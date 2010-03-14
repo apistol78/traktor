@@ -54,6 +54,15 @@ void SoundMixer::addMulConst(float* lsb, const float* rsb, uint32_t count, float
 	}
 }
 
+void SoundMixer::stretch(float* lsb, uint32_t lcount, const float* rsb, uint32_t rcount, float factor) const
+{
+	for (uint32_t s = 0; s < lcount; ++s)
+	{
+		uint32_t s0 = (s * rcount) / lcount;
+		lsb[s] = rsb[s0] * factor;
+	}
+}
+
 void SoundMixer::mute(float* sb, uint32_t count) const
 {
 	T_ASSERT (alignUp(sb, 16) == sb);

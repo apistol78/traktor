@@ -50,9 +50,14 @@ void SoundChannel::setVolume(float volume)
 
 void SoundChannel::setFilter(IFilter* filter)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_filterLock);
-	if ((m_filter = filter) != 0)
-		m_filterInstance = filter->createInstance();
+	if (m_filter == filter)
+		return;
+
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_filterLock);
+		if ((m_filter = filter) != 0)
+			m_filterInstance = filter->createInstance();
+	}
 }
 
 Ref< IFilter > SoundChannel::getFilter() const
@@ -161,13 +166,13 @@ bool SoundChannel::getBlock(const ISoundMixer* mixer, double time, SoundBlock& o
 				T_ASSERT (alignUp(outputSamples, 16) == outputSamples);
 
 				if (inputSamples)
-				{
-					for (uint32_t j = 0; j < outputSamplesCount; ++j)
-					{
-						uint32_t p0 = (j * soundBlock.sampleRate) / m_hwSampleRate;
-						outputSamples[j] = inputSamples[p0] * m_volume;
-					}
-				}
+					mixer->stretch(
+						outputSamples,
+						outputSamplesCount,
+						inputSamples,
+						soundBlock.samplesCount,
+						m_volume
+					);
 				else
 					mixer->mute(outputSamples, alignUp(outputSamplesCount, 4));
 			}

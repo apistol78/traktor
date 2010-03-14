@@ -18,6 +18,10 @@ namespace traktor
 
 /*! \brief Sound mixer interface.
  * \ingroup Sound
+ *
+ * Following restrictions for use with this interface apply:
+ * - Sample blocks must be 16-byte aligned.
+ * - Counts must be a multiple of 4.
  */
 class T_DLLCLASS ISoundMixer : public Object
 {
@@ -29,6 +33,8 @@ public:
 	virtual void mulConst(float* lsb, const float* rsb, uint32_t count, float factor) const = 0;
 
 	virtual void addMulConst(float* lsb, const float* rsb, uint32_t count, float factor) const = 0;
+
+	virtual void stretch(float* lsb, uint32_t lcount, const float* rsb, uint32_t rcount, float factor) const = 0;
 
 	virtual void mute(float* sb, uint32_t count) const = 0;
 };
