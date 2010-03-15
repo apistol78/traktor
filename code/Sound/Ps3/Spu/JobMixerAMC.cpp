@@ -1,32 +1,43 @@
 #include <cell/dma.h>
 #include <cell/spurs/job_queue.h>
+#include "Sound/Ps3/Spu/JobMC.h"
 
-void cellSpursJobQueueMain(CellSpursJobContext2* context, CellSpursJob256* job)
+using namespace traktor;
+
+void cellSpursJobQueueMain(CellSpursJobContext2* context, CellSpursJob256* job256)
 {
-	CellSpursJob128* job128 = (CellSpursJob128*)job;
+	sound::JobMC* job = (sound::JobMC*)job256;
 
-	float samples[1024] __attribute__((aligned(16)));
+	static float lsb[1024] __attribute__((aligned(16)));
+	static float rsb[1024] __attribute__((aligned(16)));
 
 	cellDmaGet(
-		samples,
-		job128->workArea.userData[1],
-		job128->workArea.userData[2] * sizeof(float),
+		lsb,
+		job->lsbEA,
+		job->count * sizeof(float),
 		context->dmaTag,
 		0,
 		0
 	);
 	cellSpursJobQueueDmaWaitTagStatusAll(1 << context->dmaTag);
 
-	uint32_t fui = job128->workArea.userData[3];
-	float factor = *(float*)&fui;
+	cellDmaGet(
+		rsb,
+		job->rsbEA,
+		job->count * sizeof(float),
+		context->dmaTag,
+		0,
+		0
+	);
+	cellSpursJobQueueDmaWaitTagStatusAll(1 << context->dmaTag);
 
-	for (uint32_t i = 0; i < job128->workArea.userData[2]; ++i)
-		samples[i] *= factor;
+	for (uint32_t i = 0; i < job->count; ++i)
+		lsb[i] += rsb[i] * job->factor;
 
 	cellDmaPut(
-		samples,
-		job128->workArea.userData[0],
-		job128->workArea.userData[2] * sizeof(float),
+		lsb,
+		job->lsbEA,
+		job->count * sizeof(float),
 		context->dmaTag,
 		0,
 		0

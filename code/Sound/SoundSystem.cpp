@@ -270,6 +270,8 @@ void SoundSystem::threadMixer()
 		if (m_threadMixer->stopped())
 			break;
 
+		m_mixer->synchronize();
+
 		m_submitQueueLock.wait();
 		m_submitQueue.push_back(frameBlock);
 		m_submitQueueLock.release();

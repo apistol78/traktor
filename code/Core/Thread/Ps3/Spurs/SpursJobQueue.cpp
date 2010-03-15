@@ -109,20 +109,20 @@ void SpursJobQueue::destroy()
 
 bool SpursJobQueue::push(CellSpursJobHeader* job)
 {
-	cellSpursJobQueuePortCopyPush(
+	int res = cellSpursJobQueuePortCopyPush(
 		m_jobQueuePort,
 		job,
 		m_descriptorSize,
-		false
+		true
 	);
-	return true;
+	return res == CELL_OK;
 }
 
 bool SpursJobQueue::wait(int32_t timeout)
 {
-	T_ASSERT (timeout == 0);
-	cellSpursJobQueuePortSync(m_jobQueuePort);
-	return true;
+	T_ASSERT (timeout < 0);
+	int res = cellSpursJobQueuePortSync(m_jobQueuePort);
+	return res == CELL_OK;
 }
 
 }

@@ -37,6 +37,8 @@ public:
 	virtual void stretch(float* lsb, uint32_t lcount, const float* rsb, uint32_t rcount, float factor) const = 0;
 
 	virtual void mute(float* sb, uint32_t count) const = 0;
+
+	virtual void synchronize() const = 0;
 };
 
 	}

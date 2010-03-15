@@ -29,7 +29,11 @@ public:
 
 	virtual void addMulConst(float* lsb, const float* rsb, uint32_t count, float factor) const;
 
+	virtual void stretch(float* lsb, uint32_t lcount, const float* rsb, uint32_t rcount, float factor) const;
+
 	virtual void mute(float* sb, uint32_t count) const;
+
+	virtual void synchronize() const;
 
 private:
 	Ref< SpursJobQueue > m_jobQueue;

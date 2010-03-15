@@ -9,23 +9,27 @@ void cellSpursJobQueueMain(CellSpursJobContext2* context, CellSpursJob256* job25
 {
 	sound::JobMC* job = (sound::JobMC*)job256;
 
-	static float samples[1024] __attribute__((aligned(16)));
+	static float lsb[1024 + 512] __attribute__((aligned(16)));
+	static float rsb[1024 + 512] __attribute__((aligned(16)));
 
 	cellDmaGet(
-		samples,
+		rsb,
 		job->rsbEA,
-		job->count * sizeof(float),
+		job->rcount * sizeof(float),
 		context->dmaTag,
 		0,
 		0
 	);
 	cellSpursJobQueueDmaWaitTagStatusAll(1 << context->dmaTag);
 
-	for (uint32_t i = 0; i < job->count; ++i)
-		samples[i] *= job->factor;
+	for (uint32_t s = 0; s < job->count; ++s)
+	{
+		uint32_t s0 = (s * job->rcount) / job->count;
+		lsb[s] = rsb[s0] * job->factor;
+	}
 
 	cellDmaPut(
-		samples,
+		lsb,
 		job->lsbEA,
 		job->count * sizeof(float),
 		context->dmaTag,

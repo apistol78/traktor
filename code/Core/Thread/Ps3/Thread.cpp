@@ -63,7 +63,7 @@ bool Thread::start(Priority priority)
 		&in->thread,
 		threadEntry,
 		(uint64_t)in,
-		1535 + int(priority) * 767,
+		1535 - int(priority) * 767,
 		c_stackSize,
 		SYS_PPU_THREAD_CREATE_JOINABLE,
 		m_name.c_str()
