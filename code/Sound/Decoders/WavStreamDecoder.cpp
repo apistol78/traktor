@@ -1,6 +1,7 @@
 #include <cstring>
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/Align.h"
 #include "Core/Misc/Endian.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Sound/Decoders/WavStreamDecoder.h"
@@ -85,9 +86,12 @@ bool WavStreamDecoder::getBlock(SoundBlock& outSoundBlock)
 	}
 
 	outSoundBlock.samples[SbcLeft] = m_samplesBuffer;
-	outSoundBlock.samplesCount = readSamples;
+	outSoundBlock.samplesCount = alignUp(readSamples, 4);
 	outSoundBlock.sampleRate = m_format.sampleRate;
 	outSoundBlock.maxChannel = m_format.channels;
+
+	for (uint32_t i = readSamples; i < outSoundBlock.samplesCount; ++i)
+		m_samplesBuffer[i] = 0.0f;
 
 	return true;
 }

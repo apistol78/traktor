@@ -150,7 +150,7 @@
                 </item>
                 <item>
                   <first>OutputFile</first>
-                  <second>$(OutDir)/$(ProjectName).elf</second>
+                  <second>$(OutDir)/$(ProjectName)_d.elf</second>
                 </item>
               </staticOptions>
             </item>
