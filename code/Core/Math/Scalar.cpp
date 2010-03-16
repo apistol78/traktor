@@ -5,6 +5,8 @@
 #		include "Core/Math/Sse2/Scalar.inl"
 #	elif defined(T_MATH_USE_ALTIVEC)
 #		include "Core/Math/AltiVec/Scalar.inl"
+#	elif defined(T_MATH_USE_ALTIVEC_SPU)
+#		include "Core/Math/AltiVec/Ps3/Spu/Scalar.inl"
 #	else
 #		include "Core/Math/Std/Scalar.inl"
 #	endif

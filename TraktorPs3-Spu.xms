@@ -257,9 +257,19 @@
 									<item type="Filter">
 										<name>AltiVec</name>
 										<items>
-											<item type="File">
-												<fileName>Math/AltiVec/*.*</fileName>
-												<items/>
+											<item type="Filter">
+												<name>Ps3</name>
+												<items>
+													<item type="Filter">
+														<name>Spu</name>
+														<items>
+															<item type="File">
+																<fileName>Math/AltiVec/Ps3/Spu/*.*</fileName>
+																<items/>
+															</item>
+														</items>
+													</item>
+												</items>
 											</item>
 										</items>
 									</item>

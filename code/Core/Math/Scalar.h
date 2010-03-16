@@ -23,7 +23,7 @@ class T_MATH_ALIGN16 T_DLLCLASS Scalar
 public:
 #if defined(T_MATH_USE_SSE2)
 	__m128 m_data;
-#elif defined(T_MATH_USE_ALTIVEC)
+#elif defined(T_MATH_USE_ALTIVEC) || defined(T_MATH_USE_ALTIVEC_SPU)
 	vec_float4 m_data;
 #else
 	float m_data;
@@ -37,7 +37,7 @@ public:
 
 #if defined(T_MATH_USE_SSE2)
 	explicit T_MATH_INLINE Scalar(__m128 value);
-#elif defined(T_MATH_USE_ALTIVEC)
+#elif defined(T_MATH_USE_ALTIVEC) || defined(T_MATH_USE_ALTIVEC_SPU)
 	explicit T_MATH_INLINE Scalar(vec_float4 value);
 #endif
 
@@ -89,6 +89,8 @@ T_MATH_INLINE T_DLLCLASS Scalar lerp(const Scalar& a, const Scalar& b, const Sca
 #		include "Core/Math/Sse2/Scalar.inl"
 #	elif defined(T_MATH_USE_ALTIVEC)
 #		include "Core/Math/AltiVec/Scalar.inl"
+#	elif defined(T_MATH_USE_ALTIVEC_SPU)
+#		include "Core/Math/AltiVec/Ps3/Spu/Scalar.inl"
 #	else
 #		include "Core/Math/Std/Scalar.inl"
 #	endif
