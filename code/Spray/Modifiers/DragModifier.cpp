@@ -47,12 +47,12 @@ void DragModifier::update(SpursJobQueue* jobQueue, const Scalar& deltaTime, cons
 	job.header.eaBinary = (uintptr_t)job_start;
 	job.header.sizeBinary = CELL_SPURS_GET_SIZE_BINARY(job_size);
 
-	job.transform = transform;
-	job.deltaTime = deltaTime;
-	job.pointsEA = (uintptr_t)(&points[0]);
-	job.pointsCount = points.size();
-	job.drag.linearDrag = m_linearDrag;
-	job.drag.angularDrag = m_angularDrag;
+	job.common.transform = transform;
+	job.common.deltaTime = deltaTime;
+	job.common.pointsEA = (uintptr_t)(&points[0]);
+	job.common.pointsCount = points.size();
+	job.modifier.drag.linearDrag = m_linearDrag;
+	job.modifier.drag.angularDrag = m_angularDrag;
 
 	jobQueue->push(&job);
 }

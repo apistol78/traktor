@@ -9,6 +9,8 @@ namespace traktor
 	namespace spray
 	{
 
+#pragma pack(1)
+
 /*! \brief Particle point.
  * \ingroup Spray
  */
@@ -28,6 +30,8 @@ struct Point
 	// Pad to ensure structure is a multiple of 16 bytes.
 	uint8_t pad[4];
 };
+
+#pragma pack()
 
 /*! \brief Array of particles.
  * \ingroup Spray

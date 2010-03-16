@@ -46,11 +46,11 @@ void IntegrateModifier::update(SpursJobQueue* jobQueue, const Scalar& deltaTime,
 	job.header.eaBinary = (uintptr_t)job_start;
 	job.header.sizeBinary = CELL_SPURS_GET_SIZE_BINARY(job_size);
 
-	job.transform = transform;
-	job.deltaTime = deltaTime;
-	job.pointsEA = (uintptr_t)(&points[0]);
-	job.pointsCount = points.size();
-	job.integrate.timeScale = m_timeScale;
+	job.common.transform = transform;
+	job.common.deltaTime = deltaTime;
+	job.common.pointsEA = (uintptr_t)(&points[0]);
+	job.common.pointsCount = points.size();
+	job.modifier.integrate.timeScale = m_timeScale;
 
 	jobQueue->push(&job);
 }

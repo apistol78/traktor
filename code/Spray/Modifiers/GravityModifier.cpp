@@ -47,12 +47,12 @@ void GravityModifier::update(SpursJobQueue* jobQueue, const Scalar& deltaTime, c
 	job.header.eaBinary = (uintptr_t)job_start;
 	job.header.sizeBinary = CELL_SPURS_GET_SIZE_BINARY(job_size);
 
-	job.transform = transform;
-	job.deltaTime = deltaTime;
-	job.pointsEA = (uintptr_t)(&points[0]);
-	job.pointsCount = points.size();
-	job.gravity.world = m_world;
-	m_gravity.storeUnaligned(job.gravity.gravity);
+	job.common.transform = transform;
+	job.common.deltaTime = deltaTime;
+	job.common.pointsEA = (uintptr_t)(&points[0]);
+	job.common.pointsCount = points.size();
+	job.modifier.gravity.world = m_world;
+	m_gravity.storeUnaligned(job.modifier.gravity.gravity);
 
 	jobQueue->push(&job);
 }

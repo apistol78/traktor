@@ -50,15 +50,15 @@ void VortexModifier::update(SpursJobQueue* jobQueue, const Scalar& deltaTime, co
 	job.header.eaBinary = (uintptr_t)job_start;
 	job.header.sizeBinary = CELL_SPURS_GET_SIZE_BINARY(job_size);
 
-	job.transform = transform;
-	job.deltaTime = deltaTime;
-	job.pointsEA = (uintptr_t)(&points[0]);
-	job.pointsCount = points.size();
-	m_axis.storeUnaligned(job.vortex.axis);
-	job.vortex.tangentForce = m_tangentForce;
-	job.vortex.normalConstantForce = m_normalConstantForce;
-	job.vortex.normalDistance = m_normalDistance;
-	job.vortex.normalDistanceForce = m_normalDistanceForce;
+	job.common.transform = transform;
+	job.common.deltaTime = deltaTime;
+	job.common.pointsEA = (uintptr_t)(&points[0]);
+	job.common.pointsCount = points.size();
+	m_axis.storeUnaligned(job.modifier.vortex.axis);
+	job.modifier.vortex.tangentForce = m_tangentForce;
+	job.modifier.vortex.normalConstantForce = m_normalConstantForce;
+	job.modifier.vortex.normalDistance = m_normalDistance;
+	job.modifier.vortex.normalDistanceForce = m_normalDistanceForce;
 
 	jobQueue->push(&job);
 }

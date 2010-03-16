@@ -45,7 +45,7 @@ EmitterInstance::EmitterInstance(Emitter* emitter)
 ,	m_count(0)
 {
 #if defined(_PS3)
-	m_jobQueue = SpursManager::getInstance().createJobQueue(sizeof(JobModifierUpdate), 16);
+	m_jobQueue = SpursManager::getInstance().createJobQueue(sizeof(JobModifierUpdate), 64);
 #endif
 }
 
@@ -134,15 +134,19 @@ void EmitterInstance::update(EmitterUpdateContext& context, const Transform& tra
 	//
 	// Update particles on SPU
 	//
-	const RefArray< Modifier >& modifiers = m_emitter->getModifiers();
-	for (RefArray< Modifier >::const_iterator i = modifiers.begin(); i != modifiers.end(); ++i)
+	if (!m_points.empty())
 	{
-		(*i)->update(
-			m_jobQueue,
-			Scalar(context.deltaTime),
-			transform,
-			m_points
-		);
+		const RefArray< Modifier >& modifiers = m_emitter->getModifiers();
+		for (RefArray< Modifier >::const_iterator i = modifiers.begin(); i != modifiers.end(); ++i)
+		{
+			if (*i)
+				(*i)->update(
+				m_jobQueue,
+				Scalar(context.deltaTime),
+				transform,
+				m_points
+			);
+		}
 	}
 #else
 	//
