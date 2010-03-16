@@ -1,6 +1,8 @@
 #include "Core/Memory/Alloc.h"
 #include "Core/Thread/Ps3/Spurs/SpursJobQueue.h"
 
+#define SM_SPURS_SPU_COUNT 4
+
 namespace traktor
 {
 
@@ -46,7 +48,7 @@ bool SpursJobQueue::create(uint32_t descriptorSize, uint32_t submitCount)
 		"Traktor Spurs JobQueue",
 		m_commandQueue,
 		/*depth*/16,
-		1,
+		SM_SPURS_SPU_COUNT,
 		priorityTable
 	);
 
