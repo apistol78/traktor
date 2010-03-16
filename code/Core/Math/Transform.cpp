@@ -1,7 +1,10 @@
 #include "Core/Math/MathConfig.h"
 #include "Core/Math/Transform.h"
-#include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/Member.h"
+
+#if !(defined(_PS3) && defined(SPU))
+#	include "Core/Serialization/ISerializer.h"
+#	include "Core/Serialization/Member.h"
+#endif
 
 #if !defined(T_MATH_USE_INLINE)
 #	include "Core/Math/Std/Transform.inl"
@@ -10,11 +13,15 @@
 namespace traktor
 {
 
+#if !(defined(_PS3) && defined(SPU))
+
 bool Transform::serialize(ISerializer& s)
 {
 	s >> Member< Vector4 >(L"translation", m_translation);
 	s >> Member< Quaternion >(L"rotation", m_rotation);
 	return true;
 }
+
+#endif
 
 }

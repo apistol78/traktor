@@ -6,7 +6,7 @@
 	<projects>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Traktor.Sound.Ps3.JobMixerMC</name>
+			<name>Traktor.Sound.JobMulConst</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Sound/Ps3/Spu</sourcePath>
 			<configurations>
 				<item type="Configuration">
@@ -54,7 +54,7 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Traktor.Sound.Ps3.JobMixerAMC</name>
+			<name>Traktor.Sound.JobAddMulConst</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Sound/Ps3/Spu</sourcePath>
 			<configurations>
 				<item type="Configuration">
@@ -102,7 +102,7 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Traktor.Sound.Ps3.JobMixerStretch</name>
+			<name>Traktor.Sound.JobStretch</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Sound/Ps3/Spu</sourcePath>
 			<configurations>
 				<item type="Configuration">
@@ -150,5 +150,519 @@
 			</items>
 			<dependencies/>
 		</item>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Traktor.Spray.JobDragModifier</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Spray/Ps3/Spu</sourcePath>
+			<configurations>
+				<item type="Configuration">
+					<name>DebugStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
+					</libraries>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
+					</libraries>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>JobDragModifier.cpp</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project type="Project" version="1">
+						<enable>true</enable>
+						<name>Traktor.Core</name>
+						<sourcePath>$(TRAKTOR_HOME)/code/Core</sourcePath>
+						<configurations>
+							<item type="Configuration">
+								<name>DebugStatic</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpDebug</targetProfile>
+								<precompiledHeader/>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/code</item>
+								</includePaths>
+								<definitions>
+									<item>T_STATIC</item>
+									<item>_DEBUG</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries>
+									<item>$(SCE_PS3_ROOT)/target/spu/lib/libm.a</item>
+								</libraries>
+							</item>
+							<item type="Configuration">
+								<name>ReleaseStatic</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpRelease</targetProfile>
+								<precompiledHeader/>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/code</item>
+								</includePaths>
+								<definitions>
+									<item>T_STATIC</item>
+									<item>NDEBUG</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries>
+									<item>$(SCE_PS3_ROOT)/target/spu/lib/libm.a</item>
+								</libraries>
+							</item>
+						</configurations>
+						<items>
+							<item type="Filter">
+								<name>Math</name>
+								<items>
+									<item type="Filter">
+										<name>Std</name>
+										<items>
+											<item type="File">
+												<fileName>Math/Std/*.*</fileName>
+												<items/>
+											</item>
+										</items>
+									</item>
+									<item type="Filter">
+										<name>AltiVec</name>
+										<items>
+											<item type="File">
+												<fileName>Math/AltiVec/*.*</fileName>
+												<items/>
+											</item>
+										</items>
+									</item>
+									<item type="File">
+										<fileName>Math/Aabb.*</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>Math/Const.*</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>Math/Float.*</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>Math/Frustum.*</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>Math/Half.*</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>Math/MathConfig.*</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>Math/MathUtils.*</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>Math/Matrix*.*</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>Math/Plane.*</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>Math/Quaternion.*</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>Math/Random*.*</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>Math/Range.*</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>Math/Scalar.*</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>Math/Transform.*</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>Math/Vector*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+							<item type="Filter">
+								<name>Containers</name>
+								<items>
+									<item type="File">
+										<fileName>Containers/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+							<item type="Filter">
+								<name>Debug</name>
+								<items>
+									<item type="Filter">
+										<name>Ps3</name>
+										<items>
+											<item type="File">
+												<fileName>Debug/Ps3/Spu/*.*</fileName>
+												<items/>
+											</item>
+										</items>
+									</item>
+									<item type="File">
+										<fileName>Debug/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+							<item type="Filter">
+								<name>Meta</name>
+								<items>
+									<item type="File">
+										<fileName>Meta/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+							<item type="File">
+								<fileName>Config.h</fileName>
+								<items/>
+							</item>
+							<item type="Filter">
+								<name>Misc</name>
+								<items>
+									<item type="File">
+										<fileName>Misc/Align.*</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>Misc/EnterLeave.*</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>Misc/Save.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+						</items>
+						<dependencies/>
+					</project>
+				</item>
+			</dependencies>
+		</item>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Traktor.Spray.JobGravityModifier</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Spray/Ps3/Spu</sourcePath>
+			<configurations>
+				<item type="Configuration">
+					<name>DebugStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
+					</libraries>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
+					</libraries>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>JobGravityModifier.cpp</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[3]/dependencies/item/project"/>
+				</item>
+			</dependencies>
+		</item>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Traktor.Spray.JobIntegrateModifier</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Spray/Ps3/Spu</sourcePath>
+			<configurations>
+				<item type="Configuration">
+					<name>DebugStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
+					</libraries>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
+					</libraries>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>JobIntegrateModifier.cpp</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[3]/dependencies/item/project"/>
+				</item>
+			</dependencies>
+		</item>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Traktor.Spray.JobPlaneCollisionModifier</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Spray/Ps3/Spu</sourcePath>
+			<configurations>
+				<item type="Configuration">
+					<name>DebugStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
+					</libraries>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
+					</libraries>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>JobPlaneCollisionModifier.cpp</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[3]/dependencies/item/project"/>
+				</item>
+			</dependencies>
+		</item>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Traktor.Spray.JobSizeModifier</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Spray/Ps3/Spu</sourcePath>
+			<configurations>
+				<item type="Configuration">
+					<name>DebugStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
+					</libraries>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
+					</libraries>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>JobSizeModifier.cpp</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[3]/dependencies/item/project"/>
+				</item>
+			</dependencies>
+		</item>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Traktor.Spray.JobVortexModifier</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Spray/Ps3/Spu</sourcePath>
+			<configurations>
+				<item type="Configuration">
+					<name>DebugStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
+					</libraries>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
+					</libraries>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>JobVortexModifier.cpp</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[3]/dependencies/item/project"/>
+				</item>
+			</dependencies>
+		</item>
+		<item ref="/object/projects/item[3]/dependencies/item/project"/>
 	</projects>
 </object>

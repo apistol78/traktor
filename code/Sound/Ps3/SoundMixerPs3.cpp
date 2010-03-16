@@ -11,35 +11,35 @@
 
 #if !defined(_DEBUG)
 
-extern char _binary_jqjob_Traktor_Sound_Ps3_JobMixerMC_bin_start[];
-extern char _binary_jqjob_Traktor_Sound_Ps3_JobMixerMC_bin_size[];
-extern char _binary_jqjob_Traktor_Sound_Ps3_JobMixerAMC_bin_start[];
-extern char _binary_jqjob_Traktor_Sound_Ps3_JobMixerAMC_bin_size[];
-extern char _binary_jqjob_Traktor_Sound_Ps3_JobMixerStretch_bin_start[];
-extern char _binary_jqjob_Traktor_Sound_Ps3_JobMixerStretch_bin_size[];
+extern char _binary_jqjob_Traktor_Sound_JobMulConst_bin_start[];
+extern char _binary_jqjob_Traktor_Sound_JobMulConst_bin_size[];
+extern char _binary_jqjob_Traktor_Sound_JobAddMulConst_bin_start[];
+extern char _binary_jqjob_Traktor_Sound_JobAddMulConst_bin_size[];
+extern char _binary_jqjob_Traktor_Sound_JobStretch_bin_start[];
+extern char _binary_jqjob_Traktor_Sound_JobStretch_bin_size[];
 
-static char* job_mc_start = _binary_jqjob_Traktor_Sound_Ps3_JobMixerMC_bin_start;
-static char* job_mc_size = _binary_jqjob_Traktor_Sound_Ps3_JobMixerMC_bin_size;
-static char* job_amc_start = _binary_jqjob_Traktor_Sound_Ps3_JobMixerAMC_bin_start;
-static char* job_amc_size = _binary_jqjob_Traktor_Sound_Ps3_JobMixerAMC_bin_size;
-static char* job_stretch_start = _binary_jqjob_Traktor_Sound_Ps3_JobMixerStretch_bin_start;
-static char* job_stretch_size = _binary_jqjob_Traktor_Sound_Ps3_JobMixerStretch_bin_size;
+static char* job_mc_start = _binary_jqjob_Traktor_Sound_JobMulConst_bin_start;
+static char* job_mc_size = _binary_jqjob_Traktor_Sound_JobMulConst_bin_size;
+static char* job_amc_start = _binary_jqjob_Traktor_Sound_JobAddMulConst_bin_start;
+static char* job_amc_size = _binary_jqjob_Traktor_Sound_JobAddMulConst_bin_size;
+static char* job_stretch_start = _binary_jqjob_Traktor_Sound_JobStretch_bin_start;
+static char* job_stretch_size = _binary_jqjob_Traktor_Sound_JobStretch_bin_size;
 
 #else
 
-extern char _binary_jqjob_Traktor_Sound_Ps3_JobMixerMC_d_bin_start[];
-extern char _binary_jqjob_Traktor_Sound_Ps3_JobMixerMC_d_bin_size[];
-extern char _binary_jqjob_Traktor_Sound_Ps3_JobMixerAMC_d_bin_start[];
-extern char _binary_jqjob_Traktor_Sound_Ps3_JobMixerAMC_d_bin_size[];
-extern char _binary_jqjob_Traktor_Sound_Ps3_JobMixerStretch_d_bin_start[];
-extern char _binary_jqjob_Traktor_Sound_Ps3_JobMixerStretch_d_bin_size[];
+extern char _binary_jqjob_Traktor_Sound_JobMulConst_d_bin_start[];
+extern char _binary_jqjob_Traktor_Sound_JobMulConst_d_bin_size[];
+extern char _binary_jqjob_Traktor_Sound_JobAddMulConst_d_bin_start[];
+extern char _binary_jqjob_Traktor_Sound_JobAddMulConst_d_bin_size[];
+extern char _binary_jqjob_Traktor_Sound_JobStretch_d_bin_start[];
+extern char _binary_jqjob_Traktor_Sound_JobStretch_d_bin_size[];
 
-static char* job_mc_start = _binary_jqjob_Traktor_Sound_Ps3_JobMixerMC_d_bin_start;
-static char* job_mc_size = _binary_jqjob_Traktor_Sound_Ps3_JobMixerMC_d_bin_size;
-static char* job_amc_start = _binary_jqjob_Traktor_Sound_Ps3_JobMixerAMC_d_bin_start;
-static char* job_amc_size = _binary_jqjob_Traktor_Sound_Ps3_JobMixerAMC_d_bin_size;
-static char* job_stretch_start = _binary_jqjob_Traktor_Sound_Ps3_JobMixerStretch_d_bin_start;
-static char* job_stretch_size = _binary_jqjob_Traktor_Sound_Ps3_JobMixerStretch_d_bin_size;
+static char* job_mc_start = _binary_jqjob_Traktor_Sound_JobMulConst_d_bin_start;
+static char* job_mc_size = _binary_jqjob_Traktor_Sound_JobMulConst_d_bin_size;
+static char* job_amc_start = _binary_jqjob_Traktor_Sound_JobAddMulConst_d_bin_start;
+static char* job_amc_size = _binary_jqjob_Traktor_Sound_JobAddMulConst_d_bin_size;
+static char* job_stretch_start = _binary_jqjob_Traktor_Sound_JobStretch_d_bin_start;
+static char* job_stretch_size = _binary_jqjob_Traktor_Sound_JobStretch_d_bin_size;
 
 #endif
 

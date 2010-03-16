@@ -48,12 +48,22 @@
 
 #	define T_MATH_ALIGN16 T_ALIGN16
 
-#	if !defined(_DEBUG)
-#		define T_MATH_USE_INLINE
-#		define T_MATH_INLINE inline
-#		define T_MATH_USE_ALTIVEC
-#	else	// _DEBUG
-#		define T_MATH_USE_ALTIVEC
+#	if !defined(SPU)
+#		if !defined(_DEBUG)
+#			define T_MATH_USE_INLINE
+#			define T_MATH_INLINE inline
+#			define T_MATH_USE_ALTIVEC
+#		else	// _DEBUG
+#			define T_MATH_USE_ALTIVEC
+#		endif
+#	else
+#		if !defined(_DEBUG)
+#			define T_MATH_USE_INLINE
+#			define T_MATH_INLINE inline
+//#			define T_MATH_USE_ALTIVEC
+#		else	// _DEBUG
+//#			define T_MATH_USE_ALTIVEC
+#		endif
 #	endif
 
 #endif	// _PS3

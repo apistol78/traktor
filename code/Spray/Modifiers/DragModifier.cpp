@@ -1,6 +1,29 @@
-#include "Spray/Modifiers/DragModifier.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
+#include "Spray/Modifiers/DragModifier.h"
+
+#if defined(_PS3)
+#	include "Core/Thread/Ps3/Spurs/SpursJobQueue.h"
+#	include "Spray/Ps3/Spu/JobModifierUpdate.h"
+
+#	if !defined(_DEBUG)
+
+extern char _binary_jqjob_Traktor_Spray_JobDragModifier_bin_start[];
+extern char _binary_jqjob_Traktor_Spray_JobDragModifier_bin_size[];
+
+static char* job_start = _binary_jqjob_Traktor_Spray_JobDragModifier_bin_start;
+static char* job_size = _binary_jqjob_Traktor_Spray_JobDragModifier_bin_size;
+
+#	else
+
+extern char _binary_jqjob_Traktor_Spray_JobDragModifier_d_bin_start[];
+extern char _binary_jqjob_Traktor_Spray_JobDragModifier_d_bin_size[];
+
+static char* job_start = _binary_jqjob_Traktor_Spray_JobDragModifier_d_bin_start;
+static char* job_size = _binary_jqjob_Traktor_Spray_JobDragModifier_d_bin_size;
+
+#	endif
+#endif
 
 namespace traktor
 {
@@ -15,6 +38,25 @@ DragModifier::DragModifier()
 {
 }
 
+#if defined(_PS3)
+void DragModifier::update(SpursJobQueue* jobQueue, const Scalar& deltaTime, const Transform& transform, PointVector& points) const
+{
+	JobModifierUpdate job;
+
+	__builtin_memset(&job, 0, sizeof(JobModifierUpdate));
+	job.header.eaBinary = (uintptr_t)job_start;
+	job.header.sizeBinary = CELL_SPURS_GET_SIZE_BINARY(job_size);
+
+	job.transform = transform;
+	job.deltaTime = deltaTime;
+	job.pointsEA = (uintptr_t)(&points[0]);
+	job.pointsCount = points.size();
+	job.drag.linearDrag = m_linearDrag;
+	job.drag.angularDrag = m_angularDrag;
+
+	jobQueue->push(&job);
+}
+#else
 void DragModifier::update(const Scalar& deltaTime, const Transform& transform, PointVector& points, size_t first, size_t last) const
 {
 	for (size_t i = first; i < last; ++i)
@@ -23,6 +65,7 @@ void DragModifier::update(const Scalar& deltaTime, const Transform& transform, P
 		points[i].angularVelocity *= 1.0f - m_angularDrag * deltaTime;
 	}
 }
+#endif
 
 bool DragModifier::serialize(ISerializer& s)
 {

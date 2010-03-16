@@ -3533,6 +3533,36 @@
 					<linkWithProduct>true</linkWithProduct>
 					<project ref="/object/projects/item[32]"/>
 				</item>
+				<item type="ExternalDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<solutionFileName>$(TRAKTOR_HOME)/TraktorPs3-Spu.xms</solutionFileName>
+					<projectName>Traktor.Spray.JobDragModifier</projectName>
+				</item>
+				<item type="ExternalDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<solutionFileName>$(TRAKTOR_HOME)/TraktorPs3-Spu.xms</solutionFileName>
+					<projectName>Traktor.Spray.JobGravityModifier</projectName>
+				</item>
+				<item type="ExternalDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<solutionFileName>$(TRAKTOR_HOME)/TraktorPs3-Spu.xms</solutionFileName>
+					<projectName>Traktor.Spray.JobIntegrateModifier</projectName>
+				</item>
+				<item type="ExternalDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<solutionFileName>$(TRAKTOR_HOME)/TraktorPs3-Spu.xms</solutionFileName>
+					<projectName>Traktor.Spray.JobPlaneCollisionModifier</projectName>
+				</item>
+				<item type="ExternalDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<solutionFileName>$(TRAKTOR_HOME)/TraktorPs3-Spu.xms</solutionFileName>
+					<projectName>Traktor.Spray.JobSizeModifier</projectName>
+				</item>
+				<item type="ExternalDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<solutionFileName>$(TRAKTOR_HOME)/TraktorPs3-Spu.xms</solutionFileName>
+					<projectName>Traktor.Spray.JobVortexModifier</projectName>
+				</item>
 			</dependencies>
 		</item>
 		<item type="Project" version="1">
@@ -4099,17 +4129,17 @@
 				<item type="ExternalDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
 					<solutionFileName>$(TRAKTOR_HOME)/TraktorPs3-Spu.xms</solutionFileName>
-					<projectName>Traktor.Sound.Ps3.JobMixerMC</projectName>
+					<projectName>Traktor.Sound.JobMulConst</projectName>
 				</item>
 				<item type="ExternalDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
 					<solutionFileName>$(TRAKTOR_HOME)/TraktorPs3-Spu.xms</solutionFileName>
-					<projectName>Traktor.Sound.Ps3.JobMixerAMC</projectName>
+					<projectName>Traktor.Sound.JobAddMulConst</projectName>
 				</item>
 				<item type="ExternalDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
 					<solutionFileName>$(TRAKTOR_HOME)/TraktorPs3-Spu.xms</solutionFileName>
-					<projectName>Traktor.Sound.Ps3.JobMixerStretch</projectName>
+					<projectName>Traktor.Sound.JobStretch</projectName>
 				</item>
 			</dependencies>
 		</item>
