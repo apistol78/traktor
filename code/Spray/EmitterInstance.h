@@ -12,15 +12,19 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_SPRAY_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
 {
 
 class Job;
+
+#if defined(_PS3)
+class SpursJobQueue;
+#endif
 
 	namespace spray
 	{
@@ -68,7 +72,11 @@ private:
 	mutable Job m_jobs[4];
 	uint32_t m_count;
 
+#if defined(_PS3)
+	Ref< SpursJobQueue > m_jobQueue;
+#else
 	void updateTask(float deltaTime, const Transform& transform, size_t first, size_t last);
+#endif
 };
 
 	}

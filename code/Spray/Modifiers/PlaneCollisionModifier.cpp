@@ -2,6 +2,29 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 
+#if defined(_PS3)
+#	include "Core/Thread/Ps3/Spurs/SpursJobQueue.h"
+#	include "Spray/Ps3/Spu/JobModifierUpdate.h"
+
+#	if !defined(_DEBUG)
+
+extern char _binary_jqjob_Traktor_Spray_JobPlaneCollisionModifier_bin_start[];
+extern char _binary_jqjob_Traktor_Spray_JobPlaneCollisionModifier_bin_size[];
+
+static char* job_start = _binary_jqjob_Traktor_Spray_JobPlaneCollisionModifier_bin_start;
+static char* job_size = _binary_jqjob_Traktor_Spray_JobPlaneCollisionModifier_bin_size;
+
+#	else
+
+extern char _binary_jqjob_Traktor_Spray_JobPlaneCollisionModifier_d_bin_start[];
+extern char _binary_jqjob_Traktor_Spray_JobPlaneCollisionModifier_d_bin_size[];
+
+static char* job_start = _binary_jqjob_Traktor_Spray_JobPlaneCollisionModifier_d_bin_start;
+static char* job_size = _binary_jqjob_Traktor_Spray_JobPlaneCollisionModifier_d_bin_size;
+
+#	endif
+#endif
+
 namespace traktor
 {
 	namespace spray
@@ -15,6 +38,26 @@ PlaneCollisionModifier::PlaneCollisionModifier()
 {
 }
 
+#if defined(_PS3)
+void PlaneCollisionModifier::update(SpursJobQueue* jobQueue, const Scalar& deltaTime, const Transform& transform, PointVector& points) const
+{
+	JobModifierUpdate job;
+
+	__builtin_memset(&job, 0, sizeof(JobModifierUpdate));
+	job.header.eaBinary = (uintptr_t)job_start;
+	job.header.sizeBinary = CELL_SPURS_GET_SIZE_BINARY(job_size);
+
+	job.transform = transform;
+	job.deltaTime = deltaTime;
+	job.pointsEA = (uintptr_t)(&points[0]);
+	job.pointsCount = points.size();
+	m_plane.normal().storeUnaligned(job.planeCollision.plane);
+	job.planeCollision.plane[3] = m_plane.distance();
+	job.planeCollision.restitution = m_restitution;
+
+	jobQueue->push(&job);
+}
+#else
 void PlaneCollisionModifier::update(const Scalar& deltaTime, const Transform& transform, PointVector& points, size_t first, size_t last) const
 {
 	for (size_t i = first; i < last; ++i)
@@ -30,6 +73,7 @@ void PlaneCollisionModifier::update(const Scalar& deltaTime, const Transform& tr
 		points[i].velocity = -reflect(points[i].velocity, m_plane.normal()) * m_restitution;
 	}
 }
+#endif
 
 bool PlaneCollisionModifier::serialize(ISerializer& s)
 {

@@ -32,7 +32,184 @@
     <platform>Win32</platform>
     <configurations>
       <!-- 0: TfStaticLibrary -->
-      <item />
+      <item type="SolutionBuilderMsvcConfiguration">
+        <staticOptions>
+          <item>
+            <first>Name</first>
+            <second>%(CONFIGURATION_NAME)|%(PROJECT_PLATFORM)</second>
+          </item>
+          <item>
+            <first>ConfigurationType</first>
+            <second>4</second>
+          </item>
+          <item>
+            <first>OutputDirectory</first>
+            <second>$(SolutionDir)$(ConfigurationName)</second>
+          </item>
+          <item>
+            <first>IntermediateDirectory</first>
+            <second>$(ConfigurationName)</second>
+          </item>
+          <item>
+            <first>CharacterSet</first>
+            <second>2</second>
+          </item>
+          <item>
+            <first>WholeProgramOptimization</first>
+            <second>0</second>
+          </item>
+        </staticOptions>
+        <tools>
+          <!-- 0: TpDebug -->
+          <item>
+            <item type="SolutionBuilderMsvcGenericTool">
+              <toolName>VCPreBuildEventTool</toolName>
+              <staticOptions/>
+            </item>
+            <item type="SolutionBuilderMsvcCompilerTool">
+              <resolvePaths>false</resolvePaths>
+              <staticOptions>
+                <item>
+                  <first>AdditionalOptions</first>
+                  <second>-O0 -Wall -fno-exceptions -fno-rtti -g -mspurs-job-initialize -fpic</second>
+                </item>
+                <item>
+                  <first>AdditionalIncludeDirectories</first>
+                  <second>.</second>
+                </item>
+                <item>
+                  <first>PreprocessorDefinitions</first>
+                  <second>_PS3;SN_TARGET_PS3_SPU;SPU;UNICODE;_UNICODE</second>
+                </item>
+                <item>
+                  <first>Optimization</first>
+                  <second>0</second>
+                </item>
+                <item>
+                  <first>MinimalRebuild</first>
+                  <second>true</second>
+                </item>
+                <item>
+                  <first>BasicRuntimeChecks</first>
+                  <second>0</second>
+                </item>
+                <item>
+                  <first>RuntimeLibrary</first>
+                  <second>3</second>
+                </item>
+                <item>
+                  <first>WarningLevel</first>
+                  <second>3</second>
+                </item>
+                <item>
+                  <first>DebugInformationFormat</first>
+                  <second>3</second>
+                </item>
+              </staticOptions>
+            </item>
+            <item type="SolutionBuilderMsvcGenericTool">
+              <toolName>VCResourceCompilerTool</toolName>
+              <staticOptions>
+                <item>
+                  <first>AdditionalIncludeDirectories</first>
+                  <second>$(IntDir)</second>
+                </item>
+              </staticOptions>
+            </item>
+            <item type="SolutionBuilderMsvcGenericTool">
+              <toolName>VCPreLinkEventTool</toolName>
+              <staticOptions/>
+            </item>
+            <item type="SolutionBuilderMsvcLibrarianTool">
+              <staticOptions/>
+            </item>
+          </item>
+          <!-- 1: TpRelease -->
+          <item>
+            <item type="SolutionBuilderMsvcGenericTool">
+              <toolName>VCPreBuildEventTool</toolName>
+              <staticOptions/>
+            </item>
+            <item type="SolutionBuilderMsvcCompilerTool">
+              <resolvePaths>false</resolvePaths>
+              <staticOptions>
+                <item>
+                  <first>AdditionalOptions</first>
+                  <second>-O2 -Wall -fno-exceptions -fno-rtti -mspurs-job-initialize -fpic</second>
+                </item>
+                <item>
+                  <first>AdditionalIncludeDirectories</first>
+                  <second>.</second>
+                </item>
+                <item>
+                  <first>PreprocessorDefinitions</first>
+                  <second>_PS3;SN_TARGET_PS3_SPU;SPU;UNICODE;_UNICODE</second>
+                </item>
+                <item>
+                  <first>Optimization</first>
+                  <second>3</second>
+                </item>
+                <item>
+                  <first>InlineFunctionExpansion</first>
+                  <second>2</second>
+                </item>
+                <item>
+                  <first>EnableIntrinsicFunctions</first>
+                  <second>true</second>
+                </item>
+                <item>
+                  <first>FavorSizeOrSpeed</first>
+                  <second>1</second>
+                </item>
+                <item>
+                  <first>OmitFramePointers</first>
+                  <second>true</second>
+                </item>
+                <item>
+                  <first>BasicRuntimeChecks</first>
+                  <second>0</second>
+                </item>
+                <item>
+                  <first>RuntimeLibrary</first>
+                  <second>2</second>
+                </item>
+                <item>
+                  <first>BufferSecurityCheck</first>
+                  <second>false</second>
+                </item>
+                <item>
+                  <first>FloatingPointModel</first>
+                  <second>2</second>
+                </item>
+                <item>
+                  <first>RuntimeTypeInfo</first>
+                  <second>false</second>
+                </item>
+                <item>
+                  <first>WarningLevel</first>
+                  <second>3</second>
+                </item>
+              </staticOptions>
+            </item>
+            <item type="SolutionBuilderMsvcGenericTool">
+              <toolName>VCResourceCompilerTool</toolName>
+              <staticOptions>
+                <item>
+                  <first>AdditionalIncludeDirectories</first>
+                  <second>$(IntDir)</second>
+                </item>
+              </staticOptions>
+            </item>
+            <item type="SolutionBuilderMsvcGenericTool">
+              <toolName>VCPreLinkEventTool</toolName>
+              <staticOptions/>
+            </item>
+            <item type="SolutionBuilderMsvcLibrarianTool">
+              <staticOptions/>
+            </item>
+          </item>
+        </tools>
+      </item>
       <!-- 1: TfSharedLibrary -->
       <item />
       <!-- 2: TfExecutable -->

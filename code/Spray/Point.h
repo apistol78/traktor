@@ -24,6 +24,9 @@ struct Point
 	float maxAge;
 	float size;
 	float random;
+
+	// Pad to ensure structure is a multiple of 16 bytes.
+	uint8_t pad[4];
 };
 
 /*! \brief Array of particles.

@@ -1,6 +1,29 @@
-#include "Spray/Modifiers/GravityModifier.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
+#include "Spray/Modifiers/GravityModifier.h"
+
+#if defined(_PS3)
+#	include "Core/Thread/Ps3/Spurs/SpursJobQueue.h"
+#	include "Spray/Ps3/Spu/JobModifierUpdate.h"
+
+#	if !defined(_DEBUG)
+
+extern char _binary_jqjob_Traktor_Spray_JobGravityModifier_bin_start[];
+extern char _binary_jqjob_Traktor_Spray_JobGravityModifier_bin_size[];
+
+static char* job_start = _binary_jqjob_Traktor_Spray_JobGravityModifier_bin_start;
+static char* job_size = _binary_jqjob_Traktor_Spray_JobGravityModifier_bin_size;
+
+#	else
+
+extern char _binary_jqjob_Traktor_Spray_JobGravityModifier_d_bin_start[];
+extern char _binary_jqjob_Traktor_Spray_JobGravityModifier_d_bin_size[];
+
+static char* job_start = _binary_jqjob_Traktor_Spray_JobGravityModifier_d_bin_start;
+static char* job_size = _binary_jqjob_Traktor_Spray_JobGravityModifier_d_bin_size;
+
+#	endif
+#endif
 
 namespace traktor
 {
@@ -15,12 +38,32 @@ GravityModifier::GravityModifier()
 {
 }
 
+#if defined(_PS3)
+void GravityModifier::update(SpursJobQueue* jobQueue, const Scalar& deltaTime, const Transform& transform, PointVector& points) const
+{
+	JobModifierUpdate job;
+
+	__builtin_memset(&job, 0, sizeof(JobModifierUpdate));
+	job.header.eaBinary = (uintptr_t)job_start;
+	job.header.sizeBinary = CELL_SPURS_GET_SIZE_BINARY(job_size);
+
+	job.transform = transform;
+	job.deltaTime = deltaTime;
+	job.pointsEA = (uintptr_t)(&points[0]);
+	job.pointsCount = points.size();
+	job.gravity.world = m_world;
+	m_gravity.storeUnaligned(job.gravity.gravity);
+
+	jobQueue->push(&job);
+}
+#else
 void GravityModifier::update(const Scalar& deltaTime, const Transform& transform, PointVector& points, size_t first, size_t last) const
 {
 	Vector4 gravity = m_world ? m_gravity : transform * m_gravity;
 	for (size_t i = first; i < last; ++i)
 		points[i].velocity += gravity * Scalar(points[i].inverseMass) * deltaTime;
 }
+#endif
 
 bool GravityModifier::serialize(ISerializer& s)
 {

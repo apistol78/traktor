@@ -1,10 +1,17 @@
-#include "Spray/EmitterInstance.h"
+#include "Core/Misc/SafeDestroy.h"
+#include "Render/Shader.h"
 #include "Spray/Emitter.h"
-#include "Spray/Source.h"
+#include "Spray/EmitterInstance.h"
+#include "Spray/EmitterUpdateContext.h"
 #include "Spray/Modifier.h"
 #include "Spray/PointRenderer.h"
-#include "Spray/EmitterUpdateContext.h"
-#include "Render/Shader.h"
+#include "Spray/Source.h"
+
+#if defined(_PS3)
+#	include "Core/Thread/Ps3/Spurs/SpursJobQueue.h"
+#	include "Core/Thread/Ps3/Spurs/SpursManager.h"
+#	include "Spray/Ps3/Spu/JobModifierUpdate.h"
+#endif
 
 #if !TARGET_OS_IPHONE && !defined(_WINCE)
 #	define T_USE_UPDATE_JOBS
@@ -37,11 +44,17 @@ EmitterInstance::EmitterInstance(Emitter* emitter)
 ,	m_warm(false)
 ,	m_count(0)
 {
+#if defined(_PS3)
+	m_jobQueue = SpursManager::getInstance().createJobQueue(sizeof(JobModifierUpdate), 16);
+#endif
 }
 
 EmitterInstance::~EmitterInstance()
 {
 	synchronize();
+#if defined(_PS3)
+	safeDestroy(m_jobQueue);
+#endif
 }
 
 void EmitterInstance::update(EmitterUpdateContext& context, const Transform& transform, bool emit, bool singleShot)
@@ -117,7 +130,25 @@ void EmitterInstance::update(EmitterUpdateContext& context, const Transform& tra
 			m_boundingBox.contain(i->position + i->velocity * deltaTime16);
 	}
 
-#if defined(T_USE_UPDATE_JOBS)
+#if defined(_PS3)
+	//
+	// Update particles on SPU
+	//
+	const RefArray< Modifier >& modifiers = m_emitter->getModifiers();
+	for (RefArray< Modifier >::const_iterator i = modifiers.begin(); i != modifiers.end(); ++i)
+	{
+		(*i)->update(
+			m_jobQueue,
+			Scalar(context.deltaTime),
+			transform,
+			m_points
+		);
+	}
+#else
+	//
+	// Update particles on CPU
+	//
+#	if defined(T_USE_UPDATE_JOBS)
 	// Execute modifiers.
 	if (size >= 4)
 	{
@@ -141,8 +172,9 @@ void EmitterInstance::update(EmitterUpdateContext& context, const Transform& tra
 		jobManager.add(m_jobs[2]);
 		jobManager.add(m_jobs[3]);
 	}
-#else
+#	else
 	updateTask(context.deltaTime, transform, 0, m_points.size());
+#	endif
 #endif
 }
 
@@ -167,14 +199,19 @@ void EmitterInstance::render(PointRenderer* pointRenderer, const Plane& cameraPl
 
 void EmitterInstance::synchronize() const
 {
-#if defined(T_USE_UPDATE_JOBS)
+#if defined(_PS3)
+	m_jobQueue->wait();
+#else
+#	if defined(T_USE_UPDATE_JOBS)
 	m_jobs[0].wait(); m_jobs[0] = 0;
 	m_jobs[1].wait(); m_jobs[1] = 0;
 	m_jobs[2].wait(); m_jobs[2] = 0;
 	m_jobs[3].wait(); m_jobs[3] = 0;
+#	endif
 #endif
 }
 
+#if !defined(_PS3)
 void EmitterInstance::updateTask(float deltaTime, const Transform& transform, size_t first, size_t last)
 {
 	Scalar deltaTimeScalar(deltaTime);
@@ -185,6 +222,7 @@ void EmitterInstance::updateTask(float deltaTime, const Transform& transform, si
 			(*i)->update(deltaTimeScalar, transform, m_points, first, last);
 	}
 }
+#endif
 
 	}
 }
