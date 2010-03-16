@@ -12,12 +12,17 @@ namespace traktor
 struct JobModifierUpdate
 {
 	CellSpursJobHeader header;
-	Transform transform;
-	float deltaTime;
-	uintptr_t pointsEA;
-	uint32_t pointsCount;
 
-	union
+	struct CommonData
+	{
+		Transform transform;
+		float deltaTime;
+		uintptr_t pointsEA;
+		uint32_t pointsCount;
+	}
+	common;
+
+	union ModifierData
 	{
 		struct
 		{
@@ -61,7 +66,10 @@ struct JobModifierUpdate
 			float normalDistanceForce;
 		}
 		vortex;
-	};
+	}
+	modifier;
+
+	uint8_t pad[128 - sizeof(CellSpursJobHeader) - sizeof(CommonData) - sizeof(ModifierData)];
 };
 
 	}

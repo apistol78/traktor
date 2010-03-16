@@ -13,23 +13,23 @@ void cellSpursJobQueueMain(CellSpursJobContext2* context, CellSpursJob256* job25
 
 	static spray::Point points[128];
 
-	Scalar deltaTime(job->deltaTime);
+	Scalar deltaTime(job->common.deltaTime);
 	Plane plane(
-		job->planeCollision.plane[0],
-		job->planeCollision.plane[1],
-		job->planeCollision.plane[2],
-		job->planeCollision.plane[3]
+		job->modifier.planeCollision.plane[0],
+		job->modifier.planeCollision.plane[1],
+		job->modifier.planeCollision.plane[2],
+		job->modifier.planeCollision.plane[3]
 	);
 
-	for (uint32_t i = 0; i < job->pointsCount; i += sizeof_array(points))
+	for (uint32_t i = 0; i < job->common.pointsCount; i += sizeof_array(points))
 	{
-		uint32_t pointsCount = job->pointsCount - i;
+		uint32_t pointsCount = job->common.pointsCount - i;
 		if (pointsCount > sizeof_array(points))
 			pointsCount = sizeof_array(points);
 
 		cellDmaGet(
 			points,
-			job->pointsEA + i * sizeof(spray::Point),
+			job->common.pointsEA + i * sizeof(spray::Point),
 			pointsCount * sizeof(spray::Point),
 			context->dmaTag,
 			0,
@@ -47,12 +47,12 @@ void cellSpursJobQueueMain(CellSpursJobContext2* context, CellSpursJob256* job25
 			if (rd >= points[j].size)
 				continue;
 
-			points[j].velocity = -reflect(points[j].velocity, plane.normal()) * Scalar(job->planeCollision.restitution);
+			points[j].velocity = -reflect(points[j].velocity, plane.normal()) * Scalar(job->modifier.planeCollision.restitution);
 		}
 
 		cellDmaPut(
 			points,
-			job->pointsEA + i * sizeof(spray::Point),
+			job->common.pointsEA + i * sizeof(spray::Point),
 			pointsCount * sizeof(spray::Point),
 			context->dmaTag,
 			0,

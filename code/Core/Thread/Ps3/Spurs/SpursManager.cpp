@@ -7,7 +7,7 @@
 #define SM_SPURS_PREFIX	"Traktor Spurs"
 #define SM_SPURS_SPU_COUNT 4
 #define	SM_SPURS_SPU_THREAD_GROUP_PRIORITY 250
-#define	SM_SPURS_PPU_THREAD_PRIORITY 1000
+#define	SM_SPURS_PPU_THREAD_PRIORITY 767 /*1535*/
 
 namespace traktor
 {
@@ -40,7 +40,7 @@ void SpursManager::destroy()
 SpursManager::SpursManager()
 :	m_spurs(0)
 {
-	spu_printf_initialize(1001, 0);
+	spu_printf_initialize(1535, 0);
 
 	m_spurs = (CellSpurs*)Alloc::acquireAlign(CELL_SPURS_SIZE, CELL_SPURS_ALIGN);
 	T_FATAL_ASSERT (m_spurs);

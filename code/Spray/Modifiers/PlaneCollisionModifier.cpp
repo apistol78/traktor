@@ -47,13 +47,13 @@ void PlaneCollisionModifier::update(SpursJobQueue* jobQueue, const Scalar& delta
 	job.header.eaBinary = (uintptr_t)job_start;
 	job.header.sizeBinary = CELL_SPURS_GET_SIZE_BINARY(job_size);
 
-	job.transform = transform;
-	job.deltaTime = deltaTime;
-	job.pointsEA = (uintptr_t)(&points[0]);
-	job.pointsCount = points.size();
-	m_plane.normal().storeUnaligned(job.planeCollision.plane);
-	job.planeCollision.plane[3] = m_plane.distance();
-	job.planeCollision.restitution = m_restitution;
+	job.common.transform = transform;
+	job.common.deltaTime = deltaTime;
+	job.common.pointsEA = (uintptr_t)(&points[0]);
+	job.common.pointsCount = points.size();
+	m_plane.normal().storeUnaligned(job.modifier.planeCollision.plane);
+	job.modifier.planeCollision.plane[3] = m_plane.distance();
+	job.modifier.planeCollision.restitution = m_restitution;
 
 	jobQueue->push(&job);
 }

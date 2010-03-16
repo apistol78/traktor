@@ -54,7 +54,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.SoundMixerPs3", SoundMixerPs3, ISoundMixe
 
 bool SoundMixerPs3::create()
 {
-	m_jobQueue = SpursManager::getInstance().createJobQueue(sizeof(JobMC), 16);
+	T_FATAL_ASSERT_M(sizeof(JobMC) == 128, L"Incorrect size of job descriptor; must be 128 bytes");
+	m_jobQueue = SpursManager::getInstance().createJobQueue(sizeof(JobMC), 512);
 	m_mixer = new SoundMixer();
 	return true;
 }
@@ -73,21 +74,15 @@ void SoundMixerPs3::mulConst(float* sb, uint32_t count, float factor) const
 	__builtin_memset(&job, 0, sizeof(JobMC));
 	job.header.eaBinary = (uintptr_t)job_mc_start;
 	job.header.sizeBinary = CELL_SPURS_GET_SIZE_BINARY(job_mc_size);
-
-	for (uint32_t i = 0; i < count; i += 1024)
+	job.mixer.lsbEA = (uintptr_t)sb;
+	job.mixer.rsbEA = (uintptr_t)sb;
+	job.mixer.count = count;
+	job.mixer.factor = factor;
+	if (!m_jobQueue->push(&job))
 	{
-		job.lsbEA = (uintptr_t)(sb + i);
-		job.rsbEA = (uintptr_t)(sb + i);
-		job.count = std::min< uint32_t >(count - i, 1024);
-		job.factor = factor;
-		if (!m_jobQueue->push(&job))
-		{
-			log::debug << L"Mixer failed; unable to queue SPU job" << Endl;
-			return;
-		}
+		log::debug << L"Mixer failed; unable to queue SPU job" << Endl;
+		return;
 	}
-
-	m_jobQueue->wait();
 
 #else
 	m_mixer->mulConst(sb, count, factor);
@@ -103,21 +98,15 @@ void SoundMixerPs3::mulConst(float* lsb, const float* rsb, uint32_t count, float
 	__builtin_memset(&job, 0, sizeof(JobMC));
 	job.header.eaBinary = (uintptr_t)job_mc_start;
 	job.header.sizeBinary = CELL_SPURS_GET_SIZE_BINARY(job_mc_size);
-
-	for (uint32_t i = 0; i < count; i += 1024)
+	job.mixer.lsbEA = (uintptr_t)lsb;
+	job.mixer.rsbEA = (uintptr_t)rsb;
+	job.mixer.count = count;
+	job.mixer.factor = factor;
+	if (!m_jobQueue->push(&job))
 	{
-		job.lsbEA = (uintptr_t)(lsb + i);
-		job.rsbEA = (uintptr_t)(rsb + i);
-		job.count = std::min< uint32_t >(count - i, 1024);
-		job.factor = factor;
-		if (!m_jobQueue->push(&job))
-		{
-			log::debug << L"Mixer failed; unable to queue SPU job" << Endl;
-			return;
-		}
+		log::debug << L"Mixer failed; unable to queue SPU job" << Endl;
+		return;
 	}
-
-	m_jobQueue->wait();
 
 #else
 	m_mixer->mulConst(lsb, rsb, count, factor);
@@ -133,22 +122,16 @@ void SoundMixerPs3::addMulConst(float* lsb, const float* rsb, uint32_t count, fl
 	__builtin_memset(&job, 0, sizeof(JobMC));
 	job.header.eaBinary = (uintptr_t)job_amc_start;
 	job.header.sizeBinary = CELL_SPURS_GET_SIZE_BINARY(job_amc_size);
-
-	for (uint32_t i = 0; i < count; i += 1024)
+	job.mixer.lsbEA = (uintptr_t)lsb;
+	job.mixer.rsbEA = (uintptr_t)rsb;
+	job.mixer.count = count;
+	job.mixer.factor = factor;
+	if (!m_jobQueue->push(&job))
 	{
-		job.lsbEA = (uintptr_t)(lsb + i);
-		job.rsbEA = (uintptr_t)(rsb + i);
-		job.count = std::min< uint32_t >(count - i, 1024);
-		job.factor = factor;
-		if (!m_jobQueue->push(&job))
-		{
-			log::debug << L"Mixer failed; unable to queue SPU job" << Endl;
-			return;
-		}
+		log::debug << L"Mixer failed; unable to queue SPU job" << Endl;
+		return;
 	}
 
-	m_jobQueue->wait();
-	
 #else
 	m_mixer->addMulConst(lsb, rsb, count, factor);
 #endif
@@ -160,18 +143,15 @@ void SoundMixerPs3::stretch(float* lsb, uint32_t lcount, const float* rsb, uint3
 
 	JobMC job;
 
-	for (uint32_t i = 0; i < lcount; ++i)
-		lsb[i] = 0.0f;
-
 	__builtin_memset(&job, 0, sizeof(JobMC));
 	job.header.eaBinary = (uintptr_t)job_stretch_start;
 	job.header.sizeBinary = CELL_SPURS_GET_SIZE_BINARY(job_stretch_size);
 
-	job.lsbEA = (uintptr_t)(lsb);
-	job.rsbEA = (uintptr_t)(rsb);
-	job.count = lcount;
-	job.rcount = rcount;
-	job.factor = factor;
+	job.mixer.lsbEA = (uintptr_t)lsb;
+	job.mixer.rsbEA = (uintptr_t)rsb;
+	job.mixer.count = lcount;
+	job.mixer.rcount = rcount;
+	job.mixer.factor = factor;
 	if (!m_jobQueue->push(&job))
 	{
 		log::debug << L"Mixer failed; unable to queue SPU job" << Endl;
@@ -190,7 +170,11 @@ void SoundMixerPs3::mute(float* sb, uint32_t count) const
 
 void SoundMixerPs3::synchronize() const
 {
+#if !T_USE_PPU_MIXER
 	m_jobQueue->wait();
+#else
+	m_mixer->synchronize();
+#endif
 }
 
 	}

@@ -12,18 +12,17 @@ void cellSpursJobQueueMain(CellSpursJobContext2* context, CellSpursJob256* job25
 
 	static spray::Point points[128];
 
-	Scalar deltaAdjustRate(job->deltaTime * job->size.adjustRate);
-	Vector4 gravity(job->gravity.gravity);
+	Scalar deltaAdjustRate(job->common.deltaTime * job->modifier.size.adjustRate);
 
-	for (uint32_t i = 0; i < job->pointsCount; i += sizeof_array(points))
+	for (uint32_t i = 0; i < job->common.pointsCount; i += sizeof_array(points))
 	{
-		uint32_t pointsCount = job->pointsCount - i;
+		uint32_t pointsCount = job->common.pointsCount - i;
 		if (pointsCount > sizeof_array(points))
 			pointsCount = sizeof_array(points);
 
 		cellDmaGet(
 			points,
-			job->pointsEA + i * sizeof(spray::Point),
+			job->common.pointsEA + i * sizeof(spray::Point),
 			pointsCount * sizeof(spray::Point),
 			context->dmaTag,
 			0,
@@ -36,7 +35,7 @@ void cellSpursJobQueueMain(CellSpursJobContext2* context, CellSpursJob256* job25
 
 		cellDmaPut(
 			points,
-			job->pointsEA + i * sizeof(spray::Point),
+			job->common.pointsEA + i * sizeof(spray::Point),
 			pointsCount * sizeof(spray::Point),
 			context->dmaTag,
 			0,

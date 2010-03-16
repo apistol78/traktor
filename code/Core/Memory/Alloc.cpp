@@ -18,6 +18,8 @@ void* Alloc::acquireAlign(size_t size, size_t align)
 {
 #if defined(_WIN32) && !defined(WINCE)
 	return _aligned_malloc(size, align);
+#elif defined(_PS3)
+	return std::memalign(align, size);
 #else
 	uint8_t* ptr = static_cast< uint8_t* >(acquire(size + align));
 	if (!ptr)
@@ -32,6 +34,8 @@ void Alloc::freeAlign(void* ptr)
 {
 #if defined(_WIN32) && !defined(WINCE)
 	_aligned_free(ptr);
+#elif defined(_PS3)
+	std::free(ptr);
 #else
 	// \note This pointer might be slight off as we compensate for alignment in acquireAlign.
 	free(ptr);

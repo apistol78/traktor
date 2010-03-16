@@ -11,25 +11,32 @@ void cellSpursJobQueueMain(CellSpursJobContext2* context, CellSpursJob256* job25
 
 	static float samples[1024] __attribute__((aligned(16)));
 
-	cellDmaGet(
-		samples,
-		job->rsbEA,
-		job->count * sizeof(float),
-		context->dmaTag,
-		0,
-		0
-	);
-	cellSpursJobQueueDmaWaitTagStatusAll(1 << context->dmaTag);
+	for (uint32_t offset = 0; offset < job->mixer.count; offset += 1024)
+	{
+		uint32_t count = job->mixer.count - offset;
+		if (count > 1024)
+			count = 1024;
 
-	for (uint32_t i = 0; i < job->count; ++i)
-		samples[i] *= job->factor;
+		cellDmaGet(
+			samples,
+			job->mixer.rsbEA + offset,
+			count * sizeof(float),
+			context->dmaTag,
+			0,
+			0
+		);
+		cellSpursJobQueueDmaWaitTagStatusAll(1 << context->dmaTag);
 
-	cellDmaPut(
-		samples,
-		job->lsbEA,
-		job->count * sizeof(float),
-		context->dmaTag,
-		0,
-		0
-	);
+		for (uint32_t i = 0; i < count; ++i)
+			samples[i] *= job->mixer.factor;
+
+		cellDmaPut(
+			samples,
+			job->mixer.lsbEA + offset,
+			count * sizeof(float),
+			context->dmaTag,
+			0,
+			0
+		);
+	}
 }

@@ -1,7 +1,9 @@
+#include "Core/Log/Log.h"
 #include "Core/Memory/Alloc.h"
 #include "Core/Thread/Ps3/Spurs/SpursJobQueue.h"
 
 #define SM_SPURS_SPU_COUNT 4
+#define SM_SPURS_QUEUE_DEPTH(submitCount) (16 * (submitCount))
 
 namespace traktor
 {
@@ -25,8 +27,14 @@ SpursJobQueue::~SpursJobQueue()
 
 bool SpursJobQueue::create(uint32_t descriptorSize, uint32_t submitCount)
 {
+	T_FATAL_ASSERT_M (
+		descriptorSize == 64 ||
+		(descriptorSize & ~127UL) == descriptorSize,
+		L"Invalid size of descriptor"
+	);
+
 	m_commandQueue = (uint64_t*)Alloc::acquireAlign(
-		CELL_SPURS_JOBQUEUE_SIZE_COMMAND_BUFFER(/*depth*/16),
+		CELL_SPURS_JOBQUEUE_SIZE_COMMAND_BUFFER(SM_SPURS_QUEUE_DEPTH(submitCount)),
 		CELL_SPURS_JOBQUEUE_COMMAND_BUFFER_ALIGN
 	);
 
@@ -47,7 +55,7 @@ bool SpursJobQueue::create(uint32_t descriptorSize, uint32_t submitCount)
 		&attributeJobQueue,
 		"Traktor Spurs JobQueue",
 		m_commandQueue,
-		/*depth*/16,
+		SM_SPURS_QUEUE_DEPTH(submitCount),
 		SM_SPURS_SPU_COUNT,
 		priorityTable
 	);
@@ -78,9 +86,16 @@ bool SpursJobQueue::create(uint32_t descriptorSize, uint32_t submitCount)
 
 void SpursJobQueue::destroy()
 {
+	int ret;
+
 	if (m_jobQueuePort)
 	{
-		cellSpursJobQueuePortFinalize(m_jobQueuePort);
+		ret = cellSpursJobQueuePortSync(m_jobQueuePort);
+		T_FATAL_ASSERT_M (ret == CELL_OK, L"cellSpursJobQueuePortSync failed");
+		
+		ret = cellSpursJobQueuePortFinalize(m_jobQueuePort);
+		T_FATAL_ASSERT_M (ret == CELL_OK, L"cellSpursJobQueuePortFinalize failed");
+
 		Alloc::freeAlign(m_jobQueuePort);
 		m_jobQueuePort = 0;
 	}
@@ -88,8 +103,13 @@ void SpursJobQueue::destroy()
 	if (m_jobQueue)
 	{
 		int exitCode;
-		cellSpursShutdownJobQueue(m_jobQueue);
-		cellSpursJoinJobQueue(m_jobQueue, &exitCode);
+		
+		ret = cellSpursShutdownJobQueue(m_jobQueue);
+		T_FATAL_ASSERT_M (ret == CELL_OK, L"cellSpursShutdownJobQueue failed");
+		
+		ret = cellSpursJoinJobQueue(m_jobQueue, &exitCode);
+		T_FATAL_ASSERT_M (ret == CELL_OK, L"cellSpursJoinJobQueue failed");
+
 		Alloc::freeAlign(m_jobQueue);
 		m_jobQueue = 0;
 	}
@@ -100,10 +120,10 @@ void SpursJobQueue::destroy()
 		m_descriptorBuffer = 0;
 	}
 
-	if (m_jobQueuePort)
+	if (m_commandQueue)
 	{
-		Alloc::freeAlign(m_jobQueuePort);
-		m_jobQueuePort = 0;
+		Alloc::freeAlign(m_commandQueue);
+		m_commandQueue = 0;
 	}
 
 	m_spurs = 0;

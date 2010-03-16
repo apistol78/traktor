@@ -14,24 +14,24 @@ void cellSpursJobQueueMain(CellSpursJobContext2* context, CellSpursJob256* job25
 
 	cellDmaGet(
 		rsb,
-		job->rsbEA,
-		job->rcount * sizeof(float),
+		job->mixer.rsbEA,
+		job->mixer.rcount * sizeof(float),
 		context->dmaTag,
 		0,
 		0
 	);
 	cellSpursJobQueueDmaWaitTagStatusAll(1 << context->dmaTag);
 
-	for (uint32_t s = 0; s < job->count; ++s)
+	for (uint32_t s = 0; s < job->mixer.count; ++s)
 	{
-		uint32_t s0 = (s * job->rcount) / job->count;
-		lsb[s] = rsb[s0] * job->factor;
+		uint32_t s0 = (s * job->mixer.rcount) / job->mixer.count;
+		lsb[s] = rsb[s0] * job->mixer.factor;
 	}
 
 	cellDmaPut(
 		lsb,
-		job->lsbEA,
-		job->count * sizeof(float),
+		job->mixer.lsbEA,
+		job->mixer.count * sizeof(float),
 		context->dmaTag,
 		0,
 		0
