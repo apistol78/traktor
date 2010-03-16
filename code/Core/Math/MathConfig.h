@@ -60,9 +60,9 @@
 #		if !defined(_DEBUG)
 #			define T_MATH_USE_INLINE
 #			define T_MATH_INLINE inline
-//#			define T_MATH_USE_ALTIVEC
+#			define T_MATH_USE_ALTIVEC_SPU
 #		else	// _DEBUG
-//#			define T_MATH_USE_ALTIVEC
+#			define T_MATH_USE_ALTIVEC_SPU
 #		endif
 #	endif
 
@@ -74,7 +74,7 @@
 #	endif
 #endif
 
-#if defined(T_MATH_USE_ALTIVEC)
+#if defined(T_MATH_USE_ALTIVEC) || defined(T_MATH_USE_ALTIVEC_SPU)
 #	if defined(_PS3)
 #		include <vec_types.h>
 #	else
