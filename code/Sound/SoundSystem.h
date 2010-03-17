@@ -4,6 +4,7 @@
 #include <list>
 #include "Core/Object.h"
 #include "Core/RefArray.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Thread/Event.h"
 #include "Core/Thread/Semaphore.h"
 #include "Core/Thread/Thread.h"
@@ -100,6 +101,7 @@ private:
 	Thread* m_threadSubmit;
 	Semaphore m_channelAttachLock;
 	RefArray< SoundChannel > m_channels;
+	AlignedVector< SoundBlock > m_requestBlocks;
 
 	// \name Submission queue
 	// \{

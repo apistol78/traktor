@@ -75,7 +75,9 @@ void ClearFpPs3::clear(StateCachePs3& stateCache, const float color[4])
 		m_clearFragmentProgram, m_clearFragmentProgramUcode->getOffset(),
 		false
 	);
-	stateCache.setVertexShaderConstant(c_clearColorRegister, 1, color);
+
+	float vc[4] __attribute__((aligned(16))) = { color[0], color[1], color[2], color[3] };
+	stateCache.setVertexShaderConstant(c_clearColorRegister, 1, vc);
 
 	T_GCM_CALL(cellGcmSetVertexDataArray)(
 		gCellGcmCurrentContext,

@@ -1,6 +1,7 @@
 #ifndef traktor_sound_SoundDriverPs3_H
 #define traktor_sound_SoundDriverPs3_H
 
+#include <sys/event.h>
 #include "Sound/ISoundDriver.h"
 
 // import/export mechanism.
@@ -15,8 +16,6 @@ namespace traktor
 {
 	namespace sound
 	{
-
-class SoundMixerPs3;
 
 /*!
  * \ingroup SoundPS3
@@ -40,13 +39,13 @@ public:
 
 private:
 	uint32_t m_port;
+	sys_event_queue_t m_eventQueue;
+	uint64_t m_eventQueueKey;
 	uint8_t* m_blockPtr;
 	uint64_t* m_readIndexPtr;
-	uint64_t m_lastReadBlock;
-	uint64_t m_writeBlock;
+	uint64_t m_writeCount;
 	uint32_t m_blockChannels;
-	const int32_t* m_remap;
-	Ref< SoundMixerPs3 > m_mixer;
+	uint32_t m_blocksPerFrame;
 };
 
 	}

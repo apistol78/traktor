@@ -10,19 +10,17 @@ namespace traktor
 {
 	namespace sound
 	{
-		namespace
-		{
-
-const int32_t c_remap2ch[] = { 0, 1,  2, 3, 4, 5, 6, 7 };
-const int32_t c_remap5_1ch[] = { 0, 1, 2, 3, 4, 5, 6, 7 };
-const int32_t c_remap7_1ch[] = { 0, 1, 2, 3, 4, 5, 6, 7 };
-
-		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundDriverPs3", 0, SoundDriverPs3, ISoundDriver)
 
 SoundDriverPs3::SoundDriverPs3()
 :	m_port(0)
+,	m_eventQueueKey(0)
+,	m_blockPtr(0)
+,	m_readIndexPtr(0)
+,	m_writeCount(0)
+,	m_blockChannels(0)
+,	m_blocksPerFrame(0)
 {
 }
 
@@ -112,26 +110,25 @@ bool SoundDriverPs3::create(const SoundDriverCreateDesc& desc, Ref< ISoundMixer 
 	case 2:
 		audioParam.nChannel = CELL_AUDIO_PORT_2CH;
 		m_blockChannels = 2;
-		m_remap = c_remap2ch;
 		break;
 
 	case 5+1:
 		audioParam.nChannel = CELL_AUDIO_PORT_8CH;
 		m_blockChannels = 8;
-		m_remap = c_remap5_1ch;
 		break;
 
 	case 7+1:
 		audioParam.nChannel = CELL_AUDIO_PORT_8CH;
 		m_blockChannels = 8;
-		m_remap = c_remap7_1ch;
 		break;
 
 	default:
 		cellAudioQuit();
 		return false;
 	}
-	
+
+	m_blocksPerFrame = desc.frameSamples / CELL_AUDIO_BLOCK_SAMPLES;
+
 	audioParam.nBlock = CELL_AUDIO_BLOCK_16;
 	audioParam.attr = 0;
 
@@ -152,48 +149,70 @@ bool SoundDriverPs3::create(const SoundDriverCreateDesc& desc, Ref< ISoundMixer 
 		return false;
 	}
 
+	err = cellAudioCreateNotifyEventQueue(&m_eventQueue, &m_eventQueueKey);
+	if (err != CELL_OK)
+	{
+		cellAudioPortClose(m_port);
+		cellAudioQuit();
+		return false;
+	}
+
+	err = cellAudioSetNotifyEventQueue(m_eventQueueKey);
+	if (err < 0)
+	{
+		sys_event_queue_destroy(m_eventQueue, 0);
+		cellAudioPortClose(m_port);
+		cellAudioQuit();
+		return false;
+	}
+
 	m_blockPtr = (uint8_t*)portConfig.portAddr; 
 	m_readIndexPtr = (uint64_t*)portConfig.readIndexAddr;
-	m_lastReadBlock = *m_readIndexPtr;
-	m_writeBlock = 0;
+	m_writeCount = 0;
 
+	sys_event_queue_drain(m_eventQueue);
 	cellAudioPortStart(m_port);
 
 	// Create SPU-accelerated sound mixer.
-	m_mixer = new SoundMixerPs3();
-	if (!m_mixer->create())
-		m_mixer = 0;
+	Ref< SoundMixerPs3 > mixer = new SoundMixerPs3();
+	if (mixer->create())
+		outMixer = mixer;
 
-	outMixer = m_mixer;
 	return true;
 }
 
 void SoundDriverPs3::destroy()
 {
+	cellAudioRemoveNotifyEventQueue(m_eventQueueKey);
+	sys_event_queue_destroy(m_eventQueue, 0);
+
 	cellAudioPortStop(m_port);
 	cellAudioPortClose(m_port);
 	cellAudioQuit();
-
-	safeDestroy(m_mixer);
 }
 
 void SoundDriverPs3::wait()
 {
+	sys_event_t event;
+
 	for (;;)
 	{
-		int32_t distance = 0;
+		uint64_t writeIndex = m_writeCount % 16;
+		uint64_t readIndex = *m_readIndexPtr;
 
-		uint64_t readBlock = *m_readIndexPtr;
-		while (readBlock != m_writeBlock)
+		int32_t nfree = 0;
+		while (writeIndex != readIndex)
 		{
-			readBlock = (readBlock + 1) % 16;
-			++distance;
+			writeIndex = (writeIndex + 1) % 16;
+			++nfree;
 		}
 
-		if (distance <= 2)
-			break;
+		if (nfree >= m_blocksPerFrame)
+			return;
 
-		sys_timer_usleep(2 * 1000);
+		int err = sys_event_queue_receive(m_eventQueue, &event, 4 * 1000 * 1000);
+		if (err == ETIMEDOUT)
+			log::warning << L"No sound event; something wrong..." << Endl;
 	}
 }
 
@@ -202,11 +221,12 @@ void SoundDriverPs3::submit(const SoundBlock& soundBlock)
 	uint32_t blockSize = m_blockChannels * CELL_AUDIO_BLOCK_SAMPLES * sizeof(float);
 	for (uint32_t offset = 0; offset < soundBlock.samplesCount; offset += CELL_AUDIO_BLOCK_SAMPLES)
 	{
-		float* blockPtr = (float*)(m_blockPtr + m_writeBlock * blockSize);
+		uint64_t writeIndex = m_writeCount++ % 16;
 
+		float* blockPtr = (float*)(m_blockPtr + writeIndex * blockSize);
 		for (int32_t c = 0; c < m_blockChannels; ++c)
 		{
-			float* blockWritePtr = blockPtr + m_remap[c];
+			float* blockWritePtr = blockPtr + c;
 
 			if (soundBlock.samples[c])
 			{
@@ -226,8 +246,6 @@ void SoundDriverPs3::submit(const SoundBlock& soundBlock)
 				}
 			}
 		}
-
-		m_writeBlock = (m_writeBlock + 1) % 16;
 	}
 }
 

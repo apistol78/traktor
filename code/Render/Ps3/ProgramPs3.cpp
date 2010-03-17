@@ -144,7 +144,7 @@ void ProgramPs3::setFloatArrayParameter(handle_t handle, const float* param, int
 	if (i == m_scalarParameterMap.end())
 		return;
 
-	std::memcpy(&m_scalarParameterData[i->second], param, length * sizeof(float));
+	__builtin_memcpy(&m_scalarParameterData[i->second], param, length * sizeof(float));
 	m_dirty = true;
 }
 
