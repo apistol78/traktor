@@ -1,6 +1,6 @@
 #include "Database/Remote/Client/RemoteInstance.h"
 #include "Database/Remote/Client/RemoteStream.h"
-#include "Database/Remote/Client/Connection.h"
+#include "Database/Remote/Client/RemoteConnection.h"
 #include "Database/Remote/Messages/CnmReleaseObject.h"
 #include "Database/Remote/Messages/DbmGetInstancePrimaryType.h"
 #include "Database/Remote/Messages/DbmOpenTransaction.h"
@@ -31,7 +31,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.db.RemoteInstance", RemoteInstance, IProviderInstance)
 
-RemoteInstance::RemoteInstance(Connection* connection, uint32_t handle)
+RemoteInstance::RemoteInstance(RemoteConnection* connection, uint32_t handle)
 :	m_connection(connection)
 ,	m_handle(handle)
 {

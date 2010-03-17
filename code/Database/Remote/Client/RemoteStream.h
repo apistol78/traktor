@@ -8,7 +8,7 @@ namespace traktor
 	namespace db
 	{
 
-class Connection;
+class RemoteConnection;
 
 /*! \brief Remote stream.
  * \ingroup Database
@@ -18,7 +18,7 @@ class RemoteStream : public IStream
 	T_RTTI_CLASS;
 
 public:
-	RemoteStream(Connection* connection, uint32_t handle);
+	RemoteStream(RemoteConnection* connection, uint32_t handle);
 
 	virtual ~RemoteStream();
 
@@ -43,7 +43,7 @@ public:
 	virtual void flush();
 
 private:
-	Ref< Connection > m_connection;
+	Ref< RemoteConnection > m_connection;
 	uint32_t m_handle;
 	bool m_canRead;
 	bool m_canWrite;

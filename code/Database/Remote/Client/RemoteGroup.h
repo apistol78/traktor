@@ -8,7 +8,7 @@ namespace traktor
 	namespace db
 	{
 
-class Connection;
+class RemoteConnection;
 
 /*! \brief Remote group.
  * \ingroup Database
@@ -18,7 +18,7 @@ class RemoteGroup : public IProviderGroup
 	T_RTTI_CLASS;
 
 public:
-	RemoteGroup(Connection* connection, uint32_t handle);
+	RemoteGroup(RemoteConnection* connection, uint32_t handle);
 
 	virtual ~RemoteGroup();
 
@@ -37,7 +37,7 @@ public:
 	virtual bool getChildInstances(RefArray< IProviderInstance >& outChildInstances);
 
 private:
-	Ref< Connection > m_connection;
+	Ref< RemoteConnection > m_connection;
 	uint32_t m_handle;
 };
 

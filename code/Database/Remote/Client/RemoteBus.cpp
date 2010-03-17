@@ -1,5 +1,5 @@
 #include "Database/Remote/Client/RemoteBus.h"
-#include "Database/Remote/Client/Connection.h"
+#include "Database/Remote/Client/RemoteConnection.h"
 #include "Database/Remote/Messages/CnmReleaseObject.h"
 #include "Database/Remote/Messages/DbmPutEvent.h"
 #include "Database/Remote/Messages/DbmGetEvent.h"
@@ -13,7 +13,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.db.RemoteBus", RemoteBus, IProviderBus)
 
-RemoteBus::RemoteBus(Connection* connection, uint32_t handle)
+RemoteBus::RemoteBus(RemoteConnection* connection, uint32_t handle)
 :	m_connection(connection)
 ,	m_handle(handle)
 {

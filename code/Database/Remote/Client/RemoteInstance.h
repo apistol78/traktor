@@ -8,7 +8,7 @@ namespace traktor
 	namespace db
 	{
 
-class Connection;
+class RemoteConnection;
 
 /*! \brief Remote instance.
  * \ingroup Database
@@ -18,7 +18,7 @@ class RemoteInstance : public IProviderInstance
 	T_RTTI_CLASS;
 
 public:
-	RemoteInstance(Connection* connection, uint32_t handle);
+	RemoteInstance(RemoteConnection* connection, uint32_t handle);
 
 	virtual ~RemoteInstance();
 
@@ -51,7 +51,7 @@ public:
 	virtual Ref< IStream > writeData(const std::wstring& dataName);
 
 private:
-	Ref< Connection > m_connection;
+	Ref< RemoteConnection > m_connection;
 	uint32_t m_handle;
 };
 

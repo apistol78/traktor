@@ -1,22 +1,22 @@
-#include "Database/Remote/Client/Connection.h"
-#include "Database/Remote/MessageTransport.h"
-#include "Net/TcpSocket.h"
 #include "Core/Thread/Acquire.h"
+#include "Database/Remote/MessageTransport.h"
+#include "Database/Remote/Client/RemoteConnection.h"
+#include "Net/TcpSocket.h"
 
 namespace traktor
 {
 	namespace db
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.db.Connection", Connection, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.db.RemoteConnection", RemoteConnection, Object)
 
-Connection::Connection(net::TcpSocket* socket)
+RemoteConnection::RemoteConnection(net::TcpSocket* socket)
 :	m_socket(socket)
 {
 	m_messageTransport = new MessageTransport(m_socket);
 }
 
-void Connection::destroy()
+void RemoteConnection::destroy()
 {
 	if (m_messageTransport)
 		m_messageTransport = 0;
@@ -28,9 +28,9 @@ void Connection::destroy()
 	}
 }
 
-Ref< IMessage > Connection::sendMessage(const IMessage& message)
+Ref< IMessage > RemoteConnection::sendMessage(const IMessage& message)
 {
-	Acquire< Semaphore > scopeLock(m_messageLock);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_messageLock);
 	Ref< IMessage > reply;
 
 	if (!m_messageTransport)

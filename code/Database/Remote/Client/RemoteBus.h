@@ -8,7 +8,7 @@ namespace traktor
 	namespace db
 	{
 
-class Connection;
+class RemoteConnection;
 
 /*! \brief Remote event bus.
  * \ingroup Database
@@ -18,7 +18,7 @@ class RemoteBus : public IProviderBus
 	T_RTTI_CLASS;
 
 public:
-	RemoteBus(Connection* connection, uint32_t handle);
+	RemoteBus(RemoteConnection* connection, uint32_t handle);
 
 	virtual ~RemoteBus();
 
@@ -27,7 +27,7 @@ public:
 	virtual bool getEvent(ProviderEvent& outEvent, Guid& outEventId, bool& outRemote);
 
 private:
-	Ref< Connection > m_connection;
+	Ref< RemoteConnection > m_connection;
 	uint32_t m_handle;
 };
 
