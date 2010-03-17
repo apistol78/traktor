@@ -2,6 +2,7 @@
 #define traktor_render_ParameterCache_H
 
 #include "Core/Object.h"
+#include "Core/Misc/AutoPtr.h"
 #include "Core/Misc/ComRef.h"
 #include "Render/Dx9/Platform.h"
 
@@ -50,8 +51,8 @@ private:
 	ComRef< IDirect3DDevice9 > m_d3dDevice;
 	IDirect3DVertexShader9* m_d3dVertexShader;
 	IDirect3DPixelShader9* m_d3dPixelShader;
-	float* m_vertexConstantsShadow;
-	float* m_pixelConstantsShadow;
+	AutoPtr< float, AllocFreeAlign< float > > m_vertexConstantsShadow;
+	AutoPtr< float, AllocFreeAlign< float > > m_pixelConstantsShadow;
 	IDirect3DBaseTexture9* m_vertexTextureShadow[VertexTextureCount];
 	IDirect3DBaseTexture9* m_pixelTextureShadow[PixelTextureCount];
 	std::vector< uint32_t > m_renderStates;
