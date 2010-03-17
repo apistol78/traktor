@@ -4,23 +4,23 @@
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>402</first>
-				<second>306</second>
+				<first>42</first>
+				<second>625</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>316</first>
-				<second>353</second>
+				<first>-77</first>
+				<second>629</second>
 			</position>
 			<swizzle>zw</swizzle>
 		</item>
 		<item type="traktor.render.Uniform">
 			<comment/>
 			<position>
-				<first>132</first>
-				<second>370</second>
+				<first>-261</first>
+				<second>646</second>
 			</position>
 			<parameterName>TargetSize</parameterName>
 			<type>PtVector</type>
@@ -28,8 +28,8 @@
 		<item type="traktor.render.FragmentPosition">
 			<comment/>
 			<position>
-				<first>207</first>
-				<second>311</second>
+				<first>-195</first>
+				<second>390</second>
 			</position>
 		</item>
 		<item type="traktor.render.Sampler">
@@ -62,6 +62,43 @@
 			</position>
 			<parameterName>DepthMap</parameterName>
 			<type>PtTexture</type>
+		</item>
+		<item type="traktor.render.Platform">
+			<comment/>
+			<position>
+				<first>340</first>
+				<second>376</second>
+			</position>
+		</item>
+		<item type="traktor.render.MulAdd">
+			<comment/>
+			<position>
+				<first>187</first>
+				<second>455</second>
+			</position>
+		</item>
+		<item type="traktor.render.Vector">
+			<comment/>
+			<position>
+				<first>-202</first>
+				<second>481</second>
+			</position>
+			<value>1, -1, 0, 0</value>
+		</item>
+		<item type="traktor.render.Mul">
+			<comment/>
+			<position>
+				<first>42</first>
+				<second>544</second>
+			</position>
+		</item>
+		<item type="traktor.render.Vector">
+			<comment/>
+			<position>
+				<first>-197</first>
+				<second>448</second>
+			</position>
+			<value>0, 1, 0, 0</value>
 		</item>
 	</nodes>
 	<edges>
@@ -97,16 +134,6 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[4]"/>
-				<name>TexCoord</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[4]"/>
 				<name>Output</name>
 			</source>
@@ -123,6 +150,86 @@
 			<destination>
 				<node ref="/object/nodes/item[4]"/>
 				<name>Texture</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[7]"/>
+				<name>Other</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[7]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<name>TexCoord</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[8]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[10]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[9]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[10]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[10]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[8]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[11]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[8]"/>
+				<name>Input3</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[8]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[7]"/>
+				<name>GCM</name>
 			</destination>
 		</item>
 	</edges>
