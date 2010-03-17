@@ -10,6 +10,8 @@
 #if defined(_PS3)
 #	include "Core/Thread/Ps3/Spurs/SpursJobQueue.h"
 #	include "Core/Thread/Ps3/Spurs/SpursManager.h"
+#	include "Core/Singleton/ISingleton.h"
+#	include "Core/Singleton/SingletonManager.h"
 #	include "Spray/Ps3/Spu/JobModifierUpdate.h"
 #endif
 
@@ -33,6 +35,49 @@ const uint32_t c_maxEmitPerUpdate = 4;
 const uint32_t c_maxEmitSingleShot = 10;
 #endif
 
+#if defined(_PS3)
+
+class EmitterJobQueue : public ISingleton
+{
+public:
+	static EmitterJobQueue& getInstance()
+	{
+		static EmitterJobQueue* s_instance = 0;
+		if (!s_instance)
+		{
+			s_instance = new EmitterJobQueue();
+			SingletonManager::getInstance().add(s_instance);
+		}
+		return *s_instance;
+	}
+
+	SpursJobQueue* getJobQueue() const
+	{
+		return m_jobQueue;
+	}
+
+protected:
+	virtual void destroy()
+	{
+		delete this;
+	}
+
+private:
+	Ref< SpursJobQueue > m_jobQueue;
+
+	EmitterJobQueue()
+	{
+		m_jobQueue = SpursManager::getInstance().createJobQueue(sizeof(JobModifierUpdate), 256);
+	}
+
+	virtual ~EmitterJobQueue()
+	{
+		safeDestroy(m_jobQueue);
+	}
+};
+
+#endif
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EmitterInstance", EmitterInstance, Object)
@@ -44,17 +89,11 @@ EmitterInstance::EmitterInstance(Emitter* emitter)
 ,	m_warm(false)
 ,	m_count(0)
 {
-#if defined(_PS3)
-	m_jobQueue = SpursManager::getInstance().createJobQueue(sizeof(JobModifierUpdate), 64);
-#endif
 }
 
 EmitterInstance::~EmitterInstance()
 {
 	synchronize();
-#if defined(_PS3)
-	safeDestroy(m_jobQueue);
-#endif
 }
 
 void EmitterInstance::update(EmitterUpdateContext& context, const Transform& transform, bool emit, bool singleShot)
@@ -136,12 +175,15 @@ void EmitterInstance::update(EmitterUpdateContext& context, const Transform& tra
 	//
 	if (!m_points.empty())
 	{
+		SpursJobQueue* jobQueue = EmitterJobQueue::getInstance().getJobQueue();
+		T_ASSERT (jobQueue);
+
 		const RefArray< Modifier >& modifiers = m_emitter->getModifiers();
 		for (RefArray< Modifier >::const_iterator i = modifiers.begin(); i != modifiers.end(); ++i)
 		{
 			if (*i)
 				(*i)->update(
-				m_jobQueue,
+				jobQueue,
 				Scalar(context.deltaTime),
 				transform,
 				m_points
@@ -204,14 +246,21 @@ void EmitterInstance::render(PointRenderer* pointRenderer, const Plane& cameraPl
 void EmitterInstance::synchronize() const
 {
 #if defined(_PS3)
-	m_jobQueue->wait();
+
+	SpursJobQueue* jobQueue = EmitterJobQueue::getInstance().getJobQueue();
+	T_ASSERT (jobQueue);
+
+	jobQueue->wait();
+
 #else
+
 #	if defined(T_USE_UPDATE_JOBS)
 	m_jobs[0].wait(); m_jobs[0] = 0;
 	m_jobs[1].wait(); m_jobs[1] = 0;
 	m_jobs[2].wait(); m_jobs[2] = 0;
 	m_jobs[3].wait(); m_jobs[3] = 0;
 #	endif
+
 #endif
 }
 

@@ -125,12 +125,26 @@ T_MATH_INLINE Vector4 Vector4::absolute() const
 T_MATH_INLINE void Vector4::storeAligned(float* out) const
 {
 	T_ASSERT (out);
-	*(vec_float4*)out = m_data;
+	vec_st(m_data, 0, out);
 }
 
 T_MATH_INLINE void Vector4::storeUnaligned(float* out) const
 {
 	T_ASSERT (out);
+
+	//vec_float4 MSQ, LSQ, edges;
+	//vec_uchar16 edgeAlign, align;
+
+	//MSQ = vec_ld(0, out);					// most significant quadword
+	//LSQ = vec_ld(15, out);					// least significant quadword
+	//edgeAlign = vec_lvsl(0, out);			// permute map to extract edges
+	//edges = vec_perm(LSQ, MSQ, edgeAlign);	// extract the edges
+	//align = vec_lvsr(0, out);				// permute map to misalign data
+	//MSQ = vec_perm(edges, m_data, align);	// misalign the data (MSQ)
+	//LSQ = vec_perm(m_data, edges, align);	// misalign the data (LSQ)
+	//vec_st(LSQ, 15, out);					// Store the LSQ part first
+	//vec_st(MSQ, 0, out);					// Store the MSQ part
+
 	out[0] = vec_extract(m_data, 0);
 	out[1] = vec_extract(m_data, 1);
 	out[2] = vec_extract(m_data, 2);
