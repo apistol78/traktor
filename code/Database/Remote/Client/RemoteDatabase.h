@@ -16,7 +16,7 @@ namespace traktor
 	namespace db
 	{
 
-class Connection;
+class RemoteConnection;
 
 /*! \brief Remote database provider.
  * \ingroup Database
@@ -37,7 +37,7 @@ public:
 	virtual Ref< IProviderGroup > getRootGroup();
 
 private:
-	Ref< Connection > m_connection;
+	Ref< RemoteConnection > m_connection;
 };
 
 	}

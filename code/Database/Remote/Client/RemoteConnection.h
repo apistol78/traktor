@@ -1,5 +1,5 @@
-#ifndef traktor_db_Connection_H
-#define traktor_db_Connection_H
+#ifndef traktor_db_RemoteConnection_H
+#define traktor_db_RemoteConnection_H
 
 #include "Core/Object.h"
 #include "Core/Thread/Semaphore.h"
@@ -22,12 +22,12 @@ class MessageTransport;
 /*! \brief Database connection.
  * \ingroup Database
  */
-class Connection : public Object
+class RemoteConnection : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	Connection(net::TcpSocket* socket);
+	RemoteConnection(net::TcpSocket* socket);
 
 	void destroy();
 
@@ -49,4 +49,4 @@ private:
 	}
 }
 
-#endif	// traktor_db_Connection_H
+#endif	// traktor_db_RemoteConnection_H

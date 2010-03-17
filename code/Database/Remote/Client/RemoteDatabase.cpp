@@ -1,7 +1,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Database/ConnectionString.h"
-#include "Database/Remote/Client/Connection.h"
+#include "Database/Remote/Client/RemoteConnection.h"
 #include "Database/Remote/Client/RemoteBus.h"
 #include "Database/Remote/Client/RemoteDatabase.h"
 #include "Database/Remote/Client/RemoteGroup.h"
@@ -56,7 +56,7 @@ bool RemoteDatabase::open(const ConnectionString& connectionString)
 		return false;
 	}
 
-	m_connection = new Connection(socket);
+	m_connection = new RemoteConnection(socket);
 
 	Ref< MsgStatus > result = m_connection->sendMessage< MsgStatus >(DbmOpen(database));
 	if (!result || result->getStatus() != StSuccess)

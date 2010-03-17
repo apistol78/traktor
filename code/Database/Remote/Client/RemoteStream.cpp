@@ -1,6 +1,6 @@
 #include <cstring>
 #include "Database/Remote/Client/RemoteStream.h"
-#include "Database/Remote/Client/Connection.h"
+#include "Database/Remote/Client/RemoteConnection.h"
 #include "Database/Remote/Messages/StmClose.h"
 #include "Database/Remote/Messages/StmGetStat.h"
 #include "Database/Remote/Messages/StmSeek.h"
@@ -18,7 +18,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.db.RemoteStream", RemoteStream, IStream)
 
-RemoteStream::RemoteStream(Connection* connection, uint32_t handle)
+RemoteStream::RemoteStream(RemoteConnection* connection, uint32_t handle)
 :	m_connection(connection)
 ,	m_handle(handle)
 ,	m_canRead(false)
