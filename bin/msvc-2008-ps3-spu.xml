@@ -71,7 +71,7 @@
               <staticOptions>
                 <item>
                   <first>AdditionalOptions</first>
-                  <second>-O0 -Wall -fno-exceptions -fno-rtti -g -mspurs-job-initialize -fpic</second>
+                  <second>-g -O0 -Wall -fno-exceptions -fno-rtti -ffast-math -fpic</second>
                 </item>
                 <item>
                   <first>AdditionalIncludeDirectories</first>
@@ -79,7 +79,7 @@
                 </item>
                 <item>
                   <first>PreprocessorDefinitions</first>
-                  <second>_PS3;SN_TARGET_PS3_SPU;SPU;UNICODE;_UNICODE</second>
+                  <second>_PS3;SN_TARGET_PS3_SPU;SPU;__CELLOS_LV2__;UNICODE;_UNICODE</second>
                 </item>
                 <item>
                   <first>Optimization</first>
@@ -135,7 +135,7 @@
               <staticOptions>
                 <item>
                   <first>AdditionalOptions</first>
-                  <second>-O2 -Wall -fno-exceptions -fno-rtti -mspurs-job-initialize -fpic</second>
+                  <second>-O3 -Wall -fno-exceptions -fno-rtti -ffast-math -fpic</second>
                 </item>
                 <item>
                   <first>AdditionalIncludeDirectories</first>
@@ -143,7 +143,7 @@
                 </item>
                 <item>
                   <first>PreprocessorDefinitions</first>
-                  <second>_PS3;SN_TARGET_PS3_SPU;SPU;UNICODE;_UNICODE</second>
+                  <second>_PS3;SN_TARGET_PS3_SPU;SPU;__CELLOS_LV2__;UNICODE;_UNICODE</second>
                 </item>
                 <item>
                   <first>Optimization</first>
@@ -252,7 +252,7 @@
               <staticOptions>
                 <item>
                   <first>AdditionalOptions</first>
-                  <second>-O0 -Wall -fno-exceptions -fno-rtti -g -mspurs-job-initialize -fpic</second>
+                  <second>-g -O0 -Wall -fno-exceptions -fno-rtti -ffast-math -fpic</second>
                 </item>
                 <item>
                   <first>AdditionalIncludeDirectories</first>
@@ -260,7 +260,7 @@
                 </item>
                 <item>
                   <first>PreprocessorDefinitions</first>
-                  <second>_PS3;SN_TARGET_PS3_SPU;SPU;UNICODE;_UNICODE</second>
+                  <second>_PS3;SN_TARGET_PS3_SPU;SPU;__CELLOS_LV2__;UNICODE;_UNICODE</second>
                 </item>
                 <item>
                   <first>Optimization</first>
@@ -307,7 +307,7 @@
               <staticOptions>
                 <item>
                   <first>AdditionalOptions</first>
-                  <second>-mspurs-job-initialize -fpic -Wl,-q</second>
+                  <second>-fpic</second>
                 </item>
                 <item>
                   <first>LinkIncremental</first>
@@ -356,7 +356,7 @@
               <staticOptions>
                 <item>
                   <first>AdditionalOptions</first>
-                  <second>-O2 -Wall -fno-exceptions -fno-rtti -mspurs-job-initialize -fpic</second>
+                  <second>-O3 -Wall -fno-exceptions -fno-rtti -ffast-math -fpic</second>
                 </item>
                 <item>
                   <first>AdditionalIncludeDirectories</first>
@@ -364,7 +364,7 @@
                 </item>
                 <item>
                   <first>PreprocessorDefinitions</first>
-                  <second>_PS3;SN_TARGET_PS3_SPU;SPU;UNICODE;_UNICODE</second>
+                  <second>_PS3;SN_TARGET_PS3_SPU;SPU;__CELLOS_LV2__;UNICODE;_UNICODE</second>
                 </item>
                 <item>
                   <first>Optimization</first>
@@ -431,7 +431,7 @@
               <staticOptions>
                 <item>
                   <first>AdditionalOptions</first>
-                  <second>-mspurs-job-initialize -fpic -Wl,-q</second>
+                  <second>-fpic</second>
                 </item>
                 <item>
                   <first>LinkIncremental</first>

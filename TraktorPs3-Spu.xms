@@ -9,7 +9,7 @@
 			<name>Traktor.Sound.JobMulConst</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Sound/Ps3/Spu</sourcePath>
 			<configurations>
-				<item type="Configuration">
+				<item type="Configuration" version="1">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -25,8 +25,10 @@
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
 					</libraries>
+					<additionalCompilerOptions>-mspurs-job-initialize</additionalCompilerOptions>
+					<additionalLinkerOptions>-mspurs-job-initialize</additionalLinkerOptions>
 				</item>
-				<item type="Configuration">
+				<item type="Configuration" version="1">
 					<name>DebugStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -42,6 +44,8 @@
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
 					</libraries>
+					<additionalCompilerOptions>-mspurs-job-initialize</additionalCompilerOptions>
+					<additionalLinkerOptions>-mspurs-job-initialize</additionalLinkerOptions>
 				</item>
 			</configurations>
 			<items>
@@ -57,7 +61,7 @@
 			<name>Traktor.Sound.JobAddMulConst</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Sound/Ps3/Spu</sourcePath>
 			<configurations>
-				<item type="Configuration">
+				<item type="Configuration" version="1">
 					<name>DebugStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -73,8 +77,10 @@
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
 					</libraries>
+					<additionalCompilerOptions>-mspurs-job-initialize</additionalCompilerOptions>
+					<additionalLinkerOptions>-mspurs-job-initialize</additionalLinkerOptions>
 				</item>
-				<item type="Configuration">
+				<item type="Configuration" version="1">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -90,6 +96,8 @@
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
 					</libraries>
+					<additionalCompilerOptions>-mspurs-job-initialize</additionalCompilerOptions>
+					<additionalLinkerOptions>-mspurs-job-initialize</additionalLinkerOptions>
 				</item>
 			</configurations>
 			<items>
@@ -105,7 +113,7 @@
 			<name>Traktor.Sound.JobStretch</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Sound/Ps3/Spu</sourcePath>
 			<configurations>
-				<item type="Configuration">
+				<item type="Configuration" version="1">
 					<name>DebugStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -122,8 +130,10 @@
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
 					</libraries>
+					<additionalCompilerOptions>-mspurs-job-initialize</additionalCompilerOptions>
+					<additionalLinkerOptions>-mspurs-job-initialize</additionalLinkerOptions>
 				</item>
-				<item type="Configuration">
+				<item type="Configuration" version="1">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -140,6 +150,8 @@
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
 					</libraries>
+					<additionalCompilerOptions>-mspurs-job-initialize</additionalCompilerOptions>
+					<additionalLinkerOptions>-mspurs-job-initialize</additionalLinkerOptions>
 				</item>
 			</configurations>
 			<items>
@@ -155,7 +167,7 @@
 			<name>Traktor.Spray.JobDragModifier</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Spray/Ps3/Spu</sourcePath>
 			<configurations>
-				<item type="Configuration">
+				<item type="Configuration" version="1">
 					<name>DebugStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -172,8 +184,10 @@
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
 					</libraries>
+					<additionalCompilerOptions>-mspurs-job-initialize</additionalCompilerOptions>
+					<additionalLinkerOptions>-mspurs-job-initialize</additionalLinkerOptions>
 				</item>
-				<item type="Configuration">
+				<item type="Configuration" version="1">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -190,6 +204,8 @@
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
 					</libraries>
+					<additionalCompilerOptions>-mspurs-job-initialize</additionalCompilerOptions>
+					<additionalLinkerOptions>-mspurs-job-initialize</additionalLinkerOptions>
 				</item>
 			</configurations>
 			<items>
@@ -206,7 +222,7 @@
 						<name>Traktor.Core</name>
 						<sourcePath>$(TRAKTOR_HOME)/code/Core</sourcePath>
 						<configurations>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>DebugStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -222,8 +238,10 @@
 								<libraries>
 									<item>$(SCE_PS3_ROOT)/target/spu/lib/libm.a</item>
 								</libraries>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>ReleaseStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -239,6 +257,8 @@
 								<libraries>
 									<item>$(SCE_PS3_ROOT)/target/spu/lib/libm.a</item>
 								</libraries>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
 						</configurations>
 						<items>
@@ -403,7 +423,7 @@
 			<name>Traktor.Spray.JobGravityModifier</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Spray/Ps3/Spu</sourcePath>
 			<configurations>
-				<item type="Configuration">
+				<item type="Configuration" version="1">
 					<name>DebugStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -420,8 +440,10 @@
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
 					</libraries>
+					<additionalCompilerOptions>-mspurs-job-initialize</additionalCompilerOptions>
+					<additionalLinkerOptions>-mspurs-job-initialize</additionalLinkerOptions>
 				</item>
-				<item type="Configuration">
+				<item type="Configuration" version="1">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -438,6 +460,8 @@
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
 					</libraries>
+					<additionalCompilerOptions>-mspurs-job-initialize</additionalCompilerOptions>
+					<additionalLinkerOptions>-mspurs-job-initialize</additionalLinkerOptions>
 				</item>
 			</configurations>
 			<items>
@@ -458,7 +482,7 @@
 			<name>Traktor.Spray.JobIntegrateModifier</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Spray/Ps3/Spu</sourcePath>
 			<configurations>
-				<item type="Configuration">
+				<item type="Configuration" version="1">
 					<name>DebugStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -475,8 +499,10 @@
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
 					</libraries>
+					<additionalCompilerOptions>-mspurs-job-initialize</additionalCompilerOptions>
+					<additionalLinkerOptions>-mspurs-job-initialize</additionalLinkerOptions>
 				</item>
-				<item type="Configuration">
+				<item type="Configuration" version="1">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -493,6 +519,8 @@
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
 					</libraries>
+					<additionalCompilerOptions>-mspurs-job-initialize</additionalCompilerOptions>
+					<additionalLinkerOptions>-mspurs-job-initialize</additionalLinkerOptions>
 				</item>
 			</configurations>
 			<items>
@@ -513,7 +541,7 @@
 			<name>Traktor.Spray.JobPlaneCollisionModifier</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Spray/Ps3/Spu</sourcePath>
 			<configurations>
-				<item type="Configuration">
+				<item type="Configuration" version="1">
 					<name>DebugStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -530,8 +558,10 @@
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
 					</libraries>
+					<additionalCompilerOptions>-mspurs-job-initialize</additionalCompilerOptions>
+					<additionalLinkerOptions>-mspurs-job-initialize</additionalLinkerOptions>
 				</item>
-				<item type="Configuration">
+				<item type="Configuration" version="1">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -548,6 +578,8 @@
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
 					</libraries>
+					<additionalCompilerOptions>-mspurs-job-initialize</additionalCompilerOptions>
+					<additionalLinkerOptions>-mspurs-job-initialize</additionalLinkerOptions>
 				</item>
 			</configurations>
 			<items>
@@ -568,7 +600,7 @@
 			<name>Traktor.Spray.JobSizeModifier</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Spray/Ps3/Spu</sourcePath>
 			<configurations>
-				<item type="Configuration">
+				<item type="Configuration" version="1">
 					<name>DebugStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -585,8 +617,10 @@
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
 					</libraries>
+					<additionalCompilerOptions>-mspurs-job-initialize</additionalCompilerOptions>
+					<additionalLinkerOptions>-mspurs-job-initialize</additionalLinkerOptions>
 				</item>
-				<item type="Configuration">
+				<item type="Configuration" version="1">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -603,6 +637,8 @@
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
 					</libraries>
+					<additionalCompilerOptions>-mspurs-job-initialize</additionalCompilerOptions>
+					<additionalLinkerOptions>-mspurs-job-initialize</additionalLinkerOptions>
 				</item>
 			</configurations>
 			<items>
@@ -623,7 +659,7 @@
 			<name>Traktor.Spray.JobVortexModifier</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Spray/Ps3/Spu</sourcePath>
 			<configurations>
-				<item type="Configuration">
+				<item type="Configuration" version="1">
 					<name>DebugStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -640,8 +676,10 @@
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
 					</libraries>
+					<additionalCompilerOptions>-mspurs-job-initialize</additionalCompilerOptions>
+					<additionalLinkerOptions>-mspurs-job-initialize</additionalLinkerOptions>
 				</item>
-				<item type="Configuration">
+				<item type="Configuration" version="1">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -658,6 +696,8 @@
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
 					</libraries>
+					<additionalCompilerOptions>-mspurs-job-initialize</additionalCompilerOptions>
+					<additionalLinkerOptions>-mspurs-job-initialize</additionalLinkerOptions>
 				</item>
 			</configurations>
 			<items>
@@ -674,5 +714,883 @@
 			</dependencies>
 		</item>
 		<item ref="/object/projects/item[3]/dependencies/item/project"/>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>PS3_SPURS_BulletCD</name>
+			<sourcePath>$(TRAKTOR_HOME)/3rdp/bullet-2.73</sourcePath>
+			<configurations>
+				<item type="Configuration" version="1">
+					<name>DebugStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(SN_PS3_PATH)\spu\include\sn</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\include</item>
+						<item>$(SCE_PS3_ROOT)\target\common\include</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\include\vectormath\cpp</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.73/src</item>
+					</includePaths>
+					<definitions>
+						<item>SN_TARGET_PS3_SPU</item>
+						<item>__GCC__</item>
+						<item>__CELLOS_LV2__</item>
+						<item>SPU</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libspurs.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libatomic.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libdma.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libsync.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libm.a</item>
+					</libraries>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions>-Ttext=0x3000</additionalLinkerOptions>
+				</item>
+				<item type="Configuration" version="1">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(SN_PS3_PATH)\spu\include\sn</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\include</item>
+						<item>$(SCE_PS3_ROOT)\target\common\include</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\include\vectormath\cpp</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.73/src</item>
+					</includePaths>
+					<definitions>
+						<item>SN_TARGET_PS3_SPU</item>
+						<item>NDEBUG</item>
+						<item>__GCC__</item>
+						<item>SPU</item>
+						<item>__CELLOS_LV2__</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libspurs.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libatomic.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libdma.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libsync.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libm.a</item>
+					</libraries>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions>-Ttext=0x3000</additionalLinkerOptions>
+				</item>
+			</configurations>
+			<items>
+				<item type="Filter">
+					<name>Source Files</name>
+					<items>
+						<item type="File">
+							<fileName>src/LinearMath/btAlignedAllocator.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/CollisionDispatch/btBoxBoxDetector.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/CollisionShapes/btBoxShape.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/CollisionShapes/btCollisionShape.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/CollisionShapes/btConvexInternalShape.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/CollisionShapes/btConvexShape.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/NarrowPhaseCollision/btPersistentManifold.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/CollisionShapes/btPolyhedralConvexShape.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/CollisionShapes/btStridingMeshInterface.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/CollisionShapes/btTriangleCallback.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/CollisionShapes/btTriangleIndexVertexArray.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/SpuDispatch/SPURS_CollisionTask/SpursCollisionTaskMain.cpp</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>Header Files</name>
+					<items>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuNarrowPhaseCollisionTask/Box.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/Physics/RigidBody/common/Box.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuNarrowPhaseCollisionTask/boxBoxDistance.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/Physics/RigidBody/common/boxBoxDistance.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/LinearMath/btAlignedAllocator.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/CollisionDispatch/btBoxBoxDetector.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/CollisionShapes/btBoxShape.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/CollisionShapes/btBvhTriangleMeshShape.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/BroadphaseCollision/btCollisionAlgorithm.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/CollisionDispatch/btCollisionObject.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/CollisionShapes/btCollisionShape.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/CollisionShapes/btConvexInternalShape.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/CollisionShapes/btConvexShape.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/CollisionShapes/btOptimizedBvh.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/NarrowPhaseCollision/btPersistentManifold.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/CollisionShapes/btPolyhedralConvexShape.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/CollisionShapes/btTriangleCallback.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/CollisionShapes/btTriangleIndexVertexArray.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/CollisionShapes/btTriangleMeshShape.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/NarrowPhaseCollision/btVoronoiSimplexSolver.h</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>softwarecache</name>
+					<items>
+						<item type="File">
+							<fileName>Extras/software_cache/cache/include/api.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>Extras/software_cache/cache/include/cbe_mfc.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>Extras/software_cache/cache/include/defs.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>Extras/software_cache/cache/include/dma.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>Extras/software_cache/cache/include/ilog2.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>Extras/software_cache/cache/include/memset.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>Extras/software_cache/cache/include/nway-lookup.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>Extras/software_cache/cache/include/nway-miss.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>Extras/software_cache/cache/include/nway-opt.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>Extras/software_cache/cache/include/nway-replace.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>Extras/software_cache/cache/include/nway.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>Extras/software_cache/cache/include/spe_cache.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>Extras/software_cache/cache/include/vec_literal.h</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>BulletMultiThreaded</name>
+					<items>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuCollisionShapes.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuCollisionShapes.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuContactManifoldCollisionAlgorithm.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuContactManifoldCollisionAlgorithm.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuContactResult.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuContactResult.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuConvexPenetrationDepthSolver.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuFakeDma.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuFakeDma.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuGatheringCollisionTask.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuGatheringCollisionTask.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuGjkPairDetector.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuGjkPairDetector.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuLocalSupport.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuMinkowskiPenetrationDepthSolver.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuMinkowskiPenetrationDepthSolver.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuPreferredPenetrationDirections.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuVoronoiSimplexSolver.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuVoronoiSimplexSolver.h</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+			</items>
+			<dependencies/>
+		</item>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>PS3_SPURS_BulletPEGatherScatter</name>
+			<sourcePath>$(TRAKTOR_HOME)/3rdp/bullet-2.73</sourcePath>
+			<configurations>
+				<item type="Configuration" version="1">
+					<name>DebugStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(SN_PS3_PATH)\spu\include\sn</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\include</item>
+						<item>$(SCE_PS3_ROOT)\target\common\include</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\include\vectormath\cpp</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.73/src</item>
+					</includePaths>
+					<definitions>
+						<item>SN_TARGET_PS3_SPU</item>
+						<item>_DEBUG</item>
+						<item>__GCC__</item>
+						<item>SPU</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libspurs.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libatomic.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libdma.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libsync.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libm.a</item>
+					</libraries>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions>-Ttext=0x3000</additionalLinkerOptions>
+				</item>
+				<item type="Configuration" version="1">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(SN_PS3_PATH)\spu\include\sn</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\include</item>
+						<item>$(SCE_PS3_ROOT)\target\common\include</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\include\vectormath\cpp</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.73/Extras/BulletMultiThreaded</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.73/src/SpuDispatch</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.73/src</item>
+					</includePaths>
+					<definitions>
+						<item>SN_TARGET_PS3_SPU</item>
+						<item>NDEBUG</item>
+						<item>__GCC__</item>
+						<item>SPU</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libspurs.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libatomic.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libdma.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libsync.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libm.a</item>
+					</libraries>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions>-Ttext=0x3000</additionalLinkerOptions>
+				</item>
+			</configurations>
+			<items>
+				<item type="Filter">
+					<name>Source Files</name>
+					<items>
+						<item type="File">
+							<fileName>src/LinearMath/btAlignedAllocator.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/CollisionDispatch/btCollisionObject.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletDynamics/Dynamics/btRigidBody.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuFakeDma.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/SpuDispatch/SPURS_PEGatherScatterTask/SpuPEGatherScatterTask.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/SpuDispatch/SPURS_PEGatherScatterTask/SpursPEGatherScatterTaskMain.cpp</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>Header Files</name>
+					<items>
+						<item type="File">
+							<fileName>src/LinearMath/btAlignedAllocator.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/CollisionDispatch/btCollisionObject.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletDynamics/Dynamics/btRigidBody.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/SpuDispatch/BulletPEGatherScatterSpursSupport.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuFakeDma.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/SpuDispatch/SPURS_PEGatherScatterTask/SpuPEGatherScatterTask.h</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+			</items>
+			<dependencies/>
+		</item>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>PS3_SPURS_BulletRaycast</name>
+			<sourcePath>$(TRAKTOR_HOME)/3rdp/bullet-2.73</sourcePath>
+			<configurations>
+				<item type="Configuration" version="1">
+					<name>DebugStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(SN_PS3_PATH)\spu\include\sn</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\include</item>
+						<item>$(SCE_PS3_ROOT)\target\common\include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.73/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.73/src/SpuDispatch</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.73/Extras/BulletMultiThreaded</item>
+					</includePaths>
+					<definitions>
+						<item>SN_TARGET_PS3_SPU</item>
+						<item>_DEBUG</item>
+						<item>__GCC__</item>
+						<item>SPU</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libspurs.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libatomic.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libdma.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libsync.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libm.a</item>
+					</libraries>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions>-Ttext=0x3000</additionalLinkerOptions>
+				</item>
+				<item type="Configuration" version="1">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(SN_PS3_PATH)\spu\include\sn</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\include</item>
+						<item>$(SCE_PS3_ROOT)\target\common\include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.73/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.73/src/SpuDispatch</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.73/Extras/BulletMultiThreaded</item>
+					</includePaths>
+					<definitions>
+						<item>SN_TARGET_PS3_SPU</item>
+						<item>NDEBUG</item>
+						<item>__GCC__</item>
+						<item>SPU</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libspurs.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libatomic.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libdma.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libsync.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libm.a</item>
+					</libraries>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions>-Ttext=0x3000</additionalLinkerOptions>
+				</item>
+			</configurations>
+			<items>
+				<item type="Filter">
+					<name>Source Files</name>
+					<items>
+						<item type="File">
+							<fileName>src/LinearMath/btAlignedAllocator.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/CollisionShapes/btStridingMeshInterface.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/CollisionShapes/btTriangleCallback.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/CollisionShapes/btTriangleIndexVertexArray.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/NarrowPhaseCollision/btVoronoiSimplexSolver.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuCollisionObjectWrapper.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuCollisionShapes.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuFakeDma.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuGjkPairDetector.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuRaycastTask/SpuRaycastTask.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/SpuDispatch/SPURS_RaycastTask/SpursRaycastTaskMain.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuRaycastTask/SpuSubSimplexConvexCast.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuVoronoiSimplexSolver.cpp</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>Header Files</name>
+					<items>
+						<item type="File">
+							<fileName>src/LinearMath/btAlignedAllocator.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/CollisionShapes/btStridingMeshInterface.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/CollisionShapes/btTriangleCallback.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/CollisionShapes/btTriangleIndexVertexArray.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/NarrowPhaseCollision/btVoronoiSimplexSolver.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuCollisionObjectWrapper.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuCollisionShapes.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuFakeDma.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuGjkPairDetector.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuRaycastTask/SpuRaycastTask.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuRaycastTask/SpuSubSimplexConvexCast.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuNarrowPhaseCollisionTask/SpuVoronoiSimplexSolver.h</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+			</items>
+			<dependencies/>
+		</item>
+		<item type="Project" version="1">
+			<enable>false</enable>
+			<name>PS3_SPURS_BulletSample</name>
+			<sourcePath>$(TRAKTOR_HOME)/3rdp/bullet-2.73</sourcePath>
+			<configurations>
+				<item type="Configuration" version="1">
+					<name>DebugStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(SN_PS3_PATH)\spu\include\sn</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\include</item>
+						<item>$(SCE_PS3_ROOT)\target\common\include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.73/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.73/src/SpuDispatch</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.73/Extras/BulletMultiThreaded</item>
+					</includePaths>
+					<definitions>
+						<item>SN_TARGET_PS3_SPU</item>
+						<item>_DEBUG</item>
+						<item>__GCC__</item>
+						<item>SPU</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libspurs.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libatomic.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libdma.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libsync.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libm.a</item>
+					</libraries>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions>-Ttext=0x3000</additionalLinkerOptions>
+				</item>
+				<item type="Configuration" version="1">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(SN_PS3_PATH)\spu\include\sn</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\include</item>
+						<item>$(SCE_PS3_ROOT)\target\common\include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.73/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.73/src/SpuDispatch</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.73/Extras/BulletMultiThreaded</item>
+					</includePaths>
+					<definitions>
+						<item>SN_TARGET_PS3_SPU</item>
+						<item>NDEBUG</item>
+						<item>__GCC__</item>
+						<item>SPU</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libspurs.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libatomic.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libdma.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libsync.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libm.a</item>
+					</libraries>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions>-Ttext=0x3000</additionalLinkerOptions>
+				</item>
+			</configurations>
+			<items>
+				<item type="Filter">
+					<name>Source Files</name>
+					<items>
+						<item type="File">
+							<fileName>src/LinearMath/btAlignedAllocator.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/CollisionDispatch/btCollisionObject.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletDynamics/Dynamics/btRigidBody.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuFakeDma.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/SpuDispatch/SPURS_SampleTask/SpursSampleTaskMain.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuSampleTask/SpuSampleTask.cpp</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>Header Files</name>
+					<items>
+						<item type="File">
+							<fileName>src/LinearMath/btAlignedAllocator.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletCollision/CollisionDispatch/btCollisionObject.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletDynamics/Dynamics/btRigidBody.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuFakeDma.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuSampleTask/SpuSampleTask.h</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+			</items>
+			<dependencies/>
+		</item>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>PS3_SPURS_BulletSolver</name>
+			<sourcePath>$(TRAKTOR_HOME)/3rdp/bullet-2.73</sourcePath>
+			<configurations>
+				<item type="Configuration" version="1">
+					<name>DebugStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(SN_PS3_PATH)\spu\include\sn</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\include</item>
+						<item>$(SCE_PS3_ROOT)\target\common\include</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\include\vectormath\cpp</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.73/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.73/src/SpuDispatch</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.73/src/SpuDispatch\SPU_MidPhase</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.73/Extras/software_cache/cache/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.73/Extras/BulletMultiThreaded</item>
+					</includePaths>
+					<definitions>
+						<item>SN_TARGET_PS3_SPU</item>
+						<item>__GCC__</item>
+						<item>__CELLOS_LV2__</item>
+						<item>SPU</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libspurs.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libatomic.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libdma.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libsync.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libm.a</item>
+					</libraries>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions>-Ttext=0x3000</additionalLinkerOptions>
+				</item>
+				<item type="Configuration" version="1">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(SN_PS3_PATH)\spu\include\sn</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\include</item>
+						<item>$(SCE_PS3_ROOT)\target\common\include</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\include\vectormath\cpp</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.73/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.73/src/SpuDispatch</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.73/src/SpuDispatch\SPU_MidPhase</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.73/Extras/software_cache/cache/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.73/Extras/BulletMultiThreaded</item>
+					</includePaths>
+					<definitions>
+						<item>SN_TARGET_PS3_SPU</item>
+						<item>NDEBUG</item>
+						<item>__GCC__</item>
+						<item>SPU</item>
+						<item>__CELLOS_LV2__</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libspurs.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libatomic.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libdma.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libsync.a</item>
+						<item>$(SCE_PS3_ROOT)\target\spu\lib\libm.a</item>
+					</libraries>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions>-Ttext=0x3000</additionalLinkerOptions>
+				</item>
+			</configurations>
+			<items>
+				<item type="Filter">
+					<name>Source Files</name>
+					<items>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuSolverTask/SpuParallellSolverTask.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>src/SpuDispatch/SPURS_SolverTask/SpursSolverTaskMain.cpp</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>Header Files</name>
+					<items>
+						<item type="File">
+							<fileName>src/BulletMultiThreaded/SpuSolverTask/SpuParallellSolverTask.h</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+			</items>
+			<dependencies/>
+		</item>
 	</projects>
 </object>
