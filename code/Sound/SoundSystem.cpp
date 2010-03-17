@@ -90,6 +90,8 @@ bool SoundSystem::create(const SoundSystemCreateDesc& desc)
 		);
 	}
 
+	m_requestBlocks.resize(desc.channels);
+
 	// Reset global playback time.
 	m_time = 0.0;
 
@@ -140,7 +142,7 @@ Ref< SoundChannel > SoundSystem::getChannel(uint32_t channelId)
 Ref< SoundChannel > SoundSystem::play(uint32_t channelId, Sound* sound, uint32_t repeat)
 {
 	T_ASSERT (channelId < m_channels.size());
-	Acquire< Semaphore > lock(m_channelAttachLock);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_channelAttachLock);
 	m_channels[channelId]->playSound(sound, m_time, repeat);
 	return m_channels[channelId];
 }
@@ -151,7 +153,7 @@ Ref< SoundChannel > SoundSystem::play(Sound* sound, bool wait, uint32_t repeat)
 	{
 		// Allocate first idle channel.
 		{
-			Acquire< Semaphore > lock(m_channelAttachLock);
+			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_channelAttachLock);
 			for (RefArray< SoundChannel >::iterator i = m_channels.begin(); i != m_channels.end(); ++i)
 			{
 				if (!(*i)->isPlaying())
@@ -165,7 +167,7 @@ Ref< SoundChannel > SoundSystem::play(Sound* sound, bool wait, uint32_t repeat)
 		if (!wait)
 			break;
 
-		// Yield calling thread; @fixme Notification when channel is free.
+		// Yield calling thread; \fixme Notification when channel is free.
 		ThreadManager::getInstance().getCurrentThread()->sleep(10);
 	}
 	return 0;
@@ -173,14 +175,14 @@ Ref< SoundChannel > SoundSystem::play(Sound* sound, bool wait, uint32_t repeat)
 
 void SoundSystem::stop(uint32_t channelId)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_channelAttachLock);
 	T_ASSERT (channelId < m_channels.size());
-	Acquire< Semaphore > lock(m_channelAttachLock);
 	m_channels[channelId]->stop();
 }
 
 void SoundSystem::stopAll()
 {
-	Acquire< Semaphore > lock(m_channelAttachLock);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_channelAttachLock);
 	for (RefArray< SoundChannel >::iterator i = m_channels.begin(); i != m_channels.end(); ++i)
 		(*i)->stop();
 }
@@ -198,7 +200,6 @@ void SoundSystem::getThreadPerformances(double& outMixerTime, double& outSubmitT
 
 void SoundSystem::threadMixer()
 {
-	SoundBlock requestBlock;
 	SoundBlock frameBlock;
 	Timer timerMixer;
 
@@ -230,34 +231,39 @@ void SoundSystem::threadMixer()
 		frameBlock.maxChannel = m_desc.driverDesc.hwChannels;
 
 		// Read blocks from channels.
+		m_channelAttachLock.wait();
 		uint32_t channelsCount = uint32_t(m_channels.size());
 		for (uint32_t i = 0; i < channelsCount; ++i)
 		{
-			requestBlock.samplesCount = m_desc.driverDesc.frameSamples;
-			requestBlock.maxChannel = 0;
+			m_requestBlocks[i].samplesCount = m_desc.driverDesc.frameSamples;
+			m_requestBlocks[i].maxChannel = 0;
+			m_channels[i]->getBlock(m_mixer, m_time, m_requestBlocks[i]);
+		}
+		m_channelAttachLock.release();
 
-			// Temporarily lock channels as we don't want user to attach new sounds just yet.
-			m_channelAttachLock.wait();
-			bool got = m_channels[i]->getBlock(m_mixer, m_time, requestBlock);
-			m_channelAttachLock.release();
-			if (!got || !requestBlock.maxChannel)
+		// Synchronize mixer.
+		m_mixer->synchronize();
+
+		// Final combine channels into hardware channels using "combine matrix".
+		for (uint32_t i = 0; i < channelsCount; ++i)
+		{
+			if (!m_requestBlocks[i].maxChannel)
 				continue;
 
-			T_ASSERT (requestBlock.sampleRate == m_desc.driverDesc.sampleRate);
-			T_ASSERT (requestBlock.samplesCount == m_desc.driverDesc.frameSamples);
-
-			// Final combine channels into hardware channels using "combine matrix".
+			T_ASSERT (m_requestBlocks[i].sampleRate == m_desc.driverDesc.sampleRate);
+			T_ASSERT (m_requestBlocks[i].samplesCount == m_desc.driverDesc.frameSamples);
+			
 			for (uint32_t j = 0; j < m_desc.driverDesc.hwChannels; ++j)
 			{
-				for (uint32_t k = 0; k < requestBlock.maxChannel; ++k)
+				for (uint32_t k = 0; k < m_requestBlocks[i].maxChannel; ++k)
 				{
 					float strength = m_desc.cm[j][k];
-					if (requestBlock.samples[k] && abs(strength) >= FUZZY_EPSILON)
+					if (m_requestBlocks[i].samples[k] && abs(strength) >= FUZZY_EPSILON)
 					{
 						m_mixer->addMulConst(
 							frameBlock.samples[j],
-							requestBlock.samples[k],
-							requestBlock.samplesCount,
+							m_requestBlocks[i].samples[k],
+							m_requestBlocks[i].samplesCount,
 							strength
 						);
 					}
@@ -265,12 +271,13 @@ void SoundSystem::threadMixer()
 			}
 		}
 
+		// Synchronize mixer.
+		m_mixer->synchronize();
+
 		m_time += double(m_desc.driverDesc.frameSamples) / m_desc.driverDesc.sampleRate;
 
 		if (m_threadMixer->stopped())
 			break;
-
-		m_mixer->synchronize();
 
 		m_submitQueueLock.wait();
 		m_submitQueue.push_back(frameBlock);
