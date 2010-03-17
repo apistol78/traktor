@@ -32,6 +32,21 @@ bool SolutionBuilderMsvcLinkerTool::generate(GeneratorContext& context, Solution
 	os << IncreaseIndent;
 	os << L"Name=\"VCLinkerTool\"" << Endl;
 
+	// Additional options.
+	os << L"AdditionalOptions=\"";
+	std::map< std::wstring, std::wstring >::const_iterator i0 = m_staticOptions.find(L"AdditionalOptions");
+	if (i0 != m_staticOptions.end())
+	{
+		os << i0->second;
+		if (!configuration->getAdditionalLinkerOptions().empty())
+			os << L" " << configuration->getAdditionalLinkerOptions();
+	}
+	else
+		os << configuration->getAdditionalLinkerOptions();
+
+	os << L"\"" << Endl;
+
+	// Dependencies.
 	os << L"AdditionalDependencies=\"";
 
 	std::set< std::wstring > additionalLibraries;
@@ -108,7 +123,11 @@ bool SolutionBuilderMsvcLinkerTool::generate(GeneratorContext& context, Solution
 	// Static options.
 	for (std::map< std::wstring, std::wstring >::const_iterator i = m_staticOptions.begin(); i != m_staticOptions.end(); ++i)
 	{
-		if (i->first == L"AdditionalDependencies" || i->first == L"AdditionalLibraryDirectories")
+		if (
+			i->first == L"AdditionalOptions" ||
+			i->first == L"AdditionalDependencies" ||
+			i->first == L"AdditionalLibraryDirectories"
+		)
 			continue;
 		os << i->first << L"=\"" << context.format(i->second) << L"\"" << Endl;
 	}

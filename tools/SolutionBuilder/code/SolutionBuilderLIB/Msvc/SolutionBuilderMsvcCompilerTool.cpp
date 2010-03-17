@@ -21,6 +21,20 @@ bool SolutionBuilderMsvcCompilerTool::generate(GeneratorContext& context, Soluti
 	os << IncreaseIndent;
 	os << L"Name=\"VCCLCompilerTool\"" << Endl;
 
+	// Additional options.
+	os << L"AdditionalOptions=\"";
+	std::map< std::wstring, std::wstring >::const_iterator i0 = m_staticOptions.find(L"AdditionalOptions");
+	if (i0 != m_staticOptions.end())
+	{
+		os << i0->second;
+		if (!configuration->getAdditionalCompilerOptions().empty())
+			os << L" " << configuration->getAdditionalCompilerOptions();
+	}
+	else
+		os << configuration->getAdditionalCompilerOptions();
+
+	os << L"\"" << Endl;
+
 	// Include directories.
 	os << L"AdditionalIncludeDirectories=\"";
 	for (std::vector< std::wstring >::const_iterator i = configuration->getIncludePaths().begin(); i != configuration->getIncludePaths().end(); ++i)
@@ -74,7 +88,11 @@ bool SolutionBuilderMsvcCompilerTool::generate(GeneratorContext& context, Soluti
 	// Static options.
 	for (std::map< std::wstring, std::wstring >::const_iterator i = m_staticOptions.begin(); i != m_staticOptions.end(); ++i)
 	{
-		if (i->first == L"AdditionalIncludeDirectories" || i->first == L"PreprocessorDefinitions")
+		if (
+			i->first == L"AdditionalOptions" ||
+			i->first == L"AdditionalIncludeDirectories" ||
+			i->first == L"PreprocessorDefinitions"
+		)
 			continue;
 		os << i->first << L"=\"" << context.format(i->second) << L"\"" << Endl;
 	}

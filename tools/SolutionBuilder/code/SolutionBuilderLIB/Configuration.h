@@ -70,6 +70,14 @@ public:
 
 	const std::vector< std::wstring >& getLibraries() const;
 
+	void setAdditionalCompilerOptions(const std::wstring& additionalCompilerOptions);
+
+	const std::wstring& getAdditionalCompilerOptions() const;
+
+	void setAdditionalLinkerOptions(const std::wstring& additionalLinkerOptions);
+
+	const std::wstring& getAdditionalLinkerOptions() const;
+
 	virtual bool serialize(traktor::ISerializer& s);
 
 private:
@@ -81,6 +89,8 @@ private:
 	std::vector< std::wstring > m_definitions;
 	std::vector< std::wstring > m_libraryPaths;
 	std::vector< std::wstring > m_libraries;
+	std::wstring m_additionalCompilerOptions;
+	std::wstring m_additionalLinkerOptions;
 };
 
 #endif	// Configuration_H
