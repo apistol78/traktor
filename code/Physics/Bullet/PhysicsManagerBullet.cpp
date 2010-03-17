@@ -1,6 +1,22 @@
 #include <algorithm>
+
 #include <btBulletDynamicsCommon.h>
 #include <BulletCollision/CollisionDispatch/btConvexConvexAlgorithm.h>
+
+#if defined(_PS3)
+#	include <SpuDispatch/BulletCollisionSpursSupport.h>
+#	include <BulletMultiThreaded/SpuGatheringCollisionDispatcher.h>
+#endif
+
+#include "Core/Log/Log.h"
+#include "Core/Math/Const.h"
+#include "Core/Misc/Save.h"
+#include "Core/Thread/Acquire.h"
+
+#if defined(_PS3)
+#	include "Core/Thread/Ps3/Spurs/SpursManager.h"
+#endif
+
 #include "Physics/Bullet/PhysicsManagerBullet.h"
 #include "Physics/Bullet/DynamicBodyBullet.h"
 #include "Physics/Bullet/StaticBodyBullet.h"
@@ -24,10 +40,6 @@
 #include "Physics/Hinge2JointDesc.h"
 #include "Physics/Mesh.h"
 #include "Physics/Heightfield.h"
-#include "Core/Math/Const.h"
-#include "Core/Misc/Save.h"
-#include "Core/Thread/Acquire.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -151,7 +163,27 @@ bool PhysicsManagerBullet::create(float simulationDeltaTime)
 
 	m_simulationDeltaTime = simulationDeltaTime;
 	m_configuration = new btDefaultCollisionConfiguration(info);
+	
+#if !defined(_PS3)
+
 	m_dispatcher = new btCollisionDispatcher(m_configuration);
+
+#else
+
+	btThreadSupportInterface* threadSupport = new BulletCollisionSpursSupport(
+		SpursManager::getInstance().getSpurs(),
+		/*numSpuTasks*/4,
+		/*numSpuTasks*/4
+	);
+
+	m_dispatcher = new SpuGatheringCollisionDispatcher(
+		threadSupport,
+		/*numSpuTasks*/4,
+		m_configuration
+	);
+
+#endif
+
 	m_broadphase = new btDbvtBroadphase();
 	m_solver = new btSequentialImpulseConstraintSolver();
 	m_dynamicsWorld = new btDiscreteDynamicsWorld(m_dispatcher, m_broadphase, m_solver, m_configuration);

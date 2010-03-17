@@ -23,6 +23,11 @@ SpursManager& SpursManager::getInstance()
 	return *s_instance;
 }
 
+CellSpurs* SpursManager::getSpurs() const
+{
+	return m_spurs;
+}
+
 Ref< SpursJobQueue > SpursManager::createJobQueue(uint32_t descriptorSize, uint32_t submitCount)
 {
 	Ref< SpursJobQueue > jobQueue = new SpursJobQueue(m_spurs);

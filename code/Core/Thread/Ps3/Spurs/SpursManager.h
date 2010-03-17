@@ -26,6 +26,8 @@ class T_DLLCLASS SpursManager : public ISingleton
 public:
 	static SpursManager& getInstance();
 
+	CellSpurs* getSpurs() const;
+
 	Ref< SpursJobQueue > createJobQueue(uint32_t descriptorSize, uint32_t submitCount);
 
 protected:

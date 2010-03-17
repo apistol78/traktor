@@ -79,7 +79,7 @@
                 </item>
                 <item>
                   <first>PreprocessorDefinitions</first>
-                  <second>_PS3;SN_TARGET_PS3;UNICODE;_UNICODE</second>
+                  <second>_PS3;SN_TARGET_PS3;__CELLOS_LV2__;UNICODE;_UNICODE</second>
                 </item>
                 <item>
                   <first>Optimization</first>
@@ -143,7 +143,7 @@
                 </item>
                 <item>
                   <first>PreprocessorDefinitions</first>
-                  <second>_PS3;SN_TARGET_PS3;UNICODE;_UNICODE</second>
+                  <second>_PS3;SN_TARGET_PS3;__CELLOS_LV2__;UNICODE;_UNICODE</second>
                 </item>
                 <item>
                   <first>Optimization</first>
@@ -258,7 +258,7 @@
                 </item>
                 <item>
                   <first>PreprocessorDefinitions</first>
-                  <second>_PS3;SN_TARGET_PS3;UNICODE;_UNICODE</second>
+                  <second>_PS3;SN_TARGET_PS3;__CELLOS_LV2__;UNICODE;_UNICODE</second>
                 </item>
                 <item>
                   <first>Optimization</first>
@@ -358,7 +358,7 @@
                 </item>
                 <item>
                   <first>PreprocessorDefinitions</first>
-                  <second>_PS3;SN_TARGET_PS3;UNICODE;_UNICODE</second>
+                  <second>_PS3;SN_TARGET_PS3;__CELLOS_LV2__;UNICODE;_UNICODE</second>
                 </item>
                 <item>
                   <first>Optimization</first>
@@ -517,7 +517,7 @@
                 </item>
                 <item>
                   <first>PreprocessorDefinitions</first>
-                  <second>_PS3;SN_TARGET_PS3;UNICODE;_UNICODE</second>
+                  <second>_PS3;SN_TARGET_PS3;__CELLOS_LV2__;UNICODE;_UNICODE</second>
                 </item>
                 <item>
                   <first>Optimization</first>
@@ -609,7 +609,7 @@
                 </item>
                 <item>
                   <first>PreprocessorDefinitions</first>
-                  <second>_PS3;SN_TARGET_PS3;UNICODE;_UNICODE</second>
+                  <second>_PS3;SN_TARGET_PS3;__CELLOS_LV2__;UNICODE;_UNICODE</second>
                 </item>
                 <item>
                   <first>Optimization</first>
@@ -760,7 +760,7 @@
                 </item>
                 <item>
                   <first>PreprocessorDefinitions</first>
-                  <second>_PS3;SN_TARGET_PS3;_CONSOLE;UNICODE;_UNICODE</second>
+                  <second>_PS3;SN_TARGET_PS3;__CELLOS_LV2__;_CONSOLE;UNICODE;_UNICODE</second>
                 </item>
                 <item>
                   <first>Optimization</first>
@@ -852,7 +852,7 @@
                 </item>
                 <item>
                   <first>PreprocessorDefinitions</first>
-                  <second>_PS3;SN_TARGET_PS3;_CONSOLE;UNICODE;_UNICODE</second>
+                  <second>_PS3;SN_TARGET_PS3;__CELLOS_LV2__;_CONSOLE;UNICODE;_UNICODE</second>
                 </item>
                 <item>
                   <first>Optimization</first>
