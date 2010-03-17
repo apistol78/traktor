@@ -2,13 +2,13 @@
 #include <Core/Serialization/Member.h>
 #include <Core/Serialization/MemberEnum.h>
 #include <Core/Serialization/MemberStl.h>
-#include "Configuration.h"
+#include "SolutionBuilderLIB/Configuration.h"
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"Configuration", 0, Configuration, traktor::ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"Configuration", 1, Configuration, traktor::ISerializable)
 
-Configuration::Configuration() :
-	m_targetFormat(TfStaticLibrary),
-	m_targetProfile(TpDebug)
+Configuration::Configuration()
+:	m_targetFormat(TfStaticLibrary)
+,	m_targetProfile(TpDebug)
 {
 }
 
@@ -102,6 +102,26 @@ const std::vector< std::wstring >& Configuration::getLibraries() const
 	return m_libraries;
 }
 
+void Configuration::setAdditionalCompilerOptions(const std::wstring& additionalCompilerOptions)
+{
+	m_additionalCompilerOptions = additionalCompilerOptions;
+}
+
+const std::wstring& Configuration::getAdditionalCompilerOptions() const
+{
+	return m_additionalCompilerOptions;
+}
+
+void Configuration::setAdditionalLinkerOptions(const std::wstring& additionalLinkerOptions)
+{
+	m_additionalLinkerOptions = additionalLinkerOptions;
+}
+
+const std::wstring& Configuration::getAdditionalLinkerOptions() const
+{
+	return m_additionalLinkerOptions;
+}
+
 bool Configuration::serialize(traktor::ISerializer& s)
 {
 	traktor::MemberEnum< TargetFormat >::Key kTargetFormat[] =
@@ -128,6 +148,12 @@ bool Configuration::serialize(traktor::ISerializer& s)
 	s >> traktor::MemberStlVector< std::wstring >(L"definitions", m_definitions);
 	s >> traktor::MemberStlVector< std::wstring >(L"libraryPaths", m_libraryPaths);
 	s >> traktor::MemberStlVector< std::wstring >(L"libraries", m_libraries);
+
+	if (s.getVersion() >= 1)
+	{
+		s >> traktor::Member< std::wstring >(L"additionalCompilerOptions", m_additionalCompilerOptions);
+		s >> traktor::Member< std::wstring >(L"additionalLinkerOptions", m_additionalLinkerOptions);
+	}
 
 	return true;
 }
