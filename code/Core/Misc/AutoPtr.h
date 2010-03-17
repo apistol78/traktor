@@ -2,11 +2,39 @@
 #define traktor_AutoPtr_H
 
 #include "Core/Config.h"
+#include "Core/Memory/Alloc.h"
 
 namespace traktor
 {
 
+	/*! \brief Default delete operator policy.
+	 * \ingroup Core
+	 */
 	template < typename Type >
+	struct DeleteOperator
+	{
+		static void release(Type* ptr)
+		{
+			delete ptr;
+		}
+	};
+
+	/*! \brief Use freeAlign method to release memory.
+	 * \ingroup Core
+	 */
+	template < typename Type >
+	struct AllocFreeAlign
+	{
+		static void release(Type* ptr)
+		{
+			Alloc::freeAlign(ptr);
+		}
+	};
+
+	/*! \brief Auto pointer
+	 * \ingroup Core
+	 */
+	template < typename Type, typename ReleasePolicy = DeleteOperator< Type > >
 	class AutoPtr
 	{
 	public:
@@ -35,7 +63,7 @@ namespace traktor
 		{
 			if (m_ptr)
 			{
-				delete m_ptr;
+				ReleasePolicy::release(m_ptr);
 				m_ptr = 0;
 			}
 		}

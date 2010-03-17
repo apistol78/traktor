@@ -1,4 +1,5 @@
 #include "Core/Log/Log.h"
+#include "Core/Misc/TString.h"
 #include "Render/Dx9/IndexBufferDx9.h"
 #include "Render/Dx9/ParameterCache.h"
 #include "Render/Dx9/VertexBufferDx9.h"
@@ -271,7 +272,6 @@ void RenderViewWin32::draw(const Primitives& primitives)
 	T_ASSERT (m_currentProgram);
 	T_ASSERT (m_currentVertexBuffer);
 
-	const RenderState& rs = m_renderStateStack.back();
 	if (m_targetDirty)
 		bindTargets();
 
@@ -347,10 +347,13 @@ void RenderViewWin32::setMSAAEnable(bool msaaEnable)
 
 void RenderViewWin32::pushMarker(const char* const marker)
 {
+	std::wstring wm = mbstows(marker); 
+	D3DPERF_BeginEvent(D3DCOLOR_RGBA(255, 255, 255, 255), wm.c_str());
 }
 
 void RenderViewWin32::popMarker()
 {
+	D3DPERF_EndEvent();
 }
 
 HRESULT RenderViewWin32::lostDevice()

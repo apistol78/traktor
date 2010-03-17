@@ -45,8 +45,8 @@ ParameterCache::ParameterCache(IDirect3DDevice9* d3dDevice)
 ,	m_vertexConstantsShadow(0)
 ,	m_pixelConstantsShadow(0)
 {
-	m_vertexConstantsShadow = (float*)Alloc::acquireAlign(VertexConstantCount * 4 * sizeof(float), 16);
-	m_pixelConstantsShadow = (float*)Alloc::acquireAlign(PixelConstantCount * 4 * sizeof(float), 16);
+	m_vertexConstantsShadow.reset((float*)Alloc::acquireAlign(VertexConstantCount * 4 * sizeof(float), 16));
+	m_pixelConstantsShadow.reset((float*)Alloc::acquireAlign(PixelConstantCount * 4 * sizeof(float), 16));
 
 	lostDevice();
 	resetDevice(d3dDevice);
@@ -54,8 +54,8 @@ ParameterCache::ParameterCache(IDirect3DDevice9* d3dDevice)
 
 ParameterCache::~ParameterCache()
 {
-	Alloc::freeAlign(m_pixelConstantsShadow);
-	Alloc::freeAlign(m_vertexConstantsShadow);
+	m_pixelConstantsShadow.release();
+	m_vertexConstantsShadow.release();
 }
 
 void ParameterCache::setVertexShader(IDirect3DVertexShader9* d3dVertexShader)
@@ -78,14 +78,14 @@ void ParameterCache::setPixelShader(IDirect3DPixelShader9* d3dPixelShader)
 
 void ParameterCache::setVertexShaderConstant(uint32_t registerOffset, uint32_t registerCount, const float* constantData)
 {
-	float* shadow = &m_vertexConstantsShadow[registerOffset * 4];
+	float* shadow = m_vertexConstantsShadow.ptr() + registerOffset * 4;
 	if (!compareExchangeEqual4(shadow, constantData, registerCount * 4))
 		m_d3dDevice->SetVertexShaderConstantF(registerOffset, constantData, registerCount);
 }
 
 void ParameterCache::setPixelShaderConstant(uint32_t registerOffset, uint32_t registerCount, const float* constantData)
 {
-	float* shadow = &m_pixelConstantsShadow[registerOffset * 4];
+	float* shadow = m_pixelConstantsShadow.ptr() + registerOffset * 4;
 	if (!compareExchangeEqual4(shadow, constantData, registerCount * 4))
 		m_d3dDevice->SetPixelShaderConstantF(registerOffset, constantData, registerCount);
 }
@@ -144,8 +144,8 @@ HRESULT ParameterCache::lostDevice()
 	m_d3dVertexShader = 0;
 	m_d3dPixelShader = 0;
 
-	std::memset(m_vertexConstantsShadow, 0, VertexConstantCount * 4 * sizeof(float));
-	std::memset(m_pixelConstantsShadow, 0, PixelConstantCount * 4 * sizeof(float));
+	std::memset(m_vertexConstantsShadow.ptr(), 0, VertexConstantCount * 4 * sizeof(float));
+	std::memset(m_pixelConstantsShadow.ptr(), 0, PixelConstantCount * 4 * sizeof(float));
 
 	for (int i = 0; i < sizeof_array(m_vertexTextureShadow); ++i)
 		m_vertexTextureShadow[i] = 0;
