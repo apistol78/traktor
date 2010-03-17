@@ -22,10 +22,6 @@ namespace traktor
 
 class Job;
 
-#if defined(_PS3)
-class SpursJobQueue;
-#endif
-
 	namespace spray
 	{
 
@@ -72,9 +68,7 @@ private:
 	mutable Job m_jobs[4];
 	uint32_t m_count;
 
-#if defined(_PS3)
-	Ref< SpursJobQueue > m_jobQueue;
-#else
+#if !defined(_PS3)
 	void updateTask(float deltaTime, const Transform& transform, size_t first, size_t last);
 #endif
 };

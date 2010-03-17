@@ -7,7 +7,7 @@
 #define SM_SPURS_PREFIX	"Traktor Spurs"
 #define SM_SPURS_SPU_COUNT 4
 #define	SM_SPURS_SPU_THREAD_GROUP_PRIORITY 250
-#define	SM_SPURS_PPU_THREAD_PRIORITY 767 /*1535*/
+#define	SM_SPURS_PPU_THREAD_PRIORITY 100
 
 namespace traktor
 {

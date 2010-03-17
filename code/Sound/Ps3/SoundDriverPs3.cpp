@@ -203,15 +203,30 @@ void SoundDriverPs3::submit(const SoundBlock& soundBlock)
 	for (uint32_t offset = 0; offset < soundBlock.samplesCount; offset += CELL_AUDIO_BLOCK_SAMPLES)
 	{
 		float* blockPtr = (float*)(m_blockPtr + m_writeBlock * blockSize);
-		for (int32_t i = 0; i < CELL_AUDIO_BLOCK_SAMPLES; ++i)
+
+		for (int32_t c = 0; c < m_blockChannels; ++c)
 		{
-			for (int32_t c = 0; c < m_blockChannels; ++c)
+			float* blockWritePtr = blockPtr + m_remap[c];
+
+			if (soundBlock.samples[c])
 			{
-				int32_t oc = m_remap[c];
-				blockPtr[oc] = soundBlock.samples[c] ? soundBlock.samples[c][i + offset] : 0.0f;
+				const float* samples = &soundBlock.samples[c][offset];
+				for (int32_t i = 0; i < CELL_AUDIO_BLOCK_SAMPLES; ++i)
+				{
+					*blockWritePtr = *samples++;
+					blockWritePtr += m_blockChannels;
+				}
 			}
-			blockPtr += m_blockChannels;
+			else
+			{
+				for (int32_t i = 0; i < CELL_AUDIO_BLOCK_SAMPLES; ++i)
+				{
+					*blockWritePtr = 0.0f;
+					blockWritePtr += m_blockChannels;
+				}
+			}
 		}
+
 		m_writeBlock = (m_writeBlock + 1) % 16;
 	}
 }

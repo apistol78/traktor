@@ -1,5 +1,6 @@
 #include <vec_types.h>
 #include "Core/Memory/Alloc.h"
+#include "Core/Misc/Align.h"
 #include "Render/Ps3/StateCachePs3.h"
 
 namespace traktor
@@ -12,29 +13,23 @@ namespace traktor
 bool compareExchangeEqual4(float* ptr1, const float* ptr2, size_t count)
 {
 	T_ASSERT ((count & 3) == 0);
+	T_ASSERT (alignUp(ptr1, 16) == ptr1);
+	T_ASSERT (alignUp(ptr2, 16) == ptr2);
 
-	const float* src = ptr2;
-	float* dst = ptr1;
 	bool equal = true;
-
 	for (size_t i = 0; i < (count >> 2); ++i)
 	{
-		if (
-			dst[0] != src[0] ||
-			dst[1] != src[1] ||
-			dst[2] != src[2] ||
-			dst[3] != src[3]
-		)
+		vec_float4 vs = vec_ld(0, ptr2);
+		vec_float4 vd = vec_ld(0, ptr1);
+		
+		if (vec_all_eq(vs, vd) == 0)
 		{
-			dst[0] = src[0];
-			dst[1] = src[1];
-			dst[2] = src[2];
-			dst[3] = src[3];
+			vec_st(vs, 0, ptr1);
 			equal = false;
 		}
 
-		src += 4;
-		dst += 4;
+		ptr1 += 4;
+		ptr2 += 4;
 	}
 
 	return equal;

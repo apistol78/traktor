@@ -224,7 +224,7 @@ void ProgramPs3::bind(PoolAllocator& patchProgramPool, StateCachePs3& stateCache
 			uint8_t* patchedPixelShaderUCode = static_cast< uint8_t* >(patchProgramPool.alloc(ucodeSize));
 			T_ASSERT_M (patchedPixelShaderUCode, L"Out of memory for patched pixel programs");
 
-			std::memcpy(
+			__builtin_memcpy(
 				patchedPixelShaderUCode,
 				m_pixelShaderUCode->getPointer(),
 				m_pixelShaderUCode->getSize()

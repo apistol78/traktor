@@ -133,7 +133,7 @@ bool Thread::resume()
 
 void Thread::sleep(int duration)
 {
-	sys_timer_usleep(duration);
+	sys_timer_usleep(usecond_t(duration) * 1000);
 }
 
 void Thread::yield()
