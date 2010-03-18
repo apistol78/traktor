@@ -65,10 +65,11 @@ private:
 	uint32_t m_emitted;
 	bool m_warm;
 	Aabb m_boundingBox;
-	mutable Job m_jobs[4];
 	uint32_t m_count;
 
 #if !defined(_PS3)
+	mutable Job m_jobs[4];
+
 	void updateTask(float deltaTime, const Transform& transform, size_t first, size_t last);
 #endif
 };

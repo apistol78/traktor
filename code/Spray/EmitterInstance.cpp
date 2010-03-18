@@ -87,7 +87,7 @@ EmitterInstance::EmitterInstance(Emitter* emitter)
 ,	m_totalTime(0.0f)
 ,	m_emitted(0)
 ,	m_warm(false)
-,	m_count(0)
+,	m_count(std::rand() & 15)
 {
 }
 
