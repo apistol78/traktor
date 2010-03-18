@@ -12,7 +12,7 @@ namespace traktor
 	{
 
 /*! Enable screenspace culling; quite expensive but might yield less draw calls. */
-#define T_ENABLE_SCREENSPACE_CULLING 0
+#define T_ENABLE_SCREENSPACE_CULLING 1
 
 /*! \brief Mesh culling.
  * First it performs a grosse culling
@@ -55,15 +55,25 @@ inline bool isMeshVisible(
 	Vector4 extents[8];
 	meshBoundingBox.getExtents(extents);
 
-	Vector2 mn( std::numeric_limits< float >::max(),  std::numeric_limits< float >::max());
-	Vector2 mx(-std::numeric_limits< float >::max(), -std::numeric_limits< float >::max());
+	Vector4 mn(
+		std::numeric_limits< float >::max(),
+		std::numeric_limits< float >::max(),
+		std::numeric_limits< float >::max(),
+		std::numeric_limits< float >::max()
+	);
+	Vector4 mx(
+		-std::numeric_limits< float >::max(),
+		-std::numeric_limits< float >::max(),
+		-std::numeric_limits< float >::max(),
+		-std::numeric_limits< float >::max()
+	);
 
-	Matrix44 worldViewProj = worldView * projection;
+	Matrix44 worldViewProj = projection * worldView;
 
 	for (int i = 0; i < sizeof_array(extents); ++i)
 	{
 		Vector4 p = worldViewProj * extents[i];
-		if (p.w <= 0.0f)
+		if (p.w() <= 0.0f)
 		{
 			// Bounding box clipped to view plane; assume it's visible.
 			outDistance = center.length();
@@ -71,19 +81,20 @@ inline bool isMeshVisible(
 		}
 
 		// Homogeneous divide.
-		p.x /= p.w;
-		p.y /= p.w;
+		p /= p.w();
 
 		// Track screen space extents.
-		mn.x = min(mn.x, p.x);
-		mn.y = min(mn.y, p.y);
-		mx.x = max(mx.x, p.x);
-		mx.y = max(mx.y, p.y);
+		mn = min(mn, p);
+		mx = max(mx, p);
 	}
 
+	// Ensure we're visible.
+	if (mn.x() > 1.0f || mn.y() > 1.0f || mx.x() < -1.0f || mx.y() < -1.0f)
+		return false;
+
 	// Calculate screen area, cull if it's below threshold.
-	float area = (mx.x - mn.x) * (mx.y - mn.y);
-	if (area < minScreenArea)
+	Vector4 e = mx - mn;
+	if (e.x() * e.y() < minScreenArea)
 		return false;
 
 #endif
