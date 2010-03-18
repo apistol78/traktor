@@ -41,7 +41,7 @@ void RumbleEffectPlayer::update(float deltaTime)
 	for (std::list< PlayingEffect >::iterator i = m_playingEffects.begin(); i != m_playingEffects.end(); )
 	{
 		float effectTime = m_totalTime - i->attachedTime;
-		if (effectTime <= i->effect->getDuration())
+		if (effectTime <= i->effect->getDuration() && i->targetDevice->isConnected())
 		{
 			InputRumble rumble;
 			i->effect->getRumble(effectTime, rumble);
