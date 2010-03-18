@@ -88,6 +88,7 @@ private:
 		uint32_t depthOffset;
 		uint32_t depthPitch;
 		RenderTargetPs3* renderTarget;
+		bool zcull;
 	};
 
 	Ref< RenderSystemPs3 > m_renderSystem;

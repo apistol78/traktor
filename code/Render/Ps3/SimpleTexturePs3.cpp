@@ -194,9 +194,12 @@ void SimpleTexturePs3::unlock(int level)
 
 void SimpleTexturePs3::bind(StateCachePs3& stateCache, int stage, const SamplerState& samplerState)
 {
-	m_texture.offset = m_data->getOffset();
-	stateCache.setSamplerState(stage, samplerState);
-	stateCache.setSamplerTexture(stage, &m_texture, m_texture.mipmap << 8);
+	if (m_data)
+	{
+		m_texture.offset = m_data->getOffset();
+		stateCache.setSamplerState(stage, samplerState);
+		stateCache.setSamplerTexture(stage, &m_texture, m_texture.mipmap << 8);
+	}
 }
 
 	}

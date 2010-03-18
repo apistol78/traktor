@@ -100,13 +100,6 @@ bool RenderTargetPs3::create(const RenderTargetSetCreateDesc& setDesc, const Ren
 	uint32_t textureSize = m_colorTexture.pitch * m_colorTexture.height;
 	m_colorData = LocalMemoryManager::getInstance().alloc(textureSize, 4096, false);
 
-	//log::info <<
-	//	L"PS3 render target created:" << Endl <<
-	//	L" format " << getTextureFormatName(desc.format) << Endl <<
-	//	L" size " << m_width << L"*" << m_height << Endl <<
-	//	L" offset " << (void*)m_colorData->getOffset() << L" (initial)" << Endl <<
-	//	L" pitch " << m_colorTexture.pitch << Endl;
-
 	return true;
 }
 
@@ -134,33 +127,14 @@ int RenderTargetPs3::getDepth() const
 	return 1;
 }
 
-void RenderTargetPs3::beginRender()
-{
-	T_ASSERT (m_inRender == false);
-	m_inRender = true;
-}
-
-void RenderTargetPs3::finishRender()
-{
-	T_ASSERT (m_inRender == true);
-	m_inRender = false;
-
-	// Write label at current location in command buffer.
-	m_waitLabel = ++s_waitLabelCounter;
-	//T_GCM_CALL(cellGcmSetWriteBackEndLabel)(gCellGcmCurrentContext, c_waitLabelId, m_waitLabel);
-}
-
 void RenderTargetPs3::bind(StateCachePs3& stateCache, int stage, const SamplerState& samplerState)
 {
 	T_ASSERT (!m_inRender);
 
-	// Wait until label has been reached.
+	// Issue GCM flush if RTs been updated.
 	if (m_waitLabel)
 	{
 		T_GCM_CALL(cellGcmFlush)(gCellGcmCurrentContext);
-	//	while (*m_waitLabelData < m_waitLabel)
-	//		sys_timer_usleep(100);
-
 		m_waitLabel = 0;
 	}
 
@@ -185,12 +159,18 @@ void RenderTargetPs3::bind(StateCachePs3& stateCache, int stage, const SamplerSt
 	}
 }
 
-const CellGcmTexture& RenderTargetPs3::getGcmColorTexture()
+void RenderTargetPs3::beginRender()
 {
-	if (m_colorData)
-		m_colorTexture.offset = m_colorData->getOffset();
+	T_ASSERT (m_inRender == false);
+	m_colorTexture.offset = m_colorData->getOffset();
+	m_inRender = true;
+}
 
-	return m_colorTexture;
+void RenderTargetPs3::finishRender()
+{
+	T_ASSERT (m_inRender == true);
+	m_inRender = false;
+	m_waitLabel = ++s_waitLabelCounter;
 }
 
 	}

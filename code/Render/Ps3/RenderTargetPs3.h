@@ -37,13 +37,15 @@ public:
 	
 	virtual int getDepth() const;
 
+	void bind(StateCachePs3& stateCache, int stage, const SamplerState& samplerState);
+
 	void beginRender();
 
 	void finishRender();
 
-	void bind(StateCachePs3& stateCache, int stage, const SamplerState& samplerState);
-
-	const CellGcmTexture& getGcmColorTexture();
+	const CellGcmTexture& getGcmColorTexture() {
+		return m_colorTexture;
+	}
 
 	uint32_t getGcmSurfaceColorFormat() const {
 		return m_colorSurfaceFormat;

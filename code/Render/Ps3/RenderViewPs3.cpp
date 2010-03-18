@@ -17,6 +17,8 @@ namespace traktor
 		namespace
 		{
 
+const uint32_t c_reportZCullStats0 = 100;
+const uint32_t c_reportZCullStats1 = 101;
 const uint32_t c_patchProgramSize = 1024 * 1024;
 const uint32_t c_patchProgramCount = 2;
 const uint8_t c_frameSyncLabelId = 128;
@@ -153,6 +155,26 @@ bool RenderViewPs3::create(const RenderViewCreateDefaultDesc& desc)
 
 		m_depthAddr = m_depthObject->getPointer();
 		m_depthTexture.offset = m_depthObject->getOffset();
+
+		// Setup Z-cull binding.
+		cellGcmBindZcull(
+			0,
+			m_depthTexture.offset,
+			surfaceWidth,
+			surfaceHeight,
+			0,
+			CELL_GCM_ZCULL_Z24S8,
+			CELL_GCM_SURFACE_CENTER_1,
+			CELL_GCM_ZCULL_LESS,
+			CELL_GCM_ZCULL_LONES,
+			CELL_GCM_SCULL_SFUNC_ALWAYS,
+			0,
+			0
+		);
+		T_GCM_CALL(cellGcmSetZcullStatsEnable)(
+			gCellGcmCurrentContext,
+			CELL_GCM_TRUE
+		);
 	}
 
 	// Create frame synchronization labels.
@@ -175,16 +197,20 @@ bool RenderViewPs3::create(const RenderViewCreateDefaultDesc& desc)
 
 void RenderViewPs3::close()
 {
+	cellGcmUnbindZcull(0);
+
 	if (m_patchProgramObject)
 	{
 		LocalMemoryManager::getInstance().free(m_patchProgramObject);
 		m_patchProgramObject = 0;
 	}
+
 	if (m_depthObject)
 	{
 		LocalMemoryManager::getInstance().free(m_depthObject);
 		m_depthObject = 0;
 	}
+
 	if (m_colorObject)
 	{
 		LocalMemoryManager::getInstance().free(m_colorObject);
@@ -250,7 +276,8 @@ bool RenderViewPs3::begin()
 		m_colorPitch,
 		m_depthTexture.offset,
 		m_depthTexture.pitch,
-		0
+		0,
+		true
 	};
 
 	T_ASSERT (m_renderTargetStack.empty());
@@ -260,6 +287,36 @@ bool RenderViewPs3::begin()
 	// Reset patched program pool.
 	uint8_t* patchArea = static_cast< uint8_t* >(m_patchProgramObject->getPointer()) + (m_frameCounter % c_patchProgramCount) * c_patchProgramSize;
 	m_patchProgramPool = PoolAllocator(patchArea, c_patchProgramSize);
+
+	/*
+	// Update Z-cull limits.
+	int32_t	maxSlope = cellGcmGetReport(CELL_GCM_ZCULL_STATS, c_reportZCullStats0);
+	int32_t	sumSlope = cellGcmGetReport(CELL_GCM_ZCULL_STATS1, c_reportZCullStats1);
+	int32_t numTiles = maxSlope & 0xffff;
+	maxSlope = (maxSlope & 0xFFFF0000) >> 16;
+	int32_t avgSlope = numTiles ? sumSlope / numTiles : 0;
+
+	int32_t moveForward = (avgSlope + maxSlope) / 2;
+	int32_t pushBack = moveForward / 2;
+
+	if (moveForward < 1)
+		moveForward = 1;
+
+	if (pushBack < 1)
+		pushBack = 1;
+
+	T_GCM_CALL(cellGcmSetZcullLimit)(
+		gCellGcmCurrentContext,
+		moveForward,
+		pushBack
+	);
+	T_GCM_CALL(cellGcmSetClearReport)(gCellGcmCurrentContext, CELL_GCM_ZCULL_STATS);
+	*/
+	T_GCM_CALL(cellGcmSetZcullLimit)(
+		gCellGcmCurrentContext,
+		0x100,
+		0x100
+	);
 
 	// Ensure no program is currently bound; might need to repatch program.
 	ProgramPs3::unbind();
@@ -274,6 +331,8 @@ bool RenderViewPs3::begin(RenderTargetSet* renderTargetSet, int renderTarget, bo
 	RenderTargetPs3* rt = rts->getRenderTarget(renderTarget);
 	T_ASSERT (rt);
 
+	rt->beginRender();
+
 	RenderState rs =
 	{
 		Viewport(0, 0, rt->getWidth(), rt->getHeight(), 0.0f, 1.0f),
@@ -284,20 +343,21 @@ bool RenderViewPs3::begin(RenderTargetSet* renderTargetSet, int renderTarget, bo
 		rt->getGcmColorTexture().pitch,
 		rts->getGcmDepthTexture().offset,
 		rts->getGcmDepthTexture().pitch,
-		rt
+		rt,
+		false
 	};
 
 	if (keepDepthStencil)
 	{
 		rs.depthOffset = m_renderTargetStack.back().depthOffset;
 		rs.depthPitch = m_renderTargetStack.back().depthPitch;
+		rs.zcull = m_renderTargetStack.back().zcull;
 	}
 
 	m_renderTargetStack.push_back(rs);
 	m_renderTargetDirty = true;
 
 	rts->setContentValid(true);
-	rt->beginRender();
 
 	return true;
 }
@@ -340,12 +400,13 @@ void RenderViewPs3::clear(uint32_t clearMask, const float color[4], float depth,
 		if (rs.depthOffset)
 		{
 			gcmClearMask |= CELL_GCM_CLEAR_Z;
-
 			T_GCM_CALL(cellGcmSetClearDepthStencil)(
 				gCellGcmCurrentContext,
 				(uint32_t(depth * 0xffffff) << 8) | (stencil & 0xff)
 			);
 		}
+		if (rs.zcull)
+			T_GCM_CALL(cellGcmSetInvalidateZcull)(gCellGcmCurrentContext);
 	}
 
 	if (gcmClearMask)
@@ -459,6 +520,11 @@ void RenderViewPs3::end()
 		rt->finishRender();
 		m_renderTargetDirty = true;
 	}
+	else
+	{
+		T_GCM_CALL(cellGcmSetReport)(gCellGcmCurrentContext, CELL_GCM_ZCULL_STATS, c_reportZCullStats0);
+		T_GCM_CALL(cellGcmSetReport)(gCellGcmCurrentContext, CELL_GCM_ZCULL_STATS1, c_reportZCullStats1);
+	}
 }
 
 void RenderViewPs3::present()
@@ -469,11 +535,10 @@ void RenderViewPs3::present()
 		return;
 	}
 	T_GCM_CALL(cellGcmSetWaitFlip)(gCellGcmCurrentContext);
-
 	T_GCM_CALL(cellGcmSetWriteBackEndLabel)(gCellGcmCurrentContext, c_frameSyncLabelId, m_frameCounter);
 	T_GCM_CALL(cellGcmFlush)(gCellGcmCurrentContext);
 
-	while (*m_frameSyncLabelData + 2 < m_frameCounter)
+	while (*m_frameSyncLabelData + 1 < m_frameCounter)
 		sys_timer_usleep(100);
 
 	m_frameCounter = incrementLabel(m_frameCounter);
@@ -502,34 +567,26 @@ void RenderViewPs3::setCurrentRenderState()
 	const RenderState& rs = m_renderTargetStack.back();
 
 	CellGcmSurface sf;
-
 	sf.colorFormat = rs.colorFormat;
 	sf.colorTarget= CELL_GCM_SURFACE_TARGET_0;
-
 	sf.colorLocation[0]	= CELL_GCM_LOCATION_LOCAL;
 	sf.colorOffset[0] = rs.colorOffset;
 	sf.colorPitch[0] = rs.colorPitch;
-
 	sf.colorLocation[1]	= CELL_GCM_LOCATION_LOCAL;
 	sf.colorOffset[1] = 0;
 	sf.colorPitch[1] = 64;
-
 	sf.colorLocation[2]	= CELL_GCM_LOCATION_LOCAL;
 	sf.colorOffset[2] = 0;
 	sf.colorPitch[2] = 64;
-
 	sf.colorLocation[3]	= CELL_GCM_LOCATION_LOCAL;
 	sf.colorOffset[3] = 0;
 	sf.colorPitch[3] = 64;
-
 	sf.depthFormat = CELL_GCM_SURFACE_Z24S8;
 	sf.depthLocation = CELL_GCM_LOCATION_LOCAL;
 	sf.depthOffset = rs.depthOffset;
 	sf.depthPitch = rs.depthPitch;
-
 	sf.type = CELL_GCM_SURFACE_PITCH;
 	sf.antialias = CELL_GCM_SURFACE_CENTER_1;
-
 	sf.width = rs.width;
 	sf.height = rs.height;
 	sf.x = 0;
@@ -546,6 +603,23 @@ void RenderViewPs3::setCurrentRenderState()
 		m_stateCache.setInFp32Mode(false);
 
 	m_stateCache.reset(/*StateCachePs3::RfRenderState | */StateCachePs3::RfSamplerStates);
+
+	if (rs.zcull && rs.depthOffset)
+	{
+		T_GCM_CALL(cellGcmSetZcullEnable)(
+			gCellGcmCurrentContext,
+			CELL_GCM_TRUE,
+			CELL_GCM_TRUE
+		);
+	}
+	else
+	{
+		T_GCM_CALL(cellGcmSetZcullEnable)(
+			gCellGcmCurrentContext,
+			CELL_GCM_FALSE,
+			CELL_GCM_FALSE
+		);
+	}
 
 	m_renderTargetDirty = false;
 }

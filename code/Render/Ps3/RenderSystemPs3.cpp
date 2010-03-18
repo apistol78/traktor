@@ -1,5 +1,6 @@
 #include <cstdlib>
 #include "Core/Log/Log.h"
+#include "Core/Memory/Alloc.h"
 #include "Core/Thread/Acquire.h"
 #include "Render/Ps3/PlatformPs3.h"
 #include "Render/Ps3/IndexBufferPs3.h"
@@ -22,7 +23,7 @@ namespace traktor
 		namespace
 		{
 
-const uint32_t c_cbSize = 0x10000;
+const uint32_t c_cbSize = 256 * 1024;
 const uint32_t c_hostSize = 8 * 1024 * 1024;
 
 		}
@@ -39,7 +40,7 @@ RenderSystemPs3::~RenderSystemPs3()
 
 bool RenderSystemPs3::create(const RenderSystemCreateDesc& desc)
 {
-	void* hostAddr = std::memalign(1024 * 1024, c_hostSize);
+	void* hostAddr = Alloc::acquireAlign(c_hostSize, 1024 * 1024);
 	if (cellGcmInit(c_cbSize, c_hostSize, hostAddr) != CELL_OK)
 		return false;
 
