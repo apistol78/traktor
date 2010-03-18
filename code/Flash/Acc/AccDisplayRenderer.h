@@ -99,15 +99,19 @@ private:
 	Ref< render::IRenderSystem > m_renderSystem;
 	RefArray< render::RenderContext > m_renderContexts;
 	Ref< render::RenderContext > m_renderContext;
-	RefArray< render::RenderTargetSet > m_renderTargetGlyphs;
+	Ref< render::RenderTargetSet > m_renderTargetGlyphs;
 	Ref< AccTextureCache > m_textureCache;
 	Ref< AccQuad > m_quad;
+	
 	std::map< uint64_t, CacheEntry > m_shapeCache;
-	std::map< uint64_t, render::RenderTargetSet* > m_glyphCache;
+
+	std::map< uint64_t, int32_t > m_glyphCache;
+	int32_t m_nextIndex;
+
 	Vector4 m_frameSize;
 	Vector4 m_viewSize;
+	Vector4 m_viewOffset;
 	float m_aspectRatio;
-	float m_scaleX;
 	bool m_clearBackground;
 	bool m_maskWrite;
 	bool m_maskIncrement;
