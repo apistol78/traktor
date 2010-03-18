@@ -21,6 +21,7 @@ namespace traktor
 
 class ActionObject;
 class ActionFunction;
+class ActionValue;
 class AsKey;
 class AsMouse;
 class FlashMovie;
@@ -154,6 +155,13 @@ public:
 	 * \return action virtual machine.
 	 */
 	Ref< IActionVM > getVM() const;
+
+	/*! \brief Set global ActionScript value.
+	 *
+	 * \param name Name of global member.
+	 * \param value Value of global member.
+	 */
+	void setGlobal(const std::wstring& name, const ActionValue& value);
 
 private:
 	struct Event

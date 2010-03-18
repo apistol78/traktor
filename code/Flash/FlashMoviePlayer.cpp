@@ -56,21 +56,21 @@ bool FlashMoviePlayer::create(FlashMovie* movie)
 	else
 		m_actionVM = new ActionVM2();
 
+	// Override some global methods.
+	setGlobal(L"getUrl", createNativeFunctionValue(this, &FlashMoviePlayer::Global_getUrl));
+	setGlobal(L"setInterval", createNativeFunctionValue(this, &FlashMoviePlayer::Global_setInterval));
+	setGlobal(L"clearInterval", createNativeFunctionValue(this, &FlashMoviePlayer::Global_clearInterval));
+
+	// Get references to key and mouse singletons.
 	Ref< ActionContext > context = m_movieInstance->getContext();
 	Ref< ActionObject > global = context->getGlobal();
 
-	// Override some global methods.
-	global->setMember(L"getUrl", createNativeFunctionValue(this, &FlashMoviePlayer::Global_getUrl));
-	global->setMember(L"setInterval", createNativeFunctionValue(this, &FlashMoviePlayer::Global_setInterval));
-	global->setMember(L"clearInterval", createNativeFunctionValue(this, &FlashMoviePlayer::Global_clearInterval));
-
-	// Get references to key and mouse singletons.
 	Ref< AsKey > key;
-	if (context->getGlobal()->getMember(L"Key", memberValue))
+	if (global->getMember(L"Key", memberValue))
 		m_key = memberValue.getObject< AsKey >();
 
 	Ref< AsMouse > mouse;
-	if (context->getGlobal()->getMember(L"Mouse", memberValue))
+	if (global->getMember(L"Mouse", memberValue))
 		m_mouse = memberValue.getObject< AsMouse >();
 
 	return true;
@@ -280,6 +280,17 @@ Ref< FlashSpriteInstance > FlashMoviePlayer::getMovieInstance() const
 Ref< IActionVM > FlashMoviePlayer::getVM() const
 {
 	return m_actionVM;
+}
+
+void FlashMoviePlayer::setGlobal(const std::wstring& name, const ActionValue& value)
+{
+	ActionContext* actionContext = m_movieInstance->getContext();
+	T_ASSERT (actionContext);
+
+	ActionObject* global = actionContext->getGlobal();
+	T_ASSERT (global);
+
+	global->setMember(name, value);
 }
 
 void FlashMoviePlayer::Global_getUrl(CallArgs& ca)
