@@ -16,6 +16,8 @@
 #include "Render/RenderTargetSet.h"
 #include "Render/Context/RenderContext.h"
 
+#define T_DEBUG_GLYPH_CACHE 0
+
 namespace traktor
 {
 	namespace flash
@@ -25,23 +27,31 @@ namespace traktor
 
 const uint32_t c_maxCacheSize = 64;
 const uint32_t c_maxUnusedCount = 40;
-const uint32_t c_maxCachedGlyphs = 32;
+
 #if !defined(TARGET_OS_IPHONE)
 const uint32_t c_cacheGlyphSize = 64;
 #else
 const uint32_t c_cacheGlyphSize = 32;
 #endif
-const uint32_t c_cacheGlyphMargin = 4;
+const uint32_t c_cacheGlyphMargin = 6;
+
+const uint32_t c_cacheGlyphCount = 64;
+const uint32_t c_cacheGlyphDimX = c_cacheGlyphSize * c_cacheGlyphCount;
+const uint32_t c_cacheGlyphDimY = c_cacheGlyphSize;
+
+const SwfCxTransform c_cxfZero = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
+const SwfCxTransform c_cxfIdentity = { 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f };
 
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AccDisplayRenderer", AccDisplayRenderer, IDisplayRenderer)
 
 AccDisplayRenderer::AccDisplayRenderer()
-:	m_frameSize(0.0f, 0.0f, 0.0f, 0.0f)
+:	m_nextIndex(0)
+,	m_frameSize(0.0f, 0.0f, 0.0f, 0.0f)
 ,	m_viewSize(0.0f, 0.0f, 0.0f, 0.0f)
+,	m_viewOffset(0.0f, 0.0f, 1.0f, 1.0f)
 ,	m_aspectRatio(1.0f)
-,	m_scaleX(1.0f)
 ,	m_clearBackground(false)
 ,	m_maskWrite(false)
 ,	m_maskIncrement(false)
@@ -74,22 +84,17 @@ bool AccDisplayRenderer::create(
 	if (!m_quad->create(resourceManager, renderSystem))
 		return false;
 
-	m_renderTargetGlyphs.resize(c_maxCachedGlyphs);
-	for (uint32_t i = 0; i < c_maxCachedGlyphs; ++i)
-	{
-		render::RenderTargetSetCreateDesc rtscd;
+	render::RenderTargetSetCreateDesc rtscd;
+	rtscd.count = 1;
+	rtscd.width = c_cacheGlyphDimX;
+	rtscd.height = c_cacheGlyphDimY;
+	rtscd.multiSample = 0;
+	rtscd.depthStencil = false;
+	rtscd.targets[0].format = render::TfR8G8B8A8;
 
-		rtscd.count = 1;
-		rtscd.width = c_cacheGlyphSize;
-		rtscd.height = c_cacheGlyphSize;
-		rtscd.multiSample = 0;
-		rtscd.depthStencil = false;
-		rtscd.targets[0].format = render::TfR8G8B8A8;
-
-		m_renderTargetGlyphs[i] = m_renderSystem->createRenderTargetSet(rtscd);
-		if (!m_renderTargetGlyphs[i])
-			return false;
-	}
+	m_renderTargetGlyphs = m_renderSystem->createRenderTargetSet(rtscd);
+	if (!m_renderTargetGlyphs)
+		return false;
 
 	m_renderContexts.resize(frameCount);
 	for (uint32_t i = 0; i < frameCount; ++i)
@@ -104,10 +109,7 @@ void AccDisplayRenderer::destroy()
 
 	safeDestroy(m_quad);
 	safeDestroy(m_textureCache);
-
-	for (RefArray< render::RenderTargetSet >::iterator i = m_renderTargetGlyphs.begin(); i != m_renderTargetGlyphs.end(); ++i)
-		(*i)->destroy();
-	m_renderTargetGlyphs.clear();
+	safeDestroy(m_renderTargetGlyphs);
 
 	for (std::map< uint64_t, CacheEntry >::iterator i = m_shapeCache.begin(); i != m_shapeCache.end(); ++i)
 		safeDestroy(i->second.shape);
@@ -126,7 +128,7 @@ void AccDisplayRenderer::build(uint32_t frame, bool correctAspectRatio)
 	else
 		m_aspectRatio = 0.0f;
 
-	m_scaleX = 1.0f;
+	m_viewOffset.set(0.0f, 0.0f, 1.0f, 1.0f);
 }
 
 void AccDisplayRenderer::render(render::IRenderView* renderView, uint32_t frame)
@@ -158,7 +160,8 @@ void AccDisplayRenderer::begin(const FlashMovie& movie, const SwfColor& backgrou
 	if (m_aspectRatio > FUZZY_EPSILON)
 	{
 		float frameAspect = (bounds.max.x - bounds.min.x) / (bounds.max.y - bounds.min.y);
-		m_scaleX = frameAspect / m_aspectRatio;
+		float scaleX = frameAspect / m_aspectRatio;
+		m_viewOffset.set(-(scaleX - 1.0f) / 2.0f, 0.0f, scaleX, 1.0f);
 	}
 
 	if (m_clearBackground)
@@ -232,10 +235,10 @@ void AccDisplayRenderer::renderShape(const FlashMovie& movie, const Matrix33& tr
 	accShape->render(
 		m_renderContext,
 		shape,
+		transform,
 		m_frameSize,
 		m_viewSize,
-		m_scaleX,
-		transform,
+		m_viewOffset,
 		cxform,
 		m_maskWrite,
 		m_maskIncrement,
@@ -250,8 +253,8 @@ void AccDisplayRenderer::renderMorphShape(const FlashMovie& movie, const Matrix3
 void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& transform, const FlashShape& shape, const SwfColor& color, const SwfCxTransform& cxform)
 {
 	uint64_t hash = reinterpret_cast< uint64_t >(&shape);
-	Ref< render::RenderTargetSet > rts;
 	Ref< AccShape > accShape;
+	int32_t index;
 
 	// Get glyph shape; create if not already cached.
 	std::map< uint64_t, CacheEntry >::iterator it1 = m_shapeCache.find(hash);
@@ -288,58 +291,56 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 	bounds.max.y += py;
 
 	// Get cached glyph target.
-	std::map< uint64_t, render::RenderTargetSet* >::iterator it2 = m_glyphCache.find(hash);
+	std::map< uint64_t, int32_t >::iterator it2 = m_glyphCache.find(hash);
 	if (it2 != m_glyphCache.end())
 	{
-		rts = it2->second;
-		T_ASSERT (rts);
+		index = it2->second;
 	}
 	else
 	{
-		// Glyph not cached; pick oldest render target which is done by simply
-		// cycling the array.
-		rts = m_renderTargetGlyphs.back();
-		m_renderTargetGlyphs.pop_back();
-		m_renderTargetGlyphs.push_front(rts);
-
-		// Remove from cache; we're about to change target.
-		for (std::map< uint64_t, render::RenderTargetSet* >::iterator i = m_glyphCache.begin(); i != m_glyphCache.end(); ++i)
+		// Glyph not cached; pick index by cycling which means oldest glyph get discarded.
+		index = m_nextIndex++ % c_cacheGlyphCount;
+		for (std::map< uint64_t, int32_t >::iterator i = m_glyphCache.begin(); i != m_glyphCache.end(); ++i)
 		{
-			if (i->second == rts)
+			if (i->second == index)
 			{
 				m_glyphCache.erase(i);
 				break;
 			}
 		}
 
-		// Indicate target as valid here; we don't want to wait until
-		// target actually been updated.
-		rts->setContentValid(true);
-
 		render::TargetBeginRenderBlock* renderBlockBegin = m_renderContext->alloc< render::TargetBeginRenderBlock >("Flash glyph render begin");
-		renderBlockBegin->renderTargetSet = rts;
+		renderBlockBegin->renderTargetSet = m_renderTargetGlyphs;
 		renderBlockBegin->renderTargetIndex = 0;
 		renderBlockBegin->keepDepthStencil = false;
 		m_renderContext->draw(render::RfOverlay, renderBlockBegin);
 
-		render::TargetClearRenderBlock* renderBlockClear = m_renderContext->alloc< render::TargetClearRenderBlock >();
-		renderBlockClear->clearMask = render::CfColor;
-		m_renderContext->draw(render::RfOverlay, renderBlockClear);
+		Vector4 frameSize(bounds.min.x, bounds.min.y, bounds.max.x, bounds.max.y);
+		Vector4 viewSize(0.0f, 0.0f, 0.0f, 0.0f);
+		Vector4 viewOffset(float(index) / c_cacheGlyphCount, 0.0f, 1.0f / c_cacheGlyphCount, 1.0f);
 
-		const SwfCxTransform cxfi = { 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f };
+		// Clear previous glyph by drawing a solid quad at it's place.
+		m_quad->render(
+			m_renderContext,
+			bounds,
+			Matrix33::identity(),
+			frameSize,
+			viewSize,
+			viewOffset,
+			c_cxfZero,
+			0,
+			Vector4::zero()
+		);
+
+		// Draw new glyph.
 		accShape->render(
 			m_renderContext,
 			shape,
-			Vector4(
-				bounds.min.x,
-				bounds.min.y,
-				bounds.max.x,
-				bounds.max.y
-			),
-			m_viewSize,
-			1.0f,
 			Matrix33::identity(),
-			cxfi,
+			frameSize,
+			viewSize,
+			viewOffset,
+			c_cxfIdentity,
 			false,
 			false,
 			false
@@ -349,7 +350,7 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 		m_renderContext->draw(render::RfOverlay, renderBlockEnd);
 
 		// Place in cache.
-		m_glyphCache[hash] = rts;
+		m_glyphCache[hash] = index;
 	}
 
 	// Draw glyph quad.
@@ -363,18 +364,35 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 
 	m_quad->render(
 		m_renderContext,
+		bounds,
+		transform,
 		m_frameSize,
 		m_viewSize,
-		m_scaleX,
-		transform,
-		bounds,
+		m_viewOffset,
 		cxf,
-		rts->getColorTexture(0)
+		m_renderTargetGlyphs->getColorTexture(0),
+		Vector4(float(index) / c_cacheGlyphCount, 0.0f, 1.0f / c_cacheGlyphCount, 1.0f)
 	);
 }
 
 void AccDisplayRenderer::end()
 {
+#if T_DEBUG_GLYPH_CACHE
+	// Overlay glyph cache.
+	const SwfRect bounds = { Vector2(0.0f, 0.0f), Vector2(c_cacheGlyphCount * 1024, 1024) };
+	m_quad->render(
+		m_renderContext,
+		bounds,
+		Matrix33::identity(),
+		m_frameSize,
+		m_viewSize,
+		m_viewOffset,
+		c_cxfIdentity,
+		m_renderTargetGlyphs->getColorTexture(0),
+		Vector4(0.0f, 0.0f, 1.0f, 1.0f)
+	);
+#endif
+
 	// Don't flush cache if it doesn't contain that many shapes.
 	if (m_shapeCache.size() < c_maxCacheSize)
 	{
@@ -395,19 +413,6 @@ void AccDisplayRenderer::end()
 		else
 			++i;
 	}
-
-#if !defined(_PS3)
-
-	// Remove cached glyphs if the target has become invalid.
-	for (std::map< uint64_t, render::RenderTargetSet* >::iterator i = m_glyphCache.begin(); i != m_glyphCache.end(); )
-	{
-		if (!i->second->isContentValid())
-			m_glyphCache.erase(i++);
-		else
-			++i;
-	}
-
-#endif
 }
 
 	}

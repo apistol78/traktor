@@ -16,6 +16,7 @@ namespace traktor
 		namespace
 		{
 
+const Guid c_guidShaderSolid(L"{1EDAAA67-1E02-8A49-B857-14D7812C96D6}");
 const Guid c_guidShaderTextured(L"{10426D17-CF0A-4849-A207-24F101A78459}");
 
 struct Vertex
@@ -24,14 +25,15 @@ struct Vertex
 };
 
 bool s_handleInitialized = false;
-render::handle_t s_handleFrameSize;
 render::handle_t s_handleTransform;
+render::handle_t s_handleFrameSize;
+render::handle_t s_handleViewSize;
+render::handle_t s_handleViewOffset;
+render::handle_t s_handleStepSize;
 render::handle_t s_handleCxFormMul;
 render::handle_t s_handleCxFormAdd;
 render::handle_t s_handleTexture;
-render::handle_t s_handleViewSize;
-render::handle_t s_handleScaleX;
-render::handle_t s_handleStepSize;
+render::handle_t s_handleTextureOffset;
 
 		}
 
@@ -42,16 +44,21 @@ bool AccQuad::create(
 {
 	if (!s_handleInitialized)
 	{
-		s_handleFrameSize = render::getParameterHandle(L"FrameSize");
 		s_handleTransform = render::getParameterHandle(L"Transform");
+		s_handleFrameSize = render::getParameterHandle(L"FrameSize");
+		s_handleViewSize = render::getParameterHandle(L"ViewSize");
+		s_handleViewOffset = render::getParameterHandle(L"ViewOffset");
+		s_handleStepSize = render::getParameterHandle(L"StepSize");
 		s_handleCxFormMul = render::getParameterHandle(L"CxFormMul");
 		s_handleCxFormAdd = render::getParameterHandle(L"CxFormAdd");
 		s_handleTexture = render::getParameterHandle(L"Texture");
-		s_handleViewSize = render::getParameterHandle(L"ViewSize");
-		s_handleScaleX = render::getParameterHandle(L"ScaleX");
-		s_handleStepSize = render::getParameterHandle(L"StepSize");
+		s_handleTextureOffset = render::getParameterHandle(L"TextureOffset");
 		s_handleInitialized = true;
 	}
+
+	m_shaderSolid = c_guidShaderSolid;
+	if (!resourceManager->bind(m_shaderSolid))
+		return false;
 
 	m_shaderTextured = c_guidShaderTextured;
 	if (!resourceManager->bind(m_shaderTextured))
@@ -83,13 +90,14 @@ void AccQuad::destroy()
 
 void AccQuad::render(
 	render::RenderContext* renderContext,
+	const SwfRect& bounds,
+	const Matrix33& transform,
 	const Vector4& frameSize,
 	const Vector4& viewSize,
-	float scaleX,
-	const Matrix33& transform,
-	const SwfRect& bounds,
+	const Vector4& viewOffset,
 	const SwfCxTransform& cxform,
-	render::ITexture* texture
+	render::ITexture* texture,
+	const Vector4& textureOffset
 )
 {
 	Matrix44 m1(
@@ -117,7 +125,7 @@ void AccQuad::render(
 	stepSize = m.inverse() * stepSize;
 
 	render::NonIndexedRenderBlock* renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >("Flash AccQuad");
-	renderBlock->shader = m_shaderTextured;
+	renderBlock->shader = texture ? m_shaderTextured : m_shaderSolid;
 	renderBlock->vertexBuffer = m_vertexBuffer;
 	renderBlock->primitive = render::PtTriangleStrip;
 	renderBlock->offset = 0;
@@ -128,11 +136,17 @@ void AccQuad::render(
 	renderBlock->shaderParams->setMatrixParameter(s_handleTransform, m);
 	renderBlock->shaderParams->setVectorParameter(s_handleFrameSize, frameSize);
 	renderBlock->shaderParams->setVectorParameter(s_handleViewSize, viewSize);
-	renderBlock->shaderParams->setFloatParameter(s_handleScaleX, scaleX);
+	renderBlock->shaderParams->setVectorParameter(s_handleViewOffset, viewOffset);
 	renderBlock->shaderParams->setVectorParameter(s_handleStepSize, stepSize);
 	renderBlock->shaderParams->setVectorParameter(s_handleCxFormMul, Vector4(cxform.red[0], cxform.green[0], cxform.blue[0], cxform.alpha[0]));
 	renderBlock->shaderParams->setVectorParameter(s_handleCxFormAdd, Vector4(cxform.red[1], cxform.green[1], cxform.blue[1], cxform.alpha[1]));
-	renderBlock->shaderParams->setTextureParameter(s_handleTexture, texture);
+	
+	if (texture)
+	{
+		renderBlock->shaderParams->setTextureParameter(s_handleTexture, texture);
+		renderBlock->shaderParams->setVectorParameter(s_handleTextureOffset, textureOffset);
+	}
+
 	renderBlock->shaderParams->endParameters(renderContext);
 
 	renderContext->draw(render::RfOverlay, renderBlock);

@@ -41,14 +41,14 @@ struct ConstructBatch
 };
 
 bool s_handleInitialized = false;
-render::handle_t s_handleFrameSize;
 render::handle_t s_handleTransform;
+render::handle_t s_handleFrameSize;
+render::handle_t s_handleViewSize;
+render::handle_t s_handleViewOffset;
 render::handle_t s_handleCxFormMul;
 render::handle_t s_handleCxFormAdd;
 render::handle_t s_handleTexture;
 render::handle_t s_handleTextureMatrix;
-render::handle_t s_handleViewSize;
-render::handle_t s_handleScaleX;
 
 		}
 
@@ -62,14 +62,14 @@ bool AccShape::create(
 {
 	if (!s_handleInitialized)
 	{
-		s_handleFrameSize = render::getParameterHandle(L"FrameSize");
 		s_handleTransform = render::getParameterHandle(L"Transform");
+		s_handleFrameSize = render::getParameterHandle(L"FrameSize");
+		s_handleViewSize = render::getParameterHandle(L"ViewSize");
+		s_handleViewOffset = render::getParameterHandle(L"ViewOffset");
 		s_handleCxFormMul = render::getParameterHandle(L"CxFormMul");
 		s_handleCxFormAdd = render::getParameterHandle(L"CxFormAdd");
 		s_handleTexture = render::getParameterHandle(L"Texture");
 		s_handleTextureMatrix = render::getParameterHandle(L"TextureMatrix");
-		s_handleViewSize = render::getParameterHandle(L"ViewSize");
-		s_handleScaleX = render::getParameterHandle(L"ScaleX");
 		s_handleInitialized = true;
 	}
 
@@ -291,10 +291,10 @@ void AccShape::destroy()
 void AccShape::render(
 	render::RenderContext* renderContext,
 	const FlashShape& shape,
+	const Matrix33& transform,
 	const Vector4& frameSize,
 	const Vector4& viewSize,
-	float scaleX,
-	const Matrix33& transform,
+	const Vector4& viewOffset,
 	const SwfCxTransform& cxform,
 	bool maskWrite,
 	bool maskIncrement,
@@ -341,12 +341,12 @@ void AccShape::render(
 	renderBlockSolid->shader = shaderSolid;
 	renderBlockSolid->shaderParams = renderContext->alloc< render::ShaderParameters >();
 	renderBlockSolid->shaderParams->beginParameters(renderContext);
-	renderBlockSolid->shaderParams->setVectorParameter(s_handleFrameSize, frameSize);
 	renderBlockSolid->shaderParams->setMatrixParameter(s_handleTransform, m);
+	renderBlockSolid->shaderParams->setVectorParameter(s_handleFrameSize, frameSize);
+	renderBlockSolid->shaderParams->setVectorParameter(s_handleViewSize, viewSize);
+	renderBlockSolid->shaderParams->setVectorParameter(s_handleViewOffset, viewOffset);
 	renderBlockSolid->shaderParams->setVectorParameter(s_handleCxFormMul, Vector4(cxform.red[0], cxform.green[0], cxform.blue[0], cxform.alpha[0]));
 	renderBlockSolid->shaderParams->setVectorParameter(s_handleCxFormAdd, Vector4(cxform.red[1], cxform.green[1], cxform.blue[1], cxform.alpha[1]));
-	renderBlockSolid->shaderParams->setVectorParameter(s_handleViewSize, viewSize);
-	renderBlockSolid->shaderParams->setFloatParameter(s_handleScaleX, scaleX);
 	renderBlockSolid->shaderParams->setStencilReference(maskReference);
 	renderBlockSolid->shaderParams->endParameters(renderContext);
 	renderContext->draw(render::RfOverlay, renderBlockSolid);
@@ -355,12 +355,12 @@ void AccShape::render(
 	renderBlockTextured->shader = shaderTextured;
 	renderBlockTextured->shaderParams = renderContext->alloc< render::ShaderParameters >();
 	renderBlockTextured->shaderParams->beginParameters(renderContext);
-	renderBlockTextured->shaderParams->setVectorParameter(s_handleFrameSize, frameSize);
 	renderBlockTextured->shaderParams->setMatrixParameter(s_handleTransform, m);
+	renderBlockTextured->shaderParams->setVectorParameter(s_handleFrameSize, frameSize);
+	renderBlockTextured->shaderParams->setVectorParameter(s_handleViewSize, viewSize);
+	renderBlockTextured->shaderParams->setVectorParameter(s_handleViewOffset, viewOffset);
 	renderBlockTextured->shaderParams->setVectorParameter(s_handleCxFormMul, Vector4(cxform.red[0], cxform.green[0], cxform.blue[0], cxform.alpha[0]));
 	renderBlockTextured->shaderParams->setVectorParameter(s_handleCxFormAdd, Vector4(cxform.red[1], cxform.green[1], cxform.blue[1], cxform.alpha[1]));
-	renderBlockTextured->shaderParams->setVectorParameter(s_handleViewSize, viewSize);
-	renderBlockTextured->shaderParams->setFloatParameter(s_handleScaleX, scaleX);
 	renderBlockTextured->shaderParams->setStencilReference(maskReference);
 	renderBlockTextured->shaderParams->endParameters(renderContext);
 	renderContext->draw(render::RfOverlay, renderBlockTextured);

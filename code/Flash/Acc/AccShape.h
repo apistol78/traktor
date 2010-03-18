@@ -55,10 +55,10 @@ public:
 	void render(
 		render::RenderContext* renderContext,
 		const FlashShape& shape,
+		const Matrix33& transform,
 		const Vector4& frameSize,
 		const Vector4& viewSize,
-		float scaleX,
-		const Matrix33& transform,
+		const Vector4& viewOffset,
 		const SwfCxTransform& cxform,
 		bool maskWrite,
 		bool maskIncrement,

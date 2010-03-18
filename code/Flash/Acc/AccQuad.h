@@ -46,16 +46,18 @@ public:
 
 	void render(
 		render::RenderContext* renderContext,
+		const SwfRect& bounds,
+		const Matrix33& transform,
 		const Vector4& frameSize,
 		const Vector4& viewSize,
-		float scaleX,
-		const Matrix33& transform,
-		const SwfRect& bounds,
+		const Vector4& viewOffset,
 		const SwfCxTransform& cxform,
-		render::ITexture* texture
+		render::ITexture* texture,
+		const Vector4& textureOffset
 	);
 
 private:
+	resource::Proxy< render::Shader > m_shaderSolid;
 	resource::Proxy< render::Shader > m_shaderTextured;
 	Ref< render::VertexBuffer > m_vertexBuffer;
 };
