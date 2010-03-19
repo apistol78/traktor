@@ -18,17 +18,29 @@
 #include "Flash/Action/Avm1/Classes/AsMovieClipLoader.h"
 #include "Flash/Action/Avm1/Classes/AsMouse.h"
 #include "Flash/Action/Avm1/Classes/AsNumber.h"
-#include "Flash/Action/Avm1/Classes/AsPoint.h"
-#include "Flash/Action/Avm1/Classes/AsRectangle.h"
 #include "Flash/Action/Avm1/Classes/AsSecurity.h"
 #include "Flash/Action/Avm1/Classes/AsSound.h"
 #include "Flash/Action/Avm1/Classes/AsStage.h"
 #include "Flash/Action/Avm1/Classes/AsString.h"
 #include "Flash/Action/Avm1/Classes/AsSystem.h"
 #include "Flash/Action/Avm1/Classes/AsTextField.h"
-#include "Flash/Action/Avm1/Classes/AsTween.h"
 #include "Flash/Action/Avm1/Classes/AsXML.h"
 #include "Flash/Action/Avm1/Classes/AsXMLNode.h"
+
+// flash.geom
+#include "Flash/Action/Avm1/Classes/AsPoint.h"
+#include "Flash/Action/Avm1/Classes/AsRectangle.h"
+
+// mx.transitions
+#include "Flash/Action/Avm1/Classes/AsTween.h"
+
+// mx.transitions.easing
+#include "Flash/Action/Avm1/Classes/As_mx_transitions_easing_Back.h"
+#include "Flash/Action/Avm1/Classes/As_mx_transitions_easing_Bounce.h"
+#include "Flash/Action/Avm1/Classes/As_mx_transitions_easing_Elastic.h"
+#include "Flash/Action/Avm1/Classes/As_mx_transitions_easing_None.h"
+#include "Flash/Action/Avm1/Classes/As_mx_transitions_easing_Regular.h"
+#include "Flash/Action/Avm1/Classes/As_mx_transitions_easing_Strong.h"
 
 namespace traktor
 {
@@ -96,6 +108,13 @@ ActionGlobal::ActionGlobal()
 			Ref< ActionObject > easing = new ActionObject(AsObject::getInstance());
 			if (easing)
 			{
+				easing->setMember(L"Back", ActionValue(As_mx_transitions_easing_Back::getInstance()));
+				easing->setMember(L"Bounce", ActionValue(As_mx_transitions_easing_Bounce::getInstance()));
+				easing->setMember(L"Elastic", ActionValue(As_mx_transitions_easing_Elastic::getInstance()));
+				easing->setMember(L"None", ActionValue(As_mx_transitions_easing_None::getInstance()));
+				easing->setMember(L"Regular", ActionValue(As_mx_transitions_easing_Regular::getInstance()));
+				easing->setMember(L"String", ActionValue(As_mx_transitions_easing_Strong::getInstance()));
+
 				transitions->setMember(L"easing", ActionValue(easing));
 			}
 		}

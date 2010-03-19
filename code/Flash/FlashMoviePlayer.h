@@ -199,7 +199,9 @@ private:
 	std::list< std::pair< std::wstring, std::wstring > > m_fsCommands;
 	std::map< uint32_t, Interval > m_interval;
 	uint32_t m_intervalNextId;
-	float m_untilNextFrame;
+	
+	double m_timeCurrent;
+	double m_timeNextFrame;
 
 	void Global_getUrl(CallArgs& ca);
 

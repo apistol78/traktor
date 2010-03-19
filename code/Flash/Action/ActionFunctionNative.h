@@ -102,6 +102,8 @@ class T_DLLCLASS ActionFunctionNative : public ActionFunction
 public:
 	ActionFunctionNative(CallFnc* callFnc);
 
+	virtual ActionValue call(const IActionVM* vm, ActionContext* context, ActionObject* self, const std::vector< ActionValue >& args);
+
 	virtual ActionValue call(const IActionVM* vm, ActionFrame* callerFrame, ActionObject* self);
 
 private:

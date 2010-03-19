@@ -80,8 +80,7 @@ int32_t translateVirtualKey(ui::VirtualKey vk)
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.FlashPreviewControl", FlashPreviewControl, ui::Widget)
 
 FlashPreviewControl::FlashPreviewControl()
-:	m_frameLength(0.0f)
-,	m_playing(false)
+:	m_playing(false)
 {
 }
 
@@ -321,22 +320,16 @@ void FlashPreviewControl::eventIdle(ui::Event* event)
 	{
 		float deltaTime = float(m_timer.getDeltaTime());
 
-		m_frameLength -= deltaTime;
-		if (m_frameLength <= 0.0f)
+		if (m_playing)
 		{
-			if (m_playing)
+			if (m_moviePlayer->progressFrame(deltaTime))
 			{
-				// Update movie logic.
-				m_moviePlayer->executeFrame();
-
-				// Read FS commands issued from this frame.
 				std::wstring command, args;
 				while (m_moviePlayer->getFsCommand(command, args))
 					log::info << L"FSCommand \"" << command << L"\" \"" << args << L"\"" << Endl;
-			}
 
-			m_frameLength = 1.0f / m_movie->getMovieClip()->getFrameRate();
-			update();
+				update();
+			}
 		}
 
 		idleEvent->requestMore();

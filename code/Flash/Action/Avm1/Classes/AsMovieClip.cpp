@@ -13,6 +13,42 @@ namespace traktor
 {
 	namespace flash
 	{
+		namespace
+		{
+
+float polarAngle(float x, float y)
+{
+	if (x == 0.0f && y == 0.0f)
+		return 0.0f;
+	
+	float r = sqrtf(x * x + y * y);
+
+	if (x > 0.0f)
+		return asinf(y / r);
+	else
+		return -asinf(y / r) + PI;
+}
+
+void decomposeTransform(const Matrix33& transform, Vector2& outTranslate, Vector2& outScale, float& outRotation)
+{
+	outTranslate.x = transform.e13;
+	outTranslate.y = transform.e23;
+
+	outScale.x = Vector2(transform.e11, transform.e12).length();
+	outScale.y = Vector2(transform.e21, transform.e22).length();
+
+	outRotation = polarAngle(transform.e11, transform.e12);
+}
+
+Matrix33 composeTransform(const Vector2& translate_, const Vector2& scale_, float rotate_)
+{
+	return
+		translate(translate_.x, translate_.y) *
+		scale(scale_.x, scale_.y) *
+		rotate(rotate_);
+}
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsMovieClip", AsMovieClip, ActionClass)
 
@@ -588,9 +624,11 @@ void AsMovieClip::MovieClip_get_height(CallArgs& ca)
 	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
 
 	float extent = (movieClipInstance->getBounds().max.y - movieClipInstance->getBounds().min.y) / 20.0f;
-	Matrix33 transform = movieClipInstance->getTransform();
 
-	ca.ret = ActionValue(transform.e22 * extent);
+	Vector2 T, S; float R;
+	decomposeTransform(movieClipInstance->getTransform(), T, S, R);
+
+	ca.ret = ActionValue(S.y * extent);
 }
 
 void AsMovieClip::MovieClip_set_height(CallArgs& ca)
@@ -598,11 +636,13 @@ void AsMovieClip::MovieClip_set_height(CallArgs& ca)
 	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
 	
 	float extent = (movieClipInstance->getBounds().max.y - movieClipInstance->getBounds().min.y) / 20.0f;
-	Matrix33 transform = movieClipInstance->getTransform();
 
-	transform.e22 = float(ca.args[0].getNumberSafe()) / extent;
+	Vector2 T, S; float R;
+	decomposeTransform(movieClipInstance->getTransform(), T, S, R);
 
-	movieClipInstance->setTransform(transform);
+	S.y = float(ca.args[0].getNumberSafe()) / extent;
+
+	movieClipInstance->setTransform(composeTransform(T, S, R));
 }
 
 void AsMovieClip::MovieClip_get_highquality(CallArgs& ca)
@@ -679,21 +719,24 @@ void AsMovieClip::MovieClip_set_quality(CallArgs& ca)
 void AsMovieClip::MovieClip_get_rotation(CallArgs& ca)
 {
 	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
-	Matrix33 transform = movieClipInstance->getTransform();
-	float x = transform.e11;
-	float y = transform.e21;
-	float a = atan2f(y, x);
-	ca.ret = ActionValue(rad2deg(a));
+
+	Vector2 T, S; float R;
+	decomposeTransform(movieClipInstance->getTransform(), T, S, R);
+
+	ca.ret = ActionValue(rad2deg(R));
 }
 
 void AsMovieClip::MovieClip_set_rotation(CallArgs& ca)
 {
 	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
-	Matrix33 transform = movieClipInstance->getTransform();
-	movieClipInstance->setTransform(
-		rotate(deg2rad(float(ca.args[0].getNumberSafe()))) *
-		translate(transform.e13, transform.e23)
-	);
+	float deg = float(ca.args[0].getNumberSafe());
+
+	Vector2 T, S; float R;
+	decomposeTransform(movieClipInstance->getTransform(), T, S, R);
+
+	R = deg2rad(deg);
+
+	movieClipInstance->setTransform(composeTransform(T, S, R));
 }
 
 void AsMovieClip::MovieClip_get_scale9Grid(CallArgs& ca)
@@ -807,37 +850,47 @@ void AsMovieClip::MovieClip_set_visible(CallArgs& ca)
 void AsMovieClip::MovieClip_get_width(CallArgs& ca)
 {
 	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
-	
 	float extent = (movieClipInstance->getBounds().max.x - movieClipInstance->getBounds().min.x) / 20.0f;
-	Matrix33 transform = movieClipInstance->getTransform();
 
-	ca.ret = ActionValue(transform.e11 * extent);
+	Vector2 T, S; float R;
+	decomposeTransform(movieClipInstance->getTransform(), T, S, R);
+
+	ca.ret = ActionValue(S.x * extent);
 }
 
 void AsMovieClip::MovieClip_set_width(CallArgs& ca)
 {
 	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
-
 	float extent = (movieClipInstance->getBounds().max.x - movieClipInstance->getBounds().min.x) / 20.0f;
-	Matrix33 transform = movieClipInstance->getTransform();
 
-	transform.e11 = float(ca.args[0].getNumberSafe()) / extent;
+	Vector2 T, S; float R;
+	decomposeTransform(movieClipInstance->getTransform(), T, S, R);
 
-	movieClipInstance->setTransform(transform);
+	S.x = float(ca.args[0].getNumberSafe()) / extent;
+
+	movieClipInstance->setTransform(composeTransform(T, S, R));
 }
 
 void AsMovieClip::MovieClip_get_x(CallArgs& ca)
 {
 	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
-	ca.ret = ActionValue(avm_number_t(movieClipInstance->getTransform().e13 / 20.0));
+
+	Vector2 T, S; float R;
+	decomposeTransform(movieClipInstance->getTransform(), T, S, R);
+
+	ca.ret = ActionValue(avm_number_t(T.x / 20.0));
 }
 
 void AsMovieClip::MovieClip_set_x(CallArgs& ca)
 {
 	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
-	Matrix33 transform = movieClipInstance->getTransform();
-	transform.e13 = float(ca.args[0].getNumberSafe() * 20.0);
-	movieClipInstance->setTransform(transform);
+
+	Vector2 T, S; float R;
+	decomposeTransform(movieClipInstance->getTransform(), T, S, R);
+
+	T.x = float(ca.args[0].getNumberSafe() * 20.0);
+
+	movieClipInstance->setTransform(composeTransform(T, S, R));
 }
 
 void AsMovieClip::MovieClip_get_xmouse(CallArgs& ca)
@@ -853,29 +906,45 @@ void AsMovieClip::MovieClip_set_xmouse(CallArgs& ca)
 void AsMovieClip::MovieClip_get_xscale(CallArgs& ca)
 {
 	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
-	ca.ret = ActionValue(avm_number_t(movieClipInstance->getTransform().e11 * 100.0));
+	
+	Vector2 T, S; float R;
+	decomposeTransform(movieClipInstance->getTransform(), T, S, R);
+	
+	ca.ret = ActionValue(avm_number_t(S.x * 100.0));
 }
 
 void AsMovieClip::MovieClip_set_xscale(CallArgs& ca)
 {
 	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
-	Matrix33 transform = movieClipInstance->getTransform();
-	transform.e11 = float(ca.args[0].getNumberSafe() / 100.0);
-	movieClipInstance->setTransform(transform);
+
+	Vector2 T, S; float R;
+	decomposeTransform(movieClipInstance->getTransform(), T, S, R);
+
+	S.x = float(ca.args[0].getNumberSafe() / 100.0);
+
+	movieClipInstance->setTransform(composeTransform(T, S, R));
 }
 
 void AsMovieClip::MovieClip_get_y(CallArgs& ca)
 {
 	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
-	ca.ret = ActionValue(avm_number_t(movieClipInstance->getTransform().e23 / 20.0));
+
+	Vector2 T, S; float R;
+	decomposeTransform(movieClipInstance->getTransform(), T, S, R);
+
+	ca.ret = ActionValue(avm_number_t(T.y / 20.0));
 }
 
 void AsMovieClip::MovieClip_set_y(CallArgs& ca)
 {
 	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
-	Matrix33 transform = movieClipInstance->getTransform();
-	transform.e23 = float(ca.args[0].getNumberSafe() * 20.0);
-	movieClipInstance->setTransform(transform);
+
+	Vector2 T, S; float R;
+	decomposeTransform(movieClipInstance->getTransform(), T, S, R);
+
+	T.y = float(ca.args[0].getNumberSafe() * 20.0);
+
+	movieClipInstance->setTransform(composeTransform(T, S, R));
 }
 
 void AsMovieClip::MovieClip_get_ymouse(CallArgs& ca)
@@ -891,15 +960,23 @@ void AsMovieClip::MovieClip_set_ymouse(CallArgs& ca)
 void AsMovieClip::MovieClip_get_yscale(CallArgs& ca)
 {
 	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
-	ca.ret = ActionValue(avm_number_t(movieClipInstance->getTransform().e22 * 100.0));
+
+	Vector2 T, S; float R;
+	decomposeTransform(movieClipInstance->getTransform(), T, S, R);
+
+	ca.ret = ActionValue(avm_number_t(S.y * 100.0));
 }
 
 void AsMovieClip::MovieClip_set_yscale(CallArgs& ca)
 {
 	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
-	Matrix33 transform = movieClipInstance->getTransform();
-	transform.e22 = float(ca.args[0].getNumberSafe() / 100.0);
-	movieClipInstance->setTransform(transform);
+
+	Vector2 T, S; float R;
+	decomposeTransform(movieClipInstance->getTransform(), T, S, R);
+
+	S.y = float(ca.args[0].getNumberSafe() / 100.0);
+
+	movieClipInstance->setTransform(composeTransform(T, S, R));
 }
 
 	}
