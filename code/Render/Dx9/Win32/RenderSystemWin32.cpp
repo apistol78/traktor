@@ -247,6 +247,7 @@ void RenderSystemWin32::destroy()
 
 	if (m_hWnd)
 	{
+		SetWindowLongPtr(m_hWnd, 0, 0);
 		DestroyWindow(m_hWnd);
 		m_hWnd = NULL;
 	}
@@ -639,7 +640,7 @@ LRESULT RenderSystemWin32::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 		break;
 
 	case WM_KEYDOWN:
-		if (wParam == VK_RETURN)
+		if (renderSystem && wParam == VK_RETURN)
 		{
 			if (GetAsyncKeyState(VK_CONTROL) != 0)
 				renderSystem->toggleMode();
@@ -660,6 +661,7 @@ LRESULT RenderSystemWin32::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 		break;
 		
 	case WM_DESTROY:
+		SetWindowLongPtr(hWnd, 0, 0);
 		PostQuitMessage(0);
 		break;
 		
@@ -668,7 +670,7 @@ LRESULT RenderSystemWin32::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 		break;
 
 	case WM_SETCURSOR:
-		if (!renderSystem->m_d3dPresent.Windowed)
+		if (renderSystem && !renderSystem->m_d3dPresent.Windowed)
 			SetCursor(NULL);
 		else
 			SetCursor(LoadCursor(NULL, IDC_ARROW));
