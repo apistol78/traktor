@@ -86,7 +86,6 @@ private:
 	Ref< FlashMoviePlayer > m_moviePlayer;
 	Ref< FlashMovie > m_movie;
 	Timer m_timer;
-	float m_frameLength;
 	bool m_playing;
 
 	ui::Point getTwips(const ui::Point& pt) const;

@@ -111,6 +111,12 @@ public:
 		return dynamic_type_cast< ObjectType* >(getObject());
 	}
 
+	template < typename ObjectType >
+	ObjectType* getObjectSafe() const
+	{
+		return dynamic_type_cast< ObjectType* >(getObject());
+	}
+
 private:
 	union Value
 	{

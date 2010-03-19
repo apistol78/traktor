@@ -102,12 +102,9 @@ private:
 	Ref< render::RenderTargetSet > m_renderTargetGlyphs;
 	Ref< AccTextureCache > m_textureCache;
 	Ref< AccQuad > m_quad;
-	
 	std::map< uint64_t, CacheEntry > m_shapeCache;
-
 	std::map< uint64_t, int32_t > m_glyphCache;
 	int32_t m_nextIndex;
-
 	Vector4 m_frameSize;
 	Vector4 m_viewSize;
 	Vector4 m_viewOffset;

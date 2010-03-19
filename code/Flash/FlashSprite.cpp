@@ -61,23 +61,14 @@ const RefArray< ActionScript >& FlashSprite::getInitActionScripts() const
 
 Ref< FlashCharacterInstance > FlashSprite::createInstance(ActionContext* context, FlashCharacterInstance* parent) const
 {
-	Ref< ActionObject > global = context->getGlobal();
-
-	Ref< ActionContext > spriteContext = new ActionContext(context->getMovie(), global);
-	Ref< FlashSpriteInstance > spriteInstance = new FlashSpriteInstance(spriteContext, parent, this);
-
-	if (!parent)
-	{
-		global->setMember(L"_root", ActionValue(spriteInstance));
-		global->setMember(L"_level0", ActionValue(spriteInstance));
-	}
+	Ref< FlashSpriteInstance > spriteInstance = new FlashSpriteInstance(context, parent, this);
 
 	// See if MovieClip has another class registered.
 	std::wstring exportName;
 	if (context->getMovie()->getExportName(getId(), exportName))
 	{
 		ActionValue movieClipClass;
-		if (global->getMember(exportName, movieClipClass))
+		if (context->getGlobal()->getMember(exportName, movieClipClass))
 			spriteInstance->setMember(L"prototype", movieClipClass);
 	}
 

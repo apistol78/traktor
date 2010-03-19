@@ -21,6 +21,20 @@ ActionFunctionNative::ActionFunctionNative(CallFnc* callFnc)
 		setMember(L"__proto__", classPrototype);
 }
 
+ActionValue ActionFunctionNative::call(const IActionVM* vm, ActionContext* context, ActionObject* self, const std::vector< ActionValue >& args)
+{
+	CallArgs fnc;
+	fnc.vm = vm;
+	fnc.context = context;
+	fnc.self = self;
+	fnc.args = args;
+
+	if (m_callFnc)
+		m_callFnc->call(fnc);
+
+	return fnc.ret;
+}
+
 ActionValue ActionFunctionNative::call(const IActionVM* vm, ActionFrame* callerFrame, ActionObject* self)
 {
 	ActionValueStack& callerStack = callerFrame->getStack();

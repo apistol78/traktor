@@ -14,6 +14,11 @@ ActionClass::ActionClass(const std::wstring& name)
 {
 }
 
+ActionValue ActionClass::call(const IActionVM* vm, ActionContext* context, ActionObject* self, const std::vector< ActionValue >& args)
+{
+	return construct(context, args);
+}
+
 ActionValue ActionClass::call(const IActionVM* vm, ActionFrame* callerFrame, ActionObject* self)
 {
 	ActionValueStack& callerStack = callerFrame->getStack();

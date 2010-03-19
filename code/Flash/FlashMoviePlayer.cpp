@@ -30,7 +30,8 @@ FlashMoviePlayer::FlashMoviePlayer(IDisplayRenderer* displayRenderer)
 :	m_displayRenderer(displayRenderer)
 ,	m_movieRenderer(new FlashMovieRenderer(displayRenderer))
 ,	m_intervalNextId(1)
-,	m_untilNextFrame(0.0f)
+,	m_timeCurrent(0.0)
+,	m_timeNextFrame(0.0)
 {
 }
 
@@ -136,14 +137,7 @@ void FlashMoviePlayer::executeFrame()
 
 	// Issue interval functions.
 	for (std::map< uint32_t, Interval >::iterator i = m_interval.begin(); i != m_interval.end(); ++i)
-	{
-		ActionFrame callFrame(context, 0, 0, 0, 4, 0, 0);
-		i->second.function->call(
-			m_actionVM,
-			&callFrame,
-			i->second.target
-		);
-	}
+		i->second.function->call(m_actionVM, context, i->second.target, std::vector< ActionValue >());
 
 	// Issue all events in sequence as each event possibly update
 	// the play head and other aspects of the movie.
@@ -193,21 +187,26 @@ void FlashMoviePlayer::executeFrame()
 	// Finally issue the frame event.
 	m_movieInstance->eventFrame(m_actionVM);
 
+	// Notify frame listeners.
+	context->notifyFrameListeners(m_actionVM, avm_number_t(m_timeCurrent));
+
 	m_movieInstance->postDispatchEvents(m_actionVM);
 }
 
 bool FlashMoviePlayer::progressFrame(float deltaTime)
 {
-	m_untilNextFrame -= deltaTime;
-	if (m_untilNextFrame <= FUZZY_EPSILON)
+	m_timeCurrent += deltaTime;
+	if (m_timeCurrent >= m_timeNextFrame)
 	{
 		Timer timer;
+
 		timer.start();
-		
 		executeFrame();
 
-		m_untilNextFrame = 1.0f / m_movie->getMovieClip()->getFrameRate();
-		m_untilNextFrame -= float(timer.getElapsedTime());
+		double frameDuration = timer.getElapsedTime();
+		double frequency = 1.0 / m_movie->getMovieClip()->getFrameRate();
+
+		m_timeNextFrame += frequency - frameDuration;
 		return true;
 	}
 	else

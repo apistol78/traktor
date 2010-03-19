@@ -2,6 +2,7 @@
 #define traktor_flash_ActionContext_H
 
 #include "Core/Object.h"
+#include "Core/RefArray.h"
 #include "Flash/Action/ActionValue.h"
 
 // import/export mechanism.
@@ -18,6 +19,7 @@ namespace traktor
 	{
 
 class FlashMovie;
+class IActionVM;
 
 /*! \brief ActionScript execution context.
  * \ingroup Flash
@@ -29,13 +31,26 @@ class T_DLLCLASS ActionContext : public Object
 public:
 	ActionContext(const FlashMovie* movie, ActionObject* global);
 
+	void addFrameListener(ActionObject* frameListener);
+
+	void removeFrameListener(ActionObject* frameListener);
+
+	void notifyFrameListeners(const IActionVM* vm, avm_number_t time);
+
 	inline Ref< const FlashMovie > getMovie() const { return m_movie; }
 
 	inline Ref< ActionObject > getGlobal() const { return m_global; }
 
 private:
+	struct FrameListener
+	{
+		Ref< ActionObject > listenerTarget;
+		Ref< ActionFunction > listenerFunction;
+	};
+
 	Ref< const FlashMovie > m_movie;
 	Ref< ActionObject > m_global;
+	std::vector< FrameListener > m_frameListeners;
 };
 
 	}

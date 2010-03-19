@@ -28,6 +28,27 @@ ActionFunction1::ActionFunction1(
 		setMember(L"__proto__", classPrototype);
 }
 
+ActionValue ActionFunction1::call(const IActionVM* vm, ActionContext* context, ActionObject* self, const std::vector< ActionValue >& args)
+{
+	ActionFrame callFrame(
+		context,
+		self,
+		m_code,
+		m_codeSize,
+		4,
+		m_dictionary,
+		this
+	);
+
+	for (size_t i = 0; i < args.size(); ++i)
+		callFrame.getStack().push(args[i]);
+
+	vm->execute(&callFrame);
+
+	ActionValueStack& callStack = callFrame.getStack();
+	return !callStack.empty() ? callStack.top() : ActionValue();
+}
+
 ActionValue ActionFunction1::call(const IActionVM* vm, ActionFrame* callerFrame, ActionObject* self)
 {
 	ActionValueStack& callerStack = callerFrame->getStack();
@@ -53,15 +74,7 @@ ActionValue ActionFunction1::call(const IActionVM* vm, ActionFrame* callerFrame,
 	for (int32_t i = 0; i < argCount; ++i)
 		callFrame.getStack().push(args[i]);
 
-#if defined(_DEBUG)
-	log::debug << L"ActionFunction1, enter VM" << Endl << IncreaseIndent;
-#endif
-
 	vm->execute(&callFrame);
-
-#if defined(_DEBUG)
-	log::debug << DecreaseIndent << L"ActionFunction1, returned from VM" << Endl;
-#endif
 
 	ActionValueStack& callStack = callFrame.getStack();
 	return !callStack.empty() ? callStack.top() : ActionValue();

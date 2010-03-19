@@ -32,10 +32,17 @@ ActionSuper::ActionSuper(ActionObject* object)
 	setMember(L"__proto__", ActionValue(m_superPrototype));
 	setReadOnly();
 
+#if defined(_DEBUG)
 	if (m_superClass)
 		log::debug << L"ActionSuper; using class " << checked_type_cast< ActionFunction* >(m_superClass)->getName() << Endl;
 	else
 		log::debug << L"ActionSuper; no constructor" << Endl;
+#endif
+}
+
+ActionValue ActionSuper::call(const IActionVM* vm, ActionContext* context, ActionObject* self, const std::vector< ActionValue >& args)
+{
+	return ActionValue();
 }
 
 ActionValue ActionSuper::call(const IActionVM* vm, ActionFrame* callerFrame, ActionObject* self)
