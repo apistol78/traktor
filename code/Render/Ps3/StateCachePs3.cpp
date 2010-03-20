@@ -148,7 +148,7 @@ void StateCachePs3::setSamplerState(int32_t stage, const SamplerState& ss)
 		T_GCM_CALL(cellGcmSetTextureFilter)(
 			gCellGcmCurrentContext,
 			stage,
-			0,
+			(-0x0080) & (0x1fff),		// -0.50 mip bias
 			ss.minFilter,
 			ss.magFilter,
 			CELL_GCM_TEXTURE_CONVOLUTION_QUINCUNX
