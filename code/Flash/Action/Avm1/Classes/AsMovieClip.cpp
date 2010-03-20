@@ -524,10 +524,17 @@ void AsMovieClip::MovieClip_unloadMovie(CallArgs& ca)
 
 void AsMovieClip::MovieClip_get_alpha(CallArgs& ca)
 {
+	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
+	const SwfCxTransform& colorTransform = movieClipInstance->getColorTransform();
+	ca.ret = ActionValue(colorTransform.alpha[0] * 100.0f);
 }
 
 void AsMovieClip::MovieClip_set_alpha(CallArgs& ca)
 {
+	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
+	SwfCxTransform colorTransform = movieClipInstance->getColorTransform();
+	colorTransform.alpha[0] = ca.args[0].getNumberSafe() / 100.0f;
+	movieClipInstance->setColorTransform(colorTransform);
 }
 
 void AsMovieClip::MovieClip_get_blendMode(CallArgs& ca)

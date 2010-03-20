@@ -31,6 +31,7 @@ Tween::Tween(
 ,	m_duration(duration)
 ,	m_useSeconds(useSeconds)
 ,	m_timeStart(avm_number_t(-1))
+,	m_current(begin)
 ,	m_playing(false)
 {
 	if (m_target)
@@ -47,6 +48,9 @@ Tween::~Tween()
 
 void Tween::continueTo(avm_number_t finish, avm_number_t duration)
 {
+	m_begin = m_current;
+	m_finish = finish;
+	m_duration = duration;
 }
 
 void Tween::fforward()
@@ -118,7 +122,9 @@ void Tween::onFrame(CallArgs& ca)
 	argv0[1] = ActionValue(m_begin);
 	argv0[2] = ActionValue(m_finish - m_begin);
 	argv0[3] = ActionValue(m_duration);
+
 	ActionValue value = m_function->call(ca.vm, ca.context, this, argv0);
+	m_current = value.getNumberSafe();
 
 	// Set property value.
 	std::vector< ActionValue > argv1(1);
