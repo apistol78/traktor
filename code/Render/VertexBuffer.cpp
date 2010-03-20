@@ -7,8 +7,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VertexBuffer", VertexBuffer, Object)
 
-VertexBuffer::VertexBuffer(uint32_t bufferSize) :
-	m_bufferSize(bufferSize)
+VertexBuffer::VertexBuffer(uint32_t bufferSize)
+:	m_bufferSize(bufferSize)
 {
 }
 
