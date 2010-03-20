@@ -474,7 +474,7 @@ SwfShapeRecord* SwfReader::readShapeRecord(uint32_t numFillBits, uint32_t numLin
 
 bool SwfReader::readShapeWithStyle(SwfShape*& outShape, SwfStyles*& outStyles, int shapeType)
 {
-	const uint32_t c_maxRecordCount = 2 * 4096UL;
+	const uint32_t c_maxRecordCount = 8 * 4096UL;
 
 	outStyles = readStyles(shapeType);
 	if (!outStyles)

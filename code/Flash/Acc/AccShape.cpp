@@ -204,9 +204,9 @@ bool AccShape::create(
 
 				vertex->pos[0] = j->v[k].x;
 				vertex->pos[1] = j->v[k].y;
-				vertex->color[0] = color.r;
+				vertex->color[2] = color.r;
 				vertex->color[1] = color.g;
-				vertex->color[2] = color.b;
+				vertex->color[0] = color.b;
 				vertex->color[3] = color.a;
 
 				vertex++;
@@ -260,9 +260,9 @@ bool AccShape::create(
 
 				vertex->pos[0] = v[c_indices[k]].x;
 				vertex->pos[1] = v[c_indices[k]].y;
-				vertex->color[0] = color.r;
+				vertex->color[2] = color.r;
 				vertex->color[1] = color.g;
-				vertex->color[2] = color.b;
+				vertex->color[0] = color.b;
 				vertex->color[3] = color.a;
 
 				vertex++;
