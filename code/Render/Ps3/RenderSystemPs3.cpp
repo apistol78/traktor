@@ -1,4 +1,5 @@
 #include <cstdlib>
+#include <cell/sysmodule.h>
 #include "Core/Log/Log.h"
 #include "Core/Memory/Alloc.h"
 #include "Core/Thread/Acquire.h"
@@ -41,6 +42,9 @@ RenderSystemPs3::~RenderSystemPs3()
 
 bool RenderSystemPs3::create(const RenderSystemCreateDesc& desc)
 {
+	// Load A/V configuration module; necessary in order to change gamma.
+	cellSysmoduleLoadModule(CELL_SYSMODULE_AVCONF_EXT);
+
 	uint8_t* data = (uint8_t*)Alloc::acquireAlign(c_hostSize + c_mainSize, 1024 * 1024);
 	if (!data)
 		return 0;

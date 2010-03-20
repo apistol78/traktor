@@ -194,6 +194,10 @@ bool RenderViewPs3::create(MemoryHeap* memoryHeap, const RenderViewCreateDefault
 		false
 	);
 
+	// Set default gamma correction.
+	const float c_defaultGammaCorrection = 0.8f;
+	cellVideoOutSetGamma(CELL_VIDEO_OUT_PRIMARY, c_defaultGammaCorrection);
+
 	setViewport(Viewport(0, 0, m_width, m_height, 0.0f, 1.0f));
 	return true;
 }
