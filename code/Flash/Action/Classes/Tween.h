@@ -59,6 +59,7 @@ private:
 	bool m_useSeconds;
 
 	avm_number_t m_timeStart;
+	avm_number_t m_current;
 	bool m_playing;
 
 	void onFrame(CallArgs& ca);
