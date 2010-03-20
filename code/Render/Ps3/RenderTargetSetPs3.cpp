@@ -1,8 +1,8 @@
 #include "Core/Log/Log.h"
 #include "Render/Ps3/RenderTargetSetPs3.h"
 #include "Render/Ps3/RenderTargetPs3.h"
-#include "Render/Ps3/LocalMemoryManager.h"
-#include "Render/Ps3/LocalMemoryObject.h"
+#include "Render/Ps3/MemoryHeap.h"
+#include "Render/Ps3/MemoryHeapObject.h"
 
 namespace traktor
 {
@@ -25,7 +25,7 @@ RenderTargetSetPs3::~RenderTargetSetPs3()
 	destroy();
 }
 
-bool RenderTargetSetPs3::create(const RenderTargetSetCreateDesc& desc)
+bool RenderTargetSetPs3::create(MemoryHeap* memoryHeap, const RenderTargetSetCreateDesc& desc)
 {
 	m_width = desc.width;
 	m_height = desc.height;
@@ -34,7 +34,7 @@ bool RenderTargetSetPs3::create(const RenderTargetSetCreateDesc& desc)
 	for (int32_t i = 0; i < desc.count; ++i)
 	{
 		m_renderTargets[i] = new RenderTargetPs3();
-		if (!m_renderTargets[i]->create(desc, desc.targets[i]))
+		if (!m_renderTargets[i]->create(memoryHeap, desc, desc.targets[i]))
 			return false;
 	}
 
@@ -53,7 +53,7 @@ bool RenderTargetSetPs3::create(const RenderTargetSetCreateDesc& desc)
 		m_depthTexture.offset = 0;
 
 		uint32_t depthSize = m_depthTexture.pitch * m_depthTexture.height;
-		m_depthData = LocalMemoryManager::getInstance().alloc(depthSize, 4096, false);
+		m_depthData = memoryHeap->alloc(depthSize, 4096, false);
 	}
 	else
 	{
@@ -72,7 +72,7 @@ void RenderTargetSetPs3::destroy()
 {
 	if (m_depthData)
 	{
-		LocalMemoryManager::getInstance().free(m_depthData);
+		m_depthData->free();
 		m_depthData = 0;
 	}
 }

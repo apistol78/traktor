@@ -3,8 +3,8 @@
 #include "Core/Misc/Align.h"
 #include "Core/Thread/Acquire.h"
 #include "Render/Ps3/PlatformPs3.h"
-#include "Render/Ps3/LocalMemoryManager.h"
-#include "Render/Ps3/LocalMemoryObject.h"
+#include "Render/Ps3/MemoryHeap.h"
+#include "Render/Ps3/MemoryHeapObject.h"
 
 namespace traktor
 {
@@ -18,28 +18,22 @@ const uint32_t c_transferWaitLabelId = 151;
 
 		}
 
-LocalMemoryManager& LocalMemoryManager::getInstance()
+MemoryHeap::MemoryHeap(void* heap, size_t heapSize, uint8_t location)
+:	m_heap(static_cast< uint8_t* >(heap))
+,	m_heapSize(heapSize)
+,	m_location(location)
+,	m_shouldCompact(false)
+,	m_waitLabel(0)
 {
-	static LocalMemoryManager instance;
-	return instance;
 }
 
-void LocalMemoryManager::setHeap(void* heap, size_t heapSize)
-{
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	T_ASSERT (m_objects.empty());
-
-	m_heap = (uint8_t*)heap;
-	m_heapSize = heapSize;
-}
-
-LocalMemoryObject* LocalMemoryManager::alloc(size_t size, size_t align, bool immutable)
+MemoryHeapObject* MemoryHeap::alloc(size_t size, size_t align, bool immutable)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	T_ASSERT (size > 0);
 	T_ASSERT (align > 0);
 
-	LocalMemoryObject* object = 0;
+	MemoryHeapObject* object = 0;
 
 	size = alignUp(size, c_blockSize);
 
@@ -49,21 +43,23 @@ LocalMemoryObject* LocalMemoryManager::alloc(size_t size, size_t align, bool imm
 
 		if (!m_objects.empty())
 		{
-			LocalMemoryObject* last = m_objects.back();
+			MemoryHeapObject* last = m_objects.back();
 			ptr = (uint8_t*)last->m_pointer + last->m_size;
 		}
 
 		uint8_t* alignedPtrStart = alignUp(ptr, align);
 		uint8_t* alignedPtrEnd = alignedPtrStart + size;
 
-		T_FATAL_ASSERT_M (alignedPtrEnd <= m_heap + m_heapSize, L"Out of local memory");
+		T_FATAL_ASSERT_M (alignedPtrEnd <= m_heap + m_heapSize, L"Out of memory");
 
-		object = new LocalMemoryObject();
+		object = new MemoryHeapObject();
+		object->m_heap = this;
 		object->m_immutable = false;
 		object->m_alignment = align;
 		object->m_size = size;
 		object->m_pointer = alignedPtrStart;
 		object->m_offset = 0;
+		object->m_location = m_location;
 
 		int err = cellGcmAddressToOffset(object->m_pointer, &object->m_offset);
 		T_FATAL_ASSERT (err == CELL_OK);
@@ -90,7 +86,7 @@ LocalMemoryObject* LocalMemoryManager::alloc(size_t size, size_t align, bool imm
 			uint8_t* immPtrStart = alignUp(last >= 0 ? (uint8_t*)m_objects[last]->m_pointer + m_objects[last]->m_size : m_heap, align);
 			uint8_t* immPtrEnd = immPtrStart + size;
 
-			T_FATAL_ASSERT_M (immPtrEnd <= m_heap + m_heapSize, L"Out of local memory");
+			T_FATAL_ASSERT_M (immPtrEnd <= m_heap + m_heapSize, L"Out of memory");
 
 			// Find maximum alignment of all other mutable objects.
 			size_t alignMax = 0;
@@ -102,7 +98,7 @@ LocalMemoryObject* LocalMemoryManager::alloc(size_t size, size_t align, bool imm
 			// Move mutable objects to make room for this object.
 			for (int32_t i = count - 1; i > last; --i)
 			{
-				LocalMemoryObject* object1 = m_objects[i];
+				MemoryHeapObject* object1 = m_objects[i];
 
 				uint8_t* ptr1 = (uint8_t*)object1->m_pointer;
 				uint8_t* ptr1New = ptr1 + offset;
@@ -123,12 +119,14 @@ LocalMemoryObject* LocalMemoryManager::alloc(size_t size, size_t align, bool imm
 				T_FATAL_ASSERT (err == CELL_OK);
 			}
 
-			object = new LocalMemoryObject();
+			object = new MemoryHeapObject();
+			object->m_heap = this;
 			object->m_immutable = true;
 			object->m_alignment = align;
 			object->m_size = size;
 			object->m_pointer = immPtrStart;
 			object->m_offset = 0;
+			object->m_location = m_location;
 
 			int err = cellGcmAddressToOffset(object->m_pointer, &object->m_offset);
 			T_FATAL_ASSERT (err == CELL_OK);
@@ -137,12 +135,14 @@ LocalMemoryObject* LocalMemoryManager::alloc(size_t size, size_t align, bool imm
 		}
 		else
 		{
-			object = new LocalMemoryObject();
+			object = new MemoryHeapObject();
+			object->m_heap = this;
 			object->m_immutable = true;
 			object->m_alignment = align;
 			object->m_size = size;
 			object->m_pointer = alignUp(m_heap, align);
 			object->m_offset = 0;
+			object->m_location = m_location;
 
 			int err = cellGcmAddressToOffset(object->m_pointer, &object->m_offset);
 			T_FATAL_ASSERT (err == CELL_OK);
@@ -154,11 +154,12 @@ LocalMemoryObject* LocalMemoryManager::alloc(size_t size, size_t align, bool imm
 	return object;
 }
 
-void LocalMemoryManager::free(LocalMemoryObject* object)
+void MemoryHeap::free(MemoryHeapObject* object)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	T_ASSERT (object->m_heap == this);
 
-	std::vector< LocalMemoryObject* >::iterator i = std::find(m_objects.begin(), m_objects.end(), object);
+	std::vector< MemoryHeapObject* >::iterator i = std::find(m_objects.begin(), m_objects.end(), object);
 	T_ASSERT (i != m_objects.end());
 
 	m_objects.erase(i);
@@ -167,14 +168,14 @@ void LocalMemoryManager::free(LocalMemoryObject* object)
 	m_shouldCompact = true;
 }
 
-size_t LocalMemoryManager::available() const
+size_t MemoryHeap::available() const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	uint32_t count = uint32_t(m_objects.size());
 	if (count)
 	{
-		LocalMemoryObject* last = m_objects[count - 1];
+		MemoryHeapObject* last = m_objects[count - 1];
 		size_t addr = (size_t)(last->m_pointer) + last->m_size;
 		return m_heapSize - (addr - (size_t)m_heap);
 	}
@@ -182,7 +183,7 @@ size_t LocalMemoryManager::available() const
 		return m_heapSize;
 }
 
-void LocalMemoryManager::compact()
+void MemoryHeap::compact()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
@@ -208,8 +209,8 @@ void LocalMemoryManager::compact()
 	// Close gaps between objects by moving them.
 	for (; i < count - 1; ++i)
 	{
-		LocalMemoryObject* object1 = m_objects[i];
-		LocalMemoryObject* object2 = m_objects[i + 1];
+		MemoryHeapObject* object1 = m_objects[i];
+		MemoryHeapObject* object2 = m_objects[i + 1];
 		T_ASSERT (!object2->m_immutable);
 
 		uint8_t* ptr1 = (uint8_t*)object1->m_pointer;
@@ -232,7 +233,7 @@ void LocalMemoryManager::compact()
 		{
 			err = cellGcmSetTransferImage(
 				gCellGcmCurrentContext,
-				CELL_GCM_TRANSFER_LOCAL_TO_LOCAL,
+				(m_location == CELL_GCM_LOCATION_LOCAL) ? CELL_GCM_TRANSFER_LOCAL_TO_LOCAL : CELL_GCM_TRANSFER_MAIN_TO_MAIN,
 				offsetNew,
 				128,
 				0,
@@ -264,14 +265,6 @@ void LocalMemoryManager::compact()
 	cellGcmFlush(gCellGcmCurrentContext);
 	cellGcmSetWaitLabel(gCellGcmCurrentContext, c_transferWaitLabelId, m_waitLabel);
 	++m_waitLabel;
-}
-
-LocalMemoryManager::LocalMemoryManager()
-:	m_heap(0)
-,	m_heapSize(0)
-,	m_shouldCompact(false)
-,	m_waitLabel(0)
-{
 }
 
 	}

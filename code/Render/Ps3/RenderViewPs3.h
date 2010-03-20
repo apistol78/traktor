@@ -22,6 +22,7 @@ namespace traktor
 	{
 
 class IndexBufferPs3;
+class MemoryHeap;
 class ProgramPs3;
 class RenderSystemPs3;
 class RenderTargetPs3;
@@ -36,7 +37,7 @@ public:
 
 	virtual ~RenderViewPs3();
 
-	bool create(const RenderViewCreateDefaultDesc& desc);
+	bool create(MemoryHeap* memoryHeap, const RenderViewCreateDefaultDesc& desc);
 
 	virtual void close();
 
@@ -98,11 +99,11 @@ private:
 	int32_t m_width;
 	int32_t m_height;
 	Viewport m_viewport;
-	LocalMemoryObject* m_colorObject;
+	MemoryHeapObject* m_colorObject;
 	void* m_colorAddr[2];
 	uint32_t m_colorOffset[2];
 	uint32_t m_colorPitch;
-	LocalMemoryObject* m_depthObject;
+	MemoryHeapObject* m_depthObject;
 	void* m_depthAddr;
 	CellGcmTexture m_depthTexture;
 	uint32_t m_frameCounter;
@@ -111,7 +112,7 @@ private:
 	bool m_renderTargetDirty;
 	ClearFpPs3 m_clearFp;
 	StateCachePs3 m_stateCache;
-	LocalMemoryObject* m_patchProgramObject;
+	MemoryHeapObject* m_patchProgramObject;
 	PoolAllocator m_patchProgramPool;
 
 	void setCurrentRenderState();

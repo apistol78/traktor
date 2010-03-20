@@ -24,7 +24,8 @@ class PoolAllocator;
 	namespace render
 	{
 
-class LocalMemoryObject;
+class MemoryHeap;
+class MemoryHeapObject;
 class ProgramResourcePs3;
 class StateCachePs3;
 
@@ -37,7 +38,7 @@ public:
 
 	virtual ~ProgramPs3();
 
-	bool create(const ProgramResourcePs3* resource);
+	bool create(MemoryHeap* memoryHeap, const ProgramResourcePs3* resource);
 
 	virtual void destroy();
 
@@ -69,8 +70,8 @@ private:
 	Ref< const ProgramResourcePs3 > m_resource;
 	CGprogram m_vertexProgram;
 	CGprogram m_pixelProgram;
-	LocalMemoryObject* m_vertexShaderUCode;
-	LocalMemoryObject* m_pixelShaderUCode;
+	MemoryHeapObject* m_vertexShaderUCode;
+	MemoryHeapObject* m_pixelShaderUCode;
 	std::vector< uint8_t > m_inputSignature;
 	RenderState m_renderState;
 	std::vector< ProgramScalar > m_vertexScalars;

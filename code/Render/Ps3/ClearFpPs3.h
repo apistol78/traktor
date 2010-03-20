@@ -8,7 +8,8 @@ namespace traktor
 	namespace render
 	{
 
-class LocalMemoryObject;
+class MemoryHeap;
+class MemoryHeapObject;
 class StateCachePs3;
 
 /*! \brief Clear FP targets helper.
@@ -24,15 +25,17 @@ public:
 
 	virtual ~ClearFpPs3();
 
+	bool create(MemoryHeap* memoryHeap);
+
 	void clear(StateCachePs3& stateCache, const float color[4]);
 
 private:
-	LocalMemoryObject* m_quadBuffer;
+	MemoryHeapObject* m_quadBuffer;
 	uint32_t m_quadBufferOffset;
 	CGprogram m_clearVertexProgram;
 	CGprogram m_clearFragmentProgram;
 	void* m_clearVertexProgramUcode;
-	LocalMemoryObject* m_clearFragmentProgramUcode;
+	MemoryHeapObject* m_clearFragmentProgramUcode;
 	uint32_t m_clearPositionIndex;
 };
 

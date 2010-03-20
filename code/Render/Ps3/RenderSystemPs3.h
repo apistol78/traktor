@@ -17,6 +17,8 @@ namespace traktor
 	namespace render
 	{
 
+class MemoryHeap;
+
 class T_DLLCLASS RenderSystemPs3 : public IRenderSystem
 {
 	T_RTTI_CLASS;
@@ -58,12 +60,16 @@ public:
 
 	virtual Ref< IProgramCompiler > createProgramCompiler() const;
 
+	void compactHeaps();
+
 	void acquireLock() { m_lock.wait(); }
 
 	void releaseLock() { m_lock.release(); }
 
 private:
 	Semaphore m_lock;
+	Ref< MemoryHeap > m_memoryHeapLocal;
+	Ref< MemoryHeap > m_memoryHeapMain;
 };
 
 	}

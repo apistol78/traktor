@@ -4,7 +4,7 @@
 #include "Core/Thread/Acquire.h"
 #include "Render/Ps3/PlatformPs3.h"
 #include "Render/Ps3/IndexBufferPs3.h"
-#include "Render/Ps3/LocalMemoryManager.h"
+#include "Render/Ps3/MemoryHeap.h"
 #include "Render/Ps3/ProgramPs3.h"
 #include "Render/Ps3/ProgramCompilerPs3.h"
 #include "Render/Ps3/ProgramResourcePs3.h"
@@ -25,6 +25,7 @@ namespace traktor
 
 const uint32_t c_cbSize = 256 * 1024;
 const uint32_t c_hostSize = 8 * 1024 * 1024;
+const uint32_t c_mainSize = 16 * 1024 * 1024;
 
 		}
 
@@ -40,18 +41,32 @@ RenderSystemPs3::~RenderSystemPs3()
 
 bool RenderSystemPs3::create(const RenderSystemCreateDesc& desc)
 {
-	void* hostAddr = Alloc::acquireAlign(c_hostSize, 1024 * 1024);
+	uint8_t* data = (uint8_t*)Alloc::acquireAlign(c_hostSize + c_mainSize, 1024 * 1024);
+	if (!data)
+		return 0;
+
+	void* hostAddr = data;
+	void* mainAddr = data + c_hostSize;
+
 	if (cellGcmInit(c_cbSize, c_hostSize, hostAddr) != CELL_OK)
 		return false;
 
 	CellGcmConfig config;
 	cellGcmGetConfiguration(&config);
-	LocalMemoryManager::getInstance().setHeap(config.localAddress, config.localSize);
+	m_memoryHeapLocal = new MemoryHeap(config.localAddress, config.localSize, CELL_GCM_LOCATION_LOCAL);
+
+	uint32_t status;
+	if (cellGcmMapMainMemory(mainAddr, c_mainSize, &status) != CELL_OK)
+		return false;
+
+	m_memoryHeapMain = new MemoryHeap(mainAddr, c_mainSize, CELL_GCM_LOCATION_MAIN);
 
 	log::info << 
 		L"PS3 render system created" << Endl <<
-		L"\tLocal address " << config.localAddress << Endl <<
-		L"\t      size " << config.localSize / (1024 * 1024) << L" Mb" << Endl;
+		L"\tLocal address 0x" << config.localAddress << Endl <<
+		L"\t      size " << config.localSize / (1024 * 1024) << L" MiB" << Endl <<
+		L"\tMain address 0x" << mainAddr << Endl <<
+		L"\t     size " << c_mainSize / (1024 * 1024) << L" MiB" << Endl;
 
 	return true;
 }
@@ -100,7 +115,7 @@ bool RenderSystemPs3::handleMessages()
 Ref< IRenderView > RenderSystemPs3::createRenderView(const RenderViewCreateDefaultDesc& desc)
 {
 	Ref< RenderViewPs3 > renderView = new RenderViewPs3(this);
-	if (renderView->create(desc))
+	if (renderView->create(m_memoryHeapLocal, desc))
 		return renderView;
 	else
 		return 0;
@@ -114,7 +129,9 @@ Ref< IRenderView > RenderSystemPs3::createRenderView(const RenderViewCreateEmbed
 Ref< VertexBuffer > RenderSystemPs3::createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	LocalMemoryObject* vbo = LocalMemoryManager::getInstance().alloc(bufferSize, 128, false);
+	
+	MemoryHeapObject* vbo = (dynamic ? m_memoryHeapMain : m_memoryHeapLocal)->alloc(bufferSize, 16, false);
+
 	if (vbo)
 		return new VertexBufferPs3(vertexElements, vbo, bufferSize);
 	else
@@ -124,7 +141,9 @@ Ref< VertexBuffer > RenderSystemPs3::createVertexBuffer(const std::vector< Verte
 Ref< IndexBuffer > RenderSystemPs3::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	LocalMemoryObject* ibo = LocalMemoryManager::getInstance().alloc(bufferSize, 128, false);
+	
+	MemoryHeapObject* ibo = (dynamic ? m_memoryHeapMain : m_memoryHeapLocal)->alloc(bufferSize, 16, false);
+
 	if (ibo)
 		return new IndexBufferPs3(ibo, indexType, bufferSize);
 	else
@@ -135,7 +154,7 @@ Ref< ISimpleTexture > RenderSystemPs3::createSimpleTexture(const SimpleTextureCr
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	Ref< SimpleTexturePs3 > texture = new SimpleTexturePs3();
-	if (texture->create(desc))
+	if (texture->create(m_memoryHeapLocal, desc))
 		return texture;
 	else
 		return 0;
@@ -155,7 +174,7 @@ Ref< RenderTargetSet > RenderSystemPs3::createRenderTargetSet(const RenderTarget
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	Ref< RenderTargetSetPs3 > renderTargetSet = new RenderTargetSetPs3();
-	if (renderTargetSet->create(desc))
+	if (renderTargetSet->create(m_memoryHeapLocal, desc))
 		return renderTargetSet;
 	else
 		return 0;
@@ -170,7 +189,7 @@ Ref< IProgram > RenderSystemPs3::createProgram(const ProgramResource* programRes
 		return 0;
 
 	Ref< ProgramPs3 > program = new ProgramPs3();
-	if (!program->create(resource))
+	if (!program->create(m_memoryHeapLocal, resource))
 		return 0;
 
 	return program;
@@ -179,6 +198,12 @@ Ref< IProgram > RenderSystemPs3::createProgram(const ProgramResource* programRes
 Ref< IProgramCompiler > RenderSystemPs3::createProgramCompiler() const
 {
 	return new ProgramCompilerPs3();
+}
+
+void RenderSystemPs3::compactHeaps()
+{
+	m_memoryHeapLocal->compact();
+	m_memoryHeapMain->compact();
 }
 
 	}

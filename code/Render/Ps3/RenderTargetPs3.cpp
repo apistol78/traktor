@@ -1,6 +1,6 @@
 #include "Core/Log/Log.h"
-#include "Render/Ps3/LocalMemoryManager.h"
-#include "Render/Ps3/LocalMemoryObject.h"
+#include "Render/Ps3/MemoryHeap.h"
+#include "Render/Ps3/MemoryHeapObject.h"
 #include "Render/Ps3/RenderTargetPs3.h"
 #include "Render/Ps3/StateCachePs3.h"
 #include "Render/Ps3/TypesPs3.h"
@@ -32,7 +32,7 @@ RenderTargetPs3::RenderTargetPs3()
 	m_waitLabelData = cellGcmGetLabelAddress(c_waitLabelId);
 }
 
-bool RenderTargetPs3::create(const RenderTargetSetCreateDesc& setDesc, const RenderTargetCreateDesc& desc)
+bool RenderTargetPs3::create(MemoryHeap* memoryHeap, const RenderTargetSetCreateDesc& setDesc, const RenderTargetCreateDesc& desc)
 {
 	int byteSize;
 
@@ -98,7 +98,7 @@ bool RenderTargetPs3::create(const RenderTargetSetCreateDesc& setDesc, const Ren
 	m_colorTexture.offset = 0;
 
 	uint32_t textureSize = m_colorTexture.pitch * m_colorTexture.height;
-	m_colorData = LocalMemoryManager::getInstance().alloc(textureSize, 4096, false);
+	m_colorData = memoryHeap->alloc(textureSize, 4096, false);
 
 	return true;
 }
@@ -107,7 +107,7 @@ void RenderTargetPs3::destroy()
 {
 	if (m_colorData)
 	{
-		LocalMemoryManager::getInstance().free(m_colorData);
+		m_colorData->free();
 		m_colorData = 0;
 	}
 }

@@ -17,7 +17,8 @@ namespace traktor
 	namespace render
 	{
 
-class LocalMemoryObject;
+class MemoryHeap;
+class MemoryHeapObject;
 class StateCachePs3;
 
 class T_DLLCLASS RenderTargetPs3 : public ITexture
@@ -27,7 +28,7 @@ class T_DLLCLASS RenderTargetPs3 : public ITexture
 public:
 	RenderTargetPs3();
 
-	bool create(const RenderTargetSetCreateDesc& setDesc, const RenderTargetCreateDesc& desc);
+	bool create(MemoryHeap* memoryHeap, const RenderTargetSetCreateDesc& setDesc, const RenderTargetCreateDesc& desc);
 
 	virtual void destroy();
 
@@ -56,7 +57,7 @@ private:
 	int32_t m_height;
 	uint32_t m_colorSurfaceFormat;
 	CellGcmTexture m_colorTexture;
-	LocalMemoryObject* m_colorData;
+	MemoryHeapObject* m_colorData;
 	bool m_inRender;
 	uint32_t m_waitLabel;
 	volatile uint32_t* m_waitLabelData;

@@ -1,8 +1,8 @@
 #include <cstring>
 #include "Core/Log/Log.h"
 #include "Core/Misc/Endian.h"
-#include "Render/Ps3/LocalMemoryManager.h"
-#include "Render/Ps3/LocalMemoryObject.h"
+#include "Render/Ps3/MemoryHeap.h"
+#include "Render/Ps3/MemoryHeapObject.h"
 #include "Render/Ps3/SimpleTexturePs3.h"
 #include "Render/Ps3/StateCachePs3.h"
 #include "Render/Ps3/TypesPs3.h"
@@ -34,7 +34,7 @@ SimpleTexturePs3::~SimpleTexturePs3()
 	destroy();
 }
 
-bool SimpleTexturePs3::create(const SimpleTextureCreateDesc& desc)
+bool SimpleTexturePs3::create(MemoryHeap* memoryHeap, const SimpleTextureCreateDesc& desc)
 {
 	if (!getGcmTextureInfo(desc.format, m_texture.format))
 	{
@@ -106,7 +106,7 @@ bool SimpleTexturePs3::create(const SimpleTextureCreateDesc& desc)
 		desc.mipCount
 	);
 
-	m_data = LocalMemoryManager::getInstance().alloc(textureSize, 128, false);
+	m_data = memoryHeap->alloc(textureSize, 128, false);
 	if (!m_data)
 		return false;
 
@@ -155,7 +155,7 @@ void SimpleTexturePs3::destroy()
 {
 	if (m_data)
 	{
-		LocalMemoryManager::getInstance().free(m_data);
+		m_data->free();
 		m_data = 0;
 	}
 }

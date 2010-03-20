@@ -18,7 +18,8 @@ namespace traktor
 	namespace render
 	{
 
-class LocalMemoryObject;
+class MemoryHeap;
+class MemoryHeapObject;
 class StateCachePs3;
 		
 class T_DLLCLASS SimpleTexturePs3 : public ISimpleTexture
@@ -30,7 +31,7 @@ public:
 
 	virtual ~SimpleTexturePs3();
 	
-	bool create(const SimpleTextureCreateDesc& desc);
+	bool create(MemoryHeap* memoryHeap, const SimpleTextureCreateDesc& desc);
 
 	virtual void destroy();
 
@@ -47,7 +48,7 @@ public:
 	void bind(StateCachePs3& stateCache, int stage, const SamplerState& samplerState);
 
 private:
-	LocalMemoryObject* m_data;
+	MemoryHeapObject* m_data;
 	CellGcmTexture m_texture;
 };
 		

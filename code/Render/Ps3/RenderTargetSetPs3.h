@@ -19,7 +19,8 @@ namespace traktor
 	namespace render
 	{
 
-class LocalMemoryObject;
+class MemoryHeap;
+class MemoryHeapObject;
 class RenderTargetPs3;
 
 class T_DLLCLASS RenderTargetSetPs3 : public RenderTargetSet
@@ -31,7 +32,7 @@ public:
 
 	virtual ~RenderTargetSetPs3();
 
-	bool create(const RenderTargetSetCreateDesc& desc);
+	bool create(MemoryHeap* memoryHeap, const RenderTargetSetCreateDesc& desc);
 
 	virtual void destroy();
 
@@ -56,7 +57,7 @@ private:
 	int32_t m_height;
 	RefArray< RenderTargetPs3 > m_renderTargets;
 	CellGcmTexture m_depthTexture;
-	LocalMemoryObject* m_depthData;
+	MemoryHeapObject* m_depthData;
 };
 
 	}

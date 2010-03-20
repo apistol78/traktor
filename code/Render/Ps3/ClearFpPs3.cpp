@@ -1,6 +1,6 @@
 #include "Render/Ps3/ClearFpPs3.h"
-#include "Render/Ps3/LocalMemoryManager.h"
-#include "Render/Ps3/LocalMemoryObject.h"
+#include "Render/Ps3/MemoryHeap.h"
+#include "Render/Ps3/MemoryHeapObject.h"
 #include "Render/Ps3/StateCachePs3.h"
 
 // Resources
@@ -19,11 +19,36 @@ const uint32_t c_clearColorRegister = 0;
 		}
 
 ClearFpPs3::ClearFpPs3()
+:	m_quadBuffer(0)
+,	m_quadBufferOffset(0)
+,	m_clearVertexProgramUcode(0)
+,	m_clearFragmentProgramUcode(0)
+,	m_clearPositionIndex(0)
+{
+}
+
+ClearFpPs3::~ClearFpPs3()
+{
+	if (m_clearFragmentProgramUcode)
+	{
+		m_clearFragmentProgramUcode->free();
+		m_clearFragmentProgramUcode = 0;
+	}
+	if (m_quadBuffer)
+	{
+		m_quadBuffer->free();
+		m_quadBuffer = 0;
+	}
+}
+
+bool ClearFpPs3::create(MemoryHeap* memoryHeap)
 {
 	uint32_t ucodeSize;
 	void* ucode;
 
-	m_quadBuffer = LocalMemoryManager::getInstance().alloc(sizeof(float) * 4 * 2, 128, false);
+	m_quadBuffer = memoryHeap->alloc(sizeof(float) * 4 * 2, 16, false);
+	if (!m_quadBuffer)
+		return false;
 
 	float* ptr = (float*)m_quadBuffer->getPointer();
 
@@ -39,7 +64,7 @@ ClearFpPs3::ClearFpPs3()
 	cellGcmCgInitProgram(m_clearFragmentProgram);
 
 	cellGcmCgGetUCode(m_clearFragmentProgram, &ucode, &ucodeSize);
-	m_clearFragmentProgramUcode = LocalMemoryManager::getInstance().alloc(ucodeSize, 64, false);
+	m_clearFragmentProgramUcode = memoryHeap->alloc(ucodeSize, 64, false);
 	std::memcpy(m_clearFragmentProgramUcode->getPointer(), ucode, ucodeSize); 
 
 	cellGcmCgGetUCode(m_clearVertexProgram, &ucode, &ucodeSize);
@@ -49,20 +74,8 @@ ClearFpPs3::ClearFpPs3()
 	CGparameter color = cellGcmCgGetNamedParameter(m_clearVertexProgram, "color");
 
 	m_clearPositionIndex = cellGcmCgGetParameterResource(m_clearVertexProgram, position) - CG_ATTR0;
-}
 
-ClearFpPs3::~ClearFpPs3()
-{
-	if (m_clearFragmentProgramUcode)
-	{
-		LocalMemoryManager::getInstance().free(m_clearFragmentProgramUcode);
-		m_clearFragmentProgramUcode = 0;
-	}
-	if (m_quadBuffer)
-	{
-		LocalMemoryManager::getInstance().free(m_quadBuffer);
-		m_quadBuffer = 0;
-	}
+	return true;
 }
 
 void ClearFpPs3::clear(StateCachePs3& stateCache, const float color[4])

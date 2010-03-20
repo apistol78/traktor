@@ -7,8 +7,8 @@
 #include "Render/Ps3/VertexBufferPs3.h"
 #include "Render/Ps3/IndexBufferPs3.h"
 #include "Render/Ps3/ProgramPs3.h"
-#include "Render/Ps3/LocalMemoryManager.h"
-#include "Render/Ps3/LocalMemoryObject.h"
+#include "Render/Ps3/MemoryHeap.h"
+#include "Render/Ps3/MemoryHeapObject.h"
 
 namespace traktor
 {
@@ -76,11 +76,14 @@ RenderViewPs3::~RenderViewPs3()
 {
 }
 
-bool RenderViewPs3::create(const RenderViewCreateDefaultDesc& desc)
+bool RenderViewPs3::create(MemoryHeap* memoryHeap, const RenderViewCreateDefaultDesc& desc)
 {
 	CellVideoOutState videoState;
 	CellVideoOutConfiguration videoConfig;
 	int32_t ret;
+
+	// Create FP clear helper.
+	m_clearFp.create(memoryHeap);
 
 	m_width = desc.displayMode.width;
 	m_height = desc.displayMode.height;
@@ -112,7 +115,7 @@ bool RenderViewPs3::create(const RenderViewCreateDefaultDesc& desc)
 		cellGcmSetFlipMode(CELL_GCM_DISPLAY_HSYNC);
 
 	uint32_t colorSize = m_colorPitch * m_height;
-	m_colorObject = LocalMemoryManager::getInstance().alloc(sizeof_array(m_colorAddr) * colorSize, 4096, true);
+	m_colorObject = memoryHeap->alloc(sizeof_array(m_colorAddr) * colorSize, 4096, true);
 
 	for (size_t i = 0; i < sizeof_array(m_colorAddr); i++)
 	{
@@ -151,7 +154,7 @@ bool RenderViewPs3::create(const RenderViewCreateDefaultDesc& desc)
 		m_depthTexture.offset = 0;
 
 		uint32_t depthSize = m_depthTexture.pitch * m_depthTexture.height;
-		m_depthObject = LocalMemoryManager::getInstance().alloc(depthSize, 4096, true);
+		m_depthObject = memoryHeap->alloc(depthSize, 4096, true);
 
 		m_depthAddr = m_depthObject->getPointer();
 		m_depthTexture.offset = m_depthObject->getOffset();
@@ -185,7 +188,7 @@ bool RenderViewPs3::create(const RenderViewCreateDefaultDesc& desc)
 	*waitLabelData = 0;
 
 	// Allocate area for patched pixel programs.
-	m_patchProgramObject = LocalMemoryManager::getInstance().alloc(
+	m_patchProgramObject = memoryHeap->alloc(
 		c_patchProgramSize * c_patchProgramCount,
 		64,
 		false
@@ -201,19 +204,19 @@ void RenderViewPs3::close()
 
 	if (m_patchProgramObject)
 	{
-		LocalMemoryManager::getInstance().free(m_patchProgramObject);
+		m_patchProgramObject->free();
 		m_patchProgramObject = 0;
 	}
 
 	if (m_depthObject)
 	{
-		LocalMemoryManager::getInstance().free(m_depthObject);
+		m_depthObject->free();
 		m_depthObject = 0;
 	}
 
 	if (m_colorObject)
 	{
-		LocalMemoryManager::getInstance().free(m_colorObject);
+		m_colorObject->free();
 		m_colorObject = 0;
 	}
 }
@@ -261,8 +264,7 @@ bool RenderViewPs3::getNativeAspectRatio(float& outAspectRatio) const
 bool RenderViewPs3::begin()
 {
 	m_renderSystem->acquireLock();
-
-	LocalMemoryManager::getInstance().compact();
+	m_renderSystem->compactHeaps();
 
 	uint32_t frameIndex = m_frameCounter % sizeof_array(m_colorOffset);
 
@@ -490,7 +492,7 @@ void RenderViewPs3::draw(const Primitives& primitives)
 			c_mode[primitives.type],
 			count,
 			type,
-			CELL_GCM_LOCATION_LOCAL,
+			m_currentIndexBuffer->getLocation(),
 			offset
 		);
 	}

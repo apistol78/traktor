@@ -1,7 +1,6 @@
 #include "Render/Ps3/PlatformPs3.h"
 #include "Render/Ps3/VertexBufferPs3.h"
-#include "Render/Ps3/LocalMemoryManager.h"
-#include "Render/Ps3/LocalMemoryObject.h"
+#include "Render/Ps3/MemoryHeapObject.h"
 #include "Render/Ps3/CgType.h"
 #include "Render/VertexElement.h"
 #include "Core/Log/Log.h"
@@ -16,7 +15,7 @@ bool VertexBufferPs3::ms_attributeEnable[16] = { false, false, false, false, fal
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VertexBufferPs3", VertexBufferPs3, VertexBuffer)
 
-VertexBufferPs3::VertexBufferPs3(const std::vector< VertexElement >& vertexElements, LocalMemoryObject* vbo, int bufferSize)
+VertexBufferPs3::VertexBufferPs3(const std::vector< VertexElement >& vertexElements, MemoryHeapObject* vbo, int bufferSize)
 :	VertexBuffer(bufferSize)
 ,	m_vbo(vbo)
 {
@@ -121,7 +120,7 @@ void VertexBufferPs3::destroy()
 
 	if (m_vbo)
 	{
-		LocalMemoryManager::getInstance().free(m_vbo);
+		m_vbo->free();
 		m_vbo = 0;
 	}
 }
@@ -158,7 +157,7 @@ void VertexBufferPs3::bind(const std::vector< uint8_t >& signature)
 				m_vertexStride,
 				m_attributeDesc[i].size,
 				m_attributeDesc[i].type,
-				CELL_GCM_LOCATION_LOCAL,
+				m_vbo->getLocation(),
 				m_vbo->getOffset() + m_attributeDesc[i].offset
 			);
 			ms_attributeEnable[i] = true;

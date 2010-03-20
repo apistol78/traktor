@@ -6,8 +6,8 @@
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Render/Ps3/PlatformPs3.h"
-#include "Render/Ps3/LocalMemoryManager.h"
-#include "Render/Ps3/LocalMemoryObject.h"
+#include "Render/Ps3/MemoryHeap.h"
+#include "Render/Ps3/MemoryHeapObject.h"
 #include "Render/Ps3/ProgramPs3.h"
 #include "Render/Ps3/ProgramResourcePs3.h"
 #include "Render/Ps3/RenderTargetPs3.h"
@@ -25,13 +25,13 @@ namespace traktor
 
 struct UCodeCacheEntry
 {
-	LocalMemoryObject* ucode;
+	MemoryHeapObject* ucode;
 	uint32_t count;
 };
 
 std::map< uint32_t, UCodeCacheEntry > m_ucodeCache;
 
-void getProgramUCode(CGprogram program, LocalMemoryObject*& outUCode)
+void getProgramUCode(MemoryHeap* memoryHeap, CGprogram program, MemoryHeapObject*& outUCode)
 {
 	uint32_t ucodeSize;
 	void* ucode;
@@ -45,7 +45,7 @@ void getProgramUCode(CGprogram program, LocalMemoryObject*& outUCode)
 	std::map< uint32_t, UCodeCacheEntry >::iterator i = m_ucodeCache.find(hash);
 	if (i == m_ucodeCache.end())
 	{
-		outUCode = LocalMemoryManager::getInstance().alloc(ucodeSize, 64, false);
+		outUCode = memoryHeap->alloc(ucodeSize, 64, false);
 		std::memcpy(outUCode->getPointer(), ucode, ucodeSize);
 
 		UCodeCacheEntry entry;
@@ -81,7 +81,7 @@ ProgramPs3::~ProgramPs3()
 	destroy();
 }
 
-bool ProgramPs3::create(const ProgramResourcePs3* resource)
+bool ProgramPs3::create(MemoryHeap* memoryHeap, const ProgramResourcePs3* resource)
 {
 	T_ASSERT (resource);
 
@@ -90,8 +90,8 @@ bool ProgramPs3::create(const ProgramResourcePs3* resource)
 	m_vertexProgram = (CGprogram)sceCgcGetBinData(resource->m_vertexShaderBin);
 	m_pixelProgram = (CGprogram)sceCgcGetBinData(resource->m_pixelShaderBin);
 
-	getProgramUCode(m_vertexProgram, m_vertexShaderUCode);
-	getProgramUCode(m_pixelProgram, m_pixelShaderUCode);
+	getProgramUCode(memoryHeap, m_vertexProgram, m_vertexShaderUCode);
+	getProgramUCode(memoryHeap, m_pixelProgram, m_pixelShaderUCode);
 
 	m_vertexScalars = resource->m_vertexScalars;
 	m_pixelScalars = resource->m_pixelScalars;

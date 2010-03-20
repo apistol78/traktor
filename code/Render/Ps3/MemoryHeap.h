@@ -2,7 +2,7 @@
 #define traktor_render_LocalMemoryManager_H
 
 #include <vector>
-#include "Core/Config.h"
+#include "Core/Object.h"
 #include "Core/Thread/Semaphore.h"
 
 namespace traktor
@@ -10,32 +10,31 @@ namespace traktor
 	namespace render
 	{
 
-class LocalMemoryObject;
+class MemoryHeapObject;
 
-class LocalMemoryManager
+class MemoryHeap : public Object
 {
 public:
-	static LocalMemoryManager& getInstance();
+	MemoryHeap(void* heap, size_t heapSize, uint8_t location);
 
-	void setHeap(void* heap, size_t heapSize);
-
-	LocalMemoryObject* alloc(size_t size, size_t align, bool immutable);
-
-	void free(LocalMemoryObject* object);
+	MemoryHeapObject* alloc(size_t size, size_t align, bool immutable);
 
 	size_t available() const;
 
 	void compact();
 
 private:
+	friend class MemoryHeapObject;
+
 	mutable Semaphore m_lock;
 	uint8_t* m_heap;
 	size_t m_heapSize;
-	std::vector< LocalMemoryObject* > m_objects;		//< Sorted list of alive objects.
+	uint8_t m_location;
+	std::vector< MemoryHeapObject* > m_objects;		//< Sorted list of alive objects.
 	bool m_shouldCompact;
 	uint32_t m_waitLabel;
 
-	LocalMemoryManager();
+	void free(MemoryHeapObject* object);
 };
 
 	}

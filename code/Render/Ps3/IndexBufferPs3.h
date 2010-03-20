@@ -16,14 +16,14 @@ namespace traktor
 	namespace render
 	{
 
-class LocalMemoryObject;
+class MemoryHeapObject;
 
 class T_DLLCLASS IndexBufferPs3 : public IndexBuffer
 {
 	T_RTTI_CLASS;
 
 public:
-	IndexBufferPs3(LocalMemoryObject* ibo, IndexType indexType, int bufferSize);
+	IndexBufferPs3(MemoryHeapObject* ibo, IndexType indexType, int bufferSize);
 
 	virtual ~IndexBufferPs3();
 
@@ -33,10 +33,12 @@ public:
 	
 	virtual void unlock();
 
+	uint8_t getLocation() const;
+
 	uint32_t getOffset() const;
 	
 private:
-	LocalMemoryObject* m_ibo;
+	MemoryHeapObject* m_ibo;
 };
 	
 	}
