@@ -34,7 +34,7 @@ void Socket::close()
 
 int Socket::select(bool read, bool write, bool except, int timeout)
 {
-	timeval to = { timeout / 1000, (timeout % 1000) * 10 };
+	timeval to = { timeout / 1000, (timeout % 1000) * 1000 };
 	fd_set* fds[] = { 0, 0, 0 };
 	fd_set readfds, writefds, exceptfds;
 

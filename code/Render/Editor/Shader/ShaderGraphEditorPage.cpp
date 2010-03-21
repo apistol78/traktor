@@ -17,6 +17,7 @@
 #include "Render/Editor/Shader/ShaderGraphEditorClipboardData.h"
 #include "Render/Editor/Shader/ShaderGraphEditorPage.h"
 #include "Render/Editor/Shader/ShaderGraphStatic.h"
+#include "Render/Editor/Shader/ShaderGraphOptimizer.h"
 #include "Render/Editor/Shader/ShaderGraphValidator.h"
 #include "Render/Editor/Shader/QuickMenuTool.h"
 #include "Render/Editor/Shader/Facades/DefaultNodeFacade.h"
@@ -112,6 +113,7 @@ bool ShaderGraphEditorPage::create(ui::Container* parent, editor::IEditorPageSit
 	m_toolBar->create(container);
 	m_toolBar->addImage(ui::Bitmap::load(c_ResourceAlignment, sizeof(c_ResourceAlignment), L"png"), 8);
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_OPEN_REFEREE"), ui::Command(L"ShaderGraph.Editor.OpenReferee"), 6));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_CENTER"), ui::Command(L"ShaderGraph.Editor.Center"), 7));
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_ALIGN_LEFT"), ui::Command(L"ShaderGraph.Editor.AlignLeft"), 0));
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_ALIGN_RIGHT"), ui::Command(L"ShaderGraph.Editor.AlignRight"), 1));
@@ -121,7 +123,8 @@ bool ShaderGraphEditorPage::create(ui::Container* parent, editor::IEditorPageSit
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_EVEN_VERTICALLY"), ui::Command(L"ShaderGraph.Editor.EvenSpaceVertically"), 4));
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_EVEN_HORIZONTALLY"), ui::Command(L"ShaderGraph.Editor.EventSpaceHorizontally"), 5));
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
-	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_CENTER"), ui::Command(L"ShaderGraph.Editor.Center"), 7));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_REMOVE_UNUSED_NODES"), ui::Command(L"ShaderGraph.Editor.RemoveUnusedNodes"), 7));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_AUTO_MERGE_BRANCHES"), ui::Command(L"ShaderGraph.Editor.AutoMergeBranches"), 7));
 	m_toolBar->addClickEventHandler(ui::createMethodHandler(this, &ShaderGraphEditorPage::eventToolClick));
 
 	// Create shader graph editor control.
@@ -495,6 +498,10 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 		if (refereeInstance)
 			m_editor->openEditor(refereeInstance);
 	}
+	else if (command == L"ShaderGraph.Editor.Center")
+	{
+		m_editorGraph->center();
+	}
 	else if (command == L"ShaderGraph.Editor.AlignLeft")
 	{
 		// Save undo state.
@@ -531,10 +538,43 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 		m_undoStack->push(m_shaderGraph);
 		m_editorGraph->evenSpace(ui::custom::GraphControl::EsHorizontally);
 	}
-	else if (command == L"ShaderGraph.Editor.Center")
+	else if (command == L"ShaderGraph.Editor.RemoveUnusedNodes")
 	{
-		// Center graph view.
-		m_editorGraph->center();
+		// Save undo state.
+		m_undoStack->push(m_shaderGraph);
+
+		m_shaderGraph = ShaderGraphOptimizer(m_shaderGraph).removeUnusedBranches();
+
+		m_editorGraph->removeAllEdges();
+		m_editorGraph->removeAllNodes();
+
+		createEditorNodes(
+			m_shaderGraph->getNodes(),
+			m_shaderGraph->getEdges()
+		);
+
+		updateGraph();
+
+		m_site->setPropertyObject(0);
+	}
+	else if (command == L"ShaderGraph.Editor.AutoMergeBranches")
+	{
+		// Save undo state.
+		m_undoStack->push(m_shaderGraph);
+
+		m_shaderGraph = ShaderGraphOptimizer(m_shaderGraph).mergeBranches();
+
+		m_editorGraph->removeAllEdges();
+		m_editorGraph->removeAllNodes();
+
+		createEditorNodes(
+			m_shaderGraph->getNodes(),
+			m_shaderGraph->getEdges()
+		);
+
+		updateGraph();
+
+		m_site->setPropertyObject(0);
 	}
 	else if (command == L"ShaderGraph.Editor.QuickMenu")
 	{

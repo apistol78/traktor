@@ -1506,6 +1506,10 @@
       <second>Tan</second>
     </item>
     <item>
+      <first>SHADERGRAPH_NODE_TARGETSIZE</first>
+      <second>Target size</second>
+    </item>
+    <item>
       <first>SHADERGRAPH_NODE_TEXTURE</first>
       <second>Texture</second>
     </item>

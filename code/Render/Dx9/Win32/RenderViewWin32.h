@@ -102,6 +102,7 @@ private:
 	struct RenderState
 	{
 		D3DVIEWPORT9 d3dViewport;
+		int32_t targetSize[2];
 		IDirect3DSurface9* d3dBackBuffer;
 		IDirect3DSurface9* d3dDepthStencilSurface;
 		RenderTargetWin32* renderTarget;

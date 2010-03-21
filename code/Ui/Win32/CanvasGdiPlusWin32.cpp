@@ -21,6 +21,10 @@ ULONG_PTR s_token;
 
 CanvasGdiPlusWin32::CanvasGdiPlusWin32()
 :	m_hDC(NULL)
+,	m_ownDC(false)
+,	m_hOffScreenBitmap(NULL)
+,	m_offScreenBitmapWidth(0)
+,	m_offScreenBitmapHeight(0)
 ,	m_foreGround(0x000000)
 ,	m_backGround(0xc0c0c0)
 ,	m_pen(Gdiplus::Color(0x000000), 1.0f)
@@ -28,14 +32,25 @@ CanvasGdiPlusWin32::CanvasGdiPlusWin32()
 {
 }
 
+CanvasGdiPlusWin32::~CanvasGdiPlusWin32()
+{
+	if (m_hOffScreenBitmap != NULL)
+	{
+		DeleteObject(m_hOffScreenBitmap);
+		m_hOffScreenBitmap = NULL;
+	}
+}
+
 bool CanvasGdiPlusWin32::beginPaint(Window& hWnd, bool doubleBuffer, HDC hDC)
 {
 	T_ASSERT_M (!m_hDC, L"Invalid device context handle");
+	//RECT rcClip;
 
 	if (hDC)
 	{
 		m_hDC = hDC;
 		m_ownDC = false;
+		//GetClientRect(hWnd, &rcClip);
 	}
 	else
 	{
@@ -58,16 +73,33 @@ bool CanvasGdiPlusWin32::beginPaint(Window& hWnd, bool doubleBuffer, HDC hDC)
 				return false;
 			}
 
+			//CopyRect(&rcClip, &m_ps.rcPaint);
+
 			RECT rcInner;
 			GetClientRect(hWnd, &rcInner);
 
-			m_hOffScreenBitmap = CreateCompatibleBitmap(hPaintDC, rcInner.right, rcInner.bottom);
-			if (!m_hOffScreenBitmap)
+			uint32_t width = uint32_t(rcInner.right - rcInner.left);
+			uint32_t height = uint32_t(rcInner.bottom - rcInner.top);
+
+			if (m_hOffScreenBitmap == NULL || m_offScreenBitmapWidth != width || m_offScreenBitmapHeight != height)
 			{
-				DeleteDC(m_hDC);
-				EndPaint(hWnd, &m_ps);
-				m_hDC = NULL;
-				return false;
+				if (m_hOffScreenBitmap != NULL)
+				{
+					DeleteObject(m_hOffScreenBitmap);
+					m_hOffScreenBitmap = NULL;
+				}
+
+				m_hOffScreenBitmap = CreateCompatibleBitmap(hPaintDC, width, height);
+				if (!m_hOffScreenBitmap)
+				{
+					EndPaint(hWnd, &m_ps);
+					DeleteDC(m_hDC);
+					m_hDC = NULL;
+					return false;
+				}
+
+				m_offScreenBitmapWidth = width;
+				m_offScreenBitmapHeight = height;
 			}
 
 			SelectObject(m_hDC, m_hOffScreenBitmap);
@@ -79,6 +111,9 @@ bool CanvasGdiPlusWin32::beginPaint(Window& hWnd, bool doubleBuffer, HDC hDC)
 	m_graphics->SetTextRenderingHint(TextRenderingHintSystemDefault);
 	m_graphics->SetPixelOffsetMode(PixelOffsetModeNone);
 	m_graphics->SetSmoothingMode(SmoothingModeHighSpeed);
+	//m_graphics->SetClip(
+	//	Gdiplus::Rect(rcClip.left, rcClip.top, rcClip.right - rcClip.left, rcClip.bottom - rcClip.top)
+	//);
 
 	m_font.reset(new Gdiplus::Font(m_hDC, hWnd.getFont()));
 
@@ -95,25 +130,19 @@ void CanvasGdiPlusWin32::endPaint(Window& hWnd)
 
 	if (m_hOffScreenBitmap)
 	{
-		RECT rcInner;
-		GetClientRect(hWnd, &rcInner);
-
 		BitBlt(
 			m_ps.hdc,
-			0,
-			0,
-			rcInner.right,
-			rcInner.bottom,
+			m_ps.rcPaint.left,
+			m_ps.rcPaint.top,
+			m_ps.rcPaint.right - m_ps.rcPaint.left,
+			m_ps.rcPaint.bottom - m_ps.rcPaint.top,
 			m_hDC,
-			0,
-			0,
+			m_ps.rcPaint.left,
+			m_ps.rcPaint.top,
 			SRCCOPY
 		);
 
 		DeleteDC(m_hDC);
-		DeleteObject(m_hOffScreenBitmap);
-
-		m_hOffScreenBitmap = NULL;
 	}
 
 	if (m_ownDC)

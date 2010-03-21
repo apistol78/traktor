@@ -18,6 +18,8 @@ class CanvasGdiPlusWin32 : public CanvasWin32
 public:
 	CanvasGdiPlusWin32();
 
+	virtual ~CanvasGdiPlusWin32();
+
 	virtual bool beginPaint(Window& hWnd, bool doubleBuffer, HDC hDC);
 
 	virtual void endPaint(Window& hWnd);
@@ -81,6 +83,8 @@ private:
 	HDC m_hDC;
 	bool m_ownDC;
 	HBITMAP m_hOffScreenBitmap;
+	uint32_t m_offScreenBitmapWidth;
+	uint32_t m_offScreenBitmapHeight;
 
 	mutable AutoPtr< Gdiplus::Graphics > m_graphics;
 	mutable AutoPtr< Gdiplus::Font > m_font;

@@ -47,7 +47,6 @@ public:
 private:
 	Ref< render::VertexBuffer > m_vertexBuffer;
 	render::Primitives m_primitives;
-	render::handle_t m_handleTargetSize;
 };
 
 	}

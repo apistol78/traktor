@@ -23,7 +23,6 @@ struct ScreenVertex
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ScreenRenderer", ScreenRenderer, Object)
 
 ScreenRenderer::ScreenRenderer()
-:	m_handleTargetSize(render::getParameterHandle(L"TargetSize"))
 {
 }
 
@@ -65,32 +64,12 @@ void ScreenRenderer::destroy()
 
 void ScreenRenderer::draw(IRenderView* renderView, Shader* shader)
 {
-	int32_t width = renderView->getWidth();
-	int32_t height = renderView->getHeight();
-
-	shader->setVectorParameter(m_handleTargetSize, Vector4(
-		0.0f,
-		0.0f,
-		float(width),
-		float(height)
-	));
-
 	renderView->setVertexBuffer(m_vertexBuffer);
 	shader->draw(renderView, m_primitives);
 }
 
 void ScreenRenderer::draw(IRenderView* renderView, RenderTargetSet* renderTargetSet, int renderTarget, Shader* shader)
 {
-	int32_t width = renderTargetSet->getWidth();
-	int32_t height = renderTargetSet->getHeight();
-
-	shader->setVectorParameter(m_handleTargetSize, Vector4(
-		0.0f,
-		0.0f,
-		float(width),
-		float(height)
-	));
-
 	if (renderView->begin(renderTargetSet, renderTarget, false))
 	{
 		renderView->setVertexBuffer(m_vertexBuffer);
