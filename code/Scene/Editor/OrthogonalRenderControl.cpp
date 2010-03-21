@@ -609,8 +609,7 @@ void OrthogonalRenderControl::eventPaint(ui::Event* event)
 			}
 		}
 
-		// @hack Translate a bit as default entity editor uses distance to calculate snap guide sizes.
-		m_primitiveRenderer->pushView(translate(0.0f, 0.0f, 10.0f) * view);
+		m_primitiveRenderer->pushView(view);
 
 		// Draw selection marker(s).
 		Ref< IModifier > modifier = m_context->getModifier();
