@@ -1173,6 +1173,14 @@ bool emitTan(HlslContext& cx, Tan* node)
 	return true;
 }
 
+bool emitTargetSize(HlslContext& cx, TargetSize* node)
+{
+	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
+	HlslVariable* out = cx.emitOutput(node, L"Output", HtFloat2);
+	assign(f, out) << L"_dx9_targetSize;";
+	return true;
+}
+
 bool emitTexture(HlslContext& cx, Texture* node)
 {
 	std::wstring parameterName = getParameterNameFromGuid(node->getExternal());
@@ -1427,6 +1435,7 @@ HlslEmitter::HlslEmitter()
 	m_emitters[&type_of< Swizzle >()] = new EmitterCast< Swizzle >(emitSwizzle);
 	m_emitters[&type_of< Switch >()] = new EmitterCast< Switch >(emitSwitch);
 	m_emitters[&type_of< Tan >()] = new EmitterCast< Tan >(emitTan);
+	m_emitters[&type_of< TargetSize >()] = new EmitterCast< TargetSize >(emitTargetSize);
 	m_emitters[&type_of< Texture >()] = new EmitterCast< Texture >(emitTexture);
 	m_emitters[&type_of< Transform >()] = new EmitterCast< Transform >(emitTransform);
 	m_emitters[&type_of< Transpose >()] = new EmitterCast< Transpose >(emitTranspose);

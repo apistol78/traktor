@@ -6,6 +6,12 @@ namespace traktor
 {
 	namespace render
 	{
+		namespace
+		{
+
+const uint32_t c_registerInternalTargetSize = 0;
+
+		}
 
 CgShader::CgShader(ShaderType shaderType)
 :	m_shaderType(shaderType)
@@ -17,6 +23,9 @@ CgShader::CgShader(ShaderType shaderType)
 	pushOutputStream(BtInput, new StringOutputStream());
 	pushOutputStream(BtOutput, new StringOutputStream());
 	pushOutputStream(BtBody, new StringOutputStream());
+
+	// Ensure internal registers are marked as allocated.
+	m_uniformAllocated[c_registerInternalTargetSize] = true;
 }
 
 CgShader::~CgShader()
@@ -198,6 +207,9 @@ std::wstring CgShader::getGeneratedShader(bool needVPos)
 	ss << L"}" << Endl;
 	ss << Endl;
 
+	ss << L"uniform float2 _cg_targetSize : register(c" << c_registerInternalTargetSize << L");" << Endl;
+	ss << Endl;
+
 	std::wstring uniformText = getOutputStream(BtUniform).str();
 	if (!uniformText.empty())
 	{
@@ -253,9 +265,6 @@ std::wstring CgShader::getGeneratedShader(bool needVPos)
 
 	if (m_shaderType == StPixel)
 	{
-#if defined(_XBOX)
-		ss << L"[removeUnusedInputs]" << Endl;
-#endif
 		ss << L"void main(";
 		
 		if (!inputDataText.empty())

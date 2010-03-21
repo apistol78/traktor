@@ -1514,6 +1514,10 @@
       <second>Tangens</second>
     </item>
     <item>
+      <first>SHADERGRAPH_NODE_TARGETSIZE</first>
+      <second>Mål storlek</second>
+    </item>
+    <item>
       <first>SHADERGRAPH_NODE_TEXTURE</first>
       <second>Texture</second>
     </item>

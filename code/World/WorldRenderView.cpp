@@ -15,7 +15,6 @@ render::handle_t s_handleProjection;
 render::handle_t s_handleView;
 render::handle_t s_handleViewPrevious;
 render::handle_t s_handleViewDistance;
-render::handle_t s_handleTargetSize;
 render::handle_t s_handleViewSize;
 render::handle_t s_handleWorld;
 render::handle_t s_handleWorldInverse;
@@ -42,7 +41,6 @@ WorldRenderView::WorldRenderView()
 ,	m_projection(Matrix44::identity())
 ,	m_view(Matrix44::identity())
 ,	m_viewPrevious(Matrix44::identity())
-,	m_targetSize(0.0f, 0.0f)
 ,	m_viewSize(0.0f, 0.0f)
 ,	m_eyePosition(0.0f, 0.0f, 0.0f, 1.0f)
 ,	m_lightCount(0)
@@ -69,7 +67,6 @@ WorldRenderView::WorldRenderView()
 		s_handleView = render::getParameterHandle(L"View");
 		s_handleViewPrevious = render::getParameterHandle(L"ViewPrevious");
 		s_handleViewDistance = render::getParameterHandle(L"ViewDistance");
-		s_handleTargetSize = render::getParameterHandle(L"TargetSize");
 		s_handleViewSize = render::getParameterHandle(L"ViewSize");
 		s_handleWorld = render::getParameterHandle(L"World");
 		s_handleWorldInverse = render::getParameterHandle(L"WorldInverse");
@@ -113,11 +110,6 @@ void WorldRenderView::setView(const Matrix44& view)
 {
 	m_viewPrevious = m_view;
 	m_view = view;
-}
-
-void WorldRenderView::setTargetSize(const Vector2& targetSize)
-{
-	m_targetSize = targetSize;
 }
 
 void WorldRenderView::setViewSize(const Vector2& viewSize)
@@ -262,8 +254,6 @@ void WorldRenderView::setTechniqueShaderParameters(render::ShaderParameters* sha
 
 void WorldRenderView::setWorldShaderParameters(render::ShaderParameters* shaderParams, const Matrix44& world, const Matrix44& worldPrevious) const
 {
-	float targetSizeInvX = m_targetSize.x != 0.0f ? 1.0f / m_targetSize.x : 0.0f;
-	float targetSizeInvY = m_targetSize.y != 0.0f ? 1.0f / m_targetSize.y : 0.0f;
 	float viewSizeInvX = m_viewSize.x != 0.0f ? 1.0f / m_viewSize.x : 0.0f;
 	float viewSizeInvY = m_viewSize.y != 0.0f ? 1.0f / m_viewSize.y : 0.0f;
 
@@ -273,7 +263,6 @@ void WorldRenderView::setWorldShaderParameters(render::ShaderParameters* shaderP
 	shaderParams->setMatrixParameter(s_handleWorld, world);
 	shaderParams->setMatrixParameter(s_handleWorldInverse, world.inverse());
 	shaderParams->setMatrixParameter(s_handleWorldPrevious, worldPrevious);
-	shaderParams->setVectorParameter(s_handleTargetSize, Vector4(m_targetSize.x, m_targetSize.y, targetSizeInvX, targetSizeInvY));
 	shaderParams->setVectorParameter(s_handleViewSize, Vector4(m_viewSize.x, m_viewSize.y, viewSizeInvX, viewSizeInvY));
 	shaderParams->setVectorParameter(s_handleEyePosition, m_eyePosition);
 

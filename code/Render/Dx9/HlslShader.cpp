@@ -6,6 +6,12 @@ namespace traktor
 {
 	namespace render
 	{
+		namespace
+		{
+
+const uint32_t c_registerInternalTargetSize = 0;
+
+		}
 
 HlslShader::HlslShader(ShaderType shaderType)
 :	m_shaderType(shaderType)
@@ -17,6 +23,9 @@ HlslShader::HlslShader(ShaderType shaderType)
 	pushOutputStream(BtInput, new StringOutputStream());
 	pushOutputStream(BtOutput, new StringOutputStream());
 	pushOutputStream(BtBody, new StringOutputStream());
+
+	// Ensure internal registers are marked as allocated.
+	m_uniformAllocated[c_registerInternalTargetSize] = true;
 }
 
 HlslShader::~HlslShader()
@@ -188,6 +197,9 @@ std::wstring HlslShader::getGeneratedShader(bool needVPos)
 	StringOutputStream ss;
 
 	ss << L"// THIS SHADER IS AUTOMATICALLY GENERATED! DO NOT EDIT!" << Endl;
+	ss << Endl;
+
+	ss << L"uniform float2 _dx9_targetSize : register(c" << c_registerInternalTargetSize << L");" << Endl;
 	ss << Endl;
 
 	std::wstring uniformText = getOutputStream(BtUniform).str();

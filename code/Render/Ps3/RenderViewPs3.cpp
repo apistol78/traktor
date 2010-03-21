@@ -627,6 +627,9 @@ void RenderViewPs3::setCurrentRenderState()
 		);
 	}
 
+	const float T_ALIGN16 targetSize[] = { rs.width, rs.height, 0.0f, 0.0f };
+	m_stateCache.setVertexShaderConstant(0, 1, targetSize);
+
 	m_renderTargetDirty = false;
 }
 

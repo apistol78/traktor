@@ -74,8 +74,6 @@ public:
 
 	void setView(const Matrix44& view);
 
-	void setTargetSize(const Vector2& targetSize);
-
 	void setViewSize(const Vector2& viewSize);
 
 	void setEyePosition(const Vector4& eyePosition);
@@ -131,10 +129,6 @@ public:
 		return m_viewPrevious;
 	}
 
-	T_FORCE_INLINE const Vector2& getTargetSize() const {
-		return m_targetSize;
-	}
-
 	T_FORCE_INLINE const Vector2& getViewSize() const {
 		return m_viewSize;
 	}
@@ -178,7 +172,6 @@ private:
 	Matrix44 m_projection;
 	Matrix44 m_view;
 	Matrix44 m_viewPrevious;
-	Vector2 m_targetSize;
 	Vector2 m_viewSize;
 	Vector4 m_eyePosition;
 	Light m_lights[MaxLightCount];

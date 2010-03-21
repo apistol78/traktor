@@ -47,13 +47,6 @@ int ShaderGraphOrderEvaluator::evaluate(const Node* node) const
 		order = nodeTrig(node);
 	else if (is_a< ArcusTan >(node))
 		order = nodeArcusTan(node);
-	else if (
-		is_a< Color >(node) ||
-		is_a< Scalar >(node) ||
-		is_a< Uniform >(node) ||
-		is_a< Vector >(node)
-	)
-		order = OrConstant;
 	else if (is_a< IndexedUniform >(node))
 		order = nodeIndexedUniform(node);
 	else if (

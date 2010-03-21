@@ -180,6 +180,7 @@ bool RenderViewWin32::begin()
 	RenderState rs =
 	{
 		m_d3dViewport,
+		{ m_d3dPresent.BackBufferWidth, m_d3dPresent.BackBufferHeight },
 		m_d3dBackBuffer,
 		m_d3dDepthStencilSurface
 	};
@@ -203,6 +204,7 @@ bool RenderViewWin32::begin(RenderTargetSet* renderTargetSet, int renderTarget, 
 	RenderState rs =
 	{
 		{ 0, 0, rts->getWidth(), rts->getHeight(), 0.0f, 1.0f },
+		{ rt->getWidth(), rt->getHeight() },
 		rt->getD3DColorSurface(),
 		rts->getD3DDepthStencilSurface(),
 		rt
@@ -477,6 +479,11 @@ void RenderViewWin32::bindTargets()
 
 	hr = m_d3dDevice->SetViewport(&rs.d3dViewport);
 	T_FATAL_ASSERT_M (SUCCEEDED(hr), L"SetViewport failed");
+
+	// Expose target size to shaders.
+	const float T_ALIGN16 targetSize[] = { float(rs.targetSize[0]), float(rs.targetSize[1]), 0.0f, 0.0f };
+	m_parameterCache->setVertexShaderConstant(0, 1, targetSize);
+	m_parameterCache->setPixelShaderConstant(0, 1, targetSize);
 
 	m_targetDirty = false;
 }

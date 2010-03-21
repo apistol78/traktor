@@ -15,6 +15,8 @@ namespace traktor
 		namespace
 		{
 
+const uint32_t c_registerInternalTargetSize = 0;
+
 const DWORD c_optimizationLevels[] =
 {
 	D3DXSHADER_SKIPOPTIMIZATION,
@@ -94,6 +96,9 @@ bool collectScalarParameters(
 		if (dcd.Class == D3DXPC_SCALAR || dcd.Class == D3DXPC_VECTOR || dcd.Class == D3DXPC_MATRIX_COLUMNS)
 		{
 			T_ASSERT (dcd.Type == D3DXPT_FLOAT);
+
+			if (dcd.RegisterIndex == c_registerInternalTargetSize)
+				continue;
 
 			std::wstring parameterName = mbstows(dcd.Name);
 

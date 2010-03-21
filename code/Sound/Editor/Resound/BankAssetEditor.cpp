@@ -16,6 +16,7 @@
 #include "Sound/Resound/RepeatGrain.h"
 #include "Sound/Resound/SequenceGrain.h"
 #include "Sound/Editor/SoundAsset.h"
+#include "Sound/Editor/SoundSystemFactory.h"
 #include "Sound/Editor/Resound/BankAsset.h"
 #include "Sound/Editor/Resound/BankAssetEditor.h"
 #include "Sound/Editor/Resound/GrainProperties.h"
@@ -102,9 +103,13 @@ bool BankAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	m_grainFacades[&type_of< SequenceGrain >()] = new SequenceGrainFacade();
 
 	// Get sound system for preview.
-	m_soundSystem = m_editor->getStoreObject< sound::SoundSystem >(L"SoundSystem");
-	if (!m_soundSystem)
-		log::warning << L"Unable to create preview sound system; preview unavailable" << Endl;
+	Ref< SoundSystemFactory > soundSystemFactory = m_editor->getStoreObject< SoundSystemFactory >(L"SoundSystemFactory");
+	if (soundSystemFactory)
+	{
+		m_soundSystem = soundSystemFactory->createSoundSystem();
+		if (!m_soundSystem)
+			log::warning << L"Unable to create preview sound system; preview unavailable" << Endl;
+	}
 
 	m_resourceManager = new resource::ResourceManager();
 	if (m_soundSystem)
@@ -128,6 +133,7 @@ void BankAssetEditor::destroy()
 	if (m_resourceManager)
 		m_resourceManager = 0;
 
+	safeDestroy(m_soundSystem);
 	safeDestroy(m_menuGrains);
 }
 

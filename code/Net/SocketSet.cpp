@@ -36,7 +36,7 @@ Ref< Socket > SocketSet::get(int index) const
 
 int SocketSet::select(bool read, bool write, bool except, int timeout, SocketSet& outResultSet)
 {
-	timeval to = { timeout / 1000, (timeout % 1000) * 10 };
+	timeval to = { timeout / 1000, (timeout % 1000) * 1000 };
 	fd_set* fds[] = { 0, 0, 0 };
 	fd_set readfds, writefds, exceptfds;
 

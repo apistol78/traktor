@@ -950,6 +950,15 @@ public:
 	Tan();
 };
 
+/*! \brief Target size. */
+class T_DLLCLASS TargetSize : public ImmutableNode
+{
+	T_RTTI_CLASS;
+
+public:
+	TargetSize();
+};
+
 /*! \brief Transform vector by matrix. */
 class T_DLLCLASS Transform : public ImmutableNode
 {

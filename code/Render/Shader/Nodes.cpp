@@ -1648,6 +1648,18 @@ Tan::Tan()
 
 /*---------------------------------------------------------------------------*/
 
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TargetSize", 0, TargetSize, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_TargetSize_i[] = { 0 };
+const ImmutableNode::OutputPinDesc c_TargetSize_o[] = { L"Output", 0 };
+
+TargetSize::TargetSize()
+:	ImmutableNode(c_TargetSize_i, c_TargetSize_o)
+{
+}
+
+/*---------------------------------------------------------------------------*/
+
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Texture", 0, Texture, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Texture_i[] = { 0 };

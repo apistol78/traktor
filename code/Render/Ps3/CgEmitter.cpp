@@ -296,7 +296,7 @@ bool emitFragmentPosition(CgContext& cx, FragmentPosition* node)
 
 	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
 	CgVariable* out = cx.emitOutput(node, L"Output", CtFloat2);
-	assign(f, out) << L"vPos;" << Endl;
+	assign(f, out) << L"float2(vPos.x, _cg_targetSize.y - vPos.y);" << Endl;
 
 	return true;
 }
@@ -1134,6 +1134,14 @@ bool emitTan(CgContext& cx, Tan* node)
 	return true;
 }
 
+bool emitTargetSize(CgContext& cx, TargetSize* node)
+{
+	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
+	CgVariable* out = cx.emitOutput(node, L"Output", CtFloat2);
+	assign(f, out) << L"_cg_targetSize;";
+	return true;
+}
+
 bool emitTexture(CgContext& cx, Texture* node)
 {
 	std::wstring parameterName = getParameterNameFromGuid(node->getExternal());
@@ -1388,6 +1396,7 @@ CgEmitter::CgEmitter()
 	m_emitters[&type_of< Swizzle >()] = new EmitterCast< Swizzle >(emitSwizzle);
 	m_emitters[&type_of< Switch >()] = new EmitterCast< Switch >(emitSwitch);
 	m_emitters[&type_of< Tan >()] = new EmitterCast< Tan >(emitTan);
+	m_emitters[&type_of< TargetSize >()] = new EmitterCast< TargetSize >(emitTargetSize);
 	m_emitters[&type_of< Texture >()] = new EmitterCast< Texture >(emitTexture);
 	m_emitters[&type_of< Transform >()] = new EmitterCast< Transform >(emitTransform);
 	m_emitters[&type_of< Transpose >()] = new EmitterCast< Transpose >(emitTranspose);
