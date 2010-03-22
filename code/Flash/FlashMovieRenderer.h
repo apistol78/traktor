@@ -17,6 +17,8 @@ namespace traktor
 	namespace flash
 	{
 
+struct SwfCxTransform;
+
 class IDisplayRenderer;
 class FlashMovie;
 class FlashSprite;
@@ -42,13 +44,15 @@ private:
 	void renderSprite(
 		FlashMovie* movie,
 		FlashSpriteInstance* spriteInstance,
-		const Matrix33& transform
+		const Matrix33& transform,
+		const SwfCxTransform& cxTransform
 	);
 
 	void renderCharacter(
 		FlashMovie* movie,
 		FlashCharacterInstance* characterInstance,
-		const Matrix33& transform
+		const Matrix33& transform,
+		const SwfCxTransform& cxTransform
 	);
 };
 
