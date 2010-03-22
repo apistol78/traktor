@@ -19,6 +19,22 @@ namespace traktor
 {
 	namespace flash
 	{
+		namespace
+		{
+
+SwfCxTransform concateCxTransform(const SwfCxTransform& cxt1, const SwfCxTransform& cxt2)
+{
+	SwfCxTransform cxtr = 
+	{
+		{ cxt1.red[0]   * cxt2.red[0]  , cxt1.red[1]   * cxt2.red[1]   },
+		{ cxt1.green[0] * cxt2.green[0], cxt1.green[1] * cxt2.green[1] },
+		{ cxt1.blue[0]  * cxt2.blue[0] , cxt1.blue[1]  * cxt2.blue[1]  },
+		{ cxt1.alpha[0] * cxt2.alpha[0], cxt1.alpha[1] * cxt2.alpha[1] }
+	};
+	return cxtr;
+}
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashMovieRenderer", FlashMovieRenderer, Object)
 
@@ -32,7 +48,12 @@ void FlashMovieRenderer::renderFrame(FlashMovie* movie, FlashSpriteInstance* mov
 	const SwfColor& backgroundColor = movieInstance->getDisplayList().getBackgroundColor();
 	m_displayRenderer->begin(*movie, backgroundColor);
 
-	renderSprite(movie, movieInstance, Matrix33::identity());
+	renderSprite(
+		movie,
+		movieInstance,
+		Matrix33::identity(),
+		movieInstance->getColorTransform()
+	);
 
 	m_displayRenderer->end();
 }
@@ -40,7 +61,8 @@ void FlashMovieRenderer::renderFrame(FlashMovie* movie, FlashSpriteInstance* mov
 void FlashMovieRenderer::renderSprite(
 	FlashMovie* movie,
 	FlashSpriteInstance* spriteInstance,
-	const Matrix33& transform
+	const Matrix33& transform,
+	const SwfCxTransform& cxTransform
 )
 {
 	if (!spriteInstance->isVisible())
@@ -63,7 +85,8 @@ void FlashMovieRenderer::renderSprite(
 			renderCharacter(
 				movie,
 				layer.instance,
-				transform * layer.instance->getTransform()
+				transform * layer.instance->getTransform(),
+				concateCxTransform(cxTransform, layer.instance->getColorTransform())
 			);
 			++i;
 		}
@@ -74,7 +97,8 @@ void FlashMovieRenderer::renderSprite(
 			renderCharacter(
 				movie,
 				layer.instance,
-				transform * layer.instance->getTransform()
+				transform * layer.instance->getTransform(),
+				concateCxTransform(cxTransform, layer.instance->getColorTransform())
 			);
 
 			m_displayRenderer->endMask();
@@ -88,7 +112,8 @@ void FlashMovieRenderer::renderSprite(
 				renderCharacter(
 					movie,
 					clippedLayer.instance,
-					transform * clippedLayer.instance->getTransform()
+					transform * clippedLayer.instance->getTransform(),
+					concateCxTransform(cxTransform, clippedLayer.instance->getColorTransform())
 				);
 			}
 
@@ -97,7 +122,8 @@ void FlashMovieRenderer::renderSprite(
 			renderCharacter(
 				movie,
 				layer.instance,
-				transform * layer.instance->getTransform()
+				transform * layer.instance->getTransform(),
+				concateCxTransform(cxTransform, layer.instance->getColorTransform())
 			);
 
 			m_displayRenderer->endMask();
@@ -108,7 +134,8 @@ void FlashMovieRenderer::renderSprite(
 void FlashMovieRenderer::renderCharacter(
 	FlashMovie* movie,
 	FlashCharacterInstance* characterInstance,
-	const Matrix33& transform
+	const Matrix33& transform,
+	const SwfCxTransform& cxTransform
 )
 {
 	// Render basic shapes.
@@ -119,7 +146,7 @@ void FlashMovieRenderer::renderCharacter(
 			*movie,
 			transform,
 			*shapeInstance->getShape(),
-			characterInstance->getColorTransform()
+			concateCxTransform(cxTransform, characterInstance->getColorTransform())
 		);
 		return;
 	}
@@ -132,7 +159,7 @@ void FlashMovieRenderer::renderCharacter(
 			*movie,
 			transform,
 			*morphInstance->getShape(),
-			characterInstance->getColorTransform()
+			concateCxTransform(cxTransform, characterInstance->getColorTransform())
 		);
 		return;
 	}
@@ -174,7 +201,7 @@ void FlashMovieRenderer::renderCharacter(
 				transform * text->getTextMatrix() * translate(i->offsetX - glyphReferenceX, i->offsetY - glyphReferenceY) * scale(scaleOffset, scaleOffset),
 				*shape,
 				i->color,
-				characterInstance->getColorTransform()
+				concateCxTransform(cxTransform, characterInstance->getColorTransform())
 			);
 		}
 
@@ -251,7 +278,7 @@ void FlashMovieRenderer::renderCharacter(
 						transform * translate(offsetX, offsetY) * scale(fontScale * fontHeight, fontScale * fontHeight),
 						*glyphShape,
 						color,
-						characterInstance->getColorTransform()
+						concateCxTransform(cxTransform, characterInstance->getColorTransform())
 					);
 				}
 
@@ -293,7 +320,8 @@ void FlashMovieRenderer::renderCharacter(
 			renderCharacter(
 				movie,
 				referenceInstance,
-				transform * j->placeMatrix
+				transform * j->placeMatrix,
+				concateCxTransform(cxTransform, characterInstance->getColorTransform())
 			);
 		}
 
@@ -307,7 +335,8 @@ void FlashMovieRenderer::renderCharacter(
 		renderSprite(
 			movie,
 			spriteInstance,
-			transform
+			transform,
+			concateCxTransform(cxTransform, characterInstance->getColorTransform())
 		);
 		return;
 	}
