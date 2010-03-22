@@ -111,7 +111,7 @@ bool ShaderGraphEditorPage::create(ui::Container* parent, editor::IEditorPageSit
 	// Create our custom toolbar.
 	m_toolBar = new ui::custom::ToolBar();
 	m_toolBar->create(container);
-	m_toolBar->addImage(ui::Bitmap::load(c_ResourceAlignment, sizeof(c_ResourceAlignment), L"png"), 8);
+	m_toolBar->addImage(ui::Bitmap::load(c_ResourceAlignment, sizeof(c_ResourceAlignment), L"png"), 10);
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_OPEN_REFEREE"), ui::Command(L"ShaderGraph.Editor.OpenReferee"), 6));
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_CENTER"), ui::Command(L"ShaderGraph.Editor.Center"), 7));
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
@@ -123,8 +123,8 @@ bool ShaderGraphEditorPage::create(ui::Container* parent, editor::IEditorPageSit
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_EVEN_VERTICALLY"), ui::Command(L"ShaderGraph.Editor.EvenSpaceVertically"), 4));
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_EVEN_HORIZONTALLY"), ui::Command(L"ShaderGraph.Editor.EventSpaceHorizontally"), 5));
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
-	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_REMOVE_UNUSED_NODES"), ui::Command(L"ShaderGraph.Editor.RemoveUnusedNodes"), 7));
-	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_AUTO_MERGE_BRANCHES"), ui::Command(L"ShaderGraph.Editor.AutoMergeBranches"), 7));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_REMOVE_UNUSED_NODES"), ui::Command(L"ShaderGraph.Editor.RemoveUnusedNodes"), 8));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_AUTO_MERGE_BRANCHES"), ui::Command(L"ShaderGraph.Editor.AutoMergeBranches"), 9));
 	m_toolBar->addClickEventHandler(ui::createMethodHandler(this, &ShaderGraphEditorPage::eventToolClick));
 
 	// Create shader graph editor control.

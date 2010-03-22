@@ -63,6 +63,8 @@ void PipelineDependsIncremental::addDependency(const ISerializable* sourceAsset,
 	// Don't add dependency multiple times.
 	if (PipelineDependency* dependency = findDependency(outputGuid))
 	{
+		dependency->flags |= flags;
+
 		// Still need to add to current dependency so one asset can be dependent upon from several others.
 		if (m_currentDependency)
 			m_currentDependency->children.push_back(dependency);
@@ -91,6 +93,8 @@ void PipelineDependsIncremental::addDependency(db::Instance* sourceAssetInstance
 	// Don't add dependency multiple times.
 	if (PipelineDependency* dependency = findDependency(sourceAssetInstance->getGuid()))
 	{
+		dependency->flags |= flags;
+
 		// Still need to add to current dependency so one asset can be dependent upon from several others.
 		if (m_currentDependency)
 			m_currentDependency->children.push_back(dependency);
@@ -127,6 +131,8 @@ void PipelineDependsIncremental::addDependency(const Guid& sourceAssetGuid, uint
 	// Don't add dependency multiple times.
 	if (PipelineDependency* dependency = findDependency(sourceAssetGuid))
 	{
+		dependency->flags |= flags;
+
 		// Still need to add to current dependency so one asset can be dependent upon from several others.
 		if (m_currentDependency)
 			m_currentDependency->children.push_back(dependency);

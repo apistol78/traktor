@@ -44,6 +44,7 @@ public:
 	uint32_t pipelineHash;						/*!< Hash of pipeline settings. */
 	Ref< const ISerializable > sourceAsset;		/*!< Source asset. */
 	uint32_t sourceAssetHash;					/*!< Hash of source asset. */
+	uint32_t dependencyHash;					/*!< Dependency hash, a complete hash of this dep and the children. */
 	std::wstring outputPath;					/*!< Database output path. */
 	Guid outputGuid;							/*!< Database output guid. */
 	Ref< const Object > buildParams;			/*!< Build parameters, passed from dependency phase. */

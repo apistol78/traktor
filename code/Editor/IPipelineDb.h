@@ -41,8 +41,9 @@ public:
 	struct Hash
 	{
 		uint32_t pipelineVersion;
-		uint32_t pipelineHash;
-		uint32_t sourceAssetHash;
+		//uint32_t pipelineHash;
+		//uint32_t sourceAssetHash;
+		uint32_t dependencyHash;
 		std::map< Path, DateTime > timeStamps;
 	};
 
