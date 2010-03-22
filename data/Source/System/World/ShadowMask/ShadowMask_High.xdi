@@ -39,6 +39,11 @@
 					<source>1</source>
 					<index>0</index>
 				</item>
+				<item>
+					<param>Depth</param>
+					<source>-2</source>
+					<index>0</index>
+				</item>
 			</sources>
 			<direction>2, 0, 0, 0</direction>
 			<taps>15</taps>
@@ -52,6 +57,11 @@
 				<item>
 					<param>Source</param>
 					<source>2</source>
+					<index>0</index>
+				</item>
+				<item>
+					<param>Depth</param>
+					<source>-2</source>
 					<index>0</index>
 				</item>
 			</sources>
