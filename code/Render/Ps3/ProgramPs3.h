@@ -58,7 +58,7 @@ public:
 
 	virtual void setStencilReference(uint32_t stencilReference);
 
-	void bind(PoolAllocator& patchProgramPool, StateCachePs3& stateCache);
+	void bind(PoolAllocator& patchProgramPool, StateCachePs3& stateCache, float targetSize[]);
 
 	static void unbind();
 
@@ -76,6 +76,7 @@ private:
 	RenderState m_renderState;
 	std::vector< ProgramScalar > m_vertexScalars;
 	std::vector< ProgramScalar > m_pixelScalars;
+	std::vector< uint32_t > m_pixelTargetSizeUCodeOffsets;
 	std::vector< ProgramSampler > m_vertexSamplers;
 	std::vector< ProgramSampler > m_pixelSamplers;
 	std::map< handle_t, uint32_t > m_scalarParameterMap;

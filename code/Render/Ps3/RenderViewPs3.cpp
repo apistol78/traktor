@@ -70,6 +70,7 @@ RenderViewPs3::RenderViewPs3(RenderSystemPs3* renderSystem)
 	std::memset(m_colorAddr, 0, sizeof(m_colorAddr));
 	std::memset(m_colorOffset, 0, sizeof(m_colorOffset));
 	std::memset(&m_depthTexture, 0, sizeof(m_depthTexture));
+	std::memset(m_targetSize, 0, sizeof(m_targetSize));
 }
 
 RenderViewPs3::~RenderViewPs3()
@@ -451,7 +452,7 @@ void RenderViewPs3::draw(const Primitives& primitives)
 	if (m_renderTargetDirty)
 		setCurrentRenderState();
 
-	m_currentProgram->bind(m_patchProgramPool, m_stateCache);
+	m_currentProgram->bind(m_patchProgramPool, m_stateCache, m_targetSize);
 	m_currentVertexBuffer->bind(m_currentProgram->getInputSignature());
 
 	uint32_t count = 0;
@@ -627,8 +628,9 @@ void RenderViewPs3::setCurrentRenderState()
 		);
 	}
 
-	const float T_ALIGN16 targetSize[] = { rs.width, rs.height, 0.0f, 0.0f };
-	m_stateCache.setVertexShaderConstant(0, 1, targetSize);
+	// Set target size vertex shader constant.
+	m_targetSize[0] = rs.width;
+	m_targetSize[1] = rs.height;
 
 	m_renderTargetDirty = false;
 }

@@ -114,6 +114,7 @@ private:
 	StateCachePs3 m_stateCache;
 	MemoryHeapObject* m_patchProgramObject;
 	PoolAllocator m_patchProgramPool;
+	float T_ALIGN16 m_targetSize[4];
 
 	void setCurrentRenderState();
 };

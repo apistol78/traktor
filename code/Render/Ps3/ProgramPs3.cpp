@@ -60,6 +60,12 @@ void getProgramUCode(MemoryHeap* memoryHeap, CGprogram program, MemoryHeapObject
 	}
 }
 
+void writeFragmentScalar(uint32_t* uc, float scalar)
+{
+	uint32_t sv = *(const uint32_t*)&scalar;
+	*uc = (sv >> 16) | (sv << 16);
+}
+
 		}
 
 ProgramPs3* ProgramPs3::ms_activeProgram = 0;
@@ -115,6 +121,18 @@ bool ProgramPs3::create(MemoryHeap* memoryHeap, const ProgramResourcePs3* resour
 
 	m_scalarParameterData.resize(resource->m_scalarParameterDataSize);
 	m_textureParameterData.resize(resource->m_textureParameterDataSize);
+
+	// Get patch offsets of internal parameters.
+	CGparameter parameter = cellGcmCgGetNamedParameter(m_pixelProgram, "_cg_targetSize");
+	if (parameter)
+	{
+		uint32_t constantCount = cellGcmCgGetEmbeddedConstantCount(m_pixelProgram, parameter);
+		for (uint32_t k = 0; k < constantCount; ++k)
+		{
+			uint32_t constantOffset = cellGcmCgGetEmbeddedConstantOffset(m_pixelProgram, parameter, k);
+			m_pixelTargetSizeUCodeOffsets.push_back(constantOffset);
+		}
+	}
 
 	m_inputSignature = resource->m_inputSignature;
 	m_renderState = resource->m_renderState;
@@ -206,7 +224,7 @@ void ProgramPs3::setStencilReference(uint32_t stencilReference)
 {
 }
 
-void ProgramPs3::bind(PoolAllocator& patchProgramPool, StateCachePs3& stateCache)
+void ProgramPs3::bind(PoolAllocator& patchProgramPool, StateCachePs3& stateCache, float targetSize[])
 {
 	stateCache.setRenderState(m_renderState);
 
@@ -215,6 +233,8 @@ void ProgramPs3::bind(PoolAllocator& patchProgramPool, StateCachePs3& stateCache
 		// Set vertex program constants.
 		for (std::vector< ProgramScalar >::iterator i = m_vertexScalars.begin(); i != m_vertexScalars.end(); ++i)
 			stateCache.setVertexShaderConstant(i->vertexRegisterIndex, i->vertexRegisterCount, &m_scalarParameterData[i->offset]);
+
+		stateCache.setVertexShaderConstant(0, 1, targetSize);
 
 		// Get patched pixel shader.
 		if (!m_pixelScalars.empty())
@@ -230,19 +250,23 @@ void ProgramPs3::bind(PoolAllocator& patchProgramPool, StateCachePs3& stateCache
 				m_pixelShaderUCode->getSize()
 			);
 
-			for (std::vector< ProgramScalar >::iterator i = m_pixelScalars.begin(); i != m_pixelScalars.end(); ++i)
+			for (std::vector< ProgramScalar >::const_iterator i = m_pixelScalars.begin(); i != m_pixelScalars.end(); ++i)
 			{
-				for (std::vector< FragmentOffset >::iterator j = i->fragmentOffsets.begin(); j != i->fragmentOffsets.end(); ++j)
+				for (std::vector< FragmentOffset >::const_iterator j = i->fragmentOffsets.begin(); j != i->fragmentOffsets.end(); ++j)
 				{
-					const uint32_t* sv = (const uint32_t*)&m_scalarParameterData[i->offset + j->parameterOffset];
+					const float* sv = &m_scalarParameterData[i->offset + j->parameterOffset];
 					uint32_t* uc = (uint32_t*)&patchedPixelShaderUCode[j->ucodeOffset];
 
 					for (uint32_t k = 0; k < 4; ++k)
-					{
-						const uint32_t v = sv[k];
-						uc[k] = (v >> 16) | (v << 16);
-					}
+						writeFragmentScalar(&uc[k], sv[k]);
 				}
+			}
+
+			for (std::vector< uint32_t >::const_iterator i = m_pixelTargetSizeUCodeOffsets.begin(); i != m_pixelTargetSizeUCodeOffsets.end(); ++i)
+			{
+				uint32_t* uc = (uint32_t*)&patchedPixelShaderUCode[*i];
+				writeFragmentScalar(&uc[0], targetSize[0]);
+				writeFragmentScalar(&uc[1], targetSize[1]);
 			}
 
 			cellGcmAddressToOffset(patchedPixelShaderUCode, &m_patchedPixelShaderOffset);
