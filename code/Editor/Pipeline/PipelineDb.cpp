@@ -8,6 +8,12 @@ namespace traktor
 {
 	namespace editor
 	{
+		namespace
+		{
+
+const int32_t c_version = 1;
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PipelineDb", PipelineDb, IPipelineDb)
 
@@ -17,8 +23,35 @@ bool PipelineDb::open(const std::wstring& connectionString)
 	if (!connection->connect(connectionString))
 		return false;
 
+	bool haveTable = connection->tableExists(L"PipelineHash");
+
+	// Ensure db latest version.
+	if (haveTable)
+	{
+		haveTable = false;
+
+		if (connection->tableExists(L"Version"))
+		{
+			Ref< sql::IResultSet > rs;
+			rs = connection->executeQuery(L"select * from Version");
+			if (rs && rs->next())
+			{
+				if (rs->getInt32(0) == c_version)
+					haveTable = true;
+			}
+		}
+
+		// Drop all tables if incorrect version.
+		if (!haveTable)
+		{
+			connection->executeUpdate(L"drop table PipelineHash");
+			connection->executeUpdate(L"drop table TimeStamps");
+			connection->executeUpdate(L"drop table Version");
+		}
+	}
+
 	// Create tables if they doesn't exist.
-	if (!connection->tableExists(L"PipelineHash"))
+	if (!haveTable)
 	{
 		T_ASSERT_M (!connection->tableExists(L"TimeStamps"), L"TimeStamps table already exists");
 
@@ -27,8 +60,7 @@ bool PipelineDb::open(const std::wstring& connectionString)
 			L"id integer primary key,"
 			L"guid char(37) unique,"
 			L"pipelineVersion integer,"
-			L"pipelineHash integer,"
-			L"sourceHash integer"
+			L"dependencyHash integer"
 			L")"
 		) <= 0)
 			return false;
@@ -41,6 +73,12 @@ bool PipelineDb::open(const std::wstring& connectionString)
 			L"epoch integer"
 			L")"
 		) <= 0)
+			return false;
+
+		if (connection->executeUpdate(L"create table Version (major integer)") <= 0)
+			return false;
+
+		if (connection->executeUpdate(L"insert into Version (major) values (" + toString(c_version) + L")") <= 0)
 			return false;
 	}
 
@@ -81,12 +119,11 @@ void PipelineDb::set(const Guid& guid, const Hash& hash)
 	// Insert hash.
 	ss.reset();
 	ss <<
-		L"insert into PipelineHash (guid, pipelineVersion, pipelineHash, sourceHash) "
+		L"insert into PipelineHash (guid, pipelineVersion, dependencyHash) "
 		L"values (" <<
 		L"'" << guid.format() << L"'," <<
 		hash.pipelineVersion << L"," <<
-		hash.pipelineHash << L"," <<
-		hash.sourceAssetHash <<
+		hash.dependencyHash <<
 		L")";
 	m_connection->executeUpdate(ss.str());
 
@@ -123,8 +160,7 @@ bool PipelineDb::get(const Guid& guid, Hash& outHash) const
 	int32_t id = rs->getInt32(L"id");
 
 	outHash.pipelineVersion = rs->getInt32(L"pipelineVersion");
-	outHash.pipelineHash = rs->getInt32(L"pipelineHash");
-	outHash.sourceAssetHash = rs->getInt32(L"sourceHash");
+	outHash.dependencyHash = rs->getInt32(L"dependencyHash");
 	
 	// Get time stamps.
 	ss.reset();

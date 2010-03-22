@@ -4,8 +4,8 @@
 		<item type="traktor.render.PixelOutput" version="2">
 			<comment/>
 			<position>
-				<first>2687</first>
-				<second>805</second>
+				<first>2706</first>
+				<second>696</second>
 			</position>
 			<technique>Default</technique>
 			<cullMode>CmClockWise</cullMode>
@@ -391,6 +391,14 @@ View direction
 			<parameterName>Heightfield</parameterName>
 			<type>PtTexture</type>
 		</item>
+		<item type="traktor.render.Scalar">
+			<comment/>
+			<position>
+				<first>2516</first>
+				<second>682</second>
+			</position>
+			<value>0</value>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
@@ -765,16 +773,6 @@ View direction
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[28]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[32]"/>
 				<name>Output</name>
 			</source>
@@ -801,6 +799,16 @@ View direction
 			<destination>
 				<node ref="/object/nodes/item[5]"/>
 				<name>Texture</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[35]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>Input</name>
 			</destination>
 		</item>
 	</edges>

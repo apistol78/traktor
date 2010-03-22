@@ -50,9 +50,13 @@ bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, 
 
 	timer.start();
 
+	// Update dependency hashes.
+	for (RefArray< PipelineDependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
+		updateLocalHashes(*i);
+
 	// Check which dependencies are dirty; ie. need to be rebuilt.
 	for (RefArray< PipelineDependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
-		analyzeBuildReason(*i, rebuild);
+		updateBuildReason(*i, rebuild);
 
 	log::debug << L"Pipeline build; analyze " << int32_t(timer.getElapsedTime() * 1000) << L" ms" << Endl;
 
@@ -164,13 +168,29 @@ Ref< IPipelineReport > PipelineBuilder::createReport(const std::wstring& name, c
 	return m_db->createReport(name, guid);
 }
 
-void PipelineBuilder::analyzeBuildReason(PipelineDependency* dependency, bool rebuild)
+void PipelineBuilder::updateLocalHashes(PipelineDependency* dependency)
+{
+	dependency->sourceAssetHash = DeepHash(dependency->sourceAsset).get();
+
+	dependency->dependencyHash = 0;
+	const std::set< Path >& files = dependency->files;
+	for (std::set< Path >::const_iterator j = files.begin(); j != files.end(); ++j)
+		dependency->dependencyHash += externalFileHash(*j);
+
+	dependency->dependencyHash += dependency->pipelineHash;
+	dependency->dependencyHash += dependency->sourceAssetHash;
+}
+
+void PipelineBuilder::updateBuildReason(PipelineDependency* dependency, bool rebuild)
 {
 	dependency->sourceAssetHash = DeepHash(checked_type_cast< const ISerializable* >(dependency->sourceAsset)).get();
 
 	// Have source asset been modified?
 	if (!rebuild)
 	{
+		uint32_t dependencyHash = calculateGlobalHash(dependency);
+
+		// Get hash entry from database.
 		IPipelineDb::Hash hash;
 		if (!m_db->get(dependency->outputGuid, hash))
 		{
@@ -182,12 +202,7 @@ void PipelineBuilder::analyzeBuildReason(PipelineDependency* dependency, bool re
 			log::info << L"Asset \"" << dependency->name << L"\" modified; pipeline version differ" << Endl;
 			dependency->reason |= PbrSourceModified;
 		}
-		else if (hash.pipelineHash != dependency->pipelineHash)
-		{
-			log::info << L"Asset \"" << dependency->name << L"\" modified; pipeline settings differ" << Endl;
-			dependency->reason |= PbrSourceModified;
-		}
-		else if (hash.sourceAssetHash != dependency->sourceAssetHash)
+		else if (hash.dependencyHash != dependencyHash)
 		{
 			log::info << L"Asset \"" << dependency->name << L"\" modified; source has been modified" << Endl;
 			dependency->reason |= PbrSourceModified;
@@ -228,8 +243,7 @@ bool PipelineBuilder::performBuild(PipelineDependency* dependency)
 
 	// Create hash entry.
 	hash.pipelineVersion = type_of(dependency->pipeline).getVersion();
-	hash.pipelineHash = dependency->pipelineHash;
-	hash.sourceAssetHash = dependency->sourceAssetHash;
+	hash.dependencyHash = calculateGlobalHash(dependency);
 	hash.timeStamps.clear();
 
 	const std::set< Path >& files = dependency->files;
@@ -254,7 +268,6 @@ bool PipelineBuilder::performBuild(PipelineDependency* dependency)
 	if (needBuild(dependency))
 	{
 		T_ANONYMOUS_VAR(ScopeIndent)(log::info);
-		uint32_t cacheHash;
 
 		log::info << L"Building asset \"" << dependency->name << L"\" (" << type_name(dependency->pipeline) << L")..." << Endl;
 		log::info << IncreaseIndent;
@@ -262,8 +275,7 @@ bool PipelineBuilder::performBuild(PipelineDependency* dependency)
 		// Get output instances from cache.
 		if (m_cache)
 		{
-			cacheHash = dependencyCacheHash(dependency);
-			result = getInstancesFromCache(dependency->outputGuid, cacheHash);
+			result = getInstancesFromCache(dependency->outputGuid, hash.dependencyHash);
 			if (result)
 			{
 				log::info << L"Cached instance(s) used" << Endl;
@@ -302,7 +314,7 @@ bool PipelineBuilder::performBuild(PipelineDependency* dependency)
 					if (m_cache)
 						putInstancesInCache(
 							dependency->outputGuid,
-							cacheHash,
+							hash.dependencyHash,
 							m_builtInstances
 						);
 
@@ -318,6 +330,17 @@ bool PipelineBuilder::performBuild(PipelineDependency* dependency)
 	}
 
 	return result;
+}
+
+uint32_t PipelineBuilder::calculateGlobalHash(const PipelineDependency* dependency) const
+{
+	uint32_t hash = dependency->dependencyHash;
+	for (RefArray< PipelineDependency >::const_iterator i = dependency->children.begin(); i != dependency->children.end(); ++i)
+	{
+		if (((*i)->flags & PdfUse) != 0)
+			hash += calculateGlobalHash(*i);
+	}
+	return hash;
 }
 
 bool PipelineBuilder::needBuild(PipelineDependency* dependency) const
@@ -405,24 +428,6 @@ bool PipelineBuilder::getInstancesFromCache(const Guid& guid, uint32_t hash)
 	}
 
 	return result;
-}
-
-uint32_t PipelineBuilder::dependencyCacheHash(const PipelineDependency* dependency)
-{
-	uint32_t hash = 0UL;
-
-	const std::set< Path >& files = dependency->files;
-	for (std::set< Path >::const_iterator i = files.begin(); i != files.end(); ++i)
-		hash += externalFileHash(*i);
-
-	hash += dependency->pipelineHash;
-	hash += dependency->sourceAssetHash;
-
-	const RefArray< PipelineDependency >& children = dependency->children;
-	for (RefArray< PipelineDependency >::const_iterator i = children.begin(); i != children.end(); ++i)
-		hash += dependencyCacheHash(*i);
-
-	return hash;
 }
 
 uint32_t PipelineBuilder::externalFileHash(const Path& path)

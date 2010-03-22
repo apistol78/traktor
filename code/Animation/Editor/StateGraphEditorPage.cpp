@@ -50,7 +50,7 @@ bool StateGraphEditorPage::create(ui::Container* parent, editor::IEditorPageSite
 	// Create our custom toolbar.
 	m_toolBar = new ui::custom::ToolBar();
 	m_toolBar->create(container);
-	m_toolBar->addImage(ui::Bitmap::load(c_ResourceAlignment, sizeof(c_ResourceAlignment), L"png"), 8);
+	m_toolBar->addImage(ui::Bitmap::load(c_ResourceAlignment, sizeof(c_ResourceAlignment), L"png"), 10);
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"STATEGRAPH_ALIGN_LEFT"), ui::Command(L"StateGraph.Editor.AlignLeft"), 0));
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"STATEGRAPH_ALIGN_RIGHT"), ui::Command(L"StateGraph.Editor.AlignRight"), 1));
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"STATEGRAPH_ALIGN_TOP"), ui::Command(L"StateGraph.Editor.AlignTop"), 2));

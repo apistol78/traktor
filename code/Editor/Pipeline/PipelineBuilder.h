@@ -93,11 +93,17 @@ private:
 	std::map< Path, uint32_t > m_externalFileHash;
 	RefArray< db::Instance > m_builtInstances;
 
+	/*! \brief Update dependency local hashes. */
+	void updateLocalHashes(PipelineDependency* dependency);
+
 	/*! \brief Update build reasons. */
-	void analyzeBuildReason(PipelineDependency* dependency, bool rebuild);
+	void updateBuildReason(PipelineDependency* dependency, bool rebuild);
 
 	/*! \brief Perform build. */
 	bool performBuild(PipelineDependency* dependency);
+
+	/*! \brief Calculate global dependency hash; ie. including child dependencies. */
+	uint32_t calculateGlobalHash(const PipelineDependency* dependency) const;
 
 	/*! \brief Check if dependency needs to be built. */
 	bool needBuild(PipelineDependency* dependency) const;
@@ -107,9 +113,6 @@ private:
 
 	/*! \brief Get isolated instance from cache. */
 	bool getInstancesFromCache(const Guid& guid, uint32_t hash);
-
-	/*! \brief Calculate dependency cache hash. */
-	uint32_t dependencyCacheHash(const PipelineDependency* dependency);
 
 	/*! \brief Calculate external file hash. */
 	uint32_t externalFileHash(const Path& path);
