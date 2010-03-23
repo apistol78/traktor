@@ -36,7 +36,7 @@ FlashEditInstance::FlashEditInstance(ActionContext* context, FlashCharacterInsta
 		parseText(html);
 }
 
-Ref< const FlashEdit > FlashEditInstance::getEdit() const
+const FlashEdit* FlashEditInstance::getEdit() const
 {
 	return m_edit;
 }

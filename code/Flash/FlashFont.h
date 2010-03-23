@@ -50,7 +50,7 @@ public:
 		CoordinateType coordinateType
 	);
 
-	Ref< const FlashShape > getShape(uint16_t index) const;
+	const FlashShape* getShape(uint16_t index) const;
 
 	int16_t getAscent() const;
 

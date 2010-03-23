@@ -271,12 +271,12 @@ bool FlashMoviePlayer::getFsCommand(std::wstring& outCommand, std::wstring& outA
 	return true;
 }
 
-Ref< FlashSpriteInstance > FlashMoviePlayer::getMovieInstance() const
+FlashSpriteInstance* FlashMoviePlayer::getMovieInstance() const
 {
 	return m_movieInstance;
 }
 
-Ref< IActionVM > FlashMoviePlayer::getVM() const
+IActionVM* FlashMoviePlayer::getVM() const
 {
 	return m_actionVM;
 }

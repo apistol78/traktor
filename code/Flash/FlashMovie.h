@@ -8,9 +8,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_FLASH_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -18,11 +18,11 @@ namespace traktor
 	namespace flash
 	{
 
-class FlashSprite;
-class FlashSpriteInstance;
-class FlashFont;
 class FlashBitmap;
 class FlashCharacter;
+class FlashFont;
+class FlashSprite;
+class FlashSpriteInstance;
 
 /*! \brief Flash movie.
  * \ingroup Flash
@@ -42,11 +42,11 @@ public:
 
 	void removeCharacter(FlashCharacter* character);
 
-	Ref< const FlashFont > getFont(uint16_t fontId) const;
+	const FlashFont* getFont(uint16_t fontId) const;
 
-	Ref< const FlashBitmap > getBitmap(uint16_t bitmapId) const;
+	const FlashBitmap* getBitmap(uint16_t bitmapId) const;
 
-	Ref< const FlashCharacter > getCharacter(uint16_t characterId) const;
+	const FlashCharacter* getCharacter(uint16_t characterId) const;
 
 	void setExport(const std::wstring& name, uint16_t exportId);
 
@@ -56,7 +56,7 @@ public:
 
 	const SwfRect& getFrameBounds() const;
 
-	Ref< const FlashSprite > getMovieClip() const;
+	const FlashSprite* getMovieClip() const;
 
 	Ref< FlashSpriteInstance > createMovieClipInstance() const;
 

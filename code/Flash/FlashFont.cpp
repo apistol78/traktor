@@ -59,7 +59,7 @@ bool FlashFont::create(
 	return true;
 }
 
-Ref< const FlashShape > FlashFont::getShape(uint16_t index) const
+const FlashShape* FlashFont::getShape(uint16_t index) const
 {
 	return index < m_shapes.size() ? m_shapes[index] : 0;
 }
