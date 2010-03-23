@@ -2,9 +2,9 @@
 #include "Core/Memory/Alloc.h"
 #include "Core/Misc/String.h"
 #include "Flash/Action/ActionValue.h"
-#include "Flash/Action/Avm1/ActionBoolean.h"
-#include "Flash/Action/Avm1/ActionNumber.h"
-#include "Flash/Action/Avm1/ActionString.h"
+#include "Flash/Action/Classes/Boolean.h"
+#include "Flash/Action/Classes/Number.h"
+#include "Flash/Action/Classes/String.h"
 
 namespace traktor
 {
@@ -182,11 +182,11 @@ Ref< ActionObject > ActionValue::getObjectSafe() const
 	switch (m_type)
 	{
 	case AvtBoolean:
-		return new ActionBoolean(m_value.b);
+		return new Boolean(m_value.b);
 	case AvtNumber:
-		return new ActionNumber(m_value.n);
+		return new Number(m_value.n);
 	case AvtString:
-		return new ActionString(m_value.s);
+		return new String(m_value.s);
 	case AvtObject:
 		return m_value.o;
 	}

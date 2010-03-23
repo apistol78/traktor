@@ -1,6 +1,6 @@
 #include "Core/Log/Log.h"
 #include "Flash/Action/ActionFunctionNative.h"
-#include "Flash/Action/Avm1/ActionArray.h"
+#include "Flash/Action/Classes/Array.h"
 #include "Flash/Action/Avm1/Classes/AsArray.h"
 #include "Flash/Action/Avm1/Classes/AsObject.h"
 
@@ -60,7 +60,7 @@ void AsArray::createPrototype()
 
 ActionValue AsArray::construct(ActionContext* context, const args_t& args)
 {
-	Ref< ActionArray > object = new ActionArray();
+	Ref< Array > object = new Array();
 	for (args_t::const_iterator i = args.begin(); i != args.end(); ++i)
 		object->push(*i);
 	return ActionValue(object);
@@ -68,7 +68,7 @@ ActionValue AsArray::construct(ActionContext* context, const args_t& args)
 
 void AsArray::Array_concat(CallArgs& ca)
 {
-	Ref< ActionArray > arr = checked_type_cast< ActionArray* >(ca.self);
+	Ref< Array > arr = checked_type_cast< Array* >(ca.self);
 	if (!ca.args.empty())
 		ca.ret = ActionValue(arr->concat(ca.args));
 	else
@@ -77,7 +77,7 @@ void AsArray::Array_concat(CallArgs& ca)
 
 void AsArray::Array_join(CallArgs& ca)
 {
-	Ref< ActionArray > arr = checked_type_cast< ActionArray* >(ca.self);
+	Ref< Array > arr = checked_type_cast< Array* >(ca.self);
 	if (ca.args.empty())
 		ca.ret = ActionValue(arr->join(L","));
 	else
@@ -86,13 +86,13 @@ void AsArray::Array_join(CallArgs& ca)
 
 void AsArray::Array_pop(CallArgs& ca)
 {
-	Ref< ActionArray > arr = checked_type_cast< ActionArray* >(ca.self);
+	Ref< Array > arr = checked_type_cast< Array* >(ca.self);
 	ca.ret = arr->pop();
 }
 
 void AsArray::Array_push(CallArgs& ca)
 {
-	Ref< ActionArray > arr = checked_type_cast< ActionArray* >(ca.self);
+	Ref< Array > arr = checked_type_cast< Array* >(ca.self);
 	arr->push(ca.args[0]);
 }
 
@@ -128,7 +128,7 @@ void AsArray::Array_splice(CallArgs& ca)
 
 void AsArray::Array_toString(CallArgs& ca)
 {
-	Ref< ActionArray > arr = checked_type_cast< ActionArray* >(ca.self);
+	Ref< Array > arr = checked_type_cast< Array* >(ca.self);
 	ca.ret = ActionValue(arr->join(L","));
 }
 
@@ -139,7 +139,7 @@ void AsArray::Array_unshift(CallArgs& ca)
 
 void AsArray::Array_get_length(CallArgs& ca)
 {
-	Ref< ActionArray > arr = checked_type_cast< ActionArray* >(ca.self);
+	Ref< Array > arr = checked_type_cast< Array* >(ca.self);
 	ca.ret = ActionValue(avm_number_t(arr->length()));
 }
 

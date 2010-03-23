@@ -1,5 +1,5 @@
-#ifndef traktor_flash_ActionRectangle_H
-#define traktor_flash_ActionRectangle_H
+#ifndef traktor_flash_Rectangle_H
+#define traktor_flash_Rectangle_H
 
 #include "Flash/Action/ActionObject.h"
 
@@ -19,19 +19,19 @@ namespace traktor
 /*! \brief ActionScript rectangle.
  * \ingroup Flash
  */
-class T_DLLCLASS ActionRectangle : public ActionObject
+class T_DLLCLASS Rectangle : public ActionObject
 {
 	T_RTTI_CLASS;
 
 public:
 	avm_number_t left;
 	avm_number_t top;
-	avm_number_t right;
-	avm_number_t bottom;
+	avm_number_t width;
+	avm_number_t height;
 
-	ActionRectangle();
+	Rectangle();
 
-	ActionRectangle(avm_number_t left_, avm_number_t top_, avm_number_t right_, avm_number_t bottom_);
+	Rectangle(avm_number_t left_, avm_number_t top_, avm_number_t right_, avm_number_t bottom_);
 
 	bool contains(avm_number_t x, avm_number_t y) const;
 
@@ -40,9 +40,11 @@ public:
 	bool isEmpty() const;
 
 	void offset(avm_number_t dx, avm_number_t dy);
+
+	virtual std::wstring toString() const;
 };
 
 	}
 }
 
-#endif	// traktor_flash_ActionRectangle_H
+#endif	// traktor_flash_Rectangle_H

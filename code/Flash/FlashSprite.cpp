@@ -69,7 +69,12 @@ Ref< FlashCharacterInstance > FlashSprite::createInstance(ActionContext* context
 	{
 		ActionValue movieClipClass;
 		if (context->getGlobal()->getMember(exportName, movieClipClass))
-			spriteInstance->setMember(L"prototype", movieClipClass);
+		{
+			ActionValue prototype;
+			movieClipClass.getObject()->getMember(L"prototype", prototype);
+			spriteInstance->setMember(L"prototype", prototype);
+			spriteInstance->setMember(L"__proto__", prototype);
+		}
 	}
 
 	return spriteInstance;

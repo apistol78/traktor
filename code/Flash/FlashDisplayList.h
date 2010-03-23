@@ -36,11 +36,13 @@ public:
 		uint16_t id;
 		Ref< FlashCharacterInstance > instance;
 		int32_t clipDepth;
+		bool immutable;
 		bool collect;
 
 		Layer()
 		:	id(0)
 		,	clipDepth(0)
+		,	immutable(false)
 		,	collect(false)
 		{
 		}
@@ -77,8 +79,9 @@ public:
 	 * \param depth Depth to place character instance.
 	 * \param characterId Identifier of character.
 	 * \param characterInstance Character instance.
+	 * \param immutable If object is immutable; ie object manually places through AS which shouldn't be removed.
 	 */
-	void showObject(int32_t depth, uint16_t characterId, FlashCharacterInstance* characterInstance);
+	void showObject(int32_t depth, uint16_t characterId, FlashCharacterInstance* characterInstance, bool immutable);
 
 	/*! \brief Remove character instance from display list.
 	 *

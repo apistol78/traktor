@@ -219,6 +219,27 @@ FlashSpriteInstance* FlashSpriteInstance::clone() const
 	return cloneInstance;
 }
 
+SwfRect FlashSpriteInstance::getLocalBounds() const
+{
+	SwfRect bounds =
+	{
+		Vector2( std::numeric_limits< float >::max(),  std::numeric_limits< float >::max()),
+		Vector2(-std::numeric_limits< float >::max(), -std::numeric_limits< float >::max())
+	};
+
+	const FlashDisplayList::layer_map_t& layers = m_displayList.getLayers();
+	for (FlashDisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
+	{
+		SwfRect layerBounds = i->second.instance->getBounds();
+		bounds.min.x = std::min(bounds.min.x, layerBounds.min.x);
+		bounds.min.y = std::min(bounds.min.y, layerBounds.min.y);
+		bounds.max.x = std::max(bounds.max.x, layerBounds.max.x);
+		bounds.max.y = std::max(bounds.max.y, layerBounds.max.y);
+	}
+
+	return bounds;
+}
+
 bool FlashSpriteInstance::getMember(const std::wstring& memberName, ActionValue& outMemberValue) const
 {
 	// Get names instance from display list.
@@ -385,21 +406,7 @@ void FlashSpriteInstance::eventMouseMove(const IActionVM* actionVM, int x, int y
 
 SwfRect FlashSpriteInstance::getBounds() const
 {
-	SwfRect bounds =
-	{
-		Vector2( std::numeric_limits< float >::max(),  std::numeric_limits< float >::max()),
-		Vector2(-std::numeric_limits< float >::max(), -std::numeric_limits< float >::max())
-	};
-
-	const FlashDisplayList::layer_map_t& layers = m_displayList.getLayers();
-	for (FlashDisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
-	{
-		SwfRect layerBounds = i->second.instance->getBounds();
-		bounds.min.x = std::min(bounds.min.x, layerBounds.min.x);
-		bounds.min.y = std::min(bounds.min.y, layerBounds.min.y);
-		bounds.max.x = std::max(bounds.max.x, layerBounds.max.x);
-		bounds.max.y = std::max(bounds.max.y, layerBounds.max.y);
-	}
+	SwfRect bounds = getLocalBounds();
 
 	bounds.min = getTransform() * bounds.min;
 	bounds.max = getTransform() * bounds.max;

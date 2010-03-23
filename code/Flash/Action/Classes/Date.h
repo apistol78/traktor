@@ -1,5 +1,5 @@
-#ifndef traktor_flash_ActionDate_H
-#define traktor_flash_ActionDate_H
+#ifndef traktor_flash_Date_H
+#define traktor_flash_Date_H
 
 #include "Flash/Action/ActionObject.h"
 
@@ -19,15 +19,15 @@ namespace traktor
 /*! \brief ActionScript date.
  * \ingroup Flash
  */
-class T_DLLCLASS ActionDate : public ActionObject
+class T_DLLCLASS Date : public ActionObject
 {
 	T_RTTI_CLASS;
 
 public:
-	ActionDate();
+	Date();
 };
 
 	}
 }
 
-#endif	// traktor_flash_ActionDate_H
+#endif	// traktor_flash_Date_H

@@ -1,5 +1,5 @@
-#ifndef traktor_flash_ActionString_H
-#define traktor_flash_ActionString_H
+#ifndef traktor_flash_String_H
+#define traktor_flash_String_H
 
 #include "Flash/Action/ActionObject.h"
 
@@ -19,16 +19,16 @@ namespace traktor
 /*! \brief ActionScript string wrapper.
  * \ingroup Flash
  */
-class T_DLLCLASS ActionString : public ActionObject
+class T_DLLCLASS String : public ActionObject
 {
 	T_RTTI_CLASS;
 
 public:
-	ActionString();
+	String();
 
-	explicit ActionString(wchar_t ch);
+	explicit String(wchar_t ch);
 
-	explicit ActionString(const std::wstring& str);
+	explicit String(const std::wstring& str);
 
 	const std::wstring& get() const { return m_str; }
 
@@ -41,4 +41,4 @@ private:
 	}
 }
 
-#endif	// traktor_flash_ActionString_H
+#endif	// traktor_flash_String_H

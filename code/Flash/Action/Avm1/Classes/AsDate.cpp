@@ -1,5 +1,5 @@
 #include "Flash/Action/ActionFunctionNative.h"
-#include "Flash/Action/Avm1/ActionDate.h"
+#include "Flash/Action/Classes/Date.h"
 #include "Flash/Action/Avm1/Classes/AsDate.h"
 #include "Flash/Action/Avm1/Classes/AsObject.h"
 
@@ -79,7 +79,7 @@ void AsDate::createPrototype()
 
 ActionValue AsDate::construct(ActionContext* context, const args_t& args)
 {
-	return ActionValue(new ActionDate());
+	return ActionValue(new Date());
 }
 
 void AsDate::Date_getDate(CallArgs& ca)
