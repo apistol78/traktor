@@ -286,13 +286,19 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 	if (bounds.max.x <= bounds.min.x || bounds.max.y <= bounds.min.y)
 		return;
 
-	float px = c_cacheGlyphMargin * (bounds.max.x - bounds.min.x) / c_cacheGlyphSize;
-	float py = c_cacheGlyphMargin * (bounds.max.y - bounds.min.y) / c_cacheGlyphSize;
+	// Keep 1:1 aspect ratio; use maximum bound dimension.
+	float gw = bounds.max.x - bounds.min.x;
+	float gh = bounds.max.y - bounds.min.y;
+	if (gw >= gh)
+		bounds.max.y = bounds.min.y + gw;
+	else
+		bounds.max.x = bounds.min.x + gh;
 
-	bounds.min.x -= px;
-	bounds.min.y -= py;
-	bounds.max.x += px;
-	bounds.max.y += py;
+	float m = c_cacheGlyphMargin * (bounds.max.x - bounds.min.x) / c_cacheGlyphSize;
+	bounds.min.x -= m;
+	bounds.min.y -= m;
+	bounds.max.x += m;
+	bounds.max.y += m;
 
 	// Get cached glyph target.
 	std::map< uint64_t, int32_t >::iterator it2 = m_glyphCache.find(hash);
@@ -321,7 +327,7 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 
 		Vector4 frameSize(bounds.min.x, bounds.min.y, bounds.max.x, bounds.max.y);
 		Vector4 viewSize(0.0f, 0.0f, 0.0f, 0.0f);
-		Vector4 viewOffset(float(index) / c_cacheGlyphCount, 0.0f, 1.0f / c_cacheGlyphCount, 1.0f);
+		Vector4 viewOffset(float(index) / c_cacheGlyphCount - 1.0f / c_cacheGlyphDimX, 0.0f, 1.0f / c_cacheGlyphCount + 2.0f / c_cacheGlyphDimX, 1.0f);
 
 		// Clear previous glyph by drawing a solid quad at it's place.
 		m_quad->render(
@@ -375,7 +381,7 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 		m_viewOffset,
 		cxf,
 		m_renderTargetGlyphs->getColorTexture(0),
-		Vector4(float(index) / c_cacheGlyphCount, 0.0f, 1.0f / c_cacheGlyphCount, 1.0f)
+		Vector4(float(index) / c_cacheGlyphCount - 1.0f / c_cacheGlyphDimX, 0.0f, 1.0f / c_cacheGlyphCount + 2.0f / c_cacheGlyphDimX, 1.0f)
 	);
 }
 
