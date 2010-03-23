@@ -22,7 +22,7 @@ ULONG_PTR s_token;
 CanvasGdiPlusWin32::CanvasGdiPlusWin32()
 :	m_hDC(NULL)
 ,	m_ownDC(false)
-,	m_hOffScreenBitmap(NULL)
+,	m_doubleBuffer(false)
 ,	m_offScreenBitmapWidth(0)
 ,	m_offScreenBitmapHeight(0)
 ,	m_foreGround(0x000000)
@@ -34,86 +34,59 @@ CanvasGdiPlusWin32::CanvasGdiPlusWin32()
 
 CanvasGdiPlusWin32::~CanvasGdiPlusWin32()
 {
-	if (m_hOffScreenBitmap != NULL)
-	{
-		DeleteObject(m_hOffScreenBitmap);
-		m_hOffScreenBitmap = NULL;
-	}
 }
 
 bool CanvasGdiPlusWin32::beginPaint(Window& hWnd, bool doubleBuffer, HDC hDC)
 {
 	T_ASSERT_M (!m_hDC, L"Invalid device context handle");
-	//RECT rcClip;
 
 	if (hDC)
 	{
 		m_hDC = hDC;
 		m_ownDC = false;
-		//GetClientRect(hWnd, &rcClip);
+		m_doubleBuffer = false;
+
+		m_graphics.reset(new Graphics(m_hDC));
 	}
 	else
 	{
+		m_hDC = BeginPaint(hWnd, &m_ps);
+		if (!m_hDC)
+			return false;
+
 		if (!doubleBuffer)
 		{
-			m_hDC = BeginPaint(hWnd, &m_ps);
-			if (!m_hDC)
-				return false;
+			m_graphics.reset(new Graphics(m_hDC));
+			m_doubleBuffer = false;
 		}
 		else
 		{
-			HDC hPaintDC = BeginPaint(hWnd, &m_ps);
-			if (!hPaintDC)
-				return false;
-
-			m_hDC = CreateCompatibleDC(hPaintDC);
-			if (!m_hDC)
-			{
-				EndPaint(hWnd, &m_ps);
-				return false;
-			}
-
-			//CopyRect(&rcClip, &m_ps.rcPaint);
-
 			RECT rcInner;
 			GetClientRect(hWnd, &rcInner);
 
 			uint32_t width = uint32_t(rcInner.right - rcInner.left);
 			uint32_t height = uint32_t(rcInner.bottom - rcInner.top);
 
-			if (m_hOffScreenBitmap == NULL || m_offScreenBitmapWidth != width || m_offScreenBitmapHeight != height)
+			if (m_offScreenBitmap.ptr() == 0 || m_offScreenBitmapWidth != width || m_offScreenBitmapHeight != height)
 			{
-				if (m_hOffScreenBitmap != NULL)
-				{
-					DeleteObject(m_hOffScreenBitmap);
-					m_hOffScreenBitmap = NULL;
-				}
-
-				m_hOffScreenBitmap = CreateCompatibleBitmap(hPaintDC, width, height);
-				if (!m_hOffScreenBitmap)
-				{
-					EndPaint(hWnd, &m_ps);
-					DeleteDC(m_hDC);
-					m_hDC = NULL;
-					return false;
-				}
+				m_offScreenBitmap.reset(new Bitmap(width, height));
 
 				m_offScreenBitmapWidth = width;
 				m_offScreenBitmapHeight = height;
 			}
 
-			SelectObject(m_hDC, m_hOffScreenBitmap);
+			m_graphics.reset(new Graphics(m_offScreenBitmap.ptr()));
+			m_doubleBuffer = true;
 		}
+
 		m_ownDC = true;
 	}
 
-	m_graphics.reset(new Graphics(m_hDC));
+	T_ASSERT (m_graphics.ptr());
+
 	m_graphics->SetTextRenderingHint(TextRenderingHintSystemDefault);
 	m_graphics->SetPixelOffsetMode(PixelOffsetModeNone);
 	m_graphics->SetSmoothingMode(SmoothingModeHighSpeed);
-	//m_graphics->SetClip(
-	//	Gdiplus::Rect(rcClip.left, rcClip.top, rcClip.right - rcClip.left, rcClip.bottom - rcClip.top)
-	//);
 
 	m_font.reset(new Gdiplus::Font(m_hDC, hWnd.getFont()));
 
@@ -128,21 +101,12 @@ void CanvasGdiPlusWin32::endPaint(Window& hWnd)
 	m_font.release();
 	m_graphics.release();
 
-	if (m_hOffScreenBitmap)
+	if (m_doubleBuffer)
 	{
-		BitBlt(
-			m_ps.hdc,
-			m_ps.rcPaint.left,
-			m_ps.rcPaint.top,
-			m_ps.rcPaint.right - m_ps.rcPaint.left,
-			m_ps.rcPaint.bottom - m_ps.rcPaint.top,
-			m_hDC,
-			m_ps.rcPaint.left,
-			m_ps.rcPaint.top,
-			SRCCOPY
-		);
+		T_ASSERT (m_offScreenBitmap.ptr());
 
-		DeleteDC(m_hDC);
+		Graphics graphics(m_hDC);
+		graphics.DrawImage(m_offScreenBitmap.ptr(), 0, 0);
 	}
 
 	if (m_ownDC)

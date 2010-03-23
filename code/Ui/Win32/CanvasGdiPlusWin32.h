@@ -82,9 +82,11 @@ private:
 	PAINTSTRUCT m_ps;
 	HDC m_hDC;
 	bool m_ownDC;
-	HBITMAP m_hOffScreenBitmap;
+	bool m_doubleBuffer;
+	
 	uint32_t m_offScreenBitmapWidth;
 	uint32_t m_offScreenBitmapHeight;
+	AutoPtr< Gdiplus::Bitmap > m_offScreenBitmap;
 
 	mutable AutoPtr< Gdiplus::Graphics > m_graphics;
 	mutable AutoPtr< Gdiplus::Font > m_font;
