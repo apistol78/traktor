@@ -212,7 +212,7 @@ bool FlashSpriteInstance::isVisible() const
 	return m_visible;
 }
 
-FlashSpriteInstance* FlashSpriteInstance::clone() const
+Ref< FlashSpriteInstance > FlashSpriteInstance::clone() const
 {
 	Ref< FlashSpriteInstance > cloneInstance = checked_type_cast< FlashSpriteInstance* >(m_sprite->createInstance(getContext(), getParent()));
 	cloneInstance->setEvents(getEvents());
@@ -315,7 +315,7 @@ void FlashSpriteInstance::eventFrame(const IActionVM* actionVM)
 	FlashCharacterInstance::eventFrame(actionVM);
 }
 
-void FlashSpriteInstance::eventKeyDown(const IActionVM* actionVM, int keyCode)
+void FlashSpriteInstance::eventKeyDown(const IActionVM* actionVM, int32_t keyCode)
 {
 	// Issue script assigned event.
 	executeScriptEvent(actionVM, L"onKeyDown");
@@ -331,7 +331,7 @@ void FlashSpriteInstance::eventKeyDown(const IActionVM* actionVM, int keyCode)
 	FlashCharacterInstance::eventKeyDown(actionVM, keyCode);
 }
 
-void FlashSpriteInstance::eventKeyUp(const IActionVM* actionVM, int keyCode)
+void FlashSpriteInstance::eventKeyUp(const IActionVM* actionVM, int32_t keyCode)
 {
 	// Issue script assigned event.
 	executeScriptEvent(actionVM, L"onKeyUp");
@@ -347,7 +347,7 @@ void FlashSpriteInstance::eventKeyUp(const IActionVM* actionVM, int keyCode)
 	FlashCharacterInstance::eventKeyUp(actionVM, keyCode);
 }
 
-void FlashSpriteInstance::eventMouseDown(const IActionVM* actionVM, int x, int y, int button)
+void FlashSpriteInstance::eventMouseDown(const IActionVM* actionVM, int32_t x, int32_t y, int32_t button)
 {
 	m_mouseX = x;
 	m_mouseY = y;
@@ -366,7 +366,7 @@ void FlashSpriteInstance::eventMouseDown(const IActionVM* actionVM, int x, int y
 	FlashCharacterInstance::eventMouseDown(actionVM, x, y, button);
 }
 
-void FlashSpriteInstance::eventMouseUp(const IActionVM* actionVM, int x, int y, int button)
+void FlashSpriteInstance::eventMouseUp(const IActionVM* actionVM, int32_t x, int32_t y, int32_t button)
 {
 	m_mouseX = x;
 	m_mouseY = y;
@@ -385,7 +385,7 @@ void FlashSpriteInstance::eventMouseUp(const IActionVM* actionVM, int x, int y, 
 	FlashCharacterInstance::eventMouseUp(actionVM, x, y, button);
 }
 
-void FlashSpriteInstance::eventMouseMove(const IActionVM* actionVM, int x, int y, int button)
+void FlashSpriteInstance::eventMouseMove(const IActionVM* actionVM, int32_t x, int32_t y, int32_t button)
 {
 	m_mouseX = x;
 	m_mouseY = y;

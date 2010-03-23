@@ -148,13 +148,13 @@ public:
 	 *
 	 * \return Root movie instance.
 	 */
-	Ref< FlashSpriteInstance > getMovieInstance() const;
+	FlashSpriteInstance* getMovieInstance() const;
 
 	/*! \brief Get action virtual machine.
 	 *
 	 * \return action virtual machine.
 	 */
-	Ref< IActionVM > getVM() const;
+	IActionVM* getVM() const;
 
 	/*! \brief Set global ActionScript value.
 	 *

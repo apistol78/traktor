@@ -58,7 +58,7 @@ public:
 
 	bool isVisible() const;
 
-	FlashSpriteInstance* clone() const;
+	Ref< FlashSpriteInstance > clone() const;
 
 	SwfRect getLocalBounds() const;
 
@@ -70,21 +70,21 @@ public:
 
 	virtual void eventFrame(const IActionVM* actionVM);
 
-	virtual void eventKeyDown(const IActionVM* actionVM, int keyCode);
+	virtual void eventKeyDown(const IActionVM* actionVM, int32_t keyCode);
 
-	virtual void eventKeyUp(const IActionVM* actionVM, int keyCode);
+	virtual void eventKeyUp(const IActionVM* actionVM, int32_t keyCode);
 
-	virtual void eventMouseDown(const IActionVM* actionVM, int x, int y, int button);
+	virtual void eventMouseDown(const IActionVM* actionVM, int32_t x, int32_t y, int32_t button);
 
-	virtual void eventMouseUp(const IActionVM* actionVM, int x, int y, int button);
+	virtual void eventMouseUp(const IActionVM* actionVM, int32_t x, int32_t y, int32_t button);
 
-	virtual void eventMouseMove(const IActionVM* actionVM, int x, int y, int button);
+	virtual void eventMouseMove(const IActionVM* actionVM, int32_t x, int32_t y, int32_t button);
 
 	virtual SwfRect getBounds() const;
 
-	inline int getMouseX() const { return m_mouseX; }
+	inline int32_t getMouseX() const { return m_mouseX; }
 
-	inline int getMouseY() const { return m_mouseY; }
+	inline int32_t getMouseY() const { return m_mouseY; }
 
 private:
 	Ref< const FlashSprite > m_sprite;
@@ -99,8 +99,8 @@ private:
 	bool m_visible;
 	bool m_inDispatch;
 	bool m_gotoIssued;
-	int m_mouseX;
-	int m_mouseY;
+	int32_t m_mouseX;
+	int32_t m_mouseY;
 
 	void executeScriptEvent(const IActionVM* actionVM, const std::wstring& eventName);
 };

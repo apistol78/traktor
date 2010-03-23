@@ -15,7 +15,7 @@ FlashMorphShapeInstance::FlashMorphShapeInstance(ActionContext* context, FlashCh
 {
 }
 
-Ref< const FlashMorphShape > FlashMorphShapeInstance::getShape() const
+const FlashMorphShape* FlashMorphShapeInstance::getShape() const
 {
 	return m_shape;
 }

@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_FLASH_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -33,7 +33,7 @@ public:
 	 *
 	 * \return Pointer to button.
 	 */
-	Ref< const FlashButton > getButton() const;
+	const FlashButton* getButton() const;
 
 	/*! \brief Get button state.
 	 *
@@ -46,7 +46,7 @@ public:
 	 * \param referenceId Character identity.
 	 * \return Character instance.
 	 */
-	Ref< FlashCharacterInstance > getCharacterInstance(uint16_t referenceId) const;
+	FlashCharacterInstance* getCharacterInstance(uint16_t referenceId) const;
 
 	virtual void eventMouseDown(IActionVM* vm, int x, int y, int button);
 

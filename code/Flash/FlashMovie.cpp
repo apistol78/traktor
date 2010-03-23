@@ -47,19 +47,19 @@ void FlashMovie::removeCharacter(FlashCharacter* character)
 	}
 }
 
-Ref< const FlashFont > FlashMovie::getFont(uint16_t fontId) const
+const FlashFont* FlashMovie::getFont(uint16_t fontId) const
 {
 	std::map< uint16_t, Ref< FlashFont > >::const_iterator i = m_fonts.find(fontId);
 	return i != m_fonts.end() ? i->second.ptr() : 0;
 }
 
-Ref< const FlashBitmap > FlashMovie::getBitmap(uint16_t bitmapId) const
+const FlashBitmap* FlashMovie::getBitmap(uint16_t bitmapId) const
 {
 	std::map< uint16_t, Ref< FlashBitmap > >::const_iterator i = m_bitmaps.find(bitmapId);
 	return i != m_bitmaps.end() ? i->second.ptr() : 0;
 }
 
-Ref< const FlashCharacter > FlashMovie::getCharacter(uint16_t characterId) const
+const FlashCharacter* FlashMovie::getCharacter(uint16_t characterId) const
 {
 	std::map< uint16_t, Ref< FlashCharacter > >::const_iterator i = m_characters.find(characterId);
 	return i != m_characters.end() ? i->second.ptr() : 0;
@@ -99,7 +99,7 @@ const SwfRect& FlashMovie::getFrameBounds() const
 	return m_frameBounds;
 }
 
-Ref< const FlashSprite > FlashMovie::getMovieClip() const
+const FlashSprite* FlashMovie::getMovieClip() const
 {
 	return m_movieClip;
 }

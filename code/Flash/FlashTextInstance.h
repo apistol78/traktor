@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_FLASH_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -28,7 +28,7 @@ class T_DLLCLASS FlashTextInstance : public FlashCharacterInstance
 public:
 	FlashTextInstance(ActionContext* context, FlashCharacterInstance* parent, const FlashText* text);
 
-	Ref< const FlashText > getText() const;
+	const FlashText* getText() const;
 
 	virtual SwfRect getBounds() const;
 

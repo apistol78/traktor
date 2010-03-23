@@ -37,7 +37,7 @@ FlashButtonInstance::FlashButtonInstance(ActionContext* context, FlashCharacterI
 	}
 }
 
-Ref< const FlashButton > FlashButtonInstance::getButton() const
+const FlashButton* FlashButtonInstance::getButton() const
 {
 	return m_button;
 }
@@ -47,7 +47,7 @@ uint8_t FlashButtonInstance::getState() const
 	return m_state;
 }
 
-Ref< FlashCharacterInstance > FlashButtonInstance::getCharacterInstance(uint16_t referenceId) const
+FlashCharacterInstance* FlashButtonInstance::getCharacterInstance(uint16_t referenceId) const
 {
 	std::map< uint16_t, Ref< FlashCharacterInstance > >::const_iterator i = m_characterInstances.find(referenceId);
 	return i != m_characterInstances.end() ? i->second.ptr() : 0;

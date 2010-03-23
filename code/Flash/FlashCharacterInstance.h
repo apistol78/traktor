@@ -36,13 +36,13 @@ public:
 	 *
 	 * \return ActionScript context.
 	 */
-	Ref< ActionContext > getContext() const;
+	ActionContext* getContext() const;
 
 	/*! \brief Get parent instance.
 	 *
 	 * \return Parent instance.
 	 */
-	Ref< FlashCharacterInstance > getParent() const;
+	FlashCharacterInstance* getParent() const;
 
 	/*! \brief Set instance name.
 	 *
