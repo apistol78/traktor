@@ -1,9 +1,9 @@
 #include <limits>
 #include "Core/Misc/String.h"
 #include "Flash/Action/ActionFunctionNative.h"
-#include "Flash/Action/Avm1/ActionNumber.h"
 #include "Flash/Action/Avm1/Classes/AsNumber.h"
 #include "Flash/Action/Avm1/Classes/AsObject.h"
+#include "Flash/Action/Classes/Number.h"
 
 namespace traktor
 {
@@ -50,20 +50,20 @@ void AsNumber::createPrototype()
 ActionValue AsNumber::construct(ActionContext* context, const args_t& args)
 {
 	if (args.empty())
-		return ActionValue(new ActionNumber(0.0));
+		return ActionValue(new Number(0.0));
 	else
-		return ActionValue(new ActionNumber(args[0].getNumberSafe()));
+		return ActionValue(new Number(args[0].getNumberSafe()));
 }
 
 void AsNumber::Number_toString(CallArgs& ca)
 {
-	const ActionNumber* obj = checked_type_cast< const ActionNumber* >(ca.self);
+	const Number* obj = checked_type_cast< const Number* >(ca.self);
 	ca.ret = ActionValue(traktor::toString(obj->get()));
 }
 
 void AsNumber::Number_valueOf(CallArgs& ca)
 {
-	const ActionNumber* obj = checked_type_cast< const ActionNumber* >(ca.self);
+	const Number* obj = checked_type_cast< const Number* >(ca.self);
 	ca.ret = ActionValue(obj->get());
 }
 

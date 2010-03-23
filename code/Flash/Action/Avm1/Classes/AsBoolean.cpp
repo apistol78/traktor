@@ -1,7 +1,7 @@
 #include "Flash/Action/ActionFunctionNative.h"
-#include "Flash/Action/Avm1/ActionBoolean.h"
 #include "Flash/Action/Avm1/Classes/AsBoolean.h"
 #include "Flash/Action/Avm1/Classes/AsObject.h"
+#include "Flash/Action/Classes/Boolean.h"
 
 namespace traktor
 {
@@ -43,20 +43,20 @@ void AsBoolean::createPrototype()
 ActionValue AsBoolean::construct(ActionContext* context, const args_t& args)
 {
 	if (args.empty())
-		return ActionValue(new ActionBoolean(false));
+		return ActionValue(new Boolean(false));
 	else
-		return ActionValue(new ActionBoolean(args[0].getBooleanSafe()));
+		return ActionValue(new Boolean(args[0].getBooleanSafe()));
 }
 
 void AsBoolean::Boolean_toString(CallArgs& ca)
 {
-	const ActionBoolean* obj = checked_type_cast< const ActionBoolean* >(ca.self);
+	const Boolean* obj = checked_type_cast< const Boolean* >(ca.self);
 	ca.ret = ActionValue(obj->get() ? L"true" : L"false");
 }
 
 void AsBoolean::Boolean_valueOf(CallArgs& ca)
 {
-	const ActionBoolean* obj = checked_type_cast< const ActionBoolean* >(ca.self);
+	const Boolean* obj = checked_type_cast< const Boolean* >(ca.self);
 	ca.ret = ActionValue(obj->get());
 }
 

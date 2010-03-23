@@ -219,7 +219,7 @@ void AsMovieClip::MovieClip_attachMovie(CallArgs& ca)
 	
 	// Add new instance to display list.
 	FlashDisplayList& displayList = movieClipInstance->getDisplayList();
-	displayList.showObject(depth, attachClipId, attachClipInstance);
+	displayList.showObject(depth, attachClipId, attachClipInstance, true);
 
 	ca.ret = ActionValue(attachClipInstance.ptr());
 }
@@ -268,7 +268,7 @@ void AsMovieClip::MovieClip_createEmptyMovieClip(CallArgs& ca)
 
 	// Add new instance to display list.
 	FlashDisplayList& displayList = movieClipInstance->getDisplayList();
-	displayList.showObject(depth, emptyClipId, emptyClipInstance);
+	displayList.showObject(depth, emptyClipId, emptyClipInstance, true);
 
 	ca.ret = ActionValue(emptyClipInstance.ptr());
 }
@@ -292,7 +292,8 @@ void AsMovieClip::MovieClip_duplicateMovieClip(CallArgs& ca)
 	parentClipInstance->getDisplayList().showObject(
 		int32_t(ca.args[1].getNumberSafe()),
 		cloneClipInstance->getSprite()->getId(),
-		cloneClipInstance
+		cloneClipInstance,
+		true
 	);
 }
 
@@ -629,20 +630,19 @@ void AsMovieClip::MovieClip_set_framesloaded(CallArgs& ca)
 void AsMovieClip::MovieClip_get_height(CallArgs& ca)
 {
 	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
+	
+	SwfRect bounds = movieClipInstance->getBounds();
+	float extent = (bounds.max.y - bounds.min.y) / 20.0f;
 
-	float extent = (movieClipInstance->getBounds().max.y - movieClipInstance->getBounds().min.y) / 20.0f;
-
-	Vector2 T, S; float R;
-	decomposeTransform(movieClipInstance->getTransform(), T, S, R);
-
-	ca.ret = ActionValue(S.y * extent);
+	ca.ret = ActionValue(extent);
 }
 
 void AsMovieClip::MovieClip_set_height(CallArgs& ca)
 {
 	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
 	
-	float extent = (movieClipInstance->getBounds().max.y - movieClipInstance->getBounds().min.y) / 20.0f;
+	SwfRect bounds = movieClipInstance->getLocalBounds();
+	float extent = (bounds.max.y - bounds.min.y) / 20.0f;
 
 	Vector2 T, S; float R;
 	decomposeTransform(movieClipInstance->getTransform(), T, S, R);
@@ -857,18 +857,19 @@ void AsMovieClip::MovieClip_set_visible(CallArgs& ca)
 void AsMovieClip::MovieClip_get_width(CallArgs& ca)
 {
 	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
-	float extent = (movieClipInstance->getBounds().max.x - movieClipInstance->getBounds().min.x) / 20.0f;
 
-	Vector2 T, S; float R;
-	decomposeTransform(movieClipInstance->getTransform(), T, S, R);
+	SwfRect bounds = movieClipInstance->getBounds();
+	float extent = (bounds.max.x - bounds.min.x) / 20.0f;
 
-	ca.ret = ActionValue(S.x * extent);
+	ca.ret = ActionValue(extent);
 }
 
 void AsMovieClip::MovieClip_set_width(CallArgs& ca)
 {
 	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
-	float extent = (movieClipInstance->getBounds().max.x - movieClipInstance->getBounds().min.x) / 20.0f;
+
+	SwfRect bounds = movieClipInstance->getLocalBounds();
+	float extent = (bounds.max.x - bounds.min.x) / 20.0f;
 
 	Vector2 T, S; float R;
 	decomposeTransform(movieClipInstance->getTransform(), T, S, R);

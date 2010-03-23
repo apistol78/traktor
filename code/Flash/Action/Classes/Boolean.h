@@ -1,5 +1,5 @@
-#ifndef traktor_flash_ActionPoint_H
-#define traktor_flash_ActionPoint_H
+#ifndef traktor_flash_Boolean_H
+#define traktor_flash_Boolean_H
 
 #include "Flash/Action/ActionObject.h"
 
@@ -16,23 +16,23 @@ namespace traktor
 	namespace flash
 	{
 
-/*! \brief ActionScript point.
+/*! \brief ActionScript boolean wrapper.
  * \ingroup Flash
  */
-class T_DLLCLASS ActionPoint : public ActionObject
+class T_DLLCLASS Boolean : public ActionObject
 {
 	T_RTTI_CLASS;
 
 public:
-	avm_number_t x;
-	avm_number_t y;
+	Boolean(bool value);
 
-	ActionPoint();
+	bool get() const { return m_value; }
 
-	ActionPoint(avm_number_t x_, avm_number_t y_);
+private:
+	bool m_value;
 };
 
 	}
 }
 
-#endif	// traktor_flash_ActionPoint_H
+#endif	// traktor_flash_Boolean_H

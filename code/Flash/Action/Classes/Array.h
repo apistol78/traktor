@@ -1,5 +1,5 @@
-#ifndef traktor_flash_ActionArray_H
-#define traktor_flash_ActionArray_H
+#ifndef traktor_flash_Array_H
+#define traktor_flash_Array_H
 
 #include "Flash/Action/ActionObject.h"
 
@@ -19,16 +19,16 @@ namespace traktor
 /*! \brief Array of ActionValue objects.
  * \ingroup Flash
  */
-class T_DLLCLASS ActionArray : public ActionObject
+class T_DLLCLASS Array : public ActionObject
 {
 	T_RTTI_CLASS;
 
 public:
-	ActionArray();
+	Array();
 
-	Ref< ActionArray > concat() const;
+	Ref< Array > concat() const;
 
-	Ref< ActionArray > concat(const std::vector< ActionValue >& values) const;
+	Ref< Array > concat(const std::vector< ActionValue >& values) const;
 
 	std::wstring join(const std::wstring& delimiter) const;
 
@@ -51,4 +51,4 @@ private:
 	}
 }
 
-#endif	// traktor_flash_ActionArray_H
+#endif	// traktor_flash_Array_H

@@ -1,9 +1,8 @@
-#include "Core/Io/StringOutputStream.h"
 #include "Flash/Action/ActionFunctionNative.h"
-#include "Flash/Action/Avm1/ActionRectangle.h"
-#include "Flash/Action/Avm1/ActionPoint.h"
 #include "Flash/Action/Avm1/Classes/AsRectangle.h"
 #include "Flash/Action/Avm1/Classes/AsObject.h"
+#include "Flash/Action/Classes/Point.h"
+#include "Flash/Action/Classes/Rectangle.h"
 
 namespace traktor
 {
@@ -69,14 +68,14 @@ void AsRectangle::createPrototype()
 
 ActionValue AsRectangle::construct(ActionContext* context, const args_t& args)
 {
-	Ref< ActionRectangle > rc = new ActionRectangle();
+	Ref< Rectangle > rc = new Rectangle();
 	
 	if (args.size() >= 4)
 	{
 		rc->left = args[0].getNumberSafe();
 		rc->top = args[1].getNumberSafe();
-		rc->right = rc->left + args[2].getNumberSafe();
-		rc->bottom = rc->top + args[3].getNumberSafe();
+		rc->width = args[2].getNumberSafe();
+		rc->height = args[3].getNumberSafe();
 	}
 
 	return ActionValue(rc);
@@ -84,18 +83,18 @@ ActionValue AsRectangle::construct(ActionContext* context, const args_t& args)
 
 void AsRectangle::Rectangle_clone(CallArgs& ca)
 {
-	Ref< ActionRectangle > rc = checked_type_cast< ActionRectangle* >(ca.self);
-	ca.ret = ActionValue(new ActionRectangle(
+	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
+	ca.ret = ActionValue(new Rectangle(
 		rc->left,
 		rc->top,
-		rc->right,
-		rc->bottom
+		rc->width,
+		rc->height
 	));
 }
 
 void AsRectangle::Rectangle_contains(CallArgs& ca)
 {
-	Ref< ActionRectangle > rc = checked_type_cast< ActionRectangle* >(ca.self);
+	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
 	ca.ret = ActionValue(rc->contains(
 		ca.args[0].getNumberSafe(),
 		ca.args[1].getNumberSafe()
@@ -104,8 +103,8 @@ void AsRectangle::Rectangle_contains(CallArgs& ca)
 
 void AsRectangle::Rectangle_containsPoint(CallArgs& ca)
 {
-	Ref< ActionRectangle > rc = checked_type_cast< ActionRectangle* >(ca.self);
-	Ref< ActionPoint > pt = ca.args[0].getObject< ActionPoint >();
+	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
+	Ref< Point > pt = ca.args[0].getObject< Point >();
 	ca.ret = ActionValue(rc->contains(
 		pt->x,
 		pt->y
@@ -114,24 +113,15 @@ void AsRectangle::Rectangle_containsPoint(CallArgs& ca)
 
 void AsRectangle::Rectangle_containsRectangle(CallArgs& ca)
 {
-	Ref< ActionRectangle > rc = checked_type_cast< ActionRectangle* >(ca.self);
-	Ref< ActionRectangle > rt = ca.args[0].getObject< ActionRectangle >();
-	ca.ret = ActionValue(
-		rc->contains(rt->left, rt->top) &&
-		rc->contains(rt->left, rt->bottom) &&
-		rc->contains(rt->right, rt->top) &&
-		rc->contains(rt->right, rt->bottom)
-	);
 }
 
 void AsRectangle::Rectangle_equals(CallArgs& ca)
 {
-	Ref< ActionRectangle > rc = checked_type_cast< ActionRectangle* >(ca.self);
 }
 
 void AsRectangle::Rectangle_inflate(CallArgs& ca)
 {
-	Ref< ActionRectangle > rc = checked_type_cast< ActionRectangle* >(ca.self);
+	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
 	rc->inflate(
 		ca.args[0].getNumberSafe(),
 		ca.args[1].getNumberSafe()
@@ -140,30 +130,30 @@ void AsRectangle::Rectangle_inflate(CallArgs& ca)
 
 void AsRectangle::Rectangle_inflatePoint(CallArgs& ca)
 {
-	Ref< ActionRectangle > rc = checked_type_cast< ActionRectangle* >(ca.self);
-	Ref< ActionPoint > pt = ca.args[0].getObject< ActionPoint >();
+	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
+	Ref< Point > pt = ca.args[0].getObject< Point >();
 	rc->inflate(pt->x, pt->y);
 }
 
 void AsRectangle::Rectangle_intersection(CallArgs& ca)
 {
-	Ref< ActionRectangle > rc = checked_type_cast< ActionRectangle* >(ca.self);
+	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
 }
 
 void AsRectangle::Rectangle_intersects(CallArgs& ca)
 {
-	Ref< ActionRectangle > rc = checked_type_cast< ActionRectangle* >(ca.self);
+	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
 }
 
 void AsRectangle::Rectangle_isEmpty(CallArgs& ca)
 {
-	Ref< ActionRectangle > rc = checked_type_cast< ActionRectangle* >(ca.self);
+	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
 	ca.ret = ActionValue(rc->isEmpty());
 }
 
 void AsRectangle::Rectangle_offset(CallArgs& ca)
 {
-	Ref< ActionRectangle > rc = checked_type_cast< ActionRectangle* >(ca.self);
+	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
 	rc->offset(
 		ca.args[0].getNumberSafe(),
 		ca.args[1].getNumberSafe()
@@ -172,169 +162,166 @@ void AsRectangle::Rectangle_offset(CallArgs& ca)
 
 void AsRectangle::Rectangle_offsetPoint(CallArgs& ca)
 {
-	Ref< ActionRectangle > rc = checked_type_cast< ActionRectangle* >(ca.self);
-	Ref< ActionPoint > pt = ca.args[0].getObject< ActionPoint >();
+	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
+	Ref< Point > pt = ca.args[0].getObject< Point >();
 	rc->offset(pt->x, pt->y);
 }
 
 void AsRectangle::Rectangle_setEmpty(CallArgs& ca)
 {
-	Ref< ActionRectangle > rc = checked_type_cast< ActionRectangle* >(ca.self);
+	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
 	rc->left =
 	rc->top =
-	rc->right =
-	rc->bottom = 0.0;
+	rc->width =
+	rc->height = 0.0;
 }
 
 void AsRectangle::Rectangle_toString(CallArgs& ca)
 {
-	Ref< ActionRectangle > rc = checked_type_cast< ActionRectangle* >(ca.self);
-	StringOutputStream ss; ss << rc->left << L", " << rc->top << L" - " << (rc->right - rc->left) << L", " << (rc->bottom - rc->top);
-	ca.ret = ActionValue(ss.str());
+	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
+	ca.ret = ActionValue(rc->toString());
 }
 
 void AsRectangle::Rectangle_union(CallArgs& ca)
 {
-	Ref< ActionRectangle > rc = checked_type_cast< ActionRectangle* >(ca.self);
+	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
 }
 
 void AsRectangle::Rectangle_get_bottom(CallArgs& ca)
 {
-	Ref< ActionRectangle > rc = checked_type_cast< ActionRectangle* >(ca.self);
-	ca.ret = ActionValue(rc->bottom);
+	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
+	ca.ret = ActionValue(rc->top + rc->height);
 }
 
 void AsRectangle::Rectangle_set_bottom(CallArgs& ca)
 {
-	Ref< ActionRectangle > rc = checked_type_cast< ActionRectangle* >(ca.self);
-	rc->bottom = ca.args[0].getNumberSafe();
+	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
+	rc->height = ca.args[0].getNumberSafe() - rc->top;
 }
 
 void AsRectangle::Rectangle_get_bottomRight(CallArgs& ca)
 {
-	Ref< ActionRectangle > rc = checked_type_cast< ActionRectangle* >(ca.self);
-	ca.ret = ActionValue(new ActionPoint(rc->right, rc->bottom));
+	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
+	ca.ret = ActionValue(new Point(rc->left + rc->width, rc->top + rc->height));
 }
 
 void AsRectangle::Rectangle_set_bottomRight(CallArgs& ca)
 {
-	Ref< ActionRectangle > rc = checked_type_cast< ActionRectangle* >(ca.self);
-	Ref< ActionPoint > pt = ca.args[0].getObject< ActionPoint >();
-	rc->right = pt->x;
-	rc->bottom = pt->y;
+	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
+	Ref< Point > pt = ca.args[0].getObject< Point >();
+	rc->width = pt->x - rc->left;
+	rc->height = pt->y - rc->top;
 }
 
 void AsRectangle::Rectangle_get_height(CallArgs& ca)
 {
-	Ref< ActionRectangle > rc = checked_type_cast< ActionRectangle* >(ca.self);
-	ca.ret = ActionValue(rc->bottom - rc->top);
+	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
+	ca.ret = ActionValue(rc->height);
 }
 
 void AsRectangle::Rectangle_set_height(CallArgs& ca)
 {
-	Ref< ActionRectangle > rc = checked_type_cast< ActionRectangle* >(ca.self);
-	rc->bottom = rc->top + ca.args[0].getNumberSafe();
+	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
+	rc->height = ca.args[0].getNumberSafe();
 }
 
 void AsRectangle::Rectangle_get_left(CallArgs& ca)
 {
-	Ref< ActionRectangle > rc = checked_type_cast< ActionRectangle* >(ca.self);
+	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
 	ca.ret = ActionValue(rc->left);
 }
 
 void AsRectangle::Rectangle_set_left(CallArgs& ca)
 {
-	Ref< ActionRectangle > rc = checked_type_cast< ActionRectangle* >(ca.self);
+	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
 	rc->left = ca.args[0].getNumberSafe();
 }
 
 void AsRectangle::Rectangle_get_right(CallArgs& ca)
 {
-	Ref< ActionRectangle > rc = checked_type_cast< ActionRectangle* >(ca.self);
-	ca.ret = ActionValue(rc->right);
+	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
+	ca.ret = ActionValue(rc->left + rc->width);
 }
 
 void AsRectangle::Rectangle_set_right(CallArgs& ca)
 {
-	Ref< ActionRectangle > rc = checked_type_cast< ActionRectangle* >(ca.self);
-	rc->right = ca.args[0].getNumberSafe();
+	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
+	rc->width = rc->left + ca.args[0].getNumberSafe();
 }
 
 void AsRectangle::Rectangle_get_size(CallArgs& ca)
 {
-	Ref< ActionRectangle > rc = checked_type_cast< ActionRectangle* >(ca.self);
-	ca.ret = ActionValue(new ActionPoint(rc->right - rc->left, rc->bottom - rc->top));
+	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
+	ca.ret = ActionValue(new Point(rc->width, rc->height));
 }
 
 void AsRectangle::Rectangle_set_size(CallArgs& ca)
 {
-	Ref< ActionRectangle > rc = checked_type_cast< ActionRectangle* >(ca.self);
-	Ref< ActionPoint > pt = ca.args[0].getObject< ActionPoint >();
-	rc->right = rc->left + pt->x;
-	rc->bottom = rc->top + pt->y;
+	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
+	Ref< Point > pt = ca.args[0].getObject< Point >();
+	rc->width = pt->x;
+	rc->height = pt->y;
 }
 
 void AsRectangle::Rectangle_get_top(CallArgs& ca)
 {
-	Ref< ActionRectangle > rc = checked_type_cast< ActionRectangle* >(ca.self);
+	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
 	ca.ret = ActionValue(rc->top);
 }
 
 void AsRectangle::Rectangle_set_top(CallArgs& ca)
 {
-	Ref< ActionRectangle > rc = checked_type_cast< ActionRectangle* >(ca.self);
+	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
 	rc->top = ca.args[0].getNumberSafe();
 }
 
 void AsRectangle::Rectangle_get_topLeft(CallArgs& ca)
 {
-	Ref< ActionRectangle > rc = checked_type_cast< ActionRectangle* >(ca.self);
-	ca.ret = ActionValue(new ActionPoint(rc->left, rc->top));
+	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
+	ca.ret = ActionValue(new Point(rc->left, rc->top));
 }
 
 void AsRectangle::Rectangle_set_topLeft(CallArgs& ca)
 {
-	Ref< ActionRectangle > rc = checked_type_cast< ActionRectangle* >(ca.self);
-	Ref< ActionPoint > pt = ca.args[0].getObject< ActionPoint >();
+	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
+	Ref< Point > pt = ca.args[0].getObject< Point >();
 	rc->left = pt->x;
 	rc->top = pt->y;
 }
 
 void AsRectangle::Rectangle_get_width(CallArgs& ca)
 {
-	Ref< ActionRectangle > rc = checked_type_cast< ActionRectangle* >(ca.self);
-	ca.ret = ActionValue(rc->right - rc->left);
+	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
+	ca.ret = ActionValue(rc->width);
 }
 
 void AsRectangle::Rectangle_set_width(CallArgs& ca)
 {
-	Ref< ActionRectangle > rc = checked_type_cast< ActionRectangle* >(ca.self);
-	rc->right = rc->left + ca.args[0].getNumberSafe();
+	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
+	rc->width = ca.args[0].getNumberSafe();
 }
 
 void AsRectangle::Rectangle_get_x(CallArgs& ca)
 {
-	Ref< ActionRectangle > rc = checked_type_cast< ActionRectangle* >(ca.self);
+	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
 	ca.ret = ActionValue(rc->left);
 }
 
 void AsRectangle::Rectangle_set_x(CallArgs& ca)
 {
-	Ref< ActionRectangle > rc = checked_type_cast< ActionRectangle* >(ca.self);
-	rc->right = ca.args[0].getNumberSafe() + (rc->right - rc->left);
+	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
 	rc->left = ca.args[0].getNumberSafe();
 }
 
 void AsRectangle::Rectangle_get_y(CallArgs& ca)
 {
-	Ref< ActionRectangle > rc = checked_type_cast< ActionRectangle* >(ca.self);
+	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
 	ca.ret = ActionValue(rc->top);
 }
 
 void AsRectangle::Rectangle_set_y(CallArgs& ca)
 {
-	Ref< ActionRectangle > rc = checked_type_cast< ActionRectangle* >(ca.self);
-	rc->bottom = ca.args[0].getNumberSafe() + (rc->bottom - rc->top);
+	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
 	rc->top = ca.args[0].getNumberSafe();
 }
 

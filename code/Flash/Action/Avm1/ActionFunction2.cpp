@@ -1,10 +1,10 @@
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFrame.h"
 #include "Flash/Action/IActionVM.h"
-#include "Flash/Action/Avm1/ActionArray.h"
 #include "Flash/Action/Avm1/ActionFunction2.h"
 #include "Flash/Action/Avm1/ActionSuper.h"
 #include "Flash/Action/Avm1/Classes/AsFunction.h"
+#include "Flash/Action/Classes/Array.h"
 #include "Flash/FlashSpriteInstance.h"
 #include "Core/Log/Log.h"
 
@@ -57,7 +57,7 @@ ActionValue ActionFunction2::call(const IActionVM* vm, ActionContext* context, A
 
 	if (m_flags & AffPreloadArguments || !(m_flags & AffSuppressArguments))
 	{
-		Ref< ActionArray > argumentArray = new ActionArray();
+		Ref< Array > argumentArray = new Array();
 		for (std::vector< ActionValue >::const_iterator i = args.begin(); i != args.end(); ++i)
 			argumentArray->push(*i);
 		if (m_flags & AffPreloadArguments)
@@ -138,7 +138,7 @@ ActionValue ActionFunction2::call(const IActionVM* vm, ActionFrame* callerFrame,
 
 	if (m_flags & AffPreloadArguments || !(m_flags & AffSuppressArguments))
 	{
-		Ref< ActionArray > argumentArray = new ActionArray();
+		Ref< Array > argumentArray = new Array();
 		for (std::vector< ActionValue >::const_iterator i = args.begin(); i != args.end(); ++i)
 			argumentArray->push(*i);
 		if (m_flags & AffPreloadArguments)

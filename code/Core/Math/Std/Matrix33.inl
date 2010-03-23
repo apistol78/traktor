@@ -114,17 +114,17 @@ T_MATH_INLINE Matrix33& Matrix33::operator *= (const Matrix33& m)
 T_MATH_INLINE Vector2 operator * (const Matrix33& m, const Vector2& v)
 {
 	return Vector2(
-		v.x * m.e11 + v.y * m.e21 + m.e31,
-		v.x * m.e12 + v.y * m.e22 + m.e32
+		v.x * m.e11 + v.y * m.e12 + m.e13,
+		v.x * m.e21 + v.y * m.e22 + m.e23
 	);
 }
 
 T_MATH_INLINE Vector4 operator * (const Matrix33& m, const Vector4& v)
 {
 	return Vector4(
-		v.x() * m.e11 + v.y() * m.e21 + v.z() * m.e31,
-		v.x() * m.e12 + v.y() * m.e22 + v.z() * m.e32,
-		v.x() * m.e13 + v.y() * m.e23 + v.z() * m.e33,
+		v.x() * m.e11 + v.y() * m.e12 + v.z() * m.e13,
+		v.x() * m.e21 + v.y() * m.e22 + v.z() * m.e23,
+		v.x() * m.e31 + v.y() * m.e32 + v.z() * m.e33,
 		0.0f
 	);
 }

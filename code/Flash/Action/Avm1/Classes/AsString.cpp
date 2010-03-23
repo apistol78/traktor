@@ -3,8 +3,8 @@
 #include "Core/Misc/String.h"
 #include "Core/Misc/Split.h"
 #include "Flash/Action/ActionFunctionNative.h"
-#include "Flash/Action/Avm1/ActionString.h"
-#include "Flash/Action/Avm1/ActionArray.h"
+#include "Flash/Action/Classes/String.h"
+#include "Flash/Action/Classes/Array.h"
 #include "Flash/Action/Avm1/Classes/AsString.h"
 #include "Flash/Action/Avm1/Classes/AsObject.h"
 
@@ -60,27 +60,27 @@ void AsString::createPrototype()
 ActionValue AsString::construct(ActionContext* context, const args_t& args)
 {
 	if (args.size() > 0)
-		return ActionValue(new ActionString(args[0].getString()));
+		return ActionValue(new String(args[0].getString()));
 	else
-		return ActionValue(new ActionString());
+		return ActionValue(new String());
 }
 
 void AsString::String_charAt(CallArgs& ca)
 {
-	Ref< ActionString > self = checked_type_cast< ActionString* >(ca.self);
+	Ref< String > self = checked_type_cast< String* >(ca.self);
 	const std::wstring& st = self->get();
 
 	uint32_t index = uint32_t(ca.args[0].getNumberSafe());
 
 	if (index < st.length())
-		ca.ret = ActionValue(new ActionString(st[index]));
+		ca.ret = ActionValue(new String(st[index]));
 	else
-		ca.ret = ActionValue(new ActionString());
+		ca.ret = ActionValue(new String());
 }
 
 void AsString::String_charCodeAt(CallArgs& ca)
 {
-	Ref< ActionString > self = checked_type_cast< ActionString* >(ca.self);
+	Ref< String > self = checked_type_cast< String* >(ca.self);
 	const std::wstring& st = self->get();
 
 	uint32_t index = uint32_t(ca.args[0].getNumberSafe());
@@ -93,7 +93,7 @@ void AsString::String_charCodeAt(CallArgs& ca)
 
 void AsString::String_concat(CallArgs& ca)
 {
-	Ref< ActionString > self = checked_type_cast< ActionString* >(ca.self);
+	Ref< String > self = checked_type_cast< String* >(ca.self);
 
 	StringOutputStream ss;
 	ss << self->get();
@@ -107,7 +107,7 @@ void AsString::String_concat(CallArgs& ca)
 void AsString::String_fromCharCode(CallArgs& ca)
 {
 	wchar_t charCode = wchar_t(ca.args[0].getNumberSafe());
-	ca.ret = ActionValue(new ActionString(charCode));
+	ca.ret = ActionValue(new String(charCode));
 }
 
 void AsString::String_indexOf(CallArgs& ca)
@@ -120,7 +120,7 @@ void AsString::String_lastIndexOf(CallArgs& ca)
 
 void AsString::String_slice(CallArgs& ca)
 {
-	Ref< ActionString > self = checked_type_cast< ActionString* >(ca.self);
+	Ref< String > self = checked_type_cast< String* >(ca.self);
 	const std::wstring& st = self->get();
 
 	if (ca.args.size() >= 2)
@@ -138,7 +138,7 @@ void AsString::String_slice(CallArgs& ca)
 
 void AsString::String_split(CallArgs& ca)
 {
-	Ref< ActionString > self = checked_type_cast< ActionString* >(ca.self);
+	Ref< String > self = checked_type_cast< String* >(ca.self);
 	const std::wstring& st = self->get();
 
 	std::vector< std::wstring > words;
@@ -154,7 +154,7 @@ void AsString::String_split(CallArgs& ca)
 		Split< std::wstring >::word(st, delim, words);
 	}
 
-	Ref< ActionArray > arr = new ActionArray();
+	Ref< Array > arr = new Array();
 	for (std::vector< std::wstring >::const_iterator i = words.begin(); i != words.end(); ++i)
 		arr->push(ActionValue(*i));
 
@@ -163,7 +163,7 @@ void AsString::String_split(CallArgs& ca)
 
 void AsString::String_substr(CallArgs& ca)
 {
-	Ref< ActionString > self = checked_type_cast< ActionString* >(ca.self);
+	Ref< String > self = checked_type_cast< String* >(ca.self);
 	const std::wstring& st = self->get();
 
 	uint32_t index = uint32_t(ca.args[0].getNumberSafe());
@@ -174,7 +174,7 @@ void AsString::String_substr(CallArgs& ca)
 
 void AsString::String_substring(CallArgs& ca)
 {
-	Ref< ActionString > self = checked_type_cast< ActionString* >(ca.self);
+	Ref< String > self = checked_type_cast< String* >(ca.self);
 	const std::wstring& st = self->get();
 
 	uint32_t start = uint32_t(ca.args[0].getNumberSafe());
@@ -185,9 +185,9 @@ void AsString::String_substring(CallArgs& ca)
 
 void AsString::String_toLowerCase(CallArgs& ca)
 {
-	Ref< ActionString > self = checked_type_cast< ActionString* >(ca.self);
+	Ref< String > self = checked_type_cast< String* >(ca.self);
 	const std::wstring& st = self->get();
-	ca.ret = ActionValue(new ActionString(toLower(st)));
+	ca.ret = ActionValue(new String(toLower(st)));
 }
 
 void AsString::String_toString(CallArgs& ca)
@@ -197,14 +197,14 @@ void AsString::String_toString(CallArgs& ca)
 
 void AsString::String_toUpperCase(CallArgs& ca)
 {
-	Ref< ActionString > self = checked_type_cast< ActionString* >(ca.self);
+	Ref< String > self = checked_type_cast< String* >(ca.self);
 	const std::wstring& st = self->get();
-	ca.ret = ActionValue(new ActionString(toUpper(st)));
+	ca.ret = ActionValue(new String(toUpper(st)));
 }
 
 void AsString::String_valueOf(CallArgs& ca)
 {
-	Ref< ActionString > self = checked_type_cast< ActionString* >(ca.self);
+	Ref< String > self = checked_type_cast< String* >(ca.self);
 	ca.ret = ActionValue(self->get());
 }
 

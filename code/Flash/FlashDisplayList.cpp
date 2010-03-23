@@ -51,7 +51,7 @@ void FlashDisplayList::updateEnd()
 	// Remove all layers which are still marked as "collect".
 	for (layer_map_t::iterator i = m_layers.begin(); i != m_layers.end(); )
 	{
-		if (i->second.collect)
+		if (!i->second.immutable && i->second.collect)
 			m_layers.erase(i++);
 		else
 			i++;
@@ -129,6 +129,7 @@ void FlashDisplayList::updateFrame(FlashCharacterInstance* ownerInstance, const 
 			if (placeObject.hasClipDepth)
 				layer.clipDepth = placeObject.clipDepth + c_depthOffset;
 
+			layer.immutable = false;
 			layer.collect = false;
 		}
 		else
@@ -144,10 +145,11 @@ void FlashDisplayList::updateFrame(FlashCharacterInstance* ownerInstance, const 
 	}
 }
 
-void FlashDisplayList::showObject(int32_t depth, uint16_t characterId, FlashCharacterInstance* characterInstance)
+void FlashDisplayList::showObject(int32_t depth, uint16_t characterId, FlashCharacterInstance* characterInstance, bool immutable)
 {
 	m_layers[depth].id = characterId;
 	m_layers[depth].instance = characterInstance;
+	m_layers[depth].immutable = immutable;
 }
 
 void FlashDisplayList::removeObject(FlashCharacterInstance* characterInstance)

@@ -478,7 +478,8 @@ void ActionVM1::execute(ActionFrame* frame) const
 			movieClip->getDisplayList().showObject(
 				int32_t(depth.getNumber()),
 				cloneClip->getSprite()->getId(),
-				cloneClip
+				cloneClip,
+				true
 			);
 		VM_END()
 

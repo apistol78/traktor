@@ -60,6 +60,8 @@ public:
 
 	FlashSpriteInstance* clone() const;
 
+	SwfRect getLocalBounds() const;
+
 	virtual bool getMember(const std::wstring& memberName, ActionValue& outMemberValue) const;
 
 	virtual void eventInit(const IActionVM* actionVM);

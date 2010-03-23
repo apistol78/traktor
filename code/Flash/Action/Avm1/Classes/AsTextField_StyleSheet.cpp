@@ -1,5 +1,4 @@
 #include "Flash/Action/ActionFunctionNative.h"
-#include "Flash/Action/Avm1/ActionDate.h"
 #include "Flash/Action/Avm1/Classes/AsTextField_StyleSheet.h"
 #include "Flash/Action/Avm1/Classes/AsObject.h"
 
