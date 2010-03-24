@@ -76,6 +76,15 @@ bool CanvasGdiPlusWin32::beginPaint(Window& hWnd, bool doubleBuffer, HDC hDC)
 			}
 
 			m_graphics.reset(new Graphics(m_offScreenBitmap.ptr()));
+
+			Gdiplus::Rect rcClip(
+				m_ps.rcPaint.left,
+				m_ps.rcPaint.top,
+				m_ps.rcPaint.right - m_ps.rcPaint.left,
+				m_ps.rcPaint.bottom - m_ps.rcPaint.top
+			);
+			m_graphics->SetClip(rcClip);
+
 			m_doubleBuffer = true;
 		}
 
