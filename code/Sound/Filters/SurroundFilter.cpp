@@ -38,8 +38,12 @@ struct SurroundFilterInstance : public RefCountImpl< IFilterInstance >
 
 	SurroundFilterInstance()
 	{
+		const uint32_t bufferSize = 4096 * sizeof(float);
 		for (int i = 0; i < sizeof_array(m_buffer); ++i)
-			m_buffer[i] = (float*)Alloc::acquireAlign(4096 * sizeof(float), 16);
+		{
+			m_buffer[i] = (float*)Alloc::acquireAlign(bufferSize, 16);
+			std::memset(m_buffer[i], 0, bufferSize);
+		}
 	}
 
 	virtual ~SurroundFilterInstance()

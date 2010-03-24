@@ -37,7 +37,7 @@ inline int16_t quantify(float sample)
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundPipeline", 3, SoundPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundPipeline", 4, SoundPipeline, editor::IPipeline)
 
 SoundPipeline::SoundPipeline()
 :	m_sampleRate(44100)
@@ -193,22 +193,24 @@ bool SoundPipeline::buildOutput(
 		float peek = 0.0f;
 		while (decoder->getBlock(soundBlock))
 		{
-			uint32_t outputSamplesCount = uint32_t(double(soundBlock.samplesCount * m_sampleRate) / soundBlock.sampleRate + 0.5);
+			uint32_t outputSamplesCount = (soundBlock.samplesCount * m_sampleRate) / soundBlock.sampleRate;
 
 			for (uint32_t i = 0; i < soundBlock.maxChannel; ++i)
 			{
-				for (uint32_t j = 0; j < outputSamplesCount; ++j)
+				if (soundBlock.samples[i])
 				{
-					uint32_t p0 = ((j + 0) * soundBlock.sampleRate) / m_sampleRate;
-					uint32_t p1 = ((j + 1) * soundBlock.sampleRate) / m_sampleRate;
-
-					float s0 = soundBlock.samples[i][p0];
-					float s1 = soundBlock.samples[i][p1];
-					float s = (s0 + s1) * 0.5f;
-
-					samples[i].push_back(quantify(s));
-
-					peek = max(peek, s);
+					for (uint32_t j = 0; j < outputSamplesCount; ++j)
+					{
+						uint32_t p = (j * soundBlock.samplesCount) / outputSamplesCount;
+						float s = soundBlock.samples[i][p];
+						samples[i].push_back(quantify(s));
+						peek = max(peek, s);
+					}
+				}
+				else
+				{
+					for (uint32_t j = 0; j < outputSamplesCount; ++j)
+						samples[i].push_back(quantify(0.0f));
 				}
 			}
 
