@@ -136,6 +136,20 @@ inline int32_t Rect::area() const
 	return getWidth() * getHeight();
 }
 
+inline Rect Rect::contain(const Point& pnt) const
+{
+	Rect rc = *this;
+	if (pnt.x < rc.left)
+		rc.left = pnt.x;
+	if (pnt.y < rc.top)
+		rc.top = pnt.y;
+	if (pnt.x > rc.right)
+		rc.right = pnt.x;
+	if (pnt.y > rc.bottom)
+		rc.bottom = pnt.y;
+	return rc;
+}
+
 inline bool Rect::inside(const Point& pnt, bool inclusive) const
 {
 	return

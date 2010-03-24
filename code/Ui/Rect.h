@@ -62,6 +62,8 @@ public:
 
 	inline int32_t area() const;
 
+	inline Rect contain(const Point& pnt) const;
+
 	inline bool inside(const Point& pnt, bool inclusive = true) const;
 
 	inline bool intersect(const Rect& rc) const;

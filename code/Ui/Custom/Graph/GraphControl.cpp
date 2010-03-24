@@ -443,7 +443,7 @@ void GraphControl::beginSelectModification()
 		m_edgeSelectionStates[i] = m_edges[i]->isSelected();
 }
 
-void GraphControl::endSelectModification()
+bool GraphControl::endSelectModification()
 {
 	RefArray< Node > nodeSelectChanged;
 	RefArray< Edge > edgeSelectChanged;
@@ -462,11 +462,13 @@ void GraphControl::endSelectModification()
 			edgeSelectChanged.push_back(m_edges[i]);
 	}
 
-	if (!nodeSelectChanged.empty() || !edgeSelectChanged.empty())
-	{
-		SelectEvent selectEvent(this, nodeSelectChanged, edgeSelectChanged);
-		raiseEvent(EiSelectionChange, &selectEvent);
-	}
+	if (nodeSelectChanged.empty() && edgeSelectChanged.empty())
+		return false;
+
+	SelectEvent selectEvent(this, nodeSelectChanged, edgeSelectChanged);
+	raiseEvent(EiSelectionChange, &selectEvent);
+	
+	return true;
 }
 
 void GraphControl::eventMouseDown(Event* e)
@@ -494,7 +496,6 @@ void GraphControl::eventMouseDown(Event* e)
 	{
 		m_mode = MdMoveAllNodes;
 		setCapture();
-		update();
 		e->consume();
 		return;
 	}
@@ -573,7 +574,6 @@ void GraphControl::eventMouseDown(Event* e)
 					m_cursor = m_origin = m_selectedPin->getPosition() + m_offset;
 					m_mode = MdDrawEdge;
 					setCapture();
-					update();
 					e->consume();
 					return;
 				}
@@ -582,7 +582,6 @@ void GraphControl::eventMouseDown(Event* e)
 			// No pin selected, move the selected node(s).
 			m_mode = MdMoveSelectedNodes;
 			setCapture();
-			update();
 			e->consume();
 		}
 	}
@@ -610,9 +609,9 @@ void GraphControl::eventMouseDown(Event* e)
 			m_selectedEdge->setSelected(true);
 		}
 
-		endSelectModification();
+		if (endSelectModification())
+			update();
 
-		update();
 		e->consume();
 	}
 	else
@@ -629,12 +628,12 @@ void GraphControl::eventMouseDown(Event* e)
 			for (RefArray< Node >::iterator i = m_nodes.begin(); i != m_nodes.end(); ++i)
 				(*i)->setSelected(false);
 
-			endSelectModification();
+			if (endSelectModification())
+				update();
 		}
 
 		m_mode = MdDrawSelectionRectangle;
 		setCapture();
-		update();
 		e->consume();
 	}
 }
@@ -747,8 +746,15 @@ void GraphControl::eventMouseMove(Event* e)
 	}
 	else if (m_mode == MdDrawEdge || m_mode == MdDrawSelectionRectangle)
 	{
+		Rect updateRect(
+			m_origin,
+			m_cursor
+		);
+
 		m_cursor = m->getPosition();
-		update();
+		updateRect = updateRect.getUnified().contain(m_cursor).inflate(2, 2);
+
+		update(&updateRect);
 	}
 
 	e->consume();
@@ -780,22 +786,22 @@ void GraphControl::eventPaint(Event* e)
 	canvas.setBackground(getSystemColor(ScButtonFace));
 	canvas.fillRect(rc);
 
-	// Draw background.
-	if (m_imageBackground)
-	{
-		Size backgroundSize = m_imageBackground->getSize();
-		canvas.setBackground(Color(255, 255, 255));
-		canvas.drawBitmap(
-			Point(
-				(rc.getWidth() - backgroundSize.cx) / 2,
-				(rc.getHeight() - backgroundSize.cy) / 2
-			),
-			Point(0, 0),
-			backgroundSize,
-			m_imageBackground,
-			ui::BmAlpha
-		);
-	}
+	//// Draw background.
+	//if (m_imageBackground)
+	//{
+	//	Size backgroundSize = m_imageBackground->getSize();
+	//	canvas.setBackground(Color(255, 255, 255));
+	//	canvas.drawBitmap(
+	//		Point(
+	//			(rc.getWidth() - backgroundSize.cx) / 2,
+	//			(rc.getHeight() - backgroundSize.cy) / 2
+	//		),
+	//		Point(0, 0),
+	//		backgroundSize,
+	//		m_imageBackground,
+	//		ui::BmAlpha
+	//	);
+	//}
 
 	// Draw arrow hints.
 	canvas.setBackground(m_paintSettings->getNodeShadow());

@@ -179,7 +179,7 @@ private:
 
 	void beginSelectModification();
 
-	void endSelectModification();
+	bool endSelectModification();
 
 	void eventMouseDown(Event* e);
 
