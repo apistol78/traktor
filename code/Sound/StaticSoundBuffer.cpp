@@ -54,7 +54,12 @@ bool StaticSoundBuffer::create(uint32_t sampleRate, uint32_t samplesCount, uint3
 		if (!m_samples[i].ptr())
 			return false;
 
-		m_blocks[i] = (float*)Alloc::acquireAlign(sizeof(float) * 4096, 16);
+		const uint32_t blockSize = sizeof(float) * 4096;
+		m_blocks[i] = (float*)Alloc::acquireAlign(blockSize, 16);
+		if (!m_blocks[i])
+			return false;
+
+		std::memset(m_blocks[i], 0, blockSize);
 	}
 
 	return true;

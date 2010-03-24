@@ -33,14 +33,18 @@ SoundChannel::SoundChannel(uint32_t hwSampleRate, uint32_t hwFrameSamples)
 ,	m_volume(1.0f)
 {
 	const uint32_t outputSamplesCount = hwFrameSamples * c_outputSamplesBlockCount;
-	for (uint32_t i = 0; i < SbcMaxChannelCount; ++i)
-		m_outputSamples[i] = static_cast< float* >(Alloc::acquireAlign(outputSamplesCount * sizeof(float), 16));
+	const uint32_t outputSamplesSize = SbcMaxChannelCount * outputSamplesCount * sizeof(float);
+
+	m_outputSamples[0] = static_cast< float* >(Alloc::acquireAlign(outputSamplesSize, 16));
+	std::memset(m_outputSamples[0], 0, outputSamplesSize);
+
+	for (uint32_t i = 1; i < SbcMaxChannelCount; ++i)
+		m_outputSamples[i] = m_outputSamples[0] + outputSamplesCount * i;
 }
 
 SoundChannel::~SoundChannel()
 {
-	for (uint32_t i = 0; i < sizeof_array(m_outputSamples); ++i)
-		Alloc::freeAlign(m_outputSamples[i]);
+	Alloc::freeAlign(m_outputSamples[0]);
 }
 
 void SoundChannel::setVolume(float volume)
@@ -174,7 +178,7 @@ bool SoundChannel::getBlock(const ISoundMixer* mixer, double time, SoundBlock& o
 						m_volume
 					);
 				else
-					mixer->mute(outputSamples, alignUp(outputSamplesCount, 4));
+					mixer->mute(outputSamples, outputSamplesCount);
 			}
 
 			m_outputSamplesIn += outputSamplesCount;
