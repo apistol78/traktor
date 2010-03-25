@@ -31,7 +31,7 @@ void RumbleEffectPlayer::stop(RumbleEffect* effect, IInputDevice* targetDevice)
 void RumbleEffectPlayer::stopAll()
 {
 	InputRumble zeroRumble = { 0.0f, 0.0f };
-	for (std::list< PlayingEffect >::iterator i = m_playingEffects.begin(); i != m_playingEffects.end(); )
+	for (std::list< PlayingEffect >::iterator i = m_playingEffects.begin(); i != m_playingEffects.end(); i++)
 		i->targetDevice->setRumble(zeroRumble);
 	m_playingEffects.clear();
 }
