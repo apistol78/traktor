@@ -110,6 +110,9 @@ bool Thread::wait(int timeout)
 	uint64_t status;
 	rc = sys_ppu_thread_join(in->thread, &status);
 
+	if (rc == CELL_OK)
+		in->thread = 0;
+
 	return bool(rc == CELL_OK);
 }
 
@@ -176,6 +179,14 @@ Thread::Thread(Functor* functor, const std::wstring& name, int hardwareCore)
 Thread::~Thread()
 {
 	Internal* in = reinterpret_cast< Internal* >(m_handle);
+	T_ASSERT (in);
+
+	if (!m_stopped)
+		stop();
+
+	sys_cond_destroy(in->cond);
+	sys_mutex_destroy(in->mutex);
+
 	delete in;
 }
 
