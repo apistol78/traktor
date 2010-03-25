@@ -1,3 +1,4 @@
+#include <cell/sysmodule.h>
 #include "Input/Ps3/InputDriverPs3.h"
 #include "Input/Ps3/InputDevicePs3.h"
 
@@ -11,6 +12,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.input.InputDriverPs3", InputDriverPs3, IInputDr
 InputDriverPs3::InputDriverPs3(int padCount)
 {
 	int32_t ret;
+
+	cellSysmoduleLoadModule(CELL_SYSMODULE_IO);
 
 	ret = cellPadInit(padCount);
 	T_ASSERT (ret == CELL_OK);

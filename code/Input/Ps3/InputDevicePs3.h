@@ -49,9 +49,10 @@ public:
 	virtual void setRumble(const InputRumble& rumble);
 
 private:
-	bool m_enabled;
 	int m_padIndex;
 	CellPadData m_padData;
+	CellPadActParam m_padActuator;
+	bool m_connected;
 };
 
 	}
