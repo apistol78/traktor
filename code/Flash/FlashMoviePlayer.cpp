@@ -292,6 +292,20 @@ void FlashMoviePlayer::setGlobal(const std::wstring& name, const ActionValue& va
 	global->setMember(name, value);
 }
 
+ActionValue FlashMoviePlayer::getGlobal(const std::wstring& name) const
+{
+	ActionContext* actionContext = m_movieInstance->getContext();
+	T_ASSERT (actionContext);
+
+	ActionObject* global = actionContext->getGlobal();
+	T_ASSERT (global);
+
+	ActionValue value;
+	global->getMember(name, value);
+
+	return value;
+}
+
 void FlashMoviePlayer::Global_getUrl(CallArgs& ca)
 {
 	std::wstring url = ca.args[0].getString();

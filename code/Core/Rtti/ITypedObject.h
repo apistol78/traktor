@@ -277,6 +277,22 @@ T checked_type_cast(const ITypedObject* obj)
 	return static_cast< T >(obj);
 }
 
+/*! \brief Safe cast object.
+ *
+ * The cast will assert if object is of incorrect type.
+ *
+ * \param T Cast to type.
+ * \param AllowNull If object is allowed to be null.
+ * \param o Object.
+ * \return Casted value.
+ */
+template < typename T, bool AllowNull >
+T checked_type_cast(const ITypedObject* obj)
+{
+	T_ASSERT ((AllowNull || obj) && is_a< T >(obj));
+	return static_cast< T >(obj);
+}
+
 }
 
 #endif	// traktor_ITypedObject_H

@@ -98,6 +98,11 @@ void RenderViewDx10::close()
 	}
 }
 
+bool RenderViewDx10::reset(const DisplayMode& displayMode)
+{
+	return false;
+}
+
 void RenderViewDx10::resize(int32_t width, int32_t height)
 {
 	ComRef< ID3D10Texture2D > d3dBackBuffer;

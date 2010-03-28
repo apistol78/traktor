@@ -100,10 +100,17 @@ public:
 
 	/*! \brief Toggle full-screen/windowed mode.
 	 *
-	 * \note Will only work if renderer was initially
-	 * created with a full-screen render view.
+	 * \note Will only work if renderer was
+	 * created with a non-embedded render view.
 	 */
 	void toggleMode();
+
+	/*! \brief Reset device's primary swap chain.
+	 *
+	 * \note Will only work if renderer was
+	 * created with a non-embedded render view.
+	 */
+	bool resetPrimary(const D3DPRESENT_PARAMETERS& d3dPresent);
 
 	// \}
 

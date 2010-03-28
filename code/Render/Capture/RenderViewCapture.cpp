@@ -32,6 +32,11 @@ void RenderViewCapture::close()
 	m_renderView->close();
 }
 
+bool RenderViewCapture::reset(const DisplayMode& displayMode)
+{
+	return m_renderView->reset(displayMode);
+}
+
 void RenderViewCapture::resize(int32_t width, int32_t height)
 {
 	m_renderView->resize(width, height);

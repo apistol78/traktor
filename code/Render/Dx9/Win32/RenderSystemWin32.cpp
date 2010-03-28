@@ -571,6 +571,20 @@ void RenderSystemWin32::toggleMode()
 		m_lostDevice = true;
 }
 
+bool RenderSystemWin32::resetPrimary(const D3DPRESENT_PARAMETERS& d3dPresent)
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_renderLock);
+	HRESULT hr;
+
+	std::memcpy(&m_d3dPresent, &d3dPresent, sizeof(D3DPRESENT_PARAMETERS));
+
+	hr = resetDevice();
+	if (FAILED(hr))
+		m_lostDevice = true;
+
+	return true;
+}
+
 HRESULT RenderSystemWin32::resetDevice()
 {
 	HRESULT hr;
