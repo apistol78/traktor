@@ -35,7 +35,7 @@ struct CallArgs
 /*! \brief Native function wrapper.
  * \ingroup Flash
  */
-struct INativeFunction : public Object
+struct T_DLLCLASS INativeFunction : public Object
 {
 	virtual void call(CallArgs& ca) = 0;
 };
@@ -63,7 +63,7 @@ struct ActionValueCast< std::wstring > { static std::wstring get(const ActionVal
 template <
 	typename CallClassType
 >
-struct MethodNativeFunction : public INativeFunction
+struct T_DLLCLASS MethodNativeFunction : public INativeFunction
 {
 	CallClassType* m_object;
 	void (CallClassType::*m_method)(CallArgs&);
@@ -80,7 +80,7 @@ template <
 	typename SelfClassType,
 	typename ReturnType
 >
-struct MethodNativeFunction_0 : public INativeFunction
+struct T_DLLCLASS MethodNativeFunction_0 : public INativeFunction
 {
 	CallClassType* m_object;
 	ReturnType (CallClassType::*m_method)(SelfClassType*) const;
@@ -97,7 +97,7 @@ template <
 	typename CallClassType,
 	typename SelfClassType
 >
-struct MethodNativeFunction_0 < CallClassType, SelfClassType, void > : public INativeFunction
+struct T_DLLCLASS MethodNativeFunction_0 < CallClassType, SelfClassType, void > : public INativeFunction
 {
 	CallClassType* m_object;
 	void (CallClassType::*m_method)(SelfClassType*) const;
@@ -117,7 +117,7 @@ template <
 	typename ReturnType,
 	typename Argument1Type
 >
-struct MethodNativeFunction_1 : public INativeFunction
+struct T_DLLCLASS MethodNativeFunction_1 : public INativeFunction
 {
 	CallClassType* m_object;
 	ReturnType (CallClassType::*m_method)(SelfClassType*, Argument1Type) const;
@@ -137,7 +137,7 @@ template <
 	typename SelfClassType,
 	typename Argument1Type
 >
-struct MethodNativeFunction_1 < CallClassType, SelfClassType, void, Argument1Type > : public INativeFunction
+struct T_DLLCLASS MethodNativeFunction_1 < CallClassType, SelfClassType, void, Argument1Type > : public INativeFunction
 {
 	CallClassType* m_object;
 	void (CallClassType::*m_method)(SelfClassType*) const;
