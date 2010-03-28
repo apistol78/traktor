@@ -99,12 +99,7 @@ public:
 
 	void prepareShader(render::Shader* shader) const;
 
-	Ref< render::RenderTargetSet > createOutputTarget(
-		render::IRenderSystem* renderSystem,
-		int32_t width,
-		int32_t height,
-		int32_t multiSample
-	);
+	bool requireHighRange() const;
 
 private:
 	Ref< render::ScreenRenderer > m_screenRenderer;

@@ -20,6 +20,9 @@ namespace traktor
 		namespace
 		{
 
+const uint32_t c_tableKey_class = -1;
+const uint32_t c_tableKey_this = -2;
+
 #if defined(_DEBUG)
 class CheckStack
 {
@@ -43,6 +46,41 @@ private:
 #	define CHECK_LUA_STACK(state, expectedOffset) CheckStack cs(state, expectedOffset);
 #else
 #	define CHECK_LUA_STACK(state, expectedOffset)
+#endif
+
+#if defined(_DEBUG)
+void stackDump(lua_State* luaState)
+{
+	int32_t top = lua_gettop(luaState);
+
+	log::debug << L"Total in stack " << top << Endl;
+
+	for (int32_t i = 1; i <= top; ++i)
+	{
+		int t = lua_type(luaState, i);
+		switch (t)
+		{
+		case LUA_TSTRING:
+			log::debug << L"\tstring: \"" << mbstows(lua_tostring(luaState, i)) << L"\"" << Endl;
+			break;
+
+		case LUA_TBOOLEAN:
+			log::debug << L"\tboolean: " << (lua_toboolean(luaState, i) ? L"true" : L"false") << Endl;
+			break;
+
+		case LUA_TNUMBER:
+			log::debug << L"\tnumber: " << lua_tonumber(luaState, i) << Endl;
+			break;
+
+		default:  /* other values */
+			log::debug << L"\tother: " << lua_typename(luaState, t) << Endl;
+			break;
+		}
+	}
+}
+#	define DUMP_LUA_STACK(state) stackDump(state)
+#else
+#	define DUMP_LUA_STACK(state)
 #endif
 
 std::jmp_buf s_jb;
@@ -202,16 +240,23 @@ void ScriptContextLua::registerClass(IScriptClass* scriptClass)
 
 	rc.scriptClass = scriptClass;
 
-	lua_newtable(m_luaState);
-	rc.metaTableRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
+	lua_newtable(m_luaState);										// +1	-> 1
+	rc.metaTableRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);		// -1	-> 0
+	lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, rc.metaTableRef);	// +1	-> 1
 
-	lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, rc.metaTableRef);
+	lua_pushvalue(m_luaState, -1);									// +1	-> 2
+	lua_setfield(m_luaState, -2, "__index");						// -1	-> 1
 
-	lua_pushvalue(m_luaState, -1);
-	lua_setfield(m_luaState, -2, "__index");
+	lua_pushlightuserdata(m_luaState, (void*)scriptClass);			// +1	-> 2
+	lua_rawseti(m_luaState, -2, c_tableKey_class);					// -1	-> 1
 
-	lua_pushlightuserdata(m_luaState, (void*)scriptClass);
-	lua_setfield(m_luaState, -2, "__class");
+	if (scriptClass->haveConstructor())
+	{
+		lua_pushlightuserdata(m_luaState, (void*)this);				// +1	-> 2
+		lua_pushlightuserdata(m_luaState, (void*)scriptClass);		// +1	-> 3
+		lua_pushcclosure(m_luaState, callConstructor, 2);			// -1	-> 2
+		lua_setfield(m_luaState, -2, "new");						// -1	-> 1
+	}
 
 	uint32_t methodCount = scriptClass->getMethodCount();
 	for (uint32_t i = 0; i < methodCount; ++i)
@@ -224,7 +269,8 @@ void ScriptContextLua::registerClass(IScriptClass* scriptClass)
 		lua_setfield(m_luaState, -2, wstombs(methodName).c_str());
 	}
 
-	const TypeInfo* superType = scriptClass->getExportType().getSuper();
+	const TypeInfo& exportType = scriptClass->getExportType();
+	const TypeInfo* superType = exportType.getSuper();
 	T_ASSERT (superType);
 
 	bool exportedAsRoot = true;
@@ -232,8 +278,8 @@ void ScriptContextLua::registerClass(IScriptClass* scriptClass)
 	{
 		if (superType == &i->scriptClass->getExportType())
 		{
-			lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, i->metaTableRef);
-			lua_setmetatable(m_luaState, -2);
+			lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, i->metaTableRef);	// +1	-> 2
+			lua_setmetatable(m_luaState, -2);								// -1	-> 1
 			exportedAsRoot = false;
 			break;
 		}
@@ -245,13 +291,23 @@ void ScriptContextLua::registerClass(IScriptClass* scriptClass)
 
 		lua_pushlightuserdata(m_luaState, (void*)this);
 		lua_pushlightuserdata(m_luaState, (void*)scriptClass);
-		lua_pushcclosure(m_luaState, getUnknownMethod, 2);
+		lua_pushcclosure(m_luaState, classIndexLookup, 2);
 		lua_setfield(m_luaState, -2, "__index");
 
 		lua_setmetatable(m_luaState, -2);
 	}
 
-	lua_pop(m_luaState, 1);
+	if (scriptClass->haveConstructor())
+	{
+		std::wstring exportName = exportType.getName();
+
+		std::vector< std::wstring > exportPath;
+		Split< std::wstring >::any(exportName, L".", exportPath);
+
+		lua_setglobal(m_luaState, wstombs(exportPath.back()).c_str());
+	}
+	else
+		lua_pop(m_luaState, 1);
 
 	m_classRegistry.push_back(rc);
 }
@@ -275,21 +331,35 @@ void ScriptContextLua::pushAny(const Any& any)
 			{
 				if (&i->scriptClass->getExportType() == objectType)
 				{
-					lua_newtable(m_luaState);
+					lua_newtable(m_luaState);						// +1
 
-					lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, i->metaTableRef);
-					lua_setmetatable(m_luaState, -2);
+					lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, i->metaTableRef);	// +1
+					lua_setmetatable(m_luaState, -2);								// -1
 
+					// Associate object with instance table.
 					Object** object = reinterpret_cast< Object** >(lua_newuserdata(m_luaState, sizeof(Object*)));	// +1
 					*object = any.getObject();
 					T_SAFE_ADDREF(*object);
 
-					lua_newtable(m_luaState);										// +1
-					lua_pushcfunction(m_luaState, gcMethod);						// +1
-					lua_setfield(m_luaState, -2, "__gc");							// -1
-					lua_setmetatable(m_luaState, -2);								// -1
+					// Associate __gc with object userdata.
+					lua_newtable(m_luaState);						// +1
+					lua_pushcfunction(m_luaState, gcMethod);		// +1
+					lua_setfield(m_luaState, -2, "__gc");			// -1
+					lua_setmetatable(m_luaState, -2);				// -1
 
-					lua_setfield(m_luaState, -2, "__this");							// -1
+					lua_rawseti(m_luaState, -2, c_tableKey_this);	// -1
+
+					//// Expose properties.
+					//uint32_t propertyCount = i->scriptClass->getPropertyCount();
+					//for (uint32_t j = 0; j < propertyCount; ++j)
+					//{
+					//	std::wstring propertyName = i->scriptClass->getPropertyName(j);
+					//	lua_pushlightuserdata(m_luaState, (void*)this);
+					//	lua_pushlightuserdata(m_luaState, (void*)i->scriptClass);
+					//	lua_pushcclosure(m_luaState, callProperty, 2);
+					//	lua_setfield(m_luaState, -2, wstombs(propertyName).c_str());
+					//}
+
 					return;
 				}
 			}
@@ -310,7 +380,8 @@ Any ScriptContextLua::toAny(int32_t index)
 		return Any(mbstows(lua_tostring(m_luaState, index)));
 	if (lua_istable(m_luaState, index))
 	{
-		lua_getfield(m_luaState, index, "__this");
+		lua_rawgeti(m_luaState, index, c_tableKey_this);
+
 		Object* object = *reinterpret_cast< Object** >(lua_touserdata(m_luaState, -1));
 		lua_pop(m_luaState, 1);
 		if (object)
@@ -319,25 +390,54 @@ Any ScriptContextLua::toAny(int32_t index)
 	return Any();
 }
 
-int ScriptContextLua::getUnknownMethod(lua_State* luaState)
+int ScriptContextLua::classIndexLookup(lua_State* luaState)
 {
+	ScriptContextLua* context = reinterpret_cast< ScriptContextLua* >(lua_touserdata(luaState, lua_upvalueindex(1)));
+	T_ASSERT (context);
+
+	// Get script class from closure.
+	const IScriptClass* scriptClass = reinterpret_cast< IScriptClass* >(lua_touserdata(luaState, lua_upvalueindex(2)));
+	if (!scriptClass)
+		return 0;
+
+	// Get index key.
+	const char* key = lua_tostring(luaState, 2);
+	T_ASSERT (key);
+
+	// Create unknown method closure.
+	lua_pushstring(luaState, key);
+	lua_pushlightuserdata(luaState, (void*)context);
+	lua_pushlightuserdata(luaState, (void*)scriptClass);
+	lua_pushcclosure(luaState, callUnknownMethod, 3);
+
+	return 1;
+}
+
+int ScriptContextLua::callConstructor(lua_State* luaState)
+{
+	CHECK_LUA_STACK(luaState, 1);
+	Any argv[16];
+
 	ScriptContextLua* context = reinterpret_cast< ScriptContextLua* >(lua_touserdata(luaState, lua_upvalueindex(1)));
 	T_ASSERT (context);
 
 	if (!lua_istable(luaState, 1))
 		return 0;
 
+	// Get script class from function.
 	const IScriptClass* scriptClass = reinterpret_cast< IScriptClass* >(lua_touserdata(luaState, lua_upvalueindex(2)));
 	if (!scriptClass)
 		return 0;
 
-	const char* methodName = lua_tostring(luaState, 2);
-	T_ASSERT (methodName);
+	// Convert arguments.
+	int32_t argc = lua_gettop(luaState) - 1;
+	T_ASSERT (argc <= sizeof_array(argv));
+	for (int32_t i = 0; i < argc; ++i)
+		argv[i] = context->toAny(2 + i);
 
-	lua_pushstring(luaState, methodName);
-	lua_pushlightuserdata(luaState, (void*)context);
-	lua_pushlightuserdata(luaState, (void*)scriptClass);
-	lua_pushcclosure(luaState, callUnknownMethod, 3);
+	// Invoke native method.
+	Any returnValue(scriptClass->construct(argc, argv));
+	context->pushAny(returnValue);
 
 	return 1;
 }
@@ -359,7 +459,7 @@ int ScriptContextLua::callMethod(lua_State* luaState)
 		return 0;
 
 	// Get object pointer.
-	lua_getfield(luaState, 1, "__this");
+	lua_rawgeti(luaState, 1, c_tableKey_this);
 	Object* object = *reinterpret_cast< Object** >(lua_touserdata(luaState, -1));
 	lua_pop(luaState, 1);
 	if (!object)
@@ -399,7 +499,7 @@ int ScriptContextLua::callUnknownMethod(lua_State* luaState)
 		return 0;
 
 	// Get object pointer.
-	lua_getfield(luaState, 1, "__this");
+	lua_rawgeti(luaState, 1, c_tableKey_this);
 	Object* object = *reinterpret_cast< Object** >(lua_touserdata(luaState, -1));
 	lua_pop(luaState, 1);
 	if (!object)
@@ -416,6 +516,44 @@ int ScriptContextLua::callUnknownMethod(lua_State* luaState)
 	context->pushAny(returnValue);
 
 	return 1;
+}
+
+int ScriptContextLua::callProperty(lua_State* luaState)
+{
+	ScriptContextLua* context = reinterpret_cast< ScriptContextLua* >(lua_touserdata(luaState, lua_upvalueindex(2)));
+	T_ASSERT (context);
+
+	if (!lua_istable(luaState, 1))
+		return 0;
+
+	int32_t propertyId = lua_tointeger(luaState, lua_upvalueindex(1));
+
+	const IScriptClass* scriptClass = reinterpret_cast< IScriptClass* >(lua_touserdata(luaState, lua_upvalueindex(3)));
+	if (!scriptClass)
+		return 0;
+
+	// Get object pointer.
+	lua_rawgeti(luaState, 1, c_tableKey_this);
+	Object* object = *reinterpret_cast< Object** >(lua_touserdata(luaState, -1));
+	lua_pop(luaState, 1);
+	if (!object)
+		return 0;
+
+	int32_t argc = lua_gettop(luaState) - 1;
+	if (argc == 2)
+	{
+		// Get property value.
+		Any propertyValue = scriptClass->getPropertyValue(object, propertyId);
+		context->pushAny(propertyValue);
+		return 1;
+	}
+	else if (argc == 3)
+	{
+		// Set property value.
+		return 0;
+	}
+
+	return 0;
 }
 
 int ScriptContextLua::gcMethod(lua_State* luaState)

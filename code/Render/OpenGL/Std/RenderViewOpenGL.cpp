@@ -69,6 +69,11 @@ void RenderViewOpenGL::close()
 	m_context = 0;
 }
 
+bool RenderViewOpenGL::reset(const DisplayMode& displayMode)
+{
+	return false;
+}
+
 void RenderViewOpenGL::resize(int32_t width, int32_t height)
 {
 	m_context->update();

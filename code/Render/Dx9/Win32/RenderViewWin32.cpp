@@ -80,6 +80,24 @@ void RenderViewWin32::close()
 	m_renderSystem->removeRenderView(this);
 }
 
+bool RenderViewWin32::reset(const DisplayMode& displayMode)
+{
+	m_d3dPresent.BackBufferWidth = displayMode.width;
+	m_d3dPresent.BackBufferHeight = displayMode.height;
+
+	if (!m_renderSystem->resetPrimary(m_d3dPresent))
+		return false;
+
+	m_d3dViewport.X = 0;
+	m_d3dViewport.Y = 0;
+	m_d3dViewport.Width = m_d3dPresent.BackBufferWidth;
+	m_d3dViewport.Height = m_d3dPresent.BackBufferHeight;
+	m_d3dViewport.MinZ = 0.0f;
+	m_d3dViewport.MaxZ = 1.0f;
+
+	return true;
+}
+
 void RenderViewWin32::resize(int32_t width, int32_t height)
 {
 	HRESULT hr;

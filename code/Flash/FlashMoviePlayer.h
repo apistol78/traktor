@@ -163,6 +163,13 @@ public:
 	 */
 	void setGlobal(const std::wstring& name, const ActionValue& value);
 
+	/*! \brief Get global ActionScript value.
+	 *
+	 * \param name Name of global member.
+	 * \return Value of global member; undefined if no such member.
+	 */
+	ActionValue getGlobal(const std::wstring& name) const;
+
 private:
 	struct Event
 	{

@@ -32,6 +32,14 @@ public:
 	/*! \brief Get exported native type. */
 	virtual const TypeInfo& getExportType() const = 0;
 
+
+	/*! \brief Have constructor. */
+	virtual bool haveConstructor() const = 0;
+
+	/*! \brief Construct new object. */
+	virtual Ref< Object > construct(uint32_t argc, const Any* argv) const = 0;
+
+
 	/*! \brief Get exported method count. */
 	virtual uint32_t getMethodCount() const = 0;
 
@@ -43,6 +51,19 @@ public:
 
 	/*! \brief Invoke unknown method. */
 	virtual Any invokeUnknown(Object* object, const std::wstring& methodName, uint32_t argc, const Any* argv) const = 0;
+
+
+	/*! \brief Get exported properties count. */
+	virtual uint32_t getPropertyCount() const = 0;
+
+	/*! \brief Get name of exported property. */
+	virtual std::wstring getPropertyName(uint32_t propertyId) const = 0;
+
+	/*! \brief Get property value. */
+	virtual Any getPropertyValue(const Object* object, uint32_t propertyId) const = 0;
+
+	/*! \brief Set property value. */
+	virtual void setPropertyValue(Object* object, uint32_t propertyId, const Any& value) const = 0;
 };
 
 	}

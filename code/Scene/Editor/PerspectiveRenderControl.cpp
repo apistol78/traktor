@@ -221,12 +221,14 @@ void PerspectiveRenderControl::updateWorldRenderer()
 		// Create render target used for post processing.
 		if (m_postProcess)
 		{
-			m_renderTarget = m_postProcess->createOutputTarget(
-				m_context->getRenderSystem(),
-				sz.cx,
-				sz.cy,
-				4
-			);
+			render::RenderTargetSetCreateDesc desc;
+			desc.count = 1;
+			desc.width = sz.cx;
+			desc.height = sz.cy;
+			desc.multiSample = 4;
+			desc.depthStencil = false;
+			desc.targets[0].format = m_postProcess->requireHighRange() ? render::TfR16G16B16A16F : render::TfR8G8B8A8;
+			m_renderTarget =  m_context->getRenderSystem()->createRenderTargetSet(desc);
 		}
 
 		// Expose shadow mask to debug view.

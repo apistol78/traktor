@@ -165,21 +165,9 @@ void PostProcess::prepareShader(render::Shader* shader) const
 		shader->setFloatParameter(i->first, i->second);
 }
 
-Ref< render::RenderTargetSet > PostProcess::createOutputTarget(
-	render::IRenderSystem* renderSystem,
-	int32_t width,
-	int32_t height,
-	int32_t multiSample
-)
+bool PostProcess::requireHighRange() const
 {
-	render::RenderTargetSetCreateDesc desc;
-	desc.count = 1;
-	desc.width = width;
-	desc.height = height;
-	desc.multiSample = multiSample;
-	desc.depthStencil = false;
-	desc.targets[0].format = m_requireHighRange ? render::TfR16G16B16A16F : render::TfR8G8B8A8;
-	return renderSystem->createRenderTargetSet(desc);
+	return m_requireHighRange;
 }
 
 	}

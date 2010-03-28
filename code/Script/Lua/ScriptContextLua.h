@@ -62,11 +62,15 @@ private:
 
 	Any toAny(int32_t index);
 
-	static int getUnknownMethod(lua_State* luaState);
+	static int classIndexLookup(lua_State* luaState);
+
+	static int callConstructor(lua_State* luaState);
 
 	static int callMethod(lua_State* luaState);
 
 	static int callUnknownMethod(lua_State* luaState);
+
+	static int callProperty(lua_State* luaState);
 
 	static int gcMethod(lua_State* luaState);
 

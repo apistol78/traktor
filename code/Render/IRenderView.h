@@ -40,6 +40,8 @@ public:
 
 	virtual void close() = 0;
 
+	virtual bool reset(const DisplayMode& displayMode) = 0;
+
 	virtual void resize(int32_t width, int32_t height) = 0;
 
 	virtual int getWidth() const = 0;

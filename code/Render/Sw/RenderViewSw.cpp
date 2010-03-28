@@ -127,6 +127,11 @@ void RenderViewSw::close()
 	}
 }
 
+bool RenderViewSw::reset(const DisplayMode& displayMode)
+{
+	return false;
+}
+
 void RenderViewSw::resize(int32_t width, int32_t height)
 {
 	bool result = m_graphicsSystem->resize(width / c_targetScale, height / c_targetScale);

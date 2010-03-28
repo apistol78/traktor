@@ -64,6 +64,11 @@ void RenderViewOpenGLES2::close()
 #	endif
 }
 
+bool RenderViewOpenGLES2::reset(const DisplayMode& displayMode)
+{
+	return false;
+}
+
 void RenderViewOpenGLES2::resize(int32_t width, int32_t height)
 {
 #	if TARGET_OS_IPHONE
