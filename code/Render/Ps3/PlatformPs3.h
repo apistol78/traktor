@@ -11,8 +11,18 @@
 #	include <Cg/cgc.h>
 #	include <cgutil.h>
 #	define T_HAVE_TYPES
-#endif
 
+#	define T_SCE_PERF_MEASURE 0
+
+#	if T_SCE_PERF_MEASURE
+#		define uint32_t uint32_t
+#		define uint64_t uint64_t
+#		include <SCEShaderPerf.h>
+#		undef uint32_t
+#		undef uint64_t
+#	endif
+
+#endif
 
 //#define T_GCM_CALL(fnc) fnc
 #define T_GCM_CALL(fnc) fnc##Inline

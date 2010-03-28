@@ -18,6 +18,10 @@ class ProgramCompilerPs3 : public IProgramCompiler
 	T_RTTI_CLASS;
 
 public:
+	ProgramCompilerPs3();
+
+	virtual ~ProgramCompilerPs3();
+
 	virtual const wchar_t* getPlatformSignature() const;
 
 	virtual Ref< ProgramResource > compile(

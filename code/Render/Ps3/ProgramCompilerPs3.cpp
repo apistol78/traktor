@@ -109,22 +109,22 @@ bool collectScalarParameters(
 				CGparameter parameter = cellGcmCgGetNamedParameter(program, wstombs(indexedParameterName).c_str());
 				if (parameter)
 				{
-					log::info << L"VP parameter \"" << parameterName << L"\", size = " << parameterSize << L", count = " << parameterCount << L", registers = " << quadCount << Endl;
+					//log::info << L"VP parameter \"" << parameterName << L"\", size = " << parameterSize << L", count = " << parameterCount << L", registers = " << quadCount << Endl;
 
 					uint32_t resourceIndex = cellGcmCgGetParameterResourceIndex(program, parameter);
 
 					scalar.vertexRegisterIndex = resourceIndex;
 					scalar.vertexRegisterCount = quadCount;
 
-					log::info << L"\tvertex register index " << scalar.vertexRegisterIndex << Endl;
-					log::info << L"\tvertex register count " << scalar.vertexRegisterCount << Endl;
+					//log::info << L"\tvertex register index " << scalar.vertexRegisterIndex << Endl;
+					//log::info << L"\tvertex register count " << scalar.vertexRegisterCount << Endl;
 
 					scalarUsed = true;
 				}
 			}
 			else
 			{
-				log::info << L"FP parameter \"" << parameterName << L"\", size = " << parameterSize << L", count = " << parameterCount << L", registers = " << quadCount << Endl;
+				//log::info << L"FP parameter \"" << parameterName << L"\", size = " << parameterSize << L", count = " << parameterCount << L", registers = " << quadCount << Endl;
 
 				for (int32_t j = 0; j < quadCount; ++j)
 				{
@@ -132,7 +132,7 @@ bool collectScalarParameters(
 					if (quadCount > 1)
 						indexedParameterName = parameterName + L"[" + toString(j) + L"]";
 
-					log::info << L"\t" << indexedParameterName << Endl;
+					//log::info << L"\t" << indexedParameterName << Endl;
 
 					CGparameter parameter = cellGcmCgGetNamedParameter(program, wstombs(indexedParameterName).c_str());
 					if (parameter)
@@ -150,8 +150,8 @@ bool collectScalarParameters(
 
 								scalar.fragmentOffsets.push_back(fragmentOffset);
 
-								log::info << L"\t\tfragment ucode offset " << fragmentOffset.ucodeOffset << Endl;
-								log::info << L"\t\tfragment parameter offset " << fragmentOffset.parameterOffset << Endl;
+								//log::info << L"\t\tfragment ucode offset " << fragmentOffset.ucodeOffset << Endl;
+								//log::info << L"\t\tfragment parameter offset " << fragmentOffset.parameterOffset << Endl;
 							}
 
 							scalarUsed = true;
@@ -227,6 +227,22 @@ bool collectInputSignature(const ShaderGraph* shaderGraph, std::vector< uint8_t 
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramCompilerPs3", 0, ProgramCompilerPs3, IProgramCompiler)
+
+ProgramCompilerPs3::ProgramCompilerPs3()
+{
+#if T_SCE_PERF_MEASURE
+	SceSpResult result = sceShaderPerfInit();
+	if (result != SCESP_OK)
+		log::error << L"sceShaderPerfInit failed; error " << int32_t(result) << Endl;
+#endif
+}
+
+ProgramCompilerPs3::~ProgramCompilerPs3()
+{
+#if T_SCE_PERF_MEASURE
+	sceShaderPerfExit();
+#endif
+}
 
 const wchar_t* ProgramCompilerPs3::getPlatformSignature() const
 {
@@ -358,6 +374,43 @@ Ref< ProgramResource > ProgramCompilerPs3::compile(
 			return false;
 
 		resource->m_renderState = cgProgram.getRenderState();
+
+		// Estimate performance measurement.
+#if T_SCE_PERF_MEASURE
+		{
+			const char* opt[] = { NULL };
+			SceSpMeasurementResult measure;
+			SceSpResult result;
+
+			if ((result = sceShaderPerfMeasure(
+				(const char*)sceCgcGetBinData(resource->m_vertexShaderBin),
+				sceCgcGetBinSize(resource->m_vertexShaderBin),
+				opt,
+				&measure
+			)) == SCESP_OK)
+			{
+				if (outStats)
+					outStats->vertexCost = measure.nCycles;
+				log::info << measure.nCycles << L" cycle(s)/vertex" << Endl;
+			}
+			else
+				log::error << L"Unable to measure vertex performance; error " << int32_t(result) << Endl;
+
+			if ((result = sceShaderPerfMeasure(
+				(const char*)sceCgcGetBinData(resource->m_pixelShaderBin),
+				sceCgcGetBinSize(resource->m_pixelShaderBin),
+				opt,
+				&measure
+			)) == SCESP_OK)
+			{
+				if (outStats)
+					outStats->pixelCost = measure.nCycles;
+				log::info << measure.nCycles << L" cycle(s)/pixel" << Endl;
+			}
+			else
+				log::error << L"Unable to measure pixel performance; error " << int32_t(result) << Endl;
+		}
+#endif
 
 		sceCgcDeleteContext(cgc);
 	}

@@ -12651,6 +12651,7 @@
 						<item>libgcm_tool.lib</item>
 						<item>libcgc.lib</item>
 						<item>libcgutil.lib</item>
+						<item>SCEShaderPerf.lib</item>
 					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -12678,6 +12679,7 @@
 						<item>libgcm_tool.lib</item>
 						<item>libcgc.lib</item>
 						<item>libcgutil.lib</item>
+						<item>SCEShaderPerf.lib</item>
 					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -12705,6 +12707,7 @@
 						<item>libgcm_tool.lib</item>
 						<item>libcgc.lib</item>
 						<item>libcgutil.lib</item>
+						<item>SCEShaderPerf.lib</item>
 					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -12732,6 +12735,7 @@
 						<item>libgcm_tool.lib</item>
 						<item>libcgc.lib</item>
 						<item>libcgutil.lib</item>
+						<item>SCEShaderPerf.lib</item>
 					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
