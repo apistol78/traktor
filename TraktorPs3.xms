@@ -2562,6 +2562,15 @@
 								</item>
 							</items>
 						</item>
+						<item type="Filter">
+							<name>Classes</name>
+							<items>
+								<item type="File">
+									<fileName>Action/Classes/*.*</fileName>
+									<items/>
+								</item>
+							</items>
+						</item>
 					</items>
 				</item>
 				<item type="Filter">
@@ -3467,6 +3476,7 @@
 						<item>$(SCE_PS3_ROOT)/target/ppu/lib/libgcm_sys_stub.a</item>
 						<item>$(SCE_PS3_ROOT)/target/ppu/lib/libcgc.a</item>
 						<item>$(SCE_PS3_ROOT)/target/ppu/lib/libsysutil_stub.a</item>
+						<item>$(SCE_PS3_ROOT)/target/ppu/lib/libsysutil_avconf_ext_stub.a</item>
 					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -3490,6 +3500,7 @@
 						<item>$(SCE_PS3_ROOT)/target/ppu/lib/libgcm_sys_stub.a</item>
 						<item>$(SCE_PS3_ROOT)/target/ppu/lib/libcgc.a</item>
 						<item>$(SCE_PS3_ROOT)/target/ppu/lib/libsysutil_stub.a</item>
+						<item>$(SCE_PS3_ROOT)/target/ppu/lib/libsysutil_avconf_ext_stub.a</item>
 					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -3970,6 +3981,11 @@
 					<linkWithProduct>true</linkWithProduct>
 					<solutionFileName>$(TRAKTOR_HOME)/TraktorPs3-Spu.xms</solutionFileName>
 					<projectName>Traktor.Spray.JobVortexModifier</projectName>
+				</item>
+				<item type="ExternalDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<solutionFileName>$(TRAKTOR_HOME)/TraktorPs3-Spu.xms</solutionFileName>
+					<projectName>Traktor.Spray.JobPointRenderer</projectName>
 				</item>
 			</dependencies>
 		</item>
