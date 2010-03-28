@@ -141,33 +141,42 @@ void PointRenderer::render(
 		{ -1.0f, -1.0f }
 	};
 
-	static std::vector< std::pair< uint32_t, float > > sorted;
-	sorted.resize(size);
+	//static std::vector< std::pair< uint32_t, float > > sorted;
+	//sorted.resize(size);
 
-	for (uint32_t i = 0; i < size; ++i)
-	{
-		sorted[i].first = i;
-		sorted[i].second = cameraPlane.distance(points[i].position);
-	}
+	//for (uint32_t i = 0; i < size; ++i)
+	//{
+	//	sorted[i].first = i;
+	//	sorted[i].second = cameraPlane.distance(points[i].position);
+	//}
 
-	std::sort(sorted.begin(), sorted.end(), PredicateZ());
+	//std::sort(sorted.begin(), sorted.end(), PredicateZ());
 
 	Vertex* vertex = static_cast< Vertex* >(m_vertexBuffer[m_currentBuffer]->lock(m_vertexOffset, size * 4));
 	if (vertex)
 	{
-		for (std::vector< std::pair< uint32_t, float > >::iterator i = sorted.begin(); i != sorted.end(); ++i)
-		{
-			// Skip particles behind near culling plane.
-			if (i->second < m_cullNearDistance)
-				continue;
+		//for (std::vector< std::pair< uint32_t, float > >::iterator i = sorted.begin(); i != sorted.end(); ++i)
+		//{
+		//	// Skip particles behind near culling plane.
+		//	float distance = i->second;
+		//	if (distance < m_cullNearDistance)
+		//		continue;
 
-			const Point& point = points[i->first];
+		//	const Point& point = points[i->first];
+
+		for (uint32_t i = 0; i < size; ++i)
+		{
+			const Point& point = points[i];
+
+			float distance = cameraPlane.distance(point.position);
+			if (distance < m_cullNearDistance)
+				continue;
 
 			// Calculate alpha based on point age and distance from near culling plane.
 			float age = clamp(point.age / point.maxAge, 0.0f, 1.0f);
 			float middle = age - middleAge;
 			float alpha = select(middle, 1.0f - middle / (1.0f - middleAge), age / middleAge);
-			alpha *= min((i->second - m_cullNearDistance) / m_fadeNearRange, 1.0f);
+			alpha *= min((distance - m_cullNearDistance) / m_fadeNearRange, 1.0f);
 			if (alpha < FUZZY_EPSILON)
 				continue;
 
@@ -188,7 +197,7 @@ void PointRenderer::render(
 				vertex++;
 			}
 
-			batches.back().distance = min(batches.back().distance, i->second);
+			batches.back().distance = min(batches.back().distance, distance);
 			batches.back().count += 2;
 
 			m_vertexOffset += 4;

@@ -64,11 +64,7 @@ public:
 	);
 
 private:
-#if !defined(WINCE)
-	enum { BufferCount = 8 };
-#else
-	enum { BufferCount = 2 };
-#endif
+	enum { BufferCount = 4 };
 
 	struct Batch
 	{
