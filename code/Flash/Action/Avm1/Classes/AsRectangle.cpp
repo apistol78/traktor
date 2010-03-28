@@ -33,21 +33,21 @@ void AsRectangle::createPrototype()
 	Ref< ActionObject > prototype = new ActionObject();
 
 	prototype->setMember(L"__proto__", ActionValue(AsObject::getInstance()));
-	prototype->setMember(L"clone", createNativeFunctionValue(this, &AsRectangle::Rectangle_clone));
-	prototype->setMember(L"contains", createNativeFunctionValue(this, &AsRectangle::Rectangle_contains));
-	prototype->setMember(L"containsPoint", createNativeFunctionValue(this, &AsRectangle::Rectangle_containsPoint));
-	prototype->setMember(L"containsRectangle", createNativeFunctionValue(this, &AsRectangle::Rectangle_containsRectangle));
-	prototype->setMember(L"equals", createNativeFunctionValue(this, &AsRectangle::Rectangle_equals));
-	prototype->setMember(L"inflate", createNativeFunctionValue(this, &AsRectangle::Rectangle_inflate));
-	prototype->setMember(L"inflatePoint", createNativeFunctionValue(this, &AsRectangle::Rectangle_inflatePoint));
-	prototype->setMember(L"intersection", createNativeFunctionValue(this, &AsRectangle::Rectangle_intersection));
-	prototype->setMember(L"intersects", createNativeFunctionValue(this, &AsRectangle::Rectangle_intersects));
-	prototype->setMember(L"isEmpty", createNativeFunctionValue(this, &AsRectangle::Rectangle_isEmpty));
-	prototype->setMember(L"offset", createNativeFunctionValue(this, &AsRectangle::Rectangle_offset));
-	prototype->setMember(L"offsetPoint", createNativeFunctionValue(this, &AsRectangle::Rectangle_offsetPoint));
-	prototype->setMember(L"setEmpty", createNativeFunctionValue(this, &AsRectangle::Rectangle_setEmpty));
-	prototype->setMember(L"toString", createNativeFunctionValue(this, &AsRectangle::Rectangle_toString));
-	prototype->setMember(L"union", createNativeFunctionValue(this, &AsRectangle::Rectangle_union));
+	prototype->setMember(L"clone", ActionValue(createNativeFunction(this, &AsRectangle::Rectangle_clone)));
+	prototype->setMember(L"contains", ActionValue(createNativeFunction(this, &AsRectangle::Rectangle_contains)));
+	prototype->setMember(L"containsPoint", ActionValue(createNativeFunction(this, &AsRectangle::Rectangle_containsPoint)));
+	prototype->setMember(L"containsRectangle", ActionValue(createNativeFunction(this, &AsRectangle::Rectangle_containsRectangle)));
+	prototype->setMember(L"equals", ActionValue(createNativeFunction(this, &AsRectangle::Rectangle_equals)));
+	prototype->setMember(L"inflate", ActionValue(createNativeFunction(this, &AsRectangle::Rectangle_inflate)));
+	prototype->setMember(L"inflatePoint", ActionValue(createNativeFunction(this, &AsRectangle::Rectangle_inflatePoint)));
+	prototype->setMember(L"intersection", ActionValue(createNativeFunction(this, &AsRectangle::Rectangle_intersection)));
+	prototype->setMember(L"intersects", ActionValue(createNativeFunction(this, &AsRectangle::Rectangle_intersects)));
+	prototype->setMember(L"isEmpty", ActionValue(createNativeFunction(this, &AsRectangle::Rectangle_isEmpty)));
+	prototype->setMember(L"offset", ActionValue(createNativeFunction(this, &AsRectangle::Rectangle_offset)));
+	prototype->setMember(L"offsetPoint", ActionValue(createNativeFunction(this, &AsRectangle::Rectangle_offsetPoint)));
+	prototype->setMember(L"setEmpty", ActionValue(createNativeFunction(this, &AsRectangle::Rectangle_setEmpty)));
+	prototype->setMember(L"toString", ActionValue(createNativeFunction(this, &AsRectangle::Rectangle_toString)));
+	prototype->setMember(L"union", ActionValue(createNativeFunction(this, &AsRectangle::Rectangle_union)));
 
 	prototype->addProperty(L"bottom", createNativeFunction(this, &AsRectangle::Rectangle_get_bottom), createNativeFunction(this, &AsRectangle::Rectangle_set_bottom));
 	prototype->addProperty(L"bottomRight", createNativeFunction(this, &AsRectangle::Rectangle_get_bottomRight), createNativeFunction(this, &AsRectangle::Rectangle_set_bottomRight));

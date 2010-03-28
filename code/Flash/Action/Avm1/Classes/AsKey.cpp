@@ -102,13 +102,13 @@ void AsKey::createPrototype()
 	prototype->setMember(L"SPACE", ActionValue(avm_number_t(AkSpace)));
 	prototype->setMember(L"TAB", ActionValue(avm_number_t(AkTab)));
 	prototype->setMember(L"UP", ActionValue(avm_number_t(AkUp)));
-	prototype->setMember(L"addListener", createNativeFunctionValue(this, &AsKey::Key_addListener));
-	prototype->setMember(L"getAscii", createNativeFunctionValue(this, &AsKey::Key_getAscii));
-	prototype->setMember(L"getCode", createNativeFunctionValue(this, &AsKey::Key_getCode));
-	prototype->setMember(L"isAccessible", createNativeFunctionValue(this, &AsKey::Key_isAccessible));
-	prototype->setMember(L"isDown", createNativeFunctionValue(this, &AsKey::Key_isDown));
-	prototype->setMember(L"isToggled", createNativeFunctionValue(this, &AsKey::Key_isToggled));
-	prototype->setMember(L"removeListener", createNativeFunctionValue(this, &AsKey::Key_removeListener));
+	prototype->setMember(L"addListener", ActionValue(createNativeFunction(this, &AsKey::Key_addListener)));
+	prototype->setMember(L"getAscii", ActionValue(createNativeFunction(this, &AsKey::Key_getAscii)));
+	prototype->setMember(L"getCode", ActionValue(createNativeFunction(this, &AsKey::Key_getCode)));
+	prototype->setMember(L"isAccessible", ActionValue(createNativeFunction(this, &AsKey::Key_isAccessible)));
+	prototype->setMember(L"isDown", ActionValue(createNativeFunction(this, &AsKey::Key_isDown)));
+	prototype->setMember(L"isToggled", ActionValue(createNativeFunction(this, &AsKey::Key_isToggled)));
+	prototype->setMember(L"removeListener", ActionValue(createNativeFunction(this, &AsKey::Key_removeListener)));
 
 	prototype->setReadOnly();
 

@@ -34,16 +34,16 @@ void AsPoint::createPrototype()
 	Ref< ActionObject > prototype = new ActionObject();
 
 	prototype->setMember(L"__proto__", ActionValue(AsObject::getInstance()));
-	prototype->setMember(L"add", createNativeFunctionValue(this, &AsPoint::Point_add));
-	prototype->setMember(L"clone", createNativeFunctionValue(this, &AsPoint::Point_clone));
-	prototype->setMember(L"distance", createNativeFunctionValue(this, &AsPoint::Point_distance));
-	prototype->setMember(L"equals", createNativeFunctionValue(this, &AsPoint::Point_equals));
-	prototype->setMember(L"interpolate", createNativeFunctionValue(this, &AsPoint::Point_interpolate));
-	prototype->setMember(L"normalize", createNativeFunctionValue(this, &AsPoint::Point_normalize));
-	prototype->setMember(L"offset", createNativeFunctionValue(this, &AsPoint::Point_offset));
-	prototype->setMember(L"polar", createNativeFunctionValue(this, &AsPoint::Point_polar));
-	prototype->setMember(L"subtract", createNativeFunctionValue(this, &AsPoint::Point_subtract));
-	prototype->setMember(L"toString", createNativeFunctionValue(this, &AsPoint::Point_toString));
+	prototype->setMember(L"add", ActionValue(createNativeFunction(this, &AsPoint::Point_add)));
+	prototype->setMember(L"clone", ActionValue(createNativeFunction(this, &AsPoint::Point_clone)));
+	prototype->setMember(L"distance", ActionValue(createNativeFunction(this, &AsPoint::Point_distance)));
+	prototype->setMember(L"equals", ActionValue(createNativeFunction(this, &AsPoint::Point_equals)));
+	prototype->setMember(L"interpolate", ActionValue(createNativeFunction(this, &AsPoint::Point_interpolate)));
+	prototype->setMember(L"normalize", ActionValue(createNativeFunction(this, &AsPoint::Point_normalize)));
+	prototype->setMember(L"offset", ActionValue(createNativeFunction(this, &AsPoint::Point_offset)));
+	prototype->setMember(L"polar", ActionValue(createNativeFunction(this, &AsPoint::Point_polar)));
+	prototype->setMember(L"subtract", ActionValue(createNativeFunction(this, &AsPoint::Point_subtract)));
+	prototype->setMember(L"toString", ActionValue(createNativeFunction(this, &AsPoint::Point_toString)));
 
 	prototype->addProperty(L"length", createNativeFunction(this, &AsPoint::Point_get_length), createNativeFunction(this, &AsPoint::Point_set_length));
 	prototype->addProperty(L"x", createNativeFunction(this, &AsPoint::Point_get_x), createNativeFunction(this, &AsPoint::Point_set_x));

@@ -37,20 +37,20 @@ void AsString::createPrototype()
 	Ref< ActionObject > prototype = new ActionObject();
 
 	prototype->setMember(L"__proto__", ActionValue(AsObject::getInstance()));
-	prototype->setMember(L"charAt", createNativeFunctionValue(this, &AsString::String_charAt));
-	prototype->setMember(L"charCodeAt", createNativeFunctionValue(this, &AsString::String_charCodeAt));
-	prototype->setMember(L"concat", createNativeFunctionValue(this, &AsString::String_concat));
-	prototype->setMember(L"fromCharCode", createNativeFunctionValue(this, &AsString::String_fromCharCode));
-	prototype->setMember(L"indexOf", createNativeFunctionValue(this, &AsString::String_indexOf));
-	prototype->setMember(L"lastIndexOf", createNativeFunctionValue(this, &AsString::String_lastIndexOf));
-	prototype->setMember(L"slice", createNativeFunctionValue(this, &AsString::String_slice));
-	prototype->setMember(L"split", createNativeFunctionValue(this, &AsString::String_split));
-	prototype->setMember(L"substr", createNativeFunctionValue(this, &AsString::String_substr));
-	prototype->setMember(L"substring", createNativeFunctionValue(this, &AsString::String_substring));
-	prototype->setMember(L"toLowerCase", createNativeFunctionValue(this, &AsString::String_toLowerCase));
-	prototype->setMember(L"toString", createNativeFunctionValue(this, &AsString::String_toString));
-	prototype->setMember(L"toUpperCase", createNativeFunctionValue(this, &AsString::String_toUpperCase));
-	prototype->setMember(L"valueOf", createNativeFunctionValue(this, &AsString::String_valueOf));
+	prototype->setMember(L"charAt", ActionValue(createNativeFunction(this, &AsString::String_charAt)));
+	prototype->setMember(L"charCodeAt", ActionValue(createNativeFunction(this, &AsString::String_charCodeAt)));
+	prototype->setMember(L"concat", ActionValue(createNativeFunction(this, &AsString::String_concat)));
+	prototype->setMember(L"fromCharCode", ActionValue(createNativeFunction(this, &AsString::String_fromCharCode)));
+	prototype->setMember(L"indexOf", ActionValue(createNativeFunction(this, &AsString::String_indexOf)));
+	prototype->setMember(L"lastIndexOf", ActionValue(createNativeFunction(this, &AsString::String_lastIndexOf)));
+	prototype->setMember(L"slice", ActionValue(createNativeFunction(this, &AsString::String_slice)));
+	prototype->setMember(L"split", ActionValue(createNativeFunction(this, &AsString::String_split)));
+	prototype->setMember(L"substr", ActionValue(createNativeFunction(this, &AsString::String_substr)));
+	prototype->setMember(L"substring", ActionValue(createNativeFunction(this, &AsString::String_substring)));
+	prototype->setMember(L"toLowerCase", ActionValue(createNativeFunction(this, &AsString::String_toLowerCase)));
+	prototype->setMember(L"toString", ActionValue(createNativeFunction(this, &AsString::String_toString)));
+	prototype->setMember(L"toUpperCase", ActionValue(createNativeFunction(this, &AsString::String_toUpperCase)));
+	prototype->setMember(L"valueOf", ActionValue(createNativeFunction(this, &AsString::String_valueOf)));
 
 	prototype->setReadOnly();
 

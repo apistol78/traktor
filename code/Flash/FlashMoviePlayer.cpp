@@ -58,9 +58,9 @@ bool FlashMoviePlayer::create(FlashMovie* movie)
 		m_actionVM = new ActionVM2();
 
 	// Override some global methods.
-	setGlobal(L"getUrl", createNativeFunctionValue(this, &FlashMoviePlayer::Global_getUrl));
-	setGlobal(L"setInterval", createNativeFunctionValue(this, &FlashMoviePlayer::Global_setInterval));
-	setGlobal(L"clearInterval", createNativeFunctionValue(this, &FlashMoviePlayer::Global_clearInterval));
+	setGlobal(L"getUrl", ActionValue(createNativeFunction(this, &FlashMoviePlayer::Global_getUrl)));
+	setGlobal(L"setInterval", ActionValue(createNativeFunction(this, &FlashMoviePlayer::Global_setInterval)));
+	setGlobal(L"clearInterval", ActionValue(createNativeFunction(this, &FlashMoviePlayer::Global_clearInterval)));
 
 	// Get references to key and mouse singletons.
 	Ref< ActionContext > context = m_movieInstance->getContext();

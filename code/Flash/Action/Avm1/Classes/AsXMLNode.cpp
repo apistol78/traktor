@@ -31,14 +31,14 @@ void AsXMLNode::createPrototype()
 	Ref< ActionObject > prototype = new ActionObject();
 
 	prototype->setMember(L"__proto__", ActionValue(AsObject::getInstance()));
-	prototype->setMember(L"appendChild", createNativeFunctionValue(this, &AsXMLNode::XMLNode_appendChild));
-	prototype->setMember(L"cloneNode", createNativeFunctionValue(this, &AsXMLNode::XMLNode_cloneNode));
-	prototype->setMember(L"getNamespaceForPrefix", createNativeFunctionValue(this, &AsXMLNode::XMLNode_getNamespaceForPrefix));
-	prototype->setMember(L"getPrefixForNamespace", createNativeFunctionValue(this, &AsXMLNode::XMLNode_getPrefixForNamespace));
-	prototype->setMember(L"hasChildNodes", createNativeFunctionValue(this, &AsXMLNode::XMLNode_hasChildNodes));
-	prototype->setMember(L"insertBefore", createNativeFunctionValue(this, &AsXMLNode::XMLNode_insertBefore));
-	prototype->setMember(L"removeNode", createNativeFunctionValue(this, &AsXMLNode::XMLNode_removeNode));
-	prototype->setMember(L"toString", createNativeFunctionValue(this, &AsXMLNode::XMLNode_toString));
+	prototype->setMember(L"appendChild", ActionValue(createNativeFunction(this, &AsXMLNode::XMLNode_appendChild)));
+	prototype->setMember(L"cloneNode", ActionValue(createNativeFunction(this, &AsXMLNode::XMLNode_cloneNode)));
+	prototype->setMember(L"getNamespaceForPrefix", ActionValue(createNativeFunction(this, &AsXMLNode::XMLNode_getNamespaceForPrefix)));
+	prototype->setMember(L"getPrefixForNamespace", ActionValue(createNativeFunction(this, &AsXMLNode::XMLNode_getPrefixForNamespace)));
+	prototype->setMember(L"hasChildNodes", ActionValue(createNativeFunction(this, &AsXMLNode::XMLNode_hasChildNodes)));
+	prototype->setMember(L"insertBefore", ActionValue(createNativeFunction(this, &AsXMLNode::XMLNode_insertBefore)));
+	prototype->setMember(L"removeNode", ActionValue(createNativeFunction(this, &AsXMLNode::XMLNode_removeNode)));
+	prototype->setMember(L"toString", ActionValue(createNativeFunction(this, &AsXMLNode::XMLNode_toString)));
 
 	prototype->setReadOnly();
 

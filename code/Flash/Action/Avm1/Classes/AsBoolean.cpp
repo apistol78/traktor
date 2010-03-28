@@ -32,8 +32,8 @@ void AsBoolean::createPrototype()
 	Ref< ActionObject > prototype = new ActionObject();
 
 	prototype->setMember(L"__proto__", ActionValue(AsObject::getInstance()));
-	prototype->setMember(L"toString", createNativeFunctionValue(this, &AsBoolean::Boolean_toString));
-	prototype->setMember(L"valueOf", createNativeFunctionValue(this, &AsBoolean::Boolean_valueOf));
+	prototype->setMember(L"toString", ActionValue(createNativeFunction(this, &AsBoolean::Boolean_toString)));
+	prototype->setMember(L"valueOf", ActionValue(createNativeFunction(this, &AsBoolean::Boolean_valueOf)));
 
 	prototype->setReadOnly();
 
@@ -48,16 +48,14 @@ ActionValue AsBoolean::construct(ActionContext* context, const args_t& args)
 		return ActionValue(new Boolean(args[0].getBooleanSafe()));
 }
 
-void AsBoolean::Boolean_toString(CallArgs& ca)
+std::wstring AsBoolean::Boolean_toString(Boolean* self) const
 {
-	const Boolean* obj = checked_type_cast< const Boolean* >(ca.self);
-	ca.ret = ActionValue(obj->get() ? L"true" : L"false");
+	return self->get() ? L"true" : L"false";
 }
 
-void AsBoolean::Boolean_valueOf(CallArgs& ca)
+bool AsBoolean::Boolean_valueOf(Boolean* self) const
 {
-	const Boolean* obj = checked_type_cast< const Boolean* >(ca.self);
-	ca.ret = ActionValue(obj->get());
+	return self->get();
 }
 
 	}

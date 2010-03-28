@@ -11,9 +11,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.ActionFunctionNative", ActionFunctionNative, ActionFunction)
 
-ActionFunctionNative::ActionFunctionNative(CallFnc* callFnc)
+ActionFunctionNative::ActionFunctionNative(INativeFunction* nativeFunction)
 :	ActionFunction(L"<native>")
-,	m_callFnc(callFnc)
+,	m_nativeFunction(nativeFunction)
 {
 	// Do this inside constructor to prevent infinite recursion.
 	ActionValue classPrototype;
@@ -29,8 +29,8 @@ ActionValue ActionFunctionNative::call(const IActionVM* vm, ActionContext* conte
 	fnc.self = self;
 	fnc.args = args;
 
-	if (m_callFnc)
-		m_callFnc->call(fnc);
+	if (m_nativeFunction)
+		m_nativeFunction->call(fnc);
 
 	return fnc.ret;
 }
@@ -49,8 +49,8 @@ ActionValue ActionFunctionNative::call(const IActionVM* vm, ActionFrame* callerF
 	for (int i = 0; i < argCount; ++i)
 		fnc.args[i] = callerStack.pop();
 
-	if (m_callFnc)
-		m_callFnc->call(fnc);
+	if (m_nativeFunction)
+		m_nativeFunction->call(fnc);
 
 	return fnc.ret;
 }

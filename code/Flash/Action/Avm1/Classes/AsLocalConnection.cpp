@@ -32,10 +32,10 @@ void AsLocalConnection::createPrototype()
 	Ref< ActionObject > prototype = new ActionObject();
 
 	prototype->setMember(L"__proto__", ActionValue(AsObject::getInstance()));
-	prototype->setMember(L"close", createNativeFunctionValue(this, &AsLocalConnection::LocalConnection_close));
-	prototype->setMember(L"connect", createNativeFunctionValue(this, &AsLocalConnection::LocalConnection_connect));
-	prototype->setMember(L"domain", createNativeFunctionValue(this, &AsLocalConnection::LocalConnection_domain));
-	prototype->setMember(L"send", createNativeFunctionValue(this, &AsLocalConnection::LocalConnection_send));
+	prototype->setMember(L"close", ActionValue(createNativeFunction(this, &AsLocalConnection::LocalConnection_close)));
+	prototype->setMember(L"connect", ActionValue(createNativeFunction(this, &AsLocalConnection::LocalConnection_connect)));
+	prototype->setMember(L"domain", ActionValue(createNativeFunction(this, &AsLocalConnection::LocalConnection_domain)));
+	prototype->setMember(L"send", ActionValue(createNativeFunction(this, &AsLocalConnection::LocalConnection_send)));
 
 	prototype->setReadOnly();
 

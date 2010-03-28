@@ -33,7 +33,7 @@ void AsFunction::createPrototype()
 	Ref< ActionObject > prototype = new ActionObject();
 
 	prototype->setMember(L"__proto__", ActionValue(AsObject::getInstance()));
-	prototype->setMember(L"call", createNativeFunctionValue(this, &AsFunction::Function_call));
+	prototype->setMember(L"call", ActionValue(createNativeFunction(this, &AsFunction::Function_call)));
 
 	prototype->setReadOnly();
 
