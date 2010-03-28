@@ -31,15 +31,15 @@ void AsObject::createPrototype()
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"addProperty", createNativeFunctionValue(this, &AsObject::Object_addProperty));
-	prototype->setMember(L"hasOwnProperty", createNativeFunctionValue(this, &AsObject::Object_hasOwnProperty));
-	prototype->setMember(L"isPropertyEnumerable", createNativeFunctionValue(this, &AsObject::Object_isPropertyEnumerable));
-	prototype->setMember(L"isPrototypeOf", createNativeFunctionValue(this, &AsObject::Object_isPrototypeOf));
-	prototype->setMember(L"registerClass", createNativeFunctionValue(this, &AsObject::Object_registerClass));
-	prototype->setMember(L"toString", createNativeFunctionValue(this, &AsObject::Object_toString));
-	prototype->setMember(L"unwatch", createNativeFunctionValue(this, &AsObject::Object_unwatch));
-	prototype->setMember(L"valueOf", createNativeFunctionValue(this, &AsObject::Object_valueOf));
-	prototype->setMember(L"watch", createNativeFunctionValue(this, &AsObject::Object_watch));
+	prototype->setMember(L"addProperty", ActionValue(createNativeFunction(this, &AsObject::Object_addProperty)));
+	prototype->setMember(L"hasOwnProperty", ActionValue(createNativeFunction(this, &AsObject::Object_hasOwnProperty)));
+	prototype->setMember(L"isPropertyEnumerable", ActionValue(createNativeFunction(this, &AsObject::Object_isPropertyEnumerable)));
+	prototype->setMember(L"isPrototypeOf", ActionValue(createNativeFunction(this, &AsObject::Object_isPrototypeOf)));
+	prototype->setMember(L"registerClass", ActionValue(createNativeFunction(this, &AsObject::Object_registerClass)));
+	prototype->setMember(L"toString", ActionValue(createNativeFunction(this, &AsObject::Object_toString)));
+	prototype->setMember(L"unwatch", ActionValue(createNativeFunction(this, &AsObject::Object_unwatch)));
+	prototype->setMember(L"valueOf", ActionValue(createNativeFunction(this, &AsObject::Object_valueOf)));
+	prototype->setMember(L"watch", ActionValue(createNativeFunction(this, &AsObject::Object_watch)));
 
 	prototype->setReadOnly();
 

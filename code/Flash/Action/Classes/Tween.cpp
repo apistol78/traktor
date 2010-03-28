@@ -37,7 +37,7 @@ Tween::Tween(
 	if (m_target)
 		m_target->getPropertySet(propertyName, m_property);
 	
-	setMember(L"onFrame", createNativeFunctionValue(this, &Tween::onFrame));
+	setMember(L"onFrame", ActionValue(createNativeFunction(this, &Tween::onFrame)));
 	start();
 }
 

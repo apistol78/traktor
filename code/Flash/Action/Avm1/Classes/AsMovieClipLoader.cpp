@@ -32,11 +32,11 @@ void AsMovieClipLoader::createPrototype()
 	Ref< ActionObject > prototype = new ActionObject();
 
 	prototype->setMember(L"__proto__", ActionValue(AsObject::getInstance()));
-	prototype->setMember(L"addListener", createNativeFunctionValue(this, &AsMovieClipLoader::MovieClipLoader_addListener));
-	prototype->setMember(L"getProgress", createNativeFunctionValue(this, &AsMovieClipLoader::MovieClipLoader_getProgress));
-	prototype->setMember(L"loadClip", createNativeFunctionValue(this, &AsMovieClipLoader::MovieClipLoader_loadClip));
-	prototype->setMember(L"removeListener", createNativeFunctionValue(this, &AsMovieClipLoader::MovieClipLoader_removeListener));
-	prototype->setMember(L"unloadClip", createNativeFunctionValue(this, &AsMovieClipLoader::MovieClipLoader_unloadClip));
+	prototype->setMember(L"addListener", ActionValue(createNativeFunction(this, &AsMovieClipLoader::MovieClipLoader_addListener)));
+	prototype->setMember(L"getProgress", ActionValue(createNativeFunction(this, &AsMovieClipLoader::MovieClipLoader_getProgress)));
+	prototype->setMember(L"loadClip", ActionValue(createNativeFunction(this, &AsMovieClipLoader::MovieClipLoader_loadClip)));
+	prototype->setMember(L"removeListener", ActionValue(createNativeFunction(this, &AsMovieClipLoader::MovieClipLoader_removeListener)));
+	prototype->setMember(L"unloadClip", ActionValue(createNativeFunction(this, &AsMovieClipLoader::MovieClipLoader_unloadClip)));
 
 	prototype->setReadOnly();
 

@@ -39,8 +39,8 @@ void AsNumber::createPrototype()
 	prototype->setMember(L"NaN", ActionValue(std::numeric_limits< avm_number_t >::signaling_NaN()));
 	prototype->setMember(L"NEGATIVE_INFINITY", ActionValue(-std::numeric_limits< avm_number_t >::infinity()));
 	prototype->setMember(L"POSITIVE_INFINITY", ActionValue(std::numeric_limits< avm_number_t >::infinity()));
-	prototype->setMember(L"toString", createNativeFunctionValue(this, &AsNumber::Number_toString));
-	prototype->setMember(L"valueOf", createNativeFunctionValue(this, &AsNumber::Number_valueOf));
+	prototype->setMember(L"toString", ActionValue(createNativeFunction(this, &AsNumber::Number_toString)));
+	prototype->setMember(L"valueOf", ActionValue(createNativeFunction(this, &AsNumber::Number_valueOf)));
 
 	prototype->setReadOnly();
 

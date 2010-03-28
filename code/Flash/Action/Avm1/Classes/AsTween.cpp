@@ -32,15 +32,15 @@ void AsTween::createPrototype()
 	Ref< ActionObject > prototype = new ActionObject();
 
 	prototype->setMember(L"__proto__", ActionValue(AsObject::getInstance()));
-	prototype->setMember(L"continueTo", createNativeFunctionValue(this, &AsTween::Tween_continueTo));
-	prototype->setMember(L"fforward", createNativeFunctionValue(this, &AsTween::Tween_fforward));
-	prototype->setMember(L"nextFrame", createNativeFunctionValue(this, &AsTween::Tween_nextFrame));
-	prototype->setMember(L"prevFrame", createNativeFunctionValue(this, &AsTween::Tween_prevFrame));
-	prototype->setMember(L"resume", createNativeFunctionValue(this, &AsTween::Tween_resume));
-	prototype->setMember(L"rewind", createNativeFunctionValue(this, &AsTween::Tween_rewind));
-	prototype->setMember(L"start", createNativeFunctionValue(this, &AsTween::Tween_start));
-	prototype->setMember(L"stop", createNativeFunctionValue(this, &AsTween::Tween_stop));
-	prototype->setMember(L"yoyo", createNativeFunctionValue(this, &AsTween::Tween_yoyo));
+	prototype->setMember(L"continueTo", ActionValue(createNativeFunction(this, &AsTween::Tween_continueTo)));
+	prototype->setMember(L"fforward", ActionValue(createNativeFunction(this, &AsTween::Tween_fforward)));
+	prototype->setMember(L"nextFrame", ActionValue(createNativeFunction(this, &AsTween::Tween_nextFrame)));
+	prototype->setMember(L"prevFrame", ActionValue(createNativeFunction(this, &AsTween::Tween_prevFrame)));
+	prototype->setMember(L"resume", ActionValue(createNativeFunction(this, &AsTween::Tween_resume)));
+	prototype->setMember(L"rewind", ActionValue(createNativeFunction(this, &AsTween::Tween_rewind)));
+	prototype->setMember(L"start", ActionValue(createNativeFunction(this, &AsTween::Tween_start)));
+	prototype->setMember(L"stop", ActionValue(createNativeFunction(this, &AsTween::Tween_stop)));
+	prototype->setMember(L"yoyo", ActionValue(createNativeFunction(this, &AsTween::Tween_yoyo)));
 	prototype->setReadOnly();
 
 	setMember(L"prototype", ActionValue(prototype));

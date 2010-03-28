@@ -31,15 +31,15 @@ void AsXML::createPrototype()
 	Ref< ActionObject > prototype = new ActionObject();
 
 	prototype->setMember(L"__proto__", ActionValue(AsXMLNode::getInstance()));
-	prototype->setMember(L"addRequestHeader", createNativeFunctionValue(this, &AsXML::XML_addRequestHeader));
-	prototype->setMember(L"createElement", createNativeFunctionValue(this, &AsXML::XML_createElement));
-	prototype->setMember(L"createTextNode", createNativeFunctionValue(this, &AsXML::XML_createTextNode));
-	prototype->setMember(L"getBytesLoaded", createNativeFunctionValue(this, &AsXML::XML_getBytesLoaded));
-	prototype->setMember(L"getBytesTotal", createNativeFunctionValue(this, &AsXML::XML_getBytesTotal));
-	prototype->setMember(L"load", createNativeFunctionValue(this, &AsXML::XML_load));
-	prototype->setMember(L"parseXML", createNativeFunctionValue(this, &AsXML::XML_parseXML));
-	prototype->setMember(L"send", createNativeFunctionValue(this, &AsXML::XML_send));
-	prototype->setMember(L"sendAndLoad", createNativeFunctionValue(this, &AsXML::XML_sendAndLoad));
+	prototype->setMember(L"addRequestHeader", ActionValue(createNativeFunction(this, &AsXML::XML_addRequestHeader)));
+	prototype->setMember(L"createElement", ActionValue(createNativeFunction(this, &AsXML::XML_createElement)));
+	prototype->setMember(L"createTextNode", ActionValue(createNativeFunction(this, &AsXML::XML_createTextNode)));
+	prototype->setMember(L"getBytesLoaded", ActionValue(createNativeFunction(this, &AsXML::XML_getBytesLoaded)));
+	prototype->setMember(L"getBytesTotal", ActionValue(createNativeFunction(this, &AsXML::XML_getBytesTotal)));
+	prototype->setMember(L"load", ActionValue(createNativeFunction(this, &AsXML::XML_load)));
+	prototype->setMember(L"parseXML", ActionValue(createNativeFunction(this, &AsXML::XML_parseXML)));
+	prototype->setMember(L"send", ActionValue(createNativeFunction(this, &AsXML::XML_send)));
+	prototype->setMember(L"sendAndLoad", ActionValue(createNativeFunction(this, &AsXML::XML_sendAndLoad)));
 
 	prototype->addProperty(L"contentType", createNativeFunction(this, &AsXML::XML_get_contentType), createNativeFunction(this, &AsXML::XML_set_contentType));
 	prototype->addProperty(L"docTypeDecl", createNativeFunction(this, &AsXML::XML_get_docTypeDecl), createNativeFunction(this, &AsXML::XML_set_docTypeDecl));

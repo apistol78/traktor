@@ -52,8 +52,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.ActionGlobal", ActionGlobal, ActionObject
 ActionGlobal::ActionGlobal()
 :	ActionObject(AsObject::getInstance())
 {
-	setMember(L"ASSetPropFlags", createNativeFunctionValue(this, &ActionGlobal::Global_ASSetPropFlags));
-	setMember(L"escape", createNativeFunctionValue(this, &ActionGlobal::Global_escape));
+	setMember(L"ASSetPropFlags", ActionValue(createNativeFunction(this, &ActionGlobal::Global_ASSetPropFlags)));
+	setMember(L"escape", ActionValue(createNativeFunction(this, &ActionGlobal::Global_escape)));
 
 	// Create prototypes.
 	setMember(L"Object", ActionValue(AsObject::getInstance()));

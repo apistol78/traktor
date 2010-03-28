@@ -33,18 +33,18 @@ void AsSound::createPrototype()
 	Ref< ActionObject > prototype = new ActionObject();
 
 	prototype->setMember(L"__proto__", ActionValue(AsObject::getInstance()));
-	prototype->setMember(L"attachSound", createNativeFunctionValue(this, &AsSound::Sound_attachSound));
-	prototype->setMember(L"getBytesLoaded", createNativeFunctionValue(this, &AsSound::Sound_getBytesLoaded));
-	prototype->setMember(L"getBytesTotal", createNativeFunctionValue(this, &AsSound::Sound_getBytesTotal));
-	prototype->setMember(L"getPan", createNativeFunctionValue(this, &AsSound::Sound_getPan));
-	prototype->setMember(L"getTransform", createNativeFunctionValue(this, &AsSound::Sound_getTransform));
-	prototype->setMember(L"getVolume", createNativeFunctionValue(this, &AsSound::Sound_getVolume));
-	prototype->setMember(L"loadSound", createNativeFunctionValue(this, &AsSound::Sound_loadSound));
-	prototype->setMember(L"setPan", createNativeFunctionValue(this, &AsSound::Sound_setPan));
-	prototype->setMember(L"setTransform", createNativeFunctionValue(this, &AsSound::Sound_setTransform));
-	prototype->setMember(L"setVolume", createNativeFunctionValue(this, &AsSound::Sound_setVolume));
-	prototype->setMember(L"start", createNativeFunctionValue(this, &AsSound::Sound_start));
-	prototype->setMember(L"stop", createNativeFunctionValue(this, &AsSound::Sound_stop));
+	prototype->setMember(L"attachSound", ActionValue(createNativeFunction(this, &AsSound::Sound_attachSound)));
+	prototype->setMember(L"getBytesLoaded", ActionValue(createNativeFunction(this, &AsSound::Sound_getBytesLoaded)));
+	prototype->setMember(L"getBytesTotal", ActionValue(createNativeFunction(this, &AsSound::Sound_getBytesTotal)));
+	prototype->setMember(L"getPan", ActionValue(createNativeFunction(this, &AsSound::Sound_getPan)));
+	prototype->setMember(L"getTransform", ActionValue(createNativeFunction(this, &AsSound::Sound_getTransform)));
+	prototype->setMember(L"getVolume", ActionValue(createNativeFunction(this, &AsSound::Sound_getVolume)));
+	prototype->setMember(L"loadSound", ActionValue(createNativeFunction(this, &AsSound::Sound_loadSound)));
+	prototype->setMember(L"setPan", ActionValue(createNativeFunction(this, &AsSound::Sound_setPan)));
+	prototype->setMember(L"setTransform", ActionValue(createNativeFunction(this, &AsSound::Sound_setTransform)));
+	prototype->setMember(L"setVolume", ActionValue(createNativeFunction(this, &AsSound::Sound_setVolume)));
+	prototype->setMember(L"start", ActionValue(createNativeFunction(this, &AsSound::Sound_start)));
+	prototype->setMember(L"stop", ActionValue(createNativeFunction(this, &AsSound::Sound_stop)));
 
 	prototype->addProperty(L"checkPolicyFile", createNativeFunction(this, &AsSound::Sound_get_checkPolicyFile), createNativeFunction(this, &AsSound::Sound_set_checkPolicyFile));
 	prototype->addProperty(L"duration", createNativeFunction(this, &AsSound::Sound_get_duration), 0);

@@ -32,14 +32,14 @@ void AsLoadVars::createPrototype()
 	Ref< ActionObject > prototype = new ActionObject();
 
 	prototype->setMember(L"__proto__", ActionValue(AsObject::getInstance()));
-	prototype->setMember(L"addRequestHeader", createNativeFunctionValue(this, &AsLoadVars::LoadVars_addRequestHeader));
-	prototype->setMember(L"decode", createNativeFunctionValue(this, &AsLoadVars::LoadVars_decode));
-	prototype->setMember(L"getBytesLoaded", createNativeFunctionValue(this, &AsLoadVars::LoadVars_getBytesLoaded));
-	prototype->setMember(L"getBytesTotal", createNativeFunctionValue(this, &AsLoadVars::LoadVars_getBytesTotal));
-	prototype->setMember(L"load", createNativeFunctionValue(this, &AsLoadVars::LoadVars_load));
-	prototype->setMember(L"send", createNativeFunctionValue(this, &AsLoadVars::LoadVars_send));
-	prototype->setMember(L"sendAndLoad", createNativeFunctionValue(this, &AsLoadVars::LoadVars_sendAndLoad));
-	prototype->setMember(L"toString", createNativeFunctionValue(this, &AsLoadVars::LoadVars_toString));
+	prototype->setMember(L"addRequestHeader", ActionValue(createNativeFunction(this, &AsLoadVars::LoadVars_addRequestHeader)));
+	prototype->setMember(L"decode", ActionValue(createNativeFunction(this, &AsLoadVars::LoadVars_decode)));
+	prototype->setMember(L"getBytesLoaded", ActionValue(createNativeFunction(this, &AsLoadVars::LoadVars_getBytesLoaded)));
+	prototype->setMember(L"getBytesTotal", ActionValue(createNativeFunction(this, &AsLoadVars::LoadVars_getBytesTotal)));
+	prototype->setMember(L"load", ActionValue(createNativeFunction(this, &AsLoadVars::LoadVars_load)));
+	prototype->setMember(L"send", ActionValue(createNativeFunction(this, &AsLoadVars::LoadVars_send)));
+	prototype->setMember(L"sendAndLoad", ActionValue(createNativeFunction(this, &AsLoadVars::LoadVars_sendAndLoad)));
+	prototype->setMember(L"toString", ActionValue(createNativeFunction(this, &AsLoadVars::LoadVars_toString)));
 
 	prototype->addProperty(L"contentType", createNativeFunction(this, &AsLoadVars::LoadVars_get_contentType), createNativeFunction(this, &AsLoadVars::LoadVars_set_contentType));
 	prototype->addProperty(L"loaded", createNativeFunction(this, &AsLoadVars::LoadVars_get_loaded), createNativeFunction(this, &AsLoadVars::LoadVars_set_loaded));

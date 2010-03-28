@@ -31,13 +31,13 @@ void AsTextField_StyleSheet::createPrototype()
 	Ref< ActionObject > prototype = new ActionObject();
 
 	prototype->setMember(L"__proto__", ActionValue(AsObject::getInstance()));
-	prototype->setMember(L"clear", createNativeFunctionValue(this, &AsTextField_StyleSheet::TextField_StyleSheet_clear));
-	prototype->setMember(L"getStyle", createNativeFunctionValue(this, &AsTextField_StyleSheet::TextField_StyleSheet_getStyle));
-	prototype->setMember(L"getStyleNames", createNativeFunctionValue(this, &AsTextField_StyleSheet::TextField_StyleSheet_getStyleNames));
-	prototype->setMember(L"load", createNativeFunctionValue(this, &AsTextField_StyleSheet::TextField_StyleSheet_load));
-	prototype->setMember(L"parseCSS", createNativeFunctionValue(this, &AsTextField_StyleSheet::TextField_StyleSheet_parseCSS));
-	prototype->setMember(L"setStyle", createNativeFunctionValue(this, &AsTextField_StyleSheet::TextField_StyleSheet_setStyle));
-	prototype->setMember(L"transform", createNativeFunctionValue(this, &AsTextField_StyleSheet::TextField_StyleSheet_transform));
+	prototype->setMember(L"clear", ActionValue(createNativeFunction(this, &AsTextField_StyleSheet::TextField_StyleSheet_clear)));
+	prototype->setMember(L"getStyle", ActionValue(createNativeFunction(this, &AsTextField_StyleSheet::TextField_StyleSheet_getStyle)));
+	prototype->setMember(L"getStyleNames", ActionValue(createNativeFunction(this, &AsTextField_StyleSheet::TextField_StyleSheet_getStyleNames)));
+	prototype->setMember(L"load", ActionValue(createNativeFunction(this, &AsTextField_StyleSheet::TextField_StyleSheet_load)));
+	prototype->setMember(L"parseCSS", ActionValue(createNativeFunction(this, &AsTextField_StyleSheet::TextField_StyleSheet_parseCSS)));
+	prototype->setMember(L"setStyle", ActionValue(createNativeFunction(this, &AsTextField_StyleSheet::TextField_StyleSheet_setStyle)));
+	prototype->setMember(L"transform", ActionValue(createNativeFunction(this, &AsTextField_StyleSheet::TextField_StyleSheet_transform)));
 
 	prototype->setReadOnly();
 

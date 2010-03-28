@@ -10,6 +10,8 @@ namespace traktor
 
 struct CallArgs;
 
+class Boolean;
+
 /*! \brief Boolean class.
  * \ingroup Flash
  */
@@ -27,9 +29,9 @@ private:
 
 	virtual ActionValue construct(ActionContext* context, const args_t& args);
 
-	void Boolean_toString(CallArgs& ca);
+	std::wstring Boolean_toString(Boolean* self) const;
 
-	void Boolean_valueOf(CallArgs& ca);
+	bool Boolean_valueOf(Boolean* self) const;
 };
 
 	}

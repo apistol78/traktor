@@ -38,18 +38,18 @@ void AsArray::createPrototype()
 	prototype->setMember(L"NUMERIC", ActionValue(avm_number_t(2)));
 	prototype->setMember(L"RETURNINDEXEDARRAY", ActionValue(avm_number_t(3)));
 	prototype->setMember(L"UNIQUESORT", ActionValue(avm_number_t(4)));
-	prototype->setMember(L"concat", createNativeFunctionValue(this, &AsArray::Array_concat));
-	prototype->setMember(L"join", createNativeFunctionValue(this, &AsArray::Array_join));
-	prototype->setMember(L"pop", createNativeFunctionValue(this, &AsArray::Array_pop));
-	prototype->setMember(L"push", createNativeFunctionValue(this, &AsArray::Array_push));
-	prototype->setMember(L"reverse", createNativeFunctionValue(this, &AsArray::Array_reverse));
-	prototype->setMember(L"shift", createNativeFunctionValue(this, &AsArray::Array_shift));
-	prototype->setMember(L"slice", createNativeFunctionValue(this, &AsArray::Array_slice));
-	prototype->setMember(L"sort", createNativeFunctionValue(this, &AsArray::Array_sort));
-	prototype->setMember(L"sortOn", createNativeFunctionValue(this, &AsArray::Array_sortOn));
-	prototype->setMember(L"splice", createNativeFunctionValue(this, &AsArray::Array_splice));
-	prototype->setMember(L"toString", createNativeFunctionValue(this, &AsArray::Array_toString));
-	prototype->setMember(L"unshift", createNativeFunctionValue(this, &AsArray::Array_unshift));
+	prototype->setMember(L"concat", ActionValue(createNativeFunction(this, &AsArray::Array_concat)));
+	prototype->setMember(L"join", ActionValue(createNativeFunction(this, &AsArray::Array_join)));
+	prototype->setMember(L"pop", ActionValue(createNativeFunction(this, &AsArray::Array_pop)));
+	prototype->setMember(L"push", ActionValue(createNativeFunction(this, &AsArray::Array_push)));
+	prototype->setMember(L"reverse", ActionValue(createNativeFunction(this, &AsArray::Array_reverse)));
+	prototype->setMember(L"shift", ActionValue(createNativeFunction(this, &AsArray::Array_shift)));
+	prototype->setMember(L"slice", ActionValue(createNativeFunction(this, &AsArray::Array_slice)));
+	prototype->setMember(L"sort", ActionValue(createNativeFunction(this, &AsArray::Array_sort)));
+	prototype->setMember(L"sortOn", ActionValue(createNativeFunction(this, &AsArray::Array_sortOn)));
+	prototype->setMember(L"splice", ActionValue(createNativeFunction(this, &AsArray::Array_splice)));
+	prototype->setMember(L"toString", ActionValue(createNativeFunction(this, &AsArray::Array_toString)));
+	prototype->setMember(L"unshift", ActionValue(createNativeFunction(this, &AsArray::Array_unshift)));
 
 	prototype->addProperty(L"length", createNativeFunction(this, &AsArray::Array_get_length), createNativeFunction(this, &AsArray::Array_set_length));
 

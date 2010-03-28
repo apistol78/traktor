@@ -32,7 +32,7 @@ void AsI18N::createPrototype()
 	Ref< ActionObject > prototype = new ActionObject();
 
 	prototype->setMember(L"__proto__", ActionValue(AsObject::getInstance()));
-	prototype->setMember(L"format", createNativeFunctionValue(this, &AsI18N::I18N_format));
+	prototype->setMember(L"format", ActionValue(createNativeFunction(this, &AsI18N::I18N_format)));
 
 	prototype->setReadOnly();
 
