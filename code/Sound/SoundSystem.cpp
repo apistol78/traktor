@@ -23,7 +23,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.SoundSystem", SoundSystem, Object)
 
 SoundSystem::SoundSystem(ISoundDriver* driver)
 :	m_driver(driver)
-,	m_mixer(0)
+,	m_volume(1.0f)
 ,	m_threadMixer(0)
 ,	m_threadSubmit(0)
 ,	m_samplesData(0)
@@ -126,6 +126,11 @@ void SoundSystem::destroy()
 		Alloc::freeAlign(m_samplesData);
 		m_samplesData = 0;
 	}
+}
+
+void SoundSystem::setVolume(float volume)
+{
+	m_volume = volume;
 }
 
 void SoundSystem::setCombineMatrix(float cm[SbcMaxChannelCount][SbcMaxChannelCount])
@@ -257,7 +262,7 @@ void SoundSystem::threadMixer()
 			{
 				for (uint32_t k = 0; k < m_requestBlocks[i].maxChannel; ++k)
 				{
-					float strength = m_desc.cm[j][k];
+					float strength = m_desc.cm[j][k] * m_volume;
 					if (m_requestBlocks[i].samples[k] && abs(strength) >= FUZZY_EPSILON)
 					{
 						m_mixer->addMulConst(

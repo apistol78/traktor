@@ -46,6 +46,12 @@ public:
 
 	void destroy();
 
+	/*! \brief Set global volume.
+	 *
+	 * \param volume Volume (0-1)
+	 */
+	void setVolume(float volume);
+
 	/*! \brief Set global combination matrix.
 	 *
 	 * [hardware channel][virtual channel]
@@ -97,6 +103,7 @@ private:
 	Ref< ISoundDriver > m_driver;
 	Ref< ISoundMixer > m_mixer;
 	SoundSystemCreateDesc m_desc;
+	float m_volume;
 	Thread* m_threadMixer;
 	Thread* m_threadSubmit;
 	Semaphore m_channelAttachLock;

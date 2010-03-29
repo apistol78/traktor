@@ -35,6 +35,8 @@ class T_DLLCLASS TextureFactory : public resource::IResourceFactory
 public:
 	TextureFactory(db::Database* db, IRenderSystem* renderSystem, int32_t skipMips);
 
+	void setSkipMips(int32_t skipMips);
+
 	virtual const TypeInfoSet getResourceTypes() const;
 
 	virtual bool isCacheable() const;

@@ -59,6 +59,10 @@ public:
 		int32_t shadowMapSizeDenom
 	);
 
+	void setShadowQuality(world::WorldRenderSettings::ShadowQuality shadowQuality);
+
+	void setShadowMapSizeDenom(int32_t shadowMapSizeDenom);
+
 	virtual const TypeInfoSet getResourceTypes() const;
 
 	virtual bool isCacheable() const;

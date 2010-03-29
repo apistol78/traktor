@@ -577,6 +577,10 @@ bool RenderSystemWin32::resetPrimary(const D3DPRESENT_PARAMETERS& d3dPresent)
 	HRESULT hr;
 
 	std::memcpy(&m_d3dPresent, &d3dPresent, sizeof(D3DPRESENT_PARAMETERS));
+	setWindowStyle(m_hWnd, m_d3dPresent.BackBufferWidth, m_d3dPresent.BackBufferHeight, m_d3dPresent.Windowed ? false : true);
+
+	if (!m_renderViews.empty())
+		m_renderViews.front()->setD3DPresent(m_d3dPresent);
 
 	hr = resetDevice();
 	if (FAILED(hr))
