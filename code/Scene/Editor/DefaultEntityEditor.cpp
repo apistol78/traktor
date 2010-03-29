@@ -1,6 +1,8 @@
 #include <limits>
+#include "Core/Settings/PropertyColor.h"
+#include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/Settings.h"
 #include "Editor/IEditor.h"
-#include "Editor/Settings.h"
 #include "Scene/Editor/DefaultEntityEditor.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/IModifier.h"
@@ -234,11 +236,11 @@ bool DefaultEntityEditor::getStatusText(
 
 void DefaultEntityEditor::updateSettings(SceneEditorContext* context)
 {
-	Ref< editor::PropertyGroup > colors = context->getEditor()->getSettings()->getProperty< editor::PropertyGroup >(L"Editor.Colors");
-	m_colorBoundingBox = colors->getProperty< editor::PropertyColor >(L"BoundingBoxWire");
-	m_colorBoundingBoxSel = colors->getProperty< editor::PropertyColor >(L"BoundingBoxWireSelected");
-	m_colorBoundingBoxFaceSel = colors->getProperty< editor::PropertyColor >(L"BoundingBoxFaceSelected");
-	m_colorSnap = colors->getProperty< editor::PropertyColor >(L"SnapPoint");
+	Ref< PropertyGroup > colors = context->getEditor()->getSettings()->getProperty< PropertyGroup >(L"Editor.Colors");
+	m_colorBoundingBox = colors->getProperty< PropertyColor >(L"BoundingBoxWire");
+	m_colorBoundingBoxSel = colors->getProperty< PropertyColor >(L"BoundingBoxWireSelected");
+	m_colorBoundingBoxFaceSel = colors->getProperty< PropertyColor >(L"BoundingBoxFaceSelected");
+	m_colorSnap = colors->getProperty< PropertyColor >(L"SnapPoint");
 }
 
 	}

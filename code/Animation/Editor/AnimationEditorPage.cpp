@@ -7,9 +7,10 @@
 #include "Animation/Bone.h"
 #include "Animation/SkeletonUtils.h"
 #include "Animation/IK/IKPoseController.h"
+#include "Core/Settings/PropertyColor.h"
+#include "Core/Settings/Settings.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPageSite.h"
-#include "Editor/Settings.h"
 #include "Editor/TypeBrowseFilter.h"
 #include "Editor/UndoStack.h"
 #include "Database/Instance.h"
@@ -677,11 +678,10 @@ void AnimationEditorPage::drawSkeleton(float time, const Color& defaultColor, co
 
 void AnimationEditorPage::updateSettings()
 {
-	Ref< editor::PropertyGroup > colors = m_editor->getSettings()->getProperty< editor::PropertyGroup >(L"Editor.Colors");
-	m_colorClear = colors->getProperty< editor::PropertyColor >(L"Background");
-	m_colorGrid = colors->getProperty< editor::PropertyColor >(L"Grid");
-	m_colorBone = colors->getProperty< editor::PropertyColor >(L"BoneWire");
-	m_colorBoneSel = colors->getProperty< editor::PropertyColor >(L"BoneWireSelected");
+	m_colorClear = m_editor->getSettings()->getProperty< PropertyColor >(L"Editor.Colors/Background");
+	m_colorGrid = m_editor->getSettings()->getProperty< PropertyColor >(L"Editor.Colors/Grid");
+	m_colorBone = m_editor->getSettings()->getProperty< PropertyColor >(L"Editor.Colors/BoneWire");
+	m_colorBoneSel = m_editor->getSettings()->getProperty< PropertyColor >(L"Editor.Colors/BoneWireSelected");
 	updateRenderWidgets();
 }
 

@@ -1,11 +1,12 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
+#include "Core/Settings/PropertyBoolean.h"
+#include "Core/Settings/Settings.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPageSite.h"
-#include "Editor/Settings.h"
 #include "Editor/UndoStack.h"
 #include "Editor/IBrowseFilter.h"
 #include "I18N/Text.h"
@@ -139,7 +140,7 @@ bool ShaderGraphEditorPage::create(ui::Container* parent, editor::IEditorPageSit
 
 	// Modify graph control settings.
 	Ref< ui::custom::PaintSettings > paintSettings = m_editorGraph->getPaintSettings();
-	paintSettings->setSmoothSpline(m_editor->getSettings()->getProperty< editor::PropertyBoolean >(L"ShaderEditor.SmoothSpline"));
+	paintSettings->setSmoothSpline(m_editor->getSettings()->getProperty< PropertyBoolean >(L"ShaderEditor.SmoothSpline"));
 
 	// Build popup menu.
 	m_menuPopup = new ui::PopupMenu();

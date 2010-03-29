@@ -1,5 +1,6 @@
-#include "Editor/Pipeline/PipelineSettings.h"
 #include "Core/Serialization/DeepHash.h"
+#include "Core/Settings/IPropertyValue.h"
+#include "Editor/Pipeline/PipelineSettings.h"
 
 namespace traktor
 {
@@ -14,9 +15,9 @@ PipelineSettings::PipelineSettings(const Settings* settings)
 {
 }
 
-Ref< PropertyValue > PipelineSettings::getProperty(const std::wstring& propertyName) const
+Ref< const IPropertyValue > PipelineSettings::getProperty(const std::wstring& propertyName) const
 {
-	Ref< PropertyValue > prop = m_settings->getProperty(propertyName);
+	Ref< const IPropertyValue > prop = m_settings->getProperty(propertyName);
 	if (prop)
 		m_hash += DeepHash(prop).get();
 	return prop;

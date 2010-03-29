@@ -4,7 +4,6 @@
 #include "Mesh/Editor/MaterialShaderGenerator.h"
 #include "Editor/IEditor.h"
 #include "Editor/TypeBrowseFilter.h"
-#include "Editor/Settings.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Database/Group.h"
@@ -27,6 +26,8 @@
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
 #include "Ui/Custom/MiniButton.h"
 #include "Core/Io/FileSystem.h"
+#include "Core/Settings/PropertyString.h"
+#include "Core/Settings/Settings.h"
 
 namespace traktor
 {
@@ -57,7 +58,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.MeshAssetEditor", MeshAssetEditor, editor:
 MeshAssetEditor::MeshAssetEditor(editor::IEditor* editor)
 :	m_editor(editor)
 {
-	m_assetPath = m_editor->getSettings()->getProperty< editor::PropertyString >(L"Pipeline.AssetPath", L"");
+	m_assetPath = m_editor->getSettings()->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
 }
 
 bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerializable* object)

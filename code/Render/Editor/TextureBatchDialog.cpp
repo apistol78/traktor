@@ -1,7 +1,6 @@
 #include "Render/Editor/TextureBatchDialog.h"
 #include "Render/Editor/TextureAsset.h"
 #include "Editor/IEditor.h"
-#include "Editor/Settings.h"
 #include "Ui/Bitmap.h"
 #include "Ui/FileDialog.h"
 #include "Ui/FloodLayout.h"
@@ -15,6 +14,8 @@
 #include "Ui/Custom/PropertyList/AutoPropertyList.h"
 #include "I18N/Text.h"
 #include "Core/Io/FileSystem.h"
+#include "Core/Settings/PropertyString.h"
+#include "Core/Settings/Settings.h"
 
 // Resources
 #include "Resources/PlusMinus.h"
@@ -103,7 +104,7 @@ void TextureBatchDialog::addTexture()
 	}
 	fileDialog.destroy();
 
-	Path assetPath = m_editor->getSettings()->getProperty< editor::PropertyString >(L"Pipeline.AssetPath", L"");
+	Path assetPath = m_editor->getSettings()->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
 
 	for (std::vector< Path >::iterator i = fileNames.begin(); i != fileNames.end(); ++i)
 	{

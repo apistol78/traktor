@@ -1,5 +1,7 @@
 #include "Core/Misc/String.h"
-#include "Editor/Settings.h"
+#include "Core/Settings/PropertyInteger.h"
+#include "Core/Settings/PropertyString.h"
+#include "Core/Settings/Settings.h"
 #include "I18N/Text.h"
 #include "Sound/ISoundDriver.h"
 #include "Sound/Editor/SoundSettingsPage.h"
@@ -17,7 +19,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundSettingsPage", 0, SoundSettingsPage, editor::ISettingsPage)
 
-bool SoundSettingsPage::create(ui::Container* parent, editor::Settings* settings, const std::list< ui::Command >& shortcutCommands)
+bool SoundSettingsPage::create(ui::Container* parent, Settings* settings, const std::list< ui::Command >& shortcutCommands)
 {
 	Ref< ui::Container > container = new ui::Container();
 	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", 0, 4)))
@@ -79,7 +81,7 @@ bool SoundSettingsPage::create(ui::Container* parent, editor::Settings* settings
 	m_editMixerFrames = new ui::Edit();
 	m_editMixerFrames->create(container, L"", ui::WsClientBorder, new ui::NumericEditValidator(false, 1, 16));
 
-	std::wstring soundDriverType = settings->getProperty< editor::PropertyString >(L"Editor.SoundDriver");
+	std::wstring soundDriverType = settings->getProperty< PropertyString >(L"Editor.SoundDriver");
 
 	std::vector< const TypeInfo* > soundDriverTypes;
 	type_of< sound::ISoundDriver >().findAllOf(soundDriverTypes, false);
@@ -92,9 +94,9 @@ bool SoundSettingsPage::create(ui::Container* parent, editor::Settings* settings
 			m_dropSoundDriver->select(index);
 	}
 
-	m_editVirtualChannels->setText(toString(settings->getProperty< editor::PropertyInteger >(L"Editor.SoundVirtualChannels")));
+	m_editVirtualChannels->setText(toString(settings->getProperty< PropertyInteger >(L"Editor.SoundVirtualChannels")));
 
-	int32_t sampleRate = settings->getProperty< editor::PropertyInteger >(L"Editor.SoundSampleRate");
+	int32_t sampleRate = settings->getProperty< PropertyInteger >(L"Editor.SoundSampleRate");
 	switch (sampleRate)
 	{
 	case 11025:
@@ -111,16 +113,16 @@ bool SoundSettingsPage::create(ui::Container* parent, editor::Settings* settings
 		break;
 	}
 
-	int32_t bitsPerSample = settings->getProperty< editor::PropertyInteger >(L"Editor.SoundBitsPerSample");
+	int32_t bitsPerSample = settings->getProperty< PropertyInteger >(L"Editor.SoundBitsPerSample");
 	if (bitsPerSample == 8)
 		m_dropBitsPerSample->select(0);
 	else if (bitsPerSample == 16)
 		m_dropBitsPerSample->select(1);
 
-	m_dropHwChannels->select(settings->getProperty< editor::PropertyInteger >(L"Editor.SoundHwChannels") - 1);
+	m_dropHwChannels->select(settings->getProperty< PropertyInteger >(L"Editor.SoundHwChannels") - 1);
 
-	m_editFrameSamples->setText(toString(settings->getProperty< editor::PropertyInteger >(L"Editor.SoundFrameSamples")));
-	m_editMixerFrames->setText(toString(settings->getProperty< editor::PropertyInteger >(L"Editor.SoundMixerFrames")));
+	m_editFrameSamples->setText(toString(settings->getProperty< PropertyInteger >(L"Editor.SoundFrameSamples")));
+	m_editMixerFrames->setText(toString(settings->getProperty< PropertyInteger >(L"Editor.SoundMixerFrames")));
 
 	parent->setText(i18n::Text(L"EDITOR_SETTINGS_SOUND"));
 	return true;
@@ -130,41 +132,41 @@ void SoundSettingsPage::destroy()
 {
 }
 
-bool SoundSettingsPage::apply(editor::Settings* settings)
+bool SoundSettingsPage::apply(Settings* settings)
 {
-	settings->setProperty< editor::PropertyString >(L"Editor.SoundDriver", m_dropSoundDriver->getSelectedItem());
-	settings->setProperty< editor::PropertyInteger >(L"Editor.SoundVirtualChannels", parseString< int32_t >(m_editVirtualChannels->getText()));
+	settings->setProperty< PropertyString >(L"Editor.SoundDriver", m_dropSoundDriver->getSelectedItem());
+	settings->setProperty< PropertyInteger >(L"Editor.SoundVirtualChannels", parseString< int32_t >(m_editVirtualChannels->getText()));
 
 	switch (m_dropSampleRate->getSelected())
 	{
 	case 0:
-		settings->setProperty< editor::PropertyInteger >(L"Editor.SoundSampleRate", 11025);
+		settings->setProperty< PropertyInteger >(L"Editor.SoundSampleRate", 11025);
 		break;
 	case 1:
-		settings->setProperty< editor::PropertyInteger >(L"Editor.SoundSampleRate", 22050);
+		settings->setProperty< PropertyInteger >(L"Editor.SoundSampleRate", 22050);
 		break;
 	case 2:
-		settings->setProperty< editor::PropertyInteger >(L"Editor.SoundSampleRate", 44100);
+		settings->setProperty< PropertyInteger >(L"Editor.SoundSampleRate", 44100);
 		break;
 	case 3:
-		settings->setProperty< editor::PropertyInteger >(L"Editor.SoundSampleRate", 48000);
+		settings->setProperty< PropertyInteger >(L"Editor.SoundSampleRate", 48000);
 		break;
 	}
 
 	switch (m_dropBitsPerSample->getSelected())
 	{
 	case 0:
-		settings->setProperty< editor::PropertyInteger >(L"Editor.SoundBitsPerSample", 8);
+		settings->setProperty< PropertyInteger >(L"Editor.SoundBitsPerSample", 8);
 		break;
 	case 1:
-		settings->setProperty< editor::PropertyInteger >(L"Editor.SoundBitsPerSample", 16);
+		settings->setProperty< PropertyInteger >(L"Editor.SoundBitsPerSample", 16);
 		break;
 	}
 
-	settings->setProperty< editor::PropertyInteger >(L"Editor.SoundHwChannels", m_dropHwChannels->getSelected() + 1);
+	settings->setProperty< PropertyInteger >(L"Editor.SoundHwChannels", m_dropHwChannels->getSelected() + 1);
 
-	settings->setProperty< editor::PropertyInteger >(L"Editor.SoundFrameSamples", parseString< int32_t >(m_editFrameSamples->getText()));
-	settings->setProperty< editor::PropertyInteger >(L"Editor.SoundMixerFrames", parseString< int32_t >(m_editMixerFrames->getText()));
+	settings->setProperty< PropertyInteger >(L"Editor.SoundFrameSamples", parseString< int32_t >(m_editFrameSamples->getText()));
+	settings->setProperty< PropertyInteger >(L"Editor.SoundMixerFrames", parseString< int32_t >(m_editMixerFrames->getText()));
 
 	return true;
 }

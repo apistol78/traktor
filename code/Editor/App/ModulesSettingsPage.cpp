@@ -1,13 +1,14 @@
+#include "Core/Settings/PropertyStringArray.h"
+#include "Core/Settings/Settings.h"
+#include "Core/Serialization/ISerializable.h"
 #include "Editor/App/ModulesSettingsPage.h"
-#include "Editor/Settings.h"
+#include "I18N/Text.h"
 #include "Ui/MethodHandler.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Container.h"
 #include "Ui/Button.h"
 #include "Ui/ListBox.h"
 #include "Ui/Custom/InputDialog.h"
-#include "I18N/Text.h"
-#include "Core/Serialization/ISerializable.h"
 
 namespace traktor
 {

@@ -14,7 +14,6 @@
 #include "Scene/Scene.h"
 #include "Physics/PhysicsManager.h"
 #include "Editor/IEditor.h"
-#include "Editor/Settings.h"
 #include "Editor/TypeBrowseFilter.h"
 #include "Database/Instance.h"
 #include "Ui/Application.h"
@@ -39,6 +38,8 @@
 #include "World/Entity/Entity.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Misc/String.h"
+#include "Core/Settings/PropertyBoolean.h"
+#include "Core/Settings/Settings.h"
 #include "Core/Log/Log.h"
 
 // Resources
@@ -71,14 +72,14 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 	m_toolToggleSnap = new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_TOGGLE_SNAP"), ui::Command(1, L"Scene.Editor.ToggleSnap"), 7, ui::custom::ToolBarButton::BsDefaultToggle);
 	m_toolToggleAddReference = new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_TOGGLE_ADD_REFERENCE"), ui::Command(1, L"Scene.Editor.ToggleAddReference"), 12, ui::custom::ToolBarButton::BsDefaultToggle);
 
-	Ref< editor::Settings > settings = context->getEditor()->getSettings();
+	Ref< Settings > settings = context->getEditor()->getSettings();
 	T_ASSERT (settings);
 
-	m_toolTogglePick->setToggled(settings->getProperty< editor::PropertyBoolean >(L"SceneEditor.TogglePick", true));
-	m_toolToggleX->setToggled(settings->getProperty< editor::PropertyBoolean >(L"SceneEditor.ToggleX", true));
-	m_toolToggleY->setToggled(settings->getProperty< editor::PropertyBoolean >(L"SceneEditor.ToggleY", true));
-	m_toolToggleZ->setToggled(settings->getProperty< editor::PropertyBoolean >(L"SceneEditor.ToggleZ", true));
-	m_toolToggleSnap->setToggled(settings->getProperty< editor::PropertyBoolean >(L"SceneEditor.ToggleSnap", true));
+	m_toolTogglePick->setToggled(settings->getProperty< PropertyBoolean >(L"SceneEditor.TogglePick", true));
+	m_toolToggleX->setToggled(settings->getProperty< PropertyBoolean >(L"SceneEditor.ToggleX", true));
+	m_toolToggleY->setToggled(settings->getProperty< PropertyBoolean >(L"SceneEditor.ToggleY", true));
+	m_toolToggleZ->setToggled(settings->getProperty< PropertyBoolean >(L"SceneEditor.ToggleZ", true));
+	m_toolToggleSnap->setToggled(settings->getProperty< PropertyBoolean >(L"SceneEditor.ToggleSnap", true));
 
 	m_toolBarActions = new ui::custom::ToolBar();
 	m_toolBarActions->create(this, ui::WsBorder);
@@ -137,14 +138,14 @@ void ScenePreviewControl::destroy()
 	}
 
 	// Save editor configuration.
-	Ref< editor::Settings > settings = m_context->getEditor()->getSettings();
+	Ref< Settings > settings = m_context->getEditor()->getSettings();
 	T_ASSERT (settings);
 
-	settings->setProperty< editor::PropertyBoolean >(L"SceneEditor.TogglePick", m_toolTogglePick->isToggled());
-	settings->setProperty< editor::PropertyBoolean >(L"SceneEditor.ToggleX", m_toolToggleX->isToggled());
-	settings->setProperty< editor::PropertyBoolean >(L"SceneEditor.ToggleY", m_toolToggleY->isToggled());
-	settings->setProperty< editor::PropertyBoolean >(L"SceneEditor.ToggleZ", m_toolToggleZ->isToggled());
-	settings->setProperty< editor::PropertyBoolean >(L"SceneEditor.ToggleSnap", m_toolToggleSnap->isToggled());
+	settings->setProperty< PropertyBoolean >(L"SceneEditor.TogglePick", m_toolTogglePick->isToggled());
+	settings->setProperty< PropertyBoolean >(L"SceneEditor.ToggleX", m_toolToggleX->isToggled());
+	settings->setProperty< PropertyBoolean >(L"SceneEditor.ToggleY", m_toolToggleY->isToggled());
+	settings->setProperty< PropertyBoolean >(L"SceneEditor.ToggleZ", m_toolToggleZ->isToggled());
+	settings->setProperty< PropertyBoolean >(L"SceneEditor.ToggleSnap", m_toolToggleSnap->isToggled());
 
 	// Destroy render controls.
 	for (RefArray< ISceneRenderControl >::iterator i = m_renderControls.begin(); i != m_renderControls.end(); ++i)

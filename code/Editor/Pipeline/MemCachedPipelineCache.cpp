@@ -1,15 +1,18 @@
 #include <sstream>
+#include "Core/Io/IStream.h"
+#include "Core/Log/Log.h"
+#include "Core/Misc/TString.h"
+#include "Core/Settings/Settings.h"
+#include "Core/Settings/PropertyBoolean.h"
+#include "Core/Settings/PropertyInteger.h"
+#include "Core/Settings/PropertyString.h"
 #include "Editor/Pipeline/MemCachedPipelineCache.h"
 #include "Editor/Pipeline/MemCachedProto.h"
 #include "Editor/Pipeline/MemCachedGetStream.h"
 #include "Editor/Pipeline/MemCachedPutStream.h"
-#include "Editor/Settings.h"
 #include "Net/Network.h"
 #include "Net/TcpSocket.h"
 #include "Net/SocketAddressIPv4.h"
-#include "Core/Io/IStream.h"
-#include "Core/Misc/TString.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {

@@ -1,5 +1,8 @@
+#include "Core/Misc/Split.h"
+#include "Core/Settings/PropertyInteger.h"
+#include "Core/Settings/Settings.h"
 #include "Editor/App/BrowseTypeDialog.h"
-#include "Editor/Settings.h"
+#include "I18N/Text.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Static.h"
@@ -12,8 +15,6 @@
 #include "Ui/Events/CommandEvent.h"
 #include "Ui/Custom/Splitter.h"
 #include "Ui/Custom/MiniButton.h"
-#include "I18N/Text.h"
-#include "Core/Misc/Split.h"
 
 // Resources
 #include "Resources/Files.h"

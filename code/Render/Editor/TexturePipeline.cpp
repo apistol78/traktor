@@ -4,6 +4,10 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
+#include "Core/Math/Vector4.h"
+#include "Core/Settings/PropertyBoolean.h"
+#include "Core/Settings/PropertyInteger.h"
+#include "Core/Settings/PropertyString.h"
 #include "Core/Thread/JobManager.h"
 #include "Database/Instance.h"
 #include "Drawing/Image.h"
@@ -193,11 +197,11 @@ TexturePipeline::TexturePipeline()
 
 bool TexturePipeline::create(const editor::IPipelineSettings* settings)
 {
-	m_assetPath = settings->getProperty< editor::PropertyString >(L"Pipeline.AssetPath", L"");
-	m_skipMips = settings->getProperty< editor::PropertyInteger >(L"TexturePipeline.SkipMips", 0);
-	m_clampSize = settings->getProperty< editor::PropertyInteger >(L"TexturePipeline.ClampSize", 0);
-	m_allowCompression = settings->getProperty< editor::PropertyBoolean >(L"TexturePipeline.AllowCompression", true);
-	m_compressionQuality = settings->getProperty< editor::PropertyInteger >(L"TexturePipeline.CompressionQuality", 1);
+	m_assetPath = settings->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
+	m_skipMips = settings->getProperty< PropertyInteger >(L"TexturePipeline.SkipMips", 0);
+	m_clampSize = settings->getProperty< PropertyInteger >(L"TexturePipeline.ClampSize", 0);
+	m_allowCompression = settings->getProperty< PropertyBoolean >(L"TexturePipeline.AllowCompression", true);
+	m_compressionQuality = settings->getProperty< PropertyInteger >(L"TexturePipeline.CompressionQuality", 1);
 	return true;
 }
 

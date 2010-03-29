@@ -15,25 +15,18 @@ SceneFactory::SceneFactory(
 	db::Database* database,
 	render::IRenderSystem* renderSystem,
 	world::IEntityBuilder* entityBuilder,
-	world::WorldRenderSettings::ShadowQuality shadowQuality,
-	int32_t shadowMapSizeDenom
+	world::WorldRenderSettings::ShadowQuality shadowQuality
 )
 :	m_database(database)
 ,	m_renderSystem(renderSystem)
 ,	m_entityBuilder(entityBuilder)
 ,	m_shadowQuality(shadowQuality)
-,	m_shadowMapSizeDenom(shadowMapSizeDenom)
 {
 }
 
 void SceneFactory::setShadowQuality(world::WorldRenderSettings::ShadowQuality shadowQuality)
 {
 	m_shadowQuality = shadowQuality;
-}
-
-void SceneFactory::setShadowMapSizeDenom(int32_t shadowMapSizeDenom)
-{
-	m_shadowMapSizeDenom = shadowMapSizeDenom;
 }
 
 const TypeInfoSet SceneFactory::getResourceTypes() const
@@ -60,8 +53,7 @@ Ref< Object > SceneFactory::create(resource::IResourceManager* resourceManager, 
 		m_renderSystem,
 		m_entityBuilder,
 		entityManager,
-		m_shadowQuality,
-		m_shadowMapSizeDenom
+		m_shadowQuality
 	);
 }
 

@@ -1,5 +1,7 @@
 #include "Core/Serialization/ISerializable.h"
-#include "Editor/Settings.h"
+#include "Core/Settings/PropertyBoolean.h"
+#include "Core/Settings/PropertyString.h"
+#include "Core/Settings/Settings.h"
 #include "Editor/App/GeneralSettingsPage.h"
 #include "I18N/Text.h"
 #include "Ui/CheckBox.h"

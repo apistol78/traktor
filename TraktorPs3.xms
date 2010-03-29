@@ -2081,6 +2081,15 @@
 						</item>
 					</items>
 				</item>
+				<item type="Filter">
+					<name>Settings</name>
+					<items>
+						<item type="File">
+							<fileName>Settings/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
 			</items>
 			<dependencies/>
 		</item>

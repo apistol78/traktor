@@ -1,7 +1,8 @@
 #include "Core/Io/StringOutputStream.h"
+#include "Core/Settings/PropertyBoolean.h"
+#include "Core/Settings/Settings.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPageSite.h"
-#include "Editor/Settings.h"
 #include "I18N/Text.h"
 #include "Render/IRenderSystem.h"
 #include "Render/Resource/ShaderFactory.h"
@@ -74,10 +75,10 @@ bool EffectEditorPage::create(ui::Container* parent, editor::IEditorPageSite* si
 
 	m_toolToggleGuide = new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_TOGGLE_GUIDE"), ui::Command(L"Effect.Editor.ToggleGuide"), 11, ui::custom::ToolBarButton::BsDefaultToggle);
 
-	Ref< editor::Settings > settings = m_editor->getSettings();
+	Ref< Settings > settings = m_editor->getSettings();
 	T_ASSERT (settings);
 
-	m_guideVisible = settings->getProperty< editor::PropertyBoolean >(L"EffectEditor.ToggleGuide", m_guideVisible);
+	m_guideVisible = settings->getProperty< PropertyBoolean >(L"EffectEditor.ToggleGuide", m_guideVisible);
 	m_toolToggleGuide->setToggled(m_guideVisible);
 
 	m_toolBar = new ui::custom::ToolBar();
@@ -112,10 +113,10 @@ bool EffectEditorPage::create(ui::Container* parent, editor::IEditorPageSite* si
 
 void EffectEditorPage::destroy()
 {
-	Ref< editor::Settings > settings = m_editor->getSettings();
+	Ref< Settings > settings = m_editor->getSettings();
 	T_ASSERT (settings);
 
-	settings->setProperty< editor::PropertyBoolean >(L"EffectEditor.ToggleGuide", m_guideVisible);
+	settings->setProperty< PropertyBoolean >(L"EffectEditor.ToggleGuide", m_guideVisible);
 
 	m_previewControl->destroy();
 }

@@ -6,6 +6,7 @@
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
+#include "Core/Settings/PropertyString.h"
 #include "Database/Instance.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineSettings.h"
@@ -19,7 +20,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.AnimationPipeline", 0, Animat
 
 bool AnimationPipeline::create(const editor::IPipelineSettings* settings)
 {
-	m_assetPath = settings->getProperty< editor::PropertyString >(L"Pipeline.AssetPath", L"");
+	m_assetPath = settings->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
 	return true;
 }
 

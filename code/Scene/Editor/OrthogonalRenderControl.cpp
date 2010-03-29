@@ -1,6 +1,8 @@
 #include <limits>
+#include "Core/Settings/PropertyColor.h"
+#include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/Settings.h"
 #include "Editor/IEditor.h"
-#include "Editor/Settings.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Render/PrimitiveRenderer.h"
@@ -221,11 +223,11 @@ void OrthogonalRenderControl::update()
 
 void OrthogonalRenderControl::updateSettings()
 {
-	Ref< editor::PropertyGroup > colors = m_context->getEditor()->getSettings()->getProperty< editor::PropertyGroup >(L"Editor.Colors");
-	m_colorClear = colors->getProperty< editor::PropertyColor >(L"Background");
-	m_colorGrid = colors->getProperty< editor::PropertyColor >(L"Grid");
-	m_colorRef = colors->getProperty< editor::PropertyColor >(L"ReferenceEdge");
-	m_colorCamera = colors->getProperty< editor::PropertyColor >(L"CameraWire");
+	Ref< PropertyGroup > colors = m_context->getEditor()->getSettings()->getProperty< PropertyGroup >(L"Editor.Colors");
+	m_colorClear = colors->getProperty< PropertyColor >(L"Background");
+	m_colorGrid = colors->getProperty< PropertyColor >(L"Grid");
+	m_colorRef = colors->getProperty< PropertyColor >(L"ReferenceEdge");
+	m_colorCamera = colors->getProperty< PropertyColor >(L"CameraWire");
 }
 
 Matrix44 OrthogonalRenderControl::getProjectionTransform() const

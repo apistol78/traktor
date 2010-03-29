@@ -2,6 +2,9 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/WildCompare.h"
 #include "Core/Serialization/DeepClone.h"
+#include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyInteger.h"
+#include "Core/Settings/Settings.h"
 #include "Core/System/OS.h"
 #include "Database/Database.h"
 #include "Database/Group.h"
@@ -10,7 +13,6 @@
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPage.h"
 #include "Editor/IWizardTool.h"
-#include "Editor/Settings.h"
 #include "Editor/App/DatabaseView.h"
 #include "Editor/App/NewInstanceDialog.h"
 #include "Editor/Pipeline/PipelineDependency.h"
@@ -307,7 +309,7 @@ Ref< ui::TreeViewItem > DatabaseView::buildTreeItem(ui::TreeView* treeView, ui::
 	Ref< PropertyGroup > iconsGroup = m_editor->getSettings()->getProperty< PropertyGroup >(L"Editor.Icons");
 	T_ASSERT (iconsGroup);
 
-	const std::map< std::wstring, Ref< PropertyValue > >& icons = iconsGroup->getValues();
+	const std::map< std::wstring, Ref< IPropertyValue > >& icons = iconsGroup->getValues();
 
 	for (RefArray< db::Instance >::iterator i = group->getBeginChildInstance(); i != group->getEndChildInstance(); ++i)
 	{
@@ -319,7 +321,7 @@ Ref< ui::TreeViewItem > DatabaseView::buildTreeItem(ui::TreeView* treeView, ui::
 			continue;
 
 		int iconIndex = 2;
-		for (std::map< std::wstring, Ref< PropertyValue > >::const_iterator j = icons.begin(); j != icons.end(); ++j)
+		for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator j = icons.begin(); j != icons.end(); ++j)
 		{
 			const TypeInfo* iconType = TypeInfo::find(j->first);
 			if (iconType && is_type_of(*iconType, *primaryType))

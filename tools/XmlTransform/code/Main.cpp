@@ -26,7 +26,13 @@ void recursiveFindFiles(const Path& currentPath, std::set< Path >& outFiles)
 		if (filePath.getFileName() == L"." || filePath.getFileName() == L"..")
 			continue;
 
-		if (!(*i)->isDirectory() && compareIgnoreCase(filePath.getExtension(), L"xdi") == 0)
+		if (
+			!(*i)->isDirectory() &&
+			(
+				//compareIgnoreCase(filePath.getExtension(), L"xdi") == 0 ||
+				compareIgnoreCase(filePath.getExtension(), L"config") == 0
+			)
+		)
 			outFiles.insert(filePath);
 		else
 			recursiveFindFiles(filePath, outFiles);
@@ -43,6 +49,32 @@ void createElementValue(xml::Element* element, const std::wstring& key, const st
 uint32_t transform(xml::Element* element)
 {
 	uint32_t changes = 0;
+
+	{
+		std::wstring typeName = element->getAttribute(L"type", L"")->getValue();
+		std::wstring replaceTypeName;
+
+		if (typeName == L"traktor.editor.PropertyGroup")
+			replaceTypeName = L"traktor.PropertyGroup";
+		if (typeName == L"traktor.editor.PropertyString")
+			replaceTypeName = L"traktor.PropertyString";
+		if (typeName == L"traktor.editor.PropertyBoolean")
+			replaceTypeName = L"traktor.PropertyBoolean";
+		if (typeName == L"traktor.editor.PropertyFloat")
+			replaceTypeName = L"traktor.PropertyFloat";
+		if (typeName == L"traktor.editor.PropertyInteger")
+			replaceTypeName = L"traktor.PropertyInteger";
+		if (typeName == L"traktor.editor.PropertyColor")
+			replaceTypeName = L"traktor.PropertyColor";
+		if (typeName == L"traktor.editor.PropertyStringArray")
+			replaceTypeName = L"traktor.PropertyStringArray";
+
+		if (!replaceTypeName.empty())
+		{
+			element->setAttribute(L"type", replaceTypeName);
+			changes++;
+		}
+	}
 
 	if (element->getName() == L"transform" || element->getName() == L"localTransform")
 	{

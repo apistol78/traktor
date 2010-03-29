@@ -1,6 +1,7 @@
 #include "Core/Log/Log.h"
+#include "Core/Settings/PropertyString.h"
+#include "Core/Settings/Settings.h"
 #include "Editor/IEditor.h"
-#include "Editor/Settings.h"
 #include "Physics/PhysicsManager.h"
 #include "Render/IRenderSystem.h"
 #include "Resource/ResourceManager.h"
@@ -38,7 +39,7 @@ Ref< editor::IEditorPage > SceneEditorPageFactory::createEditorPage(editor::IEdi
 	Ref< resource::IResourceManager > resourceManager = new resource::ResourceManager();
 
 	// Get physics manager type.
-	std::wstring physicsManagerTypeName = editor->getSettings()->getProperty< editor::PropertyString >(L"SceneEditor.PhysicsManager");
+	std::wstring physicsManagerTypeName = editor->getSettings()->getProperty< PropertyString >(L"SceneEditor.PhysicsManager");
 	const TypeInfo* physicsManagerType = TypeInfo::find(physicsManagerTypeName);
 	if (!physicsManagerType)
 	{

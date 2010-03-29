@@ -1,5 +1,9 @@
+#include "Core/Serialization/ISerializable.h"
+#include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/Settings.h"
+#include "Editor/PropertyKey.h"
 #include "Editor/App/ShortcutsSettingsPage.h"
-#include "Editor/Settings.h"
+#include "I18N/Text.h"
 #include "Ui/Application.h"
 #include "Ui/MethodHandler.h"
 #include "Ui/Event.h"
@@ -11,8 +15,6 @@
 #include "Ui/Custom/GridView/GridRow.h"
 #include "Ui/Custom/GridView/GridItem.h"
 #include "Ui/Custom/ShortcutEdit.h"
-#include "I18N/Text.h"
-#include "Core/Serialization/ISerializable.h"
 
 namespace traktor
 {
@@ -37,15 +39,13 @@ bool ShortcutsSettingsPage::create(ui::Container* parent, Settings* settings, co
 	m_editShortcut->create(container, 0, ui::VkNull, ui::WsClientBorder);
 	m_editShortcut->addChangeEventHandler(ui::createMethodHandler(this, &ShortcutsSettingsPage::eventShortcutModified));
 
-	Ref< PropertyGroup > shortcutGroup = checked_type_cast< PropertyGroup* >(settings->getProperty(L"Editor.Shortcuts"));
+	Ref< const PropertyGroup > shortcutGroup = checked_type_cast< const PropertyGroup* >(settings->getProperty(L"Editor.Shortcuts"));
 	if (shortcutGroup)
 	{
 		for (std::list< ui::Command >::const_iterator i = shortcutCommands.begin(); i != shortcutCommands.end(); ++i)
 		{
-			Ref< PropertyKey > propertyKey = dynamic_type_cast< PropertyKey* >(shortcutGroup->getProperty(i->getName()));
-
-			// Create a copy of property key as we don't want to modify settings without being applied.
-			propertyKey = new PropertyKey(PropertyKey::get(propertyKey));
+			Ref< const PropertyKey > constPropertyKey = dynamic_type_cast< const PropertyKey* >(shortcutGroup->getProperty(i->getName()));
+			Ref< PropertyKey > propertyKey = new PropertyKey(PropertyKey::get(constPropertyKey));
 
 			Ref< ui::custom::GridRow > row = new ui::custom::GridRow();
 			row->addItem(new ui::custom::GridItem(
@@ -71,9 +71,6 @@ void ShortcutsSettingsPage::destroy()
 
 bool ShortcutsSettingsPage::apply(Settings* settings)
 {
-	Ref< PropertyGroup > shortcutGroup = settings->getProperty< PropertyGroup >(L"Editor.Shortcuts");
-	T_ASSERT (shortcutGroup);
-
 	const RefArray< ui::custom::GridRow >& rows = m_gridShortcuts->getRows();
 	for (RefArray< ui::custom::GridRow >::const_iterator i = rows.begin(); i != rows.end(); ++i)
 	{
@@ -85,13 +82,11 @@ bool ShortcutsSettingsPage::apply(Settings* settings)
 
 		PropertyKey::value_type_t value = PropertyKey::get(propertyKey);
 		if (value.first != 0 || value.second != 0)
-			shortcutGroup->setProperty(
-				items[0]->getText(),
+			settings->setProperty(
+				L"Editor.Shortcuts/" + items[0]->getText(),
 				propertyKey
 			);
 	}
-
-	settings->setProperty(L"Editor.Shortcuts", shortcutGroup);
 	return true;
 }
 

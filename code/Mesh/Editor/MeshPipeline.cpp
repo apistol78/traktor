@@ -2,6 +2,8 @@
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
+#include "Core/Settings/PropertyString.h"
+#include "Core/Settings/PropertyBoolean.h"
 #include "Database/Database.h"
 #include "Database/Group.h"
 #include "Database/Instance.h"
@@ -114,8 +116,8 @@ MeshPipeline::MeshPipeline()
 
 bool MeshPipeline::create(const editor::IPipelineSettings* settings)
 {
-	m_assetPath = settings->getProperty< editor::PropertyString >(L"Pipeline.AssetPath", L"");
-	m_promoteHalf = settings->getProperty< editor::PropertyBoolean >(L"MeshPipeline.PromoteHalf", false);
+	m_assetPath = settings->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
+	m_promoteHalf = settings->getProperty< PropertyBoolean >(L"MeshPipeline.PromoteHalf", false);
 	return true;
 }
 

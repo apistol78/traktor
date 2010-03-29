@@ -7,6 +7,8 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/MathUtils.h"
 #include "Core/Misc/String.h"
+#include "Core/Settings/PropertyInteger.h"
+#include "Core/Settings/PropertyString.h"
 #include "Database/Instance.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
@@ -46,8 +48,8 @@ SoundPipeline::SoundPipeline()
 
 bool SoundPipeline::create(const editor::IPipelineSettings* settings)
 {
-	m_assetPath = settings->getProperty< editor::PropertyString >(L"Pipeline.AssetPath", L"");
-	m_sampleRate = settings->getProperty< editor::PropertyInteger >(L"SoundPipeline.SampleRate", m_sampleRate);
+	m_assetPath = settings->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
+	m_sampleRate = settings->getProperty< PropertyInteger >(L"SoundPipeline.SampleRate", m_sampleRate);
 	return true;
 }
 

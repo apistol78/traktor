@@ -3,12 +3,12 @@
 #include "Core/Serialization/DeepHash.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRef.h"
+#include "Core/Settings/Settings.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPageSite.h"
-#include "Editor/Settings.h"
 #include "Editor/UndoStack.h"
 #include "I18N/Text.h"
 #include "Physics/PhysicsManager.h"
@@ -152,7 +152,7 @@ bool SceneEditorPage::create(ui::Container* parent, editor::IEditorPageSite* sit
 	m_context->addPreModifyEventHandler(ui::createMethodHandler(this, &SceneEditorPage::eventContextPreModify));
 
 	// Restore camera from settings.
-	Ref< editor::Settings > settings = m_context->getEditor()->getSettings();
+	Ref< Settings > settings = m_context->getEditor()->getSettings();
 	T_ASSERT (settings);
 
 	m_undoStack = new editor::UndoStack();
@@ -163,7 +163,7 @@ bool SceneEditorPage::create(ui::Container* parent, editor::IEditorPageSite* sit
 void SceneEditorPage::destroy()
 {
 	// Save camera position in editor settings.
-	Ref< editor::Settings > settings = m_context->getEditor()->getSettings();
+	Ref< Settings > settings = m_context->getEditor()->getSettings();
 	T_ASSERT (settings);
 
 	// Destroy controller editor.

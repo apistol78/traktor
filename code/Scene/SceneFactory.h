@@ -49,19 +49,15 @@ public:
 	 * \param renderSystem Render system.
 	 * \param entityBuilder Entity builder.
 	 * \param shadowQuality Max shadow quality level.
-	 * \param shadowMapSizeDenom Shadow map size denominator.
 	 */
 	SceneFactory(
 		db::Database* database,
 		render::IRenderSystem* renderSystem,
 		world::IEntityBuilder* entityBuilder,
-		world::WorldRenderSettings::ShadowQuality shadowQuality,
-		int32_t shadowMapSizeDenom
+		world::WorldRenderSettings::ShadowQuality shadowQuality
 	);
 
 	void setShadowQuality(world::WorldRenderSettings::ShadowQuality shadowQuality);
-
-	void setShadowMapSizeDenom(int32_t shadowMapSizeDenom);
 
 	virtual const TypeInfoSet getResourceTypes() const;
 
@@ -74,7 +70,6 @@ private:
 	Ref< render::IRenderSystem > m_renderSystem;
 	Ref< world::IEntityBuilder > m_entityBuilder;
 	world::WorldRenderSettings::ShadowQuality m_shadowQuality;
-	int32_t m_shadowMapSizeDenom;
 };
 
 	}

@@ -7,6 +7,9 @@
 
 namespace traktor
 {
+
+class Settings;
+
 	namespace ui
 	{
 
@@ -17,7 +20,6 @@ class Command;
 	namespace editor
 	{
 
-class Settings;
 class ISettingsPage;
 
 class SettingsDialog : public ui::ConfigDialog

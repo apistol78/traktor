@@ -15,10 +15,11 @@
 
 namespace traktor
 {
-	namespace editor
-	{
 
 class Settings;
+
+	namespace editor
+	{
 
 class T_DLLCLASS PipelineFactory : public Object
 {

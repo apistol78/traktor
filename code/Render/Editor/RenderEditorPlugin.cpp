@@ -1,6 +1,8 @@
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Settings/PropertyFloat.h"
+#include "Core/Settings/PropertyString.h"
+#include "Core/Settings/Settings.h"
 #include "Editor/IEditor.h"
-#include "Editor/Settings.h"
 #include "Render/IRenderSystem.h"
 #include "Render/Editor/RenderEditorPlugin.h"
 #include "Ui/MessageBox.h"
@@ -19,7 +21,7 @@ RenderEditorPlugin::RenderEditorPlugin(editor::IEditor* editor)
 
 bool RenderEditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 {
-	std::wstring renderSystemTypeName = m_editor->getSettings()->getProperty< editor::PropertyString >(L"Editor.RenderSystem");
+	std::wstring renderSystemTypeName = m_editor->getSettings()->getProperty< PropertyString >(L"Editor.RenderSystem");
 
 	const TypeInfo* renderSystemType = TypeInfo::find(renderSystemTypeName);
 	if (!renderSystemType)
@@ -32,7 +34,7 @@ bool RenderEditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* sit
 	T_ASSERT (renderSystem);
 
 	RenderSystemCreateDesc desc;
-	desc.mipBias = m_editor->getSettings()->getProperty< editor::PropertyFloat >(L"Editor.MipBias");
+	desc.mipBias = m_editor->getSettings()->getProperty< PropertyFloat >(L"Editor.MipBias");
 
 	if (!renderSystem->create(desc))
 	{

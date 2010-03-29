@@ -2,6 +2,9 @@
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
+#include "Core/Settings/PropertyBoolean.h"
+#include "Core/Settings/PropertyInteger.h"
+#include "Core/Settings/PropertyString.h"
 #include "Core/Thread/JobManager.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
@@ -148,7 +151,7 @@ ShaderPipeline::ShaderPipeline()
 
 bool ShaderPipeline::create(const editor::IPipelineSettings* settings)
 {
-	std::wstring programCompilerTypeName = settings->getProperty< editor::PropertyString >(L"ShaderPipeline.ProgramCompiler");
+	std::wstring programCompilerTypeName = settings->getProperty< PropertyString >(L"ShaderPipeline.ProgramCompiler");
 
 	const TypeInfo* programCompilerType = TypeInfo::find(programCompilerTypeName);
 	if (!programCompilerType)
@@ -164,10 +167,10 @@ bool ShaderPipeline::create(const editor::IPipelineSettings* settings)
 		return false;
 	}
 
-	m_optimize = settings->getProperty< editor::PropertyInteger >(L"ShaderPipeline.Optimize", m_optimize);
-	m_validate = settings->getProperty< editor::PropertyBoolean >(L"ShaderPipeline.Validate", m_validate);
-	m_debugCompleteGraphs = settings->getProperty< editor::PropertyBoolean >(L"ShaderPipeline.DebugCompleteGraphs", false);
-	m_debugPath = settings->getProperty< editor::PropertyString >(L"ShaderPipeline.DebugPath", L"");
+	m_optimize = settings->getProperty< PropertyInteger >(L"ShaderPipeline.Optimize", m_optimize);
+	m_validate = settings->getProperty< PropertyBoolean >(L"ShaderPipeline.Validate", m_validate);
+	m_debugCompleteGraphs = settings->getProperty< PropertyBoolean >(L"ShaderPipeline.DebugCompleteGraphs", false);
+	m_debugPath = settings->getProperty< PropertyString >(L"ShaderPipeline.DebugPath", L"");
 
 	log::debug << L"Using optimization level " << m_optimize << (m_validate ? L" with validation" : L" without validation") << Endl;
 	return true;

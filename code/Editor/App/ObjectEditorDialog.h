@@ -7,6 +7,7 @@ namespace traktor
 {
 
 class ISerializable;
+class Settings;
 
 	namespace db
 	{
@@ -18,7 +19,6 @@ class Instance;
 	namespace editor
 	{
 
-class Settings;
 class IObjectEditor;
 
 class ObjectEditorDialog : public ui::ConfigDialog

@@ -58,8 +58,7 @@ public:
 		render::IRenderSystem* renderSystem,
 		world::IEntityBuilder* entityBuilder,
 		world::IEntityManager* entityManager,
-		world::WorldRenderSettings::ShadowQuality shadowQuality,
-		int32_t shadowMapSizeDenom
+		world::WorldRenderSettings::ShadowQuality shadowQuality
 	) const;
 
 	void setWorldRenderSettings(world::WorldRenderSettings* worldRenderSettings);
