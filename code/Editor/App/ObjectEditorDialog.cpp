@@ -1,13 +1,15 @@
-#include "Editor/App/ObjectEditorDialog.h"
-#include "Editor/Settings.h"
+#include "Core/Io/StringOutputStream.h"
+#include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyInteger.h"
+#include "Core/Settings/Settings.h"
+#include "Database/Instance.h"
 #include "Editor/IObjectEditor.h"
+#include "Editor/App/ObjectEditorDialog.h"
+#include "I18N/Text.h"
 #include "Ui/MessageBox.h"
 #include "Ui/FloodLayout.h"
 #include "Ui/MethodHandler.h"
 #include "Ui/Events/CommandEvent.h"
-#include "I18N/Text.h"
-#include "Database/Instance.h"
-#include "Core/Io/StringOutputStream.h"
 
 namespace traktor
 {
@@ -27,16 +29,8 @@ bool ObjectEditorDialog::create(ui::Widget* parent, db::Instance* instance, ISer
 	int32_t width = 500, height = 400;
 
 	// Get instance's editor dimensions from settings.
-	Ref< PropertyGroup > dimensionsGroup = dynamic_type_cast< PropertyGroup* >(m_settings->getProperty(L"Editor.ObjectEditor.Dimensions"));
-	if (dimensionsGroup)
-	{
-		Ref< PropertyGroup > dimensionGroup = dynamic_type_cast< PropertyGroup* >(dimensionsGroup->getProperty(instance->getGuid().format()));
-		if (dimensionGroup)
-		{
-			width = dimensionGroup->getProperty< PropertyInteger >(L"Width");
-			height = dimensionGroup->getProperty< PropertyInteger >(L"Height");
-		}
-	}
+	width = m_settings->getProperty< PropertyInteger >(L"Editor.ObjectEditor.Dimensions/" + instance->getGuid().format() + L"/Width", 500);
+	height = m_settings->getProperty< PropertyInteger >(L"Editor.ObjectEditor.Dimensions/" + instance->getGuid().format() + L"/Height", 400);
 
 	StringOutputStream ss;
 	ss << L"Edit \"" << instance->getName() << L"\"";
@@ -70,24 +64,9 @@ void ObjectEditorDialog::destroy()
 	// Remember instance's editor dimensions in settings.
 	if (m_settings && m_instance)
 	{
-		Ref< PropertyGroup > dimensionsGroup = dynamic_type_cast< PropertyGroup* >(m_settings->getProperty(L"Editor.ObjectEditor.Dimensions"));
-		if (!dimensionsGroup)
-		{
-			dimensionsGroup = new PropertyGroup();
-			m_settings->setProperty(L"Editor.ObjectEditor.Dimensions", dimensionsGroup);
-		}
-
-		Ref< PropertyGroup > dimensionGroup = dynamic_type_cast< PropertyGroup* >(dimensionsGroup->getProperty(m_instance->getGuid().format()));
-		if (!dimensionGroup)
-		{
-			dimensionGroup = new PropertyGroup();
-			dimensionsGroup->setProperty(m_instance->getGuid().format(), dimensionGroup);
-		}
-
 		ui::Rect rc = getRect();
-
-		dimensionGroup->setProperty< PropertyInteger >(L"Width", rc.getWidth());
-		dimensionGroup->setProperty< PropertyInteger >(L"Height", rc.getHeight());
+		m_settings->setProperty< PropertyInteger >(L"Editor.ObjectEditor.Dimensions/" + m_instance->getGuid().format() + L"/Width", rc.getWidth());
+		m_settings->setProperty< PropertyInteger >(L"Editor.ObjectEditor.Dimensions/" + m_instance->getGuid().format() + L"/Height", rc.getHeight());
 	}
 
 	if (m_objectEditor)

@@ -1,7 +1,6 @@
 #include "Mesh/Editor/MeshAssetWizardTool.h"
 #include "Mesh/Editor/MeshAsset.h"
 #include "Editor/IEditor.h"
-#include "Editor/Settings.h"
 #include "Database/Group.h"
 #include "Database/Instance.h"
 #include "Ui/FileDialog.h"

@@ -1,7 +1,8 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Settings/PropertyString.h"
+#include "Core/Settings/Settings.h"
 #include "Editor/IEditor.h"
-#include "Editor/Settings.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Render/ISimpleTexture.h"
@@ -116,7 +117,7 @@ bool VideoEditorPage::setDataObject(db::Instance* instance, Object* data)
 
 	Ref< VideoAsset > asset = checked_type_cast< VideoAsset*, false >(data);
 
-	std::wstring assetPath = m_editor->getSettings()->getProperty< editor::PropertyString >(L"Pipeline.AssetPath", L"");
+	std::wstring assetPath = m_editor->getSettings()->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
 	Path fileName = FileSystem::getInstance().getAbsolutePath(assetPath, asset->getFileName());
 	Ref< IStream > stream = FileSystem::getInstance().open(fileName, File::FmRead);
 	if (!stream)

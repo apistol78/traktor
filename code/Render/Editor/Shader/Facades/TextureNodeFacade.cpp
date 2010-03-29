@@ -1,11 +1,12 @@
 #include "Core/Io/FileSystem.h"
+#include "Core/Settings/PropertyString.h"
+#include "Core/Settings/Settings.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
 #include "Drawing/Filters/ScaleFilter.h"
 #include "Editor/IEditor.h"
-#include "Editor/Settings.h"
 #include "Editor/TypeBrowseFilter.h"
 #include "I18N/Text.h"
 #include "Render/Shader/Nodes.h"
@@ -61,7 +62,7 @@ Ref< ui::custom::Node > TextureNodeFacade::createEditorNode(
 		Ref< TextureAsset > textureAsset = editor->getSourceDatabase()->getObjectReadOnly< TextureAsset >(textureGuid);
 		if (textureAsset)
 		{
-			std::wstring assetPath = editor->getSettings()->getProperty< editor::PropertyString >(L"Pipeline.AssetPath", L"");
+			std::wstring assetPath = editor->getSettings()->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
 			Path fileName = FileSystem::getInstance().getAbsolutePath(assetPath, textureAsset->getFileName());
 
 			Ref< drawing::Image > textureImage = drawing::Image::load(fileName);

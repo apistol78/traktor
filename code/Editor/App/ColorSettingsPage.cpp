@@ -1,5 +1,8 @@
+#include "Core/Settings/PropertyColor.h"
+#include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/Settings.h"
 #include "Editor/App/ColorSettingsPage.h"
-#include "Editor/Settings.h"
+#include "I18N/Text.h"
 #include "Ui/Container.h"
 #include "Ui/Event.h"
 #include "Ui/MethodHandler.h"
@@ -7,7 +10,6 @@
 #include "Ui/Custom/ColorPicker/ColorDialog.h"
 #include "Ui/Custom/PropertyList/PropertyList.h"
 #include "Ui/Custom/PropertyList/ColorPropertyItem.h"
-#include "I18N/Text.h"
 
 namespace traktor
 {

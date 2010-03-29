@@ -6,6 +6,11 @@
 #include "Core/Misc/CommandLine.h"
 #include "Core/Misc/String.h"
 #include "Core/Serialization/BinarySerializer.h"
+#include "Core/Settings/PropertyBoolean.h"
+#include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyString.h"
+#include "Core/Settings/PropertyStringArray.h"
+#include "Core/Settings/Settings.h"
 #include "Core/System/OS.h"
 #include "Database/Database.h"
 #include "Database/Group.h"
@@ -15,7 +20,6 @@
 #include "Database/Local/LocalDatabase.h"
 #include "Editor/Assets.h"
 #include "Editor/IPipeline.h"
-#include "Editor/Settings.h"
 #include "Editor/Pipeline/MemCachedPipelineCache.h"
 #include "Editor/Pipeline/PipelineBuilder.h"
 #include "Editor/Pipeline/PipelineDb.h"
@@ -48,34 +52,30 @@ Ref< db::Database > openDatabase(const std::wstring& connectionString, bool crea
 	return database;
 }
 
-Ref< editor::Settings > loadSettings(const std::wstring& settingsFile)
+Ref< Settings > loadSettings(const std::wstring& settingsFile)
 {
-	Ref< editor::PropertyGroup > globalGroup, userGroup;
-	Ref< traktor::IStream > file;
+	Ref< Settings > settings;
+	Ref< IStream > file;
 
 	std::wstring globalConfig = settingsFile + L".config";
-
-	if ((file = FileSystem::getInstance().open(globalConfig, File::FmRead)) != 0)
-	{
-		globalGroup = dynamic_type_cast< editor::PropertyGroup* >(xml::XmlDeserializer(file).readObject());
-		file->close();
-	}
-
-	if (!globalGroup)
-		return 0;
-
 	std::wstring userConfig = settingsFile + L"." + OS::getInstance().getCurrentUser() + L".config";
 
 	if ((file = FileSystem::getInstance().open(userConfig, File::FmRead)) != 0)
 	{
-		userGroup = dynamic_type_cast< editor::PropertyGroup* >(xml::XmlDeserializer(file).readObject());
+		settings = Settings::read< xml::XmlDeserializer >(file);
 		file->close();
 	}
 
-	if (!userGroup)
-		userGroup = new editor::PropertyGroup();
+	if (settings)
+		return settings;
 
-	return new editor::Settings(globalGroup, userGroup);
+	if ((file = FileSystem::getInstance().open(globalConfig, File::FmRead)) != 0)
+	{
+		settings = Settings::read< xml::XmlDeserializer >(file);
+		file->close();
+	}
+
+	return settings;
 }
 
 int main(int argc, const char** argv)
@@ -83,11 +83,11 @@ int main(int argc, const char** argv)
 	CommandLine cmdLine(argc, argv);
 
 #if defined(T_STATIC)
-	T_FORCE_LINK_REF(editor::PropertyBoolean);
-	T_FORCE_LINK_REF(editor::PropertyInteger);
+	T_FORCE_LINK_REF(PropertyBoolean);
+	T_FORCE_LINK_REF(PropertyInteger);
 	T_FORCE_LINK_REF(editor::PropertyFloat);
-	T_FORCE_LINK_REF(editor::PropertyString);
-	T_FORCE_LINK_REF(editor::PropertyStringArray);
+	T_FORCE_LINK_REF(PropertyString);
+	T_FORCE_LINK_REF(PropertyStringArray);
 	T_FORCE_LINK_REF(editor::PropertyGuidArray);
 	T_FORCE_LINK_REF(editor::PropertyType);
 	T_FORCE_LINK_REF(editor::PropertyTypeSet);
@@ -112,14 +112,14 @@ int main(int argc, const char** argv)
 	if (cmdLine.hasOption('s'))
 		settingsFile = cmdLine.getOption('s').getString();
 
-	Ref< editor::Settings > settings = loadSettings(settingsFile);
+	Ref< Settings > settings = loadSettings(settingsFile);
 	if (!settings)
 	{
 		traktor::log::error << L"Unable to load pipeline settings \"" << settingsFile << L"\"" << Endl;
 		return 0;
 	}
 
-	std::vector< std::wstring > modules = settings->getProperty< editor::PropertyStringArray >(L"Editor.Modules");
+	std::vector< std::wstring > modules = settings->getProperty< PropertyStringArray >(L"Editor.Modules");
 	for (std::vector< std::wstring >::const_iterator i = modules.begin(); i != modules.end(); ++i)
 	{
 		if (!Library().open(*i))
@@ -129,8 +129,8 @@ int main(int argc, const char** argv)
 		}
 	}
 
-	std::wstring sourceDatabaseCS = settings->getProperty< editor::PropertyString >(L"Editor.SourceDatabase");
-	std::wstring outputDatabaseCS = settings->getProperty< editor::PropertyString >(L"Editor.OutputDatabase");
+	std::wstring sourceDatabaseCS = settings->getProperty< PropertyString >(L"Editor.SourceDatabase");
+	std::wstring outputDatabaseCS = settings->getProperty< PropertyString >(L"Editor.OutputDatabase");
 	
 	Ref< db::Database > sourceDatabase = openDatabase(sourceDatabaseCS, false);
 	if (!sourceDatabase)
@@ -146,7 +146,7 @@ int main(int argc, const char** argv)
 		return 2;
 	}
 
-	std::wstring pipelineDbConnectionStr = settings->getProperty< editor::PropertyString >(L"Pipeline.Db");
+	std::wstring pipelineDbConnectionStr = settings->getProperty< PropertyString >(L"Pipeline.Db");
 
 	Ref< editor::PipelineDb > pipelineDb = new editor::PipelineDb();
 	if (!pipelineDb->open(pipelineDbConnectionStr))
@@ -157,7 +157,7 @@ int main(int argc, const char** argv)
 
 	// Create cache if enabled.
 	Ref< editor::IPipelineCache > pipelineCache;
-	if (settings->getProperty< editor::PropertyBoolean >(L"Pipeline.MemCached", false))
+	if (settings->getProperty< PropertyBoolean >(L"Pipeline.MemCached", false))
 	{
 		pipelineCache = new editor::MemCachedPipelineCache();
 		if (!pipelineCache->create(settings))

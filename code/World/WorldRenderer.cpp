@@ -126,6 +126,20 @@ bool WorldRenderer::create(
 		desc.multiSample = 0;
 		desc.depthStencil = true;
 		desc.targets[0].format = render::TfR32F;
+
+		switch (m_settings.shadowsQuality)
+		{
+		case WorldRenderSettings::SqLow:
+			desc.width /= 4;
+			desc.height /= 4;
+			break;
+
+		case WorldRenderSettings::SqMedium:
+			desc.width /= 2;
+			desc.height /= 2;
+			break;
+		}
+
 		m_shadowTargetSet = renderSystem->createRenderTargetSet(desc);
 
 		// Create shadow mask target.

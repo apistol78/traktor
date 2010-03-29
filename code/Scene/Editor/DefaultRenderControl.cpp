@@ -1,6 +1,8 @@
 #include "Core/Misc/String.h"
+#include "Core/Settings/PropertyBoolean.h"
+#include "Core/Settings/PropertyInteger.h"
+#include "Core/Settings/Settings.h"
 #include "Editor/IEditor.h"
-#include "Editor/Settings.h"
 #include "I18N/Text.h"
 #include "Scene/Editor/DebugRenderControl.h"
 #include "Scene/Editor/DefaultRenderControl.h"
@@ -36,11 +38,11 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 
 	m_index = index;
 
-	Ref< editor::Settings > settings = context->getEditor()->getSettings();
+	Ref< Settings > settings = context->getEditor()->getSettings();
 	T_ASSERT (settings);
 
-	int32_t viewType = settings->getProperty< editor::PropertyInteger >(L"SceneEditor.View" + toString(index), 0);
-	bool postProcessEnable = settings->getProperty< editor::PropertyBoolean >(L"Scene.Editor.PostProcessEnable" + toString(index), true);
+	int32_t viewType = settings->getProperty< PropertyInteger >(L"SceneEditor.View" + toString(index), 0);
+	bool postProcessEnable = settings->getProperty< PropertyBoolean >(L"Scene.Editor.PostProcessEnable" + toString(index), true);
 
 	m_container = new ui::Container();
 	if (!m_container->create(parent, ui::WsClientBorder, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
@@ -236,10 +238,10 @@ void DefaultRenderControl::createRenderControl(int32_t type)
 	else
 		m_renderControl->handleCommand(ui::Command(L"Scene.Editor.DisablePostProcess"));
 
-	Ref< editor::Settings > settings = m_context->getEditor()->getSettings();
+	Ref< Settings > settings = m_context->getEditor()->getSettings();
 	T_ASSERT (settings);
 
-	settings->setProperty< editor::PropertyInteger >(L"SceneEditor.View" + toString(m_index), type);
+	settings->setProperty< PropertyInteger >(L"SceneEditor.View" + toString(m_index), type);
 }
 
 void DefaultRenderControl::eventToolClick(ui::Event* event)
@@ -267,18 +269,18 @@ void DefaultRenderControl::eventToolClick(ui::Event* event)
 	}
 	else if (cmdEvent->getCommand() == L"Scene.Editor.TogglePostProcess")
 	{
-		Ref< editor::Settings > settings = m_context->getEditor()->getSettings();
+		Ref< Settings > settings = m_context->getEditor()->getSettings();
 		T_ASSERT (settings);
 
 		if (m_toolTogglePostProcess->isToggled())
 		{
 			m_renderControl->handleCommand(ui::Command(L"Scene.Editor.EnablePostProcess"));
-			settings->setProperty< editor::PropertyBoolean >(L"SceneEditor.PostProcessEnable" + toString(m_index), true);
+			settings->setProperty< PropertyBoolean >(L"SceneEditor.PostProcessEnable" + toString(m_index), true);
 		}
 		else
 		{
 			m_renderControl->handleCommand(ui::Command(L"Scene.Editor.DisablePostProcess"));
-			settings->setProperty< editor::PropertyBoolean >(L"SceneEditor.PostProcessEnable" + toString(m_index), false);
+			settings->setProperty< PropertyBoolean >(L"SceneEditor.PostProcessEnable" + toString(m_index), false);
 		}
 	}
 }

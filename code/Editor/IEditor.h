@@ -12,6 +12,7 @@ namespace traktor
 class Guid;
 class ISerializable;
 class Object;
+class Settings;
 class TypeInfo;
 
 	namespace db
@@ -28,7 +29,6 @@ class Instance;
 class IEditorPage;
 class IBrowseFilter;
 class PipelineDependency;
-class Settings;
 
 /*! \brief Editor base interface.
  * \ingroup Editor

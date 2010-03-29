@@ -1,12 +1,12 @@
+#include "Core/Settings/Settings.h"
 #include "Editor/App/SettingsDialog.h"
-#include "Editor/Settings.h"
 #include "Editor/ISettingsPage.h"
+#include "I18N/Text.h"
 #include "Ui/FloodLayout.h"
 #include "Ui/Tab.h"
 #include "Ui/TabPage.h"
 #include "Ui/MethodHandler.h"
 #include "Ui/Events/CommandEvent.h"
-#include "I18N/Text.h"
 
 namespace traktor
 {

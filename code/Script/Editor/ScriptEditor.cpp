@@ -2,7 +2,6 @@
 #include "Script/IScriptManager.h"
 #include "Script/Script.h"
 #include "Editor/IEditor.h"
-#include "Editor/Settings.h"
 #include "Editor/TypeBrowseFilter.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
@@ -22,6 +21,8 @@
 #include "I18N/Text.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Settings/PropertyString.h"
+#include "Core/Settings/Settings.h"
 
 // Resources
 #include "Resources/PlusMinus.h"
@@ -88,7 +89,7 @@ bool ScriptEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 
 	// Create language specific implementations.
 	{
-		std::wstring syntaxLanguageTypeName = m_editor->getSettings()->getProperty< editor::PropertyString >(L"Editor.SyntaxLanguageType");
+		std::wstring syntaxLanguageTypeName = m_editor->getSettings()->getProperty< PropertyString >(L"Editor.SyntaxLanguageType");
 		const TypeInfo* syntaxLanguageType = TypeInfo::find(syntaxLanguageTypeName);
 		if (syntaxLanguageType)
 		{
@@ -97,7 +98,7 @@ bool ScriptEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 			m_edit->setLanguage(syntaxLanguage);
 		}
 
-		std::wstring scriptManagerTypeName = m_editor->getSettings()->getProperty< editor::PropertyString >(L"Editor.ScriptManagerType");
+		std::wstring scriptManagerTypeName = m_editor->getSettings()->getProperty< PropertyString >(L"Editor.ScriptManagerType");
 		const TypeInfo* scriptManagerType = TypeInfo::find(scriptManagerTypeName);
 		if (scriptManagerType)
 		{

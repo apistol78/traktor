@@ -14,6 +14,7 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
+#include "Core/Settings/PropertyString.h"
 
 namespace traktor
 {
@@ -63,7 +64,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.HeightfieldPipeline", 1, Height
 
 bool HeightfieldPipeline::create(const editor::IPipelineSettings* settings)
 {
-	m_assetPath = settings->getProperty< editor::PropertyString >(L"Pipeline.AssetPath", L"");
+	m_assetPath = settings->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
 	return true;
 }
 

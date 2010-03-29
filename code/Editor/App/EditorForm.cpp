@@ -8,6 +8,12 @@
 #include "Core/Serialization/BinarySerializer.h"
 #include "Core/Serialization/DeepHash.h"
 #include "Core/Serialization/DeepClone.h"
+#include "Core/Settings/PropertyBoolean.h"
+#include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyInteger.h"
+#include "Core/Settings/PropertyString.h"
+#include "Core/Settings/PropertyStringArray.h"
+#include "Core/Settings/Settings.h"
 #include "Core/System/IProcess.h"
 #include "Core/System/OS.h"
 #include "Core/Thread/ThreadManager.h"
@@ -19,7 +25,6 @@
 #include "Database/Traverse.h"
 #include "Editor/Asset.h"
 #include "Editor/Assets.h"
-#include "Editor/Settings.h"
 #include "Editor/IEditorPage.h"
 #include "Editor/IEditorPageFactory.h"
 #include "Editor/IEditorPlugin.h"
@@ -28,6 +33,7 @@
 #include "Editor/IObjectEditor.h"
 #include "Editor/IObjectEditorFactory.h"
 #include "Editor/IPipeline.h"
+#include "Editor/PropertyKey.h"
 #include "Editor/App/EditorForm.h"
 #include "Editor/App/EditorPageSite.h"
 #include "Editor/App/EditorPluginSite.h"
@@ -177,8 +183,8 @@ bool EditorForm::create(const CommandLine& cmdLine)
 #endif
 
 	// Open databases.
-	std::wstring sourceDatabase = m_settings->getProperty< editor::PropertyString >(L"Editor.SourceDatabase");
-	std::wstring outputDatabase = m_settings->getProperty< editor::PropertyString >(L"Editor.OutputDatabase");
+	std::wstring sourceDatabase = m_settings->getProperty< PropertyString >(L"Editor.SourceDatabase");
+	std::wstring outputDatabase = m_settings->getProperty< PropertyString >(L"Editor.OutputDatabase");
 
 	m_sourceDatabase = openDatabase(sourceDatabase, false);
 	m_outputDatabase = openDatabase(outputDatabase, true);
@@ -634,10 +640,10 @@ bool EditorForm::openEditor(db::Instance* instance)
 		Ref< PropertyGroup > iconsGroup = m_settings->getProperty< PropertyGroup >(L"Editor.Icons");
 		T_ASSERT (iconsGroup);
 
-		const std::map< std::wstring, Ref< PropertyValue > >& icons = iconsGroup->getValues();
+		const std::map< std::wstring, Ref< IPropertyValue > >& icons = iconsGroup->getValues();
 
 		int iconIndex = 2;
-		for (std::map< std::wstring, Ref< PropertyValue > >::const_iterator i = icons.begin(); i != icons.end(); ++i)
+		for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = icons.begin(); i != icons.end(); ++i)
 		{
 			const TypeInfo* iconType = TypeInfo::find(i->first);
 			if (iconType && is_type_of(*iconType, type_of(object)))
@@ -1328,32 +1334,28 @@ void EditorForm::activateNextEditor()
 
 Ref< Settings > EditorForm::loadSettings(const std::wstring& settingsFile)
 {
-	Ref< PropertyGroup > globalGroup, userGroup;
+	Ref< Settings > settings;
 	Ref< IStream > file;
 
 	std::wstring globalConfig = settingsFile + L".config";
-
-	if ((file = FileSystem::getInstance().open(globalConfig, File::FmRead)) != 0)
-	{
-		globalGroup = dynamic_type_cast< PropertyGroup* >(xml::XmlDeserializer(file).readObject());
-		file->close();
-	}
-
-	if (!globalGroup)
-		globalGroup = new PropertyGroup();
-
 	std::wstring userConfig = settingsFile + L"." + OS::getInstance().getCurrentUser() + L".config";
 
 	if ((file = FileSystem::getInstance().open(userConfig, File::FmRead)) != 0)
 	{
-		userGroup = dynamic_type_cast< PropertyGroup* >(xml::XmlDeserializer(file).readObject());
+		settings = Settings::read< xml::XmlDeserializer >(file);
 		file->close();
 	}
 
-	if (!userGroup)
-		userGroup = new PropertyGroup();
+	if (settings)
+		return settings;
 
-	return new Settings(globalGroup, userGroup);
+	if ((file = FileSystem::getInstance().open(globalConfig, File::FmRead)) != 0)
+	{
+		settings = Settings::read< xml::XmlDeserializer >(file);
+		file->close();
+	}
+
+	return settings;
 }
 
 void EditorForm::saveSettings(const std::wstring& settingsFile)
@@ -1363,7 +1365,7 @@ void EditorForm::saveSettings(const std::wstring& settingsFile)
 	Ref< IStream > file = FileSystem::getInstance().open(userConfig, File::FmWrite);
 	if (file)
 	{
-		xml::XmlSerializer(file).writeObject(m_settings->getUserGroup());
+		m_settings->write< xml::XmlSerializer >(file);
 		file->close();
 	}
 	else

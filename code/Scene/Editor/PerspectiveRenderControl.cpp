@@ -3,8 +3,10 @@
 #include "Core/Math/Vector2.h"
 #include "Core/Math/Format.h"
 #include "Core/Misc/EnterLeave.h"
+#include "Core/Settings/PropertyColor.h"
+#include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/Settings.h"
 #include "Editor/IEditor.h"
-#include "Editor/Settings.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Render/RenderTargetSet.h"
@@ -271,10 +273,10 @@ void PerspectiveRenderControl::update()
 
 void PerspectiveRenderControl::updateSettings()
 {
-	Ref< editor::PropertyGroup > colors = m_context->getEditor()->getSettings()->getProperty< editor::PropertyGroup >(L"Editor.Colors");
-	m_colorClear = colors->getProperty< editor::PropertyColor >(L"Background");
-	m_colorGrid = colors->getProperty< editor::PropertyColor >(L"Grid");
-	m_colorRef = colors->getProperty< editor::PropertyColor >(L"ReferenceEdge");
+	Ref< PropertyGroup > colors = m_context->getEditor()->getSettings()->getProperty< PropertyGroup >(L"Editor.Colors");
+	m_colorClear = colors->getProperty< PropertyColor >(L"Background");
+	m_colorGrid = colors->getProperty< PropertyColor >(L"Grid");
+	m_colorRef = colors->getProperty< PropertyColor >(L"ReferenceEdge");
 }
 
 void PerspectiveRenderControl::updateWorldRenderView()

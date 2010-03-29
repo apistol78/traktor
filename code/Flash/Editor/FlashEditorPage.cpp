@@ -1,8 +1,9 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/MemoryStream.h"
+#include "Core/Settings/PropertyString.h"
+#include "Core/Settings/Settings.h"
 #include "Database/Instance.h"
 #include "Editor/IEditor.h"
-#include "Editor/Settings.h"
 #include "Flash/FlashMovie.h"
 #include "Flash/FlashMovieFactory.h"
 #include "Flash/SwfReader.h"
@@ -96,7 +97,7 @@ bool FlashEditorPage::setDataObject(db::Instance* instance, Object* data)
 
 	Ref< FlashMovieAsset > asset = checked_type_cast< FlashMovieAsset* >(data);
 
-	std::wstring assetPath = m_editor->getSettings()->getProperty< editor::PropertyString >(L"Pipeline.AssetPath", L"");
+	std::wstring assetPath = m_editor->getSettings()->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
 	Path fileName = FileSystem::getInstance().getAbsolutePath(assetPath, asset->getFileName());
 	Ref< IStream > stream = FileSystem::getInstance().open(fileName, File::FmRead);
 	if (!stream)

@@ -5,6 +5,9 @@
 
 namespace traktor
 {
+
+class Settings;
+
 	namespace ui
 	{
 
@@ -32,7 +35,6 @@ class Instance;
 	namespace editor
 	{
 
-class Settings;
 class IBrowseFilter;
 
 class BrowseInstanceDialog : public ui::ConfigDialog

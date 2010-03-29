@@ -5,6 +5,9 @@
 
 namespace traktor
 {
+
+class Settings;
+
 	namespace ui
 	{
 
@@ -22,8 +25,6 @@ class MiniButton;
 
 	namespace editor
 	{
-
-class Settings;
 
 class NewInstanceDialog : public ui::ConfigDialog
 {

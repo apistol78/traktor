@@ -9,6 +9,7 @@
 #include "Database/Instance.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Log/Log.h"
+#include "Core/Settings/PropertyBoolean.h"
 
 namespace traktor
 {
@@ -28,11 +29,11 @@ ScenePipeline::ScenePipeline()
 
 bool ScenePipeline::create(const editor::IPipelineSettings* settings)
 {
-	m_suppressDepthPass = settings->getProperty< editor::PropertyBoolean >(L"ScenePipeline.SuppressDepthPass");
-	m_suppressVelocity = settings->getProperty< editor::PropertyBoolean >(L"ScenePipeline.SuppressVelocityPass");
-	m_suppressShadows = settings->getProperty< editor::PropertyBoolean >(L"ScenePipeline.SuppressShadows");
-	m_suppressPostProcess = settings->getProperty< editor::PropertyBoolean >(L"ScenePipeline.SuppressPostProcess");
-	m_shadowMapSizeDenom = settings->getProperty< editor::PropertyBoolean >(L"ScenePipeline.ShadowMapSizeDenom");
+	m_suppressDepthPass = settings->getProperty< PropertyBoolean >(L"ScenePipeline.SuppressDepthPass");
+	m_suppressVelocity = settings->getProperty< PropertyBoolean >(L"ScenePipeline.SuppressVelocityPass");
+	m_suppressShadows = settings->getProperty< PropertyBoolean >(L"ScenePipeline.SuppressShadows");
+	m_suppressPostProcess = settings->getProperty< PropertyBoolean >(L"ScenePipeline.SuppressPostProcess");
+	m_shadowMapSizeDenom = settings->getProperty< PropertyBoolean >(L"ScenePipeline.ShadowMapSizeDenom");
 	return true;
 }
 

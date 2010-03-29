@@ -28,8 +28,7 @@ Ref< Scene > SceneResource::createScene(
 	render::IRenderSystem* renderSystem,
 	world::IEntityBuilder* entityBuilder,
 	world::IEntityManager* entityManager,
-	world::WorldRenderSettings::ShadowQuality shadowQuality,
-	int32_t shadowMapSizeDenom
+	world::WorldRenderSettings::ShadowQuality shadowQuality
 ) const
 {
 	if (!m_postProcessSettings.getGuid().isNull())
@@ -56,7 +55,6 @@ Ref< Scene > SceneResource::createScene(
 
 	Ref< world::WorldRenderSettings > worldRenderSettings = new world::WorldRenderSettings(*m_worldRenderSettings);
 	worldRenderSettings->shadowsQuality = min(m_worldRenderSettings->shadowsQuality, shadowQuality);
-	worldRenderSettings->shadowMapResolution /= max(shadowMapSizeDenom, 1);
 
 	return new Scene(
 		controller,

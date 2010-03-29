@@ -49,7 +49,6 @@ class Database;
 class DatabaseView;
 class PropertiesView;
 class LogView;
-class Settings;
 class IEditorPageFactory;
 class IEditorPage;
 class IObjectEditorFactory;

@@ -5,8 +5,9 @@
 #include "Animation/SkeletonUtils.h"
 #include "Animation/Bone.h"
 #include "Animation/IPoseController.h"
+#include "Core/Settings/PropertyColor.h"
+#include "Core/Settings/Settings.h"
 #include "Editor/IEditor.h"
-#include "Editor/Settings.h"
 #include "Render/PrimitiveRenderer.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/SceneEditorContext.h"
@@ -108,8 +109,7 @@ void AnimatedMeshEntityEditor::drawGuide(
 
 void AnimatedMeshEntityEditor::updateSettings(scene::SceneEditorContext* context)
 {
-	Ref< editor::PropertyGroup > colors = context->getEditor()->getSettings()->getProperty< editor::PropertyGroup >(L"Editor.Colors");
-	m_colorBone = colors->getProperty< editor::PropertyColor >(L"BoneWire");
+	m_colorBone = context->getEditor()->getSettings()->getProperty< PropertyColor >(L"Editor.Colors/BoneWire");
 }
 
 	}
