@@ -26,6 +26,16 @@ SceneFactory::SceneFactory(
 {
 }
 
+void SceneFactory::setShadowQuality(world::WorldRenderSettings::ShadowQuality shadowQuality)
+{
+	m_shadowQuality = shadowQuality;
+}
+
+void SceneFactory::setShadowMapSizeDenom(int32_t shadowMapSizeDenom)
+{
+	m_shadowMapSizeDenom = shadowMapSizeDenom;
+}
+
 const TypeInfoSet SceneFactory::getResourceTypes() const
 {
 	TypeInfoSet typeSet;

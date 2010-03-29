@@ -82,18 +82,13 @@ void RenderViewWin32::close()
 
 bool RenderViewWin32::reset(const DisplayMode& displayMode)
 {
-	m_d3dPresent.BackBufferWidth = displayMode.width;
-	m_d3dPresent.BackBufferHeight = displayMode.height;
+	D3DPRESENT_PARAMETERS d3dPresent = m_d3dPresent;
 
-	if (!m_renderSystem->resetPrimary(m_d3dPresent))
+	d3dPresent.BackBufferWidth = displayMode.width;
+	d3dPresent.BackBufferHeight = displayMode.height;
+
+	if (!m_renderSystem->resetPrimary(d3dPresent))
 		return false;
-
-	m_d3dViewport.X = 0;
-	m_d3dViewport.Y = 0;
-	m_d3dViewport.Width = m_d3dPresent.BackBufferWidth;
-	m_d3dViewport.Height = m_d3dPresent.BackBufferHeight;
-	m_d3dViewport.MinZ = 0.0f;
-	m_d3dViewport.MaxZ = 1.0f;
 
 	return true;
 }
@@ -472,6 +467,12 @@ HRESULT RenderViewWin32::resetDevice(IDirect3DDevice9* d3dDevice)
 void RenderViewWin32::setD3DPresent(const D3DPRESENT_PARAMETERS& d3dPresent)
 {
 	m_d3dPresent = d3dPresent;
+	m_d3dViewport.X = 0;
+	m_d3dViewport.Y = 0;
+	m_d3dViewport.Width = m_d3dPresent.BackBufferWidth;
+	m_d3dViewport.Height = m_d3dPresent.BackBufferHeight;
+	m_d3dViewport.MinZ = 0.0f;
+	m_d3dViewport.MaxZ = 1.0f;
 }
 
 void RenderViewWin32::bindTargets()

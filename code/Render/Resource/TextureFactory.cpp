@@ -38,6 +38,11 @@ TextureFactory::TextureFactory(db::Database* db, IRenderSystem* renderSystem, in
 {
 }
 
+void TextureFactory::setSkipMips(int32_t skipMips)
+{
+	m_skipMips = skipMips;
+}
+
 const TypeInfoSet TextureFactory::getResourceTypes() const
 {
 	TypeInfoSet typeSet;
