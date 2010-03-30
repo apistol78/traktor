@@ -226,6 +226,11 @@ void RenderViewPs3::close()
 	}
 }
 
+bool RenderViewPs3::reset(const DisplayMode& displayMode)
+{
+	return false;
+}
+
 void RenderViewPs3::resize(int width, int height)
 {
 }
