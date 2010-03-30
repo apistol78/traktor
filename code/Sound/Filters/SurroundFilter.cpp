@@ -137,16 +137,16 @@ void SurroundFilter::applyStereo(const ISoundMixer* mixer, IFilterInstance* inst
 	float maxDistance = m_environment->getMaxDistance();
 	float innerRadius = m_environment->getInnerRadius();
 
-	float distanceAtten = clamp(1.0f - speakerDistance / maxDistance, 0.0f, 1.0f);
-	float innerAtten = clamp(speakerDistance / innerRadius, 0.0f, 1.0f);
+	float innerAtten = 1.0f - clamp(speakerDistance / innerRadius, 0.f, 1.0f);
+	float distanceAtten = 1.0f - clamp(speakerDistance / maxDistance, 0.0f, 1.0f);
 
-	const float c_angleCone = deg2rad(180.0f);
+	const float c_angleCone = deg2rad(225.0f);
 
 	for (uint32_t i = 0; i < sizeof_array(c_speakersStereo); ++i)
 	{
 		float angleOffset = angleDifference(c_speakersStereo[i].angle, speakerAngle);
 		float angleAtten = clamp(1.0f - angleOffset / c_angleCone, 0.0f, 1.0f);
-		float attenuation = angleAtten * distanceAtten * (1.0f - c_speakersStereo[i].inner * innerAtten);
+		float attenuation = innerAtten + (angleAtten * distanceAtten) * (1.0f - innerAtten);
 		mixer->mulConst(outBlock.samples[c_speakersStereo[i].channel], outBlock.samplesCount, attenuation);
 	}
 }
