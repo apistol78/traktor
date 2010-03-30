@@ -1145,33 +1145,41 @@ void ActionVM1::execute(ActionFrame* frame) const
 
 		VM_BEGIN(AopNewMethod)
 			std::wstring classConstructorName = stack.pop().getStringSafe();
-			Ref< ActionObject > classConstructorObject = stack.pop().getObject();
-			Ref< ActionFunction > classConstructor;
-
-			if (classConstructorName.empty())
-				classConstructor = dynamic_type_cast< ActionFunction* >(classConstructorObject);
-			else
+			Ref< ActionObject > classConstructorObject = stack.pop().getObjectSafe();
+			if (classConstructorObject)
 			{
-				ActionValue methodValue;
-				classConstructorObject->getMember(classConstructorName, methodValue);
-				classConstructor = methodValue.getObject< ActionFunction >();
-			}
+				Ref< ActionFunction > classConstructor;
 
-			if (classConstructor)
-			{
-				// Create instance of class.
-				Ref< ActionObject > self = new ActionObject(classConstructor);
-
-				// Call constructor.
-				ActionValue object = classConstructor->call(this, frame, self);
-				if (object.isObject())
-					stack.push(object);
+				if (classConstructorName.empty())
+					classConstructor = dynamic_type_cast< ActionFunction* >(classConstructorObject);
 				else
-					stack.push(ActionValue(self.ptr()));
+				{
+					ActionValue methodValue;
+					classConstructorObject->getMember(classConstructorName, methodValue);
+					classConstructor = methodValue.getObject< ActionFunction >();
+				}
+
+				if (classConstructor)
+				{
+					// Create instance of class.
+					Ref< ActionObject > self = new ActionObject(classConstructor);
+
+					// Call constructor.
+					ActionValue object = classConstructor->call(this, frame, self);
+					if (object.isObject())
+						stack.push(object);
+					else
+						stack.push(ActionValue(self.ptr()));
+				}
+				else
+				{
+					VM_LOG(L"Not a class object");
+					stack.push(ActionValue());
+				}
 			}
 			else
 			{
-				VM_LOG(L"Not a class object");
+				VM_LOG(L"No such class");
 				stack.push(ActionValue());
 			}
 		VM_END()
