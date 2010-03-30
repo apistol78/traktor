@@ -82,22 +82,6 @@ int main(int argc, const char** argv)
 {
 	CommandLine cmdLine(argc, argv);
 
-#if defined(T_STATIC)
-	T_FORCE_LINK_REF(PropertyBoolean);
-	T_FORCE_LINK_REF(PropertyInteger);
-	T_FORCE_LINK_REF(editor::PropertyFloat);
-	T_FORCE_LINK_REF(PropertyString);
-	T_FORCE_LINK_REF(PropertyStringArray);
-	T_FORCE_LINK_REF(editor::PropertyGuidArray);
-	T_FORCE_LINK_REF(editor::PropertyType);
-	T_FORCE_LINK_REF(editor::PropertyTypeSet);
-	T_FORCE_LINK_REF(editor::PropertyVector4);
-	T_FORCE_LINK_REF(editor::PropertyQuaternion);
-	T_FORCE_LINK_REF(editor::PropertyKey);
-	T_FORCE_LINK_REF(editor::PropertyGroup);
-	T_FORCE_LINK_REF(editor::PropertySerializable);
-#endif
-
 	if (cmdLine.hasOption('h'))
 	{
 		traktor::log::info << L"Usage: Traktor.Pipeline.App (-options) \"{Asset guid}\"" << Endl;
