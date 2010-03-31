@@ -1,7 +1,8 @@
 #include "Script/Js/ScriptContextJs.h"
 #include "Script/IScriptClass.h"
-#include "Core/Misc/TString.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/Split.h"
+#include "Core/Misc/TString.h"
 
 namespace traktor
 {
@@ -9,6 +10,12 @@ namespace traktor
 	{
 		namespace
 		{
+
+struct ConstructorData
+{
+	Ref< ScriptContextJs > scriptContext;
+	Ref< IScriptClass > scriptClass;
+};
 
 struct FunctionData
 {
@@ -46,9 +53,23 @@ bool ScriptContextJs::create(const RefArray< IScriptClass >& registeredClasses)
 		T_ASSERT (scriptClass);
 
 		const TypeInfo& exportType = scriptClass->getExportType();
+		std::vector< std::wstring > exportPath;
+		Split< std::wstring >::any(exportType.getName(), L".", exportPath);
 
-		v8::Local< v8::FunctionTemplate > functionTemplate = v8::FunctionTemplate::New();
+		// Create function template for class.
+		ConstructorData* constructorData = new ConstructorData();
+		constructorData->scriptContext = this;
+		constructorData->scriptClass = scriptClass;
 
+		v8::Local< v8::FunctionTemplate > classTemplate = v8::FunctionTemplate::New(
+			&ScriptContextJs::invokeConstructor,
+			v8::External::New(constructorData)
+		);
+		classTemplate->SetClassName(createString(
+			exportPath.back()
+		));
+
+		// Create function for each script method.
 		for (uint32_t j = 0; j < scriptClass->getMethodCount(); ++j)
 		{
 			FunctionData* functionData = new FunctionData();
@@ -61,42 +82,55 @@ bool ScriptContextJs::create(const RefArray< IScriptClass >& registeredClasses)
 				v8::External::New(functionData)
 			);
 
-			functionTemplate->PrototypeTemplate()->Set(
+			classTemplate->PrototypeTemplate()->Set(
 				createString(scriptClass->getMethodName(j)),
 				methodTemplate
 			);
 		}
 
+		// Setup inheritance.
 		const TypeInfo* superType = scriptClass->getExportType().getSuper();
 		T_ASSERT (superType);
-
-		v8::Local< v8::Object > globalObject = m_context->Global();
 
 		for (std::vector< RegisteredClass >::const_iterator j = m_classRegistry.begin(); j != m_classRegistry.end(); ++j)
 		{
 			if (superType == &j->scriptClass->getExportType())
 			{
-				functionTemplate->Inherit(j->functionTemplate);
+				classTemplate->Inherit(j->functionTemplate);
 				break;
 			}
 		}
 
 		// Ensure we have an internal field available for C++ object pointer.
-		v8::Local< v8::ObjectTemplate > objectTemplate = functionTemplate->InstanceTemplate();
+		v8::Local< v8::ObjectTemplate > objectTemplate = classTemplate->InstanceTemplate();
 		objectTemplate->SetInternalFieldCount(1);
 
-		v8::Local< v8::Function > function = functionTemplate->GetFunction();
+		// Export class function.
+		v8::Local< v8::Object > classNsObject = m_context->Global();
+		for (std::vector< std::wstring >::const_iterator j = exportPath.begin(); j != exportPath.end() - 1; ++j)
+		{
+			v8::Handle< v8::String > exportPathName = createString(*j);
 
-		globalObject->Set(
-			createString(exportType.getName()),
-			function->NewInstance()
+			v8::Local< v8::Value > exportPathObject = classNsObject->Get(exportPathName);
+			if (exportPathObject->IsUndefined())
+			{
+				v8::Local< v8::Object > childNsObject = v8::Object::New();
+				classNsObject->Set(exportPathName, childNsObject);
+				classNsObject = childNsObject;
+			}
+			else
+				classNsObject = exportPathObject->ToObject();
+		}
+		classNsObject->Set(
+			createString(exportPath.back()),
+			classTemplate->GetFunction()
 		);
 
 		RegisteredClass registeredClass =
 		{ 
 			scriptClass,
-			v8::Persistent< v8::FunctionTemplate >::New(functionTemplate),
-			v8::Persistent< v8::Function >::New(function)
+			v8::Persistent< v8::FunctionTemplate >::New(classTemplate),
+			v8::Persistent< v8::Function >::New(classTemplate->GetFunction())
 		};
 		m_classRegistry.push_back(registeredClass);
 	}
@@ -191,7 +225,7 @@ Any ScriptContextJs::executeFunction(const std::wstring& functionName, uint32_t 
 	v8::Local< v8::Value > result = function->Call(
 		m_context->Global(),
 		av.size(),
-		&av[0]
+		av.size() > 0 ? &av[0] : 0
 	);
 
 	if (result.IsEmpty())
@@ -240,6 +274,35 @@ Any ScriptContextJs::executeMethod(Object* self, const std::wstring& methodName,
 	}
 
 	return fromValue(result);
+}
+
+v8::Handle< v8::Value > ScriptContextJs::invokeConstructor(const v8::Arguments& arguments)
+{
+	v8::Local< v8::External > constructorDataX = v8::Local< v8::External >::Cast(arguments.Data());
+	ConstructorData* constructorData = static_cast< ConstructorData* >(constructorDataX->Value());
+
+	v8::Local< v8::External > objectRefExternal;
+	if (arguments[0]->IsExternal())
+	{
+		objectRefExternal = v8::Local< v8::External >::Cast(arguments[0]);
+	}
+	else
+	{
+		if (!constructorData->scriptClass->haveConstructor())
+			return v8::Undefined();
+
+		Any argv[16];
+		for (int i = 0; i < arguments.Length(); ++i)
+			argv[i] = constructorData->scriptContext->fromValue(arguments[i]);
+
+		Ref< Object > object = constructorData->scriptClass->construct(arguments.Length(), argv);
+		Ref< Object >* objectRef = new Ref< Object >(object);
+
+		objectRefExternal = v8::External::New(objectRef);
+	}
+
+	arguments.This()->SetInternalField(0, objectRefExternal);
+	return arguments.This();
 }
 
 v8::Handle< v8::Value > ScriptContextJs::invokeMethod(const v8::Arguments& arguments)
@@ -293,10 +356,12 @@ v8::Handle< v8::Object > ScriptContextJs::createObject(Object* object) const
 			{
 				Ref< Object >* objectRef = new Ref< Object >(object);
 
-				v8::Persistent< v8::Object > instanceHandle(i->function->NewInstance());
-				instanceHandle.MakeWeak(objectRef, &ScriptContextJs::weakHandleCallback);
-				instanceHandle->SetInternalField(0, v8::External::New(objectRef));
+				v8::Local< v8::External > objectRefExternal = v8::External::New(objectRef);
 
+				v8::Handle< v8::Value > args(objectRefExternal);
+				v8::Persistent< v8::Object > instanceHandle(i->function->NewInstance(1, &args));
+
+				instanceHandle.MakeWeak(objectRef, &ScriptContextJs::weakHandleCallback);
 				return instanceHandle;
 			}
 		}

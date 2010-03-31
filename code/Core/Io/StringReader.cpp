@@ -27,7 +27,7 @@ int StringReader::readLine(std::wstring& out)
 			int result = m_stream->read(&m_buffer[m_count], sizeof(m_buffer) - m_count);
 			if (result > 0)
 				m_count += result;
-			else if (out.empty())
+			else if (m_count <= 0 && out.empty())
 				return -1;
 		}
 		
