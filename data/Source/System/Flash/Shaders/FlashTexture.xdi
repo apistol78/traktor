@@ -4,8 +4,8 @@
 		<item type="traktor.render.VertexInput">
 			<comment/>
 			<position>
-				<first>-100</first>
-				<second>181</second>
+				<first>-108</first>
+				<second>159</second>
 			</position>
 			<name>Position</name>
 			<usage>DuPosition</usage>
@@ -63,8 +63,8 @@
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
 			<magFilter>FtLinear</magFilter>
-			<addressU>AdWrap</addressU>
-			<addressV>AdWrap</addressV>
+			<addressU>AdClamp</addressU>
+			<addressV>AdClamp</addressV>
 			<addressW>AdClamp</addressW>
 		</item>
 		<item type="traktor.render.Mul">
@@ -77,16 +77,16 @@
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>85</first>
-				<second>181</second>
+				<first>77</first>
+				<second>159</second>
 			</position>
 			<swizzle>xy10</swizzle>
 		</item>
 		<item type="traktor.render.Uniform">
 			<comment/>
 			<position>
-				<first>-5</first>
-				<second>217</second>
+				<first>-13</first>
+				<second>195</second>
 			</position>
 			<parameterName>TextureMatrix</parameterName>
 			<type>PtMatrix</type>
@@ -94,8 +94,8 @@
 		<item type="traktor.render.Transform">
 			<comment/>
 			<position>
-				<first>196</first>
-				<second>173</second>
+				<first>188</first>
+				<second>151</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="1">
@@ -144,8 +144,8 @@
 		<item type="traktor.render.Uniform">
 			<comment/>
 			<position>
-				<first>212</first>
-				<second>117</second>
+				<first>215</first>
+				<second>87</second>
 			</position>
 			<parameterName>Texture</parameterName>
 			<type>PtTexture</type>
@@ -170,16 +170,6 @@
 			<destination>
 				<node ref="/object/nodes/item[7]"/>
 				<name>Transform</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[7]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[3]"/>
-				<name>TexCoord</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -270,6 +260,16 @@
 			<destination>
 				<node ref="/object/nodes/item[3]"/>
 				<name>Texture</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[7]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<name>TexCoord</name>
 			</destination>
 		</item>
 	</edges>
