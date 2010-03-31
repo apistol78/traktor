@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.scene.SceneAsset">	
+<object type="traktor.scene.SceneAsset" version="3">	
 	<worldRenderSettings type="traktor.world.WorldRenderSettings">
 		<viewNearZ>0.1</viewNearZ>
 		<viewFarZ>1000</viewFarZ>
@@ -11,29 +11,21 @@
 		<shadowMapResolution>1024</shadowMapResolution>
 		<shadowMapBias>1</shadowMapBias>
 	</worldRenderSettings>
-	<instance type="traktor.world.EntityInstance" version="2">
-		<guid>{538BED2C-BAAD-D148-9265-E5A8FB8E45B4}</guid>
+	<postProcessSettings/>
+	<entityData type="traktor.world.GroupEntityData">
 		<name>Root</name>
-		<entityData type="traktor.world.GroupEntityData">
-			<instances>
-				<item type="traktor.world.EntityInstance" version="2">
-					<guid>{A2DB5130-384C-DC42-8DB6-30354B8F2938}</guid>
-					<name>Light</name>
-					<entityData type="traktor.world.DirectionalLightEntityData">
-						<transform>
-							<translation>0, 7.8, 0, 0</translation>
-							<rotation>-0.357926, 0.283994, 0.115246, 0.882017</rotation>
-						</transform>
-						<sunColor>1, 1, 1, 0</sunColor>
-						<baseColor>0.5, 0.5, 0.5, 0</baseColor>
-						<shadowColor>0.25, 0.25, 0.25, 0</shadowColor>
-					</entityData>
-					<instanceData/>
-					<references/>
-				</item>
-			</instances>
+		<entityData>
+			<item type="traktor.world.DirectionalLightEntityData">
+				<name>Light</name>
+				<transform>
+					<translation>0, 7.8, 0, 0</translation>
+					<rotation>-0.357926, 0.283994, 0.115246, 0.882017</rotation>
+				</transform>
+				<sunColor>1, 1, 1, 0</sunColor>
+				<baseColor>0.5, 0.5, 0.5, 0</baseColor>
+				<shadowColor>0.25, 0.25, 0.25, 0</shadowColor>
+			</item>
 		</entityData>
-		<instanceData/>
-		<references/>
-	</instance>
+	</entityData>
+	<controllerData/>
 </object>

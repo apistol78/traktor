@@ -1,35 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.world.SpatialGroupEntityData">	
+	<name>Unnamed</name>
 	<transform>
 		<translation>-0.014245, 0, 0, 0</translation>
 		<rotation>0, 0, 0, 1</rotation>
 	</transform>
-	<instances>
-		<item type="traktor.world.EntityInstance" version="2">
-			<guid>{13BC98EF-467C-AB45-B94D-5363C9C942FE}</guid>
+	<entityData>
+		<item type="traktor.mesh.MeshEntityData">
 			<name>Unnamed</name>
-			<entityData type="traktor.mesh.MeshEntityData">
-				<transform>
-					<translation>0.170934, -0.17094, -0.02849, 0</translation>
-					<rotation>0, 0, 0, 1</rotation>
-				</transform>
-				<mesh>{CDC1E470-7F50-0A47-A47C-8C9534092368}</mesh>
-			</entityData>
-			<instanceData/>
-			<references/>
+			<transform>
+				<translation>0.170934, -0.17094, -0.02849, 0</translation>
+				<rotation>0, 0, 0, 1</rotation>
+			</transform>
+			<mesh>{CDC1E470-7F50-0A47-A47C-8C9534092368}</mesh>
 		</item>
-		<item type="traktor.world.EntityInstance" version="2">
-			<guid>{338864E7-282C-2C49-B326-04F001D45D84}</guid>
+		<item type="traktor.mesh.MeshEntityData">
 			<name>Unnamed</name>
-			<entityData type="traktor.mesh.MeshEntityData">
-				<transform>
-					<translation>-1.07236, 1.19658, 0.014245, 0</translation>
-					<rotation>0, 0, 0, 1</rotation>
-				</transform>
-				<mesh>{CDC1E470-7F50-0A47-A47C-8C9534092368}</mesh>
-			</entityData>
-			<instanceData/>
-			<references/>
+			<transform>
+				<translation>-1.07236, 1.19658, 0.014245, 0</translation>
+				<rotation>0, 0, 0, 1</rotation>
+			</transform>
+			<mesh>{CDC1E470-7F50-0A47-A47C-8C9534092368}</mesh>
 		</item>
-	</instances>
+	</entityData>
 </object>
