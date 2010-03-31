@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.scene.SceneAsset" version="2">	
+<object type="traktor.scene.SceneAsset" version="3">	
 	<worldRenderSettings type="traktor.world.WorldRenderSettings" version="5">
 		<viewNearZ>0.1</viewNearZ>
 		<viewFarZ>20</viewFarZ>
@@ -14,62 +14,42 @@
 		<shadowMapBias>0.001</shadowMapBias>
 	</worldRenderSettings>
 	<postProcessSettings>{04C6D46A-74B8-A445-A906-4B0AC92A1A75}</postProcessSettings>
-	<instance type="traktor.world.EntityInstance" version="2">
-		<guid>{9DBAA302-EBD7-2043-ABCA-E789EDF0B9B6}</guid>
+	<entityData type="traktor.world.GroupEntityData">
 		<name>Root</name>
-		<entityData type="traktor.world.GroupEntityData">
-			<instances>
-				<item type="traktor.world.EntityInstance" version="2">
-					<guid>{A9DD3FE9-5E3D-A94E-B5DB-7B635EAF058F}</guid>
-					<name>Light</name>
-					<entityData type="traktor.world.DirectionalLightEntityData">
-						<transform>
-							<translation>0.545021, 1.806589, -7.078728, 0</translation>
-							<rotation>-0.003087, -0.917948, 0.327454, 0.224112</rotation>
-						</transform>
-						<sunColor>1, 1, 1, 0</sunColor>
-						<baseColor>0.5, 0.5, 0.5, 0</baseColor>
-						<shadowColor>0, 0, 0, 0</shadowColor>
-					</entityData>
-					<instanceData/>
-					<references/>
-				</item>
-				<item type="traktor.world.EntityInstance" version="2">
-					<guid>{2CEC991D-6C9A-C04C-A7C9-BD3907E81753}</guid>
-					<name>Mesh</name>
-					<entityData type="traktor.mesh.MeshEntityData">
-						<transform>
-							<translation>3.972665, 2.515692, -2.127127, 0</translation>
-							<rotation>0.197951, 0.954484, -0.208607, 0.079106</rotation>
-						</transform>
-						<mesh>{CDC1E470-7F50-0A47-A47C-8C9534092368}</mesh>
-					</entityData>
-					<instanceData/>
-					<references/>
-				</item>
-				<item type="traktor.world.EntityInstance" version="2">
-					<guid>{B14900E2-4D3A-B540-8C99-44D4216B11DE}</guid>
-					<name>Camera null</name>
-					<entityData type="traktor.world.NullEntityData">
-						<transform>
-							<translation>-5.486855, 1.087531, -6.823842, 0</translation>
-							<rotation>0.120463, 0.267591, -0.043221, 0.954995</rotation>
-						</transform>
-					</entityData>
-					<instanceData/>
-					<references/>
-				</item>
-			</instances>
+		<entityData>
+			<item type="traktor.world.DirectionalLightEntityData">
+				<name>Light</name>
+				<transform>
+					<translation>0.545021, 1.806589, -7.078728, 0</translation>
+					<rotation>-0.003087, -0.917948, 0.327454, 0.224112</rotation>
+				</transform>
+				<sunColor>1, 1, 1, 0</sunColor>
+				<baseColor>0.5, 0.5, 0.5, 0</baseColor>
+				<shadowColor>0, 0, 0, 0</shadowColor>
+			</item>
+			<item type="traktor.mesh.MeshEntityData">
+				<name>Mesh</name>
+				<transform>
+					<translation>3.972665, 2.515692, -2.127127, 0</translation>
+					<rotation>0.197951, 0.954484, -0.208607, 0.079106</rotation>
+				</transform>
+				<mesh>{CDC1E470-7F50-0A47-A47C-8C9534092368}</mesh>
+			</item>
+			<item type="traktor.world.NullEntityData">
+				<name>Camera null</name>
+				<transform>
+					<translation>-5.486855, 1.087531, -6.823842, 0</translation>
+					<rotation>0.120463, 0.267591, -0.043221, 0.954995</rotation>
+				</transform>
+			</item>
 		</entityData>
-		<instanceData/>
-		<references/>
-	</instance>
+	</entityData>
 	<controllerData type="traktor.theater.TheaterControllerData" version="1">
 		<duration>20</duration>
 		<loop>true</loop>
 		<trackData>
 			<item type="traktor.theater.TrackData">
-				<instance ref="/object/instance/entityData/instances/item[1]"/>
+				<entityData ref="/object/entityData/entityData/item[1]"/>
 				<path>
 					<keys>
 						<item>
@@ -164,7 +144,7 @@
 				</path>
 			</item>
 			<item type="traktor.theater.TrackData">
-				<instance ref="/object/instance/entityData/instances/item[2]"/>
+				<entityData ref="/object/entityData/entityData/item[2]"/>
 				<path>
 					<keys>
 						<item>

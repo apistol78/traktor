@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.scene.SceneAsset" version="2">	
+<object type="traktor.scene.SceneAsset" version="3">	
 	<worldRenderSettings type="traktor.world.WorldRenderSettings" version="3">
 		<viewNearZ>1</viewNearZ>
 		<viewFarZ>500</viewFarZ>
@@ -12,47 +12,32 @@
 		<shadowMapBias>0.01</shadowMapBias>
 	</worldRenderSettings>
 	<postProcessSettings>{00000000-0000-0000-0000-000000000000}</postProcessSettings>
-	<instance type="traktor.world.EntityInstance" version="2">
-		<guid>{F62183B0-85A2-BC43-B392-B3088976DF37}</guid>
+	<entityData type="traktor.world.GroupEntityData">
 		<name>Root</name>
-		<entityData type="traktor.world.GroupEntityData">
-			<instances>
-				<item type="traktor.world.EntityInstance" version="2">
-					<guid>{7B89D826-033D-A049-877C-BAB12232ED69}</guid>
-					<name>Light</name>
-					<entityData type="traktor.world.DirectionalLightEntityData">
-						<transform>
-							<translation>-5.01567, 2.08424, -6.07079, 0</translation>
-							<rotation>-0.324312, -0.103966, -0.0452493, -0.93913</rotation>
-						</transform>
-						<sunColor>1, 1, 1, 0</sunColor>
-						<baseColor>0.5, 0.7, 0.5, 0</baseColor>
-						<shadowColor>0.1, 0.1, 0.1, 0</shadowColor>
-					</entityData>
-					<instanceData/>
-					<references/>
-				</item>
-				<item type="traktor.world.EntityInstance" version="2">
-					<guid>{71D31D43-353F-0940-9511-E6AF142EC8B9}</guid>
-					<name>Avatar</name>
-					<entityData type="traktor.animation.AnimatedMeshEntityData">
-						<transform>
-							<translation>0, 0, 0, 0</translation>
-							<rotation>0, 0, 0, 1</rotation>
-						</transform>
-						<mesh>{0ADEEC97-BDCD-C34B-98C0-9CD0BEB95158}</mesh>
-						<skeleton>{FA421F3A-CDC1-0748-9A7B-5720FE6B91C2}</skeleton>
-						<poseController type="traktor.animation.StatePoseControllerData">
-							<stateGraph>{B6D28FB3-6C33-6F43-9BC0-4BB16AF0B646}</stateGraph>
-						</poseController>
-					</entityData>
-					<instanceData/>
-					<references/>
-				</item>
-			</instances>
+		<entityData>
+			<item type="traktor.world.DirectionalLightEntityData">
+				<name>Light</name>
+				<transform>
+					<translation>-5.01567, 2.08424, -6.07079, 0</translation>
+					<rotation>-0.324312, -0.103966, -0.0452493, -0.93913</rotation>
+				</transform>
+				<sunColor>1, 1, 1, 0</sunColor>
+				<baseColor>0.5, 0.7, 0.5, 0</baseColor>
+				<shadowColor>0.1, 0.1, 0.1, 0</shadowColor>
+			</item>
+			<item type="traktor.animation.AnimatedMeshEntityData">
+				<name>Avatar</name>
+				<transform>
+					<translation>0, 0, 0, 0</translation>
+					<rotation>0, 0, 0, 1</rotation>
+				</transform>
+				<mesh>{0ADEEC97-BDCD-C34B-98C0-9CD0BEB95158}</mesh>
+				<skeleton>{FA421F3A-CDC1-0748-9A7B-5720FE6B91C2}</skeleton>
+				<poseController type="traktor.animation.StatePoseControllerData">
+					<stateGraph>{B6D28FB3-6C33-6F43-9BC0-4BB16AF0B646}</stateGraph>
+				</poseController>
+			</item>
 		</entityData>
-		<instanceData/>
-		<references/>
-	</instance>
+	</entityData>
 	<controllerData/>
 </object>
