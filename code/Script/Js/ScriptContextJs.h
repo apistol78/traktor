@@ -68,7 +68,7 @@ private:
 
 	v8::Handle< v8::String > createString(const std::wstring& s) const;
 
-	v8::Handle< v8::Object > createObject(Object* object) const;
+	v8::Handle< v8::Value > createObject(Object* object) const;
 
 	v8::Handle< v8::Value > toValue(const Any& value) const;
 

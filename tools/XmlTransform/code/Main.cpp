@@ -20,14 +20,29 @@ void recursiveFindFiles(const Path& currentPath, std::set< Path >& outFiles)
 		if ((*i)->isReadOnly())
 			continue;
 
-		Path filePath = (*i)->getPath();
-		if (filePath.getFileName() == L"." || filePath.getFileName() == L"..")
-			continue;
-
 		if (!(*i)->isDirectory())
+		{
+			Path filePath = (*i)->getPath();
 			outFiles.insert(filePath);
-		else
-			recursiveFindFiles(filePath, outFiles);
+		}
+	}
+
+	RefArray< File > directoryFiles;
+	FileSystem::getInstance().find(std::wstring(currentPath.getPathOnly()) + L"/*", directoryFiles);
+
+	for (RefArray< File >::iterator i = directoryFiles.begin(); i != directoryFiles.end(); ++i)
+	{
+		if ((*i)->isDirectory())
+		{
+			Path filePath = (*i)->getPath();
+			if (filePath.getFileName() == L"." || filePath.getFileName() == L"..")
+				continue;
+
+			Path searchPath = std::wstring(filePath.getPathName()) + L"/" + std::wstring(currentPath.getFileName());
+			log::info << searchPath.getPathName() << Endl;
+
+			recursiveFindFiles(searchPath, outFiles);
+		}
 	}
 }
 

@@ -24,6 +24,23 @@ struct FunctionData
 	uint32_t methodId;
 };
 
+// The callback that is invoked by v8 whenever the JavaScript 'print'
+// function is called.  Prints its arguments on stdout separated by
+// spaces and ending with a newline.
+v8::Handle< v8::Value > printCallback(const v8::Arguments& args)
+{
+	for (int i = 0; i < args.Length(); i++)
+	{
+		v8::HandleScope handleScope;
+		if (i > 0)
+			log::info << L" ";
+		v8::String::Utf8Value str(args[i]);
+		log::info << mbstows(*str);
+	}
+	log::info << Endl;
+	return v8::Undefined();
+}
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptContextJs", ScriptContextJs, IScriptContext)
@@ -39,12 +56,17 @@ ScriptContextJs::~ScriptContextJs()
 
 bool ScriptContextJs::create(const RefArray< IScriptClass >& registeredClasses)
 {
-	m_context = v8::Context::New();
+	v8::HandleScope handleScope;
+
+	// Register common functions.
+	v8::Local< v8::ObjectTemplate > globalObjectTemplate = v8::ObjectTemplate::New();
+	globalObjectTemplate->Set(v8::String::New("print"), v8::FunctionTemplate::New(printCallback));
+
+	m_context = v8::Context::New(0, globalObjectTemplate);
 	if (m_context.IsEmpty())
 		return false;
 
 	v8::Context::Scope contextScope(m_context);
-	v8::HandleScope handleScope;
 
 	// Setup all registered classes.
 	for (RefArray< IScriptClass >::const_iterator i = registeredClasses.begin(); i != registeredClasses.end(); ++i)
@@ -257,10 +279,10 @@ Any ScriptContextJs::executeMethod(Object* self, const std::wstring& methodName,
 	for (uint32_t i = 0; i < argc; ++i)
 		av[i] = v8::Local< v8::Value >::New(toValue(argv[i]));
 
-	v8::Local< v8::Object > recv = v8::Local< v8::Object >::New(createObject(self));
+	v8::Handle< v8::Value > recv = createObject(self);
 
 	v8::Local< v8::Value > result = function->Call(
-		recv,
+		recv->ToObject(),
 		av.size(),
 		&av[0]
 	);
@@ -345,14 +367,14 @@ v8::Handle< v8::String > ScriptContextJs::createString(const std::wstring& s) co
 	return v8::String::New((const uint16_t*)s.c_str());
 }
 
-v8::Handle< v8::Object > ScriptContextJs::createObject(Object* object) const
+v8::Handle< v8::Value > ScriptContextJs::createObject(Object* object) const
 {
 	if (object)
 	{
-		const TypeInfo& objectType = type_of(object);
+		const TypeInfo* objectType = &type_of(object);
 		for (std::vector< RegisteredClass >::const_iterator i = m_classRegistry.begin(); i != m_classRegistry.end(); ++i)
 		{
-			if (is_type_of(i->scriptClass->getExportType(), objectType))
+			if (&i->scriptClass->getExportType() == objectType)
 			{
 				Ref< Object >* objectRef = new Ref< Object >(object);
 
@@ -366,7 +388,7 @@ v8::Handle< v8::Object > ScriptContextJs::createObject(Object* object) const
 			}
 		}
 	}
-	return v8::Object::New();
+	return v8::Null();
 }
 
 v8::Handle< v8::Value > ScriptContextJs::toValue(const Any& value) const
@@ -386,7 +408,7 @@ v8::Handle< v8::Value > ScriptContextJs::toValue(const Any& value) const
 		return createString(value.getString());
 	if (value.isObject())
 		return createObject(value.getObject());	
-
+	
 	return v8::Undefined();
 }
 
@@ -400,13 +422,24 @@ Any ScriptContextJs::fromValue(v8::Handle< v8::Value > value) const
 		return Any(false);
 	if (value->IsString())
 	{
-		v8::String::AsciiValue str(value);
+		v8::String::Utf8Value str(value);
 		return Any(mbstows(*str));
 	}
 	if (value->IsInt32())
 		return Any(int32_t(value->ToInt32()->Value()));
 	if (value->IsNumber())
 		return Any(float(value->ToNumber()->Value()));
+	if (value->IsObject())
+	{
+		v8::Local< v8::Object > objectWrapper = value->ToObject();
+		v8::Local< v8::External > objectExternal = v8::Local< v8::External >::Cast(objectWrapper->GetInternalField(0));
+		if (objectExternal->IsExternal())
+		{
+			Ref< Object >* objectRef = static_cast< Ref< Object >* >(objectExternal->Value());
+			Ref< Object > object = *objectRef;
+			return Any(object);
+		}
+	}
 	
 	return Any();
 }

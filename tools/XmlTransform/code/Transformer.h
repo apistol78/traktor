@@ -38,7 +38,7 @@ private:
 	traktor::Ref< traktor::script::IScriptManager > m_scriptManager;
 	std::wstring m_script;
 
-	int32_t transform(traktor::script::IScriptContext* context, traktor::xml::Element* element);
+	int32_t transform(traktor::script::IScriptContext* context, traktor::xml::Element* current, const std::wstring& entry);
 };
 
 #endif	// Transformer_H

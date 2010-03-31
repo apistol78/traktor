@@ -1,11 +1,13 @@
 #include <Core/Io/StringOutputStream.h>
 #include <Core/Log/Log.h>
+#include <Core/Misc/String.h>
 #include <Script/AutoScriptClass.h>
 #include <Script/IScriptContext.h>
 #include <Script/Js/ScriptManagerJs.h>
 #include <Xml/Attribute.h>
 #include <Xml/Document.h>
 #include <Xml/Element.h>
+#include <Xml/Text.h>
 #include "Transformer.h"
 
 using namespace traktor;
@@ -63,6 +65,10 @@ bool Transformer::create(const std::wstring& script)
 	xmlElementClass->addMethod(L"getChildElementByName", &xml::Element::getChildElementByName);
 	m_scriptManager->registerClass(xmlElementClass);
 
+	Ref< script::AutoScriptClass< xml::Text > > xmlTextClass = new script::AutoScriptClass< xml::Text >();
+	xmlTextClass->addConstructor< const std::wstring& >();
+	m_scriptManager->registerClass(xmlTextClass);
+
 	m_script = script;
 	return true;
 }
@@ -82,36 +88,46 @@ int32_t Transformer::transform(xml::Document* document)
 		return false;
 	}
 
-	if (!context->haveFunction(L"transform"))
+	int32_t changes = 0;
+	for (int32_t pass = 0; ; ++pass)
 	{
-		log::error << L"No \"transform\" function defined; unable to transform document" << Endl;
-		return false;
+		std::wstring entry = L"transform" + toString(pass);
+
+		if (!context->haveFunction(entry))
+			break;
+
+		changes += transform(context, document->getDocumentElement(), entry);
 	}
 
-	return transform(context, document->getDocumentElement());
+	return changes;
 }
 
-int32_t Transformer::transform(script::IScriptContext* context, xml::Element* element)
+int32_t Transformer::transform(script::IScriptContext* context, xml::Element* current, const std::wstring& entry)
 {
 	int32_t changes = 0;
 
 	StringOutputStream ss1, ss2;
-	element->write(ss1);
+	current->write(ss1);
 
-	script::Any arg(element);
-	context->executeFunction(L"transform", 1, &arg);
+	script::Any arg[1];
+	arg[0] = script::Any(current);
+	context->executeFunction(entry, 1, arg);
 
-	element->write(ss2);
+	current->write(ss2);
 
 	if (ss1.str() != ss2.str())
 		changes++;
 
-	for (Ref< xml::Node > child = element->getFirstChild(); child; child = child->getNextSibling())
+	RefArray< xml::Element > childElements;
+	for (Ref< xml::Node > child = current->getFirstChild(); child; child = child->getNextSibling())
 	{
 		xml::Element* childElement = dynamic_type_cast< xml::Element* >(child);
 		if (childElement)
-			changes += transform(context, childElement);
+			childElements.push_back(childElement);
 	}
+
+	for (RefArray< xml::Element >::iterator i = childElements.begin(); i != childElements.end(); ++i)
+		changes += transform(context, *i, entry);
 
 	return changes;
 }
