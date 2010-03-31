@@ -60,6 +60,8 @@ private:
 	v8::Persistent< v8::Context > m_context;
 	std::vector< RegisteredClass > m_classRegistry;
 
+	static v8::Handle< v8::Value > invokeConstructor(const v8::Arguments& arguments);
+
 	static v8::Handle< v8::Value > invokeMethod(const v8::Arguments& arguments);
 
 	static void weakHandleCallback(v8::Persistent< v8::Value > object, void* parameter);
