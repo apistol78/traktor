@@ -27,6 +27,14 @@ namespace traktor
 class T_DLLCLASS EntityData : public ISerializable
 {
 	T_RTTI_CLASS;
+
+public:
+	const std::wstring& getName() const;
+
+	virtual bool serialize(ISerializer& s);
+
+private:
+	std::wstring m_name;
 };
 
 	}

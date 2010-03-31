@@ -5,9 +5,9 @@
 
 #undef T_DLLCLASS
 #if defined(T_PHYSICS_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -41,9 +41,7 @@ public:
 
 	virtual Ref< world::Entity > createEntity(
 		world::IEntityBuilder* builder,
-		const std::wstring& name,
-		const world::EntityData& entityData,
-		const Object* instanceData
+		const world::EntityData& entityData
 	) const;
 
 private:

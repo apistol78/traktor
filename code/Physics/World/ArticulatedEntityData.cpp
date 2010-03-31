@@ -1,15 +1,15 @@
-#include "Physics/World/ArticulatedEntityData.h"
-#include "Physics/World/ArticulatedEntity.h"
-#include "Physics/World/RigidEntity.h"
-#include "Physics/PhysicsManager.h"
-#include "Physics/JointDesc.h"
-#include "World/Entity/IEntityBuilder.h"
-#include "World/Entity/EntityInstance.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberRef.h"
 #include "Core/Serialization/MemberRefArray.h"
 #include "Core/Serialization/MemberStl.h"
+#include "Physics/JointDesc.h"
+#include "Physics/PhysicsManager.h"
+#include "Physics/World/ArticulatedEntityData.h"
+#include "Physics/World/ArticulatedEntity.h"
+#include "Physics/World/RigidEntity.h"
+#include "Physics/World/RigidEntityData.h"
+#include "World/Entity/IEntityBuilder.h"
 
 namespace traktor
 {
@@ -26,10 +26,10 @@ Ref< ArticulatedEntity > ArticulatedEntityData::createEntity(
 	RefArray< RigidEntity > entities;
 	RefArray< Joint > joints;
 
-	entities.resize(m_instances.size());
-	for (uint32_t i = 0; i < uint32_t(m_instances.size()); ++i)
+	entities.resize(m_entityData.size());
+	for (uint32_t i = 0; i < uint32_t(m_entityData.size()); ++i)
 	{
-		Ref< RigidEntity > entity = dynamic_type_cast< RigidEntity* >(builder->build(m_instances[i]));
+		Ref< RigidEntity > entity = dynamic_type_cast< RigidEntity* >(builder->create(m_entityData[i]));
 		if (!entity)
 			return 0;
 
@@ -77,14 +77,10 @@ Ref< ArticulatedEntity > ArticulatedEntityData::createEntity(
 void ArticulatedEntityData::setTransform(const Transform& transform)
 {
 	Transform deltaTransform = getTransform().inverse() * transform;
-	for (RefArray< world::EntityInstance >::iterator i = m_instances.begin(); i != m_instances.end(); ++i)
+	for (RefArray< RigidEntityData >::iterator i = m_entityData.begin(); i != m_entityData.end(); ++i)
 	{
-		world::SpatialEntityData* entityData = dynamic_type_cast< world::SpatialEntityData* >((*i)->getEntityData());
-		if (entityData)
-		{
-			Transform currentTransform = entityData->getTransform();
-			entityData->setTransform(currentTransform * deltaTransform);
-		}
+		Transform currentTransform = (*i)->getTransform();
+		(*i)->setTransform(currentTransform * deltaTransform);
 	}
 	SpatialEntityData::setTransform(transform);
 }
@@ -94,7 +90,7 @@ bool ArticulatedEntityData::serialize(ISerializer& s)
 	if (!world::SpatialEntityData::serialize(s))
 		return false;
 
-	s >> MemberRefArray< world::EntityInstance >(L"instances", m_instances);
+	s >> MemberRefArray< RigidEntityData >(L"entityData", m_entityData);
 	s >> MemberStlVector< Constraint, MemberComposite< Constraint > >(L"constraints", m_constraints);
 
 	return true;

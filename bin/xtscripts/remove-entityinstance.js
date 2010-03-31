@@ -1,5 +1,4 @@
 
-
 var g_instancePaths = new Array();
 var g_collapseCount = 0;
 
@@ -38,6 +37,7 @@ function transform1(current)
 			child.removeChild(instanceName);
 			child.removeChild(instanceEntityData);
 			
+			instanceEntityData.setName(child.getName());
 			instanceEntityData.insertBefore(instanceName, 0);
 			
 			current.insertBefore(instanceEntityData, child);
@@ -68,26 +68,72 @@ function transform1(current)
 	
 	if (
 		type == "traktor.scene.SceneAsset" ||
-		type == "traktor.theater.TrackData"
+		type == "traktor.theater.TrackData" ||
+		type == "traktor.animation.PathEntityData" ||
+		type == "traktor.physics.RigidEntityData"
 	)
 	{
 		var instance = current.getChildElementByName("instance");
-		if (instance == null)
-			return;
-		
-		instance.setName("entityData");
+		if (instance != null)
+			instance.setName("entityData");
 	}
 	
 	if (
 		type == "traktor.world.GroupEntityData" ||
-		type == "traktor.mesh.CompositeMeshEntityData"
+		type == "traktor.world.SpatialGroupEntityData" ||
+		type == "traktor.mesh.CompositeMeshEntityData" ||
+		type == "traktor.physics.ArticulatedEntityData" ||
+		type == "game.LayerEntityData"
 	)
 	{
 		var instances = current.getChildElementByName("instances");
-		if (instances == null)
-			return;
-		
-		instances.setName("entityData");
+		if (instances != null)
+			instances.setName("entityData");
 	}
 	
+	// Ensure entity data have a name.
+	
+	if (
+		type == "traktor.world.ExternalSpatialEntityData" ||
+		type == "traktor.world.ExternalEntityData" ||
+		type == "traktor.animation.AnimatedMeshEntityData" ||
+		type == "traktor.animation.PathEntityData" ||
+		type == "traktor.world.GroupEntityData" ||
+		type == "traktor.world.SpatialGroupEntityData" ||
+		type == "traktor.mesh.MeshEntityData" ||
+		type == "traktor.mesh.CompositeMeshEntityData" ||
+		type == "traktor.physics.ArticulatedEntityData" ||
+		type == "traktor.physics.RigidEntityData" ||
+		type == "game.CubeEntityData" ||
+		type == "game.SwfMeshEntityData" ||
+		type == "game.ClothEntityData" ||
+		type == "game.PlayerEntityData" ||
+		type == "game.LevelEntityData" ||
+		type == "game.PickupEntityData"
+	)
+	{
+		if (current.getChildElementByName("name") == null)
+		{
+			var name = new traktor.xml.Element("name");
+			name.addChild(new traktor.xml.Text("Unnamed"));
+			current.insertBefore(name, 0);
+		}
+	}
+	
+	// Update scene asset versions.
+	
+	if (
+		type == "traktor.scene.SceneAsset"
+	)
+	{
+		current.setAttribute("version", "3");
+		
+		var worldRenderSettings = current.getChildElementByName("worldRenderSettings");
+		
+		if (current.getChildElementByName("postProcessSettings") == null)
+			current.insertAfter(new traktor.xml.Element("postProcessSettings"), worldRenderSettings);
+			
+		if (current.getChildElementByName("controllerData") == null)
+			current.addChild(new traktor.xml.Element("controllerData"));
+	}
 }

@@ -7,9 +7,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_WORLD_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -27,22 +27,22 @@ class T_DLLCLASS SpatialGroupEntityData : public SpatialEntityData
 	T_RTTI_CLASS;
 
 public:
-	void addInstance(EntityInstance* instance);
+	void addEntityData(SpatialEntityData* entityData);
 
-	void removeInstance(EntityInstance* instance);
+	void removeEntityData(SpatialEntityData* entityData);
 
-	void removeAllInstances();
+	void removeAllEntityData();
 
-	RefArray< EntityInstance >& getInstances();
+	RefArray< SpatialEntityData >& getEntityData();
 
-	const RefArray< EntityInstance >& getInstances() const;
+	const RefArray< SpatialEntityData >& getEntityData() const;
 
 	virtual void setTransform(const Transform& transform);
 	
 	virtual bool serialize(ISerializer& s);
 	
 private:
-	RefArray< EntityInstance > m_instances;
+	RefArray< SpatialEntityData > m_entityData;
 };
 	
 	}

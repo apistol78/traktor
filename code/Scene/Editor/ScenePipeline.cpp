@@ -1,15 +1,15 @@
+#include "Core/Log/Log.h"
+#include "Core/Serialization/DeepClone.h"
+#include "Core/Settings/PropertyBoolean.h"
+#include "Database/Instance.h"
+#include "Editor/IPipelineBuilder.h"
+#include "Editor/IPipelineDepends.h"
+#include "Editor/IPipelineSettings.h"
 #include "Scene/SceneResource.h"
 #include "Scene/Editor/ScenePipeline.h"
 #include "Scene/Editor/SceneAsset.h"
 #include "World/WorldRenderSettings.h"
-#include "World/Entity/EntityInstance.h"
-#include "Editor/IPipelineDepends.h"
-#include "Editor/IPipelineBuilder.h"
-#include "Editor/IPipelineSettings.h"
-#include "Database/Instance.h"
-#include "Core/Serialization/DeepClone.h"
-#include "Core/Log/Log.h"
-#include "Core/Settings/PropertyBoolean.h"
+#include "World/Entity/EntityData.h"
 
 namespace traktor
 {
@@ -57,7 +57,7 @@ bool ScenePipeline::buildDependencies(
 {
 	Ref< const SceneAsset > sceneAsset = checked_type_cast< const SceneAsset* >(sourceAsset);
 	pipelineDepends->addDependency(sceneAsset->getPostProcessSettings().getGuid(), editor::PdfBuild);
-	pipelineDepends->addDependency(sceneAsset->getInstance());
+	pipelineDepends->addDependency(sceneAsset->getEntityData());
 	return true;
 }
 
@@ -76,7 +76,7 @@ bool ScenePipeline::buildOutput(
 
 	sceneResource->setWorldRenderSettings(sceneAsset->getWorldRenderSettings());
 	sceneResource->setPostProcessSettings(sceneAsset->getPostProcessSettings());
-	sceneResource->setInstance(sceneAsset->getInstance());
+	sceneResource->setEntityData(sceneAsset->getEntityData());
 	sceneResource->setControllerData(sceneAsset->getControllerData());
 
 	if (m_suppressDepthPass && sceneResource->getWorldRenderSettings()->depthPassEnabled)

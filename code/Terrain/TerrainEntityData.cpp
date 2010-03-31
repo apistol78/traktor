@@ -1,12 +1,12 @@
-#include "Terrain/TerrainEntityData.h"
-#include "Terrain/Heightfield.h"
-#include "Terrain/HeightfieldResource.h"
-#include "Terrain/TerrainSurface.h"
-#include "Render/Shader.h"
-#include "Render/Shader/ShaderGraph.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRef.h"
+#include "Render/Shader.h"
+#include "Render/Shader/ShaderGraph.h"
 #include "Resource/Member.h"
+#include "Terrain/Heightfield.h"
+#include "Terrain/HeightfieldResource.h"
+#include "Terrain/TerrainEntityData.h"
+#include "Terrain/TerrainSurface.h"
 
 namespace traktor
 {
@@ -23,11 +23,15 @@ TerrainEntityData::TerrainEntityData()
 
 bool TerrainEntityData::serialize(ISerializer& s)
 {
+	if (!world::EntityData::serialize(s))
+		return false;
+
 	s >> resource::Member< Heightfield, HeightfieldResource >(L"heightfield", m_heightfield);
 	s >> resource::Member< render::Shader, render::ShaderGraph >(L"shader", m_shader);
 	s >> MemberRef< TerrainSurface >(L"surface", m_surface);
 	s >> Member< float >(L"patchLodDistance", m_patchLodDistance);
 	s >> Member< float >(L"surfaceLodDistance", m_surfaceLodDistance);
+
 	return true;
 }
 

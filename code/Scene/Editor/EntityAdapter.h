@@ -10,9 +10,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_SCENE_EDITOR_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -20,9 +20,8 @@ namespace traktor
 	namespace world
 	{
 
-class EntityInstance;
-class EntityData;
 class Entity;
+class EntityData;
 
 	}
 
@@ -33,7 +32,7 @@ class IEntityEditor;
 
 /*! \brief Entity adapter class.
  *
- * Map between EntityInstance and Entity.
+ * Map between EntityData and Entity.
  * Also keep parent-child relationship of entities.
  */
 class T_DLLCLASS EntityAdapter : public Object
@@ -41,18 +40,12 @@ class T_DLLCLASS EntityAdapter : public Object
 	T_RTTI_CLASS;
 
 public:
-	EntityAdapter(world::EntityInstance* instance);
+	EntityAdapter(world::EntityData* entityData);
 
 	/*! \name Accessors */
 	//@{
 
-	Ref< world::EntityInstance > getInstance() const;
-
 	Ref< world::EntityData > getEntityData() const;
-
-	void setRealEntityData(world::EntityData* entityData);
-
-	Ref< world::EntityData > getRealEntityData() const;
 
 	void setEntity(world::Entity* entity);
 
@@ -90,15 +83,6 @@ public:
 	bool isChildOfExternal() const;
 
 	bool getExternalGuid(Guid& outGuid) const;
-
-	//@}
-
-	/*! \name References. */
-	//@{
-
-	bool addReference(EntityAdapter* reference);
-
-	void removeReference(EntityAdapter* reference);
 
 	//@}
 
@@ -165,8 +149,7 @@ public:
 private:
 	friend class SceneEditorContext;
 
-	Ref< world::EntityData > m_realEntityData;
-	Ref< world::EntityInstance > m_instance;
+	Ref< world::EntityData > m_entityData;
 	Ref< world::Entity > m_entity;
 	EntityAdapter* m_parent;
 	RefArray< EntityAdapter > m_children;

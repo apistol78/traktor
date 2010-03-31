@@ -2,7 +2,6 @@
 #include "Mesh/MeshEntityData.h"
 #include "Mesh/Composite/CompositeMeshEntityData.h"
 #include "Mesh/Editor/MeshEntityPipeline.h"
-#include "World/Entity/EntityInstance.h"
 
 namespace traktor
 {
@@ -30,8 +29,8 @@ bool MeshEntityPipeline::buildDependencies(
 		pipelineDepends->addDependency(meshEntityData->getMesh().getGuid(), editor::PdfBuild);
 	else if (const CompositeMeshEntityData* compositeMeshEntityData = dynamic_type_cast< const CompositeMeshEntityData* >(sourceAsset))
 	{
-		const RefArray< world::EntityInstance >& instances = compositeMeshEntityData->getInstances();
-		for (RefArray< world::EntityInstance >::const_iterator i = instances.begin(); i != instances.end(); ++i)
+		const RefArray< AbstractMeshEntityData >& entityData = compositeMeshEntityData->getEntityData();
+		for (RefArray< AbstractMeshEntityData >::const_iterator i = entityData.begin(); i != entityData.end(); ++i)
 			pipelineDepends->addDependency(*i);
 	}
 

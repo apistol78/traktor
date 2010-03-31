@@ -14,13 +14,6 @@
 
 namespace traktor
 {
-	namespace world
-	{
-
-class EntityInstance;
-
-	}
-
 	namespace mesh
 	{
 
@@ -33,10 +26,10 @@ public:
 
 	virtual bool serialize(ISerializer& s);
 
-	inline const RefArray< world::EntityInstance >& getInstances() const { return m_instances; }
+	inline const RefArray< AbstractMeshEntityData >& getEntityData() const { return m_entityData; }
 
 private:
-	RefArray< world::EntityInstance > m_instances;
+	RefArray< AbstractMeshEntityData > m_entityData;
 };
 
 	}

@@ -1,6 +1,7 @@
 #include <cmath>
-#include "Weather/Sky/SkyEntityData.h"
-#include "Weather/Sky/SkyEntity.h"
+#include "Core/Math/Const.h"
+#include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/Member.h"
 #include "Resource/IResourceManager.h"
 #include "Render/IRenderSystem.h"
 #include "Render/VertexElement.h"
@@ -8,10 +9,9 @@
 #include "Render/IndexBuffer.h"
 #include "Render/Shader.h"
 #include "Render/Shader/ShaderGraph.h"
-#include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/Member.h"
-#include "Core/Math/Const.h"
 #include "Resource/Member.h"
+#include "Weather/Sky/SkyEntity.h"
+#include "Weather/Sky/SkyEntityData.h"
 
 namespace traktor
 {
@@ -131,6 +131,9 @@ Ref< SkyEntity > SkyEntityData::createEntity(resource::IResourceManager* resourc
 
 bool SkyEntityData::serialize(ISerializer& s)
 {
+	if (!world::EntityData::serialize(s))
+		return false;
+
 	return s >> resource::Member< render::Shader, render::ShaderGraph >(L"shader", m_shader);
 }
 

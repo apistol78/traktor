@@ -1,6 +1,6 @@
-#include "Animation/AnimatedMeshEntityFactory.h"
-#include "Animation/AnimatedMeshEntityData.h"
 #include "Animation/AnimatedMeshEntity.h"
+#include "Animation/AnimatedMeshEntityData.h"
+#include "Animation/AnimatedMeshEntityFactory.h"
 
 namespace traktor
 {
@@ -22,7 +22,7 @@ const TypeInfoSet AnimatedMeshEntityFactory::getEntityTypes() const
 	return typeSet;
 }
 
-Ref< world::Entity > AnimatedMeshEntityFactory::createEntity(world::IEntityBuilder* builder, const std::wstring& name, const world::EntityData& entityData, const Object* instanceData) const
+Ref< world::Entity > AnimatedMeshEntityFactory::createEntity(world::IEntityBuilder* builder, const world::EntityData& entityData) const
 {
 	return checked_type_cast< const AnimatedMeshEntityData* >(&entityData)->createEntity(m_resourceManager, m_physicsManager);
 }

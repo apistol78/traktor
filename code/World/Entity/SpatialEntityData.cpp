@@ -1,6 +1,6 @@
-#include "World/Entity/SpatialEntityData.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberComposite.h"
+#include "World/Entity/SpatialEntityData.h"
 
 namespace traktor
 {
@@ -26,6 +26,9 @@ const Transform& SpatialEntityData::getTransform() const
 
 bool SpatialEntityData::serialize(ISerializer& s)
 {
+	if (!EntityData::serialize(s))
+		return false;
+
 	return s >> MemberComposite< Transform >(L"transform", m_transform);
 }
 

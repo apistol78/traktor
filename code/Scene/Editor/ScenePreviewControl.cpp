@@ -70,7 +70,6 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 	m_toolToggleY = new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_TOGGLE_Y"), ui::Command(1, L"Scene.Editor.ToggleY"), 3, ui::custom::ToolBarButton::BsDefaultToggle);
 	m_toolToggleZ = new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_TOGGLE_Z"), ui::Command(1, L"Scene.Editor.ToggleZ"), 4, ui::custom::ToolBarButton::BsDefaultToggle);
 	m_toolToggleSnap = new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_TOGGLE_SNAP"), ui::Command(1, L"Scene.Editor.ToggleSnap"), 7, ui::custom::ToolBarButton::BsDefaultToggle);
-	m_toolToggleAddReference = new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_TOGGLE_ADD_REFERENCE"), ui::Command(1, L"Scene.Editor.ToggleAddReference"), 12, ui::custom::ToolBarButton::BsDefaultToggle);
 
 	Ref< Settings > settings = context->getEditor()->getSettings();
 	T_ASSERT (settings);
@@ -95,7 +94,6 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 	m_toolBarActions->addItem(m_toolToggleZ);
 	m_toolBarActions->addItem(new ui::custom::ToolBarSeparator());
 	m_toolBarActions->addItem(m_toolToggleSnap);
-	m_toolBarActions->addItem(m_toolToggleAddReference);
 	m_toolBarActions->addClickEventHandler(ui::createMethodHandler(this, &ScenePreviewControl::eventToolBarActionClicked));
 	m_toolBarActions->addItem(new ui::custom::ToolBarSeparator());
 	m_toolBarActions->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_REWIND"), ui::Command(L"Scene.Editor.Rewind"), 17));
@@ -198,12 +196,6 @@ bool ScenePreviewControl::handleCommand(const ui::Command& command)
 	{
 		if (command.getId() == 0)
 			m_toolToggleSnap->setToggled(!m_toolToggleSnap->isToggled());
-		updateEditState();
-	}
-	else if (command == L"Scene.Editor.ToggleAddReference")
-	{
-		if (command.getId() == 0)
-			m_toolToggleAddReference->setToggled(!m_toolToggleAddReference->isToggled());
 		updateEditState();
 	}
 	else if (command == L"Scene.Editor.Rewind")
@@ -383,7 +375,6 @@ void ScenePreviewControl::updateEditState()
 
 	// Guides enabled.
 	m_context->setSnapEnable(m_toolToggleSnap->isToggled());
-	m_context->setAddReferenceMode(m_toolToggleAddReference->isToggled());
 
 	// Ensure toolbar is up-to-date.
 	m_toolBarActions->update();

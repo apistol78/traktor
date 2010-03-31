@@ -9,7 +9,7 @@ namespace traktor
 	namespace world
 	{
 
-class EntityInstance;
+class EntityData;
 
 	}
 
@@ -21,14 +21,14 @@ class EntityClipboardData : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	void addInstance(world::EntityInstance* instance);
+	void addEntityData(world::EntityData* entityData);
 
-	const RefArray< world::EntityInstance >& getInstances() const;
+	const RefArray< world::EntityData >& getEntityData() const;
 
 	virtual bool serialize(ISerializer& s);
 
 private:
-	RefArray< world::EntityInstance > m_instances;
+	RefArray< world::EntityData > m_entityData;
 };
 
 	}

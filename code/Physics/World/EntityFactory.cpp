@@ -1,8 +1,8 @@
-#include "Physics/World/EntityFactory.h"
-#include "Physics/World/RigidEntityData.h"
-#include "Physics/World/RigidEntity.h"
-#include "Physics/World/ArticulatedEntityData.h"
 #include "Physics/World/ArticulatedEntity.h"
+#include "Physics/World/ArticulatedEntityData.h"
+#include "Physics/World/EntityFactory.h"
+#include "Physics/World/RigidEntity.h"
+#include "Physics/World/RigidEntityData.h"
 
 namespace traktor
 {
@@ -27,9 +27,7 @@ const TypeInfoSet EntityFactory::getEntityTypes() const
 
 Ref< world::Entity > EntityFactory::createEntity(
 	world::IEntityBuilder* builder,
-	const std::wstring& name,
-	const world::EntityData& entityData,
-	const Object* instanceData
+	const world::EntityData& entityData
 ) const
 {
 	if (const RigidEntityData* rigidEntityData = dynamic_type_cast< const RigidEntityData* >(&entityData))

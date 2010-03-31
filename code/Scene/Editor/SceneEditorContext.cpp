@@ -17,10 +17,9 @@
 #include "Scene/Editor/Camera.h"
 #include "Scene/Editor/SceneAsset.h"
 #include "Ui/Event.h"
-#include "World/Entity/EntityManager.h"
-#include "World/Entity/EntityData.h"
 #include "World/Entity/Entity.h"
-#include "World/Entity/EntityInstance.h"
+#include "World/Entity/EntityData.h"
+#include "World/Entity/EntityManager.h"
 #include "World/PostProcess/PostProcessSettings.h"
 
 namespace traktor
@@ -76,12 +75,12 @@ void createEntityEditors(
 {
 	const RefArray< EntityAdapter >& children = entityAdapter->getChildren();
 
-	if (!entityAdapter->getEntityEditor() && entityAdapter->getRealEntityData())
+	if (!entityAdapter->getEntityEditor() && entityAdapter->getEntityData())
 	{
 		Ref< IEntityEditor > entityEditor = createEntityEditor(
 			context,
 			entityEditorFactories,
-			type_of(entityAdapter->getRealEntityData())
+			type_of(entityAdapter->getEntityData())
 		);
 		if (entityEditor)
 			entityAdapter->setEntityEditor(entityEditor);
@@ -119,16 +118,6 @@ struct FindFromEntity
 	}
 };
 
-struct FindFromInstance
-{
-	const world::EntityInstance* m_entityInstance;
-
-	bool operator () (const EntityAdapter* entityAdapter) const
-	{
-		return entityAdapter->getInstance() == m_entityInstance;
-	}
-};
-
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.SceneEditorContext", SceneEditorContext, ui::EventSubject)
@@ -151,7 +140,6 @@ SceneEditorContext::SceneEditorContext(
 ,	m_axisEnable(AeXYZ)
 ,	m_snapEnable(true)
 ,	m_physicsEnable(false)
-,	m_referenceMode(false)
 ,	m_playing(false)
 ,	m_timeScale(1.0f)
 ,	m_time(0.0f)
@@ -235,16 +223,6 @@ bool SceneEditorContext::getPhysicsEnable() const
 	return m_physicsEnable;
 }
 
-void SceneEditorContext::setAddReferenceMode(bool referenceMode)
-{
-	m_referenceMode = referenceMode;
-}
-
-bool SceneEditorContext::inAddReferenceMode() const
-{
-	return m_referenceMode;
-}
-
 Ref< Camera > SceneEditorContext::getCamera(int index) const
 {
 	return m_cameras[index];
@@ -317,7 +295,7 @@ void SceneEditorContext::buildEntities()
 		Ref< world::IEntityManager > entityManager = new world::EntityManager();
 
 		entityBuilder->begin(entityManager);
-		Ref< world::Entity > rootEntity = entityBuilder->build(m_sceneAsset->getInstance());
+		Ref< world::Entity > rootEntity = entityBuilder->create(m_sceneAsset->getEntityData());
 
 		// Update scene controller also.
 		Ref< ISceneController > controller;
@@ -430,13 +408,6 @@ EntityAdapter* SceneEditorContext::findAdapterFromEntity(const world::Entity* en
 	return findAdapter(m_rootEntityAdapter, predicate);
 }
 
-EntityAdapter* SceneEditorContext::findAdapterFromInstance(const world::EntityInstance* instance) const
-{
-	FindFromInstance predicate;
-	predicate.m_entityInstance = instance;
-	return findAdapter(m_rootEntityAdapter, predicate);
-}
-
 EntityAdapter* SceneEditorContext::queryRay(const Vector4& worldRayOrigin, const Vector4& worldRayDirection) const
 {
 	RefArray< EntityAdapter > entityAdapters;
@@ -489,14 +460,14 @@ void SceneEditorContext::cloneSelected()
 		Ref< EntityAdapter > parentContainerGroup = (*i)->getParentContainerGroup();
 		T_ASSERT (parentContainerGroup);
 
-		Ref< world::EntityInstance > cloneEntityInstance = DeepClone((*i)->getInstance()).create< world::EntityInstance >();
-		T_ASSERT (cloneEntityInstance);
+		Ref< world::EntityData > clonedEntityData = DeepClone((*i)->getEntityData()).create< world::EntityData >();
+		T_ASSERT (clonedEntityData);
 
-		Ref< EntityAdapter > cloneEntityAdapter = new EntityAdapter(cloneEntityInstance);
-		parentContainerGroup->addChild(cloneEntityAdapter);
+		Ref< EntityAdapter > clonedEntityAdapter = new EntityAdapter(clonedEntityData);
+		parentContainerGroup->addChild(clonedEntityAdapter);
 
 		(*i)->m_selected = false;
-		cloneEntityAdapter->m_selected = true;
+		clonedEntityAdapter->m_selected = true;
 	}
 
 	buildEntities();

@@ -1,5 +1,4 @@
 #include "World/Editor/EntityPipeline.h"
-#include "World/Entity/EntityInstance.h"
 #include "World/Entity/ExternalEntityData.h"
 #include "World/Entity/ExternalSpatialEntityData.h"
 #include "World/Entity/GroupEntityData.h"
@@ -27,7 +26,6 @@ void EntityPipeline::destroy()
 TypeInfoSet EntityPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< EntityInstance >());
 	typeSet.insert(&type_of< EntityData >());
 	return typeSet;
 }
@@ -39,22 +37,20 @@ bool EntityPipeline::buildDependencies(
 	Ref< const Object >& outBuildParams
 ) const
 {
-	if (const EntityInstance* instance = dynamic_type_cast< const EntityInstance* >(sourceAsset))
-		pipelineDepends->addDependency(instance->getEntityData());
-	else if (const ExternalEntityData* externalEntityData = dynamic_type_cast< const ExternalEntityData* >(sourceAsset))
+	if (const ExternalEntityData* externalEntityData = dynamic_type_cast< const ExternalEntityData* >(sourceAsset))
 		pipelineDepends->addDependency(externalEntityData->getGuid(), editor::PdfBuild);
 	else if (const ExternalSpatialEntityData* externalSpatialEntityData = dynamic_type_cast< const ExternalSpatialEntityData* >(sourceAsset))
 		pipelineDepends->addDependency(externalSpatialEntityData->getGuid(), editor::PdfBuild);
 	else if (const GroupEntityData* groupEntityData = dynamic_type_cast< const GroupEntityData* >(sourceAsset))
 	{
-		const RefArray< EntityInstance >& instances = groupEntityData->getInstances();
-		for (RefArray< EntityInstance >::const_iterator i = instances.begin(); i != instances.end(); ++i)
+		const RefArray< EntityData >& instances = groupEntityData->getEntityData();
+		for (RefArray< EntityData >::const_iterator i = instances.begin(); i != instances.end(); ++i)
 			pipelineDepends->addDependency(*i);
 	}
 	else if (const SpatialGroupEntityData* spatialGroupEntityData = dynamic_type_cast< const SpatialGroupEntityData* >(sourceAsset))
 	{
-		const RefArray< EntityInstance >& instances = spatialGroupEntityData->getInstances();
-		for (RefArray< EntityInstance >::const_iterator i = instances.begin(); i != instances.end(); ++i)
+		const RefArray< SpatialEntityData >& instances = spatialGroupEntityData->getEntityData();
+		for (RefArray< SpatialEntityData >::const_iterator i = instances.begin(); i != instances.end(); ++i)
 			pipelineDepends->addDependency(*i);
 	}
 	return true;

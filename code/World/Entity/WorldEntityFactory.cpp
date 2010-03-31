@@ -43,13 +43,13 @@ const TypeInfoSet WorldEntityFactory::getEntityTypes() const
 	return typeSet;
 }
 
-Ref< Entity > WorldEntityFactory::createEntity(IEntityBuilder* builder, const std::wstring& name, const EntityData& entityData, const Object* instanceData) const
+Ref< Entity > WorldEntityFactory::createEntity(IEntityBuilder* builder, const EntityData& entityData) const
 {
 	if (const ExternalEntityData* externalEntityData = dynamic_type_cast< const ExternalEntityData* >(&entityData))
 	{
 		Guid entityGuid = externalEntityData->getGuid();
 		Ref< EntityData > resolvedEntityData = m_database->getObjectReadOnly< EntityData >(entityGuid);
-		return builder->create(name, resolvedEntityData, instanceData);
+		return builder->create(resolvedEntityData);
 	}
 
 	if (const ExternalSpatialEntityData* externalSpatialEntityData = dynamic_type_cast< const ExternalSpatialEntityData* >(&entityData))
@@ -58,32 +58,36 @@ Ref< Entity > WorldEntityFactory::createEntity(IEntityBuilder* builder, const st
 		Ref< SpatialEntityData > resolvedEntityData = m_database->getObjectReadOnly< SpatialEntityData >(entityGuid);
 		if (resolvedEntityData)
 			resolvedEntityData->setTransform(externalSpatialEntityData->getTransform());
-		return builder->create(name, resolvedEntityData, instanceData);
+		return builder->create(resolvedEntityData);
 	}
 
 	if (const GroupEntityData* groupData = dynamic_type_cast< const GroupEntityData* >(&entityData))
 	{
-		const RefArray< EntityInstance >& instances = groupData->getInstances();
 		Ref< GroupEntity > groupEntity = new GroupEntity();
-		for (RefArray< EntityInstance >::const_iterator i = instances.begin(); i != instances.end(); ++i)
+
+		const RefArray< EntityData >& entityData = groupData->getEntityData();
+		for (RefArray< EntityData >::const_iterator i = entityData.begin(); i != entityData.end(); ++i)
 		{
-			Ref< Entity > childEntity = builder->build(*i);
+			Ref< Entity > childEntity = builder->create(*i);
 			if (childEntity)
 				groupEntity->m_entities.push_back(childEntity);
 		}
+
 		return groupEntity;
 	}
 
 	if (const SpatialGroupEntityData* spatialGroupData = dynamic_type_cast< const SpatialGroupEntityData* >(&entityData))
 	{
-		const RefArray< EntityInstance >& instances = spatialGroupData->getInstances();
 		Ref< SpatialGroupEntity > spatialGroupEntity = new SpatialGroupEntity(spatialGroupData->getTransform());
-		for (RefArray< EntityInstance >::const_iterator i = instances.begin(); i != instances.end(); ++i)
+
+		const RefArray< SpatialEntityData >& entityData = spatialGroupData->getEntityData();
+		for (RefArray< SpatialEntityData >::const_iterator i = entityData.begin(); i != entityData.end(); ++i)
 		{
-			Ref< SpatialEntity > childEntity = dynamic_type_cast< SpatialEntity* >(builder->build(*i));
+			Ref< SpatialEntity > childEntity = dynamic_type_cast< SpatialEntity* >(builder->create(*i));
 			if (childEntity)
 				spatialGroupEntity->m_entities.push_back(childEntity);
 		}
+
 		return spatialGroupEntity;
 	}
 

@@ -1,8 +1,4 @@
-#include "Terrain/UndergrowthEntityData.h"
-#include "Terrain/Heightfield.h"
-#include "Terrain/HeightfieldResource.h"
-#include "Terrain/MaterialMask.h"
-#include "Terrain/MaterialMaskResource.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Render/IRenderSystem.h"
 #include "Render/VertexElement.h"
 #include "Render/VertexBuffer.h"
@@ -11,7 +7,11 @@
 #include "Render/Shader/ShaderGraph.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
-#include "Core/Serialization/ISerializer.h"
+#include "Terrain/UndergrowthEntityData.h"
+#include "Terrain/Heightfield.h"
+#include "Terrain/HeightfieldResource.h"
+#include "Terrain/MaterialMask.h"
+#include "Terrain/MaterialMaskResource.h"
 
 namespace traktor
 {
@@ -93,6 +93,9 @@ UndergrowthEntity* UndergrowthEntityData::createEntity(resource::IResourceManage
 
 bool UndergrowthEntityData::serialize(ISerializer& s)
 {
+	if (!world::EntityData::serialize(s))
+		return false;
+
 	s >> resource::Member< Heightfield, HeightfieldResource >(L"heightfield", m_heightfield);
 	s >> resource::Member< MaterialMask, MaterialMaskResource >(L"materialMask", m_materialMask);
 	s >> resource::Member< render::Shader, render::ShaderGraph >(L"shader", m_shader);
@@ -100,6 +103,7 @@ bool UndergrowthEntityData::serialize(ISerializer& s)
 	s >> Member< float >(L"spreadDistance", m_settings.spreadDistance);
 	s >> Member< float >(L"cellRadius", m_settings.cellRadius);
 	s >> Member< float >(L"plantScale", m_settings.plantScale);
+
 	return true;
 }
 

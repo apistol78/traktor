@@ -33,11 +33,12 @@ void ArticulatedEntityEditor::drawGuide(
 	scene::EntityAdapter* entityAdapter
 ) const
 {
-	ArticulatedEntityData* articulatedEntityData = checked_type_cast< ArticulatedEntityData* >(entityAdapter->getRealEntityData());
-	const RefArray< world::EntityInstance >& instances = articulatedEntityData->getInstances();
-	const std::vector< ArticulatedEntityData::Constraint >& constraints = articulatedEntityData->getConstraints();
+	ArticulatedEntityData* articulatedEntityData = checked_type_cast< ArticulatedEntityData* >(entityAdapter->getEntityData());
 
+	const std::vector< ArticulatedEntityData::Constraint >& constraints = articulatedEntityData->getConstraints();
 	Transform transform = articulatedEntityData->getTransform();
+
+	const RefArray< scene::EntityAdapter >& constraintChildren = entityAdapter->getChildren();
 
 	for (uint32_t i = 0; i < uint32_t(constraints.size()); ++i)
 	{
@@ -47,11 +48,8 @@ void ArticulatedEntityEditor::drawGuide(
 		if (constraint.entityIndex1 < 0)
 			continue;
 
-		Ref< world::EntityInstance > instance1 = instances[constraint.entityIndex1];
-		Ref< world::EntityInstance > instance2 = constraint.entityIndex2 >= 0 ? instances[constraint.entityIndex2] : 0;
-
-		Ref< scene::EntityAdapter > entity1 = context->findAdapterFromInstance(instance1);
-		Ref< scene::EntityAdapter > entity2 = instance2 ? context->findAdapterFromInstance(instance2) : 0;
+		Ref< scene::EntityAdapter > entity1 = constraintChildren[constraint.entityIndex1];
+		Ref< scene::EntityAdapter > entity2 = (constraint.entityIndex2 >= 0) ? constraintChildren[constraint.entityIndex2] : 0;
 
 		if (!entity1)
 			continue;
@@ -225,11 +223,12 @@ void ArticulatedEntityEditor::drawGuide(
 		}
 	}
 
-	for (RefArray< world::EntityInstance >::const_iterator i = instances.begin(); i != instances.end(); ++i)
+	// Draw default guides of contained entity.
+	const RefArray< scene::EntityAdapter >& children = entityAdapter->getChildren();
+	for (RefArray< scene::EntityAdapter >::const_iterator i = children.begin(); i != children.end(); ++i)
 	{
-		Ref< scene::EntityAdapter > entityAdapter = context->findAdapterFromInstance(*i);
-		if (entityAdapter)
-			context->drawGuide(primitiveRenderer, entityAdapter);
+		if (*i)
+			context->drawGuide(primitiveRenderer, *i);
 	}
 }
 

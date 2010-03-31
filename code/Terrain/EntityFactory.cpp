@@ -28,7 +28,7 @@ const TypeInfoSet EntityFactory::getEntityTypes() const
 	return typeSet;
 }
 
-Ref< world::Entity > EntityFactory::createEntity(world::IEntityBuilder* builder, const std::wstring& name, const world::EntityData& entityData, const Object* instanceData) const
+Ref< world::Entity > EntityFactory::createEntity(world::IEntityBuilder* builder, const world::EntityData& entityData) const
 {
 	Ref< world::Entity > entity;
 

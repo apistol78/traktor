@@ -1,9 +1,8 @@
-#include "Physics/Editor/RigidEntityPipeline.h"
-#include "Physics/World/RigidEntityData.h"
+#include "Editor/IPipelineDepends.h"
 #include "Physics/BodyDesc.h"
 #include "Physics/MeshShapeDesc.h"
-#include "World/Entity/EntityInstance.h"
-#include "Editor/IPipelineDepends.h"
+#include "Physics/Editor/RigidEntityPipeline.h"
+#include "Physics/World/RigidEntityData.h"
 
 namespace traktor
 {
@@ -30,9 +29,9 @@ bool RigidEntityPipeline::buildDependencies(
 	{
 		pipelineDepends->addDependency(rigidEntityData->getBodyDesc());
 
-		const world::EntityInstance* instance = rigidEntityData->getInstance();
-		if (instance)
-			pipelineDepends->addDependency(instance);
+		const world::SpatialEntityData* entityData = rigidEntityData->getEntityData();
+		if (entityData)
+			pipelineDepends->addDependency(entityData);
 	}
 	return true;
 }

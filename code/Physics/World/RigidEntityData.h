@@ -5,9 +5,9 @@
 
 #undef T_DLLCLASS
 #if defined(T_PHYSICS_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -16,7 +16,6 @@ namespace traktor
 	{
 
 class IEntityBuilder;
-class EntityInstance;
 
 	}
 
@@ -30,8 +29,8 @@ class IResourceManager;
 	namespace physics
 	{
 
-class PhysicsManager;
 class BodyDesc;
+class PhysicsManager;
 class RigidEntity;
 
 /*! \brief Rigid body entity data.
@@ -52,11 +51,11 @@ public:
 
 	inline Ref< const BodyDesc > getBodyDesc() const { return m_bodyDesc; }
 
-	inline Ref< const world::EntityInstance > getInstance() const { return m_instance; }
+	inline Ref< const world::SpatialEntityData > getEntityData() const { return m_entityData; }
 
 private:
 	Ref< BodyDesc > m_bodyDesc;
-	Ref< world::EntityInstance > m_instance;
+	Ref< world::SpatialEntityData > m_entityData;
 };
 
 	}

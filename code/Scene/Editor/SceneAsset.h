@@ -17,9 +17,9 @@ namespace traktor
 	namespace world
 	{
 
-class EntityInstance;
-class WorldRenderSettings;
+class EntityData;
 class PostProcessSettings;
+class WorldRenderSettings;
 
 	}
 
@@ -43,9 +43,9 @@ public:
 
 	const resource::Proxy< world::PostProcessSettings >& getPostProcessSettings() const;
 
-	void setInstance(world::EntityInstance* instance);
+	void setEntityData(world::EntityData* entityData);
 
-	Ref< world::EntityInstance > getInstance() const;
+	Ref< world::EntityData > getEntityData() const;
 
 	void setControllerData(ISceneControllerData* controllerData);
 
@@ -58,7 +58,7 @@ public:
 private:
 	Ref< world::WorldRenderSettings > m_worldRenderSettings;
 	mutable resource::Proxy< world::PostProcessSettings > m_postProcessSettings;
-	Ref< world::EntityInstance > m_instance;
+	Ref< world::EntityData > m_entityData;
 	Ref< ISceneControllerData > m_controllerData;
 };
 
