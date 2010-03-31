@@ -48,7 +48,7 @@ void AnimatedMeshEntityEditor::drawGuide(
 	scene::EntityAdapter* entityAdapter
 ) const
 {
-	const AnimatedMeshEntityData* animatedEntityData = checked_type_cast< const AnimatedMeshEntityData* >(entityAdapter->getRealEntityData());
+	const AnimatedMeshEntityData* animatedEntityData = checked_type_cast< const AnimatedMeshEntityData* >(entityAdapter->getEntityData());
 	const AnimatedMeshEntity* animatedEntity = checked_type_cast< const AnimatedMeshEntity* >(entityAdapter->getEntity());
 
 	primitiveRenderer->pushWorld(entityAdapter->getTransform().toMatrix44());

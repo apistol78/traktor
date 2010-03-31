@@ -1,6 +1,6 @@
-#include "Spray/EffectEntityFactory.h"
-#include "Spray/EffectEntityData.h"
 #include "Spray/EffectEntity.h"
+#include "Spray/EffectEntityData.h"
+#include "Spray/EffectEntityFactory.h"
 
 namespace traktor
 {
@@ -21,7 +21,7 @@ const TypeInfoSet EffectEntityFactory::getEntityTypes() const
 	return typeSet;
 }
 
-Ref< world::Entity > EffectEntityFactory::createEntity(world::IEntityBuilder* builder, const std::wstring& name, const world::EntityData& entityData, const Object* instanceData) const
+Ref< world::Entity > EffectEntityFactory::createEntity(world::IEntityBuilder* builder, const world::EntityData& entityData) const
 {
 	return checked_type_cast< const EffectEntityData* >(&entityData)->createEntity(m_resourceManager);
 }

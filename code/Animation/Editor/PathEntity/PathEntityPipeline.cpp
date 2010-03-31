@@ -1,6 +1,5 @@
-#include "Animation/Editor/PathEntity/PathEntityPipeline.h"
 #include "Animation/PathEntity/PathEntityData.h"
-#include "World/Entity/EntityInstance.h"
+#include "Animation/Editor/PathEntity/PathEntityPipeline.h"
 #include "Editor/IPipelineDepends.h"
 
 namespace traktor
@@ -25,7 +24,7 @@ bool PathEntityPipeline::buildDependencies(
 ) const
 {
 	if (const PathEntityData* pathEntityData = dynamic_type_cast< const PathEntityData* >(sourceAsset))
-		pipelineDepends->addDependency(pathEntityData->getInstance());
+		pipelineDepends->addDependency(pathEntityData->getEntityData());
 
 	return world::EntityPipeline::buildDependencies(pipelineDepends, sourceInstance, sourceAsset, outBuildParams);
 }

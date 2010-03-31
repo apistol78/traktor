@@ -35,7 +35,7 @@ public:
 
 	virtual const TypeInfoSet getEntityTypes() const;
 
-	virtual Ref< Entity > createEntity(IEntityBuilder* builder, const std::wstring& name, const EntityData& entityData, const Object* instanceData) const;
+	virtual Ref< Entity > createEntity(IEntityBuilder* builder, const EntityData& entityData) const;
 
 private:
 	Ref< db::Database > m_database;

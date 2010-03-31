@@ -25,7 +25,7 @@ const TypeInfoSet WeatherEntityFactory::getEntityTypes() const
 	return typeSet;
 }
 
-Ref< world::Entity > WeatherEntityFactory::createEntity(world::IEntityBuilder* builder, const std::wstring& name, const world::EntityData& entityData, const Object* instanceData) const
+Ref< world::Entity > WeatherEntityFactory::createEntity(world::IEntityBuilder* builder, const world::EntityData& entityData) const
 {
 	if (const SkyEntityData* skyEntityData = dynamic_type_cast< const SkyEntityData* >(&entityData))
 		return skyEntityData->createEntity(m_resourceManager, m_renderSystem);

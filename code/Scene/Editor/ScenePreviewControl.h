@@ -67,7 +67,6 @@ private:
 	Ref< ui::custom::ToolBarButton > m_toolToggleY;
 	Ref< ui::custom::ToolBarButton > m_toolToggleZ;
 	Ref< ui::custom::ToolBarButton > m_toolToggleSnap;
-	Ref< ui::custom::ToolBarButton > m_toolToggleAddReference;
 	SplitType m_splitType;
 	Ref< ui::Widget > m_splitterRenderControls;
 	RefArray< ISceneRenderControl > m_renderControls;

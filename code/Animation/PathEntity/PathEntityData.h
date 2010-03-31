@@ -7,9 +7,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_ANIMATION_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -18,7 +18,6 @@ namespace traktor
 	{
 
 class IEntityBuilder;
-class EntityInstance;
 
 	}
 
@@ -45,12 +44,12 @@ public:
 
 	const PathEntity::TimeMode getTimeMode() const { return m_timeMode; }
 
-	const Ref< world::EntityInstance >& getInstance() const { return m_instance; }
+	const Ref< world::SpatialEntityData >& getEntityData() const { return m_entityData; }
 
 private:
 	TransformPath m_path;
 	PathEntity::TimeMode m_timeMode;
-	Ref< world::EntityInstance > m_instance;
+	Ref< world::SpatialEntityData > m_entityData;
 };
 
 	}

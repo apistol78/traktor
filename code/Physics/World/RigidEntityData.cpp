@@ -4,7 +4,6 @@
 #include "Physics/BodyDesc.h"
 #include "Physics/Body.h"
 #include "World/Entity/SpatialEntityData.h"
-#include "World/Entity/EntityInstance.h"
 #include "World/Entity/IEntityBuilder.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRef.h"
@@ -22,10 +21,7 @@ Ref< RigidEntity > RigidEntityData::createEntity(
 	PhysicsManager* physicsManager
 ) const
 {
-	if (!m_bodyDesc && !m_instance)
-		return 0;
-
-	if (!m_bodyDesc->bind(resourceManager))
+	if (!m_bodyDesc || !m_bodyDesc->bind(resourceManager))
 		return 0;
 
 	Ref< Body > body = physicsManager->createBody(m_bodyDesc);
@@ -35,9 +31,9 @@ Ref< RigidEntity > RigidEntityData::createEntity(
 	body->setTransform(getTransform());
 
 	Ref< world::SpatialEntity > entity;
-	if (m_instance)
+	if (m_entityData)
 	{
-		entity = checked_type_cast< world::SpatialEntity* >(builder->build(m_instance));
+		entity = checked_type_cast< world::SpatialEntity* >(builder->create(m_entityData));
 		if (!entity)
 			return 0;
 
@@ -56,7 +52,7 @@ bool RigidEntityData::serialize(ISerializer& s)
 		return false;
 
 	s >> MemberRef< BodyDesc >(L"bodyDesc", m_bodyDesc);
-	s >> MemberRef< world::EntityInstance >(L"instance", m_instance);
+	s >> MemberRef< world::SpatialEntityData >(L"entityData", m_entityData);
 
 	return true;
 }

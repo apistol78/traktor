@@ -89,7 +89,7 @@ void RigidEntityEditor::drawGuide(
 	scene::EntityAdapter* entityAdapter
 ) const
 {
-	Ref< RigidEntityData > rigidEntityData = checked_type_cast< RigidEntityData* >(entityAdapter->getRealEntityData());
+	Ref< RigidEntityData > rigidEntityData = checked_type_cast< RigidEntityData* >(entityAdapter->getEntityData());
 	Ref< RigidEntity > rigidEntity = checked_type_cast< RigidEntity* >(entityAdapter->getEntity());
 
 	primitiveRenderer->pushWorld(entityAdapter->getTransform().toMatrix44());
@@ -216,11 +216,11 @@ void RigidEntityEditor::drawGuide(
 	primitiveRenderer->popWorld();
 
 	// Draw default guides of contained entity.
-	if (const world::EntityInstance* instance = rigidEntityData->getInstance())
+	const RefArray< scene::EntityAdapter >& children = entityAdapter->getChildren();
+	for (RefArray< scene::EntityAdapter >::const_iterator i = children.begin(); i != children.end(); ++i)
 	{
-		Ref< scene::EntityAdapter > entityAdapter = context->findAdapterFromInstance(instance);
-		if (entityAdapter)
-			context->drawGuide(primitiveRenderer, entityAdapter);
+		if (*i)
+			context->drawGuide(primitiveRenderer, *i);
 	}
 }
 

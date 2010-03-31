@@ -48,7 +48,6 @@
 #include "Ui/Custom/GridView/GridItem.h"
 #include "Ui/Custom/InputDialog.h"
 #include "World/WorldRenderSettings.h"
-#include "World/Entity/EntityInstance.h"
 #include "World/Entity/SpatialEntity.h"
 #include "World/Entity/SpatialEntityData.h"
 #include "World/Entity/GroupEntityData.h"
@@ -270,7 +269,7 @@ bool SceneEditorPage::dropInstance(db::Instance* instance, const ui::Point& posi
 			if (!parentGroupAdapter)
 					return false;
 		}
-		else if (m_context->getSceneAsset()->getInstance())
+		else if (m_context->getSceneAsset()->getEntityData())
 		{
 			parentGroupAdapter = m_context->getRootEntityAdapter();
 			if (!parentGroupAdapter)
@@ -288,13 +287,12 @@ bool SceneEditorPage::dropInstance(db::Instance* instance, const ui::Point& posi
 		m_undoStack->push(m_dataObject);
 
 		// Create instance and adapter.
-		Ref< world::EntityInstance > entityInstance = new world::EntityInstance(Guid::create(), instance->getName(), entityData);
-		Ref< EntityAdapter > entityAdapter = new EntityAdapter(entityInstance);
+		Ref< EntityAdapter > entityAdapter = new EntityAdapter(entityData);
 
 		if (parentGroupAdapter)
 			parentGroupAdapter->addChild(entityAdapter);
 		else
-			m_context->getSceneAsset()->setInstance(entityInstance);
+			m_context->getSceneAsset()->setEntityData(entityData);
 
 		updateScene();
 		updateInstanceGrid();
@@ -379,7 +377,7 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 		Ref< EntityClipboardData > entityClipboardData = new EntityClipboardData();
 		for (RefArray< EntityAdapter >::iterator i = selectedEntities.begin(); i != selectedEntities.end(); ++i)
 		{
-			entityClipboardData->addInstance((*i)->getInstance());
+			entityClipboardData->addEntityData((*i)->getEntityData());
 			if (command == L"Editor.Cut")
 			{
 				Ref< EntityAdapter > parentGroup = (*i)->getParent();
@@ -421,8 +419,8 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 		m_undoStack->push(m_dataObject);
 
 		// Create new instances and adapters for each entity found in clipboard.
-		const RefArray< world::EntityInstance >& instances = entityClipboardData->getInstances();
-		for (RefArray< world::EntityInstance >::const_iterator i = instances.begin(); i != instances.end(); ++i)
+		const RefArray< world::EntityData >& entityData = entityClipboardData->getEntityData();
+		for (RefArray< world::EntityData >::const_iterator i = entityData.begin(); i != entityData.end(); ++i)
 		{
 			Ref< EntityAdapter > adapter = new EntityAdapter(*i);
 			parentEntity->addChild(adapter);
@@ -553,17 +551,13 @@ void SceneEditorPage::createControllerEditor()
 
 Ref< SceneAsset > SceneEditorPage::createWhiteRoomSceneAsset(world::EntityData* entityData)
 {
-	// Create temporary instance from entity data.
-	Ref< world::EntityInstance > instance = new world::EntityInstance(Guid::create(), L"Entity", entityData);
-
 	// Read white-room scene asset from system database.
 	Ref< SceneAsset > sceneAsset = m_context->getSourceDatabase()->getObjectReadOnly< SceneAsset >(c_guidWhiteRoomScene);
 	T_ASSERT_M (sceneAsset, L"Unable to open white-room scene");
 
 	// Add our entity to white-room scene.
-	Ref< world::EntityInstance > rootInstance = sceneAsset->getInstance();
-	Ref< world::GroupEntityData > rootGroup = checked_type_cast< world::GroupEntityData* >(rootInstance->getEntityData());
-	rootGroup->addInstance(instance);
+	Ref< world::GroupEntityData > rootGroup = checked_type_cast< world::GroupEntityData*, false >(sceneAsset->getEntityData());
+	rootGroup->addEntityData(entityData);
 
 	return sceneAsset;
 }
@@ -673,10 +667,7 @@ void SceneEditorPage::updatePropertyObject()
 		Ref< EntityAdapter > entityAdapter = entityAdapters.front();
 		T_ASSERT (entityAdapter);
 
-		if (entityAdapter->getInstance())
-			m_site->setPropertyObject(entityAdapter->getInstance());
-		else
-			m_site->setPropertyObject(entityAdapter->getEntityData());
+		m_site->setPropertyObject(entityAdapter->getEntityData());
 	}
 	else
 		m_site->setPropertyObject(m_dataObject);
@@ -694,7 +685,7 @@ bool SceneEditorPage::addEntity()
 		if (!parentGroupAdapter)
 				return false;
 	}
-	else if (m_context->getSceneAsset()->getInstance())
+	else if (m_context->getSceneAsset()->getEntityData())
 	{
 		parentGroupAdapter = m_context->getRootEntityAdapter();
 		if (!parentGroupAdapter)
@@ -711,20 +702,13 @@ bool SceneEditorPage::addEntity()
 
 	m_undoStack->push(m_dataObject);
 
-	// Create instance and adapter.
-	Ref< world::EntityInstance > instance = new world::EntityInstance(
-		Guid::create(),
-		i18n::Text(L"SCENE_EDITOR_UNNAMED_ENTITY"),
-		entityData
-	);
-
 	if (parentGroupAdapter)
 	{
-		Ref< EntityAdapter > entityAdapter = new EntityAdapter(instance);
+		Ref< EntityAdapter > entityAdapter = new EntityAdapter(entityData);
 		parentGroupAdapter->addChild(entityAdapter);
 	}
 	else
-		m_context->getSceneAsset()->setInstance(instance);
+		m_context->getSceneAsset()->setEntityData(entityData);
 
 	updateScene();
 	updateInstanceGrid();

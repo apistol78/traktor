@@ -56,23 +56,22 @@ class PhysicsManager;
 	namespace world
 	{
 
-class EntityInstance;
-class EntityData;
 class Entity;
+class EntityData;
 
 	}
 
 	namespace scene
 	{
 
-class ISceneControllerEditor;
-class ISceneEditorProfile;
-class ISceneEditorPlugin;
-class IModifier;
+class Camera;
 class EntityAdapter;
+class IModifier;
+class ISceneControllerEditor;
+class ISceneEditorPlugin;
+class ISceneEditorProfile;
 class Scene;
 class SceneAsset;
-class Camera;
 
 /*! \brief Scene editor context.
  *
@@ -139,10 +138,6 @@ public:
 
 	bool getPhysicsEnable() const;
 
-	void setAddReferenceMode(bool referenceMode);
-
-	bool inAddReferenceMode() const;
-
 	//@}
 
 	/*! \name Camera control. */
@@ -195,8 +190,6 @@ public:
 	uint32_t getEntities(RefArray< EntityAdapter >& outEntityAdapters, uint32_t flags = GfDefault) const;
 	
 	EntityAdapter* findAdapterFromEntity(const world::Entity* entity) const;
-
-	EntityAdapter* findAdapterFromInstance(const world::EntityInstance* instance) const;
 
 	EntityAdapter* queryRay(const Vector4& worldRayOrigin, const Vector4& worldRayDirection) const;
 
@@ -295,7 +288,6 @@ private:
 	uint32_t m_axisEnable;
 	bool m_snapEnable;
 	bool m_physicsEnable;
-	bool m_referenceMode;
 	bool m_playing;
 	float m_timeScale;
 	float m_time;

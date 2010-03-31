@@ -34,18 +34,16 @@ public:
 
 	virtual void begin(IEntityManager* entityManager);
 
-	virtual Ref< Entity > create(const std::wstring& name, const EntityData* entityData, const Object* instanceData);
+	virtual Ref< Entity > create(const EntityData* entityData);
 
-	virtual Ref< Entity > build(const EntityInstance* instance);
-
-	virtual Ref< Entity > get(const EntityInstance* instance) const;
+	virtual Ref< Entity > get(const EntityData* entityData) const;
 
 	virtual void end();
 
 private:
 	Ref< IEntityManager > m_entityManager;
 	RefArray< IEntityFactory > m_entityFactories;
-	std::map< Ref< const EntityInstance >, Ref< Entity > > m_instances;
+	std::map< const EntityData*, Ref< Entity > > m_entities;
 	bool m_inbuild;
 };
 

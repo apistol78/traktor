@@ -1,6 +1,6 @@
-#include "World/Entity/ExternalEntityData.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
+#include "World/Entity/ExternalEntityData.h"
 
 namespace traktor
 {
@@ -30,6 +30,9 @@ const Guid& ExternalEntityData::getGuid() const
 
 bool ExternalEntityData::serialize(ISerializer& s)
 {
+	if (!EntityData::serialize(s))
+		return false;
+
 	return s >> Member< Guid >(L"guid", m_guid, &type_of< EntityData >());
 }
 

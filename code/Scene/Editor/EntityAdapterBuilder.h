@@ -11,8 +11,8 @@ namespace traktor
 	namespace scene
 	{
 
-class SceneEditorContext;
 class EntityAdapter;
+class SceneEditorContext;
 
 class EntityAdapterBuilder : public world::IEntityBuilder
 {
@@ -27,11 +27,9 @@ public:
 
 	virtual void begin(world::IEntityManager* entityManager);
 
-	virtual Ref< world::Entity > create(const std::wstring& name, const world::EntityData* entityData, const Object* instanceData);
+	virtual Ref< world::Entity > create(const world::EntityData* entityData);
 
-	virtual Ref< world::Entity > build(const world::EntityInstance* instance);
-
-	virtual Ref< world::Entity > get(const world::EntityInstance* instance) const;
+	virtual Ref< world::Entity > get(const world::EntityData* entityData) const;
 
 	virtual void end();
 
@@ -41,8 +39,8 @@ private:
 	Ref< SceneEditorContext > m_context;
 	Ref< world::IEntityManager > m_entityManager;
 	RefArray< world::IEntityFactory > m_entityFactories;
-	std::map< Guid, RefArray< EntityAdapter > > m_cachedInstances;
-	std::map< const world::EntityInstance*, Ref< world::Entity > > m_builtInstances;
+	std::map< const world::EntityData*, Ref< world::Entity > > m_entities;
+	std::map< const world::EntityData*, RefArray< EntityAdapter > > m_cachedAdapters;
 	Ref< EntityAdapter > m_currentAdapter;
 	Ref< EntityAdapter > m_rootAdapter;
 };

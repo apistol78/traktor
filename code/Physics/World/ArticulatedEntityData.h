@@ -2,13 +2,13 @@
 #define traktor_physics_ArticulatedEntityData_H
 
 #include "Core/RefArray.h"
-#include "Physics/World/RigidEntityData.h"
+#include "World/Entity/SpatialEntityData.h"
 
 #undef T_DLLCLASS
 #if defined(T_PHYSICS_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -17,16 +17,16 @@ namespace traktor
 	{
 
 class IEntityBuilder;
-class EntityInstance;
 
 	}
 
 	namespace physics
 	{
 
-class PhysicsManager;
-class JointDesc;
 class ArticulatedEntity;
+class JointDesc;
+class PhysicsManager;
+class RigidEntityData;
 
 /*! \brief Articulated entity data.
  * \ingroup Physics
@@ -56,12 +56,12 @@ public:
 	
 	virtual bool serialize(ISerializer& s);
 
-	const RefArray< world::EntityInstance >& getInstances() const { return m_instances; }
+	const RefArray< RigidEntityData >& getEntityData() const { return m_entityData; }
 
 	const std::vector< Constraint >& getConstraints() const { return m_constraints; }
 
 private:
-	RefArray< world::EntityInstance > m_instances;
+	RefArray< RigidEntityData > m_entityData;
 	std::vector< Constraint > m_constraints;
 };
 

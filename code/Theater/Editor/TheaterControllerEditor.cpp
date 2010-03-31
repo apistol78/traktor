@@ -19,7 +19,7 @@
 #include "Ui/Custom/Sequencer/SequencerControl.h"
 #include "Ui/Custom/Sequencer/Sequence.h"
 #include "Ui/Custom/Sequencer/Tick.h"
-#include "World/Entity/EntityInstance.h"
+#include "World/Entity/EntityData.h"
 
 // Resources
 #include "Resources/Theater.h"
@@ -33,18 +33,18 @@ namespace traktor
 
 const float c_clampKeyDistance = 1.0f / 30.0f;
 
-struct FindInstanceTrackData
+struct FindTrackData
 {
-	world::EntityInstance* m_instance;
+	world::EntityData* m_entityData;
 
-	FindInstanceTrackData(world::EntityInstance* instance)
-	:	m_instance(instance)
+	FindTrackData(world::EntityData* entityData)
+	:	m_entityData(entityData)
 	{
 	}
 
 	bool operator () (const TrackData* trackData) const
 	{
-		return trackData->getInstance() == m_instance;
+		return trackData->getEntityData() == m_entityData;
 	}
 };
 
@@ -115,7 +115,7 @@ void TheaterControllerEditor::entityRemoved(scene::EntityAdapter* entityAdapter)
 	RefArray< TrackData >& trackData = controllerData->getTrackData();
 	for (RefArray< TrackData >::iterator i = trackData.begin(); i != trackData.end(); )
 	{
-		if ((*i)->getInstance() == entityAdapter->getInstance())
+		if ((*i)->getEntityData() == entityAdapter->getEntityData())
 			i = trackData.erase(i);
 		else
 			++i;
@@ -219,7 +219,7 @@ void TheaterControllerEditor::updateSequencer()
 	RefArray< TrackData >& trackData = controllerData->getTrackData();
 	for (RefArray< TrackData >::iterator i = trackData.begin(); i != trackData.end(); ++i)
 	{
-		Ref< ui::custom::Sequence > trackSequence = new ui::custom::Sequence((*i)->getInstance()->getName());
+		Ref< ui::custom::Sequence > trackSequence = new ui::custom::Sequence((*i)->getEntityData()->getName());
 		trackSequence->setData(L"TRACK", *i);
 
 		TransformPath& path = (*i)->getPath();
@@ -264,18 +264,18 @@ void TheaterControllerEditor::captureEntities()
 
 		Transform transform = (*i)->getTransform();
 
-		Ref< world::EntityInstance > instance = (*i)->getInstance();
-		T_ASSERT (instance);
+		Ref< world::EntityData > entityData = (*i)->getEntityData();
+		T_ASSERT (entityData);
 
 		Ref< TrackData > instanceTrackData;
 
-		RefArray< TrackData >::iterator j = std::find_if(trackData.begin(), trackData.end(), FindInstanceTrackData(instance));
+		RefArray< TrackData >::iterator j = std::find_if(trackData.begin(), trackData.end(), FindTrackData(entityData));
 		if (j != trackData.end())
 			instanceTrackData = *j;
 		else
 		{
 			instanceTrackData = new TrackData();
-			instanceTrackData->setInstance(instance);
+			instanceTrackData->setEntityData(entityData);
 			trackData.push_back(instanceTrackData);
 		}
 

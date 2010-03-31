@@ -7,8 +7,8 @@
 #include "Scene/Scene.h"
 #include "Scene/SceneResource.h"
 #include "World/WorldRenderSettings.h"
-#include "World/Entity/EntityInstance.h"
 #include "World/Entity/IEntityBuilder.h"
+#include "World/Entity/EntityData.h"
 #include "World/PostProcess/PostProcessSettings.h"
 
 namespace traktor
@@ -41,7 +41,7 @@ Ref< Scene > SceneResource::createScene(
 
 	entityBuilder->begin(entityManager);
 
-	Ref< world::Entity > rootEntity = entityBuilder->build(m_instance);
+	Ref< world::Entity > rootEntity = entityBuilder->create(m_entityData);
 
 	Ref< ISceneController > controller;
 	if (m_controllerData)
@@ -85,14 +85,14 @@ const resource::Proxy< world::PostProcessSettings >& SceneResource::getPostProce
 	return m_postProcessSettings;
 }
 
-void SceneResource::setInstance(world::EntityInstance* instance)
+void SceneResource::setEntityData(world::EntityData* entityData)
 {
-	m_instance = instance;
+	m_entityData = entityData;
 }
 
-Ref< world::EntityInstance > SceneResource::getInstance() const
+Ref< world::EntityData > SceneResource::getEntityData() const
 {
-	return m_instance;
+	return m_entityData;
 }
 
 void SceneResource::setControllerData(ISceneControllerData* controllerData)
@@ -109,7 +109,7 @@ bool SceneResource::serialize(ISerializer& s)
 {
 	s >> MemberRef< world::WorldRenderSettings >(L"worldRenderSettings", m_worldRenderSettings);
 	s >> resource::Member< world::PostProcessSettings >(L"postProcessSettings", m_postProcessSettings);
-	s >> MemberRef< world::EntityInstance >(L"instance", m_instance);
+	s >> MemberRef< world::EntityData >(L"entityData", m_entityData);
 	s >> MemberRef< ISceneControllerData >(L"controllerData", m_controllerData);
 	return true;
 }

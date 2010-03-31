@@ -93,7 +93,8 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, bool 
 
 						// Find input pin by input port.
 						const InputPin* externalInputPin = externalNode->findInputPin(inputPortName);
-						T_ASSERT (externalInputPin);
+						if (!externalInputPin)
+							return 0;
 
 						// Create "established port" node and move all edges from input port to established port.
 						Ref< EstPort > inputEstPort = new EstPort();

@@ -1,16 +1,15 @@
 #include <algorithm>
+#include "Core/Math/Const.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/IEntityEditor.h"
-#include "World/Entity/EntityInstance.h"
-#include "World/Entity/EntityData.h"
 #include "World/Entity/Entity.h"
+#include "World/Entity/EntityData.h"
 #include "World/Entity/SpatialEntityData.h"
 #include "World/Entity/SpatialEntity.h"
 #include "World/Entity/ExternalEntityData.h"
 #include "World/Entity/ExternalSpatialEntityData.h"
 #include "World/Entity/GroupEntityData.h"
 #include "World/Entity/SpatialGroupEntityData.h"
-#include "Core/Math/Const.h"
 
 namespace traktor
 {
@@ -19,8 +18,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.EntityAdapter", EntityAdapter, Object)
 
-EntityAdapter::EntityAdapter(world::EntityInstance* instance)
-:	m_instance(instance)
+EntityAdapter::EntityAdapter(world::EntityData* entityData)
+:	m_entityData(entityData)
 ,	m_parent(0)
 ,	m_selected(false)
 ,	m_expanded(false)
@@ -28,25 +27,9 @@ EntityAdapter::EntityAdapter(world::EntityInstance* instance)
 {
 }
 
-Ref< world::EntityInstance > EntityAdapter::getInstance() const
-{
-	return m_instance;
-}
-
 Ref< world::EntityData > EntityAdapter::getEntityData() const
 {
-	T_ASSERT (m_instance);
-	return m_instance->getEntityData();
-}
-
-void EntityAdapter::setRealEntityData(world::EntityData* entityData)
-{
-	m_realEntityData = entityData;
-}
-
-Ref< world::EntityData > EntityAdapter::getRealEntityData() const
-{
-	return m_realEntityData;
+	return m_entityData;
 }
 
 void EntityAdapter::setEntity(world::Entity* entity)
@@ -61,7 +44,7 @@ Ref< world::Entity > EntityAdapter::getEntity() const
 
 std::wstring EntityAdapter::getName() const
 {
-	return m_instance->getName();
+	return m_entityData->getName();
 }
 
 std::wstring EntityAdapter::getTypeName() const
@@ -137,27 +120,6 @@ bool EntityAdapter::getExternalGuid(Guid& outGuid) const
 	return false;
 }
 
-bool EntityAdapter::addReference(EntityAdapter* reference)
-{
-	T_ASSERT (m_instance);
-	T_ASSERT (reference->m_instance);
-
-	const std::vector< world::EntityInstance* >& references = m_instance->getReferences();
-	if (std::find(references.begin(), references.end(), reference->m_instance) != references.end())
-		return false;
-
-	m_instance->addReference(reference->m_instance);
-	return true;
-}
-
-void EntityAdapter::removeReference(EntityAdapter* reference)
-{
-	T_ASSERT (m_instance);
-	T_ASSERT (reference->m_instance);
-
-	m_instance->removeReference(reference->m_instance);
-}
-
 bool EntityAdapter::isGroup() const
 {
 	if (is_a< world::GroupEntityData >(getEntityData()))
@@ -198,9 +160,12 @@ Ref< EntityAdapter > EntityAdapter::getParentContainerGroup()
 void EntityAdapter::addChild(EntityAdapter* child)
 {
 	if (world::GroupEntityData* groupEntityData = dynamic_type_cast< world::GroupEntityData* >(getEntityData()))
-		groupEntityData->addInstance(child->getInstance());
+		groupEntityData->addEntityData(child->getEntityData());
 	else if (world::SpatialGroupEntityData* spatialGroupEntityData = dynamic_type_cast< world::SpatialGroupEntityData* >(getEntityData()))
-		spatialGroupEntityData->addInstance(child->getInstance());
+	{
+		if (world::SpatialEntityData* spatialChildEntityData = dynamic_type_cast< world::SpatialEntityData* >(child->getEntityData()))
+			spatialGroupEntityData->addEntityData(spatialChildEntityData);
+	}
 	else
 		T_FATAL_ERROR;
 
@@ -210,9 +175,12 @@ void EntityAdapter::addChild(EntityAdapter* child)
 void EntityAdapter::removeChild(EntityAdapter* child)
 {
 	if (world::GroupEntityData* groupEntityData = dynamic_type_cast< world::GroupEntityData* >(getEntityData()))
-		groupEntityData->removeInstance(child->getInstance());
+		groupEntityData->removeEntityData(child->getEntityData());
 	else if (world::SpatialGroupEntityData* spatialGroupEntityData = dynamic_type_cast< world::SpatialGroupEntityData* >(getEntityData()))
-		spatialGroupEntityData->removeInstance(child->getInstance());
+	{
+		if (world::SpatialEntityData* spatialChildEntityData = dynamic_type_cast< world::SpatialEntityData* >(child->getEntityData()))
+			spatialGroupEntityData->removeEntityData(spatialChildEntityData);
+	}
 	else
 		T_FATAL_ERROR;
 

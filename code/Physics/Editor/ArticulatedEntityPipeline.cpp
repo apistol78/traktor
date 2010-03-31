@@ -1,7 +1,7 @@
+#include "Editor/IPipelineDepends.h"
 #include "Physics/Editor/ArticulatedEntityPipeline.h"
 #include "Physics/World/ArticulatedEntityData.h"
-#include "World/Entity/EntityInstance.h"
-#include "Editor/IPipelineDepends.h"
+#include "Physics/World/RigidEntityData.h"
 
 namespace traktor
 {
@@ -26,8 +26,8 @@ bool ArticulatedEntityPipeline::buildDependencies(
 {
 	if (const ArticulatedEntityData* articulatedEntityData = dynamic_type_cast< const ArticulatedEntityData* >(sourceAsset))
 	{
-		const RefArray< world::EntityInstance >& instances = articulatedEntityData->getInstances();
-		for (RefArray< world::EntityInstance >::const_iterator i = instances.begin(); i != instances.end(); ++i)
+		const RefArray< RigidEntityData >& entityData = articulatedEntityData->getEntityData();
+		for (RefArray< RigidEntityData >::const_iterator i = entityData.begin(); i != entityData.end(); ++i)
 			pipelineDepends->addDependency(*i);
 	}
 	return true;

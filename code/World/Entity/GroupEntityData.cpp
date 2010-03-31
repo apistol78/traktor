@@ -1,6 +1,5 @@
 #include <algorithm>
 #include "World/Entity/GroupEntityData.h"
-#include "World/Entity/EntityInstance.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRefArray.h"
 
@@ -11,36 +10,39 @@ namespace traktor
 	
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.GroupEntityData", 0, GroupEntityData, EntityData)
 
-void GroupEntityData::addInstance(EntityInstance* instance)
+void GroupEntityData::addEntityData(EntityData* entityData)
 {
-	m_instances.push_back(instance);
+	m_entityData.push_back(entityData);
 }
 
-void GroupEntityData::removeInstance(EntityInstance* instance)
+void GroupEntityData::removeEntityData(EntityData* entityData)
 {
-	RefArray< EntityInstance >::iterator i = std::find(m_instances.begin(), m_instances.end(), instance);
-	if (i != m_instances.end())
-		m_instances.erase(i);
+	RefArray< EntityData >::iterator i = std::find(m_entityData.begin(), m_entityData.end(), entityData);
+	if (i != m_entityData.end())
+		m_entityData.erase(i);
 }
 
-void GroupEntityData::removeAllInstances()
+void GroupEntityData::removeAllEntityData()
 {
-	m_instances.resize(0);
+	m_entityData.resize(0);
 }
 
-RefArray< EntityInstance >& GroupEntityData::getInstances()
+RefArray< EntityData >& GroupEntityData::getEntityData()
 {
-	return m_instances;
+	return m_entityData;
 }
 
-const RefArray< EntityInstance >& GroupEntityData::getInstances() const
+const RefArray< EntityData >& GroupEntityData::getEntityData() const
 {
-	return m_instances;
+	return m_entityData;
 }
 	
 bool GroupEntityData::serialize(ISerializer& s)
 {
-	return s >> MemberRefArray< EntityInstance >(L"instances", m_instances);
+	if (!EntityData::serialize(s))
+		return false;
+
+	return s >> MemberRefArray< EntityData >(L"entityData", m_entityData);
 }
 	
 	}

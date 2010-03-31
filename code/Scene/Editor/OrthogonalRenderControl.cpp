@@ -27,7 +27,6 @@
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldRenderer.h"
 #include "World/WorldRenderView.h"
-#include "World/Entity/EntityInstance.h"
 
 namespace traktor
 {
@@ -301,7 +300,7 @@ void OrthogonalRenderControl::eventButtonDown(ui::Event* event)
 	{
 		m_renderWidget->setCapture();
 	}
-	else  if (!m_context->inAddReferenceMode())
+	else
 	{
 		// Handle entity picking if enabled.
 		if (m_context->getPickEnable())
@@ -321,39 +320,6 @@ void OrthogonalRenderControl::eventButtonDown(ui::Event* event)
 
 		m_modifyBegun = false;
 		m_renderWidget->setCapture();
-	}
-	else
-	{
-		Ref< EntityAdapter > entityAdapter = pickEntity(m_mousePosition);
-		if (entityAdapter)
-		{
-			// Get selected entities.
-			m_context->getEntities(
-				m_modifyEntities,
-				SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants
-			);
-
-			if (!m_modifyEntities.empty())
-			{
-				// Issue begin modification event.
-				m_context->raisePreModify();
-
-				// Add reference to all selected entities.
-				bool referenceAdded = false;
-				for (RefArray< EntityAdapter >::iterator i = m_modifyEntities.begin(); i != m_modifyEntities.end(); ++i)
-				{
-					if ((*i) != entityAdapter)
-						referenceAdded |= (*i)->addReference(entityAdapter);
-				}
-
-				// Need to build entities so references in them will get updated.
-				if (referenceAdded)
-					m_context->buildEntities();
-
-				// Issue post modification event.
-				m_context->raisePostModify();
-			}
-		}
 	}
 
 	m_renderWidget->setFocus();
@@ -627,28 +593,6 @@ void OrthogonalRenderControl::eventPaint(ui::Event* event)
 					m_primitiveRenderer,
 					m_mouseButton
 				);
-
-				// Draw reference arrows.
-				const std::vector< world::EntityInstance* >& references = (*i)->getInstance()->getReferences();
-				for (std::vector< world::EntityInstance* >::const_iterator j = references.begin(); j != references.end(); ++j)
-				{
-					Ref< EntityAdapter > referencedAdapter = m_context->findAdapterFromInstance(*j);
-					if (referencedAdapter)
-					{
-						Vector4 sourcePosition = (*i)->getTransform().translation();
-						Vector4 targetPosition = referencedAdapter->getTransform().translation();
-
-						Vector4 center = (sourcePosition + targetPosition) / Scalar(2.0f);
-						Vector4 offset = (targetPosition - sourcePosition) / Scalar(20.0f);
-
-						Scalar length = offset.length();
-						if (length > 0.1f)
-							offset *= Scalar(0.1f) / length;
-
-						m_primitiveRenderer->drawLine(sourcePosition, targetPosition, 3.0f, m_colorRef);
-						m_primitiveRenderer->drawArrowHead(center - offset, center + offset, 0.5f, m_colorRef);
-					}
-				}
 			}
 
 			// Draw entity guides.

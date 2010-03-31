@@ -5,7 +5,7 @@
 #include "Scene/SceneResource.h"
 #include "Scene/Editor/SceneAsset.h"
 #include "World/WorldRenderSettings.h"
-#include "World/Entity/EntityInstance.h"
+#include "World/Entity/EntityData.h"
 #include "World/PostProcess/PostProcessSettings.h"
 
 namespace traktor
@@ -13,7 +13,7 @@ namespace traktor
 	namespace scene
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.scene.SceneAsset", 2, SceneAsset, editor::ITypedAsset)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.scene.SceneAsset", 3, SceneAsset, editor::ITypedAsset)
 
 SceneAsset::SceneAsset()
 :	m_worldRenderSettings(new world::WorldRenderSettings())
@@ -40,14 +40,14 @@ const resource::Proxy< world::PostProcessSettings >& SceneAsset::getPostProcessS
 	return m_postProcessSettings;
 }
 
-void SceneAsset::setInstance(world::EntityInstance* instance)
+void SceneAsset::setEntityData(world::EntityData* entityData)
 {
-	m_instance = instance;
+	m_entityData = entityData;
 }
 
-Ref< world::EntityInstance > SceneAsset::getInstance() const
+Ref< world::EntityData > SceneAsset::getEntityData() const
 {
-	return m_instance;
+	return m_entityData;
 }
 
 void SceneAsset::setControllerData(ISceneControllerData* controllerData)
@@ -67,20 +67,11 @@ const TypeInfo* SceneAsset::getOutputType() const
 
 bool SceneAsset::serialize(ISerializer& s)
 {
+	T_ASSERT (s.getVersion() >= 3);
 	s >> MemberRef< world::WorldRenderSettings >(L"worldRenderSettings", m_worldRenderSettings);
-
-	if (s.getVersion() >= 2)
-	{
-		s >> resource::Member< world::PostProcessSettings >(L"postProcessSettings", m_postProcessSettings);
-	}
-
-	s >> MemberRef< world::EntityInstance >(L"instance", m_instance);
-
-	if (s.getVersion() >= 1)
-	{
-		s >> MemberRef< ISceneControllerData >(L"controllerData", m_controllerData);
-	}
-
+	s >> resource::Member< world::PostProcessSettings >(L"postProcessSettings", m_postProcessSettings);
+	s >> MemberRef< world::EntityData >(L"entityData", m_entityData);
+	s >> MemberRef< ISceneControllerData >(L"controllerData", m_controllerData);
 	return true;
 }
 

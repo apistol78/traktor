@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_WORLD_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -17,8 +17,8 @@ namespace traktor
 	{
 
 class IEntityBuilder;
-class EntityData;
 class Entity;
+class EntityData;
 
 /*! \brief Entity factory interface.
  * \ingroup World
@@ -32,9 +32,7 @@ public:
 
 	virtual Ref< Entity > createEntity(
 		IEntityBuilder* builder,
-		const std::wstring& name,
-		const EntityData& entityData,
-		const Object* instanceData
+		const EntityData& entityData
 	) const = 0;
 };
 

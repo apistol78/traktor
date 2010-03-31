@@ -1,46 +1,19 @@
 #include <limits>
-#include "Scene/Editor/EntityAdapterBuilder.h"
-#include "Scene/Editor/SceneEditorContext.h"
+#include "Core/Log/Log.h"
+#include "Core/Misc/Save.h"
+#include "Core/Serialization/DeepHash.h"
 #include "Scene/Editor/EntityAdapter.h"
+#include "Scene/Editor/EntityAdapterBuilder.h"
+#include "World/Entity/Entity.h"
+#include "World/Entity/EntityData.h"
 #include "World/Entity/IEntityFactory.h"
 #include "World/Entity/IEntityManager.h"
-#include "World/Entity/EntityInstance.h"
-#include "World/Entity/EntityData.h"
-#include "World/Entity/Entity.h"
-#include "World/Entity/ExternalEntityData.h"
-#include "World/Entity/ExternalSpatialEntityData.h"
-#include "Database/Database.h"
-#include "Core/Serialization/DeepHash.h"
-#include "Core/Misc/Save.h"
-#include "Core/Log/Log.h"
+#include "Scene/Editor/SceneEditorContext.h"
 
 namespace traktor
 {
 	namespace scene
 	{
-		namespace
-		{
-
-Ref< const world::EntityData > resolveRealEntityData(db::Database* database, const world::EntityData* entityData)
-{
-	Ref< world::EntityData > realEntityData;
-	if (const world::ExternalEntityData* externalEntityData = dynamic_type_cast< const world::ExternalEntityData* >(entityData))
-	{
-		realEntityData = database->getObjectReadOnly< world::EntityData >(externalEntityData->getGuid());
-	}
-	else if (const world::ExternalSpatialEntityData* externalSpatialEntityData = dynamic_type_cast< const world::ExternalSpatialEntityData* >(entityData))
-	{
-		Ref< world::SpatialEntityData > realSpatialEntityData = database->getObjectReadOnly< world::SpatialEntityData >(externalSpatialEntityData->getGuid());
-		if (realSpatialEntityData)
-		{
-			realSpatialEntityData->setTransform(externalSpatialEntityData->getTransform());
-			realEntityData = realSpatialEntityData;
-		}
-	}
-	return realEntityData ? realEntityData : entityData;
-}
-
-		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.EntityAdapterBuilder", EntityAdapterBuilder, world::IEntityBuilder)
 
@@ -84,25 +57,35 @@ void EntityAdapterBuilder::begin(world::IEntityManager* entityManager)
 			parent->unlink(entityAdapter);
 
 		// Insert into map from instance guid to adapters.
-		Guid instanceGuid = entityAdapter->getInstance()->getGuid();
-		m_cachedInstances[instanceGuid].push_back(entityAdapter);
+		m_cachedAdapters[entityAdapter->getEntityData()].push_back(entityAdapter);
 	}
 
 	T_ASSERT (!m_rootAdapter);
 }
 
-Ref< world::Entity > EntityAdapterBuilder::create(const std::wstring& name, const world::EntityData* entityData, const Object* instanceData)
+Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entityData)
 {
 	if (!entityData)
 		return 0;
 
-	// Resolve entity data; we cannot create external entities through external factory as we need to have both datas.
-	Ref< const world::EntityData > realEntityData = resolveRealEntityData(m_context->getSourceDatabase(), entityData);
-	T_ASSERT (realEntityData);
+	Ref< EntityAdapter > entityAdapter;
+	RefArray< EntityAdapter >& cachedAdapters = m_cachedAdapters[entityData];
+	if (!cachedAdapters.empty())
+	{
+		entityAdapter = cachedAdapters.front(); cachedAdapters.pop_front();
+	}
+	else
+	{
+		entityAdapter = new EntityAdapter(const_cast< world::EntityData* >(entityData));
+	}
 
-	// Save "outer" entity data in current adapter; need this information in order to determine entity editor etc..
-	if (m_currentAdapter && !m_currentAdapter->getRealEntityData())
-		m_currentAdapter->setRealEntityData(const_cast< world::EntityData* >(realEntityData.ptr()));
+	if (m_currentAdapter)
+		m_currentAdapter->link(entityAdapter);
+	else
+	{
+		T_ASSERT (!m_rootAdapter);
+		m_rootAdapter = entityAdapter;
+	}
 
 	// Find entity factory.
 	uint32_t minClassDifference = std::numeric_limits< uint32_t >::max();
@@ -113,9 +96,9 @@ Ref< world::Entity > EntityAdapterBuilder::create(const std::wstring& name, cons
 		const TypeInfoSet& typeSet = (*i)->getEntityTypes();
 		for (TypeInfoSet::const_iterator j = typeSet.begin(); j != typeSet.end() && minClassDifference > 0; ++j)
 		{
-			if (is_type_of(**j, type_of(realEntityData)))
+			if (is_type_of(**j, type_of(entityData)))
 			{
-				uint32_t classDifference = type_difference(**j, type_of(realEntityData));
+				uint32_t classDifference = type_difference(**j, type_of(entityData));
 				if (classDifference < minClassDifference)
 				{
 					minClassDifference = classDifference;
@@ -127,76 +110,40 @@ Ref< world::Entity > EntityAdapterBuilder::create(const std::wstring& name, cons
 
 	if (!entityFactory)
 	{
-		log::error << L"Unable to find entity factory for \"" << type_name(realEntityData) << L"\"" << Endl;
+		log::error << L"Unable to find entity factory for \"" << type_name(entityData) << L"\"" << Endl;
 		return 0;
 	}
 
-	// Create entity from entity data through specialized factory.
-	Ref< world::Entity > entity = entityFactory->createEntity(this, name, *realEntityData, instanceData);
-	if (!entity)
-	{
-		log::error << L"Unable to create entity from \"" << type_name(realEntityData) << L"\"" << Endl;
-		return 0;
-	}
-
-	// Add this entity to the manager.
-	if (m_entityManager)
-		m_entityManager->insertEntity(name, entity);
-
-	return entity;
-}
-
-Ref< world::Entity > EntityAdapterBuilder::build(const world::EntityInstance* instance)
-{
-	if (!instance)
-		return 0;
-
-	Ref< EntityAdapter > entityAdapter;
 	Ref< world::Entity > entity;
-
-	RefArray< EntityAdapter >& cachedAdapters = m_cachedInstances[instance->getGuid()];
-	if (!cachedAdapters.empty())
 	{
-		entityAdapter = cachedAdapters.front(); cachedAdapters.pop_front();
-		entity = entityAdapter->getEntity();
-	}
-	else
-	{
-		entityAdapter = new EntityAdapter(const_cast< world::EntityInstance* >(instance));
-	}
-
-	if (!entity)
-	{
-		if (m_currentAdapter)
-			m_currentAdapter->link(entityAdapter);
-		else
+		T_ANONYMOUS_VAR(Save< Ref< EntityAdapter > >)(m_currentAdapter, entityAdapter);
+		if (!(entity = entityFactory->createEntity(this, *entityData)))
 		{
-			T_ASSERT (!m_rootAdapter);
-			m_rootAdapter = entityAdapter;
+			log::error << L"Unable to create entity from \"" << type_name(entityData) << L"\"" << Endl;
+			return 0;
 		}
-
-		{
-			T_ANONYMOUS_VAR(Save< Ref< EntityAdapter > >)(m_currentAdapter, entityAdapter);
-			entity = create(instance->getName(), instance->getEntityData(), instance->getInstanceData());
-		}
-
-		entityAdapter->setEntity(entity);
 	}
 
-	m_builtInstances.insert(std::make_pair(instance, entity));
+	entityAdapter->setEntity(entity);
+
+	m_entities[entityData] = entity;
+	
+	if (m_entityManager)
+		m_entityManager->insertEntity(entityData->getName(), entity);
+
 	return entity;
 }
 
-Ref< world::Entity > EntityAdapterBuilder::get(const world::EntityInstance* instance) const
+Ref< world::Entity > EntityAdapterBuilder::get(const world::EntityData* entityData) const
 {
-	std::map< const world::EntityInstance*, Ref< world::Entity > >::const_iterator i = m_builtInstances.find(instance);
-	return i != m_builtInstances.end() ? i->second : 0;
+	std::map< const world::EntityData*, Ref< world::Entity > >::const_iterator i = m_entities.find(entityData);
+	return (i != m_entities.end()) ? i->second : 0;
 }
 
 void EntityAdapterBuilder::end()
 {
 	T_ASSERT (m_currentAdapter == 0);
-	m_cachedInstances.clear();
+	m_cachedAdapters.clear();
 }
 
 Ref< EntityAdapter > EntityAdapterBuilder::getRootAdapter() const

@@ -7,17 +7,15 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_WORLD_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
 {
 	namespace world
 	{
-
-class EntityInstance;
 
 /*! \brief Group entity data.
  * \ingroup World
@@ -27,20 +25,20 @@ class T_DLLCLASS GroupEntityData : public EntityData
 	T_RTTI_CLASS;
 
 public:
-	void addInstance(EntityInstance* instance);
+	void addEntityData(EntityData* entityData);
 
-	void removeInstance(EntityInstance* instance);
+	void removeEntityData(EntityData* entityData);
 
-	void removeAllInstances();
+	void removeAllEntityData();
 
-	RefArray< EntityInstance >& getInstances();
+	RefArray< EntityData >& getEntityData();
 
-	const RefArray< EntityInstance >& getInstances() const;
+	const RefArray< EntityData >& getEntityData() const;
 	
 	virtual bool serialize(ISerializer& s);
 	
 private:
-	RefArray< EntityInstance > m_instances;
+	RefArray< EntityData > m_entityData;
 };
 	
 	}
