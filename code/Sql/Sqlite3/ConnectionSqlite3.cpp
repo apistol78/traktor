@@ -38,17 +38,23 @@ bool ConnectionSqlite3::connect(const std::wstring& connectionString)
 	Path fileName = FileSystem::getInstance().getAbsolutePath(cs[L"fileName"]);
 	FileSystem::getInstance().makeAllDirectories(fileName.getPathOnly());
 
-	log::debug << L"Using SQLite db \"" << fileName.getPathName() << L"\"" << Endl;
+#if defined(TARGET_OS_MAC)
+	std::wstring dbName = fileName.getPathNameNoVolume();
+#else
+	std::wstring dbName = fileName.getPathName();
+#endif
+
+	log::debug << L"Using SQLite db \"" << dbName << L"\"" << Endl;
 
 	sqlite3* db = 0;
 
 	int err = sqlite3_open(
-		wstombs(fileName.getPathName()).c_str(),
+		wstombs(dbName).c_str(),
 		&db
 	);
 	if (err != SQLITE_OK)
 	{
-		log::error << L"SQLite error (" << fileName.getPathName() << L"):" << Endl;
+		log::error << L"SQLite error (" << dbName << L"):" << Endl;
 		log::error << mbstows(sqlite3_errmsg((sqlite3*)m_db)) << Endl;
 		return false;
 	}

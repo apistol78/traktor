@@ -227,7 +227,7 @@ DisplayMode RenderSystemOpenGL::getDisplayMode(uint32_t index) const
 	return dm;
 
 #else
-	return 0;
+	return DisplayMode();
 #endif
 }
 
@@ -249,7 +249,7 @@ DisplayMode RenderSystemOpenGL::getCurrentDisplayMode() const
 	return dm;
 
 #else
-	return 0;
+	return DisplayMode();
 #endif
 }
 
