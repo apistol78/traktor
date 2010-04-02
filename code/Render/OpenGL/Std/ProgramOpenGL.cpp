@@ -197,6 +197,9 @@ bool ProgramOpenGL::create(const ProgramResource* resource)
 
 		T_OGL_SAFE(glGetActiveUniformARB(m_program, j, sizeof(uniformName), 0, &uniformSize, &uniformType, uniformName));
 		std::wstring uniformNameW = mbstows(uniformName);
+		
+		if (uniformNameW == L"_gl_targetSize")
+			continue;
 
 		// Trim indexed uniforms; seems to vary dependending on OGL implementation.
 		size_t p = uniformNameW.find('[');
@@ -397,11 +400,11 @@ void ProgramOpenGL::setStencilReference(uint32_t stencilReference)
 {
 }
 
-bool ProgramOpenGL::activate()
+bool ProgramOpenGL::activate(float targetSize[2])
 {
 	if (ms_activeProgram == this && !m_dirty)
 		return true;
-
+	
 	if (ms_activeProgram != this)
 	{
 		m_context->callStateList(m_state);
@@ -457,6 +460,9 @@ bool ProgramOpenGL::activate()
 			}
 		}
 	}
+
+	GLuint location = glGetUniformLocationARB(m_program, "_gl_targetSize");
+	glUniform2f(location, targetSize[0], targetSize[1]);
 
 	for (uint32_t i = 0; i < m_samplers.size(); ++i)
 	{

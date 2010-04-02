@@ -151,6 +151,9 @@ std::wstring GlslShader::getGeneratedShader()
 	}
 #endif
 
+	ss << L"uniform vec2 _gl_targetSize;" << Endl;
+	ss << Endl;
+
 	ss << getOutputStream(BtUniform).str();
 	ss << Endl;
 	ss <<getOutputStream(BtInput).str();

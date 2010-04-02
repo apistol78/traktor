@@ -1049,6 +1049,13 @@ void emitTan(GlslContext& cx, Tan* node)
 	assign(f, out) << L"tan(" << theta->getName() << L");" << Endl;
 }
 
+void emitTargetSize(GlslContext& cx, TargetSize* node)
+{
+	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat2);
+	assign(f, out) << L"_gl_targetSize;";
+}
+
 void emitTexture(GlslContext& cx, Texture* node)
 {
 	std::wstring parameterName = getParameterNameFromGuid(node->getExternal());
@@ -1329,6 +1336,7 @@ GlslEmitter::GlslEmitter()
 	m_emitters[&type_of< Switch >()] = new EmitterCast< Switch >(emitSwitch);
 	m_emitters[&type_of< Swizzle >()] = new EmitterCast< Swizzle >(emitSwizzle);
 	m_emitters[&type_of< Tan >()] = new EmitterCast< Tan >(emitTan);
+	m_emitters[&type_of< TargetSize >()] = new EmitterCast< TargetSize >(emitTargetSize);
 	m_emitters[&type_of< Texture >()] = new EmitterCast< Texture >(emitTexture);
 	m_emitters[&type_of< Transform >()] = new EmitterCast< Transform >(emitTransform);
 	m_emitters[&type_of< Transpose >()] = new EmitterCast< Transpose >(emitTranspose);

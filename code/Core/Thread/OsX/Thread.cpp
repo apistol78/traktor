@@ -94,7 +94,7 @@ bool Thread::wait(int timeout)
 	
 		gettimeofday(&now, 0);
 		ts.tv_sec = now.tv_sec + timeout / 1000;
-		ts.tv_nsec = (now.tv_usec + timeout % 1000) * 1000;					
+		ts.tv_nsec = (now.tv_usec + (timeout % 1000) * 1000) * 1000;					
 		
 		for (rc = 0; rc == 0 && !in->finished; )
 		{

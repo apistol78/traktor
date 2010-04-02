@@ -223,7 +223,8 @@ void RenderViewOpenGL::draw(const Primitives& primitives)
 		if (!m_currentProgram || !m_currentVertexBuffer)
 			return;
 
-		if (!m_currentProgram->activate())
+		float targetSize[] = { m_context->getWidth(), m_context->getHeight() };
+		if (!m_currentProgram->activate(targetSize))
 			return;
 
 		m_currentVertexBuffer->activate(

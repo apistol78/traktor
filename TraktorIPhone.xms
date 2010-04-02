@@ -7724,6 +7724,10 @@
 										<items/>
 									</item>
 									<item type="File">
+										<fileName>../../../res/graph/Comment.png</fileName>
+										<items/>
+									</item>
+									<item type="File">
 										<fileName>../../../res/graph/Grid.png</fileName>
 										<items/>
 									</item>

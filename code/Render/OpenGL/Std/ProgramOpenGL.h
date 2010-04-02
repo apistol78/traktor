@@ -57,7 +57,7 @@ public:
 
 	virtual void setStencilReference(uint32_t stencilReference);
 
-	bool activate();
+	bool activate(float targetSize[2]);
 
 	const GLint* getAttributeLocs() const;
 

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="Solution">
+<object type="Solution" version="1">
 	<name>Traktor MacOSX</name>
 	<rootPath>$(TRAKTOR_HOME)/build/macosx</rootPath>
+	<definitions/>
 	<projects>
 		<item type="Project" version="1">
 			<enable>true</enable>
@@ -17,7 +18,7 @@
 						<name>Extern.bullet-2.75</name>
 						<sourcePath>$(TRAKTOR_HOME)/3rdp/bullet-2.75</sourcePath>
 						<configurations>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>DebugShared</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -31,8 +32,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>ReleaseShared</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -46,8 +49,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>DebugStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -61,8 +66,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>ReleaseStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -76,6 +83,8 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
 						</configurations>
 						<items>
@@ -212,7 +221,7 @@
 						<name>Extern.expat-2.0.0</name>
 						<sourcePath>$(TRAKTOR_HOME)/3rdp/expat-2.0.0/lib</sourcePath>
 						<configurations>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>DebugShared</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -229,8 +238,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>ReleaseShared</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -247,8 +258,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>DebugStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -265,8 +278,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>ReleaseStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -283,6 +298,8 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
 						</configurations>
 						<items>
@@ -313,7 +330,7 @@
 						<name>Extern.freetype-2.3.5</name>
 						<sourcePath>$(TRAKTOR_HOME)/3rdp/freetype-2.3.5/src</sourcePath>
 						<configurations>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>DebugShared</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -329,8 +346,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>ReleaseShared</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -346,8 +365,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>DebugStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -363,8 +384,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>ReleaseStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -380,6 +403,8 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
 						</configurations>
 						<items>
@@ -1358,7 +1383,7 @@
 						<name>Extern.jpeg-6b</name>
 						<sourcePath>$(TRAKTOR_HOME)/3rdp/jpeg-6b</sourcePath>
 						<configurations>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>DebugShared</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -1372,8 +1397,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>ReleaseShared</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -1387,8 +1414,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>DebugStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -1402,8 +1431,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>ReleaseStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -1417,6 +1448,8 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
 						</configurations>
 						<items>
@@ -1439,7 +1472,7 @@
 						<name>Extern.libflac-1.2.1</name>
 						<sourcePath>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/src/libFLAC</sourcePath>
 						<configurations>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>DebugShared</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -1457,8 +1490,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>ReleaseShared</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -1476,8 +1511,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>DebugStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -1495,8 +1532,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>ReleaseStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -1514,6 +1553,8 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
 						</configurations>
 						<items>
@@ -1619,7 +1660,7 @@
 						<name>Extern.libmad-0.15.1b</name>
 						<sourcePath>$(TRAKTOR_HOME)/3rdp/libmad-0.15.1b</sourcePath>
 						<configurations>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>DebugShared</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -1637,8 +1678,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>ReleaseShared</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -1656,8 +1699,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>DebugStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -1675,8 +1720,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>ReleaseStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -1694,6 +1741,8 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
 						</configurations>
 						<items>
@@ -1813,7 +1862,7 @@
 						<name>Extern.libogg-1.1.4</name>
 						<sourcePath>$(TRAKTOR_HOME)/3rdp/libogg-1.1.4/src</sourcePath>
 						<configurations>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>DebugShared</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -1828,8 +1877,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>ReleaseShared</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -1844,8 +1895,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>DebugStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -1860,8 +1913,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>ReleaseStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -1876,6 +1931,8 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
 						</configurations>
 						<items>
@@ -1898,7 +1955,7 @@
 						<name>Extern.libvorbis-1.2.3</name>
 						<sourcePath>$(TRAKTOR_HOME)/3rdp/libvorbis-1.2.3/lib</sourcePath>
 						<configurations>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>DebugShared</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -1915,8 +1972,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>ReleaseShared</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -1933,8 +1992,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>DebugStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -1951,8 +2012,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>ReleaseStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -1969,6 +2032,8 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
 						</configurations>
 						<items>
@@ -2256,7 +2321,7 @@
 						<name>Extern.lpng128</name>
 						<sourcePath>$(TRAKTOR_HOME)/3rdp/lpng128</sourcePath>
 						<configurations>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>DebugStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -2270,8 +2335,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>ReleaseStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -2285,8 +2352,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>DebugShared</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -2301,8 +2370,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>ReleaseShared</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -2317,6 +2388,8 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
 						</configurations>
 						<items>
@@ -2339,7 +2412,7 @@
 						<name>Extern.lua-5.1.4</name>
 						<sourcePath>$(TRAKTOR_HOME)/3rdp/lua-5.1.4/src</sourcePath>
 						<configurations>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>DebugShared</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -2352,8 +2425,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>ReleaseShared</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -2366,8 +2441,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>DebugStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -2380,8 +2457,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>ReleaseStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -2394,6 +2473,8 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
 						</configurations>
 						<items>
@@ -2624,7 +2705,7 @@
 						<name>Extern.lwObject</name>
 						<sourcePath>$(TRAKTOR_HOME)/3rdp/lwObject</sourcePath>
 						<configurations>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>DebugStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -2637,8 +2718,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>ReleaseStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -2651,8 +2734,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>DebugShared</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -2666,8 +2751,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>ReleaseShared</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -2681,6 +2768,8 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
 						</configurations>
 						<items>
@@ -2699,7 +2788,7 @@
 						<name>Extern.ode-0.9</name>
 						<sourcePath>$(TRAKTOR_HOME)/3rdp/ode-0.9</sourcePath>
 						<configurations>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>DebugStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -2714,8 +2803,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>ReleaseStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -2728,8 +2819,10 @@
 								<definitions/>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>DebugShared</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -2745,8 +2838,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>ReleaseShared</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -2762,6 +2857,8 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
 						</configurations>
 						<items>
@@ -2804,7 +2901,7 @@
 						<name>Extern.squish-1.10</name>
 						<sourcePath>$(TRAKTOR_HOME)/3rdp/squish-1.10</sourcePath>
 						<configurations>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>DebugShared</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -2818,8 +2915,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>ReleaseShared</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -2833,8 +2932,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>DebugStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -2848,8 +2949,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>ReleaseStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -2863,6 +2966,8 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
 						</configurations>
 						<items>
@@ -2885,7 +2990,7 @@
 						<name>Extern.zlib-1.2.3</name>
 						<sourcePath>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</sourcePath>
 						<configurations>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>DebugStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -2898,8 +3003,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>ReleaseStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -2912,8 +3019,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>DebugShared</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -2927,8 +3036,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>ReleaseShared</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -2942,6 +3053,8 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
 						</configurations>
 						<items>
@@ -2964,7 +3077,7 @@
 						<name>Traktor.Animation</name>
 						<sourcePath>$(TRAKTOR_HOME)/code/Animation</sourcePath>
 						<configurations>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>DebugShared</name>
 								<targetFormat>TfSharedLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -2978,8 +3091,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>ReleaseShared</name>
 								<targetFormat>TfSharedLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -2993,8 +3108,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>DebugStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -3008,8 +3125,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>ReleaseStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -3023,6 +3142,8 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
 						</configurations>
 						<items>
@@ -3075,7 +3196,7 @@
 									<name>Traktor.Core</name>
 									<sourcePath>$(TRAKTOR_HOME)/code/Core</sourcePath>
 									<configurations>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -3089,8 +3210,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -3104,8 +3227,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -3119,8 +3244,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -3134,6 +3261,8 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
 									</configurations>
 									<items>
@@ -3366,6 +3495,15 @@
 												</item>
 											</items>
 										</item>
+										<item type="Filter">
+											<name>Settings</name>
+											<items>
+												<item type="File">
+													<fileName>Settings/*.*</fileName>
+													<items/>
+												</item>
+											</items>
+										</item>
 									</items>
 									<dependencies/>
 								</project>
@@ -3377,7 +3515,7 @@
 									<name>Traktor.World</name>
 									<sourcePath>$(TRAKTOR_HOME)/code/World</sourcePath>
 									<configurations>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -3391,8 +3529,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -3406,8 +3546,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -3421,8 +3563,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -3436,6 +3580,8 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
 									</configurations>
 									<items>
@@ -3474,7 +3620,7 @@
 												<name>Traktor.Render</name>
 												<sourcePath>$(TRAKTOR_HOME)/code/Render</sourcePath>
 												<configurations>
-													<item type="Configuration">
+													<item type="Configuration" version="1">
 														<name>DebugShared</name>
 														<targetFormat>TfSharedLibrary</targetFormat>
 														<targetProfile>TpDebug</targetProfile>
@@ -3488,8 +3634,10 @@
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
 													</item>
-													<item type="Configuration">
+													<item type="Configuration" version="1">
 														<name>ReleaseShared</name>
 														<targetFormat>TfSharedLibrary</targetFormat>
 														<targetProfile>TpRelease</targetProfile>
@@ -3503,8 +3651,10 @@
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
 													</item>
-													<item type="Configuration">
+													<item type="Configuration" version="1">
 														<name>DebugStatic</name>
 														<targetFormat>TfStaticLibrary</targetFormat>
 														<targetProfile>TpDebug</targetProfile>
@@ -3518,8 +3668,10 @@
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
 													</item>
-													<item type="Configuration">
+													<item type="Configuration" version="1">
 														<name>ReleaseStatic</name>
 														<targetFormat>TfStaticLibrary</targetFormat>
 														<targetProfile>TpRelease</targetProfile>
@@ -3533,6 +3685,8 @@
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
 													</item>
 												</configurations>
 												<items>
@@ -3598,7 +3752,7 @@
 															<name>Traktor.Resource</name>
 															<sourcePath>$(TRAKTOR_HOME)/code/Resource</sourcePath>
 															<configurations>
-																<item type="Configuration">
+																<item type="Configuration" version="1">
 																	<name>DebugShared</name>
 																	<targetFormat>TfSharedLibrary</targetFormat>
 																	<targetProfile>TpDebug</targetProfile>
@@ -3612,8 +3766,10 @@
 																	</definitions>
 																	<libraryPaths/>
 																	<libraries/>
+																	<additionalCompilerOptions/>
+																	<additionalLinkerOptions/>
 																</item>
-																<item type="Configuration">
+																<item type="Configuration" version="1">
 																	<name>ReleaseShared</name>
 																	<targetFormat>TfSharedLibrary</targetFormat>
 																	<targetProfile>TpRelease</targetProfile>
@@ -3627,8 +3783,10 @@
 																	</definitions>
 																	<libraryPaths/>
 																	<libraries/>
+																	<additionalCompilerOptions/>
+																	<additionalLinkerOptions/>
 																</item>
-																<item type="Configuration">
+																<item type="Configuration" version="1">
 																	<name>DebugStatic</name>
 																	<targetFormat>TfStaticLibrary</targetFormat>
 																	<targetProfile>TpDebug</targetProfile>
@@ -3642,8 +3800,10 @@
 																	</definitions>
 																	<libraryPaths/>
 																	<libraries/>
+																	<additionalCompilerOptions/>
+																	<additionalLinkerOptions/>
 																</item>
-																<item type="Configuration">
+																<item type="Configuration" version="1">
 																	<name>ReleaseStatic</name>
 																	<targetFormat>TfStaticLibrary</targetFormat>
 																	<targetProfile>TpRelease</targetProfile>
@@ -3657,6 +3817,8 @@
 																	</definitions>
 																	<libraryPaths/>
 																	<libraries/>
+																	<additionalCompilerOptions/>
+																	<additionalLinkerOptions/>
 																</item>
 															</configurations>
 															<items>
@@ -3680,7 +3842,7 @@
 															<name>Traktor.Compress.Zip</name>
 															<sourcePath>$(TRAKTOR_HOME)/code/Compress/Zip</sourcePath>
 															<configurations>
-																<item type="Configuration">
+																<item type="Configuration" version="1">
 																	<name>DebugShared</name>
 																	<targetFormat>TfSharedLibrary</targetFormat>
 																	<targetProfile>TpDebug</targetProfile>
@@ -3695,8 +3857,10 @@
 																	</definitions>
 																	<libraryPaths/>
 																	<libraries/>
+																	<additionalCompilerOptions/>
+																	<additionalLinkerOptions/>
 																</item>
-																<item type="Configuration">
+																<item type="Configuration" version="1">
 																	<name>ReleaseShared</name>
 																	<targetFormat>TfSharedLibrary</targetFormat>
 																	<targetProfile>TpRelease</targetProfile>
@@ -3711,8 +3875,10 @@
 																	</definitions>
 																	<libraryPaths/>
 																	<libraries/>
+																	<additionalCompilerOptions/>
+																	<additionalLinkerOptions/>
 																</item>
-																<item type="Configuration">
+																<item type="Configuration" version="1">
 																	<name>DebugStatic</name>
 																	<targetFormat>TfStaticLibrary</targetFormat>
 																	<targetProfile>TpDebug</targetProfile>
@@ -3727,8 +3893,10 @@
 																	</definitions>
 																	<libraryPaths/>
 																	<libraries/>
+																	<additionalCompilerOptions/>
+																	<additionalLinkerOptions/>
 																</item>
-																<item type="Configuration">
+																<item type="Configuration" version="1">
 																	<name>ReleaseStatic</name>
 																	<targetFormat>TfStaticLibrary</targetFormat>
 																	<targetProfile>TpRelease</targetProfile>
@@ -3743,6 +3911,8 @@
 																	</definitions>
 																	<libraryPaths/>
 																	<libraries/>
+																	<additionalCompilerOptions/>
+																	<additionalLinkerOptions/>
 																</item>
 															</configurations>
 															<items>
@@ -3777,7 +3947,7 @@
 												<name>Traktor.Database</name>
 												<sourcePath>$(TRAKTOR_HOME)/code/Database</sourcePath>
 												<configurations>
-													<item type="Configuration">
+													<item type="Configuration" version="1">
 														<name>DebugShared</name>
 														<targetFormat>TfSharedLibrary</targetFormat>
 														<targetProfile>TpDebug</targetProfile>
@@ -3791,8 +3961,10 @@
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
 													</item>
-													<item type="Configuration">
+													<item type="Configuration" version="1">
 														<name>ReleaseShared</name>
 														<targetFormat>TfSharedLibrary</targetFormat>
 														<targetProfile>TpRelease</targetProfile>
@@ -3806,8 +3978,10 @@
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
 													</item>
-													<item type="Configuration">
+													<item type="Configuration" version="1">
 														<name>DebugStatic</name>
 														<targetFormat>TfStaticLibrary</targetFormat>
 														<targetProfile>TpDebug</targetProfile>
@@ -3821,8 +3995,10 @@
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
 													</item>
-													<item type="Configuration">
+													<item type="Configuration" version="1">
 														<name>ReleaseStatic</name>
 														<targetFormat>TfStaticLibrary</targetFormat>
 														<targetProfile>TpRelease</targetProfile>
@@ -3836,6 +4012,8 @@
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
 													</item>
 												</configurations>
 												<items>
@@ -3865,7 +4043,7 @@
 															<name>Traktor.Xml</name>
 															<sourcePath>$(TRAKTOR_HOME)/code/Xml</sourcePath>
 															<configurations>
-																<item type="Configuration">
+																<item type="Configuration" version="1">
 																	<name>DebugShared</name>
 																	<targetFormat>TfSharedLibrary</targetFormat>
 																	<targetProfile>TpDebug</targetProfile>
@@ -3880,8 +4058,10 @@
 																	</definitions>
 																	<libraryPaths/>
 																	<libraries/>
+																	<additionalCompilerOptions/>
+																	<additionalLinkerOptions/>
 																</item>
-																<item type="Configuration">
+																<item type="Configuration" version="1">
 																	<name>ReleaseShared</name>
 																	<targetFormat>TfSharedLibrary</targetFormat>
 																	<targetProfile>TpRelease</targetProfile>
@@ -3896,8 +4076,10 @@
 																	</definitions>
 																	<libraryPaths/>
 																	<libraries/>
+																	<additionalCompilerOptions/>
+																	<additionalLinkerOptions/>
 																</item>
-																<item type="Configuration">
+																<item type="Configuration" version="1">
 																	<name>DebugStatic</name>
 																	<targetFormat>TfStaticLibrary</targetFormat>
 																	<targetProfile>TpDebug</targetProfile>
@@ -3912,8 +4094,10 @@
 																	</definitions>
 																	<libraryPaths/>
 																	<libraries/>
+																	<additionalCompilerOptions/>
+																	<additionalLinkerOptions/>
 																</item>
-																<item type="Configuration">
+																<item type="Configuration" version="1">
 																	<name>ReleaseStatic</name>
 																	<targetFormat>TfStaticLibrary</targetFormat>
 																	<targetProfile>TpRelease</targetProfile>
@@ -3928,6 +4112,8 @@
 																	</definitions>
 																	<libraryPaths/>
 																	<libraries/>
+																	<additionalCompilerOptions/>
+																	<additionalLinkerOptions/>
 																</item>
 															</configurations>
 															<items>
@@ -3961,7 +4147,7 @@
 									<name>Traktor.Mesh</name>
 									<sourcePath>$(TRAKTOR_HOME)/code/Mesh</sourcePath>
 									<configurations>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -3975,8 +4161,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -3990,8 +4178,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -4005,8 +4195,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -4020,6 +4212,8 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
 									</configurations>
 									<items>
@@ -4126,7 +4320,7 @@
 									<name>Traktor.Physics</name>
 									<sourcePath>$(TRAKTOR_HOME)/code/Physics</sourcePath>
 									<configurations>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -4140,8 +4334,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -4155,8 +4351,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -4170,8 +4368,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -4185,6 +4385,8 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
 									</configurations>
 									<items>
@@ -4232,7 +4434,7 @@
 						<name>Traktor.Animation.Editor</name>
 						<sourcePath>$(TRAKTOR_HOME)/code/Animation/Editor</sourcePath>
 						<configurations>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>DebugShared</name>
 								<targetFormat>TfSharedLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -4246,8 +4448,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>ReleaseShared</name>
 								<targetFormat>TfSharedLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -4261,8 +4465,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>DebugStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -4276,8 +4482,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>ReleaseStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -4291,6 +4499,8 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
 						</configurations>
 						<items>
@@ -4367,7 +4577,7 @@
 									<name>Traktor.Editor</name>
 									<sourcePath>$(TRAKTOR_HOME)/code/Editor</sourcePath>
 									<configurations>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -4381,8 +4591,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -4396,8 +4608,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -4411,8 +4625,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -4426,6 +4642,8 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
 									</configurations>
 									<items>
@@ -4455,7 +4673,7 @@
 												<name>Traktor.Ui</name>
 												<sourcePath>$(TRAKTOR_HOME)/code/Ui</sourcePath>
 												<configurations>
-													<item type="Configuration">
+													<item type="Configuration" version="1">
 														<name>DebugShared</name>
 														<targetFormat>TfSharedLibrary</targetFormat>
 														<targetProfile>TpDebug</targetProfile>
@@ -4469,8 +4687,10 @@
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
 													</item>
-													<item type="Configuration">
+													<item type="Configuration" version="1">
 														<name>ReleaseShared</name>
 														<targetFormat>TfSharedLibrary</targetFormat>
 														<targetProfile>TpRelease</targetProfile>
@@ -4484,8 +4704,10 @@
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
 													</item>
-													<item type="Configuration">
+													<item type="Configuration" version="1">
 														<name>DebugStatic</name>
 														<targetFormat>TfStaticLibrary</targetFormat>
 														<targetProfile>TpDebug</targetProfile>
@@ -4499,8 +4721,10 @@
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
 													</item>
-													<item type="Configuration">
+													<item type="Configuration" version="1">
 														<name>ReleaseStatic</name>
 														<targetFormat>TfStaticLibrary</targetFormat>
 														<targetProfile>TpRelease</targetProfile>
@@ -4514,6 +4738,8 @@
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
 													</item>
 												</configurations>
 												<items>
@@ -4573,7 +4799,7 @@
 															<name>Traktor.Drawing</name>
 															<sourcePath>$(TRAKTOR_HOME)/code/Drawing</sourcePath>
 															<configurations>
-																<item type="Configuration">
+																<item type="Configuration" version="1">
 																	<name>DebugShared</name>
 																	<targetFormat>TfSharedLibrary</targetFormat>
 																	<targetProfile>TpDebug</targetProfile>
@@ -4591,8 +4817,10 @@
 																	</definitions>
 																	<libraryPaths/>
 																	<libraries/>
+																	<additionalCompilerOptions/>
+																	<additionalLinkerOptions/>
 																</item>
-																<item type="Configuration">
+																<item type="Configuration" version="1">
 																	<name>ReleaseShared</name>
 																	<targetFormat>TfSharedLibrary</targetFormat>
 																	<targetProfile>TpRelease</targetProfile>
@@ -4610,8 +4838,10 @@
 																	</definitions>
 																	<libraryPaths/>
 																	<libraries/>
+																	<additionalCompilerOptions/>
+																	<additionalLinkerOptions/>
 																</item>
-																<item type="Configuration">
+																<item type="Configuration" version="1">
 																	<name>DebugStatic</name>
 																	<targetFormat>TfStaticLibrary</targetFormat>
 																	<targetProfile>TpDebug</targetProfile>
@@ -4629,8 +4859,10 @@
 																	</definitions>
 																	<libraryPaths/>
 																	<libraries/>
+																	<additionalCompilerOptions/>
+																	<additionalLinkerOptions/>
 																</item>
-																<item type="Configuration">
+																<item type="Configuration" version="1">
 																	<name>ReleaseStatic</name>
 																	<targetFormat>TfStaticLibrary</targetFormat>
 																	<targetProfile>TpRelease</targetProfile>
@@ -4648,6 +4880,8 @@
 																	</definitions>
 																	<libraryPaths/>
 																	<libraries/>
+																	<additionalCompilerOptions/>
+																	<additionalLinkerOptions/>
 																</item>
 															</configurations>
 															<items>
@@ -4708,7 +4942,7 @@
 												<name>Traktor.Net</name>
 												<sourcePath>$(TRAKTOR_HOME)/code/Net</sourcePath>
 												<configurations>
-													<item type="Configuration">
+													<item type="Configuration" version="1">
 														<name>DebugShared</name>
 														<targetFormat>TfSharedLibrary</targetFormat>
 														<targetProfile>TpDebug</targetProfile>
@@ -4722,8 +4956,10 @@
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
 													</item>
-													<item type="Configuration">
+													<item type="Configuration" version="1">
 														<name>ReleaseShared</name>
 														<targetFormat>TfSharedLibrary</targetFormat>
 														<targetProfile>TpRelease</targetProfile>
@@ -4737,8 +4973,10 @@
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
 													</item>
-													<item type="Configuration">
+													<item type="Configuration" version="1">
 														<name>DebugStatic</name>
 														<targetFormat>TfStaticLibrary</targetFormat>
 														<targetProfile>TpDebug</targetProfile>
@@ -4752,8 +4990,10 @@
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
 													</item>
-													<item type="Configuration">
+													<item type="Configuration" version="1">
 														<name>ReleaseStatic</name>
 														<targetFormat>TfStaticLibrary</targetFormat>
 														<targetProfile>TpRelease</targetProfile>
@@ -4767,6 +5007,8 @@
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
 													</item>
 												</configurations>
 												<items>
@@ -4835,7 +5077,7 @@
 												<name>Traktor.Sql</name>
 												<sourcePath>$(TRAKTOR_HOME)/code/Sql</sourcePath>
 												<configurations>
-													<item type="Configuration">
+													<item type="Configuration" version="1">
 														<name>DebugShared</name>
 														<targetFormat>TfSharedLibrary</targetFormat>
 														<targetProfile>TpDebug</targetProfile>
@@ -4849,8 +5091,10 @@
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
 													</item>
-													<item type="Configuration">
+													<item type="Configuration" version="1">
 														<name>ReleaseShared</name>
 														<targetFormat>TfSharedLibrary</targetFormat>
 														<targetProfile>TpRelease</targetProfile>
@@ -4864,8 +5108,10 @@
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
 													</item>
-													<item type="Configuration">
+													<item type="Configuration" version="1">
 														<name>DebugStatic</name>
 														<targetFormat>TfStaticLibrary</targetFormat>
 														<targetProfile>TpDebug</targetProfile>
@@ -4879,8 +5125,10 @@
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
 													</item>
-													<item type="Configuration">
+													<item type="Configuration" version="1">
 														<name>ReleaseStatic</name>
 														<targetFormat>TfStaticLibrary</targetFormat>
 														<targetProfile>TpRelease</targetProfile>
@@ -4894,6 +5142,8 @@
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
 													</item>
 												</configurations>
 												<items>
@@ -4917,7 +5167,7 @@
 												<name>Traktor.Sql.Sqlite3</name>
 												<sourcePath>$(TRAKTOR_HOME)/code/Sql/Sqlite3</sourcePath>
 												<configurations>
-													<item type="Configuration">
+													<item type="Configuration" version="1">
 														<name>DebugShared</name>
 														<targetFormat>TfSharedLibrary</targetFormat>
 														<targetProfile>TpDebug</targetProfile>
@@ -4932,8 +5182,10 @@
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
 													</item>
-													<item type="Configuration">
+													<item type="Configuration" version="1">
 														<name>ReleaseShared</name>
 														<targetFormat>TfSharedLibrary</targetFormat>
 														<targetProfile>TpRelease</targetProfile>
@@ -4948,8 +5200,10 @@
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
 													</item>
-													<item type="Configuration">
+													<item type="Configuration" version="1">
 														<name>DebugStatic</name>
 														<targetFormat>TfStaticLibrary</targetFormat>
 														<targetProfile>TpDebug</targetProfile>
@@ -4964,8 +5218,10 @@
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
 													</item>
-													<item type="Configuration">
+													<item type="Configuration" version="1">
 														<name>ReleaseStatic</name>
 														<targetFormat>TfStaticLibrary</targetFormat>
 														<targetProfile>TpRelease</targetProfile>
@@ -4980,6 +5236,8 @@
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
 													</item>
 												</configurations>
 												<items>
@@ -5004,7 +5262,7 @@
 															<name>Extern.sqlite-3.6.21</name>
 															<sourcePath>$(TRAKTOR_HOME)/3rdp/sqlite-3.6.21</sourcePath>
 															<configurations>
-																<item type="Configuration">
+																<item type="Configuration" version="1">
 																	<name>DebugShared</name>
 																	<targetFormat>TfStaticLibrary</targetFormat>
 																	<targetProfile>TpDebug</targetProfile>
@@ -5018,8 +5276,10 @@
 																	</definitions>
 																	<libraryPaths/>
 																	<libraries/>
+																	<additionalCompilerOptions/>
+																	<additionalLinkerOptions/>
 																</item>
-																<item type="Configuration">
+																<item type="Configuration" version="1">
 																	<name>ReleaseShared</name>
 																	<targetFormat>TfStaticLibrary</targetFormat>
 																	<targetProfile>TpRelease</targetProfile>
@@ -5033,8 +5293,10 @@
 																	</definitions>
 																	<libraryPaths/>
 																	<libraries/>
+																	<additionalCompilerOptions/>
+																	<additionalLinkerOptions/>
 																</item>
-																<item type="Configuration">
+																<item type="Configuration" version="1">
 																	<name>DebugStatic</name>
 																	<targetFormat>TfStaticLibrary</targetFormat>
 																	<targetProfile>TpDebug</targetProfile>
@@ -5048,8 +5310,10 @@
 																	</definitions>
 																	<libraryPaths/>
 																	<libraries/>
+																	<additionalCompilerOptions/>
+																	<additionalLinkerOptions/>
 																</item>
-																<item type="Configuration">
+																<item type="Configuration" version="1">
 																	<name>ReleaseStatic</name>
 																	<targetFormat>TfStaticLibrary</targetFormat>
 																	<targetProfile>TpRelease</targetProfile>
@@ -5063,6 +5327,8 @@
 																	</definitions>
 																	<libraryPaths/>
 																	<libraries/>
+																	<additionalCompilerOptions/>
+																	<additionalLinkerOptions/>
 																</item>
 															</configurations>
 															<items>
@@ -5095,7 +5361,7 @@
 									<name>Traktor.I18N</name>
 									<sourcePath>$(TRAKTOR_HOME)/code/I18N</sourcePath>
 									<configurations>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -5109,8 +5375,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -5124,8 +5392,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -5139,8 +5409,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -5154,6 +5426,8 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
 									</configurations>
 									<items>
@@ -5177,7 +5451,7 @@
 									<name>Traktor.Scene.Editor</name>
 									<sourcePath>$(TRAKTOR_HOME)/code/Scene/Editor</sourcePath>
 									<configurations>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -5191,8 +5465,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -5206,8 +5482,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -5221,8 +5499,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -5236,6 +5516,8 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
 									</configurations>
 									<items>
@@ -5310,7 +5592,7 @@
 												<name>Traktor.Scene</name>
 												<sourcePath>$(TRAKTOR_HOME)/code/Scene</sourcePath>
 												<configurations>
-													<item type="Configuration">
+													<item type="Configuration" version="1">
 														<name>DebugShared</name>
 														<targetFormat>TfSharedLibrary</targetFormat>
 														<targetProfile>TpDebug</targetProfile>
@@ -5324,8 +5606,10 @@
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
 													</item>
-													<item type="Configuration">
+													<item type="Configuration" version="1">
 														<name>ReleaseShared</name>
 														<targetFormat>TfSharedLibrary</targetFormat>
 														<targetProfile>TpRelease</targetProfile>
@@ -5339,8 +5623,10 @@
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
 													</item>
-													<item type="Configuration">
+													<item type="Configuration" version="1">
 														<name>DebugStatic</name>
 														<targetFormat>TfStaticLibrary</targetFormat>
 														<targetProfile>TpDebug</targetProfile>
@@ -5354,8 +5640,10 @@
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
 													</item>
-													<item type="Configuration">
+													<item type="Configuration" version="1">
 														<name>ReleaseStatic</name>
 														<targetFormat>TfStaticLibrary</targetFormat>
 														<targetProfile>TpRelease</targetProfile>
@@ -5369,6 +5657,8 @@
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
 													</item>
 												</configurations>
 												<items>
@@ -5404,7 +5694,7 @@
 												<name>Traktor.Ui.Custom</name>
 												<sourcePath>$(TRAKTOR_HOME)/code/Ui/Custom</sourcePath>
 												<configurations>
-													<item type="Configuration">
+													<item type="Configuration" version="1">
 														<name>DebugShared</name>
 														<targetFormat>TfSharedLibrary</targetFormat>
 														<targetProfile>TpDebug</targetProfile>
@@ -5418,8 +5708,10 @@
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
 													</item>
-													<item type="Configuration">
+													<item type="Configuration" version="1">
 														<name>ReleaseShared</name>
 														<targetFormat>TfSharedLibrary</targetFormat>
 														<targetProfile>TpRelease</targetProfile>
@@ -5433,8 +5725,10 @@
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
 													</item>
-													<item type="Configuration">
+													<item type="Configuration" version="1">
 														<name>DebugStatic</name>
 														<targetFormat>TfStaticLibrary</targetFormat>
 														<targetProfile>TpDebug</targetProfile>
@@ -5448,8 +5742,10 @@
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
 													</item>
-													<item type="Configuration">
+													<item type="Configuration" version="1">
 														<name>ReleaseStatic</name>
 														<targetFormat>TfStaticLibrary</targetFormat>
 														<targetProfile>TpRelease</targetProfile>
@@ -5463,6 +5759,8 @@
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
 													</item>
 												</configurations>
 												<items>
@@ -5680,6 +5978,15 @@
 															</item>
 														</items>
 													</item>
+													<item type="Filter">
+														<name>Auto</name>
+														<items>
+															<item type="File">
+																<fileName>Auto/*.*</fileName>
+																<items/>
+															</item>
+														</items>
+													</item>
 												</items>
 												<dependencies>
 													<item type="ProjectDependency" version="1">
@@ -5701,7 +6008,7 @@
 															<name>Traktor.Ui.Xtrme</name>
 															<sourcePath>$(TRAKTOR_HOME)/code/Ui/Xtrme</sourcePath>
 															<configurations>
-																<item type="Configuration">
+																<item type="Configuration" version="1">
 																	<name>DebugShared</name>
 																	<targetFormat>TfSharedLibrary</targetFormat>
 																	<targetProfile>TpDebug</targetProfile>
@@ -5716,8 +6023,10 @@
 																	</definitions>
 																	<libraryPaths/>
 																	<libraries/>
+																	<additionalCompilerOptions/>
+																	<additionalLinkerOptions/>
 																</item>
-																<item type="Configuration">
+																<item type="Configuration" version="1">
 																	<name>ReleaseShared</name>
 																	<targetFormat>TfSharedLibrary</targetFormat>
 																	<targetProfile>TpRelease</targetProfile>
@@ -5732,8 +6041,10 @@
 																	</definitions>
 																	<libraryPaths/>
 																	<libraries/>
+																	<additionalCompilerOptions/>
+																	<additionalLinkerOptions/>
 																</item>
-																<item type="Configuration">
+																<item type="Configuration" version="1">
 																	<name>DebugStatic</name>
 																	<targetFormat>TfStaticLibrary</targetFormat>
 																	<targetProfile>TpDebug</targetProfile>
@@ -5748,8 +6059,10 @@
 																	</definitions>
 																	<libraryPaths/>
 																	<libraries/>
+																	<additionalCompilerOptions/>
+																	<additionalLinkerOptions/>
 																</item>
-																<item type="Configuration">
+																<item type="Configuration" version="1">
 																	<name>ReleaseStatic</name>
 																	<targetFormat>TfStaticLibrary</targetFormat>
 																	<targetProfile>TpRelease</targetProfile>
@@ -5764,6 +6077,8 @@
 																	</definitions>
 																	<libraryPaths/>
 																	<libraries/>
+																	<additionalCompilerOptions/>
+																	<additionalLinkerOptions/>
 																</item>
 															</configurations>
 															<items>
@@ -5831,7 +6146,7 @@
 												<name>Traktor.Weather</name>
 												<sourcePath>$(TRAKTOR_HOME)/code/Weather</sourcePath>
 												<configurations>
-													<item type="Configuration">
+													<item type="Configuration" version="1">
 														<name>DebugShared</name>
 														<targetFormat>TfSharedLibrary</targetFormat>
 														<targetProfile>TpDebug</targetProfile>
@@ -5845,8 +6160,10 @@
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
 													</item>
-													<item type="Configuration">
+													<item type="Configuration" version="1">
 														<name>ReleaseShared</name>
 														<targetFormat>TfSharedLibrary</targetFormat>
 														<targetProfile>TpRelease</targetProfile>
@@ -5860,8 +6177,10 @@
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
 													</item>
-													<item type="Configuration">
+													<item type="Configuration" version="1">
 														<name>DebugStatic</name>
 														<targetFormat>TfStaticLibrary</targetFormat>
 														<targetProfile>TpDebug</targetProfile>
@@ -5875,8 +6194,10 @@
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
 													</item>
-													<item type="Configuration">
+													<item type="Configuration" version="1">
 														<name>ReleaseStatic</name>
 														<targetFormat>TfStaticLibrary</targetFormat>
 														<targetProfile>TpRelease</targetProfile>
@@ -5890,6 +6211,8 @@
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
 													</item>
 												</configurations>
 												<items>
@@ -5982,7 +6305,7 @@
 									<name>Traktor.World.Editor</name>
 									<sourcePath>$(TRAKTOR_HOME)/code/World/Editor</sourcePath>
 									<configurations>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -5996,8 +6319,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -6011,8 +6336,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -6026,8 +6353,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -6041,6 +6370,8 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
 									</configurations>
 									<items>
@@ -6087,7 +6418,7 @@
 						<name>Traktor.Database.Compact</name>
 						<sourcePath>$(TRAKTOR_HOME)/code/Database/Compact</sourcePath>
 						<configurations>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>DebugShared</name>
 								<targetFormat>TfSharedLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -6101,8 +6432,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>ReleaseShared</name>
 								<targetFormat>TfSharedLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -6116,8 +6449,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>DebugStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -6131,8 +6466,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>ReleaseStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -6146,6 +6483,8 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
 						</configurations>
 						<items>
@@ -6177,7 +6516,7 @@
 						<name>Traktor.Database.Local</name>
 						<sourcePath>$(TRAKTOR_HOME)/code/Database/Local</sourcePath>
 						<configurations>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>DebugShared</name>
 								<targetFormat>TfSharedLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -6191,8 +6530,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>ReleaseShared</name>
 								<targetFormat>TfSharedLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -6206,8 +6547,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>DebugStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -6221,8 +6564,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>ReleaseStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -6236,6 +6581,8 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
 						</configurations>
 						<items>
@@ -6267,7 +6614,7 @@
 						<name>Traktor.Database.Remote</name>
 						<sourcePath>$(TRAKTOR_HOME)/code/Database/Remote</sourcePath>
 						<configurations>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>DebugShared</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -6280,8 +6627,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>ReleaseShared</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -6294,8 +6643,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>DebugStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -6309,8 +6660,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>ReleaseStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -6324,6 +6677,8 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
 						</configurations>
 						<items>
@@ -6356,7 +6711,7 @@
 						<name>Traktor.Database.Remote.Client</name>
 						<sourcePath>$(TRAKTOR_HOME)/code/Database/Remote/Client</sourcePath>
 						<configurations>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>DebugShared</name>
 								<targetFormat>TfSharedLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -6370,8 +6725,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>ReleaseShared</name>
 								<targetFormat>TfSharedLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -6385,8 +6742,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>DebugStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -6400,8 +6759,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>ReleaseStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -6415,6 +6776,8 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
 						</configurations>
 						<items>
@@ -6450,7 +6813,7 @@
 						<name>Traktor.Database.Remote.Server</name>
 						<sourcePath>$(TRAKTOR_HOME)/code/Database/Remote/Server</sourcePath>
 						<configurations>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>DebugShared</name>
 								<targetFormat>TfSharedLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -6464,8 +6827,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>ReleaseShared</name>
 								<targetFormat>TfSharedLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -6479,8 +6844,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>DebugStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -6494,8 +6861,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>ReleaseStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -6509,6 +6878,8 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
 						</configurations>
 						<items>
@@ -6552,7 +6923,7 @@
 						<name>Traktor.Database.Remote.Server.App</name>
 						<sourcePath>$(TRAKTOR_HOME)/code/Database/Remote/Server/App</sourcePath>
 						<configurations>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>DebugShared</name>
 								<targetFormat>TfExecutableConsole</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -6565,8 +6936,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>ReleaseShared</name>
 								<targetFormat>TfExecutableConsole</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -6579,8 +6952,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>DebugStatic</name>
 								<targetFormat>TfExecutableConsole</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -6594,8 +6969,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>ReleaseStatic</name>
 								<targetFormat>TfExecutableConsole</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -6609,6 +6986,8 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
 						</configurations>
 						<items>
@@ -6660,7 +7039,7 @@
 						<name>Traktor.Editor.App</name>
 						<sourcePath>$(TRAKTOR_HOME)/code/Editor/App</sourcePath>
 						<configurations>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>DebugShared</name>
 								<targetFormat>TfExecutable</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -6674,8 +7053,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>ReleaseShared</name>
 								<targetFormat>TfExecutable</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -6689,8 +7070,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>DebugStatic</name>
 								<targetFormat>TfExecutable</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -6704,8 +7087,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>ReleaseStatic</name>
 								<targetFormat>TfExecutable</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -6719,6 +7104,8 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
 						</configurations>
 						<items>
@@ -6832,7 +7219,7 @@
 									<name>Traktor.Ui.Cocoa</name>
 									<sourcePath>$(TRAKTOR_HOME)/code/Ui/Cocoa</sourcePath>
 									<configurations>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -6851,8 +7238,10 @@
 												<item>CoreData.framework</item>
 												<item>Foundation.framework</item>
 											</libraries>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -6871,8 +7260,10 @@
 												<item>CoreData.framework</item>
 												<item>Foundation.framework</item>
 											</libraries>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -6891,8 +7282,10 @@
 												<item>CoreData.framework</item>
 												<item>Foundation.framework</item>
 											</libraries>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -6911,6 +7304,8 @@
 												<item>CoreData.framework</item>
 												<item>Foundation.framework</item>
 											</libraries>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
 									</configurations>
 									<items>
@@ -6950,7 +7345,7 @@
 									<name>Traktor.Flash</name>
 									<sourcePath>$(TRAKTOR_HOME)/code/Flash</sourcePath>
 									<configurations>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -6964,8 +7359,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -6979,8 +7376,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -6994,8 +7393,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -7009,6 +7410,8 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
 									</configurations>
 									<items>
@@ -7055,6 +7458,15 @@
 														</item>
 														<item type="File">
 															<fileName>Action/Avm2/*.*</fileName>
+															<items/>
+														</item>
+													</items>
+												</item>
+												<item type="Filter">
+													<name>Classes</name>
+													<items>
+														<item type="File">
+															<fileName>Action/Classes/*.*</fileName>
 															<items/>
 														</item>
 													</items>
@@ -7108,7 +7520,7 @@
 												<name>Traktor.Html</name>
 												<sourcePath>$(TRAKTOR_HOME)/code/Html</sourcePath>
 												<configurations>
-													<item type="Configuration">
+													<item type="Configuration" version="1">
 														<name>DebugShared</name>
 														<targetFormat>TfSharedLibrary</targetFormat>
 														<targetProfile>TpDebug</targetProfile>
@@ -7122,8 +7534,10 @@
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
 													</item>
-													<item type="Configuration">
+													<item type="Configuration" version="1">
 														<name>ReleaseShared</name>
 														<targetFormat>TfSharedLibrary</targetFormat>
 														<targetProfile>TpRelease</targetProfile>
@@ -7137,8 +7551,10 @@
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
 													</item>
-													<item type="Configuration">
+													<item type="Configuration" version="1">
 														<name>DebugStatic</name>
 														<targetFormat>TfStaticLibrary</targetFormat>
 														<targetProfile>TpDebug</targetProfile>
@@ -7152,8 +7568,10 @@
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
 													</item>
-													<item type="Configuration">
+													<item type="Configuration" version="1">
 														<name>ReleaseStatic</name>
 														<targetFormat>TfStaticLibrary</targetFormat>
 														<targetProfile>TpRelease</targetProfile>
@@ -7167,6 +7585,8 @@
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
 													</item>
 												</configurations>
 												<items>
@@ -7201,7 +7621,7 @@
 									<name>Traktor.Flash.Editor</name>
 									<sourcePath>$(TRAKTOR_HOME)/code/Flash/Editor</sourcePath>
 									<configurations>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -7215,8 +7635,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -7230,8 +7652,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -7245,8 +7669,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -7260,6 +7686,8 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
 									</configurations>
 									<items>
@@ -7332,7 +7760,7 @@
 									<name>Traktor.I18N.Editor</name>
 									<sourcePath>$(TRAKTOR_HOME)/code/I18N/Editor</sourcePath>
 									<configurations>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -7346,8 +7774,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -7361,8 +7791,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -7376,8 +7808,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -7391,6 +7825,8 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
 									</configurations>
 									<items>
@@ -7434,7 +7870,7 @@
 									<name>Traktor.Mesh.Editor</name>
 									<sourcePath>$(TRAKTOR_HOME)/code/Mesh/Editor</sourcePath>
 									<configurations>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -7448,8 +7884,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -7463,8 +7901,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -7478,8 +7918,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -7493,6 +7935,8 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
 									</configurations>
 									<items>
@@ -7583,7 +8027,7 @@
 												<name>Traktor.Model</name>
 												<sourcePath>$(TRAKTOR_HOME)/code/Model</sourcePath>
 												<configurations>
-													<item type="Configuration">
+													<item type="Configuration" version="1">
 														<name>DebugShared</name>
 														<targetFormat>TfSharedLibrary</targetFormat>
 														<targetProfile>TpDebug</targetProfile>
@@ -7598,8 +8042,10 @@
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
 													</item>
-													<item type="Configuration">
+													<item type="Configuration" version="1">
 														<name>ReleaseShared</name>
 														<targetFormat>TfSharedLibrary</targetFormat>
 														<targetProfile>TpRelease</targetProfile>
@@ -7614,8 +8060,10 @@
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
 													</item>
-													<item type="Configuration">
+													<item type="Configuration" version="1">
 														<name>DebugStatic</name>
 														<targetFormat>TfStaticLibrary</targetFormat>
 														<targetProfile>TpDebug</targetProfile>
@@ -7630,8 +8078,10 @@
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
 													</item>
-													<item type="Configuration">
+													<item type="Configuration" version="1">
 														<name>ReleaseStatic</name>
 														<targetFormat>TfStaticLibrary</targetFormat>
 														<targetProfile>TpRelease</targetProfile>
@@ -7646,6 +8096,8 @@
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
 													</item>
 												</configurations>
 												<items>
@@ -7694,7 +8146,7 @@
 												<name>Traktor.Render.Editor</name>
 												<sourcePath>$(TRAKTOR_HOME)/code/Render/Editor</sourcePath>
 												<configurations>
-													<item type="Configuration">
+													<item type="Configuration" version="1">
 														<name>DebugShared</name>
 														<targetFormat>TfSharedLibrary</targetFormat>
 														<targetProfile>TpDebug</targetProfile>
@@ -7709,8 +8161,10 @@
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
 													</item>
-													<item type="Configuration">
+													<item type="Configuration" version="1">
 														<name>ReleaseShared</name>
 														<targetFormat>TfSharedLibrary</targetFormat>
 														<targetProfile>TpRelease</targetProfile>
@@ -7725,8 +8179,10 @@
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
 													</item>
-													<item type="Configuration">
+													<item type="Configuration" version="1">
 														<name>DebugStatic</name>
 														<targetFormat>TfStaticLibrary</targetFormat>
 														<targetProfile>TpDebug</targetProfile>
@@ -7741,8 +8197,10 @@
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
 													</item>
-													<item type="Configuration">
+													<item type="Configuration" version="1">
 														<name>ReleaseStatic</name>
 														<targetFormat>TfStaticLibrary</targetFormat>
 														<targetProfile>TpRelease</targetProfile>
@@ -7757,6 +8215,8 @@
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
 													</item>
 												</configurations>
 												<items>
@@ -7770,6 +8230,24 @@
 															<item type="File">
 																<fileName>Shader/*.*</fileName>
 																<items/>
+															</item>
+															<item type="Filter">
+																<name>Traits</name>
+																<items>
+																	<item type="File">
+																		<fileName>Shader/Traits/*.*</fileName>
+																		<items/>
+																	</item>
+																</items>
+															</item>
+															<item type="Filter">
+																<name>Facades</name>
+																<items>
+																	<item type="File">
+																		<fileName>Shader/Facades/*.*</fileName>
+																		<items/>
+																	</item>
+																</items>
 															</item>
 														</items>
 													</item>
@@ -7861,7 +8339,7 @@
 									<name>Traktor.Physics.Bullet</name>
 									<sourcePath>$(TRAKTOR_HOME)/code/Physics/Bullet</sourcePath>
 									<configurations>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -7877,8 +8355,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -7894,8 +8374,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -7911,8 +8393,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -7928,6 +8412,8 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
 									</configurations>
 									<items>
@@ -7963,7 +8449,7 @@
 									<name>Traktor.Physics.Editor</name>
 									<sourcePath>$(TRAKTOR_HOME)/code/Physics/Editor</sourcePath>
 									<configurations>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -7977,8 +8463,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -7992,8 +8480,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -8007,8 +8497,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -8022,6 +8514,8 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
 									</configurations>
 									<items>
@@ -8093,7 +8587,7 @@
 									<name>Traktor.Physics.Ode</name>
 									<sourcePath>$(TRAKTOR_HOME)/code/Physics/Ode</sourcePath>
 									<configurations>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -8109,8 +8603,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -8126,8 +8622,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -8143,8 +8641,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -8160,6 +8660,8 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
 									</configurations>
 									<items>
@@ -8199,7 +8701,7 @@
 									<name>Traktor.Render.OpenGL</name>
 									<sourcePath>$(TRAKTOR_HOME)/code/Render/OpenGL</sourcePath>
 									<configurations>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -8219,8 +8721,10 @@
 												<item>AppKit.framework</item>
 												<item>OpenGL.framework</item>
 											</libraries>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -8240,8 +8744,10 @@
 												<item>AppKit.framework</item>
 												<item>OpenGL.framework</item>
 											</libraries>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -8261,8 +8767,10 @@
 												<item>AppKit.framework</item>
 												<item>OpenGL.framework</item>
 											</libraries>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -8282,6 +8790,8 @@
 												<item>AppKit.framework</item>
 												<item>OpenGL.framework</item>
 											</libraries>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
 									</configurations>
 									<items>
@@ -8339,7 +8849,7 @@
 									<name>Traktor.Script</name>
 									<sourcePath>$(TRAKTOR_HOME)/code/Script</sourcePath>
 									<configurations>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -8353,8 +8863,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -8368,8 +8880,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -8383,8 +8897,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -8398,6 +8914,8 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
 									</configurations>
 									<items>
@@ -8425,7 +8943,7 @@
 									<name>Traktor.Script.Editor</name>
 									<sourcePath>$(TRAKTOR_HOME)/code/Script/Editor</sourcePath>
 									<configurations>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -8439,8 +8957,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -8454,8 +8974,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -8469,8 +8991,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -8484,6 +9008,8 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
 									</configurations>
 									<items>
@@ -8536,7 +9062,7 @@
 									<name>Traktor.Script.Lua</name>
 									<sourcePath>$(TRAKTOR_HOME)/code/Script/Lua</sourcePath>
 									<configurations>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -8551,8 +9077,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -8567,8 +9095,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -8583,8 +9113,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -8599,6 +9131,8 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
 									</configurations>
 									<items>
@@ -8630,7 +9164,7 @@
 									<name>Traktor.Sound</name>
 									<sourcePath>$(TRAKTOR_HOME)/code/Sound</sourcePath>
 									<configurations>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -8649,8 +9183,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -8669,8 +9205,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -8689,8 +9227,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -8709,6 +9249,8 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
 									</configurations>
 									<items>
@@ -8769,6 +9311,10 @@
 											<linkWithProduct>true</linkWithProduct>
 											<project ref="/object/projects/item/dependencies/item[6]/project"/>
 										</item>
+										<item type="ProjectDependency" version="1">
+											<linkWithProduct>true</linkWithProduct>
+											<project ref="/object/projects/item/dependencies/item[14]/project/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project"/>
+										</item>
 									</dependencies>
 								</project>
 							</item>
@@ -8779,7 +9325,7 @@
 									<name>Traktor.Sound.Editor</name>
 									<sourcePath>$(TRAKTOR_HOME)/code/Sound/Editor</sourcePath>
 									<configurations>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -8793,8 +9339,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -8808,8 +9356,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -8823,8 +9373,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -8838,6 +9390,8 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
 									</configurations>
 									<items>
@@ -8850,6 +9404,15 @@
 											<items>
 												<item type="File">
 													<fileName>Resound/*.*</fileName>
+													<items/>
+												</item>
+											</items>
+										</item>
+										<item type="Filter">
+											<name>Resources</name>
+											<items>
+												<item type="File">
+													<fileName>../../../res/resound/Grain.png</fileName>
 													<items/>
 												</item>
 											</items>
@@ -8884,6 +9447,10 @@
 											<linkWithProduct>true</linkWithProduct>
 											<project ref="/object/projects/item/dependencies/item[14]/project/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 										</item>
+										<item type="ProjectDependency" version="1">
+											<linkWithProduct>true</linkWithProduct>
+											<project ref="/object/projects/item/dependencies/item[14]/project/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project"/>
+										</item>
 									</dependencies>
 								</project>
 							</item>
@@ -8894,7 +9461,7 @@
 									<name>Traktor.Sound.OpenAL</name>
 									<sourcePath>$(TRAKTOR_HOME)/code/Sound/OpenAL</sourcePath>
 									<configurations>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -8910,8 +9477,10 @@
 											<libraries>
 												<item>OpenAL.framework</item>
 											</libraries>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -8927,8 +9496,10 @@
 											<libraries>
 												<item>OpenAL.framework</item>
 											</libraries>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -8944,8 +9515,10 @@
 											<libraries>
 												<item>OpenAL.framework</item>
 											</libraries>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -8961,6 +9534,8 @@
 											<libraries>
 												<item>OpenAL.framework</item>
 											</libraries>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
 									</configurations>
 									<items>
@@ -8988,7 +9563,7 @@
 									<name>Traktor.Spray</name>
 									<sourcePath>$(TRAKTOR_HOME)/code/Spray</sourcePath>
 									<configurations>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -9002,8 +9577,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -9017,8 +9594,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -9032,8 +9611,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -9047,6 +9628,8 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
 									</configurations>
 									<items>
@@ -9104,7 +9687,7 @@
 									<name>Traktor.Spray.Editor</name>
 									<sourcePath>$(TRAKTOR_HOME)/code/Spray/Editor</sourcePath>
 									<configurations>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -9118,8 +9701,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -9133,8 +9718,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -9148,8 +9735,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -9163,6 +9752,8 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
 									</configurations>
 									<items>
@@ -9247,7 +9838,7 @@
 									<name>Traktor.Terrain</name>
 									<sourcePath>$(TRAKTOR_HOME)/code/Terrain</sourcePath>
 									<configurations>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -9261,8 +9852,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -9276,8 +9869,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -9291,8 +9886,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -9306,6 +9903,8 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
 									</configurations>
 									<items>
@@ -9341,7 +9940,7 @@
 									<name>Traktor.Terrain.Editor</name>
 									<sourcePath>$(TRAKTOR_HOME)/code/Terrain/Editor</sourcePath>
 									<configurations>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -9355,8 +9954,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -9370,8 +9971,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -9385,8 +9988,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -9400,6 +10005,8 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
 									</configurations>
 									<items>
@@ -9455,7 +10062,7 @@
 									<name>Traktor.Theater</name>
 									<sourcePath>$(TRAKTOR_HOME)/code/Theater</sourcePath>
 									<configurations>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -9469,8 +10076,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -9484,8 +10093,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -9499,8 +10110,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -9514,6 +10127,8 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
 									</configurations>
 									<items>
@@ -9545,7 +10160,7 @@
 									<name>Traktor.Theater.Editor</name>
 									<sourcePath>$(TRAKTOR_HOME)/code/Theater/Editor</sourcePath>
 									<configurations>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -9559,8 +10174,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -9574,8 +10191,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -9589,8 +10208,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -9604,6 +10225,8 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
 									</configurations>
 									<items>
@@ -9650,6 +10273,14 @@
 											<linkWithProduct>true</linkWithProduct>
 											<project ref="/object/projects/item/dependencies/item[15]/project/dependencies/item[6]/project"/>
 										</item>
+										<item type="ProjectDependency" version="1">
+											<linkWithProduct>true</linkWithProduct>
+											<project ref="/object/projects/item/dependencies/item[14]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+										</item>
+										<item type="ProjectDependency" version="1">
+											<linkWithProduct>true</linkWithProduct>
+											<project ref="/object/projects/item/dependencies/item[14]/project/dependencies/item[1]/project"/>
+										</item>
 									</dependencies>
 								</project>
 							</item>
@@ -9664,7 +10295,7 @@
 									<name>Traktor.Weather.Editor</name>
 									<sourcePath>$(TRAKTOR_HOME)/code/Weather/Editor</sourcePath>
 									<configurations>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -9678,8 +10309,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -9693,8 +10326,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -9708,8 +10343,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -9723,6 +10360,8 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
 									</configurations>
 									<items>
@@ -9783,7 +10422,7 @@
 									<name>Traktor.Graphics</name>
 									<sourcePath>$(TRAKTOR_HOME)/code/Graphics</sourcePath>
 									<configurations>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -9797,8 +10436,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -9812,8 +10453,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -9827,8 +10470,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -9842,6 +10487,8 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
 									</configurations>
 									<items>
@@ -9865,7 +10512,7 @@
 									<name>Traktor.Input</name>
 									<sourcePath>$(TRAKTOR_HOME)/code/Input</sourcePath>
 									<configurations>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -9879,8 +10526,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -9894,8 +10543,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -9909,8 +10560,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -9924,6 +10577,8 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
 									</configurations>
 									<items>
@@ -9963,7 +10618,7 @@
 									<name>Traktor.Render.Capture</name>
 									<sourcePath>$(TRAKTOR_HOME)/code/Render/Capture</sourcePath>
 									<configurations>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -9977,8 +10632,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseShared</name>
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -9992,8 +10649,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>DebugStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
@@ -10007,8 +10666,10 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
-										<item type="Configuration">
+										<item type="Configuration" version="1">
 											<name>ReleaseStatic</name>
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
@@ -10022,6 +10683,8 @@
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
 										</item>
 									</configurations>
 									<items>
@@ -10116,7 +10779,7 @@
 						<name>Traktor.Pipeline.App</name>
 						<sourcePath>$(TRAKTOR_HOME)/code/Pipeline</sourcePath>
 						<configurations>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>DebugShared</name>
 								<targetFormat>TfExecutableConsole</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -10129,8 +10792,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>ReleaseShared</name>
 								<targetFormat>TfExecutableConsole</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -10143,8 +10808,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>DebugStatic</name>
 								<targetFormat>TfExecutableConsole</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -10158,8 +10825,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>ReleaseStatic</name>
 								<targetFormat>TfExecutableConsole</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -10173,6 +10842,8 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
 						</configurations>
 						<items>
@@ -10312,7 +10983,7 @@
 						<name>UnitTest</name>
 						<sourcePath>$(TRAKTOR_HOME)/code/UnitTest</sourcePath>
 						<configurations>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>DebugShared</name>
 								<targetFormat>TfExecutableConsole</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -10326,8 +10997,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>ReleaseShared</name>
 								<targetFormat>TfExecutableConsole</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -10341,8 +11014,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>DebugStatic</name>
 								<targetFormat>TfExecutableConsole</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -10357,8 +11032,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>ReleaseStatic</name>
 								<targetFormat>TfExecutableConsole</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -10373,6 +11050,8 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
 						</configurations>
 						<items>
@@ -10420,7 +11099,7 @@
 						<name>Traktor.Render.OpenGL.ES2</name>
 						<sourcePath>$(TRAKTOR_HOME)/code/Render/OpenGL</sourcePath>
 						<configurations>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>DebugShared</name>
 								<targetFormat>TfSharedLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -10437,8 +11116,10 @@
 								<libraries>
 									<item>OpenGL.framework</item>
 								</libraries>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>ReleaseShared</name>
 								<targetFormat>TfSharedLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -10455,8 +11136,10 @@
 								<libraries>
 									<item>OpenGL.framework</item>
 								</libraries>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>DebugStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -10473,8 +11156,10 @@
 								<libraries>
 									<item>OpenGL.framework</item>
 								</libraries>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>ReleaseStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -10491,6 +11176,8 @@
 								<libraries>
 									<item>OpenGL.framework</item>
 								</libraries>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
 						</configurations>
 						<items>
@@ -10540,7 +11227,7 @@
 			<name>Extern.wxWidgets-2.8.10</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/src</sourcePath>
 			<configurations>
-				<item type="Configuration">
+				<item type="Configuration" version="1">
 					<name>DebugShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -10570,8 +11257,10 @@
 						<item>OpenGL.framework</item>
 						<item>IOKit.framework</item>
 					</libraries>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
 				</item>
-				<item type="Configuration">
+				<item type="Configuration" version="1">
 					<name>ReleaseShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -10600,8 +11289,10 @@
 						<item>OpenGL.framework</item>
 						<item>IOKit.framework</item>
 					</libraries>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
 				</item>
-				<item type="Configuration">
+				<item type="Configuration" version="1">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -10631,8 +11322,10 @@
 						<item>OpenGL.framework</item>
 						<item>IOKit.framework</item>
 					</libraries>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
 				</item>
-				<item type="Configuration">
+				<item type="Configuration" version="1">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -10661,6 +11354,8 @@
 						<item>OpenGL.framework</item>
 						<item>IOKit.framework</item>
 					</libraries>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
 				</item>
 			</configurations>
 			<items>
@@ -12167,7 +12862,7 @@
 			<name>Traktor.Ui.Wx</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Ui/Wx</sourcePath>
 			<configurations>
-				<item type="Configuration">
+				<item type="Configuration" version="1">
 					<name>DebugShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -12189,8 +12884,10 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
 				</item>
-				<item type="Configuration">
+				<item type="Configuration" version="1">
 					<name>ReleaseShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -12211,8 +12908,10 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
 				</item>
-				<item type="Configuration">
+				<item type="Configuration" version="1">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -12234,8 +12933,10 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
 				</item>
-				<item type="Configuration">
+				<item type="Configuration" version="1">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -12256,6 +12957,8 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
 				</item>
 			</configurations>
 			<items>
@@ -12293,259 +12996,15 @@
 		<item ref="/object/projects/item/dependencies/item[69]/project"/>
 		<item ref="/object/projects/item/dependencies/item[26]/project/dependencies/item[50]/project"/>
 		<item ref="/object/projects/item/dependencies/item[73]/project"/>
-		<item ref="/object/projects/item/dependencies/item[15]/project/dependencies/item[3]/project/dependencies/item[5]/project/dependencies/item[2]/project"/>
 		<item ref="/object/projects/item/dependencies/item[15]/project/dependencies/item[3]/project/dependencies/item[4]/project"/>
 		<item ref="/object/projects/item/dependencies/item[15]/project/dependencies/item[3]/project/dependencies/item[5]/project"/>
-		<item type="Project" version="1">
-			<enable>true</enable>
-			<name>Extern.sqlite-3.6.21</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/sqlite-3.6.21</sourcePath>
-			<configurations>
-				<item type="Configuration">
-					<name>DebugShared</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/sqlite-3.6.21</item>
-					</includePaths>
-					<definitions>
-						<item>_DEBUG</item>
-						<item>SQLITE_ENABLE_COLUMN_METADATA</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-				</item>
-				<item type="Configuration">
-					<name>ReleaseShared</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/sqlite-3.6.21</item>
-					</includePaths>
-					<definitions>
-						<item>NDEBUG</item>
-						<item>SQLITE_ENABLE_COLUMN_METADATA</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-				</item>
-				<item type="Configuration">
-					<name>DebugStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/sqlite-3.6.21</item>
-					</includePaths>
-					<definitions>
-						<item>_DEBUG</item>
-						<item>SQLITE_ENABLE_COLUMN_METADATA</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-				</item>
-				<item type="Configuration">
-					<name>ReleaseStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/sqlite-3.6.21</item>
-					</includePaths>
-					<definitions>
-						<item>NDEBUG</item>
-						<item>SQLITE_ENABLE_COLUMN_METADATA</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-				</item>
-			</configurations>
-			<items>
-				<item type="File">
-					<fileName>*.*</fileName>
-					<items/>
-				</item>
-			</items>
-			<dependencies/>
-		</item>
-		<item type="Project" version="1">
-			<enable>true</enable>
-			<name>Traktor.Sql</name>
-			<sourcePath>$(TRAKTOR_HOME)/code/Sql</sourcePath>
-			<configurations>
-				<item type="Configuration">
-					<name>DebugShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_SQL_EXPORT</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-				</item>
-				<item type="Configuration">
-					<name>ReleaseShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_SQL_EXPORT</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-				</item>
-				<item type="Configuration">
-					<name>DebugStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-				</item>
-				<item type="Configuration">
-					<name>ReleaseStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-				</item>
-			</configurations>
-			<items>
-				<item type="File">
-					<fileName>*.*</fileName>
-					<items/>
-				</item>
-			</items>
-			<dependencies>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item/dependencies/item[14]/project/dependencies/item/project"/>
-				</item>
-			</dependencies>
-		</item>
-		<item type="Project" version="1">
-			<enable>true</enable>
-			<name>Traktor.Sql.Sqlite3</name>
-			<sourcePath>$(TRAKTOR_HOME)/code/Sql/Sqlite3</sourcePath>
-			<configurations>
-				<item type="Configuration">
-					<name>DebugShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/sqlite-3.6.21</item>
-					</includePaths>
-					<definitions>
-						<item>T_SQL_SQLITE3_EXPORT</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-				</item>
-				<item type="Configuration">
-					<name>ReleaseShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/sqlite-3.6.21</item>
-					</includePaths>
-					<definitions>
-						<item>T_SQL_SQLITE3_EXPORT</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-				</item>
-				<item type="Configuration">
-					<name>DebugStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/sqlite-3.6.21</item>
-					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-				</item>
-				<item type="Configuration">
-					<name>ReleaseStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/sqlite-3.6.21</item>
-					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-				</item>
-			</configurations>
-			<items>
-				<item type="File">
-					<fileName>*.*</fileName>
-					<items/>
-				</item>
-			</items>
-			<dependencies>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item/dependencies/item[14]/project/dependencies/item/project"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item/dependencies/item[15]/project/dependencies/item[3]/project/dependencies/item[4]/project"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item/dependencies/item[15]/project/dependencies/item[3]/project/dependencies/item[5]/project/dependencies/item[2]/project"/>
-				</item>
-			</dependencies>
-		</item>
+		<item ref="/object/projects/item/dependencies/item[15]/project/dependencies/item[3]/project/dependencies/item[5]/project/dependencies/item[2]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Extern.libtheora-1.1.1</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/lib</sourcePath>
 			<configurations>
-				<item type="Configuration">
+				<item type="Configuration" version="1">
 					<name>DebugShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -12560,8 +13019,10 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
 				</item>
-				<item type="Configuration">
+				<item type="Configuration" version="1">
 					<name>ReleaseShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -12576,8 +13037,10 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
 				</item>
-				<item type="Configuration">
+				<item type="Configuration" version="1">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -12592,8 +13055,10 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
 				</item>
-				<item type="Configuration">
+				<item type="Configuration" version="1">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -12608,6 +13073,8 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
 				</item>
 			</configurations>
 			<items>
@@ -12636,7 +13103,7 @@
 			<name>Traktor.Video</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Video</sourcePath>
 			<configurations>
-				<item type="Configuration">
+				<item type="Configuration" version="1">
 					<name>DebugShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -12652,8 +13119,10 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
 				</item>
-				<item type="Configuration">
+				<item type="Configuration" version="1">
 					<name>ReleaseShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -12669,8 +13138,10 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
 				</item>
-				<item type="Configuration">
+				<item type="Configuration" version="1">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -12686,8 +13157,10 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
 				</item>
-				<item type="Configuration">
+				<item type="Configuration" version="1">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -12703,6 +13176,8 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
 				</item>
 			</configurations>
 			<items>
@@ -12727,7 +13202,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[83]"/>
+					<project ref="/object/projects/item[80]"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
@@ -12748,7 +13223,7 @@
 			<name>Traktor.Video.Editor</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Video/Editor</sourcePath>
 			<configurations>
-				<item type="Configuration">
+				<item type="Configuration" version="1">
 					<name>DebugShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -12762,8 +13237,10 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
 				</item>
-				<item type="Configuration">
+				<item type="Configuration" version="1">
 					<name>ReleaseShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -12777,8 +13254,10 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
 				</item>
-				<item type="Configuration">
+				<item type="Configuration" version="1">
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -12792,8 +13271,10 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
 				</item>
-				<item type="Configuration">
+				<item type="Configuration" version="1">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -12807,6 +13288,8 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
 				</item>
 			</configurations>
 			<items>
@@ -12826,7 +13309,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[84]"/>
+					<project ref="/object/projects/item[81]"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>

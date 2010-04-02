@@ -5,6 +5,7 @@
 #include <vector>
 #include "Core/Config.h"
 #include "Core/RefArray.h"
+#include "Core/Rtti/ITypedObject.h"
 
 namespace traktor
 {
