@@ -170,9 +170,9 @@ void CanvasCocoa::drawBitmap(const Point& dstAt, const Point& srcAt, const Size&
 	NSRect dstRect = makeNSRect(Rect(dstAt, size));
 	NSRect srcRect = makeNSRect(Rect(srcAt, size));
 	
-	if (blendMode == BmNone)
+	if (blendMode == 0)
 		[bmc->getNSImage() drawInRect: dstRect fromRect: srcRect operation: NSCompositeCopy fraction: 1.0f];
-	else if (blendMode == BmAlpha)
+	else if ((blendMode & BmAlpha) != 0)
 		[bmc->getNSImagePreAlpha() drawInRect: dstRect fromRect: srcRect operation: NSCompositeSourceOver fraction: 1.0f];
 }
 
@@ -184,9 +184,9 @@ void CanvasCocoa::drawBitmap(const Point& dstAt, const Size& dstSize, const Poin
 	NSRect dstRect = makeNSRect(Rect(dstAt, dstSize));
 	NSRect srcRect = makeNSRect(Rect(srcAt, srcSize));
 	
-	if (blendMode == BmNone)
+	if (blendMode == 0)
 		[bmc->getNSImage() drawInRect: dstRect fromRect: srcRect operation: NSCompositeCopy fraction: 1.0f];
-	else if (blendMode == BmAlpha)
+	else if ((blendMode & BmAlpha) != 0)
 		[bmc->getNSImagePreAlpha() drawInRect: dstRect fromRect: srcRect operation: NSCompositeSourceOver fraction: 1.0f];
 }
 

@@ -747,7 +747,7 @@ void emitSampler(GlslContext& cx, Sampler* node)
 		switch (node->getLookup())
 		{
 		case Sampler::LuSimple:
-			assign(f, out) << L"texture2D(" << samplerName << L", " << texCoord->cast(GtFloat2) << L");" << Endl;
+			assign(f, out) << L"texture2D(" << samplerName << L", " << texCoord->cast(GtFloat2) << L" * vec2(1.0, -1.0) + vec2(0.0, 1.0));" << Endl;
 			break;
 
 		case Sampler::LuCube:
