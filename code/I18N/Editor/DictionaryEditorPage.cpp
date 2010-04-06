@@ -55,8 +55,8 @@ bool DictionaryEditorPage::setDataObject(db::Instance* instance, Object* data)
 	for (std::map< std::wstring, std::wstring >::const_iterator i = map.begin(); i != map.end(); ++i)
 	{
 		Ref< ui::custom::GridRow > row = new ui::custom::GridRow();
-		row->addItem(new ui::custom::GridItem(i->first));
-		row->addItem(new ui::custom::GridItem(i->second));
+		row->add(new ui::custom::GridItem(i->first));
+		row->add(new ui::custom::GridItem(i->second));
 		m_gridDictionary->addRow(row);
 	}
 	m_gridDictionary->update();
@@ -98,7 +98,11 @@ void DictionaryEditorPage::eventGridDoubleClick(ui::Event* event)
 		// Edit selected.
 		ui::custom::InputDialog::Field fields[] =
 		{
-			{ L"Localized text", selectedRows[0]->getItems().at(1)->getText(), 0 }
+			{
+				L"Localized text",
+				checked_type_cast< ui::custom::GridItem*, false >(selectedRows[0]->get(1))->getText(),
+				0
+			}
 		};
 
 		ui::custom::InputDialog inputDialog;
@@ -111,8 +115,11 @@ void DictionaryEditorPage::eventGridDoubleClick(ui::Event* event)
 		);
 		if (inputDialog.showModal() == ui::DrOk)
 		{
-			m_dictionary->set(selectedRows[0]->getItems().at(0)->getText(), fields->value);
-			selectedRows[0]->getItems().at(1)->setText(fields->value);
+			m_dictionary->set(
+				checked_type_cast< ui::custom::GridItem*, false >(selectedRows[0]->get(0))->getText(),
+				fields->value
+			);
+			checked_type_cast< ui::custom::GridItem*, false >(selectedRows[0]->get(1))->setText(fields->value);
 			m_gridDictionary->update();
 		}
 		inputDialog.destroy();
@@ -123,8 +130,8 @@ void DictionaryEditorPage::eventGridDoubleClick(ui::Event* event)
 		m_dictionary->set(L"", L"");
 
 		Ref< ui::custom::GridRow > row = new ui::custom::GridRow();
-		row->addItem(new ui::custom::GridItem(L""));
-		row->addItem(new ui::custom::GridItem(L""));
+		row->add(new ui::custom::GridItem(L""));
+		row->add(new ui::custom::GridItem(L""));
 		m_gridDictionary->addRow(row);
 		m_gridDictionary->update();
 	}

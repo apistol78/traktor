@@ -21,14 +21,14 @@ bool GrainView::create(ui::Widget* parent)
 
 void GrainView::add(GrainViewItem* item)
 {
-	Ref< GrainViewCell > cell = new GrainViewCell(item);
-	addCell(cell);
+	m_cells.push_back(new GrainViewCell(item));
 	requestLayout();
 }
 
 void GrainView::removeAll()
 {
-	removeAllCells();
+	m_cells.clear();
+	requestLayout();
 }
 
 GrainViewItem* GrainView::getSelected() const
@@ -43,25 +43,19 @@ void GrainView::layoutCells(const ui::Rect& rc)
 	rowRect.top += 16;
 	rowRect.bottom = rowRect.top + 32;
 
-	const RefArray< ui::custom::AutoWidgetCell >& cells = getCells();
-	for (RefArray< ui::custom::AutoWidgetCell >::const_iterator i = cells.begin(); i != cells.end(); ++i)
+	for (RefArray< GrainViewCell >::const_iterator i = m_cells.begin(); i != m_cells.end(); ++i)
 	{
-		GrainViewCell* cell = checked_type_cast< GrainViewCell*, false >(*i);
-
 		uint32_t depth = 0;
-		for (const GrainViewItem* item = cell->getItem(); item; item = item->getParent())
+		for (const GrainViewItem* item = (*i)->getItem(); item; item = item->getParent())
 			++depth;
 
 		ui::Rect cellRect = rowRect;
 		cellRect.left += depth * 16;
 		cellRect.right = cellRect.left + 128;
-
-		cell->setRect(cellRect);
+		placeCell(*i, cellRect);
 
 		rowRect = rowRect.offset(0, 32 + 8);
 	}
-
-	setClientSize(ui::Size(0, rowRect.bottom));
 }
 
 	}

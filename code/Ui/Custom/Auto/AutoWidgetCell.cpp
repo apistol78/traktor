@@ -9,19 +9,13 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.AutoWidgetCell", AutoWidgetCell, Object)
 
-void AutoWidgetCell::setRect(const Rect& rect)
+void AutoWidgetCell::placeCells(AutoWidget* widget, const Rect& rect)
 {
-	m_rect = rect;
-}
-
-Rect AutoWidgetCell::getRect() const
-{
-	return m_rect;
 }
 
 AutoWidgetCell* AutoWidgetCell::hitTest(AutoWidget* widget, const Point& position)
 {
-	return m_rect.inside(position) ? this : 0;
+	return this;
 }
 
 bool AutoWidgetCell::beginCapture(AutoWidget* widget)
@@ -45,7 +39,7 @@ void AutoWidgetCell::mouseMove(AutoWidget* widget, const Point& position)
 {
 }
 
-void AutoWidgetCell::paint(AutoWidget* widget, Canvas& canvas, const Size& offset)
+void AutoWidgetCell::paint(AutoWidget* widget, Canvas& canvas, const Rect& rect)
 {
 }
 

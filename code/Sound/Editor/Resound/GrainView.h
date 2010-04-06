@@ -9,6 +9,7 @@ namespace traktor
 	namespace sound
 	{
 
+class GrainViewCell;
 class GrainViewItem;
 
 class GrainView : public ui::custom::AutoWidget
@@ -28,7 +29,7 @@ protected:
 	virtual void layoutCells(const ui::Rect& rc);
 
 private:
-	RefArray< GrainViewItem > m_items;
+	RefArray< GrainViewCell > m_cells;
 };
 
 	}

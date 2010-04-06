@@ -19,6 +19,7 @@ class ISerializable;
 	namespace ui
 	{
 
+class Bitmap;
 class Container;
 class PopupMenu;
 class Event;
@@ -99,14 +100,14 @@ private:
 	Ref< ui::custom::ToolBarButton > m_toolLookAtEntity;
 	Ref< ui::custom::ToolBarButton > m_toolFollowEntity;
 	Ref< ui::custom::ToolBar > m_entityToolBar;
+	Ref< ui::Bitmap > m_imageHidden;
+	Ref< ui::Bitmap > m_imageVisible;
 	Ref< ui::custom::GridView > m_instanceGrid;
 	Ref< ui::Font > m_instanceGridFontItalic;
 	Ref< ui::Font > m_instanceGridFontBold;
 	Ref< editor::UndoStack > m_undoStack;
 	Guid m_currentGuid;
 	uint32_t m_currentHash;
-	uint32_t m_imageHidden;
-	uint32_t m_imageVisible;
 
 	void createControllerEditor();
 

@@ -2,6 +2,7 @@
 #define traktor_ui_custom_AutoWidgetCell_H
 
 #include "Core/Object.h"
+#include "Ui/Associative.h"
 #include "Ui/Rect.h"
 
 // import/export mechanism.
@@ -27,14 +28,14 @@ class AutoWidget;
 /*! \brief Auto widget cell.
  * \ingroup UIC
  */
-class T_DLLCLASS AutoWidgetCell : public Object
+class T_DLLCLASS AutoWidgetCell
+:	public Object
+,	public Associative
 {
 	T_RTTI_CLASS;
 
 public:
-	virtual void setRect(const Rect& rect);
-
-	virtual Rect getRect() const;
+	virtual void placeCells(AutoWidget* widget, const Rect& rect);
 
 	virtual AutoWidgetCell* hitTest(AutoWidget* widget, const Point& position);
 
@@ -48,10 +49,7 @@ public:
 
 	virtual void mouseMove(AutoWidget* widget, const Point& position);
 
-	virtual void paint(AutoWidget* widget, Canvas& canvas, const Size& offset);
-
-private:
-	Rect m_rect;
+	virtual void paint(AutoWidget* widget, Canvas& canvas, const Rect& rect);
 };
 
 		}
