@@ -38,5 +38,10 @@ Ref< ISession > SessionManagerPsn::createSession(IUser* user)
 	return new SessionPsn(checked_type_cast< UserPsn*, false >(user));
 }
 
+bool SessionManagerPsn::update()
+{
+	return true;
+}
+
 	}
 }

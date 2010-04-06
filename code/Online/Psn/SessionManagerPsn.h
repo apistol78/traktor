@@ -38,6 +38,8 @@ public:
 
 	virtual Ref< ISession > createSession(IUser* user);
 
+	virtual bool update();
+
 private:
 	Ref< UserPsn > m_user;
 };

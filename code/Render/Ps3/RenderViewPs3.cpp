@@ -77,7 +77,7 @@ RenderViewPs3::~RenderViewPs3()
 {
 }
 
-bool RenderViewPs3::create(MemoryHeap* memoryHeap, const RenderViewCreateDefaultDesc& desc)
+bool RenderViewPs3::create(MemoryHeap* memoryHeap, const RenderViewDefaultDesc& desc)
 {
 	CellVideoOutState videoState;
 	CellVideoOutConfiguration videoConfig;
@@ -226,7 +226,7 @@ void RenderViewPs3::close()
 	}
 }
 
-bool RenderViewPs3::reset(const DisplayMode& displayMode)
+bool RenderViewPs3::reset(const RenderViewDefaultDesc& desc)
 {
 	return true;
 }
@@ -556,10 +556,6 @@ void RenderViewPs3::present()
 	m_frameCounter = incrementLabel(m_frameCounter);
 
 	m_renderSystem->releaseLock();
-}
-
-void RenderViewPs3::setMSAAEnable(bool msaaEnable)
-{
 }
 
 void RenderViewPs3::pushMarker(const char* const marker)

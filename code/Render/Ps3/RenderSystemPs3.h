@@ -40,9 +40,9 @@ public:
 
 	virtual bool handleMessages();
 
-	virtual Ref< IRenderView > createRenderView(const RenderViewCreateDefaultDesc& desc);
+	virtual Ref< IRenderView > createRenderView(const RenderViewDefaultDesc& desc);
 
-	virtual Ref< IRenderView > createRenderView(const RenderViewCreateEmbeddedDesc& desc);
+	virtual Ref< IRenderView > createRenderView(const RenderViewEmbeddedDesc& desc);
 
 	virtual Ref< VertexBuffer > createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic);
 

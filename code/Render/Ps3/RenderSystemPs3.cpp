@@ -116,7 +116,7 @@ bool RenderSystemPs3::handleMessages()
 	return true;
 }
 
-Ref< IRenderView > RenderSystemPs3::createRenderView(const RenderViewCreateDefaultDesc& desc)
+Ref< IRenderView > RenderSystemPs3::createRenderView(const RenderViewDefaultDesc& desc)
 {
 	Ref< RenderViewPs3 > renderView = new RenderViewPs3(this);
 	if (renderView->create(m_memoryHeapLocal, desc))
@@ -125,7 +125,7 @@ Ref< IRenderView > RenderSystemPs3::createRenderView(const RenderViewCreateDefau
 		return 0;
 }
 
-Ref< IRenderView > RenderSystemPs3::createRenderView(const RenderViewCreateEmbeddedDesc& desc)
+Ref< IRenderView > RenderSystemPs3::createRenderView(const RenderViewEmbeddedDesc& desc)
 {
 	return 0;
 }
