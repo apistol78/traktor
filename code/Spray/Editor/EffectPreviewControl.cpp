@@ -81,7 +81,7 @@ bool EffectPreviewControl::create(ui::Widget* parent, int style, resource::IReso
 	if (!Widget::create(parent, style))
 		return false;
 
-	render::RenderViewCreateEmbeddedDesc desc;
+	render::RenderViewEmbeddedDesc desc;
 	desc.depthBits = 16;
 	desc.stencilBits = 0;
 	desc.multiSample = 4;

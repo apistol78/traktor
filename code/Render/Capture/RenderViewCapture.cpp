@@ -32,9 +32,9 @@ void RenderViewCapture::close()
 	m_renderView->close();
 }
 
-bool RenderViewCapture::reset(const DisplayMode& displayMode)
+bool RenderViewCapture::reset(const RenderViewDefaultDesc& desc)
 {
-	return m_renderView->reset(displayMode);
+	return m_renderView->reset(desc);
 }
 
 void RenderViewCapture::resize(int32_t width, int32_t height)
@@ -207,11 +207,6 @@ void RenderViewCapture::present()
 {
 	m_renderView->present();
 	m_frameCount++;
-}
-
-void RenderViewCapture::setMSAAEnable(bool msaaEnable)
-{
-	m_renderView->setMSAAEnable(msaaEnable);
 }
 
 void RenderViewCapture::pushMarker(const char* const marker)

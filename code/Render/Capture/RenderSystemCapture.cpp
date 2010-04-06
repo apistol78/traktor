@@ -43,7 +43,7 @@ bool RenderSystemCapture::handleMessages()
 	return m_renderSystem->handleMessages();
 }
 
-Ref< IRenderView > RenderSystemCapture::createRenderView(const RenderViewCreateDefaultDesc& desc)
+Ref< IRenderView > RenderSystemCapture::createRenderView(const RenderViewDefaultDesc& desc)
 {
 	Ref< IRenderView > renderView = m_renderSystem->createRenderView(desc);
 	if (!renderView)
@@ -52,7 +52,7 @@ Ref< IRenderView > RenderSystemCapture::createRenderView(const RenderViewCreateD
 	return new RenderViewCapture(m_renderSystem, renderView);
 }
 
-Ref< IRenderView > RenderSystemCapture::createRenderView(const RenderViewCreateEmbeddedDesc& desc)
+Ref< IRenderView > RenderSystemCapture::createRenderView(const RenderViewEmbeddedDesc& desc)
 {
 	Ref< IRenderView > renderView = m_renderSystem->createRenderView(desc);
 	if (!renderView)

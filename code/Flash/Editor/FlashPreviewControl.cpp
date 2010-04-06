@@ -90,7 +90,7 @@ bool FlashPreviewControl::create(ui::Widget* parent, int style, resource::IResou
 		return false;
 
 #if T_USE_ACCELERATED_RENDERER
-	render::RenderViewCreateEmbeddedDesc desc;
+	render::RenderViewEmbeddedDesc desc;
 	desc.depthBits = 16;
 	desc.stencilBits = 8;
 	desc.multiSample = 0;

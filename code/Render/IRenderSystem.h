@@ -80,13 +80,6 @@ public:
 	 */
 	virtual DisplayMode getCurrentDisplayMode() const = 0;
 	
-	/*! \brief Find supported display mode from criterion.
-	 *
-	 * Find best matching and supported display mode from a criterion.
-	 * Using a simple heuristics to find best matching mode, width + height + color depth * 10.
-	 */
-	virtual bool findDisplayMode(const DisplayMode& criteria, DisplayMode& outBestMatch) const;
-	
 	//@}
 
 	/*! \name System message handling. */
@@ -106,10 +99,10 @@ public:
 	//@{
 	
 	/*! \brief Create default render view. */
-	virtual Ref< IRenderView > createRenderView(const RenderViewCreateDefaultDesc& desc) = 0;
+	virtual Ref< IRenderView > createRenderView(const RenderViewDefaultDesc& desc) = 0;
 
 	/*! \brief Create embedded render view. */
-	virtual Ref< IRenderView > createRenderView(const RenderViewCreateEmbeddedDesc& desc) = 0;
+	virtual Ref< IRenderView > createRenderView(const RenderViewEmbeddedDesc& desc) = 0;
 	
 	//@}
 

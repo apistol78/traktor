@@ -175,14 +175,14 @@ struct RenderSystemCreateDesc
 };
 
 /*! \brief Descriptor for render views. */
-struct RenderViewCreateDesc
+struct RenderViewDesc
 {
 	uint16_t depthBits;
 	uint16_t stencilBits;
 	uint32_t multiSample;
 	bool waitVBlank;
 
-	RenderViewCreateDesc()
+	RenderViewDesc()
 	:	depthBits(0)
 	,	stencilBits(0)
 	,	multiSample(0)
@@ -192,25 +192,25 @@ struct RenderViewCreateDesc
 };
 
 /*! \brief Descriptor for default render views. */
-struct RenderViewCreateDefaultDesc : public RenderViewCreateDesc
+struct RenderViewDefaultDesc : public RenderViewDesc
 {
 	DisplayMode displayMode;
 	bool fullscreen;
 
-	RenderViewCreateDefaultDesc()
-	:	RenderViewCreateDesc()
+	RenderViewDefaultDesc()
+	:	RenderViewDesc()
 	,	fullscreen(true)
 	{
 	}
 };
 
 /*! \brief Descriptor for embedded render views. */
-struct RenderViewCreateEmbeddedDesc : public RenderViewCreateDesc
+struct RenderViewEmbeddedDesc : public RenderViewDesc
 {
 	void* nativeWindowHandle;
 
-	RenderViewCreateEmbeddedDesc()
-	:	RenderViewCreateDesc()
+	RenderViewEmbeddedDesc()
+	:	RenderViewDesc()
 	,	nativeWindowHandle(0)
 	{
 	}

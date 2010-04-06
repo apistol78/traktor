@@ -127,7 +127,7 @@ void RenderViewSw::close()
 	}
 }
 
-bool RenderViewSw::reset(const DisplayMode& displayMode)
+bool RenderViewSw::reset(const RenderViewDefaultDesc& desc)
 {
 	return false;
 }
@@ -305,10 +305,6 @@ void RenderViewSw::end()
 void RenderViewSw::present()
 {
 	m_graphicsSystem->flip(false);
-}
-
-void RenderViewSw::setMSAAEnable(bool msaaEnable)
-{
 }
 
 void RenderViewSw::pushMarker(const char* const marker)

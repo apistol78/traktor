@@ -79,7 +79,7 @@ bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* co
 	if (!m_renderWidget->create(parent))
 		return false;
 
-	render::RenderViewCreateEmbeddedDesc desc;
+	render::RenderViewEmbeddedDesc desc;
 	desc.depthBits = 24;
 	desc.stencilBits = 0;
 	desc.multiSample = 4;

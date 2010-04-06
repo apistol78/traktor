@@ -54,7 +54,7 @@ bool VideoEditorPage::create(ui::Container* parent, editor::IEditorPageSite* sit
 	m_renderWidget->addSizeEventHandler(ui::createMethodHandler(this, &VideoEditorPage::eventSize));
 	m_renderWidget->addPaintEventHandler(ui::createMethodHandler(this, &VideoEditorPage::eventPaint));
 
-	render::RenderViewCreateEmbeddedDesc desc;
+	render::RenderViewEmbeddedDesc desc;
 	desc.depthBits = 16;
 	desc.stencilBits = 0;
 	desc.multiSample = 0;

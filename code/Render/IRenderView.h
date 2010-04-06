@@ -40,7 +40,7 @@ public:
 
 	virtual void close() = 0;
 
-	virtual bool reset(const DisplayMode& displayMode) = 0;
+	virtual bool reset(const RenderViewDefaultDesc& desc) = 0;
 
 	virtual void resize(int32_t width, int32_t height) = 0;
 
@@ -117,12 +117,6 @@ public:
 
 	/*! \brief Swap back and front buffers. */
 	virtual void present() = 0;
-
-	/*! \brief Set MSAA enable/disable.
-	 *
-	 * \param msaaEnable True if MSAA write enable; false no MSAA when writing to MSAA targets.
-	 */
-	virtual void setMSAAEnable(bool msaaEnable) = 0;
 
 	/*! \brief Write push debug marker to command buffer. */
 	virtual void pushMarker(const char* const marker) = 0;

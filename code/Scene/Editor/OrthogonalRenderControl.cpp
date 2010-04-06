@@ -84,7 +84,7 @@ bool OrthogonalRenderControl::create(ui::Widget* parent, SceneEditorContext* con
 	if (!m_renderWidget->create(parent))
 		return false;
 
-	render::RenderViewCreateEmbeddedDesc desc;
+	render::RenderViewEmbeddedDesc desc;
 	desc.depthBits = 24;
 	desc.stencilBits = 0;
 	desc.multiSample = 4;

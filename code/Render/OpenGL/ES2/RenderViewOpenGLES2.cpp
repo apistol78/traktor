@@ -64,7 +64,7 @@ void RenderViewOpenGLES2::close()
 #	endif
 }
 
-bool RenderViewOpenGLES2::reset(const DisplayMode& displayMode)
+bool RenderViewOpenGLES2::reset(const RenderViewDefaultDesc& desc)
 {
 	return false;
 }
@@ -374,10 +374,6 @@ void RenderViewOpenGLES2::present()
 
 	if (m_globalContext)
 		m_globalContext->deleteResources();
-}
-
-void RenderViewOpenGLES2::setMSAAEnable(bool msaaEnable)
-{
 }
 
 void RenderViewOpenGLES2::pushMarker(const char* const marker)

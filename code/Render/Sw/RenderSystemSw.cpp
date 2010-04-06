@@ -139,7 +139,7 @@ bool RenderSystemSw::handleMessages()
 #endif
 }
 
-Ref< IRenderView > RenderSystemSw::createRenderView(const RenderViewCreateDefaultDesc& desc)
+Ref< IRenderView > RenderSystemSw::createRenderView(const RenderViewDefaultDesc& desc)
 {
 	Ref< graphics::IGraphicsSystem > graphicsSystem;
 	graphics::CreateDesc graphicsDesc;
@@ -189,7 +189,7 @@ Ref< IRenderView > RenderSystemSw::createRenderView(const RenderViewCreateDefaul
 	return new RenderViewSw(this, graphicsSystem, m_processor);
 }
 
-Ref< IRenderView > RenderSystemSw::createRenderView(const RenderViewCreateEmbeddedDesc& desc)
+Ref< IRenderView > RenderSystemSw::createRenderView(const RenderViewEmbeddedDesc& desc)
 {
 	Ref< graphics::IGraphicsSystem > graphicsSystem;
 	graphics::CreateDesc graphicsDesc;

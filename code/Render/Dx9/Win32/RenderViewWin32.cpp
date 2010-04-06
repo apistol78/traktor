@@ -44,7 +44,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewWin32", RenderViewWin32, IRend
 RenderViewWin32::RenderViewWin32(
 	RenderSystemWin32* renderSystem,
 	ParameterCache* parameterCache,
-	const RenderViewCreateDesc& createDesc,
+	const RenderViewDesc& createDesc,
 	const D3DPRESENT_PARAMETERS& d3dPresent,
 	D3DFORMAT d3dDepthStencilFormat,
 	float nativeAspectRatio
@@ -80,12 +80,12 @@ void RenderViewWin32::close()
 	m_renderSystem->removeRenderView(this);
 }
 
-bool RenderViewWin32::reset(const DisplayMode& displayMode)
+bool RenderViewWin32::reset(const RenderViewDefaultDesc& desc)
 {
 	D3DPRESENT_PARAMETERS d3dPresent = m_d3dPresent;
 
-	d3dPresent.BackBufferWidth = displayMode.width;
-	d3dPresent.BackBufferHeight = displayMode.height;
+	d3dPresent.BackBufferWidth = desc.displayMode.width;
+	d3dPresent.BackBufferHeight = desc.displayMode.height;
 
 	if (!m_renderSystem->resetPrimary(d3dPresent))
 		return false;
@@ -353,11 +353,6 @@ void RenderViewWin32::present()
 		hr == D3DERR_DEVICELOST ||
 		hr == D3DERR_DEVICENOTRESET
 	);
-}
-
-void RenderViewWin32::setMSAAEnable(bool msaaEnable)
-{
-	m_d3dDevice->SetRenderState(D3DRS_MULTISAMPLEANTIALIAS, msaaEnable ? TRUE : FALSE);
 }
 
 void RenderViewWin32::pushMarker(const char* const marker)

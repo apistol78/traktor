@@ -188,7 +188,7 @@ bool RenderSystemDx10::handleMessages()
 	return going;
 }
 
-Ref< IRenderView > RenderSystemDx10::createRenderView(const RenderViewCreateDefaultDesc& desc)
+Ref< IRenderView > RenderSystemDx10::createRenderView(const RenderViewDefaultDesc& desc)
 {
 	ComRef< IDXGISwapChain > d3dSwapChain;
 	DXGI_SWAP_CHAIN_DESC scd;
@@ -254,7 +254,7 @@ Ref< IRenderView > RenderSystemDx10::createRenderView(const RenderViewCreateDefa
 	);
 }
 
-Ref< IRenderView > RenderSystemDx10::createRenderView(const RenderViewCreateEmbeddedDesc& desc)
+Ref< IRenderView > RenderSystemDx10::createRenderView(const RenderViewEmbeddedDesc& desc)
 {
 	ComRef< IDXGISwapChain > d3dSwapChain;
 	HRESULT hr;
