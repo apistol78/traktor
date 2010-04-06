@@ -90,7 +90,7 @@ bool AccDisplayRenderer::create(
 	rtscd.height = c_cacheGlyphDimY;
 	rtscd.multiSample = 0;
 	rtscd.depthStencil = false;
-	rtscd.targets[0].format = render::TfR8G8B8A8;
+	rtscd.targets[0].format = render::TfR8;
 
 	m_renderTargetGlyphs = m_renderSystem->createRenderTargetSet(rtscd);
 	if (!m_renderTargetGlyphs)

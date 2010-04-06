@@ -103,7 +103,7 @@ bool SkeletonEditorPage::create(ui::Container* parent, editor::IEditorPageSite* 
 
 	m_site->createAdditionalPanel(m_skeletonPanel, 250, false);
 
-	render::RenderViewCreateEmbeddedDesc desc;
+	render::RenderViewEmbeddedDesc desc;
 	desc.depthBits = 16;
 	desc.stencilBits = 0;
 	desc.multiSample = 4;

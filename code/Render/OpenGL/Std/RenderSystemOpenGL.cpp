@@ -277,7 +277,7 @@ bool RenderSystemOpenGL::handleMessages()
 #endif
 }
 
-Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewCreateDefaultDesc& desc)
+Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultDesc& desc)
 {
 #if defined(_WIN32)
 
@@ -371,7 +371,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewCreateDe
 #endif
 }
 
-Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewCreateEmbeddedDesc& desc)
+Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewEmbeddedDesc& desc)
 {
 #if defined(_WIN32)
 

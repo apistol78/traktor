@@ -46,7 +46,7 @@ public:
 
 	virtual void close();
 
-	virtual bool reset(const DisplayMode& displayMode);
+	virtual bool reset(const RenderViewDefaultDesc& desc);
 
 	virtual void resize(int32_t width, int32_t height);
 
@@ -77,8 +77,6 @@ public:
 	virtual void end();
 
 	virtual void present();
-
-	virtual void setMSAAEnable(bool msaaEnable);
 
 	virtual void pushMarker(const char* const marker);
 

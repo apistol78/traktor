@@ -98,7 +98,7 @@ void RenderViewDx10::close()
 	}
 }
 
-bool RenderViewDx10::reset(const DisplayMode& displayMode)
+bool RenderViewDx10::reset(const RenderViewDefaultDesc& desc)
 {
 	return false;
 }
@@ -401,10 +401,6 @@ void RenderViewDx10::present()
 {
 	m_d3dSwapChain->Present(m_waitVBlank ? 1 : 0, 0);
 	m_context->deleteResources();
-}
-
-void RenderViewDx10::setMSAAEnable(bool msaaEnable)
-{
 }
 
 void RenderViewDx10::pushMarker(const char* const marker)

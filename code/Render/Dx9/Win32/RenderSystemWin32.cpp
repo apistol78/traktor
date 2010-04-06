@@ -318,7 +318,7 @@ bool RenderSystemWin32::handleMessages()
 	return going;
 }
 
-Ref< IRenderView > RenderSystemWin32::createRenderView(const RenderViewCreateDefaultDesc& desc)
+Ref< IRenderView > RenderSystemWin32::createRenderView(const RenderViewDefaultDesc& desc)
 {
 	D3DFORMAT d3dDepthStencilFormat;
 	D3DMULTISAMPLE_TYPE d3dMultiSample;
@@ -384,7 +384,7 @@ Ref< IRenderView > RenderSystemWin32::createRenderView(const RenderViewCreateDef
 	return renderView;
 }
 
-Ref< IRenderView > RenderSystemWin32::createRenderView(const RenderViewCreateEmbeddedDesc& desc)
+Ref< IRenderView > RenderSystemWin32::createRenderView(const RenderViewEmbeddedDesc& desc)
 {
 	D3DPRESENT_PARAMETERS d3dPresent;
 	D3DFORMAT d3dDepthStencilFormat;

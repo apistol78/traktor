@@ -69,7 +69,7 @@ void RenderViewOpenGL::close()
 	m_context = 0;
 }
 
-bool RenderViewOpenGL::reset(const DisplayMode& displayMode)
+bool RenderViewOpenGL::reset(const RenderViewDefaultDesc& desc)
 {
 	return false;
 }
@@ -332,10 +332,6 @@ void RenderViewOpenGL::present()
 	m_globalContext->enter();
 	m_globalContext->deleteResources();
 	m_globalContext->leave();
-}
-
-void RenderViewOpenGL::setMSAAEnable(bool msaaEnable)
-{
 }
 
 void RenderViewOpenGL::pushMarker(const char* const marker)

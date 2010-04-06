@@ -41,7 +41,7 @@ public:
 	RenderViewWin32(
 		RenderSystemWin32* renderSystem,
 		ParameterCache* parameterCache,
-		const RenderViewCreateDesc& createDesc,
+		const RenderViewDesc& createDesc,
 		const D3DPRESENT_PARAMETERS& d3dPresent,
 		D3DFORMAT d3dDepthStencilFormat,
 		float nativeAspectRatio
@@ -51,7 +51,7 @@ public:
 
 	virtual void close();
 
-	virtual bool reset(const DisplayMode& displayMode);
+	virtual bool reset(const RenderViewDefaultDesc& desc);
 
 	virtual void resize(int32_t width, int32_t height);
 
@@ -83,8 +83,6 @@ public:
 
 	virtual void present();
 
-	virtual void setMSAAEnable(bool msaaEnable);
-
 	virtual void pushMarker(const char* const marker);
 
 	virtual void popMarker();
@@ -112,7 +110,7 @@ private:
 
 	Ref< RenderSystemWin32 > m_renderSystem;
 	ParameterCache* m_parameterCache;
-	RenderViewCreateDesc m_createDesc;
+	RenderViewDesc m_createDesc;
 	ComRef< IDirect3DDevice9 > m_d3dDevice;
 	D3DPRESENT_PARAMETERS m_d3dPresent;
 	D3DFORMAT m_d3dDepthStencilFormat;

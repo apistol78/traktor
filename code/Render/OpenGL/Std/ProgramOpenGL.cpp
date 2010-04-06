@@ -462,7 +462,7 @@ bool ProgramOpenGL::activate(float targetSize[2])
 	}
 
 	GLuint location = glGetUniformLocationARB(m_program, "_gl_targetSize");
-	glUniform2f(location, targetSize[0], targetSize[1]);
+	T_OGL_SAFE(glUniform2fvARB(location, 1, targetSize));
 
 	for (uint32_t i = 0; i < m_samplers.size(); ++i)
 	{

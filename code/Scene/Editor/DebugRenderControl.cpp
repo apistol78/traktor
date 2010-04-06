@@ -30,7 +30,7 @@ bool DebugRenderControl::create(ui::Widget* parent, SceneEditorContext* context)
 	if (!m_renderWidget->create(parent))
 		return false;
 
-	render::RenderViewCreateEmbeddedDesc desc;
+	render::RenderViewEmbeddedDesc desc;
 	desc.depthBits = 0;
 	desc.stencilBits = 0;
 	desc.multiSample = 4;

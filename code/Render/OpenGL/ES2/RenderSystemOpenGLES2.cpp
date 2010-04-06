@@ -116,7 +116,7 @@ bool RenderSystemOpenGLES2::handleMessages()
 	return true;
 }
 
-Ref< IRenderView > RenderSystemOpenGLES2::createRenderView(const RenderViewCreateDefaultDesc& desc)
+Ref< IRenderView > RenderSystemOpenGLES2::createRenderView(const RenderViewDefaultDesc& desc)
 {
 #if defined(_WIN32)
 	if (m_hWnd)
@@ -140,7 +140,7 @@ Ref< IRenderView > RenderSystemOpenGLES2::createRenderView(const RenderViewCreat
 
 	SetWindowPos(m_hWnd, HWND_TOPMOST, 0, 0, desc.displayMode.width, desc.displayMode.height, SWP_NOMOVE);
 
-	RenderViewCreateEmbeddedDesc desc2;
+	RenderViewEmbeddedDesc desc2;
 	desc2.depthBits = desc.depthBits;
 	desc2.stencilBits = desc.stencilBits;
 	desc2.multiSample = desc.multiSample;
@@ -153,7 +153,7 @@ Ref< IRenderView > RenderSystemOpenGLES2::createRenderView(const RenderViewCreat
 #endif
 }
 
-Ref< IRenderView > RenderSystemOpenGLES2::createRenderView(const RenderViewCreateEmbeddedDesc& desc)
+Ref< IRenderView > RenderSystemOpenGLES2::createRenderView(const RenderViewEmbeddedDesc& desc)
 {
 #if !defined(T_OFFLINE_ONLY)
 #	if defined(TARGET_OS_IPHONE)

@@ -234,7 +234,7 @@ bool AnimationEditorPage::create(ui::Container* parent, editor::IEditorPageSite*
 	{
 		Ref< RenderWidgetData > data = m_renderWidgets[i]->getData< RenderWidgetData >(L"DATA");
 
-		render::RenderViewCreateEmbeddedDesc desc;
+		render::RenderViewEmbeddedDesc desc;
 		desc.depthBits = 16;
 		desc.stencilBits = 0;
 		desc.multiSample = 4;
