@@ -90,7 +90,6 @@ private:
 	Ref< IPipelineDb > m_db;
 	IListener* m_listener;
 	std::map< Guid, Ref< ISerializable > > m_readCache;
-	std::map< Path, uint32_t > m_externalFileHash;
 	RefArray< db::Instance > m_builtInstances;
 
 	/*! \brief Update dependency local hashes. */
