@@ -56,6 +56,16 @@ public:
 	 * \return New play session.
 	 */
 	virtual Ref< ISession > createSession(IUser* user) = 0;
+
+	/*! \brief Update back-end messaging system.
+	 *
+	 * Should be called frequently in order to let
+	 * some poll-based systems to update their inner
+	 * workings.
+	 *
+	 * \return True if successful.
+	 */
+	virtual bool update() = 0;
 };
 
 	}
