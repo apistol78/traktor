@@ -149,5 +149,10 @@ Ref< ISession > SessionManagerLocal::createSession(IUser* user)
 	return new SessionLocal(m_db, checked_type_cast< UserLocal*, false >(user));
 }
 
+bool SessionManagerLocal::update()
+{
+	return true;
+}
+
 	}
 }

@@ -1,12 +1,11 @@
-#ifndef traktor_online_SessionManagerLocal_H
-#define traktor_online_SessionManagerLocal_H
+#ifndef traktor_online_SessionManagerSteam_H
+#define traktor_online_SessionManagerSteam_H
 
 #include "Online/ISessionManager.h"
-#include "Sql/IConnection.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
-#if defined(T_ONLINE_LOCAL_EXPORT)
+#if defined(T_ONLINE_STEAM_EXPORT)
 #	define T_DLLCLASS T_DLLEXPORT
 #else
 #	define T_DLLCLASS T_DLLIMPORT
@@ -17,15 +16,13 @@ namespace traktor
 	namespace online
 	{
 
-class UserLocal;
+class CurrentUserSteam;
 
-class T_DLLCLASS SessionManagerLocal : public ISessionManager
+class T_DLLCLASS SessionManagerSteam : public ISessionManager
 {
 	T_RTTI_CLASS;
 
 public:
-	SessionManagerLocal();
-
 	virtual bool create();
 
 	virtual void destroy();
@@ -39,11 +36,10 @@ public:
 	virtual bool update();
 
 private:
-	Ref< sql::IConnection > m_db;
-	Ref< UserLocal > m_currentUser;
+	Ref< CurrentUserSteam > m_currentUser;
 };
 
 	}
 }
 
-#endif	// traktor_online_SessionManagerLocal_H
+#endif	// traktor_online_SessionManagerSteam_H
