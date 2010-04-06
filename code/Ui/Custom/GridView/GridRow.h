@@ -3,14 +3,14 @@
 
 #include "Core/Object.h"
 #include "Core/RefArray.h"
-#include "Ui/Associative.h"
+#include "Ui/Custom/GridView/GridCell.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_UI_CUSTOM_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -18,19 +18,18 @@ namespace traktor
 	namespace ui
 	{
 
+class Bitmap;
 class Font;
 
 		namespace custom
 		{
 
-class GridItem;
+class GridCell;
 
 /*! \brief Grid row.
  * \ingroup UIC
  */
-class T_DLLCLASS GridRow
-:	public Object
-,	public Associative
+class T_DLLCLASS GridRow : public GridCell
 {
 	T_RTTI_CLASS;
 
@@ -51,9 +50,11 @@ public:
 
 	Ref< Font > getFont() const { return m_font; }
 
-	void addItem(GridItem* item);
+	void add(GridCell* item);
 
-	const RefArray< GridItem >& getItems() const { return m_items; }
+	Ref< GridCell > get(uint32_t index) const;
+
+	const RefArray< GridCell >& get() const { return m_items; }
 
 	void addChild(GridRow* row);
 
@@ -69,12 +70,23 @@ public:
 
 	const RefArray< GridRow >& getChildren() const { return m_children; }
 
+	void placeCells(AutoWidget* widget, const Rect& rect, const RefArray< GridColumn >& columns);
+
+	virtual void mouseDown(AutoWidget* widget, const Point& position);
+
+	virtual void paint(AutoWidget* widget, Canvas& canvas, const Rect& rect);
+
+	virtual int32_t getHeight() const;
+
 private:
 	uint32_t m_state;
 	Ref< Font > m_font;
-	RefArray< GridItem > m_items;
+	Ref< Bitmap > m_expand[2];
+	RefArray< GridCell > m_items;
 	GridRow* m_parent;
 	RefArray< GridRow > m_children;
+
+	int32_t getDepth() const;
 };
 
 		}

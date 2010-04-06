@@ -23,7 +23,7 @@ public:
 
 	virtual void mouseDown(ui::custom::AutoWidget* widget, const ui::Point& position);
 
-	virtual void paint(ui::custom::AutoWidget* widget, ui::Canvas& canvas, const ui::Size& offset);
+	virtual void paint(ui::custom::AutoWidget* widget, ui::Canvas& canvas, const ui::Rect& rect);
 
 private:
 	Ref< ui::Bitmap > m_bitmapGrain;

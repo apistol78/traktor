@@ -1,3 +1,6 @@
+#include "Ui/Application.h"
+#include "Ui/Bitmap.h"
+#include "Ui/Canvas.h"
 #include "Ui/Custom/GridView/GridItem.h"
 
 namespace traktor
@@ -7,44 +10,25 @@ namespace traktor
 		namespace custom
 		{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.GridItem", GridItem, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.GridItem", GridItem, AutoWidgetCell)
 
 GridItem::GridItem()
-:	m_image(-1)
-,	m_expandedImage(-1)
 {
 }
 
 GridItem::GridItem(const std::wstring& text)
 :	m_text(text)
-,	m_image(-1)
-,	m_expandedImage(-1)
 {
 }
 
-GridItem::GridItem(const std::wstring& text, int32_t image)
+GridItem::GridItem(const std::wstring& text, Bitmap* image)
 :	m_text(text)
 ,	m_image(image)
-,	m_expandedImage(-1)
 {
 }
 
-GridItem::GridItem(const std::wstring& text, int32_t image, int32_t expandedImage)
-:	m_text(text)
-,	m_image(image)
-,	m_expandedImage(expandedImage)
-{
-}
-
-GridItem::GridItem(int32_t image)
+GridItem::GridItem(Bitmap* image)
 :	m_image(image)
-,	m_expandedImage(-1)
-{
-}
-
-GridItem::GridItem(int32_t image, int32_t expandedImage)
-:	m_image(image)
-,	m_expandedImage(expandedImage)
 {
 }
 
@@ -58,24 +42,57 @@ const std::wstring& GridItem::getText() const
 	return m_text;
 }
 
-void GridItem::setImage(int32_t image)
+void GridItem::setImage(Bitmap* image)
 {
 	m_image = image;
 }
 
-int32_t GridItem::getImage() const
+Bitmap* GridItem::getImage() const
 {
 	return m_image;
 }
 
-void GridItem::setExpandedImage(int expandedImage)
+int32_t GridItem::getHeight() const
 {
-	m_expandedImage = expandedImage;
+	int32_t height = 18;
+
+	if (m_image)
+		height = std::max(height, m_image->getSize().cy);
+
+	return height;
 }
 
-int32_t GridItem::getExpandedImage() const
+AutoWidgetCell* GridItem::hitTest(AutoWidget* widget, const Point& position)
 {
-	return m_expandedImage >= 0 ? m_expandedImage : m_image;
+	// Not allowed to pick items; entire row must be picked as selection
+	// is handled by the GridView class.
+	return 0;
+}
+
+void GridItem::paint(AutoWidget* widget, Canvas& canvas, const Rect& rect)
+{
+	Rect rcText(rect.left + 2, rect.top, rect.right, rect.bottom);
+
+	if (m_image)
+	{
+		Size szImage = m_image->getSize();
+		Point pntImage(
+			rcText.left,
+			rcText.top + (rcText.getHeight() - szImage.cy) / 2
+		);
+		canvas.drawBitmap(
+			pntImage,
+			Point(0, 0),
+			szImage,
+			m_image,
+			BmAlpha
+		);
+
+		rcText.left += szImage.cx + 2;
+	}
+
+	canvas.setForeground(getSystemColor(ScWindowText));
+	canvas.drawText(rcText, m_text, AnLeft, AnCenter);
 }
 
 		}

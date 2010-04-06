@@ -35,7 +35,7 @@ bool SwitchNodeDialog::create(ui::Widget* parent, Switch* switchNode)
 	for (std::vector< int32_t >::const_iterator i = cases.begin(); i != cases.end(); ++i)
 	{
 		Ref< ui::custom::GridRow > row = new ui::custom::GridRow();
-		row->addItem(new ui::custom::GridItem(toString(*i)));
+		row->add(new ui::custom::GridItem(toString(*i)));
 		m_caseList->addRow(row);
 	}
 

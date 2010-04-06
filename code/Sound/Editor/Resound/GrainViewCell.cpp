@@ -31,10 +31,8 @@ void GrainViewCell::mouseDown(ui::custom::AutoWidget* widget, const ui::Point& p
 	widget->raiseEvent(ui::EiSelectionChange, &commandEvent);
 }
 
-void GrainViewCell::paint(ui::custom::AutoWidget* widget, ui::Canvas& canvas, const ui::Size& offset)
+void GrainViewCell::paint(ui::custom::AutoWidget* widget, ui::Canvas& canvas, const ui::Rect& rect)
 {
-	ui::Rect rect = getRect().offset(offset);
-
 	bool focus = bool(widget->getFocusCell() == this);
 
 	canvas.drawBitmap(

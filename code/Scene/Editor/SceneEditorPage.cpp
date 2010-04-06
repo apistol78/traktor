@@ -112,11 +112,12 @@ bool SceneEditorPage::create(ui::Container* parent, editor::IEditorPageSite* sit
 	m_entityToolBar->addItem(m_toolFollowEntity);
 	m_entityToolBar->addClickEventHandler(ui::createMethodHandler(this, &SceneEditorPage::eventEntityToolClick));
 
+	m_imageHidden = ui::Bitmap::load(c_ResourceLayerHidden, sizeof(c_ResourceLayerHidden), L"png");
+	m_imageVisible = ui::Bitmap::load(c_ResourceLayerVisible, sizeof(c_ResourceLayerVisible), L"png");
+
 	m_instanceGrid = new ui::custom::GridView();
 	m_instanceGrid->create(m_entityPanel, ui::WsDoubleBuffer);
-	m_instanceGrid->addImage(ui::Bitmap::load(c_ResourceEntityTypes, sizeof(c_ResourceEntityTypes), L"png"), 4);
-	m_imageHidden = m_instanceGrid->addImage(ui::Bitmap::load(c_ResourceLayerHidden, sizeof(c_ResourceLayerHidden), L"png"), 1);
-	m_imageVisible = m_instanceGrid->addImage(ui::Bitmap::load(c_ResourceLayerVisible, sizeof(c_ResourceLayerVisible), L"png"), 1);
+	//m_instanceGrid->addImage(ui::Bitmap::load(c_ResourceEntityTypes, sizeof(c_ResourceEntityTypes), L"png"), 4);
 	m_instanceGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCENE_EDITOR_ENTITY_NAME"), 200));
 	m_instanceGrid->addColumn(new ui::custom::GridColumn(L"", 30));
 	m_instanceGrid->addSelectEventHandler(ui::createMethodHandler(this, &SceneEditorPage::eventInstanceSelect));
@@ -603,21 +604,21 @@ Ref< ui::custom::GridRow > SceneEditorPage::createEntityListRow(EntityAdapter* e
 	// All external entities is highlighted as they shouldn't be edited.
 	if (entityAdapter->isChildOfExternal())
 	{
-		row->addItem(new ui::custom::GridItem(entityAdapter->getName(), 0));
+		row->add(new ui::custom::GridItem(entityAdapter->getName()/*, 0*/));
 		row->setFont(m_instanceGridFontItalic);
 	}
 	else if (entityAdapter->isExternal())
 	{
-		row->addItem(new ui::custom::GridItem(entityAdapter->getName(), 1));
+		row->add(new ui::custom::GridItem(entityAdapter->getName()/*, 1*/));
 		row->setFont(m_instanceGridFontBold);
 	}
 	else if (entityAdapter->isGroup())
-		row->addItem(new ui::custom::GridItem(entityAdapter->getName(), 2, 3));
+		row->add(new ui::custom::GridItem(entityAdapter->getName()/*, 2, 3*/));
 	else
-		row->addItem(new ui::custom::GridItem(entityAdapter->getName(), 0));
+		row->add(new ui::custom::GridItem(entityAdapter->getName()/*, 0*/));
 
 	// Create "visible" check box.
-	row->addItem(new ui::custom::GridItem(
+	row->add(new ui::custom::GridItem(
 		entityAdapter->isVisible() ? m_imageVisible : m_imageHidden
 	));
 
@@ -862,7 +863,7 @@ void SceneEditorPage::eventInstanceClick(ui::Event* event)
 	if (cmd.getId() == 1)
 	{
 		ui::custom::GridRow* row = checked_type_cast< ui::custom::GridRow*, false >(cmdEvent->getItem());
-		ui::custom::GridItem* item = row->getItems().at(1);
+		ui::custom::GridItem* item = checked_type_cast< ui::custom::GridItem*, false >(row->get(1));
 
 		EntityAdapter* entityAdapter = row->getData< EntityAdapter >(L"ENTITY");
 		T_ASSERT (entityAdapter);

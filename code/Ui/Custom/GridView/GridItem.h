@@ -1,30 +1,30 @@
 #ifndef traktor_ui_GridItem_H
 #define traktor_ui_GridItem_H
 
-#include "Core/Object.h"
-#include "Ui/Associative.h"
+#include "Ui/Custom/GridView/GridCell.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_UI_CUSTOM_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
 {
 	namespace ui
 	{
+
+class Bitmap;
+
 		namespace custom
 		{
 
 /*! \brief Grid item.
  * \ingroup UIC
  */
-class T_DLLCLASS GridItem
-:	public Object
-,	public Associative
+class T_DLLCLASS GridItem : public GridCell
 {
 	T_RTTI_CLASS;
 
@@ -33,30 +33,27 @@ public:
 
 	GridItem(const std::wstring& text);
 
-	GridItem(const std::wstring& text, int32_t image);
+	GridItem(const std::wstring& text, Bitmap* image);
 
-	GridItem(const std::wstring& text, int32_t image, int32_t expandedImage);
-
-	GridItem(int32_t image);
-
-	GridItem(int32_t image, int32_t expandedImage);
+	GridItem(Bitmap* image);
 
 	void setText(const std::wstring& text);
 
 	const std::wstring& getText() const;
 
-	void setImage(int32_t image);
+	void setImage(Bitmap* image);
 
-	int32_t getImage() const;
-
-	void setExpandedImage(int expandedImage);
-
-	int32_t getExpandedImage() const;
+	Bitmap* getImage() const;
 
 private:
 	std::wstring m_text;
-	int32_t m_image;
-	int32_t m_expandedImage;
+	Ref< Bitmap > m_image;
+
+	virtual int32_t getHeight() const;
+
+	virtual AutoWidgetCell* hitTest(AutoWidget* widget, const Point& position);
+
+	virtual void paint(AutoWidget* widget, Canvas& canvas, const Rect& rect);
 };
 
 		}

@@ -42,8 +42,6 @@ public:
 
 	void setBackgroundColor(const Color& color);
 
-	void setClientSize(const Size& size);
-
 	void setFocusCell(AutoWidgetCell* focusCell);
 
 	AutoWidgetCell* getFocusCell() const;
@@ -54,26 +52,24 @@ public:
 
 	void requestLayout();
 
-protected:
-	void addCell(AutoWidgetCell* cell);
-
-	void removeAllCells();
-
-	const RefArray< AutoWidgetCell >& getCells() const;
+	void placeCell(AutoWidgetCell* cell, const Rect& rc);
 
 	virtual void layoutCells(const Rect& rc) = 0;
 
 private:
-	RefArray< AutoWidgetCell > m_cells;
+	struct CellInstance
+	{
+		Ref< AutoWidgetCell > cell;
+		Rect rc;
+	};
+	std::vector< CellInstance > m_cells;
 	Ref< AutoWidgetCell > m_focusCell;
 	Ref< AutoWidgetCell > m_captureCell;
 	Ref< ScrollBar > m_scrollBar;
 	Color m_backgroundColor;
 	Size m_scrollOffset;
-	Size m_clientSize;
+	Rect m_bounds;
 	bool m_deferredUpdate;
-
-	void updateScrollBar();
 
 	void updateLayout();
 
@@ -82,6 +78,8 @@ private:
 	void eventButtonUp(Event* event);
 
 	void eventMouseMove(Event* event);
+
+	void eventMouseWheel(Event* event);
 
 	void eventPaint(Event* event);
 
