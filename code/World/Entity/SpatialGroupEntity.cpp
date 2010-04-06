@@ -108,9 +108,9 @@ void SpatialGroupEntity::setTransform(const Transform& transform)
 	Transform deltaTransform = transform * m_transform.inverse();
 	for (RefArray< SpatialEntity >::iterator i = m_entities.begin(); i != m_entities.end(); ++i)
 	{
-		Transform currentTransform;
-		if ((*i)->getTransform(currentTransform))
-			(*i)->setTransform(deltaTransform * currentTransform);
+		Transform childTransform;
+		if ((*i)->getTransform(childTransform))
+			(*i)->setTransform(deltaTransform * childTransform);
 	}
 	m_transform = transform;
 }
@@ -128,9 +128,15 @@ Aabb SpatialGroupEntity::getBoundingBox() const
 	Aabb boundingBox;
 	for (RefArray< SpatialEntity >::const_iterator i = m_entities.begin(); i != m_entities.end(); ++i)
 	{
-		Aabb childBoundingBox = (*i)->getWorldBoundingBox();
+		Aabb childBoundingBox = (*i)->getBoundingBox();
 		if (!childBoundingBox.empty())
-			boundingBox.contain(childBoundingBox.transform(invTransform));
+		{
+			Transform childTransform;
+			(*i)->getTransform(childTransform);
+
+			Transform intoParentTransform = invTransform * childTransform;
+			boundingBox.contain(childBoundingBox.transform(intoParentTransform));
+		}
 	}
 
 	return boundingBox;

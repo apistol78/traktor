@@ -32,9 +32,15 @@ Aabb CompositeMeshEntity::getBoundingBox() const
 	Aabb boundingBox;
 	for (std::map< std::wstring, Ref< MeshEntity > >::const_iterator i = m_meshEntities.begin(); i != m_meshEntities.end(); ++i)
 	{
-		Aabb childBoundingBox = i->second->getWorldBoundingBox();
+		Aabb childBoundingBox = i->second->getBoundingBox();
 		if (!childBoundingBox.empty())
-			boundingBox.contain(childBoundingBox.transform(invTransform));
+		{
+			Transform childTransform;
+			i->second->getTransform(childTransform);
+
+			Transform intoParentTransform = invTransform * childTransform;
+			boundingBox.contain(childBoundingBox.transform(intoParentTransform));
+		}
 	}
 
 	return boundingBox;

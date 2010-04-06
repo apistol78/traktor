@@ -49,6 +49,11 @@ void GridView::addColumn(GridColumn* column)
 	requestLayout();
 }
 
+const RefArray< GridColumn >& GridView::getColumns() const
+{
+	return m_columns;
+}
+
 int32_t GridView::getColumnIndex(int32_t x) const
 {
 	int32_t left = 0;
@@ -165,7 +170,7 @@ void GridView::layoutCells(const Rect& rc)
 		int32_t rowHeight = (*i)->getHeight();
 
 		rcRow.bottom = rcRow.top + rowHeight;
-		(*i)->placeCells(this, rcRow, m_columns);
+		placeCell(*i, rcRow);
 
 		rcRow.top = rcRow.bottom;
 	}

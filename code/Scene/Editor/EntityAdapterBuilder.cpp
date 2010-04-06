@@ -37,7 +37,7 @@ void EntityAdapterBuilder::begin(world::IEntityManager* entityManager)
 	m_entityManager = entityManager;
 
 	RefArray< EntityAdapter > entityAdapters;
-	m_context->getEntities(entityAdapters);
+	m_context->getEntities(entityAdapters, SceneEditorContext::GfDescendants | SceneEditorContext::GfExternals);
 
 	for (RefArray< EntityAdapter >::iterator i = entityAdapters.begin(); i != entityAdapters.end(); ++i)
 	{

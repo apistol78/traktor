@@ -90,9 +90,10 @@ void GridRow::removeAllChildren()
 	m_children.clear();
 }
 
-void GridRow::placeCells(AutoWidget* widget, const Rect& rect, const RefArray< GridColumn >& columns)
+void GridRow::placeCells(AutoWidget* widget, const Rect& rect)
 {
-	widget->placeCell(this, rect);
+	GridView* gridView = checked_type_cast< GridView*, false >(widget);
+	const RefArray< GridColumn >& columns = gridView->getColumns();
 
 	// Distribute column cells.
 	int32_t depth = getDepth();
@@ -143,6 +144,9 @@ void GridRow::mouseDown(AutoWidget* widget, const Point& position)
 
 void GridRow::paint(AutoWidget* widget, Canvas& canvas, const Rect& rect)
 {
+	GridView* gridView = checked_type_cast< GridView*, false >(widget);
+	const RefArray< GridColumn >& columns = gridView->getColumns();
+
 	// Paint selection background.
 	if (m_state & GridRow::RsSelected)
 	{
@@ -163,6 +167,20 @@ void GridRow::paint(AutoWidget* widget, Canvas& canvas, const Rect& rect)
 			expand
 		);
 	}
+
+	canvas.setForeground(Color(190, 190, 200));
+
+	if (columns.size() >= 2)
+	{
+		int32_t left = rect.left;
+		for (RefArray< GridColumn >::const_iterator i = columns.begin(); i != columns.end() - 1; ++i)
+		{
+			left += (*i)->getWidth();
+			canvas.drawLine(left, rect.top, left, rect.bottom - 1);
+		}
+	}
+
+	canvas.drawLine(rect.left, rect.bottom - 1, rect.right, rect.bottom - 1);
 }
 
 int32_t GridRow::getHeight() const
