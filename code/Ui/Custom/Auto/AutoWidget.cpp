@@ -233,6 +233,8 @@ void AutoWidget::eventPaint(Event* event)
 		if (rc.intersect(innerRect))
 			i->cell->paint(this, canvas, rc);
 	}
+
+	event->consume();
 }
 
 void AutoWidget::eventSize(Event* event)

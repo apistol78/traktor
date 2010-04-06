@@ -57,7 +57,7 @@ int32_t GridItem::getHeight() const
 	int32_t height = 18;
 
 	if (m_image)
-		height = std::max(height, m_image->getSize().cy);
+		height = std::max(height, m_image->getSize().cy + 4);
 
 	return height;
 }
@@ -76,10 +76,14 @@ void GridItem::paint(AutoWidget* widget, Canvas& canvas, const Rect& rect)
 	if (m_image)
 	{
 		Size szImage = m_image->getSize();
+		
 		Point pntImage(
 			rcText.left,
 			rcText.top + (rcText.getHeight() - szImage.cy) / 2
 		);
+		if (m_text.empty())
+			pntImage.x = rcText.left + (rcText.getWidth() - szImage.cx) / 2;
+
 		canvas.drawBitmap(
 			pntImage,
 			Point(0, 0),
@@ -91,8 +95,11 @@ void GridItem::paint(AutoWidget* widget, Canvas& canvas, const Rect& rect)
 		rcText.left += szImage.cx + 2;
 	}
 
-	canvas.setForeground(getSystemColor(ScWindowText));
-	canvas.drawText(rcText, m_text, AnLeft, AnCenter);
+	if (!m_text.empty())
+	{
+		canvas.setForeground(getSystemColor(ScWindowText));
+		canvas.drawText(rcText, m_text, AnLeft, AnCenter);
+	}
 }
 
 		}

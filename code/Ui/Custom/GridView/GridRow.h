@@ -70,7 +70,7 @@ public:
 
 	const RefArray< GridRow >& getChildren() const { return m_children; }
 
-	void placeCells(AutoWidget* widget, const Rect& rect, const RefArray< GridColumn >& columns);
+	virtual void placeCells(AutoWidget* widget, const Rect& rect);
 
 	virtual void mouseDown(AutoWidget* widget, const Point& position);
 

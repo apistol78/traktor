@@ -389,9 +389,12 @@ uint32_t SceneEditorContext::getEntities(RefArray< EntityAdapter >& outEntityAda
 
 			if (flags & GfDescendants)
 			{
-				const RefArray< EntityAdapter >& children = entityAdapter->getChildren();
-				if (!children.empty())
-					stack.push(std::make_pair(children.begin(), children.end()));
+				if (!entityAdapter->isExternal() || (flags & GfExternals) != 0)
+				{
+					const RefArray< EntityAdapter >& children = entityAdapter->getChildren();
+					if (!children.empty())
+						stack.push(std::make_pair(children.begin(), children.end()));
+				}
 			}
 		}
 		else

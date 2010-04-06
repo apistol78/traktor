@@ -87,6 +87,7 @@ public:
 	{
 		GfDescendants = 1 << 0,
 		GfSelectedOnly = 1 << 1,
+		GfExternals = 1 << 2,
 		GfDefault = (GfDescendants)
 	};
 

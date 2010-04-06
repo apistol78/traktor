@@ -1,13 +1,61 @@
-#include "Ui/Bitmap.h"
-#include "Ui/Application.h"
-#include "Ui/Itf/IBitmap.h"
-#include "Drawing/Image.h"
 #include "Core/Log/Log.h"
+#include "Core/Singleton/ISingleton.h"
+#include "Core/Singleton/SingletonManager.h"
+#include "Drawing/Image.h"
+#include "Ui/Application.h"
+#include "Ui/Bitmap.h"
+#include "Ui/Itf/IBitmap.h"
 
 namespace traktor
 {
 	namespace ui
 	{
+		namespace
+		{
+
+class BitmapCache : public ISingleton
+{
+public:
+	static BitmapCache& getInstance()
+	{
+		static BitmapCache* s_instance = 0;
+		if (!s_instance)
+		{
+			s_instance = new BitmapCache();
+			SingletonManager::getInstance().add(s_instance);
+		}
+		return *s_instance;
+	}
+
+	Ref< Bitmap > load(const void* resource, uint32_t size, const std::wstring& extension)
+	{
+		std::map< const void*, Ref< Bitmap > >::const_iterator i = m_cache.find(resource);
+		if (i != m_cache.end())
+			return i->second;
+
+		Ref< drawing::Image > image = drawing::Image::load(resource, size, extension);
+		if (!image)
+			return 0;
+
+		Ref< Bitmap > bitmap = new Bitmap();
+		if (!bitmap->create(image))
+			return 0;
+
+		m_cache.insert(std::make_pair(resource, bitmap));
+		return bitmap;
+	}
+
+protected:
+	virtual void destroy()
+	{
+		delete this;
+	}
+
+private:
+	std::map< const void*, Ref< Bitmap > > m_cache;
+};
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Bitmap", Bitmap, Object)
 
@@ -173,15 +221,7 @@ Ref< Bitmap > Bitmap::load(const std::wstring& fileName)
 
 Ref< Bitmap > Bitmap::load(const void* resource, uint32_t size, const std::wstring& extension)
 {
-	Ref< drawing::Image > image = drawing::Image::load(resource, size, extension);
-	if (!image)
-		return 0;
-
-	Ref< Bitmap > bitmap = new Bitmap();
-	if (!bitmap->create(image))
-		return 0;
-
-	return bitmap;
+	return BitmapCache::getInstance().load(resource, size, extension);
 }
 
 	}
