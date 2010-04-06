@@ -38,18 +38,26 @@ class T_DLLCLASS IPipelineDb : public Object
 	T_RTTI_CLASS;
 
 public:
-	struct Hash
+	struct DependencyHash
 	{
 		uint32_t pipelineVersion;
-		//uint32_t pipelineHash;
-		//uint32_t sourceAssetHash;
-		uint32_t dependencyHash;
-		std::map< Path, DateTime > timeStamps;
+		uint32_t hash;
 	};
 
-	virtual void set(const Guid& guid, const Hash& hash) = 0;
+	struct FileHash
+	{
+		uint64_t size;
+		DateTime lastWriteTime;
+		uint32_t hash;
+	};
 
-	virtual bool get(const Guid& guid, Hash& outHash) const = 0;
+	virtual void setDependency(const Guid& guid, const DependencyHash& hash) = 0;
+
+	virtual bool getDependency(const Guid& guid, DependencyHash& outHash) const = 0;
+
+	virtual void setFile(const Path& path, const FileHash& file) = 0;
+
+	virtual bool getFile(const Path& path, FileHash& outFile) = 0;
 
 	virtual Ref< IPipelineReport > createReport(const std::wstring& name, const Guid& guid) = 0;
 };

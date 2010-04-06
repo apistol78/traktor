@@ -32,9 +32,13 @@ public:
 
 	void close();
 
-	virtual void set(const Guid& guid, const Hash& hash);
+	virtual void setDependency(const Guid& guid, const DependencyHash& hash);
 
-	virtual bool get(const Guid& guid, Hash& outHash) const;
+	virtual bool getDependency(const Guid& guid, DependencyHash& outHash) const;
+
+	virtual void setFile(const Path& path, const FileHash& file);
+
+	virtual bool getFile(const Path& path, FileHash& outFile);
 
 	virtual Ref< IPipelineReport > createReport(const std::wstring& name, const Guid& guid);
 

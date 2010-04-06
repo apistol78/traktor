@@ -11,7 +11,7 @@ namespace traktor
 		namespace
 		{
 
-const int32_t c_version = 1;
+const int32_t c_version = 2;
 
 		}
 
@@ -45,7 +45,7 @@ bool PipelineDb::open(const std::wstring& connectionString)
 		if (!haveTable)
 		{
 			connection->executeUpdate(L"drop table PipelineHash");
-			connection->executeUpdate(L"drop table TimeStamps");
+			connection->executeUpdate(L"drop table PipelineFile");
 			connection->executeUpdate(L"drop table Version");
 		}
 	}
@@ -53,24 +53,23 @@ bool PipelineDb::open(const std::wstring& connectionString)
 	// Create tables if they doesn't exist.
 	if (!haveTable)
 	{
-		T_ASSERT_M (!connection->tableExists(L"TimeStamps"), L"TimeStamps table already exists");
-
 		if (connection->executeUpdate(
 			L"create table PipelineHash ("
 			L"id integer primary key,"
 			L"guid char(37) unique,"
 			L"pipelineVersion integer,"
-			L"dependencyHash integer"
+			L"hash integer"
 			L")"
 		) <= 0)
 			return false;
 
 		if (connection->executeUpdate(
-			L"create table TimeStamps ("
+			L"create table PipelineFile ("
 			L"id integer primary key,"
-			L"hashId integer,"
 			L"path varchar(1024),"
-			L"epoch integer"
+			L"size integer,"
+			L"lastWriteTime integer,"
+			L"hash integer"
 			L")"
 		) <= 0)
 			return false;
@@ -95,7 +94,7 @@ void PipelineDb::close()
 	}
 }
 
-void PipelineDb::set(const Guid& guid, const Hash& hash)
+void PipelineDb::setDependency(const Guid& guid, const DependencyHash& hash)
 {
 	Ref< sql::IResultSet > rs;
 	StringOutputStream ss;
@@ -108,10 +107,6 @@ void PipelineDb::set(const Guid& guid, const Hash& hash)
 		int32_t hashId = rs->getInt32(0);
 
 		ss.reset();
-		ss << L"delete from TimeStamps where hashId='" << hashId << L"'";
-		m_connection->executeUpdate(ss.str());
-
-		ss.reset();
 		ss << L"delete from PipelineHash where id='" << hashId << L"'";
 		m_connection->executeUpdate(ss.str());
 	}
@@ -119,34 +114,16 @@ void PipelineDb::set(const Guid& guid, const Hash& hash)
 	// Insert hash.
 	ss.reset();
 	ss <<
-		L"insert into PipelineHash (guid, pipelineVersion, dependencyHash) "
+		L"insert into PipelineHash (guid, pipelineVersion, hash) "
 		L"values (" <<
 		L"'" << guid.format() << L"'," <<
 		hash.pipelineVersion << L"," <<
-		hash.dependencyHash <<
+		hash.hash <<
 		L")";
 	m_connection->executeUpdate(ss.str());
-
-	// Insert time stamps.
-	if (!hash.timeStamps.empty())
-	{
-		int32_t hashId = m_connection->lastInsertId();
-		for (std::map< Path, DateTime >::const_iterator i = hash.timeStamps.begin(); i != hash.timeStamps.end(); ++i)
-		{
-			ss.reset();
-			ss <<
-				L"insert into TimeStamps (hashId, path, epoch) "
-				L"values (" <<
-				hashId << L"," <<
-				L"'" << i->first.getPathName() << L"'," <<
-				i->second.getSecondsSinceEpoch() <<
-				L")";
-			m_connection->executeUpdate(ss.str());
-		}
-	}
 }
 
-bool PipelineDb::get(const Guid& guid, Hash& outHash) const
+bool PipelineDb::getDependency(const Guid& guid, DependencyHash& outHash) const
 {
 	Ref< sql::IResultSet > rs;
 	StringOutputStream ss;
@@ -160,24 +137,47 @@ bool PipelineDb::get(const Guid& guid, Hash& outHash) const
 	int32_t id = rs->getInt32(L"id");
 
 	outHash.pipelineVersion = rs->getInt32(L"pipelineVersion");
-	outHash.dependencyHash = rs->getInt32(L"dependencyHash");
-	
-	// Get time stamps.
+	outHash.hash = rs->getInt32(L"hash");
+
+	return true;
+}
+
+void PipelineDb::setFile(const Path& path, const FileHash& file)
+{
+	Ref< sql::IResultSet > rs;
+	StringOutputStream ss;
+
+	// Delete existing records.
+	ss << L"delete from PipelineFile where path='" << toLower(path.getPathName()) << L"'";
+	m_connection->executeUpdate(ss.str());
+
+	// Insert new record.
 	ss.reset();
-	ss << L"select * from TimeStamps where hashId=" << id;
+	ss <<
+		L"insert into PipelineFile (path, size, lastWriteTime, hash) "
+		L"values (" <<
+		L"'" << toLower(path.getPathName()) << L"'," <<
+		file.size << L"," <<
+		file.lastWriteTime.getSecondsSinceEpoch() << L"," <<
+		file.hash <<
+		L")";
+	m_connection->executeUpdate(ss.str());
+}
+
+bool PipelineDb::getFile(const Path& path, FileHash& outFile)
+{
+	Ref< sql::IResultSet > rs;
+	StringOutputStream ss;
+
+	// Get file record.
+	ss << L"select * from PipelineFile where path='" << toLower(path.getPathName()) << L"'";
 	rs = m_connection->executeQuery(ss.str());
-	if (rs)
-	{
-		while (rs->next())
-		{
-			std::wstring path = rs->getString(L"path");
-			int64_t epoch = rs->getInt64(L"epoch");
-			outHash.timeStamps.insert(std::make_pair(
-				path,
-				DateTime(epoch)
-			));
-		}
-	}
+	if (!rs || !rs->next())
+		return false;
+
+	outFile.size = rs->getInt64(L"size"),
+	outFile.lastWriteTime = DateTime(rs->getInt64(L"lastWriteTime"));
+	outFile.hash = rs->getInt32(L"hash");
 
 	return true;
 }

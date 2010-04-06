@@ -170,12 +170,43 @@ Ref< IPipelineReport > PipelineBuilder::createReport(const std::wstring& name, c
 
 void PipelineBuilder::updateLocalHashes(PipelineDependency* dependency)
 {
-	dependency->sourceAssetHash = DeepHash(dependency->sourceAsset).get();
+	IPipelineDb::FileHash previousFileHash;
 
+	dependency->sourceAssetHash = DeepHash(dependency->sourceAsset).get();
 	dependency->dependencyHash = 0;
+
 	const std::set< Path >& files = dependency->files;
 	for (std::set< Path >::const_iterator j = files.begin(); j != files.end(); ++j)
-		dependency->dependencyHash += externalFileHash(*j);
+	{
+		Ref< File > file = FileSystem::getInstance().get(*j);
+		if (!file)
+		{
+			log::error << L"Unable to get hash of file \"" << j->getPathName() << L"\"; no such file" << Endl;
+			continue;
+		}
+
+		if (m_db->getFile(*j, previousFileHash))
+		{
+			if (
+				previousFileHash.size == file->getSize() &&
+				previousFileHash.lastWriteTime == file->getLastWriteTime()
+			)
+			{
+				// Reuse previous file hash from cache.
+				dependency->dependencyHash += previousFileHash.hash;
+				continue;
+			}
+		}
+
+		// File has either been modified or is new; calculate hash and update cache.
+		previousFileHash.size = file->getSize();
+		previousFileHash.lastWriteTime = file->getLastWriteTime();
+		previousFileHash.hash = externalFileHash(*j);
+
+		m_db->setFile(*j, previousFileHash);
+
+		dependency->dependencyHash += previousFileHash.hash;
+	}
 
 	dependency->dependencyHash += dependency->pipelineHash;
 	dependency->dependencyHash += dependency->sourceAssetHash;
@@ -191,45 +222,21 @@ void PipelineBuilder::updateBuildReason(PipelineDependency* dependency, bool reb
 		uint32_t dependencyHash = calculateGlobalHash(dependency);
 
 		// Get hash entry from database.
-		IPipelineDb::Hash hash;
-		if (!m_db->get(dependency->outputGuid, hash))
+		IPipelineDb::DependencyHash previousDependencyHash;
+		if (!m_db->getDependency(dependency->outputGuid, previousDependencyHash))
 		{
 			log::info << L"Asset \"" << dependency->name << L"\" modified; not hashed" << Endl;
 			dependency->reason |= PbrSourceModified;
 		}
-		else if (hash.pipelineVersion != type_of(dependency->pipeline).getVersion())
+		else if (previousDependencyHash.pipelineVersion != type_of(dependency->pipeline).getVersion())
 		{
 			log::info << L"Asset \"" << dependency->name << L"\" modified; pipeline version differ" << Endl;
 			dependency->reason |= PbrSourceModified;
 		}
-		else if (hash.dependencyHash != dependencyHash)
+		else if (previousDependencyHash.hash != dependencyHash)
 		{
 			log::info << L"Asset \"" << dependency->name << L"\" modified; source has been modified" << Endl;
 			dependency->reason |= PbrSourceModified;
-		}
-		else
-		{
-			const std::set< Path >& files = dependency->files;
-			for (std::set< Path >::const_iterator j = files.begin(); j != files.end(); ++j)
-			{
-				std::map< Path, DateTime >::const_iterator timeStampIt = hash.timeStamps.find(*j);
-				if (timeStampIt != hash.timeStamps.end())
-				{
-					Ref< File > sourceFile = FileSystem::getInstance().get(*j);
-					if (sourceFile && sourceFile->getLastWriteTime() != timeStampIt->second)
-					{
-						log::info << L"Asset \"" << dependency->name << L"\" modified; file \"" << j->getPathName() << L" has been modified" << Endl;
-						dependency->reason |= PbrSourceModified | PbrAssetModified;
-						break;
-					}
-				}
-				else
-				{
-					log::info << L"Asset \"" << dependency->name << L"\" modified; file \"" << j->getPathName() << L" has not been hashed" << Endl;
-					dependency->reason |= PbrSourceModified | PbrAssetModified;
-					break;
-				}
-			}
 		}
 	}
 	else
@@ -238,29 +245,18 @@ void PipelineBuilder::updateBuildReason(PipelineDependency* dependency, bool reb
 
 bool PipelineBuilder::performBuild(PipelineDependency* dependency)
 {
-	IPipelineDb::Hash hash;
+	IPipelineDb::DependencyHash currentDependencyHash;
 	bool result = true;
 
 	// Create hash entry.
-	hash.pipelineVersion = type_of(dependency->pipeline).getVersion();
-	hash.dependencyHash = calculateGlobalHash(dependency);
-	hash.timeStamps.clear();
-
-	const std::set< Path >& files = dependency->files;
-	for (std::set< Path >::const_iterator j = files.begin(); j != files.end(); ++j)
-	{
-		Ref< File > sourceFile = FileSystem::getInstance().get(*j);
-		if (sourceFile)
-			hash.timeStamps[*j] = sourceFile->getLastWriteTime();
-		else
-			log::warning << L"Unable to read timestamp of file " << j->getPathName() << Endl;
-	}
+	currentDependencyHash.pipelineVersion = type_of(dependency->pipeline).getVersion();
+	currentDependencyHash.hash = calculateGlobalHash(dependency);
 
 	// Skip no-build asset; just update hash.
 	if ((dependency->flags & PdfBuild) == 0)
 	{
 		if ((dependency->reason & PbrSourceModified) != 0)
-			m_db->set(dependency->outputGuid, hash);
+			m_db->setDependency(dependency->outputGuid, currentDependencyHash);
 		return true;
 	}
 
@@ -275,11 +271,11 @@ bool PipelineBuilder::performBuild(PipelineDependency* dependency)
 		// Get output instances from cache.
 		if (m_cache)
 		{
-			result = getInstancesFromCache(dependency->outputGuid, hash.dependencyHash);
+			result = getInstancesFromCache(dependency->outputGuid, currentDependencyHash.hash);
 			if (result)
 			{
 				log::info << L"Cached instance(s) used" << Endl;
-				m_db->set(dependency->outputGuid, hash);
+				m_db->setDependency(dependency->outputGuid, currentDependencyHash);
 			}
 		}
 		else
@@ -314,14 +310,14 @@ bool PipelineBuilder::performBuild(PipelineDependency* dependency)
 					if (m_cache)
 						putInstancesInCache(
 							dependency->outputGuid,
-							hash.dependencyHash,
+							currentDependencyHash.hash,
 							m_builtInstances
 						);
 
 					log::info << DecreaseIndent;
 				}
 
-				m_db->set(dependency->outputGuid, hash);
+				m_db->setDependency(dependency->outputGuid, currentDependencyHash);
 			}
 		}
 
@@ -432,10 +428,6 @@ bool PipelineBuilder::getInstancesFromCache(const Guid& guid, uint32_t hash)
 
 uint32_t PipelineBuilder::externalFileHash(const Path& path)
 {
-	std::map< Path, uint32_t >::const_iterator i = m_externalFileHash.find(path);
-	if (i != m_externalFileHash.end())
-		return i->second;
-
 	Adler32 adler;
 	adler.begin();
 
@@ -454,7 +446,6 @@ uint32_t PipelineBuilder::externalFileHash(const Path& path)
 	adler.end();
 	uint32_t hash = adler.get();
 
-	m_externalFileHash.insert(std::make_pair(path, hash));
 	return hash;
 }
 
