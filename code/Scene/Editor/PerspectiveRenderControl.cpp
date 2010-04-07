@@ -6,6 +6,7 @@
 #include "Core/Settings/PropertyColor.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/Settings.h"
+#include "Database/Database.h"
 #include "Editor/IEditor.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
@@ -99,6 +100,7 @@ bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* co
 
 	m_renderWidget->addButtonDownEventHandler(ui::createMethodHandler(this, &PerspectiveRenderControl::eventButtonDown));
 	m_renderWidget->addButtonUpEventHandler(ui::createMethodHandler(this, &PerspectiveRenderControl::eventButtonUp));
+	m_renderWidget->addDoubleClickEventHandler(ui::createMethodHandler(this, &PerspectiveRenderControl::eventDoubleClick));
 	m_renderWidget->addMouseMoveEventHandler(ui::createMethodHandler(this, &PerspectiveRenderControl::eventMouseMove));
 	m_renderWidget->addMouseWheelEventHandler(ui::createMethodHandler(this, &PerspectiveRenderControl::eventMouseWheel));
 	m_renderWidget->addSizeEventHandler(ui::createMethodHandler(this, &PerspectiveRenderControl::eventSize));
@@ -393,6 +395,22 @@ void PerspectiveRenderControl::eventButtonUp(ui::Event* event)
 
 	if (m_renderWidget->hasCapture())
 		m_renderWidget->releaseCapture();
+}
+
+void PerspectiveRenderControl::eventDoubleClick(ui::Event* event)
+{
+	ui::Point mousePosition = checked_type_cast< ui::MouseEvent* >(event)->getPosition();
+	
+	Ref< EntityAdapter > entityAdapter = pickEntity(mousePosition);
+	if (entityAdapter && entityAdapter->isExternal())
+	{
+		Guid externalGuid;
+		entityAdapter->getExternalGuid(externalGuid);
+
+		Ref< db::Instance > instance = m_context->getEditor()->getSourceDatabase()->getInstance(externalGuid);
+		if (instance)
+			m_context->getEditor()->openEditor(instance);
+	}
 }
 
 void PerspectiveRenderControl::eventMouseMove(ui::Event* event)
