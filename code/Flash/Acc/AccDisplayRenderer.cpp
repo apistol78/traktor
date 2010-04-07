@@ -29,7 +29,7 @@ const uint32_t c_maxCacheSize = 64;
 const uint32_t c_maxUnusedCount = 40;
 
 #if !defined(TARGET_OS_IPHONE)
-const uint32_t c_cacheGlyphSize = 64;
+const uint32_t c_cacheGlyphSize = 128;
 #else
 const uint32_t c_cacheGlyphSize = 32;
 #endif
