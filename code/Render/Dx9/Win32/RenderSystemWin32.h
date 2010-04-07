@@ -110,7 +110,7 @@ public:
 	 * \note Will only work if renderer was
 	 * created with a non-embedded render view.
 	 */
-	bool resetPrimary(const D3DPRESENT_PARAMETERS& d3dPresent);
+	bool resetPrimary(const D3DPRESENT_PARAMETERS& d3dPresent, D3DFORMAT d3dDepthStencilFormat);
 
 	// \}
 

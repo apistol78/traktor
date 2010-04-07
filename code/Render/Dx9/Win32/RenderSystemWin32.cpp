@@ -571,7 +571,7 @@ void RenderSystemWin32::toggleMode()
 		m_lostDevice = true;
 }
 
-bool RenderSystemWin32::resetPrimary(const D3DPRESENT_PARAMETERS& d3dPresent)
+bool RenderSystemWin32::resetPrimary(const D3DPRESENT_PARAMETERS& d3dPresent, D3DFORMAT d3dDepthStencilFormat)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_renderLock);
 	HRESULT hr;
@@ -579,9 +579,22 @@ bool RenderSystemWin32::resetPrimary(const D3DPRESENT_PARAMETERS& d3dPresent)
 	std::memcpy(&m_d3dPresent, &d3dPresent, sizeof(D3DPRESENT_PARAMETERS));
 	setWindowStyle(m_hWnd, m_d3dPresent.BackBufferWidth, m_d3dPresent.BackBufferHeight, m_d3dPresent.Windowed ? false : true);
 
+	// Ensure multi-sample type is supported.
+	hr = m_d3d->CheckDeviceMultiSampleType(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, m_d3dPresent.BackBufferFormat, FALSE, m_d3dPresent.MultiSampleType, NULL);
+	if (SUCCEEDED(hr))
+	{
+		hr = m_d3d->CheckDeviceMultiSampleType(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, d3dDepthStencilFormat, FALSE, m_d3dPresent.MultiSampleType, NULL);
+		if (FAILED(hr))
+			m_d3dPresent.MultiSampleType = D3DMULTISAMPLE_NONE; 
+	}
+	else
+		m_d3dPresent.MultiSampleType = D3DMULTISAMPLE_NONE;
+
+	// Replace presentation parameters.
 	if (!m_renderViews.empty())
 		m_renderViews.front()->setD3DPresent(m_d3dPresent);
 
+	// Reset device; recreate all resources.
 	hr = resetDevice();
 	if (FAILED(hr))
 		m_lostDevice = true;
