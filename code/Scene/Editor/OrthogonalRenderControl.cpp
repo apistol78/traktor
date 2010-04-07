@@ -2,6 +2,7 @@
 #include "Core/Settings/PropertyColor.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/Settings.h"
+#include "Database/Database.h"
 #include "Editor/IEditor.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
@@ -104,6 +105,7 @@ bool OrthogonalRenderControl::create(ui::Widget* parent, SceneEditorContext* con
 
 	m_renderWidget->addButtonDownEventHandler(ui::createMethodHandler(this, &OrthogonalRenderControl::eventButtonDown));
 	m_renderWidget->addButtonUpEventHandler(ui::createMethodHandler(this, &OrthogonalRenderControl::eventButtonUp));
+	m_renderWidget->addDoubleClickEventHandler(ui::createMethodHandler(this, &OrthogonalRenderControl::eventDoubleClick));
 	m_renderWidget->addMouseMoveEventHandler(ui::createMethodHandler(this, &OrthogonalRenderControl::eventMouseMove));
 	m_renderWidget->addMouseWheelEventHandler(ui::createMethodHandler(this, &OrthogonalRenderControl::eventMouseWheel));
 	m_renderWidget->addSizeEventHandler(ui::createMethodHandler(this, &OrthogonalRenderControl::eventSize));
@@ -353,6 +355,22 @@ void OrthogonalRenderControl::eventButtonUp(ui::Event* event)
 
 	if (m_renderWidget->hasCapture())
 		m_renderWidget->releaseCapture();
+}
+
+void OrthogonalRenderControl::eventDoubleClick(ui::Event* event)
+{
+	ui::Point mousePosition = checked_type_cast< ui::MouseEvent* >(event)->getPosition();
+
+	Ref< EntityAdapter > entityAdapter = pickEntity(mousePosition);
+	if (entityAdapter && entityAdapter->isExternal())
+	{
+		Guid externalGuid;
+		entityAdapter->getExternalGuid(externalGuid);
+
+		Ref< db::Instance > instance = m_context->getEditor()->getSourceDatabase()->getInstance(externalGuid);
+		if (instance)
+			m_context->getEditor()->openEditor(instance);
+	}
 }
 
 void OrthogonalRenderControl::eventMouseMove(ui::Event* event)

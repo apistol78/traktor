@@ -104,6 +104,8 @@ private:
 
 	void eventButtonUp(ui::Event* event);
 
+	void eventDoubleClick(ui::Event* event);
+
 	void eventMouseMove(ui::Event* event);
 
 	void eventMouseWheel(ui::Event* event);
