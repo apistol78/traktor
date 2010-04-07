@@ -30,10 +30,6 @@ public:
 
 	virtual bool getFriends(RefArray< IUser >& outFriends) const;
 
-	virtual bool getAchievements(RefArray< IAchievement >& outAchievements) const;
-
-	virtual bool rewardAchievement(IAchievement* achievement);
-
 	virtual bool sendMessage(const std::wstring& message) const;
 
 private:

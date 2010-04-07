@@ -1,4 +1,3 @@
-#include "Online/Local/AchievementLocal.h"
 #include "Online/Local/SessionLocal.h"
 #include "Online/Local/UserLocal.h"
 #include "Sql/IConnection.h"
@@ -31,16 +30,32 @@ Ref< IUser > SessionLocal::getUser()
 	return m_user;
 }
 
-bool SessionLocal::getAvailableAchievements(RefArray< IAchievement >& outAchievements) const
+bool SessionLocal::rewardAchievement(const std::wstring& achievementId)
 {
-	Ref< sql::IResultSet > rs = m_db->executeQuery(L"select id from Achievements");
-	if (!rs)
+	Ref< sql::IResultSet > rs;
+
+	rs = m_db->executeQuery(L"select id from Achievements where name='" + achievementId + L"'");
+	if (!rs || !rs->next())
 		return false;
 
-	while (rs->next())
-		outAchievements.push_back(new AchievementLocal(m_db, rs->getInt32(0)));
+	int32_t aid = rs->getInt32(0);
+	int32_t uid = m_user->getId();
 
-	return true;
+	return m_db->executeUpdate(L"insert into AwardedAchievements (achievementId, userId) values (" + toString(aid) + L", " + toString(uid) + L")") >= 0;
+}
+
+bool SessionLocal::withdrawAchievement(const std::wstring& achievementId)
+{
+	Ref< sql::IResultSet > rs;
+
+	rs = m_db->executeQuery(L"select id from Achievements where name='" + achievementId + L"'");
+	if (!rs || !rs->next())
+		return false;
+
+	int32_t aid = rs->getInt32(0);
+	int32_t uid = m_user->getId();
+
+	return m_db->executeUpdate(L"delete from AwardedAchievements where userId=" + toString(uid) + L" and achievementId=" + toString(aid)) >= 0;
 }
 
 Ref< ISaveGame > SessionLocal::createSaveGame(const std::wstring& name, ISerializable* attachment)

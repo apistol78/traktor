@@ -34,17 +34,14 @@ public:
 
 	virtual bool getFriends(RefArray< IUser >& outFriends) const;
 
-	virtual bool getAchievements(RefArray< IAchievement >& outAchievements) const;
-
-	virtual bool rewardAchievement(IAchievement* achievement);
-
 	virtual bool sendMessage(const std::wstring& message) const;
+
+	int32_t getId() const { return m_id; }
 
 private:
 	Ref< sql::IConnection > m_db;
 	int32_t m_id;
 	std::wstring m_name;
-	RefArray< IAchievement > m_achievements;
 };
 
 	}

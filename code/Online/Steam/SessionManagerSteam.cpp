@@ -39,12 +39,22 @@ Ref< IUser > SessionManagerSteam::getCurrentUser()
 Ref< ISession > SessionManagerSteam::createSession(IUser* user)
 {
 	T_ASSERT (user == m_currentUser);
-	return new SessionSteam(m_currentUser);
+	T_ASSERT (m_session == 0);
+
+	m_session = new SessionSteam(m_currentUser);
+	return m_session;
 }
 
 bool SessionManagerSteam::update()
 {
+	if (m_session)
+	{
+		if (!m_session->update())
+			m_session = 0;
+	}
+
 	SteamAPI_RunCallbacks();
+
 	return true;
 }
 

@@ -24,14 +24,24 @@ const std::wstring& AchievementDesc::getId() const
 	return m_id;
 }
 
-void AchievementDesc::setImagePath(const Path& imagePath)
+void AchievementDesc::setUnachievedImage(const Path& unachievedImage)
 {
-	m_imagePath = imagePath;
+	m_unachievedImage = unachievedImage;
 }
 
-const Path& AchievementDesc::getImagePath() const
+const Path& AchievementDesc::getUnachievedImage() const
 {
-	return m_imagePath;
+	return m_unachievedImage;
+}
+
+void AchievementDesc::setAchievedImage(const Path& achievedImage)
+{
+	m_achievedImage = achievedImage;
+}
+
+const Path& AchievementDesc::getAchievedImage() const
+{
+	return m_achievedImage;
 }
 
 void AchievementDesc::setName(const std::wstring& name)
@@ -67,7 +77,8 @@ bool AchievementDesc::getHidden() const
 bool AchievementDesc::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"id", m_id);
-	s >> Member< Path >(L"imagePath", m_imagePath);
+	s >> Member< Path >(L"unachievedImage", m_unachievedImage);
+	s >> Member< Path >(L"achievedImage", m_achievedImage);
 	s >> Member< std::wstring >(L"name", m_name);
 	s >> Member< std::wstring >(L"description", m_description);
 	s >> Member< bool >(L"hidden", m_hidden);

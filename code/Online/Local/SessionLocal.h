@@ -38,7 +38,9 @@ public:
 
 	virtual Ref< IUser > getUser();
 
-	virtual bool getAvailableAchievements(RefArray< IAchievement >& outAchievements) const;
+	virtual bool rewardAchievement(const std::wstring& achievementId);
+
+	virtual bool withdrawAchievement(const std::wstring& achievementId);
 
 	virtual Ref< ISaveGame > createSaveGame(const std::wstring& name, ISerializable* attachment);
 
