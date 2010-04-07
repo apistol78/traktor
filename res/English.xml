@@ -1358,6 +1358,10 @@
       <second>Derivative</second>
     </item>
     <item>
+      <first>SHADERGRAPH_NODE_DISCARD</first>
+      <second>Discard</second>
+    </item>
+    <item>
       <first>SHADERGRAPH_NODE_DIV</first>
       <second>Div</second>
     </item>

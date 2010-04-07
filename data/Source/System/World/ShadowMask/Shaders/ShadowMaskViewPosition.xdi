@@ -12,8 +12,8 @@
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>597</first>
-				<second>163</second>
+				<first>478</first>
+				<second>128</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -119,8 +119,8 @@ View position of fragment
 		<item type="traktor.render.Sampler">
 			<comment/>
 			<position>
-				<first>437</first>
-				<second>143</second>
+				<first>316</first>
+				<second>108</second>
 			</position>
 			<lookup>LuSimple</lookup>
 			<minFilter>FtLinear</minFilter>
@@ -133,8 +133,8 @@ View position of fragment
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>247</first>
-				<second>193</second>
+				<first>126</first>
+				<second>158</second>
 			</position>
 			<fragmentGuid>{6DE0FC81-3E61-0D45-81F4-8FB4B950B941}</fragmentGuid>
 			<inputPins/>
@@ -174,8 +174,8 @@ View position of fragment
 		<item type="traktor.render.Uniform">
 			<comment/>
 			<position>
-				<first>274</first>
-				<second>143</second>
+				<first>153</first>
+				<second>108</second>
 			</position>
 			<parameterName>Depth</parameterName>
 			<type>PtTexture</type>
@@ -183,26 +183,30 @@ View position of fragment
 		<item type="traktor.render.Discard">
 			<comment/>
 			<position>
-				<first>386</first>
-				<second>90</second>
+				<first>607</first>
+				<second>77</second>
 			</position>
-		</item>
-		<item type="traktor.render.Conditional" version="1">
-			<comment/>
-			<position>
-				<first>721</first>
-				<second>26</second>
-			</position>
-			<branch>BrDynamic</branch>
 			<operator>CoLess</operator>
 		</item>
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>562</first>
-				<second>42</second>
+				<first>452</first>
+				<second>76</second>
 			</position>
-			<value>10</value>
+			<value>20</value>
+		</item>
+		<item type="traktor.render.Comment">
+			<comment>
+			<![CDATA[
+Max shadow distance; further are considered infinity and should not
+be in mask.
+			]]>
+			</comment>
+			<position>
+				<first>402</first>
+				<second>-14</second>
+			</position>
 		</item>
 	</nodes>
 	<edges>
@@ -432,18 +436,8 @@ View position of fragment
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[21]"/>
-				<name>CaseTrue</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[20]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[21]"/>
-				<name>CaseFalse</name>
+				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -452,28 +446,28 @@ View position of fragment
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[21]"/>
-				<name>Input</name>
+				<node ref="/object/nodes/item[20]"/>
+				<name>Pass</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[22]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[21]"/>
-				<name>Reference</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[21]"/>
+				<node ref="/object/nodes/item[20]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[17]"/>
 				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[21]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[20]"/>
+				<name>Reference</name>
 			</destination>
 		</item>
 	</edges>

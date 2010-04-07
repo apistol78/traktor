@@ -348,14 +348,50 @@ bool Derivative::serialize(ISerializer& s)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Discard", 0, Discard, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Discard_i[] = { 0 };
+const ImmutableNode::InputPinDesc c_Discard_i[] = { { L"Input", false }, { L"Reference", false }, { L"Pass", false }, 0 };
 const ImmutableNode::OutputPinDesc c_Discard_o[] = { L"Output", 0 };
 
 Discard::Discard()
 :	ImmutableNode(c_Discard_i, c_Discard_o)
+,	m_operator(CoLess)
 {
 }
 
+void Discard::setOperator(Discard::Operator op)
+{
+	m_operator = op;
+}
+
+Discard::Operator Discard::getOperator() const
+{
+	return m_operator;
+}
+
+std::wstring Discard::getInformation() const
+{
+	const wchar_t* h[] = { L"<", L"<=", L"=", L"<>", L">", L">=" };
+	return h[int(m_operator)];
+}
+
+bool Discard::serialize(ISerializer& s)
+{
+	if (!ImmutableNode::serialize(s))
+		return false;
+
+	const MemberEnum< Operator >::Key kOperator[] =
+	{
+		{ L"CoLess", CoLess },
+		{ L"CoLessEqual", CoLessEqual },
+		{ L"CoEqual", CoEqual },
+		{ L"CoNotEqual", CoNotEqual },
+		{ L"CoGreater", CoGreater },
+		{ L"CoGreaterEqual", CoGreaterEqual }, 
+		{ 0, 0 }
+	};
+
+	s >> MemberEnum< Operator >(L"operator", m_operator, kOperator);
+	return true;
+}
 
 /*---------------------------------------------------------------------------*/
 

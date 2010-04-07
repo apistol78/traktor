@@ -12,6 +12,7 @@ TypeInfoSet ConditionalNodeTraits::getNodeTypes() const
 {
 	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< Conditional >());
+	typeSet.insert(&type_of< Discard >());
 	return typeSet;
 }
 
@@ -21,10 +22,15 @@ PinType ConditionalNodeTraits::getOutputPinType(
 	const PinType* inputPinTypes
 ) const
 {
-	return std::max< PinType >(
-		inputPinTypes[2],		// CaseTrue
-		inputPinTypes[3]		// CaseFalse
-	);
+	if (is_a< Conditional >(node))
+		return std::max< PinType >(
+			inputPinTypes[2],		// CaseTrue
+			inputPinTypes[3]		// CaseFalse
+		);
+	else if (is_a< Discard >(node))
+		return inputPinTypes[2];	// Pass
+	else
+		return PntVoid;
 }
 
 PinType ConditionalNodeTraits::getInputPinType(

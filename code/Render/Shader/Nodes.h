@@ -231,7 +231,28 @@ class T_DLLCLASS Discard : public ImmutableNode
 	T_RTTI_CLASS;
 
 public:
+	enum Operator
+	{
+		CoLess,
+		CoLessEqual,
+		CoEqual,
+		CoNotEqual,
+		CoGreater,
+		CoGreaterEqual
+	};
+
 	Discard();
+
+	void setOperator(Operator op);
+
+	Operator getOperator() const;
+
+	virtual std::wstring getInformation() const;
+
+	virtual bool serialize(ISerializer& s);
+
+private:
+	Operator m_operator;
 };
 
 /*! \brief Divide. */
