@@ -252,6 +252,15 @@ bool emitDiv(HlslContext& cx, Div* node)
 	return true;
 }
 
+bool emitDiscard(HlslContext& cx, Discard* node)
+{
+	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
+	HlslVariable* out = cx.emitOutput(node, L"Output", HtFloat);
+	assign(f, out) << L"0;" << Endl;
+	f << L"discard;" << Endl;
+	return true;
+}
+
 bool emitDot(HlslContext& cx, Dot* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
@@ -1403,6 +1412,7 @@ HlslEmitter::HlslEmitter()
 	m_emitters[&type_of< Cross >()] = new EmitterCast< Cross >(emitCross);
 	m_emitters[&type_of< Derivative >()] = new EmitterCast< Derivative >(emitDerivative);
 	m_emitters[&type_of< Div >()] = new EmitterCast< Div >(emitDiv);
+	m_emitters[&type_of< Discard >()] = new EmitterCast< Discard >(emitDiscard);
 	m_emitters[&type_of< Dot >()] = new EmitterCast< Dot >(emitDot);
 	m_emitters[&type_of< Exp >()] = new EmitterCast< Exp >(emitExp);
 	m_emitters[&type_of< Fraction >()] = new EmitterCast< Fraction >(emitFraction);

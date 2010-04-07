@@ -225,6 +225,15 @@ private:
 	Axis m_axis;
 };
 
+/*! \brief Discard fragment. */
+class T_DLLCLASS Discard : public ImmutableNode
+{
+	T_RTTI_CLASS;
+
+public:
+	Discard();
+};
+
 /*! \brief Divide. */
 class T_DLLCLASS Div : public ImmutableNode
 {
