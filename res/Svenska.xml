@@ -1366,6 +1366,10 @@
       <second>Derivata</second>
     </item>
     <item>
+      <first>SHADERGRAPH_NODE_DISCARD</first>
+      <second>Filtrera</second>
+    </item>
+    <item>
       <first>SHADERGRAPH_NODE_DIV</first>
       <second>Dividera</second>
     </item>

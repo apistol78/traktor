@@ -255,9 +255,49 @@ bool emitDiv(HlslContext& cx, Div* node)
 bool emitDiscard(HlslContext& cx, Discard* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
-	HlslVariable* out = cx.emitOutput(node, L"Output", HtFloat);
-	assign(f, out) << L"0;" << Endl;
-	f << L"discard;" << Endl;
+
+	// Emit input and reference branches.
+	HlslVariable* in = cx.emitInput(node, L"Input");
+	HlslVariable* ref = cx.emitInput(node, L"Reference");
+	if (!in || !ref)
+		return false;
+
+	f << L"[branch]" << Endl;
+
+	// Create condition statement.
+	switch (node->getOperator())
+	{
+	case Conditional::CoLess:
+		f << L"if (" << in->getName() << L" >= " << ref->getName() << L")" << Endl;
+		break;
+	case Conditional::CoLessEqual:
+		f << L"if (" << in->getName() << L" > " << ref->getName() << L")" << Endl;
+		break;
+	case Conditional::CoEqual:
+		f << L"if (" << in->getName() << L" != " << ref->getName() << L")" << Endl;
+		break;
+	case Conditional::CoNotEqual:
+		f << L"if (" << in->getName() << L" == " << ref->getName() << L")" << Endl;
+		break;
+	case Conditional::CoGreater:
+		f << L"if (" << in->getName() << L" <= " << ref->getName() << L")" << Endl;
+		break;
+	case Conditional::CoGreaterEqual:
+		f << L"if (" << in->getName() << L" < " << ref->getName() << L")" << Endl;
+		break;
+	default:
+		T_ASSERT (0);
+	}
+
+	f << L"\tdiscard;" << Endl;
+
+	HlslVariable* pass = cx.emitInput(node, L"Pass");
+	if (!pass)
+		return false;
+
+	HlslVariable* out = cx.emitOutput(node, L"Output", pass->getType());
+	assign(f, out) << in->getName() << L";" << Endl;
+
 	return true;
 }
 
