@@ -89,6 +89,11 @@ int RenderViewOpenGL::getHeight() const
 	return m_context->getHeight();
 }
 
+bool RenderViewOpenGL::isFullScreen() const
+{
+	return false;
+}
+
 void RenderViewOpenGL::setViewport(const Viewport& viewport)
 {
 	T_CONTEXT_SCOPE(m_context)
@@ -125,11 +130,6 @@ Viewport RenderViewOpenGL::getViewport()
 	viewport.farZ = range[1];
 
 	return viewport;
-}
-
-bool RenderViewOpenGL::getNativeAspectRatio(float& outAspectRatio) const
-{
-	return false;
 }
 
 bool RenderViewOpenGL::begin()

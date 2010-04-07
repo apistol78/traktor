@@ -91,6 +91,11 @@ int RenderViewOpenGLES2::getHeight() const
 	return 0;
 }
 
+bool RenderViewOpenGLES2::isFullScreen() const
+{
+	return false;
+}
+
 void RenderViewOpenGLES2::setViewport(const Viewport& viewport)
 {
 #	if TARGET_OS_IPHONE
@@ -152,11 +157,6 @@ Viewport RenderViewOpenGLES2::getViewport()
 	viewport.farZ = range[1];
 
 	return viewport;
-}
-
-bool RenderViewOpenGLES2::getNativeAspectRatio(float& outAspectRatio) const
-{
-	return false;
 }
 
 bool RenderViewOpenGLES2::begin()

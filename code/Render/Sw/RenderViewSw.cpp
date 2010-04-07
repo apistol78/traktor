@@ -160,6 +160,11 @@ int RenderViewSw::getHeight() const
 	return m_frameBufferSurfaceDesc.height;
 }
 
+bool RenderViewSw::isFullScreen() const
+{
+	return false;
+}
+
 void RenderViewSw::setViewport(const Viewport& viewport)
 {
 	m_viewPort.left = viewport.left / c_targetScale;
@@ -173,11 +178,6 @@ void RenderViewSw::setViewport(const Viewport& viewport)
 Viewport RenderViewSw::getViewport()
 {
 	return m_viewPort;
-}
-
-bool RenderViewSw::getNativeAspectRatio(float& outAspectRatio) const
-{
-	return false;
 }
 
 bool RenderViewSw::begin()

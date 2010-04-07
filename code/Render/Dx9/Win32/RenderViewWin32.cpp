@@ -46,8 +46,7 @@ RenderViewWin32::RenderViewWin32(
 	ParameterCache* parameterCache,
 	const RenderViewDesc& createDesc,
 	const D3DPRESENT_PARAMETERS& d3dPresent,
-	D3DFORMAT d3dDepthStencilFormat,
-	float nativeAspectRatio
+	D3DFORMAT d3dDepthStencilFormat
 )
 :	m_renderSystem(renderSystem)
 ,	m_parameterCache(parameterCache)
@@ -55,7 +54,6 @@ RenderViewWin32::RenderViewWin32(
 ,	m_d3dDevice(0)
 ,	m_d3dPresent(d3dPresent)
 ,	m_d3dDepthStencilFormat(d3dDepthStencilFormat)
-,	m_nativeAspectRatio(nativeAspectRatio)
 ,	m_frameCount(0)
 ,	m_targetDirty(false)
 {
@@ -130,6 +128,11 @@ int RenderViewWin32::getHeight() const
 	return m_d3dPresent.BackBufferHeight;
 }
 
+bool RenderViewWin32::isFullScreen() const
+{
+	return !m_d3dPresent.Windowed;
+}
+
 void RenderViewWin32::setViewport(const Viewport& viewport)
 {
 	if (m_renderStateStack.empty())
@@ -168,12 +171,6 @@ Viewport RenderViewWin32::getViewport()
 		d3dViewport.MinZ,
 		d3dViewport.MaxZ
 	);
-}
-
-bool RenderViewWin32::getNativeAspectRatio(float& outAspectRatio) const
-{
-	outAspectRatio = m_nativeAspectRatio;
-	return true;
 }
 
 bool RenderViewWin32::begin()

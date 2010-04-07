@@ -52,6 +52,11 @@ int RenderViewCapture::getHeight() const
 	return m_renderView->getHeight();
 }
 
+bool RenderViewCapture::isFullScreen() const
+{
+	return m_renderView->isFullScreen();
+}
+
 void RenderViewCapture::setViewport(const Viewport& viewport)
 {
 	m_renderView->setViewport(viewport);
@@ -60,11 +65,6 @@ void RenderViewCapture::setViewport(const Viewport& viewport)
 Viewport RenderViewCapture::getViewport()
 {
 	return m_renderView->getViewport();
-}
-
-bool RenderViewCapture::getNativeAspectRatio(float& outAspectRatio) const
-{
-	return m_renderView->getNativeAspectRatio(outAspectRatio);
 }
 
 bool RenderViewCapture::begin()

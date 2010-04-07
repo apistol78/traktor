@@ -169,6 +169,11 @@ int RenderViewDx10::getHeight() const
 	return int(desc.BufferDesc.Height);
 }
 
+bool RenderViewDx10::isFullScreen() const
+{
+	return false;
+}
+
 void RenderViewDx10::setViewport(const Viewport& viewport)
 {
 	if (m_renderStateStack.empty())
@@ -207,11 +212,6 @@ Viewport RenderViewDx10::getViewport()
 		d3dViewport.MinDepth,
 		d3dViewport.MaxDepth
 	);
-}
-
-bool RenderViewDx10::getNativeAspectRatio(float& outAspectRatio) const
-{
-	return false;
 }
 
 bool RenderViewDx10::begin()
