@@ -327,11 +327,6 @@ Ref< IRenderView > RenderSystemWin32::createRenderView(const RenderViewDefaultDe
 	T_ASSERT (m_hWnd);
 	T_ASSERT (m_renderViews.empty());
 
-	// Determine output aspect ratio from default display mode; not
-	// correct but we assume user have a matching resolution and monitor
-	// have square pixels.
-	float aspectRatio = float(m_d3dDefaultDisplayMode.Width) / m_d3dDefaultDisplayMode.Height;
-
 	setWindowStyle(m_hWnd, desc.displayMode.width, desc.displayMode.height, desc.fullscreen);
 
 	if (desc.stencilBits == 1)
@@ -373,8 +368,7 @@ Ref< IRenderView > RenderSystemWin32::createRenderView(const RenderViewDefaultDe
 		m_parameterCache,
 		desc,
 		m_d3dPresent,
-		d3dDepthStencilFormat,
-		aspectRatio
+		d3dDepthStencilFormat
 	);
 
 	hr = renderView->resetDevice(m_d3dDevice);
@@ -391,11 +385,6 @@ Ref< IRenderView > RenderSystemWin32::createRenderView(const RenderViewEmbeddedD
 	D3DMULTISAMPLE_TYPE d3dMultiSample;
 	HRESULT hr;
 	RECT rcWindow;
-
-	// Determine output aspect ratio from default display mode; not
-	// correct but we assume user have a matching resolution and monitor
-	// have square pixels.
-	float aspectRatio = float(m_d3dDefaultDisplayMode.Width) / m_d3dDefaultDisplayMode.Height;
 
 	GetClientRect((HWND)desc.nativeWindowHandle, &rcWindow);
 	if (rcWindow.left >= rcWindow.right)
@@ -438,8 +427,7 @@ Ref< IRenderView > RenderSystemWin32::createRenderView(const RenderViewEmbeddedD
 		m_parameterCache,
 		desc,
 		d3dPresent,
-		d3dDepthStencilFormat,
-		aspectRatio
+		d3dDepthStencilFormat
 	);
 
 	hr = renderView->resetDevice(m_d3dDevice);

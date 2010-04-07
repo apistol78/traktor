@@ -182,7 +182,10 @@ void AccDisplayRenderer::begin(const FlashMovie& movie, const SwfColor& backgrou
 
 	// Flush glyph cache is RT has become invalid.
 	if (!m_renderTargetGlyphs->isContentValid())
+	{
 		m_glyphCache.clear();
+		m_nextIndex = 0;
+	}
 
 	m_maskWrite = false;
 	m_maskIncrement = false;

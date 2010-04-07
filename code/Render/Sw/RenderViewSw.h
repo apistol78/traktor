@@ -57,11 +57,11 @@ public:
 
 	virtual int getHeight() const;
 
+	virtual bool isFullScreen() const;
+
 	virtual void setViewport(const Viewport& viewport);
 
 	virtual Viewport getViewport();
-
-	virtual bool getNativeAspectRatio(float& outAspectRatio) const;
 
 	virtual bool begin();
 
