@@ -24,16 +24,6 @@ bool FriendUserSteam::getFriends(RefArray< IUser >& outFriends) const
 	return false;
 }
 
-bool FriendUserSteam::getAchievements(RefArray< IAchievement >& outAchievements) const
-{
-	return false;
-}
-
-bool FriendUserSteam::rewardAchievement(IAchievement* achievement)
-{
-	return false;
-}
-
 bool FriendUserSteam::sendMessage(const std::wstring& message) const
 {
 	return false;

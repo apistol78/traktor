@@ -17,6 +17,7 @@ namespace traktor
 	{
 
 class CurrentUserSteam;
+class SessionSteam;
 
 class T_DLLCLASS SessionManagerSteam : public ISessionManager
 {
@@ -37,6 +38,7 @@ public:
 
 private:
 	Ref< CurrentUserSteam > m_currentUser;
+	Ref< SessionSteam > m_session;
 };
 
 	}

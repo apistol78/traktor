@@ -16240,6 +16240,15 @@
 					<fileName>*.*</fileName>
 					<items/>
 				</item>
+				<item type="Filter">
+					<name>Resources</name>
+					<items>
+						<item type="File">
+							<fileName>../../../res/icons/DefaultThumb.png</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="1">

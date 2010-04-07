@@ -32,16 +32,6 @@ bool CurrentUserSteam::getFriends(RefArray< IUser >& outFriends) const
 	return true;
 }
 
-bool CurrentUserSteam::getAchievements(RefArray< IAchievement >& outAchievements) const
-{
-	return false;
-}
-
-bool CurrentUserSteam::rewardAchievement(IAchievement* achievement)
-{
-	return false;
-}
-
 bool CurrentUserSteam::sendMessage(const std::wstring& message) const
 {
 	return false;

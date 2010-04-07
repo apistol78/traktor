@@ -31,14 +31,28 @@ public:
 
 	virtual Ref< IUser > getUser();
 
-	virtual bool getAvailableAchievements(RefArray< IAchievement >& outAchievements) const;
+	virtual bool rewardAchievement(const std::wstring& achievementId);
+
+	virtual bool withdrawAchievement(const std::wstring& achievementId);
 
 	virtual Ref< ISaveGame > createSaveGame(const std::wstring& name, ISerializable* attachment);
 
 	virtual bool getAvailableSaveGames(RefArray< ISaveGame >& outSaveGames) const;
 
+	bool update();
+
+	STEAM_CALLBACK(SessionSteam, OnUserStatsReceived, UserStatsReceived_t, m_callbackUserStatsReceived);
+
+	STEAM_CALLBACK(SessionSteam, OnUserStatsStored, UserStatsStored_t, m_callbackUserStatsStored);
+
+	STEAM_CALLBACK(SessionSteam, OnAchievementStored, UserAchievementStored_t, m_callbackAchievementStored);
+
 private:
 	Ref< CurrentUserSteam > m_user;
+	bool m_requestedStats;
+	bool m_receivedStats;
+	bool m_storeStats;
+	bool m_destroyed;
 };
 
 	}

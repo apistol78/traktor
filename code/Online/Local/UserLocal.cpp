@@ -1,4 +1,3 @@
-#include "Online/Local/AchievementLocal.h"
 #include "Online/Local/UserLocal.h"
 #include "Sql/IConnection.h"
 #include "Sql/IResultSet.h"
@@ -38,29 +37,6 @@ bool UserLocal::getFriends(RefArray< IUser >& outFriends) const
 	}
 
 	return true;
-}
-
-bool UserLocal::getAchievements(RefArray< IAchievement >& outAchievements) const
-{
-	Ref< sql::IResultSet > rs = m_db->executeQuery(L"select achievementId from AwardedAchievements where userId = " + toString(m_id));
-	if (!rs)
-		return false;
-
-	while (rs->next())
-	{
-		outAchievements.push_back(new AchievementLocal(
-			m_db,
-			rs->getInt32(0)
-		));
-	}
-
-	return true;
-}
-
-bool UserLocal::rewardAchievement(IAchievement* achievement)
-{
-	int32_t id = checked_type_cast< const AchievementLocal*, false >(achievement)->getId();
-	return m_db->executeUpdate(L"insert into AwardedAchievements (achievementId, userId) values (" + toString(id) + L", " + toString(m_id) + L")") >= 0;
 }
 
 bool UserLocal::sendMessage(const std::wstring& message) const

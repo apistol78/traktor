@@ -28,9 +28,13 @@ public:
 
 	const std::wstring& getId() const;
 
-	void setImagePath(const Path& imagePath);
+	void setUnachievedImage(const Path& unachievedImage);
 
-	const Path& getImagePath() const;
+	const Path& getUnachievedImage() const;
+
+	void setAchievedImage(const Path& achievedImage);
+
+	const Path& getAchievedImage() const;
 
 	void setName(const std::wstring& name);
 
@@ -48,7 +52,8 @@ public:
 
 private:
 	std::wstring m_id;
-	Path m_imagePath;
+	Path m_unachievedImage;
+	Path m_achievedImage;
 	std::wstring m_name;
 	std::wstring m_description;
 	bool m_hidden;

@@ -47,12 +47,17 @@ public:
 	 */
 	virtual Ref< IUser > getUser() = 0;
 
-	/*! \brief Get array of available achievements.
+	/*! \brief Reward playing user with an achievement.
 	 *
-	 * \param outAchievements Array of achievements.
-	 * \return True if achievements are available.
+	 * \return True if achievement was successfully received.
 	 */
-	virtual bool getAvailableAchievements(RefArray< IAchievement >& outAchievements) const = 0;
+	virtual bool rewardAchievement(const std::wstring& achievementId) = 0;
+
+	/*! \brief Withdraw playing user of an achievement.
+	 *
+	 * \return True if achievement was successfully withdrawn.
+	 */
+	virtual bool withdrawAchievement(const std::wstring& achievementId) = 0;
 
 	/*! \brief Create save game.
 	 *

@@ -17,8 +17,6 @@ namespace traktor
 	namespace online
 	{
 
-class IAchievement;
-
 /*! \brief User descriptor.
  * \ingroup Online
  */
@@ -30,10 +28,6 @@ public:
 	virtual std::wstring getName() const = 0;
 
 	virtual bool getFriends(RefArray< IUser >& outFriends) const = 0;
-
-	virtual bool getAchievements(RefArray< IAchievement >& outAchievements) const = 0;
-
-	virtual bool rewardAchievement(IAchievement* achievement) = 0;
 
 	virtual bool sendMessage(const std::wstring& message) const = 0;
 };

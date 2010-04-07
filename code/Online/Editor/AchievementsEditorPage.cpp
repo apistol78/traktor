@@ -12,10 +12,36 @@
 #include "Ui/Custom/GridView/GridRow.h"
 #include "Ui/Custom/GridView/GridItem.h"
 
+// Resources
+#include "Resources/DefaultThumb.h"
+
 namespace traktor
 {
 	namespace online
 	{
+		namespace
+		{
+
+const uint32_t c_thumbWidth = 64;
+const uint32_t c_thumbHeight = 64;
+
+Ref< ui::Bitmap > createAchievementThumbImage(const Path& imagePath)
+{
+	Ref< ui::Bitmap > bitmap;
+	Ref< drawing::Image > image = drawing::Image::load(imagePath);
+	if (image)
+	{
+		drawing::ScaleFilter scaleFilter(c_thumbWidth, c_thumbHeight, drawing::ScaleFilter::MnAverage, drawing::ScaleFilter::MgLinear);
+		bitmap = new ui::Bitmap(image->applyFilter(&scaleFilter));
+	}
+	else
+	{
+		bitmap = ui::Bitmap::load(c_ResourceDefaultThumb, sizeof(c_ResourceDefaultThumb), L"png");
+	}
+	return bitmap;
+}
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.online.AchievementsEditorPage", AchievementsEditorPage, editor::IEditorPage)
 
@@ -29,7 +55,8 @@ bool AchievementsEditorPage::create(ui::Container* parent, editor::IEditorPageSi
 	m_gridAchievements = new ui::custom::GridView();
 	m_gridAchievements->create(parent, ui::custom::GridView::WsColumnHeader | ui::WsDoubleBuffer);
 	m_gridAchievements->addColumn(new ui::custom::GridColumn(L"Id", 150));
-	m_gridAchievements->addColumn(new ui::custom::GridColumn(L"Image", 150));
+	m_gridAchievements->addColumn(new ui::custom::GridColumn(L"Unachieved Image", 150));
+	m_gridAchievements->addColumn(new ui::custom::GridColumn(L"Achieved Image", 150));
 	m_gridAchievements->addColumn(new ui::custom::GridColumn(L"Name", 200));
 	m_gridAchievements->addColumn(new ui::custom::GridColumn(L"Description", 500));
 	m_gridAchievements->addColumn(new ui::custom::GridColumn(L"Hidden", 50));
@@ -60,19 +87,10 @@ bool AchievementsEditorPage::setDataObject(db::Instance* instance, Object* data)
 	const RefArray< const AchievementDesc >& achievements = asset->get();
 	for (RefArray< const AchievementDesc >::const_iterator i = achievements.begin(); i != achievements.end(); ++i)
 	{
-		Ref< ui::Bitmap > bitmap;
-
-		Ref< drawing::Image > image = drawing::Image::load((*i)->getImagePath());
-		if (image)
-		{
-			drawing::ScaleFilter scaleFilter(64, 64, drawing::ScaleFilter::MnAverage, drawing::ScaleFilter::MgLinear);
-			image = image->applyFilter(&scaleFilter);
-			bitmap = new ui::Bitmap(image);
-		}
-
 		Ref< ui::custom::GridRow > row = new ui::custom::GridRow();
 		row->add(new ui::custom::GridItem((*i)->getId()));
-		row->add(new ui::custom::GridItem(bitmap));
+		row->add(new ui::custom::GridItem(createAchievementThumbImage((*i)->getUnachievedImage())));
+		row->add(new ui::custom::GridItem(createAchievementThumbImage((*i)->getAchievedImage())));
 		row->add(new ui::custom::GridItem((*i)->getName()));
 		row->add(new ui::custom::GridItem((*i)->getDescription()));
 		m_gridAchievements->addRow(row);

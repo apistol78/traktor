@@ -67,7 +67,7 @@ bool SessionManagerLocal::create()
 	if (!m_db->tableExists(L"Achievements"))
 	{
 		// Create achievements table.
-		if (m_db->executeUpdate(L"create table Achievements (id integer primary key, name varchar(250), description varchar(500), rating integer)") < 0)
+		if (m_db->executeUpdate(L"create table Achievements (id integer primary key, name varchar(250))") < 0)
 		{
 			log::error << L"Unable to create local session manager; unable to create table Achievements" << Endl;
 			return false;
