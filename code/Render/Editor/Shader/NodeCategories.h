@@ -30,6 +30,7 @@ const NodeCategory c_nodeCateogories[] =
 	{ type_of< Cos >(), L"SHADERGRAPH_TRIGONOMETRY", L"Cosine" },
 	{ type_of< Cross >(), L"SHADERGRAPH_ALGEBRA", L"Cross product of two vectors" },
 	{ type_of< Derivative >(), L"SHADERGRAPH_ARITHMETIC", L"Partial derivate of function f(x,y) in respect to x or y screen coordinate" },
+	{ type_of< Discard >(), L"SHADERGRAPH_MISCELLANEOUS", L"Discard fragment" },
 	{ type_of< Div >(), L"SHADERGRAPH_ARITHMETIC", L"Division" },
 	{ type_of< Dot >(), L"SHADERGRAPH_ALGEBRA", L"Dot product of two vectors" },
 	{ type_of< Exp >(), L"SHADERGRAPH_ARITHMETIC", L"Base e exponential of specified value" },

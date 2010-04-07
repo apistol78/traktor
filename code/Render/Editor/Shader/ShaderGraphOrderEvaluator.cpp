@@ -71,6 +71,7 @@ int ShaderGraphOrderEvaluator::evaluate(const Node* node) const
 		order = nodeConstantOrNonLinear(node);
 	else if(
 		is_a< FragmentPosition >(node) ||
+		is_a< Discard >(node) ||
 		is_a< Sampler >(node)
 	)
 		order = OrNonLinear;

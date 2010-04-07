@@ -346,6 +346,19 @@ bool Derivative::serialize(ISerializer& s)
 
 /*---------------------------------------------------------------------------*/
 
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Discard", 0, Discard, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_Discard_i[] = { 0 };
+const ImmutableNode::OutputPinDesc c_Discard_o[] = { L"Output", 0 };
+
+Discard::Discard()
+:	ImmutableNode(c_Discard_i, c_Discard_o)
+{
+}
+
+
+/*---------------------------------------------------------------------------*/
+
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Div", 0, Div, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Div_i[] = { { L"Input1", false }, { L"Input2", false }, 0 };
