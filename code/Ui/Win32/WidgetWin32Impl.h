@@ -2,14 +2,9 @@
 #define traktor_ui_WidgetWin32Impl_H
 
 #include <map>
-#include "Ui/Win32/Window.h"
-#include "Ui/Win32/CanvasGdiWin32.h"
-#if defined(T_USE_GDI_PLUS)
-#	include "Ui/Win32/CanvasGdiPlusWin32.h"
-#endif
-#include "Ui/Win32/SmartHandle.h"
-#include "Ui/Win32/UtilitiesWin32.h"
-#include "Ui/Itf/IWidget.h"
+#include "Core/Misc/TString.h"
+#include "Core/Misc/AutoPtr.h"
+#include "Ui/Canvas.h"
 #include "Ui/EventSubject.h"
 #include "Ui/Events/ShowEvent.h"
 #include "Ui/Events/KeyEvent.h"
@@ -20,9 +15,14 @@
 #include "Ui/Events/CommandEvent.h"
 #include "Ui/Events/PaintEvent.h"
 #include "Ui/Events/FileDropEvent.h"
-#include "Ui/Canvas.h"
-#include "Core/Misc/TString.h"
-#include "Core/Misc/AutoPtr.h"
+#include "Ui/Itf/IWidget.h"
+#include "Ui/Win32/Window.h"
+#include "Ui/Win32/CanvasGdiWin32.h"
+#if defined(T_USE_GDI_PLUS)
+#	include "Ui/Win32/CanvasGdiPlusWin32.h"
+#endif
+#include "Ui/Win32/SmartHandle.h"
+#include "Ui/Win32/UtilitiesWin32.h"
 
 extern HINSTANCE g_hInstance;
 
@@ -233,7 +233,7 @@ public:
 	{
 #if !defined(WINCE)
 		WINDOWPLACEMENT wp;
-		memset(&wp, 0, sizeof(wp));
+		std::memset(&wp, 0, sizeof(wp));
 		wp.length = sizeof(wp);
 		GetWindowPlacement(m_hWnd, &wp);
 		const RECT rc = wp.rcNormalPosition;
@@ -250,19 +250,18 @@ public:
 
 		HDC hDC = GetDC(m_hWnd);
 
-		Gdiplus::Graphics* graphics = new Gdiplus::Graphics(hDC);
-		Gdiplus::Font* font = new Gdiplus::Font(hDC, m_hWnd.getFont());
+		AutoPtr< Gdiplus::Graphics > graphics(new Gdiplus::Graphics(hDC));
+		AutoPtr< Gdiplus::Font > font(new Gdiplus::Font(hDC, m_hWnd.getFont()));
 
 		graphics->MeasureString(
 			text.c_str(),
 			(INT)text.length(),
-			font,
+			font.ptr(),
 			Gdiplus::RectF(0, 0, 0, 0),
 			&boundingBox
 		);
 
-		delete font;
-		delete graphics;
+		ReleaseDC(m_hWnd, hDC);
 
 		return Size(int(boundingBox.Width), int(boundingBox.Height));
 #else
@@ -280,7 +279,7 @@ public:
 	{
 		LOGFONT lf;
 
-		memset(&lf, 0, sizeof(lf));
+		std::memset(&lf, 0, sizeof(lf));
 		lf.lfHeight = font.getSize();
 		lf.lfWidth = 0;
 		lf.lfEscapement = 0;
