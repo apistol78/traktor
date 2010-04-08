@@ -30,9 +30,9 @@ bool DefaultFileStore::add(const Path& filePath)
 
 bool DefaultFileStore::remove(const Path& filePath)
 {
-	Path filePathAlt = filePath.getPathName() + L"~";
-	if (FileSystem::getInstance().exist(filePathAlt))
+	if (FileSystem::getInstance().exist(filePath))
 	{
+		Path filePathAlt = filePath.getPathName() + L"~";
 		return FileSystem::getInstance().move(
 			filePathAlt,
 			filePath,

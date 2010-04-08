@@ -257,8 +257,9 @@ void MeshAssetEditor::createMaterialShader()
 				selectedItem->setText(1, materialShaderInstance->getName());
 				selectedItem->setData(L"INSTANCE", materialShaderInstance);
 
-				// @fixme
 				m_materialList->setItems(m_materialList->getItems());
+
+				m_editor->updateDatabaseView();
 			}
 		}
 	}
@@ -277,7 +278,6 @@ void MeshAssetEditor::browseMaterialShader()
 		selectedItem->setText(1, materialShaderInstance->getName());
 		selectedItem->setData(L"INSTANCE", materialShaderInstance);
 
-		// @fixme
 		m_materialList->setItems(m_materialList->getItems());
 	}
 }
@@ -291,7 +291,6 @@ void MeshAssetEditor::removeMaterialShader()
 	selectedItem->setText(1, i18n::Text(L"MESHASSET_EDITOR_NOT_ASSIGNED"));
 	selectedItem->setData(L"INSTANCE", 0);
 
-	// @fixme
 	m_materialList->setItems(m_materialList->getItems());
 }
 

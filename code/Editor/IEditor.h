@@ -49,6 +49,9 @@ public:
 	/*! \brief Get output database. */
 	virtual Ref< db::Database > getOutputDatabase() = 0;
 
+	/*! \brief Update database view. */
+	virtual void updateDatabaseView() = 0;
+
 	/*! \brief Browse for rtti type. */
 	virtual const TypeInfo* browseType(const TypeInfo* base = 0) = 0;
 

@@ -522,6 +522,12 @@ Ref< db::Database > EditorForm::getOutputDatabase()
 	return m_outputDatabase;
 }
 
+void EditorForm::updateDatabaseView()
+{
+	T_ASSERT (m_dataBaseView);
+	m_dataBaseView->updateView();
+}
+
 const TypeInfo* EditorForm::browseType(const TypeInfo* base)
 {
 	const TypeInfo* type = 0;

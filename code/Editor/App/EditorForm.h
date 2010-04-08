@@ -83,6 +83,8 @@ public:
 
 	virtual Ref< db::Database > getOutputDatabase();
 
+	virtual void updateDatabaseView();
+
 	virtual const TypeInfo* browseType(const TypeInfo* base);
 
 	virtual Ref< db::Instance > browseInstance(const IBrowseFilter* filter);

@@ -35,7 +35,7 @@ bool ActionRemove::execute(Context* context)
 	for (std::vector< std::wstring >::const_iterator i = blobs.begin(); i != blobs.end(); ++i)
 	{
 		Path instanceDataPath = getInstanceDataPath(m_instancePath, *i);
-		if (fileStore->remove(*i))
+		if (fileStore->remove(instanceDataPath))
 			m_renamedFiles.push_back(instanceDataPath.getPathName());
 		else
 		{
