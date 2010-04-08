@@ -2,7 +2,7 @@
 <object type="traktor.render.ShaderGraph">
 	<nodes>
 		<item type="traktor.render.InputPort" version="1">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>181</first>
 				<second>304</second>
@@ -13,7 +13,7 @@
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Uniform">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>205</first>
 				<second>364</second>
@@ -22,7 +22,7 @@
 			<type>PtMatrix</type>
 		</item>
 		<item type="traktor.render.VertexOutput" version="1">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>710</first>
 				<second>333</second>
@@ -30,10 +30,10 @@
 			<technique>Shadow</technique>
 		</item>
 		<item type="traktor.render.PixelOutput" version="2">
-			<comment></comment>
+			<comment/>
 			<position>
-				<first>895</first>
-				<second>256</second>
+				<first>880</first>
+				<second>240</second>
 			</position>
 			<technique>Shadow</technique>
 			<cullMode>CmNever</cullMode>
@@ -50,7 +50,7 @@
 			<depthEnable>true</depthEnable>
 			<depthWriteEnable>true</depthWriteEnable>
 			<depthFunction>CfLessEqual</depthFunction>
-			<alphaTestEnable>true</alphaTestEnable>
+			<alphaTestEnable>false</alphaTestEnable>
 			<alphaTestFunction>CfGreater</alphaTestFunction>
 			<alphaTestReference>128</alphaTestReference>
 			<wireframe>false</wireframe>
@@ -63,22 +63,22 @@
 			<stencilMask>2147483648</stencilMask>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>619</first>
 				<second>290</second>
 			</position>
-			<swizzle>zzz0</swizzle>
+			<swizzle>z</swizzle>
 		</item>
 		<item type="traktor.render.Transform">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>406</first>
 				<second>313</second>
 			</position>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>213</first>
 				<second>240</second>
@@ -88,20 +88,21 @@
 			<optional>true</optional>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Swizzle">
-			<comment></comment>
+		<item type="traktor.render.Discard">
+			<comment/>
 			<position>
-				<first>619</first>
-				<second>240</second>
+				<first>713</first>
+				<second>204</second>
 			</position>
-			<swizzle>000x</swizzle>
+			<operator>CoGreater</operator>
 		</item>
-		<item type="traktor.render.Add">
-			<comment></comment>
+		<item type="traktor.render.Scalar">
+			<comment/>
 			<position>
-				<first>737</first>
-				<second>236</second>
+				<first>477</first>
+				<second>256</second>
 			</position>
+			<value>0.5</value>
 		</item>
 	</nodes>
 	<edges>
@@ -157,12 +158,12 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[7]"/>
+				<node ref="/object/nodes/item[8]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[8]"/>
-				<name>Input1</name>
+				<node ref="/object/nodes/item[7]"/>
+				<name>Reference</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -171,13 +172,13 @@
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[8]"/>
-				<name>Input2</name>
+				<node ref="/object/nodes/item[7]"/>
+				<name>Pass</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[8]"/>
+				<node ref="/object/nodes/item[7]"/>
 				<name>Output</name>
 			</source>
 			<destination>

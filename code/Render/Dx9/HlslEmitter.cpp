@@ -296,7 +296,7 @@ bool emitDiscard(HlslContext& cx, Discard* node)
 		return false;
 
 	HlslVariable* out = cx.emitOutput(node, L"Output", pass->getType());
-	assign(f, out) << in->getName() << L";" << Endl;
+	assign(f, out) << pass->getName() << L";" << Endl;
 
 	return true;
 }
