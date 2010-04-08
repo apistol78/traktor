@@ -1,15 +1,16 @@
-#include "World/PostProcess/PostProcessStepSmProj.h"
-#include "World/PostProcess/PostProcess.h"
+#include "Core/Math/Random.h"
+#include "Core/Misc/AutoPtr.h"
 #include "Render/IRenderSystem.h"
+#include "Render/IRenderView.h"
 #include "Render/ISimpleTexture.h"
+#include "Render/RenderTargetSet.h"
 #include "Render/ScreenRenderer.h"
 #include "Render/Shader.h"
 #include "Render/Shader/ShaderGraph.h"
-#include "Render/RenderTargetSet.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
-#include "Core/Math/Random.h"
-#include "Core/Misc/AutoPtr.h"
+#include "World/PostProcess/PostProcess.h"
+#include "World/PostProcess/PostProcessStepSmProj.h"
 
 namespace traktor
 {
@@ -158,6 +159,9 @@ void PostProcessStepSmProj::InstanceSmProj::render(
 	shader->setVectorParameter(L"ViewEdgeBottomRight", viewEdgeBottomRight);
 	shader->setVectorArrayParameter(L"ShadowMapPoissonTaps", c_poissonTaps, sizeof_array(c_poissonTaps));
 	shader->setMatrixParameter(L"ViewToLight", projection);
+
+	const float maskClear[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	renderView->clear(render::CfColor, maskClear, 1.0f, 0);
 
 	screenRenderer->draw(renderView, shader);
 

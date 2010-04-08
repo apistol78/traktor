@@ -183,11 +183,11 @@ void RenderTargetWin32::clear(
 	DWORD stencil
 )
 {
+	HRESULT hr;
 	if (m_d3dClearEffect)
 	{
 		D3DVIEWPORT9 d3dvp0, d3dvp;
 		UINT passes;
-		HRESULT hr;
 
 		// Clear stencil and z using ordinary clear call.
 		if (flags & (D3DCLEAR_ZBUFFER | D3DCLEAR_STENCIL))
@@ -271,7 +271,8 @@ void RenderTargetWin32::clear(
 			uint8_t(color[2] * 255),
 			uint8_t(color[3] * 255)
 		);
-		d3dDevice->Clear(0, NULL, flags, clearColor, z, stencil);
+		hr = d3dDevice->Clear(0, NULL, flags, clearColor, z, stencil);
+		T_ASSERT (SUCCEEDED(hr));
 	}
 }
 

@@ -374,8 +374,6 @@ void WorldRenderer::render(uint32_t flags, int frame)
 		m_renderView->pushMarker("World: Shadow mask");
 		if (m_renderView->begin(m_shadowMaskTargetSet, 0, false))
 		{
-			const float maskClear[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-			m_renderView->clear(render::CfColor, maskClear, 1.0f, 0);
 			m_shadowMaskProjection->render(
 				m_renderView,
 				m_shadowTargetSet,
