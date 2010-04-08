@@ -108,10 +108,10 @@ private:
 	bool needBuild(PipelineDependency* dependency) const;
 
 	/*! \brief Isolate instance in cache. */
-	bool putInstancesInCache(const Guid& guid, uint32_t hash, const RefArray< db::Instance >& instances);
+	bool putInstancesInCache(const Guid& guid, uint32_t hash, int32_t version, const RefArray< db::Instance >& instances);
 
 	/*! \brief Get isolated instance from cache. */
-	bool getInstancesFromCache(const Guid& guid, uint32_t hash);
+	bool getInstancesFromCache(const Guid& guid, uint32_t hash, int32_t version);
 
 	/*! \brief Calculate external file hash. */
 	uint32_t externalFileHash(const Path& path);

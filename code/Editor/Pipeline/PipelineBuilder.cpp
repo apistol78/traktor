@@ -271,7 +271,7 @@ bool PipelineBuilder::performBuild(PipelineDependency* dependency)
 		// Get output instances from cache.
 		if (m_cache)
 		{
-			result = getInstancesFromCache(dependency->outputGuid, currentDependencyHash.hash);
+			result = getInstancesFromCache(dependency->outputGuid, currentDependencyHash.hash, currentDependencyHash.pipelineVersion);
 			if (result)
 			{
 				log::info << L"Cached instance(s) used" << Endl;
@@ -311,6 +311,7 @@ bool PipelineBuilder::performBuild(PipelineDependency* dependency)
 						putInstancesInCache(
 							dependency->outputGuid,
 							currentDependencyHash.hash,
+							currentDependencyHash.pipelineVersion,
 							m_builtInstances
 						);
 
@@ -361,11 +362,11 @@ bool PipelineBuilder::needBuild(PipelineDependency* dependency) const
 	return false;
 }
 
-bool PipelineBuilder::putInstancesInCache(const Guid& guid, uint32_t hash, const RefArray< db::Instance >& instances)
+bool PipelineBuilder::putInstancesInCache(const Guid& guid, uint32_t hash, int32_t version, const RefArray< db::Instance >& instances)
 {
 	bool result = false;
 
-	Ref< IStream > stream = m_cache->put(guid, hash);
+	Ref< IStream > stream = m_cache->put(guid, hash, version);
 	if (stream)
 	{
 		Writer writer(stream);
@@ -387,11 +388,11 @@ bool PipelineBuilder::putInstancesInCache(const Guid& guid, uint32_t hash, const
 	return result;
 }
 
-bool PipelineBuilder::getInstancesFromCache(const Guid& guid, uint32_t hash)
+bool PipelineBuilder::getInstancesFromCache(const Guid& guid, uint32_t hash, int32_t version)
 {
 	bool result = false;
 
-	Ref< IStream > stream = m_cache->get(guid, hash);
+	Ref< IStream > stream = m_cache->get(guid, hash, version);
 	if (stream)
 	{
 		Reader reader(stream);

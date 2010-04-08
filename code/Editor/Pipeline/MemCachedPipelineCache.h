@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_EDITOR_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -38,9 +38,9 @@ public:
 
 	virtual void destroy();
 
-	virtual Ref< IStream > get(const Guid& guid, uint32_t hash);
+	virtual Ref< IStream > get(const Guid& guid, uint32_t hash, int32_t version);
 
-	virtual Ref< IStream > put(const Guid& guid, uint32_t hash);
+	virtual Ref< IStream > put(const Guid& guid, uint32_t hash, int32_t version);
 
 private:
 	Ref< net::TcpSocket > m_socket;

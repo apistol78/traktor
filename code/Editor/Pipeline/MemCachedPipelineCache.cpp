@@ -21,10 +21,10 @@ namespace traktor
 		namespace
 		{
 
-std::string generateKey(const Guid& guid, uint32_t hash)
+std::string generateKey(const Guid& guid, uint32_t hash, int32_t version)
 {
 	std::stringstream ss;
-	ss << wstombs(guid.format()) << ":" << hash;
+	ss << wstombs(guid.format()) << ":" << hash << ":" << version;
 	return ss.str();
 }
 
@@ -72,21 +72,21 @@ void MemCachedPipelineCache::destroy()
 	m_proto = 0;
 }
 
-Ref< IStream > MemCachedPipelineCache::get(const Guid& guid, uint32_t hash)
+Ref< IStream > MemCachedPipelineCache::get(const Guid& guid, uint32_t hash, int32_t version)
 {
 	if (m_accessRead)
 	{
-		Ref< MemCachedGetStream > stream = new MemCachedGetStream(m_proto, generateKey(guid, hash));
+		Ref< MemCachedGetStream > stream = new MemCachedGetStream(m_proto, generateKey(guid, hash, version));
 		return stream->requestNextBlock() ? stream : 0;
 	}
 	else
 		return 0;
 }
 
-Ref< IStream > MemCachedPipelineCache::put(const Guid& guid, uint32_t hash)
+Ref< IStream > MemCachedPipelineCache::put(const Guid& guid, uint32_t hash, int32_t version)
 {
 	if (m_accessWrite)
-		return new MemCachedPutStream(m_proto, generateKey(guid, hash));
+		return new MemCachedPutStream(m_proto, generateKey(guid, hash, version));
 	else
 		return 0;
 }
