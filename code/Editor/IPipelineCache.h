@@ -30,9 +30,9 @@ public:
 
 	virtual void destroy() = 0;
 
-	virtual Ref< IStream > get(const Guid& guid, uint32_t hash) = 0;
+	virtual Ref< IStream > get(const Guid& guid, uint32_t hash, int32_t version) = 0;
 
-	virtual Ref< IStream > put(const Guid& guid, uint32_t hash) = 0;
+	virtual Ref< IStream > put(const Guid& guid, uint32_t hash, int32_t version) = 0;
 };
 
 	}
