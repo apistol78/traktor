@@ -27,9 +27,14 @@ Ref< IUser > SessionPsn::getUser()
 	return m_user;
 }
 
-bool SessionPsn::getAvailableAchievements(RefArray< IAchievement >& outAchievements) const
+bool SessionPsn::rewardAchievement(const std::wstring& achievementId)
 {
 	return true;
+}
+
+bool SessionPsn::withdrawAchievement(const std::wstring& achievementId)
+{
+	return false;
 }
 
 Ref< ISaveGame > SessionPsn::createSaveGame(const std::wstring& name, ISerializable* attachment)

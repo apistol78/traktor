@@ -22,16 +22,6 @@ bool UserPsn::getFriends(RefArray< IUser >& outFriends) const
 	return true;
 }
 
-bool UserPsn::getAchievements(RefArray< IAchievement >& outAchievements) const
-{
-	return true;
-}
-
-bool UserPsn::rewardAchievement(IAchievement* achievement)
-{
-	return true;
-}
-
 bool UserPsn::sendMessage(const std::wstring& message) const
 {
 	return false;

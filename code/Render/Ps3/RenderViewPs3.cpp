@@ -245,6 +245,11 @@ int RenderViewPs3::getHeight() const
 	return m_height;
 }
 
+bool RenderViewPs3::isFullScreen() const
+{
+	return true;
+}
+
 void RenderViewPs3::setViewport(const Viewport& viewport)
 {
 	if (m_renderTargetStack.empty())
