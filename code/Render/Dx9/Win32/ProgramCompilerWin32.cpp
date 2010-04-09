@@ -5,6 +5,7 @@
 #include "Core/Misc/TString.h"
 #include "Render/Dx9/Hlsl.h"
 #include "Render/Dx9/HlslProgram.h"
+#include "Render/Dx9/ParameterCache.h"
 #include "Render/Dx9/ProgramResourceDx9.h"
 #include "Render/Dx9/Win32/ProgramCompilerWin32.h"
 
@@ -125,25 +126,24 @@ bool collectScalarParameters(
 }
 
 bool collectSamplerParameters(
-	const std::vector< std::wstring >& samplerTextures,
+	ID3DXConstantTable* d3dConstantTable,
+	const std::map< std::wstring, int32_t >& samplerTextures,
 	std::vector< ProgramSampler >& outSamplers,
 	std::map< std::wstring, uint32_t >& outTextureParameterMap,
 	uint32_t& outOffset
 )
 {
-	for (uint32_t i = 0; i < uint32_t(samplerTextures.size()); ++i)
+	for (std::map< std::wstring, int32_t >::const_iterator i = samplerTextures.begin(); i != samplerTextures.end(); ++i)
 	{
-		const std::wstring& texture = samplerTextures[i];
-
 		ProgramSampler sampler;
-		sampler.stage = i;
+		sampler.stage = i->second;
 		sampler.texture = outOffset;
 
-		std::map< std::wstring, uint32_t >::const_iterator j = outTextureParameterMap.find(texture);
+		std::map< std::wstring, uint32_t >::const_iterator j = outTextureParameterMap.find(i->first);
 		if (j != outTextureParameterMap.end())
 			sampler.texture = j->second;
 		else
-			outTextureParameterMap[texture] = outOffset++;
+			outTextureParameterMap[i->first] = outOffset++;
 
 		outSamplers.push_back(sampler);
 	}
@@ -237,6 +237,7 @@ Ref< ProgramResource > ProgramCompilerWin32::compile(
 	resource->m_textureParameterDataSize = 0;
 
 	if (!collectSamplerParameters(
+		d3dVertexConstantTable,
 		program.getVertexTextures(),
 		resource->m_vertexSamplers,
 		resource->m_textureParameterMap,
@@ -244,13 +245,26 @@ Ref< ProgramResource > ProgramCompilerWin32::compile(
 	))
 		return 0;
 
+	if (resource->m_vertexSamplers.size() > ParameterCache::VertexTextureCount)
+	{
+		log::error << L"ProgramCompilerWin32 failed; too many vertex samplers used (max 8)" << Endl;
+		return false;
+	}
+
 	if (!collectSamplerParameters(
+		d3dPixelConstantTable,
 		program.getPixelTextures(),
 		resource->m_pixelSamplers,
 		resource->m_textureParameterMap,
 		resource->m_textureParameterDataSize
 	))
 		return 0;
+
+	if (resource->m_pixelSamplers.size() > ParameterCache::PixelTextureCount)
+	{
+		log::error << L"ProgramCompilerWin32 failed; too many pixel samplers used (max 8)" << Endl;
+		return false;
+	}
 
 	// Copy render state.
 	resource->m_state = program.getState();
@@ -281,9 +295,6 @@ Ref< ProgramResource > ProgramCompilerWin32::compile(
 			if (costp)
 				outStats->pixelCost = atoi(costp + 14);
 		}
-
-		//outStats->vertexCost = D3DXGetShaderSize((const DWORD *)resource->m_vertexShader->GetBufferPointer());
-		//outStats->pixelCost = D3DXGetShaderSize((const DWORD *)resource->m_pixelShader->GetBufferPointer());
 	}
 
 	return resource;
