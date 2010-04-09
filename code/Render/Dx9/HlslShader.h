@@ -59,9 +59,9 @@ public:
 
 	void popScope();
 
-	uint32_t addSamplerTexture(const std::wstring& textureName);
+	bool defineSamplerTexture(const std::wstring& textureName, int32_t& outStage);
 
-	const std::vector< std::wstring >& getSamplerTextures() const;
+	const std::map< std::wstring, int32_t >& getSamplerTextures() const;
 
 	uint32_t addUniform(const std::wstring& uniform, HlslType type, uint32_t count);
 
@@ -81,10 +81,11 @@ private:
 	ShaderType m_shaderType;
 	std::set< std::wstring > m_inputs;
 	std::list< scope_t > m_variables;
-	std::vector< std::wstring > m_samplerTextures;
+	std::map< std::wstring, int32_t > m_samplerTextures;
 	std::set< std::wstring > m_uniforms;
 	std::vector< bool > m_uniformAllocated;
 	int32_t m_nextTemporaryVariable;
+	int32_t m_nextStage;
 	RefArray< StringOutputStream > m_outputStreams[BtLast];
 };
 
