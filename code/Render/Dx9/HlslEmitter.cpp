@@ -917,7 +917,24 @@ bool emitSampler(HlslContext& cx, Sampler* node)
 
 	HlslVariable* out = cx.emitOutput(node, L"Output", HtFloat4);
 
-	std::wstring samplerName = out->getName() + L"_sampler";
+	int32_t stage;
+	bool defineSampler = cx.getShader().defineSamplerTexture(texture->getName(), stage);
+	std::wstring samplerName = L"sampler_" + toString(stage);
+
+	if (defineSampler)
+	{
+		StringOutputStream& fu = cx.getShader().getOutputStream(HlslShader::BtUniform);
+		fu << L"sampler " << samplerName << L" : register(s" << stage << L");" << Endl;
+
+		StateBlockDx9& state = cx.getState();
+		state.setSamplerState(stage, D3DSAMP_MINFILTER, d3dFilter[node->getMinFilter()]);
+		state.setSamplerState(stage, D3DSAMP_MIPFILTER, d3dFilter[node->getMipFilter()]);
+		state.setSamplerState(stage, D3DSAMP_MAGFILTER, d3dFilter[node->getMagFilter()]);
+		state.setSamplerState(stage, D3DSAMP_ADDRESSU, d3dAddress[node->getAddressU()]);
+		state.setSamplerState(stage, D3DSAMP_ADDRESSV, d3dAddress[node->getAddressV()]);
+		state.setSamplerState(stage, D3DSAMP_ADDRESSW, d3dAddress[node->getAddressW()]);
+		state.setSamplerState(stage, D3DSAMP_BORDERCOLOR, 0xffffffff);
+	}
 
 	if (cx.inPixel())
 	{
@@ -953,20 +970,6 @@ bool emitSampler(HlslContext& cx, Sampler* node)
 			break;
 		}
 	}
-
-	uint32_t stage = cx.getShader().addSamplerTexture(texture->getName());
-
-	StringOutputStream& fu = cx.getShader().getOutputStream(HlslShader::BtUniform);
-	fu << L"sampler " << samplerName << L" : register(s" << stage << L");" << Endl;
-	
-	StateBlockDx9& state = cx.getState();
-	state.setSamplerState(stage, D3DSAMP_MINFILTER, d3dFilter[node->getMinFilter()]);
-	state.setSamplerState(stage, D3DSAMP_MIPFILTER, d3dFilter[node->getMipFilter()]);
-	state.setSamplerState(stage, D3DSAMP_MAGFILTER, d3dFilter[node->getMagFilter()]);
-	state.setSamplerState(stage, D3DSAMP_ADDRESSU, d3dAddress[node->getAddressU()]);
-	state.setSamplerState(stage, D3DSAMP_ADDRESSV, d3dAddress[node->getAddressV()]);
-	state.setSamplerState(stage, D3DSAMP_ADDRESSW, d3dAddress[node->getAddressW()]);
-	state.setSamplerState(stage, D3DSAMP_BORDERCOLOR, 0xffffffff);
 	
 	return true;
 }

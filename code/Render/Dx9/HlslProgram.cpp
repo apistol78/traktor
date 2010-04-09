@@ -12,8 +12,8 @@ HlslProgram::HlslProgram()
 HlslProgram::HlslProgram(
 	const std::wstring& vertexShader,
 	const std::wstring& pixelShader,
-	const std::vector< std::wstring >& vertexTextures,
-	const std::vector< std::wstring >& pixelTextures,
+	const std::map< std::wstring, int32_t >& vertexTextures,
+	const std::map< std::wstring, int32_t >& pixelTextures,
 	const StateBlockDx9& state
 )
 :	m_vertexShader(vertexShader)
@@ -34,12 +34,12 @@ const std::wstring& HlslProgram::getPixelShader() const
 	return m_pixelShader;
 }
 
-const std::vector< std::wstring >& HlslProgram::getVertexTextures() const
+const std::map< std::wstring, int32_t >& HlslProgram::getVertexTextures() const
 {
 	return m_vertexTextures;
 }
 
-const std::vector< std::wstring >& HlslProgram::getPixelTextures() const
+const std::map< std::wstring, int32_t >& HlslProgram::getPixelTextures() const
 {
 	return m_pixelTextures;
 }
