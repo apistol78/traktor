@@ -60,6 +60,11 @@ int ListBoxCocoa::add(const std::wstring& item)
 
 bool ListBoxCocoa::remove(int index)
 {
+	if (index < 0 || index >= int(m_items.size()))
+		return false;
+		
+	m_items.erase(m_items.begin() + index);
+	
 	[m_control reloadData];
 	return true;
 }
@@ -87,6 +92,7 @@ std::wstring ListBoxCocoa::get(int index) const
 
 void ListBoxCocoa::select(int index)
 {
+	[m_control selectRow: index byExtendingSelection: NO];
 }
 
 bool ListBoxCocoa::selected(int index) const
