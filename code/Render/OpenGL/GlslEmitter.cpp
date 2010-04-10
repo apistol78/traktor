@@ -249,6 +249,46 @@ void emitDerivative(GlslContext& cx, Derivative* node)
 #endif
 }
 
+void emitDiscard(GlslContext& cx, Discard* node)
+{
+	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+
+	// Emit input and reference branches.
+	GlslVariable* in = cx.emitInput(node, L"Input");
+	GlslVariable* ref = cx.emitInput(node, L"Reference");
+
+	// Create condition statement.
+	switch (node->getOperator())
+	{
+	case Conditional::CoLess:
+		f << L"if (" << in->getName() << L" >= " << ref->getName() << L")" << Endl;
+		break;
+	case Conditional::CoLessEqual:
+		f << L"if (" << in->getName() << L" > " << ref->getName() << L")" << Endl;
+		break;
+	case Conditional::CoEqual:
+		f << L"if (" << in->getName() << L" != " << ref->getName() << L")" << Endl;
+		break;
+	case Conditional::CoNotEqual:
+		f << L"if (" << in->getName() << L" == " << ref->getName() << L")" << Endl;
+		break;
+	case Conditional::CoGreater:
+		f << L"if (" << in->getName() << L" <= " << ref->getName() << L")" << Endl;
+		break;
+	case Conditional::CoGreaterEqual:
+		f << L"if (" << in->getName() << L" < " << ref->getName() << L")" << Endl;
+		break;
+	default:
+		T_ASSERT (0);
+	}
+
+	f << L"\tdiscard;" << Endl;
+
+	GlslVariable* pass = cx.emitInput(node, L"Pass");
+	GlslVariable* out = cx.emitOutput(node, L"Output", pass->getType());
+	assign(f, out) << pass->getName() << L";" << Endl;
+}
+
 void emitDiv(GlslContext& cx, Div* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
@@ -1303,6 +1343,7 @@ GlslEmitter::GlslEmitter()
 	m_emitters[&type_of< Cos >()] = new EmitterCast< Cos >(emitCos);
 	m_emitters[&type_of< Cross >()] = new EmitterCast< Cross >(emitCross);
 	m_emitters[&type_of< Derivative >()] = new EmitterCast< Derivative >(emitDerivative);
+	m_emitters[&type_of< Discard >()] = new EmitterCast< Discard >(emitDiscard);
 	m_emitters[&type_of< Div >()] = new EmitterCast< Div >(emitDiv);
 	m_emitters[&type_of< Dot >()] = new EmitterCast< Dot >(emitDot);
 	m_emitters[&type_of< Exp >()] = new EmitterCast< Exp >(emitExp);
