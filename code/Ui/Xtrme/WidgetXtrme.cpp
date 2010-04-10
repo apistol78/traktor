@@ -27,7 +27,7 @@ bool WidgetXtrme::create(Widget* parent, int style)
 	if (!Widget::create(parent, style))
 		return false;
 
-	render::RenderViewCreateEmbeddedDesc desc;
+	render::RenderViewEmbeddedDesc desc;
 	desc.depthBits = 0;
 	desc.stencilBits = 0;
 	desc.multiSample = 0;
