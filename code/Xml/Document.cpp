@@ -1,13 +1,13 @@
-#include "Xml/Document.h"
-#include "Xml/Element.h"
-#include "Xml/Text.h"
-#include "Xml/XmlPullParser.h"
 #include "Core/RefArray.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/FileOutputStream.h"
 #include "Core/Io/MemoryStream.h"
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Misc/String.h"
+#include "Xml/Document.h"
+#include "Xml/Element.h"
+#include "Xml/Text.h"
+#include "Xml/XmlPullParser.h"
 
 namespace traktor
 {
@@ -150,6 +150,13 @@ void Document::setDocumentElement(Element* docElement)
 Ref< Element > Document::getDocumentElement() const
 {
 	return m_docElement;
+}
+
+Ref< Document > Document::clone() const
+{
+	Ref< Document > cloneDocument = new Document();
+	cloneDocument->m_docElement = m_docElement->clone();
+	return cloneDocument;
 }
 
 	}

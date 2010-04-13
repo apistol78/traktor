@@ -1,10 +1,10 @@
 #include <sstream>
 #include <stack>
-#include "Xml/Element.h"
-#include "Xml/Attribute.h"
-#include "Xml/Text.h"
-#include "Core/Misc/String.h"
 #include "Core/Io/StringOutputStream.h"
+#include "Core/Misc/String.h"
+#include "Xml/Attribute.h"
+#include "Xml/Element.h"
+#include "Xml/Text.h"
 
 namespace traktor
 {
@@ -37,6 +37,21 @@ std::wstring Element::getValue() const
 			ss << static_cast< Text* >(child.ptr())->getValue();
 	}
 	return ss.str();
+}
+
+void Element::setValue(const std::wstring& value)
+{
+	Ref< Node > child = getFirstChild();
+	while (child)
+	{
+		Ref< Node > next = child->getNextSibling();
+		if (is_a< Text >(child))
+			removeChild(child);
+		child = next;
+	}
+
+	if (!value.empty())
+		insertBefore(new Text(value), 0);
 }
 
 void Element::write(OutputStream& os) const
@@ -313,6 +328,23 @@ Ref< Element > Element::getChildElementByName(const std::wstring& name)
 		}
 	}
 	return 0;
+}
+
+Ref< Element > Element::clone() const
+{
+	Ref< Element > elm = new Element(m_name);
+	
+	for (const Attribute* attr = m_firstAttribute; attr; attr = attr->getNext())
+		elm->setAttribute(attr->getName(), attr->getValue());
+	
+	cloneChildren(elm);
+
+	return elm;
+}
+
+Ref< Node > Element::cloneUntyped() const
+{
+	return clone();
 }
 
 	}
