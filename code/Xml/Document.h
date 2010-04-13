@@ -10,9 +10,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_XML_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif 
 
 namespace traktor
@@ -48,6 +48,8 @@ public:
 	void setDocumentElement(Element* docElement);
 
 	Ref< Element > getDocumentElement() const;
+
+	Ref< Document > clone() const;
 	
 private:
 	Ref< Element > m_docElement;

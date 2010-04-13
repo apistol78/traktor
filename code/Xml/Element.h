@@ -8,9 +8,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_XML_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif 
 
 namespace traktor
@@ -38,6 +38,8 @@ public:
 	virtual void setName(const std::wstring& name);
 
 	virtual std::wstring getValue() const;
+
+	virtual void setValue(const std::wstring& value);
 
 	virtual void write(OutputStream& os) const;
 
@@ -74,6 +76,11 @@ public:
 	Ref< Attribute > getAttribute(const std::wstring& name, const std::wstring& defaultValue) const;
 	
 	Ref< Element > getChildElementByName(const std::wstring& name);
+
+	Ref< Element > clone() const;
+
+protected:
+	virtual Ref< Node > cloneUntyped() const;
 
 private:
 	std::wstring m_name;

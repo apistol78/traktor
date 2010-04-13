@@ -1,5 +1,5 @@
-#include "Xml/Text.h"
 #include "Core/Io/OutputStream.h"
+#include "Xml/Text.h"
 
 namespace traktor
 {
@@ -26,6 +26,18 @@ void Text::setValue(const std::wstring& value)
 void Text::write(OutputStream& os) const
 {
 	os << m_text;
+}
+
+Ref< Text > Text::clone() const
+{
+	Ref< Text > textClone = new Text(m_text);
+	cloneChildren(textClone);
+	return textClone;
+}
+
+Ref< Node > Text::cloneUntyped() const
+{
+	return clone();
 }
 
 	}

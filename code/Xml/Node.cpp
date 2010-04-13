@@ -94,13 +94,14 @@ void Node::insertBefore(Node* child, Node* beforeNode)
 
 	child->m_parent = this;
 	
-	child->m_previousSibling = beforeNode->m_previousSibling;
+	child->m_previousSibling = beforeNode ? beforeNode->m_previousSibling : 0;
 	child->m_nextSibling = beforeNode;
 
 	if (child->m_previousSibling)
 		child->m_previousSibling->m_nextSibling = child;
 
-	beforeNode->m_previousSibling = child;
+	if (beforeNode)
+		beforeNode->m_previousSibling = child;
 
 	if (m_firstChild == beforeNode)
 		m_firstChild = child;
@@ -156,6 +157,15 @@ Ref< Node > Node::getFirstChild() const
 Ref< Node > Node::getLastChild() const
 {
 	return m_lastChild;
+}
+
+void Node::cloneChildren(Node* clone) const
+{
+	for (Node* child = m_firstChild; child; child = child->m_nextSibling)
+	{
+		Ref< Node > childClone = child->cloneUntyped();
+		clone->addChild(childClone);
+	}
 }
 
 	}
