@@ -393,6 +393,13 @@ bool SolutionBuilderXcode::generate(Solution* solution)
 		++i;
 	}
 
+	// Automatically create an "All" aggregate project.
+	Ref< Project > allProject = new Project();
+	allProject->setName(L"All");
+	for (RefArray< Project >::iterator i = unsorted.begin(); i != unsorted.end(); ++i)
+		allProject->addDependency(new ProjectDependency(*i));
+	unsorted.push_back(allProject);
+
 	// Sort projects by their dependencies.
 	RefArray< Project > projects;
 	while (!unsorted.empty())
