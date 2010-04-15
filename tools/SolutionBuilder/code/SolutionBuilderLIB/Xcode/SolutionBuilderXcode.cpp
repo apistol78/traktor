@@ -323,7 +323,8 @@ namespace
 T_IMPLEMENT_RTTI_CLASS(L"SolutionBuilderXcode", SolutionBuilderXcode, SolutionBuilder)
 
 SolutionBuilderXcode::SolutionBuilderXcode()
-:	m_iphone(false)
+:	m_copyProductFiles(false)
+,	m_iphone(false)
 {
 }
 
@@ -338,6 +339,9 @@ bool SolutionBuilderXcode::create(const CommandLine& cmdLine)
 		m_releaseConfig = cmdLine.getOption('r').getString();
 	else
 		m_releaseConfig = L"Release";
+
+	if (cmdLine.hasOption('c'))
+		m_copyProductFiles = true;
 
 	if (cmdLine.hasOption('i'))
 	{
@@ -460,7 +464,8 @@ bool SolutionBuilderXcode::generate(Solution* solution)
 	generatePBXBuildFileSection(s, solution, projects);
 	generatePBXBuildRuleSection(s, solution);
 	generatePBXContainerItemProxySection(s, solution, projects);
-	generatePBXCopyFilesBuildPhaseSection(s, solution, projects);
+	if (m_copyProductFiles)
+		generatePBXCopyFilesBuildPhaseSection(s, solution, projects);
 	generatePBXFileReferenceSection(s, solution, projects, files);
 	generatePBXFrameworksBuildPhaseSection(s, solution, projects);
 	generatePBXGroupSection(s, solution, projects);
@@ -489,6 +494,7 @@ void SolutionBuilderXcode::showOptions() const
 {
 	log::info << L"\t-d = Debug configuration" << Endl;
 	log::info << L"\t-r = Release configuration" << Endl;
+	log::info << L"\t-c = Copy products into bundles" << Endl;
 	log::info << L"\t-i = iPhone OS (iphone, ipad)" << Endl;
 }
 
@@ -1006,8 +1012,11 @@ void SolutionBuilderXcode::generatePBXNativeTargetSection(OutputStream& s, const
 		s << L"\t\t\t\t" << ProjectUids(*i).getBuildPhaseResourcesUid() << L" /* Resources */," << Endl;
 		s << L"\t\t\t\t" << ProjectUids(*i).getBuildPhaseFrameworksUid() << L" /* Frameworks */," << Endl;
 		
-		if (targetFormat == Configuration::TfExecutable || targetFormat == Configuration::TfExecutableConsole)
-			s << L"\t\t\t\t" << ProjectUids(*i).getBuildPhaseCopyFilesUid() << L" /* CopyFiles */," << Endl;
+		if (m_copyProductFiles)
+		{
+			if (targetFormat == Configuration::TfExecutable || targetFormat == Configuration::TfExecutableConsole)
+				s << L"\t\t\t\t" << ProjectUids(*i).getBuildPhaseCopyFilesUid() << L" /* CopyFiles */," << Endl;
+		}
 			
 		s << L"\t\t\t);" << Endl;
 		s << L"\t\t\tbuildRules = (" << Endl;
@@ -1354,7 +1363,7 @@ void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, 
 				s << L"\t\t\t\tINFOPLIST_FILE = \"" << plistFile << L"\";" << Endl;
 			
 			if (configurations[0]->getTargetFormat() == Configuration::TfSharedLibrary)
-				s << L"\t\t\t\tINSTALL_PATH = \"@executable_path\";" << Endl;
+				s << L"\t\t\t\tINSTALL_PATH = \"@loader_path\";" << Endl;
 
 			s << L"\t\t\t};" << Endl;
 			s << L"\t\t\tname = Debug;" << Endl;
@@ -1400,7 +1409,7 @@ void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, 
 				s << L"\t\t\t\tINFOPLIST_FILE = \"" << plistFile << L"\";" << Endl;
 
 			if (configurations[1]->getTargetFormat() == Configuration::TfSharedLibrary)
-				s << L"\t\t\t\tINSTALL_PATH = \"@executable_path\";" << Endl;
+				s << L"\t\t\t\tINSTALL_PATH = \"@loader_path\";" << Endl;
 
 			s << L"\t\t\t};" << Endl;
 			s << L"\t\t\tname = Release;" << Endl;
