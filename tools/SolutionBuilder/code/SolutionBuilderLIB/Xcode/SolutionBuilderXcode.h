@@ -37,6 +37,7 @@ private:
 
 	std::wstring m_debugConfig;
 	std::wstring m_releaseConfig;
+	bool m_copyProductFiles;
 	bool m_iphone;
 	std::wstring m_projectConfigurationFileDebug;
 	std::wstring m_projectConfigurationFileRelease;
