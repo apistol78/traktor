@@ -88,6 +88,7 @@ private:
 	{
 		GLenum target;
 		GLuint name;
+		GLint mipCount;
 		float offset[4];
 	};
 

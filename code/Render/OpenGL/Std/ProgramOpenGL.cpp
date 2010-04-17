@@ -371,6 +371,7 @@ void ProgramOpenGL::setTextureParameter(handle_t handle, ITexture* texture)
 	{
 		m_textureData[i->second.offset].target = GL_TEXTURE_2D;
 		m_textureData[i->second.offset].name = st->getTextureName();
+		m_textureData[i->second.offset].mipCount = st->getMipCount();
 		st->getTextureOriginAndScale().storeUnaligned(m_textureData[i->second.offset].offset);
 	}
 	else if (CubeTextureOpenGL* ct = dynamic_type_cast< CubeTextureOpenGL* >(texture))
@@ -381,16 +382,19 @@ void ProgramOpenGL::setTextureParameter(handle_t handle, ITexture* texture)
 		m_textureData[i->second.offset].target = GL_TEXTURE_CUBE_MAP_ARB;
 #endif
 		m_textureData[i->second.offset].name = ct->getTextureName();
+		m_textureData[i->second.offset].mipCount = 1;
 	}
 	else if (VolumeTextureOpenGL* vt = dynamic_type_cast< VolumeTextureOpenGL* >(texture))
 	{
 		m_textureData[i->second.offset].target = GL_TEXTURE_3D;
 		m_textureData[i->second.offset].name = vt->getTextureName();
+		m_textureData[i->second.offset].mipCount = 1;
 	}
 	else if (RenderTargetOpenGL* rt = dynamic_type_cast< RenderTargetOpenGL* >(texture))
 	{
 		m_textureData[i->second.offset].target = rt->getTextureTarget();
 		m_textureData[i->second.offset].name = rt->getTextureName();
+		m_textureData[i->second.offset].mipCount = 1;
 		rt->getTextureOriginAndScale().storeUnaligned(m_textureData[i->second.offset].offset);
 	}
 
@@ -473,9 +477,26 @@ bool ProgramOpenGL::activate(float targetSize[2])
 
 		T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + i));
 		T_OGL_SAFE(glBindTexture(td.target, td.name));
+		
+		// Override mip filter if texture doesn't have multiple mips.
+		if (td.mipCount > 1)
+		{
+			T_OGL_SAFE(glTexParameteri(td.target, GL_TEXTURE_MIN_FILTER, samplerState.minFilter));
+		}
+		else
+		{
+			if (samplerState.minFilter != GL_NEAREST)
+			{
+				T_OGL_SAFE(glTexParameteri(td.target, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+			}
+			else
+			{
+				T_OGL_SAFE(glTexParameteri(td.target, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
+			}
+		}
 
-		T_OGL_SAFE(glTexParameteri(td.target, GL_TEXTURE_MIN_FILTER, samplerState.minFilter));
 		T_OGL_SAFE(glTexParameteri(td.target, GL_TEXTURE_MAG_FILTER, samplerState.magFilter));
+
 		T_OGL_SAFE(glTexParameteri(td.target, GL_TEXTURE_WRAP_S, samplerState.wrapS));
 		T_OGL_SAFE(glTexParameteri(td.target, GL_TEXTURE_WRAP_T, samplerState.wrapT));
 
