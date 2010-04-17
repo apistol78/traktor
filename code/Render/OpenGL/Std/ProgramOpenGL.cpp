@@ -171,10 +171,11 @@ bool ProgramOpenGL::create(const ProgramResource* resource)
 	}
 
 	// Map texture parameters.
-	const std::vector< SamplerTexture >& samplerTextures = resourceOpenGL->getSamplerTextures();
-	for (std::vector< SamplerTexture >::const_iterator i = samplerTextures.begin(); i != samplerTextures.end(); ++i)
+	const std::map< std::wstring, int32_t >& samplerTextures = resourceOpenGL->getSamplerTextures();
+	for (std::map< std::wstring, int32_t >::const_iterator i = samplerTextures.begin(); i != samplerTextures.end(); ++i)
 	{
-		handle_t handle = getParameterHandle(i->texture);
+		handle_t handle = getParameterHandle(i->first);
+		
 		if (m_parameterMap.find(handle) == m_parameterMap.end())
 		{
 			m_parameterMap[handle].offset = m_textureData.size();
@@ -183,6 +184,17 @@ bool ProgramOpenGL::create(const ProgramResource* resource)
 			m_textureData.back().target = 0;
 			m_textureData.back().name = 0;
 		}
+		
+		std::wstring samplerName = L"_gl_sampler_" + toString(i->second);
+		std::wstring samplerOffset = L"_gl_sampler_" + toString(i->second) + L"_offset";
+		
+		Sampler sampler;
+		sampler.locationTexture = glGetUniformLocationARB(m_program, wstombs(samplerName).c_str());
+		sampler.locationOffset = glGetUniformLocationARB(m_program, wstombs(samplerOffset).c_str());
+		sampler.texture = m_parameterMap[handle].offset;
+		sampler.stage = i->second;
+
+		m_samplers.push_back(sampler);
 	}
 
 	// Map samplers and uniforms.
@@ -198,7 +210,8 @@ bool ProgramOpenGL::create(const ProgramResource* resource)
 		T_OGL_SAFE(glGetActiveUniformARB(m_program, j, sizeof(uniformName), 0, &uniformSize, &uniformType, uniformName));
 		std::wstring uniformNameW = mbstows(uniformName);
 		
-		if (uniformNameW == L"_gl_targetSize")
+		// Skip uniforms which starts with _gl_ as they are private.
+		if (startsWith(uniformNameW, L"_gl_"))
 			continue;
 
 		// Trim indexed uniforms; seems to vary dependending on OGL implementation.
@@ -206,21 +219,7 @@ bool ProgramOpenGL::create(const ProgramResource* resource)
 		if (p != uniformNameW.npos)
 			uniformNameW = uniformNameW.substr(0, p);
 
-		if (uniformType == GL_SAMPLER_2D_ARB)
-		{
-			const std::vector< SamplerTexture >& samplerTextures = resourceOpenGL->getSamplerTextures();
-
-			std::vector< SamplerTexture >::const_iterator it = std::find_if(samplerTextures.begin(), samplerTextures.end(), FindSamplerTexture(uniformNameW));
-			T_ASSERT (it != samplerTextures.end());
-
-			Sampler sampler;
-			sampler.location = glGetUniformLocationARB(m_program, uniformName);
-			sampler.texture = m_parameterMap[getParameterHandle(it->texture)].offset;
-			sampler.stage = uint32_t(std::distance(samplerTextures.begin(), it));
-
-			m_samplers.push_back(sampler);
-		}
-		else
+		if (uniformType != GL_SAMPLER_2D_ARB)
 		{
 			handle_t handle = getParameterHandle(uniformNameW);
 			if (m_parameterMap.find(handle) == m_parameterMap.end())
@@ -372,6 +371,7 @@ void ProgramOpenGL::setTextureParameter(handle_t handle, ITexture* texture)
 	{
 		m_textureData[i->second.offset].target = GL_TEXTURE_2D;
 		m_textureData[i->second.offset].name = st->getTextureName();
+		st->getTextureOriginAndScale().storeUnaligned(m_textureData[i->second.offset].offset);
 	}
 	else if (CubeTextureOpenGL* ct = dynamic_type_cast< CubeTextureOpenGL* >(texture))
 	{
@@ -391,6 +391,7 @@ void ProgramOpenGL::setTextureParameter(handle_t handle, ITexture* texture)
 	{
 		m_textureData[i->second.offset].target = rt->getTextureTarget();
 		m_textureData[i->second.offset].name = rt->getTextureName();
+		rt->getTextureOriginAndScale().storeUnaligned(m_textureData[i->second.offset].offset);
 	}
 
 	m_dirty = true;
@@ -478,7 +479,8 @@ bool ProgramOpenGL::activate(float targetSize[2])
 		T_OGL_SAFE(glTexParameteri(td.target, GL_TEXTURE_WRAP_S, samplerState.wrapS));
 		T_OGL_SAFE(glTexParameteri(td.target, GL_TEXTURE_WRAP_T, samplerState.wrapT));
 
-		T_OGL_SAFE(glUniform1iARB(sampler.location, i));
+		T_OGL_SAFE(glUniform1iARB(sampler.locationTexture, i));
+		T_OGL_SAFE(glUniform4fvARB(sampler.locationOffset, 1, td.offset));
 	}
 
 	ms_activeProgram = this;

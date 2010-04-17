@@ -9,6 +9,51 @@ namespace traktor
 {
 	namespace ui
 	{
+		namespace
+		{
+		
+NSMenu* createNSMenu(ITargetProxyCallback* targetProxyCallback, MenuItem* item)
+{
+	NSMenu* menu = [[NSMenu alloc] initWithTitle: makeNSString(item->getText())];
+	[menu setAutoenablesItems: NO];
+	
+	for (int i = 0; i < item->count(); ++i)
+	{
+		Ref< MenuItem > subItem = item->get(i);
+		
+		if (subItem->getText() != L"-")
+		{
+			NSTargetProxy* targetProxy = [[NSTargetProxy alloc] init];
+			[targetProxy setCallback: targetProxyCallback];
+			
+			NSMenuItem* menuItem = [[NSMenuItem alloc]
+				initWithTitle: makeNSString(subItem->getText())
+				action: nil
+				keyEquivalent: @""
+			];
+			
+			[menuItem setTarget: targetProxy];
+			[menuItem setAction: @selector(dispatchActionCallback:)];
+			[menuItem setRepresentedObject: [[ObjCRef alloc] initWithRef: subItem]];
+			
+			if (subItem->count() > 0)
+			{
+				NSMenu* subMenu = createNSMenu(targetProxyCallback, subItem);
+				[menuItem setSubmenu: subMenu];
+			}
+			
+			[menu addItem: menuItem];
+		}
+		else
+		{
+			[menu addItem: [NSMenuItem separatorItem]];
+		}
+	}
+	
+	return menu;
+}
+		
+		}
 	
 PopupMenuCocoa::PopupMenuCocoa(EventSubject* owner)
 :	m_menu(0)
@@ -47,6 +92,12 @@ void PopupMenuCocoa::add(MenuItem* item)
 		[menuItem setTarget: targetProxy];
 		[menuItem setAction: @selector(dispatchActionCallback:)];
 		[menuItem setRepresentedObject: [[ObjCRef alloc] initWithRef: item]];
+		
+		if (item->count())
+		{
+			NSMenu* subMenu = createNSMenu(this, item);
+			[menuItem setSubmenu: subMenu];
+		}
 		
 		[m_menu addItem: menuItem];
 	}

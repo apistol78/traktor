@@ -56,7 +56,6 @@ UrlConnection::EstablishResult HttpConnection::establish(const Url& url, Url* ou
 	// Send request, UTF-8 encoded.
 	FileOutputStream fos(stream, new Utf8Encoding());
 	fos << ss.str();
-	fos.flush();
 
 	// Accept and parse response from server.
 	HttpResponse response;

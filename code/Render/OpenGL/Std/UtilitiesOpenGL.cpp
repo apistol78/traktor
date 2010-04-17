@@ -61,9 +61,18 @@ bool convertTextureFormat(TextureFormat textureFormat, int& outPixelSize, GLint&
 		outType = GL_UNSIGNED_BYTE;
 		break;
 
+	case TfDXT2:
 	case TfDXT3:
 		outPixelSize = 0;
 		outComponents = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
+		outFormat = GL_RGBA;
+		outType = GL_UNSIGNED_BYTE;
+		break;
+
+	case TfDXT4:
+	case TfDXT5:
+		outPixelSize = 0;
+		outComponents = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
 		outFormat = GL_RGBA;
 		outType = GL_UNSIGNED_BYTE;
 		break;

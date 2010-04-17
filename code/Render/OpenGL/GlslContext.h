@@ -49,9 +49,9 @@ public:
 
 	RenderState& getRenderState();
 
-	uint32_t addSamplerTexture(const std::wstring& samplerName, const std::wstring& textureName);
+	bool defineSamplerTexture(const std::wstring& textureName, int32_t& outStage);
 
-	const std::vector< SamplerTexture >& getSamplerTextures() const;
+	const std::map< std::wstring, int32_t >& getSamplerTextures() const;
 
 private:
 	Ref< const ShaderGraph > m_shaderGraph;
@@ -60,7 +60,8 @@ private:
 	GlslShader* m_currentShader;
 	GlslEmitter m_emitter;
 	RenderState m_renderState;
-	std::vector< SamplerTexture > m_samplerTextures;
+	int32_t m_nextStage;
+	std::map< std::wstring, int32_t > m_samplerTextures;
 };
 
 	}

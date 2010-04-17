@@ -778,16 +778,73 @@ void emitSampler(GlslContext& cx, Sampler* node)
 		return;
 
 	GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat4);
+	
+	int32_t stage;
+	bool defineSampler = cx.defineSamplerTexture(texture->getName(), stage);
 
-	std::wstring textureName = texture->getName();
-	std::wstring samplerName = out->getName() + L"_samplerState";
+	std::wstring samplerName = L"_gl_sampler_" + toString(stage);
+	std::wstring samplerOffset = L"_gl_sampler_" + toString(stage) + L"_offset";
+	
+	if (defineSampler)
+	{
+		// \fixme We only define a sampler based on texture name, we
+		// should also consider sampler state.
+	
+		StringOutputStream& fu = cx.getShader().getOutputStream(GlslShader::BtUniform);
+		switch (node->getLookup())
+		{
+		case Sampler::LuSimple:
+			fu << L"uniform sampler2D " << samplerName << L";" << Endl;
+			fu << L"uniform vec4 " << samplerOffset << L";" << Endl;
+			break;
+
+		case Sampler::LuCube:
+			fu << L"uniform samplerCube " << samplerName << L";" << Endl;
+			break;
+
+		case Sampler::LuVolume:
+			fu << L"uniform sampler3D " << samplerName << L";" << Endl;
+			break;
+		}
+
+		RenderState& rs = cx.getRenderState();
+
+		if (cx.inFragment())
+		{
+			bool minLinear = node->getMinFilter() != Sampler::FtPoint;
+			bool mipLinear = node->getMipFilter() != Sampler::FtPoint;
+
+			if (!minLinear && !mipLinear)
+				rs.samplerStates[stage].minFilter = GL_NEAREST;
+			else if (!minLinear && mipLinear)
+				rs.samplerStates[stage].minFilter = GL_NEAREST_MIPMAP_LINEAR;
+			else if (minLinear && !mipLinear)
+				rs.samplerStates[stage].minFilter = GL_LINEAR_MIPMAP_NEAREST;
+			else
+				rs.samplerStates[stage].minFilter = GL_LINEAR_MIPMAP_LINEAR;
+
+			rs.samplerStates[stage].magFilter = c_glFilter[node->getMagFilter()];
+			rs.samplerStates[stage].wrapS = c_glWrap[node->getAddressU()];
+			rs.samplerStates[stage].wrapT = c_glWrap[node->getAddressV()];
+		}
+		else
+		{
+			rs.samplerStates[stage].minFilter = GL_NEAREST;
+			rs.samplerStates[stage].magFilter = GL_NEAREST;
+			rs.samplerStates[stage].wrapS = GL_REPEAT;
+			rs.samplerStates[stage].wrapT = GL_REPEAT;
+		}
+	}
 
 	if (cx.inFragment())
 	{
 		switch (node->getLookup())
 		{
 		case Sampler::LuSimple:
-			assign(f, out) << L"texture2D(" << samplerName << L", " << texCoord->cast(GtFloat2) << L" * vec2(1.0, -1.0) + vec2(0.0, 1.0));" << Endl;
+			{
+				std::wstring texCoordOffset = texCoord->cast(GtFloat2) + L" * " + samplerOffset + L".zw + " + samplerOffset + L".xy";
+				assign(f, out) << L"texture2D(" << samplerName << L", " << texCoordOffset << L");" << Endl;
+			}
 			break;
 
 		case Sampler::LuCube:
@@ -799,12 +856,16 @@ void emitSampler(GlslContext& cx, Sampler* node)
 			break;
 		}
 	}
+	
 	if (cx.inVertex())
 	{
 		switch (node->getLookup())
 		{
 		case Sampler::LuSimple:
-			assign(f, out) << L"texture2DLod(" << samplerName << L", " << texCoord->cast(GtFloat2) << L");" << Endl;
+			{
+				std::wstring texCoordOffset = texCoord->cast(GtFloat2) + L" * " + samplerOffset + L".xy + " + samplerOffset + L".zw";
+				assign(f, out) << L"texture2DLod(" << samplerName << L", " << texCoordOffset << L");" << Endl;
+			}
 			break;
 
 		case Sampler::LuCube:
@@ -815,52 +876,6 @@ void emitSampler(GlslContext& cx, Sampler* node)
 			assign(f, out) << L"texture3DLod(" << samplerName << L", " << texCoord->cast(GtFloat3) << L");" << Endl;
 			break;
 		}
-	}
-
-	uint32_t stage = cx.addSamplerTexture(samplerName, textureName);
-
-	StringOutputStream& fu = cx.getShader().getOutputStream(GlslShader::BtUniform);
-	switch (node->getLookup())
-	{
-	case Sampler::LuSimple:
-		fu << L"uniform sampler2D " << samplerName << L";" << Endl;
-		break;
-
-	case Sampler::LuCube:
-		fu << L"uniform samplerCube " << samplerName << L";" << Endl;
-		break;
-
-	case Sampler::LuVolume:
-		fu << L"uniform sampler3D " << samplerName << L";" << Endl;
-		break;
-	}
-
-	RenderState& rs = cx.getRenderState();
-
-	if (cx.inFragment())
-	{
-		bool minLinear = node->getMinFilter() != Sampler::FtPoint;
-		bool mipLinear = node->getMipFilter() != Sampler::FtPoint;
-
-		if (!minLinear && !mipLinear)
-			rs.samplerStates[stage].minFilter = GL_NEAREST;
-		else if (!minLinear && mipLinear)
-			rs.samplerStates[stage].minFilter = GL_NEAREST_MIPMAP_LINEAR;
-		else if (minLinear && !mipLinear)
-			rs.samplerStates[stage].minFilter = GL_LINEAR_MIPMAP_NEAREST;
-		else
-			rs.samplerStates[stage].minFilter = GL_LINEAR_MIPMAP_LINEAR;
-
-		rs.samplerStates[stage].magFilter = c_glFilter[node->getMagFilter()];
-		rs.samplerStates[stage].wrapS = c_glWrap[node->getAddressU()];
-		rs.samplerStates[stage].wrapT = c_glWrap[node->getAddressV()];
-	}
-	else
-	{
-		rs.samplerStates[stage].minFilter = GL_NEAREST;
-		rs.samplerStates[stage].magFilter = GL_NEAREST;
-		rs.samplerStates[stage].wrapS = GL_REPEAT;
-		rs.samplerStates[stage].wrapT = GL_REPEAT;
 	}
 }
 

@@ -38,8 +38,6 @@ public:
 
 	OutputStream(IOutputStreamBuffer* buffer = 0, LineEnd lineEnd = LeAuto);
 
-	virtual ~OutputStream();
-
 	void setBuffer(IOutputStreamBuffer* buffer);
 
 	IOutputStreamBuffer* getBuffer() const;
@@ -82,23 +80,20 @@ public:
 
 	void puts(const wchar_t* s);
 
-	void flush();
+	int32_t getIndent() const;
 
-	int getIndent() const;
-
-	void setIndent(int indentCount);
+	void setIndent(int32_t indent);
 
 	void increaseIndent();
 
 	void decreaseIndent();
+	
+	bool isEol(wchar_t ch) const;
 
 private:
-	Semaphore m_lock;
 	Ref< IOutputStreamBuffer > m_buffer;
 	LineEnd m_lineEnd;
-	std::vector< wchar_t > m_indent;
-	bool m_pushIndent;
-	std::vector< wchar_t > m_internal;
+	int32_t m_indent;
 };
 
 /*! \brief Character stream operator.

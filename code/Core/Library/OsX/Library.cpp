@@ -29,15 +29,22 @@ bool Library::open(const Path& libraryName, const std::vector< Path >& searchPat
 		std::string tmp1 = wstombs(library);
 		m_handle = dlopen(tmp1.c_str(), RTLD_LAZY | RTLD_GLOBAL);
 		if (m_handle)
+		{
+			log::debug << L"Library \"@executable_path/" << resolved << L".dylib\" loaded" << Endl;
 			return true;
+		}
 	}
+	
 	// Try default paths second.
 	{
 		std::wstring library = resolved + L".dylib";
 		std::string tmp1 = wstombs(library);
 		m_handle = dlopen(tmp1.c_str(), RTLD_LAZY | RTLD_GLOBAL);
 		if (m_handle)
+		{
+			log::debug << L"Library \"" << resolved << L".dylib\" loaded" << Endl;
 			return true;
+		}
 	}
 	
 	log::error << L"Unable to open library, " << mbstows(dlerror()) << Endl;

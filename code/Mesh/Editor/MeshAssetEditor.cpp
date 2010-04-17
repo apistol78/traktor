@@ -13,6 +13,7 @@
 #include "I18N/Text.h"
 #include "Ui/MethodHandler.h"
 #include "Ui/TableLayout.h"
+#include "Ui/CheckBox.h"
 #include "Ui/Container.h"
 #include "Ui/DropDown.h"
 #include "Ui/ListView.h"
@@ -111,6 +112,13 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	m_dropMeshType->add(i18n::Text(L"MESHASSET_EDITOR_MESH_TYPE_SKINNED"));
 	m_dropMeshType->add(i18n::Text(L"MESHASSET_EDITOR_MESH_TYPE_STATIC"));
 	m_dropMeshType->add(i18n::Text(L"MESHASSET_EDITOR_MESH_TYPE_STREAM"));
+	
+	Ref< ui::Static > staticDummy = new ui::Static();
+	staticDummy->create(containerFile, L"");
+	
+	m_checkBakeOcclusion = new ui::CheckBox();
+	if (!m_checkBakeOcclusion->create(containerFile, i18n::Text(L"MESHASSET_EDITOR_BAKE_OCCLUSION")))
+		return false;
 
 	m_containerMaterials = new ui::Container();
 	if (!m_containerMaterials->create(container, ui::WsClientBorder, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
@@ -147,6 +155,7 @@ void MeshAssetEditor::apply()
 {
 	m_asset->setFileName(m_editFileName->getText());
 	m_asset->setMeshType(MeshAsset::MeshType(m_dropMeshType->getSelected() + 1));
+	m_asset->setBakeOcclusion(m_checkBakeOcclusion->isChecked());
 
 	std::map< std::wstring, Guid > materialShaders;
 
@@ -188,6 +197,7 @@ void MeshAssetEditor::updateFile()
 
 	m_editFileName->setText(assetRelPath.getPathName());
 	m_dropMeshType->select(m_asset->getMeshType() - 1);
+	m_checkBakeOcclusion->setChecked(m_asset->getBakeOcclusion());
 }
 
 void MeshAssetEditor::updateMaterialList()

@@ -96,7 +96,12 @@ int DynamicMemoryStream::write(const void* block, int nbytes)
 		return 0;
 
 	size_t org = m_buffer.size();
-	m_buffer.resize(org + nbytes);
+	size_t nsz = org + nbytes;
+	
+	if (nsz > m_buffer.capacity())
+		m_buffer.reserve(std::max< size_t >(nsz * 2, 128));
+	
+	m_buffer.resize(nsz);
 	std::memcpy(&m_buffer[org], block, nbytes);
 
 	return nbytes;

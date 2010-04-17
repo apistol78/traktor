@@ -20,7 +20,6 @@ StringOutputStream::~StringOutputStream()
 {
 	T_EXCEPTION_GUARD_BEGIN
 
-	flush();
 	setBuffer(0);
 
 	T_EXCEPTION_GUARD_END
@@ -28,14 +27,11 @@ StringOutputStream::~StringOutputStream()
 
 bool StringOutputStream::empty()
 {
-	flush();
 	return m_buffer.m_internal.empty();
 }
 
 std::wstring StringOutputStream::str()
 {
-	flush();
-
 	if (m_buffer.m_internal.empty())
 		return std::wstring();
 

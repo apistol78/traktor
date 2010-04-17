@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_MESH_EDITOR_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -24,6 +24,7 @@ class IEditor;
 	{
 
 class Container;
+class CheckBox;
 class DropDown;
 class Edit;
 class Event;
@@ -64,6 +65,7 @@ private:
 	Ref< ui::Edit > m_editFileName;
 	Ref< ui::Container > m_containerMaterials;
 	Ref< ui::DropDown > m_dropMeshType;
+	Ref< ui::CheckBox > m_checkBakeOcclusion;
 	Ref< ui::ListView > m_materialList;
 	std::wstring m_assetPath;
 

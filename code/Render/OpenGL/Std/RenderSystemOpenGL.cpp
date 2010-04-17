@@ -20,6 +20,7 @@
 
 #if defined(__APPLE__)
 #	include "Render/OpenGL/Std/OsX/CGLWrapper.h"
+#	include "Render/OpenGL/Std/OsX/CGLWindow.h"
 #endif
 
 namespace traktor
@@ -33,6 +34,8 @@ RenderSystemOpenGL::RenderSystemOpenGL()
 #if defined(_WIN32)
 :	m_hWndShared(NULL)
 ,	m_hWnd(NULL)
+#elif defined(__APPLE__)
+:	m_windowHandle(0)
 #endif
 {
 }
@@ -182,6 +185,14 @@ bool RenderSystemOpenGL::create(const RenderSystemCreateDesc& desc)
 
 void RenderSystemOpenGL::destroy()
 {
+#if defined(__APPLE__)
+	if (m_windowHandle)
+	{
+		cglwDestroyWindow(m_windowHandle);
+		m_windowHandle = 0;
+	}
+#endif
+
 	if (m_globalContext)
 	{
 		m_globalContext->destroy();
@@ -271,6 +282,14 @@ bool RenderSystemOpenGL::handleMessages()
 	}
 
 	return going;
+
+#elif defined(__APPLE__)
+
+	if (!m_windowHandle)
+		return false;
+		
+	cglwUpdateWindow(m_windowHandle);
+	return true;
 
 #else
 	return true;
@@ -365,6 +384,29 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 	m_globalContext->share(context);
 
 	return new RenderViewOpenGL(context, m_globalContext, m_hWnd);
+
+#elif defined(__APPLE__)
+
+	m_windowHandle = cglwCreateWindow(L"Traktor OpenGL Renderer", desc.displayMode.width, desc.displayMode.height);
+	if (!m_windowHandle)
+		return 0;
+		
+	void* viewHandle = cglwGetWindowView(m_windowHandle);
+	T_ASSERT (viewHandle);
+		
+	void* glcontext = cglwCreateContext(
+		viewHandle,
+		m_globalContext->getGLContext(),
+		desc.depthBits,
+		desc.stencilBits,
+		desc.multiSample
+	);
+	if (!glcontext)
+		return 0;
+
+	Ref< ContextOpenGL > context = new ContextOpenGL(glcontext);
+
+	return new RenderViewOpenGL(context, m_globalContext);
 
 #else
 	return 0;

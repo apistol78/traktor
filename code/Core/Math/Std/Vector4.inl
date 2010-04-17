@@ -18,16 +18,15 @@ inline bool compare(float e1, float e2)
 
 	}
 
-#if !defined(NDEBUG)
-#   define VALIDATE(v) \
-	T_ASSERT (!isNan((v)._x) && !isInfinite((v)._x)); \
-	T_ASSERT (!isNan((v)._y) && !isInfinite((v)._y)); \
-	T_ASSERT (!isNan((v)._z) && !isInfinite((v)._z)); \
-	T_ASSERT (!isNan((v)._w) && !isInfinite((v)._w));
-
-#else
+//#if !defined(NDEBUG)
+//#   define VALIDATE(v) \
+//	T_ASSERT (!isNan((v)._x) && !isInfinite((v)._x)); \
+//	T_ASSERT (!isNan((v)._y) && !isInfinite((v)._y)); \
+//	T_ASSERT (!isNan((v)._z) && !isInfinite((v)._z)); \
+//	T_ASSERT (!isNan((v)._w) && !isInfinite((v)._w));
+//#else
 #   define VALIDATE(v)
-#endif
+//#endif
 
 T_MATH_INLINE Vector4::Vector4()
 #if defined(_DEBUG)
