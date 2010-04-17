@@ -84,6 +84,7 @@ void ContextOpenGL::update()
 	m_height = int32_t(rc.bottom - rc.top);
 #elif defined(__APPLE__)
 	cglwUpdate(m_context);
+	cglwGetSize(m_context, m_width, m_height);
 #endif
 }
 

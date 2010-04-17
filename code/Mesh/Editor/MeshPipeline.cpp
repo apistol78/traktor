@@ -23,6 +23,7 @@
 #include "Mesh/Editor/Static/StaticMeshConverter.h"
 #include "Mesh/Editor/Stream/StreamMeshConverter.h"
 #include "Model/Model.h"
+#include "Model/Utilities.h"
 #include "Model/Formats/ModelFormat.h"
 #include "Render/Shader/External.h"
 #include "Render/Shader/Nodes.h"
@@ -215,6 +216,12 @@ bool MeshPipeline::buildOutput(
 		{
 			log::error << L"Mesh pipeline failed; unable to read source model (" << path.getPathName() << L")" << Endl;
 			return false;
+		}
+
+		if (asset->getBakeOcclusion())
+		{
+			log::info << L"Baking occlusion..." << Endl;
+			model::bakeVertexOcclusion(*model);
 		}
 
 		const std::vector< model::Material >& modelMaterials = model->getMaterials();

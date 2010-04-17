@@ -4,6 +4,8 @@
 #include "Core/Math/Const.h"
 #include "Core/Math/Triangulator.h"
 #include "Core/Math/Plane.h"
+#include "Core/Math/RandomGeometry.h"
+#include "Core/Math/Winding.h"
 #include "Core/Log/Log.h"
 #include "Model/ContainerHelpers.h"
 #include "Model/Model.h"
@@ -612,6 +614,70 @@ void flattenDoubleSided(Model& model)
 	for (std::vector< Material >::iterator i = materials.begin(); i != materials.end(); ++i)
 		i->setDoubleSided(false);
 	model.setMaterials(materials);
+}
+
+void bakeVertexOcclusion(Model& model)
+{
+	RandomGeometry rnd;
+
+	const std::vector< Polygon >& polygons = model.getPolygons();
+	std::vector< Vertex > vertices = model.getVertices();
+	
+	AlignedVector< Vector4 > colors = model.getColors();
+	model.clear(Model::CfColors);
+	
+	AlignedVector< Winding > windings;
+	for (std::vector< Polygon >::const_iterator i = polygons.begin(); i != polygons.end(); ++i)
+	{
+		Winding w;
+
+		// Initialize winding from polygon.
+		const std::vector< uint32_t >& vertexIndices = i->getVertices();
+		for (std::vector< uint32_t >::const_iterator j = vertexIndices.begin(); j != vertexIndices.end(); ++j)
+		{
+			const Vertex& polyVertex = model.getVertex(*j);
+			const Vector4& polyVertexPosition = model.getPosition(polyVertex.getPosition());
+			w.points.push_back(polyVertexPosition);
+		}
+		
+		windings.push_back(w);
+	}
+	
+	for (std::vector< Vertex >::iterator i = vertices.begin(); i != vertices.end(); ++i)
+	{
+		const Vector4& position = model.getPosition(i->getPosition());
+		const Vector4& normal = model.getNormal(i->getNormal());
+		
+		uint32_t occluded = 0;
+		for (uint32_t j = 0; j < 64; ++j)
+		{
+			Vector4 rayDirection = rnd.nextHemi(normal).xyz0();
+			Vector4 rayOrigin = (position + normal * Scalar(0.01f)).xyz1();
+		
+			for (AlignedVector< Winding >::const_iterator k = windings.begin(); k != windings.end(); ++k)
+			{
+				Scalar K;
+				if (k->rayIntersection(rayOrigin, rayDirection, K))
+				{
+					occluded++;
+					break;
+				}
+			}
+		}
+		
+		Vector4 color = Vector4::one();
+		
+		if (i->getColor() != c_InvalidIndex)
+			color = colors[i->getColor()];
+			
+		color.set(3, Scalar(
+			1.0f - occluded / 64.0f
+		));
+		
+		i->setColor(model.addUniqueColor(color));
+	}
+	
+	model.setVertices(vertices);
 }
 
 	}

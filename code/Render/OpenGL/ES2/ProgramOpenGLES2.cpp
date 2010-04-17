@@ -415,10 +415,11 @@ bool ProgramOpenGLES2::createFromSource(const ProgramResource* resource)
 	m_postOrientationCoeffs = glGetUniformLocation(m_program, "t_internal_postOrientationCoeffs");
 
 	// Map texture parameters.
-	const std::vector< SamplerTexture >& samplerTextures = resourceOpenGL->getSamplerTextures();
-	for (std::vector< SamplerTexture >::const_iterator i = samplerTextures.begin(); i != samplerTextures.end(); ++i)
+	const std::map< std::wstring, int32_t >& samplerTextures = resourceOpenGL->getSamplerTextures();
+	for (std::map< std::wstring, int32_t >::const_iterator i = samplerTextures.begin(); i != samplerTextures.end(); ++i)
 	{
-		handle_t handle = getParameterHandle(i->texture);
+		handle_t handle = getParameterHandle(i->first);
+		
 		if (m_parameterMap.find(handle) == m_parameterMap.end())
 		{
 			m_parameterMap[handle] = m_textureData.size();
@@ -427,6 +428,15 @@ bool ProgramOpenGLES2::createFromSource(const ProgramResource* resource)
 			m_textureData.back().target = 0;
 			m_textureData.back().name = 0;
 		}
+		
+		std::wstring samplerName = L"sampler_" + toString(i->second);
+		
+		Sampler sampler;
+		sampler.location = glGetUniformLocation(m_program, wstombs(samplerName).c_str());
+		sampler.texture = m_parameterMap[handle];
+		sampler.stage = i->second;
+
+		m_samplers.push_back(sampler);
 	}
 
 	// Map samplers and uniforms.
@@ -449,21 +459,7 @@ bool ProgramOpenGLES2::createFromSource(const ProgramResource* resource)
 		if (uniformNameW.empty())
 			continue;
 
-		if (uniformType == GL_SAMPLER_2D)
-		{
-			const std::vector< SamplerTexture >& samplerTextures = resourceOpenGL->getSamplerTextures();
-
-			std::vector< SamplerTexture >::const_iterator it = std::find_if(samplerTextures.begin(), samplerTextures.end(), FindSamplerTexture(uniformNameW));
-			T_ASSERT (it != samplerTextures.end());
-
-			Sampler sampler;
-			sampler.location = glGetUniformLocation(m_program, uniformName);
-			sampler.texture = m_parameterMap[getParameterHandle(it->texture)];
-			sampler.stage = uint32_t(std::distance(samplerTextures.begin(), it));
-
-			m_samplers.push_back(sampler);
-		}
-		else
+		if (uniformType != GL_SAMPLER_2D)
 		{
 			handle_t handle = getParameterHandle(uniformNameW);
 			if (m_parameterMap.find(handle) == m_parameterMap.end())

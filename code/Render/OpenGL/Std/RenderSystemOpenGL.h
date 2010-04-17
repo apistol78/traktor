@@ -72,6 +72,10 @@ private:
 
 	static LRESULT wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
+#elif defined(__APPLE__)
+
+	void* m_windowHandle;
+
 #endif
 
 	Ref< ContextOpenGL > m_globalContext;

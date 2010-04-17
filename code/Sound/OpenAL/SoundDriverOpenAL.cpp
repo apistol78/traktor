@@ -30,7 +30,7 @@ void writeSamples(
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.SoundDriverOpenAL", SoundDriverOpenAL, ISoundDriver)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundDriverOpenAL", 0, SoundDriverOpenAL, ISoundDriver)
 
 SoundDriverOpenAL::SoundDriverOpenAL()
 :	m_device(0)
@@ -43,7 +43,7 @@ SoundDriverOpenAL::SoundDriverOpenAL()
 		m_buffers[i] = 0;
 }
 
-bool SoundDriverOpenAL::create(const SoundDriverCreateDesc& desc)
+bool SoundDriverOpenAL::create(const SoundDriverCreateDesc& desc, Ref< ISoundMixer >& outMixer)
 {
 	const ALuint c_formats[][2] =
 	{

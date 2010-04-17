@@ -13,7 +13,6 @@ FileOutputStream::FileOutputStream(IStream* stream, IEncoding* encoding, LineEnd
 
 void FileOutputStream::close()
 {
-	flush();
 	static_cast< FileOutputStreamBuffer* >(getBuffer())->close();
 }
 

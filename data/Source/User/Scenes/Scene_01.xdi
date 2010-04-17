@@ -11,7 +11,7 @@
 		<shadowMapResolution>1024</shadowMapResolution>
 		<shadowMapBias>0.001</shadowMapBias>
 	</worldRenderSettings>
-	<postProcessSettings/>
+	<postProcessSettings>{9F3FB638-1C8D-EE46-B29A-42DFE6876DDA}</postProcessSettings>
 	<entityData type="traktor.world.GroupEntityData">
 		<name>Root</name>
 		<entityData>

@@ -821,6 +821,10 @@
 			<first>MENU_VIEW_PROPERTIES</first>
 			<second>Egenskaper</second>
 		</item>
+	<item>
+		<first>MESHASSET_EDITOR_BAKE_OCCLUSION</first>
+		<second>Baka skuggning</second>
+	</item>
     <item>
       <first>MESHASSET_WIZARDTOOL_DESCRIPTION</first>
       <second>Skapa mesh asset...</second>

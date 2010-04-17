@@ -10,6 +10,8 @@ void* cglwCreateContext(void* nativeWindowHandle, void* sharedContext, int depth
 
 void cglwUpdate(void* context);
 
+void cglwGetSize(void* context, int32_t& outWidth, int32_t& outHeight);
+
 bool cglwMakeCurrent(void* context);
 
 void cglwSwapBuffers(void* context);

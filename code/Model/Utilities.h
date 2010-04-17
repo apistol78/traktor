@@ -74,8 +74,15 @@ void T_DLLCLASS cleanDuplicates(Model& model);
  * \ingroup Model
  *
  * \param model Source model.
-  */
+ */
 void T_DLLCLASS flattenDoubleSided(Model& model);
+
+/*! \brief Bake vertex occlusion.
+ * \ingroup Model
+ *
+ * \param model Source model.
+ */
+void T_DLLCLASS bakeVertexOcclusion(Model& model);
 
 	}
 }

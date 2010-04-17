@@ -9,7 +9,7 @@ namespace traktor
 	namespace
 	{
 
-const size_t c_flushInternalBufferSize = 16;
+const wchar_t c_indents[] = L"\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t";
 
 template < typename T, int size, int base >
 wchar_t* uitoa__(T value, wchar_t* buf)
@@ -146,7 +146,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.OutputStream", OutputStream, Object);
 OutputStream::OutputStream(IOutputStreamBuffer* buffer, LineEnd lineEnd)
 :	m_buffer(buffer)
 ,	m_lineEnd(lineEnd)
-,	m_pushIndent(false)
+,	m_indent(0)
 {
 	if (m_lineEnd == LeAuto)
 	{
@@ -156,15 +156,6 @@ OutputStream::OutputStream(IOutputStreamBuffer* buffer, LineEnd lineEnd)
 		m_lineEnd = LeUnix;
 #endif
 	}
-}
-
-OutputStream::~OutputStream()
-{
-	T_EXCEPTION_GUARD_BEGIN
-
-	flush();
-
-	T_EXCEPTION_GUARD_END
 }
 
 void OutputStream::setBuffer(IOutputStreamBuffer* buffer)
@@ -288,16 +279,57 @@ OutputStream& OutputStream::operator << (const std::wstring& s)
 
 void OutputStream::put(wchar_t ch)
 {
-	Acquire< Semaphore > lock(m_lock);
+	m_buffer->overflow(&ch, 1);
+	if (m_indent > 0 && isEol(ch))
+		m_buffer->overflow(&c_indents[m_indent], m_indent);
+}
 
-	if (m_pushIndent && !m_indent.empty())
+void OutputStream::puts(const wchar_t* s)
+{
+	if (s)
 	{
-		m_pushIndent = false;
-		m_internal.insert(m_internal.end(), m_indent.begin(), m_indent.end());
+		uint32_t x = 0;
+		while (s[x])
+		{
+			if (m_indent > 0 && isEol(s[x]))
+			{
+				m_buffer->overflow(s, x + 1);
+				m_buffer->overflow(&c_indents[m_indent], m_indent);
+				s += x + 1;
+				x = 0;
+			}
+			else
+				++x;
+		}
+		if (x > 0 && *s != 0)
+			m_buffer->overflow(s, x);
 	}
+}
 
-	m_internal.push_back(ch);
+int32_t OutputStream::getIndent() const
+{
+	return m_indent;
+}
 
+void OutputStream::setIndent(int32_t indent)
+{
+	m_indent = indent;
+}
+
+void OutputStream::increaseIndent()
+{
+	if (m_indent < sizeof_array(c_indents))
+		m_indent++;
+}
+
+void OutputStream::decreaseIndent()
+{
+	if (m_indent > 0)
+		m_indent--;
+}
+
+bool OutputStream::isEol(wchar_t ch) const
+{
 	bool eol = false;
 	switch (m_lineEnd)
 	{
@@ -310,57 +342,7 @@ void OutputStream::put(wchar_t ch)
 		eol = bool(ch == L'\r');
 		break;
 	}
-
-	if (m_internal.size() >= c_flushInternalBufferSize || eol)
-		flush();
-
-	if (eol)
-		m_pushIndent = true;
-}
-
-void OutputStream::puts(const wchar_t* s)
-{
-	if (s)
-	{
-		Acquire< Semaphore > lock(m_lock);
-		while (*s)
-			put(*s++);
-	}
-}
-
-void OutputStream::flush()
-{
-	Acquire< Semaphore > lock(m_lock);
-	if (!m_internal.empty())
-	{
-		if (m_buffer)
-			m_buffer->overflow(&m_internal[0], uint32_t(m_internal.size()));
-		m_internal.resize(0);
-	}
-}
-
-int OutputStream::getIndent() const
-{
-	return int(m_indent.size());
-}
-
-void OutputStream::setIndent(int indentCount)
-{
-	Acquire< Semaphore > lock(m_lock);
-	m_indent = std::vector< wchar_t >(indentCount, L'\t');
-}
-
-void OutputStream::increaseIndent()
-{
-	Acquire< Semaphore > lock(m_lock);
-	m_indent.push_back(L'\t');
-}
-
-void OutputStream::decreaseIndent()
-{
-	Acquire< Semaphore > lock(m_lock);
-	if (!m_indent.empty())
-		m_indent.pop_back();
+	return eol;
 }
 
 OutputStream& operator << (OutputStream& os, wchar_t ch)

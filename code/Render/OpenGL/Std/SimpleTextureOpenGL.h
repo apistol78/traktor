@@ -1,16 +1,17 @@
 #ifndef traktor_render_SimpleTextureOpenGL_H
 #define traktor_render_SimpleTextureOpenGL_H
 
+#include "Core/Math/Vector4.h"
+#include "Core/Misc/AutoPtr.h"
 #include "Render/ISimpleTexture.h"
 #include "Render/Types.h"
-#include "Core/Math/Vector4.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RENDER_OPENGL_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -62,7 +63,7 @@ private:
 	GLenum m_format;
 	GLenum m_type;
 	uint32_t m_mipCount;
-	std::vector< uint8_t > m_data;
+	AutoArrayPtr< uint8_t > m_data;
 };
 		
 	}

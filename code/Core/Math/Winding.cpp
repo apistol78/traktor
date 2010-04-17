@@ -1,6 +1,7 @@
-#include "Core/Math/Winding.h"
-#include "Core/Math/Float.h"
 #include "Core/Math/Const.h"
+#include "Core/Math/Float.h"
+#include "Core/Math/Vector2.h"
+#include "Core/Math/Winding.h"
 
 namespace traktor
 {
@@ -120,6 +121,83 @@ int Winding::classify(const Plane& plane) const
 
 	T_ASSERT (side[CfFront] && side[CfBack]);
 	return CfSpan;
+}
+
+bool Winding::rayIntersection(
+	const Vector4& origin,
+	const Vector4& direction,
+	Scalar& outK,
+	Vector4* outPoint
+) const
+{
+	Plane plane;
+	Vector4 p;
+	
+	if (!getPlane(plane))
+		return false;
+	
+	if (!plane.rayIntersection(origin, direction, outK, &p))
+		return false;
+		
+	Vector4 normal = plane.normal();
+	int32_t major = majorAxis3(normal);
+		
+	// Use maximum axis to determine projection plane.
+	Vector4 u(0.0f, 0.0f, 0.0f), v(0.0f, 0.0f, 0.0f);
+	if (major == 0)	// X
+	{
+		u = normal.x() > 0.0f ? Vector4(0.0f, 0.0f, -1.0f) : Vector4(0.0f, 0.0f, 1.0f);
+		v = Vector4(0.0f, 1.0f, 0.0f);
+	}
+	else if (major == 1)	// Y
+	{
+		u = normal.y() > 0.0f ? Vector4(0.0f, 0.0f, 1.0f) : Vector4(0.0f, 0.0f, -1.0f);
+		v = Vector4(1.0f, 0.0f, 0.0f);
+	}
+	else if (major == 2)	// Z
+	{
+		u = normal.z() > 0.0f ? Vector4(1.0f, 0.0f, 0.0f) : Vector4(-1.0f, 0.0f, 0.0f);
+		v = Vector4(0.0f, 1.0f, 0.0f);
+	}
+
+	// Project all points onto 2d plane.
+	AlignedVector< Vector2 > projected(points.size());
+	for (size_t i = 0; i < points.size(); ++i)
+	{
+		projected[i].x = dot3(u, points[i]);
+		projected[i].y = dot3(v, points[i]);
+	}
+	
+	// Use odd-even rule to determine if point is in polygon.
+	Vector2 pnt(
+		dot3(u, p),
+		dot3(v, p)
+	);
+	
+	bool pass = false;
+	for (size_t i = 0, j = points.size() - 1; i < points.size(); j = i++)
+	{
+		float dx = projected[j].x - projected[i].x;
+		float dy = projected[j].y - projected[i].y;
+		
+		if (abs(dy) <= FUZZY_EPSILON)
+			continue;
+		
+		float x = projected[i].x + dx * (pnt.y - projected[i].y) / dy;
+		if (
+			((projected[i].y > pnt.y) != (projected[j].y > pnt.y)) &&
+			(pnt.x < x)
+		)
+			pass = !pass;
+	}
+	
+	if (!pass)
+		return false;
+	
+	if (outPoint)
+		*outPoint = p;
+
+	return true;
 }
 
 }

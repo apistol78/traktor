@@ -61,7 +61,7 @@ bool SimpleTextureOpenGL::create(const SimpleTextureCreateDesc& desc)
 
 	// Allocate data buffer.
 	uint32_t texturePitch = getTextureMipPitch(desc.format, desc.width, desc.height);
-	m_data.resize(texturePitch);
+	m_data.reset(new uint8_t [texturePitch]);
 
 	if (desc.immutable)
 	{
@@ -155,11 +155,11 @@ int SimpleTextureOpenGL::getDepth() const
 
 bool SimpleTextureOpenGL::lock(int level, Lock& lock)
 {
-	if (m_data.empty())
+	if (!m_data.ptr())
 		return false;
 
 	lock.pitch = (m_width >> level) * m_pixelSize;
-	lock.bits = &m_data[0];
+	lock.bits = m_data.ptr();
 	return true;
 }
 
@@ -170,14 +170,14 @@ void SimpleTextureOpenGL::unlock(int level)
 	T_OGL_SAFE(glBindTexture(GL_TEXTURE_2D, m_textureName));
 	T_OGL_SAFE(glTexImage2D(
 		GL_TEXTURE_2D,
-		0,
+		level,
 		m_components,
 		m_width >> level,
 		m_height >> level,
 		0,
 		m_format,
 		m_type,
-		&m_data[0]
+		m_data.c_ptr()
 	));
 }
 

@@ -116,7 +116,6 @@ bool Document::saveIntoStream(IStream* stream)
 	if (m_docElement)
 		m_docElement->write(os);
 
-	os.flush();
 	return true;
 }
 

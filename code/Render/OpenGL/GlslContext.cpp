@@ -16,6 +16,7 @@ GlslContext::GlslContext(const ShaderGraph* shaderGraph)
 ,	m_vertexShader(GlslShader::StVertex)
 ,	m_fragmentShader(GlslShader::StFragment)
 ,	m_currentShader(0)
+,	m_nextStage(0)
 {
 }
 
@@ -101,14 +102,22 @@ RenderState& GlslContext::getRenderState()
 	return m_renderState;
 }
 
-uint32_t GlslContext::addSamplerTexture(const std::wstring& samplerName, const std::wstring& textureName)
+bool GlslContext::defineSamplerTexture(const std::wstring& textureName, int32_t& outStage)
 {
-	SamplerTexture st = { samplerName, textureName };
-	m_samplerTextures.push_back(st);
-	return uint32_t(m_samplerTextures.size() - 1);
+	std::map< std::wstring, int32_t >::iterator i = m_samplerTextures.find(textureName);
+	if (i != m_samplerTextures.end())
+	{
+		outStage = i->second;
+		return false;
+	}
+
+	outStage = m_nextStage++;
+	m_samplerTextures.insert(std::make_pair(textureName, outStage));
+
+	return true;
 }
 
-const std::vector< SamplerTexture >& GlslContext::getSamplerTextures() const
+const std::map< std::wstring, int32_t >& GlslContext::getSamplerTextures() const
 {
 	return m_samplerTextures;
 }

@@ -3,15 +3,15 @@
 
 #include <OpenAL/al.h>
 #include <OpenAL/alc.h>
-#include "Sound/ISoundDriver.h"
 #include "Core/Misc/AutoPtr.h"
+#include "Sound/ISoundDriver.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_SOUND_OPENAL_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -29,7 +29,7 @@ class T_DLLCLASS SoundDriverOpenAL : public ISoundDriver
 public:
 	SoundDriverOpenAL();
 	
-	virtual bool create(const SoundDriverCreateDesc& desc);
+	virtual bool create(const SoundDriverCreateDesc& desc, Ref< ISoundMixer >& outMixer);
 	
 	virtual void destroy();
 	
@@ -42,7 +42,7 @@ private:
 	ALCcontext* m_context;
 	SoundDriverCreateDesc m_desc;
 	ALuint m_format;
-	ALuint m_buffers[3];
+	ALuint m_buffers[4];
 	ALuint m_source;
 	uint32_t m_submitted;
 	AutoArrayPtr< uint8_t > m_data;

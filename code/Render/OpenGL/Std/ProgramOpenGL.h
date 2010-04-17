@@ -78,7 +78,8 @@ private:
 
 	struct Sampler
 	{
-		GLint location;
+		GLint locationTexture;
+		GLint locationOffset;
 		uint32_t texture;
 		uint32_t stage;
 	};
@@ -87,24 +88,19 @@ private:
 	{
 		GLenum target;
 		GLuint name;
+		float offset[4];
 	};
 
 	Ref< ContextOpenGL > m_context;
-
 	GLhandleARB m_program;
 	RenderState m_renderState;
 	GLuint m_state;
-
 	GLint m_attributeLocs[T_OGL_MAX_USAGE_INDEX];		//!< Vertex attribute locations.
-
 	std::map< handle_t, Parameter > m_parameterMap;		//!< Parameter to data map.
-
 	std::vector< Uniform > m_uniforms;					//!< Scalar uniforms.
 	std::vector< Sampler > m_samplers;					//!< Samplers.
-
 	AlignedVector< float > m_uniformData;				//!< Scalar uniform data.
 	AlignedVector< TextureData > m_textureData;			//!< Texture data.
-
 	static ProgramOpenGL* ms_activeProgram;
 	bool m_dirty;
 };

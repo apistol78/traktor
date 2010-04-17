@@ -58,6 +58,12 @@ bool FileDialogCocoa::create(IWidget* parent, const std::wstring& title, const s
 			
 			[m_types addObject: makeNSString(type)];
 		}
+		
+		if (![m_types count])
+		{
+			[m_types autorelease];
+			m_types = 0;
+		}
 	}
 	
 	return true;

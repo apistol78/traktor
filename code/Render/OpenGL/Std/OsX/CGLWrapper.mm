@@ -18,7 +18,9 @@ struct WrContext
 		}
 
 void* cglwCreateContext(void* nativeWindowHandle, void* sharedContext, int depthBits, int stencilBits, int multisample)
-{	
+{
+	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+
 	NSOpenGLPixelFormatAttribute attribs[] =
 	{
 		NSOpenGLPFADoubleBuffer,
@@ -40,7 +42,9 @@ void* cglwCreateContext(void* nativeWindowHandle, void* sharedContext, int depth
 	WrContext* wrc = new WrContext();
 	wrc->view = (NSView*)nativeWindowHandle;
 	wrc->context = nsctx;
-		
+
+	[pool release];	
+
 	return (void*)wrc;
 }
 
@@ -59,6 +63,22 @@ void cglwUpdate(void* context)
 		if (wrc->view)
 			[wrc->context setView: wrc->view];
 		[wrc->context update];
+	}
+}
+
+void cglwGetSize(void* context, int32_t& outWidth, int32_t& outHeight)
+{
+	WrContext* wrc = (WrContext*)context;
+	if (wrc && wrc->view)
+	{
+		NSRect bounds = [wrc->view bounds];
+		outWidth = int32_t(bounds.size.width);
+		outHeight = int32_t(bounds.size.height);
+	}
+	else
+	{
+		outWidth =
+		outHeight = 0;
 	}
 }
 
