@@ -329,7 +329,7 @@ void emitFragmentPosition(GlslContext& cx, FragmentPosition* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 	GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat2);
-	assign(f, out) << L"gl_FragCoord.xy;" << Endl;
+	assign(f, out) << L"vec2(gl_FragCoord.x, _gl_targetSize.y - gl_FragCoord.y);" << Endl;
 }
 
 void emitIndexedUniform(GlslContext& cx, IndexedUniform* node)
