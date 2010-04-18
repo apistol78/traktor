@@ -16,10 +16,14 @@ namespace traktor
 		namespace
 		{
 
-#if !TARGET_OS_IPHONE && !defined(_WINCE)
-const uint32_t c_pointCount = 10000;
-#else
+#if TARGET_OS_MAC
+const uint32_t c_pointCount = 3000;
+#elif TARGET_OS_IPHONE
 const uint32_t c_pointCount = 1000;
+#elif defined(_WINCE)
+const uint32_t c_pointCount = 1000;
+#else
+const uint32_t c_pointCount = 10000;
 #endif
 
 struct PredicateZ

@@ -1,5 +1,6 @@
 #import <Cocoa/Cocoa.h>
 
+#include "Core/Misc/TString.h"
 #include "Render/OpenGL/Std/OsX/CGLWindow.h"
 
 namespace traktor
@@ -14,15 +15,19 @@ void* cglwCreateWindow(const std::wstring& title, uint32_t width, uint32_t heigh
 	[NSApplication sharedApplication];
 	[NSApp finishLaunching];
 
+	std::string mbs = wstombs(title);
+	NSString* titleStr = [[[NSString alloc] initWithCString: mbs.c_str() encoding: NSUTF8StringEncoding] autorelease];
+
 	NSWindow* window = [[NSWindow alloc]
 		initWithContentRect: NSMakeRect(50, 50, width, height)
-		styleMask: NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask
+		styleMask: NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask
 		backing: NSBackingStoreBuffered
 		defer: YES
 	];
 
 	[window setAcceptsMouseMovedEvents: YES];
-//	[window setTitle:makeNSString(title)];
+	[window setTitle: titleStr];
+	[window center];
 	
 	[window makeKeyAndOrderFront: nil];
 	[window makeMainWindow];
