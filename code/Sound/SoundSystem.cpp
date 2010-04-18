@@ -213,8 +213,14 @@ void SoundSystem::threadMixer()
 	while (!m_threadMixer->stopped())
 	{
 		// Wait until submission queue is below threshold.
+		m_submitQueueLock.wait();
 		while (m_submitQueue.size() >= m_desc.driverDesc.mixerFrames && !m_threadMixer->stopped())
+		{
+			m_submitQueueLock.release();
 			m_submitConsumedEvent.wait(100);
+			m_submitQueueLock.wait();
+		}
+		m_submitQueueLock.release();
 
 		if (m_threadMixer->stopped())
 			break;
