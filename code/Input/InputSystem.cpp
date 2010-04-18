@@ -75,13 +75,21 @@ Ref< IInputDevice > InputSystem::getDevice(InputCategory category, int index, bo
 
 bool InputSystem::update(float deltaTime)
 {
-	for (RefArray< IInputDevice >::iterator i = m_devices.begin(); i != m_devices.end(); ++i)
+	bool shouldUpdateDevices = false;
+	
+	for (RefArray< IInputDriver >::iterator i = m_drivers.begin(); i != m_drivers.end(); ++i)
 	{
-		IInputDevice* inputDevice = *i;
-		T_ASSERT (inputDevice);
-
-		inputDevice->readState();
+		IInputDriver::UpdateResult result = (*i)->update();
+		if (result == IInputDriver::UrDevicesChanged)
+			shouldUpdateDevices |= true;
 	}
+	
+	if (shouldUpdateDevices)
+		updateDevices();
+
+	for (RefArray< IInputDevice >::iterator i = m_devices.begin(); i != m_devices.end(); ++i)
+		(*i)->readState();
+
 	return true;
 }
 
