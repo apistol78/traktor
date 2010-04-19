@@ -618,6 +618,10 @@ void flattenDoubleSided(Model& model)
 
 void bakeVertexOcclusion(Model& model)
 {
+	const uint32_t c_occlusionRayCount = 64;
+	const Scalar c_occlusionRaySpread(0.75f);
+	const Scalar c_occlusionRayBias(0.1f);
+
 	RandomGeometry rnd;
 
 	const std::vector< Polygon >& polygons = model.getPolygons();
@@ -649,10 +653,10 @@ void bakeVertexOcclusion(Model& model)
 		const Vector4& normal = model.getNormal(i->getNormal());
 		
 		uint32_t occluded = 0;
-		for (uint32_t j = 0; j < 64; ++j)
+		for (uint32_t j = 0; j < c_occlusionRayCount; ++j)
 		{
-			Vector4 rayDirection = rnd.nextHemi(normal).xyz0();
-			Vector4 rayOrigin = (position + normal * Scalar(0.01f)).xyz1();
+			Vector4 rayDirection = lerp(normal, rnd.nextHemi(normal), c_occlusionRaySpread).normalized().xyz0();
+			Vector4 rayOrigin = (position + normal * c_occlusionRayBias).xyz1();
 		
 			for (AlignedVector< Winding >::const_iterator k = windings.begin(); k != windings.end(); ++k)
 			{
@@ -671,7 +675,7 @@ void bakeVertexOcclusion(Model& model)
 			color = colors[i->getColor()];
 			
 		color.set(3, Scalar(
-			1.0f - occluded / 64.0f
+			1.0f - occluded / float(c_occlusionRayCount)
 		));
 		
 		i->setColor(model.addUniqueColor(color));
