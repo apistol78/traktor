@@ -24,5 +24,10 @@ Ref< IInputDevice > InputDriverXi::getDevice(int index)
 	return m_devices[index];
 }
 
+IInputDriver::UpdateResult InputDriverXi::update()
+{
+	return UrOk;
+}
+
 	}
 }

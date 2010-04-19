@@ -36,6 +36,8 @@ public:
 
 	virtual Ref< IInputDevice > getDevice(int index);
 
+	virtual UpdateResult update();
+
 private:
 	RefArray< InputDeviceXi > m_devices;
 };

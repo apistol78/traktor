@@ -30,6 +30,8 @@ public:
 
 	virtual Ref< IInputDevice > getDevice(int index);
 
+	virtual UpdateResult update();
+
 private:
 	Ref< KeyboardDeviceWin32 > m_keyboardDevice;
 	Ref< MouseDeviceWin32 > m_mouseDevice;
