@@ -47,6 +47,8 @@ public:
 	void enter(bool keepDepthStencil);
 	
 	void resolve();
+
+	void blit();
 	
 	bool read(void* buffer) const;
 
