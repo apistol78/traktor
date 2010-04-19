@@ -46,6 +46,8 @@ public:
 
 	void enter(bool keepDepthStencil);
 	
+	void resolve();
+	
 	bool read(void* buffer) const;
 
 	inline GLenum getTextureTarget() const { return m_textureTarget; }
@@ -59,7 +61,9 @@ private:
 	int m_width;
 	int m_height;
 	GLenum m_textureTarget;
-	GLuint m_frameBufferObject;
+	GLuint m_targetFBO;
+	GLuint m_resolveFBO;
+	GLuint m_targetColorBuffer;
 	GLuint m_colorTexture;
 	Vector4 m_originAndScale;
 	bool m_haveDepth;

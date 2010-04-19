@@ -31,7 +31,15 @@ bool RenderTargetSetOpenGL::create(const RenderTargetSetCreateDesc& desc)
 	{
 		T_OGL_SAFE(glGenRenderbuffersEXT(1, &m_depthBuffer));
 		T_OGL_SAFE(glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_depthBuffer));
-		T_OGL_SAFE(glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT, m_width, m_height));
+		
+		if (desc.multiSample <= 1)
+		{
+			T_OGL_SAFE(glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT, m_width, m_height));
+		}
+		else
+		{
+			T_OGL_SAFE(glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT, desc.multiSample, GL_DEPTH_COMPONENT, m_width, m_height));
+		}
 	}
 
 	m_colorTextures.resize(desc.count);

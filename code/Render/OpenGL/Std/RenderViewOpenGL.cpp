@@ -312,6 +312,7 @@ void RenderViewOpenGL::end()
 {
 	if (!m_renderTargetStack.empty())
 	{
+		m_renderTargetStack.top()->resolve();
 		m_renderTargetStack.pop();
 
 		if (!m_renderTargetStack.empty())
