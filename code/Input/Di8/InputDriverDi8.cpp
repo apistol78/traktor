@@ -58,6 +58,11 @@ Ref< IInputDevice > InputDriverDi8::getDevice(int index)
 	return m_devices[index];
 }
 
+IInputDriver::UpdateResult InputDriverDi8::update()
+{
+	return UrOk;
+}
+
 BOOL CALLBACK InputDriverDi8::enumDevicesCallback(const DIDEVICEINSTANCE* deviceInstance, VOID* context)
 {
 	InputDriverDi8* driver = static_cast< InputDriverDi8* >(context);

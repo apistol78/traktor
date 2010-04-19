@@ -39,6 +39,8 @@ public:
 
 	virtual Ref< IInputDevice > getDevice(int index);
 
+	virtual UpdateResult update();
+
 private:
 	static BOOL CALLBACK enumDevicesCallback(const DIDEVICEINSTANCE* deviceInstance, VOID* context);
 

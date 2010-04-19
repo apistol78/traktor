@@ -29,5 +29,10 @@ Ref< IInputDevice > InputDriverWin32::getDevice(int index)
 	return 0;
 }
 
+IInputDriver::UpdateResult InputDriverWin32::update()
+{
+	return UrOk;
+}
+
 	}
 }
