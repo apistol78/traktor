@@ -136,7 +136,7 @@ bool Winding::rayIntersection(
 	if (!getPlane(plane))
 		return false;
 	
-	if (!plane.rayIntersection(origin, direction, outK, &p))
+	if (!plane.rayIntersection(origin, direction, outK, &p) || outK <= 0.0f)
 		return false;
 		
 	Vector4 normal = plane.normal();
