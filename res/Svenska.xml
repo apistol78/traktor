@@ -834,6 +834,10 @@
       <second>Välj källmodell</second>
     </item>
     <item>
+      <first>MESHASSET_EDITOR_ENTER_NAME</first>
+      <second>Ange namn</second>
+    </item>
+    <item>
       <first>MESHASSET_EDITOR_FILENAME</first>
       <second>Filnamn</second>
     </item>

@@ -68,10 +68,11 @@ Ref< ShaderGraph > ShaderGraphOptimizer::removeUnusedBranches() const
 {
 	RefArray< Node > roots;
 
+	// Collect root nodes; assume all nodes with no output pins to be roots.
 	const RefArray< Node >& nodes = m_shaderGraph->getNodes();
 	for (RefArray< Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
 	{
-		if (is_a< VertexOutput >(*i) || is_a< PixelOutput >(*i) || is_a< OutputPort >(*i))
+		if ((*i)->getOutputPinCount() <= 0)
 			roots.push_back(*i);
 	}
 
