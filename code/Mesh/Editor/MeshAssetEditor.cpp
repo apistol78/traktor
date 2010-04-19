@@ -23,9 +23,10 @@
 #include "Ui/FileDialog.h"
 #include "Ui/Static.h"
 #include "Ui/Events/CommandEvent.h"
+#include "Ui/Custom/InputDialog.h"
+#include "Ui/Custom/MiniButton.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
-#include "Ui/Custom/MiniButton.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Settings/PropertyString.h"
 #include "Core/Settings/Settings.h"
@@ -247,9 +248,32 @@ void MeshAssetEditor::createMaterialShader()
 
 	std::wstring materialName = selectedItem->getText(0);
 
+	// Find model material to associate shader with.
 	const std::vector< model::Material >& materials = m_model->getMaterials();
 	std::vector< model::Material >::const_iterator it = std::find_if(materials.begin(), materials.end(), FindMaterialPred(materialName));
 	if (it == materials.end())
+		return;
+
+	// Query user about material name; default model's material name.
+	ui::custom::InputDialog::Field materialNameField =
+	{
+		L"",
+		materialName,
+		0
+	};
+
+	ui::custom::InputDialog materialNameDialog;
+	if (materialNameDialog.create(m_materialList, i18n::Text(L"MESHASSET_EDITOR_ENTER_NAME"), i18n::Text(L"MESHASSET_EDITOR_ENTER_NAME"), &materialNameField, 1))
+	{
+		if (materialNameDialog.showModal() == ui::DrOk)
+			materialName = materialNameField.value;
+		else
+			materialName.clear();
+
+		materialNameDialog.destroy();
+	}
+
+	if (materialName.empty())
 		return;
 
 	MaterialShaderGenerator generator(

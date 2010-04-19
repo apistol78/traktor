@@ -801,10 +801,14 @@
 			<first>MENU_VIEW_PROPERTIES</first>
 			<second>Properties</second>
 		</item>
-	<item>
-		<first>MESHASSET_EDITOR_BAKE_OCCLUSION</first>
-		<second>Bake occlusion</second>
-	</item>
+    <item>
+      <first>MESHASSET_EDITOR_BAKE_OCCLUSION</first>
+      <second>Bake occlusion</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_ENTER_NAME</first>
+      <second>Enter name</second>
+    </item>
     <item>
       <first>MESHASSET_EDITOR_FILENAME</first>
       <second>File name</second>
