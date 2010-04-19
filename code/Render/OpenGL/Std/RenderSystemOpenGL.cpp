@@ -300,12 +300,19 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 {
 #if defined(_WIN32)
 
+	UINT style = 0;
+
+	if (desc.fullscreen)
+		style = WS_POPUPWINDOW;
+	else
+		style = WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION | WS_MINIMIZEBOX;
+
 	m_hWnd = CreateWindow(
 		_T("RenderSystemOpenGL_FullScreen"),
 		_T("Traktor 2.0 OpenGL Renderer"),
-		WS_POPUPWINDOW,
-		0,
-		0,
+		style,
+		CW_USEDEFAULT,
+		CW_USEDEFAULT,
 		0,
 		0,
 		NULL,
@@ -314,32 +321,67 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 		this
 	);
 	if (!m_hWnd)
+	{
+		log::error << L"createRenderView failed; unable to create window" << Endl;
 		return 0;
+	}
 
-	SetWindowPos(m_hWnd, HWND_TOPMOST, 0, 0, desc.displayMode.width, desc.displayMode.height, SWP_SHOWWINDOW);
-	ShowWindow(m_hWnd, SW_MAXIMIZE);
+	if (desc.fullscreen)
+	{
+		SetWindowPos(m_hWnd, HWND_TOPMOST, 0, 0, desc.displayMode.width, desc.displayMode.height, SWP_SHOWWINDOW);
+		ShowWindow(m_hWnd, SW_MAXIMIZE);
+	}
+	else
+	{
+		RECT rcWindow;
+		GetWindowRect(m_hWnd, &rcWindow);
+
+		RECT rcClient;
+		GetClientRect(m_hWnd, &rcClient);
+
+		int32_t windowWidth = rcWindow.right - rcWindow.left;
+		int32_t windowHeight = rcWindow.bottom - rcWindow.top;
+
+		int32_t realClientWidth = rcClient.right - rcClient.left;
+		int32_t realClientHeight = rcClient.bottom - rcClient.top;
+
+		windowWidth = (windowWidth - realClientWidth) + desc.displayMode.width;
+		windowHeight = (windowHeight - realClientHeight) + desc.displayMode.height;
+
+		SetWindowPos(m_hWnd, 0, 0, 0, windowWidth, windowHeight, SWP_NOMOVE | SWP_NOZORDER | SWP_SHOWWINDOW);
+		ShowWindow(m_hWnd, SW_NORMAL);
+	}
+
 	UpdateWindow(m_hWnd);
 
-	DEVMODE dmgl;
-	std::memset(&dmgl, 0, sizeof(dmgl));
-	dmgl.dmSize = sizeof(dmgl);
-
-	for (UINT count = 0; EnumDisplaySettings(NULL, count, &dmgl); ++count)
+	if (desc.fullscreen)
 	{
-		if (
-			dmgl.dmPelsWidth == desc.displayMode.width &&
-			dmgl.dmPelsHeight == desc.displayMode.height
-		)
+		DEVMODE dmgl;
+		std::memset(&dmgl, 0, sizeof(dmgl));
+		dmgl.dmSize = sizeof(dmgl);
+
+		for (UINT count = 0; EnumDisplaySettings(NULL, count, &dmgl); ++count)
 		{
-			if (desc.displayMode.colorBits != 0 && dmgl.dmBitsPerPel != desc.displayMode.colorBits)
-				continue;
-			if (desc.displayMode.refreshRate != 0 && dmgl.dmDisplayFrequency != desc.displayMode.refreshRate)
-				continue;
+			if (
+				dmgl.dmPelsWidth == desc.displayMode.width &&
+				dmgl.dmPelsHeight == desc.displayMode.height
+			)
+			{
+				if (desc.displayMode.colorBits != 0 && dmgl.dmBitsPerPel != desc.displayMode.colorBits)
+					continue;
+				if (desc.displayMode.colorBits == 0 && dmgl.dmBitsPerPel < 24)
+					continue;
+				if (desc.displayMode.refreshRate != 0 && dmgl.dmDisplayFrequency != desc.displayMode.refreshRate)
+					continue;
 
-			if (ChangeDisplaySettings(&dmgl, CDS_FULLSCREEN) != DISP_CHANGE_SUCCESSFUL)
-				return 0;
+				if (ChangeDisplaySettings(&dmgl, CDS_FULLSCREEN) != DISP_CHANGE_SUCCESSFUL)
+				{
+					log::error << L"createRenderView failed; unable to change display settings" << Endl;
+					return 0;
+				}
 
-			break;
+				break;
+			}
 		}
 	}
 
@@ -367,23 +409,35 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 
 	HDC hDC = GetDC(m_hWnd);
 	if (!hDC)
+	{
+		log::error << L"createRenderView failed; unable to get device context" << Endl;
 		return 0;
+	}
 
 	int pixelFormat = ChoosePixelFormat(hDC, &pfd);
 	if (!pixelFormat)
+	{
+		log::error << L"createRenderView failed; unable to choose pixel format" << Endl;
 		return 0;
+	}
 
 	if (!SetPixelFormat(hDC, pixelFormat, &pfd))
+	{
+		log::error << L"createRenderView failed; unable to set pixel format" << Endl;
 		return 0;
+	}
 
 	HGLRC hRC = wglCreateContext(hDC);
 	if (!hRC)
+	{
+		log::error << L"createRenderView failed; unable to create WGL context" << Endl;
 		return 0;
+	}
 
 	Ref< ContextOpenGL > context = new ContextOpenGL(m_hWnd, hDC, hRC);
 	m_globalContext->share(context);
 
-	return new RenderViewOpenGL(context, m_globalContext, m_hWnd);
+	return new RenderViewOpenGL(desc, context, m_globalContext, m_hWnd);
 
 #elif defined(__APPLE__)
 
@@ -406,7 +460,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 
 	Ref< ContextOpenGL > context = new ContextOpenGL(glcontext);
 
-	return new RenderViewOpenGL(context, m_globalContext);
+	return new RenderViewOpenGL(desc, context, m_globalContext);
 
 #else
 	return 0;
@@ -464,7 +518,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewEmbedded
 
 	context->leave();
 
-	return new RenderViewOpenGL(context, m_globalContext, (HWND)desc.nativeWindowHandle);
+	return new RenderViewOpenGL(desc, context, m_globalContext, (HWND)desc.nativeWindowHandle);
 
 #elif defined(__APPLE__)
 
@@ -480,7 +534,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewEmbedded
 
 	Ref< ContextOpenGL > context = new ContextOpenGL(glcontext);
 
-	return new RenderViewOpenGL(context, m_globalContext);
+	return new RenderViewOpenGL(desc, context, m_globalContext);
 
 #else	// LINUX
 
@@ -520,7 +574,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewEmbedded
 
 	context->leave();
 
-	return new RenderViewOpenGL(context, m_globalContext);
+	return new RenderViewOpenGL(desc, context, m_globalContext);
 
 #endif
 }
@@ -632,10 +686,6 @@ LRESULT RenderSystemOpenGL::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM 
 		renderSystem = reinterpret_cast< RenderSystemOpenGL* >(createStruct->lpCreateParams);
 		SetWindowLongPtr(hWnd, 0, reinterpret_cast< LONG_PTR >(renderSystem));
 		break;
-
-	case WM_KEYDOWN:
-		if (wParam != VK_ESCAPE)
-			break;
 
 	case WM_CLOSE:
 		DestroyWindow(hWnd);

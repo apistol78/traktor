@@ -1,3 +1,5 @@
+#include "Core/Log/Log.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Render/OpenGL/Platform.h"
 #include "Render/OpenGL/VertexBufferOpenGL.h"
 #include "Render/OpenGL/IndexBufferOpenGL.h"
@@ -7,7 +9,6 @@
 #include "Render/OpenGL/Std/ProgramOpenGL.h"
 #include "Render/OpenGL/Std/RenderTargetSetOpenGL.h"
 #include "Render/OpenGL/Std/RenderTargetOpenGL.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -19,6 +20,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewOpenGL", RenderViewOpenGL, IRe
 #if defined(_WIN32)
 
 RenderViewOpenGL::RenderViewOpenGL(
+	const RenderViewDesc desc,
 	ContextOpenGL* context,
 	ContextOpenGL* globalContext,
 	HWND hWnd
@@ -30,6 +32,7 @@ RenderViewOpenGL::RenderViewOpenGL(
 #elif defined(__APPLE__)
 
 RenderViewOpenGL::RenderViewOpenGL(
+	const RenderViewDesc desc,
 	ContextOpenGL* context,
 	ContextOpenGL* globalContext
 )
@@ -40,6 +43,7 @@ RenderViewOpenGL::RenderViewOpenGL(
 #else
 
 RenderViewOpenGL::RenderViewOpenGL(
+	const RenderViewDesc desc,
 	ContextOpenGL* context,
 	ContextOpenGL* globalContext
 )
@@ -49,6 +53,8 @@ RenderViewOpenGL::RenderViewOpenGL(
 
 #endif
 {
+	T_CONTEXT_SCOPE(m_globalContext)
+
 	Viewport viewport;
 	viewport.left = 0;
 	viewport.top = 0;
@@ -57,6 +63,19 @@ RenderViewOpenGL::RenderViewOpenGL(
 	viewport.nearZ = 0.0f;
 	viewport.farZ = 1.0f;
 	setViewport(viewport);
+
+	m_primaryTargetDesc.count = 1;
+	m_primaryTargetDesc.width = m_context->getWidth();
+	m_primaryTargetDesc.height = m_context->getHeight();
+	m_primaryTargetDesc.multiSample = desc.multiSample;
+	m_primaryTargetDesc.depthStencil = bool(desc.depthBits > 0 || desc.stencilBits > 0);
+	m_primaryTargetDesc.targets[0].format = TfR8G8B8A8;
+
+	if (m_primaryTargetDesc.width > 0 && m_primaryTargetDesc.height > 0)
+	{
+		m_primaryTarget = new RenderTargetSetOpenGL(m_context);
+		m_primaryTarget->create(m_primaryTargetDesc);
+	}
 }
 
 RenderViewOpenGL::~RenderViewOpenGL()
@@ -65,8 +84,8 @@ RenderViewOpenGL::~RenderViewOpenGL()
 
 void RenderViewOpenGL::close()
 {
-	m_context->destroy();
-	m_context = 0;
+	safeDestroy(m_primaryTarget);
+	safeDestroy(m_context);
 }
 
 bool RenderViewOpenGL::reset(const RenderViewDefaultDesc& desc)
@@ -76,7 +95,19 @@ bool RenderViewOpenGL::reset(const RenderViewDefaultDesc& desc)
 
 void RenderViewOpenGL::resize(int32_t width, int32_t height)
 {
+	safeDestroy(m_primaryTarget);
+
 	m_context->update();
+
+	{
+		T_CONTEXT_SCOPE(m_globalContext)
+
+		m_primaryTargetDesc.width = m_context->getWidth();
+		m_primaryTargetDesc.height = m_context->getHeight();
+
+		m_primaryTarget = new RenderTargetSetOpenGL(m_context);
+		m_primaryTarget->create(m_primaryTargetDesc);
+	}
 }
 
 int RenderViewOpenGL::getWidth() const
@@ -134,14 +165,15 @@ Viewport RenderViewOpenGL::getViewport()
 
 bool RenderViewOpenGL::begin()
 {
+	if (!m_primaryTarget)
+		return false;
+
 	m_context->enter();
 
-	T_OGL_SAFE(glPushAttrib(GL_VIEWPORT_BIT | GL_DEPTH_BUFFER_BIT));
 	T_OGL_SAFE(glEnable(GL_DEPTH_TEST));
 	T_OGL_SAFE(glDepthFunc(GL_LEQUAL));
 
-	m_currentDirty = true;
-	return true;
+	return begin(m_primaryTarget, 0, false);
 }
 
 bool RenderViewOpenGL::begin(RenderTargetSet* renderTargetSet, int renderTarget, bool keepDepthStencil)
@@ -310,15 +342,25 @@ void RenderViewOpenGL::draw(const Primitives& primitives)
 
 void RenderViewOpenGL::end()
 {
-	if (!m_renderTargetStack.empty())
-	{
-		m_renderTargetStack.top()->resolve();
-		m_renderTargetStack.pop();
+	T_ASSERT (!m_renderTargetStack.empty());
 
-		if (!m_renderTargetStack.empty())
-			m_renderTargetStack.top()->bind(false);
-		else
-			T_OGL_SAFE(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0));
+	RenderTargetOpenGL* rt = m_renderTargetStack.top();
+	m_renderTargetStack.pop();
+
+	if (m_renderTargetStack.empty())
+	{
+		rt->blit();
+
+		// Unbind primary target.
+		T_OGL_SAFE(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0));
+	}
+	else
+	{
+		rt->resolve();
+
+		// Rebind parent target.
+		RenderTargetOpenGL* rt = m_renderTargetStack.top();
+		rt->bind(false);
 	}
 
 	T_OGL_SAFE(glPopAttrib());

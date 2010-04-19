@@ -757,13 +757,13 @@ void emitSampler(GlslContext& cx, Sampler* node)
 	const GLenum c_glWrap[] =
 	{
 		GL_REPEAT,
-		GL_REPEAT,	// AdMirror
-#if defined(T_OPENGL_STD)
-		GL_CLAMP,
-		GL_CLAMP	// AdBorder
-#elif defined(T_OPENGL_ES2)
+		GL_REPEAT,
+#if defined(T_OPENGL_ES2)
 		GL_CLAMP_TO_EDGE,
 		GL_CLAMP_TO_EDGE
+#else
+		GL_CLAMP,
+		GL_CLAMP
 #endif
 	};
 

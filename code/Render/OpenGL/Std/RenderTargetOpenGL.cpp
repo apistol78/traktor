@@ -215,14 +215,14 @@ bool RenderTargetOpenGL::create(const RenderTargetSetCreateDesc& setDesc, const 
 	else
 	{
 		// Multisampled color buffer.
-		glGenRenderbuffersEXT(1, &m_targetColorBuffer);
-		glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_targetColorBuffer);
-		glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT, setDesc.multiSample, GL_RGBA8, m_width, m_height);
+		T_OGL_SAFE(glGenRenderbuffersEXT(1, &m_targetColorBuffer));
+		T_OGL_SAFE(glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_targetColorBuffer));
+		T_OGL_SAFE(glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT, setDesc.multiSample, GL_RGBA8, m_width, m_height));
 		
 		// Create target FBO.
-		glGenFramebuffersEXT(1, &m_targetFBO);
-		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_targetFBO);
-		glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_RENDERBUFFER_EXT, m_targetColorBuffer);
+		T_OGL_SAFE(glGenFramebuffersEXT(1, &m_targetFBO));
+		T_OGL_SAFE(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_targetFBO));
+		T_OGL_SAFE(glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_RENDERBUFFER_EXT, m_targetColorBuffer));
 		if (depthBuffer)
 		{
 			T_OGL_SAFE(glFramebufferRenderbufferEXT(
@@ -258,9 +258,9 @@ bool RenderTargetOpenGL::create(const RenderTargetSetCreateDesc& setDesc, const 
 		));
 		
 		// Create resolve FBO.
-		glGenFramebuffersEXT(1, &m_resolveFBO);
-		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_resolveFBO);
-		glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, m_colorTexture, 0);
+		T_OGL_SAFE(glGenFramebuffersEXT(1, &m_resolveFBO));
+		T_OGL_SAFE(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_resolveFBO));
+		T_OGL_SAFE(glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, m_colorTexture, 0));
 	}
 
 	GLenum status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
@@ -370,10 +370,17 @@ void RenderTargetOpenGL::resolve()
 {
 	if (m_resolveFBO)
 	{
-		glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, m_targetFBO);
-		glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, m_resolveFBO);
-		glBlitFramebufferEXT(0, 0, m_width, m_height, 0, 0, m_width, m_height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+		T_OGL_SAFE(glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, m_targetFBO));
+		T_OGL_SAFE(glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, m_resolveFBO));
+		T_OGL_SAFE(glBlitFramebufferEXT(0, 0, m_width, m_height, 0, 0, m_width, m_height, GL_COLOR_BUFFER_BIT, GL_NEAREST));
 	}
+}
+
+void RenderTargetOpenGL::blit()
+{
+	T_OGL_SAFE(glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, m_targetFBO));
+	T_OGL_SAFE(glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, 0));
+	T_OGL_SAFE(glBlitFramebufferEXT(0, 0, m_width, m_height, 0, 0, m_width, m_height, GL_COLOR_BUFFER_BIT, GL_NEAREST));
 }
 
 bool RenderTargetOpenGL::read(void* buffer) const

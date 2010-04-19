@@ -24,6 +24,7 @@ class VertexBufferOpenGL;
 class IndexBufferOpenGL;
 class ProgramOpenGL;
 class RenderTargetOpenGL;
+class RenderTargetSetOpenGL;
 
 /*!
  * \ingroup OGL
@@ -36,6 +37,7 @@ public:
 #if defined(_WIN32)
 
 	RenderViewOpenGL(
+		const RenderViewDesc desc,
 		ContextOpenGL* context,
 		ContextOpenGL* globalContext,
 		HWND hWnd
@@ -44,6 +46,7 @@ public:
 #elif defined(__APPLE__)
 
 	RenderViewOpenGL(
+		const RenderViewDesc desc,
 		ContextOpenGL* context,
 		ContextOpenGL* globalContext
 	);
@@ -51,6 +54,7 @@ public:
 #else
 
 	RenderViewOpenGL(
+		const RenderViewDesc desc,
 		ContextOpenGL* context,
 		ContextOpenGL* globalContext
 	);
@@ -101,6 +105,10 @@ private:
 	Ref< RenderSystemOpenGL > m_renderSystem;
 	Ref< ContextOpenGL > m_context;
 	Ref< ContextOpenGL > m_globalContext;
+	
+	RenderTargetSetCreateDesc m_primaryTargetDesc;
+	Ref< RenderTargetSetOpenGL > m_primaryTarget;
+
 	std::stack< RenderTargetOpenGL* > m_renderTargetStack;
 	Ref< VertexBufferOpenGL > m_currentVertexBuffer;
 	Ref< IndexBufferOpenGL > m_currentIndexBuffer;
