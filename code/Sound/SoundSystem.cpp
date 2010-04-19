@@ -161,7 +161,7 @@ Ref< SoundChannel > SoundSystem::play(Sound* sound, bool wait, uint32_t repeat)
 			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_channelAttachLock);
 			for (RefArray< SoundChannel >::iterator i = m_channels.begin(); i != m_channels.end(); ++i)
 			{
-				if (!(*i)->isPlaying())
+				if (!(*i)->isPlaying() && !(*i)->isExclusive())
 				{
 					(*i)->playSound(sound, m_time, repeat);
 					return *i;

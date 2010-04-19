@@ -31,6 +31,7 @@ SoundChannel::SoundChannel(uint32_t hwSampleRate, uint32_t hwFrameSamples)
 ,	m_repeat(0)
 ,	m_outputSamplesIn(0)
 ,	m_volume(1.0f)
+,	m_exclusive(false)
 {
 	const uint32_t outputSamplesCount = hwFrameSamples * c_outputSamplesBlockCount;
 	const uint32_t outputSamplesSize = SbcMaxChannelCount * outputSamplesCount * sizeof(float);
@@ -67,6 +68,16 @@ void SoundChannel::setFilter(IFilter* filter)
 Ref< IFilter > SoundChannel::getFilter() const
 {
 	return m_filter;
+}
+
+void SoundChannel::setExclusive(bool exclusive)
+{
+	m_exclusive = exclusive;
+}
+
+bool SoundChannel::isExclusive() const
+{
+	return m_exclusive;
 }
 
 bool SoundChannel::isPlaying() const

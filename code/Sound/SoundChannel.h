@@ -42,16 +42,35 @@ public:
 
 	virtual ~SoundChannel();
 
+	/*! \brief Set channel volume. */
 	void setVolume(float volume);
 
+	/*! \brief Associate filter in channel. */
 	void setFilter(IFilter* filter);
 
+	/*! \brief Get currently associated filter. */
 	Ref< IFilter > getFilter() const;
 
+	/*! \brief Set exclusive flag.
+	 *
+	 * When channel is marked as exclusive then
+	 * sound system won't acquire this channel
+	 * for sounds even if the channel isn't playing any sounds.
+	 *
+	 * \param exclusive True if channel is application exclusive.
+	 */
+	void setExclusive(bool exclusive);
+
+	/*! \brief Check if channel is application exclusive. */
+	bool isExclusive() const;
+
+	/*! \brief Check if there are a sound playing in this channel. */
 	bool isPlaying() const;
 
+	/*! \brief Stop playing sound. */
 	void stop();
 
+	/*! \brief Return current playing sound's cursor. */
 	ISoundBufferCursor* getCursor() const;
 
 private:
@@ -68,6 +87,7 @@ private:
 	float* m_outputSamples[SbcMaxChannelCount];
 	uint32_t m_outputSamplesIn;
 	float m_volume;
+	bool m_exclusive;
 
 	void playSound(Sound* sound, double time, uint32_t repeat);
 
