@@ -96,6 +96,7 @@ private:
 	GLhandleARB m_program;
 	RenderState m_renderState;
 	GLuint m_state;
+	GLint m_locationTargetSize;
 	GLint m_attributeLocs[T_OGL_MAX_USAGE_INDEX];		//!< Vertex attribute locations.
 	std::map< handle_t, Parameter > m_parameterMap;		//!< Parameter to data map.
 	std::vector< Uniform > m_uniforms;					//!< Scalar uniforms.

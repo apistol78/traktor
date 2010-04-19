@@ -453,7 +453,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 		m_globalContext->getGLContext(),
 		desc.depthBits,
 		desc.stencilBits,
-		desc.multiSample
+		0
 	);
 	if (!glcontext)
 		return 0;
@@ -527,7 +527,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewEmbedded
 		m_globalContext->getGLContext(),
 		desc.depthBits,
 		desc.stencilBits,
-		desc.multiSample
+		0
 	);
 	if (!glcontext)
 		return 0;

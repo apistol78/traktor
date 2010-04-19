@@ -78,6 +78,7 @@ ProgramOpenGL::ProgramOpenGL(ContextOpenGL* context)
 :	m_context(context)
 ,	m_program(0)
 ,	m_state(0)
+,	m_locationTargetSize(0)
 ,	m_dirty(true)
 {
 }
@@ -169,6 +170,9 @@ bool ProgramOpenGL::create(const ProgramResource* resource)
 			return false;
 		}
 	}
+	
+	// Get target size parameter.
+	m_locationTargetSize = glGetUniformLocationARB(m_program, "_gl_targetSize");
 
 	// Map texture parameters.
 	const std::map< std::wstring, int32_t >& samplerTextures = resourceOpenGL->getSamplerTextures();
@@ -466,8 +470,8 @@ bool ProgramOpenGL::activate(float targetSize[2])
 		}
 	}
 
-	GLuint location = glGetUniformLocationARB(m_program, "_gl_targetSize");
-	T_OGL_SAFE(glUniform2fvARB(location, 1, targetSize));
+	if (m_locationTargetSize != -1)
+		T_OGL_SAFE(glUniform2fvARB(m_locationTargetSize, 1, targetSize));
 
 	for (uint32_t i = 0; i < m_samplers.size(); ++i)
 	{
@@ -501,7 +505,9 @@ bool ProgramOpenGL::activate(float targetSize[2])
 		T_OGL_SAFE(glTexParameteri(td.target, GL_TEXTURE_WRAP_T, samplerState.wrapT));
 
 		T_OGL_SAFE(glUniform1iARB(sampler.locationTexture, i));
-		T_OGL_SAFE(glUniform4fvARB(sampler.locationOffset, 1, td.offset));
+		
+		if (sampler.locationOffset != -1)
+			T_OGL_SAFE(glUniform4fvARB(sampler.locationOffset, 1, td.offset));
 	}
 
 	ms_activeProgram = this;
