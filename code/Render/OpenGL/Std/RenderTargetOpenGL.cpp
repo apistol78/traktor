@@ -51,7 +51,9 @@ RenderTargetOpenGL::RenderTargetOpenGL(IContext* context)
 ,	m_width(0)
 ,	m_height(0)
 ,	m_textureTarget(0)
-,	m_frameBufferObject(0)
+,	m_targetFBO(0)
+,	m_resolveFBO(0)
+,	m_targetColorBuffer(0)
 ,	m_colorTexture(0)
 ,	m_haveDepth(false)
 ,	m_originAndScale(0.0f, 1.0f, 1.0f, -1.0f)
@@ -164,52 +166,102 @@ bool RenderTargetOpenGL::create(const RenderTargetSetCreateDesc& setDesc, const 
 		return false;
 	}
 
-	T_OGL_SAFE(glGenFramebuffersEXT(1, &m_frameBufferObject));
-	T_OGL_SAFE(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_frameBufferObject));
-
-	if (depthBuffer)
+	if (setDesc.multiSample <= 1)
 	{
-		T_OGL_SAFE(glFramebufferRenderbufferEXT(
-			GL_FRAMEBUFFER_EXT,
-			GL_DEPTH_ATTACHMENT_EXT,
-			GL_RENDERBUFFER_EXT,
-			depthBuffer
+		T_OGL_SAFE(glGenFramebuffersEXT(1, &m_targetFBO));
+		T_OGL_SAFE(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_targetFBO));
+
+		if (depthBuffer)
+		{
+			T_OGL_SAFE(glFramebufferRenderbufferEXT(
+				GL_FRAMEBUFFER_EXT,
+				GL_DEPTH_ATTACHMENT_EXT,
+				GL_RENDERBUFFER_EXT,
+				depthBuffer
+			));
+			m_haveDepth = true;
+		}
+
+		T_OGL_SAFE(glGenTextures(1, &m_colorTexture));
+
+		T_OGL_SAFE(glActiveTexture(GL_TEXTURE0));
+		T_OGL_SAFE(glBindTexture(m_textureTarget, m_colorTexture));
+
+		T_OGL_SAFE(glTexParameterf(m_textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP));
+		T_OGL_SAFE(glTexParameterf(m_textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP));
+		T_OGL_SAFE(glTexParameterf(m_textureTarget, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
+		T_OGL_SAFE(glTexParameterf(m_textureTarget, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
+
+		T_OGL_SAFE(glTexImage2D(
+			m_textureTarget,
+			0,
+			internalFormat,
+			m_width,
+			m_height,
+			0,
+			format,
+			type,
+			NULL
 		));
-		m_haveDepth = true;
+
+		T_OGL_SAFE(glFramebufferTexture2DEXT(
+			GL_FRAMEBUFFER_EXT,
+			GL_COLOR_ATTACHMENT0_EXT,
+			m_textureTarget,
+			m_colorTexture,
+			0
+		));
 	}
+	else
+	{
+		// Multisampled color buffer.
+		glGenRenderbuffersEXT(1, &m_targetColorBuffer);
+		glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_targetColorBuffer);
+		glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT, setDesc.multiSample, GL_RGBA8, m_width, m_height);
+		
+		// Create target FBO.
+		glGenFramebuffersEXT(1, &m_targetFBO);
+		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_targetFBO);
+		glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_RENDERBUFFER_EXT, m_targetColorBuffer);
+		if (depthBuffer)
+		{
+			T_OGL_SAFE(glFramebufferRenderbufferEXT(
+				GL_FRAMEBUFFER_EXT,
+				GL_DEPTH_ATTACHMENT_EXT,
+				GL_RENDERBUFFER_EXT,
+				depthBuffer
+			));
+			m_haveDepth = true;
+		}		
+		
+		// Create read-back texture.
+		T_OGL_SAFE(glGenTextures(1, &m_colorTexture));
 
-	int targetWidth = m_width;
-	int targetHeight = m_height;
+		T_OGL_SAFE(glActiveTexture(GL_TEXTURE0));
+		T_OGL_SAFE(glBindTexture(m_textureTarget, m_colorTexture));
 
-	T_OGL_SAFE(glGenTextures(1, &m_colorTexture));
+		T_OGL_SAFE(glTexParameterf(m_textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP));
+		T_OGL_SAFE(glTexParameterf(m_textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP));
+		T_OGL_SAFE(glTexParameterf(m_textureTarget, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
+		T_OGL_SAFE(glTexParameterf(m_textureTarget, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
 
-	T_OGL_SAFE(glActiveTexture(GL_TEXTURE0));
-	T_OGL_SAFE(glBindTexture(m_textureTarget, m_colorTexture));
-
-	T_OGL_SAFE(glTexParameterf(m_textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP));
-	T_OGL_SAFE(glTexParameterf(m_textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP));
-	T_OGL_SAFE(glTexParameterf(m_textureTarget, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
-	T_OGL_SAFE(glTexParameterf(m_textureTarget, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
-
-	T_OGL_SAFE(glTexImage2D(
-		m_textureTarget,
-		0,
-		internalFormat,
-		targetWidth,
-		targetHeight,
-		0,
-		format,
-		type,
-		NULL
-	));
-
-	T_OGL_SAFE(glFramebufferTexture2DEXT(
-		GL_FRAMEBUFFER_EXT,
-		GL_COLOR_ATTACHMENT0_EXT,
-		m_textureTarget,
-		m_colorTexture,
-		0
-	));
+		T_OGL_SAFE(glTexImage2D(
+			m_textureTarget,
+			0,
+			internalFormat,
+			m_width,
+			m_height,
+			0,
+			format,
+			type,
+			NULL
+		));
+		
+		// Create resolve FBO.
+		glGenFramebuffersEXT(1, &m_resolveFBO);
+		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_resolveFBO);
+		glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, m_colorTexture, 0);
+	}
 
 	GLenum status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
 	T_OGL_SAFE(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0));
@@ -225,11 +277,17 @@ void RenderTargetOpenGL::destroy()
 			m_context->deleteResource(new DeleteTextureCallback(m_colorTexture));
 		m_colorTexture = 0;
 	}
-	if (m_frameBufferObject)
+	if (m_resolveFBO)
 	{
 		if (m_context)
-			m_context->deleteResource(new DeleteFramebufferCallback(m_frameBufferObject));
-		m_frameBufferObject = 0;
+			m_context->deleteResource(new DeleteFramebufferCallback(m_resolveFBO));
+		m_resolveFBO = 0;
+	}
+	if (m_targetFBO)
+	{
+		if (m_context)
+			m_context->deleteResource(new DeleteFramebufferCallback(m_targetFBO));
+		m_targetFBO = 0;
 	}
 }
 
@@ -274,7 +332,7 @@ void RenderTargetOpenGL::bind(bool keepDepthStencil)
 		}
 	}
 
-	T_OGL_SAFE(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_frameBufferObject));
+	T_OGL_SAFE(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_targetFBO));
 
 	if (keepDepthStencil)
 	{
@@ -305,6 +363,16 @@ void RenderTargetOpenGL::enter(bool keepDepthStencil)
 	{
 		T_OGL_SAFE(glDisable(GL_DEPTH_TEST));
 		T_OGL_SAFE(glDepthMask(GL_FALSE));
+	}
+}
+
+void RenderTargetOpenGL::resolve()
+{
+	if (m_resolveFBO)
+	{
+		glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, m_targetFBO);
+		glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, m_resolveFBO);
+		glBlitFramebufferEXT(0, 0, m_width, m_height, 0, 0, m_width, m_height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 	}
 }
 
