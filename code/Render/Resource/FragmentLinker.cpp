@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <map>
+#include "Core/Log/Log.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Render/Shader/ShaderGraph.h"
 #include "Render/Shader/Node.h"
@@ -93,26 +94,34 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, bool 
 
 						// Find input pin by input port.
 						const InputPin* externalInputPin = externalNode->findInputPin(inputPortName);
-						if (!externalInputPin)
-							return 0;
-
-						// Create "established port" node and move all edges from input port to established port.
-						Ref< EstPort > inputEstPort = new EstPort();
-						for (RefArray< Edge >::iterator k = resolvedEdges.begin(); k != resolvedEdges.end(); ++k)
+						if (externalInputPin)
 						{
-							if ((*k)->getDestination() == externalInputPin)
+							// Create "established port" node and move all edges from input port to established port.
+							Ref< EstPort > inputEstPort = new EstPort();
+							for (RefArray< Edge >::iterator k = resolvedEdges.begin(); k != resolvedEdges.end(); ++k)
 							{
-								(*k)->setDestination(inputEstPort->getInputPin(0));
-								replaceWithValue = false;
+								if ((*k)->getDestination() == externalInputPin)
+								{
+									(*k)->setDestination(inputEstPort->getInputPin(0));
+									replaceWithValue = false;
+								}
+							}
+							if (!replaceWithValue)
+							{
+								inputEstablishedPorts[inputPortName] = inputEstPort;
+								resolvedNodes.push_back(inputEstPort);
+							}
+							else if (!(*j)->isOptional())
+							{
+								log::error << L"Fragment linker failed; non-optional pin \"" << inputPortName << L"\" unconnected" << Endl;
+								return 0;
 							}
 						}
-						if (!replaceWithValue)
+						else if (!(*j)->isOptional())
 						{
-							inputEstablishedPorts[inputPortName] = inputEstPort;
-							resolvedNodes.push_back(inputEstPort);
+							log::error << L"Fragment linker failed; no such pin \"" << inputPortName << L"\"" << Endl;
+							return 0;
 						}
-						else
-							T_ASSERT_M (externalInputPin->isOptional(), L"Non-optional pin unconnected");
 					}
 					else
 						replaceWithValue = true;
