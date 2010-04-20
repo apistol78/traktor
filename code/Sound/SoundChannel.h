@@ -38,7 +38,7 @@ class T_DLLCLASS SoundChannel : public Object
 	T_RTTI_CLASS;
 
 public:
-	SoundChannel(uint32_t hwSampleRate, uint32_t hwFrameSamples);
+	SoundChannel(uint32_t id, uint32_t hwSampleRate, uint32_t hwFrameSamples);
 
 	virtual ~SoundChannel();
 
@@ -76,9 +76,10 @@ public:
 private:
 	friend class SoundSystem;
 
+	uint32_t m_id;
 	uint32_t m_hwSampleRate;	//< Hardware sample rate.
 	uint32_t m_hwFrameSamples;	//< Hardware frame size in samples.
-	Semaphore m_filterLock;
+	Semaphore m_lock;
 	Ref< IFilter > m_filter;
 	Ref< IFilterInstance > m_filterInstance;
 	Ref< Sound > m_sound;
@@ -89,7 +90,7 @@ private:
 	float m_volume;
 	bool m_exclusive;
 
-	void playSound(Sound* sound, double time, uint32_t repeat);
+	bool playSound(Sound* sound, double time, uint32_t repeat);
 
 	bool getBlock(const ISoundMixer* mixer, double time, SoundBlock& outBlock);
 };
