@@ -94,6 +94,7 @@ private:
 	Ref< IOutputStreamBuffer > m_buffer;
 	LineEnd m_lineEnd;
 	int32_t m_indent;
+	bool m_pushIndent;
 };
 
 /*! \brief Character stream operator.
