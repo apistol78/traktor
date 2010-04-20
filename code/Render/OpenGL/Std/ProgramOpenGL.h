@@ -31,7 +31,7 @@ class T_DLLCLASS ProgramOpenGL : public IProgram
 	T_RTTI_CLASS;
 
 public:
-	ProgramOpenGL(ContextOpenGL* context);
+	ProgramOpenGL(ContextOpenGL* resourceContext);
 
 	virtual ~ProgramOpenGL();
 
@@ -92,7 +92,7 @@ private:
 		float offset[4];
 	};
 
-	Ref< ContextOpenGL > m_context;
+	Ref< ContextOpenGL > m_resourceContext;
 	GLhandleARB m_program;
 	RenderState m_renderState;
 	GLuint m_state;

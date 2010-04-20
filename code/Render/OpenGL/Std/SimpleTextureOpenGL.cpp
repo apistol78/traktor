@@ -32,8 +32,8 @@ struct DeleteTextureCallback : public IContext::IDeleteCallback
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SimpleTextureOpenGL", SimpleTextureOpenGL, ISimpleTexture)
 
-SimpleTextureOpenGL::SimpleTextureOpenGL(IContext* context)
-:	m_context(context)
+SimpleTextureOpenGL::SimpleTextureOpenGL(IContext* resourceContext)
+:	m_resourceContext(resourceContext)
 ,	m_textureName(0)
 ,	m_width(0)
 ,	m_height(0)
@@ -54,8 +54,6 @@ bool SimpleTextureOpenGL::create(const SimpleTextureCreateDesc& desc)
 
 	if (!convertTextureFormat(desc.format, m_pixelSize, m_components, m_format, m_type))
 		return false;
-
-	T_CONTEXT_SCOPE(m_context)
 
 	T_OGL_SAFE(glGenTextures(1, &m_textureName));
 
@@ -132,8 +130,8 @@ void SimpleTextureOpenGL::destroy()
 {
 	if (m_textureName)
 	{
-		if (m_context)
-			m_context->deleteResource(new DeleteTextureCallback(m_textureName));
+		if (m_resourceContext)
+			m_resourceContext->deleteResource(new DeleteTextureCallback(m_textureName));
 		m_textureName = 0;
 	}
 }
@@ -165,7 +163,7 @@ bool SimpleTextureOpenGL::lock(int level, Lock& lock)
 
 void SimpleTextureOpenGL::unlock(int level)
 {
-	T_CONTEXT_SCOPE(m_context)
+	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
 	T_OGL_SAFE(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
 	T_OGL_SAFE(glBindTexture(GL_TEXTURE_2D, m_textureName));
 	T_OGL_SAFE(glTexImage2D(

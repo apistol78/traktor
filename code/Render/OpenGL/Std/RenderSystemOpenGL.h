@@ -78,7 +78,7 @@ private:
 
 #endif
 
-	Ref< ContextOpenGL > m_globalContext;
+	Ref< ContextOpenGL > m_resourceContext;
 };
 
 	}

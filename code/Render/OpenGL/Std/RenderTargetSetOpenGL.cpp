@@ -9,8 +9,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetSetOpenGL", RenderTargetSetOpenGL, RenderTargetSet)
 
-RenderTargetSetOpenGL::RenderTargetSetOpenGL(IContext* context)
-:	m_context(context)
+RenderTargetSetOpenGL::RenderTargetSetOpenGL(IContext* resourceContext)
+:	m_resourceContext(resourceContext)
 ,	m_width(0)
 ,	m_height(0)
 ,	m_depthBuffer(0)
@@ -45,7 +45,7 @@ bool RenderTargetSetOpenGL::create(const RenderTargetSetCreateDesc& desc)
 	m_colorTextures.resize(desc.count);
 	for (int i = 0; i < desc.count; ++i)
 	{
-		m_colorTextures[i] = new RenderTargetOpenGL(m_context);
+		m_colorTextures[i] = new RenderTargetOpenGL(m_resourceContext);
 		if (!m_colorTextures[i]->create(desc, desc.targets[i], m_depthBuffer))
 			return false;
 	}

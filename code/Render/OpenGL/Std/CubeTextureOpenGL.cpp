@@ -53,8 +53,8 @@ struct DeleteTextureCallback : public IContext::IDeleteCallback
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.CubeTextureOpenGL", CubeTextureOpenGL, ICubeTexture)
 
-CubeTextureOpenGL::CubeTextureOpenGL(IContext* context)
-:	m_context(context)
+CubeTextureOpenGL::CubeTextureOpenGL(IContext* resourceContext)
+:	m_resourceContext(resourceContext)
 ,	m_textureName(0)
 ,	m_side(0)
 ,	m_pixelSize(0)
@@ -124,7 +124,7 @@ void CubeTextureOpenGL::destroy()
 {
 	if (m_textureName)
 	{
-		m_context->deleteResource(new DeleteTextureCallback(m_textureName));
+		m_resourceContext->deleteResource(new DeleteTextureCallback(m_textureName));
 		m_textureName = 0;
 	}
 }

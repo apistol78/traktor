@@ -3,6 +3,7 @@
 
 #include <map>
 #include "Core/Object.h"
+#include "Core/Thread/Semaphore.h"
 #include "Core/Thread/ThreadLocal.h"
 #include "Render/OpenGL/Platform.h"
 #include "Render/OpenGL/IContext.h"
@@ -79,6 +80,7 @@ private:
 #endif
 
 	static ThreadLocal ms_contextStack;
+	Semaphore m_lock;
 	std::map< GLenum, bool > m_enableStates;
 	std::map< uint32_t, GLuint > m_stateLists;
 	GLuint m_currentStateList;

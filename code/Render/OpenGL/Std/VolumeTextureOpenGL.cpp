@@ -29,8 +29,8 @@ struct DeleteTextureCallback : public IContext::IDeleteCallback
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VolumeTextureOpenGL", VolumeTextureOpenGL, IVolumeTexture)
 
-VolumeTextureOpenGL::VolumeTextureOpenGL(IContext* context)
-:	m_context(context)
+VolumeTextureOpenGL::VolumeTextureOpenGL(IContext* resourceContext)
+:	m_resourceContext(resourceContext)
 ,	m_textureName(0)
 ,	m_width(0)
 ,	m_height(0)
@@ -47,7 +47,7 @@ void VolumeTextureOpenGL::destroy()
 {
 	if (m_textureName)
 	{
-		m_context->deleteResource(new DeleteTextureCallback(m_textureName));
+		m_resourceContext->deleteResource(new DeleteTextureCallback(m_textureName));
 		m_textureName = 0;
 	}
 }

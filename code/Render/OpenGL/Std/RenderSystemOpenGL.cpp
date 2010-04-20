@@ -125,18 +125,18 @@ bool RenderSystemOpenGL::create(const RenderSystemCreateDesc& desc)
 	HGLRC hSharedRC = wglCreateContext(hSharedDC);
 	T_ASSERT (hSharedRC);
 
-	m_globalContext = new ContextOpenGL(m_hWndShared, hSharedDC, hSharedRC);
-	m_globalContext->enter();
+	m_resourceContext = new ContextOpenGL(m_hWndShared, hSharedDC, hSharedRC);
+	m_resourceContext->enter();
 
 	if (!opengl_initialize_extensions())
 		return false;
 
-	m_globalContext->leave();
+	m_resourceContext->leave();
 
 #elif defined(__APPLE__)
 
-	void* globalContext = cglwCreateContext(0, 0, 0, 0, 0);
-	m_globalContext = new ContextOpenGL(globalContext);
+	void* resourceContext = cglwCreateContext(0, 0, 0, 0, 0);
+	m_resourceContext = new ContextOpenGL(resourceContext);
 
 #else	// LINUX
 
@@ -160,23 +160,23 @@ bool RenderSystemOpenGL::create(const RenderSystemCreateDesc& desc)
 
 	log::info << L"Create GLX context..." << Endl;
 
-	GLXContext globalContext = glXCreateContext(display, visual, NULL, GL_TRUE);
-	T_ASSERT (globalContext);
+	GLXContext resourceContext = glXCreateContext(display, visual, NULL, GL_TRUE);
+	T_ASSERT (resourceContext);
 
 	if (!globalContext)
 		log::error << L"Unable to create GLX context!" << Endl;
 
-	log::info << L"Create global context..." << Endl;
+	log::info << L"Create resource context..." << Endl;
 
 	// @hack Need to have some GLXVisual ready, need to create a dummy window.
-	m_globalContext = new ContextOpenGL(display, 0, globalContext);
-	m_globalContext->enter();
+	m_resourceContext = new ContextOpenGL(display, 0, resourceContext);
+	m_resourceContext->enter();
 
 	if (!opengl_initialize_extensions())
 		T_BREAKPOINT;
 	*/
 
-	m_globalContext->leave();
+	m_resourceContext->leave();
 
 #endif
 
@@ -193,10 +193,10 @@ void RenderSystemOpenGL::destroy()
 	}
 #endif
 
-	if (m_globalContext)
+	if (m_resourceContext)
 	{
-		m_globalContext->destroy();
-		m_globalContext = 0;
+		m_resourceContext->destroy();
+		m_resourceContext = 0;
 	}
 }
 
@@ -435,9 +435,9 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 	}
 
 	Ref< ContextOpenGL > context = new ContextOpenGL(m_hWnd, hDC, hRC);
-	m_globalContext->share(context);
+	m_resourceContext->share(context);
 
-	return new RenderViewOpenGL(desc, context, m_globalContext, m_hWnd);
+	return new RenderViewOpenGL(desc, context, m_resourceContext, m_hWnd);
 
 #elif defined(__APPLE__)
 
@@ -450,7 +450,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 		
 	void* glcontext = cglwCreateContext(
 		viewHandle,
-		m_globalContext->getGLContext(),
+		m_resourceContext->getGLContext(),
 		desc.depthBits,
 		desc.stencilBits,
 		0
@@ -460,7 +460,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 
 	Ref< ContextOpenGL > context = new ContextOpenGL(glcontext);
 
-	return new RenderViewOpenGL(desc, context, m_globalContext);
+	return new RenderViewOpenGL(desc, context, m_resourceContext);
 
 #else
 	return 0;
@@ -509,7 +509,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewEmbedded
 		return 0;
 
 	Ref< ContextOpenGL > context = new ContextOpenGL((HWND)desc.nativeWindowHandle, hDC, hRC);
-	m_globalContext->share(context);
+	m_resourceContext->share(context);
 
 	context->enter();
 
@@ -518,13 +518,13 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewEmbedded
 
 	context->leave();
 
-	return new RenderViewOpenGL(desc, context, m_globalContext, (HWND)desc.nativeWindowHandle);
+	return new RenderViewOpenGL(desc, context, m_resourceContext, (HWND)desc.nativeWindowHandle);
 
 #elif defined(__APPLE__)
 
 	void* glcontext = cglwCreateContext(
 		desc.nativeWindowHandle,
-		m_globalContext->getGLContext(),
+		m_resourceContext->getGLContext(),
 		desc.depthBits,
 		desc.stencilBits,
 		0
@@ -534,7 +534,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewEmbedded
 
 	Ref< ContextOpenGL > context = new ContextOpenGL(glcontext);
 
-	return new RenderViewOpenGL(desc, context, m_globalContext);
+	return new RenderViewOpenGL(desc, context, m_resourceContext);
 
 #else	// LINUX
 
@@ -574,48 +574,48 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewEmbedded
 
 	context->leave();
 
-	return new RenderViewOpenGL(desc, context, m_globalContext);
+	return new RenderViewOpenGL(desc, context, m_resourceContext);
 
 #endif
 }
 
 Ref< VertexBuffer > RenderSystemOpenGL::createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
 {
-	T_CONTEXT_SCOPE(m_globalContext)
+	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
 
 #if defined(_WIN32)
 	if (glGenBuffersARB)
-		return new VertexBufferVBO(m_globalContext, vertexElements, bufferSize, dynamic);
+		return new VertexBufferVBO(m_resourceContext, vertexElements, bufferSize, dynamic);
 	else
-		return new VertexBufferVAR(m_globalContext, vertexElements, bufferSize, dynamic);
+		return new VertexBufferVAR(m_resourceContext, vertexElements, bufferSize, dynamic);
 #elif defined(__APPLE__)
-	return new VertexBufferVBO(m_globalContext, vertexElements, bufferSize, dynamic);
+	return new VertexBufferVBO(m_resourceContext, vertexElements, bufferSize, dynamic);
 #else
-	return new VertexBufferVAR(m_globalContext, vertexElements, bufferSize, dynamic);
+	return new VertexBufferVAR(m_resourceContext, vertexElements, bufferSize, dynamic);
 #endif
 }
 
 Ref< IndexBuffer > RenderSystemOpenGL::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
 {
-	T_CONTEXT_SCOPE(m_globalContext)
+	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
 
 #if defined(_WIN32)
 	if (glGenBuffersARB)
-		return new IndexBufferIBO(m_globalContext, indexType, bufferSize, dynamic);
+		return new IndexBufferIBO(m_resourceContext, indexType, bufferSize, dynamic);
 	else
-		return new IndexBufferIAR(m_globalContext, indexType, bufferSize);
+		return new IndexBufferIAR(m_resourceContext, indexType, bufferSize);
 #elif defined(__APPLE__)
-	return new IndexBufferIBO(m_globalContext, indexType, bufferSize, dynamic);
+	return new IndexBufferIBO(m_resourceContext, indexType, bufferSize, dynamic);
 #else
-	return new IndexBufferIAR(m_globalContext, indexType, bufferSize);
+	return new IndexBufferIAR(m_resourceContext, indexType, bufferSize);
 #endif
 }
 
 Ref< ISimpleTexture > RenderSystemOpenGL::createSimpleTexture(const SimpleTextureCreateDesc& desc)
 {
-	T_CONTEXT_SCOPE(m_globalContext)
+	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
 
-	Ref< SimpleTextureOpenGL > texture = new SimpleTextureOpenGL(m_globalContext);
+	Ref< SimpleTextureOpenGL > texture = new SimpleTextureOpenGL(m_resourceContext);
 	if (!texture->create(desc))
 		return 0;
 
@@ -624,9 +624,9 @@ Ref< ISimpleTexture > RenderSystemOpenGL::createSimpleTexture(const SimpleTextur
 
 Ref< ICubeTexture > RenderSystemOpenGL::createCubeTexture(const CubeTextureCreateDesc& desc)
 {
-	T_CONTEXT_SCOPE(m_globalContext)
+	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
 
-	Ref< CubeTextureOpenGL > texture = new CubeTextureOpenGL(m_globalContext);
+	Ref< CubeTextureOpenGL > texture = new CubeTextureOpenGL(m_resourceContext);
 	if (!texture->create(desc))
 		return 0;
 
@@ -635,9 +635,9 @@ Ref< ICubeTexture > RenderSystemOpenGL::createCubeTexture(const CubeTextureCreat
 
 Ref< IVolumeTexture > RenderSystemOpenGL::createVolumeTexture(const VolumeTextureCreateDesc& desc)
 {
-	T_CONTEXT_SCOPE(m_globalContext)
+	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
 
-	Ref< VolumeTextureOpenGL > texture = new VolumeTextureOpenGL(m_globalContext);
+	Ref< VolumeTextureOpenGL > texture = new VolumeTextureOpenGL(m_resourceContext);
 	if (!texture->create(desc))
 		return 0;
 
@@ -646,9 +646,9 @@ Ref< IVolumeTexture > RenderSystemOpenGL::createVolumeTexture(const VolumeTextur
 
 Ref< RenderTargetSet > RenderSystemOpenGL::createRenderTargetSet(const RenderTargetSetCreateDesc& desc)
 {
-	T_CONTEXT_SCOPE(m_globalContext)
+	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
 
-	Ref< RenderTargetSetOpenGL > renderTargetSet = new RenderTargetSetOpenGL(m_globalContext);
+	Ref< RenderTargetSetOpenGL > renderTargetSet = new RenderTargetSetOpenGL(m_resourceContext);
 	if (!renderTargetSet->create(desc))
 		return 0;
 
@@ -657,9 +657,9 @@ Ref< RenderTargetSet > RenderSystemOpenGL::createRenderTargetSet(const RenderTar
 
 Ref< IProgram > RenderSystemOpenGL::createProgram(const ProgramResource* programResource)
 {
-	T_CONTEXT_SCOPE(m_globalContext)
+	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
 
-	Ref< ProgramOpenGL > shader = new ProgramOpenGL(m_globalContext);
+	Ref< ProgramOpenGL > shader = new ProgramOpenGL(m_resourceContext);
 	if (!shader->create(programResource))
 		return 0;
 

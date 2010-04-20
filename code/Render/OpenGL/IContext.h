@@ -8,8 +8,6 @@ namespace traktor
 	namespace render
 	{
 
-#define T_CONTEXT_SCOPE(context) IContext::Scope __scope__(context);
-
 /*! \brief OpenGL context interface.
  * \ingroup OGL
  */
@@ -28,10 +26,11 @@ public:
 		Scope(IContext* context)
 		:	m_context(context)
 		{
-			m_context->enter();
+			bool result = m_context->enter();
+			T_FATAL_ASSERT_M (result, L"Unable to set OpenGL context, bailing!");
 		}
 
-		virtual ~Scope()
+		~Scope()
 		{
 			m_context->leave();
 		}

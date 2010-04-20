@@ -143,6 +143,9 @@ int32_t ContextOpenGL::getHeight() const
 
 bool ContextOpenGL::enter()
 {
+	if (!m_lock.wait())
+		return false;
+
 #if defined(_WIN32)
 
 	if (!wglMakeCurrent(m_hDC, m_hRC))
@@ -205,8 +208,9 @@ void ContextOpenGL::leave()
 	else
 		cglwMakeCurrent(0);
 
-#else	// LINUX
 #endif
+
+	m_lock.release();
 }
 
 void ContextOpenGL::enable(GLenum state)

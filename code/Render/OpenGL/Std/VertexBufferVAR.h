@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RENDER_OPENGL_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -27,7 +27,7 @@ class T_DLLCLASS VertexBufferVAR : public VertexBufferOpenGL
 	T_RTTI_CLASS;
 
 public:
-	VertexBufferVAR(IContext* context, const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic);
+	VertexBufferVAR(IContext* resourceContext, const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic);
 
 	virtual ~VertexBufferVAR();
 
@@ -50,7 +50,7 @@ private:
 		GLuint offset;
 	};
 
-	Ref< IContext > m_context;
+	Ref< IContext > m_resourceContext;
 	bool m_dynamic;
 	GLuint m_vertexStride;
 	AttributeDesc m_attributeDesc[T_OGL_MAX_USAGE_INDEX];

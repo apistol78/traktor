@@ -29,7 +29,7 @@ class T_DLLCLASS SimpleTextureOpenGL : public ISimpleTexture
 	T_RTTI_CLASS;
 
 public:
-	SimpleTextureOpenGL(IContext* context);
+	SimpleTextureOpenGL(IContext* resourceContext);
 
 	virtual ~SimpleTextureOpenGL();
 	
@@ -54,7 +54,7 @@ public:
 	uint32_t getMipCount() const { return m_mipCount; }
 
 private:
-	Ref< IContext > m_context;
+	Ref< IContext > m_resourceContext;
 	GLuint m_textureName;
 	int m_width;
 	int m_height;

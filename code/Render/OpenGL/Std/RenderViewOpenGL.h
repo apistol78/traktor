@@ -39,7 +39,7 @@ public:
 	RenderViewOpenGL(
 		const RenderViewDesc desc,
 		ContextOpenGL* context,
-		ContextOpenGL* globalContext,
+		ContextOpenGL* resourceContext,
 		HWND hWnd
 	);
 
@@ -48,7 +48,7 @@ public:
 	RenderViewOpenGL(
 		const RenderViewDesc desc,
 		ContextOpenGL* context,
-		ContextOpenGL* globalContext
+		ContextOpenGL* resourceContext
 	);
 
 #else
@@ -56,7 +56,7 @@ public:
 	RenderViewOpenGL(
 		const RenderViewDesc desc,
 		ContextOpenGL* context,
-		ContextOpenGL* globalContext
+		ContextOpenGL* resourceContext
 	);
 
 #endif
@@ -104,7 +104,7 @@ public:
 private:
 	Ref< RenderSystemOpenGL > m_renderSystem;
 	Ref< ContextOpenGL > m_context;
-	Ref< ContextOpenGL > m_globalContext;
+	Ref< ContextOpenGL > m_resourceContext;
 	
 	RenderTargetSetCreateDesc m_primaryTargetDesc;
 	Ref< RenderTargetSetOpenGL > m_primaryTarget;
