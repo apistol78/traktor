@@ -49,7 +49,7 @@ public:
 	void setFilter(IFilter* filter);
 
 	/*! \brief Get currently associated filter. */
-	Ref< IFilter > getFilter() const;
+	IFilter* getFilter() const;
 
 	/*! \brief Set exclusive flag.
 	 *

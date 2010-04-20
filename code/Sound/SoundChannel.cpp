@@ -55,17 +55,16 @@ void SoundChannel::setVolume(float volume)
 
 void SoundChannel::setFilter(IFilter* filter)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_filterLock);
+
 	if (m_filter == filter)
 		return;
 
-	{
-		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_filterLock);
-		if ((m_filter = filter) != 0)
-			m_filterInstance = filter->createInstance();
-	}
+	if ((m_filter = filter) != 0)
+		m_filterInstance = filter->createInstance();
 }
 
-Ref< IFilter > SoundChannel::getFilter() const
+IFilter* SoundChannel::getFilter() const
 {
 	return m_filter;
 }
@@ -98,13 +97,16 @@ ISoundBufferCursor* SoundChannel::getCursor() const
 
 void SoundChannel::playSound(Sound* sound, double time, uint32_t repeat)
 {
-	Ref< ISoundBuffer > soundBuffer = sound->getSoundBuffer();
-	if (soundBuffer)
-	{
-		m_sound = sound;
-		m_repeat = max< uint32_t >(repeat, 1U);
-		m_cursor = soundBuffer->createCursor();
-	}
+	if (!m_sound)
+		return;
+
+	ISoundBuffer* soundBuffer = sound->getSoundBuffer();
+	if (!soundBuffer)
+		return;
+
+	m_sound = sound;
+	m_cursor = soundBuffer->createCursor();
+	m_repeat = max< uint32_t >(repeat, 1U);
 }
 
 bool SoundChannel::getBlock(const ISoundMixer* mixer, double time, SoundBlock& outBlock)
@@ -112,7 +114,7 @@ bool SoundChannel::getBlock(const ISoundMixer* mixer, double time, SoundBlock& o
 	if (!m_sound || !m_cursor)
 		return false;
 
-	Ref< ISoundBuffer > soundBuffer = m_sound->getSoundBuffer();
+	ISoundBuffer* soundBuffer = m_sound->getSoundBuffer();
 	T_ASSERT (soundBuffer);
 
 	// Remove old output samples.
