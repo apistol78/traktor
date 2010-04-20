@@ -156,33 +156,27 @@ void VertexBufferVBO::destroy()
 
 void* VertexBufferVBO::lock()
 {
-	if (!m_lock)
-	{
-		T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
-		T_OGL_SAFE(glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_name));
-
-		m_lock = static_cast< uint8_t* >(glMapBufferARB(GL_ARRAY_BUFFER_ARB, GL_WRITE_ONLY_ARB));
-	}
+	T_ASSERT_M(!m_lock, L"Vertex buffer already locked");
+	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
+	T_OGL_SAFE(glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_name));
+	m_lock = static_cast< uint8_t* >(glMapBufferARB(GL_ARRAY_BUFFER_ARB, GL_WRITE_ONLY_ARB));
 	return m_lock;
 }
 
 void* VertexBufferVBO::lock(uint32_t vertexOffset, uint32_t vertexCount)
 {
-	if (!m_lock)
-	{
-		T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
-		T_OGL_SAFE(glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_name));
-
-		m_lock = static_cast< uint8_t* >(glMapBufferARB(GL_ARRAY_BUFFER_ARB, GL_WRITE_ONLY_ARB));
-		if (!m_lock)
-			return 0;
-	}
-	return m_lock + vertexOffset * m_vertexStride;
+	T_ASSERT_M(!m_lock, L"Vertex buffer already locked");
+	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
+	T_OGL_SAFE(glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_name));
+	m_lock = static_cast< uint8_t* >(glMapBufferARB(GL_ARRAY_BUFFER_ARB, GL_WRITE_ONLY_ARB));
+	return m_lock ? (m_lock + vertexOffset * m_vertexStride) : 0;
 }
 
 void VertexBufferVBO::unlock()
 {
+	T_ASSERT_M(m_lock, L"Vertex buffer not locked");
 	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
+	T_OGL_SAFE(glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_name));
 	T_OGL_SAFE(glUnmapBufferARB(GL_ARRAY_BUFFER_ARB));
 	m_lock = 0;
 }
