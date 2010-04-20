@@ -82,7 +82,7 @@ void emitArcusTan(GlslContext& cx, ArcusTan* node)
 	GlslVariable* xy = cx.emitInput(node, L"XY");
 	T_ASSERT_M (xy->getType() == GtFloat2, L"Incorrect type on XY");
 	GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat);
-	assign(f, out) << L"atan2(" << xy->getName() << L".x, " << xy->getName() << L".y);" << Endl;
+	assign(f, out) << L"atan(" << xy->getName() << L".x, " << xy->getName() << L".y);" << Endl;
 }
 
 void emitClamp(GlslContext& cx, Clamp* node)
