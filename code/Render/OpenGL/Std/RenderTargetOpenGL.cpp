@@ -46,8 +46,8 @@ struct DeleteFramebufferCallback : public IContext::IDeleteCallback
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetOpenGL", RenderTargetOpenGL, ITexture)
 
-RenderTargetOpenGL::RenderTargetOpenGL(IContext* context)
-:	m_context(context)
+RenderTargetOpenGL::RenderTargetOpenGL(IContext* resourceContext)
+:	m_resourceContext(resourceContext)
 ,	m_width(0)
 ,	m_height(0)
 ,	m_textureTarget(0)
@@ -273,20 +273,20 @@ void RenderTargetOpenGL::destroy()
 {
 	if (m_colorTexture)
 	{
-		if (m_context)
-			m_context->deleteResource(new DeleteTextureCallback(m_colorTexture));
+		if (m_resourceContext)
+			m_resourceContext->deleteResource(new DeleteTextureCallback(m_colorTexture));
 		m_colorTexture = 0;
 	}
 	if (m_resolveFBO)
 	{
-		if (m_context)
-			m_context->deleteResource(new DeleteFramebufferCallback(m_resolveFBO));
+		if (m_resourceContext)
+			m_resourceContext->deleteResource(new DeleteFramebufferCallback(m_resolveFBO));
 		m_resolveFBO = 0;
 	}
 	if (m_targetFBO)
 	{
-		if (m_context)
-			m_context->deleteResource(new DeleteFramebufferCallback(m_targetFBO));
+		if (m_resourceContext)
+			m_resourceContext->deleteResource(new DeleteFramebufferCallback(m_targetFBO));
 		m_targetFBO = 0;
 	}
 }

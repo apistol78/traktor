@@ -29,9 +29,9 @@ struct DeleteBufferCallback : public IContext::IDeleteCallback
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.IndexBufferIBO", IndexBufferIBO, IndexBufferOpenGL)
 
-IndexBufferIBO::IndexBufferIBO(IContext* context, IndexType indexType, uint32_t bufferSize, bool dynamic)
+IndexBufferIBO::IndexBufferIBO(IContext* resourceContext, IndexType indexType, uint32_t bufferSize, bool dynamic)
 :	IndexBufferOpenGL(indexType, bufferSize)
-,	m_context(context)
+,	m_resourceContext(resourceContext)
 ,	m_locked(false)
 {
 	T_OGL_SAFE(glGenBuffersARB(1, &m_name));
@@ -49,8 +49,8 @@ void IndexBufferIBO::destroy()
 	T_ASSERT_M (!m_locked, L"Index buffer locked");
 	if (m_name)
 	{
-		if (m_context)
-			m_context->deleteResource(new DeleteBufferCallback(m_name));
+		if (m_resourceContext)
+			m_resourceContext->deleteResource(new DeleteBufferCallback(m_name));
 		m_name = 0;
 	}
 }
@@ -59,7 +59,7 @@ void* IndexBufferIBO::lock()
 {
 	T_ASSERT_M (!m_locked, L"Index buffer already locked");
 	
-	T_CONTEXT_SCOPE(m_context);
+	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
 	T_OGL_SAFE(glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, m_name));
 
 	void* ptr = glMapBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, GL_WRITE_ONLY_ARB);
@@ -73,7 +73,7 @@ void IndexBufferIBO::unlock()
 {
 	T_ASSERT_M (m_locked, L"Index buffer not locked");
 
-	T_CONTEXT_SCOPE(m_context);
+	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
 	T_OGL_SAFE(glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, m_name));
 	T_OGL_SAFE(glUnmapBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB));
 

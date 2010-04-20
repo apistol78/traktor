@@ -7,9 +7,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RENDER_OPENGL_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -27,7 +27,7 @@ class T_DLLCLASS CubeTextureOpenGL : public ICubeTexture
 	T_RTTI_CLASS;
 
 public:
-	CubeTextureOpenGL(IContext* context);
+	CubeTextureOpenGL(IContext* resourceContext);
 
 	virtual ~CubeTextureOpenGL();
 
@@ -48,7 +48,7 @@ public:
 	GLuint getTextureName() const { return m_textureName; }
 	
 private:
-	Ref< IContext > m_context;
+	Ref< IContext > m_resourceContext;
 	GLuint m_textureName;
 	int m_side;
 	int m_pixelSize;

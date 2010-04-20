@@ -74,8 +74,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProgramOpenGL", ProgramOpenGL, IProgram)
 
 ProgramOpenGL* ProgramOpenGL::ms_activeProgram = 0;
 
-ProgramOpenGL::ProgramOpenGL(ContextOpenGL* context)
-:	m_context(context)
+ProgramOpenGL::ProgramOpenGL(ContextOpenGL* resourceContext)
+:	m_resourceContext(resourceContext)
 ,	m_program(0)
 ,	m_state(0)
 ,	m_locationTargetSize(0)
@@ -279,7 +279,7 @@ bool ProgramOpenGL::create(const ProgramResource* resource)
 	// Create a display list from the render states.
 	const RenderState& renderState = resourceOpenGL->getRenderState();
 	m_renderState = renderState;
-	m_state = m_context->createStateList(renderState);
+	m_state = m_resourceContext->createStateList(renderState);
 
 	return true;
 }
@@ -294,8 +294,8 @@ void ProgramOpenGL::destroy()
 
 	if (m_program)
 	{
-		if (m_context)
-			m_context->deleteResource(new DeleteObjectCallback(m_program));
+		if (m_resourceContext)
+			m_resourceContext->deleteResource(new DeleteObjectCallback(m_program));
 		m_program = 0;
 	}
 }
@@ -416,7 +416,7 @@ bool ProgramOpenGL::activate(float targetSize[2])
 	
 	if (ms_activeProgram != this)
 	{
-		m_context->callStateList(m_state);
+		m_resourceContext->callStateList(m_state);
 
 		T_ASSERT (m_program);
 		T_OGL_SAFE(glUseProgramObjectARB(m_program));

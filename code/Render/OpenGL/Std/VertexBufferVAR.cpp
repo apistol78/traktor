@@ -1,8 +1,8 @@
 #include <cstring>
+#include "Core/Log/Log.h"
+#include "Render/VertexElement.h"
 #include "Render/OpenGL/Std/Extensions.h"
 #include "Render/OpenGL/Std/VertexBufferVAR.h"
-#include "Render/VertexElement.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -11,9 +11,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VertexBufferVAR", VertexBufferVAR, VertexBufferOpenGL)
 
-VertexBufferVAR::VertexBufferVAR(IContext* context, const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
+VertexBufferVAR::VertexBufferVAR(IContext* resourceContext, const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
 :	VertexBufferOpenGL(bufferSize)
-,	m_context(context)
+,	m_resourceContext(resourceContext)
 ,	m_dynamic(dynamic)
 ,	m_data(0)
 {

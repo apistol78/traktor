@@ -22,11 +22,11 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewOpenGL", RenderViewOpenGL, IRe
 RenderViewOpenGL::RenderViewOpenGL(
 	const RenderViewDesc desc,
 	ContextOpenGL* context,
-	ContextOpenGL* globalContext,
+	ContextOpenGL* resourceContext,
 	HWND hWnd
 )
 :	m_context(context)
-,	m_globalContext(globalContext)
+,	m_resourceContext(resourceContext)
 ,	m_currentDirty(true)
 
 #elif defined(__APPLE__)
@@ -34,10 +34,10 @@ RenderViewOpenGL::RenderViewOpenGL(
 RenderViewOpenGL::RenderViewOpenGL(
 	const RenderViewDesc desc,
 	ContextOpenGL* context,
-	ContextOpenGL* globalContext
+	ContextOpenGL* resourceContext
 )
 :	m_context(context)
-,	m_globalContext(globalContext)
+,	m_resourceContext(resourceContext)
 ,	m_currentDirty(true)
 
 #else
@@ -45,15 +45,15 @@ RenderViewOpenGL::RenderViewOpenGL(
 RenderViewOpenGL::RenderViewOpenGL(
 	const RenderViewDesc desc,
 	ContextOpenGL* context,
-	ContextOpenGL* globalContext
+	ContextOpenGL* resourceContext
 )
 :	m_context(context)
-,	m_globalContext(globalContext)
+,	m_resourceContext(resourceContext)
 ,	m_currentDirty(true)
 
 #endif
 {
-	T_CONTEXT_SCOPE(m_globalContext)
+	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
 
 	Viewport viewport;
 	viewport.left = 0;
@@ -99,8 +99,9 @@ void RenderViewOpenGL::resize(int32_t width, int32_t height)
 
 	m_context->update();
 
+	// Re-create primary FBO target.
 	{
-		T_CONTEXT_SCOPE(m_globalContext)
+		T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
 
 		m_primaryTargetDesc.width = m_context->getWidth();
 		m_primaryTargetDesc.height = m_context->getHeight();
@@ -127,7 +128,7 @@ bool RenderViewOpenGL::isFullScreen() const
 
 void RenderViewOpenGL::setViewport(const Viewport& viewport)
 {
-	T_CONTEXT_SCOPE(m_context)
+	T_ANONYMOUS_VAR(IContext::Scope)(m_context);
 
 	T_OGL_SAFE(glViewport(
 		viewport.left,
@@ -144,7 +145,7 @@ void RenderViewOpenGL::setViewport(const Viewport& viewport)
 
 Viewport RenderViewOpenGL::getViewport()
 {
-	T_CONTEXT_SCOPE(m_context)
+	T_ANONYMOUS_VAR(IContext::Scope)(m_context);
 
 	GLint ext[4];
 	T_OGL_SAFE(glGetIntegerv(GL_VIEWPORT, ext));
@@ -168,7 +169,8 @@ bool RenderViewOpenGL::begin()
 	if (!m_primaryTarget)
 		return false;
 
-	m_context->enter();
+	if (!m_context->enter())
+		return false;
 
 	T_OGL_SAFE(glEnable(GL_DEPTH_TEST));
 	T_OGL_SAFE(glDepthFunc(GL_LEQUAL));
@@ -255,7 +257,7 @@ void RenderViewOpenGL::draw(const Primitives& primitives)
 		if (!m_currentProgram || !m_currentVertexBuffer)
 			return;
 
-		float targetSize[] = { m_context->getWidth(), m_context->getHeight() };
+		float targetSize[] = { float(m_context->getWidth()), float(m_context->getHeight()) };
 		if (!m_currentProgram->activate(targetSize))
 			return;
 
@@ -368,13 +370,14 @@ void RenderViewOpenGL::end()
 
 void RenderViewOpenGL::present()
 {
+	// Swap buffers.
 	m_context->swapBuffers();
 	m_context->leave();
 
-	// Finished using view's context; restore global context and delete resources.
-	m_globalContext->enter();
-	m_globalContext->deleteResources();
-	m_globalContext->leave();
+	// Clean pending resources.
+	m_resourceContext->enter();
+	m_resourceContext->deleteResources();
+	m_resourceContext->leave();
 }
 
 void RenderViewOpenGL::pushMarker(const char* const marker)

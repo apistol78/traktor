@@ -32,9 +32,9 @@ struct DeleteBufferCallback : public IContext::IDeleteCallback
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VertexBufferVBO", VertexBufferVBO, VertexBufferOpenGL)
 
-VertexBufferVBO::VertexBufferVBO(IContext* context, const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
+VertexBufferVBO::VertexBufferVBO(IContext* resourceContext, const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
 :	VertexBufferOpenGL(bufferSize)
-,	m_context(context)
+,	m_resourceContext(resourceContext)
 ,	m_lock(0)
 {
 	m_vertexStride = getVertexSize(vertexElements);
@@ -146,24 +146,23 @@ VertexBufferVBO::~VertexBufferVBO()
 
 void VertexBufferVBO::destroy()
 {
-	T_ASSERT_M (!m_lock, L"Vertex buffer locked");
 	if (m_name)
 	{
-		if (m_context)
-			m_context->deleteResource(new DeleteBufferCallback(m_name));
+		if (m_resourceContext)
+			m_resourceContext->deleteResource(new DeleteBufferCallback(m_name));
 		m_name = 0;
 	}
 }
 
 void* VertexBufferVBO::lock()
 {
-	if (m_lock)
-		return m_lock;
+	if (!m_lock)
+	{
+		T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
+		T_OGL_SAFE(glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_name));
 
-	T_CONTEXT_SCOPE(m_context);
-	T_OGL_SAFE(glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_name));
-
-	m_lock = static_cast< uint8_t* >(glMapBufferARB(GL_ARRAY_BUFFER_ARB, GL_WRITE_ONLY_ARB));
+		m_lock = static_cast< uint8_t* >(glMapBufferARB(GL_ARRAY_BUFFER_ARB, GL_WRITE_ONLY_ARB));
+	}
 	return m_lock;
 }
 
@@ -171,7 +170,7 @@ void* VertexBufferVBO::lock(uint32_t vertexOffset, uint32_t vertexCount)
 {
 	if (!m_lock)
 	{
-		T_CONTEXT_SCOPE(m_context);
+		T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
 		T_OGL_SAFE(glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_name));
 
 		m_lock = static_cast< uint8_t* >(glMapBufferARB(GL_ARRAY_BUFFER_ARB, GL_WRITE_ONLY_ARB));
@@ -183,17 +182,16 @@ void* VertexBufferVBO::lock(uint32_t vertexOffset, uint32_t vertexCount)
 
 void VertexBufferVBO::unlock()
 {
+	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
+	T_OGL_SAFE(glUnmapBufferARB(GL_ARRAY_BUFFER_ARB));
+	m_lock = 0;
 }
 
 void VertexBufferVBO::activate(const GLint* attributeLocs)
 {
-	T_OGL_SAFE(glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_name));
+	T_ASSERT_M(!m_lock, L"Vertex buffer still locked");
 
-	if (m_lock)
-	{
-		T_OGL_SAFE(glUnmapBufferARB(GL_ARRAY_BUFFER_ARB));
-		m_lock = 0;
-	}
+	T_OGL_SAFE(glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_name));
 
 	for (int i = 0; i < T_OGL_MAX_USAGE_INDEX; ++i)
 	{

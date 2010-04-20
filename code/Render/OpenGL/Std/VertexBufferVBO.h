@@ -27,7 +27,7 @@ class T_DLLCLASS VertexBufferVBO : public VertexBufferOpenGL
 	T_RTTI_CLASS;
 
 public:
-	VertexBufferVBO(IContext* context, const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic);
+	VertexBufferVBO(IContext* resourceContext, const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic);
 
 	virtual ~VertexBufferVBO();
 
@@ -50,7 +50,7 @@ private:
 		GLuint offset;
 	};
 
-	Ref< IContext > m_context;
+	Ref< IContext > m_resourceContext;
 	GLuint m_name;
 	GLuint m_vertexStride;
 	AttributeDesc m_attributeDesc[T_OGL_MAX_USAGE_INDEX];

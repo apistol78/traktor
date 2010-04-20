@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RENDER_OPENGL_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -26,7 +26,7 @@ class T_DLLCLASS IndexBufferIBO : public IndexBufferOpenGL
 	T_RTTI_CLASS;
 
 public:
-	IndexBufferIBO(IContext* context, IndexType indexType, uint32_t bufferSize, bool dynamic);
+	IndexBufferIBO(IContext* resourceContext, IndexType indexType, uint32_t bufferSize, bool dynamic);
 
 	virtual ~IndexBufferIBO();
 
@@ -41,7 +41,7 @@ public:
 	virtual const GLvoid* getIndexData() const;
 
 private:
-	Ref< IContext > m_context;
+	Ref< IContext > m_resourceContext;
 	GLuint m_name;
 	bool m_locked;
 };

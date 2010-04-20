@@ -9,9 +9,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RENDER_OPENGL_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -30,7 +30,7 @@ class T_DLLCLASS RenderTargetSetOpenGL : public RenderTargetSet
 	T_RTTI_CLASS;
 
 public:
-	RenderTargetSetOpenGL(IContext* context);
+	RenderTargetSetOpenGL(IContext* resourceContext);
 
 	virtual ~RenderTargetSetOpenGL();
 
@@ -49,7 +49,7 @@ public:
 	virtual bool read(int index, void* buffer) const;
 
 private:
-	Ref< IContext > m_context;
+	Ref< IContext > m_resourceContext;
 	int m_width;
 	int m_height;
 	GLuint m_depthBuffer;

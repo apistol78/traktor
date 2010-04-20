@@ -8,9 +8,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RENDER_OPENGL_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -28,7 +28,7 @@ class T_DLLCLASS RenderTargetOpenGL : public ITexture
 	T_RTTI_CLASS;
 
 public:
-	RenderTargetOpenGL(IContext* context);
+	RenderTargetOpenGL(IContext* resourceContext);
 
 	virtual ~RenderTargetOpenGL();
 
@@ -59,7 +59,7 @@ public:
 	inline const Vector4& getTextureOriginAndScale() const { return m_originAndScale; }
 
 private:
-	Ref< IContext > m_context;
+	Ref< IContext > m_resourceContext;
 	int m_width;
 	int m_height;
 	GLenum m_textureTarget;
