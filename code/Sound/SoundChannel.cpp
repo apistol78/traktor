@@ -25,8 +25,9 @@ const uint32_t c_outputSamplesBlockCount = 3;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.SoundChannel", SoundChannel, Object)
 
-SoundChannel::SoundChannel(uint32_t hwSampleRate, uint32_t hwFrameSamples)
-:	m_hwSampleRate(hwSampleRate)
+SoundChannel::SoundChannel(uint32_t id, uint32_t hwSampleRate, uint32_t hwFrameSamples)
+:	m_id(id)
+,	m_hwSampleRate(hwSampleRate)
 ,	m_hwFrameSamples(hwFrameSamples)
 ,	m_repeat(0)
 ,	m_outputSamplesIn(0)
@@ -55,7 +56,7 @@ void SoundChannel::setVolume(float volume)
 
 void SoundChannel::setFilter(IFilter* filter)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_filterLock);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	if (m_filter == filter)
 		return;
@@ -81,13 +82,13 @@ bool SoundChannel::isExclusive() const
 
 bool SoundChannel::isPlaying() const
 {
-	// Assume we're playing if we have an attached sound.
 	return bool(m_sound != 0);
 }
 
 void SoundChannel::stop()
 {
 	m_sound = 0;
+	m_cursor = 0;
 }
 
 ISoundBufferCursor* SoundChannel::getCursor() const
@@ -95,18 +96,33 @@ ISoundBufferCursor* SoundChannel::getCursor() const
 	return m_cursor;
 }
 
-void SoundChannel::playSound(Sound* sound, double time, uint32_t repeat)
+bool SoundChannel::playSound(Sound* sound, double time, uint32_t repeat)
 {
-	if (!m_sound)
-		return;
+	if (!sound)
+	{
+		log::error << L"playSound failed; no sound" << Endl;
+		return false;
+	}
 
 	ISoundBuffer* soundBuffer = sound->getSoundBuffer();
 	if (!soundBuffer)
-		return;
+	{
+		log::error << L"playSound failed; no sound buffer" << Endl;
+		return false;
+	}
+
+	m_cursor = soundBuffer->createCursor();
+	if (!m_cursor)
+	{
+		log::error << L"playSound failed; unable to create cursor" << Endl;
+		return false;
+	}
 
 	m_sound = sound;
-	m_cursor = soundBuffer->createCursor();
 	m_repeat = max< uint32_t >(repeat, 1U);
+	m_outputSamplesIn = 0;
+
+	return true;
 }
 
 bool SoundChannel::getBlock(const ISoundMixer* mixer, double time, SoundBlock& outBlock)
@@ -145,12 +161,14 @@ bool SoundChannel::getBlock(const ISoundMixer* mixer, double time, SoundBlock& o
 				if (!soundBuffer->getBlock(mixer, m_cursor, soundBlock))
 				{
 					m_sound = 0;
+					m_cursor = 0;
 					return false;
 				}
 			}
 			else
 			{
 				m_sound = 0;
+				m_cursor = 0;
 				return false;
 			}
 		}
@@ -162,7 +180,7 @@ bool SoundChannel::getBlock(const ISoundMixer* mixer, double time, SoundBlock& o
 		// Apply filter on sound block.
 		if (m_filter)
 		{
-			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_filterLock);
+			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 			m_filter->apply(mixer, m_filterInstance, soundBlock);
 		}
 

@@ -85,6 +85,7 @@ bool SoundSystem::create(const SoundSystemCreateDesc& desc)
 	for (uint32_t i = 0; i < desc.channels; ++i)
 	{
 		m_channels[i] = new SoundChannel(
+			i,
 			desc.driverDesc.sampleRate,
 			desc.driverDesc.frameSamples
 		);
@@ -148,7 +149,10 @@ Ref< SoundChannel > SoundSystem::play(uint32_t channelId, Sound* sound, uint32_t
 {
 	T_ASSERT (channelId < m_channels.size());
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_channelAttachLock);
-	m_channels[channelId]->playSound(sound, m_time, repeat);
+	
+	if (!m_channels[channelId]->playSound(sound, m_time, repeat))
+		return 0;
+
 	return m_channels[channelId];
 }
 
@@ -163,8 +167,8 @@ Ref< SoundChannel > SoundSystem::play(Sound* sound, bool wait, uint32_t repeat)
 			{
 				if (!(*i)->isPlaying() && !(*i)->isExclusive())
 				{
-					(*i)->playSound(sound, m_time, repeat);
-					return *i;
+					if ((*i)->playSound(sound, m_time, repeat))
+						return *i;
 				}
 			}
 		}

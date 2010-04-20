@@ -12,10 +12,30 @@ namespace traktor
 struct StaticSoundBufferCursor : public RefCountImpl< ISoundBufferCursor >
 {
 	uint32_t m_position;
+	float* m_blocks[SbcMaxChannelCount];
 
-	StaticSoundBufferCursor()
+	StaticSoundBufferCursor(uint32_t channelsCount)
 	:	m_position(0)
 	{
+		const uint32_t blockSize = sizeof(float) * 4096;
+
+		std::memset(m_blocks, 0, sizeof(m_blocks));
+		for (uint32_t i = 0; i < channelsCount; ++i)
+		{
+			m_blocks[i] = (float*)Alloc::acquireAlign(blockSize, 16);
+			T_FATAL_ASSERT_M (m_blocks[i], L"Out of memory");
+
+			std::memset(m_blocks[i], 0, blockSize);
+		}
+	}
+
+	virtual ~StaticSoundBufferCursor()
+	{
+		for (uint32_t i = 0; i < sizeof_array(m_blocks); ++i)
+		{
+			if (m_blocks[i])
+				Alloc::freeAlign(m_blocks[i]);
+		}
 	}
 
 	virtual void reset()
@@ -46,20 +66,11 @@ bool StaticSoundBuffer::create(uint32_t sampleRate, uint32_t samplesCount, uint3
 	m_samplesCount = samplesCount;
 	m_channelsCount = channelsCount;
 
-	std::memset(m_blocks, 0, sizeof(m_blocks));
-
 	for (uint32_t i = 0; i < m_channelsCount; ++i)
 	{
 		m_samples[i].reset(new int16_t [m_samplesCount]);
 		if (!m_samples[i].ptr())
 			return false;
-
-		const uint32_t blockSize = sizeof(float) * 4096;
-		m_blocks[i] = (float*)Alloc::acquireAlign(blockSize, 16);
-		if (!m_blocks[i])
-			return false;
-
-		std::memset(m_blocks[i], 0, blockSize);
 	}
 
 	return true;
@@ -68,10 +79,7 @@ bool StaticSoundBuffer::create(uint32_t sampleRate, uint32_t samplesCount, uint3
 void StaticSoundBuffer::destroy()
 {
 	for (uint32_t i = 0; i < m_channelsCount; ++i)
-	{
-		Alloc::freeAlign(m_blocks[i]);
 		m_samples[i].release();
-	}
 }
 
 int16_t* StaticSoundBuffer::getSamplesData(uint32_t channel)
@@ -81,7 +89,7 @@ int16_t* StaticSoundBuffer::getSamplesData(uint32_t channel)
 
 Ref< ISoundBufferCursor > StaticSoundBuffer::createCursor() const
 {
-	return new StaticSoundBufferCursor();
+	return new StaticSoundBufferCursor(m_channelsCount);
 }
 
 bool StaticSoundBuffer::getBlock(const ISoundMixer* mixer, ISoundBufferCursor* cursor, SoundBlock& outBlock) const
@@ -98,9 +106,9 @@ bool StaticSoundBuffer::getBlock(const ISoundMixer* mixer, ISoundBufferCursor* c
 
 	for (uint32_t i = 0; i < m_channelsCount; ++i)
 	{
-		outBlock.samples[i] = m_blocks[i];
+		outBlock.samples[i] = ssbc->m_blocks[i];
 		for (uint32_t j = 0; j < samplesCount; ++j)
-			m_blocks[i][j] = float(m_samples[i][position + j] / 32767.0f);
+			ssbc->m_blocks[i][j] = float(m_samples[i][position + j] / 32767.0f);
 	}
 
 	outBlock.samplesCount = alignUp(samplesCount, 4);
