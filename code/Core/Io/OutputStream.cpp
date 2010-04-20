@@ -147,6 +147,7 @@ OutputStream::OutputStream(IOutputStreamBuffer* buffer, LineEnd lineEnd)
 :	m_buffer(buffer)
 ,	m_lineEnd(lineEnd)
 ,	m_indent(0)
+,	m_pushIndent(false)
 {
 	if (m_lineEnd == LeAuto)
 	{
@@ -279,13 +280,28 @@ OutputStream& OutputStream::operator << (const std::wstring& s)
 
 void OutputStream::put(wchar_t ch)
 {
+	if (m_pushIndent)
+	{
+		if (m_indent > 0)
+			m_buffer->overflow(c_indents, m_indent);
+		m_pushIndent = false;
+	}
+	
 	m_buffer->overflow(&ch, 1);
-	if (m_indent > 0 && isEol(ch))
-		m_buffer->overflow(&c_indents[m_indent], m_indent);
+
+	if (isEol(ch))
+		m_pushIndent = true;
 }
 
 void OutputStream::puts(const wchar_t* s)
 {
+	if (m_pushIndent)
+	{
+		if (m_indent > 0)
+			m_buffer->overflow(c_indents, m_indent);
+		m_pushIndent = false;
+	}
+
 	if (s)
 	{
 		uint32_t x = 0;
@@ -294,7 +310,7 @@ void OutputStream::puts(const wchar_t* s)
 			if (m_indent > 0 && isEol(s[x]))
 			{
 				m_buffer->overflow(s, x + 1);
-				m_buffer->overflow(&c_indents[m_indent], m_indent);
+				m_buffer->overflow(c_indents, m_indent);
 				s += x + 1;
 				x = 0;
 			}
