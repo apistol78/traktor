@@ -47,6 +47,16 @@ public:
 
 	float getValue(const std::wstring& name, float defaultValue) const;
 
+	void removeValue(const std::wstring& name);
+
+	const InputPin* createInputPin(const std::wstring& name, bool optional);
+
+	const OutputPin* createOutputPin(const std::wstring& name);
+
+	void removeInputPin(const InputPin* inputPin);
+
+	void removeOutputPin(const OutputPin* outputPin);
+
 	virtual std::wstring getInformation() const;
 
 	virtual int getInputPinCount() const;

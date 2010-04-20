@@ -183,6 +183,47 @@ float External::getValue(const std::wstring& name, float defaultValue) const
 	return i != m_values.end() ? i->second : defaultValue;
 }
 
+void External::removeValue(const std::wstring& name)
+{
+	std::map< std::wstring, float >::iterator i = m_values.find(name);
+	if (i != m_values.end())
+		m_values.erase(i);
+}
+
+const InputPin* External::createInputPin(const std::wstring& name, bool optional)
+{
+	InputPin* inputPin = new InputPin(this, name, optional);
+
+	m_inputPins.push_back(inputPin);
+	std::sort(m_inputPins.begin(), m_inputPins.end(), SortInputPinPredicate());
+
+	return inputPin;
+}
+
+const OutputPin* External::createOutputPin(const std::wstring& name)
+{
+	OutputPin* outputPin = new OutputPin(this, name);
+
+	m_outputPins.push_back(outputPin);
+	std::sort(m_outputPins.begin(), m_outputPins.end(), SortOutputPinPredicate());
+
+	return outputPin;
+}
+
+void External::removeInputPin(const InputPin* inputPin)
+{
+	std::vector< InputPin* >::iterator i = std::find(m_inputPins.begin(), m_inputPins.end(), inputPin);
+	T_ASSERT (i != m_inputPins.end());
+	delete *i; m_inputPins.erase(i);
+}
+
+void External::removeOutputPin(const OutputPin* outputPin)
+{
+	std::vector< OutputPin* >::iterator i = std::find(m_outputPins.begin(), m_outputPins.end(), outputPin);
+	T_ASSERT (i != m_outputPins.end());
+	delete *i; m_outputPins.erase(i);
+}
+
 std::wstring External::getInformation() const
 {
 	return m_fragmentGuid.format();

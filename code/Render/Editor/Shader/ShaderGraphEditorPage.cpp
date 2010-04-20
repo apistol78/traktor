@@ -91,6 +91,23 @@ private:
 	Guid m_fragmentGuid;
 };
 
+struct RemoveInputPortPred
+{
+	bool m_connectable;
+	bool m_optional;
+
+	RemoveInputPortPred(bool connectable, bool optional)
+	:	m_connectable(connectable)
+	,	m_optional(optional)
+	{
+	}
+
+	bool operator () (InputPort* ip) const
+	{
+		return ip->isConnectable() == m_connectable && ip->isOptional() == m_optional;
+	}
+};
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphEditorPage", ShaderGraphEditorPage, editor::IEditorPage)
@@ -112,7 +129,7 @@ bool ShaderGraphEditorPage::create(ui::Container* parent, editor::IEditorPageSit
 	// Create our custom toolbar.
 	m_toolBar = new ui::custom::ToolBar();
 	m_toolBar->create(container);
-	m_toolBar->addImage(ui::Bitmap::load(c_ResourceAlignment, sizeof(c_ResourceAlignment), L"png"), 10);
+	m_toolBar->addImage(ui::Bitmap::load(c_ResourceAlignment, sizeof(c_ResourceAlignment), L"png"), 11);
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_OPEN_REFEREE"), ui::Command(L"ShaderGraph.Editor.OpenReferee"), 6));
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_CENTER"), ui::Command(L"ShaderGraph.Editor.Center"), 7));
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
@@ -126,6 +143,7 @@ bool ShaderGraphEditorPage::create(ui::Container* parent, editor::IEditorPageSit
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_REMOVE_UNUSED_NODES"), ui::Command(L"ShaderGraph.Editor.RemoveUnusedNodes"), 8));
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_AUTO_MERGE_BRANCHES"), ui::Command(L"ShaderGraph.Editor.AutoMergeBranches"), 9));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_UPDATE_FRAGMENTS"), ui::Command(L"ShaderGraph.Editor.UpdateFragments"), 10));
 	m_toolBar->addClickEventHandler(ui::createMethodHandler(this, &ShaderGraphEditorPage::eventToolClick));
 
 	// Create shader graph editor control.
@@ -217,8 +235,6 @@ bool ShaderGraphEditorPage::setDataObject(db::Instance* instance, Object* data)
 	m_shaderGraph = dynamic_type_cast< ShaderGraph* >(data);
 	if (!m_shaderGraph)
 		return false;
-
-	checkUpdatedFragments();
 
 	m_editorGraph->removeAllEdges();
 	m_editorGraph->removeAllNodes();
@@ -577,6 +593,41 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 
 		m_site->setPropertyObject(0);
 	}
+	else if (command == L"ShaderGraph.Editor.UpdateFragments")
+	{
+		RefArray< ui::custom::Node > selectedNodes;
+		m_editorGraph->getSelectedNodes(selectedNodes);
+
+		// Get selected external nodes; ie fragments.
+		RefArray< External > selectedExternals;
+		for (RefArray< ui::custom::Node >::const_iterator i = selectedNodes.begin(); i != selectedNodes.end(); ++i)
+		{
+			Ref< External > selectedExternal = (*i)->getData< External >(L"SHADERNODE");
+			if (selectedExternal)
+				selectedExternals.push_back(selectedExternal);
+		}
+
+		if (!selectedExternals.empty())
+		{
+			// Save undo state.
+			m_undoStack->push(m_shaderGraph);
+
+			for (RefArray< External >::const_iterator i = selectedExternals.begin(); i != selectedExternals.end(); ++i)
+				updateExternalNode(*i);
+
+			m_editorGraph->removeAllEdges();
+			m_editorGraph->removeAllNodes();
+
+			createEditorNodes(
+				m_shaderGraph->getNodes(),
+				m_shaderGraph->getEdges()
+			);
+
+			updateGraph();
+
+			m_site->setPropertyObject(0);
+		}
+	}
 	else if (command == L"ShaderGraph.Editor.QuickMenu")
 	{
 		const TypeInfo* typeInfo = m_menuQuick->showMenu();
@@ -789,142 +840,123 @@ void ShaderGraphEditorPage::updateGraph()
 	m_editorGraph->update();
 }
 
-struct RemoveInputPortPred
+void ShaderGraphEditorPage::updateExternalNode(External* external)
 {
-	bool m_connectable;
-	bool m_optional;
-
-	RemoveInputPortPred(bool connectable, bool optional)
-	:	m_connectable(connectable)
-	,	m_optional(optional)
+	// Get fragment graph from source database.
+	Ref< ShaderGraph > fragmentGraph = m_editor->getSourceDatabase()->getObjectReadOnly< ShaderGraph >(external->getFragmentGuid());
+	if (!fragmentGraph)
 	{
+		ui::MessageBox::show(
+			i18n::Text(L"SHADERGRAPH_ERROR_MISSING_FRAGMENT_MESSAGE"),
+			i18n::Text(L"SHADERGRAPH_ERROR_MISSING_FRAGMENT_CAPTION"),
+			ui::MbIconError | ui::MbOk
+		);
+		return;
 	}
 
-	bool operator () (InputPort* ip) const
+	// Get input ports; remove non-connectable ports.
+	RefArray< InputPort > fragmentInputs;
+	fragmentGraph->findNodesOf< InputPort >(fragmentInputs);
+
+	RefArray< InputPort >::iterator
+		i = std::remove_if(fragmentInputs.begin(), fragmentInputs.end(), RemoveInputPortPred(false, false)); fragmentInputs.erase(i, fragmentInputs.end());
+		i = std::remove_if(fragmentInputs.begin(), fragmentInputs.end(), RemoveInputPortPred(false, true));  fragmentInputs.erase(i, fragmentInputs.end());
+
+	// Get output ports.
+	RefArray< OutputPort > fragmentOutputs;
+	fragmentGraph->findNodesOf< OutputPort >(fragmentOutputs);
+
+	// Get input-/output pins; these might differ if fragment has been updated.
+	uint32_t externalInputPinCount = external->getInputPinCount();
+	uint32_t externalOutputPinCount = external->getOutputPinCount();
+
+	std::vector< const InputPin* > externalInputPins(externalInputPinCount);
+	for (uint32_t i = 0; i < externalInputPinCount; ++i)
+		externalInputPins[i] = external->getInputPin(i);
+
+	std::vector< const OutputPin* > externalOutputPins(externalOutputPinCount);
+	for (uint32_t i = 0; i < externalOutputPinCount; ++i)
+		externalOutputPins[i] = external->getOutputPin(i);
+
+	// Remove input ports and pins which match.
+	for (RefArray< InputPort >::iterator i = fragmentInputs.begin(); i != fragmentInputs.end(); )
 	{
-		return ip->isConnectable() == m_connectable && ip->isOptional() == m_optional;
+		std::vector< const InputPin* >::iterator j = externalInputPins.begin();
+		while (j != externalInputPins.end())
+		{
+			if ((*i)->getName() == (*j)->getName())
+				break;
+			++j;
+		}
+		if (j != externalInputPins.end())
+		{
+			i = fragmentInputs.erase(i);
+			externalInputPins.erase(j);
+		}
+		else
+			++i;
 	}
-};
 
-void ShaderGraphEditorPage::checkUpdatedFragments()
-{
-	//bool firstMismatch = true;
+	// Remove output ports and pins which match.
+	for (RefArray< OutputPort >::iterator i = fragmentOutputs.begin(); i != fragmentOutputs.end(); )
+	{
+		std::vector< const OutputPin* >::iterator j = externalOutputPins.begin();
+		while (j != externalOutputPins.end())
+		{
+			if ((*i)->getName() == (*j)->getName())
+				break;
+			++j;
+		}
+		if (j != externalOutputPins.end())
+		{
+			i = fragmentOutputs.erase(i);
+			externalOutputPins.erase(j);
+		}
+		else
+			++i;
+	}
 
-	//RefArray< External > externalNodes;
-	//m_shaderGraph->findNodesOf< External >(externalNodes);
+	// If we don't have any ports nor pins there is nothing to update.
+	if (
+		fragmentInputs.empty() &&
+		fragmentOutputs.empty() &&
+		externalInputPins.empty() &&
+		externalOutputPins.empty()
+	)
+		return;
 
-	//for (RefArray< External >::iterator i = externalNodes.begin(); i != externalNodes.end(); ++i)
-	//{
-	//	Ref< ShaderGraph > fragmentGraph = m_editor->getSourceDatabase()->getObjectReadOnly< ShaderGraph >((*i)->getFragmentGuid());
-	//	if (!fragmentGraph)
-	//	{
-	//		ui::MessageBox::show(i18n::Text(L"SHADERGRAPH_ERROR_MISSING_FRAGMENT_MESSAGE"), i18n::Text(L"SHADERGRAPH_ERROR_MISSING_FRAGMENT_CAPTION"), ui::MbIconError | ui::MbOk);
-	//		continue;
-	//	}
+	// Remove pins which have their respective ports removed.
+	while (!externalInputPins.empty())
+	{
+		Ref< Edge > edge = m_shaderGraph->findEdge(externalInputPins.back());
+		if (edge)
+			m_shaderGraph->removeEdge(edge);
 
-	//	RefArray< InputPort > fragmentInputs;
-	//	fragmentGraph->findNodesOf< InputPort >(fragmentInputs);
+		external->removeValue(externalInputPins.back()->getName());
+		external->removeInputPin(externalInputPins.back());
 
-	//	// Remove non-connect-ables.
-	//	RefArray< InputPort >::iterator
-	//		j = std::remove_if(fragmentInputs.begin(), fragmentInputs.end(), RemoveInputPortPred(false, false)); fragmentInputs.erase(j, fragmentInputs.end());
-	//		j = std::remove_if(fragmentInputs.begin(), fragmentInputs.end(), RemoveInputPortPred(false, true));  fragmentInputs.erase(j, fragmentInputs.end());
+		externalInputPins.pop_back();
+	}
+	while (!externalOutputPins.empty())
+	{
+		RefSet< Edge > edges;
+		m_shaderGraph->findEdges(externalOutputPins.back(), edges);
+		for (RefSet< Edge >::const_iterator i = edges.begin(); i != edges.end(); ++i)
+			m_shaderGraph->removeEdge(*i);
 
-	//	RefArray< OutputPort > fragmentOutputs;
-	//	fragmentGraph->findNodesOf< OutputPort >(fragmentOutputs);
+		external->removeOutputPin(externalOutputPins.back());
+		externalOutputPins.pop_back();
+	}
 
-	//	uint32_t externalInputPinCount = (*i)->getInputPinCount();
-	//	uint32_t externalOutputPinCount = (*i)->getOutputPinCount();
-
-	//	std::vector< const InputPin* > externalInputPins(externalInputPinCount);
-	//	for (uint32_t j = 0; j < externalInputPinCount; ++j)
-	//		externalInputPins[j] = (*i)->getInputPin(j);
-
-	//	std::vector< const OutputPin* > externalOutputPins(externalOutputPinCount);
-	//	for (uint32_t j = 0; j < externalOutputPinCount; ++j)
-	//		externalOutputPins[j] = (*i)->getOutputPin(j);
-
-	//	bool unmatchingOptionals = false;
-
-	//	for (RefArray< InputPort >::iterator j = fragmentInputs.begin(); j != fragmentInputs.end(); )
-	//	{
-	//		std::vector< const InputPin* >::iterator k = externalInputPins.begin();
-	//		while (k != externalInputPins.end())
-	//		{
-	//			if ((*j)->getName() == (*k)->getName())
-	//				break;
-	//			++k;
-	//		}
-	//		if (k != externalInputPins.end())
-	//		{
-	//			j = fragmentInputs.erase(j);
-	//			externalInputPins.erase(k);
-	//		}
-	//		else
-	//			++j;
-	//	}
-
-	//	for (RefArray< OutputPort >::iterator j = fragmentOutputs.begin(); j != fragmentOutputs.end(); )
-	//	{
-	//		std::vector< const OutputPin* >::iterator k = externalOutputPins.begin();
-	//		while (k != externalOutputPins.end())
-	//		{
-	//			if ((*j)->getName() == (*k)->getName())
-	//				break;
-	//			++k;
-	//		}
-	//		if (k != externalOutputPins.end())
-	//		{
-	//			j = fragmentOutputs.erase(j);
-	//			externalOutputPins.erase(k);
-	//		}
-	//		else
-	//			++j;
-	//	}
-
-	//	if (!fragmentInputs.empty() || !fragmentOutputs.empty() || !externalInputPins.empty() || !externalOutputPins.empty())
-	//	{
-	//		if (firstMismatch)
-	//		{
-	//			if (ui::MessageBox::show(m_editorGraph, i18n::Text(L"SHADERGRAPH_EXTERNAL_FRAGMENT_MISMATCH_MESSAGE"), i18n::Text(L"SHADERGRAPH_EXTERNAL_FRAGMENT_MISMATCH_TITLE"), ui::MbIconExclamation | ui::MbYesNo) == ui::DrNo)
-	//				return;
-	//			firstMismatch = false;
-	//		}
-
-	//		// Remove pins.
-	//		while (!externalInputPins.empty())
-	//		{
-	//			Ref< Edge > edge = m_shaderGraph->findEdge(externalInputPins.back());
-	//			if (edge)
-	//				m_shaderGraph->removeEdge(edge);
-
-	//			RefArray< InputPin >::iterator j = std::find((*i)->getInputPins().begin(), (*i)->getInputPins().end(), externalInputPins.back());
-	//			T_ASSERT (j != (*i)->getInputPins().end());
-	//			(*i)->getInputPins().erase(j);
-
-	//			externalInputPins.pop_back();
-	//		}
-	//		while (!externalOutputPins.empty())
-	//		{
-	//			RefSet< Edge > edges;
-	//			m_shaderGraph->findEdges(externalOutputPins.back(), edges);
-	//			for (RefSet< Edge >::const_iterator j = edges.begin(); j != edges.end(); ++j)
-	//				m_shaderGraph->removeEdge(*j);
-
-	//			RefArray< OutputPin >::iterator j = std::find((*i)->getOutputPins().begin(), (*i)->getOutputPins().end(), externalOutputPins.back());
-	//			T_ASSERT (j != (*i)->getOutputPins().end());
-	//			(*i)->getOutputPins().erase(j);
-
-	//			externalOutputPins.pop_back();
-	//		}
-
-	//		// Add new pins.
-	//		for (RefArray< InputPort >::iterator j = fragmentInputs.begin(); j != fragmentInputs.end(); ++j)
-	//			(*i)->getInputPins().push_back(new InputPin((*i), (*j)->getName(), (*j)->isOptional()));
-	//		for (RefArray< OutputPort >::iterator j = fragmentOutputs.begin(); j != fragmentOutputs.end(); ++j)
-	//			(*i)->getOutputPins().push_back(new OutputPin((*i), (*j)->getName()));
-	//	}
-	//}
+	// Add new pins for new ports.
+	for (RefArray< InputPort >::iterator i = fragmentInputs.begin(); i != fragmentInputs.end(); ++i)
+	{
+		external->createInputPin((*i)->getName(), (*i)->isOptional());
+		if ((*i)->isOptional())
+			external->setValue((*i)->getName(), (*i)->getDefaultValue());
+	}
+	for (RefArray< OutputPort >::iterator i = fragmentOutputs.begin(); i != fragmentOutputs.end(); ++i)
+		external->createOutputPin((*i)->getName());
 }
 
 void ShaderGraphEditorPage::eventToolClick(ui::Event* event)

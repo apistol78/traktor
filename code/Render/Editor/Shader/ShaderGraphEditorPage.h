@@ -44,6 +44,7 @@ class ToolBar;
 	{
 
 class Edge;
+class External;
 class Node;
 class NodeFacade;
 class QuickMenuTool;
@@ -100,7 +101,7 @@ private:
 
 	void updateGraph();
 
-	void checkUpdatedFragments();
+	void updateExternalNode(External* external);
 
 	void eventToolClick(ui::Event* event);
 
