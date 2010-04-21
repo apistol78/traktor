@@ -127,6 +127,7 @@ private:
 	RefArray< RenderViewWin32 > m_renderViews;
 	Semaphore m_renderLock;
 	float m_mipBias;
+	int32_t m_maxAnisotropy;
 	bool m_lostDevice;
 
 	/*! \brief Reset device.

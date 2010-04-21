@@ -1,5 +1,6 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyFloat.h"
+#include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
 #include "Core/Settings/Settings.h"
 #include "Editor/IEditor.h"
@@ -34,7 +35,8 @@ bool RenderEditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* sit
 	T_ASSERT (renderSystem);
 
 	RenderSystemCreateDesc desc;
-	desc.mipBias = m_editor->getSettings()->getProperty< PropertyFloat >(L"Editor.MipBias");
+	desc.mipBias = m_editor->getSettings()->getProperty< PropertyFloat >(L"Editor.MipBias", 0.0f);
+	desc.maxAnisotropy = m_editor->getSettings()->getProperty< PropertyInteger >(L"Editor.MaxAnisotropy", 1);
 
 	if (!renderSystem->create(desc))
 	{

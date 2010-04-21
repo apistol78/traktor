@@ -398,6 +398,10 @@
       <second>Mip-map bias</second>
     </item>
     <item>
+      <first>EDITOR_SETTINGS_RENDERER_MAX_ANISOTROPY</first>
+      <second>Max anisotropy</second>
+    </item>    
+    <item>
 			<first>EDITOR_SETTINGS_REMOVE_MODULE</first>
 			<second>Ta bort</second>
 		</item>

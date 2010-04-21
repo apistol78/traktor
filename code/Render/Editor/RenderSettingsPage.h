@@ -41,6 +41,7 @@ public:
 private:
 	Ref< ui::DropDown > m_dropRenderSystem;
 	Ref< ui::Edit > m_editMipBias;
+	Ref< ui::Edit > m_editMaxAnisotropy;
 };
 
 	}
