@@ -37,7 +37,7 @@ public:
 
 	bool inPixel() const;
 
-	int32_t allocateInterpolator();
+	bool allocateInterpolator(int32_t width, int32_t& outId, int32_t& outOffset);
 
 	int32_t allocateBooleanRegister();
 
@@ -62,7 +62,7 @@ private:
 	HlslShader* m_currentShader;
 	HlslEmitter m_emitter;
 	StateBlockDx9 m_state;
-	int32_t m_interpolatorCount;
+	std::vector< uint8_t > m_interpolatorMap;
 	int32_t m_booleanRegisterCount;
 	bool m_needVPos;
 };

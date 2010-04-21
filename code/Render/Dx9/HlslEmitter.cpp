@@ -402,23 +402,35 @@ bool emitInterpolator(HlslContext& cx, Interpolator* node)
 
 	cx.enterPixel();
 
-	int32_t interpolatorId = cx.allocateInterpolator();
-	std::wstring interpolator = L"Attr" + toString(interpolatorId);
+	int32_t interpolatorWidth = hlsl_type_width(in->getType());
+	if (!interpolatorWidth)
+		return false;
 
-	StringOutputStream& fo = cx.getVertexShader().getOutputStream(HlslShader::BtOutput);
-	fo << hlsl_type_name(in->getType()) << L" " << interpolator << L" : TEXCOORD" << interpolatorId << L";" << Endl;
+	int32_t interpolatorId;
+	int32_t interpolatorOffset;
 
-	StringOutputStream& fb = cx.getVertexShader().getOutputStream(HlslShader::BtBody);
-	fb << L"o." << interpolator << L" = " << in->getName() << L";" << Endl;
+	bool declare = cx.allocateInterpolator(interpolatorWidth, interpolatorId, interpolatorOffset);
+
+	std::wstring interpolatorName = L"Attr" + toString(interpolatorId);
+	std::wstring interpolatorMask = interpolatorName + L"." + std::wstring(L"xyzw").substr(interpolatorOffset, interpolatorWidth);
+
+	StringOutputStream& vfb = cx.getVertexShader().getOutputStream(HlslShader::BtBody);
+	vfb << L"o." << interpolatorMask << L" = " << in->getName() << L";" << Endl;
 
 	cx.getPixelShader().createOuterVariable(
 		node->findOutputPin(L"Output"),
-		L"i." + interpolator,
+		L"i." + interpolatorMask,
 		in->getType()
 	);
 
-	StringOutputStream& fpi = cx.getPixelShader().getOutputStream(HlslShader::BtInput);
-	fpi << hlsl_type_name(in->getType()) << L" " << interpolator << L" : TEXCOORD" << interpolatorId << L";" << Endl;
+	if (declare)
+	{
+		StringOutputStream& vfo = cx.getVertexShader().getOutputStream(HlslShader::BtOutput);
+		vfo << L"float4 " << interpolatorName << L" : TEXCOORD" << interpolatorId << L";" << Endl;
+
+		StringOutputStream& pfi = cx.getPixelShader().getOutputStream(HlslShader::BtInput);
+		pfi << L"float4 " << interpolatorName << L" : TEXCOORD" << interpolatorId << L";" << Endl;
+	}
 
 	return true;
 }

@@ -17,7 +17,6 @@ HlslContext::HlslContext(const ShaderGraph* shaderGraph)
 ,	m_vertexShader(HlslShader::StVertex)
 ,	m_pixelShader(HlslShader::StPixel)
 ,	m_currentShader(0)
-,	m_interpolatorCount(0)
 ,	m_booleanRegisterCount(0)
 ,	m_needVPos(false)
 {
@@ -79,9 +78,30 @@ bool HlslContext::inPixel() const
 	return bool(m_currentShader == &m_pixelShader);
 }
 
-int32_t HlslContext::allocateInterpolator()
+bool HlslContext::allocateInterpolator(int32_t width, int32_t& outId, int32_t& outOffset)
 {
-	return m_interpolatorCount++;
+	int32_t lastId = int32_t(m_interpolatorMap.size());
+
+	for (int32_t i = 0; i < lastId; ++i)
+	{
+		uint8_t& occupied = m_interpolatorMap[i];
+		if (width <= 4 - occupied)
+		{
+			outId = i;
+			outOffset = occupied;
+
+			occupied += width;
+
+			return false;
+		}
+	}
+
+	outId = lastId;
+	outOffset = 0;
+
+	m_interpolatorMap.push_back(width);
+
+	return true;
 }
 
 int32_t HlslContext::allocateBooleanRegister()

@@ -28,6 +28,8 @@ std::wstring hlsl_semantic(DataUsage usage, int index);
 
 std::wstring hlsl_type_name(HlslType type);
 
+int32_t hlsl_type_width(HlslType type);
+
 HlslType hlsl_from_data_type(DataType type);
 
 //@}
