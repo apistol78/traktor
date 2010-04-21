@@ -29,6 +29,7 @@ Ref< RigidEntity > RigidEntityData::createEntity(
 		return 0;
 
 	body->setTransform(getTransform());
+	body->setEnable(true);
 
 	Ref< world::SpatialEntity > entity;
 	if (m_entityData)

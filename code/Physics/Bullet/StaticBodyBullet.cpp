@@ -1,5 +1,4 @@
 #include <btBulletDynamicsCommon.h>
-#include "Core/Thread/Acquire.h"
 #include "Physics/Bullet/Conversion.h"
 #include "Physics/Bullet/StaticBodyBullet.h"
 
@@ -11,16 +10,13 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.StaticBodyBullet", StaticBodyBullet, StaticBody)
 
 StaticBodyBullet::StaticBodyBullet(
-	Semaphore& updateLock,
-	DestroyCallback* callback,
+	IWorldCallback* callback,
 	btDynamicsWorld* dynamicsWorld,
 	btRigidBody* body,
 	btCollisionShape* shape,
 	uint32_t group
 )
 :	BodyBullet< StaticBody >(callback, dynamicsWorld, body, shape, group)
-,	m_updateLock(updateLock)
-,	m_enable(false)
 {
 }
 
@@ -51,26 +47,6 @@ void StaticBodyBullet::setActive(bool active)
 bool StaticBodyBullet::isActive() const
 {
 	return m_body->isActive();
-}
-
-void StaticBodyBullet::setEnable(bool enable)
-{
-	if (enable == m_enable)
-		return;
-
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_updateLock);
-
-	if (enable)
-		m_dynamicsWorld->addRigidBody(m_body);
-	else
-		m_dynamicsWorld->removeRigidBody(m_body);
-
-	m_enable = enable;
-}
-
-bool StaticBodyBullet::isEnable() const
-{
-	return m_enable;
 }
 
 	}

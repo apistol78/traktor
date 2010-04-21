@@ -8,7 +8,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.BallJointBullet", BallJointBullet, BallJoint)
 
-BallJointBullet::BallJointBullet(DestroyCallback* callback, btPoint2PointConstraint* constraint, Body* body1, Body* body2)
+BallJointBullet::BallJointBullet(IWorldCallback* callback, btPoint2PointConstraint* constraint, Body* body1, Body* body2)
 :	JointBullet< BallJoint, btPoint2PointConstraint >(callback, constraint, body1, body2)
 {
 }

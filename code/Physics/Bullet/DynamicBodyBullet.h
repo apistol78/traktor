@@ -1,7 +1,6 @@
 #ifndef traktor_physics_DynamicBodyBullet_H
 #define traktor_physics_DynamicBodyBullet_H
 
-#include "Core/Thread/Semaphore.h"
 #include "Physics/DynamicBody.h"
 #include "Physics/Bullet/BodyBullet.h"
 
@@ -31,8 +30,7 @@ class T_DLLCLASS DynamicBodyBullet : public BodyBullet< DynamicBody >
 
 public:
 	DynamicBodyBullet(
-		Semaphore& updateLock,
-		DestroyCallback* callback,
+		IWorldCallback* callback,
 		btDynamicsWorld* dynamicsWorld,
 		btRigidBody* body,
 		btCollisionShape* shape,
@@ -78,14 +76,6 @@ public:
 	virtual void setActive(bool active);
 
 	virtual bool isActive() const;
-
-	virtual void setEnable(bool enable);
-
-	virtual bool isEnable() const;
-
-private:
-	Semaphore& m_updateLock;
-	bool m_enable;
 };
 
 	}

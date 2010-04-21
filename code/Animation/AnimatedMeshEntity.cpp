@@ -4,12 +4,13 @@
 #include "Animation/SkeletonUtils.h"
 #include "Animation/Bone.h"
 #include "Animation/IPoseController.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Mesh/Skinned/SkinnedMesh.h"
 #include "World/WorldContext.h"
 #include "World/WorldRenderView.h"
 #include "World/Entity/EntityUpdate.h"
 
-#define T_USE_UPDATE_JOBS
+//#define T_USE_UPDATE_JOBS
 
 namespace traktor
 {
@@ -33,6 +34,17 @@ AnimatedMeshEntity::AnimatedMeshEntity(
 ,	m_totalTime(0.0f)
 ,	m_updateController(true)
 {
+}
+
+AnimatedMeshEntity::~AnimatedMeshEntity()
+{
+	destroy();
+}
+
+void AnimatedMeshEntity::destroy()
+{
+	safeDestroy(m_poseController);
+	mesh::MeshEntity::destroy();
 }
 
 Aabb AnimatedMeshEntity::getBoundingBox() const
@@ -102,6 +114,15 @@ void AnimatedMeshEntity::update(const world::EntityUpdate* update)
 #else
 	updatePoseController(update->getDeltaTime());
 #endif
+}
+
+void AnimatedMeshEntity::setTransform(const Transform& transform)
+{
+	// Let pose controller know that entity has been manually repositioned.
+	if (m_poseController)
+		m_poseController->setTransform(transform);
+
+	mesh::MeshEntity::setTransform(transform);
 }
 
 bool AnimatedMeshEntity::getBoneTransform(const std::wstring& boneName, Transform& outTransform) const

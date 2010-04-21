@@ -2,16 +2,16 @@
 #define traktor_animation_StatePoseController_H
 
 #include <map>
-#include "Resource/Proxy.h"
 #include "Animation/IPoseController.h"
 #include "Animation/Animation/StateContext.h"
+#include "Resource/Proxy.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_ANIMATION_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -36,6 +36,10 @@ public:
 	void setCondition(const std::wstring& condition, bool enabled);
 
 	void setTimeFactor(float timeFactor);
+
+	virtual void destroy();
+
+	virtual void setTransform(const Transform& transform);
 
 	virtual void evaluate(
 		float deltaTime,

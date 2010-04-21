@@ -24,31 +24,54 @@ const Vector4 c_axis[] =
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.ConeTwistJointBullet", ConeTwistJointBullet, ConeTwistJoint)
 
-ConeTwistJointBullet::ConeTwistJointBullet(DestroyCallback* callback, JointConstraint* constraint, Body* body1, Body* body2, const ConeTwistJointDesc* desc)
+ConeTwistJointBullet::ConeTwistJointBullet(IWorldCallback* callback, JointConstraint* constraint, const Transform& transform, Body* body1, const ConeTwistJointDesc* desc)
+:	JointBullet< ConeTwistJoint, JointConstraint >(callback, constraint, body1, 0)
+,	m_desc(desc)
+{
+	Vector4 anchor = transform * m_desc->getAnchor().xyz1();
+	Vector4 coneAxis = transform * m_desc->getConeAxis().xyz0();
+	Vector4 twistAxis = transform * m_desc->getTwistAxis().xyz0();
+
+	m_anchor1 = body1->getTransform().inverse() * anchor;
+	m_coneAxis1 = (body1->getTransform().inverse() * coneAxis).normalized();
+	m_twistAxis1 = (body1->getTransform().inverse() * twistAxis).normalized();
+
+	m_anchor2 = anchor;
+	m_coneAxis2 = coneAxis;
+	m_twistAxis2 = twistAxis;
+
+	m_dynamicBody1 = dynamic_type_cast< DynamicBody* >(body1);
+}
+
+ConeTwistJointBullet::ConeTwistJointBullet(IWorldCallback* callback, JointConstraint* constraint, const Transform& transform, Body* body1, Body* body2, const ConeTwistJointDesc* desc)
 :	JointBullet< ConeTwistJoint, JointConstraint >(callback, constraint, body1, body2)
 ,	m_desc(desc)
 {
-	m_anchor1 = body1->getTransform().inverse() * m_desc->getAnchor();
-	m_anchor2 = body2->getTransform().inverse() * m_desc->getAnchor();
-	m_coneAxis1 = (body1->getTransform().inverse() * m_desc->getConeAxis()).normalized();
-	m_coneAxis2 = (body2->getTransform().inverse() * m_desc->getConeAxis()).normalized();
-	m_twistAxis1 = (body1->getTransform().inverse() * m_desc->getTwistAxis()).normalized();
-	m_twistAxis2 = (body2->getTransform().inverse() * m_desc->getTwistAxis()).normalized();
+	Vector4 anchor = transform * m_desc->getAnchor().xyz1();
+	Vector4 coneAxis = transform * m_desc->getConeAxis().xyz0();
+	Vector4 twistAxis = transform * m_desc->getTwistAxis().xyz0();
+
+	m_anchor1 = body1->getTransform().inverse() * anchor;
+	m_coneAxis1 = (body1->getTransform().inverse() * coneAxis).normalized();
+	m_twistAxis1 = (body1->getTransform().inverse() * twistAxis).normalized();
+
+	m_anchor2 = body2->getTransform().inverse() * anchor;
+	m_coneAxis2 = (body2->getTransform().inverse() * coneAxis).normalized();
+	m_twistAxis2 = (body2->getTransform().inverse() * twistAxis).normalized();
 
 	m_dynamicBody1 = dynamic_type_cast< DynamicBody* >(body1);
 	m_dynamicBody2 = dynamic_type_cast< DynamicBody* >(body2);
-	T_ASSERT (m_dynamicBody1 || m_dynamicBody2);
 }
 
 void ConeTwistJointBullet::prepare()
 {
 	Transform tf1 = m_body1->getTransform();
-	Transform tf2 = m_body2->getTransform();
+	Transform tf2 = m_body2 ? m_body2->getTransform() : Transform::identity();
 	Transform tfInv1 = tf1.inverse();
 	Transform tfInv2 = tf2.inverse();
 
-	Vector4 centerOfMass1 = tf1.translation();
-	Vector4 centerOfMass2 = tf2.translation();
+	Vector4 centerOfMass1 = tf1.translation().xyz1();
+	Vector4 centerOfMass2 = tf2.translation().xyz1();
 
 	Vector4 anchor1 = tf1 * m_anchor1;
 	Vector4 anchor2 = tf2 * m_anchor2;
@@ -125,10 +148,10 @@ void ConeTwistJointBullet::update(float deltaTime)
 	const float c_damping = 1.0f;
 
 	Transform tf1 = m_body1->getTransform();
-	Transform tf2 = m_body2->getTransform();
+	Transform tf2 = m_body2 ? m_body2->getTransform() : Transform::identity();
 
-	Vector4 centerOfMass1 = tf1.translation();
-	Vector4 centerOfMass2 = tf2.translation();
+	Vector4 centerOfMass1 = tf1.translation().xyz1();
+	Vector4 centerOfMass2 = tf2.translation().xyz1();
 
 	Vector4 anchor1 = tf1 * m_anchor1;
 	Vector4 anchor2 = tf2 * m_anchor2;

@@ -52,6 +52,15 @@ public:
 		return m_body2;
 	}
 
+	virtual void setEnable(bool enable)
+	{
+	}
+
+	virtual bool isEnable() const
+	{
+		return false;
+	}
+
 protected:
 	DestroyCallback* m_callback;
 	dJointID m_jointId;

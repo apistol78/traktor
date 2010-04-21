@@ -1,29 +1,18 @@
-#include "Physics/StaticBodyDesc.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
+#include "Physics/StaticBodyDesc.h"
 
 namespace traktor
 {
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.StaticBodyDesc", 3, StaticBodyDesc, BodyDesc)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.StaticBodyDesc", 4, StaticBodyDesc, BodyDesc)
 
 StaticBodyDesc::StaticBodyDesc()
-:	m_initiallyEnabled(true)
-,	m_friction(0.75f)
+:	m_friction(0.75f)
 ,	m_kinematic(false)
 {
-}
-
-void StaticBodyDesc::setInitiallyEnabled(bool initiallyEnabled)
-{
-	m_initiallyEnabled = initiallyEnabled;
-}
-
-bool StaticBodyDesc::getInitiallyEnabled() const
-{
-	return m_initiallyEnabled;
 }
 
 void StaticBodyDesc::setFriction(float friction)
@@ -48,21 +37,13 @@ bool StaticBodyDesc::isKinematic() const
 
 bool StaticBodyDesc::serialize(ISerializer& s)
 {
+	T_ASSERT (s.getVersion() >= 4);
+
 	if (!BodyDesc::serialize(s))
 		return false;
 
-	if (s.getVersion() >= 1)
-	{
-		if (s.getVersion() >= 3)
-		{
-			s >> Member< bool >(L"initiallyEnabled", m_initiallyEnabled);
-		}
-		s >> Member< float >(L"friction", m_friction, 0.0f, 1.0f);
-		if (s.getVersion() >= 2)
-		{
-			s >> Member< bool >(L"kinematic", m_kinematic);
-		}
-	}
+	s >> Member< float >(L"friction", m_friction, 0.0f, 1.0f);
+	s >> Member< bool >(L"kinematic", m_kinematic);
 	
 	return true;
 }

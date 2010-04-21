@@ -354,7 +354,6 @@ Ref< Body > PhysicsManagerBullet::createBody(const BodyDesc* desc)
 
 		// Create our wrapper.
 		Ref< StaticBodyBullet > staticBody = new StaticBodyBullet(
-			m_lock,
 			this,
 			m_dynamicsWorld,
 			rigidBody,
@@ -365,10 +364,6 @@ Ref< Body > PhysicsManagerBullet::createBody(const BodyDesc* desc)
 
 		rigidBody->setUserPointer(staticBody);
 		body = staticBody;
-
-		// Add body to world if initially enabled.
-		if (staticDesc->getInitiallyEnabled())
-			staticBody->setEnable(true);
 	}
 	else if (const DynamicBodyDesc* dynamicDesc = dynamic_type_cast< const DynamicBodyDesc* >(desc))
 	{
@@ -385,7 +380,7 @@ Ref< Body > PhysicsManagerBullet::createBody(const BodyDesc* desc)
 		info.m_friction = dynamicDesc->getFriction();
 		btRigidBody* rigidBody = new btRigidBody(info);
 
-		if (!dynamicDesc->getInitiallyActive())
+		if (!dynamicDesc->getActive())
 		{
 			T_ASSERT_M (dynamicDesc->getAutoDeactivate(), L"If body is initially disabled then auto deactivate must be set as well");
 			rigidBody->forceActivationState(ISLAND_SLEEPING);
@@ -400,7 +395,6 @@ Ref< Body > PhysicsManagerBullet::createBody(const BodyDesc* desc)
 
 		// Create our wrapper.
 		Ref< DynamicBodyBullet > dynamicBody = new DynamicBodyBullet(
-			m_lock,
 			this,
 			m_dynamicsWorld,
 			rigidBody,
@@ -411,10 +405,6 @@ Ref< Body > PhysicsManagerBullet::createBody(const BodyDesc* desc)
 
 		rigidBody->setUserPointer(dynamicBody);
 		body = dynamicBody;
-
-		// Add body to world if initially enabled.
-		if (dynamicDesc->getInitiallyEnabled())
-			dynamicBody->setEnable(true);
 	}
 	else
 	{
@@ -488,20 +478,39 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 	}
 	else if (const ConeTwistJointDesc* coneTwistDesc = dynamic_type_cast< const ConeTwistJointDesc* >(desc))
 	{
-		T_ASSERT_M (b1 && b2, L"ConeTwist constraint require two bodies");
+		JointConstraint* jointConstraint;
+		
+		if (b1 && b2)
+		{
+			jointConstraint = new JointConstraint(*b1, *b2);
 
-		JointConstraint* jointConstraint = new JointConstraint(*b1, *b2);
+			Ref< ConeTwistJointBullet > coneTwistJoint = new ConeTwistJointBullet(
+				this,
+				jointConstraint,
+				transform,
+				body1,
+				body2,
+				coneTwistDesc
+			);
 
-		Ref< ConeTwistJointBullet > coneTwistJoint = new ConeTwistJointBullet(
-			this,
-			jointConstraint,
-			body1,
-			body2,
-			coneTwistDesc
-		);
+			jointConstraint->setJointSolver(coneTwistJoint);
+			joint = coneTwistJoint;
+		}
+		else
+		{
+			jointConstraint = new JointConstraint(*b1);
 
-		jointConstraint->setJointSolver(coneTwistJoint);
-		joint = coneTwistJoint;
+			Ref< ConeTwistJointBullet > coneTwistJoint = new ConeTwistJointBullet(
+				this,
+				jointConstraint,
+				transform,
+				body1,
+				coneTwistDesc
+			);
+
+			jointConstraint->setJointSolver(coneTwistJoint);
+			joint = coneTwistJoint;
+		}
 
 		constraint = jointConstraint;
 	}
@@ -557,9 +566,6 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 		log::error << L"Unable to create joint, unknown joint type \"" << type_name(desc) << L"\"" << Endl;
 		return 0;
 	}
-
-	if (constraint)
-		m_dynamicsWorld->addConstraint(constraint);
 
 	m_joints.push_back(joint);
 
@@ -730,6 +736,30 @@ void PhysicsManagerBullet::getBodyCount(uint32_t& outCount, uint32_t& outActiveC
 	}
 }
 
+void PhysicsManagerBullet::insertBody(btRigidBody* rigidBody)
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	m_dynamicsWorld->addRigidBody(rigidBody);
+}
+
+void PhysicsManagerBullet::removeBody(btRigidBody* rigidBody)
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	m_dynamicsWorld->removeRigidBody(rigidBody);
+}
+
+void PhysicsManagerBullet::insertConstraint(btTypedConstraint* constraint)
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	m_dynamicsWorld->addConstraint(constraint);
+}
+
+void PhysicsManagerBullet::removeConstraint(btTypedConstraint* constraint)
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	m_dynamicsWorld->removeConstraint(constraint);
+}
+
 void PhysicsManagerBullet::destroyBody(Body* body, btRigidBody* rigidBody, btCollisionShape* shape)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
@@ -753,7 +783,7 @@ void PhysicsManagerBullet::destroyBody(Body* body, btRigidBody* rigidBody, btCol
 	delete shape;
 }
 
-void PhysicsManagerBullet::destroyJoint(Joint* joint, btTypedConstraint* constraint)
+void PhysicsManagerBullet::destroyConstraint(Joint* joint, btTypedConstraint* constraint)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 

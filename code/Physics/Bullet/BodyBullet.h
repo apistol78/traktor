@@ -18,7 +18,7 @@ class BodyBullet : public Outer
 {
 public:
 	BodyBullet(
-		DestroyCallback* callback,
+		IWorldCallback* callback,
 		btDynamicsWorld* dynamicsWorld,
 		btRigidBody* body,
 		btCollisionShape* shape,
@@ -29,6 +29,7 @@ public:
 	,	m_body(body)
 	,	m_shape(shape)
 	,	m_group(group)
+	,	m_enable(false)
 	{
 	}
 
@@ -39,13 +40,33 @@ public:
 
 	virtual void destroy()
 	{
-		DestroyCallback* callback = Atomic::exchange< DestroyCallback* >(m_callback, 0);
-		if (callback)
+		if (m_callback)
 		{
-			callback->destroyBody(this, m_body, m_shape);
-			m_body = 0;
-			m_shape = 0;
+			m_callback->destroyBody(this, m_body, m_shape);
+			m_callback = 0;
 		}
+		
+		m_dynamicsWorld = 0;
+		m_body = 0;
+		m_shape = 0;
+	}
+
+	virtual void setEnable(bool enable)
+	{
+		if (enable == m_enable)
+			return;
+
+		if (enable)
+			m_callback->insertBody(m_body);
+		else
+			m_callback->removeBody(m_body);
+
+		m_enable = enable;
+	}
+
+	virtual bool isEnable() const
+	{
+		return m_enable;
 	}
 
 	btDynamicsWorld* getBtDynamicsWorld() const { return m_dynamicsWorld; }
@@ -57,11 +78,12 @@ public:
 	uint32_t getGroup() const { return m_group; }
 
 protected:
-	DestroyCallback* m_callback;
+	IWorldCallback* m_callback;
 	btDynamicsWorld* m_dynamicsWorld;
 	btRigidBody* m_body;
 	btCollisionShape* m_shape;
 	uint32_t m_group;
+	bool m_enable;
 };
 
 	}

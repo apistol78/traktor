@@ -110,6 +110,9 @@ public:
 
 	/*! \brief Create rigid body.
 	 *
+	 * \note Created body are initially disabled; need to call setEnable(true)
+	 * in order to add to simulation.
+	 *
 	 * \param desc Rigid body description.
 	 * \return Rigid body instance.
 	 */
@@ -120,6 +123,9 @@ public:
 	 * Create a joint between bodies.
 	 * If second body, body2, is null the joint
 	 * is created with the world.
+	 *
+	 * \note Created joint are initially disabled; need to call setEnable(true)
+	 * in order to add to simulation.
 	 *
 	 * \param desc Joint description.
 	 * \param transform Joint transform.

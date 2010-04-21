@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_PHYSICS_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -26,10 +26,6 @@ class T_DLLCLASS StaticBodyDesc : public BodyDesc
 public:
 	StaticBodyDesc();
 
-	void setInitiallyEnabled(bool initiallyEnabled);
-
-	bool getInitiallyEnabled() const;
-
 	void setFriction(float friction);
 
 	float getFriction() const;
@@ -41,7 +37,6 @@ public:
 	virtual bool serialize(ISerializer& s);
 
 private:
-	bool m_initiallyEnabled;
 	float m_friction;
 	bool m_kinematic;
 };

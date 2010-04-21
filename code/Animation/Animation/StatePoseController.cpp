@@ -1,10 +1,10 @@
-#include "Animation/Animation/StatePoseController.h"
-#include "Animation/Animation/StateGraph.h"
-#include "Animation/Animation/State.h"
-#include "Animation/Animation/Transition.h"
+#include "Animation/Bone.h"
 #include "Animation/Skeleton.h"
 #include "Animation/SkeletonUtils.h"
-#include "Animation/Bone.h"
+#include "Animation/Animation/State.h"
+#include "Animation/Animation/StateGraph.h"
+#include "Animation/Animation/StatePoseController.h"
+#include "Animation/Animation/Transition.h"
 #include "Core/Math/Const.h"
 
 namespace traktor
@@ -30,6 +30,14 @@ void StatePoseController::setCondition(const std::wstring& condition, bool enabl
 void StatePoseController::setTimeFactor(float timeFactor)
 {
 	m_timeFactor = timeFactor;
+}
+
+void StatePoseController::destroy()
+{
+}
+
+void StatePoseController::setTransform(const Transform& transform)
+{
 }
 
 void StatePoseController::evaluate(

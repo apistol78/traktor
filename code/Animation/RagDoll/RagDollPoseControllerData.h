@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_ANIMATION_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -24,6 +24,8 @@ class T_DLLCLASS RagDollPoseControllerData : public IPoseControllerData
 	T_RTTI_CLASS;
 
 public:
+	RagDollPoseControllerData();
+
 	virtual Ref< IPoseController > createInstance(
 		resource::IResourceManager* resourceManager,
 		physics::PhysicsManager* physicsManager,
@@ -32,6 +34,15 @@ public:
 	);
 
 	virtual bool serialize(ISerializer& s);
+
+private:
+	uint32_t m_collisionGroup;
+	bool m_autoDeactivate;
+	bool m_enabled;
+	bool m_fixateBones;
+	float m_limbMass;
+	float m_linearDamping;
+	float m_angularDamping;
 };
 
 	}

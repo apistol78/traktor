@@ -50,6 +50,15 @@ public:
 		return m_body2;
 	}
 
+	virtual void setEnable(bool enable)
+	{
+	}
+
+	virtual bool isEnable() const
+	{
+		return false;
+	}
+
 protected:
 	DestroyCallbackPhysX* m_callback;
 	NxJoint* m_joint;

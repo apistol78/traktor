@@ -1,10 +1,10 @@
-#include "Animation/IK/IKPoseController.h"
+#include "Animation/Bone.h"
 #include "Animation/Skeleton.h"
 #include "Animation/SkeletonUtils.h"
-#include "Animation/Bone.h"
-#include "Physics/PhysicsManager.h"
+#include "Animation/IK/IKPoseController.h"
 #include "Core/Math/Const.h"
 #include "Core/Log/Log.h"
+#include "Physics/PhysicsManager.h"
 
 namespace traktor
 {
@@ -20,9 +20,24 @@ IKPoseController::IKPoseController(physics::PhysicsManager* physicsManager, IPos
 {
 }
 
+IKPoseController::~IKPoseController()
+{
+	destroy();
+}
+
 void IKPoseController::setIgnoreBody(physics::Body* ignoreBody)
 {
 	m_ignoreBody = ignoreBody;
+}
+
+void IKPoseController::destroy()
+{
+	m_poseController = 0;
+	m_physicsManager = 0;
+}
+
+void IKPoseController::setTransform(const Transform& transform)
+{
 }
 
 void IKPoseController::evaluate(

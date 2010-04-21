@@ -1,6 +1,7 @@
 #ifndef traktor_physics_ConeTwistJointBullet_H
 #define traktor_physics_ConeTwistJointBullet_H
 
+#include "Core/Math/Transform.h"
 #include "Physics/ConeTwistJoint.h"
 #include "Physics/Bullet/JointBullet.h"
 #include "Physics/Bullet/JointConstraint.h"
@@ -8,9 +9,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_PHYSICS_BULLET_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -29,7 +30,9 @@ class T_DLLCLASS ConeTwistJointBullet : public JointBullet< ConeTwistJoint, Join
 	T_RTTI_CLASS;
 
 public:
-	ConeTwistJointBullet(DestroyCallback* callback, JointConstraint* constraint, Body* body1, Body* body2, const ConeTwistJointDesc* desc);
+	ConeTwistJointBullet(IWorldCallback* callback, JointConstraint* constraint, const Transform& transform, Body* body1, const ConeTwistJointDesc* desc);
+
+	ConeTwistJointBullet(IWorldCallback* callback, JointConstraint* constraint, const Transform& transform, Body* body1, Body* body2, const ConeTwistJointDesc* desc);
 
 	virtual void prepare();
 

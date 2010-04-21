@@ -7,9 +7,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_ANIMATION_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -34,16 +34,33 @@ class T_DLLCLASS RagDollPoseController : public IPoseController
 	T_RTTI_CLASS;
 
 public:
+	RagDollPoseController();
+
 	virtual ~RagDollPoseController();
 
+	/*! \brief Create rag-doll pose controller.
+	 *
+	 * \param initiallyDisabled If limbs should be initially disabled.
+	 * \param fixateBones Fixate parent bones in world space.
+	 */
 	bool create(
 		physics::PhysicsManager* physicsManager,
 		const Skeleton* skeleton,
 		const Transform& worldTransform,
 		const AlignedVector< Transform >& boneTransforms,
 		const AlignedVector< Velocity >& velocities,
-		bool initiallyDisabled
+		uint32_t collisionGroup,
+		bool autoDeactivate,
+		bool enabled,
+		bool fixateBones,
+		float limbMass,
+		float linearDamping,
+		float angularDamping
 	);
+
+	virtual void destroy();
+
+	virtual void setTransform(const Transform& transform);
 
 	virtual void evaluate(
 		float deltaTime,
@@ -59,11 +76,17 @@ public:
 		AlignedVector< Velocity >& outVelocities
 	);
 
-	void enableAllLimbs();
+	void setEnable(bool enable);
+
+	bool isEnable() const;
+
+	const RefArray< physics::DynamicBody >& getLimbs() const;
 
 private:
 	RefArray< physics::DynamicBody > m_limbs;
 	RefArray< physics::Joint > m_joints;
+	Transform m_worldTransform;
+	bool m_enable;
 };
 
 	}

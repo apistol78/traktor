@@ -6,6 +6,12 @@ namespace traktor
 	namespace physics
 	{
 
+JointConstraint::JointConstraint(btRigidBody& rbA)
+:	btTypedConstraint(POINT2POINT_CONSTRAINT_TYPE, rbA)
+,	m_jointSolver(0)
+{
+}
+
 JointConstraint::JointConstraint(btRigidBody& rbA, btRigidBody& rbB)
 :	btTypedConstraint(POINT2POINT_CONSTRAINT_TYPE, rbA, rbB)
 ,	m_jointSolver(0)

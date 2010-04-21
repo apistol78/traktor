@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_PHYSICS_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -34,13 +34,9 @@ public:
 
 	bool getAutoDeactivate() const;
 
-	void setInitiallyActive(bool initiallyActive);
+	void setActive(bool active);
 
-	bool getInitiallyActive() const;
-
-	void setInitiallyEnabled(bool initiallyEnabled);
-
-	bool getInitiallyEnabled() const;
+	bool getActive() const;
 
 	void setLinearDamping(float linearDamping);
 
@@ -59,8 +55,7 @@ public:
 private:
 	float m_mass;
 	bool m_autoDeactivate;
-	bool m_initiallyActive;
-	bool m_initiallyEnabled;
+	bool m_active;
 	float m_linearDamping;
 	float m_angularDamping;
 	float m_friction;

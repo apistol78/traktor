@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_ANIMATION_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -34,7 +34,13 @@ class T_DLLCLASS IKPoseController : public IPoseController
 public:
 	IKPoseController(physics::PhysicsManager* physicsManager, IPoseController* poseController, uint32_t solverIterations);
 
+	virtual ~IKPoseController();
+
 	void setIgnoreBody(physics::Body* ignoreBody);
+
+	virtual void destroy();
+
+	virtual void setTransform(const Transform& transform);
 
 	virtual void evaluate(
 		float deltaTime,
