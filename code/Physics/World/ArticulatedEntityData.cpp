@@ -3,6 +3,7 @@
 #include "Core/Serialization/MemberRef.h"
 #include "Core/Serialization/MemberRefArray.h"
 #include "Core/Serialization/MemberStl.h"
+#include "Physics/Joint.h"
 #include "Physics/JointDesc.h"
 #include "Physics/PhysicsManager.h"
 #include "Physics/World/ArticulatedEntityData.h"
@@ -62,6 +63,8 @@ Ref< ArticulatedEntity > ArticulatedEntityData::createEntity(
 			);
 			if (!joint)
 				return 0;
+
+			joint->setEnable(true);
 
 			joints[i] = joint;
 		}

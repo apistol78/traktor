@@ -28,9 +28,30 @@ class T_DLLCLASS Joint : public Object
 public:
 	virtual void destroy() = 0;
 
+	/*! \brief Get first constraint body. */
 	virtual Ref< Body > getBody1() = 0;
 
+	/*! \brief Get second constraint body.
+	 *
+	 * \note
+	 * This return null if first body is constrained
+	 * to world.
+	 */
 	virtual Ref< Body > getBody2() = 0;
+
+	/*! \brief Set joint enable state.
+	 *
+	 * Disabled joints are removed from simulation.
+	 *
+	 * \param enable Enable state.
+	 */
+	virtual void setEnable(bool enable) = 0;
+
+	/*! \brief Get joint enable state.
+	 *
+	 * \return Enable state.
+	 */
+	virtual bool isEnable() const = 0;
 };
 
 	}

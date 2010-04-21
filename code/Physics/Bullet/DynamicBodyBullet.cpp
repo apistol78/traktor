@@ -1,7 +1,6 @@
 #include <btBulletDynamicsCommon.h>
 #include "Core/Math/Const.h"
 #include "Core/Math/Float.h"
-#include "Core/Thread/Acquire.h"
 #include "Physics/DynamicBodyState.h"
 #include "Physics/Bullet/Conversion.h"
 #include "Physics/Bullet/DynamicBodyBullet.h"
@@ -27,16 +26,13 @@ inline Vector4 convert(const DynamicBodyBullet* body, const Vector4& v, bool loc
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.DynamicBodyBullet", DynamicBodyBullet, DynamicBody)
 
 DynamicBodyBullet::DynamicBodyBullet(
-	Semaphore& updateLock,
-	DestroyCallback* callback,
+	IWorldCallback* callback,
 	btDynamicsWorld* dynamicsWorld,
 	btRigidBody* body,
 	btCollisionShape* shape,
 	uint32_t group
 )
 :	BodyBullet< DynamicBody >(callback, dynamicsWorld, body, shape, group)
-,	m_updateLock(updateLock)
-,	m_enable(false)
 {
 }
 
@@ -190,26 +186,6 @@ void DynamicBodyBullet::setActive(bool active)
 bool DynamicBodyBullet::isActive() const
 {
 	return m_body->isActive();
-}
-
-void DynamicBodyBullet::setEnable(bool enable)
-{
-	if (enable == m_enable)
-		return;
-
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_updateLock);
-
-	if (enable)
-		m_dynamicsWorld->addRigidBody(m_body);
-	else
-		m_dynamicsWorld->removeRigidBody(m_body);
-
-	m_enable = enable;
-}
-
-bool DynamicBodyBullet::isEnable() const
-{
-	return m_enable;
 }
 
 	}

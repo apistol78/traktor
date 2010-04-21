@@ -7,9 +7,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_PHYSICS_BULLET_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -25,7 +25,7 @@ class T_DLLCLASS BallJointBullet : public JointBullet< BallJoint, btPoint2PointC
 	T_RTTI_CLASS;
 
 public:
-	BallJointBullet(DestroyCallback* callback, btPoint2PointConstraint* constraint, Body* body1, Body* body2);
+	BallJointBullet(IWorldCallback* callback, btPoint2PointConstraint* constraint, Body* body1, Body* body2);
 
 	virtual void setAnchor(const Vector4& anchor);
 

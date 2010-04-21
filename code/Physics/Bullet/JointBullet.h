@@ -29,11 +29,12 @@ class JointBullet
 ,	public JointSolver
 {
 public:
-	JointBullet(DestroyCallback* callback, Constraint* constraint, Body* body1, Body* body2)
+	JointBullet(IWorldCallback* callback, Constraint* constraint, Body* body1, Body* body2)
 	:	m_callback(callback)
 	,	m_constraint(constraint)
 	,	m_body1(body1)
 	,	m_body2(body2)
+	,	m_enable(false)
 	{
 	}
 
@@ -46,10 +47,14 @@ public:
 	{
 		if (m_callback)
 		{
-			m_callback->destroyJoint(this, m_constraint);
+			m_callback->destroyConstraint(this, m_constraint);
 			m_callback = 0;
 		}
+
 		m_constraint = 0;
+		m_body1 = 0;
+		m_body2 = 0;
+		m_enable = false;
 	}
 
 	virtual Ref< Body > getBody1()
@@ -62,11 +67,32 @@ public:
 		return m_body2;
 	}
 
+	virtual void setEnable(bool enable)
+	{
+		T_ASSERT (m_callback);
+
+		if (enable == m_enable)
+			return;
+
+		if (enable)
+			m_callback->insertConstraint(m_constraint);
+		else
+			m_callback->removeConstraint(m_constraint);
+
+		m_enable = enable;
+	}
+
+	virtual bool isEnable() const
+	{
+		return m_enable;
+	}
+
 protected:
-	DestroyCallback* m_callback;
+	IWorldCallback* m_callback;
 	Constraint* m_constraint;
 	Ref< Body > m_body1;
 	Ref< Body > m_body2;
+	bool m_enable;
 };
 
 	}

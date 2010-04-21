@@ -1,19 +1,18 @@
-#include "Physics/DynamicBodyDesc.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
+#include "Physics/DynamicBodyDesc.h"
 
 namespace traktor
 {
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.DynamicBodyDesc", 3, DynamicBodyDesc, BodyDesc)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.DynamicBodyDesc", 4, DynamicBodyDesc, BodyDesc)
 
 DynamicBodyDesc::DynamicBodyDesc()
 :	m_mass(1.0f)
 ,	m_autoDeactivate(true)
-,	m_initiallyActive(true)
-,	m_initiallyEnabled(true)
+,	m_active(true)
 ,	m_linearDamping(0.0f)
 ,	m_angularDamping(0.0f)
 ,	m_friction(0.75f)
@@ -40,24 +39,14 @@ bool DynamicBodyDesc::getAutoDeactivate() const
 	return m_autoDeactivate;
 }
 
-void DynamicBodyDesc::setInitiallyActive(bool initiallyActive)
+void DynamicBodyDesc::setActive(bool active)
 {
-	m_initiallyActive = initiallyActive;
+	m_active = active;
 }
 
-bool DynamicBodyDesc::getInitiallyActive() const
+bool DynamicBodyDesc::getActive() const
 {
-	return m_initiallyActive;
-}
-
-void DynamicBodyDesc::setInitiallyEnabled(bool initiallyEnabled)
-{
-	m_initiallyEnabled = initiallyEnabled;
-}
-
-bool DynamicBodyDesc::getInitiallyEnabled() const
-{
-	return m_initiallyEnabled;
+	return m_active;
 }
 
 void DynamicBodyDesc::setLinearDamping(float linearDamping)
@@ -92,35 +81,17 @@ float DynamicBodyDesc::getFriction() const
 
 bool DynamicBodyDesc::serialize(ISerializer& s)
 {
+	T_ASSERT (s.getVersion() >= 4);
+
 	if (!BodyDesc::serialize(s))
 		return false;
 
 	s >> Member< float >(L"mass", m_mass, 0.0f);
-
-	if (s.getVersion() >= 3)
-	{
-		s >> Member< bool >(L"autoDeactivate", m_autoDeactivate);
-		s >> Member< bool >(L"initiallyActive", m_initiallyActive);
-		s >> Member< bool >(L"initiallyEnabled", m_initiallyEnabled);
-	}
-	else
-	{
-		m_initiallyActive = !m_initiallyActive;
-		s >> Member< bool >(L"autoDisable", m_autoDeactivate);
-		s >> Member< bool >(L"disabled", m_initiallyActive);
-		m_initiallyActive = !m_initiallyActive;
-	}
-
-	if (s.getVersion() >= 1)
-	{
-		s >> Member< float >(L"linearDamping", m_linearDamping, 0.0f, 1.0f);
-		s >> Member< float >(L"angularDamping", m_angularDamping, 0.0f, 1.0f);
-
-		if (s.getVersion() >= 2)
-		{
-			s >> Member< float >(L"friction", m_friction, 0.0f);
-		}
-	}
+	s >> Member< bool >(L"autoDeactivate", m_autoDeactivate);
+	s >> Member< bool >(L"active", m_active);
+	s >> Member< float >(L"linearDamping", m_linearDamping, 0.0f, 1.0f);
+	s >> Member< float >(L"angularDamping", m_angularDamping, 0.0f, 1.0f);
+	s >> Member< float >(L"friction", m_friction, 0.0f);
 	
 	return true;
 }

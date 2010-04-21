@@ -16,6 +16,8 @@ struct JointSolver;
 class JointConstraint : public btTypedConstraint
 {
 public:
+	JointConstraint(btRigidBody& rbA);
+
 	JointConstraint(btRigidBody& rbA, btRigidBody& rbB);
 
 	void setJointSolver(JointSolver* jointSolver);

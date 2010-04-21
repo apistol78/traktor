@@ -345,7 +345,7 @@ Ref< Body > PhysicsManagerPhysX::createBody(const BodyDesc* desc)
 
 		setActorGroup(actor, c_defaultGroup);
 
-		if (!dynamicDesc->getInitiallyActive())
+		if (!dynamicDesc->getActive())
 			actor->putToSleep();
 
 		Ref< DynamicBodyPhysX > dynamicBody = new DynamicBodyPhysX(this, actor);

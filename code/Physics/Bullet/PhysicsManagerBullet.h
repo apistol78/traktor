@@ -1,16 +1,16 @@
 #ifndef traktor_physics_PhysicsManagerBullet_H
 #define traktor_physics_PhysicsManagerBullet_H
 
+#include "Core/Thread/Semaphore.h"
 #include "Physics/PhysicsManager.h"
 #include "Physics/Bullet/Types.h"
-#include "Core/Thread/Semaphore.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_PHYSICS_BULLET_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 // Bullet forward declarations.
@@ -27,16 +27,16 @@ namespace traktor
 	namespace physics
 	{
 
-class StaticBodyBullet;
 class DynamicBodyBullet;
 class Joint;
+class StaticBodyBullet;
 
 /*!
  * \ingroup Bullet
  */
 class T_DLLCLASS PhysicsManagerBullet
 :	public PhysicsManager
-,	public DestroyCallback
+,	public IWorldCallback
 {
 	T_RTTI_CLASS;
 
@@ -77,10 +77,6 @@ public:
 
 	virtual void getBodyCount(uint32_t& outCount, uint32_t& outActiveCount) const;
 
-	virtual void destroyBody(Body* body, btRigidBody* rigidBody, btCollisionShape* shape);
-
-	virtual void destroyJoint(Joint* joint, btTypedConstraint* constraint);
-
 private:
 	float m_simulationDeltaTime;
 	btCollisionConfiguration* m_configuration;
@@ -96,6 +92,18 @@ private:
 	static PhysicsManagerBullet* ms_this;
 
 	static void nearCallback(btBroadphasePair& collisionPair, btCollisionDispatcher& dispatcher, const btDispatcherInfo& dispatchInfo);
+
+	virtual void insertBody(btRigidBody* rigidBody);
+
+	virtual void removeBody(btRigidBody* rigidBody);
+
+	virtual void insertConstraint(btTypedConstraint* constraint);
+
+	virtual void removeConstraint(btTypedConstraint* constraint);
+
+	virtual void destroyBody(Body* body, btRigidBody* rigidBody, btCollisionShape* shape);
+
+	virtual void destroyConstraint(Joint* joint, btTypedConstraint* constraint);
 };
 
 	}

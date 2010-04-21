@@ -16,11 +16,19 @@ class Joint;
 /*!
  * \ingroup Bullet
  */
-struct DestroyCallback
+struct IWorldCallback
 {
+	virtual void insertBody(btRigidBody* rigidBody) = 0;
+
+	virtual void removeBody(btRigidBody* rigidBody) = 0;
+
+	virtual void insertConstraint(btTypedConstraint* constraint) = 0;
+
+	virtual void removeConstraint(btTypedConstraint* constraint) = 0;
+
 	virtual void destroyBody(Body* body, btRigidBody* rigidBody, btCollisionShape* shape) = 0;
 
-	virtual void destroyJoint(Joint* joint, btTypedConstraint* constraint) = 0;
+	virtual void destroyConstraint(Joint* joint, btTypedConstraint* constraint) = 0;
 };
 
 	}
