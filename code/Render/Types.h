@@ -167,9 +167,11 @@ struct DisplayMode
 struct RenderSystemCreateDesc
 {
 	float mipBias;
+	int32_t maxAnisotropy;
 
 	RenderSystemCreateDesc()
 	:	mipBias(0.0f)
+	,	maxAnisotropy(1)
 	{
 	}
 };

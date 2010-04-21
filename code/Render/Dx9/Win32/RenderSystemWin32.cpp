@@ -101,6 +101,7 @@ RenderSystemWin32::RenderSystemWin32()
 :	m_vertexDeclCache(0)
 ,	m_hWnd(0)
 ,	m_mipBias(0.0f)
+,	m_maxAnisotropy(1)
 ,	m_lostDevice(false)
 {
 }
@@ -212,7 +213,9 @@ bool RenderSystemWin32::create(const RenderSystemCreateDesc& desc)
 	m_shaderCache = new ShaderCache();
 	m_parameterCache = new ParameterCache(m_d3dDevice);
 	m_vertexDeclCache = new VertexDeclCache(m_d3dDevice);
+
 	m_mipBias = desc.mipBias;
+	m_maxAnisotropy = desc.maxAnisotropy;
 
 	return true;
 }
@@ -638,7 +641,10 @@ HRESULT RenderSystemWin32::resetDevice()
 		return hr;
 
 	for (int i = 0; i < ParameterCache::MaxTextureCount; ++i)
+	{
 		m_d3dDevice->SetSamplerState(i, D3DSAMP_MIPMAPLODBIAS, *(DWORD*)&m_mipBias);
+		m_d3dDevice->SetSamplerState(i, D3DSAMP_MAXANISOTROPY, m_maxAnisotropy);
+	}
 
 	log::debug << L"Device reset successful" << Endl;
 	return hr;

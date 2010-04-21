@@ -1,5 +1,6 @@
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyFloat.h"
+#include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
 #include "Core/Settings/Settings.h"
 #include "I18N/Text.h"
@@ -37,6 +38,12 @@ bool RenderSettingsPage::create(ui::Container* parent, Settings* settings, const
 	m_editMipBias = new ui::Edit();
 	m_editMipBias->create(container, L"", ui::WsClientBorder, new ui::NumericEditValidator(true, -100.0f, 100.0f));
 
+	Ref< ui::Static > staticMaxAnisotropy = new ui::Static();
+	staticMaxAnisotropy->create(container, i18n::Text(L"EDITOR_SETTINGS_RENDERER_MAX_ANISOTROPY"));
+
+	m_editMaxAnisotropy = new ui::Edit();
+	m_editMaxAnisotropy->create(container, L"", ui::WsClientBorder, new ui::NumericEditValidator(false, 0, 16));
+
 	std::wstring renderSystemType = settings->getProperty< PropertyString >(L"Editor.RenderSystem");
 
 	std::vector< const TypeInfo* > renderSystemTypes;
@@ -51,6 +58,7 @@ bool RenderSettingsPage::create(ui::Container* parent, Settings* settings, const
 	}
 
 	m_editMipBias->setText(toString(settings->getProperty< PropertyFloat >(L"Editor.MipBias")));
+	m_editMaxAnisotropy->setText(toString(settings->getProperty< PropertyInteger >(L"Editor.MaxAnisotropy")));
 
 	parent->setText(i18n::Text(L"EDITOR_SETTINGS_RENDERER"));
 	return true;
@@ -64,6 +72,7 @@ bool RenderSettingsPage::apply(Settings* settings)
 {
 	settings->setProperty< PropertyString >(L"Editor.RenderSystem", m_dropRenderSystem->getSelectedItem());
 	settings->setProperty< PropertyFloat >(L"Editor.MipBias", parseString< float >(m_editMipBias->getText()));
+	settings->setProperty< PropertyInteger >(L"Editor.MaxAnisotropy", parseString< int32_t >(m_editMaxAnisotropy->getText()));
 	return true;
 }
 
