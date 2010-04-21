@@ -39,6 +39,22 @@ std::wstring hlsl_type_name(HlslType type)
 	return c[type];
 }
 
+int32_t hlsl_type_width(HlslType type)
+{
+	const int32_t c_widths[] =
+	{
+		0,
+		0,
+		1,
+		2,
+		3,
+		4,
+		0,
+		0
+	};
+	return c_widths[type];
+}
+
 HlslType hlsl_from_data_type(DataType type)
 {
 	const HlslType c[] =
