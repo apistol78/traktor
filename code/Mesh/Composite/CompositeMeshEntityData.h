@@ -25,6 +25,8 @@ public:
 	virtual Ref< MeshEntity > createEntity(resource::IResourceManager* resourceManager, world::IEntityBuilder* builder) const;
 
 	virtual bool serialize(ISerializer& s);
+	
+	virtual void setTransform(const Transform& transform);
 
 	inline const RefArray< AbstractMeshEntityData >& getEntityData() const { return m_entityData; }
 
