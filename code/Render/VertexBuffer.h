@@ -52,8 +52,15 @@ public:
 	/*! \brief Unlock access. */
 	virtual void unlock() = 0;
 
+	/*! \brief Set content valid flag. */
+	inline void setContentValid(bool contentValid) { m_contentValid = contentValid; }
+
+	/*! \brief Check content valid flag. */
+	inline bool isContentValid() const { return m_contentValid; }
+
 private:
 	uint32_t m_bufferSize;
+	bool m_contentValid;
 };
 	
 	}

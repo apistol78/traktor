@@ -177,6 +177,7 @@ void VertexBufferDx9::unlock()
 		m_d3dVertexBuffer->Unlock();
 		m_locked = false;
 	}
+	setContentValid(true);
 }
 
 
@@ -191,6 +192,8 @@ HRESULT VertexBufferDx9::lostDevice()
 
 	m_d3dDevice.release();
 	m_d3dVertexBuffer.release();
+
+	setContentValid(false);
 
 	return S_OK;
 }
