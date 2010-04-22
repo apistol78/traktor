@@ -23,7 +23,7 @@ const uint32_t c_pointCount = 1000;
 #elif defined(_WINCE)
 const uint32_t c_pointCount = 1000;
 #else
-const uint32_t c_pointCount = 10000;
+const uint32_t c_pointCount = 4000;
 #endif
 
 struct PredicateZ
