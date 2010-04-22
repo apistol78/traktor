@@ -25,10 +25,12 @@ const uint32_t c_outputSamplesBlockCount = 3;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.SoundChannel", SoundChannel, Object)
 
-SoundChannel::SoundChannel(uint32_t id, uint32_t hwSampleRate, uint32_t hwFrameSamples)
+SoundChannel::SoundChannel(uint32_t id, Event& eventFinish, uint32_t hwSampleRate, uint32_t hwFrameSamples)
 :	m_id(id)
+,	m_eventFinish(eventFinish)
 ,	m_hwSampleRate(hwSampleRate)
 ,	m_hwFrameSamples(hwFrameSamples)
+,	m_priority(0)
 ,	m_repeat(0)
 ,	m_outputSamplesIn(0)
 ,	m_volume(1.0f)
@@ -89,6 +91,7 @@ void SoundChannel::stop()
 {
 	m_sound = 0;
 	m_cursor = 0;
+	m_eventFinish.broadcast();
 }
 
 ISoundBufferCursor* SoundChannel::getCursor() const
@@ -96,7 +99,7 @@ ISoundBufferCursor* SoundChannel::getCursor() const
 	return m_cursor;
 }
 
-bool SoundChannel::playSound(Sound* sound, double time, uint32_t repeat)
+bool SoundChannel::playSound(const Sound* sound, double time, uint32_t priority, uint32_t repeat)
 {
 	if (!sound)
 	{
@@ -119,6 +122,7 @@ bool SoundChannel::playSound(Sound* sound, double time, uint32_t repeat)
 	}
 
 	m_sound = sound;
+	m_priority = priority;
 	m_repeat = max< uint32_t >(repeat, 1U);
 	m_outputSamplesIn = 0;
 
@@ -162,6 +166,7 @@ bool SoundChannel::getBlock(const ISoundMixer* mixer, double time, SoundBlock& o
 				{
 					m_sound = 0;
 					m_cursor = 0;
+					m_eventFinish.broadcast();
 					return false;
 				}
 			}
@@ -169,6 +174,7 @@ bool SoundChannel::getBlock(const ISoundMixer* mixer, double time, SoundBlock& o
 			{
 				m_sound = 0;
 				m_cursor = 0;
+				m_eventFinish.broadcast();
 				return false;
 			}
 		}
@@ -238,6 +244,11 @@ bool SoundChannel::getBlock(const ISoundMixer* mixer, double time, SoundBlock& o
 		outBlock.samples[i] = m_outputSamples[i];
 
 	return true;
+}
+
+uint32_t SoundChannel::getPriority() const
+{
+	return m_priority;
 }
 
 	}

@@ -255,6 +255,7 @@ void BankAssetEditor::handleCommand(const ui::Command& command)
 			m_bankBuffer = new BankBuffer(grains);
 			m_soundChannel = m_soundSystem->play(
 				new Sound(m_bankBuffer),
+				0,
 				true
 			);
 
