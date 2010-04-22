@@ -1,3 +1,5 @@
+#include "Render/Shader/InputPin.h"
+#include "Render/Shader/OutputPin.h"
 #include "Render/Shader/Node.h"
 #include "Render/Editor/Shader/Facades/SwizzleNodeFacade.h"
 #include "Ui/Custom/Graph/Node.h"
@@ -39,6 +41,24 @@ Ref< ui::custom::Node > SwizzleNodeFacade::createEditorNode(
 		m_nodeShape
 	);
 
+	for (int j = 0; j < shaderNode->getInputPinCount(); ++j)
+	{
+		const InputPin* inputPin = shaderNode->getInputPin(j);
+		editorNode->createInputPin(
+			inputPin->getName(),
+			!inputPin->isOptional()
+		);
+	}
+
+	for (int j = 0; j < shaderNode->getOutputPinCount(); ++j)
+	{
+		const OutputPin* outputPin = shaderNode->getOutputPin(j);
+		editorNode->createOutputPin(
+			outputPin->getName()
+		);
+	}
+
+	editorNode->setComment(shaderNode->getComment());
 	editorNode->setColor(Color(220, 255, 255));
 
 	return editorNode;

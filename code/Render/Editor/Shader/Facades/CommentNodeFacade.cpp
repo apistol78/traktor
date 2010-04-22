@@ -29,7 +29,7 @@ Ref< ui::custom::Node > CommentNodeFacade::createEditorNode(
 	Node* shaderNode
 )
 {
-	return new ui::custom::Node(
+	Ref< ui::custom::Node > editorNode = new ui::custom::Node(
 		L"",
 		L"",
 		ui::Point(
@@ -38,6 +38,10 @@ Ref< ui::custom::Node > CommentNodeFacade::createEditorNode(
 		),
 		m_nodeShape
 	);
+
+	editorNode->setComment(shaderNode->getComment());
+
+	return editorNode;
 }
 
 void CommentNodeFacade::editShaderNode(
