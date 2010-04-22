@@ -86,6 +86,7 @@ bool SoundSystem::create(const SoundSystemCreateDesc& desc)
 	{
 		m_channels[i] = new SoundChannel(
 			i,
+			m_channelFinishEvent,
 			desc.driverDesc.sampleRate,
 			desc.driverDesc.frameSamples
 		);
@@ -145,39 +146,56 @@ Ref< SoundChannel > SoundSystem::getChannel(uint32_t channelId)
 	return m_channels[channelId];
 }
 
-Ref< SoundChannel > SoundSystem::play(uint32_t channelId, Sound* sound, uint32_t repeat)
+Ref< SoundChannel > SoundSystem::play(uint32_t channelId, const Sound* sound, uint32_t priority, uint32_t repeat)
 {
 	T_ASSERT (channelId < m_channels.size());
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_channelAttachLock);
 	
-	if (!m_channels[channelId]->playSound(sound, m_time, repeat))
+	if (!m_channels[channelId]->playSound(sound, m_time, priority, repeat))
 		return 0;
 
 	return m_channels[channelId];
 }
 
-Ref< SoundChannel > SoundSystem::play(Sound* sound, bool wait, uint32_t repeat)
+Ref< SoundChannel > SoundSystem::play(const Sound* sound, uint32_t priority, bool wait, uint32_t repeat)
 {
 	for (;;)
 	{
-		// Allocate first idle channel.
 		{
 			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_channelAttachLock);
+			
+			uint32_t currentLeastPriority = priority;
+			Ref< SoundChannel > channel;
+
 			for (RefArray< SoundChannel >::iterator i = m_channels.begin(); i != m_channels.end(); ++i)
 			{
-				if (!(*i)->isPlaying() && !(*i)->isExclusive())
+				if ((*i)->isExclusive())
+					continue;
+
+				if (!(*i)->isPlaying())
 				{
-					if ((*i)->playSound(sound, m_time, repeat))
-						return *i;
+					channel = *i;
+					break;
+				}
+				else
+				{
+					uint32_t channelPriority = (*i)->getPriority();
+					if (channelPriority < currentLeastPriority)
+					{
+						channel = *i;
+						currentLeastPriority = channelPriority;
+					}
 				}
 			}
+
+			if (channel && channel->playSound(sound, m_time, priority, repeat))
+				return channel;
 		}
 
 		if (!wait)
 			break;
 
-		// Yield calling thread; \fixme Notification when channel is free.
-		ThreadManager::getInstance().getCurrentThread()->sleep(10);
+		m_channelFinishEvent.wait(1000);
 	}
 	return 0;
 }

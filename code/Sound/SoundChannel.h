@@ -2,6 +2,7 @@
 #define traktor_sound_SoundChannel_H
 
 #include "Core/Object.h"
+#include "Core/Thread/Event.h"
 #include "Core/Thread/Semaphore.h"
 #include "Sound/Types.h"
 
@@ -38,7 +39,7 @@ class T_DLLCLASS SoundChannel : public Object
 	T_RTTI_CLASS;
 
 public:
-	SoundChannel(uint32_t id, uint32_t hwSampleRate, uint32_t hwFrameSamples);
+	SoundChannel(uint32_t id, Event& eventFinish, uint32_t hwSampleRate, uint32_t hwFrameSamples);
 
 	virtual ~SoundChannel();
 
@@ -77,22 +78,26 @@ private:
 	friend class SoundSystem;
 
 	uint32_t m_id;
+	Event& m_eventFinish;
 	uint32_t m_hwSampleRate;	//< Hardware sample rate.
 	uint32_t m_hwFrameSamples;	//< Hardware frame size in samples.
 	Semaphore m_lock;
 	Ref< IFilter > m_filter;
 	Ref< IFilterInstance > m_filterInstance;
-	Ref< Sound > m_sound;
+	Ref< const Sound > m_sound;
 	Ref< ISoundBufferCursor > m_cursor;
+	uint32_t m_priority;
 	uint32_t m_repeat;
 	float* m_outputSamples[SbcMaxChannelCount];
 	uint32_t m_outputSamplesIn;
 	float m_volume;
 	bool m_exclusive;
 
-	bool playSound(Sound* sound, double time, uint32_t repeat);
+	bool playSound(const Sound* sound, double time, uint32_t priority, uint32_t repeat);
 
 	bool getBlock(const ISoundMixer* mixer, double time, SoundBlock& outBlock);
+
+	uint32_t getPriority() const;
 };
 
 	}
