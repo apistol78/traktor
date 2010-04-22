@@ -176,9 +176,12 @@ void VertexBufferVBO::unlock()
 {
 	T_ASSERT_M(m_lock, L"Vertex buffer not locked");
 	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
+
 	T_OGL_SAFE(glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_name));
 	T_OGL_SAFE(glUnmapBufferARB(GL_ARRAY_BUFFER_ARB));
+
 	m_lock = 0;
+	setContentValid(true);
 }
 
 void VertexBufferVBO::activate(const GLint* attributeLocs)

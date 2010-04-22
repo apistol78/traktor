@@ -69,8 +69,11 @@ void VertexBufferDx10::unlock()
 {
 	T_ASSERT (m_d3dBuffer);
 	T_ASSERT (m_locked);
+	
 	m_d3dBuffer->Unmap();
 	m_locked = false;
+
+	setContentValid(true);
 }
 
 const std::vector< D3D10_INPUT_ELEMENT_DESC >& VertexBufferDx10::getD3D10InputElements() const

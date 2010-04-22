@@ -178,6 +178,8 @@ void VertexBufferSw::unlock()
 
 	Alloc::freeAlign(m_lock);
 	m_lock = 0;
+
+	setContentValid(true);
 }
 
 	}

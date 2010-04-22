@@ -190,7 +190,11 @@ void BlendMesh::render(
 	if (technique == world::WorldRenderer::getTechniqueDefault() || instance->count == 0)
 	{
 		bool update = true;
-		if (blendWeights.size() == instance->weights.size())
+		if (
+			instance->mesh->getVertexBuffer() &&
+			instance->mesh->getVertexBuffer()->isContentValid() &&
+			blendWeights.size() == instance->weights.size()
+		)
 		{
 			update = false;
 			for (uint32_t i = 0; i < blendWeights.size(); ++i)

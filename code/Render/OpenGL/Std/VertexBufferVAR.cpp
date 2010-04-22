@@ -141,6 +141,7 @@ void* VertexBufferVAR::lock(uint32_t vertexOffset, uint32_t vertexCount)
 
 void VertexBufferVAR::unlock()
 {
+	setContentValid(true);
 }
 
 void VertexBufferVAR::activate(const GLint* attributeLocs)
