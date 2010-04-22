@@ -103,7 +103,7 @@ void CaseSound::run()
 	sound::Sound sound(&soundBuffer);
 
 	timer.start();
-	soundSystem.play(&sound, false);
+	soundSystem.play(&sound, 0, false);
 
 	signal.wait();
 

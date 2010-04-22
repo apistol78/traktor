@@ -1,17 +1,30 @@
 #include <algorithm>
-//#include "Core/Object.h"
+#include "Core/Object.h"
 //#include "Core/Heap/Ref.h"
-//#include "Core/RefArray.h"
+#include "Core/RefArray.h"
 
 namespace traktor
 {
-//
-//class A : public Object {};
-//
-//class B : public A {};
-//
-//class C : public Object {};
-//
+
+class A : public Object {};
+
+class B : public A {};
+
+class C : public Object {};
+
+struct DummyPred { bool operator () (A* a) const { return false; } };
+
+void referenceTest()
+{
+	RefArray< A > ra;
+//	Ref< A > a;
+//	A* a;
+	
+//	*ra.begin() = a;
+	
+	std::remove_if(ra.begin(), ra.end(), DummyPred());
+}
+
 //// OK
 //Ref< A > staticImplicitCast_1()
 //{

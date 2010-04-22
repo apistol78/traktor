@@ -67,9 +67,15 @@ public:
 		// \name Assign operators
 		// @{
 
-		Handle& operator = (pointer ptr)
+		Handle< Class >& operator = (pointer ptr)
 		{
 			replace(ptr);
+			return *this;
+		}
+		
+		Handle< Class >& operator = (const Handle< Class >& href)
+		{
+			replace(href.m_ptr);
 			return *this;
 		}
 
