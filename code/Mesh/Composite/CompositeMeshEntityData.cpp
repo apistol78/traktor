@@ -26,6 +26,17 @@ Ref< MeshEntity > CompositeMeshEntityData::createEntity(resource::IResourceManag
 	return compositeMeshEntity;
 }
 
+void CompositeMeshEntityData::setTransform(const Transform& transform)
+{
+	Transform deltaTransform = getTransform().inverse() * transform;
+	for (RefArray< AbstractMeshEntityData >::iterator i = m_entityData.begin(); i != m_entityData.end(); ++i)
+	{
+		Transform currentTransform = (*i)->getTransform();
+		(*i)->setTransform(currentTransform * deltaTransform);
+	}
+	AbstractMeshEntityData::setTransform(transform);
+}
+
 bool CompositeMeshEntityData::serialize(ISerializer& s)
 {
 	if (!AbstractMeshEntityData::serialize(s))
