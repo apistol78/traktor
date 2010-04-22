@@ -1,11 +1,13 @@
+#include "Core/Misc/String.h"
+#include "I18N/Text.h"
+#include "Render/Shader/InputPin.h"
+#include "Render/Shader/OutputPin.h"
 #include "Render/Shader/Nodes.h"
 #include "Render/Editor/Shader/Facades/DefaultNodeFacade.h"
 #include "Ui/Custom/Graph/Node.h"
 #include "Ui/Custom/Graph/DefaultNodeShape.h"
 #include "Ui/Custom/Graph/InputNodeShape.h"
 #include "Ui/Custom/Graph/OutputNodeShape.h"
-#include "I18N/Text.h"
-#include "Core/Misc/String.h"
 
 namespace traktor
 {
@@ -57,6 +59,25 @@ Ref< ui::custom::Node > DefaultNodeFacade::createEditorNode(
 		),
 		shape
 	);
+
+	for (int j = 0; j < shaderNode->getInputPinCount(); ++j)
+	{
+		const InputPin* inputPin = shaderNode->getInputPin(j);
+		editorNode->createInputPin(
+			inputPin->getName(),
+			!inputPin->isOptional()
+		);
+	}
+
+	for (int j = 0; j < shaderNode->getOutputPinCount(); ++j)
+	{
+		const OutputPin* outputPin = shaderNode->getOutputPin(j);
+		editorNode->createOutputPin(
+			outputPin->getName()
+		);
+	}
+
+	editorNode->setComment(shaderNode->getComment());
 
 	if (is_a< InputPort >(shaderNode) || is_a< OutputPort >(shaderNode))
 		editorNode->setColor(traktor::Color(200, 255, 200));

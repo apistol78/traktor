@@ -1,10 +1,12 @@
-#include "Render/Shader/External.h"
-#include "Render/Shader/ShaderGraph.h"
-#include "Render/Editor/Shader/Facades/ExternalNodeFacade.h"
-#include "Editor/IEditor.h"
-#include "Editor/TypeBrowseFilter.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
+#include "Editor/IEditor.h"
+#include "Editor/TypeBrowseFilter.h"
+#include "Render/Shader/External.h"
+#include "Render/Shader/InputPin.h"
+#include "Render/Shader/OutputPin.h"
+#include "Render/Shader/ShaderGraph.h"
+#include "Render/Editor/Shader/Facades/ExternalNodeFacade.h"
 #include "Ui/Custom/Graph/GraphControl.h"
 #include "Ui/Custom/Graph/Node.h"
 #include "Ui/Custom/Graph/DefaultNodeShape.h"
@@ -68,6 +70,24 @@ Ref< ui::custom::Node > ExternalNodeFacade::createEditorNode(
 		m_nodeShape
 	);
 
+	for (int j = 0; j < shaderNode->getInputPinCount(); ++j)
+	{
+		const InputPin* inputPin = shaderNode->getInputPin(j);
+		editorNode->createInputPin(
+			inputPin->getName(),
+			!inputPin->isOptional()
+		);
+	}
+
+	for (int j = 0; j < shaderNode->getOutputPinCount(); ++j)
+	{
+		const OutputPin* outputPin = shaderNode->getOutputPin(j);
+		editorNode->createOutputPin(
+			outputPin->getName()
+		);
+	}
+
+	editorNode->setComment(shaderNode->getComment());
 	editorNode->setColor(Color(255, 255, 200));
 
 	return editorNode;

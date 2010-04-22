@@ -32,7 +32,7 @@ Ref< ui::custom::Node > SwitchNodeFacade::createEditorNode(
 	Node* shaderNode
 )
 {
-	return new ui::custom::Node(
+	Ref< ui::custom::Node > editorNode = new ui::custom::Node(
 		i18n::Text(L"SHADERGRAPH_NODE_SWITCH"),
 		shaderNode->getInformation(),
 		ui::Point(
@@ -41,6 +41,27 @@ Ref< ui::custom::Node > SwitchNodeFacade::createEditorNode(
 		),
 		m_nodeShape
 	);
+
+	for (int j = 0; j < shaderNode->getInputPinCount(); ++j)
+	{
+		const InputPin* inputPin = shaderNode->getInputPin(j);
+		editorNode->createInputPin(
+			inputPin->getName(),
+			!inputPin->isOptional()
+		);
+	}
+
+	for (int j = 0; j < shaderNode->getOutputPinCount(); ++j)
+	{
+		const OutputPin* outputPin = shaderNode->getOutputPin(j);
+		editorNode->createOutputPin(
+			outputPin->getName()
+		);
+	}
+
+	editorNode->setComment(shaderNode->getComment());
+
+	return editorNode;
 }
 
 void SwitchNodeFacade::editShaderNode(

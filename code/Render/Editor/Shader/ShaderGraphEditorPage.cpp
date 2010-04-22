@@ -735,25 +735,6 @@ Ref< ui::custom::Node > ShaderGraphEditorPage::createEditorNode(Node* shaderNode
 	if (!editorNode)
 		return 0;
 
-	for (int j = 0; j < shaderNode->getInputPinCount(); ++j)
-	{
-		const InputPin* inputPin = shaderNode->getInputPin(j);
-		editorNode->createInputPin(
-			inputPin->getName(),
-			!inputPin->isOptional()
-		);
-	}
-
-	for (int j = 0; j < shaderNode->getOutputPinCount(); ++j)
-	{
-		const OutputPin* outputPin = shaderNode->getOutputPin(j);
-		editorNode->createOutputPin(
-			outputPin->getName()
-		);
-	}
-
-	editorNode->setComment(shaderNode->getComment());
-
 	editorNode->setData(L"SHADERNODE", shaderNode);
 	editorNode->setData(L"FACADE", nodeFacade);
 

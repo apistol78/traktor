@@ -54,6 +54,24 @@ Ref< ui::custom::Node > TextureNodeFacade::createEditorNode(
 		m_nodeShape
 	);
 
+	for (int j = 0; j < shaderNode->getInputPinCount(); ++j)
+	{
+		const InputPin* inputPin = shaderNode->getInputPin(j);
+		editorNode->createInputPin(
+			inputPin->getName(),
+			!inputPin->isOptional()
+		);
+	}
+
+	for (int j = 0; j < shaderNode->getOutputPinCount(); ++j)
+	{
+		const OutputPin* outputPin = shaderNode->getOutputPin(j);
+		editorNode->createOutputPin(
+			outputPin->getName()
+		);
+	}
+
+	editorNode->setComment(shaderNode->getComment());
 	editorNode->setColor(traktor::Color(255, 255, 200));
 
 	Guid textureGuid = texture->getExternal();
