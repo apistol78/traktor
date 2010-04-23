@@ -94,10 +94,7 @@ bool PostProcess::render(
 	render::RenderTargetSet* depthBuffer,
 	render::RenderTargetSet* velocityBuffer,
 	render::RenderTargetSet* shadowMask,
-	const Frustum& viewFrustum,
-	const Matrix44& projection,
-	float shadowMapBias,
-	float deltaTime
+	const PostProcessStep::Instance::RenderParams& params
 )
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
@@ -116,10 +113,7 @@ bool PostProcess::render(
 			this,
 			renderView,
 			m_screenRenderer,
-			viewFrustum,
-			projection,
-			shadowMapBias,
-			deltaTime
+			params
 		);
 	}
 

@@ -62,10 +62,7 @@ void PostProcessStepSimple::InstanceSimple::render(
 	PostProcess* postProcess,
 	render::IRenderView* renderView,
 	render::ScreenRenderer* screenRenderer,
-	const Frustum& viewFrustum,
-	const Matrix44& projection,
-	float shadowMapBias,
-	float deltaTime
+	const RenderParams& params
 )
 {
 	resource::Proxy< render::Shader > shader = m_step->m_shader;
@@ -75,7 +72,7 @@ void PostProcessStepSimple::InstanceSimple::render(
 	postProcess->prepareShader(shader);
 
 	shader->setFloatParameter(L"Time", m_time);
-	shader->setFloatParameter(L"DeltaTime", deltaTime);
+	shader->setFloatParameter(L"DeltaTime", params.deltaTime);
 
 	const std::vector< Source >& sources = m_step->m_sources;
 	for (std::vector< Source >::const_iterator i = sources.begin(); i != sources.end(); ++i)
@@ -95,7 +92,7 @@ void PostProcessStepSimple::InstanceSimple::render(
 
 	screenRenderer->draw(renderView, shader);
 
-	m_time += deltaTime;
+	m_time += params.deltaTime;
 }
 
 	}

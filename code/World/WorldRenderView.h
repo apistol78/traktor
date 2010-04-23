@@ -12,9 +12,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_WORLD_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -178,7 +178,6 @@ private:
 	int m_lightCount;
 	Aabb m_shadowBox;
 	Ref< render::ITexture > m_shadowMask;
-	float m_shadowMapBias;
 	Ref< render::ITexture > m_depthMap;
 	float m_time;
 	float m_deltaTime;

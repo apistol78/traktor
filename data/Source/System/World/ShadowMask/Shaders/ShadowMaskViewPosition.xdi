@@ -188,14 +188,6 @@ View position of fragment
 			</position>
 			<operator>CoLess</operator>
 		</item>
-		<item type="traktor.render.Scalar">
-			<comment/>
-			<position>
-				<first>452</first>
-				<second>76</second>
-			</position>
-			<value>20</value>
-		</item>
 		<item type="traktor.render.Comment">
 			<comment>
 			<![CDATA[
@@ -204,9 +196,18 @@ be in mask.
 			]]>
 			</comment>
 			<position>
-				<first>402</first>
-				<second>-14</second>
+				<first>399</first>
+				<second>-66</second>
 			</position>
+		</item>
+		<item type="traktor.render.Uniform">
+			<comment/>
+			<position>
+				<first>406</first>
+				<second>66</second>
+			</position>
+			<parameterName>ShadowFarZ</parameterName>
+			<type>PtScalar</type>
 		</item>
 	</nodes>
 	<edges>
@@ -462,7 +463,7 @@ be in mask.
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[21]"/>
+				<node ref="/object/nodes/item[22]"/>
 				<name>Output</name>
 			</source>
 			<destination>

@@ -48,16 +48,22 @@ public:
 	class T_DLLCLASS Instance : public Object
 	{
 	public:
+		struct RenderParams
+		{
+			Frustum viewFrustum;
+			Matrix44 projection;
+			float shadowFarZ;
+			float shadowMapBias;
+			float deltaTime;
+		};
+
 		virtual void destroy() = 0;
 
 		virtual void render(
 			PostProcess* postProcess,
 			render::IRenderView* renderView,
 			render::ScreenRenderer* screenRenderer,
-			const Frustum& viewFrustum,
-			const Matrix44& projection,
-			float shadowMapBias,
-			float deltaTime
+			const RenderParams& params
 		) = 0;
 	};
 

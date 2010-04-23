@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_WORLD_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -35,10 +35,7 @@ public:
 			PostProcess* postProcess,
 			render::IRenderView* renderView,
 			render::ScreenRenderer* screenRenderer,
-			const Frustum& viewFrustum,
-			const Matrix44& projection,
-			float shadowMapBias,
-			float deltaTime
+			const RenderParams& params
 		);
 
 	private:

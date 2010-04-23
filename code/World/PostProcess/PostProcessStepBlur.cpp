@@ -104,10 +104,7 @@ void PostProcessStepBlur::InstanceBlur::render(
 	PostProcess* postProcess,
 	render::IRenderView* renderView,
 	render::ScreenRenderer* screenRenderer,
-	const Frustum& viewFrustum,
-	const Matrix44& projection,
-	float shadowMapBias,
-	float deltaTime
+	const RenderParams& params
 )
 {
 	resource::Proxy< render::Shader > shader = m_step->m_shader;
@@ -134,7 +131,7 @@ void PostProcessStepBlur::InstanceBlur::render(
 
 	shader->setVectorArrayParameter(L"GaussianOffsetWeights", &m_gaussianOffsetWeights[0], m_gaussianOffsetWeights.size());
 	shader->setVectorParameter(L"Direction", m_step->m_direction);
-	shader->setFloatParameter(L"ViewFar", viewFrustum.getFarZ());
+	shader->setFloatParameter(L"ViewFar", params.viewFrustum.getFarZ());
 
 	screenRenderer->draw(renderView, shader);
 }

@@ -70,10 +70,7 @@ void PostProcessStepLuminance::InstanceLuminance::render(
 	PostProcess* postProcess,
 	render::IRenderView* renderView,
 	render::ScreenRenderer* screenRenderer,
-	const Frustum& viewFrustum,
-	const Matrix44& projection,
-	float shadowMapBias,
-	float deltaTime
+	const RenderParams& params
 )
 {
 	resource::Proxy< render::Shader > shader = m_step->m_shader;

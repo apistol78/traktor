@@ -160,35 +160,39 @@ public:
 
 	//@}
 
-	inline static render::handle_t getTechniqueDefault() {
+	const WorldRenderSettings& getSettings() const {
+		return m_settings;
+	}
+
+	static render::handle_t getTechniqueDefault() {
 		return ms_techniqueDefault;
 	}
 
-	inline static render::handle_t getTechniqueDepth() {
+	static render::handle_t getTechniqueDepth() {
 		return ms_techniqueDepth;
 	}
 
-	inline static render::handle_t getTechniqueVelocity() {
+	static render::handle_t getTechniqueVelocity() {
 		return ms_techniqueVelocity;
 	}
 
-	inline static render::handle_t getTechniqueShadow() {
+	static render::handle_t getTechniqueShadow() {
 		return ms_techniqueShadow;
 	}
 
-	inline render::RenderTargetSet* getDepthTargetSet() const {
+	render::RenderTargetSet* getDepthTargetSet() const {
 		return m_depthTargetSet;
 	}
 
-	inline render::RenderTargetSet* getVelocityTargetSet() const {
+	render::RenderTargetSet* getVelocityTargetSet() const {
 		return m_velocityTargetSet;
 	}
 
-	inline render::RenderTargetSet* getShadowTargetSet() const {
+	render::RenderTargetSet* getShadowTargetSet() const {
 		return m_shadowTargetSet;
 	}
 
-	inline render::RenderTargetSet* getShadowMaskTargetSet() const {
+	render::RenderTargetSet* getShadowMaskTargetSet() const {
 		return m_shadowMaskTargetSet;
 	}
 
