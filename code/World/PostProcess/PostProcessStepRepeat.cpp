@@ -43,10 +43,7 @@ void PostProcessStepRepeat::InstanceRepeat::render(
 	PostProcess* postProcess,
 	render::IRenderView* renderView,
 	render::ScreenRenderer* screenRenderer,
-	const Frustum& viewFrustum,
-	const Matrix44& projection,
-	float shadowMapBias,
-	float deltaTime
+	const RenderParams& params
 )
 {
 	for (uint32_t i = 0; i < m_count; ++i)
@@ -55,10 +52,7 @@ void PostProcessStepRepeat::InstanceRepeat::render(
 			postProcess,
 			renderView,
 			screenRenderer,
-			viewFrustum,
-			projection,
-			shadowMapBias,
-			deltaTime
+			params
 		);
 	}
 }

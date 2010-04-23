@@ -34,10 +34,7 @@ void PostProcessStepSetTarget::InstanceSetTarget::render(
 	PostProcess* postProcess,
 	render::IRenderView* renderView,
 	render::ScreenRenderer* screenRenderer,
-	const Frustum& viewFrustum,
-	const Matrix44& projection,
-	float shadowMapBias,
-	float deltaTime
+	const RenderParams& params
 )
 {
 	postProcess->setTarget(renderView, m_target);

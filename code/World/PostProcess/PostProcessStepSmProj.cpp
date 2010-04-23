@@ -111,10 +111,7 @@ void PostProcessStepSmProj::InstanceSmProj::render(
 	PostProcess* postProcess,
 	render::IRenderView* renderView,
 	render::ScreenRenderer* screenRenderer,
-	const Frustum& viewFrustum,
-	const Matrix44& projection,
-	float shadowMapBias,
-	float deltaTime
+	const RenderParams& params
 )
 {
 	resource::Proxy< render::Shader > shader = m_step->m_shader;
@@ -128,7 +125,7 @@ void PostProcessStepSmProj::InstanceSmProj::render(
 
 	postProcess->prepareShader(shader);
 
-	float viewRange = viewFrustum.getFarZ() - viewFrustum.getNearZ();
+	float viewRange = params.viewFrustum.getFarZ() - params.viewFrustum.getNearZ();
 
 	Vector4 sourceDepthSize(
 		float(sourceDepth->getWidth()),
@@ -138,19 +135,20 @@ void PostProcessStepSmProj::InstanceSmProj::render(
 	);
 	Vector4 shadowMapSizeAndBias(
 		1.0f / float(sourceShMap->getWidth()),
-		shadowMapBias / viewRange,
+		params.shadowMapBias / viewRange,
 		0.0f,
 		0.0f
 	);
 
-	Vector4 viewEdgeTopLeft = viewFrustum.corners[4];
-	Vector4 viewEdgeTopRight = viewFrustum.corners[5];
-	Vector4 viewEdgeBottomLeft = viewFrustum.corners[7];
-	Vector4 viewEdgeBottomRight = viewFrustum.corners[6];
+	Vector4 viewEdgeTopLeft = params.viewFrustum.corners[4];
+	Vector4 viewEdgeTopRight = params.viewFrustum.corners[5];
+	Vector4 viewEdgeBottomLeft = params.viewFrustum.corners[7];
+	Vector4 viewEdgeBottomRight = params.viewFrustum.corners[6];
 
 	shader->setTextureParameter(L"ShadowMap", sourceShMap->getColorTexture(0));
 	shader->setTextureParameter(L"ShadowMapDiscRotation", m_shadowMapDiscRotation[m_frame & 1]);
 	shader->setVectorParameter(L"ShadowMapSizeAndBias", shadowMapSizeAndBias);
+	shader->setFloatParameter(L"ShadowFarZ", params.shadowFarZ);
 	shader->setTextureParameter(L"Depth", sourceDepth->getColorTexture(0));
 	shader->setVectorParameter(L"Depth_Size", sourceDepthSize);
 	shader->setVectorParameter(L"ViewEdgeTopLeft", viewEdgeTopLeft);
@@ -158,7 +156,7 @@ void PostProcessStepSmProj::InstanceSmProj::render(
 	shader->setVectorParameter(L"ViewEdgeBottomLeft", viewEdgeBottomLeft);
 	shader->setVectorParameter(L"ViewEdgeBottomRight", viewEdgeBottomRight);
 	shader->setVectorArrayParameter(L"ShadowMapPoissonTaps", c_poissonTaps, sizeof_array(c_poissonTaps));
-	shader->setMatrixParameter(L"ViewToLight", projection);
+	shader->setMatrixParameter(L"ViewToLight", params.projection);
 
 	const float maskClear[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 	renderView->clear(render::CfColor, maskClear, 1.0f, 0);

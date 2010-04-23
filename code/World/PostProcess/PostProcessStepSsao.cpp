@@ -93,10 +93,7 @@ void PostProcessStepSsao::InstanceSsao::render(
 	PostProcess* postProcess,
 	render::IRenderView* renderView,
 	render::ScreenRenderer* screenRenderer,
-	const Frustum& viewFrustum,
-	const Matrix44& projection,
-	float shadowMapBias,
-	float deltaTime
+	const RenderParams& params
 )
 {
 	resource::Proxy< render::Shader > shader = m_step->m_shader;
@@ -123,10 +120,10 @@ void PostProcessStepSsao::InstanceSsao::render(
 		0.0f
 	);
 
-	Vector4 viewEdgeTopLeft = viewFrustum.corners[4];
-	Vector4 viewEdgeTopRight = viewFrustum.corners[5];
-	Vector4 viewEdgeBottomLeft = viewFrustum.corners[7];
-	Vector4 viewEdgeBottomRight = viewFrustum.corners[6];
+	Vector4 viewEdgeTopLeft = params.viewFrustum.corners[4];
+	Vector4 viewEdgeTopRight = params.viewFrustum.corners[5];
+	Vector4 viewEdgeBottomLeft = params.viewFrustum.corners[7];
+	Vector4 viewEdgeBottomRight = params.viewFrustum.corners[6];
 
 	shader->setTextureParameter(L"Frame", sourceColor->getColorTexture(0));
 	shader->setTextureParameter(L"Depth", sourceDepth->getColorTexture(0));
@@ -136,7 +133,7 @@ void PostProcessStepSsao::InstanceSsao::render(
 	shader->setVectorParameter(L"ViewEdgeTopRight", viewEdgeTopRight);
 	shader->setVectorParameter(L"ViewEdgeBottomLeft", viewEdgeBottomLeft);
 	shader->setVectorParameter(L"ViewEdgeBottomRight", viewEdgeBottomRight);
-	shader->setMatrixParameter(L"Projection", projection);
+	shader->setMatrixParameter(L"Projection", params.projection);
 	shader->setVectorArrayParameter(L"Offsets", m_offsets, sizeof_array(m_offsets));
 	shader->setTextureParameter(L"RandomNormals", m_randomNormals);
 

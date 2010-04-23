@@ -45,10 +45,7 @@ void PostProcessStepChain::InstanceChain::render(
 	PostProcess* postProcess,
 	render::IRenderView* renderView,
 	render::ScreenRenderer* screenRenderer,
-	const Frustum& viewFrustum,
-	const Matrix44& projection,
-	float shadowMapBias,
-	float deltaTime
+	const RenderParams& params
 )
 {
 	for (RefArray< Instance >::iterator i = m_instances.begin(); i != m_instances.end(); ++i)
@@ -57,10 +54,7 @@ void PostProcessStepChain::InstanceChain::render(
 			postProcess,
 			renderView,
 			screenRenderer,
-			viewFrustum,
-			projection,
-			shadowMapBias,
-			deltaTime
+			params
 		);
 	}
 }

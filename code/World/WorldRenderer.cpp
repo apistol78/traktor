@@ -374,16 +374,21 @@ void WorldRenderer::render(uint32_t flags, int frame)
 		m_renderView->pushMarker("World: Shadow mask");
 		if (m_renderView->begin(m_shadowMaskTargetSet, 0, false))
 		{
+			PostProcessStep::Instance::RenderParams params;
+
+			params.viewFrustum = f.viewFrustum;
+			params.projection = f.viewToLightSpace;
+			params.shadowFarZ = m_settings.shadowFarZ;
+			params.shadowMapBias = m_settings.shadowMapBias;
+			params.deltaTime = 0.0f;
+
 			m_shadowMaskProjection->render(
 				m_renderView,
 				m_shadowTargetSet,
 				m_depthTargetSet,
 				0,
 				0,
-				f.viewFrustum,
-				f.viewToLightSpace,
-				m_settings.shadowMapBias,
-				0.0f
+				params
 			);
 			m_renderView->end();
 		}
