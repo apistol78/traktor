@@ -35,6 +35,10 @@ public:
 
 	virtual bool withdrawAchievement(const std::wstring& achievementId);
 
+	virtual bool setStatValue(const std::wstring& statId, float value);
+
+	virtual bool getStatValue(const std::wstring& statId, float& outValue);
+
 	virtual Ref< ISaveGame > createSaveGame(const std::wstring& name, ISerializable* attachment);
 
 	virtual bool getAvailableSaveGames(RefArray< ISaveGame >& outSaveGames) const;

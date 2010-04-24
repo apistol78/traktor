@@ -62,6 +62,20 @@ bool SessionSteam::withdrawAchievement(const std::wstring& achievementId)
 	return true;
 }
 
+bool SessionSteam::setStatValue(const std::wstring& statId, float value)
+{
+	if (!SteamUserStats()->SetStat(wstombs(statId).c_str(), value))
+		return false;
+
+	m_storeStats = true;
+	return true;
+}
+
+bool SessionSteam::getStatValue(const std::wstring& statId, float& outValue)
+{
+	return SteamUserStats()->GetStat(wstombs(statId).c_str(), &outValue);
+}
+
 Ref< ISaveGame > SessionSteam::createSaveGame(const std::wstring& name, ISerializable* attachment)
 {
 	return 0;

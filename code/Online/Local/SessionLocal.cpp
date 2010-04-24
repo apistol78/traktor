@@ -58,6 +58,26 @@ bool SessionLocal::withdrawAchievement(const std::wstring& achievementId)
 	return m_db->executeUpdate(L"delete from AwardedAchievements where userId=" + toString(uid) + L" and achievementId=" + toString(aid)) >= 0;
 }
 
+bool SessionLocal::setStatValue(const std::wstring& statId, float value)
+{
+	if (m_db->executeUpdate(L"update Stats set value=" + toString(value) + L" where name='" + statId + L"'"))
+		return true;
+
+	return m_db->executeUpdate(L"insert into Stats (name, value) values ('" + statId + L"', " + toString(value) + L")") >= 0;
+}
+
+bool SessionLocal::getStatValue(const std::wstring& statId, float& outValue)
+{
+	Ref< sql::IResultSet > rs;
+
+	rs = m_db->executeQuery(L"select value from Stats where name='" + statId + L"'");
+	if (!rs || !rs->next())
+		return false;
+
+	outValue = rs->getFloat(0);
+	return true;
+}
+
 Ref< ISaveGame > SessionLocal::createSaveGame(const std::wstring& name, ISerializable* attachment)
 {
 	return 0;
