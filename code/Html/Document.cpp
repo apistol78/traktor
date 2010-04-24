@@ -165,7 +165,7 @@ bool Document::loadFromStream(IStream* stream, const IEncoding* encoding)
 							for (RefArray< Element >::iterator j = tmp.begin(); j != tmp.end(); ++j)
 								element->addChild(*j);
 
-							i = elm.erase(elm.begin());
+							elm.erase(elm.begin(), i + 1);
 
 							T_ASSERT (!elm.empty());
 

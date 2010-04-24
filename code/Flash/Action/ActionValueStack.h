@@ -48,8 +48,7 @@ public:
 	 */
 	inline ActionValue pop()
 	{
-		T_ASSERT (m_index > 0);
-		return m_stack[--m_index];
+		return m_index > 0 ? m_stack[--m_index] : ActionValue();
 	}
 
 	/*! \brief Peek at value on top of stack.
@@ -59,9 +58,9 @@ public:
 	 */
 	inline ActionValue& top(int32_t offset = 0)
 	{
+		static ActionValue s_undefined;
 		int index = m_index + offset - 1;
-		T_ASSERT (index >= 0 && index < MaxStackDepth);
-		return m_stack[index];
+		return (index >= 0 && index < MaxStackDepth) ? m_stack[index] : s_undefined;
 	}
 
 	/*! \brief Stack empty.

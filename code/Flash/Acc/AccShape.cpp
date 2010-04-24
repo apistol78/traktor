@@ -351,19 +351,22 @@ void AccShape::render(
 	renderBlockSolid->shaderParams->endParameters(renderContext);
 	renderContext->draw(render::RfOverlay, renderBlockSolid);
 
-	render::NullRenderBlock* renderBlockTextured = renderContext->alloc< render::NullRenderBlock >("Flash AccShape; set textured parameters");
-	renderBlockTextured->shader = shaderTextured;
-	renderBlockTextured->shaderParams = renderContext->alloc< render::ShaderParameters >();
-	renderBlockTextured->shaderParams->beginParameters(renderContext);
-	renderBlockTextured->shaderParams->setMatrixParameter(s_handleTransform, m);
-	renderBlockTextured->shaderParams->setVectorParameter(s_handleFrameSize, frameSize);
-	renderBlockTextured->shaderParams->setVectorParameter(s_handleViewSize, viewSize);
-	renderBlockTextured->shaderParams->setVectorParameter(s_handleViewOffset, viewOffset);
-	renderBlockTextured->shaderParams->setVectorParameter(s_handleCxFormMul, Vector4(cxform.red[0], cxform.green[0], cxform.blue[0], cxform.alpha[0]));
-	renderBlockTextured->shaderParams->setVectorParameter(s_handleCxFormAdd, Vector4(cxform.red[1], cxform.green[1], cxform.blue[1], cxform.alpha[1]));
-	renderBlockTextured->shaderParams->setStencilReference(maskReference);
-	renderBlockTextured->shaderParams->endParameters(renderContext);
-	renderContext->draw(render::RfOverlay, renderBlockTextured);
+	if (shaderTextured)
+	{
+		render::NullRenderBlock* renderBlockTextured = renderContext->alloc< render::NullRenderBlock >("Flash AccShape; set textured parameters");
+		renderBlockTextured->shader = shaderTextured;
+		renderBlockTextured->shaderParams = renderContext->alloc< render::ShaderParameters >();
+		renderBlockTextured->shaderParams->beginParameters(renderContext);
+		renderBlockTextured->shaderParams->setMatrixParameter(s_handleTransform, m);
+		renderBlockTextured->shaderParams->setVectorParameter(s_handleFrameSize, frameSize);
+		renderBlockTextured->shaderParams->setVectorParameter(s_handleViewSize, viewSize);
+		renderBlockTextured->shaderParams->setVectorParameter(s_handleViewOffset, viewOffset);
+		renderBlockTextured->shaderParams->setVectorParameter(s_handleCxFormMul, Vector4(cxform.red[0], cxform.green[0], cxform.blue[0], cxform.alpha[0]));
+		renderBlockTextured->shaderParams->setVectorParameter(s_handleCxFormAdd, Vector4(cxform.red[1], cxform.green[1], cxform.blue[1], cxform.alpha[1]));
+		renderBlockTextured->shaderParams->setStencilReference(maskReference);
+		renderBlockTextured->shaderParams->endParameters(renderContext);
+		renderContext->draw(render::RfOverlay, renderBlockTextured);
+	}
 	
 	for (AlignedVector< Batch >::iterator i = m_batches.begin(); i != m_batches.end(); ++i)
 	{
@@ -377,7 +380,7 @@ void AccShape::render(
 			renderBlock->count = i->primitives.count;
 			renderContext->draw(render::RfOverlay, renderBlock);
 		}
-		else
+		else if (shaderTextured)
 		{
 			Matrix44 textureMatrix(
 				i->textureMatrix.e11, i->textureMatrix.e12, i->textureMatrix.e13, 0.0f,
