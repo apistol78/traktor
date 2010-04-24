@@ -1,3 +1,4 @@
+#include <windows.h>
 #include "Input/Win32/InputDriverWin32.h"
 #include "Input/Win32/KeyboardDeviceWin32.h"
 #include "Input/Win32/MouseDeviceWin32.h"
@@ -31,6 +32,17 @@ Ref< IInputDevice > InputDriverWin32::getDevice(int index)
 
 IInputDriver::UpdateResult InputDriverWin32::update()
 {
+	// Ensure devices are "connected" only when the application
+	// is active.
+
+	HWND hWndActive = GetActiveWindow();
+	DWORD dwPID = 0; GetWindowThreadProcessId(hWndActive, &dwPID);
+
+	bool connected = bool(GetCurrentProcessId() == dwPID);
+
+	m_keyboardDevice->m_connected = connected;
+	m_mouseDevice->m_connected = connected;
+
 	return UrOk;
 }
 

@@ -10,7 +10,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.KeyboardDeviceWin32", KeyboardDeviceWin32, IInputDevice)
 
 KeyboardDeviceWin32::KeyboardDeviceWin32()
-:	m_connected(true)
+:	m_connected(false)
 {
 }
 
@@ -62,9 +62,6 @@ void KeyboardDeviceWin32::resetState()
 
 void KeyboardDeviceWin32::readState()
 {
-	HWND hWndActive = GetActiveWindow();
-	DWORD dwPID = 0; GetWindowThreadProcessId(hWndActive, &dwPID);
-	m_connected = bool(GetCurrentProcessId() == dwPID);
 }
 
 bool KeyboardDeviceWin32::supportRumble() const

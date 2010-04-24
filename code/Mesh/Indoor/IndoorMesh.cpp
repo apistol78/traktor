@@ -43,10 +43,10 @@ void IndoorMesh::render(
 	// 6 planes as it's later reconstructed from clipped portals.
 	AlignedVector< Plane > frustum(6);
 	for (int i = 0; i < 6; ++i)
-		frustum[i] = worldRenderView->getCullFrustum().pl[i];
+		frustum[i] = worldRenderView->getCullFrustum().planes[i];
 
 	// Find initially active sectors which are the sectors that the camera is within,
-	// as sector bounding boxes are lously calculated more than one sector
+	// as sector bounding boxes are lousily calculated more than one sector
 	// can become initially active.
 	std::set< int > activeSectors;
 
