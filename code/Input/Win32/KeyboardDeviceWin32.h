@@ -48,6 +48,8 @@ public:
 	virtual void setRumble(const InputRumble& rumble);
 
 private:
+	friend class InputDriverWin32;
+
 	bool m_connected;
 };
 

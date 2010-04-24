@@ -21,6 +21,8 @@ class T_DLLCLASS MouseDeviceWin32 : public IInputDevice
 	T_RTTI_CLASS;
 
 public:
+	MouseDeviceWin32();
+
 	virtual std::wstring getName() const;
 
 	virtual InputCategory getCategory() const;
@@ -44,6 +46,11 @@ public:
 	virtual bool supportRumble() const;
 
 	virtual void setRumble(const InputRumble& rumble);
+
+private:
+	friend class InputDriverWin32;
+
+	bool m_connected;
 };
 
 	}

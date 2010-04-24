@@ -8,6 +8,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.MouseDeviceWin32", MouseDeviceWin32, IInputDevice)
 
+MouseDeviceWin32::MouseDeviceWin32()
+:	m_connected(false)
+{
+}
+
 std::wstring MouseDeviceWin32::getName() const
 {
 	return L"Standard Mouse";
@@ -20,7 +25,7 @@ InputCategory MouseDeviceWin32::getCategory() const
 
 bool MouseDeviceWin32::isConnected() const
 {
-	return true;
+	return m_connected;
 }
 
 int MouseDeviceWin32::getControlCount()

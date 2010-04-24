@@ -2,6 +2,7 @@
 #define traktor_Frustum_H
 
 #include "Core/Config.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Math/MathConfig.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Plane.h"
@@ -34,9 +35,11 @@ public:
 		PsFar
 	};
 
-	Plane pl[6];
+	AlignedVector< Plane > planes;
 	Vector4 corners[8];
 	Vector4 center;
+
+	Frustum();
 
 	void buildPerspective(float vfov, float aspect, float zn, float zf);
 

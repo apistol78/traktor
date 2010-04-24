@@ -167,8 +167,10 @@ T_MATH_INLINE Quaternion Quaternion::identity()
 T_MATH_INLINE Quaternion Quaternion::normalized() const
 {
 	VALIDATE(*this);
-	float i = 1.0f / sqrtf(x * x + y * y + z * z + w * w);
-	T_ASSERT (i > FUZZY_EPSILON);
+	float d = sqrtf(x * x + y * y + z * z + w * w);
+	if (abs(d) <= FUZZY_EPSILON)
+		return identity();
+	float i = 1.0f / d;
 	return Quaternion(x * i, y * i, z * i, w * i);
 }
 

@@ -1,4 +1,5 @@
 #include "Core/Math/Plane.h"
+#include "Core/Math/Matrix44.h"
 
 namespace traktor
 {
@@ -151,6 +152,18 @@ T_MATH_INLINE Plane& Plane::operator = (const Plane& src)
 	m_normal = src.m_normal;
 	m_distance = src.m_distance;
 	return *this;
+}
+
+T_MATH_INLINE Plane operator * (const Matrix44& m, const Plane& pl)
+{
+	// Ax + By + Cz + D = 0
+	// p' = -D/3A, -D/3B, -D/3C
+	// A(-D/3A) + B(-D/3B) + C(-D/3C) + D = 0
+
+	Vector4 N = m * pl.normal();
+	Vector4 P = m * (pl.distance() / (pl.normal() * Scalar(3.0f))).xyz1();
+
+	return Plane(N, P);
 }
 
 }

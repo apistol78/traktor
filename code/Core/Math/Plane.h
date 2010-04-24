@@ -16,6 +16,8 @@
 namespace traktor
 {
 
+class Matrix44;
+
 /*! \brief 3d plane.
  * \ingroup Core
  *
@@ -81,6 +83,8 @@ private:
 	Vector4 m_normal;
 	Scalar m_distance;
 };
+
+T_MATH_INLINE T_DLLCLASS Plane operator * (const Matrix44& m, const Plane& pl);
 
 }
 
