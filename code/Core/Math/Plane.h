@@ -52,6 +52,8 @@ public:
 
 	T_MATH_INLINE Scalar distance(const Vector4& point) const;
 
+	T_MATH_INLINE Vector4 project(const Vector4& v) const;
+
 	T_MATH_INLINE bool rayIntersection(
 		const Vector4& origin,
 		const Vector4& direction,
