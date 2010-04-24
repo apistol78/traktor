@@ -59,6 +59,18 @@ public:
 	 */
 	virtual bool withdrawAchievement(const std::wstring& achievementId) = 0;
 
+	/*! \brief Set value.
+	 *
+	 * \return True if stat was successfully updated.
+	 */
+	virtual bool setStatValue(const std::wstring& statId, float value) = 0;
+
+	/*! \brief Get value.
+	 *
+	 * \return True if stat was successfully received.
+	 */
+	virtual bool getStatValue(const std::wstring& statId, float& outValue) = 0;
+
 	/*! \brief Create save game.
 	 *
 	 * \param name Name of saved game.
