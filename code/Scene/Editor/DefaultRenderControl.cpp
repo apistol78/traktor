@@ -42,6 +42,8 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	T_ASSERT (settings);
 
 	int32_t viewType = settings->getProperty< PropertyInteger >(L"SceneEditor.View" + toString(index), 0);
+	bool gridEnable = settings->getProperty< PropertyBoolean >(L"Scene.Editor.GridEnable" + toString(m_index), true);
+	bool guideEnable = settings->getProperty< PropertyBoolean >(L"Scene.Editor.GuideEnable" + toString(m_index), true);
 	bool postProcessEnable = settings->getProperty< PropertyBoolean >(L"Scene.Editor.PostProcessEnable" + toString(index), true);
 
 	m_container = new ui::Container();
@@ -70,14 +72,14 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 		i18n::Text(L"SCENE_EDITOR_TOGGLE_GRID"),
 		ui::Command(1, L"Scene.Editor.ToggleGrid"),
 		16,
-		ui::custom::ToolBarButton::BsDefaultToggled
+		gridEnable ? ui::custom::ToolBarButton::BsDefaultToggled : ui::custom::ToolBarButton::BsDefaultToggle
 	);
 
 	m_toolToggleGuide = new ui::custom::ToolBarButton(
 		i18n::Text(L"SCENE_EDITOR_TOGGLE_GUIDE"),
 		ui::Command(1, L"Scene.Editor.ToggleGuide"),
 		5,
-		ui::custom::ToolBarButton::BsDefaultToggled
+		guideEnable ? ui::custom::ToolBarButton::BsDefaultToggled : ui::custom::ToolBarButton::BsDefaultToggle
 	);
 
 	m_toolTogglePostProcess = new ui::custom::ToolBarButton(
@@ -100,6 +102,13 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 
 void DefaultRenderControl::destroy()
 {
+	Ref< Settings > settings = m_context->getEditor()->getSettings();
+	T_ASSERT (settings);
+
+	settings->setProperty< PropertyBoolean >(L"Scene.Editor.GridEnable" + toString(m_index), m_toolToggleGrid->isToggled());
+	settings->setProperty< PropertyBoolean >(L"Scene.Editor.GuideEnable" + toString(m_index), m_toolToggleGuide->isToggled());
+	settings->setProperty< PropertyBoolean >(L"Scene.Editor.PostProcessEnable" + toString(m_index), m_toolTogglePostProcess->isToggled());
+
 	m_toolView = 0;
 
 	if (m_renderControl)
@@ -269,19 +278,10 @@ void DefaultRenderControl::eventToolClick(ui::Event* event)
 	}
 	else if (cmdEvent->getCommand() == L"Scene.Editor.TogglePostProcess")
 	{
-		Ref< Settings > settings = m_context->getEditor()->getSettings();
-		T_ASSERT (settings);
-
 		if (m_toolTogglePostProcess->isToggled())
-		{
 			m_renderControl->handleCommand(ui::Command(L"Scene.Editor.EnablePostProcess"));
-			settings->setProperty< PropertyBoolean >(L"SceneEditor.PostProcessEnable" + toString(m_index), true);
-		}
 		else
-		{
 			m_renderControl->handleCommand(ui::Command(L"Scene.Editor.DisablePostProcess"));
-			settings->setProperty< PropertyBoolean >(L"SceneEditor.PostProcessEnable" + toString(m_index), false);
-		}
 	}
 }
 
