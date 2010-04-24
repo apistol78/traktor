@@ -74,6 +74,11 @@ T_MATH_INLINE Scalar Plane::distance(const Vector4& point) const
 	return dot3(m_normal, point) - m_distance;
 }
 
+T_MATH_INLINE Vector4 Plane::project(const Vector4& v) const
+{
+	return v - m_normal * distance(v);
+}
+
 T_MATH_INLINE bool Plane::rayIntersection(
 	const Vector4& origin,
 	const Vector4& direction,
