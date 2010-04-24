@@ -547,10 +547,14 @@ public:
 		{
 			T_SAFE_RELEASE(m_items[i]);
 			m_items[i] = m_items[i + count];
+			T_SAFE_ADDREF(m_items[i]);
 		}
 
 		for (size_type i = size; i < m_size; ++i)
+		{
+			T_SAFE_RELEASE(m_items[i]);
 			m_items[i] = 0;
+		}
 
 		m_size = size;
 	}
