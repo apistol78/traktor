@@ -1,9 +1,9 @@
 #ifndef traktor_flash_ActionFrame_H
 #define traktor_flash_ActionFrame_H
 
-#include <vector>
 #include "Core/Object.h"
 #include "Flash/Action/ActionValue.h"
+#include "Flash/Action/ActionValueArray.h"
 #include "Flash/Action/ActionValueStack.h"
 
 // import/export mechanism.
@@ -73,7 +73,7 @@ private:
 	Ref< ActionObject > m_self;
 	const uint8_t* m_code;
 	uint16_t m_codeSize;
-	std::vector< ActionValue > m_localRegisters;
+	ActionValueArray m_localRegisters;
 	std::map< std::wstring, ActionValue > m_localVariables;
 	Ref< ActionDictionary > m_dictionary;
 	Ref< ActionFunction > m_callee;
