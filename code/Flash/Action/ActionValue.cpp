@@ -13,6 +13,8 @@ namespace traktor
 		namespace
 		{
 
+static int32_t s_stringCount = 0;
+
 wchar_t* refStringCreate(const wchar_t* s)
 {
 	uint32_t len = wcslen(s);
@@ -23,28 +25,32 @@ wchar_t* refStringCreate(const wchar_t* s)
 		return 0;
 
 	uint16_t* base = static_cast< uint16_t* >(ptr);
-	*base = 0;
+	*base = 1;
 
 	wchar_t* c = reinterpret_cast< wchar_t* >(base + 1);
 	if (len > 0)
 		std::memcpy(c, s, len * sizeof(wchar_t));
 
 	c[len] = L'\0';
+
+	++s_stringCount;
 	return c;
 }
 
 wchar_t* refStringInc(wchar_t* s)
 {
-	uint16_t* base = reinterpret_cast< uint16_t* >(s) - 1; *base++;
+	uint16_t* base = reinterpret_cast< uint16_t* >(s) - 1;
+	(*base)++;
 	return s;
 }
 
 wchar_t* refStringDec(wchar_t* s)
 {
 	uint16_t* base = reinterpret_cast< uint16_t* >(s) - 1;
-	if (--*base == 0)
+	if (--(*base) == 0)
 	{
 		Alloc::free(base);
+		--s_stringCount;
 		return 0;
 	}
 	return s;

@@ -69,18 +69,11 @@ bool Frustum::inside(const Vector4& point) const
 {
 	const Scalar c_zero(0.0f);
 
-	if (planes[0].distance(point) < c_zero)
-		return false;
-	if (planes[1].distance(point) < c_zero)
-		return false;
-	if (planes[2].distance(point) < c_zero)
-		return false;
-	if (planes[3].distance(point) < c_zero)
-		return false;
-	if (planes[4].distance(point) < c_zero)
-		return false;
-	if (planes[5].distance(point) < c_zero)
-		return false;
+	for (uint32_t i = 0; i < planes.size(); ++i)
+	{
+		if (planes[i].distance(point) < c_zero)
+			return false;
+	}
 
 	return true;
 }
