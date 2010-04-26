@@ -39,7 +39,7 @@ void AsI18N::createPrototype()
 	setMember(L"prototype", ActionValue(prototype));
 }
 
-ActionValue AsI18N::construct(ActionContext* context, const args_t& args)
+ActionValue AsI18N::construct(ActionContext* context, const ActionValueArray& args)
 {
 	return ActionValue();
 }

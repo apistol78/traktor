@@ -58,11 +58,11 @@ void AsArray::createPrototype()
 	setMember(L"prototype", ActionValue(prototype));
 }
 
-ActionValue AsArray::construct(ActionContext* context, const args_t& args)
+ActionValue AsArray::construct(ActionContext* context, const ActionValueArray& args)
 {
 	Ref< Array > object = new Array();
-	for (args_t::const_iterator i = args.begin(); i != args.end(); ++i)
-		object->push(*i);
+	for (uint32_t i = 0; i < args.size(); ++i)
+		object->push(args[i]);
 	return ActionValue(object);
 }
 
@@ -81,7 +81,7 @@ void AsArray::Array_join(CallArgs& ca)
 	if (ca.args.empty())
 		ca.ret = ActionValue(arr->join(L","));
 	else
-		ca.ret = ActionValue(arr->join(ca.args.front().getStringSafe()));
+		ca.ret = ActionValue(arr->join(ca.args[0].getStringSafe()));
 }
 
 void AsArray::Array_pop(CallArgs& ca)

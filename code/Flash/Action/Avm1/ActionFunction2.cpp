@@ -38,8 +38,11 @@ ActionFunction2::ActionFunction2(
 		setMember(L"__proto__", classPrototype);
 }
 
-ActionValue ActionFunction2::call(const IActionVM* vm, ActionContext* context, ActionObject* self, const std::vector< ActionValue >& args)
+ActionValue ActionFunction2::call(const IActionVM* vm, ActionContext* context, ActionObject* self, const ActionValueArray& args)
 {
+	ActionValuePool& pool = context->getPool();
+	T_ANONYMOUS_VAR(ActionValuePool::Scope)(pool);
+
 	ActionFrame callFrame(
 		context,
 		self,
@@ -58,8 +61,8 @@ ActionValue ActionFunction2::call(const IActionVM* vm, ActionContext* context, A
 	if (m_flags & AffPreloadArguments || !(m_flags & AffSuppressArguments))
 	{
 		Ref< Array > argumentArray = new Array();
-		for (std::vector< ActionValue >::const_iterator i = args.begin(); i != args.end(); ++i)
-			argumentArray->push(*i);
+		for (uint32_t i = 0; i < args.size(); ++i)
+			argumentArray->push(args[i]);
 		if (m_flags & AffPreloadArguments)
 			callFrame.setRegister(preloadRegister++, ActionValue(argumentArray));
 		if (!(m_flags & AffSuppressArguments))
@@ -112,12 +115,15 @@ ActionValue ActionFunction2::call(const IActionVM* vm, ActionContext* context, A
 
 ActionValue ActionFunction2::call(const IActionVM* vm, ActionFrame* callerFrame, ActionObject* self)
 {
-	Ref< ActionContext > context = callerFrame->getContext();
+	ActionContext* context = callerFrame->getContext();
+
+	ActionValuePool& pool = context->getPool();
+	T_ANONYMOUS_VAR(ActionValuePool::Scope)(pool);
 
 	ActionValueStack& callerStack = callerFrame->getStack();
 	int32_t argCount = !callerStack.empty() ? int32_t(callerStack.pop().getNumber()) : 0;
 	
-	args_t args(argCount);
+	ActionValueArray args(context->getPool(), argCount);
 	for (int32_t i = 0; i < argCount; ++i)
 		args[i] = callerStack.pop();
 
@@ -139,8 +145,8 @@ ActionValue ActionFunction2::call(const IActionVM* vm, ActionFrame* callerFrame,
 	if (m_flags & AffPreloadArguments || !(m_flags & AffSuppressArguments))
 	{
 		Ref< Array > argumentArray = new Array();
-		for (std::vector< ActionValue >::const_iterator i = args.begin(); i != args.end(); ++i)
-			argumentArray->push(*i);
+		for (uint32_t i = 0; i < args.size(); ++i)
+			argumentArray->push(args[i]);
 		if (m_flags & AffPreloadArguments)
 			callFrame.setRegister(preloadRegister++, ActionValue(argumentArray));
 		if (!(m_flags & AffSuppressArguments))

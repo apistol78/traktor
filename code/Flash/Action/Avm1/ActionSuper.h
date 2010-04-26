@@ -31,7 +31,7 @@ class T_DLLCLASS ActionSuper : public ActionFunction
 public:
 	ActionSuper(ActionObject* object);
 
-	virtual ActionValue call(const IActionVM* vm, ActionContext* context, ActionObject* self, const std::vector< ActionValue >& args);
+	virtual ActionValue call(const IActionVM* vm, ActionContext* context, ActionObject* self, const ActionValueArray& args);
 
 	virtual ActionValue call(const IActionVM* vm, ActionFrame* callerFrame, ActionObject* self);
 

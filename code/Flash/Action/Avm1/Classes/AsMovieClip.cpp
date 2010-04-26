@@ -165,7 +165,7 @@ void AsMovieClip::createPrototype()
 	setMember(L"prototype", ActionValue(prototype));
 }
 
-ActionValue AsMovieClip::construct(ActionContext* context, const args_t& args)
+ActionValue AsMovieClip::construct(ActionContext* context, const ActionValueArray& args)
 {
 	// Create a fake sprite character for this instance.
 	Ref< FlashSprite > sprite = new FlashSprite(0, 0);

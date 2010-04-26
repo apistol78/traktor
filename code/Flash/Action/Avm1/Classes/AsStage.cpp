@@ -44,7 +44,7 @@ void AsStage::createPrototype()
 	setMember(L"prototype", ActionValue(prototype));
 }
 
-ActionValue AsStage::construct(ActionContext* context, const args_t& args)
+ActionValue AsStage::construct(ActionContext* context, const ActionValueArray& args)
 {
 	return ActionValue();
 }

@@ -16,7 +16,7 @@
 #include "Flash/Action/Avm1/Classes/AsFunction.h"
 #include "Flash/Action/Avm1/Classes/AsMovieClip.h"
 
-#define VM_TRACE_ENABLE 1
+//#define VM_TRACE_ENABLE 1
 
 #if VM_TRACE_ENABLE
 #	define T_WIDEN_X(x) L ## x

@@ -39,7 +39,7 @@ void AsSystem::createPrototype()
 	setMember(L"prototype", ActionValue(prototype));
 }
 
-ActionValue AsSystem::construct(ActionContext* context, const args_t& args)
+ActionValue AsSystem::construct(ActionContext* context, const ActionValueArray& args)
 {
 	return ActionValue();
 }

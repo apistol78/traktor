@@ -49,7 +49,7 @@ void AsLoadVars::createPrototype()
 	setMember(L"prototype", ActionValue(prototype));
 }
 
-ActionValue AsLoadVars::construct(ActionContext* context, const args_t& args)
+ActionValue AsLoadVars::construct(ActionContext* context, const ActionValueArray& args)
 {
 	return ActionValue(new ActionObject(this));
 }

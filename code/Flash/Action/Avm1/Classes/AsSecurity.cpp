@@ -42,7 +42,7 @@ void AsSecurity::createPrototype()
 	setMember(L"prototype", ActionValue(prototype));
 }
 
-ActionValue AsSecurity::construct(ActionContext* context, const args_t& args)
+ActionValue AsSecurity::construct(ActionContext* context, const ActionValueArray& args)
 {
 	return ActionValue();
 }

@@ -24,11 +24,11 @@ Ref< Array > Array::concat() const
 	return out;
 }
 
-Ref< Array > Array::concat(const std::vector< ActionValue >& values) const
+Ref< Array > Array::concat(const ActionValueArray& values) const
 {
 	Ref< Array > out = new Array();
 	out->m_values.insert(out->m_values.end(), m_values.begin(), m_values.end());
-	out->m_values.insert(out->m_values.end(), values.begin(), values.end());
+	out->m_values.insert(out->m_values.end(), &values[0], &values[values.size() - 1]);
 	return out;
 }
 

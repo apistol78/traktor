@@ -66,7 +66,7 @@ void AsRectangle::createPrototype()
 	setMember(L"prototype", ActionValue(prototype));
 }
 
-ActionValue AsRectangle::construct(ActionContext* context, const args_t& args)
+ActionValue AsRectangle::construct(ActionContext* context, const ActionValueArray& args)
 {
 	Ref< Rectangle > rc = new Rectangle();
 	

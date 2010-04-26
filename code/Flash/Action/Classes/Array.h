@@ -2,6 +2,7 @@
 #define traktor_flash_Array_H
 
 #include "Flash/Action/ActionObject.h"
+#include "Flash/Action/ActionValueArray.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -28,7 +29,7 @@ public:
 
 	Ref< Array > concat() const;
 
-	Ref< Array > concat(const std::vector< ActionValue >& values) const;
+	Ref< Array > concat(const ActionValueArray& values) const;
 
 	std::wstring join(const std::wstring& delimiter) const;
 

@@ -1,3 +1,4 @@
+#include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFrame.h"
 #include "Flash/Action/IActionVM.h"
 #include "Flash/Action/Avm1/ActionFunction1.h"
@@ -28,8 +29,11 @@ ActionFunction1::ActionFunction1(
 		setMember(L"__proto__", classPrototype);
 }
 
-ActionValue ActionFunction1::call(const IActionVM* vm, ActionContext* context, ActionObject* self, const std::vector< ActionValue >& args)
+ActionValue ActionFunction1::call(const IActionVM* vm, ActionContext* context, ActionObject* self, const ActionValueArray& args)
 {
+	ActionValuePool& pool = context->getPool();
+	T_ANONYMOUS_VAR(ActionValuePool::Scope)(pool);
+
 	ActionFrame callFrame(
 		context,
 		self,
@@ -51,15 +55,20 @@ ActionValue ActionFunction1::call(const IActionVM* vm, ActionContext* context, A
 
 ActionValue ActionFunction1::call(const IActionVM* vm, ActionFrame* callerFrame, ActionObject* self)
 {
+	ActionContext* context = callerFrame->getContext();
+
+	ActionValuePool& pool = context->getPool();
+	T_ANONYMOUS_VAR(ActionValuePool::Scope)(pool);
+
 	ActionValueStack& callerStack = callerFrame->getStack();
 	int32_t argCount = !callerStack.empty() ? int32_t(callerStack.pop().getNumber()) : 0;
 
-	args_t args(argCount);
+	ActionValueArray args(context->getPool(), argCount);
 	for (int32_t i = 0; i < argCount; ++i)
 		args[i] = callerStack.pop();
 
 	ActionFrame callFrame(
-		callerFrame->getContext(),
+		context,
 		self,
 		m_code,
 		m_codeSize,

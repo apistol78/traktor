@@ -32,7 +32,7 @@ public:
 private:
 	void createPrototype();
 
-	virtual ActionValue construct(ActionContext* context, const args_t& args);
+	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
 
 	void I18N_format(CallArgs& ca);
 };

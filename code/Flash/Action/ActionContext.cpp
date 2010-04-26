@@ -1,5 +1,6 @@
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFunction.h"
+#include "Flash/Action/ActionValueArray.h"
 
 namespace traktor
 {
@@ -42,7 +43,7 @@ void ActionContext::removeFrameListener(ActionObject* frameListener)
 
 void ActionContext::notifyFrameListeners(const IActionVM* vm, avm_number_t time)
 {
-	std::vector< ActionValue > argv(1);
+	ActionValueArray argv(m_pool, 1);
 	argv[0] = ActionValue(time);
 
 	std::vector< FrameListener > frameListeners = m_frameListeners;

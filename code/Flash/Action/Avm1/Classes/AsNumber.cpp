@@ -47,7 +47,7 @@ void AsNumber::createPrototype()
 	setMember(L"prototype", ActionValue(prototype));
 }
 
-ActionValue AsNumber::construct(ActionContext* context, const args_t& args)
+ActionValue AsNumber::construct(ActionContext* context, const ActionValueArray& args)
 {
 	if (args.empty())
 		return ActionValue(new Number(0.0));

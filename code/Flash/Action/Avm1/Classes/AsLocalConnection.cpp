@@ -42,7 +42,7 @@ void AsLocalConnection::createPrototype()
 	setMember(L"prototype", ActionValue(prototype));
 }
 
-ActionValue AsLocalConnection::construct(ActionContext* context, const args_t& args)
+ActionValue AsLocalConnection::construct(ActionContext* context, const ActionValueArray& args)
 {
 	return ActionValue(new ActionObject(this));
 }

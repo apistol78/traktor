@@ -117,7 +117,7 @@ void Tween::onFrame(CallArgs& ca)
 	avm_number_t b = T / m_duration;
 
 	// Calculate eased value.
-	std::vector< ActionValue > argv0(4);
+	ActionValueArray argv0(ca.context->getPool(), 4);
 	argv0[0] = ActionValue(T);
 	argv0[1] = ActionValue(m_begin);
 	argv0[2] = ActionValue(m_finish - m_begin);
@@ -127,7 +127,7 @@ void Tween::onFrame(CallArgs& ca)
 	m_current = value.getNumberSafe();
 
 	// Set property value.
-	std::vector< ActionValue > argv1(1);
+	ActionValueArray argv1(ca.context->getPool(), 1);
 	argv1[0] = value;
 	m_property->call(ca.vm, ca.context, m_target, argv1);
 
@@ -142,7 +142,7 @@ void Tween::onFrame(CallArgs& ca)
 		{
 			Ref< ActionFunction > motionFinished = memberValue.getObject< ActionFunction >();
 			if (motionFinished)
-				motionFinished->call(ca.vm, ca.context, this, std::vector< ActionValue >());
+				motionFinished->call(ca.vm, ca.context, this, ActionValueArray());
 		}
 	}
 }

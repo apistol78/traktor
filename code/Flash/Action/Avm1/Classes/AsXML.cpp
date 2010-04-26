@@ -54,7 +54,7 @@ void AsXML::createPrototype()
 	setMember(L"prototype", ActionValue(prototype));
 }
 
-ActionValue AsXML::construct(ActionContext* context, const args_t& args)
+ActionValue AsXML::construct(ActionContext* context, const ActionValueArray& args)
 {
 	return ActionValue(new ActionObject(this));
 }

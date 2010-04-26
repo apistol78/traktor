@@ -40,7 +40,7 @@ void AsBoolean::createPrototype()
 	setMember(L"prototype", ActionValue(prototype));
 }
 
-ActionValue AsBoolean::construct(ActionContext* context, const args_t& args)
+ActionValue AsBoolean::construct(ActionContext* context, const ActionValueArray& args)
 {
 	if (args.empty())
 		return ActionValue(new Boolean(false));
