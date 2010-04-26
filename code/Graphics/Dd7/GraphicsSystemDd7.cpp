@@ -44,6 +44,12 @@ bool GraphicsSystemDd7::create(const CreateDesc& createDesc)
 		return false;
 	}
 
+	if (!getDDPixelFormat(createDesc.pixelFormat, m_ddpf))
+	{
+		log::error << L"Create graphics failed, unable to determine format of secondary surface" << Endl;
+		return false;
+	}
+
 	if (createDesc.fullScreen)
 	{
 		hr = m_dd->SetCooperativeLevel(m_hWnd, DDSCL_EXCLUSIVE | DDSCL_FULLSCREEN | DDSCL_ALLOWREBOOT);
@@ -121,12 +127,8 @@ bool GraphicsSystemDd7::create(const CreateDesc& createDesc)
 		ddsd.dwFlags = DDSD_CAPS | DDSD_WIDTH | DDSD_HEIGHT | DDSD_PIXELFORMAT;
 		ddsd.dwWidth = createDesc.displayMode.width;
 		ddsd.dwHeight = createDesc.displayMode.height;
+		ddsd.ddpfPixelFormat = m_ddpf;
 		ddsd.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN;
-		if (!getDDPixelFormat(createDesc.pixelFormat, ddsd.ddpfPixelFormat))
-		{
-			log::error << L"Create graphics failed, unable to determine format of secondary surface" << Endl;
-			return false;
-		}
 
 		hr = m_dd->CreateSurface(&ddsd, &m_ddsSecondary.getAssign(), NULL);
 		if (FAILED(hr))
@@ -180,10 +182,11 @@ bool GraphicsSystemDd7::resize(int width, int height)
 
 	memset(&ddsd, 0, sizeof(ddsd));
 	ddsd.dwSize = sizeof(ddsd);
-	ddsd.dwFlags = DDSD_CAPS | DDSD_WIDTH | DDSD_HEIGHT;
-	ddsd.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN;
+	ddsd.dwFlags = DDSD_CAPS | DDSD_WIDTH | DDSD_HEIGHT | DDSD_PIXELFORMAT;
 	ddsd.dwWidth = width;
 	ddsd.dwHeight = height;
+	ddsd.ddpfPixelFormat = m_ddpf;
+	ddsd.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN;
 
 	ComRef< IDirectDrawSurface7 > ddsSecondary;
 	hr = m_dd->CreateSurface(&ddsd, &ddsSecondary.getAssign(), NULL);
