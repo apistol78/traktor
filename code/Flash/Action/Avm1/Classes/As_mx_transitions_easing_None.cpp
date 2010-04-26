@@ -34,6 +34,7 @@ void As_mx_transitions_easing_None::createPrototype()
 	prototype->setMember(L"easeIn", ActionValue(createNativeFunction(this, &As_mx_transitions_easing_None::None_easeIn)));
 	prototype->setMember(L"easeInOut", ActionValue(createNativeFunction(this, &As_mx_transitions_easing_None::None_easeInOut)));
 	prototype->setMember(L"easeOut", ActionValue(createNativeFunction(this, &As_mx_transitions_easing_None::None_easeOut)));
+	prototype->setMember(L"easeNone", ActionValue(createNativeFunction(this, &As_mx_transitions_easing_None::None_easeNone)));
 
 	prototype->setReadOnly();
 
@@ -64,6 +65,15 @@ void As_mx_transitions_easing_None::None_easeInOut(CallArgs& ca)
 }
 
 void As_mx_transitions_easing_None::None_easeOut(CallArgs& ca)
+{
+	avm_number_t T = ca.args[0].getNumberSafe();
+	avm_number_t B = ca.args[1].getNumberSafe();
+	avm_number_t C = ca.args[2].getNumberSafe();
+	avm_number_t D = ca.args[3].getNumberSafe();
+	ca.ret = ActionValue(B + C * T / D);
+}
+
+void As_mx_transitions_easing_None::None_easeNone(CallArgs& ca)
 {
 	avm_number_t T = ca.args[0].getNumberSafe();
 	avm_number_t B = ca.args[1].getNumberSafe();
