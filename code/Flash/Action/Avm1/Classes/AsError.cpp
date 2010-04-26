@@ -39,7 +39,7 @@ void AsError::createPrototype()
 	setMember(L"prototype", ActionValue(prototype));
 }
 
-ActionValue AsError::construct(ActionContext* context, const args_t& args)
+ActionValue AsError::construct(ActionContext* context, const ActionValueArray& args)
 {
 	Ref< ActionObject > errorObject = new ActionObject(this);
 

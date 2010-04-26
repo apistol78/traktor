@@ -36,7 +36,7 @@ private:
 
 	void createPrototype();
 
-	virtual ActionValue construct(ActionContext* context, const args_t& args);
+	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
 
 	void Mouse_addListener(CallArgs& ca);
 

@@ -69,7 +69,7 @@ void AsButton::createPrototype()
 	setMember(L"prototype", ActionValue(prototype));
 }
 
-ActionValue AsButton::construct(ActionContext* context, const args_t& args)
+ActionValue AsButton::construct(ActionContext* context, const ActionValueArray& args)
 {
 	return ActionValue();
 }

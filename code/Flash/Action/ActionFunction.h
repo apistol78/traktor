@@ -20,6 +20,7 @@ class ActionContext;
 class ActionObject;
 class ActionFrame;
 class ActionValue;
+class ActionValueArray;
 class IActionVM;
 
 /*! \brief ActionScript callable function base.
@@ -32,7 +33,7 @@ class T_DLLCLASS ActionFunction : public ActionObject
 public:
 	ActionFunction(const std::wstring& name);
 
-	virtual ActionValue call(const IActionVM* vm, ActionContext* context, ActionObject* self, const std::vector< ActionValue >& args) = 0;
+	virtual ActionValue call(const IActionVM* vm, ActionContext* context, ActionObject* self, const ActionValueArray& args) = 0;
 
 	virtual ActionValue call(const IActionVM* vm, ActionFrame* callerFrame, ActionObject* self) = 0;
 

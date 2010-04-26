@@ -20,7 +20,7 @@ private:
 
 	void createPrototype();
 
-	virtual ActionValue construct(ActionContext* context, const args_t& args);
+	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
 
 	void Bounce_easeIn(CallArgs& ca);
 

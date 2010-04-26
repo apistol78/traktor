@@ -1,17 +1,8 @@
 #ifndef traktor_flash_ActionValueStack_H
 #define traktor_flash_ActionValueStack_H
 
-#include <vector>
-#include "Core/Misc/AutoPtr.h"
 #include "Flash/Action/ActionValue.h"
-
-// import/export mechanism.
-#undef T_DLLCLASS
-#if defined(T_FLASH_EXPORT)
-#	define T_DLLCLASS T_DLLEXPORT
-#else
-#	define T_DLLCLASS T_DLLIMPORT
-#endif
+#include "Flash/Action/ActionValuePool.h"
 
 namespace traktor
 {
@@ -20,14 +11,14 @@ namespace traktor
 
 /*! \brief ActionScript value stack.
  * \ingroup Flash
+ *
+ * Only intended to be used in implementation.
  */
-class T_DLLCLASS ActionValueStack : public Object
+class ActionValueStack
 {
-	T_RTTI_CLASS;
-
 public:
-	ActionValueStack()
-	:	m_stack(new ActionValue [MaxStackDepth])
+	ActionValueStack(ActionValuePool& pool)
+	:	m_stack(pool.alloc(MaxStackDepth))
 	,	m_index(0)
 	{
 	}
@@ -36,7 +27,7 @@ public:
 	 *
 	 * \param value Value to push.
 	 */
-	inline void push(const ActionValue& value)
+	void push(const ActionValue& value)
 	{
 		T_ASSERT (m_index < MaxStackDepth);
 		m_stack[m_index++] = value;
@@ -46,7 +37,7 @@ public:
 	 *
 	 * \return Value.
 	 */
-	inline ActionValue pop()
+	ActionValue pop()
 	{
 		return m_index > 0 ? m_stack[--m_index] : ActionValue();
 	}
@@ -56,7 +47,7 @@ public:
 	 * \param offset Offset from top of stack.
 	 * \return Value.
 	 */
-	inline ActionValue& top(int32_t offset = 0)
+	ActionValue& top(int32_t offset = 0)
 	{
 		static ActionValue s_undefined;
 		int index = m_index + offset - 1;
@@ -67,7 +58,7 @@ public:
 	 *
 	 * \return True if stack is empty.
 	 */
-	inline bool empty() const
+	bool empty() const
 	{
 		return m_index <= 0;
 	}
@@ -76,7 +67,7 @@ public:
 	 *
 	 * \param ensureCount Number of values.
 	 */
-	inline void ensure(int32_t ensureCount)
+	void ensure(int32_t ensureCount)
 	{
 		T_ASSERT (ensureCount < MaxStackDepth);
 		while (m_index < ensureCount)
@@ -87,7 +78,7 @@ public:
 	 *
 	 * \param dropCount Number of values to drop.
 	 */
-	inline void drop(int32_t dropCount)
+	void drop(int32_t dropCount)
 	{
 		if ((m_index -= dropCount) < 0)
 			m_index = 0;
@@ -97,14 +88,14 @@ public:
 	 *
 	 * \return Depth of stack.
 	 */
-	inline int32_t depth() const
+	int32_t depth() const
 	{
 		return m_index;
 	}
 
 private:
-	enum { MaxStackDepth = 128 };
-	AutoArrayPtr< ActionValue > m_stack;
+	enum { MaxStackDepth = 32 };
+	ActionValue* m_stack;
 	int32_t m_index;
 };
 

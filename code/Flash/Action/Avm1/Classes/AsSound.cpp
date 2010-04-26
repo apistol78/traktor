@@ -56,7 +56,7 @@ void AsSound::createPrototype()
 	setMember(L"prototype", ActionValue(prototype));
 }
 
-ActionValue AsSound::construct(ActionContext* context, const args_t& args)
+ActionValue AsSound::construct(ActionContext* context, const ActionValueArray& args)
 {
 	return ActionValue();
 }

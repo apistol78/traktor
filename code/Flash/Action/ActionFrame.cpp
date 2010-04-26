@@ -1,3 +1,4 @@
+#include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFrame.h"
 
 namespace traktor
@@ -20,9 +21,10 @@ ActionFrame::ActionFrame(
 ,	m_self(self)
 ,	m_code(code)
 ,	m_codeSize(codeSize)
-,	m_localRegisters(localRegisters)
+,	m_localRegisters(context->getPool(), localRegisters)
 ,	m_dictionary(dictionary)
 ,	m_callee(callee)
+,	m_stack(context->getPool())
 {
 	setVariable(L"this", ActionValue(self));
 }

@@ -40,7 +40,7 @@ ActionSuper::ActionSuper(ActionObject* object)
 #endif
 }
 
-ActionValue ActionSuper::call(const IActionVM* vm, ActionContext* context, ActionObject* self, const std::vector< ActionValue >& args)
+ActionValue ActionSuper::call(const IActionVM* vm, ActionContext* context, ActionObject* self, const ActionValueArray& args)
 {
 	return ActionValue();
 }

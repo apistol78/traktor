@@ -103,7 +103,7 @@ void AsMouse::createPrototype()
 	setMember(L"prototype", ActionValue(prototype));
 }
 
-ActionValue AsMouse::construct(ActionContext* context, const args_t& args)
+ActionValue AsMouse::construct(ActionContext* context, const ActionValueArray& args)
 {
 	return ActionValue();
 }

@@ -1,58 +1,68 @@
 #ifndef traktor_flash_ActionValueArray_H
 #define traktor_flash_ActionValueArray_H
 
-#include "Core/Misc/AutoPtr.h"
 #include "Flash/Action/ActionValue.h"
-
-// import/export mechanism.
-#undef T_DLLCLASS
-#if defined(T_FLASH_EXPORT)
-#	define T_DLLCLASS T_DLLEXPORT
-#else
-#	define T_DLLCLASS T_DLLIMPORT
-#endif
+#include "Flash/Action/ActionValuePool.h"
 
 namespace traktor
 {
 	namespace flash
 	{
 
-/*! \brief ActionScript mutable value array.
+/*! \brief ActionScript immutable value array.
  * \ingroup Flash
+ *
+ * Only intended to be used in implementation.
  */
-class T_DLLCLASS ActionValueArray : public Object
+class ActionValueArray
 {
-	T_RTTI_CLASS;
-
 public:
-	ActionValueArray(uint32_t size)
-	:	m_values(new ActionValue [size])
-	,	m_size(size)
+	ActionValueArray()
+	:	m_values(0)
+	,	m_size(0)
+	{
+	}
+
+	ActionValueArray(ActionValuePool& pool, uint32_t count)
+	:	m_values(pool.alloc(count))
+	,	m_size(count)
 	{
 	}
 	
-	inline uint32_t size() const
+	bool empty() const
+	{
+		return m_size == 0;
+	}
+
+	uint32_t size() const
 	{
 		return m_size;
 	}
 	
-	inline ActionValue& operator [] (uint32_t index)
+	ActionValue& operator [] (uint32_t index)
 	{
 		T_ASSERT (index < m_size);
 		return m_values[index];
 	}
 	
-	inline const ActionValue& operator [] (uint32_t index) const
+	const ActionValue& operator [] (uint32_t index) const
 	{
 		T_ASSERT (index < m_size);
 		return m_values[index];
+	}
+
+	ActionValueArray& operator = (const ActionValueArray& arr)
+	{
+		m_values = arr.m_values;
+		m_size = arr.m_size;
+		return *this;
 	}
 	
 private:
-	AutoArrayPtr< ActionValue > m_values;
+	ActionValue* m_values;
 	uint32_t m_size;
 };
-	
+
 	}
 }
 

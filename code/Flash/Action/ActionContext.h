@@ -4,6 +4,7 @@
 #include "Core/Object.h"
 #include "Core/RefArray.h"
 #include "Flash/Action/ActionValue.h"
+#include "Flash/Action/ActionValuePool.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -37,9 +38,11 @@ public:
 
 	void notifyFrameListeners(const IActionVM* vm, avm_number_t time);
 
-	inline Ref< const FlashMovie > getMovie() const { return m_movie; }
+	const Ref< const FlashMovie >& getMovie() const { return m_movie; }
 
-	inline Ref< ActionObject > getGlobal() const { return m_global; }
+	const Ref< ActionObject >& getGlobal() const { return m_global; }
+
+	ActionValuePool& getPool() { return m_pool; }
 
 private:
 	struct FrameListener
@@ -50,6 +53,7 @@ private:
 
 	Ref< const FlashMovie > m_movie;
 	Ref< ActionObject > m_global;
+	ActionValuePool m_pool;
 	std::vector< FrameListener > m_frameListeners;
 };
 

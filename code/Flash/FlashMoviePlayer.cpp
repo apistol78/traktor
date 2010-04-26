@@ -137,7 +137,7 @@ void FlashMoviePlayer::executeFrame()
 
 	// Issue interval functions.
 	for (std::map< uint32_t, Interval >::iterator i = m_interval.begin(); i != m_interval.end(); ++i)
-		i->second.function->call(m_actionVM, context, i->second.target, std::vector< ActionValue >());
+		i->second.function->call(m_actionVM, context, i->second.target, ActionValueArray());
 
 	// Issue all events in sequence as each event possibly update
 	// the play head and other aspects of the movie.
@@ -191,6 +191,9 @@ void FlashMoviePlayer::executeFrame()
 	context->notifyFrameListeners(m_actionVM, avm_number_t(m_timeCurrent));
 
 	m_movieInstance->postDispatchEvents(m_actionVM);
+
+	// Flush pool memory; release all lingering object references etc.
+	context->getPool().flush();
 }
 
 bool FlashMoviePlayer::progressFrame(float deltaTime)

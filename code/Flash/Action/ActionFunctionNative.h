@@ -3,6 +3,7 @@
 
 #include "Core/Meta/Traits.h"
 #include "Flash/Action/ActionFunction.h"
+#include "Flash/Action/ActionValueArray.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -28,7 +29,7 @@ struct CallArgs
 	const IActionVM* vm;
 	ActionContext* context;
 	ActionObject* self;
-	std::vector< ActionValue > args;
+	ActionValueArray args;
 	ActionValue ret;
 };
 
@@ -266,7 +267,7 @@ class T_DLLCLASS ActionFunctionNative : public ActionFunction
 public:
 	ActionFunctionNative(INativeFunction* nativeFunction);
 
-	virtual ActionValue call(const IActionVM* vm, ActionContext* context, ActionObject* self, const std::vector< ActionValue >& args);
+	virtual ActionValue call(const IActionVM* vm, ActionContext* context, ActionObject* self, const ActionValueArray& args);
 
 	virtual ActionValue call(const IActionVM* vm, ActionFrame* callerFrame, ActionObject* self);
 

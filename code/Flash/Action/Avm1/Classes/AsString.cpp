@@ -57,7 +57,7 @@ void AsString::createPrototype()
 	setMember(L"prototype", ActionValue(prototype));
 }
 
-ActionValue AsString::construct(ActionContext* context, const args_t& args)
+ActionValue AsString::construct(ActionContext* context, const ActionValueArray& args)
 {
 	if (args.size() > 0)
 		return ActionValue(new String(args[0].getString()));
@@ -98,8 +98,8 @@ void AsString::String_concat(CallArgs& ca)
 	StringOutputStream ss;
 	ss << self->get();
 
-	for (std::vector< ActionValue >::const_iterator i = ca.args.begin(); i != ca.args.end(); ++i)
-		ss << i->getStringSafe();
+	for (uint32_t i = 0; i < ca.args.size(); ++i)
+		ss << ca.args[i].getStringSafe();
 
 	ca.ret = ActionValue(ss.str());
 }

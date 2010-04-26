@@ -44,7 +44,7 @@ void AsTextField_StyleSheet::createPrototype()
 	setMember(L"prototype", ActionValue(prototype));
 }
 
-ActionValue AsTextField_StyleSheet::construct(ActionContext* context, const args_t& args)
+ActionValue AsTextField_StyleSheet::construct(ActionContext* context, const ActionValueArray& args)
 {
 	return ActionValue(new ActionObject(this));
 }

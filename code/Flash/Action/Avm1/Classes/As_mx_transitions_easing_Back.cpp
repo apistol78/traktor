@@ -40,7 +40,7 @@ void As_mx_transitions_easing_Back::createPrototype()
 	setMember(L"prototype", ActionValue(prototype));
 }
 
-ActionValue As_mx_transitions_easing_Back::construct(ActionContext* context, const args_t& args)
+ActionValue As_mx_transitions_easing_Back::construct(ActionContext* context, const ActionValueArray& args)
 {
 	return ActionValue();
 }

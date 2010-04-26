@@ -46,7 +46,7 @@ void AsTween::createPrototype()
 	setMember(L"prototype", ActionValue(prototype));
 }
 
-ActionValue AsTween::construct(ActionContext* context, const args_t& args)
+ActionValue AsTween::construct(ActionContext* context, const ActionValueArray& args)
 {
 	if (args.size() < 7)
 		return ActionValue();

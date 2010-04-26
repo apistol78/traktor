@@ -2,6 +2,7 @@
 #define traktor_flash_ActionClass_H
 
 #include "Flash/Action/ActionFunction.h"
+#include "Flash/Action/ActionValueArray.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -26,16 +27,14 @@ class T_DLLCLASS ActionClass : public ActionFunction
 	T_RTTI_CLASS;
 
 public:
-	typedef std::vector< ActionValue > args_t;
-
 	ActionClass(const std::wstring& name);
 
-	virtual ActionValue call(const IActionVM* vm, ActionContext* context, ActionObject* self, const std::vector< ActionValue >& args);
+	virtual ActionValue call(const IActionVM* vm, ActionContext* context, ActionObject* self, const ActionValueArray& args);
 
 	virtual ActionValue call(const IActionVM* vm, ActionFrame* callerFrame, ActionObject* self);
 
 protected:
-	virtual ActionValue construct(ActionContext* context, const args_t& args) = 0;
+	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args) = 0;
 };
 
 	}

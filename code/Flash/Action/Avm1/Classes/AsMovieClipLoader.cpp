@@ -43,7 +43,7 @@ void AsMovieClipLoader::createPrototype()
 	setMember(L"prototype", ActionValue(prototype));
 }
 
-ActionValue AsMovieClipLoader::construct(ActionContext* context, const args_t& args)
+ActionValue AsMovieClipLoader::construct(ActionContext* context, const ActionValueArray& args)
 {
 	return ActionValue(new ActionObject(this));
 }

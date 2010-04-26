@@ -77,7 +77,7 @@ void AsDate::createPrototype()
 	setMember(L"prototype", ActionValue(prototype));
 }
 
-ActionValue AsDate::construct(ActionContext* context, const args_t& args)
+ActionValue AsDate::construct(ActionContext* context, const ActionValueArray& args)
 {
 	return ActionValue(new Date());
 }

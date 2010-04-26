@@ -39,7 +39,7 @@ void AsAccessibility::createPrototype()
 	setMember(L"prototype", ActionValue(prototype));
 }
 
-ActionValue AsAccessibility::construct(ActionContext* context, const args_t& args)
+ActionValue AsAccessibility::construct(ActionContext* context, const ActionValueArray& args)
 {
 	return ActionValue();
 }

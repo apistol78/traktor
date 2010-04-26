@@ -54,7 +54,7 @@ void AsPoint::createPrototype()
 	setMember(L"prototype", ActionValue(prototype));
 }
 
-ActionValue AsPoint::construct(ActionContext* context, const args_t& args)
+ActionValue AsPoint::construct(ActionContext* context, const ActionValueArray& args)
 {
 	Ref< Point > pt = new Point();
 
