@@ -51,6 +51,7 @@ private:
 	ComRef< IDirectDrawClipper > m_ddClipper;
 	Ref< SurfaceDd7 > m_primary;
 	Ref< SurfaceDd7 > m_secondary;
+	DDPIXELFORMAT m_ddpf;
 	bool m_bltFlip;
 };
 
