@@ -5,15 +5,15 @@ namespace traktor
 	namespace ui
 	{
 
-ContainerWin32::ContainerWin32(EventSubject* owner) :
-	WidgetWin32Impl< IContainer >(owner)
+ContainerWin32::ContainerWin32(EventSubject* owner)
+:	WidgetWin32Impl< IContainer >(owner)
 {
 }
 
 bool ContainerWin32::create(IWidget* parent, int style)
 {
 	DWORD dwStyle = WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
-	DWORD dwStyleEx = 0;
+	DWORD dwStyleEx = WS_EX_CONTROLPARENT;
 
 	if (style & WsBorder)
 		dwStyle |= WS_BORDER;

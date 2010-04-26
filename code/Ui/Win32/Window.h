@@ -86,6 +86,10 @@ public:
 
 	static void unregisterDefaultClass();
 
+	static void registerDialogClass();
+
+	static void unregisterDialogClass();
+
 private:
 	HWND m_hWnd;
 	HFONT m_hFont;
@@ -95,6 +99,8 @@ private:
 	static LRESULT invokeMessageHandlers(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass);
 
 	static LRESULT CALLBACK wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+
+	static LRESULT CALLBACK dlgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 	static LRESULT CALLBACK wndProcSubClass(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 };

@@ -5,6 +5,12 @@ namespace traktor
 {
 	namespace ui
 	{
+		namespace
+		{
+
+UINT s_buttonId = 1000;
+
+		}
 
 ButtonWin32::ButtonWin32(EventSubject* owner)
 :	WidgetWin32Impl< IButton >(owner)
@@ -34,7 +40,7 @@ bool ButtonWin32::create(IWidget* parent, const std::wstring& text, int style)
 		0,
 		0,
 		0,
-		0,
+		s_buttonId,
 		true
 	))
 		return false;
@@ -43,6 +49,18 @@ bool ButtonWin32::create(IWidget* parent, const std::wstring& text, int style)
 		return false;
 
 	m_hWnd.registerMessageHandler(WM_REFLECTED_COMMAND, new MethodMessageHandler< ButtonWin32 >(this, &ButtonWin32::eventCommand));
+
+	if (style & Button::WsDefaultButton)
+	{
+		SendMessage(
+			(HWND)parent->getInternalHandle(),
+			DM_SETDEFID,
+			s_buttonId,
+			0
+		);
+	}
+
+	s_buttonId++;
 
 	return true;
 }

@@ -175,6 +175,35 @@ void Window::unregisterDefaultClass()
 	UnregisterClass(_T("TraktorWin32Class"), g_hInstance);
 }
 
+void Window::registerDialogClass()
+{
+	WNDCLASS wc;
+
+	std::memset(&wc, 0, sizeof(wc));
+	wc.style         = CS_DBLCLKS;
+	wc.lpfnWndProc   = dlgProc;
+	wc.cbClsExtra    = 0;
+	wc.cbWndExtra    = DLGWINDOWEXTRA + sizeof(void*);
+	wc.hInstance     = g_hInstance;
+#if !defined(WINCE)
+	wc.hbrBackground = (HBRUSH)(COLOR_BTNFACE + 1);
+#else
+	wc.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
+#endif
+	wc.hIcon         = LoadIcon(g_hInstance, _T("DEFAULTICON"));
+	wc.hCursor       = LoadCursor(NULL, IDC_ARROW);
+	wc.lpszMenuName  = NULL;
+	wc.lpszClassName = _T("TraktorDialogWin32Class");
+
+	if (!RegisterClass(&wc))
+		log::error << L"Unable to register class \"TraktorDialogWin32Class\"" << Endl;
+}
+
+void Window::unregisterDialogClass()
+{
+	UnregisterClass(_T("TraktorDialogWin32Class"), g_hInstance);
+}
+
 LRESULT Window::invokeMessageHandlers(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass)
 {
 	LRESULT result = FALSE;
@@ -242,6 +271,53 @@ LRESULT CALLBACK Window::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 
 	// Call default window procedure.
 	return DefWindowProc(hWnd, message, wParam, lParam);
+}
+
+LRESULT CALLBACK Window::dlgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	LRESULT result = FALSE;
+	bool pass;
+
+	// Lookup handler of issued message.
+	result = invokeMessageHandlers(hWnd, message, wParam, lParam, pass);
+	if (!pass)
+		return result;
+
+	// Reflect messages sent to parents back to issuing child.
+	if (message == WM_COMMAND)
+	{
+		HWND hWndControl = (HWND)lParam;
+		if (hWndControl)
+		{
+			result = invokeMessageHandlers(hWndControl, WM_REFLECTED_COMMAND, wParam, lParam, pass);
+			if (!pass)
+				return result;
+		}
+	}
+	else if (message == WM_NOTIFY)
+	{
+		LPNMHDR nmhdr = reinterpret_cast< LPNMHDR >(lParam);
+		if (nmhdr && nmhdr->hwndFrom)
+		{
+			result = invokeMessageHandlers(nmhdr->hwndFrom, WM_REFLECTED_NOTIFY, wParam, lParam, pass);
+			if (!pass)
+				return result;
+		}
+	}
+	else if (message == WM_HSCROLL || message == WM_VSCROLL)
+	{
+		HWND hWndControl = (HWND)lParam;
+		if (hWndControl)
+		{
+			UINT reflectMsg = (message == WM_HSCROLL) ? WM_REFLECTED_HSCROLL : WM_REFLECTED_VSCROLL;
+			result = invokeMessageHandlers(hWndControl, reflectMsg, wParam, lParam, pass);
+			if (!pass)
+				return result;
+		}
+	}
+
+	// Call default dialog procedure.
+	return DefDlgProc(hWnd, message, wParam, lParam);
 }
 
 LRESULT CALLBACK Window::wndProcSubClass(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)

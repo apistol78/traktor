@@ -52,7 +52,7 @@ bool DialogWin32::create(IWidget* parent, const std::wstring& text, int width, i
 
 	if (!m_hWnd.create(
 		parent ? reinterpret_cast< HWND >(parent->getInternalHandle()) : 0,
-		_T("TraktorWin32Class"),
+		_T("TraktorDialogWin32Class"),
 		wstots(text).c_str(),
 		nativeStyle,
 		0,
@@ -66,6 +66,7 @@ bool DialogWin32::create(IWidget* parent, const std::wstring& text, int width, i
 	if (!WidgetWin32Impl::create(0))
 		return false;
 
+	m_hWnd.registerMessageHandler(WM_INITDIALOG, new MethodMessageHandler< DialogWin32 >(this, &DialogWin32::eventInitDialog));
 #if !defined(WINCE)
 	m_hWnd.registerMessageHandler(WM_SIZING, new MethodMessageHandler< DialogWin32 >(this, &DialogWin32::eventSizing));
 #endif
@@ -118,8 +119,11 @@ int DialogWin32::showModal()
 	{
 		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
+			if (!IsDialogMessage(m_hWnd, &msg))
+			{
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
+			}
 		}
 		else
 			Sleep(100);
@@ -176,6 +180,12 @@ void DialogWin32::setVisible(bool visible)
 	}
 	else
 		ShowWindow(m_hWnd, SW_HIDE);
+}
+
+LRESULT DialogWin32::eventInitDialog(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& skip)
+{
+	skip = false;
+	return TRUE;
 }
 
 #if !defined(WINCE)
