@@ -2,7 +2,7 @@
 #define traktor_Frustum_H
 
 #include "Core/Config.h"
-#include "Core/Containers/AlignedVector.h"
+#include "Core/Containers/StaticVector.h"
 #include "Core/Math/MathConfig.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Plane.h"
@@ -35,7 +35,7 @@ public:
 		PsFar
 	};
 
-	AlignedVector< Plane > planes;
+	StaticVector< Plane, 12 > planes;
 	Vector4 corners[8];
 	Vector4 center;
 
