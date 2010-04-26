@@ -32,6 +32,8 @@ private:
 	bool m_centerDesktop;
 	int32_t m_result;
 
+	LRESULT eventInitDialog(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& skip);
+
 #if !defined(WINCE)
 
 	LRESULT eventSizing(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& skip);

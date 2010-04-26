@@ -38,10 +38,12 @@ EventLoopWin32::EventLoopWin32()
 #endif
 
 	Window::registerDefaultClass();
+	Window::registerDialogClass();
 }
 
 EventLoopWin32::~EventLoopWin32()
 {
+	Window::unregisterDialogClass();
 	Window::unregisterDefaultClass();
 
 #if defined(T_USE_GDI_PLUS)

@@ -25,7 +25,7 @@ bool EditWin32::create(IWidget* parent, const std::wstring& text, int style)
 		(HWND)parent->getInternalHandle(),
 		_T("EDIT"),
 		wstots(text).c_str(),
-		WS_VISIBLE | WS_CHILD | WS_TABSTOP | ES_AUTOHSCROLL | ES_LEFT | ES_WANTRETURN | nativeStyle,
+		WS_VISIBLE | WS_CHILD | WS_TABSTOP | ES_AUTOHSCROLL | ES_LEFT/* | ES_WANTRETURN*/ | nativeStyle,
 		nativeStyleEx,
 		0,
 		0,
