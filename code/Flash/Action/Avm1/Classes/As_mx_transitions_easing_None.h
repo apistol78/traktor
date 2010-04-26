@@ -27,6 +27,8 @@ private:
 	void None_easeInOut(CallArgs& ca);
 
 	void None_easeOut(CallArgs& ca);
+
+	void None_easeNone(CallArgs& ca);
 };
 
 	}
