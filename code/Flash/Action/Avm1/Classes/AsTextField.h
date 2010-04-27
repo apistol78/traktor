@@ -8,7 +8,7 @@ namespace traktor
 	namespace flash
 	{
 
-struct CallArgs;
+class FlashEditInstance;
 
 /*! \brief TextField class.
  * \ingroup Flash
@@ -27,9 +27,13 @@ private:
 
 	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
 
-	void TextField_get_text(CallArgs& ca);
+	std::wstring TextField_get_text(FlashEditInstance* editInstance) const;
 
-	void TextField_set_text(CallArgs& ca);
+	void TextField_set_text(FlashEditInstance* editInstance, const std::wstring& text) const;
+
+	avm_number_t TextField_get_textWidth(FlashEditInstance* editInstance) const;
+
+	avm_number_t TextField_get_textHeight(FlashEditInstance* editInstance) const;
 };
 
 	}

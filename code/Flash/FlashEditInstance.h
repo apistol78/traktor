@@ -39,6 +39,10 @@ public:
 
 	const text_t& getText() const;
 
+	avm_number_t getTextWidth() const;
+
+	avm_number_t getTextHeight() const;
+
 	virtual SwfRect getBounds() const;
 
 private:
