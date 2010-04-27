@@ -81,6 +81,13 @@ struct ActionValueCast< std::wstring, false >
 	static std::wstring get(const ActionValue& av) { return av.getStringSafe(); }
 };
 
+template < >
+struct ActionValueCast< const std::wstring&, false >
+{
+	static ActionValue set(const std::wstring& v) { return ActionValue(v); }
+	static std::wstring get(const ActionValue& av) { return av.getStringSafe(); }
+};
+
 template < typename Type >
 struct ActionValueCast< Ref< Type >, false >
 {
@@ -176,7 +183,7 @@ template <
 struct MethodNativeFunction_1 < CallClassType, SelfClassType, void, Argument1Type > : public INativeFunction
 {
 	CallClassType* m_object;
-	void (CallClassType::*m_method)(SelfClassType*) const;
+	void (CallClassType::*m_method)(SelfClassType*, Argument1Type) const;
 
 	virtual void call(CallArgs& ca)
 	{

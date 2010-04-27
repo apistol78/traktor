@@ -39,6 +39,8 @@ void AsTextField::createPrototype()
 	prototype->setMember(L"StyleSheet", ActionValue(AsTextField_StyleSheet::getInstance()));
 
 	prototype->addProperty(L"text", createNativeFunction(this, &AsTextField::TextField_get_text), createNativeFunction(this, &AsTextField::TextField_set_text));
+	prototype->addProperty(L"textWidth", createNativeFunction(this, &AsTextField::TextField_get_textWidth), 0);
+	prototype->addProperty(L"textHeight", createNativeFunction(this, &AsTextField::TextField_get_textHeight), 0);
 
 	prototype->setReadOnly();
 
@@ -50,30 +52,30 @@ ActionValue AsTextField::construct(ActionContext* context, const ActionValueArra
 	return ActionValue();
 }
 
-void AsTextField::TextField_get_text(CallArgs& ca)
+std::wstring AsTextField::TextField_get_text(FlashEditInstance* editInstance) const
 {
-	Ref< FlashEditInstance > editInstance = dynamic_type_cast< FlashEditInstance* >(ca.self);
-	if (editInstance)
-	{
-		StringOutputStream ss;
+	StringOutputStream ss;
 
-		const FlashEditInstance::text_t& text = editInstance->getText();
-		for (FlashEditInstance::text_t::const_iterator i = text.begin(); i != text.end(); ++i)
-			ss << *i << Endl;
+	const FlashEditInstance::text_t& text = editInstance->getText();
+	for (FlashEditInstance::text_t::const_iterator i = text.begin(); i != text.end(); ++i)
+		ss << *i << Endl;
 
-		ca.ret = ActionValue(ss.str());
-	}
-	else
-		log::warning << L"Cannot get text from static text fields" << Endl;
+	return ss.str();
 }
 
-void AsTextField::TextField_set_text(CallArgs& ca)
+void AsTextField::TextField_set_text(FlashEditInstance* editInstance, const std::wstring& text) const
 {
-	Ref< FlashEditInstance > editInstance = dynamic_type_cast< FlashEditInstance* >(ca.self);
-	if (editInstance)
-		editInstance->parseText(ca.args[0].getStringSafe());
-	else
-		log::warning << L"Cannot set text on static text fields" << Endl;
+	editInstance->parseText(text);
+}
+
+avm_number_t AsTextField::TextField_get_textWidth(FlashEditInstance* editInstance) const
+{
+	return editInstance->getTextWidth();
+}
+
+avm_number_t AsTextField::TextField_get_textHeight(FlashEditInstance* editInstance) const
+{
+	return editInstance->getTextHeight();
 }
 
 	}

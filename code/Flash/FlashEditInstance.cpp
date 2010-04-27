@@ -74,6 +74,16 @@ const FlashEditInstance::text_t& FlashEditInstance::getText() const
 	return m_text;
 }
 
+avm_number_t FlashEditInstance::getTextWidth() const
+{
+	return 0;
+}
+
+avm_number_t FlashEditInstance::getTextHeight() const
+{
+	return 0;
+}
+
 SwfRect FlashEditInstance::getBounds() const
 {
 	SwfRect textBounds = m_edit->getTextBounds();
