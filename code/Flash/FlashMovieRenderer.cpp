@@ -52,7 +52,8 @@ void FlashMovieRenderer::renderFrame(FlashMovie* movie, FlashSpriteInstance* mov
 		movie,
 		movieInstance,
 		Matrix33::identity(),
-		movieInstance->getColorTransform()
+		movieInstance->getColorTransform(),
+		false
 	);
 
 	m_displayRenderer->end();
@@ -62,10 +63,11 @@ void FlashMovieRenderer::renderSprite(
 	FlashMovie* movie,
 	FlashSpriteInstance* spriteInstance,
 	const Matrix33& transform,
-	const SwfCxTransform& cxTransform
+	const SwfCxTransform& cxTransform,
+	bool renderAsMask
 )
 {
-	if (!spriteInstance->isVisible())
+	if (!spriteInstance->isVisible() && !renderAsMask)
 		return;
 
 	const FlashDisplayList& displayList = spriteInstance->getDisplayList();
@@ -85,7 +87,7 @@ void FlashMovieRenderer::renderSprite(
 			renderCharacter(
 				movie,
 				layer.instance,
-				transform * layer.instance->getTransform(),
+				transform,
 				concateCxTransform(cxTransform, layer.instance->getColorTransform())
 			);
 			++i;
@@ -97,7 +99,7 @@ void FlashMovieRenderer::renderSprite(
 			renderCharacter(
 				movie,
 				layer.instance,
-				transform * layer.instance->getTransform(),
+				transform,
 				concateCxTransform(cxTransform, layer.instance->getColorTransform())
 			);
 
@@ -112,7 +114,7 @@ void FlashMovieRenderer::renderSprite(
 				renderCharacter(
 					movie,
 					clippedLayer.instance,
-					transform * clippedLayer.instance->getTransform(),
+					transform,
 					concateCxTransform(cxTransform, clippedLayer.instance->getColorTransform())
 				);
 			}
@@ -122,7 +124,7 @@ void FlashMovieRenderer::renderSprite(
 			renderCharacter(
 				movie,
 				layer.instance,
-				transform * layer.instance->getTransform(),
+				transform,
 				concateCxTransform(cxTransform, layer.instance->getColorTransform())
 			);
 
@@ -144,7 +146,7 @@ void FlashMovieRenderer::renderCharacter(
 	{
 		m_displayRenderer->renderShape(
 			*movie,
-			transform,
+			transform * shapeInstance->getTransform(),
 			*shapeInstance->getShape(),
 			concateCxTransform(cxTransform, characterInstance->getColorTransform())
 		);
@@ -157,7 +159,7 @@ void FlashMovieRenderer::renderCharacter(
 	{
 		m_displayRenderer->renderMorphShape(
 			*movie,
-			transform,
+			transform * morphInstance->getTransform(),
 			*morphInstance->getShape(),
 			concateCxTransform(cxTransform, characterInstance->getColorTransform())
 		);
@@ -169,6 +171,8 @@ void FlashMovieRenderer::renderCharacter(
 	if (textInstance)
 	{
 		Ref< const FlashText > text = textInstance->getText();
+
+		Matrix33 textTransform = transform * textInstance->getTransform() * text->getTextMatrix();
 
 		const AlignedVector< FlashText::Character >& characters = text->getCharacters();
 		for (AlignedVector< FlashText::Character >::const_iterator i = characters.begin(); i != characters.end(); ++i)
@@ -198,7 +202,7 @@ void FlashMovieRenderer::renderCharacter(
 
 			m_displayRenderer->renderGlyph(
 				*movie,
-				transform * text->getTextMatrix() * translate(i->offsetX - glyphReferenceX, i->offsetY - glyphReferenceY) * scale(scaleOffset, scaleOffset),
+				textTransform * translate(i->offsetX - glyphReferenceX, i->offsetY - glyphReferenceY) * scale(scaleOffset, scaleOffset),
 				*shape,
 				i->color,
 				concateCxTransform(cxTransform, characterInstance->getColorTransform())
@@ -216,6 +220,8 @@ void FlashMovieRenderer::renderCharacter(
 		Ref< const FlashFont > font = movie->getFont(edit->getFontId());
 		if (!font)
 			return;
+
+		Matrix33 editTransform = transform * editInstance->getTransform();
 
 		float fontScale =
 			font->getCoordinateType() == FlashFont::CtTwips ? 
@@ -275,7 +281,7 @@ void FlashMovieRenderer::renderCharacter(
 
 					m_displayRenderer->renderGlyph(
 						*movie,
-						transform * translate(offsetX, offsetY) * scale(fontScale * fontHeight, fontScale * fontHeight),
+						editTransform * translate(offsetX, offsetY) * scale(fontScale * fontHeight, fontScale * fontHeight),
 						*glyphShape,
 						color,
 						concateCxTransform(cxTransform, characterInstance->getColorTransform())
@@ -305,6 +311,7 @@ void FlashMovieRenderer::renderCharacter(
 	{
 		Ref< const FlashButton> button = buttonInstance->getButton();
 
+		Matrix33 buttonTransform = transform * buttonInstance->getTransform();
 		uint8_t buttonState = buttonInstance->getState();
 
 		const FlashButton::button_layers_t& layers = button->getButtonLayers();
@@ -320,8 +327,8 @@ void FlashMovieRenderer::renderCharacter(
 			renderCharacter(
 				movie,
 				referenceInstance,
-				transform * j->placeMatrix,
-				concateCxTransform(cxTransform, characterInstance->getColorTransform())
+				buttonTransform * j->placeMatrix,
+				concateCxTransform(cxTransform, buttonInstance->getColorTransform())
 			);
 		}
 
@@ -332,12 +339,45 @@ void FlashMovieRenderer::renderCharacter(
 	Ref< FlashSpriteInstance > spriteInstance = dynamic_type_cast< FlashSpriteInstance* >(characterInstance);
 	if (spriteInstance)
 	{
+		FlashSpriteInstance* maskInstance = spriteInstance->getMask();
+		if (maskInstance)
+		{
+			m_displayRenderer->beginMask(true);
+
+			renderSprite(
+				movie,
+				maskInstance,
+				transform * maskInstance->getTransform(),
+				maskInstance->getColorTransform(),
+				true
+			);
+
+			m_displayRenderer->endMask();
+		}
+
 		renderSprite(
 			movie,
 			spriteInstance,
-			transform,
-			concateCxTransform(cxTransform, characterInstance->getColorTransform())
+			transform * spriteInstance->getTransform(),
+			concateCxTransform(cxTransform, spriteInstance->getColorTransform()),
+			false
 		);
+
+		if (maskInstance)
+		{
+			m_displayRenderer->beginMask(false);
+
+			renderSprite(
+				movie,
+				maskInstance,
+				transform * maskInstance->getTransform(),
+				maskInstance->getColorTransform(),
+				true
+			);
+
+			m_displayRenderer->endMask();
+		}
+
 		return;
 	}
 }

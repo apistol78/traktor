@@ -103,7 +103,7 @@ void Tween::yoyo()
 
 void Tween::onFrame(CallArgs& ca)
 {
-	if (!m_function || !m_property || !m_playing)
+	if (!m_function || !m_property || !m_playing || m_duration <= 0.0f)
 		return;
 
 	avm_number_t time = ca.args[0].getNumberSafe();

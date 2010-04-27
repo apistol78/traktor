@@ -62,6 +62,14 @@ public:
 
 	SwfRect getLocalBounds() const;
 
+	void setMask(FlashSpriteInstance* maskInstance);
+
+	FlashSpriteInstance* getMask();
+
+	int32_t getMouseX() const { return m_mouseX; }
+
+	int32_t getMouseY() const { return m_mouseY; }
+
 	virtual bool getMember(const std::wstring& memberName, ActionValue& outMemberValue) const;
 
 	virtual void eventInit(const IActionVM* actionVM);
@@ -82,13 +90,10 @@ public:
 
 	virtual SwfRect getBounds() const;
 
-	inline int32_t getMouseX() const { return m_mouseX; }
-
-	inline int32_t getMouseY() const { return m_mouseY; }
-
 private:
 	Ref< const FlashSprite > m_sprite;
 	FlashDisplayList m_displayList;
+	Ref< FlashSpriteInstance > m_mask;
 	uint32_t m_currentFrame;
 	uint32_t m_nextFrame;
 	uint32_t m_lastUpdateFrame;
@@ -101,6 +106,7 @@ private:
 	bool m_gotoIssued;
 	int32_t m_mouseX;
 	int32_t m_mouseY;
+	int32_t m_maskCount;
 
 	void executeScriptEvent(const IActionVM* actionVM, const std::wstring& eventName);
 };

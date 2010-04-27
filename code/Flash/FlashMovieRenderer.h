@@ -45,7 +45,8 @@ private:
 		FlashMovie* movie,
 		FlashSpriteInstance* spriteInstance,
 		const Matrix33& transform,
-		const SwfCxTransform& cxTransform
+		const SwfCxTransform& cxTransform,
+		bool renderAsMask
 	);
 
 	void renderCharacter(
