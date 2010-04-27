@@ -474,13 +474,16 @@ void AsMovieClip::MovieClip_prevFrame(CallArgs& ca)
 void AsMovieClip::MovieClip_removeMovieClip(CallArgs& ca)
 {
 	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
-	Ref< FlashSpriteInstance > parentClipInstance = checked_type_cast< FlashSpriteInstance* >(movieClipInstance->getParent());
+	FlashSpriteInstance* parentClipInstance = checked_type_cast< FlashSpriteInstance*, false >(movieClipInstance->getParent());
 	FlashDisplayList& displayList = parentClipInstance->getDisplayList();
 	displayList.removeObject(movieClipInstance);
 }
 
 void AsMovieClip::MovieClip_setMask(CallArgs& ca)
 {
+	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
+	Ref< FlashSpriteInstance > maskInstance = ca.args[0].getObjectSafe< FlashSpriteInstance >();
+	movieClipInstance->setMask(maskInstance);
 }
 
 void AsMovieClip::MovieClip_startDrag(CallArgs& ca)
@@ -500,7 +503,7 @@ void AsMovieClip::MovieClip_stopDrag(CallArgs& ca)
 void AsMovieClip::MovieClip_swapDepths(CallArgs& ca)
 {
 	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
-	Ref< FlashSpriteInstance > parentClipInstance = checked_type_cast< FlashSpriteInstance* >(movieClipInstance->getParent());
+	FlashSpriteInstance* parentClipInstance = checked_type_cast< FlashSpriteInstance*, false >(movieClipInstance->getParent());
 
 	// Get my own current depth.
 	int32_t depth = parentClipInstance->getDisplayList().getObjectDepth(movieClipInstance);

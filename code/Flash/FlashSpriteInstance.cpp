@@ -31,6 +31,7 @@ FlashSpriteInstance::FlashSpriteInstance(ActionContext* context, FlashCharacterI
 ,	m_gotoIssued(false)
 ,	m_mouseX(0)
 ,	m_mouseY(0)
+,	m_maskCount(0)
 {
 	T_ASSERT (m_sprite->getFrameCount() > 0);
 	updateDisplayList();
@@ -209,7 +210,7 @@ void FlashSpriteInstance::setVisible(bool visible)
 
 bool FlashSpriteInstance::isVisible() const
 {
-	return m_visible;
+	return m_visible && m_maskCount == 0;
 }
 
 Ref< FlashSpriteInstance > FlashSpriteInstance::clone() const
@@ -238,6 +239,19 @@ SwfRect FlashSpriteInstance::getLocalBounds() const
 	}
 
 	return bounds;
+}
+
+void FlashSpriteInstance::setMask(FlashSpriteInstance* mask)
+{
+	if (m_mask)
+		m_mask->m_maskCount--;
+	if ((m_mask = mask) != 0)
+		m_mask->m_maskCount++;
+}
+
+FlashSpriteInstance* FlashSpriteInstance::getMask()
+{
+	return m_mask;
 }
 
 bool FlashSpriteInstance::getMember(const std::wstring& memberName, ActionValue& outMemberValue) const
