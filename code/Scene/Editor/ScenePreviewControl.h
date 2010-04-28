@@ -56,9 +56,9 @@ public:
 private:
 	enum SplitType
 	{
-		StSingle,
-		StDouble,
-		StQuadruple
+		StSingle = 1,
+		StDouble = 2,
+		StQuadruple = 4
 	};
 
 	Ref< ui::custom::ToolBar > m_toolBarActions;
@@ -67,7 +67,7 @@ private:
 	Ref< ui::custom::ToolBarButton > m_toolToggleY;
 	Ref< ui::custom::ToolBarButton > m_toolToggleZ;
 	Ref< ui::custom::ToolBarButton > m_toolToggleSnap;
-	SplitType m_splitType;
+	int32_t m_splitCount;
 	Ref< ui::Widget > m_splitterRenderControls;
 	RefArray< ISceneRenderControl > m_renderControls;
 	Ref< ui::EventHandler > m_idleHandler;

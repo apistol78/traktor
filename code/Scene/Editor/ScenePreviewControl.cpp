@@ -39,6 +39,7 @@
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyBoolean.h"
+#include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/Settings.h"
 #include "Core/Log/Log.h"
 
@@ -54,7 +55,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.ScenePreviewControl", ScenePreviewControl, ui::Widget)
 
 ScenePreviewControl::ScenePreviewControl()
-:	m_splitType(StQuadruple)
+:	m_splitCount(StQuadruple)
 ,	m_lastDeltaTime(0.0f)
 ,	m_lastPhysicsTime(0.0f)
 {
@@ -115,6 +116,8 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 	m_context = context;
 	m_context->setModifier(m_modifierTranslate);
 
+	m_splitCount = settings->getProperty< PropertyInteger >(L"SceneEditor.SplitCount", 4);
+
 	updateRenderControls();
 	updateEditState();
 
@@ -144,6 +147,7 @@ void ScenePreviewControl::destroy()
 	settings->setProperty< PropertyBoolean >(L"SceneEditor.ToggleY", m_toolToggleY->isToggled());
 	settings->setProperty< PropertyBoolean >(L"SceneEditor.ToggleZ", m_toolToggleZ->isToggled());
 	settings->setProperty< PropertyBoolean >(L"SceneEditor.ToggleSnap", m_toolToggleSnap->isToggled());
+	settings->setProperty< PropertyInteger >(L"SceneEditor.SplitCount", m_splitCount);
 
 	// Destroy render controls.
 	for (RefArray< ISceneRenderControl >::iterator i = m_renderControls.begin(); i != m_renderControls.end(); ++i)
@@ -217,17 +221,17 @@ bool ScenePreviewControl::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"Scene.Editor.SingleView")
 	{
-		m_splitType = StSingle;
+		m_splitCount = StSingle;
 		updateRenderControls();
 	}
 	else if (command == L"Scene.Editor.DoubleView")
 	{
-		m_splitType = StDouble;
+		m_splitCount = StDouble;
 		updateRenderControls();
 	}
 	else if (command == L"Scene.Editor.QuadrupleView")
 	{
-		m_splitType = StQuadruple;
+		m_splitCount = StQuadruple;
 		updateRenderControls();
 	}
 	else
@@ -303,7 +307,7 @@ void ScenePreviewControl::updateRenderControls()
 		m_splitterRenderControls = 0;
 	}
 
-	if (m_splitType == StSingle)
+	if (m_splitCount == StSingle)
 	{
 		m_renderControls.resize(1);
 
@@ -315,7 +319,7 @@ void ScenePreviewControl::updateRenderControls()
 		))
 			m_renderControls[0] = renderControl;
 	}
-	else if (m_splitType == StDouble)
+	else if (m_splitCount == StDouble)
 	{
 		Ref< ui::custom::Splitter > doubleSplitter = new ui::custom::Splitter();
 		doubleSplitter->create(this, true, 50, true);
@@ -334,7 +338,7 @@ void ScenePreviewControl::updateRenderControls()
 
 		m_splitterRenderControls = doubleSplitter;
 	}
-	else if (m_splitType == StQuadruple)
+	else if (m_splitCount == StQuadruple)
 	{
 		Ref< ui::custom::QuadSplitter > quadSplitter = new ui::custom::QuadSplitter();
 		quadSplitter->create(this, ui::Point(50, 50), true);
