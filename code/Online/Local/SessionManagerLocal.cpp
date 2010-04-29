@@ -84,6 +84,16 @@ bool SessionManagerLocal::create()
 		}
 	}
 
+	if (!m_db->tableExists(L"SaveGames"))
+	{
+		// Create save games table.
+		if (m_db->executeUpdate(L"create table SaveGames (id integer primary key, name varchar(250), attachment varchar(4096))") < 0)
+		{
+			log::error << L"Unable to create local session manager; unable to create table SaveGames" << Endl;
+			return false;
+		}
+	}
+
 	// Get user identity in database.
 	int32_t userId;
 
