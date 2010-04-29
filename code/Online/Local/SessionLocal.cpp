@@ -1,3 +1,7 @@
+#include "Core/Io/DynamicMemoryStream.h"
+#include "Core/Misc/Base64.h"
+#include "Core/Serialization/BinarySerializer.h"
+#include "Online/Local/SaveGameLocal.h"
 #include "Online/Local/SessionLocal.h"
 #include "Online/Local/UserLocal.h"
 #include "Sql/IConnection.h"
@@ -80,12 +84,38 @@ bool SessionLocal::getStatValue(const std::wstring& statId, float& outValue)
 
 Ref< ISaveGame > SessionLocal::createSaveGame(const std::wstring& name, ISerializable* attachment)
 {
-	return 0;
+	DynamicMemoryStream dms(false, true);
+	BinarySerializer(&dms).writeObject(attachment);
+	std::wstring ab64 = Base64().encode(dms.getBuffer(), false);
+	
+	if (m_db->executeUpdate(L"insert into SaveGames (name, attachment) values ('" + name + L"', '" + ab64 + L"')") < 0)
+		return 0;
+
+	return new SaveGameLocal(
+		m_db,
+		m_db->lastInsertId(),
+		name
+	);
 }
 
 bool SessionLocal::getAvailableSaveGames(RefArray< ISaveGame >& outSaveGames) const
 {
-	return false;
+	Ref< sql::IResultSet > rs;
+
+	rs = m_db->executeQuery(L"select id, name from SaveGames");
+	if (!rs)
+		return false;
+
+	while (rs->next())
+	{
+		outSaveGames.push_back(new SaveGameLocal(
+			m_db,
+			rs->getInt32(0),
+			rs->getString(1)
+		));
+	}
+
+	return true;
 }
 
 	}
