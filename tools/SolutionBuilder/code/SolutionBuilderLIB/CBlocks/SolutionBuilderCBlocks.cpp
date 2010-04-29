@@ -198,9 +198,7 @@ bool SolutionBuilderCBlocks::generate(Solution* solution)
 				else
 					os << L"<Add option=\"-O3\" />" << Endl;
 
-				if (configuration->getTargetFormat() == Configuration::TfSharedLibrary)
-					os << L"<Add option=\"-fPIC\" />" << Endl;
-
+				os << L"<Add option=\"-fPIC\" />" << Endl;
 				os << L"<Add option=\"-DUNICODE\" />" << Endl;
 				os << L"<Add option=\"-D_UNICODE\" />" << Endl;
 			}
