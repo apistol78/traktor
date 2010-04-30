@@ -17,6 +17,7 @@ CgShader::CgShader(ShaderType shaderType)
 :	m_shaderType(shaderType)
 ,	m_uniformAllocated(256, false)
 ,	m_nextTemporaryVariable(0)
+,	m_nextStage(0)
 {
 	pushScope();
 	pushOutputStream(BtUniform, new StringOutputStream());
@@ -101,13 +102,22 @@ void CgShader::popScope()
 	m_variables.pop_back();
 }
 
-uint32_t CgShader::addSamplerTexture(const std::wstring& textureName)
+bool CgShader::defineSamplerTexture(const std::wstring& textureName, int32_t& outStage)
 {
-	m_samplerTextures.push_back(textureName);
-	return uint32_t(m_samplerTextures.size() - 1);
+	std::map< std::wstring, int32_t >::iterator i = m_samplerTextures.find(textureName);
+	if (i != m_samplerTextures.end())
+	{
+		outStage = i->second;
+		return false;
+	}
+
+	outStage = m_nextStage++;
+	m_samplerTextures.insert(std::make_pair(textureName, outStage));
+
+	return true;
 }
 
-const std::vector< std::wstring >& CgShader::getSamplerTextures() const
+const std::map< std::wstring, int32_t >& CgShader::getSamplerTextures() const
 {
 	return m_samplerTextures;
 }

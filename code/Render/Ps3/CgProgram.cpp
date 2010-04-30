@@ -12,8 +12,8 @@ CgProgram::CgProgram()
 CgProgram::CgProgram(
 	const std::wstring& vertexShader,
 	const std::wstring& pixelShader,
-	const std::vector< std::wstring >& vertexTextures,
-	const std::vector< std::wstring >& pixelTextures,
+	const std::map< std::wstring, int32_t >& vertexTextures,
+	const std::map< std::wstring, int32_t >& pixelTextures,
 	const RenderState& renderState
 )
 :	m_vertexShader(vertexShader)
@@ -34,12 +34,12 @@ const std::wstring& CgProgram::getPixelShader() const
 	return m_pixelShader;
 }
 
-const std::vector< std::wstring >& CgProgram::getVertexTextures() const
+const std::map< std::wstring, int32_t >& CgProgram::getVertexTextures() const
 {
 	return m_vertexTextures;
 }
 
-const std::vector< std::wstring >& CgProgram::getPixelTextures() const
+const std::map< std::wstring, int32_t >& CgProgram::getPixelTextures() const
 {
 	return m_pixelTextures;
 }

@@ -46,6 +46,22 @@ std::wstring cg_type_name(CgType type)
 	return c[type];
 }
 
+int32_t cg_type_width(CgType type)
+{
+	const int32_t c_widths[] =
+	{
+		0,
+		0,
+		1,
+		2,
+		3,
+		4,
+		0,
+		0
+	};
+	return c_widths[type];
+}
+
 CgType cg_from_data_type(DataType type)
 {
 	const CgType c[] =

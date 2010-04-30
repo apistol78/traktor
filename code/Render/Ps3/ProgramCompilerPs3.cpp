@@ -180,25 +180,23 @@ bool collectScalarParameters(
 }
 
 bool collectSamplerParameters(
-	const std::vector< std::wstring >& samplerTextures,
+	const std::map< std::wstring, int32_t >& samplerTextures,
 	std::vector< ProgramSampler >& outSamplers,
 	std::map< std::wstring, uint32_t >& outTextureParameterMap,
 	uint32_t& outOffset
 )
 {
-	for (uint32_t i = 0; i < uint32_t(samplerTextures.size()); ++i)
+	for (std::map< std::wstring, int32_t >::const_iterator i = samplerTextures.begin(); i != samplerTextures.end(); ++i)
 	{
-		const std::wstring& texture = samplerTextures[i];
-
 		ProgramSampler sampler;
-		sampler.stage = i;
+		sampler.stage = i->second;
 		sampler.texture = outOffset;
 
-		std::map< std::wstring, uint32_t >::const_iterator j = outTextureParameterMap.find(texture);
+		std::map< std::wstring, uint32_t >::const_iterator j = outTextureParameterMap.find(i->first);
 		if (j != outTextureParameterMap.end())
 			sampler.texture = j->second;
 		else
-			outTextureParameterMap[texture] = outOffset++;
+			outTextureParameterMap[i->first] = outOffset++;
 
 		outSamplers.push_back(sampler);
 	}

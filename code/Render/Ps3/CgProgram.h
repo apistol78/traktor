@@ -20,8 +20,8 @@ public:
 	CgProgram(
 		const std::wstring& vertexShader,
 		const std::wstring& pixelShader,
-		const std::vector< std::wstring >& vertexTextures,
-		const std::vector< std::wstring >& pixelTextures,
+		const std::map< std::wstring, int32_t >& vertexTextures,
+		const std::map< std::wstring, int32_t >& pixelTextures,
 		const RenderState& renderState
 	);
 
@@ -29,17 +29,17 @@ public:
 
 	const std::wstring& getPixelShader() const;
 
-	const std::vector< std::wstring >& getVertexTextures() const;
+	const std::map< std::wstring, int32_t >& getVertexTextures() const;
 
-	const std::vector< std::wstring >& getPixelTextures() const;
+	const std::map< std::wstring, int32_t >& getPixelTextures() const;
 
 	const RenderState& getRenderState() const;
 
 private:
 	std::wstring m_vertexShader;
 	std::wstring m_pixelShader;
-	std::vector< std::wstring > m_vertexTextures;
-	std::vector< std::wstring > m_pixelTextures;
+	std::map< std::wstring, int32_t > m_vertexTextures;
+	std::map< std::wstring, int32_t > m_pixelTextures;
 	RenderState m_renderState;
 };
 

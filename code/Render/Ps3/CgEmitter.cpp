@@ -402,23 +402,35 @@ bool emitInterpolator(CgContext& cx, Interpolator* node)
 
 	cx.enterPixel();
 
-	int32_t interpolatorId = cx.allocateInterpolator();
-	std::wstring interpolator = L"Attr" + toString(interpolatorId);
+	int32_t interpolatorWidth = cg_type_width(in->getType());
+	if (!interpolatorWidth)
+		return false;
 
-	StringOutputStream& fo = cx.getVertexShader().getOutputStream(CgShader::BtOutput);
-	fo << cg_type_name(in->getType()) << L" " << interpolator << L" : TEXCOORD" << interpolatorId << L";" << Endl;
+	int32_t interpolatorId;
+	int32_t interpolatorOffset;
 
-	StringOutputStream& fb = cx.getVertexShader().getOutputStream(CgShader::BtBody);
-	fb << L"o." << interpolator << L" = " << in->getName() << L";" << Endl;
+	bool declare = cx.allocateInterpolator(interpolatorWidth, interpolatorId, interpolatorOffset);
+
+	std::wstring interpolatorName = L"Attr" + toString(interpolatorId);
+	std::wstring interpolatorMask = interpolatorName + L"." + std::wstring(L"xyzw").substr(interpolatorOffset, interpolatorWidth);
+
+	StringOutputStream& vfb = cx.getVertexShader().getOutputStream(CgShader::BtBody);
+	vfb << L"o." << interpolatorMask << L" = " << in->getName() << L";" << Endl;
 
 	cx.getPixelShader().createOuterVariable(
 		node->findOutputPin(L"Output"),
-		L"i." + interpolator,
+		L"i." + interpolatorMask,
 		in->getType()
 	);
 
-	StringOutputStream& fpi = cx.getPixelShader().getOutputStream(CgShader::BtInput);
-	fpi << cg_type_name(in->getType()) << L" " << interpolator << L" : TEXCOORD" << interpolatorId << L";" << Endl;
+	if (declare)
+	{
+		StringOutputStream& vfo = cx.getVertexShader().getOutputStream(CgShader::BtOutput);
+		vfo << L"float4 " << interpolatorName << L" : TEXCOORD" << interpolatorId << L";" << Endl;
+
+		StringOutputStream& pfi = cx.getPixelShader().getOutputStream(CgShader::BtInput);
+		pfi << L"float4 " << interpolatorName << L" : TEXCOORD" << interpolatorId << L";" << Endl;
+	}
 
 	return true;
 }
@@ -868,8 +880,35 @@ bool emitSampler(CgContext& cx, Sampler* node)
 
 	CgVariable* out = cx.emitOutput(node, L"Output", CtFloat4);
 
-	std::wstring samplerName = out->getName() + L"_sampler";
-	std::wstring textureName = texture->getName();
+	int32_t stage;
+	bool defineSampler = cx.getShader().defineSamplerTexture(texture->getName(), stage);
+	std::wstring samplerName = L"sampler_" + toString(stage);
+
+	if (defineSampler)
+	{
+		StringOutputStream& fu = cx.getShader().getOutputStream(CgShader::BtUniform);
+		fu << L"sampler " << samplerName << L" : register(s" << stage << L");" << Endl;
+
+		RenderState& rs = cx.getRenderState();
+		SamplerState& ss = rs.samplerStates[stage];
+
+		bool minLinear = node->getMinFilter() != Sampler::FtPoint;
+		bool mipLinear = node->getMipFilter() != Sampler::FtPoint;
+
+		if (!minLinear && !mipLinear)
+			ss.minFilter = CELL_GCM_TEXTURE_NEAREST;
+		else if (!minLinear && mipLinear)
+			ss.minFilter = CELL_GCM_TEXTURE_NEAREST_LINEAR;
+		else if (minLinear && !mipLinear)
+			ss.minFilter = CELL_GCM_TEXTURE_LINEAR_NEAREST;
+		else
+			ss.minFilter = CELL_GCM_TEXTURE_LINEAR_LINEAR;
+
+		ss.magFilter = gcmFilter[node->getMagFilter()];
+		ss.wrapU = gcmAddress[node->getAddressU()];
+		ss.wrapV = gcmAddress[node->getAddressV()];
+		ss.wrapW = gcmAddress[node->getAddressW()];
+	}
 
 	if (cx.inPixel())
 	{
@@ -905,31 +944,6 @@ bool emitSampler(CgContext& cx, Sampler* node)
 			break;
 		}
 	}
-
-	uint32_t stage = cx.getShader().addSamplerTexture(textureName);
-
-	StringOutputStream& fu = cx.getShader().getOutputStream(CgShader::BtUniform);
-	fu << L"sampler " << samplerName << L" : register(s" << stage << L");" << Endl;
-	
-	RenderState& rs = cx.getRenderState();
-	SamplerState& ss = rs.samplerStates[stage];
-
-	bool minLinear = node->getMinFilter() != Sampler::FtPoint;
-	bool mipLinear = node->getMipFilter() != Sampler::FtPoint;
-
-	if (!minLinear && !mipLinear)
-		ss.minFilter = CELL_GCM_TEXTURE_NEAREST;
-	else if (!minLinear && mipLinear)
-		ss.minFilter = CELL_GCM_TEXTURE_NEAREST_LINEAR;
-	else if (minLinear && !mipLinear)
-		ss.minFilter = CELL_GCM_TEXTURE_LINEAR_NEAREST;
-	else
-		ss.minFilter = CELL_GCM_TEXTURE_LINEAR_LINEAR;
-
-	ss.magFilter = gcmFilter[node->getMagFilter()];
-	ss.wrapU = gcmAddress[node->getAddressU()];
-	ss.wrapV = gcmAddress[node->getAddressV()];
-	ss.wrapW = gcmAddress[node->getAddressW()];
 
 	return true;
 }
