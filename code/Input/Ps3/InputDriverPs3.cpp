@@ -33,5 +33,10 @@ Ref< IInputDevice > InputDriverPs3::getDevice(int index)
 	return m_devices[index];
 }
 
+IInputDriver::UpdateResult InputDriverPs3::update()
+{
+	return UrOk;
+}
+
 	}
 }

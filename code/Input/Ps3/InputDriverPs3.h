@@ -30,6 +30,8 @@ public:
 
 	virtual Ref< IInputDevice > getDevice(int index);
 
+	virtual UpdateResult update();
+
 private:
 	RefArray< InputDevicePs3 > m_devices;
 };

@@ -37,6 +37,16 @@ bool SessionPsn::withdrawAchievement(const std::wstring& achievementId)
 	return false;
 }
 
+bool SessionPsn::setStatValue(const std::wstring& statId, float value)
+{
+	return false;
+}
+
+bool SessionPsn::getStatValue(const std::wstring& statId, float& outValue)
+{
+	return false;
+}
+
 Ref< ISaveGame > SessionPsn::createSaveGame(const std::wstring& name, ISerializable* attachment)
 {
 	return 0;
