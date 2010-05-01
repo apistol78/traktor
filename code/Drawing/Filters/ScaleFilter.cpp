@@ -30,11 +30,12 @@ Ref< Image > ScaleFilter::apply(const Image* image)
 {
 	Ref< Image > final = new Image(image->getPixelFormat(), m_width, m_height, image->getPalette());
 	Color in, out;
+	Color c1, c2;
 
 	float sx = image->getWidth() / float(m_width);
 	float sy = image->getHeight() / float(m_height);
 
-	std::vector< Color > row(image->getWidth() + 1);
+	std::vector< Color > row(image->getWidth() + 1, Color(0, 0, 0, 0));
 
 	for (int32_t y = 0; y < m_height; ++y)
 	{
@@ -51,7 +52,6 @@ Ref< Image > ScaleFilter::apply(const Image* image)
 				int yy = int(std::floor(y * sy));
 				for (int32_t x = 0; x < image->getWidth(); ++x)
 				{
-					Color c1, c2;
 					image->getPixel(x, yy, c1);
 					image->getPixel(x, yy + 1, c2);
 					row[x] = c1 + (c2 - c1) * (y * sy - yy);
@@ -70,26 +70,29 @@ Ref< Image > ScaleFilter::apply(const Image* image)
 			{
 				int y1 = int(std::floor(y * sy));
 				int y2 = int(std::floor(y * sy + sy));
+				
+				float denom = 1.0f / float(y2 - y1);
+								
 				for (int32_t x = 0; x < image->getWidth(); ++x)
 				{
 					bool zeroAlpha = false;
-				
+
 					row[x] = Color(0, 0, 0, 0);
+				
 					for (int32_t yy = y1; yy < y2; ++yy)
 					{
-						Color c;
-						image->getPixel(x, yy, c);
+						image->getPixel(x, yy, c1);
 						
 						if (m_keepZeroAlpha)
 						{
-							if (c.getAlpha() <= FUZZY_EPSILON)
+							if (c1.getAlpha() <= FUZZY_EPSILON)
 								zeroAlpha = true;
 						}
 						
-						row[x] += c;
+						row[x] += c1;
 					}
 					
-					row[x] /= float(y2 - y1);
+					row[x] *= denom;
 					
 					if (zeroAlpha)
 						row[x].setAlpha(0.0f);
