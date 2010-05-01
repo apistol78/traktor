@@ -1,4 +1,6 @@
-#include <intrin.h>
+#if !defined(WINCE)
+#	include <intrin.h>
+#endif
 #include "Core/Platform.h"
 #include "Core/Thread/Atomic.h"
 #include "Core/Thread/Semaphore.h"
@@ -8,17 +10,29 @@ namespace traktor
 
 int32_t Atomic::increment(int32_t& value)
 {
+#if !defined(WINCE)
 	return _InterlockedIncrement((LPLONG)&value);
+#else
+	return InterlockedIncrement((LPLONG)&value);
+#endif
 }
 
 int32_t Atomic::decrement(int32_t& value)
 {
+#if !defined(WINCE)
 	return _InterlockedDecrement((LPLONG)&value);
+#else
+	return InterlockedDecrement((LPLONG)&value);
+#endif
 }
 
 uint32_t Atomic::exchange(uint32_t& s, uint32_t v)
 {
+#if !defined(WINCE)
 	LONG p = _InterlockedExchange((LPLONG)&s, *(LPLONG)&v);
+#else
+	LONG p = InterlockedExchange((LPLONG)&s, *(LPLONG)&v);
+#endif
 	return *(uint32_t*)&p;
 }
 

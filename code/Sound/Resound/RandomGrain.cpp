@@ -1,4 +1,8 @@
-#include <ctime>
+#if !defined(WINCE)
+#	include <ctime>
+#else
+#	include <time_ce.h>
+#endif
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRefArray.h"
 #include "Sound/ISoundBuffer.h"
@@ -28,7 +32,11 @@ struct RandomGrainCursor : public RefCountImpl< ISoundBufferCursor >
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.RandomGrain", 1, RandomGrain, IGrain)
 
 RandomGrain::RandomGrain()
+#if !defined(WINCE)
 :	m_random(uint32_t(clock()))
+#else
+:	m_random(uint32_t(clock_ce()))
+#endif
 ,	m_humanize(false)
 ,	m_last(-1)
 {
