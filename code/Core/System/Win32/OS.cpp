@@ -194,6 +194,7 @@ OS::envmap_t OS::getEnvironment() const
 {
 	envmap_t envmap;
 
+#if !defined(WINCE)
 	LPTCH lpEnv = GetEnvironmentStrings();
 	if (lpEnv)
 	{
@@ -217,6 +218,7 @@ OS::envmap_t OS::getEnvironment() const
 			p = val + _tcslen(val) + 1;
 		}
 	}
+#endif
 
 	return envmap;
 }
@@ -331,12 +333,11 @@ Ref< IProcess > OS::execute(
 	DWORD dwCreationFlags;
 #if !defined(WINCE)
 	dwCreationFlags = mute ? CREATE_NO_WINDOW : CREATE_NEW_CONSOLE;
+	if (environment.ptr())
+		dwCreationFlags |= CREATE_UNICODE_ENVIRONMENT;
 #else
 	dwCreationFlags = mute ? 0 : CREATE_NEW_CONSOLE;
 #endif
-
-	if (environment.ptr())
-		dwCreationFlags |= CREATE_UNICODE_ENVIRONMENT;
 
 	BOOL result = CreateProcess(
 		NULL,

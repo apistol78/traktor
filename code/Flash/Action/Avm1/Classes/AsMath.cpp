@@ -73,62 +73,62 @@ ActionValue AsMath::construct(ActionContext* context, const ActionValueArray& ar
 void AsMath::Math_abs(CallArgs& ca)
 {
 	avm_number_t n = ca.args[0].getNumberSafe();
-	ca.ret = ActionValue(std::fabs(n));
+	ca.ret = ActionValue((avm_number_t)std::fabs(n));
 }
 
 void AsMath::Math_acos(CallArgs& ca)
 {
 	avm_number_t n = ca.args[0].getNumberSafe();
-	ca.ret = ActionValue(std::acos(n));
+	ca.ret = ActionValue((avm_number_t)std::acos(n));
 }
 
 void AsMath::Math_asin(CallArgs& ca)
 {
 	avm_number_t n = ca.args[0].getNumberSafe();
-	ca.ret = ActionValue(std::asin(n));
+	ca.ret = ActionValue((avm_number_t)std::asin(n));
 }
 
 void AsMath::Math_atan(CallArgs& ca)
 {
 	avm_number_t n = ca.args[0].getNumberSafe();
-	ca.ret = ActionValue(std::atan(n));
+	ca.ret = ActionValue((avm_number_t)std::atan(n));
 }
 
 void AsMath::Math_atan2(CallArgs& ca)
 {
 	avm_number_t x = ca.args[0].getNumberSafe();
 	avm_number_t y = ca.args[1].getNumberSafe();
-	ca.ret = ActionValue(std::atan2(x, y));
+	ca.ret = ActionValue((avm_number_t)std::atan2(x, y));
 }
 
 void AsMath::Math_ceil(CallArgs& ca)
 {
 	avm_number_t n = ca.args[0].getNumberSafe();
-	ca.ret = ActionValue(std::ceil(n));
+	ca.ret = ActionValue((avm_number_t)std::ceil(n));
 }
 
 void AsMath::Math_cos(CallArgs& ca)
 {
 	avm_number_t n = ca.args[0].getNumberSafe();
-	ca.ret = ActionValue(std::cos(n));
+	ca.ret = ActionValue((avm_number_t)std::cos(n));
 }
 
 void AsMath::Math_exp(CallArgs& ca)
 {
 	avm_number_t n = ca.args[0].getNumberSafe();
-	ca.ret = ActionValue(std::exp(n));
+	ca.ret = ActionValue((avm_number_t)std::exp(n));
 }
 
 void AsMath::Math_floor(CallArgs& ca)
 {
 	avm_number_t n = ca.args[0].getNumberSafe();
-	ca.ret = ActionValue(std::floor(n));
+	ca.ret = ActionValue((avm_number_t)std::floor(n));
 }
 
 void AsMath::Math_log(CallArgs& ca)
 {
 	avm_number_t n = ca.args[0].getNumberSafe();
-	ca.ret = ActionValue(std::log(n));
+	ca.ret = ActionValue((avm_number_t)std::log(n));
 }
 
 void AsMath::Math_max(CallArgs& ca)
@@ -159,7 +159,7 @@ void AsMath::Math_pow(CallArgs& ca)
 {
 	avm_number_t b = ca.args[0].getNumberSafe();
 	avm_number_t e = ca.args[1].getNumberSafe();
-	ca.ret = ActionValue(std::pow(b, e));
+	ca.ret = ActionValue((avm_number_t)std::pow(b, e));
 }
 
 void AsMath::Math_random(CallArgs& ca)
@@ -170,7 +170,7 @@ void AsMath::Math_random(CallArgs& ca)
 void AsMath::Math_round(CallArgs& ca)
 {
 	avm_number_t x = ca.args[0].getNumberSafe();
-	avm_number_t f = std::abs(x);
+	avm_number_t f = (avm_number_t)std::abs(x);
 
 	if (f - int(f) >= 0.5)
 		f += 1.0;
@@ -184,19 +184,19 @@ void AsMath::Math_round(CallArgs& ca)
 void AsMath::Math_sin(CallArgs& ca)
 {
 	avm_number_t n = ca.args[0].getNumberSafe();
-	ca.ret = ActionValue(std::sin(n));
+	ca.ret = ActionValue((avm_number_t)std::sin(n));
 }
 
 void AsMath::Math_sqrt(CallArgs& ca)
 {
 	avm_number_t n = ca.args[0].getNumberSafe();
-	ca.ret = ActionValue(std::sqrt(n));
+	ca.ret = ActionValue((avm_number_t)std::sqrt(n));
 }
 
 void AsMath::Math_tan(CallArgs& ca)
 {
 	avm_number_t n = ca.args[0].getNumberSafe();
-	ca.ret = ActionValue(std::tan(n));
+	ca.ret = ActionValue((avm_number_t)std::tan(n));
 }
 
 	}

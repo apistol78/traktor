@@ -13,7 +13,11 @@ UserWidgetWin32::UserWidgetWin32(EventSubject* owner)
 bool UserWidgetWin32::create(IWidget* parent, int style)
 {
 	DWORD dwStyle = WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
+#if !defined(WINCE)
 	DWORD dwStyleEx = WS_EX_CONTROLPARENT;
+#else
+	DWORD dwStyleEx = 0;
+#endif
 
 	if (style & WsBorder)
 		dwStyle |= WS_BORDER;
