@@ -1,13 +1,16 @@
-#include "Mesh/Editor/MeshAssetWizardTool.h"
-#include "Mesh/Editor/MeshAsset.h"
-#include "Editor/IEditor.h"
-#include "Database/Group.h"
-#include "Database/Instance.h"
-#include "Ui/FileDialog.h"
-#include "Ui/MessageBox.h"
-#include "I18N/Text.h"
+#include "Core/Io/FileSystem.h"
 #include "Core/Misc/String.h"
 #include "Core/Log/Log.h"
+#include "Core/Settings/PropertyString.h"
+#include "Core/Settings/Settings.h"
+#include "Database/Group.h"
+#include "Database/Instance.h"
+#include "Editor/IEditor.h"
+#include "I18N/Text.h"
+#include "Mesh/Editor/MeshAsset.h"
+#include "Mesh/Editor/MeshAssetWizardTool.h"
+#include "Ui/FileDialog.h"
+#include "Ui/MessageBox.h"
 
 namespace traktor
 {
@@ -35,6 +38,14 @@ bool MeshAssetWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db
 		return true;
 	}
 	fileDialog.destroy();
+
+	// Create path relative to asset path.
+	std::wstring assetPath = editor->getSettings()->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
+	FileSystem::getInstance().getRelativePath(
+		FileSystem::getInstance().getAbsolutePath(fileName),
+		FileSystem::getInstance().getAbsolutePath(assetPath),
+		fileName
+	);
 
 	// Create source asset.
 	Ref< MeshAsset > asset = new MeshAsset();
