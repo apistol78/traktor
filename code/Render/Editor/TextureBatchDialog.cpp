@@ -104,12 +104,16 @@ void TextureBatchDialog::addTexture()
 	}
 	fileDialog.destroy();
 
-	Path assetPath = m_editor->getSettings()->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
+	std::wstring assetPath = m_editor->getSettings()->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
 
 	for (std::vector< Path >::iterator i = fileNames.begin(); i != fileNames.end(); ++i)
 	{
 		Path texturePath;
-		if (!FileSystem::getInstance().getRelativePath(*i, assetPath, texturePath))
+		if (!FileSystem::getInstance().getRelativePath(
+			FileSystem::getInstance().getAbsolutePath(*i),
+			FileSystem::getInstance().getAbsolutePath(assetPath),
+			texturePath
+		))
 			texturePath = *i;
 
 		Ref< TextureAsset > asset = new TextureAsset();
