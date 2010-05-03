@@ -92,6 +92,9 @@ private:
 	std::map< uint64_t, ISerializable* > m_readCache;
 	std::map< ISerializable*, uint64_t > m_writeCache;
 	uint64_t m_nextCacheId;
+	std::vector< std::wstring > m_typeReadCache;
+	std::map< const TypeInfo*, uint32_t > m_typeWriteCache;
+	uint32_t m_nextTypeCacheId;
 };
 	
 }

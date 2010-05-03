@@ -59,13 +59,24 @@ struct GetBackSurfaceEnum
 	}
 };
 
+bool getDDPixelFormat(PixelFormatEnum pixelFormat, DDPIXELFORMAT& ddpf)
+{
+	std::memset(&ddpf, 0, sizeof(ddpf));
+	ddpf.dwSize = sizeof(ddpf);
+	ddpf.dwFlags = DDPF_RGB;
+	ddpf.dwRGBBitCount = getColorBits(pixelFormat);
+	ddpf.dwRBitMask = getRedMask(pixelFormat);
+	ddpf.dwGBitMask = getGreenMask(pixelFormat);
+	ddpf.dwBBitMask = getBlueMask(pixelFormat);
+	return true;
+}
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.graphics.GraphicsSystemDdWm5", GraphicsSystemDdWm5, IGraphicsSystem)
 
 GraphicsSystemDdWm5::GraphicsSystemDdWm5()
 :	m_hWnd(NULL)
-,	m_supportHardwareFlip(false)
 {
 	HRESULT hr = DirectDrawCreate(NULL, (IDirectDraw**)&m_dd.getAssign(), NULL);
 	T_ASSERT_M (SUCCEEDED(hr), translateError(hr));
@@ -79,88 +90,92 @@ bool GraphicsSystemDdWm5::getDisplayModes(std::vector< DisplayMode >& outDisplay
 
 bool GraphicsSystemDdWm5::create(const CreateDesc& createDesc)
 {
-	DDCAPS ddc;
 	DDSURFACEDESC ddsd;
 	HRESULT hr;
 
 	if (!(m_hWnd = (HWND)createDesc.windowHandle))
 		return false;
 
-	SetWindowPos(m_hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
-	ShowWindow(m_hWnd, SW_MAXIMIZE);
-	UpdateWindow(m_hWnd);
-
-	hr = m_dd->SetCooperativeLevel(m_hWnd, DDSCL_FULLSCREEN);
-	if (FAILED(hr))
-	{
-		log::error << L"Create graphics failed; unable to set cooperative level (" << translateError(hr) << L")" << Endl;
+	if (!getDDPixelFormat(createDesc.pixelFormat, m_ddPixelFormat))
 		return false;
-	}
 
-	hr = m_dd->SetDisplayMode(
-		createDesc.displayMode.width,
-		createDesc.displayMode.height,
-		createDesc.displayMode.bits,
-		0,
-		0
-	);
-	if (FAILED(hr))
-		log::warning << L"Create graphics failed; unable to set display mode (" << translateError(hr) << L")" << Endl;
-
-	std::memset(&ddc, 0, sizeof(ddc));
-	ddc.dwSize = sizeof(ddc);
-	m_dd->GetCaps(&ddc, NULL);
-
-	//m_supportHardwareFlip = (ddc.ddsCaps.dwCaps & DDSCAPS_BACKBUFFER) != 0;
-	//m_supportHardwareFlip &= (ddc.ddsCaps.dwCaps & DDSCAPS_FLIP) != 0;
-	//if (!m_supportHardwareFlip)
-	//	log::warning << L"Doesn't support hardware flip; performance might be poor" << Endl;
-
-	m_supportHardwareFlip = false;
-
-	if (m_supportHardwareFlip)
+	if (createDesc.fullScreen)
 	{
-		std::memset(&ddsd, 0, sizeof(ddsd));
-		ddsd.dwSize = sizeof(ddsd);
-		ddsd.dwFlags = DDSD_CAPS | DDSD_BACKBUFFERCOUNT;
-		ddsd.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE | DDSCAPS_FLIP;
-		ddsd.dwBackBufferCount = 1;
-
-		hr = m_dd->CreateSurface(&ddsd, &m_ddsPrimary.getAssign(), NULL);
+		hr = m_dd->SetCooperativeLevel(m_hWnd, DDSCL_FULLSCREEN);
 		if (FAILED(hr))
 		{
-			log::error << L"Create graphics failed; unable to create primary surface (" << translateError(hr) << L")" << Endl;
+			log::error << L"Create graphics failed; unable to set cooperative level (" << translateError(hr) << L")" << Endl;
 			return false;
 		}
 
-		GetBackSurfaceEnum callback;
-		m_ddsPrimary->EnumAttachedSurfaces(&callback, &GetBackSurfaceEnum::callback);
-		m_ddsSecondary = callback.m_ddBackSurface;
+		hr = m_dd->SetDisplayMode(
+			createDesc.displayMode.width,
+			createDesc.displayMode.height,
+			createDesc.displayMode.bits,
+			0,
+			0
+		);
+		if (FAILED(hr))
+		{
+			log::warning << L"Create graphics failed; unable to set display mode (" << translateError(hr) << L")" << Endl;
+			return false;
+		}
 	}
 	else
 	{
-		std::memset(&ddsd, 0, sizeof(ddsd));
-		ddsd.dwSize = sizeof(ddsd);
-		ddsd.dwFlags = DDSD_CAPS;
-		ddsd.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE;
-
-		hr = m_dd->CreateSurface(&ddsd, &m_ddsPrimary.getAssign(), NULL);
+		hr = m_dd->SetCooperativeLevel(m_hWnd, DDSCL_NORMAL);
 		if (FAILED(hr))
 		{
-			log::error << L"Create graphics failed; unable to create primary surface (" << translateError(hr) << L")" << Endl;
+			log::error << L"Create graphics failed; unable to set cooperative level (" << translateError(hr) << L")" << Endl;
+			return false;
+		}
+	}
+	std::memset(&ddsd, 0, sizeof(ddsd));
+	ddsd.dwSize = sizeof(ddsd);
+	ddsd.dwFlags = DDSD_CAPS;
+	ddsd.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE;
+
+	hr = m_dd->CreateSurface(&ddsd, &m_ddsPrimary.getAssign(), NULL);
+	if (FAILED(hr))
+	{
+		log::error << L"Create graphics failed; unable to create primary surface (" << translateError(hr) << L")" << Endl;
+		return false;
+	}
+
+	std::memset(&ddsd, 0, sizeof(ddsd));
+	ddsd.dwSize = sizeof(ddsd);
+	ddsd.dwFlags = DDSD_WIDTH | DDSD_HEIGHT | DDSD_PIXELFORMAT;
+	ddsd.dwWidth = createDesc.displayMode.width;
+	ddsd.dwHeight = createDesc.displayMode.height;
+	ddsd.ddpfPixelFormat = m_ddPixelFormat;
+
+	hr = m_dd->CreateSurface(&ddsd, &m_ddsSecondary.getAssign(), NULL);
+	if (FAILED(hr))
+	{
+		log::error << L"Create graphics failed; unable to create secondary surface (" << translateError(hr) << L")" << Endl;
+		return false;
+	}
+
+	if (!createDesc.fullScreen)
+	{
+		hr = m_dd->CreateClipper(0, &m_ddcClipper.getAssign(), NULL);
+		if (FAILED(hr))
+		{
+			log::error << L"Create graphics failed; unable to create clipper" << Endl;
 			return false;
 		}
 
-		std::memset(&ddsd, 0, sizeof(ddsd));
-		ddsd.dwSize = sizeof(ddsd);
-		ddsd.dwFlags = DDSD_WIDTH | DDSD_HEIGHT;
-		ddsd.dwWidth = createDesc.displayMode.width;
-		ddsd.dwHeight = createDesc.displayMode.height;
-
-		hr = m_dd->CreateSurface(&ddsd, &m_ddsSecondary.getAssign(), NULL);
+		hr = m_ddcClipper->SetHWnd(0, m_hWnd);
 		if (FAILED(hr))
 		{
-			log::error << L"Create graphics failed; unable to create secondary surface (" << translateError(hr) << L")" << Endl;
+			log::error << L"Create graphics failed, unable to set window handle to clipper" << Endl;
+			return false;
+		}
+
+		hr = m_ddsPrimary->SetClipper(m_ddcClipper);
+		if (FAILED(hr))
+		{
+			log::error << L"Create graphics failed, unable to set clipper on primary surface" << Endl;
 			return false;
 		}
 	}
@@ -172,6 +187,7 @@ bool GraphicsSystemDdWm5::create(const CreateDesc& createDesc)
 
 void GraphicsSystemDdWm5::destroy()
 {
+	m_ddcClipper.release();
 	m_ddsPrimary.release();
 	m_ddsSecondary.release();
 	m_dd.release();
@@ -179,7 +195,26 @@ void GraphicsSystemDdWm5::destroy()
 
 bool GraphicsSystemDdWm5::resize(int width, int height)
 {
-	return false;
+	DDSURFACEDESC ddsd;
+	HRESULT hr;
+
+	std::memset(&ddsd, 0, sizeof(ddsd));
+	ddsd.dwSize = sizeof(ddsd);
+	ddsd.dwFlags = DDSD_WIDTH | DDSD_HEIGHT | DDSD_PIXELFORMAT;
+	ddsd.dwWidth = width;
+	ddsd.dwHeight = height;
+	ddsd.ddpfPixelFormat = m_ddPixelFormat;
+
+	hr = m_dd->CreateSurface(&ddsd, &m_ddsSecondary.getAssign(), NULL);
+	if (FAILED(hr))
+	{
+		log::error << L"Create graphics failed; unable to create secondary surface (" << translateError(hr) << L")" << Endl;
+		return false;
+	}
+
+	m_secondary->swap(m_ddsSecondary);
+
+	return true;
 }
 
 Ref< ISurface > GraphicsSystemDdWm5::getPrimarySurface()
@@ -199,10 +234,20 @@ Ref< ISurface > GraphicsSystemDdWm5::createOffScreenSurface(const SurfaceDesc& s
 
 void GraphicsSystemDdWm5::flip(bool waitVBlank)
 {
-	if (m_supportHardwareFlip)
-		m_ddsPrimary->Flip(NULL, DDFLIP_WAITNOTBUSY);
-	else
-		m_ddsPrimary->Blt(NULL, m_ddsSecondary, NULL, DDBLT_WAITNOTBUSY, 0);
+	HRESULT hr;
+	//POINT offset = { 0, 0 };
+	//RECT rc;
+
+	//ClientToScreen(m_hWnd, &offset);
+	//GetClientRect(m_hWnd, &rc);
+	//OffsetRect(&rc, offset.x, offset.y);
+
+	for (;;)
+	{
+		hr = m_ddsPrimary->Blt(NULL, m_ddsSecondary, NULL, 0, NULL);
+		if (hr == DD_OK || hr != DDERR_WASSTILLDRAWING)
+			break;
+	}
 }
 
 	}

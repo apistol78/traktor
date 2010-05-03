@@ -18,7 +18,7 @@ bool SurfaceDdWm5::getSurfaceDesc(SurfaceDesc& surfaceDesc) const
 	DDSURFACEDESC ddsd;
 	HRESULT hr;
 
-	memset(&ddsd, 0, sizeof(ddsd));
+	std::memset(&ddsd, 0, sizeof(ddsd));
 	ddsd.dwSize = sizeof(ddsd);
 
 	hr = m_dds->GetSurfaceDesc(&ddsd);
@@ -37,10 +37,10 @@ void* SurfaceDdWm5::lock(SurfaceDesc& surfaceDesc)
 	DDSURFACEDESC ddsd;
 	HRESULT hr;
 
-	memset(&ddsd, 0, sizeof(ddsd));
+	std::memset(&ddsd, 0, sizeof(ddsd));
 	ddsd.dwSize = sizeof(ddsd);
 	
-	hr = m_dds->Lock(NULL, &ddsd, DDLOCK_WRITEONLY, NULL);
+	hr = m_dds->Lock(NULL, &ddsd, DDLOCK_DISCARD | DDLOCK_WRITEONLY, NULL);
 	if (FAILED(hr))
 		return 0;
 

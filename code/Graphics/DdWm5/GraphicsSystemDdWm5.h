@@ -48,10 +48,10 @@ private:
 	ComRef< IDirectDraw > m_dd;
 	ComRef< IDirectDrawSurface > m_ddsPrimary;
 	ComRef< IDirectDrawSurface > m_ddsSecondary;
+	ComRef< IDirectDrawClipper > m_ddcClipper;
 	DDPIXELFORMAT m_ddPixelFormat;
 	Ref< SurfaceDdWm5 > m_primary;
 	Ref< SurfaceDdWm5 > m_secondary;
-	bool m_supportHardwareFlip;
 };
 
 	}

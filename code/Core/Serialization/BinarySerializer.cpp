@@ -145,15 +145,11 @@ bool write_primitive(const Ref< IStream >& stream, bool v)
 	return false;
 }
 
-bool read_string(const Ref< IStream >& stream, std::wstring& outString)
+bool read_string(const Ref< IStream >& stream, uint32_t u8len, std::wstring& outString)
 {
-	uint32_t u8len;
 	wchar_t wc;
 
 	outString.clear();
-
-	if (!read_primitive< uint32_t >(stream, u8len))
-		return false;
 
 	if (u8len > 0)
 	{
@@ -177,6 +173,16 @@ bool read_string(const Ref< IStream >& stream, std::wstring& outString)
 	}
 
 	return true;
+}
+
+bool read_string(const Ref< IStream >& stream, std::wstring& outString)
+{
+	uint32_t u8len;
+
+	if (!read_primitive< uint32_t >(stream, u8len))
+		return false;
+
+	return read_string(stream, u8len, outString);
 }
 
 bool write_string(const Ref< IStream >& stream, const std::wstring& str)
@@ -233,6 +239,7 @@ BinarySerializer::BinarySerializer(IStream* stream)
 :	m_stream(stream)
 ,	m_direction(m_stream->canRead() ? SdRead : SdWrite)
 ,	m_nextCacheId(1)
+,	m_nextTypeCacheId(0)
 {
 }
 
@@ -564,11 +571,22 @@ bool BinarySerializer::operator >> (const Member< ISerializable* >& m)
 		{
 			if (!reference)
 			{
+				uint32_t typeHashOrLen;
 				std::wstring typeName;
 				int32_t version;
 
-				if (!read_string(m_stream, typeName))
+				if (!read_primitive< uint32_t >(m_stream, typeHashOrLen))
 					return false;
+
+				if ((typeHashOrLen & 0x80000000) == 0x80000000)
+					typeName = m_typeReadCache[typeHashOrLen & 0x7fffffff];
+				else
+				{
+					if (!read_string(m_stream, typeHashOrLen, typeName))
+						return false;
+
+					m_typeReadCache.push_back(typeName);
+				}
 				
 				const TypeInfo* type = TypeInfo::find(typeName);
 				if (type == 0)
@@ -624,8 +642,18 @@ bool BinarySerializer::operator >> (const Member< ISerializable* >& m)
 					return false;
 				if (!write_primitive< uint64_t >(m_stream, hash))
 					return false;
-				if (!write_string(m_stream, type_name(object)))
-					return false;
+
+				std::map< const TypeInfo*, uint32_t >::const_iterator i = m_typeWriteCache.find(&type_of(object));
+				if (i != m_typeWriteCache.end())
+					write_primitive< uint32_t >(m_stream, 0x80000000 | i->second);
+				else
+				{
+					if (!write_string(m_stream, type_name(object)))
+						return false;
+
+					m_typeWriteCache.insert(std::make_pair(&type_of(object), m_nextTypeCacheId++));
+				}
+
 				if (!write_primitive< int32_t >(m_stream, version))
 					return false;
 
