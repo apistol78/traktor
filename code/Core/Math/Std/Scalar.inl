@@ -104,12 +104,12 @@ T_MATH_INLINE Scalar operator / (const Scalar& l, const Scalar& r)
 
 T_MATH_INLINE Scalar abs(const Scalar& s)
 {
-	return Scalar(abs< float >(s.m_data));
+	return Scalar((float)std::fabs(s.m_data));
 }
 
 T_MATH_INLINE Scalar squareRoot(const Scalar& s)
 {
-	return Scalar(sqrtf(s.m_data));
+	return Scalar((float)std::sqrtf(s.m_data));
 }
 
 T_MATH_INLINE Scalar lerp(const Scalar& a, const Scalar& b, const Scalar& c)

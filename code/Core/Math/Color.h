@@ -51,6 +51,8 @@ public:
 
 	T_MATH_INLINE void getRGBA32F(float outRGBA[4]) const;
 
+	T_MATH_INLINE uint16_t getRGB565() const;
+
 	T_MATH_INLINE Color& operator = (const Color& v);
 
 	T_MATH_INLINE Color operator + (const Color& color) const;
