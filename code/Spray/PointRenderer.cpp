@@ -126,7 +126,8 @@ void PointRenderer::render(
 	uint32_t size = uint32_t(points.size());
 	T_ASSERT (size > 0);
 
-	if (pointOffset + size >= c_pointCount)
+	size = std::min(size, c_pointCount - pointOffset);
+	if (!size)
 		return;
 
 	AlignedVector< Batch >& batches = m_batches[m_currentBuffer];
