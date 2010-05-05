@@ -109,7 +109,7 @@ T_MATH_INLINE Scalar abs(const Scalar& s)
 
 T_MATH_INLINE Scalar squareRoot(const Scalar& s)
 {
-	return Scalar((float)std::sqrtf(s.m_data));
+	return Scalar((float)std::sqrt(s.m_data));
 }
 
 T_MATH_INLINE Scalar lerp(const Scalar& a, const Scalar& b, const Scalar& c)

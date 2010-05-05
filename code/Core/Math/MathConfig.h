@@ -22,23 +22,18 @@
 
 #endif	// _MSC_VER
 
-#if defined (__GNUC__)
-
+#if defined(__GNUC__)
 #	define T_MATH_ALIGN16 T_ALIGN16
 
 #	if !defined(_DEBUG)
 #		define T_MATH_USE_INLINE
 #		define T_MATH_INLINE inline
 #		if defined(__APPLE__)
-#			if TARGET_OS_MAC && !TARGET_OS_IPHONE
-#				define T_MATH_USE_SSE2
-#			endif
+#			define T_MATH_USE_SSE2
 #		endif
 #	else	// _DEBUG
 #		if defined(__APPLE__)
-#			if TARGET_OS_MAC && !TARGET_OS_IPHONE
-#				define T_MATH_USE_SSE2
-#			endif
+#			define T_MATH_USE_SSE2
 #		endif
 #	endif
 
