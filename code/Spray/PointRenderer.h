@@ -79,6 +79,7 @@ private:
 	Ref< render::VertexBuffer > m_vertexBuffer[BufferCount];
 	Ref< render::IndexBuffer > m_indexBuffer;
 	uint32_t m_currentBuffer;
+	Vertex* m_vertex;
 	uint32_t m_vertexOffset;
 	AlignedVector< Batch > m_batches[BufferCount];
 };
