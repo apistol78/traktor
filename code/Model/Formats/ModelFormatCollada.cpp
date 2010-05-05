@@ -539,6 +539,8 @@ class SkinData
 public:
 	std::wstring getSkinSource() const { return m_skinSource; }
 
+	const Matrix44& getBindShapeMatrix() const { return m_bindShapeMatrix; }
+
 	void read(xml::Element* skin)
 	{
 		m_skinSource = skin->getAttribute(L"source", L"")->getValue();
@@ -821,8 +823,9 @@ void createMesh(
 			ColladaMeshdata meshData;
 			if (meshData.read(geometry, 0))
 			{
-				meshData.addPositions(transform, outModel);
-				meshData.addToModel(transform, materialRefs, &skinData, outModel);
+				Matrix44 bindShapeMatrix = skinData.getBindShapeMatrix();
+				meshData.addPositions(bindShapeMatrix * transform, outModel);
+				meshData.addToModel(bindShapeMatrix * transform, materialRefs, &skinData, outModel);
 			}
 			return;
 		}
