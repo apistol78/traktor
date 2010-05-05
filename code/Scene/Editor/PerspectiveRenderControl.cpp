@@ -642,7 +642,7 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 
 		// Draw controller guides.
 		Ref< ISceneControllerEditor > controllerEditor = m_context->getControllerEditor();
-		if (controllerEditor)
+		if (controllerEditor && m_guideEnable)
 			controllerEditor->draw(
 				m_primitiveRenderer
 			);
