@@ -76,6 +76,7 @@ PointRenderer::PointRenderer(render::IRenderSystem* renderSystem, float cullNear
 :	m_cullNearDistance(cullNearDistance)
 ,	m_fadeNearRange(fadeNearRange)
 ,	m_currentBuffer(0)
+,	m_vertex(0)
 ,	m_vertexOffset(0)
 {
 	std::vector< render::VertexElement > vertexElements;
@@ -115,12 +116,6 @@ void PointRenderer::render(
 	float middleAge
 )
 {
-#if TARGET_OS_IPHONE
-	// @fixme iPhone doesn't support partial update of vertex buffers
-	// need to lock entire buffer at once.
-	return;
-#endif
-
 	uint32_t pointOffset = m_vertexOffset >> 2;
 
 	uint32_t size = uint32_t(points.size());
@@ -157,57 +152,59 @@ void PointRenderer::render(
 
 	//std::sort(sorted.begin(), sorted.end(), PredicateZ());
 
-	Vertex* vertex = static_cast< Vertex* >(m_vertexBuffer[m_currentBuffer]->lock(m_vertexOffset, size * 4));
-	if (vertex)
+	if (!m_vertex)
 	{
-		//for (std::vector< std::pair< uint32_t, float > >::iterator i = sorted.begin(); i != sorted.end(); ++i)
-		//{
-		//	// Skip particles behind near culling plane.
-		//	float distance = i->second;
-		//	if (distance < m_cullNearDistance)
-		//		continue;
+		m_vertex = static_cast< Vertex* >(m_vertexBuffer[m_currentBuffer]->lock());
+		if (!m_vertex)
+			return;
+	}
 
-		//	const Point& point = points[i->first];
+	//for (std::vector< std::pair< uint32_t, float > >::iterator i = sorted.begin(); i != sorted.end(); ++i)
+	//{
+	//	// Skip particles behind near culling plane.
+	//	float distance = i->second;
+	//	if (distance < m_cullNearDistance)
+	//		continue;
 
-		for (uint32_t i = 0; i < size; ++i)
+	//	const Point& point = points[i->first];
+
+	for (uint32_t i = 0; i < size; ++i)
+	{
+		const Point& point = points[i];
+
+		float distance = cameraPlane.distance(point.position);
+		if (distance < m_cullNearDistance)
+			continue;
+
+		// Calculate alpha based on point age and distance from near culling plane.
+		float age = clamp(point.age / point.maxAge, 0.0f, 1.0f);
+		float middle = age - middleAge;
+		float alpha = select(middle, 1.0f - middle / (1.0f - middleAge), age / middleAge);
+		alpha *= min((distance - m_cullNearDistance) / m_fadeNearRange, 1.0f);
+		if (alpha < FUZZY_EPSILON)
+			continue;
+
+		for (int j = 0; j < 4; ++j)
 		{
-			const Point& point = points[i];
+			point.position.storeUnaligned(m_vertex->positionAndOrientation.position);
+			point.velocity.storeUnaligned(m_vertex->velocityAndRandom.velocity);
+			point.color.storeUnaligned(m_vertex->attrib2.color);
 
-			float distance = cameraPlane.distance(point.position);
-			if (distance < m_cullNearDistance)
-				continue;
+			m_vertex->positionAndOrientation.orientation = point.orientation;
+			m_vertex->velocityAndRandom.random = point.random;
+			m_vertex->attrib1.extent[0] = c_extents[j][0];
+			m_vertex->attrib1.extent[1] = c_extents[j][1];
+			m_vertex->attrib1.alpha = alpha;
+			m_vertex->attrib1.size = point.size;
+			m_vertex->attrib2.age = age;
 
-			// Calculate alpha based on point age and distance from near culling plane.
-			float age = clamp(point.age / point.maxAge, 0.0f, 1.0f);
-			float middle = age - middleAge;
-			float alpha = select(middle, 1.0f - middle / (1.0f - middleAge), age / middleAge);
-			alpha *= min((distance - m_cullNearDistance) / m_fadeNearRange, 1.0f);
-			if (alpha < FUZZY_EPSILON)
-				continue;
-
-			for (int j = 0; j < 4; ++j)
-			{
-				point.position.storeUnaligned(vertex->positionAndOrientation.position);
-				point.velocity.storeUnaligned(vertex->velocityAndRandom.velocity);
-				point.color.storeUnaligned(vertex->attrib2.color);
-
-				vertex->positionAndOrientation.orientation = point.orientation;
-				vertex->velocityAndRandom.random = point.random;
-				vertex->attrib1.extent[0] = c_extents[j][0];
-				vertex->attrib1.extent[1] = c_extents[j][1];
-				vertex->attrib1.alpha = alpha;
-				vertex->attrib1.size = point.size;
-				vertex->attrib2.age = age;
-
-				vertex++;
-			}
-
-			batches.back().distance = min(batches.back().distance, distance);
-			batches.back().count += 2;
-
-			m_vertexOffset += 4;
+			m_vertex++;
 		}
-		m_vertexBuffer[m_currentBuffer]->unlock();
+
+		batches.back().distance = min(batches.back().distance, distance);
+		batches.back().count += 2;
+
+		m_vertexOffset += 4;
 	}
 }
 
@@ -218,6 +215,11 @@ void PointRenderer::flush(
 {
 	if (m_vertexOffset > 0)
 	{
+		T_ASSERT (m_vertex);
+
+		m_vertex = 0;
+		m_vertexBuffer[m_currentBuffer]->unlock();
+
 		for (AlignedVector< Batch >::iterator i = m_batches[m_currentBuffer].begin(); i != m_batches[m_currentBuffer].end(); ++i)
 		{
 			if (!i->shader || !i->count)
