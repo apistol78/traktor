@@ -55,7 +55,10 @@ public:
 		bool fixateBones,
 		float limbMass,
 		float linearDamping,
-		float angularDamping
+		float angularDamping,
+		IPoseController* trackPoseController,
+		float trackLinearTension,
+		float trackAngularTension
 	);
 
 	virtual void destroy();
@@ -83,6 +86,9 @@ public:
 	const RefArray< physics::DynamicBody >& getLimbs() const;
 
 private:
+	Ref< IPoseController > m_trackPoseController;
+	Scalar m_trackLinearTension;
+	Scalar m_trackAngularTension;
 	RefArray< physics::DynamicBody > m_limbs;
 	RefArray< physics::Joint > m_joints;
 	Transform m_worldTransform;

@@ -1,0 +1,40 @@
+#include "Animation/Animation/StatePoseControllerData.h"
+#include "Animation/IK/IKPoseControllerData.h"
+#include "Animation/RagDoll/RagDollPoseControllerData.h"
+#include "Animation/Editor/PoseControllerPipeline.h"
+#include "Editor/IPipelineDepends.h"
+
+namespace traktor
+{
+	namespace animation
+	{
+
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.PoseControllerPipeline", 0, PoseControllerPipeline, editor::DefaultPipeline)
+
+TypeInfoSet PoseControllerPipeline::getAssetTypes() const
+{
+	TypeInfoSet typeSet;
+	typeSet.insert(&type_of< StatePoseControllerData >());
+	typeSet.insert(&type_of< IKPoseControllerData >());
+	typeSet.insert(&type_of< RagDollPoseControllerData >());
+	return typeSet;
+}
+
+bool PoseControllerPipeline::buildDependencies(
+	editor::IPipelineDepends* pipelineDepends,
+	const db::Instance* sourceInstance,
+	const ISerializable* sourceAsset,
+	Ref< const Object >& outBuildParams
+) const
+{
+	if (const StatePoseControllerData* statePoseControllerData = dynamic_type_cast< const StatePoseControllerData* >(sourceAsset))
+		pipelineDepends->addDependency(statePoseControllerData->getStateGraph().getGuid(), editor::PdfBuild);
+	else if (const IKPoseControllerData* ikPoseContollerData = dynamic_type_cast< const IKPoseControllerData* >(sourceAsset))
+		pipelineDepends->addDependency(ikPoseContollerData->getNeutralPoseController());
+	else if (const RagDollPoseControllerData* ragDollPoseContollerData = dynamic_type_cast< const RagDollPoseControllerData* >(sourceAsset))
+		pipelineDepends->addDependency(ragDollPoseContollerData->getTrackPoseController());
+	return true;
+}
+
+	}
+}

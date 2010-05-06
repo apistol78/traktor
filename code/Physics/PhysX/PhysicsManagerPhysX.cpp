@@ -115,6 +115,13 @@ void PhysicsManagerPhysX::setGravity(const Vector4& gravity)
 	m_scene->setGravity(toNxVec3(gravity));
 }
 
+Vector4 PhysicsManagerPhysX::getGravity() const
+{
+	NxVec3 gravity;
+	m_scene->getGravity(gravity);
+	return fromNxVec3(gravity, 0.0f);
+}
+
 Ref< Body > PhysicsManagerPhysX::createBody(const BodyDesc* desc)
 {
 	if (!desc)

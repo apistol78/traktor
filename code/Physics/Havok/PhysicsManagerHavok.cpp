@@ -221,6 +221,12 @@ void PhysicsManagerHavok::setGravity(const Vector4& gravity)
 	m_world->setGravity(toHkVector4(gravity));
 }
 
+Vector4 PhysicsManagerHavok::getGravity() const
+{
+	T_ASSERT (m_world);
+	return fromHkVector4(m_world->getGravity());
+}
+
 Ref< Body > PhysicsManagerHavok::createBody(const BodyDesc* desc)
 {
 	if (!desc)

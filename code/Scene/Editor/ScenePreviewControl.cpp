@@ -419,27 +419,33 @@ void ScenePreviewControl::eventIdle(ui::Event* event)
 			}
 		}
 
-		// Update physics; update in steps of 1/60th of a second.
+		// Update entities.
+		Ref< EntityAdapter > rootEntityAdapter = m_context->getRootEntityAdapter();
+		Ref< world::Entity > rootEntity = rootEntityAdapter ? rootEntityAdapter->getEntity() : 0;
+
+		// Use physics; update in steps of 1/60th of a second.
 		if (m_context->getPhysicsEnable())
 		{
 			if (m_lastPhysicsTime > scaledTime)
 				m_lastPhysicsTime = scaledTime;
 
+			const float c_updateDeltaTime = 1.0f / 60.0f;
+
 			while (m_lastPhysicsTime < scaledTime)
 			{
+				if (rootEntity)
+				{
+					world::EntityUpdate entityUpdate(c_updateDeltaTime);
+					rootEntity->update(&entityUpdate);
+				}
+
 				m_context->getPhysicsManager()->update();
-				m_lastPhysicsTime += 1.0f / 60.0f;
+				m_lastPhysicsTime += c_updateDeltaTime;
 			}
 		}
-
-		// Update entities.
-		Ref< EntityAdapter > rootEntityAdapter = m_context->getRootEntityAdapter();
-		Ref< world::Entity > rootEntity = rootEntityAdapter ? rootEntityAdapter->getEntity() : 0;
-
-		// Update entities.
-		if (rootEntity)
+		else
 		{
-			world::EntityUpdate entityUpdate(deltaTime);
+			world::EntityUpdate entityUpdate(scaledDeltaTime);
 			rootEntity->update(&entityUpdate);
 		}
 

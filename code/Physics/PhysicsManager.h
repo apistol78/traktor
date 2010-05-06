@@ -108,6 +108,12 @@ public:
 	 */
 	virtual void setGravity(const Vector4& gravity) = 0;
 
+	/*! \brief Get global gravity vector.
+	 *
+	 * \return Gravity vector.
+	 */
+	virtual Vector4 getGravity() const = 0;
+
 	/*! \brief Create rigid body.
 	 *
 	 * \note Created body are initially disabled; need to call setEnable(true)

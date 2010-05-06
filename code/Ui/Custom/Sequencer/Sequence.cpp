@@ -73,6 +73,8 @@ void Sequence::mouseDown(SequencerControl* sequencer, const Point& at, const Rec
 		return;
 
 	m_selectedKey = 0;
+	m_trackKey = 0;
+
 	for (RefArray< Key >::const_iterator j = m_keys.begin(); j != m_keys.end(); ++j)
 	{
 		int left, right;
@@ -85,6 +87,7 @@ void Sequence::mouseDown(SequencerControl* sequencer, const Point& at, const Rec
 		{
 			m_previousPosition = at.x;
 			m_selectedKey = *j;
+			m_trackKey = *j;
 			break;
 		}
 	}
@@ -92,20 +95,20 @@ void Sequence::mouseDown(SequencerControl* sequencer, const Point& at, const Rec
 
 void Sequence::mouseUp(SequencerControl* sequencer, const Point& at, const Rect& rc, int button, int separator, int scrollOffset)
 {
-	m_selectedKey = 0;
 	m_previousPosition = 0;
+	m_trackKey = 0;
 }
 
 void Sequence::mouseMove(SequencerControl* sequencer, const Point& at, const Rect& rc, int button, int separator, int scrollOffset)
 {
-	if (m_selectedKey)
+	if (button && m_trackKey)
 	{
 		int32_t offset = timeFromClient(at.x - m_previousPosition);
 		if (offset != 0)
 		{
-			m_selectedKey->move(offset);
+			m_trackKey->move(offset);
 
-			CommandEvent cmdEvent(sequencer, m_selectedKey, Command(offset));
+			CommandEvent cmdEvent(sequencer, m_trackKey, Command(offset));
 			sequencer->raiseEvent(SequencerControl::EiKeyMove, &cmdEvent);
 		}
 		m_previousPosition = at.x;

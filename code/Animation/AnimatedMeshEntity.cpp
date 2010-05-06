@@ -93,7 +93,7 @@ void AnimatedMeshEntity::render(world::WorldContext* worldContext, world::WorldR
 
 void AnimatedMeshEntity::update(const world::EntityUpdate* update)
 {
-	if (!m_updateController)
+	if (!m_skeleton.validate() || !m_updateController)
 		return;
 
 	synchronize();

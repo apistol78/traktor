@@ -122,6 +122,13 @@ public:
 		dWorldSetGravity(m_worldId, gravity.x(), gravity.y(), gravity.z());
 	}
 
+	Vector4 getGravity() const
+	{
+		dVector3 gravity;
+		dWorldGetGravity(m_worldId, gravity);
+		return Vector4(gravity[0], gravity[1], gravity[2]);
+	}
+
 	Ref< Body > createBody(const BodyDesc* desc)
 	{
 		if (!desc)
@@ -677,6 +684,11 @@ void PhysicsManagerOde::destroy()
 void PhysicsManagerOde::setGravity(const Vector4& gravity)
 {
 	m_impl->setGravity(gravity);
+}
+
+Vector4 PhysicsManagerOde::getGravity() const
+{
+	return m_impl->getGravity();
 }
 
 Ref< Body > PhysicsManagerOde::createBody(const BodyDesc* desc)

@@ -216,6 +216,12 @@ void PhysicsManagerBullet::setGravity(const Vector4& gravity)
 	m_dynamicsWorld->setGravity(toBtVector3(gravity));
 }
 
+Vector4 PhysicsManagerBullet::getGravity() const
+{
+	T_ASSERT (m_dynamicsWorld);
+	return fromBtVector3(m_dynamicsWorld->getGravity(), 0.0f);
+}
+
 Ref< Body > PhysicsManagerBullet::createBody(const BodyDesc* desc)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
@@ -821,6 +827,16 @@ void PhysicsManagerBullet::nearCallback(btBroadphasePair& collisionPair, btColli
 
 		if ((group1 & group2) == 0)
 			return;
+
+		// Skip bodies which are directly connected through a joint.
+		for (RefArray< Joint >::const_iterator i = ms_this->m_joints.begin(); i != ms_this->m_joints.end(); ++i)
+		{
+			if (
+				((*i)->getBody1() == body1 && (*i)->getBody2() == body2) ||
+				((*i)->getBody1() == body2 && (*i)->getBody2() == body1)
+			)
+				return;
+		}
 
 		CollisionInfo info;
 		info.body1 = body1;
