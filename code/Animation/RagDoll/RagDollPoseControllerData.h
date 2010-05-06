@@ -35,6 +35,8 @@ public:
 
 	virtual bool serialize(ISerializer& s);
 
+	IPoseControllerData* getTrackPoseController() const { return m_trackPoseController; }
+
 private:
 	uint32_t m_collisionGroup;
 	bool m_autoDeactivate;
@@ -43,6 +45,9 @@ private:
 	float m_limbMass;
 	float m_linearDamping;
 	float m_angularDamping;
+	Ref< IPoseControllerData > m_trackPoseController;
+	float m_trackLinearTension;
+	float m_trackAngularTension;
 };
 
 	}

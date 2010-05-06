@@ -2,6 +2,7 @@
 #include "Animation/Skeleton.h"
 #include "Animation/RagDoll/RagDollPoseController.h"
 #include "Core/Math/Const.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Physics/BallJointDesc.h"
 #include "Physics/CapsuleShapeDesc.h"
 #include "Physics/ConeTwistJointDesc.h"
@@ -40,11 +41,30 @@ bool RagDollPoseController::create(
 	bool fixateBones,
 	float limbMass,
 	float linearDamping,
-	float angularDamping
+	float angularDamping,
+	IPoseController* trackPoseController,
+	float trackLinearTension,
+	float trackAngularTension
 )
 {
 	if (!physicsManager)
 		return false;
+
+	AlignedVector< Transform > limbTransforms = boneTransforms;
+
+	// Evaluate initial poses with tracking controller.
+	if (trackPoseController)
+	{
+		bool updateController;
+		trackPoseController->evaluate(
+			0.0f,
+			worldTransform,
+			skeleton,
+			boneTransforms,
+			limbTransforms,
+			updateController
+		);
+	}
 
 	for (uint32_t i = 0; i < skeleton->getBoneCount(); ++i)
 	{
@@ -69,7 +89,7 @@ bool RagDollPoseController::create(
 		if (!limb)
 			return false;
 
-		limb->setTransform(worldTransform * boneTransforms[i] * Transform(centerOfMass));
+		limb->setTransform(worldTransform * limbTransforms[i] * Transform(centerOfMass));
 		
 		// Set initial velocities.
 		if (!velocities.empty())
@@ -88,9 +108,9 @@ bool RagDollPoseController::create(
 		Bone* bone = skeleton->getBone(i);
 		T_ASSERT (bone);
 
-		const Vector4 anchor = boneTransforms[i].translation().xyz1();
-		const Vector4 twistAxis = boneTransforms[i].axisZ();
-		const Vector4 coneAxis = boneTransforms[i].axisX();
+		const Vector4 anchor = limbTransforms[i].translation().xyz1();
+		const Vector4 twistAxis = limbTransforms[i].axisZ();
+		const Vector4 coneAxis = limbTransforms[i].axisX();
 
 		int parentIndex = bone->getParent();
 		if (parentIndex < 0)
@@ -167,6 +187,10 @@ bool RagDollPoseController::create(
 
 	m_worldTransform = worldTransform;
 
+	m_trackPoseController = trackPoseController;
+	m_trackLinearTension = Scalar(trackLinearTension);
+	m_trackAngularTension = Scalar(trackAngularTension);
+
 	setEnable(enabled);
 
 	return true;
@@ -174,17 +198,13 @@ bool RagDollPoseController::create(
 
 void RagDollPoseController::destroy()
 {
+	safeDestroy(m_trackPoseController);
+
 	for (RefArray< physics::Joint >::iterator i = m_joints.begin(); i != m_joints.end(); ++i)
-	{
-		if (*i)
-			(*i)->destroy();
-	}
+		safeDestroy(*i);
 
 	for (RefArray< physics::DynamicBody >::iterator j = m_limbs.begin(); j != m_limbs.end(); ++j)
-	{
-		if (*j)
-			(*j)->destroy();
-	}
+		safeDestroy(*j);
 
 	m_limbs.resize(0);
 	m_joints.resize(0);
@@ -214,6 +234,18 @@ void RagDollPoseController::evaluate(
 {
 	T_ASSERT (boneTransforms.size() == m_limbs.size());
 
+	if (m_trackPoseController)
+	{
+		m_trackPoseController->evaluate(
+			deltaTime,
+			worldTransform,
+			skeleton,
+			boneTransforms,
+			outPoseTransforms,
+			outUpdateController
+		);
+	}
+
 	Transform worldTransformInv = worldTransform.inverse();
 	uint32_t limbCount = uint32_t(m_limbs.size());
 	
@@ -223,8 +255,52 @@ void RagDollPoseController::evaluate(
 		const Bone* bone = skeleton->getBone(i);
 		T_ASSERT (bone);
 
-		Vector4 centerOfMass = Vector4(0.0f, 0.0f, -bone->getLength() * 0.5f, 1.0f);
-		outPoseTransforms[i] = worldTransformInv * m_limbs[i]->getTransform() * Transform(centerOfMass);
+		Transform boneP(Vector4(0.0f, 0.0f, bone->getLength(), 1.0f));
+		Transform halfBoneN(Vector4(0.0f, 0.0f, -bone->getLength() * 0.5f, 1.0f));
+
+		if (m_trackPoseController)
+		{
+			const Scalar c_maxTension(10.0f);
+
+			Transform trackT = worldTransform * outPoseTransforms[i];
+			Transform limbT = m_limbs[i]->getTransform() * Transform(halfBoneN);
+
+			{
+				Vector4 Tl = (limbT).translation().xyz1();
+				Vector4 Tt = (trackT).translation().xyz1();
+
+				Scalar tension = min(m_trackLinearTension * Scalar(deltaTime), c_maxTension);
+
+				m_limbs[i]->addForceAt(
+					Tl,
+					(Tt - Tl) * tension,
+					false
+				);
+			}
+
+			{
+				Vector4 Tl = (limbT * boneP).translation().xyz1();
+				Vector4 Tt = (trackT * boneP).translation().xyz1();
+
+				Scalar tension = min(m_trackLinearTension * Scalar(deltaTime), c_maxTension);
+
+				m_limbs[i]->addForceAt(
+					Tl,
+					(Tt - Tl) * tension,
+					false
+				);
+			}
+
+			Vector4 vR = cross(limbT.axisX(), trackT.axisX());
+			Scalar lnR = vR.length();
+			if (lnR > FUZZY_EPSILON)
+			{
+				Scalar m = Scalar(1.0f) - abs(dot3(trackT.axisX(), limbT.axisX()));
+				m_limbs[i]->addTorque((m * vR * m_trackAngularTension * Scalar(deltaTime)) / lnR, false);
+			}
+		}
+
+		outPoseTransforms[i] = worldTransformInv * m_limbs[i]->getTransform() * Transform(halfBoneN);
 	}
 
 	outUpdateController = true;

@@ -1,14 +1,15 @@
-#include "Core/Serialization/ISerializer.h"
 #include "Animation/SkeletonUtils.h"
 #include "Animation/RagDoll/RagDollPoseController.h"
 #include "Animation/RagDoll/RagDollPoseControllerData.h"
+#include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberRef.h"
 
 namespace traktor
 {
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.RagDollPoseControllerData", 1, RagDollPoseControllerData, IPoseControllerData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.RagDollPoseControllerData", 2, RagDollPoseControllerData, IPoseControllerData)
 
 RagDollPoseControllerData::RagDollPoseControllerData()
 :	m_collisionGroup(~0UL)
@@ -18,6 +19,8 @@ RagDollPoseControllerData::RagDollPoseControllerData()
 ,	m_limbMass(1.0f)
 ,	m_linearDamping(0.1f)
 ,	m_angularDamping(0.1f)
+,	m_trackLinearTension(0.0f)
+,	m_trackAngularTension(0.0f)
 {
 }
 
@@ -28,6 +31,8 @@ Ref< IPoseController > RagDollPoseControllerData::createInstance(
 	const Transform& worldTransform
 )
 {
+	Ref< IPoseController > trackPoseController;
+
 	AlignedVector< Transform > boneTransforms;
 	calculateBoneTransforms(skeleton, boneTransforms);
 
@@ -38,6 +43,18 @@ Ref< IPoseController > RagDollPoseControllerData::createInstance(
 		velocity.linear =
 		velocity.angular = Vector4(0.0f, 0.0f, 0.0f, 0.0f);
 		velocities.push_back(velocity);
+	}
+
+	if (m_trackPoseController)
+	{
+		trackPoseController = m_trackPoseController->createInstance(
+			resourceManager,
+			physicsManager,
+			skeleton,
+			worldTransform
+		);
+		if (!trackPoseController)
+			return 0;
 	}
 
 	Ref< RagDollPoseController > poseController = new RagDollPoseController();
@@ -53,7 +70,10 @@ Ref< IPoseController > RagDollPoseControllerData::createInstance(
 		m_fixateBones,
 		m_limbMass,
 		m_linearDamping,
-		m_angularDamping
+		m_angularDamping,
+		trackPoseController,
+		m_trackLinearTension,
+		m_trackAngularTension
 	))
 		return 0;
 
@@ -71,6 +91,12 @@ bool RagDollPoseControllerData::serialize(ISerializer& s)
 		s >> Member< float >(L"limbMass", m_limbMass);
 		s >> Member< float >(L"linearDamping", m_linearDamping);
 		s >> Member< float >(L"angularDamping", m_angularDamping);
+	}
+	if (s.getVersion() >= 2)
+	{
+		s >> MemberRef< IPoseControllerData >(L"trackPoseController", m_trackPoseController);
+		s >> Member< float >(L"trackLinearTension", m_trackLinearTension);
+		s >> Member< float >(L"trackAngularTension", m_trackAngularTension);
 	}
 	return true;
 }

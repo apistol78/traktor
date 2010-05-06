@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_ANIMATION_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -34,6 +34,8 @@ public:
 	);
 
 	virtual bool serialize(ISerializer& s);
+
+	IPoseControllerData* getNeutralPoseController() const { return m_neutralPoseController; }
 
 private:
 	Ref< IPoseControllerData > m_neutralPoseController;
