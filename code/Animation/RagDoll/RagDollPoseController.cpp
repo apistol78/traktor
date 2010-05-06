@@ -201,10 +201,10 @@ void RagDollPoseController::destroy()
 	safeDestroy(m_trackPoseController);
 
 	for (RefArray< physics::Joint >::iterator i = m_joints.begin(); i != m_joints.end(); ++i)
-		safeDestroy(*i);
+		(*i)->destroy();
 
-	for (RefArray< physics::DynamicBody >::iterator j = m_limbs.begin(); j != m_limbs.end(); ++j)
-		safeDestroy(*j);
+	for (RefArray< physics::DynamicBody >::iterator i = m_limbs.begin(); i != m_limbs.end(); ++i)
+		(*i)->destroy();
 
 	m_limbs.resize(0);
 	m_joints.resize(0);
