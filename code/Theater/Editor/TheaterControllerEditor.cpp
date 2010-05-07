@@ -302,7 +302,36 @@ void TheaterControllerEditor::captureEntities()
 
 void TheaterControllerEditor::deleteSelectedKey()
 {
-	// @fixme
+	RefArray< ui::custom::SequenceItem > sequenceItems;
+	m_trackSequencer->getSequenceItems(sequenceItems, ui::custom::SequencerControl::GfSelectedOnly | ui::custom::SequencerControl::GfDescendants);
+
+	for (RefArray< ui::custom::SequenceItem >::iterator i = sequenceItems.begin(); i != sequenceItems.end(); ++i)
+	{
+		ui::custom::Sequence* selectedSequence = checked_type_cast< ui::custom::Sequence*, false >(*i);
+		ui::custom::Tick* selectedTick = checked_type_cast< ui::custom::Tick*, true >(selectedSequence->getSelectedKey());
+		if (!selectedTick)
+			continue;
+
+		Ref< TrackData > trackData = selectedSequence->getData< TrackData >(L"TRACK");
+		T_ASSERT (trackData);
+
+		TransformPathKeyWrapper* keyWrapper = selectedTick->getData< TransformPathKeyWrapper >(L"KEY");
+		T_ASSERT (keyWrapper);
+
+		TransformPath& path = trackData->getPath();
+		AlignedVector< TransformPath::Key >& keys = path.getKeys();
+		for (AlignedVector< TransformPath::Key >::iterator j = keys.begin(); j != keys.end(); ++j)
+		{
+			if (&(*j) == &keyWrapper->m_key)
+			{
+				selectedSequence->removeKey(selectedTick);
+				keys.erase(j);
+				break;
+			}
+		}
+	}
+
+	m_context->buildEntities();
 }
 
 void TheaterControllerEditor::gotoPreviousKey()
