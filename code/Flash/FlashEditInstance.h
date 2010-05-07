@@ -2,6 +2,7 @@
 #define traktor_flash_FlashEditInstance_H
 
 #include <list>
+#include "Core/Thread/Semaphore.h"
 #include "Flash/FlashCharacterInstance.h"
 
 // import/export mechanism.
@@ -37,7 +38,7 @@ public:
 
 	bool parseHtml(const std::wstring& html);
 
-	const text_t& getText() const;
+	text_t getText() const;
 
 	avm_number_t getTextWidth() const;
 
@@ -46,6 +47,7 @@ public:
 	virtual SwfRect getBounds() const;
 
 private:
+	mutable Semaphore m_lock;
 	Ref< const FlashEdit > m_edit;
 	text_t m_text;
 };

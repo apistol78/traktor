@@ -1,10 +1,11 @@
-#include "Flash/FlashEditInstance.h"
+#include "Core/Io/StringOutputStream.h"
+#include "Core/Thread/Acquire.h"
 #include "Flash/FlashEdit.h"
+#include "Flash/FlashEditInstance.h"
 #include "Flash/Action/Avm1/Classes/AsTextField.h"
 #include "Html/Document.h"
 #include "Html/Element.h"
 #include "Html/Text.h"
-#include "Core/Io/StringOutputStream.h"
 
 namespace traktor
 {
@@ -43,6 +44,7 @@ const FlashEdit* FlashEditInstance::getEdit() const
 
 bool FlashEditInstance::parseText(const std::wstring& text)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	m_text.clear();
 	m_text.push_back(text);
 	return true;
@@ -54,6 +56,8 @@ bool FlashEditInstance::parseHtml(const std::wstring& html)
 
 	if (!document.loadFromText(html))
 		return false;
+
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	m_text.clear();
 
@@ -69,8 +73,9 @@ bool FlashEditInstance::parseHtml(const std::wstring& html)
 	return true;
 }
 
-const FlashEditInstance::text_t& FlashEditInstance::getText() const
+FlashEditInstance::text_t FlashEditInstance::getText() const
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	return m_text;
 }
 
