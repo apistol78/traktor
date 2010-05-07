@@ -1,8 +1,9 @@
-#include "Ui/Custom/PropertyList/PropertyItem.h"
-#include "Ui/Custom/PropertyList/PropertyList.h"
+#include "Core/Math/MathUtils.h"
+#include "Drawing/Image.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Events/CommandEvent.h"
-#include "Drawing/Image.h"
+#include "Ui/Custom/PropertyList/PropertyItem.h"
+#include "Ui/Custom/PropertyList/PropertyList.h"
 
 // Resources
 #include "Resources/Expand.h"
@@ -193,7 +194,18 @@ void PropertyItem::paintBackground(Canvas& canvas, const Rect& rc)
 	}
 	else
 	{
-		canvas.setBackground(Color(255, 255, 255));
+		int depth = getDepth();
+
+		if (!m_childItems.empty())
+			++depth;
+
+		Color color = lerp(
+			Color(255, 255, 255),
+			Color(80, 80, 80),
+			clamp(depth / 10.0f, 0.0f, 1.0f)
+		);
+
+		canvas.setBackground(color);
 		canvas.fillRect(rc);
 	}
 }
