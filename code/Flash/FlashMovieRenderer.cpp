@@ -230,7 +230,7 @@ void FlashMovieRenderer::renderCharacter(
 		float fontHeight = edit->getFontHeight();
 
 		const SwfColor& color = edit->getTextColor();
-		const FlashEditInstance::text_t& text = editInstance->getText();
+		FlashEditInstance::text_t text = editInstance->getText();
 
 		const float c_magicX = 32.0f * 20.0f;
 		const float c_magicY = 8.0f * 20.0f;
