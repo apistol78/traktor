@@ -443,7 +443,7 @@ void ScenePreviewControl::eventIdle(ui::Event* event)
 				m_lastPhysicsTime += c_updateDeltaTime;
 			}
 		}
-		else
+		else if (rootEntity)
 		{
 			world::EntityUpdate entityUpdate(scaledDeltaTime);
 			rootEntity->update(&entityUpdate);
