@@ -269,11 +269,15 @@ void RagDollPoseController::evaluate(
 				Vector4 Tl = (limbT).translation().xyz1();
 				Vector4 Tt = (trackT).translation().xyz1();
 
-				Scalar tension = min(m_trackLinearTension * Scalar(deltaTime), c_maxTension);
+				Vector4 Fl = Tt - Tl;
+				Vector4 Vl = m_limbs[i]->getVelocityAt(Tl, false);
+
+				Scalar damping = Scalar(1.0f) - dot3(Fl, Vl);
+				Scalar tension = min(m_trackLinearTension * damping * Scalar(deltaTime), c_maxTension);
 
 				m_limbs[i]->addForceAt(
 					Tl,
-					(Tt - Tl) * tension,
+					Fl * tension,
 					false
 				);
 			}
@@ -282,11 +286,15 @@ void RagDollPoseController::evaluate(
 				Vector4 Tl = (limbT * boneP).translation().xyz1();
 				Vector4 Tt = (trackT * boneP).translation().xyz1();
 
-				Scalar tension = min(m_trackLinearTension * Scalar(deltaTime), c_maxTension);
+				Vector4 Fl = Tt - Tl;
+				Vector4 Vl = m_limbs[i]->getVelocityAt(Tl, false);
+
+				Scalar damping = Scalar(1.0f) - dot3(Fl, Vl);
+				Scalar tension = min(m_trackLinearTension * damping * Scalar(deltaTime), c_maxTension);
 
 				m_limbs[i]->addForceAt(
 					Tl,
-					(Tt - Tl) * tension,
+					Fl * tension,
 					false
 				);
 			}
