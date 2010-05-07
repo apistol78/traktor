@@ -41,6 +41,8 @@ public:
 
 	virtual IListView* createListView(EventSubject* owner);
 
+	virtual IMenuBar* createMenuBar(EventSubject* owner);
+
 	virtual IMessageBox* createMessageBox(EventSubject* owner);
 
 	virtual INotificationIcon* createNotificationIcon(EventSubject* owner);
@@ -55,7 +57,7 @@ public:
 
 	virtual IScrollBar* createScrollBar(EventSubject* owner);
 
-	virtual IScrollContainer* createScrollContainer(EventSubject* owner);
+	virtual ISlider* createSlider(EventSubject* owner);
 
 	virtual IStatic* createStatic(EventSubject* owner);
 
@@ -64,6 +66,14 @@ public:
 	virtual ITreeView* createTreeView(EventSubject* owner);
 
 	virtual IUserWidget* createUserWidget(EventSubject* owner);
+
+	virtual INative* createNative(EventSubject* owner);
+
+	virtual IBitmap* createBitmap();
+
+	virtual IClipboard* createClipboard();
+
+	virtual bool getSystemColor(SystemColor systemColor, Color& outColor);
 };
 
 	}

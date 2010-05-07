@@ -1,6 +1,6 @@
-#include "Ui/Gtk/ContainerGtk.h"
-#include "Ui/SizeEvent.h"
 #include "Core/Log/Log.h"
+#include "Ui/Gtk/ContainerGtk.h"
+#include "Ui/Events/SizeEvent.h"
 
 namespace traktor
 {
@@ -36,7 +36,7 @@ void ContainerGtk::on_size_allocate(Gtk::Allocation& allocation)
 {
 	log::info << "ContainerGtk::on_size_allocate : " << allocation.get_width() << " x " << allocation.get_height() << Endl;
 
-	SizeEvent s(m_owner, Size(allocation.get_width(), allocation.get_height()));
+	SizeEvent s(m_owner, 0, Size(allocation.get_width(), allocation.get_height()));
 	m_owner->raiseEvent(EiSize, &s);
 }
 

@@ -23,7 +23,7 @@ public:
 
 	virtual ~WidgetGtkImpl()
 	{
-		assert (m_widget == 0);
+		T_ASSERT (m_widget == 0);
 	}
 
 	virtual void destroy()
@@ -32,39 +32,46 @@ public:
 		delete this;
 	}
 
-	virtual void setStyle(int style)
-	{
-	}
-
 	virtual void setParent(IWidget* parent)
 	{
 	}
 
-	virtual void setText(const std::string& text)
+	virtual void setText(const std::wstring& text)
 	{
 	}
 
-	virtual std::string getText() const
+	virtual std::wstring getText() const
 	{
-		return "";
+		return L"";
 	}
 
-	virtual void setToolTipText(const std::string& text)
+	virtual void setStyle(int style)
 	{
 	}
 
-	virtual bool isTopLevel() const
+	virtual void setToolTipText(const std::wstring& text)
 	{
-		return false;
+	}
+
+	virtual void setForeground()
+	{
+	}
+
+	virtual bool isForeground() const
+	{
 	}
 
 	virtual void setVisible(bool visible)
 	{
 	}
 
-	virtual bool isVisible() const
+	virtual bool isVisible(bool includingParents) const
 	{
 		return true;
+	}
+
+	virtual void setActive()
+	{
 	}
 
 	virtual void setEnable(bool enable)
@@ -78,6 +85,11 @@ public:
 	}
 
 	virtual bool hasFocus() const
+	{
+		return false;
+	}
+
+	virtual bool containFocus() const
 	{
 		return false;
 	}
@@ -132,7 +144,7 @@ public:
 		return Rect(0, 0, 0, 0);
 	}
 
-	virtual Size getTextExtent(const std::string& text) const
+	virtual Size getTextExtent(const std::wstring& text) const
 	{
 		return Size(0, 0);
 	}
@@ -163,6 +175,15 @@ public:
 	virtual Point clientToScreen(const Point& pt) const
 	{
 		return Point(0, 0);
+	}
+
+	virtual bool hitTest(const Point& pt) const
+	{
+		return false;
+	}
+
+	virtual void setChildRects(const std::vector< IWidgetRect >& childRects)
+	{
 	}
 
 	virtual Size getMinimumSize() const
