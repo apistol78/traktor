@@ -1,10 +1,11 @@
-#include "Ui/Custom/PropertyList/ObjectPropertyItem.h"
-#include "Ui/Custom/PropertyList/PropertyList.h"
-#include "Ui/Custom/MiniButton.h"
+#include "Core/Io/StringOutputStream.h"
+#include "Core/Math/MathUtils.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Command.h"
 #include "Ui/MethodHandler.h"
-#include "Core/Io/StringOutputStream.h"
+#include "Ui/Custom/MiniButton.h"
+#include "Ui/Custom/PropertyList/ObjectPropertyItem.h"
+#include "Ui/Custom/PropertyList/PropertyList.h"
 
 // Resources
 #include "Resources/SmallDots.h"

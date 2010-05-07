@@ -1,11 +1,11 @@
-#include "Ui/Custom/PropertyList/ArrayPropertyItem.h"
-#include "Ui/Custom/PropertyList/NullPropertyItem.h"
-#include "Ui/Custom/PropertyList/PropertyList.h"
-#include "Ui/Custom/MiniButton.h"
+#include "Core/Io/StringOutputStream.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Command.h"
 #include "Ui/MethodHandler.h"
-#include "Core/Io/StringOutputStream.h"
+#include "Ui/Custom/MiniButton.h"
+#include "Ui/Custom/PropertyList/ArrayPropertyItem.h"
+#include "Ui/Custom/PropertyList/NullPropertyItem.h"
+#include "Ui/Custom/PropertyList/PropertyList.h"
 
 // Resources
 #include "Resources/SmallDots.h"
