@@ -14,15 +14,13 @@ class ButtonGtk : public WidgetGtkImpl< IButton >
 public:
 	ButtonGtk(EventSubject* owner);
 
-	virtual bool create(IWidget* parent, const std::string& text, int id, int style);
+	virtual bool create(IWidget* parent, const std::wstring& text, int style);
 
 	virtual void setState(bool state);
 
 	virtual bool getState() const;
 
 private:
-	int m_id;
-
 	void on_button_clicked();
 };
 

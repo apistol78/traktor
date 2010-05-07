@@ -21,12 +21,12 @@ EventLoopGtk::~EventLoopGtk()
 	delete m_main;
 }
 
-bool EventLoopGtk::process()
+bool EventLoopGtk::process(EventSubject* owner)
 {
 	return false;
 }
 
-int EventLoopGtk::execute()
+int EventLoopGtk::execute(EventSubject* owner)
 {
 	//gtk_main();
 	m_main->run();

@@ -14,15 +14,9 @@ class FormGtk : public WindowGtkImpl< IForm >
 public:
 	FormGtk(EventSubject* owner);
 
-	virtual bool create(IWidget* parent, const std::string& text, int width, int height, int style);
+	virtual bool create(IWidget* parent, const std::wstring& text, int width, int height, int style);
 
-	virtual void setIcon(drawing::Image* icon);
-
-	virtual IMenuBar* createMenuBar(EventSubject* owner);
-
-	virtual IToolBar* createToolBar(EventSubject* owner);
-
-	virtual IStatusBar* createStatusBar(EventSubject* owner);
+	virtual void setIcon(ui::IBitmap* icon);
 
 	virtual void maximize();
 

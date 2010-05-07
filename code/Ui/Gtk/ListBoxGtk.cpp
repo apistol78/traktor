@@ -18,7 +18,7 @@ bool ListBoxGtk::create(IWidget* parent, int style)
 		return false;
 
 	Gtk::ScrolledWindow* scrolledWindow = new Gtk::ScrolledWindow();
-	
+
 	m_parentContainer->put(*scrolledWindow, 0, 0);
 
 	scrolledWindow->show();
@@ -28,7 +28,7 @@ bool ListBoxGtk::create(IWidget* parent, int style)
 	return true;
 }
 
-int ListBoxGtk::add(const std::string& item)
+int ListBoxGtk::add(const std::wstring& item)
 {
 	return 0;
 }
@@ -47,13 +47,13 @@ int ListBoxGtk::count() const
 	return 0;
 }
 
-void ListBoxGtk::set(int index, const std::string& item)
+void ListBoxGtk::set(int index, const std::wstring& item)
 {
 }
 
-std::string ListBoxGtk::get(int index) const
+std::wstring ListBoxGtk::get(int index) const
 {
-	return "";
+	return L"";
 }
 
 void ListBoxGtk::select(int index)

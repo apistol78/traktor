@@ -1,5 +1,6 @@
+#include "Core/Misc/TString.h"
 #include "Ui/Gtk/ButtonGtk.h"
-#include "Ui/CommandEvent.h"
+#include "Ui/Events/CommandEvent.h"
 
 namespace traktor
 {
@@ -11,22 +12,21 @@ ButtonGtk::ButtonGtk(EventSubject* owner)
 {
 }
 
-bool ButtonGtk::create(IWidget* parent, const std::string& text, int id, int style)
+bool ButtonGtk::create(IWidget* parent, const std::wstring& text, int style)
 {
 	// @fixme Not safe, we must check so the internal handle in fact are a Gtk::Fixed container. Also need to ensure cleanup of m_parentContainer.
 	m_parentContainer = static_cast< Gtk::Fixed* >(parent->getInternalHandle());
 	if (!m_parentContainer)
 		return false;
 
-	Gtk::Button* button = new Gtk::Button(text.c_str());
+	Gtk::Button* button = new Gtk::Button(wstombs(text).c_str());
 	button->signal_clicked().connect(sigc::mem_fun(*this, &ButtonGtk::on_button_clicked));
-	
+
 	m_parentContainer->put(*button, 0, 0);
 
 	button->show();
 
 	m_widget = button;
-	m_id = id;
 
 	return true;
 }
@@ -42,7 +42,7 @@ bool ButtonGtk::getState() const
 
 void ButtonGtk::on_button_clicked()
 {
-	CommandEvent commandEvent(m_owner, m_id);
+	CommandEvent commandEvent(m_owner, 0);
 	m_owner->raiseEvent(EiClick, &commandEvent);
 }
 

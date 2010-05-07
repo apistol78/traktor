@@ -30,9 +30,9 @@ public:
 
 	virtual ~EventLoopGtk();
 
-	virtual bool process();
+	virtual bool process(EventSubject* owner);
 
-	virtual int execute();
+	virtual int execute(EventSubject* owner);
 
 	virtual void exit(int exitCode);
 

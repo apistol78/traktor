@@ -16,7 +16,7 @@ public:
 
 	virtual bool create(IWidget* parent, int style);
 
-	virtual int add(const std::string& item);
+	virtual int add(const std::wstring& item);
 
 	virtual bool remove(int index);
 
@@ -24,10 +24,10 @@ public:
 
 	virtual int count() const;
 
-	virtual void set(int index, const std::string& item);
+	virtual void set(int index, const std::wstring& item);
 
-	virtual std::string get(int index) const;
-	
+	virtual std::wstring get(int index) const;
+
 	virtual void select(int index);
 
 	virtual bool selected(int index) const;

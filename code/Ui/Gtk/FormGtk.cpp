@@ -1,7 +1,8 @@
-#include "Ui/Gtk/FormGtk.h"
-#include "Ui/SizeEvent.h"
-#include "Ui/Application.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/TString.h"
+#include "Ui/Application.h"
+#include "Ui/Events/SizeEvent.h"
+#include "Ui/Gtk/FormGtk.h"
 
 namespace traktor
 {
@@ -13,11 +14,11 @@ FormGtk::FormGtk(EventSubject* owner)
 {
 }
 
-bool FormGtk::create(IWidget* parent, const std::string& text, int width, int height, int style)
+bool FormGtk::create(IWidget* parent, const std::wstring& text, int width, int height, int style)
 {
 	// Create top-level window.
 	m_window = new Gtk::Window();
-	m_window->set_title(text.c_str());
+	m_window->set_title(wstombs(text).c_str());
 	m_window->set_default_size(width, height);
 	m_window->set_border_width(0);
 
@@ -37,23 +38,8 @@ bool FormGtk::create(IWidget* parent, const std::string& text, int width, int he
 	return true;
 }
 
-void FormGtk::setIcon(drawing::Image* icon)
+void FormGtk::setIcon(ui::IBitmap* icon)
 {
-}
-
-IMenuBar* FormGtk::createMenuBar(EventSubject* owner)
-{
-	return 0;
-}
-
-IToolBar* FormGtk::createToolBar(EventSubject* owner)
-{
-	return 0;
-}
-
-IStatusBar* FormGtk::createStatusBar(EventSubject* owner)
-{
-	return 0;
 }
 
 void FormGtk::maximize()
@@ -85,14 +71,14 @@ Rect FormGtk::getInnerRect() const
 
 void FormGtk::on_remove(Gtk::Widget* widget)
 {
-	Application::getInstance().exit(0);
+	Application::getInstance()->exit(0);
 }
 
 void FormGtk::on_size_allocate(Gtk::Allocation& allocation)
 {
 	log::info << "FormGtk::on_size_allocate : " << allocation.get_width() << " x " << allocation.get_height() << Endl;
 
-	SizeEvent s(m_owner, Size(allocation.get_width(), allocation.get_height()));
+	SizeEvent s(m_owner, 0, Size(allocation.get_width(), allocation.get_height()));
 	m_owner->raiseEvent(EiSize, &s);
 }
 
