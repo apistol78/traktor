@@ -667,7 +667,7 @@ LRESULT RenderSystemWin32::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 	case WM_KEYDOWN:
 		if (renderSystem && wParam == VK_RETURN)
 		{
-			if (GetAsyncKeyState(VK_CONTROL) != 0)
+			if ((GetAsyncKeyState(VK_CONTROL) & 0x8000) != 0)
 				renderSystem->toggleMode();
 		}
 		break;
