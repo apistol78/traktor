@@ -235,16 +235,16 @@ Ref< ISurface > GraphicsSystemDdWm5::createOffScreenSurface(const SurfaceDesc& s
 void GraphicsSystemDdWm5::flip(bool waitVBlank)
 {
 	HRESULT hr;
-	//POINT offset = { 0, 0 };
-	//RECT rc;
+	POINT offset = { 0, 0 };
+	RECT rc;
 
-	//ClientToScreen(m_hWnd, &offset);
-	//GetClientRect(m_hWnd, &rc);
-	//OffsetRect(&rc, offset.x, offset.y);
+	ClientToScreen(m_hWnd, &offset);
+	GetClientRect(m_hWnd, &rc);
+	OffsetRect(&rc, offset.x, offset.y);
 
 	for (;;)
 	{
-		hr = m_ddsPrimary->Blt(NULL, m_ddsSecondary, NULL, 0, NULL);
+		hr = m_ddsPrimary->Blt(&rc, m_ddsSecondary, NULL, 0, NULL);
 		if (hr == DD_OK || hr != DDERR_WASSTILLDRAWING)
 			break;
 	}
