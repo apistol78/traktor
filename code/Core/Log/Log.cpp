@@ -14,12 +14,14 @@ LogTargetConsole::LogTargetConsole(int color)
 
 void LogTargetConsole::log(const std::wstring& str)
 {
+#if !defined(WINCE)
 	if (m_color == 0)
 		std::wcout << str << std::endl;
 	else if (m_color == 1)
 		std::wcout << L"(WARN) " << str << std::endl;
 	else
 		std::wcerr << L"(ERROR) " << str << std::endl;
+#endif
 #if defined(_WIN32)
 	tstring tss = wstots(str + L"\n");
 	OutputDebugString(tss.c_str());
