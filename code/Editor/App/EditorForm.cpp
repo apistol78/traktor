@@ -277,12 +277,11 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	// Define docking panes.
 	Ref< ui::DockPane > pane = m_dock->getPane();
 
-	Ref< ui::DockPane > paneTop, paneLog;
-	pane->split(true, -140, paneTop, paneLog);
-	
-	Ref< ui::DockPane > paneCenter;
-	paneTop->split(false, 250, m_paneWest, paneCenter);
+	Ref< ui::DockPane > paneCenter, paneLog;
+
+	pane->split(false, 280, m_paneWest, paneCenter);
 	paneCenter->split(false, -250, paneCenter, m_paneEast);
+	paneCenter->split(true, -140, paneCenter, paneLog);
 	paneCenter->split(true, -200, paneCenter, m_paneSouth);
 	
 	// Create panes.
