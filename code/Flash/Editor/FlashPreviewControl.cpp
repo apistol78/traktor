@@ -102,8 +102,17 @@ bool FlashPreviewControl::create(ui::Widget* parent, int style, resource::IResou
 	if (!m_renderView)
 		return false;
 
+	render::Viewport viewport = m_renderView->getViewport();
+
 	m_displayRenderer = new AccDisplayRenderer();
-	m_displayRenderer->create(resourceManager, renderSystem, 1, true);
+	m_displayRenderer->create(
+		resourceManager,
+		renderSystem,
+		float(viewport.width),
+		float(viewport.height),
+		1,
+		true
+	);
 #else
 	graphics::CreateDesc desc;
 
@@ -242,11 +251,13 @@ void FlashPreviewControl::eventSize(ui::Event* event)
 	ui::Size sz = s->getSize();
 
 #if T_USE_ACCELERATED_RENDERER
-	if (!m_renderView)
-		return;
-
-	m_renderView->resize(sz.cx, sz.cy);
-	m_renderView->setViewport(render::Viewport(0, 0, sz.cx, sz.cy, 0, 1));
+	if (m_renderView)
+	{
+		m_renderView->resize(sz.cx, sz.cy);
+		m_renderView->setViewport(render::Viewport(0, 0, sz.cx, sz.cy, 0, 1));
+	}
+	if (m_displayRenderer)
+		m_displayRenderer->setViewSize(float(sz.cx), float(sz.cy));
 #else
 	if (!m_graphicsSystem)
 		return;

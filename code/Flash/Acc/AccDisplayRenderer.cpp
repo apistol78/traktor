@@ -71,6 +71,8 @@ AccDisplayRenderer::~AccDisplayRenderer()
 bool AccDisplayRenderer::create(
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem,
+	float viewWidth,
+	float viewHeight,
 	uint32_t frameCount,
 	bool clearBackground
 )
@@ -78,6 +80,7 @@ bool AccDisplayRenderer::create(
 	m_resourceManager = resourceManager;
 	m_renderSystem = renderSystem;
 	m_textureCache = new AccTextureCache(m_renderSystem);
+	m_viewSize.set(viewWidth, viewHeight, 1.0f / viewWidth, 1.0f / viewHeight);
 	m_clearBackground = clearBackground;
 
 	m_quad = new AccQuad();
@@ -134,15 +137,16 @@ void AccDisplayRenderer::build(uint32_t frame, bool correctAspectRatio)
 void AccDisplayRenderer::render(render::IRenderView* renderView, uint32_t frame)
 {
 	m_renderContexts[frame]->render(renderView, render::RfOverlay);
-
-	// \fixme Not very nice.
-	render::Viewport viewport = renderView->getViewport();
-	m_viewSize.set(float(viewport.width), float(viewport.height), 1.0f / viewport.width, 1.0f / viewport.height);
 }
 
 void AccDisplayRenderer::flush(uint32_t frame)
 {
 	m_renderContexts[frame]->flush();
+}
+
+void AccDisplayRenderer::setViewSize(float width, float height)
+{
+	m_viewSize.set(width, height, 1.0f / width, 1.0f / height);
 }
 
 void AccDisplayRenderer::begin(const FlashMovie& movie, const SwfColor& backgroundColor)

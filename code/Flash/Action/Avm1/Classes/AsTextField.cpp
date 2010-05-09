@@ -70,12 +70,20 @@ void AsTextField::TextField_set_text(FlashEditInstance* editInstance, const std:
 
 avm_number_t AsTextField::TextField_get_textWidth(FlashEditInstance* editInstance) const
 {
-	return editInstance->getTextWidth();
+	float width, height;
+	if (editInstance->getTextExtents(width, height))
+		return avm_number_t(width);
+	else
+		return avm_number_t(0);
 }
 
 avm_number_t AsTextField::TextField_get_textHeight(FlashEditInstance* editInstance) const
 {
-	return editInstance->getTextHeight();
+	float width, height;
+	if (editInstance->getTextExtents(width, height))
+		return avm_number_t(height);
+	else
+		return avm_number_t(0);
 }
 
 	}
