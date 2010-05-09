@@ -40,9 +40,7 @@ public:
 
 	text_t getText() const;
 
-	avm_number_t getTextWidth() const;
-
-	avm_number_t getTextHeight() const;
+	bool getTextExtents(float& outWidth, float& outHeight) const;
 
 	virtual SwfRect getBounds() const;
 

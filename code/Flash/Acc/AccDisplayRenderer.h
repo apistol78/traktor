@@ -57,6 +57,8 @@ public:
 	bool create(
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
+		float viewWidth,
+		float viewHeight,
 		uint32_t frameCount,
 		bool clearBackground
 	);
@@ -68,6 +70,8 @@ public:
 	void render(render::IRenderView* renderView, uint32_t frame);
 
 	void flush(uint32_t frame);
+
+	void setViewSize(float width, float height);
 
 	// \name IDisplayRenderer
 	// \{
