@@ -94,12 +94,17 @@ int PropertyItem::getDepth() const
 	return depth;
 }
 
-PropertyItem* PropertyItem::getParentItem()
+PropertyItem* PropertyItem::getParentItem() const
 {
 	return m_parent;
 }
 
 RefArray< PropertyItem >& PropertyItem::getChildItems()
+{
+	return m_childItems;
+}
+
+const RefArray< PropertyItem >& PropertyItem::getChildItems() const
 {
 	return m_childItems;
 }

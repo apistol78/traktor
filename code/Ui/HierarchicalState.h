@@ -1,5 +1,5 @@
-#ifndef traktor_ui_TreeViewState_H
-#define traktor_ui_TreeViewState_H
+#ifndef traktor_ui_HierarchicalState_H
+#define traktor_ui_HierarchicalState_H
 
 #include <map>
 #include "Core/Serialization/ISerializable.h"
@@ -7,9 +7,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_UI_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -17,10 +17,10 @@ namespace traktor
 	namespace ui
 	{
 
-/*! \brief Tree view state.
+/*! \brief Persistent hierarchical view state.
  * \ingroup UI
  */
-class T_DLLCLASS TreeViewState : public ISerializable
+class T_DLLCLASS HierarchicalState : public ISerializable
 {
 	T_RTTI_CLASS;
 
@@ -40,7 +40,7 @@ public:
 	 * \param state Right hand state.
 	 * \return Merged state.
 	 */
-	Ref< TreeViewState > merge(const TreeViewState* state) const;
+	Ref< HierarchicalState > merge(const HierarchicalState* state) const;
 
 	virtual bool serialize(ISerializer& s);
 
@@ -51,4 +51,4 @@ private:
 	}
 }
 
-#endif	// traktor_ui_TreeViewState_H
+#endif	// traktor_ui_HierarchicalState_H
