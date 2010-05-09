@@ -68,6 +68,59 @@ struct FindSamplerTexture
 	}
 };
 
+bool storeIfNotEqual(const float* source, int length, float* dest)
+{
+	bool mismatch = false;
+	int i = 0;
+	
+	for (; i < length; ++i)
+	{
+		if (dest[i] != source[i])
+		{
+			mismatch = true;
+			break;
+		}
+	}
+	
+	if (mismatch)
+	{
+		for (; i < length; ++i)
+			dest[i] = source[i];
+	}
+		
+	return mismatch;
+}
+
+bool storeIfNotEqual(const Vector4* source, int length, float* dest)
+{
+	bool mismatch = false;
+	int i = 0;
+	
+	for (; i < length; ++i)
+	{
+		if (Vector4(&dest[i * 4]) != source[i])
+		{
+			mismatch = true;
+			break;
+		}
+	}
+	
+	if (mismatch)
+	{
+		for (; i < length; ++i)
+			source[i].storeUnaligned(&dest[i * 4]);
+	}
+		
+	return mismatch;
+}
+
+bool storeIfNotEqual(const Matrix44* source, int length, float* dest)
+{
+	for (int i = 0; i < length; ++i)
+		source[i].storeUnaligned(&dest[i * 4 * 4]);
+	return true;
+}
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProgramOpenGL", ProgramOpenGL, IProgram)
@@ -79,7 +132,6 @@ ProgramOpenGL::ProgramOpenGL(ContextOpenGL* resourceContext)
 ,	m_program(0)
 ,	m_state(0)
 ,	m_locationTargetSize(0)
-,	m_dirty(true)
 {
 }
 
@@ -179,15 +231,13 @@ bool ProgramOpenGL::create(const ProgramResource* resource)
 	for (std::map< std::wstring, int32_t >::const_iterator i = samplerTextures.begin(); i != samplerTextures.end(); ++i)
 	{
 		handle_t handle = getParameterHandle(i->first);
-		
-		if (m_parameterMap.find(handle) == m_parameterMap.end())
-		{
-			m_parameterMap[handle].offset = m_textureData.size();
+		T_ASSERT (m_parameterMap.find(handle) == m_parameterMap.end());
 
-			m_textureData.push_back(TextureData());
-			m_textureData.back().target = 0;
-			m_textureData.back().name = 0;
-		}
+		m_parameterMap[handle] = m_textureData.size();
+
+		m_textureData.push_back(TextureData());
+		m_textureData.back().target = 0;
+		m_textureData.back().name = 0;
 		
 		std::wstring samplerName = L"_gl_sampler_" + toString(i->second);
 		std::wstring samplerOffset = L"_gl_sampler_" + toString(i->second) + L"_offset";
@@ -195,7 +245,7 @@ bool ProgramOpenGL::create(const ProgramResource* resource)
 		Sampler sampler;
 		sampler.locationTexture = glGetUniformLocationARB(m_program, wstombs(samplerName).c_str());
 		sampler.locationOffset = glGetUniformLocationARB(m_program, wstombs(samplerOffset).c_str());
-		sampler.texture = m_parameterMap[handle].offset;
+		sampler.texture = m_parameterMap[handle];
 		sampler.stage = i->second;
 
 		m_samplers.push_back(sampler);
@@ -226,40 +276,41 @@ bool ProgramOpenGL::create(const ProgramResource* resource)
 		if (uniformType != GL_SAMPLER_2D_ARB)
 		{
 			handle_t handle = getParameterHandle(uniformNameW);
-			if (m_parameterMap.find(handle) == m_parameterMap.end())
+			T_ASSERT (m_parameterMap.find(handle) == m_parameterMap.end());
+
+			uint32_t allocSize = 0;
+			switch (uniformType)
 			{
-				uint32_t allocSize = 0;
-				switch (uniformType)
-				{
-				case GL_FLOAT:
-					allocSize = 1 * uniformSize;
-					break;
+			case GL_FLOAT:
+				allocSize = 1 * uniformSize;
+				break;
 
-				case GL_FLOAT_VEC4_ARB:
-					allocSize = 4 * uniformSize;
-					break;
+			case GL_FLOAT_VEC4_ARB:
+				allocSize = 4 * uniformSize;
+				break;
 
-				case GL_FLOAT_MAT4_ARB:
-					allocSize = 16 * uniformSize;
-					break;
+			case GL_FLOAT_MAT4_ARB:
+				allocSize = 16 * uniformSize;
+				break;
 
-				default:
-					log::error << L"Invalid uniform type " << uint32_t(uniformType) << Endl;
-					return false;
-				}
-
-				uint32_t offset = uint32_t(m_uniformData.size());
-				m_parameterMap[handle].offset = offset;
-				m_parameterMap[handle].length = uniformSize;
-
-				m_uniformData.resize(offset + allocSize, 0.0f);
-
-				m_uniforms.push_back(Uniform());
-				m_uniforms.back().location = glGetUniformLocationARB(m_program, uniformName);
-				m_uniforms.back().type = uniformType;
-				m_uniforms.back().offset = m_parameterMap[handle].offset;
-				m_uniforms.back().length = m_parameterMap[handle].length;
+			default:
+				log::error << L"Invalid uniform type " << uint32_t(uniformType) << Endl;
+				return false;
 			}
+
+			uint32_t offsetUniform = uint32_t(m_uniforms.size());
+			uint32_t offsetData = uint32_t(m_uniformData.size());
+			
+			m_parameterMap[handle] = offsetUniform;
+
+			m_uniforms.push_back(Uniform());
+			m_uniforms.back().location = glGetUniformLocationARB(m_program, uniformName);
+			m_uniforms.back().type = uniformType;
+			m_uniforms.back().offset = offsetData;
+			m_uniforms.back().length = uniformSize;
+			m_uniforms.back().dirty = true;
+
+			m_uniformData.resize(offsetData + allocSize, 0.0f);
 		}
 	}
 
@@ -287,10 +338,7 @@ bool ProgramOpenGL::create(const ProgramResource* resource)
 void ProgramOpenGL::destroy()
 {
 	if (ms_activeProgram == this)
-	{
 		ms_activeProgram = 0;
-		m_dirty = true;
-	}
 
 	if (m_program)
 	{
@@ -307,102 +355,92 @@ void ProgramOpenGL::setFloatParameter(handle_t handle, float param)
 
 void ProgramOpenGL::setFloatArrayParameter(handle_t handle, const float* param, int length)
 {
-	std::map< handle_t, Parameter >::iterator i = m_parameterMap.find(handle);
+	std::map< handle_t, uint32_t >::iterator i = m_parameterMap.find(handle);
 	if (i == m_parameterMap.end())
 		return;
+		
+	Uniform& uniform = m_uniforms[i->second];
 
-	length = min< int >(i->second.length, length);
+	length = min< int >(uniform.length, length);
 
-	std::memcpy(&m_uniformData[i->second.offset], param, length * sizeof(float));
-	m_dirty = true;
+	if (storeIfNotEqual(param, length, &m_uniformData[uniform.offset]))
+		uniform.dirty = true;
 }
 
 void ProgramOpenGL::setVectorParameter(handle_t handle, const Vector4& param)
 {
-	std::map< handle_t, Parameter >::iterator i = m_parameterMap.find(handle);
-	if (i == m_parameterMap.end())
-		return;
-
-	param.storeUnaligned(&m_uniformData[i->second.offset]);
-	m_dirty = true;
+	setVectorArrayParameter(handle, &param, 1);
 }
 
 void ProgramOpenGL::setVectorArrayParameter(handle_t handle, const Vector4* param, int length)
 {
-	std::map< handle_t, Parameter >::iterator i = m_parameterMap.find(handle);
+	std::map< handle_t, uint32_t >::iterator i = m_parameterMap.find(handle);
 	if (i == m_parameterMap.end())
 		return;
+		
+	Uniform& uniform = m_uniforms[i->second];
 
-	length = min< int >(i->second.length, length);
+	length = min< int >(uniform.length, length);
 
-	for (int j = 0; j < length; ++j)
-		param[j].storeUnaligned(&m_uniformData[i->second.offset + j * 4]);
-
-	m_dirty = true;
+	if (storeIfNotEqual(param, length, &m_uniformData[uniform.offset]))
+		uniform.dirty = true;
 }
 
 void ProgramOpenGL::setMatrixParameter(handle_t handle, const Matrix44& param)
 {
-	std::map< handle_t, Parameter >::iterator i = m_parameterMap.find(handle);
-	if (i == m_parameterMap.end())
-		return;
-
-	param.storeUnaligned(&m_uniformData[i->second.offset]);
-	m_dirty = true;
+	setMatrixArrayParameter(handle, &param, 1);
 }
 
 void ProgramOpenGL::setMatrixArrayParameter(handle_t handle, const Matrix44* param, int length)
 {
-	std::map< handle_t, Parameter >::iterator i = m_parameterMap.find(handle);
+	std::map< handle_t, uint32_t >::iterator i = m_parameterMap.find(handle);
 	if (i == m_parameterMap.end())
 		return;
+		
+	Uniform& uniform = m_uniforms[i->second];
 
-	length = min< int >(i->second.length, length);
+	length = min< int >(uniform.length, length);
 
-	for (int j = 0; j < length; ++j)
-		param[j].storeUnaligned(&m_uniformData[i->second.offset + j * 16]);
-
-	m_dirty = true;
+	if (storeIfNotEqual(param, length, &m_uniformData[uniform.offset]))
+		uniform.dirty = true;
 }
 
 void ProgramOpenGL::setTextureParameter(handle_t handle, ITexture* texture)
 {
-	std::map< handle_t, Parameter >::iterator i = m_parameterMap.find(handle);
+	std::map< handle_t, uint32_t >::iterator i = m_parameterMap.find(handle);
 	if (i == m_parameterMap.end())
 		return;
 
 	if (SimpleTextureOpenGL* st = dynamic_type_cast< SimpleTextureOpenGL* >(texture))
 	{
-		m_textureData[i->second.offset].target = GL_TEXTURE_2D;
-		m_textureData[i->second.offset].name = st->getTextureName();
-		m_textureData[i->second.offset].mipCount = st->getMipCount();
-		st->getTextureOriginAndScale().storeUnaligned(m_textureData[i->second.offset].offset);
+		m_textureData[i->second].target = GL_TEXTURE_2D;
+		m_textureData[i->second].name = st->getTextureName();
+		m_textureData[i->second].mipCount = st->getMipCount();
+		st->getTextureOriginAndScale().storeUnaligned(m_textureData[i->second].offset);
 	}
 	else if (CubeTextureOpenGL* ct = dynamic_type_cast< CubeTextureOpenGL* >(texture))
 	{
 #if !defined(__APPLE__)
-		m_textureData[i->second.offset].target = GL_TEXTURE_CUBE_MAP_EXT;
+		m_textureData[i->second].target = GL_TEXTURE_CUBE_MAP_EXT;
 #else
-		m_textureData[i->second.offset].target = GL_TEXTURE_CUBE_MAP_ARB;
+		m_textureData[i->second].target = GL_TEXTURE_CUBE_MAP_ARB;
 #endif
-		m_textureData[i->second.offset].name = ct->getTextureName();
-		m_textureData[i->second.offset].mipCount = 1;
+		m_textureData[i->second].name = ct->getTextureName();
+		m_textureData[i->second].mipCount = 1;
 	}
 	else if (VolumeTextureOpenGL* vt = dynamic_type_cast< VolumeTextureOpenGL* >(texture))
 	{
-		m_textureData[i->second.offset].target = GL_TEXTURE_3D;
-		m_textureData[i->second.offset].name = vt->getTextureName();
-		m_textureData[i->second.offset].mipCount = 1;
+		m_textureData[i->second].target = GL_TEXTURE_3D;
+		m_textureData[i->second].name = vt->getTextureName();
+		m_textureData[i->second].mipCount = 1;
 	}
 	else if (RenderTargetOpenGL* rt = dynamic_type_cast< RenderTargetOpenGL* >(texture))
 	{
-		m_textureData[i->second.offset].target = rt->getTextureTarget();
-		m_textureData[i->second.offset].name = rt->getTextureName();
-		m_textureData[i->second.offset].mipCount = 1;
-		rt->getTextureOriginAndScale().storeUnaligned(m_textureData[i->second.offset].offset);
+		m_textureData[i->second].target = rt->getTextureTarget();
+		m_textureData[i->second].name = rt->getTextureName();
+		m_textureData[i->second].mipCount = 1;
+		rt->getTextureOriginAndScale().storeUnaligned(m_textureData[i->second].offset);
 	}
-
-	m_dirty = true;
 }
 
 void ProgramOpenGL::setStencilReference(uint32_t stencilReference)
@@ -411,68 +449,47 @@ void ProgramOpenGL::setStencilReference(uint32_t stencilReference)
 
 bool ProgramOpenGL::activate(float targetSize[2])
 {
-	if (ms_activeProgram == this && !m_dirty)
-		return true;
-	
+	// Bind program and set state display list.
 	if (ms_activeProgram != this)
 	{
 		m_resourceContext->callStateList(m_state);
 
 		T_ASSERT (m_program);
 		T_OGL_SAFE(glUseProgramObjectARB(m_program));
-
-		for (std::vector< Uniform >::iterator i = m_uniforms.begin(); i != m_uniforms.end(); ++i)
-		{
-			const float* uniformData = &m_uniformData[i->offset];
-
-			switch (i->type)
-			{
-			case GL_FLOAT:
-				T_OGL_SAFE(glUniform1fvARB(i->location, i->length, uniformData));
-				break;
-
-			case GL_FLOAT_VEC4_ARB:
-				T_OGL_SAFE(glUniform4fvARB(i->location, i->length, uniformData));
-				break;
-
-			case GL_FLOAT_MAT4_ARB:
-				T_OGL_SAFE(glUniformMatrix4fvARB(i->location, i->length, GL_FALSE, uniformData));
-				break;
-
-			default:
-				T_ASSERT (0);
-			}
-		}
 	}
-	else
+
+	// Update dirty uniforms.
+	for (std::vector< Uniform >::iterator i = m_uniforms.begin(); i != m_uniforms.end(); ++i)
 	{
-		for (std::vector< Uniform >::iterator i = m_uniforms.begin(); i != m_uniforms.end(); ++i)
+		if (!i->dirty)
+			continue;
+			
+		const float* uniformData = &m_uniformData[i->offset];
+		switch (i->type)
 		{
-			const float* uniformData = &m_uniformData[i->offset];
+		case GL_FLOAT:
+			T_OGL_SAFE(glUniform1fvARB(i->location, i->length, uniformData));
+			break;
 
-			switch (i->type)
-			{
-			case GL_FLOAT:
-				T_OGL_SAFE(glUniform1fvARB(i->location, i->length, uniformData));
-				break;
+		case GL_FLOAT_VEC4_ARB:
+			T_OGL_SAFE(glUniform4fvARB(i->location, i->length, uniformData));
+			break;
 
-			case GL_FLOAT_VEC4_ARB:
-				T_OGL_SAFE(glUniform4fvARB(i->location, i->length, uniformData));
-				break;
+		case GL_FLOAT_MAT4_ARB:
+			T_OGL_SAFE(glUniformMatrix4fvARB(i->location, i->length, GL_FALSE, uniformData));
+			break;
 
-			case GL_FLOAT_MAT4_ARB:
-				T_OGL_SAFE(glUniformMatrix4fvARB(i->location, i->length, GL_FALSE, uniformData));
-				break;
-
-			default:
-				T_ASSERT (0);
-			}
+		default:
+			T_ASSERT (0);
 		}
+		
+		i->dirty = false;
 	}
 
 	if (m_locationTargetSize != -1)
 		T_OGL_SAFE(glUniform2fvARB(m_locationTargetSize, 1, targetSize));
 
+	// Bind textures.
 	for (uint32_t i = 0; i < m_samplers.size(); ++i)
 	{
 		const Sampler& sampler = m_samplers[i];
@@ -511,8 +528,6 @@ bool ProgramOpenGL::activate(float targetSize[2])
 	}
 
 	ms_activeProgram = this;
-	m_dirty = false;
-
 	return true;
 }
 
