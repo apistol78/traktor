@@ -62,18 +62,13 @@ public:
 	const GLint* getAttributeLocs() const;
 
 private:
-	struct Parameter
-	{
-		uint32_t offset;
-		uint32_t length;
-	};
-
 	struct Uniform
 	{
 		GLint location;
 		GLenum type;
 		uint32_t offset;
 		uint32_t length;
+		bool dirty;
 	};
 
 	struct Sampler
@@ -98,13 +93,12 @@ private:
 	GLuint m_state;
 	GLint m_locationTargetSize;
 	GLint m_attributeLocs[T_OGL_MAX_USAGE_INDEX];		//!< Vertex attribute locations.
-	std::map< handle_t, Parameter > m_parameterMap;		//!< Parameter to data map.
+	std::map< handle_t, uint32_t > m_parameterMap;		//!< Parameter to data map.
 	std::vector< Uniform > m_uniforms;					//!< Scalar uniforms.
 	std::vector< Sampler > m_samplers;					//!< Samplers.
 	AlignedVector< float > m_uniformData;				//!< Scalar uniform data.
 	AlignedVector< TextureData > m_textureData;			//!< Texture data.
 	static ProgramOpenGL* ms_activeProgram;
-	bool m_dirty;
 };
 
 	}
