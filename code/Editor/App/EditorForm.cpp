@@ -162,10 +162,14 @@ bool findShortcutCommandMapping(const Settings* settings, const std::wstring& co
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.EditorForm", EditorForm, ui::Form)
 
+EditorForm::EditorForm()
+:	m_threadAssetMonitor(0)
+,	m_threadBuild(0)
+{
+}
+
 bool EditorForm::create(const CommandLine& cmdLine)
 {
-	m_threadBuild = 0;
-
 	// Load settings.
 	m_settings = loadSettings(L"Traktor.Editor");
 
@@ -467,8 +471,12 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	update();
 	show();
 
-	// Start modified and database poll timer.
+	// Start thread and timer.
+	m_threadAssetMonitor = ThreadManager::getInstance().create(makeFunctor(this, &EditorForm::threadAssetMonitor), L"Asset monitor");
+	m_threadAssetMonitor->start();
+
 	startTimer(1000);
+
 	return true;
 }
 
@@ -476,7 +484,13 @@ void EditorForm::destroy()
 {
 	closeAllEditors();
 
-	// Stop current build.
+	// Stop threads.
+	if (m_threadAssetMonitor)
+	{
+		while (!m_threadAssetMonitor->stop());
+		ThreadManager::getInstance().destroy(m_threadAssetMonitor);
+		m_threadAssetMonitor = 0;
+	}
 	if (m_threadBuild)
 	{
 		while (!m_threadBuild->stop());
@@ -1816,41 +1830,6 @@ void EditorForm::eventTimer(ui::Event* /*event*/)
 		log::debug << L"Database change(s) notified" << Endl;
 	}
 
-	// Check asset sources.
-	if (m_settings->getProperty< PropertyBoolean >(L"Editor.BuildWhenAssetModified"))
-	{
-		std::vector< Guid > modifiedAssets;
-
-		RefArray< db::Instance > assetInstances;
-		db::recursiveFindChildInstances(m_sourceDatabase->getRootGroup(), db::FindInstanceByType(type_of< Asset >()), assetInstances);
-
-		if (!assetInstances.empty())
-		{
-			std::wstring assetPath = m_settings->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
-
-			for (RefArray< db::Instance >::iterator i = assetInstances.begin(); i != assetInstances.end(); ++i)
-			{
-				Ref< Asset > asset = (*i)->getObject< Asset >();
-				if (asset)
-				{
-					Path fileName = FileSystem::getInstance().getAbsolutePath(assetPath, asset->getFileName());
-					Ref< File > file = FileSystem::getInstance().get(fileName);
-					if (file && (file->getFlags() & File::FfArchive) == File::FfArchive)
-					{
-						modifiedAssets.push_back((*i)->getGuid());
-						FileSystem::getInstance().modify(fileName, (file->getFlags() & ~File::FfArchive));
-					}
-				}
-			}
-
-			if (!modifiedAssets.empty())
-			{
-				log::debug << L"Modified source asset(s) detected; building asset(s)..." << Endl;
-				buildAssets(modifiedAssets, false);
-			}
-		}
-	}
-
 	// We need to update database view as another process has modified database.
 	if (updateView)
 		m_dataBaseView->updateView();
@@ -1863,6 +1842,72 @@ void EditorForm::eventTimer(ui::Event* /*event*/)
 	{
 		m_buildProgress->setVisible(false);
 		m_statusBar->setText(i18n::Text(L"STATUS_IDLE"));
+	}
+}
+
+void EditorForm::threadAssetMonitor()
+{
+	while (!m_threadAssetMonitor->stopped())
+	{
+		if (
+			(!m_threadBuild || m_threadBuild->finished()) &&
+			m_sourceDatabase &&
+			m_settings->getProperty< PropertyBoolean >(L"Editor.BuildWhenAssetModified")
+		)
+		{
+			RefArray< db::Instance > assetInstances;
+			db::recursiveFindChildInstances(
+				m_sourceDatabase->getRootGroup(),
+				db::FindInstanceByType(type_of< Asset >()),
+				assetInstances
+			);
+
+			if (!assetInstances.empty())
+			{
+				std::vector< Guid > modifiedAssets;
+				std::wstring assetPath = m_settings->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
+
+				for (RefArray< db::Instance >::const_iterator i = assetInstances.begin(); i != assetInstances.end(); ++i)
+				{
+					Ref< Asset > asset = (*i)->getObject< Asset >();
+					if (!asset)
+						continue;
+
+					Path fileName = FileSystem::getInstance().getAbsolutePath(assetPath, asset->getFileName());
+					
+					RefArray< File > files;
+					FileSystem::getInstance().find(fileName, files);
+
+					for (RefArray< File >::const_iterator j = files.begin(); j != files.end(); ++j)
+					{
+						const File* file = *j;
+						uint32_t flags = file->getFlags();
+						if ((flags & File::FfArchive) == File::FfArchive)
+						{
+							flags &= ~File::FfArchive;
+							if (FileSystem::getInstance().modify(file->getPath(), flags))
+							{
+								log::info << L"Source asset \"" << file->getPath().getPathName() << L"\" modified" << Endl;
+								modifiedAssets.push_back((*i)->getGuid());
+							}
+							else
+								log::error << L"Unable to restore archive flag; source asset \"" << file->getPath().getPathName() << L"\" skipped" << Endl;
+						}
+					}
+				}
+
+				if (
+					(!m_threadBuild || m_threadBuild->finished()) &&
+					!modifiedAssets.empty()
+				)
+				{
+					log::info << L"Modified source asset(s) detected; building asset(s)..." << Endl;
+					buildAssets(modifiedAssets, false);
+				}
+			}
+		}
+
+		m_threadAssetMonitor->sleep(1000);
 	}
 }
 
