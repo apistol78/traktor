@@ -70,6 +70,8 @@ class EditorForm
 	T_RTTI_CLASS;
 
 public:
+	EditorForm();
+
 	bool create(const CommandLine& cmdLine);
 
 	void destroy();
@@ -141,6 +143,7 @@ private:
 	Ref< db::Database > m_outputDatabase;
 	Ref< IEditorPage > m_activeEditorPage;
 	Ref< EditorPageSite > m_activeEditorPageSite;
+	Thread* m_threadAssetMonitor;
 	Thread* m_threadBuild;
 
 	void setPropertyObject(Object* properties);
@@ -209,6 +212,13 @@ private:
 	void eventClose(ui::Event* event);
 
 	void eventTimer(ui::Event* event);
+
+	//@}
+
+	/*! \name Monitor thread methods. */
+	//@{
+
+	void threadAssetMonitor();
 
 	//@}
 };
