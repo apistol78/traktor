@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_UI_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -16,8 +16,8 @@ namespace traktor
 	namespace ui
 	{
 
+class HierarchicalState;
 class TreeViewItem;
-class TreeViewState;
 		
 /*! \brief Tree view.
  * \ingroup UI
@@ -55,9 +55,9 @@ public:
 
 	Ref< TreeViewItem > getSelectedItem() const;
 
-	Ref< TreeViewState > captureState() const;
+	Ref< HierarchicalState > captureState() const;
 
-	void applyState(const TreeViewState* state);
+	void applyState(const HierarchicalState* state);
 	
 	void addSelectEventHandler(EventHandler* eventHandler);
 

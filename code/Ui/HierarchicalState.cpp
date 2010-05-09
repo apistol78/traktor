@@ -1,15 +1,15 @@
-#include "Ui/TreeViewState.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberStl.h"
+#include "Ui/HierarchicalState.h"
 
 namespace traktor
 {
 	namespace ui
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ui.TreeViewState", 0, TreeViewState, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ui.HierarchicalState", 0, HierarchicalState, ISerializable)
 
-void TreeViewState::addState(const std::wstring& path, bool expanded, bool selected)
+void HierarchicalState::addState(const std::wstring& path, bool expanded, bool selected)
 {
 	if (expanded || selected)
 		m_states.insert(std::make_pair(path, std::make_pair(expanded, selected)));
@@ -21,21 +21,21 @@ void TreeViewState::addState(const std::wstring& path, bool expanded, bool selec
 	}
 }
 
-bool TreeViewState::getExpanded(const std::wstring& path) const
+bool HierarchicalState::getExpanded(const std::wstring& path) const
 {
 	std::map< std::wstring, std::pair< bool, bool > >::const_iterator i = m_states.find(path);
 	return i != m_states.end() ? i->second.first : false;
 }
 
-bool TreeViewState::getSelected(const std::wstring& path) const
+bool HierarchicalState::getSelected(const std::wstring& path) const
 {
 	std::map< std::wstring, std::pair< bool, bool > >::const_iterator i = m_states.find(path);
 	return i != m_states.end() ? i->second.second : false;
 }
 
-Ref< TreeViewState > TreeViewState::merge(const TreeViewState* state) const
+Ref< HierarchicalState > HierarchicalState::merge(const HierarchicalState* state) const
 {
-	Ref< TreeViewState > merged = new TreeViewState();
+	Ref< HierarchicalState > merged = new HierarchicalState();
 
 	merged->m_states = m_states;
 
@@ -45,7 +45,7 @@ Ref< TreeViewState > TreeViewState::merge(const TreeViewState* state) const
 	return merged;
 }
 
-bool TreeViewState::serialize(ISerializer& s)
+bool HierarchicalState::serialize(ISerializer& s)
 {
 	return s >> MemberStlMap< 
 		std::wstring,

@@ -56,9 +56,11 @@ public:
 
 	int getDepth() const;
 
-	PropertyItem* getParentItem();
+	PropertyItem* getParentItem() const;
 
 	RefArray< PropertyItem >& getChildItems();
+
+	const RefArray< PropertyItem >& getChildItems() const;
 
 protected:
 	friend class PropertyList;

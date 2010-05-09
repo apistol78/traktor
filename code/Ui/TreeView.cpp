@@ -1,10 +1,10 @@
+#include "Core/Log/Log.h"
+#include "Ui/Application.h"
+#include "Ui/Bitmap.h"
+#include "Ui/HierarchicalState.h"
 #include "Ui/TreeView.h"
 #include "Ui/TreeViewItem.h"
-#include "Ui/TreeViewState.h"
-#include "Ui/Bitmap.h"
-#include "Ui/Application.h"
 #include "Ui/Itf/ITreeView.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -13,7 +13,7 @@ namespace traktor
 		namespace
 		{
 
-void recursiveCaptureState(TreeViewItem* item, TreeViewState* outState)
+void recursiveCaptureState(TreeViewItem* item, HierarchicalState* outState)
 {
 	if (!item)
 		return;
@@ -28,7 +28,7 @@ void recursiveCaptureState(TreeViewItem* item, TreeViewState* outState)
 		recursiveCaptureState(*i, outState);
 }
 
-void recursiveApplyState(TreeViewItem* item, const TreeViewState* state)
+void recursiveApplyState(TreeViewItem* item, const HierarchicalState* state)
 {
 	if (!item)
 		return;
@@ -110,14 +110,14 @@ Ref< TreeViewItem > TreeView::getSelectedItem() const
 	return static_cast< ITreeView* >(m_widget)->getSelectedItem();
 }
 
-Ref< TreeViewState > TreeView::captureState() const
+Ref< HierarchicalState > TreeView::captureState() const
 {
-	Ref< TreeViewState > state = new TreeViewState();
+	Ref< HierarchicalState > state = new HierarchicalState();
 	recursiveCaptureState(getRootItem(), state);
 	return state;
 }
 
-void TreeView::applyState(const TreeViewState* state)
+void TreeView::applyState(const HierarchicalState* state)
 {
 	// Temporarily hide tree to prevent multiple updates being issued when
 	// applying states.

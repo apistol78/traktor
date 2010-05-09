@@ -1,14 +1,15 @@
 #include <algorithm>
 #include <stack>
-#include "Ui/Custom/PropertyList/PropertyList.h"
-#include "Ui/Custom/PropertyList/PropertyItem.h"
 #include "Ui/Application.h"
+#include "Ui/HierarchicalState.h"
 #include "Ui/ScrollBar.h"
 #include "Ui/MethodHandler.h"
 #include "Ui/Events/CommandEvent.h"
 #include "Ui/Events/MouseEvent.h"
 #include "Ui/Events/SizeEvent.h"
 #include "Ui/Events/PaintEvent.h"
+#include "Ui/Custom/PropertyList/PropertyList.h"
+#include "Ui/Custom/PropertyList/PropertyItem.h"
 
 namespace traktor
 {
@@ -16,21 +17,64 @@ namespace traktor
 	{
 		namespace custom
 		{
+			namespace
+			{
 
-namespace
+enum Modes
 {
+	MdNone,
+	MdMoveSeparator
+};
 
-	enum Modes
-	{
-		MdNone,
-		MdMoveSeparator
-	};
+const int c_columnsHeight = 25;
+const int c_propertyItemHeight = 20;
+const int c_wheelRotationFactor = 2;
 
-	const int c_columnsHeight = 25;
-	const int c_propertyItemHeight = 20;
-	const int c_wheelRotationFactor = 2;
-
+std::wstring buildPath(const PropertyItem* item)
+{
+	std::wstring path = item->getText();
+	const PropertyItem* parent = item->getParentItem();
+	if (parent)
+		path = buildPath(parent) + L"/" + path;
+	return path;
 }
+
+void recursiveCaptureState(const PropertyItem* item, HierarchicalState* outState)
+{
+	if (!item)
+		return;
+
+	std::wstring path = buildPath(item);
+	outState->addState(path, item->isExpanded(), item->isSelected());
+
+	const RefArray< PropertyItem >& children = item->getChildItems();
+	for (RefArray< PropertyItem >::const_iterator i = children.begin(); i != children.end(); ++i)
+		recursiveCaptureState(*i, outState);
+}
+
+void recursiveApplyState(PropertyItem* item, const HierarchicalState* state)
+{
+	if (!item)
+		return;
+
+	RefArray< PropertyItem >& children = item->getChildItems();
+	for (RefArray< PropertyItem >::iterator i = children.begin(); i != children.end(); ++i)
+		recursiveApplyState(*i, state);
+
+	std::wstring path = buildPath(item);
+
+	if (state->getExpanded(path))
+		item->expand();
+	else
+		item->collapse();
+
+	if (state->getSelected(path))
+		item->setSelected(true);
+	else
+		item->setSelected(false);
+}
+
+			}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.PropertyList", PropertyList, Widget)
 
@@ -215,6 +259,20 @@ bool PropertyList::resolvePropertyGuid(const Guid& guid, std::wstring& resolved)
 		return false;
 
 	return m_guidResolver->resolvePropertyGuid(guid, resolved);
+}
+
+Ref< HierarchicalState > PropertyList::captureState() const
+{
+	Ref< HierarchicalState > state = new HierarchicalState();
+	for (RefArray< PropertyItem >::const_iterator i = m_propertyItems.begin(); i != m_propertyItems.end(); ++i)
+		recursiveCaptureState(*i, state);
+	return state;
+}
+
+void PropertyList::applyState(const HierarchicalState* state)
+{
+	for (RefArray< PropertyItem >::iterator i = m_propertyItems.begin(); i != m_propertyItems.end(); ++i)
+		recursiveApplyState(*i, state);
 }
 
 void PropertyList::addSelectEventHandler(EventHandler* eventHandler)

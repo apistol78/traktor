@@ -1,9 +1,13 @@
-#include "Editor/App/PropertiesView.h"
-#include "Editor/App/TextEditorDialog.h"
+#include "Core/Misc/SafeDestroy.h"
+#include "Database/Database.h"
+#include "Database/Instance.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPage.h"
 #include "Editor/ITypedAsset.h"
 #include "Editor/TypeBrowseFilter.h"
+#include "Editor/App/PropertiesView.h"
+#include "Editor/App/TextEditorDialog.h"
+#include "I18N/Text.h"
 #include "Ui/FileDialog.h"
 #include "Ui/FloodLayout.h"
 #include "Ui/MethodHandler.h"
@@ -15,9 +19,6 @@
 #include "Ui/Custom/PropertyList/TextPropertyItem.h"
 #include "Ui/Custom/PropertyList/ColorPropertyItem.h"
 #include "Ui/Custom/ColorPicker/ColorDialog.h"
-#include "I18N/Text.h"
-#include "Database/Database.h"
-#include "Database/Instance.h"
 
 namespace traktor
 {
@@ -46,18 +47,17 @@ bool PropertiesView::create(ui::Widget* parent)
 
 void PropertiesView::destroy()
 {
-	m_propertyList->destroy();
-	m_propertyObject = 0;
-
+	safeDestroy(m_propertyList);
 	ui::Container::destroy();
 }
 
 void PropertiesView::setPropertyObject(ISerializable* object, ISerializable* outer)
 {
+	Ref< ui::HierarchicalState > state = m_propertyList->captureState();
 	m_propertyList->hide();
 	m_propertyList->bind(object, outer);
+	m_propertyList->applyState(state);
 	m_propertyList->show();
-
 	m_propertyObject = object;
 }
 

@@ -14,7 +14,7 @@
 #include "Ui/PopupMenu.h"
 #include "Ui/MenuItem.h"
 #include "Ui/TreeView.h"
-#include "Ui/TreeViewState.h"
+#include "Ui/HierarchicalState.h"
 #include "Ui/TreeViewItem.h"
 #include "Ui/MethodHandler.h"
 #include "Ui/Events/MouseEvent.h"
@@ -283,7 +283,7 @@ void SkeletonEditorPage::handleDatabaseEvent(const Guid& eventId)
 
 void SkeletonEditorPage::createSkeletonTreeNodes()
 {
-	Ref< ui::TreeViewState > treeSkeletonState = m_treeSkeleton->captureState();
+	Ref< ui::HierarchicalState > treeSkeletonState = m_treeSkeleton->captureState();
 
 	m_treeSkeleton->removeAllItems();
 
