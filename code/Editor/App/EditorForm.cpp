@@ -1586,6 +1586,13 @@ bool EditorForm::handleCommand(const ui::Command& command)
 				break;
 		}
 
+		// Propagate command to database view; if it containts focus.
+		if (!result)
+		{
+			if (m_dataBaseView->containFocus())
+				result = m_dataBaseView->handleCommand(command);
+		}
+
 		// Propagate command to active editor; if it contains focus.
 		if (!result)
 		{

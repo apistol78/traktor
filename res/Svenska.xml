@@ -137,7 +137,15 @@
 			<first>DATABASE_DELETE</first>
 			<second>Ta bort</second>
 		</item>
-		<item>
+    <item>
+      <first>DATABASE_COPY</first>
+      <second>Kopiera</second>
+    </item>
+    <item>
+      <first>DATABASE_PASTE</first>
+      <second>Klistra in</second>
+    </item>
+    <item>
 			<first>DATABASE_DELETE_ARE_YOU_SURE</first>
 			<second>Är du säker på att du vill ta bort?</second>
 		</item>

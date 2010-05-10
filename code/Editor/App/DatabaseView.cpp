@@ -14,10 +14,13 @@
 #include "Editor/IEditorPage.h"
 #include "Editor/IWizardTool.h"
 #include "Editor/App/DatabaseView.h"
+#include "Editor/App/InstanceClipboardData.h"
 #include "Editor/App/NewInstanceDialog.h"
 #include "Editor/Pipeline/PipelineDependency.h"
 #include "I18N/Text.h"
+#include "Ui/Application.h"
 #include "Ui/Bitmap.h"
+#include "Ui/Clipboard.h"
 #include "Ui/Edit.h"
 #include "Ui/FloodLayout.h"
 #include "Ui/MenuItem.h"
@@ -199,7 +202,9 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_menuGroup->add(new ui::MenuItem(ui::Command(L"Editor.Database.NewInstance"), i18n::Text(L"DATABASE_NEW_INSTANCE")));
 	m_menuGroup->add(new ui::MenuItem(ui::Command(L"Editor.Database.NewGroup"), i18n::Text(L"DATABASE_NEW_GROUP")));
 	m_menuGroup->add(new ui::MenuItem(ui::Command(L"Editor.Database.Rename"), i18n::Text(L"DATABASE_RENAME")));
-	m_menuGroup->add(new ui::MenuItem(ui::Command(L"Editor.Database.Delete"), i18n::Text(L"DATABASE_DELETE")));
+	m_menuGroup->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"DATABASE_DELETE")));
+	m_menuGroup->add(new ui::MenuItem(L"-"));
+	m_menuGroup->add(new ui::MenuItem(ui::Command(L"Editor.Paste"), i18n::Text(L"DATABASE_PASTE")));
 	
 	std::vector< const TypeInfo* > wizardToolTypes;
 	type_of< IWizardTool >().findAllOf(wizardToolTypes);
@@ -229,8 +234,10 @@ bool DatabaseView::create(ui::Widget* parent)
 	if (!m_menuInstance->create())
 		return false;
 	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Database.Rename"), i18n::Text(L"DATABASE_RENAME")));
-	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Database.Delete"), i18n::Text(L"DATABASE_DELETE")));
+	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"DATABASE_DELETE")));
 	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Database.Clone"), i18n::Text(L"DATABASE_CLONE")));
+	m_menuInstance->add(new ui::MenuItem(L"-"));
+	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Copy"), i18n::Text(L"DATABASE_COPY")));
 	m_menuInstance->add(new ui::MenuItem(L"-"));
 	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Database.FilterInstanceType"), i18n::Text(L"DATABASE_FILTER_TYPE")));
 	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Database.FilterInstanceDepends"), i18n::Text(L"DATABASE_FILTER_DEPENDENCIES")));
@@ -245,8 +252,10 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Database.Explore"), i18n::Text(L"DATABASE_EXPLORE")));
 	m_menuInstanceAsset->add(new ui::MenuItem(L"-"));
 	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Database.Rename"), i18n::Text(L"DATABASE_RENAME")));
-	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Database.Delete"), i18n::Text(L"DATABASE_DELETE")));
+	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"DATABASE_DELETE")));
 	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Database.Clone"), i18n::Text(L"DATABASE_CLONE")));
+	m_menuInstanceAsset->add(new ui::MenuItem(L"-"));
+	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Copy"), i18n::Text(L"DATABASE_COPY")));
 	m_menuInstanceAsset->add(new ui::MenuItem(L"-"));
 	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Database.FilterInstanceType"), i18n::Text(L"DATABASE_FILTER_TYPE")));
 	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Database.FilterInstanceDepends"), i18n::Text(L"DATABASE_FILTER_DEPENDENCIES")));
@@ -291,11 +300,271 @@ void DatabaseView::updateView()
 	m_treeDatabase->update();
 }
 
+bool DatabaseView::handleCommand(const ui::Command& command)
+{
+	Ref< ui::TreeViewItem > treeItem = m_treeDatabase->getSelectedItem();
+	if (!treeItem)
+		return false;
+
+	Ref< db::Group > group = treeItem->getData< db::Group >(L"GROUP");
+	Ref< db::Instance > instance = treeItem->getData< db::Instance >(L"INSTANCE");
+
+	if (group && instance)
+	{
+		if (command == L"Editor.Database.Edit")	// Edit
+		{
+			Ref< Asset > editAsset = instance->getObject< Asset >();
+			if (editAsset)
+				OS::getInstance().editFile(editAsset->getFileName());
+		}
+		else if (command == L"Editor.Database.Explore")	// Explore
+		{
+			Ref< Asset > exploreAsset = instance->getObject< Asset >();
+			if (exploreAsset)
+				OS::getInstance().exploreFile(exploreAsset->getFileName());
+		}
+		else if (command == L"Editor.Database.Rename")	// Rename
+		{
+			treeItem->edit();
+		}
+		else if (command == L"Editor.Delete")	// Delete
+		{
+			if (ui::MessageBox::show(this, i18n::Text(L"DATABASE_DELETE_ARE_YOU_SURE"), i18n::Text(L"DATABASE_DELETE_INSTANCE"), ui::MbYesNo | ui::MbIconQuestion) != 1)
+				return false;
+
+			if (!instance->checkout())
+				return false;
+
+			if (!instance->remove())
+				return false;
+
+			if (!instance->commit())
+				return false;
+
+			m_treeDatabase->removeItem(treeItem);
+			m_treeDatabase->update();
+		}
+		else if (command == L"Editor.Database.Clone")	// Clone
+		{
+			Ref< ISerializable > object = instance->getObject< ISerializable >();
+			if (!object)
+			{
+				log::error << L"Unable to checkout instance" << Endl;
+				return false;
+			}
+
+			object = DeepClone(object).create();
+			if (!object)
+			{
+				log::error << L"Unable to create clone" << Endl;
+				return false;
+			}
+
+			Ref< db::Instance > instanceClone = group->createInstance(instance->getName() + L" (clone)");
+			if (!instanceClone)
+			{
+				log::error << L"Unable to create clone instance" << Endl;
+				return false;
+			}
+
+			instanceClone->setObject(object);
+
+			if (!instanceClone->commit())
+			{
+				log::error << L"Unable to commit clone instance" << Endl;
+				return false;
+			}
+
+			Ref< ui::TreeViewItem > treeCloneItem = m_treeDatabase->createItem(treeItem->getParent(), instanceClone->getName(), treeItem->getImage());
+			treeCloneItem->setData(L"GROUP", group);
+			treeCloneItem->setData(L"INSTANCE", instanceClone);
+
+			m_treeDatabase->update();
+		}
+		else if (command == L"Editor.Copy")		// Copy instance
+		{
+			Ref< ISerializable > object = instance->getObject< ISerializable >();
+			if (!object)
+			{
+				log::error << L"Unable to checkout instance" << Endl;
+				return false;
+			}
+
+			object = DeepClone(object).create();
+			if (!object)
+			{
+				log::error << L"Unable to create clone" << Endl;
+				return false;
+			}
+
+			Ref< InstanceClipboardData > instanceClipboardData = new InstanceClipboardData(instance->getName(), object);
+			ui::Application::getInstance()->getClipboard()->setObject(instanceClipboardData);
+		}
+		else if (command == L"Editor.Database.FilterInstanceType")	// Filter on type.
+		{
+			filterType(instance);
+		}
+		else if (command == L"Editor.Database.FilterInstanceDepends")	// Filter on dependencies
+		{
+			filterDependencies(instance);
+		}
+		else if (command == L"Editor.Database.Build")	// Build asset
+		{
+			m_editor->buildAsset(instance->getGuid(), false);
+		}
+		else if (command == L"Editor.Database.Rebuild")	// Rebuild asset
+		{
+			m_editor->buildAsset(instance->getGuid(), true);
+		}
+		else
+			return false;
+	}
+	else if (group)
+	{
+		if (command == L"Editor.Database.NewInstance")	// New instance...
+		{
+			NewInstanceDialog newInstanceDlg(m_editor->getSettings());
+			newInstanceDlg.create(this);
+
+			if (newInstanceDlg.showModal() == ui::DrOk)
+			{
+				std::wstring typeName = newInstanceDlg.getTypeName();
+				T_ASSERT (!typeName.empty());
+
+				std::wstring instanceName = newInstanceDlg.getInstanceName();
+				T_ASSERT (!instanceName.empty());
+
+				const TypeInfo* type = TypeInfo::find(typeName);
+				T_ASSERT (type);
+
+				Ref< ISerializable > data = dynamic_type_cast< ISerializable* >(type->createInstance());
+				T_ASSERT (data);
+
+				Ref< db::Instance > instance = group->createInstance(instanceName);
+				if (instance)
+				{
+					instance->setObject(data);
+					if (instance->commit())
+					{
+						int32_t iconIndex = getIconIndex(type);
+
+						Ref< ui::TreeViewItem > instanceItem = m_treeDatabase->createItem(treeItem, instanceName, iconIndex);
+						instanceItem->setData(L"GROUP", group);
+						instanceItem->setData(L"INSTANCE", instance);
+
+						m_treeDatabase->update();
+					}
+				}
+			}
+
+			newInstanceDlg.destroy();
+		}
+		else if (command == L"Editor.Database.NewGroup")	// New group...
+		{
+			Ref< db::Group > newGroup = group->createGroup(i18n::Text(L"DATABASE_NEW_GROUP_UNNAMED"));
+			if (newGroup)
+			{
+				Ref< ui::TreeViewItem > groupItem = m_treeDatabase->createItem(treeItem, i18n::Text(L"DATABASE_NEW_GROUP_UNNAMED"), 0, 1);
+				groupItem->setData(L"GROUP", newGroup);
+
+				m_treeDatabase->update();
+
+				// Enter edit mode directly as user probably don't want to call
+				// the group "Unnamed".
+				groupItem->edit();
+			}
+		}
+		else if (command == L"Editor.Database.Rename")	// Rename
+		{
+			treeItem->edit();
+		}
+		else if (command == L"Editor.Delete")	// Delete
+		{
+			if (ui::MessageBox::show(this, i18n::Text(L"DATABASE_DELETE_ARE_YOU_SURE"), i18n::Text(L"DATABASE_DELETE_GROUP"), ui::MbYesNo | ui::MbIconQuestion) != 1)
+				return false;
+
+			if (!group->remove())
+				return false;
+
+			m_treeDatabase->removeItem(treeItem);
+			m_treeDatabase->update();
+		}
+		else if (command == L"Editor.Paste")	// Paste instance into group
+		{
+			Ref< InstanceClipboardData > instanceClipboardData = dynamic_type_cast< InstanceClipboardData* >(
+				ui::Application::getInstance()->getClipboard()->getObject()
+			);
+			if (!instanceClipboardData || !instanceClipboardData->getObject())
+				return false;
+
+			if (group->getInstance(instanceClipboardData->getName()) != 0)
+			{
+				log::error << L"Instance named \"" << instanceClipboardData->getName() << L"\" already exist in selected group" << Endl;
+				return false;
+			}
+
+			Ref< db::Instance > instanceCopy = group->createInstance(instanceClipboardData->getName());
+			if (!instanceCopy)
+			{
+				log::error << L"Unable to create instance copy" << Endl;
+				return false;
+			}
+
+			instanceCopy->setObject(instanceClipboardData->getObject());
+
+			if (!instanceCopy->commit())
+			{
+				log::error << L"Unable to commit instance copy" << Endl;
+				return false;
+			}
+
+			int32_t iconIndex = getIconIndex(&type_of(instanceClipboardData->getObject()));
+
+			Ref< ui::TreeViewItem > treeCloneItem = m_treeDatabase->createItem(treeItem, instanceCopy->getName(), iconIndex);
+			treeCloneItem->setData(L"GROUP", group);
+			treeCloneItem->setData(L"INSTANCE", instanceCopy);
+
+			m_treeDatabase->update();
+		}
+		else if (command == L"Editor.Database.Wizard")
+		{
+			Ref< IWizardTool > wizard = m_wizardTools[command.getId()];
+			if (wizard->launch(this, m_editor, group))
+				updateView();
+		}
+		else
+			return false;
+	}
+
+	return true;
+}
+
 void DatabaseView::setEnable(bool enable)
 {
 	m_toolSelection->setEnable(enable);
 	m_treeDatabase->setEnable(enable);
 	ui::Container::setEnable(enable);
+}
+
+int32_t DatabaseView::getIconIndex(const TypeInfo* instanceType) const
+{
+	Ref< PropertyGroup > iconsGroup = m_editor->getSettings()->getProperty< PropertyGroup >(L"Editor.Icons");
+	T_ASSERT (iconsGroup);
+
+	const std::map< std::wstring, Ref< IPropertyValue > >& icons = iconsGroup->getValues();
+
+	int iconIndex = 2;
+	for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = icons.begin(); i != icons.end(); ++i)
+	{
+		const TypeInfo* iconType = TypeInfo::find(i->first);
+		if (iconType && is_type_of(*iconType, *instanceType))
+		{
+			iconIndex = PropertyInteger::get(i->second);
+			break;
+		}
+	}
+
+	return iconIndex;
 }
 
 Ref< ui::TreeViewItem > DatabaseView::buildTreeItem(ui::TreeView* treeView, ui::TreeViewItem* parentItem, db::Group* group)
@@ -306,11 +575,6 @@ Ref< ui::TreeViewItem > DatabaseView::buildTreeItem(ui::TreeView* treeView, ui::
 	for (RefArray< db::Group >::iterator i = group->getBeginChildGroup(); i != group->getEndChildGroup(); ++i)
 		buildTreeItem(treeView, groupItem, *i);
 
-	Ref< PropertyGroup > iconsGroup = m_editor->getSettings()->getProperty< PropertyGroup >(L"Editor.Icons");
-	T_ASSERT (iconsGroup);
-
-	const std::map< std::wstring, Ref< IPropertyValue > >& icons = iconsGroup->getValues();
-
 	for (RefArray< db::Instance >::iterator i = group->getBeginChildInstance(); i != group->getEndChildInstance(); ++i)
 	{
 		const TypeInfo* primaryType = (*i)->getPrimaryType();
@@ -320,17 +584,7 @@ Ref< ui::TreeViewItem > DatabaseView::buildTreeItem(ui::TreeView* treeView, ui::
 		if (!m_filter->acceptInstance((*i)))
 			continue;
 
-		int iconIndex = 2;
-		for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator j = icons.begin(); j != icons.end(); ++j)
-		{
-			const TypeInfo* iconType = TypeInfo::find(j->first);
-			if (iconType && is_type_of(*iconType, *primaryType))
-			{
-				iconIndex = PropertyInteger::get(j->second);
-				break;
-			}
-		}
-
+		int32_t iconIndex = getIconIndex(primaryType);
 		Ref< ui::TreeViewItem > instanceItem = treeView->createItem(
 			groupItem,
 			(*i)->getName(),
@@ -434,8 +688,7 @@ void DatabaseView::eventInstanceButtonDown(ui::Event* event)
 	if (mouseEvent->getButton() != ui::MouseEvent::BtRight)
 		return;
 
-	Ref< ui::TreeView > treeDomain = checked_type_cast< ui::TreeView* >(mouseEvent->getSender());
-	Ref< ui::TreeViewItem > treeItem = treeDomain->getSelectedItem();
+	Ref< ui::TreeViewItem > treeItem = m_treeDatabase->getSelectedItem();
 	if (!treeItem)
 		return;
 
@@ -451,181 +704,15 @@ void DatabaseView::eventInstanceButtonDown(ui::Event* event)
 		else
 			menuInstance = m_menuInstance;
 
-		Ref< ui::MenuItem > selected = menuInstance->show(treeDomain, mouseEvent->getPosition());
-		if (!selected)
-			return;
-
-		if (selected->getCommand() == L"Editor.Database.Edit")	// Edit
-		{
-			Ref< Asset > editAsset = instance->getObject< Asset >();
-			if (editAsset)
-				OS::getInstance().editFile(editAsset->getFileName());
-		}
-		else if (selected->getCommand() == L"Editor.Database.Explore")	// Explore
-		{
-			Ref< Asset > exploreAsset = instance->getObject< Asset >();
-			if (exploreAsset)
-				OS::getInstance().exploreFile(exploreAsset->getFileName());
-		}
-		else if (selected->getCommand() == L"Editor.Database.Rename")	// Rename
-		{
-			treeItem->edit();
-		}
-		else if (selected->getCommand() == L"Editor.Database.Delete")	// Delete
-		{
-			if (ui::MessageBox::show(this, i18n::Text(L"DATABASE_DELETE_ARE_YOU_SURE"), i18n::Text(L"DATABASE_DELETE_INSTANCE"), ui::MbYesNo | ui::MbIconQuestion) != 1)
-				return;
-
-			if (!instance->checkout())
-				return;
-
-			if (!instance->remove())
-				return;
-
-			if (!instance->commit())
-				return;
-
-			treeDomain->removeItem(treeItem);
-			treeDomain->update();
-		}
-		else if (selected->getCommand() == L"Editor.Database.Clone")	// Clone
-		{
-			Ref< ISerializable > object = instance->getObject< ISerializable >();
-			if (!object)
-			{
-				log::error << L"Unable to checkout instance" << Endl;
-				return;
-			}
-
-			object = DeepClone(object).create();
-			if (!object)
-			{
-				log::error << L"Unable to create clone" << Endl;
-				return;
-			}
-
-			Ref< db::Instance > instanceClone = group->createInstance(instance->getName() + L" (clone)");
-			if (!instanceClone)
-			{
-				log::error << L"Unable to create clone instance" << Endl;
-				return;
-			}
-
-			instanceClone->setObject(object);
-
-			if (!instanceClone->commit())
-			{
-				log::error << L"Unable to commit clone instance" << Endl;
-				return;
-			}
-
-			Ref< ui::TreeViewItem > treeCloneItem = treeDomain->createItem(treeItem->getParent(), instanceClone->getName(), treeItem->getImage());
-			treeCloneItem->setData(L"GROUP", group);
-			treeCloneItem->setData(L"INSTANCE", instanceClone);
-			
-			treeDomain->update();
-		}
-		else if (selected->getCommand() == L"Editor.Database.FilterInstanceType")	// Filter on type.
-		{
-			filterType(instance);
-		}
-		else if (selected->getCommand() == L"Editor.Database.FilterInstanceDepends")	// Filter on dependencies
-		{
-			filterDependencies(instance);
-		}
-		else if (selected->getCommand() == L"Editor.Database.Build")	// Build asset
-		{
-			m_editor->buildAsset(instance->getGuid(), false);
-		}
-		else if (selected->getCommand() == L"Editor.Database.Rebuild")	// Rebuild asset
-		{
-			m_editor->buildAsset(instance->getGuid(), true);
-		}
+		Ref< ui::MenuItem > selected = menuInstance->show(m_treeDatabase, mouseEvent->getPosition());
+		if (selected)
+			handleCommand(selected->getCommand());
 	}
 	else if (group)
 	{
-		Ref< ui::MenuItem > selected = m_menuGroup->show(treeDomain, mouseEvent->getPosition());
-		if (!selected)
-			return;
-
-		const ui::Command& command = selected->getCommand();
-
-		if (command == L"Editor.Database.NewInstance")	// New instance...
-		{
-			NewInstanceDialog newInstanceDlg(m_editor->getSettings());
-			newInstanceDlg.create(this);
-
-			if (newInstanceDlg.showModal() == ui::DrOk)
-			{
-				std::wstring typeName = newInstanceDlg.getTypeName();
-				T_ASSERT (!typeName.empty());
-
-				std::wstring instanceName = newInstanceDlg.getInstanceName();
-				T_ASSERT (!instanceName.empty());
-
-				const TypeInfo* type = TypeInfo::find(typeName);
-				T_ASSERT (type);
-
-				Ref< ISerializable > data = dynamic_type_cast< ISerializable* >(type->createInstance());
-				T_ASSERT (data);
-
-				Ref< db::Instance > instance = group->createInstance(instanceName);
-				if (instance)
-				{
-					instance->setObject(data);
-					if (instance->commit())
-					{
-						const PropertyGroup* iconGroup = checked_type_cast< const PropertyGroup* >(m_editor->getSettings()->getProperty(L"Editor.Icons"));
-						int iconIndex = iconGroup->getProperty< PropertyInteger >(typeName, 2);
-
-						Ref< ui::TreeViewItem > instanceItem = treeDomain->createItem(treeItem, instanceName, iconIndex);
-						instanceItem->setData(L"GROUP", group);
-						instanceItem->setData(L"INSTANCE", instance);
-						
-						treeDomain->update();
-					}
-				}
-			}
-
-			newInstanceDlg.destroy();
-		}
-		else if (command == L"Editor.Database.NewGroup")	// New group...
-		{
-			Ref< db::Group > newGroup = group->createGroup(i18n::Text(L"DATABASE_NEW_GROUP_UNNAMED"));
-			if (newGroup)
-			{
-				Ref< ui::TreeViewItem > groupItem = treeDomain->createItem(treeItem, i18n::Text(L"DATABASE_NEW_GROUP_UNNAMED"), 0, 1);
-				groupItem->setData(L"GROUP", newGroup);
-
-				treeDomain->update();
-
-				// Enter edit mode directly as user probably don't want to call
-				// the group "Unnamed".
-				groupItem->edit();
-			}
-		}
-		else if (command == L"Editor.Database.Rename")	// Rename
-		{
-			treeItem->edit();
-		}
-		else if (command == L"Editor.Database.Delete")	// Delete
-		{
-			if (ui::MessageBox::show(this, i18n::Text(L"DATABASE_DELETE_ARE_YOU_SURE"), i18n::Text(L"DATABASE_DELETE_GROUP"), ui::MbYesNo | ui::MbIconQuestion) != 1)
-				return;
-
-			if (!group->remove())
-				return;
-
-			treeDomain->removeItem(treeItem);
-			treeDomain->update();
-		}
-		else if (command == L"Editor.Database.Wizard")
-		{
-			Ref< IWizardTool > wizard = m_wizardTools[command.getId()];
-
-			if (wizard->launch(this, m_editor, group))
-				updateView();
-		}
+		Ref< ui::MenuItem > selected = m_menuGroup->show(m_treeDatabase, mouseEvent->getPosition());
+		if (selected)
+			handleCommand(selected->getCommand());
 	}
 
 	event->consume();
