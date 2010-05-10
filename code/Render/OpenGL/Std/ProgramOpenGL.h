@@ -98,6 +98,8 @@ private:
 	std::vector< Sampler > m_samplers;					//!< Samplers.
 	AlignedVector< float > m_uniformData;				//!< Scalar uniform data.
 	AlignedVector< TextureData > m_textureData;			//!< Texture data.
+	float m_targetSize[2];
+	bool m_textureDirty;
 	static ProgramOpenGL* ms_activeProgram;
 };
 
