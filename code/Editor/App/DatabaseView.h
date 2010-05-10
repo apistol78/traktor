@@ -64,6 +64,8 @@ public:
 
 	void updateView();
 
+	bool handleCommand(const ui::Command& command);
+
 	virtual void setEnable(bool enable);
 
 private:
@@ -79,6 +81,8 @@ private:
 	Ref< db::Database > m_db;
 	Ref< Filter > m_filter;
 	RefArray< IWizardTool > m_wizardTools;
+
+	int32_t getIconIndex(const TypeInfo* instanceType) const;
 
 	Ref< ui::TreeViewItem > buildTreeItem(ui::TreeView* treeView, ui::TreeViewItem* parentItem, db::Group* group);
 

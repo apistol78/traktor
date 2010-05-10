@@ -133,7 +133,15 @@
 			<first>DATABASE_DELETE</first>
 			<second>Delete</second>
 		</item>
-		<item>
+    <item>
+      <first>DATABASE_COPY</first>
+      <second>Copy</second>
+    </item>
+    <item>
+      <first>DATABASE_PASTE</first>
+      <second>Paste</second>
+    </item>
+    <item>
 			<first>DATABASE_DELETE_ARE_YOU_SURE</first>
 			<second>Are you sure you want to delete?</second>
 		</item>
