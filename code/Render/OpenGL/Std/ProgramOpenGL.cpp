@@ -132,7 +132,10 @@ ProgramOpenGL::ProgramOpenGL(ContextOpenGL* resourceContext)
 ,	m_program(0)
 ,	m_state(0)
 ,	m_locationTargetSize(0)
+,	m_textureDirty(true)
 {
+	m_targetSize[0] =
+	m_targetSize[1] = 0.0f;
 }
 
 ProgramOpenGL::~ProgramOpenGL()
@@ -441,6 +444,8 @@ void ProgramOpenGL::setTextureParameter(handle_t handle, ITexture* texture)
 		m_textureData[i->second].mipCount = 1;
 		rt->getTextureOriginAndScale().storeUnaligned(m_textureData[i->second].offset);
 	}
+
+	m_textureDirty = true;
 }
 
 void ProgramOpenGL::setStencilReference(uint32_t stencilReference)
@@ -486,45 +491,57 @@ bool ProgramOpenGL::activate(float targetSize[2])
 		i->dirty = false;
 	}
 
+	// Update target size uniform if necessary.
 	if (m_locationTargetSize != -1)
-		T_OGL_SAFE(glUniform2fvARB(m_locationTargetSize, 1, targetSize));
+	{
+		if (m_targetSize[0] != targetSize[0] || m_targetSize[1] != targetSize[1])
+		{
+			T_OGL_SAFE(glUniform2fvARB(m_locationTargetSize, 1, targetSize));
+			m_targetSize[0] = targetSize[0];
+			m_targetSize[1] = targetSize[1];
+		}
+	}
 
 	// Bind textures.
-	for (uint32_t i = 0; i < m_samplers.size(); ++i)
+	if (ms_activeProgram != this || m_textureDirty)
 	{
-		const Sampler& sampler = m_samplers[i];
-		const SamplerState& samplerState = m_renderState.samplerStates[sampler.stage];
-		const TextureData& td = m_textureData[sampler.texture];
+		for (uint32_t i = 0; i < m_samplers.size(); ++i)
+		{
+			const Sampler& sampler = m_samplers[i];
+			const SamplerState& samplerState = m_renderState.samplerStates[sampler.stage];
+			const TextureData& td = m_textureData[sampler.texture];
 
-		T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + i));
-		T_OGL_SAFE(glBindTexture(td.target, td.name));
-		
-		// Override mip filter if texture doesn't have multiple mips.
-		if (td.mipCount > 1)
-		{
-			T_OGL_SAFE(glTexParameteri(td.target, GL_TEXTURE_MIN_FILTER, samplerState.minFilter));
-		}
-		else
-		{
-			if (samplerState.minFilter != GL_NEAREST)
+			T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + i));
+			T_OGL_SAFE(glBindTexture(td.target, td.name));
+			
+			// Override mip filter if texture doesn't have multiple mips.
+			if (td.mipCount > 1)
 			{
-				T_OGL_SAFE(glTexParameteri(td.target, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+				T_OGL_SAFE(glTexParameteri(td.target, GL_TEXTURE_MIN_FILTER, samplerState.minFilter));
 			}
 			else
 			{
-				T_OGL_SAFE(glTexParameteri(td.target, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
+				if (samplerState.minFilter != GL_NEAREST)
+				{
+					T_OGL_SAFE(glTexParameteri(td.target, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+				}
+				else
+				{
+					T_OGL_SAFE(glTexParameteri(td.target, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
+				}
 			}
+
+			T_OGL_SAFE(glTexParameteri(td.target, GL_TEXTURE_MAG_FILTER, samplerState.magFilter));
+
+			T_OGL_SAFE(glTexParameteri(td.target, GL_TEXTURE_WRAP_S, samplerState.wrapS));
+			T_OGL_SAFE(glTexParameteri(td.target, GL_TEXTURE_WRAP_T, samplerState.wrapT));
+
+			T_OGL_SAFE(glUniform1iARB(sampler.locationTexture, i));
+			
+			if (sampler.locationOffset != -1)
+				T_OGL_SAFE(glUniform4fvARB(sampler.locationOffset, 1, td.offset));
 		}
-
-		T_OGL_SAFE(glTexParameteri(td.target, GL_TEXTURE_MAG_FILTER, samplerState.magFilter));
-
-		T_OGL_SAFE(glTexParameteri(td.target, GL_TEXTURE_WRAP_S, samplerState.wrapS));
-		T_OGL_SAFE(glTexParameteri(td.target, GL_TEXTURE_WRAP_T, samplerState.wrapT));
-
-		T_OGL_SAFE(glUniform1iARB(sampler.locationTexture, i));
-		
-		if (sampler.locationOffset != -1)
-			T_OGL_SAFE(glUniform4fvARB(sampler.locationOffset, 1, td.offset));
+		m_textureDirty = false;
 	}
 
 	ms_activeProgram = this;

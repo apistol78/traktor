@@ -545,7 +545,7 @@ void emitMixOut(GlslContext& cx, MixOut* node)
 	case GtFloat:
 		{
 			GlslVariable* x = cx.emitOutput(node, L"X", GtFloat);
-			assign(f, x) << in->getName() << L".x;" << Endl;
+			assign(f, x) << in->getName() << L";" << Endl;
 		}
 		break;
 

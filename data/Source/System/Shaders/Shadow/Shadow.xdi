@@ -25,13 +25,6 @@
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.FragmentPosition">
-			<comment/>
-			<position>
-				<first>1127</first>
-				<second>848</second>
-			</position>
-		</item>
 		<item type="traktor.render.Sampler">
 			<comment/>
 			<position>
@@ -57,31 +50,17 @@
 		<item type="traktor.render.Uniform">
 			<comment/>
 			<position>
-				<first>1256</first>
-				<second>796</second>
+				<first>1233</first>
+				<second>793</second>
 			</position>
 			<parameterName>ShadowMask</parameterName>
 			<type>PtTexture</type>
 		</item>
-		<item type="traktor.render.TargetSize">
-			<comment/>
-			<position>
-				<first>1171</first>
-				<second>881</second>
-			</position>
-		</item>
-		<item type="traktor.render.Div">
-			<comment/>
-			<position>
-				<first>1311</first>
-				<second>838</second>
-			</position>
-		</item>
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>1267</first>
-				<second>927</second>
+				<first>1272</first>
+				<second>846</second>
 			</position>
 			<fragmentGuid>{2CB56A80-C0ED-A74D-8CB6-E6C12713F1CB}</fragmentGuid>
 			<inputPins/>
@@ -116,17 +95,17 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[4]"/>
+				<node ref="/object/nodes/item[3]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[5]"/>
+				<node ref="/object/nodes/item[4]"/>
 				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[5]"/>
+				<node ref="/object/nodes/item[4]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -136,41 +115,21 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[6]"/>
+				<node ref="/object/nodes/item[5]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[4]"/>
+				<node ref="/object/nodes/item[3]"/>
 				<name>Texture</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[7]"/>
+				<node ref="/object/nodes/item[6]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[8]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[3]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[8]"/>
-				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[9]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[4]"/>
 				<name>TexCoord</name>
 			</destination>
 		</item>
