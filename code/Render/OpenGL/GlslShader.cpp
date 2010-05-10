@@ -48,7 +48,7 @@ GlslVariable* GlslShader::createVariable(const OutputPin* outputPin, const std::
 {
 	T_ASSERT (!m_variables.empty());
 
-	GlslVariable* variable = new GlslVariable(variableName, type);
+	Ref< GlslVariable > variable = new GlslVariable(variableName, type);
 	m_variables.back().insert(std::make_pair(outputPin, variable));
 
 	return variable;
@@ -58,10 +58,15 @@ GlslVariable* GlslShader::createOuterVariable(const OutputPin* outputPin, const 
 {
 	T_ASSERT (!m_variables.empty());
 
-	GlslVariable* variable = new GlslVariable(variableName, type);
+	Ref< GlslVariable > variable = new GlslVariable(variableName, type);
 	m_variables.front().insert(std::make_pair(outputPin, variable));
 
 	return variable;
+}
+
+void GlslShader::associateVariable(const OutputPin* outputPin, GlslVariable* variable)
+{
+	m_variables.back().insert(std::make_pair(outputPin, variable));
 }
 
 GlslVariable* GlslShader::getVariable(const OutputPin* outputPin)
@@ -86,8 +91,6 @@ void GlslShader::pushScope()
 void GlslShader::popScope()
 {
 	T_ASSERT (!m_variables.empty());
-	for (scope_t::iterator i = m_variables.back().begin(); i != m_variables.back().end(); ++i)
-		delete i->second;
 	m_variables.pop_back();
 }
 
