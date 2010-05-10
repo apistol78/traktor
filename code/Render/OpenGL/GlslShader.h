@@ -53,6 +53,8 @@ public:
 
 	GlslVariable* createOuterVariable(const OutputPin* outputPin, const std::wstring& variableName, GlslType type);
 
+	void associateVariable(const OutputPin* outputPin, GlslVariable* variable);
+
 	GlslVariable* getVariable(const OutputPin* outputPin);
 
 	void pushScope();
@@ -74,7 +76,7 @@ public:
 	std::wstring getGeneratedShader();
 
 private:
-	typedef std::map< const OutputPin*, GlslVariable* > scope_t;
+	typedef std::map< const OutputPin*, Ref< GlslVariable > > scope_t;
 
 	ShaderType m_shaderType;
 	std::map< std::wstring, GlslVariable* > m_inputVariables;

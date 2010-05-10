@@ -13,18 +13,20 @@ namespace traktor
 /*!
  * \ingroup OGL
  */
-class GlslVariable
+class GlslVariable : public Object
 {
+	T_RTTI_CLASS;
+
 public:
 	GlslVariable();
 
 	GlslVariable(const std::wstring& name, GlslType type);
 
-	inline const std::wstring& getName() const { return m_name; }
+	const std::wstring& getName() const { return m_name; }
 
-	inline void setType(GlslType type) { m_type = type; }
+	void setType(GlslType type) { m_type = type; }
 
-	inline GlslType getType() const { return m_type; }
+	GlslType getType() const { return m_type; }
 
 	std::wstring cast(GlslType to) const;
 

@@ -963,46 +963,60 @@ void emitSwizzle(GlslContext& cx, Swizzle* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
-	std::wstring map = node->get();
+	std::wstring map = toLower(node->get());
 	T_ASSERT (map.length() > 0);
 
 	const GlslType types[] = { GtFloat, GtFloat2, GtFloat3, GtFloat4 };
 	GlslType type = types[map.length() - 1];
 
 	GlslVariable* in = cx.emitInput(node, L"Input");
-	GlslVariable* out = cx.emitOutput(node, L"Output", type);
 
-	std::wstringstream ss;
-	ss << glsl_type_name(type) << L"(";
-	for (size_t i = 0; i < map.length(); ++i)
+	if (
+		(map == L"xyzw" && in->getType() == GtFloat4) ||
+		(map == L"xyz" && in->getType() == GtFloat3) ||
+		(map == L"xy" && in->getType() == GtFloat2) ||
+		(map == L"x" && in->getType() == GtFloat)
+	)
 	{
-		if (i > 0)
-			ss << L", ";
-		switch (tolower(map[i]))
+		// No need to swizzle; pass variable further.
+		cx.emitOutput(node, L"Output", in);
+	}
+	else
+	{
+		GlslVariable* out = cx.emitOutput(node, L"Output", type);
+
+		std::wstringstream ss;
+		ss << glsl_type_name(type) << L"(";
+		for (size_t i = 0; i < map.length(); ++i)
 		{
-		case 'x':
-			if (in->getType() == GtFloat)
+			if (i > 0)
+				ss << L", ";
+			switch (map[i])
 			{
-				ss << in->getName();
+			case 'x':
+				if (in->getType() == GtFloat)
+				{
+					ss << in->getName();
+					break;
+				}
+				// Don't break, multidimensional source.
+			case 'y':
+			case 'z':
+			case 'w':
+				ss << in->getName() << L'.' << char(tolower(map[i]));
+				break;
+			case '0':
+				ss << L"0.0";
+				break;
+			case '1':
+				ss << L"1.0";
 				break;
 			}
-			// Don't break, multidimensional source.
-		case 'y':
-		case 'z':
-		case 'w':
-			ss << in->getName() << L'.' << char(tolower(map[i]));
-			break;
-		case '0':
-			ss << L"0.0";
-			break;
-		case '1':
-			ss << L"1.0";
-			break;
 		}
-	}
-	ss << L")";
+		ss << L")";
 
-	assign(f, out) << ss.str() << L";" << Endl;
+		assign(f, out) << ss.str() << L";" << Endl;
+	}
 }
 
 void emitSwitch(GlslContext& cx, Switch* node)
@@ -1126,7 +1140,7 @@ void emitTransform(GlslContext& cx, Transform* node)
 	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 	GlslVariable* in = cx.emitInput(node, L"Input");
 	GlslVariable* transform = cx.emitInput(node, L"Transform");
-	GlslVariable* out = cx.emitOutput(node, L"Output", in->getType());
+	GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat4);
 	assign(f, out) << transform->getName() << L" * " << in->cast(GtFloat4) << L";" << Endl;
 }
 

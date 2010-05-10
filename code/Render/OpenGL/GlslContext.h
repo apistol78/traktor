@@ -31,6 +31,8 @@ public:
 
 	GlslVariable* emitOutput(Node* node, const std::wstring& outputPinName, GlslType type);
 
+	void emitOutput(Node* node, const std::wstring& outputPinName, GlslVariable* variable);
+
 	void enterVertex();
 
 	void enterFragment();

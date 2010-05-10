@@ -295,22 +295,21 @@ void OutputStream::put(wchar_t ch)
 
 void OutputStream::puts(const wchar_t* s)
 {
-	if (m_pushIndent)
-	{
-		if (m_indent > 0)
-			m_buffer->overflow(c_indents, m_indent);
-		m_pushIndent = false;
-	}
-
 	if (s)
 	{
 		uint32_t x = 0;
 		while (s[x])
 		{
-			if (m_indent > 0 && isEol(s[x]))
+			if (isEol(s[x]))
 			{
+				if (m_pushIndent)
+				{
+					if (m_indent > 0)
+						m_buffer->overflow(c_indents, m_indent);
+					m_pushIndent = false;
+				}
 				m_buffer->overflow(s, x + 1);
-				m_buffer->overflow(c_indents, m_indent);
+				m_pushIndent = true;
 				s += x + 1;
 				x = 0;
 			}
@@ -318,7 +317,15 @@ void OutputStream::puts(const wchar_t* s)
 				++x;
 		}
 		if (x > 0 && *s != 0)
+		{
+			if (m_pushIndent)
+			{
+				if (m_indent > 0)
+					m_buffer->overflow(c_indents, m_indent);
+				m_pushIndent = false;
+			}
 			m_buffer->overflow(s, x);
+		}
 	}
 }
 

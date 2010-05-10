@@ -6,6 +6,8 @@ namespace traktor
 	namespace render
 	{
 
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.GlslVariable", GlslVariable, Object)
+
 GlslVariable::GlslVariable()
 :	m_type(GtVoid)
 {

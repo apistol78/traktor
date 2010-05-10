@@ -56,6 +56,14 @@ GlslVariable* GlslContext::emitOutput(Node* node, const std::wstring& outputPinN
 	return out;
 }
 
+void GlslContext::emitOutput(Node* node, const std::wstring& outputPinName, GlslVariable* variable)
+{
+	const OutputPin* outputPin = node->findOutputPin(outputPinName);
+	T_ASSERT (outputPin);
+
+	m_currentShader->associateVariable(outputPin, variable);
+}
+
 void GlslContext::enterVertex()
 {
 	m_currentShader = &m_vertexShader;

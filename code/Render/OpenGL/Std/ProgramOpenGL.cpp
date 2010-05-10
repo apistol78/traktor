@@ -181,7 +181,7 @@ bool ProgramOpenGL::create(const ProgramResource* resource)
 			log::error << L"GLSL vertex shader compile failed :" << Endl;
 			log::error << mbstows(errorBuf) << Endl;
 			log::error << Endl;
-			log::error << resourceOpenGL->getVertexShader() << Endl;
+			FormatMultipleLines(log::error, resourceOpenGL->getVertexShader());
 			return false;
 		}
 	}
@@ -199,7 +199,7 @@ bool ProgramOpenGL::create(const ProgramResource* resource)
 			log::error << L"GLSL fragment shader compile failed :" << Endl;
 			log::error << mbstows(errorBuf) << Endl;
 			log::error << Endl;
-			log::error << resourceOpenGL->getFragmentShader() << Endl;
+			FormatMultipleLines(log::error, resourceOpenGL->getFragmentShader());
 			return false;
 		}
 	}
