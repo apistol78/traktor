@@ -59,17 +59,11 @@ void setWindowStyle(HWND hWnd, int32_t clientWidth, int32_t clientHeight, bool f
 	else
 	{
 		SetWindowLong(hWnd, GWL_STYLE, WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION | WS_MINIMIZEBOX);
-
-		UINT exStyle = GetWindowLong(hWnd, GWL_EXSTYLE);
-		SetWindowLong(hWnd, GWL_EXSTYLE, exStyle & ~WS_EX_TOPMOST);
-
-		SetWindowPos(hWnd, NULL, 0, 0, clientWidth, clientHeight, SWP_NOZORDER | SWP_FRAMECHANGED | SWP_NOMOVE);
+		SetWindowPos(hWnd, HWND_NOTOPMOST, 0, 0, clientWidth, clientHeight, SWP_FRAMECHANGED | SWP_NOMOVE);
 	}
 
-	RECT rcWindow;
+	RECT rcWindow, rcClient;
 	GetWindowRect(hWnd, &rcWindow);
-
-	RECT rcClient;
 	GetClientRect(hWnd, &rcClient);
 
 	int32_t windowWidth = rcWindow.right - rcWindow.left;
@@ -82,15 +76,11 @@ void setWindowStyle(HWND hWnd, int32_t clientWidth, int32_t clientHeight, bool f
 	windowHeight = (windowHeight - realClientHeight) + clientHeight;
 
 	if (fullScreen)
-	{
-		SetWindowPos(hWnd, NULL, 0, 0, windowWidth, windowHeight, SWP_NOMOVE | SWP_NOZORDER | SWP_SHOWWINDOW);
-	}
+		SetWindowPos(hWnd, NULL, 0, 0, windowWidth, windowHeight, SWP_NOZORDER | SWP_NOMOVE);
 	else
-	{
-		SetWindowPos(hWnd, NULL, 128, 128, windowWidth, windowHeight, SWP_NOZORDER | SWP_SHOWWINDOW);
-	}
+		SetWindowPos(hWnd, NULL, 128, 128, windowWidth, windowHeight, SWP_NOZORDER);
 
-	UpdateWindow(hWnd);
+	ShowWindow(hWnd, SW_SHOWNOACTIVATE);
 }
 
 		}
