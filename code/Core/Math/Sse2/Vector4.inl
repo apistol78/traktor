@@ -111,6 +111,18 @@ T_MATH_INLINE Vector4 Vector4::absolute() const
 	return Vector4(_mm_and_ps(m_data, mask));
 }
 
+T_MATH_INLINE Vector4 Vector4::loadAligned(const float* in)
+{
+	T_ASSERT (in);
+	return Vector4(_mm_load_ps(in));
+}
+
+T_MATH_INLINE Vector4 Vector4::loadUnaligned(const float* in)
+{
+	T_ASSERT (in);
+	return Vector4(_mm_loadu_ps(in));
+}
+
 T_MATH_INLINE void Vector4::storeAligned(float* out) const
 {
 	T_ASSERT (out);
@@ -221,30 +233,14 @@ T_MATH_INLINE Vector4& Vector4::operator /= (const Vector4& v)
 
 T_MATH_INLINE bool Vector4::operator == (const Vector4& v) const
 {
-	Vector4 diff = (*this - v).absolute();
-
-	float T_ALIGN16 tmp[4];
-	_mm_store_ps(tmp, diff.m_data);
-
-	return
-		tmp[0] <= 1e-3f &&
-		tmp[1] <= 1e-3f &&
-		tmp[2] <= 1e-3f &&
-		tmp[3] <= 1e-3f;
+	__m128 eq =_mm_cmpeq_ps(m_data, v.m_data);
+	return _mm_movemask_ps(eq) == 15;
 }
 
 T_MATH_INLINE bool Vector4::operator != (const Vector4& v) const
 {
-	Vector4 diff = (*this - v).absolute();
-
-	float T_ALIGN16 tmp[4];
-	_mm_store_ps(tmp, diff.m_data);
-
-	return
-		tmp[0] > 1e-3f ||
-		tmp[1] > 1e-3f ||
-		tmp[2] > 1e-3f ||
-		tmp[3] > 1e-3f;
+	__m128 eq =_mm_cmpeq_ps(m_data, v.m_data);
+	return _mm_movemask_ps(eq) != 15;
 }
 
 T_MATH_INLINE Scalar Vector4::operator [] (int index) const

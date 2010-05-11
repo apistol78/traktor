@@ -96,6 +96,10 @@ public:
 
 	T_MATH_INLINE Vector4 absolute() const;
 
+	static T_MATH_INLINE Vector4 loadAligned(const float* in);
+
+	static T_MATH_INLINE Vector4 loadUnaligned(const float* in);
+
 	T_MATH_INLINE void storeAligned(float* out) const;
 
 	T_MATH_INLINE void storeUnaligned(float* out) const;
