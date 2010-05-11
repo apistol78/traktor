@@ -51,7 +51,7 @@ void AsArray::createPrototype()
 	prototype->setMember(L"toString", ActionValue(createNativeFunction(this, &AsArray::Array_toString)));
 	prototype->setMember(L"unshift", ActionValue(createNativeFunction(this, &AsArray::Array_unshift)));
 
-	prototype->addProperty(L"length", createNativeFunction(this, &AsArray::Array_get_length), createNativeFunction(this, &AsArray::Array_set_length));
+	prototype->addProperty(L"length", createNativeFunction(this, &AsArray::Array_get_length), 0);
 
 	prototype->setReadOnly();
 
@@ -68,7 +68,7 @@ ActionValue AsArray::construct(ActionContext* context, const ActionValueArray& a
 
 void AsArray::Array_concat(CallArgs& ca)
 {
-	Ref< Array > arr = checked_type_cast< Array* >(ca.self);
+	Array* arr = checked_type_cast< Array*, false >(ca.self);
 	if (!ca.args.empty())
 		ca.ret = ActionValue(arr->concat(ca.args));
 	else
@@ -77,7 +77,7 @@ void AsArray::Array_concat(CallArgs& ca)
 
 void AsArray::Array_join(CallArgs& ca)
 {
-	Ref< Array > arr = checked_type_cast< Array* >(ca.self);
+	Array* arr = checked_type_cast< Array*, false >(ca.self);
 	if (ca.args.empty())
 		ca.ret = ActionValue(arr->join(L","));
 	else
@@ -86,29 +86,42 @@ void AsArray::Array_join(CallArgs& ca)
 
 void AsArray::Array_pop(CallArgs& ca)
 {
-	Ref< Array > arr = checked_type_cast< Array* >(ca.self);
+	Array* arr = checked_type_cast< Array*, false >(ca.self);
 	ca.ret = arr->pop();
 }
 
 void AsArray::Array_push(CallArgs& ca)
 {
-	Ref< Array > arr = checked_type_cast< Array* >(ca.self);
+	Array* arr = checked_type_cast< Array*, false >(ca.self);
 	arr->push(ca.args[0]);
 }
 
 void AsArray::Array_reverse(CallArgs& ca)
 {
-	T_FATAL_ERROR;
+	Array* arr = checked_type_cast< Array*, false >(ca.self);
+	arr->reverse();
+	ca.ret = ActionValue(arr);
 }
 
 void AsArray::Array_shift(CallArgs& ca)
 {
-	T_FATAL_ERROR;
+	Array* arr = checked_type_cast< Array*, false >(ca.self);
+	ca.ret = arr->shift();
 }
 
 void AsArray::Array_slice(CallArgs& ca)
 {
-	T_FATAL_ERROR;
+	Array* arr = checked_type_cast< Array*, false >(ca.self);
+	
+	int32_t startIndex = 0;
+	int32_t endIndex = 16777215;
+	
+	if (ca.args.size() >= 1)
+		startIndex = int32_t(ca.args[0].getNumberSafe());
+	if (ca.args.size() >= 2)
+		endIndex = int32_t(ca.args[1].getNumberSafe());
+
+	ca.ret = ActionValue(arr->slice(startIndex, endIndex));
 }
 
 void AsArray::Array_sort(CallArgs& ca)
@@ -123,7 +136,14 @@ void AsArray::Array_sortOn(CallArgs& ca)
 
 void AsArray::Array_splice(CallArgs& ca)
 {
-	T_FATAL_ERROR;
+	Array* arr = checked_type_cast< Array*, false >(ca.self);
+
+	int32_t startIndex = int32_t(ca.args[0].getNumberSafe());
+	uint32_t deleteCount = uint32_t(ca.args[1].getNumberSafe());
+
+	Ref< Array > removed = arr->splice(startIndex, deleteCount, ca.args, 2);
+
+	ca.ret = ActionValue(removed);
 }
 
 void AsArray::Array_toString(CallArgs& ca)
@@ -134,18 +154,14 @@ void AsArray::Array_toString(CallArgs& ca)
 
 void AsArray::Array_unshift(CallArgs& ca)
 {
-	T_FATAL_ERROR;
+	Ref< Array > arr = checked_type_cast< Array* >(ca.self);
+	ca.ret = ActionValue(avm_number_t(arr->unshift(ca.args)));
 }
 
 void AsArray::Array_get_length(CallArgs& ca)
 {
 	Ref< Array > arr = checked_type_cast< Array* >(ca.self);
 	ca.ret = ActionValue(avm_number_t(arr->length()));
-}
-
-void AsArray::Array_set_length(CallArgs& ca)
-{
-	log::error << L"Array.length is read-only" << Endl;
 }
 
 	}

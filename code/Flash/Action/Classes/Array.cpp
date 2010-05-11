@@ -51,8 +51,86 @@ void Array::push(const ActionValue& value)
 
 ActionValue Array::pop()
 {
-	ActionValue out = m_values.back(); m_values.pop_back();
-	return out;
+	if (!m_values.empty())
+	{
+		ActionValue out = m_values.back();
+		m_values.pop_back();
+		return out;
+	}
+	else
+		return ActionValue();
+}
+
+void Array::reverse()
+{
+	std::reverse(m_values.begin(), m_values.end());
+}
+
+ActionValue Array::shift()
+{
+	if (!m_values.empty())
+	{
+		ActionValue out = m_values.front();
+		m_values.erase(m_values.begin());
+		return out;
+	}
+	else
+		return ActionValue();
+}
+
+uint32_t Array::unshift(const ActionValueArray& values)
+{
+	std::vector< ActionValue > head(values.size());
+	for (uint32_t i = 0; i < values.size(); ++i)
+		head[i] = values[i];
+	m_values.insert(m_values.begin(), head.begin(), head.end());
+	return uint32_t(m_values.size());
+}
+
+Ref< Array > Array::slice(int32_t startIndex, int32_t endIndex) const
+{
+	if (startIndex < 0)
+		startIndex = int32_t(m_values.size() + startIndex);
+	if (endIndex < 0)
+		endIndex = int32_t(m_values.size() + endIndex);
+
+	Ref< Array > copy = new Array();
+	for (int32_t i = startIndex; i < endIndex; ++i)
+	{
+		if (i >= 0 && i < int32_t(m_values.size()))
+			copy->m_values.push_back(m_values[i]);
+	}
+
+	return copy;
+}
+
+Ref< Array > Array::splice(int32_t startIndex, uint32_t deleteCount, const ActionValueArray& values, int32_t offset)
+{
+	if (startIndex < 0)
+		startIndex = int32_t(m_values.size() + startIndex);
+
+	Ref< Array > removed = new Array();
+	while (deleteCount > 0)
+	{
+		if (startIndex >= int32_t(m_values.size()))
+			break;
+		removed->m_values.push_back(m_values[startIndex]);
+		m_values.erase(m_values.begin() + startIndex);
+		deleteCount--;
+	}
+
+	if (startIndex < int32_t(m_values.size()))
+	{
+		for (uint32_t i = offset; i < values.size(); ++i)
+			m_values.insert(m_values.begin() + startIndex, values[i]);
+	}
+	else
+	{
+		for (uint32_t i = offset; i < values.size(); ++i)
+			m_values.push_back(values[i]);
+	}
+
+	return removed;
 }
 
 uint32_t Array::length() const
