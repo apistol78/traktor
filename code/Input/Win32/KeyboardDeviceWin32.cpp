@@ -46,8 +46,13 @@ bool KeyboardDeviceWin32::isControlAnalogue(int /*control*/) const
 
 float KeyboardDeviceWin32::getControlValue(int control)
 {
-	SHORT state = GetAsyncKeyState(control);
-	return (state & 0x8000) ? 1.0f : 0.0f;
+	if (m_connected)
+	{
+		SHORT state = GetAsyncKeyState(control);
+		return (state & 0x8000) ? 1.0f : 0.0f;
+	}
+	else
+		return 0.0f;
 }
 
 bool KeyboardDeviceWin32::getDefaultControl(InputDefaultControlType controlType, int& control) const

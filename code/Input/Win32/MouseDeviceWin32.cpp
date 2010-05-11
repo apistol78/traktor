@@ -60,21 +60,22 @@ bool MouseDeviceWin32::isControlAnalogue(int control) const
 
 float MouseDeviceWin32::getControlValue(int control)
 {
-	InputDefaultControlType controlType = InputDefaultControlType(control);
-
-	if (controlType == DtAxisX || controlType == DtAxisY)
+	if (m_connected)
 	{
-		POINT cursorPosition;
-		if (GetCursorPos(&cursorPosition))
-			return (controlType == DtAxisX) ? float(cursorPosition.x) : float(cursorPosition.y);
+		InputDefaultControlType controlType = InputDefaultControlType(control);
+		if (controlType == DtAxisX || controlType == DtAxisY)
+		{
+			POINT cursorPosition;
+			if (GetCursorPos(&cursorPosition))
+				return (controlType == DtAxisX) ? float(cursorPosition.x) : float(cursorPosition.y);
+		}
+		else if (controlType == DtButton1)
+			return (GetAsyncKeyState(VK_LBUTTON) & 0x8000) ? 1.0f : 0.0f;
+		else if (controlType == DtButton2)
+			return (GetAsyncKeyState(VK_RBUTTON) & 0x8000) ? 1.0f : 0.0f;
+		else if (controlType == DtButton3)
+			return (GetAsyncKeyState(VK_MBUTTON) & 0x8000) ? 1.0f : 0.0f;
 	}
-	else if (controlType == DtButton1)
-		return (GetAsyncKeyState(VK_LBUTTON) & 0x8000) ? 1.0f : 0.0f;
-	else if (controlType == DtButton2)
-		return (GetAsyncKeyState(VK_RBUTTON) & 0x8000) ? 1.0f : 0.0f;
-	else if (controlType == DtButton3)
-		return (GetAsyncKeyState(VK_MBUTTON) & 0x8000) ? 1.0f : 0.0f;
-
 	return 0.0f;
 }
 

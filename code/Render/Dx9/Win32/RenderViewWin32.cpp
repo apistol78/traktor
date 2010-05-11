@@ -128,6 +128,14 @@ int RenderViewWin32::getHeight() const
 	return m_d3dPresent.BackBufferHeight;
 }
 
+bool RenderViewWin32::isActive() const
+{
+	if (m_d3dDevice)
+		return GetForegroundWindow() == m_d3dPresent.hDeviceWindow;
+	else
+		return false;
+}
+
 bool RenderViewWin32::isFullScreen() const
 {
 	return !m_d3dPresent.Windowed;

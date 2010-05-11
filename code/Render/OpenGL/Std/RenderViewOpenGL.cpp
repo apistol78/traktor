@@ -121,6 +121,11 @@ int RenderViewOpenGL::getHeight() const
 	return m_context->getHeight();
 }
 
+bool RenderViewOpenGL::isActive() const
+{
+	return true;
+}
+
 bool RenderViewOpenGL::isFullScreen() const
 {
 	return false;

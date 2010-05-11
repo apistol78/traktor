@@ -52,6 +52,11 @@ int RenderViewCapture::getHeight() const
 	return m_renderView->getHeight();
 }
 
+bool RenderViewCapture::isActive() const
+{
+	return m_renderView->isActive();
+}
+
 bool RenderViewCapture::isFullScreen() const
 {
 	return m_renderView->isFullScreen();

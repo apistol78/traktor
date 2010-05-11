@@ -91,6 +91,11 @@ int RenderViewOpenGLES2::getHeight() const
 	return 0;
 }
 
+bool RenderViewOpenGLES2::isActive() const
+{
+	return true;
+}
+
 bool RenderViewOpenGLES2::isFullScreen() const
 {
 	return false;

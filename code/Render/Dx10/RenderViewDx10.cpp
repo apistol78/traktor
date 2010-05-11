@@ -169,6 +169,11 @@ int RenderViewDx10::getHeight() const
 	return int(desc.BufferDesc.Height);
 }
 
+bool RenderViewDx10::isActive() const
+{
+	return true;
+}
+
 bool RenderViewDx10::isFullScreen() const
 {
 	return false;
