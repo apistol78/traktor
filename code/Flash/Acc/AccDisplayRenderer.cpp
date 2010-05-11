@@ -125,6 +125,7 @@ void AccDisplayRenderer::destroy()
 void AccDisplayRenderer::build(uint32_t frame, bool correctAspectRatio)
 {
 	m_renderContext = m_renderContexts[frame];
+	m_renderContext->flush();
 
 	if (correctAspectRatio)
 		m_aspectRatio = m_viewSize.x() / m_viewSize.y();
@@ -137,11 +138,6 @@ void AccDisplayRenderer::build(uint32_t frame, bool correctAspectRatio)
 void AccDisplayRenderer::render(render::IRenderView* renderView, uint32_t frame)
 {
 	m_renderContexts[frame]->render(renderView, render::RfOverlay);
-}
-
-void AccDisplayRenderer::flush(uint32_t frame)
-{
-	m_renderContexts[frame]->flush();
 }
 
 void AccDisplayRenderer::setViewSize(float width, float height)
@@ -227,13 +223,15 @@ void AccDisplayRenderer::renderShape(const FlashMovie& movie, const Matrix33& tr
 	if (it == m_shapeCache.end())
 	{
 		accShape = new AccShape();
-		accShape->create(
+		if (!accShape->create(
 			m_resourceManager,
 			m_renderSystem,
 			*m_textureCache,
 			movie,
 			shape
-		);
+		))
+			return;
+
 		m_shapeCache[hash].unusedCount = 0;
 		m_shapeCache[hash].shape = accShape;
 	}
@@ -272,13 +270,15 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 	if (it1 == m_shapeCache.end())
 	{
 		accShape = new AccShape();
-		accShape->create(
+		if (!accShape->create(
 			m_resourceManager,
 			m_renderSystem,
 			*m_textureCache,
 			movie,
 			shape
-		);
+		))
+			return;
+
 		m_shapeCache[hash].unusedCount = 0;
 		m_shapeCache[hash].shape = accShape;
 	}

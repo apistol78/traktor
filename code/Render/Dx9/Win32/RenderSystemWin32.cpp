@@ -22,6 +22,8 @@
 #include "Render/Dx9/Win32/RenderTargetSetWin32.h"
 #include "Render/Dx9/Win32/RenderViewWin32.h"
 
+#pragma optimize("", off)
+
 namespace traktor
 {
 	namespace render
@@ -29,7 +31,7 @@ namespace traktor
 		namespace
 		{
 
-const TCHAR* c_className = _T("TraktorRenderSystem");
+const TCHAR* c_classRenderName = _T("TraktorRenderSystem");
 
 uint16_t colorBitsFromFormat(D3DFORMAT d3dFormat)
 {
@@ -79,8 +81,6 @@ void setWindowStyle(HWND hWnd, int32_t clientWidth, int32_t clientHeight, bool f
 		SetWindowPos(hWnd, NULL, 0, 0, windowWidth, windowHeight, SWP_NOZORDER | SWP_NOMOVE);
 	else
 		SetWindowPos(hWnd, NULL, 128, 128, windowWidth, windowHeight, SWP_NOZORDER);
-
-	ShowWindow(hWnd, SW_SHOWNOACTIVATE);
 }
 
 		}
@@ -92,12 +92,14 @@ RenderSystemWin32::RenderSystemWin32()
 ,	m_hWnd(0)
 ,	m_mipBias(0.0f)
 ,	m_maxAnisotropy(1)
-,	m_lostDevice(false)
+,	m_deviceLost(0)
+,	m_inRender(false)
 {
 }
 
 bool RenderSystemWin32::create(const RenderSystemCreateDesc& desc)
 {
+	WNDCLASS wc;
 	HRESULT hr;
 
 	m_d3d.getAssign() = Direct3DCreate9(D3D_SDK_VERSION);
@@ -106,9 +108,7 @@ bool RenderSystemWin32::create(const RenderSystemCreateDesc& desc)
 	if (FAILED(m_d3d->GetAdapterDisplayMode(D3DADAPTER_DEFAULT, &m_d3dDefaultDisplayMode)))
 		return false;
 
-	log::debug << L"Adapter display mode " << m_d3dDefaultDisplayMode.Width << L"x" << m_d3dDefaultDisplayMode.Height << L" " << m_d3dDefaultDisplayMode.RefreshRate << L" Hz" << Endl;
-
-	WNDCLASS wc;
+	// Render window class.
 	std::memset(&wc, 0, sizeof(wc));
 	wc.style = CS_HREDRAW | CS_VREDRAW;
 	wc.cbClsExtra = 0;
@@ -117,11 +117,12 @@ bool RenderSystemWin32::create(const RenderSystemCreateDesc& desc)
 	wc.hInstance = static_cast<HINSTANCE>(GetModuleHandle(0));
 	wc.hIcon = NULL;
 	wc.hCursor = static_cast<HCURSOR>(LoadCursor(NULL, IDC_ARROW));
-	wc.lpszClassName = c_className;
+	wc.lpszClassName = c_classRenderName;
 	RegisterClass(&wc);
 
+	// Render window.
 	m_hWnd = CreateWindow(
-		c_className,
+		c_classRenderName,
 		_T("Traktor 2.0 DirectX 9.0 Renderer"),
 		WS_POPUPWINDOW,
 		0,
@@ -139,7 +140,7 @@ bool RenderSystemWin32::create(const RenderSystemCreateDesc& desc)
 	UINT d3dAdapter = D3DADAPTER_DEFAULT;
 	D3DDEVTYPE d3dDevType = D3DDEVTYPE_HAL;
 
-	// Create "resource" device.
+	// Create devices.
 	DWORD dwBehaviour =
 		D3DCREATE_HARDWARE_VERTEXPROCESSING |
 		D3DCREATE_FPU_PRESERVE |
@@ -195,10 +196,6 @@ bool RenderSystemWin32::create(const RenderSystemCreateDesc& desc)
 	else
 		log::warning << L"Unable to get device capabilities; may produce unexpected results" << Endl;
 
-	// Investigate available texture memory.
-	UINT availTextureMem = m_d3dDevice->GetAvailableTextureMem();
-	log::debug << L"Estimated " << availTextureMem / (1024 * 1024) << L" MiB texture memory available" << Endl;
-
 	m_resourceManager = new ResourceManagerDx9();
 	m_shaderCache = new ShaderCache();
 	m_parameterCache = new ParameterCache(m_d3dDevice);
@@ -240,7 +237,6 @@ void RenderSystemWin32::destroy()
 
 	if (m_hWnd)
 	{
-		SetWindowLongPtr(m_hWnd, 0, 0);
 		DestroyWindow(m_hWnd);
 		m_hWnd = NULL;
 	}
@@ -279,36 +275,40 @@ DisplayMode RenderSystemWin32::getCurrentDisplayMode() const
 
 bool RenderSystemWin32::handleMessages()
 {
-	bool going = true;
 	MSG msg;
-	
-	// Dispatch pending window messages.
-	while (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE))
+	do
 	{
-		int ret = GetMessage(&msg, NULL, 0, 0);
-		if (ret <= 0 || msg.message == WM_QUIT)
-			going = false;
+		// Dispatch pending window messages.
+		bool going = true;
+		while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+		{
+			if (msg.message == WM_QUIT)
+				going = false;
 
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
+		if (!going)
+			return false;
+
+		// Try to reset lost device.
+		if (m_deviceLost != 0)
+		{
+			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_renderLock);
+			HRESULT hr;
+
+			hr = m_d3dDevice->TestCooperativeLevel();
+			if (hr == D3DERR_DEVICENOTRESET)
+				hr = resetDevice();
+
+			if (SUCCEEDED(hr))
+				m_deviceLost = 0;
+			else
+				Sleep(100);
+		}
 	}
-
-	// Try to reset lost device.
-	if (m_lostDevice)
-	{
-		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_renderLock);
-		HRESULT hr;
-
-		hr = m_d3dDevice->TestCooperativeLevel();
-
-		if (hr == D3DERR_DEVICENOTRESET)
-			hr = resetDevice();
-
-		if (SUCCEEDED(hr))
-			m_lostDevice = false;
-	}
-
-	return going;
+	while (m_deviceLost != 0);
+	return true;
 }
 
 Ref< IRenderView > RenderSystemWin32::createRenderView(const RenderViewDefaultDesc& desc)
@@ -321,6 +321,7 @@ Ref< IRenderView > RenderSystemWin32::createRenderView(const RenderViewDefaultDe
 	T_ASSERT (m_renderViews.empty());
 
 	setWindowStyle(m_hWnd, desc.displayMode.width, desc.displayMode.height, desc.fullscreen);
+	ShowWindow(m_hWnd, SW_SHOWNORMAL);
 
 	if (desc.stencilBits == 1)
 		d3dDepthStencilFormat = D3DFMT_D15S1;
@@ -433,60 +434,114 @@ Ref< IRenderView > RenderSystemWin32::createRenderView(const RenderViewEmbeddedD
 Ref< VertexBuffer > RenderSystemWin32::createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_renderLock);
+
+	while (m_deviceLost != 0)
+	{
+		T_ANONYMOUS_VAR(Release< Semaphore >)(m_renderLock);
+		Sleep(100);
+	}
+
 	Ref< VertexBufferDx9 > vertexBuffer = new VertexBufferDx9(m_resourceManager, bufferSize, m_vertexDeclCache);
 	if (!vertexBuffer->create(m_d3dDevice, vertexElements, dynamic))
 		return 0;
+
 	return vertexBuffer;
 }
 
 Ref< IndexBuffer > RenderSystemWin32::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_renderLock);
+
+	while (m_deviceLost != 0)
+	{
+		T_ANONYMOUS_VAR(Release< Semaphore >)(m_renderLock);
+		Sleep(100);
+	}
+
 	Ref< IndexBufferDx9 > indexBuffer = new IndexBufferDx9(m_resourceManager, indexType, bufferSize);
 	if (!indexBuffer->create(m_d3dDevice, dynamic))
 		return 0;
+
 	return indexBuffer;
 }
 
 Ref< ISimpleTexture > RenderSystemWin32::createSimpleTexture(const SimpleTextureCreateDesc& desc)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_renderLock);
+
+	while (m_deviceLost != 0)
+	{
+		T_ANONYMOUS_VAR(Release< Semaphore >)(m_renderLock);
+		Sleep(100);
+	}
+
 	Ref< SimpleTextureDx9 > texture = new SimpleTextureDx9(m_resourceManager);
 	if (!texture->create(m_d3dDevice, desc))
 		return 0;
+
 	return texture;
 }
 
 Ref< ICubeTexture > RenderSystemWin32::createCubeTexture(const CubeTextureCreateDesc& desc)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_renderLock);
+
+	while (m_deviceLost != 0)
+	{
+		T_ANONYMOUS_VAR(Release< Semaphore >)(m_renderLock);
+		Sleep(100);
+	}
+
 	Ref< CubeTextureDx9 > texture = new CubeTextureDx9(m_resourceManager);
 	if (!texture->create(m_d3dDevice, desc))
 		return 0;
+
 	return texture;
 }
 
 Ref< IVolumeTexture > RenderSystemWin32::createVolumeTexture(const VolumeTextureCreateDesc& desc)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_renderLock);
+
+	while (m_deviceLost != 0)
+	{
+		T_ANONYMOUS_VAR(Release< Semaphore >)(m_renderLock);
+		Sleep(100);
+	}
+
 	Ref< VolumeTextureDx9 > texture = new VolumeTextureDx9(m_resourceManager);
 	if (!texture->create(m_d3dDevice, desc))
 		return 0;
+
 	return texture;
 }
 
 Ref< RenderTargetSet > RenderSystemWin32::createRenderTargetSet(const RenderTargetSetCreateDesc& desc)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_renderLock);
+
+	while (m_deviceLost != 0)
+	{
+		T_ANONYMOUS_VAR(Release< Semaphore >)(m_renderLock);
+		Sleep(100);
+	}
+
 	Ref< RenderTargetSetWin32 > renderTargetSet = new RenderTargetSetWin32(m_resourceManager);
 	if (!renderTargetSet->create(m_d3dDevice, desc))
 		return 0;
+
 	return renderTargetSet;
 }
 
 Ref< IProgram > RenderSystemWin32::createProgram(const ProgramResource* programResource)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_renderLock);
+
+	while (m_deviceLost != 0)
+	{
+		T_ANONYMOUS_VAR(Release< Semaphore >)(m_renderLock);
+		Sleep(100);
+	}
 
 	Ref< const ProgramResourceDx9 > resource = dynamic_type_cast< const ProgramResourceDx9* >(programResource);
 	if (!resource)
@@ -516,23 +571,29 @@ void RenderSystemWin32::removeRenderView(RenderViewWin32* renderView)
 
 bool RenderSystemWin32::beginRender()
 {
+	T_ASSERT (!m_inRender);
+
 	if (!m_renderLock.wait(1000))
 		return false;
 
-	if (m_lostDevice)
+	if (m_deviceLost)
 	{
-		Sleep(100);
+		m_renderLock.release();
 		return false;
 	}
 
+	m_inRender = true;
 	return true;
 }
 
 void RenderSystemWin32::endRender(bool lostDevice)
 {
-	if (lostDevice)
-		m_lostDevice = true;
+	T_ASSERT (m_inRender);
 
+	if (lostDevice)
+		m_deviceLost = 1;
+
+	m_inRender = false;
 	m_renderLock.release();
 }
 
@@ -542,14 +603,16 @@ void RenderSystemWin32::toggleMode()
 	HRESULT hr;
 
 	m_d3dPresent.Windowed = !m_d3dPresent.Windowed;
+	
 	setWindowStyle(m_hWnd, m_d3dPresent.BackBufferWidth, m_d3dPresent.BackBufferHeight, m_d3dPresent.Windowed ? false : true);
+	ShowWindow(m_hWnd, SW_SHOWNOACTIVATE);
 
 	if (!m_renderViews.empty())
 		m_renderViews.front()->setD3DPresent(m_d3dPresent);
 
 	hr = resetDevice();
 	if (FAILED(hr))
-		m_lostDevice = true;
+		m_deviceLost = 1;
 }
 
 bool RenderSystemWin32::resetPrimary(const D3DPRESENT_PARAMETERS& d3dPresent, D3DFORMAT d3dDepthStencilFormat)
@@ -558,7 +621,9 @@ bool RenderSystemWin32::resetPrimary(const D3DPRESENT_PARAMETERS& d3dPresent, D3
 	HRESULT hr;
 
 	std::memcpy(&m_d3dPresent, &d3dPresent, sizeof(D3DPRESENT_PARAMETERS));
+
 	setWindowStyle(m_hWnd, m_d3dPresent.BackBufferWidth, m_d3dPresent.BackBufferHeight, m_d3dPresent.Windowed ? false : true);
+	ShowWindow(m_hWnd, SW_SHOWNOACTIVATE);
 
 	// Ensure multi-sample type is supported.
 	hr = m_d3d->CheckDeviceMultiSampleType(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, m_d3dPresent.BackBufferFormat, FALSE, m_d3dPresent.MultiSampleType, NULL);
@@ -578,7 +643,7 @@ bool RenderSystemWin32::resetPrimary(const D3DPRESENT_PARAMETERS& d3dPresent, D3
 	// Reset device; recreate all resources.
 	hr = resetDevice();
 	if (FAILED(hr))
-		m_lostDevice = true;
+		m_deviceLost = 1;
 
 	return true;
 }
@@ -662,15 +727,15 @@ LRESULT RenderSystemWin32::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 		}
 		break;
 
-	case WM_ACTIVATEAPP:
-		if (!wParam)
-		{
-			// We're about to be deactivated; ensure we're running in windowed mode.
-			if (renderSystem && !renderSystem->m_d3dPresent.Windowed)
-				renderSystem->toggleMode();
-		}
-		break;
-	
+	//case WM_ACTIVATEAPP:
+	//	if (!wParam)
+	//	{
+	//		// We're about to be deactivated; ensure we're running in windowed mode.
+	//		if (renderSystem && !renderSystem->m_d3dPresent.Windowed)
+	//			renderSystem->toggleMode();
+	//	}
+	//	break;
+
 	case WM_CLOSE:
 		DestroyWindow(hWnd);
 		break;

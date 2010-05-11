@@ -690,8 +690,6 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 					params
 				);
 			}
-
-			m_worldRenderer->flush(0);
 		}
 
 		m_primitiveRenderer->end(m_renderView);

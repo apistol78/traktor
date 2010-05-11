@@ -128,7 +128,8 @@ private:
 	Semaphore m_renderLock;
 	float m_mipBias;
 	int32_t m_maxAnisotropy;
-	bool m_lostDevice;
+	uint32_t m_deviceLost;
+	bool m_inRender;
 
 	/*! \brief Reset device.
 	 *
@@ -138,6 +139,8 @@ private:
 	 * \return Reset error code.
 	 */
 	HRESULT resetDevice();
+
+	void synchronizeDevice();
 
 	static LRESULT wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 };

@@ -50,6 +50,11 @@ Ref< IMesh > InstanceMeshResource::createMesh(
 		indexType,
 		singleInstanceMesh->getIndexBuffer()->getBufferSize() * InstanceMesh::MaxInstanceCount * (indexType == render::ItUInt16 ? 1 : 2)
 	);
+	if (!renderMesh)
+	{
+		log::error << L"Instance mesh create failed; unable to create render mesh" << Endl;
+		return 0;
+	}
 
 	// Fill instancing vertex buffer.
 	uint8_t* destinationVertex = static_cast< uint8_t* >(renderMesh->getVertexBuffer()->lock());

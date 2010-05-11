@@ -668,7 +668,6 @@ void OrthogonalRenderControl::eventPaint(ui::Event* event)
 		{
 			m_worldRenderer->build(worldRenderView, rootEntity, 0);
 			m_worldRenderer->render(world::WrfDepthMap | world::WrfShadowMap | world::WrfVisualOpaque | world::WrfVisualAlphaBlend, 0);
-			m_worldRenderer->flush(0);
 		}
 
 		m_primitiveRenderer->end(m_renderView);

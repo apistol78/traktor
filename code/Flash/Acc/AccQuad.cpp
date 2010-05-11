@@ -68,10 +68,12 @@ bool AccQuad::create(
 	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat2, offsetof(Vertex, pos)));
 
 	m_vertexBuffer = renderSystem->createVertexBuffer(vertexElements, 2 * 3 * sizeof(Vertex), false);
-	T_ASSERT (m_vertexBuffer);
+	if (!m_vertexBuffer)
+		return false;
 
 	Vertex* vertex = static_cast< Vertex* >(m_vertexBuffer->lock());
-	T_ASSERT (vertex);
+	if (!vertex)
+		return false;
 
 	vertex->pos[0] = 0.0f; vertex->pos[1] = 0.0f; ++vertex;
 	vertex->pos[0] = 1.0f; vertex->pos[1] = 0.0f; ++vertex;
