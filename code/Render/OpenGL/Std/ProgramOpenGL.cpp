@@ -1,4 +1,8 @@
 #include <cstring>
+#include "Core/Log/Log.h"
+#include "Core/Misc/Align.h"
+#include "Core/Misc/String.h"
+#include "Core/Misc/TString.h"
 #include "Render/OpenGL/Platform.h"
 #include "Render/OpenGL/GlslType.h"
 #include "Render/OpenGL/GlslProgram.h"
@@ -10,9 +14,6 @@
 #include "Render/OpenGL/Std/VolumeTextureOpenGL.h"
 #include "Render/OpenGL/Std/RenderTargetOpenGL.h"
 #include "Render/OpenGL/Std/ContextOpenGL.h"
-#include "Core/Misc/String.h"
-#include "Core/Misc/TString.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -70,54 +71,36 @@ struct FindSamplerTexture
 
 bool storeIfNotEqual(const float* source, int length, float* dest)
 {
-	bool mismatch = false;
-	int i = 0;
-	
-	for (; i < length; ++i)
+	for (int i = 0; i < length; ++i)
 	{
 		if (dest[i] != source[i])
 		{
-			mismatch = true;
-			break;
+			for (; i < length; ++i)
+				dest[i] = source[i];
+			return true;
 		}
 	}
-	
-	if (mismatch)
-	{
-		for (; i < length; ++i)
-			dest[i] = source[i];
-	}
-		
-	return mismatch;
+	return false;
 }
 
 bool storeIfNotEqual(const Vector4* source, int length, float* dest)
 {
-	bool mismatch = false;
-	int i = 0;
-	
-	for (; i < length; ++i)
+	for (int i = 0; i < length; ++i)
 	{
-		if (Vector4(&dest[i * 4]) != source[i])
+		if (Vector4::loadAligned(&dest[i * 4]) != source[i])
 		{
-			mismatch = true;
-			break;
+			for (; i < length; ++i)
+				source[i].storeAligned(&dest[i * 4]);
+			return true;
 		}
 	}
-	
-	if (mismatch)
-	{
-		for (; i < length; ++i)
-			source[i].storeUnaligned(&dest[i * 4]);
-	}
-		
-	return mismatch;
+	return false;	
 }
 
 bool storeIfNotEqual(const Matrix44* source, int length, float* dest)
 {
 	for (int i = 0; i < length; ++i)
-		source[i].storeUnaligned(&dest[i * 4 * 4]);
+		source[i].storeAligned(&dest[i * 4 * 4]);
 	return true;
 }
 
@@ -234,13 +217,20 @@ bool ProgramOpenGL::create(const ProgramResource* resource)
 	for (std::map< std::wstring, int32_t >::const_iterator i = samplerTextures.begin(); i != samplerTextures.end(); ++i)
 	{
 		handle_t handle = getParameterHandle(i->first);
-		T_ASSERT (m_parameterMap.find(handle) == m_parameterMap.end());
 
-		m_parameterMap[handle] = m_textureData.size();
+		if (m_parameterMap.find(handle) == m_parameterMap.end())
+		{
+			m_parameterMap[handle] = m_textureData.size();
 
-		m_textureData.push_back(TextureData());
-		m_textureData.back().target = 0;
-		m_textureData.back().name = 0;
+			m_textureData.push_back(TextureData());
+			m_textureData.back().target = 0;
+			m_textureData.back().name = 0;
+			m_textureData.back().mipCount = 0;
+			m_textureData.back().offset[0] =
+			m_textureData.back().offset[1] =
+			m_textureData.back().offset[2] =
+			m_textureData.back().offset[3] = 0.0f;
+		}
 		
 		std::wstring samplerName = L"_gl_sampler_" + toString(i->second);
 		std::wstring samplerOffset = L"_gl_sampler_" + toString(i->second) + L"_offset";
@@ -279,13 +269,14 @@ bool ProgramOpenGL::create(const ProgramResource* resource)
 		if (uniformType != GL_SAMPLER_2D_ARB)
 		{
 			handle_t handle = getParameterHandle(uniformNameW);
-			T_ASSERT (m_parameterMap.find(handle) == m_parameterMap.end());
+			if (m_parameterMap.find(handle) != m_parameterMap.end())
+				continue;
 
 			uint32_t allocSize = 0;
 			switch (uniformType)
 			{
 			case GL_FLOAT:
-				allocSize = 1 * uniformSize;
+				allocSize = alignUp(1 * uniformSize, 4);
 				break;
 
 			case GL_FLOAT_VEC4_ARB:
@@ -363,8 +354,7 @@ void ProgramOpenGL::setFloatArrayParameter(handle_t handle, const float* param, 
 		return;
 		
 	Uniform& uniform = m_uniforms[i->second];
-
-	length = min< int >(uniform.length, length);
+	length = std::min< int >(length, uniform.length);
 
 	if (storeIfNotEqual(param, length, &m_uniformData[uniform.offset]))
 		uniform.dirty = true;
@@ -382,8 +372,7 @@ void ProgramOpenGL::setVectorArrayParameter(handle_t handle, const Vector4* para
 		return;
 		
 	Uniform& uniform = m_uniforms[i->second];
-
-	length = min< int >(uniform.length, length);
+	length = std::min< int >(length, uniform.length);
 
 	if (storeIfNotEqual(param, length, &m_uniformData[uniform.offset]))
 		uniform.dirty = true;
@@ -401,8 +390,7 @@ void ProgramOpenGL::setMatrixArrayParameter(handle_t handle, const Matrix44* par
 		return;
 		
 	Uniform& uniform = m_uniforms[i->second];
-
-	length = min< int >(uniform.length, length);
+	length = std::min< int >(length, uniform.length);
 
 	if (storeIfNotEqual(param, length, &m_uniformData[uniform.offset]))
 		uniform.dirty = true;
