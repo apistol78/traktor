@@ -37,6 +37,16 @@ public:
 
 	ActionValue pop();
 
+	void reverse();
+
+	ActionValue shift();
+
+	uint32_t unshift(const ActionValueArray& values);
+
+	Ref< Array > slice(int32_t startIndex, int32_t endIndex) const;
+
+	Ref< Array > splice(int32_t startIndex, uint32_t deleteCount, const ActionValueArray& values, int32_t offset);
+
 	uint32_t length() const;
 
 	virtual void setMember(const std::wstring& memberName, const ActionValue& memberValue);

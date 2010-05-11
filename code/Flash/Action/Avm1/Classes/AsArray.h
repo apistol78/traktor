@@ -52,8 +52,6 @@ private:
 	void Array_unshift(CallArgs& ca);
 
 	void Array_get_length(CallArgs& ca);
-
-	void Array_set_length(CallArgs& ca);
 };
 
 	}
