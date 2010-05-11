@@ -285,6 +285,17 @@ void WorldRenderer::build(WorldRenderView& worldRenderView, Entity* entity, int 
 {
 	Frame& f = m_frames[frame];
 
+	if (f.haveDepth)
+		f.depth->getRenderContext()->flush();
+
+	if (f.haveVelocity)
+		f.velocity->getRenderContext()->flush();
+
+	if (f.haveShadows)
+		f.shadow->getRenderContext()->flush();
+
+	f.visual->getRenderContext()->flush();
+
 	if (m_settings.depthPassEnabled || m_settings.shadowsEnabled)
 	{
 		WorldRenderView depthRenderView = worldRenderView;
@@ -408,22 +419,6 @@ void WorldRenderer::render(uint32_t flags, int frame)
 		f.visual->getRenderContext()->render(m_renderView, renderFlags);
 		m_renderView->popMarker();
 	}
-}
-
-void WorldRenderer::flush(int frame)
-{
-	Frame& f = m_frames[frame];
-
-	if (f.haveDepth)
-		f.depth->getRenderContext()->flush();
-
-	if (f.haveVelocity)
-		f.velocity->getRenderContext()->flush();
-
-	if (f.haveShadows)
-		f.shadow->getRenderContext()->flush();
-
-	f.visual->getRenderContext()->flush();
 }
 
 void WorldRenderer::buildShadows(WorldRenderView& worldRenderView, Entity* entity, int frame)

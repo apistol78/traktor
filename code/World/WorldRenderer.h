@@ -152,12 +152,6 @@ public:
 	 */
 	void render(uint32_t flags, int frame);
 
-	/*! \brief Flush render contexts.
-	 *
-	 * \param frame Multi threaded context frame.
-	 */
-	void flush(int frame);
-
 	//@}
 
 	const WorldRenderSettings& getSettings() const {

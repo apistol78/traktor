@@ -188,7 +188,7 @@ HRESULT VertexBufferDx9::lostDevice()
 	if (!m_dynamic)
 		return S_OK;
 
-	unlock();
+	T_FATAL_ASSERT (!m_locked);
 
 	m_d3dDevice.release();
 	m_d3dVertexBuffer.release();

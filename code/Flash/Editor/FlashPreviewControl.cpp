@@ -294,7 +294,6 @@ void FlashPreviewControl::eventPaint(ui::Event* event)
 		);
 
 		m_displayRenderer->render(m_renderView, 0);
-		m_displayRenderer->flush(0);
 
 		m_renderView->end();
 		m_renderView->present();

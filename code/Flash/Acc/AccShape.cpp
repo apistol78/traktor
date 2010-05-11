@@ -136,10 +136,12 @@ bool AccShape::create(
 		return true;
 
 	m_vertexBuffer = renderSystem->createVertexBuffer(vertexElements, totalTriangleCount * 3 * sizeof(Vertex), false);
-	T_ASSERT (m_vertexBuffer);
+	if (!m_vertexBuffer)
+		return false;
 
 	Vertex* vertex = static_cast< Vertex* >(m_vertexBuffer->lock());
-	T_ASSERT (vertex);
+	if (!vertex)
+		return false;
 
 	uint32_t vertexOffset = 0;
 

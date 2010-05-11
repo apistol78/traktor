@@ -69,8 +69,6 @@ public:
 
 	void render(render::IRenderView* renderView, uint32_t frame);
 
-	void flush(uint32_t frame);
-
 	void setViewSize(float width, float height);
 
 	// \name IDisplayRenderer
