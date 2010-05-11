@@ -8,7 +8,7 @@ namespace traktor
 	namespace render
 	{
 
-void* cglwCreateWindow(const std::wstring& title, uint32_t width, uint32_t height)
+void* cglwCreateWindow(const std::wstring& title, uint32_t width, uint32_t height, bool fullscreen)
 {
 	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 
@@ -18,19 +18,42 @@ void* cglwCreateWindow(const std::wstring& title, uint32_t width, uint32_t heigh
 	std::string mbs = wstombs(title);
 	NSString* titleStr = [[[NSString alloc] initWithCString: mbs.c_str() encoding: NSUTF8StringEncoding] autorelease];
 
-	NSWindow* window = [[NSWindow alloc]
-		initWithContentRect: NSMakeRect(50, 50, width, height)
-		styleMask: NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask
-		backing: NSBackingStoreBuffered
-		defer: YES
-	];
+	NSWindow* window = 0;
+	
+	if (fullscreen)
+	{
+		CGDisplayCapture(kCGDirectMainDisplay);
+		NSInteger windowLevel = CGShieldingWindowLevel();
 
+		NSRect frame = [[NSScreen mainScreen] frame];
+
+		window = [[NSWindow alloc]
+			initWithContentRect: frame
+			styleMask:NSBorderlessWindowMask
+			backing: NSBackingStoreBuffered
+			defer: YES
+			screen: [NSScreen mainScreen]
+		];
+		
+		[window setLevel: windowLevel];
+	}
+	else
+	{
+		window = [[NSWindow alloc]
+			initWithContentRect: NSMakeRect(50, 50, width, height)
+			styleMask: NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask
+			backing: NSBackingStoreBuffered
+			defer: YES
+		];
+	}
+
+	[window setBackgroundColor: [NSColor blackColor]];
 	[window setAcceptsMouseMovedEvents: YES];
 	[window setTitle: titleStr];
 	[window center];
 	
 	[window makeKeyAndOrderFront: nil];
-	[window makeMainWindow];
+	//[window makeMainWindow];
 	
 	cglwUpdateWindow(window);
 	

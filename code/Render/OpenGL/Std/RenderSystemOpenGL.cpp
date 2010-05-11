@@ -441,7 +441,12 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 
 #elif defined(__APPLE__)
 
-	m_windowHandle = cglwCreateWindow(L"Traktor OpenGL Renderer", desc.displayMode.width, desc.displayMode.height);
+	m_windowHandle = cglwCreateWindow(
+		L"Traktor OpenGL Renderer",
+		desc.displayMode.width,
+		desc.displayMode.height,
+		desc.fullscreen
+	);
 	if (!m_windowHandle)
 		return 0;
 		
