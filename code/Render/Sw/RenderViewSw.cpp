@@ -160,6 +160,11 @@ int RenderViewSw::getHeight() const
 	return m_frameBufferSurfaceDesc.height;
 }
 
+bool RenderViewSw::isActive() const
+{
+	return true;
+}
+
 bool RenderViewSw::isFullScreen() const
 {
 	return false;

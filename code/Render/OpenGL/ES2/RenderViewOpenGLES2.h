@@ -58,6 +58,8 @@ public:
 
 	virtual int getHeight() const;
 
+	virtual bool isActive() const;
+
 	virtual bool isFullScreen() const;
 
 	virtual void setViewport(const Viewport& viewport);
