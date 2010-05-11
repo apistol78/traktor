@@ -8,7 +8,7 @@ namespace traktor
 	namespace render
 	{
 	
-void* cglwCreateWindow(const std::wstring& title, uint32_t width, uint32_t height);
+void* cglwCreateWindow(const std::wstring& title, uint32_t width, uint32_t height, bool fullscreen);
 
 void cglwDestroyWindow(void* windowHandle);
 
