@@ -3,7 +3,7 @@
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Classes/Tween.h"
-#include "Flash/Action/Avm1/Classes/AsTween.h"
+#include "Flash/Action/Avm1/Classes/As_mx_transitions_Tween.h"
 
 namespace traktor
 {
@@ -22,7 +22,7 @@ Tween::Tween(
 	avm_number_t duration,
 	bool useSeconds
 )
-:	ActionObject(AsTween::getInstance())
+:	ActionObject(As_mx_transitions_Tween::getInstance())
 ,	m_context(context)
 ,	m_target(target)
 ,	m_function(function)

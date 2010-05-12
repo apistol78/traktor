@@ -1,5 +1,5 @@
-#ifndef traktor_flash_AsRectangle_H
-#define traktor_flash_AsRectangle_H
+#ifndef traktor_flash_As_flash_geom_Rectangle_H
+#define traktor_flash_As_flash_geom_Rectangle_H
 
 #include "Flash/Action/Avm1/ActionClass.h"
 
@@ -13,15 +13,15 @@ struct CallArgs;
 /*! \brief Rectangle class.
  * \ingroup Flash
  */
-class AsRectangle : public ActionClass
+class As_flash_geom_Rectangle : public ActionClass
 {
 	T_RTTI_CLASS;
 
 public:
-	static Ref< AsRectangle > getInstance();
+	static Ref< As_flash_geom_Rectangle > getInstance();
 
 private:
-	AsRectangle();
+	As_flash_geom_Rectangle();
 
 	void createPrototype();
 
@@ -105,4 +105,4 @@ private:
 	}
 }
 
-#endif	// traktor_flash_AsRectangle_H
+#endif	// traktor_flash_As_flash_geom_Rectangle_H

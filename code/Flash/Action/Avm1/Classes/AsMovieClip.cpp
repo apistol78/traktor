@@ -6,6 +6,7 @@
 #include "Flash/FlashFrame.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFunctionNative.h"
+#include "Flash/Action/Classes/Transform.h"
 #include "Flash/Action/Avm1/Classes/AsMovieClip.h"
 #include "Flash/Action/Avm1/Classes/AsObject.h"
 
@@ -148,7 +149,7 @@ void AsMovieClip::createPrototype()
 	prototype->addProperty(L"_target", createNativeFunction(this, &AsMovieClip::MovieClip_get_target), createNativeFunction(this, &AsMovieClip::MovieClip_set_target));
 	prototype->addProperty(L"_totalframes", createNativeFunction(this, &AsMovieClip::MovieClip_get_totalframes), createNativeFunction(this, &AsMovieClip::MovieClip_set_totalframes));
 	prototype->addProperty(L"trackAsMenu", createNativeFunction(this, &AsMovieClip::MovieClip_get_trackAsMenu), createNativeFunction(this, &AsMovieClip::MovieClip_set_trackAsMenu));
-	prototype->addProperty(L"transform", createNativeFunction(this, &AsMovieClip::MovieClip_get_transform), createNativeFunction(this, &AsMovieClip::MovieClip_set_transform));
+	prototype->addProperty(L"transform", createNativeFunction(this, &AsMovieClip::MovieClip_get_transform), 0);
 	prototype->addProperty(L"_url", createNativeFunction(this, &AsMovieClip::MovieClip_get_url), createNativeFunction(this, &AsMovieClip::MovieClip_set_url));
 	prototype->addProperty(L"useHandCursor", createNativeFunction(this, &AsMovieClip::MovieClip_get_useHandCursor), createNativeFunction(this, &AsMovieClip::MovieClip_set_useHandCursor));
 	prototype->addProperty(L"_visible", createNativeFunction(this, &AsMovieClip::MovieClip_get_visible), createNativeFunction(this, &AsMovieClip::MovieClip_set_visible));
@@ -823,10 +824,8 @@ void AsMovieClip::MovieClip_set_trackAsMenu(CallArgs& ca)
 
 void AsMovieClip::MovieClip_get_transform(CallArgs& ca)
 {
-}
-
-void AsMovieClip::MovieClip_set_transform(CallArgs& ca)
-{
+	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
+	ca.ret = ActionValue(new Transform(movieClipInstance));
 }
 
 void AsMovieClip::MovieClip_get_url(CallArgs& ca)

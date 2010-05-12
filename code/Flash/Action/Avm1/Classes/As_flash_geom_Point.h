@@ -1,5 +1,5 @@
-#ifndef traktor_flash_AsPoint_H
-#define traktor_flash_AsPoint_H
+#ifndef traktor_flash_As_flash_geom_Point_H
+#define traktor_flash_As_flash_geom_Point_H
 
 #include "Flash/Action/Avm1/ActionClass.h"
 
@@ -13,15 +13,15 @@ struct CallArgs;
 /*! \brief Point class.
  * \ingroup Flash
  */
-class AsPoint : public ActionClass
+class As_flash_geom_Point : public ActionClass
 {
 	T_RTTI_CLASS;
 
 public:
-	static Ref< AsPoint > getInstance();
+	static Ref< As_flash_geom_Point > getInstance();
 
 private:
-	AsPoint();
+	As_flash_geom_Point();
 
 	void createPrototype();
 
@@ -63,4 +63,4 @@ private:
 	}
 }
 
-#endif	// traktor_flash_AsPoint_H
+#endif	// traktor_flash_As_flash_geom_Point_H

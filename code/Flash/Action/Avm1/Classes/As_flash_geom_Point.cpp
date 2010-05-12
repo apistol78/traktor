@@ -1,7 +1,7 @@
 #include <cmath>
 #include "Core/Math/MathUtils.h"
 #include "Flash/Action/ActionFunctionNative.h"
-#include "Flash/Action/Avm1/Classes/AsPoint.h"
+#include "Flash/Action/Avm1/Classes/As_flash_geom_Point.h"
 #include "Flash/Action/Avm1/Classes/AsObject.h"
 #include "Flash/Action/Classes/Point.h"
 
@@ -10,51 +10,51 @@ namespace traktor
 	namespace flash
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsPoint", AsPoint, ActionClass)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.As_flash_geom_Point", As_flash_geom_Point, ActionClass)
 
-Ref< AsPoint > AsPoint::getInstance()
+Ref< As_flash_geom_Point > As_flash_geom_Point::getInstance()
 {
-	static Ref< AsPoint > instance = 0;
+	static Ref< As_flash_geom_Point > instance = 0;
 	if (!instance)
 	{
-		instance = new AsPoint();
+		instance = new As_flash_geom_Point();
 		instance->createPrototype();
 		instance->setReadOnly();
 	}
 	return instance;
 }
 
-AsPoint::AsPoint()
+As_flash_geom_Point::As_flash_geom_Point()
 :	ActionClass(L"Point")
 {
 }
 
-void AsPoint::createPrototype()
+void As_flash_geom_Point::createPrototype()
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
 	prototype->setMember(L"__proto__", ActionValue(AsObject::getInstance()));
-	prototype->setMember(L"add", ActionValue(createNativeFunction(this, &AsPoint::Point_add)));
-	prototype->setMember(L"clone", ActionValue(createNativeFunction(this, &AsPoint::Point_clone)));
-	prototype->setMember(L"distance", ActionValue(createNativeFunction(this, &AsPoint::Point_distance)));
-	prototype->setMember(L"equals", ActionValue(createNativeFunction(this, &AsPoint::Point_equals)));
-	prototype->setMember(L"interpolate", ActionValue(createNativeFunction(this, &AsPoint::Point_interpolate)));
-	prototype->setMember(L"normalize", ActionValue(createNativeFunction(this, &AsPoint::Point_normalize)));
-	prototype->setMember(L"offset", ActionValue(createNativeFunction(this, &AsPoint::Point_offset)));
-	prototype->setMember(L"polar", ActionValue(createNativeFunction(this, &AsPoint::Point_polar)));
-	prototype->setMember(L"subtract", ActionValue(createNativeFunction(this, &AsPoint::Point_subtract)));
-	prototype->setMember(L"toString", ActionValue(createNativeFunction(this, &AsPoint::Point_toString)));
+	prototype->setMember(L"add", ActionValue(createNativeFunction(this, &As_flash_geom_Point::Point_add)));
+	prototype->setMember(L"clone", ActionValue(createNativeFunction(this, &As_flash_geom_Point::Point_clone)));
+	prototype->setMember(L"distance", ActionValue(createNativeFunction(this, &As_flash_geom_Point::Point_distance)));
+	prototype->setMember(L"equals", ActionValue(createNativeFunction(this, &As_flash_geom_Point::Point_equals)));
+	prototype->setMember(L"interpolate", ActionValue(createNativeFunction(this, &As_flash_geom_Point::Point_interpolate)));
+	prototype->setMember(L"normalize", ActionValue(createNativeFunction(this, &As_flash_geom_Point::Point_normalize)));
+	prototype->setMember(L"offset", ActionValue(createNativeFunction(this, &As_flash_geom_Point::Point_offset)));
+	prototype->setMember(L"polar", ActionValue(createNativeFunction(this, &As_flash_geom_Point::Point_polar)));
+	prototype->setMember(L"subtract", ActionValue(createNativeFunction(this, &As_flash_geom_Point::Point_subtract)));
+	prototype->setMember(L"toString", ActionValue(createNativeFunction(this, &As_flash_geom_Point::Point_toString)));
 
-	prototype->addProperty(L"length", createNativeFunction(this, &AsPoint::Point_get_length), createNativeFunction(this, &AsPoint::Point_set_length));
-	prototype->addProperty(L"x", createNativeFunction(this, &AsPoint::Point_get_x), createNativeFunction(this, &AsPoint::Point_set_x));
-	prototype->addProperty(L"y", createNativeFunction(this, &AsPoint::Point_get_y), createNativeFunction(this, &AsPoint::Point_set_y));
+	prototype->addProperty(L"length", createNativeFunction(this, &As_flash_geom_Point::Point_get_length), createNativeFunction(this, &As_flash_geom_Point::Point_set_length));
+	prototype->addProperty(L"x", createNativeFunction(this, &As_flash_geom_Point::Point_get_x), createNativeFunction(this, &As_flash_geom_Point::Point_set_x));
+	prototype->addProperty(L"y", createNativeFunction(this, &As_flash_geom_Point::Point_get_y), createNativeFunction(this, &As_flash_geom_Point::Point_set_y));
 
 	prototype->setReadOnly();
 
 	setMember(L"prototype", ActionValue(prototype));
 }
 
-ActionValue AsPoint::construct(ActionContext* context, const ActionValueArray& args)
+ActionValue As_flash_geom_Point::construct(ActionContext* context, const ActionValueArray& args)
 {
 	Ref< Point > pt = new Point();
 
@@ -67,7 +67,7 @@ ActionValue AsPoint::construct(ActionContext* context, const ActionValueArray& a
 	return ActionValue(pt);
 }
 
-void AsPoint::Point_add(CallArgs& ca)
+void As_flash_geom_Point::Point_add(CallArgs& ca)
 {
 	Point* pt = checked_type_cast< Point*, false >(ca.self);
 	Ref< Point > pr = ca.args[0].getObject< Point >();
@@ -75,13 +75,13 @@ void AsPoint::Point_add(CallArgs& ca)
 	pt->y += pr->y;
 }
 
-void AsPoint::Point_clone(CallArgs& ca)
+void As_flash_geom_Point::Point_clone(CallArgs& ca)
 {
 	Point* pt = checked_type_cast< Point*, false >(ca.self);
 	ca.ret = ActionValue(new Point(pt->x, pt->y));
 }
 
-void AsPoint::Point_distance(CallArgs& ca)
+void As_flash_geom_Point::Point_distance(CallArgs& ca)
 {
 	Ref< Point > pt1 = ca.args[0].getObject< Point >();
 	Ref< Point > pt2 = ca.args[1].getObject< Point >();
@@ -90,14 +90,14 @@ void AsPoint::Point_distance(CallArgs& ca)
 	ca.ret = ActionValue(sqrtf(dx * dx + dy * dy));
 }
 
-void AsPoint::Point_equals(CallArgs& ca)
+void As_flash_geom_Point::Point_equals(CallArgs& ca)
 {
 	Point* pt = checked_type_cast< Point*, false >(ca.self);
 	Ref< Point > pr = ca.args[0].getObject< Point >();
 	ca.ret = ActionValue(bool(pt->x == pr->x && pt->y == pr->y));
 }
 
-void AsPoint::Point_interpolate(CallArgs& ca)
+void As_flash_geom_Point::Point_interpolate(CallArgs& ca)
 {
 	Ref< Point > pt1 = ca.args[0].getObject< Point >();
 	Ref< Point > pt2 = ca.args[1].getObject< Point >();
@@ -108,7 +108,7 @@ void AsPoint::Point_interpolate(CallArgs& ca)
 	));
 }
 
-void AsPoint::Point_normalize(CallArgs& ca)
+void As_flash_geom_Point::Point_normalize(CallArgs& ca)
 {
 	Point* pt = checked_type_cast< Point*, false >(ca.self);
 	avm_number_t scale = ca.args[0].getNumberSafe();
@@ -117,14 +117,14 @@ void AsPoint::Point_normalize(CallArgs& ca)
 	pt->y *= scale / ln;
 }
 
-void AsPoint::Point_offset(CallArgs& ca)
+void As_flash_geom_Point::Point_offset(CallArgs& ca)
 {
 	Point* pt = checked_type_cast< Point*, false >(ca.self);
 	pt->x += ca.args[0].getNumberSafe();
 	pt->y += ca.args[1].getNumberSafe();
 }
 
-void AsPoint::Point_polar(CallArgs& ca)
+void As_flash_geom_Point::Point_polar(CallArgs& ca)
 {
 	avm_number_t length = ca.args[0].getNumberSafe();
 	avm_number_t angle = ca.args[1].getNumberSafe();
@@ -134,7 +134,7 @@ void AsPoint::Point_polar(CallArgs& ca)
 	));
 }
 
-void AsPoint::Point_subtract(CallArgs& ca)
+void As_flash_geom_Point::Point_subtract(CallArgs& ca)
 {
 	Point* pt = checked_type_cast< Point*, false >(ca.self);
 	Ref< Point > pr = ca.args[0].getObject< Point >();
@@ -142,41 +142,41 @@ void AsPoint::Point_subtract(CallArgs& ca)
 	pt->y -= pr->y;
 }
 
-void AsPoint::Point_toString(CallArgs& ca)
+void As_flash_geom_Point::Point_toString(CallArgs& ca)
 {
 	Point* pt = checked_type_cast< Point*, false >(ca.self);
 	ca.ret = ActionValue(pt->toString());
 }
 
-void AsPoint::Point_get_length(CallArgs& ca)
+void As_flash_geom_Point::Point_get_length(CallArgs& ca)
 {
 	Point* pt = checked_type_cast< Point*, false >(ca.self);
 	ca.ret = ActionValue(sqrtf(pt->x * pt->x + pt->y * pt->y));
 }
 
-void AsPoint::Point_set_length(CallArgs& ca)
+void As_flash_geom_Point::Point_set_length(CallArgs& ca)
 {
 }
 
-void AsPoint::Point_get_x(CallArgs& ca)
+void As_flash_geom_Point::Point_get_x(CallArgs& ca)
 {
 	Point* pt = checked_type_cast< Point*, false >(ca.self);
 	ca.ret = ActionValue(pt->x);
 }
 
-void AsPoint::Point_set_x(CallArgs& ca)
+void As_flash_geom_Point::Point_set_x(CallArgs& ca)
 {
 	Point* pt = checked_type_cast< Point*, false >(ca.self);
 	pt->x = ca.args[0].getNumberSafe();
 }
 
-void AsPoint::Point_get_y(CallArgs& ca)
+void As_flash_geom_Point::Point_get_y(CallArgs& ca)
 {
 	Point* pt = checked_type_cast< Point*, false >(ca.self);
 	ca.ret = ActionValue(pt->y);
 }
 
-void AsPoint::Point_set_y(CallArgs& ca)
+void As_flash_geom_Point::Point_set_y(CallArgs& ca)
 {
 	Point* pt = checked_type_cast< Point*, false >(ca.self);
 	pt->y = ca.args[0].getNumberSafe();
