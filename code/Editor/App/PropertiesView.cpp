@@ -70,6 +70,7 @@ void PropertiesView::setPropertyObject(ISerializable* object, ISerializable* out
 			m_propertyList->applyState(i->second);
 	}
 	
+	m_propertyList->update();
 	m_propertyList->show();
 
 	m_propertyObject = object;
