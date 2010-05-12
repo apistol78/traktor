@@ -28,11 +28,13 @@
 #include "Flash/Action/Avm1/Classes/AsXMLNode.h"
 
 // flash.geom
-#include "Flash/Action/Avm1/Classes/AsPoint.h"
-#include "Flash/Action/Avm1/Classes/AsRectangle.h"
+#include "Flash/Action/Avm1/Classes/As_flash_geom_ColorTransform.h"
+#include "Flash/Action/Avm1/Classes/As_flash_geom_Point.h"
+#include "Flash/Action/Avm1/Classes/As_flash_geom_Rectangle.h"
+#include "Flash/Action/Avm1/Classes/As_flash_geom_Transform.h"
 
 // mx.transitions
-#include "Flash/Action/Avm1/Classes/AsTween.h"
+#include "Flash/Action/Avm1/Classes/As_mx_transitions_Tween.h"
 
 // mx.transitions.easing
 #include "Flash/Action/Avm1/Classes/As_mx_transitions_easing_Back.h"
@@ -88,8 +90,10 @@ ActionGlobal::ActionGlobal()
 		// flash.geom.
 		Ref< ActionObject > geom = new ActionObject(AsObject::getInstance());
 		{
-			geom->setMember(L"Point", ActionValue(AsPoint::getInstance()));
-			geom->setMember(L"Rectangle", ActionValue(AsRectangle::getInstance()));
+			geom->setMember(L"ColorTransform", ActionValue(As_flash_geom_ColorTransform::getInstance()));
+			geom->setMember(L"Point", ActionValue(As_flash_geom_Point::getInstance()));
+			geom->setMember(L"Rectangle", ActionValue(As_flash_geom_Rectangle::getInstance()));
+			geom->setMember(L"Transform", ActionValue(As_flash_geom_Transform::getInstance()));
 		}
 		flash->setMember(L"geom", ActionValue(geom));
 	}
@@ -102,7 +106,7 @@ ActionGlobal::ActionGlobal()
 		Ref< ActionObject > transitions = new ActionObject(AsObject::getInstance());
 		if (transitions)
 		{
-			transitions->setMember(L"Tween", ActionValue(AsTween::getInstance()));
+			transitions->setMember(L"Tween", ActionValue(As_mx_transitions_Tween::getInstance()));
 
 			// mx.transitions.easing
 			Ref< ActionObject > easing = new ActionObject(AsObject::getInstance());
