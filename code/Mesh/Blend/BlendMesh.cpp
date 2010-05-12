@@ -184,16 +184,13 @@ void BlendMesh::render(
 	// Build render-able mesh by weighting in each blend shape's vertices.
 	T_ASSERT (blendWeights.size() == getBlendTargetCount());
 
-	render::handle_t technique = worldRenderView->getTechnique();
-
-	// Update target mesh only when we're rendering default technique.
-	if (technique == world::WorldRenderer::getTechniqueDefault() || instance->count == 0)
+	// Update target mesh if weights has changed.
 	{
 		bool update = true;
 		if (
-			instance->mesh->getVertexBuffer() &&
-			instance->mesh->getVertexBuffer()->isContentValid() &&
-			blendWeights.size() == instance->weights.size()
+			instance->count > 0 ||
+			(instance->mesh->getVertexBuffer() && instance->mesh->getVertexBuffer()->isContentValid()) &&
+			(blendWeights.size() == instance->weights.size())
 		)
 		{
 			update = false;
