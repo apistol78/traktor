@@ -20,6 +20,7 @@ SessionManagerLocal::SessionManagerLocal()
 bool SessionManagerLocal::create()
 {
 	Ref< sql::IResultSet > rs;
+	int32_t userId;
 
 	// Get current user; use logged in OS user.
 	std::wstring user = OS::getInstance().getCurrentUser();
@@ -94,9 +95,17 @@ bool SessionManagerLocal::create()
 		}
 	}
 
-	// Get user identity in database.
-	int32_t userId;
+	if (!m_db->tableExists(L"Stats"))
+	{
+		// Create stats table.
+		if (m_db->executeUpdate(L"create table Stats (id integer primary key, name varchar(250), value float)") < 0)
+		{
+			log::error << L"Unable to create local session manager; unable to create table Stats" << Endl;
+			return false;
+		}
+	}
 
+	// Get user identity in database.
 	rs = m_db->executeQuery(L"select id from Users where name='" + user + L"'");
 	if (rs && rs->next())
 	{

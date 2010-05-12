@@ -64,7 +64,7 @@ bool SessionLocal::withdrawAchievement(const std::wstring& achievementId)
 
 bool SessionLocal::setStatValue(const std::wstring& statId, float value)
 {
-	if (m_db->executeUpdate(L"update Stats set value=" + toString(value) + L" where name='" + statId + L"'"))
+	if (m_db->executeUpdate(L"update Stats set value=" + toString(value) + L" where name='" + statId + L"'") > 0)
 		return true;
 
 	return m_db->executeUpdate(L"insert into Stats (name, value) values ('" + statId + L"', " + toString(value) + L")") >= 0;
@@ -84,16 +84,32 @@ bool SessionLocal::getStatValue(const std::wstring& statId, float& outValue)
 
 Ref< ISaveGame > SessionLocal::createSaveGame(const std::wstring& name, ISerializable* attachment)
 {
+	Ref< sql::IResultSet > rs;
+	int32_t id;
+
 	DynamicMemoryStream dms(false, true);
 	BinarySerializer(&dms).writeObject(attachment);
 	std::wstring ab64 = Base64().encode(dms.getBuffer(), false);
-	
-	if (m_db->executeUpdate(L"insert into SaveGames (name, attachment) values ('" + name + L"', '" + ab64 + L"')") < 0)
-		return 0;
+
+	rs = m_db->executeQuery(L"select id from SaveGames where name='" + name + L"'");
+	if (rs && rs->next() && rs->getInt32(0) > 0)
+	{
+		// Save game already exists; replace attachment.
+		id = rs->getInt32(0);
+		if (m_db->executeUpdate(L"update SaveGames set attachment='" + ab64 + L"' where id=" + toString(id)) < 0)
+			return 0;
+	}
+	else
+	{
+		// Doesn't exist; create new save game.
+		if (m_db->executeUpdate(L"insert into SaveGames (name, attachment) values ('" + name + L"', '" + ab64 + L"')") < 0)
+			return 0;
+		id = m_db->lastInsertId();
+	}
 
 	return new SaveGameLocal(
 		m_db,
-		m_db->lastInsertId(),
+		id,
 		name
 	);
 }
