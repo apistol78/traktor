@@ -1,14 +1,29 @@
+#include "Core/Math/Float.h"
+#include "Core/Memory/Alloc.h"
+#include "Render/VertexElement.h"
 #include "Render/Sw/ProgramSw.h"
 #include "Render/Sw/SimpleTextureSw.h"
 #include "Render/Sw/RenderTargetSw.h"
 #include "Render/Sw/Samplers.h"
-#include "Render/VertexElement.h"
-#include "Core/Memory/Alloc.h"
 
 namespace traktor
 {
 	namespace render
 	{
+		namespace
+		{
+
+void T_FORCE_INLINE checkRegister(const Vector4& r)
+{
+	T_ASSERT (!(isNan(r.x()) || isInfinite(r.x())));
+	T_ASSERT (!(isNan(r.y()) || isInfinite(r.y())));
+	T_ASSERT (!(isNan(r.z()) || isInfinite(r.z())));
+	T_ASSERT (!(isNan(r.w()) || isInfinite(r.w())));
+}
+
+#define CHECK(r) checkRegister(r)
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProgramSw", ProgramSw, IProgram)
 
@@ -49,8 +64,9 @@ void ProgramSw::setFloatParameter(handle_t handle, float param)
 	std::map< handle_t, int >::const_iterator i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
 	{
-		T_ASSERT (i->second < 256);
+		T_FATAL_ASSERT (i->second < 256);
 		m_parameters[i->second].set(param, param, param, param);
+		CHECK(m_parameters[i->second]);
 	}
 }
 
@@ -59,9 +75,12 @@ void ProgramSw::setFloatArrayParameter(handle_t handle, const float* param, int 
 	std::map< handle_t, int >::const_iterator i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
 	{
-		T_ASSERT (i->second + length < 256)
+		T_FATAL_ASSERT (i->second + length < 256)
 		for (int j = 0; j < length; ++j)
+		{
 			m_parameters[i->second + j].set(param[j], param[j], param[j], param[j]);
+			CHECK(m_parameters[i->second + j]);
+		}
 	}
 }
 
@@ -70,8 +89,9 @@ void ProgramSw::setVectorParameter(handle_t handle, const Vector4& param)
 	std::map< handle_t, int >::const_iterator i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
 	{
-		T_ASSERT (i->second < 256);
+		T_FATAL_ASSERT (i->second < 256);
 		m_parameters[i->second] = param;
+		CHECK(param);
 	}
 }
 
@@ -80,9 +100,12 @@ void ProgramSw::setVectorArrayParameter(handle_t handle, const Vector4* param, i
 	std::map< handle_t, int >::const_iterator i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
 	{
-		T_ASSERT (i->second + length < 256);
+		T_FATAL_ASSERT (i->second + length < 256);
 		for (int j = 0; j < length; ++j)
+		{
 			m_parameters[i->second + j] = param[j];
+			CHECK(m_parameters[i->second + j]);
+		}
 	}
 }
 
@@ -91,11 +114,15 @@ void ProgramSw::setMatrixParameter(handle_t handle, const Matrix44& param)
 	std::map< handle_t, int >::const_iterator i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
 	{
-		T_ASSERT (i->second + 4 < 256);
+		T_FATAL_ASSERT (i->second + 4 < 256);
 		m_parameters[i->second    ] = param.axisX();
 		m_parameters[i->second + 1] = param.axisY();
 		m_parameters[i->second + 2] = param.axisZ();
 		m_parameters[i->second + 3] = param.translation();
+		CHECK(m_parameters[i->second    ]);
+		CHECK(m_parameters[i->second + 1]);
+		CHECK(m_parameters[i->second + 2]);
+		CHECK(m_parameters[i->second + 3]);
 	}
 }
 
@@ -104,13 +131,17 @@ void ProgramSw::setMatrixArrayParameter(handle_t handle, const Matrix44* param, 
 	std::map< handle_t, int >::const_iterator i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
 	{
-		T_ASSERT (i->second + length * 4 < 256);
+		T_FATAL_ASSERT (i->second + length * 4 < 256);
 		for (int j = 0; j < length; ++j)
 		{
 			m_parameters[i->second + j * 4    ] = param[j].axisX();
 			m_parameters[i->second + j * 4 + 1] = param[j].axisY();
 			m_parameters[i->second + j * 4 + 2] = param[j].axisZ();
 			m_parameters[i->second + j * 4 + 3] = param[j].translation();
+			CHECK(m_parameters[i->second + j * 4    ]);
+			CHECK(m_parameters[i->second + j * 4 + 1]);
+			CHECK(m_parameters[i->second + j * 4 + 2]);
+			CHECK(m_parameters[i->second + j * 4 + 3]);
 		}
 	}
 }

@@ -143,7 +143,8 @@ private:
 	Ref< IndexBufferSw > m_currentIndexBuffer;
 	Ref< ProgramSw > m_currentProgram;
 	Viewport m_viewPort;
-	int32_t m_dirty[4];
+	Vector4 m_targetSize;
+	//int32_t m_dirty[4];
 
 	void fetchVertex(uint32_t index, varying_data_t& outVertexVarying) const;
 

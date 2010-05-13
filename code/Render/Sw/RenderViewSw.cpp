@@ -106,10 +106,17 @@ RenderViewSw::RenderViewSw(RenderSystemSw* renderSystem, graphics::IGraphicsSyst
 	m_depthBuffer.reset(new uint16_t [m_frameBufferSurfaceDesc.width * m_frameBufferSurfaceDesc.height]);
 	m_viewPort = Viewport(0, 0, m_frameBufferSurfaceDesc.width, m_frameBufferSurfaceDesc.height, 0.0f, 1.0f);
 
-	m_dirty[0] = 0;
-	m_dirty[1] = 0;
-	m_dirty[2] = m_frameBufferSurfaceDesc.width;
-	m_dirty[3] = m_frameBufferSurfaceDesc.height;
+	//m_dirty[0] = 0;
+	//m_dirty[1] = 0;
+	//m_dirty[2] = m_frameBufferSurfaceDesc.width;
+	//m_dirty[3] = m_frameBufferSurfaceDesc.height;
+
+	m_targetSize.set(
+		float(m_frameBufferSurfaceDesc.width),
+		float(m_frameBufferSurfaceDesc.height),
+		0.0f,
+		0.0f
+	);
 }
 
 RenderViewSw::~RenderViewSw()
@@ -144,10 +151,17 @@ void RenderViewSw::resize(int32_t width, int32_t height)
 	m_viewPort.width = width / c_targetScale;
 	m_viewPort.height = height / c_targetScale;
 
-	m_dirty[0] = 0;
-	m_dirty[1] = 0;
-	m_dirty[2] = m_frameBufferSurfaceDesc.width;
-	m_dirty[3] = m_frameBufferSurfaceDesc.height;
+	//m_dirty[0] = 0;
+	//m_dirty[1] = 0;
+	//m_dirty[2] = m_frameBufferSurfaceDesc.width;
+	//m_dirty[3] = m_frameBufferSurfaceDesc.height;
+
+	m_targetSize.set(
+		float(width),
+		float(height),
+		0.0f,
+		0.0f
+	);
 }
 
 int RenderViewSw::getWidth() const
@@ -219,10 +233,16 @@ bool RenderViewSw::begin(RenderTargetSet* renderTargetSet, int renderTarget, boo
 		rts->getWidth(),
 		rts->getHeight(),
 		rt->getColorSurface(),
-		rt->getWidth() * 4,
+		rt->getWidth() * sizeof(uint16_t),
 		rts->getDepthSurface(),
-		rt->getWidth() * 2
+		rt->getWidth() * sizeof(uint16_t)
 	};
+
+	if (keepDepthStencil)
+	{
+		rs.depthTarget = m_renderStateStack.back().depthTarget;
+		rs.depthTargetPitch = m_renderStateStack.back().depthTargetPitch;
+	}
 
 	m_renderStateStack.push_back(rs);
 
@@ -234,43 +254,49 @@ void RenderViewSw::clear(uint32_t clearMask, const float color[4], float depth, 
 {
 	RenderState& rs = m_renderStateStack.back();
 
-	int32_t x1 = std::max< int32_t >(m_dirty[0], 0);
-	int32_t y1 = std::max< int32_t >(m_dirty[1], 0);
-	int32_t x2 = std::min< int32_t >(m_dirty[2], rs.width);
-	int32_t y2 = std::min< int32_t >(m_dirty[3], rs.height);
+	int32_t x1 = 0; //std::max< int32_t >(m_dirty[0], 0);
+	int32_t y1 = 0; //std::max< int32_t >(m_dirty[1], 0);
+	int32_t x2 = rs.width; //std::min< int32_t >(m_dirty[2], rs.width);
+	int32_t y2 = rs.height; //std::min< int32_t >(m_dirty[3], rs.height);
 
-	uint16_t* colorTarget = rs.colorTarget;
-	if (colorTarget)
+	if (clearMask & CfColor)
 	{
-		uint16_t clearColor = to565(color[0], color[1], color[2]);
-
-		colorTarget += y1 * rs.colorTargetPitch / sizeof(uint16_t);
-		for (int32_t y = y1; y < y2; ++y)
+		uint16_t* colorTarget = rs.colorTarget;
+		if (colorTarget)
 		{
-			for (int32_t x = x1; x < x2; ++x)
-				colorTarget[x] = clearColor;
-			colorTarget += rs.colorTargetPitch / sizeof(uint16_t);
+			uint16_t clearColor = to565(color[0], color[1], color[2]);
+
+			colorTarget += y1 * rs.colorTargetPitch / sizeof(uint16_t);
+			for (int32_t y = y1; y < y2; ++y)
+			{
+				for (int32_t x = x1; x < x2; ++x)
+					colorTarget[x] = clearColor;
+				colorTarget += rs.colorTargetPitch / sizeof(uint16_t);
+			}
 		}
 	}
 
-	uint16_t* depthTarget = rs.depthTarget;
-	if (depthTarget)
+	if (clearMask & CfDepth)
 	{
-		uint16_t clearDepth = toDepth(1.0f - depth);
-
-		depthTarget += y1 * rs.depthTargetPitch / sizeof(uint16_t);
-		for (int32_t y = y1; y < y2; ++y)
+		uint16_t* depthTarget = rs.depthTarget;
+		if (depthTarget)
 		{
-			for (int32_t x = x1; x < x2; ++x)
-				depthTarget[x] = clearDepth;
-			depthTarget += rs.depthTargetPitch / sizeof(uint16_t);
+			uint16_t clearDepth = toDepth(1.0f - depth);
+
+			depthTarget += y1 * rs.depthTargetPitch / sizeof(uint16_t);
+			for (int32_t y = y1; y < y2; ++y)
+			{
+				for (int32_t x = x1; x < x2; ++x)
+					depthTarget[x] = clearDepth;
+				depthTarget += rs.depthTargetPitch / sizeof(uint16_t);
+			}
 		}
 	}
 
-	m_dirty[0] = m_frameBufferSurfaceDesc.width;
-	m_dirty[1] = m_frameBufferSurfaceDesc.height;
-	m_dirty[2] = 0;
-	m_dirty[3] = 0;
+	//m_dirty[0] = m_frameBufferSurfaceDesc.width;
+	//m_dirty[1] = m_frameBufferSurfaceDesc.height;
+	//m_dirty[2] = 0;
+	//m_dirty[3] = 0;
 }
 
 void RenderViewSw::setVertexBuffer(VertexBuffer* vertexBuffer)
@@ -347,6 +373,7 @@ void RenderViewSw::executeVertexShader(const varying_data_t& vertexVarying, vary
 		m_currentProgram->getVertexProgram(),
 		m_currentProgram->getParameters(),		// Uniforms
 		(const Vector4*)&vertexVarying,			// Vertex varyings
+		m_targetSize,							// Target size
 		0,										// Samplers
 		(Vector4*)&outInterpolatorVarying		// Output, interpolates, varyings
 	);
@@ -466,12 +493,12 @@ void RenderViewSw::drawIndexed(const Primitives& primitives)
 
 					// Update dirty rectangle.
 					//if (m_renderStateStack.size() <= 1)
-					{
-						m_dirty[0] = std::min< int32_t >(m_dirty[0], floorf(context.screen[j].x));
-						m_dirty[1] = std::min< int32_t >(m_dirty[1], floorf(context.screen[j].y));
-						m_dirty[2] = std::max< int32_t >(m_dirty[2], ceilf(context.screen[j].x));
-						m_dirty[3] = std::max< int32_t >(m_dirty[3], ceilf(context.screen[j].y));
-					}
+					//{
+					//	m_dirty[0] = std::min< int32_t >(m_dirty[0], floorf(context.screen[j].x));
+					//	m_dirty[1] = std::min< int32_t >(m_dirty[1], floorf(context.screen[j].y));
+					//	m_dirty[2] = std::max< int32_t >(m_dirty[2], ceilf(context.screen[j].x));
+					//	m_dirty[3] = std::max< int32_t >(m_dirty[3], ceilf(context.screen[j].y));
+					//}
 				}
 
 				// Check culling, rewind vertices if needed as triangle rasterizer
@@ -669,12 +696,12 @@ void RenderViewSw::drawNonIndexed(const Primitives& primitives)
 
 					// Update dirty rectangle.
 					//if (m_renderStateStack.size() <= 1)
-					{
-						m_dirty[0] = std::min< int32_t >(m_dirty[0], floorf(context.screen[j].x));
-						m_dirty[1] = std::min< int32_t >(m_dirty[1], floorf(context.screen[j].y));
-						m_dirty[2] = std::max< int32_t >(m_dirty[2], ceilf(context.screen[j].x));
-						m_dirty[3] = std::max< int32_t >(m_dirty[3], ceilf(context.screen[j].y));
-					}
+					//{
+					//	m_dirty[0] = std::min< int32_t >(m_dirty[0], floorf(context.screen[j].x));
+					//	m_dirty[1] = std::min< int32_t >(m_dirty[1], floorf(context.screen[j].y));
+					//	m_dirty[2] = std::max< int32_t >(m_dirty[2], ceilf(context.screen[j].x));
+					//	m_dirty[3] = std::max< int32_t >(m_dirty[3], ceilf(context.screen[j].y));
+					//}
 				}
 
 				// Check culling, rewind vertices if needed as triangle rasterizer
@@ -898,6 +925,7 @@ void RenderViewSw::triangleShadeOpaque(const FragmentContext& context, int x1, i
 					pixelProgram,
 					parameters,
 					pixelVaryings,
+					m_targetSize,
 					samplers,
 					fragmentVaryings
 				);
@@ -982,6 +1010,7 @@ void RenderViewSw::triangleShadeBlend(const FragmentContext& context, int x1, in
 //				pixelProgram,
 //				parameters,
 //				pixelVaryings,
+//				m_targetSize,
 //				samplers,
 //				fragmentVaryings
 //			);

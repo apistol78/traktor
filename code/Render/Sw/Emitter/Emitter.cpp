@@ -197,6 +197,13 @@ void emitDerivative(EmitterContext& cx, Derivative* node)
 	cx.emitInstruction(is0);
 }
 
+void emitDiscard(EmitterContext& cx, Discard* node)
+{
+	Variable* pass = cx.emitInput(node, L"Pass");
+	Variable* out = cx.emitOutput(node, L"Output", pass->type);
+	cx.emitInstruction(OpMove, out, pass);
+}
+
 void emitDiv(EmitterContext& cx, Div* node)
 {
 	Variable* in1 = cx.emitInput(node, L"Input1");
@@ -529,8 +536,6 @@ void emitReflect(EmitterContext& cx, Reflect* node)
 	Variable* direction = cx.emitInput(node, L"Direction");
 	Variable* out = cx.emitOutput(node, L"Output", direction->type);
 
-	cx.emitInstruction(OpTrace);
-
 	Variable* tmp1 = cx.allocTemporary(VtFloat);
 	cx.emitInstruction(OpDot3, tmp1, normal, direction);
 
@@ -782,6 +787,12 @@ void emitSwizzle(EmitterContext& cx, Swizzle* node)
 	}
 }
 
+void emitTargetSize(EmitterContext& cx, TargetSize* node)
+{
+	Variable* out = cx.emitOutput(node, L"Output", VtFloat4);
+	cx.emitInstruction(OpFetchTargetSize, out);
+}
+
 void emitTan(EmitterContext& cx, Tan* node)
 {
 	Variable* theta = cx.emitInput(node, L"Theta");
@@ -883,14 +894,55 @@ void emitVertexInput(EmitterContext& cx, VertexInput* node)
 	Variable* in = cx.emitVarying(varyingOffset);
 	Variable* out = cx.emitOutput(node, L"Output", type);
 	cx.emitInstruction(OpFetchVarying, out, in);
+
+	if (node->getDataUsage() == DuPosition && type != VtFloat4)
+	{
+		Instruction is1(OpSet, out->reg, 8, 0, 0, 0);
+		cx.emitInstruction(is1);
+		out->type = VtFloat4;
+	}
 }
 
 void emitVertexOutput(EmitterContext& cx, VertexOutput* node)
 {
 	cx.enterVertex();
+	
 	Variable* in = cx.emitInput(node, L"Input");
-	Variable* out = cx.emitVarying(0);
-	cx.emitInstruction(OpStoreVarying, out, in);
+	if (in->type != VtFloat4)
+	{
+		Variable* tmp = cx.allocTemporary(VtFloat4);
+		cx.emitInstruction(OpMove, tmp, in);
+
+		switch (in->type)
+		{
+		case VtFloat:
+			{
+				Instruction is0(OpSet, tmp->reg, 0, (2 | 4 | 8), 0, 0);
+				cx.emitInstruction(is0);
+			}
+			break;
+		case VtFloat2:
+			{
+				Instruction is0(OpSet, tmp->reg, 0, (4 | 8), 0, 0);
+				cx.emitInstruction(is0);
+			}
+			break;
+		case VtFloat3:
+			{
+				Instruction is0(OpSet, tmp->reg, 0, (8), 0, 0);
+				cx.emitInstruction(is0);
+			}
+			break;
+		}
+
+		Variable* out = cx.emitVarying(0);
+		cx.emitInstruction(OpStoreVarying, out, tmp);
+	}
+	else
+	{
+		Variable* out = cx.emitVarying(0);
+		cx.emitInstruction(OpStoreVarying, out, in);
+	}
 }
 
 struct EmitterImpl
@@ -931,6 +983,7 @@ Emitter::Emitter()
 	m_emitters[&type_of< Cos >()] = new EmitterCast< Cos >(emitCos);
 	m_emitters[&type_of< Cross >()] = new EmitterCast< Cross >(emitCross);
 	m_emitters[&type_of< Derivative >()] = new EmitterCast< Derivative >(emitDerivative);
+	m_emitters[&type_of< Discard >()] = new EmitterCast< Discard >(emitDiscard);
 	m_emitters[&type_of< Div >()] = new EmitterCast< Div >(emitDiv);
 	m_emitters[&type_of< Dot >()] = new EmitterCast< Dot >(emitDot);
 	m_emitters[&type_of< Exp >()] = new EmitterCast< Exp >(emitExp);
@@ -960,6 +1013,7 @@ Emitter::Emitter()
 	m_emitters[&type_of< Sum >()] = new EmitterCast< Sum >(emitSum);
 	m_emitters[&type_of< Switch >()] = new EmitterCast< Switch >(emitSwitch);
 	m_emitters[&type_of< Swizzle >()] = new EmitterCast< Swizzle >(emitSwizzle);
+	m_emitters[&type_of< TargetSize >()] = new EmitterCast< TargetSize >(emitTargetSize);
 	m_emitters[&type_of< Tan >()] = new EmitterCast< Tan >(emitTan);
 	m_emitters[&type_of< Texture >()] = new EmitterCast< Texture >(emitTexture);
 	m_emitters[&type_of< Transform >()] = new EmitterCast< Transform >(emitTransform);

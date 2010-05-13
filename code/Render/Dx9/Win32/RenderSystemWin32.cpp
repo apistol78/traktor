@@ -22,8 +22,6 @@
 #include "Render/Dx9/Win32/RenderTargetSetWin32.h"
 #include "Render/Dx9/Win32/RenderViewWin32.h"
 
-#pragma optimize("", off)
-
 namespace traktor
 {
 	namespace render

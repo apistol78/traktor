@@ -102,7 +102,7 @@ Variable* EmitterContext::emitOutput(Node* node, const std::wstring& outputPinNa
 		return 0;
 
 	Variable* var = allocTemporary(type);
-	T_ASSERT (var);
+	T_FATAL_ASSERT (var);
 
 	TransientInput input;
 	input.var = var;

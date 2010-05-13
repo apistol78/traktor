@@ -71,22 +71,6 @@ bool RenderSystemSw::create(const RenderSystemCreateDesc& desc)
 	wc.lpszClassName = c_windowClassName;
 	RegisterClass(&wc);
 
-	Ref< graphics::IGraphicsSystem > graphicsSystem;
-
-#if defined(_WIN32)
-#	if !defined(WINCE)
-	graphicsSystem = new graphics::GraphicsSystemDd7();
-#	else
-	graphicsSystem = new graphics::GraphicsSystemDdWm5();
-#	endif
-#endif
-
-	if (graphicsSystem)
-	{
-		graphicsSystem->getDisplayModes(m_displayModes);
-		graphicsSystem->destroy();
-	}
-
 #endif
 	return true;
 }
@@ -146,12 +130,19 @@ Ref< IRenderView > RenderSystemSw::createRenderView(const RenderViewDefaultDesc&
 
 #if defined(_WIN32)
 
+	DWORD style = 0;
+
+	if (desc.fullscreen)
+		style = WS_POPUP;
+	else
+		style = WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION | WS_MINIMIZEBOX;
+
 	m_hWnd = CreateWindow(
 		c_windowClassName,
 		_T("Traktor 2.0 Software Renderer"),
-		WS_POPUP,
-		0,
-		0,
+		style,
+		CW_USEDEFAULT,
+		CW_USEDEFAULT,
 		desc.displayMode.width,
 		desc.displayMode.height,
 		NULL,
@@ -162,8 +153,30 @@ Ref< IRenderView > RenderSystemSw::createRenderView(const RenderViewDefaultDesc&
 	if (!m_hWnd)
 		return 0;
 
-	SetWindowPos(m_hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
-	ShowWindow(m_hWnd, SW_MAXIMIZE);
+	RECT rcWindow, rcClient;
+	GetWindowRect(m_hWnd, &rcWindow);
+	GetClientRect(m_hWnd, &rcClient);
+
+	int32_t windowWidth = rcWindow.right - rcWindow.left;
+	int32_t windowHeight = rcWindow.bottom - rcWindow.top;
+
+	int32_t realClientWidth = rcClient.right - rcClient.left;
+	int32_t realClientHeight = rcClient.bottom - rcClient.top;
+
+	windowWidth = (windowWidth - realClientWidth) + desc.displayMode.width;
+	windowHeight = (windowHeight - realClientHeight) + desc.displayMode.height;
+
+	if (desc.fullscreen)
+	{
+		SetWindowPos(m_hWnd, HWND_TOPMOST, 0, 0, windowWidth, windowHeight, SWP_NOSIZE | SWP_NOMOVE);
+		ShowWindow(m_hWnd, SW_MAXIMIZE);
+	}
+	else
+	{
+		SetWindowPos(m_hWnd, NULL, 0, 0, windowWidth, windowHeight, SWP_NOZORDER | SWP_NOMOVE);
+		ShowWindow(m_hWnd, SW_SHOW);
+	}
+
 	UpdateWindow(m_hWnd);
 
 #endif
@@ -177,7 +190,7 @@ Ref< IRenderView > RenderSystemSw::createRenderView(const RenderViewDefaultDesc&
 #endif
 
 	graphicsDesc.windowHandle = m_hWnd;
-	graphicsDesc.fullScreen = true;
+	graphicsDesc.fullScreen = desc.fullscreen;
 	graphicsDesc.displayMode.width = desc.displayMode.width;
 	graphicsDesc.displayMode.height = desc.displayMode.height;
 	graphicsDesc.displayMode.bits = desc.displayMode.colorBits;
