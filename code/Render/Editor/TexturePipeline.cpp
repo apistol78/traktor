@@ -185,7 +185,7 @@ struct CompressTextureTask
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TexturePipeline", 10, TexturePipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TexturePipeline", 11, TexturePipeline, editor::IPipeline)
 
 TexturePipeline::TexturePipeline()
 :	m_skipMips(0)
@@ -366,10 +366,17 @@ bool TexturePipeline::buildOutput(
 		image = image->applyFilter(&filter);
 	}
 
+	// Inverse normal map Y; assume it's a normal map to begin with.
+	if (textureAsset->m_inverseNormalMapY)
+	{
+		drawing::TransformFilter transformFilter(drawing::Color(1.0f, -1.0f, 1.0f, 1.0f), drawing::Color(0.0f, 1.0f, 0.0f, 0.0f));
+		image = image->applyFilter(&transformFilter);
+	}
+
 	// Swizzle channels to prepare for DXT5nm compression.
 	if (m_allowCompression && textureAsset->m_enableNormalMapCompression)
 	{
-		// Negative X axis; do it here instead of in shader.
+		// Inverse X axis; do it here instead of in shader.
 		drawing::TransformFilter transformFilter(drawing::Color(-1.0f, 1.0f, 1.0f, 1.0f), drawing::Color(1.0f, 0.0f, 0.0f, 0.0f));
 		image = image->applyFilter(&transformFilter);
 
