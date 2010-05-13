@@ -33,6 +33,7 @@ public:
 	int32_t m_scaleHeight;
 	bool m_enableCompression;
 	bool m_enableNormalMapCompression;
+	bool m_inverseNormalMapY;
 	bool m_linearGamma;
 	bool m_generateSphereMap;
 

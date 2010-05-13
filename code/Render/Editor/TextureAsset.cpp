@@ -8,7 +8,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.render.TextureAsset", 2, TextureAsset, editor::Asset)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.render.TextureAsset", 3, TextureAsset, editor::Asset)
 
 TextureAsset::TextureAsset()
 :	m_generateNormalMap(false)
@@ -23,6 +23,7 @@ TextureAsset::TextureAsset()
 ,	m_scaleHeight(0)
 ,	m_enableCompression(true)
 ,	m_enableNormalMapCompression(false)
+,	m_inverseNormalMapY(false)
 ,	m_linearGamma(true)
 ,	m_generateSphereMap(false)
 {
@@ -52,6 +53,9 @@ bool TextureAsset::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 2)
 		s >> Member< bool >(L"enableNormalMapCompression", m_enableNormalMapCompression);
+
+	if (s.getVersion() >= 3)
+		s >> Member< bool >(L"inverseNormalMapY", m_inverseNormalMapY);
 
 	s >> Member< bool >(L"linearGamma", m_linearGamma);
 
