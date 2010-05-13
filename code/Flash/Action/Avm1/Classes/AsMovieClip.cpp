@@ -647,6 +647,8 @@ void AsMovieClip::MovieClip_set_height(CallArgs& ca)
 	
 	SwfRect bounds = movieClipInstance->getLocalBounds();
 	float extent = (bounds.max.y - bounds.min.y) / 20.0f;
+	if (abs(extent) <= FUZZY_EPSILON)
+		return;
 
 	Vector2 T, S; float R;
 	decomposeTransform(movieClipInstance->getTransform(), T, S, R);
@@ -872,6 +874,8 @@ void AsMovieClip::MovieClip_set_width(CallArgs& ca)
 
 	SwfRect bounds = movieClipInstance->getLocalBounds();
 	float extent = (bounds.max.x - bounds.min.x) / 20.0f;
+	if (abs(extent) <= FUZZY_EPSILON)
+		return;
 
 	Vector2 T, S; float R;
 	decomposeTransform(movieClipInstance->getTransform(), T, S, R);

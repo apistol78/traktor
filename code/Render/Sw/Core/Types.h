@@ -15,6 +15,7 @@ enum Opcode
 {
 	OpNop,
 	OpFetchConstant,
+	OpFetchTargetSize,
 	OpFetchUniform,
 	OpFetchIndexedUniform,
 	OpFetchVarying,
@@ -23,7 +24,7 @@ enum Opcode
 	OpAbs,
 	OpIncrement,
 	OpDecrement,
-	OpAdd,					// 10
+	OpAdd,					// 11
 	OpDiv,
 	OpMul,
 	OpMulAdd,
@@ -33,7 +34,7 @@ enum Opcode
 	OpExp,
 	OpFraction,
 	OpNeg,
-	OpPow,					// 20
+	OpPow,					// 21
 	OpSqrt,
 	OpSub,
 	OpAcos,
@@ -43,7 +44,7 @@ enum Opcode
 	OpTan,
 	OpCross,
 	OpDot3,
-	OpDot4,					// 30
+	OpDot4,					// 31
 	OpLength,
 	OpNormalize,
 	OpTransform,
@@ -53,7 +54,7 @@ enum Opcode
 	OpMixIn,
 	OpMax,
 	OpSampler,
-	OpSwizzle,				// 40
+	OpSwizzle,				// 41
 	OpSet,
 	OpExpandWithZero,
 	OpSplat,
@@ -63,13 +64,14 @@ enum Opcode
 	OpCompareNotEqual,
 	OpJumpIfZero,
 	OpJump,
-	OpTrace					// 50
+	OpTrace					// 51
 };
 
 static const wchar_t* c_opcodeText[] =
 {
 	L"OpNop",
 	L"OpFetchConstant",
+	L"OpFetchTargetSize",
 	L"OpFetchUniform",
 	L"OpFetchIndexedUniform",
 	L"OpFetchVarying",

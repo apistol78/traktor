@@ -71,6 +71,7 @@ void InterpreterFixed::execute(
 	const image_t image,
 	const Vector4* inUniforms,
 	const Vector4* inVaryings,
+	const Vector4& targetSize,
 	const Ref< AbstractSampler >* inSamplers,
 	Vector4* outVaryings
 ) const
@@ -91,6 +92,10 @@ void InterpreterFixed::execute(
 
 		case OpFetchConstant:
 			dest = img->constants[i->src[0]];
+			break;
+
+		case OpFetchTargetSize:
+			dest = toFixed(targetSize);
 			break;
 
 		case OpFetchUniform:

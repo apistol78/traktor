@@ -1,11 +1,12 @@
 #include <cmath>
 #include <limits>
+#include "Core/Log/Log.h"
+#include "Core/Math/Const.h"
+#include "Core/Math/Float.h"
+#include "Core/Math/Matrix44.h"
 #include "Render/Sw/Core/Interpreter.h"
 #include "Render/Sw/Core/IntrProgram.h"
 #include "Render/Sw/Core/Sampler.h"
-#include "Core/Math/Const.h"
-#include "Core/Math/Matrix44.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -19,12 +20,12 @@ struct InternalImage
 	IntrProgram program;
 };
 
-inline float clamp(float v, float mn, float mx)
+float T_FORCE_INLINE clamp(float v, float mn, float mx)
 {
 	return min(max(v, mn), mx);
 }
 
-inline float frac(float v)
+float T_FORCE_INLINE frac(float v)
 {
 	if (v >= 0.0f)
 		return v - floorf(v);
@@ -32,14 +33,20 @@ inline float frac(float v)
 		return -(-v - floorf(-v));
 }
 
-inline double fpow(double a, double b)
+float T_FORCE_INLINE fpow(float a, float b)
 {
-	int tmp = *(1 + (int*)&a);
-	int tmp2 = (int)(b * (tmp - 1072632447) + 1072632447);
-	double p = 0.0;
-	*(1 + (int*)&p) = tmp2;
-	return p;
+	return std::powf(a, b);
 }
+
+void T_FORCE_INLINE checkRegister(const Vector4& r)
+{
+	T_ASSERT (!(isNan(r.x()) || isInfinite(r.x())));
+	T_ASSERT (!(isNan(r.y()) || isInfinite(r.y())));
+	T_ASSERT (!(isNan(r.z()) || isInfinite(r.z())));
+	T_ASSERT (!(isNan(r.w()) || isInfinite(r.w())));
+}
+
+#define CHECK(r) checkRegister(r)
 
 		}
 
@@ -62,6 +69,7 @@ void Interpreter::execute(
 	const image_t image,
 	const Vector4* inUniforms,
 	const Vector4* inVaryings,
+	const Vector4& targetSize,
 	const Ref< AbstractSampler >* inSamplers,
 	Vector4* outVaryings
 ) const
@@ -83,6 +91,12 @@ void Interpreter::execute(
 
 		case OpFetchConstant:
 			dest = img->program.getConstant(i->src[0]);
+			CHECK(dest);
+			break;
+
+		case OpFetchTargetSize:
+			dest = targetSize;
+			CHECK(dest);
 			break;
 
 		case OpFetchUniform:
@@ -92,7 +106,10 @@ void Interpreter::execute(
 				T_ASSERT (base + size < 256);
 
 				for (uint32_t j = 0; j < size; ++j)
+				{
 					R(i->dest + j) = inUniforms[base + j];
+					CHECK(R(i->dest + j));
+				}
 			}
 			break;
 
@@ -104,56 +121,78 @@ void Interpreter::execute(
 				T_ASSERT (base + index * size + size < 256);
 				
 				for (uint32_t j = 0; j < size; ++j)
+				{
 					R(i->dest + j) = inUniforms[base + index * size + j];
+					CHECK(R(i->dest + j));
+				}
 			}
 			break;
 
 		case OpFetchVarying:
 			T_ASSERT (i->src[0] < 4 + 2 + 8);
 			dest = inVaryings[i->src[0]];
+			CHECK(dest);
 			break;
 
 		case OpStoreVarying:
 			T_ASSERT (i->dest < 4 + 2 + 8);
 			outVaryings[i->dest] = R(i->src[0]);
+			CHECK(outVaryings[i->dest]);
 			break;
 
 		case OpMove:
 			dest = R(i->src[0]);
+			CHECK(dest);
 			break;
 
 		case OpAbs:
 			dest = R(i->src[0]).absolute();
+			CHECK(dest);
 			break;
 
 		case OpIncrement:
 			dest += Scalar(1.0f);
+			CHECK(dest);
 			break;
 
 		case OpDecrement:
 			dest -= Scalar(1.0f);
+			CHECK(dest);
 			break;
 
 		case OpAdd:
 			dest = R(i->src[0]) + R(i->src[1]);
+			CHECK(dest);
 			break;
 
 		case OpDiv:
-			dest = R(i->src[0]) / R(i->src[1]);
+			{
+				Vector4 denom = R(i->src[1]);
+				for (int j = 0; j < 4; ++j)
+				{
+					if (abs(denom[j]) <= Scalar(FUZZY_EPSILON))
+						denom.set(j, Scalar(1.0f));
+				}
+				dest = R(i->src[0]) / denom;
+				CHECK(dest);
+			}
 			break;
 
 		case OpMul:
 			dest = R(i->src[0]) * R(i->src[1]);
+			CHECK(dest);
 			break;
 
 		case OpMulAdd:
 			dest = R(i->src[0]) * R(i->src[1]) + R(i->src[2]);
+			CHECK(dest);
 			break;
 
 		case OpLog:
 			{
 				float v = std::log(R(i->src[0]).x());
 				dest = Vector4(v, v, v, v);
+				CHECK(dest);
 			}
 			break;
 
@@ -168,6 +207,7 @@ void Interpreter::execute(
 			{
 				float v = std::log10(R(i->src[0]).x());
 				dest = Vector4(v, v, v, v);
+				CHECK(dest);
 			}
 			break;
 
@@ -178,6 +218,7 @@ void Interpreter::execute(
 				std::exp(R(i->src[0]).z()),
 				std::exp(R(i->src[0]).w())
 			);
+			CHECK(dest);
 			break;
 
 		case OpFraction:
@@ -187,10 +228,12 @@ void Interpreter::execute(
 				frac(R(i->src[0]).z()),
 				frac(R(i->src[0]).w())
 			);
+			CHECK(dest);
 			break;
 
 		case OpNeg:
 			dest = -R(i->src[0]);
+			CHECK(dest);
 			break;
 
 		case OpPow:
@@ -200,19 +243,28 @@ void Interpreter::execute(
 				fpow(R(i->src[0]).z(), R(i->src[1]).z()),
 				fpow(R(i->src[0]).w(), R(i->src[1]).w())
 			);
+			CHECK(dest);
 			break;
 
 		case OpSqrt:
-			dest.set(
-				sqrtf(R(i->src[0]).x()),
-				sqrtf(R(i->src[0]).y()),
-				sqrtf(R(i->src[0]).z()),
-				sqrtf(R(i->src[0]).w())
-			);
+			{
+				float x = std::max< float >(R(i->src[0]).x(), 0.0f);
+				float y = std::max< float >(R(i->src[0]).y(), 0.0f);
+				float z = std::max< float >(R(i->src[0]).z(), 0.0f);
+				float w = std::max< float >(R(i->src[0]).w(), 0.0f);
+				dest.set(
+					sqrtf(x),
+					sqrtf(y),
+					sqrtf(z),
+					sqrtf(w)
+				);
+				CHECK(dest);
+			}
 			break;
 
 		case OpSub:
 			dest = R(i->src[0]) - R(i->src[1]);
+			CHECK(dest);
 			break;
 
 		case OpAcos:
@@ -222,6 +274,7 @@ void Interpreter::execute(
 				acosf(clamp(R(i->src[0]).z(), -1.0f, 1.0f)),
 				acosf(clamp(R(i->src[0]).w(), -1.0f, 1.0f))
 			);
+			CHECK(dest);
 			break;
 
 		case OpAtan:
@@ -231,6 +284,7 @@ void Interpreter::execute(
 				std::atan(R(i->src[0]).z()),
 				std::atan(R(i->src[0]).w())
 			);
+			CHECK(dest);
 			break;
 
 		case OpCos:
@@ -240,6 +294,7 @@ void Interpreter::execute(
 				cosf(R(i->src[0]).z()),
 				cosf(R(i->src[0]).w())
 			);
+			CHECK(dest);
 			break;
 
 		case OpSin:
@@ -249,6 +304,7 @@ void Interpreter::execute(
 				sinf(R(i->src[0]).z()),
 				sinf(R(i->src[0]).w())
 			);
+			CHECK(dest);
 			break;
 
 		case OpTan:
@@ -258,16 +314,19 @@ void Interpreter::execute(
 				std::tan(R(i->src[0]).z()),
 				std::tan(R(i->src[0]).w())
 			);
+			CHECK(dest);
 			break;
 
 		case OpCross:
 			dest = cross(R(i->src[0]), R(i->src[1]));
+			CHECK(dest);
 			break;
 
 		case OpDot3:
 			{
 				Scalar a = dot3(R(i->src[0]), R(i->src[1]));
 				dest.set(a, a, a, a);
+				CHECK(dest);
 			}
 			break;
 
@@ -275,6 +334,7 @@ void Interpreter::execute(
 			{
 				Scalar a = dot4(R(i->src[0]), R(i->src[1]));
 				dest.set(a, a, a, a);
+				CHECK(dest);
 			}
 			break;
 
@@ -282,6 +342,7 @@ void Interpreter::execute(
 			{
 				Scalar l = R(i->src[0]).length();
 				dest.set(l, l, l, l);
+				CHECK(dest);
 			}
 			break;
 
@@ -292,6 +353,7 @@ void Interpreter::execute(
 					dest = R(i->src[0]) / l;
 				else
 					dest.set(0.0f, 0.0f, 0.0f, 0.0f);
+				CHECK(dest);
 			}
 			break;
 
@@ -304,6 +366,7 @@ void Interpreter::execute(
 					R(i->src[1] + 3)
 				);
 				dest = m * R(i->src[0]);
+				CHECK(dest);
 			}
 			break;
 
@@ -335,6 +398,7 @@ void Interpreter::execute(
 					clamp(R(i->src[0]).z(), mn.z(), mx.z()),
 					clamp(R(i->src[0]).w(), mn.w(), mx.w())
 				);
+				CHECK(dest);
 			}
 			break;
 
@@ -342,6 +406,7 @@ void Interpreter::execute(
 			{
 				Scalar s = R(i->src[0]).x();
 				dest = R(i->src[1]) * (Scalar(1.0f) - s) + R(i->src[2]) * s;
+				CHECK(dest);
 			}
 			break;
 
@@ -352,11 +417,13 @@ void Interpreter::execute(
 				float z = R(i->src[2]).x();
 				float w = R(i->src[3]).x();
 				dest.set(x, y, z, w);
+				CHECK(dest);
 			}
 			break;
 
 		case OpMax:
 			dest = max(R(i->src[0]), R(i->src[1]));
+			CHECK(dest);
 			break;
 
 		case OpSampler:
@@ -367,10 +434,12 @@ void Interpreter::execute(
 					if (sampler)
 					{
 						dest = sampler->get(R(i->src[0]));
+						CHECK(dest);
 						break;
 					}
 				}
 				dest = Vector4::zero();
+				CHECK(dest);
 			}
 			break;
 
@@ -391,32 +460,33 @@ void Interpreter::execute(
 					s[cz],
 					s[cw]
 				);
+				CHECK(dest);
 			}
 			break;
 
 		case OpSet:
 			{
-				dest = Vector4(0.0f, 0.0f, 0.0f, 0.0f);
-
 				uint8_t ones = i->src[0];
 				if (ones & 1)
-					dest += Vector4(1.0f, 0.0f, 0.0f, 0.0f);
+					dest.set(0, Scalar(1.0f));
 				if (ones & 2)
-					dest += Vector4(0.0f, 1.0f, 0.0f, 0.0f);
+					dest.set(1, Scalar(1.0f));
 				if (ones & 4)
-					dest += Vector4(0.0f, 0.0f, 1.0f, 0.0f);
+					dest.set(2, Scalar(1.0f));
 				if (ones & 8)
-					dest += Vector4(0.0f, 0.0f, 0.0f, 1.0f);
+					dest.set(3, Scalar(1.0f));
 
 				uint8_t zeros = i->src[1];
 				if (zeros & 1)
-					dest *= Vector4(0.0f, 1.0f, 1.0f, 1.0f);
+					dest.set(0, Scalar(0.0f));
 				if (zeros & 2)
-					dest *= Vector4(1.0f, 0.0f, 1.0f, 1.0f);
+					dest.set(1, Scalar(0.0f));
 				if (zeros & 4)
-					dest *= Vector4(1.0f, 1.0f, 0.0f, 1.0f);
+					dest.set(2, Scalar(0.0f));
 				if (zeros & 8)
-					dest *= Vector4(1.0f, 1.0f, 1.0f, 0.0f);
+					dest.set(3, Scalar(0.0f));
+
+				CHECK(dest);
 			}
 			break;
 
@@ -432,6 +502,7 @@ void Interpreter::execute(
 					dest *= Vector4(1.0f, 1.0f, 0.0f, 1.0f);
 				if (ch & 8)
 					dest *= Vector4(1.0f, 1.0f, 1.0f, 0.0f);
+				CHECK(dest);
 			}
 			break;
 
@@ -439,6 +510,7 @@ void Interpreter::execute(
 			{
 				float sp = R(i->src[0])[i->src[1]];
 				dest.set(sp, sp, sp, sp);
+				CHECK(dest);
 			}
 			break;
 
@@ -451,6 +523,8 @@ void Interpreter::execute(
 					dest.set(1.0f, 1.0f, 1.0f, 1.0f);
 				else
 					dest.set(0.0f, 0.0f, 0.0f, 0.0f);
+
+				CHECK(dest);
 			}
 			break;
 
@@ -463,6 +537,8 @@ void Interpreter::execute(
 					dest.set(1.0f, 1.0f, 1.0f, 1.0f);
 				else
 					dest.set(0.0f, 0.0f, 0.0f, 0.0f);
+
+				CHECK(dest);
 			}
 			break;
 
@@ -475,6 +551,8 @@ void Interpreter::execute(
 					dest.set(1.0f, 1.0f, 1.0f, 1.0f);
 				else
 					dest.set(0.0f, 0.0f, 0.0f, 0.0f);
+
+				CHECK(dest);
 			}
 			break;
 
@@ -487,6 +565,8 @@ void Interpreter::execute(
 					dest.set(1.0f, 1.0f, 1.0f, 1.0f);
 				else
 					dest.set(0.0f, 0.0f, 0.0f, 0.0f);
+
+				CHECK(dest);
 			}
 			break;
 

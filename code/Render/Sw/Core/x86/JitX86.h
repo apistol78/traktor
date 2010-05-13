@@ -39,6 +39,7 @@ public:
 		const image_t image,
 		const Vector4* inUniforms,
 		const Vector4* inVaryings,
+		const Vector4& targetSize,
 		const Ref< AbstractSampler >* inSamplers,
 		Vector4* outVaryings
 	) const;

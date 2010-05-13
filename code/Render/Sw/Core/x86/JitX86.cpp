@@ -25,15 +25,17 @@ const uint32_t c_trigResolution = 65536;
 #define REGISTERS					ecx
 #define CONTEXT						esi
 #define CONTEXT_OFFSET_CONSTANTS	0
-#define CONTEXT_OFFSET_UNIFORMS		4
-#define CONTEXT_OFFSET_VARYINGS		8
-#define CONTEXT_OFFSET_SAMPLERS		12
-#define CONTEXT_OFFSET_OUT			16
+#define CONTEXT_OFFSET_TARGETSIZE	4
+#define CONTEXT_OFFSET_UNIFORMS		8
+#define CONTEXT_OFFSET_VARYINGS		12
+#define CONTEXT_OFFSET_SAMPLERS		16
+#define CONTEXT_OFFSET_OUT			20
 
 #pragma pack(1)
 struct ExecuteContext
 {
 	void* constants;
+	void* targetSize;
 	void* uniforms;
 	void* varyings;
 	void* samplers;
@@ -47,10 +49,10 @@ struct InternalImage
 	void* native;
 };
 
-const uint32_t T_ALIGN16 s_absoluteMask[]	= { 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff };
-const uint32_t T_ALIGN16 s_negateMask[]		= { 0x80000000, 0x80000000, 0x80000000, 0x80000000 };
+const uint32_t T_ALIGN16 s_absoluteMask[]		= { 0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffffff };
+const uint32_t T_ALIGN16 s_negateMask[]			= { 0x80000000, 0x80000000, 0x80000000, 0x80000000 };
 const uint32_t T_ALIGN16 s_negateCrossMask[]	= { 0x00000000, 0x80000000, 0x00000000, 0x00000000 };
-const uint32_t T_ALIGN16 s_zero[]			= { 0x00000000, 0x00000000, 0x00000000, 0x00000000 };
+const uint32_t T_ALIGN16 s_zero[]				= { 0x00000000, 0x00000000, 0x00000000, 0x00000000 };
 const uint32_t T_ALIGN16 s_one[]				= { 0x3f800000, 0x3f800000, 0x3f800000, 0x3f800000 };
 const uint32_t T_ALIGN16 s_masks[] =
 {
@@ -82,22 +84,13 @@ static Vector4 T_ALIGN16 s_trigArcCos[c_trigResolution];
 #define SSE_SHUFFLE_MASK(x, y, z, w) \
 	(x) | ((y) << 2) | ((z) << 4) | ((w) << 6)
 
-inline double fastPow(double a, double b)
-{
-	int tmp = *(1 + (int*)&a);
-	int tmp2 = (int)(b * (tmp - 1072632447) + 1072632447);
-	double p = 0.0;
-	*(1 + (int*)&p) = tmp2;
-	return p;
-}
-
 void __stdcall callPow(Vector4* registers, ExecuteContext* context, uint32_t dest, uint32_t src0, uint32_t src1)
 {
 	registers[dest].set(
-		fastPow(registers[src0].x(), registers[src1].x()),
-		fastPow(registers[src0].y(), registers[src1].y()),
-		fastPow(registers[src0].z(), registers[src1].z()),
-		fastPow(registers[src0].w(), registers[src1].w())
+		std::powf(registers[src0].x(), registers[src1].x()),
+		std::powf(registers[src0].y(), registers[src1].y()),
+		std::powf(registers[src0].z(), registers[src1].z()),
+		std::powf(registers[src0].w(), registers[src1].w())
 	);
 }
 
@@ -302,6 +295,11 @@ Processor::image_t JitX86::compile(const IntrProgram& program) const
 		case OpFetchConstant:
 			a.lea(eax, CONTEXT, CONTEXT_OFFSET_CONSTANTS);
 			a.movaps(xmmw(a, i.dest), eax, i.src[0] * 16);
+			break;
+
+		case OpFetchTargetSize:
+			a.lea(eax, CONTEXT, CONTEXT_OFFSET_TARGETSIZE);
+			a.movaps(xmmw(a, i.dest), eax, 0);
 			break;
 
 		case OpFetchUniform:
@@ -884,6 +882,7 @@ void JitX86::execute(
 	const image_t image,
 	const Vector4* inUniforms,
 	const Vector4* inVaryings,
+	const Vector4& targetSize,
 	const Ref< AbstractSampler >* inSamplers,
 	Vector4* outVaryings
 ) const
@@ -898,6 +897,7 @@ void JitX86::execute(
 
 	ExecuteContext T_ALIGN16 context;
 	context.constants = (void*)i->constants;
+	context.targetSize = (void*)&targetSize;
 	context.uniforms = (void*)inUniforms;
 	context.varyings = (void*)inVaryings;
 	context.samplers = (void*)inSamplers;

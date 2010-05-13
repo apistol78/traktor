@@ -152,9 +152,9 @@ bool AccShape::create(
 	{
 		for (AlignedVector< Triangle >::iterator j = i->triangles.begin(); j != i->triangles.end(); ++j)
 		{
+			Matrix33 textureMatrix = Matrix33::identity();
 			Color color(255, 255, 255, 255);
 			render::ITexture* texture = 0;
-			Matrix33 textureMatrix;
 
 			if (j->fillStyle && j->fillStyle - 1 < uint16_t(fillStyles.size()))
 			{
