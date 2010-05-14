@@ -29,7 +29,7 @@ public:
 
 	virtual void destroy();
 
-	virtual bool handleCommand(const ui::Command& command);
+	virtual bool handleCommand(const ui::Command& command, bool result);
 
 	virtual void handleDatabaseEvent(const Guid& eventId);
 

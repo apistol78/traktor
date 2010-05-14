@@ -1,13 +1,14 @@
-#include <limits>
 #include <algorithm>
-#include "Spray/PointRenderer.h"
+#include <limits>
+#include "Core/Math/Const.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Render/IRenderSystem.h"
 #include "Render/VertexElement.h"
 #include "Render/VertexBuffer.h"
 #include "Render/IndexBuffer.h"
 #include "Render/Context/RenderContext.h"
+#include "Spray/PointRenderer.h"
 #include "World/WorldRenderView.h"
-#include "Core/Math/Const.h"
 
 namespace traktor
 {
@@ -107,6 +108,25 @@ PointRenderer::PointRenderer(render::IRenderSystem* renderSystem, float cullNear
 	}
 
 	m_indexBuffer->unlock();
+}
+
+PointRenderer::~PointRenderer()
+{
+	destroy();
+}
+
+void PointRenderer::destroy()
+{
+	if (m_vertex)
+	{
+		m_vertex = 0;
+		m_vertexBuffer[m_currentBuffer]->unlock();
+	}
+
+	safeDestroy(m_indexBuffer);
+
+	for (int i = 0; i < BufferCount; ++i)
+		safeDestroy(m_vertexBuffer[i]);
 }
 
 void PointRenderer::render(

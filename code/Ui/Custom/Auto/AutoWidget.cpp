@@ -19,6 +19,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.AutoWidget", AutoWidget, Widget)
 AutoWidget::AutoWidget()
 :	m_scrollOffset(0, 0)
 ,	m_deferredUpdate(false)
+,	m_deferredLayout(false)
 {
 }
 
@@ -86,7 +87,7 @@ void AutoWidget::requestUpdate()
 
 void AutoWidget::requestLayout()
 {
-	updateLayout();
+	m_deferredLayout = true;
 }
 
 void AutoWidget::placeCell(AutoWidgetCell* cell, const Rect& rect)
@@ -253,6 +254,11 @@ void AutoWidget::eventSize(Event* event)
 
 void AutoWidget::eventTimer(Event* event)
 {
+	if (m_deferredLayout)
+	{
+		m_deferredLayout = false;
+		updateLayout();
+	}
 	if (m_deferredUpdate)
 	{
 		m_deferredUpdate = false;

@@ -26,9 +26,9 @@ void EditorPluginSite::destroy()
 	safeDestroy(m_editorPlugin);
 }
 
-bool EditorPluginSite::handleCommand(const ui::Command& command)
+bool EditorPluginSite::handleCommand(const ui::Command& command, bool result)
 {
-	return m_editorPlugin->handleCommand(command);
+	return m_editorPlugin->handleCommand(command, result);
 }
 
 void EditorPluginSite::handleDatabaseEvent(const Guid& eventId)

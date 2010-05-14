@@ -25,7 +25,7 @@ void SoundEditorPlugin::destroy()
 	m_editor->setStoreObject(L"SoundSystemFactory", 0);
 }
 
-bool SoundEditorPlugin::handleCommand(const ui::Command& command)
+bool SoundEditorPlugin::handleCommand(const ui::Command& command, bool result)
 {
 	return false;
 }

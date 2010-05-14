@@ -58,7 +58,7 @@ void RenderEditorPlugin::destroy()
 	}
 }
 
-bool RenderEditorPlugin::handleCommand(const ui::Command& command)
+bool RenderEditorPlugin::handleCommand(const ui::Command& command, bool result)
 {
 	return false;
 }
