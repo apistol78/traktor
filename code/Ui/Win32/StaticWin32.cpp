@@ -5,8 +5,8 @@ namespace traktor
 	namespace ui
 	{
 
-StaticWin32::StaticWin32(EventSubject* owner) :
-	WidgetWin32Impl< IStatic >(owner)
+StaticWin32::StaticWin32(EventSubject* owner)
+:	WidgetWin32Impl< IStatic >(owner)
 {
 }
 
@@ -35,7 +35,19 @@ bool StaticWin32::create(IWidget* parent, const std::wstring& text)
 
 Size StaticWin32::getPreferedSize() const
 {
-	return getTextExtent(getText());
+	SIZE size = { 0, 0 };
+
+	std::wstring text = getText();
+	if (!text.empty())
+	{
+		HDC hDC = GetDC(m_hWnd);
+		HGDIOBJ hOldFont = SelectObject(hDC, m_hWnd.getFont());
+		GetTextExtentPoint32(hDC, wstots(text).c_str(), int(text.length()), &size);
+		SelectObject(hDC, hOldFont);
+		ReleaseDC(m_hWnd, hDC);
+	}
+
+	return Size(size.cx, size.cy);
 }
 
 	}

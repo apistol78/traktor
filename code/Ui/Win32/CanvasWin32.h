@@ -20,6 +20,8 @@ public:
 	virtual bool beginPaint(Window& hWnd, bool doubleBuffer, HDC hDC) = 0;
 
 	virtual void endPaint(Window& hWnd) = 0;
+
+	virtual Size getTextExtent(Window& hWnd, const std::wstring& text) const = 0;
 };
 	
 	}

@@ -48,7 +48,7 @@ bool LogList::create(Widget* parent, int style)
 
 	m_icons = Bitmap::load(c_ResourceLog, sizeof(c_ResourceLog), L"png");
 
-	m_itemHeight = abs(getFont().getSize()) + 3;
+	m_itemHeight = abs(getFont().getSize()) + 4;
 	m_itemHeight = std::max< int >(m_itemHeight, m_icons->getSize().cy);
 
 	startTimer(100, 0);

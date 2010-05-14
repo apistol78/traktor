@@ -4,6 +4,7 @@
 #include "Core/Math/Format.h"
 #include "Core/Misc/EnterLeave.h"
 #include "Core/Settings/PropertyColor.h"
+#include "Core/Settings/PropertyFloat.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/Settings.h"
 #include "Database/Database.h"
@@ -75,6 +76,8 @@ bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* co
 {
 	m_context = context;
 	T_ASSERT (m_context);
+
+	m_fieldOfView = m_context->getEditor()->getSettings()->getProperty< PropertyFloat >(L"SceneEditor.FieldOfView", c_defaultFieldOfView);
 
 	m_renderWidget = new ui::Widget();
 	if (!m_renderWidget->create(parent))

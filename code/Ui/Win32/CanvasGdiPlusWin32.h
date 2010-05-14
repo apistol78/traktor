@@ -23,6 +23,8 @@ public:
 	virtual bool beginPaint(Window& hWnd, bool doubleBuffer, HDC hDC);
 
 	virtual void endPaint(Window& hWnd);
+
+	virtual Size getTextExtent(Window& hWnd, const std::wstring& text) const;
 	
 	virtual void setForeground(const Color& foreground);
 
@@ -81,14 +83,14 @@ public:
 private:
 	PAINTSTRUCT m_ps;
 	HDC m_hDC;
+	HFONT m_hFont;
 	bool m_ownDC;
 	bool m_doubleBuffer;
-	
 	uint32_t m_offScreenBitmapWidth;
 	uint32_t m_offScreenBitmapHeight;
 	AutoPtr< Gdiplus::Bitmap > m_offScreenBitmap;
-
 	mutable AutoPtr< Gdiplus::Graphics > m_graphics;
+	mutable AutoPtr< Gdiplus::StringFormat > m_stringFormat;
 	mutable AutoPtr< Gdiplus::Font > m_font;
 	Gdiplus::Color m_foreGround;
 	Gdiplus::Color m_backGround;
