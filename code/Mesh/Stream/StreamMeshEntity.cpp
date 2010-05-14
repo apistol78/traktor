@@ -53,6 +53,8 @@ void StreamMeshEntity::render(world::WorldContext* worldContext, world::WorldRen
 		distance,
 		getParameterCallback()
 	);
+
+	m_first = false;
 }
 
 bool StreamMeshEntity::validate() const

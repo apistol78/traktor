@@ -88,6 +88,7 @@ void AnimatedMeshEntity::render(world::WorldContext* worldContext, world::WorldR
 		getParameterCallback()
 	);
 
+	m_first = false;
 	m_updateController = true;
 }
 
