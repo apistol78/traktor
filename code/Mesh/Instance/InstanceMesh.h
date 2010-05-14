@@ -53,10 +53,8 @@ class T_DLLCLASS InstanceMesh : public IMesh
 public:
 #if TARGET_OS_IPHONE
 	enum { MaxInstanceCount = 10 };		// ES doesn't support 32-bit indices thus we cannot batch enough instances.
-#elif defined(_PS3)
-	enum { MaxInstanceCount = 30 };
 #else
-	enum { MaxInstanceCount = 60 };
+	enum { MaxInstanceCount = 20 };
 #endif
 
 	struct Part
@@ -68,6 +66,8 @@ public:
 	typedef std::pair< InstanceMeshData, float > instance_distance_t;
 
 	InstanceMesh();
+
+	virtual ~InstanceMesh();
 
 	const Aabb& getBoundingBox() const;
 	
@@ -82,6 +82,11 @@ private:
 
 	Ref< render::Mesh > m_mesh;
 	std::vector< Part > m_parts;
+
+#if defined(_DEBUG)
+	uint32_t m_instanceUsedCount;
+	uint32_t m_instanceRenderedCount;
+#endif
 };
 
 	}

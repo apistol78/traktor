@@ -1,4 +1,5 @@
 #include <algorithm>
+#include "Core/Log/Log.h"
 #include "Mesh/Instance/InstanceMesh.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Mesh/Mesh.h"
@@ -26,9 +27,20 @@ struct SortInstanceDistance
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.InstanceMesh", InstanceMesh, IMesh)
 
 InstanceMesh::InstanceMesh()
+#if defined(_DEBUG)
+:	m_instanceUsedCount(0)
+,	m_instanceRenderedCount(0)
+#endif
 {
 	if (!s_handleInstanceWorld)
 		s_handleInstanceWorld = render::getParameterHandle(L"InstanceWorld");
+}
+
+InstanceMesh::~InstanceMesh()
+{
+#if defined(_DEBUG)
+	log::info << L"InstanceMesh " << (uint32_t)this << L": Average batch size " << (float(m_instanceUsedCount) / m_instanceRenderedCount) << Endl;
+#endif
 }
 
 const Aabb& InstanceMesh::getBoundingBox() const
@@ -40,6 +52,11 @@ void InstanceMesh::render(render::RenderContext* renderContext, const world::Wor
 {
 	InstanceMeshData T_ALIGN16 instanceBatch[MaxInstanceCount];
 	bool haveAlphaBlend = false;
+
+#if defined(_DEBUG)
+	m_instanceUsedCount += instanceWorld.size();
+	m_instanceRenderedCount++;
+#endif
 
 	if (instanceWorld.empty())
 		return;
