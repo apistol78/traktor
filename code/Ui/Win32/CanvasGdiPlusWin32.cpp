@@ -21,6 +21,7 @@ ULONG_PTR s_token;
 
 CanvasGdiPlusWin32::CanvasGdiPlusWin32()
 :	m_hDC(NULL)
+,	m_hFont(NULL)
 ,	m_ownDC(false)
 ,	m_doubleBuffer(false)
 ,	m_offScreenBitmapWidth(0)
@@ -91,13 +92,13 @@ bool CanvasGdiPlusWin32::beginPaint(Window& hWnd, bool doubleBuffer, HDC hDC)
 		m_ownDC = true;
 	}
 
+	m_hFont = hWnd.getFont();
+
 	T_ASSERT (m_graphics.ptr());
 
 	m_graphics->SetTextRenderingHint(TextRenderingHintSystemDefault);
 	m_graphics->SetPixelOffsetMode(PixelOffsetModeNone);
 	m_graphics->SetSmoothingMode(SmoothingModeHighSpeed);
-
-	m_font.reset(new Gdiplus::Font(m_hDC, hWnd.getFont()));
 
 	setForeground(Color(255, 255, 255, 255));
 	setBackground(getSystemColor(ScButtonFace));
@@ -122,6 +123,32 @@ void CanvasGdiPlusWin32::endPaint(Window& hWnd)
 		EndPaint(hWnd, &m_ps);
 
 	m_hDC = NULL;
+}
+
+Size CanvasGdiPlusWin32::getTextExtent(Window& hWnd, const std::wstring& text) const
+{
+	Gdiplus::RectF boundingBox;
+
+	HDC hDC = GetDC(hWnd);
+
+	AutoPtr< Gdiplus::Graphics > graphics(new Gdiplus::Graphics(hDC));
+	AutoPtr< Gdiplus::Font > font(new Gdiplus::Font(hDC, hWnd.getFont()));
+
+	AutoPtr< Gdiplus::StringFormat > stringFormat(StringFormat::GenericTypographic()->Clone());
+	stringFormat->SetFormatFlags(StringFormatFlagsNoWrap);
+
+	graphics->MeasureString(
+		text.c_str(),
+		(INT)text.length(),
+		font.ptr(),
+		Gdiplus::RectF(0, 0, 0, 0),
+		stringFormat.ptr(),
+		&boundingBox
+	);
+
+	ReleaseDC(hWnd, hDC);
+
+	return Size(int(boundingBox.Width), int(boundingBox.Height));
 }
 
 void CanvasGdiPlusWin32::setForeground(const Color& color)
@@ -348,22 +375,31 @@ void CanvasGdiPlusWin32::drawBitmap(const Point& dstAt, const Size& dstSize, con
 
 void CanvasGdiPlusWin32::drawText(const Point& at, const std::wstring& text)
 {
-	AutoPtr< StringFormat > stringFormat(StringFormat::GenericDefault()->Clone());
-	stringFormat->SetFormatFlags(StringFormatFlagsNoWrap);
+	if (!m_font.ptr())
+		m_font.reset(new Gdiplus::Font(m_hDC, m_hFont));
+
+	if (!m_stringFormat.ptr())
+	{
+		m_stringFormat.reset(StringFormat::GenericTypographic()->Clone());
+		m_stringFormat->SetFormatFlags(StringFormatFlagsNoWrap);
+	}
 
 	m_graphics->DrawString(
 		text.c_str(),
 		(INT)text.length(),
 		m_font.ptr(),
 		Gdiplus::PointF((Gdiplus::REAL)at.x, (Gdiplus::REAL)at.y),
-		stringFormat.ptr(),
+		m_stringFormat.ptr(),
 		&SolidBrush(m_foreGround)
 	);
 }
 
 void CanvasGdiPlusWin32::drawText(const Rect& rc, const std::wstring& text, Align halign, Align valign)
 {
-	AutoPtr< StringFormat > stringFormat(StringFormat::GenericDefault()->Clone());
+	if (!m_font.ptr())
+		m_font.reset(new Gdiplus::Font(m_hDC, m_hFont));
+
+	AutoPtr< StringFormat > stringFormat(StringFormat::GenericTypographic()->Clone());
 
 	switch (halign)
 	{
@@ -411,15 +447,25 @@ Size CanvasGdiPlusWin32::getTextExtent(const std::wstring& text) const
 {
 	Gdiplus::RectF boundingBox;
 
+	if (!m_font.ptr())
+		m_font.reset(new Gdiplus::Font(m_hDC, m_hFont));
+
+	if (!m_stringFormat.ptr())
+	{
+		m_stringFormat.reset(StringFormat::GenericTypographic()->Clone());
+		m_stringFormat->SetFormatFlags(StringFormatFlagsNoWrap);
+	}
+
 	m_graphics->MeasureString(
 		text.c_str(),
 		(INT)text.length(),
 		m_font.ptr(),
 		Gdiplus::RectF(0, 0, 0, 0),
+		m_stringFormat.ptr(),
 		&boundingBox
 	);
 
-	return Size(int(boundingBox.Width), int(boundingBox.Height));
+	return Size(int(boundingBox.Width + 1), int(boundingBox.Height));
 }
 
 bool CanvasGdiPlusWin32::startup()

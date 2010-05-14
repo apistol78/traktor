@@ -19,6 +19,8 @@ public:
 
 	virtual void endPaint(Window& hWnd);
 
+	virtual Size getTextExtent(Window& hWnd, const std::wstring& text) const;
+
 	virtual void setForeground(const Color& foreground);
 
 	virtual void setBackground(const Color& background);

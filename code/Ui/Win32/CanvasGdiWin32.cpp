@@ -196,6 +196,17 @@ void CanvasGdiWin32::endPaint(Window& hWnd)
 #endif
 }
 
+Size CanvasGdiWin32::getTextExtent(Window& hWnd, const std::wstring& text) const
+{
+	SIZE size = { 0, 0 };
+	HDC hDC = GetDC(hWnd);
+	HGDIOBJ hOldFont = SelectObject(hDC, hWnd.getFont());
+	GetTextExtentPoint32(hDC, wstots(text).c_str(), int(text.length()), &size);
+	SelectObject(hDC, hOldFont);
+	ReleaseDC(hWnd, hDC);
+	return Size(size.cx, size.cy);
+}
+
 void CanvasGdiWin32::setForeground(const Color& color)
 {
 	if (color != m_foreGround)

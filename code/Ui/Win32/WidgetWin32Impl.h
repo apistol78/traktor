@@ -245,34 +245,7 @@ public:
 
 	virtual Size getTextExtent(const std::wstring& text) const
 	{
-#if defined(T_USE_GDI_PLUS)
-		Gdiplus::RectF boundingBox;
-
-		HDC hDC = GetDC(m_hWnd);
-
-		AutoPtr< Gdiplus::Graphics > graphics(new Gdiplus::Graphics(hDC));
-		AutoPtr< Gdiplus::Font > font(new Gdiplus::Font(hDC, m_hWnd.getFont()));
-
-		graphics->MeasureString(
-			text.c_str(),
-			(INT)text.length(),
-			font.ptr(),
-			Gdiplus::RectF(0, 0, 0, 0),
-			&boundingBox
-		);
-
-		ReleaseDC(m_hWnd, hDC);
-
-		return Size(int(boundingBox.Width), int(boundingBox.Height));
-#else
-		SIZE size = { 0, 0 };
-		HDC hDC = GetDC(m_hWnd);
-		HGDIOBJ hOldFont = SelectObject(hDC, m_hFont.getHandle());
-		GetTextExtentPoint32(hDC, wstots(text).c_str(), int(text.length()), &size);
-		SelectObject(hDC, hOldFont);
-		ReleaseDC(m_hWnd, hDC);
-		return Size(size.cx, size.cy);
-#endif
+		return m_canvasImpl->getTextExtent(m_hWnd, text);
 	}
 
 	virtual void setFont(const Font& font)
@@ -460,19 +433,19 @@ public:
 
 	virtual void update(const Rect* rc, bool immediate)
 	{
-		RECT wrc;
 		if (rc)
 		{
+			RECT wrc;
 			wrc.left = rc->left;
 			wrc.top = rc->top;
 			wrc.right = rc->right;
 			wrc.bottom = rc->bottom;
+			RedrawWindow(m_hWnd, &wrc, NULL, RDW_INVALIDATE | (immediate ? RDW_UPDATENOW : 0)); 
 		}
 		else
 		{
-			GetClientRect(m_hWnd, &wrc);
+			RedrawWindow(m_hWnd, NULL, NULL, RDW_INVALIDATE | (immediate ? RDW_UPDATENOW : 0)); 
 		}
-		RedrawWindow(m_hWnd, &wrc, NULL, RDW_INVALIDATE | RDW_ALLCHILDREN | (immediate ? RDW_UPDATENOW : 0)); 
 	}
 
 	virtual void* getInternalHandle()
@@ -487,7 +460,7 @@ public:
 
 protected:
 	EventSubject* m_owner;
-	Window m_hWnd;
+	mutable Window m_hWnd;
 	bool m_doubleBuffer;
 	CanvasWin32* m_canvasImpl;
 	int m_paintLock;
