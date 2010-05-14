@@ -33,6 +33,8 @@ void IndoorMeshEntity::render(world::WorldContext* worldContext, world::WorldRen
 		distance,
 		getParameterCallback()
 	);
+
+	m_first = false;
 }
 
 	}

@@ -35,6 +35,8 @@ void StaticMeshEntity::render(world::WorldContext* worldContext, world::WorldRen
 		getUserParameter(),
 		getParameterCallback()
 	);
+
+	m_first = false;
 }
 
 	}

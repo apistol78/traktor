@@ -53,6 +53,7 @@ void CompositeMeshEntity::render(world::WorldContext* worldContext, world::World
 		i->second->setUserParameter(m_userParameter);
 		worldContext->build(worldRenderView, i->second);
 	}
+	m_first = false;
 }
 
 void CompositeMeshEntity::update(const world::EntityUpdate* update)

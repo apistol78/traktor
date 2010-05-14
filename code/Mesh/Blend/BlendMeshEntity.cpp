@@ -46,6 +46,8 @@ void BlendMeshEntity::render(world::WorldContext* worldContext, world::WorldRend
 		distance,
 		getParameterCallback()
 	);
+
+	m_first = false;
 }
 
 bool BlendMeshEntity::validate() const

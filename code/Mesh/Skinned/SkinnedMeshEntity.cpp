@@ -46,6 +46,8 @@ void SkinnedMeshEntity::render(world::WorldContext* worldContext, world::WorldRe
 		distance,
 		getParameterCallback()
 	);
+
+	m_first = false;
 }
 
 bool SkinnedMeshEntity::validate() const

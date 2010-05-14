@@ -19,7 +19,6 @@ MeshEntity::MeshEntity(const Transform& transform)
 void MeshEntity::update(const world::EntityUpdate* update)
 {
 	m_transformPrevious = m_transform;
-	m_first = false;
 }
 
 void MeshEntity::setTransform(const Transform& transform)
