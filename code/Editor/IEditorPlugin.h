@@ -52,9 +52,10 @@ public:
 	/*! \brief Handle shortcut command.
 	 *
 	 * \param command Shortcut command.
+	 * \param result Result from previously action; plugins get all commands even if it's already has been processed.
 	 * \return True if command was consumed.
 	 */
-	virtual bool handleCommand(const ui::Command& command) = 0;
+	virtual bool handleCommand(const ui::Command& command, bool result) = 0;
 
 	/*! \brief Handle database event.
 	 *

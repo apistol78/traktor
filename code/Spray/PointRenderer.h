@@ -51,6 +51,10 @@ class T_DLLCLASS PointRenderer : public Object
 public:
 	PointRenderer(render::IRenderSystem* renderSystem, float cullNearDistance, float fadeNearRange);
 
+	virtual ~PointRenderer();
+
+	void destroy();
+
 	void render(
 		render::Shader* shader,
 		const Plane& cameraPlane,

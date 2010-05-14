@@ -33,7 +33,7 @@ public:
 
 	void destroy();
 
-	bool handleCommand(const ui::Command& command);
+	bool handleCommand(const ui::Command& command, bool result);
 
 	void handleDatabaseEvent(const Guid& eventId);
 

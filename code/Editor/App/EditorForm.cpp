@@ -1578,14 +1578,6 @@ bool EditorForm::handleCommand(const ui::Command& command)
 	{
 		result = false;
 
-		// Propagate command to plugins.
-		for (RefArray< EditorPluginSite >::iterator i = m_editorPluginSites.begin(); i != m_editorPluginSites.end(); ++i)
-		{
-			result = (*i)->handleCommand(command);
-			if (result)
-				break;
-		}
-
 		// Propagate command to database view; if it containts focus.
 		if (!result)
 		{
@@ -1622,6 +1614,10 @@ bool EditorForm::handleCommand(const ui::Command& command)
 			}
 		}
 	}
+
+	// Propagate commands to plugins; even if it's already consumed.
+	for (RefArray< EditorPluginSite >::iterator i = m_editorPluginSites.begin(); i != m_editorPluginSites.end(); ++i)
+		result |= (*i)->handleCommand(command, result);
 
 	return result;
 }

@@ -70,6 +70,7 @@ private:
 	Size m_scrollOffset;
 	Rect m_bounds;
 	bool m_deferredUpdate;
+	bool m_deferredLayout;
 
 	void updateLayout();
 
