@@ -13,16 +13,25 @@ BitWriter::BitWriter(IStream* stream)
 {
 }
 
+BitWriter::~BitWriter()
+{
+	flush();
+}
+
 void BitWriter::writeBit(bool bit)
 {
-	m_data |= bit ? (1 << m_cnt) : 0;
+	if (bit)
+		m_data |= 1 << (7 - m_cnt);
+	else
+		m_data &= ~(1 << (7 - m_cnt));
+
 	if (++m_cnt >= 8)
 		flush();
 }
 
 void BitWriter::writeUnsigned(int32_t nbits, uint32_t value)
 {
-	for (int i = 0; i < nbits; ++i)
+	for (int32_t i = 0; i < nbits; ++i)
 	{
 		uint32_t bit = 1 << (nbits - i - 1);
 		writeBit((value & bit) == bit);

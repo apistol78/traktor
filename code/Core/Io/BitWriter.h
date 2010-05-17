@@ -27,6 +27,8 @@ class T_DLLCLASS BitWriter : public Object
 public:
 	BitWriter(IStream* stream);
 
+	virtual ~BitWriter();
+
 	/*! \brief Write single bit to stream. */
 	void writeBit(bool bit);
 
