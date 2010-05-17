@@ -57,7 +57,7 @@ void analyzeDeltaRange(const int16_t* samples, uint32_t nsamples, int32_t& outNe
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundPipeline", 6, SoundPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundPipeline", 7, SoundPipeline, editor::IPipeline)
 
 SoundPipeline::SoundPipeline()
 :	m_sampleRate(44100)
@@ -245,35 +245,80 @@ bool SoundPipeline::buildOutput(
 
 		// Write asset.
 		Writer writer(stream);
-		writer << uint32_t(4);
+		writer << uint32_t(5);
 		writer << uint32_t(m_sampleRate);
 		writer << uint32_t(samplesCount);
 		writer << uint32_t(maxChannel);
 
 		if (samplesCount > 0)
 		{
-			Ref< DynamicMemoryStream > streamDelta = new DynamicMemoryStream(false, true);
-			Ref< compress::DeflateStream > streamData = new compress::DeflateStream(streamDelta);
+			uint32_t originalSize = maxChannel * samplesCount * sizeof(int16_t);
 
-			uint32_t deltaSize = 0;
-			for (uint32_t i = 0; i < maxChannel; ++i)
+			// Compress ZLib
+			Ref< DynamicMemoryStream > streamZLib = new DynamicMemoryStream(false, true);
 			{
-				BitWriter bw(streamData);
-				deltaSize += deltaEncode(&samples[i][0], samplesCount, bw);
+				Ref< compress::DeflateStream > deflateZLib = new compress::DeflateStream(streamZLib);
+				for (uint32_t i = 0; i < maxChannel; ++i)
+				{
+					if (deflateZLib->write(&samples[i][0], samplesCount * sizeof(int16_t)) != samplesCount * sizeof(int16_t))
+					{
+						log::error << L"Failed to build sound asset, unable to write samples" << Endl;
+						return false;
+					}
+				}
+				deflateZLib->close();
 			}
 
-			streamData->close();
-
-			const std::vector< uint8_t >& buffer = streamDelta->getBuffer();
-
-			log::info << L"Original " << (maxChannel * samplesCount * sizeof(int16_t)) << L" byte(s)" << Endl;
-			log::info << L"Delta " << deltaSize << L" byte(s)" << Endl;
-			log::info << L"Delta+zlib " << buffer.size() << L" byte(s)" << Endl;
-
-			if (stream->write(&buffer[0], buffer.size()) != buffer.size())
+			// Compress Delta+ZLib
+			Ref< DynamicMemoryStream > streamDeltaZLib = new DynamicMemoryStream(false, true);
 			{
-				log::error << L"Failed to build sound asset, unable to write samples" << Endl;
-				return false;
+				Ref< compress::DeflateStream > deflateDeltaZLib = new compress::DeflateStream(streamDeltaZLib);
+				for (uint32_t i = 0; i < maxChannel; ++i)
+				{
+					BitWriter bw(deflateDeltaZLib);
+					deltaEncode(&samples[i][0], samplesCount, bw);
+				}
+				deflateDeltaZLib->close();
+			}
+
+			const std::vector< uint8_t >& zlibBuffer = streamZLib->getBuffer();
+			const std::vector< uint8_t >& deltaZLibBuffer = streamDeltaZLib->getBuffer();
+
+			if (deltaZLibBuffer.size() < zlibBuffer.size())
+			{
+				log::info << L"Using Delta+ZLib, " << deltaZLibBuffer.size() << L" / " << originalSize << L" byte(s)" << Endl;
+
+				writer << uint8_t(SrfZLib | SrfDelta);
+				if (stream->write(&deltaZLibBuffer[0], deltaZLibBuffer.size()) != deltaZLibBuffer.size())
+				{
+					log::error << L"Failed to build sound asset, unable to write samples" << Endl;
+					return false;
+				}
+			}
+			else if (zlibBuffer.size() < originalSize)
+			{
+				log::info << L"Using ZLib, " << zlibBuffer.size() << L" / " << originalSize << L" byte(s)" << Endl;
+
+				writer << uint8_t(SrfZLib);
+				if (stream->write(&zlibBuffer[0], zlibBuffer.size()) != zlibBuffer.size())
+				{
+					log::error << L"Failed to build sound asset, unable to write samples" << Endl;
+					return false;
+				}
+			}
+			else
+			{
+				log::info << L"Using no compression, " << originalSize << L" byte(s)" << Endl;
+
+				writer << uint8_t(0);
+				for (uint32_t i = 0; i < maxChannel; ++i)
+				{
+					if (stream->write(&samples[i][0], samplesCount * sizeof(int16_t)) != samplesCount * sizeof(int16_t))
+					{
+						log::error << L"Failed to build sound asset, unable to write samples" << Endl;
+						return false;
+					}
+				}
 			}
 		}
 
