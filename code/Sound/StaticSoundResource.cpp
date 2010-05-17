@@ -25,32 +25,51 @@ Ref< Sound > StaticSoundResource::createSound(resource::IResourceManager* resour
 
 	uint32_t version;
 	reader >> version;
-	if (version != 4)
+	if (version != 5)
 	{
-		log::error << L"Unable to create sound, incorrect version" << Endl;
+		log::error << L"Failed to create sound; incorrect version" << Endl;
 		return 0;
 	}
 
 	uint32_t sampleRate, samplesCount, channelsCount;
+	uint8_t flags;
+
 	reader >> sampleRate;
 	reader >> samplesCount;
 	reader >> channelsCount;
+	reader >> flags;
 
 	Ref< StaticSoundBuffer > soundBuffer = new StaticSoundBuffer();
 	if (!soundBuffer->create(sampleRate, samplesCount, channelsCount))
 	{
-		log::error << L"Unable to create sound, unable to create static sound buffer" << Endl;
+		log::error << L"Failed to create sound; unable to create static sound buffer" << Endl;
 		return 0;
 	}
 
-	Ref< compress::InflateStream > streamData = new compress::InflateStream(stream);
+	Ref< IStream > streamData;
+	if (flags & SrfZLib)
+		streamData = new compress::InflateStream(stream);
+	else
+		streamData = stream;
+
 	for (uint32_t i = 0; i < channelsCount; ++i)
 	{
 		int16_t* samples = soundBuffer->getSamplesData(i);
 		T_ASSERT (samples);
 
-		BitReader br(streamData);
-		deltaDecode(br, samplesCount, samples);
+		if (flags & SrfDelta)
+		{
+			BitReader br(streamData);
+			deltaDecode(br, samplesCount, samples);
+		}
+		else
+		{
+			if (streamData->read(samples, samplesCount * sizeof(int16_t)) != samplesCount * sizeof(int16_t))
+			{
+				log::error << L"Failed to create sound; unable to read samples" << Endl;
+				return 0;
+			}
+		}
 	}
 
 	streamData->close();

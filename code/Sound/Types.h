@@ -11,6 +11,13 @@ namespace traktor
 /*! \ingroup Sound */
 //@{
 
+/*! \brief Static sound resource flags. */
+enum StaticResourceFlags
+{
+	SrfZLib = 1,
+	SrfDelta = 2
+};
+
 /*! \brief Sound channel mapping. */
 enum SoundBlockChannel
 {
