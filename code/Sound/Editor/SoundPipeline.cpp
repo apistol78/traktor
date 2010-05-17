@@ -1,5 +1,9 @@
 #include <cstring>
 #include "Compress/Zip/DeflateStream.h"
+#include "Core/Io/BitReader.h"
+#include "Core/Io/BitWriter.h"
+#include "Core/Io/BufferedStream.h"
+#include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Io/StreamCopy.h"
@@ -13,6 +17,7 @@
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
+#include "Sound/Delta.h"
 #include "Sound/StaticSoundResource.h"
 #include "Sound/StreamSoundResource.h"
 #include "Sound/IStreamDecoder.h"
@@ -30,16 +35,29 @@ namespace traktor
 		namespace
 		{
 
-inline int16_t quantify(float sample)
+int16_t quantify(float sample)
 {
 	sample = max(-1.0f, sample);
 	sample = min( 1.0f, sample);
 	return int16_t(sample * 32767.0f);
 }
 
+void analyzeDeltaRange(const int16_t* samples, uint32_t nsamples, int32_t& outNegD, int32_t& outPosD)
+{
+	outNegD = outPosD = 0;
+	for (uint32_t i = 0; i < nsamples - 1; ++i)
+	{
+		int32_t delta = samples[i + 1] - samples[i];
+		if (delta < 0)
+			outNegD = max(outNegD, -delta);
+		else
+			outPosD = max(outPosD, delta);
+	}
+}
+
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundPipeline", 4, SoundPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundPipeline", 6, SoundPipeline, editor::IPipeline)
 
 SoundPipeline::SoundPipeline()
 :	m_sampleRate(44100)
@@ -223,23 +241,43 @@ bool SoundPipeline::buildOutput(
 		if (peek > 1.0f)
 			log::warning << L"Sound peek sample higher than 1; clipped to range" << Endl;
 
+		sourceStream->close();
+
 		// Write asset.
 		Writer writer(stream);
-		writer << uint32_t(3);
+		writer << uint32_t(4);
 		writer << uint32_t(m_sampleRate);
 		writer << uint32_t(samplesCount);
 		writer << uint32_t(maxChannel);
 
-		Ref< IStream > streamData = new compress::DeflateStream(stream);
-		Writer writerData(streamData);
+		if (samplesCount > 0)
+		{
+			Ref< DynamicMemoryStream > streamDelta = new DynamicMemoryStream(false, true);
+			Ref< compress::DeflateStream > streamData = new compress::DeflateStream(streamDelta);
 
-		for (uint32_t i = 0; i < maxChannel; ++i)
-			writerData.write(&samples[i][0], int(samples[i].size()), sizeof(int16_t));
+			uint32_t deltaSize = 0;
+			for (uint32_t i = 0; i < maxChannel; ++i)
+			{
+				BitWriter bw(streamData);
+				deltaSize += deltaEncode(&samples[i][0], samplesCount, bw);
+			}
 
-		streamData->close();
+			streamData->close();
+
+			const std::vector< uint8_t >& buffer = streamDelta->getBuffer();
+
+			log::info << L"Original " << (maxChannel * samplesCount * sizeof(int16_t)) << L" byte(s)" << Endl;
+			log::info << L"Delta " << deltaSize << L" byte(s)" << Endl;
+			log::info << L"Delta+zlib " << buffer.size() << L" byte(s)" << Endl;
+
+			if (stream->write(&buffer[0], buffer.size()) != buffer.size())
+			{
+				log::error << L"Failed to build sound asset, unable to write samples" << Endl;
+				return false;
+			}
+		}
+
 		stream->close();
-
-		sourceStream->close();
 
 		if (!instance->commit())
 		{

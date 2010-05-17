@@ -41,7 +41,7 @@ public:
 		for (;;)
 		{
 			T_ASSERT (m_zstream.avail_out > 0);
-			rc = deflate(&m_zstream, Z_SYNC_FLUSH);
+			rc = deflate(&m_zstream, Z_NO_FLUSH);
 			if (rc != Z_OK)
 				return -1;
 
