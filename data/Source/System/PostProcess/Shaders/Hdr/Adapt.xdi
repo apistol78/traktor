@@ -35,11 +35,7 @@
 			<stencilMask>4294967295</stencilMask>
 		</item>
 		<item type="traktor.render.Sampler">
-			<comment>
-			<![CDATA[
-Estimated luminance of this frame
-			]]>
-			</comment>
+			<comment/>
 			<position>
 				<first>187</first>
 				<second>125</second>
@@ -53,11 +49,7 @@ Estimated luminance of this frame
 			<addressW>AdClamp</addressW>
 		</item>
 		<item type="traktor.render.Sampler">
-			<comment>
-			<![CDATA[
-Current adapted luminance
-			]]>
-			</comment>
+			<comment/>
 			<position>
 				<first>185</first>
 				<second>232</second>
@@ -78,22 +70,18 @@ Current adapted luminance
 			</position>
 		</item>
 		<item type="traktor.render.Scalar">
-			<comment>
-			<![CDATA[
-Estimated framerate
-			]]>
-			</comment>
+			<comment/>
 			<position>
-				<first>-21</first>
-				<second>467</second>
+				<first>221</first>
+				<second>421</second>
 			</position>
 			<value>0.65</value>
 		</item>
 		<item type="traktor.render.Uniform">
 			<comment/>
 			<position>
-				<first>-60</first>
-				<second>395</second>
+				<first>166</first>
+				<second>364</second>
 			</position>
 			<parameterName>DeltaTime</parameterName>
 			<type>PtScalar</type>
@@ -101,23 +89,8 @@ Estimated framerate
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>109</first>
-				<second>416</second>
-			</position>
-		</item>
-		<item type="traktor.render.Scalar">
-			<comment/>
-			<position>
-				<first>478</first>
-				<second>290</second>
-			</position>
-			<value>1</value>
-		</item>
-		<item type="traktor.render.Sub">
-			<comment/>
-			<position>
-				<first>577</first>
-				<second>293</second>
+				<first>351</first>
+				<second>370</second>
 			</position>
 		</item>
 		<item type="traktor.render.Vector">
@@ -162,26 +135,11 @@ Estimated framerate
 			</position>
 			<swizzle>x</swizzle>
 		</item>
-		<item type="traktor.render.Pow">
-			<comment/>
-			<position>
-				<first>276</first>
-				<second>372</second>
-			</position>
-		</item>
-		<item type="traktor.render.Scalar">
-			<comment/>
-			<position>
-				<first>150</first>
-				<second>350</second>
-			</position>
-			<value>0.98</value>
-		</item>
 		<item type="traktor.render.Clamp">
 			<comment/>
 			<position>
-				<first>451</first>
-				<second>342</second>
+				<first>534</first>
+				<second>335</second>
 			</position>
 			<min>0</min>
 			<max>1</max>
@@ -189,10 +147,10 @@ Estimated framerate
 		<item type="traktor.render.Uniform">
 			<comment/>
 			<position>
-				<first>-43</first>
+				<first>-34</first>
 				<second>65</second>
 			</position>
-			<parameterName>AverageTexture</parameterName>
+			<parameterName>SourceTexture</parameterName>
 			<type>PtTexture</type>
 		</item>
 		<item type="traktor.render.Uniform">
@@ -222,23 +180,13 @@ Estimated framerate
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[8]"/>
-				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[9]"/>
-				<name>Output</name>
-			</source>
-			<destination>
 				<node ref="/object/nodes/item[1]"/>
 				<name>TexCoord</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[9]"/>
+				<node ref="/object/nodes/item[7]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -262,7 +210,7 @@ Estimated framerate
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[12]"/>
+				<node ref="/object/nodes/item[10]"/>
 				<name>Input</name>
 			</destination>
 		</item>
@@ -272,58 +220,8 @@ Estimated framerate
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[11]"/>
+				<node ref="/object/nodes/item[9]"/>
 				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[12]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[3]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[8]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[3]"/>
-				<name>Blend</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[6]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[13]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[14]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[13]"/>
-				<name>Exponent</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[11]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[3]"/>
-				<name>Input1</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -338,27 +236,7 @@ Estimated framerate
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[13]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[15]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[15]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[8]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[16]"/>
+				<node ref="/object/nodes/item[12]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -368,12 +246,52 @@ Estimated framerate
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[17]"/>
+				<node ref="/object/nodes/item[13]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[2]"/>
 				<name>Texture</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[6]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[11]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[11]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Blend</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[10]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[9]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Input2</name>
 			</destination>
 		</item>
 	</edges>
