@@ -1,5 +1,7 @@
 #include <cstring>
 #include <limits>
+#include "Core/Io/Writer.h"
+#include "Core/Log/Log.h"
 #include "Mesh/Editor/Blend/BlendMeshConverter.h"
 #include "Mesh/Editor/ModelOptimizations.h"
 #include "Mesh/Editor/MeshVertexWriter.h"
@@ -10,8 +12,6 @@
 #include "Render/Mesh/MeshWriter.h"
 #include "Render/VertexBuffer.h"
 #include "Render/IndexBuffer.h"
-#include "Core/Io/Writer.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -25,7 +25,8 @@ Ref< IMeshResource > BlendMeshConverter::createResource() const
 
 bool BlendMeshConverter::convert(
 	const RefArray< model::Model >& models,
-	const std::map< std::wstring, MaterialInfo >& materialInfo,
+	const Guid& materialGuid,
+	const std::map< std::wstring, std::list< MeshMaterialTechnique > >& materialTechniqueMap,
 	const std::vector< render::VertexElement >& vertexElements,
 	IMeshResource* meshResource,
 	IStream* meshResourceStream
@@ -101,8 +102,8 @@ bool BlendMeshConverter::convert(
 	baseMesh->getVertexBuffer()->unlock();
 
 	// Create index buffer and build parts.
-	std::vector< render::Mesh::Part > parts;
-	std::vector< BlendMeshResource::Part > assetParts;
+	std::vector< render::Mesh::Part > meshParts;
+	std::map< std::wstring, BlendMeshResource::parts_t > parts;
 
 	uint16_t* index = static_cast< uint16_t* >(baseMesh->getIndexBuffer()->lock());
 	uint16_t* indexFirst = index;
@@ -111,8 +112,8 @@ bool BlendMeshConverter::convert(
 	{
 		const model::Material& material = *j;
 
-		std::map< std::wstring, MaterialInfo >::const_iterator materialIt = materialInfo.find(material.getName());
-		if (materialIt == materialInfo.end())
+		std::map< std::wstring, std::list< MeshMaterialTechnique > >::const_iterator materialIt = materialTechniqueMap.find(material.getName());
+		if (materialIt == materialTechniqueMap.end())
 			continue;
 
 		int offset = int(index - indexFirst);
@@ -142,24 +143,29 @@ bool BlendMeshConverter::convert(
 		if (!triangleCount)
 			continue;
 
-		parts.push_back(render::Mesh::Part());
-		parts.back().name = material.getName();
-		parts.back().primitives.setIndexed(
+		for (std::list< MeshMaterialTechnique >::const_iterator j = materialIt->second.begin(); j != materialIt->second.end(); ++j)
+		{
+			BlendMeshResource::Part part;
+			part.shaderTechnique = j->shaderTechnique;
+			part.meshPart = uint32_t(meshParts.size());
+			part.opaque = j->opaque;
+			parts[j->worldTechnique].push_back(part);
+		}
+
+		render::Mesh::Part meshPart;
+		meshPart.name = material.getName();
+		meshPart.primitives.setIndexed(
 			render::PtTriangles,
 			offset,
 			triangleCount,
 			minIndex,
 			maxIndex
 		);
-
-		assetParts.push_back(BlendMeshResource::Part());
-		assetParts.back().name = material.getName();
-		assetParts.back().material = materialIt->second.guid;
-		assetParts.back().opaque = materialIt->second.opaque;
+		meshParts.push_back(meshPart);
 	}
 
 	baseMesh->getIndexBuffer()->unlock();
-	baseMesh->setParts(parts);
+	baseMesh->setParts(meshParts);
 	baseMesh->setBoundingBox(model::calculateModelBoundingBox(model));
 
 	if (!render::MeshWriter().write(meshResourceStream, baseMesh))
@@ -208,7 +214,8 @@ bool BlendMeshConverter::convert(
 			return false;
 	}
 
-	checked_type_cast< BlendMeshResource* >(meshResource)->m_parts = assetParts;
+	checked_type_cast< BlendMeshResource* >(meshResource)->m_shader = materialGuid;
+	checked_type_cast< BlendMeshResource* >(meshResource)->m_parts = parts;
 
 	// Create blend shape "name to weight" mapping.
 	for (uint32_t i = 0; i < model.getBlendTargetCount(); ++i)

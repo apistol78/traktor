@@ -1,6 +1,11 @@
 #include <algorithm>
 #include <cstring>
 #include <limits>
+#include "Core/Log/Log.h"
+#include "Core/Math/Const.h"
+#include "Core/Math/Half.h"
+#include "Core/Misc/String.h"
+#include "Mesh/Editor/IndexRange.h"
 #include "Mesh/Editor/Skinned/SkinnedMeshConverter.h"
 #include "Mesh/Editor/ModelOptimizations.h"
 #include "Mesh/Editor/MeshVertexWriter.h"
@@ -11,9 +16,6 @@
 #include "Render/Mesh/MeshWriter.h"
 #include "Render/VertexBuffer.h"
 #include "Render/IndexBuffer.h"
-#include "Core/Math/Const.h"
-#include "Core/Math/Half.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -39,7 +41,8 @@ Ref< IMeshResource > SkinnedMeshConverter::createResource() const
 
 bool SkinnedMeshConverter::convert(
 	const RefArray< model::Model >& models,
-	const std::map< std::wstring, MaterialInfo >& materialInfo,
+	const Guid& materialGuid,
+	const std::map< std::wstring, std::list< MeshMaterialTechnique > >& materialTechniqueMap,
 	const std::vector< render::VertexElement >& vertexElements,
 	IMeshResource* meshResource,
 	IStream* meshResourceStream
@@ -147,72 +150,104 @@ bool SkinnedMeshConverter::convert(
 
 	mesh->getVertexBuffer()->unlock();
 
-	// Create index buffer and build parts.
-	std::vector< render::Mesh::Part > parts;
-	std::vector< SkinnedMeshResource::Part > assetParts;
+	// Create index buffer.
+	std::map< std::wstring, std::vector< IndexRange > > techniqueRanges;
 
 	uint16_t* index = static_cast< uint16_t* >(mesh->getIndexBuffer()->lock());
 	uint16_t* indexFirst = index;
 
-	for (std::vector< model::Material >::const_iterator i = model.getMaterials().begin(); i != model.getMaterials().end(); ++i)
+	for (std::map< std::wstring, std::list< MeshMaterialTechnique > >::const_iterator i = materialTechniqueMap.begin(); i != materialTechniqueMap.end(); ++i)
 	{
-		const model::Material& material = *i;
+		IndexRange range;
 
-		std::map< std::wstring, MaterialInfo >::const_iterator materialIt = materialInfo.find(material.getName());
-		if (materialIt == materialInfo.end())
-			continue;
-
-		int offset = int(index - indexFirst);
-		int triangleCount = 0;
-
-		int minIndex =  std::numeric_limits< int >::max();
-		int maxIndex = -std::numeric_limits< int >::max();
+		range.offsetFirst = int32_t(index - indexFirst);
+		range.offsetLast = 0;
+		range.minIndex = std::numeric_limits< int32_t >::max();
+		range.maxIndex = -std::numeric_limits< int32_t >::max();
 
 		for (std::vector< model::Polygon >::const_iterator j = model.getPolygons().begin(); j != model.getPolygons().end(); ++j)
 		{
 			const model::Polygon& polygon = *j;
 			T_ASSERT (polygon.getVertices().size() == 3);
 
-			if (polygon.getMaterial() != std::distance(model.getMaterials().begin(), i))
+			if (model.getMaterial(polygon.getMaterial()).getName() != i->first)
 				continue;
 
 			for (int k = 0; k < 3; ++k)
 			{
 				*index++ = (uint16_t)(polygon.getVertex(k));
-				minIndex = std::min< int >(minIndex, polygon.getVertex(k));
-				maxIndex = std::max< int >(maxIndex, polygon.getVertex(k));
+				range.minIndex = std::min< int32_t >(range.minIndex, polygon.getVertex(k));
+				range.maxIndex = std::max< int32_t >(range.maxIndex, polygon.getVertex(k));
 			}
-
-			triangleCount++;
 		}
 
-		if (!triangleCount)
+		range.offsetLast = int32_t(index - indexFirst);
+		if (range.offsetLast <= range.offsetFirst)
 			continue;
 
-		parts.push_back(render::Mesh::Part());
-		parts.back().name = material.getName();
-		parts.back().primitives.setIndexed(
-			render::PtTriangles,
-			offset,
-			triangleCount,
-			minIndex,
-			maxIndex
-		);
-
-		assetParts.push_back(SkinnedMeshResource::Part());
-		assetParts.back().name = material.getName();
-		assetParts.back().material = materialIt->second.guid;
-		assetParts.back().opaque = materialIt->second.opaque;
+		for (std::list< MeshMaterialTechnique >::const_iterator j = i->second.begin(); j != i->second.end(); ++j)
+		{
+			std::wstring technique = j->worldTechnique + L"/" + j->shaderTechnique;
+			range.opaque = j->opaque;
+			range.mergeInto(techniqueRanges[technique]);
+		}
 	}
 
 	mesh->getIndexBuffer()->unlock();
-	mesh->setParts(parts);
+
+	// Build parts.
+	std::vector< render::Mesh::Part > meshParts;
+	std::map< std::wstring, SkinnedMeshResource::parts_t > parts;
+
+	for (std::map< std::wstring, std::vector< IndexRange > >::const_iterator i = techniqueRanges.begin(); i != techniqueRanges.end(); ++i)
+	{
+		std::wstring worldTechnique, shaderTechnique;
+		split(i->first, L'/', worldTechnique, shaderTechnique);
+
+		for (std::vector< IndexRange >::const_iterator j = i->second.begin(); j != i->second.end(); ++j)
+		{
+			SkinnedMeshResource::Part part;
+			part.shaderTechnique = shaderTechnique;
+			part.meshPart = uint32_t(meshParts.size());
+			part.opaque = j->opaque;
+
+			for (uint32_t k = 0; k < uint32_t(meshParts.size()); ++k)
+			{
+				if (
+					meshParts[k].primitives.offset == j->offsetFirst &&
+					meshParts[k].primitives.count == (j->offsetLast - j->offsetFirst) / 3
+				)
+				{
+					part.meshPart = k;
+					break;
+				}
+			}
+
+			if (part.meshPart >= meshParts.size())
+			{
+				render::Mesh::Part meshPart;
+				meshPart.primitives.setIndexed(
+					render::PtTriangles,
+					j->offsetFirst,
+					(j->offsetLast - j->offsetFirst) / 3,
+					j->minIndex,
+					j->maxIndex
+				);
+				meshParts.push_back(meshPart);
+			}
+
+			parts[worldTechnique].push_back(part);
+		}
+	}
+
+	mesh->setParts(meshParts);
 	mesh->setBoundingBox(model::calculateModelBoundingBox(model));
 
 	if (!render::MeshWriter().write(meshResourceStream, mesh))
 		return false;
 
-	checked_type_cast< SkinnedMeshResource* >(meshResource)->m_parts = assetParts;
+	checked_type_cast< SkinnedMeshResource* >(meshResource)->m_shader = materialGuid;
+	checked_type_cast< SkinnedMeshResource* >(meshResource)->m_parts = parts;
 	for (uint32_t i = 0; i < model.getBoneCount(); ++i)
 		checked_type_cast< SkinnedMeshResource* >(meshResource)->m_boneMap[model.getBone(i)] = i;
 

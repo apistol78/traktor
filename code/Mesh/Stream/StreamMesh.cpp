@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "Core/Io/IStream.h"
 #include "Mesh/IMeshParameterCallback.h"
 #include "Mesh/Stream/StreamMesh.h"
@@ -10,6 +11,25 @@ namespace traktor
 {
 	namespace mesh
 	{
+		namespace
+		{
+
+struct NamedMeshPart
+{
+	std::wstring m_meshPart;
+
+	NamedMeshPart(const std::wstring& meshPart)
+	:	m_meshPart(meshPart)
+	{
+	}
+
+	bool operator () (const render::Mesh::Part& meshPart) const
+	{
+		return meshPart.name == m_meshPart;
+	}
+};
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.StreamMesh", StreamMesh, IMesh)
 
@@ -45,6 +65,9 @@ void StreamMesh::render(
 	const IMeshParameterCallback* parameterCallback
 )
 {
+	if (!m_shader.validate())
+		return;
+
 	// Load mesh frame if different from instance's cached frame.
 	if (instance->frame != frame || !instance->mesh)
 	{
@@ -57,28 +80,29 @@ void StreamMesh::render(
 	if (!instance->mesh[0])
 		return;
 
-	const std::vector< render::Mesh::Part >& parts = instance->mesh[0]->getParts();
-	for (size_t i = 0; i < parts.size(); ++i)
-	{
-		std::map< std::wstring, Part >::iterator it = m_parts.find(parts[i].name);
-		if (it == m_parts.end())
-			continue;
+	std::map< render::handle_t, std::vector< Part > >::const_iterator it = m_parts.find(worldRenderView->getTechnique());
+	if (it == m_parts.end())
+		return;
 
-		if (!it->second.material.validate())
-			continue;
-		if (!it->second.material->hasTechnique(worldRenderView->getTechnique()))
+	const std::vector< render::Mesh::Part >& meshParts = instance->mesh[0]->getParts();
+	for (std::vector< Part >::const_iterator i = it->second.begin(); i != it->second.end(); ++i)
+	{
+		// \fixme Linear search by string
+		std::vector< render::Mesh::Part >::const_iterator j = std::find_if(meshParts.begin(), meshParts.end(), NamedMeshPart(i->meshPart));
+		if (j == meshParts.end())
 			continue;
 
 		render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >("StreamMesh");
 
 		renderBlock->distance = distance;
-		renderBlock->shader = it->second.material;
+		renderBlock->shader = m_shader;
 		renderBlock->shaderParams = renderContext->alloc< render::ShaderParameters >();
 		renderBlock->indexBuffer = instance->mesh[0]->getIndexBuffer();
 		renderBlock->vertexBuffer = instance->mesh[0]->getVertexBuffer();
-		renderBlock->primitives = &parts[i].primitives;
+		renderBlock->primitives = &j->primitives;
 
 		renderBlock->shaderParams->beginParameters(renderContext);
+		renderBlock->shaderParams->setTechnique(i->shaderTechnique);
 		worldRenderView->setShaderParameters(
 			renderBlock->shaderParams,
 			worldTransform.toMatrix44(),
@@ -90,7 +114,7 @@ void StreamMesh::render(
 		renderBlock->shaderParams->endParameters(renderContext);
 
 		renderContext->draw(
-			it->second.opaque ? render::RfOpaque : render::RfAlphaBlend,
+			i->opaque ? render::RfOpaque : render::RfAlphaBlend,
 			renderBlock
 		);
 	}

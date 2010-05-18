@@ -1,7 +1,9 @@
+#include <list>
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
+#include "Core/Serialization/DeepClone.h"
 #include "Core/Settings/PropertyString.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Database/Database.h"
@@ -28,7 +30,9 @@
 #include "Render/Shader/External.h"
 #include "Render/Shader/Nodes.h"
 #include "Render/Shader/ShaderGraph.h"
+#include "Render/Editor/Shader/ShaderGraphHash.h"
 #include "Render/Editor/Shader/ShaderGraphOptimizer.h"
+#include "Render/Editor/Shader/ShaderGraphTechniques.h"
 #include "Render/Resource/FragmentLinker.h"
 
 namespace traktor
@@ -108,7 +112,7 @@ Guid incrementGuid(const Guid& g)
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 10, MeshPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 12, MeshPipeline, editor::IPipeline)
 
 MeshPipeline::MeshPipeline()
 :	m_promoteHalf(false)
@@ -238,9 +242,11 @@ bool MeshPipeline::buildOutput(
 	}
 
 	// Build materials.
-	std::map< std::wstring, IMeshConverter::MaterialInfo > materialInfo;
 	std::vector< render::VertexElement > vertexElements;
 	uint32_t vertexElementOffset = 0;
+
+	std::map< uint32_t, Ref< render::ShaderGraph > > materialTechniqueShaderGraphs;		//< Collection of all material technique fragments; later merged into single shader.
+	std::map< std::wstring, std::list< MeshMaterialTechnique > > materialTechniqueMap;	//< Map from model material to technique fragments. ["Model material":["Default":hash0, "Depth":hash1, ...]]
 
 	Guid vertexShaderGuid = getVertexShaderGuid(asset->getMeshType());
 	T_ASSERT (vertexShaderGuid.isValid());
@@ -293,6 +299,24 @@ bool MeshPipeline::buildOutput(
 			return false;
 		}
 
+		// Extract each material technique.
+		std::set< std::wstring > materialTechniqueNames = render::ShaderGraphTechniques(materialShaderGraph).getNames();
+		for (std::set< std::wstring >::iterator j = materialTechniqueNames.begin(); j != materialTechniqueNames.end(); ++j)
+		{
+			Ref< render::ShaderGraph > materialTechniqueShaderGraph = render::ShaderGraphTechniques(materialShaderGraph).generate(*j);
+
+			uint32_t hash = render::ShaderGraphHash::calculate(materialTechniqueShaderGraph);
+			materialTechniqueShaderGraphs[hash] = materialTechniqueShaderGraph;
+
+			MeshMaterialTechnique mt;
+			mt.worldTechnique = *j;
+			mt.shaderTechnique = L"M" + toString(hash);
+			mt.hash = hash;
+			mt.opaque = isOpaqueMaterial(materialTechniqueShaderGraph);
+
+			materialTechniqueMap[i->first].push_back(mt);
+		}
+
 		// Build vertex declaration from shader vertex inputs.
 		RefArray< render::VertexInput > vertexInputNodes;
 		materialShaderGraph->findNodesOf< render::VertexInput >(vertexInputNodes);
@@ -336,27 +360,44 @@ bool MeshPipeline::buildOutput(
 				vertexElementOffset += element.getSize();
 			}
 		}
+	}
 
-		// Build material shader.
-		std::wstring materialPath = Path(outputPath).getPathOnly() + L"/" + outputGuid.format() + L"/" + i->first;
-		if (!pipelineBuilder->buildOutput(
-			materialShaderGraph,
-			0,
-			i->first,
-			materialPath,
-			materialGuid
-		))
+	// Merge all shader technique fragments into a single material shader.
+	Ref< render::ShaderGraph > materialShaderGraph = new render::ShaderGraph();
+	for (std::map< uint32_t, Ref< render::ShaderGraph > >::iterator i = materialTechniqueShaderGraphs.begin(); i != materialTechniqueShaderGraphs.end(); ++i)
+	{
+		Ref< render::ShaderGraph > materialTechniqueShaderGraph = DeepClone(i->second).create< render::ShaderGraph >();
+
+		const RefArray< render::Edge >& edges = materialTechniqueShaderGraph->getEdges();
+		const RefArray< render::Node >& nodes = materialTechniqueShaderGraph->getNodes();
+
+		std::wstring techniqueName = L"M" + toString(i->first);
+		for (RefArray< render::Node >::const_iterator j = nodes.begin(); j != nodes.end(); ++j)
 		{
-			log::error << L"Mesh pipeline failed; unable to build material \"" << i->first << L"\"" << Endl;
-			return false;
+			if (render::VertexOutput* vertexOutputNode = dynamic_type_cast< render::VertexOutput* >(*j))
+				vertexOutputNode->setTechnique(techniqueName);
+			if (render::PixelOutput* pixelOutputNode = dynamic_type_cast< render::PixelOutput* >(*j))
+				pixelOutputNode->setTechnique(techniqueName);
 		}
 
-		// Insert into material map.
-		IMeshConverter::MaterialInfo mi = { materialGuid, isOpaqueMaterial(materialShaderGraph) };
-		materialInfo.insert(std::make_pair(i->first, mi));
+		for (RefArray< render::Node >::const_iterator j = nodes.begin(); j != nodes.end(); ++j)
+			materialShaderGraph->addNode(*j);
+		for (RefArray< render::Edge >::const_iterator j = edges.begin(); j != edges.end(); ++j)
+			materialShaderGraph->addEdge(*j);
+	}
 
-		// Increment guid for each material, quite hackish but won't guid;s still be universally unique?
-		materialGuid = incrementGuid(materialGuid);
+	// Build material shader.
+	std::wstring materialPath = Path(outputPath).getPathOnly() + L"/" + outputGuid.format() + L"/Shader";
+	if (!pipelineBuilder->buildOutput(
+		materialShaderGraph,
+		0,
+		L"Shader",
+		materialPath,
+		materialGuid
+	))
+	{
+		log::error << L"Mesh pipeline failed; unable to build material shader" << Endl;
+		return false;
 	}
 
 	// Create mesh converter.
@@ -419,7 +460,8 @@ bool MeshPipeline::buildOutput(
 	// Convert mesh asset.
 	if (!converter->convert(
 		models,
-		materialInfo,
+		materialGuid,
+		materialTechniqueMap,
 		vertexElements,
 		resource,
 		stream

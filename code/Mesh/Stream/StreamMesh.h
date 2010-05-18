@@ -79,15 +79,17 @@ private:
 
 	struct Part
 	{
-		resource::Proxy< render::Shader > material;
+		render::handle_t shaderTechnique;
+		std::wstring meshPart;
 		bool opaque;
 	};
 
+	resource::Proxy< render::Shader > m_shader;
 	Ref< IStream > m_stream;
 	Ref< render::MeshReader > m_meshReader;
 	std::vector< uint32_t > m_frameOffsets;
 	Aabb m_boundingBox;
-	std::map< std::wstring, Part > m_parts;
+	std::map< render::handle_t, std::vector< Part > > m_parts;
 };
 
 	}

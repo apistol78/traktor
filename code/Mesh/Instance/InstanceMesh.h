@@ -59,7 +59,8 @@ public:
 
 	struct Part
 	{
-		resource::Proxy< render::Shader > material;
+		render::handle_t shaderTechnique;
+		uint32_t meshPart;
 		bool opaque;
 	};
 
@@ -73,15 +74,12 @@ public:
 	
 	void render(render::RenderContext* renderContext, const world::WorldRenderView* worldRenderView, AlignedVector< instance_distance_t >& instanceWorld);
 
-	inline const Ref< render::Mesh >& getRenderMesh() const { return m_mesh; }
-
-	inline const std::vector< Part >& getParts() const { return m_parts; }
-
 private:
 	friend class InstanceMeshResource;
 
+	resource::Proxy< render::Shader > m_shader;
 	Ref< render::Mesh > m_mesh;
-	std::vector< Part > m_parts;
+	std::map< render::handle_t, std::vector< Part > > m_parts;
 
 #if defined(_DEBUG)
 	uint32_t m_instanceUsedCount;

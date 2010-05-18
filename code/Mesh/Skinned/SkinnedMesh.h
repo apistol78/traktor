@@ -72,12 +72,14 @@ private:
 
 	struct Part
 	{
-		resource::Proxy< render::Shader > material;
+		render::handle_t shaderTechnique;
+		uint32_t meshPart;
 		bool opaque;
 	};
 
+	resource::Proxy< render::Shader > m_shader;
 	Ref< render::Mesh > m_mesh;
-	std::vector< Part > m_parts;
+	std::map< render::handle_t, std::vector< Part > > m_parts;
 	std::map< std::wstring, int32_t > m_boneMap;
 	int32_t m_boneCount;
 };

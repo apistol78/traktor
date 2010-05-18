@@ -3,6 +3,7 @@
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Half.h"
+#include "Core/Misc/String.h"
 #include "Model/Model.h"
 #include "Model/Utilities.h"
 #include "Mesh/Editor/ModelOptimizations.h"
@@ -27,7 +28,8 @@ Ref< IMeshResource > StreamMeshConverter::createResource() const
 
 bool StreamMeshConverter::convert(
 	const RefArray< model::Model >& models,
-	const std::map< std::wstring, MaterialInfo >& materialInfo,
+	const Guid& materialGuid,
+	const std::map< std::wstring, std::list< MeshMaterialTechnique > >& materialTechniqueMap,
 	const std::vector< render::VertexElement >& vertexElements,
 	IMeshResource* meshResource,
 	IStream* meshResourceStream
@@ -99,7 +101,7 @@ bool StreamMeshConverter::convert(
 		mesh->getVertexBuffer()->unlock();
 
 		// Create index buffer and build parts.
-		std::vector< render::Mesh::Part > parts;
+		std::vector< render::Mesh::Part > meshParts;
 
 		uint16_t* index = static_cast< unsigned short* >(mesh->getIndexBuffer()->lock());
 		uint16_t* indexFirst = index;
@@ -108,8 +110,8 @@ bool StreamMeshConverter::convert(
 		{
 			const model::Material& material = *i;
 
-			std::map< std::wstring, MaterialInfo >::const_iterator materialIt = materialInfo.find(material.getName());
-			if (materialIt == materialInfo.end())
+			std::map< std::wstring, std::list< MeshMaterialTechnique > >::const_iterator materialIt = materialTechniqueMap.find(material.getName());
+			if (materialIt == materialTechniqueMap.end())
 				continue;
 
 			int offset = int(index - indexFirst);
@@ -139,9 +141,9 @@ bool StreamMeshConverter::convert(
 			if (!triangleCount)
 				continue;
 
-			parts.push_back(render::Mesh::Part());
-			parts.back().name = material.getName();
-			parts.back().primitives.setIndexed(
+			meshParts.push_back(render::Mesh::Part());
+			meshParts.back().name = material.getName();
+			meshParts.back().primitives.setIndexed(
 				render::PtTriangles,
 				offset,
 				triangleCount,
@@ -150,8 +152,8 @@ bool StreamMeshConverter::convert(
 			);
 		}
 
+		mesh->setParts(meshParts);
 		mesh->getIndexBuffer()->unlock();
-		mesh->setParts(parts);
 		mesh->setBoundingBox(model::calculateModelBoundingBox(model));
 
 		int32_t frameOffset = meshResourceStream->tell();
@@ -163,19 +165,22 @@ bool StreamMeshConverter::convert(
 		boundingBox.contain(mesh->getBoundingBox());
 	}
 
+	streamMeshResource->m_shader = materialGuid;
 	streamMeshResource->m_frameOffsets = frameOffsets;
 	streamMeshResource->m_boundingBox = boundingBox;
 
 	// Create resource parts.
-	std::vector< StreamMeshResource::Part > resourceParts;
-	for (std::map< std::wstring, MaterialInfo >::const_iterator i = materialInfo.begin(); i != materialInfo.end(); ++i)
+	for (std::map< std::wstring, std::list< MeshMaterialTechnique > >::const_iterator i = materialTechniqueMap.begin(); i != materialTechniqueMap.end(); ++i)
 	{
-		resourceParts.push_back(StreamMeshResource::Part());
-		resourceParts.back().name = i->first;
-		resourceParts.back().material = i->second.guid;
-		resourceParts.back().opaque = i->second.opaque;
+		for (std::list< MeshMaterialTechnique >::const_iterator j = i->second.begin(); j != i->second.end(); ++j)
+		{
+			StreamMeshResource::Part part;
+			part.shaderTechnique = j->shaderTechnique;
+			part.meshPart = i->first;
+			part.opaque = j->opaque;
+			streamMeshResource->m_parts[j->worldTechnique].push_back(part);
+		}
 	}
-	streamMeshResource->m_parts = resourceParts;
 
 	return true;
 }

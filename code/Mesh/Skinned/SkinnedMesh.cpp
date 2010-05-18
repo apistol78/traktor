@@ -41,26 +41,27 @@ void SkinnedMesh::render(
 	const IMeshParameterCallback* parameterCallback
 )
 {
-	const std::vector< render::Mesh::Part >& parts = m_mesh->getParts();
-	T_ASSERT (parts.size() == m_parts.size());
+	if (!m_shader.validate())
+		return;
 
-	for (size_t i = 0; i < parts.size(); ++i)
+	std::map< render::handle_t, std::vector< Part > >::const_iterator it = m_parts.find(worldRenderView->getTechnique());
+	if (it == m_parts.end())
+		return;
+
+	const std::vector< render::Mesh::Part >& meshParts = m_mesh->getParts();
+	for (std::vector< Part >::const_iterator i = it->second.begin(); i != it->second.end(); ++i)
 	{
-		if (!m_parts[i].material.validate())
-			continue;
-		if (!m_parts[i].material->hasTechnique(worldRenderView->getTechnique()))
-			continue;
-
 		render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >("SkinnedMesh");
 
 		renderBlock->distance = distance;
-		renderBlock->shader = m_parts[i].material;
+		renderBlock->shader = m_shader;
 		renderBlock->shaderParams = renderContext->alloc< render::ShaderParameters >();
 		renderBlock->indexBuffer = m_mesh->getIndexBuffer();
 		renderBlock->vertexBuffer = m_mesh->getVertexBuffer();
-		renderBlock->primitives = &parts[i].primitives;
+		renderBlock->primitives = &meshParts[i->meshPart].primitives;
 
 		renderBlock->shaderParams->beginParameters(renderContext);
+		renderBlock->shaderParams->setTechnique(i->shaderTechnique);
 		worldRenderView->setShaderParameters(
 			renderBlock->shaderParams,
 			worldTransform.toMatrix44(),
@@ -74,7 +75,7 @@ void SkinnedMesh::render(
 		renderBlock->shaderParams->endParameters(renderContext);
 
 		renderContext->draw(
-			m_parts[i].opaque ? render::RfOpaque : render::RfAlphaBlend,
+			i->opaque ? render::RfOpaque : render::RfAlphaBlend,
 			renderBlock
 		);
 	}

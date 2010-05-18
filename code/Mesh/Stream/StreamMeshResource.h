@@ -25,8 +25,8 @@ class T_DLLCLASS StreamMeshResource : public IMeshResource
 public:
 	struct T_DLLCLASS Part
 	{
-		std::wstring name;
-		Guid material;
+		std::wstring shaderTechnique;
+		std::wstring meshPart;
 		bool opaque;
 
 		Part();
@@ -45,10 +45,12 @@ public:
 
 private:
 	friend class StreamMeshConverter;
+	typedef std::list< Part > parts_t;
 
+	Guid m_shader;
 	std::vector< uint32_t > m_frameOffsets;
 	Aabb m_boundingBox;
-	std::vector< Part > m_parts;
+	std::map< std::wstring, parts_t > m_parts;
 };
 
 	}

@@ -154,38 +154,13 @@ void WorldRenderView::resetLights()
 	m_lightCount = 0;
 }
 
-void WorldRenderView::setShaderParameters(render::ShaderParameters* shaderParams) const
-{
-	setTechniqueShaderParameters(shaderParams);
-	setWorldShaderParameters(shaderParams, Matrix44::identity(), Matrix44::identity());
-
-	// Set these parameters only if we're rendering using default technique.
-	if (m_technique == s_handleDefaultTechnique)
-	{
-		setLightShaderParameters(shaderParams);
-		setShadowMapShaderParameters(shaderParams);
-		setDepthMapShaderParameters(shaderParams);
-	}
-}
-
-void WorldRenderView::setShaderParameters(render::ShaderParameters* shaderParams, const Matrix44& world, const Matrix44& worldPrevious, const Aabb& bounds) const
-{
-	setTechniqueShaderParameters(shaderParams, world, bounds);
-	setWorldShaderParameters(shaderParams, world, worldPrevious);
-
-	// Set these parameters only if we're rendering using default technique.
-	if (m_technique == s_handleDefaultTechnique)
-	{
-		setLightShaderParameters(shaderParams, world, bounds);
-		setShadowMapShaderParameters(shaderParams);
-		setDepthMapShaderParameters(shaderParams);
-	}
-}
-
-void WorldRenderView::setTechniqueShaderParameters(render::ShaderParameters* shaderParams) const
+void WorldRenderView::setTechniqueParameters(render::ShaderParameters* shaderParams) const
 {
 	shaderParams->setTechnique(m_technique);
+}
 
+void WorldRenderView::setShaderParameters(render::ShaderParameters* shaderParams) const
+{
 	if (m_technique == s_handleDefaultTechnique)
 	{
 		if (m_lightCount == 1 && m_lights[0].type == LtDirectional)
@@ -203,13 +178,19 @@ void WorldRenderView::setTechniqueShaderParameters(render::ShaderParameters* sha
 		shaderParams->setCombination(s_handleDepthEnable, m_depthMap != 0);
 	}
 
-	shaderParams->setFloatParameter(s_handleTime, m_time);
+	setWorldShaderParameters(shaderParams, Matrix44::identity(), Matrix44::identity());
+
+	// Set these parameters only if we're rendering using default technique.
+	if (m_technique == s_handleDefaultTechnique)
+	{
+		setLightShaderParameters(shaderParams);
+		setShadowMapShaderParameters(shaderParams);
+		setDepthMapShaderParameters(shaderParams);
+	}
 }
 
-void WorldRenderView::setTechniqueShaderParameters(render::ShaderParameters* shaderParams, const Matrix44& world, const Aabb& bounds) const
+void WorldRenderView::setShaderParameters(render::ShaderParameters* shaderParams, const Matrix44& world, const Matrix44& worldPrevious, const Aabb& bounds) const
 {
-	shaderParams->setTechnique(m_technique);
-
 	if (m_technique == s_handleDefaultTechnique)
 	{
 		int lightDirectionalCount = 0;
@@ -248,7 +229,15 @@ void WorldRenderView::setTechniqueShaderParameters(render::ShaderParameters* sha
 		shaderParams->setCombination(s_handleDepthEnable, m_depthMap != 0);
 	}
 
-	shaderParams->setFloatParameter(s_handleTime, m_time);
+	setWorldShaderParameters(shaderParams, world, worldPrevious);
+
+	// Set these parameters only if we're rendering using default technique.
+	if (m_technique == s_handleDefaultTechnique)
+	{
+		setLightShaderParameters(shaderParams, world, bounds);
+		setShadowMapShaderParameters(shaderParams);
+		setDepthMapShaderParameters(shaderParams);
+	}
 }
 
 void WorldRenderView::setWorldShaderParameters(render::ShaderParameters* shaderParams, const Matrix44& world, const Matrix44& worldPrevious) const
@@ -256,6 +245,7 @@ void WorldRenderView::setWorldShaderParameters(render::ShaderParameters* shaderP
 	float viewSizeInvX = m_viewSize.x != 0.0f ? 1.0f / m_viewSize.x : 0.0f;
 	float viewSizeInvY = m_viewSize.y != 0.0f ? 1.0f / m_viewSize.y : 0.0f;
 
+	shaderParams->setFloatParameter(s_handleTime, m_time);
 	shaderParams->setMatrixParameter(s_handleProjection, m_projection);
 	shaderParams->setMatrixParameter(s_handleView, m_view);
 	shaderParams->setMatrixParameter(s_handleViewPrevious, m_viewPrevious);

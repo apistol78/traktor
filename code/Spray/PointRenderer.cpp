@@ -259,6 +259,7 @@ void PointRenderer::flush(
 			renderBlock->maxIndex = m_vertexOffset;
 
 			renderBlock->shaderParams->beginParameters(renderContext);
+			worldRenderView->setTechniqueParameters(renderBlock->shaderParams);
 			worldRenderView->setShaderParameters(renderBlock->shaderParams);
 			renderBlock->shaderParams->endParameters(renderContext);
 

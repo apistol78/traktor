@@ -916,6 +916,11 @@ PixelOutput::PixelOutput()
 {
 }
 
+void PixelOutput::setTechnique(const std::wstring& technique)
+{
+	m_technique = technique;
+}
+
 const std::wstring& PixelOutput::getTechnique() const
 {
 	return m_technique;

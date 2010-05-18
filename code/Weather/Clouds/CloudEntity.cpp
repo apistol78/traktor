@@ -512,7 +512,10 @@ void CloudEntity::renderCluster(
 			scale((maxXY[0] - minXY[0]) / 2.0f, (maxXY[1] - minXY[1]) / 2.0f, 1.0f);
 
 		renderBlock->shaderParams->beginParameters(renderContext);
+
+		worldRenderView->setTechniqueParameters(renderBlock->shaderParams);
 		worldRenderView->setShaderParameters(renderBlock->shaderParams, m_transform.toMatrix44(), Matrix44::identity(), clusterBoundingBox);
+
 		renderBlock->shaderParams->setMatrixParameter(L"View", billboardView);
 		renderBlock->shaderParams->setFloatParameter(L"SliceDistance", sliceDistance);
 		renderBlock->shaderParams->setTextureParameter(m_handleImpostorTarget, m_impostorTargets[slice]->getColorTexture(0));

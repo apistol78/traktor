@@ -16,7 +16,7 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.InstanceMeshResource", 1, InstanceMeshResource, IMeshResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.InstanceMeshResource", 2, InstanceMeshResource, IMeshResource)
 
 Ref< IMesh > InstanceMeshResource::createMesh(
 	IStream* dataStream,
@@ -34,21 +34,31 @@ Ref< IMesh > InstanceMeshResource::createMesh(
 		return 0;
 	}
 
+	const std::vector< render::Mesh::Part >& singleInstanceParts = singleInstanceMesh->getParts();
+
 	uint32_t vertexSize = render::getVertexSize(singleInstanceMesh->getVertexElements());
 	uint32_t vertexCount = singleInstanceMesh->getVertexBuffer()->getBufferSize() / vertexSize;
-	uint32_t instanceOffset = findVertexElement(singleInstanceMesh->getVertexElements(), render::DuCustom, 1)->getOffset();
+	uint32_t vertexInstanceOffset = findVertexElement(singleInstanceMesh->getVertexElements(), render::DuCustom, 1)->getOffset();
 
 	T_ASSERT (vertexSize * vertexCount == singleInstanceMesh->getVertexBuffer()->getBufferSize());
 	T_ASSERT (singleInstanceMesh->getIndexBuffer()->getIndexType() == render::ItUInt16);
 
 	render::IndexType indexType = vertexCount * InstanceMesh::MaxInstanceCount > 65535 ? render::ItUInt32 : render::ItUInt16;
 
+	// Calculate number of indices required in instancing index buffer.
+	uint32_t destinationIndicesCount = 0;
+	for (uint32_t i = 0; i < singleInstanceParts.size(); ++i)
+	{
+		const render::Mesh::Part& singleInstancePart = singleInstanceParts[i];
+		destinationIndicesCount += InstanceMesh::MaxInstanceCount * singleInstancePart.primitives.count * 3;
+	}
+
 	// Create instancing mesh.
 	Ref< render::Mesh > renderMesh = meshFactory->createMesh(
 		singleInstanceMesh->getVertexElements(),
 		singleInstanceMesh->getVertexBuffer()->getBufferSize() * InstanceMesh::MaxInstanceCount,
 		indexType,
-		singleInstanceMesh->getIndexBuffer()->getBufferSize() * InstanceMesh::MaxInstanceCount * (indexType == render::ItUInt16 ? 1 : 2)
+		destinationIndicesCount * (indexType == render::ItUInt16 ? 2 : 4)
 	);
 	if (!renderMesh)
 	{
@@ -67,7 +77,7 @@ Ref< IMesh > InstanceMeshResource::createMesh(
 
 			// Copy vertex, patch instance index.
 			std::memcpy(destinationVertex, sourceVertex, vertexSize);
-			*reinterpret_cast< float* >(destinationVertex + instanceOffset) = float(i);
+			*reinterpret_cast< float* >(destinationVertex + vertexInstanceOffset) = float(i);
 
 			destinationVertex += vertexSize;
 			sourceVertex += vertexSize;
@@ -77,14 +87,13 @@ Ref< IMesh > InstanceMeshResource::createMesh(
 	renderMesh->getVertexBuffer()->unlock();
 
 	// Fill instancing index buffer.
+	std::vector< render::Mesh::Part > renderParts(singleInstanceParts.size());
 	const uint16_t* sourceIndex = static_cast< const uint16_t* >(singleInstanceMesh->getIndexBuffer()->lock());
-
+	uint32_t sourceIndexCount = singleInstanceMesh->getIndexBuffer()->getBufferSize() / sizeof(uint16_t);
+	uint32_t destinationIndexSize = (indexType == render::ItUInt16 ? 2 : 4);
 	uint8_t* destinationIndex = static_cast< uint8_t* >(renderMesh->getIndexBuffer()->lock());
 	uint8_t* destinationIndexTop = destinationIndex;
-	uint32_t destinationIndexSize = indexType == render::ItUInt16 ? 2 : 4;
-
-	const std::vector< render::Mesh::Part >& singleInstanceParts = singleInstanceMesh->getParts();
-	std::vector< render::Mesh::Part > renderParts(singleInstanceParts.size());
+	uint8_t* destinationIndexEnd = destinationIndexTop + destinationIndicesCount * destinationIndexSize;
 
 	for (uint32_t i = 0; i < singleInstanceParts.size(); ++i)
 	{
@@ -103,6 +112,7 @@ Ref< IMesh > InstanceMeshResource::createMesh(
 			{
 				for (uint32_t k = 0; k < singleInstancePart.primitives.count; ++k)
 				{
+					T_ASSERT (destinationIndex + 3 * sizeof(uint16_t) <= destinationIndexEnd);
 					reinterpret_cast< uint16_t* >(destinationIndex)[0] = sourceIndex[singleInstancePart.primitives.offset + k * 3 + 0] + vertexOffset;
 					reinterpret_cast< uint16_t* >(destinationIndex)[1] = sourceIndex[singleInstancePart.primitives.offset + k * 3 + 1] + vertexOffset;
 					reinterpret_cast< uint16_t* >(destinationIndex)[2] = sourceIndex[singleInstancePart.primitives.offset + k * 3 + 2] + vertexOffset;
@@ -113,6 +123,7 @@ Ref< IMesh > InstanceMeshResource::createMesh(
 			{
 				for (uint32_t k = 0; k < singleInstancePart.primitives.count; ++k)
 				{
+					T_ASSERT (destinationIndex + 3 * sizeof(uint32_t) <= destinationIndexEnd);
 					reinterpret_cast< uint32_t* >(destinationIndex)[0] = sourceIndex[singleInstancePart.primitives.offset + k * 3 + 0] + vertexOffset;
 					reinterpret_cast< uint32_t* >(destinationIndex)[1] = sourceIndex[singleInstancePart.primitives.offset + k * 3 + 1] + vertexOffset;
 					reinterpret_cast< uint32_t* >(destinationIndex)[2] = sourceIndex[singleInstancePart.primitives.offset + k * 3 + 2] + vertexOffset;
@@ -121,49 +132,65 @@ Ref< IMesh > InstanceMeshResource::createMesh(
 			}
 		}
 	}
-	renderMesh->setParts(renderParts);
+
 	renderMesh->getIndexBuffer()->unlock();
 	singleInstanceMesh->getIndexBuffer()->unlock();
 
+	renderMesh->setParts(renderParts);
 	renderMesh->setBoundingBox(singleInstanceMesh->getBoundingBox());
 
-	if (m_parts.size() != renderMesh->getParts().size())
-	{
-		log::error << L"Instance mesh create failed; parts mismatch" << Endl;
-		return 0;
-	}
-
 	Ref< InstanceMesh > instanceMesh = new InstanceMesh();
+	instanceMesh->m_shader = m_shader;
 	instanceMesh->m_mesh = renderMesh;
-	instanceMesh->m_parts.resize(m_parts.size());
 
-	for (size_t i = 0; i < m_parts.size(); ++i)
+	for (std::map< std::wstring, parts_t >::const_iterator i = m_parts.begin(); i != m_parts.end(); ++i)
 	{
-		instanceMesh->m_parts[i].material = m_parts[i].material;
-		instanceMesh->m_parts[i].opaque = m_parts[i].opaque;
-		if (!resourceManager->bind(instanceMesh->m_parts[i].material))
-			return 0;
+		render::handle_t worldTechnique = render::getParameterHandle(i->first);
+
+		for (parts_t::const_iterator j = i->second.begin(); j != i->second.end(); ++j)
+		{
+			InstanceMesh::Part part;
+			part.shaderTechnique = render::getParameterHandle(j->shaderTechnique);
+			part.meshPart = j->meshPart;
+			part.opaque = j->opaque;
+			instanceMesh->m_parts[worldTechnique].push_back(part);
+		}
 	}
+
+	if (!resourceManager->bind(instanceMesh->m_shader))
+		return 0;
 
 	return instanceMesh;
 }
 
 bool InstanceMeshResource::serialize(ISerializer& s)
 {
-	return s >> MemberStlVector< Part, MemberComposite< Part > >(L"parts", m_parts);
+	T_ASSERT_M(s.getVersion() >= 2, L"Incorrect version");
+	s >> Member< Guid >(L"shader", m_shader);
+	s >> MemberStlMap<
+		std::wstring,
+		parts_t,
+		MemberStlPair<
+			std::wstring,
+			parts_t,
+			Member< std::wstring >,
+			MemberStlList< Part, MemberComposite< Part > >
+		>
+	>(L"parts", m_parts);
+	return true;
 }
 
 InstanceMeshResource::Part::Part()
-:	opaque(true)
+:	meshPart(0)
+,	opaque(true)
 {
 }
 
 bool InstanceMeshResource::Part::serialize(ISerializer& s)
 {
-	s >> Member< std::wstring >(L"name", name);
-	s >> Member< Guid >(L"material", material);
-	if (s.getVersion() >= 1)
-		s >> Member< bool >(L"opaque", opaque);
+	s >> Member< std::wstring >(L"shaderTechnique", shaderTechnique);
+	s >> Member< uint32_t >(L"meshPart", meshPart);
+	s >> Member< bool >(L"opaque", opaque);
 	return true;
 }
 

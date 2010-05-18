@@ -37,6 +37,9 @@ void IndoorMesh::render(
 	const IMeshParameterCallback* parameterCallback
 )
 {
+	if (!m_shader.validate())
+		return;
+
 	Vector4 cameraPosition = worldRenderView->getView().inverse().translation();
 	
 	// Create initial clipper frustum, clipper frustums can have more than
@@ -87,22 +90,27 @@ void IndoorMesh::render(
 	for (std::set< int >::iterator i = activeSectors.begin(); i != activeSectors.end(); ++i)
 	{
 		Sector& sector = m_sectors[*i];
-		for (std::vector< Part >::iterator j = sector.parts.begin(); j != sector.parts.end(); ++j)
+		
+		std::map< render::handle_t, std::vector< Part > >::const_iterator it = sector.parts.find(worldRenderView->getTechnique());
+		if (it == sector.parts.end())
+			continue;
+
+		for (std::vector< Part >::const_iterator j = it->second.begin(); j != it->second.end(); ++j)
 		{
-			resource::Proxy< render::Shader >& material = j->material;
-			if (!material.validate())
+			if (!m_shader->hasTechnique(j->shaderTechnique))
 				continue;
 
 			render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >("IndoorMesh");
 
 			renderBlock->distance = distance;
-			renderBlock->shader = material;
+			renderBlock->shader = m_shader;
 			renderBlock->shaderParams = renderContext->alloc< render::ShaderParameters >();
 			renderBlock->indexBuffer = m_mesh->getIndexBuffer();
 			renderBlock->vertexBuffer = m_mesh->getVertexBuffer();
 			renderBlock->primitives = &meshParts[j->meshPart].primitives;
 
 			renderBlock->shaderParams->beginParameters(renderContext);
+			renderBlock->shaderParams->setTechnique(j->shaderTechnique);
 			worldRenderView->setShaderParameters(
 				renderBlock->shaderParams,
 				worldTransform.toMatrix44(),

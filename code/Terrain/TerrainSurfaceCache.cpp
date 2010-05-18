@@ -196,6 +196,8 @@ void TerrainSurfaceCache::get(
 	renderBlock->shaderParams = renderContext->alloc< render::ShaderParameters >();
 
 	renderBlock->shaderParams->beginParameters(renderContext);
+
+	worldRenderView->setTechniqueParameters(renderBlock->shaderParams);
 	worldRenderView->setShaderParameters(renderBlock->shaderParams);
 
 	renderBlock->shaderParams->setTextureParameter(m_handleHeightfield, heightfieldTexture);

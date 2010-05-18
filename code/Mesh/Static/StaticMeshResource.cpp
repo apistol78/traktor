@@ -13,7 +13,7 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.StaticMeshResource", 1, StaticMeshResource, IMeshResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.StaticMeshResource", 2, StaticMeshResource, IMeshResource)
 
 Ref< IMesh > StaticMeshResource::createMesh(
 	IStream* dataStream,
@@ -29,43 +29,58 @@ Ref< IMesh > StaticMeshResource::createMesh(
 		return 0;
 	}
 
-	if (m_parts.size() != mesh->getParts().size())
-	{
-		log::error << L"Static mesh create failed; parts mismatch" << Endl;
-		return 0;
-	}
-
 	Ref< StaticMesh > staticMesh = new StaticMesh();
+	staticMesh->m_shader = m_shader;
 	staticMesh->m_mesh = mesh;
-	staticMesh->m_parts.resize(m_parts.size());
 
-	for (size_t i = 0; i < m_parts.size(); ++i)
+	for (std::map< std::wstring, parts_t >::const_iterator i = m_parts.begin(); i != m_parts.end(); ++i)
 	{
-		staticMesh->m_parts[i].material = m_parts[i].material;
-		staticMesh->m_parts[i].opaque = m_parts[i].opaque;
-		if (!resourceManager->bind(staticMesh->m_parts[i].material))
-			return 0;
+		render::handle_t worldTechnique = render::getParameterHandle(i->first);
+
+		for (parts_t::const_iterator j = i->second.begin(); j != i->second.end(); ++j)
+		{
+			StaticMesh::Part part;
+			part.shaderTechnique = render::getParameterHandle(j->shaderTechnique);
+			part.meshPart = j->meshPart;
+			part.opaque = j->opaque;
+			staticMesh->m_parts[worldTechnique].push_back(part);
+		}
 	}
+
+	if (!resourceManager->bind(staticMesh->m_shader))
+		return 0;
 
 	return staticMesh;
 }
 
 bool StaticMeshResource::serialize(ISerializer& s)
 {
-	return s >> MemberStlVector< Part, MemberComposite< Part > >(L"parts", m_parts);
+	T_ASSERT_M(s.getVersion() >= 2, L"Incorrect version");
+	s >> Member< Guid >(L"shader", m_shader);
+	s >> MemberStlMap<
+		std::wstring,
+		parts_t,
+		MemberStlPair<
+			std::wstring,
+			parts_t,
+			Member< std::wstring >,
+			MemberStlList< Part, MemberComposite< Part > >
+		>
+	>(L"parts", m_parts);
+	return true;
 }
 
 StaticMeshResource::Part::Part()
-:	opaque(true)
+:	meshPart(0)
+,	opaque(true)
 {
 }
 
 bool StaticMeshResource::Part::serialize(ISerializer& s)
 {
-	s >> Member< std::wstring >(L"name", name);
-	s >> Member< Guid >(L"material", material);
-	if (s.getVersion() >= 1)
-		s >> Member< bool >(L"opaque", opaque);
+	s >> Member< std::wstring >(L"shaderTechnique", shaderTechnique);
+	s >> Member< uint32_t >(L"meshPart", meshPart);
+	s >> Member< bool >(L"opaque", opaque);
 	return true;
 }
 

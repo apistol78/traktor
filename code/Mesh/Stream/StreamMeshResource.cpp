@@ -11,7 +11,7 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.StreamMeshResource", 0, StreamMeshResource, IMeshResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.StreamMeshResource", 2, StreamMeshResource, IMeshResource)
 
 Ref< IMesh > StreamMeshResource::createMesh(
 	IStream* dataStream,
@@ -21,32 +21,49 @@ Ref< IMesh > StreamMeshResource::createMesh(
 ) const
 {
 	Ref< StreamMesh > streamMesh = new StreamMesh();
+	streamMesh->m_shader = m_shader;
 	streamMesh->m_stream = dataStream;
 	streamMesh->m_meshReader = new render::MeshReader(meshFactory);
 	streamMesh->m_frameOffsets = m_frameOffsets;
 	streamMesh->m_boundingBox = m_boundingBox;
 
-	for (std::vector< StreamMeshResource::Part >::const_iterator i = m_parts.begin(); i != m_parts.end(); ++i)
+	for (std::map< std::wstring, parts_t >::const_iterator i = m_parts.begin(); i != m_parts.end(); ++i)
 	{
-		StreamMesh::Part part;
-		part.material = i->material;
-		part.opaque = i->opaque;
+		render::handle_t worldTechnique = render::getParameterHandle(i->first);
 
-		if (resourceManager->bind(part.material))
-			streamMesh->m_parts[i->name] = part;
-		else
-			return 0;
+		for (parts_t::const_iterator j = i->second.begin(); j != i->second.end(); ++j)
+		{
+			StreamMesh::Part part;
+			part.shaderTechnique = render::getParameterHandle(j->shaderTechnique);
+			part.meshPart = j->meshPart;
+			part.opaque = j->opaque;
+			streamMesh->m_parts[worldTechnique].push_back(part);
+		}
 	}
+
+	if (!resourceManager->bind(streamMesh->m_shader))
+		return 0;
 
 	return streamMesh;
 }
 
 bool StreamMeshResource::serialize(ISerializer& s)
 {
+	T_ASSERT_M(s.getVersion() >= 2, L"Incorrect version");
+	s >> Member< Guid >(L"shader", m_shader);
 	s >> MemberStlVector< uint32_t >(L"frameOffsets", m_frameOffsets);
 	s >> Member< Vector4 >(L"boundingBoxMin", m_boundingBox.mn);
 	s >> Member< Vector4 >(L"boundingBoxMax", m_boundingBox.mx);
-	s >> MemberStlVector< Part, MemberComposite< Part > >(L"parts", m_parts);
+	s >> MemberStlMap<
+		std::wstring,
+		parts_t,
+		MemberStlPair<
+			std::wstring,
+			parts_t,
+			Member< std::wstring >,
+			MemberStlList< Part, MemberComposite< Part > >
+		>
+	>(L"parts", m_parts);
 	return true;
 }
 
@@ -57,8 +74,8 @@ StreamMeshResource::Part::Part()
 
 bool StreamMeshResource::Part::serialize(ISerializer& s)
 {
-	s >> Member< std::wstring >(L"name", name);
-	s >> Member< Guid >(L"material", material);
+	s >> Member< std::wstring >(L"shaderTechnique", shaderTechnique);
+	s >> Member< std::wstring >(L"meshPart", meshPart);
 	s >> Member< bool >(L"opaque", opaque);
 	return true;
 }

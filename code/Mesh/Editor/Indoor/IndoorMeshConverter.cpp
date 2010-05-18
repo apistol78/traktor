@@ -518,7 +518,8 @@ Ref< IMeshResource > IndoorMeshConverter::createResource() const
 
 bool IndoorMeshConverter::convert(
 	const RefArray< model::Model >& models,
-	const std::map< std::wstring, MaterialInfo >& materialInfo,
+	const Guid& materialGuid,
+	const std::map< std::wstring, std::list< MeshMaterialTechnique > >& materialTechniqueMap,
 	const std::vector< render::VertexElement >& vertexElements,
 	IMeshResource* meshResource,
 	IStream* meshResourceStream
@@ -586,7 +587,6 @@ bool IndoorMeshConverter::convert(
 	/*-----------------------------------------------------------------------*/
 	log::info << L"Creating index buffer" << Endl;
 
-	std::vector< render::Mesh::Part > meshParts;
 	AlignedVector< IndoorMeshResource::Sector > assetSectors;
 	AlignedVector< IndoorMeshResource::Portal > assetPortals;
 
@@ -602,8 +602,8 @@ bool IndoorMeshConverter::convert(
 
 		for (uint32_t material = 0; material < uint32_t(model.getMaterials().size()); ++material)
 		{
-			std::map< std::wstring, MaterialInfo >::const_iterator materialIt = materialInfo.find(model.getMaterial(material).getName());
-			if (materialIt == materialInfo.end())
+			std::map< std::wstring, std::list< MeshMaterialTechnique > >::const_iterator materialIt = materialTechniqueMap.find(model.getMaterial(material).getName());
+			if (materialIt == materialTechniqueMap.end())
 				continue;
 
 			size_t minIndex = std::numeric_limits< size_t >::max();
@@ -628,20 +628,20 @@ bool IndoorMeshConverter::convert(
 			if (!indexCount)
 				continue;
 
-			assetSectors.back().parts.push_back(IndoorMeshResource::Part());
-			assetSectors.back().parts.back().material = materialIt->second.guid;
-			assetSectors.back().parts.back().meshPart = int(meshParts.size());
-			assetSectors.back().parts.back().opaque = materialIt->second.opaque;
-
-			meshParts.push_back(render::Mesh::Part());
-			meshParts.back().name = i->name + L"_" + toString(material);
-			meshParts.back().primitives.setIndexed(
-				render::PtTriangles,
-				int(indexOffset),
-				int(indexCount / 3),
-				int(minIndex),
-				int(maxIndex)
-			);
+			for (std::list< MeshMaterialTechnique >::const_iterator j = materialIt->second.begin(); j != materialIt->second.end(); ++j)
+			{
+				IndoorMeshResource::Part part;
+				part.shaderTechnique = j->shaderTechnique;
+				//part.primitives.setIndexed(
+				//	render::PtTriangles,
+				//	int(indexOffset),
+				//	int(indexCount / 3),
+				//	int(minIndex),
+				//	int(maxIndex)
+				//);
+				part.opaque = j->opaque;
+				assetSectors.back().parts[j->worldTechnique].push_back(part);
+			}
 
 			indexOffset += indexCount;
 		}
@@ -662,12 +662,12 @@ bool IndoorMeshConverter::convert(
 	/*-----------------------------------------------------------------------*/
 	log::info << L"Creating asset" << Endl;
 
-	mesh->setParts(meshParts);
 	mesh->setBoundingBox(model::calculateModelBoundingBox(model));
 
 	if (!render::MeshWriter().write(meshResourceStream, mesh))
 		return false;
 
+	checked_type_cast< IndoorMeshResource* >(meshResource)->m_shader = materialGuid;
 	checked_type_cast< IndoorMeshResource* >(meshResource)->m_sectors = assetSectors;
 	checked_type_cast< IndoorMeshResource* >(meshResource)->m_portals = assetPortals;
 

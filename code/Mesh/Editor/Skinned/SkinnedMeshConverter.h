@@ -15,7 +15,8 @@ public:
 
 	virtual bool convert(
 		const RefArray< model::Model >& models,
-		const std::map< std::wstring, MaterialInfo >& materialInfo,
+		const Guid& materialGuid,
+		const std::map< std::wstring, std::list< MeshMaterialTechnique > >& materialTechniqueMap,
 		const std::vector< render::VertexElement >& vertexElements,
 		IMeshResource* meshResource,
 		IStream* meshResourceStream

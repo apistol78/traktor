@@ -41,6 +41,8 @@ void SkyEntity::render(render::RenderContext* renderContext, const world::WorldR
 	renderBlock->primitives = &m_primitives;
 
 	renderBlock->shaderParams->beginParameters(renderContext);
+
+	worldRenderView->setTechniqueParameters(renderBlock->shaderParams);
 	worldRenderView->setShaderParameters(renderBlock->shaderParams);
 	
 	renderBlock->shaderParams->setFloatParameter(m_handleSkyDomeRadius, worldRenderView->getViewFrustum().getFarZ());

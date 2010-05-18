@@ -62,15 +62,15 @@ private:
 
 	struct Part
 	{
-		resource::Proxy< render::Shader > material;
-		int meshPart;
+		render::handle_t shaderTechnique;
+		uint32_t meshPart;
 		bool opaque;
 	};
 
 	struct Sector
 	{
 		Aabb boundingBox;
-		std::vector< Part > parts;
+		std::map< render::handle_t, std::vector< Part > > parts;
 	};
 
 	struct Portal
@@ -81,6 +81,7 @@ private:
 	};
 
 	Ref< render::Mesh > m_mesh;
+	resource::Proxy< render::Shader > m_shader;
 	std::vector< Part > m_parts;
 	AlignedVector< Sector > m_sectors;
 	AlignedVector< Portal > m_portals;

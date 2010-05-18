@@ -61,6 +61,13 @@ void InstanceMesh::render(render::RenderContext* renderContext, const world::Wor
 	if (instanceWorld.empty())
 		return;
 
+	if (!m_shader.validate())
+		return;
+
+	std::map< render::handle_t, std::vector< Part > >::const_iterator it = m_parts.find(worldRenderView->getTechnique());
+	if (it == m_parts.end())
+		return;
+
 	// Sort instances by ascending distance; note we're sorting caller's vector.
 	std::sort(instanceWorld.begin(), instanceWorld.end(), SortInstanceDistance());
 
@@ -93,17 +100,12 @@ void InstanceMesh::render(render::RenderContext* renderContext, const world::Wor
 	Matrix44 boundingBoxCenter = translate(boundingBoxWorld.getCenter());
 	boundingBoxWorld.transform(Transform(-boundingBoxWorld.getCenter()));
 
-	const std::vector< render::Mesh::Part >& parts = m_mesh->getParts();
-	T_ASSERT (parts.size() == m_parts.size());
+	const std::vector< render::Mesh::Part >& meshParts = m_mesh->getParts();
 
 	// Render opaque parts front-to-back.
-	for (size_t i = 0; i < parts.size(); ++i)
+	for (std::vector< Part >::const_iterator i = it->second.begin(); i != it->second.end(); ++i)
 	{
-		if (!m_parts[i].material.validate())
-			continue;
-		if (!m_parts[i].material->hasTechnique(worldRenderView->getTechnique()))
-			continue;
-		if (!m_parts[i].opaque)
+		if (!i->opaque)
 		{
 			haveAlphaBlend = true;
 			continue;
@@ -119,18 +121,24 @@ void InstanceMesh::render(render::RenderContext* renderContext, const world::Wor
 			render::IndexedRenderBlock* renderBlock = renderContext->alloc< render::IndexedRenderBlock >("InstanceMesh opaque");
 
 			renderBlock->distance = instanceWorld[batchOffset].second;
-			renderBlock->shader = m_parts[i].material;
+			renderBlock->shader = m_shader;
 			renderBlock->shaderParams = renderContext->alloc< render::ShaderParameters >();
 			renderBlock->indexBuffer = m_mesh->getIndexBuffer();
 			renderBlock->vertexBuffer = m_mesh->getVertexBuffer();
-			renderBlock->primitive = parts[i].primitives.type;
-			renderBlock->offset = parts[i].primitives.offset;
-			renderBlock->count = parts[i].primitives.count * batchCount;
-			renderBlock->minIndex = parts[i].primitives.minIndex;
-			renderBlock->maxIndex = parts[i].primitives.maxIndex;
+			renderBlock->primitive = meshParts[i->meshPart].primitives.type;
+			renderBlock->offset = meshParts[i->meshPart].primitives.offset;
+			renderBlock->count = meshParts[i->meshPart].primitives.count * batchCount;
+			renderBlock->minIndex = meshParts[i->meshPart].primitives.minIndex;
+			renderBlock->maxIndex = meshParts[i->meshPart].primitives.maxIndex;
 
 			renderBlock->shaderParams->beginParameters(renderContext);
-			worldRenderView->setShaderParameters(renderBlock->shaderParams, boundingBoxCenter, boundingBoxCenter, boundingBoxWorld);
+			renderBlock->shaderParams->setTechnique(i->shaderTechnique);
+			worldRenderView->setShaderParameters(
+				renderBlock->shaderParams,
+				boundingBoxCenter,
+				boundingBoxCenter,
+				boundingBoxWorld
+			);
 			renderBlock->shaderParams->setVectorArrayParameter(
 				s_handleInstanceWorld,
 				reinterpret_cast< const Vector4* >(instanceBatch),
@@ -149,9 +157,9 @@ void InstanceMesh::render(render::RenderContext* renderContext, const world::Wor
 	{
 		std::reverse(instanceWorld.begin(), instanceWorld.end());
 
-		for (size_t i = 0; i < parts.size(); ++i)
+		for (std::vector< Part >::const_iterator i = it->second.begin(); i != it->second.end(); ++i)
 		{
-			if (!m_parts[i].material.validate() || m_parts[i].opaque)
+			if (i->opaque)
 				continue;
 
 			for (uint32_t batchOffset = 0; batchOffset < instanceWorld.size(); )
@@ -164,17 +172,18 @@ void InstanceMesh::render(render::RenderContext* renderContext, const world::Wor
 				render::IndexedRenderBlock* renderBlock = renderContext->alloc< render::IndexedRenderBlock >("InstanceMesh blend");
 
 				renderBlock->distance = instanceWorld[batchOffset].second;
-				renderBlock->shader = m_parts[i].material;
+				renderBlock->shader = m_shader;
 				renderBlock->shaderParams = renderContext->alloc< render::ShaderParameters >();
 				renderBlock->indexBuffer = m_mesh->getIndexBuffer();
 				renderBlock->vertexBuffer = m_mesh->getVertexBuffer();
-				renderBlock->primitive = parts[i].primitives.type;
-				renderBlock->offset = parts[i].primitives.offset;
-				renderBlock->count = parts[i].primitives.count * batchCount;
-				renderBlock->minIndex = parts[i].primitives.minIndex;
-				renderBlock->maxIndex = parts[i].primitives.maxIndex;
+				renderBlock->primitive = meshParts[i->meshPart].primitives.type;
+				renderBlock->offset = meshParts[i->meshPart].primitives.offset;
+				renderBlock->count = meshParts[i->meshPart].primitives.count * batchCount;
+				renderBlock->minIndex = meshParts[i->meshPart].primitives.minIndex;
+				renderBlock->maxIndex = meshParts[i->meshPart].primitives.maxIndex;
 
 				renderBlock->shaderParams->beginParameters(renderContext);
+				renderBlock->shaderParams->setTechnique(i->shaderTechnique);
 				worldRenderView->setShaderParameters(renderBlock->shaderParams);
 				renderBlock->shaderParams->setVectorArrayParameter(
 					s_handleInstanceWorld,
