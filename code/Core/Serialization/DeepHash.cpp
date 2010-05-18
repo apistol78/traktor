@@ -1,10 +1,44 @@
+#include "Core/Io/IStream.h"
+#include "Core/Misc/Adler32.h"
 #include "Core/Serialization/DeepHash.h"
 #include "Core/Serialization/BinarySerializer.h"
-#include "Core/Io/DynamicMemoryStream.h"
-#include "Core/Misc/Adler32.h"
 
 namespace traktor
 {
+	namespace
+	{
+
+/*! \brief Feed stream directly into Adler32 checksum. */
+class Adler32Stream : public IStream
+{
+public:
+	Adler32Stream(Adler32& adler)
+	:	m_adler(adler)
+	{
+	}
+
+	virtual void close() {}
+	virtual bool canRead() const { return false; }
+	virtual bool canWrite() const { return true; }
+	virtual bool canSeek() const { return false; }
+	virtual int tell() const { return 0; }
+	virtual int available() const { return 0; }
+	virtual int seek(SeekOriginType origin, int offset) { return 0; }
+	virtual int read(void* block, int nbytes) { return 0; }
+
+	virtual int write(const void* block, int nbytes)
+	{
+		m_adler.feed(block, nbytes);
+		return nbytes;
+	}
+
+	virtual void flush() {}
+
+private:
+	Adler32& m_adler;
+};
+
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.DeepHash", DeepHash, Object)
 
@@ -13,19 +47,14 @@ DeepHash::DeepHash(const ISerializable* object)
 {
 	if (object)
 	{
-		std::vector< uint8_t > copy;
+		Adler32 a;
+		Adler32Stream as(a);
 
-		// Create flat binary copy of object.
-		DynamicMemoryStream stream(copy, false, true);
-		BinarySerializer(&stream).writeObject(object);
+		a.begin();
+		BinarySerializer(&as).writeObject(object);
+		a.end();
 
-		// Calculate checksum of binary object.
-		Adler32 cs;
-		cs.begin();
-		cs.feed(&copy[0], uint32_t(copy.size()));
-		cs.end();
-
-		m_hash = cs.get();
+		m_hash = a.get();
 	}
 }
 

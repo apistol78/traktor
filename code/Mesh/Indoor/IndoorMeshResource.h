@@ -26,8 +26,8 @@ class T_DLLCLASS IndoorMeshResource : public IMeshResource
 public:
 	struct T_DLLCLASS Part
 	{
-		Guid material;
-		int32_t meshPart;
+		std::wstring shaderTechnique;
+		uint32_t meshPart;
 		bool opaque;
 
 		Part();
@@ -35,11 +35,13 @@ public:
 		bool serialize(ISerializer& s);
 	};
 
+	typedef std::list< Part > parts_t;
+
 	struct Sector
 	{
 		Vector4 min;
 		Vector4 max;
-		std::vector< Part > parts;
+		std::map< std::wstring, parts_t > parts;
 
 		bool serialize(ISerializer& s);
 	};
@@ -65,6 +67,7 @@ public:
 private:
 	friend class IndoorMeshConverter;
 
+	Guid m_shader;
 	AlignedVector< Sector > m_sectors;
 	AlignedVector< Portal > m_portals;
 };

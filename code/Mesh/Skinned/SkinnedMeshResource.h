@@ -25,8 +25,8 @@ class T_DLLCLASS SkinnedMeshResource : public IMeshResource
 public:
 	struct T_DLLCLASS Part
 	{
-		std::wstring name;
-		Guid material;
+		std::wstring shaderTechnique;
+		uint32_t meshPart;
 		bool opaque;
 
 		Part();
@@ -45,8 +45,10 @@ public:
 
 private:
 	friend class SkinnedMeshConverter;
+	typedef std::list< Part > parts_t;
 
-	std::vector< Part > m_parts;
+	Guid m_shader;
+	std::map< std::wstring, parts_t > m_parts;
 	std::map< std::wstring, int > m_boneMap;
 };
 

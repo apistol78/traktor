@@ -229,6 +229,20 @@ inline bool parseString< bool >(const std::wstring& text)
 	return false;
 }
 
+/*! \brief Two-way split.
+ * \ingroup Core
+ */
+inline bool split(const std::wstring& str, wchar_t delim, std::wstring& outLeft, std::wstring& outRight)
+{
+	size_t p = str.find_first_of(delim);
+	if (p == str.npos)
+		return false;
+
+	outLeft = str.substr(0, p);
+	outRight = str.substr(p + 1);
+
+	return true;
+}
 
 }
 

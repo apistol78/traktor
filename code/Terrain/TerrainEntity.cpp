@@ -454,6 +454,8 @@ void TerrainEntity::render(render::RenderContext* renderContext, const world::Wo
 		renderBlock->primitives = &m_primitives[patchLod];
 
 		renderBlock->shaderParams->beginParameters(renderContext);
+
+		worldRenderView->setTechniqueParameters(renderBlock->shaderParams);
 		worldRenderView->setShaderParameters(renderBlock->shaderParams);
 
 		renderBlock->shaderParams->setTextureParameter(m_handleSurface, surface);

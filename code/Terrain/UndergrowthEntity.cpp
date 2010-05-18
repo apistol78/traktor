@@ -99,6 +99,8 @@ void UndergrowthEntity::render(render::RenderContext* renderContext, const world
 	renderBlock->primitives = &m_primitives;
 
 	renderBlock->shaderParams->beginParameters(renderContext);
+
+	worldRenderView->setTechniqueParameters(renderBlock->shaderParams);
 	worldRenderView->setShaderParameters(renderBlock->shaderParams);
 
 	renderBlock->shaderParams->setFloatParameter(L"MaxRadius", m_settings.spreadDistance + m_settings.cellRadius);

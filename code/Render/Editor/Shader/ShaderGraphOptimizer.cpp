@@ -1,12 +1,8 @@
-#include <algorithm>
-#include <stack>
 #include "Core/Log/Log.h"
-#include "Core/Serialization/DeepHash.h"
-#include "Core/Thread/Semaphore.h"
-#include "Core/Thread/Acquire.h"
 #include "Render/Shader/Edge.h"
 #include "Render/Shader/Nodes.h"
 #include "Render/Shader/ShaderGraph.h"
+#include "Render/Editor/Shader/ShaderGraphHash.h"
 #include "Render/Editor/Shader/ShaderGraphOptimizer.h"
 #include "Render/Editor/Shader/ShaderGraphOrderEvaluator.h"
 #include "Render/Editor/Shader/ShaderGraphUtilities.h"
@@ -30,29 +26,6 @@ struct CopyVisitor
 		m_shaderGraph->addEdge(edge);
 	}
 };
-
-Semaphore s_calculateNodeHashLock;
-
-uint32_t calculateNodeHash(Node* node)
-{
-	// Need to make sure only one thread at a time modifies the
-	// node; we can possible let the DeepHash run concurrently but
-	// we choose not to at the moment.
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(s_calculateNodeHashLock);
-
-	std::pair< int, int > position = node->getPosition();
-	std::wstring comment = node->getComment();
-
-	node->setPosition(std::make_pair(0, 0));
-	node->setComment(L"");
-
-	uint32_t hash = DeepHash(node).get();
-
-	node->setPosition(position);
-	node->setComment(comment);
-
-	return hash;
-}
 
 		}
 
@@ -101,7 +74,7 @@ Ref< ShaderGraph > ShaderGraphOptimizer::mergeBranches() const
 	// Calculate node hashes.
 	std::map< const Node*, uint32_t > hash;
 	for (RefArray< Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
-		hash[*i] = calculateNodeHash(*i);
+		hash[*i] = ShaderGraphHash::calculate(*i);
 
 	// Merge single output nodes.
 	for (uint32_t i = 0; i < uint32_t(nodes.size() - 1); ++i)

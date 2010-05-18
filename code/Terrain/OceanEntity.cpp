@@ -137,6 +137,7 @@ void OceanEntity::render(render::RenderContext* renderContext, const world::Worl
 
 	renderBlock->shaderParams->beginParameters(renderContext);
 	
+	worldRenderView->setTechniqueParameters(renderBlock->shaderParams);
 	worldRenderView->setShaderParameters(
 		renderBlock->shaderParams,
 		oceanWorld,

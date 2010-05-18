@@ -18,7 +18,7 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.BlendMeshResource", 1, BlendMeshResource, IMeshResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.BlendMeshResource", 2, BlendMeshResource, IMeshResource)
 
 Ref< IMesh > BlendMeshResource::createMesh(
 	IStream* dataStream,
@@ -59,41 +59,61 @@ Ref< IMesh > BlendMeshResource::createMesh(
 
 	Ref< BlendMesh > blendMesh = new BlendMesh();
 	blendMesh->m_renderSystem = renderSystem;
+	blendMesh->m_shader = m_shader;
 	blendMesh->m_meshes = meshes;
 	blendMesh->m_vertices = meshVertices;
-	blendMesh->m_parts.resize(m_parts.size());
 
-	for (size_t i = 0; i < m_parts.size(); ++i)
+	for (std::map< std::wstring, parts_t >::const_iterator i = m_parts.begin(); i != m_parts.end(); ++i)
 	{
-		blendMesh->m_parts[i].material = m_parts[i].material;
-		blendMesh->m_parts[i].opaque = m_parts[i].opaque;
-		if (!resourceManager->bind(blendMesh->m_parts[i].material))
-			return 0;
+		render::handle_t worldTechnique = render::getParameterHandle(i->first);
+
+		for (parts_t::const_iterator j = i->second.begin(); j != i->second.end(); ++j)
+		{
+			BlendMesh::Part part;
+			part.shaderTechnique = render::getParameterHandle(j->shaderTechnique);
+			part.meshPart = j->meshPart;
+			part.opaque = j->opaque;
+			blendMesh->m_parts[worldTechnique].push_back(part);
+		}
 	}
 
 	blendMesh->m_targetMap = m_targetMap;
+
+	if (!resourceManager->bind(blendMesh->m_shader))
+		return 0;
 
 	return blendMesh;
 }
 
 bool BlendMeshResource::serialize(ISerializer& s)
 {
-	s >> MemberStlVector< Part, MemberComposite< Part > >(L"parts", m_parts);
+	T_ASSERT_M(s.getVersion() >= 2, L"Incorrect version");
+	s >> Member< Guid >(L"shader", m_shader);
+	s >> MemberStlMap<
+		std::wstring,
+		parts_t,
+		MemberStlPair<
+			std::wstring,
+			parts_t,
+			Member< std::wstring >,
+			MemberStlList< Part, MemberComposite< Part > >
+		>
+	>(L"parts", m_parts);
 	s >> MemberStlMap< std::wstring, int >(L"targetMap", m_targetMap);
 	return true;
 }
 
 BlendMeshResource::Part::Part()
-:	opaque(true)
+:	meshPart(0)
+,	opaque(true)
 {
 }
 
 bool BlendMeshResource::Part::serialize(ISerializer& s)
 {
-	s >> Member< std::wstring >(L"name", name);
-	s >> Member< Guid >(L"material", material);
-	if (s.getVersion() >= 1)
-		s >> Member< bool >(L"opaque", opaque);
+	s >> Member< std::wstring >(L"shaderTechnique", shaderTechnique);
+	s >> Member< uint32_t >(L"meshPart", meshPart);
+	s >> Member< bool >(L"opaque", opaque);
 	return true;
 }
 
