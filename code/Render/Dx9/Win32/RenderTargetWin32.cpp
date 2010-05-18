@@ -26,7 +26,7 @@ const ClearTriangleVertex c_clearTriangles[] =
 
 const char c_clearEffect[] =
 {
-	"float4 g_ClearColor;								\r\n"
+	"float4 g_ClearColor : register(c1);				\r\n"
 
 	"float4 vs_main(float3 pos : POSITION) : POSITION	\r\n"
 	"{													\r\n"

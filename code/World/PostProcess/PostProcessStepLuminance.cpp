@@ -46,7 +46,7 @@ Ref< PostProcessStep::Instance > PostProcessStepLuminance::create(resource::IRes
 bool PostProcessStepLuminance::serialize(ISerializer& s)
 {
 	s >> resource::Member< render::Shader, render::ShaderGraph >(L"shader", m_shader);
-	s >> Member< uint32_t >(L"source", m_source);
+	s >> Member< int32_t >(L"source", m_source);
 	return true;
 }
 

@@ -1,25 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.scene.SceneAsset" version="3">	
-	<worldRenderSettings type="traktor.world.WorldRenderSettings">
+<object type="traktor.scene.SceneAsset" version="3">
+	<worldRenderSettings type="traktor.world.WorldRenderSettings" version="5">
 		<viewNearZ>0.1</viewNearZ>
 		<viewFarZ>20</viewFarZ>
-		<depthPassEnabled>false</depthPassEnabled>
-		<shadowsEnabled>false</shadowsEnabled>
-		<shadowCascadingSlices>4</shadowCascadingSlices>
-		<shadowCascadingLambda>0.75</shadowCascadingLambda>
-		<shadowFarZ>50</shadowFarZ>
+		<depthPassEnabled>true</depthPassEnabled>
+		<velocityPassEnable>false</velocityPassEnable>
+		<shadowsEnabled>true</shadowsEnabled>
+		<shadowsProjection>SpUniform</shadowsProjection>
+		<shadowsQuality>SqMedium</shadowsQuality>
+		<ssaoEnabled>false</ssaoEnabled>
+		<shadowFarZ>10</shadowFarZ>
 		<shadowMapResolution>1024</shadowMapResolution>
-		<shadowMapBias>0.001</shadowMapBias>
+		<shadowMapBias>0.1</shadowMapBias>
 	</worldRenderSettings>
-	<postProcessSettings>{9F3FB638-1C8D-EE46-B29A-42DFE6876DDA}</postProcessSettings>
+	<postProcessSettings>{93BB7BDE-FAEA-3341-BDEF-B7DF5582C81A}</postProcessSettings>
 	<entityData type="traktor.world.GroupEntityData">
 		<name>Root</name>
 		<entityData>
 			<item type="traktor.world.DirectionalLightEntityData">
 				<name>Light</name>
 				<transform>
-					<translation>-5.01567, 2.08424, -6.07079, 0</translation>
-					<rotation>-0.00308665, -0.917948, 0.327454, 0.224112</rotation>
+					<translation>-2.355778, 2.725676, -0.303274, 0</translation>
+					<rotation>-0.003087, -0.917948, 0.327454, 0.224112</rotation>
 				</transform>
 				<sunColor>1, 1, 1, 0</sunColor>
 				<baseColor>0.5, 0.5, 0.5, 0</baseColor>
@@ -28,16 +30,16 @@
 			<item type="traktor.mesh.MeshEntityData">
 				<name>Static Mesh</name>
 				<transform>
-					<translation>-1.43046, 0.0945361, 0.499357, 0</translation>
-					<rotation>-2.54015e-008, 0.0699429, 3.84854e-009, 0.997551</rotation>
+					<translation>-1.430521, 0.094536, 0.499357, 0</translation>
+					<rotation>0, 0.069943, 0, 0.997551</rotation>
 				</transform>
 				<mesh>{CDC1E470-7F50-0A47-A47C-8C9534092368}</mesh>
 			</item>
 			<item type="traktor.mesh.MeshEntityData">
 				<name>Instance Mesh</name>
 				<transform>
-					<translation>1.52422, 0, 0.51282, 0</translation>
-					<rotation>-0.0496771, -0.109641, -0.00548663, 0.992714</rotation>
+					<translation>-1.52581, 1.645606, 0.58513, 0</translation>
+					<rotation>-0.049677, -0.109641, -0.005487, 0.992714</rotation>
 				</transform>
 				<mesh>{2BEECC12-C76D-974A-B0AE-02CE93F6C466}</mesh>
 			</item>

@@ -63,7 +63,7 @@ public:
 
 private:
 	mutable resource::Proxy< render::Shader > m_shader;
-	uint32_t m_source;
+	int32_t m_source;
 };
 
 	}
