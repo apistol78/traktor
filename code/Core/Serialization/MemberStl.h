@@ -96,12 +96,8 @@ public:
 
 	virtual bool read(ISerializer& s) const
 	{
-		ValueType item;
-		if (!(s >> ValueMember(L"item", item)))
-			return false;
-
-		m_ref.push_back(item);
-		return true;
+		m_ref.push_back(ValueType());
+		return s >> ValueMember(L"item", m_ref.back());
 	}
 
 	virtual bool write(ISerializer& s, size_t index) const
