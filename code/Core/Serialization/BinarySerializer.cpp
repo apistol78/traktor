@@ -398,7 +398,7 @@ bool BinarySerializer::operator >> (const Member< Path >& m)
 	}
 	else
 	{
-		std::wstring path = m->getPathName();
+		std::wstring path = m->getOriginal();
 		if (!write_string(m_stream, path))
 			return false;
 	}

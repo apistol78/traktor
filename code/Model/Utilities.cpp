@@ -86,6 +86,8 @@ void calculateModelTangents(Model& mdl, bool binormals)
 	const std::vector< Polygon >& polygons = mdl.getPolygons();
 	AlignedVector< TangentBase > polygonTangentBases;
 	AlignedVector< TangentBase > vertexTangentBases;
+	uint32_t degenerated = 0;
+	uint32_t invalid = 0;
 
 	// Calculate tangent base for each polygon.
 	polygonTangentBases.resize(polygons.size());
@@ -96,7 +98,7 @@ void calculateModelTangents(Model& mdl, bool binormals)
 
 		if (!findBaseIndex(mdl, polygon, baseIndex))
 		{
-			log::warning << L"Degenerate polygon (" << i << L") found in model" << Endl;
+			++degenerated;
 			continue;
 		}
 
@@ -169,12 +171,18 @@ void calculateModelTangents(Model& mdl, bool binormals)
 						tb.tangent = -tb.tangent;
 				}
 				else
-					log::warning << L"Invalid tangent space vectors; colinear vectors (" << i << L")" << Endl;
+					++invalid;
 			}
 			else
-				log::warning << L"Invalid tangent space vectors; invalid texture coordinates (" << i << L")" << Endl;
+				++invalid;
 		}
 	}
+
+	if (degenerated)
+		log::warning << L"Degenerate " << degenerated << L" polygon(s) found in model" << Endl;
+
+	if (invalid)
+		log::warning << L"Invalid tangent space vectors; " << invalid << L" invalid texture coordinate(s)" << Endl;
 
 	// Normalize polygon tangent bases.
 	for (AlignedVector< TangentBase >::iterator i = polygonTangentBases.begin(); i != polygonTangentBases.end(); ++i)
