@@ -474,8 +474,15 @@ void createSectors(
 			for (std::vector< size_t >::const_iterator k = j->indices.begin(); k != j->indices.end(); ++k)
 				winding.points.push_back(i->vertices[*k].position);
 
+			Plane windingPlane;
+			winding.getPlane(windingPlane);
+
 			std::vector< Triangulator::Triangle > triangulation;
-			Triangulator().freeze(winding.points, triangulation);
+			Triangulator().freeze(
+				winding.points,
+				windingPlane.normal(),
+				triangulation
+			);
 
 			for (std::vector< Triangulator::Triangle >::const_iterator k = triangulation.begin(); k != triangulation.end(); ++k)
 			{

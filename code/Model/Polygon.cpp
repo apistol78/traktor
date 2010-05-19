@@ -8,11 +8,13 @@ namespace traktor
 
 Polygon::Polygon()
 :	m_material(c_InvalidIndex)
+,	m_normal(c_InvalidIndex)
 {
 }
 
 Polygon::Polygon(uint32_t material, uint32_t vertex1, uint32_t vertex2, uint32_t vertex3)
 :	m_material(material)
+,	m_normal(c_InvalidIndex)
 ,	m_vertices(3)
 {
 	m_vertices[0] = vertex1;
@@ -22,6 +24,7 @@ Polygon::Polygon(uint32_t material, uint32_t vertex1, uint32_t vertex2, uint32_t
 
 Polygon::Polygon(uint32_t material, uint32_t vertex1, uint32_t vertex2, uint32_t vertex3, uint32_t vertex4)
 :	m_material(material)
+,	m_normal(c_InvalidIndex)
 ,	m_vertices(4)
 {
 	m_vertices[0] = vertex1;
@@ -38,6 +41,16 @@ void Polygon::setMaterial(uint32_t material)
 uint32_t Polygon::getMaterial() const
 {
 	return m_material;
+}
+
+void Polygon::setNormal(uint32_t normal)
+{
+	m_normal = normal;
+}
+
+uint32_t Polygon::getNormal() const
+{
+	return m_normal;
 }
 
 void Polygon::clearVertices()

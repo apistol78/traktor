@@ -248,13 +248,29 @@ void triangulateModel(Model& model)
 		const std::vector< uint32_t >& vertices = i->getVertices();
 		if (vertices.size() > 3)
 		{
-			AlignedVector< Vector4 > polygonPoints(vertices.size());
+			Winding polygonWinding;
+
+			polygonWinding.points.resize(vertices.size());
 			for (size_t j = 0; j < vertices.size(); ++j)
-				polygonPoints[j] = model.getPosition(model.getVertex(vertices[j]).getPosition());
+				polygonWinding.points[j] = model.getPosition(model.getVertex(vertices[j]).getPosition());
+
+			Vector4 polygonNormal;
+			if (i->getNormal() != c_InvalidIndex)
+				polygonNormal = model.getNormal(i->getNormal());
+			else
+			{
+				// No normal associated with polygon; try to determine from winding.
+				Plane polygonPlane;
+				if (!polygonWinding.getPlane(polygonPlane))
+					continue;
+
+				polygonNormal = polygonPlane.normal();
+			}
 
 			std::vector< Triangulator::Triangle > triangles;
 			Triangulator().freeze(
-				polygonPoints,
+				polygonWinding.points,
+				polygonNormal,
 				triangles
 			);
 

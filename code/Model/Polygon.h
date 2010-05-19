@@ -34,6 +34,10 @@ public:
 
 	uint32_t getMaterial() const;
 
+	void setNormal(uint32_t normal);
+
+	uint32_t getNormal() const;
+
 	void clearVertices();
 
 	void flipWinding();
@@ -51,7 +55,8 @@ public:
 	bool operator == (const Polygon& r) const;
 
 private:
-	int m_material;
+	uint32_t m_material;
+	uint32_t m_normal;
 	std::vector< uint32_t > m_vertices;
 };
 

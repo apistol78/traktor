@@ -249,6 +249,11 @@ bool createMesh(const lwObject* lwo, Model* outModel, uint32_t importFlags)
 
 				Polygon polygon;
 				polygon.setMaterial(materialIndex);
+				polygon.setNormal(outModel->addUniqueNormal(Vector4(
+					pol->norm[0],
+					pol->norm[1],
+					pol->norm[2]
+				)));
 
 				if (importFlags & ModelFormat::IfMeshVertices)
 				{
