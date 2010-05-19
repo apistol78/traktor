@@ -39,7 +39,7 @@ Ref< Image > NormalMapFilter::apply(const Image* image)
 
 			normal = normal * Scalar(0.5f) + Scalar(0.5f);
 
-			final->setPixel(x, y, Color(
+			final->setPixelUnsafe(x, y, Color(
 				normal.x(),
 				normal.y(),
 				normal.z(),

@@ -290,7 +290,7 @@ bool SoundPipeline::buildOutput(
 
 			if (m_enableDeltaCompression && deltaZLibBuffer.size() < zlibBuffer.size())
 			{
-				log::info << L"Using Delta+ZLib, " << deltaZLibBuffer.size() << L" / " << originalSize << L" byte(s)" << Endl;
+				log::info << L"Using Delta+ZLib, " << uint32_t(deltaZLibBuffer.size()) << L" / " << originalSize << L" byte(s)" << Endl;
 
 				writer << uint8_t(SrfZLib | SrfDelta);
 				if (stream->write(&deltaZLibBuffer[0], deltaZLibBuffer.size()) != deltaZLibBuffer.size())
@@ -301,7 +301,7 @@ bool SoundPipeline::buildOutput(
 			}
 			else if (zlibBuffer.size() < originalSize)
 			{
-				log::info << L"Using ZLib, " << zlibBuffer.size() << L" / " << originalSize << L" byte(s)" << Endl;
+				log::info << L"Using ZLib, " << uint32_t(zlibBuffer.size()) << L" / " << originalSize << L" byte(s)" << Endl;
 
 				writer << uint8_t(SrfZLib);
 				if (stream->write(&zlibBuffer[0], zlibBuffer.size()) != zlibBuffer.size())

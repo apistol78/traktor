@@ -23,14 +23,14 @@ Ref< Image > QuantizeFilter::apply(const Image* image)
 	{
 		for (int32_t x = 0; x < image->getWidth(); ++x)
 		{
-			image->getPixel(x, y, in);
+			image->getPixelUnsafe(x, y, in);
 
 			in.setRed(std::floor(in.getRed() * m_steps + 0.5f) / m_steps);
 			in.setGreen(std::floor(in.getGreen() * m_steps + 0.5f) / m_steps);
 			in.setBlue(std::floor(in.getBlue() * m_steps + 0.5f) / m_steps);
 			in.setAlpha(std::floor(in.getAlpha() * m_steps + 0.5f) / m_steps);
 
-			final->setPixel(x, y, in);
+			final->setPixelUnsafe(x, y, in);
 		}
 	}
 

@@ -47,7 +47,7 @@ Ref< Image > ConvolutionFilter::apply(const Image* image)
 			{
 				for (int32_t c = 0; c < 3; ++c)
 				{
-					image->getPixel(x + c - 1, y + r - 1, in);
+					image->getPixelUnsafe(x + c - 1, y + r - 1, in);
 					acc += in * m_matrix.e[r][c];
 					norm += m_matrix.e[r][c];
 				}
@@ -56,7 +56,7 @@ Ref< Image > ConvolutionFilter::apply(const Image* image)
 			if (norm)
 				acc /= norm;
 
-			final->setPixel(x, y, acc);
+			final->setPixelUnsafe(x, y, acc);
 		}
 	}
 

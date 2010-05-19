@@ -25,9 +25,9 @@ Ref< Image > MirrorFilter::apply(const Image* image)
 		int32_t dy = m_flipVertical ? (image->getHeight() - y - 1) : y;
 		for (int32_t x = 0; x < image->getWidth(); ++x)
 		{
-			image->getPixel(x, y, in);
+			image->getPixelUnsafe(x, y, in);
 			int32_t dx = m_flipHorizontal ? (image->getWidth() - x - 1) : x;
-			final->setPixel(dx, dy, in);
+			final->setPixelUnsafe(dx, dy, in);
 		}
 	}
 

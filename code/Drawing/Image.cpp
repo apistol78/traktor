@@ -191,11 +191,26 @@ void Image::clear(const Color& color)
 	checkData(m_data, m_size);
 }
 
-bool Image::getPixel(int32_t x, int32_t y, Color& color) const
+bool Image::getPixel(int32_t x, int32_t y, Color& outColor) const
 {
 	if (x < 0  || x >= m_width || y < 0 || y >= m_height)
 		return false;
 
+	getPixelUnsafe(x, y, outColor);
+	return true;
+}
+
+bool Image::setPixel(int32_t x, int32_t y, const Color& color)
+{
+	if (x < 0  || x >= m_width || y < 0 || y >= m_height)
+		return false;
+
+	setPixelUnsafe(x, y, color);
+	return true;
+}
+
+void Image::getPixelUnsafe(int32_t x, int32_t y, Color& outColor) const
+{
 	float tmp[] =
 	{
 		0,
@@ -213,15 +228,11 @@ bool Image::getPixel(int32_t x, int32_t y, Color& color) const
 		1
 	);
 	
-	color.set(tmp[0], tmp[1], tmp[2], tmp[3]);
-	return true;
+	outColor.set(tmp[0], tmp[1], tmp[2], tmp[3]);
 }
 
-bool Image::setPixel(int32_t x, int32_t y, const Color& color)
+void Image::setPixelUnsafe(int32_t x, int32_t y, const Color& color)
 {
-	if (x < 0  || x >= m_width || y < 0 || y >= m_height)
-		return false;
-
 	float tmp[] =
 	{
 		color.getRed(),
@@ -240,7 +251,6 @@ bool Image::setPixel(int32_t x, int32_t y, const Color& color)
 	);
 	
 	checkData(m_data, m_size);
-	return true;
 }
 
 Ref< Image > Image::applyFilter(IImageFilter* imageFilter) const

@@ -19,7 +19,7 @@ Ref< Image > TonemapFilter::apply(const Image* image)
 	{
 		for (int32_t x = 0; x < image->getWidth(); ++x)
 		{
-			image->getPixel(x, y, in);
+			image->getPixelUnsafe(x, y, in);
 			intensity += in.getRed() + in.getGreen() + in.getBlue();
 		}
 	}
@@ -31,8 +31,8 @@ Ref< Image > TonemapFilter::apply(const Image* image)
 	{
 		for (int32_t x = 0; x < image->getWidth(); ++x)
 		{
-			image->getPixel(x, y, in);
-			final->setPixel(x, y, in / intensity);
+			image->getPixelUnsafe(x, y, in);
+			final->setPixelUnsafe(x, y, in / intensity);
 		}
 	}
 
