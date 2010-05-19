@@ -32,6 +32,7 @@ TypeInfoSet MathNodeTraits::getNodeTypes() const
 	typeSet.insert(&type_of< Normalize >());
 	typeSet.insert(&type_of< Pow >());
 	typeSet.insert(&type_of< Reflect >());
+	typeSet.insert(&type_of< Sign >());
 	typeSet.insert(&type_of< Sin >());
 	typeSet.insert(&type_of< Sqrt >());
 	typeSet.insert(&type_of< Sub >());

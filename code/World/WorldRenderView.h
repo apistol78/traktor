@@ -179,6 +179,7 @@ private:
 	Light m_lights[MaxLightCount];
 	int m_lightCount;
 	Aabb m_shadowBox;
+	float m_shadowMaskSize;
 	Ref< render::ITexture > m_shadowMask;
 	Ref< render::ITexture > m_depthMap;
 	float m_time;

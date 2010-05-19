@@ -6,6 +6,7 @@
 #include "Core/Settings/PropertyColor.h"
 #include "Core/Settings/PropertyFloat.h"
 #include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/Settings.h"
 #include "Database/Database.h"
 #include "Editor/IEditor.h"
@@ -47,6 +48,7 @@ namespace traktor
 		{
 
 const float c_defaultFieldOfView = 45.0f;
+const int32_t c_defaultMultiSample = 4;
 const float c_minFieldOfView = 4.0f;
 const float c_maxFieldOfView = 90.0f;
 const float c_cameraTranslateDeltaScale = 0.025f;
@@ -63,6 +65,7 @@ PerspectiveRenderControl::PerspectiveRenderControl()
 ,	m_guideEnable(true)
 ,	m_postProcessEnable(true)
 ,	m_fieldOfView(c_defaultFieldOfView)
+,	m_multiSample(c_defaultMultiSample)
 ,	m_mousePosition(0, 0)
 ,	m_mouseButton(0)
 ,	m_modifyCamera(false)
@@ -78,6 +81,7 @@ bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* co
 	T_ASSERT (m_context);
 
 	m_fieldOfView = m_context->getEditor()->getSettings()->getProperty< PropertyFloat >(L"SceneEditor.FieldOfView", c_defaultFieldOfView);
+	m_multiSample = m_context->getEditor()->getSettings()->getProperty< PropertyInteger >(L"SceneEditor.MultiSample", c_defaultMultiSample);
 
 	m_renderWidget = new ui::Widget();
 	if (!m_renderWidget->create(parent))
@@ -86,7 +90,7 @@ bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* co
 	render::RenderViewEmbeddedDesc desc;
 	desc.depthBits = 24;
 	desc.stencilBits = 0;
-	desc.multiSample = 4;
+	desc.multiSample = m_multiSample;
 	desc.waitVBlank = false;
 	desc.nativeWindowHandle = m_renderWidget->getIWidget()->getSystemHandle();
 
@@ -218,7 +222,7 @@ void PerspectiveRenderControl::updateWorldRenderer()
 		m_context->getResourceManager(),
 		m_context->getRenderSystem(),
 		m_renderView,
-		4,
+		m_multiSample,
 		1
 	))
 	{
@@ -231,7 +235,7 @@ void PerspectiveRenderControl::updateWorldRenderer()
 			desc.count = 1;
 			desc.width = sz.cx;
 			desc.height = sz.cy;
-			desc.multiSample = 4;
+			desc.multiSample = m_multiSample;
 			desc.depthStencil = false;
 			desc.targets[0].format = m_postProcess->requireHighRange() ? render::TfR16G16B16A16F : render::TfR8G8B8A8;
 			m_renderTarget =  m_context->getRenderSystem()->createRenderTargetSet(desc);

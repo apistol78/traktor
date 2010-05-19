@@ -78,6 +78,7 @@ private:
 	Color m_colorGrid;
 	Color m_colorRef;
 	float m_fieldOfView;
+	int32_t m_multiSample;
 	Timer m_timer;
 	ui::Point m_mousePosition;
 	int m_mouseButton;

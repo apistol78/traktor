@@ -994,6 +994,17 @@ bool emitScalar(HlslContext& cx, Scalar* node)
 	return true;
 }
 
+bool emitSign(HlslContext& cx, Sign* node)
+{
+	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
+	HlslVariable* in = cx.emitInput(node, L"Input");
+	if (!in)
+		return false;
+	HlslVariable* out = cx.emitOutput(node, L"Output", in->getType());
+	assign(f, out) << L"sign(" << in->getName() << L");" << Endl;
+	return true;
+}
+
 bool emitSin(HlslContext& cx, Sin* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
@@ -1493,6 +1504,7 @@ HlslEmitter::HlslEmitter()
 	m_emitters[&type_of< Reflect >()] = new EmitterCast< Reflect >(emitReflect);
 	m_emitters[&type_of< Sampler >()] = new EmitterCast< Sampler >(emitSampler);
 	m_emitters[&type_of< Scalar >()] = new EmitterCast< Scalar >(emitScalar);
+	m_emitters[&type_of< Sign >()] = new EmitterCast< Sign >(emitSign);
 	m_emitters[&type_of< Sin >()] = new EmitterCast< Sin >(emitSin);
 	m_emitters[&type_of< Sqrt >()] = new EmitterCast< Sqrt >(emitSqrt);
 	m_emitters[&type_of< Sub >()] = new EmitterCast< Sub >(emitSub);

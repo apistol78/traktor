@@ -13,7 +13,7 @@
 		<shadowMapResolution>1024</shadowMapResolution>
 		<shadowMapBias>0.1</shadowMapBias>
 	</worldRenderSettings>
-	<postProcessSettings>{93BB7BDE-FAEA-3341-BDEF-B7DF5582C81A}</postProcessSettings>
+	<postProcessSettings>{00000000-0000-0000-0000-000000000000}</postProcessSettings>
 	<entityData type="traktor.world.GroupEntityData">
 		<name>Root</name>
 		<entityData>
@@ -33,7 +33,7 @@
 					<translation>-1.430521, 0.094536, 0.499357, 0</translation>
 					<rotation>0, 0.069943, 0, 0.997551</rotation>
 				</transform>
-				<mesh>{CDC1E470-7F50-0A47-A47C-8C9534092368}</mesh>
+				<mesh>{85A0B3C5-17F2-8640-A9BE-4A1A1A9AE291}</mesh>
 			</item>
 			<item type="traktor.mesh.MeshEntityData">
 				<name>Instance Mesh</name>

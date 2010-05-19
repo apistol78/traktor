@@ -859,6 +859,15 @@ private:
 	float m_value;
 };
 
+/*! \brief Sign. */
+class T_DLLCLASS Sign : public ImmutableNode
+{
+	T_RTTI_CLASS;
+
+public:
+	Sign();
+};
+
 /*! \brief Sine. */
 class T_DLLCLASS Sin : public ImmutableNode
 {
