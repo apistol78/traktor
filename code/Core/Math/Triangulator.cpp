@@ -1,8 +1,8 @@
-#include <cmath>
 #include <algorithm>
+#include <cmath>
+#include "Core/Log/Log.h"
 #include "Core/Math/Triangulator.h"
 #include "Core/Math/Const.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -195,39 +195,23 @@ void Triangulator::freeze(
 
 void Triangulator::freeze(
 	const AlignedVector< Vector4 >& points,
+	const Vector4& normal,
 	std::vector< Triangle >& outTriangles,
 	uint32_t flags
 )
 {
-	Vector4 edge1 = points[1] - points.front();
-	Vector4 edge2 = points.back() - points.front();
-
-	Scalar edgeLn1 = edge1.length();
-	Scalar edgeLn2 = edge2.length();
-	if (abs(edgeLn1) < FUZZY_EPSILON || abs(edgeLn2) < FUZZY_EPSILON)
-		return;
-
-	edge1 /= edgeLn1;
-	edge2 /= edgeLn2;
-
-	Scalar angle = dot3(edge1, edge2);
-	if (abs(angle) > 1.0f - FUZZY_EPSILON)
-		return;
-
-	Vector4 normal = cross(edge1, edge2).normalized();
-
 	// Use maximum axis to determine projection plane.
 	Vector4 u(0.0f, 0.0f, 0.0f), v(0.0f, 0.0f, 0.0f);
 	if (abs(normal.x()) > abs(normal.y()))
 	{
 		if (abs(normal.x()) > abs(normal.z()))	// X major
 		{
-			u = normal.x() > 0.0f ? Vector4(0.0f, 0.0f, -1.0f) : Vector4(0.0f, 0.0f, 1.0f);
+			u = normal.x() > 0.0f ? Vector4(0.0f, 0.0f, 1.0f) : Vector4(0.0f, 0.0f, -1.0f);
 			v = Vector4(0.0f, 1.0f, 0.0f);
 		}
 		else	// Z major
 		{
-			u = normal.z() > 0.0f ? Vector4(1.0f, 0.0f, 0.0f) : Vector4(-1.0f, 0.0f, 0.0f);
+			u = normal.z() > 0.0f ? Vector4(-1.0f, 0.0f, 0.0f) : Vector4(1.0f, 0.0f, 0.0f);
 			v = Vector4(0.0f, 1.0f, 0.0f);
 		}
 	}
@@ -235,12 +219,12 @@ void Triangulator::freeze(
 	{
 		if (abs(normal.y()) > abs(normal.z()))	// Y major
 		{
-			u = normal.y() > 0.0f ? Vector4(0.0f, 0.0f, 1.0f) : Vector4(0.0f, 0.0f, -1.0f);
+			u = normal.y() > 0.0f ? Vector4(0.0f, 0.0f, -1.0f) : Vector4(0.0f, 0.0f, 1.0f);
 			v = Vector4(1.0f, 0.0f, 0.0f);
 		}
 		else	// Z major
 		{
-			u = normal.z() > 0.0f ? Vector4(1.0f, 0.0f, 0.0f) : Vector4(-1.0f, 0.0f, 0.0f);
+			u = normal.z() > 0.0f ? Vector4(-1.0f, 0.0f, 0.0f) : Vector4(1.0f, 0.0f, 0.0f);
 			v = Vector4(0.0f, 1.0f, 0.0f);
 		}
 	}

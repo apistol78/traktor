@@ -44,6 +44,7 @@ public:
 
 	void freeze(
 		const AlignedVector< Vector4 >& points,
+		const Vector4& normal,
 		std::vector< Triangle >& outTriangles,
 		uint32_t flags = TfSorted
 	);
