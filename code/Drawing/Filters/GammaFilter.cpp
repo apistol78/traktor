@@ -40,14 +40,14 @@ Ref< Image > GammaFilter::apply(const Image* image)
 	{
 		for (int32_t x = 0; x < image->getWidth(); ++x)
 		{
-			image->getPixel(x, y, in);
+			image->getPixelUnsafe(x, y, in);
 			Color out(
 				std::pow(in.getRed(), m_gamma[0]),
 				std::pow(in.getGreen(), m_gamma[1]),
 				std::pow(in.getBlue(), m_gamma[2]),
 				std::pow(in.getAlpha(), m_gamma[3])
 			);
-			final->setPixel(x, y, out);
+			final->setPixelUnsafe(x, y, out);
 		}
 	}
 	return final;

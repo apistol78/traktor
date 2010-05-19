@@ -16,10 +16,10 @@ Ref< Image > GrayscaleFilter::apply(const Image* image)
 	{
 		for (int32_t x = 0; x < image->getWidth(); ++x)
 		{
-			image->getPixel(x, y, in);
+			image->getPixelUnsafe(x, y, in);
 			float luminance = 0.2126f * in.getRed() + 0.7152f * in.getGreen() + 0.0722f * in.getBlue();
 			Color out(luminance, luminance, luminance, in.getAlpha());
-			final->setPixel(x, y, out);
+			final->setPixelUnsafe(x, y, out);
 		}
 	}
 	return final;

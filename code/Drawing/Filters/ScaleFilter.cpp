@@ -45,15 +45,15 @@ Ref< Image > ScaleFilter::apply(const Image* image)
 			{
 				int yy = int(std::floor(y * sy));
 				for (int32_t x = 0; x < image->getWidth(); ++x)
-					image->getPixel(x, yy, row[x]);
+					image->getPixelUnsafe(x, yy, row[x]);
 			}
 			else	// MgLinear
 			{
 				int yy = int(std::floor(y * sy));
 				for (int32_t x = 0; x < image->getWidth(); ++x)
 				{
-					image->getPixel(x, yy, c1);
-					image->getPixel(x, yy + 1, c2);
+					image->getPixelUnsafe(x, yy, c1);
+					image->getPixelUnsafe(x, yy + 1, c2);
 					row[x] = c1 + (c2 - c1) * (y * sy - yy);
 				}
 			}
@@ -64,7 +64,7 @@ Ref< Image > ScaleFilter::apply(const Image* image)
 			{
 				int yy = int(std::floor(y + sy * 0.5f));
 				for (int32_t x = 0; x < image->getWidth(); ++x)
-					image->getPixel(x, yy, row[x]);
+					image->getPixelUnsafe(x, yy, row[x]);
 			}
 			else	// MnAverage
 			{
@@ -81,7 +81,7 @@ Ref< Image > ScaleFilter::apply(const Image* image)
 				
 					for (int32_t yy = y1; yy < y2; ++yy)
 					{
-						image->getPixel(x, yy, c1);
+						image->getPixelUnsafe(x, yy, c1);
 						
 						if (m_keepZeroAlpha)
 						{
@@ -102,7 +102,7 @@ Ref< Image > ScaleFilter::apply(const Image* image)
 		else	// Keep
 		{
 			for (int32_t x = 0; x < image->getWidth(); ++x)
-				image->getPixel(x, y, row[x]);
+				image->getPixelUnsafe(x, y, row[x]);
 		}
 
 		for (int32_t x = 0; x < m_width; ++x)
@@ -112,12 +112,12 @@ Ref< Image > ScaleFilter::apply(const Image* image)
 				if (m_magnify == MgNearest)
 				{
 					int32_t xx = int32_t(std::floor(x * sx));
-					final->setPixel(x, y, row[xx]);
+					final->setPixelUnsafe(x, y, row[xx]);
 				}
 				else	// MgLinear
 				{
 					int32_t xx = int32_t(std::floor(x * sx));
-					final->setPixel(x, y, row[xx] + (row[xx + 1] - row[xx]) * (x * sx - xx));
+					final->setPixelUnsafe(x, y, row[xx] + (row[xx + 1] - row[xx]) * (x * sx - xx));
 				}
 			}
 			else if (sx > 1.0f)	// Minify
@@ -125,7 +125,7 @@ Ref< Image > ScaleFilter::apply(const Image* image)
 				if (m_minify == MnCenter)
 				{
 					int32_t xx = int32_t(std::floor(x * sx + sx * 0.5f));
-					final->setPixel(x, y, row[xx]);
+					final->setPixelUnsafe(x, y, row[xx]);
 				}
 				else	// MnAverage
 				{
@@ -148,12 +148,12 @@ Ref< Image > ScaleFilter::apply(const Image* image)
 					if (m_keepZeroAlpha && zeroAlpha)
 						c.setAlpha(0.0f);
 
-					final->setPixel(x, y, c);
+					final->setPixelUnsafe(x, y, c);
 				}
 			}
 			else	// Keep
 			{
-				final->setPixel(x, y, row[x]);
+				final->setPixelUnsafe(x, y, row[x]);
 			}
 		}
 	}

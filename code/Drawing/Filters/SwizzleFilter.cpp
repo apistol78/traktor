@@ -27,7 +27,7 @@ Ref< Image > SwizzleFilter::apply(const Image* image)
 	{
 		for (int32_t x = 0; x < image->getWidth(); ++x)
 		{
-			image->getPixel(x, y, in);
+			image->getPixelUnsafe(x, y, in);
 			for (int32_t i = 0; i < 4; ++i)
 			{
 				switch (std::toupper(m_swizzle[i]))
@@ -52,7 +52,7 @@ Ref< Image > SwizzleFilter::apply(const Image* image)
 					break;
 				}
 			}
-			final->setPixel(x, y, out);
+			final->setPixelUnsafe(x, y, out);
 		}
 	}
 	return final;

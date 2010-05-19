@@ -9,9 +9,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_DRAWING_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -65,10 +65,16 @@ public:
 	void clear(const Color& color);
 
 	/*! \brief Get single pixel. */
-	bool getPixel(int32_t x, int32_t y, Color& color) const;
+	bool getPixel(int32_t x, int32_t y, Color& outColor) const;
 
 	/*! \brief Set single pixel. */
 	bool setPixel(int32_t x, int32_t y, const Color& color);
+	
+	/*! \brief Get single pixel, no boundary check. */
+	void getPixelUnsafe(int32_t x, int32_t y, Color& outColor) const;
+	
+	/*! \brief Set single pixel, no boundary check. */
+	void setPixelUnsafe(int32_t x, int32_t y, const Color& color);
 	
 	/*! \brief Apply filter on entire image. */
 	Ref< Image > applyFilter(IImageFilter* imageFilter) const;
