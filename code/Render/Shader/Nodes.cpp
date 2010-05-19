@@ -1476,6 +1476,18 @@ bool Scalar::serialize(ISerializer& s)
 
 /*---------------------------------------------------------------------------*/
 
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Sign", 0, Sign, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_Sign_i[] = { { L"Input", false }, 0 };
+const ImmutableNode::OutputPinDesc c_Sign_o[] = { L"Output", 0 };
+
+Sign::Sign()
+:	ImmutableNode(c_Sign_i, c_Sign_o)
+{
+}
+
+/*---------------------------------------------------------------------------*/
+
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Sin", 0, Sin, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Sin_i[] = { { L"Theta", false }, 0 };

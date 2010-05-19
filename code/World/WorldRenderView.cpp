@@ -28,6 +28,7 @@ render::handle_t s_handleLightBaseColor;
 render::handle_t s_handleLightShadowColor;
 render::handle_t s_handleShadowEnable;
 render::handle_t s_handleShadowMask;
+render::handle_t s_handleShadowMaskSize;
 render::handle_t s_handleDepthEnable;
 render::handle_t s_handleDepthMap;
 render::handle_t s_handleTime;
@@ -44,6 +45,7 @@ WorldRenderView::WorldRenderView()
 ,	m_viewSize(0.0f, 0.0f)
 ,	m_eyePosition(0.0f, 0.0f, 0.0f, 1.0f)
 ,	m_lightCount(0)
+,	m_shadowMaskSize(0.0f)
 ,	m_time(0.0f)
 ,	m_deltaTime(0.0f)
 ,	m_interval(0.0f)
@@ -79,6 +81,7 @@ WorldRenderView::WorldRenderView()
 		s_handleLightShadowColor = render::getParameterHandle(L"LightShadowColor");
 		s_handleShadowEnable = render::getParameterHandle(L"ShadowEnable");
 		s_handleShadowMask = render::getParameterHandle(L"ShadowMask");
+		s_handleShadowMaskSize = render::getParameterHandle(L"ShadowMaskSize");
 		s_handleDepthEnable = render::getParameterHandle(L"DepthEnable");
 		s_handleDepthMap = render::getParameterHandle(L"DepthMap");
 		s_handleTime = render::getParameterHandle(L"Time");
@@ -128,7 +131,8 @@ void WorldRenderView::setShadowBox(const Aabb& shadowBox)
 
 void WorldRenderView::setShadowMask(render::ITexture* shadowMask)
 {
-	m_shadowMask = shadowMask;
+	if ((m_shadowMask = shadowMask) != 0)
+		m_shadowMaskSize = float(0.5f / m_shadowMask->getWidth());
 }
 
 void WorldRenderView::setDepthMap(render::ITexture* depthMap)
@@ -371,7 +375,10 @@ void WorldRenderView::setLightShaderParameters(render::ShaderParameters* shaderP
 void WorldRenderView::setShadowMapShaderParameters(render::ShaderParameters* shaderParams) const
 {
 	if (m_shadowMask)
+	{
 		shaderParams->setTextureParameter(s_handleShadowMask, m_shadowMask);
+		shaderParams->setFloatParameter(s_handleShadowMaskSize, m_shadowMaskSize);
+	}
 }
 
 void WorldRenderView::setDepthMapShaderParameters(render::ShaderParameters* shaderParams) const

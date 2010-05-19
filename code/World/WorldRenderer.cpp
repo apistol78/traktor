@@ -79,10 +79,10 @@ bool WorldRenderer::create(
 		desc.count = 1;
 		//desc.width = width;
 		//desc.height = height;
-		desc.width = width / 2;
-		desc.height = height / 2;
-		desc.multiSample = 0; //multiSample;
-		desc.depthStencil = true; //false;
+		desc.width = width/* / 2*/;
+		desc.height = height/* / 2*/;
+		desc.multiSample = multiSample;
+		desc.depthStencil = false;
 		desc.targets[0].format = render::TfR16F;
 
 		m_depthTargetSet = renderSystem->createRenderTargetSet(desc);
@@ -142,13 +142,20 @@ bool WorldRenderer::create(
 
 		m_shadowTargetSet = renderSystem->createRenderTargetSet(desc);
 
-		// Create shadow mask target.
-		int32_t shadowMaskWidth = width / 2;
-		int32_t shadowMaskHeight = height / 2;
+		// Determine shadow mask size; high quality is same as entire screen.
+		if (m_settings.shadowsQuality == WorldRenderSettings::SqHigh)
+		{
+			desc.width = width;
+			desc.height = height;
+		}
+		else
+		{
+			desc.width = width / 2;
+			desc.height = height / 2;
+		}
 
+		// Create shadow mask target.
 		desc.count = 1;
-		desc.width = shadowMaskWidth;
-		desc.height = shadowMaskHeight;
 		desc.multiSample = 0;
 		desc.depthStencil = false;
 		desc.targets[0].format = render::TfR8;
@@ -181,8 +188,8 @@ bool WorldRenderer::create(
 				shadowMaskProjectionSettings,
 				resourceManager,
 				renderSystem,
-				shadowMaskWidth,
-				shadowMaskHeight
+				desc.width,
+				desc.height
 			))
 			{
 				log::warning << L"Unable to create shadow projection process; shadows disabled" << Endl;
@@ -344,11 +351,11 @@ void WorldRenderer::render(uint32_t flags, int frame)
 	if ((flags & WrfDepthMap) != 0 && f.haveDepth)
 	{
 		m_renderView->pushMarker("World: Depth");
-		if (m_renderView->begin(m_depthTargetSet, 0, /*true*/false))
+		if (m_renderView->begin(m_depthTargetSet, 0, true))
 		{
 			const float depthColor[] = { m_settings.viewFarZ, m_settings.viewFarZ, m_settings.viewFarZ, m_settings.viewFarZ };
-			//m_renderView->clear(render::CfColor, depthColor, 1.0f, 0);
-			m_renderView->clear(render::CfColor | render::CfDepth, depthColor, 1.0f, 0);
+			m_renderView->clear(render::CfColor, depthColor, 1.0f, 0);
+			//m_renderView->clear(render::CfColor | render::CfDepth, depthColor, 1.0f, 0);
 			f.depth->getRenderContext()->render(m_renderView, render::RfOpaque);
 			m_renderView->end();
 		}

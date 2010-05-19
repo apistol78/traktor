@@ -1502,6 +1502,10 @@
       <second>Scalar</second>
     </item>
     <item>
+      <first>SHADERGRAPH_NODE_SIGN</first>
+      <second>Sign</second>
+    </item>
+    <item>
       <first>SHADERGRAPH_NODE_SIN</first>
       <second>Sin</second>
     </item>

@@ -62,6 +62,7 @@ const NodeCategory c_nodeCateogories[] =
 	{ type_of< Sampler >(), L"SHADERGRAPH_VALUE", L"Texture sampler" },
 	{ type_of< Scalar >(), L"SHADERGRAPH_VALUE", L"Scalar constant" },
 	{ type_of< Sin >(), L"SHADERGRAPH_TRIGONOMETRY", L"Sine" },
+	{ type_of< Sign >(), L"SHADERGRAPH_MISCELLANEOUS", L"Sign" },
 	{ type_of< Sqrt >(), L"SHADERGRAPH_ARITHMETIC", L"Square-root" },
 	{ type_of< Sub >(), L"SHADERGRAPH_ARITHMETIC", L"Subtract" },
 	{ type_of< Sum >(), L"SHADERGRAPH_ARITHMETIC", L"Summarize by evaluation branch from iteration" },

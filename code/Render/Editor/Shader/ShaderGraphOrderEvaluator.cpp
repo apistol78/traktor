@@ -66,6 +66,7 @@ int ShaderGraphOrderEvaluator::evaluate(const Node* node) const
 		is_a< Polynomial >(node) ||
 		is_a< Pow >(node) ||
 		is_a< Reflect >(node) ||
+		is_a< Sign >(node) ||
 		is_a< Sqrt >(node)
 	)
 		order = nodeConstantOrNonLinear(node);

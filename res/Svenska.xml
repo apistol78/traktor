@@ -1510,6 +1510,10 @@
       <second>Skalär</second>
     </item>
     <item>
+      <first>SHADERGRAPH_NODE_SIGN</first>
+      <second>Tecken</second>
+    </item>
+    <item>
       <first>SHADERGRAPH_NODE_SIN</first>
       <second>Sin</second>
     </item>
