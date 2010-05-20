@@ -16,6 +16,7 @@
 #include "Core/Settings/Settings.h"
 #include "Core/System/IProcess.h"
 #include "Core/System/OS.h"
+#include "Core/Thread/Acquire.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Timer/Timer.h"
@@ -874,6 +875,8 @@ void EditorForm::updateAdditionalPanelMenu()
 
 void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockBuild);
+
 	Timer timerBuild;
 	timerBuild.start();
 
@@ -1795,7 +1798,8 @@ void EditorForm::eventTimer(ui::Event* /*event*/)
 	if (commited && m_settings->getProperty< PropertyBoolean >(L"Editor.BuildWhenSourceModified"))
 		buildAssets(false);
 
-	std::vector< Guid > eventIds;
+	// Gather events from output database; used to notify
+	// editors what to reload.
 	while (m_outputDatabase->getEvent(event, eventId, remote))
 	{
 		if (event != db::PeCommited)
@@ -1803,13 +1807,17 @@ void EditorForm::eventTimer(ui::Event* /*event*/)
 
 		log::debug << (remote ? L"Remotely" : L"Locally") << L" modified instance " << eventId.format() << L" detected; propagate to editor pages..." << Endl;
 
-		eventIds.push_back(eventId);
+		m_eventIds.push_back(eventId);
 
 		if (remote)
 			updateView = true;
 	}
 
-	if (!eventIds.empty())
+	// Only propagate events when build is finished.
+	if (
+		!m_eventIds.empty() &&
+		m_lockBuild.wait(0)
+	)
 	{
 		// Propagate database event to editor pages in order for them to flush resources.
 		for (int i = 0; i < m_tab->getPageCount(); ++i)
@@ -1818,7 +1826,7 @@ void EditorForm::eventTimer(ui::Event* /*event*/)
 			Ref< IEditorPage > editorPage = checked_type_cast< IEditorPage* >(tabPage->getData(L"EDITORPAGE"));
 			if (editorPage)
 			{
-				for (std::vector< Guid >::iterator j = eventIds.begin(); j != eventIds.end(); ++j)
+				for (std::vector< Guid >::iterator j = m_eventIds.begin(); j != m_eventIds.end(); ++j)
 					editorPage->handleDatabaseEvent(*j);
 			}
 		}
@@ -1826,9 +1834,12 @@ void EditorForm::eventTimer(ui::Event* /*event*/)
 		// Propagate database event to editor plugins.
 		for (RefArray< EditorPluginSite >::iterator i = m_editorPluginSites.begin(); i != m_editorPluginSites.end(); ++i)
 		{
-			for (std::vector< Guid >::iterator j = eventIds.begin(); j != eventIds.end(); ++j)
+			for (std::vector< Guid >::iterator j = m_eventIds.begin(); j != m_eventIds.end(); ++j)
 				(*i)->handleDatabaseEvent(*j);
 		}
+
+		m_eventIds.resize(0);
+		m_lockBuild.release();
 
 		log::debug << L"Database change(s) notified" << Endl;
 	}
@@ -1853,7 +1864,7 @@ void EditorForm::threadAssetMonitor()
 	while (!m_threadAssetMonitor->stopped())
 	{
 		if (
-			(!m_threadBuild || m_threadBuild->finished()) &&
+			m_lockBuild.wait(0) &&
 			m_sourceDatabase &&
 			m_settings->getProperty< PropertyBoolean >(L"Editor.BuildWhenAssetModified")
 		)
@@ -1899,10 +1910,9 @@ void EditorForm::threadAssetMonitor()
 					}
 				}
 
-				if (
-					(!m_threadBuild || m_threadBuild->finished()) &&
-					!modifiedAssets.empty()
-				)
+				m_lockBuild.release();
+
+				if (!modifiedAssets.empty())
 				{
 					log::info << L"Modified source asset(s) detected; building asset(s)..." << Endl;
 					buildAssets(modifiedAssets, false);
