@@ -1,6 +1,7 @@
 #ifndef traktor_flash_Array_H
 #define traktor_flash_Array_H
 
+#include <algorithm>
 #include "Flash/Action/ActionObject.h"
 #include "Flash/Action/ActionValueArray.h"
 
@@ -48,6 +49,12 @@ public:
 	Ref< Array > splice(int32_t startIndex, uint32_t deleteCount, const ActionValueArray& values, int32_t offset);
 
 	uint32_t length() const;
+
+	template < typename PredicateType >
+	void sort(const PredicateType& predicate)
+	{
+		std::sort(m_values.begin(), m_values.end(), predicate);
+	}
 
 	virtual void setMember(const std::wstring& memberName, const ActionValue& memberValue);
 

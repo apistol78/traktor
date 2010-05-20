@@ -1,4 +1,5 @@
 #include "Core/Log/Log.h"
+#include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Classes/Array.h"
 #include "Flash/Action/Avm1/Classes/AsArray.h"
@@ -8,6 +9,38 @@ namespace traktor
 {
 	namespace flash
 	{
+		namespace
+		{
+
+struct ArrayPredicateSort
+{
+	const IActionVM* vm;
+	ActionContext* context;
+	ActionFunction* predicateFunction;
+	ActionValueArray* predicateFunctionArgs;
+
+	bool operator () (const ActionValue& avl, const ActionValue& avr) const
+	{
+		(*predicateFunctionArgs)[0] = avl;
+		(*predicateFunctionArgs)[1] = avr;
+
+		ActionValue resv = predicateFunction->call(vm, context, 0, (*predicateFunctionArgs));
+		int32_t res = int32_t(resv.getNumberSafe());
+
+		return res < 0;
+	}
+};
+
+struct ArrayDefaultSort
+{
+	bool operator () (const ActionValue& avl, const ActionValue& avr) const
+	{
+		// \fixme
+		return false;
+	}
+};
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsArray", AsArray, ActionClass)
 
@@ -126,7 +159,28 @@ void AsArray::Array_slice(CallArgs& ca)
 
 void AsArray::Array_sort(CallArgs& ca)
 {
-	T_FATAL_ERROR;
+	Array* arr = checked_type_cast< Array*, false >(ca.self);
+
+	if (ca.args.size() >= 1)
+	{
+		ActionFunction* predicateFunction = ca.args[0].getObjectSafe< ActionFunction >();
+		if (!predicateFunction)
+			return;
+
+		// Allocate argument array here as we don't want to flood the pool
+		// with new array for each comparison.
+		ActionValueArray predicateFunctionArgs(ca.context->getPool(), 2);
+
+		ArrayPredicateSort aps;
+		aps.vm = ca.vm;
+		aps.context = ca.context;
+		aps.predicateFunction = predicateFunction;
+		aps.predicateFunctionArgs = &predicateFunctionArgs;
+
+		arr->sort(aps);
+	}
+	else
+		arr->sort(ArrayDefaultSort());
 }
 
 void AsArray::Array_sortOn(CallArgs& ca)
