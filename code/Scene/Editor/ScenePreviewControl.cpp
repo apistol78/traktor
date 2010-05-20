@@ -1,5 +1,16 @@
-#include <sstream>
-#include <limits>
+#include "Core/Io/StringOutputStream.h"
+#include "Core/Log/Log.h"
+#include "Core/Misc/String.h"
+#include "Core/Settings/PropertyBoolean.h"
+#include "Core/Settings/PropertyInteger.h"
+#include "Core/Settings/Settings.h"
+#include "Database/Instance.h"
+#include "Editor/IEditor.h"
+#include "Editor/TypeBrowseFilter.h"
+#include "I18N/Text.h"
+#include "I18N/Format.h"
+#include "Physics/PhysicsManager.h"
+#include "Scene/Scene.h"
 #include "Scene/Editor/ScenePreviewControl.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/ISceneEditorProfile.h"
@@ -10,19 +21,13 @@
 #include "Scene/Editor/FrameEvent.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/IEntityEditor.h"
-#include "Scene/ISceneController.h"
-#include "Scene/Scene.h"
-#include "Physics/PhysicsManager.h"
-#include "Editor/IEditor.h"
-#include "Editor/TypeBrowseFilter.h"
-#include "Database/Instance.h"
 #include "Ui/Application.h"
-#include "Ui/Command.h"
-#include "Ui/TableLayout.h"
 #include "Ui/Bitmap.h"
-#include "Ui/Slider.h"
-#include "Ui/NumericEditValidator.h"
+#include "Ui/Command.h"
 #include "Ui/MethodHandler.h"
+#include "Ui/NumericEditValidator.h"
+#include "Ui/Slider.h"
+#include "Ui/TableLayout.h"
 #include "Ui/Events/CommandEvent.h"
 #include "Ui/Events/MouseEvent.h"
 #include "Ui/Events/IdleEvent.h"
@@ -32,16 +37,6 @@
 #include "Ui/Custom/StatusBar/StatusBar.h"
 #include "Ui/Custom/Splitter.h"
 #include "Ui/Custom/QuadSplitter.h"
-#include "I18N/Text.h"
-#include "I18N/Format.h"
-#include "World/Entity/EntityUpdate.h"
-#include "World/Entity/Entity.h"
-#include "Core/Io/StringOutputStream.h"
-#include "Core/Misc/String.h"
-#include "Core/Settings/PropertyBoolean.h"
-#include "Core/Settings/PropertyInteger.h"
-#include "Core/Settings/Settings.h"
-#include "Core/Log/Log.h"
 
 // Resources
 #include "Resources/SceneEdit.h"
@@ -395,6 +390,8 @@ void ScenePreviewControl::eventIdle(ui::Event* event)
 	ui::IdleEvent* idleEvent = checked_type_cast< ui::IdleEvent* >(event);
 	if (isVisible(true))
 	{
+		Ref< Scene > scene = m_context->getScene();
+
 		// Filter delta time.
 		float deltaTime = float(m_timer.getDeltaTime());
 		deltaTime = std::min(deltaTime, 1.0f / 10.0f);
@@ -403,21 +400,6 @@ void ScenePreviewControl::eventIdle(ui::Event* event)
 
 		float scaledTime = m_context->getTime();
 		float scaledDeltaTime = m_context->isPlaying() ? deltaTime * m_context->getTimeScale() : 0.0f;
-
-		// Update scene controller.
-		Ref< Scene > scene = m_context->getScene();
-		if (scene)
-		{
-			Ref< ISceneController > controller = scene->getController();
-			if (controller)
-			{
-				controller->update(
-					m_context->getScene(),
-					scaledTime,
-					scaledDeltaTime
-				);
-			}
-		}
 
 		// Update entities.
 		Ref< EntityAdapter > rootEntityAdapter = m_context->getRootEntityAdapter();
@@ -433,20 +415,14 @@ void ScenePreviewControl::eventIdle(ui::Event* event)
 
 			while (m_lastPhysicsTime < scaledTime)
 			{
-				if (rootEntity)
-				{
-					world::EntityUpdate entityUpdate(c_updateDeltaTime);
-					rootEntity->update(&entityUpdate);
-				}
-
+				scene->update(m_lastPhysicsTime, c_updateDeltaTime);
 				m_context->getPhysicsManager()->update();
 				m_lastPhysicsTime += c_updateDeltaTime;
 			}
 		}
-		else if (rootEntity)
+		else if (scene)
 		{
-			world::EntityUpdate entityUpdate(scaledDeltaTime);
-			rootEntity->update(&entityUpdate);
+			scene->update(scaledTime, scaledDeltaTime);
 		}
 
 		// Issue updates on render controls.

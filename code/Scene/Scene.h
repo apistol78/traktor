@@ -16,10 +16,12 @@ namespace traktor
 	namespace world
 	{
 
-class IEntityManager;
 class Entity;
-class WorldRenderSettings;
+class IEntityManager;
 class PostProcessSettings;
+class WorldRenderer;
+class WorldRenderSettings;
+class WorldRenderView;
 
 	}
 
@@ -44,6 +46,10 @@ public:
 	virtual ~Scene();
 
 	void destroy();
+
+	void update(float time, float deltaTime);
+
+	void build(world::WorldRenderer* worldRenderer, world::WorldRenderView& worldRenderView, int frame);
 
 	Ref< world::IEntityManager > getEntityManager() const;
 
