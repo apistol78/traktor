@@ -51,9 +51,10 @@ Aabb AnimatedMeshEntity::getBoundingBox() const
 {
 	synchronize();
 
+	Aabb boundingBox = m_mesh.valid() ? m_mesh->getBoundingBox() : Aabb();
+
 	if (!m_poseTransforms.empty())
 	{
-		Aabb boundingBox;
 		for (uint32_t i = 0; i < uint32_t(m_poseTransforms.size()); ++i)
 		{
 			const Bone* bone = m_skeleton->getBone(i);
@@ -66,10 +67,9 @@ Aabb AnimatedMeshEntity::getBoundingBox() const
 
 			boundingBox.contain(boneAabb);
 		}
-		return boundingBox;
 	}
 
-	return m_mesh.valid() ? m_mesh->getBoundingBox() : Aabb();
+	return boundingBox;
 }
 
 void AnimatedMeshEntity::render(world::WorldContext* worldContext, world::WorldRenderView* worldRenderView, float distance)

@@ -121,6 +121,10 @@ bool SkinnedMeshConverter::convert(
 		float blendIndices[4], blendWeights[4];
 		if (std::fabs(totalInfluence) > FUZZY_EPSILON)
 		{
+			// Don't normalize single bone vertices; skinned with world.
+			if (boneCount <= 1)
+				totalInfluence = 1.0f;
+
 			for (int j = 0; j < boneCount; ++j)
 			{
 				blendIndices[j] = float(boneInfluences[j].first);

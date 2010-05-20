@@ -4,6 +4,7 @@
 #include <list>
 #include "Core/Guid.h"
 #include "Core/Io/Path.h"
+#include "Core/Thread/Semaphore.h"
 #include "Editor/IEditor.h"
 #include "Ui/Command.h"
 #include "Ui/Form.h"
@@ -143,8 +144,10 @@ private:
 	Ref< db::Database > m_outputDatabase;
 	Ref< IEditorPage > m_activeEditorPage;
 	Ref< EditorPageSite > m_activeEditorPageSite;
+	std::vector< Guid > m_eventIds;
 	Thread* m_threadAssetMonitor;
 	Thread* m_threadBuild;
+	Semaphore m_lockBuild;
 
 	void setPropertyObject(Object* properties);
 

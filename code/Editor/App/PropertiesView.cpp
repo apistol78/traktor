@@ -125,9 +125,10 @@ void PropertiesView::eventPropertyCommand(ui::Event* event)
 				{
 					const TypeInfo* filterType = browseItem->getFilterType();
 
-					// Check if filter type is actually a result of a asset; in such case we should
-					// browse for the asset and not the final result.
+					// Check if filter type is actually a product of an asset; in such case we should
+					// also browse for the asset.
 					TypeInfoSet filterTypes;
+					filterTypes.insert(filterType);
 
 					std::vector< const TypeInfo* > assetTypes;
 					type_of< ITypedAsset >().findAllOf(assetTypes);
@@ -140,9 +141,6 @@ void PropertiesView::eventPropertyCommand(ui::Event* event)
 								filterTypes.insert(*i);
 						}
 					}
-
-					if (filterTypes.empty())
-						filterTypes.insert(filterType);
 
 					editor::TypeBrowseFilter filter(filterTypes);
 					instance = m_editor->browseInstance(&filter);
