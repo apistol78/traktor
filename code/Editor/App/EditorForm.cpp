@@ -1864,9 +1864,9 @@ void EditorForm::threadAssetMonitor()
 	while (!m_threadAssetMonitor->stopped())
 	{
 		if (
-			m_lockBuild.wait(0) &&
 			m_sourceDatabase &&
-			m_settings->getProperty< PropertyBoolean >(L"Editor.BuildWhenAssetModified")
+			m_settings->getProperty< PropertyBoolean >(L"Editor.BuildWhenAssetModified") &&
+			m_lockBuild.wait(0)
 		)
 		{
 			RefArray< db::Instance > assetInstances;
