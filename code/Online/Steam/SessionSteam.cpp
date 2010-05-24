@@ -3,6 +3,8 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
 #include "Core/Serialization/BinarySerializer.h"
+#include "Core/Thread/Thread.h"
+#include "Core/Thread/ThreadManager.h"
 #include "Online/Steam/CurrentUserSteam.h"
 #include "Online/Steam/SaveGameSteam.h"
 #include "Online/Steam/SessionSteam.h"
@@ -22,13 +24,39 @@ SessionSteam::SessionSteam(CurrentUserSteam* user)
 ,	m_requestedStats(false)
 ,	m_receivedStats(false)
 ,	m_storeStats(false)
+,	m_storedStats(false)
 ,	m_destroyed(false)
 {
 }
 
 void SessionSteam::destroy()
 {
-	m_destroyed = true;
+	if (!m_destroyed)
+	{
+		m_destroyed = true;
+
+		// Ensure pending stats are sent to Steam.
+		if (m_storeStats)
+		{
+			if (SteamUser()->BLoggedOn())
+			{
+				m_storedStats = false;
+				if (SteamUserStats()->StoreStats())
+				{
+					// Wait until we've received an acknowledgment; bail if more than one second.
+					for (int i = 0; i < 100; ++i)
+					{
+						SteamAPI_RunCallbacks();
+						if (m_storedStats)
+							break;
+						ThreadManager::getInstance().getCurrentThread()->sleep(10);
+					}
+					if (!m_storedStats)
+						log::warning << L"Steam stats not stored properly" << Endl;
+				}
+			}
+		}
+	}
 }
 
 bool SessionSteam::isConnected() const
@@ -44,10 +72,16 @@ Ref< IUser > SessionSteam::getUser()
 bool SessionSteam::rewardAchievement(const std::wstring& achievementId)
 {
 	if (!m_receivedStats)
+	{
+		log::error << L"Unable to reward achievement \"" << achievementId << L"\"; no stats received yet" << Endl;
 		return false;
+	}
 
 	if (!SteamUserStats()->SetAchievement(wstombs(achievementId).c_str()))
+	{
+		log::error << L"Unable to reward achievement \"" << achievementId << L"\"; SetAchievement failed" << Endl;
 		return false;
+	}
 
 	m_storeStats = true;
 	return true;
@@ -56,10 +90,16 @@ bool SessionSteam::rewardAchievement(const std::wstring& achievementId)
 bool SessionSteam::withdrawAchievement(const std::wstring& achievementId)
 {
 	if (!m_receivedStats)
+	{
+		log::error << L"Unable to withdraw achievement \"" << achievementId << L"\"; no stats received yet" << Endl;
 		return false;
+	}
 
 	if (!SteamUserStats()->ClearAchievement(wstombs(achievementId).c_str()))
+	{
+		log::error << L"Unable to withdraw achievement \"" << achievementId << L"\"; ClearAchievement failed" << Endl;
 		return false;
+	}
 
 	m_storeStats = true;
 	return true;
@@ -124,6 +164,7 @@ bool SessionSteam::update()
 
 	if (m_storeStats)
 	{
+		m_storedStats = false;
 		if (SteamUser()->BLoggedOn())
 		{
 			if (SteamUserStats()->StoreStats())
@@ -136,18 +177,30 @@ bool SessionSteam::update()
 
 void SessionSteam::OnUserStatsReceived(UserStatsReceived_t* pCallback)
 {
-	log::debug << L"Steam session event; user stats received" << Endl;
-	m_receivedStats = true;
+	if (pCallback->m_eResult == k_EResultOK)
+	//{
+		log::debug << L"Steam session event; user stats received" << Endl;
+		m_receivedStats = true;
+	//}
+	//else
+		//log::error << L"Steam session event; failure receiving stats (m_eResult = " << int32_t(pCallback->m_eResult) << L")" << Endl;
 }
 
 void SessionSteam::OnUserStatsStored(UserStatsStored_t* pCallback)
 {
-	log::debug << L"Steam session event; user stats stored" << Endl;
+	if (pCallback->m_eResult == k_EResultOK)
+	{
+		log::debug << L"Steam session event; user stats stored" << Endl;
+		m_storedStats = true;
+	}
+	else
+		log::error << L"Steam session event; failure storing stats (m_eResult = " << int32_t(pCallback->m_eResult) << L")" << Endl;
 }
 
 void SessionSteam::OnAchievementStored(UserAchievementStored_t* pCallback)
 {
 	log::debug << L"Steam session event; achievement stored" << Endl;
+	m_storedStats = true;
 }
 
 	}

@@ -14,7 +14,10 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.online.SessionManagerSteam", 0, Session
 bool SessionManagerSteam::create()
 {
 	if (!SteamAPI_Init())
+	{
+		log::error << L"Unable to initialize Steam API" << Endl;
 		return false;
+	}
 
 	m_currentUser = new CurrentUserSteam();
 	return true;
@@ -22,7 +25,14 @@ bool SessionManagerSteam::create()
 
 void SessionManagerSteam::destroy()
 {
+	if (m_session)
+	{
+		m_session->destroy();
+		m_session = 0;
+	}
+
 	m_currentUser = 0;
+
 	SteamAPI_Shutdown();
 }
 
