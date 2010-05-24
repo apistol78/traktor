@@ -1,7 +1,10 @@
 #include <steam/steam_api.h>
+#include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
+#include "Core/Serialization/BinarySerializer.h"
 #include "Online/Steam/CurrentUserSteam.h"
+#include "Online/Steam/SaveGameSteam.h"
 #include "Online/Steam/SessionSteam.h"
 
 namespace traktor
@@ -78,12 +81,34 @@ bool SessionSteam::getStatValue(const std::wstring& statId, float& outValue)
 
 Ref< ISaveGame > SessionSteam::createSaveGame(const std::wstring& name, ISerializable* attachment)
 {
-	return 0;
+	DynamicMemoryStream dms(false, true);
+	BinarySerializer(&dms).writeObject(attachment);
+
+	const std::vector< uint8_t >& buffer = dms.getBuffer();
+	if (!SteamRemoteStorage()->FileWrite(wstombs(name).c_str(), &buffer[0], buffer.size()))
+	{
+		log::error << L"Unable to create save game; Steam FileWrite failed" << Endl;
+		return 0;
+	}
+
+	return new SaveGameSteam(name);
 }
 
 bool SessionSteam::getAvailableSaveGames(RefArray< ISaveGame >& outSaveGames) const
 {
-	return false;
+	int32_t fileCount = SteamRemoteStorage()->GetFileCount();
+	int32_t fileSize;
+
+	for (int32_t i = 0; i < fileCount; ++i)
+	{
+		const char* fileName = SteamRemoteStorage()->GetFileNameAndSize(i, &fileSize);
+		if (!fileName)
+			continue;
+
+		outSaveGames.push_back(new SaveGameSteam(mbstows(fileName)));
+	}
+
+	return true;
 }
 
 bool SessionSteam::update()
