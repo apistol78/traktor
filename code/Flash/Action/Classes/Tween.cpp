@@ -85,6 +85,25 @@ void Tween::start()
 
 	m_timeStart = avm_number_t(-1);
 	m_playing = true;
+
+	if (m_property && m_function)
+	{
+		ActionValueArray argv0(m_context->getPool(), 4);
+		ActionValueArray argv1(m_context->getPool(), 1);
+
+		// Calculate eased value.
+		argv0[0] = ActionValue(avm_number_t(0));
+		argv0[1] = ActionValue(m_begin);
+		argv0[2] = ActionValue(m_finish - m_begin);
+		argv0[3] = ActionValue(m_duration);
+
+		ActionValue value = m_function->call(m_context, this, argv0);
+		m_current = value.getNumberSafe();
+
+		// Set property value.
+		argv1[0] = value;
+		m_property->call(m_context, m_target, argv1);
+	}
 }
 
 void Tween::stop()
@@ -123,13 +142,13 @@ void Tween::onFrame(CallArgs& ca)
 	argv0[2] = ActionValue(m_finish - m_begin);
 	argv0[3] = ActionValue(m_duration);
 
-	ActionValue value = m_function->call(ca.vm, ca.context, this, argv0);
+	ActionValue value = m_function->call(ca.context, this, argv0);
 	m_current = value.getNumberSafe();
 
 	// Set property value.
 	ActionValueArray argv1(ca.context->getPool(), 1);
 	argv1[0] = value;
-	m_property->call(ca.vm, ca.context, m_target, argv1);
+	m_property->call(ca.context, m_target, argv1);
 
 	// Stop after duration expired.
 	if (m_playing && t >= m_duration)
@@ -142,7 +161,7 @@ void Tween::onFrame(CallArgs& ca)
 		{
 			Ref< ActionFunction > motionFinished = memberValue.getObject< ActionFunction >();
 			if (motionFinished)
-				motionFinished->call(ca.vm, ca.context, this, ActionValueArray());
+				motionFinished->call(ca.context, this, ActionValueArray());
 		}
 	}
 }

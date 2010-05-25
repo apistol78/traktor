@@ -53,36 +53,36 @@ FlashCharacterInstance* FlashButtonInstance::getCharacterInstance(uint16_t refer
 	return i != m_characterInstances.end() ? i->second.ptr() : 0;
 }
 
-void FlashButtonInstance::eventMouseDown(IActionVM* actionVM, int x, int y, int button)
+void FlashButtonInstance::eventMouseDown(int x, int y, int button)
 {
 	if (m_inside && !m_pushed)
 	{
-		executeCondition(actionVM, FlashButton::CmOverUpToOverDown);
-		executeScriptEvent(actionVM, L"onPress");
+		executeCondition(FlashButton::CmOverUpToOverDown);
+		executeScriptEvent(L"onPress");
 		m_state = FlashButton::SmDown;
 		m_pushed = true;
 	}
 }
 
-void FlashButtonInstance::eventMouseUp(IActionVM* actionVM, int x, int y, int button)
+void FlashButtonInstance::eventMouseUp(int x, int y, int button)
 {
 	if (m_inside && m_pushed)
 	{
-		executeCondition(actionVM, FlashButton::CmOverDownToOverUp);
-		executeScriptEvent(actionVM, L"onRelease");
+		executeCondition(FlashButton::CmOverDownToOverUp);
+		executeScriptEvent(L"onRelease");
 		m_state = FlashButton::SmOver;
 		m_pushed = false;
 	}
 	else if (!m_inside && m_pushed)
 	{
-		executeCondition(actionVM, FlashButton::CmOutDownToIdle);
-		executeScriptEvent(actionVM, L"onReleaseOutside");
+		executeCondition(FlashButton::CmOutDownToIdle);
+		executeScriptEvent(L"onReleaseOutside");
 		m_state = FlashButton::SmUp;
 		m_pushed = false;
 	}
 }
 
-void FlashButtonInstance::eventMouseMove(IActionVM* actionVM, int x, int y, int button)
+void FlashButtonInstance::eventMouseMove(int x, int y, int button)
 {
 	SwfRect bounds = getBounds();
 	bool inside = (x >= bounds.min.x && y >= bounds.min.y && x <= bounds.max.x && y <= bounds.max.y);
@@ -92,13 +92,13 @@ void FlashButtonInstance::eventMouseMove(IActionVM* actionVM, int x, int y, int 
 		{
 			if (button == 0)
 			{
-				executeCondition(actionVM, FlashButton::CmIdleToOverUp);
-				executeScriptEvent(actionVM, L"onRollOver");
+				executeCondition(FlashButton::CmIdleToOverUp);
+				executeScriptEvent(L"onRollOver");
 				m_state = FlashButton::SmOver;
 			}
 			else
 			{
-				executeCondition(actionVM, FlashButton::CmOutDownToOverDown);
+				executeCondition(FlashButton::CmOutDownToOverDown);
 				m_state = FlashButton::SmDown;
 			}
 		}
@@ -106,13 +106,13 @@ void FlashButtonInstance::eventMouseMove(IActionVM* actionVM, int x, int y, int 
 		{
 			if (button == 0)
 			{
-				executeCondition(actionVM, FlashButton::CmOverUpToIdle);
-				executeScriptEvent(actionVM, L"onRollOut");
+				executeCondition(FlashButton::CmOverUpToIdle);
+				executeScriptEvent(L"onRollOut");
 				m_state = FlashButton::SmUp;
 			}
 			else
 			{
-				executeCondition(actionVM, FlashButton::CmOverDownToOutDown);
+				executeCondition(FlashButton::CmOverDownToOutDown);
 				m_state = FlashButton::SmOver;
 			}
 		}
@@ -148,7 +148,7 @@ SwfRect FlashButtonInstance::getBounds() const
 	return bounds;
 }
 
-void FlashButtonInstance::executeCondition(IActionVM* actionVM, uint32_t conditionMask)
+void FlashButtonInstance::executeCondition(uint32_t conditionMask)
 {
 	const FlashButton::button_conditions_t& conditions = m_button->getButtonConditions();
 	for (FlashButton::button_conditions_t::const_iterator i = conditions.begin(); i != conditions.end(); ++i)
@@ -156,12 +156,13 @@ void FlashButtonInstance::executeCondition(IActionVM* actionVM, uint32_t conditi
 		if ((i->mask & conditionMask) == 0)
 			continue;
 
-		ActionFrame callFrame(getContext(), this, i->script->getCode(), i->script->getCodeSize(), 4, 0, 0);
-		actionVM->execute(&callFrame);
+		ActionContext* context = getContext();
+		ActionFrame callFrame(context, this, i->script->getCode(), i->script->getCodeSize(), 4, 0, 0);
+		context->getVM()->execute(&callFrame);
 	}
 }
 
-void FlashButtonInstance::executeScriptEvent(IActionVM* actionVM, const std::wstring& eventName)
+void FlashButtonInstance::executeScriptEvent(const std::wstring& eventName)
 {
 	ActionValue memberValue;
 	if (!getLocalMember(eventName, memberValue))
@@ -172,7 +173,7 @@ void FlashButtonInstance::executeScriptEvent(IActionVM* actionVM, const std::wst
 		return;
 
 	ActionFrame callFrame(getContext(), this, 0, 0, 4, 0, 0);
-	eventFunction->call(actionVM, &callFrame, this);
+	eventFunction->call(&callFrame, this);
 }
 
 	}

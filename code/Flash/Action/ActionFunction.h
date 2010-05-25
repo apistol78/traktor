@@ -21,7 +21,6 @@ class ActionObject;
 class ActionFrame;
 class ActionValue;
 class ActionValueArray;
-class IActionVM;
 
 /*! \brief ActionScript callable function base.
  * \ingroup Flash
@@ -33,9 +32,9 @@ class T_DLLCLASS ActionFunction : public ActionObject
 public:
 	ActionFunction(const std::wstring& name);
 
-	virtual ActionValue call(const IActionVM* vm, ActionContext* context, ActionObject* self, const ActionValueArray& args) = 0;
+	virtual ActionValue call(ActionContext* context, ActionObject* self, const ActionValueArray& args) = 0;
 
-	virtual ActionValue call(const IActionVM* vm, ActionFrame* callerFrame, ActionObject* self) = 0;
+	virtual ActionValue call(ActionFrame* callerFrame, ActionObject* self) = 0;
 
 	virtual std::wstring toString() const;
 

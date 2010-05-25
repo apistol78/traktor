@@ -104,10 +104,10 @@ const FlashSprite* FlashMovie::getMovieClip() const
 	return m_movieClip;
 }
 
-Ref< FlashSpriteInstance > FlashMovie::createMovieClipInstance() const
+Ref< FlashSpriteInstance > FlashMovie::createMovieClipInstance(const IActionVM* vm) const
 {
 	Ref< ActionGlobal > global = new ActionGlobal();
-	Ref< ActionContext > context = new ActionContext(this, global);
+	Ref< ActionContext > context = new ActionContext(vm, this, global);
 	
 	Ref< FlashSpriteInstance > spriteInstance = checked_type_cast< FlashSpriteInstance*, false >(m_movieClip->createInstance(context, 0));
 

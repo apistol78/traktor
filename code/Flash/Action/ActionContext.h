@@ -30,13 +30,15 @@ class T_DLLCLASS ActionContext : public Object
 	T_RTTI_CLASS;
 
 public:
-	ActionContext(const FlashMovie* movie, ActionObject* global);
+	ActionContext(const IActionVM* vm, const FlashMovie* movie, ActionObject* global);
 
 	void addFrameListener(ActionObject* frameListener);
 
 	void removeFrameListener(ActionObject* frameListener);
 
-	void notifyFrameListeners(const IActionVM* vm, avm_number_t time);
+	void notifyFrameListeners(avm_number_t time);
+
+	const IActionVM* getVM() const { return m_vm; }
 
 	const Ref< const FlashMovie >& getMovie() const { return m_movie; }
 
@@ -51,6 +53,7 @@ private:
 		Ref< ActionFunction > listenerFunction;
 	};
 
+	const IActionVM* m_vm;
 	Ref< const FlashMovie > m_movie;
 	Ref< ActionObject > m_global;
 	ActionValuePool m_pool;

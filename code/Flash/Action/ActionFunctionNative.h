@@ -26,7 +26,6 @@ class ActionContext;
  */
 struct CallArgs
 {
-	const IActionVM* vm;
 	ActionContext* context;
 	ActionObject* self;
 	ActionValueArray args;
@@ -274,9 +273,9 @@ class T_DLLCLASS ActionFunctionNative : public ActionFunction
 public:
 	ActionFunctionNative(INativeFunction* nativeFunction);
 
-	virtual ActionValue call(const IActionVM* vm, ActionContext* context, ActionObject* self, const ActionValueArray& args);
+	virtual ActionValue call(ActionContext* context, ActionObject* self, const ActionValueArray& args);
 
-	virtual ActionValue call(const IActionVM* vm, ActionFrame* callerFrame, ActionObject* self);
+	virtual ActionValue call(ActionFrame* callerFrame, ActionObject* self);
 
 private:
 	Ref< INativeFunction > m_nativeFunction;

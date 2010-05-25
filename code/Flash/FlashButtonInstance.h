@@ -48,11 +48,11 @@ public:
 	 */
 	FlashCharacterInstance* getCharacterInstance(uint16_t referenceId) const;
 
-	virtual void eventMouseDown(IActionVM* vm, int x, int y, int button);
+	virtual void eventMouseDown(int x, int y, int button);
 
-	virtual void eventMouseUp(IActionVM* actionVM, int x, int y, int button);
+	virtual void eventMouseUp(int x, int y, int button);
 
-	virtual void eventMouseMove(IActionVM* actionVM, int x, int y, int button);
+	virtual void eventMouseMove(int x, int y, int button);
 
 	virtual SwfRect getBounds() const;
 
@@ -63,9 +63,9 @@ private:
 	bool m_inside;
 	bool m_pushed;
 
-	void executeCondition(IActionVM* actionVM, uint32_t conditionMask);
+	void executeCondition(uint32_t conditionMask);
 
-	void executeScriptEvent(IActionVM* actionVM, const std::wstring& eventName);
+	void executeScriptEvent(const std::wstring& eventName);
 };
 
 	}

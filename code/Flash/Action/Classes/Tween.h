@@ -9,7 +9,6 @@ namespace traktor
 	{
 
 class ActionContext;
-class IActionVM;
 
 class Tween : public ActionObject
 {
@@ -57,7 +56,6 @@ private:
 	avm_number_t m_finish;
 	avm_number_t m_duration;
 	bool m_useSeconds;
-
 	avm_number_t m_timeStart;
 	avm_number_t m_current;
 	bool m_playing;

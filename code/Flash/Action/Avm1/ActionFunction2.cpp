@@ -38,7 +38,7 @@ ActionFunction2::ActionFunction2(
 		setMember(L"__proto__", classPrototype);
 }
 
-ActionValue ActionFunction2::call(const IActionVM* vm, ActionContext* context, ActionObject* self, const ActionValueArray& args)
+ActionValue ActionFunction2::call(ActionContext* context, ActionObject* self, const ActionValueArray& args)
 {
 	ActionValuePool& pool = context->getPool();
 	T_ANONYMOUS_VAR(ActionValuePool::Scope)(pool);
@@ -107,13 +107,13 @@ ActionValue ActionFunction2::call(const IActionVM* vm, ActionContext* context, A
 	while (argumentPassed < args.size())
 		callFrame.getStack().push(args[argumentPassed++]);
 
-	vm->execute(&callFrame);
+	context->getVM()->execute(&callFrame);
 
 	ActionValueStack& callStack = callFrame.getStack();
 	return !callStack.empty() ? callStack.top() : ActionValue();
 }
 
-ActionValue ActionFunction2::call(const IActionVM* vm, ActionFrame* callerFrame, ActionObject* self)
+ActionValue ActionFunction2::call(ActionFrame* callerFrame, ActionObject* self)
 {
 	ActionContext* context = callerFrame->getContext();
 
@@ -191,7 +191,7 @@ ActionValue ActionFunction2::call(const IActionVM* vm, ActionFrame* callerFrame,
 	while (argumentPassed < argCount)
 		callFrame.getStack().push(args[argumentPassed++]);
 
-	vm->execute(&callFrame);
+	context->getVM()->execute(&callFrame);
 
 	ActionValueStack& callStack = callFrame.getStack();
 	return !callStack.empty() ? callStack.top() : ActionValue();

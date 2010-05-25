@@ -33,9 +33,9 @@ public:
 		ActionDictionary* dictionary
 	);
 
-	virtual ActionValue call(const IActionVM* vm, ActionContext* context, ActionObject* self, const ActionValueArray& args);
+	virtual ActionValue call(ActionContext* context, ActionObject* self, const ActionValueArray& args);
 
-	virtual ActionValue call(const IActionVM* vm, ActionFrame* callerFrame, ActionObject* self);
+	virtual ActionValue call(ActionFrame* callerFrame, ActionObject* self);
 
 private:
 	const uint8_t* m_code;

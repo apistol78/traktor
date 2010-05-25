@@ -21,10 +21,9 @@ ActionFunctionNative::ActionFunctionNative(INativeFunction* nativeFunction)
 		setMember(L"__proto__", classPrototype);
 }
 
-ActionValue ActionFunctionNative::call(const IActionVM* vm, ActionContext* context, ActionObject* self, const ActionValueArray& args)
+ActionValue ActionFunctionNative::call(ActionContext* context, ActionObject* self, const ActionValueArray& args)
 {
 	CallArgs fnc;
-	fnc.vm = vm;
 	fnc.context = context;
 	fnc.self = self;
 	fnc.args = args;
@@ -35,13 +34,12 @@ ActionValue ActionFunctionNative::call(const IActionVM* vm, ActionContext* conte
 	return fnc.ret;
 }
 
-ActionValue ActionFunctionNative::call(const IActionVM* vm, ActionFrame* callerFrame, ActionObject* self)
+ActionValue ActionFunctionNative::call(ActionFrame* callerFrame, ActionObject* self)
 {
 	ActionValueStack& callerStack = callerFrame->getStack();
 	int argCount = !callerStack.empty() ? int(callerStack.pop().getNumber()) : 0;
 
 	CallArgs fnc;
-	fnc.vm = vm;
 	fnc.context = callerFrame->getContext();
 	fnc.self = self;
 	fnc.args = ActionValueArray(callerFrame->getContext()->getPool(), argCount);

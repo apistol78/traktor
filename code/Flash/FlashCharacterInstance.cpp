@@ -1,7 +1,8 @@
 #include "Flash/FlashCharacterInstance.h"
-#include "Flash/Action/IActionVM.h"
+#include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFrame.h"
 #include "Flash/Action/ActionScript.h"
+#include "Flash/Action/IActionVM.h"
 
 namespace traktor
 {
@@ -81,7 +82,7 @@ const std::map< uint32_t, Ref< ActionScript > >& FlashCharacterInstance::getEven
 	return m_eventScripts;
 }
 
-void FlashCharacterInstance::eventInit(const IActionVM* actionVM)
+void FlashCharacterInstance::eventInit()
 {
 	std::map< uint32_t, Ref< ActionScript > >::iterator i = m_eventScripts.find(EvtInitialize);
 	if (i != m_eventScripts.end())
@@ -95,11 +96,11 @@ void FlashCharacterInstance::eventInit(const IActionVM* actionVM)
 			0,
 			0
 		);
-		actionVM->execute(&callFrame);
+		m_context->getVM()->execute(&callFrame);
 	}
 }
 
-void FlashCharacterInstance::eventLoad(const IActionVM* actionVM)
+void FlashCharacterInstance::eventLoad()
 {
 	std::map< uint32_t, Ref< ActionScript > >::iterator i = m_eventScripts.find(EvtLoad);
 	if (i != m_eventScripts.end())
@@ -113,11 +114,11 @@ void FlashCharacterInstance::eventLoad(const IActionVM* actionVM)
 			0,
 			0
 		);
-		actionVM->execute(&callFrame);
+		m_context->getVM()->execute(&callFrame);
 	}
 }
 
-void FlashCharacterInstance::eventFrame(const IActionVM* actionVM)
+void FlashCharacterInstance::eventFrame()
 {
 	std::map< uint32_t, Ref< ActionScript > >::iterator i = m_eventScripts.find(EvtEnterFrame);
 	if (i != m_eventScripts.end())
@@ -131,27 +132,27 @@ void FlashCharacterInstance::eventFrame(const IActionVM* actionVM)
 			0,
 			0
 		);
-		actionVM->execute(&callFrame);
+		m_context->getVM()->execute(&callFrame);
 	}
 }
 
-void FlashCharacterInstance::eventKeyDown(const IActionVM* actionVM, int keyCode)
+void FlashCharacterInstance::eventKeyDown(int keyCode)
 {
 }
 
-void FlashCharacterInstance::eventKeyUp(const IActionVM* actionVM, int keyCode)
+void FlashCharacterInstance::eventKeyUp(int keyCode)
 {
 }
 
-void FlashCharacterInstance::eventMouseDown(const IActionVM* actionVM, int x, int y, int button)
+void FlashCharacterInstance::eventMouseDown(int x, int y, int button)
 {
 }
 
-void FlashCharacterInstance::eventMouseUp(const IActionVM* actionVM, int x, int y, int button)
+void FlashCharacterInstance::eventMouseUp(int x, int y, int button)
 {
 }
 
-void FlashCharacterInstance::eventMouseMove(const IActionVM* actionVM, int x, int y, int button)
+void FlashCharacterInstance::eventMouseMove(int x, int y, int button)
 {
 }
 

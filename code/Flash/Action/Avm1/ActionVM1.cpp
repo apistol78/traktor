@@ -183,7 +183,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 					stack.push(ActionValue(mbstows(query)));
 					stack.push(ActionValue(mbstows(url)));
 					stack.push(ActionValue(avm_number_t(2)));
-					function->call(this, frame, 0);
+					function->call(frame, 0);
 				}
 				else
 					log::warning << L"_global.getUrl must be a function object" << Endl;
@@ -689,7 +689,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 					stack.push(url);
 					stack.push(ActionValue(avm_number_t(2)));
 
-					function->call(this, frame, 0);
+					function->call(frame, 0);
 				}
 				else
 					log::error << L"_global.getUrl must be a function object" << Endl;
@@ -795,7 +795,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 			if (functionObject.isObject())
 			{
 				ActionFunction* function = checked_type_cast< ActionFunction* >(functionObject.getObject());
-				stack.push(function->call(this, frame, frame->getSelf()));
+				stack.push(function->call(frame, frame->getSelf()));
 			}
 			else
 			{
@@ -839,7 +839,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 				Ref< ActionObject > self = new ActionObject(classConstructor);
 
 				// Call constructor.
-				ActionValue object = classConstructor->call(this, frame, self);
+				ActionValue object = classConstructor->call(frame, self);
 				if (object.isObject())
 					stack.push(object);
 				else
@@ -861,7 +861,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 		VM_END()
 
 		VM_BEGIN(AopInitArray)
-			ActionValue object = AsArray::getInstance()->call(this, frame, 0);
+			ActionValue object = AsArray::getInstance()->call(frame, 0);
 			stack.push(object);
 		VM_END()
 
@@ -1046,7 +1046,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 				if (target->getPropertyGet(memberName, propertyGet))
 				{
 					stack.push(ActionValue(avm_number_t(0)));
-					memberValue = propertyGet->call(this, frame, target);
+					memberValue = propertyGet->call(frame, target);
 				}
 				else
 					target->getMember(memberName, memberValue);
@@ -1072,7 +1072,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 				{
 					stack.push(memberValue);
 					stack.push(ActionValue(avm_number_t(1)));
-					propertySet->call(this, frame, target);
+					propertySet->call(frame, target);
 				}
 				else
 				{
@@ -1130,7 +1130,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 			}
 
 			if (method)
-				returnValue = method->call(this, frame, target);
+				returnValue = method->call(frame, target);
 			else
 			{
 				log::warning << L"Undefined method \"" << classConstructorName.getStringSafe() << L"\"" << Endl;
@@ -1163,7 +1163,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 					Ref< ActionObject > self = new ActionObject(classConstructor);
 
 					// Call constructor.
-					ActionValue object = classConstructor->call(this, frame, self);
+					ActionValue object = classConstructor->call(frame, self);
 					if (object.isObject())
 						stack.push(object);
 					else
