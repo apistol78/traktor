@@ -105,7 +105,7 @@ bool PostProcess::render(
 	m_targets[PdtSourceShadowMask] = shadowMask;
 	m_currentTarget = 0;
 
-	renderView->pushMarker("PostProcess");
+	T_RENDER_PUSH_MARKER(renderView, "PostProcess");
 
 	for (RefArray< PostProcessStep::Instance >::const_iterator i = m_instances.begin(); i != m_instances.end(); ++i)
 	{
@@ -117,7 +117,7 @@ bool PostProcess::render(
 		);
 	}
 
-	renderView->popMarker();
+	T_RENDER_POP_MARKER(renderView);
 
 	T_ASSERT_M(m_currentTarget == 0, L"Invalid post-process steps");
 	return true;
