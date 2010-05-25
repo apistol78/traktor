@@ -80,30 +80,43 @@ void Tween::rewind(avm_number_t t)
 
 void Tween::start()
 {
-	if (!m_playing)
-		m_context->addFrameListener(this);
-
 	m_timeStart = avm_number_t(-1);
-	m_playing = true;
 
-	if (m_property && m_function)
+	if (!m_playing)
 	{
-		ActionValueArray argv0(m_context->getPool(), 4);
-		ActionValueArray argv1(m_context->getPool(), 1);
+		// Ensure property is set to initial value.
+		if (m_property && m_function)
+		{
+			ActionValue value;
 
-		// Calculate eased value.
-		argv0[0] = ActionValue(avm_number_t(0));
-		argv0[1] = ActionValue(m_begin);
-		argv0[2] = ActionValue(m_finish - m_begin);
-		argv0[3] = ActionValue(m_duration);
+			// Calculate eased value.
+			if (m_duration > 0.0f)
+			{
+				ActionValueArray argv0(m_context->getPool(), 4);
+				argv0[0] = ActionValue(avm_number_t(0));
+				argv0[1] = ActionValue(m_begin);
+				argv0[2] = ActionValue(m_finish - m_begin);
+				argv0[3] = ActionValue(m_duration);
+				value = m_function->call(m_context, this, argv0);
+			}
+			else
+				value = ActionValue(m_begin);
 
-		ActionValue value = m_function->call(m_context, this, argv0);
-		m_current = value.getNumberSafe();
+			m_current = value.getNumberSafe();
 
-		// Set property value.
-		argv1[0] = value;
-		m_property->call(m_context, m_target, argv1);
+			// Set property value.
+			if (!value.isUndefined())
+			{
+				ActionValueArray argv1(m_context->getPool(), 1);
+				argv1[0] = value;
+				m_property->call(m_context, m_target, argv1);
+			}
+		}
+
+		m_context->addFrameListener(this);
 	}
+
+	m_playing = true;
 }
 
 void Tween::stop()
@@ -125,33 +138,41 @@ void Tween::onFrame(CallArgs& ca)
 	if (!m_function || !m_property || !m_playing || m_duration <= 0.0f)
 		return;
 
-	avm_number_t time = ca.args[0].getNumberSafe();
+	ActionValue value;
 
+	avm_number_t time = ca.args[0].getNumberSafe();
 	if (m_timeStart < 0)
 		m_timeStart = time;
 
 	// Calculate interpolated value.
 	avm_number_t t = time - m_timeStart;
 	avm_number_t T = clamp(t, avm_number_t(0), m_duration);
-	avm_number_t b = T / m_duration;
 
 	// Calculate eased value.
-	ActionValueArray argv0(ca.context->getPool(), 4);
-	argv0[0] = ActionValue(T);
-	argv0[1] = ActionValue(m_begin);
-	argv0[2] = ActionValue(m_finish - m_begin);
-	argv0[3] = ActionValue(m_duration);
+	if (m_duration > 0.0f)
+	{
+		ActionValueArray argv0(ca.context->getPool(), 4);
+		argv0[0] = ActionValue(T);
+		argv0[1] = ActionValue(m_begin);
+		argv0[2] = ActionValue(m_finish - m_begin);
+		argv0[3] = ActionValue(m_duration);
+		value = m_function->call(ca.context, this, argv0);
+	}
+	else
+		value = ActionValue(m_begin);
 
-	ActionValue value = m_function->call(ca.context, this, argv0);
 	m_current = value.getNumberSafe();
 
 	// Set property value.
-	ActionValueArray argv1(ca.context->getPool(), 1);
-	argv1[0] = value;
-	m_property->call(ca.context, m_target, argv1);
+	if (!value.isUndefined())
+	{
+		ActionValueArray argv1(ca.context->getPool(), 1);
+		argv1[0] = value;
+		m_property->call(ca.context, m_target, argv1);
+	}
 
 	// Stop after duration expired.
-	if (m_playing && t >= m_duration)
+	if (t >= m_duration)
 	{
 		stop();
 
