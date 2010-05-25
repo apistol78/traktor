@@ -178,12 +178,12 @@ bool SessionSteam::update()
 void SessionSteam::OnUserStatsReceived(UserStatsReceived_t* pCallback)
 {
 	if (pCallback->m_eResult == k_EResultOK)
-	//{
+	{
 		log::debug << L"Steam session event; user stats received" << Endl;
 		m_receivedStats = true;
-	//}
-	//else
-		//log::error << L"Steam session event; failure receiving stats (m_eResult = " << int32_t(pCallback->m_eResult) << L")" << Endl;
+	}
+	else
+		log::error << L"Steam session event; failure receiving stats (m_eResult = " << int32_t(pCallback->m_eResult) << L")" << Endl;
 }
 
 void SessionSteam::OnUserStatsStored(UserStatsStored_t* pCallback)
