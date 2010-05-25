@@ -48,14 +48,14 @@ bool FlashMoviePlayer::create(FlashMovie* movie)
 {
 	ActionValue memberValue;
 
-	m_movie = movie;
-	m_movieInstance = m_movie->createMovieClipInstance();
-
 	// Create ActionScript virtual machine.
 	if (1)
 		m_actionVM = new ActionVM1();
 	else
 		m_actionVM = new ActionVM2();
+
+	m_movie = movie;
+	m_movieInstance = m_movie->createMovieClipInstance(m_actionVM);
 
 	// Override some global methods.
 	setGlobal(L"getUrl", ActionValue(createNativeFunction(this, &FlashMoviePlayer::Global_getUrl)));
@@ -137,14 +137,14 @@ void FlashMoviePlayer::executeFrame()
 
 	// Issue interval functions.
 	for (std::map< uint32_t, Interval >::iterator i = m_interval.begin(); i != m_interval.end(); ++i)
-		i->second.function->call(m_actionVM, context, i->second.target, ActionValueArray());
+		i->second.function->call(context, i->second.target, ActionValueArray());
 
 	// Issue all events in sequence as each event possibly update
 	// the play head and other aspects of the movie.
 
 	m_movieInstance->updateDisplayList();
 
-	m_movieInstance->preDispatchEvents(m_actionVM);
+	m_movieInstance->preDispatchEvents();
 
 	while (!m_events.empty())
 	{
@@ -152,45 +152,45 @@ void FlashMoviePlayer::executeFrame()
 		switch (evt.eventType)
 		{
 		case EvtKeyDown:
-			m_movieInstance->eventKeyDown(m_actionVM, evt.keyCode);
+			m_movieInstance->eventKeyDown(evt.keyCode);
 			if (m_key)
-				m_key->eventKeyDown(m_actionVM, context, evt.keyCode);
+				m_key->eventKeyDown(context, evt.keyCode);
 			break;
 
 		case EvtKeyUp:
-			m_movieInstance->eventKeyUp(m_actionVM, evt.keyCode);
+			m_movieInstance->eventKeyUp(evt.keyCode);
 			if (m_key)
-				m_key->eventKeyUp(m_actionVM, context, evt.keyCode);
+				m_key->eventKeyUp(context, evt.keyCode);
 			break;
 
 		case EvtMouseDown:
-			m_movieInstance->eventMouseDown(m_actionVM, evt.mouse.x, evt.mouse.y, evt.mouse.button);
+			m_movieInstance->eventMouseDown(evt.mouse.x, evt.mouse.y, evt.mouse.button);
 			if (m_mouse)
-				m_mouse->eventMouseDown(m_actionVM, context, evt.mouse.x, evt.mouse.y, evt.mouse.button);
+				m_mouse->eventMouseDown(context, evt.mouse.x, evt.mouse.y, evt.mouse.button);
 			break;
 
 		case EvtMouseUp:
-			m_movieInstance->eventMouseUp(m_actionVM, evt.mouse.x, evt.mouse.y, evt.mouse.button);
+			m_movieInstance->eventMouseUp(evt.mouse.x, evt.mouse.y, evt.mouse.button);
 			if (m_mouse)
-				m_mouse->eventMouseUp(m_actionVM, context, evt.mouse.x, evt.mouse.y, evt.mouse.button);
+				m_mouse->eventMouseUp(context, evt.mouse.x, evt.mouse.y, evt.mouse.button);
 			break;
 
 		case EvtMouseMove:
-			m_movieInstance->eventMouseMove(m_actionVM, evt.mouse.x, evt.mouse.y, evt.mouse.button);
+			m_movieInstance->eventMouseMove(evt.mouse.x, evt.mouse.y, evt.mouse.button);
 			if (m_mouse)
-				m_mouse->eventMouseMove(m_actionVM, context, evt.mouse.x, evt.mouse.y, evt.mouse.button);
+				m_mouse->eventMouseMove(context, evt.mouse.x, evt.mouse.y, evt.mouse.button);
 			break;
 		}
 		m_events.pop_front();
 	}
 
 	// Finally issue the frame event.
-	m_movieInstance->eventFrame(m_actionVM);
+	m_movieInstance->eventFrame();
 
 	// Notify frame listeners.
-	context->notifyFrameListeners(m_actionVM, avm_number_t(m_timeCurrent));
+	context->notifyFrameListeners(avm_number_t(m_timeCurrent));
 
-	m_movieInstance->postDispatchEvents(m_actionVM);
+	m_movieInstance->postDispatchEvents();
 
 	// Flush pool memory; release all lingering object references etc.
 	context->getPool().flush();

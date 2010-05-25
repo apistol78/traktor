@@ -25,7 +25,7 @@ AsMouse::AsMouse()
 {
 }
 
-void AsMouse::eventMouseDown(IActionVM* actionVM, ActionContext* context, int x, int y, int button)
+void AsMouse::eventMouseDown(ActionContext* context, int x, int y, int button)
 {
 	// Create a snapshot of active listeners the moment this event is raised,
 	// this because listeners can be either added or removed by listeners.
@@ -41,12 +41,12 @@ void AsMouse::eventMouseDown(IActionVM* actionVM, ActionContext* context, int x,
 		if (eventFunction)
 		{
 			ActionFrame callerFrame(context, 0, 0, 0, 4, 0, 0);
-			eventFunction->call(actionVM, &callerFrame, (*i));
+			eventFunction->call(&callerFrame, (*i));
 		}
 	}
 }
 
-void AsMouse::eventMouseUp(IActionVM* actionVM, ActionContext* context, int x, int y, int button)
+void AsMouse::eventMouseUp(ActionContext* context, int x, int y, int button)
 {
 	// Create a snapshot of active listeners the moment this event is raised,
 	// this because listeners can be either added or removed by listeners.
@@ -62,12 +62,12 @@ void AsMouse::eventMouseUp(IActionVM* actionVM, ActionContext* context, int x, i
 		if (eventFunction)
 		{
 			ActionFrame callerFrame(context, 0, 0, 0, 4, 0, 0);
-			eventFunction->call(actionVM, &callerFrame, (*i));
+			eventFunction->call(&callerFrame, (*i));
 		}
 	}
 }
 
-void AsMouse::eventMouseMove(IActionVM* actionVM, ActionContext* context, int x, int y, int button)
+void AsMouse::eventMouseMove(ActionContext* context, int x, int y, int button)
 {
 	// Create a snapshot of active listeners the moment this event is raised,
 	// this because listeners can be either added or removed by listeners.
@@ -83,7 +83,7 @@ void AsMouse::eventMouseMove(IActionVM* actionVM, ActionContext* context, int x,
 		if (eventFunction)
 		{
 			ActionFrame callerFrame(context, 0, 0, 0, 4, 0, 0);
-			eventFunction->call(actionVM, &callerFrame, (*i));
+			eventFunction->call(&callerFrame, (*i));
 		}
 	}
 }

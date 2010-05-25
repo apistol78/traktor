@@ -23,6 +23,7 @@ class FlashCharacter;
 class FlashFont;
 class FlashSprite;
 class FlashSpriteInstance;
+class IActionVM;
 
 /*! \brief Flash movie.
  * \ingroup Flash
@@ -58,7 +59,7 @@ public:
 
 	const FlashSprite* getMovieClip() const;
 
-	Ref< FlashSpriteInstance > createMovieClipInstance() const;
+	Ref< FlashSpriteInstance > createMovieClipInstance(const IActionVM* vm) const;
 
 	const std::map< uint16_t, Ref< FlashFont > >& getFonts() const { return m_fonts; }
 

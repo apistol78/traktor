@@ -15,12 +15,12 @@ ActionClass::ActionClass(const std::wstring& name)
 {
 }
 
-ActionValue ActionClass::call(const IActionVM* vm, ActionContext* context, ActionObject* self, const ActionValueArray& args)
+ActionValue ActionClass::call(ActionContext* context, ActionObject* self, const ActionValueArray& args)
 {
 	return construct(context, args);
 }
 
-ActionValue ActionClass::call(const IActionVM* vm, ActionFrame* callerFrame, ActionObject* self)
+ActionValue ActionClass::call(ActionFrame* callerFrame, ActionObject* self)
 {
 	ActionValueStack& callerStack = callerFrame->getStack();
 	int32_t argCount = !callerStack.empty() ? int32_t(callerStack.pop().getNumber()) : 0;

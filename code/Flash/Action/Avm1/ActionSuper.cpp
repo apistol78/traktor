@@ -40,15 +40,15 @@ ActionSuper::ActionSuper(ActionObject* object)
 #endif
 }
 
-ActionValue ActionSuper::call(const IActionVM* vm, ActionContext* context, ActionObject* self, const ActionValueArray& args)
+ActionValue ActionSuper::call(ActionContext* context, ActionObject* self, const ActionValueArray& args)
 {
 	return ActionValue();
 }
 
-ActionValue ActionSuper::call(const IActionVM* vm, ActionFrame* callerFrame, ActionObject* self)
+ActionValue ActionSuper::call(ActionFrame* callerFrame, ActionObject* self)
 {
 	Ref< ActionFunction > superCtor = dynamic_type_cast< ActionFunction* >(m_superClass);
-	return superCtor ? superCtor->call(vm, callerFrame, self) : ActionValue();
+	return superCtor ? superCtor->call(callerFrame, self) : ActionValue();
 }
 
 	}

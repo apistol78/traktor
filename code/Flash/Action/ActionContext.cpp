@@ -9,8 +9,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.ActionContext", ActionContext, Object)
 
-ActionContext::ActionContext(const FlashMovie* movie, ActionObject* global)
-:	m_movie(movie)
+ActionContext::ActionContext(const IActionVM* vm, const FlashMovie* movie, ActionObject* global)
+:	m_vm(vm)
+,	m_movie(movie)
 ,	m_global(global)
 {
 }
@@ -41,14 +42,14 @@ void ActionContext::removeFrameListener(ActionObject* frameListener)
 	}
 }
 
-void ActionContext::notifyFrameListeners(const IActionVM* vm, avm_number_t time)
+void ActionContext::notifyFrameListeners(avm_number_t time)
 {
 	ActionValueArray argv(m_pool, 1);
 	argv[0] = ActionValue(time);
 
 	std::vector< FrameListener > frameListeners = m_frameListeners;
 	for (std::vector< FrameListener >::iterator i = frameListeners.begin(); i != frameListeners.end(); ++i)
-		i->listenerFunction->call(vm, this, i->listenerTarget, argv);
+		i->listenerFunction->call(this, i->listenerTarget, argv);
 }
 
 	}

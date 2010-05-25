@@ -74,7 +74,6 @@ void AsFunction::Function_call(CallArgs& ca)
 	stack.push(ActionValue(avm_number_t(ca.args.size() - 1)));
 
 	function->call(
-		ca.vm,
 		&frame,
 		self
 	);

@@ -19,7 +19,6 @@ namespace traktor
 	{
 
 class ActionContext;
-class IActionVM;
 class ActionScript;
 
 /*! \brief Character instance.
@@ -102,21 +101,21 @@ public:
 	/*! \name Events */
 	//@{
 
-	virtual void eventInit(const IActionVM* actionVM);
+	virtual void eventInit();
 
-	virtual void eventLoad(const IActionVM* actionVM);
+	virtual void eventLoad();
 
-	virtual void eventFrame(const IActionVM* actionVM);
+	virtual void eventFrame();
 
-	virtual void eventKeyDown(const IActionVM* actionVM, int keyCode);
+	virtual void eventKeyDown(int keyCode);
 
-	virtual void eventKeyUp(const IActionVM* actionVM, int keyCode);
+	virtual void eventKeyUp(int keyCode);
 
-	virtual void eventMouseDown(const IActionVM* actionVM, int x, int y, int button);
+	virtual void eventMouseDown(int x, int y, int button);
 
-	virtual void eventMouseUp(const IActionVM* actionVM, int x, int y, int button);
+	virtual void eventMouseUp(int x, int y, int button);
 
-	virtual void eventMouseMove(const IActionVM* actionVM, int x, int y, int button);
+	virtual void eventMouseMove(int x, int y, int button);
 
 	//@}
 

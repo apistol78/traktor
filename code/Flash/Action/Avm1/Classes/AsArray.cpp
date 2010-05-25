@@ -14,7 +14,6 @@ namespace traktor
 
 struct ArrayPredicateSort
 {
-	const IActionVM* vm;
 	ActionContext* context;
 	ActionFunction* predicateFunction;
 	ActionValueArray* predicateFunctionArgs;
@@ -24,7 +23,7 @@ struct ArrayPredicateSort
 		(*predicateFunctionArgs)[0] = avl;
 		(*predicateFunctionArgs)[1] = avr;
 
-		ActionValue resv = predicateFunction->call(vm, context, 0, (*predicateFunctionArgs));
+		ActionValue resv = predicateFunction->call(context, 0, (*predicateFunctionArgs));
 		int32_t res = int32_t(resv.getNumberSafe());
 
 		return res < 0;
@@ -172,7 +171,6 @@ void AsArray::Array_sort(CallArgs& ca)
 		ActionValueArray predicateFunctionArgs(ca.context->getPool(), 2);
 
 		ArrayPredicateSort aps;
-		aps.vm = ca.vm;
 		aps.context = ca.context;
 		aps.predicateFunction = predicateFunction;
 		aps.predicateFunctionArgs = &predicateFunctionArgs;

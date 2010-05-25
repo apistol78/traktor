@@ -17,10 +17,9 @@ namespace traktor
 	namespace flash
 	{
 
-class FlashSprite;
-class FlashCharacter;
-class IActionVM;
 class ActionContext;
+class FlashCharacter;
+class FlashSprite;
 
 /*! \brief Flash sprite instance.
  * \ingroup Flash
@@ -48,9 +47,9 @@ public:
 
 	void updateDisplayList();
 
-	void preDispatchEvents(IActionVM* actionVM);
+	void preDispatchEvents();
 
-	void postDispatchEvents(IActionVM* actionVM);
+	void postDispatchEvents();
 
 	FlashDisplayList& getDisplayList();
 
@@ -72,21 +71,21 @@ public:
 
 	virtual bool getMember(const std::wstring& memberName, ActionValue& outMemberValue) const;
 
-	virtual void eventInit(const IActionVM* actionVM);
+	virtual void eventInit();
 
-	virtual void eventLoad(const IActionVM* actionVM);
+	virtual void eventLoad();
 
-	virtual void eventFrame(const IActionVM* actionVM);
+	virtual void eventFrame();
 
-	virtual void eventKeyDown(const IActionVM* actionVM, int32_t keyCode);
+	virtual void eventKeyDown(int32_t keyCode);
 
-	virtual void eventKeyUp(const IActionVM* actionVM, int32_t keyCode);
+	virtual void eventKeyUp(int32_t keyCode);
 
-	virtual void eventMouseDown(const IActionVM* actionVM, int32_t x, int32_t y, int32_t button);
+	virtual void eventMouseDown(int32_t x, int32_t y, int32_t button);
 
-	virtual void eventMouseUp(const IActionVM* actionVM, int32_t x, int32_t y, int32_t button);
+	virtual void eventMouseUp(int32_t x, int32_t y, int32_t button);
 
-	virtual void eventMouseMove(const IActionVM* actionVM, int32_t x, int32_t y, int32_t button);
+	virtual void eventMouseMove(int32_t x, int32_t y, int32_t button);
 
 	virtual SwfRect getBounds() const;
 
@@ -108,7 +107,7 @@ private:
 	int32_t m_mouseY;
 	int32_t m_maskCount;
 
-	void executeScriptEvent(const IActionVM* actionVM, const std::wstring& eventName);
+	void executeScriptEvent(const std::wstring& eventName);
 };
 
 	}

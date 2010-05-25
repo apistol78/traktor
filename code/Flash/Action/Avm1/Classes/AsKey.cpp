@@ -32,7 +32,7 @@ AsKey::~AsKey()
 {
 }
 
-void AsKey::eventKeyDown(IActionVM* actionVM, ActionContext* context, int keyCode)
+void AsKey::eventKeyDown(ActionContext* context, int keyCode)
 {
 	m_keyState[keyCode] = true;
 	m_lastKeyCode = keyCode;
@@ -51,12 +51,12 @@ void AsKey::eventKeyDown(IActionVM* actionVM, ActionContext* context, int keyCod
 		if (eventFunction)
 		{
 			ActionFrame callerFrame(context, 0, 0, 0, 4, 0, 0);
-			eventFunction->call(actionVM, &callerFrame, (*i));
+			eventFunction->call(&callerFrame, (*i));
 		}
 	}
 }
 
-void AsKey::eventKeyUp(IActionVM* actionVM, ActionContext* context, int keyCode)
+void AsKey::eventKeyUp(ActionContext* context, int keyCode)
 {
 	m_keyState[keyCode] = false;
 
@@ -74,7 +74,7 @@ void AsKey::eventKeyUp(IActionVM* actionVM, ActionContext* context, int keyCode)
 		if (eventFunction)
 		{
 			ActionFrame callerFrame(context, 0, 0, 0, 4, 0, 0);
-			eventFunction->call(actionVM, &callerFrame, (*i));
+			eventFunction->call(&callerFrame, (*i));
 		}
 	}
 }

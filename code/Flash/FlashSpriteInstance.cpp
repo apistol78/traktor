@@ -146,7 +146,7 @@ void FlashSpriteInstance::updateDisplayList()
 	}
 }
 
-void FlashSpriteInstance::preDispatchEvents(IActionVM* actionVM)
+void FlashSpriteInstance::preDispatchEvents()
 {
 	T_ASSERT (!m_inDispatch);
 	m_inDispatch = true;
@@ -155,8 +155,8 @@ void FlashSpriteInstance::preDispatchEvents(IActionVM* actionVM)
 	// Initialize sprite instance.
 	if (!m_initialized)
 	{
-		eventInit(actionVM);
-		eventLoad(actionVM);
+		eventInit();
+		eventLoad();
 		m_initialized = true;
 	}
 
@@ -171,11 +171,11 @@ void FlashSpriteInstance::preDispatchEvents(IActionVM* actionVM)
 	for (FlashDisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
 	{
 		if (FlashSpriteInstance* spriteInstance = dynamic_type_cast< FlashSpriteInstance* >(i->second.instance))
-			spriteInstance->preDispatchEvents(actionVM);
+			spriteInstance->preDispatchEvents();
 	}
 }
 
-void FlashSpriteInstance::postDispatchEvents(IActionVM* actionVM)
+void FlashSpriteInstance::postDispatchEvents()
 {
 	if (!m_inDispatch)
 		return;
@@ -192,7 +192,7 @@ void FlashSpriteInstance::postDispatchEvents(IActionVM* actionVM)
 	for (FlashDisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
 	{
 		if (FlashSpriteInstance* spriteInstance = dynamic_type_cast< FlashSpriteInstance* >(i->second.instance))
-			spriteInstance->postDispatchEvents(actionVM);
+			spriteInstance->postDispatchEvents();
 	}
 
 	m_inDispatch = false;
@@ -267,54 +267,59 @@ bool FlashSpriteInstance::getMember(const std::wstring& memberName, ActionValue&
 	return FlashCharacterInstance::getMember(memberName, outMemberValue);
 }
 
-void FlashSpriteInstance::eventInit(const IActionVM* actionVM)
+void FlashSpriteInstance::eventInit()
 {
+	ActionContext* context = getContext();
+
 	const RefArray< ActionScript >& initActionScripts = m_sprite->getInitActionScripts();
 	for (RefArray< ActionScript >::const_iterator i = initActionScripts.begin(); i != initActionScripts.end(); ++i)
 	{
-		ActionFrame frame(getContext(), this, (*i)->getCode(), (*i)->getCodeSize(), 4, 0, 0);
-		actionVM->execute(&frame);
+		ActionFrame frame(context, this, (*i)->getCode(), (*i)->getCodeSize(), 4, 0, 0);
+		context->getVM()->execute(&frame);
 	}
 
-	FlashCharacterInstance::eventInit(actionVM);
+	FlashCharacterInstance::eventInit();
 }
 
-void FlashSpriteInstance::eventLoad(const IActionVM* actionVM)
+void FlashSpriteInstance::eventLoad()
 {
 	// Issue events on "visible" characters.
 	const FlashDisplayList::layer_map_t& layers = m_displayList.getLayers();
 	for (FlashDisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
 	{
 		if (i->second.instance)
-			i->second.instance->eventLoad(actionVM);
+			i->second.instance->eventLoad();
 	}
 
 	// Issue script assigned event.
-	executeScriptEvent(actionVM, L"onLoad");
+	executeScriptEvent(L"onLoad");
 
-	FlashCharacterInstance::eventLoad(actionVM);
+	FlashCharacterInstance::eventLoad();
 }
 
-void FlashSpriteInstance::eventFrame(const IActionVM* actionVM)
+void FlashSpriteInstance::eventFrame()
 {
 	Ref< FlashFrame > frame = m_sprite->getFrame(m_currentFrame);
 	T_ASSERT (frame);
 
 	// Issue script assigned event; hack to skip events when using goto methods.
 	if (!m_skipEnterFrame)
-		executeScriptEvent(actionVM, L"onEnterFrame");
+		executeScriptEvent(L"onEnterFrame");
 	else
 		--m_skipEnterFrame;
 
 	// Execute frame scripts.
 	if (m_lastExecutedFrame != m_currentFrame)
 	{
+		ActionContext* context = getContext();
+
 		const RefArray< ActionScript >& scripts = frame->getActionScripts();
 		for (RefArray< ActionScript >::const_iterator i = scripts.begin(); i != scripts.end(); ++i)
 		{
-			ActionFrame callFrame(getContext(), this, (*i)->getCode(), (*i)->getCodeSize(), 4, 0, 0);
-			actionVM->execute(&callFrame);
+			ActionFrame callFrame(context, this, (*i)->getCode(), (*i)->getCodeSize(), 4, 0, 0);
+			context->getVM()->execute(&callFrame);
 		}
+
 		m_lastExecutedFrame = m_currentFrame;
 	}
 
@@ -323,99 +328,99 @@ void FlashSpriteInstance::eventFrame(const IActionVM* actionVM)
 	for (FlashDisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
 	{
 		if (i->second.instance)
-			i->second.instance->eventFrame(actionVM);
+			i->second.instance->eventFrame();
 	}
 
-	FlashCharacterInstance::eventFrame(actionVM);
+	FlashCharacterInstance::eventFrame();
 }
 
-void FlashSpriteInstance::eventKeyDown(const IActionVM* actionVM, int32_t keyCode)
+void FlashSpriteInstance::eventKeyDown(int32_t keyCode)
 {
 	// Issue script assigned event.
-	executeScriptEvent(actionVM, L"onKeyDown");
+	executeScriptEvent(L"onKeyDown");
 
 	// Issue events on "visible" characters.
 	const FlashDisplayList::layer_map_t& layers = m_displayList.getLayers();
 	for (FlashDisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
 	{
 		if (i->second.instance)
-			i->second.instance->eventKeyDown(actionVM, keyCode);
+			i->second.instance->eventKeyDown(keyCode);
 	}
 
-	FlashCharacterInstance::eventKeyDown(actionVM, keyCode);
+	FlashCharacterInstance::eventKeyDown(keyCode);
 }
 
-void FlashSpriteInstance::eventKeyUp(const IActionVM* actionVM, int32_t keyCode)
+void FlashSpriteInstance::eventKeyUp(int32_t keyCode)
 {
 	// Issue script assigned event.
-	executeScriptEvent(actionVM, L"onKeyUp");
+	executeScriptEvent(L"onKeyUp");
 
 	// Issue events on "visible" characters.
 	const FlashDisplayList::layer_map_t& layers = m_displayList.getLayers();
 	for (FlashDisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
 	{
 		if (i->second.instance)
-			i->second.instance->eventKeyUp(actionVM, keyCode);
+			i->second.instance->eventKeyUp(keyCode);
 	}
 
-	FlashCharacterInstance::eventKeyUp(actionVM, keyCode);
+	FlashCharacterInstance::eventKeyUp(keyCode);
 }
 
-void FlashSpriteInstance::eventMouseDown(const IActionVM* actionVM, int32_t x, int32_t y, int32_t button)
-{
-	m_mouseX = x;
-	m_mouseY = y;
-
-	// Issue script assigned event.
-	executeScriptEvent(actionVM, L"onMouseDown");
-
-	// Issue events on "visible" characters.
-	const FlashDisplayList::layer_map_t& layers = m_displayList.getLayers();
-	for (FlashDisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
-	{
-		if (i->second.instance)
-			i->second.instance->eventMouseDown(actionVM, x, y, button);
-	}
-
-	FlashCharacterInstance::eventMouseDown(actionVM, x, y, button);
-}
-
-void FlashSpriteInstance::eventMouseUp(const IActionVM* actionVM, int32_t x, int32_t y, int32_t button)
+void FlashSpriteInstance::eventMouseDown(int32_t x, int32_t y, int32_t button)
 {
 	m_mouseX = x;
 	m_mouseY = y;
 
 	// Issue script assigned event.
-	executeScriptEvent(actionVM, L"onMouseUp");
+	executeScriptEvent(L"onMouseDown");
 
 	// Issue events on "visible" characters.
 	const FlashDisplayList::layer_map_t& layers = m_displayList.getLayers();
 	for (FlashDisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
 	{
 		if (i->second.instance)
-			i->second.instance->eventMouseUp(actionVM, x, y, button);
+			i->second.instance->eventMouseDown(x, y, button);
 	}
 
-	FlashCharacterInstance::eventMouseUp(actionVM, x, y, button);
+	FlashCharacterInstance::eventMouseDown(x, y, button);
 }
 
-void FlashSpriteInstance::eventMouseMove(const IActionVM* actionVM, int32_t x, int32_t y, int32_t button)
+void FlashSpriteInstance::eventMouseUp(int32_t x, int32_t y, int32_t button)
 {
 	m_mouseX = x;
 	m_mouseY = y;
 
 	// Issue script assigned event.
-	executeScriptEvent(actionVM, L"onMouseMove");
+	executeScriptEvent(L"onMouseUp");
 
 	// Issue events on "visible" characters.
 	const FlashDisplayList::layer_map_t& layers = m_displayList.getLayers();
 	for (FlashDisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
 	{
 		if (i->second.instance)
-			i->second.instance->eventMouseMove(actionVM, x, y, button);
+			i->second.instance->eventMouseUp(x, y, button);
 	}
 
-	FlashCharacterInstance::eventMouseMove(actionVM, x, y, button);
+	FlashCharacterInstance::eventMouseUp(x, y, button);
+}
+
+void FlashSpriteInstance::eventMouseMove(int32_t x, int32_t y, int32_t button)
+{
+	m_mouseX = x;
+	m_mouseY = y;
+
+	// Issue script assigned event.
+	executeScriptEvent(L"onMouseMove");
+
+	// Issue events on "visible" characters.
+	const FlashDisplayList::layer_map_t& layers = m_displayList.getLayers();
+	for (FlashDisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
+	{
+		if (i->second.instance)
+			i->second.instance->eventMouseMove(x, y, button);
+	}
+
+	FlashCharacterInstance::eventMouseMove(x, y, button);
 }
 
 SwfRect FlashSpriteInstance::getBounds() const
@@ -428,7 +433,7 @@ SwfRect FlashSpriteInstance::getBounds() const
 	return bounds;
 }
 
-void FlashSpriteInstance::executeScriptEvent(const IActionVM* actionVM, const std::wstring& eventName)
+void FlashSpriteInstance::executeScriptEvent(const std::wstring& eventName)
 {
 	ActionValue memberValue;
 	if (!getLocalMember(eventName, memberValue))
@@ -439,7 +444,7 @@ void FlashSpriteInstance::executeScriptEvent(const IActionVM* actionVM, const st
 		return;
 
 	ActionFrame callFrame(getContext(), this, 0, 0, 4, 0, 0);
-	eventFunction->call(actionVM, &callFrame, this);
+	eventFunction->call(&callFrame, this);
 }
 
 	}

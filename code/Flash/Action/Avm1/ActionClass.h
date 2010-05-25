@@ -29,9 +29,9 @@ class T_DLLCLASS ActionClass : public ActionFunction
 public:
 	ActionClass(const std::wstring& name);
 
-	virtual ActionValue call(const IActionVM* vm, ActionContext* context, ActionObject* self, const ActionValueArray& args);
+	virtual ActionValue call(ActionContext* context, ActionObject* self, const ActionValueArray& args);
 
-	virtual ActionValue call(const IActionVM* vm, ActionFrame* callerFrame, ActionObject* self);
+	virtual ActionValue call(ActionFrame* callerFrame, ActionObject* self);
 
 protected:
 	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args) = 0;
