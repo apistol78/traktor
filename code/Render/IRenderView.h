@@ -27,6 +27,16 @@ class IVolumeTexture;
 class RenderTargetSet;
 class IProgram;
 
+#if defined(T_USE_RENDER_MARKERS)
+#	define T_RENDER_PUSH_MARKER(renderView, marker) \
+	(renderView)->pushMarker(marker)
+#	define T_RENDER_POP_MARKER(renderView) \
+	(renderView)->popMarker()
+#else
+#	define T_RENDER_PUSH_MARKER(renderView, marker)
+#	define T_RENDER_POP_MARKER(renderView)
+#endif
+
 /*! \brief Render view.
  * \ingroup Render
  */

@@ -9,26 +9,17 @@ namespace traktor
 
 void NullRenderBlock::render(IRenderView* renderView) const
 {
-#if defined(T_USE_RENDERBLOCK_NAME)
-	if (name)
-		renderView->pushMarker(name);
-#endif
+	T_RENDER_PUSH_MARKER(renderView, name);
 
 	if (shaderParams)
 		shaderParams->fixup(shader);
 
-#if defined(T_USE_RENDERBLOCK_NAME)
-	if (name)
-		renderView->popMarker();
-#endif
+	T_RENDER_POP_MARKER(renderView);
 }
 
 void SimpleRenderBlock::render(IRenderView* renderView) const
 {
-#if defined(T_USE_RENDERBLOCK_NAME)
-	if (name)
-		renderView->pushMarker(name);
-#endif
+	T_RENDER_PUSH_MARKER(renderView, name);
 
 	if (shaderParams)
 		shaderParams->fixup(shader);
@@ -37,20 +28,14 @@ void SimpleRenderBlock::render(IRenderView* renderView) const
 	renderView->setVertexBuffer(vertexBuffer);
 	shader->draw(renderView, *primitives);
 
-#if defined(T_USE_RENDERBLOCK_NAME)
-	if (name)
-		renderView->popMarker();
-#endif
+	T_RENDER_POP_MARKER(renderView);
 }
 
 void NonIndexedRenderBlock::render(IRenderView* renderView) const
 {
 	Primitives p(primitive, offset, count);
 
-#if defined(T_USE_RENDERBLOCK_NAME)
-	if (name)
-		renderView->pushMarker(name);
-#endif
+	T_RENDER_PUSH_MARKER(renderView, name);
 
 	if (shaderParams)
 		shaderParams->fixup(shader);
@@ -58,20 +43,14 @@ void NonIndexedRenderBlock::render(IRenderView* renderView) const
 	renderView->setVertexBuffer(vertexBuffer);
 	shader->draw(renderView, p);
 
-#if defined(T_USE_RENDERBLOCK_NAME)
-	if (name)
-		renderView->popMarker();
-#endif
+	T_RENDER_POP_MARKER(renderView);
 }
 
 void IndexedRenderBlock::render(IRenderView* renderView) const
 {
 	Primitives p(primitive, offset, count, minIndex, maxIndex);
 
-#if defined(T_USE_RENDERBLOCK_NAME)
-	if (name)
-		renderView->pushMarker(name);
-#endif
+	T_RENDER_PUSH_MARKER(renderView, name);
 
 	if (shaderParams)
 		shaderParams->fixup(shader);
@@ -80,48 +59,30 @@ void IndexedRenderBlock::render(IRenderView* renderView) const
 	renderView->setVertexBuffer(vertexBuffer);
 	shader->draw(renderView, p);
 
-#if defined(T_USE_RENDERBLOCK_NAME)
-	if (name)
-		renderView->popMarker();
-#endif
+	T_RENDER_POP_MARKER(renderView);
 }
 
 void TargetBeginRenderBlock::render(IRenderView* renderView) const
 {
-#if defined(T_USE_RENDERBLOCK_NAME)
-	if (name)
-		renderView->pushMarker(name);
-#endif
+	T_RENDER_PUSH_MARKER(renderView, name);
 
 	renderView->begin(renderTargetSet, renderTargetIndex, keepDepthStencil);
 
-#if defined(T_USE_RENDERBLOCK_NAME)
-	if (name)
-		renderView->popMarker();
-#endif
+	T_RENDER_POP_MARKER(renderView);
 }
 
 void TargetEndRenderBlock::render(IRenderView* renderView) const
 {
-#if defined(T_USE_RENDERBLOCK_NAME)
-	if (name)
-		renderView->pushMarker(name);
-#endif
+	T_RENDER_PUSH_MARKER(renderView, name);
 
 	renderView->end();
 
-#if defined(T_USE_RENDERBLOCK_NAME)
-	if (name)
-		renderView->popMarker();
-#endif
+	T_RENDER_POP_MARKER(renderView);
 }
 
 void TargetClearRenderBlock::render(IRenderView* renderView) const
 {
-#if defined(T_USE_RENDERBLOCK_NAME)
-	if (name)
-		renderView->pushMarker(name);
-#endif
+	T_RENDER_PUSH_MARKER(renderView, name);
 
 	if (clearMask)
 	{
@@ -133,18 +94,12 @@ void TargetClearRenderBlock::render(IRenderView* renderView) const
 		);
 	}
 
-#if defined(T_USE_RENDERBLOCK_NAME)
-	if (name)
-		renderView->popMarker();
-#endif
+	T_RENDER_POP_MARKER(renderView);
 }
 
 void ChainRenderBlock::render(IRenderView* renderView) const
 {
-#if defined(T_USE_RENDERBLOCK_NAME)
-	if (name)
-		renderView->pushMarker(name);
-#endif
+	T_RENDER_PUSH_MARKER(renderView, name);
 
 	if (inner)
 		inner->render(renderView);
@@ -152,10 +107,7 @@ void ChainRenderBlock::render(IRenderView* renderView) const
 	if (next)
 		next->render(renderView);
 
-#if defined(T_USE_RENDERBLOCK_NAME)
-	if (name)
-		renderView->popMarker();
-#endif
+	T_RENDER_POP_MARKER(renderView);
 }
 
 	}
