@@ -56,6 +56,7 @@ private:
 	bool m_requestedStats;
 	bool m_receivedStats;
 	bool m_storeStats;
+	bool m_storedStats;
 	bool m_destroyed;
 };
 
