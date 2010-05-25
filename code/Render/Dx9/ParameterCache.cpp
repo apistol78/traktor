@@ -163,6 +163,10 @@ HRESULT ParameterCache::lostDevice()
 HRESULT ParameterCache::resetDevice(IDirect3DDevice9* d3dDevice)
 {
 	m_d3dDevice = d3dDevice;
+
+	m_d3dDevice->SetVertexShaderConstantF(0, m_vertexConstantsShadow.ptr(), VertexConstantCount);
+	m_d3dDevice->SetPixelShaderConstantF(0, m_pixelConstantsShadow.ptr(), PixelConstantCount);
+
 	return S_OK;
 }
 

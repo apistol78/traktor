@@ -379,6 +379,7 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 		{ (color.alpha * cxform.alpha[0]) / 255.0f + cxform.alpha[1], 0.0f }
 	};
 
+	float cachePixelDx = 1.0f / c_cacheGlyphDimX;
 	m_quad->render(
 		m_renderContext,
 		bounds,
@@ -388,7 +389,7 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 		m_viewOffset,
 		cxf,
 		m_renderTargetGlyphs->getColorTexture(0),
-		Vector4(float(index) / c_cacheGlyphCount - 1.0f / c_cacheGlyphDimX, 0.0f, 1.0f / c_cacheGlyphCount + 2.0f / c_cacheGlyphDimX, 1.0f)
+		Vector4(float(index) / c_cacheGlyphCount + cachePixelDx * 2.0f, 0.0f, 1.0f / c_cacheGlyphCount - cachePixelDx * 4.0f, 1.0f)
 	);
 }
 
