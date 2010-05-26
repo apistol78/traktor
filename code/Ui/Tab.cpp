@@ -400,6 +400,8 @@ void Tab::eventSize(Event* event)
 	for (Widget* child = getFirstChild(); child != 0; child = child->getNextSibling())
 		child->setRect(m_innerRect);
 
+	update();
+
 	event->consume();
 }
 

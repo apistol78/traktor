@@ -110,6 +110,7 @@ public:
 
 private:
 	IBitmap* m_bitmap;
+	bool m_cached;
 };
 
 	}

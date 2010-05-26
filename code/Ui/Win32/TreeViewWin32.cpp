@@ -68,12 +68,13 @@ int TreeViewWin32::addImage(IBitmap* image, int imageCount)
 		m_hWnd.sendMessage(TVM_SETIMAGELIST, 0, (LPARAM)m_hImageList);
 	}
 
-	HBITMAP hImageBitmap = reinterpret_cast< BitmapWin32* >(image)->getHBitmap();
+	HBITMAP hImageBitmap = reinterpret_cast< BitmapWin32* >(image)->createClone();
 	if (!hImageBitmap)
 		return -1;
 
 	ImageList_AddMasked(m_hImageList, hImageBitmap, reinterpret_cast< BitmapWin32* >(image)->getMask());
 
+	DeleteObject(hImageBitmap);
 	return 0;
 }
 

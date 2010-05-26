@@ -46,6 +46,8 @@ public:
 
 	HICON createIcon() const;
 
+	HBITMAP createClone() const;
+
 #if defined(T_USE_GDI_PLUS)
 	Gdiplus::Bitmap* getGdiPlusBitmap();
 #endif
