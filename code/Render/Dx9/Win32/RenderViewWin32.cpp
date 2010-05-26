@@ -344,7 +344,7 @@ void RenderViewWin32::present()
 
 	hr = m_d3dSwapChain->Present(NULL, NULL, NULL, NULL, 0);
 
-	if (SUCCEEDED(hr))
+	if (SUCCEEDED(hr) && m_d3dSyncQueries[0])
 	{
 		uint32_t previousQuery = (m_frameCount + 1) % sizeof_array(m_d3dSyncQueries);
 		uint32_t currentQuery = m_frameCount % sizeof_array(m_d3dSyncQueries);
@@ -449,6 +449,7 @@ HRESULT RenderViewWin32::resetDevice(IDirect3DDevice9* d3dDevice)
 		return hr;
 	}
 
+	// Create synchronization queries; some devices doesn't support these thus allow failure.
 	for (uint32_t i = 0; i < sizeof_array(m_d3dSyncQueries); ++i)
 	{
 		hr = m_d3dDevice->CreateQuery(
@@ -457,8 +458,8 @@ HRESULT RenderViewWin32::resetDevice(IDirect3DDevice9* d3dDevice)
 		);
 		if (FAILED(hr))
 		{
-			log::error << L"Failed to create query; hr = " << hr << Endl;
-			return hr;
+			log::warning << L"Unable to create synchronization query; hr = " << hr << Endl;
+			m_d3dSyncQueries[i].release();
 		}
 	}
 
