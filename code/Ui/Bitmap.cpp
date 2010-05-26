@@ -1,4 +1,5 @@
 #include "Core/Log/Log.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Singleton/ISingleton.h"
 #include "Core/Singleton/SingletonManager.h"
 #include "Drawing/Image.h"
@@ -61,11 +62,13 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Bitmap", Bitmap, Object)
 
 Bitmap::Bitmap()
 :	m_bitmap(0)
+,	m_cached(false)
 {
 }
 
 Bitmap::Bitmap(uint32_t width, uint32_t height)
 :	m_bitmap(0)
+,	m_cached(false)
 {
 	create(width, height);
 	T_ASSERT (m_bitmap);
@@ -73,6 +76,7 @@ Bitmap::Bitmap(uint32_t width, uint32_t height)
 
 Bitmap::Bitmap(drawing::Image* image)
 :	m_bitmap(0)
+,	m_cached(false)
 {
 	create(image);
 	T_ASSERT (m_bitmap);
@@ -80,6 +84,7 @@ Bitmap::Bitmap(drawing::Image* image)
 
 Bitmap::Bitmap(drawing::Image* image, const ui::Rect& srcRect)
 :	m_bitmap(0)
+,	m_cached(false)
 {
 	create(image, srcRect);
 	T_ASSERT (m_bitmap);
@@ -87,11 +92,13 @@ Bitmap::Bitmap(drawing::Image* image, const ui::Rect& srcRect)
 
 Bitmap::~Bitmap()
 {
-	destroy();
+	safeDestroy(m_bitmap);
 }
 
 bool Bitmap::create(uint32_t width, uint32_t height)
 {
+	T_ASSERT (!m_bitmap);
+
 	if (!(m_bitmap = Application::getInstance()->getWidgetFactory()->createBitmap()))
 	{
 		log::error << L"Failed to create native widget peer (Bitmap)" << Endl;
@@ -110,6 +117,8 @@ bool Bitmap::create(uint32_t width, uint32_t height)
 
 bool Bitmap::create(drawing::Image* image)
 {
+	T_ASSERT (!m_bitmap);
+
 	if (!create(image->getWidth(), image->getHeight()))
 		return false;
 
@@ -124,6 +133,8 @@ bool Bitmap::create(drawing::Image* image)
 
 bool Bitmap::create(drawing::Image* image, const Rect& srcRect)
 {
+	T_ASSERT (!m_bitmap);
+
 	if (!create(image->getWidth(), image->getHeight()))
 		return false;
 
@@ -138,11 +149,8 @@ bool Bitmap::create(drawing::Image* image, const Rect& srcRect)
 
 void Bitmap::destroy()
 {
-	if (m_bitmap)
-	{
-		m_bitmap->destroy();
-		m_bitmap = 0;
-	}
+	if (!m_cached)
+		safeDestroy(m_bitmap);
 }
 
 void Bitmap::copyImage(drawing::Image* image)
@@ -221,7 +229,12 @@ Ref< Bitmap > Bitmap::load(const std::wstring& fileName)
 
 Ref< Bitmap > Bitmap::load(const void* resource, uint32_t size, const std::wstring& extension)
 {
-	return BitmapCache::getInstance().load(resource, size, extension);
+	Ref< Bitmap > bitmap = BitmapCache::getInstance().load(resource, size, extension);
+	if (!bitmap)
+		return 0;
+
+	bitmap->m_cached = true;
+	return bitmap;
 }
 
 	}

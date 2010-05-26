@@ -205,8 +205,8 @@ Color BitmapWin32::getPixel(uint32_t x, uint32_t y) const
 
 HICON BitmapWin32::createIcon() const
 {
-	HDC hDC = GetDC(NULL);
-	HDC hMaskDC = CreateCompatibleDC(hDC);
+	//HDC hDC = GetDC(NULL);
+	HDC hMaskDC = CreateCompatibleDC(/*hDC*/NULL);
 
 	HBITMAP hMask = CreateCompatibleBitmap(hMaskDC, m_width, m_height);
 	HBITMAP hMaskPrev = (HBITMAP)SelectObject(hMaskDC, hMask);
@@ -239,6 +239,30 @@ HICON BitmapWin32::createIcon() const
 	DeleteObject(hMask);
 
 	return hIcon;
+}
+
+HBITMAP BitmapWin32::createClone() const
+{
+	BITMAP bm;
+	GetObject(m_hBitmap, sizeof(bm), &bm);
+
+	HBITMAP hCloneBitmap = CreateBitmap(m_width, m_height, bm.bmPlanes, bm.bmBitsPixel, NULL);
+	if (!hCloneBitmap)
+		return NULL;
+
+	HDC hSourceDC = CreateCompatibleDC(NULL);
+	HDC hDestDC = CreateCompatibleDC(NULL);
+
+	HGDIOBJ hOldSourceBitmap = SelectObject(hSourceDC, m_hBitmap);
+	HGDIOBJ hOldDestBitmap = SelectObject(hDestDC, hCloneBitmap);
+	BitBlt(hDestDC, 0, 0, m_width, m_height, hSourceDC, 0, 0, SRCCOPY);
+	SelectObject(hSourceDC, hOldSourceBitmap);
+	SelectObject(hDestDC, hOldDestBitmap);
+
+	DeleteDC(hSourceDC);
+	DeleteDC(hDestDC);
+
+	return hCloneBitmap;
 }
 
 #if defined(T_USE_GDI_PLUS)
