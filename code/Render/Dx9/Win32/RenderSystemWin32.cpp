@@ -97,14 +97,29 @@ RenderSystemWin32::RenderSystemWin32()
 
 bool RenderSystemWin32::create(const RenderSystemCreateDesc& desc)
 {
+	UINT d3dAdapter = D3DADAPTER_DEFAULT;
+	D3DDEVTYPE d3dDevType = D3DDEVTYPE_HAL;
+	D3DCAPS9 d3dCaps;
 	WNDCLASS wc;
 	HRESULT hr;
 
 	m_d3d.getAssign() = Direct3DCreate9(D3D_SDK_VERSION);
 	T_ASSERT (m_d3d);
 
-	if (FAILED(m_d3d->GetAdapterDisplayMode(D3DADAPTER_DEFAULT, &m_d3dDefaultDisplayMode)))
+	if (FAILED(m_d3d->GetAdapterDisplayMode(d3dAdapter, &m_d3dDefaultDisplayMode)))
 		return false;
+
+	std::memset(&d3dCaps, 0, sizeof(d3dCaps));
+	hr = m_d3d->GetDeviceCaps(d3dAdapter, d3dDevType, &d3dCaps);
+	if (FAILED(hr))
+		log::warning << L"Unable to get device capabilities (" << int32_t(hr) << L"); possibly unexpected behavior" << Endl;
+	
+	if (d3dCaps.VertexShaderVersion < D3DVS_VERSION(3, 0))
+		log::warning << L"Out dated shader model; need at least VS 3.0 (device VS " << uint32_t(D3DSHADER_VERSION_MAJOR(d3dCaps.VertexShaderVersion)) << L"." << uint32_t(D3DSHADER_VERSION_MINOR(d3dCaps.VertexShaderVersion)) << L")" << Endl;
+	if (d3dCaps.PixelShaderVersion < D3DPS_VERSION(3, 0))
+		log::warning << L"Out dated shader model; need at least PS 3.0 (device PS " << uint32_t(D3DSHADER_VERSION_MAJOR(d3dCaps.PixelShaderVersion)) << L"." << uint32_t(D3DSHADER_VERSION_MINOR(d3dCaps.PixelShaderVersion)) << L")" << Endl;
+
+	log::info << L"D3DCAPS9.MaxVertexShaderConst = " << uint32_t(d3dCaps.MaxVertexShaderConst) << Endl;
 
 	// Render window class.
 	std::memset(&wc, 0, sizeof(wc));
@@ -135,15 +150,18 @@ bool RenderSystemWin32::create(const RenderSystemCreateDesc& desc)
 	if (!m_hWnd)
 		return false;
 
-	UINT d3dAdapter = D3DADAPTER_DEFAULT;
-	D3DDEVTYPE d3dDevType = D3DDEVTYPE_HAL;
-
 	// Create devices.
-	DWORD dwBehaviour =
-		D3DCREATE_HARDWARE_VERTEXPROCESSING |
-		D3DCREATE_FPU_PRESERVE |
-		D3DCREATE_PUREDEVICE |
-		D3DCREATE_MULTITHREADED;
+	DWORD dwBehaviour = D3DCREATE_MULTITHREADED;
+	if (d3dCaps.DevCaps & D3DDEVCAPS_HWTRANSFORMANDLIGHT)
+	{
+		log::info << L"Using D3DCREATE_HARDWARE_VERTEXPROCESSING" << Endl;
+		dwBehaviour |= D3DCREATE_HARDWARE_VERTEXPROCESSING;
+	}
+	if (d3dCaps.DevCaps & D3DDEVCAPS_PUREDEVICE)
+	{
+		log::info << L"Using D3DCREATE_PUREDEVICE" << Endl;
+		dwBehaviour |= D3DCREATE_PUREDEVICE;
+	}
 
 	std::memset(&m_d3dPresent, 0, sizeof(m_d3dPresent));
 	m_d3dPresent.BackBufferFormat = D3DFMT_UNKNOWN;
@@ -168,31 +186,25 @@ bool RenderSystemWin32::create(const RenderSystemCreateDesc& desc)
 	);
 	if (FAILED(hr) || !m_d3dDevice)
 	{
-		log::error << L"CreateDevice failed; unable to create device" << Endl;
-		return false;
-	}
+		log::warning << L"CreateDevice failed; trying D3DCREATE_SOFTWARE_VERTEXPROCESSING..." << Endl;
 
-	D3DCAPS9 d3dDeviceCaps;
-	std::memset(&d3dDeviceCaps, 0, sizeof(d3dDeviceCaps));
-	hr = m_d3dDevice->GetDeviceCaps(&d3dDeviceCaps);
-	if (SUCCEEDED(hr))
-	{
-		// Ensure device supports at least SM 3.0.
-		if (d3dDeviceCaps.VertexShaderVersion < D3DVS_VERSION(3, 0))
+		dwBehaviour &= ~D3DCREATE_HARDWARE_VERTEXPROCESSING;
+		dwBehaviour |= D3DCREATE_SOFTWARE_VERTEXPROCESSING;
+
+		hr = m_d3d->CreateDevice(
+			d3dAdapter,
+			d3dDevType,
+			m_d3dPresent.hDeviceWindow,
+			dwBehaviour,
+			&m_d3dPresent,
+			&m_d3dDevice.getAssign()
+		);
+		if (FAILED(hr) || !m_d3dDevice)
 		{
-			log::error << L"Create device failed, need at least VS 3.0 (device VS " << uint32_t(D3DSHADER_VERSION_MAJOR(d3dDeviceCaps.VertexShaderVersion)) << L"." << uint32_t(D3DSHADER_VERSION_MINOR(d3dDeviceCaps.VertexShaderVersion)) << L")" << Endl;
+			log::error << L"CreateDevice failed; unable to create device (" << int32_t(hr) << L")" << Endl;
 			return false;
 		}
-		if (d3dDeviceCaps.PixelShaderVersion < D3DPS_VERSION(3, 0))
-		{
-			log::error << L"Create device failed, need at least PS 3.0 (device PS " << uint32_t(D3DSHADER_VERSION_MAJOR(d3dDeviceCaps.PixelShaderVersion)) << L"." << uint32_t(D3DSHADER_VERSION_MINOR(d3dDeviceCaps.PixelShaderVersion)) << L")" << Endl;
-			return false;
-		}
-
-		log::debug << L"D3DCAPS9.MaxVertexShaderConst = " << uint32_t(d3dDeviceCaps.MaxVertexShaderConst) << Endl;
 	}
-	else
-		log::warning << L"Unable to get device capabilities; may produce unexpected results" << Endl;
 
 	m_resourceManager = new ResourceManagerDx9();
 	m_shaderCache = new ShaderCache();
