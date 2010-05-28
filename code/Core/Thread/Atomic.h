@@ -25,19 +25,19 @@ struct T_DLLCLASS Atomic
 	 *
 	 * \return Result value of variable.
 	 */
-	static int32_t increment(int32_t& value);
+	static T_FORCE_INLINE int32_t increment(int32_t& value);
 
 	/*! \brief Decrement variable.
 	 *
 	 * \return Result value of variable.
 	 */
-	static int32_t decrement(int32_t& value);
+	static T_FORCE_INLINE int32_t decrement(int32_t& value);
 
 	/*! \brief Set value of variable. */
-	static uint32_t exchange(uint32_t& s, uint32_t v);
+	static T_FORCE_INLINE uint32_t exchange(uint32_t& s, uint32_t v);
 
 	/*! \brief Set value of variable. */
-	static uint64_t exchange(uint64_t& s, uint64_t v);
+	static T_FORCE_INLINE uint64_t exchange(uint64_t& s, uint64_t v);
 
 	/*! \brief Set value of variable. */
 	template < typename T >
@@ -51,5 +51,15 @@ struct T_DLLCLASS Atomic
 };
 
 }
+
+#if defined(_WIN32)
+#	include "Core/Thread/Win32/Atomic.inl"
+#elif defined(__APPLE__)
+#	include "Core/Thread/OsX/Atomic.inl"
+#elif defined(_PS3)
+#	include "Core/Thread/Ps3/Atomic.inl"
+#else
+#	include "Core/Thread/Linux/Atomic.inl"
+#endif
 
 #endif	// traktor_Atomic_H

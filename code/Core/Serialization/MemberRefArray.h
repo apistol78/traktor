@@ -20,15 +20,7 @@ public:
 	MemberRefArray(const std::wstring& name, value_type& ref)
 	:	MemberArray(name)
 	,	m_ref(ref)
-	,	m_value(ref)
-	,	m_modified(false)
 	{
-	}
-
-	virtual ~MemberRefArray()
-	{
-		if (m_modified)
-			m_ref.swap(m_value);
 	}
 
 	virtual const TypeInfo* getType() const
@@ -38,14 +30,13 @@ public:
 
 	virtual void reserve(size_t size) const
 	{
-		m_value.resize(0);
-		m_value.reserve(size);
-		m_modified = true;
+		m_ref.resize(0);
+		m_ref.reserve(size);
 	}
 
 	virtual size_t size() const
 	{
-		return m_value.size();
+		return m_ref.size();
 	}
 
 	virtual bool read(ISerializer& s) const
@@ -54,17 +45,15 @@ public:
 		if (!(s >> MemberType(L"item", object)))
 			return false;
 
-		m_value.push_back(checked_type_cast< Class* >(object));
-		m_modified = true;
-
+		m_ref.push_back(object);
 		return true;
 	}
 
 	virtual bool write(ISerializer& s, size_t index) const
 	{
-		if (index >= m_value.size())
+		if (index >= m_ref.size())
 			T_FATAL_ERROR;
-		Ref< Class > object = m_value[index];
+		Ref< Class > object = m_ref[index];
 		return s >> MemberType(L"item", object);
 	}
 
@@ -75,8 +64,6 @@ public:
 
 private:
 	value_type& m_ref;
-	mutable value_type m_value;
-	mutable bool m_modified;
 };
 
 }
