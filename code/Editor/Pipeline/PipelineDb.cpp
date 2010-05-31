@@ -60,7 +60,7 @@ bool PipelineDb::open(const std::wstring& connectionString)
 			L"pipelineVersion integer,"
 			L"hash integer"
 			L")"
-		) <= 0)
+		) < 0)
 			return false;
 
 		if (connection->executeUpdate(
@@ -71,10 +71,10 @@ bool PipelineDb::open(const std::wstring& connectionString)
 			L"lastWriteTime integer,"
 			L"hash integer"
 			L")"
-		) <= 0)
+		) < 0)
 			return false;
 
-		if (connection->executeUpdate(L"create table Version (major integer)") <= 0)
+		if (connection->executeUpdate(L"create table Version (major integer)") < 0)
 			return false;
 
 		if (connection->executeUpdate(L"insert into Version (major) values (" + toString(c_version) + L")") <= 0)
