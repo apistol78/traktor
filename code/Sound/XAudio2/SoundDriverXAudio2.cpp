@@ -33,15 +33,62 @@ struct StreamingVoiceContext : public IXAudio2VoiceCallback
 };
 
 template < typename SampleType >
+struct CastSample
+{
+	SampleType cast(float sample) const
+	{
+		return static_cast< SampleType >(sample * std::numeric_limits< SampleType >::max());
+	}
+};
+
+template < >
+struct CastSample < int8_t >
+{
+	__m128 f;
+
+	CastSample()
+	{
+		static const float T_ALIGN16 c_int8max = std::numeric_limits< int8_t >::max();
+		f = _mm_load_ss(&c_int8max);
+	}
+
+	int8_t cast(float sample) const
+	{
+		__m128 s = _mm_load_ss(&sample);
+		__m128 sf = _mm_mul_ss(s, f);
+		return (int8_t)_mm_cvtt_ss2si(sf);
+	}
+};
+
+template < >
+struct CastSample < int16_t >
+{
+	__m128 f;
+
+	CastSample()
+	{
+		static const float T_ALIGN16 c_int16max = std::numeric_limits< int16_t >::max();
+		f = _mm_load_ss(&c_int16max);
+	}
+
+	int16_t cast(float sample) const
+	{
+		__m128 s = _mm_load_ss(&sample);
+		__m128 sf = _mm_mul_ss(s, f);
+		return (int16_t)_mm_cvtt_ss2si(sf);
+	}
+};
+
+template < typename SampleType >
 void writeSamples(void* dest, const float* samples, uint32_t samplesCount, uint32_t writeStride)
 {
+	CastSample< SampleType > cs;
 	SampleType* write = static_cast< SampleType* >(dest);
 	for (uint32_t i = 0; i < samplesCount; ++i)
 	{
-		float sample = samples[i];
-		sample = max(sample, -1.0f);
-		sample = min(sample,  1.0f);
-		write[i * writeStride] = static_cast< SampleType >(sample * std::numeric_limits< SampleType >::max());
+		float sample = clamp(*samples++, -1.0f, 1.0f);
+		*write = cs.cast(sample);
+		write += writeStride;
 	}
 }
 
@@ -205,7 +252,7 @@ void SoundDriverXAudio2::wait()
 	if (!m_sourceVoice)
 		return;
 
-	while (m_sourceVoice->GetState(&state), state.BuffersQueued >= 2)
+	while (m_sourceVoice->GetState(&state), state.BuffersQueued >= 3)
 		WaitForSingleObject(m_eventNotify, INFINITE);
 }
 
@@ -230,7 +277,7 @@ void SoundDriverXAudio2::submit(const SoundBlock& soundBlock)
 	{
 	case 8:
 		for (uint32_t i = 0; i < soundBlock.maxChannel; ++i)
-			writeSamples< uint8_t >(&data[i], soundBlock.samples[i], soundBlock.samplesCount, soundBlock.maxChannel);
+			writeSamples< int8_t >(&data[i], soundBlock.samples[i], soundBlock.samplesCount, soundBlock.maxChannel);
 		break;
 
 	case 16:
