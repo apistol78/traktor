@@ -1,21 +1,9 @@
-#include "Database/Compact/BlockFile.h"
 #include "Core/Io/FileSystem.h"
-#include "Core/Io/IStream.h"
-#include "Core/Io/BufferedStream.h"
 #include "Core/Io/Reader.h"
+#include "Core/Io/StreamStream.h"
 #include "Core/Io/Writer.h"
 #include "Core/Thread/Acquire.h"
-
-#if defined(_DEBUG)
-#define T_DEBUG_USAGE 1
-#else
-#define T_DEBUG_USAGE 0
-#endif
-
-#if T_DEBUG_USAGE
-#include "Core/Io/DebugStream.h"
-#include "Core/Log/Log.h"
-#endif
+#include "Database/Compact/BlockFile.h"
 
 namespace traktor
 {
@@ -24,110 +12,20 @@ namespace traktor
 		namespace
 		{
 
-class BlockReadStream : public IStream
+struct BlockPred
 {
-	T_RTTI_CLASS;
+	uint32_t m_id;
 
-public:
-	BlockReadStream(IStream* stream, const BlockFile::Block& block, Mutex& lock)
-	:	m_stream(stream)
-	,	m_block(block)
-	,	m_offset(0)
-	,	m_lock(lock)
+	BlockPred(uint32_t id)
+	:	m_id(id)
 	{
 	}
 
-	virtual void close()
+	bool operator () (const BlockFile::Block& block) const
 	{
-		T_ASSERT (m_stream);
-		m_stream = 0;
+		return block.id == m_id;
 	}
-
-	virtual bool canRead() const
-	{
-		return true;
-	}
-
-	virtual bool canWrite() const
-	{
-		return false;
-	}
-
-	virtual bool canSeek() const
-	{
-		return true;
-	}
-
-	virtual int tell() const
-	{
-		T_ASSERT (m_stream);
-		return m_offset;
-	}
-
-	virtual int available() const
-	{
-		return m_block.size - m_offset;
-	}
-
-	virtual int seek(SeekOriginType origin, int offset)
-	{
-		switch (origin)
-		{
-		case SeekCurrent:
-			m_offset += offset;
-			break;
-
-		case SeekEnd:
-			m_offset = m_block.size - offset;
-			break;
-
-		case SeekSet:
-			m_offset = offset;
-			break;
-		}
-
-		if (m_offset < 0)
-			m_offset = 0;
-		if (m_offset >= m_block.size)
-			m_offset = m_block.size - 1;
-
-		return m_offset;
-	}
-
-	virtual int read(void* block, int nbytes)
-	{
-		T_ASSERT (m_stream);
-
-		nbytes = std::min(available(), nbytes);
-
-		Acquire< Mutex > __lock__(m_lock);
-
-		m_stream->seek(IStream::SeekSet, m_block.offset + m_offset);
-	
-		int nread = m_stream->read(block, nbytes);
-		if (nread > 0)
-			m_offset += nread;
-
-		return nread;
-	}
-
-	virtual int write(const void* block, int nbytes)
-	{
-		return 0;
-	}
-
-	virtual void flush()
-	{
-	}
-
-private:
-	Mutex& m_lock;
-	Ref< IStream > m_stream;
-	const BlockFile::Block& m_block;
-	uint32_t m_offset;
 };
-
-T_IMPLEMENT_RTTI_CLASS(L"traktor.db.BlockReadStream", BlockReadStream, IStream)
 
 class BlockWriteStream : public IStream
 {
@@ -230,9 +128,7 @@ bool BlockFile::create(const Path& fileName)
 	if (!m_stream)
 		return false;
 
-#if T_DEBUG_USAGE
-	m_stream = new DebugStream(m_stream);
-#endif
+	m_fileName = fileName;
 
 	flushTOC();
 
@@ -247,10 +143,6 @@ bool BlockFile::open(const Path& fileName, bool readOnly)
 	m_stream = FileSystem::getInstance().open(fileName, readOnly ? File::FmRead : File::FmRead | File::FmWrite);
 	if (!m_stream)
 		return false;
-
-#if T_DEBUG_USAGE
-	m_stream = new DebugStream(m_stream);
-#endif
 
 	Reader reader(m_stream);
 
@@ -274,6 +166,7 @@ bool BlockFile::open(const Path& fileName, bool readOnly)
 	}
 
 	m_stream->seek(IStream::SeekSet, 3 * sizeof(uint32_t) + 4096 * (sizeof(uint32_t) + sizeof(Block)));
+	m_fileName = fileName;
 
 	return true;
 }
@@ -282,10 +175,6 @@ void BlockFile::close()
 {
 	if (m_stream)
 	{
-#if T_DEBUG_USAGE
-		checked_type_cast< DebugStream* >(m_stream)->dump(log::info);
-#endif
-
 		m_stream->close();
 		m_stream = 0;
 	}
@@ -320,25 +209,30 @@ void BlockFile::freeBlockId(uint32_t blockId)
 
 Ref< IStream > BlockFile::readBlock(uint32_t blockId)
 {
-	for (std::vector< Block >::const_iterator i = m_blocks.begin(); i != m_blocks.end(); ++i)
-	{
-		if (i->id == blockId)
-			return new BufferedStream(new BlockReadStream(m_stream, *i, m_lock));
-	}
-	return 0;
+	std::vector< Block >::const_iterator it = std::find_if(m_blocks.begin(), m_blocks.end(), BlockPred(blockId));
+	if (it == m_blocks.end())
+		return 0;
+
+	Ref< IStream > stream = FileSystem::getInstance().open(m_fileName, File::FmRead);
+	if (!stream)
+		return 0;
+
+	if (stream->seek(IStream::SeekSet, it->offset) < 0)
+		return 0;
+
+	return new StreamStream(stream, it->offset + it->size);
 }
 
 Ref< IStream > BlockFile::writeBlock(uint32_t blockId)
 {
-	for (std::vector< Block >::iterator i = m_blocks.begin(); i != m_blocks.end(); ++i)
-	{
-		if (i->id == blockId)
-		{
-			m_stream->seek(IStream::SeekEnd, 0);
-			return new BlockWriteStream(this, m_stream, *i);
-		}
-	}
-	return 0;
+	std::vector< Block >::iterator it = std::find_if(m_blocks.begin(), m_blocks.end(), BlockPred(blockId));
+	if (it == m_blocks.end())
+		return 0;
+
+	if (m_stream->seek(IStream::SeekEnd, 0) < 0)
+		return 0;
+
+	return new BlockWriteStream(this, m_stream, *it);
 }
 
 void BlockFile::flushTOC()

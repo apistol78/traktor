@@ -3,7 +3,7 @@
 
 #include "Core/Object.h"
 #include "Core/Io/Path.h"
-#include "Core/Thread/Mutex.h"
+#include "Core/Thread/Semaphore.h"
 
 namespace traktor
 {
@@ -47,7 +47,8 @@ public:
 	void flushTOC();
 
 private:
-	Mutex m_lock;
+	Path m_fileName;
+	Semaphore m_lock;
 	Ref< IStream > m_stream;
 	std::vector< Block > m_blocks;
 };
