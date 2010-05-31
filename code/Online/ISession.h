@@ -22,6 +22,7 @@ class ISerializable;
 
 class IUser;
 class IAchievement;
+class ILeaderboard;
 class ISaveGame;
 
 /*! \brief Single game session.
@@ -58,6 +59,13 @@ public:
 	 * \return True if achievement was successfully withdrawn.
 	 */
 	virtual bool withdrawAchievement(const std::wstring& achievementId) = 0;
+
+	/*! \brief Get leaderboard.
+	 *
+	 * \param id Leaderboard id.
+	 * \return Leaderboard instance.
+	 */
+	virtual Ref< ILeaderboard > getLeaderboard(const std::wstring& id) = 0;
 
 	/*! \brief Set value.
 	 *

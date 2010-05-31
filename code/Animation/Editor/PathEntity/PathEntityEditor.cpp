@@ -155,6 +155,7 @@ void PathEntityEditor::drawGuide(
 		}
 
 		// Draw evaluated curve.
+		bool loop = (pathEntity->getTimeMode() == PathEntity::TmLoop);
 		float st = keys.front().T;
 		float et = keys.back().T;
 		for (uint32_t i = 0; i < 40; ++i)
@@ -162,8 +163,8 @@ void PathEntityEditor::drawGuide(
 			float t1 = st + (i * (et - st)) / 40.0f;
 			float t2 = st + ((i + 1) * (et - st)) / 40.0f;
 			primitiveRenderer->drawLine(
-				path.evaluate(t1, false).position,
-				path.evaluate(t2, false).position,
+				path.evaluate(t1, loop).position,
+				path.evaluate(t2, loop).position,
 				Color(170, 170, 255)
 			);
 		}

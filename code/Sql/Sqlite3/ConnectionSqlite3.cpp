@@ -115,7 +115,10 @@ int32_t ConnectionSqlite3::executeUpdate(const std::wstring& update)
 	err = sqlite3_step((sqlite3_stmt*)stmt);
 	sqlite3_finalize((sqlite3_stmt*)stmt);
 
-	return err == SQLITE_DONE ? 1 : 0;
+	if (err != SQLITE_DONE)
+		return -1;
+
+	return sqlite3_changes((sqlite3*)m_db);
 }
 
 int32_t ConnectionSqlite3::lastInsertId()
