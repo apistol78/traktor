@@ -1,3 +1,5 @@
+#include "Core/Log/Log.h"
+#include "Core/Math/Const.h"
 #include "Flash/FlashMovieRenderer.h"
 #include "Flash/FlashSpriteInstance.h"
 #include "Flash/FlashShapeInstance.h"
@@ -13,7 +15,6 @@
 #include "Flash/FlashButton.h"
 #include "Flash/FlashFont.h"
 #include "Flash/IDisplayRenderer.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -140,6 +141,10 @@ void FlashMovieRenderer::renderCharacter(
 	const SwfCxTransform& cxTransform
 )
 {
+	// Don't render completely transparent shapes.
+	if (cxTransform.alpha[0] + cxTransform.alpha[1] <= FUZZY_EPSILON)
+		return;
+
 	// Render basic shapes.
 	Ref< FlashShapeInstance > shapeInstance = dynamic_type_cast< FlashShapeInstance* >(characterInstance);
 	if (shapeInstance)
