@@ -105,6 +105,26 @@ bool SessionManagerLocal::create()
 		}
 	}
 
+	if (!m_db->tableExists(L"Leaderboards"))
+	{
+		// Create leaderboards table.
+		if (m_db->executeUpdate(L"create table Leaderboards (id integer primary key, name varchar(250))") < 0)
+		{
+			log::error << L"Unable to create local session manager; unable to create table Leaderboards" << Endl;
+			return false;
+		}
+	}
+
+	if (!m_db->tableExists(L"LeaderboardEntries"))
+	{
+		// Create leaderboard entries table.
+		if (m_db->executeUpdate(L"create table LeaderboardEntries (id integer primary key, leaderboard integer, user integer, score integer)") < 0)
+		{
+			log::error << L"Unable to create local session manager; unable to create table LeaderboardEntries" << Endl;
+			return false;
+		}
+	}
+
 	// Get user identity in database.
 	rs = m_db->executeQuery(L"select id from Users where name='" + user + L"'");
 	if (rs && rs->next())

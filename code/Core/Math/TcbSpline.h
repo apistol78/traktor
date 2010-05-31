@@ -126,7 +126,7 @@ struct TcbSpline
 			v1, -k22
 		);
 
-		Time T = (Tcurr - T0) / (T1 - T0);
+		Time T = (T1 > T0) ? (Tcurr - T0) / (T1 - T0) : Time(0.0f);
 		Time T2 = T * T;
 		Time T3 = T2 * T;
 

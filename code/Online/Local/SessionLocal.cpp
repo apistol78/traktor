@@ -1,6 +1,7 @@
 #include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Misc/Base64.h"
 #include "Core/Serialization/BinarySerializer.h"
+#include "Online/Local/LeaderboardLocal.h"
 #include "Online/Local/SaveGameLocal.h"
 #include "Online/Local/SessionLocal.h"
 #include "Online/Local/UserLocal.h"
@@ -68,6 +69,25 @@ bool SessionLocal::setStatValue(const std::wstring& statId, float value)
 		return true;
 
 	return m_db->executeUpdate(L"insert into Stats (name, value) values ('" + statId + L"', " + toString(value) + L")") >= 0;
+}
+
+Ref< ILeaderboard > SessionLocal::getLeaderboard(const std::wstring& id)
+{
+	Ref< sql::IResultSet > rs;
+	int32_t leaderboardId;
+
+	rs = m_db->executeQuery(L"select id from Leaderboards where name='" + id + L"'");
+	if (rs && rs->next())
+		leaderboardId = rs->getInt32(0);
+	else
+	{
+		if (m_db->executeUpdate(L"insert into Leaderboards (name) values ('" + id + L"')") < 0)
+			return 0;
+
+		leaderboardId = m_db->lastInsertId();
+	}
+
+	return new LeaderboardLocal(m_db, leaderboardId, m_user->getId());
 }
 
 bool SessionLocal::getStatValue(const std::wstring& statId, float& outValue)

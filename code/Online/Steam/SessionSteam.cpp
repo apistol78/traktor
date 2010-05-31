@@ -6,6 +6,7 @@
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Online/Steam/CurrentUserSteam.h"
+#include "Online/Steam/LeaderboardSteam.h"
 #include "Online/Steam/SaveGameSteam.h"
 #include "Online/Steam/SessionSteam.h"
 
@@ -25,6 +26,7 @@ SessionSteam::SessionSteam(CurrentUserSteam* user)
 ,	m_receivedStats(false)
 ,	m_storeStats(false)
 ,	m_storedStats(false)
+,	m_receivedLeaderboard(false)
 ,	m_destroyed(false)
 {
 }
@@ -103,6 +105,37 @@ bool SessionSteam::withdrawAchievement(const std::wstring& achievementId)
 
 	m_storeStats = true;
 	return true;
+}
+
+Ref< ILeaderboard > SessionSteam::getLeaderboard(const std::wstring& id)
+{
+	std::map< std::wstring, Ref< LeaderboardSteam > >::iterator it = m_leaderboards.find(id);
+	if (it != m_leaderboards.end())
+		return it->second;
+
+	if (!SteamUser()->BLoggedOn())
+		return 0;
+
+	m_receivedLeaderboard = false;
+	std::string leaderboardId = wstombs(id);
+
+	SteamAPICall_t call = SteamUserStats()->FindOrCreateLeaderboard(leaderboardId.c_str(), k_ELeaderboardSortMethodDescending, k_ELeaderboardDisplayTypeNumeric);
+	if (call == 0)
+		return 0;
+
+	m_callbackFindLeaderboard.Set(call, this, &SessionSteam::OnLeaderboardFind);
+
+	for (int32_t tries = 1000; tries >= 0; --tries)
+	{
+		SteamAPI_RunCallbacks();
+		if (m_receivedLeaderboard)
+			break;
+
+		ThreadManager::getInstance().getCurrentThread()->sleep(10);
+	}
+
+	it = m_leaderboards.find(id);
+	return it != m_leaderboards.end() ? it->second : 0;
 }
 
 bool SessionSteam::setStatValue(const std::wstring& statId, float value)
@@ -201,6 +234,59 @@ void SessionSteam::OnAchievementStored(UserAchievementStored_t* pCallback)
 {
 	log::debug << L"Steam session event; achievement stored" << Endl;
 	m_storedStats = true;
+}
+
+void SessionSteam::OnLeaderboardFind(LeaderboardFindResult_t* pCallback, bool bIOFailure)
+{
+	if (pCallback->m_hSteamLeaderboard != 0)
+	{
+		log::debug << L"Steam session event; found leaderboard, requesting rank/score of current player..." << Endl;
+
+		SteamAPICall_t call = SteamUserStats()->DownloadLeaderboardEntries(pCallback->m_hSteamLeaderboard, k_ELeaderboardDataRequestGlobalAroundUser, 0, 0);
+		if (call == 0)
+		{
+			log::error << L"Steam session event; unable to request rank/score" << Endl;
+			m_receivedLeaderboard = true;
+			return;
+		}
+
+		m_callbackDownloadLeaderboard.Set(call, this, &SessionSteam::OnLeaderboardDownloaded);
+	}
+	else
+	{
+		log::error << L"Steam session event; didn't find requested leaderboard" << Endl;
+		m_receivedLeaderboard = true;
+	}
+}
+
+void SessionSteam::OnLeaderboardDownloaded(LeaderboardScoresDownloaded_t* pCallback, bool bIOFailure)
+{
+	log::debug << L"Steam session event; got rank/score of current player..." << Endl;
+
+	const char* leaderboardId = SteamUserStats()->GetLeaderboardName(pCallback->m_hSteamLeaderboard);
+	if (!leaderboardId)
+	{
+		m_receivedLeaderboard = true;
+		return;
+	}
+
+	LeaderboardEntry_t leaderboardEntry;
+	leaderboardEntry.m_nGlobalRank = 0;
+	leaderboardEntry.m_nScore = 0;
+
+	if (pCallback->m_cEntryCount > 0)
+		SteamUserStats()->GetDownloadedLeaderboardEntry(pCallback->m_hSteamLeaderboardEntries, 0, &leaderboardEntry, 0, 0);
+
+	m_leaderboards.insert(std::make_pair(
+		mbstows(leaderboardId),
+		new LeaderboardSteam(
+			pCallback->m_hSteamLeaderboard,
+			leaderboardEntry.m_nGlobalRank,
+			leaderboardEntry.m_nScore
+		)
+	));
+
+	m_receivedLeaderboard = true;
 }
 
 	}

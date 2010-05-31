@@ -1,15 +1,8 @@
 #ifndef traktor_online_SessionSteam_H
 #define traktor_online_SessionSteam_H
 
+#include <map>
 #include "Online/ISession.h"
-
-// import/export mechanism.
-#undef T_DLLCLASS
-#if defined(T_ONLINE_STEAM_EXPORT)
-#	define T_DLLCLASS T_DLLEXPORT
-#else
-#	define T_DLLCLASS T_DLLIMPORT
-#endif 
 
 namespace traktor
 {
@@ -17,8 +10,9 @@ namespace traktor
 	{
 
 class CurrentUserSteam;
+class LeaderboardSteam;
 
-class T_DLLCLASS SessionSteam : public ISession
+class SessionSteam : public ISession
 {
 	T_RTTI_CLASS;
 
@@ -34,6 +28,8 @@ public:
 	virtual bool rewardAchievement(const std::wstring& achievementId);
 
 	virtual bool withdrawAchievement(const std::wstring& achievementId);
+
+	virtual Ref< ILeaderboard > getLeaderboard(const std::wstring& id);
 
 	virtual bool setStatValue(const std::wstring& statId, float value);
 
@@ -53,11 +49,19 @@ public:
 
 private:
 	Ref< CurrentUserSteam > m_user;
+	std::map< std::wstring, Ref< LeaderboardSteam > > m_leaderboards;
 	bool m_requestedStats;
 	bool m_receivedStats;
 	bool m_storeStats;
 	bool m_storedStats;
+	bool m_receivedLeaderboard;
 	bool m_destroyed;
+	CCallResult< SessionSteam, LeaderboardFindResult_t > m_callbackFindLeaderboard;
+	CCallResult< SessionSteam, LeaderboardScoresDownloaded_t > m_callbackDownloadLeaderboard;
+
+	void OnLeaderboardFind(LeaderboardFindResult_t* pCallback, bool bIOFailure);
+
+	void OnLeaderboardDownloaded(LeaderboardScoresDownloaded_t* pCallback, bool bIOFailure);
 };
 
 	}
