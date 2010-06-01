@@ -1,15 +1,22 @@
+#include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberComposite.h"
+#include "Core/Serialization/MemberRef.h"
 #include "Theater/TrackData.h"
 #include "World/Entity/EntityData.h"
-#include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/MemberRef.h"
-#include "Core/Serialization/MemberComposite.h"
 
 namespace traktor
 {
 	namespace theater
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.theater.TrackData", 0, TrackData, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.theater.TrackData", 1, TrackData, ISerializable)
+
+TrackData::TrackData()
+:	m_loopStart(0.0f)
+,	m_loopEnd(0.0f)
+,	m_loopEase(0.0f)
+{
+}
 
 void TrackData::setEntityData(world::EntityData* entityData)
 {
@@ -31,10 +38,33 @@ TransformPath& TrackData::getPath()
 	return m_path;
 }
 
+float TrackData::getLoopStart() const
+{
+	return m_loopStart;
+}
+
+float TrackData::getLoopEnd() const
+{
+	return m_loopEnd;
+}
+
+float TrackData::getLoopEase() const
+{
+	return m_loopEase;
+}
+
 bool TrackData::serialize(ISerializer& s)
 {
 	s >> MemberRef< world::EntityData >(L"entityData", m_entityData);
 	s >> MemberComposite< TransformPath >(L"path", m_path);
+	
+	if (s.getVersion() >= 1)
+	{
+		s >> Member< float >(L"loopStart", m_loopStart);
+		s >> Member< float >(L"loopEnd", m_loopEnd);
+		s >> Member< float >(L"loopEase", m_loopEase);
+	}
+
 	return true;
 }
 

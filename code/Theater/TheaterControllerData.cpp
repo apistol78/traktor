@@ -31,7 +31,10 @@ Ref< scene::ISceneController > TheaterControllerData::createController(world::IE
 
 		tracks[i] = new Track(
 			entity,
-			m_trackData[i]->getPath()
+			m_trackData[i]->getPath(),
+			m_trackData[i]->getLoopStart(),
+			m_trackData[i]->getLoopEnd(),
+			m_trackData[i]->getLoopEase()
 		);
 	}
 	return new TheaterController(m_duration, m_loop, tracks);

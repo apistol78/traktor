@@ -7,9 +7,18 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.theater.Track", Track, Object)
 
-Track::Track(world::SpatialEntity* entity, const TransformPath& path)
+Track::Track(
+	world::SpatialEntity* entity,
+	const TransformPath& path,
+	float loopStart,
+	float loopEnd,
+	float loopEase
+)
 :	m_entity(entity)
 ,	m_path(path)
+,	m_loopStart(loopStart)
+,	m_loopEnd(loopEnd)
+,	m_loopEase(loopEase)
 {
 }
 
@@ -31,6 +40,21 @@ const TransformPath& Track::getPath() const
 TransformPath& Track::getPath()
 {
 	return m_path;
+}
+
+float Track::getLoopStart() const
+{
+	return m_loopStart;
+}
+
+float Track::getLoopEnd() const
+{
+	return m_loopEnd;
+}
+
+float Track::getLoopEase() const
+{
+	return m_loopEase;
 }
 
 	}

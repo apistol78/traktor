@@ -5,7 +5,7 @@
 #include "Core/Memory/BlockAllocator.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Atomic.h"
-#include "Core/Thread/CriticalSection.h"
+#include "Core/Thread/Semaphore.h"
 #include "Core/Thread/JobManager.h"
 
 namespace traktor
@@ -30,12 +30,12 @@ public:
 	void* alloc(uint32_t size)
 	{
 		T_ASSERT_M (size <= MaxFunctorSize, L"Allocation size too big");
-		Acquire< CriticalSection > __lock__(m_allocatorLock);
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_allocatorLock);
 		void* ptr = m_blockAllocator.alloc();
 		if (!ptr)
 			T_FATAL_ERROR;
 #if defined(_DEBUG)
-		Atomic::increment(m_count);
+		m_count++;
 #endif
 		return ptr;
 	}
@@ -45,11 +45,11 @@ public:
 		if (!ptr)
 			return;
 
-		Acquire< CriticalSection > __lock__(m_allocatorLock);
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_allocatorLock);
 		bool result = m_blockAllocator.free(ptr);
 		T_ASSERT_M (result, L"Invalid pointer");
 #if defined(_DEBUG)
-		Atomic::decrement(m_count);
+		m_count--;
 #endif
 	}
 
@@ -66,7 +66,7 @@ private:
 	
 	void* m_block;
 	BlockAllocator m_blockAllocator;
-	CriticalSection m_allocatorLock;
+	Semaphore m_allocatorLock;
 #if defined(_DEBUG)
 	int32_t m_count;
 #endif

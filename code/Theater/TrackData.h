@@ -29,6 +29,8 @@ class T_DLLCLASS TrackData : public ISerializable
 	T_RTTI_CLASS;
 
 public:
+	TrackData();
+
 	void setEntityData(world::EntityData* entityData);
 
 	Ref< world::EntityData > getEntityData() const;
@@ -37,11 +39,20 @@ public:
 
 	TransformPath& getPath();
 
+	float getLoopStart() const;
+
+	float getLoopEnd() const;
+
+	float getLoopEase() const;
+
 	virtual bool serialize(ISerializer& s);
 
 private:
 	Ref< world::EntityData > m_entityData;
 	TransformPath m_path;
+	float m_loopStart;
+	float m_loopEnd;
+	float m_loopEase;
 };
 
 	}
