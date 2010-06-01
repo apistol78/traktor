@@ -29,7 +29,13 @@ class T_DLLCLASS Track : public Object
 	T_RTTI_CLASS;
 
 public:
-	Track(world::SpatialEntity* entity, const TransformPath& path);
+	Track(
+		world::SpatialEntity* entity,
+		const TransformPath& path,
+		float loopStart,
+		float loopEnd,
+		float loopEase
+	);
 
 	void setEntity(world::SpatialEntity* entity);
 
@@ -39,9 +45,18 @@ public:
 
 	TransformPath& getPath();
 
+	float getLoopStart() const;
+
+	float getLoopEnd() const;
+
+	float getLoopEase() const;
+
 private:
 	Ref< world::SpatialEntity > m_entity;
 	TransformPath m_path;
+	float m_loopStart;
+	float m_loopEnd;
+	float m_loopEase;
 };
 
 	}
