@@ -35,6 +35,10 @@ public:
 
 	Ref< world::EntityData > getEntityData() const;
 
+	void setLookAtEntityData(world::EntityData* entityData);
+
+	Ref< world::EntityData > getLookAtEntityData() const;
+
 	const TransformPath& getPath() const;
 
 	TransformPath& getPath();
@@ -49,6 +53,7 @@ public:
 
 private:
 	Ref< world::EntityData > m_entityData;
+	Ref< world::EntityData > m_lookAtEntityData;
 	TransformPath m_path;
 	float m_loopStart;
 	float m_loopEnd;

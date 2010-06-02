@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.scene.SceneAsset" version="3">	
+<object type="traktor.scene.SceneAsset" version="3">
 	<worldRenderSettings type="traktor.world.WorldRenderSettings" version="5">
 		<viewNearZ>0.1</viewNearZ>
 		<viewFarZ>20</viewFarZ>
@@ -36,10 +36,10 @@
 				<mesh>{CDC1E470-7F50-0A47-A47C-8C9534092368}</mesh>
 			</item>
 			<item type="traktor.world.NullEntityData">
-				<name>Camera null</name>
+				<name>Look at Target</name>
 				<transform>
-					<translation>-5.486855, 1.087531, -6.823842, 0</translation>
-					<rotation>0.120463, 0.267591, -0.043221, 0.954995</rotation>
+					<translation>-2.673715, 0, -0.755287, 0</translation>
+					<rotation>0, 0, 0, 1</rotation>
 				</transform>
 			</item>
 		</entityData>
@@ -48,8 +48,9 @@
 		<duration>20</duration>
 		<loop>true</loop>
 		<trackData>
-			<item type="traktor.theater.TrackData">
+			<item type="traktor.theater.TrackData" version="2">
 				<entityData ref="/object/entityData/entityData/item[1]"/>
+				<lookAtEntityData ref="/object/entityData/entityData/item[2]"/>
 				<path>
 					<keys>
 						<item>
@@ -57,7 +58,7 @@
 							<tcb>0, 0, 0, 0</tcb>
 							<value>
 								<position>0, 0, 0, 1</position>
-								<orientation>0, 0, 0, 1</orientation>
+								<orientation>0, 0, 0, 0</orientation>
 							</value>
 						</item>
 						<item>
@@ -65,7 +66,7 @@
 							<tcb>0, -1, 0, 0</tcb>
 							<value>
 								<position>-2.28171, 0.924057, 3.205768, 0</position>
-								<orientation>-0.000901, 0.706702, 0.000693, 0.70751</orientation>
+								<orientation>1.56965, 6.28093, 6.28289, 0</orientation>
 							</value>
 						</item>
 						<item>
@@ -73,7 +74,7 @@
 							<tcb>0, -1, 0, 0</tcb>
 							<value>
 								<position>2.24956, 2.850871, 3.244947, 0</position>
-								<orientation>0.426284, 0.804826, -0.327808, 0.251155</orientation>
+								<orientation>2.95442, 0.83573, 0.89088, 0</orientation>
 							</value>
 						</item>
 						<item>
@@ -81,7 +82,7 @@
 							<tcb>0, 0, 0, 0</tcb>
 							<value>
 								<position>3.972665, 2.515692, -2.127127, 0</position>
-								<orientation>0.197951, 0.954484, -0.208607, 0.079106</orientation>
+								<orientation>3.06575, 0.44399, 0.39186, 0</orientation>
 							</value>
 						</item>
 						<item>
@@ -89,7 +90,7 @@
 							<tcb>0, 0, 0, 0</tcb>
 							<value>
 								<position>1.824295, -1.26728, -3.09157, 0</position>
-								<orientation>0, 0.999995, 0, 0.003249</orientation>
+								<orientation>3.13509, 0, 0, 0</orientation>
 							</value>
 						</item>
 						<item>
@@ -97,7 +98,7 @@
 							<tcb>0, 0, 0, 0</tcb>
 							<value>
 								<position>-3.288983, -1.227677, 2.061307, 0</position>
-								<orientation>0.84919, -0.157175, 0.309444, 0.398016</orientation>
+								<orientation>2.45809, 0.88396, 3.17411, 0</orientation>
 							</value>
 						</item>
 						<item>
@@ -105,7 +106,7 @@
 							<tcb>0, 0, 0, 0</tcb>
 							<value>
 								<position>-2.900249, 0.052803, 2.953052, 0</position>
-								<orientation>0, -0.704674, 0, 0.709532</orientation>
+								<orientation>4.71926, 0, 0, 0</orientation>
 							</value>
 						</item>
 						<item>
@@ -113,7 +114,7 @@
 							<tcb>0, 0, 0, 0</tcb>
 							<value>
 								<position>-3.064059, 0.594037, 3.658096, 0</position>
-								<orientation>-0.924225, 0.141437, -0.337544, 0.108941</orientation>
+								<orientation>2.42283, 6.1771, 3.48519, 0</orientation>
 							</value>
 						</item>
 						<item>
@@ -121,7 +122,7 @@
 							<tcb>0, 0, 0, 0</tcb>
 							<value>
 								<position>0.779197, 1.306883, 0.527686, 0</position>
-								<orientation>0, -0.945829, 0, 0.324665</orientation>
+								<orientation>3.80291, 0, 0, 0</orientation>
 							</value>
 						</item>
 						<item>
@@ -129,7 +130,7 @@
 							<tcb>0, 0, 0, 0</tcb>
 							<value>
 								<position>1.341329, -0.541234, -1.882564, 0</position>
-								<orientation>0.807957, 0.450106, -0.295962, 0.23878</orientation>
+								<orientation>3.49635, 0.71058, 2.25788, 0</orientation>
 							</value>
 						</item>
 						<item>
@@ -137,82 +138,41 @@
 							<tcb>0, 0, 0, 0</tcb>
 							<value>
 								<position>-1.328598, -0.573985, 0.551566, 0</position>
-								<orientation>0, -0.031587, 0, 0.999501</orientation>
+								<orientation>6.22, 0, 0, 0</orientation>
 							</value>
 						</item>
 					</keys>
 				</path>
+				<loopStart>0</loopStart>
+				<loopEnd>0</loopEnd>
+				<loopEase>0</loopEase>
 			</item>
-			<item type="traktor.theater.TrackData">
+			<item type="traktor.theater.TrackData" version="2">
 				<entityData ref="/object/entityData/entityData/item[2]"/>
+				<lookAtEntityData/>
 				<path>
 					<keys>
 						<item>
 							<T>0</T>
 							<tcb>0, 0, 0, 0</tcb>
 							<value>
-								<position>0.006242, 1.087531, -5.724385, 0</position>
-								<orientation>0, 0, 0, 1</orientation>
+								<position>1.283987, 0, 1.706947, 0</position>
+								<orientation>0, 0, 0, 0</orientation>
 							</value>
 						</item>
 						<item>
-							<T>3.16</T>
+							<T>4.336</T>
 							<tcb>0, 0, 0, 0</tcb>
 							<value>
-								<position>2.704299, 1.087531, -4.216654, 0</position>
-								<orientation>0, -0.159318, 0, 0.987227</orientation>
-							</value>
-						</item>
-						<item>
-							<T>5.407</T>
-							<tcb>0, 0, 0, 0</tcb>
-							<value>
-								<position>-1.947658, 1.087531, -1.352477, 0</position>
-								<orientation>-0.151021, 0.444254, 0.076259, 0.879782</orientation>
-							</value>
-						</item>
-						<item>
-							<T>7.128</T>
-							<tcb>0, 0, 0, 0</tcb>
-							<value>
-								<position>-4.802262, 1.087531, 0.090278, 0</position>
-								<orientation>0.04589, 0.849028, -0.072309, 0.521361</orientation>
-							</value>
-						</item>
-						<item>
-							<T>8.816</T>
-							<tcb>0, 0, 0, 0</tcb>
-							<value>
-								<position>-5.804908, 1.087531, -1.637383, 0</position>
-								<orientation>0.272688, 0.38807, -0.120171, 0.872125</orientation>
-							</value>
-						</item>
-						<item>
-							<T>11.992001</T>
-							<tcb>0, 0, 0, 0</tcb>
-							<value>
-								<position>-5.43371, 1.087531, -5.644536, 0</position>
-								<orientation>0.031611, 0.104793, -0.03229, 0.993467</orientation>
-							</value>
-						</item>
-						<item>
-							<T>14.736001</T>
-							<tcb>0, 0, 0, 0</tcb>
-							<value>
-								<position>-5.98167, 1.087531, -3.682951, 0</position>
-								<orientation>-0.004493, 0.554149, -0.015631, 0.832259</orientation>
-							</value>
-						</item>
-						<item>
-							<T>17.168001</T>
-							<tcb>0, 0, 0, 0</tcb>
-							<value>
-								<position>-5.486855, 1.087531, -6.823842, 0</position>
-								<orientation>0.120463, 0.267591, -0.043221, 0.954995</orientation>
+								<position>-2.673715, 0, -0.755287, 0</position>
+								<orientation>0, 0, 0, 0</orientation>
 							</value>
 						</item>
 					</keys>
 				</path>
+				<loopStart>0</loopStart>
+				<loopEnd>0</loopEnd>
+				<loopEase>0</loopEase>
 			</item>
 		</trackData>
 	</controllerData>

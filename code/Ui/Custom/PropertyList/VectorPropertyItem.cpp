@@ -56,7 +56,8 @@ void VectorPropertyItem::createInPlaceControls(Widget* parent)
 			new NumericEditValidator(
 				true,
 				-std::numeric_limits< float >::max(),
-				std::numeric_limits< float >::max()
+				std::numeric_limits< float >::max(),
+				3
 			)
 		);
 		m_editors[i]->setVisible(false);
@@ -101,7 +102,7 @@ void VectorPropertyItem::mouseButtonDown(MouseEvent* event)
 		Rect rcSub = m_editors[i]->getRect();
 		if (rcSub.inside(event->getPosition()))
 		{
-			m_editors[i]->setText(toString(m_value[i]));
+			m_editors[i]->setText(toString(m_value[i], 3));
 			m_editors[i]->setVisible(true);
 			m_editors[i]->setFocus();
 			m_editors[i]->selectAll();
@@ -123,7 +124,7 @@ void VectorPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 
 		canvas.drawText(
 			rcSub.inflate(-2, -2),
-			toString(m_value[i]),
+			toString(m_value[i], 3),
 			AnLeft,
 			AnCenter
 		);

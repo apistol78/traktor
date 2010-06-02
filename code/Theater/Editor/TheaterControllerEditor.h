@@ -52,6 +52,8 @@ private:
 
 	void deleteSelectedKey();
 
+	void setLookAtEntity();
+
 	void gotoPreviousKey();
 
 	void gotoNextKey();

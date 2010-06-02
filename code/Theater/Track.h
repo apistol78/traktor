@@ -31,6 +31,7 @@ class T_DLLCLASS Track : public Object
 public:
 	Track(
 		world::SpatialEntity* entity,
+		world::SpatialEntity* lookAtEntity,
 		const TransformPath& path,
 		float loopStart,
 		float loopEnd,
@@ -40,6 +41,10 @@ public:
 	void setEntity(world::SpatialEntity* entity);
 
 	Ref< world::SpatialEntity > getEntity() const;
+
+	void setLookAtEntity(world::SpatialEntity* entity);
+
+	Ref< world::SpatialEntity > getLookAtEntity() const;
 
 	const TransformPath& getPath() const;
 
@@ -53,6 +58,7 @@ public:
 
 private:
 	Ref< world::SpatialEntity > m_entity;
+	Ref< world::SpatialEntity > m_lookAtEntity;
 	TransformPath m_path;
 	float m_loopStart;
 	float m_loopEnd;

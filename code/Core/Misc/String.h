@@ -7,6 +7,7 @@
 #include <sstream>
 #include <string>
 #include "Core/Config.h"
+#include "Core/Io/StringOutputStream.h"
 
 #if defined(max)
 #	undef max
@@ -165,7 +166,29 @@ inline std::wstring trim(const std::wstring& a)
 template < typename ValueType >
 inline std::wstring toString(ValueType value)
 {
-	std::wstringstream ss; ss << value;
+	StringOutputStream ss; ss << value;
+	return ss.str();
+}
+
+/*! \brief Convert value to literal.
+ * \ingroup Core
+ */
+inline std::wstring toString(float value, int32_t decimals = 6)
+{
+	StringOutputStream ss;
+	ss.setDecimals(decimals);
+	ss << value;
+	return ss.str();
+}
+
+/*! \brief Convert value to literal.
+ * \ingroup Core
+ */
+inline std::wstring toString(double value, int32_t decimals = 6)
+{
+	StringOutputStream ss;
+	ss.setDecimals(decimals);
+	ss << value;
 	return ss.str();
 }
 

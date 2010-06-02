@@ -64,8 +64,8 @@ template < typename T > struct ftoa_int_type {};
 template <> struct ftoa_int_type < float > { typedef int32_t int_t; };
 template <> struct ftoa_int_type < double > { typedef int64_t int_t; };
 
-template < typename T, int fractions, int size >
-wchar_t* ftoa__(T value, wchar_t* buf)
+template < typename T, int size >
+wchar_t* ftoa__(T value, int fractions, wchar_t* buf)
 {
 	typedef typename ftoa_int_type< T >::int_t int_t;
 
@@ -75,7 +75,7 @@ wchar_t* ftoa__(T value, wchar_t* buf)
 	wchar_t* p = &buf[size - 1];
 	*p-- = L'\0';
 
-	int_t fm = int_t(traktor::powf(10, fractions + 1));
+	int_t fm = int_t(traktor::powf(10, float(fractions + 1)));
 	int_t vi = int_t(un);
 	int_t vf = int_t((un - vi) * fm);
 
@@ -147,6 +147,7 @@ OutputStream::OutputStream(IOutputStreamBuffer* buffer, LineEnd lineEnd)
 :	m_buffer(buffer)
 ,	m_lineEnd(lineEnd)
 ,	m_indent(0)
+,	m_decimals(6)
 ,	m_pushIndent(false)
 {
 	if (m_lineEnd == LeAuto)
@@ -248,21 +249,21 @@ OutputStream& OutputStream::operator << (uint64_t n)
 OutputStream& OutputStream::operator << (float f)
 {
 	wchar_t buf[128];
-	puts(ftoa__< float, 6, sizeof_array(buf) >(f, buf));
+	puts(ftoa__< float, sizeof_array(buf) >(f, m_decimals, buf));
 	return *this;
 }
 
 OutputStream& OutputStream::operator << (double f)
 {
 	wchar_t buf[256];
-	puts(ftoa__< double, 8, sizeof_array(buf) >(f, buf));
+	puts(ftoa__< double, sizeof_array(buf) >(f, m_decimals, buf));
 	return *this;
 }
 
 OutputStream& OutputStream::operator << (long double f)
 {
 	wchar_t buf[256];
-	puts(ftoa__< double, 8, sizeof_array(buf) >(f, buf));
+	puts(ftoa__< double, sizeof_array(buf) >(f, m_decimals, buf));
 	return *this;
 }
 
@@ -349,6 +350,16 @@ void OutputStream::decreaseIndent()
 {
 	if (m_indent > 0)
 		m_indent--;
+}
+
+int32_t OutputStream::getDecimals() const
+{
+	return m_decimals;
+}
+
+void OutputStream::setDecimals(int32_t decimals)
+{
+	m_decimals = decimals;
 }
 
 bool OutputStream::isEol(wchar_t ch) const

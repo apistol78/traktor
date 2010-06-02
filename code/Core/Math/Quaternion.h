@@ -53,6 +53,8 @@ public:
 
 	T_MATH_INLINE Matrix44 toMatrix44() const;
 
+	T_MATH_INLINE Vector4 toEulerAngles() const;
+
 	T_MATH_INLINE void toEulerAngles(float& outHead, float& outPitch, float& outBank) const;
 
 	T_MATH_INLINE Quaternion& operator *= (const Quaternion& r);
