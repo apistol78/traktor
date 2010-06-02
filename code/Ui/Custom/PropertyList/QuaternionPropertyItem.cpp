@@ -128,7 +128,7 @@ void QuaternionPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 
 		canvas.drawText(
 			rcSub.inflate(-2, -2),
-			toString(rad2deg(hpb[i]), 1) + L"°",
+			toString(rad2deg(hpb[i]), 1) + L"\xb0",
 			AnLeft,
 			AnCenter
 		);
