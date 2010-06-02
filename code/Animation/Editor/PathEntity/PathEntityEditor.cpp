@@ -62,7 +62,7 @@ void PathEntityEditor::applyModifier(
 		if (frame)
 		{
 			// Use modifier to adjust closest key frame.
-			Transform transform(frame->position, frame->orientation);
+			Transform transform = frame->transform();
 			modifier->adjust(
 				context,
 				viewTransform,
@@ -73,7 +73,7 @@ void PathEntityEditor::applyModifier(
 				transform
 			);
 			frame->position = transform.translation();
-			frame->orientation = transform.rotation();
+			frame->orientation = transform.rotation().toEulerAngles();
 
 			// Update entity's path to reflect changes as we're editing the entity data's path
 			// initially.

@@ -29,8 +29,11 @@ Ref< scene::ISceneController > TheaterControllerData::createController(world::IE
 		if (!entity)
 			return 0;
 
+		Ref< world::SpatialEntity > lookAtEntity = dynamic_type_cast< world::SpatialEntity* >(entityBuilder->get(m_trackData[i]->getLookAtEntityData()));
+
 		tracks[i] = new Track(
 			entity,
+			lookAtEntity,
 			m_trackData[i]->getPath(),
 			m_trackData[i]->getLoopStart(),
 			m_trackData[i]->getLoopEnd(),

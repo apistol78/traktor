@@ -2,8 +2,7 @@
 #define traktor_TransformPath_H
 
 #include "Core/Containers/AlignedVector.h"
-#include "Core/Math/Quaternion.h"
-#include "Core/Math/Vector4.h"
+#include "Core/Math/Transform.h"
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
@@ -25,16 +24,18 @@ class T_DLLCLASS TransformPath : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	struct Frame
+	struct T_DLLCLASS Frame
 	{
 		Vector4 position;
-		Quaternion orientation;
+		Vector4 orientation;
 
 		Frame()
 		:	position(Vector4::origo())
-		,	orientation(Quaternion::identity())
+		,	orientation(Vector4::zero())
 		{
 		}
+
+		Transform transform() const;
 
 		bool serialize(ISerializer& s);
 	};

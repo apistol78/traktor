@@ -11,31 +11,31 @@ namespace traktor
 	namespace
 	{
 
+Quaternion orientationAsQuaternion(const Vector4& orientation)
+{
+	return Quaternion(orientation.x(), orientation.y(), orientation.z());
+}
+
 struct FrameAccessor
 {
-	static inline Scalar time(const TransformPath::Key& key)
-	{
+	static inline Scalar time(const TransformPath::Key& key) {
 		return Scalar(key.T);
 	}
 
-	static inline Scalar tension(const TransformPath::Key& key)
-	{
+	static inline Scalar tension(const TransformPath::Key& key) {
 		return key.tcb.x();
 	}
 
-	static inline Scalar continuity(const TransformPath::Key& key)
-	{
+	static inline Scalar continuity(const TransformPath::Key& key) {
 		return key.tcb.y();
 	}
 
-	static inline Scalar bias(const TransformPath::Key& key)
-	{
+	static inline Scalar bias(const TransformPath::Key& key) {
 		return key.tcb.z();
 	}
 
-	static inline TransformPath::Frame value(const TransformPath::Key& key)
-	{
-		return TransformPath::Frame(key.value);
+	static inline const TransformPath::Frame& value(const TransformPath::Key& key) {
+		return key.value;
 	}
 
 	static inline TransformPath::Frame combine(
@@ -110,7 +110,7 @@ TransformPath::Frame TransformPath::evaluate(float at, float end, bool loop) con
 			TcbSpline< Key, Scalar, Scalar, Frame, FrameAccessor, ClampTime< Scalar > >::evaluate(&m_keys[0], m_keys.size(), Scalar(at), Scalar(end));
 
 		frame.position = frame.position.xyz1();
-		frame.orientation = frame.orientation.normalized();
+		frame.orientation = frame.orientation.xyz0();
 
 		return frame;
 	}
@@ -204,10 +204,22 @@ bool TransformPath::Key::serialize(ISerializer& s)
 	return true;
 }
 
+Transform TransformPath::Frame::transform() const
+{
+	return Transform(
+		position.xyz0(),
+		Quaternion(
+			orientation.x(),
+			orientation.y(),
+			orientation.z()
+		)
+	);
+}
+
 bool TransformPath::Frame::serialize(ISerializer& s)
 {
 	s >> Member< Vector4 >(L"position", position);
-	s >> Member< Quaternion >(L"orientation", orientation);
+	s >> Member< Vector4 >(L"orientation", orientation);
 	return true;
 }
 

@@ -48,7 +48,7 @@ void TheaterController::update(scene::Scene* scene, float time, float deltaTime)
 
 			// Calculate looped frame.
 			frame = path.evaluate(trackTime, m_duration, m_loop);
-			transform = Transform(frame.position, frame.orientation);
+			transform = frame.transform();
 
 			if (trackTime >= loopEnd - loopEase)
 			{
@@ -56,10 +56,10 @@ void TheaterController::update(scene::Scene* scene, float time, float deltaTime)
 
 				// Calculate ease into frame.
 				TransformPath::Frame frame0 = path.evaluate(loopStart - loopEase + offset, m_duration, m_loop);
-				Transform transform0(frame0.position, frame0.orientation);
+				Transform transform0 = frame0.transform();
 
 				// Ease loop transition.
-				float blend = offset / loopEase;
+				float blend = 1.0f - (cosf(PI * offset / loopEase) * 0.5f + 0.5f);
 				transform = lerp(transform, transform0, Scalar(blend));
 			}
 		}
@@ -67,7 +67,22 @@ void TheaterController::update(scene::Scene* scene, float time, float deltaTime)
 		{
 			// Calculate path frame.
 			frame = path.evaluate(time, m_duration, m_loop);
-			transform = Transform(frame.position, frame.orientation);
+			transform = frame.transform();
+		}
+
+		// Override orientation if track has a "look-at" entity associated.
+		Ref< world::SpatialEntity > lookAtEntity = (*i)->getLookAtEntity();
+		if (lookAtEntity)
+		{
+			Transform lookAtTransform;
+			if (lookAtEntity->getTransform(lookAtTransform))
+			{
+				Matrix44 m = lookAt(
+					transform.translation().xyz1(),
+					lookAtTransform.translation().xyz1()
+				);
+				transform = Transform(m.inverse());
+			}
 		}
 
 		entity->setTransform(transform);

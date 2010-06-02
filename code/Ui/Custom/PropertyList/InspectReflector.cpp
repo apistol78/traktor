@@ -1,23 +1,24 @@
 #include <limits>
 #include <sstream>
-#include "Ui/Custom/PropertyList/InspectReflector.h"
-#include "Ui/Custom/PropertyList/AutoPropertyList.h"
-#include "Ui/Custom/PropertyList/StaticPropertyItem.h"
-#include "Ui/Custom/PropertyList/NumericPropertyItem.h"
-#include "Ui/Custom/PropertyList/ColorPropertyItem.h"
-#include "Ui/Custom/PropertyList/VectorPropertyItem.h"
-#include "Ui/Custom/PropertyList/TextPropertyItem.h"
-#include "Ui/Custom/PropertyList/CheckPropertyItem.h"
-#include "Ui/Custom/PropertyList/ListPropertyItem.h"
-#include "Ui/Custom/PropertyList/BrowsePropertyItem.h"
-#include "Ui/Custom/PropertyList/FilePropertyItem.h"
-#include "Ui/Custom/PropertyList/ObjectPropertyItem.h"
-#include "Ui/Custom/PropertyList/ArrayPropertyItem.h"
+#include "Core/Io/StringOutputStream.h"
+#include "Core/Misc/Split.h"
 #include "Core/Serialization/MemberArray.h"
 #include "Core/Serialization/MemberComplex.h"
 #include "Core/Serialization/MemberEnum.h"
-#include "Core/Io/StringOutputStream.h"
-#include "Core/Misc/Split.h"
+#include "Ui/Custom/PropertyList/ArrayPropertyItem.h"
+#include "Ui/Custom/PropertyList/AutoPropertyList.h"
+#include "Ui/Custom/PropertyList/BrowsePropertyItem.h"
+#include "Ui/Custom/PropertyList/CheckPropertyItem.h"
+#include "Ui/Custom/PropertyList/ColorPropertyItem.h"
+#include "Ui/Custom/PropertyList/FilePropertyItem.h"
+#include "Ui/Custom/PropertyList/InspectReflector.h"
+#include "Ui/Custom/PropertyList/ListPropertyItem.h"
+#include "Ui/Custom/PropertyList/NumericPropertyItem.h"
+#include "Ui/Custom/PropertyList/ObjectPropertyItem.h"
+#include "Ui/Custom/PropertyList/QuaternionPropertyItem.h"
+#include "Ui/Custom/PropertyList/StaticPropertyItem.h"
+#include "Ui/Custom/PropertyList/TextPropertyItem.h"
+#include "Ui/Custom/PropertyList/VectorPropertyItem.h"
 
 namespace traktor
 {
@@ -156,9 +157,9 @@ bool InspectReflector::operator >> (const Member< int64_t >& m)
 {
 	addPropertyItem(new NumericPropertyItem(
 		stylizeMemberName(m.getName()),
-		m,
-		std::numeric_limits< int64_t >::min(),
-		std::numeric_limits< int64_t >::max(),
+		(double)m,
+		(double)std::numeric_limits< int64_t >::min(),
+		(double)std::numeric_limits< int64_t >::max(),
 		false
 	));
 	return true;
@@ -168,9 +169,9 @@ bool InspectReflector::operator >> (const Member< uint64_t >& m)
 {
 	addPropertyItem(new NumericPropertyItem(
 		stylizeMemberName(m.getName()),
-		m,
-		std::numeric_limits< uint64_t >::min(),
-		std::numeric_limits< uint64_t >::max(),
+		(double)m,
+		(double)std::numeric_limits< uint64_t >::min(),
+		(double)std::numeric_limits< uint64_t >::max(),
 		false
 	));
 	return true;
@@ -269,8 +270,7 @@ bool InspectReflector::operator >> (const Member< Matrix44 >& m)
 
 bool InspectReflector::operator >> (const Member< Quaternion >& m)
 {
-	VectorPropertyItem::vector_t value = { m->x, m->y, m->z, m->w };
-	addPropertyItem(new VectorPropertyItem(stylizeMemberName(m.getName()), value, 4));
+	addPropertyItem(new QuaternionPropertyItem(stylizeMemberName(m.getName()), m));
 	return true;
 }
 

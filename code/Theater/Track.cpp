@@ -9,12 +9,14 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.theater.Track", Track, Object)
 
 Track::Track(
 	world::SpatialEntity* entity,
+	world::SpatialEntity* lookAtEntity,
 	const TransformPath& path,
 	float loopStart,
 	float loopEnd,
 	float loopEase
 )
 :	m_entity(entity)
+,	m_lookAtEntity(lookAtEntity)
 ,	m_path(path)
 ,	m_loopStart(loopStart)
 ,	m_loopEnd(loopEnd)
@@ -30,6 +32,16 @@ void Track::setEntity(world::SpatialEntity* entity)
 Ref< world::SpatialEntity > Track::getEntity() const
 {
 	return m_entity;
+}
+
+void Track::setLookAtEntity(world::SpatialEntity* entity)
+{
+	m_lookAtEntity = entity;
+}
+
+Ref< world::SpatialEntity > Track::getLookAtEntity() const
+{
+	return m_lookAtEntity;
 }
 
 const TransformPath& Track::getPath() const

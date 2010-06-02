@@ -1,5 +1,7 @@
 #include <Core/Io/StringOutputStream.h>
 #include <Core/Log/Log.h>
+#include <Core/Math/Quaternion.h>
+#include <Core/Misc/Split.h>
 #include <Core/Misc/String.h>
 #include <Script/AutoScriptClass.h>
 #include <Script/IScriptContext.h>
@@ -11,6 +13,44 @@
 #include "Transformer.h"
 
 using namespace traktor;
+
+namespace
+{
+
+class QuaternionHelper : public Object
+{
+	T_RTTI_CLASS;
+
+public:
+	QuaternionHelper(const std::wstring& desc)
+	{
+		std::vector< float > q;
+		Split< std::wstring, float >::any(desc, L",", q, true, 4);
+		m_value = Quaternion(q[0], q[1], q[2], q[3]);
+	}
+
+	float getHead() const
+	{
+		return m_value.toEulerAngles().x();
+	}
+
+	float getPitch() const
+	{
+		return m_value.toEulerAngles().y();
+	}
+
+	float getBank() const
+	{
+		return m_value.toEulerAngles().z();
+	}
+
+private:
+	Quaternion m_value;
+};
+
+T_IMPLEMENT_RTTI_CLASS(L"QuaternionHelper", QuaternionHelper, Object)
+
+}
 
 T_IMPLEMENT_RTTI_CLASS(L"Transformer", Transformer, Object)
 
@@ -68,6 +108,13 @@ bool Transformer::create(const std::wstring& script)
 	Ref< script::AutoScriptClass< xml::Text > > xmlTextClass = new script::AutoScriptClass< xml::Text >();
 	xmlTextClass->addConstructor< const std::wstring& >();
 	m_scriptManager->registerClass(xmlTextClass);
+
+	Ref< script::AutoScriptClass< QuaternionHelper > > quaternionClass = new script::AutoScriptClass< QuaternionHelper >();
+	quaternionClass->addConstructor< const std::wstring& >();
+	quaternionClass->addMethod(L"getHead", &QuaternionHelper::getHead);
+	quaternionClass->addMethod(L"getPitch", &QuaternionHelper::getPitch);
+	quaternionClass->addMethod(L"getBank", &QuaternionHelper::getBank);
+	m_scriptManager->registerClass(quaternionClass);
 
 	m_script = script;
 	return true;

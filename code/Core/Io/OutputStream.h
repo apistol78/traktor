@@ -87,6 +87,10 @@ public:
 	void increaseIndent();
 
 	void decreaseIndent();
+
+	int32_t getDecimals() const;
+
+	void setDecimals(int32_t decimals);
 	
 	bool isEol(wchar_t ch) const;
 
@@ -94,6 +98,7 @@ private:
 	Ref< IOutputStreamBuffer > m_buffer;
 	LineEnd m_lineEnd;
 	int32_t m_indent;
+	int32_t m_decimals;
 	bool m_pushIndent;
 };
 

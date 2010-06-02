@@ -74,6 +74,7 @@ bool TheaterControllerEditor::create(scene::SceneEditorContext* context, ui::Con
 	m_toolBar->addImage(ui::Bitmap::load(c_ResourceTheater, sizeof(c_ResourceTheater), L"png"), 4);
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"THEATER_EDITOR_CAPTURE_ENTITIES"), ui::Command(L"Theater.CaptureEntities"), 0));
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"THEATER_EDITOR_DELETE_SELECTED_KEY"), ui::Command(L"Theater.DeleteSelectedKey"), 1));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"THEATER_EDITOR_SET_LOOKAT_ENTITY"), ui::Command(L"Theater.SetLookAtEntity"), 0));
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"THEATER_EDITOR_GOTO_PREVIOUS_KEY"), ui::Command(L"Theater.GotoPreviousKey"), 2));
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"THEATER_EDITOR_GOTO_NEXT_KEY"), ui::Command(L"Theater.GotoNextKey"), 3));
@@ -140,6 +141,10 @@ bool TheaterControllerEditor::handleCommand(const ui::Command& command)
 	{
 		deleteSelectedKey();
 		updateSequencer();
+	}
+	else if (command == L"Theater.SetLookAtEntity")
+	{
+		setLookAtEntity();
 	}
 	else if (command == L"Theater.GotoPreviousKey")
 	{
@@ -286,13 +291,13 @@ void TheaterControllerEditor::captureEntities()
 		if (closestKey && abs(closestKey->T - time) < c_clampKeyDistance)
 		{
 			closestKey->value.position = transform.translation();
-			closestKey->value.orientation = transform.rotation();
+			closestKey->value.orientation = transform.rotation().toEulerAngles();
 		}
 		else
 		{
 			TransformPath::Frame frame;
 			frame.position = transform.translation();
-			frame.orientation = transform.rotation();
+			frame.orientation = transform.rotation().toEulerAngles();
 			pathData.insert(time, frame);
 		}
 	}
@@ -329,6 +334,34 @@ void TheaterControllerEditor::deleteSelectedKey()
 				break;
 			}
 		}
+	}
+
+	m_context->buildEntities();
+}
+
+void TheaterControllerEditor::setLookAtEntity()
+{
+	Ref< scene::SceneAsset > sceneAsset = m_context->getSceneAsset();
+	Ref< TheaterControllerData > controllerData = checked_type_cast< TheaterControllerData* >(sceneAsset->getControllerData());
+
+	RefArray< ui::custom::SequenceItem > sequenceItems;
+	m_trackSequencer->getSequenceItems(sequenceItems, ui::custom::SequencerControl::GfSelectedOnly | ui::custom::SequencerControl::GfDescendants);
+
+	RefArray< scene::EntityAdapter > selectedEntities;
+	m_context->getEntities(selectedEntities, scene::SceneEditorContext::GfDescendants | scene::SceneEditorContext::GfSelectedOnly);
+	if (selectedEntities.size() > 1)
+		return;
+
+	for (RefArray< ui::custom::SequenceItem >::iterator i = sequenceItems.begin(); i != sequenceItems.end(); ++i)
+	{
+		ui::custom::Sequence* selectedSequence = checked_type_cast< ui::custom::Sequence*, false >(*i);
+		Ref< TrackData > trackData = selectedSequence->getData< TrackData >(L"TRACK");
+		T_ASSERT (trackData);
+
+		if (!selectedEntities.empty())
+			trackData->setLookAtEntityData(selectedEntities[0]->getEntityData());
+		else
+			trackData->setLookAtEntityData(0);
 	}
 
 	m_context->buildEntities();

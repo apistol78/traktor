@@ -88,7 +88,7 @@ T_MATH_INLINE Quaternion::Quaternion(const Matrix44& m)
 	{
 		if (m(0, 0) > m(1, 1) && m(0, 0) > m(2, 2))
 		{
-			float S = sqrtf(1.0f + m(0, 0) - m(1, 1) - m(2, 2)) * 2;
+			float S = sqrtf(1.0f + m(0, 0) - m(1, 1) - m(2, 2)) * 2.0f;
 			x = 0.25f * S;
 			y = (m(1, 0) + m(0, 1)) / S;
 			z = (m(0, 2) + m(2, 0)) / S;
@@ -96,7 +96,7 @@ T_MATH_INLINE Quaternion::Quaternion(const Matrix44& m)
 		}
 		else if (m(1, 1) > m(2, 2))
 		{
-			float S = sqrtf(1.0f + m(1, 1) - m(0, 0) - m(2, 2)) * 2;
+			float S = sqrtf(1.0f + m(1, 1) - m(0, 0) - m(2, 2)) * 2.0f;
 			x = (m(1, 0) + m(0, 1)) / S;
 			y = 0.25f * S;
 			z = (m(2, 1) + m(1, 2)) / S;
@@ -104,7 +104,7 @@ T_MATH_INLINE Quaternion::Quaternion(const Matrix44& m)
 		}
 		else
 		{
-			float S = sqrtf(1.0f + m(2, 2) - m(0, 0) - m(1, 1)) * 2;
+			float S = sqrtf(1.0f + m(2, 2) - m(0, 0) - m(1, 1)) * 2.0f;
 			x = (m(0, 2) + m(2, 0)) / S;
 			y = (m(2, 1) + m(1, 2)) / S;
 			z = 0.25f * S;
@@ -116,17 +116,11 @@ T_MATH_INLINE Quaternion::Quaternion(const Matrix44& m)
 
 T_MATH_INLINE Quaternion::Quaternion(float head, float pitch, float bank)
 {
-	float c1 = cosf(head / 2.0f);
-	float c2 = cosf(pitch / 2.0f);
-	float c3 = cosf(bank / 2.0f);
-	float s1 = sinf(head / 2.0f);
-	float s2 = sinf(pitch / 2.0f);
-	float s3 = sinf(bank / 2.0f);
+	Quaternion Qh(Vector4(0.0f, head, 0.0f));
+	Quaternion Qp(Vector4(pitch, 0.0f, 0.0f));
+	Quaternion Qb(Vector4(0.0f, 0.0f, bank));
 
-	x = s1 * s2 * c3 + c1 * c2 * s3;
-	y = s1 * c2 * c3 + c1 * s2 * s3;
-	z = c1 * s2 * c3 - s1 * c2 * s3;
-	w = c1 * c2 * c3 - s1 * s2 * s3;
+	*this = Qh * Qp * Qb;
 
 	VALIDATE(*this);
 }
@@ -223,12 +217,42 @@ T_MATH_INLINE Matrix44 Quaternion::toMatrix44() const
 	);
 }
 
+T_MATH_INLINE Vector4 Quaternion::toEulerAngles() const
+{
+	float h, p, b;
+	toEulerAngles(h, p, b);
+	return Vector4(h, p, b, 0.0f);
+}
+
 T_MATH_INLINE void Quaternion::toEulerAngles(float& outHead, float& outPitch, float& outBank) const
 {
 	VALIDATE(*this);
-	outHead  = atan2f(2.0f * y * w - 2.0f * x * z, 1.0f - 2.0f * y * y - 2.0f * z *z);
-	outPitch = atan2f(2.0f * x * w - 2.0f * y * z, 1.0f - 2.0f * x * x - 2 * z * z);
-	outBank  = asinf (2.0f * x * y + 2.0f * z * w);
+
+	const Vector4 axisX(1.0f, 0.0f, 0.0f);
+	const Vector4 axisZ(0.0f, 0.0f, 1.0f);
+
+	Vector4 axisX_2 = (*this) * axisX;
+	Vector4 axisZ_2 = (*this) * axisZ;
+
+	outHead = atan2f(
+		axisZ_2.x(),
+		axisZ_2.z()
+	);
+
+	Vector4 axisX_3 = Quaternion(Vector4(0.0f, -outHead, 0.0f)) * axisX_2;
+	Vector4 axisZ_3 = Quaternion(Vector4(0.0f, -outHead, 0.0f)) * axisZ_2;
+
+	outPitch = -atan2f(
+		axisZ_3.y(),
+		axisZ_3.z()
+	);
+
+	Vector4 axisX_4 = Quaternion(Vector4(-outPitch, 0.0f, 0.0f)) * axisX_3;
+
+	outBank = atan2f(
+		axisX_4.y(),
+		axisX_4.x()
+	);
 }
 
 T_MATH_INLINE Quaternion& Quaternion::operator *= (const Quaternion& r)

@@ -9,7 +9,7 @@ namespace traktor
 	namespace theater
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.theater.TrackData", 1, TrackData, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.theater.TrackData", 2, TrackData, ISerializable)
 
 TrackData::TrackData()
 :	m_loopStart(0.0f)
@@ -26,6 +26,16 @@ void TrackData::setEntityData(world::EntityData* entityData)
 Ref< world::EntityData > TrackData::getEntityData() const
 {
 	return m_entityData;
+}
+
+void TrackData::setLookAtEntityData(world::EntityData* entityData)
+{
+	m_lookAtEntityData = entityData;
+}
+
+Ref< world::EntityData > TrackData::getLookAtEntityData() const
+{
+	return m_lookAtEntityData;
 }
 
 const TransformPath& TrackData::getPath() const
@@ -56,6 +66,10 @@ float TrackData::getLoopEase() const
 bool TrackData::serialize(ISerializer& s)
 {
 	s >> MemberRef< world::EntityData >(L"entityData", m_entityData);
+
+	if (s.getVersion() >= 2)
+		s >> MemberRef< world::EntityData >(L"lookAtEntityData", m_lookAtEntityData);
+
 	s >> MemberComposite< TransformPath >(L"path", m_path);
 	
 	if (s.getVersion() >= 1)

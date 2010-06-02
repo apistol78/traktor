@@ -33,7 +33,7 @@ void RotateModifier::draw(
 	Matrix44 mp = rotateX(pitch);
 	Matrix44 mb = rotateZ(bank);
 
-	primitiveRenderer->pushDepthEnable(false);
+	//primitiveRenderer->pushDepthEnable(false);
 
 	// Head
 	primitiveRenderer->pushWorld(translate(translation) * mh);
@@ -116,7 +116,7 @@ void RotateModifier::draw(
 
 	primitiveRenderer->popWorld();
 
-	primitiveRenderer->popDepthEnable();
+	//primitiveRenderer->popDepthEnable();
 }
 
 void RotateModifier::adjust(
@@ -132,19 +132,26 @@ void RotateModifier::adjust(
 	const float c_constantDeltaScale = 0.02f;
 	uint32_t axisEnable = context->getAxisEnable();
 
-	Quaternion Qh = ((axisEnable & SceneEditorContext::AeX) != 0 && button == 0) ? Quaternion(Vector4(0.0f, screenDelta.x() * c_constantDeltaScale, 0.0f)) : Quaternion::identity();
-	Quaternion Qp = ((axisEnable & SceneEditorContext::AeY) != 0 && button == 0) ? Quaternion(Vector4(screenDelta.y() * c_constantDeltaScale, 0.0f, 0.0f)) : Quaternion::identity();
-	Quaternion Qb = ((axisEnable & SceneEditorContext::AeZ) != 0 && button != 0) ? Quaternion(Vector4(0.0f, 0.0f, screenDelta.x() * c_constantDeltaScale)) : Quaternion::identity();
+	float head, pitch, bank;
+	outTransform.rotation().toEulerAngles(head, pitch, bank);
 
-	Quaternion Qr = outTransform.rotation();
+	if ((axisEnable & SceneEditorContext::AeX) != 0 && button == 0)
+		head += screenDelta.x() * c_constantDeltaScale;
+	if ((axisEnable & SceneEditorContext::AeY) != 0 && button == 0)
+		pitch += screenDelta.y() * c_constantDeltaScale;
+	if ((axisEnable & SceneEditorContext::AeZ) != 0 && button != 0)
+		bank += screenDelta.x() * c_constantDeltaScale;
 
-	Qr = Qh * Qr;
-	Qr = Qr * Qp;
-	Qr = Qr * Qb;
+	//Matrix44 mt = translate(outTransform.translation());
+	//Matrix44 mh = rotateY(head);
+	//Matrix44 mp = rotateX(pitch);
+	//Matrix44 mb = rotateZ(bank);
+
+	//outTransform = Transform(mt * mh * mp * mb);
 
 	outTransform = Transform(
 		outTransform.translation(),
-		Qr.normalized()
+		Quaternion(head, pitch, bank)
 	);
 }
 

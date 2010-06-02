@@ -20,26 +20,18 @@
 			<item type="traktor.world.DirectionalLightEntityData">
 				<name>Light</name>
 				<transform>
-					<translation>-2.355778, 2.725676, -0.303274, 0</translation>
-					<rotation>-0.003087, -0.917948, 0.327454, 0.224112</rotation>
+					<translation>-8.298438, 2.116519, 1.057417, 0</translation>
+					<rotation>-0.184619, 0.625109, -0.270448, -0.708528</rotation>
 				</transform>
 				<sunColor>1, 1, 1, 0</sunColor>
 				<baseColor>0.5, 0.5, 0.5, 0</baseColor>
 				<shadowColor>0, 0, 0, 0</shadowColor>
 			</item>
 			<item type="traktor.mesh.MeshEntityData">
-				<name>Static Mesh</name>
-				<transform>
-					<translation>-1.430521, 0.094536, 0.499357, 0</translation>
-					<rotation>0, 0.069943, 0, 0.997551</rotation>
-				</transform>
-				<mesh>{85A0B3C5-17F2-8640-A9BE-4A1A1A9AE291}</mesh>
-			</item>
-			<item type="traktor.mesh.MeshEntityData">
 				<name>Instance Mesh</name>
 				<transform>
-					<translation>-1.52581, 1.645606, 0.58513, 0</translation>
-					<rotation>-0.049677, -0.109641, -0.005487, 0.992714</rotation>
+					<translation>0, 0, 0, 0</translation>
+					<rotation>0, 0, 0, 1</rotation>
 				</transform>
 				<mesh>{2BEECC12-C76D-974A-B0AE-02CE93F6C466}</mesh>
 			</item>
