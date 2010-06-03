@@ -1,3 +1,4 @@
+#include "Core/Math/Float.h"
 #include "I18N/Text.h"
 #include "Render/PrimitiveRenderer.h"
 #include "Scene/Editor/EntityAdapter.h"
@@ -71,10 +72,11 @@ bool TheaterControllerEditor::create(scene::SceneEditorContext* context, ui::Con
 
 	m_toolBar = new ui::custom::ToolBar();
 	m_toolBar->create(container);
-	m_toolBar->addImage(ui::Bitmap::load(c_ResourceTheater, sizeof(c_ResourceTheater), L"png"), 4);
+	m_toolBar->addImage(ui::Bitmap::load(c_ResourceTheater, sizeof(c_ResourceTheater), L"png"), 6);
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"THEATER_EDITOR_CAPTURE_ENTITIES"), ui::Command(L"Theater.CaptureEntities"), 0));
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"THEATER_EDITOR_DELETE_SELECTED_KEY"), ui::Command(L"Theater.DeleteSelectedKey"), 1));
-	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"THEATER_EDITOR_SET_LOOKAT_ENTITY"), ui::Command(L"Theater.SetLookAtEntity"), 0));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"THEATER_EDITOR_SET_LOOKAT_ENTITY"), ui::Command(L"Theater.SetLookAtEntity"), 4));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"THEATER_EDITOR_EASE_VELOCITY"), ui::Command(L"Theater.EaseVelocity"), 5));
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"THEATER_EDITOR_GOTO_PREVIOUS_KEY"), ui::Command(L"Theater.GotoPreviousKey"), 2));
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"THEATER_EDITOR_GOTO_NEXT_KEY"), ui::Command(L"Theater.GotoNextKey"), 3));
@@ -145,6 +147,10 @@ bool TheaterControllerEditor::handleCommand(const ui::Command& command)
 	else if (command == L"Theater.SetLookAtEntity")
 	{
 		setLookAtEntity();
+	}
+	else if (command == L"Theater.EaseVelocity")
+	{
+		easeVelocity();
 	}
 	else if (command == L"Theater.GotoPreviousKey")
 	{
@@ -363,6 +369,59 @@ void TheaterControllerEditor::setLookAtEntity()
 		else
 			trackData->setLookAtEntityData(0);
 	}
+
+	m_context->buildEntities();
+}
+
+void TheaterControllerEditor::easeVelocity()
+{
+	Ref< scene::SceneAsset > sceneAsset = m_context->getSceneAsset();
+	Ref< TheaterControllerData > controllerData = checked_type_cast< TheaterControllerData* >(sceneAsset->getControllerData());
+
+	RefArray< ui::custom::SequenceItem > sequenceItems;
+	m_trackSequencer->getSequenceItems(sequenceItems, ui::custom::SequencerControl::GfSelectedOnly | ui::custom::SequencerControl::GfDescendants);
+
+	for (RefArray< ui::custom::SequenceItem >::iterator i = sequenceItems.begin(); i != sequenceItems.end(); ++i)
+	{
+		ui::custom::Sequence* selectedSequence = checked_type_cast< ui::custom::Sequence*, false >(*i);
+		Ref< TrackData > trackData = selectedSequence->getData< TrackData >(L"TRACK");
+		T_ASSERT (trackData);
+
+		TransformPath& path = trackData->getPath();
+		AlignedVector< TransformPath::Key >& keys = path.getKeys();
+		if (keys.size() < 3)
+			continue;
+
+		float Ts = keys.front().T;
+		float Te = keys.back().T;
+
+		// Measure euclidean distance of keys.
+		std::vector< float > distances(keys.size(), 0.0f);
+		float totalDistance = 0.0f;
+
+		for (uint32_t i = 1; i < keys.size(); ++i)
+		{
+			float T0 = keys[i - 1].T;
+			float T1 = keys[i].T;
+
+			const float c_measureStep = 1.0f / 1000.0f;
+			for (float T = T0; T <= T1 - c_measureStep; T += c_measureStep)
+			{
+				TransformPath::Frame Fc = path.evaluate(T, controllerData->getLoop());
+				TransformPath::Frame Fn = path.evaluate(T + c_measureStep, controllerData->getLoop());
+				totalDistance += (Fn.position - Fc.position).length();
+			}
+
+			distances[i] = totalDistance;
+		}
+
+		// Distribute keys according to distances in time.
+		const float c_smoothFactor = 0.1f;
+		for (uint32_t i = 1; i < keys.size(); ++i)
+			keys[i].T = lerp(keys[i].T, Ts + (distances[i] / totalDistance) * (Te - Ts), c_smoothFactor);
+	}
+
+	updateSequencer();
 
 	m_context->buildEntities();
 }
