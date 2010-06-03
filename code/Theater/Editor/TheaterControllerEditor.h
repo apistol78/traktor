@@ -54,6 +54,8 @@ private:
 
 	void setLookAtEntity();
 
+	void easeVelocity();
+
 	void gotoPreviousKey();
 
 	void gotoNextKey();

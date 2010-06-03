@@ -36,7 +36,7 @@ T_MATH_INLINE Transform::Transform(const Quaternion& rotation)
 T_MATH_INLINE Transform::Transform(const Matrix44& mx)
 {
 	m_translation = mx.translation().xyz0();
-	m_rotation = Quaternion(mx);
+	m_rotation = Quaternion(mx).normalized();
 }
 
 T_MATH_INLINE const Transform& Transform::identity()
