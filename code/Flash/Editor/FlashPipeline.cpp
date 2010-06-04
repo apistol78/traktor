@@ -55,6 +55,8 @@ bool FlashPipeline::buildDependencies(
 	pipelineDepends->addDependency(Guid(L"{57F6F4DF-F4EE-6740-907C-027A3A2596D7}"), editor::PdfBuild);	// Decrement Mask
 	pipelineDepends->addDependency(Guid(L"{1EDAAA67-1E02-8A49-B857-14D7812C96D6}"), editor::PdfBuild);	// Solid Quad
 	pipelineDepends->addDependency(Guid(L"{10426D17-CF0A-4849-A207-24F101A78459}"), editor::PdfBuild);	// Textured Quad
+	pipelineDepends->addDependency(Guid(L"{2EDC5E1B-562D-9F46-9E3C-474729FB078E}"), editor::PdfBuild);	// Solid Mask Quad
+	pipelineDepends->addDependency(Guid(L"{98A59F6A-1D90-144C-B688-4CEF382453F2}"), editor::PdfBuild);	// Textured Mask Quad
 
 	return true;
 }

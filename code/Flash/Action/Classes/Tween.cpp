@@ -51,6 +51,8 @@ void Tween::continueTo(avm_number_t finish, avm_number_t duration)
 	m_begin = m_current;
 	m_finish = finish;
 	m_duration = duration;
+	m_timeStart = avm_number_t(-1);
+	resume();
 }
 
 void Tween::fforward()

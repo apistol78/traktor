@@ -346,7 +346,8 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 			viewOffset,
 			c_cxfZero,
 			0,
-			Vector4::zero()
+			Vector4::zero(),
+			0
 		);
 
 		// Draw new glyph.
@@ -389,7 +390,8 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 		m_viewOffset,
 		cxf,
 		m_renderTargetGlyphs->getColorTexture(0),
-		Vector4(float(index) / c_cacheGlyphCount + cachePixelDx * 2.0f, 0.0f, 1.0f / c_cacheGlyphCount - cachePixelDx * 4.0f, 1.0f)
+		Vector4(float(index) / c_cacheGlyphCount + cachePixelDx * 2.0f, 0.0f, 1.0f / c_cacheGlyphCount - cachePixelDx * 4.0f, 1.0f),
+		m_maskReference
 	);
 }
 
