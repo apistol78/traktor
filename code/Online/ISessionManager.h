@@ -37,6 +37,14 @@ public:
 	/*! \brief Destroy session manager. */
 	virtual void destroy() = 0;
 
+	/*! \brief Get current language code.
+	 *
+	 * Language code defined in ISO 639-1.
+	 *
+	 * \return Language code, empty string if unavailable.
+	 */
+	virtual std::wstring getLanguageCode() const = 0;
+
 	/*! \brief Get available "playable" users.
 	 *
 	 * \param outUser Array of users.

@@ -159,6 +159,11 @@ void SessionManagerLocal::destroy()
 	}
 }
 
+std::wstring SessionManagerLocal::getLanguageCode() const
+{
+	return L"";
+}
+
 bool SessionManagerLocal::getAvailableUsers(RefArray< IUser >& outUsers)
 {
 	Ref< sql::IResultSet > rs = m_db->executeQuery(L"select * from Users");
