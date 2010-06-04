@@ -28,6 +28,8 @@ public:
 
 	virtual void destroy();
 
+	virtual std::wstring getLanguageCode() const;
+
 	virtual bool getAvailableUsers(RefArray< IUser >& outUsers);
 
 	virtual Ref< IUser > getCurrentUser();
