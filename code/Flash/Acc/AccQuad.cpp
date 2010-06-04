@@ -18,6 +18,8 @@ namespace traktor
 
 const Guid c_guidShaderSolid(L"{1EDAAA67-1E02-8A49-B857-14D7812C96D6}");
 const Guid c_guidShaderTextured(L"{10426D17-CF0A-4849-A207-24F101A78459}");
+const Guid c_guidShaderSolidMask(L"{2EDC5E1B-562D-9F46-9E3C-474729FB078E}");
+const Guid c_guidShaderTexturedMask(L"{98A59F6A-1D90-144C-B688-4CEF382453F2}");
 
 struct Vertex
 {
@@ -64,6 +66,14 @@ bool AccQuad::create(
 	if (!resourceManager->bind(m_shaderTextured))
 		return false;
 
+	m_shaderSolidMask = c_guidShaderSolidMask;
+	if (!resourceManager->bind(m_shaderSolidMask))
+		return false;
+
+	m_shaderTexturedMask = c_guidShaderTexturedMask;
+	if (!resourceManager->bind(m_shaderTexturedMask))
+		return false;
+
 	std::vector< render::VertexElement > vertexElements;
 	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat2, offsetof(Vertex, pos)));
 
@@ -99,7 +109,8 @@ void AccQuad::render(
 	const Vector4& viewOffset,
 	const SwfCxTransform& cxform,
 	render::ITexture* texture,
-	const Vector4& textureOffset
+	const Vector4& textureOffset,
+	uint8_t maskReference
 )
 {
 	Matrix44 m1(
@@ -126,8 +137,20 @@ void AccQuad::render(
 	);
 	stepSize = m.inverse() * stepSize;
 
+	Ref< render::Shader > shaderSolid, shaderTextured;
+	if (maskReference == 0)
+	{
+		shaderSolid = m_shaderSolid;
+		shaderTextured = m_shaderTextured;
+	}
+	else
+	{
+		shaderSolid = m_shaderSolidMask;
+		shaderTextured = m_shaderTexturedMask;
+	}
+
 	render::NonIndexedRenderBlock* renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >("Flash AccQuad");
-	renderBlock->shader = texture ? m_shaderTextured : m_shaderSolid;
+	renderBlock->shader = texture ? shaderTextured : shaderSolid;
 	renderBlock->vertexBuffer = m_vertexBuffer;
 	renderBlock->primitive = render::PtTriangleStrip;
 	renderBlock->offset = 0;
@@ -142,6 +165,7 @@ void AccQuad::render(
 	renderBlock->shaderParams->setVectorParameter(s_handleStepSize, stepSize);
 	renderBlock->shaderParams->setVectorParameter(s_handleCxFormMul, Vector4(cxform.red[0], cxform.green[0], cxform.blue[0], cxform.alpha[0]));
 	renderBlock->shaderParams->setVectorParameter(s_handleCxFormAdd, Vector4(cxform.red[1], cxform.green[1], cxform.blue[1], cxform.alpha[1]));
+	renderBlock->shaderParams->setStencilReference(maskReference);
 	
 	if (texture)
 	{
