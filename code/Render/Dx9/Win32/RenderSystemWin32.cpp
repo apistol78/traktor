@@ -29,6 +29,7 @@ namespace traktor
 		namespace
 		{
 
+const DWORD c_iconResource = 10000;
 const TCHAR* c_classRenderName = _T("TraktorRenderSystem");
 
 uint16_t colorBitsFromFormat(D3DFORMAT d3dFormat)
@@ -127,16 +128,16 @@ bool RenderSystemWin32::create(const RenderSystemCreateDesc& desc)
 	wc.cbClsExtra = 0;
 	wc.cbWndExtra = sizeof(this);
 	wc.lpfnWndProc = (WNDPROC)wndProc;
-	wc.hInstance = static_cast<HINSTANCE>(GetModuleHandle(0));
-	wc.hIcon = NULL;
-	wc.hCursor = static_cast<HCURSOR>(LoadCursor(NULL, IDC_ARROW));
+	wc.hInstance = static_cast< HINSTANCE >(GetModuleHandle(NULL));
+	wc.hIcon = LoadIcon(wc.hInstance, MAKEINTRESOURCE(c_iconResource));
+	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
 	wc.lpszClassName = c_classRenderName;
 	RegisterClass(&wc);
 
 	// Render window.
 	m_hWnd = CreateWindow(
 		c_classRenderName,
-		_T("Traktor 2.0 DirectX 9.0 Renderer"),
+		desc.windowTitle ? desc.windowTitle : _T("Traktor 2.0 DirectX 9.0 Renderer"),
 		WS_POPUPWINDOW,
 		0,
 		0,

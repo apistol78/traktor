@@ -166,11 +166,13 @@ struct DisplayMode
 /*! \brief Descriptor for render system. */
 struct RenderSystemCreateDesc
 {
+	const wchar_t* windowTitle;
 	float mipBias;
 	int32_t maxAnisotropy;
 
 	RenderSystemCreateDesc()
-	:	mipBias(0.0f)
+	:	windowTitle(0)
+	,	mipBias(0.0f)
 	,	maxAnisotropy(1)
 	{
 	}
