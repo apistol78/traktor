@@ -4,6 +4,7 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
+#include "Core/Math/Log2.h"
 #include "Core/Math/Vector4.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyInteger.h"
@@ -32,39 +33,6 @@ namespace traktor
 	{
 		namespace
 		{
-
-int log2(int v)
-{
-	for (int i = 32; i >= 0; --i)
-		if (v & (1 << i))
-			return i;
-	return 0;
-}
-
-bool isLog2(int v)
-{
-	return (1 << log2(v)) == v;
-}
-
-uint32_t nearestLog2(uint32_t num)
-{
-    uint32_t n = num > 0 ? num - 1 : 0;
-
-    n |= n >> 1;
-    n |= n >> 2;
-    n |= n >> 4;
-    n |= n >> 8;
-    n |= n >> 16;
-    n++;
-
-    return n;
-}
-
-uint32_t previousLog2(uint32_t num)
-{
-	uint32_t lg2 = nearestLog2(num);
-	return lg2 > 1 ? (lg2 >> 1) : 1;
-}
 
 bool isBinaryAlpha(const drawing::Image* image)
 {

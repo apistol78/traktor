@@ -1,4 +1,5 @@
 #include "Core/Log/Log.h"
+#include "Core/Math/Log2.h"
 #include "Render/Dx9/Platform.h"
 #include "Render/Dx9/TypesDx9.h"
 #include "Render/Dx9/ResourceManagerDx9.h"
@@ -8,20 +9,6 @@ namespace traktor
 {
 	namespace render
 	{
-		namespace
-		{
-
-bool isLog2(uint32_t x)
-{
-	for (uint32_t i = 0; i < 32; ++i)
-	{
-		if ((1 << i) == x)
-			return true;
-	}
-	return false;
-}
-
-		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SimpleTextureDx9", SimpleTextureDx9, ISimpleTexture)
 

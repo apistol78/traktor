@@ -1,39 +1,16 @@
 #include <cstring>
-#include "Flash/FlashBitmap.h"
-#include "Flash/Action/Avm1/Classes/AsObject.h"
+#include "Core/Log/Log.h"
+#include "Core/Math/Log2.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
 #include "Drawing/Filters/ScaleFilter.h"
-#include "Core/Log/Log.h"
+#include "Flash/FlashBitmap.h"
+#include "Flash/Action/Avm1/Classes/AsObject.h"
 
 namespace traktor
 {
 	namespace flash
 	{
-		namespace
-		{
-
-uint32_t nearestLog2(uint32_t num)
-{
-    uint32_t n = num > 0 ? num - 1 : 0;
-
-    n |= n >> 1;
-    n |= n >> 2;
-    n |= n >> 4;
-    n |= n >> 8;
-    n |= n >> 16;
-    n++;
-
-    return n;
-}
-
-uint32_t previousLog2(uint32_t num)
-{
-	uint32_t lg2 = nearestLog2(num);
-	return lg2 > 1 ? (lg2 >> 1) : 1;
-}
-
-		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashBitmap", FlashBitmap, ActionObject)
 

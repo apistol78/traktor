@@ -1,20 +1,21 @@
 #include <limits>
-#include "Terrain/Editor/HeightfieldPipeline.h"
-#include "Terrain/Editor/HeightfieldAsset.h"
-#include "Terrain/HeightfieldResource.h"
-#include "Terrain/Heightfield.h"
-#include "Editor/IPipelineDepends.h"
-#include "Editor/IPipelineBuilder.h"
-#include "Editor/IPipelineSettings.h"
+#include "Core/Io/FileSystem.h"
+#include "Core/Io/Writer.h"
+#include "Core/Log/Log.h"
+#include "Core/Math/Log2.h"
+#include "Core/Settings/PropertyString.h"
+#include "Database/Instance.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
 #include "Drawing/Filters/ScaleFilter.h"
 #include "Drawing/Filters/ConvolutionFilter.h"
-#include "Database/Instance.h"
-#include "Core/Io/FileSystem.h"
-#include "Core/Io/Writer.h"
-#include "Core/Log/Log.h"
-#include "Core/Settings/PropertyString.h"
+#include "Editor/IPipelineBuilder.h"
+#include "Editor/IPipelineDepends.h"
+#include "Editor/IPipelineSettings.h"
+#include "Terrain/Heightfield.h"
+#include "Terrain/HeightfieldResource.h"
+#include "Terrain/Editor/HeightfieldAsset.h"
+#include "Terrain/Editor/HeightfieldPipeline.h"
 
 namespace traktor
 {
@@ -24,14 +25,6 @@ namespace traktor
 		{
 
 drawing::PixelFormat s_pfRaw16(16, 16, 0, 0, 0, 0, 0, 0, 0, false, false);
-
-int log2(int v)
-{
-	for (int i = 31; i >= 0; --i)
-		if (v & (1 << i))
-			return i;
-	return 0;
-}
 
 Ref< drawing::Image > readRawTerrain(const Path& fileName)
 {

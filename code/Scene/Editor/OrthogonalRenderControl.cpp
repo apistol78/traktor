@@ -1,4 +1,5 @@
 #include <limits>
+#include "Core/Math/Log2.h"
 #include "Core/Settings/PropertyColor.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/Settings.h"
@@ -38,20 +39,6 @@ namespace traktor
 
 const float c_cameraTranslateDeltaScale = 0.025f;
 const float c_minMagnification = 0.01f;
-
-uint32_t nearestLog2(uint32_t num)
-{
-	uint32_t n = num > 0 ? num - 1 : 0;
-
-	n |= n >> 1;
-	n |= n >> 2;
-	n |= n >> 4;
-	n |= n >> 8;
-	n |= n >> 16;
-	n++;
-
-	return n;
-}
 
 		}
 

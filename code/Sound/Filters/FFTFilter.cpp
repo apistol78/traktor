@@ -1,6 +1,7 @@
 #include <cstring>
 #include "Core/Math/Const.h"
 #include "Core/Math/Hermite.h"
+#include "Core/Math/Log2.h"
 #include "Core/Math/MathUtils.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
@@ -13,20 +14,6 @@ namespace traktor
 	{
 		namespace
 		{
-
-uint32_t log2(uint32_t samplesCount)
-{
-	if (samplesCount < 2)
-		return 0;
-
-	for (uint32_t i = 0; ; ++i)
-	{
-		if (samplesCount & (1 << i))
-			return i;
-	}
-
-	return 0;
-}
 
 uint32_t reverseBits(uint32_t value, uint32_t numBits)
 {
