@@ -43,6 +43,7 @@ public:
 		Align align,
 		uint16_t leftMargin,
 		uint16_t rightMargin,
+		bool wordWrap,
 		bool renderHtml
 	);
 
@@ -96,6 +97,12 @@ public:
 	 */
 	uint16_t getRightMargin() const;
 
+	/*! \brief Word wrap enabled.
+	 *
+	 * \return True if word wrap is enabled.
+	 */
+	bool wordWrap() const;
+
 	/*! \brief Render HTML content.
 	 *
 	 * \return True if text is HTML.
@@ -111,6 +118,7 @@ private:
 	Align m_align;
 	uint16_t m_leftMargin;
 	uint16_t m_rightMargin;
+	bool m_wordWrap;
 	bool m_renderHtml;
 };
 

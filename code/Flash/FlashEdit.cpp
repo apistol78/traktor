@@ -18,6 +18,7 @@ FlashEdit::FlashEdit(
 	Align align,
 	uint16_t leftMargin,
 	uint16_t rightMargin,
+	bool wordWrap,
 	bool renderHtml
 )
 :	FlashCharacter(id)
@@ -29,6 +30,7 @@ FlashEdit::FlashEdit(
 ,	m_align(align)
 ,	m_leftMargin(leftMargin)
 ,	m_rightMargin(rightMargin)
+,	m_wordWrap(wordWrap)
 ,	m_renderHtml(renderHtml)
 {
 }
@@ -76,6 +78,11 @@ uint16_t FlashEdit::getLeftMargin() const
 uint16_t FlashEdit::getRightMargin() const
 {
 	return m_rightMargin;
+}
+
+bool FlashEdit::wordWrap() const
+{
+	return m_wordWrap;
 }
 
 bool FlashEdit::renderHtml() const

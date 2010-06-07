@@ -1,5 +1,6 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
+#include "Core/Misc/Split.h"
 #include "Flash/FlashMovieRenderer.h"
 #include "Flash/FlashSpriteInstance.h"
 #include "Flash/FlashShapeInstance.h"
@@ -234,77 +235,124 @@ void FlashMovieRenderer::renderCharacter(
 			1.0f / (20.0f * 1000.0f);
 		float fontHeight = edit->getFontHeight();
 
+		const SwfRect& bounds = edit->getTextBounds();
 		const SwfColor& color = edit->getTextColor();
+		bool wordWrap = edit->wordWrap();
+
 		FlashEditInstance::text_t text = editInstance->getText();
 
 		const float c_magicX = 32.0f * 20.0f;
 		const float c_magicY = 8.0f * 20.0f;
 
 		float offsetY = fontHeight - c_magicY;
+
+		// Get space width.
+		uint16_t spaceGlyphIndex = font->lookupIndex(L' ');
+		int16_t spaceWidth = font->getAdvance(spaceGlyphIndex);
+
+		// Render text lines.
 		for (FlashEditInstance::text_t::const_iterator i = text.begin(); i != text.end(); ++i)
 		{
-			const std::wstring& line = *i;
-			float offsetX = 0.0f;
+			std::vector< std::wstring > words;
+			Split< std::wstring >::any(*i, L" \t", words);
 
-			// Calculate origin offsets based on alignment.
-			if (edit->getAlign() == FlashEdit::AnCenter || edit->getAlign() == FlashEdit::AnRight)
+			// Calculate width of each word.
+			std::vector< float > widths(words.size());
+			for (uint32_t j = 0; j < words.size(); ++j)
 			{
-				float width = 0.0f;
-				for (uint32_t j = 0; j < line.length(); ++j)
+				const std::wstring& word = words[j];
+				uint32_t wordLength = word.length();
+
+				float wordWidth = 0.0f;
+				for (uint32_t k = 0; k < wordLength; ++k)
 				{
-					uint16_t glyphIndex = font->lookupIndex(line[j]);
+					uint16_t glyphIndex = font->lookupIndex(word[k]);
 					int16_t glyphAdvance = font->getAdvance(glyphIndex);
-					if (j < line.length() - 1)
+					if (k < wordLength - 1)
 					{
-						const SwfKerningRecord* kerningRecord = font->lookupKerningRecord(line[j], line[j + 1]);
+						const SwfKerningRecord* kerningRecord = font->lookupKerningRecord(word[k], word[k + 1]);
 						if (kerningRecord)
 							glyphAdvance += kerningRecord->adjustment;
 					}
-					width += (glyphAdvance - c_magicX);
+					wordWidth += (glyphAdvance - c_magicX);
 				}
 
-				width *= fontScale * fontHeight;
-
-				const SwfRect& bounds = edit->getTextBounds();
-				if (edit->getAlign() == FlashEdit::AnCenter)
-					offsetX = (bounds.max.x - bounds.min.x - width) / 2.0f;
-				else
-					offsetX = bounds.max.x - bounds.min.x - width;
+				widths[j] = wordWidth * fontScale * fontHeight;
 			}
 
-			// Render each glyph.
-			for (uint32_t j = 0; j < line.length(); ++j)
+			// Pack as many words as fits in bounds (only if word wrap enabled); then render each line.
+			uint32_t wordOffsetStart = 0;
+			uint32_t wordOffsetEnd = 0;
+
+			while (wordOffsetStart < words.size())
 			{
-				wchar_t ch = line[j];
-				uint16_t glyphIndex = font->lookupIndex(ch);
-
-				if (iswgraph(ch))
+				float lineWidth = 0.0f;
+				while (wordOffsetEnd < words.size())
 				{
-					const FlashShape* glyphShape = font->getShape(glyphIndex);
-					if (!glyphShape)
-						continue;
+					float wordWidth = widths[wordOffsetEnd];
 
-					m_displayRenderer->renderGlyph(
-						*movie,
-						editTransform * translate(offsetX, offsetY) * scale(fontScale * fontHeight, fontScale * fontHeight),
-						*glyphShape,
-						color,
-						concateCxTransform(cxTransform, characterInstance->getColorTransform())
-					);
+					if (wordOffsetStart >= wordOffsetEnd)
+						lineWidth = wordWidth;
+					else
+					{
+						wordWidth += spaceWidth * fontScale * fontHeight;
+						if (wordWrap && lineWidth + wordWidth >= bounds.max.x - bounds.min.x)
+							break;
+						lineWidth += wordWidth;
+					}
+
+					wordOffsetEnd++;
 				}
 
-				int16_t glyphAdvance = font->getAdvance(glyphIndex);
-				if (j < line.length() - 1)
+				// Calculate line horizontal offset.
+				float offsetX = 0.0f;
+				if (edit->getAlign() == FlashEdit::AnCenter)
+					offsetX = (bounds.max.x - bounds.min.x - lineWidth) / 2.0f;
+				else if (edit->getAlign() == FlashEdit::AnRight)
+					offsetX = bounds.max.x - bounds.min.x - lineWidth;
+
+				// Render each word.
+				while (wordOffsetStart < wordOffsetEnd)
 				{
-					const SwfKerningRecord* kerningRecord = font->lookupKerningRecord(line[j], line[j + 1]);
-					if (kerningRecord)
-						glyphAdvance += kerningRecord->adjustment;
+					const std::wstring& word = words[wordOffsetStart++];
+					uint32_t wordLength = word.length();
+
+					for (uint32_t i = 0; i < wordLength; ++i)
+					{
+						wchar_t ch = word[i];
+						uint16_t glyphIndex = font->lookupIndex(ch);
+
+						if (iswgraph(ch))
+						{
+							const FlashShape* glyphShape = font->getShape(glyphIndex);
+							if (!glyphShape)
+								continue;
+
+							m_displayRenderer->renderGlyph(
+								*movie,
+								editTransform * translate(offsetX, offsetY) * scale(fontScale * fontHeight, fontScale * fontHeight),
+								*glyphShape,
+								color,
+								concateCxTransform(cxTransform, characterInstance->getColorTransform())
+							);
+						}
+
+						int16_t glyphAdvance = font->getAdvance(glyphIndex);
+						if (i < wordLength - 1)
+						{
+							const SwfKerningRecord* kerningRecord = font->lookupKerningRecord(word[i], word[i + 1]);
+							if (kerningRecord)
+								glyphAdvance += kerningRecord->adjustment;
+						}
+
+						offsetX += (glyphAdvance - c_magicX) * fontScale * fontHeight;
+					}
+
+					offsetX += spaceWidth * fontScale * fontHeight;
 				}
 
-				offsetX += (glyphAdvance - c_magicX) * fontScale * fontHeight;
+				offsetY += fontHeight;
 			}
-
-			offsetY += fontHeight;
 		}
 
 		return;
