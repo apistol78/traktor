@@ -1,4 +1,4 @@
-#include "Core/Io/IStream.h"
+#include "Core/Io/BufferedStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Serialization/BinarySerializer.h"
 #include "Core/Serialization/ISerializable.h"
@@ -129,7 +129,7 @@ bool Instance::checkout()
 {
 	T_ASSERT (m_providerInstance);
 
-	Acquire< Mutex > __lock__(m_lock);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	if (!m_providerInstance->openTransaction())
 		return false;
@@ -144,7 +144,7 @@ bool Instance::commit(uint32_t flags)
 {
 	T_ASSERT (m_providerInstance);
 
-	Acquire< Mutex > __lock__(m_lock);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	if ((flags & CfKeepCheckedOut) != 0 && m_removed)
 	{
@@ -207,7 +207,7 @@ bool Instance::revert()
 {
 	T_ASSERT (m_providerInstance);
 
-	Acquire< Mutex > __lock__(m_lock);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	if (!m_providerInstance->closeTransaction())
 		return false;
@@ -244,7 +244,7 @@ Ref< ISerializable > Instance::getObject()
 {
 	T_ASSERT (m_providerInstance);
 
-	Acquire< Mutex > __lock__(m_lock);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	Ref< ISerializable > object;
 	const TypeInfo* serializerType = 0;
 
@@ -254,11 +254,12 @@ Ref< ISerializable > Instance::getObject()
 
 	T_ASSERT (serializerType);
 
+	BufferedStream bs(stream);
 	Ref< Serializer > serializer;
 	if (serializerType == &type_of< BinarySerializer >())
-		serializer = new BinarySerializer(stream);
+		serializer = new BinarySerializer(&bs);
 	else if (serializerType == &type_of< xml::XmlDeserializer >())
-		serializer = new xml::XmlDeserializer(stream);
+		serializer = new xml::XmlDeserializer(&bs);
 	else
 	{
 		stream->close();
@@ -279,7 +280,7 @@ bool Instance::setObject(const ISerializable* object)
 	if (!object)
 		return false;
 
-	Acquire< Mutex > __lock__(m_lock);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	const TypeInfo* serializerType = 0;
 
 	Ref< IStream > stream = m_providerInstance->writeObject(type_name(object), serializerType);
@@ -315,7 +316,12 @@ uint32_t Instance::getDataNames(std::vector< std::wstring >& dataNames) const
 Ref< IStream > Instance::readData(const std::wstring& dataName)
 {
 	T_ASSERT (m_providerInstance);
-	return m_providerInstance->readData(dataName);
+
+	Ref< IStream > stream = m_providerInstance->readData(dataName);
+	if (!stream)
+		return 0;
+
+	return new BufferedStream(stream);
 }
 
 Ref< IStream > Instance::writeData(const std::wstring& dataName)

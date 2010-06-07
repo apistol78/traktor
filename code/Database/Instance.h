@@ -1,8 +1,9 @@
 #ifndef traktor_db_Instance_H
 #define traktor_db_Instance_H
 
+#include "Core/Guid.h"
 #include "Core/Object.h"
-#include "Core/Thread/Mutex.h"
+#include "Core/Thread/Semaphore.h"
 #include "Database/Config.h"
 #include "Database/Types.h"
 
@@ -93,7 +94,7 @@ private:
 	IProviderBus* m_providerBus;
 	Ref< IProviderInstance > m_providerInstance;
 	Ref< Group > m_parent;
-	Mutex m_lock;
+	Semaphore m_lock;
 	bool m_renamed;
 	bool m_removed;
 #if T_INSTANCE_CACHE_NAME || T_INSTANCE_CACHE_GUID || T_INSTANCE_CACHE_PRIMARY_TYPE
