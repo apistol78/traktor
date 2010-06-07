@@ -1,10 +1,10 @@
 #include <cstring>
+#include "Core/Io/BufferedStream.h"
+#include "Core/Io/FileSystem.h"
+#include "Core/Serialization/BinarySerializer.h"
 #include "Database/Local/PhysicalAccess.h"
 #include "Xml/XmlSerializer.h"
 #include "Xml/XmlDeserializer.h"
-#include "Core/Serialization/BinarySerializer.h"
-#include "Core/Io/FileSystem.h"
-#include "Core/Io/IStream.h"
 
 namespace traktor
 {
@@ -32,20 +32,22 @@ Ref< ISerializable > readPhysicalObject(const Path& objectPath)
 	if (!objectStream)
 		return 0;
 
+	BufferedStream bs(objectStream);
+
 	uint8_t head[5];
-	if (objectStream->read(head, sizeof(head)) != sizeof(head))
+	if (bs.read(head, sizeof(head)) != sizeof(head))
 	{
 		objectStream->close();
 		return 0;
 	}
 
-	objectStream->seek(IStream::SeekSet, 0);
+	bs.seek(IStream::SeekSet, 0);
 
 	Ref< ISerializable > object;
 	if (std::memcmp(head, "<?xml", sizeof(head)) != 0)
-		object = BinarySerializer(objectStream).readObject();
+		object = BinarySerializer(&bs).readObject();
 	else
-		object = xml::XmlDeserializer(objectStream).readObject();
+		object = xml::XmlDeserializer(&bs).readObject();
 
 	objectStream->close();
 	return object;
