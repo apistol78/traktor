@@ -35,9 +35,11 @@ const uint32_t c_cacheGlyphSize = 32;
 #endif
 const uint32_t c_cacheGlyphMargin = 6;
 
-const uint32_t c_cacheGlyphCount = 64;
-const uint32_t c_cacheGlyphDimX = c_cacheGlyphSize * c_cacheGlyphCount;
-const uint32_t c_cacheGlyphDimY = c_cacheGlyphSize;
+const uint32_t c_cacheGlyphCountX = 8;
+const uint32_t c_cacheGlyphCountY = 8;
+const uint32_t c_cacheGlyphCount = c_cacheGlyphCountX * c_cacheGlyphCountY;
+const uint32_t c_cacheGlyphDimX = c_cacheGlyphSize * c_cacheGlyphCountX;
+const uint32_t c_cacheGlyphDimY = c_cacheGlyphSize * c_cacheGlyphCountY;
 
 const SwfCxTransform c_cxfZero = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
 const SwfCxTransform c_cxfIdentity = { 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f };
@@ -326,6 +328,9 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 			}
 		}
 
+		int32_t column = index & (c_cacheGlyphCountX - 1);
+		int32_t row = index / c_cacheGlyphCountX;
+
 		render::TargetBeginRenderBlock* renderBlockBegin = m_renderContext->alloc< render::TargetBeginRenderBlock >("Flash glyph render begin");
 		renderBlockBegin->renderTargetSet = m_renderTargetGlyphs;
 		renderBlockBegin->renderTargetIndex = 0;
@@ -334,7 +339,12 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 
 		Vector4 frameSize(bounds.min.x, bounds.min.y, bounds.max.x, bounds.max.y);
 		Vector4 viewSize(0.0f, 0.0f, 0.0f, 0.0f);
-		Vector4 viewOffset(float(index) / c_cacheGlyphCount - 1.0f / c_cacheGlyphDimX, 0.0f, 1.0f / c_cacheGlyphCount + 2.0f / c_cacheGlyphDimX, 1.0f);
+		Vector4 viewOffset(
+			float(column) / c_cacheGlyphCountX - 1.0f / c_cacheGlyphDimX,
+			float(row) / c_cacheGlyphCountY - 1.0f / c_cacheGlyphDimY,
+			1.0f / c_cacheGlyphCountX + 2.0f / c_cacheGlyphDimX,
+			1.0f / c_cacheGlyphCountY + 2.0f / c_cacheGlyphDimY
+		);
 
 		// Clear previous glyph by drawing a solid quad at it's place.
 		m_quad->render(
@@ -381,6 +391,10 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 	};
 
 	float cachePixelDx = 1.0f / c_cacheGlyphDimX;
+	float cachePixelDy = 1.0f / c_cacheGlyphDimY;
+	int32_t column = index & (c_cacheGlyphCountX - 1);
+	int32_t row = index / c_cacheGlyphCountX;
+
 	m_quad->render(
 		m_renderContext,
 		bounds,
@@ -390,7 +404,12 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 		m_viewOffset,
 		cxf,
 		m_renderTargetGlyphs->getColorTexture(0),
-		Vector4(float(index) / c_cacheGlyphCount + cachePixelDx * 2.0f, 0.0f, 1.0f / c_cacheGlyphCount - cachePixelDx * 4.0f, 1.0f),
+		Vector4(
+			float(column) / c_cacheGlyphCountX + cachePixelDx * 2.0f,
+			float(row) / c_cacheGlyphCountY + cachePixelDy * 2.0f,
+			1.0f / c_cacheGlyphCountX - cachePixelDx * 4.0f,
+			1.0f / c_cacheGlyphCountY - cachePixelDy * 4.0f
+		),
 		m_maskReference
 	);
 }
