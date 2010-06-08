@@ -396,7 +396,7 @@ HRESULT RenderViewWin32::resetDevice(IDirect3DDevice9* d3dDevice)
 {
 	HRESULT hr;
 
-	log::debug << L"RenderViewWin32::resetDevice, d3dDevice = " << (void*)(d3dDevice) << Endl;
+	log::debug << L"RenderViewWin32::resetDevice" << Endl;
 
 	T_ASSERT (d3dDevice);
 	m_d3dDevice = d3dDevice;

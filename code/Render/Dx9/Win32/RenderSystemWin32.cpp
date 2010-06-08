@@ -112,16 +112,22 @@ bool RenderSystemWin32::create(const RenderSystemCreateDesc& desc)
 
 	std::memset(&d3dCaps, 0, sizeof(d3dCaps));
 	hr = m_d3d->GetDeviceCaps(d3dAdapter, d3dDevType, &d3dCaps);
-	if (FAILED(hr))
-		log::warning << L"Unable to get device capabilities (" << int32_t(hr) << L"); possibly unexpected behavior" << Endl;
+	if (SUCCEEDED(hr))
+	{
+		if (d3dCaps.VertexShaderVersion > D3DVS_VERSION(0, 0) && d3dCaps.VertexShaderVersion < D3DVS_VERSION(3, 0))
+		{
+			log::error << L"Out dated shader model; need at least VS 3.0 (device VS " << uint32_t(D3DSHADER_VERSION_MAJOR(d3dCaps.VertexShaderVersion)) << L"." << uint32_t(D3DSHADER_VERSION_MINOR(d3dCaps.VertexShaderVersion)) << L")" << Endl;
+			return false;
+		}
+		if (d3dCaps.PixelShaderVersion < D3DPS_VERSION(3, 0))
+		{
+			log::error << L"Out dated shader model; need at least PS 3.0 (device PS " << uint32_t(D3DSHADER_VERSION_MAJOR(d3dCaps.PixelShaderVersion)) << L"." << uint32_t(D3DSHADER_VERSION_MINOR(d3dCaps.PixelShaderVersion)) << L")" << Endl;
+			return false;
+		}
+	}
+	else
+		log::warning << L"Unable to get device capabilities (" << int32_t(hr) << L"); may cause unexpected behavior" << Endl;
 	
-	if (d3dCaps.VertexShaderVersion < D3DVS_VERSION(3, 0))
-		log::warning << L"Out dated shader model; need at least VS 3.0 (device VS " << uint32_t(D3DSHADER_VERSION_MAJOR(d3dCaps.VertexShaderVersion)) << L"." << uint32_t(D3DSHADER_VERSION_MINOR(d3dCaps.VertexShaderVersion)) << L")" << Endl;
-	if (d3dCaps.PixelShaderVersion < D3DPS_VERSION(3, 0))
-		log::warning << L"Out dated shader model; need at least PS 3.0 (device PS " << uint32_t(D3DSHADER_VERSION_MAJOR(d3dCaps.PixelShaderVersion)) << L"." << uint32_t(D3DSHADER_VERSION_MINOR(d3dCaps.PixelShaderVersion)) << L")" << Endl;
-
-	log::info << L"D3DCAPS9.MaxVertexShaderConst = " << uint32_t(d3dCaps.MaxVertexShaderConst) << Endl;
-
 	// Render window class.
 	std::memset(&wc, 0, sizeof(wc));
 	wc.style = CS_HREDRAW | CS_VREDRAW;
@@ -155,12 +161,12 @@ bool RenderSystemWin32::create(const RenderSystemCreateDesc& desc)
 	DWORD dwBehaviour = D3DCREATE_MULTITHREADED;
 	if (d3dCaps.DevCaps & D3DDEVCAPS_HWTRANSFORMANDLIGHT)
 	{
-		log::info << L"Using D3DCREATE_HARDWARE_VERTEXPROCESSING" << Endl;
+		log::debug << L"Using D3DCREATE_HARDWARE_VERTEXPROCESSING" << Endl;
 		dwBehaviour |= D3DCREATE_HARDWARE_VERTEXPROCESSING;
 	}
 	if (d3dCaps.DevCaps & D3DDEVCAPS_PUREDEVICE)
 	{
-		log::info << L"Using D3DCREATE_PUREDEVICE" << Endl;
+		log::debug << L"Using D3DCREATE_PUREDEVICE" << Endl;
 		dwBehaviour |= D3DCREATE_PUREDEVICE;
 	}
 
