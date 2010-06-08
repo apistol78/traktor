@@ -317,7 +317,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 
 	m_tab = new ui::Tab();
 	m_tab->create(m_dock);
-	m_tab->addImage(ui::Bitmap::load(c_ResourceTypes, sizeof(c_ResourceTypes), L"png"), 15);
+	m_tab->addImage(ui::Bitmap::load(c_ResourceTypes, sizeof(c_ResourceTypes), L"png"), 30);
 	m_tab->addButtonDownEventHandler(ui::createMethodHandler(this, &EditorForm::eventTabButtonDown));
 	m_tab->addSelChangeEventHandler(ui::createMethodHandler(this, &EditorForm::eventTabSelChange));
 	m_tab->addCloseEventHandler(ui::createMethodHandler(this, &EditorForm::eventTabClose));
