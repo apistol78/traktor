@@ -43,7 +43,7 @@ bool EntityDependencyInvestigator::create(ui::Widget* parent)
 
 	m_dependencyTree = new ui::TreeView();
 	m_dependencyTree->create(this, ui::TreeView::WsDefault & ~ui::WsClientBorder);
-	m_dependencyTree->addImage(ui::Bitmap::load(c_ResourceTypes, sizeof(c_ResourceTypes), L"png"), 15);
+	m_dependencyTree->addImage(ui::Bitmap::load(c_ResourceTypes, sizeof(c_ResourceTypes), L"png"), 30);
 	m_dependencyTree->addImage(ui::Bitmap::load(c_ResourceEntityTypes, sizeof(c_ResourceEntityTypes), L"png"), 4);
 	m_dependencyTree->addActivateEventHandler(ui::createMethodHandler(this, &EntityDependencyInvestigator::eventDependencyActivate));
 

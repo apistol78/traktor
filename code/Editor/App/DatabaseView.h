@@ -71,7 +71,8 @@ public:
 private:
 	IEditor* m_editor;
 	Ref< ui::custom::ToolBar > m_toolSelection;
-	Ref< ui::custom::ToolBarButton > m_toolFilter;
+	Ref< ui::custom::ToolBarButton > m_toolFilterType;
+	Ref< ui::custom::ToolBarButton > m_toolFilterAssets;
 	Ref< ui::Edit > m_editFilter;
 	Ref< ui::TreeView > m_treeDatabase;
 	Ref< ui::HierarchicalState > m_treeState;

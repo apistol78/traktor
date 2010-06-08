@@ -9,7 +9,9 @@
 #include "Database/Database.h"
 #include "Database/Group.h"
 #include "Database/Instance.h"
+#include "Database/Traverse.h"
 #include "Editor/Asset.h"
+#include "Editor/Assets.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPage.h"
 #include "Editor/IWizardTool.h"
@@ -169,13 +171,21 @@ bool DatabaseView::create(ui::Widget* parent)
 		return false;
 	m_toolSelection->addImage(ui::Bitmap::load(c_ResourceDatabaseView, sizeof(c_ResourceDatabaseView), L"png"), 1);
 
-	m_toolFilter = new ui::custom::ToolBarButton(
+	m_toolFilterType = new ui::custom::ToolBarButton(
 		i18n::Text(L"DATABASE_FILTER"),
 		ui::Command(L"Database.Filter"),
 		0,
 		ui::custom::ToolBarButton::BsDefaultToggle
 	);
-	m_toolSelection->addItem(m_toolFilter);
+	m_toolSelection->addItem(m_toolFilterType);
+
+	m_toolFilterAssets = new ui::custom::ToolBarButton(
+		i18n::Text(L"DATABASE_FILTER_ASSETS"),
+		ui::Command(L"Database.FilterAssets"),
+		0,
+		ui::custom::ToolBarButton::BsDefaultToggle
+	);
+	m_toolSelection->addItem(m_toolFilterAssets);
 
 	m_toolSelection->addItem(new ui::custom::ToolBarSeparator());
 
@@ -189,7 +199,7 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_treeDatabase = new ui::TreeView();
 	if (!m_treeDatabase->create(this, (ui::TreeView::WsDefault | ui::TreeView::WsDrag) & ~ui::WsClientBorder))
 		return false;
-	m_treeDatabase->addImage(ui::Bitmap::load(c_ResourceTypes, sizeof(c_ResourceTypes), L"png"), 15);
+	m_treeDatabase->addImage(ui::Bitmap::load(c_ResourceTypes, sizeof(c_ResourceTypes), L"png"), 30);
 	m_treeDatabase->addActivateEventHandler(ui::createMethodHandler(this, &DatabaseView::eventInstanceActivate));
 	m_treeDatabase->addButtonDownEventHandler(ui::createMethodHandler(this, &DatabaseView::eventInstanceButtonDown));
 	m_treeDatabase->addEditedEventHandler(ui::createMethodHandler(this, &DatabaseView::eventInstanceRenamed));
@@ -581,10 +591,14 @@ Ref< ui::TreeViewItem > DatabaseView::buildTreeItem(ui::TreeView* treeView, ui::
 		if (!primaryType)
 			continue;
 
-		if (!m_filter->acceptInstance((*i)))
-			continue;
-
 		int32_t iconIndex = getIconIndex(primaryType);
+
+		//if (!m_filter->acceptInstance((*i)))
+		//	continue;
+
+		if (!m_filter->acceptInstance((*i)))
+			iconIndex += 15;
+
 		Ref< ui::TreeViewItem > instanceItem = treeView->createItem(
 			groupItem,
 			(*i)->getName(),
@@ -611,7 +625,8 @@ void DatabaseView::filterType(db::Instance* instance)
 	typeSet.insert(instance->getPrimaryType());
 	m_editFilter->setText(L"");
 	m_filter = new TypeSetFilter(typeSet);
-	m_toolFilter->setToggled(true);
+	m_toolFilterType->setToggled(true);
+	m_toolFilterAssets->setToggled(false);
 	updateView();
 }
 
@@ -621,12 +636,15 @@ void DatabaseView::filterDependencies(db::Instance* instance)
 	if (instance && m_editor->buildAssetDependencies(instance->getObject(), ~0UL, dependencies))
 	{
 		std::set< Guid > guidSet;
+
+		guidSet.insert(instance->getGuid());
 		for (RefArray< PipelineDependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
 			guidSet.insert((*i)->outputGuid);
 
 		m_editFilter->setText(L"");
 		m_filter = new GuidSetFilter(guidSet);
-		m_toolFilter->setToggled(true);
+		m_toolFilterType->setToggled(true);
+		m_toolFilterAssets->setToggled(false);
 	}
 	updateView();
 }
@@ -635,23 +653,57 @@ void DatabaseView::eventToolSelectionClicked(ui::Event* event)
 {
 	const ui::CommandEvent* commandEvent = checked_type_cast< const ui::CommandEvent* >(event);
 
-	Ref< ui::custom::ToolBarButton > toolButton = checked_type_cast< ui::custom::ToolBarButton* >(commandEvent->getItem());
-	if (toolButton->isToggled())
+	if (commandEvent->getCommand() == L"Database.Filter")
 	{
-		const TypeInfo* filterType = m_editor->browseType(&type_of< ISerializable >());
-		if (filterType)
+		if (m_toolFilterType->isToggled())
 		{
-			TypeInfoSet typeSet;
-			typeSet.insert(filterType);
-			m_editFilter->setText(L"");
-			m_filter = new TypeSetFilter(typeSet);
+			const TypeInfo* filterType = m_editor->browseType(&type_of< ISerializable >());
+			if (filterType)
+			{
+				TypeInfoSet typeSet;
+				typeSet.insert(filterType);
+				m_editFilter->setText(L"");
+				m_filter = new TypeSetFilter(typeSet);
+				m_toolFilterAssets->setToggled(false);
+			}
+			else
+				m_toolFilterType->setToggled(false);
 		}
-		else
-			toolButton->setToggled(false);
+		if (!m_toolFilterType->isToggled())
+			m_filter = new DefaultFilter();
 	}
-	if (!toolButton->isToggled())
-		m_filter = new DefaultFilter();
+	else if (commandEvent->getCommand() == L"Database.FilterAssets")
+	{
+		if (m_toolFilterAssets->isToggled())
+		{
+			RefArray< db::Instance > assetsInstances;
+			db::recursiveFindChildInstances(
+				m_db->getRootGroup(),
+				db::FindInstanceByType(type_of< Assets >()),
+				assetsInstances
+			);
 
+			std::set< Guid > guidSet;
+			for (RefArray< db::Instance >::iterator i = assetsInstances.begin(); i != assetsInstances.end(); ++i)
+			{
+				guidSet.insert((*i)->getGuid());
+
+				RefArray< PipelineDependency > dependencies;
+				if (m_editor->buildAssetDependencies((*i)->getObject(), ~0UL, dependencies))
+				{
+					for (RefArray< PipelineDependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
+						guidSet.insert((*j)->outputGuid);
+				}
+			}
+
+			m_editFilter->setText(L"");
+			m_filter = new GuidSetFilter(guidSet);
+			m_toolFilterType->setToggled(false);
+		}
+		if (!m_toolFilterAssets->isToggled())
+			m_filter = new DefaultFilter();
+	}
+	
 	updateView();
 }
 
@@ -663,7 +715,8 @@ void DatabaseView::eventFilterKey(ui::Event* event)
 	else
 		m_filter = new DefaultFilter();
 
-	m_toolFilter->setToggled(false);
+	m_toolFilterType->setToggled(false);
+	m_toolFilterAssets->setToggled(false);
 
 	updateView();
 }
