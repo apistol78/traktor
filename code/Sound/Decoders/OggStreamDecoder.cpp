@@ -23,9 +23,9 @@ public:
 
 		ogg_sync_init(&m_oy);
 
-		// Submit a 4k block to libvorbis' Ogg layer.
-		m_buffer = ogg_sync_buffer(&m_oy, 4096);
-		int bytes = stream->read(m_buffer, 4096);
+		// Submit a block to libvorbis' Ogg layer.
+		m_buffer = ogg_sync_buffer(&m_oy, 8192);
+		int bytes = stream->read(m_buffer, 8192);
 		ogg_sync_wrote(&m_oy, bytes);
 
 		if (ogg_sync_pageout(&m_oy, &m_og) != 1)
@@ -82,7 +82,7 @@ public:
 		int i = 0;
 		while (i < 2)
 		{
-			while (i<2)
+			while (i < 2)
 			{
 				int result = ogg_sync_pageout(&m_oy, &m_og);
 				if (result == 0)
@@ -109,9 +109,10 @@ public:
 					}
 				}
 			}
+
 			// no harm in not checking before adding more.
-			m_buffer = ogg_sync_buffer(&m_oy, 4096);
-			bytes = m_stream->read(m_buffer, 4096);
+			m_buffer = ogg_sync_buffer(&m_oy, 8192);
+			bytes = m_stream->read(m_buffer, 8192);
 			if (bytes <= 0 && i < 2)
 			{
 				log::error << L"Failed to create Ogg stream, end of stream before finding all Vorbis headers" << Endl;
@@ -170,15 +171,22 @@ public:
 				for (;;)
 				{
 					int result = ogg_sync_pageout(&m_oy, &m_og);
-					if (result > 0)
+					if (result >= 1)
 						break;
+					else if (result == 0)
+					{
+						m_buffer = ogg_sync_buffer(&m_oy, 8192);
 
-					m_buffer = ogg_sync_buffer(&m_oy, 4096);
-					int bytes = m_stream->read(m_buffer, 4096);
-					ogg_sync_wrote(&m_oy, bytes);
-					if (bytes <= 0)
-						return false;
+						int bytes = m_stream->read(m_buffer, 8192);
+						if (bytes <= 0)
+							return false;
+
+						ogg_sync_wrote(&m_oy, bytes);
+					}
+					else
+						log::warning << L"Ogg decoder; corrupt or missing data in stream" << Endl;
 				}
+
 				ogg_stream_pagein(&m_os, &m_og);
 				m_readPage = false;
 			}
@@ -186,12 +194,19 @@ public:
 			// Read packet.
 			if (m_readPacket)
 			{
-				int result = ogg_stream_packetout(&m_os, &m_op);
-				if (result <= 0)
+				for (;;)
 				{
-					m_readPage = true;
-					continue;
+					int result = ogg_stream_packetout(&m_os, &m_op);
+					if (result >= 1)
+						break;
+					else if (result == 0)
+					{
+						m_readPage = true;
+						break;
+					}
 				}
+				if (m_readPage)
+					continue;
 				m_readPacket = false;
 			}
 
@@ -206,7 +221,7 @@ public:
 				int consumeSamples = std::min(int(outSoundBlock.samplesCount - decodedCount), samplesCount);
 
 				for (int i = 0; i < m_vi.channels; ++i)
-					memcpy(&m_decoded[i][decodedCount], pcm[i], consumeSamples * sizeof(float));
+					std::memcpy(&m_decoded[i][decodedCount], pcm[i], consumeSamples * sizeof(float));
 
 				decodedCount += consumeSamples;
 
@@ -215,6 +230,7 @@ public:
 				if (decodedCount >= outSoundBlock.samplesCount)
 					break;
 			}
+
 			if (samplesCount <= 0)
 				m_readPacket = true;
 		}
