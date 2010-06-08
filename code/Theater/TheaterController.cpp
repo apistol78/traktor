@@ -25,22 +25,23 @@ void TheaterController::update(scene::Scene* scene, float time, float deltaTime)
 	if (abs(m_lastTime - time) <= FUZZY_EPSILON)
 		return;
 
-	//if (!m_loop && time > m_duration)
-	//	return;
+	uint32_t ntracks = m_tracks.size();
 
 	TransformPath::Frame frame;
+	Transform lookAtTransform;
 	Transform transform;
 
-	for (RefArray< Track >::iterator i = m_tracks.begin(); i != m_tracks.end(); ++i)
+	// Calculate transforms.
+	for (uint32_t i = 0; i < ntracks; ++i)
 	{
-		Ref< world::SpatialEntity > entity = (*i)->getEntity();
+		Ref< world::SpatialEntity > entity = m_tracks[i]->getEntity();
 		T_ASSERT (entity);
 
-		const TransformPath& path = (*i)->getPath();
+		const TransformPath& path = m_tracks[i]->getPath();
 
-		float loopStart = (*i)->getLoopStart();
-		float loopEnd = (*i)->getLoopEnd();
-		float loopEase = (*i)->getLoopEase();
+		float loopStart = m_tracks[i]->getLoopStart();
+		float loopEnd = m_tracks[i]->getLoopEnd();
+		float loopEase = m_tracks[i]->getLoopEase();
 
 		if (loopStart < loopEnd && time >= loopEnd - loopEase)
 		{
@@ -70,20 +71,27 @@ void TheaterController::update(scene::Scene* scene, float time, float deltaTime)
 			transform = frame.transform();
 		}
 
-		// Override orientation if track has a "look-at" entity associated.
-		Ref< world::SpatialEntity > lookAtEntity = (*i)->getLookAtEntity();
-		if (lookAtEntity)
-		{
-			Transform lookAtTransform;
-			if (lookAtEntity->getTransform(lookAtTransform))
-			{
-				Matrix44 m = lookAt(
-					transform.translation().xyz1(),
-					lookAtTransform.translation().xyz1()
-				);
-				transform = Transform(m.inverse());
-			}
-		}
+		entity->setTransform(transform);
+	}
+
+	// Fixup orientation of "looking" entities.
+	for (uint32_t i = 0; i < ntracks; ++i)
+	{
+		Ref< world::SpatialEntity > entity = m_tracks[i]->getEntity();
+		T_ASSERT (entity);
+
+		if (!entity->getTransform(transform))
+			continue;
+
+		Ref< world::SpatialEntity > lookAtEntity = m_tracks[i]->getLookAtEntity();
+		if (!lookAtEntity || !lookAtEntity->getTransform(lookAtTransform))
+			continue;
+		
+		Matrix44 m = lookAt(
+			transform.translation().xyz1(),
+			lookAtTransform.translation().xyz1()
+		);
+		transform = Transform(m.inverse());
 
 		entity->setTransform(transform);
 	}
