@@ -184,6 +184,8 @@ void BitmapWin32::setPixel(uint32_t x, uint32_t y, const Color& color)
 	h[2] = (h[2] * h[3]) >> 8;
 
 	dstAlpha[offset] = rgba;
+
+	m_gpBitmap.release();
 }
 
 Color BitmapWin32::getPixel(uint32_t x, uint32_t y) const
@@ -205,8 +207,7 @@ Color BitmapWin32::getPixel(uint32_t x, uint32_t y) const
 
 HICON BitmapWin32::createIcon() const
 {
-	//HDC hDC = GetDC(NULL);
-	HDC hMaskDC = CreateCompatibleDC(/*hDC*/NULL);
+	HDC hMaskDC = CreateCompatibleDC(NULL);
 
 	HBITMAP hMask = CreateCompatibleBitmap(hMaskDC, m_width, m_height);
 	HBITMAP hMaskPrev = (HBITMAP)SelectObject(hMaskDC, hMask);

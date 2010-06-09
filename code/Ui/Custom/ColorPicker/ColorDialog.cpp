@@ -1,16 +1,17 @@
 #include <sstream>
+#include "Core/Math/MathUtils.h"
+#include "Core/Misc/String.h"
+#include "Ui/Edit.h"
+#include "Ui/MethodHandler.h"
+#include "Ui/NumericEditValidator.h"
+#include "Ui/Static.h"
+#include "Ui/TableLayout.h"
+#include "Ui/Events/FocusEvent.h"
 #include "Ui/Custom/ColorPicker/ColorDialog.h"
 #include "Ui/Custom/ColorPicker/ColorGradientControl.h"
 #include "Ui/Custom/ColorPicker/ColorSliderControl.h"
 #include "Ui/Custom/ColorPicker/ColorControl.h"
 #include "Ui/Custom/ColorPicker/ColorEvent.h"
-#include "Ui/TableLayout.h"
-#include "Ui/Static.h"
-#include "Ui/Edit.h"
-#include "Ui/NumericEditValidator.h"
-#include "Ui/MethodHandler.h"
-#include "Ui/Events/FocusEvent.h"
-#include "Core/Misc/String.h"
 
 namespace traktor
 {
@@ -95,21 +96,21 @@ bool ColorDialog::create(Widget* parent, const std::wstring& text, int style, co
 	labelR->create(container, L"R:");
 
 	m_editColor[0] = new Edit();
-	m_editColor[0]->create(container, toString(initialColor.r), WsClientBorder, new NumericEditValidator(false, 0, 255, 0));
+	m_editColor[0]->create(container, toString< int32_t >(initialColor.r), WsClientBorder, new NumericEditValidator(false, 0, 255, 0));
 	m_editColor[0]->addFocusEventHandler(createMethodHandler(this, &ColorDialog::eventEditFocus));
 
 	Ref< Static > labelG = new Static();
 	labelG->create(container, L"G:");
 
 	m_editColor[1] = new Edit();
-	m_editColor[1]->create(container, toString(initialColor.g), WsClientBorder, new NumericEditValidator(false, 0, 255, 0));
+	m_editColor[1]->create(container, toString< int32_t >(initialColor.g), WsClientBorder, new NumericEditValidator(false, 0, 255, 0));
 	m_editColor[1]->addFocusEventHandler(createMethodHandler(this, &ColorDialog::eventEditFocus));
 
 	Ref< Static > labelB = new Static();
 	labelB->create(container, L"B:");
 
 	m_editColor[2] = new Edit();
-	m_editColor[2]->create(container, toString(initialColor.b), WsClientBorder, new NumericEditValidator(false, 0, 255, 0));
+	m_editColor[2]->create(container, toString< int32_t >(initialColor.b), WsClientBorder, new NumericEditValidator(false, 0, 255, 0));
 	m_editColor[2]->addFocusEventHandler(createMethodHandler(this, &ColorDialog::eventEditFocus));
 
 	if (style & WsAlpha)
@@ -118,7 +119,7 @@ bool ColorDialog::create(Widget* parent, const std::wstring& text, int style, co
 		labelA->create(container, L"A:");
 
 		m_editColor[3] = new Edit();
-		m_editColor[3]->create(container, toString(initialColor.a), WsClientBorder, new NumericEditValidator(false, 0, 255, 0));
+		m_editColor[3]->create(container, toString< int32_t >(initialColor.a), WsClientBorder, new NumericEditValidator(false, 0, 255, 0));
 		m_editColor[3]->addFocusEventHandler(createMethodHandler(this, &ColorDialog::eventEditFocus));
 	}
 
@@ -139,12 +140,12 @@ Color ColorDialog::getColor() const
 
 void ColorDialog::updateControls()
 {
-	m_editColor[0]->setText(toString(m_color.r));
-	m_editColor[1]->setText(toString(m_color.g));
-	m_editColor[2]->setText(toString(m_color.b));
+	m_editColor[0]->setText(toString< int32_t >(m_color.r));
+	m_editColor[1]->setText(toString< int32_t >(m_color.g));
+	m_editColor[2]->setText(toString< int32_t >(m_color.b));
 
 	if (m_editColor[3])
-		m_editColor[3]->setText(toString(m_color.a));
+		m_editColor[3]->setText(toString< int32_t >(m_color.a));
 
 	if (m_alphaGradient)
 	{
@@ -168,12 +169,12 @@ void ColorDialog::eventGradientColorSelect(Event* event)
 	m_color.g = color.g;
 	m_color.b = color.b;
 
-	m_editColor[0]->setText(toString(m_color.r));
-	m_editColor[1]->setText(toString(m_color.g));
-	m_editColor[2]->setText(toString(m_color.b));
+	m_editColor[0]->setText(toString< int32_t >(m_color.r));
+	m_editColor[1]->setText(toString< int32_t >(m_color.g));
+	m_editColor[2]->setText(toString< int32_t >(m_color.b));
 
 	if (m_editColor[3])
-		m_editColor[3]->setText(toString(m_color.a));
+		m_editColor[3]->setText(toString< int32_t >(m_color.a));
 
 	if (m_alphaGradient)
 	{
@@ -201,12 +202,12 @@ void ColorDialog::eventSliderColorSelect(Event* event)
 	m_color.g = color.g;
 	m_color.b = color.b;
 
-	m_editColor[0]->setText(toString(m_color.r));
-	m_editColor[1]->setText(toString(m_color.g));
-	m_editColor[2]->setText(toString(m_color.b));
+	m_editColor[0]->setText(toString< int32_t >(m_color.r));
+	m_editColor[1]->setText(toString< int32_t >(m_color.g));
+	m_editColor[2]->setText(toString< int32_t >(m_color.b));
 
 	if (m_editColor[3])
-		m_editColor[3]->setText(toString(m_color.a));
+		m_editColor[3]->setText(toString< int32_t >(m_color.a));
 
 	if (m_alphaGradient)
 	{
@@ -226,7 +227,7 @@ void ColorDialog::eventSliderAlphaSelect(Event* event)
 	m_color.a = alpha.a;
 
 	if (m_editColor[3])
-		m_editColor[3]->setText(toString(m_color.a));
+		m_editColor[3]->setText(toString< int32_t >(m_color.a));
 
 	if (m_alphaGradient)
 	{
@@ -245,15 +246,15 @@ void ColorDialog::eventEditFocus(Event* event)
 	if (!focusEvent->lostFocus())
 		return;
 
-	int r = parseString< int >(m_editColor[0]->getText());
-	int g = parseString< int >(m_editColor[1]->getText());
-	int b = parseString< int >(m_editColor[2]->getText());
-	int a = m_editColor[3] ? parseString< int >(m_editColor[3]->getText()) : 255;
+	int32_t r = parseString< int32_t >(m_editColor[0]->getText());
+	int32_t g = parseString< int32_t >(m_editColor[1]->getText());
+	int32_t b = parseString< int32_t >(m_editColor[2]->getText());
+	int32_t a = m_editColor[3] ? parseString< int32_t >(m_editColor[3]->getText()) : 255;
 
-	m_color.r = uint8_t(r);
-	m_color.g = uint8_t(g);
-	m_color.b = uint8_t(b);
-	m_color.a = uint8_t(a);
+	m_color.r = uint8_t(clamp(r, 0, 255));
+	m_color.g = uint8_t(clamp(g, 0, 255));
+	m_color.b = uint8_t(clamp(b, 0, 255));
+	m_color.a = uint8_t(clamp(a, 0, 255));
 
 	updateControls();
 }
