@@ -736,6 +736,14 @@ LRESULT RenderSystemWin32::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 		SetWindowLongPtr(hWnd, 0, reinterpret_cast< LONG_PTR >(renderSystem));
 		break;
 
+	case WM_SYSKEYDOWN:
+		if (renderSystem && wParam == VK_RETURN)
+		{
+			if ((lParam & (1 << 29)) != 0)
+				renderSystem->toggleMode();
+		}
+		break;
+
 	case WM_KEYDOWN:
 		if (renderSystem && wParam == VK_RETURN)
 		{
