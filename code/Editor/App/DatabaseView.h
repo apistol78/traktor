@@ -73,6 +73,7 @@ private:
 	Ref< ui::custom::ToolBar > m_toolSelection;
 	Ref< ui::custom::ToolBarButton > m_toolFilterType;
 	Ref< ui::custom::ToolBarButton > m_toolFilterAssets;
+	Ref< ui::custom::ToolBarButton > m_toolFilterShow;
 	Ref< ui::Edit > m_editFilter;
 	Ref< ui::TreeView > m_treeDatabase;
 	Ref< ui::HierarchicalState > m_treeState;

@@ -12,7 +12,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ui.HierarchicalState", 0, HierarchicalS
 void HierarchicalState::addState(const std::wstring& path, bool expanded, bool selected)
 {
 	if (expanded || selected)
-		m_states.insert(std::make_pair(path, std::make_pair(expanded, selected)));
+		m_states[path] = std::make_pair(expanded, selected);
 	else
 	{
 		std::map< std::wstring, std::pair< bool, bool > >::iterator i = m_states.find(path);
