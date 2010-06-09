@@ -169,7 +169,7 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_toolSelection = new ui::custom::ToolBar();
 	if (!m_toolSelection->create(this))
 		return false;
-	m_toolSelection->addImage(ui::Bitmap::load(c_ResourceDatabaseView, sizeof(c_ResourceDatabaseView), L"png"), 1);
+	m_toolSelection->addImage(ui::Bitmap::load(c_ResourceDatabaseView, sizeof(c_ResourceDatabaseView), L"png"), 3);
 
 	m_toolFilterType = new ui::custom::ToolBarButton(
 		i18n::Text(L"DATABASE_FILTER"),
@@ -182,10 +182,18 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_toolFilterAssets = new ui::custom::ToolBarButton(
 		i18n::Text(L"DATABASE_FILTER_ASSETS"),
 		ui::Command(L"Database.FilterAssets"),
-		0,
+		1,
 		ui::custom::ToolBarButton::BsDefaultToggle
 	);
 	m_toolSelection->addItem(m_toolFilterAssets);
+
+	m_toolFilterShow = new ui::custom::ToolBarButton(
+		i18n::Text(L"DATABASE_FILTER_SHOW_FILTERED"),
+		ui::Command(L"Database.ShowFiltered"),
+		2,
+		ui::custom::ToolBarButton::BsDefaultToggle
+	);
+	m_toolSelection->addItem(m_toolFilterShow);
 
 	m_toolSelection->addItem(new ui::custom::ToolBarSeparator());
 
@@ -585,6 +593,8 @@ Ref< ui::TreeViewItem > DatabaseView::buildTreeItem(ui::TreeView* treeView, ui::
 	for (RefArray< db::Group >::iterator i = group->getBeginChildGroup(); i != group->getEndChildGroup(); ++i)
 		buildTreeItem(treeView, groupItem, *i);
 
+	bool showFiltered = m_toolFilterShow->isToggled();
+
 	for (RefArray< db::Instance >::iterator i = group->getBeginChildInstance(); i != group->getEndChildInstance(); ++i)
 	{
 		const TypeInfo* primaryType = (*i)->getPrimaryType();
@@ -593,11 +603,16 @@ Ref< ui::TreeViewItem > DatabaseView::buildTreeItem(ui::TreeView* treeView, ui::
 
 		int32_t iconIndex = getIconIndex(primaryType);
 
-		//if (!m_filter->acceptInstance((*i)))
-		//	continue;
-
-		if (!m_filter->acceptInstance((*i)))
-			iconIndex += 15;
+		if (!showFiltered)
+		{
+			if (!m_filter->acceptInstance((*i)))
+				continue;
+		}
+		else
+		{
+			if (!m_filter->acceptInstance((*i)))
+				iconIndex += 15;
+		}
 
 		Ref< ui::TreeViewItem > instanceItem = treeView->createItem(
 			groupItem,
