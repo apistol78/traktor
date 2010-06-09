@@ -317,7 +317,8 @@ void EffectPreviewControl::eventPaint(ui::Event* event)
 
 	if (m_effectInstance)
 	{
-		float deltaTime = float(m_timer.getDeltaTime() * 0.2f + m_lastDeltaTime * 0.8f);
+		float time = float(m_timer.getElapsedTime());
+		float deltaTime = float(m_timer.getDeltaTime() * 0.9f + m_lastDeltaTime * 0.1f);
 
 		m_context.deltaTime = deltaTime * m_timeScale;
 
@@ -335,6 +336,7 @@ void EffectPreviewControl::eventPaint(ui::Event* event)
 		worldRenderView.setViewSize(Vector2(float(viewport.width), float(viewport.height)));
 		worldRenderView.setCullFrustum(viewFrustum);
 		worldRenderView.setViewFrustum(viewFrustum);
+		worldRenderView.setTimes(time, deltaTime, 0.0f);
 
 		world::WorldRenderView::Light globalLight;
 		globalLight.type = world::WorldRenderView::LtDirectional;
