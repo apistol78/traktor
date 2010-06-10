@@ -112,9 +112,9 @@ public:
 	}
 
 	template < typename ObjectType >
-	ObjectType* getObjectSafe() const
+	Ref< ObjectType > getObjectSafe() const
 	{
-		return dynamic_type_cast< ObjectType* >(getObject());
+		return dynamic_type_cast< ObjectType* >(getObjectSafe());
 	}
 
 private:

@@ -182,7 +182,7 @@ void Tween::onFrame(CallArgs& ca)
 		ActionValue memberValue;
 		if (getLocalMember(L"onMotionFinished", memberValue))
 		{
-			Ref< ActionFunction > motionFinished = memberValue.getObject< ActionFunction >();
+			Ref< ActionFunction > motionFinished = memberValue.getObjectSafe< ActionFunction >();
 			if (motionFinished)
 				motionFinished->call(ca.context, this, ActionValueArray());
 		}
