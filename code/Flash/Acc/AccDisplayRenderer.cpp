@@ -44,6 +44,26 @@ const uint32_t c_cacheGlyphDimY = c_cacheGlyphSize * c_cacheGlyphCountY;
 const SwfCxTransform c_cxfZero = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
 const SwfCxTransform c_cxfIdentity = { 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f };
 
+bool insideFrameBounds(const FlashMovie& movie, const Matrix33& transform, const SwfRect& bounds)
+{
+	if (bounds.max.x <= bounds.min.x || bounds.max.y <= bounds.min.y)
+		return false;
+
+	const SwfRect& frameBounds = movie.getFrameBounds();
+
+	Vector2 emn = transform * bounds.min;
+	Vector2 emx = transform * bounds.max;
+	Vector2 xmn(min(emn.x, emx.x), min(emn.y, emx.y));
+	Vector2 xmx(max(emn.x, emx.x), max(emn.y, emx.y));
+
+	if (xmn.x > frameBounds.max.x || xmn.y > frameBounds.max.y)
+		return false;
+	if (xmx.x < frameBounds.min.x || xmx.y < frameBounds.min.y)
+		return false;
+
+	return true;
+}
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AccDisplayRenderer", AccDisplayRenderer, IDisplayRenderer)
@@ -243,6 +263,9 @@ void AccDisplayRenderer::renderShape(const FlashMovie& movie, const Matrix33& tr
 		accShape = it->second.shape;
 	}
 
+	if (!insideFrameBounds(movie, transform, accShape->getBounds()))
+		return;
+
 	accShape->render(
 		m_renderContext,
 		shape,
@@ -290,9 +313,8 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 		accShape = it1->second.shape;
 	}
 
-	// Calculate bounds with margin.
 	SwfRect bounds = accShape->getBounds();
-	if (bounds.max.x <= bounds.min.x || bounds.max.y <= bounds.min.y)
+	if (!insideFrameBounds(movie, transform, bounds))
 		return;
 
 	// Keep 1:1 aspect ratio; use maximum bound dimension.
