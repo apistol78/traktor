@@ -265,6 +265,12 @@ bool MeshPipeline::buildOutput(
 		std::map< std::wstring, Guid >::const_iterator it = materialShaders.find(i->first);
 		if (it != materialShaders.end())
 		{
+			if (it->second.isNull())
+			{
+				log::info << L"Material \"" << i->first << L"\" disabled; skipped" << Endl;
+				continue;
+			}
+
 			materialShaderGraph = pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(it->second);
 			if (!materialShaderGraph)
 			{

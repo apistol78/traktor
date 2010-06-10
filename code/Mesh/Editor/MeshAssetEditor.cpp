@@ -220,9 +220,14 @@ void MeshAssetEditor::updateMaterialList()
 			std::map< std::wstring, Guid >::const_iterator it = materialShaders.find(i->getName());
 			if (it != materialShaders.end())
 			{
-				materialShaderInstance = m_editor->getSourceDatabase()->getInstance(it->second);
-				if (materialShaderInstance)
-					materialShader = materialShaderInstance->getName();
+				if (!it->second.isNull())
+				{
+					materialShaderInstance = m_editor->getSourceDatabase()->getInstance(it->second);
+					if (materialShaderInstance)
+						materialShader = materialShaderInstance->getName();
+				}
+				else
+					materialShader = i18n::Text(L"MESHASSET_EDITOR_DISABLED");
 			}
 
 			Ref< ui::ListViewItem > item = new ui::ListViewItem();
