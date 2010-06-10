@@ -1,6 +1,7 @@
 #include <limits>
 #include "Core/Log/Log.h"
 #include "Core/Math/MathUtils.h"
+#include "Core/Memory/Alloc.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Sound/XAudio2/SoundDriverXAudio2.h"
 
@@ -127,7 +128,10 @@ bool SoundDriverXAudio2::create(const SoundDriverCreateDesc& desc, Ref< ISoundMi
 
 	m_eventNotify = CreateEvent(NULL, FALSE, FALSE, NULL);
 	if (!m_eventNotify)
+	{
+		log::error << L"Unable to create XAudio2 sound driver; CreateEvent failed" << Endl;
 		return false;
+	}
 
 	UINT32 flags = 0;
 #if defined(_DEBUG)
@@ -135,7 +139,10 @@ bool SoundDriverXAudio2::create(const SoundDriverCreateDesc& desc, Ref< ISoundMi
 #endif
 	hr = XAudio2Create(&m_audio.getAssign(), flags, XAUDIO2_DEFAULT_PROCESSOR);
 	if (FAILED(hr))
+	{
+		log::error << L"Unable to create XAudio2 sound driver; XAudio2Create failed (" << int32_t(hr) << L")" << Endl;
 		return false;
+	}
 
 	UINT32 preferredDevice = 0;
 
@@ -158,7 +165,10 @@ bool SoundDriverXAudio2::create(const SoundDriverCreateDesc& desc, Ref< ISoundMi
 
 	hr = m_audio->CreateMasteringVoice(&m_masteringVoice, desc.hwChannels, XAUDIO2_DEFAULT_SAMPLERATE, 0, preferredDevice, NULL);
 	if (FAILED(hr))
+	{
+		log::error << L"Unable to create XAudio2 sound driver; CreateMasteringVoice failed (" << int32_t(hr) << L")" << Endl;
 		return false;
+	}
 
 	m_masteringVoice->SetVolume(1.0f);
 
@@ -185,6 +195,9 @@ bool SoundDriverXAudio2::create(const SoundDriverCreateDesc& desc, Ref< ISoundMi
 	case 2:
 		m_wfx.dwChannelMask |= SPEAKER_FRONT_LEFT | SPEAKER_FRONT_RIGHT;
 		break;
+	default:
+		log::error << L"Unable to create XAudio2 sound driver; Incorrect number of channels" << Endl;
+		return false;
 	}
 
 	m_wfx.SubFormat = KSDATAFORMAT_SUBTYPE_PCM;
@@ -193,14 +206,24 @@ bool SoundDriverXAudio2::create(const SoundDriverCreateDesc& desc, Ref< ISoundMi
 
 	hr = m_audio->CreateSourceVoice(&m_sourceVoice, (WAVEFORMATEX*)&m_wfx, 0, XAUDIO2_DEFAULT_FREQ_RATIO, m_voiceCallback, NULL, NULL);
 	if (FAILED(hr))
+	{
+		log::error << L"Unable to create XAudio2 sound driver; CreateSourceVoice failed (" << int32_t(hr) << L")" << Endl;
 		return false;
+	}
 
 	m_sourceVoice->SetVolume(1.0f);
 	m_sourceVoice->Start(0, 0);
 
 	m_bufferSize = desc.frameSamples * desc.hwChannels * desc.bitsPerSample / 8;
 	for (uint32_t i = 0; i < sizeof_array(m_buffers); ++i)
-		m_buffers[i] = new uint8_t [m_bufferSize];
+	{
+		m_buffers[i] = (uint8_t*)Alloc::acquireAlign(m_bufferSize, 16);
+		if (!m_buffers[i])
+		{
+			log::error << L"Unable to create XAudio2 sound driver; Out of memory" << Endl;
+			return false;
+		}
+	}
 
 	return true;
 }
@@ -236,7 +259,7 @@ void SoundDriverXAudio2::destroy()
 
 	for (uint32_t i = 0; i < sizeof_array(m_buffers); ++i)
 	{
-		delete[] m_buffers[i];
+		Alloc::freeAlign(m_buffers[i]);
 		m_buffers[i] = 0;
 	}
 
