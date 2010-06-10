@@ -906,6 +906,10 @@
       <second>[ Automatisk shader ]</second>
     </item>
     <item>
+      <first>MESHASSET_EDITOR_DISABLED</first>
+      <second>[ Ej aktiv ]</second>
+    </item>
+    <item>
 			<first>NEW_BATCH_DESCRIPTION</first>
 			<second>Skapa nytt import skript...</second>
 		</item>

@@ -878,6 +878,10 @@
       <second>[ Automatic shader ]</second>
     </item>
     <item>
+      <first>MESHASSET_EDITOR_DISABLED</first>
+      <second>[ Disabled ]</second>
+    </item>
+    <item>
       <first>MESHASSET_WIZARDTOOL_DESCRIPTION</first>
       <second>Create mesh asset...</second>
     </item>
