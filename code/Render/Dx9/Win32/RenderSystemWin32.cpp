@@ -157,18 +157,17 @@ bool RenderSystemWin32::create(const RenderSystemCreateDesc& desc)
 	if (!m_hWnd)
 		return false;
 
-	// Create devices.
 	DWORD dwBehaviour = D3DCREATE_MULTITHREADED;
 	if (d3dCaps.DevCaps & D3DDEVCAPS_HWTRANSFORMANDLIGHT)
 	{
 		log::debug << L"Using D3DCREATE_HARDWARE_VERTEXPROCESSING" << Endl;
 		dwBehaviour |= D3DCREATE_HARDWARE_VERTEXPROCESSING;
 	}
-	if (d3dCaps.DevCaps & D3DDEVCAPS_PUREDEVICE)
-	{
-		log::debug << L"Using D3DCREATE_PUREDEVICE" << Endl;
-		dwBehaviour |= D3DCREATE_PUREDEVICE;
-	}
+	//if (d3dCaps.DevCaps & D3DDEVCAPS_PUREDEVICE)
+	//{
+	//	log::debug << L"Using D3DCREATE_PUREDEVICE" << Endl;
+	//	dwBehaviour |= D3DCREATE_PUREDEVICE;
+	//}
 
 	std::memset(&m_d3dPresent, 0, sizeof(m_d3dPresent));
 	m_d3dPresent.BackBufferFormat = D3DFMT_UNKNOWN;
