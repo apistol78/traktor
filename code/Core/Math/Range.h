@@ -37,7 +37,7 @@ public:
 
 	T_MATH_INLINE Type delta() const
 	{
-		return min - max;
+		return max - min;
 	}
 
 	T_MATH_INLINE Type random(Random& r) const

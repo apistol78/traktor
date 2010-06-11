@@ -1,15 +1,16 @@
 #ifndef traktor_animation_StatePoseControllerData_H
 #define traktor_animation_StatePoseControllerData_H
 
-#include "Resource/Proxy.h"
+#include "Core/Math/Range.h"
 #include "Animation/IPoseControllerData.h"
+#include "Resource/Proxy.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_ANIMATION_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -27,6 +28,8 @@ class T_DLLCLASS StatePoseControllerData : public IPoseControllerData
 	T_RTTI_CLASS;
 
 public:
+	StatePoseControllerData();
+
 	virtual Ref< IPoseController > createInstance(
 		resource::IResourceManager* resourceManager,
 		physics::PhysicsManager* physicsManager,
@@ -40,6 +43,7 @@ public:
 
 private:
 	resource::Proxy< StateGraph > m_stateGraph;
+	Range< float > m_randomTimeOffset;
 };
 
 	}
