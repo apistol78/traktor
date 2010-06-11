@@ -28,11 +28,13 @@ const Guid c_guidShaderTexturedMask(L"{5CDDBEC8-1629-0A4E-ACE5-C8186072D694}");
 const Guid c_guidShaderIncrementMask(L"{8DCBCF05-4640-884E-95AC-F090510788F4}");
 const Guid c_guidShaderDecrementMask(L"{57F6F4DF-F4EE-6740-907C-027A3A2596D7}");
 
+#pragma pack(1)
 struct Vertex
 {
 	float pos[2];
 	uint8_t color[4];
 };
+#pragma pack()
 
 struct ConstructBatch
 {
@@ -103,6 +105,7 @@ bool AccShape::create(
 	std::vector< render::VertexElement > vertexElements;
 	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat2, offsetof(Vertex, pos)));
 	vertexElements.push_back(render::VertexElement(render::DuColor, render::DtByte4N, offsetof(Vertex, color), 0));
+	T_ASSERT (render::getVertexSize(vertexElements) == sizeof(Vertex));
 
 	AlignedVector< ConstructBatch > batches;
 	uint32_t totalTriangleCount = 0;

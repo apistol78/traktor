@@ -229,6 +229,7 @@ private:
 	Ref< PostProcess > m_shadowMaskProjection;
 	AlignedVector< Frame > m_frames;
 	uint32_t m_count;
+	bool m_depthTargetHaveOwnZBuffer;
 
 	/*! \brief Build render contexts.
 	 *

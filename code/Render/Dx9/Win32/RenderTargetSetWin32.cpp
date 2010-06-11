@@ -224,6 +224,14 @@ HRESULT RenderTargetSetWin32::internalCreate()
 	for (int i = 0; i < m_desc.count; ++i)
 	{
 		d3dFormats[i] = c_d3dFormat[m_desc.targets[i].format];
+
+		// Due to crappy NVidia 7300 GT hw/driver combo we cannot
+		// use L8 render targets and there are no safe way of
+		// determine as the driver happily report it support
+		// the L8 format which it doesn't.
+		if (d3dFormats[i] == D3DFMT_L8)
+			d3dFormats[i] = D3DFMT_A8R8G8B8;
+
 		for (;;)
 		{
 			hr = d3d->CheckDeviceFormat(
@@ -266,9 +274,8 @@ HRESULT RenderTargetSetWin32::internalCreate()
 			);
 			if (FAILED(hr))
 			{
-				log::warning << L"Device doesn't support MSAA on target format; MSAA disabled." << Endl;
-				m_desc.multiSample = 0;
-				break;
+				log::error << L"Device doesn't support MSAA on target format \"" << getD3DFormatName(d3dFormats[i]) << L"\"" << Endl;
+				return hr;
 			}
 		}
 	}
