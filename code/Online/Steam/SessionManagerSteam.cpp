@@ -1,3 +1,6 @@
+#if defined(_WIN32)
+#	include <windows.h>
+#endif
 #include <steam/steam_api.h>
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
@@ -22,6 +25,16 @@ const struct { const char* steam; const wchar_t* code; } c_languageCodes[] =
 	{ "swedish", L"se" }
 };
 
+#if defined(_WIN32)
+
+void steamMiniDumpTranslator(unsigned int exceptionCode, struct _EXCEPTION_POINTERS* exception)
+{
+	SteamAPI_SetMiniDumpComment("Traktor SteamWorks rev.1");
+	SteamAPI_WriteMiniDump(exceptionCode, exception, 0);
+}
+
+#endif
+
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.online.SessionManagerSteam", 0, SessionManagerSteam, ISessionManager)
@@ -33,6 +46,12 @@ bool SessionManagerSteam::create()
 		log::error << L"Unable to initialize Steam API" << Endl;
 		return false;
 	}
+
+#if defined(_WIN32)
+	// Hook Steam mini dump facility into SEH.
+	if (!IsDebuggerPresent())
+		_set_se_translator(steamMiniDumpTranslator);
+#endif
 
 	m_currentUser = new CurrentUserSteam();
 	return true;
