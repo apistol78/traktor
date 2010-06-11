@@ -169,6 +169,10 @@
                   <first>BufferSecurityCheck</first>
                   <second>false</second>
                 </item>
+				<item>
+				  <first>EnableEnhancedInstructionSet</first>
+				  <second>1</second>
+				</item>
                 <item>
                   <first>FloatingPointModel</first>
                   <second>2</second>
@@ -176,6 +180,10 @@
                 <item>
                   <first>RuntimeTypeInfo</first>
                   <second>false</second>
+                </item>
+                <item>
+                  <first>WholeProgramOptimization</first>
+                  <second>true</second>
                 </item>
                 <item>
                   <first>WarningLevel</first>
@@ -375,6 +383,10 @@
                   <first>BufferSecurityCheck</first>
                   <second>false</second>
                 </item>
+				<item>
+				  <first>EnableEnhancedInstructionSet</first>
+				  <second>1</second>
+				</item>
                 <item>
                   <first>FloatingPointModel</first>
                   <second>2</second>
@@ -382,6 +394,10 @@
                 <item>
                   <first>RuntimeTypeInfo</first>
                   <second>false</second>
+                </item>
+                <item>
+                  <first>WholeProgramOptimization</first>
+                  <second>true</second>
                 </item>
                 <item>
                   <first>WarningLevel</first>
@@ -417,6 +433,10 @@
                   <first>OptimizeReferences</first>
                   <second>2</second>
                 </item>
+				<item>
+				  <first>LinkTimeCodeGeneration</first>
+				  <second>1</second>
+				</item>
                 <item>
                   <first>RandomizedBaseAddress</first>
                   <second>1</second>
@@ -620,6 +640,10 @@
                   <first>BufferSecurityCheck</first>
                   <second>false</second>
                 </item>
+				<item>
+				  <first>EnableEnhancedInstructionSet</first>
+				  <second>1</second>
+				</item>
                 <item>
                   <first>FloatingPointModel</first>
                   <second>2</second>
@@ -627,6 +651,10 @@
                 <item>
                   <first>RuntimeTypeInfo</first>
                   <second>false</second>
+                </item>
+                <item>
+                  <first>WholeProgramOptimization</first>
+                  <second>true</second>
                 </item>
                 <item>
                   <first>WarningLevel</first>
@@ -662,6 +690,10 @@
                   <first>OptimizeReferences</first>
                   <second>2</second>
                 </item>
+				<item>
+				  <first>LinkTimeCodeGeneration</first>
+				  <second>1</second>
+				</item>
                 <item>
                   <first>RandomizedBaseAddress</first>
                   <second>1</second>
@@ -861,6 +893,10 @@
                   <first>BufferSecurityCheck</first>
                   <second>false</second>
                 </item>
+				<item>
+				  <first>EnableEnhancedInstructionSet</first>
+				  <second>1</second>
+				</item>
                 <item>
                   <first>FloatingPointModel</first>
                   <second>2</second>
@@ -868,6 +904,10 @@
                 <item>
                   <first>RuntimeTypeInfo</first>
                   <second>false</second>
+                </item>
+                <item>
+                  <first>WholeProgramOptimization</first>
+                  <second>true</second>
                 </item>
                 <item>
                   <first>WarningLevel</first>
@@ -903,6 +943,10 @@
                   <first>OptimizeReferences</first>
                   <second>2</second>
                 </item>
+				<item>
+				  <first>LinkTimeCodeGeneration</first>
+				  <second>1</second>
+				</item>
                 <item>
                   <first>RandomizedBaseAddress</first>
                   <second>1</second>
