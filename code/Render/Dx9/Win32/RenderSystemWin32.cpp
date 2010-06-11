@@ -372,7 +372,10 @@ Ref< IRenderView > RenderSystemWin32::createRenderView(const RenderViewDefaultDe
 
 	hr = m_d3dDevice->Reset(&m_d3dPresent);
 	if (FAILED(hr))
+	{
+		log::error << L"Render view failed; unable to reset device, hr = " << int32_t(hr) << Endl;
 		return 0;
+	}
 
 	Ref< RenderViewWin32 > renderView = new RenderViewWin32(
 		this,
@@ -452,12 +455,6 @@ Ref< VertexBuffer > RenderSystemWin32::createVertexBuffer(const std::vector< Ver
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_renderLock);
 
-	while (m_deviceLost != 0)
-	{
-		T_ANONYMOUS_VAR(Release< Semaphore >)(m_renderLock);
-		Sleep(100);
-	}
-
 	Ref< VertexBufferDx9 > vertexBuffer = new VertexBufferDx9(m_resourceManager, bufferSize, m_vertexDeclCache);
 	if (!vertexBuffer->create(m_d3dDevice, vertexElements, dynamic))
 		return 0;
@@ -468,12 +465,6 @@ Ref< VertexBuffer > RenderSystemWin32::createVertexBuffer(const std::vector< Ver
 Ref< IndexBuffer > RenderSystemWin32::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_renderLock);
-
-	while (m_deviceLost != 0)
-	{
-		T_ANONYMOUS_VAR(Release< Semaphore >)(m_renderLock);
-		Sleep(100);
-	}
 
 	Ref< IndexBufferDx9 > indexBuffer = new IndexBufferDx9(m_resourceManager, indexType, bufferSize);
 	if (!indexBuffer->create(m_d3dDevice, dynamic))
@@ -486,12 +477,6 @@ Ref< ISimpleTexture > RenderSystemWin32::createSimpleTexture(const SimpleTexture
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_renderLock);
 
-	while (m_deviceLost != 0)
-	{
-		T_ANONYMOUS_VAR(Release< Semaphore >)(m_renderLock);
-		Sleep(100);
-	}
-
 	Ref< SimpleTextureDx9 > texture = new SimpleTextureDx9(m_resourceManager);
 	if (!texture->create(m_d3dDevice, desc))
 		return 0;
@@ -502,12 +487,6 @@ Ref< ISimpleTexture > RenderSystemWin32::createSimpleTexture(const SimpleTexture
 Ref< ICubeTexture > RenderSystemWin32::createCubeTexture(const CubeTextureCreateDesc& desc)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_renderLock);
-
-	while (m_deviceLost != 0)
-	{
-		T_ANONYMOUS_VAR(Release< Semaphore >)(m_renderLock);
-		Sleep(100);
-	}
 
 	Ref< CubeTextureDx9 > texture = new CubeTextureDx9(m_resourceManager);
 	if (!texture->create(m_d3dDevice, desc))
@@ -520,12 +499,6 @@ Ref< IVolumeTexture > RenderSystemWin32::createVolumeTexture(const VolumeTexture
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_renderLock);
 
-	while (m_deviceLost != 0)
-	{
-		T_ANONYMOUS_VAR(Release< Semaphore >)(m_renderLock);
-		Sleep(100);
-	}
-
 	Ref< VolumeTextureDx9 > texture = new VolumeTextureDx9(m_resourceManager);
 	if (!texture->create(m_d3dDevice, desc))
 		return 0;
@@ -537,12 +510,6 @@ Ref< RenderTargetSet > RenderSystemWin32::createRenderTargetSet(const RenderTarg
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_renderLock);
 
-	while (m_deviceLost != 0)
-	{
-		T_ANONYMOUS_VAR(Release< Semaphore >)(m_renderLock);
-		Sleep(100);
-	}
-
 	Ref< RenderTargetSetWin32 > renderTargetSet = new RenderTargetSetWin32(m_resourceManager);
 	if (!renderTargetSet->create(m_d3dDevice, desc))
 		return 0;
@@ -553,12 +520,6 @@ Ref< RenderTargetSet > RenderSystemWin32::createRenderTargetSet(const RenderTarg
 Ref< IProgram > RenderSystemWin32::createProgram(const ProgramResource* programResource)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_renderLock);
-
-	while (m_deviceLost != 0)
-	{
-		T_ANONYMOUS_VAR(Release< Semaphore >)(m_renderLock);
-		Sleep(100);
-	}
 
 	Ref< const ProgramResourceDx9 > resource = dynamic_type_cast< const ProgramResourceDx9* >(programResource);
 	if (!resource)
