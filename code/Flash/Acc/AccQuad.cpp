@@ -21,10 +21,12 @@ const Guid c_guidShaderTextured(L"{10426D17-CF0A-4849-A207-24F101A78459}");
 const Guid c_guidShaderSolidMask(L"{2EDC5E1B-562D-9F46-9E3C-474729FB078E}");
 const Guid c_guidShaderTexturedMask(L"{98A59F6A-1D90-144C-B688-4CEF382453F2}");
 
+#pragma pack(1)
 struct Vertex
 {
 	float pos[2];
 };
+#pragma pack()
 
 bool s_handleInitialized = false;
 render::handle_t s_handleTransform;
@@ -76,6 +78,7 @@ bool AccQuad::create(
 
 	std::vector< render::VertexElement > vertexElements;
 	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat2, offsetof(Vertex, pos)));
+	T_ASSERT (render::getVertexSize(vertexElements) == sizeof(Vertex));
 
 	m_vertexBuffer = renderSystem->createVertexBuffer(vertexElements, 2 * 3 * sizeof(Vertex), false);
 	if (!m_vertexBuffer)

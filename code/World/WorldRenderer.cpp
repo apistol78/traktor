@@ -44,6 +44,7 @@ render::handle_t WorldRenderer::ms_techniqueVelocity = 0;
 
 WorldRenderer::WorldRenderer()
 :	m_count(0)
+,	m_depthTargetHaveOwnZBuffer(false)
 {
 	ms_techniqueDefault = render::getParameterHandle(L"Default");
 	ms_techniqueDepth = render::getParameterHandle(L"Depth");
@@ -77,15 +78,27 @@ bool WorldRenderer::create(
 		render::RenderTargetSetCreateDesc desc;
 
 		desc.count = 1;
-		//desc.width = width;
-		//desc.height = height;
-		desc.width = width/* / 2*/;
-		desc.height = height/* / 2*/;
+		desc.width = width;
+		desc.height = height;
 		desc.multiSample = multiSample;
 		desc.depthStencil = false;
 		desc.targets[0].format = render::TfR16F;
 
 		m_depthTargetSet = renderSystem->createRenderTargetSet(desc);
+
+		if (!m_depthTargetSet && multiSample > 0)
+		{
+			desc.multiSample = 0;
+			desc.depthStencil = true;
+
+			m_depthTargetSet = renderSystem->createRenderTargetSet(desc);
+			if (m_depthTargetSet)
+			{
+				log::warning << L"MSAA depth render target unsupported; may cause poor performance" << Endl;
+				m_depthTargetHaveOwnZBuffer = true;
+			}
+		}
+
 		if (!m_depthTargetSet)
 		{
 			log::warning << L"Unable to create depth render target; depth disabled" << Endl;
@@ -351,11 +364,15 @@ void WorldRenderer::render(uint32_t flags, int frame)
 	if ((flags & WrfDepthMap) != 0 && f.haveDepth)
 	{
 		T_RENDER_PUSH_MARKER(m_renderView, "World: Depth");
-		if (m_renderView->begin(m_depthTargetSet, 0, true))
+		if (m_renderView->begin(m_depthTargetSet, 0, !m_depthTargetHaveOwnZBuffer))
 		{
 			const float depthColor[] = { m_settings.viewFarZ, m_settings.viewFarZ, m_settings.viewFarZ, m_settings.viewFarZ };
-			m_renderView->clear(render::CfColor, depthColor, 1.0f, 0);
-			//m_renderView->clear(render::CfColor | render::CfDepth, depthColor, 1.0f, 0);
+			
+			if (!m_depthTargetHaveOwnZBuffer)
+				m_renderView->clear(render::CfColor, depthColor, 1.0f, 0);
+			else
+				m_renderView->clear(render::CfColor | render::CfDepth, depthColor, 1.0f, 0);
+
 			f.depth->getRenderContext()->render(m_renderView, render::RfOpaque);
 			m_renderView->end();
 		}
