@@ -1,5 +1,8 @@
+#include <iostream>
 #include "Core/Io/FileSystem.h"
+#include "Core/Io/FileOutputStreamBuffer.h"
 #include "Core/Io/IStream.h"
+#include "Core/Io/Utf8Encoding.h"
 #include "Core/Library/Library.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/AutoPtr.h"
@@ -37,7 +40,7 @@ struct StatusListener : public editor::PipelineBuilder::IListener
 		uint32_t count
 	) const
 	{
-		traktor::log::info << L":" << index << L":" << count << Endl;
+		std::wcout << L":" << index << L":" << count << std::endl;
 	}
 };
 
@@ -81,15 +84,38 @@ Ref< Settings > loadSettings(const std::wstring& settingsFile)
 int main(int argc, const char** argv)
 {
 	CommandLine cmdLine(argc, argv);
+	Ref< traktor::IStream > logFile;
 
 	if (cmdLine.hasOption('h'))
 	{
 		traktor::log::info << L"Usage: Traktor.Pipeline.App (-options) \"{Asset guid}\"" << Endl;
-		traktor::log::info << L"       -f    Force rebuild" << Endl;
-		traktor::log::info << L"       -s    Settings (default \"Traktor.Editor\")" << Endl;
-		traktor::log::info << L"       -p    Write progress to stdout" << Endl;
-		traktor::log::info << L"       -h    Show this help" << Endl;
+		traktor::log::info << L"       -f           Force rebuild" << Endl;
+		traktor::log::info << L"       -s           Settings (default \"Traktor.Editor\")" << Endl;
+		traktor::log::info << L"       -l=logfile   Save log file" << Endl;
+		traktor::log::info << L"       -n           Disable memcached" << Endl;
+		traktor::log::info << L"       -p           Write progress to stdout" << Endl;
+		traktor::log::info << L"       -h           Show this help" << Endl;
 		return 0;
+	}
+
+	if (cmdLine.hasOption('l'))
+	{
+		std::wstring logPath = cmdLine.getOption('l').getString();
+		if ((logFile = FileSystem::getInstance().open(logPath, File::FmWrite)) != 0)
+		{
+			traktor::log::info   .setBuffer(new FileOutputStreamBuffer(logFile, new Utf8Encoding()));
+			traktor::log::info   .setLineEnd(OutputStream::LeWin);
+			traktor::log::warning.setBuffer(new FileOutputStreamBuffer(logFile, new Utf8Encoding()));
+			traktor::log::warning.setLineEnd(OutputStream::LeWin);
+			traktor::log::error  .setBuffer(new FileOutputStreamBuffer(logFile, new Utf8Encoding()));
+			traktor::log::error  .setLineEnd(OutputStream::LeWin);
+			traktor::log::debug  .setBuffer(new FileOutputStreamBuffer(logFile, new Utf8Encoding()));
+			traktor::log::debug  .setLineEnd(OutputStream::LeWin);
+
+			traktor::log::info << L"Log file \"Application.log\" created" << Endl;
+		}
+		else
+			traktor::log::error << L"Unable to create log file; logging only to std pipes" << Endl;
 	}
 
 	std::wstring settingsFile = L"Traktor.Editor";
@@ -102,6 +128,9 @@ int main(int argc, const char** argv)
 		traktor::log::error << L"Unable to load pipeline settings \"" << settingsFile << L"\"" << Endl;
 		return 0;
 	}
+
+	if (cmdLine.hasOption('n'))
+		settings->setProperty< PropertyBoolean >(L"Pipeline.MemCached", false);
 
 	std::vector< std::wstring > modules = settings->getProperty< PropertyStringArray >(L"Editor.Modules");
 	for (std::vector< std::wstring >::const_iterator i = modules.begin(); i != modules.end(); ++i)
@@ -220,6 +249,17 @@ int main(int argc, const char** argv)
 	pipelineDb->close();
 	outputDatabase->close();
 	sourceDatabase->close();
+
+	if (logFile)
+	{
+		traktor::log::info.setBuffer(0);
+		traktor::log::warning.setBuffer(0);
+		traktor::log::error.setBuffer(0);
+		traktor::log::debug.setBuffer(0);
+
+		logFile->close();
+		logFile = 0;
+	}
 
 	return 0;
 }
