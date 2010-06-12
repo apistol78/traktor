@@ -57,6 +57,8 @@ bool FlashPipeline::buildDependencies(
 	pipelineDepends->addDependency(Guid(L"{10426D17-CF0A-4849-A207-24F101A78459}"), editor::PdfBuild);	// Textured Quad
 	pipelineDepends->addDependency(Guid(L"{2EDC5E1B-562D-9F46-9E3C-474729FB078E}"), editor::PdfBuild);	// Solid Mask Quad
 	pipelineDepends->addDependency(Guid(L"{98A59F6A-1D90-144C-B688-4CEF382453F2}"), editor::PdfBuild);	// Textured Mask Quad
+	pipelineDepends->addDependency(Guid(L"{A8BC2D03-EB52-B744-8D4B-29E39FF0B4F5}"), editor::PdfBuild);	// Glyph
+	pipelineDepends->addDependency(Guid(L"{C8FEF24B-D775-A14D-9FF3-E34A17495FB4}"), editor::PdfBuild);	// Glyph Mask
 
 	return true;
 }

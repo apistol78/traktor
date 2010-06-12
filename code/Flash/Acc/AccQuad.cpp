@@ -52,7 +52,6 @@ bool AccQuad::create(
 		s_handleFrameSize = render::getParameterHandle(L"FrameSize");
 		s_handleViewSize = render::getParameterHandle(L"ViewSize");
 		s_handleViewOffset = render::getParameterHandle(L"ViewOffset");
-		s_handleStepSize = render::getParameterHandle(L"StepSize");
 		s_handleCxFormMul = render::getParameterHandle(L"CxFormMul");
 		s_handleCxFormAdd = render::getParameterHandle(L"CxFormAdd");
 		s_handleTexture = render::getParameterHandle(L"Texture");
@@ -132,14 +131,6 @@ void AccQuad::render(
 
 	Matrix44 m = m1 * m2;
 
-	Vector4 stepSize(
-		(frameSize.z() - frameSize.x()) * viewSize.z() * Scalar(0.5f),
-		(frameSize.w() - frameSize.y()) * viewSize.w() * Scalar(0.5f),
-		0.0f,
-		0.0f
-	);
-	stepSize = m.inverse() * stepSize;
-
 	Ref< render::Shader > shaderSolid, shaderTextured;
 	if (maskReference == 0)
 	{
@@ -165,7 +156,6 @@ void AccQuad::render(
 	renderBlock->shaderParams->setVectorParameter(s_handleFrameSize, frameSize);
 	renderBlock->shaderParams->setVectorParameter(s_handleViewSize, viewSize);
 	renderBlock->shaderParams->setVectorParameter(s_handleViewOffset, viewOffset);
-	renderBlock->shaderParams->setVectorParameter(s_handleStepSize, stepSize);
 	renderBlock->shaderParams->setVectorParameter(s_handleCxFormMul, Vector4(cxform.red[0], cxform.green[0], cxform.blue[0], cxform.alpha[0]));
 	renderBlock->shaderParams->setVectorParameter(s_handleCxFormAdd, Vector4(cxform.red[1], cxform.green[1], cxform.blue[1], cxform.alpha[1]));
 	renderBlock->shaderParams->setStencilReference(maskReference);

@@ -8,6 +8,7 @@
 #include "Flash/FlashFrame.h"
 #include "Flash/FlashShape.h"
 #include "Flash/Acc/AccDisplayRenderer.h"
+#include "Flash/Acc/AccGlyph.h"
 #include "Flash/Acc/AccTextureCache.h"
 #include "Flash/Acc/AccShape.h"
 #include "Flash/Acc/AccQuad.h"
@@ -105,6 +106,10 @@ bool AccDisplayRenderer::create(
 	m_viewSize.set(viewWidth, viewHeight, 1.0f / viewWidth, 1.0f / viewHeight);
 	m_clearBackground = clearBackground;
 
+	m_glyph = new AccGlyph();
+	if (!m_glyph->create(resourceManager, renderSystem))
+		return false;
+
 	m_quad = new AccQuad();
 	if (!m_quad->create(resourceManager, renderSystem))
 		return false;
@@ -132,6 +137,7 @@ void AccDisplayRenderer::destroy()
 {
 	m_renderSystem = 0;
 
+	safeDestroy(m_glyph);
 	safeDestroy(m_quad);
 	safeDestroy(m_textureCache);
 	safeDestroy(m_renderTargetGlyphs);
@@ -216,12 +222,30 @@ void AccDisplayRenderer::begin(const FlashMovie& movie, const SwfColor& backgrou
 
 void AccDisplayRenderer::beginMask(bool increment)
 {
+	m_glyph->render(
+		m_renderContext,
+		m_frameSize,
+		m_viewSize,
+		m_viewOffset,
+		m_renderTargetGlyphs->getColorTexture(0),
+		m_maskReference
+	);
+
 	m_maskWrite = true;
 	m_maskIncrement = increment;
 }
 
 void AccDisplayRenderer::endMask()
 {
+	m_glyph->render(
+		m_renderContext,
+		m_frameSize,
+		m_viewSize,
+		m_viewOffset,
+		m_renderTargetGlyphs->getColorTexture(0),
+		m_maskReference
+	);
+
 	m_maskWrite = false;
 	if (m_maskIncrement)
 	{
@@ -265,6 +289,15 @@ void AccDisplayRenderer::renderShape(const FlashMovie& movie, const Matrix33& tr
 
 	if (!insideFrameBounds(movie, transform, accShape->getBounds()))
 		return;
+
+	m_glyph->render(
+		m_renderContext,
+		m_frameSize,
+		m_viewSize,
+		m_viewOffset,
+		m_renderTargetGlyphs->getColorTexture(0),
+		m_maskReference
+	);
 
 	accShape->render(
 		m_renderContext,
@@ -417,22 +450,16 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 	int32_t column = index & (c_cacheGlyphCountX - 1);
 	int32_t row = index / c_cacheGlyphCountX;
 
-	m_quad->render(
-		m_renderContext,
+	m_glyph->add(
 		bounds,
 		transform,
-		m_frameSize,
-		m_viewSize,
-		m_viewOffset,
 		cxf,
-		m_renderTargetGlyphs->getColorTexture(0),
 		Vector4(
 			float(column) / c_cacheGlyphCountX + cachePixelDx * 2.0f,
 			float(row) / c_cacheGlyphCountY + cachePixelDy * 2.0f,
 			1.0f / c_cacheGlyphCountX - cachePixelDx * 4.0f,
 			1.0f / c_cacheGlyphCountY - cachePixelDy * 4.0f
-		),
-		m_maskReference
+		)
 	);
 }
 
@@ -453,6 +480,15 @@ void AccDisplayRenderer::end()
 		Vector4(0.0f, 0.0f, 1.0f, 1.0f)
 	);
 #endif
+
+	m_glyph->render(
+		m_renderContext,
+		m_frameSize,
+		m_viewSize,
+		m_viewOffset,
+		m_renderTargetGlyphs->getColorTexture(0),
+		m_maskReference
+	);
 
 	// Don't flush cache if it doesn't contain that many shapes.
 	if (m_shapeCache.size() < c_maxCacheSize)
