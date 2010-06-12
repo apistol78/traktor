@@ -135,7 +135,7 @@
 			</position>
 			<name>TexCoord</name>
 			<usage>DuCustom</usage>
-			<type>DtFloat2</type>
+			<type>DtHalf2</type>
 			<index>2</index>
 		</item>
 		<item type="traktor.render.OutputPort">
@@ -480,7 +480,7 @@
 			</position>
 			<name>TexCoord2</name>
 			<usage>DuCustom</usage>
-			<type>DtFloat2</type>
+			<type>DtHalf2</type>
 			<index>3</index>
 		</item>
 	</nodes>
