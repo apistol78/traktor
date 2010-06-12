@@ -625,6 +625,7 @@ bool TexturePipeline::buildOutput(
 	Ref< editor::IPipelineReport > report = pipelineBuilder->createReport(L"Texture", outputGuid);
 	if (report)
 	{
+		report->set(L"path", outputPath);
 		report->set(L"width", width);
 		report->set(L"height", height);
 		report->set(L"mipCount", mipCount);

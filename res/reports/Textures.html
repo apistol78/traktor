@@ -74,11 +74,7 @@
 	while (rs.next())
 	{
 		var guid = rs.getStringByName("guid");
-		var name = guid;
-			
-		var rs2 = db.executeQuery("select path from TimeStamps where hashId=(select id from PipelineHash where guid='" + guid + "')");
-		if (rs2.next())
-			name = rs2.getStringByName("path");
+		var name = rs.getStringByName("path");
 			
 		if (index % 2 == 1)
 			Global.print("<tr class=\"alt\">");
