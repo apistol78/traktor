@@ -35,6 +35,7 @@ class RenderTargetSet;
 	namespace flash
 	{
 
+class AccGlyph;
 class AccTextureCache;
 class AccShape;
 class AccQuad;
@@ -103,6 +104,7 @@ private:
 	Ref< render::RenderContext > m_renderContext;
 	Ref< render::RenderTargetSet > m_renderTargetGlyphs;
 	Ref< AccTextureCache > m_textureCache;
+	Ref< AccGlyph > m_glyph;
 	Ref< AccQuad > m_quad;
 	std::map< uint64_t, CacheEntry > m_shapeCache;
 	std::map< uint64_t, int32_t > m_glyphCache;
