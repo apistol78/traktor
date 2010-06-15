@@ -161,10 +161,17 @@ bool SoundDriverXAudio2::create(const SoundDriverCreateDesc& desc, Ref< ISoundMi
 	}
 #endif
 
-	hr = m_audio->CreateMasteringVoice(&m_masteringVoice, desc.hwChannels, XAUDIO2_DEFAULT_SAMPLERATE, 0, preferredDevice, NULL);
+	hr = m_audio->CreateMasteringVoice(
+		&m_masteringVoice,
+		desc.hwChannels,
+		XAUDIO2_DEFAULT_SAMPLERATE,
+		0,
+		preferredDevice,
+		NULL
+	);
 	if (FAILED(hr))
 	{
-		log::error << L"Unable to create XAudio2 sound driver; CreateMasteringVoice failed (" << int32_t(hr) << L")" << Endl;
+		log::error << L"Unable to create XAudio2 sound driver; CreateMasteringVoice failed (" << desc.hwChannels << L" channels, " << int32_t(hr) << L")" << Endl;
 		return false;
 	}
 
