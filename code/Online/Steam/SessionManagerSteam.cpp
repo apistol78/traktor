@@ -96,12 +96,12 @@ Ref< IUser > SessionManagerSteam::getCurrentUser()
 	return m_currentUser;
 }
 
-Ref< ISession > SessionManagerSteam::createSession(IUser* user)
+Ref< ISession > SessionManagerSteam::createSession(IUser* user, const std::set< std::wstring >& leaderboards)
 {
 	T_ASSERT (user == m_currentUser);
 	T_ASSERT (m_session == 0);
 
-	m_session = new SessionSteam(m_currentUser);
+	m_session = new SessionSteam(m_currentUser, leaderboards);
 	return m_session;
 }
 
