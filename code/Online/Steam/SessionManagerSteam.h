@@ -34,7 +34,7 @@ public:
 
 	virtual Ref< IUser > getCurrentUser();
 
-	virtual Ref< ISession > createSession(IUser* user);
+	virtual Ref< ISession > createSession(IUser* user, const std::set< std::wstring >& leaderboards);
 
 	virtual bool update();
 

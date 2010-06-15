@@ -1,6 +1,7 @@
 #ifndef traktor_online_SessionSteam_H
 #define traktor_online_SessionSteam_H
 
+#include <list>
 #include <map>
 #include "Online/ISession.h"
 
@@ -17,7 +18,7 @@ class SessionSteam : public ISession
 	T_RTTI_CLASS;
 
 public:
-	SessionSteam(CurrentUserSteam* user);
+	SessionSteam(CurrentUserSteam* user, const std::set< std::wstring >& leaderboards);
 
 	virtual void destroy();
 
@@ -39,6 +40,8 @@ public:
 
 	virtual bool getAvailableSaveGames(RefArray< ISaveGame >& outSaveGames) const;
 
+	bool requestLeaderboard(const std::wstring& id);
+
 	bool update();
 
 	STEAM_CALLBACK(SessionSteam, OnUserStatsReceived, UserStatsReceived_t, m_callbackUserStatsReceived);
@@ -49,11 +52,13 @@ public:
 
 private:
 	Ref< CurrentUserSteam > m_user;
+	std::list< std::wstring > m_pendingLeaderboards;
 	std::map< std::wstring, Ref< LeaderboardSteam > > m_leaderboards;
 	bool m_requestedStats;
 	bool m_receivedStats;
 	bool m_storeStats;
 	bool m_storedStats;
+	bool m_requestedLeaderboard;
 	bool m_receivedLeaderboard;
 	bool m_destroyed;
 	CCallResult< SessionSteam, LeaderboardFindResult_t > m_callbackFindLeaderboard;

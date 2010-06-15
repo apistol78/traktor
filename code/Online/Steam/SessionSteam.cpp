@@ -17,15 +17,17 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.online.SessionSteam", SessionSteam, ISession)
 
-SessionSteam::SessionSteam(CurrentUserSteam* user)
+SessionSteam::SessionSteam(CurrentUserSteam* user, const std::set< std::wstring >& leaderboards)
 :	m_callbackUserStatsReceived(this, &SessionSteam::OnUserStatsReceived)
 ,	m_callbackUserStatsStored(this, &SessionSteam::OnUserStatsStored)
 ,	m_callbackAchievementStored(this, &SessionSteam::OnAchievementStored)
 ,	m_user(user)
+,	m_pendingLeaderboards(leaderboards.begin(), leaderboards.end())
 ,	m_requestedStats(false)
 ,	m_receivedStats(false)
 ,	m_storeStats(false)
 ,	m_storedStats(false)
+,	m_requestedLeaderboard(false)
 ,	m_receivedLeaderboard(false)
 ,	m_destroyed(false)
 {
@@ -113,26 +115,8 @@ Ref< ILeaderboard > SessionSteam::getLeaderboard(const std::wstring& id)
 	if (it != m_leaderboards.end())
 		return it->second;
 
-	if (!SteamUser()->BLoggedOn())
+	if (!requestLeaderboard(id))
 		return 0;
-
-	m_receivedLeaderboard = false;
-	std::string leaderboardId = wstombs(id);
-
-	SteamAPICall_t call = SteamUserStats()->FindOrCreateLeaderboard(leaderboardId.c_str(), k_ELeaderboardSortMethodDescending, k_ELeaderboardDisplayTypeNumeric);
-	if (call == 0)
-		return 0;
-
-	m_callbackFindLeaderboard.Set(call, this, &SessionSteam::OnLeaderboardFind);
-
-	for (int32_t tries = 1000; tries >= 0; --tries)
-	{
-		SteamAPI_RunCallbacks();
-		if (m_receivedLeaderboard)
-			break;
-
-		ThreadManager::getInstance().getCurrentThread()->sleep(10);
-	}
 
 	it = m_leaderboards.find(id);
 	return it != m_leaderboards.end() ? it->second : 0;
@@ -184,6 +168,53 @@ bool SessionSteam::getAvailableSaveGames(RefArray< ISaveGame >& outSaveGames) co
 	return true;
 }
 
+bool SessionSteam::requestLeaderboard(const std::wstring& id)
+{
+	std::map< std::wstring, Ref< LeaderboardSteam > >::iterator it = m_leaderboards.find(id);
+	if (it != m_leaderboards.end())
+		return true;
+
+	if (!SteamUser()->BLoggedOn())
+		return false;
+
+	// Ensure pending request is processed first.
+	if (m_requestedLeaderboard)
+	{
+		for (int32_t tries = 1000; tries >= 0; --tries)
+		{
+			SteamAPI_RunCallbacks();
+			if (m_receivedLeaderboard)
+				break;
+
+			ThreadManager::getInstance().getCurrentThread()->sleep(10);
+		}
+
+		if (!m_receivedLeaderboard)
+			return false;
+
+		T_ASSERT (!m_requestedLeaderboard);
+
+		std::map< std::wstring, Ref< LeaderboardSteam > >::iterator it = m_leaderboards.find(id);
+		if (it != m_leaderboards.end())
+			return true;
+	}
+
+	// Issue leaderboard request.
+	SteamAPICall_t call = SteamUserStats()->FindOrCreateLeaderboard(
+		wstombs(id).c_str(),
+		k_ELeaderboardSortMethodDescending,
+		k_ELeaderboardDisplayTypeNumeric
+	);
+	if (call == 0)
+		return false;
+
+	m_requestedLeaderboard = true;
+	m_receivedLeaderboard = false;
+	m_callbackFindLeaderboard.Set(call, this, &SessionSteam::OnLeaderboardFind);
+
+	return true;
+}
+
 bool SessionSteam::update()
 {
 	if (!m_requestedStats)
@@ -202,6 +233,25 @@ bool SessionSteam::update()
 		{
 			if (SteamUserStats()->StoreStats())
 				m_storeStats = false;
+		}
+	}
+
+	if (!m_pendingLeaderboards.empty() && !m_requestedLeaderboard)
+	{
+		std::wstring id = m_pendingLeaderboards.back();
+		log::info << L"Requesting leaderboard \"" << id << L"\"..." << Endl;
+
+		SteamAPICall_t call = SteamUserStats()->FindOrCreateLeaderboard(
+			wstombs(id).c_str(),
+			k_ELeaderboardSortMethodDescending,
+			k_ELeaderboardDisplayTypeNumeric
+		);
+		if (call != 0)
+		{
+			m_pendingLeaderboards.pop_back();
+			m_requestedLeaderboard = true;
+			m_receivedLeaderboard = false;
+			m_callbackFindLeaderboard.Set(call, this, &SessionSteam::OnLeaderboardFind);
 		}
 	}
 
@@ -246,6 +296,7 @@ void SessionSteam::OnLeaderboardFind(LeaderboardFindResult_t* pCallback, bool bI
 		if (call == 0)
 		{
 			log::error << L"Steam session event; unable to request rank/score" << Endl;
+			m_requestedLeaderboard = false;
 			m_receivedLeaderboard = true;
 			return;
 		}
@@ -255,6 +306,7 @@ void SessionSteam::OnLeaderboardFind(LeaderboardFindResult_t* pCallback, bool bI
 	else
 	{
 		log::error << L"Steam session event; didn't find requested leaderboard" << Endl;
+		m_requestedLeaderboard = false;
 		m_receivedLeaderboard = true;
 	}
 }
@@ -266,6 +318,7 @@ void SessionSteam::OnLeaderboardDownloaded(LeaderboardScoresDownloaded_t* pCallb
 	const char* leaderboardId = SteamUserStats()->GetLeaderboardName(pCallback->m_hSteamLeaderboard);
 	if (!leaderboardId)
 	{
+		m_requestedLeaderboard = false;
 		m_receivedLeaderboard = true;
 		return;
 	}
@@ -286,6 +339,7 @@ void SessionSteam::OnLeaderboardDownloaded(LeaderboardScoresDownloaded_t* pCallb
 		)
 	));
 
+	m_requestedLeaderboard = false;
 	m_receivedLeaderboard = true;
 }
 

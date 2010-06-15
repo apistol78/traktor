@@ -1,6 +1,7 @@
 #ifndef traktor_online_ISessionManager_H
 #define traktor_online_ISessionManager_H
 
+#include <set>
 #include "Core/Object.h"
 #include "Core/RefArray.h"
 
@@ -61,9 +62,10 @@ public:
 	/*! \brief Create play session.
 	 *
 	 * \param user User which will play the session.
+	 * \param leaderboards Set of available leaderboard identifications.
 	 * \return New play session.
 	 */
-	virtual Ref< ISession > createSession(IUser* user) = 0;
+	virtual Ref< ISession > createSession(IUser* user, const std::set< std::wstring >& leaderboards) = 0;
 
 	/*! \brief Update back-end messaging system.
 	 *

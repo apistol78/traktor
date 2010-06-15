@@ -187,7 +187,7 @@ Ref< IUser > SessionManagerLocal::getCurrentUser()
 	return m_currentUser;
 }
 
-Ref< ISession > SessionManagerLocal::createSession(IUser* user)
+Ref< ISession > SessionManagerLocal::createSession(IUser* user, const std::set< std::wstring >& leaderboards)
 {
 	T_ASSERT (user == m_currentUser);
 	return new SessionLocal(m_db, checked_type_cast< UserLocal*, false >(user));
