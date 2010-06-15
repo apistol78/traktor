@@ -10167,7 +10167,7 @@
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
 					<project type="Project" version="1">
-						<enable>true</enable>
+						<enable>false</enable>
 						<name>Traktor.Graphics.Dd7</name>
 						<sourcePath>$(TRAKTOR_HOME)/code/Graphics/Dd7</sourcePath>
 						<configurations>
@@ -12844,7 +12844,7 @@
 			</dependencies>
 		</item>
 		<item type="Project" version="1">
-			<enable>true</enable>
+			<enable>false</enable>
 			<name>Traktor.Render.Sw</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Render/Sw</sourcePath>
 			<configurations>
@@ -12978,7 +12978,7 @@
 			</dependencies>
 		</item>
 		<item type="Project" version="1">
-			<enable>true</enable>
+			<enable>false</enable>
 			<name>Traktor.Render.Xbox360</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Render/Dx9</sourcePath>
 			<configurations>
@@ -15470,10 +15470,6 @@
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
 					<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[60]"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
