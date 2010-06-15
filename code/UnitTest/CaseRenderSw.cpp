@@ -1,8 +1,10 @@
 #include "UnitTest/CaseRenderSw.h"
+/*
 #include "Render/Sw/Core/x86/JitX86.h"
 #include "Render/Sw/Core/InterpreterFixed.h"
 #include "Render/Sw/Core/Interpreter.h"
 #include "Render/Sw/Core/IntrProgram.h"
+*/
 #include "Core/Math/Const.h"
 #include "Core/Math/Format.h"
 #include "Core/Math/RandomGeometry.h"
@@ -30,6 +32,7 @@ bool equalFuzzy(const Vector4& a, const Vector4& b)
 
 void CaseRenderSw::run()
 {
+/*
 #if !defined(__GNUC__) && !defined(_WIN64) && !defined(WINCE)
 	render::Interpreter interpreter;
 	render::InterpreterFixed interpreterFixed;
@@ -1187,6 +1190,7 @@ void CaseRenderSw::run()
 		CASE_ASSERT_COMPARE(outputVarying1[0], outputVarying3[0], equalFuzzy);
 	}
 #endif
+*/
 }
 
 }
