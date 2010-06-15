@@ -48,7 +48,7 @@ public:
 		m_outBlock.size = m_stream->tell() - m_outBlock.offset;
 		m_stream = 0;
 
-		m_blockFile->flushTOC();
+		m_blockFile->needFlushTOC();
 	}
 	
 	virtual bool canRead() const
@@ -111,12 +111,18 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.db.BlockWriteStream", BlockWriteStream, IStream
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.db.BlockFile", BlockFile, Object)
 
+BlockFile::BlockFile()
+:	m_flushAlways(false)
+,	m_needFlushTOC(false)
+{
+}
+
 BlockFile::~BlockFile()
 {
 	T_ASSERT (!m_stream);
 }
 
-bool BlockFile::create(const Path& fileName)
+bool BlockFile::create(const Path& fileName, bool flushAlways)
 {
 	if (FileSystem::getInstance().exist(fileName))
 	{
@@ -129,13 +135,14 @@ bool BlockFile::create(const Path& fileName)
 		return false;
 
 	m_fileName = fileName;
+	m_flushAlways = flushAlways;
 
 	flushTOC();
 
 	return true;
 }
 
-bool BlockFile::open(const Path& fileName, bool readOnly)
+bool BlockFile::open(const Path& fileName, bool readOnly, bool flushAlways)
 {
 	if (!readOnly && !FileSystem::getInstance().exist(fileName))
 		return false;
@@ -166,7 +173,9 @@ bool BlockFile::open(const Path& fileName, bool readOnly)
 	}
 
 	m_stream->seek(IStream::SeekSet, 3 * sizeof(uint32_t) + 4096 * (sizeof(uint32_t) + sizeof(Block)));
+
 	m_fileName = fileName;
+	m_flushAlways = flushAlways;
 
 	return true;
 }
@@ -175,6 +184,9 @@ void BlockFile::close()
 {
 	if (m_stream)
 	{
+		if (m_needFlushTOC)
+			flushTOC();
+
 		m_stream->close();
 		m_stream = 0;
 	}
@@ -235,6 +247,14 @@ Ref< IStream > BlockFile::writeBlock(uint32_t blockId)
 	return new BlockWriteStream(this, m_stream, *it);
 }
 
+void BlockFile::needFlushTOC()
+{
+	if (!m_flushAlways)
+		m_needFlushTOC = true;
+	else
+		flushTOC();
+}
+
 void BlockFile::flushTOC()
 {
 	m_stream->seek(IStream::SeekSet, 0);
@@ -260,6 +280,8 @@ void BlockFile::flushTOC()
 		uint8_t padDummy = 0x00;
 		m_stream->write(&padDummy, 1);
 	}
+
+	m_needFlushTOC = false;
 }
 
 	}

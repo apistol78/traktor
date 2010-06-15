@@ -80,7 +80,7 @@ private:
 	XML_Parser m_parser;
 	uint8_t m_buf[4096];
 	bool m_done;
-	std::vector< wchar_t > m_cdata;
+	AlignedVector< wchar_t > m_cdata;
 	XmlPullParser::Event m_eventQueue[1024];
 	volatile uint32_t m_eventQueueHead;
 	volatile uint32_t m_eventQueueTail;
@@ -307,12 +307,17 @@ void XMLCALL XmlPullParserImpl::characterData(void* userData, const XML_Char* s,
 	T_ASSERT (len > 0);
 
 	std::wstring ws = xmltows(s, &s[len]);
-	pp->m_cdata.insert(pp->m_cdata.end(), ws.begin(), ws.end());
+
+	uint32_t cl = pp->m_cdata.size();
+	pp->m_cdata.resize(cl + len);
+
+	for (int i = 0; i < len; ++i)
+		pp->m_cdata[cl + i] = ws[i];
 }
 
 int XMLCALL XmlPullParserImpl::unknownEncoding(void* userData, const XML_Char* name, XML_Encoding* info)
 {
-	// Map Windows encoding as iso-8859-1; not completely accurat.
+	// Map Windows encoding as iso-8859-1; not completely accurate.
 	// @fixme Should use IEncoding classes from Core.
 	if (compareIgnoreCase(xmltows(name), L"Windows-1252") == 0)
 	{

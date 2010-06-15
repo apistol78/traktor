@@ -60,6 +60,11 @@ public:
 		typedef const value_type* pointer;
 		typedef const value_type& reference;
 
+		const_iterator()
+		:	m_ptr(0)
+		{
+		}
+
 		reference operator * () const
 		{
 			return *m_ptr;
@@ -128,6 +133,12 @@ public:
 		difference_type operator - (const const_iterator& r) const
 		{
 			return difference_type(m_ptr - r.m_ptr);
+		}
+
+		const_iterator& operator = (const const_iterator& r)
+		{
+			m_ptr = r.m_ptr;
+			return *this;
 		}
 
 		const pointer _const_ptr() const
