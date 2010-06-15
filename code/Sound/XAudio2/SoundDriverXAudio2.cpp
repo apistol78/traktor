@@ -104,13 +104,11 @@ SoundDriverXAudio2::SoundDriverXAudio2()
 ,	m_eventNotify(NULL)
 ,	m_bufferSize(0)
 ,	m_nextSubmitBuffer(0)
+,	m_channels(0)
 {
 	std::memset(&m_wfx, 0, sizeof(m_wfx));
-
-	m_buffers[0] =
-	m_buffers[1] =
-	m_buffers[2] =
-	m_buffers[3] = 0;
+	for (uint32_t i = 0; i < sizeof_array(m_buffers); ++i)
+		m_buffers[i] = 0;
 }
 
 SoundDriverXAudio2::~SoundDriverXAudio2()
@@ -225,6 +223,7 @@ bool SoundDriverXAudio2::create(const SoundDriverCreateDesc& desc, Ref< ISoundMi
 		}
 	}
 
+	m_channels = desc.hwChannels;
 	return true;
 }
 
@@ -287,6 +286,7 @@ void SoundDriverXAudio2::submit(const SoundBlock& soundBlock)
 		return;
 
 	uint32_t blockSize = soundBlock.samplesCount * m_wfx.Format.nChannels * m_wfx.Format.wBitsPerSample / 8;
+	uint32_t channels = min(m_channels, soundBlock.maxChannel);
 
 	// Grab buffer to submit.
 	std::memset(&buffer, 0, sizeof(buffer));
@@ -299,13 +299,19 @@ void SoundDriverXAudio2::submit(const SoundBlock& soundBlock)
 	switch (m_wfx.Format.wBitsPerSample)
 	{
 	case 8:
-		for (uint32_t i = 0; i < soundBlock.maxChannel; ++i)
-			writeSamples< int8_t >(&data[i], soundBlock.samples[i], soundBlock.samplesCount, soundBlock.maxChannel);
+		for (uint32_t i = 0; i < channels; ++i)
+		{
+			T_ASSERT (soundBlock.samples[i]);
+			writeSamples< int8_t >(&data[i], soundBlock.samples[i], soundBlock.samplesCount, m_channels);
+		}
 		break;
 
 	case 16:
-		for (uint32_t i = 0; i < soundBlock.maxChannel; ++i)
-			writeSamples< int16_t >(&data[i * 2], soundBlock.samples[i], soundBlock.samplesCount, soundBlock.maxChannel);
+		for (uint32_t i = 0; i < channels; ++i)
+		{
+			T_ASSERT (soundBlock.samples[i]);
+			writeSamples< int16_t >(&data[i * 2], soundBlock.samples[i], soundBlock.samplesCount, m_channels);
+		}
 		break;
 	}
 

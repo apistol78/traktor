@@ -52,6 +52,7 @@ private:
 	uint32_t m_bufferSize;
 	uint8_t* m_buffers[3];
 	uint32_t m_nextSubmitBuffer;
+	uint32_t m_channels;
 };
 
 	}
