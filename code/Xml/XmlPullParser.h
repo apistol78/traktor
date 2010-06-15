@@ -3,6 +3,7 @@
 
 #include <string>
 #include "Core/Object.h"
+#include "Core/Containers/AlignedVector.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -41,7 +42,7 @@ public:
 	};
 
 	typedef std::pair< std::wstring, std::wstring > Attribute;
-	typedef std::vector< Attribute > Attributes;
+	typedef AlignedVector< Attribute > Attributes;
 
 	struct Event
 	{

@@ -23,9 +23,10 @@ bool CompactDatabase::create(const ConnectionString& connectionString)
 		return false;
 
 	Path fileName = connectionString.get(L"fileName");
+	bool flushAlways = parseString< bool >(connectionString.get(L"flushAlways"));
 
 	Ref< BlockFile > blockFile = new BlockFile();
-	if (!blockFile->create(fileName))
+	if (!blockFile->create(fileName, flushAlways))
 		return false;
 
 	uint32_t registryBlockId = blockFile->allocBlockId();
@@ -56,9 +57,10 @@ bool CompactDatabase::open(const ConnectionString& connectionString)
 
 	Path fileName = connectionString.get(L"fileName");
 	bool readOnly = parseString< bool >(connectionString.get(L"readOnly"));
+	bool flushAlways = parseString< bool >(connectionString.get(L"flushAlways"));
 
 	Ref< BlockFile > blockFile = new BlockFile();
-	if (!blockFile->open(fileName, readOnly))
+	if (!blockFile->open(fileName, readOnly, flushAlways))
 		return false;
 
 	Ref< IStream > registryStream = blockFile->readBlock(1);

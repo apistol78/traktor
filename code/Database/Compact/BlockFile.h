@@ -28,11 +28,13 @@ public:
 		uint32_t size;
 	};
 
+	BlockFile();
+
 	virtual ~BlockFile();
 
-	bool create(const Path& fileName);
+	bool create(const Path& fileName, bool flushAlways);
 
-	bool open(const Path& fileName, bool readOnly);
+	bool open(const Path& fileName, bool readOnly, bool flushAlways);
 
 	void close();
 
@@ -44,6 +46,8 @@ public:
 
 	Ref< IStream > writeBlock(uint32_t blockId);
 
+	void needFlushTOC();
+
 	void flushTOC();
 
 private:
@@ -51,6 +55,8 @@ private:
 	Semaphore m_lock;
 	Ref< IStream > m_stream;
 	std::vector< Block > m_blocks;
+	bool m_flushAlways;
+	bool m_needFlushTOC;
 };
 
 	}
