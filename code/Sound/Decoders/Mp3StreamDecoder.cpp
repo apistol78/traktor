@@ -4,6 +4,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Memory/Alloc.h"
 #include "Core/Misc/Align.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Sound/Decoders/Mp3StreamDecoder.h"
 
@@ -26,6 +27,8 @@ inline float scale(mad_fixed_t sample)
 class Mp3StreamDecoderImpl : public Object
 {
 public:
+	enum { DecodedBufferSize = 65536 * sizeof(float) };
+
 	Mp3StreamDecoderImpl()
 	:	m_decodedCount(0)
 	,	m_consumedCount(0)
@@ -37,8 +40,11 @@ public:
 	{
 		m_stream = stream;
 
-		m_decoded[0] = (float*)Alloc::acquireAlign(sizeof(float) * 65536, 16);
-		m_decoded[1] = (float*)Alloc::acquireAlign(sizeof(float) * 65536, 16);
+		m_decoded[0] = (float*)Alloc::acquireAlign(DecodedBufferSize, 16);
+		m_decoded[1] = (float*)Alloc::acquireAlign(DecodedBufferSize, 16);
+
+		if (!m_decoded[0] || !m_decoded[1])
+			return false;
 
 		mad_stream_init(&m_mad_stream);
 		mad_frame_init(&m_mad_frame);
@@ -56,6 +62,22 @@ public:
 
 		Alloc::freeAlign(m_decoded[0]);
 		Alloc::freeAlign(m_decoded[1]);
+	}
+
+	void reset()
+	{
+		mad_timer_reset(&m_mad_timer);
+
+		mad_synth_finish(&m_mad_synth);
+		mad_frame_finish(&m_mad_frame);
+		mad_stream_finish(&m_mad_stream);
+
+		mad_stream_init(&m_mad_stream);
+		mad_frame_init(&m_mad_frame);
+		mad_synth_init(&m_mad_synth);
+
+		m_decodedCount = 0;
+		m_consumedCount = 0;
 	}
 
 	double getDuration() const
@@ -128,12 +150,32 @@ public:
 			const mad_fixed_t* left = m_mad_synth.pcm.samples[0];
 			const mad_fixed_t* right = m_mad_synth.pcm.samples[1];
 
-			for (uint32_t i = 0; i < m_mad_synth.pcm.length; ++i)
+			if (m_mad_synth.pcm.channels >= 2)
 			{
-				m_decoded[SbcLeft][m_decodedCount] = scale(*left++);
-				if (m_mad_synth.pcm.channels == 2)
+				for (uint32_t i = 0; i < m_mad_synth.pcm.length; ++i)
+				{
+					m_decoded[SbcLeft][m_decodedCount] = scale(*left++);
 					m_decoded[SbcRight][m_decodedCount] = scale(*right++);
-				m_decodedCount++;
+					m_decodedCount++;
+				}
+			}
+			else if (m_mad_synth.pcm.channels >= 1)
+			{
+				for (uint32_t i = 0; i < m_mad_synth.pcm.length; ++i)
+				{
+					m_decoded[SbcLeft][m_decodedCount] = scale(*left++);
+					m_decoded[SbcRight][m_decodedCount] = 0.0f;
+					m_decodedCount++;
+				}
+			}
+			else
+			{
+				for (uint32_t i = 0; i < m_mad_synth.pcm.length; ++i)
+				{
+					m_decoded[SbcLeft][m_decodedCount] = 0.0f;
+					m_decoded[SbcRight][m_decodedCount] = 0.0f;
+					m_decodedCount++;
+				}
 			}
 		}
 
@@ -168,18 +210,23 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.Mp3StreamDecoder", 0, Mp3StreamDe
 
 bool Mp3StreamDecoder::create(IStream* stream)
 {
-	m_stream = stream;
-	rewind();
-	return m_decoderImpl != 0;
+	if ((m_stream = stream) == 0)
+		return false;
+
+	m_decoderImpl = new Mp3StreamDecoderImpl();
+	if (!m_decoderImpl->create(m_stream))
+	{
+		m_decoderImpl = 0;
+		m_stream = 0;
+		return false;
+	}
+
+	return true;
 }
 
 void Mp3StreamDecoder::destroy()
 {
-	if (m_decoderImpl)
-	{
-		m_decoderImpl->destroy();
-		m_decoderImpl = 0;
-	}
+	safeDestroy(m_decoderImpl);
 }
 
 double Mp3StreamDecoder::getDuration() const
@@ -196,14 +243,9 @@ bool Mp3StreamDecoder::getBlock(SoundBlock& outSoundBlock)
 
 void Mp3StreamDecoder::rewind()
 {
-	destroy();
+	T_ASSERT (m_decoderImpl);
 	m_stream->seek(IStream::SeekSet, 0);
-	m_decoderImpl = new Mp3StreamDecoderImpl();
-	if (!m_decoderImpl->create(m_stream))
-	{
-		log::error << L"Unable to create MP3 decoder" << Endl;
-		m_decoderImpl = 0;
-	}
+	m_decoderImpl->reset();
 }
 
 	}

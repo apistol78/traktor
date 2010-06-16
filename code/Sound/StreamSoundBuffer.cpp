@@ -64,7 +64,7 @@ bool StreamSoundBuffer::getBlock(const ISoundMixer* mixer, ISoundBufferCursor* c
 	}
 
 	uint32_t samplesCount = outBlock.samplesCount;
-	while (m_position < position)
+	while (m_position <= position)
 	{
 		outBlock.samplesCount = samplesCount;
 		if (!m_streamDecoder->getBlock(outBlock))
