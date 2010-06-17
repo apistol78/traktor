@@ -4,6 +4,32 @@ namespace traktor
 {
 	namespace render
 	{
+		namespace
+		{
+
+const struct DepthStencilFormats
+{
+	int32_t depthBits;
+	int32_t stencilBits;
+	D3DFORMAT d3dDepthBufferFormats[6];
+}
+c_depthStencilFormats []=
+{
+	{ 15, 0, { D3DFMT_D16, D3DFMT_D15S1, D3DFMT_D24X8, D3DFMT_D24S8, D3DFMT_D32, D3DFMT_UNKNOWN } },
+	{ 16, 0, { D3DFMT_D16, D3DFMT_D24X8, D3DFMT_D24S8, D3DFMT_D32, D3DFMT_UNKNOWN } },
+	{ 24, 0, { D3DFMT_D24X8, D3DFMT_D24S8, D3DFMT_D32, D3DFMT_D16, D3DFMT_UNKNOWN } },
+	{ 15, 1, { D3DFMT_D15S1, D3DFMT_D24S8, D3DFMT_D24X4S4, D3DFMT_UNKNOWN } },
+	{ 16, 1, { D3DFMT_D24S8, D3DFMT_D24X4S4, D3DFMT_D15S1, D3DFMT_UNKNOWN } },
+	{ 24, 1, { D3DFMT_D24S8, D3DFMT_D24X4S4, D3DFMT_D15S1, D3DFMT_UNKNOWN } },
+	{ 15, 4, { D3DFMT_D24S8, D3DFMT_D24X4S4, D3DFMT_UNKNOWN } },
+	{ 16, 4, { D3DFMT_D24S8, D3DFMT_D24X4S4, D3DFMT_UNKNOWN } },
+	{ 24, 4, { D3DFMT_D24S8, D3DFMT_D24X4S4, D3DFMT_UNKNOWN } },
+	{ 15, 8, { D3DFMT_D24S8, D3DFMT_UNKNOWN } },
+	{ 16, 8, { D3DFMT_D24S8, D3DFMT_UNKNOWN } },
+	{ 24, 8, { D3DFMT_D24S8, D3DFMT_UNKNOWN } }
+};
+
+		}
 
 void textureCopy(void* d, const void* s, uint32_t bytes, TextureFormat textureFormat)
 {
@@ -73,6 +99,40 @@ void textureCopy(void* d, const void* s, uint32_t bytes, TextureFormat textureFo
 		memcpy(d, s, bytes);
 		break;
 	}
+}
+
+D3DFORMAT determineDepthStencilFormat(IDirect3D9* d3d, const RenderViewDesc& desc, D3DFORMAT d3dBackBufferFormat)
+{
+	HRESULT hr;
+	
+	for (uint32_t i = 0; i < sizeof_array(c_depthStencilFormats); ++i)
+	{
+		if (
+			c_depthStencilFormats[i].depthBits >= desc.depthBits &&
+			c_depthStencilFormats[i].stencilBits >= desc.stencilBits
+		)
+		{
+			// Found satisfying chain of formats; ensure device supports any of them.
+			for (uint32_t j = 0; j < sizeof_array(c_depthStencilFormats[i].d3dDepthBufferFormats); ++j)
+			{
+				if (c_depthStencilFormats[i].d3dDepthBufferFormats[j] == D3DFMT_UNKNOWN)
+					break;
+			
+				hr = d3d->CheckDeviceFormat(
+					D3DADAPTER_DEFAULT,
+					D3DDEVTYPE_HAL,
+					d3dBackBufferFormat,
+					D3DUSAGE_DEPTHSTENCIL,
+					D3DRTYPE_SURFACE,
+					c_depthStencilFormats[i].d3dDepthBufferFormats[j]
+				);
+				if (SUCCEEDED(hr))
+					return c_depthStencilFormats[i].d3dDepthBufferFormats[j];
+			}
+		}
+	}
+	
+	return D3DFMT_UNKNOWN;
 }
 
 	}

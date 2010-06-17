@@ -133,10 +133,20 @@ JobManager::JobManager()
 
 JobManager::~JobManager()
 {
+	// Destroy worker threads.
 	for (uint32_t i = 0; i < uint32_t(m_workerThreads.size()); ++i)
 	{
 		m_workerThreads[i]->stop();
 		ThreadManager::getInstance().destroy(m_workerThreads[i]);
+	}
+
+	// Ensure all pending jobs are dropped.
+	Job* job;
+	while (m_jobQueue.get(job))
+	{
+		T_ASSERT (job);
+		delete job->m_functor;
+		job->m_finished = true;
 	}
 }
 

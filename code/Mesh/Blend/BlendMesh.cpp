@@ -18,6 +18,7 @@ namespace traktor
 		namespace
 		{
 
+const uint32_t c_vertexCountFork = 1000;	//< Fork blend update on multiple threads if vertex count exceed this value.
 render::handle_t s_handleUserParameter = 0;
 
 struct BlendMeshTask
@@ -191,11 +192,12 @@ void BlendMesh::render(
 	{
 		bool update = true;
 		if (
-			instance->count > 0 ||
 			(instance->mesh->getVertexBuffer() && instance->mesh->getVertexBuffer()->isContentValid()) &&
 			(blendWeights.size() == instance->weights.size())
 		)
 		{
+			T_ASSERT (instance->count > 0);
+
 			update = false;
 			for (uint32_t i = 0; i < blendWeights.size(); ++i)
 			{
@@ -208,7 +210,7 @@ void BlendMesh::render(
 		}
 		if (update)
 		{
-			render::VertexBuffer* vertexBuffer = instance->vertexBuffers[instance->count++ % VertexBufferCount];
+			render::VertexBuffer* vertexBuffer = instance->vertexBuffers[instance->count % VertexBufferCount];
 
 			const std::vector< render::VertexElement >& vertexElements = instance->mesh->getVertexElements();
 			uint32_t vertexSize = render::getVertexSize(vertexElements);
@@ -216,42 +218,56 @@ void BlendMesh::render(
 
 			// Execute multiple tasks to perform blending.
 			uint8_t* destinationVertices = static_cast< uint8_t* >(vertexBuffer->lock());
-
+			if (destinationVertices)
+			{
 #if 1
-			uint32_t pivots[] =
-			{
-				0,
-				vertexCount / 4,
-				(vertexCount * 2) / 4,
-				(vertexCount * 3) / 4,
-				vertexCount
-			};
+				if (vertexCount > c_vertexCountFork)
+				{
+					uint32_t pivots[] =
+					{
+						0,
+						vertexCount / 4,
+						(vertexCount * 2) / 4,
+						(vertexCount * 3) / 4,
+						vertexCount
+					};
 
-			BlendMeshTask task1(vertexElements, blendWeights, m_vertices, destinationVertices, pivots[0], pivots[1]);
-			BlendMeshTask task2(vertexElements, blendWeights, m_vertices, destinationVertices, pivots[1], pivots[2]);
-			BlendMeshTask task3(vertexElements, blendWeights, m_vertices, destinationVertices, pivots[2], pivots[3]);
-			BlendMeshTask task4(vertexElements, blendWeights, m_vertices, destinationVertices, pivots[3], pivots[4]);
+					BlendMeshTask task1(vertexElements, blendWeights, m_vertices, destinationVertices, pivots[0], pivots[1]);
+					BlendMeshTask task2(vertexElements, blendWeights, m_vertices, destinationVertices, pivots[1], pivots[2]);
+					BlendMeshTask task3(vertexElements, blendWeights, m_vertices, destinationVertices, pivots[2], pivots[3]);
+					BlendMeshTask task4(vertexElements, blendWeights, m_vertices, destinationVertices, pivots[3], pivots[4]);
 
-			Job jobs[] =
-			{
-				makeFunctor< BlendMeshTask >(&task1, &BlendMeshTask::execute),
-				makeFunctor< BlendMeshTask >(&task2, &BlendMeshTask::execute),
-				makeFunctor< BlendMeshTask >(&task3, &BlendMeshTask::execute),
-				makeFunctor< BlendMeshTask >(&task4, &BlendMeshTask::execute)
-			};
+					Job jobs[] =
+					{
+						makeFunctor< BlendMeshTask >(&task1, &BlendMeshTask::execute),
+						makeFunctor< BlendMeshTask >(&task2, &BlendMeshTask::execute),
+						makeFunctor< BlendMeshTask >(&task3, &BlendMeshTask::execute),
+						makeFunctor< BlendMeshTask >(&task4, &BlendMeshTask::execute)
+					};
 
-			JobManager::getInstance().fork(jobs, sizeof_array(jobs));
-#else
-			BlendMeshTask task(vertexElements, blendWeights, m_vertices, destinationVertices, 0, vertexCount);
-			task.execute();
+					JobManager::getInstance().fork(jobs, sizeof_array(jobs));
+				}
+				else
 #endif
+				{
+					BlendMeshTask task(vertexElements, blendWeights, m_vertices, destinationVertices, 0, vertexCount);
+					task.execute();
+				}
 
-			vertexBuffer->unlock();
+				vertexBuffer->unlock();
 
-			instance->mesh->setVertexBuffer(vertexBuffer);
-			instance->weights = blendWeights;
+				instance->mesh->setVertexBuffer(vertexBuffer);
+				instance->weights = blendWeights;
+				instance->count++;
+			}
 		}
 	}
+
+	if (
+		!instance->mesh->getVertexBuffer() ||
+		!instance->mesh->getVertexBuffer()->isContentValid()
+	)
+		return;
 
 	// Render mesh.
 	std::map< render::handle_t, std::vector< Part > >::const_iterator it = m_parts.find(worldRenderView->getTechnique());

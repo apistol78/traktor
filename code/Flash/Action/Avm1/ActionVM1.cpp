@@ -486,7 +486,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 		VM_END()
 
 		VM_BEGIN(AopTrace)
-			log::info << L"TRACE \"" << stack.pop().getStringSafe() << L"\"" << Endl;
+			log::debug << L"TRACE \"" << stack.pop().getStringSafe() << L"\"" << Endl;
 		VM_END()
 
 		VM_BEGIN(AopStartDragMovie)
