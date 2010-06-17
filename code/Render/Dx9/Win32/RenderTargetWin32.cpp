@@ -1,3 +1,4 @@
+#include "Core/Log/Log.h"
 #include "Render/Types.h"
 #include "Render/Dx9/TypesDx9.h"
 #include "Render/Dx9/ParameterCache.h"
@@ -81,11 +82,17 @@ bool RenderTargetWin32::create(
 			NULL
 		);
 		if (FAILED(hr))
+		{
+			log::error << L"Render target create failed; Unable to create render target texture" << Endl;
 			return false;
+		}
 
 		hr = m_d3dTargetTexture->GetSurfaceLevel(0, &m_d3dTargetSurface.getAssign());
 		if (FAILED(hr))
+		{
+			log::error << L"Render target create failed; Unable to get color surface level 0" << Endl;
 			return false;
+		}
 	}
 	else
 	{
@@ -100,7 +107,10 @@ bool RenderTargetWin32::create(
 			NULL
 		);
 		if (FAILED(hr))
+		{
+			log::error << L"Render target create failed; Unable to create render target" << Endl;
 			return false;
+		}
 
 		hr = d3dDevice->CreateTexture(
 			setDesc.width,
@@ -113,11 +123,17 @@ bool RenderTargetWin32::create(
 			NULL
 		);
 		if (FAILED(hr))
+		{
+			log::error << L"Render target create failed; Unable to create render target resolve texture" << Endl;
 			return false;
+		}
 
 		hr = m_d3dTargetTexture->GetSurfaceLevel(0, &m_d3dResolveTargetSurface.getAssign());
 		if (FAILED(hr))
+		{
+			log::error << L"Render target create failed; Unable to get resolve color surface level 0" << Endl;
 			return false;
+		}
 	}
 
 	m_width = setDesc.width;
@@ -137,7 +153,10 @@ bool RenderTargetWin32::create(
 			NULL
 		);
 		if (FAILED(hr))
+		{
+			log::error << L"Render target create failed; Unable to create clear effect" << Endl;
 			return false;
+		}
 
 		T_ASSERT (m_d3dClearEffect);
 		m_d3dClearTechnique = m_d3dClearEffect->GetTechniqueByName("Clear");

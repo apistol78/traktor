@@ -339,7 +339,7 @@ Ref< IRenderView > RenderSystemWin32::createRenderView(const RenderViewDefaultDe
 	setWindowStyle(m_hWnd, desc.displayMode.width, desc.displayMode.height, desc.fullscreen);
 	ShowWindow(m_hWnd, SW_SHOWNORMAL);
 
-	d3dDepthStencilFormat = determineDepthStencilFormat(m_d3d, desc, D3DFMT_X8R8G8B8);
+	d3dDepthStencilFormat = determineDepthStencilFormat(m_d3d, desc.depthBits, desc.stencilBits, D3DFMT_X8R8G8B8);
 	if (d3dDepthStencilFormat == D3DFMT_UNKNOWN)
 	{
 		log::error << L"Render view failed; any of the required depth/stencil formats supported" << Endl;
@@ -404,7 +404,7 @@ Ref< IRenderView > RenderSystemWin32::createRenderView(const RenderViewEmbeddedD
 	if (rcWindow.top >= rcWindow.bottom)
 		rcWindow.bottom = rcWindow.top + 10;
 
-	d3dDepthStencilFormat = determineDepthStencilFormat(m_d3d, desc, D3DFMT_X8R8G8B8);
+	d3dDepthStencilFormat = determineDepthStencilFormat(m_d3d, desc.depthBits, desc.stencilBits, D3DFMT_X8R8G8B8);
 	if (d3dDepthStencilFormat == D3DFMT_UNKNOWN)
 	{
 		log::error << L"Render view failed; any of the required depth/stencil formats supported" << Endl;

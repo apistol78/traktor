@@ -207,15 +207,24 @@ HRESULT RenderTargetSetWin32::internalCreate()
 
 	hr = m_d3dDevice->GetDirect3D(&d3d.getAssign());
 	if (FAILED(hr))
+	{
+		log::error << L"Render target create failed; Unable to get D3D object" << Endl;
 		return hr;
+	}
 
 	hr = m_d3dDevice->GetDeviceCaps(&d3dCaps); 
 	if (FAILED(hr))
+	{
+		log::error << L"Render target create failed; Unable to get device capabilities" << Endl;
 		return hr;
+	}
 
 	hr = m_d3dDevice->GetDisplayMode(0, &d3dDisplayMode);
 	if (FAILED(hr))
+	{
+		log::error << L"Render target create failed; Unable to get current display mode" << Endl;
 		return hr;
+	}
 
 	// Ensure all target formats is supported; try to promote format if
 	// available.
@@ -249,11 +258,11 @@ HRESULT RenderTargetSetWin32::internalCreate()
 				D3DFORMAT promotedFormat = getD3DFormatPromoted(d3dFormats[i]);
 				if (promotedFormat == D3DFMT_UNKNOWN)
 				{
-					log::error << L"Device doesn't support target format \"" << getD3DFormatName(d3dFormats[i]) << L"\"" << Endl;
+					log::error << L"Render target create failed; Device doesn't support target format \"" << getD3DFormatName(d3dFormats[i]) << L"\"" << Endl;
 					return hr;
 				}
 
-				log::debug << L"Device doesn't support target format \"" << getD3DFormatName(d3dFormats[i]) << L"\"; trying with \"" << getD3DFormatName(promotedFormat) << L"\"" << Endl;
+				log::debug << L"Render target create warning; Device doesn't support target format \"" << getD3DFormatName(d3dFormats[i]) << L"\"; trying with \"" << getD3DFormatName(promotedFormat) << L"\"" << Endl;
 				d3dFormats[i] = promotedFormat;
 			}
 		}
@@ -274,7 +283,7 @@ HRESULT RenderTargetSetWin32::internalCreate()
 			);
 			if (FAILED(hr))
 			{
-				log::error << L"Device doesn't support MSAA on target format \"" << getD3DFormatName(d3dFormats[i]) << L"\"" << Endl;
+				log::error << L"Render target create failed; Device doesn't support MSAA on target format \"" << getD3DFormatName(d3dFormats[i]) << L"\"" << Endl;
 				return hr;
 			}
 		}
@@ -292,24 +301,32 @@ HRESULT RenderTargetSetWin32::internalCreate()
 	// Create depth/stencil surface.
 	if (m_desc.depthStencil)
 	{
-		hr = d3d->CheckDeviceFormat(
-			d3dCaps.AdapterOrdinal,
-			d3dCaps.DeviceType,
-			d3dDisplayMode.Format,
-			D3DUSAGE_DEPTHSTENCIL,
-			D3DRTYPE_SURFACE,
-			D3DFMT_D24S8
-		);
-		if (FAILED(hr))
-			return hr;
+		D3DFORMAT d3dDepthStencilFormat = determineDepthStencilFormat(d3d, 16, 8, d3dDisplayMode.Format);
+		if (d3dDepthStencilFormat == D3DFMT_UNKNOWN)
+		{
+			d3dDepthStencilFormat = determineDepthStencilFormat(d3d, 16, 4, d3dDisplayMode.Format);
+			if (d3dDepthStencilFormat == D3DFMT_UNKNOWN)
+			{
+				d3dDepthStencilFormat = determineDepthStencilFormat(d3d, 16, 1, d3dDisplayMode.Format);
+				if (d3dDepthStencilFormat == D3DFMT_UNKNOWN)
+				{
+					d3dDepthStencilFormat = determineDepthStencilFormat(d3d, 16, 0, d3dDisplayMode.Format);
+					if (d3dDepthStencilFormat == D3DFMT_UNKNOWN)
+					{
+						log::error << L"Render target create failed; Unable to find any supported depth/stencil buffer format" << Endl;
+						return S_FALSE;
+					}
+				}
+			}
+		}
 
 		D3DMULTISAMPLE_TYPE d3dMultiSample = c_d3dMultiSample[m_desc.multiSample];
-		if (d3dMultiSample != D3DMULTISAMPLE_NONE)
+		//if (d3dMultiSample != D3DMULTISAMPLE_NONE)
 		{
 			hr = m_d3dDevice->CreateDepthStencilSurface(
 				m_desc.width,
 				m_desc.height,
-				D3DFMT_D24S8,
+				d3dDepthStencilFormat,
 				d3dMultiSample,
 				0,
 				TRUE,
@@ -317,27 +334,36 @@ HRESULT RenderTargetSetWin32::internalCreate()
 				NULL
 			);
 			if (FAILED(hr))
+			{
+				log::error << L"Render target create failed; Unable to create depth/stencil surface" << Endl;
 				return hr;
+			}
 		}
-		else
-		{
-			hr = m_d3dDevice->CreateTexture(
-				m_desc.width,
-				m_desc.height,
-				1,
-				D3DUSAGE_DEPTHSTENCIL,
-				D3DFMT_D24S8,
-				D3DPOOL_DEFAULT,
-				&m_d3dTargetDepthStencilTexture.getAssign(),
-				NULL
-			);
-			if (FAILED(hr))
-				return hr;
+		//else
+		//{
+		//	hr = m_d3dDevice->CreateTexture(
+		//		m_desc.width,
+		//		m_desc.height,
+		//		1,
+		//		D3DUSAGE_DEPTHSTENCIL,
+		//		d3dDepthStencilFormat,
+		//		D3DPOOL_DEFAULT,
+		//		&m_d3dTargetDepthStencilTexture.getAssign(),
+		//		NULL
+		//	);
+		//	if (FAILED(hr))
+		//	{
+		//		log::error << L"Render target create failed; Unable to create depth/stencil texture" << Endl;
+		//		return hr;
+		//	}
 
-			hr = m_d3dTargetDepthStencilTexture->GetSurfaceLevel(0, &m_d3dTargetDepthStencilSurface.getAssign());
-			if (FAILED(hr))
-				return hr;
-		}
+		//	hr = m_d3dTargetDepthStencilTexture->GetSurfaceLevel(0, &m_d3dTargetDepthStencilSurface.getAssign());
+		//	if (FAILED(hr))
+		//	{
+		//		log::error << L"Render target create failed; Unable to get surface level 0" << Endl;
+		//		return hr;
+		//	}
+		//}
 	}
 
 	return S_OK;
