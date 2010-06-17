@@ -148,9 +148,7 @@ Ref< render::ITexture > AccTextureCache::getGradientTexture(const FlashFillStyle
 		texture = m_renderSystem->createSimpleTexture(desc);
 	}
 
-	T_ASSERT (texture);
 	m_cache[hash] = texture;
-
 	return texture;
 }
 
@@ -172,7 +170,6 @@ Ref< render::ITexture > AccTextureCache::getBitmapTexture(const FlashBitmap& bit
 	desc.initialData[0].pitch = bitmap.getBitsWidth() * 4;
 
 	Ref< render::ISimpleTexture > texture = m_renderSystem->createSimpleTexture(desc);
-	T_ASSERT (texture);
 
 	m_cache[hash] = texture;
 	return texture;

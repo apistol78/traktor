@@ -339,15 +339,14 @@ Ref< IRenderView > RenderSystemWin32::createRenderView(const RenderViewDefaultDe
 	setWindowStyle(m_hWnd, desc.displayMode.width, desc.displayMode.height, desc.fullscreen);
 	ShowWindow(m_hWnd, SW_SHOWNORMAL);
 
-	if (desc.stencilBits == 1)
-		d3dDepthStencilFormat = D3DFMT_D15S1;
-	else if (desc.stencilBits > 1)
-		d3dDepthStencilFormat = D3DFMT_D24S8;
-	else
-		d3dDepthStencilFormat = (desc.depthBits > 16) ? D3DFMT_D24X8 : D3DFMT_D16;
-
-	d3dMultiSample = D3DMULTISAMPLE_NONE;
+	d3dDepthStencilFormat = determineDepthStencilFormat(m_d3d, desc, D3DFMT_X8R8G8B8);
+	if (d3dDepthStencilFormat == D3DFMT_UNKNOWN)
+	{
+		log::error << L"Render view failed; any of the required depth/stencil formats supported" << Endl;
+		return 0;
+	}
 	
+	d3dMultiSample = D3DMULTISAMPLE_NONE;
 	hr = m_d3d->CheckDeviceMultiSampleType(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, D3DFMT_X8R8G8B8, FALSE, c_d3dMultiSample[desc.multiSample], NULL);
 	if (SUCCEEDED(hr))
 	{
@@ -405,15 +404,14 @@ Ref< IRenderView > RenderSystemWin32::createRenderView(const RenderViewEmbeddedD
 	if (rcWindow.top >= rcWindow.bottom)
 		rcWindow.bottom = rcWindow.top + 10;
 
-	if (desc.stencilBits == 1)
-		d3dDepthStencilFormat = D3DFMT_D15S1;
-	else if (desc.stencilBits > 1)
-		d3dDepthStencilFormat = D3DFMT_D24S8;
-	else
-		d3dDepthStencilFormat = (desc.depthBits > 16) ? D3DFMT_D24X8 : D3DFMT_D16;
+	d3dDepthStencilFormat = determineDepthStencilFormat(m_d3d, desc, D3DFMT_X8R8G8B8);
+	if (d3dDepthStencilFormat == D3DFMT_UNKNOWN)
+	{
+		log::error << L"Render view failed; any of the required depth/stencil formats supported" << Endl;
+		return 0;
+	}
 
 	d3dMultiSample = D3DMULTISAMPLE_NONE;
-
 	hr = m_d3d->CheckDeviceMultiSampleType(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, D3DFMT_X8R8G8B8, TRUE, c_d3dMultiSample[desc.multiSample], NULL);
 	if (SUCCEEDED(hr))
 	{

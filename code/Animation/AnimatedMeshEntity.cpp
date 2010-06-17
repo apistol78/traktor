@@ -43,6 +43,7 @@ AnimatedMeshEntity::~AnimatedMeshEntity()
 
 void AnimatedMeshEntity::destroy()
 {
+	synchronize();
 	safeDestroy(m_poseController);
 	mesh::MeshEntity::destroy();
 }
