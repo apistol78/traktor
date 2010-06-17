@@ -101,15 +101,15 @@ void textureCopy(void* d, const void* s, uint32_t bytes, TextureFormat textureFo
 	}
 }
 
-D3DFORMAT determineDepthStencilFormat(IDirect3D9* d3d, const RenderViewDesc& desc, D3DFORMAT d3dBackBufferFormat)
+D3DFORMAT determineDepthStencilFormat(IDirect3D9* d3d, uint16_t depthBits, uint16_t stencilBits, D3DFORMAT d3dBackBufferFormat)
 {
 	HRESULT hr;
 	
 	for (uint32_t i = 0; i < sizeof_array(c_depthStencilFormats); ++i)
 	{
 		if (
-			c_depthStencilFormats[i].depthBits >= desc.depthBits &&
-			c_depthStencilFormats[i].stencilBits >= desc.stencilBits
+			c_depthStencilFormats[i].depthBits >= depthBits &&
+			c_depthStencilFormats[i].stencilBits >= stencilBits
 		)
 		{
 			// Found satisfying chain of formats; ensure device supports any of them.

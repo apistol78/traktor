@@ -82,7 +82,7 @@ void textureCopy(void* d, const void* s, uint32_t bytes, TextureFormat textureFo
  *
  * \return Depth buffer format, D3DFMT_UNKNOWN if none was found.
  */
-D3DFORMAT determineDepthStencilFormat(IDirect3D9* d3d, const RenderViewDesc& desc, D3DFORMAT d3dBackBufferFormat);
+D3DFORMAT determineDepthStencilFormat(IDirect3D9* d3d, uint16_t depthBits, uint16_t stencilBits, D3DFORMAT d3dBackBufferFormat);
 
 	}
 }
