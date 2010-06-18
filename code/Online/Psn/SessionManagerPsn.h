@@ -32,11 +32,13 @@ public:
 
 	virtual void destroy();
 
+	virtual std::wstring getLanguageCode() const;
+
 	virtual bool getAvailableUsers(RefArray< IUser >& outUsers);
 
 	virtual Ref< IUser > getCurrentUser();
 
-	virtual Ref< ISession > createSession(IUser* user);
+	virtual Ref< ISession > createSession(IUser* user, const std::set< std::wstring >& leaderboards);
 
 	virtual bool update();
 

@@ -245,6 +245,11 @@ int RenderViewPs3::getHeight() const
 	return m_height;
 }
 
+bool RenderViewPs3::isActive() const
+{
+	return true;
+}
+
 bool RenderViewPs3::isFullScreen() const
 {
 	return true;
@@ -268,12 +273,6 @@ Viewport RenderViewPs3::getViewport()
 		return m_viewport;
 	else
 		return m_renderTargetStack.back().viewport;
-}
-
-bool RenderViewPs3::getNativeAspectRatio(float& outAspectRatio) const
-{
-	outAspectRatio = float(m_width) / m_height;
-	return true;
 }
 
 bool RenderViewPs3::begin()

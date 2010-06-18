@@ -39,10 +39,10 @@ bool RenderTargetPs3::create(MemoryHeap* memoryHeap, const RenderTargetSetCreate
 	switch (desc.format)
 	{
 	case TfR8:
-		m_colorTexture.format = CELL_GCM_TEXTURE_B8;
-		m_colorSurfaceFormat = CELL_GCM_SURFACE_B8;
-		byteSize = 1;
-		break;
+		//m_colorTexture.format = CELL_GCM_TEXTURE_B8;
+		//m_colorSurfaceFormat = CELL_GCM_SURFACE_B8;
+		//byteSize = 1;
+		//break;
 
 	case TfR8G8B8A8:
 		m_colorTexture.format = CELL_GCM_TEXTURE_A8R8G8B8;
