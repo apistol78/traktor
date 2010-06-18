@@ -23,6 +23,11 @@ void SessionManagerPsn::destroy()
 {
 }
 
+std::wstring SessionManagerPsn::getLanguageCode() const
+{
+	return L"";
+}
+
 bool SessionManagerPsn::getAvailableUsers(RefArray< IUser >& outUsers)
 {
 	return true;
@@ -33,7 +38,7 @@ Ref< IUser > SessionManagerPsn::getCurrentUser()
 	return m_user;
 }
 
-Ref< ISession > SessionManagerPsn::createSession(IUser* user)
+Ref< ISession > SessionManagerPsn::createSession(IUser* user, const std::set< std::wstring >& leaderboards)
 {
 	return new SessionPsn(checked_type_cast< UserPsn*, false >(user));
 }
