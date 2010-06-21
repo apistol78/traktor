@@ -47,6 +47,8 @@ class T_DLLCLASS RenderContext : public Object
 public:
 #if defined(WINCE)
 	enum { DefaultHeapSize = 512 * 1024 };
+#elif defined(_PS3)
+	enum { DefaultHeapSize = 2 * 1024 * 1024 };
 #else
 	enum { DefaultHeapSize = 4 * 1024 * 1024 };
 #endif
