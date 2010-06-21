@@ -40,6 +40,7 @@ private:
 	Scalar m_normalConstantForce;	//< Amount of constant force applied to each particle in normal direction.
 	Scalar m_normalDistance;		//< Distance from axis for each particle, scaled together with m_normalDistanceForce in order to apply different amount of force based on distance.
 	Scalar m_normalDistanceForce;
+	bool m_world;
 };
 
 	}
