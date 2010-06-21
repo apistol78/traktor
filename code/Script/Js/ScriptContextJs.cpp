@@ -372,20 +372,32 @@ v8::Handle< v8::Value > ScriptContextJs::createObject(Object* object) const
 	if (object)
 	{
 		const TypeInfo* objectType = &type_of(object);
+		T_ASSERT (objectType);
+
+		v8::Handle< v8::Function > minFunction;
+		uint32_t minScriptClassDiff = ~0UL;
+
 		for (std::vector< RegisteredClass >::const_iterator i = m_classRegistry.begin(); i != m_classRegistry.end(); ++i)
 		{
-			if (&i->scriptClass->getExportType() == objectType)
+			uint32_t scriptClassDiff = type_difference(i->scriptClass->getExportType(), *objectType);
+			if (scriptClassDiff < minScriptClassDiff)
 			{
-				Ref< Object >* objectRef = new Ref< Object >(object);
-
-				v8::Local< v8::External > objectRefExternal = v8::External::New(objectRef);
-
-				v8::Handle< v8::Value > args(objectRefExternal);
-				v8::Persistent< v8::Object > instanceHandle(i->function->NewInstance(1, &args));
-
-				instanceHandle.MakeWeak(objectRef, &ScriptContextJs::weakHandleCallback);
-				return instanceHandle;
+				minFunction = i->function;
+				minScriptClassDiff = scriptClassDiff;
 			}
+		}
+
+		if (!minFunction.IsEmpty())
+		{
+			Ref< Object >* objectRef = new Ref< Object >(object);
+
+			v8::Local< v8::External > objectRefExternal = v8::External::New(objectRef);
+
+			v8::Handle< v8::Value > args(objectRefExternal);
+			v8::Persistent< v8::Object > instanceHandle(minFunction->NewInstance(1, &args));
+
+			instanceHandle.MakeWeak(objectRef, &ScriptContextJs::weakHandleCallback);
+			return instanceHandle;
 		}
 	}
 	return v8::Null();
