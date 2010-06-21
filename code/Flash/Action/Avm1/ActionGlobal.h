@@ -32,6 +32,8 @@ private:
 	void Global_ASSetPropFlags(CallArgs& ca);
 
 	void Global_escape(CallArgs& ca);
+
+	void Global_isNaN(CallArgs& ca);
 };
 
 	}
