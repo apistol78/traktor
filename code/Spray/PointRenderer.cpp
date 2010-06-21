@@ -27,6 +27,9 @@ const uint32_t c_pointCount = 1000;
 const uint32_t c_pointCount = 4000;
 #endif
 
+const int32_t c_manyPointsThreshold = 100;	//<! Threshold, over this value are considered dense instances.
+const int32_t c_fewPointsHole = 40;			//<! Always keep this number of points available for sparse instances.
+
 struct PredicateZ
 {
 	bool operator () (const std::pair< uint32_t, float >& i1, const std::pair< uint32_t, float >& i2) const
@@ -136,12 +139,16 @@ void PointRenderer::render(
 	float middleAge
 )
 {
-	uint32_t pointOffset = m_vertexOffset >> 2;
+	int32_t pointOffset = m_vertexOffset >> 2;
 
-	uint32_t size = uint32_t(points.size());
+	int32_t size = int32_t(points.size());
 	T_ASSERT (size > 0);
 
-	size = std::min(size, c_pointCount - pointOffset);
+	int32_t avail = c_pointCount - pointOffset;
+	if (points.size() >= c_manyPointsThreshold)
+		avail -= c_fewPointsHole;
+
+	size = std::min(size, avail);
 	if (!size)
 		return;
 
@@ -188,7 +195,7 @@ void PointRenderer::render(
 
 	//	const Point& point = points[i->first];
 
-	for (uint32_t i = 0; i < size; ++i)
+	for (int32_t i = 0; i < size; ++i)
 	{
 		const Point& point = points[i];
 
