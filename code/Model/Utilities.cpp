@@ -655,6 +655,7 @@ void bakeVertexOcclusion(Model& model)
 	model.clear(Model::CfColors);
 	
 	AlignedVector< Winding > windings;
+	windings.reserve(polygons.size());
 	for (std::vector< Polygon >::const_iterator i = polygons.begin(); i != polygons.end(); ++i)
 	{
 		Winding w;
