@@ -1,3 +1,4 @@
+#include <limits>
 #include "Core/Io/StringOutputStream.h"
 #include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Avm1/ActionGlobal.h"
@@ -56,6 +57,7 @@ ActionGlobal::ActionGlobal()
 {
 	setMember(L"ASSetPropFlags", ActionValue(createNativeFunction(this, &ActionGlobal::Global_ASSetPropFlags)));
 	setMember(L"escape", ActionValue(createNativeFunction(this, &ActionGlobal::Global_escape)));
+	setMember(L"isNaN", ActionValue(createNativeFunction(this, &ActionGlobal::Global_isNaN)));
 
 	// Create prototypes.
 	setMember(L"Object", ActionValue(AsObject::getInstance()));
@@ -162,6 +164,23 @@ void ActionGlobal::Global_escape(CallArgs& ca)
 	}
 
 	ca.ret = ActionValue(ss.str());
+}
+
+void ActionGlobal::Global_isNaN(CallArgs& ca)
+{
+	bool nan = true;
+	if (!ca.args.empty() && ca.args[0].isNumeric())
+	{
+		avm_number_t n = ca.args[0].getNumber();
+		if (
+			std::numeric_limits< avm_number_t >::quiet_NaN() == n ||
+			std::numeric_limits< avm_number_t >::signaling_NaN() == n
+		)
+			nan = true;
+		else
+			nan = false;
+	}
+	ca.ret = ActionValue(nan);
 }
 
 	}

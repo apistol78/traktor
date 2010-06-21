@@ -3,6 +3,7 @@
 #endif
 #include <steam/steam_api.h>
 #include "Core/Log/Log.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/TString.h"
 #include "Online/Steam/CurrentUserSteam.h"
 #include "Online/Steam/SessionManagerSteam.h"
@@ -59,11 +60,7 @@ bool SessionManagerSteam::create()
 
 void SessionManagerSteam::destroy()
 {
-	if (m_session)
-	{
-		m_session->destroy();
-		m_session = 0;
-	}
+	safeDestroy(m_session);
 
 	m_currentUser = 0;
 
