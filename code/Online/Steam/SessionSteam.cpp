@@ -3,6 +3,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
 #include "Core/Serialization/BinarySerializer.h"
+#include "Core/Thread/Acquire.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Online/Steam/CurrentUserSteam.h"
@@ -42,6 +43,7 @@ void SessionSteam::destroy()
 		// Ensure pending stats are sent to Steam.
 		if (m_storeStats)
 		{
+			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 			if (SteamUser()->BLoggedOn())
 			{
 				m_storedStats = false;
@@ -75,6 +77,8 @@ Ref< IUser > SessionSteam::getUser()
 
 bool SessionSteam::rewardAchievement(const std::wstring& achievementId)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	if (!m_receivedStats)
 	{
 		log::error << L"Unable to reward achievement \"" << achievementId << L"\"; no stats received yet" << Endl;
@@ -93,6 +97,8 @@ bool SessionSteam::rewardAchievement(const std::wstring& achievementId)
 
 bool SessionSteam::withdrawAchievement(const std::wstring& achievementId)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	if (!m_receivedStats)
 	{
 		log::error << L"Unable to withdraw achievement \"" << achievementId << L"\"; no stats received yet" << Endl;
@@ -111,6 +117,8 @@ bool SessionSteam::withdrawAchievement(const std::wstring& achievementId)
 
 Ref< ILeaderboard > SessionSteam::getLeaderboard(const std::wstring& id)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	std::map< std::wstring, Ref< LeaderboardSteam > >::iterator it = m_leaderboards.find(id);
 	if (it != m_leaderboards.end())
 		return it->second;
@@ -124,6 +132,8 @@ Ref< ILeaderboard > SessionSteam::getLeaderboard(const std::wstring& id)
 
 bool SessionSteam::setStatValue(const std::wstring& statId, float value)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	if (!SteamUserStats()->SetStat(wstombs(statId).c_str(), value))
 		return false;
 
@@ -133,11 +143,14 @@ bool SessionSteam::setStatValue(const std::wstring& statId, float value)
 
 bool SessionSteam::getStatValue(const std::wstring& statId, float& outValue)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	return SteamUserStats()->GetStat(wstombs(statId).c_str(), &outValue);
 }
 
 Ref< ISaveGame > SessionSteam::createSaveGame(const std::wstring& name, ISerializable* attachment)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	DynamicMemoryStream dms(false, true);
 	BinarySerializer(&dms).writeObject(attachment);
 
@@ -153,6 +166,8 @@ Ref< ISaveGame > SessionSteam::createSaveGame(const std::wstring& name, ISeriali
 
 bool SessionSteam::getAvailableSaveGames(RefArray< ISaveGame >& outSaveGames) const
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	int32_t fileCount = SteamRemoteStorage()->GetFileCount();
 	int32_t fileSize;
 
@@ -170,9 +185,7 @@ bool SessionSteam::getAvailableSaveGames(RefArray< ISaveGame >& outSaveGames) co
 
 bool SessionSteam::requestLeaderboard(const std::wstring& id)
 {
-	std::map< std::wstring, Ref< LeaderboardSteam > >::iterator it = m_leaderboards.find(id);
-	if (it != m_leaderboards.end())
-		return true;
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	if (!SteamUser()->BLoggedOn())
 		return false;
@@ -217,6 +230,8 @@ bool SessionSteam::requestLeaderboard(const std::wstring& id)
 
 bool SessionSteam::update()
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	if (!m_requestedStats)
 	{
 		if (SteamUser()->BLoggedOn())
