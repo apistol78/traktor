@@ -202,6 +202,8 @@ int main(int argc, const char** argv)
 				traktor::log::error << L"Invalid asset guid (" << i << L")" << Endl;
 				return 7;
 			}
+
+			traktor::log::info << L"Traversing root \"" << assetGuid.format() << L"\"..." << Endl;
 			pipelineDepends.addDependency(assetGuid, editor::PdfBuild);
 		}
 	}
@@ -211,7 +213,10 @@ int main(int argc, const char** argv)
 		db::recursiveFindChildInstances(sourceDatabase->getRootGroup(), db::FindInstanceByType(type_of< editor::Assets >()), assetInstances);
 
 		for (RefArray< db::Instance >::iterator i = assetInstances.begin(); i != assetInstances.end(); ++i)
+		{
+			traktor::log::info << L"Traversing root \"" << (*i)->getGuid().format() << L"\"..." << Endl;
 			pipelineDepends.addDependency(*i, editor::PdfBuild);
+		}
 	}
 
 	traktor::log::info << DecreaseIndent;
