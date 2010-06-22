@@ -91,7 +91,8 @@ Ref< FlashMovie > FlashMovieFactory::createMovie(SwfReader* swf)
 	context.movie = movie;
 	context.sprite = movieClip;
 	context.frame = new FlashFrame();
-	for (;;)
+
+	for (bool going = true; going; )
 	{
 		swf->enterScope();
 
@@ -112,12 +113,14 @@ Ref< FlashMovie > FlashMovieFactory::createMovie(SwfReader* swf)
 			if (uint32_t(swf->getBitReader().getStream()->tell()) < context.tagEndPosition)
 			{
 				log::debug << L"Read too few bytes (" << context.tagEndPosition - swf->getBitReader().getStream()->tell() << L" left) in tag " << int32_t(tag->id) << Endl;
-				swf->getBitReader().getStream()->seek(IStream::SeekSet, context.tagEndPosition);
+				if (swf->getBitReader().getStream()->seek(IStream::SeekSet, context.tagEndPosition) < 0)
+					going = false;
 			}
 			else if (uint32_t(swf->getBitReader().getStream()->tell()) > context.tagEndPosition)
 			{
 				log::error << L"Malformed SWF; read too many bytes (" << swf->getBitReader().getStream()->tell() - context.tagEndPosition << L") in tag " << int32_t(tag->id) << Endl;
-				swf->getBitReader().getStream()->seek(IStream::SeekSet, context.tagEndPosition);
+				if (swf->getBitReader().getStream()->seek(IStream::SeekSet, context.tagEndPosition) < 0)
+					going = false;
 			}
 		}
 		else
