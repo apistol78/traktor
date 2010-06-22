@@ -3,6 +3,7 @@
 
 #include <list>
 #include <map>
+#include "Core/Thread/Semaphore.h"
 #include "Online/ISession.h"
 
 namespace traktor
@@ -51,6 +52,7 @@ public:
 	STEAM_CALLBACK(SessionSteam, OnAchievementStored, UserAchievementStored_t, m_callbackAchievementStored);
 
 private:
+	mutable Semaphore m_lock;
 	Ref< CurrentUserSteam > m_user;
 	std::list< std::wstring > m_pendingLeaderboards;
 	std::map< std::wstring, Ref< LeaderboardSteam > > m_leaderboards;
