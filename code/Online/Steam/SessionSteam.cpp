@@ -134,6 +134,9 @@ bool SessionSteam::setStatValue(const std::wstring& statId, float value)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
+	if (!m_receivedStats)
+		return false;
+
 	if (!SteamUserStats()->SetStat(wstombs(statId).c_str(), value))
 		return false;
 
@@ -144,6 +147,10 @@ bool SessionSteam::setStatValue(const std::wstring& statId, float value)
 bool SessionSteam::getStatValue(const std::wstring& statId, float& outValue)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
+	if (!m_receivedStats)
+		return false;
+
 	return SteamUserStats()->GetStat(wstombs(statId).c_str(), &outValue);
 }
 
@@ -232,6 +239,7 @@ bool SessionSteam::update()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
+	// Request stats; do once at first update.
 	if (!m_requestedStats)
 	{
 		if (SteamUser()->BLoggedOn())
@@ -241,32 +249,40 @@ bool SessionSteam::update()
 		}
 	}
 
-	if (m_storeStats)
+	if (m_receivedStats)
 	{
-		m_storedStats = false;
-		if (SteamUser()->BLoggedOn())
+		// Store modified stats; only if no pending leaderboard request.
+		if (m_storeStats && !m_requestedLeaderboard)
 		{
-			if (SteamUserStats()->StoreStats())
-				m_storeStats = false;
+			m_storedStats = false;
+			if (SteamUser()->BLoggedOn())
+			{
+				if (SteamUserStats()->StoreStats())
+					m_storeStats = false;
+			}
 		}
-	}
-
-	if (!m_pendingLeaderboards.empty() && !m_requestedLeaderboard)
-	{
-		std::wstring id = m_pendingLeaderboards.back();
-		log::info << L"Requesting leaderboard \"" << id << L"\"..." << Endl;
-
-		SteamAPICall_t call = SteamUserStats()->FindOrCreateLeaderboard(
-			wstombs(id).c_str(),
-			k_ELeaderboardSortMethodDescending,
-			k_ELeaderboardDisplayTypeNumeric
-		);
-		if (call != 0)
+		
+		// Request another leaderboard; only when not storing stats.
+		if (m_storedStats && !m_requestedLeaderboard)
 		{
-			m_pendingLeaderboards.pop_back();
-			m_requestedLeaderboard = true;
-			m_receivedLeaderboard = false;
-			m_callbackFindLeaderboard.Set(call, this, &SessionSteam::OnLeaderboardFind);
+			if (!m_pendingLeaderboards.empty())
+			{
+				std::wstring id = m_pendingLeaderboards.back();
+				log::info << L"Requesting leaderboard \"" << id << L"\"..." << Endl;
+
+				SteamAPICall_t call = SteamUserStats()->FindOrCreateLeaderboard(
+					wstombs(id).c_str(),
+					k_ELeaderboardSortMethodDescending,
+					k_ELeaderboardDisplayTypeNumeric
+				);
+				if (call != 0)
+				{
+					m_pendingLeaderboards.pop_back();
+					m_requestedLeaderboard = true;
+					m_receivedLeaderboard = false;
+					m_callbackFindLeaderboard.Set(call, this, &SessionSteam::OnLeaderboardFind);
+				}
+			}
 		}
 	}
 
@@ -303,6 +319,8 @@ void SessionSteam::OnAchievementStored(UserAchievementStored_t* pCallback)
 
 void SessionSteam::OnLeaderboardFind(LeaderboardFindResult_t* pCallback, bool bIOFailure)
 {
+	m_callbackFindLeaderboard.Cancel();
+
 	if (pCallback->m_hSteamLeaderboard != 0)
 	{
 		log::debug << L"Steam session event; found leaderboard, requesting rank/score of current player..." << Endl;
@@ -330,6 +348,8 @@ void SessionSteam::OnLeaderboardDownloaded(LeaderboardScoresDownloaded_t* pCallb
 {
 	log::debug << L"Steam session event; got rank/score of current player..." << Endl;
 
+	m_callbackDownloadLeaderboard.Cancel();
+
 	const char* leaderboardId = SteamUserStats()->GetLeaderboardName(pCallback->m_hSteamLeaderboard);
 	if (!leaderboardId)
 	{
@@ -345,13 +365,15 @@ void SessionSteam::OnLeaderboardDownloaded(LeaderboardScoresDownloaded_t* pCallb
 	if (pCallback->m_cEntryCount > 0)
 		SteamUserStats()->GetDownloadedLeaderboardEntry(pCallback->m_hSteamLeaderboardEntries, 0, &leaderboardEntry, 0, 0);
 
+	Ref< LeaderboardSteam > leaderboard = new LeaderboardSteam(
+		pCallback->m_hSteamLeaderboard,
+		leaderboardEntry.m_nGlobalRank,
+		leaderboardEntry.m_nScore
+	);
+
 	m_leaderboards.insert(std::make_pair(
 		mbstows(leaderboardId),
-		new LeaderboardSteam(
-			pCallback->m_hSteamLeaderboard,
-			leaderboardEntry.m_nGlobalRank,
-			leaderboardEntry.m_nScore
-		)
+		leaderboard
 	));
 
 	m_requestedLeaderboard = false;

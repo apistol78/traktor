@@ -77,6 +77,8 @@ void LeaderboardSteam::OnLeaderboardUploaded(LeaderboardScoreUploaded_t* pCallba
 
 	m_score = pCallback->m_nScore;
 	m_rank = pCallback->m_nGlobalRankNew;
+
+	m_callbackLeaderboardUploaded.Cancel();
 }
 
 	}
