@@ -38,9 +38,7 @@ void writeSamples(void* dest, const float* samples, uint32_t samplesCount, uint3
 	SampleType* write = static_cast< SampleType* >(dest);
 	for (uint32_t i = 0; i < samplesCount; ++i)
 	{
-		float sample = samples[i];
-		sample = max(sample, -1.0f);
-		sample = min(sample,  1.0f);
+		float sample = clamp(samples[i], -1.0f, 1.0f);
 		write[i * writeStride] = SampleTypeTransform::transform(sample);
 	}
 }
@@ -119,7 +117,7 @@ bool SoundDriverDs8::create(const SoundDriverCreateDesc& desc, Ref< ISoundMixer 
 	}
 
 	T_ASSERT (size[1] == 0);
-	memset(ptr[0], 0, size[0]);
+	std::memset(ptr[0], 0, size[0]);
 
 	hr = m_dsBuffer->Unlock(ptr[0], size[0], ptr[1], size[1]);
 	if (FAILED(hr))

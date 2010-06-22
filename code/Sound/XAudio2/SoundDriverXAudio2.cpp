@@ -142,31 +142,12 @@ bool SoundDriverXAudio2::create(const SoundDriverCreateDesc& desc, Ref< ISoundMi
 		return false;
 	}
 
-	UINT32 preferredDevice = 0;
-
-#if 0
-	XAUDIO2_DEVICE_DETAILS deviceDetails;
-	UINT32 deviceCount;
-
-	m_audio->GetDeviceCount(&deviceCount);
-	for (UINT32 i = 0; i < deviceCount; i++)
-	{
-		m_audio->GetDeviceDetails(i, &deviceDetails);
-		if (deviceDetails.OutputFormat.Format.nChannels >= desc.hwChannels)
-		{
-			log::debug << L"Found preferred XAudio2 device \"" << deviceDetails.DisplayName << L"\"" << Endl;
-			preferredDevice = i;
-			break;
-		}
-	}
-#endif
-
 	hr = m_audio->CreateMasteringVoice(
 		&m_masteringVoice,
-		desc.hwChannels,
+		XAUDIO2_DEFAULT_CHANNELS,
 		XAUDIO2_DEFAULT_SAMPLERATE,
 		0,
-		preferredDevice,
+		0,
 		NULL
 	);
 	if (FAILED(hr))
