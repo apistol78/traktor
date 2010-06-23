@@ -29,7 +29,6 @@ SessionSteam::SessionSteam(CurrentUserSteam* user, const std::set< std::wstring 
 ,	m_storeStats(false)
 ,	m_storedStats(false)
 ,	m_requestedLeaderboard(false)
-,	m_receivedLeaderboard(false)
 ,	m_destroyed(false)
 {
 }
@@ -119,14 +118,13 @@ Ref< ILeaderboard > SessionSteam::getLeaderboard(const std::wstring& id)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
+	if (!m_pendingLeaderboards.empty())
+	{
+		log::error << L"Unable to get leaderboard \"" << id << L"\"; pending leaderboards not received yet" << Endl;
+		return false;
+	}
+
 	std::map< std::wstring, Ref< LeaderboardSteam > >::iterator it = m_leaderboards.find(id);
-	if (it != m_leaderboards.end())
-		return it->second;
-
-	if (!requestLeaderboard(id))
-		return 0;
-
-	it = m_leaderboards.find(id);
 	return it != m_leaderboards.end() ? it->second : 0;
 }
 
@@ -190,51 +188,6 @@ bool SessionSteam::getAvailableSaveGames(RefArray< ISaveGame >& outSaveGames) co
 	return true;
 }
 
-bool SessionSteam::requestLeaderboard(const std::wstring& id)
-{
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-
-	if (!SteamUser()->BLoggedOn())
-		return false;
-
-	// Ensure pending request is processed first.
-	if (m_requestedLeaderboard)
-	{
-		for (int32_t tries = 1000; tries >= 0; --tries)
-		{
-			SteamAPI_RunCallbacks();
-			if (m_receivedLeaderboard)
-				break;
-
-			ThreadManager::getInstance().getCurrentThread()->sleep(10);
-		}
-
-		if (!m_receivedLeaderboard)
-			return false;
-
-		T_ASSERT (!m_requestedLeaderboard);
-
-		std::map< std::wstring, Ref< LeaderboardSteam > >::iterator it = m_leaderboards.find(id);
-		if (it != m_leaderboards.end())
-			return true;
-	}
-
-	// Issue leaderboard request.
-	SteamAPICall_t call = SteamUserStats()->FindOrCreateLeaderboard(
-		wstombs(id).c_str(),
-		k_ELeaderboardSortMethodDescending,
-		k_ELeaderboardDisplayTypeNumeric
-	);
-	if (call == 0)
-		return false;
-
-	m_requestedLeaderboard = true;
-	m_receivedLeaderboard = false;
-	m_callbackFindLeaderboard.Set(call, this, &SessionSteam::OnLeaderboardFind);
-
-	return true;
-}
-
 bool SessionSteam::update()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
@@ -279,7 +232,6 @@ bool SessionSteam::update()
 				{
 					m_pendingLeaderboards.pop_back();
 					m_requestedLeaderboard = true;
-					m_receivedLeaderboard = false;
 					m_callbackFindLeaderboard.Set(call, this, &SessionSteam::OnLeaderboardFind);
 				}
 			}
@@ -291,6 +243,8 @@ bool SessionSteam::update()
 
 void SessionSteam::OnUserStatsReceived(UserStatsReceived_t* pCallback)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	if (pCallback->m_eResult == k_EResultOK)
 	{
 		log::debug << L"Steam session event; user stats received" << Endl;
@@ -302,6 +256,8 @@ void SessionSteam::OnUserStatsReceived(UserStatsReceived_t* pCallback)
 
 void SessionSteam::OnUserStatsStored(UserStatsStored_t* pCallback)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	if (pCallback->m_eResult == k_EResultOK)
 	{
 		log::debug << L"Steam session event; user stats stored" << Endl;
@@ -313,12 +269,16 @@ void SessionSteam::OnUserStatsStored(UserStatsStored_t* pCallback)
 
 void SessionSteam::OnAchievementStored(UserAchievementStored_t* pCallback)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	log::debug << L"Steam session event; achievement stored" << Endl;
 	m_storedStats = true;
 }
 
 void SessionSteam::OnLeaderboardFind(LeaderboardFindResult_t* pCallback, bool bIOFailure)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	m_callbackFindLeaderboard.Cancel();
 
 	if (pCallback->m_hSteamLeaderboard != 0)
@@ -330,7 +290,6 @@ void SessionSteam::OnLeaderboardFind(LeaderboardFindResult_t* pCallback, bool bI
 		{
 			log::error << L"Steam session event; unable to request rank/score" << Endl;
 			m_requestedLeaderboard = false;
-			m_receivedLeaderboard = true;
 			return;
 		}
 
@@ -340,12 +299,13 @@ void SessionSteam::OnLeaderboardFind(LeaderboardFindResult_t* pCallback, bool bI
 	{
 		log::error << L"Steam session event; didn't find requested leaderboard" << Endl;
 		m_requestedLeaderboard = false;
-		m_receivedLeaderboard = true;
 	}
 }
 
 void SessionSteam::OnLeaderboardDownloaded(LeaderboardScoresDownloaded_t* pCallback, bool bIOFailure)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	log::debug << L"Steam session event; got rank/score of current player..." << Endl;
 
 	m_callbackDownloadLeaderboard.Cancel();
@@ -354,7 +314,6 @@ void SessionSteam::OnLeaderboardDownloaded(LeaderboardScoresDownloaded_t* pCallb
 	if (!leaderboardId)
 	{
 		m_requestedLeaderboard = false;
-		m_receivedLeaderboard = true;
 		return;
 	}
 
@@ -377,7 +336,6 @@ void SessionSteam::OnLeaderboardDownloaded(LeaderboardScoresDownloaded_t* pCallb
 	));
 
 	m_requestedLeaderboard = false;
-	m_receivedLeaderboard = true;
 }
 
 	}

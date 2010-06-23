@@ -1,14 +1,15 @@
 #ifndef traktor_input_InputDriverWin32_H
 #define traktor_input_InputDriverWin32_H
 
+#include "Core/RefArray.h"
 #include "Input/IInputDriver.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_INPUT_WIN32_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -24,7 +25,7 @@ class T_DLLCLASS InputDriverWin32 : public IInputDriver
 	T_RTTI_CLASS;
 
 public:
-	InputDriverWin32();
+	InputDriverWin32(uint32_t inputCategories);
 
 	virtual int getDeviceCount();
 
@@ -35,6 +36,7 @@ public:
 private:
 	Ref< KeyboardDeviceWin32 > m_keyboardDevice;
 	Ref< MouseDeviceWin32 > m_mouseDevice;
+	RefArray< IInputDevice > m_devices;
 };
 
 	}
