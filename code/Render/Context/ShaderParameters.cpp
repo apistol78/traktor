@@ -194,6 +194,10 @@ void ShaderParameters::setMatrixArrayParameter(handle_t handle, const Matrix44* 
 void ShaderParameters::setTextureParameter(handle_t handle, ITexture* texture)
 {
 	T_ASSERT (m_parameterLast);
+	T_ASSERT (texture);
+
+	T_SAFE_ADDREF(texture);
+
 	align< handle_t >(m_parameterLast);
 	write< handle_t >(m_parameterLast, handle);
 	write< int >(m_parameterLast, PmtTexture);
@@ -265,7 +269,11 @@ void ShaderParameters::fixup(Shader* shader) const
 			break;
 
 		case PmtTexture:
-			shader->setTextureParameter(handle, read< ITexture* >(parameter));
+			{
+				ITexture* texture = read< ITexture* >(parameter);
+				shader->setTextureParameter(handle, texture);
+				T_SAFE_RELEASE(texture);
+			}
 			break;
 
 		case PmtStencilReference:

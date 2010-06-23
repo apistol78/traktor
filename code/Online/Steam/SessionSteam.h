@@ -41,8 +41,6 @@ public:
 
 	virtual bool getAvailableSaveGames(RefArray< ISaveGame >& outSaveGames) const;
 
-	bool requestLeaderboard(const std::wstring& id);
-
 	bool update();
 
 	STEAM_CALLBACK(SessionSteam, OnUserStatsReceived, UserStatsReceived_t, m_callbackUserStatsReceived);
@@ -61,7 +59,6 @@ private:
 	bool m_storeStats;
 	bool m_storedStats;
 	bool m_requestedLeaderboard;
-	bool m_receivedLeaderboard;
 	bool m_destroyed;
 	CCallResult< SessionSteam, LeaderboardFindResult_t > m_callbackFindLeaderboard;
 	CCallResult< SessionSteam, LeaderboardScoresDownloaded_t > m_callbackDownloadLeaderboard;

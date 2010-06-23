@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_INPUT_WIN32_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -51,6 +51,14 @@ private:
 	friend class InputDriverWin32;
 
 	bool m_connected;
+	HWND m_hWndActive;
+	POINT m_cursorPosition;
+	bool m_haveCursorPosition;
+	float m_axisX;
+	float m_axisY;
+	float m_button1;
+	float m_button2;
+	float m_button3;
 };
 
 	}
