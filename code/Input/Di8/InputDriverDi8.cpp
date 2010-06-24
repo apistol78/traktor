@@ -1,3 +1,5 @@
+#include "Core/Log/Log.h"
+#include "Core/Misc/TString.h"
 #include "Input/Di8/InputDriverDi8.h"
 #include "Input/Di8/InputDeviceDi8.h"
 
@@ -5,6 +7,38 @@ namespace traktor
 {
 	namespace input
 	{
+		namespace
+		{
+
+BOOL CALLBACK enumWindowProc(HWND hWnd, LPARAM lParam)
+{
+	HWND* outHwnd = (HWND*)lParam;
+
+	DWORD dwProcessId;
+	GetWindowThreadProcessId(hWnd, &dwProcessId);
+
+	if (IsWindowVisible(hWnd) && GetCurrentProcessId() == dwProcessId)
+	{
+#if defined(_DEBUG)
+		TCHAR text[256];
+		GetWindowText(hWnd, text, sizeof_array(text));
+		log::debug << L"Using \"" << tstows(text) << L"\" as device window" << Endl;
+#endif
+		*outHwnd = hWnd;
+		return FALSE;
+	}
+
+	return TRUE;
+}
+
+HWND getMyProcessWindow()
+{
+	HWND hWnd = NULL;
+	EnumWindows(enumWindowProc, (LPARAM)&hWnd);
+	return hWnd;
+}
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.InputDriverDi8", InputDriverDi8, IInputDriver)
 
@@ -26,19 +60,28 @@ bool InputDriverDi8::create(void* nativeWindowHandle, uint32_t inputCategories)
 
 	if (!(m_hWnd = (HWND)nativeWindowHandle))
 	{
-		if (!(m_hWnd = GetForegroundWindow()))
+		if (!(m_hWnd = getMyProcessWindow()))
+		{
+			log::error << L"Unable to create input driver; no window handle" << Endl;
 			return false;
+		}
 	}
 
 	hr = DirectInput8Create((HINSTANCE)GetModuleHandle(NULL), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&m_directInput.getAssign(), NULL); 
 	if (FAILED(hr))
+	{
+		log::error << L"Unable to create input driver; DirectInput8Create failed, hr = " << int32_t(hr) << Endl;
 		return false;
+	}
 
 	m_inputCategories = inputCategories;
 
 	hr = m_directInput->EnumDevices(DI8DEVCLASS_ALL, enumDevicesCallback, this, DIEDFL_ATTACHEDONLY);
 	if (FAILED(hr))
+	{
+		log::error << L"Unable to create input driver; enumerate devices failed" << Endl;
 		return false;
+	}
 
 	return true;
 }
