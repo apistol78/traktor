@@ -190,15 +190,50 @@ bool SoundDriverXAudio2::create(const SoundDriverCreateDesc& desc, Ref< ISoundMi
 
 	m_voiceCallback = new StreamingVoiceContext(m_eventNotify);
 
-	hr = m_audio->CreateSourceVoice(&m_sourceVoice, (WAVEFORMATEX*)&m_wfx, 0, XAUDIO2_DEFAULT_FREQ_RATIO, m_voiceCallback, NULL, NULL);
+	hr = m_audio->CreateSourceVoice(
+		&m_sourceVoice,
+		(WAVEFORMATEX*)&m_wfx,
+		0,
+		XAUDIO2_DEFAULT_FREQ_RATIO,
+		m_voiceCallback,
+		NULL,
+		NULL
+	);
 	if (FAILED(hr))
 	{
-		log::error << L"Unable to create XAudio2 sound driver; CreateSourceVoice failed (" << int32_t(hr) << L")" << Endl;
-		return false;
+		// Unable to create source voice with extensible wave format; try with default.
+		log::warning << L"CreateSourceVoice failed (" << int32_t(hr) << L"); trying without extensible wave format..." << Endl;
+
+		std::memset(&m_wfx, 0, sizeof(m_wfx));
+		m_wfx.Format.cbSize = sizeof(WAVEFORMATEX);
+		m_wfx.Format.wFormatTag = WAVE_FORMAT_PCM;
+		m_wfx.Format.nChannels = desc.hwChannels;
+		m_wfx.Format.nSamplesPerSec = desc.sampleRate;
+		m_wfx.Format.wBitsPerSample = desc.bitsPerSample;
+		m_wfx.Format.nBlockAlign = desc.hwChannels * desc.bitsPerSample / 8;
+		m_wfx.Format.nAvgBytesPerSec = desc.sampleRate * m_wfx.Format.nBlockAlign;
+		m_wfx.Samples.wValidBitsPerSample = desc.bitsPerSample;
+		m_wfx.dwChannelMask = SPEAKER_FRONT_LEFT | SPEAKER_FRONT_RIGHT;
+		m_wfx.SubFormat = KSDATAFORMAT_SUBTYPE_PCM;
+
+		hr = m_audio->CreateSourceVoice(
+			&m_sourceVoice,
+			(WAVEFORMATEX*)&m_wfx,
+			0,
+			XAUDIO2_DEFAULT_FREQ_RATIO,
+			m_voiceCallback,
+			NULL,
+			NULL
+		);
+		if (FAILED(hr))
+		{
+			log::error << L"Unable to create XAudio2 sound driver; CreateSourceVoice failed (" << int32_t(hr) << L")" << Endl;
+			return false;
+		}
 	}
 
 	m_sourceVoice->SetVolume(1.0f);
-	m_sourceVoice->Start(0, 0);
+	m_sourceVoice->Start(0);
 
 	m_bufferSize = desc.frameSamples * desc.hwChannels * desc.bitsPerSample / 8;
 	for (uint32_t i = 0; i < sizeof_array(m_buffers); ++i)
