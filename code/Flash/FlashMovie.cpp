@@ -109,10 +109,39 @@ Ref< FlashSpriteInstance > FlashMovie::createMovieClipInstance(const IActionVM* 
 	Ref< ActionGlobal > global = new ActionGlobal();
 	Ref< ActionContext > context = new ActionContext(vm, this, global);
 	
-	Ref< FlashSpriteInstance > spriteInstance = checked_type_cast< FlashSpriteInstance*, false >(m_movieClip->createInstance(context, 0));
+	Ref< FlashSpriteInstance > spriteInstance = checked_type_cast< FlashSpriteInstance*, false >(
+		m_movieClip->createInstance(context, 0)
+	);
 
 	global->setMember(L"_root", ActionValue(spriteInstance));
 	global->setMember(L"_level0", ActionValue(spriteInstance));
+
+	return spriteInstance;
+}
+
+Ref< FlashSpriteInstance > FlashMovie::createExternalMovieClipInstance(FlashSpriteInstance* containerInstance) const
+{
+	// Create context; share VM and global.
+	Ref< ActionContext > outerContext = containerInstance->getContext();
+	Ref< ActionContext > context = new ActionContext(
+		outerContext->getVM(),
+		this,
+		outerContext->getGlobal()
+	);
+
+	// Create instance of external movie.
+	Ref< FlashSpriteInstance > spriteInstance = checked_type_cast< FlashSpriteInstance*, false >(
+		m_movieClip->createInstance(context, containerInstance)
+	);
+
+	// Add instance to container's display list.
+	FlashDisplayList& displayList = containerInstance->getDisplayList();
+	displayList.showObject(
+		0,
+		0,
+		spriteInstance,
+		true
+	);
 
 	return spriteInstance;
 }

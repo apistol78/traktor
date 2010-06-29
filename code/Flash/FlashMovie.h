@@ -61,6 +61,8 @@ public:
 
 	Ref< FlashSpriteInstance > createMovieClipInstance(const IActionVM* vm) const;
 
+	Ref< FlashSpriteInstance > createExternalMovieClipInstance(FlashSpriteInstance* containerInstance) const;
+
 	const std::map< uint16_t, Ref< FlashFont > >& getFonts() const { return m_fonts; }
 
 	const std::map< uint16_t, Ref< FlashBitmap > >& getBitmaps() const { return m_bitmaps; }

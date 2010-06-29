@@ -1,9 +1,12 @@
+#include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Flash/FlashSpriteInstance.h"
 #include "Flash/FlashSprite.h"
 #include "Flash/FlashMovie.h"
+#include "Flash/FlashMovieFactory.h"
 #include "Flash/FlashFrame.h"
+#include "Flash/SwfReader.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Classes/Transform.h"
@@ -439,6 +442,22 @@ void AsMovieClip::MovieClip_lineTo(CallArgs& ca)
 
 void AsMovieClip::MovieClip_loadMovie(CallArgs& ca)
 {
+	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
+
+	std::wstring fileName = ca.args[0].getStringSafe();
+
+	Ref< IStream > file = FileSystem::getInstance().open(fileName, File::FmRead);
+	if (!file)
+		return;
+
+	Ref< SwfReader > swf = new SwfReader(file);
+	Ref< FlashMovie > movie = flash::FlashMovieFactory().createMovie(swf);
+	if (!movie)
+		return;
+
+	Ref< FlashSpriteInstance > externalMovieClipInstance = movie->createExternalMovieClipInstance(
+		movieClipInstance
+	);
 }
 
 void AsMovieClip::MovieClip_loadVariables(CallArgs& ca)
