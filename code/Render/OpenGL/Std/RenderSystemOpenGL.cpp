@@ -215,6 +215,10 @@ uint32_t RenderSystemOpenGL::getDisplayModeCount() const
 
 	return count;
 
+#elif defined(__APPLE__)
+
+	return cglwGetDisplayModeCount();
+
 #else
 	return 0;
 #endif
@@ -237,6 +241,12 @@ DisplayMode RenderSystemOpenGL::getDisplayMode(uint32_t index) const
 	dm.colorBits = (uint16_t)dmgl.dmBitsPerPel;
 	return dm;
 
+#elif defined(__APPLE__)
+
+	DisplayMode dm;
+	cglwGetDisplayMode(index, dm);
+	return dm;
+	
 #else
 	return DisplayMode();
 #endif
@@ -440,6 +450,12 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 	return new RenderViewOpenGL(desc, context, m_resourceContext, m_hWnd);
 
 #elif defined(__APPLE__)
+
+	if (desc.fullscreen)
+	{
+		if (!cglwSetDisplayMode(desc.displayMode))
+			return 0;
+	}
 
 	m_windowHandle = cglwCreateWindow(
 		L"Traktor OpenGL Renderer",

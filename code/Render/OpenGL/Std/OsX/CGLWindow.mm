@@ -7,6 +7,79 @@ namespace traktor
 {
 	namespace render
 	{
+		namespace
+		{
+
+int32_t getDictionaryLong(CFDictionaryRef dict, const void* key)
+{
+	CFNumberRef numberRef = (CFNumberRef)CFDictionaryGetValue(dict, key);
+	if (!numberRef)
+		return 0;
+	
+	long value = 0;
+	CFNumberGetValue(numberRef, kCFNumberLongType, &value);
+	
+	return int32_t(value);
+}
+
+		}
+	
+uint32_t cglwGetDisplayModeCount()
+{
+	CFArrayRef availModes = CGDisplayAvailableModes(kCGDirectMainDisplay);
+	return CFArrayGetCount(availModes);
+}
+
+bool cglwGetDisplayMode(uint32_t index, DisplayMode& outDisplayMode)
+{
+	CFArrayRef availModes = CGDisplayAvailableModes(kCGDirectMainDisplay);
+	if (!availModes)
+		return false;
+	
+	CFDictionaryRef mode = (CFDictionaryRef)CFArrayGetValueAtIndex(availModes, index);
+	if (!mode)
+		return false;
+		
+	outDisplayMode.width = getDictionaryLong(mode, kCGDisplayWidth);
+	outDisplayMode.height = getDictionaryLong(mode, kCGDisplayHeight);
+	outDisplayMode.refreshRate = getDictionaryLong(mode, kCGDisplayRefreshRate);
+	outDisplayMode.colorBits = getDictionaryLong(mode, kCGDisplayBitsPerPixel);
+	
+	return true;
+}
+
+bool cglwSetDisplayMode(const DisplayMode& displayMode)
+{
+	CFDictionaryRef bestMatch = 0;
+	
+	if (displayMode.refreshRate != 0)
+	{
+		bestMatch = CGDisplayBestModeForParametersAndRefreshRate(
+			kCGDirectMainDisplay,
+			displayMode.colorBits,
+			displayMode.width,
+			displayMode.height,
+			displayMode.refreshRate,
+			NULL
+		);
+	}
+	else
+	{
+		bestMatch = CGDisplayBestModeForParameters(
+			kCGDirectMainDisplay,
+			displayMode.colorBits,
+			displayMode.width,
+			displayMode.height,
+			NULL
+		);
+	}
+	
+	if (!bestMatch)
+		return false;
+
+	CGDisplaySwitchToMode(kCGDirectMainDisplay, bestMatch);
+	return true;
+}
 
 void* cglwCreateWindow(const std::wstring& title, uint32_t width, uint32_t height, bool fullscreen)
 {

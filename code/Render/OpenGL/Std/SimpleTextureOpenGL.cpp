@@ -68,12 +68,12 @@ bool SimpleTextureOpenGL::create(const SimpleTextureCreateDesc& desc)
 
 		for (int i = 0; i < desc.mipCount; ++i)
 		{
-			uint32_t width = m_width >> i;
-			uint32_t height = m_height >> i;
+			uint32_t width = getTextureMipSize(m_width, i);
+			uint32_t height = getTextureMipSize(m_height, i);
 
 			if (desc.format >= TfDXT1 && desc.format <= TfDXT5)
 			{
-				uint32_t mipSize = getTextureMipPitch(desc.format, width, height);
+				uint32_t mipPitch = getTextureMipPitch(desc.format, width, height);
 
 				T_OGL_SAFE(glCompressedTexImage2D(
 					GL_TEXTURE_2D,
@@ -82,7 +82,7 @@ bool SimpleTextureOpenGL::create(const SimpleTextureCreateDesc& desc)
 					width,
 					height,
 					0,
-					mipSize,
+					mipPitch,
 					desc.initialData[i].data
 				));
 			}
