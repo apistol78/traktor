@@ -1,5 +1,6 @@
 #include "Core/Log/Log.h"
-#include "Input/OsX/InputDeviceOsX.h"
+#include "Input/OsX/InputDeviceGamepadOsX.h"
+#include "Input/OsX/InputDeviceKeyboardOsX.h"
 #include "Input/OsX/InputDriverOsX.h"
 
 namespace traktor
@@ -48,17 +49,29 @@ bool InputDriverOsX::create()
 {
 	IOHIDManagerRef managerRef = IOHIDManagerCreate(kCFAllocatorDefault, kIOHIDOptionsTypeNone);
 	if (!managerRef)
+	{
+		log::error << L"Unable to create input driver; IOHIDManagerCreate failed" << Endl;
 		return false;
+	}
 	
-	CFDictionaryRef matchingCFDictRef = createMatchingDictionary(kHIDPage_GenericDesktop, kHIDUsage_GD_GamePad);
+	CFDictionaryRef matchingCFDictRef = createMatchingDictionary(
+		kHIDPage_GenericDesktop,
+		//kHIDUsage_GD_GamePad
+		kHIDUsage_GD_Keyboard
+		//kHIDUsage_GD_Keypad
+	);
 	if (!matchingCFDictRef)
+	{
+		log::error << L"Unable to create input driver; failed to create matching dictionary" << Endl;
 		return false;
+	}
 
 	IOHIDManagerSetDeviceMatching(managerRef, matchingCFDictRef);
 	IOHIDManagerRegisterDeviceMatchingCallback(managerRef, callbackDeviceMatch, this);
 //	IOHIDManagerRegisterDeviceRemovalCallback(tIOHIDManagerRef, Handle_RemovalCallback, &sSharedStickHandler);
 	IOHIDManagerScheduleWithRunLoop(managerRef, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
 	
+	log::info << L"HID manager initialized successful" << Endl;
 	return true;
 }
 
@@ -87,6 +100,8 @@ IInputDriver::UpdateResult InputDriverOsX::update()
 
 void InputDriverOsX::callbackDeviceMatch(void* inContext, IOReturn inResult, void* inSender, IOHIDDeviceRef inIOHIDDeviceRef)
 {
+	log::info << L"HID device; matching device callback" << Endl;
+
 	InputDriverOsX* this_ = (InputDriverOsX*)inContext;
 	T_ASSERT (this_);
 
@@ -97,7 +112,7 @@ void InputDriverOsX::callbackDeviceMatch(void* inContext, IOReturn inResult, voi
 	if (result != kIOReturnSuccess)
 		return;
 	
-	Ref< InputDeviceOsX > device = new InputDeviceOsX(inIOHIDDeviceRef);
+	Ref< InputDeviceKeyboardOsX > device = new InputDeviceKeyboardOsX(inIOHIDDeviceRef);
 	this_->m_devices.push_back(device);
 	this_->m_devicesChanged = true;
 }

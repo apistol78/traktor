@@ -18,7 +18,7 @@ namespace traktor
 	namespace input
 	{
 	
-class InputDeviceOsX;
+class IInputDevice;
 
 class T_DLLCLASS InputDriverOsX : public IInputDriver
 {
@@ -39,7 +39,7 @@ public:
 	
 private:
 	bool m_devicesChanged;
-	RefArray< InputDeviceOsX > m_devices;
+	RefArray< IInputDevice > m_devices;
 	
 	static void callbackDeviceMatch(void* inContext, IOReturn inResult, void* inSender, IOHIDDeviceRef inIOHIDDeviceRef);
 };
