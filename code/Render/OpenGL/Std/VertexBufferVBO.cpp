@@ -1,5 +1,6 @@
 #include <cstring>
 #include "Core/Log/Log.h"
+#include "Core/Memory/Alloc.h"
 #include "Render/VertexElement.h"
 #include "Render/OpenGL/IContext.h"
 #include "Render/OpenGL/Std/Extensions.h"
@@ -36,13 +37,14 @@ VertexBufferVBO::VertexBufferVBO(IContext* resourceContext, const std::vector< V
 :	VertexBufferOpenGL(bufferSize)
 ,	m_resourceContext(resourceContext)
 ,	m_lock(0)
+,	m_dynamic(dynamic)
 {
 	m_vertexStride = getVertexSize(vertexElements);
 	T_ASSERT (m_vertexStride > 0);
 
 	T_OGL_SAFE(glGenBuffersARB(1, &m_name));
 	T_OGL_SAFE(glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_name));
-	T_OGL_SAFE(glBufferDataARB(GL_ARRAY_BUFFER_ARB, bufferSize, 0, dynamic ? GL_DYNAMIC_DRAW_ARB : GL_STATIC_DRAW_ARB));
+	T_OGL_SAFE(glBufferDataARB(GL_ARRAY_BUFFER_ARB, bufferSize, 0, m_dynamic ? GL_DYNAMIC_DRAW_ARB : GL_STATIC_DRAW_ARB));
 
 	std::memset(m_attributeDesc, 0, sizeof(m_attributeDesc));
 
@@ -157,19 +159,14 @@ void VertexBufferVBO::destroy()
 void* VertexBufferVBO::lock()
 {
 	T_ASSERT_M(!m_lock, L"Vertex buffer already locked");
-	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
-	T_OGL_SAFE(glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_name));
-	m_lock = static_cast< uint8_t* >(glMapBufferARB(GL_ARRAY_BUFFER_ARB, GL_WRITE_ONLY_ARB));
+	m_lock = (uint8_t*)Alloc::acquireAlign(getBufferSize(), 16);
 	return m_lock;
 }
 
 void* VertexBufferVBO::lock(uint32_t vertexOffset, uint32_t vertexCount)
 {
-	T_ASSERT_M(!m_lock, L"Vertex buffer already locked");
-	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
-	T_OGL_SAFE(glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_name));
-	m_lock = static_cast< uint8_t* >(glMapBufferARB(GL_ARRAY_BUFFER_ARB, GL_WRITE_ONLY_ARB));
-	return m_lock ? (m_lock + vertexOffset * m_vertexStride) : 0;
+	T_FATAL_ERROR;
+	return 0;
 }
 
 void VertexBufferVBO::unlock()
@@ -178,9 +175,11 @@ void VertexBufferVBO::unlock()
 	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
 
 	T_OGL_SAFE(glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_name));
-	T_OGL_SAFE(glUnmapBufferARB(GL_ARRAY_BUFFER_ARB));
+	T_OGL_SAFE(glBufferDataARB(GL_ARRAY_BUFFER_ARB, getBufferSize(), m_lock, m_dynamic ? GL_DYNAMIC_DRAW_ARB : GL_STATIC_DRAW_ARB));
 
+	Alloc::freeAlign(m_lock);
 	m_lock = 0;
+	
 	setContentValid(true);
 }
 

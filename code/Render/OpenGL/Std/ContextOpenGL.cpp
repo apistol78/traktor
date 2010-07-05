@@ -1,8 +1,9 @@
-#include "Render/OpenGL/Std/ContextOpenGL.h"
-#include "Render/OpenGL/Std/Extensions.h"
 #include "Core/RefArray.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/Adler32.h"
+#include "Core/Thread/Acquire.h"
+#include "Render/OpenGL/Std/ContextOpenGL.h"
+#include "Render/OpenGL/Std/Extensions.h"
 
 #if defined(__APPLE__)
 #	include "Render/OpenGL/Std/OsX/CGLWrapper.h"
@@ -307,11 +308,13 @@ void ContextOpenGL::callStateList(GLuint stateList)
 
 void ContextOpenGL::deleteResource(IDeleteCallback* callback)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	m_deleteResources.push_back(callback);
 }
 
 void ContextOpenGL::deleteResources()
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	for (std::vector< IDeleteCallback* >::iterator i = m_deleteResources.begin(); i != m_deleteResources.end(); ++i)
 		(*i)->deleteResource();
 	m_deleteResources.resize(0);
