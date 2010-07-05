@@ -55,6 +55,7 @@ private:
 	GLuint m_vertexStride;
 	AttributeDesc m_attributeDesc[T_OGL_MAX_USAGE_INDEX];
 	uint8_t* m_lock;
+	bool m_dynamic;
 };
 
 	}
