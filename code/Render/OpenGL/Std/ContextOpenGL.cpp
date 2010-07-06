@@ -33,14 +33,16 @@ ContextOpenGL::ContextOpenGL(HWND hWnd, HDC hDC, HGLRC hRC)
 ,	m_currentStateList(0)
 ,	m_width(0)
 ,	m_height(0)
+,	m_fullscreen(false)
 
 #elif defined(__APPLE__)
 
-ContextOpenGL::ContextOpenGL(void* context)
+ContextOpenGL::ContextOpenGL(void* context, bool fullscreen)
 :	m_context(context)
 ,	m_currentStateList(0)
 ,	m_width(0)
 ,	m_height(0)
+,	m_fullscreen(fullscreen)
 
 #else	// LINUX
 
@@ -51,6 +53,7 @@ ContextOpenGL::ContextOpenGL(Display* display, Window window, GLXContext context
 ,	m_currentStateList(0)
 ,	m_width(0)
 ,	m_height(0)
+,	m_fullscreen(false)
 
 #endif
 {
@@ -140,6 +143,11 @@ int32_t ContextOpenGL::getWidth() const
 int32_t ContextOpenGL::getHeight() const
 {
 	return m_height;
+}
+
+bool ContextOpenGL::isFullScreen() const
+{
+	return m_fullscreen;
 }
 
 bool ContextOpenGL::enter()

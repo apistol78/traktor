@@ -90,25 +90,38 @@ void RenderViewOpenGL::close()
 
 bool RenderViewOpenGL::reset(const RenderViewDefaultDesc& desc)
 {
-	return false;
+	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
+
+	safeDestroy(m_primaryTarget);
+
+	// \fixme Resize window
+
+	m_context->update();
+
+	// Re-create primary FBO target.
+	m_primaryTargetDesc.width = m_context->getWidth();
+	m_primaryTargetDesc.height = m_context->getHeight();
+
+	m_primaryTarget = new RenderTargetSetOpenGL(m_context);
+	m_primaryTarget->create(m_primaryTargetDesc);
+
+	return true;
 }
 
 void RenderViewOpenGL::resize(int32_t width, int32_t height)
 {
+	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
+
 	safeDestroy(m_primaryTarget);
 
 	m_context->update();
 
 	// Re-create primary FBO target.
-	{
-		T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
+	m_primaryTargetDesc.width = m_context->getWidth();
+	m_primaryTargetDesc.height = m_context->getHeight();
 
-		m_primaryTargetDesc.width = m_context->getWidth();
-		m_primaryTargetDesc.height = m_context->getHeight();
-
-		m_primaryTarget = new RenderTargetSetOpenGL(m_context);
-		m_primaryTarget->create(m_primaryTargetDesc);
-	}
+	m_primaryTarget = new RenderTargetSetOpenGL(m_context);
+	m_primaryTarget->create(m_primaryTargetDesc);
 }
 
 int RenderViewOpenGL::getWidth() const
@@ -128,7 +141,7 @@ bool RenderViewOpenGL::isActive() const
 
 bool RenderViewOpenGL::isFullScreen() const
 {
-	return false;
+	return m_context->isFullScreen();
 }
 
 void RenderViewOpenGL::setViewport(const Viewport& viewport)
