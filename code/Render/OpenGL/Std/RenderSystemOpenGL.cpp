@@ -136,7 +136,7 @@ bool RenderSystemOpenGL::create(const RenderSystemCreateDesc& desc)
 #elif defined(__APPLE__)
 
 	void* resourceContext = cglwCreateContext(0, 0, 0, 0, 0);
-	m_resourceContext = new ContextOpenGL(resourceContext);
+	m_resourceContext = new ContextOpenGL(resourceContext, false);
 
 #else	// LINUX
 
@@ -267,6 +267,12 @@ DisplayMode RenderSystemOpenGL::getCurrentDisplayMode() const
 	dm.height = dmgl.dmPelsHeight;
 	dm.refreshRate = (uint16_t)dmgl.dmDisplayFrequency;
 	dm.colorBits = (uint16_t)dmgl.dmBitsPerPel;
+	return dm;
+
+#elif defined(__APPLE__)
+
+	DisplayMode dm;
+	cglwGetCurrentDisplayMode(dm);
 	return dm;
 
 #else
@@ -479,7 +485,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 	if (!glcontext)
 		return 0;
 
-	Ref< ContextOpenGL > context = new ContextOpenGL(glcontext);
+	Ref< ContextOpenGL > context = new ContextOpenGL(glcontext, desc.fullscreen);
 
 	return new RenderViewOpenGL(desc, context, m_resourceContext);
 
@@ -553,7 +559,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewEmbedded
 	if (!glcontext)
 		return 0;
 
-	Ref< ContextOpenGL > context = new ContextOpenGL(glcontext);
+	Ref< ContextOpenGL > context = new ContextOpenGL(glcontext, false);
 
 	return new RenderViewOpenGL(desc, context, m_resourceContext);
 

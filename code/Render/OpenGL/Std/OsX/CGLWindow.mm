@@ -81,6 +81,20 @@ bool cglwSetDisplayMode(const DisplayMode& displayMode)
 	return true;
 }
 
+bool cglwGetCurrentDisplayMode(DisplayMode& outDisplayMode)
+{
+	CFDictionaryRef mode = CGDisplayCurrentMode(kCGDirectMainDisplay);
+//	if (!mode)
+//		return false;
+	
+	outDisplayMode.width = getDictionaryLong(mode, kCGDisplayWidth);
+	outDisplayMode.height = getDictionaryLong(mode, kCGDisplayHeight);
+	outDisplayMode.refreshRate = getDictionaryLong(mode, kCGDisplayRefreshRate);
+	outDisplayMode.colorBits = getDictionaryLong(mode, kCGDisplayBitsPerPixel);
+
+	return true;
+}
+
 void* cglwCreateWindow(const std::wstring& title, uint32_t width, uint32_t height, bool fullscreen)
 {
 	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
