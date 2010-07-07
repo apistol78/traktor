@@ -3,12 +3,12 @@
 
 #include "Render/OpenGL/Platform.h"
 
-#if !defined(__APPLE__)
-
 namespace traktor
 {
 	namespace render
 	{
+
+#if !defined(__APPLE__)
 
 /*! \ingroup OGL */
 //@{
@@ -72,13 +72,15 @@ extern PFNGLBLENDEQUATIONEXTPROC glBlendEquationEXT;
 // GL_ARB_texture_compression
 extern PFNGLCOMPRESSEDTEXIMAGE2DPROC glCompressedTexImage2D;
 
+#endif
+
 bool opengl_initialize_extensions();
+
+bool opengl_have_extension(const char* extension);
 
 //@}
 
 	}
 }
-
-#endif
 
 #endif	// traktor_render_Extensions_H
