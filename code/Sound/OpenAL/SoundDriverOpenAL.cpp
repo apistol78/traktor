@@ -1,7 +1,8 @@
 #include <limits>
-#include "Sound/OpenAL/SoundDriverOpenAL.h"
-#include "Core/Thread/ThreadManager.h"
 #include "Core/Thread/Thread.h"
+#include "Core/Thread/ThreadManager.h"
+#include "Core/Timer/Timer.h"
+#include "Sound/OpenAL/SoundDriverOpenAL.h"
 
 namespace traktor
 {
@@ -112,13 +113,17 @@ void SoundDriverOpenAL::destroy()
 
 void SoundDriverOpenAL::wait()
 {
+	ALint processed;
+	Timer timer;
+
 	if (m_submitted < sizeof_array(m_buffers))
 		return;
 
-	// Wait until at least one buffer has been processed by OpenAL.
 	Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
-	ALint processed;
-	for (;;)
+
+	// Wait until at least one buffer has been processed by OpenAL.
+	double timeout = timer.getElapsedTime() + 1.0;
+	while (timer.getElapsedTime() < timeout)
 	{
 		alGetSourcei(m_source, AL_BUFFERS_PROCESSED, &processed);
 		if (processed > 0)
