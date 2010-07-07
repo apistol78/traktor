@@ -67,24 +67,28 @@ PFNGLBLENDEQUATIONEXTPROC glBlendEquationEXT = 0;
 // GL_ARB_texture_compression
 PFNGLCOMPRESSEDTEXIMAGE2DPROC glCompressedTexImage2D = 0;
 
+#endif
+
 bool opengl_initialize_extensions()
 {
-	#define T_WIDEN_X(x) L ## x
-	#define T_WIDEN(x) T_WIDEN_X(x)
+#if !defined(__APPLE__)
 
-#if defined(_WIN32)
-	#define RESOLVE(fp) \
+#	define T_WIDEN_X(x) L ## x
+#	define T_WIDEN(x) T_WIDEN_X(x)
+
+#	if defined(_WIN32)
+#		define RESOLVE(fp) \
 		if (!(*(PROC*)&fp = wglGetProcAddress(#fp))) { \
 			log::error << L"Unable to load OpenGL extensions, \"" << T_WIDEN(#fp) << L"\" failed" << Endl; \
 			return false; \
 		}
-#else	// LINUX
-	#define RESOLVE(fp) \
+#	else	// LINUX
+#		define RESOLVE(fp) \
 		if (!(*(size_t*)&fp = (size_t)glXGetProcAddressARB((const GLubyte*)#fp))) { \
 			log::error << L"Unable to load OpenGL extensions, \"" << T_WIDEN(#fp) << L"\" failed" << Endl; \
 			return false; \
 		}
-#endif
+#	endif
 
 	// GL_ARB_shader_objects
 	// GL_ARB_shading_language_100
@@ -145,10 +149,36 @@ bool opengl_initialize_extensions()
 	// GL_ARB_texture_compression
 	RESOLVE(glCompressedTexImage2D);
 
+#endif
+
 	return true;
 }
 
-#endif
+bool opengl_have_extension(const char* extension)
+{
+	const char* supp = (const char*)glGetString(GL_EXTENSIONS);
+	
+	while (*supp)
+	{
+		const char* end = supp;
+		while (*end && *end != ' ')
+			++end;
+		
+		int len = end - supp;
+		if (
+			len == strlen(extension) &&
+			strncmp(supp, extension, len) == 0
+		)
+			return true;
+		
+		supp = end;
+		
+		while (*supp == ' ')
+			++supp;
+	}
+	
+	return false;
+}
 
 	}
 }
