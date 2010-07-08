@@ -1,4 +1,6 @@
 #include <limits>
+#include "Core/Math/MathConfig.h"
+#include "Core/Math/MathUtils.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Core/Timer/Timer.h"
@@ -10,22 +12,64 @@ namespace traktor
 	{
 		namespace
 		{
-		
+
 template < typename SampleType >
-void writeSamples(
-	void* dest,
-	const float* samples,
-	uint32_t samplesCount,
-	uint32_t writeStride
-)
+struct CastSample
 {
+	SampleType cast(float sample) const
+	{
+		return static_cast< SampleType >(sample * std::numeric_limits< SampleType >::max());
+	}
+};
+
+template < >
+struct CastSample < int8_t >
+{
+	__m128 f;
+
+	CastSample()
+	{
+		static const float T_ALIGN16 c_int8max = std::numeric_limits< int8_t >::max();
+		f = _mm_load_ss(&c_int8max);
+	}
+
+	int8_t cast(float sample) const
+	{
+		__m128 s = _mm_load_ss(&sample);
+		__m128 sf = _mm_mul_ss(s, f);
+		return (int8_t)_mm_cvtt_ss2si(sf);
+	}
+};
+
+template < >
+struct CastSample < int16_t >
+{
+	__m128 f;
+
+	CastSample()
+	{
+		static const float T_ALIGN16 c_int16max = std::numeric_limits< int16_t >::max();
+		f = _mm_load_ss(&c_int16max);
+	}
+
+	int16_t cast(float sample) const
+	{
+		__m128 s = _mm_load_ss(&sample);
+		__m128 sf = _mm_mul_ss(s, f);
+		return (int16_t)_mm_cvtt_ss2si(sf);
+	}
+};
+
+template < typename SampleType >
+void writeSamples(void* dest, const float* samples, uint32_t samplesCount, uint32_t writeStride)
+{
+	CastSample< SampleType > cs;
 	SampleType* write = static_cast< SampleType* >(dest);
 	for (uint32_t i = 0; i < samplesCount; ++i)
 	{
-		float sample = samples[i];
-		sample = std::max< float >(sample, -1.0f);
-		sample = std::min< float >(sample,  1.0f);
-		write[i * writeStride] = static_cast< SampleType >(sample * std::numeric_limits< SampleType >::max());
+		float sample = clamp(*samples++, -1.0f, 1.0f);
+		*write = cs.cast(sample);
+		write += writeStride;
 	}
 }
 
