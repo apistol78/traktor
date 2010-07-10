@@ -129,10 +129,6 @@ void LogView::destroy()
 	warningBuffer->setTarget(m_originalTargets[1]);
 	infoBuffer->setTarget(m_originalTargets[0]);
 
-	delete m_newTargets[2];
-	delete m_newTargets[1];
-	delete m_newTargets[0];
-
 	m_popup->destroy();
 
 	ui::Container::destroy();

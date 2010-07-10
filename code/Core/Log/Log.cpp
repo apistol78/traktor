@@ -93,6 +93,16 @@ LogStream::~LogStream()
 	T_EXCEPTION_GUARD_END
 }
 
+ILogTarget* LogStream::getTarget()
+{
+	return checked_type_cast< LogStreamBuffer* >(getBuffer())->getTarget();
+}
+
+void LogStream::setTarget(ILogTarget* target)
+{
+	checked_type_cast< LogStreamBuffer* >(getBuffer())->setTarget(target);
+}
+
 	namespace log
 	{
 
