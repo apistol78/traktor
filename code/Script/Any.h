@@ -71,8 +71,6 @@ public:
 	Any& operator = (const Any& src);
 
 private:
-	typedef Ref< Object > ref_object_t;
-
 	enum AnyType
 	{
 		AtVoid,
@@ -89,7 +87,7 @@ private:
 		int32_t m_integer;
 		float m_float;
 		wchar_t* m_string;
-		ref_object_t* m_object;
+		Object* m_object;
 	};
 
 	AnyType m_type;

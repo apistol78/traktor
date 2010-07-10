@@ -21,7 +21,7 @@ namespace traktor
 /*! \brief Log target.
  * \ingroup Core
  */
-class ILogTarget
+class T_DLLCLASS ILogTarget : public Object
 {
 public:
 	virtual void log(const std::wstring& str) = 0;
@@ -67,7 +67,7 @@ protected:
 	
 private:
 	ThreadLocal m_buffers;
-	ILogTarget* m_target;
+	Ref< ILogTarget > m_target;
 };
 
 /*! \brief Log stream.
@@ -79,6 +79,10 @@ public:
 	LogStream(ILogTarget* target);
 
 	virtual ~LogStream();
+
+	ILogTarget* getTarget();
+
+	void setTarget(ILogTarget* target);
 };
 	
 	namespace log

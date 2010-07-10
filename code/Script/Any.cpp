@@ -1,7 +1,6 @@
 #include <cstring>
 #include "Script/Any.h"
 #include "Core/Memory/Alloc.h"
-#include "Core/Memory/BlockAllocator.h"
 #include "Core/Misc/String.h"
 #include "Core/Singleton/ISingleton.h"
 #include "Core/Singleton/SingletonManager.h"
@@ -49,64 +48,6 @@ wchar_t* refStringDec(wchar_t* s)
 	return s;
 }
 
-class RefPool : public ISingleton
-{
-public:
-	enum { MaxRefCount = 1024 };
-
-	static RefPool& getInstance()
-	{
-		static RefPool* s_instance = 0;
-		if (!s_instance)
-		{
-			s_instance = new RefPool();
-			SingletonManager::getInstance().add(s_instance);
-		}
-		return *s_instance;
-	}
-
-	Ref< Object >* construct(Object* obj)
-	{
-		void* ptr = m_alloc->alloc();
-		T_FATAL_ASSERT_M (ptr, L"Out of memory");
-
-		return new (ptr) Ref< Object > (obj);
-	}
-
-	void destruct(Ref< Object >* refPtr)
-	{
-		if (refPtr)
-		{
-			refPtr->~Ref< Object >();
-			m_alloc->free(refPtr);
-		}
-	}
-
-protected:
-	RefPool()
-	:	m_pool(0)
-	,	m_alloc(0)
-	{
-		m_pool = Alloc::acquireAlign(MaxRefCount * sizeof(Ref< Object >), 16);
-		m_alloc = new BlockAllocator(m_pool, MaxRefCount, sizeof(Ref< Object >));
-	}
-
-	virtual ~RefPool()
-	{
-		delete m_alloc;
-		Alloc::freeAlign(m_pool);
-	}
-
-	virtual void destroy()
-	{
-		delete this;
-	}
-
-private:
-	void* m_pool;
-	BlockAllocator* m_alloc;
-};
-
 		}
 
 Any::Any()
@@ -120,7 +61,10 @@ Any::Any(const Any& src)
 	if (m_type == AtString)
 		m_data.m_string = refStringInc(src.m_data.m_string);
 	else if (m_type == AtObject)
-		m_data.m_object = RefPool::getInstance().construct(*src.m_data.m_object);
+	{
+		T_SAFE_ADDREF(src.m_data.m_object);
+		m_data.m_object = src.m_data.m_object;
+	}
 	else
 		m_data = src.m_data;
 }
@@ -152,7 +96,8 @@ Any::Any(const std::wstring& value)
 Any::Any(Object* value)
 :	m_type(AtObject)
 {
-	m_data.m_object = RefPool::getInstance().construct(value);
+	T_SAFE_ADDREF(value);
+	m_data.m_object = value;
 }
 
 Any::~Any()
@@ -162,7 +107,7 @@ Any::~Any()
 	if (m_type == AtString)
 		refStringDec(m_data.m_string);
 	else if (m_type == AtObject)
-		RefPool::getInstance().destruct(m_data.m_object);
+		T_SAFE_RELEASE(m_data.m_object);
 
 	T_EXCEPTION_GUARD_END
 }
@@ -180,7 +125,7 @@ bool Any::getBoolean() const
 	case AtString:
 		return parseString< int32_t >(m_data.m_string) != 0;
 	case AtObject:
-		return *m_data.m_object != 0;
+		return m_data.m_object != 0;
 	}
 	return false;
 }
@@ -235,7 +180,7 @@ std::wstring Any::getString() const
 
 Ref< Object > Any::getObject() const
 {
-	return m_type == AtObject ? *m_data.m_object : 0;
+	return m_type == AtObject ? m_data.m_object : 0;
 }
 
 Any& Any::operator = (const Any& src)
@@ -243,7 +188,7 @@ Any& Any::operator = (const Any& src)
 	if (m_type == AtString)
 		refStringDec(m_data.m_string);
 	else if (m_type == AtObject)
-		RefPool::getInstance().destruct(m_data.m_object);
+		T_SAFE_RELEASE(m_data.m_object);
 
 	m_type = src.m_type;
 	m_data = src.m_data;
@@ -251,7 +196,7 @@ Any& Any::operator = (const Any& src)
 	if (m_type == AtString)
 		refStringInc(m_data.m_string);
 	else if (m_type == AtObject)
-		m_data.m_object = RefPool::getInstance().construct(*m_data.m_object);
+		T_SAFE_ADDREF(m_data.m_object);
 
 	return *this;
 }
