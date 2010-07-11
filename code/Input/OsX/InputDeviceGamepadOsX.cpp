@@ -1,5 +1,5 @@
 #include "Core/Log/Log.h"
-#include "Input/OsX/InputDeviceOsX.h"
+#include "Input/OsX/InputDeviceGamepadOsX.h"
 
 namespace traktor
 {
@@ -17,45 +17,45 @@ float adjustDeadZone(float value)
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.input.InputDeviceOsX", InputDeviceOsX, IInputDevice)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.input.InputDeviceGamepadOsX", InputDeviceGamepadOsX, IInputDevice)
 
-InputDeviceOsX::InputDeviceOsX(IOHIDDeviceRef deviceRef)
+InputDeviceGamepadOsX::InputDeviceGamepadOsX(IOHIDDeviceRef deviceRef)
 :	m_deviceRef(deviceRef)
 {
 	resetState();
 }
 
-std::wstring InputDeviceOsX::getName() const
+std::wstring InputDeviceGamepadOsX::getName() const
 {
 	return L"HID Gamepad";
 }
 
-InputCategory InputDeviceOsX::getCategory() const
+InputCategory InputDeviceGamepadOsX::getCategory() const
 {
 	return CtJoystick;
 }
 
-bool InputDeviceOsX::isConnected() const
+bool InputDeviceGamepadOsX::isConnected() const
 {
 	return m_deviceRef != 0;
 }
 
-int InputDeviceOsX::getControlCount()
+int InputDeviceGamepadOsX::getControlCount()
 {
 	return 0;
 }
 
-std::wstring InputDeviceOsX::getControlName(int control)
+std::wstring InputDeviceGamepadOsX::getControlName(int control)
 {
 	return L"";
 }
 
-bool InputDeviceOsX::isControlAnalogue(int control) const
+bool InputDeviceGamepadOsX::isControlAnalogue(int control) const
 {
 	return false;
 }
 
-float InputDeviceOsX::getControlValue(int control)
+float InputDeviceGamepadOsX::getControlValue(int control)
 {
 	if (control >= 0 && control <= 7)
 		return m_button[control] ? 1.0f : 0.0f;
@@ -72,7 +72,7 @@ float InputDeviceOsX::getControlValue(int control)
 	return 0.0f;
 }
 
-bool InputDeviceOsX::getDefaultControl(InputDefaultControlType controlType, int& control) const
+bool InputDeviceGamepadOsX::getDefaultControl(InputDefaultControlType controlType, int& control) const
 {
 	switch (controlType)
 	{
@@ -131,12 +131,12 @@ bool InputDeviceOsX::getDefaultControl(InputDefaultControlType controlType, int&
 	return true;
 }
 
-void InputDeviceOsX::resetState()
+void InputDeviceGamepadOsX::resetState()
 {
 	std::memset(m_button, 0, sizeof(m_button));
 }
 
-void InputDeviceOsX::readState()
+void InputDeviceGamepadOsX::readState()
 {
 	if (!m_deviceRef)
 		return;
@@ -186,12 +186,12 @@ void InputDeviceOsX::readState()
 	}
 }
 
-bool InputDeviceOsX::supportRumble() const
+bool InputDeviceGamepadOsX::supportRumble() const
 {
 	return false;
 }
 
-void InputDeviceOsX::setRumble(const InputRumble& rumble)
+void InputDeviceGamepadOsX::setRumble(const InputRumble& rumble)
 {
 }
 
