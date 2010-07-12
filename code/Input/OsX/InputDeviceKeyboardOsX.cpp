@@ -15,24 +15,46 @@ struct KeyControlMap
 }
 c_keyControlMap[] =
 {
-	{ DtKeyUp, 98 },
-	{ DtKeyDown, 97 },
-	{ DtKeyLeft, 96 },
-	{ DtKeyRight, 95 },
-	{ DtKeyA, 20 },
-	{ DtKeyS, 38 },
-	{ DtKeyW, 42 },
-	{ DtKeyD, 23 },
-	{ DtKeySpace, 60 },
-	{ DtKeyEscape, 57 },
-	{ DtKeyLeftShift, 3 },
-	{ DtKeyLeftControl, 2 },
-	{ DtKeyLeftMenu, 4 },
-	{ DtKeyLeftWin, 5 },
-	{ DtKeyRightShift, 7 },
-	{ DtKeyRightMenu, 8 },
-	{ DtKeyRightWin, 9 },
-	{ DtKeyReturn, 56 }
+	{ DtKeyUp, kHIDUsage_KeyboardUpArrow },
+	{ DtKeyDown, kHIDUsage_KeyboardDownArrow },
+	{ DtKeyLeft, kHIDUsage_KeyboardLeftArrow },
+	{ DtKeyRight, kHIDUsage_KeyboardRightArrow },
+	{ DtKeyA, kHIDUsage_KeyboardA },
+	{ DtKeyB, kHIDUsage_KeyboardB },
+	{ DtKeyC, kHIDUsage_KeyboardC },
+	{ DtKeyD, kHIDUsage_KeyboardD },
+	{ DtKeyE, kHIDUsage_KeyboardE },
+	{ DtKeyF, kHIDUsage_KeyboardF },
+	{ DtKeyG, kHIDUsage_KeyboardG },
+	{ DtKeyH, kHIDUsage_KeyboardH },
+	{ DtKeyI, kHIDUsage_KeyboardI },
+	{ DtKeyJ, kHIDUsage_KeyboardJ },
+	{ DtKeyK, kHIDUsage_KeyboardK },
+	{ DtKeyL, kHIDUsage_KeyboardL },
+	{ DtKeyM, kHIDUsage_KeyboardM },
+	{ DtKeyN, kHIDUsage_KeyboardN },
+	{ DtKeyO, kHIDUsage_KeyboardO },
+	{ DtKeyP, kHIDUsage_KeyboardP },
+	{ DtKeyQ, kHIDUsage_KeyboardQ },
+	{ DtKeyR, kHIDUsage_KeyboardR },
+	{ DtKeyS, kHIDUsage_KeyboardS },
+	{ DtKeyT, kHIDUsage_KeyboardT },
+	{ DtKeyU, kHIDUsage_KeyboardU },
+	{ DtKeyV, kHIDUsage_KeyboardV },
+	{ DtKeyW, kHIDUsage_KeyboardW },
+	{ DtKeyX, kHIDUsage_KeyboardX },
+	{ DtKeyY, kHIDUsage_KeyboardY },
+	{ DtKeyZ, kHIDUsage_KeyboardZ },
+	{ DtKeySpace, kHIDUsage_KeyboardSpacebar },
+	{ DtKeyEscape, kHIDUsage_KeyboardEscape },
+	{ DtKeyLeftShift, kHIDUsage_KeyboardLeftShift },
+	{ DtKeyLeftControl, kHIDUsage_KeyboardLeftControl },
+	{ DtKeyLeftMenu, kHIDUsage_KeyboardMenu },
+	{ DtKeyLeftWin, kHIDUsage_KeyboardLeftAlt },
+	{ DtKeyRightShift, kHIDUsage_KeyboardRightShift },
+	{ DtKeyRightMenu, kHIDUsage_KeyboardMenu },
+	{ DtKeyRightWin, kHIDUsage_KeyboardRightAlt },
+	{ DtKeyReturn, kHIDUsage_KeyboardReturnOrEnter }
 };
 		
 		}
@@ -113,20 +135,16 @@ void InputDeviceKeyboardOsX::readState()
 		if (!e)
 			continue;
 
-		int cookie = (int)IOHIDElementGetCookie(e);
-		
 		IOHIDValueRef valueRef = 0;
 		IOHIDDeviceGetValue(m_deviceRef, e, &valueRef);
 		if (!valueRef)
 			continue;
 			
-		int v = (int)IOHIDValueGetIntegerValue(valueRef);
+		int value = (int)IOHIDValueGetIntegerValue(valueRef);
+		int keycode = (int)IOHIDElementGetUsage(e);
 
-		if (cookie < sizeof_array(m_data))
-			m_data[cookie] = v ? 255 : 0;
-			
-//		if (m_data[cookie])
-//			log::info << L"DOWN " << cookie << Endl;
+		if (keycode < sizeof_array(m_data))
+			m_data[keycode] = value ? 255 : 0;
 	}
 }
 
