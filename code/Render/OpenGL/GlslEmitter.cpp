@@ -758,13 +758,8 @@ void emitSampler(GlslContext& cx, Sampler* node)
 	{
 		GL_REPEAT,
 		GL_REPEAT,
-#if defined(T_OPENGL_ES2)
 		GL_CLAMP_TO_EDGE,
 		GL_CLAMP_TO_EDGE
-#else
-		GL_CLAMP,
-		GL_CLAMP
-#endif
 	};
 
 	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
