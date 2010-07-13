@@ -1,5 +1,6 @@
 #import <Cocoa/Cocoa.h>
 
+#include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
 #include "Render/OpenGL/Std/OsX/CGLWindow.h"
 
@@ -9,6 +10,14 @@ namespace traktor
 	{
 		namespace
 		{
+		
+struct WindowData
+{
+	NSWindow* window;
+	DisplayMode displayMode;
+	bool fullscreen;
+	CFDictionaryRef originalMode;
+};
 
 int32_t getDictionaryLong(CFDictionaryRef dict, const void* key)
 {
@@ -95,7 +104,7 @@ bool cglwGetCurrentDisplayMode(DisplayMode& outDisplayMode)
 	return true;
 }
 
-void* cglwCreateWindow(const std::wstring& title, uint32_t width, uint32_t height, bool fullscreen)
+void* cglwCreateWindow(const std::wstring& title, const DisplayMode& displayMode, bool fullscreen)
 {
 	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 
@@ -105,54 +114,107 @@ void* cglwCreateWindow(const std::wstring& title, uint32_t width, uint32_t heigh
 	std::string mbs = wstombs(title);
 	NSString* titleStr = [[[NSString alloc] initWithCString: mbs.c_str() encoding: NSUTF8StringEncoding] autorelease];
 
-	NSWindow* window = 0;
+	WindowData* windowData = new WindowData();
+	windowData->window = 0;
+	windowData->displayMode = displayMode;
+	windowData->fullscreen = fullscreen;
+	windowData->originalMode = CGDisplayCurrentMode(kCGDirectMainDisplay);
 	
 	if (fullscreen)
 	{
 		CGDisplayCapture(kCGDirectMainDisplay);
+
+		if (!cglwSetDisplayMode(displayMode))
+			return 0;
+	
 		NSInteger windowLevel = CGShieldingWindowLevel();
 
-		NSRect frame = [[NSScreen mainScreen] frame];
-
-		window = [[NSWindow alloc]
-			initWithContentRect: frame
+		windowData->window = [[NSWindow alloc]
+			initWithContentRect: NSMakeRect(0, 0, displayMode.width, displayMode.height)
 			styleMask:NSBorderlessWindowMask
 			backing: NSBackingStoreBuffered
 			defer: YES
 			screen: [NSScreen mainScreen]
 		];
 		
-		[window setLevel: windowLevel];
+		[windowData->window setLevel: windowLevel];
 	}
 	else
 	{
-		window = [[NSWindow alloc]
-			initWithContentRect: NSMakeRect(50, 50, width, height)
+		windowData->window = [[NSWindow alloc]
+			initWithContentRect: NSMakeRect(0, 0, displayMode.width, displayMode.height)
 			styleMask: NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask
 			backing: NSBackingStoreBuffered
 			defer: YES
 		];
 	}
 
-	[window setBackgroundColor: [NSColor blackColor]];
-	[window setAcceptsMouseMovedEvents: YES];
-	[window setTitle: titleStr];
-	[window center];
+	[windowData->window setBackgroundColor: [NSColor blackColor]];
+	[windowData->window setAcceptsMouseMovedEvents: YES];
+	[windowData->window setTitle: titleStr];
+	[windowData->window center];
 	
-	[window makeKeyAndOrderFront: nil];
-	[window makeMainWindow];
+	[windowData->window makeKeyAndOrderFront: nil];
+	[windowData->window makeMainWindow];
 	
-	cglwUpdateWindow(window);
+	cglwUpdateWindow(windowData->window);
 	
 	[pool release];	
 	
-	return window;
+	return windowData;
 }
 
 void cglwDestroyWindow(void* windowHandle)
 {
-	NSWindow* window = (NSWindow*)windowHandle;
-	[window release];
+	WindowData* windowData = static_cast< WindowData* >(windowHandle);
+	
+	if (windowData->fullscreen)
+		CGDisplayRelease(kCGDirectMainDisplay);
+	
+	[windowData->window release];
+	
+	delete windowData;
+}
+
+void cglwSetFullscreen(void* windowHandle, bool fullscreen)
+{
+	WindowData* windowData = static_cast< WindowData* >(windowHandle);
+	
+	if (windowData->fullscreen == fullscreen)
+		return;
+
+	if (fullscreen)
+	{
+		CGDisplayCapture(kCGDirectMainDisplay);
+
+		if (!cglwSetDisplayMode(windowData->displayMode))
+			return;
+
+		NSInteger windowLevel = CGShieldingWindowLevel();
+
+		[windowData->window setFrame: NSMakeRect(0, 0, windowData->displayMode.width, windowData->displayMode.height) display: YES];
+		[windowData->window setStyleMask: NSBorderlessWindowMask];
+		[windowData->window setLevel: windowLevel];
+	}
+	else
+	{
+		CGDisplaySwitchToMode(kCGDirectMainDisplay, windowData->originalMode);
+		CGDisplayRelease(kCGDirectMainDisplay);
+	
+		[windowData->window setLevel: NSNormalWindowLevel];
+		[windowData->window setStyleMask: NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask];
+		[windowData->window center];
+	}
+	
+	cglwUpdateWindow(windowData->window);
+	
+	windowData->fullscreen = fullscreen;
+}
+
+bool cglwIsFullscreen(void* windowHandle)
+{
+	WindowData* windowData = static_cast< WindowData* >(windowHandle);
+	return windowData->fullscreen;
 }
 
 void cglwUpdateWindow(void* windowHandle)
@@ -161,8 +223,18 @@ void cglwUpdateWindow(void* windowHandle)
 	NSEvent* event = [NSApp nextEventMatchingMask: NSAnyEventMask untilDate: nil inMode: NSDefaultRunLoopMode dequeue: YES];
 	if (event != nil)
 	{
-		NSEventType eventType = [event type];
-		if (eventType != NSKeyDown && eventType != NSKeyUp)	// \hack Don't propagate key events as they cause beeps.
+		NSEventType eventType = [event type];		
+		if (eventType == NSKeyDown)
+		{
+			uint32_t keyCode = [event keyCode];
+			log::debug << keyCode << Endl;
+			
+			if (keyCode == 122)	// F1
+				cglwSetFullscreen(windowHandle, true);
+			else if (keyCode == 120)	// F2
+				cglwSetFullscreen(windowHandle, false);
+		}
+		else if (eventType != NSKeyUp)
 		{
 			[NSApp sendEvent: event];
 			[NSApp updateWindows];
@@ -173,8 +245,8 @@ void cglwUpdateWindow(void* windowHandle)
 
 void* cglwGetWindowView(void* windowHandle)
 {
-	NSWindow* window = (NSWindow*)windowHandle;
-	return [window contentView];
+	WindowData* windowData = static_cast< WindowData* >(windowHandle);
+	return [windowData->window contentView];
 }
 	
 	}

@@ -17,9 +17,13 @@ bool cglwSetDisplayMode(const DisplayMode& displayMode);
 
 bool cglwGetCurrentDisplayMode(DisplayMode& outDisplayMode);
 
-void* cglwCreateWindow(const std::wstring& title, uint32_t width, uint32_t height, bool fullscreen);
+void* cglwCreateWindow(const std::wstring& title, const DisplayMode& displayMode, bool fullscreen);
 
 void cglwDestroyWindow(void* windowHandle);
+
+void cglwSetFullscreen(void* windowHandle, bool fullscreen);
+
+bool cglwIsFullscreen(void* windowHandle);
 
 void cglwUpdateWindow(void* windowHandle);
 
