@@ -194,6 +194,12 @@ float InputDeviceDi8::getControlValue(int control)
 			case DtThumbRightY:
 				return adjustDeadZone((state->lRz - 32767.0f) / 32767.0f);
 
+			case DtAxisX:
+				return adjustDeadZone((state->lRx - 32767.0f) / 32767.0f);
+
+			case DtAxisY:
+				return adjustDeadZone((state->lRy - 32767.0f) / 32767.0f);
+
 			case DtButton1:
 				return ((state->rgbButtons[1] & 0x80) != 0) ? 1.0f : 0.0f;
 
