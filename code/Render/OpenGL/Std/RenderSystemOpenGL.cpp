@@ -480,7 +480,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 
 	Ref< ContextOpenGL > context = new ContextOpenGL(glcontext, desc.fullscreen);
 
-	return new RenderViewOpenGL(desc, context, m_resourceContext);
+	return new RenderViewOpenGL(desc, context, m_resourceContext, m_windowHandle);
 
 #else
 	return 0;
@@ -554,7 +554,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewEmbedded
 
 	Ref< ContextOpenGL > context = new ContextOpenGL(glcontext, false);
 
-	return new RenderViewOpenGL(desc, context, m_resourceContext);
+	return new RenderViewOpenGL(desc, context, m_resourceContext, 0);
 
 #else	// LINUX
 

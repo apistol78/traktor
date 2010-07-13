@@ -10,6 +10,10 @@
 #include "Render/OpenGL/Std/RenderTargetSetOpenGL.h"
 #include "Render/OpenGL/Std/RenderTargetOpenGL.h"
 
+#if defined(__APPLE__)
+#	include "Render/OpenGL/Std/OsX/CGLWindow.h"
+#endif
+
 namespace traktor
 {
 	namespace render
@@ -34,10 +38,12 @@ RenderViewOpenGL::RenderViewOpenGL(
 RenderViewOpenGL::RenderViewOpenGL(
 	const RenderViewDesc desc,
 	ContextOpenGL* context,
-	ContextOpenGL* resourceContext
+	ContextOpenGL* resourceContext,
+	void* windowHandle
 )
 :	m_context(context)
 ,	m_resourceContext(resourceContext)
+,	m_windowHandle(windowHandle)
 ,	m_currentDirty(true)
 
 #else
@@ -90,11 +96,18 @@ void RenderViewOpenGL::close()
 
 bool RenderViewOpenGL::reset(const RenderViewDefaultDesc& desc)
 {
+#if defined(__APPLE__)
+	if (!m_windowHandle)
+		return false;
+#endif
+
 	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
 
 	safeDestroy(m_primaryTarget);
 
-	// \fixme Resize window
+#if defined(__APPLE__)
+	cglwModifyWindow(m_windowHandle, desc.displayMode);
+#endif
 
 	m_context->update();
 
@@ -141,7 +154,14 @@ bool RenderViewOpenGL::isActive() const
 
 bool RenderViewOpenGL::isFullScreen() const
 {
-	return m_context->isFullScreen();
+#if defined(__APPLE__)
+	if (!m_windowHandle)
+		return false;
+		
+	return cglwIsFullscreen(m_windowHandle);
+#else
+	return false;
+#endif
 }
 
 void RenderViewOpenGL::setViewport(const Viewport& viewport)

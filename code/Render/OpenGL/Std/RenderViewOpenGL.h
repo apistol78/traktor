@@ -48,7 +48,8 @@ public:
 	RenderViewOpenGL(
 		const RenderViewDesc desc,
 		ContextOpenGL* context,
-		ContextOpenGL* resourceContext
+		ContextOpenGL* resourceContext,
+		void* windowHandle
 	);
 
 #else
@@ -107,6 +108,10 @@ private:
 	Ref< RenderSystemOpenGL > m_renderSystem;
 	Ref< ContextOpenGL > m_context;
 	Ref< ContextOpenGL > m_resourceContext;
+	
+#if defined(__APPLE__)
+	void* m_windowHandle;
+#endif
 	
 	RenderTargetSetCreateDesc m_primaryTargetDesc;
 	Ref< RenderTargetSetOpenGL > m_primaryTarget;
