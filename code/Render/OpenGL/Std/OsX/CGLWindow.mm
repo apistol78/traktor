@@ -140,7 +140,7 @@ void* cglwCreateWindow(const std::wstring& title, uint32_t width, uint32_t heigh
 	[window center];
 	
 	[window makeKeyAndOrderFront: nil];
-	//[window makeMainWindow];
+	[window makeMainWindow];
 	
 	cglwUpdateWindow(window);
 	
@@ -161,8 +161,12 @@ void cglwUpdateWindow(void* windowHandle)
 	NSEvent* event = [NSApp nextEventMatchingMask: NSAnyEventMask untilDate: nil inMode: NSDefaultRunLoopMode dequeue: YES];
 	if (event != nil)
 	{
-		[NSApp sendEvent: event];
-		[NSApp updateWindows];
+		NSEventType eventType = [event type];
+		if (eventType != NSKeyDown && eventType != NSKeyUp)	// \hack Don't propagate key events as they cause beeps.
+		{
+			[NSApp sendEvent: event];
+			[NSApp updateWindows];
+		}
 	}
 	[pool release];
 }
