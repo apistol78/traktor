@@ -191,7 +191,7 @@
                 </item>
                 <item>
                   <first>WholeProgramOptimization</first>
-                  <second>0</second>
+                  <second>true</second>
                 </item>
                 <item>
                   <first>WarningLevel</first>
@@ -413,7 +413,7 @@
                 </item>
                 <item>
                   <first>WholeProgramOptimization</first>
-                  <second>0</second>
+                  <second>true</second>
                 </item>
                 <item>
                   <first>WarningLevel</first>
@@ -451,7 +451,7 @@
                 </item>
 				<item>
 				  <first>LinkTimeCodeGeneration</first>
-				  <second>0</second>
+				  <second>1</second>
 				</item>
                 <item>
                   <first>RandomizedBaseAddress</first>
@@ -678,7 +678,7 @@
                 </item>
                 <item>
                   <first>WholeProgramOptimization</first>
-                  <second>0</second>
+                  <second>true</second>
                 </item>
                 <item>
                   <first>WarningLevel</first>
@@ -716,7 +716,7 @@
                 </item>
 				<item>
 				  <first>LinkTimeCodeGeneration</first>
-				  <second>0</second>
+				  <second>1</second>
 				</item>
                 <item>
                   <first>RandomizedBaseAddress</first>
@@ -939,7 +939,7 @@
                 </item>
                 <item>
                   <first>WholeProgramOptimization</first>
-                  <second>0</second>
+                  <second>true</second>
                 </item>
                 <item>
                   <first>WarningLevel</first>
@@ -977,7 +977,7 @@
                 </item>
 				<item>
 				  <first>LinkTimeCodeGeneration</first>
-				  <second>0</second>
+				  <second>1</second>
 				</item>
                 <item>
                   <first>RandomizedBaseAddress</first>
