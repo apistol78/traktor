@@ -31,9 +31,19 @@ InputValueSourceData::InputValueSourceData(InputCategory category, int32_t index
 {
 }
 
+void InputValueSourceData::setCategory(InputCategory category)
+{
+	m_category = category;
+}
+
 InputCategory InputValueSourceData::getCategory() const
 {
 	return m_category;
+}
+
+void InputValueSourceData::setControlType(InputDefaultControlType controlType)
+{
+	m_controlType = controlType;
 }
 
 InputDefaultControlType InputValueSourceData::getControlType() const
@@ -41,9 +51,19 @@ InputDefaultControlType InputValueSourceData::getControlType() const
 	return m_controlType;
 }
 
+void InputValueSourceData::setIndex(int32_t index)
+{
+	m_index = index;
+}
+
 int32_t InputValueSourceData::getIndex() const
 {
 	return m_index;
+}
+
+void InputValueSourceData::setValueId(const std::wstring& valueId)
+{
+	m_valueId = valueId;
 }
 
 const std::wstring& InputValueSourceData::getValueId() const

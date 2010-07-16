@@ -13,41 +13,66 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.input.InputValueSource", InputValueSource, Obje
 
 InputValueSource::InputValueSource(const InputValueSourceData* data)
 :	m_data(data)
-,	m_control(0)
 {
 }
 
 void InputValueSource::update(InputSystem* inputSystem, InputValueSet& outValueSet)
 {
-	if (!m_device)
+	InputCategory category = m_data->getCategory();
+	InputDefaultControlType controlType = m_data->getControlType();
+	int32_t index = m_data->getIndex();
+
+	int32_t deviceCount = inputSystem->getDeviceCount(category);
+
+	// Find all matching devices.
+	if (m_deviceControls.size() != deviceCount)
 	{
-		InputCategory category = m_data->getCategory();
-		InputDefaultControlType controlType = m_data->getControlType();
-		int32_t index = m_data->getIndex();
-		
+		m_deviceControls.clear();
 		if (index < 0)
 		{
-			int32_t deviceCount = inputSystem->getDeviceCount(category);
 			for (int32_t i = 0; i < deviceCount; ++i)
 			{
-				m_device = inputSystem->getDevice(category, i, false);
-				if (m_device)
-					break;
+				Ref< IInputDevice > device = inputSystem->getDevice(category, i, false);
+				if (device)
+				{
+					int32_t control;
+					if (device->getDefaultControl(controlType, control))
+					{
+						DeviceControl dc;
+						dc.device = device;
+						dc.control = control;
+						m_deviceControls.push_back(dc);
+					}
+				}
 			}
 		}
 		else
-			m_device = inputSystem->getDevice(category, index, false);
-
-		if (!m_device)
-			return;
-			
-		m_device->getDefaultControl(controlType, m_control);
+		{
+			Ref< IInputDevice > device = inputSystem->getDevice(category, index, false);
+			if (device)
+			{
+				int32_t control;
+				if (device->getDefaultControl(controlType, control))
+				{
+					DeviceControl dc;
+					dc.device = device;
+					dc.control = control;
+					m_deviceControls.push_back(dc);
+				}
+			}
+		}
 	}
 	
-	if (!m_device->isConnected())
-		return;
+	// Query all matching devices.
+	float value = 0.0f;
+	for (std::list< DeviceControl >::const_iterator i = m_deviceControls.begin(); i != m_deviceControls.end(); ++i)
+	{
+		if (!i->device->isConnected())
+			continue;
+
+		value = std::max(value, i->device->getControlValue(i->control));
+	}
 	
-	float value = m_device->getControlValue(m_control);
 	outValueSet.set(m_data->getValueId(), InputValue(value));
 }
 

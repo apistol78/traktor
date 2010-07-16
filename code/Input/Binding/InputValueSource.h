@@ -1,6 +1,7 @@
 #ifndef traktor_input_InputValueSource_H
 #define traktor_input_InputValueSource_H
 
+#include <list>
 #include "Core/Object.h"
 
 // import/export mechanism.
@@ -31,9 +32,14 @@ public:
 	void update(InputSystem* inputSystem, InputValueSet& outValueSet);
 	
 private:
+	struct DeviceControl
+	{
+		Ref< IInputDevice > device;
+		int32_t control;
+	};
+
 	Ref< const InputValueSourceData > m_data;
-	Ref< IInputDevice > m_device;
-	int32_t m_control;
+	std::list< DeviceControl > m_deviceControls;
 };
 
 	}

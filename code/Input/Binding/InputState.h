@@ -28,6 +28,18 @@ public:
 
 	void update(const InputValueSet& valueSet);
 	
+	float getValue() const { return m_currentValue; }
+	
+	float getPreviousValue() const { return m_previousValue; }
+	
+	bool isDown() const;
+	
+	bool isUp() const;
+	
+	bool isPressed() const;
+	
+	bool isReleased() const;
+	
 private:
 	Ref< const InputStateData > m_data;
 	float m_previousValue;
