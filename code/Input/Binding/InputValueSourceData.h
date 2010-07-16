@@ -28,11 +28,19 @@ public:
 
 	InputValueSourceData(InputCategory category, int32_t index, InputDefaultControlType controlType);
 	
+	void setCategory(InputCategory category);
+	
 	InputCategory getCategory() const;
+	
+	void setControlType(InputDefaultControlType controlType);
 	
 	InputDefaultControlType getControlType() const;
 	
+	void setIndex(int32_t index);
+	
 	int32_t getIndex() const;
+	
+	void setValueId(const std::wstring& valueId);
 	
 	const std::wstring& getValueId() const;
 	
