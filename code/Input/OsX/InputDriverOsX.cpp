@@ -54,19 +54,43 @@ bool InputDriverOsX::create()
 		return false;
 	}
 	
-	CFDictionaryRef matchingCFDictRef = createMatchingDictionary(
-		kHIDPage_GenericDesktop,
-		//kHIDUsage_GD_GamePad
-		kHIDUsage_GD_Keyboard
-		//kHIDUsage_GD_Keypad
+	CFArrayRef matchingDictionariesRef = CFArrayCreateMutable(
+		kCFAllocatorDefault,
+		0,
+		&kCFTypeArrayCallBacks
 	);
-	if (!matchingCFDictRef)
+
+	// Keyboard matching dictionary.
 	{
-		log::error << L"Unable to create input driver; failed to create matching dictionary" << Endl;
-		return false;
+		CFDictionaryRef matchingCFDictRef = createMatchingDictionary(
+			kHIDPage_GenericDesktop,
+			kHIDUsage_GD_Keyboard
+		);
+		if (!matchingCFDictRef)
+		{
+			log::error << L"Unable to create input driver; failed to create matching dictionary" << Endl;
+			return false;
+		}
+		CFArrayAppendValue((__CFArray*)matchingDictionariesRef, matchingCFDictRef);
+		CFRelease(matchingCFDictRef);
 	}
 
-	IOHIDManagerSetDeviceMatching(managerRef, matchingCFDictRef);
+	// Gamepad matching dictionary.
+	{
+		CFDictionaryRef matchingCFDictRef = createMatchingDictionary(
+			kHIDPage_GenericDesktop,
+			kHIDUsage_GD_GamePad
+		);
+		if (!matchingCFDictRef)
+		{
+			log::error << L"Unable to create input driver; failed to create matching dictionary" << Endl;
+			return false;
+		}
+		CFArrayAppendValue((__CFArray*)matchingDictionariesRef, matchingCFDictRef);
+		CFRelease(matchingCFDictRef);
+	}
+
+	IOHIDManagerSetDeviceMatchingMultiple(managerRef, matchingDictionariesRef);
 	IOHIDManagerRegisterDeviceMatchingCallback(managerRef, callbackDeviceMatch, this);
 //	IOHIDManagerRegisterDeviceRemovalCallback(tIOHIDManagerRef, Handle_RemovalCallback, &sSharedStickHandler);
 	IOHIDManagerScheduleWithRunLoop(managerRef, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
