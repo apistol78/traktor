@@ -30,14 +30,15 @@ namespace traktor
 class T_DLLCLASS InputValue
 {
 public:
-	InputValue(float value = 0.0f);
-	
-	void set(float value);
+	InputValue(float value = 0.0f, float T = 0.0f);
 	
 	float get() const;
 	
+	float getTime() const;
+	
 private:
 	float m_value;
+	float m_T;
 };
 	
 	}

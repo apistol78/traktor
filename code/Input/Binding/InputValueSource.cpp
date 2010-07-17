@@ -1,3 +1,4 @@
+#include "Core/Math/Const.h"
 #include "Input/IInputDevice.h"
 #include "Input/InputSystem.h"
 #include "Input/Binding/InputValueSet.h"
@@ -16,7 +17,7 @@ InputValueSource::InputValueSource(const InputValueSourceData* data)
 {
 }
 
-void InputValueSource::update(InputSystem* inputSystem, InputValueSet& outValueSet)
+void InputValueSource::update(InputSystem* inputSystem, float T, float dT, InputValueSet& outValueSet)
 {
 	InputCategory category = m_data->getCategory();
 	InputDefaultControlType controlType = m_data->getControlType();
@@ -73,7 +74,16 @@ void InputValueSource::update(InputSystem* inputSystem, InputValueSet& outValueS
 		value = std::max(value, i->device->getControlValue(i->control));
 	}
 	
-	outValueSet.set(m_data->getValueId(), InputValue(value));
+	// Replace value; modify only if exceeding different as we
+	// don't want to modify timestamp.
+	float currentValue = outValueSet.get(m_data->getValueId()).get();
+	if (abs(value - currentValue) >= FUZZY_EPSILON)
+	{
+		outValueSet.set(
+			m_data->getValueId(),
+			InputValue(value, T)
+		);
+	}
 }
 
 	}

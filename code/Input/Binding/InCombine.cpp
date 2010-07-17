@@ -11,15 +11,18 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.InCombine", 0, InCombine, IInputNode)
 
-float InCombine::evaluate(const InputValueSet& valueSet, float currentStateValue) const
+InputValue InCombine::evaluate(const InputValueSet& valueSet, float T, float dT, float currentStateValue) const
 {
-	float value1 = m_source[0]->evaluate(valueSet, currentStateValue);
-	float value2 = m_source[1]->evaluate(valueSet, currentStateValue);
+	InputValue value1 = m_source[0]->evaluate(valueSet, T, dT, currentStateValue);
+	InputValue value2 = m_source[1]->evaluate(valueSet, T, dT, currentStateValue);
 	
-	value1 = value1 * m_valueMul[0] + m_valueAdd[0];
-	value2 = value2 * m_valueMul[1] + m_valueAdd[1];
+	float sv1 = value1.get() * m_valueMul[0] + m_valueAdd[0];
+	float sv2 = value2.get() * m_valueMul[1] + m_valueAdd[1];
 	
-	return value1 + value2;
+	return InputValue(
+		sv1 + sv2,
+		std::min(value1.getTime(), value2.getTime())
+	);
 }
 
 bool InCombine::serialize(ISerializer& s)

@@ -38,9 +38,11 @@ class T_DLLCLASS InputMapping : public Object
 	T_RTTI_CLASS;
 	
 public:
+	InputMapping();
+	
 	bool create(const InputMappingData* data);
 
-	void update(InputSystem* inputSystem);
+	void update(InputSystem* inputSystem, float dT);
 	
 	InputState* get(const std::wstring& id) const;
 	
@@ -48,6 +50,7 @@ private:
 	RefArray< InputValueSource > m_sources;
 	std::map< std::wstring, Ref< InputState > > m_states;
 	InputValueSet m_valueSet;
+	float m_T;
 };
 	
 	}

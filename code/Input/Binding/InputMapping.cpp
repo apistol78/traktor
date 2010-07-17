@@ -11,6 +11,11 @@ namespace traktor
 	
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.InputMapping", InputMapping, Object)
 
+InputMapping::InputMapping()
+:	m_T(0.0f)
+{
+}
+
 bool InputMapping::create(const InputMappingData* data)
 {
 	const RefArray< InputValueSourceData >& sourceData = data->getSourceData();
@@ -29,15 +34,17 @@ bool InputMapping::create(const InputMappingData* data)
 	return true;
 }
 
-void InputMapping::update(InputSystem* InputSystem)
+void InputMapping::update(InputSystem* InputSystem, float dT)
 {
 	// Input value set by updating all sources.
 	for (RefArray< InputValueSource >::iterator i = m_sources.begin(); i != m_sources.end(); ++i)
-		(*i)->update(InputSystem, m_valueSet);
+		(*i)->update(InputSystem, m_T, dT, m_valueSet);
 		
 	// Update states.
 	for (std::map< std::wstring, Ref< InputState > >::iterator i = m_states.begin(); i != m_states.end(); ++i)
-		i->second->update(m_valueSet);
+		i->second->update(m_valueSet, m_T, dT);
+		
+	m_T += dT;
 }
 
 InputState* InputMapping::get(const std::wstring& id) const

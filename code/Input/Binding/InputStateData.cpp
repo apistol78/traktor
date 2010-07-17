@@ -10,6 +10,16 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.InputStateData", 0, InputStateData, ISerializable)
 
+InputStateData::InputStateData()
+{
+}
+
+InputStateData::InputStateData(const std::wstring& id, IInputNode* source)
+:	m_id(id)
+,	m_source(source)
+{
+}
+
 const std::wstring& InputStateData::getId() const
 {
 	return m_id;

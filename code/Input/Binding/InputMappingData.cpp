@@ -11,9 +11,19 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.InputMappingData", 0, InputMappingData, ISerializable)
 
+void InputMappingData::addSourceData(InputValueSourceData* data)
+{
+	m_sourceData.push_back(data);
+}
+
 const RefArray< InputValueSourceData >& InputMappingData::getSourceData() const
 {
 	return m_sourceData;
+}
+
+void InputMappingData::addStateData(InputStateData* data)
+{
+	m_stateData.push_back(data);
 }
 
 const RefArray< InputStateData >& InputMappingData::getStateData() const

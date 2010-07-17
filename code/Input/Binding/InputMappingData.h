@@ -25,7 +25,11 @@ class T_DLLCLASS InputMappingData : public ISerializable
 	T_RTTI_CLASS;
 
 public:
+	void addSourceData(InputValueSourceData* data);
+	
 	const RefArray< InputValueSourceData >& getSourceData() const;
+	
+	void addStateData(InputStateData* data);
 	
 	const RefArray< InputStateData >& getStateData() const;
 
