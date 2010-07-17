@@ -21,7 +21,7 @@ class T_DLLCLASS InCombine : public IInputNode
 	T_RTTI_CLASS;
 	
 public:
-	virtual float evaluate(const InputValueSet& valueSet, float currentStateValue) const;
+	virtual InputValue evaluate(const InputValueSet& valueSet, float T, float dT, float currentStateValue) const;
 	
 	virtual bool serialize(ISerializer& s);
 	

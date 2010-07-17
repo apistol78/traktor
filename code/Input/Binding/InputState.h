@@ -26,7 +26,7 @@ class InputState : public Object
 public:
 	InputState(const InputStateData* data);
 
-	void update(const InputValueSet& valueSet);
+	void update(const InputValueSet& valueSet, float T, float dT);
 	
 	float getValue() const { return m_currentValue; }
 	

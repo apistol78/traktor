@@ -17,17 +17,28 @@ InputValueSourceData::InputValueSourceData()
 {
 }
 
-InputValueSourceData::InputValueSourceData(InputCategory category, InputDefaultControlType controlType)
+InputValueSourceData::InputValueSourceData(
+	InputCategory category,
+	InputDefaultControlType controlType,
+	const std::wstring& valueId
+)
 :	m_category(category)
 ,	m_controlType(controlType)
 ,	m_index(-1)
+,	m_valueId(valueId)
 {
 }
 
-InputValueSourceData::InputValueSourceData(InputCategory category, int32_t index, InputDefaultControlType controlType)
+InputValueSourceData::InputValueSourceData(
+	InputCategory category,
+	int32_t index,
+	InputDefaultControlType controlType,
+	const std::wstring& valueId
+)
 :	m_category(category)
 ,	m_controlType(controlType)
 ,	m_index(index)
+,	m_valueId(valueId)
 {
 }
 

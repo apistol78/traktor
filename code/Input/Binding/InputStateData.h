@@ -23,6 +23,10 @@ class T_DLLCLASS InputStateData : public ISerializable
 	T_RTTI_CLASS;
 	
 public:
+	InputStateData();
+	
+	InputStateData(const std::wstring& id, IInputNode* source);
+	
 	const std::wstring& getId() const;
 
 	const IInputNode* getSource() const;

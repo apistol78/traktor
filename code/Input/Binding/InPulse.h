@@ -1,5 +1,5 @@
-#ifndef traktor_input_InReadValue_H
-#define traktor_input_InReadValue_H
+#ifndef traktor_input_InPulse_H
+#define traktor_input_InPulse_H
 
 #include "Input/Binding/IInputNode.h"
 
@@ -16,24 +16,24 @@ namespace traktor
 	namespace input
 	{
 
-class T_DLLCLASS InReadValue : public IInputNode
+class T_DLLCLASS InPulse : public IInputNode
 {
 	T_RTTI_CLASS;
 	
 public:
-	InReadValue();
+	InPulse();
 	
-	InReadValue(const std::wstring& valueId);
-
 	virtual InputValue evaluate(const InputValueSet& valueSet, float T, float dT, float currentStateValue) const;
 	
 	virtual bool serialize(ISerializer& s);
 	
 private:
-	std::wstring m_valueId;
+	Ref< IInputNode > m_source;
+	float m_delay;
+	float m_interval;
 };
 
 	}
 }
 
-#endif	// traktor_input_InReadValue_H
+#endif	// traktor_input_InPulse_H

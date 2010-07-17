@@ -24,9 +24,18 @@ class T_DLLCLASS InputValueSourceData : public ISerializable
 public:
 	InputValueSourceData();
 	
-	InputValueSourceData(InputCategory category, InputDefaultControlType controlType);
+	InputValueSourceData(
+		InputCategory category,
+		InputDefaultControlType controlType,
+		const std::wstring& valueId
+	);
 
-	InputValueSourceData(InputCategory category, int32_t index, InputDefaultControlType controlType);
+	InputValueSourceData(
+		InputCategory category,
+		int32_t index,
+		InputDefaultControlType controlType,
+		const std::wstring& valueId
+	);
 	
 	void setCategory(InputCategory category);
 	

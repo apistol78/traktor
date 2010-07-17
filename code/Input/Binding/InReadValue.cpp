@@ -10,9 +10,18 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.InReadValue", 0, InReadValue, IInputNode)
 
-float InReadValue::evaluate(const InputValueSet& valueSet, float currentStateValue) const
+InReadValue::InReadValue()
 {
-	return valueSet.get(m_valueId).get();
+}
+
+InReadValue::InReadValue(const std::wstring& valueId)
+:	m_valueId(valueId)
+{
+}
+
+InputValue InReadValue::evaluate(const InputValueSet& valueSet, float T, float dT, float currentStateValue) const
+{
+	return valueSet.get(m_valueId);
 }
 
 bool InReadValue::serialize(ISerializer& s)

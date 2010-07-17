@@ -29,7 +29,7 @@ class T_DLLCLASS InputValueSource : public Object
 public:
 	InputValueSource(const InputValueSourceData* data);
 	
-	void update(InputSystem* inputSystem, InputValueSet& outValueSet);
+	void update(InputSystem* inputSystem, float T, float dT, InputValueSet& outValueSet);
 	
 private:
 	struct DeviceControl
