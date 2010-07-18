@@ -19,7 +19,7 @@ namespace traktor
 class InputStateData;
 class InputValueSet;
 
-class InputState : public Object
+class T_DLLCLASS InputState : public Object
 {
 	T_RTTI_CLASS;
 
