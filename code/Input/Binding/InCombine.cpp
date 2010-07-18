@@ -11,6 +11,25 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.InCombine", 0, InCombine, IInputNode)
 
+InCombine::InCombine()
+{
+	m_valueMul[0] = m_valueMul[1] = 0.0f;
+	m_valueAdd[0] = m_valueAdd[1] = 0.0f;
+}
+
+InCombine::InCombine(
+	IInputNode* source1, float mul1, float add1,
+	IInputNode* source2, float mul2, float add2
+)
+{
+	m_source[0] = source1;
+	m_source[1] = source2;
+	m_valueMul[0] = mul1;
+	m_valueMul[1] = mul2;
+	m_valueAdd[0] = add1;
+	m_valueAdd[1] = add2;
+}
+
 InputValue InCombine::evaluate(const InputValueSet& valueSet, float T, float dT, float currentStateValue) const
 {
 	InputValue value1 = m_source[0]->evaluate(valueSet, T, dT, currentStateValue);

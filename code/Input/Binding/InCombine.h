@@ -21,6 +21,13 @@ class T_DLLCLASS InCombine : public IInputNode
 	T_RTTI_CLASS;
 	
 public:
+	InCombine();
+
+	InCombine(
+		IInputNode* source1, float mul1, float add1,
+		IInputNode* source2, float mul2, float add2
+	);
+
 	virtual InputValue evaluate(const InputValueSet& valueSet, float T, float dT, float currentStateValue) const;
 	
 	virtual bool serialize(ISerializer& s);
