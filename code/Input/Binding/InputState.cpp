@@ -19,7 +19,7 @@ InputState::InputState(const InputStateData* data)
 void InputState::update(const InputValueSet& valueSet, float T, float dT)
 {
 	m_previousValue = m_currentValue;
-	m_currentValue = m_data->getSource()->evaluate(valueSet, T, dT, m_currentValue).get();
+	m_currentValue = m_data->getSource()->evaluate(valueSet, T, dT, m_currentValue).getValue();
 }
 
 bool InputState::isDown() const

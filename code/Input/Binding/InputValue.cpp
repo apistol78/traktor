@@ -5,13 +5,16 @@ namespace traktor
 	namespace input
 	{
 
-InputValue::InputValue(float value, float T)
+InputValue::InputValue(
+	float value,
+	float T
+)
 :	m_value(value)
 ,	m_T(T)
 {
 }
 
-float InputValue::get() const
+float InputValue::getValue() const
 {
 	return m_value;
 }

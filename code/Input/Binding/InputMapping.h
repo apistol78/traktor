@@ -44,7 +44,9 @@ public:
 
 	void update(InputSystem* inputSystem, float dT);
 	
-	InputState* get(const std::wstring& id) const;
+	InputState* getState(const std::wstring& id) const;
+	
+	const std::map< std::wstring, Ref< InputState > >& getStates() const;
 	
 private:
 	RefArray< InputValueSource > m_sources;
