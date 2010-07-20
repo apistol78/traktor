@@ -35,11 +35,11 @@ InputValue InCombine::evaluate(const InputValueSet& valueSet, float T, float dT,
 	InputValue value1 = m_source[0]->evaluate(valueSet, T, dT, currentStateValue);
 	InputValue value2 = m_source[1]->evaluate(valueSet, T, dT, currentStateValue);
 	
-	float sv1 = value1.get() * m_valueMul[0] + m_valueAdd[0];
-	float sv2 = value2.get() * m_valueMul[1] + m_valueAdd[1];
+	float cv1 = value1.getValue() * m_valueMul[0] + m_valueAdd[0];
+	float cv2 = value2.getValue() * m_valueMul[1] + m_valueAdd[1];
 	
 	return InputValue(
-		sv1 + sv2,
+		cv1 + cv2,
 		std::min(value1.getTime(), value2.getTime())
 	);
 }

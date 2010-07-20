@@ -65,23 +65,24 @@ void InputValueSource::update(InputSystem* inputSystem, float T, float dT, Input
 	}
 	
 	// Query all matching devices.
-	float value = 0.0f;
+	float currentValue = 0.0f;
 	for (std::list< DeviceControl >::const_iterator i = m_deviceControls.begin(); i != m_deviceControls.end(); ++i)
 	{
-		if (!i->device->isConnected())
-			continue;
-
-		value = std::max(value, i->device->getControlValue(i->control));
+		if (i->device->isConnected())
+			currentValue = std::max(currentValue, i->device->getControlValue(i->control));
 	}
 	
 	// Replace value; modify only if exceeding different as we
 	// don't want to modify timestamp.
-	float currentValue = outValueSet.get(m_data->getValueId()).get();
-	if (abs(value - currentValue) >= FUZZY_EPSILON)
+	float previousValue = outValueSet.get(m_data->getValueId()).getValue();
+	if (abs(currentValue - previousValue) >= FUZZY_EPSILON)
 	{
 		outValueSet.set(
 			m_data->getValueId(),
-			InputValue(value, T)
+			InputValue(
+				currentValue,
+				T
+			)
 		);
 	}
 }

@@ -29,7 +29,7 @@ InputValue InPulse::evaluate(const InputValueSet& valueSet, float T, float dT, f
 {
 	InputValue value = m_source->evaluate(valueSet, T, dT, currentStateValue);
 	
-	float v = value.get();
+	float v = value.getValue();
 	float vT = value.getTime();
 	
 	if (v < 0.5f)

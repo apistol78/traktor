@@ -47,11 +47,16 @@ void InputMapping::update(InputSystem* InputSystem, float dT)
 	m_T += dT;
 }
 
-InputState* InputMapping::get(const std::wstring& id) const
+InputState* InputMapping::getState(const std::wstring& id) const
 {
 	std::map< std::wstring, Ref< InputState > >::const_iterator i = m_states.find(id);
 	return i != m_states.end() ? i->second : 0;
 }
-	
+
+const std::map< std::wstring, Ref< InputState > >& InputMapping::getStates() const
+{
+	return m_states;
+}
+
 	}
 }

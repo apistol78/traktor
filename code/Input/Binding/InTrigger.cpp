@@ -30,7 +30,7 @@ InputValue InTrigger::evaluate(const InputValueSet& valueSet, float T, float dT,
 {
 	InputValue value = m_source->evaluate(valueSet, T, dT, currentStateValue);
 	
-	float v = value.get();
+	float v = value.getValue();
 	float vT = value.getTime();
 	
 	float vT0 = T - vT;
