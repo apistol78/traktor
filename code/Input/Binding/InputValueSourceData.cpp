@@ -7,6 +7,25 @@ namespace traktor
 {
 	namespace input
 	{
+		namespace
+		{
+
+const MemberEnum< InputCategory >::Key c_InputCategory_Keys[] =
+{
+	{ L"CtKeyboard", CtKeyboard },
+	{ L"CtMouse", CtMouse },
+	{ L"CtJoystick", CtJoystick },
+	{ L"CtWheel", CtWheel },
+	0
+};
+
+const MemberEnum< InputDefaultControlType >::Key c_InputDefaultControlType_Keys[] =
+{
+	{ L"DtKeyA", DtKeyA },
+	0
+};
+
+		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.InputValueSourceData", 0, InputValueSourceData, ISerializable)
 
@@ -84,8 +103,8 @@ const std::wstring& InputValueSourceData::getValueId() const
 
 bool InputValueSourceData::serialize(ISerializer& s)
 {
-//	s >> MemberEnum< InputCategory >(L"category", m_category, c_InputCategory_Keys);
-//	s >> MemberEnum< InputDefaultControlType >(L"controlType", m_controlType, c_InputDefaultControlType_Keys);
+	s >> MemberEnum< InputCategory >(L"category", m_category, c_InputCategory_Keys);
+	s >> MemberEnum< InputDefaultControlType >(L"controlType", m_controlType, c_InputDefaultControlType_Keys);
 	s >> Member< int32_t >(L"index", m_index);
 	s >> Member< std::wstring >(L"valueId", m_valueId);
 	return true;
