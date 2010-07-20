@@ -22,6 +22,8 @@ class T_DLLCLASS InPulse : public IInputNode
 	
 public:
 	InPulse();
+
+	InPulse(IInputNode* source, float delay, float interval);
 	
 	virtual InputValue evaluate(const InputValueSet& valueSet, float T, float dT, float currentStateValue) const;
 	

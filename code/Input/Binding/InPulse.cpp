@@ -1,3 +1,4 @@
+#include "Core/Log/Log.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberRef.h"
@@ -17,6 +18,13 @@ InPulse::InPulse()
 {
 }
 
+InPulse::InPulse(IInputNode* source, float delay, float interval)
+:	m_source(source)
+,	m_delay(delay)
+,	m_interval(interval)
+{
+}
+
 InputValue InPulse::evaluate(const InputValueSet& valueSet, float T, float dT, float currentStateValue) const
 {
 	InputValue value = m_source->evaluate(valueSet, T, dT, currentStateValue);
@@ -27,7 +35,7 @@ InputValue InPulse::evaluate(const InputValueSet& valueSet, float T, float dT, f
 	if (v < 0.5f)
 		return InputValue(0.0f, vT);
 
-	float vT0 = vT - m_delay;
+	float vT0 = T - vT - m_delay;
 	if (vT0 <= 0.0f)
 		return InputValue(1.0f, vT);
 	
