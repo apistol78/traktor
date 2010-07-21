@@ -2,7 +2,6 @@
 #define traktor_input_IInputNode_H
 
 #include "Core/Serialization/ISerializable.h"
-#include "Input/Binding/InputValue.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -31,7 +30,16 @@ class T_DLLCLASS IInputNode : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	virtual InputValue evaluate(const InputValueSet& valueSet, float T, float dT, float currentStateValue) const = 0;
+	struct Instance : public IRefCount {};
+
+	virtual Ref< Instance > createInstance() const = 0;
+
+	virtual float evaluate(
+		Instance* instance,
+		const InputValueSet& valueSet,
+		float T,
+		float dT
+	) const = 0;
 };
 
 	}

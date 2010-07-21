@@ -25,10 +25,12 @@ bool InputMapping::create(const InputMappingData* data)
 	const RefArray< InputStateData >& stateData = data->getStateData();
 	for (RefArray< InputStateData >::const_iterator i = stateData.begin(); i != stateData.end(); ++i)
 	{
-		m_states.insert(std::make_pair(
-			(*i)->getId(),
-			new InputState(*i)
-		));
+		Ref< InputState > state = new InputState();
+
+		if (!state->create(*i))
+			return false;
+			
+		m_states.insert(std::make_pair((*i)->getId(), state));
 	}
 	
 	return true;
@@ -36,6 +38,10 @@ bool InputMapping::create(const InputMappingData* data)
 
 void InputMapping::update(InputSystem* InputSystem, float dT)
 {
+	// Update value set with state's current values.
+	for (std::map< std::wstring, Ref< InputState > >::iterator i = m_states.begin(); i != m_states.end(); ++i)
+		m_valueSet.set(i->first, i->second->getValue());
+	
 	// Input value set by updating all sources.
 	for (RefArray< InputValueSource >::iterator i = m_sources.begin(); i != m_sources.end(); ++i)
 		(*i)->update(InputSystem, m_T, dT, m_valueSet);

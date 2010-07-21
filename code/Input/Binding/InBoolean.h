@@ -1,5 +1,5 @@
-#ifndef traktor_input_InReadValue_H
-#define traktor_input_InReadValue_H
+#ifndef traktor_input_InBoolean_H
+#define traktor_input_InBoolean_H
 
 #include "Input/Binding/IInputNode.h"
 
@@ -16,15 +16,26 @@ namespace traktor
 	namespace input
 	{
 
-class T_DLLCLASS InReadValue : public IInputNode
+class T_DLLCLASS InBoolean : public IInputNode
 {
 	T_RTTI_CLASS;
 	
 public:
-	InReadValue();
+	enum Operator
+	{
+		OpAnd,
+		OpOr,
+		OpXor
+	};
 	
-	InReadValue(const std::wstring& valueId);
-	
+	InBoolean();
+
+	InBoolean(
+		IInputNode* source1,
+		IInputNode* source2,
+		Operator op
+	);
+
 	virtual Ref< Instance > createInstance() const;
 
 	virtual float evaluate(
@@ -32,15 +43,16 @@ public:
 		const InputValueSet& valueSet,
 		float T,
 		float dT
-	) const;	
-
+	) const;
+	
 	virtual bool serialize(ISerializer& s);
 	
 private:
-	std::wstring m_valueId;
+	Ref< IInputNode > m_source[2];
+	Operator m_op;
 };
 
 	}
 }
 
-#endif	// traktor_input_InReadValue_H
+#endif	// traktor_input_InBoolean_H
