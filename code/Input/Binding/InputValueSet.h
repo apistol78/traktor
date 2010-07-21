@@ -3,7 +3,6 @@
 
 #include <map>
 #include "Core/Object.h"
-#include "Input/Binding/InputValue.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -23,12 +22,12 @@ class T_DLLCLASS InputValueSet : public Object
 	T_RTTI_CLASS;
 
 public:
-	void set(const std::wstring& valueId, const InputValue& value);
+	void set(const std::wstring& valueId, float value);
 	
-	InputValue get(const std::wstring& valueId) const;
+	float get(const std::wstring& valueId) const;
 	
 private:
-	std::map< std::wstring, InputValue > m_valueMap;
+	std::map< std::wstring, float > m_valueMap;
 };
 	
 	}

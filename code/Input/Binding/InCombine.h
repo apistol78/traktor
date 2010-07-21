@@ -28,7 +28,14 @@ public:
 		IInputNode* source2, float mul2, float add2
 	);
 
-	virtual InputValue evaluate(const InputValueSet& valueSet, float T, float dT, float currentStateValue) const;
+	virtual Ref< Instance > createInstance() const;
+
+	virtual float evaluate(
+		Instance* instance,
+		const InputValueSet& valueSet,
+		float T,
+		float dT
+	) const;
 	
 	virtual bool serialize(ISerializer& s);
 	

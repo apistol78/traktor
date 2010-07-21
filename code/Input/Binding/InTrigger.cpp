@@ -1,4 +1,5 @@
 #include "Core/Log/Log.h"
+#include "Core/Math/Const.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberEnum.h"
@@ -10,6 +11,17 @@ namespace traktor
 {
 	namespace input
 	{
+		namespace
+		{
+
+struct InTriggerInstance : public RefCountImpl< IInputNode::Instance >
+{
+	Ref< IInputNode::Instance > sourceInstance;
+	float previousValue;
+	float pulseEnd;
+};
+
+		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.InTrigger", 0, InTrigger, IInputNode)
 
@@ -26,28 +38,43 @@ InTrigger::InTrigger(IInputNode* source, Flank flank, float duration)
 {
 }
 
-InputValue InTrigger::evaluate(const InputValueSet& valueSet, float T, float dT, float currentStateValue) const
+Ref< IInputNode::Instance > InTrigger::createInstance() const
 {
-	InputValue value = m_source->evaluate(valueSet, T, dT, currentStateValue);
-	
-	float v = value.getValue();
-	float vT = value.getTime();
-	
-	float vT0 = T - vT;
-	if (vT0 > m_duration)
-		return InputValue(0.0f, vT);
+	Ref< InTriggerInstance > instance = new InTriggerInstance();
+	instance->sourceInstance = m_source->createInstance();
+	instance->previousValue = 0.0f;
+	instance->pulseEnd = 0.0f;
+	return instance;
+}
 
+float InTrigger::evaluate(
+	Instance* instance,
+	const InputValueSet& valueSet,
+	float T,
+	float dT
+) const
+{
+	InTriggerInstance* iti = static_cast< InTriggerInstance* >(instance);
+
+	float V = m_source->evaluate(iti->sourceInstance, valueSet, T, dT);
+	float dV = V - iti->previousValue;
+	
+	iti->previousValue = V;
+	
 	bool pulse = false;
-	
-	if (m_flank == FlPositive)
-		pulse = v > 0.5f;
-	else if (m_flank == FlNegative)
-		pulse = v < 0.5f;
-	
+
+	if (m_flank == FlPositive && dV > FUZZY_EPSILON)
+		pulse = true;
+	else if (m_flank == FlNegative && dV < -FUZZY_EPSILON)
+		pulse = true;
+		
 	if (pulse)
-		return InputValue(1.0f, vT);
+		iti->pulseEnd = T + m_duration;
+		
+	if (T < iti->pulseEnd)
+		return 1.0f;
 	else
-		return InputValue(0.0f, vT);
+		return 0.0f;
 }
 
 bool InTrigger::serialize(ISerializer& s)

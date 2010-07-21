@@ -1,4 +1,5 @@
 #include "Core/Log/Log.h"
+#include "Core/Math/Const.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberRef.h"
@@ -9,6 +10,17 @@ namespace traktor
 {
 	namespace input
 	{
+		namespace
+		{
+
+struct InPulseInstance : public RefCountImpl< IInputNode::Instance >
+{
+	Ref< IInputNode::Instance > sourceInstance;
+	float previousValue;
+	float issueTime;
+};
+
+		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.InPulse", 0, InPulse, IInputNode)
 
@@ -25,25 +37,44 @@ InPulse::InPulse(IInputNode* source, float delay, float interval)
 {
 }
 
-InputValue InPulse::evaluate(const InputValueSet& valueSet, float T, float dT, float currentStateValue) const
+Ref< IInputNode::Instance > InPulse::createInstance() const
 {
-	InputValue value = m_source->evaluate(valueSet, T, dT, currentStateValue);
-	
-	float v = value.getValue();
-	float vT = value.getTime();
-	
-	if (v < 0.5f)
-		return InputValue(0.0f, vT);
+	Ref< InPulseInstance > instance = new InPulseInstance();
+	instance->sourceInstance = m_source->createInstance();
+	instance->previousValue = 0.0f;
+	instance->issueTime = 0.0f;
+	return instance;
+}
 
-	float vT0 = T - vT - m_delay;
-	if (vT0 <= 0.0f)
-		return InputValue(1.0f, vT);
+float InPulse::evaluate(
+	Instance* instance,
+	const InputValueSet& valueSet,
+	float T,
+	float dT
+) const
+{
+	InPulseInstance* ipi = static_cast< InPulseInstance* >(instance);
+
+	float V = m_source->evaluate(ipi->sourceInstance, valueSet, T, dT);
+	float dV = V - ipi->previousValue;
+
+	ipi->previousValue = V;
 	
-	int32_t i = int32_t(vT0 / m_interval);
+	if (V < 0.5f)
+		return 0.0f;
+
+	if (dV > FUZZY_EPSILON)
+		ipi->issueTime = T;
+	
+	float T0 = T - ipi->issueTime - m_delay;
+	if (T0 < 0.0f)
+		return 1.0f;
+	
+	int32_t i = int32_t(T0 / m_interval);
 	if ((i & 1) == 0)
-		return InputValue(0.0f, vT);
+		return 0.0f;
 	else
-		return InputValue(1.0f, vT);
+		return 1.0f;
 }
 
 bool InPulse::serialize(ISerializer& s)

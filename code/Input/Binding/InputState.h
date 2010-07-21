@@ -2,6 +2,7 @@
 #define traktor_input_InputState_H
 
 #include "Core/Object.h"
+#include "Input/Binding/IInputNode.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -24,7 +25,9 @@ class T_DLLCLASS InputState : public Object
 	T_RTTI_CLASS;
 
 public:
-	InputState(const InputStateData* data);
+	InputState();
+	
+	bool create(const InputStateData* data);
 
 	void update(const InputValueSet& valueSet, float T, float dT);
 	
@@ -42,6 +45,7 @@ public:
 	
 private:
 	Ref< const InputStateData > m_data;
+	Ref< IInputNode::Instance > m_instance;
 	float m_previousValue;
 	float m_currentValue;
 };

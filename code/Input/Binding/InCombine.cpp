@@ -8,6 +8,15 @@ namespace traktor
 {
 	namespace input
 	{
+		namespace
+		{
+
+struct InCombineInstance : public RefCountImpl< IInputNode::Instance >
+{
+	Ref< IInputNode::Instance > sourceInstance[2];
+};
+		
+		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.InCombine", 0, InCombine, IInputNode)
 
@@ -30,18 +39,30 @@ InCombine::InCombine(
 	m_valueAdd[1] = add2;
 }
 
-InputValue InCombine::evaluate(const InputValueSet& valueSet, float T, float dT, float currentStateValue) const
+Ref< IInputNode::Instance > InCombine::createInstance() const
 {
-	InputValue value1 = m_source[0]->evaluate(valueSet, T, dT, currentStateValue);
-	InputValue value2 = m_source[1]->evaluate(valueSet, T, dT, currentStateValue);
+	Ref< InCombineInstance > instance = new InCombineInstance();
+	instance->sourceInstance[0] = m_source[0] ? m_source[0]->createInstance() : 0;
+	instance->sourceInstance[1] = m_source[1] ? m_source[1]->createInstance() : 0;
+	return instance;
+}
+
+float InCombine::evaluate(
+	Instance* instance,
+	const InputValueSet& valueSet,
+	float T,
+	float dT
+) const
+{
+	InCombineInstance* ici = static_cast< InCombineInstance* >(instance);
 	
-	float cv1 = value1.getValue() * m_valueMul[0] + m_valueAdd[0];
-	float cv2 = value2.getValue() * m_valueMul[1] + m_valueAdd[1];
+	float value1 = m_source[0] ? m_source[0]->evaluate(ici->sourceInstance[0], valueSet, T, dT) : 0.0f;
+	float value2 = m_source[1] ? m_source[1]->evaluate(ici->sourceInstance[1], valueSet, T, dT) : 0.0f;
 	
-	return InputValue(
-		cv1 + cv2,
-		std::min(value1.getTime(), value2.getTime())
-	);
+	float cv1 = value1 * m_valueMul[0] + m_valueAdd[0];
+	float cv2 = value2 * m_valueMul[1] + m_valueAdd[1];
+	
+	return cv1 + cv2;
 }
 
 bool InCombine::serialize(ISerializer& s)

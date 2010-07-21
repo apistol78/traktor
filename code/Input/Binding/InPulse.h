@@ -25,8 +25,15 @@ public:
 
 	InPulse(IInputNode* source, float delay, float interval);
 	
-	virtual InputValue evaluate(const InputValueSet& valueSet, float T, float dT, float currentStateValue) const;
-	
+	virtual Ref< Instance > createInstance() const;
+
+	virtual float evaluate(
+		Instance* instance,
+		const InputValueSet& valueSet,
+		float T,
+		float dT
+	) const;
+
 	virtual bool serialize(ISerializer& s);
 	
 private:

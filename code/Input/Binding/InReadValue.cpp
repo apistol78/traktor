@@ -19,7 +19,17 @@ InReadValue::InReadValue(const std::wstring& valueId)
 {
 }
 
-InputValue InReadValue::evaluate(const InputValueSet& valueSet, float T, float dT, float currentStateValue) const
+Ref< IInputNode::Instance > InReadValue::createInstance() const
+{
+	return 0;
+}
+
+float InReadValue::evaluate(
+	Instance* instance,
+	const InputValueSet& valueSet,
+	float T,
+	float dT
+) const
 {
 	return valueSet.get(m_valueId);
 }

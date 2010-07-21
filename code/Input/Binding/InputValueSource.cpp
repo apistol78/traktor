@@ -74,15 +74,12 @@ void InputValueSource::update(InputSystem* inputSystem, float T, float dT, Input
 	
 	// Replace value; modify only if exceeding different as we
 	// don't want to modify timestamp.
-	float previousValue = outValueSet.get(m_data->getValueId()).getValue();
+	float previousValue = outValueSet.get(m_data->getValueId());
 	if (abs(currentValue - previousValue) >= FUZZY_EPSILON)
 	{
 		outValueSet.set(
 			m_data->getValueId(),
-			InputValue(
-				currentValue,
-				T
-			)
+			currentValue
 		);
 	}
 }

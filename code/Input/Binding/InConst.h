@@ -1,5 +1,5 @@
-#ifndef traktor_input_InReadValue_H
-#define traktor_input_InReadValue_H
+#ifndef traktor_input_InConst_H
+#define traktor_input_InConst_H
 
 #include "Input/Binding/IInputNode.h"
 
@@ -16,14 +16,14 @@ namespace traktor
 	namespace input
 	{
 
-class T_DLLCLASS InReadValue : public IInputNode
+class T_DLLCLASS InConst : public IInputNode
 {
 	T_RTTI_CLASS;
 	
 public:
-	InReadValue();
+	InConst();
 	
-	InReadValue(const std::wstring& valueId);
+	InConst(float value);
 	
 	virtual Ref< Instance > createInstance() const;
 
@@ -37,10 +37,10 @@ public:
 	virtual bool serialize(ISerializer& s);
 	
 private:
-	std::wstring m_valueId;
+	float m_value;
 };
 
 	}
 }
 
-#endif	// traktor_input_InReadValue_H
+#endif	// traktor_input_InConst_H
