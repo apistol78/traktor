@@ -1,6 +1,7 @@
 #include "Ui/Cocoa/WidgetFactoryCocoa.h"
 #include "Ui/Cocoa/ButtonCocoa.h"
 #include "Ui/Cocoa/CheckBoxCocoa.h"
+#include "Ui/Cocoa/ClipboardCocoa.h"
 #include "Ui/Cocoa/ContainerCocoa.h"
 #include "Ui/Cocoa/DialogCocoa.h"
 #include "Ui/Cocoa/DropDownCocoa.h"
@@ -157,7 +158,7 @@ IBitmap* WidgetFactoryCocoa::createBitmap()
 
 IClipboard* WidgetFactoryCocoa::createClipboard()
 {
-	return 0;
+	return new ClipboardCocoa();
 }
 
 bool WidgetFactoryCocoa::getSystemColor(SystemColor systemColor, Color& outColor)
