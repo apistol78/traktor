@@ -156,7 +156,7 @@ void PostProcessStepSmProj::InstanceSmProj::render(
 	shader->setVectorParameter(L"ViewEdgeBottomLeft", viewEdgeBottomLeft);
 	shader->setVectorParameter(L"ViewEdgeBottomRight", viewEdgeBottomRight);
 	shader->setVectorArrayParameter(L"ShadowMapPoissonTaps", c_poissonTaps, sizeof_array(c_poissonTaps));
-	shader->setMatrixParameter(L"ViewToLight", params.projection);
+	shader->setMatrixParameter(L"ViewToLight", params.viewToLight);
 
 	const float maskClear[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 	renderView->clear(render::CfColor, maskClear, 1.0f, 0);

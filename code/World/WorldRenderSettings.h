@@ -45,7 +45,8 @@ public:
 		SqNoFilter,
 		SqLow,
 		SqMedium,
-		SqHigh
+		SqHigh,
+		SqHighest
 	};
 
 	float viewNearZ;

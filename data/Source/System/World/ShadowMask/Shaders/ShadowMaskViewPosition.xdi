@@ -209,6 +209,14 @@ be in mask.
 			<parameterName>ShadowFarZ</parameterName>
 			<type>PtScalar</type>
 		</item>
+		<item type="traktor.render.OutputPort">
+			<comment/>
+			<position>
+				<first>624</first>
+				<second>258</second>
+			</position>
+			<name>Depth</name>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
@@ -469,6 +477,16 @@ be in mask.
 			<destination>
 				<node ref="/object/nodes/item[20]"/>
 				<name>Reference</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[23]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 	</edges>

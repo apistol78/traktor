@@ -1,25 +1,27 @@
-#include "World/PostProcess/PostProcessStepSsao.h"
-#include "World/PostProcess/PostProcess.h"
-#include "World/WorldRenderView.h"
-#include "Render/IRenderSystem.h"
-#include "Render/ScreenRenderer.h"
-#include "Render/Shader.h"
-#include "Render/Shader/ShaderGraph.h"
-#include "Render/RenderTargetSet.h"
-#include "Render/ISimpleTexture.h"
-#include "Core/Serialization/ISerializer.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/RandomGeometry.h"
 #include "Core/Misc/AutoPtr.h"
+#include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberStl.h"
+#include "Core/Serialization/MemberComposite.h"
+#include "Render/IRenderSystem.h"
+#include "Render/ISimpleTexture.h"
+#include "Render/RenderTargetSet.h"
+#include "Render/ScreenRenderer.h"
+#include "Render/Shader.h"
+#include "Render/Shader/ShaderGraph.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
+#include "World/WorldRenderView.h"
+#include "World/PostProcess/PostProcess.h"
+#include "World/PostProcess/PostProcessStepSsao.h"
 
 namespace traktor
 {
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.PostProcessStepSsao", 0, PostProcessStepSsao, PostProcessStep)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.PostProcessStepSsao", 1, PostProcessStepSsao, PostProcessStep)
 
 Ref< PostProcessStep::Instance > PostProcessStepSsao::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
 {
@@ -67,7 +69,26 @@ Ref< PostProcessStep::Instance > PostProcessStepSsao::create(resource::IResource
 
 bool PostProcessStepSsao::serialize(ISerializer& s)
 {
-	return s >> resource::Member< render::Shader, render::ShaderGraph >(L"shader", m_shader);
+	s >> resource::Member< render::Shader, render::ShaderGraph >(L"shader", m_shader);
+	
+	if (s.getVersion() >= 1)
+		s >> MemberStlVector< Source, MemberComposite< Source > >(L"sources", m_sources);
+
+	return true;
+}
+
+PostProcessStepSsao::Source::Source()
+:	source(0)
+,	index(0)
+{
+}
+
+bool PostProcessStepSsao::Source::serialize(ISerializer& s)
+{
+	s >> Member< std::wstring >(L"param", param);
+	s >> Member< int32_t >(L"source", source);
+	s >> Member< uint32_t >(L"index", index);
+	return true;
 }
 
 // Instance
@@ -125,10 +146,6 @@ void PostProcessStepSsao::InstanceSsao::render(
 	Vector4 viewEdgeBottomLeft = params.viewFrustum.corners[7];
 	Vector4 viewEdgeBottomRight = params.viewFrustum.corners[6];
 
-	shader->setTextureParameter(L"Frame", sourceColor->getColorTexture(0));
-	shader->setTextureParameter(L"Depth", sourceDepth->getColorTexture(0));
-	shader->setVectorParameter(L"Frame_Size", sourceColorSize);
-	shader->setVectorParameter(L"Depth_Size", sourceDepthSize);
 	shader->setVectorParameter(L"ViewEdgeTopLeft", viewEdgeTopLeft);
 	shader->setVectorParameter(L"ViewEdgeTopRight", viewEdgeTopRight);
 	shader->setVectorParameter(L"ViewEdgeBottomLeft", viewEdgeBottomLeft);
@@ -136,6 +153,22 @@ void PostProcessStepSsao::InstanceSsao::render(
 	shader->setMatrixParameter(L"Projection", params.projection);
 	shader->setVectorArrayParameter(L"Offsets", m_offsets, sizeof_array(m_offsets));
 	shader->setTextureParameter(L"RandomNormals", m_randomNormals);
+
+	const std::vector< Source >& sources = m_step->m_sources;
+	for (std::vector< Source >::const_iterator i = sources.begin(); i != sources.end(); ++i)
+	{
+		Ref< render::RenderTargetSet > source = postProcess->getTargetRef(i->source);
+		if (source)
+		{
+			shader->setTextureParameter(i->param, source->getColorTexture(i->index));
+			shader->setVectorParameter(i->param + L"_Size", Vector4(
+				float(source->getWidth()),
+				float(source->getHeight()),
+				0.0f,
+				0.0f
+			));
+		}
+	}
 
 	screenRenderer->draw(renderView, shader);
 }

@@ -32,6 +32,7 @@ const Guid c_shadowMaskProjectionSettingsNoFilter(L"{19222311-363F-CB45-86E5-34D
 const Guid c_shadowMaskProjectionSettingsLow(L"{7D4D38B9-1E43-8046-B1A4-705CFEF9B8EB}");
 const Guid c_shadowMaskProjectionSettingsMedium(L"{57FD53AF-547A-9F46-8C94-B4D24EFB63BC}");
 const Guid c_shadowMaskProjectionSettingsHigh(L"{FABC4017-4D65-604D-B9AB-9FC03FE3CE43}");
+const Guid c_shadowMaskProjectionSettingsHighest(L"{5AFC153E-6FCE-3142-9E1B-DD3722DA447F}");
 
 		}
 
@@ -191,6 +192,9 @@ bool WorldRenderer::create(
 				break;
 			case WorldRenderSettings::SqHigh:
 				shadowMaskProjectionSettings = c_shadowMaskProjectionSettingsHigh;
+				break;
+			case WorldRenderSettings::SqHighest:
+				shadowMaskProjectionSettings = c_shadowMaskProjectionSettingsHighest;
 				break;
 			}
 
@@ -412,7 +416,8 @@ void WorldRenderer::render(uint32_t flags, int frame)
 			PostProcessStep::Instance::RenderParams params;
 
 			params.viewFrustum = f.viewFrustum;
-			params.projection = f.viewToLightSpace;
+			params.viewToLight = f.viewToLightSpace;
+			params.projection = f.projection;
 			params.shadowFarZ = m_settings.shadowFarZ;
 			params.shadowMapBias = m_settings.shadowMapBias;
 			params.deltaTime = 0.0f;
