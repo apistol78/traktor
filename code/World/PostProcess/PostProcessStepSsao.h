@@ -34,6 +34,17 @@ class T_DLLCLASS PostProcessStepSsao : public PostProcessStep
 	T_RTTI_CLASS;
 
 public:
+	struct Source
+	{
+		std::wstring param;	/*!< Shader parameter name. */
+		int32_t source;		/*!< Render target set source. */
+		uint32_t index;		/*!< Render target index. */
+
+		Source();
+
+		bool serialize(ISerializer& s);
+	};
+
 	class InstanceSsao : public Instance
 	{
 	public:
@@ -66,6 +77,7 @@ public:
 
 private:
 	mutable resource::Proxy< render::Shader > m_shader;
+	std::vector< Source > m_sources;
 };
 
 	}
