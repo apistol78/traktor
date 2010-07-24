@@ -36,6 +36,10 @@ float GenericInputSource::read(InputSystem* inputSystem, float T, float dT)
 	InputCategory category = m_data->getCategory();
 	InputDefaultControlType controlType = m_data->getControlType();
 	int32_t index = m_data->getIndex();
+	
+	// Abort early as no device should have this control.
+	if (controlType == DtInvalid)
+		return 0.0f;
 
 	int32_t deviceCount = inputSystem->getDeviceCount(category);
 
