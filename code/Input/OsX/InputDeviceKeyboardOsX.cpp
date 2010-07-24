@@ -143,7 +143,7 @@ void InputDeviceKeyboardOsX::readState()
 		int value = (int)IOHIDValueGetIntegerValue(valueRef);
 		int keycode = (int)IOHIDElementGetUsage(e);
 
-		if (keycode < sizeof_array(m_data))
+		if (keycode >= 0 && keycode < sizeof_array(m_data))
 			m_data[keycode] = value ? 255 : 0;
 	}
 }
