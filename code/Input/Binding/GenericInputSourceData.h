@@ -1,8 +1,8 @@
-#ifndef traktor_input_InputValueSourceData_H
-#define traktor_input_InputValueSourceData_H
+#ifndef traktor_input_GenericInputSourceData_H
+#define traktor_input_GenericInputSourceData_H
 
-#include "Core/Serialization/ISerializable.h"
 #include "Input/InputTypes.h"
+#include "Input/Binding/IInputSourceData.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -17,24 +17,22 @@ namespace traktor
 	namespace input
 	{
 	
-class T_DLLCLASS InputValueSourceData : public ISerializable
+class T_DLLCLASS GenericInputSourceData : public IInputSourceData
 {
 	T_RTTI_CLASS;
 
 public:
-	InputValueSourceData();
+	GenericInputSourceData();
 	
-	InputValueSourceData(
+	GenericInputSourceData(
 		InputCategory category,
-		InputDefaultControlType controlType,
-		const std::wstring& valueId
+		InputDefaultControlType controlType
 	);
 
-	InputValueSourceData(
+	GenericInputSourceData(
 		InputCategory category,
 		int32_t index,
-		InputDefaultControlType controlType,
-		const std::wstring& valueId
+		InputDefaultControlType controlType
 	);
 	
 	void setCategory(InputCategory category);
@@ -49,20 +47,17 @@ public:
 	
 	int32_t getIndex() const;
 	
-	void setValueId(const std::wstring& valueId);
-	
-	const std::wstring& getValueId() const;
-	
+	virtual Ref< IInputSource > createInstance() const;
+
 	virtual bool serialize(ISerializer& s);
 
 private:
 	InputCategory m_category;
 	InputDefaultControlType m_controlType;
 	int32_t m_index;
-	std::wstring m_valueId;
 };
 
 	}
 }
 
-#endif	// traktor_input_InputValueSourceData_H
+#endif	// traktor_input_GenericInputSourceData_H

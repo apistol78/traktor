@@ -25,16 +25,13 @@ class T_DLLCLASS InputStateData : public ISerializable
 public:
 	InputStateData();
 	
-	InputStateData(const std::wstring& id, IInputNode* source);
-	
-	const std::wstring& getId() const;
+	InputStateData(IInputNode* source);
 
 	const IInputNode* getSource() const;
 
 	virtual bool serialize(ISerializer& s);
 	
 private:
-	std::wstring m_id;
 	Ref< IInputNode > m_source;
 };
 	

@@ -3,6 +3,7 @@
 #include "Core/Serialization/MemberStaticArray.h"
 #include "Input/Binding/InBoolean.h"
 #include "Input/Binding/InputValueSet.h"
+#include "Input/Binding/ValueDigital.h"
 
 namespace traktor
 {
@@ -39,8 +40,8 @@ InBoolean::InBoolean(
 Ref< IInputNode::Instance > InBoolean::createInstance() const
 {
 	Ref< InBooleanInstance > instance = new InBooleanInstance();
-	instance->sourceInstance[0] = m_source[0]->createInstance();
-	instance->sourceInstance[1] = m_source[1]->createInstance();
+	instance->sourceInstance[0] = m_source[0] ? m_source[0]->createInstance() : 0;
+	instance->sourceInstance[1] = m_source[1] ? m_source[1]->createInstance() : 0;
 	return instance;
 }
 
@@ -53,12 +54,16 @@ float InBoolean::evaluate(
 {
 	InBooleanInstance* ibi = static_cast< InBooleanInstance* >(instance);
 	
-	bool value1 = m_source[0]->evaluate(ibi->sourceInstance[0], valueSet, T, dT) > 0.5f;
-	bool value2 = m_source[1]->evaluate(ibi->sourceInstance[1], valueSet, T, dT) > 0.5f;
+	bool value1 = asBoolean(m_source[0] ? m_source[0]->evaluate(ibi->sourceInstance[0], valueSet, T, dT) : 0.0f);
+	bool value2 = asBoolean(m_source[1] ? m_source[1]->evaluate(ibi->sourceInstance[1], valueSet, T, dT) : 0.0f);
 	
 	bool result = false;
 	switch (m_op)
 	{
+	case OpNot:
+		result = !value1;
+		break;
+
 	case OpAnd:
 		result = value1 & value2;
 		break;
@@ -72,16 +77,14 @@ float InBoolean::evaluate(
 		break;
 	}
 	
-	if (result)
-		return 1.0f;
-	else
-		return 0.0f;
+	return asFloat(result);
 }
 
 bool InBoolean::serialize(ISerializer& s)
 {
 	const MemberEnum< Operator >::Key c_Operator_Keys[] =
 	{
+		{ L"OpNot", OpNot },
 		{ L"OpAnd", OpAnd },
 		{ L"OpOr", OpOr },
 		{ L"OpXor", OpXor },

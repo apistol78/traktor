@@ -6,6 +6,7 @@
 #include "Core/Serialization/MemberRef.h"
 #include "Input/Binding/InTrigger.h"
 #include "Input/Binding/InputValueSet.h"
+#include "Input/Binding/ValueDigital.h"
 
 namespace traktor
 {
@@ -72,9 +73,9 @@ float InTrigger::evaluate(
 		iti->pulseEnd = T + m_duration;
 		
 	if (T < iti->pulseEnd)
-		return 1.0f;
+		return asFloat(true);
 	else
-		return 0.0f;
+		return asFloat(false);
 }
 
 bool InTrigger::serialize(ISerializer& s)

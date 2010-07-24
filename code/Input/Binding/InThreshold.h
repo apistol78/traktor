@@ -1,5 +1,5 @@
-#ifndef traktor_input_InBoolean_H
-#define traktor_input_InBoolean_H
+#ifndef traktor_input_InThreshold_H
+#define traktor_input_InThreshold_H
 
 #include "Input/Binding/IInputNode.h"
 
@@ -16,27 +16,15 @@ namespace traktor
 	namespace input
 	{
 
-class T_DLLCLASS InBoolean : public IInputNode
+class T_DLLCLASS InThreshold : public IInputNode
 {
 	T_RTTI_CLASS;
 	
 public:
-	enum Operator
-	{
-		OpNot,
-		OpAnd,
-		OpOr,
-		OpXor
-	};
+	InThreshold();
+
+	InThreshold(IInputNode* source, float duration);
 	
-	InBoolean();
-
-	InBoolean(
-		IInputNode* source1,
-		IInputNode* source2,
-		Operator op
-	);
-
 	virtual Ref< Instance > createInstance() const;
 
 	virtual float evaluate(
@@ -45,15 +33,15 @@ public:
 		float T,
 		float dT
 	) const;
-	
+
 	virtual bool serialize(ISerializer& s);
 	
 private:
-	Ref< IInputNode > m_source[2];
-	Operator m_op;
+	Ref< IInputNode > m_source;
+	float m_duration;
 };
 
 	}
 }
 
-#endif	// traktor_input_InBoolean_H
+#endif	// traktor_input_InThreshold_H
