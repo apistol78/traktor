@@ -44,7 +44,7 @@ bool WorldRenderSettings::serialize(ISerializer& s)
 		{ L"SqLow", SqLow },
 		{ L"SqMedium", SqMedium },
 		{ L"SqHigh", SqHigh },
-		{ L"SqHigest", SqHighest },
+		{ L"SqHighest", SqHighest },
 		{ 0 }
 	};
 
