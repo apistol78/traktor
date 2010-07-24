@@ -4,6 +4,7 @@
 #include <steam/steam_api.h>
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Online/Steam/CurrentUserSteam.h"
 #include "Online/Steam/SessionManagerSteam.h"
@@ -16,14 +17,14 @@ namespace traktor
 		namespace
 		{
 
-const struct { const char* steam; const wchar_t* code; } c_languageCodes[] =
+const struct { const wchar_t* steam; const wchar_t* code; } c_languageCodes[] =
 {
-	{ "english", L"en" },
-	{ "french", L"fr" },
-	{ "german", L"de" },
-	{ "italian", L"it" },
-	{ "spanish", L"es" },
-	{ "swedish", L"se" }
+	{ L"english", L"en" },
+	{ L"french", L"fr" },
+	{ L"german", L"de" },
+	{ L"italian", L"it" },
+	{ L"spanish", L"es" },
+	{ L"swedish", L"se" }
 };
 
 #if defined(_WIN32)
@@ -75,7 +76,7 @@ std::wstring SessionManagerSteam::getLanguageCode() const
 
 	for (uint32_t i = 0; i < sizeof_array(c_languageCodes); ++i)
 	{
-		if (_stricmp(language, c_languageCodes[i].steam) == 0)
+		if (compareIgnoreCase(mbstows(language), c_languageCodes[i].steam) == 0)
 			return c_languageCodes[i].code;
 	}
 
