@@ -2,6 +2,7 @@
 #include "Input/Binding/InputState.h"
 #include "Input/Binding/InputStateData.h"
 #include "Input/Binding/InputValueSet.h"
+#include "Input/Binding/ValueDigital.h"
 
 namespace traktor
 {
@@ -36,9 +37,15 @@ void InputState::update(const InputValueSet& valueSet, float T, float dT)
 	);
 }
 
+void InputState::reset()
+{
+	m_previousValue =
+	m_currentValue = 0.0f;
+}
+
 bool InputState::isDown() const
 {
-	return m_currentValue > 0.5f;
+	return asBoolean(m_currentValue);
 }
 
 bool InputState::isUp() const
@@ -48,12 +55,12 @@ bool InputState::isUp() const
 
 bool InputState::isPressed() const
 {
-	return isDown() && m_previousValue <= 0.5f;
+	return isDown() && !asBoolean(m_previousValue);
 }
 
 bool InputState::isReleased() const
 {
-	return !isDown() && m_previousValue > 0.5f;
+	return !isDown() && asBoolean(m_previousValue);
 }
 
 	}

@@ -30,6 +30,8 @@ public:
 	bool create(const InputStateData* data);
 
 	void update(const InputValueSet& valueSet, float T, float dT);
+
+	void reset();
 	
 	float getValue() const { return m_currentValue; }
 	

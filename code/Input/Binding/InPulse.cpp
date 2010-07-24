@@ -5,6 +5,7 @@
 #include "Core/Serialization/MemberRef.h"
 #include "Input/Binding/InPulse.h"
 #include "Input/Binding/InputValueSet.h"
+#include "Input/Binding/ValueDigital.h"
 
 namespace traktor
 {
@@ -60,21 +61,21 @@ float InPulse::evaluate(
 
 	ipi->previousValue = V;
 	
-	if (V < 0.5f)
-		return 0.0f;
+	if (!asBoolean(V))
+		return asFloat(false);
 
 	if (dV > FUZZY_EPSILON)
 		ipi->issueTime = T;
 	
 	float T0 = T - ipi->issueTime - m_delay;
 	if (T0 < 0.0f)
-		return 1.0f;
+		return asFloat(true);
 	
 	int32_t i = int32_t(T0 / m_interval);
 	if ((i & 1) == 0)
-		return 0.0f;
+		return asFloat(false);
 	else
-		return 1.0f;
+		return asFloat(true);
 }
 
 bool InPulse::serialize(ISerializer& s)

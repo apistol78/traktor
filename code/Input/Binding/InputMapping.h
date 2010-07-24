@@ -18,10 +18,10 @@ namespace traktor
 	namespace input
 	{
 
+class IInputSource;
 class InputMappingData;
 class InputState;
 class InputSystem;
-class InputValueSource;
 
 /*! \brief Input sources to state mapping.
  * \ingroup Input
@@ -43,13 +43,23 @@ public:
 	bool create(const InputMappingData* data);
 
 	void update(InputSystem* inputSystem, float dT);
+
+	void reset();
+
+	void setValue(const std::wstring& id, float value);
+
+	float getValue(const std::wstring& id) const;
+
+	IInputSource* getSource(const std::wstring& id) const;
+
+	const std::map< std::wstring, Ref< IInputSource > >& getSources() const;
 	
 	InputState* getState(const std::wstring& id) const;
 	
 	const std::map< std::wstring, Ref< InputState > >& getStates() const;
 	
 private:
-	RefArray< InputValueSource > m_sources;
+	std::map< std::wstring, Ref< IInputSource > > m_sources;
 	std::map< std::wstring, Ref< InputState > > m_states;
 	InputValueSet m_valueSet;
 	float m_T;

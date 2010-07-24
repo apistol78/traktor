@@ -1,5 +1,5 @@
-#ifndef traktor_input_InBoolean_H
-#define traktor_input_InBoolean_H
+#ifndef traktor_input_InCombine3_H
+#define traktor_input_InCombine3_H
 
 #include "Input/Binding/IInputNode.h"
 
@@ -16,25 +16,17 @@ namespace traktor
 	namespace input
 	{
 
-class T_DLLCLASS InBoolean : public IInputNode
+class T_DLLCLASS InCombine3 : public IInputNode
 {
 	T_RTTI_CLASS;
 	
 public:
-	enum Operator
-	{
-		OpNot,
-		OpAnd,
-		OpOr,
-		OpXor
-	};
-	
-	InBoolean();
+	InCombine3();
 
-	InBoolean(
-		IInputNode* source1,
-		IInputNode* source2,
-		Operator op
+	InCombine3(
+		IInputNode* source1, float mul1, float add1,
+		IInputNode* source2, float mul2, float add2,
+		IInputNode* source3, float mul3, float add3
 	);
 
 	virtual Ref< Instance > createInstance() const;
@@ -49,11 +41,12 @@ public:
 	virtual bool serialize(ISerializer& s);
 	
 private:
-	Ref< IInputNode > m_source[2];
-	Operator m_op;
+	Ref< IInputNode > m_source[3];
+	float m_valueMul[3];
+	float m_valueAdd[3];
 };
 
 	}
 }
 
-#endif	// traktor_input_InBoolean_H
+#endif	// traktor_input_InCombine3_H

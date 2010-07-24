@@ -1,8 +1,9 @@
 #include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/MemberRefArray.h"
+#include "Core/Serialization/MemberRef.h"
+#include "Core/Serialization/MemberStl.h"
+#include "Input/Binding/IInputSourceData.h"
 #include "Input/Binding/InputMappingData.h"
 #include "Input/Binding/InputStateData.h"
-#include "Input/Binding/InputValueSourceData.h"
 
 namespace traktor
 {
@@ -11,30 +12,50 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.InputMappingData", 0, InputMappingData, ISerializable)
 
-void InputMappingData::addSourceData(InputValueSourceData* data)
+void InputMappingData::setSourceData(const std::wstring& id, IInputSourceData* data)
 {
-	m_sourceData.push_back(data);
+	m_sourceData[id] = data;
 }
 
-const RefArray< InputValueSourceData >& InputMappingData::getSourceData() const
+const std::map< std::wstring, Ref< IInputSourceData > >& InputMappingData::getSourceData() const
 {
 	return m_sourceData;
 }
 
-void InputMappingData::addStateData(InputStateData* data)
+void InputMappingData::setStateData(const std::wstring& id, InputStateData* data)
 {
-	m_stateData.push_back(data);
+	m_stateData[id] = data;
 }
 
-const RefArray< InputStateData >& InputMappingData::getStateData() const
+const std::map< std::wstring, Ref< InputStateData > >& InputMappingData::getStateData() const
 {
 	return m_stateData;
 }
 
 bool InputMappingData::serialize(ISerializer& s)
 {
-	s >> MemberRefArray< InputValueSourceData >(L"sourceData", m_sourceData);
-	s >> MemberRefArray< InputStateData >(L"stateData", m_stateData);
+	s >> MemberStlMap<
+		std::wstring,
+		Ref< IInputSourceData >,
+		MemberStlPair<
+			std::wstring,
+			Ref< IInputSourceData >,
+			Member< std::wstring >,
+			MemberRef< IInputSourceData >
+		>
+	>(L"sourceData", m_sourceData);
+
+	s >> MemberStlMap<
+		std::wstring,
+		Ref< InputStateData >,
+		MemberStlPair<
+			std::wstring,
+			Ref< InputStateData >,
+			Member< std::wstring >,
+			MemberRef< InputStateData >
+		>
+	>(L"stateData", m_stateData);
+
 	return true;
 }
 

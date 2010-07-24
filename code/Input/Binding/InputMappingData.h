@@ -1,7 +1,7 @@
 #ifndef traktor_input_InputMappingData_H
 #define traktor_input_InputMappingData_H
 
-#include "Core/RefArray.h"
+#include <map>
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
@@ -17,27 +17,27 @@ namespace traktor
 	namespace input
 	{
 	
+class IInputSourceData;
 class InputStateData;
-class InputValueSourceData;
 
 class T_DLLCLASS InputMappingData : public ISerializable
 {
 	T_RTTI_CLASS;
 
 public:
-	void addSourceData(InputValueSourceData* data);
+	void setSourceData(const std::wstring& id, IInputSourceData* data);
 	
-	const RefArray< InputValueSourceData >& getSourceData() const;
+	const std::map< std::wstring, Ref< IInputSourceData > >& getSourceData() const;
 	
-	void addStateData(InputStateData* data);
+	void setStateData(const std::wstring& id, InputStateData* data);
 	
-	const RefArray< InputStateData >& getStateData() const;
+	const std::map< std::wstring, Ref< InputStateData > >& getStateData() const;
 
 	virtual bool serialize(ISerializer& s);
 
 private:
-	RefArray< InputValueSourceData > m_sourceData;
-	RefArray< InputStateData > m_stateData;
+	std::map< std::wstring, Ref< IInputSourceData > > m_sourceData;
+	std::map< std::wstring, Ref< InputStateData > > m_stateData;
 };
 
 	}

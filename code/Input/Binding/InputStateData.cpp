@@ -14,15 +14,9 @@ InputStateData::InputStateData()
 {
 }
 
-InputStateData::InputStateData(const std::wstring& id, IInputNode* source)
-:	m_id(id)
-,	m_source(source)
+InputStateData::InputStateData(IInputNode* source)
+:	m_source(source)
 {
-}
-
-const std::wstring& InputStateData::getId() const
-{
-	return m_id;
 }
 
 const IInputNode* InputStateData::getSource() const
@@ -32,9 +26,7 @@ const IInputNode* InputStateData::getSource() const
 
 bool InputStateData::serialize(ISerializer& s)
 {
-	s >> Member< std::wstring >(L"id", m_id);
-	s >> MemberRef< IInputNode >(L"source", m_source);
-	return true;
+	return s >> MemberRef< IInputNode >(L"source", m_source);
 }
 
 	}
