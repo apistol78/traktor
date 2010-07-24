@@ -124,8 +124,6 @@ IInputDriver::UpdateResult InputDriverOsX::update()
 
 void InputDriverOsX::callbackDeviceMatch(void* inContext, IOReturn inResult, void* inSender, IOHIDDeviceRef inIOHIDDeviceRef)
 {
-	log::info << L"HID device; matching device callback" << Endl;
-
 	InputDriverOsX* this_ = (InputDriverOsX*)inContext;
 	T_ASSERT (this_);
 
@@ -135,10 +133,24 @@ void InputDriverOsX::callbackDeviceMatch(void* inContext, IOReturn inResult, voi
 	IOReturn result = IOHIDManagerOpen(managerRef, kIOHIDOptionsTypeNone);
 	if (result != kIOReturnSuccess)
 		return;
-	
-	Ref< InputDeviceKeyboardOsX > device = new InputDeviceKeyboardOsX(inIOHIDDeviceRef);
-	this_->m_devices.push_back(device);
-	this_->m_devicesChanged = true;
+		
+	if (IOHIDDeviceConformsTo(inIOHIDDeviceRef, kHIDPage_GenericDesktop, kHIDUsage_GD_Keyboard))
+	{
+		log::info << L"HID device; matching keyboard device connected" << Endl;
+
+		Ref< InputDeviceKeyboardOsX > device = new InputDeviceKeyboardOsX(inIOHIDDeviceRef);
+		this_->m_devices.push_back(device);
+		this_->m_devicesChanged = true;
+	}
+	else if (IOHIDDeviceConformsTo(inIOHIDDeviceRef, kHIDPage_GenericDesktop, kHIDUsage_GD_GamePad))
+	{
+		log::info << L"HID device; matching gamepad device connected" << Endl;
+
+		Ref< InputDeviceGamepadOsX > device = new InputDeviceGamepadOsX(inIOHIDDeviceRef);
+		this_->m_devices.push_back(device);
+		this_->m_devicesChanged = true;
+	}
+
 }
 
 	}
