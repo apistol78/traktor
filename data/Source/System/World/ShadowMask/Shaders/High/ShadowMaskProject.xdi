@@ -4,8 +4,8 @@
 		<item type="traktor.render.PixelOutput" version="2">
 			<comment/>
 			<position>
-				<first>1422</first>
-				<second>193</second>
+				<first>1391</first>
+				<second>177</second>
 			</position>
 			<technique>Default</technique>
 			<cullMode>CmNever</cullMode>
