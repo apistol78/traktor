@@ -1,5 +1,5 @@
 #include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/MemberRef.h"
+#include "Core/Serialization/MemberRefArray.h"
 #include "Input/Binding/CombinedInputSource.h"
 #include "Input/Binding/CombinedInputSourceData.h"
 
@@ -14,46 +14,38 @@ CombinedInputSourceData::CombinedInputSourceData()
 {
 }
 
-CombinedInputSourceData::CombinedInputSourceData(
-	IInputSourceData* source1,
-	IInputSourceData* source2
-)
-:	m_source1(source1)
-,	m_source2(source1)
+CombinedInputSourceData::CombinedInputSourceData(const RefArray< IInputSourceData >& sources)
+:	m_sources(sources)
 {
 }
 
-void CombinedInputSourceData::setSource1(IInputSourceData* source1)
+void CombinedInputSourceData::addSource(IInputSourceData* source)
 {
-	m_source1 = source1;
+	m_sources.push_back(source);
 }
 
-IInputSourceData* CombinedInputSourceData::getSource1() const
+const RefArray< IInputSourceData >& CombinedInputSourceData::getSources() const
 {
-	return m_source1;
-}
-
-void CombinedInputSourceData::setSource2(IInputSourceData* source2)
-{
-	m_source2 = source2;
-}
-
-IInputSourceData* CombinedInputSourceData::getSource2() const
-{
-	return m_source2;
+	return m_sources;
 }
 
 Ref< IInputSource > CombinedInputSourceData::createInstance() const
 {
-	Ref< IInputSource > source1 = m_source1 ? m_source1->createInstance() : 0;
-	Ref< IInputSource > source2 = m_source2 ? m_source2->createInstance() : 0;
-	return new CombinedInputSource(source1, source2);
+	RefArray< IInputSource > sources(m_sources.size());
+	for (uint32_t i = 0; i < m_sources.size(); ++i)
+	{
+		Ref< IInputSource > source = m_sources[i]->createInstance();
+		if (!source)
+			return 0;
+			
+		sources[i] = source;
+	}
+	return new CombinedInputSource(sources);
 }
 
 bool CombinedInputSourceData::serialize(ISerializer& s)
 {
-	s >> MemberRef< IInputSourceData >(L"source1", m_source1);
-	s >> MemberRef< IInputSourceData >(L"source2", m_source2);
+	s >> MemberRefArray< IInputSourceData >(L"sources", m_sources);
 	return true;
 }
 	

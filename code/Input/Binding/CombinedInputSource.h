@@ -2,6 +2,7 @@
 #define traktor_input_CombinedInputSource_H
 
 #include <list>
+#include "Core/RefArray.h"
 #include "Input/Binding/IInputSource.h"
 
 // import/export mechanism.
@@ -22,15 +23,14 @@ class T_DLLCLASS CombinedInputSource : public IInputSource
 	T_RTTI_CLASS;
 
 public:
-	CombinedInputSource(IInputSource* source1, IInputSource* source2);
+	CombinedInputSource(const RefArray< IInputSource >& sources);
 
 	virtual std::wstring getDescription() const;
 	
 	virtual float read(InputSystem* inputSystem, float T, float dT);
 	
 private:
-	Ref< IInputSource > m_source1;
-	Ref< IInputSource > m_source2;
+	RefArray< IInputSource > m_sources;
 };
 
 	}
