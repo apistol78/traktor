@@ -24,26 +24,18 @@ class T_DLLCLASS CombinedInputSourceData : public IInputSourceData
 public:
 	CombinedInputSourceData();
 	
-	CombinedInputSourceData(
-		IInputSourceData* source1,
-		IInputSourceData* source2
-	);
+	CombinedInputSourceData(const RefArray< IInputSourceData >& sources);
 
-	void setSource1(IInputSourceData* source1);
+	void addSource(IInputSourceData* source);
 
-	IInputSourceData* getSource1() const;
-
-	void setSource2(IInputSourceData* source2);
-
-	IInputSourceData* getSource2() const;
+	const RefArray< IInputSourceData >& getSources() const;
 	
 	virtual Ref< IInputSource > createInstance() const;
 
 	virtual bool serialize(ISerializer& s);
 
 private:
-	Ref< IInputSourceData > m_source1;
-	Ref< IInputSourceData > m_source2;
+	RefArray< IInputSourceData > m_sources;
 };
 
 	}
