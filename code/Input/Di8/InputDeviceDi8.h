@@ -19,12 +19,25 @@ namespace traktor
 	namespace input
 	{
 
+struct PadAxisInfo 
+{
+	int saturation;
+	int deadzone;
+	int rangeMin;
+	int rangeMax;
+	GUID guidType;
+	int sliderIndex;
+	std::wstring name;
+};
+
 class T_DLLCLASS InputDeviceDi8 : public IInputDevice
 {
 	T_RTTI_CLASS;
 
 public:
 	InputDeviceDi8(IDirectInputDevice8* diDevice);
+
+	void collectGamepadInfo(IDirectInputDevice8* device);
 
 	virtual ~InputDeviceDi8();
 
@@ -57,6 +70,7 @@ private:
 	DIDEVICEINSTANCE m_deviceDesc;
 	LPVOID m_state;
 	bool m_connected;
+	std::vector< PadAxisInfo > m_padAxisInfo;
 };
 
 	}

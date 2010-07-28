@@ -10,6 +10,25 @@ namespace traktor
 		namespace
 		{
 
+int getPadAxisValue(DIJOYSTATE* state, const PadAxisInfo& padAxisInfo)
+{
+	if (padAxisInfo.guidType == GUID_XAxis)
+		return state->lX;
+	if (padAxisInfo.guidType == GUID_YAxis)
+		return state->lY;
+	if (padAxisInfo.guidType == GUID_ZAxis)
+		return state->lZ;
+	if (padAxisInfo.guidType == GUID_RxAxis)
+		return state->lRx;
+	if (padAxisInfo.guidType == GUID_RyAxis)
+		return state->lRy;
+	if (padAxisInfo.guidType == GUID_RzAxis)
+		return state->lRz;
+	if (padAxisInfo.guidType == GUID_Slider)
+		return state->rglSlider[padAxisInfo.sliderIndex];
+	return 0;
+}
+
 float adjustDeadZone(float value)
 {
 	if (value >= -0.2f && value <= 0.2f)
@@ -56,6 +75,8 @@ InputDeviceDi8::InputDeviceDi8(IDirectInputDevice8* device)
 
 	case CtJoystick:
 		device->SetDataFormat(&c_dfDIJoystick2);
+
+		collectGamepadInfo(device);
 		m_state = new DIJOYSTATE2;
 		break;
 	}
@@ -183,22 +204,36 @@ float InputDeviceDi8::getControlValue(int control)
 					return 0.0f;
 
 			case DtThumbLeftX:
-				return adjustDeadZone((state->lX - 32767.0f) / 32767.0f);
+				{
+					if (m_padAxisInfo.size() < 4)
+						return 0;
+					int v = getPadAxisValue(state, m_padAxisInfo[0]);
+					return adjustDeadZone((v - 32767.0f) / 32767.0f);
+				}
 
 			case DtThumbLeftY:
-				return adjustDeadZone(-(state->lY - 32767.0f) / 32767.0f);
+				{
+					if (m_padAxisInfo.size() < 4)
+						return 0;
+					int v = getPadAxisValue(state, m_padAxisInfo[1]);
+					return adjustDeadZone(-(v - 32767.0f) / 32767.0f);
+				}
 
 			case DtThumbRightX:
-				return adjustDeadZone((state->lZ - 32767.0f) / 32767.0f);
+				{
+					if (m_padAxisInfo.size() < 4)
+						return 0;
+					int v = getPadAxisValue(state, m_padAxisInfo[2]);
+					return adjustDeadZone((v - 32767.0f) / 32767.0f);
+				}
 
 			case DtThumbRightY:
-				return adjustDeadZone((state->lRz - 32767.0f) / 32767.0f);
-
-			case DtAxisX:
-				return adjustDeadZone((state->lRx - 32767.0f) / 32767.0f);
-
-			case DtAxisY:
-				return adjustDeadZone((state->lRy - 32767.0f) / 32767.0f);
+				{
+					if (m_padAxisInfo.size() < 4)
+						return 0;
+					int v = getPadAxisValue(state, m_padAxisInfo[3]);
+					return adjustDeadZone((v - 32767.0f) / 32767.0f);
+				}
 
 			case DtButton1:
 				return ((state->rgbButtons[1] & 0x80) != 0) ? 1.0f : 0.0f;
@@ -295,5 +330,68 @@ void InputDeviceDi8::setRumble(const InputRumble& rumble)
 {
 }
 
+void InputDeviceDi8::collectGamepadInfo(IDirectInputDevice8* device)
+{
+	DIDEVCAPS capabilities;
+	capabilities.dwSize = sizeof(DIDEVCAPS);
+	device->GetCapabilities(&capabilities);
+	int axesCount = capabilities.dwAxes;
+	m_padAxisInfo.resize(axesCount);
+
+	DWORD ids[] =
+	{
+		DIJOFS_X,
+		DIJOFS_Y,
+		DIJOFS_Z,
+		DIJOFS_RX,
+		DIJOFS_RY,
+		DIJOFS_RZ,
+		DIJOFS_SLIDER(0),
+		DIJOFS_SLIDER(1)
+	};
+
+	int axisIndex = 0;
+	int sliderIndex = 0;
+	for (int i = 0; i < sizeof_array(ids); i++)
+	{
+		DIPROPRANGE range; 
+		range.diph.dwSize       = sizeof(DIPROPRANGE); 
+		range.diph.dwHeaderSize = sizeof(DIPROPHEADER); 
+		range.diph.dwHow        = DIPH_BYOFFSET; 
+		range.diph.dwObj        = ids[i];
+		HRESULT r;
+		r = device->GetProperty(DIPROP_RANGE, &range.diph);
+		if (r != S_OK)
+			continue;
+		DIPROPDWORD deadzone;
+		deadzone.diph.dwSize       = sizeof(DIPROPDWORD); 
+		deadzone.diph.dwHeaderSize = sizeof(DIPROPHEADER); 
+		deadzone.diph.dwHow        = DIPH_BYOFFSET; 
+		deadzone.diph.dwObj        = ids[i];
+		r = device->GetProperty(DIPROP_DEADZONE, &deadzone.diph);
+
+		DIPROPDWORD saturation;
+		saturation.diph.dwSize       = sizeof(DIPROPDWORD); 
+		saturation.diph.dwHeaderSize = sizeof(DIPROPHEADER); 
+		saturation.diph.dwHow        = DIPH_BYOFFSET; 
+		saturation.diph.dwObj        = ids[i];
+		r = device->GetProperty(DIPROP_SATURATION, &saturation.diph);
+
+		DIDEVICEOBJECTINSTANCE didoi;
+		didoi.dwSize = sizeof(DIDEVICEOBJECTINSTANCE);
+		r = device ->GetObjectInfo(&didoi, ids[i], DIPH_BYOFFSET);
+
+		m_padAxisInfo[axisIndex].name = std::wstring(didoi.tszName);
+		m_padAxisInfo[axisIndex].guidType = didoi.guidType;
+		m_padAxisInfo[axisIndex].rangeMax = range.lMax;
+		m_padAxisInfo[axisIndex].rangeMin = range.lMin;
+		m_padAxisInfo[axisIndex].deadzone = deadzone.dwData;
+		m_padAxisInfo[axisIndex].saturation = saturation.dwData;
+		m_padAxisInfo[axisIndex].sliderIndex = sliderIndex;
+		if (didoi.guidType == GUID_Slider)
+			sliderIndex++;
+		axisIndex++;
+	}
+}
 	}
 }
