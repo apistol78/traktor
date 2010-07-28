@@ -1,5 +1,5 @@
-#ifndef traktor_input_InputMappingData_H
-#define traktor_input_InputMappingData_H
+#ifndef traktor_input_InputMappingStateData_H
+#define traktor_input_InputMappingStateData_H
 
 #include <map>
 #include "Core/Serialization/ISerializable.h"
@@ -17,18 +17,18 @@ namespace traktor
 	namespace input
 	{
 	
-class IInputSourceData;
 class InputStateData;
 
-class T_DLLCLASS InputMappingData : public ISerializable
+/*! \brief Input mapping state data
+ * \ingroup Input
+ *
+ * Serializable description of input states.
+ */
+class T_DLLCLASS InputMappingStateData : public ISerializable
 {
 	T_RTTI_CLASS;
 
 public:
-	void setSourceData(const std::wstring& id, IInputSourceData* data);
-	
-	const std::map< std::wstring, Ref< IInputSourceData > >& getSourceData() const;
-	
 	void setStateData(const std::wstring& id, InputStateData* data);
 	
 	const std::map< std::wstring, Ref< InputStateData > >& getStateData() const;
@@ -36,11 +36,10 @@ public:
 	virtual bool serialize(ISerializer& s);
 
 private:
-	std::map< std::wstring, Ref< IInputSourceData > > m_sourceData;
 	std::map< std::wstring, Ref< InputStateData > > m_stateData;
 };
 
 	}
 }
 
-#endif	// traktor_input_InputMappingData_H
+#endif	// traktor_input_InputMappingStateData_H

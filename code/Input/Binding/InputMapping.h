@@ -19,7 +19,8 @@ namespace traktor
 	{
 
 class IInputSource;
-class InputMappingData;
+class InputMappingSourceData;
+class InputMappingStateData;
 class InputState;
 class InputSystem;
 
@@ -32,6 +33,12 @@ class InputSystem;
  *
  * Each state may have a chain of input nodes in order
  * to modify the source values into the final state's value.
+ *
+ * As source and state data are separated it's
+ * possible to have the source data stored separatly
+ * from the state data and thus have sources be
+ * reconfigurable by the user and stored
+ * in a configuration file of some sort.
  */
 class T_DLLCLASS InputMapping : public Object
 {
@@ -40,7 +47,10 @@ class T_DLLCLASS InputMapping : public Object
 public:
 	InputMapping();
 	
-	bool create(const InputMappingData* data);
+	bool create(
+		const InputMappingSourceData* sourceData,
+		const InputMappingStateData* stateData
+	);
 
 	void update(InputSystem* inputSystem, float dT);
 

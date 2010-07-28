@@ -1,7 +1,8 @@
 #include "Input/Binding/IInputSource.h"
 #include "Input/Binding/IInputSourceData.h"
 #include "Input/Binding/InputMapping.h"
-#include "Input/Binding/InputMappingData.h"
+#include "Input/Binding/InputMappingSourceData.h"
+#include "Input/Binding/InputMappingStateData.h"
 #include "Input/Binding/InputState.h"
 #include "Input/Binding/InputStateData.h"
 
@@ -17,10 +18,13 @@ InputMapping::InputMapping()
 {
 }
 
-bool InputMapping::create(const InputMappingData* data)
+bool InputMapping::create(
+	const InputMappingSourceData* sourceData,
+	const InputMappingStateData* stateData
+)
 {
-	const std::map< std::wstring, Ref< IInputSourceData > >& sourceData = data->getSourceData();
-	for (std::map< std::wstring, Ref< IInputSourceData > >::const_iterator i = sourceData.begin(); i != sourceData.end(); ++i)
+	const std::map< std::wstring, Ref< IInputSourceData > >& sourceDataMap = sourceData->getSourceData();
+	for (std::map< std::wstring, Ref< IInputSourceData > >::const_iterator i = sourceDataMap.begin(); i != sourceDataMap.end(); ++i)
 	{
 		Ref< IInputSource > source = i->second->createInstance();
 		if (!source)
@@ -29,8 +33,8 @@ bool InputMapping::create(const InputMappingData* data)
 		m_sources.insert(std::make_pair(i->first, source));
 	}
 
-	const std::map< std::wstring, Ref< InputStateData > >& stateData = data->getStateData();
-	for (std::map< std::wstring, Ref< InputStateData > >::const_iterator i = stateData.begin(); i != stateData.end(); ++i)
+	const std::map< std::wstring, Ref< InputStateData > >& stateDataMap = stateData->getStateData();
+	for (std::map< std::wstring, Ref< InputStateData > >::const_iterator i = stateDataMap.begin(); i != stateDataMap.end(); ++i)
 	{
 		Ref< InputState > state = new InputState();
 
