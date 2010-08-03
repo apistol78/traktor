@@ -28,13 +28,12 @@ std::wstring CombinedInputSource::getDescription() const
 
 float CombinedInputSource::read(InputSystem* inputSystem, float T, float dT)
 {
+	bool value = true;
+
 	for (RefArray< IInputSource >::iterator i = m_sources.begin(); i != m_sources.end(); ++i)
-	{
-		bool value = asBoolean((*i)->read(inputSystem, T, dT));
-		if (!value)
-			return asFloat(false);
-	}
-	return asFloat(true);
+		value &= asBoolean((*i)->read(inputSystem, T, dT));
+
+	return asFloat(value);
 }
 
 	}
