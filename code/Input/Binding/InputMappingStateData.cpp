@@ -9,7 +9,7 @@ namespace traktor
 	namespace input
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.InputMappingStateData", 0, InputMappingStateData, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.input.InputMappingStateData", 0, InputMappingStateData, ISerializable)
 
 void InputMappingStateData::setStateData(const std::wstring& id, InputStateData* data)
 {

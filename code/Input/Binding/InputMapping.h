@@ -35,7 +35,7 @@ class InputSystem;
  * to modify the source values into the final state's value.
  *
  * As source and state data are separated it's
- * possible to have the source data stored separatly
+ * possible to have the source data stored separately
  * from the state data and thus have sources be
  * reconfigurable by the user and stored
  * in a configuration file of some sort.
@@ -67,6 +67,25 @@ public:
 	InputState* getState(const std::wstring& id) const;
 	
 	const std::map< std::wstring, Ref< InputState > >& getStates() const;
+
+	/*! \name Helpers */
+	// \{
+
+	float getStateValue(const std::wstring& id) const;
+
+	float getStatePreviousValue(const std::wstring& id) const;
+
+	bool isStateDown(const std::wstring& id) const;
+
+	bool isStateUp(const std::wstring& id) const;
+
+	bool isStatePressed(const std::wstring& id) const;
+
+	bool isStateReleased(const std::wstring& id) const;
+
+	bool hasStateChanged(const std::wstring& id) const;
+
+	// \}
 	
 private:
 	std::map< std::wstring, Ref< IInputSource > > m_sources;

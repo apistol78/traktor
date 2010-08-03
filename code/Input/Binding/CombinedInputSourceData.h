@@ -2,6 +2,7 @@
 #define traktor_input_CombinedInputSourceData_H
 
 #include "Input/InputTypes.h"
+#include "Input/Binding/CombinedInputSource.h"
 #include "Input/Binding/IInputSourceData.h"
 
 // import/export mechanism.
@@ -23,8 +24,10 @@ class T_DLLCLASS CombinedInputSourceData : public IInputSourceData
 
 public:
 	CombinedInputSourceData();
+
+	CombinedInputSourceData(CombinedInputSource::CombineMode mode);
 	
-	CombinedInputSourceData(const RefArray< IInputSourceData >& sources);
+	CombinedInputSourceData(const RefArray< IInputSourceData >& sources, CombinedInputSource::CombineMode mode);
 
 	void addSource(IInputSourceData* source);
 
@@ -36,6 +39,7 @@ public:
 
 private:
 	RefArray< IInputSourceData > m_sources;
+	CombinedInputSource::CombineMode m_mode;
 };
 
 	}

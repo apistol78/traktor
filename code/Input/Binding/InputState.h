@@ -44,6 +44,8 @@ public:
 	bool isPressed() const;
 	
 	bool isReleased() const;
+
+	bool hasChanged() const;
 	
 private:
 	Ref< const InputStateData > m_data;

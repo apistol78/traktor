@@ -23,7 +23,14 @@ class T_DLLCLASS CombinedInputSource : public IInputSource
 	T_RTTI_CLASS;
 
 public:
-	CombinedInputSource(const RefArray< IInputSource >& sources);
+	enum CombineMode
+	{
+		CmAny,
+		CmExclusive,
+		CmAll
+	};
+
+	CombinedInputSource(const RefArray< IInputSource >& sources, CombineMode mode);
 
 	virtual std::wstring getDescription() const;
 	
@@ -31,6 +38,7 @@ public:
 	
 private:
 	RefArray< IInputSource > m_sources;
+	CombineMode m_mode;
 };
 
 	}

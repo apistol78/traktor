@@ -63,5 +63,10 @@ bool InputState::isReleased() const
 	return !isDown() && asBoolean(m_previousValue);
 }
 
+bool InputState::hasChanged() const
+{
+	return isPressed() || isReleased();
+}
+
 	}
 }

@@ -9,8 +9,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.CombinedInputSource", CombinedInputSource, Object)
 
-CombinedInputSource::CombinedInputSource(const RefArray< IInputSource >& sources)
+CombinedInputSource::CombinedInputSource(const RefArray< IInputSource >& sources, CombineMode mode)
 :	m_sources(sources)
+,	m_mode(mode)
 {
 }
 
@@ -20,7 +21,22 @@ std::wstring CombinedInputSource::getDescription() const
 	for (RefArray< IInputSource >::const_iterator i = m_sources.begin(); i != m_sources.end(); ++i)
 	{
 		if (!ss.empty())
-			ss << L" + ";
+		{
+			switch (m_mode)
+			{
+			case CmAny:
+				ss << L", " << Endl;
+				break;
+
+			case CmExclusive:
+				ss << L" ^ " << Endl;
+				break;
+
+			case CmAll:
+				ss << L" + " << Endl;
+				break;
+			}
+		}
 		ss << (*i)->getDescription();
 	}
 	return ss.str();
@@ -28,10 +44,37 @@ std::wstring CombinedInputSource::getDescription() const
 
 float CombinedInputSource::read(InputSystem* inputSystem, float T, float dT)
 {
-	bool value = true;
+	bool value = false;
 
-	for (RefArray< IInputSource >::iterator i = m_sources.begin(); i != m_sources.end(); ++i)
-		value &= asBoolean((*i)->read(inputSystem, T, dT));
+	switch (m_mode)
+	{
+	case CmAny:
+		{
+			for (RefArray< IInputSource >::iterator i = m_sources.begin(); i != m_sources.end(); ++i)
+				value |= asBoolean((*i)->read(inputSystem, T, dT));
+		}
+		break;
+
+	case CmExclusive:
+		{
+			uint32_t count = 0;
+			for (RefArray< IInputSource >::iterator i = m_sources.begin(); i != m_sources.end(); ++i)
+			{
+				if (asBoolean((*i)->read(inputSystem, T, dT)))
+					++count;
+			}
+			value = bool(count == 1);
+		}
+		break;
+
+	case CmAll:
+		{
+			value = true;
+			for (RefArray< IInputSource >::iterator i = m_sources.begin(); i != m_sources.end(); ++i)
+				value &= asBoolean((*i)->read(inputSystem, T, dT));
+		}
+		break;
+	}
 
 	return asFloat(value);
 }
