@@ -108,5 +108,47 @@ const std::map< std::wstring, Ref< InputState > >& InputMapping::getStates() con
 	return m_states;
 }
 
+float InputMapping::getStateValue(const std::wstring& id) const
+{
+	InputState* state = getState(id);
+	return state ? state->getValue() : 0.0f;
+}
+
+float InputMapping::getStatePreviousValue(const std::wstring& id) const
+{
+	InputState* state = getState(id);
+	return state ? state->getPreviousValue() : 0.0f;
+}
+
+bool InputMapping::isStateDown(const std::wstring& id) const
+{
+	InputState* state = getState(id);
+	return state ? state->isDown() : false;
+}
+
+bool InputMapping::isStateUp(const std::wstring& id) const
+{
+	InputState* state = getState(id);
+	return state ? state->isUp() : false;
+}
+
+bool InputMapping::isStatePressed(const std::wstring& id) const
+{
+	InputState* state = getState(id);
+	return state ? state->isPressed() : false;
+}
+
+bool InputMapping::isStateReleased(const std::wstring& id) const
+{
+	InputState* state = getState(id);
+	return state ? state->isReleased() : false;
+}
+
+bool InputMapping::hasStateChanged(const std::wstring& id) const
+{
+	InputState* state = getState(id);
+	return state ? state->hasChanged() : false;
+}
+
 	}
 }

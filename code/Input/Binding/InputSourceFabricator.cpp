@@ -71,7 +71,7 @@ Ref< IInputSourceData > InputSourceFabricator::update()
 					if (asBoolean(value))
 					{
 						if (!m_combinedData)
-							m_combinedData = new CombinedInputSourceData();
+							m_combinedData = new CombinedInputSourceData(CombinedInputSource::CmAll);
 
 						m_combinedData->addSource(new GenericInputSourceData(
 							m_category,

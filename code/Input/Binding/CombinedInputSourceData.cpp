@@ -1,6 +1,5 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRefArray.h"
-#include "Input/Binding/CombinedInputSource.h"
 #include "Input/Binding/CombinedInputSourceData.h"
 
 namespace traktor
@@ -11,11 +10,18 @@ namespace traktor
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.CombinedInputSourceData", 0, CombinedInputSourceData, IInputSourceData)
 
 CombinedInputSourceData::CombinedInputSourceData()
+:	m_mode(CombinedInputSource::CmAny)
 {
 }
 
-CombinedInputSourceData::CombinedInputSourceData(const RefArray< IInputSourceData >& sources)
+CombinedInputSourceData::CombinedInputSourceData(CombinedInputSource::CombineMode mode)
+:	m_mode(mode)
+{
+}
+
+CombinedInputSourceData::CombinedInputSourceData(const RefArray< IInputSourceData >& sources, CombinedInputSource::CombineMode mode)
 :	m_sources(sources)
+,	m_mode(mode)
 {
 }
 
@@ -40,12 +46,22 @@ Ref< IInputSource > CombinedInputSourceData::createInstance() const
 			
 		sources[i] = source;
 	}
-	return new CombinedInputSource(sources);
+	return new CombinedInputSource(sources, m_mode);
 }
 
 bool CombinedInputSourceData::serialize(ISerializer& s)
 {
+	const MemberEnum< CombinedInputSource::CombineMode >::Key c_CombineMode_Keys[] =
+	{
+		{ L"CmAny", CombinedInputSource::CmAny },
+		{ L"CmExclusive", CombinedInputSource::CmExclusive },
+		{ L"CmAll", CombinedInputSource::CmAll },
+		0
+	};
+
 	s >> MemberRefArray< IInputSourceData >(L"sources", m_sources);
+	s >> MemberEnum< CombinedInputSource::CombineMode >(L"mode", m_mode, c_CombineMode_Keys);
+
 	return true;
 }
 	
