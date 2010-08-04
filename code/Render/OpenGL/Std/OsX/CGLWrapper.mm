@@ -28,8 +28,6 @@ void* cglwCreateContext(void* nativeWindowHandle, void* sharedContext, int depth
 		NSOpenGLPFAWindow,
 		NSOpenGLPFADepthSize, depthBits,
 		NSOpenGLPFAStencilSize, stencilBits,
-		NSOpenGLPFASampleBuffers, multisample > 0 ? 1 : 0,
-		NSOpenGLPFASamples, multisample,
 		nil
 	};
 	
