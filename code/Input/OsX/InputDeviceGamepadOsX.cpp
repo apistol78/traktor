@@ -1,4 +1,5 @@
 #include "Core/Log/Log.h"
+#include "Core/Misc/String.h"
 #include "Input/OsX/InputDeviceGamepadOsX.h"
 
 namespace traktor
@@ -47,11 +48,27 @@ int InputDeviceGamepadOsX::getControlCount()
 
 std::wstring InputDeviceGamepadOsX::getControlName(int control)
 {
-	return L"";
+	switch (control)
+	{
+	case -1:
+		return L"Left thumb X";
+	case -2:
+		return L"Left thumb Y";
+	case -3:
+		return L"Right thumb X";
+	case -4:
+		return L"Right thumb Y";
+	}
+	return L"Button " + toString(control);
 }
 
 bool InputDeviceGamepadOsX::isControlAnalogue(int control) const
 {
+	// Axises are analogue.
+	if (control >= -4 && control <= -1)
+		return true;
+	
+	// All left are considered buttons.
 	return false;
 }
 
