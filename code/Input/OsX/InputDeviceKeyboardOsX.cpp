@@ -1,4 +1,6 @@
 #include "Core/Log/Log.h"
+#include "Core/Misc/String.h"
+#include "Core/Misc/TString.h"
 #include "Input/OsX/InputDeviceKeyboardOsX.h"
 
 namespace traktor
@@ -56,7 +58,27 @@ c_keyControlMap[] =
 	{ DtKeyRightWin, kHIDUsage_KeyboardRightAlt },
 	{ DtKeyReturn, kHIDUsage_KeyboardReturnOrEnter }
 };
-		
+
+const KeyControlMap* findControlMapFromDefault(InputDefaultControlType control)
+{
+	for (int i = 0; i < sizeof_array(c_keyControlMap); ++i)
+	{
+		if (c_keyControlMap[i].control == control)
+			return &c_keyControlMap[i];
+	}
+	return 0;
+}
+
+const KeyControlMap* findControlMapFromIndex(int32_t index)
+{
+	for (int i = 0; i < sizeof_array(c_keyControlMap); ++i)
+	{
+		if (c_keyControlMap[i].index == index)
+			return &c_keyControlMap[i];
+	}
+	return 0;
+}
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.InputDeviceKeyboardOsX", InputDeviceKeyboardOsX, IInputDevice)
@@ -89,7 +111,26 @@ int InputDeviceKeyboardOsX::getControlCount()
 
 std::wstring InputDeviceKeyboardOsX::getControlName(int control)
 {
-	return L"";
+	CFArrayRef elements = IOHIDDeviceCopyMatchingElements(m_deviceRef, NULL, kIOHIDOptionsTypeNone);
+	for (CFIndex i = 0; i < CFArrayGetCount(elements); ++i)
+	{
+		IOHIDElementRef e = (IOHIDElementRef)CFArrayGetValueAtIndex(elements, i);
+		if (!e)
+			continue;
+			
+		int usage = (int)IOHIDElementGetUsage(e);
+		if (usage == control)
+		{
+			CFStringRef name = IOHIDElementGetName(e);
+			
+			// Get c-style string.
+			const char* cname = CFStringGetCStringPtr(name, kCFStringEncodingUTF8);
+			if (cname)
+				return mbstows(cname);
+		}
+	}
+
+	return toString(control);
 }
 
 bool InputDeviceKeyboardOsX::isControlAnalogue(int control) const
@@ -107,15 +148,12 @@ float InputDeviceKeyboardOsX::getControlValue(int control)
 
 bool InputDeviceKeyboardOsX::getDefaultControl(InputDefaultControlType controlType, int& control) const
 {
-	for (int i = 0; i < sizeof_array(c_keyControlMap); ++i)
-	{
-		if (c_keyControlMap[i].control == controlType)
-		{
-			control = c_keyControlMap[i].index;
-			return true;
-		}
-	}
-	return false;
+	const KeyControlMap* controlMap = findControlMapFromDefault(controlType);
+	if (!controlMap)
+		return false;
+		
+	control = controlMap->index;
+	return true;
 }
 
 void InputDeviceKeyboardOsX::resetState()
