@@ -74,7 +74,7 @@ float KeyboardDeviceWin32::getControlValue(int control)
 bool KeyboardDeviceWin32::getDefaultControl(InputDefaultControlType controlType, int& control) const
 {
 	control = c_vkControlKeys[int(controlType)];
-	return true;
+	return control != 0;
 }
 
 void KeyboardDeviceWin32::resetState()

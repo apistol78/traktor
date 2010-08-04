@@ -9,6 +9,12 @@ namespace traktor
 {
 	namespace input
 	{
+		namespace
+		{
+
+const float c_valueThreshold = 0.1f;
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.InputSourceFabricator", InputSourceFabricator, Object)
 
@@ -50,7 +56,17 @@ Ref< IInputSourceData > InputSourceFabricator::update()
 				continue;
 			
 			float value = i->device->getControlValue(control);
-			if (value != i->values[controlType])
+
+			// Wait until digital control has been released before we
+			// start tracking it.
+			if (
+				!m_analogue &&
+				asBoolean(value) &&
+				i->values.find(controlType) == i->values.end()
+			)
+				continue;
+
+			if (std::abs(value - i->values[controlType]) > c_valueThreshold)
 			{
 				// Control has been modified; record it's use.
 				if (m_analogue)
@@ -81,8 +97,15 @@ Ref< IInputSourceData > InputSourceFabricator::update()
 					}
 					else
 					{
-						m_outputData = m_combinedData;
-						break;
+						// Remove combined wrapper if it only contain one source.
+						const RefArray< IInputSourceData >& sources = m_combinedData->getSources();
+						if (sources.size() > 1)
+							m_outputData = m_combinedData;
+						else if (sources.size() == 1)
+							m_outputData = sources[0];
+
+						if (m_outputData)
+							break;
 					}
 				}
 				i->values[controlType] = value;
