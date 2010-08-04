@@ -1,6 +1,5 @@
 #include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/MemberRef.h"
-#include "Core/Serialization/MemberStaticArray.h"
+#include "Core/Serialization/MemberRefArray.h"
 #include "Input/Binding/InBoolean.h"
 #include "Input/Binding/InputValueSet.h"
 #include "Input/Binding/ValueDigital.h"
@@ -14,7 +13,7 @@ namespace traktor
 
 struct InBooleanInstance : public RefCountImpl< IInputNode::Instance >
 {
-	Ref< IInputNode::Instance > sourceInstance[2];
+	RefArray< IInputNode::Instance > sourceInstance;
 };
 		
 		}
@@ -31,7 +30,8 @@ InBoolean::InBoolean(
 	IInputNode* source2,
 	Operator op
 )
-:	m_op(op)
+:	m_source(2)
+,	m_op(op)
 {
 	m_source[0] = source1;
 	m_source[1] = source2;
@@ -40,8 +40,8 @@ InBoolean::InBoolean(
 Ref< IInputNode::Instance > InBoolean::createInstance() const
 {
 	Ref< InBooleanInstance > instance = new InBooleanInstance();
-	instance->sourceInstance[0] = m_source[0] ? m_source[0]->createInstance() : 0;
-	instance->sourceInstance[1] = m_source[1] ? m_source[1]->createInstance() : 0;
+	for (RefArray< IInputNode >::const_iterator i = m_source.begin(); i != m_source.end(); ++i)
+		instance->sourceInstance.push_back((*i)->createInstance());
 	return instance;
 }
 
@@ -54,27 +54,29 @@ float InBoolean::evaluate(
 {
 	InBooleanInstance* ibi = static_cast< InBooleanInstance* >(instance);
 	
-	bool value1 = asBoolean(m_source[0] ? m_source[0]->evaluate(ibi->sourceInstance[0], valueSet, T, dT) : 0.0f);
-	bool value2 = asBoolean(m_source[1] ? m_source[1]->evaluate(ibi->sourceInstance[1], valueSet, T, dT) : 0.0f);
-	
 	bool result = false;
-	switch (m_op)
+	for (uint32_t i = 0; i < uint32_t(m_source.size()); ++i)
 	{
-	case OpNot:
-		result = !value1;
-		break;
+		bool value = asBoolean(m_source[i]->evaluate(ibi->sourceInstance[i], valueSet, T, dT));
+	
+		switch (m_op)
+		{
+		case OpNot:
+			result = !value;
+			break;
 
-	case OpAnd:
-		result = value1 & value2;
-		break;
-		
-	case OpOr:
-		result = value1 | value2;
-		break;
-		
-	case OpXor:
-		result = value1 ^ value2;
-		break;
+		case OpAnd:
+			result &= value;
+			break;
+			
+		case OpOr:
+			result |= value;
+			break;
+			
+		case OpXor:
+			result ^= value;
+			break;
+		}
 	}
 	
 	return asFloat(result);
@@ -91,7 +93,7 @@ bool InBoolean::serialize(ISerializer& s)
 		0
 	};
 	
-	s >> MemberStaticArray< Ref< IInputNode >, 2, MemberRef< IInputNode > >(L"source", m_source);
+	s >> MemberRefArray< IInputNode >(L"source", m_source);
 	s >> MemberEnum< Operator >(L"op", m_op, c_Operator_Keys);
 	
 	return true;
