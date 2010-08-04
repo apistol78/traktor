@@ -263,6 +263,94 @@ struct MethodNativeFunction_self_1 < ClassType, void, Argument1Type > : public I
 };
 
 
+template <
+	typename ClassType,
+	typename ReturnType,
+	typename Argument1Type,
+	typename Argument2Type
+>
+struct MethodNativeFunction_self_2 : public INativeFunction
+{
+	ReturnType (ClassType::*m_method)(Argument1Type, Argument2Type);
+
+	virtual void call(CallArgs& ca)
+	{
+		T_ASSERT (ca.args.size() == 2);
+		ca.ret = ActionValueCast< ReturnType >::set(
+			(checked_type_cast< ClassType*, false >(ca.self)->*m_method)(
+				ActionValueCast< Argument1Type >::get(ca.args[0]),
+				ActionValueCast< Argument2Type >::get(ca.args[1])
+			)
+		);
+	}
+};
+
+template <
+	typename ClassType,
+	typename Argument1Type,
+	typename Argument2Type
+>
+struct MethodNativeFunction_self_2 < ClassType, void, Argument1Type, Argument2Type > : public INativeFunction
+{
+	void (ClassType::*m_method)(Argument1Type, Argument2Type);
+
+	virtual void call(CallArgs& ca)
+	{
+		T_ASSERT (ca.args.size() == 2);
+		(checked_type_cast< ClassType*, false >(ca.self)->*m_method)(
+			ActionValueCast< Argument1Type >::get(ca.args[0]),
+			ActionValueCast< Argument2Type >::get(ca.args[1])
+		);
+	}
+};
+
+
+template <
+	typename ClassType,
+	typename ReturnType,
+	typename Argument1Type,
+	typename Argument2Type,
+	typename Argument3Type
+>
+struct MethodNativeFunction_self_3 : public INativeFunction
+{
+	ReturnType (ClassType::*m_method)(Argument1Type, Argument2Type, Argument3Type);
+
+	virtual void call(CallArgs& ca)
+	{
+		T_ASSERT (ca.args.size() == 3);
+		ca.ret = ActionValueCast< ReturnType >::set(
+			(checked_type_cast< ClassType*, false >(ca.self)->*m_method)(
+				ActionValueCast< Argument1Type >::get(ca.args[0]),
+				ActionValueCast< Argument2Type >::get(ca.args[1]),
+				ActionValueCast< Argument3Type >::get(ca.args[2])
+			)
+		);
+	}
+};
+
+template <
+	typename ClassType,
+	typename Argument1Type,
+	typename Argument2Type,
+	typename Argument3Type
+>
+struct MethodNativeFunction_self_3 < ClassType, void, Argument1Type, Argument2Type, Argument3Type > : public INativeFunction
+{
+	void (ClassType::*m_method)(Argument1Type, Argument2Type, Argument3Type);
+
+	virtual void call(CallArgs& ca)
+	{
+		T_ASSERT (ca.args.size() == 3);
+		(checked_type_cast< ClassType*, false >(ca.self)->*m_method)(
+			ActionValueCast< Argument1Type >::get(ca.args[0]),
+			ActionValueCast< Argument2Type >::get(ca.args[1]),
+			ActionValueCast< Argument3Type >::get(ca.args[2])
+		);
+	}
+};
+
+
 /*! \brief ActionScript native function.
  * \ingroup Flash
  */
@@ -343,6 +431,35 @@ template <
 Ref< ActionFunctionNative > createNativeFunction(ReturnType (ClassType::*method)(Argument1Type))
 {
 	Ref< MethodNativeFunction_self_1< ClassType, ReturnType, Argument1Type > > nf = new MethodNativeFunction_self_1< ClassType, ReturnType, Argument1Type >();
+	nf->m_method = method;
+	return new ActionFunctionNative(nf);
+}
+
+
+template <
+	typename ClassType,
+	typename ReturnType,
+	typename Argument1Type,
+	typename Argument2Type
+>
+Ref< ActionFunctionNative > createNativeFunction(ReturnType (ClassType::*method)(Argument1Type, Argument2Type))
+{
+	Ref< MethodNativeFunction_self_2< ClassType, ReturnType, Argument1Type, Argument2Type > > nf = new MethodNativeFunction_self_2< ClassType, ReturnType, Argument1Type, Argument2Type >();
+	nf->m_method = method;
+	return new ActionFunctionNative(nf);
+}
+
+
+template <
+	typename ClassType,
+	typename ReturnType,
+	typename Argument1Type,
+	typename Argument2Type,
+	typename Argument3Type
+>
+Ref< ActionFunctionNative > createNativeFunction(ReturnType (ClassType::*method)(Argument1Type, Argument2Type, Argument3Type))
+{
+	Ref< MethodNativeFunction_self_3< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type > > nf = new MethodNativeFunction_self_3< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type >();
 	nf->m_method = method;
 	return new ActionFunctionNative(nf);
 }
