@@ -49,7 +49,7 @@ public:
 	virtual bool serialize(ISerializer& s);
 	
 private:
-	Ref< IInputNode > m_source[2];
+	RefArray< IInputNode > m_source;
 	Operator m_op;
 };
 
