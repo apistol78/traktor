@@ -2,6 +2,7 @@
 
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
+#include "Render/OpenGL/Std/OsX/CGLCustomWindow.h"
 #include "Render/OpenGL/Std/OsX/CGLWindow.h"
 
 namespace traktor
@@ -13,7 +14,7 @@ namespace traktor
 		
 struct WindowData
 {
-	NSWindow* window;
+	CGLCustomWindow* window;
 	DisplayMode displayMode;
 	bool fullscreen;
 	CFDictionaryRef originalMode;
@@ -38,6 +39,21 @@ void setWindowSize(NSWindow* window, int32_t width, int32_t height)
 	frame.size.height = height;
 	
 	NSRect content = [window contentRectForFrameRect: frame];
+	frame.size.width += frame.size.width - content.size.width;
+	frame.size.height += frame.size.height - content.size.height;
+	
+	[window setFrame: frame display: YES];
+}
+
+void setWindowRect(NSWindow* window, int32_t x, int32_t y, int32_t width, int32_t height)
+{
+	NSRect frame = [window frame];
+	frame.size.width = width;
+	frame.size.height = height;
+	
+	NSRect content = [window contentRectForFrameRect: frame];
+	frame.origin.x = x;
+	frame.origin.y = y;
 	frame.size.width += frame.size.width - content.size.width;
 	frame.size.height += frame.size.height - content.size.height;
 	
@@ -152,19 +168,21 @@ void* cglwCreateWindow(const std::wstring& title, const DisplayMode& displayMode
 	
 		NSInteger windowLevel = CGShieldingWindowLevel();
 
-		windowData->window = [[NSWindow alloc]
+		windowData->window = [[CGLCustomWindow alloc]
 			initWithContentRect: frame
 			styleMask:NSBorderlessWindowMask
 			backing: NSBackingStoreBuffered
 			defer: YES
 			screen: [NSScreen mainScreen]
 		];
-		
-		[windowData->window setLevel: windowLevel];
+
+		[windowData->window setLevel: windowLevel];		
+		[windowData->window setHidesOnDeactivate: YES];
+		[windowData->window setOpaque: YES];
 	}
 	else
 	{
-		windowData->window = [[NSWindow alloc]
+		windowData->window = [[CGLCustomWindow alloc]
 			initWithContentRect: frame
 			styleMask: NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask
 			backing: NSBackingStoreBuffered
@@ -175,12 +193,17 @@ void* cglwCreateWindow(const std::wstring& title, const DisplayMode& displayMode
 	[windowData->window setBackgroundColor: [NSColor blackColor]];
 	[windowData->window setAcceptsMouseMovedEvents: YES];
 	[windowData->window setTitle: titleStr];
-	[windowData->window center];
+	
+	if (!fullscreen)
+		[windowData->window center];
 	
 	[windowData->window makeKeyAndOrderFront: nil];
 	[windowData->window makeMainWindow];
 	
 	cglwUpdateWindow(windowData);
+	
+	if (fullscreen)
+		CGDisplayHideCursor(kCGDirectMainDisplay);
 	
 	[pool release];	
 	
@@ -215,6 +238,14 @@ bool cglwModifyWindow(void* windowHandle, const DisplayMode& displayMode)
 		displayMode.height
 	);
 	
+	// Center window if display mode is shrinking.
+	if (
+		!windowData->fullscreen &&
+		(displayMode.width < windowData->displayMode.width ||
+		displayMode.height < windowData->displayMode.height)
+	)
+		[windowData->window center];
+
 	windowData->displayMode = displayMode;
 	
 	cglwUpdateWindow(windowHandle);
@@ -240,6 +271,17 @@ void cglwSetFullscreen(void* windowHandle, bool fullscreen)
 
 		[windowData->window setStyleMask: NSBorderlessWindowMask];
 		[windowData->window setLevel: windowLevel];
+		[windowData->window setOpaque: YES];
+		
+		setWindowRect(
+			windowData->window,
+			0,
+			0,
+			windowData->displayMode.width,
+			windowData->displayMode.height
+		);
+		
+		CGDisplayHideCursor(kCGDirectMainDisplay);
 	}
 	else
 	{
@@ -248,15 +290,18 @@ void cglwSetFullscreen(void* windowHandle, bool fullscreen)
 	
 		[windowData->window setStyleMask: NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask];
 		[windowData->window setLevel: NSNormalWindowLevel];
+		[windowData->window setOpaque: NO];
+
+		setWindowSize(
+			windowData->window,
+			windowData->displayMode.width,
+			windowData->displayMode.height
+		);
+
+		[windowData->window center];
+		
+		CGDisplayShowCursor(kCGDirectMainDisplay);
 	}
-
-	setWindowSize(
-		windowData->window,
-		windowData->displayMode.width,
-		windowData->displayMode.height
-	);
-
-	[windowData->window center];
 	
 	cglwUpdateWindow(windowData->window);
 	
@@ -278,11 +323,20 @@ void cglwUpdateWindow(void* windowHandle)
 		NSEventType eventType = [event type];		
 		if (eventType == NSKeyDown)
 		{
+			uint32_t modifierFlags = [event modifierFlags];
 			int32_t keyCode = [event keyCode];
-			if (keyCode == 122)	// F1
-				cglwSetFullscreen(windowHandle, true);
-			else if (keyCode == 120)	// F2
-				cglwSetFullscreen(windowHandle, false);
+			
+			// Toggle fullscreen with Cmd+M or Cmd+Return key combinations.
+			if (
+				(modifierFlags & kCGEventFlagMaskCommand) != 0 &&
+				(keyCode == 0x2e || keyCode == 0x24)
+			)
+			{
+				if (cglwIsFullscreen(windowHandle))
+					cglwSetFullscreen(windowHandle, false);
+				else
+					cglwSetFullscreen(windowHandle, true);
+			}
 		}
 		else if (eventType != NSKeyUp)
 		{

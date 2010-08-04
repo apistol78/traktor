@@ -114,6 +114,7 @@ bool RenderViewOpenGL::reset(const RenderViewDefaultDesc& desc)
 	// Re-create primary FBO target.
 	m_primaryTargetDesc.width = m_context->getWidth();
 	m_primaryTargetDesc.height = m_context->getHeight();
+	m_primaryTargetDesc.multiSample = desc.multiSample;
 
 	m_primaryTarget = new RenderTargetSetOpenGL(m_context);
 	m_primaryTarget->create(m_primaryTargetDesc);
