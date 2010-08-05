@@ -14,17 +14,19 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.input.GenericInputSource", GenericInputSource, 
 
 GenericInputSource::GenericInputSource(const GenericInputSourceData* data)
 :	m_data(data)
+,	m_matchingDeviceCount(0)
 ,	m_lastValue(0.0f)
 {
 }
 
 std::wstring GenericInputSource::getDescription() const
 {
-	// Use name of control as description; use from first connected device as it should be the same name on all.
+	// Use name of control as description; use first valid name as it should be the same on all our devices.
 	for (std::list< DeviceControl >::const_iterator i = m_deviceControls.begin(); i != m_deviceControls.end(); ++i)
 	{
-		if (i->device->isConnected())
-			return i->device->getControlName(i->control);
+		std::wstring controlName = i->device->getControlName(i->control);
+		if (!controlName.empty())
+			return controlName;
 	}
 
 	// No device connected; return empty string.
@@ -44,7 +46,7 @@ float GenericInputSource::read(InputSystem* inputSystem, float T, float dT)
 	int32_t deviceCount = inputSystem->getDeviceCount(category);
 
 	// Find all matching devices.
-	if (m_deviceControls.size() != deviceCount)
+	if (deviceCount != m_matchingDeviceCount)
 	{
 		m_deviceControls.clear();
 		if (index < 0)
@@ -84,6 +86,7 @@ float GenericInputSource::read(InputSystem* inputSystem, float T, float dT)
 				}
 			}
 		}
+		m_matchingDeviceCount = deviceCount;
 	}
 	
 	// Query all matching devices.
@@ -92,6 +95,8 @@ float GenericInputSource::read(InputSystem* inputSystem, float T, float dT)
 		i->previousValue = i->currentValue;
 		if (i->device->isConnected())
 			i->currentValue = i->device->getControlValue(i->control);
+		else
+			i->currentValue = 0.0f;
 	}
 
 	// Return first found modified value.
@@ -100,11 +105,10 @@ float GenericInputSource::read(InputSystem* inputSystem, float T, float dT)
 		if (abs< float >(i->currentValue - i->previousValue) > FUZZY_EPSILON)
 		{
 			m_lastValue = i->currentValue;
-			return i->currentValue;
+			break;
 		}
 	}
 
-	// No device modified; return same value as last time.
 	return m_lastValue;
 }
 

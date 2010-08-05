@@ -1,5 +1,7 @@
 #include <cstring>
 #include "Core/Io/MemoryStream.h"
+#include "Core/Io/StringOutputStream.h"
+#include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
 #include "Core/Misc/AutoPtr.h"
@@ -29,6 +31,29 @@ namespace traktor
 	{
 		namespace
 		{
+
+std::wstring translateStringEncoding(const IEncoding& encoding, const std::string& s)
+{
+	StringOutputStream ss;
+	uint8_t buf[IEncoding::MaxEncodingSize];
+	wchar_t ec;
+	int32_t r;
+
+	const char* cs = s.c_str();
+	for (uint32_t i = 0; i < s.length(); )
+	{
+		uint32_t nb = std::min(sizeof_array(buf), s.length() - i);
+
+		std::memcpy(buf, &cs[i], nb);
+		if ((r = encoding.translate(buf, nb, ec)) < 0)
+			break;
+
+		ss << ec;
+		i += r;
+	}
+
+	return ss.str();
+}
 
 Ref< ActionScript > readActionScript(BitReader& bs)
 {
@@ -388,7 +413,10 @@ bool FlashTagDefineEditText::read(SwfReader* swf, ReadContext& context)
 	std::wstring variableName = mbstows(swf->readString());
 	std::wstring initialText;
 	if (hasText)
-		initialText = mbstows(swf->readString());
+	{
+		std::string it = swf->readString();
+		initialText = translateStringEncoding(Utf8Encoding(), it);
+	}
 
 	Ref< FlashEdit > edit = new FlashEdit(
 		textId,
