@@ -90,4 +90,11 @@ Ref< const IPropertyValue > Settings::getProperty(const std::wstring& propertyNa
 	return traverseGetProperty(m_rootGroup, propertyName);
 }
 
+void Settings::merge(Settings* right)
+{
+	const std::map< std::wstring, Ref< IPropertyValue > >& rightValues = right->m_rootGroup->getValues();
+	for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = rightValues.begin(); i != rightValues.end(); ++i)
+		setProperty(i->first, i->second);
+}
+
 }
