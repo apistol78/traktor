@@ -9,6 +9,37 @@ namespace traktor
 		namespace
 		{
 
+const struct ControlConfig
+{
+	const wchar_t* name;
+	InputDefaultControlType controlType;
+	bool analogue;
+	int32_t index;
+}
+c_controlConfig[] =
+{
+	{ L"Up", DtUp, false, XINPUT_GAMEPAD_DPAD_UP },
+	{ L"Down", DtDown, false, XINPUT_GAMEPAD_DPAD_DOWN },
+	{ L"Left", DtLeft, false, XINPUT_GAMEPAD_DPAD_LEFT },
+	{ L"Right", DtRight, false, XINPUT_GAMEPAD_DPAD_RIGHT },
+	{ L"Start", DtSelect, false, XINPUT_GAMEPAD_START },
+	{ L"Back", DtCancel, false, XINPUT_GAMEPAD_BACK },
+	{ L"Left Thumb Left/Right", DtThumbLeftX, true, -1 },
+	{ L"Left Thumb Up/Down", DtThumbLeftY, true, -2 },
+	{ L"Left Thumb Push", DtThumbLeftPush, false, XINPUT_GAMEPAD_LEFT_THUMB },
+	{ L"Right Thumb Left/Right", DtThumbRightX, true, -3 },
+	{ L"Right Thumb Up/Down", DtThumbRightY, true, -4 },
+	{ L"Right Thumb Push", DtThumbRightPush, false, XINPUT_GAMEPAD_RIGHT_THUMB },
+	{ L"Left Trigger", DtTriggerLeft, true, -5 },
+	{ L"Right Trigger", DtTriggerRight, true, -6 },
+	{ L"Left Shoulder", DtShoulderLeft, false, XINPUT_GAMEPAD_LEFT_SHOULDER },
+	{ L"Right Shoulder", DtShoulderRight, false, XINPUT_GAMEPAD_RIGHT_SHOULDER },
+	{ L"Button A", DtButton1, false, XINPUT_GAMEPAD_A },
+	{ L"Button B", DtButton2, false, XINPUT_GAMEPAD_B },
+	{ L"Button X", DtButton3, false, XINPUT_GAMEPAD_X },
+	{ L"Button Y", DtButton4, false, XINPUT_GAMEPAD_Y }
+};
+
 const uint32_t c_skipReadStateNoConnect = 15;
 
 float adjustDeadZone(float value)
@@ -33,7 +64,7 @@ InputDeviceXi::InputDeviceXi(DWORD controller)
 
 std::wstring InputDeviceXi::getName() const
 {
-	return L"Xbox360 joypad " + toString< uint32_t >(m_controller);
+	return L"Xbox360 gamepad " + toString< uint32_t >(m_controller);
 }
 
 InputCategory InputDeviceXi::getCategory() const
@@ -48,26 +79,28 @@ bool InputDeviceXi::isConnected() const
 
 int InputDeviceXi::getControlCount()
 {
-	return 0;
+	return sizeof_array(c_controlConfig);
 }
 
 std::wstring InputDeviceXi::getControlName(int control)
 {
-	return L"";
+	return c_controlConfig[control].name;
 }
 
 bool InputDeviceXi::isControlAnalogue(int control) const
 {
-	return control < 0;
+	return c_controlConfig[control].analogue;
 }
 
 float InputDeviceXi::getControlValue(int control)
 {
-	if (control > 0)
-		return ((m_state.Gamepad.wButtons & control) == control) ? 1.0f : 0.0f;
-	else if (control < 0)
+	const ControlConfig& config = c_controlConfig[control];
+
+	if (!config.analogue)
+		return ((m_state.Gamepad.wButtons & config.index) == config.index) ? 1.0f : 0.0f;
+	else
 	{
-		switch (control)
+		switch (config.index)
 		{
 		case -1:
 			return adjustDeadZone(m_state.Gamepad.sThumbLX / 32767.0f);
@@ -88,97 +121,21 @@ float InputDeviceXi::getControlValue(int control)
 			return m_state.Gamepad.bRightTrigger / 255.0f;
 		}
 	}
+
 	return 0.0f;
 }
 
 bool InputDeviceXi::getDefaultControl(InputDefaultControlType controlType, int& control) const
 {
-	switch (controlType)
+	for (uint32_t i = 0; i < sizeof_array(c_controlConfig); ++i)
 	{
-	case DtUp:
-		control = XINPUT_GAMEPAD_DPAD_UP;
-		break;
-
-	case DtDown:
-		control = XINPUT_GAMEPAD_DPAD_DOWN;
-		break;
-
-	case DtLeft:
-		control = XINPUT_GAMEPAD_DPAD_LEFT;
-		break;
-
-	case DtRight:
-		control = XINPUT_GAMEPAD_DPAD_RIGHT;
-		break;
-
-	case DtSelect:
-		control = XINPUT_GAMEPAD_START;
-		break;
-
-	case DtCancel:
-		control = XINPUT_GAMEPAD_BACK;
-		break;
-
-	case DtThumbLeftX:
-		control = -1;
-		break;
-
-	case DtThumbLeftY:
-		control = -2;
-		break;
-
-	case DtThumbLeftPush:
-		control = XINPUT_GAMEPAD_LEFT_THUMB;
-		break;
-
-	case DtThumbRightX:
-		control = -3;
-		break;
-
-	case DtThumbRightY:
-		control = -4;
-		break;
-
-	case DtThumbRightPush:
-		control = XINPUT_GAMEPAD_RIGHT_THUMB;
-		break;
-
-	case DtTriggerLeft:
-		control = -5;
-		break;
-
-	case DtTriggerRight:
-		control = -6;
-		break;
-
-	case DtShoulderLeft:
-		control = XINPUT_GAMEPAD_LEFT_SHOULDER;
-		break;
-
-	case DtShoulderRight:
-		control = XINPUT_GAMEPAD_RIGHT_SHOULDER;
-		break;
-
-	case DtButton1:
-		control = XINPUT_GAMEPAD_A;
-		break;
-
-	case DtButton2:
-		control = XINPUT_GAMEPAD_B;
-		break;
-
-	case DtButton3:
-		control = XINPUT_GAMEPAD_X;
-		break;
-
-	case DtButton4:
-		control = XINPUT_GAMEPAD_Y;
-		break;
-
-	default:
-		return false;
+		if (c_controlConfig[i].controlType == controlType)
+		{
+			control = i;
+			return true;
+		}
 	}
-	return true;
+	return false;
 }
 
 void InputDeviceXi::resetState()

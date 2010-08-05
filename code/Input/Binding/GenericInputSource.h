@@ -43,6 +43,7 @@ private:
 
 	Ref< const GenericInputSourceData > m_data;
 	std::list< DeviceControl > m_deviceControls;
+	int32_t m_matchingDeviceCount;
 	float m_lastValue;
 };
 
