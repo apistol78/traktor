@@ -56,11 +56,17 @@ public:
 		return write(s);
 	}
 
-	/*! \brief
+	/*! \brief Set property.
+	 *
+	 * \param propertyName Name of property.
+	 * \param value Property value instance.
 	 */
 	void setProperty(const std::wstring& propertyName, IPropertyValue* value);
 
-	/*! \brief
+	/*! \brief Get property.
+	 *
+	 * \param propertyName Name of property.
+	 * \return Property value instance; null if no such property.
 	 */
 	Ref< const IPropertyValue > getProperty(const std::wstring& propertyName) const;
 
@@ -94,6 +100,16 @@ public:
 		Ref< const IPropertyValue > value = getProperty(propertyName);
 		return PropertyType::get(value);
 	}
+	
+	/*! \brief Merge settings.
+	 *
+	 * Properties existing in "right" settings
+	 * will override those who exist in this
+	 * settings.
+	 *
+	 * \param right Right-hand settings.
+	 */
+	void merge(Settings* right);
 
 	/*! \brief
 	 */
