@@ -7,9 +7,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_HTML_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -28,6 +28,8 @@ class T_DLLCLASS Node : public Object
 	T_RTTI_CLASS;
 
 public:
+	Node();
+	
 	virtual std::wstring getName() const;
 
 	virtual std::wstring getValue() const;
@@ -51,7 +53,7 @@ public:
 	virtual void writeHtml(IStream* stream);
 
 private:
-	Ref< Node > m_parent;
+	Node* m_parent;
 	Ref< Node > m_previousSibling;
 	Ref< Node > m_nextSibling;
 	Ref< Node > m_firstChild;
