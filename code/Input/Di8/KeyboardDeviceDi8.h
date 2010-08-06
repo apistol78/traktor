@@ -1,5 +1,5 @@
-#ifndef traktor_input_InputDeviceDi8_H
-#define traktor_input_InputDeviceDi8_H
+#ifndef traktor_input_KeyboardDeviceDi8_H
+#define traktor_input_KeyboardDeviceDi8_H
 
 #define DIRECTINPUT_VERSION 0x0800
 #include <dinput.h>
@@ -9,9 +9,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_INPUT_DI8_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -19,27 +19,12 @@ namespace traktor
 	namespace input
 	{
 
-struct PadAxisInfo 
-{
-	int saturation;
-	int deadzone;
-	int rangeMin;
-	int rangeMax;
-	GUID guidType;
-	int sliderIndex;
-	std::wstring name;
-};
-
-class T_DLLCLASS InputDeviceDi8 : public IInputDevice
+class T_DLLCLASS KeyboardDeviceDi8 : public IInputDevice
 {
 	T_RTTI_CLASS;
 
 public:
-	InputDeviceDi8(IDirectInputDevice8* diDevice);
-
-	void collectGamepadInfo(IDirectInputDevice8* device);
-
-	virtual ~InputDeviceDi8();
+	KeyboardDeviceDi8(IDirectInputDevice8* diDevice, const DIDEVICEINSTANCE* deviceInstance);
 
 	virtual std::wstring getName() const;
 
@@ -67,13 +52,12 @@ public:
 
 private:
 	ComRef< IDirectInputDevice8 > m_device;
-	DIDEVICEINSTANCE m_deviceDesc;
-	LPVOID m_state;
+	std::wstring m_name;
+	uint8_t m_state[256];
 	bool m_connected;
-	std::vector< PadAxisInfo > m_padAxisInfo;
 };
 
 	}
 }
 
-#endif	// traktor_input_InputDeviceDi8_H
+#endif	// traktor_input_KeyboardDeviceDi8_H

@@ -22,6 +22,7 @@ ActionFunction2::ActionFunction2(
 	uint8_t registerCount,
 	uint16_t flags,
 	const std::vector< std::pair< std::wstring, uint8_t > >& argumentsIntoRegisters,
+	const std::map< std::wstring, ActionValue >& variables,
 	ActionDictionary* dictionary
 )
 :	ActionFunction(name)
@@ -30,6 +31,7 @@ ActionFunction2::ActionFunction2(
 ,	m_registerCount(registerCount)
 ,	m_flags(flags)
 ,	m_argumentsIntoRegisters(argumentsIntoRegisters)
+,	m_variables(variables)
 ,	m_dictionary(dictionary)
 {
 	// Do this inside constructor to prevent infinite recursion.
@@ -52,6 +54,11 @@ ActionValue ActionFunction2::call(ActionContext* context, ActionObject* self, co
 		m_dictionary,
 		this
 	);
+
+	// Prepare activation scope variables; do this first
+	// as some variables will get overridden below such as "this", "arguments" etc.
+	for (std::map< std::wstring, ActionValue >::const_iterator i = m_variables.begin(); i != m_variables.end(); ++i)
+		callFrame.setVariable(i->first, i->second);
 
 	uint8_t preloadRegister = 1;
 	if (m_flags & AffPreloadThis)
@@ -92,6 +99,7 @@ ActionValue ActionFunction2::call(ActionContext* context, ActionObject* self, co
 	if (m_flags & AffPreloadGlobal)
 		callFrame.setRegister(preloadRegister++, ActionValue(context->getGlobal()));
 
+	// Pass arguments into registers.
 	size_t argumentPassed = 0;
 	for (
 		std::vector< std::pair< std::wstring, uint8_t > >::const_iterator i = m_argumentsIntoRegisters.begin();

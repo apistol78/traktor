@@ -20,8 +20,6 @@ namespace traktor
 	namespace input
 	{
 
-class InputDeviceDi8;
-
 class T_DLLCLASS InputDriverDi8 : public IInputDriver
 {
 	T_RTTI_CLASS;
@@ -48,7 +46,7 @@ private:
 
 	HWND m_hWnd;
 	uint32_t m_inputCategories;
-	RefArray< InputDeviceDi8 > m_devices;
+	RefArray< IInputDevice > m_devices;
 	ComRef< IDirectInput8 > m_directInput;
 };
 

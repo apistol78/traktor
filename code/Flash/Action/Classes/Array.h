@@ -62,6 +62,8 @@ public:
 
 	virtual std::wstring toString() const;
 
+	const std::vector< ActionValue >& getValues() const { return m_values; }
+
 private:
 	std::vector< ActionValue > m_values;
 };

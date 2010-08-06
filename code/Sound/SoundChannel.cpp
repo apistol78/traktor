@@ -89,6 +89,7 @@ bool SoundChannel::isPlaying() const
 
 void SoundChannel::stop()
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	m_sound = 0;
 	m_cursor = 0;
 	m_eventFinish.broadcast();
@@ -101,6 +102,8 @@ ISoundBufferCursor* SoundChannel::getCursor() const
 
 bool SoundChannel::playSound(const Sound* sound, double time, uint32_t priority, uint32_t repeat)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	if (!sound)
 	{
 		log::error << L"playSound failed; no sound" << Endl;
@@ -131,6 +134,8 @@ bool SoundChannel::playSound(const Sound* sound, double time, uint32_t priority,
 
 bool SoundChannel::getBlock(const ISoundMixer* mixer, double time, SoundBlock& outBlock)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	if (!m_sound || !m_cursor)
 		return false;
 
@@ -185,10 +190,7 @@ bool SoundChannel::getBlock(const ISoundMixer* mixer, double time, SoundBlock& o
 
 		// Apply filter on sound block.
 		if (m_filter)
-		{
-			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 			m_filter->apply(mixer, m_filterInstance, soundBlock);
-		}
 
 		// Convert sound block into hardware required sample rate.
 		if (soundBlock.sampleRate != m_hwSampleRate)

@@ -1,6 +1,7 @@
 #include "Core/Log/Log.h"
 #include "Flash/Action/ActionFrame.h"
 #include "Flash/Action/ActionFunctionNative.h"
+#include "Flash/Action/Classes/Array.h"
 #include "Flash/Action/Avm1/Classes/AsFunction.h"
 #include "Flash/Action/Avm1/Classes/AsObject.h"
 
@@ -33,6 +34,7 @@ void AsFunction::createPrototype()
 	Ref< ActionObject > prototype = new ActionObject();
 
 	prototype->setMember(L"__proto__", ActionValue(AsObject::getInstance()));
+	prototype->setMember(L"apply", ActionValue(createNativeFunction(this, &AsFunction::Function_apply)));
 	prototype->setMember(L"call", ActionValue(createNativeFunction(this, &AsFunction::Function_call)));
 
 	prototype->setReadOnly();
@@ -45,6 +47,48 @@ ActionValue AsFunction::construct(ActionContext* context, const ActionValueArray
 	return ActionValue();
 }
 
+void AsFunction::Function_apply(CallArgs& ca)
+{
+	if (ca.args.size() < 2)
+	{
+		log::error << L"Function.apply, incorrect number of arguments" << Endl;
+		return;
+	}
+
+	ActionFunction* function = checked_type_cast< ActionFunction*, false >(ca.self);
+	Ref< ActionObject > self = ca.args[0].getObjectSafe();
+	Ref< Array > args = ca.args[1].getObjectSafe< Array >();
+
+	ActionFrame frame(
+		ca.context,
+		ca.self,
+		0,
+		0,
+		0,
+		0,
+		function
+	);
+
+	ActionValueStack& stack = frame.getStack();
+	if (args)
+	{
+		const std::vector< ActionValue >& argValues = args->getValues();
+		for (size_t i = 0; i < argValues.size(); ++i)
+			stack.push(argValues[i]);
+		stack.push(ActionValue(avm_number_t(argValues.size())));
+	}
+	else
+		stack.push(ActionValue(avm_number_t(0)));
+
+	function->call(
+		&frame,
+		self
+	);
+
+	if (stack.depth() > 0)
+		ca.ret = stack.pop();
+}
+
 void AsFunction::Function_call(CallArgs& ca)
 {
 	if (ca.args.size() < 1)
@@ -54,8 +98,7 @@ void AsFunction::Function_call(CallArgs& ca)
 	}
 
 	ActionFunction* function = checked_type_cast< ActionFunction*, false >(ca.self);
-
-	Ref< ActionObject > self = ca.args[0].getObjectSafe();
+	ActionObject* self = ca.args[0].getObjectSafe();
 
 	ActionFrame frame(
 		ca.context,

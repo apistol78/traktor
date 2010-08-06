@@ -1381,6 +1381,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 				registerCount,
 				flags,
 				argumentsIntoRegisters,
+				frame->getVariables(),
 				frame->getDictionary()
 			);
 

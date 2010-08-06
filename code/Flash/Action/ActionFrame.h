@@ -62,6 +62,8 @@ public:
 
 	inline uint16_t getCodeSize() const { return m_codeSize; }
 
+	inline const std::map< std::wstring, ActionValue >& getVariables() const { return m_localVariables; }
+
 	inline ActionDictionary* getDictionary() const { return m_dictionary; }
 
 	inline ActionFunction* getCallee() const { return m_callee; }
