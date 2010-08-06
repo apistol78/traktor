@@ -1,0 +1,75 @@
+#ifndef traktor_input_JoystickDeviceDi8_H
+#define traktor_input_JoystickDeviceDi8_H
+
+#define DIRECTINPUT_VERSION 0x0800
+#include <dinput.h>
+#include "Input/IInputDevice.h"
+#include "Core/Misc/ComRef.h"
+
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_INPUT_DI8_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
+namespace traktor
+{
+	namespace input
+	{
+
+class T_DLLCLASS JoystickDeviceDi8 : public IInputDevice
+{
+	T_RTTI_CLASS;
+
+public:
+	JoystickDeviceDi8(IDirectInputDevice8* diDevice, const DIDEVICEINSTANCE* deviceInstance);
+
+	virtual std::wstring getName() const;
+
+	virtual InputCategory getCategory() const;
+
+	virtual bool isConnected() const;
+
+	virtual int getControlCount();
+
+	virtual std::wstring getControlName(int control);
+
+	virtual bool isControlAnalogue(int control) const;
+
+	virtual float getControlValue(int control);
+
+	virtual bool getDefaultControl(InputDefaultControlType controlType, int& control) const;
+
+	virtual void resetState();
+
+	virtual void readState();
+
+	virtual bool supportRumble() const;
+
+	virtual void setRumble(const InputRumble& rumble);
+
+private:
+	struct ControlInfo 
+	{
+		std::wstring name;
+		InputDefaultControlType controlType;
+		uint32_t offset;
+		bool analogue;
+		bool inverted;
+	};
+
+	ComRef< IDirectInputDevice8 > m_device;
+	std::wstring m_name;
+	DIJOYSTATE2 m_state;
+	bool m_connected;
+	std::vector< ControlInfo > m_controlInfo;
+
+	void collectControls(IDirectInputDevice8* device);
+};
+
+	}
+}
+
+#endif	// traktor_input_JoystickDeviceDi8_H

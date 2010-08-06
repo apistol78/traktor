@@ -11,37 +11,54 @@ const DWORD c_vkControlKeys[] =
 {
 	0,
 
-	'W',
+	'W',			// DtUp
 	'S',
 	'A',
 	'D',
-	VK_RETURN,
+	VK_RETURN,		// DtSelect
 	VK_ESCAPE,
+	0,				// DtThumbLeftX
 	0,
 	0,
 	0,
-	0,				// 10
+	0,				// DtThumbRightX
 	0,
 	0,
 	0,
+	0,				// DtSliderLeft
 	0,
+	0,				// DtTriggerLeft
 	0,
+	0,				// DtShoulderLeft
 	0,
-	'1',
+	'1',			// DtButton1
 	'2',
 	'3',
-	'4',			// 20
+	'4',
+	'5',
+	'6',
+	'7',
+	'8',
+	0,				// DtReserved1
+	0,				// DtAxisX
+	0,
+	0,				// DtReserved2
+	0,
+	0,
+	0,
+	0,
+	0,
 	0,
 	0,
 
-	VK_ESCAPE,
+	VK_ESCAPE,		// DtKeyEscape
 	'1',
 	'2',
 	'3',
 	'4',
 	'5',
 	'6',
-	'7',			// 30
+	'7',
 	'8',
 	'9',
 	'0',
@@ -51,7 +68,7 @@ const DWORD c_vkControlKeys[] =
 	VK_TAB,
 	'Q',
 	'W',
-	'E',			// 40
+	'E',
 	'R',
 	'T',
 	'Y',
@@ -61,7 +78,7 @@ const DWORD c_vkControlKeys[] =
 	'P',
 	'[',
 	']',
-	VK_RETURN,		// 50
+	VK_RETURN,
 	VK_LCONTROL,
 	'A',
 	'S',
@@ -71,7 +88,7 @@ const DWORD c_vkControlKeys[] =
 	'H',
 	'J',
 	'K',
-	'L',			// 60
+	'L',
 	';',
 	'\"',
 	'\'',
@@ -81,7 +98,7 @@ const DWORD c_vkControlKeys[] =
 	'X',
 	'C',
 	'V',
-	'B',			// 70
+	'B',
 	'N',
 	'M',
 	',',
@@ -91,7 +108,7 @@ const DWORD c_vkControlKeys[] =
 	VK_MULTIPLY,
 	VK_LMENU,
 	VK_SPACE,
-	VK_CAPITAL,		// 80
+	VK_CAPITAL,
 	VK_F1,
 	VK_F2,
 	VK_F3,
@@ -101,7 +118,7 @@ const DWORD c_vkControlKeys[] =
 	VK_F7,
 	VK_F8,
 	VK_F9,
-	VK_F10,			// 90
+	VK_F10,
 	VK_NUMLOCK,
 	VK_SCROLL,
 	VK_NUMPAD7,
@@ -111,7 +128,7 @@ const DWORD c_vkControlKeys[] =
 	VK_NUMPAD4,
 	VK_NUMPAD5,
 	VK_NUMPAD6,
-	VK_ADD,			// 100
+	VK_ADD,
 	VK_NUMPAD1,
 	VK_NUMPAD2,
 	VK_NUMPAD3,
@@ -121,7 +138,7 @@ const DWORD c_vkControlKeys[] =
 	VK_F11,
 	VK_F12,
 	VK_F13,
-	VK_F14,			// 110
+	VK_F14,
 	VK_F15,
 	VK_KANA,
 	0,
@@ -131,7 +148,7 @@ const DWORD c_vkControlKeys[] =
 	0,
 	0,
 	0,
-	'@',			// 120
+	'@',
 	':',
 	'_',
 	VK_KANJI,
@@ -141,7 +158,7 @@ const DWORD c_vkControlKeys[] =
 	0,
 	0,
 	VK_RCONTROL,
-	0,				// 130
+	0,
 	0,
 	0,
 	0,
@@ -151,7 +168,7 @@ const DWORD c_vkControlKeys[] =
 	0,
 	VK_DIVIDE,
 	0,
-	VK_RMENU,		// 140
+	VK_RMENU,
 	VK_PAUSE,
 	VK_HOME,
 	VK_UP,
@@ -161,7 +178,7 @@ const DWORD c_vkControlKeys[] =
 	VK_END,
 	VK_DOWN,
 	VK_NEXT,
-	VK_INSERT,		// 150
+	VK_INSERT,
 	VK_DELETE,
 	VK_LWIN,
 	VK_RWIN,
@@ -171,7 +188,7 @@ const DWORD c_vkControlKeys[] =
 	0,
 	0,
 	0,
-	0,				// 160
+	0,
 	0,
 	0,
 	0,

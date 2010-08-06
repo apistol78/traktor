@@ -27,6 +27,8 @@ private:
 
 	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
 
+	void Function_apply(CallArgs& ca);
+
 	void Function_call(CallArgs& ca);
 };
 
