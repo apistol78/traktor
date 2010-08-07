@@ -13,7 +13,7 @@ namespace traktor
 struct KeyControlMap
 {
 	InputDefaultControlType control;
-	int32_t index;
+	uint32_t usage;
 }
 c_keyControlMap[] =
 {
@@ -59,32 +59,13 @@ c_keyControlMap[] =
 	{ DtKeyReturn, kHIDUsage_KeyboardReturnOrEnter }
 };
 
-const KeyControlMap* findControlMapFromDefault(InputDefaultControlType control)
-{
-	for (int i = 0; i < sizeof_array(c_keyControlMap); ++i)
-	{
-		if (c_keyControlMap[i].control == control)
-			return &c_keyControlMap[i];
-	}
-	return 0;
-}
-
-const KeyControlMap* findControlMapFromIndex(int32_t index)
-{
-	for (int i = 0; i < sizeof_array(c_keyControlMap); ++i)
-	{
-		if (c_keyControlMap[i].index == index)
-			return &c_keyControlMap[i];
-	}
-	return 0;
-}
-
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.InputDeviceKeyboardOsX", InputDeviceKeyboardOsX, IInputDevice)
 
 InputDeviceKeyboardOsX::InputDeviceKeyboardOsX(IOHIDDeviceRef deviceRef)
 :	m_deviceRef(deviceRef)
+,	m_data(new uint8_t [sizeof_array(c_keyControlMap)])
 {
 	resetState();
 }
@@ -111,6 +92,8 @@ int InputDeviceKeyboardOsX::getControlCount()
 
 std::wstring InputDeviceKeyboardOsX::getControlName(int control)
 {
+	const KeyControlMap& controlMap = c_keyControlMap[control];
+	
 	CFArrayRef elements = IOHIDDeviceCopyMatchingElements(m_deviceRef, NULL, kIOHIDOptionsTypeNone);
 	for (CFIndex i = 0; i < CFArrayGetCount(elements); ++i)
 	{
@@ -118,8 +101,7 @@ std::wstring InputDeviceKeyboardOsX::getControlName(int control)
 		if (!e)
 			continue;
 			
-		int usage = (int)IOHIDElementGetUsage(e);
-		if (usage == control)
+		if (IOHIDElementGetUsage(e) == controlMap.usage)
 		{
 			CFStringRef name = IOHIDElementGetName(e);
 			
@@ -148,23 +130,29 @@ float InputDeviceKeyboardOsX::getControlValue(int control)
 
 bool InputDeviceKeyboardOsX::getDefaultControl(InputDefaultControlType controlType, int& control) const
 {
-	const KeyControlMap* controlMap = findControlMapFromDefault(controlType);
-	if (!controlMap)
-		return false;
-		
-	control = controlMap->index;
-	return true;
+	for (int32_t i = 0; i < sizeof_array(c_keyControlMap); ++i)
+	{
+		const KeyControlMap& controlMap = c_keyControlMap[i];
+		if (controlMap.control == controlType)
+		{
+			control = i;
+			return true;
+		}
+	}
+	return false;
 }
 
 void InputDeviceKeyboardOsX::resetState()
 {
-	std::memset(m_data, 0, sizeof(m_data));
 }
 
 void InputDeviceKeyboardOsX::readState()
 {
 	if (!m_deviceRef)
 		return;
+		
+	const uint32_t dataSize = sizeof_array(c_keyControlMap) * sizeof(uint8_t);
+	std::memset(m_data.ptr(), 0, dataSize);
 
 	CFArrayRef elements = IOHIDDeviceCopyMatchingElements(m_deviceRef, NULL, kIOHIDOptionsTypeNone);
 	for (CFIndex i = 0; i < CFArrayGetCount(elements); ++i)
@@ -173,16 +161,23 @@ void InputDeviceKeyboardOsX::readState()
 		if (!e)
 			continue;
 
-		IOHIDValueRef valueRef = 0;
-		IOHIDDeviceGetValue(m_deviceRef, e, &valueRef);
-		if (!valueRef)
-			continue;
-			
-		int value = (int)IOHIDValueGetIntegerValue(valueRef);
-		int keycode = (int)IOHIDElementGetUsage(e);
-
-		if (keycode >= 0 && keycode < sizeof_array(m_data))
-			m_data[keycode] = value ? 255 : 0;
+		uint32_t usage = (uint32_t)IOHIDElementGetUsage(e);
+		for (uint32_t j = 0; j < sizeof_array(c_keyControlMap); ++j)
+		{
+			const KeyControlMap& controlMap = c_keyControlMap[j];
+			if (controlMap.usage == usage)
+			{
+				IOHIDValueRef valueRef = 0;
+				IOHIDDeviceGetValue(m_deviceRef, e, &valueRef);
+				if (valueRef)
+				{
+					int32_t value = (int32_t)IOHIDValueGetIntegerValue(valueRef);
+					if (value != 0)
+						m_data[j] |= 255;
+				}
+				break;
+			}
+		}
 	}
 }
 
