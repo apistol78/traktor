@@ -7,9 +7,10 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.html.Attribute", Attribute, Object)
 
-Attribute::Attribute(const std::wstring& name, const std::wstring& value) :
-	m_name(name),
-	m_value(value)
+Attribute::Attribute(const std::wstring& name, const std::wstring& value)
+:	m_name(name)
+,	m_value(value)
+,	m_previous(0)
 {
 }
 

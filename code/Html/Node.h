@@ -54,7 +54,7 @@ public:
 
 private:
 	Node* m_parent;
-	Ref< Node > m_previousSibling;
+	Node* m_previousSibling;
 	Ref< Node > m_nextSibling;
 	Ref< Node > m_firstChild;
 	Ref< Node > m_lastChild;
