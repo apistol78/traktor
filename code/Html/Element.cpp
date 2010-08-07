@@ -10,8 +10,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.html.Element", Element, Node)
 
-Element::Element(const std::wstring& name) :
-	m_name(name)
+Element::Element(const std::wstring& name)
+:	m_name(name)
 {
 }
 

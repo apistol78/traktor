@@ -10,6 +10,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.xml.Node", Node, Object)
 
 Node::Node()
 :	m_parent(0)
+,	m_previousSibling(0)
 {
 }
 

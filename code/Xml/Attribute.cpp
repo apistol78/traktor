@@ -10,6 +10,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.xml.Attribute", Attribute, Object)
 Attribute::Attribute(const std::wstring& name, const std::wstring& value)
 :	m_name(name)
 ,	m_value(value)
+,	m_previous(0)
 {
 }
 

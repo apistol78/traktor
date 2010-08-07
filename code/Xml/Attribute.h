@@ -7,9 +7,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_XML_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif 
 
 namespace traktor
@@ -44,7 +44,7 @@ private:
 
 	std::wstring m_name;
 	std::wstring m_value;
-	Ref< Attribute > m_previous;
+	Attribute* m_previous;
 	Ref< Attribute > m_next;
 };
 
