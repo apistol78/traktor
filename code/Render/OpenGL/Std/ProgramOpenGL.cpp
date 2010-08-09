@@ -115,6 +115,7 @@ ProgramOpenGL::ProgramOpenGL(ContextOpenGL* resourceContext)
 ,	m_program(0)
 ,	m_state(0)
 ,	m_locationTargetSize(0)
+,	m_maxAnisotrophy(0.0f)
 ,	m_textureDirty(true)
 {
 	m_targetSize[0] =
@@ -325,6 +326,11 @@ bool ProgramOpenGL::create(const ProgramResource* resource)
 	const RenderState& renderState = resourceOpenGL->getRenderState();
 	m_renderState = renderState;
 	m_state = m_resourceContext->createStateList(renderState);
+	
+	// Determine anisotropy; don't use more than 4 taps.
+	glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &m_maxAnisotrophy);
+	if (m_maxAnisotrophy > 4.0f)
+		m_maxAnisotrophy = 4.0f;
 
 	return true;
 }
@@ -506,6 +512,7 @@ bool ProgramOpenGL::activate(float targetSize[2])
 			if (td.mipCount > 1)
 			{
 				T_OGL_SAFE(glTexParameteri(td.target, GL_TEXTURE_MIN_FILTER, samplerState.minFilter));
+				T_OGL_SAFE(glTexParameterf(td.target, GL_TEXTURE_MAX_ANISOTROPY_EXT, m_maxAnisotrophy));
 			}
 			else
 			{

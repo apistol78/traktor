@@ -99,6 +99,7 @@ private:
 	AlignedVector< float > m_uniformData;				//!< Scalar uniform data.
 	AlignedVector< TextureData > m_textureData;			//!< Texture data.
 	float m_targetSize[2];
+	GLfloat m_maxAnisotrophy;
 	bool m_textureDirty;
 	static ProgramOpenGL* ms_activeProgram;
 };

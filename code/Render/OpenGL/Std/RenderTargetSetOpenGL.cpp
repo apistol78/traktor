@@ -34,11 +34,22 @@ bool RenderTargetSetOpenGL::create(const RenderTargetSetCreateDesc& desc)
 		
 		if (desc.multiSample <= 1)
 		{
-			T_OGL_SAFE(glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT, m_width, m_height));
+			T_OGL_SAFE(glRenderbufferStorageEXT(
+				GL_RENDERBUFFER_EXT,
+				GL_DEPTH_COMPONENT24,
+				m_width,
+				m_height
+			));
 		}
 		else
 		{
-			T_OGL_SAFE(glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT, desc.multiSample, GL_DEPTH_COMPONENT, m_width, m_height));
+			T_OGL_SAFE(glRenderbufferStorageMultisampleEXT(
+				GL_RENDERBUFFER_EXT,
+				desc.multiSample,
+				GL_DEPTH_COMPONENT24,
+				m_width,
+				m_height
+			));
 		}
 	}
 
