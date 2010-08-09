@@ -208,6 +208,7 @@ private:
 	uint32_t m_intervalNextId;
 	
 	double m_timeCurrent;
+	double m_timeNext;
 	double m_timeNextFrame;
 
 	void Global_getUrl(CallArgs& ca);

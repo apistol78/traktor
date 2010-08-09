@@ -31,6 +31,7 @@ FlashMoviePlayer::FlashMoviePlayer(IDisplayRenderer* displayRenderer)
 ,	m_movieRenderer(new FlashMovieRenderer(displayRenderer))
 ,	m_intervalNextId(1)
 ,	m_timeCurrent(0.0)
+,	m_timeNext(0.0)
 ,	m_timeNextFrame(0.0)
 {
 }
@@ -198,22 +199,21 @@ void FlashMoviePlayer::executeFrame()
 
 bool FlashMoviePlayer::progressFrame(float deltaTime)
 {
-	m_timeCurrent += deltaTime;
-	if (m_timeCurrent >= m_timeNextFrame)
-	{
-		Timer timer;
+	bool executed = false;
 
-		timer.start();
+	if (m_timeNext >= m_timeNextFrame)
+	{
+		m_timeCurrent = m_timeNext;
+		m_timeNextFrame += 1.0 / m_movie->getMovieClip()->getFrameRate();
+
 		executeFrame();
 
-		double frameDuration = timer.getElapsedTime();
-		double frequency = 1.0 / m_movie->getMovieClip()->getFrameRate();
-
-		m_timeNextFrame += frequency - frameDuration;
-		return true;
+		executed = true;
 	}
-	else
-		return false;
+
+	m_timeNext += deltaTime;
+
+	return executed;
 }
 
 void FlashMoviePlayer::postKeyDown(int keyCode)
