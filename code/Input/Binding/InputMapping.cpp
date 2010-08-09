@@ -1,3 +1,4 @@
+#include "Core/Log/Log.h"
 #include "Input/Binding/IInputSource.h"
 #include "Input/Binding/IInputSourceData.h"
 #include "Input/Binding/InputMapping.h"
@@ -23,14 +24,20 @@ bool InputMapping::create(
 	const InputMappingStateData* stateData
 )
 {
+	m_sources.clear();
+	m_states.clear();
+	
 	const std::map< std::wstring, Ref< IInputSourceData > >& sourceDataMap = sourceData->getSourceData();
 	for (std::map< std::wstring, Ref< IInputSourceData > >::const_iterator i = sourceDataMap.begin(); i != sourceDataMap.end(); ++i)
 	{
 		Ref< IInputSource > source = i->second->createInstance();
 		if (!source)
+		{
+			log::error << L"Unable to create source instance \"" << i->first << L"\"" << Endl;
 			return false;
+		}
 
-		m_sources.insert(std::make_pair(i->first, source));
+		m_sources[i->first] = source;
 	}
 
 	const std::map< std::wstring, Ref< InputStateData > >& stateDataMap = stateData->getStateData();
@@ -39,11 +46,14 @@ bool InputMapping::create(
 		Ref< InputState > state = new InputState();
 
 		if (!state->create(i->second))
+		{
+			log::error << L"Unable to create state \"" << i->first << L"\"" << Endl;
 			return false;
+		}
 			
-		m_states.insert(std::make_pair(i->first, state));
+		m_states[i->first] = state;
 	}
-	
+
 	return true;
 }
 
