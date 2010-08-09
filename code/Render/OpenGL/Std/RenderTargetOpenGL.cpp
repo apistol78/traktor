@@ -1,7 +1,8 @@
+#include "Core/Log/Log.h"
+#include "Core/Math/Log2.h"
 #include "Render/OpenGL/IContext.h"
 #include "Render/OpenGL/Std/Extensions.h"
 #include "Render/OpenGL/Std/RenderTargetOpenGL.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -74,20 +75,23 @@ bool RenderTargetOpenGL::create(const RenderTargetSetCreateDesc& setDesc, const 
 	m_width = setDesc.width;
 	m_height = setDesc.height;
 
+	//if (isLog2(m_width) && isLog2(m_height))
+		m_textureTarget = GL_TEXTURE_2D;
+	//else
+	//	m_textureTarget = GL_TEXTURE_RECTANGLE_ARB;
+
 	switch (desc.format)
 	{
 	case TfR8:
 		internalFormat = GL_RED;
 		format = GL_RED;
 		type = GL_UNSIGNED_BYTE;
-		m_textureTarget = GL_TEXTURE_2D;
 		break;
 
 	case TfR8G8B8A8:
 		internalFormat = GL_RGBA;
 		format = GL_RGBA;
 		type = GL_UNSIGNED_BYTE;
-		m_textureTarget = GL_TEXTURE_2D;
 		break;
 
 	case TfR16G16B16A16F:
@@ -95,12 +99,10 @@ bool RenderTargetOpenGL::create(const RenderTargetSetCreateDesc& setDesc, const 
 		internalFormat = GL_RGBA16F_ARB;
 		format = GL_RGBA;
 		type = GL_HALF_FLOAT_ARB;
-		m_textureTarget = GL_TEXTURE_2D;
 #else
 		internalFormat = GL_RGBA16F_ARB;
 		format = GL_RGBA;
 		type = GL_FLOAT;
-		m_textureTarget = GL_TEXTURE_2D;
 #endif
 		break;
 
@@ -108,7 +110,6 @@ bool RenderTargetOpenGL::create(const RenderTargetSetCreateDesc& setDesc, const 
 		internalFormat = GL_RGBA32F_ARB;
 		format = GL_RGBA;
 		type = GL_FLOAT;
-		m_textureTarget = GL_TEXTURE_2D;
 		break;
 
 #if !defined(__APPLE__)
@@ -118,14 +119,12 @@ bool RenderTargetOpenGL::create(const RenderTargetSetCreateDesc& setDesc, const 
 			internalFormat = GL_FLOAT_R16_NV;
 			format = GL_RED;
 			type = GL_FLOAT;
-			m_textureTarget = GL_TEXTURE_RECTANGLE_NV;
 		}
 		else if (opengl_have_extension("GL_ATI_texture_float"))
 		{
 			internalFormat = GL_LUMINANCE_FLOAT16_ATI;
 			format = GL_RED;
 			type = GL_FLOAT;
-			m_textureTarget = GL_TEXTURE_2D;
 		}
 		else
 			return false;
@@ -137,14 +136,12 @@ bool RenderTargetOpenGL::create(const RenderTargetSetCreateDesc& setDesc, const 
 			internalFormat = GL_FLOAT_R32_NV;
 			format = GL_RED;
 			type = GL_FLOAT;
-			m_textureTarget = GL_TEXTURE_RECTANGLE_NV;
 		}
 		else if (opengl_have_extension("GL_ATI_texture_float"))
 		{
 			internalFormat = GL_LUMINANCE_FLOAT32_ATI;
 			format = GL_RED;
 			type = GL_FLOAT;
-			m_textureTarget = GL_TEXTURE_2D;
 		}
 		else
 			return false;
@@ -154,14 +151,12 @@ bool RenderTargetOpenGL::create(const RenderTargetSetCreateDesc& setDesc, const 
 		internalFormat = GL_RGBA16F_ARB;
 		format = GL_RGBA;
 		type = GL_FLOAT;
-		m_textureTarget = GL_TEXTURE_2D;
 		break;
 			
 	case TfR32F:
 		internalFormat = GL_RGBA32F_ARB;
 		format = GL_RGBA;
 		type = GL_FLOAT;
-		m_textureTarget = GL_TEXTURE_2D;
 		break;
 #endif
 
@@ -191,8 +186,8 @@ bool RenderTargetOpenGL::create(const RenderTargetSetCreateDesc& setDesc, const 
 		T_OGL_SAFE(glActiveTexture(GL_TEXTURE0));
 		T_OGL_SAFE(glBindTexture(m_textureTarget, m_colorTexture));
 
-		T_OGL_SAFE(glTexParameterf(m_textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP));
-		T_OGL_SAFE(glTexParameterf(m_textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP));
+		T_OGL_SAFE(glTexParameterf(m_textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+		T_OGL_SAFE(glTexParameterf(m_textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
 		T_OGL_SAFE(glTexParameterf(m_textureTarget, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
 		T_OGL_SAFE(glTexParameterf(m_textureTarget, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
 
@@ -221,12 +216,23 @@ bool RenderTargetOpenGL::create(const RenderTargetSetCreateDesc& setDesc, const 
 		// Multisampled color buffer.
 		T_OGL_SAFE(glGenRenderbuffersEXT(1, &m_targetColorBuffer));
 		T_OGL_SAFE(glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_targetColorBuffer));
-		T_OGL_SAFE(glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT, setDesc.multiSample, GL_RGBA8, m_width, m_height));
+		T_OGL_SAFE(glRenderbufferStorageMultisampleEXT(
+			GL_RENDERBUFFER_EXT,
+			setDesc.multiSample,
+			internalFormat,
+			m_width,
+			m_height
+		));
 		
 		// Create target FBO.
 		T_OGL_SAFE(glGenFramebuffersEXT(1, &m_targetFBO));
 		T_OGL_SAFE(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_targetFBO));
-		T_OGL_SAFE(glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_RENDERBUFFER_EXT, m_targetColorBuffer));
+		T_OGL_SAFE(glFramebufferRenderbufferEXT(
+			GL_FRAMEBUFFER_EXT,
+			GL_COLOR_ATTACHMENT0_EXT,
+			GL_RENDERBUFFER_EXT,
+			m_targetColorBuffer
+		));
 		if (depthBuffer)
 		{
 			T_OGL_SAFE(glFramebufferRenderbufferEXT(
@@ -244,8 +250,8 @@ bool RenderTargetOpenGL::create(const RenderTargetSetCreateDesc& setDesc, const 
 		T_OGL_SAFE(glActiveTexture(GL_TEXTURE0));
 		T_OGL_SAFE(glBindTexture(m_textureTarget, m_colorTexture));
 
-		T_OGL_SAFE(glTexParameterf(m_textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP));
-		T_OGL_SAFE(glTexParameterf(m_textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP));
+		T_OGL_SAFE(glTexParameterf(m_textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+		T_OGL_SAFE(glTexParameterf(m_textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
 		T_OGL_SAFE(glTexParameterf(m_textureTarget, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
 		T_OGL_SAFE(glTexParameterf(m_textureTarget, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
 
@@ -347,14 +353,16 @@ void RenderTargetOpenGL::bind(bool keepDepthStencil)
 			GL_RENDERBUFFER_EXT,
 			currentDepthBuffer
 		));
+		
+#if defined(_DEBUG)
+		GLenum status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
+		T_ASSERT (status == GL_FRAMEBUFFER_COMPLETE_EXT);
+#endif
 	}
 }
 
 void RenderTargetOpenGL::enter(bool keepDepthStencil)
 {
-	T_OGL_SAFE(glActiveTexture(GL_TEXTURE0));
-	T_OGL_SAFE(glBindTexture(m_textureTarget, m_colorTexture));
-
 	T_OGL_SAFE(glViewport(0, 0, m_width, m_height));
 
 	if (m_haveDepth || keepDepthStencil)
