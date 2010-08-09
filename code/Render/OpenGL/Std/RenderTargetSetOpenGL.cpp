@@ -36,7 +36,7 @@ bool RenderTargetSetOpenGL::create(const RenderTargetSetCreateDesc& desc)
 		{
 			T_OGL_SAFE(glRenderbufferStorageEXT(
 				GL_RENDERBUFFER_EXT,
-				GL_DEPTH_COMPONENT24,
+				GL_DEPTH_STENCIL_EXT,
 				m_width,
 				m_height
 			));
@@ -46,7 +46,7 @@ bool RenderTargetSetOpenGL::create(const RenderTargetSetCreateDesc& desc)
 			T_OGL_SAFE(glRenderbufferStorageMultisampleEXT(
 				GL_RENDERBUFFER_EXT,
 				desc.multiSample,
-				GL_DEPTH_COMPONENT24,
+				GL_DEPTH_STENCIL_EXT,
 				m_width,
 				m_height
 			));
