@@ -178,6 +178,12 @@ bool RenderTargetOpenGL::create(const RenderTargetSetCreateDesc& setDesc, const 
 				GL_RENDERBUFFER_EXT,
 				depthBuffer
 			));
+			T_OGL_SAFE(glFramebufferRenderbufferEXT(
+				GL_FRAMEBUFFER_EXT,
+				GL_STENCIL_ATTACHMENT_EXT,
+				GL_RENDERBUFFER_EXT,
+				depthBuffer
+			));
 			m_haveDepth = true;
 		}
 
@@ -238,6 +244,12 @@ bool RenderTargetOpenGL::create(const RenderTargetSetCreateDesc& setDesc, const 
 			T_OGL_SAFE(glFramebufferRenderbufferEXT(
 				GL_FRAMEBUFFER_EXT,
 				GL_DEPTH_ATTACHMENT_EXT,
+				GL_RENDERBUFFER_EXT,
+				depthBuffer
+			));
+			T_OGL_SAFE(glFramebufferRenderbufferEXT(
+				GL_FRAMEBUFFER_EXT,
+				GL_STENCIL_ATTACHMENT_EXT,
 				GL_RENDERBUFFER_EXT,
 				depthBuffer
 			));
@@ -350,6 +362,12 @@ void RenderTargetOpenGL::bind(bool keepDepthStencil)
 		T_OGL_SAFE(glFramebufferRenderbufferEXT(
 			GL_FRAMEBUFFER_EXT,
 			GL_DEPTH_ATTACHMENT_EXT,
+			GL_RENDERBUFFER_EXT,
+			currentDepthBuffer
+		));
+		T_OGL_SAFE(glFramebufferRenderbufferEXT(
+			GL_FRAMEBUFFER_EXT,
+			GL_STENCIL_ATTACHMENT_EXT,
 			GL_RENDERBUFFER_EXT,
 			currentDepthBuffer
 		));
