@@ -42,8 +42,8 @@ public:
 	
 private:
 	IOHIDDeviceRef m_deviceRef;
-	uint8_t m_button[8];
-	float m_axis[2][2];
+	uint8_t m_button[14];
+	float m_axis[3][2];
 };
 	
 	}
