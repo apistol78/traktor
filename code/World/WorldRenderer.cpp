@@ -157,7 +157,10 @@ bool WorldRenderer::create(
 		m_shadowTargetSet = renderSystem->createRenderTargetSet(desc);
 
 		// Determine shadow mask size; high quality is same as entire screen.
-		if (m_settings.shadowsQuality == WorldRenderSettings::SqHigh)
+		if (
+			m_settings.shadowsQuality == WorldRenderSettings::SqHigh ||
+			m_settings.shadowsQuality == WorldRenderSettings::SqHighest
+		)
 		{
 			desc.width = width;
 			desc.height = height;
