@@ -769,7 +769,6 @@ void emitSampler(GlslContext& cx, Sampler* node)
 	const GLenum c_glFilter[] =
 	{
 		GL_NEAREST,
-		GL_LINEAR,
 		GL_LINEAR
 	};
 

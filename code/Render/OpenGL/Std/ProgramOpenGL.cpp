@@ -110,12 +110,12 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProgramOpenGL", ProgramOpenGL, IProgram)
 
 ProgramOpenGL* ProgramOpenGL::ms_activeProgram = 0;
 
-ProgramOpenGL::ProgramOpenGL(ContextOpenGL* resourceContext)
+ProgramOpenGL::ProgramOpenGL(ContextOpenGL* resourceContext, GLfloat maxAnisotrophy)
 :	m_resourceContext(resourceContext)
 ,	m_program(0)
 ,	m_state(0)
 ,	m_locationTargetSize(0)
-,	m_maxAnisotrophy(0.0f)
+,	m_maxAnisotrophy(maxAnisotrophy)
 ,	m_stencilRef(0)
 ,	m_textureDirty(true)
 {
@@ -299,11 +299,6 @@ bool ProgramOpenGL::create(const ProgramResource* resource)
 	m_state = m_resourceContext->createStateList(m_renderState);
 	m_stencilRef = m_renderState.stencilRef;
 	
-	// Determine anisotropy; don't use more than 4 taps.
-	glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &m_maxAnisotrophy);
-	if (m_maxAnisotrophy > 4.0f)
-		m_maxAnisotrophy = 4.0f;
-
 	return true;
 }
 

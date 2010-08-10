@@ -39,11 +39,13 @@ bool compareExchangeEqual4(float* ptr1, const float* ptr2, size_t count)
 
 		}
 
-ParameterCache::ParameterCache(IDirect3DDevice9* d3dDevice)
+ParameterCache::ParameterCache(IDirect3DDevice9* d3dDevice, float mipBias, DWORD maxAnisotropy)
 :	m_d3dVertexShader(0)
 ,	m_d3dPixelShader(0)
 ,	m_vertexConstantsShadow(0)
 ,	m_pixelConstantsShadow(0)
+,	m_mipBias(mipBias)
+,	m_maxAnisotropy(maxAnisotropy)
 {
 	m_vertexConstantsShadow.reset((float*)Alloc::acquireAlign(VertexConstantCount * 4 * sizeof(float), 16));
 	m_pixelConstantsShadow.reset((float*)Alloc::acquireAlign(PixelConstantCount * 4 * sizeof(float), 16));
@@ -166,6 +168,12 @@ HRESULT ParameterCache::resetDevice(IDirect3DDevice9* d3dDevice)
 
 	m_d3dDevice->SetVertexShaderConstantF(0, m_vertexConstantsShadow.ptr(), VertexConstantCount);
 	m_d3dDevice->SetPixelShaderConstantF(0, m_pixelConstantsShadow.ptr(), PixelConstantCount);
+
+	for (int i = 0; i < MaxTextureCount; ++i)
+	{
+		m_d3dDevice->SetSamplerState(i, D3DSAMP_MIPMAPLODBIAS, *(DWORD*)&m_mipBias);
+		m_d3dDevice->SetSamplerState(i, D3DSAMP_MAXANISOTROPY, m_maxAnisotropy);
+	}
 
 	return S_OK;
 }

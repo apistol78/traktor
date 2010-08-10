@@ -37,6 +37,7 @@ RenderSystemOpenGL::RenderSystemOpenGL()
 #elif defined(__APPLE__)
 :	m_windowHandle(0)
 #endif
+,	m_maxAnisotrophy(1.0f)
 {
 }
 
@@ -180,6 +181,7 @@ bool RenderSystemOpenGL::create(const RenderSystemCreateDesc& desc)
 
 #endif
 
+	m_maxAnisotrophy = (GLfloat)desc.maxAnisotropy;
 	return true;
 }
 
@@ -679,7 +681,7 @@ Ref< IProgram > RenderSystemOpenGL::createProgram(const ProgramResource* program
 {
 	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
 
-	Ref< ProgramOpenGL > shader = new ProgramOpenGL(m_resourceContext);
+	Ref< ProgramOpenGL > shader = new ProgramOpenGL(m_resourceContext, m_maxAnisotrophy);
 	if (!shader->create(programResource))
 		return 0;
 

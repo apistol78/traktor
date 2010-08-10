@@ -31,7 +31,7 @@ class T_DLLCLASS ProgramOpenGL : public IProgram
 	T_RTTI_CLASS;
 
 public:
-	ProgramOpenGL(ContextOpenGL* resourceContext);
+	ProgramOpenGL(ContextOpenGL* resourceContext, GLfloat maxAnisotrophy);
 
 	virtual ~ProgramOpenGL();
 

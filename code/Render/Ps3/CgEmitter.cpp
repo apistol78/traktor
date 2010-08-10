@@ -856,7 +856,6 @@ bool emitSampler(CgContext& cx, Sampler* node)
 	const uint8_t gcmFilter[] =
 	{
 		CELL_GCM_TEXTURE_NEAREST,
-		CELL_GCM_TEXTURE_LINEAR,
 		CELL_GCM_TEXTURE_LINEAR
 	};
 
