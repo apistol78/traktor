@@ -58,35 +58,37 @@ std::wstring InputDeviceGamepadOsX::getControlName(int control)
 		return L"Right thumb X";
 	case -4:
 		return L"Right thumb Y";
+	case -5:
+		return L"Left trigger";
+	case -6:
+		return L"Right trigger";
 	}
 	return L"Button " + toString(control);
 }
 
 bool InputDeviceGamepadOsX::isControlAnalogue(int control) const
 {
-	// Axises are analogue.
-	if (control >= -4 && control <= -1)
-		return true;
-	
-	// All left are considered buttons.
-	return false;
+	return control < 0;
 }
 
 float InputDeviceGamepadOsX::getControlValue(int control)
 {
-	if (control >= 0 && control <= 7)
-		return m_button[control] ? 1.0f : 0.0f;
-		
 	if (control == -1)
 		return m_axis[0][0];
-	if (control == -2)
+	else if (control == -2)
 		return m_axis[0][1];
-	if (control == -3)
+	else if (control == -3)
 		return m_axis[1][0];
-	if (control == -4)
+	else if (control == -4)
 		return m_axis[1][1];
-
-	return 0.0f;
+	else if (control == -5)
+		return m_axis[2][0];
+	else if (control == -6)
+		return m_axis[2][1];
+	else if (control >= 0 && control < sizeof_array(m_button))
+		return m_button[control] ? 1.0f : 0.0f;
+	else
+		return 0.0f;
 }
 
 bool InputDeviceGamepadOsX::getDefaultControl(InputDefaultControlType controlType, int& control) const
@@ -109,20 +111,44 @@ bool InputDeviceGamepadOsX::getDefaultControl(InputDefaultControlType controlTyp
 		control = 3;
 		break;
 		
-	case DtUp:
+	case DtShoulderLeft:
 		control = 4;
 		break;
 		
-	case DtDown:
+	case DtShoulderRight:
 		control = 5;
 		break;
 		
-	case DtLeft:
+	case DtThumbLeftPush:
 		control = 6;
 		break;
 		
-	case DtRight:
+	case DtThumbRightPush:
 		control = 7;
+		break;
+		
+	case DtSelect:
+		control = 8;
+		break;
+		
+	case DtCancel:
+		control = 9;
+		break;
+		
+	case DtUp:
+		control = 10;
+		break;
+		
+	case DtDown:
+		control = 11;
+		break;
+		
+	case DtLeft:
+		control = 12;
+		break;
+		
+	case DtRight:
+		control = 13;
 		break;
 		
 	case DtThumbLeftX:
@@ -141,6 +167,14 @@ bool InputDeviceGamepadOsX::getDefaultControl(InputDefaultControlType controlTyp
 		control = -4;
 		break;
 		
+	case DtTriggerLeft:
+		control = -5;
+		break;
+		
+	case DtTriggerRight:
+		control = -6;
+		break;
+		
 	default:
 		return false;
 	}
@@ -151,6 +185,7 @@ bool InputDeviceGamepadOsX::getDefaultControl(InputDefaultControlType controlTyp
 void InputDeviceGamepadOsX::resetState()
 {
 	std::memset(m_button, 0, sizeof(m_button));
+	std::memset(m_axis, 0, sizeof(m_axis));
 }
 
 void InputDeviceGamepadOsX::readState()
@@ -165,41 +200,57 @@ void InputDeviceGamepadOsX::readState()
 		if (!e)
 			continue;
 
-		int cookie = (int)IOHIDElementGetCookie(e);
+		uint32_t usage = (uint32_t)IOHIDElementGetUsage(e);
+		if (usage == ~0UL)
+			continue;
 		
 		IOHIDValueRef valueRef = 0;
 		IOHIDDeviceGetValue(m_deviceRef, e, &valueRef);
 		if (!valueRef)
 			continue;
-			
-		int v = (int)IOHIDValueGetIntegerValue(valueRef);
-		
-		if (cookie == 21)
-			m_button[0] = bool(v != 0);		// A
-		if (cookie == 22)
-			m_button[1] = bool(v != 0);		// B
-		if (cookie == 23)
-			m_button[2] = bool(v != 0);		// X
-		if (cookie == 24)
-			m_button[3] = bool(v != 0);		// Y
 
-		if (cookie == 10)
-			m_button[4] = bool(v != 0);		// Dpad up
-		if (cookie == 11)
-			m_button[5] = bool(v != 0);		// Dpad down
-		if (cookie == 12)
-			m_button[6] = bool(v != 0);		// Dpad left
-		if (cookie == 13)
-			m_button[7] = bool(v != 0);		// Dpad right
-			
-		if (cookie == 27)
+		int32_t v = (int32_t)IOHIDValueGetIntegerValue(valueRef);
+		
+		if (usage == 1)
+			m_button[0] = bool(v != 0);		// A
+		else if (usage == 2)
+			m_button[1] = bool(v != 0);		// B
+		else if (usage == 3)
+			m_button[2] = bool(v != 0);		// X
+		else if (usage == 4)
+			m_button[3] = bool(v != 0);		// Y
+		else if (usage == 5)
+			m_button[4] = bool(v != 0);		// Left shoulder
+		else if (usage == 6)
+			m_button[5] = bool(v != 0);		// Right shoulder
+		else if (usage == 7)
+			m_button[6] = bool(v != 0);		// Left thumb down
+		else if (usage == 8)
+			m_button[7] = bool(v != 0);		// Right thumb down
+		else if (usage == 9)
+			m_button[8] = bool(v != 0);		// Start
+		else if (usage == 10)
+			m_button[9] = bool(v != 0);		// Back
+		else if (usage == 12)
+			m_button[10] = bool(v != 0);	// Dpad up
+		else if (usage == 13)
+			m_button[11] = bool(v != 0);	// Dpad down
+		else if (usage == 14)
+			m_button[12] = bool(v != 0);	// Dpad left
+		else if (usage == 15)
+			m_button[13] = bool(v != 0);	// Dpad right
+		else if (usage == 48)
 			m_axis[0][0] = adjustDeadZone(v / 32767.0f);	// Left Thumb X
-		if (cookie == 28)
+		else if (usage == 49)
 			m_axis[0][1] = adjustDeadZone(-v / 32767.0f);	// Left Thumb Y
-		if (cookie == 29)
+		else if (usage == 51)
 			m_axis[1][0] = adjustDeadZone(v / 32767.0f);	// Right Thumb X
-		if (cookie == 30)
+		else if (usage == 52)
 			m_axis[1][1] = adjustDeadZone(-v / 32767.0f);	// Right Thumb Y
+		else if (usage == 50)				// Left trigger
+			m_axis[2][0] = v / 255.0f;
+		else if (usage == 53)				// Right trigger
+			m_axis[2][1] = v / 255.0f;
 	}
 }
 
