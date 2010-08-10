@@ -28,13 +28,8 @@ struct SamplerState
 	SamplerState()
 	:	minFilter(GL_NEAREST)
 	,	magFilter(GL_NEAREST)
-#if defined(T_OPENGL_STD)
-	,	wrapS(GL_CLAMP)
-	,	wrapT(GL_CLAMP)
-#elif defined(T_OPENGL_ES2)
 	,	wrapS(GL_CLAMP_TO_EDGE)
 	,	wrapT(GL_CLAMP_TO_EDGE)
-#endif
 	{
 	}
 };
@@ -63,6 +58,12 @@ struct RenderState
 	GLboolean alphaTestEnable;
 	GLenum alphaFunc;
 	GLclampf alphaRef;
+	GLboolean stencilTestEnable;
+	GLenum stencilFunc;
+	GLint stencilRef;
+	GLenum stencilOpFail;
+	GLenum stencilOpZFail;
+	GLenum stencilOpZPass;
 	SamplerState samplerStates[16];
 
 	RenderState()
@@ -79,6 +80,12 @@ struct RenderState
 	,	alphaTestEnable(GL_FALSE)
 	,	alphaFunc(GL_ALWAYS)
 	,	alphaRef(0)
+	,	stencilTestEnable(GL_FALSE)
+	,	stencilFunc(GL_ALWAYS)
+	,	stencilRef(0)
+	,	stencilOpFail(GL_KEEP)
+	,	stencilOpZFail(GL_KEEP)
+	,	stencilOpZPass(GL_KEEP)
 	{
 	}
 };

@@ -669,6 +669,18 @@ void emitPixelOutput(GlslContext& cx, PixelOutput* node)
 		GL_EQUAL,
 		GL_NOTEQUAL
 	};
+	
+	const GLenum c_oglStencilOperation[] =
+	{
+		GL_KEEP,
+		GL_ZERO,
+		GL_REPLACE,
+		GL_INCR,
+		GL_DECR,
+		GL_INVERT,
+		GL_INCR_WRAP,
+		GL_DECR_WRAP
+	};
 
 	cx.enterFragment();
 
@@ -697,6 +709,13 @@ void emitPixelOutput(GlslContext& cx, PixelOutput* node)
 	rs.alphaTestEnable = node->getAlphaTestEnable() ? GL_TRUE : GL_FALSE;
 	rs.alphaFunc = c_oglFunction[node->getAlphaTestFunction()];
 	rs.alphaRef = GLclampf(node->getAlphaTestReference() / 255.0f);
+	rs.stencilTestEnable = node->getStencilEnable();
+	rs.stencilFunc = c_oglFunction[node->getStencilFunction()];
+	rs.stencilRef = node->getStencilReference();
+	rs.stencilOpFail = c_oglStencilOperation[node->getStencilFail()];
+	rs.stencilOpZFail = c_oglStencilOperation[node->getStencilZFail()];
+	rs.stencilOpZPass = c_oglStencilOperation[node->getStencilPass()];
+	
 }
 
 void emitPolynomial(GlslContext& cx, Polynomial* node)
