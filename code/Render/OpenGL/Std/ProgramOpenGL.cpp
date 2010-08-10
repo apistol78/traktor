@@ -145,52 +145,23 @@ Ref< ProgramResource > ProgramOpenGL::compile(const GlslProgram& glslProgram, in
 bool ProgramOpenGL::create(const ProgramResource* resource)
 {
 	const ProgramResourceOpenGL* resourceOpenGL = checked_type_cast< const ProgramResourceOpenGL* >(resource);
-
+	char errorBuf[32000];
+	GLsizei errorBufLen;
+	GLint status;
+	
 	std::string vertexShader = wstombs(resourceOpenGL->getVertexShader());
 	const char* vertexShaderPtr = vertexShader.c_str();
 
 	std::string fragmentShader = wstombs(resourceOpenGL->getFragmentShader());
 	const char* fragmentShaderPtr = fragmentShader.c_str();
-
-	char errorBuf[32000];
-	GLsizei errorBufLen;
-	GLint status;
-
-	GLhandleARB vertexObject = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
-	T_OGL_SAFE(glShaderSourceARB(vertexObject, 1, &vertexShaderPtr, NULL));
-	T_OGL_SAFE(glCompileShaderARB(vertexObject));
-
-	T_OGL_SAFE(glGetObjectParameterivARB(vertexObject, GL_OBJECT_COMPILE_STATUS_ARB, &status));
-	if (status != 1)
-	{
-		T_OGL_SAFE(glGetInfoLogARB(vertexObject, sizeof(errorBuf), &errorBufLen, errorBuf));
-		if (errorBufLen > 0)
-		{
-			log::error << L"GLSL vertex shader compile failed :" << Endl;
-			log::error << mbstows(errorBuf) << Endl;
-			log::error << Endl;
-			FormatMultipleLines(log::error, resourceOpenGL->getVertexShader());
-			return false;
-		}
-	}
-
-	GLhandleARB fragmentObject = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
-	T_OGL_SAFE(glShaderSourceARB(fragmentObject, 1, &fragmentShaderPtr, NULL));
-	T_OGL_SAFE(glCompileShaderARB(fragmentObject));
-
-	T_OGL_SAFE(glGetObjectParameterivARB(fragmentObject, GL_OBJECT_COMPILE_STATUS_ARB, &status));
-	if (status != 1)
-	{
-		T_OGL_SAFE(glGetInfoLogARB(fragmentObject, sizeof(errorBuf), &errorBufLen, errorBuf));
-		if (errorBufLen > 0)
-		{
-			log::error << L"GLSL fragment shader compile failed :" << Endl;
-			log::error << mbstows(errorBuf) << Endl;
-			log::error << Endl;
-			FormatMultipleLines(log::error, resourceOpenGL->getFragmentShader());
-			return false;
-		}
-	}
+	
+	GLhandleARB vertexObject = m_resourceContext->createShaderObject(vertexShaderPtr, GL_VERTEX_SHADER_ARB);
+	if (!vertexObject)
+		return false;
+		
+	GLhandleARB fragmentObject = m_resourceContext->createShaderObject(fragmentShaderPtr, GL_FRAGMENT_SHADER_ARB);
+	if (!fragmentObject)
+		return false;
 
 	m_program = glCreateProgramObjectARB();
 

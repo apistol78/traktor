@@ -1,6 +1,7 @@
 #include "Core/RefArray.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/Adler32.h"
+#include "Core/Misc/TString.h"
 #include "Core/Thread/Acquire.h"
 #include "Render/OpenGL/Std/ContextOpenGL.h"
 #include "Render/OpenGL/Std/Extensions.h"
@@ -325,6 +326,45 @@ void ContextOpenGL::callStateList(GLuint stateList)
 		T_OGL_SAFE(glCallList(stateList));
 		m_currentStateList = stateList;
 	}
+}
+
+GLhandleARB ContextOpenGL::createShaderObject(const char* shader, GLenum shaderType)
+{
+	char errorBuf[32000];
+	GLsizei errorBufLen;
+	GLint status;
+	
+	Adler32 adler;
+	adler.begin();
+	adler.feed(shader, strlen(shader));
+	adler.end();
+	
+	uint32_t hash = adler.get();
+	
+	std::map< uint32_t, GLhandleARB >::const_iterator i = m_shaderObjects.find(hash);
+	if (i != m_shaderObjects.end())
+		return i->second;
+
+	GLhandleARB shaderObject = glCreateShaderObjectARB(shaderType);
+	T_OGL_SAFE(glShaderSourceARB(shaderObject, 1, &shader, NULL));
+	T_OGL_SAFE(glCompileShaderARB(shaderObject));
+
+	T_OGL_SAFE(glGetObjectParameterivARB(shaderObject, GL_OBJECT_COMPILE_STATUS_ARB, &status));
+	if (status != 1)
+	{
+		T_OGL_SAFE(glGetInfoLogARB(shaderObject, sizeof(errorBuf), &errorBufLen, errorBuf));
+		if (errorBufLen > 0)
+		{
+			log::error << L"GLSL shader compile failed :" << Endl;
+			log::error << mbstows(errorBuf) << Endl;
+			log::error << Endl;
+			FormatMultipleLines(log::error, mbstows(shader));
+			return 0;
+		}
+	}
+	
+	m_shaderObjects.insert(std::make_pair(hash, shaderObject));
+	return shaderObject;
 }
 
 void ContextOpenGL::deleteResource(IDeleteCallback* callback)
