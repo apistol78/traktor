@@ -314,6 +314,12 @@ bool cglwIsFullscreen(void* windowHandle)
 	return windowData->fullscreen;
 }
 
+bool cglwIsActive(void* windowHandle)
+{
+	WindowData* windowData = static_cast< WindowData* >(windowHandle);
+	return [windowData->window isKeyWindow] == YES;
+}
+
 void cglwUpdateWindow(void* windowHandle)
 {
 	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
