@@ -185,7 +185,9 @@ void BitmapWin32::setPixel(uint32_t x, uint32_t y, const Color& color)
 
 	dstAlpha[offset] = rgba;
 
+#if defined(T_USE_GDI_PLUS)
 	m_gpBitmap.release();
+#endif
 }
 
 Color BitmapWin32::getPixel(uint32_t x, uint32_t y) const
