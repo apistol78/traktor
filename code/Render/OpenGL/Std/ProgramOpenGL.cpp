@@ -323,9 +323,8 @@ bool ProgramOpenGL::create(const ProgramResource* resource)
 	}
 
 	// Create a display list from the render states.
-	const RenderState& renderState = resourceOpenGL->getRenderState();
-	m_renderState = renderState;
-	m_state = m_resourceContext->createStateList(renderState);
+	m_renderState = resourceOpenGL->getRenderState();
+	m_state = m_resourceContext->createStateList(m_renderState);
 	
 	// Determine anisotropy; don't use more than 4 taps.
 	glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &m_maxAnisotrophy);
@@ -444,6 +443,12 @@ void ProgramOpenGL::setTextureParameter(handle_t handle, ITexture* texture)
 
 void ProgramOpenGL::setStencilReference(uint32_t stencilReference)
 {
+	// Create new display list from the render state if we've modified it.
+	if (stencilReference != m_renderState.stencilRef)
+	{
+		m_renderState.stencilRef = stencilReference;
+		m_state = m_resourceContext->createStateList(m_renderState);
+	}
 }
 
 bool ProgramOpenGL::activate(float targetSize[2])

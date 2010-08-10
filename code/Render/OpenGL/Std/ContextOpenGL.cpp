@@ -298,6 +298,19 @@ GLuint ContextOpenGL::createStateList(const RenderState& renderState)
 	}
 	else
 		T_OGL_SAFE(glDisable(GL_ALPHA_TEST));
+		
+	if (renderState.stencilTestEnable)
+	{
+		T_OGL_SAFE(glEnable(GL_STENCIL_TEST));
+		T_OGL_SAFE(glStencilFunc(renderState.stencilFunc, renderState.stencilRef, ~0UL));
+		T_OGL_SAFE(glStencilOp(
+			renderState.stencilOpFail,
+			renderState.stencilOpZFail,
+			renderState.stencilOpZPass
+		));
+	}
+	else
+		T_OGL_SAFE(glDisable(GL_STENCIL_TEST));
 
 	glEndList();
 	
