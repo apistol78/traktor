@@ -23,7 +23,7 @@ public:
 		MaxTextureCount = 8
 	};
 
-	ParameterCache(IDirect3DDevice9* d3dDevice);
+	ParameterCache(IDirect3DDevice9* d3dDevice, float mipBias, DWORD maxAnisotropy);
 
 	virtual ~ParameterCache();
 
@@ -57,6 +57,8 @@ private:
 	IDirect3DBaseTexture9* m_pixelTextureShadow[PixelTextureCount];
 	std::vector< uint32_t > m_renderStates;
 	std::vector< uint32_t > m_samplerStates[MaxTextureCount];
+	float m_mipBias;
+	int32_t m_maxAnisotropy;
 };
 
 	}

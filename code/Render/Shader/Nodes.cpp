@@ -1408,7 +1408,6 @@ bool Sampler::serialize(ISerializer& s)
 	{
 		{ L"FtPoint", FtPoint },
 		{ L"FtLinear", FtLinear },
-		{ L"FtAnisotropic", FtAnisotropic },
 		{ 0, 0 }
 	};
 

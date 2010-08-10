@@ -902,11 +902,16 @@ bool emitReflect(HlslContext& cx, Reflect* node)
 
 bool emitSampler(HlslContext& cx, Sampler* node)
 {
-	const DWORD d3dFilter[] =
+	const DWORD d3dMinMagFilter[] =
 	{
 		D3DTEXF_POINT,
-		D3DTEXF_LINEAR,
 		D3DTEXF_ANISOTROPIC
+	};
+
+	const DWORD d3dMipFilter[] =
+	{
+		D3DTEXF_POINT,
+		D3DTEXF_LINEAR
 	};
 
 	const DWORD d3dAddress[] =
@@ -939,9 +944,9 @@ bool emitSampler(HlslContext& cx, Sampler* node)
 		fu << L"sampler " << samplerName << L" : register(s" << stage << L");" << Endl;
 
 		StateBlockDx9& state = cx.getState();
-		state.setSamplerState(stage, D3DSAMP_MINFILTER, d3dFilter[node->getMinFilter()]);
-		state.setSamplerState(stage, D3DSAMP_MIPFILTER, d3dFilter[node->getMipFilter()]);
-		state.setSamplerState(stage, D3DSAMP_MAGFILTER, d3dFilter[node->getMagFilter()]);
+		state.setSamplerState(stage, D3DSAMP_MINFILTER, d3dMinMagFilter[node->getMinFilter()]);
+		state.setSamplerState(stage, D3DSAMP_MIPFILTER, d3dMipFilter[node->getMipFilter()]);
+		state.setSamplerState(stage, D3DSAMP_MAGFILTER, d3dMinMagFilter[node->getMagFilter()]);
 		state.setSamplerState(stage, D3DSAMP_ADDRESSU, d3dAddress[node->getAddressU()]);
 		state.setSamplerState(stage, D3DSAMP_ADDRESSV, d3dAddress[node->getAddressV()]);
 		state.setSamplerState(stage, D3DSAMP_ADDRESSW, d3dAddress[node->getAddressW()]);

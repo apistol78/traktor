@@ -79,6 +79,7 @@ private:
 #endif
 
 	Ref< ContextOpenGL > m_resourceContext;
+	GLfloat m_maxAnisotrophy;
 };
 
 	}

@@ -777,8 +777,7 @@ public:
 	enum Filter
 	{
 		FtPoint,
-		FtLinear,
-		FtAnisotropic
+		FtLinear
 	};
 
 	enum Address

@@ -890,7 +890,6 @@ bool emitSampler(HlslContext& cx, Sampler* node)
 		case Sampler::FtPoint:
 			break;
 		case Sampler::FtLinear:
-		case Sampler::FtAnisotropic:
 			(UINT&)dsd.Filter |= 0x1;
 			break;
 		}
@@ -900,7 +899,6 @@ bool emitSampler(HlslContext& cx, Sampler* node)
 		case Sampler::FtPoint:
 			break;
 		case Sampler::FtLinear:
-		case Sampler::FtAnisotropic:
 			(UINT&)dsd.Filter |= 0x4;
 			break;
 		}
@@ -910,7 +908,6 @@ bool emitSampler(HlslContext& cx, Sampler* node)
 		case Sampler::FtPoint:
 			break;
 		case Sampler::FtLinear:
-		case Sampler::FtAnisotropic:
 			(UINT&)dsd.Filter |= 0x10;
 			break;
 		}
