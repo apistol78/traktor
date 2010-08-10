@@ -1365,6 +1365,53 @@ void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, 
 			if (configurations[0]->getTargetFormat() == Configuration::TfSharedLibrary)
 				s << L"\t\t\t\tINSTALL_PATH = \"@loader_path\";" << Endl;
 
+			if (
+				configurations[1]->getTargetFormat() == Configuration::TfSharedLibrary ||
+				configurations[1]->getTargetFormat() == Configuration::TfExecutable ||
+				configurations[1]->getTargetFormat() == Configuration::TfExecutableConsole
+			)
+			{
+				const std::vector< std::wstring >& libraryPaths = configurations[0]->getLibraryPaths();
+				if (!libraryPaths.empty())
+				{
+					s << L"\t\t\t\tLIBRARY_SEARCH_PATHS = \"";
+					for (std::vector< std::wstring >::const_iterator j = libraryPaths.begin(); j != libraryPaths.end(); ++j)
+					{
+						Path projectPath = FileSystem::getInstance().getAbsolutePath(solution->getRootPath());
+						Path libraryPath = FileSystem::getInstance().getAbsolutePath(*j);
+
+						Path relativeLibraryPath;
+						if (!FileSystem::getInstance().getRelativePath(libraryPath, projectPath, relativeLibraryPath))
+							relativeLibraryPath = libraryPath;
+
+						s << relativeLibraryPath.getPathName() << L" ";
+					}
+					s << L"$(inherited) \\\"$(SRCROOT)/build/Debug\\\"\";" << Endl;
+				}
+
+				const std::vector< std::wstring >& libraries = configurations[0]->getLibraries();
+				if (!libraries.empty())
+				{
+					s << L"\t\t\t\tOTHER_LDFLAGS = \"";
+
+					bool first = true;
+					for (std::vector< std::wstring >::const_iterator j = libraries.begin(); j != libraries.end(); ++j)
+					{
+						if (endsWith(*j, L".framework"))
+							continue;
+
+						if (!first)
+							s << L" ";
+
+						s << L"-l" << *j;
+
+						first = false;
+					}
+
+					s << L"\";" << Endl;
+				}
+			}
+
 			s << L"\t\t\t};" << Endl;
 			s << L"\t\t\tname = Debug;" << Endl;
 			s << L"\t\t};" << Endl;
@@ -1410,6 +1457,53 @@ void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, 
 
 			if (configurations[1]->getTargetFormat() == Configuration::TfSharedLibrary)
 				s << L"\t\t\t\tINSTALL_PATH = \"@loader_path\";" << Endl;
+
+			if (
+				configurations[1]->getTargetFormat() == Configuration::TfSharedLibrary ||
+				configurations[1]->getTargetFormat() == Configuration::TfExecutable ||
+				configurations[1]->getTargetFormat() == Configuration::TfExecutableConsole
+			)
+			{
+				const std::vector< std::wstring >& libraryPaths = configurations[1]->getLibraryPaths();
+				if (!libraryPaths.empty())
+				{
+					s << L"\t\t\t\tLIBRARY_SEARCH_PATHS = \"";
+					for (std::vector< std::wstring >::const_iterator j = libraryPaths.begin(); j != libraryPaths.end(); ++j)
+					{
+						Path projectPath = FileSystem::getInstance().getAbsolutePath(solution->getRootPath());
+						Path libraryPath = FileSystem::getInstance().getAbsolutePath(*j);
+
+						Path relativeLibraryPath;
+						if (!FileSystem::getInstance().getRelativePath(libraryPath, projectPath, relativeLibraryPath))
+							relativeLibraryPath = libraryPath;
+
+						s << relativeLibraryPath.getPathName() << L" ";
+					}
+					s << L"$(inherited) \\\"$(SRCROOT)/build/Release\\\"\";" << Endl;
+				}
+
+				const std::vector< std::wstring >& libraries = configurations[0]->getLibraries();
+				if (!libraries.empty())
+				{
+					s << L"\t\t\t\tOTHER_LDFLAGS = \"";
+
+					bool first = true;
+					for (std::vector< std::wstring >::const_iterator j = libraries.begin(); j != libraries.end(); ++j)
+					{
+						if (endsWith(*j, L".framework"))
+							continue;
+
+						if (!first)
+							s << L" ";
+
+						s << L"-l" << *j;
+
+						first = false;
+					}
+
+					s << L"\";" << Endl;
+				}
+			}
 
 			s << L"\t\t\t};" << Endl;
 			s << L"\t\t\tname = Release;" << Endl;
