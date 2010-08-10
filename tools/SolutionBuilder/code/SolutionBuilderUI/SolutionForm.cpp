@@ -226,7 +226,7 @@ void SolutionForm::updateSolutionTree()
 	m_pageProject->hide();
 	m_pageConfiguration->hide();
 
-	Ref< ui::TreeViewState > treeState = m_treeSolution->captureState();
+	Ref< ui::HierarchicalState > treeState = m_treeSolution->captureState();
 
 	m_treeSolution->removeAllItems();
 
