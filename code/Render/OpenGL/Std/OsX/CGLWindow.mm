@@ -18,6 +18,7 @@ struct WindowData
 	DisplayMode displayMode;
 	bool fullscreen;
 	CFDictionaryRef originalMode;
+	NSString* title;
 };
 
 int32_t getDictionaryLong(CFDictionaryRef dict, const void* key)
@@ -149,13 +150,13 @@ void* cglwCreateWindow(const std::wstring& title, const DisplayMode& displayMode
 	[NSApp finishLaunching];
 
 	std::string mbs = wstombs(title);
-	NSString* titleStr = [[[NSString alloc] initWithCString: mbs.c_str() encoding: NSUTF8StringEncoding] autorelease];
 
 	WindowData* windowData = new WindowData();
 	windowData->window = 0;
 	windowData->displayMode = displayMode;
 	windowData->fullscreen = fullscreen;
 	windowData->originalMode = CGDisplayCurrentMode(kCGDirectMainDisplay);
+	windowData->title = [[NSString alloc] initWithCString: mbs.c_str() encoding: NSUTF8StringEncoding];
 	
 	NSRect frame = NSMakeRect(0, 0, displayMode.width, displayMode.height);
 	
@@ -192,7 +193,7 @@ void* cglwCreateWindow(const std::wstring& title, const DisplayMode& displayMode
 
 	[windowData->window setBackgroundColor: [NSColor blackColor]];
 	[windowData->window setAcceptsMouseMovedEvents: YES];
-	[windowData->window setTitle: titleStr];
+	[windowData->window setTitle: windowData->title];
 	
 	if (!fullscreen)
 		[windowData->window center];
@@ -218,6 +219,7 @@ void cglwDestroyWindow(void* windowHandle)
 		CGDisplayRelease(kCGDirectMainDisplay);
 	
 	[windowData->window release];
+	[windowData->title release];
 	
 	delete windowData;
 }
@@ -290,6 +292,7 @@ void cglwSetFullscreen(void* windowHandle, bool fullscreen)
 	
 		[windowData->window setStyleMask: NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask];
 		[windowData->window setLevel: NSNormalWindowLevel];
+		[windowData->window setTitle: windowData->title];
 		[windowData->window setOpaque: NO];
 
 		setWindowSize(

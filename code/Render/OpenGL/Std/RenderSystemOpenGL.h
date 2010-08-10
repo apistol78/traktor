@@ -74,6 +74,7 @@ private:
 
 #elif defined(__APPLE__)
 
+	std::wstring m_title;
 	void* m_windowHandle;
 
 #endif

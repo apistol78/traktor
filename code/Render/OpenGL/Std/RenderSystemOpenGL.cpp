@@ -139,6 +139,8 @@ bool RenderSystemOpenGL::create(const RenderSystemCreateDesc& desc)
 	void* resourceContext = cglwCreateContext(0, 0, 0, 0, 0);
 	m_resourceContext = new ContextOpenGL(resourceContext, false);
 
+	m_title = desc.windowTitle ? desc.windowTitle : L"Traktor (OpenGL)";
+
 #else	// LINUX
 
 	/*
@@ -460,7 +462,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 #elif defined(__APPLE__)
 
 	m_windowHandle = cglwCreateWindow(
-		L"Traktor OpenGL Renderer",
+		m_title,
 		desc.displayMode,
 		desc.fullscreen
 	);
