@@ -30,6 +30,8 @@ class T_DLLCLASS Node : public Object
 public:
 	Node();
 
+	virtual ~Node();
+
 	virtual std::wstring getName() const;
 
 	virtual void setName(const std::wstring& name);

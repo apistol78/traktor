@@ -29,8 +29,7 @@ void CaseXmlDocument::run()
 {
 	xml::Document doc;
 	
-	MemoryStream stream((void*)c_validXml, sizeof(c_validXml), true, false);
-	if (!doc.loadFromStream(&stream))
+	if (!doc.loadFromFile(L"d:\\private\\dre\\traktor\\data\\Assets\\User\\branches.DAE"))
 	{
 		failed(L"XML load from stream failed");
 		return;
