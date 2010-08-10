@@ -100,6 +100,7 @@ private:
 	AlignedVector< TextureData > m_textureData;			//!< Texture data.
 	float m_targetSize[2];
 	GLfloat m_maxAnisotrophy;
+	GLint m_stencilRef;
 	bool m_textureDirty;
 	static ProgramOpenGL* ms_activeProgram;
 };
