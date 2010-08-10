@@ -150,7 +150,14 @@ int RenderViewOpenGL::getHeight() const
 
 bool RenderViewOpenGL::isActive() const
 {
+#if defined(__APPLE__)
+	if (!m_windowHandle)
+		return false;
+		
+	return cglwIsActive(m_windowHandle);
+#else
 	return true;
+#endif
 }
 
 bool RenderViewOpenGL::isFullScreen() const
