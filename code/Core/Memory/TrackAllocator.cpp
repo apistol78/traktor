@@ -81,6 +81,8 @@ void TrackAllocator::free(void* ptr)
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	std::map< void*, Block >::iterator i = m_aliveBlocks.find(ptr);
+	T_ASSERT (i != m_aliveBlocks.end());
+
 	if (i != m_aliveBlocks.end())
 		m_aliveBlocks.erase(i);
 

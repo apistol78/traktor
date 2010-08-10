@@ -1,5 +1,5 @@
-#include "Xml/Node.h"
 #include "Core/Io/IStream.h"
+#include "Xml/Node.h"
 
 namespace traktor
 {
@@ -12,6 +12,19 @@ Node::Node()
 :	m_parent(0)
 ,	m_previousSibling(0)
 {
+}
+
+Node::~Node()
+{
+	// Release children non-recursively in order to prevent excessive recursion.
+	if (m_lastChild)
+	{
+		for (Node* child = m_lastChild; child; child = child->m_previousSibling)
+			child->m_nextSibling.reset();
+	}
+
+	m_firstChild = 0;
+	m_lastChild = 0;
 }
 
 std::wstring Node::getName() const
@@ -41,12 +54,13 @@ void Node::write(OutputStream& os) const
 void Node::addChild(Node* child)
 {
 	T_ASSERT (child->m_parent == 0);
+	T_ASSERT (child->m_previousSibling == 0);
+	T_ASSERT (child->m_nextSibling == 0);
 
 	child->m_parent = this;
 	child->m_previousSibling = m_lastChild;
-	child->m_nextSibling = 0;
 	
-	if (m_lastChild != 0)
+	if (m_lastChild)
 		m_lastChild->m_nextSibling = child;
 	else
 		m_firstChild = child;
@@ -80,6 +94,7 @@ void Node::removeAllChildren()
 	{
 		T_ASSERT (child->m_parent == this);
 		child->m_parent = 0;
+		child->m_previousSibling = 0;
 	}
 	m_firstChild = 0;
 	m_lastChild = 0;
@@ -88,6 +103,7 @@ void Node::removeAllChildren()
 void Node::insertBefore(Node* child, Node* beforeNode)
 {
 	T_ASSERT (child->m_parent == 0);
+	T_ASSERT (child->m_previousSibling == 0);
 	T_ASSERT (!beforeNode || beforeNode->m_parent == this);
 
 	if (!beforeNode)

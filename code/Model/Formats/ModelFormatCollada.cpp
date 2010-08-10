@@ -997,7 +997,7 @@ Ref< Model > ModelFormatCollada::read(const Path& filePath, uint32_t importFlags
 		return 0;
 
 	Ref< xml::Element > instanceVisualScene = scene->getSingle(L"instance_visual_scene");
-	const std::wstring& visualSceneRef = instanceVisualScene->getAttribute(L"url", L"")->getValue();
+	std::wstring visualSceneRef = instanceVisualScene->getAttribute(L"url", L"")->getValue();
 
 	Ref< xml::Element > visualScene = doc.getSingle(L"library_visual_scenes/visual_scene[@id=" + dereference(visualSceneRef) + L"]");
 	if (!visualScene)

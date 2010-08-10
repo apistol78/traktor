@@ -74,8 +74,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	//log::info << L"Case xml pull parser" << Endl;
 	//traktor::CaseXmlPullParser().run();
 
-	//log::info << L"Case xml document" << Endl;
-	//traktor::CaseXmlDocument().run();
+	log::info << L"Case xml document" << Endl;
+	traktor::CaseXmlDocument().run();
 
 	//log::info << L"Case zip" << Endl;
 	//traktor::CaseZip().run();
@@ -83,8 +83,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	//log::info << L"Case spatial hash array" << Endl;
 	//traktor::CaseSpatialHashArray().run();
 
-	log::info << L"Case software renderer" << Endl;
-	traktor::CaseRenderSw().run();
+	//log::info << L"Case software renderer" << Endl;
+	//traktor::CaseRenderSw().run();
 
 	//log::info << L"Case sound" << Endl;
 	//traktor::CaseSound().run();
