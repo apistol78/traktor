@@ -67,7 +67,7 @@ bool ProjectPropertyPage::create(ui::Widget* parent)
 	m_listDependencies = new ui::ListView();
 	m_listDependencies->create(container, ui::WsClientBorder | ui::ListView::WsReport);
 	m_listDependencies->addColumn(L"Dependency", 130);
-	m_listDependencies->addColumn(L"Location", 180);
+	m_listDependencies->addColumn(L"Location", 270);
 	m_listDependencies->addColumn(L"Link", 50);
 	m_listDependencies->addDoubleClickEventHandler(ui::createMethodHandler(this, &ProjectPropertyPage::eventDependencyDoubleClick));
 
@@ -146,6 +146,7 @@ void ProjectPropertyPage::updateDependencyList()
 		Ref< ui::ListViewItem > dependencyItem = new ui::ListViewItem();
 		dependencyItem->setText(0, (*i)->getName());
 		dependencyItem->setText(1, (*i)->getLocation());
+		dependencyItem->setText(2, (*i)->shouldLinkWithProduct() ? L"Yes" : L"No");
 		dependencyItem->setData(L"DEPENDENCY", *i);
 		dependencyItems->add(dependencyItem);
 	}
