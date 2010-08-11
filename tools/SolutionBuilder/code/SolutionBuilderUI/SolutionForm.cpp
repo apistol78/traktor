@@ -41,7 +41,7 @@
 
 using namespace traktor;
 
-#define TITLE L"SolutionBuilder v2.1"
+#define TITLE L"SolutionBuilder v2.2"
 
 T_IMPLEMENT_RTTI_CLASS(L"SolutionForm", SolutionForm, ui::Form)
 
@@ -62,7 +62,7 @@ bool SolutionForm::create(const traktor::CommandLine& cmdLine)
 {
 	if (!ui::Form::create(
 		TITLE,
-		800,
+		900,
 		600,
 		ui::Form::WsDefault,
 		new ui::FloodLayout()
