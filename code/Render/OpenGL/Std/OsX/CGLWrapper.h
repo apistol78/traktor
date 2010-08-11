@@ -6,7 +6,7 @@ namespace traktor
 	namespace render
 	{
 
-void* cglwCreateContext(void* nativeWindowHandle, void* sharedContext, int depthBits, int stencilBits, int multisample);
+void* cglwCreateContext(void* nativeWindowHandle, void* sharedContext, int depthBits, int stencilBits, int multisample, bool waitVBlank);
 
 void cglwUpdate(void* context);
 
