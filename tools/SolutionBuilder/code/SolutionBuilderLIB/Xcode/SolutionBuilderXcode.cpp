@@ -313,7 +313,7 @@ namespace
 		}
 
 		s << L"\t\t\t);" << Endl;
-		s << L"\t\t\tname = " << groupName << L";" << Endl;
+		s << L"\t\t\tname = \"" << groupName << L"\";" << Endl;
 		s << L"\t\t\tsourceTree = \"<group>\";" << Endl;
 		s << L"\t\t};" << Endl;
 	}
@@ -324,6 +324,7 @@ T_IMPLEMENT_RTTI_CLASS(L"SolutionBuilderXcode", SolutionBuilderXcode, SolutionBu
 
 SolutionBuilderXcode::SolutionBuilderXcode()
 :	m_copyProductFiles(false)
+,	m_generateAllAggregate(false)
 ,	m_iphone(false)
 {
 }
@@ -342,6 +343,9 @@ bool SolutionBuilderXcode::create(const CommandLine& cmdLine)
 
 	if (cmdLine.hasOption('c'))
 		m_copyProductFiles = true;
+
+	if (cmdLine.hasOption('a'))
+		m_generateAllAggregate = true;
 
 	if (cmdLine.hasOption('i'))
 	{
@@ -398,11 +402,14 @@ bool SolutionBuilderXcode::generate(Solution* solution)
 	}
 
 	// Automatically create an "All" aggregate project.
-	Ref< Project > allProject = new Project();
-	allProject->setName(L"All");
-	for (RefArray< Project >::iterator i = unsorted.begin(); i != unsorted.end(); ++i)
-		allProject->addDependency(new ProjectDependency(*i));
-	unsorted.push_back(allProject);
+	if (m_generateAllAggregate)
+	{
+		Ref< Project > allProject = new Project();
+		allProject->setName(L"All");
+		for (RefArray< Project >::iterator i = unsorted.begin(); i != unsorted.end(); ++i)
+			allProject->addDependency(new ProjectDependency(*i));
+		unsorted.push_back(allProject);
+	}
 
 	// Sort projects by their dependencies.
 	RefArray< Project > projects;
@@ -464,8 +471,7 @@ bool SolutionBuilderXcode::generate(Solution* solution)
 	generatePBXBuildFileSection(s, solution, projects);
 	generatePBXBuildRuleSection(s, solution);
 	generatePBXContainerItemProxySection(s, solution, projects);
-	if (m_copyProductFiles)
-		generatePBXCopyFilesBuildPhaseSection(s, solution, projects);
+	generatePBXCopyFilesBuildPhaseSection(s, solution, projects);
 	generatePBXFileReferenceSection(s, solution, projects, files);
 	generatePBXFrameworksBuildPhaseSection(s, solution, projects);
 	generatePBXGroupSection(s, solution, projects);
@@ -520,6 +526,8 @@ void SolutionBuilderXcode::generatePBXBuildFileSection(OutputStream& s, const So
 				s << L"\t\t" << buildFileUid << L" /* " << j->getFileName() << L" in Resources */ = { isa = PBXBuildFile; fileRef = " << fileUid << L" /* " << j->getFileName() << L" */; };" << Endl;
 		}
 	}
+
+	// Copy files.
 	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
 		if (isAggregate(*i))
@@ -574,6 +582,33 @@ void SolutionBuilderXcode::generatePBXBuildFileSection(OutputStream& s, const So
 			}
 		}
 	}
+
+	// Copy files into aggregates.
+	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+	{
+		if (!isAggregate(*i))
+			continue;
+
+		std::set< ResolvedDependency > dependencies;
+		collectDependencies(solution, *i, dependencies, true, false);
+
+		for (std::set< ResolvedDependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
+		{
+			Configuration::TargetFormat targetFormat = getTargetFormat(j->project);
+			if (
+				targetFormat != Configuration::TfSharedLibrary &&
+				targetFormat != Configuration::TfExecutable &&
+				targetFormat != Configuration::TfExecutableConsole
+			)
+				continue;
+
+			std::wstring productUid = ProjectUids(j->project).getProductUid();
+			std::wstring productName = getProductName(j->project, targetFormat);
+
+			s << L"\t\t" << ProjectUids(*i).getBuildFileCopyFileUid(j->project) << L" /* " << productName << L" in CopyFiles */ = { isa = PBXBuildFile; fileRef = " << productUid << L" /* " << productName << L" */; };" << Endl;
+		}
+	}
+
 	s << L"/* End PBXBuildFile section */" << Endl;
 	s << Endl;
 }
@@ -675,9 +710,16 @@ void SolutionBuilderXcode::generatePBXCopyFilesBuildPhaseSection(traktor::Output
 {
 	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
-		// Only executable (not console though) projects gets files copied as they are "bundles".
-		if (isAggregate(*i) || getTargetFormat(*i) != Configuration::TfExecutable)
-			continue;
+		// Always copy aggregates files.
+		if (!isAggregate(*i))
+		{
+			if (!m_copyProductFiles)
+				continue;
+
+			// Only executable (not console though) projects gets files copied as they are "bundles".
+			if (getTargetFormat(*i) != Configuration::TfExecutable)
+				continue;
+		}
 			
 		log::info << (*i)->getName() << L"..." << Endl;
 	
@@ -695,10 +737,18 @@ void SolutionBuilderXcode::generatePBXCopyFilesBuildPhaseSection(traktor::Output
 
 		for (std::set< ResolvedDependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
 		{
-			Configuration::TargetFormat targetFormat = getTargetFormat(j->project);
-			if (targetFormat != Configuration::TfSharedLibrary)
+			// Only copy external dependencies.
+			if (!j->external)
 				continue;
-			
+
+			Configuration::TargetFormat targetFormat = getTargetFormat(j->project);
+			if (
+				targetFormat != Configuration::TfSharedLibrary &&
+				targetFormat != Configuration::TfExecutable &&
+				targetFormat != Configuration::TfExecutableConsole
+			)
+				continue;
+
 			std::wstring productName = getProductName(j->project, targetFormat);
 			std::wstring buildFileUid = ProjectUids(*i).getBuildFileCopyFileUid(j->project);
 			s << L"\t\t\t\t" << buildFileUid << L" /* " << productName << L" in CopyFiles */," << Endl;
@@ -969,11 +1019,10 @@ void SolutionBuilderXcode::generatePBXAggregateTargetSection(OutputStream& s, co
 
 		s << L"\t\t" << ProjectUids(*i).getTargetUid() << L" /* " << (*i)->getName() << L" */ = {" << Endl;
 		s << L"\t\t\tisa = PBXAggregateTarget;" << Endl;
-
-		s << L"\t\t\tbuildConfigurationList = " << ProjectUids(*i).getBuildConfigurationListUid() << L" /* Build configuration list for PBXNativeTarget \"" << (*i)->getName() << L"\" */;" << Endl;
+		s << L"\t\t\tbuildConfigurationList = " << ProjectUids(*i).getBuildConfigurationListUid() << L" /* Build configuration list for PBXAggregateTarget \"" << (*i)->getName() << L"\" */;" << Endl;
 		s << L"\t\t\tbuildPhases = (" << Endl;
+		s << L"\t\t\t\t" << ProjectUids(*i).getBuildPhaseCopyFilesUid() << L" /* CopyFiles */," << Endl;
 		s << L"\t\t\t);" << Endl;
-
 		s << L"\t\t\tdependencies = (" << Endl;
 
 		const RefArray< Dependency >& dependencies = (*i)->getDependencies();
@@ -984,10 +1033,9 @@ void SolutionBuilderXcode::generatePBXAggregateTargetSection(OutputStream& s, co
 		}
 
 		s << L"\t\t\t);" << Endl;
-		s << L"\t\t\tname = " << (*i)->getName() << L";" << Endl;
-		s << L"\t\t\tproductName = " << (*i)->getName() << L";" << Endl;		
-
-		s << L"\t\t\t};" << Endl;
+		s << L"\t\t\tname = \"" << (*i)->getName() << L"\";" << Endl;
+		s << L"\t\t\tproductName = \"" << (*i)->getName() << L"\";" << Endl;		
+		s << L"\t\t};" << Endl;
 	}
 	s << L"/* End PBXAggregateTarget section */" << Endl;
 	s << Endl;
@@ -1033,8 +1081,8 @@ void SolutionBuilderXcode::generatePBXNativeTargetSection(OutputStream& s, const
 		}
 
 		s << L"\t\t\t);" << Endl;
-		s << L"\t\t\tname = " << (*i)->getName() << L";" << Endl;
-		s << L"\t\t\tproductName = " << (*i)->getName() << L";" << Endl;
+		s << L"\t\t\tname = \"" << (*i)->getName() << L"\";" << Endl;
+		s << L"\t\t\tproductName = \"" << (*i)->getName() << L"\";" << Endl;
 		s << L"\t\t\tproductReference = " << ProjectUids(*i).getProductUid() << L" /* " << getProductName(*i, targetFormat) << L" */;" << Endl;
 		s << L"\t\t\tproductType = \"" << getProductType(targetFormat) << L"\";" << Endl;
 		s << L"\t\t};" << Endl;
@@ -1282,7 +1330,7 @@ void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, 
 		s << L"\t\t" << ProjectUids(*i).getBuildConfigurationDebugUid() << L" /* " << (*i)->getName() << L" Debug */ = {" << Endl;
 		s << L"\t\t\tisa = XCBuildConfiguration;" << Endl;
 		s << L"\t\t\tbuildSettings = {" << Endl;
-		s << L"\t\t\t\tPRODUCT_NAME = " << (*i)->getName() << L";" << Endl;
+		s << L"\t\t\t\tPRODUCT_NAME = \"" << (*i)->getName() << L"\";" << Endl;
 		s << L"\t\t\t};" << Endl;
 		s << L"\t\t\tname = Debug;" << Endl;
 		s << L"\t\t};" << Endl;
@@ -1290,7 +1338,7 @@ void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, 
 		s << L"\t\t" << ProjectUids(*i).getBuildConfigurationReleaseUid() << L" /* " << (*i)->getName() << L" Release */ = {" << Endl;
 		s << L"\t\t\tisa = XCBuildConfiguration;" << Endl;
 		s << L"\t\t\tbuildSettings = {" << Endl;
-		s << L"\t\t\t\tPRODUCT_NAME = " << (*i)->getName() << L";" << Endl;
+		s << L"\t\t\t\tPRODUCT_NAME = \"" << (*i)->getName() << L"\";" << Endl;
 		s << L"\t\t\t};" << Endl;
 		s << L"\t\t\tname = Release;" << Endl;
 		s << L"\t\t};" << Endl;
@@ -1358,7 +1406,7 @@ void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, 
 			}
 			s << L"${DERIVED_FILES_DIR)\";" << Endl;
 
-			s << L"\t\t\t\tPRODUCT_NAME = " << (*i)->getName() << L";" << Endl;
+			s << L"\t\t\t\tPRODUCT_NAME = \"" << (*i)->getName() << L"\";" << Endl;
 			if (!plistFile.empty())
 				s << L"\t\t\t\tINFOPLIST_FILE = \"" << plistFile << L"\";" << Endl;
 			
@@ -1451,7 +1499,7 @@ void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, 
 			}
 			s << L"${DERIVED_FILES_DIR)\";" << Endl;
 			
-			s << L"\t\t\t\tPRODUCT_NAME = " << (*i)->getName() << L";" << Endl;
+			s << L"\t\t\t\tPRODUCT_NAME = \"" << (*i)->getName() << L"\";" << Endl;
 			if (!plistFile.empty())
 				s << L"\t\t\t\tINFOPLIST_FILE = \"" << plistFile << L"\";" << Endl;
 
@@ -1535,23 +1583,8 @@ void SolutionBuilderXcode::generateXCConfigurationListSection(OutputStream& s, c
 
 		s << L"\t\t\tisa = XCConfigurationList;" << Endl;
 		s << L"\t\t\tbuildConfigurations = (" << Endl;
-
-		if (!isAggregate(*i))
-		{
-			Ref< Configuration > configurations[2];
-			getConfigurations(*i, configurations);
-
-			if (configurations[0])
-				s << L"\t\t\t\t" << ProjectUids(*i).getBuildConfigurationDebugUid() << L" /* Debug */," << Endl;
-			if (configurations[1])
-				s << L"\t\t\t\t" << ProjectUids(*i).getBuildConfigurationReleaseUid() << L" /* Release */," << Endl;
-		}
-		else
-		{
-			s << L"\t\t\t\t" << ProjectUids(*i).getBuildConfigurationDebugUid() << L" /* Debug */," << Endl;
-			s << L"\t\t\t\t" << ProjectUids(*i).getBuildConfigurationReleaseUid() << L" /* Release */," << Endl;
-		}
-
+		s << L"\t\t\t\t" << ProjectUids(*i).getBuildConfigurationDebugUid() << L" /* Debug */," << Endl;
+		s << L"\t\t\t\t" << ProjectUids(*i).getBuildConfigurationReleaseUid() << L" /* Release */," << Endl;
 		s << L"\t\t\t);" << Endl;
 		s << L"\t\t\tdefaultConfigurationIsVisible = 0;" << Endl;
 		s << L"\t\t\tdefaultConfigurationName = Debug;" << Endl;
@@ -1653,6 +1686,9 @@ void SolutionBuilderXcode::collectDependencies(
 			dependency.external = true;
 		}
 		else
+			continue;
+
+		if (isAggregate(dependency.project))
 			continue;
 
 		if (outDependencies.find(dependency) == outDependencies.end())

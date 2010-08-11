@@ -31,13 +31,21 @@ private:
 
 		bool operator < (const ResolvedDependency& rh) const
 		{
-			return solution < rh.solution || project < rh.project;
+			if (solution < rh.solution)
+				return true;
+			else if (solution > rh.solution)
+				return false;
+			else if (project < rh.project)
+				return true;
+			else
+				return false;
 		}
 	};
 
 	std::wstring m_debugConfig;
 	std::wstring m_releaseConfig;
 	bool m_copyProductFiles;
+	bool m_generateAllAggregate;
 	bool m_iphone;
 	std::wstring m_projectConfigurationFileDebug;
 	std::wstring m_projectConfigurationFileRelease;
