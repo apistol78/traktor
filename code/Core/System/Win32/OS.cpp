@@ -223,6 +223,16 @@ OS::envmap_t OS::getEnvironment() const
 	return envmap;
 }
 
+bool OS::getEnvironment(const std::wstring& name, std::wstring& outValue) const
+{
+	const char* env = getenv(wstombs(name).c_str());
+	if (!env)
+		return false;
+
+	outValue = mbstows(env);
+	return true;
+}
+
 Ref< IProcess > OS::execute(
 	const Path& file,
 	const std::wstring& commandLine,
