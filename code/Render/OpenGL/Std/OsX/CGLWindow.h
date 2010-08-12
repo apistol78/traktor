@@ -27,7 +27,7 @@ bool cglwIsFullscreen(void* windowHandle);
 
 bool cglwIsActive(void* windowHandle);
 
-void cglwUpdateWindow(void* windowHandle);
+bool cglwUpdateWindow(void* windowHandle);
 
 void* cglwGetWindowView(void* windowHandle);
 	

@@ -10,6 +10,11 @@
 
 @implementation CGLCustomWindow
 
+- (void) init
+{
+	m_closed = NO;
+}
+
 - (BOOL) canBecomeKeyWindow
 {
 	return YES;
@@ -18,6 +23,16 @@
 - (BOOL) canBecomeMainWindow
 {
 	return YES;
+}
+
+- (void) close
+{
+	m_closed = YES;
+}
+
+- (BOOL) closed
+{
+	return m_closed;
 }
 
 @end
