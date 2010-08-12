@@ -56,56 +56,60 @@ Ref< IInputSourceData > InputSourceFabricator::update()
 				continue;
 			
 			float value = i->device->getControlValue(control);
+			bool first = i->values.find(controlType) == i->values.end();
 
 			// Wait until digital control has been released before we
 			// start tracking it.
 			if (
 				!m_analogue &&
 				asBoolean(value) &&
-				i->values.find(controlType) == i->values.end()
+				first
 			)
 				continue;
 
 			if (std::abs(value - i->values[controlType]) > c_valueThreshold)
 			{
-				// Control has been modified; record it's use.
-				if (m_analogue)
+				if (!first)
 				{
-					// Analogue control cannot be combined, thus create generic
-					// source and finish.
-					m_outputData = new GenericInputSourceData(
-						m_category,
-						std::distance(m_deviceStates.begin(), i),
-						controlType
-					);
-					break;
-				}
-				else
-				{
-					// Digital controls are chained until any control are
-					// released and then we're finished.
-					if (asBoolean(value))
+					// Control has been modified; record it's use.
+					if (m_analogue)
 					{
-						if (!m_combinedData)
-							m_combinedData = new CombinedInputSourceData(CombinedInputSource::CmAll);
-
-						m_combinedData->addSource(new GenericInputSourceData(
+						// Analogue control cannot be combined, thus create generic
+						// source and finish.
+						m_outputData = new GenericInputSourceData(
 							m_category,
 							std::distance(m_deviceStates.begin(), i),
 							controlType
-						));
+						);
+						break;
 					}
 					else
 					{
-						// Remove combined wrapper if it only contain one source.
-						const RefArray< IInputSourceData >& sources = m_combinedData->getSources();
-						if (sources.size() > 1)
-							m_outputData = m_combinedData;
-						else if (sources.size() == 1)
-							m_outputData = sources[0];
-
-						if (m_outputData)
-							break;
+						// Digital controls are chained until any control are
+						// released and then we're finished.
+						if (asBoolean(value))
+						{
+							if (!m_combinedData)
+								m_combinedData = new CombinedInputSourceData(CombinedInputSource::CmAll);
+	
+							m_combinedData->addSource(new GenericInputSourceData(
+								m_category,
+								std::distance(m_deviceStates.begin(), i),
+								controlType
+							));
+						}
+						else
+						{
+							// Remove combined wrapper if it only contain one source.
+							const RefArray< IInputSourceData >& sources = m_combinedData->getSources();
+							if (sources.size() > 1)
+								m_outputData = m_combinedData;
+							else if (sources.size() == 1)
+								m_outputData = sources[0];
+	
+							if (m_outputData)
+								break;
+						}
 					}
 				}
 				i->values[controlType] = value;

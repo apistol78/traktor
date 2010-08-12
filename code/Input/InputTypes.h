@@ -44,7 +44,7 @@ enum InputDefaultControlType
 	DtButton8			= 28,
 	DtReserved1			= 29,
 
-	// Absolute axises, ex mouse axises.
+	// Relative axises, ex mouse axises.
 	DtAxisX				= 30,
 	DtAxisY				= 31,
 

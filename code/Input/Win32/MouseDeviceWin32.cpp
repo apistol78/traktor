@@ -131,8 +131,8 @@ void MouseDeviceWin32::readState()
 			cursorCenter.x = (rc.right - rc.left) / 2;
 			cursorCenter.y = (rc.bottom - rc.top) / 2;
 
-			m_axisX += float(m_cursorPosition.x - cursorCenter.x);
-			m_axisY += float(m_cursorPosition.y - cursorCenter.y);
+			m_axisX = float(m_cursorPosition.x - cursorCenter.x);
+			m_axisY = float(m_cursorPosition.y - cursorCenter.y);
 
 			ClientToScreen(m_hWndActive, &cursorCenter);
 			SetCursorPos(cursorCenter.x, cursorCenter.y);
@@ -145,8 +145,8 @@ void MouseDeviceWin32::readState()
 			if (!m_haveCursorPosition)
 				m_cursorPosition = cursorPosition;
 
-			m_axisX += float(cursorPosition.x - m_cursorPosition.x);
-			m_axisY += float(cursorPosition.y - m_cursorPosition.y);
+			m_axisX = float(cursorPosition.x - m_cursorPosition.x);
+			m_axisY = float(cursorPosition.y - m_cursorPosition.y);
 
 			m_cursorPosition = cursorPosition;
 			m_haveCursorPosition = true;
