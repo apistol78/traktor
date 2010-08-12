@@ -5,6 +5,7 @@
 #include "Core/Misc/Split.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
+#include "Core/System/OS.h"
 
 namespace traktor
 {
@@ -209,8 +210,8 @@ bool Path::operator < (const Path& rh) const
 void Path::resolve()
 {
 	std::wstring tmp = replaceAll(m_original, L'\\', L'/');
+	std::wstring env;
 
-#if !defined(_XBOX) && !defined(WINCE) && !defined(_PS3)
 	for (;;)
 	{
 		size_t s = tmp.find(L"$(");
@@ -222,13 +223,12 @@ void Path::resolve()
 			break;
 
 		std::wstring name = tmp.substr(s + 2, e - s - 2);
-		const char* env = getenv(wstombs(name).c_str());
-		if (env)
-			tmp = tmp.substr(0, s) + replaceAll< std::wstring >(mbstows(env), L'\\', L'/') + tmp.substr(e + 1);
+		
+		if (OS::getInstance().getEnvironment(name, env))
+			tmp = tmp.substr(0, s) + replaceAll< std::wstring >(env, L'\\', L'/') + tmp.substr(e + 1);
 		else
 			tmp = tmp.substr(0, s) + tmp.substr(e + 1);
 	}
-#endif
 	
 	std::wstring::size_type vol = tmp.find(L':');
 	if (vol != std::wstring::npos)

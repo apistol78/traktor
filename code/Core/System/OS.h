@@ -83,6 +83,14 @@ public:
 	 * \return Environment variables.
 	 */
 	envmap_t getEnvironment() const;
+	
+	/*! \brief Get environment variable value.
+	 *
+	 * \param name Name of variable.
+	 * \param outValue Value of variable if found.
+	 * \return True if variable found.
+	 */
+	bool getEnvironment(const std::wstring& name, std::wstring& outValue) const;
 
 	/*! \brief Execute command.
 	 *
