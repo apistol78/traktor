@@ -308,8 +308,7 @@ bool RenderSystemOpenGL::handleMessages()
 	if (!m_windowHandle)
 		return false;
 		
-	cglwUpdateWindow(m_windowHandle);
-	return true;
+	return cglwUpdateWindow(m_windowHandle);
 
 #else
 	return true;

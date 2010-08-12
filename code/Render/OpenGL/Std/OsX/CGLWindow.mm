@@ -190,6 +190,8 @@ void* cglwCreateWindow(const std::wstring& title, const DisplayMode& displayMode
 			defer: YES
 		];
 	}
+	
+	[windowData->window init];
 
 	[windowData->window setBackgroundColor: [NSColor blackColor]];
 	[windowData->window setAcceptsMouseMovedEvents: YES];
@@ -323,9 +325,12 @@ bool cglwIsActive(void* windowHandle)
 	return [windowData->window isKeyWindow] == YES;
 }
 
-void cglwUpdateWindow(void* windowHandle)
+bool cglwUpdateWindow(void* windowHandle)
 {
+	WindowData* windowData = static_cast< WindowData* >(windowHandle);
 	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+	
+	// Handle system events.
 	NSEvent* event = [NSApp nextEventMatchingMask: NSAnyEventMask untilDate: nil inMode: NSDefaultRunLoopMode dequeue: YES];
 	if (event != nil)
 	{
@@ -353,7 +358,9 @@ void cglwUpdateWindow(void* windowHandle)
 			[NSApp updateWindows];
 		}
 	}
+	
 	[pool release];
+	return [windowData->window closed] == NO;
 }
 
 void* cglwGetWindowView(void* windowHandle)
