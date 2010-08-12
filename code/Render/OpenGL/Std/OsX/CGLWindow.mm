@@ -308,7 +308,7 @@ void cglwSetFullscreen(void* windowHandle, bool fullscreen)
 		CGDisplayShowCursor(kCGDirectMainDisplay);
 	}
 	
-	cglwUpdateWindow(windowData->window);
+	cglwUpdateWindow(windowHandle);
 	
 	windowData->fullscreen = fullscreen;
 }
