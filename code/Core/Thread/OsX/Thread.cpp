@@ -48,6 +48,7 @@ Thread::~Thread()
 bool Thread::start(Priority priority)
 {
 	pthread_attr_t attr;
+	sched_param param;
 	int rc;
 	
 	Internal* in = new Internal();
@@ -60,6 +61,31 @@ bool Thread::start(Priority priority)
 
 	pthread_attr_init(&attr);
 	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
+	
+	std::memset(&param, 0, sizeof(param));
+	switch (priority)
+	{
+	case Lowest:
+		param.sched_priority = 15;
+		break;
+		
+	case Below:
+		param.sched_priority = 5;
+		break;
+		
+	case Normal:
+		param.sched_priority = 0;
+		break;
+		
+	case Above:
+		param.sched_priority = -6;
+		break;
+		
+	case Highest:
+		param.sched_priority = -16;
+		break;
+	}	
+	pthread_attr_setschedparam(&attr, &param);
 	
 	rc = pthread_create(
 		&in->thread,

@@ -167,7 +167,6 @@ bool ProgramOpenGL::create(const ProgramResource* resource)
 
 	T_OGL_SAFE(glAttachObjectARB(m_program, vertexObject));
 	T_OGL_SAFE(glAttachObjectARB(m_program, fragmentObject));
-	T_OGL_SAFE(glBindAttribLocationARB(m_program, 0, "in_Position0"));
 	T_OGL_SAFE(glLinkProgramARB(m_program));
 
 	T_OGL_SAFE(glGetObjectParameterivARB(m_program, GL_OBJECT_LINK_STATUS_ARB, &status));
