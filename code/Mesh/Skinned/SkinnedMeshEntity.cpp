@@ -19,13 +19,20 @@ SkinnedMeshEntity::SkinnedMeshEntity(const Transform& transform, const resource:
 void SkinnedMeshEntity::setBoneTransforms(const AlignedVector< Matrix44 >& boneTransforms)
 {
 	uint32_t size = uint32_t(m_boneTransforms.size());
-	for (uint32_t i = 0; i < size; ++i)
-		m_boneTransforms[i] = i < boneTransforms.size() ? boneTransforms[i] : Matrix44::identity();
-}
-
-const AlignedVector< Matrix44 >& SkinnedMeshEntity::getBoneTransforms() const
-{
-	return m_boneTransforms;
+	for (uint32_t i = 0, j = 0; i < size; i += 2, ++j)
+	{
+		if (j < boneTransforms.size())
+		{
+			Transform bone(boneTransforms[i]);
+			m_boneTransforms[i + 0] = Vector4::loadAligned(bone.rotation().e);
+			m_boneTransforms[i + 1] = bone.translation().xyz1();
+		}
+		else
+		{
+			m_boneTransforms[i + 0] = Vector4::origo();
+			m_boneTransforms[i + 1] = Vector4::origo();
+		}
+	}
 }
 
 Aabb SkinnedMeshEntity::getBoundingBox() const
@@ -60,9 +67,9 @@ bool SkinnedMeshEntity::validate() const
 
 	const std::map< std::wstring, int >& boneMap = m_mesh->getBoneMap();
 
-	m_boneTransforms.resize(boneMap.size());
+	m_boneTransforms.resize(boneMap.size() * 2);
 	for (uint32_t i = 0; i < uint32_t(m_boneTransforms.size()); ++i)
-		m_boneTransforms[i] = Matrix44::identity();
+		m_boneTransforms[i] = Vector4::origo();
 
 	return true;
 }
