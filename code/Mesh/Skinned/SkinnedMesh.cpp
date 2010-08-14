@@ -36,7 +36,7 @@ void SkinnedMesh::render(
 	render::RenderContext* renderContext,
 	const world::WorldRenderView* worldRenderView,
 	const Transform& worldTransform,
-	const AlignedVector< Matrix44 >& boneTransforms,
+	const AlignedVector< Vector4 >& boneTransforms,
 	float distance,
 	const IMeshParameterCallback* parameterCallback
 )
@@ -71,7 +71,7 @@ void SkinnedMesh::render(
 		if (parameterCallback)
 			parameterCallback->setParameters(renderBlock->shaderParams);
 		if (!boneTransforms.empty())
-			renderBlock->shaderParams->setMatrixArrayParameter(s_handleBones, &boneTransforms[0], int(boneTransforms.size()));
+			renderBlock->shaderParams->setVectorArrayParameter(s_handleBones, &boneTransforms[0], int(boneTransforms.size()));
 		renderBlock->shaderParams->endParameters(renderContext);
 
 		renderContext->draw(

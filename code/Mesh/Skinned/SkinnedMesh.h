@@ -3,7 +3,6 @@
 
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Aabb.h"
-#include "Core/Math/Matrix44.h"
 #include "Mesh/IMesh.h"
 #include "Render/Shader.h"
 #include "Resource/Proxy.h"
@@ -58,7 +57,7 @@ public:
 		render::RenderContext* renderContext,
 		const world::WorldRenderView* worldRenderView,
 		const Transform& worldTransform,
-		const AlignedVector< Matrix44 >& boneTransforms,
+		const AlignedVector< Vector4 >& boneTransforms,
 		float distance,
 		const IMeshParameterCallback* parameterCallback
 	);

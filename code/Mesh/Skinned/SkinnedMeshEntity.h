@@ -29,15 +29,13 @@ public:
 
 	void setBoneTransforms(const AlignedVector< Matrix44 >& boneTransforms);
 
-	const AlignedVector< Matrix44 >& getBoneTransforms() const;
-
 	virtual Aabb getBoundingBox() const;
 
 	virtual void render(world::WorldContext* worldContext, world::WorldRenderView* worldRenderView, float distance);
 
 private:
 	mutable resource::Proxy< SkinnedMesh > m_mesh;
-	mutable AlignedVector< Matrix44 > m_boneTransforms;
+	mutable AlignedVector< Vector4 > m_boneTransforms;
 
 	bool validate() const;
 };

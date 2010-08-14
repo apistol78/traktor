@@ -62,7 +62,7 @@ public:
 
 	bool getPoseTransform(const std::wstring& boneName, Transform& outTransform) const;
 
-	bool getSkinTransform(const std::wstring& boneName, Matrix44& outTransform) const;
+	bool getSkinTransform(const std::wstring& boneName, Transform& outTransform) const;
 
 	inline const resource::Proxy< Skeleton >& getSkeleton() const { return m_skeleton; }
 
@@ -81,7 +81,7 @@ private:
 	std::vector< int32_t > m_boneRemap;
 	AlignedVector< Transform > m_boneTransforms;
 	AlignedVector< Transform > m_poseTransforms;
-	AlignedVector< Matrix44 > m_skinTransforms;
+	AlignedVector< Vector4 > m_skinTransforms;
 	float m_totalTime;
 	bool m_updateController;
 	mutable Job m_updatePoseControllerJob;

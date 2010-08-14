@@ -157,7 +157,7 @@ bool AnimatedMeshEntity::getPoseTransform(const std::wstring& boneName, Transfor
 	return true;
 }
 
-bool AnimatedMeshEntity::getSkinTransform(const std::wstring& boneName, Matrix44& outTransform) const
+bool AnimatedMeshEntity::getSkinTransform(const std::wstring& boneName, Transform& outTransform) const
 {
 	uint32_t index;
 
@@ -172,7 +172,13 @@ bool AnimatedMeshEntity::getSkinTransform(const std::wstring& boneName, Matrix44
 	if (skinIndex < 0)
 		return false;
 
-	outTransform = m_skinTransforms[skinIndex];
+	Quaternion tmp;
+	m_skinTransforms[skinIndex * 2 + 0].storeAligned((float*)&tmp);
+	
+	outTransform = Transform(
+		m_skinTransforms[skinIndex * 2 + 1],
+		tmp
+	);
 	return true;
 }
 
@@ -211,23 +217,33 @@ void AnimatedMeshEntity::updatePoseController(float deltaTime)
 		while (m_poseTransforms.size() < skeletonBoneCount)
 			m_poseTransforms.push_back(Transform::identity());
 
-		m_skinTransforms.resize(skinBoneCount);
-		for (size_t i = 0; i < skinBoneCount; ++i)
-			m_skinTransforms[i] = Matrix44::identity();
+		m_skinTransforms.resize(skinBoneCount * 2);
+		for (size_t i = 0; i < skinBoneCount * 2; i += 2)
+		{
+			m_skinTransforms[i + 0] = Vector4::origo();
+			m_skinTransforms[i + 1] = Vector4::origo();
+		}
 
 		for (size_t i = 0; i < skeletonBoneCount; ++i)
 		{
 			int32_t boneIndex = m_boneRemap[i];
 			if (boneIndex >= 0 && boneIndex < int32_t(skinBoneCount))
-				m_skinTransforms[boneIndex] = (m_poseTransforms[i] * m_boneTransforms[i].inverse()).toMatrix44();
+			{
+				Transform skinTransform = m_poseTransforms[i] * m_boneTransforms[i].inverse();
+				m_skinTransforms[boneIndex * 2 + 0] = Vector4::loadAligned(skinTransform.rotation().e);
+				m_skinTransforms[boneIndex * 2 + 1] = skinTransform.translation().xyz1();
+			}
 		}
 	}
 	else
 	{
 		size_t skinBoneCount = m_mesh->getBoneCount();
-		m_skinTransforms.resize(skinBoneCount);
-		for (size_t i = 0; i < skinBoneCount; ++i)
-			m_skinTransforms[i] = Matrix44::identity();
+		m_skinTransforms.resize(skinBoneCount * 2);
+		for (size_t i = 0; i < skinBoneCount * 2; i += 2)
+		{
+			m_skinTransforms[i + 0] = Vector4::origo();
+			m_skinTransforms[i + 1] = Vector4::origo();
+		}
 	}
 }
 
