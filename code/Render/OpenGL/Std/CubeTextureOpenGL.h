@@ -3,6 +3,7 @@
 
 #include "Render/ICubeTexture.h"
 #include "Render/Types.h"
+#include "Render/OpenGL/Std/ITextureBinding.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -22,7 +23,9 @@ class IContext;
 /*!
  * \ingroup OGL
  */
-class T_DLLCLASS CubeTextureOpenGL : public ICubeTexture
+class T_DLLCLASS CubeTextureOpenGL
+:	public ICubeTexture
+,	public ITextureBinding
 {
 	T_RTTI_CLASS;
 
@@ -44,8 +47,10 @@ public:
 	virtual bool lock(int side, int level, Lock& lock);
 
 	virtual void unlock(int side, int level);
-
-	GLuint getTextureName() const { return m_textureName; }
+	
+	// ITextureBinding
+	
+	virtual void bind(GLuint unit, const SamplerState& samplerState, GLint locationTexture, GLint locationOffset);
 	
 private:
 	Ref< IContext > m_resourceContext;

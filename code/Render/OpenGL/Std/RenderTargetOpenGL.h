@@ -3,6 +3,7 @@
 
 #include "Render/ITexture.h"
 #include "Render/Types.h"
+#include "Render/OpenGL/Std/ITextureBinding.h"
 #include "Core/Math/Vector4.h"
 
 // import/export mechanism.
@@ -23,7 +24,9 @@ class IContext;
 /*!
  * \ingroup OGL
  */
-class T_DLLCLASS RenderTargetOpenGL : public ITexture
+class T_DLLCLASS RenderTargetOpenGL
+:	public ITexture
+,	public ITextureBinding
 {
 	T_RTTI_CLASS;
 
@@ -41,6 +44,8 @@ public:
 	virtual int getHeight() const;
 	
 	virtual int getDepth() const;
+	
+	virtual void bind(GLuint unit, const SamplerState& samplerState, GLint locationTexture, GLint locationOffset);
 
 	void bind(bool keepDepthStencil);
 
@@ -51,12 +56,8 @@ public:
 	void blit();
 	
 	bool read(void* buffer) const;
-
-	inline GLenum getTextureTarget() const { return m_textureTarget; }
-
-	inline GLuint getTextureName() const { return m_colorTexture; }
-
-	inline const Vector4& getTextureOriginAndScale() const { return m_originAndScale; }
+	
+	GLuint clearMask() const;
 
 private:
 	Ref< IContext > m_resourceContext;
@@ -69,6 +70,7 @@ private:
 	GLuint m_colorTexture;
 	Vector4 m_originAndScale;
 	bool m_haveDepth;
+	SamplerState m_shadowState;
 };
 
 	}
