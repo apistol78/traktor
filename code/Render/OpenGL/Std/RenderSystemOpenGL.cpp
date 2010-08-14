@@ -641,7 +641,7 @@ Ref< ISimpleTexture > RenderSystemOpenGL::createSimpleTexture(const SimpleTextur
 	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
 
 	Ref< SimpleTextureOpenGL > texture = new SimpleTextureOpenGL(m_resourceContext);
-	if (!texture->create(desc))
+	if (!texture->create(desc, m_maxAnisotrophy))
 		return 0;
 
 	return texture;
@@ -684,7 +684,7 @@ Ref< IProgram > RenderSystemOpenGL::createProgram(const ProgramResource* program
 {
 	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
 
-	Ref< ProgramOpenGL > shader = new ProgramOpenGL(m_resourceContext, m_maxAnisotrophy);
+	Ref< ProgramOpenGL > shader = new ProgramOpenGL(m_resourceContext);
 	if (!shader->create(programResource))
 		return 0;
 

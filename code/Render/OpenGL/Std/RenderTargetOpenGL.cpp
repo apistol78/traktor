@@ -287,6 +287,8 @@ bool RenderTargetOpenGL::create(const RenderTargetSetCreateDesc& setDesc, const 
 
 	GLenum status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
 	T_OGL_SAFE(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0));
+	
+	std::memset(&m_shadowState, 0, sizeof(m_shadowState));
 
 	return bool(status == GL_FRAMEBUFFER_COMPLETE_EXT);
 }
@@ -326,6 +328,48 @@ int RenderTargetOpenGL::getHeight() const
 int RenderTargetOpenGL::getDepth() const
 {
 	return 0;
+}
+
+void RenderTargetOpenGL::bind(GLuint unit, const SamplerState& samplerState, GLint locationTexture, GLint locationOffset)
+{
+	T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + unit));
+	T_OGL_SAFE(glBindTexture(GL_TEXTURE_2D, m_colorTexture));
+	
+	
+	GLenum minFilter = GL_NEAREST;
+	if (samplerState.minFilter != GL_NEAREST)
+		minFilter = GL_LINEAR;
+	else
+		minFilter = GL_NEAREST;
+
+	if (m_shadowState.minFilter != minFilter)
+	{
+		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter));
+		m_shadowState.minFilter = minFilter;
+	}
+	
+	if (m_shadowState.magFilter != samplerState.magFilter)
+	{
+		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, samplerState.magFilter));
+		m_shadowState.magFilter = samplerState.magFilter;
+	}
+
+	if (m_shadowState.wrapS != samplerState.wrapS)
+	{
+		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, samplerState.wrapS));
+		m_shadowState.wrapS = samplerState.wrapS;
+	}
+	
+	if (m_shadowState.wrapT != samplerState.wrapT)
+	{
+		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, samplerState.wrapT));
+		m_shadowState.wrapT = samplerState.wrapT;
+	}
+	
+	T_OGL_SAFE(glUniform1iARB(locationTexture, unit));
+	
+	if (locationOffset != -1)
+		T_OGL_SAFE(glUniform4fvARB(locationOffset, 1, (const GLfloat*)&m_originAndScale));
 }
 
 void RenderTargetOpenGL::bind(bool keepDepthStencil)
@@ -424,6 +468,14 @@ bool RenderTargetOpenGL::read(void* buffer) const
 		buffer
 	));
 	return true;
+}
+
+GLuint RenderTargetOpenGL::clearMask() const
+{
+	if (m_haveDepth)
+		return GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT;
+	else
+		return GL_COLOR_BUFFER_BIT;
 }
 
 	}

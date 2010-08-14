@@ -3,6 +3,7 @@
 
 #include "Render/IVolumeTexture.h"
 #include "Render/Types.h"
+#include "Render/OpenGL/Std/ITextureBinding.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -22,7 +23,9 @@ class IContext;
 /*!
  * \ingroup OGL
  */
-class T_DLLCLASS VolumeTextureOpenGL : public IVolumeTexture
+class T_DLLCLASS VolumeTextureOpenGL
+:	public IVolumeTexture
+,	public ITextureBinding
 {
 	T_RTTI_CLASS;
 	
@@ -39,8 +42,8 @@ public:
 	
 	virtual int getDepth() const;
 
-	GLuint getTextureName() const { return m_textureName; }
-	
+	virtual void bind(GLuint unit, const SamplerState& samplerState, GLint locationTexture, GLint locationOffset);
+
 private:
 	Ref< IContext > m_resourceContext;
 	GLuint m_textureName;

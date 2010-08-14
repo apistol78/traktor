@@ -5,6 +5,7 @@
 #include "Core/Misc/AutoPtr.h"
 #include "Render/ISimpleTexture.h"
 #include "Render/Types.h"
+#include "Render/OpenGL/Std/ITextureBinding.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -24,7 +25,9 @@ class IContext;
 /*!
  * \ingroup OGL
  */
-class T_DLLCLASS SimpleTextureOpenGL : public ISimpleTexture
+class T_DLLCLASS SimpleTextureOpenGL
+:	public ISimpleTexture
+,	public ITextureBinding
 {
 	T_RTTI_CLASS;
 
@@ -33,7 +36,7 @@ public:
 
 	virtual ~SimpleTextureOpenGL();
 	
-	bool create(const SimpleTextureCreateDesc& desc);
+	bool create(const SimpleTextureCreateDesc& desc, GLfloat maxAnisotropy);
 
 	virtual void destroy();
 
@@ -47,11 +50,7 @@ public:
 
 	virtual void unlock(int level);
 
-	GLuint getTextureName() const { return m_textureName; }
-
-	Vector4 getTextureOriginAndScale() const { return Vector4(0.0f, 0.0f, 1.0f, 1.0f);	}
-
-	uint32_t getMipCount() const { return m_mipCount; }
+	virtual void bind(GLuint unit, const SamplerState& samplerState, GLint locationTexture, GLint locationOffset);
 
 private:
 	Ref< IContext > m_resourceContext;
@@ -64,6 +63,7 @@ private:
 	GLenum m_type;
 	uint32_t m_mipCount;
 	AutoArrayPtr< uint8_t > m_data;
+	SamplerState m_shadowState;
 };
 		
 	}

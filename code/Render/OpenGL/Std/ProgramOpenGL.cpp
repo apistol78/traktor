@@ -14,6 +14,7 @@
 #include "Render/OpenGL/Std/VolumeTextureOpenGL.h"
 #include "Render/OpenGL/Std/RenderTargetOpenGL.h"
 #include "Render/OpenGL/Std/ContextOpenGL.h"
+#include "Render/OpenGL/Std/ITextureBinding.h"
 
 namespace traktor
 {
@@ -110,12 +111,11 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProgramOpenGL", ProgramOpenGL, IProgram)
 
 ProgramOpenGL* ProgramOpenGL::ms_activeProgram = 0;
 
-ProgramOpenGL::ProgramOpenGL(ContextOpenGL* resourceContext, GLfloat maxAnisotrophy)
+ProgramOpenGL::ProgramOpenGL(ContextOpenGL* resourceContext)
 :	m_resourceContext(resourceContext)
 ,	m_program(0)
 ,	m_state(0)
 ,	m_locationTargetSize(0)
-,	m_maxAnisotrophy(maxAnisotrophy)
 ,	m_stencilRef(0)
 ,	m_textureDirty(true)
 {
@@ -192,16 +192,8 @@ bool ProgramOpenGL::create(const ProgramResource* resource)
 
 		if (m_parameterMap.find(handle) == m_parameterMap.end())
 		{
-			m_parameterMap[handle] = m_textureData.size();
-
-			m_textureData.push_back(TextureData());
-			m_textureData.back().target = 0;
-			m_textureData.back().name = 0;
-			m_textureData.back().mipCount = 0;
-			m_textureData.back().offset[0] =
-			m_textureData.back().offset[1] =
-			m_textureData.back().offset[2] =
-			m_textureData.back().offset[3] = 0.0f;
+			m_parameterMap[handle] = m_textureBindings.size();
+			m_textureBindings.push_back(0);
 		}
 		
 		std::wstring samplerName = L"_gl_sampler_" + toString(i->second);
@@ -375,35 +367,13 @@ void ProgramOpenGL::setTextureParameter(handle_t handle, ITexture* texture)
 		return;
 
 	if (SimpleTextureOpenGL* st = dynamic_type_cast< SimpleTextureOpenGL* >(texture))
-	{
-		m_textureData[i->second].target = GL_TEXTURE_2D;
-		m_textureData[i->second].name = st->getTextureName();
-		m_textureData[i->second].mipCount = st->getMipCount();
-		st->getTextureOriginAndScale().storeUnaligned(m_textureData[i->second].offset);
-	}
+		m_textureBindings[i->second] = static_cast< ITextureBinding* >(st);
 	else if (CubeTextureOpenGL* ct = dynamic_type_cast< CubeTextureOpenGL* >(texture))
-	{
-#if !defined(__APPLE__)
-		m_textureData[i->second].target = GL_TEXTURE_CUBE_MAP_EXT;
-#else
-		m_textureData[i->second].target = GL_TEXTURE_CUBE_MAP_ARB;
-#endif
-		m_textureData[i->second].name = ct->getTextureName();
-		m_textureData[i->second].mipCount = 1;
-	}
+		m_textureBindings[i->second] = static_cast< ITextureBinding* >(ct);
 	else if (VolumeTextureOpenGL* vt = dynamic_type_cast< VolumeTextureOpenGL* >(texture))
-	{
-		m_textureData[i->second].target = GL_TEXTURE_3D;
-		m_textureData[i->second].name = vt->getTextureName();
-		m_textureData[i->second].mipCount = 1;
-	}
+		m_textureBindings[i->second] = static_cast< ITextureBinding* >(vt);
 	else if (RenderTargetOpenGL* rt = dynamic_type_cast< RenderTargetOpenGL* >(texture))
-	{
-		m_textureData[i->second].target = rt->getTextureTarget();
-		m_textureData[i->second].name = rt->getTextureName();
-		m_textureData[i->second].mipCount = 1;
-		rt->getTextureOriginAndScale().storeUnaligned(m_textureData[i->second].offset);
-	}
+		m_textureBindings[i->second] = static_cast< ITextureBinding* >(rt);
 
 	m_textureDirty = true;
 }
@@ -474,38 +444,11 @@ bool ProgramOpenGL::activate(float targetSize[2])
 		{
 			const Sampler& sampler = m_samplers[i];
 			const SamplerState& samplerState = m_renderState.samplerStates[sampler.stage];
-			const TextureData& td = m_textureData[sampler.texture];
 
-			T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + i));
-			T_OGL_SAFE(glBindTexture(td.target, td.name));
+			ITextureBinding* tb = m_textureBindings[sampler.texture];
+			T_ASSERT (tb);
 			
-			// Override mip filter if texture doesn't have multiple mips.
-			if (td.mipCount > 1)
-			{
-				T_OGL_SAFE(glTexParameteri(td.target, GL_TEXTURE_MIN_FILTER, samplerState.minFilter));
-				T_OGL_SAFE(glTexParameterf(td.target, GL_TEXTURE_MAX_ANISOTROPY_EXT, m_maxAnisotrophy));
-			}
-			else
-			{
-				if (samplerState.minFilter != GL_NEAREST)
-				{
-					T_OGL_SAFE(glTexParameteri(td.target, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
-				}
-				else
-				{
-					T_OGL_SAFE(glTexParameteri(td.target, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
-				}
-			}
-
-			T_OGL_SAFE(glTexParameteri(td.target, GL_TEXTURE_MAG_FILTER, samplerState.magFilter));
-
-			T_OGL_SAFE(glTexParameteri(td.target, GL_TEXTURE_WRAP_S, samplerState.wrapS));
-			T_OGL_SAFE(glTexParameteri(td.target, GL_TEXTURE_WRAP_T, samplerState.wrapT));
-
-			T_OGL_SAFE(glUniform1iARB(sampler.locationTexture, i));
-			
-			if (sampler.locationOffset != -1)
-				T_OGL_SAFE(glUniform4fvARB(sampler.locationOffset, 1, td.offset));
+			tb->bind(i, samplerState, sampler.locationTexture, sampler.locationOffset);
 		}
 		m_textureDirty = false;
 	}

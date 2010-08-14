@@ -255,8 +255,11 @@ void RenderViewOpenGL::clear(uint32_t clearMask, const float color[4], float dep
 		GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT,
 		GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT
 	};
+	
+	RenderTargetOpenGL* rt = m_renderTargetStack.top();
+	GLuint cm = c_clearMask[clearMask] & rt->clearMask();
 
-	if (clearMask & CfColor)
+	if (cm & GL_COLOR_BUFFER_BIT)
 	{
 		float r = color[0];
 		float g = color[1];
@@ -266,16 +269,16 @@ void RenderViewOpenGL::clear(uint32_t clearMask, const float color[4], float dep
 		T_OGL_SAFE(glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE));
 	}
 
-	if (clearMask & CfDepth)
+	if (cm & GL_DEPTH_BUFFER_BIT)
 	{
 		T_OGL_SAFE(glClearDepth(depth));
 		T_OGL_SAFE(glDepthMask(GL_TRUE));
 	}
 
-	if (clearMask & CfStencil)
+	if (cm & GL_STENCIL_BUFFER_BIT)
 		T_OGL_SAFE(glClearStencil(stencil));
 
-	T_OGL_SAFE(glClear(c_clearMask[clearMask]));
+	T_OGL_SAFE(glClear(cm));
 }
 
 void RenderViewOpenGL::setVertexBuffer(VertexBuffer* vertexBuffer)

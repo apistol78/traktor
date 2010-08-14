@@ -47,7 +47,7 @@ SimpleTextureOpenGL::~SimpleTextureOpenGL()
 	destroy();
 }
 
-bool SimpleTextureOpenGL::create(const SimpleTextureCreateDesc& desc)
+bool SimpleTextureOpenGL::create(const SimpleTextureCreateDesc& desc, GLfloat maxAnisotropy)
 {
 	m_width = desc.width;
 	m_height = desc.height;
@@ -56,6 +56,8 @@ bool SimpleTextureOpenGL::create(const SimpleTextureCreateDesc& desc)
 		return false;
 
 	T_OGL_SAFE(glGenTextures(1, &m_textureName));
+	T_OGL_SAFE(glBindTexture(GL_TEXTURE_2D, m_textureName));
+	T_OGL_SAFE(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, maxAnisotropy));
 
 	// Allocate data buffer.
 	uint32_t texturePitch = getTextureMipPitch(desc.format, desc.width, desc.height);
@@ -64,7 +66,6 @@ bool SimpleTextureOpenGL::create(const SimpleTextureCreateDesc& desc)
 	if (desc.immutable)
 	{
 		T_OGL_SAFE(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
-		T_OGL_SAFE(glBindTexture(GL_TEXTURE_2D, m_textureName));
 
 		for (int i = 0; i < desc.mipCount; ++i)
 		{
@@ -123,6 +124,8 @@ bool SimpleTextureOpenGL::create(const SimpleTextureCreateDesc& desc)
 	}
 
 	m_mipCount = desc.mipCount;
+	std::memset(&m_shadowState, 0, sizeof(m_shadowState));
+	
 	return true;
 }
 
@@ -177,6 +180,55 @@ void SimpleTextureOpenGL::unlock(int level)
 		m_type,
 		m_data.c_ptr()
 	));
+}
+
+void SimpleTextureOpenGL::bind(GLuint unit, const SamplerState& samplerState, GLint locationTexture, GLint locationOffset)
+{
+	T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + unit));
+	T_OGL_SAFE(glBindTexture(GL_TEXTURE_2D, m_textureName));
+	
+	GLenum minFilter = GL_NEAREST;
+	if (m_mipCount > 1)
+		minFilter = samplerState.minFilter;
+	else
+	{
+		if (samplerState.minFilter != GL_NEAREST)
+			minFilter = GL_LINEAR;
+		else
+			minFilter = GL_NEAREST;
+	}
+
+	if (m_shadowState.minFilter != minFilter)
+	{
+		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter));
+		m_shadowState.minFilter = minFilter;
+	}
+	
+	if (m_shadowState.magFilter != samplerState.magFilter)
+	{
+		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, samplerState.magFilter));
+		m_shadowState.magFilter = samplerState.magFilter;
+	}
+
+	if (m_shadowState.wrapS != samplerState.wrapS)
+	{
+		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, samplerState.wrapS));
+		m_shadowState.wrapS = samplerState.wrapS;
+	}
+	
+	if (m_shadowState.wrapT != samplerState.wrapT)
+	{
+		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, samplerState.wrapT));
+		m_shadowState.wrapT = samplerState.wrapT;
+	}
+	
+	T_OGL_SAFE(glUniform1iARB(locationTexture, unit));
+	
+	if (locationOffset != -1)
+	{
+		const float offset[] = { 0.0f, 0.0f, 1.0f, 1.0f };
+		T_OGL_SAFE(glUniform4fvARB(locationOffset, 1, offset));
+	}
 }
 
 	}

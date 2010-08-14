@@ -19,9 +19,10 @@ namespace traktor
 	namespace render
 	{
 
-class GlslProgram;
-class ProgramResource;
 class ContextOpenGL;
+class GlslProgram;
+class ITextureBinding;
+class ProgramResource;
 
 /*!
  * \ingroup OGL
@@ -31,7 +32,7 @@ class T_DLLCLASS ProgramOpenGL : public IProgram
 	T_RTTI_CLASS;
 
 public:
-	ProgramOpenGL(ContextOpenGL* resourceContext, GLfloat maxAnisotrophy);
+	ProgramOpenGL(ContextOpenGL* resourceContext);
 
 	virtual ~ProgramOpenGL();
 
@@ -92,14 +93,13 @@ private:
 	RenderState m_renderState;
 	GLuint m_state;
 	GLint m_locationTargetSize;
-	GLint m_attributeLocs[T_OGL_MAX_USAGE_INDEX];		//!< Vertex attribute locations.
-	std::map< handle_t, uint32_t > m_parameterMap;		//!< Parameter to data map.
-	std::vector< Uniform > m_uniforms;					//!< Scalar uniforms.
-	std::vector< Sampler > m_samplers;					//!< Samplers.
-	AlignedVector< float > m_uniformData;				//!< Scalar uniform data.
-	AlignedVector< TextureData > m_textureData;			//!< Texture data.
+	GLint m_attributeLocs[T_OGL_MAX_USAGE_INDEX];			//!< Vertex attribute locations.
+	std::map< handle_t, uint32_t > m_parameterMap;			//!< Parameter to data map.
+	std::vector< Uniform > m_uniforms;						//!< Scalar uniforms.
+	std::vector< Sampler > m_samplers;						//!< Samplers.
+	AlignedVector< float > m_uniformData;					//!< Scalar uniform data.
+	AlignedVector< ITextureBinding* > m_textureBindings;	//!< Texture bindings.
 	float m_targetSize[2];
-	GLfloat m_maxAnisotrophy;
 	GLint m_stencilRef;
 	bool m_textureDirty;
 	static ProgramOpenGL* ms_activeProgram;
