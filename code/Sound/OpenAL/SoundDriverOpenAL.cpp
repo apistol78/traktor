@@ -13,6 +13,9 @@ namespace traktor
 		namespace
 		{
 
+static const __m128 c_clampMin(_mm_set1_ps(-1.0f));
+static const __m128 c_clampMax(_mm_set1_ps(1.0f));
+
 template < typename SampleType >
 struct CastSample
 {
@@ -36,6 +39,8 @@ struct CastSample < int8_t >
 	int8_t cast(float sample) const
 	{
 		__m128 s = _mm_load_ss(&sample);
+		s = _mm_max_ps(s, c_clampMin);
+		s = _mm_min_ps(s, c_clampMax);
 		__m128 sf = _mm_mul_ss(s, f);
 		return (int8_t)_mm_cvtt_ss2si(sf);
 	}
@@ -55,6 +60,8 @@ struct CastSample < int16_t >
 	int16_t cast(float sample) const
 	{
 		__m128 s = _mm_load_ss(&sample);
+		s = _mm_max_ps(s, c_clampMin);
+		s = _mm_min_ps(s, c_clampMax);
 		__m128 sf = _mm_mul_ss(s, f);
 		return (int16_t)_mm_cvtt_ss2si(sf);
 	}
@@ -67,8 +74,7 @@ void writeSamples(void* dest, const float* samples, uint32_t samplesCount, uint3
 	SampleType* write = static_cast< SampleType* >(dest);
 	for (uint32_t i = 0; i < samplesCount; ++i)
 	{
-		float sample = clamp(*samples++, -1.0f, 1.0f);
-		*write = cs.cast(sample);
+		*write = cs.cast(*samples++);
 		write += writeStride;
 	}
 }
