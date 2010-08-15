@@ -114,12 +114,31 @@ T_MATH_INLINE Scalar Matrix44::determinant() const
 
 T_MATH_INLINE Matrix44 Matrix44::transpose() const
 {
+#if defined(T_MATH_USE_SSE2)
+
+	__m128 t0 = _mm_unpacklo_ps(m_c[0].m_data, m_c[1].m_data);	// c0x,c1x,c0y,c1y
+	__m128 t1 = _mm_unpackhi_ps(m_c[0].m_data, m_c[1].m_data);	// c0z,c1z,c0w,c1w
+	__m128 t2 = _mm_unpacklo_ps(m_c[2].m_data, m_c[3].m_data);	// c2x,c3x,c2y,c3y
+	__m128 t3 = _mm_unpackhi_ps(m_c[2].m_data, m_c[3].m_data);	// c2z,c3z,c2w,c3w
+	
+	Matrix44 Mt;
+	Mt.m_c[0].m_data = _mm_movelh_ps(t0, t2);	// c0x,c1x,c2x,c3x
+	Mt.m_c[1].m_data = _mm_movehl_ps(t2, t0);	// c0y,c1y,c2y,c3y
+	Mt.m_c[2].m_data = _mm_movelh_ps(t1, t3);	// c0z,c1z,c2z,c3z
+	Mt.m_c[3].m_data = _mm_movehl_ps(t3, t1);	// c0w,c1w,c2w,c3w
+
+	return Mt;
+
+#else
+
 	return Matrix44(
 		m_c[0].x(), m_c[0].y(), m_c[0].z(), m_c[0].w(),
 		m_c[1].x(), m_c[1].y(), m_c[1].z(), m_c[1].w(),
 		m_c[2].x(), m_c[2].y(), m_c[2].z(), m_c[2].w(),
 		m_c[3].x(), m_c[3].y(), m_c[3].z(), m_c[3].w()
 	);
+
+#endif
 }
 
 T_MATH_INLINE Matrix44 Matrix44::inverse() const
