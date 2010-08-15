@@ -1461,8 +1461,9 @@
 					<definitions>
 						<item>T_LIBMAD_EXPORT</item>
 						<item>_DEBUG</item>
-						<item>FPM_DEFAULT</item>
+						<item>FPM_INTEL</item>
 						<item>HAVE_CONFIG_H</item>
+						<item>OPT_SPEED</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -1482,8 +1483,9 @@
 					<definitions>
 						<item>T_LIBMAD_EXPORT</item>
 						<item>NDEBUG</item>
-						<item>FPM_DEFAULT</item>
+						<item>FPM_INTEL</item>
 						<item>HAVE_CONFIG_H</item>
+						<item>OPT_SPEED</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
