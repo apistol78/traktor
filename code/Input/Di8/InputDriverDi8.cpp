@@ -297,6 +297,9 @@ bool InputDriverDi8::addDevice(const DIDEVICEINSTANCE* deviceInstance)
 		return true;
 	}
 
+	if ((inputCategory & m_inputCategories) == 0)
+		return true;
+
 	hr = m_directInput->CreateDevice(deviceInstance->guidInstance, &device.getAssign(), NULL);
 	if (FAILED(hr)) 
 		return false;

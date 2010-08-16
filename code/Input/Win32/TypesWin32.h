@@ -9,40 +9,7 @@ namespace traktor
 /*! \brief InputDefaultControlType to VK mapping. */
 const DWORD c_vkControlKeys[] =
 {
-	0,
-
-	'W',			// DtUp
-	'S',
-	'A',
-	'D',
-	VK_RETURN,		// DtSelect
-	VK_ESCAPE,
-	0,				// DtThumbLeftX
-	0,
-	0,
-	0,
-	0,				// DtThumbRightX
-	0,
-	0,
-	0,
-	0,				// DtSliderLeft
-	0,
-	0,				// DtTriggerLeft
-	0,
-	0,				// DtShoulderLeft
-	0,
-	'1',			// DtButton1
-	'2',
-	'3',
-	'4',
-	'5',
-	'6',
-	'7',
-	'8',
-	0,				// DtReserved1
-	0,				// DtAxisX
-	0,
-	0,				// DtReserved2
+	0,	// DtInvalid
 	0,
 	0,
 	0,
@@ -50,8 +17,39 @@ const DWORD c_vkControlKeys[] =
 	0,
 	0,
 	0,
-
-	VK_ESCAPE,		// DtKeyEscape
+	0,
+	0,
+	0,	// 10
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,	// 20
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,	// 30
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	VK_ESCAPE,	// 40
 	'1',
 	'2',
 	'3',
@@ -91,7 +89,7 @@ const DWORD c_vkControlKeys[] =
 	'L',
 	';',
 	'\"',
-	'\'',
+	0/*'\''*/,
 	VK_LSHIFT,
 	'\\',
 	'Z',
