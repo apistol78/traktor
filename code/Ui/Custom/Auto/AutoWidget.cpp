@@ -68,7 +68,7 @@ AutoWidgetCell* AutoWidget::hitTest(const Point& position)
 	AutoWidgetCell* hit = 0;
 
 	Point clientPosition = position - m_scrollOffset;
-	for (std::vector< CellInstance >::const_reverse_iterator i = m_cells.rbegin(); i != m_cells.rend(); ++i)
+	for (std::vector< CellInstance >::reverse_iterator i = m_cells.rbegin(); i != m_cells.rend(); ++i)
 	{
 		if (!i->rc.inside(clientPosition))
 			continue;
