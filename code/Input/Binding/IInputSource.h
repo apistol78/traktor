@@ -26,7 +26,7 @@ class T_DLLCLASS IInputSource : public Object
 public:
 	virtual std::wstring getDescription() const = 0;
 
-	virtual float read(InputSystem* inputSystem, float T, float dT) = 0;
+	virtual float read(float T, float dT) = 0;
 };
 
 	}

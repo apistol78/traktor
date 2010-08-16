@@ -18,7 +18,7 @@ std::wstring ConstantInputSource::getDescription() const
 	return toString(m_value);
 }
 
-float ConstantInputSource::read(InputSystem* inputSystem, float T, float dT)
+float ConstantInputSource::read(float T, float dT)
 {
 	return m_value;
 }

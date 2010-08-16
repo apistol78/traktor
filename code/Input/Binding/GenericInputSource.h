@@ -1,7 +1,7 @@
 #ifndef traktor_input_GenericInputSource_H
 #define traktor_input_GenericInputSource_H
 
-#include <list>
+#include "Core/RefArray.h"
 #include "Input/Binding/IInputSource.h"
 
 // import/export mechanism.
@@ -17,6 +17,8 @@ namespace traktor
 	namespace input
 	{
 
+class DeviceControl;
+class DeviceControlManager;
 class GenericInputSourceData;
 class IInputDevice;
 class InputSystem;
@@ -26,23 +28,16 @@ class T_DLLCLASS GenericInputSource : public IInputSource
 	T_RTTI_CLASS;
 
 public:
-	GenericInputSource(const GenericInputSourceData* data);
+	GenericInputSource(const GenericInputSourceData* data, DeviceControlManager* deviceControlManager);
 	
 	virtual std::wstring getDescription() const;
 
-	virtual float read(InputSystem* inputSystem, float T, float dT);
+	virtual float read(float T, float dT);
 	
 private:
-	struct DeviceControl
-	{
-		Ref< IInputDevice > device;
-		int32_t control;
-		float previousValue;
-		float currentValue;
-	};
-
 	Ref< const GenericInputSourceData > m_data;
-	std::list< DeviceControl > m_deviceControls;
+	Ref< DeviceControlManager > m_deviceControlManager;
+	RefArray< DeviceControl > m_deviceControls;
 	int32_t m_matchingDeviceCount;
 	float m_lastValue;
 };

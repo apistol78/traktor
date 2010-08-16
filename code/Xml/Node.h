@@ -42,6 +42,8 @@ public:
 
 	virtual void write(OutputStream& os) const;
 
+	void unlink();
+
 	void addChild(Node* child);
 
 	void removeChild(Node* child);

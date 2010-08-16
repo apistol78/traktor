@@ -35,12 +35,12 @@ const RefArray< IInputSourceData >& CombinedInputSourceData::getSources() const
 	return m_sources;
 }
 
-Ref< IInputSource > CombinedInputSourceData::createInstance() const
+Ref< IInputSource > CombinedInputSourceData::createInstance(DeviceControlManager* deviceControlManager) const
 {
 	RefArray< IInputSource > sources(m_sources.size());
 	for (uint32_t i = 0; i < m_sources.size(); ++i)
 	{
-		Ref< IInputSource > source = m_sources[i]->createInstance();
+		Ref< IInputSource > source = m_sources[i]->createInstance(deviceControlManager);
 		if (!source)
 			return 0;
 			

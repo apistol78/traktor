@@ -223,7 +223,7 @@ bool Element::match(const std::wstring& condition)
 				}
 				else
 				{
-					int n = parseString< int >(indexer.substr(0, i));
+					int n = parseString< int >(indexer);
 					
 					// Calculate our own index.
 					int nn = 0;

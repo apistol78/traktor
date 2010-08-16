@@ -33,7 +33,7 @@ public:
 
 	const RefArray< IInputSourceData >& getSources() const;
 	
-	virtual Ref< IInputSource > createInstance() const;
+	virtual Ref< IInputSource > createInstance(DeviceControlManager* deviceControlManager) const;
 
 	virtual bool serialize(ISerializer& s);
 

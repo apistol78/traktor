@@ -70,9 +70,9 @@ int32_t GenericInputSourceData::getIndex() const
 	return m_index;
 }
 
-Ref< IInputSource > GenericInputSourceData::createInstance() const
+Ref< IInputSource > GenericInputSourceData::createInstance(DeviceControlManager* deviceControlManager) const
 {
-	return new GenericInputSource(this);
+	return new GenericInputSource(this, deviceControlManager);
 }
 
 bool GenericInputSourceData::serialize(ISerializer& s)

@@ -26,7 +26,7 @@ public:
 	
 	virtual std::wstring getDescription() const;
 
-	virtual float read(InputSystem* inputSystem, float T, float dT);
+	virtual float read(float T, float dT);
 	
 private:
 	float m_value;

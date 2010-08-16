@@ -42,7 +42,7 @@ std::wstring CombinedInputSource::getDescription() const
 	return ss.str();
 }
 
-float CombinedInputSource::read(InputSystem* inputSystem, float T, float dT)
+float CombinedInputSource::read(float T, float dT)
 {
 	bool value = false;
 
@@ -51,7 +51,7 @@ float CombinedInputSource::read(InputSystem* inputSystem, float T, float dT)
 	case CmAny:
 		{
 			for (RefArray< IInputSource >::iterator i = m_sources.begin(); i != m_sources.end(); ++i)
-				value |= asBoolean((*i)->read(inputSystem, T, dT));
+				value |= asBoolean((*i)->read(T, dT));
 		}
 		break;
 
@@ -60,7 +60,7 @@ float CombinedInputSource::read(InputSystem* inputSystem, float T, float dT)
 			uint32_t count = 0;
 			for (RefArray< IInputSource >::iterator i = m_sources.begin(); i != m_sources.end(); ++i)
 			{
-				if (asBoolean((*i)->read(inputSystem, T, dT)))
+				if (asBoolean((*i)->read(T, dT)))
 					++count;
 			}
 			value = bool(count == 1);
@@ -71,7 +71,7 @@ float CombinedInputSource::read(InputSystem* inputSystem, float T, float dT)
 		{
 			value = true;
 			for (RefArray< IInputSource >::iterator i = m_sources.begin(); i != m_sources.end(); ++i)
-				value &= asBoolean((*i)->read(inputSystem, T, dT));
+				value &= asBoolean((*i)->read(T, dT));
 		}
 		break;
 	}

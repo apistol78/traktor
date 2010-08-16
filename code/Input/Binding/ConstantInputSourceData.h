@@ -25,7 +25,7 @@ public:
 
 	ConstantInputSourceData(float value);
 	
-	virtual Ref< IInputSource > createInstance() const;
+	virtual Ref< IInputSource > createInstance(DeviceControlManager* deviceControlManager) const;
 
 	virtual bool serialize(ISerializer& s);
 

@@ -51,9 +51,19 @@ void Node::write(OutputStream& os) const
 		child->write(os);
 }
 
+void Node::unlink()
+{
+	if (m_parent)
+	{
+		m_parent->removeChild(this);
+		m_parent = 0;
+	}
+}
+
 void Node::addChild(Node* child)
 {
-	T_ASSERT (child->m_parent == 0);
+	child->unlink();
+
 	T_ASSERT (child->m_previousSibling == 0);
 	T_ASSERT (child->m_nextSibling == 0);
 
