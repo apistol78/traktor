@@ -38,6 +38,17 @@ Ref< DeviceControl > DeviceControlManager::getDeviceControl(InputCategory catego
 	deviceControl->m_controlType = controlType;
 	deviceControl->m_index = index;
 
+	Ref< IInputDevice > device = m_inputSystem->getDevice(deviceControl->m_category, deviceControl->m_index, false);
+	if (device)
+	{
+		int32_t control;
+		if (device->getDefaultControl(deviceControl->m_controlType, control))
+		{
+			deviceControl->m_device = device;
+			deviceControl->m_control = control;
+		}
+	}
+
 	m_deviceControls.push_back(deviceControl);
 	return deviceControl;
 }
@@ -48,6 +59,7 @@ void DeviceControlManager::update()
 	{
 		DeviceControl* deviceControl = *i;
 
+		/*
 		// Resolve device if unbound.
 		if (!deviceControl->m_device)
 		{
@@ -64,6 +76,7 @@ void DeviceControlManager::update()
 				}
 			}
 		}
+		*/
 
 		// Read control value.
 		deviceControl->m_previousValue = deviceControl->m_currentValue;
