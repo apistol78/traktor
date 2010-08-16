@@ -23,11 +23,6 @@ class T_DLLCLASS InCombine : public IInputNode
 public:
 	InCombine();
 
-	InCombine(
-		IInputNode* source1, float mul1, float add1,
-		IInputNode* source2, float mul2, float add2
-	);
-
 	virtual Ref< Instance > createInstance() const;
 
 	virtual float evaluate(
@@ -40,9 +35,16 @@ public:
 	virtual bool serialize(ISerializer& s);
 	
 private:
-	Ref< IInputNode > m_source[2];
-	float m_valueMul[2];
-	float m_valueAdd[2];
+	struct Entry
+	{
+		Ref< IInputNode > source;
+		float mul;
+		float add;
+
+		bool serialize(ISerializer& s);
+	};
+
+	std::vector< Entry > m_entries;
 };
 
 	}

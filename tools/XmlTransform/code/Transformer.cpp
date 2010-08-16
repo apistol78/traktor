@@ -63,6 +63,7 @@ bool Transformer::create(const std::wstring& script)
 	xmlNodeClass->addMethod(L"setName", &xml::Node::setName);
 	xmlNodeClass->addMethod(L"getValue", &xml::Node::getValue);
 	xmlNodeClass->addMethod(L"setValue", &xml::Node::setValue);
+	xmlNodeClass->addMethod(L"unlink", &xml::Node::unlink);
 	xmlNodeClass->addMethod(L"addChild", &xml::Node::addChild);
 	xmlNodeClass->addMethod(L"removeChild", &xml::Node::removeChild);
 	xmlNodeClass->addMethod(L"removeAllChildren", &xml::Node::removeAllChildren);

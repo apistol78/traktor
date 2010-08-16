@@ -18,6 +18,7 @@ namespace traktor
 	namespace input
 	{
 
+class DeviceControlManager;
 class IInputSource;
 class InputMappingSourceData;
 class InputMappingStateData;
@@ -48,11 +49,12 @@ public:
 	InputMapping();
 	
 	bool create(
+		InputSystem* inputSystem,
 		const InputMappingSourceData* sourceData,
 		const InputMappingStateData* stateData
 	);
 
-	void update(InputSystem* inputSystem, float dT);
+	void update(float dT);
 
 	void reset();
 
@@ -88,6 +90,7 @@ public:
 	// \}
 	
 private:
+	Ref< DeviceControlManager > m_deviceControlManager;
 	std::map< std::wstring, Ref< IInputSource > > m_sources;
 	std::map< std::wstring, Ref< InputState > > m_states;
 	InputValueSet m_valueSet;

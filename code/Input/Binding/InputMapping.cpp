@@ -1,4 +1,5 @@
 #include "Core/Log/Log.h"
+#include "Input/Binding/DeviceControlManager.h"
 #include "Input/Binding/IInputSource.h"
 #include "Input/Binding/IInputSourceData.h"
 #include "Input/Binding/InputMapping.h"
@@ -20,17 +21,20 @@ InputMapping::InputMapping()
 }
 
 bool InputMapping::create(
+	InputSystem* inputSystem,
 	const InputMappingSourceData* sourceData,
 	const InputMappingStateData* stateData
 )
 {
+	m_deviceControlManager = new DeviceControlManager(inputSystem);
+
 	m_sources.clear();
 	m_states.clear();
 	
 	const std::map< std::wstring, Ref< IInputSourceData > >& sourceDataMap = sourceData->getSourceData();
 	for (std::map< std::wstring, Ref< IInputSourceData > >::const_iterator i = sourceDataMap.begin(); i != sourceDataMap.end(); ++i)
 	{
-		Ref< IInputSource > source = i->second->createInstance();
+		Ref< IInputSource > source = i->second->createInstance(m_deviceControlManager);
 		if (!source)
 		{
 			log::error << L"Unable to create source instance \"" << i->first << L"\"" << Endl;
@@ -57,8 +61,11 @@ bool InputMapping::create(
 	return true;
 }
 
-void InputMapping::update(InputSystem* InputSystem, float dT)
+void InputMapping::update(float dT)
 {
+	// Update device control manager.
+	m_deviceControlManager->update();
+
 	// Update value set with state's current values.
 	for (std::map< std::wstring, Ref< InputState > >::iterator i = m_states.begin(); i != m_states.end(); ++i)
 	{
@@ -69,7 +76,7 @@ void InputMapping::update(InputSystem* InputSystem, float dT)
 	// Input value set by updating all sources.
 	for (std::map< std::wstring, Ref< IInputSource > >::iterator i = m_sources.begin(); i != m_sources.end(); ++i)
 	{
-		float value = i->second->read(InputSystem, m_T, dT);
+		float value = i->second->read(m_T, dT);
 		m_valueSet.set(i->first, value);
 	}
 		

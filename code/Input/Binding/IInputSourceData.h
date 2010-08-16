@@ -16,6 +16,7 @@ namespace traktor
 	namespace input
 	{
 
+class DeviceControlManager;
 class IInputSource;
 
 class T_DLLCLASS IInputSourceData : public ISerializable
@@ -23,7 +24,7 @@ class T_DLLCLASS IInputSourceData : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< IInputSource > createInstance() const = 0;
+	virtual Ref< IInputSource > createInstance(DeviceControlManager* deviceControlManager) const = 0;
 };
 
 	}

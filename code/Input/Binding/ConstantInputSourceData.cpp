@@ -20,7 +20,7 @@ ConstantInputSourceData::ConstantInputSourceData(float value)
 {
 }
 
-Ref< IInputSource > ConstantInputSourceData::createInstance() const
+Ref< IInputSource > ConstantInputSourceData::createInstance(DeviceControlManager* deviceControlManager) const
 {
 	return new ConstantInputSource(m_value);
 }

@@ -2,6 +2,8 @@
 #include "Core/Math/MathUtils.h"
 #include "Input/IInputDevice.h"
 #include "Input/InputSystem.h"
+#include "Input/Binding/DeviceControl.h"
+#include "Input/Binding/DeviceControlManager.h"
 #include "Input/Binding/GenericInputSource.h"
 #include "Input/Binding/GenericInputSourceData.h"
 
@@ -12,8 +14,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.GenericInputSource", GenericInputSource, Object)
 
-GenericInputSource::GenericInputSource(const GenericInputSourceData* data)
+GenericInputSource::GenericInputSource(const GenericInputSourceData* data, DeviceControlManager* deviceControlManager)
 :	m_data(data)
+,	m_deviceControlManager(deviceControlManager)
 ,	m_matchingDeviceCount(0)
 ,	m_lastValue(0.0f)
 {
@@ -22,9 +25,9 @@ GenericInputSource::GenericInputSource(const GenericInputSourceData* data)
 std::wstring GenericInputSource::getDescription() const
 {
 	// Use name of control as description; use first valid name as it should be the same on all our devices.
-	for (std::list< DeviceControl >::const_iterator i = m_deviceControls.begin(); i != m_deviceControls.end(); ++i)
+	for (RefArray< DeviceControl >::const_iterator i = m_deviceControls.begin(); i != m_deviceControls.end(); ++i)
 	{
-		std::wstring controlName = i->device->getControlName(i->control);
+		std::wstring controlName = i->getControlName();
 		if (!controlName.empty())
 			return controlName;
 	}
@@ -33,7 +36,7 @@ std::wstring GenericInputSource::getDescription() const
 	return L"";
 }
 
-float GenericInputSource::read(InputSystem* inputSystem, float T, float dT)
+float GenericInputSource::read(float T, float dT)
 {
 	InputCategory category = m_data->getCategory();
 	InputDefaultControlType controlType = m_data->getControlType();
@@ -43,7 +46,7 @@ float GenericInputSource::read(InputSystem* inputSystem, float T, float dT)
 	if (controlType == DtInvalid)
 		return 0.0f;
 
-	int32_t deviceCount = inputSystem->getDeviceCount(category);
+	int32_t deviceCount = m_deviceControlManager->getDeviceControlCount(category);
 
 	// Find all matching devices.
 	if (deviceCount != m_matchingDeviceCount)
@@ -52,59 +55,32 @@ float GenericInputSource::read(InputSystem* inputSystem, float T, float dT)
 		if (index < 0)
 		{
 			for (int32_t i = 0; i < deviceCount; ++i)
-			{
-				Ref< IInputDevice > device = inputSystem->getDevice(category, i, false);
-				if (device)
-				{
-					int32_t control;
-					if (device->getDefaultControl(controlType, control))
-					{
-						DeviceControl dc;
-						dc.device = device;
-						dc.control = control;
-						dc.previousValue = 0.0f;
-						dc.currentValue = 0.0f;
-						m_deviceControls.push_back(dc);
-					}
-				}
-			}
+				m_deviceControls.push_back(m_deviceControlManager->getDeviceControl(
+					category,
+					controlType,
+					i
+				));
 		}
 		else
 		{
-			Ref< IInputDevice > device = inputSystem->getDevice(category, index, false);
-			if (device)
-			{
-				int32_t control;
-				if (device->getDefaultControl(controlType, control))
-				{
-					DeviceControl dc;
-					dc.device = device;
-					dc.control = control;
-					dc.previousValue = 0.0f;
-					dc.currentValue = 0.0f;
-					m_deviceControls.push_back(dc);
-				}
-			}
+			m_deviceControls.push_back(m_deviceControlManager->getDeviceControl(
+				category,
+				controlType,
+				index
+			));
 		}
 		m_matchingDeviceCount = deviceCount;
 	}
-	
-	// Query all matching devices.
-	for (std::list< DeviceControl >::iterator i = m_deviceControls.begin(); i != m_deviceControls.end(); ++i)
-	{
-		i->previousValue = i->currentValue;
-		if (i->device->isConnected())
-			i->currentValue = i->device->getControlValue(i->control);
-		else
-			i->currentValue = 0.0f;
-	}
 
 	// Return first found modified value.
-	for (std::list< DeviceControl >::const_iterator i = m_deviceControls.begin(); i != m_deviceControls.end(); ++i)
+	for (RefArray< DeviceControl >::const_iterator i = m_deviceControls.begin(); i != m_deviceControls.end(); ++i)
 	{
-		if (abs< float >(i->currentValue - i->previousValue) > FUZZY_EPSILON)
+		float previousValue = (*i)->getPreviousValue();
+		float currentValue = (*i)->getCurrentValue();
+
+		if (abs< float >(currentValue - previousValue) > FUZZY_EPSILON)
 		{
-			m_lastValue = i->currentValue;
+			m_lastValue = currentValue;
 			break;
 		}
 	}
