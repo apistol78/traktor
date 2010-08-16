@@ -10,38 +10,38 @@ namespace traktor
 const DWORD c_di8ControlKeys[] =
 {
 	0,
-	DIK_W,			// DtUp
-	DIK_S,
-	DIK_A,
-	DIK_D,
-	DIK_RETURN,		// DtSelect
-	DIK_ESCAPE,
-	0,				// DtThumbLeftX
 	0,
 	0,
 	0,
-	0,				// DtThumbRightX
 	0,
 	0,
 	0,
-	0,				// DtSliderLeft
 	0,
-	0,				// DtTriggerLeft
 	0,
-	0,				// DtShoulderLeft
 	0,
-	DIK_1,			// DtButton1
-	DIK_2,
-	DIK_3,
-	DIK_4,
-	DIK_5,			// DtButton5
-	DIK_6,
-	DIK_7,
-	DIK_8,
 	0,
-	0,				// DtAxisX
 	0,
-	0,				// DtReserved2
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
 	0,
 	0,
 	0,
