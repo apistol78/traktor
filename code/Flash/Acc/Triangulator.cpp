@@ -53,19 +53,22 @@ void Triangulator::triangulate(const AlignedVector< Segment >& segments, Aligned
 	{
 		if (!i->fillStyle0 && !i->fillStyle1)
 			continue;
-		if (std::abs(i->v[1].y - i->v[0].y) <= FUZZY_EPSILON)
+
+		float dy = i->v[0].y - i->v[1].y;
+
+		if (std::abs(dy) <= FUZZY_EPSILON)
 			continue;
 
 		Segment segment;
 
-		if (i->v[0].y < i->v[1].y)
+		if (dy < 0.0f)
 		{
 			segment.v[0] = i->v[0];
 			segment.v[1] = i->v[1];
 			segment.fillStyle0 = i->fillStyle0;
 			segment.fillStyle1 = i->fillStyle1;
 		}
-		else if (i->v[0].y > i->v[1].y)
+		else if (dy > 0.0f)
 		{
 			segment.v[0] = i->v[1];
 			segment.v[1] = i->v[0];
@@ -97,7 +100,7 @@ void Triangulator::triangulate(const AlignedVector< Segment >& segments, Aligned
 		for (AlignedVector< Segment >::iterator j = m_segments.begin(); j != m_segments.end(); )
 		{
 			// As segments are sorted we can safely abort if we find one that's completely below.
-			if (j->v[0].y >= *i - FUZZY_EPSILON)
+			if (j->v[0].y >= *i)
 				break;
 
 			float d = (j->v[1].y - j->v[0].y);
