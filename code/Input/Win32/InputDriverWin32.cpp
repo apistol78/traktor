@@ -22,6 +22,7 @@ InputDriverWin32::InputDriverWin32(uint32_t inputCategories)
 		m_mouseDevice = new MouseDeviceWin32();
 		m_devices.push_back(m_mouseDevice);
 	}
+	update();
 }
 
 int InputDriverWin32::getDeviceCount()

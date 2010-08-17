@@ -14,6 +14,11 @@ std::wstring DeviceControl::getControlName() const
 		return L"";
 }
 
+IInputDevice* DeviceControl::getDevice() const
+{
+	return m_device;
+}
+
 float DeviceControl::getPreviousValue() const
 {
 	return m_previousValue;

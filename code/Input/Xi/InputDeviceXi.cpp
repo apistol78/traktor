@@ -79,22 +79,27 @@ bool InputDeviceXi::isConnected() const
 	return m_connected;
 }
 
-int InputDeviceXi::getControlCount()
+int32_t InputDeviceXi::getControlCount()
 {
 	return sizeof_array(c_controlConfig);
 }
 
-std::wstring InputDeviceXi::getControlName(int control)
+std::wstring InputDeviceXi::getControlName(int32_t control)
 {
 	return c_controlConfig[control].name;
 }
 
-bool InputDeviceXi::isControlAnalogue(int control) const
+bool InputDeviceXi::isControlAnalogue(int32_t control) const
 {
 	return c_controlConfig[control].analogue;
 }
 
-float InputDeviceXi::getControlValue(int control)
+int32_t InputDeviceXi::getActiveControlCount() const
+{
+	return 0;
+}
+
+float InputDeviceXi::getControlValue(int32_t control)
 {
 	const ControlConfig& config = c_controlConfig[control];
 
@@ -133,7 +138,7 @@ float InputDeviceXi::getControlValue(int control)
 	return 0.0f;
 }
 
-bool InputDeviceXi::getDefaultControl(InputDefaultControlType controlType, bool analogue, int& control) const
+bool InputDeviceXi::getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const
 {
 	for (uint32_t i = 0; i < sizeof_array(c_controlConfig); ++i)
 	{

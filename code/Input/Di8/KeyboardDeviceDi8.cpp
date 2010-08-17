@@ -37,22 +37,27 @@ bool KeyboardDeviceDi8::isConnected() const
 	return m_connected;
 }
 
-int KeyboardDeviceDi8::getControlCount()
+int32_t KeyboardDeviceDi8::getControlCount()
 {
 	return sizeof_array(c_di8ControlKeys);
 }
 
-std::wstring KeyboardDeviceDi8::getControlName(int control)
+std::wstring KeyboardDeviceDi8::getControlName(int32_t control)
 {
 	return L"";
 }
 
-bool KeyboardDeviceDi8::isControlAnalogue(int control) const
+bool KeyboardDeviceDi8::isControlAnalogue(int32_t control) const
 {
 	return false;
 }
 
-float KeyboardDeviceDi8::getControlValue(int control)
+int32_t KeyboardDeviceDi8::getActiveControlCount() const
+{
+	return 0;
+}
+
+float KeyboardDeviceDi8::getControlValue(int32_t control)
 {
 	if (!m_connected)
 		return 0.0f;
@@ -64,7 +69,7 @@ float KeyboardDeviceDi8::getControlValue(int control)
 	return (m_state[dik] & 0x80) ? 1.0f : 0.0f;
 }
 
-bool KeyboardDeviceDi8::getDefaultControl(InputDefaultControlType controlType, bool analogue, int& control) const
+bool KeyboardDeviceDi8::getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const
 {
 	if (analogue)
 		return false;

@@ -35,12 +35,12 @@ bool MouseDeviceWin32::isConnected() const
 	return m_connected;
 }
 
-int MouseDeviceWin32::getControlCount()
+int32_t MouseDeviceWin32::getControlCount()
 {
 	return 5;
 }
 
-std::wstring MouseDeviceWin32::getControlName(int control)
+std::wstring MouseDeviceWin32::getControlName(int32_t control)
 {
 	InputDefaultControlType controlType = InputDefaultControlType(control);
 	switch (controlType)
@@ -59,13 +59,18 @@ std::wstring MouseDeviceWin32::getControlName(int control)
 	return L"";
 }
 
-bool MouseDeviceWin32::isControlAnalogue(int control) const
+bool MouseDeviceWin32::isControlAnalogue(int32_t control) const
 {
 	InputDefaultControlType controlType = InputDefaultControlType(control);
 	return bool(controlType >= DtButton1 && controlType <= DtButton3);
 }
 
-float MouseDeviceWin32::getControlValue(int control)
+int32_t MouseDeviceWin32::getActiveControlCount() const
+{
+	return 0;
+}
+
+float MouseDeviceWin32::getControlValue(int32_t control)
 {
 	if (!m_connected)
 		return 0.0f;
@@ -85,7 +90,7 @@ float MouseDeviceWin32::getControlValue(int control)
 		return 0.0f;
 }
 
-bool MouseDeviceWin32::getDefaultControl(InputDefaultControlType controlType, bool analogue, int& control) const
+bool MouseDeviceWin32::getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const
 {
 	control = 0;
 

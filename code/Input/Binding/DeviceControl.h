@@ -17,6 +17,8 @@ class DeviceControl : public RefCountImpl< IRefCount >
 public:
 	std::wstring getControlName() const;
 
+	IInputDevice* getDevice() const;
+
 	float getPreviousValue() const;
 
 	float getCurrentValue() const;

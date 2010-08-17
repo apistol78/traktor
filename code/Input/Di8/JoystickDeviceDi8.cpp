@@ -65,22 +65,27 @@ bool JoystickDeviceDi8::isConnected() const
 	return m_connected;
 }
 
-int JoystickDeviceDi8::getControlCount()
+int32_t JoystickDeviceDi8::getControlCount()
 {
-	return int(m_controlInfo.size());
+	return int32_t(m_controlInfo.size());
 }
 
-std::wstring JoystickDeviceDi8::getControlName(int control)
+std::wstring JoystickDeviceDi8::getControlName(int32_t control)
 {
 	return m_controlInfo[control].name;
 }
 
-bool JoystickDeviceDi8::isControlAnalogue(int control) const
+bool JoystickDeviceDi8::isControlAnalogue(int32_t control) const
 {
 	return m_controlInfo[control].analogue;
 }
 
-float JoystickDeviceDi8::getControlValue(int control)
+int32_t JoystickDeviceDi8::getActiveControlCount() const
+{
+	return 0;
+}
+
+float JoystickDeviceDi8::getControlValue(int32_t control)
 {
 	if (!m_connected)
 		return 0.0f;
@@ -155,7 +160,7 @@ float JoystickDeviceDi8::getControlValue(int control)
 	return 0.0f;
 }
 
-bool JoystickDeviceDi8::getDefaultControl(InputDefaultControlType controlType, bool analogue, int& control) const
+bool JoystickDeviceDi8::getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const
 {
 	for (int i = 0; i < int(m_controlInfo.size()); ++i)
 	{

@@ -59,14 +59,14 @@ public:
 	 *
 	 * \return Number of controls.
 	 */
-	virtual int getControlCount() = 0;
+	virtual int32_t getControlCount() = 0;
 
 	/*! \brief Get human readable name of control.
 	 *
 	 * \param control Control identifier.
 	 * \return Human readable name of control.
 	 */
-	virtual std::wstring getControlName(int control) = 0;
+	virtual std::wstring getControlName(int32_t control) = 0;
 
 	/*! \brief Check if control is analogue.
 	 *
@@ -76,14 +76,23 @@ public:
 	 * \param control Control identifier.
 	 * \return True if control is analogue.
 	 */
-	virtual bool isControlAnalogue(int control) const = 0;
+	virtual bool isControlAnalogue(int32_t control) const = 0;
+
+	/*! \brief Get number of active controls.
+	 *
+	 * Controls are considered active when they
+	 * differ from idle state, ie button not pressed etc.
+	 *
+	 * \return Number of active controls.
+	 */
+	virtual int32_t getActiveControlCount() const = 0;
 
 	/*! \brief Get current value of a control.
 	 *
 	 * \param control Control identifier.
 	 * \return Control value.
 	 */
-	virtual float getControlValue(int control) = 0;
+	virtual float getControlValue(int32_t control) = 0;
 
 	/*! \brief Get control identifier of a default control type.
 	 *
@@ -92,7 +101,7 @@ public:
 	 * \param control Output control identifier.
 	 * \return True if device support control type and have successfully mapped identifier.
 	 */
-	virtual bool getDefaultControl(InputDefaultControlType controlType, bool analogue, int& control) const = 0;
+	virtual bool getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const = 0;
 
 	/*! \brief Reset device state.
 	 *

@@ -2,13 +2,14 @@
 #define traktor_input_KeyboardDeviceWin32_H
 
 #include "Input/IInputDevice.h"
+#include "Input/Win32/TypesWin32.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_INPUT_WIN32_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -29,15 +30,17 @@ public:
 
 	virtual bool isConnected() const;
 
-	virtual int getControlCount();
+	virtual int32_t getControlCount();
 
-	virtual std::wstring getControlName(int control);
+	virtual std::wstring getControlName(int32_t control);
 
-	virtual bool isControlAnalogue(int control) const;
+	virtual bool isControlAnalogue(int32_t control) const;
 
-	virtual float getControlValue(int control);
+	virtual int32_t getActiveControlCount() const;
 
-	virtual bool getDefaultControl(InputDefaultControlType controlType, bool analogue, int& control) const;
+	virtual float getControlValue(int32_t control);
+
+	virtual bool getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const;
 
 	virtual void resetState();
 
@@ -51,6 +54,8 @@ private:
 	friend class InputDriverWin32;
 
 	bool m_connected;
+	uint8_t m_keyStates[sizeof_array(c_vkControlKeys)];
+	int32_t m_keyCount;
 };
 
 	}

@@ -1,6 +1,5 @@
 #include <windows.h>
 #include "Core/Misc/TString.h"
-#include "Input/Win32/TypesWin32.h"
 #include "Input/Win32/KeyboardDeviceWin32.h"
 
 namespace traktor
@@ -12,6 +11,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.input.KeyboardDeviceWin32", KeyboardDeviceWin32
 
 KeyboardDeviceWin32::KeyboardDeviceWin32()
 :	m_connected(false)
+,	m_keyCount(0)
 {
 }
 
@@ -30,16 +30,16 @@ bool KeyboardDeviceWin32::isConnected() const
 	return m_connected;
 }
 
-int KeyboardDeviceWin32::getControlCount()
+int32_t KeyboardDeviceWin32::getControlCount()
 {
 	return sizeof_array(c_vkControlKeys);
 }
 
-std::wstring KeyboardDeviceWin32::getControlName(int control)
+std::wstring KeyboardDeviceWin32::getControlName(int32_t control)
 {
-	UINT scanCode = MapVirtualKey(control, MAPVK_VK_TO_VSC);
+	UINT scanCode = MapVirtualKey(c_vkControlKeys[control], MAPVK_VK_TO_VSC);
 
-	switch (control)
+	switch (c_vkControlKeys[control])
 	{
 	case VK_LEFT: case VK_UP: case VK_RIGHT: case VK_DOWN:
 	case VK_PRIOR: case VK_NEXT: case VK_END: case VK_HOME:
@@ -55,37 +55,61 @@ std::wstring KeyboardDeviceWin32::getControlName(int control)
 		return L"";
 }
 
-bool KeyboardDeviceWin32::isControlAnalogue(int /*control*/) const
+bool KeyboardDeviceWin32::isControlAnalogue(int32_t /*control*/) const
 {
 	return false;
 }
 
-float KeyboardDeviceWin32::getControlValue(int control)
+int32_t KeyboardDeviceWin32::getActiveControlCount() const
+{
+	return m_keyCount;
+}
+
+float KeyboardDeviceWin32::getControlValue(int32_t control)
 {
 	if (m_connected)
-	{
-		SHORT state = GetAsyncKeyState(control);
-		return (state & 0x8000) ? 1.0f : 0.0f;
-	}
+		return m_keyStates[control] ? 1.0f : 0.0f;
 	else
 		return 0.0f;
 }
 
-bool KeyboardDeviceWin32::getDefaultControl(InputDefaultControlType controlType, bool analogue, int& control) const
+bool KeyboardDeviceWin32::getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const
 {
-	if (analogue)
+	if (analogue || !c_vkControlKeys[int32_t(controlType)])
 		return false;
 
-	control = c_vkControlKeys[int(controlType)];
-	return control != 0;
+	control = int32_t(controlType);
+	return true;
 }
 
 void KeyboardDeviceWin32::resetState()
 {
+	std::memset(m_keyStates, 0, sizeof(m_keyStates));
+	m_keyCount = 0;
 }
 
 void KeyboardDeviceWin32::readState()
 {
+	if (m_connected)
+	{
+		m_keyCount = 0;
+		for (int32_t i = 0; i < sizeof_array(c_vkControlKeys); ++i)
+		{
+			if (c_vkControlKeys[i] == 0)
+				continue;
+
+			SHORT keyState = GetAsyncKeyState(c_vkControlKeys[i]);
+			if (keyState & 0x8000)
+			{
+				m_keyStates[i] = 0xff;
+				m_keyCount++;
+			}
+			else
+				m_keyStates[i] = 0x00;
+		}
+	}
+	else
+		resetState();
 }
 
 bool KeyboardDeviceWin32::supportRumble() const

@@ -30,29 +30,34 @@ bool RecordInputDevice::isConnected() const
 	return true;
 }
 
-int RecordInputDevice::getControlCount()
+int32_t RecordInputDevice::getControlCount()
 {
 	return m_inputDevice->getControlCount();
 }
 
-std::wstring RecordInputDevice::getControlName(int control)
+std::wstring RecordInputDevice::getControlName(int32_t control)
 {
 	return m_inputDevice->getControlName(control);
 }
 
-bool RecordInputDevice::isControlAnalogue(int control) const
+bool RecordInputDevice::isControlAnalogue(int32_t control) const
 {
 	return m_inputDevice->isControlAnalogue(control);
 }
 
-float RecordInputDevice::getControlValue(int control)
+int32_t RecordInputDevice::getActiveControlCount() const
+{
+	return 0;
+}
+
+float RecordInputDevice::getControlValue(int32_t control)
 {
 	float value = m_inputDevice->getControlValue(control);
 	m_inputScript->addInputValue(m_frame, control, value);
 	return value;
 }
 
-bool RecordInputDevice::getDefaultControl(InputDefaultControlType controlType, bool analogue, int& control) const
+bool RecordInputDevice::getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const
 {
 	return m_inputDevice->getDefaultControl(controlType, analogue, control);
 }

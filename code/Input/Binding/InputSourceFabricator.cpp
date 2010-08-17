@@ -3,6 +3,7 @@
 #include "Input/Binding/CombinedInputSourceData.h"
 #include "Input/Binding/GenericInputSourceData.h"
 #include "Input/Binding/InputSourceFabricator.h"
+#include "Input/Binding/KeyboardInputSourceData.h"
 #include "Input/Binding/ValueDigital.h"
 
 namespace traktor
@@ -80,6 +81,20 @@ Ref< IInputSourceData > InputSourceFabricator::update()
 							m_analogue
 						);
 						break;
+					}
+					else if (m_category == CtKeyboard)
+					{
+						if (asBoolean(value))
+						{
+							if (!m_keyboardData)
+								m_keyboardData = new KeyboardInputSourceData();
+
+							m_keyboardData->addControlType(controlType);
+						}
+						else
+						{
+							m_outputData = m_keyboardData;
+						}
 					}
 					else
 					{
