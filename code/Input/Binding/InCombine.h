@@ -44,7 +44,16 @@ private:
 		bool serialize(ISerializer& s);
 	};
 
+	enum CombineOperator
+	{
+		CoAdd,
+		CoSub,
+		CoMul,
+		CoDiv
+	};
+
 	std::vector< Entry > m_entries;
+	CombineOperator m_operator;
 };
 
 	}
