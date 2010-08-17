@@ -56,6 +56,7 @@ public:
 		s >> Member< GLboolean >(L"alphaTestEnable", m_ref.alphaTestEnable);
 		s >> Member< GLenum >(L"alphaFunc", m_ref.alphaFunc);
 		s >> Member< GLclampf >(L"alphaRef", m_ref.alphaRef);
+		s >> Member< GLboolean >(L"stencilTestEnable", m_ref.stencilTestEnable);
 		s >> Member< GLenum >(L"stencilFunc", m_ref.stencilFunc);
 		s >> Member< GLint >(L"stencilRef", m_ref.stencilRef);
 		s >> Member< GLenum >(L"stencilOpFail", m_ref.stencilOpFail);
