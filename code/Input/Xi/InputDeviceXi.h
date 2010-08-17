@@ -43,7 +43,7 @@ public:
 
 	virtual float getControlValue(int control);
 
-	virtual bool getDefaultControl(InputDefaultControlType controlType, int& control) const;
+	virtual bool getDefaultControl(InputDefaultControlType controlType, bool analogue, int& control) const;
 
 	virtual void resetState();
 

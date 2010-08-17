@@ -32,6 +32,8 @@ c_controlConfig[] =
 	{ L"Right Thumb Push", DtThumbRightPush, false, XINPUT_GAMEPAD_RIGHT_THUMB },
 	{ L"Left Trigger", DtTriggerLeft, true, -5 },
 	{ L"Right Trigger", DtTriggerRight, true, -6 },
+	{ L"Left Trigger", DtTriggerLeft, false, -7 },
+	{ L"Right Trigger", DtTriggerRight, false, -8 },
 	{ L"Left Shoulder", DtShoulderLeft, false, XINPUT_GAMEPAD_LEFT_SHOULDER },
 	{ L"Right Shoulder", DtShoulderRight, false, XINPUT_GAMEPAD_RIGHT_SHOULDER },
 	{ L"Button A", DtButton1, false, XINPUT_GAMEPAD_A },
@@ -96,7 +98,7 @@ float InputDeviceXi::getControlValue(int control)
 {
 	const ControlConfig& config = c_controlConfig[control];
 
-	if (!config.analogue)
+	if (config.index >= 0)
 		return ((m_state.Gamepad.wButtons & config.index) == config.index) ? 1.0f : 0.0f;
 	else
 	{
@@ -119,17 +121,23 @@ float InputDeviceXi::getControlValue(int control)
 
 		case -6:
 			return m_state.Gamepad.bRightTrigger / 255.0f;
+
+		case -7:
+			return (m_state.Gamepad.bLeftTrigger > 128.0f) ? 1.0f : 0.0f;
+
+		case -8:
+			return (m_state.Gamepad.bRightTrigger > 128.0f) ? 1.0f : 0.0f;
 		}
 	}
 
 	return 0.0f;
 }
 
-bool InputDeviceXi::getDefaultControl(InputDefaultControlType controlType, int& control) const
+bool InputDeviceXi::getDefaultControl(InputDefaultControlType controlType, bool analogue, int& control) const
 {
 	for (uint32_t i = 0; i < sizeof_array(c_controlConfig); ++i)
 	{
-		if (c_controlConfig[i].controlType == controlType)
+		if (c_controlConfig[i].controlType == controlType && c_controlConfig[i].analogue == analogue)
 		{
 			control = i;
 			return true;

@@ -88,10 +88,11 @@ public:
 	/*! \brief Get control identifier of a default control type.
 	 *
 	 * \param controlType Default control type.
+	 * \param analogue If control should be used as analogue.
 	 * \param control Output control identifier.
 	 * \return True if device support control type and have successfully mapped identifier.
 	 */
-	virtual bool getDefaultControl(InputDefaultControlType controlType, int& control) const = 0;
+	virtual bool getDefaultControl(InputDefaultControlType controlType, bool analogue, int& control) const = 0;
 
 	/*! \brief Reset device state.
 	 *

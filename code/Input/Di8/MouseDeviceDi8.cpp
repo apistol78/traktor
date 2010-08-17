@@ -62,7 +62,7 @@ float MouseDeviceDi8::getControlValue(int control)
 	return 0.0f;
 }
 
-bool MouseDeviceDi8::getDefaultControl(InputDefaultControlType controlType, int& control) const
+bool MouseDeviceDi8::getDefaultControl(InputDefaultControlType controlType, bool analogue, int& control) const
 {
 	control = controlType;
 	return true;

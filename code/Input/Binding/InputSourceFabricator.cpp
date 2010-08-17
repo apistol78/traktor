@@ -22,10 +22,10 @@ InputSourceFabricator::InputSourceFabricator(InputSystem* inputSystem, InputCate
 :	m_category(category)
 ,	m_analogue(analogue)
 {
-	int32_t deviceCount = inputSystem->getDeviceCount(m_category);
+	int32_t deviceCount = inputSystem->getDeviceCount(m_category, true);
 	for (int32_t i = 0; i < deviceCount; ++i)
 	{
-		Ref< IInputDevice > device = inputSystem->getDevice(m_category, i, false);
+		Ref< IInputDevice > device = inputSystem->getDevice(m_category, i, true);
 		if (device)
 		{
 			DeviceState ds;
@@ -49,10 +49,7 @@ Ref< IInputSourceData > InputSourceFabricator::update()
 			InputDefaultControlType controlType = (InputDefaultControlType)j;
 		
 			int32_t control;
-			if (!i->device->getDefaultControl(controlType, control))
-				continue;
-			
-			if (i->device->isControlAnalogue(control) != m_analogue)
+			if (!i->device->getDefaultControl(controlType, m_analogue, control))
 				continue;
 			
 			float value = i->device->getControlValue(control);
@@ -79,7 +76,8 @@ Ref< IInputSourceData > InputSourceFabricator::update()
 						m_outputData = new GenericInputSourceData(
 							m_category,
 							std::distance(m_deviceStates.begin(), i),
-							controlType
+							controlType,
+							m_analogue
 						);
 						break;
 					}
@@ -95,7 +93,8 @@ Ref< IInputSourceData > InputSourceFabricator::update()
 							m_combinedData->addSource(new GenericInputSourceData(
 								m_category,
 								std::distance(m_deviceStates.begin(), i),
-								controlType
+								controlType,
+								m_analogue
 							));
 						}
 						else

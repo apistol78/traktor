@@ -64,8 +64,11 @@ float KeyboardDeviceDi8::getControlValue(int control)
 	return (m_state[dik] & 0x80) ? 1.0f : 0.0f;
 }
 
-bool KeyboardDeviceDi8::getDefaultControl(InputDefaultControlType controlType, int& control) const
+bool KeyboardDeviceDi8::getDefaultControl(InputDefaultControlType controlType, bool analogue, int& control) const
 {
+	if (analogue)
+		return false;
+
 	control = controlType;
 	return c_di8ControlKeys[control] != 0;
 }
