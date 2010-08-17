@@ -40,6 +40,7 @@ float GenericInputSource::read(float T, float dT)
 {
 	InputCategory category = m_data->getCategory();
 	InputDefaultControlType controlType = m_data->getControlType();
+	bool analogue = m_data->isAnalogue();
 	int32_t index = m_data->getIndex();
 	
 	// Abort early as no device should have this control.
@@ -58,6 +59,7 @@ float GenericInputSource::read(float T, float dT)
 				m_deviceControls.push_back(m_deviceControlManager->getDeviceControl(
 					category,
 					controlType,
+					analogue,
 					i
 				));
 		}
@@ -66,6 +68,7 @@ float GenericInputSource::read(float T, float dT)
 			m_deviceControls.push_back(m_deviceControlManager->getDeviceControl(
 				category,
 				controlType,
+				analogue,
 				index
 			));
 		}

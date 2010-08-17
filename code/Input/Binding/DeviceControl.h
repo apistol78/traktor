@@ -28,6 +28,7 @@ private:
 
 	InputCategory m_category;
 	InputDefaultControlType m_controlType;
+	bool m_analogue;
 	int32_t m_index;
 	Ref< IInputDevice > m_device;
 	int32_t m_control;

@@ -8,7 +8,7 @@ namespace traktor
 
 std::wstring DeviceControl::getControlName() const
 {
-	if (m_device)
+	if (m_device && m_device->isConnected())
 		return m_device->getControlName(m_control);
 	else
 		return L"";
@@ -27,6 +27,7 @@ float DeviceControl::getCurrentValue() const
 DeviceControl::DeviceControl()
 :	m_category(CtUnknown)
 ,	m_controlType(DtInvalid)
+,	m_analogue(false)
 ,	m_index(0)
 ,	m_control(0)
 ,	m_previousValue(0.0f)

@@ -38,29 +38,29 @@ void InputSystem::removeDevice(IInputDevice* inputDevice)
 		m_devices.erase(i);
 }
 
-int InputSystem::getDeviceCount() const
+int32_t InputSystem::getDeviceCount() const
 {
-	return int(m_devices.size());
+	return int32_t(m_devices.size());
 }
 
-Ref< IInputDevice > InputSystem::getDevice(int index)
+Ref< IInputDevice > InputSystem::getDevice(int32_t index)
 {
 	T_ASSERT (index >= 0 && index < getDeviceCount());
 	return m_devices[index];
 }
 
-int InputSystem::getDeviceCount(InputCategory category) const
+int32_t InputSystem::getDeviceCount(InputCategory category, bool connected) const
 {
-	int deviceCount = 0;
+	int32_t deviceCount = 0;
 	for (RefArray< IInputDevice >::const_iterator i = m_devices.begin(); i != m_devices.end(); ++i)
 	{
-		if ((*i)->getCategory() == category)
+		if ((*i)->getCategory() == category && (!connected || (*i)->isConnected()))
 			++deviceCount;
 	}
 	return deviceCount;
 }
 
-Ref< IInputDevice > InputSystem::getDevice(InputCategory category, int index, bool connected)
+Ref< IInputDevice > InputSystem::getDevice(InputCategory category, int32_t index, bool connected)
 {
 	for (RefArray< IInputDevice >::iterator i = m_devices.begin(); i != m_devices.end(); ++i)
 	{

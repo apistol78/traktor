@@ -85,7 +85,7 @@ float MouseDeviceWin32::getControlValue(int control)
 		return 0.0f;
 }
 
-bool MouseDeviceWin32::getDefaultControl(InputDefaultControlType controlType, int& control) const
+bool MouseDeviceWin32::getDefaultControl(InputDefaultControlType controlType, bool analogue, int& control) const
 {
 	control = 0;
 
@@ -94,9 +94,13 @@ bool MouseDeviceWin32::getDefaultControl(InputDefaultControlType controlType, in
 	case DtButton1:
 	case DtButton2:
 	case DtButton3:
+		if (!analogue)
+			control = int(controlType);
+		break;
 	case DtAxisX:
 	case DtAxisY:
-		control = int(controlType);
+		if (analogue)
+			control = int(controlType);
 		break;
 	}
 

@@ -52,9 +52,9 @@ float RecordInputDevice::getControlValue(int control)
 	return value;
 }
 
-bool RecordInputDevice::getDefaultControl(InputDefaultControlType controlType, int& control) const
+bool RecordInputDevice::getDefaultControl(InputDefaultControlType controlType, bool analogue, int& control) const
 {
-	return m_inputDevice->getDefaultControl(controlType, control);
+	return m_inputDevice->getDefaultControl(controlType, analogue, control);
 }
 
 void RecordInputDevice::resetState()

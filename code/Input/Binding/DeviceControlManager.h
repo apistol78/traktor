@@ -22,7 +22,7 @@ public:
 
 	int32_t getDeviceControlCount(InputCategory category);
 
-	Ref< DeviceControl > getDeviceControl(InputCategory category, InputDefaultControlType controlType, int32_t index);
+	Ref< DeviceControl > getDeviceControl(InputCategory category, InputDefaultControlType controlType, bool analogue, int32_t index);
 
 	void update();
 

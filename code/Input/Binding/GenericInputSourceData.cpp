@@ -15,16 +15,19 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.GenericInputSourceData", 0, Gener
 GenericInputSourceData::GenericInputSourceData()
 :	m_category(CtUnknown)
 ,	m_controlType(DtInvalid)
+,	m_analogue(false)
 ,	m_index(-1)
 {
 }
 
 GenericInputSourceData::GenericInputSourceData(
 	InputCategory category,
-	InputDefaultControlType controlType
+	InputDefaultControlType controlType,
+	bool analogue
 )
 :	m_category(category)
 ,	m_controlType(controlType)
+,	m_analogue(analogue)
 ,	m_index(-1)
 {
 }
@@ -32,10 +35,12 @@ GenericInputSourceData::GenericInputSourceData(
 GenericInputSourceData::GenericInputSourceData(
 	InputCategory category,
 	int32_t index,
-	InputDefaultControlType controlType
+	InputDefaultControlType controlType,
+	bool analogue
 )
 :	m_category(category)
 ,	m_controlType(controlType)
+,	m_analogue(analogue)
 ,	m_index(index)
 {
 }
@@ -60,6 +65,16 @@ InputDefaultControlType GenericInputSourceData::getControlType() const
 	return m_controlType;
 }
 
+void GenericInputSourceData::setAnalogue(bool analogue)
+{
+	m_analogue = analogue;
+}
+
+bool GenericInputSourceData::isAnalogue() const
+{
+	return m_analogue;
+}
+
 void GenericInputSourceData::setIndex(int32_t index)
 {
 	m_index = index;
@@ -79,6 +94,7 @@ bool GenericInputSourceData::serialize(ISerializer& s)
 {
 	s >> MemberEnum< InputCategory >(L"category", m_category, g_InputCategory_Keys);
 	s >> MemberEnum< InputDefaultControlType >(L"controlType", m_controlType, g_InputDefaultControlType_Keys);
+	s >> Member< bool >(L"analogue", m_analogue);
 	s >> Member< int32_t >(L"index", m_index);
 	return true;
 }

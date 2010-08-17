@@ -51,9 +51,9 @@ float ReplayInputDevice::getControlValue(int control)
 	return m_inputScript->getInputValue(m_frame, control);
 }
 
-bool ReplayInputDevice::getDefaultControl(InputDefaultControlType controlType, int& control) const
+bool ReplayInputDevice::getDefaultControl(InputDefaultControlType controlType, bool analogue, int& control) const
 {
-	return m_inputDevice->getDefaultControl(controlType, control);
+	return m_inputDevice->getDefaultControl(controlType, analogue, control);
 }
 
 void ReplayInputDevice::resetState()

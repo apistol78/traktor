@@ -37,13 +37,13 @@ public:
 
 	void removeDevice(IInputDevice* inputDevice);
 
-	int getDeviceCount() const;
+	int32_t getDeviceCount() const;
 
-	Ref< IInputDevice > getDevice(int index);
+	Ref< IInputDevice > getDevice(int32_t index);
 
-	int getDeviceCount(InputCategory category) const;
+	int32_t getDeviceCount(InputCategory category, bool connected) const;
 
-	Ref< IInputDevice > getDevice(InputCategory category, int index, bool connected);
+	Ref< IInputDevice > getDevice(InputCategory category, int32_t index, bool connected);
 
 	bool update(float deltaTime);
 

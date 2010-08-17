@@ -71,8 +71,11 @@ float KeyboardDeviceWin32::getControlValue(int control)
 		return 0.0f;
 }
 
-bool KeyboardDeviceWin32::getDefaultControl(InputDefaultControlType controlType, int& control) const
+bool KeyboardDeviceWin32::getDefaultControl(InputDefaultControlType controlType, bool analogue, int& control) const
 {
+	if (analogue)
+		return false;
+
 	control = c_vkControlKeys[int(controlType)];
 	return control != 0;
 }

@@ -155,11 +155,11 @@ float JoystickDeviceDi8::getControlValue(int control)
 	return 0.0f;
 }
 
-bool JoystickDeviceDi8::getDefaultControl(InputDefaultControlType controlType, int& control) const
+bool JoystickDeviceDi8::getDefaultControl(InputDefaultControlType controlType, bool analogue, int& control) const
 {
 	for (int i = 0; i < int(m_controlInfo.size()); ++i)
 	{
-		if (m_controlInfo[i].controlType == controlType)
+		if (m_controlInfo[i].controlType == controlType && m_controlInfo[i].analogue == analogue)
 		{
 			control = i;
 			return true;
