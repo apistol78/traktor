@@ -76,6 +76,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.input.InputDeviceKeyboardOsX", InputDeviceKeybo
 InputDeviceKeyboardOsX::InputDeviceKeyboardOsX(IOHIDDeviceRef deviceRef)
 :	m_deviceRef(deviceRef)
 ,	m_data(new uint8_t [sizeof_array(c_keyControlMap)])
+,	m_controlCount(0)
 {
 	resetState();
 }
@@ -130,6 +131,11 @@ bool InputDeviceKeyboardOsX::isControlAnalogue(int control) const
 	return false;
 }
 
+int32_t InputDeviceKeyboardOsX::getActiveControlCount() const
+{
+	return m_controlCount;
+}
+
 float InputDeviceKeyboardOsX::getControlValue(int control)
 {
 	if (m_data[control])
@@ -158,6 +164,7 @@ bool InputDeviceKeyboardOsX::getDefaultControl(InputDefaultControlType controlTy
 
 void InputDeviceKeyboardOsX::resetState()
 {
+	m_controlCount = 0;
 }
 
 void InputDeviceKeyboardOsX::readState()
@@ -167,7 +174,7 @@ void InputDeviceKeyboardOsX::readState()
 		
 	const uint32_t dataSize = sizeof_array(c_keyControlMap) * sizeof(uint8_t);
 	std::memset(m_data.ptr(), 0, dataSize);
-
+	
 	CFArrayRef elements = IOHIDDeviceCopyMatchingElements(m_deviceRef, NULL, kIOHIDOptionsTypeNone);
 	for (CFIndex i = 0; i < CFArrayGetCount(elements); ++i)
 	{
@@ -193,6 +200,16 @@ void InputDeviceKeyboardOsX::readState()
 			}
 		}
 	}
+	
+	m_controlCount = 0;
+	for (uint32_t i = 0; i < sizeof_array(c_keyControlMap); ++i)
+	{
+		if (m_data[i])
+			m_controlCount++;
+	}
+	
+	// \fixme Which key is stuck?
+	m_controlCount--;
 }
 
 bool InputDeviceKeyboardOsX::supportRumble() const
