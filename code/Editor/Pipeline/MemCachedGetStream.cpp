@@ -23,9 +23,87 @@ MemCachedGetStream::MemCachedGetStream(MemCachedProto* proto, const std::string&
 {
 }
 
+bool MemCachedGetStream::requestEndBlock()
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_proto->getLock());
+
+	std::stringstream ss;
+	std::string command;
+	std::string reply;
+
+	ss << "get " << m_key << ":END";
+	
+	command = ss.str();
+	log::debug << mbstows(command) << Endl;
+
+	if (!m_proto->sendCommand(command))
+	{
+		log::error << L"Unable to request cache block; unable to send command" << Endl;
+		return false;
+	}
+
+	bool gotEndBlock = false;
+	for (;;)
+	{
+		if (!m_proto->readReply(reply))
+		{
+			log::error << L"Unable to request cache block; unable to receive reply" << Endl;
+			return false;
+		}
+
+		std::vector< std::string > args;
+		Split< std::string >::any(reply, " ", args);
+
+		if (args.empty())
+		{
+			log::error << L"Unable to request cache block; empty reply" << Endl;
+			return false;
+		}
+
+		if (args[0] == "VALUE")
+		{
+			if (args.size() < 4)
+			{
+				log::error << L"Unable to request cache block; malformed reply" << Endl;
+				return false;
+			}
+
+			uint32_t bytes = parseString< uint32_t >(args[3]);
+			if (bytes != 1)
+			{
+				log::error << L"Unable to request cache block; invalid size, end block must be one byte" << Endl;
+				return false;
+			}
+
+			uint8_t endData = 0;
+			if (!m_proto->readData(&endData, 1))
+			{
+				log::error << L"Unable to request cache block; unable to receive data" << Endl;
+				return false;
+			}
+			
+			if (endData != 0xfe)
+			{
+				log::error << L"Unable to request cache block; invalid end block" << Endl;
+				return false;
+			}
+			
+			gotEndBlock = true;
+		}
+		else
+		{
+			if (args[0] != "END")
+				log::error << L"Unable to request cache block; server error " << mbstows(args[0]) << Endl;
+			break;
+		}
+	}
+	
+	return gotEndBlock;
+}
+
 bool MemCachedGetStream::requestNextBlock()
 {
-	Acquire< Semaphore > lock(m_proto->getLock());
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_proto->getLock());
 
 	std::stringstream ss;
 	std::string command;

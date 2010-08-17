@@ -77,7 +77,16 @@ Ref< IStream > MemCachedPipelineCache::get(const Guid& guid, uint32_t hash, int3
 	if (m_accessRead)
 	{
 		Ref< MemCachedGetStream > stream = new MemCachedGetStream(m_proto, generateKey(guid, hash, version));
-		return stream->requestNextBlock() ? stream : 0;
+		
+		// Request end block; do not try to open non-finished cache streams.
+		if (!stream->requestEndBlock())
+			return 0;
+			
+		// Request first block of data.
+		if (!stream->requestNextBlock())
+			return 0;
+			
+		return stream;
 	}
 	else
 		return 0;

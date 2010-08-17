@@ -1,5 +1,5 @@
-#ifndef traktor_editor_MemCachedPutStream_H
-#define traktor_editor_MemCachedPutStream_H
+#ifndef traktor_editor_FilePipelinePutStream_H
+#define traktor_editor_FilePipelinePutStream_H
 
 #include "Core/Io/IStream.h"
 
@@ -8,16 +8,12 @@ namespace traktor
 	namespace editor
 	{
 
-class MemCachedProto;
-
-class MemCachedPutStream : public IStream
+class FilePipelinePutStream : public IStream
 {
 	T_RTTI_CLASS;
 
 public:
-	enum { MaxBlockSize = 65536 };
-
-	MemCachedPutStream(MemCachedProto* proto, const std::string& key);
+	FilePipelinePutStream(IStream* file, const std::wstring& path);
 
 	virtual void close();
 
@@ -40,18 +36,11 @@ public:
 	virtual void flush();
 
 private:
-	Ref< MemCachedProto > m_proto;
-	std::string m_key;
-	uint8_t m_block[MaxBlockSize + 2];
-	uint32_t m_inblock;
-	uint32_t m_index;
-
-	bool uploadBlock();
-	
-	void uploadEndBlock();
+	Ref< IStream > m_file;
+	std::wstring m_path;
 };
 
 	}
 }
 
-#endif	// traktor_editor_MemCachedPutStream_H
+#endif	// traktor_editor_FilePipelinePutStream_H

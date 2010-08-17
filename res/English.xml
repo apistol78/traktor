@@ -354,11 +354,15 @@
       <second>Use memcached</second>
     </item>
     <item>
-      <first>EDITOR_SETTINGS_PIPELINE_MEMCACHED_READ</first>
+      <first>EDITOR_SETTINGS_PIPELINE_ENABLE_FILE_CACHE</first>
+      <second>Use file cache</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_PIPELINE_CACHE_READ</first>
       <second>Read access</second>
     </item>
     <item>
-      <first>EDITOR_SETTINGS_PIPELINE_MEMCACHED_WRITE</first>
+      <first>EDITOR_SETTINGS_PIPELINE_CACHE_WRITE</first>
       <second>Write access</second>
     </item>
     <item>

@@ -48,6 +48,7 @@
 #include "Editor/App/SettingsDialog.h"
 #include "Editor/App/AboutDialog.h"
 #include "Editor/App/MRU.h"
+#include "Editor/Pipeline/FilePipelineCache.h"
 #include "Editor/Pipeline/MemCachedPipelineCache.h"
 #include "Editor/Pipeline/PipelineBuilder.h"
 #include "Editor/Pipeline/PipelineDb.h"
@@ -901,7 +902,16 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 		pipelineCache = new editor::MemCachedPipelineCache();
 		if (!pipelineCache->create(m_settings))
 		{
-			traktor::log::warning << L"Unable to create pipeline cache; cache disabled" << Endl;
+			traktor::log::warning << L"Unable to create pipeline memcached cache; cache disabled" << Endl;
+			pipelineCache = 0;
+		}
+	}
+	if (m_settings->getProperty< PropertyBoolean >(L"Pipeline.FileCache", false))
+	{
+		pipelineCache = new editor::FilePipelineCache();
+		if (!pipelineCache->create(m_settings))
+		{
+			traktor::log::warning << L"Unable to create pipeline file cache; cache disabled" << Endl;
 			pipelineCache = 0;
 		}
 	}

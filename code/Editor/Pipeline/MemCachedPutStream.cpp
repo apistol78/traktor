@@ -23,8 +23,12 @@ MemCachedPutStream::MemCachedPutStream(MemCachedProto* proto, const std::string&
 
 void MemCachedPutStream::close()
 {
-	flush();
-	m_proto = 0;
+	if (m_proto)
+	{
+		flush();
+		uploadEndBlock();
+		m_proto = 0;
+	}
 }
 
 bool MemCachedPutStream::canRead() const
@@ -98,7 +102,7 @@ void MemCachedPutStream::flush()
 
 bool MemCachedPutStream::uploadBlock()
 {
-	Acquire< Semaphore > lock(m_proto->getLock());
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_proto->getLock());
 
 	std::stringstream ss;
 	std::string command;
@@ -135,6 +139,45 @@ bool MemCachedPutStream::uploadBlock()
 
 	m_index++;
 	return true;
+}
+
+void MemCachedPutStream::uploadEndBlock()
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_proto->getLock());
+
+	std::stringstream ss;
+	std::string command;
+	std::string reply;
+	
+	ss << "set " << m_key << ":END 0 0 1";
+
+	command = ss.str();
+	log::debug << mbstows(command) << Endl;
+
+	if (!m_proto->sendCommand(command))
+	{
+		log::error << L"Unable to store cache block; unable to send command" << Endl;
+		return;
+	}
+	
+	uint8_t endData = 0xfe;
+	if (!m_proto->writeData(&endData, 1))
+	{
+		log::error << L"Unable to store cache block; unable to write data" << Endl;
+		return;
+	}
+
+	if (!m_proto->readReply(reply))
+	{
+		log::error << L"Unable to store cache block; unable to read reply" << Endl;
+		return;
+	}
+
+	if (reply != "STORED")
+	{
+		log::error << L"Unable to store cache block; server unable to store data" << Endl;
+		return;
+	}
 }
 
 	}

@@ -354,11 +354,15 @@
       <second>Använd memcached</second>
     </item>
     <item>
-      <first>EDITOR_SETTINGS_PIPELINE_MEMCACHED_READ</first>
+      <first>EDITOR_SETTINGS_PIPELINE_ENABLE_FILE_CACHE</first>
+      <second>Använd fil-cache</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_PIPELINE_CACHE_READ</first>
       <second>Läs tillåtet</second>
     </item>
     <item>
-      <first>EDITOR_SETTINGS_PIPELINE_MEMCACHED_WRITE</first>
+      <first>EDITOR_SETTINGS_PIPELINE_CACHE_WRITE</first>
       <second>Skriv tillåtet</second>
     </item>
     <item>
