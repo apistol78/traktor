@@ -62,6 +62,10 @@ std::wstring InputDeviceGamepadOsX::getControlName(int control)
 		return L"Left trigger";
 	case -6:
 		return L"Right trigger";
+	case -7:
+		return L"Left trigger";
+	case -8:
+		return L"Right trigger";
 	}
 	return L"Button " + toString(control);
 }
@@ -85,100 +89,123 @@ float InputDeviceGamepadOsX::getControlValue(int control)
 		return m_axis[2][0];
 	else if (control == -6)
 		return m_axis[2][1];
+	else if (control == -7)
+		return m_axis[2][0] > 0.5f ? 1.0f : 0.0f;
+	else if (control == -8)
+		return m_axis[2][1] > 0.5f ? 1.0f : 0.0f;
 	else if (control >= 0 && control < sizeof_array(m_button))
 		return m_button[control] ? 1.0f : 0.0f;
 	else
 		return 0.0f;
 }
 
-bool InputDeviceGamepadOsX::getDefaultControl(InputDefaultControlType controlType, int& control) const
+bool InputDeviceGamepadOsX::getDefaultControl(InputDefaultControlType controlType, bool analogue, int& control) const
 {
-	switch (controlType)
+	if (analogue)
 	{
-	case DtButton1:
-		control = 0;
-		break;
+		switch (controlType)
+		{
+		case DtThumbLeftX:
+			control = -1;
+			break;
 		
-	case DtButton2:
-		control = 1;
-		break;
+		case DtThumbLeftY:
+			control = -2;
+			break;
 		
-	case DtButton3:
-		control = 2;
-		break;
+		case DtThumbRightX:
+			control = -3;
+			break;
 		
-	case DtButton4:
-		control = 3;
-		break;
+		case DtThumbRightY:
+			control = -4;
+			break;
 		
-	case DtShoulderLeft:
-		control = 4;
-		break;
+		case DtTriggerLeft:
+			control = -5;
+			break;
 		
-	case DtShoulderRight:
-		control = 5;
-		break;
+		case DtTriggerRight:
+			control = -6;
+			break;
 		
-	case DtThumbLeftPush:
-		control = 6;
-		break;
-		
-	case DtThumbRightPush:
-		control = 7;
-		break;
-		
-	case DtSelect:
-		control = 8;
-		break;
-		
-	case DtCancel:
-		control = 9;
-		break;
-		
-	case DtUp:
-		control = 10;
-		break;
-		
-	case DtDown:
-		control = 11;
-		break;
-		
-	case DtLeft:
-		control = 12;
-		break;
-		
-	case DtRight:
-		control = 13;
-		break;
-		
-	case DtThumbLeftX:
-		control = -1;
-		break;
-		
-	case DtThumbLeftY:
-		control = -2;
-		break;
-		
-	case DtThumbRightX:
-		control = -3;
-		break;
-		
-	case DtThumbRightY:
-		control = -4;
-		break;
-		
-	case DtTriggerLeft:
-		control = -5;
-		break;
-		
-	case DtTriggerRight:
-		control = -6;
-		break;
-		
-	default:
-		return false;
+		default:
+			return false;
+		}
 	}
-	
+	else
+	{
+		switch (controlType)
+		{
+		case DtButton1:
+			control = 0;
+			break;
+		
+		case DtButton2:
+			control = 1;
+			break;
+		
+		case DtButton3:
+			control = 2;
+			break;
+		
+		case DtButton4:
+			control = 3;
+			break;
+		
+		case DtShoulderLeft:
+			control = 4;
+			break;
+		
+		case DtShoulderRight:
+			control = 5;
+			break;
+		
+		case DtThumbLeftPush:
+			control = 6;
+			break;
+		
+		case DtThumbRightPush:
+			control = 7;
+			break;
+		
+		case DtSelect:
+			control = 8;
+			break;
+		
+		case DtCancel:
+			control = 9;
+			break;
+		
+		case DtUp:
+			control = 10;
+			break;
+		
+		case DtDown:
+			control = 11;
+			break;
+		
+		case DtLeft:
+			control = 12;
+			break;
+		
+		case DtRight:
+			control = 13;
+			break;
+		
+		case DtTriggerLeft:
+			control = -7;
+			break;
+		
+		case DtTriggerRight:
+			control = -8;
+			break;
+		
+		default:
+			return false;
+		}
+	}
+
 	return true;
 }
 
