@@ -52,6 +52,7 @@ public:
 		s >> Member< GLenum >(L"blendFuncDest", m_ref.blendFuncDest);
 		s >> Member< GLboolean >(L"depthTestEnable", m_ref.depthTestEnable);
 		s >> Member< uint32_t >(L"colorMask", m_ref.colorMask);
+		s >> Member< GLboolean >(L"depthMask", m_ref.depthMask);
 		s >> Member< GLboolean >(L"alphaTestEnable", m_ref.alphaTestEnable);
 		s >> Member< GLenum >(L"alphaFunc", m_ref.alphaFunc);
 		s >> Member< GLclampf >(L"alphaRef", m_ref.alphaRef);
