@@ -57,7 +57,9 @@ bool SimpleTextureOpenGL::create(const SimpleTextureCreateDesc& desc, GLfloat ma
 
 	T_OGL_SAFE(glGenTextures(1, &m_textureName));
 	T_OGL_SAFE(glBindTexture(GL_TEXTURE_2D, m_textureName));
-	T_OGL_SAFE(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, maxAnisotropy));
+	
+	if (maxAnisotropy > 0.0f)
+		T_OGL_SAFE(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, maxAnisotropy));
 
 	// Allocate data buffer.
 	uint32_t texturePitch = getTextureMipPitch(desc.format, desc.width, desc.height);
