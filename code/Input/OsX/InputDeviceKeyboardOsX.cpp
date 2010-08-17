@@ -138,8 +138,11 @@ float InputDeviceKeyboardOsX::getControlValue(int control)
 		return 0.0f;
 }
 
-bool InputDeviceKeyboardOsX::getDefaultControl(InputDefaultControlType controlType, int& control) const
+bool InputDeviceKeyboardOsX::getDefaultControl(InputDefaultControlType controlType, bool analogue, int& control) const
 {
+	if (analogue)
+		return false;
+
 	for (int32_t i = 0; i < sizeof_array(c_keyControlMap); ++i)
 	{
 		const KeyControlMap& controlMap = c_keyControlMap[i];
@@ -149,6 +152,7 @@ bool InputDeviceKeyboardOsX::getDefaultControl(InputDefaultControlType controlTy
 			return true;
 		}
 	}
+
 	return false;
 }
 
