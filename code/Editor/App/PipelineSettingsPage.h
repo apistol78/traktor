@@ -38,7 +38,12 @@ private:
 	Ref< ui::CheckBox > m_checkMemCachedRead;
 	Ref< ui::CheckBox > m_checkMemCachedWrite;
 
-	void eventUseMemCachedClick(ui::Event* event);
+	Ref< ui::CheckBox > m_checkUseFileCache;
+	Ref< ui::Edit > m_editFileCachePath;
+	Ref< ui::CheckBox > m_checkFileCacheRead;
+	Ref< ui::CheckBox > m_checkFileCacheWrite;
+	
+	void eventUseCacheClick(ui::Event* event);
 };
 
 	}

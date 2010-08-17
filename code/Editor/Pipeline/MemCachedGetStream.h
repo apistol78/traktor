@@ -18,6 +18,8 @@ public:
 	enum { MaxBlockSize = 65536 };
 
 	MemCachedGetStream(MemCachedProto* proto, const std::string& key);
+	
+	bool requestEndBlock();
 
 	bool requestNextBlock();
 
