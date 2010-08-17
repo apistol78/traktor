@@ -37,22 +37,27 @@ bool MouseDeviceDi8::isConnected() const
 	return m_connected;
 }
 
-int MouseDeviceDi8::getControlCount()
+int32_t MouseDeviceDi8::getControlCount()
 {
 	return 0;
 }
 
-std::wstring MouseDeviceDi8::getControlName(int control)
+std::wstring MouseDeviceDi8::getControlName(int32_t control)
 {
 	return L"";
 }
 
-bool MouseDeviceDi8::isControlAnalogue(int control) const
+bool MouseDeviceDi8::isControlAnalogue(int32_t control) const
 {
 	return false;
 }
 
-float MouseDeviceDi8::getControlValue(int control)
+int32_t MouseDeviceDi8::getActiveControlCount() const
+{
+	return 0;
+}
+
+float MouseDeviceDi8::getControlValue(int32_t control)
 {
 	if (!m_connected)
 		return 0.0f;
@@ -62,7 +67,7 @@ float MouseDeviceDi8::getControlValue(int control)
 	return 0.0f;
 }
 
-bool MouseDeviceDi8::getDefaultControl(InputDefaultControlType controlType, bool analogue, int& control) const
+bool MouseDeviceDi8::getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const
 {
 	control = controlType;
 	return true;

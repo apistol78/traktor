@@ -31,27 +31,32 @@ bool ReplayInputDevice::isConnected() const
 	return true;
 }
 
-int ReplayInputDevice::getControlCount()
+int32_t ReplayInputDevice::getControlCount()
 {
 	return m_inputDevice->getControlCount();
 }
 
-std::wstring ReplayInputDevice::getControlName(int control)
+std::wstring ReplayInputDevice::getControlName(int32_t control)
 {
 	return m_inputDevice->getControlName(control);
 }
 
-bool ReplayInputDevice::isControlAnalogue(int control) const
+bool ReplayInputDevice::isControlAnalogue(int32_t control) const
 {
 	return m_inputDevice->isControlAnalogue(control);
 }
 
-float ReplayInputDevice::getControlValue(int control)
+int32_t ReplayInputDevice::getActiveControlCount() const
+{
+	return 0;
+}
+
+float ReplayInputDevice::getControlValue(int32_t control)
 {
 	return m_inputScript->getInputValue(m_frame, control);
 }
 
-bool ReplayInputDevice::getDefaultControl(InputDefaultControlType controlType, bool analogue, int& control) const
+bool ReplayInputDevice::getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const
 {
 	return m_inputDevice->getDefaultControl(controlType, analogue, control);
 }

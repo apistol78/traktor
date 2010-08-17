@@ -61,6 +61,19 @@ void DeviceControlManager::update()
 	{
 		DeviceControl* deviceControl = *i;
 
+		if (!deviceControl->m_device)
+		{
+			deviceControl->m_device = m_inputSystem->getDevice(deviceControl->m_category, deviceControl->m_index, true);
+			if (deviceControl->m_device)
+			{
+				int32_t control;
+				if (deviceControl->m_device->getDefaultControl(deviceControl->m_controlType, deviceControl->m_analogue, control))
+					deviceControl->m_control = control;
+				else
+					deviceControl->m_device = 0;
+			}
+		}
+
 		deviceControl->m_previousValue = deviceControl->m_currentValue;
 		if (deviceControl->m_device)
 		{

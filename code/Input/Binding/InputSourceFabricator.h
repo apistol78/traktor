@@ -19,6 +19,7 @@ namespace traktor
 	namespace input
 	{
 
+class KeyboardInputSourceData;
 class CombinedInputSourceData;
 class IInputDevice;
 class IInputSourceData;
@@ -42,6 +43,7 @@ private:
 
 	InputCategory m_category;
 	bool m_analogue;
+	Ref< KeyboardInputSourceData > m_keyboardData;
 	Ref< CombinedInputSourceData > m_combinedData;
 	Ref< IInputSourceData > m_outputData;
 	std::list< DeviceState > m_deviceStates;
