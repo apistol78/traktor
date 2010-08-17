@@ -52,7 +52,7 @@ struct RenderState
 	GLenum blendFuncSrc;
 	GLenum blendFuncDest;
 	GLboolean depthTestEnable;
-	unsigned colorMask;
+	uint32_t colorMask;
 	GLboolean depthMask;
 	GLenum depthFunc;
 	GLboolean alphaTestEnable;
