@@ -20,9 +20,10 @@ struct InCombineInstance : public RefCountImpl< IInputNode::Instance >
 		
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.InCombine", 0, InCombine, IInputNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.InCombine", 1, InCombine, IInputNode)
 
 InCombine::InCombine()
+:	m_operator(CoAdd)
 {
 }
 
@@ -47,7 +48,31 @@ float InCombine::evaluate(
 	for (uint32_t i = 0; i < m_entries.size(); ++i)
 	{
 		float value = m_entries[i].source->evaluate(ici->sourceInstances[i], valueSet, T, dT);
-		result += value * m_entries[i].mul + m_entries[i].add;
+		float scaled = value * m_entries[i].mul + m_entries[i].add;
+
+		if (i > 0)
+		{
+			switch (m_operator)
+			{
+			case CoAdd:
+				result += scaled;
+				break;
+
+			case CoSub:
+				result -= scaled;
+				break;
+
+			case CoMul:
+				result *= scaled;
+				break;
+
+			case CoDiv:
+				result /= scaled;
+				break;
+			}
+		}
+		else
+			result = scaled;
 	}
 	
 	return result;
@@ -55,7 +80,22 @@ float InCombine::evaluate(
 
 bool InCombine::serialize(ISerializer& s)
 {
-	return s >> MemberStlVector< Entry, MemberComposite< Entry > >(L"entries", m_entries);
+	s >> MemberStlVector< Entry, MemberComposite< Entry > >(L"entries", m_entries);
+	
+	if (s.getVersion() >= 1)
+	{
+		const MemberEnum< CombineOperator >::Key c_CombineOperator_Keys[] =
+		{
+			{ L"CoAdd", CoAdd },
+			{ L"CoSub", CoSub },
+			{ L"CoMul", CoMul },
+			{ L"CoDiv", CoDiv },
+			0
+		};
+		s >> MemberEnum< CombineOperator >(L"operator", m_operator, c_CombineOperator_Keys);
+	}
+
+	return true;
 }
 
 bool InCombine::Entry::serialize(ISerializer& s)
