@@ -1,23 +1,36 @@
-#include <sys/time.h>
+#include <mach/mach.h>
+#include <mach/mach_time.h>
 #include "Core/Timer/Timer.h"
 
 namespace traktor
 {
+	namespace
+	{
+
+double absoluteToSeconds(uint64_t abs)
+{
+	static mach_timebase_info_data_t tb;
+	if (tb.denom == 0)
+		mach_timebase_info(&tb);
+	uint64_t nano = abs * tb.numer / tb.denom;
+	return double(nano) / 1e9;
+}
+
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Timer", Timer, Object)
 
 Timer::Timer()
-:	m_paused(true)
-,	m_frequency(0)
+:	m_frequency(0)
+,	m_first(0)
+,	m_last(0)
+,	m_paused(true)
 {
 }
 
 void Timer::start()
 {
-	timeval tv;
-	gettimeofday(&tv, 0);
-
-	m_first = int64_t(tv.tv_sec) * 1e6 + tv.tv_usec;
+	m_first = mach_absolute_time();
 	m_last = m_first;
 	m_paused = false;
 }
@@ -34,25 +47,16 @@ void Timer::stop()
 
 double Timer::getElapsedTime() const
 {
-	timeval tv;
-	gettimeofday(&tv, 0);
-
-	int64_t curr = int64_t(tv.tv_sec) * 1e6 + tv.tv_usec;
-	
-	return double(curr) / 1e6;
+	uint64_t current = mach_absolute_time();
+	uint64_t elapsed = current - m_first;
+	return absoluteToSeconds(elapsed);
 }
 
 double Timer::getDeltaTime()
 {
-	timeval tv;
-	gettimeofday(&tv, 0);
-
-	int64_t curr = int64_t(tv.tv_sec) * 1e6 + tv.tv_usec;
-	
-	double delta = double(curr - m_last) / 1e6;
-	m_last = curr;
-
-	return delta;
+	uint64_t current = mach_absolute_time();
+	uint64_t delta = current - m_last; m_last = current;
+	return absoluteToSeconds(delta);
 }
 
 }
