@@ -2,6 +2,7 @@
 #define traktor_input_InputMappingStateData_H
 
 #include <map>
+#include "Core/RefArray.h"
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
@@ -17,6 +18,7 @@ namespace traktor
 	namespace input
 	{
 	
+class IInputFilter;
 class InputStateData;
 
 /*! \brief Input mapping state data
@@ -29,6 +31,10 @@ class T_DLLCLASS InputMappingStateData : public ISerializable
 	T_RTTI_CLASS;
 
 public:
+	void addFilter(IInputFilter* filter);
+	
+	const RefArray< IInputFilter >& getFilters() const;
+
 	void setStateData(const std::wstring& id, InputStateData* data);
 	
 	const std::map< std::wstring, Ref< InputStateData > >& getStateData() const;
@@ -36,6 +42,7 @@ public:
 	virtual bool serialize(ISerializer& s);
 
 private:
+	RefArray< IInputFilter > m_filters;
 	std::map< std::wstring, Ref< InputStateData > > m_stateData;
 };
 
