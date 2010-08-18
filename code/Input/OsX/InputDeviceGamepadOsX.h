@@ -28,8 +28,6 @@ public:
 
 	virtual bool isControlAnalogue(int control) const;
 	
-	virtual int32_t getActiveControlCount() const;
-
 	virtual float getControlValue(int control);
 
 	virtual bool getDefaultControl(InputDefaultControlType controlType, bool analogue, int& control) const;

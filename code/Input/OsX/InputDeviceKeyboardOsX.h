@@ -28,8 +28,6 @@ public:
 	virtual std::wstring getControlName(int control);
 
 	virtual bool isControlAnalogue(int control) const;
-	
-	virtual int32_t getActiveControlCount() const;
 
 	virtual float getControlValue(int control);
 
@@ -46,7 +44,6 @@ public:
 private:
 	IOHIDDeviceRef m_deviceRef;
 	AutoArrayPtr< uint8_t > m_data;
-	int32_t m_controlCount;
 };
 	
 	}

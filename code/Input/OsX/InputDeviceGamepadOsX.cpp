@@ -75,11 +75,6 @@ bool InputDeviceGamepadOsX::isControlAnalogue(int control) const
 	return control < 0;
 }
 
-int32_t InputDeviceGamepadOsX::getActiveControlCount() const
-{
-	return 0;
-}
-
 float InputDeviceGamepadOsX::getControlValue(int control)
 {
 	if (control == -1)
