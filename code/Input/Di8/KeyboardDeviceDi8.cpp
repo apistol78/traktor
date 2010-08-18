@@ -52,11 +52,6 @@ bool KeyboardDeviceDi8::isControlAnalogue(int32_t control) const
 	return false;
 }
 
-int32_t KeyboardDeviceDi8::getActiveControlCount() const
-{
-	return 0;
-}
-
 float KeyboardDeviceDi8::getControlValue(int32_t control)
 {
 	if (!m_connected)

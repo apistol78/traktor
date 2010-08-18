@@ -65,11 +65,6 @@ bool MouseDeviceWin32::isControlAnalogue(int32_t control) const
 	return bool(controlType >= DtButton1 && controlType <= DtButton3);
 }
 
-int32_t MouseDeviceWin32::getActiveControlCount() const
-{
-	return 0;
-}
-
 float MouseDeviceWin32::getControlValue(int32_t control)
 {
 	if (!m_connected)

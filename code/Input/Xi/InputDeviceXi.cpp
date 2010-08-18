@@ -94,11 +94,6 @@ bool InputDeviceXi::isControlAnalogue(int32_t control) const
 	return c_controlConfig[control].analogue;
 }
 
-int32_t InputDeviceXi::getActiveControlCount() const
-{
-	return 0;
-}
-
 float InputDeviceXi::getControlValue(int32_t control)
 {
 	const ControlConfig& config = c_controlConfig[control];
