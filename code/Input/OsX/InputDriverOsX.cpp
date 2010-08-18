@@ -1,6 +1,7 @@
 #include "Core/Log/Log.h"
 #include "Input/OsX/InputDeviceGamepadOsX.h"
 #include "Input/OsX/InputDeviceKeyboardOsX.h"
+#include "Input/OsX/InputDeviceMouseOsX.h"
 #include "Input/OsX/InputDriverOsX.h"
 
 namespace traktor
@@ -68,13 +69,28 @@ bool InputDriverOsX::create()
 		);
 		if (!matchingCFDictRef)
 		{
-			log::error << L"Unable to create input driver; failed to create matching dictionary" << Endl;
+			log::error << L"Unable to create input driver; failed to create keyboard matching dictionary" << Endl;
 			return false;
 		}
 		CFArrayAppendValue((__CFArray*)matchingDictionariesRef, matchingCFDictRef);
 		CFRelease(matchingCFDictRef);
 	}
 
+	// Mouse matching dictionary.
+	{
+		CFDictionaryRef matchingCFDictRef = createMatchingDictionary(
+			kHIDPage_GenericDesktop,
+			kHIDUsage_GD_Mouse
+		);
+		if (!matchingCFDictRef)
+		{
+			log::error << L"Unable to create input driver; failed to create mouse matching dictionary" << Endl;
+			return false;
+		}
+		CFArrayAppendValue((__CFArray*)matchingDictionariesRef, matchingCFDictRef);
+		CFRelease(matchingCFDictRef);
+	}
+	
 	// Gamepad matching dictionary.
 	{
 		CFDictionaryRef matchingCFDictRef = createMatchingDictionary(
@@ -83,7 +99,7 @@ bool InputDriverOsX::create()
 		);
 		if (!matchingCFDictRef)
 		{
-			log::error << L"Unable to create input driver; failed to create matching dictionary" << Endl;
+			log::error << L"Unable to create input driver; failed to create gamepad matching dictionary" << Endl;
 			return false;
 		}
 		CFArrayAppendValue((__CFArray*)matchingDictionariesRef, matchingCFDictRef);
@@ -92,7 +108,6 @@ bool InputDriverOsX::create()
 
 	IOHIDManagerSetDeviceMatchingMultiple(managerRef, matchingDictionariesRef);
 	IOHIDManagerRegisterDeviceMatchingCallback(managerRef, callbackDeviceMatch, this);
-//	IOHIDManagerRegisterDeviceRemovalCallback(tIOHIDManagerRef, Handle_RemovalCallback, &sSharedStickHandler);
 	IOHIDManagerScheduleWithRunLoop(managerRef, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
 	
 	log::info << L"HID manager initialized successful" << Endl;
@@ -142,6 +157,14 @@ void InputDriverOsX::callbackDeviceMatch(void* inContext, IOReturn inResult, voi
 		this_->m_devices.push_back(device);
 		this_->m_devicesChanged = true;
 	}
+	else if (IOHIDDeviceConformsTo(inIOHIDDeviceRef, kHIDPage_GenericDesktop, kHIDUsage_GD_Mouse))
+	{
+		log::info << L"HID device; matching mouse device connected" << Endl;
+		
+		Ref< InputDeviceMouseOsX > device = new InputDeviceMouseOsX(inIOHIDDeviceRef);
+		this_->m_devices.push_back(device);
+		this_->m_devicesChanged = true;
+	}
 	else if (IOHIDDeviceConformsTo(inIOHIDDeviceRef, kHIDPage_GenericDesktop, kHIDUsage_GD_GamePad))
 	{
 		log::info << L"HID device; matching gamepad device connected" << Endl;
@@ -150,7 +173,6 @@ void InputDriverOsX::callbackDeviceMatch(void* inContext, IOReturn inResult, voi
 		this_->m_devices.push_back(device);
 		this_->m_devicesChanged = true;
 	}
-
 }
 
 	}

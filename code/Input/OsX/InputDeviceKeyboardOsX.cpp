@@ -78,6 +78,9 @@ InputDeviceKeyboardOsX::InputDeviceKeyboardOsX(IOHIDDeviceRef deviceRef)
 :	m_deviceRef(deviceRef)
 ,	m_data(new uint8_t [sizeof_array(c_keyControlMap)])
 {
+	if (m_deviceRef)
+		IOHIDDeviceRegisterRemovalCallback(m_deviceRef, &callbackRemoval, this);
+
 	resetState();
 }
 
@@ -96,12 +99,12 @@ bool InputDeviceKeyboardOsX::isConnected() const
 	return m_deviceRef != 0;
 }
 
-int InputDeviceKeyboardOsX::getControlCount()
+int32_t InputDeviceKeyboardOsX::getControlCount()
 {
 	return sizeof_array(c_keyControlMap);
 }
 
-std::wstring InputDeviceKeyboardOsX::getControlName(int control)
+std::wstring InputDeviceKeyboardOsX::getControlName(int32_t control)
 {
 	const KeyControlMap& controlMap = c_keyControlMap[control];
 	
@@ -126,12 +129,12 @@ std::wstring InputDeviceKeyboardOsX::getControlName(int control)
 	return toString(control);
 }
 
-bool InputDeviceKeyboardOsX::isControlAnalogue(int control) const
+bool InputDeviceKeyboardOsX::isControlAnalogue(int32_t control) const
 {
 	return false;
 }
 
-float InputDeviceKeyboardOsX::getControlValue(int control)
+float InputDeviceKeyboardOsX::getControlValue(int32_t control)
 {
 	if (m_data[control])
 		return 1.0f;
@@ -139,7 +142,7 @@ float InputDeviceKeyboardOsX::getControlValue(int control)
 		return 0.0f;
 }
 
-bool InputDeviceKeyboardOsX::getDefaultControl(InputDefaultControlType controlType, bool analogue, int& control) const
+bool InputDeviceKeyboardOsX::getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const
 {
 	if (analogue)
 		return false;
@@ -205,6 +208,12 @@ bool InputDeviceKeyboardOsX::supportRumble() const
 
 void InputDeviceKeyboardOsX::setRumble(const InputRumble& rumble)
 {
+}
+
+void InputDeviceKeyboardOsX::callbackRemoval(void* context, IOReturn result, void* sender)
+{
+	InputDeviceKeyboardOsX* this_ = static_cast< InputDeviceKeyboardOsX* >(context);
+	this_->m_deviceRef = 0;
 }
 
 	}
