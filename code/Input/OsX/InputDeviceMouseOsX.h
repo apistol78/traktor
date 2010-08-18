@@ -1,5 +1,5 @@
-#ifndef traktor_input_InputDeviceGamepadOsX_H
-#define traktor_input_InputDeviceGamepadOsX_H
+#ifndef traktor_input_InputDeviceMouseOsX_H
+#define traktor_input_InputDeviceMouseOsX_H
 
 #include <IOKit/hid/IOHIDLib.h>
 #include "Input/IInputDevice.h"
@@ -9,12 +9,12 @@ namespace traktor
 	namespace input
 	{
 	
-class InputDeviceGamepadOsX : public IInputDevice
+class InputDeviceMouseOsX : public IInputDevice
 {
 	T_RTTI_CLASS;
 	
 public:
-	InputDeviceGamepadOsX(IOHIDDeviceRef deviceRef);
+	InputDeviceMouseOsX(IOHIDDeviceRef deviceRef);
 
 	virtual std::wstring getName() const;
 
@@ -42,8 +42,8 @@ public:
 	
 private:
 	IOHIDDeviceRef m_deviceRef;
-	uint8_t m_button[14];
-	float m_axis[3][2];
+	uint8_t m_button[4];
+	int32_t m_axis[2];
 	
 	static void callbackRemoval(void* context, IOReturn result, void* sender);
 };
@@ -51,4 +51,4 @@ private:
 	}
 }
 
-#endif	// traktor_input_InputDeviceGamepadOsX_H
+#endif	// traktor_input_InputDeviceMouseOsX_H

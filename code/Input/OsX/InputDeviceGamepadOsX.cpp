@@ -23,6 +23,9 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.input.InputDeviceGamepadOsX", InputDeviceGamepa
 InputDeviceGamepadOsX::InputDeviceGamepadOsX(IOHIDDeviceRef deviceRef)
 :	m_deviceRef(deviceRef)
 {
+	if (m_deviceRef)
+		IOHIDDeviceRegisterRemovalCallback(m_deviceRef, &callbackRemoval, this);
+
 	resetState();
 }
 
@@ -41,12 +44,12 @@ bool InputDeviceGamepadOsX::isConnected() const
 	return m_deviceRef != 0;
 }
 
-int InputDeviceGamepadOsX::getControlCount()
+int32_t InputDeviceGamepadOsX::getControlCount()
 {
 	return 0;
 }
 
-std::wstring InputDeviceGamepadOsX::getControlName(int control)
+std::wstring InputDeviceGamepadOsX::getControlName(int32_t control)
 {
 	switch (control)
 	{
@@ -70,12 +73,12 @@ std::wstring InputDeviceGamepadOsX::getControlName(int control)
 	return L"Button " + toString(control);
 }
 
-bool InputDeviceGamepadOsX::isControlAnalogue(int control) const
+bool InputDeviceGamepadOsX::isControlAnalogue(int32_t control) const
 {
 	return control < 0;
 }
 
-float InputDeviceGamepadOsX::getControlValue(int control)
+float InputDeviceGamepadOsX::getControlValue(int32_t control)
 {
 	if (control == -1)
 		return m_axis[0][0];
@@ -99,7 +102,7 @@ float InputDeviceGamepadOsX::getControlValue(int control)
 		return 0.0f;
 }
 
-bool InputDeviceGamepadOsX::getDefaultControl(InputDefaultControlType controlType, bool analogue, int& control) const
+bool InputDeviceGamepadOsX::getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const
 {
 	if (analogue)
 	{
@@ -288,6 +291,12 @@ bool InputDeviceGamepadOsX::supportRumble() const
 
 void InputDeviceGamepadOsX::setRumble(const InputRumble& rumble)
 {
+}
+
+void InputDeviceGamepadOsX::callbackRemoval(void* context, IOReturn result, void* sender)
+{
+	InputDeviceGamepadOsX* this_ = static_cast< InputDeviceGamepadOsX* >(context);
+	this_->m_deviceRef = 0;
 }
 
 	}
