@@ -36,13 +36,16 @@ bool InputMapping::create(
 	const std::map< std::wstring, Ref< IInputSourceData > >& sourceDataMap = sourceData->getSourceData();
 	for (std::map< std::wstring, Ref< IInputSourceData > >::const_iterator i = sourceDataMap.begin(); i != sourceDataMap.end(); ++i)
 	{
+		if (!i->second)
+			continue;
+	
 		Ref< IInputSource > source = i->second->createInstance(m_deviceControlManager);
 		if (!source)
 		{
 			log::error << L"Unable to create source instance \"" << i->first << L"\"" << Endl;
 			return false;
 		}
-
+		
 		m_sources[i->first] = source;
 	}
 	
@@ -51,8 +54,10 @@ bool InputMapping::create(
 	const std::map< std::wstring, Ref< InputStateData > >& stateDataMap = stateData->getStateData();
 	for (std::map< std::wstring, Ref< InputStateData > >::const_iterator i = stateDataMap.begin(); i != stateDataMap.end(); ++i)
 	{
+		if (!i->second)
+			continue;
+	
 		Ref< InputState > state = new InputState();
-
 		if (!state->create(i->second))
 		{
 			log::error << L"Unable to create state \"" << i->first << L"\"" << Endl;

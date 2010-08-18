@@ -46,11 +46,6 @@ bool ReplayInputDevice::isControlAnalogue(int32_t control) const
 	return m_inputDevice->isControlAnalogue(control);
 }
 
-int32_t ReplayInputDevice::getActiveControlCount() const
-{
-	return 0;
-}
-
 float ReplayInputDevice::getControlValue(int32_t control)
 {
 	return m_inputScript->getInputValue(m_frame, control);

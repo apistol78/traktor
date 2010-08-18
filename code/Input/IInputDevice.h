@@ -78,15 +78,6 @@ public:
 	 */
 	virtual bool isControlAnalogue(int32_t control) const = 0;
 
-	/*! \brief Get number of active controls.
-	 *
-	 * Controls are considered active when they
-	 * differ from idle state, ie button not pressed etc.
-	 *
-	 * \return Number of active controls.
-	 */
-	virtual int32_t getActiveControlCount() const = 0;
-
 	/*! \brief Get current value of a control.
 	 *
 	 * \param control Control identifier.

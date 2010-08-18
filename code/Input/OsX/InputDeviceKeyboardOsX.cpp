@@ -61,12 +61,13 @@ c_keyControlMap[] =
 	{ DtKeyEscape, kHIDUsage_KeyboardEscape },
 	{ DtKeyLeftShift, kHIDUsage_KeyboardLeftShift },
 	{ DtKeyLeftControl, kHIDUsage_KeyboardLeftControl },
-	{ DtKeyLeftMenu, kHIDUsage_KeyboardMenu },
+	{ DtKeyLeftMenu, kHIDUsage_KeyboardLeftGUI },
 	{ DtKeyLeftWin, kHIDUsage_KeyboardLeftAlt },
 	{ DtKeyRightShift, kHIDUsage_KeyboardRightShift },
-	{ DtKeyRightMenu, kHIDUsage_KeyboardMenu },
+	{ DtKeyRightMenu, kHIDUsage_KeyboardRightGUI },
 	{ DtKeyRightWin, kHIDUsage_KeyboardRightAlt },
-	{ DtKeyReturn, kHIDUsage_KeyboardReturnOrEnter }
+	{ DtKeyReturn, kHIDUsage_KeyboardReturnOrEnter },
+	{ DtKeyBack, kHIDUsage_KeyboardDeleteOrBackspace }
 };
 
 		}
@@ -76,7 +77,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.input.InputDeviceKeyboardOsX", InputDeviceKeybo
 InputDeviceKeyboardOsX::InputDeviceKeyboardOsX(IOHIDDeviceRef deviceRef)
 :	m_deviceRef(deviceRef)
 ,	m_data(new uint8_t [sizeof_array(c_keyControlMap)])
-,	m_controlCount(0)
 {
 	resetState();
 }
@@ -131,11 +131,6 @@ bool InputDeviceKeyboardOsX::isControlAnalogue(int control) const
 	return false;
 }
 
-int32_t InputDeviceKeyboardOsX::getActiveControlCount() const
-{
-	return m_controlCount;
-}
-
 float InputDeviceKeyboardOsX::getControlValue(int control)
 {
 	if (m_data[control])
@@ -164,7 +159,8 @@ bool InputDeviceKeyboardOsX::getDefaultControl(InputDefaultControlType controlTy
 
 void InputDeviceKeyboardOsX::resetState()
 {
-	m_controlCount = 0;
+	const uint32_t dataSize = sizeof_array(c_keyControlMap) * sizeof(uint8_t);
+	std::memset(m_data.ptr(), 0, dataSize);
 }
 
 void InputDeviceKeyboardOsX::readState()
@@ -200,16 +196,6 @@ void InputDeviceKeyboardOsX::readState()
 			}
 		}
 	}
-	
-	m_controlCount = 0;
-	for (uint32_t i = 0; i < sizeof_array(c_keyControlMap); ++i)
-	{
-		if (m_data[i])
-			m_controlCount++;
-	}
-	
-	// \fixme Which key is stuck?
-	m_controlCount--;
 }
 
 bool InputDeviceKeyboardOsX::supportRumble() const

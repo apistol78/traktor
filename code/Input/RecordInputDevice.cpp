@@ -45,11 +45,6 @@ bool RecordInputDevice::isControlAnalogue(int32_t control) const
 	return m_inputDevice->isControlAnalogue(control);
 }
 
-int32_t RecordInputDevice::getActiveControlCount() const
-{
-	return 0;
-}
-
 float RecordInputDevice::getControlValue(int32_t control)
 {
 	float value = m_inputDevice->getControlValue(control);
