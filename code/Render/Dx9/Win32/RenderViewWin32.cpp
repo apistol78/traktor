@@ -85,6 +85,7 @@ bool RenderViewWin32::reset(const RenderViewDefaultDesc& desc)
 	d3dPresent.BackBufferWidth = desc.displayMode.width;
 	d3dPresent.BackBufferHeight = desc.displayMode.height;
 	d3dPresent.MultiSampleType = c_d3dMultiSample[desc.multiSample];
+	d3dPresent.PresentationInterval = desc.waitVBlank ? D3DPRESENT_INTERVAL_DEFAULT : D3DPRESENT_INTERVAL_IMMEDIATE;
 
 	if (!m_renderSystem->resetPrimary(d3dPresent, m_d3dDepthStencilFormat))
 		return false;
