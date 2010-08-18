@@ -14,60 +14,61 @@ struct KeyControlMap
 {
 	InputDefaultControlType control;
 	uint32_t usage;
+	const wchar_t* name;
 }
 c_keyControlMap[] =
 {
-	{ DtKeyUp, kHIDUsage_KeyboardUpArrow },
-	{ DtKeyDown, kHIDUsage_KeyboardDownArrow },
-	{ DtKeyLeft, kHIDUsage_KeyboardLeftArrow },
-	{ DtKeyRight, kHIDUsage_KeyboardRightArrow },
-	{ DtKeyA, kHIDUsage_KeyboardA },
-	{ DtKeyB, kHIDUsage_KeyboardB },
-	{ DtKeyC, kHIDUsage_KeyboardC },
-	{ DtKeyD, kHIDUsage_KeyboardD },
-	{ DtKeyE, kHIDUsage_KeyboardE },
-	{ DtKeyF, kHIDUsage_KeyboardF },
-	{ DtKeyG, kHIDUsage_KeyboardG },
-	{ DtKeyH, kHIDUsage_KeyboardH },
-	{ DtKeyI, kHIDUsage_KeyboardI },
-	{ DtKeyJ, kHIDUsage_KeyboardJ },
-	{ DtKeyK, kHIDUsage_KeyboardK },
-	{ DtKeyL, kHIDUsage_KeyboardL },
-	{ DtKeyM, kHIDUsage_KeyboardM },
-	{ DtKeyN, kHIDUsage_KeyboardN },
-	{ DtKeyO, kHIDUsage_KeyboardO },
-	{ DtKeyP, kHIDUsage_KeyboardP },
-	{ DtKeyQ, kHIDUsage_KeyboardQ },
-	{ DtKeyR, kHIDUsage_KeyboardR },
-	{ DtKeyS, kHIDUsage_KeyboardS },
-	{ DtKeyT, kHIDUsage_KeyboardT },
-	{ DtKeyU, kHIDUsage_KeyboardU },
-	{ DtKeyV, kHIDUsage_KeyboardV },
-	{ DtKeyW, kHIDUsage_KeyboardW },
-	{ DtKeyX, kHIDUsage_KeyboardX },
-	{ DtKeyY, kHIDUsage_KeyboardY },
-	{ DtKeyZ, kHIDUsage_KeyboardZ },
-	{ DtKey0, kHIDUsage_Keyboard0 },
-	{ DtKey1, kHIDUsage_Keyboard1 },
-	{ DtKey2, kHIDUsage_Keyboard2 },
-	{ DtKey3, kHIDUsage_Keyboard3 },
-	{ DtKey4, kHIDUsage_Keyboard4 },
-	{ DtKey5, kHIDUsage_Keyboard5 },
-	{ DtKey6, kHIDUsage_Keyboard6 },
-	{ DtKey7, kHIDUsage_Keyboard7 },
-	{ DtKey8, kHIDUsage_Keyboard8 },
-	{ DtKey9, kHIDUsage_Keyboard9 },
-	{ DtKeySpace, kHIDUsage_KeyboardSpacebar },
-	{ DtKeyEscape, kHIDUsage_KeyboardEscape },
-	{ DtKeyLeftShift, kHIDUsage_KeyboardLeftShift },
-	{ DtKeyLeftControl, kHIDUsage_KeyboardLeftControl },
-	{ DtKeyLeftMenu, kHIDUsage_KeyboardLeftGUI },
-	{ DtKeyLeftWin, kHIDUsage_KeyboardLeftAlt },
-	{ DtKeyRightShift, kHIDUsage_KeyboardRightShift },
-	{ DtKeyRightMenu, kHIDUsage_KeyboardRightGUI },
-	{ DtKeyRightWin, kHIDUsage_KeyboardRightAlt },
-	{ DtKeyReturn, kHIDUsage_KeyboardReturnOrEnter },
-	{ DtKeyBack, kHIDUsage_KeyboardDeleteOrBackspace }
+	{ DtKeyUp, kHIDUsage_KeyboardUpArrow, L"Up" },
+	{ DtKeyDown, kHIDUsage_KeyboardDownArrow, L"Down" },
+	{ DtKeyLeft, kHIDUsage_KeyboardLeftArrow, L"Left" },
+	{ DtKeyRight, kHIDUsage_KeyboardRightArrow, L"Right" },
+	{ DtKeyA, kHIDUsage_KeyboardA, L"A" },
+	{ DtKeyB, kHIDUsage_KeyboardB, L"B" },
+	{ DtKeyC, kHIDUsage_KeyboardC, L"C" },
+	{ DtKeyD, kHIDUsage_KeyboardD, L"D" },
+	{ DtKeyE, kHIDUsage_KeyboardE, L"E" },
+	{ DtKeyF, kHIDUsage_KeyboardF, L"F" },
+	{ DtKeyG, kHIDUsage_KeyboardG, L"G" },
+	{ DtKeyH, kHIDUsage_KeyboardH, L"H" },
+	{ DtKeyI, kHIDUsage_KeyboardI, L"I" },
+	{ DtKeyJ, kHIDUsage_KeyboardJ, L"J" },
+	{ DtKeyK, kHIDUsage_KeyboardK, L"K" },
+	{ DtKeyL, kHIDUsage_KeyboardL, L"L" },
+	{ DtKeyM, kHIDUsage_KeyboardM, L"M" },
+	{ DtKeyN, kHIDUsage_KeyboardN, L"N" },
+	{ DtKeyO, kHIDUsage_KeyboardO, L"O" },
+	{ DtKeyP, kHIDUsage_KeyboardP, L"P" },
+	{ DtKeyQ, kHIDUsage_KeyboardQ, L"Q" },
+	{ DtKeyR, kHIDUsage_KeyboardR, L"R" },
+	{ DtKeyS, kHIDUsage_KeyboardS, L"S" },
+	{ DtKeyT, kHIDUsage_KeyboardT, L"T" },
+	{ DtKeyU, kHIDUsage_KeyboardU, L"U" },
+	{ DtKeyV, kHIDUsage_KeyboardV, L"V" },
+	{ DtKeyW, kHIDUsage_KeyboardW, L"W" },
+	{ DtKeyX, kHIDUsage_KeyboardX, L"X" },
+	{ DtKeyY, kHIDUsage_KeyboardY, L"Y" },
+	{ DtKeyZ, kHIDUsage_KeyboardZ, L"Z" },
+	{ DtKey0, kHIDUsage_Keyboard0, L"0" },
+	{ DtKey1, kHIDUsage_Keyboard1, L"1" },
+	{ DtKey2, kHIDUsage_Keyboard2, L"2" },
+	{ DtKey3, kHIDUsage_Keyboard3, L"3" },
+	{ DtKey4, kHIDUsage_Keyboard4, L"4" },
+	{ DtKey5, kHIDUsage_Keyboard5, L"5" },
+	{ DtKey6, kHIDUsage_Keyboard6, L"6" },
+	{ DtKey7, kHIDUsage_Keyboard7, L"7" },
+	{ DtKey8, kHIDUsage_Keyboard8, L"8" },
+	{ DtKey9, kHIDUsage_Keyboard9, L"9" },
+	{ DtKeySpace, kHIDUsage_KeyboardSpacebar, L"Space" },
+	{ DtKeyEscape, kHIDUsage_KeyboardEscape, L"Escape" },
+	{ DtKeyLeftShift, kHIDUsage_KeyboardLeftShift, L"Left shift" },
+	{ DtKeyLeftControl, kHIDUsage_KeyboardLeftControl, L"Left ctrl" },
+	{ DtKeyLeftMenu, kHIDUsage_KeyboardLeftGUI, L"Left cmd" },
+	{ DtKeyLeftWin, kHIDUsage_KeyboardLeftAlt, L"Left alt" },
+	{ DtKeyRightShift, kHIDUsage_KeyboardRightShift, L"Right shift" },
+	{ DtKeyRightMenu, kHIDUsage_KeyboardRightGUI, L"Right cmd" },
+	{ DtKeyRightWin, kHIDUsage_KeyboardRightAlt, L"Right alt" },
+	{ DtKeyReturn, kHIDUsage_KeyboardReturnOrEnter, L"Enter" },
+	{ DtKeyBack, kHIDUsage_KeyboardDeleteOrBackspace, L"Delete" }
 };
 
 		}
@@ -107,26 +108,7 @@ int32_t InputDeviceKeyboardOsX::getControlCount()
 std::wstring InputDeviceKeyboardOsX::getControlName(int32_t control)
 {
 	const KeyControlMap& controlMap = c_keyControlMap[control];
-	
-	CFArrayRef elements = IOHIDDeviceCopyMatchingElements(m_deviceRef, NULL, kIOHIDOptionsTypeNone);
-	for (CFIndex i = 0; i < CFArrayGetCount(elements); ++i)
-	{
-		IOHIDElementRef e = (IOHIDElementRef)CFArrayGetValueAtIndex(elements, i);
-		if (!e)
-			continue;
-			
-		if (IOHIDElementGetUsage(e) == controlMap.usage)
-		{
-			CFStringRef name = IOHIDElementGetName(e);
-			
-			// Get c-style string.
-			const char* cname = CFStringGetCStringPtr(name, kCFStringEncodingUTF8);
-			if (cname)
-				return mbstows(cname);
-		}
-	}
-
-	return toString(control);
+	return controlMap.name;
 }
 
 bool InputDeviceKeyboardOsX::isControlAnalogue(int32_t control) const
