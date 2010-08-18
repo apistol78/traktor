@@ -52,11 +52,6 @@ bool MouseDeviceDi8::isControlAnalogue(int32_t control) const
 	return false;
 }
 
-int32_t MouseDeviceDi8::getActiveControlCount() const
-{
-	return 0;
-}
-
 float MouseDeviceDi8::getControlValue(int32_t control)
 {
 	if (!m_connected)

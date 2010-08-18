@@ -36,8 +36,6 @@ public:
 
 	virtual bool isControlAnalogue(int32_t control) const;
 
-	virtual int32_t getActiveControlCount() const;
-
 	virtual float getControlValue(int32_t control);
 
 	virtual bool getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const;
@@ -55,7 +53,6 @@ private:
 
 	bool m_connected;
 	uint8_t m_keyStates[sizeof_array(c_vkControlKeys)];
-	int32_t m_keyCount;
 };
 
 	}

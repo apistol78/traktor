@@ -11,7 +11,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.input.KeyboardDeviceWin32", KeyboardDeviceWin32
 
 KeyboardDeviceWin32::KeyboardDeviceWin32()
 :	m_connected(false)
-,	m_keyCount(0)
 {
 }
 
@@ -60,11 +59,6 @@ bool KeyboardDeviceWin32::isControlAnalogue(int32_t /*control*/) const
 	return false;
 }
 
-int32_t KeyboardDeviceWin32::getActiveControlCount() const
-{
-	return m_keyCount;
-}
-
 float KeyboardDeviceWin32::getControlValue(int32_t control)
 {
 	if (m_connected)
@@ -85,14 +79,12 @@ bool KeyboardDeviceWin32::getDefaultControl(InputDefaultControlType controlType,
 void KeyboardDeviceWin32::resetState()
 {
 	std::memset(m_keyStates, 0, sizeof(m_keyStates));
-	m_keyCount = 0;
 }
 
 void KeyboardDeviceWin32::readState()
 {
 	if (m_connected)
 	{
-		m_keyCount = 0;
 		for (int32_t i = 0; i < sizeof_array(c_vkControlKeys); ++i)
 		{
 			if (c_vkControlKeys[i] == 0)
@@ -100,10 +92,7 @@ void KeyboardDeviceWin32::readState()
 
 			SHORT keyState = GetAsyncKeyState(c_vkControlKeys[i]);
 			if (keyState & 0x8000)
-			{
 				m_keyStates[i] = 0xff;
-				m_keyCount++;
-			}
 			else
 				m_keyStates[i] = 0x00;
 		}

@@ -80,11 +80,6 @@ bool JoystickDeviceDi8::isControlAnalogue(int32_t control) const
 	return m_controlInfo[control].analogue;
 }
 
-int32_t JoystickDeviceDi8::getActiveControlCount() const
-{
-	return 0;
-}
-
 float JoystickDeviceDi8::getControlValue(int32_t control)
 {
 	if (!m_connected)
