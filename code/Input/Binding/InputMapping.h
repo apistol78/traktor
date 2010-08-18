@@ -19,6 +19,7 @@ namespace traktor
 	{
 
 class DeviceControlManager;
+class IInputFilter;
 class IInputSource;
 class InputMappingSourceData;
 class InputMappingStateData;
@@ -92,6 +93,7 @@ public:
 private:
 	Ref< DeviceControlManager > m_deviceControlManager;
 	std::map< std::wstring, Ref< IInputSource > > m_sources;
+	RefArray< IInputFilter > m_filters;
 	std::map< std::wstring, Ref< InputState > > m_states;
 	InputValueSet m_valueSet;
 	float m_T;

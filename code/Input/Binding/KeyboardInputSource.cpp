@@ -50,9 +50,6 @@ float KeyboardInputSource::read(float T, float dT)
 
 	for (RefArray< DeviceControl >::const_iterator i = m_deviceControls.begin(); i != m_deviceControls.end(); ++i)
 	{
-		if (!(*i)->getDevice() || (*i)->getDevice()->getActiveControlCount() != m_deviceControls.size())
-			return 0.0f;
-
 		if (!asBoolean((*i)->getCurrentValue()))
 			return 0.0f;
 	}

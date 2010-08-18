@@ -1,5 +1,6 @@
 #include "Core/Log/Log.h"
 #include "Input/Binding/DeviceControlManager.h"
+#include "Input/Binding/IInputFilter.h"
 #include "Input/Binding/IInputSource.h"
 #include "Input/Binding/IInputSourceData.h"
 #include "Input/Binding/InputMapping.h"
@@ -29,6 +30,7 @@ bool InputMapping::create(
 	m_deviceControlManager = new DeviceControlManager(inputSystem);
 
 	m_sources.clear();
+	m_filters.clear();
 	m_states.clear();
 	
 	const std::map< std::wstring, Ref< IInputSourceData > >& sourceDataMap = sourceData->getSourceData();
@@ -43,6 +45,8 @@ bool InputMapping::create(
 
 		m_sources[i->first] = source;
 	}
+	
+	m_filters = stateData->getFilters();
 
 	const std::map< std::wstring, Ref< InputStateData > >& stateDataMap = stateData->getStateData();
 	for (std::map< std::wstring, Ref< InputStateData > >::const_iterator i = stateDataMap.begin(); i != stateDataMap.end(); ++i)
@@ -79,6 +83,10 @@ void InputMapping::update(float dT)
 		float value = i->second->read(m_T, dT);
 		m_valueSet.set(i->first, value);
 	}
+	
+	// Filter values.
+	for (RefArray< IInputFilter >::iterator i = m_filters.begin(); i != m_filters.end(); ++i)
+		(*i)->evaluate(m_valueSet);
 		
 	// Update states.
 	for (std::map< std::wstring, Ref< InputState > >::iterator i = m_states.begin(); i != m_states.end(); ++i)
