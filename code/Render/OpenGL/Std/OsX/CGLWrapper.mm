@@ -13,11 +13,12 @@ struct WrContext
 {
 	NSView* view;
 	NSOpenGLContext* context;
+	bool waitVBlank;
 };
 		
 		}
 
-void* cglwCreateContext(void* nativeWindowHandle, void* sharedContext, int depthBits, int stencilBits, int multisample, bool waitVBlank)
+void* cglwCreateContext(void* nativeWindowHandle, void* sharedContext, int depthBits, int stencilBits, int multisample)
 {
 	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 
@@ -35,12 +36,10 @@ void* cglwCreateContext(void* nativeWindowHandle, void* sharedContext, int depth
 	NSOpenGLContext* nsshctx = shwrc ? shwrc->context : 0;
 	NSOpenGLContext* nsctx = [[NSOpenGLContext alloc] initWithFormat: nspf shareContext: nsshctx];
 	
-	int32_t param = waitVBlank ? 1 : 0;
-	[nsctx setValues: &param forParameter: NSOpenGLCPSwapInterval];
-	
 	WrContext* wrc = new WrContext();
 	wrc->view = (NSView*)nativeWindowHandle;
 	wrc->context = nsctx;
+	wrc->waitVBlank = false;
 
 	[pool release];	
 
@@ -96,11 +95,19 @@ bool cglwMakeCurrent(void* context)
 	return true;
 }
 
-void cglwSwapBuffers(void* context)
+void cglwSwapBuffers(void* context, bool waitVBlank)
 {
 	WrContext* wrc = (WrContext*)context;
 	if (wrc)
+	{
+		if (waitVBlank != wrc->waitVBlank)
+		{
+			int32_t param = waitVBlank ? 1 : 0;
+			[wrc->context setValues: &param forParameter: NSOpenGLCPSwapInterval];
+			wrc->waitVBlank = waitVBlank;
+		}
 		[wrc->context flushBuffer];
+	}
 }
 	
 	}

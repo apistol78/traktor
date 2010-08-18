@@ -82,6 +82,8 @@ RenderViewOpenGL::RenderViewOpenGL(
 		m_primaryTarget = new RenderTargetSetOpenGL(m_context);
 		m_primaryTarget->create(m_primaryTargetDesc);
 	}
+	
+	m_waitVBlank = desc.waitVBlank;
 }
 
 RenderViewOpenGL::~RenderViewOpenGL()
@@ -118,6 +120,8 @@ bool RenderViewOpenGL::reset(const RenderViewDefaultDesc& desc)
 
 	m_primaryTarget = new RenderTargetSetOpenGL(m_context);
 	m_primaryTarget->create(m_primaryTargetDesc);
+	
+	m_waitVBlank = desc.waitVBlank;
 
 	return true;
 }
@@ -419,8 +423,7 @@ void RenderViewOpenGL::end()
 
 void RenderViewOpenGL::present()
 {
-	// Swap buffers.
-	m_context->swapBuffers();
+	m_context->swapBuffers(m_waitVBlank);
 	m_context->leave();
 
 	// Clean pending resources.

@@ -36,7 +36,7 @@ public:
 
 	void update();
 
-	void swapBuffers();
+	void swapBuffers(bool waitVBlank);
 
 	void destroy();
 	
