@@ -93,12 +93,12 @@ void ContextOpenGL::update()
 #endif
 }
 
-void ContextOpenGL::swapBuffers()
+void ContextOpenGL::swapBuffers(bool waitVBlank)
 {
 #if defined(_WIN32)
 	SwapBuffers(m_hDC);
 #elif defined(__APPLE__)
-	cglwSwapBuffers(m_context);
+	cglwSwapBuffers(m_context, waitVBlank);
 #else	// LINUX
 	glXSwapBuffers(m_display, m_window);
 #endif

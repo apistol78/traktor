@@ -115,6 +115,8 @@ private:
 	
 	RenderTargetSetCreateDesc m_primaryTargetDesc;
 	Ref< RenderTargetSetOpenGL > m_primaryTarget;
+	
+	bool m_waitVBlank;
 
 	std::stack< RenderTargetOpenGL* > m_renderTargetStack;
 	Ref< VertexBufferOpenGL > m_currentVertexBuffer;
