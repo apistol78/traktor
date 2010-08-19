@@ -8,7 +8,7 @@ namespace traktor
 	{
 		namespace
 		{
-		
+
 int32_t getElementValue(IOHIDDeviceRef deviceRef, IOHIDElementRef elementRef)
 {
 	IOHIDValueRef valueRef = 0;
@@ -16,7 +16,25 @@ int32_t getElementValue(IOHIDDeviceRef deviceRef, IOHIDElementRef elementRef)
 	if (!valueRef)
 		return 0;
 		
-	return (int32_t)IOHIDValueGetIntegerValue(valueRef);
+	int32_t value = (int32_t)IOHIDValueGetIntegerValue(valueRef);
+	return value;
+}
+
+int32_t getElementValue(IOHIDDeviceRef deviceRef, IOHIDElementRef elementRef, uint64_t& lastTimeStamp)
+{
+	IOHIDValueRef valueRef = 0;
+	IOHIDDeviceGetValue(deviceRef, elementRef, &valueRef);
+	if (!valueRef)
+		return 0;
+		
+	uint64_t timeStamp = IOHIDValueGetTimeStamp(valueRef);
+	if (timeStamp == lastTimeStamp)
+		return 0;
+		
+	int32_t value = (int32_t)IOHIDValueGetIntegerValue(valueRef);
+	lastTimeStamp = timeStamp;
+	
+	return value;
 }
 
 		}
@@ -28,6 +46,8 @@ InputDeviceMouseOsX::InputDeviceMouseOsX(IOHIDDeviceRef deviceRef)
 {
 	if (m_deviceRef)
 		IOHIDDeviceRegisterRemovalCallback(m_deviceRef, &callbackRemoval, this);
+		
+	std::memset(m_timeStamps, 0, sizeof(m_timeStamps));
 
 	resetState();
 }
@@ -60,8 +80,10 @@ std::wstring InputDeviceMouseOsX::getControlName(int32_t control)
 		return L"Axis X";
 	case -2:
 		return L"Axis Y";
+	case -3:
+		return L"Wheel";
 	}
-	return L"Button " + toString(control);
+	return L"Button " + toString(1 + control);
 }
 
 bool InputDeviceMouseOsX::isControlAnalogue(int32_t control) const
@@ -75,6 +97,8 @@ float InputDeviceMouseOsX::getControlValue(int32_t control)
 		return m_axis[0];
 	else if (control == -2)
 		return m_axis[1];
+	else if (control == -3)
+		return m_axis[2];
 	else if (control >= 0 && control < sizeof_array(m_button))
 		return m_button[control] ? 1.0f : 0.0f;
 	else
@@ -93,6 +117,10 @@ bool InputDeviceMouseOsX::getDefaultControl(InputDefaultControlType controlType,
 		
 		case DtAxisY:
 			control = -2;
+			break;
+			
+		case DtAxisZ:
+			control = -3;
 			break;
 
 		default:
@@ -135,8 +163,7 @@ void InputDeviceMouseOsX::resetState()
 
 void InputDeviceMouseOsX::readState()
 {
-	m_axis[0] =
-	m_axis[1] = 0;
+	resetState();
 
 	if (!m_deviceRef)
 		return;
@@ -153,19 +180,41 @@ void InputDeviceMouseOsX::readState()
 		uint32_t usage = (uint32_t)IOHIDElementGetUsage(e);
 		if (usage == ~0UL)
 			continue;
+			
+		uint32_t page = (uint32_t)IOHIDElementGetUsagePage(e);
 		
-		if (usage == kHIDUsage_GD_X)
-			m_axis[0] = getElementValue(m_deviceRef, e) / 4;
-		else if (usage == kHIDUsage_GD_Y)
-			m_axis[1] = getElementValue(m_deviceRef, e) / 4;
-		else if (usage == kHIDUsage_Button_1)
-			m_button[0] = bool(getElementValue(m_deviceRef, e) != 0);
-		else if (usage == kHIDUsage_Button_2)
-			m_button[1] = bool(getElementValue(m_deviceRef, e) != 0);
-		else if (usage == kHIDUsage_Button_3)
-			m_button[2] = bool(getElementValue(m_deviceRef, e) != 0);
-		else if (usage == kHIDUsage_Button_4)
-			m_button[3] = bool(getElementValue(m_deviceRef, e) != 0);
+		if (page == kHIDPage_GenericDesktop)
+		{
+			if (usage == kHIDUsage_GD_X)
+				m_axis[0] = getElementValue(m_deviceRef, e, m_timeStamps[0]) * 2.0f;
+			else if (usage == kHIDUsage_GD_Y)
+				m_axis[1] = getElementValue(m_deviceRef, e, m_timeStamps[1]) * 2.0f;
+			else if (usage == kHIDUsage_GD_Wheel)
+				m_axis[2] = getElementValue(m_deviceRef, e, m_timeStamps[2]);
+		}
+		else if (page == kHIDPage_Button)
+		{
+			if (usage == kHIDUsage_Button_1)
+			{
+				int32_t value = getElementValue(m_deviceRef, e);
+				m_button[0] |= bool(value != 0);
+			}
+			else if (usage == kHIDUsage_Button_2)
+			{
+				int32_t value = getElementValue(m_deviceRef, e);
+				m_button[1] |= bool(value != 0);
+			}
+			else if (usage == kHIDUsage_Button_3)
+			{
+				int32_t value = getElementValue(m_deviceRef, e);
+				m_button[2] |= bool(value != 0);
+			}
+			else if (usage == kHIDUsage_Button_4)
+			{
+				int32_t value = getElementValue(m_deviceRef, e);
+				m_button[3] |= bool(value != 0);
+			}
+		}
 	}
 }
 
