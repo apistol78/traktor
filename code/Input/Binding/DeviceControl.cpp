@@ -14,6 +14,26 @@ std::wstring DeviceControl::getControlName() const
 		return L"";
 }
 
+InputCategory DeviceControl::getCategory() const
+{
+	return m_category;
+}
+
+InputDefaultControlType DeviceControl::getControlType() const
+{
+	return m_controlType;
+}
+	
+bool DeviceControl::isAnalogue() const
+{
+	return m_analogue;
+}
+	
+int32_t DeviceControl::getIndex() const
+{
+	return m_index;
+}
+
 IInputDevice* DeviceControl::getDevice() const
 {
 	return m_device;

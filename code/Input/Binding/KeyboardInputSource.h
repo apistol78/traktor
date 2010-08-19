@@ -32,6 +32,8 @@ public:
 		DeviceControlManager* deviceControlManager
 	);
 	
+	virtual ~KeyboardInputSource();
+	
 	virtual std::wstring getDescription() const;
 
 	virtual float read(float T, float dT);
