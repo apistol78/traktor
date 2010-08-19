@@ -48,7 +48,7 @@ const MemberEnum< InputDefaultControlType >::Key g_InputDefaultControlType_Keys[
 	{ L"DtReserved1", DtReserved1 },
 	{ L"DtAxisX", DtAxisX },
 	{ L"DtAxisY", DtAxisY },
-	{ L"DtReserved2", DtReserved2 },
+	{ L"DtAxisZ", DtAxisZ },
 	{ L"DtReserved3", DtReserved3 },
 	{ L"DtReserved4", DtReserved4 },
 	{ L"DtReserved5", DtReserved5 },

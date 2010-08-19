@@ -47,8 +47,8 @@ enum InputDefaultControlType
 	// Relative axises, ex mouse axises.
 	DtAxisX				= 30,
 	DtAxisY				= 31,
+	DtAxisZ				= 32,
 
-	DtReserved2			= 32,
 	DtReserved3			= 33,
 	DtReserved4			= 34,
 	DtReserved5			= 35,
