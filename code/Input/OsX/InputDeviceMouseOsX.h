@@ -42,8 +42,9 @@ public:
 	
 private:
 	IOHIDDeviceRef m_deviceRef;
-	uint8_t m_button[4];
-	int32_t m_axis[2];
+	bool m_button[4];
+	int32_t m_axis[3];
+	uint64_t m_timeStamps[3];
 	
 	static void callbackRemoval(void* context, IOReturn result, void* sender);
 };
