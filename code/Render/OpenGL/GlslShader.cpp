@@ -132,6 +132,9 @@ std::wstring GlslShader::getGeneratedShader()
 	ss << L"// THIS SHADER IS AUTOMATICALLY GENERATED! DO NOT EDIT!" << Endl;
 	ss << Endl;
 
+	ss << L"#version 120" << Endl;
+	ss << Endl;
+
 #if defined(T_OPENGL_ES2)
 	ss << L"precision mediump float;" << Endl;
 	ss << Endl;
