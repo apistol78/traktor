@@ -137,7 +137,7 @@ bool RenderSystemOpenGL::create(const RenderSystemCreateDesc& desc)
 #elif defined(__APPLE__)
 
 	void* resourceContext = cglwCreateContext(0, 0, 0, 0, 0);
-	m_resourceContext = new ContextOpenGL(resourceContext, false);
+	m_resourceContext = new ContextOpenGL(resourceContext);
 
 	m_title = desc.windowTitle ? desc.windowTitle : L"Traktor (OpenGL)";
 
@@ -481,7 +481,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 	if (!glcontext)
 		return 0;
 
-	Ref< ContextOpenGL > context = new ContextOpenGL(glcontext, desc.fullscreen);
+	Ref< ContextOpenGL > context = new ContextOpenGL(glcontext);
 
 	return new RenderViewOpenGL(desc, context, m_resourceContext, m_windowHandle);
 
@@ -555,7 +555,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewEmbedded
 	if (!glcontext)
 		return 0;
 
-	Ref< ContextOpenGL > context = new ContextOpenGL(glcontext, false);
+	Ref< ContextOpenGL > context = new ContextOpenGL(glcontext);
 
 	return new RenderViewOpenGL(desc, context, m_resourceContext, 0);
 
