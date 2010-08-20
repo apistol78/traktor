@@ -1,16 +1,15 @@
+#include "Render/IndexBuffer.h"
+#include "Render/IRenderSystem.h"
+#include "Render/IRenderView.h"
+#include "Render/ScreenRenderer.h"
+#include "Render/VertexBuffer.h"
+#include "Render/VertexElement.h"
+#include "Render/Context/RenderContext.h"
+#include "Resource/IResourceManager.h"
 #include "Terrain/OceanEntity.h"
 #include "Terrain/OceanEntityData.h"
 #include "Terrain/Heightfield.h"
 #include "World/WorldRenderView.h"
-#include "Resource/IResourceManager.h"
-#include "Render/IRenderSystem.h"
-#include "Render/IRenderView.h"
-#include "Render/VertexElement.h"
-#include "Render/VertexBuffer.h"
-#include "Render/IndexBuffer.h"
-#include "Render/Shader.h"
-#include "Render/ScreenRenderer.h"
-#include "Render/Context/RenderContext.h"
 
 namespace traktor
 {
@@ -118,7 +117,11 @@ void OceanEntity::render(render::RenderContext* renderContext, const world::Worl
 	if (!m_shader.validate())
 		return;
 
-	if (!m_shader->hasTechnique(worldRenderView->getTechnique()))
+	worldRenderView->setShaderTechnique(m_shader);
+	worldRenderView->setShaderCombination(m_shader);
+
+	render::IProgram* program = m_shader->getCurrentProgram();
+	if (!program)
 		return;
 
 	Matrix44 viewInverse = worldRenderView->getView().inverse();
@@ -129,38 +132,38 @@ void OceanEntity::render(render::RenderContext* renderContext, const world::Worl
 	render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >();
 
 	renderBlock->distance = 0.0f;
-	renderBlock->shader = m_shader;
-	renderBlock->shaderParams = renderContext->alloc< render::ShaderParameters >();
+	renderBlock->program = program;
+	renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 	renderBlock->indexBuffer = m_indexBuffer;
 	renderBlock->vertexBuffer = m_vertexBuffer;
 	renderBlock->primitives = &m_primitives;
 
-	renderBlock->shaderParams->beginParameters(renderContext);
+	renderBlock->programParams->beginParameters(renderContext);
 	
-	worldRenderView->setTechniqueParameters(renderBlock->shaderParams);
-	worldRenderView->setShaderParameters(
-		renderBlock->shaderParams,
+	m_shader->setProgramParameters(renderBlock->programParams);
+	worldRenderView->setProgramParameters(
+		renderBlock->programParams,
 		oceanWorld,
 		oceanWorld,	// @fixme
 		Aabb()
 	);
 
-	renderBlock->shaderParams->setFloatParameter(L"ViewPlane", worldRenderView->getViewFrustum().getNearZ());
-	renderBlock->shaderParams->setFloatParameter(L"OceanRadius", worldRenderView->getViewFrustum().getFarZ());
-	renderBlock->shaderParams->setFloatParameter(L"OceanAltitude", m_altitude);
-	renderBlock->shaderParams->setVectorParameter(L"CameraPosition", cameraPosition);
-	renderBlock->shaderParams->setVectorArrayParameter(L"WaveData", m_waveData, MaxWaves);
-	renderBlock->shaderParams->setMatrixParameter(L"ViewInverse", viewInverse);
-	renderBlock->shaderParams->setFloatParameter(L"ViewRatio", worldRenderView->getViewSize().x / worldRenderView->getViewSize().y);
+	renderBlock->programParams->setFloatParameter(L"ViewPlane", worldRenderView->getViewFrustum().getNearZ());
+	renderBlock->programParams->setFloatParameter(L"OceanRadius", worldRenderView->getViewFrustum().getFarZ());
+	renderBlock->programParams->setFloatParameter(L"OceanAltitude", m_altitude);
+	renderBlock->programParams->setVectorParameter(L"CameraPosition", cameraPosition);
+	renderBlock->programParams->setVectorArrayParameter(L"WaveData", m_waveData, MaxWaves);
+	renderBlock->programParams->setMatrixParameter(L"ViewInverse", viewInverse);
+	renderBlock->programParams->setFloatParameter(L"ViewRatio", worldRenderView->getViewSize().x / worldRenderView->getViewSize().y);
 
 	if (m_heightfield.validate())
 	{
-		renderBlock->shaderParams->setVectorParameter(L"WorldOrigin", -(m_heightfield->getResource().getWorldExtent() * Scalar(0.5f)).xyz1());
-		renderBlock->shaderParams->setVectorParameter(L"WorldExtent", m_heightfield->getResource().getWorldExtent().xyz0());
-		renderBlock->shaderParams->setTextureParameter(L"Heightfield", m_heightfield->getHeightTexture());
+		renderBlock->programParams->setVectorParameter(L"WorldOrigin", -(m_heightfield->getResource().getWorldExtent() * Scalar(0.5f)).xyz1());
+		renderBlock->programParams->setVectorParameter(L"WorldExtent", m_heightfield->getResource().getWorldExtent().xyz0());
+		renderBlock->programParams->setTextureParameter(L"Heightfield", m_heightfield->getHeightTexture());
 	}
 
-	renderBlock->shaderParams->endParameters(renderContext);
+	renderBlock->programParams->endParameters(renderContext);
 
 	renderContext->draw(render::RfAlphaBlend, renderBlock);
 }

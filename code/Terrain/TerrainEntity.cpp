@@ -347,7 +347,11 @@ void TerrainEntity::render(render::RenderContext* renderContext, const world::Wo
 	if (!m_heightfield.validate() || !m_shader.validate() || !m_surface)
 		return;
 
-	if (!m_shader->hasTechnique(worldRenderView->getTechnique()))
+	worldRenderView->setShaderTechnique(m_shader);
+	worldRenderView->setShaderCombination(m_shader);
+
+	render::IProgram* program = m_shader->getCurrentProgram();
+	if (!program)
 		return;
 
 	bool updateCache =
@@ -443,8 +447,8 @@ void TerrainEntity::render(render::RenderContext* renderContext, const world::Wo
 		}
 
 		renderBlock->distance = i->distance;
-		renderBlock->shader = m_shader;
-		renderBlock->shaderParams = renderContext->alloc< render::ShaderParameters >();
+		renderBlock->program = program;
+		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 		renderBlock->indexBuffer = m_indexBuffer;
 #if !defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
 		renderBlock->vertexBuffer = patch.vertexBuffer;
@@ -453,22 +457,22 @@ void TerrainEntity::render(render::RenderContext* renderContext, const world::Wo
 #endif
 		renderBlock->primitives = &m_primitives[patchLod];
 
-		renderBlock->shaderParams->beginParameters(renderContext);
+		renderBlock->programParams->beginParameters(renderContext);
 
-		worldRenderView->setTechniqueParameters(renderBlock->shaderParams);
-		worldRenderView->setShaderParameters(renderBlock->shaderParams);
+		m_shader->setProgramParameters(renderBlock->programParams);
+		worldRenderView->setProgramParameters(renderBlock->programParams);
 
-		renderBlock->shaderParams->setTextureParameter(m_handleSurface, surface);
-		renderBlock->shaderParams->setTextureParameter(m_handleHeightfield, m_heightfield->getHeightTexture());
-		renderBlock->shaderParams->setFloatParameter(m_handleHeightfieldSize, float(m_heightfield->getHeightTexture()->getWidth()));
-		renderBlock->shaderParams->setTextureParameter(m_handleNormals, m_heightfield->getNormalTexture());
-		renderBlock->shaderParams->setFloatParameter(m_handleNormalsSize, float(m_heightfield->getNormalTexture()->getWidth()));
-		renderBlock->shaderParams->setVectorParameter(m_handleWorldOrigin, -worldExtent * Scalar(0.5f));
-		renderBlock->shaderParams->setVectorParameter(m_handleWorldExtent, worldExtent);
-		renderBlock->shaderParams->setVectorParameter(m_handlePatchOrigin, patchOrigin);
-		renderBlock->shaderParams->setVectorParameter(m_handlePatchExtent, patchExtent);
+		renderBlock->programParams->setTextureParameter(m_handleSurface, surface);
+		renderBlock->programParams->setTextureParameter(m_handleHeightfield, m_heightfield->getHeightTexture());
+		renderBlock->programParams->setFloatParameter(m_handleHeightfieldSize, float(m_heightfield->getHeightTexture()->getWidth()));
+		renderBlock->programParams->setTextureParameter(m_handleNormals, m_heightfield->getNormalTexture());
+		renderBlock->programParams->setFloatParameter(m_handleNormalsSize, float(m_heightfield->getNormalTexture()->getWidth()));
+		renderBlock->programParams->setVectorParameter(m_handleWorldOrigin, -worldExtent * Scalar(0.5f));
+		renderBlock->programParams->setVectorParameter(m_handleWorldExtent, worldExtent);
+		renderBlock->programParams->setVectorParameter(m_handlePatchOrigin, patchOrigin);
+		renderBlock->programParams->setVectorParameter(m_handlePatchExtent, patchExtent);
 
-		renderBlock->shaderParams->endParameters(renderContext);
+		renderBlock->programParams->endParameters(renderContext);
 
 		renderContext->draw(render::RfOpaque, renderBlock);
 	}

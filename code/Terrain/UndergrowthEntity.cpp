@@ -83,7 +83,11 @@ void UndergrowthEntity::render(render::RenderContext* renderContext, const world
 	if (!m_heightfield.validate() || !m_shader.validate())
 		return;
 
-	if (!m_shader->hasTechnique(worldRenderView->getTechnique()))
+	worldRenderView->setShaderTechnique(m_shader);
+	worldRenderView->setShaderCombination(m_shader);
+
+	render::IProgram* program = m_shader->getCurrentProgram();
+	if (!program)
 		return;
 
 	synchronize();
@@ -92,20 +96,20 @@ void UndergrowthEntity::render(render::RenderContext* renderContext, const world
 	render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >();
 
 	renderBlock->distance = 0.0f;
-	renderBlock->shader = m_shader;
-	renderBlock->shaderParams = renderContext->alloc< render::ShaderParameters >();
+	renderBlock->program = program;
+	renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 	renderBlock->indexBuffer = m_indexBuffer;
 	renderBlock->vertexBuffer = m_vertexBuffer;
 	renderBlock->primitives = &m_primitives;
 
-	renderBlock->shaderParams->beginParameters(renderContext);
+	renderBlock->programParams->beginParameters(renderContext);
 
-	worldRenderView->setTechniqueParameters(renderBlock->shaderParams);
-	worldRenderView->setShaderParameters(renderBlock->shaderParams);
+	m_shader->setProgramParameters(renderBlock->programParams);
+	worldRenderView->setProgramParameters(renderBlock->programParams);
 
-	renderBlock->shaderParams->setFloatParameter(L"MaxRadius", m_settings.spreadDistance + m_settings.cellRadius);
+	renderBlock->programParams->setFloatParameter(L"MaxRadius", m_settings.spreadDistance + m_settings.cellRadius);
 
-	renderBlock->shaderParams->endParameters(renderContext);
+	renderBlock->programParams->endParameters(renderContext);
 
 	renderContext->draw(
 		render::RfAlphaBlend,

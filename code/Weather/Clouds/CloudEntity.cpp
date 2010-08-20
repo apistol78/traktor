@@ -431,7 +431,7 @@ void CloudEntity::renderCluster(
 	//				particleRenderBlock->type = render::RbtAlphaBlend;
 	//				particleRenderBlock->distance = 0.0f;
 	//				particleRenderBlock->shader = m_particleShader;
-	//				particleRenderBlock->shaderParams = renderContext->alloc< render::ShaderParameters >();
+	//				particleRenderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 	//				particleRenderBlock->indexBuffer = m_indexBuffer;
 	//				particleRenderBlock->vertexBuffer = m_vertexBuffer;
 	//				particleRenderBlock->primitive = render::PtTriangles;
@@ -440,18 +440,18 @@ void CloudEntity::renderCluster(
 	//				particleRenderBlock->minIndex = 0;
 	//				particleRenderBlock->maxIndex = c_instanceCount * 4;
 
-	//				particleRenderBlock->shaderParams->beginParameters(renderContext);
-	//				worldRenderView->setShaderParameters(particleRenderBlock->shaderParams, m_transform.toMatrix44(), Matrix44::identity(), clusterBoundingBox);
-	//				particleRenderBlock->shaderParams->setTechnique(c_techniquePasses[pass]);
-	//				particleRenderBlock->shaderParams->setFloatParameter(L"ParticleDensity", m_particleData.getDensity());
-	//				particleRenderBlock->shaderParams->setFloatParameter(L"SunInfluence", m_particleData.getSunInfluence());
-	//				particleRenderBlock->shaderParams->setMatrixParameter(L"Projection", clusterProjection);
-	//				particleRenderBlock->shaderParams->setVectorParameter(L"SkyColor", colorAsVector4(m_particleData.getSkyColor()));
-	//				particleRenderBlock->shaderParams->setVectorParameter(L"GroundColor", colorAsVector4(m_particleData.getGroundColor()));
-	//				particleRenderBlock->shaderParams->setVectorArrayParameter(L"InstanceData1", instanceData1, instanceCount);
-	//				particleRenderBlock->shaderParams->setVectorArrayParameter(L"InstanceData2", instanceData2, instanceCount);
-	//				particleRenderBlock->shaderParams->setTextureParameter(L"ParticleTexture", m_particleTexture);
-	//				particleRenderBlock->shaderParams->endParameters(renderContext);
+	//				particleRenderBlock->programParams->beginParameters(renderContext);
+	//				worldRenderView->setProgramParameters(particleRenderBlock->programParams, m_transform.toMatrix44(), Matrix44::identity(), clusterBoundingBox);
+	//				particleRenderBlock->programParams->setTechnique(c_techniquePasses[pass]);
+	//				particleRenderBlock->programParams->setFloatParameter(L"ParticleDensity", m_particleData.getDensity());
+	//				particleRenderBlock->programParams->setFloatParameter(L"SunInfluence", m_particleData.getSunInfluence());
+	//				particleRenderBlock->programParams->setMatrixParameter(L"Projection", clusterProjection);
+	//				particleRenderBlock->programParams->setVectorParameter(L"SkyColor", colorAsVector4(m_particleData.getSkyColor()));
+	//				particleRenderBlock->programParams->setVectorParameter(L"GroundColor", colorAsVector4(m_particleData.getGroundColor()));
+	//				particleRenderBlock->programParams->setVectorArrayParameter(L"InstanceData1", instanceData1, instanceCount);
+	//				particleRenderBlock->programParams->setVectorArrayParameter(L"InstanceData2", instanceData2, instanceCount);
+	//				particleRenderBlock->programParams->setTextureParameter(L"ParticleTexture", m_particleTexture);
+	//				particleRenderBlock->programParams->endParameters(renderContext);
 
 	//				render::ChainRenderBlock* chainRenderBlock = renderContext->alloc< render::ChainRenderBlock >();
 	//				chainRenderBlock->inner = particleRenderBlock;
@@ -497,8 +497,8 @@ void CloudEntity::renderCluster(
 		render::NonIndexedRenderBlock* renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >();
 
 		renderBlock->distance = sliceNearZ;
-		renderBlock->shader = m_impostorShader;
-		renderBlock->shaderParams = renderContext->alloc< render::ShaderParameters >();
+		renderBlock->program = m_impostorShader->getCurrentProgram();
+		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 		renderBlock->vertexBuffer = m_vertexBuffer;
 		renderBlock->primitive = render::PtTriangleStrip;
 		renderBlock->offset = 0;
@@ -511,15 +511,15 @@ void CloudEntity::renderCluster(
 			translate((maxXY[0] + minXY[0]) / 2.0f, (maxXY[1] + minXY[1]) / 2.0f, sliceNearZ) *
 			scale((maxXY[0] - minXY[0]) / 2.0f, (maxXY[1] - minXY[1]) / 2.0f, 1.0f);
 
-		renderBlock->shaderParams->beginParameters(renderContext);
+		renderBlock->programParams->beginParameters(renderContext);
 
-		worldRenderView->setTechniqueParameters(renderBlock->shaderParams);
-		worldRenderView->setShaderParameters(renderBlock->shaderParams, m_transform.toMatrix44(), Matrix44::identity(), clusterBoundingBox);
+		m_impostorShader->setProgramParameters(renderBlock->programParams);
+		worldRenderView->setProgramParameters(renderBlock->programParams, m_transform.toMatrix44(), Matrix44::identity(), clusterBoundingBox);
 
-		renderBlock->shaderParams->setMatrixParameter(L"View", billboardView);
-		renderBlock->shaderParams->setFloatParameter(L"SliceDistance", sliceDistance);
-		renderBlock->shaderParams->setTextureParameter(m_handleImpostorTarget, m_impostorTargets[slice]->getColorTexture(0));
-		renderBlock->shaderParams->endParameters(renderContext);
+		renderBlock->programParams->setMatrixParameter(L"View", billboardView);
+		renderBlock->programParams->setFloatParameter(L"SliceDistance", sliceDistance);
+		renderBlock->programParams->setTextureParameter(m_handleImpostorTarget, m_impostorTargets[slice]->getColorTexture(0));
+		renderBlock->programParams->endParameters(renderContext);
 
 		renderContext->draw(render::RfAlphaBlend, renderBlock);
 	}

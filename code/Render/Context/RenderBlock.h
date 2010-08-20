@@ -28,11 +28,11 @@ namespace traktor
 
 /*! \} */
 
-class IRenderView;
-class RenderTargetSet;
-class Shader;
-class ShaderParameters;
 class IndexBuffer;
+class IProgram;
+class IRenderView;
+class ProgramParameters;
+class RenderTargetSet;
 class VertexBuffer;
 
 /*! \brief Render block base class.
@@ -45,8 +45,8 @@ public:
 	const char* name;
 #endif
 	float distance;
-	Shader* shader;
-	ShaderParameters* shaderParams;
+	IProgram* program;
+	ProgramParameters* programParams;
 
 	RenderBlock()
 #if defined(T_USE_RENDERBLOCK_NAME)
@@ -55,8 +55,8 @@ public:
 #else
 	:	distance(0.0f)
 #endif
-	,	shader(0)
-	,	shaderParams(0)
+	,	program(0)
+	,	programParams(0)
 	{
 	}
 

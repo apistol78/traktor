@@ -51,28 +51,41 @@ void SkinnedMesh::render(
 	const std::vector< render::Mesh::Part >& meshParts = m_mesh->getParts();
 	for (std::vector< Part >::const_iterator i = it->second.begin(); i != it->second.end(); ++i)
 	{
+		m_shader->setTechnique(i->shaderTechnique);
+
+		worldRenderView->setShaderCombination(
+			m_shader,
+			worldTransform.toMatrix44(),
+			worldTransform.toMatrix44(),
+			getBoundingBox()
+		);
+
+		render::IProgram* program = m_shader->getCurrentProgram();
+		if (!program)
+			continue;
+
 		render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >("SkinnedMesh");
 
 		renderBlock->distance = distance;
-		renderBlock->shader = m_shader;
-		renderBlock->shaderParams = renderContext->alloc< render::ShaderParameters >();
+		renderBlock->program = program;
+		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 		renderBlock->indexBuffer = m_mesh->getIndexBuffer();
 		renderBlock->vertexBuffer = m_mesh->getVertexBuffer();
 		renderBlock->primitives = &meshParts[i->meshPart].primitives;
 
-		renderBlock->shaderParams->beginParameters(renderContext);
-		renderBlock->shaderParams->setTechnique(i->shaderTechnique);
-		worldRenderView->setShaderParameters(
-			renderBlock->shaderParams,
+		renderBlock->programParams->beginParameters(renderContext);
+		m_shader->setProgramParameters(renderBlock->programParams);
+		worldRenderView->setProgramParameters(
+			renderBlock->programParams,
 			worldTransform.toMatrix44(),
 			worldTransform.toMatrix44(),	// \fixme
 			getBoundingBox()
 		);
 		if (parameterCallback)
-			parameterCallback->setParameters(renderBlock->shaderParams);
+			parameterCallback->setParameters(renderBlock->programParams);
 		if (!boneTransforms.empty())
-			renderBlock->shaderParams->setVectorArrayParameter(s_handleBones, &boneTransforms[0], int(boneTransforms.size()));
-		renderBlock->shaderParams->endParameters(renderContext);
+			renderBlock->programParams->setVectorArrayParameter(s_handleBones, &boneTransforms[0], int(boneTransforms.size()));
+		renderBlock->programParams->endParameters(renderContext);
 
 		renderContext->draw(
 			i->opaque ? render::RfOpaque : render::RfAlphaBlend,

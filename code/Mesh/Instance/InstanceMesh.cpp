@@ -111,6 +111,19 @@ void InstanceMesh::render(render::RenderContext* renderContext, const world::Wor
 			continue;
 		}
 
+		m_shader->setTechnique(i->shaderTechnique);
+
+		worldRenderView->setShaderCombination(
+			m_shader,
+			boundingBoxCenter,
+			boundingBoxCenter,
+			boundingBoxWorld
+		);
+
+		render::IProgram* program = m_shader->getCurrentProgram();
+		if (!program)
+			continue;
+
 		for (uint32_t batchOffset = 0; batchOffset < instanceWorld.size(); )
 		{
 			uint32_t batchCount = std::min< uint32_t >(uint32_t(instanceWorld.size()) - batchOffset, MaxInstanceCount);
@@ -121,8 +134,8 @@ void InstanceMesh::render(render::RenderContext* renderContext, const world::Wor
 			render::IndexedRenderBlock* renderBlock = renderContext->alloc< render::IndexedRenderBlock >("InstanceMesh opaque");
 
 			renderBlock->distance = instanceWorld[batchOffset].second;
-			renderBlock->shader = m_shader;
-			renderBlock->shaderParams = renderContext->alloc< render::ShaderParameters >();
+			renderBlock->program = program;
+			renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 			renderBlock->indexBuffer = m_mesh->getIndexBuffer();
 			renderBlock->vertexBuffer = m_mesh->getVertexBuffer();
 			renderBlock->primitive = meshParts[i->meshPart].primitives.type;
@@ -131,20 +144,20 @@ void InstanceMesh::render(render::RenderContext* renderContext, const world::Wor
 			renderBlock->minIndex = meshParts[i->meshPart].primitives.minIndex;
 			renderBlock->maxIndex = meshParts[i->meshPart].primitives.maxIndex;
 
-			renderBlock->shaderParams->beginParameters(renderContext);
-			renderBlock->shaderParams->setTechnique(i->shaderTechnique);
-			worldRenderView->setShaderParameters(
-				renderBlock->shaderParams,
+			renderBlock->programParams->beginParameters(renderContext);
+			m_shader->setProgramParameters(renderBlock->programParams);
+			worldRenderView->setProgramParameters(
+				renderBlock->programParams,
 				boundingBoxCenter,
 				boundingBoxCenter,
 				boundingBoxWorld
 			);
-			renderBlock->shaderParams->setVectorArrayParameter(
+			renderBlock->programParams->setVectorArrayParameter(
 				s_handleInstanceWorld,
 				reinterpret_cast< const Vector4* >(instanceBatch),
 				batchCount * sizeof(InstanceMeshData) / sizeof(Vector4)
 			);
-			renderBlock->shaderParams->endParameters(renderContext);
+			renderBlock->programParams->endParameters(renderContext);
 
 			renderContext->draw(render::RfOpaque, renderBlock);
 
@@ -162,6 +175,19 @@ void InstanceMesh::render(render::RenderContext* renderContext, const world::Wor
 			if (i->opaque)
 				continue;
 
+			m_shader->setTechnique(i->shaderTechnique);
+
+			worldRenderView->setShaderCombination(
+				m_shader,
+				boundingBoxCenter,
+				boundingBoxCenter,
+				boundingBoxWorld
+				);
+
+			render::IProgram* program = m_shader->getCurrentProgram();
+			if (!program)
+				continue;
+
 			for (uint32_t batchOffset = 0; batchOffset < instanceWorld.size(); )
 			{
 				uint32_t batchCount = std::min< uint32_t >(uint32_t(instanceWorld.size()) - batchOffset, MaxInstanceCount);
@@ -172,8 +198,8 @@ void InstanceMesh::render(render::RenderContext* renderContext, const world::Wor
 				render::IndexedRenderBlock* renderBlock = renderContext->alloc< render::IndexedRenderBlock >("InstanceMesh blend");
 
 				renderBlock->distance = instanceWorld[batchOffset].second;
-				renderBlock->shader = m_shader;
-				renderBlock->shaderParams = renderContext->alloc< render::ShaderParameters >();
+				renderBlock->program = program;
+				renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 				renderBlock->indexBuffer = m_mesh->getIndexBuffer();
 				renderBlock->vertexBuffer = m_mesh->getVertexBuffer();
 				renderBlock->primitive = meshParts[i->meshPart].primitives.type;
@@ -182,15 +208,15 @@ void InstanceMesh::render(render::RenderContext* renderContext, const world::Wor
 				renderBlock->minIndex = meshParts[i->meshPart].primitives.minIndex;
 				renderBlock->maxIndex = meshParts[i->meshPart].primitives.maxIndex;
 
-				renderBlock->shaderParams->beginParameters(renderContext);
-				renderBlock->shaderParams->setTechnique(i->shaderTechnique);
-				worldRenderView->setShaderParameters(renderBlock->shaderParams);
-				renderBlock->shaderParams->setVectorArrayParameter(
+				renderBlock->programParams->beginParameters(renderContext);
+				m_shader->setProgramParameters(renderBlock->programParams);
+				worldRenderView->setProgramParameters(renderBlock->programParams);
+				renderBlock->programParams->setVectorArrayParameter(
 					s_handleInstanceWorld,
 					reinterpret_cast< const Vector4* >(instanceBatch),
 					batchCount * sizeof(InstanceMeshData) / sizeof(Vector4)
 				);
-				renderBlock->shaderParams->endParameters(renderContext);
+				renderBlock->programParams->endParameters(renderContext);
 
 				renderContext->draw(render::RfAlphaBlend, renderBlock);
 

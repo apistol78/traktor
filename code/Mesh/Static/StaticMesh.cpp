@@ -48,27 +48,40 @@ void StaticMesh::render(
 	const std::vector< render::Mesh::Part >& meshParts = m_mesh->getParts();
 	for (std::vector< Part >::const_iterator i = it->second.begin(); i != it->second.end(); ++i)
 	{
-		render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >("StaticMesh");
+		m_shader->setTechnique(i->shaderTechnique);
 
-		renderBlock->distance = distance;
-		renderBlock->shader = m_shader;
-		renderBlock->shaderParams = renderContext->alloc< render::ShaderParameters >();
-		renderBlock->indexBuffer = m_mesh->getIndexBuffer();
-		renderBlock->vertexBuffer = m_mesh->getVertexBuffer();
-		renderBlock->primitives = &meshParts[i->meshPart].primitives;
-
-		renderBlock->shaderParams->beginParameters(renderContext);
-		renderBlock->shaderParams->setTechnique(i->shaderTechnique);
-		worldRenderView->setShaderParameters(
-			renderBlock->shaderParams,
+		worldRenderView->setShaderCombination(
+			m_shader,
 			worldTransform.toMatrix44(),
 			worldTransformPrevious.toMatrix44(),
 			getBoundingBox()
 		);
-		renderBlock->shaderParams->setFloatParameter(s_handleUserParameter, userParameter);
+
+		render::IProgram* program = m_shader->getCurrentProgram();
+		if (!program)
+			continue;
+
+		render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >("StaticMesh");
+
+		renderBlock->distance = distance;
+		renderBlock->program = program;
+		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
+		renderBlock->indexBuffer = m_mesh->getIndexBuffer();
+		renderBlock->vertexBuffer = m_mesh->getVertexBuffer();
+		renderBlock->primitives = &meshParts[i->meshPart].primitives;
+
+		renderBlock->programParams->beginParameters(renderContext);
+		m_shader->setProgramParameters(renderBlock->programParams);
+		worldRenderView->setProgramParameters(
+			renderBlock->programParams,
+			worldTransform.toMatrix44(),
+			worldTransformPrevious.toMatrix44(),
+			getBoundingBox()
+		);
+		renderBlock->programParams->setFloatParameter(s_handleUserParameter, userParameter);
 		if (parameterCallback)
-			parameterCallback->setParameters(renderBlock->shaderParams);
-		renderBlock->shaderParams->endParameters(renderContext);
+			parameterCallback->setParameters(renderBlock->programParams);
+		renderBlock->programParams->endParameters(renderContext);
 
 		renderContext->draw(
 			i->opaque ? render::RfOpaque : render::RfAlphaBlend,

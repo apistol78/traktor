@@ -144,29 +144,29 @@ void AccQuad::render(
 	}
 
 	render::NonIndexedRenderBlock* renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >("Flash AccQuad");
-	renderBlock->shader = texture ? shaderTextured : shaderSolid;
+	renderBlock->program = (texture ? shaderTextured : shaderSolid)->getCurrentProgram();
 	renderBlock->vertexBuffer = m_vertexBuffer;
 	renderBlock->primitive = render::PtTriangleStrip;
 	renderBlock->offset = 0;
 	renderBlock->count = 2;
 
-	renderBlock->shaderParams = renderContext->alloc< render::ShaderParameters >();
-	renderBlock->shaderParams->beginParameters(renderContext);
-	renderBlock->shaderParams->setMatrixParameter(s_handleTransform, m);
-	renderBlock->shaderParams->setVectorParameter(s_handleFrameSize, frameSize);
-	renderBlock->shaderParams->setVectorParameter(s_handleViewSize, viewSize);
-	renderBlock->shaderParams->setVectorParameter(s_handleViewOffset, viewOffset);
-	renderBlock->shaderParams->setVectorParameter(s_handleCxFormMul, Vector4(cxform.red[0], cxform.green[0], cxform.blue[0], cxform.alpha[0]));
-	renderBlock->shaderParams->setVectorParameter(s_handleCxFormAdd, Vector4(cxform.red[1], cxform.green[1], cxform.blue[1], cxform.alpha[1]));
-	renderBlock->shaderParams->setStencilReference(maskReference);
+	renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
+	renderBlock->programParams->beginParameters(renderContext);
+	renderBlock->programParams->setMatrixParameter(s_handleTransform, m);
+	renderBlock->programParams->setVectorParameter(s_handleFrameSize, frameSize);
+	renderBlock->programParams->setVectorParameter(s_handleViewSize, viewSize);
+	renderBlock->programParams->setVectorParameter(s_handleViewOffset, viewOffset);
+	renderBlock->programParams->setVectorParameter(s_handleCxFormMul, Vector4(cxform.red[0], cxform.green[0], cxform.blue[0], cxform.alpha[0]));
+	renderBlock->programParams->setVectorParameter(s_handleCxFormAdd, Vector4(cxform.red[1], cxform.green[1], cxform.blue[1], cxform.alpha[1]));
+	renderBlock->programParams->setStencilReference(maskReference);
 	
 	if (texture)
 	{
-		renderBlock->shaderParams->setTextureParameter(s_handleTexture, texture);
-		renderBlock->shaderParams->setVectorParameter(s_handleTextureOffset, textureOffset);
+		renderBlock->programParams->setTextureParameter(s_handleTexture, texture);
+		renderBlock->programParams->setVectorParameter(s_handleTextureOffset, textureOffset);
 	}
 
-	renderBlock->shaderParams->endParameters(renderContext);
+	renderBlock->programParams->endParameters(renderContext);
 
 	renderContext->draw(render::RfOverlay, renderBlock);
 }

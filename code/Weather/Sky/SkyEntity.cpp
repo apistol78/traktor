@@ -27,27 +27,34 @@ SkyEntity::SkyEntity(
 
 void SkyEntity::render(render::RenderContext* renderContext, const world::WorldRenderView* worldRenderView)
 {
-	if (!m_shader.validate() || !m_shader->hasTechnique(worldRenderView->getTechnique()))
+	if (!m_shader.validate())
+		return;
+
+	worldRenderView->setShaderTechnique(m_shader);
+	worldRenderView->setShaderCombination(m_shader);
+
+	render::IProgram* program = m_shader->getCurrentProgram();
+	if (!program)
 		return;
 
 	render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >();
 
 	// Render sky after all opaques but first of all alpha blended.
 	renderBlock->distance = std::numeric_limits< float >::max();
-	renderBlock->shader = m_shader;
-	renderBlock->shaderParams = renderContext->alloc< render::ShaderParameters >();
+	renderBlock->program = program;
+	renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 	renderBlock->indexBuffer = m_indexBuffer;
 	renderBlock->vertexBuffer = m_vertexBuffer;
 	renderBlock->primitives = &m_primitives;
 
-	renderBlock->shaderParams->beginParameters(renderContext);
+	renderBlock->programParams->beginParameters(renderContext);
 
-	worldRenderView->setTechniqueParameters(renderBlock->shaderParams);
-	worldRenderView->setShaderParameters(renderBlock->shaderParams);
+	m_shader->setProgramParameters(renderBlock->programParams);
+	worldRenderView->setProgramParameters(renderBlock->programParams);
 	
-	renderBlock->shaderParams->setFloatParameter(m_handleSkyDomeRadius, worldRenderView->getViewFrustum().getFarZ());
+	renderBlock->programParams->setFloatParameter(m_handleSkyDomeRadius, worldRenderView->getViewFrustum().getFarZ());
 
-	renderBlock->shaderParams->endParameters(renderContext);
+	renderBlock->programParams->endParameters(renderContext);
 
 	renderContext->draw(render::RfAlphaBlend, renderBlock);
 }

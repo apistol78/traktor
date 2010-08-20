@@ -1,10 +1,10 @@
-#ifndef traktor_render_ShaderParameters_H
-#define traktor_render_ShaderParameters_H
+#ifndef traktor_render_ProgramParameters_H
+#define traktor_render_ProgramParameters_H
 
 #include <string>
 #include "Core/Math/Vector4.h"
 #include "Core/Math/Matrix44.h"
-#include "Render/Shader.h"
+#include "Render/Types.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,19 +19,17 @@ namespace traktor
 	namespace render
 	{
 
-class Shader;
+class IProgram;
 class ITexture;
 class RenderContext;
 
-/*! \brief Shader parameter values.
+/*! \brief Program parameter values.
  * \ingroup Render
  */
-class T_DLLCLASS ShaderParameters
+class T_DLLCLASS ProgramParameters
 {
 public:
-	ShaderParameters();
-
-	void setTechnique(handle_t handle);
+	ProgramParameters();
 
 	/*! \name Record parameters.
 	 *
@@ -42,8 +40,6 @@ public:
 	void beginParameters(RenderContext* context);
 
 	void endParameters(RenderContext* context);
-
-	void setCombination(handle_t handle, bool param);
 
 	void setFloatParameter(handle_t handle, float param);
 
@@ -61,7 +57,7 @@ public:
 
 	void setStencilReference(uint32_t stencilReference);
 
-	void fixup(Shader* shader) const;
+	void fixup(IProgram* program) const;
 
 	//@}
 
@@ -71,10 +67,6 @@ public:
 	 * time critical paths.
 	 */
 	//@{
-
-	inline void setTechnique(const std::wstring& name) { setTechnique(getParameterHandle(name)); }
-
-	inline void setCombination(const std::wstring& name, bool param) { setCombination(getParameterHandle(name), param); }
 
 	inline void setFloatParameter(const std::wstring& name, float param) { setFloatParameter(getParameterHandle(name), param); }
 
@@ -93,7 +85,6 @@ public:
 	//@}
 
 private:
-	handle_t m_technique;
 	uint8_t* m_parameterFirst;
 	uint8_t* m_parameterLast;
 };
@@ -101,4 +92,4 @@ private:
 	}
 }
 
-#endif	// traktor_render_ShaderParameters_H
+#endif	// traktor_render_ProgramParameters_H

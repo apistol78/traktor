@@ -1,4 +1,5 @@
-#include "Render/Context/ShaderParameters.h"
+#include "Render/IProgram.h"
+#include "Render/Context/ProgramParameters.h"
 #include "Render/Context/RenderContext.h"
 
 namespace traktor
@@ -82,7 +83,6 @@ inline const Type* read(uint8_t*& readPtr, int length)
 
 enum ParameterTypes
 {
-	PmtCombination,
 	PmtFloat,
 	PmtFloatArray,
 	PmtVector,
@@ -95,25 +95,19 @@ enum ParameterTypes
 
 		}
 
-ShaderParameters::ShaderParameters()
-:	m_technique(0)
-,	m_parameterFirst(0)
+ProgramParameters::ProgramParameters()
+:	m_parameterFirst(0)
 ,	m_parameterLast(0)
 {
 }
 
-void ShaderParameters::setTechnique(handle_t handle)
-{
-	m_technique = handle;
-}
-
-void ShaderParameters::beginParameters(RenderContext* context)
+void ProgramParameters::beginParameters(RenderContext* context)
 {
 	m_parameterFirst =
 	m_parameterLast = static_cast< uint8_t* >(context->alloc(0));
 }
 
-void ShaderParameters::endParameters(RenderContext* context)
+void ProgramParameters::endParameters(RenderContext* context)
 {
 	T_ASSERT (m_parameterFirst);
 	uint32_t parametersSize = uint32_t(m_parameterLast - m_parameterFirst);
@@ -121,16 +115,7 @@ void ShaderParameters::endParameters(RenderContext* context)
 		T_FATAL_ERROR;
 }
 
-void ShaderParameters::setCombination(handle_t handle, bool param)
-{
-	T_ASSERT (m_parameterLast);
-	align< handle_t >(m_parameterLast);
-	write< handle_t >(m_parameterLast, handle);
-	write< int >(m_parameterLast, PmtCombination);
-	write< bool >(m_parameterLast, param);
-}
-
-void ShaderParameters::setFloatParameter(handle_t handle, float param)
+void ProgramParameters::setFloatParameter(handle_t handle, float param)
 {
 	T_ASSERT (m_parameterLast);
 	align< handle_t >(m_parameterLast);
@@ -139,7 +124,7 @@ void ShaderParameters::setFloatParameter(handle_t handle, float param)
 	write< float >(m_parameterLast, param);
 }
 
-void ShaderParameters::setFloatArrayParameter(handle_t handle, const float* param, int length)
+void ProgramParameters::setFloatArrayParameter(handle_t handle, const float* param, int length)
 {
 	T_ASSERT (m_parameterLast);
 	align< handle_t >(m_parameterLast);
@@ -149,7 +134,7 @@ void ShaderParameters::setFloatArrayParameter(handle_t handle, const float* para
 	write< float >(m_parameterLast, param, length);
 }
 
-void ShaderParameters::setVectorParameter(handle_t handle, const Vector4& param)
+void ProgramParameters::setVectorParameter(handle_t handle, const Vector4& param)
 {
 	T_ASSERT (m_parameterLast);
 	align< handle_t >(m_parameterLast);
@@ -159,7 +144,7 @@ void ShaderParameters::setVectorParameter(handle_t handle, const Vector4& param)
 	write< Vector4 >(m_parameterLast, param);
 }
 
-void ShaderParameters::setVectorArrayParameter(handle_t handle, const Vector4* param, int length)
+void ProgramParameters::setVectorArrayParameter(handle_t handle, const Vector4* param, int length)
 {
 	T_ASSERT (m_parameterLast);
 	align< handle_t >(m_parameterLast);
@@ -170,7 +155,7 @@ void ShaderParameters::setVectorArrayParameter(handle_t handle, const Vector4* p
 	write< Vector4 >(m_parameterLast, param, length);
 }
 
-void ShaderParameters::setMatrixParameter(handle_t handle, const Matrix44& param)
+void ProgramParameters::setMatrixParameter(handle_t handle, const Matrix44& param)
 {
 	T_ASSERT (m_parameterLast);
 	align< handle_t >(m_parameterLast);
@@ -180,7 +165,7 @@ void ShaderParameters::setMatrixParameter(handle_t handle, const Matrix44& param
 	write< Matrix44 >(m_parameterLast, param);
 }
 
-void ShaderParameters::setMatrixArrayParameter(handle_t handle, const Matrix44* param, int length)
+void ProgramParameters::setMatrixArrayParameter(handle_t handle, const Matrix44* param, int length)
 {
 	T_ASSERT (m_parameterLast);
 	align< handle_t >(m_parameterLast);
@@ -191,7 +176,7 @@ void ShaderParameters::setMatrixArrayParameter(handle_t handle, const Matrix44* 
 	write< Matrix44 >(m_parameterLast, param, length);
 }
 
-void ShaderParameters::setTextureParameter(handle_t handle, ITexture* texture)
+void ProgramParameters::setTextureParameter(handle_t handle, ITexture* texture)
 {
 	T_ASSERT (m_parameterLast);
 	T_ASSERT (texture);
@@ -204,7 +189,7 @@ void ShaderParameters::setTextureParameter(handle_t handle, ITexture* texture)
 	write< ITexture* >(m_parameterLast, texture);
 }
 
-void ShaderParameters::setStencilReference(uint32_t stencilReference)
+void ProgramParameters::setStencilReference(uint32_t stencilReference)
 {
 	T_ASSERT (m_parameterLast);
 	align< handle_t >(m_parameterLast);
@@ -213,11 +198,8 @@ void ShaderParameters::setStencilReference(uint32_t stencilReference)
 	write< uint32_t >(m_parameterLast, stencilReference);
 }
 
-void ShaderParameters::fixup(Shader* shader) const
+void ProgramParameters::fixup(IProgram* program) const
 {
-	if (m_technique)
-		shader->setTechnique(m_technique);
-
 	for (uint8_t* parameter = m_parameterFirst; parameter < m_parameterLast; )
 	{
 		align< handle_t >(parameter);
@@ -227,57 +209,53 @@ void ShaderParameters::fixup(Shader* shader) const
 
 		switch (type)
 		{
-		case PmtCombination:
-			shader->setCombination(handle, read< bool >(parameter));
-			break;
-
 		case PmtFloat:
-			shader->setFloatParameter(handle, read< float >(parameter));
+			program->setFloatParameter(handle, read< float >(parameter));
 			break;
 
 		case PmtFloatArray:
 			{
 				int length = read< int >(parameter);
-				shader->setFloatArrayParameter(handle, read< float >(parameter, length), length);
+				program->setFloatArrayParameter(handle, read< float >(parameter, length), length);
 			}
 			break;
 
 		case PmtVector:
 			align< Vector4 >(parameter);
-			shader->setVectorParameter(handle, read< Vector4 >(parameter));
+			program->setVectorParameter(handle, read< Vector4 >(parameter));
 			break;
 
 		case PmtVectorArray:
 			{
 				int length = read< int >(parameter);
 				align< Vector4 >(parameter);
-				shader->setVectorArrayParameter(handle, read< Vector4 >(parameter, length), length);
+				program->setVectorArrayParameter(handle, read< Vector4 >(parameter, length), length);
 			}
 			break;
 
 		case PmtMatrix:
 			align< Matrix44 >(parameter);
-			shader->setMatrixParameter(handle, read< Matrix44 >(parameter));
+			program->setMatrixParameter(handle, read< Matrix44 >(parameter));
 			break;
 
 		case PmtMatrixArray:
 			{
 				int length = read< int >(parameter);
 				align< Matrix44 >(parameter);
-				shader->setMatrixArrayParameter(handle, read< Matrix44 >(parameter, length), length);
+				program->setMatrixArrayParameter(handle, read< Matrix44 >(parameter, length), length);
 			}
 			break;
 
 		case PmtTexture:
 			{
 				ITexture* texture = read< ITexture* >(parameter);
-				shader->setTextureParameter(handle, texture);
+				program->setTextureParameter(handle, texture);
 				T_SAFE_RELEASE(texture);
 			}
 			break;
 
 		case PmtStencilReference:
-			shader->setStencilReference(read< uint32_t >(parameter));
+			program->setStencilReference(read< uint32_t >(parameter));
 			break;
 		}
 	}

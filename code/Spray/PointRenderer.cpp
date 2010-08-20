@@ -252,11 +252,18 @@ void PointRenderer::flush(
 			if (!i->shader || !i->count)
 				continue;
 
+			worldRenderView->setShaderTechnique(i->shader);
+			worldRenderView->setShaderCombination(i->shader);
+
+			render::IProgram* program = i->shader->getCurrentProgram();
+			if (!program)
+				continue;
+
 			render::IndexedRenderBlock* renderBlock = renderContext->alloc< render::IndexedRenderBlock >("PointRenderer");
 
 			renderBlock->distance = i->distance;
-			renderBlock->shader = i->shader;
-			renderBlock->shaderParams = renderContext->alloc< render::ShaderParameters >();
+			renderBlock->program = program;
+			renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 			renderBlock->indexBuffer = m_indexBuffer;
 			renderBlock->vertexBuffer = m_vertexBuffer[m_currentBuffer];
 			renderBlock->primitive = render::PtTriangles;
@@ -265,10 +272,10 @@ void PointRenderer::flush(
 			renderBlock->minIndex = 0;
 			renderBlock->maxIndex = m_vertexOffset;
 
-			renderBlock->shaderParams->beginParameters(renderContext);
-			worldRenderView->setTechniqueParameters(renderBlock->shaderParams);
-			worldRenderView->setShaderParameters(renderBlock->shaderParams);
-			renderBlock->shaderParams->endParameters(renderContext);
+			renderBlock->programParams->beginParameters(renderContext);
+			i->shader->setProgramParameters(renderBlock->programParams);
+			worldRenderView->setProgramParameters(renderBlock->programParams);
+			renderBlock->programParams->endParameters(renderContext);
 
 			renderContext->draw(render::RfAlphaBlend, renderBlock);
 		}
