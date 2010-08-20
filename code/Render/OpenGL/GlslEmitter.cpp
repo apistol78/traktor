@@ -1162,11 +1162,11 @@ void emitTranspose(GlslContext& cx, Transpose* node)
 	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 	GlslVariable* in = cx.emitInput(node, L"Input");
 	GlslVariable* out = cx.emitOutput(node, L"Output", in->getType());
-//#if defined(T_OPENGL_STD)
-//	assign(f, out) << L"transpose(" << in->getName() << L");" << Endl;
-//#elif defined(T_OPENGL_ES2)
+#if defined(T_OPENGL_STD)
+	assign(f, out) << L"transpose(" << in->getName() << L");" << Endl;
+#elif defined(T_OPENGL_ES2)
 	assign(f, out) << in->getName() << L";" << Endl;
-//#endif
+#endif
 }
 
 void emitUniform(GlslContext& cx, Uniform* node)
