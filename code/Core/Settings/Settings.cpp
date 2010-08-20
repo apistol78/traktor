@@ -1,3 +1,4 @@
+#include "Core/Serialization/DeepClone.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRef.h"
 #include "Core/Settings/PropertyGroup.h"
@@ -78,6 +79,14 @@ bool Settings::write(ISerializer& s) const
 	T_ASSERT (s.getDirection() == ISerializer::SdWrite);
 	ISerializable* mutableRootGroup = (ISerializable*)(m_rootGroup);
 	return s >> Member< ISerializable* >(L"object", mutableRootGroup);
+}
+
+Ref< Settings > Settings::clone() const
+{
+	Ref< PropertyGroup > clonedRootGroup = DeepClone(m_rootGroup).create< PropertyGroup >();
+	Ref< Settings > clonedSettings = new Settings();
+	clonedSettings->m_rootGroup = clonedRootGroup;
+	return clonedSettings;
 }
 
 void Settings::setProperty(const std::wstring& propertyName, IPropertyValue* value)

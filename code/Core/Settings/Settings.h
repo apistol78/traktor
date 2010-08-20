@@ -38,6 +38,10 @@ public:
 	 */
 	bool write(ISerializer& s) const;
 
+	/*! \brief Clone settings.
+	 */
+	Ref< Settings > clone() const;
+
 	/*! \brief
 	 */
 	template < typename SerializerType >
