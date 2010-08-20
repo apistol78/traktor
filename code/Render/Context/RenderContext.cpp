@@ -1,5 +1,5 @@
-#include "Render/Context/RenderContext.h"
 #include "Core/Memory/Alloc.h"
+#include "Render/Context/RenderContext.h"
 
 namespace traktor
 {
@@ -12,9 +12,9 @@ struct SortOpaquePredicate
 {
 	T_FORCE_INLINE bool operator () (const RenderBlock* renderBlock1, const RenderBlock* renderBlock2) const
 	{
-		if (renderBlock1->shader < renderBlock2->shader)
+		if (renderBlock1->program < renderBlock2->program)
 			return true;
-		if (renderBlock1->shader > renderBlock2->shader)
+		if (renderBlock1->program > renderBlock2->program)
 			return false;
 		return renderBlock1->distance < renderBlock2->distance;
 	}

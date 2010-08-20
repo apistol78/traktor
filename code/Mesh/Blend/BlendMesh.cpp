@@ -277,26 +277,39 @@ void BlendMesh::render(
 	const std::vector< render::Mesh::Part >& meshParts = instance->mesh->getParts();
 	for (std::vector< Part >::const_iterator i = it->second.begin(); i != it->second.end(); ++i)
 	{
+		m_shader->setTechnique(i->shaderTechnique);
+
+		worldRenderView->setShaderCombination(
+			m_shader,
+			worldTransform.toMatrix44(),
+			worldTransform.toMatrix44(),
+			getBoundingBox()
+		);
+
+		render::IProgram* program = m_shader->getCurrentProgram();
+		if (!program)
+			continue;
+
 		render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >("BlendMesh");
 
 		renderBlock->distance = distance;
-		renderBlock->shader = m_shader;
-		renderBlock->shaderParams = renderContext->alloc< render::ShaderParameters >();
+		renderBlock->program = program;
+		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 		renderBlock->indexBuffer = instance->mesh->getIndexBuffer();
 		renderBlock->vertexBuffer = instance->mesh->getVertexBuffer();
 		renderBlock->primitives = &meshParts[i->meshPart].primitives;
 
-		renderBlock->shaderParams->beginParameters(renderContext);
-		renderBlock->shaderParams->setTechnique(i->shaderTechnique);
-		worldRenderView->setShaderParameters(
-			renderBlock->shaderParams,
+		renderBlock->programParams->beginParameters(renderContext);
+		m_shader->setProgramParameters(renderBlock->programParams);
+		worldRenderView->setProgramParameters(
+			renderBlock->programParams,
 			worldTransform.toMatrix44(),
-			worldTransform.toMatrix44(),	// \fixme
+			worldTransform.toMatrix44(),
 			getBoundingBox()
 		);
 		if (parameterCallback)
-			parameterCallback->setParameters(renderBlock->shaderParams);
-		renderBlock->shaderParams->endParameters(renderContext);
+			parameterCallback->setParameters(renderBlock->programParams);
+		renderBlock->programParams->endParameters(renderContext);
 
 		renderContext->draw(
 			i->opaque ? render::RfOpaque : render::RfAlphaBlend,

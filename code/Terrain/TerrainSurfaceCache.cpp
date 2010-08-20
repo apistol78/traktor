@@ -35,15 +35,16 @@ struct TerrainSurfaceRenderBlock : public render::RenderBlock
 
 	virtual void render(render::IRenderView* renderView) const
 	{
-		if (shaderParams)
-			shaderParams->fixup(shader);
+		if (programParams)
+			programParams->fixup(program);
 
 		renderView->begin(renderTargetSet, 0, false);
 
 		const float clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
 		renderView->clear(render::CfColor, clearColor, 0.0f, 0);
 
-		screenRenderer->draw(renderView, shader);
+		// \fixme
+		//screenRenderer->draw(renderView, shader);
 
 		renderView->end();
 	}
@@ -185,6 +186,9 @@ void TerrainSurfaceCache::get(
 	if (!m_resourceManager->bind(shader))
 		return;
 
+	worldRenderView->setShaderTechnique(shader);
+	worldRenderView->setShaderCombination(shader);
+
 	// Create render block.
 	TerrainSurfaceRenderBlock* renderBlock = renderContext->alloc< TerrainSurfaceRenderBlock >();
 
@@ -192,22 +196,22 @@ void TerrainSurfaceCache::get(
 	renderBlock->renderTargetSet = renderTargetSet;
 
 	renderBlock->distance = 0.0f;
-	renderBlock->shader = shader;
-	renderBlock->shaderParams = renderContext->alloc< render::ShaderParameters >();
+	renderBlock->program = shader->getCurrentProgram();
+	renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 
-	renderBlock->shaderParams->beginParameters(renderContext);
+	renderBlock->programParams->beginParameters(renderContext);
 
-	worldRenderView->setTechniqueParameters(renderBlock->shaderParams);
-	worldRenderView->setShaderParameters(renderBlock->shaderParams);
+	shader->setProgramParameters(renderBlock->programParams);
+	worldRenderView->setProgramParameters(renderBlock->programParams);
 
-	renderBlock->shaderParams->setTextureParameter(m_handleHeightfield, heightfieldTexture);
-	renderBlock->shaderParams->setFloatParameter(m_handleHeightfieldSize, float(heightfieldTexture->getWidth()));
-	renderBlock->shaderParams->setVectorParameter(m_handleWorldOrigin, worldOrigin);
-	renderBlock->shaderParams->setVectorParameter(m_handleWorldExtent, worldExtent);
-	renderBlock->shaderParams->setVectorParameter(m_handlePatchOrigin, patchOrigin);
-	renderBlock->shaderParams->setVectorParameter(m_handlePatchExtent, patchExtent);
+	renderBlock->programParams->setTextureParameter(m_handleHeightfield, heightfieldTexture);
+	renderBlock->programParams->setFloatParameter(m_handleHeightfieldSize, float(heightfieldTexture->getWidth()));
+	renderBlock->programParams->setVectorParameter(m_handleWorldOrigin, worldOrigin);
+	renderBlock->programParams->setVectorParameter(m_handleWorldExtent, worldExtent);
+	renderBlock->programParams->setVectorParameter(m_handlePatchOrigin, patchOrigin);
+	renderBlock->programParams->setVectorParameter(m_handlePatchExtent, patchExtent);
 
-	renderBlock->shaderParams->endParameters(renderContext);
+	renderBlock->programParams->endParameters(renderContext);
 
 	// Update cache entry.
 	m_entries[patchId].lod = surfaceLod;

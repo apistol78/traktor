@@ -24,6 +24,7 @@ namespace traktor
 class ITexture;
 class IProgram;
 class IRenderView;
+class ProgramParameters;
 
 /*! \brief Shader
  * \ingroup Render
@@ -91,6 +92,16 @@ public:
 	 * \param primitives Primitives.
 	 */
 	void draw(IRenderView* renderView, const Primitives& primitives);
+
+	/*! \name Program access
+	 */
+	//@{
+
+	IProgram* getCurrentProgram() const;
+
+	void setProgramParameters(ProgramParameters* programParameters);
+
+	//@}
 
 	/*! \name Set parameter by name.
 	 *

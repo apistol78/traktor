@@ -1,6 +1,7 @@
-#include "World/WorldRenderView.h"
 #include "Render/ITexture.h"
-#include "Render/Context/ShaderParameters.h"
+#include "Render/Shader.h"
+#include "Render/Context/ProgramParameters.h"
+#include "World/WorldRenderView.h"
 
 namespace traktor
 {
@@ -158,42 +159,32 @@ void WorldRenderView::resetLights()
 	m_lightCount = 0;
 }
 
-void WorldRenderView::setTechniqueParameters(render::ShaderParameters* shaderParams) const
+void WorldRenderView::setShaderTechnique(render::Shader* shader) const
 {
-	shaderParams->setTechnique(m_technique);
+	shader->setTechnique(m_technique);
 }
 
-void WorldRenderView::setShaderParameters(render::ShaderParameters* shaderParams) const
+void WorldRenderView::setShaderCombination(render::Shader* shader) const
 {
 	if (m_technique == s_handleDefaultTechnique)
 	{
 		if (m_lightCount == 1 && m_lights[0].type == LtDirectional)
 		{
 			// Single directional light; enable simple lighting path.
-			shaderParams->setCombination(s_handleLightEnableComplex, false);
+			shader->setCombination(s_handleLightEnableComplex, false);
 		}
 		else
 		{
 			// Enable complex lighting path with dynamic branching.
-			shaderParams->setCombination(s_handleLightEnableComplex, true);
+			shader->setCombination(s_handleLightEnableComplex, true);
 		}
 
-		shaderParams->setCombination(s_handleShadowEnable, m_shadowMask != 0);
-		shaderParams->setCombination(s_handleDepthEnable, m_depthMap != 0);
-	}
-
-	setWorldShaderParameters(shaderParams, Matrix44::identity(), Matrix44::identity());
-
-	// Set these parameters only if we're rendering using default technique.
-	if (m_technique == s_handleDefaultTechnique)
-	{
-		setLightShaderParameters(shaderParams);
-		setShadowMapShaderParameters(shaderParams);
-		setDepthMapShaderParameters(shaderParams);
+		shader->setCombination(s_handleShadowEnable, m_shadowMask != 0);
+		shader->setCombination(s_handleDepthEnable, m_depthMap != 0);
 	}
 }
 
-void WorldRenderView::setShaderParameters(render::ShaderParameters* shaderParams, const Matrix44& world, const Matrix44& worldPrevious, const Aabb& bounds) const
+void WorldRenderView::setShaderCombination(render::Shader* shader, const Matrix44& world, const Matrix44& worldPrevious, const Aabb& bounds) const
 {
 	if (m_technique == s_handleDefaultTechnique)
 	{
@@ -221,49 +212,65 @@ void WorldRenderView::setShaderParameters(render::ShaderParameters* shaderParams
 		if (lightPointCount > 0 || lightDirectionalCount > 1)
 		{
 			// Enable complex lighting path with dynamic branching.
-			shaderParams->setCombination(s_handleLightEnableComplex, true);
+			shader->setCombination(s_handleLightEnableComplex, true);
 		}
 		else
 		{
 			// Single directional light; enable simple lighting path.
-			shaderParams->setCombination(s_handleLightEnableComplex, false);
+			shader->setCombination(s_handleLightEnableComplex, false);
 		}
 
-		shaderParams->setCombination(s_handleShadowEnable, m_shadowMask != 0);
-		shaderParams->setCombination(s_handleDepthEnable, m_depthMap != 0);
+		shader->setCombination(s_handleShadowEnable, m_shadowMask != 0);
+		shader->setCombination(s_handleDepthEnable, m_depthMap != 0);
 	}
+}
 
-	setWorldShaderParameters(shaderParams, world, worldPrevious);
+void WorldRenderView::setProgramParameters(render::ProgramParameters* programParams) const
+{
+	setWorldProgramParameters(programParams, Matrix44::identity(), Matrix44::identity());
 
 	// Set these parameters only if we're rendering using default technique.
 	if (m_technique == s_handleDefaultTechnique)
 	{
-		setLightShaderParameters(shaderParams, world, bounds);
-		setShadowMapShaderParameters(shaderParams);
-		setDepthMapShaderParameters(shaderParams);
+		setLightProgramParameters(programParams);
+		setShadowMapProgramParameters(programParams);
+		setDepthMapProgramParameters(programParams);
 	}
 }
 
-void WorldRenderView::setWorldShaderParameters(render::ShaderParameters* shaderParams, const Matrix44& world, const Matrix44& worldPrevious) const
+void WorldRenderView::setProgramParameters(render::ProgramParameters* programParams, const Matrix44& world, const Matrix44& worldPrevious, const Aabb& bounds) const
+{
+	setWorldProgramParameters(programParams, world, worldPrevious);
+
+	// Set these parameters only if we're rendering using default technique.
+	if (m_technique == s_handleDefaultTechnique)
+	{
+		setLightProgramParameters(programParams, world, bounds);
+		setShadowMapProgramParameters(programParams);
+		setDepthMapProgramParameters(programParams);
+	}
+}
+
+void WorldRenderView::setWorldProgramParameters(render::ProgramParameters* programParams, const Matrix44& world, const Matrix44& worldPrevious) const
 {
 	float viewSizeInvX = m_viewSize.x != 0.0f ? 1.0f / m_viewSize.x : 0.0f;
 	float viewSizeInvY = m_viewSize.y != 0.0f ? 1.0f / m_viewSize.y : 0.0f;
 
-	shaderParams->setFloatParameter(s_handleTime, m_time);
-	shaderParams->setMatrixParameter(s_handleProjection, m_projection);
-	shaderParams->setMatrixParameter(s_handleView, m_view);
-	shaderParams->setMatrixParameter(s_handleViewPrevious, m_viewPrevious);
-	shaderParams->setMatrixParameter(s_handleWorld, world);
-	shaderParams->setMatrixParameter(s_handleWorldInverse, world.inverse());
-	shaderParams->setMatrixParameter(s_handleWorldPrevious, worldPrevious);
-	shaderParams->setVectorParameter(s_handleViewSize, Vector4(m_viewSize.x, m_viewSize.y, viewSizeInvX, viewSizeInvY));
-	shaderParams->setVectorParameter(s_handleEyePosition, m_eyePosition);
+	programParams->setFloatParameter(s_handleTime, m_time);
+	programParams->setMatrixParameter(s_handleProjection, m_projection);
+	programParams->setMatrixParameter(s_handleView, m_view);
+	programParams->setMatrixParameter(s_handleViewPrevious, m_viewPrevious);
+	programParams->setMatrixParameter(s_handleWorld, world);
+	programParams->setMatrixParameter(s_handleWorldInverse, world.inverse());
+	programParams->setMatrixParameter(s_handleWorldPrevious, worldPrevious);
+	programParams->setVectorParameter(s_handleViewSize, Vector4(m_viewSize.x, m_viewSize.y, viewSizeInvX, viewSizeInvY));
+	programParams->setVectorParameter(s_handleEyePosition, m_eyePosition);
 
 	Vector4 viewDistance(m_viewFrustum.getNearZ(), m_viewFrustum.getFarZ(), m_cullFrustum.getNearZ(), m_cullFrustum.getFarZ());
-	shaderParams->setVectorParameter(s_handleViewDistance, viewDistance);
+	programParams->setVectorParameter(s_handleViewDistance, viewDistance);
 }
 
-void WorldRenderView::setLightShaderParameters(render::ShaderParameters* shaderParams) const
+void WorldRenderView::setLightProgramParameters(render::ProgramParameters* programParams) const
 {
 	T_ASSERT (m_lightCount <= MaxLightCount);
 
@@ -295,14 +302,14 @@ void WorldRenderView::setLightShaderParameters(render::ShaderParameters* shaderP
 	}
 
 	// Finally set shader parameters.
-	shaderParams->setVectorArrayParameter(s_handleLightPositionAndType, lightPositionAndType, MaxLightCount);
-	shaderParams->setVectorArrayParameter(s_handleLightDirectionAndRange, lightDirectionAndRange, MaxLightCount);
-	shaderParams->setVectorArrayParameter(s_handleLightSunColor, lightSunColor, MaxLightCount);
-	shaderParams->setVectorArrayParameter(s_handleLightBaseColor, lightBaseColor, MaxLightCount);
-	shaderParams->setVectorArrayParameter(s_handleLightShadowColor, lightShadowColor, MaxLightCount);
+	programParams->setVectorArrayParameter(s_handleLightPositionAndType, lightPositionAndType, MaxLightCount);
+	programParams->setVectorArrayParameter(s_handleLightDirectionAndRange, lightDirectionAndRange, MaxLightCount);
+	programParams->setVectorArrayParameter(s_handleLightSunColor, lightSunColor, MaxLightCount);
+	programParams->setVectorArrayParameter(s_handleLightBaseColor, lightBaseColor, MaxLightCount);
+	programParams->setVectorArrayParameter(s_handleLightShadowColor, lightShadowColor, MaxLightCount);
 }
 
-void WorldRenderView::setLightShaderParameters(render::ShaderParameters* shaderParams, const Matrix44& world, const Aabb& bounds) const
+void WorldRenderView::setLightProgramParameters(render::ProgramParameters* programParams, const Matrix44& world, const Aabb& bounds) const
 {
 	T_ASSERT (m_lightCount <= MaxLightCount);
 
@@ -365,26 +372,26 @@ void WorldRenderView::setLightShaderParameters(render::ShaderParameters* shaderP
 	}
 
 	// Finally set shader parameters.
-	shaderParams->setVectorArrayParameter(s_handleLightPositionAndType, lightPositionAndType, MaxLightCount);
-	shaderParams->setVectorArrayParameter(s_handleLightDirectionAndRange, lightDirectionAndRange, MaxLightCount);
-	shaderParams->setVectorArrayParameter(s_handleLightSunColor, lightSunColor, MaxLightCount);
-	shaderParams->setVectorArrayParameter(s_handleLightBaseColor, lightBaseColor, MaxLightCount);
-	shaderParams->setVectorArrayParameter(s_handleLightShadowColor, lightShadowColor, MaxLightCount);
+	programParams->setVectorArrayParameter(s_handleLightPositionAndType, lightPositionAndType, MaxLightCount);
+	programParams->setVectorArrayParameter(s_handleLightDirectionAndRange, lightDirectionAndRange, MaxLightCount);
+	programParams->setVectorArrayParameter(s_handleLightSunColor, lightSunColor, MaxLightCount);
+	programParams->setVectorArrayParameter(s_handleLightBaseColor, lightBaseColor, MaxLightCount);
+	programParams->setVectorArrayParameter(s_handleLightShadowColor, lightShadowColor, MaxLightCount);
 }
 
-void WorldRenderView::setShadowMapShaderParameters(render::ShaderParameters* shaderParams) const
+void WorldRenderView::setShadowMapProgramParameters(render::ProgramParameters* programParams) const
 {
 	if (m_shadowMask)
 	{
-		shaderParams->setTextureParameter(s_handleShadowMask, m_shadowMask);
-		shaderParams->setFloatParameter(s_handleShadowMaskSize, m_shadowMaskSize);
+		programParams->setTextureParameter(s_handleShadowMask, m_shadowMask);
+		programParams->setFloatParameter(s_handleShadowMaskSize, m_shadowMaskSize);
 	}
 }
 
-void WorldRenderView::setDepthMapShaderParameters(render::ShaderParameters* shaderParams) const
+void WorldRenderView::setDepthMapProgramParameters(render::ProgramParameters* programParams) const
 {
 	if (m_depthMap)
-		shaderParams->setTextureParameter(s_handleDepthMap, m_depthMap);
+		programParams->setTextureParameter(s_handleDepthMap, m_depthMap);
 }
 
 	}

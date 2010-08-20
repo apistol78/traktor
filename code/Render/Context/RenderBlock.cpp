@@ -1,5 +1,5 @@
 #include "Render/Context/RenderBlock.h"
-#include "Render/Context/ShaderParameters.h"
+#include "Render/Context/ProgramParameters.h"
 #include "Render/IRenderView.h"
 
 namespace traktor
@@ -11,8 +11,8 @@ void NullRenderBlock::render(IRenderView* renderView) const
 {
 	T_RENDER_PUSH_MARKER(renderView, name);
 
-	if (shaderParams)
-		shaderParams->fixup(shader);
+	if (programParams)
+		programParams->fixup(program);
 
 	T_RENDER_POP_MARKER(renderView);
 }
@@ -21,12 +21,13 @@ void SimpleRenderBlock::render(IRenderView* renderView) const
 {
 	T_RENDER_PUSH_MARKER(renderView, name);
 
-	if (shaderParams)
-		shaderParams->fixup(shader);
+	if (programParams)
+		programParams->fixup(program);
 
 	renderView->setIndexBuffer(indexBuffer);
 	renderView->setVertexBuffer(vertexBuffer);
-	shader->draw(renderView, *primitives);
+	renderView->setProgram(program);
+	renderView->draw(*primitives);
 
 	T_RENDER_POP_MARKER(renderView);
 }
@@ -37,11 +38,12 @@ void NonIndexedRenderBlock::render(IRenderView* renderView) const
 
 	T_RENDER_PUSH_MARKER(renderView, name);
 
-	if (shaderParams)
-		shaderParams->fixup(shader);
+	if (programParams)
+		programParams->fixup(program);
 
 	renderView->setVertexBuffer(vertexBuffer);
-	shader->draw(renderView, p);
+	renderView->setProgram(program);
+	renderView->draw(p);
 
 	T_RENDER_POP_MARKER(renderView);
 }
@@ -52,12 +54,13 @@ void IndexedRenderBlock::render(IRenderView* renderView) const
 
 	T_RENDER_PUSH_MARKER(renderView, name);
 
-	if (shaderParams)
-		shaderParams->fixup(shader);
+	if (programParams)
+		programParams->fixup(program);
 
 	renderView->setIndexBuffer(indexBuffer);
 	renderView->setVertexBuffer(vertexBuffer);
-	shader->draw(renderView, p);
+	renderView->setProgram(program);
+	renderView->draw(p);
 
 	T_RENDER_POP_MARKER(renderView);
 }

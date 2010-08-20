@@ -218,7 +218,7 @@ void AccGlyph::render(
 	vertexBuffer->unlock();
 
 	render::IndexedRenderBlock* renderBlock = renderContext->alloc< render::IndexedRenderBlock >("Flash AccGlyph");
-	renderBlock->shader = (maskReference == 0) ? m_shaderGlyph : m_shaderGlyphMask;
+	renderBlock->program = ((maskReference == 0) ? m_shaderGlyph : m_shaderGlyphMask)->getCurrentProgram();
 	renderBlock->indexBuffer = m_indexBuffer;
 	renderBlock->vertexBuffer = vertexBuffer;
 	renderBlock->primitive = render::PtTriangles;
@@ -227,15 +227,15 @@ void AccGlyph::render(
 	renderBlock->minIndex = 0;
 	renderBlock->maxIndex = c_glyphCount * 4;
 
-	renderBlock->shaderParams = renderContext->alloc< render::ShaderParameters >();
-	renderBlock->shaderParams->beginParameters(renderContext);
-	renderBlock->shaderParams->setVectorParameter(s_handleFrameSize, frameSize);
-	renderBlock->shaderParams->setVectorParameter(s_handleViewSize, viewSize);
-	renderBlock->shaderParams->setVectorParameter(s_handleViewOffset, viewOffset);
-	renderBlock->shaderParams->setStencilReference(maskReference);
-	renderBlock->shaderParams->setTextureParameter(s_handleTexture, texture);
+	renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
+	renderBlock->programParams->beginParameters(renderContext);
+	renderBlock->programParams->setVectorParameter(s_handleFrameSize, frameSize);
+	renderBlock->programParams->setVectorParameter(s_handleViewSize, viewSize);
+	renderBlock->programParams->setVectorParameter(s_handleViewOffset, viewOffset);
+	renderBlock->programParams->setStencilReference(maskReference);
+	renderBlock->programParams->setTextureParameter(s_handleTexture, texture);
 
-	renderBlock->shaderParams->endParameters(renderContext);
+	renderBlock->programParams->endParameters(renderContext);
 
 	renderContext->draw(render::RfOverlay, renderBlock);
 

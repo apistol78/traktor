@@ -87,6 +87,19 @@ void StreamMesh::render(
 	const std::vector< render::Mesh::Part >& meshParts = instance->mesh[0]->getParts();
 	for (std::vector< Part >::const_iterator i = it->second.begin(); i != it->second.end(); ++i)
 	{
+		m_shader->setTechnique(i->shaderTechnique);
+
+		worldRenderView->setShaderCombination(
+			m_shader,
+			worldTransform.toMatrix44(),
+			worldTransformPrevious.toMatrix44(),
+			getBoundingBox()
+		);
+
+		render::IProgram* program = m_shader->getCurrentProgram();
+		if (!program)
+			continue;
+
 		// \fixme Linear search by string
 		std::vector< render::Mesh::Part >::const_iterator j = std::find_if(meshParts.begin(), meshParts.end(), NamedMeshPart(i->meshPart));
 		if (j == meshParts.end())
@@ -95,23 +108,23 @@ void StreamMesh::render(
 		render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >("StreamMesh");
 
 		renderBlock->distance = distance;
-		renderBlock->shader = m_shader;
-		renderBlock->shaderParams = renderContext->alloc< render::ShaderParameters >();
+		renderBlock->program = program;
+		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 		renderBlock->indexBuffer = instance->mesh[0]->getIndexBuffer();
 		renderBlock->vertexBuffer = instance->mesh[0]->getVertexBuffer();
 		renderBlock->primitives = &j->primitives;
 
-		renderBlock->shaderParams->beginParameters(renderContext);
-		renderBlock->shaderParams->setTechnique(i->shaderTechnique);
-		worldRenderView->setShaderParameters(
-			renderBlock->shaderParams,
+		renderBlock->programParams->beginParameters(renderContext);
+		m_shader->setProgramParameters(renderBlock->programParams);
+		worldRenderView->setProgramParameters(
+			renderBlock->programParams,
 			worldTransform.toMatrix44(),
 			worldTransformPrevious.toMatrix44(),
 			getBoundingBox()
 		);
 		if (parameterCallback)
-			parameterCallback->setParameters(renderBlock->shaderParams);
-		renderBlock->shaderParams->endParameters(renderContext);
+			parameterCallback->setParameters(renderBlock->programParams);
+		renderBlock->programParams->endParameters(renderContext);
 
 		renderContext->draw(
 			i->opaque ? render::RfOpaque : render::RfAlphaBlend,

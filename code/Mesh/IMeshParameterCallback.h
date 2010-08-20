@@ -16,7 +16,7 @@ namespace traktor
 	namespace render
 	{
 
-class ShaderParameters;
+class ProgramParameters;
 
 	}
 
@@ -31,7 +31,7 @@ class ShaderParameters;
 class T_DLLCLASS IMeshParameterCallback
 {
 public:
-	virtual void setParameters(render::ShaderParameters* shaderParameters) const = 0;
+	virtual void setParameters(render::ProgramParameters* programParameters) const = 0;
 };
 
 	}

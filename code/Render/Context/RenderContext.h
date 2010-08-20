@@ -6,7 +6,7 @@
 #include "Core/Math/Vector4.h"
 #include "Core/Math/Matrix44.h"
 #include "Render/Context/RenderBlock.h"
-#include "Render/Context/ShaderParameters.h"
+#include "Render/Context/ProgramParameters.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

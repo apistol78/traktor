@@ -7,7 +7,7 @@
 #include "Core/Math/Matrix44.h"
 #include "Core/Math/Frustum.h"
 #include "Core/Math/Aabb.h"
-#include "Render/Shader.h"
+#include "Render/Types.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -23,8 +23,8 @@ namespace traktor
 	{
 
 class ITexture;
+class ProgramParameters;
 class Shader;
-class ShaderParameters;
 
 	}
 
@@ -90,22 +90,26 @@ public:
 
 	void resetLights();
 
-	void setTechniqueParameters(render::ShaderParameters* shaderParams) const;
+	void setShaderTechnique(render::Shader* shader) const;
 
-	/*! \brief Set shader parameters defined by world renderer.
+	void setShaderCombination(render::Shader* shader) const;
+
+	void setShaderCombination(render::Shader* shader, const Matrix44& world, const Matrix44& worldPrevious, const Aabb& bounds) const;
+
+	/*! \brief Set program parameters defined by world renderer.
 	 *
-	 * \param shaderParams Pointer to shader parameter container.
+	 * \param programParams Pointer to program parameter container.
 	 */
-	void setShaderParameters(render::ShaderParameters* shaderParams) const;
+	void setProgramParameters(render::ProgramParameters* programParams) const;
 
-	/*! \brief Set shader parameters defined by world renderer.
+	/*! \brief Set program parameters defined by world renderer.
 	 *
-	 * \param shaderParams Pointer to shader parameter container.
+	 * \param programParams Pointer to program parameter container.
 	 * \param world Entity world transform.
 	 * \param worldPrevious Entity previous world transform.
 	 * \param bounds Entity bounds in object space.
 	 */
-	void setShaderParameters(render::ShaderParameters* shaderParams, const Matrix44& world, const Matrix44& worldPrevious, const Aabb& bounds) const;
+	void setProgramParameters(render::ProgramParameters* programParams, const Matrix44& world, const Matrix44& worldPrevious, const Aabb& bounds) const;
 
 	T_FORCE_INLINE render::handle_t getTechnique() const {
 		return m_technique;
@@ -186,15 +190,15 @@ private:
 	float m_deltaTime;
 	float m_interval;
 
-	void setWorldShaderParameters(render::ShaderParameters* shaderParams, const Matrix44& world, const Matrix44& worldPrevious) const;
+	void setWorldProgramParameters(render::ProgramParameters* programParams, const Matrix44& world, const Matrix44& worldPrevious) const;
 
-	void setLightShaderParameters(render::ShaderParameters* shaderParams) const;
+	void setLightProgramParameters(render::ProgramParameters* programParams) const;
 
-	void setLightShaderParameters(render::ShaderParameters* shaderParams, const Matrix44& world, const Aabb& bounds) const;
+	void setLightProgramParameters(render::ProgramParameters* programParams, const Matrix44& world, const Aabb& bounds) const;
 
-	void setShadowMapShaderParameters(render::ShaderParameters* shaderParams) const;
+	void setShadowMapProgramParameters(render::ProgramParameters* programParams) const;
 
-	void setDepthMapShaderParameters(render::ShaderParameters* shaderParams) const;
+	void setDepthMapProgramParameters(render::ProgramParameters* programParams) const;
 };
 	
 	}

@@ -1,6 +1,7 @@
 #include "Render/Shader.h"
 #include "Render/IProgram.h"
 #include "Render/IRenderView.h"
+#include "Render/Context/ProgramParameters.h"
 
 namespace traktor
 {
@@ -127,6 +128,22 @@ void Shader::draw(IRenderView* renderView, const Primitives& primitives)
 
 	renderView->setProgram(m_currentProgram);
 	renderView->draw(primitives);
+}
+
+IProgram* Shader::getCurrentProgram() const
+{
+	return m_currentProgram;
+}
+
+void Shader::setProgramParameters(ProgramParameters* programParameters)
+{
+	for (std::map< handle_t, resource::Proxy< ITexture > >::iterator i = m_textures.begin(); i != m_textures.end(); ++i)
+	{
+		if (i->second.validate())
+			programParameters->setTextureParameter(i->first, i->second);
+		else
+			programParameters->setTextureParameter(i->first, 0);
+	}
 }
 
 void Shader::updateCurrentProgram()
