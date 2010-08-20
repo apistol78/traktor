@@ -109,6 +109,8 @@ bool RenderViewOpenGL::reset(const RenderViewDefaultDesc& desc)
 
 #if defined(__APPLE__)
 	cglwModifyWindow(m_windowHandle, desc.displayMode);
+	if (desc.fullscreen != cglwIsFullscreen(m_windowHandle))
+		cglwSetFullscreen(m_windowHandle, desc.fullscreen);
 #endif
 
 	m_context->update();

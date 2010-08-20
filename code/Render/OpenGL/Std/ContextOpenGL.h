@@ -25,7 +25,7 @@ public:
 #if defined(_WIN32)
 	ContextOpenGL(HWND hWnd, HDC hDC, HGLRC hRC);
 #elif defined(__APPLE__)
-	ContextOpenGL(void* context, bool fullscreen);
+	ContextOpenGL(void* context);
 #else	// LINUX
 	ContextOpenGL(Display* display, Window window, GLXContext context);
 #endif
@@ -53,8 +53,6 @@ public:
 	int32_t getWidth() const;
 
 	int32_t getHeight() const;
-	
-	bool isFullScreen() const;
 
 	virtual bool enter();
 
@@ -92,7 +90,6 @@ private:
 	std::vector< IDeleteCallback* > m_deleteResources;
 	int32_t m_width;
 	int32_t m_height;
-	bool m_fullscreen;
 };
 
 	}
