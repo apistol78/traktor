@@ -12,6 +12,7 @@ namespace traktor
 
 bool s_handlesInitialized = false;
 render::handle_t s_handleDefaultTechnique;
+render::handle_t s_handleVelocityTechnique;
 render::handle_t s_handleProjection;
 render::handle_t s_handleView;
 render::handle_t s_handleViewPrevious;
@@ -65,6 +66,7 @@ WorldRenderView::WorldRenderView()
 	if (!s_handlesInitialized)
 	{
 		s_handleDefaultTechnique = render::getParameterHandle(L"Default");
+		s_handleVelocityTechnique = render::getParameterHandle(L"Velocity");
 		s_handleProjection = render::getParameterHandle(L"Projection");
 		s_handleView = render::getParameterHandle(L"View");
 		s_handleViewPrevious = render::getParameterHandle(L"ViewPrevious");
@@ -259,12 +261,16 @@ void WorldRenderView::setWorldProgramParameters(render::ProgramParameters* progr
 	programParams->setFloatParameter(s_handleTime, m_time);
 	programParams->setMatrixParameter(s_handleProjection, m_projection);
 	programParams->setMatrixParameter(s_handleView, m_view);
-	programParams->setMatrixParameter(s_handleViewPrevious, m_viewPrevious);
 	programParams->setMatrixParameter(s_handleWorld, world);
 	programParams->setMatrixParameter(s_handleWorldInverse, world.inverse());
-	programParams->setMatrixParameter(s_handleWorldPrevious, worldPrevious);
 	programParams->setVectorParameter(s_handleViewSize, Vector4(m_viewSize.x, m_viewSize.y, viewSizeInvX, viewSizeInvY));
 	programParams->setVectorParameter(s_handleEyePosition, m_eyePosition);
+
+	if (m_technique == s_handleVelocityTechnique)
+	{
+		programParams->setMatrixParameter(s_handleViewPrevious, m_viewPrevious);
+		programParams->setMatrixParameter(s_handleWorldPrevious, worldPrevious);
+	}
 
 	Vector4 viewDistance(m_viewFrustum.getNearZ(), m_viewFrustum.getFarZ(), m_cullFrustum.getNearZ(), m_cullFrustum.getFarZ());
 	programParams->setVectorParameter(s_handleViewDistance, viewDistance);
