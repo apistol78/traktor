@@ -28,7 +28,7 @@ struct Vertex
 
 const Guid c_guidShaderGlyph(L"{A8BC2D03-EB52-B744-8D4B-29E39FF0B4F5}");
 const Guid c_guidShaderGlyphMask(L"{C8FEF24B-D775-A14D-9FF3-E34A17495FB4}");
-const uint32_t c_glyphCount = 300;
+const uint32_t c_glyphCount = 400;
 
 const struct TemplateVertex
 {
