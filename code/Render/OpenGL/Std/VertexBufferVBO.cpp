@@ -1,6 +1,5 @@
 #include <cstring>
 #include "Core/Log/Log.h"
-#include "Core/Memory/Alloc.h"
 #include "Render/VertexElement.h"
 #include "Render/OpenGL/IContext.h"
 #include "Render/OpenGL/Std/Extensions.h"
@@ -36,15 +35,23 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VertexBufferVBO", VertexBufferVBO, Verte
 VertexBufferVBO::VertexBufferVBO(IContext* resourceContext, const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
 :	VertexBufferOpenGL(bufferSize)
 ,	m_resourceContext(resourceContext)
+,	m_current(0)
 ,	m_lock(0)
 ,	m_dynamic(dynamic)
 {
 	m_vertexStride = getVertexSize(vertexElements);
 	T_ASSERT (m_vertexStride > 0);
 
-	T_OGL_SAFE(glGenBuffersARB(1, &m_name));
-	T_OGL_SAFE(glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_name));
-	T_OGL_SAFE(glBufferDataARB(GL_ARRAY_BUFFER_ARB, bufferSize, 0, m_dynamic ? GL_DYNAMIC_DRAW_ARB : GL_STATIC_DRAW_ARB));
+	std::memset(m_name, 0, sizeof(m_name));
+
+	int bufferCount = m_dynamic ? 2 : 1;
+	T_OGL_SAFE(glGenBuffersARB(bufferCount, m_name));
+	
+	for (int i = 0; i < bufferCount; ++i)
+	{
+		T_OGL_SAFE(glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_name[i]));
+		T_OGL_SAFE(glBufferDataARB(GL_ARRAY_BUFFER_ARB, bufferSize, 0, m_dynamic ? GL_DYNAMIC_DRAW_ARB : GL_STATIC_DRAW_ARB));
+	}
 
 	std::memset(m_attributeDesc, 0, sizeof(m_attributeDesc));
 
@@ -148,36 +155,51 @@ VertexBufferVBO::~VertexBufferVBO()
 
 void VertexBufferVBO::destroy()
 {
-	if (m_name)
+	int bufferCount = m_dynamic ? 2 : 1;
+
+	for (int i = 0; i < bufferCount; ++i)
 	{
-		if (m_resourceContext)
-			m_resourceContext->deleteResource(new DeleteBufferCallback(m_name));
-		m_name = 0;
+		if (m_name[i])
+		{
+			if (m_resourceContext)
+				m_resourceContext->deleteResource(new DeleteBufferCallback(m_name[i]));
+			m_name[i] = 0;
+		}
 	}
 }
 
 void* VertexBufferVBO::lock()
 {
 	T_ASSERT_M(!m_lock, L"Vertex buffer already locked");
-	m_lock = (uint8_t*)Alloc::acquireAlign(getBufferSize(), 16);
+	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
+	
+	if (m_dynamic)
+		m_current = 1 - m_current;
+	
+	T_OGL_SAFE(glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_name[m_current]));
+	m_lock = static_cast< uint8_t* >(glMapBufferARB(GL_ARRAY_BUFFER_ARB, GL_WRITE_ONLY_ARB));
+	
 	return m_lock;
 }
 
 void* VertexBufferVBO::lock(uint32_t vertexOffset, uint32_t vertexCount)
 {
-	T_FATAL_ERROR;
-	return 0;
+	T_ASSERT_M(!m_lock, L"Vertex buffer already locked");
+	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
+	
+	T_OGL_SAFE(glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_name[m_current]));
+	m_lock = static_cast< uint8_t* >(glMapBufferARB(GL_ARRAY_BUFFER_ARB, GL_WRITE_ONLY_ARB));
+	
+	return m_lock ? (m_lock + vertexOffset * m_vertexStride) : 0;
 }
 
 void VertexBufferVBO::unlock()
 {
 	T_ASSERT_M(m_lock, L"Vertex buffer not locked");
 	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
-
-	T_OGL_SAFE(glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_name));
-	T_OGL_SAFE(glBufferDataARB(GL_ARRAY_BUFFER_ARB, getBufferSize(), m_lock, m_dynamic ? GL_DYNAMIC_DRAW_ARB : GL_STATIC_DRAW_ARB));
-
-	Alloc::freeAlign(m_lock);
+	
+	T_OGL_SAFE(glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_name[m_current]));
+	T_OGL_SAFE(glUnmapBufferARB(GL_ARRAY_BUFFER_ARB));
 	m_lock = 0;
 	
 	setContentValid(true);
@@ -187,7 +209,7 @@ void VertexBufferVBO::activate(const GLint* attributeLocs)
 {
 	T_ASSERT_M(!m_lock, L"Vertex buffer still locked");
 
-	T_OGL_SAFE(glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_name));
+	T_OGL_SAFE(glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_name[m_current]));
 
 	for (int i = 0; i < T_OGL_MAX_USAGE_INDEX; ++i)
 	{
