@@ -51,7 +51,8 @@ private:
 	};
 
 	Ref< IContext > m_resourceContext;
-	GLuint m_name;
+	GLuint m_name[2];
+	int m_current;
 	GLuint m_vertexStride;
 	AttributeDesc m_attributeDesc[T_OGL_MAX_USAGE_INDEX];
 	uint8_t* m_lock;
