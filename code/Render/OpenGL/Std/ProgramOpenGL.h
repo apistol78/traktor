@@ -32,13 +32,11 @@ class T_DLLCLASS ProgramOpenGL : public IProgram
 	T_RTTI_CLASS;
 
 public:
-	ProgramOpenGL(ContextOpenGL* resourceContext);
-
 	virtual ~ProgramOpenGL();
 
 	static Ref< ProgramResource > compile(const GlslProgram& glslProgram, int optimize, bool validate);
 
-	bool create(const ProgramResource* resource);
+	static Ref< ProgramOpenGL > create(ContextOpenGL* resourceContext, const ProgramResource* resource);
 
 	virtual void destroy();
 
@@ -103,6 +101,8 @@ private:
 	GLint m_stencilRef;
 	bool m_textureDirty;
 	static ProgramOpenGL* ms_activeProgram;
+	
+	ProgramOpenGL(ContextOpenGL* resourceContext, GLhandleARB program, const ProgramResource* resource);
 };
 
 	}

@@ -3,6 +3,7 @@
 #include "Core/Misc/Align.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
+#include "Core/Serialization/DeepHash.h"
 #include "Render/OpenGL/Platform.h"
 #include "Render/OpenGL/GlslType.h"
 #include "Render/OpenGL/GlslProgram.h"
@@ -105,23 +106,13 @@ bool storeIfNotEqual(const Matrix44* source, int length, float* dest)
 	return true;
 }
 
+std::map< uint32_t, ProgramOpenGL* > s_programCache;
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProgramOpenGL", ProgramOpenGL, IProgram)
 
 ProgramOpenGL* ProgramOpenGL::ms_activeProgram = 0;
-
-ProgramOpenGL::ProgramOpenGL(ContextOpenGL* resourceContext)
-:	m_resourceContext(resourceContext)
-,	m_program(0)
-,	m_state(0)
-,	m_locationTargetSize(0)
-,	m_stencilRef(0)
-,	m_textureDirty(true)
-{
-	m_targetSize[0] =
-	m_targetSize[1] = 0.0f;
-}
 
 ProgramOpenGL::~ProgramOpenGL()
 {
@@ -142,161 +133,67 @@ Ref< ProgramResource > ProgramOpenGL::compile(const GlslProgram& glslProgram, in
 	return resource;
 }
 
-bool ProgramOpenGL::create(const ProgramResource* resource)
+Ref< ProgramOpenGL > ProgramOpenGL::create(ContextOpenGL* resourceContext, const ProgramResource* resource)
 {
 	const ProgramResourceOpenGL* resourceOpenGL = checked_type_cast< const ProgramResourceOpenGL* >(resource);
 	char errorBuf[32000];
 	GLsizei errorBufLen;
 	GLint status;
 	
-	std::string vertexShader = wstombs(resourceOpenGL->getVertexShader());
-	const char* vertexShaderPtr = vertexShader.c_str();
+	uint32_t hash = DeepHash(resource).get();
 
-	std::string fragmentShader = wstombs(resourceOpenGL->getFragmentShader());
-	const char* fragmentShaderPtr = fragmentShader.c_str();
+	std::map< uint32_t, ProgramOpenGL* >::iterator i = s_programCache.find(hash);
+	if (i != s_programCache.end())
+		return i->second;
 	
-	GLhandleARB vertexObject = m_resourceContext->createShaderObject(vertexShaderPtr, GL_VERTEX_SHADER_ARB);
+	std::string vertexShader = wstombs(resourceOpenGL->getVertexShader());
+	std::string fragmentShader = wstombs(resourceOpenGL->getFragmentShader());
+
+	GLhandleARB vertexObject = resourceContext->createShaderObject(vertexShader.c_str(), GL_VERTEX_SHADER_ARB);
 	if (!vertexObject)
-		return false;
+		return 0;
 		
-	GLhandleARB fragmentObject = m_resourceContext->createShaderObject(fragmentShaderPtr, GL_FRAGMENT_SHADER_ARB);
+	GLhandleARB fragmentObject = resourceContext->createShaderObject(fragmentShader.c_str(), GL_FRAGMENT_SHADER_ARB);
 	if (!fragmentObject)
-		return false;
+		return 0;
 
-	m_program = glCreateProgramObjectARB();
+	GLhandleARB programObject = glCreateProgramObjectARB();
 
-	T_OGL_SAFE(glAttachObjectARB(m_program, vertexObject));
-	T_OGL_SAFE(glAttachObjectARB(m_program, fragmentObject));
-	T_OGL_SAFE(glLinkProgramARB(m_program));
+	T_OGL_SAFE(glAttachObjectARB(programObject, vertexObject));
+	T_OGL_SAFE(glAttachObjectARB(programObject, fragmentObject));
+	T_OGL_SAFE(glLinkProgramARB(programObject));
 
-	T_OGL_SAFE(glGetObjectParameterivARB(m_program, GL_OBJECT_LINK_STATUS_ARB, &status));
+	T_OGL_SAFE(glGetObjectParameterivARB(programObject, GL_OBJECT_LINK_STATUS_ARB, &status));
 	if (status != GL_TRUE)
 	{
-		T_OGL_SAFE(glGetInfoLogARB(m_program, sizeof(errorBuf), &errorBufLen, errorBuf));
+		T_OGL_SAFE(glGetInfoLogARB(programObject, sizeof(errorBuf), &errorBufLen, errorBuf));
 		if (errorBufLen > 0)
 		{
 			log::error << L"GLSL program link failed :" << Endl;
 			log::error << mbstows(errorBuf) << Endl;
-			return false;
+			return 0;
 		}
 	}
 	
-	// Get target size parameter.
-	m_locationTargetSize = glGetUniformLocationARB(m_program, "_gl_targetSize");
-
-	// Map texture parameters.
-	const std::map< std::wstring, int32_t >& samplerTextures = resourceOpenGL->getSamplerTextures();
-	for (std::map< std::wstring, int32_t >::const_iterator i = samplerTextures.begin(); i != samplerTextures.end(); ++i)
-	{
-		handle_t handle = getParameterHandle(i->first);
-
-		if (m_parameterMap.find(handle) == m_parameterMap.end())
-		{
-			m_parameterMap[handle] = m_textureBindings.size();
-			m_textureBindings.push_back(0);
-		}
-		
-		std::wstring samplerName = L"_gl_sampler_" + toString(i->second);
-		std::wstring samplerOffset = L"_gl_sampler_" + toString(i->second) + L"_offset";
-		
-		Sampler sampler;
-		sampler.locationTexture = glGetUniformLocationARB(m_program, wstombs(samplerName).c_str());
-		sampler.locationOffset = glGetUniformLocationARB(m_program, wstombs(samplerOffset).c_str());
-		sampler.texture = m_parameterMap[handle];
-		sampler.stage = i->second;
-
-		m_samplers.push_back(sampler);
-	}
-
-	// Map samplers and uniforms.
-	GLint uniformCount;
-	T_OGL_SAFE(glGetObjectParameterivARB(m_program, GL_OBJECT_ACTIVE_UNIFORMS_ARB, &uniformCount));
-
-	for (GLint j = 0; j < uniformCount; ++j)
-	{
-		GLint uniformSize;
-		GLenum uniformType;
-		GLcharARB uniformName[256];
-
-		T_OGL_SAFE(glGetActiveUniformARB(m_program, j, sizeof(uniformName), 0, &uniformSize, &uniformType, uniformName));
-		std::wstring uniformNameW = mbstows(uniformName);
-		
-		// Skip uniforms which starts with _gl_ as they are private.
-		if (startsWith(uniformNameW, L"_gl_"))
-			continue;
-
-		// Trim indexed uniforms; seems to vary dependending on OGL implementation.
-		size_t p = uniformNameW.find('[');
-		if (p != uniformNameW.npos)
-			uniformNameW = uniformNameW.substr(0, p);
-
-		if (uniformType != GL_SAMPLER_2D_ARB)
-		{
-			handle_t handle = getParameterHandle(uniformNameW);
-			if (m_parameterMap.find(handle) != m_parameterMap.end())
-				continue;
-
-			uint32_t allocSize = 0;
-			switch (uniformType)
-			{
-			case GL_FLOAT:
-				allocSize = alignUp(1 * uniformSize, 4);
-				break;
-
-			case GL_FLOAT_VEC4_ARB:
-				allocSize = 4 * uniformSize;
-				break;
-
-			case GL_FLOAT_MAT4_ARB:
-				allocSize = 16 * uniformSize;
-				break;
-
-			default:
-				log::error << L"Invalid uniform type " << uint32_t(uniformType) << Endl;
-				return false;
-			}
-
-			uint32_t offsetUniform = uint32_t(m_uniforms.size());
-			uint32_t offsetData = uint32_t(m_uniformData.size());
-			
-			m_parameterMap[handle] = offsetUniform;
-
-			m_uniforms.push_back(Uniform());
-			m_uniforms.back().location = glGetUniformLocationARB(m_program, uniformName);
-			m_uniforms.back().type = uniformType;
-			m_uniforms.back().offset = offsetData;
-			m_uniforms.back().length = uniformSize;
-			m_uniforms.back().dirty = true;
-
-			m_uniformData.resize(offsetData + allocSize, 0.0f);
-		}
-	}
-
-	for (int j = 0; j < sizeof_array(m_attributeLocs); ++j)
-		m_attributeLocs[j] = -1;
-
-	for (int j = 0; j < T_OGL_MAX_INDEX; ++j)
-	{
-		m_attributeLocs[T_OGL_USAGE_INDEX(DuPosition, j)] = glGetAttribLocationARB(m_program, wstombs(glsl_vertex_attr_name(DuPosition, j)).c_str());
-		m_attributeLocs[T_OGL_USAGE_INDEX(DuNormal, j)] = glGetAttribLocationARB(m_program, wstombs(glsl_vertex_attr_name(DuNormal, j)).c_str());
-		m_attributeLocs[T_OGL_USAGE_INDEX(DuTangent, j)] = glGetAttribLocationARB(m_program, wstombs(glsl_vertex_attr_name(DuTangent, j)).c_str());
-		m_attributeLocs[T_OGL_USAGE_INDEX(DuBinormal, j)] = glGetAttribLocationARB(m_program, wstombs(glsl_vertex_attr_name(DuBinormal, j)).c_str());
-		m_attributeLocs[T_OGL_USAGE_INDEX(DuColor, j)] = glGetAttribLocationARB(m_program, wstombs(glsl_vertex_attr_name(DuColor, j)).c_str());
-		m_attributeLocs[T_OGL_USAGE_INDEX(DuCustom, j)] = glGetAttribLocationARB(m_program, wstombs(glsl_vertex_attr_name(DuCustom, j)).c_str());
-	}
-
-	// Create a display list from the render states.
-	m_renderState = resourceOpenGL->getRenderState();
-	m_state = m_resourceContext->createStateList(m_renderState);
-	m_stencilRef = m_renderState.stencilRef;
+	Ref< ProgramOpenGL > program = new ProgramOpenGL(resourceContext, programObject, resource);
+	s_programCache.insert(std::make_pair(hash, program));
 	
-	return true;
+	return program;
 }
 
 void ProgramOpenGL::destroy()
 {
 	if (ms_activeProgram == this)
 		ms_activeProgram = 0;
+		
+	for (std::map< uint32_t, ProgramOpenGL* >::iterator i = s_programCache.begin(); i != s_programCache.end(); ++i)
+	{
+		if (i->second == this)
+		{
+			s_programCache.erase(i);
+			break;
+		}
+	}
 
 	if (m_program)
 	{
@@ -460,6 +357,129 @@ bool ProgramOpenGL::activate(float targetSize[2])
 const GLint* ProgramOpenGL::getAttributeLocs() const
 {
 	return m_attributeLocs;
+}
+
+ProgramOpenGL::ProgramOpenGL(ContextOpenGL* resourceContext, GLhandleARB program, const ProgramResource* resource)
+:	m_resourceContext(resourceContext)
+,	m_program(program)
+,	m_state(0)
+,	m_locationTargetSize(0)
+,	m_stencilRef(0)
+,	m_textureDirty(true)
+{
+	const ProgramResourceOpenGL* resourceOpenGL = checked_type_cast< const ProgramResourceOpenGL* >(resource);
+
+	m_targetSize[0] =
+	m_targetSize[1] = 0.0f;
+	
+	// Get target size parameter.
+	m_locationTargetSize = glGetUniformLocationARB(m_program, "_gl_targetSize");
+
+	// Map texture parameters.
+	const std::map< std::wstring, int32_t >& samplerTextures = resourceOpenGL->getSamplerTextures();
+	for (std::map< std::wstring, int32_t >::const_iterator i = samplerTextures.begin(); i != samplerTextures.end(); ++i)
+	{
+		handle_t handle = getParameterHandle(i->first);
+
+		if (m_parameterMap.find(handle) == m_parameterMap.end())
+		{
+			m_parameterMap[handle] = m_textureBindings.size();
+			m_textureBindings.push_back(0);
+		}
+		
+		std::wstring samplerName = L"_gl_sampler_" + toString(i->second);
+		std::wstring samplerOffset = L"_gl_sampler_" + toString(i->second) + L"_offset";
+		
+		Sampler sampler;
+		sampler.locationTexture = glGetUniformLocationARB(m_program, wstombs(samplerName).c_str());
+		sampler.locationOffset = glGetUniformLocationARB(m_program, wstombs(samplerOffset).c_str());
+		sampler.texture = m_parameterMap[handle];
+		sampler.stage = i->second;
+
+		m_samplers.push_back(sampler);
+	}
+
+	// Map samplers and uniforms.
+	GLint uniformCount;
+	T_OGL_SAFE(glGetObjectParameterivARB(m_program, GL_OBJECT_ACTIVE_UNIFORMS_ARB, &uniformCount));
+
+	for (GLint j = 0; j < uniformCount; ++j)
+	{
+		GLint uniformSize;
+		GLenum uniformType;
+		GLcharARB uniformName[256];
+
+		T_OGL_SAFE(glGetActiveUniformARB(m_program, j, sizeof(uniformName), 0, &uniformSize, &uniformType, uniformName));
+		std::wstring uniformNameW = mbstows(uniformName);
+		
+		// Skip uniforms which starts with _gl_ as they are private.
+		if (startsWith(uniformNameW, L"_gl_"))
+			continue;
+
+		// Trim indexed uniforms; seems to vary dependending on OGL implementation.
+		size_t p = uniformNameW.find('[');
+		if (p != uniformNameW.npos)
+			uniformNameW = uniformNameW.substr(0, p);
+
+		if (uniformType != GL_SAMPLER_2D_ARB)
+		{
+			handle_t handle = getParameterHandle(uniformNameW);
+			if (m_parameterMap.find(handle) != m_parameterMap.end())
+				continue;
+
+			uint32_t allocSize = 0;
+			switch (uniformType)
+			{
+			case GL_FLOAT:
+				allocSize = alignUp(1 * uniformSize, 4);
+				break;
+
+			case GL_FLOAT_VEC4_ARB:
+				allocSize = 4 * uniformSize;
+				break;
+
+			case GL_FLOAT_MAT4_ARB:
+				allocSize = 16 * uniformSize;
+				break;
+
+			default:
+				log::error << L"Invalid uniform type " << uint32_t(uniformType) << Endl;
+				break;
+			}
+
+			uint32_t offsetUniform = uint32_t(m_uniforms.size());
+			uint32_t offsetData = uint32_t(m_uniformData.size());
+			
+			m_parameterMap[handle] = offsetUniform;
+
+			m_uniforms.push_back(Uniform());
+			m_uniforms.back().location = glGetUniformLocationARB(m_program, uniformName);
+			m_uniforms.back().type = uniformType;
+			m_uniforms.back().offset = offsetData;
+			m_uniforms.back().length = uniformSize;
+			m_uniforms.back().dirty = true;
+
+			m_uniformData.resize(offsetData + allocSize, 0.0f);
+		}
+	}
+
+	for (int j = 0; j < sizeof_array(m_attributeLocs); ++j)
+		m_attributeLocs[j] = -1;
+
+	for (int j = 0; j < T_OGL_MAX_INDEX; ++j)
+	{
+		m_attributeLocs[T_OGL_USAGE_INDEX(DuPosition, j)] = glGetAttribLocationARB(m_program, wstombs(glsl_vertex_attr_name(DuPosition, j)).c_str());
+		m_attributeLocs[T_OGL_USAGE_INDEX(DuNormal, j)] = glGetAttribLocationARB(m_program, wstombs(glsl_vertex_attr_name(DuNormal, j)).c_str());
+		m_attributeLocs[T_OGL_USAGE_INDEX(DuTangent, j)] = glGetAttribLocationARB(m_program, wstombs(glsl_vertex_attr_name(DuTangent, j)).c_str());
+		m_attributeLocs[T_OGL_USAGE_INDEX(DuBinormal, j)] = glGetAttribLocationARB(m_program, wstombs(glsl_vertex_attr_name(DuBinormal, j)).c_str());
+		m_attributeLocs[T_OGL_USAGE_INDEX(DuColor, j)] = glGetAttribLocationARB(m_program, wstombs(glsl_vertex_attr_name(DuColor, j)).c_str());
+		m_attributeLocs[T_OGL_USAGE_INDEX(DuCustom, j)] = glGetAttribLocationARB(m_program, wstombs(glsl_vertex_attr_name(DuCustom, j)).c_str());
+	}
+
+	// Create a display list from the render states.
+	m_renderState = resourceOpenGL->getRenderState();
+	m_state = m_resourceContext->createStateList(m_renderState);
+	m_stencilRef = m_renderState.stencilRef;
 }
 
 	}
