@@ -687,12 +687,7 @@ Ref< RenderTargetSet > RenderSystemOpenGL::createRenderTargetSet(const RenderTar
 Ref< IProgram > RenderSystemOpenGL::createProgram(const ProgramResource* programResource)
 {
 	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
-
-	Ref< ProgramOpenGL > shader = new ProgramOpenGL(m_resourceContext);
-	if (!shader->create(programResource))
-		return 0;
-
-	return shader;
+	return ProgramOpenGL::create(m_resourceContext, programResource);
 }
 
 Ref< IProgramCompiler > RenderSystemOpenGL::createProgramCompiler() const
