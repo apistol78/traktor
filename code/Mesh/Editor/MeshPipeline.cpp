@@ -116,6 +116,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 12, MeshPipeline, e
 
 MeshPipeline::MeshPipeline()
 :	m_promoteHalf(false)
+,	m_enableBakeOcclusion(true)
 {
 }
 
@@ -123,6 +124,7 @@ bool MeshPipeline::create(const editor::IPipelineSettings* settings)
 {
 	m_assetPath = settings->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
 	m_promoteHalf = settings->getProperty< PropertyBoolean >(L"MeshPipeline.PromoteHalf", false);
+	m_enableBakeOcclusion = settings->getProperty< PropertyBoolean >(L"MeshPipeline.BakeOcclusion", true);
 	return true;
 }
 
@@ -222,7 +224,7 @@ bool MeshPipeline::buildOutput(
 			return false;
 		}
 
-		if (asset->getBakeOcclusion())
+		if (m_enableBakeOcclusion && asset->getBakeOcclusion())
 		{
 			log::info << L"Baking occlusion..." << Endl;
 			model::bakeVertexOcclusion(*model);
