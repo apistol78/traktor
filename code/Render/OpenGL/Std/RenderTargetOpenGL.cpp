@@ -51,6 +51,8 @@ RenderTargetOpenGL::RenderTargetOpenGL(IContext* resourceContext)
 :	m_resourceContext(resourceContext)
 ,	m_width(0)
 ,	m_height(0)
+,	m_targetWidth(0)
+,	m_targetHeight(0)
 ,	m_textureTarget(0)
 ,	m_targetFBO(0)
 ,	m_resolveFBO(0)
@@ -74,11 +76,25 @@ bool RenderTargetOpenGL::create(const RenderTargetSetCreateDesc& setDesc, const 
 
 	m_width = setDesc.width;
 	m_height = setDesc.height;
+	m_targetWidth = setDesc.width;
+	m_targetHeight = setDesc.height;
+	m_textureTarget = GL_TEXTURE_2D;
 
-	//if (isLog2(m_width) && isLog2(m_height))
-		m_textureTarget = GL_TEXTURE_2D;
-	//else
-	//	m_textureTarget = GL_TEXTURE_RECTANGLE_ARB;
+	if (!opengl_have_extension("GL_ARB_texture_non_power_of_two"))
+	{
+		if (!isLog2(m_width) || !isLog2(m_height))
+		{
+			m_width = nearestLog2(m_width);
+			m_height = nearestLog2(m_height);
+			
+			m_originAndScale.set(
+				0.0f,
+				m_targetHeight / float(m_height),
+				m_targetWidth / float(m_width),
+				-m_targetHeight / float(m_height)
+			);
+		}
+	}
 
 	switch (desc.format)
 	{
@@ -95,15 +111,9 @@ bool RenderTargetOpenGL::create(const RenderTargetSetCreateDesc& setDesc, const 
 		break;
 
 	case TfR16G16B16A16F:
-#if !defined(__APPLE__)
 		internalFormat = GL_RGBA16F_ARB;
 		format = GL_RGBA;
 		type = GL_HALF_FLOAT_ARB;
-#else
-		internalFormat = GL_RGBA16F_ARB;
-		format = GL_RGBA;
-		type = GL_FLOAT;
-#endif
 		break;
 
 	case TfR32G32B32A32F:
@@ -149,13 +159,13 @@ bool RenderTargetOpenGL::create(const RenderTargetSetCreateDesc& setDesc, const 
 #else
 	case TfR16F:
 		internalFormat = GL_RGBA16F_ARB;
-		format = GL_RGBA;
-		type = GL_FLOAT;
+		format = GL_RED;
+		type = GL_HALF_FLOAT_ARB;
 		break;
 			
 	case TfR32F:
 		internalFormat = GL_RGBA32F_ARB;
-		format = GL_RGBA;
+		format = GL_RED;
 		type = GL_FLOAT;
 		break;
 #endif
@@ -317,12 +327,12 @@ void RenderTargetOpenGL::destroy()
 
 int RenderTargetOpenGL::getWidth() const
 {
-	return m_width;
+	return m_targetWidth;
 }
 
 int RenderTargetOpenGL::getHeight() const
 {
-	return m_height;
+	return m_targetHeight;
 }
 
 int RenderTargetOpenGL::getDepth() const
@@ -333,9 +343,8 @@ int RenderTargetOpenGL::getDepth() const
 void RenderTargetOpenGL::bind(GLuint unit, const SamplerState& samplerState, GLint locationTexture, GLint locationOffset)
 {
 	T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + unit));
-	T_OGL_SAFE(glBindTexture(GL_TEXTURE_2D, m_colorTexture));
-	
-	
+	T_OGL_SAFE(glBindTexture(m_textureTarget, m_colorTexture));
+
 	GLenum minFilter = GL_NEAREST;
 	if (samplerState.minFilter != GL_NEAREST)
 		minFilter = GL_LINEAR;
@@ -344,25 +353,25 @@ void RenderTargetOpenGL::bind(GLuint unit, const SamplerState& samplerState, GLi
 
 	if (m_shadowState.minFilter != minFilter)
 	{
-		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter));
+		T_OGL_SAFE(glTexParameteri(m_textureTarget, GL_TEXTURE_MIN_FILTER, minFilter));
 		m_shadowState.minFilter = minFilter;
 	}
 	
 	if (m_shadowState.magFilter != samplerState.magFilter)
 	{
-		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, samplerState.magFilter));
+		T_OGL_SAFE(glTexParameteri(m_textureTarget, GL_TEXTURE_MAG_FILTER, samplerState.magFilter));
 		m_shadowState.magFilter = samplerState.magFilter;
 	}
 
 	if (m_shadowState.wrapS != samplerState.wrapS)
 	{
-		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, samplerState.wrapS));
+		T_OGL_SAFE(glTexParameteri(m_textureTarget, GL_TEXTURE_WRAP_S, samplerState.wrapS));
 		m_shadowState.wrapS = samplerState.wrapS;
 	}
 	
 	if (m_shadowState.wrapT != samplerState.wrapT)
 	{
-		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, samplerState.wrapT));
+		T_OGL_SAFE(glTexParameteri(m_textureTarget, GL_TEXTURE_WRAP_T, samplerState.wrapT));
 		m_shadowState.wrapT = samplerState.wrapT;
 	}
 	
@@ -425,7 +434,7 @@ void RenderTargetOpenGL::bind(bool keepDepthStencil)
 
 void RenderTargetOpenGL::enter(bool keepDepthStencil)
 {
-	T_OGL_SAFE(glViewport(0, 0, m_width, m_height));
+	T_OGL_SAFE(glViewport(0, 0, m_targetWidth, m_targetHeight));
 
 	if (m_haveDepth || keepDepthStencil)
 	{
@@ -446,15 +455,27 @@ void RenderTargetOpenGL::resolve()
 	{
 		T_OGL_SAFE(glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, m_targetFBO));
 		T_OGL_SAFE(glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, m_resolveFBO));
-		T_OGL_SAFE(glBlitFramebufferEXT(0, 0, m_width, m_height, 0, 0, m_width, m_height, GL_COLOR_BUFFER_BIT, GL_NEAREST));
+		T_OGL_SAFE(glBlitFramebufferEXT(
+			0, 0,
+			m_targetWidth, m_targetHeight,
+			0, 0,
+			m_targetWidth, m_targetHeight,
+			GL_COLOR_BUFFER_BIT, GL_NEAREST
+		));
 	}
 }
 
 void RenderTargetOpenGL::blit()
 {
+	int32_t offsetY = m_resolveFBO ? m_height - m_targetHeight : 0;
 	T_OGL_SAFE(glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, m_targetFBO));
 	T_OGL_SAFE(glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, 0));
-	T_OGL_SAFE(glBlitFramebufferEXT(0, 0, m_width, m_height, 0, 0, m_width, m_height, GL_COLOR_BUFFER_BIT, GL_NEAREST));
+	T_OGL_SAFE(glBlitFramebufferEXT(
+		0, offsetY, m_targetWidth, m_targetHeight + offsetY,
+		0, 0, m_targetWidth, m_targetHeight,
+		GL_COLOR_BUFFER_BIT,
+		GL_NEAREST
+	));
 }
 
 bool RenderTargetOpenGL::read(void* buffer) const

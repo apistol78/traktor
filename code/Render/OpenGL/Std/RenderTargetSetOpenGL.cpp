@@ -1,3 +1,5 @@
+#include "Core/Log/Log.h"
+#include "Core/Math/Log2.h"
 #include "Render/OpenGL/Std/Extensions.h"
 #include "Render/OpenGL/Std/RenderTargetSetOpenGL.h"
 #include "Render/OpenGL/Std/RenderTargetOpenGL.h"
@@ -13,6 +15,8 @@ RenderTargetSetOpenGL::RenderTargetSetOpenGL(IContext* resourceContext)
 :	m_resourceContext(resourceContext)
 ,	m_width(0)
 ,	m_height(0)
+,	m_targetWidth(0)
+,	m_targetHeight(0)
 ,	m_depthBuffer(0)
 {
 }
@@ -24,8 +28,26 @@ RenderTargetSetOpenGL::~RenderTargetSetOpenGL()
 
 bool RenderTargetSetOpenGL::create(const RenderTargetSetCreateDesc& desc)
 {
+	if (desc.multiSample > 1 && !opengl_have_extension("GL_EXT_framebuffer_multisample"))
+	{
+		log::error << L"Cannot create multisample FBO; not supported by OpenGL driver" << Endl;
+		return false;
+	}
+
 	m_width = desc.width;
 	m_height = desc.height;
+	m_targetWidth = desc.width;
+	m_targetHeight = desc.height;
+
+	if (!opengl_have_extension("GL_ARB_texture_non_power_of_two"))
+	{
+		if (!isLog2(m_width) || !isLog2(m_height))
+		{
+			log::warning << L"Trying to create non-power-of-2 render target but OpenGL doesn't support NPOT; scaling applied" << Endl;
+			m_width = nearestLog2(m_width);
+			m_height = nearestLog2(m_height);
+		}
+	}
 
 	if (desc.depthStencil)
 	{
@@ -76,12 +98,12 @@ void RenderTargetSetOpenGL::destroy()
 
 int RenderTargetSetOpenGL::getWidth() const
 {
-	return m_width;
+	return m_targetWidth;
 }
 
 int RenderTargetSetOpenGL::getHeight() const
 {
-	return m_height;
+	return m_targetHeight;
 }
 
 Ref< ITexture > RenderTargetSetOpenGL::getColorTexture(int index) const

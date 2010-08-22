@@ -61,8 +61,10 @@ public:
 
 private:
 	Ref< IContext > m_resourceContext;
-	int m_width;
-	int m_height;
+	int32_t m_width;
+	int32_t m_height;
+	int32_t m_targetWidth;
+	int32_t m_targetHeight;
 	GLenum m_textureTarget;
 	GLuint m_targetFBO;
 	GLuint m_resolveFBO;
