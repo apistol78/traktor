@@ -1,5 +1,6 @@
-#include "Render/OpenGL/Std/Extensions.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/TString.h"
+#include "Render/OpenGL/Std/Extensions.h"
 
 namespace traktor
 {
@@ -71,6 +72,28 @@ PFNGLCOMPRESSEDTEXIMAGE2DPROC glCompressedTexImage2D = 0;
 
 bool opengl_initialize_extensions()
 {
+	const char* supp = (const char*)glGetString(GL_EXTENSIONS);
+
+	log::info << L"OpenGL supported extensions" << Endl;
+	log::info << IncreaseIndent;
+	
+	while (*supp)
+	{
+		const char* end = supp;
+		while (*end && *end != ' ')
+			++end;
+		
+		int len = end - supp;		
+		log::info << mbstows(std::string(supp, end)) << Endl;
+		
+		supp = end;
+		
+		while (*supp == ' ')
+			++supp;
+	}
+	
+	log::info << DecreaseIndent;
+
 #if !defined(__APPLE__)
 
 #	define T_WIDEN_X(x) L ## x

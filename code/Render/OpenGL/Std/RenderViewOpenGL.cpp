@@ -312,7 +312,9 @@ void RenderViewOpenGL::draw(const Primitives& primitives)
 		if (!m_currentProgram || !m_currentVertexBuffer)
 			return;
 
-		float targetSize[] = { float(m_context->getWidth()), float(m_context->getHeight()) };
+		const RenderTargetOpenGL* rt = m_renderTargetStack.top();
+		float targetSize[] = { float(rt->getWidth()), float(rt->getHeight()) };
+		
 		if (!m_currentProgram->activate(targetSize))
 			return;
 

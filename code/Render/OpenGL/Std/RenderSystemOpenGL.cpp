@@ -139,6 +139,13 @@ bool RenderSystemOpenGL::create(const RenderSystemCreateDesc& desc)
 	void* resourceContext = cglwCreateContext(0, 0, 0, 0, 0);
 	m_resourceContext = new ContextOpenGL(resourceContext);
 
+	m_resourceContext->enter();
+
+	if (!opengl_initialize_extensions())
+		return false;
+
+	m_resourceContext->leave();
+
 	m_title = desc.windowTitle ? desc.windowTitle : L"Traktor (OpenGL)";
 
 #else	// LINUX

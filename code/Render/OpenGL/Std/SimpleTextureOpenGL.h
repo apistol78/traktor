@@ -62,6 +62,7 @@ private:
 	GLenum m_format;
 	GLenum m_type;
 	uint32_t m_mipCount;
+	uint32_t m_dataSize;
 	AutoArrayPtr< uint8_t > m_data;
 	SamplerState m_shadowState;
 };

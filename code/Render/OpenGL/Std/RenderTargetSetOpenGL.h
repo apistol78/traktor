@@ -50,8 +50,10 @@ public:
 
 private:
 	Ref< IContext > m_resourceContext;
-	int m_width;
-	int m_height;
+	int32_t m_width;
+	int32_t m_height;
+	int32_t m_targetWidth;
+	int32_t m_targetHeight;
 	GLuint m_depthBuffer;
 	RefArray< RenderTargetOpenGL > m_colorTextures;
 };

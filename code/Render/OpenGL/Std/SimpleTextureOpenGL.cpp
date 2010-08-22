@@ -1,9 +1,10 @@
+#include "Core/Log/Log.h"
+#include "Core/Math/Log2.h"
 #include "Render/OpenGL/Platform.h"
 #include "Render/OpenGL/IContext.h"
 #include "Render/OpenGL/Std/SimpleTextureOpenGL.h"
 #include "Render/OpenGL/Std/Extensions.h"
 #include "Render/OpenGL/Std/UtilitiesOpenGL.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -39,6 +40,7 @@ SimpleTextureOpenGL::SimpleTextureOpenGL(IContext* resourceContext)
 ,	m_height(0)
 ,	m_pixelSize(0)
 ,	m_mipCount(0)
+,	m_dataSize(0)
 {
 }
 
@@ -51,6 +53,15 @@ bool SimpleTextureOpenGL::create(const SimpleTextureCreateDesc& desc, GLfloat ma
 {
 	m_width = desc.width;
 	m_height = desc.height;
+	
+	if (!isLog2(m_width) || !isLog2(m_height))
+	{
+		if (!opengl_have_extension("GL_ARB_texture_non_power_of_two"))
+		{
+			log::error << L"Cannot create non-power-of-2 texture; not supported by OpenGL driver" << Endl;
+			return false;
+		}
+	}
 
 	if (!convertTextureFormat(desc.format, m_pixelSize, m_components, m_format, m_type))
 		return false;
@@ -61,9 +72,7 @@ bool SimpleTextureOpenGL::create(const SimpleTextureCreateDesc& desc, GLfloat ma
 	if (maxAnisotropy > 0.0f)
 		T_OGL_SAFE(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, maxAnisotropy));
 
-	// Allocate data buffer.
-	uint32_t texturePitch = getTextureMipPitch(desc.format, desc.width, desc.height);
-	m_data.reset(new uint8_t [texturePitch]);
+	m_dataSize = getTextureMipPitch(desc.format, desc.width, desc.height);
 
 	if (desc.immutable)
 	{
@@ -159,7 +168,11 @@ int SimpleTextureOpenGL::getDepth() const
 bool SimpleTextureOpenGL::lock(int level, Lock& lock)
 {
 	if (!m_data.ptr())
-		return false;
+	{
+		m_data.reset(new uint8_t [m_dataSize]);
+		if (!m_data.ptr())
+			return false;
+	}
 
 	lock.pitch = (m_width >> level) * m_pixelSize;
 	lock.bits = m_data.ptr();
