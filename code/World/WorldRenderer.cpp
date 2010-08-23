@@ -377,7 +377,7 @@ void WorldRenderer::render(uint32_t flags, int frame)
 		T_RENDER_PUSH_MARKER(m_renderView, "World: Depth");
 		if (m_renderView->begin(m_depthTargetSet, 0, !m_depthTargetHaveOwnZBuffer))
 		{
-			const float depthColor[] = { m_settings.viewFarZ, m_settings.viewFarZ, m_settings.viewFarZ, m_settings.viewFarZ };
+			const float depthColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 			
 			if (!m_depthTargetHaveOwnZBuffer)
 				m_renderView->clear(render::CfColor, depthColor, 1.0f, 0);
