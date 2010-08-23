@@ -2,14 +2,17 @@
 <object type="traktor.render.ShaderGraph">
 	<nodes>
 		<item type="traktor.render.External" version="1">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>227</first>
-				<second>360</second>
+				<second>343</second>
 			</position>
 			<fragmentGuid>{8EB13045-4558-F14A-AA41-E84D2F7776EC}</fragmentGuid>
 			<inputPins/>
 			<outputPins>
+				<item>
+					<name>Depth</name>
+				</item>
 				<item>
 					<name>Output</name>
 				</item>
@@ -17,7 +20,7 @@
 			<values/>
 		</item>
 		<item type="traktor.render.Vector">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>460</first>
 				<second>530</second>
@@ -25,7 +28,7 @@
 			<value>0.5, 0.5, 0, 0</value>
 		</item>
 		<item type="traktor.render.Vector">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>455</first>
 				<second>503</second>
@@ -33,14 +36,22 @@
 			<value>0.5, -0.5, 0, 0</value>
 		</item>
 		<item type="traktor.render.Transform">
-			<comment>Light space position</comment>
+			<comment>
+			<![CDATA[
+Light space position
+			]]>
+			</comment>
 			<position>
 				<first>439</first>
 				<second>385</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform">
-			<comment>View to light space transform</comment>
+			<comment>
+			<![CDATA[
+View to light space transform
+			]]>
+			</comment>
 			<position>
 				<first>244</first>
 				<second>443</second>
@@ -49,14 +60,18 @@
 			<type>PtMatrix</type>
 		</item>
 		<item type="traktor.render.MulAdd">
-			<comment>Shadow map texcoord</comment>
+			<comment>
+			<![CDATA[
+Shadow map texcoord
+			]]>
+			</comment>
 			<position>
 				<first>660</first>
 				<second>428</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>689</first>
 				<second>349</second>
@@ -64,7 +79,7 @@
 			<swizzle>z</swizzle>
 		</item>
 		<item type="traktor.render.External" version="1">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>895</first>
 				<second>371</second>
@@ -88,7 +103,7 @@
 			<values/>
 		</item>
 		<item type="traktor.render.PixelOutput" version="2">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1128</first>
 				<second>407</second>

@@ -11,8 +11,8 @@
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>407</first>
-				<second>373</second>
+				<first>419</first>
+				<second>349</second>
 			</position>
 			<swizzle>z</swizzle>
 		</item>
@@ -39,8 +39,8 @@
 		<item type="traktor.render.PixelOutput" version="2">
 			<comment/>
 			<position>
-				<first>532</first>
-				<second>373</second>
+				<first>722</first>
+				<second>355</second>
 			</position>
 			<technique>Depth</technique>
 			<cullMode>CmClockWise</cullMode>
@@ -50,9 +50,9 @@
 			<blendDestination>BfZero</blendDestination>
 			<colorWriteMask>
 				<red>true</red>
-				<green>false</green>
-				<blue>false</blue>
-				<alpha>false</alpha>
+				<green>true</green>
+				<blue>true</blue>
+				<alpha>true</alpha>
 			</colorWriteMask>
 			<depthEnable>true</depthEnable>
 			<depthWriteEnable>true</depthWriteEnable>
@@ -76,6 +76,52 @@
 				<second>455</second>
 			</position>
 			<technique>Depth</technique>
+		</item>
+		<item type="traktor.render.External" version="1">
+			<comment/>
+			<position>
+				<first>542</first>
+				<second>335</second>
+			</position>
+			<fragmentGuid>{15A567D7-FC63-D649-AA8D-A0D34D3BCCC5}</fragmentGuid>
+			<inputPins>
+				<item>
+					<name>Value</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<name>Range Max</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<name>Range Min</name>
+					<optional>true</optional>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<name>Output</name>
+				</item>
+			</outputPins>
+			<values>
+				<item>
+					<first>Range Max</first>
+					<second>1000</second>
+				</item>
+				<item>
+					<first>Range Min</first>
+					<second>0</second>
+				</item>
+			</values>
+		</item>
+		<item type="traktor.render.Uniform">
+			<comment/>
+			<position>
+				<first>362</first>
+				<second>377</second>
+			</position>
+			<parameterName>DepthRange</parameterName>
+			<type>PtScalar</type>
 		</item>
 	</nodes>
 	<edges>
@@ -111,7 +157,27 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Output</name>
+			</source>
+			<destination>
 				<node ref="/object/nodes/item[1]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[6]"/>
+				<name>Value</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[6]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -121,12 +187,12 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[3]"/>
+				<node ref="/object/nodes/item[7]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[1]"/>
-				<name>Input</name>
+				<node ref="/object/nodes/item[6]"/>
+				<name>Range Max</name>
 			</destination>
 		</item>
 	</edges>

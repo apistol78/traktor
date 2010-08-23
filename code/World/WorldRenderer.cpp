@@ -83,7 +83,7 @@ bool WorldRenderer::create(
 		desc.height = height;
 		desc.multiSample = multiSample;
 		desc.depthStencil = false;
-		desc.targets[0].format = render::TfR16F;
+		desc.targets[0].format = render::TfR8G8B8A8;
 
 		m_depthTargetSet = renderSystem->createRenderTargetSet(desc);
 
@@ -139,7 +139,7 @@ bool WorldRenderer::create(
 		desc.height = m_settings.shadowMapResolution;
 		desc.multiSample = 0;
 		desc.depthStencil = true;
-		desc.targets[0].format = render::TfR32F;
+		desc.targets[0].format = render::TfR8G8B8A8;
 
 		switch (m_settings.shadowsQuality)
 		{
@@ -285,6 +285,7 @@ void WorldRenderer::createRenderView(const WorldViewPerspective& worldView, Worl
 {
 	float viewNearZ = m_settings.viewNearZ;
 	float viewFarZ = m_settings.viewFarZ;
+	float depthRange = m_settings.depthRange;
 
 	Frustum viewFrustum;
 	viewFrustum.buildPerspective(worldView.fov, worldView.aspect, viewNearZ, viewFarZ);
@@ -293,11 +294,13 @@ void WorldRenderer::createRenderView(const WorldViewPerspective& worldView, Worl
 	outRenderView.setViewFrustum(viewFrustum);
 	outRenderView.setCullFrustum(viewFrustum);
 	outRenderView.setProjection(perspectiveLh(worldView.fov, worldView.aspect, viewNearZ, viewFarZ));
+	outRenderView.setDepthRange(depthRange);
 }
 
 void WorldRenderer::createRenderView(const WorldViewOrtho& worldView, WorldRenderView& outRenderView) const
 {
 	float viewFarZ = m_settings.viewFarZ;
+	float depthRange = m_settings.depthRange;
 
 	Frustum viewFrustum;
 	viewFrustum.buildOrtho(worldView.width, worldView.height, -viewFarZ, viewFarZ);
@@ -306,6 +309,7 @@ void WorldRenderer::createRenderView(const WorldViewOrtho& worldView, WorldRende
 	outRenderView.setViewFrustum(viewFrustum);
 	outRenderView.setCullFrustum(viewFrustum);
 	outRenderView.setProjection(orthoLh(worldView.width, worldView.height, -viewFarZ, viewFarZ));
+	outRenderView.setDepthRange(depthRange);
 }
 
 void WorldRenderer::build(WorldRenderView& worldRenderView, Entity* entity, int frame)
@@ -406,7 +410,7 @@ void WorldRenderer::render(uint32_t flags, int frame)
 		T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow map");
 		if (m_renderView->begin(m_shadowTargetSet, 0, false))
 		{
-			const float shadowClear[] = { m_settings.shadowFarZ, m_settings.shadowFarZ, m_settings.shadowFarZ, m_settings.shadowFarZ };
+			const float shadowClear[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 			m_renderView->clear(render::CfColor | render::CfDepth, shadowClear, 1.0f, 0);
 			f.shadow->getRenderContext()->render(m_renderView, render::RfOpaque);
 			m_renderView->end();
@@ -421,6 +425,7 @@ void WorldRenderer::render(uint32_t flags, int frame)
 			params.viewFrustum = f.viewFrustum;
 			params.viewToLight = f.viewToLightSpace;
 			params.projection = f.projection;
+			params.depthRange = m_settings.depthRange;
 			params.shadowFarZ = m_settings.shadowFarZ;
 			params.shadowMapBias = m_settings.shadowMapBias;
 			params.deltaTime = 0.0f;
@@ -544,6 +549,7 @@ void WorldRenderer::buildShadows(WorldRenderView& worldRenderView, Entity* entit
 	shadowRenderView.setEyePosition(eyePosition);
 	shadowRenderView.setViewFrustum(shadowFrustum);
 	shadowRenderView.setCullFrustum(shadowFrustum);
+	shadowRenderView.setDepthRange(m_settings.depthRange);
 	shadowRenderView.setTimes(
 		worldRenderView.getTime(),
 		worldRenderView.getDeltaTime(),

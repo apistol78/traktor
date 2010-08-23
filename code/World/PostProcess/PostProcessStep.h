@@ -53,6 +53,7 @@ public:
 			Frustum viewFrustum;
 			Matrix44 viewToLight;
 			Matrix44 projection;
+			float depthRange;
 			float shadowFarZ;
 			float shadowMapBias;
 			float deltaTime;

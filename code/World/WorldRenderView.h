@@ -84,6 +84,8 @@ public:
 
 	void setDepthMap(render::ITexture* depthMap);
 
+	void setDepthRange(float depthRange);
+
 	void setTimes(float time, float deltaTime, float interval);
 
 	void addLight(const Light& light);
@@ -185,6 +187,7 @@ private:
 	Aabb m_shadowBox;
 	float m_shadowMaskSize;
 	Ref< render::ITexture > m_shadowMask;
+	float m_depthRange;
 	Ref< render::ITexture > m_depthMap;
 	float m_time;
 	float m_deltaTime;
