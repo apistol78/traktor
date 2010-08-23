@@ -72,28 +72,34 @@ PFNGLCOMPRESSEDTEXIMAGE2DPROC glCompressedTexImage2D = 0;
 
 bool opengl_initialize_extensions()
 {
-	const char* supp = (const char*)glGetString(GL_EXTENSIONS);
+	const char* renderer = (const char*)glGetString(GL_RENDERER);
+	if (renderer)
+		log::info << L"OpenGL renderer: " << mbstows(renderer) << Endl;
 
-	log::info << L"OpenGL supported extensions" << Endl;
-	log::info << IncreaseIndent;
-	
-	while (*supp)
+	const char* supported = (const char*)glGetString(GL_EXTENSIONS);
+	if (supported)
 	{
-		const char* end = supp;
-		while (*end && *end != ' ')
-			++end;
+		log::info << L"OpenGL extensions:" << Endl;
+		log::info << IncreaseIndent;
+	
+		while (*supported)
+		{
+			const char* end = supported;
+			while (*end && *end != ' ')
+				++end;
 		
-		int len = end - supp;		
-		log::info << mbstows(std::string(supp, end)) << Endl;
+			int len = end - supported;		
+			log::info << mbstows(std::string(supported, end)) << Endl;
 		
-		supp = end;
+			supported = end;
 		
-		while (*supp == ' ')
-			++supp;
+			while (*supported == ' ')
+				++supported;
+		}
+
+		log::info << DecreaseIndent;
 	}
 	
-	log::info << DecreaseIndent;
-
 #if !defined(__APPLE__)
 
 #	define T_WIDEN_X(x) L ## x

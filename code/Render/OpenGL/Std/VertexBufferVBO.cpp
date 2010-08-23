@@ -126,22 +126,30 @@ VertexBufferVBO::VertexBufferVBO(IContext* resourceContext, const std::vector< V
 			m_attributeDesc[usageIndex].normalized = GL_TRUE;
 			break;
 
-#if defined(GL_ARB_half_float_pixel)
 		case DtHalf2:
-			m_attributeDesc[usageIndex].size = 2;
-			m_attributeDesc[usageIndex].type = GL_HALF_FLOAT_ARB;
-			m_attributeDesc[usageIndex].normalized = GL_TRUE;
+			if (opengl_have_extension("GL_ARB_half_float_vertex"))
+			{
+				m_attributeDesc[usageIndex].size = 2;
+				m_attributeDesc[usageIndex].type = GL_HALF_FLOAT_ARB;
+				m_attributeDesc[usageIndex].normalized = GL_TRUE;
+			}
+			else
+				log::error << L"Unsupported vertex format; OpenGL driver doesn't support GL_ARB_half_float_vertex" << Endl;
 			break;
 
 		case DtHalf4:
-			m_attributeDesc[usageIndex].size = 4;
-			m_attributeDesc[usageIndex].type = GL_HALF_FLOAT_ARB;
-			m_attributeDesc[usageIndex].normalized = GL_TRUE;
+			if (opengl_have_extension("GL_ARB_half_float_vertex"))
+			{
+				m_attributeDesc[usageIndex].size = 4;
+				m_attributeDesc[usageIndex].type = GL_HALF_FLOAT_ARB;
+				m_attributeDesc[usageIndex].normalized = GL_TRUE;
+			}
+			else
+				log::error << L"Unsupported vertex format; OpenGL driver doesn't support GL_ARB_half_float_vertex" << Endl;
 			break;
-#endif
 
 		default:
-			log::warning << L"Unsupport vertex format" << Endl;
+			log::error << L"Unsupport vertex format" << Endl;
 		}
 
 		m_attributeDesc[usageIndex].offset = vertexElements[i].getOffset();
