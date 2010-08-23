@@ -111,20 +111,36 @@ bool RenderTargetOpenGL::create(const RenderTargetSetCreateDesc& setDesc, const 
 		break;
 
 	case TfR16G16B16A16F:
-		internalFormat = GL_RGBA16F_ARB;
-		format = GL_RGBA;
-		type = GL_HALF_FLOAT_ARB;
+		if (opengl_have_extension("GL_ARB_texture_float"))
+		{
+			internalFormat = GL_RGBA16F_ARB;
+			format = GL_RGBA;
+			type = GL_HALF_FLOAT_ARB;
+		}
+		else
+			return false;
 		break;
 
 	case TfR32G32B32A32F:
-		internalFormat = GL_RGBA32F_ARB;
-		format = GL_RGBA;
-		type = GL_FLOAT;
+		if (opengl_have_extension("GL_ARB_texture_float"))
+		{
+			internalFormat = GL_RGBA32F_ARB;
+			format = GL_RGBA;
+			type = GL_FLOAT;
+		}
+		else
+			return false;
 		break;
 
 #if !defined(__APPLE__)
 	case TfR16F:
-		if (opengl_have_extension("GL_NV_float_buffer"))
+		if (opengl_have_extension("GL_ARB_texture_float"))
+		{
+			internalFormat = GL_RGBA16F_ARB;
+			format = GL_RED;
+			type = GL_HALF_FLOAT_ARB;
+		}
+		else if (opengl_have_extension("GL_NV_float_buffer"))
 		{
 			internalFormat = GL_FLOAT_R16_NV;
 			format = GL_RED;
@@ -141,7 +157,13 @@ bool RenderTargetOpenGL::create(const RenderTargetSetCreateDesc& setDesc, const 
 		break;
 
 	case TfR32F:
-		if (opengl_have_extension("GL_NV_float_buffer"))
+		if (opengl_have_extension("GL_ARB_texture_float"))
+		{
+			internalFormat = GL_RGBA32F_ARB;
+			format = GL_RED;
+			type = GL_FLOAT;
+		}
+		else if (opengl_have_extension("GL_NV_float_buffer"))
 		{
 			internalFormat = GL_FLOAT_R32_NV;
 			format = GL_RED;
@@ -158,15 +180,25 @@ bool RenderTargetOpenGL::create(const RenderTargetSetCreateDesc& setDesc, const 
 		break;
 #else
 	case TfR16F:
-		internalFormat = GL_RGBA16F_ARB;
-		format = GL_RED;
-		type = GL_HALF_FLOAT_ARB;
+		if (opengl_have_extension("GL_ARB_texture_float"))
+		{
+			internalFormat = GL_RGBA16F_ARB;
+			format = GL_RED;
+			type = GL_HALF_FLOAT_ARB;
+		}
+		else
+			return false;
 		break;
 			
 	case TfR32F:
-		internalFormat = GL_RGBA32F_ARB;
-		format = GL_RED;
-		type = GL_FLOAT;
+		if (opengl_have_extension("GL_ARB_texture_float"))
+		{
+			internalFormat = GL_RGBA32F_ARB;
+			format = GL_RED;
+			type = GL_FLOAT;
+		}
+		else
+			return false;
 		break;
 #endif
 
