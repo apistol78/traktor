@@ -132,6 +132,7 @@ void PostProcessStepBlur::InstanceBlur::render(
 	shader->setVectorArrayParameter(L"GaussianOffsetWeights", &m_gaussianOffsetWeights[0], m_gaussianOffsetWeights.size());
 	shader->setVectorParameter(L"Direction", m_step->m_direction);
 	shader->setFloatParameter(L"ViewFar", params.viewFrustum.getFarZ());
+	shader->setFloatParameter(L"DepthRange", params.depthRange);
 
 	screenRenderer->draw(renderView, shader);
 }

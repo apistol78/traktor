@@ -153,6 +153,7 @@ void PostProcessStepSsao::InstanceSsao::render(
 	shader->setMatrixParameter(L"Projection", params.projection);
 	shader->setVectorArrayParameter(L"Offsets", m_offsets, sizeof_array(m_offsets));
 	shader->setTextureParameter(L"RandomNormals", m_randomNormals);
+	shader->setFloatParameter(L"DepthRange", params.depthRange);
 
 	const std::vector< Source >& sources = m_step->m_sources;
 	for (std::vector< Source >::const_iterator i = sources.begin(); i != sources.end(); ++i)
