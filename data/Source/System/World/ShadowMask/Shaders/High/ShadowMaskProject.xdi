@@ -120,12 +120,15 @@ Light space position
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>521</first>
-				<second>146</second>
+				<first>513</first>
+				<second>129</second>
 			</position>
 			<fragmentGuid>{8EB13045-4558-F14A-AA41-E84D2F7776EC}</fragmentGuid>
 			<inputPins/>
 			<outputPins>
+				<item>
+					<name>Depth</name>
+				</item>
 				<item>
 					<name>Output</name>
 				</item>

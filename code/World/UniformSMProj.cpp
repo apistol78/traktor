@@ -55,7 +55,7 @@ void calculateUniformSMProj(
 		lightAxisZ * center.z() +
 		Vector4::origo();
 
-	Scalar lightDistance = Scalar(settings.viewFarZ);
+	Scalar lightDistance = Scalar(settings.depthRange);
 
 	outLightView = Matrix44(
 		lightAxisX,

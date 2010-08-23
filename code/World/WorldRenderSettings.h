@@ -52,6 +52,7 @@ public:
 	float viewNearZ;
 	float viewFarZ;
 	bool depthPassEnabled;
+	float depthRange;
 	bool velocityPassEnable;
 	bool shadowsEnabled;
 	ShadowProjection shadowsProjection;

@@ -18,7 +18,7 @@ void calculateBoxSMProj(
 	Frustum& outShadowFrustum
 )
 {
-	Scalar lightDistance(settings.viewFarZ);
+	Scalar lightDistance(settings.depthRange);
 
 	Vector4 shadowBoxExtents[8];
 	shadowBox.getExtents(shadowBoxExtents);

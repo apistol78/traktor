@@ -24,15 +24,15 @@
 		<item type="traktor.render.VertexOutput" version="1">
 			<comment/>
 			<position>
-				<first>710</first>
-				<second>333</second>
+				<first>756</first>
+				<second>368</second>
 			</position>
 			<technique>Shadow</technique>
 		</item>
 		<item type="traktor.render.PixelOutput" version="2">
 			<comment/>
 			<position>
-				<first>880</first>
+				<first>1212</first>
 				<second>240</second>
 			</position>
 			<technique>Shadow</technique>
@@ -65,7 +65,7 @@
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>619</first>
+				<first>660</first>
 				<second>290</second>
 			</position>
 			<swizzle>z</swizzle>
@@ -91,7 +91,7 @@
 		<item type="traktor.render.Discard">
 			<comment/>
 			<position>
-				<first>713</first>
+				<first>1045</first>
 				<second>204</second>
 			</position>
 			<operator>CoGreater</operator>
@@ -99,10 +99,56 @@
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>477</first>
+				<first>518</first>
 				<second>256</second>
 			</position>
 			<value>0.5</value>
+		</item>
+		<item type="traktor.render.External" version="1">
+			<comment/>
+			<position>
+				<first>847</first>
+				<second>270</second>
+			</position>
+			<fragmentGuid>{15A567D7-FC63-D649-AA8D-A0D34D3BCCC5}</fragmentGuid>
+			<inputPins>
+				<item>
+					<name>Value</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<name>Range Max</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<name>Range Min</name>
+					<optional>true</optional>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<name>Output</name>
+				</item>
+			</outputPins>
+			<values>
+				<item>
+					<first>Range Max</first>
+					<second>1</second>
+				</item>
+				<item>
+					<first>Range Min</first>
+					<second>0</second>
+				</item>
+			</values>
+		</item>
+		<item type="traktor.render.Uniform">
+			<comment/>
+			<position>
+				<first>629</first>
+				<second>320</second>
+			</position>
+			<parameterName>DepthRange</parameterName>
+			<type>PtScalar</type>
 		</item>
 	</nodes>
 	<edges>
@@ -168,7 +214,27 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
+				<node ref="/object/nodes/item[7]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
 				<node ref="/object/nodes/item[4]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[9]"/>
+				<name>Value</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[9]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -178,12 +244,12 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[7]"/>
+				<node ref="/object/nodes/item[10]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[3]"/>
-				<name>Input</name>
+				<node ref="/object/nodes/item[9]"/>
+				<name>Range Max</name>
 			</destination>
 		</item>
 	</edges>

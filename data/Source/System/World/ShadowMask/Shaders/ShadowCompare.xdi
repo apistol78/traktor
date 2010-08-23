@@ -4,30 +4,22 @@
 		<item type="traktor.render.Sampler">
 			<comment/>
 			<position>
-				<first>153</first>
-				<second>150</second>
+				<first>368</first>
+				<second>248</second>
 			</position>
 			<lookup>LuSimple</lookup>
 			<minFilter>FtPoint</minFilter>
 			<mipFilter>FtPoint</mipFilter>
 			<magFilter>FtPoint</magFilter>
-			<addressU>AdBorder</addressU>
-			<addressV>AdBorder</addressV>
+			<addressU>AdClamp</addressU>
+			<addressV>AdClamp</addressV>
 			<addressW>AdClamp</addressW>
-		</item>
-		<item type="traktor.render.Swizzle">
-			<comment/>
-			<position>
-				<first>323</first>
-				<second>186</second>
-			</position>
-			<swizzle>x</swizzle>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-53</first>
-				<second>186</second>
+				<first>162</first>
+				<second>284</second>
 			</position>
 			<name>ShadowMapUV</name>
 			<connectable>true</connectable>
@@ -37,8 +29,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>324</first>
-				<second>406</second>
+				<first>318</first>
+				<second>400</second>
 			</position>
 			<name>ReferenceZ</name>
 			<connectable>true</connectable>
@@ -56,8 +48,8 @@
 		<item type="traktor.render.Uniform">
 			<comment/>
 			<position>
-				<first>179</first>
-				<second>467</second>
+				<first>196</first>
+				<second>460</second>
 			</position>
 			<parameterName>ShadowMapSizeAndBias</parameterName>
 			<type>PtVector</type>
@@ -69,8 +61,8 @@ Constant bias
 			]]>
 			</comment>
 			<position>
-				<first>419</first>
-				<second>467</second>
+				<first>436</first>
+				<second>460</second>
 			</position>
 			<swizzle>y</swizzle>
 		</item>
@@ -99,60 +91,73 @@ Constant bias
 			</position>
 			<value>0</value>
 		</item>
-		<item type="traktor.render.Sub">
+		<item type="traktor.render.Uniform">
 			<comment/>
 			<position>
-				<first>542</first>
-				<second>408</second>
+				<first>187</first>
+				<second>251</second>
 			</position>
+			<parameterName>ShadowMap</parameterName>
+			<type>PtTexture</type>
 		</item>
-		<item type="traktor.render.Conditional" version="1">
-			<comment>
-			<![CDATA[
-Some renderers are unable to set FP border color thus we remap 0 to infinity
-			]]>
-			</comment>
-			<position>
-				<first>519</first>
-				<second>178</second>
-			</position>
-			<branch>BrAuto</branch>
-			<operator>CoGreater</operator>
-		</item>
-		<item type="traktor.render.Scalar">
+		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>271</first>
-				<second>244</second>
+				<first>562</first>
+				<second>261</second>
 			</position>
-			<value>0.1</value>
-		</item>
-		<item type="traktor.render.Scalar">
-			<comment>
-			<![CDATA[
-Infinity
-			]]>
-			</comment>
-			<position>
-				<first>258</first>
-				<second>305</second>
-			</position>
-			<value>1000000</value>
+			<fragmentGuid>{2C7E2EE3-D483-1C4D-9A3A-2ACC67B3AB70}</fragmentGuid>
+			<inputPins>
+				<item>
+					<name>Value</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<name>Range Max</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<name>Range Min</name>
+					<optional>true</optional>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<name>Output</name>
+				</item>
+			</outputPins>
+			<values>
+				<item>
+					<first>Range Max</first>
+					<second>1</second>
+				</item>
+				<item>
+					<first>Range Min</first>
+					<second>0</second>
+				</item>
+			</values>
 		</item>
 		<item type="traktor.render.Uniform">
 			<comment/>
 			<position>
-				<first>-28</first>
-				<second>153</second>
+				<first>324</first>
+				<second>337</second>
 			</position>
-			<parameterName>ShadowMap</parameterName>
-			<type>PtTexture</type>
+			<parameterName>DepthRange</parameterName>
+			<type>PtScalar</type>
+		</item>
+		<item type="traktor.render.Sub">
+			<comment/>
+			<position>
+				<first>570</first>
+				<second>399</second>
+			</position>
 		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[2]"/>
+				<node ref="/object/nodes/item[1]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -162,12 +167,22 @@ Infinity
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[5]"/>
+				<node ref="/object/nodes/item[4]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[6]"/>
+				<node ref="/object/nodes/item[5]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[6]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[7]"/>
+				<name>CaseTrue</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -176,8 +191,8 @@ Infinity
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[8]"/>
-				<name>CaseTrue</name>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -186,8 +201,8 @@ Infinity
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[4]"/>
-				<name>Input</name>
+				<node ref="/object/nodes/item[7]"/>
+				<name>CaseFalse</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -196,38 +211,8 @@ Infinity
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[8]"/>
-				<name>CaseFalse</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[10]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[8]"/>
-				<name>Reference</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[6]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[10]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[3]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[10]"/>
-				<name>Input1</name>
+				<node ref="/object/nodes/item"/>
+				<name>Texture</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -236,18 +221,48 @@ Infinity
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[1]"/>
+				<node ref="/object/nodes/item[10]"/>
+				<name>Value</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[10]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[7]"/>
 				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[1]"/>
+				<node ref="/object/nodes/item[11]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[11]"/>
-				<name>Input</name>
+				<node ref="/object/nodes/item[10]"/>
+				<name>Range Max</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[12]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[5]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[12]"/>
+				<name>Input2</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -256,48 +271,8 @@ Infinity
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[11]"/>
+				<node ref="/object/nodes/item[7]"/>
 				<name>Reference</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[1]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[11]"/>
-				<name>CaseTrue</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[11]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[8]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[13]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[11]"/>
-				<name>CaseFalse</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[14]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item"/>
-				<name>Texture</name>
 			</destination>
 		</item>
 	</edges>

@@ -12,11 +12,11 @@ namespace traktor
 
 bool s_handlesInitialized = false;
 render::handle_t s_handleDefaultTechnique;
+render::handle_t s_handleShadowTechnique;
 render::handle_t s_handleVelocityTechnique;
 render::handle_t s_handleProjection;
 render::handle_t s_handleView;
 render::handle_t s_handleViewPrevious;
-//render::handle_t s_handleViewDistance;
 //render::handle_t s_handleViewSize;
 render::handle_t s_handleWorld;
 //render::handle_t s_handleWorldInverse;
@@ -32,6 +32,7 @@ render::handle_t s_handleShadowEnable;
 render::handle_t s_handleShadowMask;
 render::handle_t s_handleShadowMaskSize;
 render::handle_t s_handleDepthEnable;
+render::handle_t s_handleDepthRange;
 render::handle_t s_handleDepthMap;
 render::handle_t s_handleTime;
 
@@ -48,6 +49,7 @@ WorldRenderView::WorldRenderView()
 ,	m_eyePosition(0.0f, 0.0f, 0.0f, 1.0f)
 ,	m_lightCount(0)
 ,	m_shadowMaskSize(0.0f)
+,	m_depthRange(0.0f)
 ,	m_time(0.0f)
 ,	m_deltaTime(0.0f)
 ,	m_interval(0.0f)
@@ -66,11 +68,12 @@ WorldRenderView::WorldRenderView()
 	if (!s_handlesInitialized)
 	{
 		s_handleDefaultTechnique = render::getParameterHandle(L"Default");
+		s_handleShadowTechnique = render::getParameterHandle(L"Shadow");
 		s_handleVelocityTechnique = render::getParameterHandle(L"Velocity");
+
 		s_handleProjection = render::getParameterHandle(L"Projection");
 		s_handleView = render::getParameterHandle(L"View");
 		s_handleViewPrevious = render::getParameterHandle(L"ViewPrevious");
-		//s_handleViewDistance = render::getParameterHandle(L"ViewDistance");
 		//s_handleViewSize = render::getParameterHandle(L"ViewSize");
 		s_handleWorld = render::getParameterHandle(L"World");
 		//s_handleWorldInverse = render::getParameterHandle(L"WorldInverse");
@@ -86,6 +89,7 @@ WorldRenderView::WorldRenderView()
 		s_handleShadowMask = render::getParameterHandle(L"ShadowMask");
 		s_handleShadowMaskSize = render::getParameterHandle(L"ShadowMaskSize");
 		s_handleDepthEnable = render::getParameterHandle(L"DepthEnable");
+		s_handleDepthRange = render::getParameterHandle(L"DepthRange");
 		s_handleDepthMap = render::getParameterHandle(L"DepthMap");
 		s_handleTime = render::getParameterHandle(L"Time");
 	}
@@ -141,6 +145,11 @@ void WorldRenderView::setShadowMask(render::ITexture* shadowMask)
 void WorldRenderView::setDepthMap(render::ITexture* depthMap)
 {
 	m_depthMap = depthMap;
+}
+
+void WorldRenderView::setDepthRange(float depthRange)
+{
+	m_depthRange = depthRange;
 }
 
 void WorldRenderView::setTimes(float time, float deltaTime, float interval)
@@ -265,15 +274,14 @@ void WorldRenderView::setWorldProgramParameters(render::ProgramParameters* progr
 	//programParams->setMatrixParameter(s_handleWorldInverse, world.inverse());
 	//programParams->setVectorParameter(s_handleViewSize, Vector4(m_viewSize.x, m_viewSize.y, viewSizeInvX, viewSizeInvY));
 	programParams->setVectorParameter(s_handleEyePosition, m_eyePosition);
+	programParams->setFloatParameter(s_handleDepthRange, m_depthRange);
 
 	if (m_technique == s_handleVelocityTechnique)
 	{
+		// Write velocity map technique.
 		programParams->setMatrixParameter(s_handleViewPrevious, m_viewPrevious);
 		programParams->setMatrixParameter(s_handleWorldPrevious, worldPrevious);
 	}
-
-	//Vector4 viewDistance(m_viewFrustum.getNearZ(), m_viewFrustum.getFarZ(), m_cullFrustum.getNearZ(), m_cullFrustum.getFarZ());
-	//programParams->setVectorParameter(s_handleViewDistance, viewDistance);
 }
 
 void WorldRenderView::setLightProgramParameters(render::ProgramParameters* programParams) const
