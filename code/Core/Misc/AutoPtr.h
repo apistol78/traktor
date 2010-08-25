@@ -68,7 +68,7 @@ namespace traktor
 			}
 		}
 
-		Type* ptr()
+		Type* ptr() const
 		{
 			return m_ptr;
 		}
@@ -79,7 +79,7 @@ namespace traktor
 			m_ptr = ptr;
 		}
 
-		Type* operator -> ()
+		Type* operator -> () const
 		{
 			return ptr();
 		}
