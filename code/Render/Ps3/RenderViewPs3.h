@@ -92,6 +92,12 @@ private:
 		uint32_t depthPitch;
 		RenderTargetPs3* renderTarget;
 		bool zcull;
+
+		// Deferred clear.
+		uint32_t clearMask;
+		float clearColor[4];
+		float clearDepth;
+		int32_t clearStencil;
 	};
 
 	Ref< RenderSystemPs3 > m_renderSystem;
@@ -119,6 +125,8 @@ private:
 	float T_ALIGN16 m_targetSize[4];
 
 	void setCurrentRenderState();
+
+	void clearImmediate();
 };
 
 	}

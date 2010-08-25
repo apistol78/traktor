@@ -244,14 +244,14 @@ void StateCachePs3::setColorMask(uint32_t colorMask)
 
 void StateCachePs3::setViewport(const Viewport& viewport)
 {
-	if (
+	/*if (
 		viewport.left != m_viewport.left ||
 		viewport.top != m_viewport.top ||
 		viewport.width != m_viewport.width ||
 		viewport.height != m_viewport.height ||
 		viewport.nearZ != m_viewport.nearZ ||
 		viewport.farZ != m_viewport.farZ
-	)
+	)*/
 	{
 		float scale[4];
 		float offset[4];

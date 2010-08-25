@@ -261,9 +261,9 @@ void RenderViewPs3::setViewport(const Viewport& viewport)
 		m_viewport = viewport;
 	else
 	{
-		RenderState& rs = m_renderTargetStack.back();
-		rs.viewport = viewport;
-		m_stateCache.setViewport(rs.viewport);
+		m_renderTargetStack.back().viewport = viewport;
+		if (!m_renderTargetDirty)
+			m_stateCache.setViewport(viewport);
 	}
 }
 
@@ -382,51 +382,22 @@ void RenderViewPs3::clear(uint32_t clearMask, const float color[4], float depth,
 {
 	T_ASSERT (!m_renderTargetStack.empty());
 
-	if (m_renderTargetDirty)
-		setCurrentRenderState();
-
-	const RenderState& rs = m_renderTargetStack.back();
-	uint32_t gcmClearMask = 0;
-
+	RenderState& rs = m_renderTargetStack.back();
+	rs.clearMask |= clearMask;
 	if (clearMask & CfColor)
 	{
-		if (
-			rs.colorFormat == CELL_GCM_SURFACE_A8R8G8B8 ||
-			rs.colorFormat == CELL_GCM_SURFACE_B8
-		)
-		{
-			gcmClearMask |= CELL_GCM_CLEAR_R | CELL_GCM_CLEAR_G | CELL_GCM_CLEAR_B | CELL_GCM_CLEAR_A;
-
-			uint32_t clearColor =
-				(uint32_t(color[0] * 255.0f) << 16) |
-				(uint32_t(color[1] * 255.0f) << 8) |
-				(uint32_t(color[2] * 255.0f) << 0) |
-				(uint32_t(color[3] * 255.0f) << 24);
-
-			T_GCM_CALL(cellGcmSetClearColor)(gCellGcmCurrentContext, clearColor);
-		}
-		else
-		{
-			m_clearFp.clear(m_stateCache, color);
-		}
+		rs.clearColor[0] = color[0];
+		rs.clearColor[1] = color[1];
+		rs.clearColor[2] = color[2];
+		rs.clearColor[3] = color[3];
 	}
+	if (clearMask & CfDepth)
+		rs.clearDepth = depth;
+	if (clearMask & CfStencil)
+		rs.clearStencil = stencil;
 
-	if (clearMask & (CfDepth | CfStencil))
-	{
-		if (rs.depthOffset)
-		{
-			gcmClearMask |= CELL_GCM_CLEAR_Z;
-			T_GCM_CALL(cellGcmSetClearDepthStencil)(
-				gCellGcmCurrentContext,
-				(uint32_t(depth * 0xffffff) << 8) | (stencil & 0xff)
-			);
-		}
-		if (rs.zcull)
-			T_GCM_CALL(cellGcmSetInvalidateZcull)(gCellGcmCurrentContext);
-	}
-
-	if (gcmClearMask)
-		T_GCM_CALL(cellGcmSetClearSurface)(gCellGcmCurrentContext, gcmClearMask);
+	if (!m_renderTargetDirty)
+		clearImmediate();
 }
 
 void RenderViewPs3::setVertexBuffer(VertexBuffer* vertexBuffer)
@@ -604,7 +575,12 @@ void RenderViewPs3::setCurrentRenderState()
 	sf.x = 0;
 	sf.y = 0;
 
-	T_GCM_CALL(cellGcmSetSurface)(gCellGcmCurrentContext, &sf);
+	T_GCM_CALL(cellGcmSetSurfaceWindow)(
+		gCellGcmCurrentContext,
+		&sf,
+		CELL_GCM_WINDOW_ORIGIN_BOTTOM,
+		CELL_GCM_WINDOW_PIXEL_CENTER_INTEGER
+	);
 
 	m_stateCache.setViewport(rs.viewport);
 	m_stateCache.setColorMask(CELL_GCM_COLOR_MASK_B | CELL_GCM_COLOR_MASK_G | CELL_GCM_COLOR_MASK_R | CELL_GCM_COLOR_MASK_A);
@@ -637,7 +613,58 @@ void RenderViewPs3::setCurrentRenderState()
 	m_targetSize[0] = rs.width;
 	m_targetSize[1] = rs.height;
 
+	// Ensure target is cleared.
+	clearImmediate();
+
 	m_renderTargetDirty = false;
+}
+
+void RenderViewPs3::clearImmediate()
+{
+	RenderState& rs = m_renderTargetStack.back();
+	uint32_t gcmClearMask = 0;
+
+	if (rs.clearMask & CfColor)
+	{
+		if (
+			rs.colorFormat == CELL_GCM_SURFACE_A8R8G8B8 ||
+			rs.colorFormat == CELL_GCM_SURFACE_B8
+		)
+		{
+			gcmClearMask |= CELL_GCM_CLEAR_R | CELL_GCM_CLEAR_G | CELL_GCM_CLEAR_B | CELL_GCM_CLEAR_A;
+
+			uint32_t clearColor =
+				(uint32_t(rs.clearColor[0] * 255.0f) << 16) |
+				(uint32_t(rs.clearColor[1] * 255.0f) << 8) |
+				(uint32_t(rs.clearColor[2] * 255.0f) << 0) |
+				(uint32_t(rs.clearColor[3] * 255.0f) << 24);
+
+			T_GCM_CALL(cellGcmSetClearColor)(gCellGcmCurrentContext, clearColor);
+		}
+		else
+		{
+			m_clearFp.clear(m_stateCache, rs.clearColor);
+		}
+	}
+
+	if (rs.clearMask & (CfDepth | CfStencil))
+	{
+		if (rs.depthOffset)
+		{
+			gcmClearMask |= CELL_GCM_CLEAR_Z;
+			T_GCM_CALL(cellGcmSetClearDepthStencil)(
+				gCellGcmCurrentContext,
+				(uint32_t(rs.clearDepth * 0xffffff) << 8) | (rs.clearStencil & 0xff)
+			);
+		}
+		if (rs.zcull)
+			T_GCM_CALL(cellGcmSetInvalidateZcull)(gCellGcmCurrentContext);
+	}
+
+	if (gcmClearMask)
+		T_GCM_CALL(cellGcmSetClearSurface)(gCellGcmCurrentContext, gcmClearMask);
+
+	rs.clearMask = 0;
 }
 
 	}

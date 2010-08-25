@@ -237,7 +237,7 @@ void ProgramPs3::bind(PoolAllocator& patchProgramPool, StateCachePs3& stateCache
 		stateCache.setVertexShaderConstant(0, 1, targetSize);
 
 		// Get patched pixel shader.
-		if (!m_pixelScalars.empty())
+		if (!m_pixelScalars.empty() || !m_pixelTargetSizeUCodeOffsets.empty())
 		{
 			uint32_t ucodeSize = alignUp(m_pixelShaderUCode->getSize(), 64);
 

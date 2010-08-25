@@ -60,6 +60,11 @@ OS::envmap_t OS::getEnvironment() const
 	return envmap_t();
 }
 
+bool OS::getEnvironment(const std::wstring& name, std::wstring& outValue) const
+{
+	return false;
+}
+
 Ref< IProcess > OS::execute(
 	const Path& file,
 	const std::wstring& commandLine,

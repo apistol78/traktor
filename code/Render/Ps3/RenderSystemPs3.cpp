@@ -26,7 +26,7 @@ namespace traktor
 
 const uint32_t c_cbSize = 256 * 1024;
 const uint32_t c_hostSize = 8 * 1024 * 1024;
-const uint32_t c_mainSize = 16 * 1024 * 1024;
+const uint32_t c_mainSize = 8 * 1024 * 1024;
 
 		}
 
@@ -70,7 +70,7 @@ bool RenderSystemPs3::create(const RenderSystemCreateDesc& desc)
 		L"\tLocal address 0x" << config.localAddress << Endl <<
 		L"\t      size " << config.localSize / (1024 * 1024) << L" MiB" << Endl <<
 		L"\tMain address 0x" << mainAddr << Endl <<
-		L"\t     size " << c_mainSize / (1024 * 1024) << L" MiB" << Endl;
+		L"\t      size " << c_mainSize / (1024 * 1024) << L" MiB" << Endl;
 
 	return true;
 }

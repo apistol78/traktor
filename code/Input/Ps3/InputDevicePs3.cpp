@@ -29,6 +29,35 @@ float adjustDeadZone(float value)
 
 static CellPadInfo2 s_info;
 
+struct ControlInfo
+{
+	const wchar_t* name;
+	InputDefaultControlType type;
+	bool analogue;
+	int32_t control;
+}
+c_controlInfo[] =
+{
+	{ L"INPUT_GAMEPAD_UP", DtUp, false, T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL1, CELL_PAD_CTRL_UP) },
+	{ L"INPUT_GAMEPAD_DOWN", DtDown, false, T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL1, CELL_PAD_CTRL_DOWN) },
+	{ L"INPUT_GAMEPAD_LEFT", DtLeft, false, T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL1, CELL_PAD_CTRL_LEFT) },
+	{ L"INPUT_GAMEPAD_RIGHT", DtRight, false, T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL1, CELL_PAD_CTRL_RIGHT) },
+	{ L"INPUT_GAMEPAD_SELECT", DtSelect, false, T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL1, CELL_PAD_CTRL_SELECT) },
+	{ L"INPUT_GAMEPAD_CANCEL", DtCancel, false, T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL1, CELL_PAD_CTRL_START) },
+	{ L"INPUT_GAMEPAD_BUTTON_1", DtButton1, false, T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL2, CELL_PAD_CTRL_CROSS) },
+	{ L"INPUT_GAMEPAD_BUTTON_2", DtButton2, false, T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL2, CELL_PAD_CTRL_CIRCLE) },
+	{ L"INPUT_GAMEPAD_BUTTON_3", DtButton3, T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL2, CELL_PAD_CTRL_TRIANGLE) },
+	{ L"INPUT_GAMEPAD_BUTTON_4", DtButton4, T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL2, CELL_PAD_CTRL_SQUARE) },
+	{ L"INPUT_GAMEPAD_TRIGGER_LEFT", DtTriggerLeft, false, T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL2, CELL_PAD_CTRL_L2) },
+	{ L"INPUT_GAMEPAD_TRIGGER_RIGHT", DtTriggerRight, false, T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL2, CELL_PAD_CTRL_R2) },
+	{ L"INPUT_GAMEPAD_SHOULDER_LEFT", DtShoulderLeft, false, T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL2, CELL_PAD_CTRL_L1) },
+	{ L"INPUT_GAMEPAD_SHOULDER_RIGHT", DtShoulderRight, false, T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL2, CELL_PAD_CTRL_R1) },
+	{ L"INPUT_GAMEPAD_THUMB_LEFT_X", DtThumbLeftX, true, 0 },
+	{ L"INPUT_GAMEPAD_THUMB_LEFT_Y", DtThumbLeftY, true, 1 },
+	{ L"INPUT_GAMEPAD_THUMB_RIGHT_X", DtThumbRightX, true, 2 },
+	{ L"INPUT_GAMEPAD_THUMB_RIGHT_Y", DtThumbRightY, true, 3 }
+};
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.InputDevicePs3", InputDevicePs3, IInputDevice)
@@ -44,7 +73,7 @@ InputDevicePs3::InputDevicePs3(int padIndex)
 
 std::wstring InputDevicePs3::getName() const
 {
-	return L"Pad " + toString(m_padIndex);
+	return L"INPUT_GAMEPAD_" + toString(m_padIndex);
 }
 
 InputCategory InputDevicePs3::getCategory() const
@@ -57,50 +86,53 @@ bool InputDevicePs3::isConnected() const
 	return m_connected;
 }
 
-int InputDevicePs3::getControlCount()
+int32_t InputDevicePs3::getControlCount()
 {
-	return 0;
+	return sizeof_array(c_controlInfo);
 }
 
-std::wstring InputDevicePs3::getControlName(int control)
+std::wstring InputDevicePs3::getControlName(int32_t control)
 {
-	return L"";
+	const ControlInfo& controlInfo = c_controlInfo[control];
+	return controlInfo.name;
 }
 
-bool InputDevicePs3::isControlAnalogue(int control) const
+bool InputDevicePs3::isControlAnalogue(int32_t control) const
 {
-	return control < 0;
+	const ControlInfo& controlInfo = c_controlInfo[control];
+	return controlInfo.analogue;
 }
 
-float InputDevicePs3::getControlValue(int control)
+float InputDevicePs3::getControlValue(int32_t control)
 {
 	if (!m_connected)
 		return 0.0f;
 
-	if (control > 0)
+	const ControlInfo& controlInfo = c_controlInfo[control];
+	if (!controlInfo.analogue)
 	{
-		int offset = T_CONTROL_OFFSET(control);
-		int bit = T_CONTROL_BIT(control);
+		int offset = T_CONTROL_OFFSET(controlInfo.control);
+		int bit = T_CONTROL_BIT(controlInfo.control);
 		return (m_padData.button[offset] & bit) ? 1.0f : 0.0f;
 	}
-	else if (control < 0)
+	else
 	{
 		float thumb = 0.0f;
-		switch (control)
+		switch (controlInfo.control)
 		{
-		case -1:
+		case 0:
 			thumb = m_padData.button[6] / 128.0f - 1.0f;
 			break;
 			
-		case -2:
+		case 1:
 			thumb = -(m_padData.button[7] / 128.0f - 1.0f);
 			break;
 
-		case -3:
+		case 2:
 			thumb = m_padData.button[4] / 128.0f - 1.0f;
 			break;
 
-		case -4:
+		case 3:
 			thumb = -(m_padData.button[5] / 128.0f - 1.0f);
 			break;
 		}
@@ -110,86 +142,17 @@ float InputDevicePs3::getControlValue(int control)
 	return 0.0f;
 }
 
-bool InputDevicePs3::getDefaultControl(InputDefaultControlType controlType, int& control) const
+bool InputDevicePs3::getDefaultControl(InputDefaultControlType controlType, bool analogue, int& control) const
 {
-	switch (controlType)
+	for (int i = 0; i < sizeof_array(c_controlInfo); ++i)
 	{
-	case DtUp:
-		control = T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL1, CELL_PAD_CTRL_UP);
-		break;
-
-	case DtDown:
-		control = T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL1, CELL_PAD_CTRL_DOWN);
-		break;
-
-	case DtLeft:
-		control = T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL1, CELL_PAD_CTRL_LEFT);
-		break;
-
-	case DtRight:
-		control = T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL1, CELL_PAD_CTRL_RIGHT);
-		break;
-
-	case DtSelect:
-		control = T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL1, CELL_PAD_CTRL_SELECT);
-		break;
-
-	case DtCancel:
-		control = T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL1, CELL_PAD_CTRL_START);
-		break;
-
-	case DtButton1:
-		control = T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL2, CELL_PAD_CTRL_CROSS);
-		break;
-
-	case DtButton2:
-		control = T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL2, CELL_PAD_CTRL_CIRCLE);
-		break;
-
-	case DtButton3:
-		control = T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL2, CELL_PAD_CTRL_TRIANGLE);
-		break;
-
-	case DtButton4:
-		control = T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL2, CELL_PAD_CTRL_SQUARE);
-		break;
-
-	case DtTriggerLeft:
-		control = T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL2, CELL_PAD_CTRL_L2);
-		break;
-
-	case DtTriggerRight:
-		control = T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL2, CELL_PAD_CTRL_R2);
-		break;
-
-	case DtShoulderLeft:
-		control = T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL2, CELL_PAD_CTRL_L1);
-		break;
-
-	case DtShoulderRight:
-		control = T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL2, CELL_PAD_CTRL_R1);
-		break;
-
-	case DtThumbLeftX:
-		control = -1;
-		break;
-
-	case DtThumbLeftY:
-		control = -2;
-		break;
-
-	case DtThumbRightX:
-		control = -3;
-		break;
-
-	case DtThumbRightY:
-		control = -4;
-		break;
-
-	default:
-		return false;
+		if (c_controlInfo[i].type == controlType && c_controlInfo[i].analogue == analogue)
+		{
+			control = i;
+			return true;
+		}
 	}
-	return true;
+	return false;
 }
 
 void InputDevicePs3::resetState()

@@ -30,15 +30,15 @@ public:
 
 	virtual bool isConnected() const;
 
-	virtual int getControlCount();
+	virtual int32_t getControlCount();
 
-	virtual std::wstring getControlName(int control);
+	virtual std::wstring getControlName(int32_t control);
 
-	virtual bool isControlAnalogue(int control) const;
+	virtual bool isControlAnalogue(int32_t control) const;
 
-	virtual float getControlValue(int control);
+	virtual float getControlValue(int32_t control);
 
-	virtual bool getDefaultControl(InputDefaultControlType controlType, int& control) const;
+	virtual bool getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const;
 
 	virtual void resetState();
 

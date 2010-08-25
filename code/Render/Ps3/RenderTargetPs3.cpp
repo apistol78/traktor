@@ -94,7 +94,7 @@ bool RenderTargetPs3::create(MemoryHeap* memoryHeap, const RenderTargetSetCreate
 	m_colorTexture.height = m_height;
 	m_colorTexture.depth = 1;
 	m_colorTexture.location = CELL_GCM_LOCATION_LOCAL;
-	m_colorTexture.pitch = cellGcmGetTiledPitchSize(m_width * byteSize);
+	m_colorTexture.pitch = m_width * byteSize; //cellGcmGetTiledPitchSize(m_width * byteSize);
 	m_colorTexture.offset = 0;
 
 	uint32_t textureSize = m_colorTexture.pitch * m_colorTexture.height;
