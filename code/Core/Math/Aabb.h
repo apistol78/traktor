@@ -50,10 +50,20 @@ public:
 	 *
 	 * \param p Start point.
 	 * \param d Ray direction.
-	 * \param outDistance Distance from start point to intersection.
+	 * \param outDistance Distance from start point to enter intersection.
 	 * \return True if intersection found.
 	 */
 	bool intersectRay(const Vector4& p, const Vector4& d, Scalar& outDistance) const;
+
+	/*! \brief Ray intersection query.
+	*
+	* \param p Start point.
+	* \param d Ray direction.
+	* \param outDistanceEnter Distance from start point to enter intersection.
+	* \param outDistanceExit Distance from start point to exit intersection.
+	* \return True if intersection found.
+	*/
+	bool intersectRay(const Vector4& p, const Vector4& d, Scalar& outDistanceEnter, Scalar& outDistanceExit) const;
 
 	/*! \brief Line segment intersection query.
 	 *

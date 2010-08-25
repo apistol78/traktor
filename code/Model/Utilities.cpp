@@ -5,6 +5,7 @@
 #include "Core/Math/Triangulator.h"
 #include "Core/Math/Plane.h"
 #include "Core/Math/RandomGeometry.h"
+#include "Core/Math/SahTree.h"
 #include "Core/Math/Winding.h"
 #include "Core/Log/Log.h"
 #include "Model/ContainerHelpers.h"
@@ -654,23 +655,22 @@ void bakeVertexOcclusion(Model& model)
 	AlignedVector< Vector4 > colors = model.getColors();
 	model.clear(Model::CfColors);
 	
-	AlignedVector< Winding > windings;
-	windings.reserve(polygons.size());
-	for (std::vector< Polygon >::const_iterator i = polygons.begin(); i != polygons.end(); ++i)
+	AlignedVector< Winding > windings(polygons.size());
+	for (uint32_t i = 0; i < polygons.size(); ++i)
 	{
-		Winding w;
-
-		// Initialize winding from polygon.
-		const std::vector< uint32_t >& vertexIndices = i->getVertices();
+		Winding& w = windings[i];
+		const std::vector< uint32_t >& vertexIndices = polygons[i].getVertices();
 		for (std::vector< uint32_t >::const_iterator j = vertexIndices.begin(); j != vertexIndices.end(); ++j)
 		{
 			const Vertex& polyVertex = model.getVertex(*j);
 			const Vector4& polyVertexPosition = model.getPosition(polyVertex.getPosition());
 			w.points.push_back(polyVertexPosition);
 		}
-		
-		windings.push_back(w);
 	}
+
+	// Build acceleration tree.
+	SahTree sah;
+	sah.build(windings);
 	
 	for (std::vector< Vertex >::iterator i = vertices.begin(); i != vertices.end(); ++i)
 	{
@@ -682,16 +682,8 @@ void bakeVertexOcclusion(Model& model)
 		{
 			Vector4 rayDirection = lerp(normal, rnd.nextHemi(normal), c_occlusionRaySpread).normalized().xyz0();
 			Vector4 rayOrigin = (position + normal * c_occlusionRayBias).xyz1();
-		
-			for (AlignedVector< Winding >::const_iterator k = windings.begin(); k != windings.end(); ++k)
-			{
-				Scalar K;
-				if (k->rayIntersection(rayOrigin, rayDirection, K))
-				{
-					occluded++;
-					break;
-				}
-			}
+			if (sah.queryAnyIntersection(rayOrigin, rayDirection, 0.0f))
+				occluded++;
 		}
 		
 		Vector4 color = Vector4::one();

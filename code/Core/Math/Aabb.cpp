@@ -62,8 +62,48 @@ bool Aabb::inside(const Vector4& pt) const
 
 bool Aabb::intersectRay(const Vector4& p, const Vector4& d, Scalar& outDistance) const
 {
-	T_FATAL_ERROR;
-	return false;
+	Scalar distanceExitDummy;
+	return intersectRay(p, d, outDistance, distanceExitDummy);
+}
+
+bool Aabb::intersectRay(const Vector4& p, const Vector4& d, Scalar& outDistanceEnter, Scalar& outDistanceExit) const
+{
+	Vector4 id = Scalar(1.0f) / d;
+	int32_t sign[] =
+	{
+		id.x() < 0.0f,
+		id.y() < 0.0f,
+		id.z() < 0.0f
+	};
+
+	const Vector4 mnmx[] = { mn, mx };
+
+	Scalar tmin = (mnmx[sign[0]].x() - p.x()) * id.x();
+	Scalar tmax = (mnmx[1 - sign[0]].x() - p.x()) * id.x();
+	Scalar tymin = (mnmx[sign[1]].y() - p.y()) * id.y();
+	Scalar tymax = (mnmx[1 - sign[1]].y() - p.y()) * id.y();
+	if ((tmin > tymax) || (tymin > tmax))
+		return false;
+
+	if (tymin > tmin)
+		tmin = tymin;
+	if (tymax < tmax)
+		tmax = tymax;
+
+	Scalar tzmin = (mnmx[sign[2]].z() - p.z()) * id.z();
+	Scalar tzmax = (mnmx[1-sign[2]].z() - p.z()) * id.z();
+	if ((tmin > tzmax) || (tzmin > tmax))
+		return false;
+
+	if (tzmin > tmin)
+		tmin = tzmin;
+	if (tzmax < tmax)
+		tmax = tzmax;
+
+	outDistanceEnter = tmin;
+	outDistanceExit = tmax;
+
+	return true;
 }
 
 bool Aabb::intersectSegment(const Vector4& p1, const Vector4& p2, Scalar& outDistance) const
