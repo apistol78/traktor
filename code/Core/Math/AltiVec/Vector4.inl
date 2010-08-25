@@ -122,6 +122,18 @@ T_MATH_INLINE Vector4 Vector4::absolute() const
 	return Vector4(vec_and(m_data, (vec_float4)umask));
 }
 
+T_MATH_INLINE Vector4 Vector4::loadAligned(const float* in)
+{
+	T_ASSERT (in);
+	return Vector4(in);
+}
+
+T_MATH_INLINE Vector4 Vector4::loadUnaligned(const float* in)
+{
+	T_ASSERT (in);
+	return Vector4(in);
+}
+
 T_MATH_INLINE void Vector4::storeAligned(float* out) const
 {
 	T_ASSERT (out);
