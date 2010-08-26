@@ -222,6 +222,7 @@ void ProgramPs3::setTextureParameter(handle_t handle, ITexture* texture)
 
 void ProgramPs3::setStencilReference(uint32_t stencilReference)
 {
+	m_renderState.stencilRef = stencilReference;
 }
 
 void ProgramPs3::bind(PoolAllocator& patchProgramPool, StateCachePs3& stateCache, float targetSize[])

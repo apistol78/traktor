@@ -433,7 +433,7 @@ void RenderViewPs3::draw(const Primitives& primitives)
 		setCurrentRenderState();
 
 	m_currentProgram->bind(m_patchProgramPool, m_stateCache, m_targetSize);
-	m_currentVertexBuffer->bind(m_currentProgram->getInputSignature());
+	m_currentVertexBuffer->bind(m_stateCache, m_currentProgram->getInputSignature());
 
 	uint32_t count = 0;
 	switch (primitives.type)
@@ -583,7 +583,6 @@ void RenderViewPs3::setCurrentRenderState()
 	);
 
 	m_stateCache.setViewport(rs.viewport);
-	m_stateCache.setColorMask(CELL_GCM_COLOR_MASK_B | CELL_GCM_COLOR_MASK_G | CELL_GCM_COLOR_MASK_R | CELL_GCM_COLOR_MASK_A);
 
 	if (rs.colorFormat == CELL_GCM_SURFACE_F_W32Z32Y32X32 || rs.colorFormat == CELL_GCM_SURFACE_F_X32)
 		m_stateCache.setInFp32Mode(true);
@@ -651,7 +650,7 @@ void RenderViewPs3::clearImmediate()
 	{
 		if (rs.depthOffset)
 		{
-			gcmClearMask |= CELL_GCM_CLEAR_Z;
+			gcmClearMask |= CELL_GCM_CLEAR_Z | CELL_GCM_CLEAR_S;
 			T_GCM_CALL(cellGcmSetClearDepthStencil)(
 				gCellGcmCurrentContext,
 				(uint32_t(rs.clearDepth * 0xffffff) << 8) | (rs.clearStencil & 0xff)

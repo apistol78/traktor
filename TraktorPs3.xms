@@ -701,6 +701,8 @@
 						<item>_DEBUG</item>
 						<item>HAVE_CONFIG_H</item>
 						<item>FPM_PPC</item>
+						<item>OPT_SPEED</item>
+						<item>OPT_SSO</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -722,6 +724,8 @@
 						<item>NDEBUG</item>
 						<item>HAVE_CONFIG_H</item>
 						<item>FPM_PPC</item>
+						<item>OPT_SPEED</item>
+						<item>OPT_SSO</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>

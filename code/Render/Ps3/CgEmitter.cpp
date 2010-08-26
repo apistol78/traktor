@@ -755,6 +755,17 @@ bool emitPixelOutput(CgContext& cx, PixelOutput* node)
 		CELL_GCM_NOTEQUAL
 	};
 
+	const uint32_t gcmStencilOperation[] =
+	{
+		CELL_GCM_KEEP,
+		CELL_GCM_ZERO,
+		CELL_GCM_REPLACE,
+		CELL_GCM_INCR,
+		CELL_GCM_DECR,
+		CELL_GCM_INCR_WRAP,
+		CELL_GCM_DECR_WRAP
+	};
+
 	cx.enterPixel();
 
 	CgVariable* in = cx.emitInput(node, L"Input");
@@ -781,6 +792,12 @@ bool emitPixelOutput(CgContext& cx, PixelOutput* node)
 	rs.alphaTestEnable = node->getAlphaTestEnable() ? CELL_GCM_TRUE : CELL_GCM_FALSE;
 	rs.alphaFunc = gcmFunction[node->getAlphaTestFunction()];
 	rs.alphaRef = node->getAlphaTestReference();
+	rs.stencilTestEnable = node->getStencilEnable() ? CELL_GCM_TRUE : CELL_GCM_FALSE;
+	rs.stencilFunc = gcmFunction[node->getStencilFunction()];
+	rs.stencilRef = node->getStencilReference();
+	rs.stencilOpFail = gcmStencilOperation[node->getStencilFail()];
+	rs.stencilOpZFail = gcmStencilOperation[node->getStencilZFail()];
+	rs.stencilOpZPass = gcmStencilOperation[node->getStencilPass()];
 
 	rs.colorMask = 0;
 	if (node->getColorWriteMask() & PixelOutput::CwRed)

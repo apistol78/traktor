@@ -19,6 +19,7 @@ namespace traktor
 	{
 
 class MemoryHeapObject;
+class StateCachePs3;
 
 class T_DLLCLASS VertexBufferPs3 : public VertexBuffer
 {
@@ -37,7 +38,7 @@ public:
 	
 	virtual void unlock();
 
-	void bind(const std::vector< uint8_t >& signature);
+	void bind(StateCachePs3& stateCache, const std::vector< uint8_t >& signature);
 
 private:
 	struct AttributeDesc
@@ -48,8 +49,6 @@ private:
 	};
 
 	static VertexBufferPs3* ms_activeVertexBuffer;
-	static bool ms_attributeEnable[16];
-
 	MemoryHeapObject* m_vbo;
 	uint8_t m_vertexStride;
 	AttributeDesc m_attributeDesc[16];

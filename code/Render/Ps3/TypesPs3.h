@@ -42,6 +42,12 @@ struct RenderState
 	uint32_t alphaTestEnable;
 	uint32_t alphaFunc;
 	uint32_t alphaRef;
+	uint32_t stencilTestEnable;
+	uint32_t stencilFunc;
+	uint32_t stencilRef;
+	uint32_t stencilOpFail;
+	uint32_t stencilOpZFail;
+	uint32_t stencilOpZPass;
 	SamplerState samplerStates[8];
 
 	RenderState()
@@ -58,6 +64,12 @@ struct RenderState
 	,	alphaTestEnable(CELL_GCM_FALSE)
 	,	alphaFunc(CELL_GCM_ALWAYS)
 	,	alphaRef(0)
+	,	stencilTestEnable(CELL_GCM_FALSE)
+	,	stencilFunc(CELL_GCM_ALWAYS)
+	,	stencilRef(0)
+	,	stencilOpFail(CELL_GCM_KEEP)
+	,	stencilOpZFail(CELL_GCM_KEEP)
+	,	stencilOpZPass(CELL_GCM_KEEP)
 	{
 	}
 };

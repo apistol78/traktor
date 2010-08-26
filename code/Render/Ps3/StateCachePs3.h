@@ -16,6 +16,7 @@ public:
 	enum
 	{
 		VertexConstantCount = 256,
+		VertexAttributeCount = 16,
 		SamplerCount = 8
 	};
 
@@ -42,13 +43,22 @@ public:
 
 	void setVertexShaderConstant(uint32_t registerOffset, uint32_t registerCount, const float* constantData);
 
-	void setColorMask(uint32_t colorMask);
-
 	void setViewport(const Viewport& viewport);
+
+	void setVertexDataArray(uint8_t index, uint8_t stride, uint8_t size, uint8_t type, uint8_t location, uint32_t offset);
 
 	void reset(uint32_t flags);
 
 private:
+	struct VertexAttribute
+	{
+		uint8_t stride;
+		uint8_t size;
+		uint8_t type;
+		uint8_t location;
+		uint32_t offset;
+	};
+
 	bool m_inFp32Mode;
 	RenderState m_renderState;
 	SamplerState m_samplerStates[SamplerCount];
@@ -60,6 +70,7 @@ private:
 	uint16_t m_textureLods[SamplerCount];
 	uint32_t m_colorMask;
 	Viewport m_viewport;
+	VertexAttribute m_vertexAttributes[VertexAttributeCount];
 };
 
 	}

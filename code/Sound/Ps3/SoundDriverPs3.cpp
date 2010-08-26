@@ -218,6 +218,9 @@ void SoundDriverPs3::wait()
 
 void SoundDriverPs3::submit(const SoundBlock& soundBlock)
 {
+	T_ASSERT (soundBlock.samplesCount % CELL_AUDIO_BLOCK_SAMPLES == 0);
+	T_ASSERT (soundBlock.samplesCount / CELL_AUDIO_BLOCK_SAMPLES <= m_blocksPerFrame);
+
 	uint32_t blockSize = m_blockChannels * CELL_AUDIO_BLOCK_SAMPLES * sizeof(float);
 	for (uint32_t offset = 0; offset < soundBlock.samplesCount; offset += CELL_AUDIO_BLOCK_SAMPLES)
 	{

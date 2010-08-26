@@ -44,6 +44,7 @@ StateCachePs3::StateCachePs3()
 {
 	m_vertexConstantsShadow = (float*)Alloc::acquireAlign(VertexConstantCount * 4 * sizeof(float), 16);
 	std::memset(m_vertexConstantsShadow, 0, VertexConstantCount * 4 * sizeof(float));
+	std::memset(m_vertexAttributes, 0, sizeof(m_vertexAttributes));
 
 	T_GCM_CALL(cellGcmSetVertexProgramParameterBlock)(
 		gCellGcmCurrentContext,
@@ -73,7 +74,7 @@ void StateCachePs3::setRenderState(const RenderState& rs)
 		m_renderState.cullFaceEnable = rs.cullFaceEnable;
 	}
 
-	if (/*rs.cullFaceEnable == CELL_GCM_TRUE && */(rs.cullFace != m_renderState.cullFace))
+	if (rs.cullFaceEnable != CELL_GCM_FALSE && (rs.cullFace != m_renderState.cullFace))
 	{
 		T_GCM_CALL(cellGcmSetCullFace)(gCellGcmCurrentContext, rs.cullFace);
 		m_renderState.cullFace = rs.cullFace;
@@ -97,10 +98,44 @@ void StateCachePs3::setRenderState(const RenderState& rs)
 		m_renderState.depthMask = rs.depthMask;
 	}
 
-	if (/*rs.depthTestEnable == CELL_GCM_TRUE && */(rs.depthFunc != m_renderState.depthFunc))
+	if (rs.depthTestEnable != CELL_GCM_FALSE && (rs.depthFunc != m_renderState.depthFunc))
 	{
 		T_GCM_CALL(cellGcmSetDepthFunc)(gCellGcmCurrentContext, rs.depthFunc);
 		m_renderState.depthFunc = rs.depthFunc;
+	}
+
+	if (rs.stencilTestEnable != m_renderState.stencilTestEnable)
+	{
+		T_GCM_CALL(cellGcmSetStencilTestEnable)(gCellGcmCurrentContext, rs.stencilTestEnable);
+		m_renderState.stencilTestEnable = rs.stencilTestEnable;
+	}
+
+	if (
+		rs.stencilTestEnable != CELL_GCM_FALSE &&
+		(
+			rs.stencilFunc != m_renderState.stencilFunc ||
+			rs.stencilRef != m_renderState.stencilRef
+		)
+	)
+	{
+		T_GCM_CALL(cellGcmSetStencilFunc)(gCellGcmCurrentContext, rs.stencilFunc, rs.stencilRef, ~0UL);
+		m_renderState.stencilFunc = rs.stencilFunc;
+		m_renderState.stencilRef = rs.stencilRef;
+	}
+
+	if (
+		rs.stencilTestEnable != CELL_GCM_FALSE &&
+		(
+			rs.stencilOpFail != m_renderState.stencilOpFail ||
+			rs.stencilOpZFail != m_renderState.stencilOpZFail ||
+			rs.stencilOpZPass != m_renderState.stencilOpZPass
+		)
+	)
+	{
+		T_GCM_CALL(cellGcmSetStencilOp)(gCellGcmCurrentContext, rs.stencilOpFail, rs.stencilOpZFail, rs.stencilOpZPass);
+		m_renderState.stencilOpFail = rs.stencilOpFail;
+		m_renderState.stencilOpZFail = rs.stencilOpZFail;
+		m_renderState.stencilOpZPass = rs.stencilOpZPass;
 	}
 
 	if (!m_inFp32Mode)
@@ -111,13 +146,13 @@ void StateCachePs3::setRenderState(const RenderState& rs)
 			m_renderState.blendEnable = rs.blendEnable;
 		}
 
-		if (/*rs.blendEnable == CELL_GCM_TRUE && */(rs.blendEquation != m_renderState.blendEquation))
+		if (rs.blendEnable != CELL_GCM_FALSE && (rs.blendEquation != m_renderState.blendEquation))
 		{
 			T_GCM_CALL(cellGcmSetBlendEquation)(gCellGcmCurrentContext, rs.blendEquation, CELL_GCM_FUNC_ADD);
 			m_renderState.blendEquation = rs.blendEquation;
 		}
 
-		if (/*rs.blendEnable == CELL_GCM_TRUE && */(rs.blendFuncSrc != m_renderState.blendFuncSrc || rs.blendFuncDest != m_renderState.blendFuncDest))
+		if (/*rs.blendEnable != CELL_GCM_FALSE &&*/ (rs.blendFuncSrc != m_renderState.blendFuncSrc || rs.blendFuncDest != m_renderState.blendFuncDest))
 		{
 			T_GCM_CALL(cellGcmSetBlendFunc)(gCellGcmCurrentContext, rs.blendFuncSrc, rs.blendFuncDest, CELL_GCM_ONE, CELL_GCM_ZERO);
 			m_renderState.blendFuncSrc = rs.blendFuncSrc;
@@ -130,7 +165,7 @@ void StateCachePs3::setRenderState(const RenderState& rs)
 			m_renderState.alphaTestEnable = rs.alphaTestEnable;
 		}
 
-		if (/*rs.alphaTestEnable == CELL_GCM_TRUE && */(rs.alphaFunc != m_renderState.alphaFunc || m_renderState.alphaRef != m_renderState.alphaRef))
+		if (rs.alphaTestEnable != CELL_GCM_FALSE && (rs.alphaFunc != m_renderState.alphaFunc || m_renderState.alphaRef != m_renderState.alphaRef))
 		{
 			T_GCM_CALL(cellGcmSetAlphaFunc)(gCellGcmCurrentContext, rs.alphaFunc, rs.alphaRef);
 			m_renderState.alphaFunc = rs.alphaFunc;
@@ -233,15 +268,6 @@ void StateCachePs3::setVertexShaderConstant(uint32_t registerOffset, uint32_t re
 	}
 }
 
-void StateCachePs3::setColorMask(uint32_t colorMask)
-{
-	if (colorMask != m_colorMask)
-	{
-		T_GCM_CALL(cellGcmSetColorMask)(gCellGcmCurrentContext, colorMask);
-		m_colorMask = colorMask;
-	}
-}
-
 void StateCachePs3::setViewport(const Viewport& viewport)
 {
 	/*if (
@@ -290,6 +316,36 @@ void StateCachePs3::setViewport(const Viewport& viewport)
 	}
 }
 
+void StateCachePs3::setVertexDataArray(uint8_t index, uint8_t stride, uint8_t size, uint8_t type, uint8_t location, uint32_t offset)
+{
+	VertexAttribute& vattr = m_vertexAttributes[index];
+	if (
+		vattr.stride != stride ||
+		vattr.size != size ||
+		vattr.type != type ||
+		vattr.location != location ||
+		vattr.offset != offset
+	)
+	{
+		T_GCM_CALL(cellGcmSetVertexDataArray)(
+			gCellGcmCurrentContext,
+			index,
+			0,
+			stride,
+			size,
+			type,
+			location,
+			offset
+		);
+
+		vattr.stride = stride;
+		vattr.size = size;
+		vattr.type = type;
+		vattr.location = location;
+		vattr.offset = offset;
+	}
+}
+
 void StateCachePs3::reset(uint32_t flags)
 {
 	if (!(flags & RfForced))
@@ -319,10 +375,10 @@ void StateCachePs3::reset(uint32_t flags)
 	}
 	else
 	{
-		m_renderState = RenderState();
-
 		if (flags & RfRenderState)
 		{
+			m_renderState = RenderState();
+
 			T_GCM_CALL(cellGcmSetCullFaceEnable)(gCellGcmCurrentContext, m_renderState.cullFaceEnable);
 			T_GCM_CALL(cellGcmSetCullFace)(gCellGcmCurrentContext, m_renderState.cullFace);
 			T_GCM_CALL(cellGcmSetDepthTestEnable)(gCellGcmCurrentContext, m_renderState.depthTestEnable);
@@ -373,8 +429,6 @@ void StateCachePs3::reset(uint32_t flags)
 				);
 			}
 		}
-
-		T_GCM_CALL(cellGcmSetColorMask)(gCellGcmCurrentContext, CELL_GCM_COLOR_MASK_R | CELL_GCM_COLOR_MASK_G | CELL_GCM_COLOR_MASK_B | CELL_GCM_COLOR_MASK_A);
 	}
 
 	m_vertexUCode = 0;

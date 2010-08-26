@@ -2,9 +2,10 @@
 #include <sys/synchronization.h>
 #include <sys/process.h>
 #include <sys/timer.h>
-#include "Core/Thread/Thread.h"
 #include "Core/Functor/Functor.h"
+#include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
+#include "Core/Thread/Thread.h"
 
 namespace traktor
 {
@@ -50,14 +51,22 @@ bool Thread::start(Priority priority)
 
 	res = sys_mutex_create(&in->mutex, &attr);
 	if (res != CELL_OK)
+	{
+		log::error << L"Unable to create ppu thread mutex" << Endl;
+		delete in;
 		return false;
+	}
 
 	sys_cond_attribute_t attr2;
 	sys_cond_attribute_initialize(attr2);
 
 	res = sys_cond_create(&in->cond, in->mutex, &attr2);
 	if (res != CELL_OK)
+	{
+		log::error << L"Unable to create ppu thread condition variable" << Endl;
+		delete in;
 		return false;
+	}
 
 	res = sys_ppu_thread_create(
 		&in->thread,
@@ -70,6 +79,7 @@ bool Thread::start(Priority priority)
 	);
 	if (res != CELL_OK)
 	{
+		log::error << L"Unable to create ppu thread" << Endl;
 		delete in;
 		return false;
 	}
@@ -82,6 +92,9 @@ bool Thread::wait(int timeout)
 {
 	Internal* in = reinterpret_cast< Internal* >(m_handle);
 	T_ASSERT (in);
+
+	if (!in->thread)
+		return true;
 
 	int rc;
 

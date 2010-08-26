@@ -165,6 +165,12 @@ public:
 		s >> Member< uint32_t >(L"alphaTestEnable", m_ref.alphaTestEnable);
 		s >> Member< uint32_t >(L"alphaFunc", m_ref.alphaFunc);
 		s >> Member< uint32_t >(L"alphaRef", m_ref.alphaRef);
+		s >> Member< uint32_t >(L"stencilTestEnable", m_ref.stencilTestEnable);
+		s >> Member< uint32_t >(L"stencilFunc", m_ref.stencilFunc);
+		s >> Member< uint32_t >(L"stencilRef", m_ref.stencilRef);
+		s >> Member< uint32_t >(L"stencilOpFail", m_ref.stencilOpFail);
+		s >> Member< uint32_t >(L"stencilOpZFail", m_ref.stencilOpZFail);
+		s >> Member< uint32_t >(L"stencilOpZPass", m_ref.stencilOpZPass);
 		s >> MemberStaticArray< SamplerState, 8, MemberSamplerState >(L"samplerStates", m_ref.samplerStates);
 		return true;
 	}

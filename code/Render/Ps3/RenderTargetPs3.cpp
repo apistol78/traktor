@@ -131,12 +131,14 @@ void RenderTargetPs3::bind(StateCachePs3& stateCache, int stage, const SamplerSt
 {
 	T_ASSERT (!m_inRender);
 
+	/*
 	// Issue GCM flush if RTs been updated.
 	if (m_waitLabel)
 	{
 		T_GCM_CALL(cellGcmFlush)(gCellGcmCurrentContext);
 		m_waitLabel = 0;
 	}
+	*/
 
 	m_colorTexture.offset = m_colorData->getOffset();
 
