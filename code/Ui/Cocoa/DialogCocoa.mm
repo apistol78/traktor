@@ -22,9 +22,14 @@ DialogCocoa::DialogCocoa(EventSubject* owner)
 
 bool DialogCocoa::create(IWidget* parent, const std::wstring& text, int width, int height, int style)
 {
+	uint32_t styleMask = NSTitledWindowMask | NSClosableWindowMask;
+	
+	if (style & WsResizable)
+		styleMask |= NSResizableWindowMask;
+
 	m_window = [[NSWindow alloc]
 		initWithContentRect: NSMakeRect(50, 50, width, height)
-		styleMask: NSTitledWindowMask | NSClosableWindowMask | NSResizableWindowMask
+		styleMask: styleMask
 		backing: NSBackingStoreBuffered
 		defer: TRUE
 	];
@@ -49,6 +54,7 @@ void DialogCocoa::setIcon(drawing::Image* icon)
 int DialogCocoa::showModal()
 {
 	[m_window makeKeyAndOrderFront: nil];
+	[m_window center];
 	[NSApp runModalForWindow: m_window];
 	[m_window orderOut: nil];
 	return m_result;

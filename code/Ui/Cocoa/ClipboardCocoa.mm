@@ -2,6 +2,7 @@
 #include "Core/Io/MemoryStream.h"
 #include "Core/Serialization/BinarySerializer.h"
 #include "Ui/Cocoa/ClipboardCocoa.h"
+#include "Ui/Cocoa/UtilitiesCocoa.h"
 
 namespace traktor
 {
@@ -46,6 +47,9 @@ bool ClipboardCocoa::setObject(ISerializable* object)
 bool ClipboardCocoa::setText(const std::wstring& text)
 {
 	NSPasteboard* pb = [NSPasteboard generalPasteboard];
+	
+	[pb declareTypes: [NSArray arrayWithObjects: NSStringPboardType, nil] owner: nil];
+	[pb setString: makeNSString(text) forType: NSStringPboardType];
 	
 	return true;
 }
