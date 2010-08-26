@@ -19,6 +19,7 @@ EventLoopCocoa::EventLoopCocoa()
 ,	m_exitCode(0)
 ,	m_terminated(false)
 ,	m_modifierFlags(0)
+,	m_idleMode(true)
 {
 	m_pool = [[NSDebugAutoreleasePool alloc] init];
 	[NSApplication sharedApplication];
@@ -44,24 +45,44 @@ bool EventLoopCocoa::process(EventSubject* owner)
 	{
 		NSDebugAutoreleasePool* pool = [[NSDebugAutoreleasePool alloc] init];
 
-		// Get application events.
-		NSEvent* event = [NSApp nextEventMatchingMask: NSAnyEventMask untilDate: nil inMode: NSDefaultRunLoopMode dequeue: YES];
-		if (event != nil)
+		if (m_idleMode)
 		{
-			if (!handleGlobalEvents(owner, event))
+			// Poll application events.
+			NSEvent* event = [NSApp nextEventMatchingMask: NSAnyEventMask untilDate: nil inMode: NSDefaultRunLoopMode dequeue: YES];
+			if (event != nil)
 			{
-				// Process event.
-				[NSApp sendEvent: event];
-				[NSApp updateWindows];
+				if (!handleGlobalEvents(owner, event))
+				{
+					// Process event.
+					[NSApp sendEvent: event];
+					[NSApp updateWindows];
+				}
+			}
+			else
+			{
+				// No event queued; kick off idle.
+				IdleEvent idleEvent(owner);
+				owner->raiseEvent(EiIdle, &idleEvent);
+				if (!idleEvent.requestedMore())
+					m_idleMode = false;
 			}
 		}
 		else
 		{
-			// No event queued; kick off idle.
-			IdleEvent idleEvent(owner);
-			owner->raiseEvent(EiIdle, &idleEvent);
+			// Get application events.
+			NSEvent* event = [NSApp nextEventMatchingMask: NSAnyEventMask untilDate: [NSDate distantFuture] inMode: NSDefaultRunLoopMode dequeue: YES];
+			if (event != nil)
+			{
+				if (!handleGlobalEvents(owner, event))
+				{
+					// Process event.
+					[NSApp sendEvent: event];
+					[NSApp updateWindows];
+				}
+			}
+			m_idleMode = true;
 		}
-
+		
 		[pool release];
 	}
 	
@@ -80,22 +101,42 @@ int EventLoopCocoa::execute(EventSubject* owner)
 	{
 		NSDebugAutoreleasePool* pool = [[NSDebugAutoreleasePool alloc] init];
 
-		// Get application events.
-		NSEvent* event = [NSApp nextEventMatchingMask: NSAnyEventMask untilDate: nil inMode: NSDefaultRunLoopMode dequeue: YES];
-		if (event != nil)
+		if (m_idleMode)
 		{
-			if (!handleGlobalEvents(owner, event))
+			// Poll application events.
+			NSEvent* event = [NSApp nextEventMatchingMask: NSAnyEventMask untilDate: nil inMode: NSDefaultRunLoopMode dequeue: YES];
+			if (event != nil)
 			{
-				// Process event.
-				[NSApp sendEvent: event];
-				[NSApp updateWindows];
+				if (!handleGlobalEvents(owner, event))
+				{
+					// Process event.
+					[NSApp sendEvent: event];
+					[NSApp updateWindows];
+				}
+			}
+			else
+			{
+				// No event queued; kick off idle.
+				IdleEvent idleEvent(owner);
+				owner->raiseEvent(EiIdle, &idleEvent);
+				if (!idleEvent.requestedMore())
+					m_idleMode = false;
 			}
 		}
 		else
 		{
-			// No event queued; kick off idle.
-			IdleEvent idleEvent(owner);
-			owner->raiseEvent(EiIdle, &idleEvent);
+			// Get application events.
+			NSEvent* event = [NSApp nextEventMatchingMask: NSAnyEventMask untilDate: [NSDate distantFuture] inMode: NSDefaultRunLoopMode dequeue: YES];
+			if (event != nil)
+			{
+				if (!handleGlobalEvents(owner, event))
+				{
+					// Process event.
+					[NSApp sendEvent: event];
+					[NSApp updateWindows];
+				}
+			}
+			m_idleMode = true;
 		}
 
 		[pool release];
