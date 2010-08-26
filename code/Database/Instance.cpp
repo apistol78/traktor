@@ -167,9 +167,10 @@ bool Instance::commit(uint32_t flags)
 		}
 	}
 
+	Guid guid = getGuid();
+
 	if (m_providerBus)
 	{
-		Guid guid = getGuid();
 		if (!m_removed && !m_renamed)
 			m_providerBus->putEvent(PeCommited, guid);
 		else
@@ -195,7 +196,7 @@ bool Instance::commit(uint32_t flags)
 			m_parent->removeChildInstance(this);
 		
 		if (m_database)
-			m_database->flushInstanceMap();
+			m_database->flushInstance(guid);
 
 		internalDestroy();
 	}
