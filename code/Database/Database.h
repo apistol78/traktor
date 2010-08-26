@@ -128,12 +128,8 @@ private:
 	Semaphore m_lock;
 	std::map< Guid, Ref< Instance > > m_instanceMap;
 
-	/*! \brief Flush instance map.
-	 *
-	 * Next instance access will cause a rebuild
-	 * of the instance map.
-	 */
-	void flushInstanceMap();
+	/*! \brief Flush instance from cache. */
+	void flushInstance(const Guid& instanceGuid);
 };
 
 	}

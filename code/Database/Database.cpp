@@ -283,10 +283,12 @@ bool Database::getEvent(ProviderEvent& outEvent, Guid& outEventId, bool& outRemo
 	return true;
 }
 
-void Database::flushInstanceMap()
+void Database::flushInstance(const Guid& instanceGuid)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	m_instanceMap.clear();
+	std::map< Guid, Ref< Instance > >::iterator i = m_instanceMap.find(instanceGuid);
+	if (i != m_instanceMap.end())
+		m_instanceMap.erase(i);
 }
 
 	}
