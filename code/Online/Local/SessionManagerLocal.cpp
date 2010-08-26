@@ -193,6 +193,11 @@ Ref< ISession > SessionManagerLocal::createSession(IUser* user, const std::set< 
 	return new SessionLocal(m_db, checked_type_cast< UserLocal*, false >(user));
 }
 
+bool SessionManagerLocal::requireUserAttention() const
+{
+	return false;
+}
+
 bool SessionManagerLocal::update()
 {
 	return true;

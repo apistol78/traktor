@@ -103,6 +103,11 @@ Ref< ISession > SessionManagerSteam::createSession(IUser* user, const std::set< 
 	return m_session;
 }
 
+bool SessionManagerSteam::requireUserAttention() const
+{
+	return SteamUtils()->IsOverlayEnabled();
+}
+
 bool SessionManagerSteam::update()
 {
 	if (m_session)
