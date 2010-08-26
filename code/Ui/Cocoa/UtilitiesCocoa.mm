@@ -58,7 +58,7 @@ NSColor* makeNSColor(const Color& color)
 		colorWithCalibratedRed:(color.r / 255.0f)
 		green:(color.g / 255.0f)
 		blue:(color.b / 255.0f)
-		alpha:(1.0f)
+		alpha:(color.a / 255.0f)
 	];
 }
 
