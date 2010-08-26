@@ -7837,6 +7837,7 @@
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
 									<item>$(TRAKTOR_HOME)/3rdp/squish-1.10</item>
+									<item>$(TRAKTOR_HOME)/3rdp/stb_dxt</item>
 								</includePaths>
 								<definitions>
 									<item>T_RENDER_EDITOR_EXPORT</item>
@@ -7855,6 +7856,7 @@
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
 									<item>$(TRAKTOR_HOME)/3rdp/squish-1.10</item>
+									<item>$(TRAKTOR_HOME)/3rdp/stb_dxt</item>
 								</includePaths>
 								<definitions>
 									<item>T_RENDER_EDITOR_EXPORT</item>

@@ -1,5 +1,15 @@
+
+#define SQUISH_COMPRESSOR	1
+#define STB_DXT_COMPRESSOR	2
+#define USE_DXT_COMPRESSOR	STB_DXT_COMPRESSOR
+
 #include <cstring>
-#include <squish.h>
+#if USE_DXT_COMPRESSOR == SQUISH_COMPRESSOR
+#	include <squish.h>
+#elif USE_DXT_COMPRESSOR == STB_DXT_COMPRESSOR
+#	define STB_DXT_IMPLEMENTATION
+#	include <stb_dxt.h>
+#endif
 #include "Compress/Zip/DeflateStream.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/Writer.h"
@@ -87,8 +97,8 @@ struct CompressTextureTask
 			bottom - top
 		);
 
-		output.resize(outputSize);
-		std::memset(&output[0], 0, outputSize);
+		output.clear();
+		output.resize(outputSize, 0);
 
 		if (textureFormat == TfDXT1 || textureFormat == TfDXT3 || textureFormat == TfDXT5)
 		{
@@ -122,6 +132,7 @@ struct CompressTextureTask
 						}
 					}
 
+#if USE_DXT_COMPRESSOR == SQUISH_COMPRESSOR
 					const int32_t c_compressionFlags[] = { squish::kColourRangeFit, squish::kColourClusterFit, squish::kColourIterativeClusterFit };
 
 					int32_t flags = c_compressionFlags[compressionQuality];
@@ -138,7 +149,36 @@ struct CompressTextureTask
 						block,
 						flags
 					);
-
+#elif USE_DXT_COMPRESSOR == STB_DXT_COMPRESSOR
+					if (textureFormat == TfDXT1 || textureFormat == TfDXT5)
+					{
+						stb_compress_dxt_block(
+							block,
+							(const unsigned char*)rgba,
+							needAlpha,
+							compressionQuality > 0 ? STB_DXT_HIGHQUAL : STB_DXT_NORMAL
+						);
+					}
+					else if (textureFormat == TfDXT3)
+					{
+						// Manually compress alpha as stb_dxt doesn't support DXT3.
+						block[0] = (rgba[0][1][3] & 0xf0) | (rgba[0][0][3] >> 4);
+						block[1] = (rgba[0][3][3] & 0xf0) | (rgba[0][2][3] >> 4);
+						block[2] = (rgba[1][1][3] & 0xf0) | (rgba[1][0][3] >> 4);
+						block[3] = (rgba[1][3][3] & 0xf0) | (rgba[1][2][3] >> 4);
+						block[4] = (rgba[2][1][3] & 0xf0) | (rgba[2][0][3] >> 4);
+						block[5] = (rgba[2][3][3] & 0xf0) | (rgba[2][2][3] >> 4);
+						block[6] = (rgba[3][1][3] & 0xf0) | (rgba[3][0][3] >> 4);
+						block[7] = (rgba[3][3][3] & 0xf0) | (rgba[3][2][3] >> 4);
+						
+						stb_compress_dxt_block(
+							&block[8],
+							(const unsigned char*)rgba,
+							0,
+							compressionQuality > 0 ? STB_DXT_HIGHQUAL : STB_DXT_NORMAL
+						);
+					}
+#endif
 					block += getTextureBlockSize(textureFormat);
 				}
 			}
@@ -429,7 +469,11 @@ bool TexturePipeline::buildOutput(
 			}
 			else
 			{
+#if USE_DXT_COMPRESSOR == SQUISH_COMPRESSOR
 				bool binaryAlpha = isBinaryAlpha(image);
+#elif USE_DXT_COMPRESSOR == STB_DXT_COMPRESSOR
+				bool binaryAlpha = false;
+#endif
 				if (needAlpha && !binaryAlpha)
 				{
 					log::info << L"Using DXT3 compression" << Endl;
