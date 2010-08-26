@@ -40,6 +40,8 @@ public:
 
 	virtual Ref< ISession > createSession(IUser* user, const std::set< std::wstring >& leaderboards);
 
+	virtual bool requireUserAttention() const;
+
 	virtual bool update();
 
 private:

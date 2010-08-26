@@ -43,6 +43,11 @@ Ref< ISession > SessionManagerPsn::createSession(IUser* user, const std::set< st
 	return new SessionPsn(checked_type_cast< UserPsn*, false >(user));
 }
 
+bool SessionManagerPsn::requireUserAttention() const
+{
+	return false;
+}
+
 bool SessionManagerPsn::update()
 {
 	return true;
