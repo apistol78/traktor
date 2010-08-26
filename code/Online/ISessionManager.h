@@ -66,6 +66,15 @@ public:
 	 * \return New play session.
 	 */
 	virtual Ref< ISession > createSession(IUser* user, const std::set< std::wstring >& leaderboards) = 0;
+	
+	/*! \brief Check if online back-end require full user attention.
+	 *
+	 * Application should be disabled during back-end user attention
+	 * in order not to conflict with input etc.
+	 *
+	 * \return True if require user attention.
+	 */
+	virtual bool requireUserAttention() const = 0;
 
 	/*! \brief Update back-end messaging system.
 	 *
