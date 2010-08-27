@@ -24,6 +24,8 @@ class T_DLLCLASS SessionManagerSteam : public ISessionManager
 	T_RTTI_CLASS;
 
 public:
+	SessionManagerSteam();
+
 	virtual bool create();
 
 	virtual void destroy();
@@ -43,6 +45,9 @@ public:
 private:
 	Ref< CurrentUserSteam > m_currentUser;
 	Ref< SessionSteam > m_session;
+	bool m_userAttention;
+	
+	STEAM_CALLBACK(SessionManagerSteam, OnOverlayActivated, GameOverlayActivated_t, m_callbackOverlay);
 };
 
 	}
