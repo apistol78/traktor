@@ -79,7 +79,11 @@ bool UserWidgetCocoa::event_mouseDown(NSEvent* theEvent, int button)
 		button,
 		fromNSPoint(mousePosition)
 	);
-	m_owner->raiseEvent(EiButtonDown, &mouseEvent);
+	
+	if ([theEvent clickCount] <= 1)
+		m_owner->raiseEvent(EiButtonDown, &mouseEvent);
+	else
+		m_owner->raiseEvent(EiDoubleClick, &mouseEvent);
 	
 	return true;
 }
@@ -103,7 +107,9 @@ bool UserWidgetCocoa::event_mouseUp(NSEvent* theEvent, int button)
 		button,
 		fromNSPoint(mousePosition)
 	);
-	m_owner->raiseEvent(EiButtonUp, &mouseEvent);
+	
+	if ([theEvent clickCount] <= 1)
+		m_owner->raiseEvent(EiButtonUp, &mouseEvent);
 	
 	return true;
 }
