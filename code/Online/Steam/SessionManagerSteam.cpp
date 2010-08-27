@@ -41,6 +41,12 @@ void steamMiniDumpTranslator(unsigned int exceptionCode, struct _EXCEPTION_POINT
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.online.SessionManagerSteam", 0, SessionManagerSteam, ISessionManager)
 
+SessionManagerSteam::SessionManagerSteam()
+:	m_userAttention(false)
+,	m_callbackOverlay(this, &SessionManagerSteam::OnOverlayActivated)
+{
+}
+
 bool SessionManagerSteam::create()
 {
 	if (!SteamAPI_Init())
@@ -105,7 +111,7 @@ Ref< ISession > SessionManagerSteam::createSession(IUser* user, const std::set< 
 
 bool SessionManagerSteam::requireUserAttention() const
 {
-	return SteamUtils()->IsOverlayEnabled();
+	return m_userAttention;
 }
 
 bool SessionManagerSteam::update()
@@ -119,6 +125,12 @@ bool SessionManagerSteam::update()
 	SteamAPI_RunCallbacks();
 
 	return true;
+}
+
+void SessionManagerSteam::OnOverlayActivated(GameOverlayActivated_t* pCallback)
+{
+	log::info << L"Steam overlay " << (pCallback->m_bActive ? L"activated" : L"deactivated") << Endl;
+	m_userAttention = pCallback->m_bActive;
 }
 
 	}
