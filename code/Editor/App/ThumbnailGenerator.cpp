@@ -1,0 +1,108 @@
+#include "Core/Io/FileSystem.h"
+#include "Core/Misc/Adler32.h"
+#include "Core/Misc/String.h"
+#include "Drawing/Image.h"
+#include "Drawing/Filters/ScaleFilter.h"
+#include "Editor/App/ThumbnailGenerator.h"
+
+namespace traktor
+{
+	namespace editor
+	{
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.ThumbnailGenerator", ThumbnailGenerator, IThumbnailGenerator)
+
+ThumbnailGenerator::ThumbnailGenerator(const Path& thumbsPath)
+:	m_thumbsPath(thumbsPath)
+{
+}
+
+Ref< drawing::Image > ThumbnailGenerator::get(const Path& fileName, int32_t width, int32_t height, bool visibleAlpha)
+{
+	std::wstring pathName = fileName.getPathName();
+
+	// Generate checksum of full path to source image.
+	Adler32 adler;
+	adler.begin();
+	adler.feed(pathName.c_str(), pathName.length());
+	adler.end();
+
+	Path thumbFileName =
+		m_thumbsPath.getPathName() + L"/" +
+		fileName.getFileNameNoExtension() + L"_" +
+		toString(adler.get()) + L"_" +
+		toString(width) + L"x" + toString(height) + L"_" +
+		(visibleAlpha ? L"a" : L"o") +
+		L".png";
+
+	if (FileSystem::getInstance().exist(thumbFileName))
+	{
+		// Cached thumb exist; ensure source hasn't been modified.
+		Ref< File > file = FileSystem::getInstance().get(fileName);
+		if (!file)
+			return 0;
+		if (!file->isArchive())
+		{
+			// Source hasn't been modified; load thumb.
+			return drawing::Image::load(thumbFileName);
+		}
+	}
+
+	Ref< drawing::Image > image = drawing::Image::load(fileName);
+	if (!image)
+		return 0;
+
+	drawing::ScaleFilter scale(
+		width,
+		height,
+		drawing::ScaleFilter::MnAverage,
+		drawing::ScaleFilter::MgNearest
+	);
+	image = image->applyFilter(&scale);
+
+	if (image->getPixelFormat().getAlphaBits() > 0 && visibleAlpha)
+	{
+		drawing::Color pixel;
+		for (int32_t y = 0; y < height; ++y)
+		{
+			for (int32_t x = 0; x < width; ++x)
+			{
+				drawing::Color alpha =
+					((x >> 2) & 1) ^ ((y >> 2) & 1) ?
+					drawing::Color(0.4f, 0.4f, 0.4f) :
+					drawing::Color(0.6f, 0.6f, 0.6f);
+
+				image->getPixelUnsafe(x, y, pixel);
+
+				pixel = pixel * pixel.getAlpha() + alpha * (1.0f - pixel.getAlpha());
+				pixel.setAlpha(1.0f);
+
+				image->setPixelUnsafe(x, y, pixel);
+			}
+		}
+	}
+	else	// Create solid alpha channel.
+	{
+		image->convert(drawing::PixelFormat::getR8G8B8A8());
+
+		drawing::Color pixel;
+		for (int32_t y = 0; y < height; ++y)
+		{
+			for (int32_t x = 0; x < width; ++x)
+			{
+				image->getPixelUnsafe(x, y, pixel);
+				pixel.setAlpha(1.0f);
+				image->setPixelUnsafe(x, y, pixel);
+			}
+		}
+	}
+
+	// Ensure thumb path exist; then save thumb image.
+	if (FileSystem::getInstance().makeAllDirectories(m_thumbsPath))
+		image->save(thumbFileName);
+
+	return image;
+}
+
+	}
+}

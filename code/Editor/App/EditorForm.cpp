@@ -35,19 +35,20 @@
 #include "Editor/IObjectEditorFactory.h"
 #include "Editor/IPipeline.h"
 #include "Editor/PropertyKey.h"
+#include "Editor/App/AboutDialog.h"
+#include "Editor/App/BrowseInstanceDialog.h"
+#include "Editor/App/BrowseTypeDialog.h"
+#include "Editor/App/DatabaseView.h"
 #include "Editor/App/EditorForm.h"
 #include "Editor/App/EditorPageSite.h"
 #include "Editor/App/EditorPluginSite.h"
-#include "Editor/App/DatabaseView.h"
-#include "Editor/App/PropertiesView.h"
 #include "Editor/App/LogView.h"
-#include "Editor/App/NewInstanceDialog.h"
-#include "Editor/App/BrowseTypeDialog.h"
-#include "Editor/App/BrowseInstanceDialog.h"
-#include "Editor/App/ObjectEditorDialog.h"
-#include "Editor/App/SettingsDialog.h"
-#include "Editor/App/AboutDialog.h"
 #include "Editor/App/MRU.h"
+#include "Editor/App/NewInstanceDialog.h"
+#include "Editor/App/ObjectEditorDialog.h"
+#include "Editor/App/PropertiesView.h"
+#include "Editor/App/SettingsDialog.h"
+#include "Editor/App/ThumbnailGenerator.h"
 #include "Editor/Pipeline/FilePipelineCache.h"
 #include "Editor/Pipeline/MemCachedPipelineCache.h"
 #include "Editor/Pipeline/PipelineBuilder.h"
@@ -458,6 +459,10 @@ bool EditorForm::create(const CommandLine& cmdLine)
 
 	// Build shortcut accelerator table.
 	updateShortcutTable();
+
+	// Create auxiliary tools.
+	Path thumbsPath = m_settings->getProperty< PropertyString >(L"Editor.ThumbsPath");
+	setStoreObject(L"ThumbnailGenerator", new ThumbnailGenerator(thumbsPath));
 
 	// Restore last used form settings.
 	int x = m_settings->getProperty< PropertyInteger >(L"Editor.PositionX");
@@ -1372,19 +1377,24 @@ Ref< Settings > EditorForm::loadSettings(const std::wstring& settingsFile)
 	std::wstring globalConfig = settingsFile + L".config";
 	std::wstring userConfig = settingsFile + L"." + OS::getInstance().getCurrentUser() + L".config";
 
-	if ((file = FileSystem::getInstance().open(userConfig, File::FmRead)) != 0)
+	if ((file = FileSystem::getInstance().open(globalConfig, File::FmRead)) != 0)
 	{
 		settings = Settings::read< xml::XmlDeserializer >(file);
 		file->close();
 	}
 
-	if (settings)
-		return settings;
-
-	if ((file = FileSystem::getInstance().open(globalConfig, File::FmRead)) != 0)
+	if ((file = FileSystem::getInstance().open(userConfig, File::FmRead)) != 0)
 	{
-		settings = Settings::read< xml::XmlDeserializer >(file);
+		Ref< Settings > userSettings = Settings::read< xml::XmlDeserializer >(file);
 		file->close();
+
+		if (userSettings)
+		{
+			if (settings)
+				settings->merge(userSettings);
+			else
+				settings = userSettings;
+		}
 	}
 
 	return settings;

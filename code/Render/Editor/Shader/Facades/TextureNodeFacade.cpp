@@ -3,10 +3,8 @@
 #include "Core/Settings/Settings.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
-#include "Drawing/Image.h"
-#include "Drawing/PixelFormat.h"
-#include "Drawing/Filters/ScaleFilter.h"
 #include "Editor/IEditor.h"
+#include "Editor/IThumbnailGenerator.h"
 #include "Editor/TypeBrowseFilter.h"
 #include "I18N/Text.h"
 #include "Render/Shader/Nodes.h"
@@ -83,59 +81,17 @@ Ref< ui::custom::Node > TextureNodeFacade::createEditorNode(
 			std::wstring assetPath = editor->getSettings()->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
 			Path fileName = FileSystem::getInstance().getAbsolutePath(assetPath, textureAsset->getFileName());
 
-			Ref< drawing::Image > textureImage = drawing::Image::load(fileName);
-			if (textureImage)
+			Ref< editor::IThumbnailGenerator > thumbnailGenerator = editor->getStoreObject< editor::IThumbnailGenerator >(L"ThumbnailGenerator");
+			if (thumbnailGenerator)
 			{
-				drawing::ScaleFilter scale(
-					64,
-					64,
-					drawing::ScaleFilter::MnAverage,
-					drawing::ScaleFilter::MgNearest
-				);
-				textureImage = textureImage->applyFilter(&scale);
-
-				// Create alpha preview.
-				if (textureImage->getPixelFormat().getAlphaBits() > 0 && textureAsset->m_hasAlpha == true && textureAsset->m_ignoreAlpha == false)
+				bool visibleAlpha = (textureAsset->m_hasAlpha == true && textureAsset->m_ignoreAlpha == false);
+				Ref< drawing::Image > thumbnail = thumbnailGenerator->get(fileName, 64, 64, visibleAlpha);
+				if (thumbnail)
 				{
-					for (int32_t y = 0; y < textureImage->getHeight(); ++y)
-					{
-						for (int32_t x = 0; x < textureImage->getWidth(); ++x)
-						{
-							drawing::Color alpha =
-								((x >> 2) & 1) ^ ((y >> 2) & 1) ?
-								drawing::Color(0.4f, 0.4f, 0.4f) :
-								drawing::Color(0.6f, 0.6f, 0.6f);
-
-							drawing::Color pixel;
-							textureImage->getPixel(x, y, pixel);
-
-							pixel = pixel * pixel.getAlpha() + alpha * (1.0f - pixel.getAlpha());
-							pixel.setAlpha(1.0f);
-
-							textureImage->setPixel(x, y, pixel);
-						}
-					}
+					Ref< ui::Bitmap > nodeImage = new ui::Bitmap();
+					if (nodeImage->create(thumbnail))
+						editorNode->setImage(nodeImage);
 				}
-				else	// Create solid alpha channel.
-				{
-					textureImage->convert(drawing::PixelFormat::getR8G8B8A8());
-
-					for (int32_t y = 0; y < textureImage->getHeight(); ++y)
-					{
-						for (int32_t x = 0; x < textureImage->getWidth(); ++x)
-						{
-							drawing::Color pixel;
-							textureImage->getPixel(x, y, pixel);
-
-							pixel.setAlpha(1.0f);
-							textureImage->setPixel(x, y, pixel);
-						}
-					}
-				}
-
-				Ref< ui::Bitmap > nodeImage = new ui::Bitmap();
-				if (nodeImage->create(textureImage))
-					editorNode->setImage(nodeImage);
 			}
 		}
 	}
