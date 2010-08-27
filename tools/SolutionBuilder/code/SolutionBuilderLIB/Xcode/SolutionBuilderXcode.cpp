@@ -1363,7 +1363,14 @@ void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, 
 			std::wstring extension = toLower(j->getExtension());
 			if (extension == L"plist")
 			{
-				plistFile = j->getPathName();
+				Path projectPath = FileSystem::getInstance().getAbsolutePath(solution->getRootPath());
+				Path plistPath = FileSystem::getInstance().getAbsolutePath(*j);
+
+				Path relativePlistPath;
+				if (!FileSystem::getInstance().getRelativePath(plistPath, projectPath, relativePlistPath))
+					relativePlistPath = plistPath;
+
+				plistFile = relativePlistPath.getPathName();
 				break;
 			}
 		}
