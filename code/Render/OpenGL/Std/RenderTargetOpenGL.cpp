@@ -99,11 +99,6 @@ bool RenderTargetOpenGL::create(const RenderTargetSetCreateDesc& setDesc, const 
 	switch (desc.format)
 	{
 	case TfR8:
-		internalFormat = GL_RED;
-		format = GL_RED;
-		type = GL_UNSIGNED_BYTE;
-		break;
-
 	case TfR8G8B8A8:
 		internalFormat = GL_RGBA;
 		format = GL_RGBA;
