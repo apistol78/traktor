@@ -59,6 +59,17 @@ RenderViewOpenGL::RenderViewOpenGL(
 
 #endif
 {
+	m_primaryTargetDesc.multiSample = desc.multiSample;
+	m_primaryTargetDesc.depthStencil = bool(desc.depthBits > 0 || desc.stencilBits > 0);
+	m_waitVBlank = desc.waitVBlank;
+}
+
+RenderViewOpenGL::~RenderViewOpenGL()
+{
+}
+
+bool RenderViewOpenGL::createPrimaryTarget()
+{
 	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
 
 	Viewport viewport;
@@ -73,21 +84,16 @@ RenderViewOpenGL::RenderViewOpenGL(
 	m_primaryTargetDesc.count = 1;
 	m_primaryTargetDesc.width = m_context->getWidth();
 	m_primaryTargetDesc.height = m_context->getHeight();
-	m_primaryTargetDesc.multiSample = desc.multiSample;
-	m_primaryTargetDesc.depthStencil = bool(desc.depthBits > 0 || desc.stencilBits > 0);
 	m_primaryTargetDesc.targets[0].format = TfR8G8B8A8;
 
 	if (m_primaryTargetDesc.width > 0 && m_primaryTargetDesc.height > 0)
 	{
 		m_primaryTarget = new RenderTargetSetOpenGL(m_context);
-		m_primaryTarget->create(m_primaryTargetDesc);
+		if (m_primaryTarget->create(m_primaryTargetDesc))
+			return true;
 	}
 	
-	m_waitVBlank = desc.waitVBlank;
-}
-
-RenderViewOpenGL::~RenderViewOpenGL()
-{
+	return false;
 }
 
 void RenderViewOpenGL::close()

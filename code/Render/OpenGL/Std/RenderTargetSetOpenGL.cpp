@@ -28,6 +28,15 @@ RenderTargetSetOpenGL::~RenderTargetSetOpenGL()
 
 bool RenderTargetSetOpenGL::create(const RenderTargetSetCreateDesc& desc)
 {
+	if (
+		!opengl_have_extension("GL_EXT_framebuffer_object") ||
+		!opengl_have_extension("GL_EXT_framebuffer_blit")
+	)
+	{
+		log::error << L"Cannot create FBO; not supported by OpenGL driver" << Endl;
+		return false;
+	}
+
 	if (desc.multiSample > 1 && !opengl_have_extension("GL_EXT_framebuffer_multisample"))
 	{
 		log::error << L"Cannot create multisample FBO; not supported by OpenGL driver" << Endl;

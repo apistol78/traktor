@@ -26,7 +26,6 @@ void* cglwCreateContext(void* nativeWindowHandle, void* sharedContext, int depth
 	{
 		NSOpenGLPFADoubleBuffer,
 		NSOpenGLPFAAccelerated,
-		NSOpenGLPFAWindow,
 		nil
 	};
 	

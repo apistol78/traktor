@@ -2,7 +2,6 @@
 #define traktor_input_InputDeviceKeyboardOsX_H
 
 #include <IOKit/hid/IOHIDLib.h>
-#include "Core/Misc/AutoPtr.h"
 #include "Input/IInputDevice.h"
 
 namespace traktor
@@ -43,7 +42,7 @@ public:
 	
 private:
 	IOHIDDeviceRef m_deviceRef;
-	AutoArrayPtr< uint8_t > m_data;
+	uint8_t m_data[256];
 	
 	static void callbackRemoval(void* context, IOReturn result, void* sender);
 };
