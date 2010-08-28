@@ -463,7 +463,12 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 	Ref< ContextOpenGL > context = new ContextOpenGL(m_hWnd, hDC, hRC);
 	m_resourceContext->share(context);
 
-	return new RenderViewOpenGL(desc, context, m_resourceContext, m_hWnd);
+	Ref< RenderViewOpenGL > renderView = new RenderViewOpenGL(desc, context, m_resourceContext, m_hWnd);
+	if (renderView->createPrimaryTarget())
+		return renderView;
+		
+	context->destroy();
+	context = 0;
 
 #elif defined(__APPLE__)
 
@@ -490,11 +495,16 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 
 	Ref< ContextOpenGL > context = new ContextOpenGL(glcontext);
 
-	return new RenderViewOpenGL(desc, context, m_resourceContext, m_windowHandle);
+	Ref< RenderViewOpenGL > renderView = new RenderViewOpenGL(desc, context, m_resourceContext, m_windowHandle);
+	if (renderView->createPrimaryTarget())
+		return renderView;
+		
+	context->destroy();
+	context = 0;
 
-#else
-	return 0;
 #endif
+
+	return 0;
 }
 
 Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewEmbeddedDesc& desc)

@@ -62,6 +62,8 @@ public:
 
 #endif
 
+	bool createPrimaryTarget();
+
 	virtual ~RenderViewOpenGL();
 
 	virtual void close();

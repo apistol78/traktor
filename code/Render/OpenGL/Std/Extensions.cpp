@@ -186,6 +186,8 @@ bool opengl_initialize_extensions()
 bool opengl_have_extension(const char* extension)
 {
 	const char* supp = (const char*)glGetString(GL_EXTENSIONS);
+	if (!supp)
+		return false;
 	
 	while (*supp)
 	{

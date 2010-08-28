@@ -68,7 +68,36 @@ c_keyControlMap[] =
 	{ DtKeyRightMenu, kHIDUsage_KeyboardRightGUI, L"Right cmd" },
 	{ DtKeyRightWin, kHIDUsage_KeyboardRightAlt, L"Right alt" },
 	{ DtKeyReturn, kHIDUsage_KeyboardReturnOrEnter, L"Enter" },
-	{ DtKeyBack, kHIDUsage_KeyboardDeleteOrBackspace, L"Delete" }
+	{ DtKeyBack, kHIDUsage_KeyboardDeleteOrBackspace, L"Delete" },
+	{ DtKeyTab, kHIDUsage_KeyboardTab, L"Tab" },
+	{ DtKeyEquals, kHIDUsage_KeyboardEqualSign, L"=" },
+	{ DtKeySemicolon, kHIDUsage_KeyboardSemicolon, L";" },
+	{ DtKeyComma, kHIDUsage_KeyboardComma, L"," },
+	{ DtKeyPeriod, kHIDUsage_KeyboardPeriod, L"." },
+	{ DtKeySlash, kHIDUsage_KeyboardSlash, L"/" },
+	{ DtKeyF1, kHIDUsage_KeyboardF1, L"F1" },
+	{ DtKeyF2, kHIDUsage_KeyboardF2, L"F2" },
+	{ DtKeyF3, kHIDUsage_KeyboardF3, L"F3" },
+	{ DtKeyF4, kHIDUsage_KeyboardF4, L"F4" },
+	{ DtKeyF5, kHIDUsage_KeyboardF5, L"F5" },
+	{ DtKeyF6, kHIDUsage_KeyboardF6, L"F6" },
+	{ DtKeyF7, kHIDUsage_KeyboardF7, L"F7" },
+	{ DtKeyF8, kHIDUsage_KeyboardF8, L"F8" },
+	{ DtKeyF9, kHIDUsage_KeyboardF9, L"F9" },
+	{ DtKeyF10, kHIDUsage_KeyboardF10, L"F10" },
+	{ DtKeyF11, kHIDUsage_KeyboardF11, L"F11" },
+	{ DtKeyF12, kHIDUsage_KeyboardF12, L"F12" },
+	{ DtKeyNumPadEnter, kHIDUsage_KeypadEnter, L"Num Enter" },
+	{ DtKeyNumPad0, kHIDUsage_Keypad0, L"Num 0" },
+	{ DtKeyNumPad1, kHIDUsage_Keypad1, L"Num 1" },
+	{ DtKeyNumPad2, kHIDUsage_Keypad2, L"Num 2" },
+	{ DtKeyNumPad3, kHIDUsage_Keypad3, L"Num 3" },
+	{ DtKeyNumPad4, kHIDUsage_Keypad4, L"Num 4" },
+	{ DtKeyNumPad5, kHIDUsage_Keypad5, L"Num 5" },
+	{ DtKeyNumPad6, kHIDUsage_Keypad6, L"Num 6" },
+	{ DtKeyNumPad7, kHIDUsage_Keypad7, L"Num 7" },
+	{ DtKeyNumPad8, kHIDUsage_Keypad8, L"Num 8" },
+	{ DtKeyNumPad9, kHIDUsage_Keypad9, L"Num 9" }
 };
 
 		}
@@ -77,7 +106,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.input.InputDeviceKeyboardOsX", InputDeviceKeybo
 
 InputDeviceKeyboardOsX::InputDeviceKeyboardOsX(IOHIDDeviceRef deviceRef)
 :	m_deviceRef(deviceRef)
-,	m_data(new uint8_t [sizeof_array(c_keyControlMap)])
 {
 	if (m_deviceRef)
 		IOHIDDeviceRegisterRemovalCallback(m_deviceRef, &callbackRemoval, this);
@@ -118,10 +146,9 @@ bool InputDeviceKeyboardOsX::isControlAnalogue(int32_t control) const
 
 float InputDeviceKeyboardOsX::getControlValue(int32_t control)
 {
-	if (m_data[control])
-		return 1.0f;
-	else
-		return 0.0f;
+	const KeyControlMap& controlMap = c_keyControlMap[control];
+	T_ASSERT (controlMap.usage < sizeof_array(m_data));
+	return m_data[controlMap.usage] ? 1.0f : 0.0f;
 }
 
 bool InputDeviceKeyboardOsX::getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const
@@ -144,8 +171,7 @@ bool InputDeviceKeyboardOsX::getDefaultControl(InputDefaultControlType controlTy
 
 void InputDeviceKeyboardOsX::resetState()
 {
-	const uint32_t dataSize = sizeof_array(c_keyControlMap) * sizeof(uint8_t);
-	std::memset(m_data.ptr(), 0, dataSize);
+	std::memset(m_data, 0, sizeof(m_data));
 }
 
 void InputDeviceKeyboardOsX::readState()
@@ -153,8 +179,7 @@ void InputDeviceKeyboardOsX::readState()
 	if (!m_deviceRef)
 		return;
 		
-	const uint32_t dataSize = sizeof_array(c_keyControlMap) * sizeof(uint8_t);
-	std::memset(m_data.ptr(), 0, dataSize);
+	std::memset(m_data, 0, sizeof(m_data));
 	
 	CFArrayRef elements = IOHIDDeviceCopyMatchingElements(m_deviceRef, NULL, kIOHIDOptionsTypeNone);
 	for (CFIndex i = 0; i < CFArrayGetCount(elements); ++i)
@@ -162,24 +187,19 @@ void InputDeviceKeyboardOsX::readState()
 		IOHIDElementRef e = (IOHIDElementRef)CFArrayGetValueAtIndex(elements, i);
 		if (!e)
 			continue;
+			
+		uint32_t page = (uint32_t)IOHIDElementGetUsagePage(e);
+		if (page != kHIDPage_KeyboardOrKeypad)
+			continue;
 
 		uint32_t usage = (uint32_t)IOHIDElementGetUsage(e);
-		for (uint32_t j = 0; j < sizeof_array(c_keyControlMap); ++j)
-		{
-			const KeyControlMap& controlMap = c_keyControlMap[j];
-			if (controlMap.usage == usage)
-			{
-				IOHIDValueRef valueRef = 0;
-				IOHIDDeviceGetValue(m_deviceRef, e, &valueRef);
-				if (valueRef)
-				{
-					int32_t value = (int32_t)IOHIDValueGetIntegerValue(valueRef);
-					if (value != 0)
-						m_data[j] |= 255;
-				}
-				break;
-			}
-		}
+		if (usage >= sizeof_array(m_data))
+			continue;
+
+		IOHIDValueRef valueRef = 0;
+		IOHIDDeviceGetValue(m_deviceRef, e, &valueRef);
+		
+		m_data[usage] = (int32_t)IOHIDValueGetIntegerValue(valueRef) ? 255 : 0;
 	}
 }
 
