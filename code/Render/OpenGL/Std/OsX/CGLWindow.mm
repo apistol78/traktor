@@ -61,21 +61,49 @@ void setWindowRect(NSWindow* window, int32_t x, int32_t y, int32_t width, int32_
 	[window setFrame: frame display: YES];
 }
 
+void getValidDisplayModes(std::vector< CFDictionaryRef >& outValidModes)
+{
+	CFArrayRef availModes = CGDisplayAvailableModes(kCGDirectMainDisplay);
+	for (int32_t i = 0; i < CFArrayGetCount(availModes); ++i)
+	{
+		CFDictionaryRef mode = (CFDictionaryRef)CFArrayGetValueAtIndex(availModes, i);
+		if (!mode)
+			continue;
+			
+		int32_t bitsPerPixel = getDictionaryLong(mode, kCGDisplayBitsPerPixel);
+		if (bitsPerPixel < 15)
+			continue;
+			
+		if (!CFDictionaryContainsKey(mode, kCGDisplayModeIsSafeForHardware))
+			continue;
+		if (CFDictionaryContainsKey(mode, kCGDisplayModeIsInterlaced))
+			continue;
+		if (CFDictionaryContainsKey(mode, kCGDisplayModeIsTelevisionOutput))
+			continue;
+		if (CFDictionaryContainsKey(mode, kCGDisplayModeIsStretched))
+			continue;
+			
+		outValidModes.push_back(mode);
+	}
+}
+
 		}
 	
 uint32_t cglwGetDisplayModeCount()
 {
-	CFArrayRef availModes = CGDisplayAvailableModes(kCGDirectMainDisplay);
-	return CFArrayGetCount(availModes);
+	std::vector< CFDictionaryRef > displayModes;
+	getValidDisplayModes(displayModes);
+	return uint32_t(displayModes.size());
 }
 
 bool cglwGetDisplayMode(uint32_t index, DisplayMode& outDisplayMode)
 {
-	CFArrayRef availModes = CGDisplayAvailableModes(kCGDirectMainDisplay);
-	if (!availModes)
+	std::vector< CFDictionaryRef > displayModes;
+	getValidDisplayModes(displayModes);
+	if (index >= displayModes.size())
 		return false;
 	
-	CFDictionaryRef mode = (CFDictionaryRef)CFArrayGetValueAtIndex(availModes, index);
+	CFDictionaryRef mode = displayModes[index];
 	if (!mode)
 		return false;
 		
@@ -98,29 +126,24 @@ bool cglwSetDisplayMode(const DisplayMode& displayMode)
 		dm.colorBits = getDictionaryLong(currentMode, kCGDisplayBitsPerPixel);
 	if (dm.refreshRate == 0)
 		dm.refreshRate = getDictionaryLong(currentMode, kCGDisplayRefreshRate);
-	
-	/*if (dm.refreshRate != 0)
+
+	std::vector< CFDictionaryRef > displayModes;
+	getValidDisplayModes(displayModes);
+
+	for (std::vector< CFDictionaryRef >::iterator i = displayModes.begin(); i != displayModes.end(); ++i)
 	{
-		bestMatch = CGDisplayBestModeForParametersAndRefreshRate(
-			kCGDirectMainDisplay,
-			dm.colorBits,
-			dm.width,
-			dm.height,
-			dm.refreshRate,
-			NULL
-		);
+		if (
+			getDictionaryLong(*i, kCGDisplayWidth) == dm.width &&
+			getDictionaryLong(*i, kCGDisplayHeight) == dm.height &&
+			getDictionaryLong(*i, kCGDisplayRefreshRate) == dm.refreshRate &&
+			getDictionaryLong(*i, kCGDisplayBitsPerPixel) == dm.colorBits
+		)
+		{
+			bestMatch = *i;
+			break;
+		}
 	}
-	else*/
-	{
-		bestMatch = CGDisplayBestModeForParameters(
-			kCGDirectMainDisplay,
-			dm.colorBits,
-			dm.width,
-			dm.height,
-			NULL
-		);
-	}
-	
+		
 	if (!bestMatch)
 		return false;
 
