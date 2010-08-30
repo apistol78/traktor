@@ -101,6 +101,8 @@ void BitmapCocoa::copySubImage(drawing::Image* image, const Rect& srcRect, const
 		rc.right = rc.left + width;
 	if (rc.getHeight() > height)
 		rc.bottom = rc.top + height;
+		
+	bool haveAlpha = image->getPixelFormat().getAlphaBits() > 0;
 
 	Ref< drawing::Image > sourceImage = image->clone();
 	sourceImage->convert(drawing::PixelFormat::getA8B8G8R8());
@@ -116,6 +118,9 @@ void BitmapCocoa::copySubImage(drawing::Image* image, const Rect& srcRect, const
 		{
 			uint32_t dstOffset = destPos.x + (x - rc.left) + (size.cy - (destPos.y + (y - rc.top)) - 1) * size.cx;
 			uint32_t c = sourceBits[x + y * sourceWidth];
+			
+			if (!haveAlpha)
+				c |= 0xff000000;
 			
 			uint32_t pa = (c & 0xff000000) >> 24;
 			uint32_t pr = (c & 0x000000ff);
