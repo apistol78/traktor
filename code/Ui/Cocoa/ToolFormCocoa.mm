@@ -1,12 +1,13 @@
+#include "Core/Log/Log.h"
+#include "Core/Misc/TString.h"
+#include "Ui/EventSubject.h"
 #include "Ui/Cocoa/ToolFormCocoa.h"
 #include "Ui/Cocoa/NSTargetProxy.h"
 #include "Ui/Cocoa/UtilitiesCocoa.h"
+#include "Ui/Events/CloseEvent.h"
+#include "Ui/Events/CommandEvent.h"
 #include "Ui/Events/MoveEvent.h"
 #include "Ui/Events/SizeEvent.h"
-#include "Ui/Events/CommandEvent.h"
-#include "Ui/EventSubject.h"
-#include "Core/Misc/TString.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -304,6 +305,13 @@ void ToolFormCocoa::callbackTimer(void* controlId)
 {
 	CommandEvent commandEvent(m_owner, 0);
 	m_owner->raiseEvent(EiTimer, &commandEvent);
+}
+
+bool ToolFormCocoa::event_windowShouldClose()
+{
+	CloseEvent closeEvent(m_owner, 0);
+	m_owner->raiseEvent(EiClose, &closeEvent);
+	return !closeEvent.consumed() || !closeEvent.cancelled();
 }
 
 	}

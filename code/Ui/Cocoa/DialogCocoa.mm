@@ -1,12 +1,13 @@
 #import "Ui/Cocoa/NSCustomControl.h"
 
+#include "Core/Log/Log.h"
+#include "Core/Misc/TString.h"
+#include "Ui/EventSubject.h"
 #include "Ui/Cocoa/DialogCocoa.h"
 #include "Ui/Cocoa/UtilitiesCocoa.h"
+#include "Ui/Events/CloseEvent.h"
 #include "Ui/Events/MoveEvent.h"
 #include "Ui/Events/SizeEvent.h"
-#include "Ui/EventSubject.h"
-#include "Core/Misc/TString.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -284,6 +285,19 @@ void DialogCocoa::event_windowDidResize()
 	Size sz = getRect().getSize();
 	SizeEvent s(m_owner, 0, sz);
 	m_owner->raiseEvent(EiSize, &s);
+}
+
+bool DialogCocoa::event_windowShouldClose()
+{
+	CloseEvent c(m_owner, 0);
+	m_owner->raiseEvent(EiClose, &c);
+	if (!c.consumed() || !c.cancelled())
+	{
+		m_result = DrCancel;
+		return true;
+	}
+	else
+		return false;
 }
 
 	}

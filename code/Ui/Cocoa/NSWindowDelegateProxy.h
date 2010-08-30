@@ -11,6 +11,8 @@ struct INSWindowEventsCallback
 	virtual void event_windowDidMove() = 0;
 	
 	virtual void event_windowDidResize() = 0;
+	
+	virtual bool event_windowShouldClose() = 0;
 };
 
 	}
@@ -28,5 +30,7 @@ struct INSWindowEventsCallback
 - (void) windowDidMove: (NSNotification*)notification;
 
 - (void) windowDidResize: (NSNotification*)notification;
+
+- (BOOL) windowShouldClose: (id)sender;
 
 @end

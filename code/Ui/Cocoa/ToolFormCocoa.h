@@ -114,6 +114,8 @@ public:
 	virtual void event_windowDidMove();
 	
 	virtual void event_windowDidResize();
+	
+	virtual bool event_windowShouldClose();
 
 private:
 	EventSubject* m_owner;

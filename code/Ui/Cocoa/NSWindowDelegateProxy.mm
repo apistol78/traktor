@@ -24,4 +24,9 @@
 	m_eventsCallback->event_windowDidResize();
 }
 
+- (BOOL) windowShouldClose: (id)sender
+{
+	return m_eventsCallback->event_windowShouldClose();
+}
+
 @end
