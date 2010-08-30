@@ -31,7 +31,7 @@ void Raster::drawLine(int32_t x0, int32_t y0, int32_t x1, int32_t y1, const Colo
 	float dy = float(y1 - y0);
 
 	drawPixel(x0, y0, color);
-
+	
 	if (abs(dx) > abs(dy) && dx != 0)
 	{
 		if (dx < 0)
@@ -92,13 +92,17 @@ void Raster::drawLine(int32_t x0, int32_t y0, int32_t x1, int32_t y1, const Colo
 
 void Raster::drawPixel(int32_t x, int32_t y, const Color& color)
 {
-	m_image->setPixel(x, y, color);
+	Color colorDst;
+	m_image->getPixel(x, y, colorDst);
+	float alpha = color.getAlpha();
+	m_image->setPixel(x, y, color * alpha + colorDst * (1.0f -  alpha));
 }
 
 void Raster::drawPixel(int32_t x, int32_t y, const Color& color, float alpha)
 {
 	Color colorDst;
 	m_image->getPixel(x, y, colorDst);
+	alpha *= color.getAlpha();
 	m_image->setPixel(x, y, color * alpha + colorDst * (1.0f -  alpha));
 }
 
