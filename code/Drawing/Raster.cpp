@@ -153,6 +153,31 @@ void Raster::drawFilledCircle(int32_t x, int32_t y, int32_t radius, const Color&
 	}
 }
 
+void Raster::drawRectangle(int32_t x1, int32_t y1, int32_t x2, int32_t y2, const Color& color)
+{
+	for (int32_t y = y1; y <= y2; ++y)
+	{
+		drawPixel(x1, y, color);
+		drawPixel(x2, y, color);
+	}
+	for (int32_t x = x1; x<= x2; ++x)
+	{
+		drawPixel(x, y1, color);
+		drawPixel(x, y2, color);
+	}
+}
+
+void Raster::drawFilledRectangle(int32_t x1, int32_t y1, int32_t x2, int32_t y2, const Color& color)
+{
+	for (int32_t y = y1; y <= y2; ++y)
+	{
+		for (int32_t x = x1; x<= x2; ++x)
+		{
+			drawPixel(x, y, color);
+		}
+	}
+}
+
 void Raster::drawPolygon(const Vector2* points, uint32_t npoints, const Color& color)
 {
 	int32_t mny = m_image->getHeight() - 1;

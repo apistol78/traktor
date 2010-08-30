@@ -39,6 +39,10 @@ public:
 
 	void drawFilledCircle(int32_t x, int32_t y, int32_t radius, const Color& color);
 
+	void drawRectangle(int32_t x1, int32_t y1, int32_t x2, int32_t y2, const Color& color);
+
+	void drawFilledRectangle(int32_t x1, int32_t y1, int32_t x2, int32_t y2, const Color& color);
+
 	void drawPolygon(const Vector2* points, uint32_t npoints, const Color& color);
 
 	void drawPolyLine(const Vector2* points, uint32_t npoints, const Color& color);
