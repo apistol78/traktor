@@ -108,8 +108,10 @@ InputDeviceKeyboardOsX::InputDeviceKeyboardOsX(IOHIDDeviceRef deviceRef)
 :	m_deviceRef(deviceRef)
 {
 	if (m_deviceRef)
+	{
 		IOHIDDeviceRegisterRemovalCallback(m_deviceRef, &callbackRemoval, this);
-
+		IOHIDDeviceRegisterInputValueCallback(m_deviceRef, &callbackValue, this);
+	}
 	resetState();
 }
 
@@ -176,31 +178,6 @@ void InputDeviceKeyboardOsX::resetState()
 
 void InputDeviceKeyboardOsX::readState()
 {
-	if (!m_deviceRef)
-		return;
-		
-	std::memset(m_data, 0, sizeof(m_data));
-	
-	CFArrayRef elements = IOHIDDeviceCopyMatchingElements(m_deviceRef, NULL, kIOHIDOptionsTypeNone);
-	for (CFIndex i = 0; i < CFArrayGetCount(elements); ++i)
-	{
-		IOHIDElementRef e = (IOHIDElementRef)CFArrayGetValueAtIndex(elements, i);
-		if (!e)
-			continue;
-			
-		uint32_t page = (uint32_t)IOHIDElementGetUsagePage(e);
-		if (page != kHIDPage_KeyboardOrKeypad)
-			continue;
-
-		uint32_t usage = (uint32_t)IOHIDElementGetUsage(e);
-		if (usage >= sizeof_array(m_data))
-			continue;
-
-		IOHIDValueRef valueRef = 0;
-		IOHIDDeviceGetValue(m_deviceRef, e, &valueRef);
-		
-		m_data[usage] = (int32_t)IOHIDValueGetIntegerValue(valueRef) ? 255 : 0;
-	}
 }
 
 bool InputDeviceKeyboardOsX::supportRumble() const
@@ -216,6 +193,25 @@ void InputDeviceKeyboardOsX::callbackRemoval(void* context, IOReturn result, voi
 {
 	InputDeviceKeyboardOsX* this_ = static_cast< InputDeviceKeyboardOsX* >(context);
 	this_->m_deviceRef = 0;
+}
+
+void InputDeviceKeyboardOsX::callbackValue(void* context, IOReturn result, void* sender, IOHIDValueRef value)
+{
+	InputDeviceKeyboardOsX* this_ = static_cast< InputDeviceKeyboardOsX* >(context);
+	
+	IOHIDElementRef element = IOHIDValueGetElement(value);
+	if (!element)
+		return;
+		
+	uint32_t page = (uint32_t)IOHIDElementGetUsagePage(element);
+	if (page != kHIDPage_KeyboardOrKeypad)
+		return;
+
+	uint32_t usage = (uint32_t)IOHIDElementGetUsage(element);
+	if (usage >= sizeof_array(this_->m_data))
+		return;
+
+	this_->m_data[usage] = (int32_t)IOHIDValueGetIntegerValue(value) ? 255 : 0;	
 }
 
 	}
