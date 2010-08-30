@@ -6163,6 +6163,10 @@
 													<fileName>../../../res/graph/Comment.png</fileName>
 													<items/>
 												</item>
+												<item type="File">
+													<fileName>../../../res/preview/PreviewFrame.png</fileName>
+													<items/>
+												</item>
 											</items>
 										</item>
 										<item type="Filter">

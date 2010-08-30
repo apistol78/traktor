@@ -117,15 +117,13 @@ bool cglwGetDisplayMode(uint32_t index, DisplayMode& outDisplayMode)
 
 bool cglwSetDisplayMode(const DisplayMode& displayMode)
 {
-	DisplayMode dm = displayMode;
-
-	CFDictionaryRef currentMode = CGDisplayCurrentMode(kCGDirectMainDisplay);
 	CFDictionaryRef bestMatch = 0;
-	
-	if (dm.colorBits <= 8)
-		dm.colorBits = getDictionaryLong(currentMode, kCGDisplayBitsPerPixel);
-	if (dm.refreshRate == 0)
-		dm.refreshRate = getDictionaryLong(currentMode, kCGDisplayRefreshRate);
+
+	log::info << L"cglwSetDisplayMode" << Endl;
+	log::info << L"\twidth " << displayMode.width << Endl;
+	log::info << L"\theight " << displayMode.height << Endl;
+	log::info << L"\trefreshRate " << displayMode.refreshRate << Endl;
+	log::info << L"\tcolorBits " << displayMode.colorBits << Endl;
 
 	std::vector< CFDictionaryRef > displayModes;
 	getValidDisplayModes(displayModes);
@@ -133,10 +131,10 @@ bool cglwSetDisplayMode(const DisplayMode& displayMode)
 	for (std::vector< CFDictionaryRef >::iterator i = displayModes.begin(); i != displayModes.end(); ++i)
 	{
 		if (
-			getDictionaryLong(*i, kCGDisplayWidth) == dm.width &&
-			getDictionaryLong(*i, kCGDisplayHeight) == dm.height &&
-			getDictionaryLong(*i, kCGDisplayRefreshRate) == dm.refreshRate &&
-			getDictionaryLong(*i, kCGDisplayBitsPerPixel) == dm.colorBits
+			getDictionaryLong(*i, kCGDisplayWidth) == displayMode.width &&
+			getDictionaryLong(*i, kCGDisplayHeight) == displayMode.height &&
+			getDictionaryLong(*i, kCGDisplayRefreshRate) == displayMode.refreshRate &&
+			getDictionaryLong(*i, kCGDisplayBitsPerPixel) == displayMode.colorBits
 		)
 		{
 			bestMatch = *i;
@@ -145,7 +143,10 @@ bool cglwSetDisplayMode(const DisplayMode& displayMode)
 	}
 		
 	if (!bestMatch)
+	{
+		log::error << L"Unable to set display mode; no such display mode supported" << Endl;
 		return false;
+	}
 
 	CGDisplaySwitchToMode(kCGDirectMainDisplay, bestMatch);
 	return true;

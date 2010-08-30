@@ -89,11 +89,11 @@ bool RenderViewOpenGL::createPrimaryTarget()
 	if (m_primaryTargetDesc.width > 0 && m_primaryTargetDesc.height > 0)
 	{
 		m_primaryTarget = new RenderTargetSetOpenGL(m_context);
-		if (m_primaryTarget->create(m_primaryTargetDesc))
-			return true;
+		if (!m_primaryTarget->create(m_primaryTargetDesc))
+			return false;
 	}
 	
-	return false;
+	return true;
 }
 
 void RenderViewOpenGL::close()
@@ -126,8 +126,12 @@ bool RenderViewOpenGL::reset(const RenderViewDefaultDesc& desc)
 	m_primaryTargetDesc.height = m_context->getHeight();
 	m_primaryTargetDesc.multiSample = desc.multiSample;
 
-	m_primaryTarget = new RenderTargetSetOpenGL(m_context);
-	m_primaryTarget->create(m_primaryTargetDesc);
+	if (m_primaryTargetDesc.width > 0 && m_primaryTargetDesc.height > 0)
+	{
+		m_primaryTarget = new RenderTargetSetOpenGL(m_context);
+		if (!m_primaryTarget->create(m_primaryTargetDesc))
+			return false;
+	}
 	
 	m_waitVBlank = desc.waitVBlank;
 

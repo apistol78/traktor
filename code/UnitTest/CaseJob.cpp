@@ -46,9 +46,9 @@ void CaseJob::run()
 
 		Job jobs[] =
 		{
-			makeStaticFunctor(job_1),
-			makeStaticFunctor(job_2),
-			makeStaticFunctor(job_3)
+			Job(makeStaticFunctor(job_1)),
+			Job(makeStaticFunctor(job_2)),
+			Job(makeStaticFunctor(job_3))
 		};
 
 		JobManager::getInstance().fork(jobs, sizeof_array(jobs));
@@ -64,10 +64,10 @@ void CaseJob::run()
 
 		Job jobs[] =
 		{
-			makeStaticFunctor(job_stress, 0),
-			makeStaticFunctor(job_stress, 200000),
-			makeStaticFunctor(job_stress, 400000),
-			makeStaticFunctor(job_stress, 600000)
+			Job(makeStaticFunctor(job_stress, 0)),
+			Job(makeStaticFunctor(job_stress, 200000)),
+			Job(makeStaticFunctor(job_stress, 400000)),
+			Job(makeStaticFunctor(job_stress, 600000))
 		};
 
 		JobManager::getInstance().fork(jobs, sizeof_array(jobs));

@@ -239,10 +239,10 @@ void BlendMesh::render(
 
 					Job jobs[] =
 					{
-						makeFunctor< BlendMeshTask >(&task1, &BlendMeshTask::execute),
-						makeFunctor< BlendMeshTask >(&task2, &BlendMeshTask::execute),
-						makeFunctor< BlendMeshTask >(&task3, &BlendMeshTask::execute),
-						makeFunctor< BlendMeshTask >(&task4, &BlendMeshTask::execute)
+						Job(makeFunctor< BlendMeshTask >(&task1, &BlendMeshTask::execute)),
+						Job(makeFunctor< BlendMeshTask >(&task2, &BlendMeshTask::execute)),
+						Job(makeFunctor< BlendMeshTask >(&task3, &BlendMeshTask::execute)),
+						Job(makeFunctor< BlendMeshTask >(&task4, &BlendMeshTask::execute))
 					};
 
 					JobManager::getInstance().fork(jobs, sizeof_array(jobs));
