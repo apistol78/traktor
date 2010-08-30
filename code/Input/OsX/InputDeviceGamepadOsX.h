@@ -46,6 +46,8 @@ private:
 	float m_axis[3][2];
 	
 	static void callbackRemoval(void* context, IOReturn result, void* sender);
+
+	static void callbackValue(void* context, IOReturn result, void* sender, IOHIDValueRef value);
 };
 	
 	}

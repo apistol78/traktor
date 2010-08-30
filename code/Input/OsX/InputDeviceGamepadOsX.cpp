@@ -24,7 +24,10 @@ InputDeviceGamepadOsX::InputDeviceGamepadOsX(IOHIDDeviceRef deviceRef)
 :	m_deviceRef(deviceRef)
 {
 	if (m_deviceRef)
+	{
 		IOHIDDeviceRegisterRemovalCallback(m_deviceRef, &callbackRemoval, this);
+		IOHIDDeviceRegisterInputValueCallback(m_deviceRef, &callbackValue, this);
+	}
 
 	resetState();
 }
@@ -220,68 +223,6 @@ void InputDeviceGamepadOsX::resetState()
 
 void InputDeviceGamepadOsX::readState()
 {
-	if (!m_deviceRef)
-		return;
-
-	CFArrayRef elements = IOHIDDeviceCopyMatchingElements(m_deviceRef, NULL, kIOHIDOptionsTypeNone);
-	for (CFIndex i = 0; i < CFArrayGetCount(elements); ++i)
-	{
-		IOHIDElementRef e = (IOHIDElementRef)CFArrayGetValueAtIndex(elements, i);
-		if (!e)
-			continue;
-
-		uint32_t usage = (uint32_t)IOHIDElementGetUsage(e);
-		if (usage == ~0UL)
-			continue;
-		
-		IOHIDValueRef valueRef = 0;
-		IOHIDDeviceGetValue(m_deviceRef, e, &valueRef);
-		if (!valueRef)
-			continue;
-
-		int32_t v = (int32_t)IOHIDValueGetIntegerValue(valueRef);
-		
-		if (usage == 1)
-			m_button[0] = bool(v != 0);		// A
-		else if (usage == 2)
-			m_button[1] = bool(v != 0);		// B
-		else if (usage == 3)
-			m_button[2] = bool(v != 0);		// X
-		else if (usage == 4)
-			m_button[3] = bool(v != 0);		// Y
-		else if (usage == 5)
-			m_button[4] = bool(v != 0);		// Left shoulder
-		else if (usage == 6)
-			m_button[5] = bool(v != 0);		// Right shoulder
-		else if (usage == 7)
-			m_button[6] = bool(v != 0);		// Left thumb down
-		else if (usage == 8)
-			m_button[7] = bool(v != 0);		// Right thumb down
-		else if (usage == 9)
-			m_button[8] = bool(v != 0);		// Start
-		else if (usage == 10)
-			m_button[9] = bool(v != 0);		// Back
-		else if (usage == 12)
-			m_button[10] = bool(v != 0);	// Dpad up
-		else if (usage == 13)
-			m_button[11] = bool(v != 0);	// Dpad down
-		else if (usage == 14)
-			m_button[12] = bool(v != 0);	// Dpad left
-		else if (usage == 15)
-			m_button[13] = bool(v != 0);	// Dpad right
-		else if (usage == 48)
-			m_axis[0][0] = adjustDeadZone(v / 32767.0f);	// Left Thumb X
-		else if (usage == 49)
-			m_axis[0][1] = adjustDeadZone(-v / 32767.0f);	// Left Thumb Y
-		else if (usage == 51)
-			m_axis[1][0] = adjustDeadZone(v / 32767.0f);	// Right Thumb X
-		else if (usage == 52)
-			m_axis[1][1] = adjustDeadZone(-v / 32767.0f);	// Right Thumb Y
-		else if (usage == 50)				// Left trigger
-			m_axis[2][0] = v / 255.0f;
-		else if (usage == 53)				// Right trigger
-			m_axis[2][1] = v / 255.0f;
-	}
 }
 
 bool InputDeviceGamepadOsX::supportRumble() const
@@ -297,6 +238,62 @@ void InputDeviceGamepadOsX::callbackRemoval(void* context, IOReturn result, void
 {
 	InputDeviceGamepadOsX* this_ = static_cast< InputDeviceGamepadOsX* >(context);
 	this_->m_deviceRef = 0;
+}
+
+void InputDeviceGamepadOsX::callbackValue(void* context, IOReturn result, void* sender, IOHIDValueRef value)
+{
+	InputDeviceGamepadOsX* this_ = static_cast< InputDeviceGamepadOsX* >(context);
+	
+	IOHIDElementRef element = IOHIDValueGetElement(value);
+	if (!element)
+		return;
+		
+	uint32_t usage = (uint32_t)IOHIDElementGetUsage(element);
+	if (usage == ~0UL)
+		return;
+		
+	int32_t v = (int32_t)IOHIDValueGetIntegerValue(value);
+		
+	if (usage == 1)
+		this_->m_button[0] = bool(v != 0);		// A
+	else if (usage == 2)
+		this_->m_button[1] = bool(v != 0);		// B
+	else if (usage == 3)
+		this_->m_button[2] = bool(v != 0);		// X
+	else if (usage == 4)
+		this_->m_button[3] = bool(v != 0);		// Y
+	else if (usage == 5)
+		this_->m_button[4] = bool(v != 0);		// Left shoulder
+	else if (usage == 6)
+		this_->m_button[5] = bool(v != 0);		// Right shoulder
+	else if (usage == 7)
+		this_->m_button[6] = bool(v != 0);		// Left thumb down
+	else if (usage == 8)
+		this_->m_button[7] = bool(v != 0);		// Right thumb down
+	else if (usage == 9)
+		this_->m_button[8] = bool(v != 0);		// Start
+	else if (usage == 10)
+		this_->m_button[9] = bool(v != 0);		// Back
+	else if (usage == 12)
+		this_->m_button[10] = bool(v != 0);	// Dpad up
+	else if (usage == 13)
+		this_->m_button[11] = bool(v != 0);	// Dpad down
+	else if (usage == 14)
+		this_->m_button[12] = bool(v != 0);	// Dpad left
+	else if (usage == 15)
+		this_->m_button[13] = bool(v != 0);	// Dpad right
+	else if (usage == 48)
+		this_->m_axis[0][0] = adjustDeadZone(v / 32767.0f);	// Left Thumb X
+	else if (usage == 49)
+		this_->m_axis[0][1] = adjustDeadZone(-v / 32767.0f);	// Left Thumb Y
+	else if (usage == 51)
+		this_->m_axis[1][0] = adjustDeadZone(v / 32767.0f);	// Right Thumb X
+	else if (usage == 52)
+		this_->m_axis[1][1] = adjustDeadZone(-v / 32767.0f);	// Right Thumb Y
+	else if (usage == 50)				// Left trigger
+		this_->m_axis[2][0] = v / 255.0f;
+	else if (usage == 53)				// Right trigger
+		this_->m_axis[2][1] = v / 255.0f;
 }
 
 	}

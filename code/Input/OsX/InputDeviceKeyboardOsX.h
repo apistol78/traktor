@@ -45,6 +45,8 @@ private:
 	uint8_t m_data[256];
 	
 	static void callbackRemoval(void* context, IOReturn result, void* sender);
+	
+	static void callbackValue(void* context, IOReturn result, void* sender, IOHIDValueRef value);
 };
 	
 	}

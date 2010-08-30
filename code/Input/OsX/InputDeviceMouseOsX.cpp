@@ -216,6 +216,8 @@ void InputDeviceMouseOsX::readState()
 			}
 		}
 	}
+	
+	CFRelease(elements);
 }
 
 bool InputDeviceMouseOsX::supportRumble() const
