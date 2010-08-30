@@ -34,6 +34,12 @@ public:
 			return false;
 	}
 
+	void clear()
+	{
+		T_ANONYMOUS_VAR(Acquire< LockType >)(m_lock);
+		m_items.clear();
+	}
+
 private:
 	LockType m_lock; 
 	std::list< ItemType > m_items;

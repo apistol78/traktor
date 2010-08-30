@@ -80,11 +80,11 @@ public:
 	/*! \name IEditor implementation */
 	//@{
 
-	virtual Ref< Settings > getSettings();
+	virtual Ref< Settings > getSettings() const;
 
-	virtual Ref< db::Database > getSourceDatabase();
+	virtual Ref< db::Database > getSourceDatabase() const;
 
-	virtual Ref< db::Database > getOutputDatabase();
+	virtual Ref< db::Database > getOutputDatabase() const;
 
 	virtual void updateDatabaseView();
 

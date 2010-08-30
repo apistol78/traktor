@@ -1,7 +1,7 @@
 #ifndef traktor_Functor_H
 #define traktor_Functor_H
 
-#include "Core/Config.h"
+#include "Core/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -21,7 +21,7 @@ namespace traktor
  * a object. When creating a functor it's possible to "attach" argument values
  * as well.
  */
-class T_DLLCLASS Functor
+class T_DLLCLASS Functor : public RefCountImpl< IRefCount >
 {
 public:
 	void* operator new (size_t size);
@@ -60,7 +60,7 @@ private:
  * \ingroup Core
  */
 template < typename T >
-inline Functor0< T >* makeFunctor(T* self, typename Functor0< T >::method_t method)
+inline Ref< Functor0< T > > makeFunctor(T* self, typename Functor0< T >::method_t method)
 {
 	return new Functor0< T >(self, method);
 }
@@ -96,7 +96,7 @@ private:
  * \ingroup Core
  */
 template < typename T, typename P1 >
-inline Functor1< T, P1 >* makeFunctor(T* self, typename Functor1< T, P1 >::method_t method, P1 p1)
+inline Ref< Functor1< T, P1 > > makeFunctor(T* self, typename Functor1< T, P1 >::method_t method, P1 p1)
 {
 	return new Functor1< T, P1 >(self, method, p1);
 }
@@ -134,7 +134,7 @@ private:
  * \ingroup Core
  */
 template < typename T, typename P1, typename P2 >
-inline Functor2< T, P1, P2 >* makeFunctor(T* self, typename Functor2< T, P1, P2 >::method_t method, P1 p1, P2 p2)
+inline Ref< Functor2< T, P1, P2 > > makeFunctor(T* self, typename Functor2< T, P1, P2 >::method_t method, P1 p1, P2 p2)
 {
 	return new Functor2< T, P1, P2 >(self, method, p1, p2);
 }
@@ -174,7 +174,7 @@ private:
  * \ingroup Core
  */
 template < typename T, typename P1, typename P2, typename P3 >
-inline Functor3< T, P1, P2, P3 >* makeFunctor(T* self, typename Functor3< T, P1, P2, P3 >::method_t method, P1 p1, P2 p2, P3 p3)
+inline Ref< Functor3< T, P1, P2, P3 > > makeFunctor(T* self, typename Functor3< T, P1, P2, P3 >::method_t method, P1 p1, P2 p2, P3 p3)
 {
 	return new Functor3< T, P1, P2, P3 >(self, method, p1, p2, p3);
 }
@@ -216,7 +216,7 @@ private:
  * \ingroup Core
  */
 template < typename T, typename P1, typename P2, typename P3, typename P4 >
-inline Functor4< T, P1, P2, P3, P4 >* makeFunctor(T* self, typename Functor4< T, P1, P2, P3, P4 >::method_t method, P1 p1, P2 p2, P3 p3, P4 p4)
+inline Ref< Functor4< T, P1, P2, P3, P4 > > makeFunctor(T* self, typename Functor4< T, P1, P2, P3, P4 >::method_t method, P1 p1, P2 p2, P3 p3, P4 p4)
 {
 	return new Functor4< T, P1, P2, P3, P4 >(self, method, p1, p2, p3, p4);
 }
@@ -246,7 +246,7 @@ private:
 /*! \brief Create functor object.
  * \ingroup Core
  */
-inline StaticFunctor0* makeStaticFunctor(StaticFunctor0::function_t function)
+inline Ref< StaticFunctor0 > makeStaticFunctor(StaticFunctor0::function_t function)
 {
 	return new StaticFunctor0(function);
 }
@@ -280,7 +280,7 @@ private:
  * \ingroup Core
  */
 template < typename P1 >
-inline StaticFunctor1< P1 >* makeStaticFunctor(typename StaticFunctor1< P1 >::function_t function, P1 p1)
+inline Ref< StaticFunctor1< P1 > > makeStaticFunctor(typename StaticFunctor1< P1 >::function_t function, P1 p1)
 {
 	return new StaticFunctor1< P1 >(function, p1);
 }
@@ -316,7 +316,7 @@ private:
  * \ingroup Core
  */
 template < typename P1, typename P2 >
-inline StaticFunctor2< P1, P2 >* makeStaticFunctor(typename StaticFunctor2< P1, P2 >::function_t function, P1 p1, P2 p2)
+inline Ref< StaticFunctor2< P1, P2 > > makeStaticFunctor(typename StaticFunctor2< P1, P2 >::function_t function, P1 p1, P2 p2)
 {
 	return new StaticFunctor2< P1, P2 >(function, p1, p2);
 }
@@ -356,7 +356,7 @@ private:
  * \ingroup Core
  */
 template < typename P1, typename P2, typename P3, typename P4 >
-inline StaticFunctor4< P1, P2, P3, P4 >* makeStaticFunctor(typename StaticFunctor4< P1, P2, P3, P4 >::function_t function, P1 p1, P2 p2, P3 p3, P4 p4)
+inline Ref< StaticFunctor4< P1, P2, P3, P4 > > makeStaticFunctor(typename StaticFunctor4< P1, P2, P3, P4 >::function_t function, P1 p1, P2 p2, P3 p3, P4 p4)
 {
 	return new StaticFunctor4< P1, P2, P3, P4 >(function, p1, p2, p3, p4);
 }
@@ -398,7 +398,7 @@ private:
  * \ingroup Core
  */
 template < typename P1, typename P2, typename P3, typename P4, typename P5 >
-inline StaticFunctor5< P1, P2, P3, P4, P5 >* makeStaticFunctor(typename StaticFunctor5< P1, P2, P3, P4, P5 >::function_t function, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5)
+inline Ref< StaticFunctor5< P1, P2, P3, P4, P5 > > makeStaticFunctor(typename StaticFunctor5< P1, P2, P3, P4, P5 >::function_t function, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5)
 {
 	return new StaticFunctor5< P1, P2, P3, P4, P5 >(function, p1, p2, p3, p4, p5);
 }
@@ -442,7 +442,7 @@ private:
  * \ingroup Core
  */
 template < typename P1, typename P2, typename P3, typename P4, typename P5, typename P6 >
-inline StaticFunctor6< P1, P2, P3, P4, P5, P6 >* makeStaticFunctor(typename StaticFunctor6< P1, P2, P3, P4, P5, P6 >::function_t function, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6)
+inline Ref< StaticFunctor6< P1, P2, P3, P4, P5, P6 > > makeStaticFunctor(typename StaticFunctor6< P1, P2, P3, P4, P5, P6 >::function_t function, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6)
 {
 	return new StaticFunctor6< P1, P2, P3, P4, P5, P6 >(function, p1, p2, p3, p4, p5, p6);
 }

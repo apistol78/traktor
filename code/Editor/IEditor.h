@@ -41,13 +41,13 @@ class T_NOVTABLE IEditor
 {
 public:
 	/*! \brief Get editor settings. */
-	virtual Ref< Settings > getSettings() = 0;
+	virtual Ref< Settings > getSettings() const = 0;
 
 	/*! \brief Get source asset database. */
-	virtual Ref< db::Database > getSourceDatabase() = 0;
+	virtual Ref< db::Database > getSourceDatabase() const = 0;
 
 	/*! \brief Get output database. */
-	virtual Ref< db::Database > getOutputDatabase() = 0;
+	virtual Ref< db::Database > getOutputDatabase() const = 0;
 
 	/*! \brief Update database view. */
 	virtual void updateDatabaseView() = 0;
