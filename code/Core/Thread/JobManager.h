@@ -21,8 +21,6 @@ class T_DLLCLASS Job : public IWaitable
 public:
 	Job(Functor* functor = 0);
 
-	virtual ~Job();
-
 	/*! \brief Prepare job for execution. */
 	void begin();
 
@@ -37,7 +35,7 @@ public:
 private:
 	friend class JobManager;
 
-	Functor* m_functor;
+	Ref< Functor > m_functor;
 	int32_t m_finished;
 };
 

@@ -527,17 +527,17 @@ void EditorForm::destroy()
 	Form::destroy();
 }
 
-Ref< Settings > EditorForm::getSettings()
+Ref< Settings > EditorForm::getSettings() const
 {
 	return m_settings;
 }
 
-Ref< db::Database > EditorForm::getSourceDatabase()
+Ref< db::Database > EditorForm::getSourceDatabase() const
 {
 	return m_sourceDatabase;
 }
 
-Ref< db::Database > EditorForm::getOutputDatabase()
+Ref< db::Database > EditorForm::getOutputDatabase() const
 {
 	return m_outputDatabase;
 }
@@ -567,7 +567,7 @@ Ref< db::Instance > EditorForm::browseInstance(const IBrowseFilter* filter)
 {
 	Ref< db::Instance > instance;
 
-	BrowseInstanceDialog dlgBrowse(m_settings);
+	BrowseInstanceDialog dlgBrowse(this, m_settings);
 	if (dlgBrowse.create(this, m_sourceDatabase, filter))
 	{
 		if (dlgBrowse.showModal() == ui::DrOk)

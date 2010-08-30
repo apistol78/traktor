@@ -16,23 +16,17 @@ public:
 	:	m_leave(leave)
 	{
 		if (enter)
-		{
 			(*enter)();
-			delete enter;
-		}
 	}
 
 	inline ~EnterLeave()
 	{
 		if (m_leave)
-		{
 			(*m_leave)();
-			delete m_leave;
-		}
 	}
 
 private:
-	Functor* m_leave;
+	Ref< Functor > m_leave;
 };
 
 }

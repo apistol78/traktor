@@ -8125,6 +8125,10 @@
 										<fileName>../../../res/graph/Comment.png</fileName>
 										<items/>
 									</item>
+									<item type="File">
+										<fileName>../../../res/preview/PreviewFrame.png</fileName>
+										<items/>
+									</item>
 								</items>
 							</item>
 							<item type="Filter">
@@ -8150,6 +8154,15 @@
 								<items>
 									<item type="File">
 										<fileName>Auto/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+							<item type="Filter">
+								<name>PreviewList</name>
+								<items>
+									<item type="File">
+										<fileName>PreviewList/*.*</fileName>
 										<items/>
 									</item>
 								</items>
@@ -11244,6 +11257,10 @@
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
 					<project ref="/object/projects/item[17]/dependencies/item[11]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 			</dependencies>
 		</item>

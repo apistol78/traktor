@@ -1,9 +1,13 @@
+#include "Core/Functor/Functor.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/Settings.h"
+#include "Core/Thread/Thread.h"
+#include "Core/Thread/ThreadManager.h"
 #include "Database/Database.h"
 #include "Database/Group.h"
 #include "Database/Instance.h"
 #include "Editor/IBrowseFilter.h"
+#include "Editor/IBrowsePreview.h"
 #include "Editor/App/BrowseInstanceDialog.h"
 #include "I18N/Text.h"
 #include "Ui/Bitmap.h"
@@ -12,18 +16,16 @@
 #include "Ui/FloodLayout.h"
 #include "Ui/TreeView.h"
 #include "Ui/TreeViewItem.h"
-#include "Ui/ListView.h"
-#include "Ui/ListViewItem.h"
 #include "Ui/MethodHandler.h"
 #include "Ui/Events/CommandEvent.h"
 #include "Ui/Custom/Splitter.h"
 #include "Ui/Custom/MiniButton.h"
+#include "Ui/Custom/PreviewList/PreviewItem.h"
+#include "Ui/Custom/PreviewList/PreviewItems.h"
+#include "Ui/Custom/PreviewList/PreviewList.h"
 
 // Resources
 #include "Resources/Files.h"
-#include "Resources/New.h"
-#include "Resources/BigIcons.h"
-#include "Resources/SmallIcons.h"
 
 #pragma warning(disable: 4344)
 
@@ -34,8 +36,10 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.BrowseInstanceDialog", BrowseInstanceDialog, ui::ConfigDialog)
 
-BrowseInstanceDialog::BrowseInstanceDialog(Settings* settings)
-:	m_settings(settings)
+BrowseInstanceDialog::BrowseInstanceDialog(const IEditor* editor, Settings* settings)
+:	m_editor(editor)
+,	m_settings(settings)
+,	m_threadGeneratePreview(0)
 {
 }
 
@@ -73,36 +77,55 @@ bool BrowseInstanceDialog::create(ui::Widget* parent, db::Database* database, co
 	if (!right->create(splitter, ui::WsNone, new ui::TableLayout(L"100%", L"22,100%", 0, 0)))
 		return false;
 
-	Ref< ui::Container > rightTop = new ui::Container();
-	if (!rightTop->create(right, ui::WsNone, new ui::TableLayout(L"100%,*,*", L"100%", 0, 0)))
-		return false;
-
 	Ref< ui::Static > listLabel = new ui::Static();
-	if (!listLabel->create(rightTop, i18n::Text(L"BROWSE_INSTANCE_INSTANCES")))
+	if (!listLabel->create(right, i18n::Text(L"BROWSE_INSTANCE_INSTANCES")))
 		return false;
 
-	m_buttonIcon = new ui::custom::MiniButton();
-	if (!m_buttonIcon->create(rightTop, ui::Bitmap::load(c_ResourceBigIcons, sizeof(c_ResourceBigIcons), L"png")))
+	m_listInstances = new ui::custom::PreviewList();
+	if (!m_listInstances->create(right, ui::WsClientBorder | ui::WsDoubleBuffer))
 		return false;
-	m_buttonIcon->addClickEventHandler(ui::createMethodHandler(this, &BrowseInstanceDialog::eventButtonClick));
-
-	m_buttonSmall = new ui::custom::MiniButton();
-	if (!m_buttonSmall->create(rightTop, ui::Bitmap::load(c_ResourceSmallIcons, sizeof(c_ResourceSmallIcons), L"png")))
-		return false;
-	m_buttonSmall->addClickEventHandler(ui::createMethodHandler(this, &BrowseInstanceDialog::eventButtonClick));
-
-	int32_t iconSize = m_settings->getProperty< PropertyInteger >(L"Editor.BrowseInstance.IconSize", 0);
-
-	m_listInstances = new ui::ListView();
-	if (!m_listInstances->create(right, ui::WsClientBorder | (iconSize == 0 ? ui::ListView::WsIconNormal : ui::ListView::WsList)))
-		return false;
-	m_listInstances->addImage(ui::Bitmap::load(c_ResourceNew, sizeof(c_ResourceNew), L"png"), 1);
 	m_listInstances->addSelectEventHandler(ui::createMethodHandler(this, &BrowseInstanceDialog::eventListItemSelected));
 	m_listInstances->addDoubleClickEventHandler(ui::createMethodHandler(this, &BrowseInstanceDialog::eventListDoubleClick));
 
-	buildGroupItems(m_treeDatabase, 0, database->getRootGroup(), filter);
+	// Create browse preview generators.
+	std::vector< const TypeInfo* > browsePreviewImplTypes;
+	type_of< IBrowsePreview >().findAllOf(browsePreviewImplTypes, false);
+	for (std::vector< const TypeInfo* >::const_iterator j = browsePreviewImplTypes.begin(); j != browsePreviewImplTypes.end(); ++j)
+	{
+		Ref< const IBrowsePreview > browsePreview = checked_type_cast< const IBrowsePreview*, false >((*j)->createInstance());
+		m_browsePreview.push_back(browsePreview);
+	}
+
+	// Spawn preview generator thread.
+	m_threadGeneratePreview = ThreadManager::getInstance().create(
+		makeFunctor(this, &BrowseInstanceDialog::threadGeneratePreview),
+		L"Preview generator"
+	);
+	m_threadGeneratePreview->start();
+
+	// Traverse database and filter out items.
+	buildGroupItems(
+		m_treeDatabase,
+		0,
+		database->getRootGroup(),
+		filter
+	);
 
 	return true;
+}
+
+void BrowseInstanceDialog::destroy()
+{
+	if (m_threadGeneratePreview)
+	{
+		m_threadGeneratePreview->stop();
+		ThreadManager::getInstance().destroy(m_threadGeneratePreview);
+		m_threadGeneratePreview = 0;
+	}
+
+	m_previewTasks.clear();
+
+	ui::ConfigDialog::destroy();
 }
 
 Ref< db::Instance > BrowseInstanceDialog::getInstance()
@@ -144,14 +167,12 @@ void BrowseInstanceDialog::buildGroupItems(ui::TreeView* treeView, ui::TreeViewI
 	for (RefArray< db::Group >::iterator i = group->getBeginChildGroup(); i != group->getEndChildGroup(); ++i)
 		buildGroupItems(treeView, groupItem, *i, filter);
 
-	Ref< ui::ListViewItems > instanceItems = new ui::ListViewItems();
+	Ref< ui::custom::PreviewItems > instanceItems = new ui::custom::PreviewItems();
 	for (RefArray< db::Instance >::iterator i = group->getBeginChildInstance(); i != group->getEndChildInstance(); ++i)
 	{
 		if (!filter || filter->acceptable(*i))
 		{
-			Ref< ui::ListViewItem > instanceItem = new ui::ListViewItem();
-			instanceItem->setImage(0, 0);
-			instanceItem->setText(0, (*i)->getName());
+			Ref< ui::custom::PreviewItem > instanceItem = new ui::custom::PreviewItem((*i)->getName());
 			instanceItem->setData(L"INSTANCE", (*i));
 			instanceItems->add(instanceItem);
 		}
@@ -165,10 +186,28 @@ void BrowseInstanceDialog::eventTreeItemSelected(ui::Event* event)
 	Ref< ui::TreeViewItem > item = dynamic_type_cast< ui::TreeViewItem* >(
 		static_cast< ui::CommandEvent* >(event)->getItem()
 	);
+
+	// Stop all pending preview tasks.
+	m_previewTasks.clear();
+
 	if (item)
 	{
-		Ref< ui::ListViewItems > items = item->getData< ui::ListViewItems >(L"INSTANCE_ITEMS");
+		Ref< ui::custom::PreviewItems > items = item->getData< ui::custom::PreviewItems >(L"INSTANCE_ITEMS");
 		m_listInstances->setItems(items);
+
+		// Create preview generator tasks.
+		if (items)
+		{
+			for (int i = 0; i < items->count(); ++i)
+			{
+				ui::custom::PreviewItem* item = items->get(i);
+				if (!item->getImage())
+				{
+					m_previewTasks.put(makeFunctor(this, &BrowseInstanceDialog::taskGeneratePreview, item));
+					m_previewTaskEvent.pulse();
+				}
+			}
+		}
 	}
 	else
 		m_listInstances->setItems(0);
@@ -176,7 +215,7 @@ void BrowseInstanceDialog::eventTreeItemSelected(ui::Event* event)
 
 void BrowseInstanceDialog::eventListItemSelected(ui::Event* event)
 {
-	Ref< ui::ListViewItem > item = dynamic_type_cast< ui::ListViewItem* >(
+	Ref< ui::custom::PreviewItem > item = dynamic_type_cast< ui::custom::PreviewItem* >(
 		static_cast< ui::CommandEvent* >(event)->getItem()
 	);
 
@@ -192,17 +231,38 @@ void BrowseInstanceDialog::eventListDoubleClick(ui::Event* event)
 		endModal(ui::DrOk);
 }
 
-void BrowseInstanceDialog::eventButtonClick(ui::Event* event)
+void BrowseInstanceDialog::taskGeneratePreview(ui::custom::PreviewItem* item)
 {
-	if (event->getSender() == m_buttonIcon)
+	Ref< db::Instance > instance = item->getData< db::Instance >(L"INSTANCE");
+	T_ASSERT (instance);
+
+	const TypeInfo* instanceType = instance->getPrimaryType();
+	for (RefArray< const IBrowsePreview >::const_iterator i = m_browsePreview.begin(); i != m_browsePreview.end(); ++i)
 	{
-		m_listInstances->setStyle(ui::ListView::WsIconNormal | ui::WsClientBorder);
-		m_settings->setProperty< PropertyInteger >(L"Editor.BrowseInstance.IconSize", 0);
+		TypeInfoSet previewTypes = (*i)->getPreviewTypes();
+		if (previewTypes.find(instanceType) != previewTypes.end())
+		{
+			item->setImage((*i)->generate(
+				m_editor,
+				instance
+			));
+			m_listInstances->requestUpdate();
+			break;
+		}
 	}
-	else
+}
+
+void BrowseInstanceDialog::threadGeneratePreview()
+{
+	Ref< Functor > task;
+	while (!m_threadGeneratePreview->stopped())
 	{
-		m_listInstances->setStyle(ui::ListView::WsList | ui::WsClientBorder);
-		m_settings->setProperty< PropertyInteger >(L"Editor.BrowseInstance.IconSize", 1);
+		if (!m_previewTasks.get(task))
+		{
+			m_previewTaskEvent.wait(100);
+			continue;
+		}
+		(*task)(); task = 0;
 	}
 }
 

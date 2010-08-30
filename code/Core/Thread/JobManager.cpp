@@ -15,11 +15,6 @@ Job::Job(Functor* functor)
 {
 }
 
-Job::~Job()
-{
-	delete m_functor;
-}
-
 void Job::begin()
 {
 	m_finished = 0;
@@ -45,15 +40,8 @@ bool Job::wait(int32_t timeout)
 
 Job& Job::operator = (Functor* functor)
 {
-	if (m_functor)
-	{
-		T_ASSERT (m_functor != functor);
-		delete m_functor;
-	}
-
 	m_functor = functor;
 	m_finished = 1;
-
 	return *this;
 }
 

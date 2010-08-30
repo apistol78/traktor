@@ -59,7 +59,7 @@ private:
 	void* m_handle;
 	uint32_t m_id;
 	bool m_stopped;
-	Functor* m_functor;
+	Ref< Functor > m_functor;
 	std::string m_name;
 	int m_hardwareCore;
 

@@ -72,7 +72,6 @@ void ThreadManager::destroy(Thread* thread)
 	if (i != m_threads.end())
 	{
 		m_threads.erase(i);
-		delete thread->m_functor;
 		delete thread;
 	}
 }
