@@ -76,10 +76,10 @@ Ref< render::ITexture > createHeightTexture(render::IRenderSystem* renderSystem,
 
 	Job jobs[] =
 	{
-		makeStaticFunctor< const Heightfield*, uint32_t, uint32_t, half_t*, uint32_t, uint32_t >(createHeightTextureJob, heightfield, size, dim, data.ptr(), (dim * 0) / 4, (dim * 1) / 4),
-		makeStaticFunctor< const Heightfield*, uint32_t, uint32_t, half_t*, uint32_t, uint32_t >(createHeightTextureJob, heightfield, size, dim, data.ptr(), (dim * 1) / 4, (dim * 2) / 4),
-		makeStaticFunctor< const Heightfield*, uint32_t, uint32_t, half_t*, uint32_t, uint32_t >(createHeightTextureJob, heightfield, size, dim, data.ptr(), (dim * 2) / 4, (dim * 3) / 4),
-		makeStaticFunctor< const Heightfield*, uint32_t, uint32_t, half_t*, uint32_t, uint32_t >(createHeightTextureJob, heightfield, size, dim, data.ptr(), (dim * 3) / 4, (dim * 4) / 4)
+		Job(makeStaticFunctor< const Heightfield*, uint32_t, uint32_t, half_t*, uint32_t, uint32_t >(createHeightTextureJob, heightfield, size, dim, data.ptr(), (dim * 0) / 4, (dim * 1) / 4)),
+		Job(makeStaticFunctor< const Heightfield*, uint32_t, uint32_t, half_t*, uint32_t, uint32_t >(createHeightTextureJob, heightfield, size, dim, data.ptr(), (dim * 1) / 4, (dim * 2) / 4)),
+		Job(makeStaticFunctor< const Heightfield*, uint32_t, uint32_t, half_t*, uint32_t, uint32_t >(createHeightTextureJob, heightfield, size, dim, data.ptr(), (dim * 2) / 4, (dim * 3) / 4)),
+		Job(makeStaticFunctor< const Heightfield*, uint32_t, uint32_t, half_t*, uint32_t, uint32_t >(createHeightTextureJob, heightfield, size, dim, data.ptr(), (dim * 3) / 4, (dim * 4) / 4))
 	};
 
 	JobManager::getInstance().fork(jobs, sizeof_array(jobs));
@@ -150,10 +150,10 @@ Ref< render::ITexture > createNormalTexture(render::IRenderSystem* renderSystem,
 
 	Job jobs[] =
 	{
-		makeStaticFunctor< const Heightfield*, uint32_t, uint32_t, uint8_t*, uint32_t, uint32_t >(createNormalTextureJob, heightfield, size, dim, data.ptr(), (dim * 0) / 4, (dim * 1) / 4),
-		makeStaticFunctor< const Heightfield*, uint32_t, uint32_t, uint8_t*, uint32_t, uint32_t >(createNormalTextureJob, heightfield, size, dim, data.ptr(), (dim * 1) / 4, (dim * 2) / 4),
-		makeStaticFunctor< const Heightfield*, uint32_t, uint32_t, uint8_t*, uint32_t, uint32_t >(createNormalTextureJob, heightfield, size, dim, data.ptr(), (dim * 2) / 4, (dim * 3) / 4),
-		makeStaticFunctor< const Heightfield*, uint32_t, uint32_t, uint8_t*, uint32_t, uint32_t >(createNormalTextureJob, heightfield, size, dim, data.ptr(), (dim * 3) / 4, (dim * 4) / 4)
+		Job(makeStaticFunctor< const Heightfield*, uint32_t, uint32_t, uint8_t*, uint32_t, uint32_t >(createNormalTextureJob, heightfield, size, dim, data.ptr(), (dim * 0) / 4, (dim * 1) / 4)),
+		Job(makeStaticFunctor< const Heightfield*, uint32_t, uint32_t, uint8_t*, uint32_t, uint32_t >(createNormalTextureJob, heightfield, size, dim, data.ptr(), (dim * 1) / 4, (dim * 2) / 4)),
+		Job(makeStaticFunctor< const Heightfield*, uint32_t, uint32_t, uint8_t*, uint32_t, uint32_t >(createNormalTextureJob, heightfield, size, dim, data.ptr(), (dim * 2) / 4, (dim * 3) / 4)),
+		Job(makeStaticFunctor< const Heightfield*, uint32_t, uint32_t, uint8_t*, uint32_t, uint32_t >(createNormalTextureJob, heightfield, size, dim, data.ptr(), (dim * 3) / 4, (dim * 4) / 4))
 	};
 
 	JobManager::getInstance().fork(jobs, sizeof_array(jobs));

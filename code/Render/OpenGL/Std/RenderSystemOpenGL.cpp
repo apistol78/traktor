@@ -558,7 +558,12 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewEmbedded
 
 	context->leave();
 
-	return new RenderViewOpenGL(desc, context, m_resourceContext, (HWND)desc.nativeWindowHandle);
+	Ref< RenderViewOpenGL > renderView = new RenderViewOpenGL(desc, context, m_resourceContext, (HWND)desc.nativeWindowHandle);
+	if (renderView->createPrimaryTarget())
+		return renderView;
+
+	context->destroy();
+	context = 0;
 
 #elif defined(__APPLE__)
 
@@ -574,7 +579,12 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewEmbedded
 
 	Ref< ContextOpenGL > context = new ContextOpenGL(glcontext);
 
-	return new RenderViewOpenGL(desc, context, m_resourceContext, 0);
+	Ref< RenderViewOpenGL > renderView = new RenderViewOpenGL(desc, context, m_resourceContext, 0);
+	if (renderView->createPrimaryTarget())
+		return renderView;
+
+	context->destroy();
+	context = 0;
 
 #else	// LINUX
 
@@ -614,9 +624,16 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewEmbedded
 
 	context->leave();
 
-	return new RenderViewOpenGL(desc, context, m_resourceContext);
+	Ref< RenderViewOpenGL > renderView = new RenderViewOpenGL(desc, context, m_resourceContext);
+	if (renderView->createPrimaryTarget())
+		return renderView;
+		
+	context->destroy();
+	context = 0;
 
 #endif
+
+	return 0;
 }
 
 Ref< VertexBuffer > RenderSystemOpenGL::createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
