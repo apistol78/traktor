@@ -150,7 +150,7 @@
 			<name>Total weight</name>
 			<connectable>false</connectable>
 			<optional>false</optional>
-			<defaultValue>9.15</defaultValue>
+			<defaultValue>9.6153</defaultValue>
 		</item>
 		<item type="traktor.render.Sub">
 			<comment/>
