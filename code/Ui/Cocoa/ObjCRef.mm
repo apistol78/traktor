@@ -1,5 +1,7 @@
 #import "Ui/Cocoa/ObjCRef.h"
 
+using namespace traktor;
+
 @implementation ObjCRef
 
 - (id) init
@@ -12,25 +14,29 @@
 - (id) initWithRef: (traktor::Object*)ptr
 {
 	if ((self = [super init]) != nil)
-		m_ref = new traktor::Ref< traktor::Object >(ptr);
+	{
+		T_SAFE_ADDREF(ptr);
+		m_ref = ptr;
+	}
 	return self;
 }
 
 - (void) dealloc
 {
-	delete m_ref; m_ref = 0;
+	T_SAFE_RELEASE(m_ref); m_ref = 0;
 	[super dealloc];
 }
 
 - (void) set: (traktor::Object*)ptr
 {
-	delete m_ref;
-	m_ref = new traktor::Ref< traktor::Object >(ptr);
+	T_SAFE_RELEASE(m_ref);
+	T_SAFE_ADDREF(ptr);
+	m_ref = ptr;
 }
 
 - (traktor::Object*) get
 {
-	return m_ref ? *m_ref : 0;
+	return m_ref;
 }
 
 @end

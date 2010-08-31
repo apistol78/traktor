@@ -6,7 +6,7 @@
 
 @interface ObjCRef : NSObject
 {
-	traktor::Ref< traktor::Object >* m_ref;
+	traktor::Object* m_ref;
 }
 
 - (id) init;
