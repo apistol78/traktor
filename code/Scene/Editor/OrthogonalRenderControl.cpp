@@ -2,6 +2,7 @@
 #include "Core/Math/Log2.h"
 #include "Core/Settings/PropertyColor.h"
 #include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/Settings.h"
 #include "Database/Database.h"
 #include "Editor/IEditor.h"
@@ -37,6 +38,7 @@ namespace traktor
 		namespace
 		{
 
+const int32_t c_defaultMultiSample = 4;
 const float c_cameraTranslateDeltaScale = 0.025f;
 const float c_minMagnification = 0.01f;
 
@@ -52,6 +54,7 @@ OrthogonalRenderControl::OrthogonalRenderControl()
 ,	m_modifyCamera(false)
 ,	m_modifyAlternative(false)
 ,	m_modifyBegun(false)
+,	m_multiSample(0)
 ,	m_viewPlane(PositiveX)
 ,	m_viewFarZ(0.0f)
 ,	m_magnification(10.0f)
@@ -66,6 +69,7 @@ bool OrthogonalRenderControl::create(ui::Widget* parent, SceneEditorContext* con
 	m_context = context;
 	T_ASSERT (m_context);
 
+	m_multiSample = m_context->getEditor()->getSettings()->getProperty< PropertyInteger >(L"SceneEditor.MultiSample", c_defaultMultiSample);
 	m_viewPlane = viewPlane;
 
 	m_renderWidget = new ui::Widget();
@@ -75,7 +79,7 @@ bool OrthogonalRenderControl::create(ui::Widget* parent, SceneEditorContext* con
 	render::RenderViewEmbeddedDesc desc;
 	desc.depthBits = 24;
 	desc.stencilBits = 0;
-	desc.multiSample = 4;
+	desc.multiSample = m_multiSample;
 	desc.waitVBlank = false;
 	desc.nativeWindowHandle = m_renderWidget->getIWidget()->getSystemHandle();
 
@@ -178,7 +182,7 @@ void OrthogonalRenderControl::updateWorldRenderer()
 		m_context->getResourceManager(),
 		m_context->getRenderSystem(),
 		m_renderView,
-		4,
+		m_multiSample,
 		1
 	))
 		m_worldRenderer = 0;

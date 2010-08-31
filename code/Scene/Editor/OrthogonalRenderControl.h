@@ -85,6 +85,7 @@ private:
 	bool m_modifyAlternative;
 	bool m_modifyBegun;
 	RefArray< EntityAdapter > m_modifyEntities;
+	int32_t m_multiSample;
 	ViewPlane m_viewPlane;
 	float m_viewFarZ;
 	float m_magnification;

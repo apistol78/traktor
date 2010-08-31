@@ -247,7 +247,9 @@ bool RenderViewOpenGL::begin(RenderTargetSet* renderTargetSet, int renderTarget,
 	RenderTargetSetOpenGL* rts = checked_type_cast< RenderTargetSetOpenGL* >(renderTargetSet);
 	RenderTargetOpenGL* rt = checked_type_cast< RenderTargetOpenGL* >(rts->getColorTexture(renderTarget));
 	
-	rt->bind(keepDepthStencil);
+	if (!rt->bind(keepDepthStencil))
+		return false;
+	
 	rt->enter(keepDepthStencil);
 
 	m_renderTargetStack.push(rt);
