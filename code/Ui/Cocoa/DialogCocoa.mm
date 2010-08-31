@@ -293,6 +293,9 @@ bool DialogCocoa::event_windowShouldClose()
 	m_owner->raiseEvent(EiClose, &c);
 	if (!c.consumed() || !c.cancelled())
 	{
+		if ([NSApp modalWindow] == m_window)
+			[NSApp stopModal];
+		
 		m_result = DrCancel;
 		return true;
 	}

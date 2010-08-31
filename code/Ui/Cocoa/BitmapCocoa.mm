@@ -1,7 +1,8 @@
-#include "Ui/Cocoa/BitmapCocoa.h"
+#include "Core/Math/Color.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
-#include "Core/Math/Color.h"
+#include "Ui/Cocoa/BitmapCocoa.h"
+#include "Ui/Cocoa/NSDebugAutoreleasePool.h"
 
 namespace traktor
 {
@@ -18,6 +19,8 @@ BitmapCocoa::BitmapCocoa()
 
 bool BitmapCocoa::create(uint32_t width, uint32_t height)
 {
+	NSDebugAutoreleasePool* pool = [[NSDebugAutoreleasePool alloc] init];
+
 	m_image = [[NSImage alloc] initWithSize: NSMakeSize(width, height)];
 	m_imageRep = [[NSBitmapImageRep alloc]
 		initWithBitmapDataPlanes: NULL
@@ -46,6 +49,7 @@ bool BitmapCocoa::create(uint32_t width, uint32_t height)
 		bitsPerPixel: NULL];
 	[m_imagePreAlpha addRepresentation: m_imageRepPreAlpha];
 
+	[pool release];
 	return true;
 }
 
