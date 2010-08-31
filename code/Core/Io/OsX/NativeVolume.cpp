@@ -27,7 +27,7 @@ DateTime fromUnixTime(const time_t& t)
 	return DateTime(
 		tmp->tm_year + 1900,
 		tmp->tm_mon + 1,
-		tmp->tm_mday + 1,
+		tmp->tm_mday,
 		tmp->tm_hour,
 		tmp->tm_min,
 		tmp->tm_sec
