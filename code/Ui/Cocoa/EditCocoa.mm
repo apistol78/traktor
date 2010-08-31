@@ -37,6 +37,7 @@ void EditCocoa::getSelection(int& outFrom, int& outTo) const
 
 void EditCocoa::selectAll()
 {
+	[m_control selectText: nil];
 }
 
 void EditCocoa::setText(const std::wstring& text)

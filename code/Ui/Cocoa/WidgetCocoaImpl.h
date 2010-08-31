@@ -280,12 +280,14 @@ public:
 
 	virtual Point screenToClient(const Point& pt) const
 	{
-		return Point(0, 0);
+		NSPoint basePt = [m_view convertPointToBase: makeNSPoint(pt)];
+		return fromNSPoint(basePt);
 	}
 
 	virtual Point clientToScreen(const Point& pt) const
 	{
-		return Point(0, 0);
+		NSPoint localPt = [m_view convertPointFromBase: makeNSPoint(pt)];
+		return fromNSPoint(localPt);
 	}
 
 	virtual bool hitTest(const Point& pt) const
