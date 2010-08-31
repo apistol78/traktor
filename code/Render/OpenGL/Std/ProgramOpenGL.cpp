@@ -158,6 +158,7 @@ Ref< ProgramOpenGL > ProgramOpenGL::create(ContextOpenGL* resourceContext, const
 		return 0;
 
 	GLhandleARB programObject = glCreateProgramObjectARB();
+	T_ASSERT (programObject != 0);
 
 	T_OGL_SAFE(glAttachObjectARB(programObject, vertexObject));
 	T_OGL_SAFE(glAttachObjectARB(programObject, fragmentObject));
@@ -291,7 +292,6 @@ bool ProgramOpenGL::activate(float targetSize[2])
 		if (m_renderState.stencilTestEnable && m_stencilRef != m_renderState.stencilRef)
 			T_OGL_SAFE(glStencilFunc(m_renderState.stencilFunc, m_stencilRef, ~0UL));
 
-		T_ASSERT (m_program);
 		T_OGL_SAFE(glUseProgramObjectARB(m_program));
 	}
 

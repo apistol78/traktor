@@ -408,7 +408,7 @@ void RenderTargetOpenGL::bind(GLuint unit, const SamplerState& samplerState, GLi
 		T_OGL_SAFE(glUniform4fvARB(locationOffset, 1, (const GLfloat*)&m_originAndScale));
 }
 
-void RenderTargetOpenGL::bind(bool keepDepthStencil)
+bool RenderTargetOpenGL::bind(bool keepDepthStencil)
 {
 	GLuint currentDepthBuffer;
 
@@ -451,12 +451,10 @@ void RenderTargetOpenGL::bind(bool keepDepthStencil)
 			GL_RENDERBUFFER_EXT,
 			currentDepthBuffer
 		));
-		
-#if defined(_DEBUG)
-		GLenum status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
-		T_ASSERT (status == GL_FRAMEBUFFER_COMPLETE_EXT);
-#endif
 	}
+
+	GLenum status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
+	return status == GL_FRAMEBUFFER_COMPLETE_EXT;
 }
 
 void RenderTargetOpenGL::enter(bool keepDepthStencil)

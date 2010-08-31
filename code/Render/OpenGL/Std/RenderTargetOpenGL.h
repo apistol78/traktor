@@ -47,7 +47,7 @@ public:
 	
 	virtual void bind(GLuint unit, const SamplerState& samplerState, GLint locationTexture, GLint locationOffset);
 
-	void bind(bool keepDepthStencil);
+	bool bind(bool keepDepthStencil);
 
 	void enter(bool keepDepthStencil);
 	

@@ -32,8 +32,8 @@
 		<item type="traktor.render.PixelOutput" version="2">
 			<comment/>
 			<position>
-				<first>1212</first>
-				<second>240</second>
+				<first>1370</first>
+				<second>245</second>
 			</position>
 			<technique>Shadow</technique>
 			<cullMode>CmNever</cullMode>
@@ -50,7 +50,7 @@
 			<depthEnable>true</depthEnable>
 			<depthWriteEnable>true</depthWriteEnable>
 			<depthFunction>CfLessEqual</depthFunction>
-			<alphaTestEnable>false</alphaTestEnable>
+			<alphaTestEnable>true</alphaTestEnable>
 			<alphaTestFunction>CfGreater</alphaTestFunction>
 			<alphaTestReference>128</alphaTestReference>
 			<wireframe>false</wireframe>
@@ -60,7 +60,7 @@
 			<stencilPass>SoKeep</stencilPass>
 			<stencilFunction>CfAlways</stencilFunction>
 			<stencilReference>0</stencilReference>
-			<stencilMask>2147483648</stencilMask>
+			<stencilMask>0</stencilMask>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
@@ -87,22 +87,6 @@
 			<connectable>true</connectable>
 			<optional>true</optional>
 			<defaultValue>0</defaultValue>
-		</item>
-		<item type="traktor.render.Discard">
-			<comment/>
-			<position>
-				<first>1045</first>
-				<second>204</second>
-			</position>
-			<operator>CoGreater</operator>
-		</item>
-		<item type="traktor.render.Scalar">
-			<comment/>
-			<position>
-				<first>518</first>
-				<second>256</second>
-			</position>
-			<value>0.5</value>
 		</item>
 		<item type="traktor.render.External" version="1">
 			<comment/>
@@ -150,6 +134,29 @@
 			<parameterName>DepthRange</parameterName>
 			<type>PtScalar</type>
 		</item>
+		<item type="traktor.render.Swizzle">
+			<comment/>
+			<position>
+				<first>1070</first>
+				<second>276</second>
+			</position>
+			<swizzle>xyz0</swizzle>
+		</item>
+		<item type="traktor.render.Swizzle">
+			<comment/>
+			<position>
+				<first>1070</first>
+				<second>252</second>
+			</position>
+			<swizzle>000x</swizzle>
+		</item>
+		<item type="traktor.render.Add">
+			<comment/>
+			<position>
+				<first>1169</first>
+				<second>240</second>
+			</position>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
@@ -194,12 +201,12 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[6]"/>
+				<node ref="/object/nodes/item[4]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[7]"/>
-				<name>Input</name>
+				<name>Value</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -209,7 +216,7 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[7]"/>
-				<name>Reference</name>
+				<name>Range Max</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -218,28 +225,18 @@
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[3]"/>
+				<node ref="/object/nodes/item[9]"/>
 				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[4]"/>
+				<node ref="/object/nodes/item[6]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[9]"/>
-				<name>Value</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[9]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[7]"/>
-				<name>Pass</name>
+				<node ref="/object/nodes/item[10]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -248,8 +245,28 @@
 				<name>Output</name>
 			</source>
 			<destination>
+				<node ref="/object/nodes/item[11]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
 				<node ref="/object/nodes/item[9]"/>
-				<name>Range Max</name>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[11]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[11]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 	</edges>
