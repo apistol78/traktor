@@ -58,7 +58,8 @@ ProgramWin32::~ProgramWin32()
 bool ProgramWin32::create(
 	IDirect3DDevice9* d3dDevice,
 	ShaderCache* shaderCache,
-	const ProgramResourceDx9* resource
+	const ProgramResourceDx9* resource,
+	int32_t maxAnisotropy
 )
 {
 	T_ASSERT (d3dDevice);
@@ -115,6 +116,7 @@ bool ProgramWin32::create(
 	m_textureParameterData.resize(resource->m_textureParameterDataSize);
 
 	m_state = resource->m_state;
+	m_state.prepareAnisotropy(maxAnisotropy);
 
 	m_d3dDevice = d3dDevice;
 
