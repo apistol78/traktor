@@ -272,6 +272,8 @@ void ProgramOpenGL::setTextureParameter(handle_t handle, ITexture* texture)
 		m_textureBindings[i->second] = static_cast< ITextureBinding* >(vt);
 	else if (RenderTargetOpenGL* rt = dynamic_type_cast< RenderTargetOpenGL* >(texture))
 		m_textureBindings[i->second] = static_cast< ITextureBinding* >(rt);
+	else
+		m_textureBindings[i->second] = 0;
 
 	m_textureDirty = true;
 }
@@ -345,7 +347,8 @@ bool ProgramOpenGL::activate(float targetSize[2])
 			ITextureBinding* tb = m_textureBindings[sampler.texture];
 			T_ASSERT (tb);
 			
-			tb->bind(i, samplerState, sampler.locationTexture, sampler.locationOffset);
+			if (tb)
+				tb->bind(i, samplerState, sampler.locationTexture, sampler.locationOffset);
 		}
 		m_textureDirty = false;
 	}
