@@ -33,7 +33,7 @@ Light direction
 			</position>
 			<parameterName>LightDirectionAndRange</parameterName>
 			<type>PtVector</type>
-			<length>4</length>
+			<length>2</length>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment>
@@ -67,7 +67,7 @@ Light type
 			</position>
 			<parameterName>LightPositionAndType</parameterName>
 			<type>PtVector</type>
-			<length>4</length>
+			<length>2</length>
 		</item>
 		<item type="traktor.render.IndexedUniform">
 			<comment/>
@@ -77,7 +77,7 @@ Light type
 			</position>
 			<parameterName>LightShadowColor</parameterName>
 			<type>PtVector</type>
-			<length>4</length>
+			<length>2</length>
 		</item>
 		<item type="traktor.render.IndexedUniform">
 			<comment/>
@@ -87,7 +87,7 @@ Light type
 			</position>
 			<parameterName>LightBaseColor</parameterName>
 			<type>PtVector</type>
-			<length>4</length>
+			<length>2</length>
 		</item>
 		<item type="traktor.render.IndexedUniform">
 			<comment/>
@@ -97,7 +97,7 @@ Light type
 			</position>
 			<parameterName>LightSunColor</parameterName>
 			<type>PtVector</type>
-			<length>4</length>
+			<length>2</length>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
