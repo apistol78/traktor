@@ -56,6 +56,23 @@ void StateBlockDx9::setSamplerState(DWORD sampler, D3DSAMPLERSTATETYPE type, DWO
 	states.push_back(std::make_pair(uint32_t(type), uint32_t(value)));
 }
 
+void StateBlockDx9::prepareAnisotropy(int32_t maxAnisotropy)
+{
+	// If anisotropy enabled then we're already prepared.
+	if (maxAnisotropy > 0)
+		return;
+
+	// Reduce filtering to plain linear.
+	for (std::map< uint32_t, std::vector< std::pair< uint32_t, uint32_t > > >::iterator i = m_samplerStates.begin(); i != m_samplerStates.end(); ++i)
+	{
+		for (std::vector< std::pair< uint32_t, uint32_t > >::iterator j = i->second.begin(); j != i->second.end(); ++j)
+		{
+			if ((j->first == D3DSAMP_MINFILTER || j->first == D3DSAMP_MAGFILTER) && j->second == D3DTEXF_ANISOTROPIC)
+				j->second = D3DTEXF_LINEAR;
+		}
+	}
+}
+
 void StateBlockDx9::apply(ParameterCache* parameterCache)
 {
 	for (std::vector< std::pair< uint32_t, uint32_t > >::iterator i = m_renderStates.begin(); i != m_renderStates.end(); ++i)

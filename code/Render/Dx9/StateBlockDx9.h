@@ -29,6 +29,8 @@ public:
 
 	void setSamplerState(DWORD sampler, D3DSAMPLERSTATETYPE type, DWORD value);
 
+	void prepareAnisotropy(int32_t maxAnisotropy);
+
 	void apply(ParameterCache* parameterCache);
 
 	StateBlockDx9& operator = (const StateBlockDx9& stateBlock);

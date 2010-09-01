@@ -3,6 +3,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Misc/TString.h"
+#include "Core/Thread/Acquire.h"
 
 namespace traktor
 {
@@ -56,6 +57,8 @@ void LogStreamBuffer::setTarget(ILogTarget* target)
 
 int LogStreamBuffer::overflow(const wchar_t* buffer, int count)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	StringOutputStream* ss = static_cast< StringOutputStream* >(m_buffers.get());
 	if (!ss)
 	{

@@ -50,7 +50,8 @@ public:
 	bool create(
 		IDirect3DDevice9* d3dDevice,
 		ShaderCache* shaderCache,
-		const ProgramResourceDx9* resource
+		const ProgramResourceDx9* resource,
+		int32_t maxAnisotropy
 	);
 
 	bool activate();

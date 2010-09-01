@@ -124,6 +124,7 @@ private:
 	Ref< ShaderCache > m_shaderCache;
 	Ref< ParameterCache > m_parameterCache;
 	Ref< VertexDeclCache > m_vertexDeclCache;
+	int32_t m_maxAnisotropy;
 	RefArray< RenderViewWin32 > m_renderViews;
 	Semaphore m_renderLock;
 	uint32_t m_deviceLost;

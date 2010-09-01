@@ -89,6 +89,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderSystemWin32", 0, RenderSys
 RenderSystemWin32::RenderSystemWin32()
 :	m_vertexDeclCache(0)
 ,	m_hWnd(0)
+,	m_maxAnisotropy(0)
 ,	m_deviceLost(0)
 ,	m_inRender(false)
 {
@@ -214,6 +215,7 @@ bool RenderSystemWin32::create(const RenderSystemCreateDesc& desc)
 	m_shaderCache = new ShaderCache();
 	m_parameterCache = new ParameterCache(m_d3dDevice, desc.mipBias, desc.maxAnisotropy);
 	m_vertexDeclCache = new VertexDeclCache(m_d3dDevice);
+	m_maxAnisotropy = desc.maxAnisotropy;
 
 	return true;
 }
@@ -518,7 +520,7 @@ Ref< IProgram > RenderSystemWin32::createProgram(const ProgramResource* programR
 		return 0;
 
 	Ref< ProgramWin32 > program = new ProgramWin32(m_resourceManager, m_parameterCache);
-	if (!program->create(m_d3dDevice, m_shaderCache, resource))
+	if (!program->create(m_d3dDevice, m_shaderCache, resource, m_maxAnisotropy))
 		return 0;
 
 	return program;

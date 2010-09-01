@@ -5,6 +5,7 @@
 #include <string>
 #include "Core/Io/IOutputStreamBuffer.h"
 #include "Core/Io/OutputStream.h"
+#include "Core/Thread/Semaphore.h"
 #include "Core/Thread/ThreadLocal.h"
 
 // import/export mechanism.
@@ -66,6 +67,7 @@ protected:
 	virtual int overflow(const wchar_t* buffer, int count);
 	
 private:
+	Semaphore m_lock;
 	ThreadLocal m_buffers;
 	Ref< ILogTarget > m_target;
 };
