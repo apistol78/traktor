@@ -376,24 +376,36 @@ void emitInterpolator(GlslContext& cx, Interpolator* node)
 	T_ASSERT (in);
 
 	cx.enterFragment();
+	
+	int32_t interpolatorWidth = glsl_type_width(in->getType());
+	if (!interpolatorWidth)
+		return;
 
-	int interpolatorId = cx.getShader().allocateInterpolator();
-	std::wstring interpolator = L"Attr" + toString(interpolatorId);
+	int32_t interpolatorId;
+	int32_t interpolatorOffset;
 
-	StringOutputStream& fo = cx.getVertexShader().getOutputStream(GlslShader::BtOutput);
-	fo << L"varying " << glsl_type_name(in->getType()) << L" " << interpolator << L";" << Endl;
+	bool declare = cx.allocateInterpolator(interpolatorWidth, interpolatorId, interpolatorOffset);
 
+	std::wstring interpolatorName = L"Attr" + toString(interpolatorId);
+	std::wstring interpolatorMask = interpolatorName + L"." + std::wstring(L"xyzw").substr(interpolatorOffset, interpolatorWidth);
+	
 	StringOutputStream& fb = cx.getVertexShader().getOutputStream(GlslShader::BtBody);
-	fb << interpolator << L" = " << in->getName() << L";" << Endl;
+	fb << interpolatorMask << L" = " << in->getName() << L";" << Endl;
 
 	cx.getFragmentShader().createOuterVariable(
 		node->findOutputPin(L"Output"),
-		interpolator,
+		interpolatorMask,
 		in->getType()
 	);
 
-	StringOutputStream& fpi = cx.getFragmentShader().getOutputStream(GlslShader::BtInput);
-	fpi << L"varying " << glsl_type_name(in->getType()) << L" " << interpolator << L";" << Endl;
+	if (declare)
+	{
+		StringOutputStream& fvo = cx.getVertexShader().getOutputStream(GlslShader::BtOutput);
+		fvo << L"varying vec4 " << interpolatorName << L";" << Endl;
+
+		StringOutputStream& fpi = cx.getFragmentShader().getOutputStream(GlslShader::BtInput);
+		fpi << L"varying vec4 " << interpolatorName << L";" << Endl;
+	}
 }
 
 void emitIterate(GlslContext& cx, Iterate* node)

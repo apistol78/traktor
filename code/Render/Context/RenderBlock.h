@@ -22,7 +22,7 @@ namespace traktor
  * \{
  */
 
-#if defined(T_USE_RENDER_MARKERS)
+#if defined(_DEBUG) || defined(T_USE_RENDER_MARKERS)
 #	define T_USE_RENDERBLOCK_NAME
 #endif
 

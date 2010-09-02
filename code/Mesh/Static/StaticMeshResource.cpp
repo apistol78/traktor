@@ -1,4 +1,5 @@
 #include "Core/Log/Log.h"
+#include "Core/Misc/TString.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberStl.h"
@@ -16,6 +17,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.StaticMeshResource", 2, StaticMeshResource, IMeshResource)
 
 Ref< IMesh > StaticMeshResource::createMesh(
+	const std::wstring& name,
 	IStream* dataStream,
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem,
@@ -49,6 +51,10 @@ Ref< IMesh > StaticMeshResource::createMesh(
 
 	if (!resourceManager->bind(staticMesh->m_shader))
 		return 0;
+	
+#if defined(_DEBUG)
+	staticMesh->m_name = wstombs(name);
+#endif
 
 	return staticMesh;
 }

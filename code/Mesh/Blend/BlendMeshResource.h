@@ -35,6 +35,7 @@ public:
 	};
 
 	virtual Ref< IMesh > createMesh(
+		const std::wstring& name,
 		IStream* dataStream,
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,

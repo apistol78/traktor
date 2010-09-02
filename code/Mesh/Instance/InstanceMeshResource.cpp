@@ -19,6 +19,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.InstanceMeshResource", 2, InstanceMeshResource, IMeshResource)
 
 Ref< IMesh > InstanceMeshResource::createMesh(
+	const std::wstring& name,
 	IStream* dataStream,
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem,

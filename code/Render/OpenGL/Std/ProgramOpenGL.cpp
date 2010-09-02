@@ -151,11 +151,17 @@ Ref< ProgramOpenGL > ProgramOpenGL::create(ContextOpenGL* resourceContext, const
 
 	GLhandleARB vertexObject = resourceContext->createShaderObject(vertexShader.c_str(), GL_VERTEX_SHADER_ARB);
 	if (!vertexObject)
+	{
+		log::error << L"Unable to create vertex object" << Endl;
 		return 0;
+	}
 		
 	GLhandleARB fragmentObject = resourceContext->createShaderObject(fragmentShader.c_str(), GL_FRAGMENT_SHADER_ARB);
 	if (!fragmentObject)
+	{
+		log::error << L"Unable to create fragment object" << Endl;
 		return 0;
+	}
 
 	GLhandleARB programObject = glCreateProgramObjectARB();
 	T_ASSERT (programObject != 0);
@@ -176,6 +182,21 @@ Ref< ProgramOpenGL > ProgramOpenGL::create(ContextOpenGL* resourceContext, const
 		}
 	}
 	
+#if defined(_DEBUG)
+	T_OGL_SAFE(glValidateProgramARB(programObject));
+	T_OGL_SAFE(glGetObjectParameterivARB(programObject, GL_OBJECT_VALIDATE_STATUS_ARB, &status));
+	if (status != GL_TRUE)
+	{
+		T_OGL_SAFE(glGetInfoLogARB(programObject, sizeof(errorBuf), &errorBufLen, errorBuf));
+		if (errorBufLen > 0)
+		{
+			log::error << L"GLSL program validate failed :" << Endl;
+			log::error << mbstows(errorBuf) << Endl;
+			return 0;
+		}
+	}
+#endif
+
 	Ref< ProgramOpenGL > program = new ProgramOpenGL(resourceContext, programObject, resource);
 	s_programCache.insert(std::make_pair(hash, program));
 	
@@ -296,7 +317,7 @@ bool ProgramOpenGL::activate(float targetSize[2])
 
 		T_OGL_SAFE(glUseProgramObjectARB(m_program));
 	}
-
+	
 	// Update dirty uniforms.
 	for (std::vector< Uniform >::iterator i = m_uniforms.begin(); i != m_uniforms.end(); ++i)
 	{
@@ -337,9 +358,11 @@ bool ProgramOpenGL::activate(float targetSize[2])
 	}
 
 	// Bind textures.
-	if (ms_activeProgram != this || m_textureDirty)
+	if (m_textureDirty || ms_activeProgram != this)
 	{
-		for (uint32_t i = 0; i < m_samplers.size(); ++i)
+		T_ASSERT (m_samplers.size() <= 8);
+		uint32_t nsamplers = m_samplers.size();
+		for (uint32_t i = 0; i < nsamplers; ++i)
 		{
 			const Sampler& sampler = m_samplers[i];
 			const SamplerState& samplerState = m_renderState.samplerStates[sampler.stage];
@@ -348,7 +371,14 @@ bool ProgramOpenGL::activate(float targetSize[2])
 			T_ASSERT (tb);
 			
 			if (tb)
-				tb->bind(i, samplerState, sampler.locationTexture, sampler.locationOffset);
+			{
+				tb->bind(
+					i,
+					samplerState,
+					sampler.locationTexture,
+					sampler.locationOffset
+				);
+			}
 		}
 		m_textureDirty = false;
 	}

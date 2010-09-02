@@ -27,6 +27,8 @@ std::wstring glsl_vertex_attr_name(DataUsage usage, int index);
 
 std::wstring glsl_type_name(GlslType type);
 
+int32_t glsl_type_width(GlslType type);
+
 GlslType glsl_from_data_type(DataType type);
 
 //@}

@@ -7,7 +7,6 @@ namespace traktor
 
 GlslShader::GlslShader(ShaderType shaderType)
 :	m_shaderType(shaderType)
-,	m_interpolatorCount(1)
 ,	m_nextTemporaryVariable(0)
 {
 	pushScope();
@@ -92,11 +91,6 @@ void GlslShader::popScope()
 {
 	T_ASSERT (!m_variables.empty());
 	m_variables.pop_back();
-}
-
-int32_t GlslShader::allocateInterpolator()
-{
-	return m_interpolatorCount++;
 }
 
 void GlslShader::addUniform(const std::wstring& uniform)

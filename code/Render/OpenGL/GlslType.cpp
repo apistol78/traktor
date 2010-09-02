@@ -38,6 +38,21 @@ std::wstring glsl_type_name(GlslType type)
 	return c[type];
 }
 
+int32_t glsl_type_width(GlslType type)
+{
+	const int32_t w[] =
+	{
+		0,
+		1,
+		2,
+		3,
+		4,
+		16,
+		0
+	};
+	return w[type];
+}
+
 GlslType glsl_from_data_type(DataType type)
 {
 	const GlslType c[] =

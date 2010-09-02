@@ -16,6 +16,8 @@ bool cglwMakeCurrent(void* context);
 
 void cglwSwapBuffers(void* context, bool waitVBlank);
 
+bool cglwCheckHardwarePath();
+
 	}
 }
 

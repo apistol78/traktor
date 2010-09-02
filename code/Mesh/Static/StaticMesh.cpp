@@ -61,8 +61,12 @@ void StaticMesh::render(
 		if (!program)
 			continue;
 
+#if !defined(_DEBUG)
 		render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >("StaticMesh");
-
+#else
+		render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >(m_name.c_str());
+#endif
+		
 		renderBlock->distance = distance;
 		renderBlock->program = program;
 		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();

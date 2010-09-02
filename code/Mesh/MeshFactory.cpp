@@ -70,7 +70,7 @@ Ref< Object > MeshFactory::create(resource::IResourceManager* resourceManager, c
 		return 0;
 	}
 
-	Ref< IMesh > mesh = resource->createMesh(dataStream, resourceManager, m_renderSystem, m_meshFactory);
+	Ref< IMesh > mesh = resource->createMesh(instance->getPath(), dataStream, resourceManager, m_renderSystem, m_meshFactory);
 	if (!mesh)
 	{
 		log::error << L"Mesh factory failed; unable to create mesh" << Endl;

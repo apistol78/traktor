@@ -12,6 +12,7 @@
 
 #if defined(__APPLE__)
 #	include "Render/OpenGL/Std/OsX/CGLWindow.h"
+#	include "Render/OpenGL/Std/OsX/CGLWrapper.h"
 #endif
 
 namespace traktor
@@ -392,10 +393,16 @@ void RenderViewOpenGL::draw(const Primitives& primitives)
 
 		m_currentIndexBuffer->bind();
 
-		const GLubyte* indices = static_cast< const GLubyte* >(m_currentIndexBuffer->getIndexData()) + primitives.offset * offsetMultiplier;
+#if defined(_DEBUG) && defined(__APPLE__)
+		if (!cglwCheckHardwarePath())
+			log::error << L"Software path detected; serious performance issue" << Endl;
+#endif
 
-		T_OGL_SAFE(glDrawElements(
+		const GLubyte* indices = static_cast< const GLubyte* >(m_currentIndexBuffer->getIndexData()) + primitives.offset * offsetMultiplier;
+		T_OGL_SAFE(glDrawRangeElements(
 			primitiveType,
+			primitives.minIndex,
+			primitives.maxIndex,
 			vertexCount,
 			indexType,
 			indices
@@ -403,6 +410,11 @@ void RenderViewOpenGL::draw(const Primitives& primitives)
 	}
 	else
 	{
+#if defined(_DEBUG) && defined(__APPLE__)
+		if (!cglwCheckHardwarePath())
+			log::error << L"Software path detected; serious performance issue" << Endl;
+#endif
+
 		T_OGL_SAFE(glDrawArrays(
 			primitiveType,
 			primitives.offset,

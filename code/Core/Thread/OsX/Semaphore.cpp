@@ -38,19 +38,16 @@ Semaphore::~Semaphore()
 bool Semaphore::wait(int32_t timeout)
 {
 	InternalData* data = reinterpret_cast< InternalData* >(m_handle);
-
-	int rc = pthread_mutex_lock(&data->outer);
-	T_ASSERT(rc == 0);
-
+	while (pthread_mutex_lock(&data->outer) != 0)
+		;
 	return true;
 }
 
 void Semaphore::release()
 {
 	InternalData* data = reinterpret_cast< InternalData* >(m_handle);
-
-	int rc = pthread_mutex_unlock(&data->outer);
-	T_ASSERT(rc == 0);
+	while (pthread_mutex_unlock(&data->outer) != 0)
+		;
 }
 
 }
