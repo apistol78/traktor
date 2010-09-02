@@ -1,7 +1,6 @@
 #if defined(_WIN32)
 #	include <windows.h>
 #endif
-#include <steam/steam_api.h>
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
