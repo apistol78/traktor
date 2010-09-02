@@ -1,6 +1,7 @@
 #ifndef traktor_online_SessionManagerSteam_H
 #define traktor_online_SessionManagerSteam_H
 
+#include <steam/steam_api.h>
 #include "Online/ISessionManager.h"
 
 // import/export mechanism.
