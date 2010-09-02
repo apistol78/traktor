@@ -11,6 +11,13 @@ namespace traktor
 class Database;
 
 	}
+	
+	namespace editor
+	{
+	
+class IPipelineDepends;
+	
+	}
 
 	namespace render
 	{
@@ -37,6 +44,8 @@ public:
 	MaterialShaderGenerator(db::Database* database);
 
 	Ref< render::ShaderGraph > generate(const model::Material& material) const;
+	
+	static void addDependencies(editor::IPipelineDepends* pipelineDepends);
 
 private:
 	Ref< db::Database > m_database;

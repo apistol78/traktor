@@ -176,6 +176,9 @@ bool MeshPipeline::buildDependencies(
 	}
 
 	pipelineDepends->addDependency(vertexShaderGuid, editor::PdfUse);
+	
+	// Add dependencies to material generator fragments.
+	MaterialShaderGenerator::addDependencies(pipelineDepends);
 
 	// Add dependencies to "fixed" material shaders.
 	const std::map< std::wstring, Guid >& materialShaders = asset->getMaterialShaders();

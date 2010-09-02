@@ -1,4 +1,5 @@
 #include "Database/Database.h"
+#include "Editor/IPipelineDepends.h"
 #include "Mesh/Editor/MaterialShaderGenerator.h"
 #include "Model/Material.h"
 #include "Render/Resource/FragmentLinker.h"
@@ -118,6 +119,24 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(const model::Materi
 	}
 
 	return materialShaderGraph;
+}
+
+void MaterialShaderGenerator::addDependencies(editor::IPipelineDepends* pipelineDepends)
+{
+	pipelineDepends->addDependency(c_materialShader, editor::PdfUse);
+	pipelineDepends->addDependency(c_tplDiffuseParams, editor::PdfUse);
+	pipelineDepends->addDependency(c_tplLight, editor::PdfUse);
+	pipelineDepends->addDependency(c_tplNormalParams, editor::PdfUse);
+	pipelineDepends->addDependency(c_tplOutput, editor::PdfUse);
+	pipelineDepends->addDependency(c_tplSpecularParams, editor::PdfUse);
+	pipelineDepends->addDependency(c_tplVertexParams, editor::PdfUse);
+	pipelineDepends->addDependency(c_implDiffuseConst, editor::PdfUse);
+	pipelineDepends->addDependency(c_implLight, editor::PdfUse);
+	pipelineDepends->addDependency(c_implNormalConst, editor::PdfUse);
+	pipelineDepends->addDependency(c_implOutputOpaque, editor::PdfUse);
+	pipelineDepends->addDependency(c_implOutputTransparent, editor::PdfUse);
+	pipelineDepends->addDependency(c_implSpecularConst, editor::PdfUse);
+	pipelineDepends->addDependency(c_implVertex, editor::PdfUse);
 }
 
 	}
