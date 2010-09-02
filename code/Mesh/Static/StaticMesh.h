@@ -76,6 +76,9 @@ private:
 	resource::Proxy< render::Shader > m_shader;
 	Ref< render::Mesh > m_mesh;
 	std::map< render::handle_t, std::vector< Part > > m_parts;
+#if defined(_DEBUG)
+	std::string m_name;
+#endif
 };
 
 	}

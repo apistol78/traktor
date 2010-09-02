@@ -16,6 +16,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.SkinnedMeshResource", 2, SkinnedMeshResource, IMeshResource)
 
 Ref< IMesh > SkinnedMeshResource::createMesh(
+	const std::wstring& name,
 	IStream* dataStream,
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem,

@@ -26,6 +26,7 @@ void* cglwCreateContext(void* nativeWindowHandle, void* sharedContext, int depth
 	{
 		NSOpenGLPFADoubleBuffer,
 		NSOpenGLPFAAccelerated,
+		NSOpenGLPFANoRecovery,
 		nil
 	};
 	
@@ -107,6 +108,14 @@ void cglwSwapBuffers(void* context, bool waitVBlank)
 		}
 		[wrc->context flushBuffer];
 	}
+}
+
+bool cglwCheckHardwarePath()
+{
+	GLint fragmentGPUProcessing, vertexGPUProcessing;
+	CGLGetParameter(CGLGetCurrentContext(), kCGLCPGPUFragmentProcessing, &fragmentGPUProcessing);
+	CGLGetParameter(CGLGetCurrentContext(), kCGLCPGPUVertexProcessing, &vertexGPUProcessing);
+	return bool(fragmentGPUProcessing && vertexGPUProcessing);
 }
 	
 	}

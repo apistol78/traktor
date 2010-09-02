@@ -40,7 +40,9 @@ public:
 	bool inVertex() const;
 
 	bool inFragment() const;
-
+	
+	bool allocateInterpolator(int32_t width, int32_t& outId, int32_t& outOffset);
+	
 	GlslShader& getVertexShader();
 
 	GlslShader& getFragmentShader();
@@ -63,6 +65,7 @@ private:
 	GlslEmitter m_emitter;
 	RenderState m_renderState;
 	int32_t m_nextStage;
+	std::vector< uint8_t > m_interpolatorMap;
 	std::map< std::wstring, int32_t > m_samplerTextures;
 };
 
