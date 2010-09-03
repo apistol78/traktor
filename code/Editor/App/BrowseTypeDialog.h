@@ -13,12 +13,11 @@ class Settings;
 
 class TreeView;
 class TreeViewItem;
-class ListView;
 
 		namespace custom
 		{
 
-class MiniButton;
+class PreviewList;
 
 		}
 	}
@@ -40,18 +39,14 @@ public:
 private:
 	Ref< Settings > m_settings;
 	Ref< ui::TreeView > m_categoryTree;
-	Ref< ui::ListView > m_typeList;
-	Ref< ui::custom::MiniButton > m_buttonIcon;
-	Ref< ui::custom::MiniButton > m_buttonSmall;
-	std::wstring m_typeName;
+	Ref< ui::custom::PreviewList > m_typeList;
+	const TypeInfo* m_type;
 
 	void eventDialogClick(ui::Event* event);
 
 	void eventTreeItemSelected(ui::Event* event);
 
 	void eventListDoubleClick(ui::Event* event);
-
-	void eventButtonClick(ui::Event* event);
 };
 
 	}

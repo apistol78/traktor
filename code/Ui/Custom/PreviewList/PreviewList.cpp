@@ -51,6 +51,20 @@ Ref< PreviewItems > PreviewList::getItems() const
 	return m_items;
 }
 
+PreviewItem* PreviewList::getSelectedItem() const
+{
+	if (!m_items)
+		return 0;
+		
+	for (int32_t i = 0; i < m_items->count(); ++i)
+	{
+		if (m_items->get(i)->isSelected())
+			return m_items->get(i);
+	}
+	
+	return 0;
+}
+
 void PreviewList::addSelectEventHandler(EventHandler* eventHandler)
 {
 	addEventHandler(EiSelectionChange, eventHandler);
