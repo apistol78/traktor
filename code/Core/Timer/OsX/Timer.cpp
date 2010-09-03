@@ -9,7 +9,7 @@ namespace traktor
 
 double absoluteToSeconds(uint64_t abs)
 {
-	static mach_timebase_info_data_t tb;
+	static mach_timebase_info_data_t tb = { 0, 0 };
 	if (tb.denom == 0)
 		mach_timebase_info(&tb);
 	uint64_t nano = abs * tb.numer / tb.denom;
