@@ -25,7 +25,7 @@ PipelineFactory::PipelineFactory(const Settings* settings)
 			if (pipeline->create(&pipelineSettings))
 				m_pipelines.push_back(std::make_pair(
 				pipeline,
-				pipelineSettings.getHash()
+				pipelineSettings.getHash() + (*i)->getVersion()
 			));
 			else
 				log::error << L"Failed to create pipeline \"" << type_name(pipeline) << L"\"" << Endl;
