@@ -18,11 +18,10 @@ float frac(float v)
 
 		}
 
-AlignedVector< Raster::spanline_t > Raster::ms_spanlines;
-
 Raster::Raster(Image* image)
 :	m_image(image)
 {
+	m_spanlines.resize(m_image->getHeight());
 }
 
 void Raster::drawLine(int32_t x0, int32_t y0, int32_t x1, int32_t y1, const Color& color)
@@ -32,7 +31,7 @@ void Raster::drawLine(int32_t x0, int32_t y0, int32_t x1, int32_t y1, const Colo
 
 	drawPixel(x0, y0, color);
 	
-	if (abs(dx) > abs(dy) && dx != 0)
+	if (std::abs(dx) > std::abs(dy) && dx != 0)
 	{
 		if (dx < 0)
 		{
@@ -147,7 +146,7 @@ void Raster::drawFilledCircle(int32_t x, int32_t y, int32_t radius, const Color&
 {
 	for (int32_t yy = -radius; yy <= radius; ++yy)
 	{
-		int32_t xx = (int32_t)(sqrt(float(radius * radius - yy * yy)) + 0.5f);
+		int32_t xx = (int32_t)(std::sqrt(float(radius * radius - yy * yy)) + 0.5f);
 
 		int32_t x1 = x - xx;
 		int32_t x2 = x + xx;
@@ -186,8 +185,6 @@ void Raster::drawPolygon(const Vector2* points, uint32_t npoints, const Color& c
 {
 	int32_t mny = m_image->getHeight() - 1;
 	int32_t mxy = 0;
-
-	ms_spanlines.resize(m_image->getHeight());
 
 	float px1 = points[0].x;
 	float py1 = points[0].y;
@@ -241,7 +238,7 @@ void Raster::drawPolygon(const Vector2* points, uint32_t npoints, const Color& c
 		for (int32_t y = iy1; y < iy2; ++y)
 		{
 			Span span = { x1, fillDelta };
-			insertSpan(ms_spanlines[y], span);
+			insertSpan(m_spanlines[y], span);
 			x1 += dx;
 		}
 
@@ -251,7 +248,7 @@ void Raster::drawPolygon(const Vector2* points, uint32_t npoints, const Color& c
 
 	for (int32_t y = mny; y < mxy; ++y)
 	{
-		spanline_t& spanline = ms_spanlines[y];
+		spanline_t& spanline = m_spanlines[y];
 
 		int32_t spansize = int32_t(spanline.size());
 		if (spansize <= 1)

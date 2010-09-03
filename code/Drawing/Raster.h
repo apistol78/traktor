@@ -57,7 +57,7 @@ private:
 	typedef AlignedVector< Span > spanline_t;
 
 	Ref< Image > m_image;
-	static AlignedVector< spanline_t > ms_spanlines;
+	AlignedVector< Raster::spanline_t > m_spanlines;
 
 	void insertSpan(spanline_t& spanline, const Span& span) const;
 };

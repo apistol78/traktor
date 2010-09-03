@@ -23,6 +23,7 @@
 #include "Database/Local/LocalDatabase.h"
 #include "Editor/Assets.h"
 #include "Editor/IPipeline.h"
+#include "Editor/Pipeline/FilePipelineCache.h"
 #include "Editor/Pipeline/MemCachedPipelineCache.h"
 #include "Editor/Pipeline/PipelineBuilder.h"
 #include "Editor/Pipeline/PipelineDb.h"
@@ -130,7 +131,10 @@ int main(int argc, const char** argv)
 	}
 
 	if (cmdLine.hasOption('n'))
+	{
 		settings->setProperty< PropertyBoolean >(L"Pipeline.MemCached", false);
+		settings->setProperty< PropertyBoolean >(L"Pipeline.FileCache", false);
+	}
 
 	std::vector< std::wstring > modules = settings->getProperty< PropertyStringArray >(L"Editor.Modules");
 	for (std::vector< std::wstring >::const_iterator i = modules.begin(); i != modules.end(); ++i)
@@ -176,6 +180,15 @@ int main(int argc, const char** argv)
 		if (!pipelineCache->create(settings))
 		{
 			traktor::log::warning << L"Unable to create pipeline cache; cache disabled" << Endl;
+			pipelineCache = 0;
+		}
+	}
+	if (settings->getProperty< PropertyBoolean >(L"Pipeline.FileCache", false))
+	{
+		pipelineCache = new editor::FilePipelineCache();
+		if (!pipelineCache->create(settings))
+		{
+			traktor::log::warning << L"Unable to create pipeline file cache; cache disabled" << Endl;
 			pipelineCache = 0;
 		}
 	}

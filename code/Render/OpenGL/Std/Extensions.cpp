@@ -20,6 +20,7 @@ PFNGLCOMPILESHADERARBPROC glCompileShaderARB = 0;
 PFNGLCREATEPROGRAMOBJECTARBPROC glCreateProgramObjectARB = 0;
 PFNGLATTACHOBJECTARBPROC glAttachObjectARB = 0;
 PFNGLLINKPROGRAMARBPROC glLinkProgramARB = 0;
+PFNGLVALIDATEPROGRAMARBPROC glValidateProgramARB = 0;
 PFNGLUSEPROGRAMOBJECTARBPROC glUseProgramObjectARB = 0;
 PFNGLGETINFOLOGARBPROC glGetInfoLogARB = 0;
 PFNGLGETOBJECTPARAMETERIVARBPROC glGetObjectParameterivARB = 0;
@@ -133,6 +134,7 @@ bool opengl_initialize_extensions()
 	RESOLVE(glCreateProgramObjectARB);
 	RESOLVE(glAttachObjectARB);
 	RESOLVE(glLinkProgramARB);
+	RESOLVE(glValidateProgramARB);
 	RESOLVE(glUseProgramObjectARB);
 	RESOLVE(glGetInfoLogARB);
 	RESOLVE(glGetObjectParameterivARB);
