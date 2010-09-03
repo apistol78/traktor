@@ -248,6 +248,55 @@ bool emitDiv(HlslContext& cx, Div* node)
 	return true;
 }
 
+bool emitDiscard(HlslContext& cx, Discard* node)
+{
+	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
+
+	// Emit input and reference branches.
+	HlslVariable* in = cx.emitInput(node, L"Input");
+	HlslVariable* ref = cx.emitInput(node, L"Reference");
+	if (!in || !ref)
+		return false;
+
+	f << L"[branch]" << Endl;
+
+	// Create condition statement.
+	switch (node->getOperator())
+	{
+	case Conditional::CoLess:
+		f << L"if (" << in->getName() << L" >= " << ref->getName() << L")" << Endl;
+		break;
+	case Conditional::CoLessEqual:
+		f << L"if (" << in->getName() << L" > " << ref->getName() << L")" << Endl;
+		break;
+	case Conditional::CoEqual:
+		f << L"if (" << in->getName() << L" != " << ref->getName() << L")" << Endl;
+		break;
+	case Conditional::CoNotEqual:
+		f << L"if (" << in->getName() << L" == " << ref->getName() << L")" << Endl;
+		break;
+	case Conditional::CoGreater:
+		f << L"if (" << in->getName() << L" <= " << ref->getName() << L")" << Endl;
+		break;
+	case Conditional::CoGreaterEqual:
+		f << L"if (" << in->getName() << L" < " << ref->getName() << L")" << Endl;
+		break;
+	default:
+		T_ASSERT (0);
+	}
+
+	f << L"\tdiscard;" << Endl;
+
+	HlslVariable* pass = cx.emitInput(node, L"Pass");
+	if (!pass)
+		return false;
+
+	HlslVariable* out = cx.emitOutput(node, L"Output", pass->getType());
+	assign(f, out) << pass->getName() << L";" << Endl;
+
+	return true;
+}
+
 bool emitDot(HlslContext& cx, Dot* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
@@ -1190,6 +1239,14 @@ bool emitTan(HlslContext& cx, Tan* node)
 	return true;
 }
 
+bool emitTargetSize(HlslContext& cx, TargetSize* node)
+{
+	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
+	HlslVariable* out = cx.emitOutput(node, L"Output", HtFloat2);
+	assign(f, out) << L"_dx10_targetSize;";
+	return true;
+}
+
 bool emitTexture(HlslContext& cx, Texture* node)
 {
 	std::wstring parameterName = getParameterNameFromGuid(node->getExternal());
@@ -1412,6 +1469,7 @@ HlslEmitter::HlslEmitter()
 	m_emitters[&type_of< Cross >()] = new EmitterCast< Cross >(emitCross);
 	m_emitters[&type_of< Derivative >()] = new EmitterCast< Derivative >(emitDerivative);
 	m_emitters[&type_of< Div >()] = new EmitterCast< Div >(emitDiv);
+	m_emitters[&type_of< Discard >()] = new EmitterCast< Discard >(emitDiscard);
 	m_emitters[&type_of< Dot >()] = new EmitterCast< Dot >(emitDot);
 	m_emitters[&type_of< Exp >()] = new EmitterCast< Exp >(emitExp);
 	m_emitters[&type_of< Fraction >()] = new EmitterCast< Fraction >(emitFraction);
@@ -1444,6 +1502,7 @@ HlslEmitter::HlslEmitter()
 	m_emitters[&type_of< Swizzle >()] = new EmitterCast< Swizzle >(emitSwizzle);
 	m_emitters[&type_of< Switch >()] = new EmitterCast< Switch >(emitSwitch);
 	m_emitters[&type_of< Tan >()] = new EmitterCast< Tan >(emitTan);
+	m_emitters[&type_of< TargetSize >()] = new EmitterCast< TargetSize >(emitTargetSize);
 	m_emitters[&type_of< Texture >()] = new EmitterCast< Texture >(emitTexture);
 	m_emitters[&type_of< Transform >()] = new EmitterCast< Transform >(emitTransform);
 	m_emitters[&type_of< Transpose >()] = new EmitterCast< Transpose >(emitTranspose);
