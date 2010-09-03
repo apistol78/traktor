@@ -446,14 +446,11 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 
 			if (newInstanceDlg.showModal() == ui::DrOk)
 			{
-				std::wstring typeName = newInstanceDlg.getTypeName();
-				T_ASSERT (!typeName.empty());
+				const TypeInfo* type = newInstanceDlg.getType();
+				T_ASSERT (type);
 
 				std::wstring instanceName = newInstanceDlg.getInstanceName();
 				T_ASSERT (!instanceName.empty());
-
-				const TypeInfo* type = TypeInfo::find(typeName);
-				T_ASSERT (type);
 
 				Ref< ISerializable > data = dynamic_type_cast< ISerializable* >(type->createInstance());
 				T_ASSERT (data);

@@ -4,26 +4,21 @@
 #include "Core/Settings/Settings.h"
 #include "Editor/App/NewInstanceDialog.h"
 #include "I18N/Text.h"
-#include "Ui/TableLayout.h"
 #include "Ui/Bitmap.h"
-#include "Ui/Static.h"
-#include "Ui/TreeView.h"
-#include "Ui/TreeViewItem.h"
-#include "Ui/ListView.h"
-#include "Ui/ListViewItem.h"
-#include "Ui/ListViewItems.h"
-#include "Ui/Static.h"
 #include "Ui/Edit.h"
 #include "Ui/MethodHandler.h"
+#include "Ui/Static.h"
+#include "Ui/TableLayout.h"
+#include "Ui/TreeView.h"
+#include "Ui/TreeViewItem.h"
 #include "Ui/Events/CommandEvent.h"
 #include "Ui/Custom/Splitter.h"
-#include "Ui/Custom/MiniButton.h"
+#include "Ui/Custom/PreviewList/PreviewItem.h"
+#include "Ui/Custom/PreviewList/PreviewItems.h"
+#include "Ui/Custom/PreviewList/PreviewList.h"
 
 // Resources
 #include "Resources/Files.h"
-#include "Resources/New.h"
-#include "Resources/BigIcons.h"
-#include "Resources/SmallIcons.h"
 
 #pragma warning(disable: 4344)
 
@@ -31,11 +26,27 @@ namespace traktor
 {
 	namespace editor
 	{
+		namespace
+		{
+
+class TypeInfoWrapper : public Object
+{
+public:
+	const TypeInfo& m_typeInfo;
+
+	TypeInfoWrapper(const TypeInfo& typeInfo)
+	:	m_typeInfo(typeInfo)
+	{
+	}
+};
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.NewInstanceDialog", NewInstanceDialog, ui::ConfigDialog)
 
 NewInstanceDialog::NewInstanceDialog(Settings* settings)
 :	m_settings(settings)
+,	m_type(0)
 {
 }
 
@@ -75,25 +86,12 @@ bool NewInstanceDialog::create(ui::Widget* parent)
 	Ref< ui::Container > right = new ui::Container();
 	right->create(splitter, ui::WsNone, new ui::TableLayout(L"100%", L"22,100%", 0, 0));
 
-	Ref< ui::Container > rightTop = new ui::Container();
-	rightTop->create(right, ui::WsNone, new ui::TableLayout(L"100%,*,*", L"100%", 0, 0));
-
 	Ref< ui::Static > listLabel = new ui::Static();
-	listLabel->create(rightTop, i18n::Text(L"NEW_INSTANCE_TYPES"));
+	listLabel->create(right, i18n::Text(L"NEW_INSTANCE_TYPES"));
 
-	m_buttonIcon = new ui::custom::MiniButton();
-	m_buttonIcon->create(rightTop, ui::Bitmap::load(c_ResourceBigIcons, sizeof(c_ResourceBigIcons), L"png"));
-	m_buttonIcon->addClickEventHandler(ui::createMethodHandler(this, &NewInstanceDialog::eventButtonClick));
-
-	m_buttonSmall = new ui::custom::MiniButton();
-	m_buttonSmall->create(rightTop, ui::Bitmap::load(c_ResourceSmallIcons, sizeof(c_ResourceSmallIcons), L"png"));
-	m_buttonSmall->addClickEventHandler(ui::createMethodHandler(this, &NewInstanceDialog::eventButtonClick));
-
-	int32_t iconSize = m_settings->getProperty< PropertyInteger >(L"Editor.NewInstance.IconSize", 0);
-
-	m_typeList = new ui::ListView();
-	m_typeList->create(right, ui::WsClientBorder | (iconSize == 0 ? ui::ListView::WsIconNormal : ui::ListView::WsList));
-	m_typeList->addImage(ui::Bitmap::load(c_ResourceNew, sizeof(c_ResourceNew), L"png"), 1);
+	m_typeList = new ui::custom::PreviewList();
+	if (!m_typeList->create(right, ui::WsClientBorder | ui::WsDoubleBuffer))
+		return false;
 
 	Ref< ui::Container > bottom = new ui::Container();
 	bottom->create(this, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", 0, 4));
@@ -131,17 +129,15 @@ bool NewInstanceDialog::create(ui::Widget* parent)
 			group = child;
 		}
 
-		Ref< ui::ListViewItems > items = group->getData< ui::ListViewItems >(L"ITEMS");
+		Ref< ui::custom::PreviewItems > items = group->getData< ui::custom::PreviewItems >(L"ITEMS");
 		if (!items)
 		{
-			items = new ui::ListViewItems();
+			items = new ui::custom::PreviewItems();
 			group->setData(L"ITEMS", items);
 		}
 
-		Ref< ui::ListViewItem > item = new ui::ListViewItem();
-		item->setImage(0, 0);
-		item->setText(0, className);
-		item->setText(1, type->getName());
+		Ref< ui::custom::PreviewItem > item = new ui::custom::PreviewItem(className);
+		item->setData(L"TYPE", new TypeInfoWrapper(*type));
 		
 		items->add(item);
 	}
@@ -152,9 +148,9 @@ bool NewInstanceDialog::create(ui::Widget* parent)
 	return true;
 }
 
-const std::wstring& NewInstanceDialog::getTypeName() const
+const TypeInfo* NewInstanceDialog::getType() const
 {
-	return m_typeName;
+	return m_type;
 }
 
 const std::wstring& NewInstanceDialog::getInstanceName() const
@@ -164,11 +160,16 @@ const std::wstring& NewInstanceDialog::getInstanceName() const
 
 void NewInstanceDialog::eventDialogClick(ui::Event* event)
 {
-	Ref< ui::ListViewItem > item = m_typeList->getSelectedItem();
+	Ref< ui::custom::PreviewItem > item = m_typeList->getSelectedItem();
 	if (!item)
 		return;
 
-	m_typeName = item->getText(1);
+	TypeInfoWrapper* typeInfoWrapper = item->getData< TypeInfoWrapper >(L"TYPE");
+	if (typeInfoWrapper)
+		m_type = &typeInfoWrapper->m_typeInfo;
+	else
+		m_type = 0;
+
 	m_instanceName = m_editInstanceName->getText();
 }
 
@@ -179,25 +180,11 @@ void NewInstanceDialog::eventTreeItemSelected(ui::Event* event)
 	);
 	if (item)
 	{
-		Ref< ui::ListViewItems > items = item->getData< ui::ListViewItems >(L"ITEMS");
+		Ref< ui::custom::PreviewItems > items = item->getData< ui::custom::PreviewItems >(L"ITEMS");
 		m_typeList->setItems(items);
 	}
 	else
 		m_typeList->setItems(0);
-}
-
-void NewInstanceDialog::eventButtonClick(ui::Event* event)
-{
-	if (event->getSender() == m_buttonIcon)
-	{
-		m_typeList->setStyle(ui::ListView::WsIconNormal | ui::WsClientBorder);
-		m_settings->setProperty< PropertyInteger >(L"Editor.NewInstance.IconSize", 0);
-	}
-	else
-	{
-		m_typeList->setStyle(ui::ListView::WsList | ui::WsClientBorder);
-		m_settings->setProperty< PropertyInteger >(L"Editor.NewInstance.IconSize", 1);
-	}
 }
 
 	}

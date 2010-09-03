@@ -18,7 +18,7 @@ class Edit;
 		namespace custom
 		{
 
-class MiniButton;
+class PreviewList;
 
 		}
 	}
@@ -35,25 +35,21 @@ public:
 
 	bool create(ui::Widget* parent);
 
-	const std::wstring& getTypeName() const;
+	const TypeInfo* getType() const;
 
 	const std::wstring& getInstanceName() const;
 
 private:
 	Ref< Settings > m_settings;
 	Ref< ui::TreeView > m_categoryTree;
-	Ref< ui::ListView > m_typeList;
-	Ref< ui::custom::MiniButton > m_buttonIcon;
-	Ref< ui::custom::MiniButton > m_buttonSmall;
+	Ref< ui::custom::PreviewList > m_typeList;
 	Ref< ui::Edit > m_editInstanceName;
-	std::wstring m_typeName;
+	const TypeInfo* m_type;
 	std::wstring m_instanceName;
 
 	void eventDialogClick(ui::Event* event);
 
 	void eventTreeItemSelected(ui::Event* event);
-
-	void eventButtonClick(ui::Event* event);
 };
 
 	}

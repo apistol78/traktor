@@ -31,6 +31,8 @@ public:
 	void setItems(PreviewItems* items);
 
 	Ref< PreviewItems > getItems() const;
+	
+	PreviewItem* getSelectedItem() const;
 
 	void addSelectEventHandler(EventHandler* eventHandler);
 
