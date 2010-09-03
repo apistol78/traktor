@@ -70,6 +70,23 @@ void PreviewItem::paint(AutoWidget* widget, Canvas& canvas, const Rect& rect)
 			BmAlpha
 		);
 	}
+	
+	// Ensure text fit within boundaries; if
+	// not append trailing "..."
+	std::wstring text = m_text;
+	Size textExtent = canvas.getTextExtent(text);
+	
+	if (textExtent.cx > rect.getWidth())
+	{
+		while (!text.empty())
+		{
+			text = text.substr(0, text.length() - 1);
+			textExtent = canvas.getTextExtent(text + L"...");
+			if (textExtent.cx <= rect.getWidth())
+				break;
+		}
+		text += L"...";
+	}
 
 	canvas.setForeground(Color(255, 255, 255));
 	canvas.drawText(
@@ -79,7 +96,7 @@ void PreviewItem::paint(AutoWidget* widget, Canvas& canvas, const Rect& rect)
 			rect.right,
 			rect.bottom
 		),
-		m_text,
+		text,
 		AnCenter,
 		AnTop
 	);

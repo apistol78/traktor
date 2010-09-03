@@ -196,6 +196,7 @@ void CanvasCocoa::drawText(const Point& at, const std::wstring& text)
 	
 	NSMutableDictionary* attributes = [NSMutableDictionary dictionary];
 	[attributes setObject: font forKey:NSFontAttributeName];
+	[attributes setObject: m_foregroundColor forKey: NSForegroundColorAttributeName];
 
 	NSString* str = makeNSString(text);
 	[str drawAtPoint: makeNSPoint(at) withAttributes: attributes];
@@ -206,8 +207,9 @@ void CanvasCocoa::drawText(const Rect& rc, const std::wstring& text, Align halig
 	NSFont* font = [NSFont controlContentFontOfSize: 11];
 	
 	NSMutableDictionary* attributes = [NSMutableDictionary dictionary];
-	[attributes setObject: font forKey:NSFontAttributeName];
-
+	[attributes setObject: font forKey: NSFontAttributeName];
+	[attributes setObject: m_foregroundColor forKey: NSForegroundColorAttributeName];
+	
 	NSString* str = makeNSString(text);
 	
 	NSRect nrc = makeNSRect(rc);
