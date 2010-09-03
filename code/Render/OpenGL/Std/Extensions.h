@@ -72,6 +72,9 @@ extern PFNGLBLENDEQUATIONEXTPROC glBlendEquationEXT;
 // GL_ARB_texture_compression
 extern PFNGLCOMPRESSEDTEXIMAGE2DPROC glCompressedTexImage2D;
 
+// ???
+extern PFNGLDRAWRANGEELEMENTSPROC glDrawRangeElements;
+
 // GL_ARB_half_float_vertex
 #	if !defined(GL_HALF_FLOAT_ARB)
 #		define GL_HALF_FLOAT_ARB 0x140B

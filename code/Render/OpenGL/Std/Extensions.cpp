@@ -68,6 +68,9 @@ PFNGLBLENDEQUATIONEXTPROC glBlendEquationEXT = 0;
 // GL_ARB_texture_compression
 PFNGLCOMPRESSEDTEXIMAGE2DPROC glCompressedTexImage2D = 0;
 
+// ???
+PFNGLDRAWRANGEELEMENTSPROC glDrawRangeElements = 0;
+
 #endif
 
 bool opengl_initialize_extensions()
@@ -177,6 +180,9 @@ bool opengl_initialize_extensions()
 
 	// GL_ARB_texture_compression
 	RESOLVE(glCompressedTexImage2D);
+
+	// ???
+	RESOLVE(glDrawRangeElements);
 
 #endif
 
