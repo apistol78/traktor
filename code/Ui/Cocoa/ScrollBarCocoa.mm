@@ -35,6 +35,7 @@ bool ScrollBarCocoa::create(IWidget* parent, int style)
 	];
 	[m_control setTarget: proxyTarget];
 	[m_control setAction: @selector(dispatchActionCallback:)];
+	[m_control setKnobProportion: float(m_page) / m_range];
 	[m_control setEnabled: YES];
 	
 	NSView* contentView = (NSView*)parent->getInternalHandle();
@@ -48,6 +49,7 @@ bool ScrollBarCocoa::create(IWidget* parent, int style)
 void ScrollBarCocoa::setRange(int range)
 {
 	m_range = range;
+	[m_control setKnobProportion: float(m_page) / m_range];
 }
 
 int ScrollBarCocoa::getRange() const
@@ -58,6 +60,7 @@ int ScrollBarCocoa::getRange() const
 void ScrollBarCocoa::setPage(int page)
 {
 	m_page = page;
+	[m_control setKnobProportion: float(m_page) / m_range];
 }
 
 int ScrollBarCocoa::getPage() const
