@@ -187,7 +187,12 @@ bool XmlPullParserImpl::parse()
 		if (XML_Parse(m_parser, (const char*)m_buf, nread, m_done) == XML_STATUS_ERROR)
 		{
 			log::error << L"XML parse error" << Endl;
-			return false;
+
+			XmlPullParser::Event& evt = allocEvent();
+			evt.type = XmlPullParser::EtInvalid;
+			pushEvent();
+			
+			return true;
 		}
 	}
 	else
