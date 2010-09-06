@@ -212,20 +212,20 @@ void CanvasCocoa::drawText(const Rect& rc, const std::wstring& text, Align halig
 	
 	NSString* str = makeNSString(text);
 	
-	NSRect nrc = makeNSRect(rc);
+	NSPoint ntl = makeNSPoint(rc.getTopLeft());
 	NSSize nsz = [str sizeWithAttributes: NULL];
 	
 	if (halign == AnCenter)
-		nrc.origin.x += (nrc.size.width - nsz.width) / 2;
+		ntl.x += (rc.getWidth() - nsz.width) / 2;
 	else if (halign == AnRight)
-		nrc.origin.x = (nrc.origin.x + nrc.size.width) - nsz.width;
+		ntl.x = (ntl.x + rc.getWidth()) - nsz.width;
 	
 	if (valign == AnCenter)
-		nrc.origin.y += (nrc.size.height - nsz.height) / 2;
+		ntl.y += (rc.getHeight() - nsz.height) / 2;
 	else if (valign == AnBottom)
-		nrc.origin.y = (nrc.origin.y + nrc.size.height) - nsz.height;
+		ntl.y = (ntl.y + rc.getHeight()) - nsz.height;
 
-	[str drawInRect: nrc withAttributes: attributes];
+	[str drawAtPoint: ntl withAttributes: attributes];
 }
 
 Size CanvasCocoa::getTextExtent(const std::wstring& text) const
