@@ -82,6 +82,10 @@ void InputMapping::update(float dT)
 		m_valueSet.set(i->first, value);
 	}
 	
+	// Prepare all sources for a new state.
+	for (std::map< std::wstring, Ref< IInputSource > >::iterator i = m_sources.begin(); i != m_sources.end(); ++i)
+		i->second->prepare(m_T, dT);
+	
 	// Input value set by updating all sources.
 	for (std::map< std::wstring, Ref< IInputSource > >::iterator i = m_sources.begin(); i != m_sources.end(); ++i)
 	{

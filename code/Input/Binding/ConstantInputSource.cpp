@@ -18,6 +18,10 @@ std::wstring ConstantInputSource::getDescription() const
 	return toString(m_value);
 }
 
+void ConstantInputSource::prepare(float T, float dT)
+{
+}
+
 float ConstantInputSource::read(float T, float dT)
 {
 	return m_value;

@@ -42,6 +42,12 @@ std::wstring CombinedInputSource::getDescription() const
 	return ss.str();
 }
 
+void CombinedInputSource::prepare(float T, float dT)
+{
+	for (RefArray< IInputSource >::iterator i = m_sources.begin(); i != m_sources.end(); ++i)
+		(*i)->prepare(T, dT);
+}
+
 float CombinedInputSource::read(float T, float dT)
 {
 	bool value = false;

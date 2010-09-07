@@ -36,6 +36,10 @@ std::wstring GenericInputSource::getDescription() const
 	return L"";
 }
 
+void GenericInputSource::prepare(float T, float dT)
+{
+}
+
 float GenericInputSource::read(float T, float dT)
 {
 	InputCategory category = m_data->getCategory();
