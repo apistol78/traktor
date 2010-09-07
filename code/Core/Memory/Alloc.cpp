@@ -23,7 +23,7 @@ void* Alloc::acquireAlign(size_t size, size_t align, const char* tag)
 #elif defined(_PS3)
 	void* ptr = std::memalign(align, size);
 #else
-	uint8_t* uptr = (uint8_t*)acquire(size + sizeof(size_t) + align);
+	uint8_t* uptr = (uint8_t*)acquire(size + sizeof(size_t) + align, tag);
 	if (!uptr)
 		return 0;
 	uint8_t* aptr = alignUp(uptr + sizeof(size_t), align);
