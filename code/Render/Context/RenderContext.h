@@ -47,8 +47,6 @@ class T_DLLCLASS RenderContext : public Object
 public:
 #if defined(WINCE)
 	enum { DefaultHeapSize = 512 * 1024 };
-#elif defined(_PS3)
-	enum { DefaultHeapSize = 2 * 1024 * 1024 };
 #else
 	enum { DefaultHeapSize = 4 * 1024 * 1024 };
 #endif
@@ -71,9 +69,8 @@ public:
 	template < typename ObjectType >
 	ObjectType* alloc()
 	{
-		ObjectType* object = reinterpret_cast< ObjectType* >(alloc(sizeof(ObjectType), alignOf< ObjectType >()));
-		new (object) ObjectType();
-		return object;
+		void* object = alloc(sizeof(ObjectType), alignOf< ObjectType >());
+		return new (object) ObjectType();
 	}
 
 	/*! \brief Allocate named object from context's heap. */
@@ -81,7 +78,7 @@ public:
 	ObjectType* alloc(const char* const name)
 	{
 		ObjectType* object = alloc< ObjectType >();
-#if defined T_USE_RENDERBLOCK_NAME
+#if defined(T_USE_RENDERBLOCK_NAME)
 		object->name = name;
 #endif
 		return object;

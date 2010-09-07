@@ -35,7 +35,7 @@ Ref< IFilterInstance > EqualizerFilter::createInstance() const
 	return instance;
 }
 
-void EqualizerFilter::apply(const ISoundMixer* mixer, IFilterInstance* instance, SoundBlock& outBlock) const
+void EqualizerFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
 {
 	EqualizerFilterInstance* efi = static_cast< EqualizerFilterInstance* >(instance);
 	for (uint32_t i = 0; i < outBlock.maxChannel; ++i)

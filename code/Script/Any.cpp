@@ -16,7 +16,7 @@ wchar_t* refStringCreate(const wchar_t* s)
 {
 	uint32_t len = wcslen(s);
 	
-	void* ptr = Alloc::acquire(sizeof(uint16_t) + (len + 1) * sizeof(wchar_t));
+	void* ptr = Alloc::acquire(sizeof(uint16_t) + (len + 1) * sizeof(wchar_t), T_FILE_LINE);
 	if (!ptr)
 		return 0;
 

@@ -15,7 +15,7 @@ namespace traktor
 class IAllocator : public IRefCount
 {
 public:
-	virtual void* alloc(size_t size, size_t align, const wchar_t* const tag) = 0;
+	virtual void* alloc(size_t size, size_t align, const char* const tag) = 0;
 	
 	virtual void free(void* ptr) = 0;
 };

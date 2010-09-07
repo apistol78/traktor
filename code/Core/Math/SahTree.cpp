@@ -269,7 +269,7 @@ void SahTree::buildNode(Node* node, int32_t depth)
 
 SahTree::Node* SahTree::allocNode()
 {
-	void* ptr = Alloc::acquireAlign(sizeof(Node), 16);
+	void* ptr = Alloc::acquireAlign(sizeof(Node), 16, T_FILE_LINE);
 	if (ptr)
 	{
 		Node* node = new (ptr) Node();

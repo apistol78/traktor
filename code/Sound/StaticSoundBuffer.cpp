@@ -17,12 +17,12 @@ struct StaticSoundBufferCursor : public RefCountImpl< ISoundBufferCursor >
 	StaticSoundBufferCursor(uint32_t channelsCount)
 	:	m_position(0)
 	{
-		const uint32_t blockSize = sizeof(float) * 4096;
+		const uint32_t blockSize = sizeof(float) * (4096 + 16);	// 16 samples padding.
 
 		std::memset(m_blocks, 0, sizeof(m_blocks));
 		for (uint32_t i = 0; i < channelsCount; ++i)
 		{
-			m_blocks[i] = (float*)Alloc::acquireAlign(blockSize, 16);
+			m_blocks[i] = (float*)Alloc::acquireAlign(blockSize, 16, T_FILE_LINE);
 			T_FATAL_ASSERT_M (m_blocks[i], L"Out of memory");
 
 			std::memset(m_blocks[i], 0, blockSize);
@@ -92,7 +92,7 @@ Ref< ISoundBufferCursor > StaticSoundBuffer::createCursor() const
 	return new StaticSoundBufferCursor(m_channelsCount);
 }
 
-bool StaticSoundBuffer::getBlock(const ISoundMixer* mixer, ISoundBufferCursor* cursor, SoundBlock& outBlock) const
+bool StaticSoundBuffer::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const
 {
 	StaticSoundBufferCursor* ssbc = static_cast< StaticSoundBufferCursor* >(cursor);
 
@@ -102,6 +102,7 @@ bool StaticSoundBuffer::getBlock(const ISoundMixer* mixer, ISoundBufferCursor* c
 
 	uint32_t samplesCount = m_samplesCount - position;
 	samplesCount = std::min< uint32_t >(samplesCount, outBlock.samplesCount);
+	samplesCount = alignUp(samplesCount, 4);
 	samplesCount = std::min< uint32_t >(samplesCount, 4096);
 
 	for (uint32_t i = 0; i < m_channelsCount; ++i)
@@ -111,7 +112,7 @@ bool StaticSoundBuffer::getBlock(const ISoundMixer* mixer, ISoundBufferCursor* c
 			ssbc->m_blocks[i][j] = float(m_samples[i][position + j] / 32767.0f);
 	}
 
-	outBlock.samplesCount = alignUp(samplesCount, 4);
+	outBlock.samplesCount = samplesCount;
 	outBlock.sampleRate = m_sampleRate;
 	outBlock.maxChannel = m_channelsCount;
 

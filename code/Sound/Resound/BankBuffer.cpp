@@ -56,7 +56,7 @@ Ref< ISoundBufferCursor > BankBuffer::createCursor() const
 	return bankCursor->m_grainCursor ? bankCursor : 0;
 }
 
-bool BankBuffer::getBlock(const ISoundMixer* mixer, ISoundBufferCursor* cursor, SoundBlock& outBlock) const
+bool BankBuffer::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
@@ -66,7 +66,6 @@ bool BankBuffer::getBlock(const ISoundMixer* mixer, ISoundBufferCursor* cursor, 
 	for (;;)
 	{
 		if (grain->getBlock(
-			mixer,
 			bankCursor->m_grainCursor,
 			outBlock
 		))

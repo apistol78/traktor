@@ -357,7 +357,7 @@ public:
 	{
 		if (capacity > m_capacity)
 		{
-			ItemType* data = reinterpret_cast< ItemType* >(Alloc::acquireAlign(capacity * sizeof(ItemType), Alignment));
+			ItemType* data = reinterpret_cast< ItemType* >(Alloc::acquireAlign(capacity * sizeof(ItemType), Alignment, T_FILE_LINE));
 
 			if (m_data)
 			{

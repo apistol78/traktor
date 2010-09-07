@@ -24,7 +24,7 @@ public:
 	
 	virtual ~FastAllocator();
 	
-	virtual void* alloc(size_t size, size_t align, const wchar_t* const tag);
+	virtual void* alloc(size_t size, size_t align, const char* const tag);
 	
 	virtual void free(void* ptr);
 	

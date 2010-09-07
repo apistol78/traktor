@@ -33,8 +33,8 @@ public:
 
 		m_stream = stream;
 
-		m_decoded[0] = (float*)Alloc::acquireAlign(sizeof(float) * 65536, 16);
-		m_decoded[1] = (float*)Alloc::acquireAlign(sizeof(float) * 65536, 16);
+		m_decoded[0] = (float*)Alloc::acquireAlign(sizeof(float) * 65536, 16, T_FILE_LINE);
+		m_decoded[1] = (float*)Alloc::acquireAlign(sizeof(float) * 65536, 16, T_FILE_LINE);
 
 		m_decoder = FLAC__stream_decoder_new();
 		if (!m_decoder)

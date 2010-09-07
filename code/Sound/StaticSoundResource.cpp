@@ -64,7 +64,7 @@ Ref< Sound > StaticSoundResource::createSound(resource::IResourceManager* resour
 		}
 		else
 		{
-			if (streamData->read(samples, samplesCount * sizeof(int16_t)) != samplesCount * sizeof(int16_t))
+			if (Reader(streamData).read(samples, samplesCount, sizeof(int16_t)) != samplesCount * sizeof(int16_t))
 			{
 				log::error << L"Failed to create sound; unable to read samples" << Endl;
 				return 0;

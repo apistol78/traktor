@@ -40,8 +40,8 @@ public:
 	{
 		m_stream = stream;
 
-		m_decoded[0] = (float*)Alloc::acquireAlign(DecodedBufferSize, 16);
-		m_decoded[1] = (float*)Alloc::acquireAlign(DecodedBufferSize, 16);
+		m_decoded[0] = (float*)Alloc::acquireAlign(DecodedBufferSize, 16, T_FILE_LINE);
+		m_decoded[1] = (float*)Alloc::acquireAlign(DecodedBufferSize, 16, T_FILE_LINE);
 
 		if (!m_decoded[0] || !m_decoded[1])
 			return false;

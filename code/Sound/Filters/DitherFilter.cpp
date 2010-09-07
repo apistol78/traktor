@@ -17,7 +17,7 @@ Ref< IFilterInstance > DitherFilter::createInstance() const
 	return 0;
 }
 
-void DitherFilter::apply(const ISoundMixer* mixer, IFilterInstance* instance, SoundBlock& outBlock) const
+void DitherFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
 {
 	for (uint32_t i = 0; i < outBlock.samplesCount; ++i)
 	{

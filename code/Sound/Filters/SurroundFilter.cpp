@@ -41,7 +41,7 @@ struct SurroundFilterInstance : public RefCountImpl< IFilterInstance >
 		const uint32_t bufferSize = 4096 * sizeof(float);
 		for (int i = 0; i < sizeof_array(m_buffer); ++i)
 		{
-			m_buffer[i] = (float*)Alloc::acquireAlign(bufferSize, 16);
+			m_buffer[i] = (float*)Alloc::acquireAlign(bufferSize, 16, T_FILE_LINE);
 			std::memset(m_buffer[i], 0, bufferSize);
 		}
 	}
@@ -100,15 +100,15 @@ Ref< IFilterInstance > SurroundFilter::createInstance() const
 	return new SurroundFilterInstance();
 }
 
-void SurroundFilter::apply(const ISoundMixer* mixer, IFilterInstance* instance, SoundBlock& outBlock) const
+void SurroundFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
 {
 	if (m_environment->getFullSurround())
-		applyFull(mixer, instance, outBlock);
+		applyFull(instance, outBlock);
 	else
-		applyStereo(mixer, instance, outBlock);
+		applyStereo(instance, outBlock);
 }
 
-void SurroundFilter::applyStereo(const ISoundMixer* mixer, IFilterInstance* instance, SoundBlock& outBlock) const
+void SurroundFilter::applyStereo(IFilterInstance* instance, SoundBlock& outBlock) const
 {
 	SurroundFilterInstance* sfi = static_cast< SurroundFilterInstance* >(instance);
 
@@ -147,11 +147,13 @@ void SurroundFilter::applyStereo(const ISoundMixer* mixer, IFilterInstance* inst
 		float angleOffset = angleDifference(c_speakersStereo[i].angle, speakerAngle);
 		float angleAtten = clamp(1.0f - angleOffset / c_angleCone, 0.0f, 1.0f);
 		float attenuation = innerAtten + (angleAtten * distanceAtten) * (1.0f - innerAtten);
-		mixer->mulConst(outBlock.samples[c_speakersStereo[i].channel], outBlock.samplesCount, attenuation);
+		float* samples = outBlock.samples[c_speakersStereo[i].channel];
+		for (uint32_t j = 0; j < outBlock.samplesCount; ++j)
+			samples[j] *= attenuation;
 	}
 }
 
-void SurroundFilter::applyFull(const ISoundMixer* mixer, IFilterInstance* instance, SoundBlock& outBlock) const
+void SurroundFilter::applyFull(IFilterInstance* instance, SoundBlock& outBlock) const
 {
 	SurroundFilterInstance* sfi = static_cast< SurroundFilterInstance* >(instance);
 
@@ -190,7 +192,9 @@ void SurroundFilter::applyFull(const ISoundMixer* mixer, IFilterInstance* instan
 		float angleOffset = angleDifference(c_speakersFull[i].angle, speakerAngle);
 		float angleAtten = clamp(1.0f - angleOffset / c_angleCone, 0.0f, 1.0f);
 		float attenuation = angleAtten * distanceAtten * (1.0f - c_speakersFull[i].inner * innerAtten);
-		mixer->mulConst(outBlock.samples[c_speakersFull[i].channel], outBlock.samplesCount, attenuation);
+		float* samples = outBlock.samples[c_speakersFull[i].channel];
+		for (uint32_t j = 0; j < outBlock.samplesCount; ++j)
+			samples[j] *= attenuation;
 	}
 }
 

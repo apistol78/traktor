@@ -20,11 +20,11 @@ namespace traktor
 class T_DLLCLASS Alloc
 {
 public:
-	static void* acquire(size_t size);
+	static void* acquire(size_t size, const char* tag);
 
 	static void free(void* ptr);
 
-	static void* acquireAlign(size_t size, size_t align);
+	static void* acquireAlign(size_t size, size_t align, const char* tag);
 
 	static void freeAlign(void* ptr);
 };

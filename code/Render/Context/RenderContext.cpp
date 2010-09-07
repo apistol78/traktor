@@ -55,7 +55,7 @@ RenderContext::RenderContext(uint32_t heapSize)
 ,	m_heapEnd(0)
 ,	m_heapPtr(0)
 {
-	m_heap = static_cast< uint8_t* >(Alloc::acquireAlign(heapSize, 16));
+	m_heap = static_cast< uint8_t* >(Alloc::acquireAlign(heapSize, 16, T_FILE_LINE));
 	T_FATAL_ASSERT_M (m_heap, L"Out of memory");
 	m_heapEnd = m_heap + heapSize;
 	m_heapPtr = m_heap;

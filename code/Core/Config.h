@@ -152,6 +152,12 @@ typedef long unsigned int uint64_t;
 #	define T_ANONYMOUS_VAR(T) T T_ANONYMOUS_VAR_1(_anonymous, __LINE__)
 #endif
 
+#if !defined(T_FILE_LINE)
+#	define T_FILE_LINE_2(x) #x
+#	define T_FILE_LINE_1(x) T_FILE_LINE_2(x)
+#	define T_FILE_LINE __FILE__ "(" T_FILE_LINE_1(__LINE__) ")"
+#endif
+
 template < typename T >
 uint32_t alignOf()
 {

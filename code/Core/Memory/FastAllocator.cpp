@@ -33,13 +33,13 @@ FastAllocator::~FastAllocator()
 	}
 }
 
-void* FastAllocator::alloc(size_t size, size_t align, const wchar_t* const tag)
+void* FastAllocator::alloc(size_t size, size_t align, const char* const tag)
 {
 	void* p = 0;
 	
 	if (size <= 256)
 	{
-		Acquire< CriticalSection > scope(m_lock);
+		T_ANONYMOUS_VAR(Acquire< CriticalSection >)(m_lock);
 
 		size_t qsize = (size + 15) & ~15UL;
 		size_t qid = (qsize >> 4) - 1;
@@ -65,7 +65,7 @@ void* FastAllocator::alloc(size_t size, size_t align, const wchar_t* const tag)
 void FastAllocator::free(void* ptr)
 {
 	{
-		Acquire< CriticalSection > scope(m_lock);
+		T_ANONYMOUS_VAR(Acquire< CriticalSection >)(m_lock);
 		for (size_t i = 0; i < sizeof_array(m_blockAlloc); ++i)
 		{
 			if (m_blockAlloc[i] && m_blockAlloc[i]->free(ptr))

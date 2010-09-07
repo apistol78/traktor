@@ -57,11 +57,13 @@ bool SoundSystem::create(const SoundSystemCreateDesc& desc)
 
 	m_samplesData = static_cast< float* >(Alloc::acquireAlign(
 		samplesPerBlock * samplesBlockCount * sizeof(float),
-		16
+		16,
+		T_FILE_LINE
 	));
 	if (!m_samplesData)
 		return false;
 
+	log::debug << L"Using " << samplesBlockCount << L" sample blocks" << Endl;
 	for (uint32_t i = 0; i < samplesBlockCount; ++i)
 		m_samplesBlocks.push_back(&m_samplesData[i * samplesPerBlock]);
 
@@ -274,7 +276,7 @@ void SoundSystem::threadMixer()
 		}
 		m_channelAttachLock.release();
 
-		// Synchronize mixer.
+		// Synchronize mixer as we've pending stretches etc from channels.
 		m_mixer->synchronize();
 
 		// Final combine channels into hardware channels using "combine matrix".
@@ -304,7 +306,7 @@ void SoundSystem::threadMixer()
 			}
 		}
 
-		// Synchronize mixer.
+		// Synchronize mixer as we want ready blocks passed to submission.
 		m_mixer->synchronize();
 
 		m_time += double(m_desc.driverDesc.frameSamples) / m_desc.driverDesc.sampleRate;

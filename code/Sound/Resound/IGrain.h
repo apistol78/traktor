@@ -25,7 +25,6 @@ class IResourceManager;
 	{
 
 class ISoundBufferCursor;
-class ISoundMixer;
 
 /*! \brief
  * \ingroup Sound
@@ -43,7 +42,7 @@ public:
 
 	virtual const IGrain* getCurrentGrain(ISoundBufferCursor* cursor) const = 0;
 
-	virtual bool getBlock(const ISoundMixer* mixer, ISoundBufferCursor* cursor, SoundBlock& outBlock) const = 0;
+	virtual bool getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const = 0;
 };
 
 	}
