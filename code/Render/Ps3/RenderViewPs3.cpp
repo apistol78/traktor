@@ -94,6 +94,7 @@ bool RenderViewPs3::create(MemoryHeap* memoryHeap, const RenderViewDefaultDesc& 
 	std::memset(&videoConfig, 0, sizeof(CellVideoOutConfiguration));
 	videoConfig.resolutionId = findResolutionId(m_width, m_height);
 	videoConfig.format = CELL_VIDEO_OUT_BUFFER_COLOR_FORMAT_X8R8G8B8;
+	videoConfig.aspect = CELL_VIDEO_OUT_ASPECT_AUTO;
 	videoConfig.pitch = m_colorPitch;
 
 	ret = cellVideoOutConfigure(CELL_VIDEO_OUT_PRIMARY, &videoConfig, NULL, 0);

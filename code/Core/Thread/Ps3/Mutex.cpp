@@ -35,8 +35,17 @@ Mutex::~Mutex()
 bool Mutex::wait(int32_t timeout)
 {
 	sys_mutex_t* mutex = reinterpret_cast< sys_mutex_t* >(m_handle);
-	int rc = sys_mutex_lock(*mutex, usecond_t(timeout) * 1000);
-	return bool(rc == CELL_OK);
+	if (timeout >= 0)
+	{
+		int rc = sys_mutex_lock(*mutex, usecond_t(timeout) * 1000);
+		return bool(rc == CELL_OK);
+	}
+	else
+	{
+		while (sys_mutex_lock(*mutex, SYS_NO_TIMEOUT) != CELL_OK)
+			;
+		return true;
+	}
 }
 
 void Mutex::release()

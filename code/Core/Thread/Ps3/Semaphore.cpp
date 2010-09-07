@@ -29,8 +29,17 @@ Semaphore::~Semaphore()
 bool Semaphore::wait(int32_t timeout)
 {
 	sys_lwmutex_t* mutex = reinterpret_cast< sys_lwmutex_t* >(m_handle);
-	int rc = sys_lwmutex_lock(mutex, usecond_t(timeout) * 1000);
-	return bool(rc == CELL_OK);
+	if (timeout >= 0)
+	{
+		int rc = sys_lwmutex_lock(mutex, usecond_t(timeout) * 1000);
+		return bool(rc == CELL_OK);
+	}
+	else
+	{
+		while (sys_lwmutex_lock(mutex, SYS_NO_TIMEOUT) != CELL_OK)
+			;
+		return true;
+	}
 }
 
 void Semaphore::release()

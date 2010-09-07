@@ -1,4 +1,5 @@
 #include <spu_printf.h>
+#include <sys/spu_initialize.h>
 #include "Core/Memory/Alloc.h"
 #include "Core/Singleton/SingletonManager.h"
 #include "Core/Thread/Ps3/Spurs/SpursJobQueue.h"
@@ -6,7 +7,7 @@
 
 #define SM_SPURS_PREFIX	"Traktor Spurs"
 #define SM_SPURS_SPU_COUNT 5
-#define	SM_SPURS_SPU_THREAD_GROUP_PRIORITY 250
+#define	SM_SPURS_SPU_THREAD_GROUP_PRIORITY 100
 #define	SM_SPURS_PPU_THREAD_PRIORITY 100
 
 namespace traktor
@@ -50,7 +51,11 @@ void SpursManager::destroy()
 SpursManager::SpursManager()
 :	m_spurs(0)
 {
+	sys_spu_initialize(6, 0);
+
+#if defined(_DEBUG)
 	spu_printf_initialize(1535, 0);
+#endif
 
 	m_spurs = (CellSpurs*)Alloc::acquireAlign(CELL_SPURS_SIZE, CELL_SPURS_ALIGN, T_FILE_LINE);
 	T_FATAL_ASSERT (m_spurs);
@@ -61,7 +66,7 @@ SpursManager::SpursManager()
 		SM_SPURS_SPU_COUNT,
 		SM_SPURS_SPU_THREAD_GROUP_PRIORITY,
 		SM_SPURS_PPU_THREAD_PRIORITY,
-		true
+		false
 	);
 	cellSpursAttributeSetNamePrefix(&attributeSpurs, SM_SPURS_PREFIX, strlen(SM_SPURS_PREFIX));
 	cellSpursAttributeEnableSpuPrintfIfAvailable(&attributeSpurs);

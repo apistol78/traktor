@@ -55,8 +55,10 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.SoundMixerPs3", SoundMixerPs3, ISoundMixe
 
 bool SoundMixerPs3::create()
 {
+#if !T_USE_PPU_MIXER
 	T_FATAL_ASSERT_M(sizeof(JobMC) == 128, L"Incorrect size of job descriptor; must be 128 bytes");
 	m_jobQueue = SpursManager::getInstance().createJobQueue(sizeof(JobMC), 512);
+#endif
 	m_mixer = new SoundMixer();
 	return true;
 }

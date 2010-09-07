@@ -28,6 +28,18 @@ const uint32_t c_cbSize = 256 * 1024;
 const uint32_t c_hostSize = 8 * 1024 * 1024;
 const uint32_t c_mainSize = 8 * 1024 * 1024;	//< RSX mapped main memory; used for dynamic index- and vertexbuffers.
 
+struct ResolutionDesc { int32_t width; int32_t height; int32_t colorBits; } c_resolutions[] =
+{
+	{ 1920, 1080, 24 },
+	{ 1280, 720, 24 },
+	{ 640, 480, 24 },
+	{ 720, 576, 24 },
+	{ 1600, 1080, 24 },
+	{ 1440, 1080, 24 },
+	{ 1280, 1080, 24 },
+	{ 960, 1080, 24 }
+};
+
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderSystemPs3", 0, RenderSystemPs3, IRenderSystem)
@@ -83,10 +95,20 @@ void RenderSystemPs3::destroy()
 
 uint32_t RenderSystemPs3::getDisplayModeCount() const
 {
-	return 1;
+	return sizeof_array(c_resolutions);
 }
 
 DisplayMode RenderSystemPs3::getDisplayMode(uint32_t index) const
+{
+	DisplayMode dm;
+	dm.width = c_resolutions[index].width;
+	dm.height = c_resolutions[index].height;
+	dm.refreshRate = 0;
+	dm.colorBits = c_resolutions[index].colorBits;
+	return dm;
+}
+
+DisplayMode RenderSystemPs3::getCurrentDisplayMode() const
 {
 	CellVideoOutState videoState;
 	CellVideoOutResolution videoResolution;
@@ -102,13 +124,9 @@ DisplayMode RenderSystemPs3::getDisplayMode(uint32_t index) const
 	dm.width = videoResolution.width;
 	dm.height = videoResolution.height;
 	dm.refreshRate = 0;
-	dm.colorBits = 0;
-	return dm;
-}
+	dm.colorBits = 24;
 
-DisplayMode RenderSystemPs3::getCurrentDisplayMode() const
-{
-	return getDisplayMode(0);
+	return dm;
 }
 
 bool RenderSystemPs3::handleMessages()
