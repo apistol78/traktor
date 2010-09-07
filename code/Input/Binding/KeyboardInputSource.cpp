@@ -44,28 +44,6 @@ private:
 	std::list< KeyboardInputSource* > m_sources;
 };
 
-class DeviceControlPred
-{
-public:
-	DeviceControlPred(const DeviceControl* dc)
-	:	m_dc(dc)
-	{
-	}
-	
-	bool operator () (const DeviceControl* dc) const
-	{
-		if (dc->getDevice() != m_dc->getDevice())
-			return false;
-		else if (dc->getControlType() != m_dc->getControlType())
-			return false;
-		else
-			return true;
-	}
-	
-private:
-	const DeviceControl* m_dc;
-};
-
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.KeyboardInputSource", KeyboardInputSource, Object)
@@ -74,15 +52,16 @@ KeyboardInputSource::KeyboardInputSource(
 	const std::vector< InputDefaultControlType >& controlTypes,
 	DeviceControlManager* deviceControlManager
 )
+:	m_deviceControlManager(deviceControlManager)
+,	m_deviceCount(0)
+,	m_state(false)
 {
 	for (std::vector< InputDefaultControlType >::const_iterator i = controlTypes.begin(); i != controlTypes.end(); ++i)
 	{
-		m_deviceControls.push_back(deviceControlManager->getDeviceControl(
-			CtKeyboard,
-			*i,
-			false,
-			0
-		));
+		Key key;
+		key.controlType = *i;
+		key.state = false;
+		m_keys.push_back(key);
 	}
 	KeyboardRegistry::getInstance().add(this);
 }
@@ -95,27 +74,61 @@ KeyboardInputSource::~KeyboardInputSource()
 std::wstring KeyboardInputSource::getDescription() const
 {
 	StringOutputStream ss;
-	for (RefArray< DeviceControl >::const_iterator i = m_deviceControls.begin(); i != m_deviceControls.end(); ++i)
+	for (std::vector< Key >::const_iterator i = m_keys.begin(); i != m_keys.end(); ++i)
 	{
-		if (i != m_deviceControls.begin())
+		if (i != m_keys.begin())
 			ss << L" + ";
-
-		std::wstring controlName = i->getControlName();
-		ss << controlName;
+			
+		for (RefArray< DeviceControl >::const_iterator j = i->deviceControls.begin(); j != i->deviceControls.end(); ++j)
+		{
+			std::wstring controlName = j->getControlName();
+			if (!controlName.empty())
+			{
+				ss << controlName;
+				break;
+			}
+		}
 	}
 	return ss.str();
 }
 
+void KeyboardInputSource::prepare(float T, float dT)
+{
+	// Check if number of connected keyboard devices has changed since last preparation.
+	int32_t deviceCount = m_deviceControlManager->getDeviceControlCount(CtKeyboard);
+	if (deviceCount != m_deviceCount)
+	{
+		for (std::vector< Key >::iterator i = m_keys.begin(); i != m_keys.end(); ++i)
+		{
+			i->deviceControls.resize(deviceCount);
+			for (int32_t j = 0; j < deviceCount; ++j)
+			{			
+				i->deviceControls[j] = m_deviceControlManager->getDeviceControl(
+					CtKeyboard,
+					i->controlType,
+					false,
+					j
+				);
+			}
+		}
+		m_deviceCount = deviceCount;
+	}
+	
+	// Update our local state; ie state without looking at other keyboard sources.
+	m_state = true;
+	for (std::vector< Key >::iterator i = m_keys.begin(); i != m_keys.end(); ++i)
+	{
+		i->state = false;
+		for (RefArray< DeviceControl >::const_iterator j = i->deviceControls.begin(); j != i->deviceControls.end(); ++j)
+			i->state |= asBoolean(j->getCurrentValue());
+		m_state &= i->state;
+	}
+}
+
 float KeyboardInputSource::read(float T, float dT)
 {
-	if (m_deviceControls.empty())
+	if (!m_state)
 		return 0.0f;
-		
-	for (RefArray< DeviceControl >::const_iterator i = m_deviceControls.begin(); i != m_deviceControls.end(); ++i)
-	{
-		if (!asBoolean((*i)->getCurrentValue()))
-			return 0.0f;
-	}
 	
 	// Our chain of controls are all active, ie all pressed.
 
@@ -125,41 +138,39 @@ float KeyboardInputSource::read(float T, float dT)
 	const std::list< KeyboardInputSource* >& otherSources = KeyboardRegistry::getInstance().get();
 	for (std::list< KeyboardInputSource* >::const_iterator i = otherSources.begin(); i != otherSources.end(); ++i)
 	{
-		if ((*i)->m_deviceControls.size() <= m_deviceControls.size())
+		if ((*i)->m_keys.size() <= m_keys.size())
+			continue;
+			
+		bool otherActive = (*i)->read(T, dT);
+		if (!otherActive)
 			continue;
 		
 		bool match = true;
-	
-		for (RefArray< DeviceControl >::const_iterator j = m_deviceControls.begin(); j != m_deviceControls.end(); ++j)
+		for (std::vector< Key >::iterator j = m_keys.begin(); j != m_keys.end(); ++j)
 		{
-			if (std::find_if((*i)->m_deviceControls.begin(), (*i)->m_deviceControls.end(), DeviceControlPred(*j)) == (*i)->m_deviceControls.end())
+			if (std::find((*i)->m_keys.begin(), (*i)->m_keys.end(), *j) == (*i)->m_keys.end())
 			{
 				match = false;
 				break;
 			}
 		}
 		
+		// Found other source which are active with all our our keys mapped; we
+		// cannot be as it contain more keys thus have higher priority.
 		if (match)
 		{
-			// Found other source with all our our keys mapped; if other source also
-			// active then we cannot be.
-			
-			for (RefArray< DeviceControl >::const_iterator j = (*i)->m_deviceControls.begin(); j != (*i)->m_deviceControls.end(); ++j)
-			{
-				if (!asBoolean((*j)->getCurrentValue()))
-				{
-					match = false;
-					break;
-				}
-			}
-			
-			if (match)
-				return 0.0f;
+			m_state = false;
+			break;
 		}
 	}
 	
 
-	return 1.0f;
+	return asFloat(m_state);
+}
+
+bool KeyboardInputSource::Key::operator == (const Key& rh) const
+{
+	return controlType == rh.controlType;
 }
 
 	}

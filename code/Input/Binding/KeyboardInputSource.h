@@ -35,11 +35,25 @@ public:
 	virtual ~KeyboardInputSource();
 	
 	virtual std::wstring getDescription() const;
+	
+	virtual void prepare(float T, float dT);
 
 	virtual float read(float T, float dT);
 	
 private:
-	RefArray< DeviceControl > m_deviceControls;
+	struct Key
+	{
+		InputDefaultControlType controlType;
+		RefArray< DeviceControl > deviceControls;
+		bool state;
+		
+		bool operator == (const Key& rh) const;
+	};
+	
+	Ref< DeviceControlManager > m_deviceControlManager;
+	int32_t m_deviceCount;
+	std::vector< Key > m_keys;
+	bool m_state;
 };
 
 	}

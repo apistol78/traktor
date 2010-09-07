@@ -34,6 +34,8 @@ public:
 
 	virtual std::wstring getDescription() const;
 	
+	virtual void prepare(float T, float dT);
+
 	virtual float read(float T, float dT);
 	
 private:
