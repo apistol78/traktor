@@ -71,7 +71,7 @@ private:
 	NSView* m_view;
 	NSColor* m_foregroundColor;
 	NSColor* m_backgroundColor;
-	int32_t m_clipStack;
+	bool m_haveClipper;
 };
 	
 	}
