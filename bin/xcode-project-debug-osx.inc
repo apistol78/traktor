@@ -1,1 +1,2 @@
 COPY_PHASE_STRIP = NO;
+SDKROOT = macosx10.5;
