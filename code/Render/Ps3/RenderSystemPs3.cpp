@@ -26,7 +26,7 @@ namespace traktor
 
 const uint32_t c_cbSize = 256 * 1024;
 const uint32_t c_hostSize = 8 * 1024 * 1024;
-const uint32_t c_mainSize = 8 * 1024 * 1024;
+const uint32_t c_mainSize = 8 * 1024 * 1024;	//< RSX mapped main memory; used for dynamic index- and vertexbuffers.
 
 		}
 
@@ -45,7 +45,7 @@ bool RenderSystemPs3::create(const RenderSystemCreateDesc& desc)
 	// Load A/V configuration module; necessary in order to change gamma.
 	cellSysmoduleLoadModule(CELL_SYSMODULE_AVCONF_EXT);
 
-	uint8_t* data = (uint8_t*)Alloc::acquireAlign(c_hostSize + c_mainSize, 1024 * 1024);
+	uint8_t* data = (uint8_t*)Alloc::acquireAlign(c_hostSize + c_mainSize, 1024 * 1024, T_FILE_LINE);
 	if (!data)
 		return 0;
 

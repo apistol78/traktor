@@ -9,8 +9,8 @@ void cellSpursJobQueueMain(CellSpursJobContext2* context, CellSpursJob256* job25
 {
 	sound::JobMC* job = (sound::JobMC*)job256;
 
-	static float lsb[1024 + 512] __attribute__((aligned(16)));
-	static float rsb[1024 + 512] __attribute__((aligned(16)));
+	static float lsb[2048] __attribute__((aligned(16)));
+	static float rsb[2048] __attribute__((aligned(16)));
 
 	cellDmaGet(
 		rsb,

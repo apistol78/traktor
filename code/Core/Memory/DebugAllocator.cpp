@@ -24,9 +24,9 @@ DebugAllocator::~DebugAllocator()
 		m_systemAllocator->free(i->top);
 }
 
-void* DebugAllocator::alloc(size_t size, size_t align, const wchar_t* const tag)
+void* DebugAllocator::alloc(size_t size, size_t align, const char* const tag)
 {
-	Acquire< CriticalSection > scope(m_lock);
+	T_ANONYMOUS_VAR(Acquire< CriticalSection >)(m_lock);
 
 	checkBlocks();
 
@@ -49,7 +49,7 @@ void* DebugAllocator::alloc(size_t size, size_t align, const wchar_t* const tag)
 
 void DebugAllocator::free(void* ptr)
 {
-	Acquire< CriticalSection > scope(m_lock);
+	T_ANONYMOUS_VAR(Acquire< CriticalSection >)(m_lock);
 
 	checkBlocks();
 

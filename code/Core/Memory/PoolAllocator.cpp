@@ -19,7 +19,7 @@ PoolAllocator::PoolAllocator(IAllocator* allocator, uint32_t totalSize)
 :	m_allocator(allocator)
 ,	m_totalSize(totalSize)
 {
-	m_head = static_cast< uint8_t* >(m_allocator->alloc(totalSize, 16, L"Pool"));
+	m_head = static_cast< uint8_t* >(m_allocator->alloc(totalSize, 16, T_FILE_LINE));
 	m_tail = m_head;
 	T_ASSERT (m_head);
 }
@@ -28,7 +28,7 @@ PoolAllocator::PoolAllocator(uint32_t totalSize)
 :	m_allocator(new StdAllocator())
 ,	m_totalSize(totalSize)
 {
-	m_head = static_cast< uint8_t* >(m_allocator->alloc(totalSize, 16, L"Pool"));
+	m_head = static_cast< uint8_t* >(m_allocator->alloc(totalSize, 16, T_FILE_LINE));
 	m_tail = m_head;
 	T_ASSERT (m_head);
 }

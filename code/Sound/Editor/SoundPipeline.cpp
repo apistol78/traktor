@@ -63,6 +63,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundPipeline", 7, SoundPipeline,
 SoundPipeline::SoundPipeline()
 :	m_sampleRate(44100)
 ,	m_enableDeltaCompression(false)
+,	m_enableZLibCompression(true)
 {
 }
 
@@ -71,6 +72,7 @@ bool SoundPipeline::create(const editor::IPipelineSettings* settings)
 	m_assetPath = settings->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
 	m_sampleRate = settings->getProperty< PropertyInteger >(L"SoundPipeline.SampleRate", m_sampleRate);
 	m_enableDeltaCompression = settings->getProperty< PropertyBoolean >(L"SoundPipeline.EnableDeltaCompression", false);
+	m_enableZLibCompression = settings->getProperty< PropertyBoolean >(L"SoundPipeline.EnableZLibCompression", true);
 	return true;
 }
 
@@ -259,6 +261,7 @@ bool SoundPipeline::buildOutput(
 
 			// Compress ZLib
 			Ref< DynamicMemoryStream > streamZLib = new DynamicMemoryStream(false, true);
+			if (m_enableZLibCompression)
 			{
 				Ref< compress::DeflateStream > deflateZLib = new compress::DeflateStream(streamZLib);
 				for (uint32_t i = 0; i < maxChannel; ++i)
@@ -288,7 +291,7 @@ bool SoundPipeline::buildOutput(
 			const std::vector< uint8_t >& zlibBuffer = streamZLib->getBuffer();
 			const std::vector< uint8_t >& deltaZLibBuffer = streamDeltaZLib->getBuffer();
 
-			if (m_enableDeltaCompression && deltaZLibBuffer.size() < zlibBuffer.size())
+			if (m_enableDeltaCompression && (deltaZLibBuffer.size() < zlibBuffer.size() || !m_enableZLibCompression))
 			{
 				log::info << L"Using Delta+ZLib, " << uint32_t(deltaZLibBuffer.size()) << L" / " << originalSize << L" byte(s)" << Endl;
 
@@ -299,7 +302,7 @@ bool SoundPipeline::buildOutput(
 					return false;
 				}
 			}
-			else if (zlibBuffer.size() < originalSize)
+			else if (m_enableZLibCompression && zlibBuffer.size() < originalSize)
 			{
 				log::info << L"Using ZLib, " << uint32_t(zlibBuffer.size()) << L" / " << originalSize << L" byte(s)" << Endl;
 

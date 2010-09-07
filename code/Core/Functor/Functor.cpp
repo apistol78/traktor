@@ -72,7 +72,7 @@ private:
 #endif
 
 	FunctorHeap()
-	:	m_block(Alloc::acquireAlign(MaxFunctorCount * MaxFunctorSize, 16))
+	:	m_block(Alloc::acquireAlign(MaxFunctorCount * MaxFunctorSize, 16, T_FILE_LINE))
 	,	m_blockAllocator(m_block, MaxFunctorCount, MaxFunctorSize)
 #if defined(_DEBUG)
 	,	m_count(0)

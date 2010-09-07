@@ -200,6 +200,7 @@ void ProgramParameters::setStencilReference(uint32_t stencilReference)
 
 void ProgramParameters::fixup(IProgram* program) const
 {
+	T_ASSERT (program);
 	for (uint8_t* parameter = m_parameterFirst; parameter < m_parameterLast; )
 	{
 		align< handle_t >(parameter);

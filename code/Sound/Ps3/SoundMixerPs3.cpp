@@ -43,7 +43,7 @@ static char* job_stretch_size = _binary_jqjob_Traktor_Sound_JobStretch_d_bin_siz
 
 #endif
 
-#define T_USE_PPU_MIXER	1
+#define T_USE_PPU_MIXER	0
 #define T_SPU_SYNCHRONIZED 0
 
 namespace traktor
@@ -56,7 +56,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.SoundMixerPs3", SoundMixerPs3, ISoundMixe
 bool SoundMixerPs3::create()
 {
 	T_FATAL_ASSERT_M(sizeof(JobMC) == 128, L"Incorrect size of job descriptor; must be 128 bytes");
-	m_jobQueue = SpursManager::getInstance().createJobQueue(sizeof(JobMC), 256);
+	m_jobQueue = SpursManager::getInstance().createJobQueue(sizeof(JobMC), 512);
 	m_mixer = new SoundMixer();
 	return true;
 }
@@ -178,16 +178,19 @@ void SoundMixerPs3::stretch(float* lsb, uint32_t lcount, const float* rsb, uint3
 
 void SoundMixerPs3::mute(float* sb, uint32_t count) const
 {
+#if !T_USE_PPU_MIXER
+	mulConst(sb, count, 0.0f);
+#else
 	m_mixer->mute(sb, count);
+#endif
 }
 
 void SoundMixerPs3::synchronize() const
 {
-#if !T_USE_PPU_MIXER
-#	if !T_SPU_SYNCHRONIZED
-	m_jobQueue->wait();
-#	endif
-#else
+#if !T_USE_PPU_MIXER && !T_SPU_SYNCHRONIZED
+	while (!m_jobQueue->wait())
+		;
+#elif T_USE_PPU_MIXER
 	m_mixer->synchronize();
 #endif
 }

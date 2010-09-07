@@ -1,9 +1,13 @@
 #include <algorithm>
 
+#if defined(_PS3)
+//#	define T_BULLET_USE_SPURS
+#endif
+
 #include <btBulletDynamicsCommon.h>
 #include <BulletCollision/CollisionDispatch/btConvexConvexAlgorithm.h>
 
-#if defined(_PS3)
+#if defined(T_BULLET_USE_SPURS)
 #	include <SpuDispatch/BulletCollisionSpursSupport.h>
 #	include <BulletMultiThreaded/SpuGatheringCollisionDispatcher.h>
 #endif
@@ -13,7 +17,7 @@
 #include "Core/Misc/Save.h"
 #include "Core/Thread/Acquire.h"
 
-#if defined(_PS3)
+#if defined(T_BULLET_USE_SPURS)
 #	include "Core/Thread/Ps3/Spurs/SpursManager.h"
 #endif
 
@@ -164,24 +168,20 @@ bool PhysicsManagerBullet::create(float simulationDeltaTime)
 	m_simulationDeltaTime = simulationDeltaTime;
 	m_configuration = new btDefaultCollisionConfiguration(info);
 	
-#if !defined(_PS3)
-
+#if !defined(T_BULLET_USE_SPURS)
 	m_dispatcher = new btCollisionDispatcher(m_configuration);
-
 #else
-
 	btThreadSupportInterface* threadSupport = new BulletCollisionSpursSupport(
 		SpursManager::getInstance().getSpurs(),
-		/*numSpuTasks*/4,
-		/*numSpuTasks*/4
+		SpursManager::getInstance().getSpuCount(),
+		SpursManager::getInstance().getSpuCount()
 	);
 
 	m_dispatcher = new SpuGatheringCollisionDispatcher(
 		threadSupport,
-		/*numSpuTasks*/4,
+		SpursManager::getInstance().getSpuCount(),
 		m_configuration
 	);
-
 #endif
 
 	m_broadphase = new btDbvtBroadphase();

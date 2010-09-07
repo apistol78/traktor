@@ -5,7 +5,7 @@
 #include "Core/Thread/Ps3/Spurs/SpursManager.h"
 
 #define SM_SPURS_PREFIX	"Traktor Spurs"
-#define SM_SPURS_SPU_COUNT 4
+#define SM_SPURS_SPU_COUNT 5
 #define	SM_SPURS_SPU_THREAD_GROUP_PRIORITY 250
 #define	SM_SPURS_PPU_THREAD_PRIORITY 100
 
@@ -28,6 +28,11 @@ CellSpurs* SpursManager::getSpurs() const
 	return m_spurs;
 }
 
+uint32_t SpursManager::getSpuCount() const
+{
+	return SM_SPURS_SPU_COUNT;
+}
+
 Ref< SpursJobQueue > SpursManager::createJobQueue(uint32_t descriptorSize, uint32_t submitCount)
 {
 	Ref< SpursJobQueue > jobQueue = new SpursJobQueue(m_spurs);
@@ -47,7 +52,7 @@ SpursManager::SpursManager()
 {
 	spu_printf_initialize(1535, 0);
 
-	m_spurs = (CellSpurs*)Alloc::acquireAlign(CELL_SPURS_SIZE, CELL_SPURS_ALIGN);
+	m_spurs = (CellSpurs*)Alloc::acquireAlign(CELL_SPURS_SIZE, CELL_SPURS_ALIGN, T_FILE_LINE);
 	T_FATAL_ASSERT (m_spurs);
 
 	CellSpursAttribute attributeSpurs;

@@ -47,8 +47,8 @@ ParameterCache::ParameterCache(IDirect3DDevice9* d3dDevice, float mipBias, DWORD
 ,	m_mipBias(mipBias)
 ,	m_maxAnisotropy(maxAnisotropy)
 {
-	m_vertexConstantsShadow.reset((float*)Alloc::acquireAlign(VertexConstantCount * 4 * sizeof(float), 16));
-	m_pixelConstantsShadow.reset((float*)Alloc::acquireAlign(PixelConstantCount * 4 * sizeof(float), 16));
+	m_vertexConstantsShadow.reset((float*)Alloc::acquireAlign(VertexConstantCount * 4 * sizeof(float), 16, T_FILE_LINE));
+	m_pixelConstantsShadow.reset((float*)Alloc::acquireAlign(PixelConstantCount * 4 * sizeof(float), 16, T_FILE_LINE));
 
 	lostDevice();
 	resetDevice(d3dDevice);

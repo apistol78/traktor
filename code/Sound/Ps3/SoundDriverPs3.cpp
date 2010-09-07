@@ -46,54 +46,57 @@ bool SoundDriverPs3::create(const SoundDriverCreateDesc& desc, Ref< ISoundMixer 
 		return false;
 	}
 
-	int32_t channelsAvailPcm = cellAudioOutGetSoundAvailability(CELL_AUDIO_OUT_PRIMARY, CELL_AUDIO_OUT_CODING_TYPE_LPCM, CELL_AUDIO_OUT_FS_48KHZ, 0);
-	int32_t channelsAvailDts = cellAudioOutGetSoundAvailability(CELL_AUDIO_OUT_PRIMARY, CELL_AUDIO_OUT_CODING_TYPE_DTS, CELL_AUDIO_OUT_FS_48KHZ, 0);
-	int32_t channelsAvailAc3 = cellAudioOutGetSoundAvailability(CELL_AUDIO_OUT_PRIMARY, CELL_AUDIO_OUT_CODING_TYPE_AC3, CELL_AUDIO_OUT_FS_48KHZ, 0);
-	int32_t channelsAvail = 0;
-
-	log::info << L"Available channels:" << Endl <<
-		L"\tPCM " << channelsAvailPcm << Endl <<
-		L"\tDTS " << channelsAvailDts << Endl <<
-		L"\tAC3 " << channelsAvailAc3 << Endl;
-
-	std::memset(&audioOutConfig, 0, sizeof(audioOutConfig));
-	if (channelsAvailPcm >= channelsAvailAc3 && channelsAvailPcm >= channelsAvailDts)
+	if (desc.hwChannels > 2)
 	{
-		channelsAvail = channelsAvailPcm;
-		audioOutConfig.encoder = CELL_AUDIO_OUT_CODING_TYPE_LPCM;
-		log::info << L"Using PCM encoding" << Endl;
-	}
-	else if (channelsAvailDts >= channelsAvailAc3)
-	{
-		channelsAvail = channelsAvailDts;
-		audioOutConfig.encoder = CELL_AUDIO_OUT_CODING_TYPE_DTS;
-		log::info << L"Using DTS encoding" << Endl;
-	}
-	else
-	{
-		channelsAvail = channelsAvailAc3;
-		audioOutConfig.encoder = CELL_AUDIO_OUT_CODING_TYPE_AC3;
-		log::info << L"Using AC3 encoding" << Endl;
-	}
+		int32_t channelsAvailPcm = cellAudioOutGetSoundAvailability(CELL_AUDIO_OUT_PRIMARY, CELL_AUDIO_OUT_CODING_TYPE_LPCM, CELL_AUDIO_OUT_FS_48KHZ, 0);
+		int32_t channelsAvailDts = cellAudioOutGetSoundAvailability(CELL_AUDIO_OUT_PRIMARY, CELL_AUDIO_OUT_CODING_TYPE_DTS, CELL_AUDIO_OUT_FS_48KHZ, 0);
+		int32_t channelsAvailAc3 = cellAudioOutGetSoundAvailability(CELL_AUDIO_OUT_PRIMARY, CELL_AUDIO_OUT_CODING_TYPE_AC3, CELL_AUDIO_OUT_FS_48KHZ, 0);
+		int32_t channelsAvail = 0;
 
-	if (channelsAvail == 6)
-	{
-		log::info << L"Trying with 7.1 -> 5.1 downmix" << Endl;
+		log::info << L"Available channels:" << Endl <<
+			L"\tPCM " << channelsAvailPcm << Endl <<
+			L"\tDTS " << channelsAvailDts << Endl <<
+			L"\tAC3 " << channelsAvailAc3 << Endl;
 
-		audioOutConfig.channel = channelsAvail;
-		audioOutConfig.downMixer = CELL_AUDIO_OUT_DOWNMIXER_TYPE_B;
-
-		err = cellAudioOutConfigure(CELL_AUDIO_OUT_PRIMARY, &audioOutConfig, NULL, 0);
-		if (err != CELL_OK)
+		std::memset(&audioOutConfig, 0, sizeof(audioOutConfig));
+		if (channelsAvailPcm >= channelsAvailAc3 && channelsAvailPcm >= channelsAvailDts)
 		{
-			log::error << L"Unable to create PS3 audio; cellAudioOutConfigure failed" << Endl;
-			return false;
+			channelsAvail = channelsAvailPcm;
+			audioOutConfig.encoder = CELL_AUDIO_OUT_CODING_TYPE_LPCM;
+			log::info << L"Using PCM encoding" << Endl;
 		}
-	}
-	else if (channelsAvail == 2)
-	{
-		log::info << L"Trying with 7.1 -> 2.0 downmix" << Endl;
-		T_BREAKPOINT;
+		else if (channelsAvailDts >= channelsAvailAc3)
+		{
+			channelsAvail = channelsAvailDts;
+			audioOutConfig.encoder = CELL_AUDIO_OUT_CODING_TYPE_DTS;
+			log::info << L"Using DTS encoding" << Endl;
+		}
+		else
+		{
+			channelsAvail = channelsAvailAc3;
+			audioOutConfig.encoder = CELL_AUDIO_OUT_CODING_TYPE_AC3;
+			log::info << L"Using AC3 encoding" << Endl;
+		}
+
+		if (channelsAvail == 6)
+		{
+			log::info << L"Trying with 7.1 -> 5.1 downmix" << Endl;
+
+			audioOutConfig.channel = channelsAvail;
+			audioOutConfig.downMixer = CELL_AUDIO_OUT_DOWNMIXER_TYPE_B;
+
+			err = cellAudioOutConfigure(CELL_AUDIO_OUT_PRIMARY, &audioOutConfig, NULL, 0);
+			if (err != CELL_OK)
+			{
+				log::error << L"Unable to create PS3 audio; cellAudioOutConfigure failed" << Endl;
+				return false;
+			}
+		}
+		else if (channelsAvail == 2)
+		{
+			log::info << L"Trying with 7.1 -> 2.0 downmix" << Endl;
+			T_BREAKPOINT;
+		}
 	}
 
 	err = cellAudioInit();
@@ -130,7 +133,8 @@ bool SoundDriverPs3::create(const SoundDriverCreateDesc& desc, Ref< ISoundMixer 
 	m_blocksPerFrame = desc.frameSamples / CELL_AUDIO_BLOCK_SAMPLES;
 
 	audioParam.nBlock = CELL_AUDIO_BLOCK_16;
-	audioParam.attr = 0;
+	audioParam.attr = CELL_AUDIO_PORTATTR_INITLEVEL;
+	audioParam.level = 1.0f;
 
 	err = cellAudioPortOpen(&audioParam, &m_port);
 	if (err != CELL_OK)
@@ -230,7 +234,6 @@ void SoundDriverPs3::submit(const SoundBlock& soundBlock)
 		for (int32_t c = 0; c < m_blockChannels; ++c)
 		{
 			float* blockWritePtr = blockPtr + c;
-
 			if (soundBlock.samples[c])
 			{
 				const float* samples = &soundBlock.samples[c][offset];

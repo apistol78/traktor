@@ -28,6 +28,8 @@ public:
 
 	CellSpurs* getSpurs() const;
 
+	uint32_t getSpuCount() const;
+
 	Ref< SpursJobQueue > createJobQueue(uint32_t descriptorSize, uint32_t submitCount);
 
 protected:

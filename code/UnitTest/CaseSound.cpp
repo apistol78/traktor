@@ -70,7 +70,7 @@ public:
 		return 0;
 	}
 
-	virtual bool getBlock(const sound::ISoundMixer* mixer, sound::ISoundBufferCursor* cursor, sound::SoundBlock& outBlock) const
+	virtual bool getBlock(sound::ISoundBufferCursor* cursor, sound::SoundBlock& outBlock) const
 	{
 		outBlock.samples[0] = m_block;
 		outBlock.samplesCount = sizeof_array(m_block);

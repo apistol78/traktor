@@ -39,7 +39,7 @@ SoundChannel::SoundChannel(uint32_t id, Event& eventFinish, uint32_t hwSampleRat
 	const uint32_t outputSamplesCount = hwFrameSamples * c_outputSamplesBlockCount;
 	const uint32_t outputSamplesSize = SbcMaxChannelCount * outputSamplesCount * sizeof(float);
 
-	m_outputSamples[0] = static_cast< float* >(Alloc::acquireAlign(outputSamplesSize, 16));
+	m_outputSamples[0] = static_cast< float* >(Alloc::acquireAlign(outputSamplesSize, 16, T_FILE_LINE));
 	std::memset(m_outputSamples[0], 0, outputSamplesSize);
 
 	for (uint32_t i = 1; i < SbcMaxChannelCount; ++i)
@@ -160,14 +160,14 @@ bool SoundChannel::getBlock(const ISoundMixer* mixer, double time, SoundBlock& o
 	while (m_outputSamplesIn < m_hwFrameSamples)
 	{
 		// Request sound block from buffer.
-		SoundBlock soundBlock = { { 0, 0 }, m_hwFrameSamples, 0, 0 };
-		if (!soundBuffer->getBlock(mixer, m_cursor, soundBlock))
+		SoundBlock soundBlock = { { 0, 0, 0, 0, 0, 0, 0, 0 }, m_hwFrameSamples, 0, 0 };
+		if (!soundBuffer->getBlock(m_cursor, soundBlock))
 		{
 			// No more blocks from sound buffer.
 			if (--m_repeat > 0)
 			{
 				m_cursor->reset();
-				if (!soundBuffer->getBlock(mixer, m_cursor, soundBlock))
+				if (!soundBuffer->getBlock(m_cursor, soundBlock))
 				{
 					m_sound = 0;
 					m_cursor = 0;
@@ -190,7 +190,7 @@ bool SoundChannel::getBlock(const ISoundMixer* mixer, double time, SoundBlock& o
 
 		// Apply filter on sound block.
 		if (m_filter)
-			m_filter->apply(mixer, m_filterInstance, soundBlock);
+			m_filter->apply(m_filterInstance, soundBlock);
 
 		// Convert sound block into hardware required sample rate.
 		if (soundBlock.sampleRate != m_hwSampleRate)

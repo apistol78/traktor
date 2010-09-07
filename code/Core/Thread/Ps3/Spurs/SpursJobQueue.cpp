@@ -35,12 +35,14 @@ bool SpursJobQueue::create(uint32_t descriptorSize, uint32_t submitCount)
 
 	m_commandQueue = (uint64_t*)Alloc::acquireAlign(
 		CELL_SPURS_JOBQUEUE_SIZE_COMMAND_BUFFER(SM_SPURS_QUEUE_DEPTH(submitCount)),
-		CELL_SPURS_JOBQUEUE_COMMAND_BUFFER_ALIGN
+		CELL_SPURS_JOBQUEUE_COMMAND_BUFFER_ALIGN,
+		T_FILE_LINE
 	);
 
 	m_jobQueue = (CellSpursJobQueue*)Alloc::acquireAlign(
 		CELL_SPURS_JOBQUEUE_SIZE,
-		CELL_SPURS_JOBQUEUE_ALIGN
+		CELL_SPURS_JOBQUEUE_ALIGN,
+		T_FILE_LINE
 	);
 
 	CellSpursJobQueueAttribute attributeJobQueue;
@@ -62,14 +64,16 @@ bool SpursJobQueue::create(uint32_t descriptorSize, uint32_t submitCount)
 
 	m_descriptorBuffer = (CellSpursJobHeader*)Alloc::acquireAlign(
 		descriptorSize * submitCount,
-		128
+		128,
+		T_FILE_LINE
 	);
 
 	m_descriptorSize = descriptorSize;
 
 	m_jobQueuePort = (CellSpursJobQueuePort*)Alloc::acquireAlign(
 		CELL_SPURS_JOBQUEUE_PORT_SIZE,
-		CELL_SPURS_JOBQUEUE_PORT_ALIGN
+		CELL_SPURS_JOBQUEUE_PORT_ALIGN,
+		T_FILE_LINE
 	);
 
 	cellSpursJobQueuePortInitializeWithDescriptorBuffer(

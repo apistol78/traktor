@@ -17,7 +17,7 @@ void SoundMixer::mulConst(float* sb, uint32_t count, float factor) const
 	Scalar sf(factor);
 	for (uint32_t s = 0; s < count; s += 4)
 	{
-		Vector4 s4(&sb[s]);
+		Vector4 s4 = Vector4::loadAligned(&sb[s]);
 		s4 *= sf;
 		s4.storeAligned(&sb[s]);
 	}
@@ -32,7 +32,7 @@ void SoundMixer::mulConst(float* lsb, const float* rsb, uint32_t count, float fa
 	Scalar sf(factor);
 	for (uint32_t s = 0; s < count; s += 4)
 	{
-		Vector4 rs4(&rsb[s]);
+		Vector4 rs4 = Vector4::loadAligned(&rsb[s]);
 		rs4 *= sf;
 		rs4.storeAligned(&lsb[s]);
 	}
@@ -47,8 +47,8 @@ void SoundMixer::addMulConst(float* lsb, const float* rsb, uint32_t count, float
 	Scalar sf(factor);
 	for (uint32_t s = 0; s < count; s += 4)
 	{
-		const Vector4 rs4(&rsb[s]);
-		Vector4 ls4(&lsb[s]);
+		Vector4 rs4 = Vector4::loadAligned(&rsb[s]);
+		Vector4 ls4 = Vector4::loadAligned(&lsb[s]);
 		ls4 += rs4 * sf;
 		ls4.storeAligned(&lsb[s]);
 	}

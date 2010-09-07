@@ -99,7 +99,6 @@ bool collectScalarParameters(
 			scalar.offset = outOffset;
 
 			bool scalarUsed = false;
-
 			if (!isFragmentProfile)
 			{
 				std::wstring indexedParameterName = parameterName;
@@ -109,30 +108,22 @@ bool collectScalarParameters(
 				CGparameter parameter = cellGcmCgGetNamedParameter(program, wstombs(indexedParameterName).c_str());
 				if (parameter)
 				{
-					//log::info << L"VP parameter \"" << parameterName << L"\", size = " << parameterSize << L", count = " << parameterCount << L", registers = " << quadCount << Endl;
-
 					uint32_t resourceIndex = cellGcmCgGetParameterResourceIndex(program, parameter);
-
-					scalar.vertexRegisterIndex = resourceIndex;
-					scalar.vertexRegisterCount = quadCount;
-
-					//log::info << L"\tvertex register index " << scalar.vertexRegisterIndex << Endl;
-					//log::info << L"\tvertex register count " << scalar.vertexRegisterCount << Endl;
-
-					scalarUsed = true;
+					if (resourceIndex != ~0UL)
+					{
+						scalar.vertexRegisterIndex = resourceIndex;
+						scalar.vertexRegisterCount = quadCount;
+						scalarUsed = true;
+					}
 				}
 			}
 			else
 			{
-				//log::info << L"FP parameter \"" << parameterName << L"\", size = " << parameterSize << L", count = " << parameterCount << L", registers = " << quadCount << Endl;
-
 				for (int32_t j = 0; j < quadCount; ++j)
 				{
 					std::wstring indexedParameterName = parameterName;
 					if (quadCount > 1)
 						indexedParameterName = parameterName + L"[" + toString(j) + L"]";
-
-					//log::info << L"\t" << indexedParameterName << Endl;
 
 					CGparameter parameter = cellGcmCgGetNamedParameter(program, wstombs(indexedParameterName).c_str());
 					if (parameter)
@@ -143,15 +134,10 @@ bool collectScalarParameters(
 							for (uint32_t k = 0; k < constantCount; ++k)
 							{
 								uint32_t constantOffset = cellGcmCgGetEmbeddedConstantOffset(program, parameter, k);
-
 								FragmentOffset fragmentOffset;
 								fragmentOffset.ucodeOffset = constantOffset;
 								fragmentOffset.parameterOffset = j * 4;
-
 								scalar.fragmentOffsets.push_back(fragmentOffset);
-
-								//log::info << L"\t\tfragment ucode offset " << fragmentOffset.ucodeOffset << Endl;
-								//log::info << L"\t\tfragment parameter offset " << fragmentOffset.parameterOffset << Endl;
 							}
 
 							scalarUsed = true;

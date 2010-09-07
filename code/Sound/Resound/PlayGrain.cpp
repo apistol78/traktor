@@ -85,11 +85,10 @@ const IGrain* PlayGrain::getCurrentGrain(ISoundBufferCursor* cursor) const
 	return this;
 }
 
-bool PlayGrain::getBlock(const ISoundMixer* mixer, ISoundBufferCursor* cursor, SoundBlock& outBlock) const
+bool PlayGrain::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const
 {
 	PlayGrainCursor* playCursor = static_cast< PlayGrainCursor* >(cursor);
 	if (!playCursor || !playCursor->m_soundBuffer->getBlock(
-		mixer,
 		playCursor->m_soundCursor,
 		outBlock
 	))
@@ -102,7 +101,6 @@ bool PlayGrain::getBlock(const ISoundMixer* mixer, ISoundBufferCursor* cursor, S
 		if (m_filters[i])
 		{
 			m_filters[i]->apply(
-				mixer,
 				playCursor->m_filterInstances[i],
 				outBlock
 			);
@@ -114,8 +112,11 @@ bool PlayGrain::getBlock(const ISoundMixer* mixer, ISoundBufferCursor* cursor, S
 	{
 		for (uint32_t i = 0; i < outBlock.maxChannel; ++i)
 		{
-			if (outBlock.samples[i])
-				mixer->mulConst(outBlock.samples[i], outBlock.samplesCount, playCursor->m_gain + 1.0f);
+			if (!outBlock.samples[i])
+				continue;
+
+			for (uint32_t j = 0; j < outBlock.samplesCount; ++j)
+				outBlock.samples[i][j] *= playCursor->m_gain + 1.0f;
 		}
 	}
 

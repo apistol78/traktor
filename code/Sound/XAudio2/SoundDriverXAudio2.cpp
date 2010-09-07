@@ -238,7 +238,7 @@ bool SoundDriverXAudio2::create(const SoundDriverCreateDesc& desc, Ref< ISoundMi
 	m_bufferSize = desc.frameSamples * desc.hwChannels * desc.bitsPerSample / 8;
 	for (uint32_t i = 0; i < sizeof_array(m_buffers); ++i)
 	{
-		m_buffers[i] = (uint8_t*)Alloc::acquireAlign(m_bufferSize, 16);
+		m_buffers[i] = (uint8_t*)Alloc::acquireAlign(m_bufferSize, 16, T_FILE_LINE);
 		if (!m_buffers[i])
 		{
 			log::error << L"Unable to create XAudio2 sound driver; Out of memory" << Endl;

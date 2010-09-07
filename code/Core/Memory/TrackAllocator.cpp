@@ -37,7 +37,7 @@ TrackAllocator::~TrackAllocator()
 #endif
 }
 
-void* TrackAllocator::alloc(size_t size, size_t align, const wchar_t* const tag)
+void* TrackAllocator::alloc(size_t size, size_t align, const char* const tag)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 

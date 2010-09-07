@@ -33,7 +33,7 @@ public:
 
 	virtual Ref< IFilterInstance > createInstance() const;
 
-	virtual void apply(const ISoundMixer* mixer, IFilterInstance* instance, SoundBlock& outBlock) const;
+	virtual void apply(IFilterInstance* instance, SoundBlock& outBlock) const;
 
 	virtual bool serialize(ISerializer& s);
 
@@ -41,9 +41,9 @@ private:
 	Ref< SurroundEnvironment > m_environment;
 	Vector4 m_speakerPosition;
 
-	void applyStereo(const ISoundMixer* mixer, IFilterInstance* instance, SoundBlock& outBlock) const;
+	void applyStereo(IFilterInstance* instance, SoundBlock& outBlock) const;
 
-	void applyFull(const ISoundMixer* mixer, IFilterInstance* instance, SoundBlock& outBlock) const;
+	void applyFull(IFilterInstance* instance, SoundBlock& outBlock) const;
 };
 
 	}

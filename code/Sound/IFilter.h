@@ -17,8 +17,6 @@ namespace traktor
 	namespace sound
 	{
 
-class ISoundMixer;
-
 /*! \brief Filter instance data.
 * \ingroup Sound
 */
@@ -36,7 +34,7 @@ class T_DLLCLASS IFilter : public ISerializable
 public:
 	virtual Ref< IFilterInstance > createInstance() const = 0;
 
-	virtual void apply(const ISoundMixer* mixer, IFilterInstance* instance, SoundBlock& outBlock) const = 0;
+	virtual void apply(IFilterInstance* instance, SoundBlock& outBlock) const = 0;
 };
 
 	}

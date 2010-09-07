@@ -42,8 +42,8 @@ private:
 	sys_event_queue_t m_eventQueue;
 	uint64_t m_eventQueueKey;
 	uint8_t* m_blockPtr;
-	uint64_t* m_readIndexPtr;
-	uint64_t m_writeCount;
+	volatile uint64_t* m_readIndexPtr;
+	volatile uint64_t m_writeCount;
 	uint32_t m_blockChannels;
 	uint32_t m_blocksPerFrame;
 };

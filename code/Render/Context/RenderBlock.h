@@ -17,17 +17,6 @@ namespace traktor
 	namespace render
 	{
 
-/*! \group Render block debug name.
- * \ingroup Render
- * \{
- */
-
-#if defined(_DEBUG) || defined(T_USE_RENDER_MARKERS)
-#	define T_USE_RENDERBLOCK_NAME
-#endif
-
-/*! \} */
-
 class IndexBuffer;
 class IProgram;
 class IRenderView;
@@ -41,20 +30,14 @@ class VertexBuffer;
 class T_DLLCLASS RenderBlock
 {
 public:
-#if defined(T_USE_RENDERBLOCK_NAME)
 	const char* name;
-#endif
 	float distance;
 	IProgram* program;
 	ProgramParameters* programParams;
 
 	RenderBlock()
-#if defined(T_USE_RENDERBLOCK_NAME)
 	:	name(0)
 	,	distance(0.0f)
-#else
-	:	distance(0.0f)
-#endif
 	,	program(0)
 	,	programParams(0)
 	{
@@ -62,9 +45,6 @@ public:
 
 	virtual void render(IRenderView* renderView) const = 0;
 };
-
-#pragma warning( push )
-#pragma warning( disable : 4311 )	// Pointer truncation
 
 /*! \brief Null render block.
  * \ingroup Render
@@ -222,8 +202,6 @@ public:
 
 	virtual void render(IRenderView* renderView) const;
 };
-
-#pragma warning( pop )
 
 	}
 }

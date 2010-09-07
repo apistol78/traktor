@@ -31,7 +31,7 @@ Ref< IFilterInstance > LowPassFilter::createInstance() const
 	return lpfi;
 }
 
-void LowPassFilter::apply(const ISoundMixer* mixer, IFilterInstance* instance, SoundBlock& outBlock) const
+void LowPassFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
 {
 	LowPassFilterInstance* lpfi = static_cast< LowPassFilterInstance* >(instance);
 

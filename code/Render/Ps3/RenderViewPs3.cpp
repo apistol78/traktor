@@ -490,6 +490,12 @@ void RenderViewPs3::draw(const Primitives& primitives)
 			count
 		);
 	}
+
+#if 0
+	// Synchronize RSX after each draw; help to find RSX crashes.
+	static uint32_t s_finishRef = 0; s_finishRef++;
+	cellGcmFinish(gCellGcmCurrentContext, s_finishRef);
+#endif
 }
 
 void RenderViewPs3::end()
