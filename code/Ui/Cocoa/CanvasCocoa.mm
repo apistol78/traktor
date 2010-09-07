@@ -11,7 +11,7 @@ CanvasCocoa::CanvasCocoa(NSView* view)
 :	m_view(view)
 ,	m_foregroundColor(0)
 ,	m_backgroundColor(0)
-,	m_clipStack(0)
+,	m_haveClipper(false)
 {
 	m_foregroundColor = [NSColor controlTextColor];
 	m_backgroundColor = [NSColor controlBackgroundColor];
@@ -20,8 +20,7 @@ CanvasCocoa::CanvasCocoa(NSView* view)
 
 CanvasCocoa::~CanvasCocoa()
 {
-	while (m_clipStack > 0)
-		resetClipRect();
+	resetClipRect();
 }
 
 void CanvasCocoa::setForeground(const Color& foreground)
@@ -49,26 +48,23 @@ void CanvasCocoa::setPenThickness(int thickness)
 
 void CanvasCocoa::setClipRect(const Rect& rc)
 {
-/*
-	if (m_clipStack++ == 0)
-	{
-		NSGraphicsContext* context = [NSGraphicsContext currentContext];
-		[context saveGraphicsState];
-	}
+	resetClipRect();
+
+	NSGraphicsContext* context = [NSGraphicsContext currentContext];
+	[context saveGraphicsState];
+	m_haveClipper = true;
 	
-	NSRectClip(makeNSRect(rc));
-*/
+	NSRectClip(makeNSRect(rc));	
 }
 
 void CanvasCocoa::resetClipRect()
 {
-/*
-	if (--m_clipStack == 0)
+	if (m_haveClipper)
 	{
 		NSGraphicsContext* context = [NSGraphicsContext currentContext];
 		[context restoreGraphicsState];
+		m_haveClipper = false;
 	}
-*/
 }
 
 void CanvasCocoa::drawPixel(int x, int y, const Color& c)
@@ -114,7 +110,7 @@ void CanvasCocoa::drawSpline(const Point* pnts, int npnts)
 
 void CanvasCocoa::fillRect(const Rect& rc)
 {
-	NSRect nrc = makeNSRect(rc);
+	NSRect nrc = makeNSRect(rc.getUnified());
 	nrc = NSOffsetRect(nrc, 0.5, 0.5);
 
 	[m_backgroundColor set];
@@ -123,7 +119,7 @@ void CanvasCocoa::fillRect(const Rect& rc)
 
 void CanvasCocoa::fillGradientRect(const Rect& rc, bool vertical)
 {
-	NSRect nrc = makeNSRect(rc);
+	NSRect nrc = makeNSRect(rc.getUnified());
 	nrc = NSOffsetRect(nrc, 0.5, 0.5);
 
 	NSGradient* gradient = [[[NSGradient alloc]
@@ -138,7 +134,7 @@ void CanvasCocoa::fillGradientRect(const Rect& rc, bool vertical)
 
 void CanvasCocoa::drawRect(const Rect& rc)
 {
-	NSRect nrc = makeNSRect(rc);
+	NSRect nrc = makeNSRect(rc.getUnified());
 	nrc = NSOffsetRect(nrc, 0.5, 0.5);
 
 	[m_foregroundColor set];
@@ -147,7 +143,7 @@ void CanvasCocoa::drawRect(const Rect& rc)
 
 void CanvasCocoa::drawRoundRect(const Rect& rc, int radius)
 {
-	NSRect nrc = makeNSRect(rc);
+	NSRect nrc = makeNSRect(rc.getUnified());
 	nrc = NSOffsetRect(nrc, 0.5, 0.5);
 
 	[m_foregroundColor set];
