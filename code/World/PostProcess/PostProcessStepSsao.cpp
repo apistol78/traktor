@@ -143,7 +143,15 @@ void PostProcessStepSsao::InstanceSsao::render(
 
 	Scalar p11 = params.projection.get(0, 0);
 	Scalar p22 = params.projection.get(1, 1);
+	Vector4 viewEdgeTopLeft = params.viewFrustum.corners[4];
+	Vector4 viewEdgeTopRight = params.viewFrustum.corners[5];
+	Vector4 viewEdgeBottomLeft = params.viewFrustum.corners[7];
+	Vector4 viewEdgeBottomRight = params.viewFrustum.corners[6];
 
+	shader->setVectorParameter(L"ViewEdgeTopLeft", viewEdgeTopLeft);
+	shader->setVectorParameter(L"ViewEdgeTopRight", viewEdgeTopRight);
+	shader->setVectorParameter(L"ViewEdgeBottomLeft", viewEdgeBottomLeft);
+	shader->setVectorParameter(L"ViewEdgeBottomRight", viewEdgeBottomRight);
 	shader->setMatrixParameter(L"Projection", params.projection);
 	shader->setVectorArrayParameter(L"Offsets", m_offsets, sizeof_array(m_offsets));
 	shader->setTextureParameter(L"RandomNormals", m_randomNormals);

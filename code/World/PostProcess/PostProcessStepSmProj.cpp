@@ -139,6 +139,12 @@ void PostProcessStepSmProj::InstanceSmProj::render(
 		0.0f,
 		0.0f
 	);
+	
+	Scalar viewEdgeNorm = params.viewFrustum.getFarZ() / Scalar(params.depthRange);
+	Vector4 viewEdgeTopLeft = params.viewFrustum.corners[4] / viewEdgeNorm;
+	Vector4 viewEdgeTopRight = params.viewFrustum.corners[5] / viewEdgeNorm;
+	Vector4 viewEdgeBottomLeft = params.viewFrustum.corners[7] / viewEdgeNorm;
+	Vector4 viewEdgeBottomRight = params.viewFrustum.corners[6] / viewEdgeNorm;
 
 	Scalar p11 = params.projection.get(0, 0);
 	Scalar p22 = params.projection.get(1, 1);
@@ -152,6 +158,10 @@ void PostProcessStepSmProj::InstanceSmProj::render(
 	shader->setFloatParameter(L"DepthRange", params.depthRange);
 	shader->setVectorParameter(L"Depth_Size", sourceDepthSize);	
 	shader->setVectorParameter(L"MagicCoeffs", Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
+	shader->setVectorParameter(L"ViewEdgeTopLeft", viewEdgeTopLeft);
+	shader->setVectorParameter(L"ViewEdgeTopRight", viewEdgeTopRight);
+	shader->setVectorParameter(L"ViewEdgeBottomLeft", viewEdgeBottomLeft);
+	shader->setVectorParameter(L"ViewEdgeBottomRight", viewEdgeBottomRight);
 	shader->setMatrixParameter(L"ViewToLight", params.viewToLight);
 
 	const float maskClear[] = { 1.0f, 1.0f, 1.0f, 1.0f };
