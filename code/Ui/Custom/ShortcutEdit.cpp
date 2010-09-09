@@ -56,7 +56,7 @@ std::wstring ShortcutEdit::getText() const
 		keyDesc = L"Ctrl";
 #endif
 	}
-	if (m_keyState & ui::KsControl)
+	else if (m_keyState & ui::KsControl)
 		keyDesc = keyDesc.empty() ? L"Ctrl" : keyDesc + L"+Ctrl";
 	if (m_keyState & ui::KsMenu)
 		keyDesc = keyDesc.empty() ? L"Alt" : keyDesc + L"+Alt";

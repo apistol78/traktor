@@ -46,14 +46,14 @@ bool PropertyKey::serialize(ISerializer& s)
 		Split< std::wstring >::any(state, L"|", states);
 		for (std::vector< std::wstring >::iterator i = states.begin(); i != states.end(); ++i)
 		{
-			if (*i == L"KsControl")
+			if (*i == L"KsCommand")
+				m_value.first |= ui::KsCommand;
+			else if (*i == L"KsControl")
 				m_value.first |= ui::KsControl;
 			else if (*i == L"KsMenu")
 				m_value.first |= ui::KsMenu;
 			else if (*i == L"KsShift")
 				m_value.first |= ui::KsShift;
-			else if (*i == L"KsCommand")
-				m_value.first |= ui::KsCommand;
 			else
 				return false;
 		}
@@ -66,8 +66,14 @@ bool PropertyKey::serialize(ISerializer& s)
 
 		if (m_value.first)
 		{
+			if (m_value.first & ui::KsCommand)
+				keydesc = L"KsCommand";
 			if (m_value.first & ui::KsControl)
+			{
+				if (!keydesc.empty())
+					keydesc += L"|";
 				keydesc += L"KsControl";
+			}
 			if (m_value.first & ui::KsMenu)
 			{
 				if (!keydesc.empty())
@@ -79,12 +85,6 @@ bool PropertyKey::serialize(ISerializer& s)
 				if (!keydesc.empty())
 					keydesc += L"|";
 				keydesc += L"KsShift";
-			}
-			if (m_value.first & ui::KsCommand)
-			{
-				if (!keydesc.empty())
-					keydesc += L"|";
-				keydesc += L"KsCommand";
 			}
 		}
 

@@ -114,8 +114,7 @@ void ShortcutsSettingsPage::updateShortcutGrid()
 				keyDesc = L"Ctrl";
 #endif
 			}
-			
-			if (key.first & ui::KsControl)
+			else if (key.first & ui::KsControl)
 				keyDesc = keyDesc.empty() ? L"Ctrl" : keyDesc + L"+Ctrl";
 			if (key.first & ui::KsMenu)
 				keyDesc = keyDesc.empty() ? L"Alt" : keyDesc + L"+Alt";

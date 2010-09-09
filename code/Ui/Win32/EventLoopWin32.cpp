@@ -119,7 +119,7 @@ int EventLoopWin32::getAsyncKeyState() const
 	int keyState = KsNone;
 
 	if (GetAsyncKeyState(VK_CONTROL))
-		keyState |= KsControl;
+		keyState |= KsControl | KsCommand;
 	if (GetAsyncKeyState(VK_MENU))
 		keyState |= KsMenu;
 	if (GetAsyncKeyState(VK_SHIFT))
