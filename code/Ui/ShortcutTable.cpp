@@ -70,7 +70,14 @@ void ShortcutTable::eventKeyDown(Event* event)
 	int keyState = keyEvent->getKeyState();
 	VirtualKey keyCode = keyEvent->getVirtualKey();
 
-	std::map< uint32_t, std::list< Command > >::iterator it = m_commands.find(buildMapKey(keyState, keyCode));
+	// Get command; ignore explicit KsControl as we should only
+	// trigger on KsCommand which is defined as KsControl on Windows.
+	std::map< uint32_t, std::list< Command > >::iterator it;
+	if (keyState & KsCommand)
+		it = m_commands.find(buildMapKey(keyState & ~KsControl, keyCode));
+	else
+		it = m_commands.find(buildMapKey(keyState, keyCode));
+
 	if (it == m_commands.end())
 		return;
 
