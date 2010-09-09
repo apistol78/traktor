@@ -4,9 +4,20 @@
 #include <cstdlib>
 #include <string>
 #include <vector>
+#include "Core/Config.h"
+
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_CORE_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
 
 namespace traktor
 {
+
+class IEncoding;
 
 #if defined(_MSC_VER)
 #	pragma warning ( push )
@@ -71,6 +82,22 @@ namespace traktor
 #else
 	inline const std::string& tstombs(const tstring& ts) { return ts; }
 #endif
+
+/*! \brief Translate multibyte encoding into wide string.
+ *
+ * \param encoding Encoding object.
+ * \param s Multibyte string.
+ * \return Wide string (UTF-16 or UTF-32 encoded).
+ */
+std::wstring T_DLLCLASS mbstows(const IEncoding& encoding, const std::string& s);
+
+/*! \brief Translate wide string to multibyte string using encoding.
+ *
+ * \param encoding Encoding object.
+ * \param s Wide string.
+ * \return Multibyte encoded string.
+ */
+std::string T_DLLCLASS wstombs(const IEncoding& encoding, const std::wstring& s);
 
 #if defined(_MSC_VER)
 #	pragma warning ( pop )

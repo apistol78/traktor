@@ -48,8 +48,16 @@ std::wstring ShortcutEdit::getText() const
 
 	std::wstring keyDesc = L"";
 
-	if (m_keyState & ui::KsControl)
+	if (m_keyState & ui::KsCommand)
+	{
+#if defined(__APPLE__)
+		keyDesc = L"\x2318";
+#else
 		keyDesc = L"Ctrl";
+#endif
+	}
+	if (m_keyState & ui::KsControl)
+		keyDesc = keyDesc.empty() ? L"Ctrl" : keyDesc + L"+Ctrl";
 	if (m_keyState & ui::KsMenu)
 		keyDesc = keyDesc.empty() ? L"Alt" : keyDesc + L"+Alt";
 	if (m_keyState & ui::KsShift)

@@ -52,6 +52,8 @@ bool PropertyKey::serialize(ISerializer& s)
 				m_value.first |= ui::KsMenu;
 			else if (*i == L"KsShift")
 				m_value.first |= ui::KsShift;
+			else if (*i == L"KsCommand")
+				m_value.first |= ui::KsCommand;
 			else
 				return false;
 		}
@@ -77,6 +79,12 @@ bool PropertyKey::serialize(ISerializer& s)
 				if (!keydesc.empty())
 					keydesc += L"|";
 				keydesc += L"KsShift";
+			}
+			if (m_value.first & ui::KsCommand)
+			{
+				if (!keydesc.empty())
+					keydesc += L"|";
+				keydesc += L"KsCommand";
 			}
 		}
 

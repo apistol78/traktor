@@ -166,6 +166,8 @@ int EventLoopCocoa::getAsyncKeyState() const
 		keyState |= KsMenu;
 	if (m_modifierFlags & NSShiftKeyMask)
 		keyState |= KsShift;
+	if (m_modifierFlags & NSCommandKeyMask)
+		keyState |= KsCommand;
 
 	return keyState;
 }

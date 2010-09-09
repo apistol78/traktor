@@ -106,8 +106,17 @@ void ShortcutsSettingsPage::updateShortcutGrid()
 		{
 			std::wstring keyDesc = L"";
 
-			if (key.first & ui::KsControl)
+			if (key.first & ui::KsCommand)
+			{
+#if defined(__APPLE__)
+				keyDesc = L"\x2318";
+#else
 				keyDesc = L"Ctrl";
+#endif
+			}
+			
+			if (key.first & ui::KsControl)
+				keyDesc = keyDesc.empty() ? L"Ctrl" : keyDesc + L"+Ctrl";
 			if (key.first & ui::KsMenu)
 				keyDesc = keyDesc.empty() ? L"Alt" : keyDesc + L"+Alt";
 			if (key.first & ui::KsShift)
