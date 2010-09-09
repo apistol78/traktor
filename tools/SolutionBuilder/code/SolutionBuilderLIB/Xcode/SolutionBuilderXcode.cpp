@@ -1148,7 +1148,7 @@ void SolutionBuilderXcode::generatePBXReferenceProxySection(OutputStream& s, con
 	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
 		std::set< ResolvedDependency > dependencies;
-		collectDependencies(solution, *i, dependencies, false, false);
+		collectDependencies(solution, *i, dependencies, true, false);
 
 		for (std::set< ResolvedDependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
 		{
@@ -1157,10 +1157,11 @@ void SolutionBuilderXcode::generatePBXReferenceProxySection(OutputStream& s, con
 				
 			Configuration::TargetFormat targetFormat = getTargetFormat(j->project);
 			std::wstring productName = getProductName(j->project, targetFormat);
+			std::wstring productType = getProductType(targetFormat);
 
 			s << L"\t\t" << ProjectUids(j->project).getProductUid() << L" /* " << productName << L" */ = {" << Endl;
 			s << L"\t\t\tisa = PBXReferenceProxy;" << Endl;
-			s << L"\t\t\tfileType = archive.ar;" << Endl;
+			s << L"\t\t\tfileType = \"" << productType << L"\";" << Endl;
 			s << L"\t\t\tpath = \"" << productName << L"\";" << Endl;
 			s << L"\t\t\tremoteRef = " << ProjectUids(j->project).getContainerItemProxy() << L" /* PBXContainerItemProxy */;" << Endl;
 			s << L"\t\t\tsourceTree = BUILT_PRODUCTS_DIR;" << Endl;
@@ -1634,11 +1635,11 @@ std::wstring SolutionBuilderXcode::getProductType(Configuration::TargetFormat ta
 	switch (targetFormat)
 	{
 	case Configuration::TfStaticLibrary:
-		return L"com.apple.product-type.library.static";
+		return L"archive.ar"; //L"com.apple.product-type.library.static";
 	case Configuration::TfSharedLibrary:
-		return L"com.apple.product-type.library.dynamic";
+		return L"compiled.mach-o.dylib"; //L"com.apple.product-type.library.dynamic";
 	case Configuration::TfExecutable:
-		return L"com.apple.product-type.application";
+		return L"compiled.mach-o.executable"; //L"com.apple.product-type.application";
 	case Configuration::TfExecutableConsole:
 		if (!m_iphone)
 			return L"com.apple.product-type.tool";
@@ -1655,7 +1656,7 @@ std::wstring SolutionBuilderXcode::getProductName(const Project* project, Config
 	case Configuration::TfStaticLibrary:
 		return L"lib" + project->getName() + L".a";
 	case Configuration::TfSharedLibrary:
-		return L"lib" + project->getName() + L".dylib";
+		return project->getName() + L".dylib";
 	case Configuration::TfExecutable:
 		return project->getName();
 	case Configuration::TfExecutableConsole:
