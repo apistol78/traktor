@@ -1,10 +1,10 @@
 #import <Cocoa/Cocoa.h>
-
-#include "Ui/Cocoa/UtilitiesCocoa.h"
+#include "Core/Io/Utf8Encoding.h"
+#include "Core/Log/Log.h"
+#include "Core/Misc/TString.h"
 #include "Ui/Point.h"
 #include "Ui/Rect.h"
-#include "Core/Misc/TString.h"
-#include "Core/Log/Log.h"
+#include "Ui/Cocoa/UtilitiesCocoa.h"
 
 namespace traktor
 {
@@ -41,7 +41,7 @@ OutputStream& operator << (OutputStream& os, const Rect& rc)
 
 NSString* makeNSString(const std::wstring& str)
 {
-	std::string mbs = wstombs(str);
+	std::string mbs = wstombs(Utf8Encoding(), str);
 	return [[[NSString alloc] initWithCString: mbs.c_str() encoding: NSUTF8StringEncoding] autorelease];
 }
 

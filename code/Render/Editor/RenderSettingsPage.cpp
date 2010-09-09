@@ -4,6 +4,7 @@
 #include "Core/Settings/PropertyString.h"
 #include "Core/Settings/Settings.h"
 #include "I18N/Text.h"
+#include "Render/IProgramCompiler.h"
 #include "Render/IRenderSystem.h"
 #include "Render/Editor/RenderSettingsPage.h"
 #include "Ui/DropDown.h"
@@ -31,6 +32,12 @@ bool RenderSettingsPage::create(ui::Container* parent, Settings* settings, const
 
 	m_dropRenderSystem = new ui::DropDown();
 	m_dropRenderSystem->create(container, L"");
+	
+	Ref< ui::Static > staticCompiler = new ui::Static();
+	staticCompiler->create(container, i18n::Text(L"EDITOR_SETTINGS_COMPILER_TYPE"));
+	
+	m_dropCompiler = new ui::DropDown();
+	m_dropCompiler->create(container, L"");
 
 	Ref< ui::Static > staticMipBias = new ui::Static();
 	staticMipBias->create(container, i18n::Text(L"EDITOR_SETTINGS_RENDERER_MIPBIAS"));
@@ -56,6 +63,19 @@ bool RenderSettingsPage::create(ui::Container* parent, Settings* settings, const
 		if (name == renderSystemType)
 			m_dropRenderSystem->select(index);
 	}
+	
+	std::wstring compilerType = settings->getProperty< PropertyString >(L"ShaderPipeline.ProgramCompiler");
+	
+	std::vector< const TypeInfo* > compilerTypes;
+	type_of< render::IProgramCompiler >().findAllOf(compilerTypes, false);
+
+	for (std::vector< const TypeInfo* >::const_iterator i = compilerTypes.begin(); i != compilerTypes.end(); ++i)
+	{
+		std::wstring name = (*i)->getName();
+		int32_t index = m_dropCompiler->add(name);
+		if (name == compilerType)
+			m_dropCompiler->select(index);
+	}
 
 	m_editMipBias->setText(toString(settings->getProperty< PropertyFloat >(L"Editor.MipBias")));
 	m_editMaxAnisotropy->setText(toString(settings->getProperty< PropertyInteger >(L"Editor.MaxAnisotropy")));
@@ -71,6 +91,7 @@ void RenderSettingsPage::destroy()
 bool RenderSettingsPage::apply(Settings* settings)
 {
 	settings->setProperty< PropertyString >(L"Editor.RenderSystem", m_dropRenderSystem->getSelectedItem());
+	settings->setProperty< PropertyString >(L"ShaderPipeline.ProgramCompiler", m_dropCompiler->getSelectedItem());
 	settings->setProperty< PropertyFloat >(L"Editor.MipBias", parseString< float >(m_editMipBias->getText()));
 	settings->setProperty< PropertyInteger >(L"Editor.MaxAnisotropy", parseString< int32_t >(m_editMaxAnisotropy->getText()));
 	return true;

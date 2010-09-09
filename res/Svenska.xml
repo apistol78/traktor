@@ -342,6 +342,10 @@
       <second>Kommando</second>
     </item>
     <item>
+      <first>EDITOR_SETTINGS_COMPILER_TYPE</first>
+      <second>Shader compiler</second>
+    </item>
+    <item>
       <first>EDITOR_SETTINGS_OPEN_LAST_PROJECT</first>
       <second>Öppna senaste projektet vid uppstart</second>
     </item>
