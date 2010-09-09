@@ -1635,11 +1635,11 @@ std::wstring SolutionBuilderXcode::getProductType(Configuration::TargetFormat ta
 	switch (targetFormat)
 	{
 	case Configuration::TfStaticLibrary:
-		return L"archive.ar"; //L"com.apple.product-type.library.static";
+		return L"com.apple.product-type.library.static";
 	case Configuration::TfSharedLibrary:
-		return L"compiled.mach-o.dylib"; //L"com.apple.product-type.library.dynamic";
+		return L"com.apple.product-type.library.dynamic";
 	case Configuration::TfExecutable:
-		return L"compiled.mach-o.executable"; //L"com.apple.product-type.application";
+		return L"com.apple.product-type.application";
 	case Configuration::TfExecutableConsole:
 		if (!m_iphone)
 			return L"com.apple.product-type.tool";
