@@ -1,3 +1,4 @@
+#include <iostream>
 #include "Core/Platform.h"
 #include "Core/Memory/TrackAllocator.h"
 #include "Core/Thread/Acquire.h"
@@ -14,27 +15,16 @@ TrackAllocator::~TrackAllocator()
 {
 	if (!m_aliveBlocks.empty())
 	{
-#if defined(_WIN32)
-		OutputDebugString(L"Memory leak detected, following allocation(s) not freed:\n");
+		std::wcout << L"Memory leak detected, following allocation(s) not freed:" << std::endl;
 		for (std::map< void*, Block >::const_iterator i = m_aliveBlocks.begin(); i != m_aliveBlocks.end(); ++i)
 		{
-			wchar_t tmp[1024];
-
-			wsprintf(tmp, L"0x%p, %d byte(s), tag \"%s\"\n", i->first, i->second.size, i->second.tag);
-			OutputDebugString(tmp);
-
+			std::wcout << L"0x" << i->first << L", " << i->second.size << L" byte(s), tag \"" << i->second.tag << L"\"" << std::endl;
 			for (int j = 0; j < sizeof_array(i->second.at); ++j)
-			{
-				wsprintf(tmp, L"   %d: 0x%p\n", j, i->second.at[j]);
-				OutputDebugString(tmp);
-			}
+				std::wcout << L"   " << j << L": 0x" << i->second.at[j] << std::endl;
 		}
-#endif
 	}
-#if defined(_WIN32)
 	else
-		OutputDebugString(L"No memory leaks! Good work!\n");
-#endif
+		std::wcout << L"No memory leaks! Good work!" << std::endl;
 }
 
 void* TrackAllocator::alloc(size_t size, size_t align, const char* const tag)

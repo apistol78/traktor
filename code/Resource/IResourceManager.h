@@ -67,6 +67,9 @@ public:
 
 	/*! \brief Flush all resources. */
 	virtual void flush() = 0;
+	
+	/*! \brief Dump statistics. */
+	virtual void dumpStatistics() = 0;
 
 	template < typename ResourceType >
 	Ref< IResourceHandle > bind(const Guid& guid)
