@@ -1,4 +1,5 @@
 #include "Render/Ps3/ProgramResourcePs3.h"
+#include "Core/Misc/AutoPtr.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberComplex.h"
 #include "Core/Serialization/MemberComposite.h"
@@ -31,11 +32,20 @@ public:
 
 			if (size > 0)
 			{
-				m_ref = sceCgcNewBin();
-				if (sceCgcStoreBinData(m_ref, 0, size) != SCECGC_OK)
+				AutoPtr< uint8_t > data(new uint8_t [size]);
+
+				if (!(s >> Member< void* >(L"data", data.ptr(), size)))
 					return false;
 
-				s >> Member< void* >(L"data", sceCgcGetBinData(m_ref), size);
+				m_ref = sceCgcNewBin();
+				if (!m_ref || sceCgcStoreBinData(m_ref, data.ptr(), size) != SCECGC_OK)
+				{
+					m_ref = 0;
+					return false;
+				}
+
+				uint32_t binSize = sceCgcGetBinSize(m_ref);
+				T_ASSERT (binSize == size);
 			}
 			else
 				m_ref = 0;
