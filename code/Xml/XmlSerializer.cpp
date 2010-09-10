@@ -59,25 +59,25 @@ bool XmlSerializer::operator >> (const Member< bool >& m)
 
 bool XmlSerializer::operator >> (const Member< int8_t >& m)
 {
-	m_xml << m_indent << L"<" << m.getName() << L">" << m << L"</" << m.getName() << L">" << Endl;
+	m_xml << m_indent << L"<" << m.getName() << L">" << int32_t(m) << L"</" << m.getName() << L">" << Endl;
 	return true;
 }
 
 bool XmlSerializer::operator >> (const Member< uint8_t >& m)
 {
-	m_xml << m_indent << L"<" << m.getName() << L">" << m << L"</" << m.getName() << L">" << Endl;
+	m_xml << m_indent << L"<" << m.getName() << L">" << int32_t(m) << L"</" << m.getName() << L">" << Endl;
 	return true;
 }
 
 bool XmlSerializer::operator >> (const Member< int16_t >& m)
 {
-	m_xml << m_indent << L"<" << m.getName() << L">" << m << L"</" << m.getName() << L">" << Endl;
+	m_xml << m_indent << L"<" << m.getName() << L">" << int32_t(m) << L"</" << m.getName() << L">" << Endl;
 	return true;
 }
 
 bool XmlSerializer::operator >> (const Member< uint16_t >& m)
 {
-	m_xml << m_indent << L"<" << m.getName() << L">" << m << L"</" << m.getName() << L">" << Endl;
+	m_xml << m_indent << L"<" << m.getName() << L">" << int32_t(m) << L"</" << m.getName() << L">" << Endl;
 	return true;
 }
 
