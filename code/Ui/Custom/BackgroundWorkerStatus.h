@@ -26,7 +26,11 @@ namespace traktor
 class T_DLLCLASS BackgroundWorkerStatus : public RefCountImpl< BackgroundWorkerDialog::IWorkerStatus >
 {
 public:
+	BackgroundWorkerStatus();
+
 	BackgroundWorkerStatus(int32_t steps);
+
+	void setSteps(int32_t steps);
 
 	void notify(int32_t step, const std::wstring& status);
 

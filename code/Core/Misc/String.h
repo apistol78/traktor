@@ -9,10 +9,6 @@
 #include "Core/Config.h"
 #include "Core/Io/StringOutputStream.h"
 
-#if defined(max)
-#	undef max
-#endif
-
 namespace traktor
 {
 
@@ -43,9 +39,12 @@ String replaceAll(const String& str, typename String::value_type ch, typename St
 template < typename String >
 String replaceAll(const String& str, const String& ndl, const String& rep)
 {
-	String cpy = str; size_t p;
-	while ((p = cpy.find(ndl)) != -1)
+	String cpy = str; size_t p = 0;
+	while ((p = cpy.find(ndl, p)) != -1)
+	{
 		cpy = cpy.substr(0, p) + rep + cpy.substr(p + ndl.length());
+		p += rep.length();
+	}
 	return cpy;
 }
 

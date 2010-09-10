@@ -8,9 +8,19 @@ namespace traktor
 		namespace custom
 		{
 
+BackgroundWorkerStatus::BackgroundWorkerStatus()
+:	m_steps(0)
+{
+}
+
 BackgroundWorkerStatus::BackgroundWorkerStatus(int32_t steps)
 :	m_steps(steps)
 {
+}
+
+void BackgroundWorkerStatus::setSteps(int32_t steps)
+{
+	m_steps = steps;
 }
 
 void BackgroundWorkerStatus::notify(int32_t step, const std::wstring& status)
