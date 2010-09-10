@@ -22,6 +22,11 @@ int main(int argc, const char** argv)
 	Path outputFile = cmdLine.getString(1);
 	std::wstring symbol = cmdLine.getString(2);
 
+	// Ensure symbol doesn't contain invalid characters.
+	symbol = replaceAll< std::wstring >(symbol, '.', '_');
+	symbol = replaceAll< std::wstring >(symbol, '/', '_');
+	symbol = replaceAll< std::wstring >(symbol, '\\', '_');
+
 	// Check if we need to build; do not touch output uneccessarily.
 	Ref< File > fileInputFile = FileSystem::getInstance().get(inputFile);
 	if (!fileInputFile)

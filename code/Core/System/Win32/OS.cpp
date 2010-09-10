@@ -342,7 +342,7 @@ Ref< IProcess > OS::execute(
 
 	DWORD dwCreationFlags;
 #if !defined(WINCE)
-	dwCreationFlags = mute ? CREATE_NO_WINDOW : CREATE_NEW_CONSOLE;
+	dwCreationFlags = mute ? DETACHED_PROCESS : CREATE_NEW_CONSOLE;
 	if (environment.ptr())
 		dwCreationFlags |= CREATE_UNICODE_ENVIRONMENT;
 #else
