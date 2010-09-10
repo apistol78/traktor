@@ -19,7 +19,9 @@
 #include "Xml/XmlSerializer.h"
 
 // Resources
-#include "Resources/Traktor.Update.Post.h"
+#if defined(_WIN32)
+#	include "Resources/Traktor.Update.Post.h"
+#endif
 
 namespace traktor
 {
@@ -203,6 +205,8 @@ Process::CheckResult Process::check(const net::Url& bundleUrl)
 	else
 		log::error << L"Unable to update \"Installed.bundle.updated\"; failed to create file" << Endl;
 
+#if defined(_WIN32)
+
 	// Extract post binary and launch it.
 	Ref< IStream > streamPost = FileSystem::getInstance().open(c_postUpdateFileName, File::FmWrite);
 	if (streamPost)
@@ -228,6 +232,29 @@ Process::CheckResult Process::check(const net::Url& bundleUrl)
 			return CrFailed;
 		}
 	}
+	
+#else
+
+	// We've successfully downloaded entire bundle; replace existing local copies with updated items.
+	// Move updated files into place.
+	RefArray< File > files;
+	FileSystem::getInstance().find(L"*.updated", files);
+
+	for (RefArray< File >::const_iterator i = files.begin(); i != files.end(); ++i)
+	{
+		std::wstring filePath = (*i)->getPath().getPathName();
+		if (filePath.length() > 8)
+		{
+			if (!FileSystem::getInstance().move(
+				filePath.substr(0, filePath.length() - 8),
+				filePath,
+				true
+			))
+				log::error << L"Failed to rename updated item; installation might be broken" << Endl;
+		}
+	}	
+
+#endif
 
 	return CrTerminate;
 }
