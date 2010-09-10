@@ -3,6 +3,7 @@
 #include "Core/Memory/FastAllocator.h"
 #include "Core/Memory/StdAllocator.h"
 #include "Core/Memory/TrackAllocator.h"
+#include "Core/Misc/AutoPtr.h"
 
 namespace traktor
 {
@@ -34,20 +35,20 @@ inline bool isObjectHeapAllocated(const void* ptr)
 
 IAllocator* getAllocator()
 {
-	static IAllocator* s_allocator = 0;
-	if (!s_allocator)
+	static AutoPtr< IAllocator > s_allocator;
+	if (!s_allocator.ptr())
 	{
 #if !defined(_DEBUG)
-		s_allocator = new FastAllocator(
+		s_allocator.reset(new FastAllocator(
 			new StdAllocator()
-		);
+		));
 #else
-		s_allocator = new TrackAllocator(
+		s_allocator.reset(new TrackAllocator(
 			new StdAllocator()
-		);
+		));
 #endif
 	}
-	return s_allocator;
+	return s_allocator.ptr();
 }
 
 	}

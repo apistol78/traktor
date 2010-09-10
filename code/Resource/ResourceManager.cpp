@@ -127,6 +127,26 @@ void ResourceManager::flush()
 		i->second->flush();
 }
 
+void ResourceManager::dumpStatistics()
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	log::debug << L"Resource manager statistics:" << Endl;
+	log::debug << IncreaseIndent;
+	
+	log::debug << uint32_t(m_cache.size()) << L" cache entries" << Endl;
+	
+	uint32_t count = 0;
+	for (std::map< Guid, Ref< ResourceHandle > >::iterator i = m_cache.begin(); i != m_cache.end(); ++i)
+	{
+		if (i->second->get())
+			++count;
+	}
+	
+	log::debug << count << L" resource(s)" << Endl;
+	
+	log::debug << DecreaseIndent;
+}
+
 Ref< IResourceFactory > ResourceManager::findFactory(const TypeInfo& type)
 {
 	for (RefArray< IResourceFactory >::iterator i = m_factories.begin(); i != m_factories.end(); ++i)

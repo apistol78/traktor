@@ -45,6 +45,8 @@ public:
 	virtual void flush(const Guid& guid);
 
 	virtual void flush();
+	
+	virtual void dumpStatistics();
 
 private:
 	RefArray< IResourceFactory > m_factories;
