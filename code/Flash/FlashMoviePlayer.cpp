@@ -83,10 +83,19 @@ void FlashMoviePlayer::destroy()
 	m_displayRenderer = 0;
 	m_movieRenderer = 0;
 	m_actionVM = 0;
+	m_key = 0;
+	m_mouse = 0;
 	m_movie = 0;
-	m_movieInstance = 0;
+	
+	if (m_movieInstance)
+	{
+		m_movieInstance->destroy();
+		m_movieInstance = 0;
+	}
+	
 	m_events.clear();
 	m_fsCommands.clear();
+	m_interval.clear();
 }
 
 void FlashMoviePlayer::gotoAndPlay(uint32_t frame)

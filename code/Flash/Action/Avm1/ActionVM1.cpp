@@ -1154,7 +1154,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 				{
 					ActionValue methodValue;
 					classConstructorObject->getMember(classConstructorName, methodValue);
-					classConstructor = methodValue.getObject< ActionFunction >();
+					classConstructor = methodValue.getObjectSafe< ActionFunction >();
 				}
 
 				if (classConstructor)

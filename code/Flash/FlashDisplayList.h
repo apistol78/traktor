@@ -129,7 +129,7 @@ public:
 	const layer_map_t::const_iterator findLayer(const std::wstring& name) const;
 
 private:
-	Ref< ActionContext > m_context;
+	ActionContext* m_context;
 	SwfColor m_backgroundColor;
 	layer_map_t m_layers;
 };

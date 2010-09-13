@@ -72,7 +72,7 @@ public:
 
 private:
 	Ref< ActionContext > m_context;
-	Ref< ActionObject > m_self;
+	ActionObject* m_self;
 	const uint8_t* m_code;
 	uint16_t m_codeSize;
 	ActionValueArray m_localRegisters;

@@ -37,6 +37,15 @@ FlashSpriteInstance::FlashSpriteInstance(ActionContext* context, FlashCharacterI
 	updateDisplayList();
 }
 
+void FlashSpriteInstance::destroy()
+{
+	m_sprite = 0;
+	m_displayList.reset();
+	m_mask = 0;
+	
+	FlashCharacterInstance::destroy();
+}
+
 const FlashSprite* FlashSpriteInstance::getSprite() const
 {
 	return m_sprite;
