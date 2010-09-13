@@ -10,6 +10,7 @@
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFrame.h"
 #include "Flash/Action/ActionFunctionNative.h"
+#include "Flash/Action/ActionObjectCyclic.h"
 
 // ActionScript VM 1
 #include "Flash/Action/Avm1/ActionVM1.h"
@@ -23,6 +24,12 @@ namespace traktor
 {
 	namespace flash
 	{
+		namespace
+		{
+
+const int32_t c_framesBetweenCollections = 100;
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashMoviePlayer", FlashMoviePlayer, Object)
 
@@ -33,6 +40,7 @@ FlashMoviePlayer::FlashMoviePlayer(IDisplayRenderer* displayRenderer)
 ,	m_timeCurrent(0.0)
 ,	m_timeNext(0.0)
 ,	m_timeNextFrame(0.0)
+,	m_framesUntilCollection(c_framesBetweenCollections)
 {
 }
 
@@ -96,6 +104,8 @@ void FlashMoviePlayer::destroy()
 	m_events.clear();
 	m_fsCommands.clear();
 	m_interval.clear();
+
+	ActionObjectCyclic::getInstance().collectCycles();
 }
 
 void FlashMoviePlayer::gotoAndPlay(uint32_t frame)
@@ -204,6 +214,13 @@ void FlashMoviePlayer::executeFrame()
 
 	// Flush pool memory; release all lingering object references etc.
 	context->getPool().flush();
+
+	// Collect reference cycles.
+	if (--m_framesUntilCollection <= 0)
+	{
+		ActionObjectCyclic::getInstance().collectCycles();
+		m_framesUntilCollection = c_framesBetweenCollections;
+	}
 }
 
 bool FlashMoviePlayer::progressFrame(float deltaTime)

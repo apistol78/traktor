@@ -1,7 +1,7 @@
 #include <iostream>
-
-#include <execinfo.h>
-
+#if !defined(_WIN32)
+#	include <execinfo.h>
+#endif
 #include "Core/Platform.h"
 #include "Core/Memory/TrackAllocator.h"
 #include "Core/Thread/Acquire.h"
@@ -46,7 +46,8 @@ void* TrackAllocator::alloc(size_t size, size_t align, const char* const tag)
 	block.at[2] =
 	block.at[3] = 0;
 
-#if defined(_WIN32) && !defined(_WIN64) && !defined(WINCE)
+#if defined(_WIN32)
+#	if !defined(_WIN64) && !defined(WINCE) && !defined(_XBOX)
 
 	uint32_t at_0 = 0, at_1 = 0;
 	uint32_t at_2 = 0, at_3 = 0;
@@ -61,6 +62,7 @@ void* TrackAllocator::alloc(size_t size, size_t align, const char* const tag)
 	block.at[2] = (void*)at_2;
 	block.at[3] = (void*)at_3;
 
+#	endif
 #else
 
 	backtrace(

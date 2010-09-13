@@ -37,6 +37,8 @@ public:
 	ActionObject();
 
 	ActionObject(ActionObject* prototype);
+
+	virtual void addRef() const;
 	
 	virtual void release() const;
 
@@ -71,19 +73,30 @@ public:
 	bool getLocalPropertySet(const std::wstring& propertyName, Ref< ActionFunction >& outPropertySet) const;
 
 private:
+	friend class ActionObjectCyclic;
+
+	enum TraceColor
+	{
+		TcBlack,
+		TcPurple,
+		TcGray,
+		TcWhite
+	};
+
 	bool m_readOnly;
 	mutable member_map_t m_members;
 	property_map_t m_properties;
-	
-	static int32_t ms_traceTag;
-	mutable int32_t m_tracedTag;
-	mutable bool m_cycle;
-	
-	/*
-	int32_t traceCycles(const ActionObject* root) const;
-	
-	void resetCycles(const ActionObject* root) const;
-	*/
+	mutable int32_t m_traceColor;
+	mutable bool m_traceBuffered;
+	mutable int32_t m_traceRefCount;
+
+	void traceMarkGray();
+
+	void traceScan();
+
+	void traceScanBlack();
+
+	void traceCollectWhite();
 };
 
 	}
