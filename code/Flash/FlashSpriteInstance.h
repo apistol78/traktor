@@ -30,6 +30,8 @@ class T_DLLCLASS FlashSpriteInstance : public FlashCharacterInstance
 
 public:
 	FlashSpriteInstance(ActionContext* context, FlashCharacterInstance* parent, const FlashSprite* sprite);
+	
+	virtual void destroy();
 
 	const FlashSprite* getSprite() const;
 

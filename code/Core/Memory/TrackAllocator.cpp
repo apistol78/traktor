@@ -1,4 +1,7 @@
 #include <iostream>
+
+#include <execinfo.h>
+
 #include "Core/Platform.h"
 #include "Core/Memory/TrackAllocator.h"
 #include "Core/Thread/Acquire.h"
@@ -57,6 +60,13 @@ void* TrackAllocator::alloc(size_t size, size_t align, const char* const tag)
 	block.at[1] = (void*)at_1;
 	block.at[2] = (void*)at_2;
 	block.at[3] = (void*)at_3;
+
+#else
+
+	backtrace(
+		block.at,
+		sizeof_array(block.at)
+	);
 
 #endif
 

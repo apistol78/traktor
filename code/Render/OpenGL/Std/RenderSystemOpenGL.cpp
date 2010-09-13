@@ -206,6 +206,12 @@ void RenderSystemOpenGL::destroy()
 
 	if (m_resourceContext)
 	{
+		// Clean pending resources; don't want to leak resources.
+		m_resourceContext->enter();
+		m_resourceContext->deleteResources();
+		m_resourceContext->leave();
+
+		// Destroy resource context.
 		m_resourceContext->destroy();
 		m_resourceContext = 0;
 	}

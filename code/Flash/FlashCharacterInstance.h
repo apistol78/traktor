@@ -30,6 +30,9 @@ class T_DLLCLASS FlashCharacterInstance : public ActionObject
 
 public:
 	FlashCharacterInstance(ActionContext* context, ActionObject* prototype, FlashCharacterInstance* parent);
+	
+	/*! \brief Destroy instance. */
+	virtual void destroy();
 
 	/*! \brief Get ActionScript execution context.
 	 *

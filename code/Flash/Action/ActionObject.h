@@ -37,6 +37,8 @@ public:
 	ActionObject();
 
 	ActionObject(ActionObject* prototype);
+	
+	virtual void release() const;
 
 	virtual void addInterface(ActionObject* intrface);
 
@@ -70,8 +72,18 @@ public:
 
 private:
 	bool m_readOnly;
-	member_map_t m_members;
+	mutable member_map_t m_members;
 	property_map_t m_properties;
+	
+	static int32_t ms_traceTag;
+	mutable int32_t m_tracedTag;
+	mutable bool m_cycle;
+	
+	/*
+	int32_t traceCycles(const ActionObject* root) const;
+	
+	void resetCycles(const ActionObject* root) const;
+	*/
 };
 
 	}

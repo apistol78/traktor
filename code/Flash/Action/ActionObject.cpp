@@ -1,4 +1,5 @@
 #include "Core/Io/StringOutputStream.h"
+#include "Core/Thread/Acquire.h"
 #include "Flash/Action/ActionObject.h"
 
 namespace traktor
@@ -8,17 +9,55 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.ActionObject", ActionObject, Object)
 
+int32_t ActionObject::ms_traceTag = 0;
+
 ActionObject::ActionObject()
 :	m_readOnly(false)
+,	m_tracedTag(0)
+,	m_cycle(false)
 {
 }
 
 ActionObject::ActionObject(ActionObject* classObject)
 :	m_readOnly(false)
+,	m_tracedTag(0)
+,	m_cycle(false)
 {
 	ActionValue classPrototype;
 	if (classObject->getLocalMember(L"prototype", classPrototype))
 		setMember(L"__proto__", classPrototype);
+}
+
+void ActionObject::release() const
+{
+	/*
+	int32_t refCount = getReferenceCount() - 1;
+	if (!m_cycle && refCount >= 1)
+	{
+		// Cyclic candidate; trace cycles to see if we
+		// should release entire cycle.
+		++ms_traceTag;
+		int32_t cycles = traceCycles(this);
+		if (refCount - cycles <= 0)
+		{
+			// FIXME Ensure cycle is held by some external
+			// reference to object in cycle!!
+			// Ie cycle MUST BE ISOLATED.
+		
+			// Our only reference(s) are kept by cyclic references
+			// back to our self; reset all members in order to
+			// break cycle.
+
+			// Set cycle flag in order to prevent further
+			// cyclic checks on this object.			
+			m_cycle = true;
+			
+			++ms_traceTag;
+			resetCycles(this);
+		}
+	}
+	*/
+	Object::release();
 }
 
 void ActionObject::addInterface(ActionObject* intrface)
@@ -243,6 +282,70 @@ bool ActionObject::getLocalPropertySet(const std::wstring& propertyName, Ref< Ac
 	outPropertySet = i->second.second;
 	return true;
 }
+/*
+void ActionObject::traceCycles_black() const
+{
+	if (m_tracedTag == ms_traceTag)
+		return;
+		
+	m_tracedTag = ms_traceTag;
+	m_cycleRefCount = 0;
+	
+	for (member_map_t::const_iterator i = m_members.begin(); i != m_members.end(); ++i)
+	{
+		if (!i->second.isObject() || !i->second.getObject())
+			continue;
+			
+		ActionObject* memberObject = i->second.getObject();
+		memberObject->traceCycles_black();
+		memberObject->m_cycleRefCount++;
+	}
+}
 
+// True means cycle externally referenced and thus should be kept.
+bool ActionObject::traceCycles_white() const
+{
+	if (m_cycleRefCount >= getReferenceCount())
+		return false;
+
+	if (m_tracedTag == ms_traceTag)
+		return true;
+		
+	m_tracedTag = ms_traceTag;
+	
+	for (member_map_t::const_iterator i = m_members.begin(); i != m_members.end(); ++i)
+	{
+		if (!i->second.isObject() || !i->second.getObject())
+			continue;
+			
+		ActionObject* memberObject = i->second.getObject();
+		if (memberObject->traceCycles_white())
+			return true;
+	}
+	
+	return false;
+}
+
+void ActionObject::resetCycles(const ActionObject* root) const
+{
+	if (m_tracedTag == ms_traceTag)
+		return;
+		
+	m_tracedTag = ms_traceTag;
+	
+	for (member_map_t::iterator i = m_members.begin(); i != m_members.end(); ++i)
+	{
+		if (!i->second.isObject() || !i->second.getObject())
+			continue;
+			
+		ActionObject* memberObject = i->second.getObject();
+			
+		if (memberObject == root)
+			i->second = ActionValue();
+		else
+			memberObject->resetCycles(root);
+	}
+}
+*/
 	}
 }

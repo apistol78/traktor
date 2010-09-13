@@ -27,6 +27,13 @@ FlashCharacterInstance::FlashCharacterInstance(ActionContext* context, ActionObj
 	m_transform = Matrix33::identity();
 }
 
+void FlashCharacterInstance::destroy()
+{
+	m_context = 0;
+	m_parent = 0;
+	m_eventScripts.clear();
+}
+
 ActionContext* FlashCharacterInstance::getContext() const
 {
 	return m_context;

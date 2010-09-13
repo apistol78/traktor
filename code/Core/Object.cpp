@@ -38,7 +38,7 @@ IAllocator* getAllocator()
 	static AutoPtr< IAllocator > s_allocator;
 	if (!s_allocator.ptr())
 	{
-#if !defined(_DEBUG)
+#if 1
 		s_allocator.reset(new FastAllocator(
 			new StdAllocator()
 		));
@@ -78,12 +78,9 @@ void* Object::operator new (size_t size)
 	ObjectHeader* header = static_cast< ObjectHeader* >(allocator->alloc(size + objectHeaderSize, 16, "Object"));
 	T_FATAL_ASSERT_M (header, L"Out of memory");
 
-	Object* object = reinterpret_cast< Object* >(header + 1);
-
 	header->magic = c_magic;
-	++ms_instanceCount;
 
-	return object;
+	return reinterpret_cast< Object* >(header + 1);
 }
 
 void Object::operator delete (void* ptr)
@@ -93,18 +90,14 @@ void Object::operator delete (void* ptr)
 		ObjectHeader* header = static_cast< ObjectHeader* >(ptr) - 1;
 		T_ASSERT (header->magic == c_magic);
 
-		--ms_instanceCount;
-
 		IAllocator* allocator = getAllocator();
 		allocator->free(header);
 	}
 }
 
-int32_t Object::getInstanceCount()
+int32_t Object::getReferenceCount() const
 {
-	return ms_instanceCount;
+	return m_refCount;
 }
-
-AtomicRefCount Object::ms_instanceCount;
 
 }
