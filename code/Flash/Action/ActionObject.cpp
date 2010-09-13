@@ -1,6 +1,9 @@
+#include "Core/RefArray.h"
 #include "Core/Io/StringOutputStream.h"
+#include "Core/Log/Log.h"
 #include "Core/Thread/Acquire.h"
 #include "Flash/Action/ActionObject.h"
+#include "Flash/Action/ActionObjectCyclic.h"
 
 namespace traktor
 {
@@ -9,54 +12,54 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.ActionObject", ActionObject, Object)
 
-int32_t ActionObject::ms_traceTag = 0;
-
 ActionObject::ActionObject()
 :	m_readOnly(false)
-,	m_tracedTag(0)
-,	m_cycle(false)
+,	m_traceColor(TcBlack)
+,	m_traceBuffered(false)
+,	m_traceRefCount(0)
 {
 }
 
 ActionObject::ActionObject(ActionObject* classObject)
 :	m_readOnly(false)
-,	m_tracedTag(0)
-,	m_cycle(false)
+,	m_traceColor(TcBlack)
+,	m_traceBuffered(false)
+,	m_traceRefCount(0)
 {
 	ActionValue classPrototype;
 	if (classObject->getLocalMember(L"prototype", classPrototype))
 		setMember(L"__proto__", classPrototype);
 }
 
+void ActionObject::addRef() const
+{
+	m_traceColor = TcBlack;
+	Object::addRef();
+}
+
 void ActionObject::release() const
 {
-	/*
-	int32_t refCount = getReferenceCount() - 1;
-	if (!m_cycle && refCount >= 1)
+	if (getReferenceCount() <= 1)
 	{
-		// Cyclic candidate; trace cycles to see if we
-		// should release entire cycle.
-		++ms_traceTag;
-		int32_t cycles = traceCycles(this);
-		if (refCount - cycles <= 0)
+		m_traceColor = TcBlack;
+		if (m_traceBuffered)
 		{
-			// FIXME Ensure cycle is held by some external
-			// reference to object in cycle!!
-			// Ie cycle MUST BE ISOLATED.
-		
-			// Our only reference(s) are kept by cyclic references
-			// back to our self; reset all members in order to
-			// break cycle.
-
-			// Set cycle flag in order to prevent further
-			// cyclic checks on this object.			
-			m_cycle = true;
-			
-			++ms_traceTag;
-			resetCycles(this);
+			m_traceBuffered = false;
+			ActionObjectCyclic::getInstance().removeCandidate(const_cast< ActionObject* >(this));
 		}
 	}
-	*/
+	else
+	{
+		if (m_traceColor != TcPurple)
+		{
+			m_traceColor = TcPurple;
+			if (!m_traceBuffered)
+			{
+				m_traceBuffered = true;
+				ActionObjectCyclic::getInstance().addCandidate(const_cast< ActionObject* >(this));
+			}
+		}
+	}
 	Object::release();
 }
 
@@ -282,70 +285,85 @@ bool ActionObject::getLocalPropertySet(const std::wstring& propertyName, Ref< Ac
 	outPropertySet = i->second.second;
 	return true;
 }
-/*
-void ActionObject::traceCycles_black() const
+
+void ActionObject::traceMarkGray()
 {
-	if (m_tracedTag == ms_traceTag)
-		return;
-		
-	m_tracedTag = ms_traceTag;
-	m_cycleRefCount = 0;
-	
-	for (member_map_t::const_iterator i = m_members.begin(); i != m_members.end(); ++i)
+	if (m_traceColor != TcGray)
 	{
-		if (!i->second.isObject() || !i->second.getObject())
-			continue;
-			
-		ActionObject* memberObject = i->second.getObject();
-		memberObject->traceCycles_black();
-		memberObject->m_cycleRefCount++;
+		m_traceColor = TcGray;
+		m_traceRefCount = getReferenceCount();
+
+		for (member_map_t::const_iterator i = m_members.begin(); i != m_members.end(); ++i)
+		{
+			if (!i->second.isObject() || !i->second.getObject())
+				continue;
+
+			ActionObject* memberObject = i->second.getObject();
+			memberObject->traceMarkGray();
+			memberObject->m_traceRefCount--;
+		}
 	}
 }
 
-// True means cycle externally referenced and thus should be kept.
-bool ActionObject::traceCycles_white() const
+void ActionObject::traceScan()
 {
-	if (m_cycleRefCount >= getReferenceCount())
-		return false;
-
-	if (m_tracedTag == ms_traceTag)
-		return true;
-		
-	m_tracedTag = ms_traceTag;
-	
-	for (member_map_t::const_iterator i = m_members.begin(); i != m_members.end(); ++i)
+	if (m_traceColor == TcGray)
 	{
-		if (!i->second.isObject() || !i->second.getObject())
-			continue;
-			
-		ActionObject* memberObject = i->second.getObject();
-		if (memberObject->traceCycles_white())
-			return true;
-	}
-	
-	return false;
-}
-
-void ActionObject::resetCycles(const ActionObject* root) const
-{
-	if (m_tracedTag == ms_traceTag)
-		return;
-		
-	m_tracedTag = ms_traceTag;
-	
-	for (member_map_t::iterator i = m_members.begin(); i != m_members.end(); ++i)
-	{
-		if (!i->second.isObject() || !i->second.getObject())
-			continue;
-			
-		ActionObject* memberObject = i->second.getObject();
-			
-		if (memberObject == root)
-			i->second = ActionValue();
+		if (m_traceRefCount > 0)
+			traceScanBlack();
 		else
-			memberObject->resetCycles(root);
+		{
+			m_traceColor = TcWhite;
+			for (member_map_t::const_iterator i = m_members.begin(); i != m_members.end(); ++i)
+			{
+				if (!i->second.isObject() || !i->second.getObject())
+					continue;
+
+				ActionObject* memberObject = i->second.getObject();
+				memberObject->traceScan();
+			}
+		}
 	}
 }
-*/
+
+void ActionObject::traceScanBlack()
+{
+	m_traceColor = TcBlack;
+	for (member_map_t::const_iterator i = m_members.begin(); i != m_members.end(); ++i)
+	{
+		if (!i->second.isObject() || !i->second.getObject())
+			continue;
+
+		ActionObject* memberObject = i->second.getObject();
+		memberObject->m_traceRefCount++;
+		if (memberObject->m_traceColor != TcBlack)
+			memberObject->traceScanBlack();
+	}
+}
+
+void ActionObject::traceCollectWhite()
+{
+	if (m_traceColor == TcWhite)
+	{
+		T_ASSERT (m_traceRefCount == 0);
+
+		log::debug << L"Isolated cycle detected; collecting object " << uint32_t(this) << Endl;
+
+		// Move member references into temporary stack container.
+		RefArray< ActionObject > memberObjects;
+		for (member_map_t::const_iterator i = m_members.begin(); i != m_members.end(); ++i)
+		{
+			if (i->second.isObject() && i->second.getObject())
+				memberObjects.push_back(i->second.getObject());
+		}
+
+		// Clear all our members.
+		m_members.clear();
+
+		// Drop member references; this will kill this object.
+		memberObjects.clear();
+	}
+}
+
 	}
 }
