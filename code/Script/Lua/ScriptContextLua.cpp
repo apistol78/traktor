@@ -90,6 +90,8 @@ std::jmp_buf s_jb;
 T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptContextLua", ScriptContextLua, IScriptContext)
 
 ScriptContextLua::ScriptContextLua(const RefArray< IScriptClass >& registeredClasses)
+:	m_luaState(0)
+,	m_pending(0)
 {
 	m_luaState = lua_open();
 
@@ -107,6 +109,7 @@ ScriptContextLua::ScriptContextLua(const RefArray< IScriptClass >& registeredCla
 ScriptContextLua::~ScriptContextLua()
 {
 	lua_close(m_luaState);
+	T_ASSERT (m_pending == 0);
 }
 
 void ScriptContextLua::setGlobal(const std::wstring& globalName, const Any& globalValue)
@@ -340,10 +343,15 @@ void ScriptContextLua::pushAny(const Any& any)
 					Object** object = reinterpret_cast< Object** >(lua_newuserdata(m_luaState, sizeof(Object*)));	// +1
 					*object = any.getObject();
 					T_SAFE_ADDREF(*object);
+					++m_pending;
 
 					// Associate __gc with object userdata.
 					lua_newtable(m_luaState);						// +1
-					lua_pushcfunction(m_luaState, gcMethod);		// +1
+					//lua_pushcfunction(m_luaState, gcMethod);		// +1
+
+					lua_pushlightuserdata(m_luaState, (void*)this);
+					lua_pushcclosure(m_luaState, gcMethod, 1);
+
 					lua_setfield(m_luaState, -2, "__gc");			// -1
 					lua_setmetatable(m_luaState, -2);				// -1
 
@@ -558,8 +566,13 @@ int ScriptContextLua::callProperty(lua_State* luaState)
 
 int ScriptContextLua::gcMethod(lua_State* luaState)
 {
+	ScriptContextLua* context = reinterpret_cast< ScriptContextLua* >(lua_touserdata(luaState, lua_upvalueindex(1)));
+	T_ASSERT (context);
+
 	Object* object = *reinterpret_cast< Object** >(lua_touserdata(luaState, 1));
 	T_SAFE_ANONYMOUS_RELEASE(object);
+
+	--context->m_pending;
 	return 0;
 }
 

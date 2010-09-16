@@ -55,6 +55,7 @@ private:
 
 	lua_State* m_luaState;
 	std::vector< RegisteredClass > m_classRegistry;
+	int32_t m_pending;
 
 	void registerClass(IScriptClass* scriptClass);
 
