@@ -33,11 +33,11 @@ class T_DLLCLASS RenderViewPs3 : public IRenderView
 	T_RTTI_CLASS;
 
 public:
-	RenderViewPs3(RenderSystemPs3* renderSystem);
+	RenderViewPs3(MemoryHeap* localMemoryHeap, RenderSystemPs3* renderSystem);
 
 	virtual ~RenderViewPs3();
 
-	bool create(MemoryHeap* memoryHeap, const RenderViewDefaultDesc& desc);
+	bool create(const RenderViewDefaultDesc& desc);
 
 	virtual void close();
 
@@ -100,6 +100,7 @@ private:
 		int32_t clearStencil;
 	};
 
+	Ref< MemoryHeap > m_localMemoryHeap;
 	Ref< RenderSystemPs3 > m_renderSystem;
 	Ref< VertexBufferPs3 > m_currentVertexBuffer;
 	Ref< IndexBufferPs3 > m_currentIndexBuffer;

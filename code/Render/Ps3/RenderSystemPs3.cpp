@@ -141,8 +141,8 @@ bool RenderSystemPs3::handleMessages()
 
 Ref< IRenderView > RenderSystemPs3::createRenderView(const RenderViewDefaultDesc& desc)
 {
-	Ref< RenderViewPs3 > renderView = new RenderViewPs3(this);
-	if (renderView->create(m_memoryHeapLocal, desc))
+	Ref< RenderViewPs3 > renderView = new RenderViewPs3(m_memoryHeapLocal, this);
+	if (renderView->create(desc))
 		return renderView;
 	else
 		return 0;

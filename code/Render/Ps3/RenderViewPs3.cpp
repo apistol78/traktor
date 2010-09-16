@@ -54,8 +54,9 @@ uint32_t incrementLabel(uint32_t label)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewPs3", RenderViewPs3, IRenderView)
 
-RenderViewPs3::RenderViewPs3(RenderSystemPs3* renderSystem)
-:	m_renderSystem(renderSystem)
+RenderViewPs3::RenderViewPs3(MemoryHeap* localMemoryHeap, RenderSystemPs3* renderSystem)
+:	m_localMemoryHeap(localMemoryHeap)
+,	m_renderSystem(renderSystem)
 ,	m_width(0)
 ,	m_height(0)
 ,	m_colorObject(0)
@@ -77,14 +78,14 @@ RenderViewPs3::~RenderViewPs3()
 {
 }
 
-bool RenderViewPs3::create(MemoryHeap* memoryHeap, const RenderViewDefaultDesc& desc)
+bool RenderViewPs3::create(const RenderViewDefaultDesc& desc)
 {
 	CellVideoOutState videoState;
 	CellVideoOutConfiguration videoConfig;
 	int32_t ret;
 
 	// Create FP clear helper.
-	m_clearFp.create(memoryHeap);
+	m_clearFp.create(m_localMemoryHeap);
 
 	m_width = desc.displayMode.width;
 	m_height = desc.displayMode.height;
@@ -117,7 +118,7 @@ bool RenderViewPs3::create(MemoryHeap* memoryHeap, const RenderViewDefaultDesc& 
 		cellGcmSetFlipMode(CELL_GCM_DISPLAY_HSYNC);
 
 	uint32_t colorSize = m_colorPitch * m_height;
-	m_colorObject = memoryHeap->alloc(sizeof_array(m_colorAddr) * colorSize, 4096, true);
+	m_colorObject = m_localMemoryHeap->alloc(sizeof_array(m_colorAddr) * colorSize, 4096, true);
 
 	for (size_t i = 0; i < sizeof_array(m_colorAddr); i++)
 	{
@@ -156,7 +157,7 @@ bool RenderViewPs3::create(MemoryHeap* memoryHeap, const RenderViewDefaultDesc& 
 		m_depthTexture.offset = 0;
 
 		uint32_t depthSize = m_depthTexture.pitch * m_depthTexture.height;
-		m_depthObject = memoryHeap->alloc(depthSize, 4096, true);
+		m_depthObject = m_localMemoryHeap->alloc(depthSize, 4096, true);
 
 		m_depthAddr = m_depthObject->getPointer();
 		m_depthTexture.offset = m_depthObject->getOffset();
@@ -190,14 +191,14 @@ bool RenderViewPs3::create(MemoryHeap* memoryHeap, const RenderViewDefaultDesc& 
 	*waitLabelData = 0;
 
 	// Allocate area for patched pixel programs.
-	m_patchProgramObject = memoryHeap->alloc(
+	m_patchProgramObject = m_localMemoryHeap->alloc(
 		c_patchProgramSize * c_patchProgramCount,
 		64,
 		false
 	);
 
 	// Set default gamma correction.
-	const float c_defaultGammaCorrection = 0.8f;
+	const float c_defaultGammaCorrection = 1.2f;
 	cellVideoOutSetGamma(CELL_VIDEO_OUT_PRIMARY, c_defaultGammaCorrection);
 
 	setViewport(Viewport(0, 0, m_width, m_height, 0.0f, 1.0f));
@@ -229,6 +230,125 @@ void RenderViewPs3::close()
 
 bool RenderViewPs3::reset(const RenderViewDefaultDesc& desc)
 {
+	CellVideoOutState videoState;
+	CellVideoOutConfiguration videoConfig;
+	int32_t ret;
+
+	cellGcmUnbindZcull(0);
+
+	if (m_depthObject)
+	{
+		m_depthObject->free();
+		m_depthObject = 0;
+	}
+
+	if (m_colorObject)
+	{
+		m_colorObject->free();
+		m_colorObject = 0;
+	}
+
+	m_width = desc.displayMode.width;
+	m_height = desc.displayMode.height;
+
+	m_colorPitch = m_width * 4;
+
+	std::memset(&videoConfig, 0, sizeof(CellVideoOutConfiguration));
+	videoConfig.resolutionId = findResolutionId(m_width, m_height);
+	videoConfig.format = CELL_VIDEO_OUT_BUFFER_COLOR_FORMAT_X8R8G8B8;
+	videoConfig.aspect = CELL_VIDEO_OUT_ASPECT_AUTO;
+	videoConfig.pitch = m_colorPitch;
+
+	ret = cellVideoOutConfigure(CELL_VIDEO_OUT_PRIMARY, &videoConfig, NULL, 0);
+	if (ret != CELL_OK)
+	{
+		log::error << L"Create render view failed, unable to configure video" << Endl;
+		return 0;
+	}
+
+	ret = cellVideoOutGetState(CELL_VIDEO_OUT_PRIMARY, 0, &videoState);
+	if (ret != CELL_OK)
+	{
+		log::error << L"Create render view failed, unable get video state" << Endl;
+		return 0;
+	}
+
+	if (desc.waitVBlank)
+		cellGcmSetFlipMode(CELL_GCM_DISPLAY_VSYNC);
+	else
+		cellGcmSetFlipMode(CELL_GCM_DISPLAY_HSYNC);
+
+	uint32_t colorSize = m_colorPitch * m_height;
+	m_colorObject = m_localMemoryHeap->alloc(sizeof_array(m_colorAddr) * colorSize, 4096, true);
+
+	for (size_t i = 0; i < sizeof_array(m_colorAddr); i++)
+	{
+		m_colorAddr[i] = (uint8_t*)m_colorObject->getPointer() + (i * colorSize);
+		m_colorOffset[i] = m_colorObject->getOffset() + (i * colorSize);
+
+		ret = cellGcmSetDisplayBuffer(
+			i,
+			m_colorOffset[i],
+			m_colorPitch,
+			m_width,
+			m_height
+		);
+		if (ret != CELL_OK)
+		{
+			log::error << L"Create render view failed, unable to set display buffers" << Endl;
+			return false;
+		}
+	}
+
+	// Allocate depth buffer.
+	{
+		int surfaceWidth = m_width;
+		int surfaceHeight = m_height;
+
+		m_depthTexture.format = CELL_GCM_TEXTURE_DEPTH24_D8 | CELL_GCM_TEXTURE_LN;
+		m_depthTexture.mipmap = 1;
+		m_depthTexture.dimension = CELL_GCM_TEXTURE_DIMENSION_2;
+		m_depthTexture.cubemap = 0;
+		m_depthTexture.remap = 0;
+		m_depthTexture.width = surfaceWidth;
+		m_depthTexture.height = surfaceHeight;
+		m_depthTexture.depth = 1;
+		m_depthTexture.location = CELL_GCM_LOCATION_LOCAL;
+		m_depthTexture.pitch = surfaceWidth * 4;
+		m_depthTexture.offset = 0;
+
+		uint32_t depthSize = m_depthTexture.pitch * m_depthTexture.height;
+		m_depthObject = m_localMemoryHeap->alloc(depthSize, 4096, true);
+
+		m_depthAddr = m_depthObject->getPointer();
+		m_depthTexture.offset = m_depthObject->getOffset();
+
+		// Setup Z-cull binding.
+		cellGcmBindZcull(
+			0,
+			m_depthTexture.offset,
+			surfaceWidth,
+			surfaceHeight,
+			0,
+			CELL_GCM_ZCULL_Z24S8,
+			CELL_GCM_SURFACE_CENTER_1,
+			CELL_GCM_ZCULL_LESS,
+			CELL_GCM_ZCULL_LONES,
+			CELL_GCM_SCULL_SFUNC_ALWAYS,
+			0,
+			0
+		);
+		T_GCM_CALL(cellGcmSetZcullStatsEnable)(
+			gCellGcmCurrentContext,
+			CELL_GCM_TRUE
+		);
+	}
+
+	// Set default gamma correction.
+	const float c_defaultGammaCorrection = 1.2f;
+	cellVideoOutSetGamma(CELL_VIDEO_OUT_PRIMARY, c_defaultGammaCorrection);
+
+	setViewport(Viewport(0, 0, m_width, m_height, 0.0f, 1.0f));
 	return true;
 }
 
