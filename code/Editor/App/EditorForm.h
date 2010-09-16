@@ -4,6 +4,7 @@
 #include <list>
 #include "Core/Guid.h"
 #include "Core/Io/Path.h"
+#include "Core/Library/Library.h"
 #include "Core/Thread/Semaphore.h"
 #include "Editor/IEditor.h"
 #include "Ui/Command.h"
@@ -116,6 +117,7 @@ private:
 	friend class EditorPageSite;
 	friend class EditorPluginSite;
 
+	std::vector< Library > m_libraries;
 	RefArray< IEditorPageFactory > m_editorPageFactories;
 	RefArray< IObjectEditorFactory > m_objectEditorFactories;
 	RefArray< IEditorPluginFactory > m_editorPluginFactories;

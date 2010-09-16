@@ -9,8 +9,14 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Library", Library, Object)
 
+Library::Library()
+:	m_handle(0)
+{
+}
+
 Library::~Library()
 {
+	T_ASSERT (m_handle == 0);
 }
 
 bool Library::open(const Path& libraryName)
@@ -72,7 +78,11 @@ bool Library::open(const Path& libraryName, const std::vector< Path >& searchPat
 
 void Library::close()
 {
-	FreeLibrary((HMODULE)m_handle);
+	if (m_handle)
+	{
+		FreeLibrary((HMODULE)m_handle);
+		m_handle = 0;
+	}
 }
 
 void* Library::find(const std::wstring& symbol)
