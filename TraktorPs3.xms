@@ -1819,6 +1819,8 @@
 						<item>$(SCE_PS3_ROOT)/target/ppu/lib/libfs_stub.a</item>
 						<item>$(SCE_PS3_ROOT)/target/ppu/lib/libio_stub.a</item>
 						<item>$(SCE_PS3_ROOT)/target/ppu/lib/libpthread.a</item>
+						<item>$(SCE_PS3_ROOT)/target/ppu/lib/libsysutil_game_stub.a</item>
+						<item>$(SCE_PS3_ROOT)/target/ppu/lib/libsysmodule_stub.a</item>
 					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -1841,6 +1843,8 @@
 						<item>$(SCE_PS3_ROOT)/target/ppu/lib/libfs_stub.a</item>
 						<item>$(SCE_PS3_ROOT)/target/ppu/lib/libio_stub.a</item>
 						<item>$(SCE_PS3_ROOT)/target/ppu/lib/libpthread.a</item>
+						<item>$(SCE_PS3_ROOT)/target/ppu/lib/libsysutil_game_stub.a</item>
+						<item>$(SCE_PS3_ROOT)/target/ppu/lib/libsysmodule_stub.a</item>
 					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>

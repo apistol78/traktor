@@ -1,8 +1,22 @@
-#include "Core/System/OS.h"
+#include <cell/sysmodule.h>
+#include <sysutil/sysutil_gamecontent.h>
+#include "Core/Log/Log.h"
+#include "Core/Misc/TString.h"
 #include "Core/Singleton/SingletonManager.h"
+#include "Core/System/OS.h"
 
 namespace traktor
 {
+	namespace
+	{
+
+struct OSData
+{
+	std::wstring contentPath;
+	std::wstring usrdirPath;
+};
+
+	}
 
 OS& OS::getInstance()
 {
@@ -32,17 +46,20 @@ std::wstring OS::getCurrentUser() const
 
 std::wstring OS::getUserHomePath() const
 {
-	return L".";
+	OSData* data = static_cast< OSData* >(m_handle);
+	return data->usrdirPath;
 }
 
 std::wstring OS::getUserApplicationDataPath() const
 {
-	return L".";
+	OSData* data = static_cast< OSData* >(m_handle);
+	return data->contentPath;
 }
 
 std::wstring OS::getWritableFolderPath() const
 {
-	return L".";
+	OSData* data = static_cast< OSData* >(m_handle);
+	return data->contentPath;
 }
 
 bool OS::editFile(const Path& file) const
@@ -62,6 +79,19 @@ OS::envmap_t OS::getEnvironment() const
 
 bool OS::getEnvironment(const std::wstring& name, std::wstring& outValue) const
 {
+	OSData* data = static_cast< OSData* >(m_handle);
+	
+	if (name == L"CONTENT_PATH")
+	{
+		outValue = data->contentPath;
+		return true;
+	}
+	else if (name == L"USRDIR_PATH")
+	{
+		outValue = data->usrdirPath;
+		return true;
+	}
+
 	return false;
 }
 
@@ -83,11 +113,33 @@ Ref< ISharedMemory > OS::createSharedMemory(const std::wstring& name, uint32_t s
 }
 
 OS::OS()
+:	m_handle(0)
 {
+	uint32_t type;
+	uint32_t attributes;
+	CellGameContentSize size;
+	char dirName[256];
+	char contentInfoPath[256];
+	char usrdirPath[256];
+
+	cellSysmoduleLoadModule(CELL_SYSMODULE_SYSUTIL_GAME);
+
+	cellGameBootCheck(&type, &attributes, &size, dirName);
+	cellGameContentPermit(contentInfoPath, usrdirPath);
+
+	OSData* data = new OSData();
+	data->contentPath = mbstows(contentInfoPath);
+	data->usrdirPath = mbstows(usrdirPath);
+
+	log::debug << L"contentPath \"" << data->contentPath << L"\"" << Endl;
+	log::debug << L"usrdirPath \"" << data->usrdirPath << L"\"" << Endl;
+
+	m_handle = data;
 }
 
 OS::~OS()
 {
+	delete (OSData*)m_handle;
 }
 
 void OS::destroy()

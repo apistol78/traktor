@@ -125,6 +125,9 @@ protected:
 	virtual ~OS();
 
 	virtual void destroy();
+
+private:
+	void* m_handle;
 };
 
 }
