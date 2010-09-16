@@ -15,9 +15,10 @@ VertexBufferPs3* VertexBufferPs3::ms_activeVertexBuffer = 0;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VertexBufferPs3", VertexBufferPs3, VertexBuffer)
 
-VertexBufferPs3::VertexBufferPs3(const std::vector< VertexElement >& vertexElements, MemoryHeapObject* vbo, int bufferSize)
+VertexBufferPs3::VertexBufferPs3(const std::vector< VertexElement >& vertexElements, MemoryHeapObject* vbo, int bufferSize, int32_t& counter)
 :	VertexBuffer(bufferSize)
 ,	m_vbo(vbo)
+,	m_counter(counter)
 {
 	m_vertexStride = getVertexSize(vertexElements);
 
@@ -90,6 +91,8 @@ VertexBufferPs3::VertexBufferPs3(const std::vector< VertexElement >& vertexEleme
 
 		m_attributeDesc[attr].offset = i->getOffset();
 	}
+
+	++m_counter;
 }
 
 VertexBufferPs3::~VertexBufferPs3()
@@ -120,8 +123,8 @@ void VertexBufferPs3::destroy()
 
 	if (m_vbo)
 	{
-		m_vbo->free();
-		m_vbo = 0;
+		m_vbo->free(); m_vbo = 0;
+		--m_counter;
 	}
 }
 

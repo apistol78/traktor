@@ -39,7 +39,7 @@ void threadEntry(uint64_t data)
 
 bool Thread::start(Priority priority)
 {
-	const uint32_t c_stackSize = 4 * 1024 * 1024;
+	const uint32_t c_stackSize = 1 * 1024 * 1024;
 	int res;
 
 	Internal* in = new Internal();
@@ -80,6 +80,27 @@ bool Thread::start(Priority priority)
 	if (res != CELL_OK)
 	{
 		log::error << L"Unable to create ppu thread" << Endl;
+		switch (res)
+		{
+		case ENOMEM:
+			log::error << L"ENOMEM" << Endl;
+			break;
+		case EAGAIN:
+			log::error << L"EAGAIN" << Endl;
+			break;
+		case EINVAL:
+			log::error << L"EINVAL" << Endl;
+			break;
+		case EFAULT:
+			log::error << L"EFAULT" << Endl;
+			break;
+		case EPERM:
+			log::error << L"EPERM" << Endl;
+			break;
+		default:
+			log::error << L"Unknown reason" << Endl;
+			break;
+		}
 		delete in;
 		return false;
 	}

@@ -50,7 +50,7 @@ MemoryHeapObject* MemoryHeap::alloc(size_t size, size_t align, bool immutable)
 		uint8_t* alignedPtrStart = alignUp(ptr, align);
 		uint8_t* alignedPtrEnd = alignedPtrStart + size;
 
-		T_FATAL_ASSERT_M (alignedPtrEnd <= m_heap + m_heapSize, L"Out of memory");
+		T_FATAL_ASSERT_M (alignedPtrEnd <= m_heap + m_heapSize, L"Out of renderer memory (1)");
 
 		object = new MemoryHeapObject();
 		object->m_heap = this;
@@ -86,7 +86,7 @@ MemoryHeapObject* MemoryHeap::alloc(size_t size, size_t align, bool immutable)
 			uint8_t* immPtrStart = alignUp(last >= 0 ? (uint8_t*)m_objects[last]->m_pointer + m_objects[last]->m_size : m_heap, align);
 			uint8_t* immPtrEnd = immPtrStart + size;
 
-			T_FATAL_ASSERT_M (immPtrEnd <= m_heap + m_heapSize, L"Out of memory");
+			T_FATAL_ASSERT_M (immPtrEnd <= m_heap + m_heapSize, L"Out of renderer memory (2)");
 
 			// Find maximum alignment of all other mutable objects.
 			size_t alignMax = 0;
@@ -168,7 +168,7 @@ void MemoryHeap::free(MemoryHeapObject* object)
 	m_shouldCompact = true;
 }
 
-size_t MemoryHeap::available() const
+size_t MemoryHeap::getAvailable() const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
@@ -181,6 +181,12 @@ size_t MemoryHeap::available() const
 	}
 	else
 		return m_heapSize;
+}
+
+size_t MemoryHeap::getObjectCount() const
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	return m_objects.size();
 }
 
 void MemoryHeap::compact()

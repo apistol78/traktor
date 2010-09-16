@@ -27,7 +27,7 @@ class T_DLLCLASS SimpleTexturePs3 : public ISimpleTexture
 	T_RTTI_CLASS;
 
 public:
-	SimpleTexturePs3();
+	SimpleTexturePs3(int32_t& counter);
 
 	virtual ~SimpleTexturePs3();
 	
@@ -50,6 +50,7 @@ public:
 private:
 	MemoryHeapObject* m_data;
 	CellGcmTexture m_texture;
+	int32_t& m_counter;
 };
 		
 	}

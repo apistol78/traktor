@@ -34,7 +34,7 @@ class T_DLLCLASS ProgramPs3 : public IProgram
 	T_RTTI_CLASS;
 
 public:
-	ProgramPs3();
+	ProgramPs3(int32_t& counter);
 
 	virtual ~ProgramPs3();
 
@@ -85,6 +85,7 @@ private:
 	RefArray< ITexture > m_textureParameterData;
 	uint32_t m_patchedPixelShaderOffset;
 	bool m_dirty;
+	int32_t& m_counter;
 };
 
 	}

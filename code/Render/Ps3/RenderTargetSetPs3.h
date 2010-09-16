@@ -28,7 +28,7 @@ class T_DLLCLASS RenderTargetSetPs3 : public RenderTargetSet
 	T_RTTI_CLASS;
 
 public:
-	RenderTargetSetPs3();
+	RenderTargetSetPs3(int32_t& counter);
 
 	virtual ~RenderTargetSetPs3();
 
@@ -58,6 +58,7 @@ private:
 	RefArray< RenderTargetPs3 > m_renderTargets;
 	CellGcmTexture m_depthTexture;
 	MemoryHeapObject* m_depthData;
+	int32_t& m_counter;
 };
 
 	}

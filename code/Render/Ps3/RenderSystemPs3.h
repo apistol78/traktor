@@ -70,6 +70,11 @@ private:
 	Semaphore m_lock;
 	Ref< MemoryHeap > m_memoryHeapLocal;
 	Ref< MemoryHeap > m_memoryHeapMain;
+	int32_t m_counterVertexBuffers;
+	int32_t m_counterIndexBuffers;
+	int32_t m_counterSimpleTextures;
+	int32_t m_counterRenderTargetSets;
+	int32_t m_counterPrograms;
 };
 
 	}

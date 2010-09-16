@@ -11,13 +11,15 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetSetPs3", RenderTargetSetPs3, RenderTargetSet)
 
-RenderTargetSetPs3::RenderTargetSetPs3()
+RenderTargetSetPs3::RenderTargetSetPs3(int32_t& counter)
 :	RenderTargetSet()
 ,	m_width(0)
 ,	m_height(0)
 ,	m_depthData(0)
+,	m_counter(counter)
 {
 	std::memset(&m_depthTexture, 0, sizeof(m_depthTexture));
+	++m_counter;
 }
 
 RenderTargetSetPs3::~RenderTargetSetPs3()
@@ -75,6 +77,12 @@ void RenderTargetSetPs3::destroy()
 		m_depthData->free();
 		m_depthData = 0;
 	}
+
+	for (RefArray< RenderTargetPs3 >::iterator i = m_renderTargets.begin(); i != m_renderTargets.end(); ++i)
+		(*i)->destroy();
+	
+	m_renderTargets.clear();
+	--m_counter;
 }
 
 int RenderTargetSetPs3::getWidth() const

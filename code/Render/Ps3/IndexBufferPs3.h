@@ -23,7 +23,7 @@ class T_DLLCLASS IndexBufferPs3 : public IndexBuffer
 	T_RTTI_CLASS;
 
 public:
-	IndexBufferPs3(MemoryHeapObject* ibo, IndexType indexType, int bufferSize);
+	IndexBufferPs3(MemoryHeapObject* ibo, IndexType indexType, int bufferSize, int32_t& counter);
 
 	virtual ~IndexBufferPs3();
 
@@ -39,6 +39,7 @@ public:
 	
 private:
 	MemoryHeapObject* m_ibo;
+	int32_t& m_counter;
 };
 	
 	}

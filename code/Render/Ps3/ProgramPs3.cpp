@@ -72,19 +72,22 @@ ProgramPs3* ProgramPs3::ms_activeProgram = 0;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProgramPs3", ProgramPs3, IProgram)
 
-ProgramPs3::ProgramPs3()
+ProgramPs3::ProgramPs3(int32_t& counter)
 :	m_vertexProgram(0)
 ,	m_pixelProgram(0)
 ,	m_vertexShaderUCode(0)
 ,	m_pixelShaderUCode(0)
 ,	m_patchedPixelShaderOffset(0)
 ,	m_dirty(false)
+,	m_counter(counter)
 {
+	++m_counter;
 }
 
 ProgramPs3::~ProgramPs3()
 {
 	destroy();
+	--m_counter;
 }
 
 bool ProgramPs3::create(MemoryHeap* memoryHeap, const ProgramResourcePs3* resource)

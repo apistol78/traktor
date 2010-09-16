@@ -45,6 +45,11 @@ struct ResolutionDesc { int32_t width; int32_t height; int32_t colorBits; } c_re
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderSystemPs3", 0, RenderSystemPs3, IRenderSystem)
 
 RenderSystemPs3::RenderSystemPs3()
+:	m_counterVertexBuffers(0)
+,	m_counterIndexBuffers(0)
+,	m_counterSimpleTextures(0)
+,	m_counterRenderTargetSets(0)
+,	m_counterPrograms(0)
 {
 }
 
@@ -155,7 +160,7 @@ Ref< VertexBuffer > RenderSystemPs3::createVertexBuffer(const std::vector< Verte
 	MemoryHeapObject* vbo = (dynamic ? m_memoryHeapMain : m_memoryHeapLocal)->alloc(bufferSize, 16, false);
 
 	if (vbo)
-		return new VertexBufferPs3(vertexElements, vbo, bufferSize);
+		return new VertexBufferPs3(vertexElements, vbo, bufferSize, m_counterVertexBuffers);
 	else
 		return 0;
 }
@@ -167,7 +172,7 @@ Ref< IndexBuffer > RenderSystemPs3::createIndexBuffer(IndexType indexType, uint3
 	MemoryHeapObject* ibo = (dynamic ? m_memoryHeapMain : m_memoryHeapLocal)->alloc(bufferSize, 16, false);
 
 	if (ibo)
-		return new IndexBufferPs3(ibo, indexType, bufferSize);
+		return new IndexBufferPs3(ibo, indexType, bufferSize, m_counterIndexBuffers);
 	else
 		return 0;
 }
@@ -175,7 +180,7 @@ Ref< IndexBuffer > RenderSystemPs3::createIndexBuffer(IndexType indexType, uint3
 Ref< ISimpleTexture > RenderSystemPs3::createSimpleTexture(const SimpleTextureCreateDesc& desc)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	Ref< SimpleTexturePs3 > texture = new SimpleTexturePs3();
+	Ref< SimpleTexturePs3 > texture = new SimpleTexturePs3(m_counterSimpleTextures);
 	if (texture->create(m_memoryHeapLocal, desc))
 		return texture;
 	else
@@ -195,7 +200,7 @@ Ref< IVolumeTexture > RenderSystemPs3::createVolumeTexture(const VolumeTextureCr
 Ref< RenderTargetSet > RenderSystemPs3::createRenderTargetSet(const RenderTargetSetCreateDesc& desc)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	Ref< RenderTargetSetPs3 > renderTargetSet = new RenderTargetSetPs3();
+	Ref< RenderTargetSetPs3 > renderTargetSet = new RenderTargetSetPs3(m_counterRenderTargetSets);
 	if (renderTargetSet->create(m_memoryHeapLocal, desc))
 		return renderTargetSet;
 	else
@@ -210,7 +215,7 @@ Ref< IProgram > RenderSystemPs3::createProgram(const ProgramResource* programRes
 	if (!resource)
 		return 0;
 
-	Ref< ProgramPs3 > program = new ProgramPs3();
+	Ref< ProgramPs3 > program = new ProgramPs3(m_counterPrograms);
 	if (!program->create(m_memoryHeapLocal, resource))
 		return 0;
 
@@ -224,6 +229,29 @@ Ref< IProgramCompiler > RenderSystemPs3::createProgramCompiler() const
 
 void RenderSystemPs3::compactHeaps()
 {
+#if defined(_DEBUG)
+
+	static int32_t localObjectCount = 0, mainObjectCount = 0;
+
+	if (localObjectCount != m_memoryHeapLocal->getObjectCount() || mainObjectCount != m_memoryHeapMain->getObjectCount())
+	{
+		log::debug << L"Local heap:" << Endl;
+		log::debug << IncreaseIndent;
+		log::debug << m_memoryHeapLocal->getAvailable() << L" byte(s) available" << Endl;
+		log::debug << m_memoryHeapLocal->getObjectCount() << L" alive object(s)" << Endl;
+		log::debug << DecreaseIndent;
+
+		log::debug << L"Main heap:" << Endl;
+		log::debug << IncreaseIndent;
+		log::debug << m_memoryHeapMain->getAvailable() << L" byte(s) available" << Endl;
+		log::debug << m_memoryHeapMain->getObjectCount() << L" alive object(s)" << Endl;
+		log::debug << DecreaseIndent;
+
+		localObjectCount = m_memoryHeapLocal->getObjectCount();
+		mainObjectCount = m_memoryHeapMain->getObjectCount();
+	}
+#endif
+
 	m_memoryHeapLocal->compact();
 	m_memoryHeapMain->compact();
 }

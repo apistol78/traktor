@@ -8,10 +8,12 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.IndexBufferPs3", IndexBufferPs3, IndexBuffer)
 
-IndexBufferPs3::IndexBufferPs3(MemoryHeapObject* ibo, IndexType indexType, int bufferSize)
+IndexBufferPs3::IndexBufferPs3(MemoryHeapObject* ibo, IndexType indexType, int bufferSize, int32_t& counter)
 :	IndexBuffer(indexType, bufferSize)
 ,	m_ibo(ibo)
+,	m_counter(counter)
 {
+	++m_counter;
 }
 
 IndexBufferPs3::~IndexBufferPs3()
@@ -23,8 +25,8 @@ void IndexBufferPs3::destroy()
 {
 	if (m_ibo)
 	{
-		m_ibo->free();
-		m_ibo = 0;
+		m_ibo->free(); m_ibo = 0;
+		--m_counter;
 	}
 }
 

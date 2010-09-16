@@ -23,10 +23,12 @@ bool isPowerOf2(int value)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SimpleTexturePs3", SimpleTexturePs3, ISimpleTexture)
 
-SimpleTexturePs3::SimpleTexturePs3()
+SimpleTexturePs3::SimpleTexturePs3(int32_t& counter)
 :	m_data(0)
+,	m_counter(counter)
 {
 	std::memset(&m_texture, 0, sizeof(m_texture));
+	++m_counter;
 }
 
 SimpleTexturePs3::~SimpleTexturePs3()
@@ -155,8 +157,8 @@ void SimpleTexturePs3::destroy()
 {
 	if (m_data)
 	{
-		m_data->free();
-		m_data = 0;
+		m_data->free(); m_data = 0;
+		--m_counter;
 	}
 }
 

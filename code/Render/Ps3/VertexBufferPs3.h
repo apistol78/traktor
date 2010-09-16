@@ -26,7 +26,7 @@ class T_DLLCLASS VertexBufferPs3 : public VertexBuffer
 	T_RTTI_CLASS;
 
 public:
-	VertexBufferPs3(const std::vector< VertexElement >& vertexElements, MemoryHeapObject* vbo, int bufferSize);
+	VertexBufferPs3(const std::vector< VertexElement >& vertexElements, MemoryHeapObject* vbo, int bufferSize, int32_t& counter);
 
 	virtual ~VertexBufferPs3();
 
@@ -52,6 +52,7 @@ private:
 	MemoryHeapObject* m_vbo;
 	uint8_t m_vertexStride;
 	AttributeDesc m_attributeDesc[16];
+	int32_t& m_counter;
 };
 
 	}

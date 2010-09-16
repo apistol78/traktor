@@ -19,7 +19,9 @@ public:
 
 	MemoryHeapObject* alloc(size_t size, size_t align, bool immutable);
 
-	size_t available() const;
+	size_t getAvailable() const;
+
+	size_t getObjectCount() const;
 
 	void compact();
 
