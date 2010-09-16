@@ -117,6 +117,13 @@ public:
 		m_resource = 0;
 	}
 
+	/*! \brief Clear proxy; becoming completely unbound. */
+	void clear()
+	{
+		m_handle = 0;
+		m_resource = 0;
+	}
+
 	inline operator ResourceType* ()
 	{
 		return m_resource;
