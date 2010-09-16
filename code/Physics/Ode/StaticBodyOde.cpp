@@ -32,6 +32,7 @@ void StaticBodyOde::destroy()
 		dGeomDestroy(m_geomId);
 		m_geomId = 0;
 	}
+	StaticBody::destroy();
 }
 
 void StaticBodyOde::setTransform(const Transform& transform)

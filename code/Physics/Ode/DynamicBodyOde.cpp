@@ -62,6 +62,7 @@ void DynamicBodyOde::destroy()
 		dGeomDestroy(m_geomId);
 		m_geomId = 0;
 	}
+	DynamicBody::destroy();
 }
 
 void DynamicBodyOde::setTransform(const Transform& transform)

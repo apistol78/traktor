@@ -49,6 +49,8 @@ public:
 		m_dynamicsWorld = 0;
 		m_body = 0;
 		m_shape = 0;
+
+		Outer::destroy();
 	}
 
 	virtual void setEnable(bool enable)

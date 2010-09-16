@@ -32,7 +32,7 @@ public:
 	Body();
 
 	/*! \brief Destroy rigid body. */
-	virtual void destroy() = 0;
+	virtual void destroy();
 
 	/*! \brief Set rigid body world transform. */
 	virtual void setTransform(const Transform& transform) = 0;
@@ -87,6 +87,9 @@ public:
 	 * \param collisionListener Collision listener.
 	 */
 	void removeCollisionListener(CollisionListener* collisionListener);
+
+	/*! \brief Remove all collision listener callbacks. */
+	void removeAllCollisionListeners();
 
 	/*! \brief Notify registered collision listeners.
 	 *

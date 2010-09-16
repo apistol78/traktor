@@ -14,6 +14,11 @@ Body::Body()
 {
 }
 
+void Body::destroy()
+{
+	removeAllCollisionListeners();
+}
+
 void Body::addCollisionListener(CollisionListener* collisionListener)
 {
 	m_collisionListeners.push_back(collisionListener);
@@ -24,6 +29,11 @@ void Body::removeCollisionListener(CollisionListener* collisionListener)
 	RefArray< CollisionListener >::iterator i = std::find(m_collisionListeners.begin(), m_collisionListeners.end(), collisionListener);
 	if (i != m_collisionListeners.end())
 		m_collisionListeners.erase(i);
+}
+
+void Body::removeAllCollisionListeners()
+{
+	m_collisionListeners.clear();
 }
 
 void Body::notifyCollisionListeners(const CollisionInfo& collisionInfo)
