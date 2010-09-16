@@ -28,6 +28,22 @@ WorldRenderSettings::WorldRenderSettings()
 {
 }
 
+WorldRenderSettings::WorldRenderSettings(const WorldRenderSettings& settings)
+:	viewNearZ(settings.viewNearZ)
+,	viewFarZ(settings.viewFarZ)
+,	depthPassEnabled(settings.depthPassEnabled)
+,	depthRange(settings.depthRange)
+,	velocityPassEnable(settings.velocityPassEnable)
+,	shadowsEnabled(settings.shadowsEnabled)
+,	shadowsProjection(settings.shadowsProjection)
+,	shadowsQuality(settings.shadowsQuality)
+,	ssaoEnabled(settings.ssaoEnabled)
+,	shadowFarZ(settings.shadowFarZ)
+,	shadowMapResolution(settings.shadowMapResolution)
+,	shadowMapBias(settings.shadowMapBias)
+{
+}
+
 bool WorldRenderSettings::serialize(ISerializer& s)
 {
 	const MemberEnum< ShadowProjection >::Key c_ShadowProjection_Keys[] =

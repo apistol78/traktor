@@ -64,6 +64,8 @@ public:
 
 	WorldRenderSettings();
 
+	WorldRenderSettings(const WorldRenderSettings& settings);
+
 	virtual bool serialize(ISerializer& s);
 };
 
