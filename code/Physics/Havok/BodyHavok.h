@@ -37,6 +37,8 @@ public:
 		}
 
 		m_rigidBody.release();
+
+		Outer::destroy();
 	}
 
 	inline const HvkRef< hkpRigidBody >& getRigidBody() const { return m_rigidBody; }

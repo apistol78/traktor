@@ -34,6 +34,7 @@ public:
 			m_callback = 0;
 		}
 		m_actor = 0;
+		Outer::destroy();
 	}
 
 	inline NxActor* getActor() const { return m_actor; }
