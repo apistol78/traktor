@@ -25,6 +25,8 @@ class T_DLLCLASS Library : public Object
 	T_RTTI_CLASS;
 
 public:
+	Library();
+	
 	virtual ~Library();
 	
 	/*! \brief Open library.
