@@ -1,4 +1,5 @@
 #include "Core/Log/Log.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Sound/IStreamDecoder.h"
 #include "Sound/StreamSoundBuffer.h"
 
@@ -33,6 +34,11 @@ StreamSoundBuffer::StreamSoundBuffer()
 {
 }
 
+StreamSoundBuffer::~StreamSoundBuffer()
+{
+	destroy();
+}
+
 bool StreamSoundBuffer::create(IStreamDecoder* streamDecoder)
 {
 	if ((m_streamDecoder = streamDecoder) != 0)
@@ -43,7 +49,7 @@ bool StreamSoundBuffer::create(IStreamDecoder* streamDecoder)
 
 void StreamSoundBuffer::destroy()
 {
-	m_streamDecoder = 0;
+	safeDestroy(m_streamDecoder);
 }
 
 Ref< ISoundBufferCursor > StreamSoundBuffer::createCursor() const

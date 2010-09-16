@@ -27,6 +27,8 @@ class T_DLLCLASS StreamSoundBuffer : public ISoundBuffer
 
 public:
 	StreamSoundBuffer();
+	
+	virtual ~StreamSoundBuffer();
 
 	bool create(IStreamDecoder* streamDecoder);
 
