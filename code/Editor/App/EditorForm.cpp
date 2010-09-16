@@ -184,9 +184,9 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	{
 		log::info << L"Loading module \"" << modules[i] << L"\"..." << Endl;
 		if (m_libraries[i].open(modules[i]))
-			log::info << L"Module \"" << *i << L"\" loaded successfully" << Endl;
+			log::info << L"Module \"" << modules[i] << L"\" loaded successfully" << Endl;
 		else
-			log::error << L"Unable to load module \"" << *i << L"\"" << Endl;
+			log::error << L"Unable to load module \"" << modules[i] << L"\"" << Endl;
 	}
 #endif
 
