@@ -179,10 +179,11 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	// Load dependent modules.
 #if !defined(T_STATIC)
 	const std::vector< std::wstring >& modules = m_settings->getProperty< PropertyStringArray >(L"Editor.Modules");
-	for (std::vector< std::wstring >::const_iterator i = modules.begin(); i != modules.end(); ++i)
+	m_libraries.resize(modules.size());
+	for (uint32_t i = 0; i < modules.size(); ++i)
 	{
-		log::info << L"Loading module \"" << *i << L"\"..." << Endl;
-		if (Library().open(*i))
+		log::info << L"Loading module \"" << modules[i] << L"\"..." << Endl;
+		if (m_libraries[i].open(modules[i]))
 			log::info << L"Module \"" << *i << L"\" loaded successfully" << Endl;
 		else
 			log::error << L"Unable to load module \"" << *i << L"\"" << Endl;
@@ -523,6 +524,10 @@ void EditorForm::destroy()
 	m_statusBar->destroy();
 	m_toolBar->destroy();
 	m_menuBar->destroy();
+
+	// Unload libraries.
+	for (std::vector< Library >::iterator i = m_libraries.begin(); i != m_libraries.end(); ++i)
+		i->close();
 
 	Form::destroy();
 }

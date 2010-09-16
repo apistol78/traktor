@@ -86,6 +86,7 @@ int main(int argc, const char** argv)
 {
 	CommandLine cmdLine(argc, argv);
 	Ref< traktor::IStream > logFile;
+	std::vector< Library > libraries;
 
 	if (cmdLine.hasOption('h'))
 	{
@@ -137,11 +138,12 @@ int main(int argc, const char** argv)
 	}
 
 	std::vector< std::wstring > modules = settings->getProperty< PropertyStringArray >(L"Editor.Modules");
-	for (std::vector< std::wstring >::const_iterator i = modules.begin(); i != modules.end(); ++i)
+	libraries.resize(modules.size());
+	for (uint32_t i = 0; i < modules.size(); ++i)
 	{
-		if (!Library().open(*i))
+		if (!libraries[i].open(modules[i]))
 		{
-			traktor::log::error << L"Unable to load module \"" << *i << L"\"" << Endl;
+			traktor::log::error << L"Unable to load module \"" << modules[i] << L"\"" << Endl;
 			return 6;
 		}
 	}
@@ -267,6 +269,9 @@ int main(int argc, const char** argv)
 	pipelineDb->close();
 	outputDatabase->close();
 	sourceDatabase->close();
+
+	for (std::vector< Library >::iterator i = libraries.begin(); i != libraries.end(); ++i)
+		i->close();
 
 	if (logFile)
 	{
