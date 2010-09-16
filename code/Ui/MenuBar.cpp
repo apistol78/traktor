@@ -14,6 +14,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.MenuBar", MenuBar, EventSubject)
 
 MenuBar::MenuBar()
 :	m_menuBar(0)
+,	m_form(0)
 {
 }
 

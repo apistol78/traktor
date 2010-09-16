@@ -18,13 +18,9 @@ class AsXML : public ActionClass
 	T_RTTI_CLASS;
 
 public:
-	static Ref< AsXML > getInstance();
-
-private:
 	AsXML();
 
-	void createPrototype();
-
+private:
 	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
 
 	void XML_addRequestHeader(CallArgs& ca);

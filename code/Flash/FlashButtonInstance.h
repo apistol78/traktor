@@ -56,6 +56,11 @@ public:
 
 	virtual SwfRect getBounds() const;
 
+protected:
+	virtual void trace(const IVisitor& visitor) const;
+
+	virtual void dereference();
+
 private:
 	Ref< const FlashButton > m_button;
 	std::map< uint16_t, Ref< FlashCharacterInstance > > m_characterInstances;

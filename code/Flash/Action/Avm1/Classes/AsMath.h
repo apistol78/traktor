@@ -1,8 +1,8 @@
 #ifndef traktor_flash_AsMath_H
 #define traktor_flash_AsMath_H
 
-#include "Flash/Action/Avm1/ActionClass.h"
 #include "Core/Math/Random.h"
+#include "Flash/Action/Avm1/ActionClass.h"
 
 namespace traktor
 {
@@ -19,14 +19,10 @@ class AsMath : public ActionClass
 	T_RTTI_CLASS;
 
 public:
-	static Ref< AsMath > getInstance();
+	AsMath();
 
 private:
 	Random m_random;
-
-	AsMath();
-
-	void createPrototype();
 
 	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
 

@@ -18,13 +18,9 @@ class AsString : public ActionClass
 	T_RTTI_CLASS;
 
 public:
-	static Ref< AsString > getInstance();
-
-private:
 	AsString();
 
-	void createPrototype();
-
+private:
 	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
 
 	void String_charAt(CallArgs& ca);

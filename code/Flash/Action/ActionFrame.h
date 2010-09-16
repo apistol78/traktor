@@ -71,14 +71,14 @@ public:
 	inline ActionValueStack& getStack() { return m_stack; }
 
 private:
-	Ref< ActionContext > m_context;
+	ActionContext* m_context;
 	ActionObject* m_self;
 	const uint8_t* m_code;
 	uint16_t m_codeSize;
 	ActionValueArray m_localRegisters;
 	std::map< std::wstring, ActionValue > m_localVariables;
 	Ref< ActionDictionary > m_dictionary;
-	Ref< ActionFunction > m_callee;
+	ActionFunction* m_callee;
 	ActionValueStack m_stack;
 };
 

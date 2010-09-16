@@ -8,8 +8,6 @@ namespace traktor
 	namespace flash
 	{
 
-class ActionVM;
-class ActionContext;
 struct CallArgs;
 
 /*! \brief Sound class.
@@ -20,13 +18,9 @@ class AsSound : public ActionClass
 	T_RTTI_CLASS;
 
 public:
-	static Ref< AsSound > getInstance();
-
-private:
 	AsSound();
 
-	void createPrototype();
-
+private:
 	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
 
 	void Sound_attachSound(CallArgs& ca);

@@ -2,7 +2,6 @@
 #include "Flash/FlashButtonInstance.h"
 #include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Avm1/Classes/AsButton.h"
-#include "Flash/Action/Avm1/Classes/AsObject.h"
 
 namespace traktor
 {
@@ -11,28 +10,10 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsButton", AsButton, ActionClass)
 
-Ref< AsButton > AsButton::getInstance()
-{
-	static Ref< AsButton > instance = 0;
-	if (!instance)
-	{
-		instance = new AsButton();
-		instance->createPrototype();
-		instance->setReadOnly();
-	}
-	return instance;
-}
-
 AsButton::AsButton()
 :	ActionClass(L"Button")
 {
-}
-
-void AsButton::createPrototype()
-{
 	Ref< ActionObject > prototype = new ActionObject();
-
-	prototype->setMember(L"__proto__", ActionValue(AsObject::getInstance()));
 
 	prototype->addProperty(L"_alpha", createNativeFunction(this, &AsButton::Button_get_alpha), createNativeFunction(this, &AsButton::Button_set_alpha));
 	prototype->addProperty(L"blendMode", createNativeFunction(this, &AsButton::Button_get_blendMode), createNativeFunction(this, &AsButton::Button_set_blendMode));

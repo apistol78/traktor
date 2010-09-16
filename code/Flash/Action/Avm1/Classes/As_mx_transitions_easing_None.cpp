@@ -1,6 +1,5 @@
 #include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Avm1/Classes/As_mx_transitions_easing_None.h"
-#include "Flash/Action/Avm1/Classes/AsObject.h"
 
 namespace traktor
 {
@@ -9,28 +8,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.As_mx_transitions_easing_None", As_mx_transitions_easing_None, ActionClass)
 
-Ref< As_mx_transitions_easing_None > As_mx_transitions_easing_None::getInstance()
-{
-	static Ref< As_mx_transitions_easing_None > instance;
-	if (!instance)
-	{
-		instance = new As_mx_transitions_easing_None();
-		instance->createPrototype();
-		instance->setReadOnly();
-	}
-	return instance;
-}
-
 As_mx_transitions_easing_None::As_mx_transitions_easing_None()
-:	ActionClass(L"None")
-{
-}
-
-void As_mx_transitions_easing_None::createPrototype()
+:	ActionClass(L"mx.transitions.easing.None")
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"__proto__", ActionValue(AsObject::getInstance()));
 	prototype->setMember(L"easeIn", ActionValue(createNativeFunction(this, &As_mx_transitions_easing_None::None_easeIn)));
 	prototype->setMember(L"easeInOut", ActionValue(createNativeFunction(this, &As_mx_transitions_easing_None::None_easeInOut)));
 	prototype->setMember(L"easeOut", ActionValue(createNativeFunction(this, &As_mx_transitions_easing_None::None_easeOut)));

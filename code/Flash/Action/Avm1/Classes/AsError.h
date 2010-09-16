@@ -18,13 +18,9 @@ class AsError : public ActionClass
 	T_RTTI_CLASS;
 
 public:
-	static Ref< AsError > getInstance();
-
-private:
 	AsError();
 
-	void createPrototype();
-
+private:
 	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
 };
 

@@ -18,13 +18,9 @@ class AsMovieClip : public ActionClass
 	T_RTTI_CLASS;
 
 public:
-	static Ref< AsMovieClip > getInstance();
-
-private:
 	AsMovieClip();
 
-	void createPrototype();
-
+private:
 	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
 
 	void MovieClip_attachAudio(CallArgs& ca);

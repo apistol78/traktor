@@ -18,13 +18,9 @@ class AsSecurity : public ActionClass
 	T_RTTI_CLASS;
 
 public:
-	static Ref< AsSecurity > getInstance();
-
-private:
 	AsSecurity();
 
-	void createPrototype();
-
+private:
 	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
 
 	void Security_allowDomain(CallArgs& ca);

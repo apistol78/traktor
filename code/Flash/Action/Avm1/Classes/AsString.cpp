@@ -6,7 +6,6 @@
 #include "Flash/Action/Classes/String.h"
 #include "Flash/Action/Classes/Array.h"
 #include "Flash/Action/Avm1/Classes/AsString.h"
-#include "Flash/Action/Avm1/Classes/AsObject.h"
 
 namespace traktor
 {
@@ -15,28 +14,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsString", AsString, ActionClass)
 
-Ref< AsString > AsString::getInstance()
-{
-	static Ref< AsString > instance = 0;
-	if (!instance)
-	{
-		instance = new AsString();
-		instance->createPrototype();
-		instance->setReadOnly();
-	}
-	return instance;
-}
-
 AsString::AsString()
 :	ActionClass(L"String")
 {
-}
-
-void AsString::createPrototype()
-{
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"__proto__", ActionValue(AsObject::getInstance()));
 	prototype->setMember(L"charAt", ActionValue(createNativeFunction(this, &AsString::String_charAt)));
 	prototype->setMember(L"charCodeAt", ActionValue(createNativeFunction(this, &AsString::String_charCodeAt)));
 	prototype->setMember(L"concat", ActionValue(createNativeFunction(this, &AsString::String_concat)));

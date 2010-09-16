@@ -2,6 +2,7 @@
 #	include <windows.h>
 #endif
 #include "UnitTest/CaseAtomic.h"
+#include "UnitTest/CaseCycleDebugger.h"
 #include "UnitTest/CaseMeta.h"
 #include "UnitTest/CaseProcess.h"
 #include "UnitTest/CaseThread.h"
@@ -32,6 +33,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPWSTR, int)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 #endif
 {
+	log::info << L"Case cycle debugger" << Endl;
+	traktor::CaseCycleDebugger().run();
+
 	//log::info << L"Case atomic" << Endl;
 	//traktor::CaseAtomic().run();
 
@@ -74,8 +78,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	//log::info << L"Case xml pull parser" << Endl;
 	//traktor::CaseXmlPullParser().run();
 
-	log::info << L"Case xml document" << Endl;
-	traktor::CaseXmlDocument().run();
+	//log::info << L"Case xml document" << Endl;
+	//traktor::CaseXmlDocument().run();
 
 	//log::info << L"Case zip" << Endl;
 	//traktor::CaseZip().run();

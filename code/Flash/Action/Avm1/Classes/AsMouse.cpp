@@ -3,7 +3,6 @@
 #include "Flash/Action/ActionFrame.h"
 #include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Avm1/Classes/AsMouse.h"
-#include "Flash/Action/Avm1/Classes/AsObject.h"
 
 namespace traktor
 {
@@ -12,17 +11,19 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsMouse", AsMouse, ActionClass)
 
-Ref< AsMouse > AsMouse::createInstance()
-{
-	Ref< AsMouse > instance = new AsMouse();
-	instance->createPrototype();
-	instance->setReadOnly();
-	return instance;
-}
-
 AsMouse::AsMouse()
 :	ActionClass(L"Mouse")
 {
+	Ref< ActionObject > prototype = new ActionObject();
+
+	prototype->setMember(L"addListener", ActionValue(createNativeFunction(this, &AsMouse::Mouse_addListener)));
+	prototype->setMember(L"removeListener", ActionValue(createNativeFunction(this, &AsMouse::Mouse_removeListener)));
+	prototype->setMember(L"show", ActionValue(createNativeFunction(this, &AsMouse::Mouse_show)));
+	prototype->setMember(L"hide", ActionValue(createNativeFunction(this, &AsMouse::Mouse_hide)));
+
+	prototype->setReadOnly();
+
+	setMember(L"prototype", ActionValue(prototype));
 }
 
 void AsMouse::eventMouseDown(ActionContext* context, int x, int y, int button)
@@ -33,7 +34,7 @@ void AsMouse::eventMouseDown(ActionContext* context, int x, int y, int button)
 	for (RefArray< ActionObject >::iterator i = listeners.begin(); i != listeners.end(); ++i)
 	{
 		ActionValue member;
-		(*i)->getMember(L"onButtonDown", member);
+		(*i)->getMember(context, L"onButtonDown", member);
 		if (member.isUndefined())
 			continue;
 
@@ -54,7 +55,7 @@ void AsMouse::eventMouseUp(ActionContext* context, int x, int y, int button)
 	for (RefArray< ActionObject >::iterator i = listeners.begin(); i != listeners.end(); ++i)
 	{
 		ActionValue member;
-		(*i)->getMember(L"onButtonUp", member);
+		(*i)->getMember(context, L"onButtonUp", member);
 		if (member.isUndefined())
 			continue;
 
@@ -75,7 +76,7 @@ void AsMouse::eventMouseMove(ActionContext* context, int x, int y, int button)
 	for (RefArray< ActionObject >::iterator i = listeners.begin(); i != listeners.end(); ++i)
 	{
 		ActionValue member;
-		(*i)->getMember(L"onMove", member);
+		(*i)->getMember(context, L"onMove", member);
 		if (member.isUndefined())
 			continue;
 
@@ -88,19 +89,22 @@ void AsMouse::eventMouseMove(ActionContext* context, int x, int y, int button)
 	}
 }
 
-void AsMouse::createPrototype()
+void AsMouse::removeAllListeners()
 {
-	Ref< ActionObject > prototype = new ActionObject();
+	m_listeners.clear();
+}
 
-	prototype->setMember(L"__proto__", ActionValue(AsObject::getInstance()));
-	prototype->setMember(L"addListener", ActionValue(createNativeFunction(this, &AsMouse::Mouse_addListener)));
-	prototype->setMember(L"removeListener", ActionValue(createNativeFunction(this, &AsMouse::Mouse_removeListener)));
-	prototype->setMember(L"show", ActionValue(createNativeFunction(this, &AsMouse::Mouse_show)));
-	prototype->setMember(L"hide", ActionValue(createNativeFunction(this, &AsMouse::Mouse_hide)));
+void AsMouse::trace(const IVisitor& visitor) const
+{
+	for (RefArray< ActionObject >::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
+		visitor(*i);
+	ActionClass::trace(visitor);
+}
 
-	prototype->setReadOnly();
-
-	setMember(L"prototype", ActionValue(prototype));
+void AsMouse::dereference()
+{
+	m_listeners.clear();
+	ActionClass::dereference();
 }
 
 ActionValue AsMouse::construct(ActionContext* context, const ActionValueArray& args)

@@ -3,7 +3,6 @@
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Classes/Tween.h"
-#include "Flash/Action/Avm1/Classes/As_mx_transitions_Tween.h"
 
 namespace traktor
 {
@@ -22,10 +21,8 @@ Tween::Tween(
 	avm_number_t duration,
 	bool useSeconds
 )
-:	ActionObject(As_mx_transitions_Tween::getInstance())
+:	ActionObject(L"mx.transitions.Tween")
 ,	m_context(context)
-,	m_target(target)
-,	m_function(function)
 ,	m_begin(begin)
 ,	m_finish(finish)
 ,	m_duration(duration)
@@ -34,16 +31,20 @@ Tween::Tween(
 ,	m_current(begin)
 ,	m_playing(false)
 {
-	if (m_target)
-		m_target->getPropertySet(propertyName, m_property);
+	if (target)
+	{
+		setMember(L"_target", ActionValue(target));
+
+		Ref< ActionFunction > propertySet;
+		if (target->getPropertySet(context, propertyName, propertySet))
+			setMember(L"_targetProperty", ActionValue(propertySet));
+	}
 	
+	if (function)
+		setMember(L"_function", ActionValue(function));
+
 	setMember(L"onFrame", ActionValue(createNativeFunction(this, &Tween::onFrame)));
 	start();
-}
-
-Tween::~Tween()
-{
-	stop();
 }
 
 void Tween::continueTo(avm_number_t finish, avm_number_t duration)
@@ -86,8 +87,16 @@ void Tween::start()
 
 	if (!m_playing)
 	{
+		ActionValue target;
+		ActionValue propertySet;
+		ActionValue function;
+
+		getLocalMember(L"_target", target);
+		getLocalMember(L"_targetProperty", propertySet);
+		getLocalMember(L"_function", function);
+
 		// Ensure property is set to initial value.
-		if (m_property && m_function)
+		if (propertySet.isObject() && function.isObject())
 		{
 			ActionValue value;
 
@@ -99,7 +108,7 @@ void Tween::start()
 				argv0[1] = ActionValue(m_begin);
 				argv0[2] = ActionValue(m_finish - m_begin);
 				argv0[3] = ActionValue(m_duration);
-				value = m_function->call(m_context, this, argv0);
+				value = function.getObject< ActionFunction >()->call(m_context, this, argv0);
 			}
 			else
 				value = ActionValue(m_begin);
@@ -111,7 +120,11 @@ void Tween::start()
 			{
 				ActionValueArray argv1(m_context->getPool(), 1);
 				argv1[0] = value;
-				m_property->call(m_context, m_target, argv1);
+				propertySet.getObject< ActionFunction >()->call(
+					m_context,
+					target.getObjectSafe(),
+					argv1
+				);
 			}
 		}
 
@@ -137,7 +150,15 @@ void Tween::yoyo()
 
 void Tween::onFrame(CallArgs& ca)
 {
-	if (!m_function || !m_property || !m_playing || m_duration <= 0.0f)
+	ActionValue target;
+	ActionValue propertySet;
+	ActionValue function;
+
+	getLocalMember(L"_target", target);
+	getLocalMember(L"_targetProperty", propertySet);
+	getLocalMember(L"_function", function);
+
+	if (!function.isObject() || !propertySet.isObject() || !m_playing || m_duration <= 0.0f)
 		return;
 
 	ActionValue value;
@@ -158,7 +179,7 @@ void Tween::onFrame(CallArgs& ca)
 		argv0[1] = ActionValue(m_begin);
 		argv0[2] = ActionValue(m_finish - m_begin);
 		argv0[3] = ActionValue(m_duration);
-		value = m_function->call(ca.context, this, argv0);
+		value = function.getObject< ActionFunction >()->call(ca.context, this, argv0);
 	}
 	else
 		value = ActionValue(m_begin);
@@ -170,7 +191,11 @@ void Tween::onFrame(CallArgs& ca)
 	{
 		ActionValueArray argv1(ca.context->getPool(), 1);
 		argv1[0] = value;
-		m_property->call(ca.context, m_target, argv1);
+		propertySet.getObject< ActionFunction >()->call(
+			ca.context,
+			target.getObjectSafe(),
+			argv1
+		);
 	}
 
 	// Stop after duration expired.

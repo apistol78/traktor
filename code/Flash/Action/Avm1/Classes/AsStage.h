@@ -18,13 +18,9 @@ class AsStage : public ActionClass
 	T_RTTI_CLASS;
 
 public:
-	static Ref< AsStage > getInstance();
-
-private:
 	AsStage();
 
-	void createPrototype();
-
+private:
 	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
 
 	void Stage_get_width(CallArgs& ca);

@@ -1,7 +1,6 @@
 #include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Classes/Tween.h"
 #include "Flash/Action/Avm1/Classes/As_mx_transitions_Tween.h"
-#include "Flash/Action/Avm1/Classes/AsObject.h"
 
 namespace traktor
 {
@@ -10,28 +9,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.As_mx_transitions_Tween", As_mx_transitions_Tween, ActionClass)
 
-Ref< As_mx_transitions_Tween > As_mx_transitions_Tween::getInstance()
-{
-	static Ref< As_mx_transitions_Tween > instance = 0;
-	if (!instance)
-	{
-		instance = new As_mx_transitions_Tween();
-		instance->createPrototype();
-		instance->setReadOnly();
-	}
-	return instance;
-}
-
 As_mx_transitions_Tween::As_mx_transitions_Tween()
-:	ActionClass(L"Tween")
-{
-}
-
-void As_mx_transitions_Tween::createPrototype()
+:	ActionClass(L"mx.transitions.Tween")
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"__proto__", ActionValue(AsObject::getInstance()));
 	prototype->setMember(L"continueTo", ActionValue(createNativeFunction(this, &As_mx_transitions_Tween::Tween_continueTo)));
 	prototype->setMember(L"fforward", ActionValue(createNativeFunction(this, &As_mx_transitions_Tween::Tween_fforward)));
 	prototype->setMember(L"nextFrame", ActionValue(createNativeFunction(this, &As_mx_transitions_Tween::Tween_nextFrame)));

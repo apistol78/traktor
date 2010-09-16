@@ -50,6 +50,11 @@ public:
 
 	virtual Ref< FlashCharacterInstance > createInstance(ActionContext* context, FlashCharacterInstance* parent) const;
 
+protected:
+	virtual void trace(const IVisitor& visitor) const;
+
+	virtual void dereference();
+
 private:
 	uint16_t m_frameRate;
 	RefArray< FlashFrame > m_frames;

@@ -2,7 +2,6 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Flash/Action/Classes/Array.h"
-#include "Flash/Action/Avm1/Classes/AsArray.h"
 
 namespace traktor
 {
@@ -12,7 +11,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.Array", Array, ActionObject)
 
 Array::Array()
-:	ActionObject(AsArray::getInstance())
+:	ActionObject(L"Array")
 {
 }
 
@@ -147,7 +146,7 @@ void Array::setMember(const std::wstring& memberName, const ActionValue& memberV
 		ActionObject::setMember(memberName, memberValue);
 }
 
-bool Array::getMember(const std::wstring& memberName, ActionValue& outMemberValue) const
+bool Array::getMember(ActionContext* context, const std::wstring& memberName, ActionValue& outMemberValue)
 {
 	int32_t index = parseString< int32_t >(memberName, -1);
 	if (index >= 0 && index < int32_t(m_values.size()))
@@ -155,7 +154,7 @@ bool Array::getMember(const std::wstring& memberName, ActionValue& outMemberValu
 		outMemberValue = m_values[index];
 		return true;
 	}
-	return ActionObject::getMember(memberName, outMemberValue);
+	return ActionObject::getMember(context, memberName, outMemberValue);
 }
 
 std::wstring Array::toString() const
@@ -168,6 +167,22 @@ std::wstring Array::toString() const
 		ss << i->getStringSafe();
 	}
 	return ss.str();
+}
+
+void Array::trace(const IVisitor& visitor) const
+{
+	for (std::vector< ActionValue >::const_iterator i = m_values.begin(); i != m_values.end(); ++i)
+	{
+		if (i->isObject() && i->getObject())
+			visitor(i->getObject());
+	}
+	ActionObject::trace(visitor);
+}
+
+void Array::dereference()
+{
+	m_values.clear();
+	ActionObject::dereference();
 }
 
 	}

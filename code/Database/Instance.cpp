@@ -32,6 +32,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.db.Instance", Instance, Object)
 Instance::Instance(Database* database)
 :	m_database(database)
 ,	m_providerBus(0)
+,	m_parent(0)
 ,	m_renamed(false)
 ,	m_removed(false)
 #if T_INSTANCE_CACHE_NAME || T_INSTANCE_CACHE_GUID || T_INSTANCE_CACHE_PRIMARY_TYPE

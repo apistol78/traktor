@@ -4,7 +4,6 @@
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Avm1/Classes/AsStage.h"
-#include "Flash/Action/Avm1/Classes/AsObject.h"
 
 namespace traktor
 {
@@ -13,28 +12,10 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsStage", AsStage, ActionClass)
 
-Ref< AsStage > AsStage::getInstance()
-{
-	static Ref< AsStage > instance = 0;
-	if (!instance)
-	{
-		instance = new AsStage();
-		instance->createPrototype();
-		instance->setReadOnly();
-	}
-	return instance;
-}
-
 AsStage::AsStage()
 :	ActionClass(L"Stage")
 {
-}
-
-void AsStage::createPrototype()
-{
 	Ref< ActionObject > prototype = new ActionObject();
-
-	prototype->setMember(L"__proto__", ActionValue(AsObject::getInstance()));
 
 	prototype->addProperty(L"width", createNativeFunction(this, &AsStage::Stage_get_width), createNativeFunction(this, &AsStage::Stage_set_width));
 	prototype->addProperty(L"height", createNativeFunction(this, &AsStage::Stage_get_height), createNativeFunction(this, &AsStage::Stage_set_height));

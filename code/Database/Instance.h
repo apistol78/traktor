@@ -93,7 +93,7 @@ private:
 	Database* m_database;
 	IProviderBus* m_providerBus;
 	Ref< IProviderInstance > m_providerInstance;
-	Ref< Group > m_parent;
+	Group* m_parent;
 	Semaphore m_lock;
 	bool m_renamed;
 	bool m_removed;

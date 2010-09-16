@@ -11,7 +11,6 @@
 #include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Classes/Transform.h"
 #include "Flash/Action/Avm1/Classes/AsMovieClip.h"
-#include "Flash/Action/Avm1/Classes/AsObject.h"
 
 namespace traktor
 {
@@ -56,28 +55,11 @@ Matrix33 composeTransform(const Vector2& translate_, const Vector2& scale_, floa
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsMovieClip", AsMovieClip, ActionClass)
 
-Ref< AsMovieClip > AsMovieClip::getInstance()
-{
-	static Ref< AsMovieClip > instance;
-	if (!instance)
-	{
-		instance = new AsMovieClip();
-		instance->createPrototype();
-		instance->setReadOnly();
-	}
-	return instance;
-}
-
 AsMovieClip::AsMovieClip()
 :	ActionClass(L"MovieClip")
 {
-}
-
-void AsMovieClip::createPrototype()
-{
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"__proto__", ActionValue(AsObject::getInstance()));
 	prototype->setMember(L"attachAudio", ActionValue(createNativeFunction(this, &AsMovieClip::MovieClip_attachAudio)));
 	prototype->setMember(L"attachBitmap", ActionValue(createNativeFunction(this, &AsMovieClip::MovieClip_attachBitmap)));
 	prototype->setMember(L"attachMovie", ActionValue(createNativeFunction(this, &AsMovieClip::MovieClip_attachMovie)));

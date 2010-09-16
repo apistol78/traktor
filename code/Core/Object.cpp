@@ -1,3 +1,4 @@
+#include "Core/IObjectRefDebugger.h"
 #include "Core/Object.h"
 #include "Core/Memory/Alloc.h"
 #include "Core/Memory/FastAllocator.h"
@@ -38,7 +39,7 @@ IAllocator* getAllocator()
 	static AutoPtr< IAllocator > s_allocator;
 	if (!s_allocator.ptr())
 	{
-#if 1
+#if !defined(_DEBUG)
 		s_allocator.reset(new FastAllocator(
 			new StdAllocator()
 		));
@@ -55,13 +56,25 @@ IAllocator* getAllocator()
 
 T_IMPLEMENT_RTTI_CLASS_ROOT(L"traktor.Object", Object)
 
-void Object::addRef() const
+IObjectRefDebugger* Object::ms_refDebugger = 0;
+
+void Object::addRef(void* owner) const
 {
 	++m_refCount;
+
+#if defined(_DEBUG)
+	if (ms_refDebugger)
+		ms_refDebugger->addObjectRef(owner, (void*)this);
+#endif
 }
 
-void Object::release() const
+void Object::release(void* owner) const
 {
+#if defined(_DEBUG)
+	if (ms_refDebugger)
+		ms_refDebugger->removeObjectRef(owner, (void*)this);
+#endif
+
 	if (--m_refCount == 0)
 	{
 		if (isObjectHeapAllocated(this))
@@ -80,7 +93,14 @@ void* Object::operator new (size_t size)
 
 	header->magic = c_magic;
 
-	return reinterpret_cast< Object* >(header + 1);
+	Object* object = reinterpret_cast< Object* >(header + 1);
+
+#if defined(_DEBUG)
+	if (ms_refDebugger)
+		ms_refDebugger->addObject(object, size);
+#endif
+
+	return object;
 }
 
 void Object::operator delete (void* ptr)
@@ -90,6 +110,11 @@ void Object::operator delete (void* ptr)
 		ObjectHeader* header = static_cast< ObjectHeader* >(ptr) - 1;
 		T_ASSERT (header->magic == c_magic);
 
+#if defined(_DEBUG)
+		if (ms_refDebugger)
+			ms_refDebugger->removeObject(ptr);
+#endif
+
 		IAllocator* allocator = getAllocator();
 		allocator->free(header);
 	}
@@ -98,6 +123,11 @@ void Object::operator delete (void* ptr)
 int32_t Object::getReferenceCount() const
 {
 	return m_refCount;
+}
+
+void Object::setReferenceDebugger(IObjectRefDebugger* refDebugger)
+{
+	ms_refDebugger = refDebugger;
 }
 
 }

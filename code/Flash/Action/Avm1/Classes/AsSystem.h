@@ -18,13 +18,9 @@ class AsSystem : public ActionClass
 	T_RTTI_CLASS;
 
 public:
-	static Ref< AsSystem > getInstance();
-
-private:
 	AsSystem();
 
-	void createPrototype();
-
+private:
 	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
 };
 

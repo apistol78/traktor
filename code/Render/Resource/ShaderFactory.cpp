@@ -37,7 +37,7 @@ public:
 	}
 
 private:
-	Ref< resource::IResourceManager > m_resourceManager;
+	resource::IResourceManager* m_resourceManager;
 };
 
 		}

@@ -9,8 +9,6 @@ namespace traktor
 	namespace flash
 	{
 
-class ActionVM;
-class ActionContext;
 struct CallArgs;
 
 /*! \brief I18N class.
@@ -25,13 +23,9 @@ class AsI18N : public ActionClass
 	T_RTTI_CLASS;
 
 public:
-	static Ref< AsI18N > getInstance();
-
 	AsI18N();
 
 private:
-	void createPrototype();
-
 	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
 
 	void I18N_format(CallArgs& ca);

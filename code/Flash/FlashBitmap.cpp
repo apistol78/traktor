@@ -5,7 +5,6 @@
 #include "Drawing/PixelFormat.h"
 #include "Drawing/Filters/ScaleFilter.h"
 #include "Flash/FlashBitmap.h"
-#include "Flash/Action/Avm1/Classes/AsObject.h"
 
 namespace traktor
 {
@@ -15,7 +14,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashBitmap", FlashBitmap, ActionObject)
 
 FlashBitmap::FlashBitmap()
-:	ActionObject(AsObject::getInstance())
+:	ActionObject(L"Object")
 ,	m_originalWidth(0)
 ,	m_originalHeight(0)
 ,	m_bitsWidth(0)

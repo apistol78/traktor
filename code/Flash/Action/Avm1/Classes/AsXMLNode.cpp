@@ -1,6 +1,5 @@
 #include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Avm1/Classes/AsXMLNode.h"
-#include "Flash/Action/Avm1/Classes/AsObject.h"
 
 namespace traktor
 {
@@ -9,28 +8,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsXMLNode", AsXMLNode, ActionClass)
 
-Ref< AsXMLNode > AsXMLNode::getInstance()
-{
-	static Ref< AsXMLNode > instance = 0;
-	if (!instance)
-	{
-		instance = new AsXMLNode();
-		instance->createPrototype();
-		instance->setReadOnly();
-	}
-	return instance;
-}
-
 AsXMLNode::AsXMLNode()
 :	ActionClass(L"XMLNode")
 {
-}
-
-void AsXMLNode::createPrototype()
-{
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"__proto__", ActionValue(AsObject::getInstance()));
 	prototype->setMember(L"appendChild", ActionValue(createNativeFunction(this, &AsXMLNode::XMLNode_appendChild)));
 	prototype->setMember(L"cloneNode", ActionValue(createNativeFunction(this, &AsXMLNode::XMLNode_cloneNode)));
 	prototype->setMember(L"getNamespaceForPrefix", ActionValue(createNativeFunction(this, &AsXMLNode::XMLNode_getNamespaceForPrefix)));
@@ -47,7 +29,7 @@ void AsXMLNode::createPrototype()
 
 ActionValue AsXMLNode::construct(ActionContext* context, const ActionValueArray& args)
 {
-	return ActionValue(new ActionObject(this));
+	return ActionValue(new ActionObject(L"XMLNode"));
 }
 
 void AsXMLNode::XMLNode_appendChild(CallArgs& ca)

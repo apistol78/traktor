@@ -3,7 +3,6 @@
 #include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Classes/Array.h"
 #include "Flash/Action/Avm1/Classes/AsFunction.h"
-#include "Flash/Action/Avm1/Classes/AsObject.h"
 
 namespace traktor
 {
@@ -12,28 +11,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsFunction", AsFunction, ActionClass)
 
-Ref< AsFunction > AsFunction::getInstance()
-{
-	static Ref< AsFunction > instance;
-	if (!instance)
-	{
-		instance = new AsFunction();
-		instance->createPrototype();
-		instance->setReadOnly();
-	}
-	return instance;
-}
-
 AsFunction::AsFunction()
 :	ActionClass(L"Function")
 {
-}
-
-void AsFunction::createPrototype()
-{
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"__proto__", ActionValue(AsObject::getInstance()));
 	prototype->setMember(L"apply", ActionValue(createNativeFunction(this, &AsFunction::Function_apply)));
 	prototype->setMember(L"call", ActionValue(createNativeFunction(this, &AsFunction::Function_call)));
 

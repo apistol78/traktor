@@ -15,13 +15,9 @@ class As_flash_geom_ColorTransform : public ActionClass
 	T_RTTI_CLASS;
 
 public:
-	static Ref< As_flash_geom_ColorTransform > getInstance();
-
-private:
 	As_flash_geom_ColorTransform();
 
-	void createPrototype();
-
+private:
 	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
 
 	avm_number_t ColorTransform_get_alphaMultiplier(ColorTransform* self) const;

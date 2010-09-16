@@ -1,6 +1,5 @@
 #include "Flash/FlashTextInstance.h"
 #include "Flash/FlashText.h"
-#include "Flash/Action/Avm1/Classes/AsTextField.h"
 
 namespace traktor
 {
@@ -10,7 +9,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashTextInstance", FlashTextInstance, FlashCharacterInstance)
 
 FlashTextInstance::FlashTextInstance(ActionContext* context, FlashCharacterInstance* parent, const FlashText* text)
-:	FlashCharacterInstance(context, AsTextField::getInstance(), parent)
+:	FlashCharacterInstance(context, L"TextField", parent)
 ,	m_text(text)
 {
 }

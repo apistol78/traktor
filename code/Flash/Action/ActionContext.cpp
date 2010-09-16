@@ -1,3 +1,4 @@
+#include "Core/Misc/Split.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFunction.h"
 #include "Flash/Action/ActionValueArray.h"
@@ -50,6 +51,31 @@ void ActionContext::notifyFrameListeners(avm_number_t time)
 	std::vector< FrameListener > frameListeners = m_frameListeners;
 	for (std::vector< FrameListener >::iterator i = frameListeners.begin(); i != frameListeners.end(); ++i)
 		i->listenerFunction->call(this, i->listenerTarget, argv);
+}
+
+ActionObject* ActionContext::lookupClass(const std::wstring& className)
+{
+	std::vector< std::wstring > classNameSep;
+	Split< std::wstring >::any(className, L".", classNameSep);
+
+	Ref< ActionObject > clazz = m_global;
+	for (std::vector< std::wstring >::const_iterator i = classNameSep.begin(); i != classNameSep.end(); ++i)
+	{
+		ActionValue clazzMember;
+		if (!clazz->getLocalMember(*i, clazzMember) || !clazzMember.isObject())
+			return 0;
+
+		clazz = clazzMember.getObject();
+	}
+
+	if (!clazz)
+		return 0;
+
+	ActionValue prototypeMember;
+	if (!clazz->getLocalMember(L"prototype", prototypeMember) || !prototypeMember.isObject())
+		return 0;
+
+	return prototypeMember.getObject();
 }
 
 	}

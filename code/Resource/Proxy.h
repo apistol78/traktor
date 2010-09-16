@@ -111,6 +111,12 @@ public:
 		return m_resource != 0;
 	}
 
+	/*! \brief Invalidate proxy; reset resource. */
+	void invalidate()
+	{
+		m_resource = 0;
+	}
+
 	inline operator ResourceType* ()
 	{
 		return m_resource;

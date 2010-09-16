@@ -98,8 +98,8 @@ private:
 		Ref< AccShape > shape;
 	};
 
-	Ref< resource::IResourceManager > m_resourceManager;
-	Ref< render::IRenderSystem > m_renderSystem;
+	resource::IResourceManager* m_resourceManager;
+	render::IRenderSystem* m_renderSystem;
 	RefArray< render::RenderContext > m_renderContexts;
 	Ref< render::RenderContext > m_renderContext;
 	Ref< render::RenderTargetSet > m_renderTargetGlyphs;

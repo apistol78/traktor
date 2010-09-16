@@ -29,11 +29,16 @@ class T_DLLCLASS ActionSuper : public ActionFunction
 	T_RTTI_CLASS;
 
 public:
-	ActionSuper(ActionObject* object);
+	ActionSuper(ActionContext* context, ActionObject* object);
 
 	virtual ActionValue call(ActionContext* context, ActionObject* self, const ActionValueArray& args);
 
 	virtual ActionValue call(ActionFrame* callerFrame, ActionObject* self);
+
+protected:
+	virtual void trace(const IVisitor& visitor) const;
+
+	virtual void dereference();
 
 private:
 	Ref< ActionObject > m_superClass;

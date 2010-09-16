@@ -9,7 +9,6 @@ namespace traktor
 	namespace flash
 	{
 
-class ActionContext;
 struct CallArgs;
 
 /*! \brief Mouse class.
@@ -20,8 +19,6 @@ class AsMouse : public ActionClass
 	T_RTTI_CLASS;
 
 public:
-	static Ref< AsMouse > createInstance();
-
 	AsMouse();
 
 	void eventMouseDown(ActionContext* context, int x, int y, int button);
@@ -30,10 +27,15 @@ public:
 
 	void eventMouseMove(ActionContext* context, int x, int y, int button);
 
+	void removeAllListeners();
+
+protected:
+	virtual void trace(const IVisitor& visitor) const;
+
+	virtual void dereference();
+
 private:
 	RefArray< ActionObject > m_listeners;
-
-	void createPrototype();
 
 	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
 

@@ -1,5 +1,4 @@
 #include "Flash/Action/Classes/ColorTransform.h"
-#include "Flash/Action/Avm1/Classes/As_flash_geom_ColorTransform.h"
 
 namespace traktor
 {
@@ -9,7 +8,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.ColorTransform", ColorTransform, ActionObject)
 
 ColorTransform::ColorTransform(const SwfCxTransform& transform)
-:	ActionObject(As_flash_geom_ColorTransform::getInstance())
+:	ActionObject(L"flash.geom.Transform")
 ,	m_transform(transform)
 {
 }

@@ -8,19 +8,17 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.ActionSuper", ActionSuper, ActionFunction)
 
-ActionSuper::ActionSuper(ActionObject* object)
+ActionSuper::ActionSuper(ActionContext* context, ActionObject* object)
 :	ActionFunction(L"super")
 ,	m_object(object)
 {
 	ActionValue memberValue;
 
 	// __proto__
-	m_object->getMember(L"__proto__", memberValue);
-	Ref< ActionObject > prototype = memberValue.getObject();
+	Ref< ActionObject > prototype = m_object->getPrototype(context);
 
 	// __proto__.__proto__
-	if (prototype->getLocalMember(L"__proto__", memberValue))
-		m_superPrototype = memberValue.getObject();
+	m_superPrototype = prototype->getPrototype(context);
 
 	// __proto__.__constructor__
 	if (prototype->getLocalMember(L"__constructor__", memberValue))
@@ -50,6 +48,23 @@ ActionValue ActionSuper::call(ActionFrame* callerFrame, ActionObject* self)
 	Ref< ActionFunction > superCtor = dynamic_type_cast< ActionFunction* >(m_superClass);
 	return superCtor ? superCtor->call(callerFrame, self) : ActionValue();
 }
+
+void ActionSuper::trace(const IVisitor& visitor) const
+{
+	visitor(m_superClass);
+	visitor(m_superPrototype);
+	visitor(m_object);
+	ActionFunction::trace(visitor);
+}
+
+void ActionSuper::dereference()
+{
+	m_superClass = 0;
+	m_superPrototype = 0;
+	m_object = 0;
+	ActionFunction::dereference();
+}
+
 
 	}
 }

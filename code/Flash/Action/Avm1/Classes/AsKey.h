@@ -9,7 +9,6 @@ namespace traktor
 	namespace flash
 	{
 
-class ActionContext;
 struct CallArgs;
 
 /*! \brief Key class.
@@ -42,22 +41,23 @@ public:
 		AkUp = 38
 	};
 
-	static Ref< AsKey > createInstance();
-
 	AsKey();
-
-	virtual ~AsKey();
 
 	void eventKeyDown(ActionContext* context, int keyCode);
 
 	void eventKeyUp(ActionContext* context, int keyCode);
 
+	void removeAllListeners();
+
+protected:
+	virtual void trace(const IVisitor& visitor) const;
+
+	virtual void dereference();
+
 private:
 	RefArray< ActionObject > m_listeners;
 	bool m_keyState[256];
 	int m_lastKeyCode;
-
-	void createPrototype();
 
 	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
 

@@ -22,9 +22,9 @@ class T_DLLCLASS IRefCount
 public:
 	virtual ~IRefCount() {}
 
-	virtual void addRef() const = 0;
+	virtual void addRef(void* owner) const = 0;
 
-	virtual void release() const = 0;
+	virtual void release(void* owner) const = 0;
 };
 
 /*! \brief Reference count value with atomic inc/dec operations.
@@ -64,12 +64,12 @@ template < typename T >
 class RefCountImpl : public T
 {
 public:
-	virtual void addRef() const
+	virtual void addRef(void* owner) const
 	{
 		++m_refCount;
 	}
 
-	virtual void release() const
+	virtual void release(void* owner) const
 	{
 		T_ASSERT (m_refCount > 0);
 		if (--m_refCount == 0)
@@ -87,14 +87,42 @@ private:
 */
 #	define T_SAFE_ADDREF(ptr) \
 	if ((ptr)) \
-		(ptr)->addRef();
+		(ptr)->addRef((void*)this);
 
 /*! \brief Safe release template.
 * \ingroup Core
 */
 #	define T_SAFE_RELEASE(ptr) \
 	if ((ptr)) \
-		(ptr)->release();
+		(ptr)->release((void*)this);
+
+/*! \brief Safe add reference template.
+ * \ingroup Core
+ */
+#	define T_SAFE_ANONYMOUS_ADDREF(ptr) \
+	if ((ptr)) \
+		(ptr)->addRef(0);
+
+/*! \brief Safe release template.
+* \ingroup Core
+*/
+#	define T_SAFE_ANONYMOUS_RELEASE(ptr) \
+	if ((ptr)) \
+		(ptr)->release(0);
+
+/*! \brief (Not as) Safe add reference template.
+ * \ingroup Core
+ */
+#	define T_SAFE_EXPLICIT_ADDREF(ptr, owner) \
+	if ((ptr)) \
+		(ptr)->addRef(owner);
+
+/*! \brief (Not as) Safe release template.
+ * \ingroup Core
+ */
+#	define T_SAFE_EXPLICIT_RELEASE(ptr, owner) \
+	if ((ptr)) \
+		(ptr)->release(owner);
 
 #else
 
@@ -103,14 +131,42 @@ private:
  */
 #	define T_SAFE_ADDREF(ptr) \
 	if ((ptr)) \
-		((IRefCount*)(ptr))->addRef();
+		((IRefCount*)(ptr))->addRef((void*)this);
 
 /*! \brief (Not as) Safe release template.
 * \ingroup Core
 */
 #	define T_SAFE_RELEASE(ptr) \
 	if ((ptr)) \
-		((IRefCount*)(ptr))->release();
+		((IRefCount*)(ptr))->release((void*)this);
+
+/*! \brief (Not as) Safe add reference template.
+ * \ingroup Core
+ */
+#	define T_SAFE_ANONYMOUS_ADDREF(ptr) \
+	if ((ptr)) \
+		((IRefCount*)(ptr))->addRef(0);
+
+/*! \brief (Not as) Safe release template.
+* \ingroup Core
+*/
+#	define T_SAFE_ANONYMOUS_RELEASE(ptr) \
+	if ((ptr)) \
+		((IRefCount*)(ptr))->release(0);
+
+/*! \brief (Not as) Safe add reference template.
+ * \ingroup Core
+ */
+#	define T_SAFE_EXPLICIT_ADDREF(ptr, owner) \
+	if ((ptr)) \
+		((IRefCount*)(ptr))->addRef(owner);
+
+/*! \brief (Not as) Safe release template.
+ * \ingroup Core
+ */
+#	define T_SAFE_EXPLICIT_RELEASE(ptr, owner) \
+	if ((ptr)) \
+		((IRefCount*)(ptr))->release(owner);
 
 #endif
 

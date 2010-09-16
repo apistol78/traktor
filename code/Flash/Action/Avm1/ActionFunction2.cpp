@@ -34,10 +34,6 @@ ActionFunction2::ActionFunction2(
 ,	m_variables(variables)
 ,	m_dictionary(dictionary)
 {
-	// Do this inside constructor to prevent infinite recursion.
-	ActionValue classPrototype;
-	if (AsFunction::getInstance()->getLocalMember(L"prototype", classPrototype))
-		setMember(L"__proto__", classPrototype);
 }
 
 ActionValue ActionFunction2::call(ActionContext* context, ActionObject* self, const ActionValueArray& args)
@@ -78,7 +74,7 @@ ActionValue ActionFunction2::call(ActionContext* context, ActionObject* self, co
 
 	if ((m_flags & AffPreloadSuper) || (!(m_flags & AffSuppressSuper)))
 	{
-		Ref< ActionSuper > super = new ActionSuper(self);
+		Ref< ActionSuper > super = new ActionSuper(context, self);
 		if (m_flags & AffPreloadSuper)
 			callFrame.setRegister(preloadRegister++, ActionValue(super));
 		if (!(m_flags & AffSuppressSuper))
@@ -88,7 +84,7 @@ ActionValue ActionFunction2::call(ActionContext* context, ActionObject* self, co
 	if (m_flags & AffPreloadRoot)
 	{
 		ActionValue root; 
-		context->getGlobal()->getMember(L"_root", root);
+		context->getGlobal()->getLocalMember(L"_root", root);
 		callFrame.setRegister(preloadRegister++, root);
 	}
 	if (m_flags & AffPreloadParent)
@@ -163,7 +159,7 @@ ActionValue ActionFunction2::call(ActionFrame* callerFrame, ActionObject* self)
 
 	if ((m_flags & AffPreloadSuper) || (!(m_flags & AffSuppressSuper)))
 	{
-		Ref< ActionSuper > super = new ActionSuper(self);
+		Ref< ActionSuper > super = new ActionSuper(context, self);
 		if (m_flags & AffPreloadSuper)
 			callFrame.setRegister(preloadRegister++, ActionValue(super));
 		if (!(m_flags & AffSuppressSuper))
@@ -173,7 +169,7 @@ ActionValue ActionFunction2::call(ActionFrame* callerFrame, ActionObject* self)
 	if (m_flags & AffPreloadRoot)
 	{
 		ActionValue root; 
-		context->getGlobal()->getMember(L"_root", root);
+		context->getGlobal()->getLocalMember(L"_root", root);
 		callFrame.setRegister(preloadRegister++, root);
 	}
 	if (m_flags & AffPreloadParent)
@@ -203,6 +199,22 @@ ActionValue ActionFunction2::call(ActionFrame* callerFrame, ActionObject* self)
 
 	ActionValueStack& callStack = callFrame.getStack();
 	return !callStack.empty() ? callStack.top() : ActionValue();
+}
+
+void ActionFunction2::trace(const IVisitor& visitor) const
+{
+	for (std::map< std::wstring, ActionValue >::const_iterator i = m_variables.begin(); i != m_variables.end(); ++i)
+	{
+		if (i->second.isObject())
+			visitor(i->second.getObject());
+	}
+	ActionFunction::trace(visitor);
+}
+
+void ActionFunction2::dereference()
+{
+	m_variables.clear();
+	ActionFunction::dereference();
 }
 
 	}

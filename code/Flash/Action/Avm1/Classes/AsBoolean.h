@@ -20,13 +20,9 @@ class AsBoolean : public ActionClass
 	T_RTTI_CLASS;
 
 public:
-	static Ref< AsBoolean > getInstance();
-
-private:
 	AsBoolean();
 
-	void createPrototype();
-
+private:
 	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
 
 	std::wstring Boolean_toString(Boolean* self) const;

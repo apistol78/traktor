@@ -37,15 +37,16 @@ public:
 	class Handle
 	{
 	public:
-		Handle(pointer& ptr)
+		Handle(pointer& ptr, void* owner)
 		:	m_ptr(ptr)
+		,	m_owner(owner)
 		{
 		}
 
 		void replace(pointer ptr)
 		{
-			T_SAFE_ADDREF(ptr);
-			T_SAFE_RELEASE(m_ptr);
+			T_SAFE_EXPLICIT_ADDREF(ptr, m_owner);
+			T_SAFE_EXPLICIT_RELEASE(m_ptr, m_owner);
 			m_ptr = ptr;
 		}
 
@@ -116,6 +117,7 @@ public:
 
 	private:
 		pointer& m_ptr;
+		void* m_owner;
 	};
 
 	/*! \brief Constant iterator. */
@@ -241,11 +243,13 @@ public:
 		typedef value_type reference;
 
 		iterator()
+		:	m_owner(0)
 		{
 		}
 
 		iterator(const iterator& it)
 		:	const_iterator(it.m_item)
+		,	m_owner(it.m_owner)
 		{
 		}
 
@@ -255,7 +259,7 @@ public:
 
 		Handle< Class > operator * ()
 		{
-			return *_O::m_item;
+			return Handle< Class >(*_O::m_item, m_owner);
 		}
 
 		pointer operator -> ()
@@ -265,32 +269,32 @@ public:
 
 		iterator operator + (int offset) const
 		{
-			return iterator(_O::m_item + offset);
+			return iterator(_O::m_item + offset, m_owner);
 		}
 
 		iterator operator - (int offset) const
 		{
-			return iterator(_O::m_item - offset);
+			return iterator(_O::m_item - offset, m_owner);
 		}
 
 		iterator operator ++ ()
 		{
-			return iterator(++_O::m_item);
+			return iterator(++_O::m_item, m_owner);
 		}
 
 		iterator operator ++ (int)
 		{
-			return iterator(_O::m_item++);
+			return iterator(_O::m_item++, m_owner);
 		}
 
 		iterator operator -- ()
 		{
-			return iterator(--_O::m_item);
+			return iterator(--_O::m_item, m_owner);
 		}
 
 		iterator operator -- (int)
 		{
-			return iterator(_O::m_item--);
+			return iterator(_O::m_item--, m_owner);
 		}
 
 		bool operator == (const iterator& r) const
@@ -321,9 +325,11 @@ public:
 
 	protected:
 		friend class RefArray;
+		void* m_owner;
 
-		explicit iterator(value_type* item)
+		explicit iterator(value_type* item, void* owner)
 		:	const_iterator(item)
+		,	m_owner(owner)
 		{
 		}
 	};
@@ -387,13 +393,13 @@ public:
 	/*! \brief Return iterator at beginning of array. */
 	iterator begin()
 	{
-		return iterator(&m_items[0]);
+		return iterator(&m_items[0], this);
 	}
 
 	/*! \brief Return iterator one past last element. */
 	iterator end()
 	{
-		return iterator(&m_items[m_size]);
+		return iterator(&m_items[m_size], this);
 	}
 
 	/*! \brief Return iterator at beginning of array. */
@@ -487,7 +493,7 @@ public:
 	}
 
 	/*! \brief Insert elements at specified location. */
-	void insert(iterator at, iterator first, iterator last)
+	iterator insert(iterator at, iterator first, iterator last)
 	{
 		size_type size = m_size;
 		size_type offset = size_type(at.m_item - m_items);
@@ -505,7 +511,7 @@ public:
 			m_items[i + offset] = first.m_item[i];
 		}
 
-		return iterator(&m_items[offset]);
+		return iterator(&m_items[offset], this);
 	}
 
 	/*! \brief Erase element from array. */
@@ -525,7 +531,7 @@ public:
 		m_items[m_size - 1] = 0;
 		shrink(1);
 
-		return iterator(&m_items[offset]);
+		return iterator(&m_items[offset], this);
 	}
 
 	/*! \brief Remove first element from array by value. */
@@ -635,7 +641,7 @@ public:
 	/*! \brief Return handle to element at specified location. */
 	Handle< Class > at(size_type index)
 	{
-		return m_items[index];
+		return Handle< Class >(m_items[index], (void*)this);
 	}
 
 	/*! \brief Return element at specified location. */
@@ -662,7 +668,7 @@ public:
 
 	Handle< Class > operator [] (size_type index)
 	{
-		return m_items[index];
+		return Handle< Class >(m_items[index], (void*)this);
 	}
 
 	Class* operator [] (size_type index) const

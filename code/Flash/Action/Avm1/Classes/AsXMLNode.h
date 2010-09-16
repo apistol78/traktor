@@ -18,13 +18,9 @@ class AsXMLNode : public ActionClass
 	T_RTTI_CLASS;
 
 public:
-	static Ref< AsXMLNode > getInstance();
-
-private:
 	AsXMLNode();
 
-	void createPrototype();
-
+private:
 	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
 
 	void XMLNode_appendChild(CallArgs& ca);

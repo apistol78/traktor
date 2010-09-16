@@ -18,13 +18,9 @@ class As_mx_transitions_Tween : public ActionClass
 	T_RTTI_CLASS;
 
 public:
-	static Ref< As_mx_transitions_Tween > getInstance();
-
-private:
 	As_mx_transitions_Tween();
 
-	void createPrototype();
-
+private:
 	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
 
 	void Tween_continueTo(CallArgs& ca);

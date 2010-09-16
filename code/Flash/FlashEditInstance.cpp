@@ -5,7 +5,6 @@
 #include "Flash/FlashFont.h"
 #include "Flash/FlashMovie.h"
 #include "Flash/Action/ActionContext.h"
-#include "Flash/Action/Avm1/Classes/AsTextField.h"
 #include "Html/Document.h"
 #include "Html/Element.h"
 #include "Html/Text.h"
@@ -31,7 +30,7 @@ void concateHtmlText(const html::Node* node, StringOutputStream& ss)
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashEditInstance", FlashEditInstance, FlashCharacterInstance)
 
 FlashEditInstance::FlashEditInstance(ActionContext* context, FlashCharacterInstance* parent, const FlashEdit* edit, const std::wstring& html)
-:	FlashCharacterInstance(context, AsTextField::getInstance(), parent)
+:	FlashCharacterInstance(context, L"TextField", parent)
 ,	m_edit(edit)
 {
 	if (m_edit->renderHtml())

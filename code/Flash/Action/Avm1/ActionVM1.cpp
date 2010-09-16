@@ -16,7 +16,7 @@
 #include "Flash/Action/Avm1/Classes/AsFunction.h"
 #include "Flash/Action/Avm1/Classes/AsMovieClip.h"
 
-//#define VM_TRACE_ENABLE 1
+#define VM_TRACE_ENABLE 0
 
 #if VM_TRACE_ENABLE
 #	define T_WIDEN_X(x) L ## x
@@ -101,15 +101,15 @@ void ActionVM1::execute(ActionFrame* frame) const
 {
 	VM_LOG(L"-- Execute begin --");
 
-	Ref< ActionContext > context = frame->getContext();
+	ActionContext* context = frame->getContext();
 	ActionValueStack& stack = frame->getStack();
 
-	Ref< FlashSpriteInstance > movieClip = dynamic_type_cast< FlashSpriteInstance* >(frame->getSelf());
+	FlashSpriteInstance* movieClip = dynamic_type_cast< FlashSpriteInstance* >(frame->getSelf());
 	if (!movieClip)
 	{
 		// Not a movie clip; get root movie clip from global object.
 		ActionValue root;
-		context->getGlobal()->getMember(L"_root", root);
+		context->getGlobal()->getLocalMember(L"_root", root);
 		movieClip = root.getObject< FlashSpriteInstance >();
 	}
 
@@ -174,7 +174,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 			const char T_UNALIGNED * url = reinterpret_cast< const char T_UNALIGNED * >(data);
 			const char T_UNALIGNED * query = url + strlen(url) + 1;
 			ActionValue getUrl;
-			context->getGlobal()->getMember(L"getUrl", getUrl);
+			context->getGlobal()->getLocalMember(L"getUrl", getUrl);
 			if (getUrl.isObject())
 			{
 				Ref< ActionFunction > function = dynamic_type_cast< ActionFunction* >(getUrl.getObject());
@@ -329,11 +329,11 @@ void ActionVM1::execute(ActionFrame* frame) const
 
 			if (frame->getVariable(variableName, value))
 				stack.push(value);
-			else if (frame->getSelf()->getMember(variableName, value))
+			else if (frame->getSelf()->getMember(context, variableName, value))
 				stack.push(value);
-			else if (movieClip->getMember(variableName, value))
+			else if (movieClip->getMember(context, variableName, value))
 				stack.push(value);
-			else if (context->getGlobal()->getMember(variableName, value))
+			else if (context->getGlobal()->getLocalMember(variableName, value))
 				stack.push(value);
 			else if (variableName == L"_global")
 			{
@@ -676,7 +676,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 
 		VM_BEGIN(AopGetUrl2)
 			ActionValue getUrl;
-			context->getGlobal()->getMember(L"getUrl", getUrl);
+			context->getGlobal()->getLocalMember(L"getUrl", getUrl);
 			if (getUrl.isObject())
 			{
 				Ref< ActionFunction > function = dynamic_type_cast< ActionFunction* >(getUrl.getObject());
@@ -783,11 +783,11 @@ void ActionVM1::execute(ActionFrame* frame) const
 
 			if (!frame->getVariable(functionName, functionObject))
 			{
-				if (!frame->getSelf()->getMember(functionName, functionObject))
+				if (!frame->getSelf()->getMember(context, functionName, functionObject))
 				{
-					if (!movieClip->getMember(functionName, functionObject))
+					if (!movieClip->getMember(context, functionName, functionObject))
 					{
-						context->getGlobal()->getMember(functionName, functionObject);
+						context->getGlobal()->getLocalMember(functionName, functionObject);
 					}
 				}
 			}
@@ -828,15 +828,17 @@ void ActionVM1::execute(ActionFrame* frame) const
 			else
 			{
 				std::wstring classConstructorName = classFunction.getStringSafe();
-				context->getGlobal()->getMember(classConstructorName, classFunction);
-				if (classFunction.isObject())
-					classConstructor = classFunction.getObject< ActionFunction >();
+				context->getGlobal()->getLocalMember(classConstructorName, classFunction);
+				classConstructor = classFunction.getObjectSafe< ActionFunction >();
 			}
 
 			if (classConstructor)
 			{
+				ActionValue prototype;
+				classConstructor->getLocalMember(L"prototype", prototype);
+
 				// Create instance of class.
-				Ref< ActionObject > self = new ActionObject(classConstructor);
+				Ref< ActionObject > self = new ActionObject(prototype.getObjectSafe());
 
 				// Call constructor.
 				ActionValue object = classConstructor->call(frame, self);
@@ -861,14 +863,20 @@ void ActionVM1::execute(ActionFrame* frame) const
 		VM_END()
 
 		VM_BEGIN(AopInitArray)
-			ActionValue object = AsArray::getInstance()->call(frame, 0);
-			stack.push(object);
+			ActionValue arrayClassMember;
+			if (context->getGlobal()->getLocalMember(L"Array", arrayClassMember) && arrayClassMember.isObject())
+			{
+				ActionValue arrayObject = arrayClassMember.getObject< ActionFunction >()->call(frame, 0);
+				stack.push(arrayObject);
+			}
+			else
+				stack.push(ActionValue());
 		VM_END()
 
 		VM_BEGIN(AopInitObject)
 			int32_t initialPropertyCount = int32_t(stack.pop().getNumberSafe());
 
-			Ref< ActionObject > scriptObject = new ActionObject(AsObject::getInstance());
+			Ref< ActionObject > scriptObject = new ActionObject();
 			for (int32_t i = 0; i < initialPropertyCount; ++i)
 			{
 				ActionValue value = stack.pop();
@@ -1043,13 +1051,13 @@ void ActionVM1::execute(ActionFrame* frame) const
 			{
 				Ref< ActionObject > target = targetValue.getObject();
 				Ref< ActionFunction > propertyGet;
-				if (target->getPropertyGet(memberName, propertyGet))
+				if (target->getPropertyGet(context, memberName, propertyGet))
 				{
 					stack.push(ActionValue(avm_number_t(0)));
 					memberValue = propertyGet->call(frame, target);
 				}
 				else
-					target->getMember(memberName, memberValue);
+					target->getMember(context, memberName, memberValue);
 			}
 			else
 				VM_LOG(L"Target undefined");
@@ -1068,7 +1076,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 			{
 				Ref< ActionObject > target = targetValue.getObject();
 				Ref< ActionFunction > propertySet;
-				if (target->getPropertySet(memberName, propertySet))
+				if (target->getPropertySet(context, memberName, propertySet))
 				{
 					stack.push(memberValue);
 					stack.push(ActionValue(avm_number_t(1)));
@@ -1122,7 +1130,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 				if (classConstructorName.isString())
 				{
 					ActionValue memberValue;
-					if (target->getMember(classConstructorName.getString(), memberValue))
+					if (target->getMember(context, classConstructorName.getString(), memberValue))
 						method = dynamic_type_cast< ActionFunction* >(memberValue.getObjectSafe());
 				}
 				else
@@ -1153,14 +1161,17 @@ void ActionVM1::execute(ActionFrame* frame) const
 				else
 				{
 					ActionValue methodValue;
-					classConstructorObject->getMember(classConstructorName, methodValue);
+					classConstructorObject->getMember(context, classConstructorName, methodValue);
 					classConstructor = methodValue.getObjectSafe< ActionFunction >();
 				}
 
 				if (classConstructor)
 				{
+					ActionValue prototype;
+					classConstructor->getLocalMember(L"prototype", prototype);
+
 					// Create instance of class.
-					Ref< ActionObject > self = new ActionObject(classConstructor);
+					Ref< ActionObject > self = new ActionObject(prototype.getObjectSafe());
 
 					// Call constructor.
 					ActionValue object = classConstructor->call(frame, self);
@@ -1326,7 +1337,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 			VM_LOG(subClass.getObject< ActionFunction >()->getName() << L" extends " << superClass.getObject< ActionFunction >()->getName());
 
 			ActionValue superPrototype;
-			superClass.getObject()->getMember(L"prototype", superPrototype);
+			superClass.getObject()->getMember(context, L"prototype", superPrototype);
 
 			Ref< ActionObject > prototype = new ActionObject();
 			prototype->setMember(L"__proto__", superPrototype);
@@ -1387,7 +1398,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 
 			// Create our own prototype member as it will probably be filled with additional members.
 			// Default extends the Object class.
-			function->setMember(L"prototype", ActionValue(new ActionObject(AsObject::getInstance())));
+			function->setMember(L"prototype", ActionValue(new ActionObject()));
 
 			if (*functionName != 0)
 			{
@@ -1437,7 +1448,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 			);
 
 			// Create our own prototype member as it will probably be filled with additional members.
-			function->setMember(L"prototype", ActionValue(new ActionObject(AsObject::getInstance())));
+			function->setMember(L"prototype", ActionValue(new ActionObject()));
 
 			if (*functionName != 0)
 			{

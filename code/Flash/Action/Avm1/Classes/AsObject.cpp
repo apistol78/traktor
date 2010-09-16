@@ -1,3 +1,4 @@
+#include "Core/Platform.h"
 #include "Core/Log/Log.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFunctionNative.h"
@@ -10,24 +11,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsObject", AsObject, ActionClass)
 
-Ref< AsObject > AsObject::getInstance()
-{
-	static Ref< AsObject > instance = 0;
-	if (!instance)
-	{
-		instance = new AsObject();
-		instance->createPrototype();	
-		instance->setReadOnly();
-	}
-	return instance;
-}
-
 AsObject::AsObject()
 :	ActionClass(L"Object")
-{
-}
-
-void AsObject::createPrototype()
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
@@ -48,7 +33,7 @@ void AsObject::createPrototype()
 
 ActionValue AsObject::construct(ActionContext* context, const ActionValueArray& args)
 {
-	return ActionValue(new ActionObject(this));
+	return ActionValue(new ActionObject(L"Object"));
 }
 
 void AsObject::Object_addProperty(CallArgs& ca)

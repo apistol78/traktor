@@ -1,5 +1,4 @@
 #include "Flash/Action/Classes/Boolean.h"
-#include "Flash/Action/Avm1/Classes/AsBoolean.h"
 
 namespace traktor
 {
@@ -9,7 +8,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.Boolean", Boolean, ActionObject)
 
 Boolean::Boolean(bool value)
-:	ActionObject(AsBoolean::getInstance())
+:	ActionObject(L"Boolean")
 ,	m_value(value)
 {
 }

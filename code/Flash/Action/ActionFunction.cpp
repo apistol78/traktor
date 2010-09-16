@@ -10,7 +10,8 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.ActionFunction", ActionFunction, ActionObject)
 
 ActionFunction::ActionFunction(const std::wstring& name)
-:	m_name(name)
+:	ActionObject(L"Function")
+,	m_name(name)
 {
 }
 

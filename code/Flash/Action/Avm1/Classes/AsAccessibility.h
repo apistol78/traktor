@@ -18,13 +18,9 @@ class AsAccessibility : public ActionClass
 	T_RTTI_CLASS;
 
 public:
-	static Ref< AsAccessibility > getInstance();
-
-private:
 	AsAccessibility();
 
-	void createPrototype();
-
+private:
 	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
 
 	void Accessibility_isActive(CallArgs& ca);

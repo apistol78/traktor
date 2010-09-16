@@ -2,7 +2,6 @@
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Avm1/Classes/AsMath.h"
-#include "Flash/Action/Avm1/Classes/AsObject.h"
 
 namespace traktor
 {
@@ -11,28 +10,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsMath", AsMath, ActionClass)
 
-Ref< AsMath > AsMath::getInstance()
-{
-	static Ref< AsMath > instance = 0;
-	if (!instance)
-	{
-		instance = new AsMath();
-		instance->createPrototype();
-		instance->setReadOnly();
-	}
-	return instance;
-}
-
 AsMath::AsMath()
 :	ActionClass(L"Math")
 {
-}
-
-void AsMath::createPrototype()
-{
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"__proto__", ActionValue(AsObject::getInstance()));
 	prototype->setMember(L"e", ActionValue(avm_number_t(2.7182818284590452354)));
 	prototype->setMember(L"ln2", ActionValue(avm_number_t(0.69314718055994530942)));
 	prototype->setMember(L"log2e", ActionValue(avm_number_t(1.4426950408889634074)));

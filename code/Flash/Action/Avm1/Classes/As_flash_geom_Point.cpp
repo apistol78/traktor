@@ -2,7 +2,6 @@
 #include "Core/Math/MathUtils.h"
 #include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Avm1/Classes/As_flash_geom_Point.h"
-#include "Flash/Action/Avm1/Classes/AsObject.h"
 #include "Flash/Action/Classes/Point.h"
 
 namespace traktor
@@ -12,28 +11,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.As_flash_geom_Point", As_flash_geom_Point, ActionClass)
 
-Ref< As_flash_geom_Point > As_flash_geom_Point::getInstance()
-{
-	static Ref< As_flash_geom_Point > instance = 0;
-	if (!instance)
-	{
-		instance = new As_flash_geom_Point();
-		instance->createPrototype();
-		instance->setReadOnly();
-	}
-	return instance;
-}
-
 As_flash_geom_Point::As_flash_geom_Point()
-:	ActionClass(L"Point")
-{
-}
-
-void As_flash_geom_Point::createPrototype()
+:	ActionClass(L"flash.geom.Point")
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"__proto__", ActionValue(AsObject::getInstance()));
 	prototype->setMember(L"add", ActionValue(createNativeFunction(this, &As_flash_geom_Point::Point_add)));
 	prototype->setMember(L"clone", ActionValue(createNativeFunction(this, &As_flash_geom_Point::Point_clone)));
 	prototype->setMember(L"distance", ActionValue(createNativeFunction(this, &As_flash_geom_Point::Point_distance)));

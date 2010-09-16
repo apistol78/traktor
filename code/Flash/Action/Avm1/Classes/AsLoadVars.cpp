@@ -1,7 +1,6 @@
 #include "Core/Log/Log.h"
 #include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Avm1/Classes/AsLoadVars.h"
-#include "Flash/Action/Avm1/Classes/AsObject.h"
 
 namespace traktor
 {
@@ -10,28 +9,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsLoadVars", AsLoadVars, ActionClass)
 
-Ref< AsLoadVars > AsLoadVars::getInstance()
-{
-	static Ref< AsLoadVars > instance = 0;
-	if (!instance)
-	{
-		instance = new AsLoadVars();
-		instance->createPrototype();
-		instance->setReadOnly();
-	}
-	return instance;
-}
-
 AsLoadVars::AsLoadVars()
 :	ActionClass(L"LoadVars")
 {
-}
-
-void AsLoadVars::createPrototype()
-{
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"__proto__", ActionValue(AsObject::getInstance()));
 	prototype->setMember(L"addRequestHeader", ActionValue(createNativeFunction(this, &AsLoadVars::LoadVars_addRequestHeader)));
 	prototype->setMember(L"decode", ActionValue(createNativeFunction(this, &AsLoadVars::LoadVars_decode)));
 	prototype->setMember(L"getBytesLoaded", ActionValue(createNativeFunction(this, &AsLoadVars::LoadVars_getBytesLoaded)));
@@ -51,7 +33,7 @@ void AsLoadVars::createPrototype()
 
 ActionValue AsLoadVars::construct(ActionContext* context, const ActionValueArray& args)
 {
-	return ActionValue(new ActionObject(this));
+	return ActionValue(new ActionObject(L"LoadVars"));
 }
 
 void AsLoadVars::LoadVars_addRequestHeader(CallArgs& ca)

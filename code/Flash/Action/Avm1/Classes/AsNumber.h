@@ -18,13 +18,9 @@ class AsNumber : public ActionClass
 	T_RTTI_CLASS;
 
 public:
-	static Ref< AsNumber > getInstance();
-
-private:
 	AsNumber();
 
-	void createPrototype();
-
+private:
 	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
 
 	void Number_toString(CallArgs& ca);

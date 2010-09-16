@@ -13,13 +13,9 @@ class As_mx_transitions_easing_Bounce : public ActionClass
 	T_RTTI_CLASS;
 
 public:
-	static Ref< As_mx_transitions_easing_Bounce > getInstance();
-
-private:
 	As_mx_transitions_easing_Bounce();
 
-	void createPrototype();
-
+private:
 	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
 
 	void Bounce_easeIn(CallArgs& ca);

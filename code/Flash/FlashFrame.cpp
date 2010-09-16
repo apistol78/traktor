@@ -1,5 +1,4 @@
 #include "Flash/FlashFrame.h"
-#include "Flash/Action/Avm1/Classes/AsObject.h"
 
 namespace traktor
 {
@@ -9,7 +8,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashFrame", FlashFrame, ActionObject)
 
 FlashFrame::FlashFrame()
-:	ActionObject(AsObject::getInstance())
+:	ActionObject(L"Object")
 ,	m_backgroundColorChange(false)
 {
 	m_backgroundColor.red =

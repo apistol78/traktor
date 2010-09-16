@@ -9,28 +9,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsXML", AsXML, ActionClass)
 
-Ref< AsXML > AsXML::getInstance()
-{
-	static Ref< AsXML > instance = 0;
-	if (!instance)
-	{
-		instance = new AsXML();
-		instance->createPrototype();
-		instance->setReadOnly();
-	}
-	return instance;
-}
-
 AsXML::AsXML()
 :	ActionClass(L"XML")
 {
-}
-
-void AsXML::createPrototype()
-{
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"__proto__", ActionValue(AsXMLNode::getInstance()));
 	prototype->setMember(L"addRequestHeader", ActionValue(createNativeFunction(this, &AsXML::XML_addRequestHeader)));
 	prototype->setMember(L"createElement", ActionValue(createNativeFunction(this, &AsXML::XML_createElement)));
 	prototype->setMember(L"createTextNode", ActionValue(createNativeFunction(this, &AsXML::XML_createTextNode)));
@@ -56,7 +39,7 @@ void AsXML::createPrototype()
 
 ActionValue AsXML::construct(ActionContext* context, const ActionValueArray& args)
 {
-	return ActionValue(new ActionObject(this));
+	return ActionValue(new ActionObject(L"XML"));
 }
 
 void AsXML::XML_addRequestHeader(CallArgs& ca)

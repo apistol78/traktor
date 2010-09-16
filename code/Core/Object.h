@@ -14,6 +14,8 @@
 namespace traktor
 {
 
+struct IObjectRefDebugger;
+
 /*! \brief Managed object base class.
  * \ingroup Core
  */
@@ -22,9 +24,9 @@ class T_DLLCLASS Object : public ITypedObject
 	T_RTTI_CLASS;
 
 public:
-	virtual void addRef() const;
+	virtual void addRef(void* owner) const;
 
-	virtual void release() const;
+	virtual void release(void* owner) const;
 
 	void* operator new (size_t size);
 
@@ -32,7 +34,10 @@ public:
 
 	int32_t getReferenceCount() const;
 
+	static void setReferenceDebugger(IObjectRefDebugger* refDebugger);
+
 private:
+	static IObjectRefDebugger* ms_refDebugger;
 	mutable AtomicRefCount m_refCount;
 };	
 

@@ -18,13 +18,9 @@ class As_flash_geom_Rectangle : public ActionClass
 	T_RTTI_CLASS;
 
 public:
-	static Ref< As_flash_geom_Rectangle > getInstance();
-
-private:
 	As_flash_geom_Rectangle();
 
-	void createPrototype();
-
+private:
 	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
 
 	void Rectangle_clone(CallArgs& ca);

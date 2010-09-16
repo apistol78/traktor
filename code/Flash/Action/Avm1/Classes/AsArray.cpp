@@ -3,7 +3,6 @@
 #include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Classes/Array.h"
 #include "Flash/Action/Avm1/Classes/AsArray.h"
-#include "Flash/Action/Avm1/Classes/AsObject.h"
 
 namespace traktor
 {
@@ -43,28 +42,11 @@ struct ArrayDefaultSort
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsArray", AsArray, ActionClass)
 
-Ref< AsArray > AsArray::getInstance()
-{
-	static Ref< AsArray > instance = 0;
-	if (!instance)
-	{
-		instance = new AsArray();
-		instance->createPrototype();
-		instance->setReadOnly();
-	}
-	return instance;
-}
-
 AsArray::AsArray()
 :	ActionClass(L"Array")
 {
-}
-
-void AsArray::createPrototype()
-{
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"__proto__", ActionValue(AsObject::getInstance()));
 	prototype->setMember(L"CASEINSENSITIVE", ActionValue(avm_number_t(0)));
 	prototype->setMember(L"DESCENDING", ActionValue(avm_number_t(1)));
 	prototype->setMember(L"NUMERIC", ActionValue(avm_number_t(2)));

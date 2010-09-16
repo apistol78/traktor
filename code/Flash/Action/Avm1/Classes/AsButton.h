@@ -18,13 +18,9 @@ class AsButton : public ActionClass
 	T_RTTI_CLASS;
 
 public:
-	static Ref< AsButton > getInstance();
-
-private:
 	AsButton();
 
-	void createPrototype();
-
+private:
 	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
 
 	void Button_get_alpha(CallArgs& ca);
