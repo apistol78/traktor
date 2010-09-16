@@ -1,7 +1,6 @@
 #include "Core/Log/Log.h"
 #include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Avm1/Classes/AsMovieClipLoader.h"
-#include "Flash/Action/Avm1/Classes/AsObject.h"
 
 namespace traktor
 {
@@ -10,28 +9,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsMovieClipLoader", AsMovieClipLoader, ActionClass)
 
-Ref< AsMovieClipLoader > AsMovieClipLoader::getInstance()
-{
-	static Ref< AsMovieClipLoader > instance = 0;
-	if (!instance)
-	{
-		instance = new AsMovieClipLoader();
-		instance->createPrototype();
-		instance->setReadOnly();
-	}
-	return instance;
-}
-
 AsMovieClipLoader::AsMovieClipLoader()
 :	ActionClass(L"MovieClipLoader")
 {
-}
-
-void AsMovieClipLoader::createPrototype()
-{
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"__proto__", ActionValue(AsObject::getInstance()));
 	prototype->setMember(L"addListener", ActionValue(createNativeFunction(this, &AsMovieClipLoader::MovieClipLoader_addListener)));
 	prototype->setMember(L"getProgress", ActionValue(createNativeFunction(this, &AsMovieClipLoader::MovieClipLoader_getProgress)));
 	prototype->setMember(L"loadClip", ActionValue(createNativeFunction(this, &AsMovieClipLoader::MovieClipLoader_loadClip)));
@@ -45,7 +27,7 @@ void AsMovieClipLoader::createPrototype()
 
 ActionValue AsMovieClipLoader::construct(ActionContext* context, const ActionValueArray& args)
 {
-	return ActionValue(new ActionObject(this));
+	return ActionValue(new ActionObject(L"MovieClipLoader"));
 }
 
 void AsMovieClipLoader::MovieClipLoader_addListener(CallArgs& ca)

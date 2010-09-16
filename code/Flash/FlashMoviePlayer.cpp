@@ -76,11 +76,11 @@ bool FlashMoviePlayer::create(FlashMovie* movie)
 	Ref< ActionObject > global = context->getGlobal();
 
 	Ref< AsKey > key;
-	if (global->getMember(L"Key", memberValue))
+	if (global->getLocalMember(L"Key", memberValue))
 		m_key = memberValue.getObject< AsKey >();
 
 	Ref< AsMouse > mouse;
-	if (global->getMember(L"Mouse", memberValue))
+	if (global->getLocalMember(L"Mouse", memberValue))
 		m_mouse = memberValue.getObject< AsMouse >();
 
 	return true;
@@ -91,8 +91,19 @@ void FlashMoviePlayer::destroy()
 	m_displayRenderer = 0;
 	m_movieRenderer = 0;
 	m_actionVM = 0;
-	m_key = 0;
-	m_mouse = 0;
+
+	if (m_key)
+	{
+		m_key->removeAllListeners();
+		m_key = 0;
+	}
+
+	if (m_mouse)
+	{
+		m_mouse->removeAllListeners();
+		m_mouse = 0;
+	}
+
 	m_movie = 0;
 	
 	if (m_movieInstance)
@@ -330,7 +341,7 @@ ActionValue FlashMoviePlayer::getGlobal(const std::wstring& name) const
 	T_ASSERT (global);
 
 	ActionValue value;
-	global->getMember(name, value);
+	global->getLocalMember(name, value);
 
 	return value;
 }
@@ -349,6 +360,9 @@ void FlashMoviePlayer::Global_getUrl(CallArgs& ca)
 
 void FlashMoviePlayer::Global_setInterval(CallArgs& ca)
 {
+	ActionContext* actionContext = m_movieInstance->getContext();
+	T_ASSERT (actionContext);
+
 	Ref< ActionObject > target;
 	Ref< ActionFunction > function;
 	ActionValue functionValue;
@@ -358,7 +372,7 @@ void FlashMoviePlayer::Global_setInterval(CallArgs& ca)
 	{
 		// (objectReference:Object, methodName:String, interval:Number, [param1:Object, param2, ..., paramN])
 		target = ca.args[0].getObjectSafe();
-		if (!target->getMember(ca.args[1].getString(), functionValue))
+		if (!target->getMember(actionContext, ca.args[1].getString(), functionValue))
 			return;
 		function = functionValue.getObject< ActionFunction >();
 		interval = uint32_t(ca.args[2].getNumberSafe());

@@ -88,8 +88,8 @@ private:
 		Ref< render::RenderTargetSet > renderTargetSet;
 	};
 
-	Ref< resource::IResourceManager > m_resourceManager;
-	Ref< render::IRenderSystem > m_renderSystem;
+	resource::IResourceManager* m_resourceManager;
+	render::IRenderSystem* m_renderSystem;
 	Ref< render::ScreenRenderer > m_screenRenderer;
 	RefArray< render::RenderTargetSet > m_cache[4];
 	std::vector< Entry > m_entries;

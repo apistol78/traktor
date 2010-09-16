@@ -13,13 +13,9 @@ class As_mx_transitions_easing_Elastic : public ActionClass
 	T_RTTI_CLASS;
 
 public:
-	static Ref< As_mx_transitions_easing_Elastic > getInstance();
-
-private:
 	As_mx_transitions_easing_Elastic();
 
-	void createPrototype();
-
+private:
 	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
 
 	void Elastic_easeIn(CallArgs& ca);

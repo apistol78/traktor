@@ -42,8 +42,8 @@ public:
 	virtual Ref< world::Entity > createEntity(world::IEntityBuilder* builder, const world::EntityData& entityData) const;
 
 private:
-	Ref< resource::IResourceManager > m_resourceManager;
-	Ref< render::IRenderSystem > m_renderSystem;
+	resource::IResourceManager* m_resourceManager;
+	render::IRenderSystem* m_renderSystem;
 };
 
 	}

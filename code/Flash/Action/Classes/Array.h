@@ -58,11 +58,16 @@ public:
 
 	virtual void setMember(const std::wstring& memberName, const ActionValue& memberValue);
 
-	virtual bool getMember(const std::wstring& memberName, ActionValue& outMemberValue) const;
+	virtual bool getMember(ActionContext* context, const std::wstring& memberName, ActionValue& outMemberValue);
 
 	virtual std::wstring toString() const;
 
 	const std::vector< ActionValue >& getValues() const { return m_values; }
+
+protected:
+	virtual void trace(const IVisitor& visitor) const;
+
+	virtual void dereference();
 
 private:
 	std::vector< ActionValue > m_values;

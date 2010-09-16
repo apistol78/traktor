@@ -4,9 +4,9 @@
 #include "Flash/FlashFrame.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFrame.h"
+#include "Flash/Action/ActionFunction.h"
 #include "Flash/Action/ActionScript.h"
 #include "Flash/Action/IActionVM.h"
-#include "Flash/Action/Avm1/Classes/AsMovieClip.h"
 
 namespace traktor
 {
@@ -16,7 +16,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashSpriteInstance", FlashSpriteInstance, FlashCharacterInstance)
 
 FlashSpriteInstance::FlashSpriteInstance(ActionContext* context, FlashCharacterInstance* parent, const FlashSprite* sprite)
-:	FlashCharacterInstance(context, AsMovieClip::getInstance(), parent)
+:	FlashCharacterInstance(context, L"MovieClip", parent)
 ,	m_sprite(sprite)
 ,	m_displayList(context)
 ,	m_currentFrame(0)
@@ -40,9 +40,17 @@ FlashSpriteInstance::FlashSpriteInstance(ActionContext* context, FlashCharacterI
 void FlashSpriteInstance::destroy()
 {
 	m_sprite = 0;
-	m_displayList.reset();
 	m_mask = 0;
-	
+
+	const FlashDisplayList::layer_map_t& layers = m_displayList.getLayers();
+	for (FlashDisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
+	{
+		if (i->second.instance)
+			i->second.instance->destroy();
+	}
+
+	m_displayList.reset();
+
 	FlashCharacterInstance::destroy();
 }
 
@@ -263,7 +271,7 @@ FlashSpriteInstance* FlashSpriteInstance::getMask()
 	return m_mask;
 }
 
-bool FlashSpriteInstance::getMember(const std::wstring& memberName, ActionValue& outMemberValue) const
+bool FlashSpriteInstance::getMember(ActionContext* context, const std::wstring& memberName, ActionValue& outMemberValue)
 {
 	// Get names instance from display list.
 	FlashDisplayList::layer_map_t::const_iterator i = m_displayList.findLayer(memberName);
@@ -273,7 +281,7 @@ bool FlashSpriteInstance::getMember(const std::wstring& memberName, ActionValue&
 		return true;
 	}
 
-	return FlashCharacterInstance::getMember(memberName, outMemberValue);
+	return FlashCharacterInstance::getMember(context, memberName, outMemberValue);
 }
 
 void FlashSpriteInstance::eventInit()
@@ -440,6 +448,24 @@ SwfRect FlashSpriteInstance::getBounds() const
 	bounds.max = getTransform() * bounds.max;
 
 	return bounds;
+}
+
+void FlashSpriteInstance::trace(const IVisitor& visitor) const
+{
+	visitor(m_mask);
+
+	const FlashDisplayList::layer_map_t& layers = m_displayList.getLayers();
+	for (FlashDisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
+		visitor(i->second.instance);
+
+	FlashCharacterInstance::trace(visitor);
+}
+
+void FlashSpriteInstance::dereference()
+{
+	m_mask = 0;
+	m_displayList.reset();
+	FlashCharacterInstance::dereference();
 }
 
 void FlashSpriteInstance::executeScriptEvent(const std::wstring& eventName)

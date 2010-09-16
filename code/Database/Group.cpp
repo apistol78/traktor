@@ -15,6 +15,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.db.Group", Group, Object)
 Group::Group(Database* database, IProviderBus* providerBus)
 :	m_database(database)
 ,	m_providerBus(providerBus)
+,	m_parent(0)
 {
 }
 

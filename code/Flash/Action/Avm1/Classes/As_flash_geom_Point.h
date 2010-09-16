@@ -18,13 +18,9 @@ class As_flash_geom_Point : public ActionClass
 	T_RTTI_CLASS;
 
 public:
-	static Ref< As_flash_geom_Point > getInstance();
-
-private:
 	As_flash_geom_Point();
 
-	void createPrototype();
-
+private:
 	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
 
 	void Point_add(CallArgs& ca);

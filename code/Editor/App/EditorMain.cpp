@@ -4,6 +4,9 @@
 #include "Ui/Application.h"
 #include "Editor/App/Splash.h"
 #include "Editor/App/EditorForm.h"
+#if defined(_DEBUG)
+#	include "Core/CycleRefDebugger.h"
+#endif
 #include "Core/Misc/CommandLine.h"
 #include "Core/Misc/Split.h"
 #include "Core/Thread/ThreadManager.h"
@@ -47,6 +50,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	CommandLine cmdLine(file, mbstows(szCmdLine));
 #endif
 
+#if defined(_DEBUG)
+	CycleRefDebugger cycleDebugger;
+	Object::setReferenceDebugger(&cycleDebugger);
+#endif
+
 	ui::Application::getInstance()->initialize(
 		new EventLoopImpl(),
 		new WidgetFactoryImpl()
@@ -86,5 +94,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	}
 
 	ui::Application::getInstance()->finalize();
+
+#if defined(_DEBUG)
+	Object::setReferenceDebugger(0);
+#endif
 	return 0;
 }

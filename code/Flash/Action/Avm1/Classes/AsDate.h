@@ -18,13 +18,9 @@ class AsDate : public ActionClass
 	T_RTTI_CLASS;
 
 public:
-	static Ref< AsDate > getInstance();
-
-private:
 	AsDate();
 
-	void createPrototype();
-
+private:
 	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
 
 	void Date_getDate(CallArgs& ca);

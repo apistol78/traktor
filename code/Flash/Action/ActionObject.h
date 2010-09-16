@@ -20,6 +20,7 @@ namespace traktor
 	namespace flash
 	{
 
+class ActionContext;
 class ActionFunction;
 class ActionValue;
 
@@ -36,27 +37,37 @@ public:
 
 	ActionObject();
 
-	ActionObject(ActionObject* prototype);
+	explicit ActionObject(const std::wstring& prototypeName);
 
-	virtual void addRef() const;
+	explicit ActionObject(ActionObject* prototype);
+
+	virtual ~ActionObject();
+
+	virtual void addRef(void* owner) const;
 	
-	virtual void release() const;
+	virtual void release(void* owner) const;
 
 	virtual void addInterface(ActionObject* intrface);
 
+	virtual ActionObject* getPrototype(ActionContext* context);
+
 	virtual void setMember(const std::wstring& memberName, const ActionValue& memberValue);
 
-	virtual bool getMember(const std::wstring& memberName, ActionValue& outMemberValue) const;
+	virtual bool getMember(ActionContext* context, const std::wstring& memberName, ActionValue& outMemberValue);
 
 	virtual bool deleteMember(const std::wstring& memberName);
 
+	virtual void deleteAllMembers();
+
 	virtual void addProperty(const std::wstring& propertyName, ActionFunction* propertyGet, ActionFunction* propertySet);
 
-	virtual bool getPropertyGet(const std::wstring& propertyName, Ref< ActionFunction >& outPropertyGet) const;
+	virtual bool getPropertyGet(ActionContext* context, const std::wstring& propertyName, Ref< ActionFunction >& outPropertyGet);
 
-	virtual bool getPropertySet(const std::wstring& propertyName, Ref< ActionFunction >& outPropertySet) const;
+	virtual bool getPropertySet(ActionContext* context, const std::wstring& propertyName, Ref< ActionFunction >& outPropertySet);
 
 	virtual const property_map_t& getProperties() const;
+
+	virtual void deleteAllProperties();
 
 	virtual avm_number_t valueOf() const;
 
@@ -72,6 +83,16 @@ public:
 
 	bool getLocalPropertySet(const std::wstring& propertyName, Ref< ActionFunction >& outPropertySet) const;
 
+protected:
+	struct IVisitor
+	{
+		virtual void operator () (ActionObject* memberObject) const = 0;
+	};
+
+	virtual void trace(const IVisitor& visitor) const;
+
+	virtual void dereference();
+
 private:
 	friend class ActionObjectCyclic;
 
@@ -81,6 +102,21 @@ private:
 		TcPurple,
 		TcGray,
 		TcWhite
+	};
+
+	struct MarkGrayVisitor : public IVisitor
+	{
+		virtual void operator () (ActionObject* memberObject) const;
+	};
+
+	struct ScanVisitor : public IVisitor
+	{
+		virtual void operator () (ActionObject* memberObject) const;
+	};
+
+	struct ScanBlackVisitor : public IVisitor
+	{
+		virtual void operator () (ActionObject* memberObject) const;
 	};
 
 	bool m_readOnly;

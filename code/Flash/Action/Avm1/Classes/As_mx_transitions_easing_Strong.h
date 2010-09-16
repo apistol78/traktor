@@ -13,13 +13,9 @@ class As_mx_transitions_easing_Strong : public ActionClass
 	T_RTTI_CLASS;
 
 public:
-	static Ref< As_mx_transitions_easing_Strong > getInstance();
-
-private:
 	As_mx_transitions_easing_Strong();
 
-	void createPrototype();
-
+private:
 	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
 
 	void Strong_easeIn(CallArgs& ca);

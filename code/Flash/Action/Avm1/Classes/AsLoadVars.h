@@ -18,13 +18,9 @@ class AsLoadVars : public ActionClass
 	T_RTTI_CLASS;
 
 public:
-	static Ref< AsLoadVars > getInstance();
-
-private:
 	AsLoadVars();
 
-	void createPrototype();
-
+private:
 	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
 
 	void LoadVars_addRequestHeader(CallArgs& ca);

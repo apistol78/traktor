@@ -3,7 +3,6 @@
 #include "Flash/Action/Classes/ColorTransform.h"
 #include "Flash/Action/Classes/Transform.h"
 #include "Flash/Action/Avm1/Classes/As_flash_geom_Transform.h"
-#include "Flash/Action/Avm1/Classes/AsObject.h"
 
 namespace traktor
 {
@@ -12,28 +11,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.As_flash_geom_Transform", As_flash_geom_Transform, ActionClass)
 
-Ref< As_flash_geom_Transform > As_flash_geom_Transform::getInstance()
-{
-	static Ref< As_flash_geom_Transform > instance;
-	if (!instance)
-	{
-		instance = new As_flash_geom_Transform();
-		instance->createPrototype();
-		instance->setReadOnly();
-	}
-	return instance;
-}
-
 As_flash_geom_Transform::As_flash_geom_Transform()
-:	ActionClass(L"Transform")
-{
-}
-
-void As_flash_geom_Transform::createPrototype()
+:	ActionClass(L"flash.geom.Transform")
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"__proto__", ActionValue(AsObject::getInstance()));
 	prototype->addProperty(L"colorTransform", createNativeFunction(this, &As_flash_geom_Transform::Transform_get_colorTransform), createNativeFunction(this, &As_flash_geom_Transform::Transform_set_colorTransform));
 	//prototype->addProperty(L"concatenatedColorTransform", createNativeFunction(this, &Transform_get_concatenatedColorTransform), 0);
 	//prototype->addProperty(L"concatenatedMatrix", createNativeFunction(this, &Transform_get_concatenatedMatrix), 0);

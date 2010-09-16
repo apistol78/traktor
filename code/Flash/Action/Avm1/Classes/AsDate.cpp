@@ -1,7 +1,6 @@
 #include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Classes/Date.h"
 #include "Flash/Action/Avm1/Classes/AsDate.h"
-#include "Flash/Action/Avm1/Classes/AsObject.h"
 
 namespace traktor
 {
@@ -10,28 +9,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsDate", AsDate, ActionClass)
 
-Ref< AsDate > AsDate::getInstance()
-{
-	static Ref< AsDate > instance = 0;
-	if (!instance)
-	{
-		instance = new AsDate();
-		instance->createPrototype();
-		instance->setReadOnly();
-	}
-	return instance;
-}
-
 AsDate::AsDate()
 :	ActionClass(L"Date")
 {
-}
-
-void AsDate::createPrototype()
-{
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"__proto__", ActionValue(AsObject::getInstance()));
 	prototype->setMember(L"getDate", ActionValue(createNativeFunction(this, &AsDate::Date_getDate)));
 	prototype->setMember(L"getDay", ActionValue(createNativeFunction(this, &AsDate::Date_getDay)));
 	prototype->setMember(L"getFullYear", ActionValue(createNativeFunction(this, &AsDate::Date_getFullYear)));

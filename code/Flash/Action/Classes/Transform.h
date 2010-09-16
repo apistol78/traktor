@@ -33,6 +33,11 @@ public:
 
 	void setColorTransform(const ColorTransform* colorTransform);
 
+protected:
+	virtual void trace(const IVisitor& visitor) const;
+
+	virtual void dereference();
+
 private:
 	Ref< FlashCharacterInstance > m_instance;
 };

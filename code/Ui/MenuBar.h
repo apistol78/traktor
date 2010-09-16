@@ -42,7 +42,7 @@ public:
 	
 private:
 	IMenuBar* m_menuBar;
-	Ref< Form > m_form;
+	Form* m_form;
 };
 
 	}

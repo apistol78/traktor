@@ -1,5 +1,5 @@
 #include <iostream>
-#if !defined(_WIN32)
+#if !defined(_WIN32) && !defined(_PS3)
 #	include <execinfo.h>
 #endif
 #include "Core/Platform.h"
@@ -18,6 +18,31 @@ TrackAllocator::~TrackAllocator()
 {
 	if (!m_aliveBlocks.empty())
 	{
+		std::map< void*, uint32_t > frequency;
+
+#if defined(_WIN32)
+		wchar_t buf[512];
+		wsprintf(buf, L"Memory leak detected, following %d allocation(s) not freed:\n", m_aliveBlocks.size());
+		OutputDebugString(buf);
+
+		for (std::map< void*, Block >::const_iterator i = m_aliveBlocks.begin(); i != m_aliveBlocks.end(); ++i)
+		{
+			wsprintf(buf, L"0x%p, %d byte(s), tag \"%S\"\n", i->first, i->second.size, i->second.tag);
+			OutputDebugString(buf);
+			for (int j = 0; j < sizeof_array(i->second.at); ++j)
+			{
+				wsprintf(buf, L"   %d: 0x%p\n", j, i->second.at[j]);
+				OutputDebugString(buf);
+			}
+			frequency[i->second.at[0]]++;
+		}
+
+		for (std::map< void*, uint32_t >::const_iterator i = frequency.begin(); i != frequency.end(); ++i)
+		{
+			wsprintf(buf, L"0x%p: %d allocation(s)\n", i->first, i->second);
+			OutputDebugString(buf);
+		}
+#else
 		std::wcout << L"Memory leak detected, following allocation(s) not freed:" << std::endl;
 		for (std::map< void*, Block >::const_iterator i = m_aliveBlocks.begin(); i != m_aliveBlocks.end(); ++i)
 		{
@@ -25,6 +50,7 @@ TrackAllocator::~TrackAllocator()
 			for (int j = 0; j < sizeof_array(i->second.at); ++j)
 				std::wcout << L"   " << j << L": 0x" << i->second.at[j] << std::endl;
 		}
+#endif
 	}
 	else
 		std::wcout << L"No memory leaks! Good work!" << std::endl;
@@ -47,23 +73,15 @@ void* TrackAllocator::alloc(size_t size, size_t align, const char* const tag)
 	block.at[3] = 0;
 
 #if defined(_WIN32)
-#	if !defined(_WIN64) && !defined(WINCE) && !defined(_XBOX)
 
-	uint32_t at_0 = 0, at_1 = 0;
-	uint32_t at_2 = 0, at_3 = 0;
-	__asm
-	{
-		mov ecx, [ebp]
-		mov eax, [ecx + 4]
-		mov at_0, eax
-	}
-	block.at[0] = (void*)(at_0 - 6);
-	block.at[1] = (void*)at_1;
-	block.at[2] = (void*)at_2;
-	block.at[3] = (void*)at_3;
+	CaptureStackBackTrace(
+		2,
+		sizeof_array(block.at),
+		block.at,
+		0
+	);
 
-#	endif
-#else
+#elif !defined(_PS3)
 
 	backtrace(
 		block.at,

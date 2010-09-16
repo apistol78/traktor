@@ -68,16 +68,29 @@ Ref< FlashCharacterInstance > FlashSprite::createInstance(ActionContext* context
 	if (context->getMovie()->getExportName(getId(), exportName))
 	{
 		ActionValue movieClipClass;
-		if (context->getGlobal()->getMember(exportName, movieClipClass))
+		if (context->getGlobal()->getLocalMember(exportName, movieClipClass))
 		{
 			ActionValue prototype;
-			movieClipClass.getObject()->getMember(L"prototype", prototype);
+			movieClipClass.getObject()->getLocalMember(L"prototype", prototype);
 			spriteInstance->setMember(L"prototype", prototype);
 			spriteInstance->setMember(L"__proto__", prototype);
 		}
 	}
 
 	return spriteInstance;
+}
+
+void FlashSprite::trace(const IVisitor& visitor) const
+{
+	for (RefArray< FlashFrame >::const_iterator i = m_frames.begin(); i != m_frames.end(); ++i)
+		visitor(*i);
+	FlashCharacter::trace(visitor);
+}
+
+void FlashSprite::dereference()
+{
+	m_frames.clear();
+	FlashCharacter::dereference();
 }
 
 	}

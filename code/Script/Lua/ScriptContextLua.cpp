@@ -559,7 +559,7 @@ int ScriptContextLua::callProperty(lua_State* luaState)
 int ScriptContextLua::gcMethod(lua_State* luaState)
 {
 	Object* object = *reinterpret_cast< Object** >(lua_touserdata(luaState, 1));
-	T_SAFE_RELEASE(object);
+	T_SAFE_ANONYMOUS_RELEASE(object);
 	return 0;
 }
 

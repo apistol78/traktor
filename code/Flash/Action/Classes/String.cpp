@@ -1,5 +1,4 @@
 #include "Flash/Action/Classes/String.h"
-#include "Flash/Action/Avm1/Classes/AsString.h"
 
 namespace traktor
 {
@@ -9,18 +8,18 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.String", String, ActionObject)
 
 String::String()
-:	ActionObject(AsString::getInstance())
+:	ActionObject(L"String")
 {
 }
 
 String::String(wchar_t ch)
-:	ActionObject(AsString::getInstance())
+:	ActionObject(L"String")
 {
 	m_str.resize(1, ch);
 }
 
 String::String(const std::wstring& str)
-:	ActionObject(AsString::getInstance())
+:	ActionObject(L"String")
 ,	m_str(str)
 {
 }

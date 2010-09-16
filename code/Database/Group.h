@@ -80,7 +80,7 @@ private:
 	Database* m_database;
 	IProviderBus* m_providerBus;
 	Ref< IProviderGroup > m_providerGroup;
-	Ref< Group > m_parent;
+	Group* m_parent;
 	std::wstring m_name;
 	RefArray< Group > m_childGroups;
 	RefArray< Instance > m_childInstances;

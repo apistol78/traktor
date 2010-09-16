@@ -16,13 +16,9 @@ class As_flash_geom_Transform : public ActionClass
 	T_RTTI_CLASS;
 
 public:
-	static Ref< As_flash_geom_Transform > getInstance();
-
-private:
 	As_flash_geom_Transform();
 
-	void createPrototype();
-
+private:
 	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
 
 	Ref< ColorTransform > Transform_get_colorTransform(Transform* self) const;

@@ -26,13 +26,9 @@ class T_DLLCLASS AsObject : public ActionClass
 	T_RTTI_CLASS;
 
 public:
-	static Ref< AsObject > getInstance();
-
-private:
 	AsObject();
 
-	void createPrototype();
-
+private:
 	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
 
 	void Object_addProperty(CallArgs& ca);

@@ -10,28 +10,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.As_flash_geom_ColorTransform", As_flash_geom_ColorTransform, ActionClass)
 
-Ref< As_flash_geom_ColorTransform > As_flash_geom_ColorTransform::getInstance()
-{
-	static Ref< As_flash_geom_ColorTransform > instance;
-	if (!instance)
-	{
-		instance = new As_flash_geom_ColorTransform();
-		instance->createPrototype();
-		instance->setReadOnly();
-	}
-	return instance;
-}
-
 As_flash_geom_ColorTransform::As_flash_geom_ColorTransform()
-:	ActionClass(L"Transform")
-{
-}
-
-void As_flash_geom_ColorTransform::createPrototype()
+:	ActionClass(L"flash.geom.Transform")
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"__proto__", ActionValue(AsObject::getInstance()));
 	prototype->addProperty(L"alphaMultiplier", createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_get_alphaMultiplier), createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_set_alphaMultiplier));
 	prototype->addProperty(L"alphaOffset", createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_get_alphaOffset), createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_set_alphaOffset));
 	prototype->addProperty(L"blueMultiplier", createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_get_blueMultiplier), createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_set_blueMultiplier));

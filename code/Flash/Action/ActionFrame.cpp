@@ -26,7 +26,6 @@ ActionFrame::ActionFrame(
 ,	m_callee(callee)
 ,	m_stack(context->getPool())
 {
-	setVariable(L"this", ActionValue(self));
 }
 
 void ActionFrame::setRegister(uint16_t index, const ActionValue& value)
@@ -42,17 +41,27 @@ ActionValue ActionFrame::getRegister(uint16_t index) const
 
 bool ActionFrame::hasVariable(const std::wstring& variableName) const
 {
+	if (variableName == L"this")
+		return true;
+
 	std::map< std::wstring, ActionValue >::const_iterator i = m_localVariables.find(variableName);
 	return i != m_localVariables.end();
 }
 
 void ActionFrame::setVariable(const std::wstring& variableName, const ActionValue& variableValue)
 {
+	T_ASSERT (variableName != L"this");
 	m_localVariables[variableName] = variableValue;
 }
 
 bool ActionFrame::getVariable(const std::wstring& variableName, ActionValue& outVariableValue) const
 {
+	if (variableName == L"this")
+	{
+		outVariableValue = ActionValue(m_self);
+		return true;
+	}
+
 	std::map< std::wstring, ActionValue >::const_iterator i = m_localVariables.find(variableName);
 	if (i == m_localVariables.end())
 		return false;

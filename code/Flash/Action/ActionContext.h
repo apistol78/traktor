@@ -38,9 +38,11 @@ public:
 
 	void notifyFrameListeners(avm_number_t time);
 
+	ActionObject* lookupClass(const std::wstring& className);
+
 	const IActionVM* getVM() const { return m_vm; }
 
-	const Ref< const FlashMovie >& getMovie() const { return m_movie; }
+	const FlashMovie* getMovie() const { return m_movie; }
 
 	const Ref< ActionObject >& getGlobal() const { return m_global; }
 
@@ -54,7 +56,7 @@ private:
 	};
 
 	const IActionVM* m_vm;
-	Ref< const FlashMovie > m_movie;
+	const FlashMovie* m_movie;
 	Ref< ActionObject > m_global;
 	ActionValuePool m_pool;
 	std::vector< FrameListener > m_frameListeners;

@@ -68,6 +68,11 @@ public:
 
 	CoordinateType getCoordinateType() const;
 
+protected:
+	virtual void trace(const IVisitor& visitor) const;
+
+	virtual void dereference();
+
 private:
 	RefArray< FlashShape > m_shapes;
 	int16_t m_ascent;

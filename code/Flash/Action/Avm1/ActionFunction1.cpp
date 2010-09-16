@@ -23,10 +23,6 @@ ActionFunction1::ActionFunction1(
 ,	m_codeSize(codeSize)
 ,	m_dictionary(dictionary)
 {
-	// Do this inside constructor to prevent infinite recursion.
-	ActionValue classPrototype;
-	if (AsFunction::getInstance()->getLocalMember(L"prototype", classPrototype))
-		setMember(L"__proto__", classPrototype);
 }
 
 ActionValue ActionFunction1::call(ActionContext* context, ActionObject* self, const ActionValueArray& args)

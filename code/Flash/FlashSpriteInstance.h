@@ -30,7 +30,7 @@ class T_DLLCLASS FlashSpriteInstance : public FlashCharacterInstance
 
 public:
 	FlashSpriteInstance(ActionContext* context, FlashCharacterInstance* parent, const FlashSprite* sprite);
-	
+
 	virtual void destroy();
 
 	const FlashSprite* getSprite() const;
@@ -71,7 +71,7 @@ public:
 
 	int32_t getMouseY() const { return m_mouseY; }
 
-	virtual bool getMember(const std::wstring& memberName, ActionValue& outMemberValue) const;
+	virtual bool getMember(ActionContext* context, const std::wstring& memberName, ActionValue& outMemberValue);
 
 	virtual void eventInit();
 
@@ -90,6 +90,11 @@ public:
 	virtual void eventMouseMove(int32_t x, int32_t y, int32_t button);
 
 	virtual SwfRect getBounds() const;
+
+protected:
+	virtual void trace(const IVisitor& visitor) const;
+
+	virtual void dereference();
 
 private:
 	Ref< const FlashSprite > m_sprite;

@@ -98,6 +98,7 @@ void EntityBuilder::end()
 {
 	T_FATAL_ASSERT_M (m_inbuild, L"EntityBuilder not begun");
 	m_entities.clear();
+	m_entityManager = 0;
 	m_inbuild = false;
 }
 

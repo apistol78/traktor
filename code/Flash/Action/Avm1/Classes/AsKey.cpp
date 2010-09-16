@@ -4,7 +4,6 @@
 #include "Flash/Action/ActionFrame.h"
 #include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Avm1/Classes/AsKey.h"
-#include "Flash/Action/Avm1/Classes/AsObject.h"
 
 namespace traktor
 {
@@ -13,77 +12,14 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsKey", AsKey, ActionClass)
 
-Ref< AsKey > AsKey::createInstance()
-{
-	Ref< AsKey > instance = new AsKey();
-	instance->createPrototype();
-	instance->setReadOnly();
-	return instance;
-}
-
 AsKey::AsKey()
 :	ActionClass(L"Key")
 ,	m_lastKeyCode(0)
 {
 	std::memset(m_keyState, 0, sizeof(m_keyState));
-}
 
-AsKey::~AsKey()
-{
-}
-
-void AsKey::eventKeyDown(ActionContext* context, int keyCode)
-{
-	m_keyState[keyCode] = true;
-	m_lastKeyCode = keyCode;
-
-	// Create a snapshot of active listeners the moment this event is raised,
-	// this because listeners can be either added or removed by listeners.
-	RefArray< ActionObject > listeners = m_listeners;
-	for (RefArray< ActionObject >::iterator i = listeners.begin(); i != listeners.end(); ++i)
-	{
-		ActionValue member;
-		(*i)->getMember(L"onKeyDown", member);
-		if (member.isUndefined())
-			continue;
-
-		Ref< ActionFunction > eventFunction = checked_type_cast< ActionFunction* >(member.getObject());
-		if (eventFunction)
-		{
-			ActionFrame callerFrame(context, 0, 0, 0, 4, 0, 0);
-			eventFunction->call(&callerFrame, (*i));
-		}
-	}
-}
-
-void AsKey::eventKeyUp(ActionContext* context, int keyCode)
-{
-	m_keyState[keyCode] = false;
-
-	// Create a snapshot of active listeners the moment this event is raised,
-	// this because listeners can be either added or removed by listeners.
-	RefArray< ActionObject > listeners = m_listeners;
-	for (RefArray< ActionObject >::iterator i = listeners.begin(); i != listeners.end(); ++i)
-	{
-		ActionValue member;
-		(*i)->getMember(L"onKeyUp", member);
-		if (member.isUndefined())
-			continue;
-
-		Ref< ActionFunction > eventFunction = checked_type_cast< ActionFunction* >(member.getObject());
-		if (eventFunction)
-		{
-			ActionFrame callerFrame(context, 0, 0, 0, 4, 0, 0);
-			eventFunction->call(&callerFrame, (*i));
-		}
-	}
-}
-
-void AsKey::createPrototype()
-{
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"__proto__", ActionValue(AsObject::getInstance()));
 	prototype->setMember(L"BACKSPACE", ActionValue(avm_number_t(AkBackspace)));
 	prototype->setMember(L"CAPSLOCK", ActionValue(avm_number_t(AkCapsLock)));
 	prototype->setMember(L"CONTROL", ActionValue(avm_number_t(AkControl)));
@@ -113,6 +49,71 @@ void AsKey::createPrototype()
 	prototype->setReadOnly();
 
 	setMember(L"prototype", ActionValue(prototype));
+}
+
+void AsKey::eventKeyDown(ActionContext* context, int keyCode)
+{
+	m_keyState[keyCode] = true;
+	m_lastKeyCode = keyCode;
+
+	// Create a snapshot of active listeners the moment this event is raised,
+	// this because listeners can be either added or removed by listeners.
+	RefArray< ActionObject > listeners = m_listeners;
+	for (RefArray< ActionObject >::iterator i = listeners.begin(); i != listeners.end(); ++i)
+	{
+		ActionValue member;
+		(*i)->getMember(context, L"onKeyDown", member);
+		if (member.isUndefined())
+			continue;
+
+		Ref< ActionFunction > eventFunction = checked_type_cast< ActionFunction* >(member.getObject());
+		if (eventFunction)
+		{
+			ActionFrame callerFrame(context, 0, 0, 0, 4, 0, 0);
+			eventFunction->call(&callerFrame, (*i));
+		}
+	}
+}
+
+void AsKey::eventKeyUp(ActionContext* context, int keyCode)
+{
+	m_keyState[keyCode] = false;
+
+	// Create a snapshot of active listeners the moment this event is raised,
+	// this because listeners can be either added or removed by listeners.
+	RefArray< ActionObject > listeners = m_listeners;
+	for (RefArray< ActionObject >::iterator i = listeners.begin(); i != listeners.end(); ++i)
+	{
+		ActionValue member;
+		(*i)->getMember(context, L"onKeyUp", member);
+		if (member.isUndefined())
+			continue;
+
+		Ref< ActionFunction > eventFunction = checked_type_cast< ActionFunction* >(member.getObject());
+		if (eventFunction)
+		{
+			ActionFrame callerFrame(context, 0, 0, 0, 4, 0, 0);
+			eventFunction->call(&callerFrame, (*i));
+		}
+	}
+}
+
+void AsKey::removeAllListeners()
+{
+	m_listeners.clear();
+}
+
+void AsKey::trace(const IVisitor& visitor) const
+{
+	for (RefArray< ActionObject >::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
+		visitor(*i);
+	ActionClass::trace(visitor);
+}
+
+void AsKey::dereference()
+{
+	m_listeners.clear();
+	ActionClass::dereference();
 }
 
 ActionValue AsKey::construct(ActionContext* context, const ActionValueArray& args)

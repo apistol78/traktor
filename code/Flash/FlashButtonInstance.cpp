@@ -4,9 +4,9 @@
 #include "Flash/FlashMovie.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFrame.h"
+#include "Flash/Action/ActionFunction.h"
 #include "Flash/Action/ActionScript.h"
 #include "Flash/Action/IActionVM.h"
-#include "Flash/Action/Avm1/Classes/AsButton.h"
 
 namespace traktor
 {
@@ -16,7 +16,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashButtonInstance", FlashButtonInstance, FlashCharacterInstance)
 
 FlashButtonInstance::FlashButtonInstance(ActionContext* context, FlashCharacterInstance* parent, const FlashButton* button)
-:	FlashCharacterInstance(context, AsButton::getInstance(), parent)
+:	FlashCharacterInstance(context, L"Button", parent)
 ,	m_button(button)
 ,	m_state(FlashButton::SmUp)
 ,	m_inside(false)
@@ -146,6 +146,21 @@ SwfRect FlashButtonInstance::getBounds() const
 	bounds.max = getTransform() * bounds.max;
 
 	return bounds;
+}
+
+void FlashButtonInstance::trace(const IVisitor& visitor) const
+{
+	//visitor(m_button);
+	for (std::map< uint16_t, Ref< FlashCharacterInstance > >::const_iterator i = m_characterInstances.begin(); i != m_characterInstances.end(); ++i)
+		visitor(i->second);
+	FlashCharacterInstance::trace(visitor);
+}
+
+void FlashButtonInstance::dereference()
+{
+	//m_button = 0;
+	m_characterInstances.clear();
+	FlashCharacterInstance::dereference();
 }
 
 void FlashButtonInstance::executeCondition(uint32_t conditionMask)

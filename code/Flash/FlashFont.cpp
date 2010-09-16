@@ -1,7 +1,6 @@
 #include <algorithm>
 #include "Flash/FlashFont.h"
 #include "Flash/FlashShape.h"
-#include "Flash/Action/Avm1/Classes/AsObject.h"
 
 namespace traktor
 {
@@ -11,7 +10,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashFont", FlashFont, ActionObject)
 
 FlashFont::FlashFont()
-:	ActionObject(AsObject::getInstance())
+:	ActionObject(L"Object")
 ,	m_ascent(0)
 ,	m_descent(0)
 ,	m_leading(0)
@@ -114,6 +113,19 @@ uint16_t FlashFont::lookupIndex(uint16_t code) const
 FlashFont::CoordinateType FlashFont::getCoordinateType() const
 {
 	return m_coordinateType;
+}
+
+void FlashFont::trace(const IVisitor& visitor) const
+{
+	for (RefArray< FlashShape >::const_iterator i = m_shapes.begin(); i != m_shapes.end(); ++i)
+		visitor(*i);
+	ActionObject::trace(visitor);
+}
+
+void FlashFont::dereference()
+{
+	m_shapes.clear();
+	ActionObject::dereference();
 }
 
 	}

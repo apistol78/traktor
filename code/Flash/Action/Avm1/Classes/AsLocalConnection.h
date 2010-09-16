@@ -18,13 +18,9 @@ class AsLocalConnection : public ActionClass
 	T_RTTI_CLASS;
 
 public:
-	static Ref< AsLocalConnection > getInstance();
-
-private:
 	AsLocalConnection();
 
-	void createPrototype();
-
+private:
 	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
 
 	void LocalConnection_close(CallArgs& ca);

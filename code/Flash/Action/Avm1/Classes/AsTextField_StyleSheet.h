@@ -18,13 +18,9 @@ class AsTextField_StyleSheet : public ActionClass
 	T_RTTI_CLASS;
 
 public:
-	static Ref< AsTextField_StyleSheet > getInstance();
-
-private:
 	AsTextField_StyleSheet();
 
-	void createPrototype();
-
+private:
 	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
 
 	void TextField_StyleSheet_clear(CallArgs& ca);

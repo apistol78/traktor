@@ -1,7 +1,6 @@
 #include "Core/Log/Log.h"
 #include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Avm1/Classes/AsLocalConnection.h"
-#include "Flash/Action/Avm1/Classes/AsObject.h"
 
 namespace traktor
 {
@@ -10,28 +9,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsLocalConnection", AsLocalConnection, ActionClass)
 
-Ref< AsLocalConnection > AsLocalConnection::getInstance()
-{
-	static Ref< AsLocalConnection > instance = 0;
-	if (!instance)
-	{
-		instance = new AsLocalConnection();
-		instance->createPrototype();
-		instance->setReadOnly();
-	}
-	return instance;
-}
-
 AsLocalConnection::AsLocalConnection()
 :	ActionClass(L"LocalConnection")
 {
-}
-
-void AsLocalConnection::createPrototype()
-{
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"__proto__", ActionValue(AsObject::getInstance()));
 	prototype->setMember(L"close", ActionValue(createNativeFunction(this, &AsLocalConnection::LocalConnection_close)));
 	prototype->setMember(L"connect", ActionValue(createNativeFunction(this, &AsLocalConnection::LocalConnection_connect)));
 	prototype->setMember(L"domain", ActionValue(createNativeFunction(this, &AsLocalConnection::LocalConnection_domain)));
@@ -44,7 +26,7 @@ void AsLocalConnection::createPrototype()
 
 ActionValue AsLocalConnection::construct(ActionContext* context, const ActionValueArray& args)
 {
-	return ActionValue(new ActionObject(this));
+	return ActionValue(new ActionObject(L"LocalConnection"));
 }
 
 void AsLocalConnection::LocalConnection_close(CallArgs& ca)

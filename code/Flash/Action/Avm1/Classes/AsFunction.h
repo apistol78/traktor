@@ -18,13 +18,9 @@ class AsFunction : public ActionClass
 	T_RTTI_CLASS;
 
 public:
-	static Ref< AsFunction > getInstance();
-
-private:
 	AsFunction();
 
-	void createPrototype();
-
+private:
 	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
 
 	void Function_apply(CallArgs& ca);

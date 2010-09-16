@@ -54,6 +54,11 @@ public:
 
 	virtual ActionValue call(ActionFrame* callerFrame, ActionObject* self);
 
+protected:
+	virtual void trace(const IVisitor& visitor) const;
+
+	virtual void dereference();
+
 private:
 	const uint8_t* m_code;
 	uint16_t m_codeSize;

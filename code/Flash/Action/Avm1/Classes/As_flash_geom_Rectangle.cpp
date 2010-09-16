@@ -1,6 +1,5 @@
 #include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Avm1/Classes/As_flash_geom_Rectangle.h"
-#include "Flash/Action/Avm1/Classes/AsObject.h"
 #include "Flash/Action/Classes/Point.h"
 #include "Flash/Action/Classes/Rectangle.h"
 
@@ -11,28 +10,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.As_flash_geom_Rectangle", As_flash_geom_Rectangle, ActionClass)
 
-Ref< As_flash_geom_Rectangle > As_flash_geom_Rectangle::getInstance()
-{
-	static Ref< As_flash_geom_Rectangle > instance = 0;
-	if (!instance)
-	{
-		instance = new As_flash_geom_Rectangle();
-		instance->createPrototype();
-		instance->setReadOnly();
-	}
-	return instance;
-}
-
 As_flash_geom_Rectangle::As_flash_geom_Rectangle()
-:	ActionClass(L"Rectangle")
-{
-}
-
-void As_flash_geom_Rectangle::createPrototype()
+:	ActionClass(L"flash.geom.Rectangle")
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"__proto__", ActionValue(AsObject::getInstance()));
 	prototype->setMember(L"clone", ActionValue(createNativeFunction(this, &As_flash_geom_Rectangle::Rectangle_clone)));
 	prototype->setMember(L"contains", ActionValue(createNativeFunction(this, &As_flash_geom_Rectangle::Rectangle_contains)));
 	prototype->setMember(L"containsPoint", ActionValue(createNativeFunction(this, &As_flash_geom_Rectangle::Rectangle_containsPoint)));

@@ -18,13 +18,9 @@ class AsTextField : public ActionClass
 	T_RTTI_CLASS;
 
 public:
-	static Ref< AsTextField > getInstance();
-
-private:
 	AsTextField();
 
-	void createPrototype();
-
+private:
 	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
 
 	std::wstring TextField_get_text(FlashEditInstance* editInstance) const;

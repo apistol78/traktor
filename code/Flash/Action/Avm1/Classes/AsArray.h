@@ -18,13 +18,9 @@ class AsArray : public ActionClass
 	T_RTTI_CLASS;
 
 public:
-	static Ref< AsArray > getInstance();
-
-private:
 	AsArray();
 
-	void createPrototype();
-
+private:
 	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
 
 	void Array_concat(CallArgs& ca);

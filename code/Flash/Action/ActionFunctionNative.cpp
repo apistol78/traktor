@@ -15,10 +15,6 @@ ActionFunctionNative::ActionFunctionNative(INativeFunction* nativeFunction)
 :	ActionFunction(L"<native>")
 ,	m_nativeFunction(nativeFunction)
 {
-	// Do this inside constructor to prevent infinite recursion.
-	ActionValue classPrototype;
-	if (AsFunction::getInstance()->getLocalMember(L"prototype", classPrototype))
-		setMember(L"__proto__", classPrototype);
 }
 
 ActionValue ActionFunctionNative::call(ActionContext* context, ActionObject* self, const ActionValueArray& args)

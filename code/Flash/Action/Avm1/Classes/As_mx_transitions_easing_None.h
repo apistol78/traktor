@@ -13,13 +13,9 @@ class As_mx_transitions_easing_None : public ActionClass
 	T_RTTI_CLASS;
 
 public:
-	static Ref< As_mx_transitions_easing_None > getInstance();
-
-private:
 	As_mx_transitions_easing_None();
 
-	void createPrototype();
-
+private:
 	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
 
 	void None_easeIn(CallArgs& ca);

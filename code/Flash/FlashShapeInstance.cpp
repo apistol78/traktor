@@ -1,6 +1,5 @@
 #include "Flash/FlashShapeInstance.h"
 #include "Flash/FlashShape.h"
-#include "Flash/Action/Avm1/Classes/AsObject.h"
 
 namespace traktor
 {
@@ -10,7 +9,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashShapeInstance", FlashShapeInstance, FlashCharacterInstance)
 
 FlashShapeInstance::FlashShapeInstance(ActionContext* context, FlashCharacterInstance* parent, const FlashShape* shape)
-:	FlashCharacterInstance(context, AsObject::getInstance(), parent)
+:	FlashCharacterInstance(context, L"Object", parent)
 ,	m_shape(shape)
 {
 }

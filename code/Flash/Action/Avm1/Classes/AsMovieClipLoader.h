@@ -18,13 +18,9 @@ class AsMovieClipLoader : public ActionClass
 	T_RTTI_CLASS;
 
 public:
-	static Ref< AsMovieClipLoader > getInstance();
-
-private:
 	AsMovieClipLoader();
 
-	void createPrototype();
-
+private:
 	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
 
 	void MovieClipLoader_addListener(CallArgs& ca);

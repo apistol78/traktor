@@ -1,5 +1,4 @@
 #include "Flash/FlashCharacter.h"
-#include "Flash/Action/Avm1/Classes/AsObject.h"
 
 namespace traktor
 {
@@ -9,7 +8,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashCharacter", FlashCharacter, ActionObject)
 
 FlashCharacter::FlashCharacter(uint16_t id)
-:	ActionObject(AsObject::getInstance())
+:	ActionObject(L"Object")
 ,	m_id(id)
 {
 }

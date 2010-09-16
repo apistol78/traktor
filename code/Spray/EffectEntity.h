@@ -9,9 +9,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_SPRAY_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -59,7 +59,7 @@ public:
 	inline bool isEnable() const { return m_enable; }
 
 private:
-	Ref< resource::IResourceManager > m_resourceManager;
+	resource::IResourceManager* m_resourceManager;
 	Transform m_transform;
 	resource::Proxy< Effect > m_effect;
 	Ref< EffectInstance > m_effectInstance;

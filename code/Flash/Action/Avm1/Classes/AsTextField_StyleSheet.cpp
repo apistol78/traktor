@@ -1,6 +1,5 @@
 #include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Avm1/Classes/AsTextField_StyleSheet.h"
-#include "Flash/Action/Avm1/Classes/AsObject.h"
 
 namespace traktor
 {
@@ -9,28 +8,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsTextField_StyleSheet", AsTextField_StyleSheet, ActionClass)
 
-Ref< AsTextField_StyleSheet > AsTextField_StyleSheet::getInstance()
-{
-	static Ref< AsTextField_StyleSheet > instance = 0;
-	if (!instance)
-	{
-		instance = new AsTextField_StyleSheet();
-		instance->createPrototype();
-		instance->setReadOnly();
-	}
-	return instance;
-}
-
 AsTextField_StyleSheet::AsTextField_StyleSheet()
 :	ActionClass(L"TextField.StyleSheet")
 {
-}
-
-void AsTextField_StyleSheet::createPrototype()
-{
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"__proto__", ActionValue(AsObject::getInstance()));
 	prototype->setMember(L"clear", ActionValue(createNativeFunction(this, &AsTextField_StyleSheet::TextField_StyleSheet_clear)));
 	prototype->setMember(L"getStyle", ActionValue(createNativeFunction(this, &AsTextField_StyleSheet::TextField_StyleSheet_getStyle)));
 	prototype->setMember(L"getStyleNames", ActionValue(createNativeFunction(this, &AsTextField_StyleSheet::TextField_StyleSheet_getStyleNames)));
@@ -46,7 +28,7 @@ void AsTextField_StyleSheet::createPrototype()
 
 ActionValue AsTextField_StyleSheet::construct(ActionContext* context, const ActionValueArray& args)
 {
-	return ActionValue(new ActionObject(this));
+	return ActionValue(new ActionObject(L"TextField.StyleSheet"));
 }
 
 void AsTextField_StyleSheet::TextField_StyleSheet_clear(CallArgs& ca)

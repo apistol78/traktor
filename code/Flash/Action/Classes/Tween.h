@@ -26,8 +26,6 @@ public:
 		bool useSeconds
 	);
 
-	virtual ~Tween();
-
 	void continueTo(avm_number_t finish, avm_number_t duration);
 
 	void fforward();
@@ -47,11 +45,7 @@ public:
 	void yoyo();
 
 private:
-	Ref< ActionContext > m_context;
-	Ref< ActionFunction > m_frameListener;
-	Ref< ActionObject > m_target;
-	Ref< ActionFunction > m_property;
-	Ref< ActionFunction > m_function;
+	ActionContext* m_context;
 	avm_number_t m_begin;
 	avm_number_t m_finish;
 	avm_number_t m_duration;

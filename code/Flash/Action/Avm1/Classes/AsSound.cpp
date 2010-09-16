@@ -2,7 +2,6 @@
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Avm1/Classes/AsSound.h"
-#include "Flash/Action/Avm1/Classes/AsObject.h"
 
 namespace traktor
 {
@@ -11,28 +10,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsSound", AsSound, ActionClass)
 
-Ref< AsSound > AsSound::getInstance()
-{
-	static Ref< AsSound > instance = 0;
-	if (!instance)
-	{
-		instance = new AsSound();
-		instance->createPrototype();
-		instance->setReadOnly();
-	}
-	return instance;
-}
-
 AsSound::AsSound()
 :	ActionClass(L"Sound")
 {
-}
-
-void AsSound::createPrototype()
-{
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"__proto__", ActionValue(AsObject::getInstance()));
 	prototype->setMember(L"attachSound", ActionValue(createNativeFunction(this, &AsSound::Sound_attachSound)));
 	prototype->setMember(L"getBytesLoaded", ActionValue(createNativeFunction(this, &AsSound::Sound_getBytesLoaded)));
 	prototype->setMember(L"getBytesTotal", ActionValue(createNativeFunction(this, &AsSound::Sound_getBytesTotal)));

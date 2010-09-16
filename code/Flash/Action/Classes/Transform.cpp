@@ -1,7 +1,6 @@
 #include "Flash/FlashCharacterInstance.h"
 #include "Flash/Action/Classes/ColorTransform.h"
 #include "Flash/Action/Classes/Transform.h"
-#include "Flash/Action/Avm1/Classes/As_flash_geom_Transform.h"
 
 namespace traktor
 {
@@ -11,7 +10,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.Transform", Transform, ActionObject)
 
 Transform::Transform(FlashCharacterInstance* instance)
-:	ActionObject(As_flash_geom_Transform::getInstance())
+:	ActionObject(L"flash.geom.Transform")
 ,	m_instance(instance)
 {
 }
@@ -24,6 +23,18 @@ Ref< ColorTransform > Transform::getColorTransform() const
 void Transform::setColorTransform(const ColorTransform* colorTransform)
 {
 	m_instance->setColorTransform(colorTransform->getTransform());
+}
+
+void Transform::trace(const IVisitor& visitor) const
+{
+	visitor(m_instance);
+	ActionObject::trace(visitor);
+}
+
+void Transform::dereference()
+{
+	m_instance = 0;
+	ActionObject::dereference();
 }
 
 	}
