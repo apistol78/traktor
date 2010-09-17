@@ -80,6 +80,7 @@ bool opengl_initialize_extensions()
 	if (renderer)
 		log::info << L"OpenGL renderer: " << mbstows(renderer) << Endl;
 
+#if defined(_DEBUG)
 	const char* supported = (const char*)glGetString(GL_EXTENSIONS);
 	if (supported)
 	{
@@ -92,7 +93,6 @@ bool opengl_initialize_extensions()
 			while (*end && *end != ' ')
 				++end;
 		
-			int len = end - supported;		
 			log::info << mbstows(std::string(supported, end)) << Endl;
 		
 			supported = end;
@@ -103,6 +103,7 @@ bool opengl_initialize_extensions()
 
 		log::info << DecreaseIndent;
 	}
+#endif
 	
 #if !defined(__APPLE__)
 
@@ -193,27 +194,39 @@ bool opengl_initialize_extensions()
 
 bool opengl_have_extension(const char* extension)
 {
-	const char* supp = (const char*)glGetString(GL_EXTENSIONS);
-	if (!supp)
+	T_ASSERT (extension);
+
+	const char* supported = (const char*)glGetString(GL_EXTENSIONS);
+	if (!supported)
 		return false;
 	
-	while (*supp)
+	int32_t extensionLength = strlen(extension);
+	while (*supported)
 	{
-		const char* end = supp;
+		const char* end = supported;
 		while (*end && *end != ' ')
-			++end;
+		{
+			// Fail safe; if extension seems to be more than 200 characters
+			// long then we assume something has gone wrong and we abort.
+			if ((++end - supported) >= 200)
+				return false;
+		}
 		
-		int len = end - supp;
+		int length = end - supported;
 		if (
-			len == strlen(extension) &&
-			strncmp(supp, extension, len) == 0
+			length == extensionLength &&
+			strncmp(supported, extension, length) == 0
 		)
 			return true;
 		
-		supp = end;
-		
-		while (*supp == ' ')
-			++supp;
+		supported = end;
+		while (*supported == ' ')
+		{
+			// Fail safe; if more than 10 white space characters then
+			// we assume somethings wrong and abort.
+			if ((++supported - end) >= 10)
+				return false;
+		}
 	}
 	
 	return false;
