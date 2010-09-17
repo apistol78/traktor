@@ -19,15 +19,45 @@ template <typename T> T read_primitive(IStream* stream)
 
 #elif defined(T_BIG_ENDIAN)
 
+template < typename T, int Size >
+struct ReadPrimitive
+{
+	static T read(IStream* stream)
+	{
+		T t;
+		stream->read(&t, sizeof(t));
+		swap8in32(t);
+		return t;
+	}
+};
+
+template < typename T >
+struct ReadPrimitive < T, 1 >
+{
+	static T read(IStream* stream)
+	{
+		T t;
+		stream->read(&t, 1);
+		return t;
+	}
+};
+
+template < typename T >
+struct ReadPrimitive < T, 8 >
+{
+	static T read(IStream* stream)
+	{
+		T t;
+		stream->read(&t, 8);
+		swap8in32(*(((uint32_t*)&t) + 0));
+		swap8in32(*(((uint32_t*)&t) + 1));
+		return t;
+	}
+};
+
 template <typename T> T read_primitive(IStream* stream)
 {
-	std::vector< char > tmp; tmp.resize(sizeof(T));
-	if (stream->read(&tmp[0], sizeof(T)) == sizeof(T))
-	{
-		std::reverse(tmp.begin(), tmp.end());
-		return *(T*)&tmp[0];
-	}
-	return T(0);
+	return ReadPrimitive< T, sizeof(T) >::read(stream);
 }
 
 #endif

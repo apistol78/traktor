@@ -66,6 +66,11 @@ void Library::close()
 	}
 }
 
+void Library::detach()
+{
+	m_handle = 0;
+}
+
 void* Library::find(const std::wstring& symbol)
 {
 	std::string tmp = wstombs(symbol);
