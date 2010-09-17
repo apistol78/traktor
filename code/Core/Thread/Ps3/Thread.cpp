@@ -197,7 +197,9 @@ bool Thread::current() const
 
 bool Thread::finished() const
 {
-	return false;
+	Internal* in = reinterpret_cast< Internal* >(m_handle);
+	T_ASSERT (in);
+	return in->finished;
 }
 
 Thread::Thread(Functor* functor, const std::wstring& name, int hardwareCore)

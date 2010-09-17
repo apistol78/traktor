@@ -225,7 +225,7 @@ Process::CheckResult Process::check(const net::Url& bundleUrl)
 			return CrFailed;
 		}
 
-		Ref< IProcess > process = OS::getInstance().execute(c_postUpdateFileName, L"", L"", 0, false, true);
+		Ref< IProcess > process = OS::getInstance().execute(c_postUpdateFileName, L"", L"", 0, false, true, true);
 		if (!process)
 		{
 			log::error << L"Unable to spawn post update process" << Endl;

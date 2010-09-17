@@ -52,6 +52,14 @@ public:
 
 	/*! \brief Close library. */
 	void close();
+
+	/*! \brief Detach library.
+	 *
+	 * \note
+	 * A detached library is not unloaded from the
+	 * process until the process terminates.
+	 */
+	void detach();
 	
 	/*! \brief Find exported symbol from library.
 	 *

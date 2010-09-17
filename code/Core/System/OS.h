@@ -100,6 +100,7 @@ public:
 	 * \param envmap Optional environment variables.
 	 * \param redirect Redirect standard IO.
 	 * \param mute Mute spawn process's output.
+	 * \param detach Detach process from calling process.
 	 * \return Process instance, null if unable to execute.
 	 */
 	Ref< IProcess > execute(
@@ -108,7 +109,8 @@ public:
 		const Path& workingDirectory,
 		const envmap_t* envmap,
 		bool redirect,
-		bool mute
+		bool mute,
+		bool detach
 	) const;
 
 	/*! \brief Create shared memory object.

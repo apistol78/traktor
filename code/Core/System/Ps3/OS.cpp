@@ -101,7 +101,8 @@ Ref< IProcess > OS::execute(
 	const Path& workingDirectory,
 	const envmap_t* envmap,
 	bool redirect,
-	bool mute
+	bool mute,
+	bool detach
 ) const
 {
 	return 0;
