@@ -18,6 +18,7 @@ namespace traktor
 	{
 
 class Item;
+class IPostAction;
 
 /*! \brief Update bundle.
  * \ingroup Update
@@ -31,16 +32,22 @@ public:
 
 	int32_t getVersion() const;
 
+	const std::wstring& getBaseUrl() const;
+
 	const std::wstring& getDescription() const;
 
 	const RefArray< Item >& getItems() const;
+
+	const RefArray< IPostAction >& getPostActions() const;
 
 	virtual bool serialize(ISerializer& s);
 
 private:
 	int32_t m_version;
+	std::wstring m_baseUrl;
 	std::wstring m_description;
 	RefArray< Item > m_items;
+	RefArray< IPostAction > m_postActions;
 };
 
 	}

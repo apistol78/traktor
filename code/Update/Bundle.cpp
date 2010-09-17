@@ -2,6 +2,7 @@
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberRefArray.h"
 #include "Update/Bundle.h"
+#include "Update/IPostAction.h"
 #include "Update/Item.h"
 
 namespace traktor
@@ -21,6 +22,11 @@ int32_t Bundle::getVersion() const
 	return m_version;
 }
 
+const std::wstring& Bundle::getBaseUrl() const
+{
+	return m_baseUrl;
+}
+
 const std::wstring& Bundle::getDescription() const
 {
 	return m_description;
@@ -31,11 +37,18 @@ const RefArray< Item >& Bundle::getItems() const
 	return m_items;
 }
 
+const RefArray< IPostAction >& Bundle::getPostActions() const
+{
+	return m_postActions;
+}
+
 bool Bundle::serialize(ISerializer& s)
 {
 	s >> Member< int32_t >(L"version", m_version);
+	s >> Member< std::wstring >(L"baseUrl", m_baseUrl);
 	s >> Member< std::wstring >(L"description", m_description);
 	s >> MemberRefArray< Item >(L"items", m_items);
+	s >> MemberRefArray< IPostAction >(L"postActions", m_postActions);
 	return true;
 }
 

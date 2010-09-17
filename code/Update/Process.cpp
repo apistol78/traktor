@@ -2,6 +2,7 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/StreamCopy.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/AutoPtr.h"
 #include "Core/Serialization/DeepHash.h"
 #include "Core/System/IProcess.h"
 #include "Core/System/OS.h"
@@ -17,6 +18,10 @@
 #include "Ui/Custom/BackgroundWorkerStatus.h"
 #include "Xml/XmlDeserializer.h"
 #include "Xml/XmlSerializer.h"
+
+#if defined(T_STATIC)
+#	include "Update/PostLaunch.h"
+#endif
 
 // Resources
 #if defined(_WIN32)
@@ -42,6 +47,11 @@ struct BundleDownloader : public ui::custom::BackgroundWorkerStatus
 
 		setSteps(int32_t(bundleItems.size()));
 
+		net::Url baseUrl(bundle->getBaseUrl());
+		Path bundleBasePath = baseUrl.valid() ? baseUrl.getPath() : L"/";
+
+		log::info << L"bundleBasePath \"" << bundleBasePath.getPathName() << L"\"" << Endl;
+
 		for (RefArray< Item >::const_iterator i = bundleItems.begin(); i != bundleItems.end(); ++i, ++itemIndex)
 		{
 			const Resource* resource = dynamic_type_cast< const Resource* >(*i);
@@ -51,14 +61,26 @@ struct BundleDownloader : public ui::custom::BackgroundWorkerStatus
 				if (!bundleItemUrl.valid())
 					continue;
 
-				std::wstring fileName = bundleItemUrl.getFile();
+				Path bundlePath = bundleItemUrl.getPath();
+				Path filePath = bundlePath;
 
-				notify(itemIndex, fileName);
+				FileSystem::getInstance().getRelativePath(
+					bundlePath,
+					bundleBasePath,
+					filePath
+				);
+
+				log::info << L"bundlePath \"" << bundlePath.getPathName() << L"\"" << Endl;
+				log::info << L"filePath \"" << filePath.getPathName() << L"\"" << Endl;
+
+				notify(itemIndex, filePath.getFileName());
+
+				FileSystem::getInstance().makeAllDirectories(filePath.getPathOnly());
 
 				// Skip downloading resource if it already exists and have same checksum.
-				if (FileSystem::getInstance().exist(fileName))
+				if (FileSystem::getInstance().exist(filePath))
 				{
-					Ref< IStream > targetStream = FileSystem::getInstance().open(fileName, File::FmRead);
+					Ref< IStream > targetStream = FileSystem::getInstance().open(filePath, File::FmRead);
 					if (targetStream)
 					{
 						MD5 targetMD5;
@@ -75,12 +97,8 @@ struct BundleDownloader : public ui::custom::BackgroundWorkerStatus
 
 						if (targetMD5 == resource->getMD5())
 						{
-							log::info << L"Item \"" << bundleItemUrl.getFile() << L"\" already up-to-date; skipping" << Endl;
+							log::info << L"Item \"" << filePath.getPathName() << L"\" already up-to-date; skipping" << Endl;
 							continue;
-						}
-						else
-						{
-							log::info << targetMD5.format() << Endl;
 						}
 					}
 				}
@@ -93,7 +111,7 @@ struct BundleDownloader : public ui::custom::BackgroundWorkerStatus
 				if (!sourceStream)
 					continue;
 
-				Ref< IStream > targetStream = FileSystem::getInstance().open(fileName + L".updated", File::FmWrite);
+				Ref< IStream > targetStream = FileSystem::getInstance().open(filePath.getPathName() + L".updated", File::FmWrite);
 				if (!targetStream)
 					continue;
 
@@ -112,6 +130,10 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.update.Process", Process, Object)
 
 Process::CheckResult Process::check(const net::Url& bundleUrl)
 {
+#if defined(T_STATIC)
+	T_FORCE_LINK_REF(PostLaunch);
+#endif
+
 	Ref< net::UrlConnection > connection = net::UrlConnection::open(bundleUrl);
 	if (!connection)
 	{
@@ -218,14 +240,22 @@ Process::CheckResult Process::check(const net::Url& bundleUrl)
 		// to wait until this process has been terminated before
 		// replacing files.
 
-		Mutex postMutex(c_guidParentTerminate);
-		if (!postMutex.wait())
+		Mutex terminationMutex(c_guidParentTerminate);
+		if (!terminationMutex.wait())
 		{
 			log::error << L"Unable to create post synchronization named mutex" << Endl;
 			return CrFailed;
 		}
 
-		Ref< IProcess > process = OS::getInstance().execute(c_postUpdateFileName, L"", L"", 0, false, true, true);
+		Ref< IProcess > process = OS::getInstance().execute(
+			c_postUpdateFileName,
+			L"Installed.bundle",
+			L"",
+			0,
+			false,
+			false,
+			true
+		);
 		if (!process)
 		{
 			log::error << L"Unable to spawn post update process" << Endl;

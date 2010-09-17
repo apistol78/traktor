@@ -39,6 +39,14 @@ public:
 		CrFailed
 	};
 
+	/*! \brief Check for updates.
+	 *
+	 * This will check for updates and if
+	 * available download them and prepare
+	 * for restart.
+	 *
+	 * \param bundleUrl URL to update bundle.
+	 */
 	CheckResult check(const net::Url& bundleUrl);
 };
 

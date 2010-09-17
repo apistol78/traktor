@@ -237,7 +237,7 @@
 			<dependencies/>
 		</item>
 		<item type="Project" version="1">
-			<enable>true</enable>
+			<enable>false</enable>
 			<name>Extern.freetype-2.3.5</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/freetype-2.3.5/src</sourcePath>
 			<configurations>
@@ -6219,101 +6219,6 @@
 											<linkWithProduct>true</linkWithProduct>
 											<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 										</item>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
-											<project type="Project" version="1">
-												<enable>true</enable>
-												<name>Traktor.Ui.Xtrme</name>
-												<sourcePath>$(TRAKTOR_HOME)/code/Ui/Xtrme</sourcePath>
-												<configurations>
-													<item type="Configuration" version="1">
-														<name>DebugShared</name>
-														<targetFormat>TfSharedLibrary</targetFormat>
-														<targetProfile>TpDebug</targetProfile>
-														<precompiledHeader/>
-														<includePaths>
-															<item>$(TRAKTOR_HOME)/code</item>
-															<item>$(TRAKTOR_HOME)/3rdp/freetype-2.3.5/include</item>
-														</includePaths>
-														<definitions>
-															<item>T_UI_XTRME_EXPORT</item>
-															<item>_DEBUG</item>
-														</definitions>
-														<libraryPaths/>
-														<libraries/>
-														<additionalCompilerOptions/>
-														<additionalLinkerOptions/>
-													</item>
-													<item type="Configuration" version="1">
-														<name>ReleaseShared</name>
-														<targetFormat>TfSharedLibrary</targetFormat>
-														<targetProfile>TpRelease</targetProfile>
-														<precompiledHeader/>
-														<includePaths>
-															<item>$(TRAKTOR_HOME)/code</item>
-															<item>$(TRAKTOR_HOME)/3rdp/freetype-2.3.5/include</item>
-														</includePaths>
-														<definitions>
-															<item>T_UI_XTRME_EXPORT</item>
-															<item>NDEBUG</item>
-														</definitions>
-														<libraryPaths/>
-														<libraries/>
-														<additionalCompilerOptions/>
-														<additionalLinkerOptions/>
-													</item>
-												</configurations>
-												<items>
-													<item type="File">
-														<fileName>*.*</fileName>
-														<items/>
-													</item>
-													<item type="Filter">
-														<name>Resources</name>
-														<items>
-															<item type="File">
-																<fileName>../../../data/Source/System/CanvasXtrme/Shaders/Cx2d.xdi</fileName>
-																<items/>
-															</item>
-															<item type="File">
-																<fileName>../../../data/Source/System/CanvasXtrme/Shaders/Cx2dFont.xdi</fileName>
-																<items/>
-															</item>
-															<item type="File">
-																<fileName>../../../data/Source/System/CanvasXtrme/Shaders/Cx2dImage.xdi</fileName>
-																<items/>
-															</item>
-														</items>
-													</item>
-												</items>
-												<dependencies>
-													<item type="ProjectDependency" version="1">
-														<linkWithProduct>true</linkWithProduct>
-														<project ref="/object/projects/item[15]/dependencies/item/project"/>
-													</item>
-													<item type="ProjectDependency" version="1">
-														<linkWithProduct>true</linkWithProduct>
-														<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project"/>
-													</item>
-													<item type="ProjectDependency" version="1">
-														<linkWithProduct>true</linkWithProduct>
-														<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
-													</item>
-													<item type="ProjectDependency" version="1">
-														<linkWithProduct>true</linkWithProduct>
-														<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
-													</item>
-													<item type="ProjectDependency" version="1">
-														<linkWithProduct>true</linkWithProduct>
-														<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
-													</item>
-													<item type="ProjectDependency" version="1">
-														<linkWithProduct>true</linkWithProduct>
-														<project ref="/object/projects/item[2]"/>
-													</item>
-												</dependencies>
-											</project>
-										</item>
 									</dependencies>
 								</project>
 							</item>
@@ -9455,7 +9360,98 @@
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[16]/dependencies/item[7]/project/dependencies/item[6]/project/dependencies/item[3]/project"/>
+		<item type="Project" version="1">
+			<enable>false</enable>
+			<name>Traktor.Ui.Xtrme</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Ui/Xtrme</sourcePath>
+			<configurations>
+				<item type="Configuration" version="1">
+					<name>DebugShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/freetype-2.3.5/include</item>
+					</includePaths>
+					<definitions>
+						<item>T_UI_XTRME_EXPORT</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>ReleaseShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/freetype-2.3.5/include</item>
+					</includePaths>
+					<definitions>
+						<item>T_UI_XTRME_EXPORT</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
+				</item>
+				<item type="Filter">
+					<name>Resources</name>
+					<items>
+						<item type="File">
+							<fileName>../../../data/Source/System/CanvasXtrme/Shaders/Cx2d.xdi</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../../../data/Source/System/CanvasXtrme/Shaders/Cx2dFont.xdi</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../../../data/Source/System/CanvasXtrme/Shaders/Cx2dImage.xdi</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[2]"/>
+				</item>
+			</dependencies>
+		</item>
 		<item ref="/object/projects/item[16]/dependencies/item[7]/project/dependencies/item[8]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
