@@ -2,6 +2,7 @@
 #include "Core/Io/BitReader.h"
 #include "Core/Io/Reader.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/Endian.h"
 #include "Database/Instance.h"
 #include "Sound/Delta.h"
 #include "Sound/Sound.h"
@@ -64,11 +65,16 @@ Ref< Sound > StaticSoundResource::createSound(resource::IResourceManager* resour
 		}
 		else
 		{
-			if (Reader(streamData).read(samples, samplesCount, sizeof(int16_t)) != samplesCount * sizeof(int16_t))
+			if (streamData->read(samples, samplesCount * sizeof(int16_t)) != samplesCount * sizeof(int16_t))
 			{
 				log::error << L"Failed to create sound; unable to read samples" << Endl;
 				return 0;
 			}
+
+#if !defined(T_LITTLE_ENDIAN)
+			for (uint32_t i = 0; i < samplesCount; ++i)
+				swap8in32(samples[i]);
+#endif
 		}
 	}
 

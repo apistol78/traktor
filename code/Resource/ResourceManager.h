@@ -2,6 +2,7 @@
 #define traktor_resource_ResourceManager_H
 
 #include <map>
+#include <stack>
 #include "Core/RefArray.h"
 #include "Core/Thread/Semaphore.h"
 #include "Resource/IResourceManager.h"
@@ -49,9 +50,23 @@ public:
 	virtual void dumpStatistics();
 
 private:
+	struct TimeCount
+	{
+		uint32_t count;
+		double time;
+
+		TimeCount()
+		:	count(0)
+		,	time(0.0)
+		{
+		}
+	};
+
 	RefArray< IResourceFactory > m_factories;
 	Ref< IResourceHandle > m_nullHandle;
 	std::map< Guid, Ref< ResourceHandle > > m_cache;
+	std::map< const TypeInfo*, TimeCount > m_times;
+	std::stack< double > m_timeStack;
 	Semaphore m_lock;
 
 	Ref< IResourceFactory > findFactory(const TypeInfo& type);
