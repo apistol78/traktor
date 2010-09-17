@@ -1,11 +1,12 @@
+#include "Core/Io/Reader.h"
+#include "Core/Log/Log.h"
+#include "Core/Math/Half.h"
+#include "Core/Misc/Endian.h"
 #include "Render/Mesh/MeshReader.h"
 #include "Render/Mesh/MeshFactory.h"
 #include "Render/Mesh/Mesh.h"
 #include "Render/VertexBuffer.h"
 #include "Render/IndexBuffer.h"
-#include "Core/Math/Half.h"
-#include "Core/Io/Reader.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -75,56 +76,71 @@ Ref< Mesh > MeshReader::read(IStream* stream) const
 		if (!vertex)
 			return 0;
 
-#if defined(T_LITTLE_ENDIAN)
 		reader.read(vertex, vertexBufferSize);
-#else
-		for (unsigned int i = 0; i < vertexBufferSize; )
+
+#if !defined(T_LITTLE_ENDIAN)
+		uint32_t vertexSize = getVertexSize(vertexElements);
+		for (uint32_t i = 0; i < vertexBufferSize; i += vertexSize)
 		{
 			for (std::vector< VertexElement >::iterator j = vertexElements.begin(); j != vertexElements.end(); ++j)
 			{
+				uint8_t* vertexElm = &vertex[i + j->getOffset()];
 				switch (j->getDataType())
 				{
 				case DtFloat1:
-					reader.read(&vertex[i + j->getOffset()], 1, sizeof(float));
+					swap8in32(*(float*)vertexElm);
 					break;
 
 				case DtFloat2:
-					reader.read(&vertex[i + j->getOffset()], 2, sizeof(float));
+					swap8in32(*(float*)vertexElm);
+					swap8in32(*(float*)(vertexElm + 4));
 					break;
 
 				case DtFloat3:
-					reader.read(&vertex[i + j->getOffset()], 3, sizeof(float));
+					swap8in32(*(float*)vertexElm);
+					swap8in32(*(float*)(vertexElm + 4));
+					swap8in32(*(float*)(vertexElm + 8));
 					break;
 
 				case DtFloat4:
-					reader.read(&vertex[i + j->getOffset()], 4, sizeof(float));
+					swap8in32(*(float*)vertexElm);
+					swap8in32(*(float*)(vertexElm + 4));
+					swap8in32(*(float*)(vertexElm + 8));
+					swap8in32(*(float*)(vertexElm + 12));
 					break;
 
 				case DtByte4:
 				case DtByte4N:
-					reader.read(&vertex[i + j->getOffset()], 4, sizeof(uint8_t));
+					swap8in32(*(uint32_t*)vertexElm);
 					break;
 
 				case DtShort2:
 				case DtShort2N:
-					reader.read(&vertex[i + j->getOffset()], 2, sizeof(int16_t));
+					swap8in32(*(uint16_t*)vertexElm);
+					swap8in32(*(uint16_t*)(vertexElm + 2));
 					break;
 
 				case DtShort4:
 				case DtShort4N:
-					reader.read(&vertex[i + j->getOffset()], 4, sizeof(int16_t));
+					swap8in32(*(uint16_t*)vertexElm);
+					swap8in32(*(uint16_t*)(vertexElm + 2));
+					swap8in32(*(uint16_t*)(vertexElm + 4));
+					swap8in32(*(uint16_t*)(vertexElm + 6));
 					break;
 
 				case DtHalf2:
-					reader.read(&vertex[i + j->getOffset()], 2, sizeof(half_t));
+					swap8in32(*(uint16_t*)vertexElm);
+					swap8in32(*(uint16_t*)(vertexElm + 2));
 					break;
 
 				case DtHalf4:
-					reader.read(&vertex[i + j->getOffset()], 4, sizeof(half_t));
+					swap8in32(*(uint16_t*)vertexElm);
+					swap8in32(*(uint16_t*)(vertexElm + 2));
+					swap8in32(*(uint16_t*)(vertexElm + 4));
+					swap8in32(*(uint16_t*)(vertexElm + 6));
 					break;
 				}
 			}
-			i += getVertexSize(vertexElements);
 		}
 #endif
 
@@ -137,17 +153,19 @@ Ref< Mesh > MeshReader::read(IStream* stream) const
 		if (!index)
 			return 0;
 
-#if defined(T_LITTLE_ENDIAN)
 		reader.read(index, indexBufferSize);
-#else
+
+#if !defined(T_LITTLE_ENDIAN)
 		switch (indexType)
 		{
 		case ItUInt16:
-			reader.read(index, indexBufferSize / sizeof(uint16_t), sizeof(uint16_t));
+			for (uint32_t i = 0; i < indexBufferSize; i += 2)
+				swap8in32(*(uint16_t*)(index + i));
 			break;
 
 		case ItUInt32:
-			reader.read(index, indexBufferSize / sizeof(uint32_t), sizeof(uint32_t));
+			for (uint32_t i = 0; i < indexBufferSize; i += 4)
+				swap8in32(*(uint32_t*)(index + i));
 			break;
 		}
 #endif

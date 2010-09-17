@@ -5,6 +5,7 @@
 #include "Core/Thread/ThreadManager.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/Acquire.h"
+#include "Core/Timer/Timer.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
@@ -130,6 +131,7 @@ void ResourceManager::flush()
 void ResourceManager::dumpStatistics()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	log::debug << L"Resource manager statistics:" << Endl;
 	log::debug << IncreaseIndent;
 	
@@ -141,8 +143,13 @@ void ResourceManager::dumpStatistics()
 		if (i->second->get())
 			++count;
 	}
-	
 	log::debug << count << L" resource(s)" << Endl;
+
+	double totalTime = 0.0;
+	for (std::map< const TypeInfo*, TimeCount >::const_iterator i = m_times.begin(); i != m_times.end(); ++i)
+		totalTime += i->second.time;
+	for (std::map< const TypeInfo*, TimeCount >::const_iterator i = m_times.begin(); i != m_times.end(); ++i)
+		log::debug << i->first->getName() << L" " << (i->second.time * 1000.0) << L" ms (" << i->second.count << L" resource(s), " << (i->second.time * 100.0f / totalTime) << L"%)" << Endl;
 	
 	log::debug << DecreaseIndent;
 }
@@ -160,6 +167,11 @@ Ref< IResourceFactory > ResourceManager::findFactory(const TypeInfo& type)
 
 void ResourceManager::load(const Guid& guid, IResourceFactory* factory, ResourceHandle* handle)
 {
+	m_timeStack.push(0.0);
+
+	Timer timer;
+	timer.start();
+
 	const TypeInfo& resourceType = handle->getResourceType();
 	Ref< Object > object = factory->create(this, resourceType, guid);
 	if (object)
@@ -175,6 +187,16 @@ void ResourceManager::load(const Guid& guid, IResourceFactory* factory, Resource
 	}
 	else
 		log::error << L"Unable to create resource \"" << guid.format() << L"\" (" << resourceType.getName() << L")" << Endl;
+
+	// Accumulate time spend on creating resources.
+	double time = timer.getElapsedTime();
+
+	m_times[&resourceType].count++;
+	m_times[&resourceType].time += time + m_timeStack.top();
+	m_timeStack.pop();
+
+	if (!m_timeStack.empty())
+		m_timeStack.top() -= time;
 }
 
 	}
