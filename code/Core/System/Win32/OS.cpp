@@ -239,7 +239,8 @@ Ref< IProcess > OS::execute(
 	const Path& workingDirectory,
 	const envmap_t* envmap,
 	bool redirect,
-	bool mute
+	bool mute,
+	bool detach
 ) const
 {
 	TCHAR cmd[32768], cwd[MAX_PATH];
@@ -340,9 +341,15 @@ Ref< IProcess > OS::execute(
 	PROCESS_INFORMATION pi;
 	std::memset(&pi, 0, sizeof(pi));
 
-	DWORD dwCreationFlags;
+	DWORD dwCreationFlags = 0;
 #if !defined(WINCE)
-	dwCreationFlags = mute ? DETACHED_PROCESS : CREATE_NEW_CONSOLE;
+	if (detach)
+		dwCreationFlags = DETACHED_PROCESS;
+	else if (mute)
+		dwCreationFlags = CREATE_NO_WINDOW;
+	else
+		dwCreationFlags = CREATE_NEW_CONSOLE;
+
 	if (environment.ptr())
 		dwCreationFlags |= CREATE_UNICODE_ENVIRONMENT;
 #else
