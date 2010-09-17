@@ -33,12 +33,15 @@ public:
 
 	const std::wstring& getUrl() const;
 
+	bool autoLaunch() const;
+
 	virtual bool serialize(ISerializer& s);
 
 private:
 	uint32_t m_size;
 	MD5 m_md5;
 	std::wstring m_url;
+	bool m_autoLaunch;
 };
 
 	}
