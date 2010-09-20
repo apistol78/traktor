@@ -89,7 +89,7 @@ private:
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ProcessWin32", ProcessWin32, IProcess)
 
 ProcessWin32::ProcessWin32(
-	const PROCESS_INFORMATION& pi,
+	HANDLE hProcess,
 	HANDLE hStdInRead,
 	HANDLE hStdInWrite,
 	HANDLE hStdOutRead,
@@ -97,7 +97,7 @@ ProcessWin32::ProcessWin32(
 	HANDLE hStdErrRead,
 	HANDLE hStdErrWrite
 )
-:	m_pi(pi)
+:	m_hProcess(hProcess)
 ,	m_hStdInRead(hStdInRead)
 ,	m_hStdInWrite(hStdInWrite)
 ,	m_hStdOutRead(hStdOutRead)
@@ -113,8 +113,7 @@ ProcessWin32::ProcessWin32(
 
 ProcessWin32::~ProcessWin32()
 {
-	CloseHandle(m_pi.hThread);
-	CloseHandle(m_pi.hProcess);
+	CloseHandle(m_hProcess);
 #if !defined(WINCE)
 	CloseHandle(m_hStdInRead);
 	CloseHandle(m_hStdInWrite);
@@ -127,7 +126,7 @@ ProcessWin32::~ProcessWin32()
 
 bool ProcessWin32::wait(int32_t timeout)
 {
-	return WaitForSingleObject(m_pi.hProcess, timeout >= 0 ? timeout : INFINITE) == WAIT_OBJECT_0;
+	return WaitForSingleObject(m_hProcess, timeout >= 0 ? timeout : INFINITE) == WAIT_OBJECT_0;
 }
 
 Ref< IStream > ProcessWin32::getPipeStream(StdPipe pipe)
@@ -146,7 +145,7 @@ int32_t ProcessWin32::exitCode() const
 {
 	DWORD code;
 
-	if (!GetExitCodeProcess(m_pi.hProcess, &code))
+	if (!GetExitCodeProcess(m_hProcess, &code))
 		return 0;
 
 	return (int32_t)code;
