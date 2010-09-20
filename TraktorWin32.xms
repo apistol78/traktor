@@ -16401,6 +16401,10 @@
 							<fileName>../../bin/Traktor.Update.Post.exe</fileName>
 							<items/>
 						</item>
+						<item type="File">
+							<fileName>../../res/update/UpdateBanner.png</fileName>
+							<items/>
+						</item>
 					</items>
 				</item>
 			</items>

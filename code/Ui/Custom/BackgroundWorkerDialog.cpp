@@ -105,7 +105,7 @@ void BackgroundWorkerDialog::eventTimer(Event* event)
 
 			if (step >= 0)
 			{
-				m_progressBar->setRange(0, 100);
+				m_progressBar->setRange(0, 1000);
 				m_progressBar->setProgress(step);
 			}
 			else

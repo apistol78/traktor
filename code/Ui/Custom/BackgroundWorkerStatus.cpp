@@ -10,11 +10,13 @@ namespace traktor
 
 BackgroundWorkerStatus::BackgroundWorkerStatus()
 :	m_steps(0)
+,	m_step(-1)
 {
 }
 
 BackgroundWorkerStatus::BackgroundWorkerStatus(int32_t steps)
 :	m_steps(steps)
+,	m_step(-1)
 {
 }
 
@@ -26,19 +28,21 @@ void BackgroundWorkerStatus::setSteps(int32_t steps)
 void BackgroundWorkerStatus::notify(int32_t step, const std::wstring& status)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	Notification notification = { step, status };
-	m_notifications.push_back(notification);
+	m_step = step;
+	m_status = status;
 }
 
 bool BackgroundWorkerStatus::read(int32_t& outStep, std::wstring& outStatus)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	if (m_notifications.empty())
+	if (m_step < 0)
 		return false;
 
-	outStep = m_steps > 0 ? int32_t(100 * m_notifications.front().step) / m_steps : -1;
-	outStatus = m_notifications.front().status;
-	m_notifications.pop_front();
+	outStep = int32_t(1000 * m_step) / m_steps;
+	outStatus = m_status;
+
+	m_step = -1;
+	m_status.clear();
 
 	return true;
 }
