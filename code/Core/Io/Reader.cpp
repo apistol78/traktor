@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <vector>
 #include "Core/Io/Reader.h"
+#include "Core/Misc/Endian.h"
 
 namespace traktor
 {
