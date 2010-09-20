@@ -37,15 +37,10 @@ public:
 	virtual bool read(int32_t& outStep, std::wstring& outStatus);
 
 private:
-	struct Notification
-	{
-		int32_t step;
-		std::wstring status;
-	};
-
-	int32_t m_steps;
 	Semaphore m_lock;
-	std::list< Notification > m_notifications;
+	int32_t m_steps;
+	int32_t m_step;
+	std::wstring m_status;
 };
 
 		}

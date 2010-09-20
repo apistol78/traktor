@@ -1,6 +1,5 @@
 #include "Core/Io/IStream.h"
 #include "Core/Io/FileSystem.h"
-#include "Core/Io/StreamCopy.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/AutoPtr.h"
 #include "Core/Serialization/DeepHash.h"
@@ -41,44 +40,74 @@ const wchar_t c_postUpdateFileName[] = L"Traktor.Update.Post.exe";
 
 struct BundleDownloader : public ui::custom::BackgroundWorkerStatus
 {
+	uint8_t m_buffer[4096];
+	bool m_result;
+
+	BundleDownloader()
+	:	m_result(true)
+	{
+	}
+
 	void execute(const Bundle* bundle, const net::Url& bundleUrl)
 	{
+		Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
 		const RefArray< Item >& bundleItems = bundle->getItems();
-		int32_t itemIndex = 0;
-
-		setSteps(int32_t(bundleItems.size()));
-
 		net::Url baseUrl(bundle->getBaseUrl());
 		Path bundleBasePath = baseUrl.valid() ? baseUrl.getPath() : L"/";
 
-		log::info << L"bundleBasePath \"" << bundleBasePath.getPathName() << L"\"" << Endl;
+		setSteps(1000);
 
-		for (RefArray< Item >::const_iterator i = bundleItems.begin(); i != bundleItems.end(); ++i, ++itemIndex)
+		// Calculate total size of update bundle.
+		uint64_t totalSize = 0;
+		for (RefArray< Item >::const_iterator i = bundleItems.begin(); i != bundleItems.end(); ++i)
 		{
+			const Resource* resource = dynamic_type_cast< const Resource* >(*i);
+			if (resource)
+				totalSize += resource->getSize();
+		}
+
+		// Download each resource in update bundle.
+		uint64_t progressSize = 0;
+		for (RefArray< Item >::const_iterator i = bundleItems.begin(); i != bundleItems.end(); ++i)
+		{
+			if (currentThread->stopped())
+			{
+				m_result = false;
+				return;
+			}
+
 			const Resource* resource = dynamic_type_cast< const Resource* >(*i);
 			if (resource)
 			{
 				net::Url bundleItemUrl = resource->getUrl();
 				if (!bundleItemUrl.valid())
-					continue;
+				{
+					log::error << L"Invalid URL in bundle resource" << Endl;
+					m_result = false;
+					break;
+				}
 
 				Path bundlePath = bundleItemUrl.getPath();
 				Path filePath = bundlePath;
 
-				FileSystem::getInstance().getRelativePath(
+				if (!FileSystem::getInstance().getRelativePath(
 					bundlePath,
 					bundleBasePath,
 					filePath
-				);
-
-				log::info << L"bundlePath \"" << bundlePath.getPathName() << L"\"" << Endl;
-				log::info << L"filePath \"" << filePath.getPathName() << L"\"" << Endl;
-
-				notify(itemIndex, filePath.getFileName());
+				))
+				{
+					log::error << L"Unable to determine file path from resource URL" << Endl;
+					m_result = false;
+					break;
+				}
 
 				FileSystem::getInstance().makeAllDirectories(filePath.getPathOnly());
 
-				// Skip downloading resource if it already exists and have same checksum.
+				uint32_t progress = uint32_t((progressSize * 1000) / totalSize);
+				notify(progress, filePath.getFileName());
+
+				// Skip downloading if resource already exists and have same checksum
+				// as in bundle.
 				if (FileSystem::getInstance().exist(filePath))
 				{
 					Ref< IStream > targetStream = FileSystem::getInstance().open(filePath, File::FmRead);
@@ -87,10 +116,9 @@ struct BundleDownloader : public ui::custom::BackgroundWorkerStatus
 						MD5 targetMD5;
 						targetMD5.begin();
 
-						uint8_t buffer[4096];
 						int32_t nread;
-						while ((nread = targetStream->read(buffer, sizeof(buffer))) > 0)
-							targetMD5.feed(buffer, nread);
+						while ((nread = targetStream->read(m_buffer, sizeof(m_buffer))) > 0)
+							targetMD5.feed(m_buffer, nread);
 
 						targetMD5.end();
 
@@ -99,6 +127,7 @@ struct BundleDownloader : public ui::custom::BackgroundWorkerStatus
 						if (targetMD5 == resource->getMD5())
 						{
 							log::info << L"Item \"" << filePath.getPathName() << L"\" already up-to-date; skipping" << Endl;
+							progressSize += resource->getSize();
 							continue;
 						}
 					}
@@ -106,20 +135,77 @@ struct BundleDownloader : public ui::custom::BackgroundWorkerStatus
 
 				Ref< net::UrlConnection > connection = net::UrlConnection::open(bundleItemUrl);
 				if (!connection)
-					continue;
+				{
+					log::error << L"Unable to connect to bundle resource \"" << bundleItemUrl.getString() << L"\"" << Endl;
+					m_result = false;
+					break;
+				}
 
 				Ref< IStream > sourceStream = connection->getStream();
 				if (!sourceStream)
-					continue;
+				{
+					log::error << L"Unable to open stream to resource" << Endl;
+					m_result = false;
+					break;
+				}
 
 				Ref< IStream > targetStream = FileSystem::getInstance().open(filePath.getPathName() + L".updated", File::FmWrite);
 				if (!targetStream)
-					continue;
+				{
+					log::error << L"Unable to create file for updated resource" << Endl;
+					m_result = false;
+					break;
+				}
 
-				StreamCopy(targetStream, sourceStream).execute();
+				MD5 checksum;
+				checksum.begin();
+
+				for (;;)
+				{
+					if (currentThread->stopped())
+					{
+						m_result = false;
+						return;
+					}
+
+					uint32_t progress = uint32_t((progressSize * 1000) / totalSize);
+					notify(progress, filePath.getFileName());
+
+					int32_t nread = sourceStream->read(m_buffer, sizeof(m_buffer));
+					if (nread < 0)
+					{
+						log::error << L"Unable to download resource" << Endl;
+						m_result = false;
+						break;
+					}
+
+					if (nread == 0)
+						break;
+
+					int32_t nwritten = targetStream->write(m_buffer, nread);
+					if (nwritten != nread)
+					{
+						log::error << L"Unable to write updated resource" << Endl;
+						m_result = false;
+						break;
+					}
+
+					checksum.feed(m_buffer, nread);
+
+					progressSize += nread;
+				}
+
+				checksum.end();
 
 				targetStream->close();
 				sourceStream->close();
+
+				if (checksum != resource->getMD5())
+				{
+					log::error << L"Resource \"" << filePath.getPathName() << L"\" corrupt; incorrect checksum" << Endl;
+					m_result = false;
+					break;
+				}
 			}
 		}
 	}
@@ -202,12 +288,12 @@ Process::CheckResult Process::check(const net::Url& bundleUrl)
 	);
 	if (!threadDownload || !threadDownload->start())
 	{
-		log::error << L"Unable to issue download thread" << Endl;
+		log::error << L"Unable to create download thread" << Endl;
 		return CrFailed;
 	}
 
 	ui::custom::BackgroundWorkerDialog progressDialog;
-	if (progressDialog.create(0, L"Downloading", L"Downloading update..."))
+	if (progressDialog.create(0, L"Downloading", L"Downloading update...", ui::Dialog::WsDefaultFixed | ui::custom::BackgroundWorkerDialog::WsAbortButton))
 	{
 		progressDialog.execute(threadDownload, bundleDownloader);
 		progressDialog.destroy();
@@ -215,6 +301,12 @@ Process::CheckResult Process::check(const net::Url& bundleUrl)
 
 	threadDownload->stop();
 	ThreadManager::getInstance().destroy(threadDownload);
+
+	if (!bundleDownloader->m_result)
+	{
+		log::warning << L"Download failed; assuming aborted" << Endl;
+		return CrAborted;
+	}
 
 	// Update installed bundle descriptor.
 	installedBundleStream = FileSystem::getInstance().open(L"Installed.bundle.updated", File::FmWrite);
