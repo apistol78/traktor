@@ -35,6 +35,7 @@ namespace traktor
 Ref< ActionScript > readActionScript(BitReader& bs)
 {
 	std::vector< uint8_t > buf;
+	buf.reserve(32767);
 	for (;;)
 	{
 		uint8_t opcode = bs.readUInt8();

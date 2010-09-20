@@ -12,6 +12,7 @@
 #include "Net/UrlConnection.h"
 #include "Update/AvailableDialog.h"
 #include "Update/Bundle.h"
+#include "Update/IPostAction.h"
 #include "Update/Resource.h"
 #include "Update/Process.h"
 #include "Ui/Custom/BackgroundWorkerDialog.h"
@@ -282,7 +283,14 @@ Process::CheckResult Process::check(const net::Url& bundleUrl)
 			))
 				log::error << L"Failed to rename updated item; installation might be broken" << Endl;
 		}
-	}	
+	}
+	
+	const RefArray< IPostAction >& postActions = bundle->getPostActions();
+	for (RefArray< IPostAction >::const_iterator i = postActions.begin(); i != postActions.end(); ++i)
+	{
+		if (!(*i)->execute())
+			log::error << L"Failed to perform post update action; installation might be broken" << Endl;
+	}
 
 #endif
 
