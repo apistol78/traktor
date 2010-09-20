@@ -92,6 +92,9 @@ bool cglwMakeCurrent(void* context)
 			glViewport(0, 0, frame.size.width, frame.size.height);
 		}
 	}
+	else
+		[NSOpenGLContext clearCurrentContext];
+
 	return true;
 }
 
