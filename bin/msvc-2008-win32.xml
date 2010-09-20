@@ -330,20 +330,14 @@
                   <first>ModuleDefinitionFile</first>
                   <second>%(MODULE_DEFINITION_FILE)</second>
                 </item>
+				<item>
+				  <first>GenerateManifest</first>
+				  <second>false</second>
+				</item>
               </staticOptions>
             </item>
-            <item type="SolutionBuilderMsvcGenericTool">
-              <toolName>VCManifestTool</toolName>
-              <staticOptions>
-                <item>
-                  <first>AdditionalManifestFiles</first>
-                  <second>$(TRAKTOR_HOME)/res/manifest.xml</second>
-                </item>
-                <item>
-                  <first>EmbedManifest</first>
-                  <second>true</second>
-                </item>
-              </staticOptions>
+            <item type="SolutionBuilderMsvcManifestTool">
+			  <manifest>$(TRAKTOR_HOME)/res/manifest.xml</manifest>
             </item>
           </item>
           <!-- 1: TpRelease -->
@@ -469,20 +463,14 @@
                   <first>ModuleDefinitionFile</first>
                   <second>%(MODULE_DEFINITION_FILE)</second>
                 </item>
+				<item>
+				  <first>GenerateManifest</first>
+				  <second>false</second>
+				</item>
               </staticOptions>
             </item>
-            <item type="SolutionBuilderMsvcGenericTool">
-              <toolName>VCManifestTool</toolName>
-              <staticOptions>
-                <item>
-                  <first>AdditionalManifestFiles</first>
-                  <second>$(TRAKTOR_HOME)/res/manifest.xml</second>
-                </item>
-                <item>
-                  <first>EmbedManifest</first>
-                  <second>true</second>
-                </item>
-              </staticOptions>
+            <item type="SolutionBuilderMsvcManifestTool">
+			  <manifest>$(TRAKTOR_HOME)/res/manifest.xml</manifest>
             </item>
           </item>
         </tools>
@@ -595,20 +583,14 @@
                   <first>DataExecutionPrevention</first>
                   <second>0</second>
                 </item>
+				<item>
+				  <first>GenerateManifest</first>
+				  <second>false</second>
+				</item>
               </staticOptions>
             </item>
-            <item type="SolutionBuilderMsvcGenericTool">
-              <toolName>VCManifestTool</toolName>
-              <staticOptions>
-                <item>
-                  <first>AdditionalManifestFiles</first>
-                  <second>$(TRAKTOR_HOME)/res/manifest.xml</second>
-                </item>
-                <item>
-                  <first>EmbedManifest</first>
-                  <second>true</second>
-                </item>
-              </staticOptions>
+            <item type="SolutionBuilderMsvcManifestTool">
+			  <manifest>$(TRAKTOR_HOME)/res/manifest.xml</manifest>
             </item>
           </item>
           <!-- 1: TpRelease -->
@@ -729,21 +711,15 @@
 				<item>
 				  <first>GenerateDebugInformation</first>
 				  <second>true</second>
+				</item>
+				<item>
+				  <first>GenerateManifest</first>
+				  <second>false</second>
 				</item>				
               </staticOptions>
             </item>
-            <item type="SolutionBuilderMsvcGenericTool">
-              <toolName>VCManifestTool</toolName>
-              <staticOptions>
-                <item>
-                  <first>AdditionalManifestFiles</first>
-                  <second>$(TRAKTOR_HOME)/res/manifest.xml</second>
-                </item>
-                <item>
-                  <first>EmbedManifest</first>
-                  <second>true</second>
-                </item>
-              </staticOptions>
+            <item type="SolutionBuilderMsvcManifestTool">
+			  <manifest>$(TRAKTOR_HOME)/res/manifest.xml</manifest>
             </item>
           </item>
         </tools>
@@ -856,20 +832,14 @@
                   <first>DataExecutionPrevention</first>
                   <second>0</second>
                 </item>
+				<item>
+				  <first>GenerateManifest</first>
+				  <second>false</second>
+				</item>
               </staticOptions>
             </item>
-            <item type="SolutionBuilderMsvcGenericTool">
-              <toolName>VCManifestTool</toolName>
-              <staticOptions>
-                <item>
-                  <first>AdditionalManifestFiles</first>
-                  <second>$(TRAKTOR_HOME)/res/manifest.xml</second>
-                </item>
-                <item>
-                  <first>EmbedManifest</first>
-                  <second>true</second>
-                </item>
-              </staticOptions>
+            <item type="SolutionBuilderMsvcManifestTool">
+			  <manifest>$(TRAKTOR_HOME)/res/manifest.xml</manifest>
             </item>
           </item>
           <!-- 1: TpRelease -->
@@ -990,21 +960,15 @@
 				<item>
 				  <first>GenerateDebugInformation</first>
 				  <second>true</second>
+				</item>
+				<item>
+				  <first>GenerateManifest</first>
+				  <second>false</second>
 				</item>				
               </staticOptions>
             </item>
-            <item type="SolutionBuilderMsvcGenericTool">
-              <toolName>VCManifestTool</toolName>
-              <staticOptions>
-                <item>
-                  <first>AdditionalManifestFiles</first>
-                  <second>$(TRAKTOR_HOME)/res/manifest.xml</second>
-                </item>
-                <item>
-                  <first>EmbedManifest</first>
-                  <second>true</second>
-                </item>
-              </staticOptions>
+            <item type="SolutionBuilderMsvcManifestTool">
+			  <manifest>$(TRAKTOR_HOME)/res/manifest.xml</manifest>
             </item>
           </item>
         </tools>

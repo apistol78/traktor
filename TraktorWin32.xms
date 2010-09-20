@@ -16514,6 +16514,10 @@
 					<fileName>*.*</fileName>
 					<items/>
 				</item>
+				<item type="File">
+					<fileName>../../../res/manifest-uac-win32.xml</fileName>
+					<items/>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="1">

@@ -25,7 +25,7 @@ class T_DLLCLASS ProcessWin32 : public IProcess
 
 public:
 	ProcessWin32(
-		const PROCESS_INFORMATION& pi,
+		HANDLE hProcess,
 		HANDLE hStdInRead,
 		HANDLE hStdInWrite,
 		HANDLE hStdOutRead,
@@ -43,7 +43,7 @@ public:
 	virtual int32_t exitCode() const;
 
 private:
-	PROCESS_INFORMATION m_pi;
+	HANDLE m_hProcess;
 	HANDLE m_hStdInRead;
 	HANDLE m_hStdInWrite;
 	HANDLE m_hStdOutRead;
