@@ -589,6 +589,15 @@
                 </item>
               </staticOptions>
             </item>
+            <item type="SolutionBuilderMsvcGenericTool">
+              <toolName>VCPostBuildEventTool</toolName>
+              <staticOptions>
+                <item>
+                  <first>CommandLine</first>
+                  <second>$(SCE_PS3_ROOT)/host-win32/bin/make_fself_npdrm $(TargetPath) $(TargetDir)$(TargetName).npdrm.self</second>
+                </item>
+              </staticOptions>
+            </item>
           </item>
           <!-- 1: TpRelease -->
           <item>
