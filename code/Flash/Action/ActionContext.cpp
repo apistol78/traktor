@@ -1,4 +1,4 @@
-#include "Core/Misc/Split.h"
+#include "Core/Misc/StringSplit.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFunction.h"
 #include "Flash/Action/ActionValueArray.h"
@@ -55,11 +55,10 @@ void ActionContext::notifyFrameListeners(avm_number_t time)
 
 ActionObject* ActionContext::lookupClass(const std::wstring& className)
 {
-	std::vector< std::wstring > classNameSep;
-	Split< std::wstring >::any(className, L".", classNameSep);
-
 	Ref< ActionObject > clazz = m_global;
-	for (std::vector< std::wstring >::const_iterator i = classNameSep.begin(); i != classNameSep.end(); ++i)
+
+	StringSplit< std::wstring > classNameSplit(className, L".");
+	for (StringSplit< std::wstring >::const_iterator i = classNameSplit.begin(); i != classNameSplit.end(); ++i)
 	{
 		ActionValue clazzMember;
 		if (!clazz->getLocalMember(*i, clazzMember) || !clazzMember.isObject())
