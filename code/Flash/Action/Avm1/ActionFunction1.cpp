@@ -16,11 +16,13 @@ ActionFunction1::ActionFunction1(
 	const std::wstring& name,
 	const uint8_t* code,
 	uint16_t codeSize,
+	uint16_t argumentCount,
 	ActionDictionary* dictionary
 )
 :	ActionFunction(name)
 ,	m_code(code)
 ,	m_codeSize(codeSize)
+,	m_argumentCount(argumentCount)
 ,	m_dictionary(dictionary)
 {
 }
@@ -42,6 +44,8 @@ ActionValue ActionFunction1::call(ActionContext* context, ActionObject* self, co
 
 	for (size_t i = 0; i < args.size(); ++i)
 		callFrame.getStack().push(args[i]);
+	for (size_t i = args.size(); i < m_argumentCount; ++i)
+		callFrame.getStack().push(ActionValue());
 
 	context->getVM()->execute(&callFrame);
 
@@ -78,6 +82,8 @@ ActionValue ActionFunction1::call(ActionFrame* callerFrame, ActionObject* self)
 
 	for (int32_t i = 0; i < argCount; ++i)
 		callFrame.getStack().push(args[i]);
+	for (size_t i = argCount; i < m_argumentCount; ++i)
+		callFrame.getStack().push(ActionValue());
 
 	context->getVM()->execute(&callFrame);
 

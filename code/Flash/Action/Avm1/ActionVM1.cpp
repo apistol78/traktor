@@ -486,7 +486,11 @@ void ActionVM1::execute(ActionFrame* frame) const
 		VM_END()
 
 		VM_BEGIN(AopTrace)
-			log::debug << L"TRACE \"" << stack.pop().getStringSafe() << L"\"" << Endl;
+			std::wstring trace = stack.pop().getStringSafe();
+			if (trace != L"** BREAK **")
+				log::debug << L"TRACE \"" << trace << L"\"" << Endl;
+			else
+				T_BREAKPOINT;
 		VM_END()
 
 		VM_BEGIN(AopStartDragMovie)
@@ -597,7 +601,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 				}
 				else if (type == 2)	// Null
 				{
-					value = ActionValue(avm_number_t(0));
+					value = ActionValue((ActionObject*)0);
 					VM_LOG(L"Push data, null");
 				}
 				else if (type == 3)	// Undefined
@@ -989,38 +993,50 @@ void ActionVM1::execute(ActionFrame* frame) const
 		VM_BEGIN(AopNewEquals)
 			ActionValue value2 = stack.pop();
 			ActionValue value1 = stack.pop();
-			if (value2.isString() || value1.isString())
+
+			if (!value2.isUndefined() && !value1.isUndefined())
 			{
-				ActionValue string2 = value2.toString();
-				ActionValue string1 = value1.toString();
-				if (string2.isString() && string1.isString())
+				ActionValue::Type predicateType = max(value2.getType(), value1.getType());
+				if (predicateType == ActionValue::AvtBoolean)
 				{
-					std::wstring str2 = string2.getString();
-					std::wstring str1 = string1.getString();
-					stack.push(ActionValue(bool(str1.compare(str2) == 0)));
+					bool v2 = value2.getBooleanSafe();
+					bool v1 = value1.getBooleanSafe();
+					stack.push(ActionValue(v1 == v2));
 				}
-				else
-					stack.push(ActionValue());
+				else if (predicateType == ActionValue::AvtNumber)
+				{
+					avm_number_t v2 = value2.getNumberSafe();
+					avm_number_t v1 = value1.getNumberSafe();
+					stack.push(ActionValue(v1 == v2));
+				}
+				else if (predicateType == ActionValue::AvtString)
+				{
+					std::wstring v2 = value2.getStringSafe();
+					std::wstring v1 = value1.getStringSafe();
+					stack.push(ActionValue(v1 == v2));
+				}
+				else	// AvtObject
+				{
+					Ref< ActionObject > object2 = value2.getObjectSafe();
+					Ref< ActionObject > object1 = value1.getObjectSafe();
+					stack.push(ActionValue(object1 == object2));
+				}
 			}
-			else if (value2.isObject() || value1.isObject())
+			else if (value1.isObject() && value2.isUndefined())
 			{
-				Ref< ActionObject > object2 = value2.getObjectSafe();
-				Ref< ActionObject > object1 = value1.getObjectSafe();
-				stack.push(ActionValue(bool(object1 == object2)));
+				ActionObject* object1 = value1.getObject();
+				stack.push(ActionValue(object1 == 0));
 			}
+			else if (value1.isUndefined() && value2.isObject())
+			{
+				ActionObject* object2 = value2.getObject();
+				stack.push(ActionValue(object2 == 0));
+			}
+			else if (value1.isUndefined() && value2.isUndefined())
+				stack.push(ActionValue(true));
 			else
-			{
-				ActionValue number2 = value2.toNumber();
-				ActionValue number1 = value1.toNumber();
-				if (number2.isNumeric() && number1.isNumeric())
-				{
-					avm_number_t n2 = number2.getNumber();
-					avm_number_t n1 = number1.getNumber();
-					stack.push(ActionValue(bool(n1 == n2)));
-				}
-				else
-					stack.push(ActionValue());
-			}
+				stack.push(ActionValue(false));
+			
 		VM_END()
 
 		VM_BEGIN(AopToNumber)
@@ -1049,15 +1065,20 @@ void ActionVM1::execute(ActionFrame* frame) const
 
 			if (targetValue.isObject())
 			{
-				Ref< ActionObject > target = targetValue.getObject();
-				Ref< ActionFunction > propertyGet;
-				if (target->getPropertyGet(context, memberName, propertyGet))
+				ActionObject* target = targetValue.getObject();
+				if (target)
 				{
-					stack.push(ActionValue(avm_number_t(0)));
-					memberValue = propertyGet->call(frame, target);
+					Ref< ActionFunction > propertyGet;
+					if (target->getPropertyGet(context, memberName, propertyGet))
+					{
+						stack.push(ActionValue(avm_number_t(0)));
+						memberValue = propertyGet->call(frame, target);
+					}
+					else
+						target->getMember(context, memberName, memberValue);
 				}
 				else
-					target->getMember(context, memberName, memberValue);
+					VM_LOG(L"Target null");
 			}
 			else
 				VM_LOG(L"Target undefined");
@@ -1265,32 +1286,37 @@ void ActionVM1::execute(ActionFrame* frame) const
 		VM_BEGIN(AopStrictEq)
 			ActionValue value2 = stack.pop();
 			ActionValue value1 = stack.pop();
-			if (value2.isString() || value1.isString())
+			if (value1.getType() == value2.getType())
 			{
-				ActionValue string2 = value2.toString();
-				ActionValue string1 = value1.toString();
-				if (string2.isString() && string1.isString())
+				if (value1.isBoolean())
 				{
-					std::wstring str2 = string2.getString();
-					std::wstring str1 = string1.getString();
-					stack.push(ActionValue(bool(str1.compare(str2) == 0)));
+					bool b2 = value2.getBoolean();
+					bool b1 = value1.getBoolean();
+					stack.push(ActionValue(b1 == b2));
+				}
+				else if (value1.isNumeric())
+				{
+					avm_number_t n2 = value2.getNumber();
+					avm_number_t n1 = value1.getNumber();
+					stack.push(ActionValue(n1 == n2));
+				}
+				else if (value1.isString())
+				{
+					std::wstring s2 = value2.getString();
+					std::wstring s1 = value1.getString();
+					stack.push(ActionValue(s1 == s2));
+				}
+				else if (value1.isObject())
+				{
+					ActionObject* o2 = value2.getObject();
+					ActionObject* o1 = value1.getObject();
+					stack.push(ActionValue(o1 == o2));
 				}
 				else
-					stack.push(ActionValue());
+					stack.push(ActionValue(true));
 			}
 			else
-			{
-				ActionValue number2 = value2.toNumber();
-				ActionValue number1 = value1.toNumber();
-				if (number2.isNumeric() && number1.isNumeric())
-				{
-					avm_number_t n2 = number2.getNumber();
-					avm_number_t n1 = number1.getNumber();
-					stack.push(ActionValue(bool(n1 == n2)));
-				}
-				else
-					stack.push(ActionValue());
-			}
+				stack.push(ActionValue(false));
 		VM_END()
 
 		VM_BEGIN(AopGreater)
@@ -1444,6 +1470,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 				mbstows(functionName),
 				npc,
 				codeSize,
+				argumentCount,
 				frame->getDictionary()
 			);
 
