@@ -27,7 +27,7 @@ void TreeViewItemWin32::setText(const std::wstring& text)
 	tstring ttext = wstots(text);
 
 	TV_ITEM tvi;
-	memset(&tvi, 0, sizeof(tvi));
+	std::memset(&tvi, 0, sizeof(tvi));
 	tvi.mask = TVIF_TEXT;
 	tvi.hItem = m_hItem;
 	tvi.pszText = (LPTSTR)ttext.c_str();
@@ -39,7 +39,7 @@ std::wstring TreeViewItemWin32::getText() const
 	TCHAR buf[_MAX_PATH];
 	
 	TV_ITEM tvi;
-	memset(&tvi, 0, sizeof(tvi));
+	std::memset(&tvi, 0, sizeof(tvi));
 	tvi.mask = TVIF_TEXT;
 	tvi.hItem = m_hItem;
 	tvi.cchTextMax = sizeof_array(buf);
@@ -47,6 +47,28 @@ std::wstring TreeViewItemWin32::getText() const
 	TreeView_GetItem(m_hWndTree, &tvi);
 
 	return tstows(buf);
+}
+
+void TreeViewItemWin32::setBold(bool bold)
+{
+	TV_ITEM tvi;
+	std::memset(&tvi, 0, sizeof(tvi));
+	tvi.mask = TVIF_STATE;
+	tvi.hItem = m_hItem;
+	tvi.stateMask = TVIS_BOLD;
+	tvi.state = bold ? TVIS_BOLD : 0;
+	TreeView_SetItem(m_hWndTree, &tvi);
+}
+
+bool TreeViewItemWin32::isBold() const
+{
+	TV_ITEM tvi;
+	std::memset(&tvi, 0, sizeof(tvi));
+	tvi.mask = TVIF_STATE;
+	tvi.hItem = m_hItem;
+	tvi.stateMask = TVIS_BOLD;
+	TreeView_GetItem(m_hWndTree, &tvi);
+	return (tvi.state & TVIS_BOLD) == TVIS_BOLD;
 }
 
 void TreeViewItemWin32::setImage(int image)

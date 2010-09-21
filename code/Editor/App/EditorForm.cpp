@@ -1047,16 +1047,10 @@ void EditorForm::buildAssets(bool rebuild)
 	log::info << L"Collecting assets..." << Endl;
 	log::info << IncreaseIndent;
 
-	RefArray< db::Instance > assetsInstances;
-	db::recursiveFindChildInstances(
-		m_sourceDatabase->getRootGroup(),
-		db::FindInstanceByType(type_of< Assets >()),
-		assetsInstances
-	);
-
 	std::vector< Guid > assetGuids;
-	for (RefArray< db::Instance >::iterator i = assetsInstances.begin(); i != assetsInstances.end(); ++i)
-		assetGuids.push_back((*i)->getGuid());
+	std::vector< std::wstring > rootInstances = m_settings->getProperty< PropertyStringArray >(L"Editor.RootInstances");
+	for (std::vector< std::wstring >::const_iterator i = rootInstances.begin(); i != rootInstances.end(); ++i)
+		assetGuids.push_back(Guid(*i));
 
 	log::info << DecreaseIndent;
 

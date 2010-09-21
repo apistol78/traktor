@@ -50,7 +50,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	CommandLine cmdLine(file, mbstows(szCmdLine));
 #endif
 
-#if defined(_DEBUG)
+#if 0
 	CycleRefDebugger cycleDebugger;
 	Object::setReferenceDebugger(&cycleDebugger);
 #endif
@@ -95,7 +95,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 
 	ui::Application::getInstance()->finalize();
 
-#if defined(_DEBUG)
+#if 0
 	Object::setReferenceDebugger(0);
 #endif
 	return 0;

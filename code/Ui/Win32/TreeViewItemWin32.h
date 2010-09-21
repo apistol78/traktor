@@ -24,6 +24,10 @@ public:
 
 	virtual std::wstring getText() const;
 
+	virtual void setBold(bool bold);
+
+	virtual bool isBold() const;
+
 	virtual void setImage(int image);
 
 	virtual int getImage() const;

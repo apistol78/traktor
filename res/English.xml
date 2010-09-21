@@ -229,6 +229,10 @@
 			<first>DATABASE_SYSTEM</first>
 			<second>System</second>
 		</item>
+    <item>
+      <first>DATABASE_TOGGLE_AS_ROOT</first>
+      <second>Toggle root</second>
+    </item>
 		<item>
 			<first>DATABASE_USER</first>
 			<second>User</second>

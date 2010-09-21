@@ -83,6 +83,7 @@ private:
 	Ref< db::Database > m_db;
 	Ref< Filter > m_filter;
 	RefArray< IWizardTool > m_wizardTools;
+	std::set< Guid > m_rootInstances;
 
 	int32_t getIconIndex(const TypeInfo* instanceType) const;
 

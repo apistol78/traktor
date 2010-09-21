@@ -34,6 +34,10 @@ public:
 
 	virtual std::wstring getText() const = 0;
 
+	virtual void setBold(bool bold) = 0;
+
+	virtual bool isBold() const = 0;
+
 	virtual void setImage(int image) = 0;
 
 	virtual int getImage() const = 0;
