@@ -237,7 +237,11 @@
 			<first>DATABASE_SYSTEM</first>
 			<second>System</second>
 		</item>
-		<item>
+    <item>
+      <first>DATABASE_TOGGLE_AS_ROOT</first>
+      <second>Växla rot</second>
+    </item>
+    <item>
 			<first>DATABASE_USER</first>
 			<second>Användar</second>
 		</item>

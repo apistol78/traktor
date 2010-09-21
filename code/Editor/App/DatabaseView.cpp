@@ -4,6 +4,7 @@
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
+#include "Core/Settings/PropertyStringArray.h"
 #include "Core/Settings/Settings.h"
 #include "Core/System/OS.h"
 #include "Database/Database.h"
@@ -260,6 +261,7 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Database.FilterInstanceType"), i18n::Text(L"DATABASE_FILTER_TYPE")));
 	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Database.FilterInstanceDepends"), i18n::Text(L"DATABASE_FILTER_DEPENDENCIES")));
 	m_menuInstance->add(new ui::MenuItem(L"-"));
+	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Database.ToggleRoot"), i18n::Text(L"DATABASE_TOGGLE_AS_ROOT")));
 	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Database.Build"), i18n::Text(L"DATABASE_BUILD")));
 	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Database.Rebuild"), i18n::Text(L"DATABASE_REBUILD")));
 
@@ -278,8 +280,13 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Database.FilterInstanceType"), i18n::Text(L"DATABASE_FILTER_TYPE")));
 	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Database.FilterInstanceDepends"), i18n::Text(L"DATABASE_FILTER_DEPENDENCIES")));
 	m_menuInstanceAsset->add(new ui::MenuItem(L"-"));
+	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Database.ToggleRoot"), i18n::Text(L"DATABASE_TOGGLE_AS_ROOT")));
 	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Database.Build"), i18n::Text(L"DATABASE_BUILD")));
 	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Database.Rebuild"), i18n::Text(L"DATABASE_REBUILD")));
+
+	std::vector< std::wstring > rootInstances = m_editor->getSettings()->getProperty< PropertyStringArray >(L"Editor.RootInstances");
+	for (std::vector< std::wstring >::const_iterator i = rootInstances.begin(); i != rootInstances.end(); ++i)
+		m_rootInstances.insert(Guid(*i));
 
 	return true;
 }
@@ -425,6 +432,24 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 		else if (command == L"Editor.Database.FilterInstanceDepends")	// Filter on dependencies
 		{
 			filterDependencies(instance);
+		}
+		else if (command == L"Editor.Database.ToggleRoot")	// Toggle root flag.
+		{
+			Guid instanceGuid = instance->getGuid();
+
+			std::set< Guid >::iterator i = m_rootInstances.find(instanceGuid);
+			if (i == m_rootInstances.end())
+				m_rootInstances.insert(instanceGuid);
+			else
+				m_rootInstances.erase(i);
+
+			std::vector< std::wstring > rootInstances;
+			for (std::set< Guid >::iterator i = m_rootInstances.begin(); i != m_rootInstances.end(); ++i)
+				rootInstances.push_back(i->format());
+
+			m_editor->getSettings()->setProperty< PropertyStringArray >(L"Editor.RootInstances", rootInstances);
+
+			updateView();
 		}
 		else if (command == L"Editor.Database.Build")	// Build asset
 		{
@@ -616,6 +641,9 @@ Ref< ui::TreeViewItem > DatabaseView::buildTreeItem(ui::TreeView* treeView, ui::
 			(*i)->getName(),
 			iconIndex
 		);
+
+		if (m_rootInstances.find((*i)->getGuid()) != m_rootInstances.end())
+			instanceItem->setBold(true);
 		
 		instanceItem->setData(L"GROUP", group);
 		instanceItem->setData(L"INSTANCE", (*i));
