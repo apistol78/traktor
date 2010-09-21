@@ -30,6 +30,7 @@ public:
 		const std::wstring& name,
 		const uint8_t* code,
 		uint16_t codeSize,
+		uint16_t argumentCount,
 		ActionDictionary* dictionary
 	);
 
@@ -40,6 +41,7 @@ public:
 private:
 	const uint8_t* m_code;
 	uint16_t m_codeSize;
+	uint16_t m_argumentCount;
 	Ref< ActionDictionary > m_dictionary;
 };
 

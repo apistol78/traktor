@@ -183,15 +183,28 @@ ActionValue ActionFunction2::call(ActionFrame* callerFrame, ActionObject* self)
 	int32_t argumentPassed = 0;
 	for (
 		std::vector< std::pair< std::wstring, uint8_t > >::const_iterator i = m_argumentsIntoRegisters.begin();
-		argumentPassed < argCount && i != m_argumentsIntoRegisters.end();
+		i != m_argumentsIntoRegisters.end();
 		++i
 	)
 	{
-		if (i->second)
-			callFrame.setRegister(i->second, args[argumentPassed++]);
+		if (argumentPassed < argCount)
+		{
+			if (i->second)
+				callFrame.setRegister(i->second, args[argumentPassed++]);
+			else
+				callFrame.setVariable(i->first, args[argumentPassed++]);
+		}
 		else
-			callFrame.setVariable(i->first, args[argumentPassed++]);
+		{
+			if (i->second)
+				callFrame.setRegister(i->second, ActionValue());
+			else
+				callFrame.setVariable(i->first, ActionValue());
+
+			++argumentPassed;
+		}
 	}
+
 	while (argumentPassed < argCount)
 		callFrame.getStack().push(args[argumentPassed++]);
 
