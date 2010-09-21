@@ -1,5 +1,5 @@
 #include "Core/Log/Log.h"
-#include "Core/Misc/Split.h"
+#include "Core/Misc/StringSplit.h"
 #include "Core/Thread/Acquire.h"
 #include "Database/Database.h"
 #include "Database/Group.h"
@@ -117,11 +117,9 @@ Ref< Group > Database::getGroup(const std::wstring& groupPath)
 	T_ASSERT (m_providerDatabase);
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
-	std::vector< std::wstring > pathElements;
-	Split< std::wstring >::any(groupPath, L"/", pathElements);
-
 	Ref< Group > group = m_rootGroup;
-	for (std::vector< std::wstring >::iterator i = pathElements.begin(); i != pathElements.end(); ++i)
+	StringSplit< std::wstring > pathElements(groupPath, L"/");
+	for (StringSplit< std::wstring >::const_iterator i = pathElements.begin(); i != pathElements.end(); ++i)
 	{
 		if (!(group = findChildGroup(group, FindGroupByName(*i))))
 			break;
@@ -135,14 +133,10 @@ Ref< Group > Database::createGroup(const std::wstring& groupPath)
 	T_ASSERT (m_providerDatabase);
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
-	std::vector< std::wstring > groupNames;
-	Split< std::wstring >::any(groupPath, L"/", groupNames);
-
-	T_ASSERT (!groupNames.empty());
-
 	Ref< Group > group = m_rootGroup;
 
-	for (std::vector< std::wstring >::iterator i = groupNames.begin(); i != groupNames.end(); ++i)
+	StringSplit< std::wstring > groupNames(groupPath, L"/");
+	for (StringSplit< std::wstring >::const_iterator i = groupNames.begin(); i != groupNames.end(); ++i)
 	{
 		Ref< Group > childGroup = group->getGroup(*i);
 		if (!childGroup)

@@ -117,7 +117,6 @@ private:
 	friend class EditorPageSite;
 	friend class EditorPluginSite;
 
-	std::vector< Library > m_libraries;
 	RefArray< IEditorPageFactory > m_editorPageFactories;
 	RefArray< IObjectEditorFactory > m_objectEditorFactories;
 	RefArray< IEditorPluginFactory > m_editorPluginFactories;
