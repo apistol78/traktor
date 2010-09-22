@@ -9,6 +9,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.TreeViewItemCocoa", TreeViewItemCocoa, TreeV
 
 TreeViewItemCocoa::TreeViewItemCocoa(TreeViewItemCocoa* parent)
 :	m_image(-1)
+,	m_bold(false)
 ,	m_expandedImage(-1)
 ,	m_expanded(false)
 ,	m_parent(parent)
@@ -26,6 +27,16 @@ TreeViewItemCocoa::~TreeViewItemCocoa()
 void TreeViewItemCocoa::setText(const std::wstring& text)
 {
 	m_text = text;
+}
+
+void TreeViewItemCocoa::setBold(bool bold)
+{
+	m_bold = bold;
+}
+	
+bool TreeViewItemCocoa::isBold() const
+{
+	return m_bold;
 }
 
 std::wstring TreeViewItemCocoa::getText() const

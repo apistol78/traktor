@@ -51,7 +51,7 @@ public:
 	
 	virtual int treeNumberOfChildren(void* item) const;
 	
-	virtual std::wstring treeValue(void* item) const;
+	virtual void treeValue(void* item, std::wstring& outValue, bool& outBold) const;
 	
 	virtual void treeSetValue(void* item, const std::wstring& value);
 	
