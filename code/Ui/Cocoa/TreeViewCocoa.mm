@@ -185,12 +185,13 @@ int TreeViewCocoa::treeNumberOfChildren(void* item) const
 	return int(childItems.size());
 }
 
-std::wstring TreeViewCocoa::treeValue(void* item) const
+void TreeViewCocoa::treeValue(void* item, std::wstring& outValue, bool& outBold) const
 {
 	Ref< TreeViewItemCocoa > realItem = getRealItem(item);
 	T_ASSERT (realItem);
 
-	return realItem->getText();
+	outValue = realItem->getText();
+	outBold = realItem->isBold();
 }
 
 void TreeViewCocoa::treeSetValue(void* item, const std::wstring& value)

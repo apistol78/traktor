@@ -12,7 +12,7 @@ struct ITreeDataCallback
 	
 	virtual int treeNumberOfChildren(void* item) const = 0;
 	
-	virtual std::wstring treeValue(void* item) const = 0;
+	virtual void treeValue(void* item, std::wstring& outValue, bool& outBold) const = 0;
 	
 	virtual void treeSetValue(void* item, const std::wstring& value) = 0;
 };

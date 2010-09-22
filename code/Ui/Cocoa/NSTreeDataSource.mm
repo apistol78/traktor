@@ -1,6 +1,8 @@
 #import "Ui/Cocoa/NSTreeDataSource.h"
 #include "Ui/Cocoa/UtilitiesCocoa.h"
 
+using namespace traktor::ui;
+
 @implementation NSTreeDataSource
 
 - (void) setCallback: (ITreeDataCallback*)callback
@@ -25,13 +27,31 @@
 
 - (id) outlineView:(NSOutlineView*)outlineView objectValueForTableColumn:(NSTableColumn*)tableColumn byItem:(id)item
 {
-	return traktor::ui::makeNSString(m_callback->treeValue(item));
+	std::wstring value;
+	bool bold;
+	
+	m_callback->treeValue(item, value, bold);
+	NSString* s = makeNSString(value);
+
+	if (bold)
+	{
+		CGFloat fontSize = [NSFont systemFontSize];
+		NSFont* font = [NSFont boldSystemFontOfSize: fontSize];
+	
+		NSMutableDictionary* attributes = [NSMutableDictionary dictionary];
+		[attributes setObject: font forKey:NSFontAttributeName];
+	
+		NSAttributedString* as = [[[NSAttributedString alloc] initWithString: s attributes: attributes] autorelease];
+		return as;
+	}
+	else
+		return s;
 }
 
 - (void) outlineView:(NSOutlineView*)outlineView setObjectValue:(id)object forTableColumn:(NSTableColumn*)tableColumn byItem:(id)item
 {
 	NSString* str = (NSString*)object;
-	m_callback->treeSetValue(item, traktor::ui::fromNSString(str));
+	m_callback->treeSetValue(item, fromNSString(str));
 }
 
 @end
