@@ -68,8 +68,8 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Extern.bullet-2.73</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/bullet-2.73</sourcePath>
+			<name>Extern.bullet-2.77</name>
+			<sourcePath>$(TRAKTOR_HOME)/3rdp/bullet-2.77</sourcePath>
 			<configurations>
 				<item type="Configuration" version="1">
 					<name>DebugStatic</name>
@@ -77,8 +77,8 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.73/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.73/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.77/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.77/src</item>
 						<item>$(SCE_PS3_ROOT)\target\ppu\include\vectormath\cpp</item>
 					</includePaths>
 					<definitions>
@@ -96,8 +96,8 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.73/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.73/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.77/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.77/src</item>
 						<item>$(SCE_PS3_ROOT)\target\ppu\include\vectormath\cpp</item>
 					</includePaths>
 					<definitions>
@@ -257,203 +257,43 @@
 								</item>
 							</items>
 						</item>
-						<item type="Filter">
-							<name>SpuSolverTask</name>
-							<items>
-								<item type="File">
-									<fileName>src/BulletMultithreaded/SpuSolverTask/*.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>src/BulletMultithreaded/SpuSolverTask/*.h</fileName>
-									<items/>
-								</item>
-							</items>
-						</item>
 					</items>
 				</item>
 				<item type="Filter">
 					<name>SpuDispatch</name>
 					<items>
 						<item type="File">
-							<fileName>src/SpuDispatch/btPEBroadphase.cpp</fileName>
+							<fileName>src/SpuDispatch/*.cpp</fileName>
 							<items/>
 						</item>
 						<item type="File">
-							<fileName>src/SpuDispatch/btPEBroadphase.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>src/SpuDispatch/btPhysicsEffectsWorld.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>src/SpuDispatch/btPhysicsEffectsWorld.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>src/SpuDispatch/btSpuDynamicsWorld.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>src/SpuDispatch/btSpuDynamicsWorld.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>src/SpuDispatch/BulletCollisionSpursSupport.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>src/SpuDispatch/BulletCollisionSpursSupport.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>src/SpuDispatch/BulletConstraintSolverSpursSupport.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>src/SpuDispatch/BulletConstraintSolverSpursSupport.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>src/SpuDispatch/BulletPEGatherScatterSpursSupport.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>src/SpuDispatch/BulletPEGatherScatterSpursSupport.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>src/SpuDispatch/BulletRaycastSpursSupport.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>src/SpuDispatch/BulletRaycastSpursSupport.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>src/SpuDispatch/BulletSampleSpursSupport.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>src/SpuDispatch/BulletSampleSpursSupport.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>src/SpuDispatch/BulletSpursTask.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>src/SpuDispatch/BulletSpursTask.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>src/SpuDispatch/CellConfiguration.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>src/SpuDispatch/CellUtilityMacros.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>src/SpuDispatch/CellVectorMath.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>src/SpuDispatch/PS3Types.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>src/SpuDispatch/SPUAssert.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>src/SpuDispatch/SpuConfiguration.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>src/SpuDispatch/SpuPEGatherScatterTaskProcess.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>src/SpuDispatch/SpuPEGatherScatterTaskProcess.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>src/SpuDispatch/SpursBulletCollision2.mk</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>src/SpuDispatch/SpursBulletPEGatherScatter.mk</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>src/SpuDispatch/SpursBulletRaycast.mk</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>src/SpuDispatch/SpursBulletSolver.mk</fileName>
+							<fileName>src/SpuDispatch/*.h</fileName>
 							<items/>
 						</item>
 					</items>
 				</item>
 				<item type="Filter">
-					<name>TaskUtil</name>
+					<name>BulletSpuBroadphase</name>
 					<items>
 						<item type="File">
-							<fileName>src/Physics/TaskUtil/HeightFluidTask.cpp</fileName>
+							<fileName>src/BulletSpuBroadphase/btLowLevelBroadphase.cpp</fileName>
 							<items/>
 						</item>
 						<item type="File">
-							<fileName>src/Physics/TaskUtil/HeightFluidTask.h</fileName>
+							<fileName>src/BulletSpuBroadphase/btLowLevelBroadphase.h</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>Util</name>
+					<items>
+						<item type="File">
+							<fileName>src/Util/SpursTask.cpp</fileName>
 							<items/>
 						</item>
 						<item type="File">
-							<fileName>src/Physics/TaskUtil/ParticleFluidTask.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>src/Physics/TaskUtil/ParticleFluidTask.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>src/Physics/TaskUtil/ParticleTaskMulti.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>src/Physics/TaskUtil/ParticleTaskMulti.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>src/Physics/TaskUtil/RayCastTaskMulti.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>src/Physics/TaskUtil/RayCastTaskMulti.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>src/Physics/TaskUtil/RigidBodyTaskMulti.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>src/Physics/TaskUtil/RigidBodyTaskMulti.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>src/Physics/TaskUtil/spurs_printf_service.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>src/Physics/TaskUtil/spurs_util_spu_printf_service.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>src/Physics/TaskUtil/SpursTask.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>src/Physics/TaskUtil/SpursTask.h</fileName>
+							<fileName>src/Util/SpursTask.h</fileName>
 							<items/>
 						</item>
 					</items>
@@ -463,22 +303,22 @@
 				<item type="ExternalDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
 					<solutionFileName>$(TRAKTOR_HOME)/TraktorPs3-Spu.xms</solutionFileName>
+					<projectName>PS3_SPURS_Broadphase</projectName>
+				</item>
+				<item type="ExternalDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<solutionFileName>$(TRAKTOR_HOME)/TraktorPs3-Spu.xms</solutionFileName>
 					<projectName>PS3_SPURS_BulletCD</projectName>
 				</item>
 				<item type="ExternalDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
 					<solutionFileName>$(TRAKTOR_HOME)/TraktorPs3-Spu.xms</solutionFileName>
-					<projectName>PS3_SPURS_BulletPEGatherScatter</projectName>
+					<projectName>PS3_SPURS_ConstraintSolver</projectName>
 				</item>
 				<item type="ExternalDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
 					<solutionFileName>$(TRAKTOR_HOME)/TraktorPs3-Spu.xms</solutionFileName>
-					<projectName>PS3_SPURS_BulletRaycast</projectName>
-				</item>
-				<item type="ExternalDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<solutionFileName>$(TRAKTOR_HOME)/TraktorPs3-Spu.xms</solutionFileName>
-					<projectName>PS3_SPURS_BulletSolver</projectName>
+					<projectName>PS3_SPURS_Integrate</projectName>
 				</item>
 			</dependencies>
 		</item>
@@ -3262,8 +3102,9 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.73/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.73/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.77/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.77/src</item>
+						<item>$(SCE_PS3_ROOT)\target\ppu\include\vectormath\cpp</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -3281,8 +3122,9 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.73/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.73/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.77/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.77/src</item>
+						<item>$(SCE_PS3_ROOT)\target\ppu\include\vectormath\cpp</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>

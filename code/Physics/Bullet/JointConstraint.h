@@ -28,7 +28,11 @@ public:
 
 	virtual void getInfo2(btConstraintInfo2* info);
 
-	virtual	void solveConstraintObsolete(btSolverBody& bodyA, btSolverBody& bodyB, btScalar timeStep);
+	virtual	void solveConstraintObsolete(btRigidBody& bodyA, btRigidBody& bodyB, btScalar timeStep);
+
+	virtual	void setParam(int num, btScalar value, int axis);
+
+	virtual	btScalar getParam(int num, int axis) const;
 
 private:
 	JointSolver* m_jointSolver;
