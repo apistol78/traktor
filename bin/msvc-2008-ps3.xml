@@ -585,16 +585,7 @@
               <staticOptions>
                 <item>
                   <first>CommandLine</first>
-                  <second>$(SCE_PS3_ROOT)/host-win32/bin/make_fself $(TargetPath) $(TargetDir)$(TargetName).self</second>
-                </item>
-              </staticOptions>
-            </item>
-            <item type="SolutionBuilderMsvcGenericTool">
-              <toolName>VCPostBuildEventTool</toolName>
-              <staticOptions>
-                <item>
-                  <first>CommandLine</first>
-                  <second>$(SCE_PS3_ROOT)/host-win32/bin/make_fself_npdrm $(TargetPath) $(TargetDir)$(TargetName).npdrm.self</second>
+                  <second><![CDATA[$(SCE_PS3_ROOT)/host-win32/bin/make_fself $(TargetPath) $(TargetDir)$(TargetName).self&#x0D;&#x0A;$(SCE_PS3_ROOT)/host-win32/bin/make_fself_npdrm $(TargetPath) $(TargetDir)$(TargetName).npdrm_self]]></second>
                 </item>
               </staticOptions>
             </item>
@@ -714,8 +705,8 @@
               <staticOptions>
                 <item>
                   <first>CommandLine</first>
-                  <second>$(SCE_PS3_ROOT)/host-win32/bin/make_fself $(TargetPath) $(TargetDir)$(TargetName).self</second>
-                </item>
+                  <second><![CDATA[$(SCE_PS3_ROOT)/host-win32/bin/make_fself $(TargetPath) $(TargetDir)$(TargetName).self&#x0D;&#x0A;$(SCE_PS3_ROOT)/host-win32/bin/make_fself_npdrm $(TargetPath) $(TargetDir)$(TargetName).npdrm_self]]></second>
+			    </item>
               </staticOptions>
             </item>
           </item>
@@ -837,7 +828,7 @@
               <staticOptions>
                 <item>
                   <first>CommandLine</first>
-                  <second>$(SCE_PS3_ROOT)/host-win32/bin/make_fself $(TargetPath) $(TargetDir)$(TargetName).self</second>
+                  <second><![CDATA[$(SCE_PS3_ROOT)/host-win32/bin/make_fself $(TargetPath) $(TargetDir)$(TargetName).self&#x0D;&#x0A;$(SCE_PS3_ROOT)/host-win32/bin/make_fself_npdrm $(TargetPath) $(TargetDir)$(TargetName).npdrm_self]]></second>
                 </item>
               </staticOptions>
             </item>
@@ -957,7 +948,7 @@
               <staticOptions>
                 <item>
                   <first>CommandLine</first>
-                  <second>$(SCE_PS3_ROOT)/host-win32/bin/make_fself $(TargetPath) $(TargetDir)$(TargetName).self</second>
+                  <second><![CDATA[$(SCE_PS3_ROOT)/host-win32/bin/make_fself $(TargetPath) $(TargetDir)$(TargetName).self&#x0D;&#x0A;$(SCE_PS3_ROOT)/host-win32/bin/make_fself_npdrm $(TargetPath) $(TargetDir)$(TargetName).npdrm_self]]></second>
                 </item>
               </staticOptions>
             </item>
