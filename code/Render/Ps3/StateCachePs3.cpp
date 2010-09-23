@@ -45,15 +45,6 @@ StateCachePs3::StateCachePs3()
 	m_vertexConstantsShadow = (float*)Alloc::acquireAlign(VertexConstantCount * 4 * sizeof(float), 16, T_FILE_LINE);
 	std::memset(m_vertexConstantsShadow, 0, VertexConstantCount * 4 * sizeof(float));
 	std::memset(m_vertexAttributes, 0, sizeof(m_vertexAttributes));
-
-	T_GCM_CALL(cellGcmSetVertexProgramParameterBlock)(
-		gCellGcmCurrentContext,
-		0,
-		VertexConstantCount,
-		m_vertexConstantsShadow
-	);
-
-	reset(RfRenderState | RfSamplerStates | RfForced);
 }
 
 StateCachePs3::~StateCachePs3()
@@ -100,10 +91,40 @@ void StateCachePs3::setRenderState(const RenderState& rs)
 
 	if (rs.depthTestEnable != CELL_GCM_FALSE && (rs.depthFunc != m_renderState.depthFunc))
 	{
-		T_GCM_CALL(cellGcmSetDepthFunc)(gCellGcmCurrentContext, rs.depthFunc);
+		// Reverse depth function if we use a "1-Z" depth buffer.
+		uint32_t depthFunc = rs.depthFunc;
+		switch (rs.depthFunc)
+		{
+		case CELL_GCM_NEVER:
+			depthFunc = CELL_GCM_NEVER;
+			break;
+		case CELL_GCM_LESS:
+			depthFunc = CELL_GCM_GREATER;
+			break;
+		case CELL_GCM_EQUAL:
+			depthFunc = CELL_GCM_EQUAL;
+			break;
+		case CELL_GCM_LEQUAL:
+			depthFunc = CELL_GCM_GEQUAL;
+			break;
+		case CELL_GCM_GREATER:
+			depthFunc = CELL_GCM_LESS;
+			break;
+		case CELL_GCM_NOTEQUAL:
+			depthFunc = CELL_GCM_NOTEQUAL;
+			break;
+		case CELL_GCM_GEQUAL:
+			depthFunc = CELL_GCM_LEQUAL;
+			break;
+		case CELL_GCM_ALWAYS:
+			depthFunc = CELL_GCM_ALWAYS;
+			break;
+		}
+		T_GCM_CALL(cellGcmSetDepthFunc)(gCellGcmCurrentContext, depthFunc);
 		m_renderState.depthFunc = rs.depthFunc;
 	}
 
+	/*
 	if (rs.stencilTestEnable != m_renderState.stencilTestEnable)
 	{
 		T_GCM_CALL(cellGcmSetStencilTestEnable)(gCellGcmCurrentContext, rs.stencilTestEnable);
@@ -137,6 +158,7 @@ void StateCachePs3::setRenderState(const RenderState& rs)
 		m_renderState.stencilOpZFail = rs.stencilOpZFail;
 		m_renderState.stencilOpZPass = rs.stencilOpZPass;
 	}
+	*/
 
 	if (!m_inFp32Mode)
 	{
@@ -148,13 +170,13 @@ void StateCachePs3::setRenderState(const RenderState& rs)
 
 		if (rs.blendEnable != CELL_GCM_FALSE && (rs.blendEquation != m_renderState.blendEquation))
 		{
-			T_GCM_CALL(cellGcmSetBlendEquation)(gCellGcmCurrentContext, rs.blendEquation, CELL_GCM_FUNC_ADD);
+			T_GCM_CALL(cellGcmSetBlendEquation)(gCellGcmCurrentContext, rs.blendEquation, rs.blendEquation);
 			m_renderState.blendEquation = rs.blendEquation;
 		}
 
-		if (/*rs.blendEnable != CELL_GCM_FALSE &&*/ (rs.blendFuncSrc != m_renderState.blendFuncSrc || rs.blendFuncDest != m_renderState.blendFuncDest))
+		if (rs.blendEnable != CELL_GCM_FALSE && (rs.blendFuncSrc != m_renderState.blendFuncSrc || rs.blendFuncDest != m_renderState.blendFuncDest))
 		{
-			T_GCM_CALL(cellGcmSetBlendFunc)(gCellGcmCurrentContext, rs.blendFuncSrc, rs.blendFuncDest, CELL_GCM_ONE, CELL_GCM_ZERO);
+			T_GCM_CALL(cellGcmSetBlendFunc)(gCellGcmCurrentContext, rs.blendFuncSrc, rs.blendFuncDest, rs.blendFuncSrc, rs.blendFuncDest);
 			m_renderState.blendFuncSrc = rs.blendFuncSrc;
 			m_renderState.blendFuncDest = rs.blendFuncDest;
 		}
@@ -178,12 +200,15 @@ void StateCachePs3::setSamplerState(int32_t stage, const SamplerState& ss)
 {
 	SamplerState& samplerState = m_samplerStates[stage];
 
-	if (ss.minFilter != samplerState.minFilter || ss.magFilter != samplerState.magFilter)
+	if (
+		ss.minFilter != samplerState.minFilter ||
+		ss.magFilter != samplerState.magFilter
+	)
 	{
 		T_GCM_CALL(cellGcmSetTextureFilter)(
 			gCellGcmCurrentContext,
 			stage,
-			(-0x0080) & (0x1fff),		// -0.50 mip bias
+			0,
 			ss.minFilter,
 			ss.magFilter,
 			CELL_GCM_TEXTURE_CONVOLUTION_QUINCUNX
@@ -192,7 +217,11 @@ void StateCachePs3::setSamplerState(int32_t stage, const SamplerState& ss)
 		samplerState.magFilter = ss.magFilter;
 	}
 
-	if (ss.wrapU != samplerState.wrapU || ss.wrapV != samplerState.wrapV || ss.wrapW != samplerState.wrapW)
+	if (
+		ss.wrapU != samplerState.wrapU ||
+		ss.wrapV != samplerState.wrapV ||
+		ss.wrapW != samplerState.wrapW
+	)
 	{
 		T_GCM_CALL(cellGcmSetTextureAddress)(
 			gCellGcmCurrentContext,
@@ -284,7 +313,7 @@ void StateCachePs3::setViewport(const Viewport& viewport)
 
 		scale[0] = viewport.width * 0.5f;
 		scale[1] = viewport.height * -0.5f;
-		scale[2] = (viewport.farZ - viewport.nearZ) * 0.5f;
+		scale[2] = -(viewport.farZ - viewport.nearZ) * 0.5f;	// Scale negative if we use a "1-Z" depth buffer.
 		scale[3] = 0.0f;
 
 		offset[0] = viewport.left + scale[0];
@@ -369,26 +398,67 @@ void StateCachePs3::reset(uint32_t flags)
 						0,
 						CELL_GCM_TEXTURE_MAX_ANISO_1
 					);
+					m_textureLods[i] = uint16_t(~0);
 				}
 			}
 		}
 	}
 	else
 	{
+		if (flags & RfVertexConstants)
+		{
+			T_GCM_CALL(cellGcmSetVertexProgramParameterBlock)(
+				gCellGcmCurrentContext,
+				0,
+				VertexConstantCount,
+				m_vertexConstantsShadow
+			);
+		}
+
 		if (flags & RfRenderState)
 		{
 			m_renderState = RenderState();
+
+			// Reverse depth function if we use a "1-Z" depth buffer.
+			uint32_t depthFunc = m_renderState.depthFunc;
+			switch (m_renderState.depthFunc)
+			{
+			case CELL_GCM_NEVER:
+				depthFunc = CELL_GCM_NEVER;
+				break;
+			case CELL_GCM_LESS:
+				depthFunc = CELL_GCM_GREATER;
+				break;
+			case CELL_GCM_EQUAL:
+				depthFunc = CELL_GCM_EQUAL;
+				break;
+			case CELL_GCM_LEQUAL:
+				depthFunc = CELL_GCM_GEQUAL;
+				break;
+			case CELL_GCM_GREATER:
+				depthFunc = CELL_GCM_LESS;
+				break;
+			case CELL_GCM_NOTEQUAL:
+				depthFunc = CELL_GCM_NOTEQUAL;
+				break;
+			case CELL_GCM_GEQUAL:
+				depthFunc = CELL_GCM_LEQUAL;
+				break;
+			case CELL_GCM_ALWAYS:
+				depthFunc = CELL_GCM_ALWAYS;
+				break;
+			}
 
 			T_GCM_CALL(cellGcmSetCullFaceEnable)(gCellGcmCurrentContext, m_renderState.cullFaceEnable);
 			T_GCM_CALL(cellGcmSetCullFace)(gCellGcmCurrentContext, m_renderState.cullFace);
 			T_GCM_CALL(cellGcmSetDepthTestEnable)(gCellGcmCurrentContext, m_renderState.depthTestEnable);
 			T_GCM_CALL(cellGcmSetColorMask)(gCellGcmCurrentContext, m_renderState.colorMask);
 			T_GCM_CALL(cellGcmSetDepthMask)(gCellGcmCurrentContext, m_renderState.depthMask);
-			T_GCM_CALL(cellGcmSetDepthFunc)(gCellGcmCurrentContext, m_renderState.depthFunc);
+			T_GCM_CALL(cellGcmSetDepthFunc)(gCellGcmCurrentContext, depthFunc);
 
 			T_GCM_CALL(cellGcmSetBlendEnable)(gCellGcmCurrentContext, m_renderState.blendEnable);
-			T_GCM_CALL(cellGcmSetBlendEquation)(gCellGcmCurrentContext, m_renderState.blendEquation, CELL_GCM_FUNC_ADD);
-			T_GCM_CALL(cellGcmSetBlendFunc)(gCellGcmCurrentContext, m_renderState.blendFuncSrc, m_renderState.blendFuncDest, CELL_GCM_ONE, CELL_GCM_ZERO);
+			T_GCM_CALL(cellGcmSetBlendEquation)(gCellGcmCurrentContext, m_renderState.blendEquation, m_renderState.blendEquation);
+			T_GCM_CALL(cellGcmSetBlendFunc)(gCellGcmCurrentContext, m_renderState.blendFuncSrc, m_renderState.blendFuncDest,  m_renderState.blendFuncSrc, m_renderState.blendFuncDest);
 			T_GCM_CALL(cellGcmSetAlphaTestEnable)(gCellGcmCurrentContext, m_renderState.alphaTestEnable);
 			T_GCM_CALL(cellGcmSetAlphaFunc)(gCellGcmCurrentContext, m_renderState.alphaFunc, m_renderState.alphaRef);
 		}

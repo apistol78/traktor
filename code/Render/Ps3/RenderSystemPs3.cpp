@@ -26,7 +26,7 @@ namespace traktor
 
 const uint32_t c_cbSize = 256 * 1024;
 const uint32_t c_hostSize = 8 * 1024 * 1024;
-const uint32_t c_mainSize = 8 * 1024 * 1024;	//< RSX mapped main memory; used for dynamic index- and vertexbuffers.
+const uint32_t c_mainSize = 12 * 1024 * 1024;	//< RSX mapped main memory; used for dynamic index- and vertexbuffers.
 
 struct ResolutionDesc { int32_t width; int32_t height; int32_t colorBits; } c_resolutions[] =
 {
@@ -141,7 +141,7 @@ bool RenderSystemPs3::handleMessages()
 
 Ref< IRenderView > RenderSystemPs3::createRenderView(const RenderViewDefaultDesc& desc)
 {
-	Ref< RenderViewPs3 > renderView = new RenderViewPs3(m_memoryHeapLocal, this);
+	Ref< RenderViewPs3 > renderView = new RenderViewPs3(m_memoryHeapLocal, m_tileArea, this);
 	if (renderView->create(desc))
 		return renderView;
 	else
@@ -201,7 +201,7 @@ Ref< RenderTargetSet > RenderSystemPs3::createRenderTargetSet(const RenderTarget
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	Ref< RenderTargetSetPs3 > renderTargetSet = new RenderTargetSetPs3(m_counterRenderTargetSets);
-	if (renderTargetSet->create(m_memoryHeapLocal, desc))
+	if (renderTargetSet->create(m_memoryHeapLocal, m_tileArea, desc))
 		return renderTargetSet;
 	else
 		return 0;

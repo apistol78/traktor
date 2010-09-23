@@ -78,7 +78,7 @@ public:
 	ObjectType* alloc(const char* const name)
 	{
 		ObjectType* object = alloc< ObjectType >();
-#if defined(T_USE_RENDERBLOCK_NAME)
+#if defined(_DEBUG)
 		object->name = name;
 #endif
 		return object;

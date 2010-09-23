@@ -20,6 +20,7 @@ namespace traktor
 class MemoryHeap;
 class MemoryHeapObject;
 class StateCachePs3;
+class TileArea;
 
 class T_DLLCLASS RenderTargetPs3 : public ITexture
 {
@@ -28,7 +29,7 @@ class T_DLLCLASS RenderTargetPs3 : public ITexture
 public:
 	RenderTargetPs3();
 
-	bool create(MemoryHeap* memoryHeap, const RenderTargetSetCreateDesc& setDesc, const RenderTargetCreateDesc& desc);
+	bool create(MemoryHeap* memoryHeap, TileArea& tileArea, const RenderTargetSetCreateDesc& setDesc, const RenderTargetCreateDesc& desc);
 
 	virtual void destroy();
 
@@ -58,9 +59,8 @@ private:
 	uint32_t m_colorSurfaceFormat;
 	CellGcmTexture m_colorTexture;
 	MemoryHeapObject* m_colorData;
+	uint32_t m_tileIndex;
 	bool m_inRender;
-	uint32_t m_waitLabel;
-	volatile uint32_t* m_waitLabelData;
 };
 
 	}

@@ -3,6 +3,7 @@
 
 #include "Core/Thread/Semaphore.h"
 #include "Render/IRenderSystem.h"
+#include "Render/Ps3/TileArea.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -70,6 +71,7 @@ private:
 	Semaphore m_lock;
 	Ref< MemoryHeap > m_memoryHeapLocal;
 	Ref< MemoryHeap > m_memoryHeapMain;
+	TileArea m_tileArea;
 	int32_t m_counterVertexBuffers;
 	int32_t m_counterIndexBuffers;
 	int32_t m_counterSimpleTextures;

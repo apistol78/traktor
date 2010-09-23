@@ -26,6 +26,7 @@ class MemoryHeap;
 class ProgramPs3;
 class RenderSystemPs3;
 class RenderTargetPs3;
+class TileArea;
 class VertexBufferPs3;
 
 class T_DLLCLASS RenderViewPs3 : public IRenderView
@@ -33,7 +34,7 @@ class T_DLLCLASS RenderViewPs3 : public IRenderView
 	T_RTTI_CLASS;
 
 public:
-	RenderViewPs3(MemoryHeap* localMemoryHeap, RenderSystemPs3* renderSystem);
+	RenderViewPs3(MemoryHeap* localMemoryHeap, TileArea& tileArea, RenderSystemPs3* renderSystem);
 
 	virtual ~RenderViewPs3();
 
@@ -101,6 +102,7 @@ private:
 	};
 
 	Ref< MemoryHeap > m_localMemoryHeap;
+	TileArea& m_tileArea;
 	Ref< RenderSystemPs3 > m_renderSystem;
 	Ref< VertexBufferPs3 > m_currentVertexBuffer;
 	Ref< IndexBufferPs3 > m_currentIndexBuffer;

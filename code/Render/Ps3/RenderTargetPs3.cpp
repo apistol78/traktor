@@ -1,21 +1,18 @@
 #include "Core/Log/Log.h"
+#include "Core/Misc/Align.h"
 #include "Render/Ps3/MemoryHeap.h"
 #include "Render/Ps3/MemoryHeapObject.h"
 #include "Render/Ps3/RenderTargetPs3.h"
 #include "Render/Ps3/StateCachePs3.h"
+#include "Render/Ps3/TileArea.h"
 #include "Render/Ps3/TypesPs3.h"
+
+#define USE_TILED_COLOR 1
 
 namespace traktor
 {
 	namespace render
 	{
-		namespace
-		{
-
-const uint8_t c_waitLabelId = 129;
-uint32_t s_waitLabelCounter = 0;
-
-		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetPs3", RenderTargetPs3, ITexture)
 
@@ -24,15 +21,13 @@ RenderTargetPs3::RenderTargetPs3()
 ,	m_height(0)
 ,	m_colorSurfaceFormat(0)
 ,	m_colorData(0)
+,	m_tileIndex(~0UL)
 ,	m_inRender(false)
-,	m_waitLabel(0)
-,	m_waitLabelData(0)
 {
 	std::memset(&m_colorTexture, 0, sizeof(m_colorTexture));
-	m_waitLabelData = cellGcmGetLabelAddress(c_waitLabelId);
 }
 
-bool RenderTargetPs3::create(MemoryHeap* memoryHeap, const RenderTargetSetCreateDesc& setDesc, const RenderTargetCreateDesc& desc)
+bool RenderTargetPs3::create(MemoryHeap* memoryHeap, TileArea& tileArea, const RenderTargetSetCreateDesc& setDesc, const RenderTargetCreateDesc& desc)
 {
 	int byteSize;
 
@@ -94,17 +89,51 @@ bool RenderTargetPs3::create(MemoryHeap* memoryHeap, const RenderTargetSetCreate
 	m_colorTexture.height = m_height;
 	m_colorTexture.depth = 1;
 	m_colorTexture.location = CELL_GCM_LOCATION_LOCAL;
-	m_colorTexture.pitch = m_width * byteSize; //cellGcmGetTiledPitchSize(m_width * byteSize);
+#if USE_TILED_COLOR
+	m_colorTexture.pitch = cellGcmGetTiledPitchSize(alignUp(m_width, 64) * byteSize);
+#else
+	m_colorTexture.pitch = m_width * byteSize;
+#endif
 	m_colorTexture.offset = 0;
 
-	uint32_t textureSize = m_colorTexture.pitch * m_colorTexture.height;
-	m_colorData = memoryHeap->alloc(textureSize, 4096, false);
+#if USE_TILED_COLOR
+	uint32_t colorSize = m_colorTexture.pitch * alignUp(m_colorTexture.height, 64);
+#else
+	uint32_t colorSize = m_colorTexture.pitch * m_colorTexture.height;
+#endif
+	m_colorData = memoryHeap->alloc(colorSize, 4096, false);
+
+#if USE_TILED_COLOR
+	TileArea::TileInfo colorTile;
+	if (tileArea.alloc(colorSize, colorTile))
+	{
+		cellGcmSetTileInfo(
+			colorTile.index,
+			CELL_GCM_LOCATION_LOCAL,
+			m_colorData->getOffset(),
+			colorSize,
+			m_colorTexture.pitch,
+			CELL_GCM_COMPMODE_C32_2X1,
+			colorTile.tagBase,
+			colorTile.dramBank
+		);
+		cellGcmBindTile(colorTile.index);
+		m_tileIndex = colorTile.index;
+	}
+#endif
 
 	return true;
 }
 
 void RenderTargetPs3::destroy()
 {
+#if USE_TILED_COLOR
+	if (m_tileIndex != ~0UL)
+	{
+		cellGcmUnbindTile(m_tileIndex);
+		m_tileIndex = ~0UL;
+	}
+#endif
 	if (m_colorData)
 	{
 		m_colorData->free();
@@ -130,15 +159,6 @@ int RenderTargetPs3::getDepth() const
 void RenderTargetPs3::bind(StateCachePs3& stateCache, int stage, const SamplerState& samplerState)
 {
 	T_ASSERT (!m_inRender);
-
-	/*
-	// Issue GCM flush if RTs been updated.
-	if (m_waitLabel)
-	{
-		T_GCM_CALL(cellGcmFlush)(gCellGcmCurrentContext);
-		m_waitLabel = 0;
-	}
-	*/
 
 	m_colorTexture.offset = m_colorData->getOffset();
 
@@ -172,7 +192,6 @@ void RenderTargetPs3::finishRender()
 {
 	T_ASSERT (m_inRender == true);
 	m_inRender = false;
-	m_waitLabel = ++s_waitLabelCounter;
 }
 
 	}

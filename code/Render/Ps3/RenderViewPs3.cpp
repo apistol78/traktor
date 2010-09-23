@@ -1,14 +1,21 @@
 #include <cstring>
 #include "Core/Log/Log.h"
-#include "Render/Ps3/RenderViewPs3.h"
-#include "Render/Ps3/RenderSystemPs3.h"
-#include "Render/Ps3/RenderTargetSetPs3.h"
-#include "Render/Ps3/RenderTargetPs3.h"
-#include "Render/Ps3/VertexBufferPs3.h"
+#include "Core/Misc/Align.h"
 #include "Render/Ps3/IndexBufferPs3.h"
-#include "Render/Ps3/ProgramPs3.h"
 #include "Render/Ps3/MemoryHeap.h"
 #include "Render/Ps3/MemoryHeapObject.h"
+#include "Render/Ps3/ProgramPs3.h"
+#include "Render/Ps3/RenderSystemPs3.h"
+#include "Render/Ps3/RenderTargetPs3.h"
+#include "Render/Ps3/RenderTargetSetPs3.h"
+#include "Render/Ps3/RenderViewPs3.h"
+#include "Render/Ps3/TileArea.h"
+#include "Render/Ps3/VertexBufferPs3.h"
+
+#define USE_TILED_COLOR 1
+#define USE_TILED_DEPTH 1
+#define USE_ZCULL 1
+#define USE_DEBUG_DRAW 0
 
 namespace traktor
 {
@@ -54,8 +61,9 @@ uint32_t incrementLabel(uint32_t label)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewPs3", RenderViewPs3, IRenderView)
 
-RenderViewPs3::RenderViewPs3(MemoryHeap* localMemoryHeap, RenderSystemPs3* renderSystem)
+RenderViewPs3::RenderViewPs3(MemoryHeap* localMemoryHeap, TileArea& tileArea, RenderSystemPs3* renderSystem)
 :	m_localMemoryHeap(localMemoryHeap)
+,	m_tileArea(tileArea)
 ,	m_renderSystem(renderSystem)
 ,	m_width(0)
 ,	m_height(0)
@@ -90,7 +98,11 @@ bool RenderViewPs3::create(const RenderViewDefaultDesc& desc)
 	m_width = desc.displayMode.width;
 	m_height = desc.displayMode.height;
 
+#if USE_TILED_COLOR
+	m_colorPitch = cellGcmGetTiledPitchSize(alignUp(m_width, 64) * 4);
+#else
 	m_colorPitch = m_width * 4;
+#endif
 
 	std::memset(&videoConfig, 0, sizeof(CellVideoOutConfiguration));
 	videoConfig.resolutionId = findResolutionId(m_width, m_height);
@@ -117,13 +129,35 @@ bool RenderViewPs3::create(const RenderViewDefaultDesc& desc)
 	else
 		cellGcmSetFlipMode(CELL_GCM_DISPLAY_HSYNC);
 
+#if USE_TILED_COLOR
+	uint32_t colorSize = m_colorPitch * alignUp(m_height, 64);
+#else
 	uint32_t colorSize = m_colorPitch * m_height;
+#endif
 	m_colorObject = m_localMemoryHeap->alloc(sizeof_array(m_colorAddr) * colorSize, 4096, true);
 
 	for (size_t i = 0; i < sizeof_array(m_colorAddr); i++)
 	{
 		m_colorAddr[i] = (uint8_t*)m_colorObject->getPointer() + (i * colorSize);
 		m_colorOffset[i] = m_colorObject->getOffset() + (i * colorSize);
+
+#if USE_TILED_COLOR
+		TileArea::TileInfo colorTile;
+		if (m_tileArea.alloc(colorSize, colorTile))
+		{
+			cellGcmSetTileInfo(
+				colorTile.index,
+				CELL_GCM_LOCATION_LOCAL,
+				m_colorOffset[i],
+				colorSize,
+				m_colorPitch,
+				CELL_GCM_COMPMODE_C32_2X1,
+				colorTile.tagBase,
+				colorTile.dramBank
+			);
+			cellGcmBindTile(colorTile.index);
+		}
+#endif
 
 		ret = cellGcmSetDisplayBuffer(
 			i,
@@ -153,34 +187,64 @@ bool RenderViewPs3::create(const RenderViewDefaultDesc& desc)
 		m_depthTexture.height = surfaceHeight;
 		m_depthTexture.depth = 1;
 		m_depthTexture.location = CELL_GCM_LOCATION_LOCAL;
+#if USE_TILED_DEPTH
+		m_depthTexture.pitch = cellGcmGetTiledPitchSize(surfaceWidth * 4);
+#else
 		m_depthTexture.pitch = surfaceWidth * 4;
+#endif
 		m_depthTexture.offset = 0;
 
+#if USE_TILED_DEPTH
+		uint32_t depthSize = m_depthTexture.pitch * alignUp(m_depthTexture.height, 64);
+#else
 		uint32_t depthSize = m_depthTexture.pitch * m_depthTexture.height;
+#endif
 		m_depthObject = m_localMemoryHeap->alloc(depthSize, 4096, true);
 
 		m_depthAddr = m_depthObject->getPointer();
 		m_depthTexture.offset = m_depthObject->getOffset();
 
+		// Ensure primary depth buffer is associated with tile 0.
+#if USE_TILED_DEPTH
+		TileArea::TileInfo depthTile;
+		if (m_tileArea.alloc(depthSize, depthTile))
+		{
+			cellGcmSetTileInfo(
+				depthTile.index,
+				m_depthTexture.location,
+				m_depthTexture.offset,
+				depthSize,
+				m_depthTexture.pitch,
+				CELL_GCM_COMPMODE_Z32_SEPSTENCIL,
+				depthTile.tagBase,
+				depthTile.dramBank
+			);
+			cellGcmBindTile(depthTile.index);
+		}
+#endif
+
+#if USE_ZCULL
 		// Setup Z-cull binding.
 		cellGcmBindZcull(
 			0,
 			m_depthTexture.offset,
 			surfaceWidth,
-			surfaceHeight,
+			alignUp(surfaceHeight, 64),
 			0,
 			CELL_GCM_ZCULL_Z24S8,
 			CELL_GCM_SURFACE_CENTER_1,
-			CELL_GCM_ZCULL_LESS,
-			CELL_GCM_ZCULL_LONES,
+			CELL_GCM_ZCULL_GREATER,
+			CELL_GCM_ZCULL_MSB,
 			CELL_GCM_SCULL_SFUNC_ALWAYS,
 			0,
 			0
 		);
+
 		T_GCM_CALL(cellGcmSetZcullStatsEnable)(
 			gCellGcmCurrentContext,
 			CELL_GCM_TRUE
 		);
+#endif
 	}
 
 	// Create frame synchronization labels.
@@ -230,126 +294,7 @@ void RenderViewPs3::close()
 
 bool RenderViewPs3::reset(const RenderViewDefaultDesc& desc)
 {
-	CellVideoOutState videoState;
-	CellVideoOutConfiguration videoConfig;
-	int32_t ret;
-
-	cellGcmUnbindZcull(0);
-
-	if (m_depthObject)
-	{
-		m_depthObject->free();
-		m_depthObject = 0;
-	}
-
-	if (m_colorObject)
-	{
-		m_colorObject->free();
-		m_colorObject = 0;
-	}
-
-	m_width = desc.displayMode.width;
-	m_height = desc.displayMode.height;
-
-	m_colorPitch = m_width * 4;
-
-	std::memset(&videoConfig, 0, sizeof(CellVideoOutConfiguration));
-	videoConfig.resolutionId = findResolutionId(m_width, m_height);
-	videoConfig.format = CELL_VIDEO_OUT_BUFFER_COLOR_FORMAT_X8R8G8B8;
-	videoConfig.aspect = CELL_VIDEO_OUT_ASPECT_AUTO;
-	videoConfig.pitch = m_colorPitch;
-
-	ret = cellVideoOutConfigure(CELL_VIDEO_OUT_PRIMARY, &videoConfig, NULL, 0);
-	if (ret != CELL_OK)
-	{
-		log::error << L"Create render view failed, unable to configure video" << Endl;
-		return 0;
-	}
-
-	ret = cellVideoOutGetState(CELL_VIDEO_OUT_PRIMARY, 0, &videoState);
-	if (ret != CELL_OK)
-	{
-		log::error << L"Create render view failed, unable get video state" << Endl;
-		return 0;
-	}
-
-	if (desc.waitVBlank)
-		cellGcmSetFlipMode(CELL_GCM_DISPLAY_VSYNC);
-	else
-		cellGcmSetFlipMode(CELL_GCM_DISPLAY_HSYNC);
-
-	uint32_t colorSize = m_colorPitch * m_height;
-	m_colorObject = m_localMemoryHeap->alloc(sizeof_array(m_colorAddr) * colorSize, 4096, true);
-
-	for (size_t i = 0; i < sizeof_array(m_colorAddr); i++)
-	{
-		m_colorAddr[i] = (uint8_t*)m_colorObject->getPointer() + (i * colorSize);
-		m_colorOffset[i] = m_colorObject->getOffset() + (i * colorSize);
-
-		ret = cellGcmSetDisplayBuffer(
-			i,
-			m_colorOffset[i],
-			m_colorPitch,
-			m_width,
-			m_height
-		);
-		if (ret != CELL_OK)
-		{
-			log::error << L"Create render view failed, unable to set display buffers" << Endl;
-			return false;
-		}
-	}
-
-	// Allocate depth buffer.
-	{
-		int surfaceWidth = m_width;
-		int surfaceHeight = m_height;
-
-		m_depthTexture.format = CELL_GCM_TEXTURE_DEPTH24_D8 | CELL_GCM_TEXTURE_LN;
-		m_depthTexture.mipmap = 1;
-		m_depthTexture.dimension = CELL_GCM_TEXTURE_DIMENSION_2;
-		m_depthTexture.cubemap = 0;
-		m_depthTexture.remap = 0;
-		m_depthTexture.width = surfaceWidth;
-		m_depthTexture.height = surfaceHeight;
-		m_depthTexture.depth = 1;
-		m_depthTexture.location = CELL_GCM_LOCATION_LOCAL;
-		m_depthTexture.pitch = surfaceWidth * 4;
-		m_depthTexture.offset = 0;
-
-		uint32_t depthSize = m_depthTexture.pitch * m_depthTexture.height;
-		m_depthObject = m_localMemoryHeap->alloc(depthSize, 4096, true);
-
-		m_depthAddr = m_depthObject->getPointer();
-		m_depthTexture.offset = m_depthObject->getOffset();
-
-		// Setup Z-cull binding.
-		cellGcmBindZcull(
-			0,
-			m_depthTexture.offset,
-			surfaceWidth,
-			surfaceHeight,
-			0,
-			CELL_GCM_ZCULL_Z24S8,
-			CELL_GCM_SURFACE_CENTER_1,
-			CELL_GCM_ZCULL_LESS,
-			CELL_GCM_ZCULL_LONES,
-			CELL_GCM_SCULL_SFUNC_ALWAYS,
-			0,
-			0
-		);
-		T_GCM_CALL(cellGcmSetZcullStatsEnable)(
-			gCellGcmCurrentContext,
-			CELL_GCM_TRUE
-		);
-	}
-
-	// Set default gamma correction.
-	const float c_defaultGammaCorrection = 1.2f;
-	cellVideoOutSetGamma(CELL_VIDEO_OUT_PRIMARY, c_defaultGammaCorrection);
-
-	setViewport(Viewport(0, 0, m_width, m_height, 0.0f, 1.0f));
-	return true;
+	return false;
 }
 
 void RenderViewPs3::resize(int width, int height)
@@ -414,7 +359,8 @@ bool RenderViewPs3::begin()
 		m_depthTexture.offset,
 		m_depthTexture.pitch,
 		0,
-		true
+		true,
+		0
 	};
 
 	T_ASSERT (m_renderTargetStack.empty());
@@ -425,7 +371,8 @@ bool RenderViewPs3::begin()
 	uint8_t* patchArea = static_cast< uint8_t* >(m_patchProgramObject->getPointer()) + (m_frameCounter % c_patchProgramCount) * c_patchProgramSize;
 	m_patchProgramPool = PoolAllocator(patchArea, c_patchProgramSize);
 
-	/*
+#if USE_ZCULL
+
 	// Update Z-cull limits.
 	int32_t	maxSlope = cellGcmGetReport(CELL_GCM_ZCULL_STATS, c_reportZCullStats0);
 	int32_t	sumSlope = cellGcmGetReport(CELL_GCM_ZCULL_STATS1, c_reportZCullStats1);
@@ -448,12 +395,8 @@ bool RenderViewPs3::begin()
 		pushBack
 	);
 	T_GCM_CALL(cellGcmSetClearReport)(gCellGcmCurrentContext, CELL_GCM_ZCULL_STATS);
-	*/
-	T_GCM_CALL(cellGcmSetZcullLimit)(
-		gCellGcmCurrentContext,
-		0x100,
-		0x100
-	);
+
+#endif
 
 	// Ensure no program is currently bound; might need to repatch program.
 	ProgramPs3::unbind();
@@ -481,7 +424,8 @@ bool RenderViewPs3::begin(RenderTargetSet* renderTargetSet, int renderTarget, bo
 		rts->getGcmDepthTexture().offset,
 		rts->getGcmDepthTexture().pitch,
 		rt,
-		false
+		false,
+		0
 	};
 
 	if (keepDepthStencil)
@@ -612,7 +556,7 @@ void RenderViewPs3::draw(const Primitives& primitives)
 		);
 	}
 
-#if 0
+#if USE_DEBUG_DRAW
 	// Synchronize RSX after each draw; help to find RSX crashes.
 	static uint32_t s_finishRef = 0; s_finishRef++;
 	cellGcmFinish(gCellGcmCurrentContext, s_finishRef);
@@ -636,8 +580,10 @@ void RenderViewPs3::end()
 	}
 	else
 	{
+#if USE_ZCULL
 		T_GCM_CALL(cellGcmSetReport)(gCellGcmCurrentContext, CELL_GCM_ZCULL_STATS, c_reportZCullStats0);
 		T_GCM_CALL(cellGcmSetReport)(gCellGcmCurrentContext, CELL_GCM_ZCULL_STATS1, c_reportZCullStats1);
+#endif
 	}
 }
 
@@ -709,15 +655,7 @@ void RenderViewPs3::setCurrentRenderState()
 		CELL_GCM_WINDOW_PIXEL_CENTER_INTEGER
 	);
 
-	m_stateCache.setViewport(rs.viewport);
-
-	if (rs.colorFormat == CELL_GCM_SURFACE_F_W32Z32Y32X32 || rs.colorFormat == CELL_GCM_SURFACE_F_X32)
-		m_stateCache.setInFp32Mode(true);
-	else
-		m_stateCache.setInFp32Mode(false);
-
-	m_stateCache.reset(/*StateCachePs3::RfRenderState | */StateCachePs3::RfSamplerStates);
-
+#if USE_ZCULL
 	if (rs.zcull && rs.depthOffset)
 	{
 		T_GCM_CALL(cellGcmSetZcullEnable)(
@@ -734,10 +672,16 @@ void RenderViewPs3::setCurrentRenderState()
 			CELL_GCM_FALSE
 		);
 	}
+#endif
 
 	// Set target size vertex shader constant.
 	m_targetSize[0] = rs.width;
 	m_targetSize[1] = rs.height;
+
+	// Reset state cache; apparently render states somehow get automatically altered when changing render target.
+	m_stateCache.setInFp32Mode((rs.colorFormat == CELL_GCM_SURFACE_F_W32Z32Y32X32 || rs.colorFormat == CELL_GCM_SURFACE_F_X32));
+	m_stateCache.setViewport(rs.viewport);
+	m_stateCache.reset(StateCachePs3::RfRenderState | StateCachePs3::RfSamplerStates | StateCachePs3::RfForced);
 
 	// Ensure target is cleared.
 	clearImmediate();
@@ -777,14 +721,17 @@ void RenderViewPs3::clearImmediate()
 	{
 		if (rs.depthOffset)
 		{
-			gcmClearMask |= CELL_GCM_CLEAR_Z | CELL_GCM_CLEAR_S;
+			float clearDepth = 1.0f - rs.clearDepth;	// "1-Z" depth buffer.
+			gcmClearMask |= CELL_GCM_CLEAR_Z/* | CELL_GCM_CLEAR_S*/;
 			T_GCM_CALL(cellGcmSetClearDepthStencil)(
 				gCellGcmCurrentContext,
-				(uint32_t(rs.clearDepth * 0xffffff) << 8) | (rs.clearStencil & 0xff)
+				(uint32_t(clearDepth * 0xffffff) << 8) | (rs.clearStencil & 0xff)
 			);
 		}
+#if USE_ZCULL
 		if (rs.zcull)
 			T_GCM_CALL(cellGcmSetInvalidateZcull)(gCellGcmCurrentContext);
+#endif
 	}
 
 	if (gcmClearMask)

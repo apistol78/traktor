@@ -12,7 +12,7 @@
 #	include <cgutil.h>
 #	define T_HAVE_TYPES
 
-#	define T_SCE_PERF_MEASURE 0
+#	define T_SCE_PERF_MEASURE 1
 
 #	if T_SCE_PERF_MEASURE
 #		define uint32_t uint32_t

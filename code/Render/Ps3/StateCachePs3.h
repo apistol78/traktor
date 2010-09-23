@@ -22,9 +22,10 @@ public:
 
 	enum ResetFlags
 	{
-		RfRenderState = 1,
-		RfSamplerStates = 2,
-		RfForced = 4
+		RfVertexConstants = 1,
+		RfRenderState = 2,
+		RfSamplerStates = 4,
+		RfForced = 8
 	};
 
 	StateCachePs3();

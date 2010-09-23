@@ -22,6 +22,7 @@ namespace traktor
 class MemoryHeap;
 class MemoryHeapObject;
 class RenderTargetPs3;
+class TileArea;
 
 class T_DLLCLASS RenderTargetSetPs3 : public RenderTargetSet
 {
@@ -32,7 +33,7 @@ public:
 
 	virtual ~RenderTargetSetPs3();
 
-	bool create(MemoryHeap* memoryHeap, const RenderTargetSetCreateDesc& desc);
+	bool create(MemoryHeap* memoryHeap, TileArea& tileArea, const RenderTargetSetCreateDesc& desc);
 
 	virtual void destroy();
 
@@ -58,6 +59,7 @@ private:
 	RefArray< RenderTargetPs3 > m_renderTargets;
 	CellGcmTexture m_depthTexture;
 	MemoryHeapObject* m_depthData;
+	uint32_t m_tileIndex;
 	int32_t& m_counter;
 };
 
