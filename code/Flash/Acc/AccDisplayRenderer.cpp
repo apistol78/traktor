@@ -28,7 +28,11 @@ namespace traktor
 
 const uint32_t c_maxCacheSize = 64;
 const uint32_t c_maxUnusedCount = 40;
+#if defined(_PS3)
+	const uint32_t c_cacheGlyphSize = 64;
+#else
 const uint32_t c_cacheGlyphSize = 128;
+#endif
 const uint32_t c_cacheGlyphMargin = 6;
 const uint32_t c_cacheGlyphCountX = 8;
 const uint32_t c_cacheGlyphCountY = 8;
