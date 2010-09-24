@@ -37,6 +37,11 @@ bool SessionPsn::withdrawAchievement(const std::wstring& achievementId)
 	return false;
 }
 
+bool SessionPsn::haveAchievement(const std::wstring& achievementId)
+{
+	return false;
+}
+
 Ref< ILeaderboard > SessionPsn::getLeaderboard(const std::wstring& id)
 {
 	return 0;
