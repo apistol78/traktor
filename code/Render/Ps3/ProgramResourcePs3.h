@@ -34,7 +34,7 @@ private:
 	std::vector< ProgramScalar > m_pixelScalars;
 	std::vector< ProgramSampler > m_vertexSamplers;
 	std::vector< ProgramSampler > m_pixelSamplers;
-	std::map< std::wstring, uint32_t > m_scalarParameterMap;
+	std::map< std::wstring, ScalarParameter > m_scalarParameterMap;
 	std::map< std::wstring, uint32_t > m_textureParameterMap;
 	uint32_t m_scalarParameterDataSize;
 	uint32_t m_textureParameterDataSize;

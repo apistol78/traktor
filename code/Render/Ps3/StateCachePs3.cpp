@@ -17,22 +17,36 @@ bool compareExchangeEqual4(float* ptr1, const float* ptr2, size_t count)
 	T_ASSERT (alignUp(ptr2, 16) == ptr2);
 
 	bool equal = true;
-	for (size_t i = 0; i < (count >> 2); ++i)
+	size_t i = 0;
+
+	count >>= 2;
+	for (i = 0; i < count; ++i)
 	{
 		vec_float4 vs = vec_ld(0, ptr2);
 		vec_float4 vd = vec_ld(0, ptr1);
 		
 		if (vec_all_eq(vs, vd) == 0)
 		{
-			vec_st(vs, 0, ptr1);
 			equal = false;
+			break;
 		}
 
 		ptr1 += 4;
 		ptr2 += 4;
 	}
 
-	return equal;
+	if (equal)
+		return true;
+
+	for (; i < count; ++i)
+	{
+		vec_float4 vs = vec_ld(0, ptr2);
+		vec_st(vs, 0, ptr1);
+		ptr1 += 4;
+		ptr2 += 4;
+	}
+
+	return false;
 }
 
 		}
@@ -265,19 +279,26 @@ void StateCachePs3::setSamplerTexture(int32_t stage, const CellGcmTexture* textu
 	}
 }
 
-void StateCachePs3::setProgram(const CGprogram vertexProgram, const void* vertexUCode, const CGprogram fragmentProgram, const uint32_t fragmentOffset, bool updateFragmentProgram)
+void StateCachePs3::setProgram(
+	const CGprogram vertexProgram,
+	const void* vertexUCode,
+	const CGprogram fragmentProgram,
+	const uint32_t fragmentOffset,
+	bool updateFragmentConstants,
+	bool updateFragmentTextures
+)
 {
 	if (vertexUCode != m_vertexUCode)
 	{
 		T_GCM_CALL(cellGcmSetVertexProgram)(gCellGcmCurrentContext, vertexProgram, vertexUCode);
 		m_vertexUCode = vertexUCode;
 	}
-	if (fragmentOffset != m_fragmentOffset)
+	if (fragmentOffset != m_fragmentOffset || updateFragmentTextures)
 	{
 		T_GCM_CALL(cellGcmSetFragmentProgram)(gCellGcmCurrentContext, fragmentProgram, fragmentOffset);
 		m_fragmentOffset = fragmentOffset;
 	}
-	else if (updateFragmentProgram)
+	else if (updateFragmentConstants)
 	{
 		T_GCM_CALL(cellGcmSetUpdateFragmentProgramParameter)(gCellGcmCurrentContext, fragmentOffset);
 	}

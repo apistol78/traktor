@@ -25,7 +25,7 @@ bool collectScalarParameters(
 	CGCbin* shaderBin,
 	bool isFragmentProfile,
 	std::vector< ProgramScalar >& outScalars,
-	std::map< std::wstring, uint32_t >& outScalarParameterMap,
+	std::map< std::wstring, ScalarParameter >& outScalarParameterMap,
 	uint32_t& outOffset
 )
 {
@@ -99,6 +99,7 @@ bool collectScalarParameters(
 			scalar.offset = outOffset;
 
 			bool scalarUsed = false;
+
 			if (!isFragmentProfile)
 			{
 				std::wstring indexedParameterName = parameterName;
@@ -148,12 +149,16 @@ bool collectScalarParameters(
 
 			if (scalarUsed)
 			{
-				std::map< std::wstring, uint32_t >::iterator j = outScalarParameterMap.find(parameterName);
+				std::map< std::wstring, ScalarParameter >::iterator j = outScalarParameterMap.find(parameterName);
 				if (j != outScalarParameterMap.end())
-					scalar.offset = j->second;
+				{
+					scalar.offset = j->second.offset;
+					j->second.usage |= isFragmentProfile ? SuPixel : SuVertex;
+				}
 				else
 				{
-					outScalarParameterMap[parameterName] = outOffset;
+					outScalarParameterMap[parameterName].offset = outOffset;
+					outScalarParameterMap[parameterName].usage = isFragmentProfile ? SuPixel : SuVertex;
 					outOffset += quadCount * 4;
 				}
 

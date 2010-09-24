@@ -17,6 +17,8 @@ public:
 
 	void free();
 
+	size_t getAlignment() const { return m_alignment; }
+
 	size_t getSize() const { return m_size; }
 
 	void* getPointer() const { return m_pointer; }

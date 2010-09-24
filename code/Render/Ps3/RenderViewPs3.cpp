@@ -26,8 +26,6 @@ namespace traktor
 
 const uint32_t c_reportZCullStats0 = 100;
 const uint32_t c_reportZCullStats1 = 101;
-const uint32_t c_patchProgramSize = 1024 * 1024;
-const uint32_t c_patchProgramCount = 2;
 const uint8_t c_frameSyncLabelId = 128;
 const uint8_t c_waitLabelId = 129;
 
@@ -74,7 +72,6 @@ RenderViewPs3::RenderViewPs3(MemoryHeap* localMemoryHeap, TileArea& tileArea, Re
 ,	m_frameCounter(1)
 ,	m_frameSyncLabelData(0)
 ,	m_renderTargetDirty(false)
-,	m_patchProgramObject(0)
 {
 	std::memset(m_colorAddr, 0, sizeof(m_colorAddr));
 	std::memset(m_colorOffset, 0, sizeof(m_colorOffset));
@@ -254,13 +251,6 @@ bool RenderViewPs3::create(const RenderViewDefaultDesc& desc)
 	volatile uint32_t* waitLabelData = cellGcmGetLabelAddress(c_waitLabelId);
 	*waitLabelData = 0;
 
-	// Allocate area for patched pixel programs.
-	m_patchProgramObject = m_localMemoryHeap->alloc(
-		c_patchProgramSize * c_patchProgramCount,
-		64,
-		false
-	);
-
 	// Set default gamma correction.
 	const float c_defaultGammaCorrection = 1.2f;
 	cellVideoOutSetGamma(CELL_VIDEO_OUT_PRIMARY, c_defaultGammaCorrection);
@@ -272,12 +262,6 @@ bool RenderViewPs3::create(const RenderViewDefaultDesc& desc)
 void RenderViewPs3::close()
 {
 	cellGcmUnbindZcull(0);
-
-	if (m_patchProgramObject)
-	{
-		m_patchProgramObject->free();
-		m_patchProgramObject = 0;
-	}
 
 	if (m_depthObject)
 	{
@@ -366,10 +350,6 @@ bool RenderViewPs3::begin()
 	T_ASSERT (m_renderTargetStack.empty());
 	m_renderTargetStack.push_back(rs);
 	m_renderTargetDirty = true;
-
-	// Reset patched program pool.
-	uint8_t* patchArea = static_cast< uint8_t* >(m_patchProgramObject->getPointer()) + (m_frameCounter % c_patchProgramCount) * c_patchProgramSize;
-	m_patchProgramPool = PoolAllocator(patchArea, c_patchProgramSize);
 
 #if USE_ZCULL
 
@@ -497,7 +477,7 @@ void RenderViewPs3::draw(const Primitives& primitives)
 	if (m_renderTargetDirty)
 		setCurrentRenderState();
 
-	m_currentProgram->bind(m_patchProgramPool, m_stateCache, m_targetSize);
+	m_currentProgram->bind(m_stateCache, m_targetSize, m_frameCounter);
 	m_currentVertexBuffer->bind(m_stateCache, m_currentProgram->getInputSignature());
 
 	uint32_t count = 0;
@@ -681,6 +661,7 @@ void RenderViewPs3::setCurrentRenderState()
 	// Reset state cache; apparently render states somehow get automatically altered when changing render target.
 	m_stateCache.setInFp32Mode((rs.colorFormat == CELL_GCM_SURFACE_F_W32Z32Y32X32 || rs.colorFormat == CELL_GCM_SURFACE_F_X32));
 	m_stateCache.setViewport(rs.viewport);
+	m_stateCache.setVertexShaderConstant(0, 1, m_targetSize);
 	m_stateCache.reset(StateCachePs3::RfRenderState | StateCachePs3::RfSamplerStates | StateCachePs3::RfForced);
 
 	// Ensure target is cleared.

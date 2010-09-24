@@ -18,9 +18,6 @@
 
 namespace traktor
 {
-
-class PoolAllocator;
-
 	namespace render
 	{
 
@@ -58,7 +55,7 @@ public:
 
 	virtual void setStencilReference(uint32_t stencilReference);
 
-	void bind(PoolAllocator& patchProgramPool, StateCachePs3& stateCache, float targetSize[]);
+	void bind(StateCachePs3& stateCache, float targetSize[], uint32_t frameCounter);
 
 	static void unbind();
 
@@ -67,11 +64,23 @@ public:
 private:
 	static ProgramPs3* ms_activeProgram;
 
+	enum DirtyFlags
+	{
+		DfVertex = SuVertex,
+		DfPixel = SuPixel,
+		DfTexture = 4
+	};
+
+	enum { PatchInFifo = 128 };
+
 	Ref< const ProgramResourcePs3 > m_resource;
 	CGprogram m_vertexProgram;
 	CGprogram m_pixelProgram;
 	MemoryHeapObject* m_vertexShaderUCode;
 	MemoryHeapObject* m_pixelShaderUCode;
+	MemoryHeapObject* m_patchPixelShaderUCode[PatchInFifo];
+	MemoryHeapObject* m_patchedPixelShaderUCode;
+	uint32_t m_patchCounter;
 	std::vector< uint8_t > m_inputSignature;
 	RenderState m_renderState;
 	std::vector< ProgramScalar > m_vertexScalars;
@@ -79,13 +88,16 @@ private:
 	std::vector< uint32_t > m_pixelTargetSizeUCodeOffsets;
 	std::vector< ProgramSampler > m_vertexSamplers;
 	std::vector< ProgramSampler > m_pixelSamplers;
-	std::map< handle_t, uint32_t > m_scalarParameterMap;
+	std::map< handle_t, ScalarParameter > m_scalarParameterMap;
 	std::map< handle_t, uint32_t > m_textureParameterMap;
 	AlignedVector< float > m_scalarParameterData;
 	RefArray< ITexture > m_textureParameterData;
-	uint32_t m_patchedPixelShaderOffset;
-	bool m_dirty;
+	uint8_t m_dirty;
+	float m_targetSize[2];
 	int32_t& m_counter;
+
+	uint32_t m_debugFrame;
+	uint32_t m_patchesInFrame;
 };
 
 	}

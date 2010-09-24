@@ -40,7 +40,14 @@ public:
 
 	void setSamplerTexture(int32_t stage, const CellGcmTexture* texture, uint16_t maxLod);
 
-	void setProgram(const CGprogram vertexProgram, const void* vertexUCode, const CGprogram fragmentProgram, const uint32_t fragmentOffset, bool updateFragmentProgram);
+	void setProgram(
+		const CGprogram vertexProgram,
+		const void* vertexUCode,
+		const CGprogram fragmentProgram,
+		const uint32_t fragmentOffset,
+		bool updateFragmentConstants,
+		bool updateFragmentTextures
+	);
 
 	void setVertexShaderConstant(uint32_t registerOffset, uint32_t registerCount, const float* constantData);
 

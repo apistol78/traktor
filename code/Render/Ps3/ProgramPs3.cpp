@@ -1,6 +1,5 @@
 #include <ppu_intrinsics.h>
 #include "Core/Log/Log.h"
-#include "Core/Memory/PoolAllocator.h"
 #include "Core/Misc/Adler32.h"
 #include "Core/Misc/Align.h"
 #include "Core/Misc/String.h"
@@ -77,10 +76,20 @@ ProgramPs3::ProgramPs3(int32_t& counter)
 ,	m_pixelProgram(0)
 ,	m_vertexShaderUCode(0)
 ,	m_pixelShaderUCode(0)
-,	m_patchedPixelShaderOffset(0)
-,	m_dirty(false)
+,	m_patchedPixelShaderUCode(0)
+,	m_patchCounter(0)
+,	m_dirty(0)
 ,	m_counter(counter)
+
+,	m_debugFrame(0)
+
 {
+	for (uint32_t i = 0; i < sizeof_array(m_patchPixelShaderUCode); ++i)
+		m_patchPixelShaderUCode[i] = 0;
+
+	m_targetSize[0] =
+	m_targetSize[1] = 0.0f;
+
 	++m_counter;
 }
 
@@ -108,7 +117,7 @@ bool ProgramPs3::create(MemoryHeap* memoryHeap, const ProgramResourcePs3* resour
 	m_vertexSamplers = resource->m_vertexSamplers;
 	m_pixelSamplers = resource->m_pixelSamplers;
 
-	for (std::map< std::wstring, uint32_t >::const_iterator i = resource->m_scalarParameterMap.begin(); i != resource->m_scalarParameterMap.end(); ++i)
+	for (std::map< std::wstring, ScalarParameter >::const_iterator i = resource->m_scalarParameterMap.begin(); i != resource->m_scalarParameterMap.end(); ++i)
 	{
 		m_scalarParameterMap.insert(std::make_pair(
 			getParameterHandle(i->first),
@@ -140,6 +149,25 @@ bool ProgramPs3::create(MemoryHeap* memoryHeap, const ProgramResourcePs3* resour
 	m_inputSignature = resource->m_inputSignature;
 	m_renderState = resource->m_renderState;
 
+	if (!m_pixelScalars.empty() || !m_pixelTargetSizeUCodeOffsets.empty())
+	{
+		// Allocate patch fragments.
+		for (uint32_t i = 0; i < sizeof_array(m_patchPixelShaderUCode); ++i)
+		{
+			m_patchPixelShaderUCode[i] = memoryHeap->alloc(m_pixelShaderUCode->getSize(), m_pixelShaderUCode->getAlignment(), false);
+			std::memcpy(
+				m_patchPixelShaderUCode[i]->getPointer(),
+				m_pixelShaderUCode->getPointer(),
+				m_pixelShaderUCode->getSize()
+			);
+		}
+	}
+	else
+	{
+		// No parameters; ie no need to patch this fragment thus we always use same fragment.
+		m_patchedPixelShaderUCode = m_pixelShaderUCode;
+	}
+
 	return true;
 }
 
@@ -147,70 +175,81 @@ void ProgramPs3::destroy()
 {
 	if (ms_activeProgram == this)
 		ms_activeProgram = 0;
+
+	for (uint32_t i = 0; i < sizeof_array(m_patchPixelShaderUCode); ++i)
+	{
+		if (m_patchPixelShaderUCode[i])
+		{
+			m_patchPixelShaderUCode[i]->free();
+			m_patchPixelShaderUCode[i] = 0;
+		}
+	}
+
+	m_patchedPixelShaderUCode = 0;
 }
 
 void ProgramPs3::setFloatParameter(handle_t handle, float param)
 {
-	std::map< handle_t, uint32_t >::const_iterator i = m_scalarParameterMap.find(handle);
+	std::map< handle_t, ScalarParameter >::const_iterator i = m_scalarParameterMap.find(handle);
 	if (i == m_scalarParameterMap.end())
 		return;
 
-	m_scalarParameterData[i->second] = param;
-	m_dirty = true;
+	m_scalarParameterData[i->second.offset] = param;
+	m_dirty |= i->second.usage;
 }
 
 void ProgramPs3::setFloatArrayParameter(handle_t handle, const float* param, int length)
 {
-	std::map< handle_t, uint32_t >::const_iterator i = m_scalarParameterMap.find(handle);
+	std::map< handle_t, ScalarParameter >::const_iterator i = m_scalarParameterMap.find(handle);
 	if (i == m_scalarParameterMap.end())
 		return;
 
-	__builtin_memcpy(&m_scalarParameterData[i->second], param, length * sizeof(float));
-	m_dirty = true;
+	__builtin_memcpy(&m_scalarParameterData[i->second.offset], param, length * sizeof(float));
+	m_dirty |= i->second.usage;
 }
 
 void ProgramPs3::setVectorParameter(handle_t handle, const Vector4& param)
 {
-	std::map< handle_t, uint32_t >::const_iterator i = m_scalarParameterMap.find(handle);
+	std::map< handle_t, ScalarParameter >::const_iterator i = m_scalarParameterMap.find(handle);
 	if (i == m_scalarParameterMap.end())
 		return;
 
-	param.storeAligned(&m_scalarParameterData[i->second]);
-	m_dirty = true;
+	param.storeAligned(&m_scalarParameterData[i->second.offset]);
+	m_dirty |= i->second.usage;
 }
 
 void ProgramPs3::setVectorArrayParameter(handle_t handle, const Vector4* param, int length)
 {
-	std::map< handle_t, uint32_t >::const_iterator i = m_scalarParameterMap.find(handle);
+	std::map< handle_t, ScalarParameter >::const_iterator i = m_scalarParameterMap.find(handle);
 	if (i == m_scalarParameterMap.end())
 		return;
 
 	for (int j = 0; j < length; ++j)
-		param[j].storeAligned(&m_scalarParameterData[i->second + j * 4]);
+		param[j].storeAligned(&m_scalarParameterData[i->second.offset + j * 4]);
 
-	m_dirty = true;
+	m_dirty |= i->second.usage;
 }
 
 void ProgramPs3::setMatrixParameter(handle_t handle, const Matrix44& param)
 {
-	std::map< handle_t, uint32_t >::const_iterator i = m_scalarParameterMap.find(handle);
+	std::map< handle_t, ScalarParameter >::const_iterator i = m_scalarParameterMap.find(handle);
 	if (i == m_scalarParameterMap.end())
 		return;
 
-	param.storeAligned(&m_scalarParameterData[i->second]);
-	m_dirty = true;
+	param.storeAligned(&m_scalarParameterData[i->second.offset]);
+	m_dirty |= i->second.usage;
 }
 
 void ProgramPs3::setMatrixArrayParameter(handle_t handle, const Matrix44* param, int length)
 {
-	std::map< handle_t, uint32_t >::const_iterator i = m_scalarParameterMap.find(handle);
+	std::map< handle_t, ScalarParameter >::const_iterator i = m_scalarParameterMap.find(handle);
 	if (i == m_scalarParameterMap.end())
 		return;
 
 	for (int j = 0; j < length; ++j)
-		param[j].storeAligned(&m_scalarParameterData[i->second + j * 16]);
+		param[j].storeAligned(&m_scalarParameterData[i->second.offset + j * 16]);
 
-	m_dirty = true;
+	m_dirty |= i->second.usage;
 }
 
 void ProgramPs3::setTextureParameter(handle_t handle, ITexture* texture)
@@ -220,7 +259,7 @@ void ProgramPs3::setTextureParameter(handle_t handle, ITexture* texture)
 		return;
 
 	m_textureParameterData[i->second] = texture;
-	m_dirty = true;
+	m_dirty |= DfTexture;
 }
 
 void ProgramPs3::setStencilReference(uint32_t stencilReference)
@@ -228,31 +267,47 @@ void ProgramPs3::setStencilReference(uint32_t stencilReference)
 	m_renderState.stencilRef = stencilReference;
 }
 
-void ProgramPs3::bind(PoolAllocator& patchProgramPool, StateCachePs3& stateCache, float targetSize[])
+void ProgramPs3::bind(StateCachePs3& stateCache, float targetSize[], uint32_t frameCounter)
 {
 	stateCache.setRenderState(m_renderState);
 
-	if (m_dirty || ms_activeProgram != this)
+	// Check if implicit target size fragment parameter has changed.
+	if (!m_pixelScalars.empty() || !m_pixelTargetSizeUCodeOffsets.empty())
+	{
+		if (targetSize[0] != m_targetSize[0] || targetSize[1] != m_targetSize[1])
+		{
+			m_dirty |= DfPixel;
+			m_targetSize[0] = targetSize[0];
+			m_targetSize[1] = targetSize[1];
+		}
+	}
+
+	// Ensure vertex constants are updated if we aren't the active program.
+	if (ms_activeProgram != this)
+		m_dirty |= DfVertex;
+
+	if (m_dirty)
 	{
 		// Set vertex program constants.
-		for (std::vector< ProgramScalar >::iterator i = m_vertexScalars.begin(); i != m_vertexScalars.end(); ++i)
-			stateCache.setVertexShaderConstant(i->vertexRegisterIndex, i->vertexRegisterCount, &m_scalarParameterData[i->offset]);
-
-		stateCache.setVertexShaderConstant(0, 1, targetSize);
+		if (m_dirty & DfVertex)
+		{
+			for (std::vector< ProgramScalar >::iterator i = m_vertexScalars.begin(); i != m_vertexScalars.end(); ++i)
+				stateCache.setVertexShaderConstant(i->vertexRegisterIndex, i->vertexRegisterCount, &m_scalarParameterData[i->offset]);
+		}
 
 		// Get patched pixel shader.
-		if (!m_pixelScalars.empty() || !m_pixelTargetSizeUCodeOffsets.empty())
+		if (m_dirty & DfPixel)
 		{
-			uint32_t ucodeSize = alignUp(m_pixelShaderUCode->getSize(), 64);
+			if (m_debugFrame != frameCounter)
+			{
+				m_patchesInFrame = 0;
+				m_debugFrame = frameCounter;
+			}
+			if (++m_patchesInFrame >= sizeof_array(m_patchPixelShaderUCode) / 2)
+				log::error << L"Too many patches" << Endl;
 
-			uint8_t* patchedPixelShaderUCode = static_cast< uint8_t* >(patchProgramPool.alloc(ucodeSize));
-			T_ASSERT_M (patchedPixelShaderUCode, L"Out of memory for patched pixel programs");
-
-			__builtin_memcpy(
-				patchedPixelShaderUCode,
-				m_pixelShaderUCode->getPointer(),
-				m_pixelShaderUCode->getSize()
-			);
+			MemoryHeapObject* patchPixelShaderUCode = m_patchPixelShaderUCode[m_patchCounter++ % sizeof_array(m_patchPixelShaderUCode)];
+			uint8_t* patchedPixelShaderUCode = (uint8_t*)patchPixelShaderUCode->getPointer();
 
 			for (std::vector< ProgramScalar >::const_iterator i = m_pixelScalars.begin(); i != m_pixelScalars.end(); ++i)
 			{
@@ -273,10 +328,8 @@ void ProgramPs3::bind(PoolAllocator& patchProgramPool, StateCachePs3& stateCache
 				writeFragmentScalar(&uc[1], targetSize[1]);
 			}
 
-			cellGcmAddressToOffset(patchedPixelShaderUCode, &m_patchedPixelShaderOffset);
+			m_patchedPixelShaderUCode = patchPixelShaderUCode;
 		}
-		else
-			m_patchedPixelShaderOffset = m_pixelShaderUCode->getOffset();
 
 		for (std::vector< ProgramSampler >::iterator i = m_pixelSamplers.begin(); i != m_pixelSamplers.end(); ++i)
 		{
@@ -295,10 +348,12 @@ void ProgramPs3::bind(PoolAllocator& patchProgramPool, StateCachePs3& stateCache
 		m_vertexProgram,
 		m_vertexShaderUCode->getPointer(),
 		m_pixelProgram,
-		m_patchedPixelShaderOffset,
-		(m_dirty || ms_activeProgram != this)
+		m_patchedPixelShaderUCode->getOffset(),
+		m_dirty & DfPixel,
+		m_dirty & DfTexture
 	);
 
+	m_dirty = 0;
 	ms_activeProgram = this;
 }
 

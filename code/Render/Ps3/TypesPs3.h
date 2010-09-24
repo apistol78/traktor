@@ -94,6 +94,18 @@ struct ProgramSampler
 	uint16_t texture;
 };
 
+enum ScalarUsage
+{
+	SuVertex = 1,
+	SuPixel = 2
+};
+
+struct ScalarParameter
+{
+	uint32_t offset;
+	uint8_t usage;
+};
+
 bool getGcmTextureInfo(TextureFormat textureFormat, uint8_t& outGcmFormat);
 
 void cellUtilConvertLinearToSwizzle(

@@ -128,6 +128,26 @@ private:
 	ProgramSampler& m_ref;
 };
 
+class MemberScalarParameter : public MemberComplex
+{
+public:
+	MemberScalarParameter(const std::wstring& name, ScalarParameter& ref)
+	:	MemberComplex(name, true)
+	,	m_ref(ref)
+	{
+	}
+
+	virtual bool serialize(ISerializer& s) const
+	{
+		s >> Member< uint32_t >(L"offset", m_ref.offset);
+		s >> Member< uint8_t >(L"usage", m_ref.usage);
+		return true;
+	}
+
+private:
+	ScalarParameter& m_ref;
+};
+
 class MemberSamplerState : public MemberComplex
 {
 public:
@@ -217,7 +237,7 @@ bool ProgramResourcePs3::serialize(ISerializer& s)
 	s >> MemberStlVector< ProgramScalar, MemberProgramScalar >(L"pixelScalars", m_pixelScalars);
 	s >> MemberStlVector< ProgramSampler, MemberProgramSampler >(L"vertexSamplers", m_vertexSamplers);
 	s >> MemberStlVector< ProgramSampler, MemberProgramSampler >(L"pixelSamplers", m_pixelSamplers);
-	s >> MemberStlMap< std::wstring, uint32_t >(L"scalarParameterMap", m_scalarParameterMap);
+	s >> MemberStlMap< std::wstring, ScalarParameter, MemberStlPair< std::wstring, ScalarParameter, Member< std::wstring >, MemberScalarParameter > >(L"scalarParameterMap", m_scalarParameterMap);
 	s >> MemberStlMap< std::wstring, uint32_t >(L"textureParameterMap", m_textureParameterMap);
 	s >> Member< uint32_t >(L"scalarParameterDataSize", m_scalarParameterDataSize);
 	s >> Member< uint32_t >(L"textureParameterDataSize", m_textureParameterDataSize);
