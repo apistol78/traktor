@@ -114,6 +114,26 @@ bool SessionSteam::withdrawAchievement(const std::wstring& achievementId)
 	return true;
 }
 
+bool SessionSteam::haveAchievement(const std::wstring& achievementId)
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
+	if (!m_receivedStats)
+	{
+		log::error << L"Unable to query achievement \"" << achievementId << L"\"; no stats received yet" << Endl;
+		return false;
+	}
+
+	bool achieved = false;
+	if (!SteamUserStats()->GetAchievement(wstombs(achievementId).c_str(), &achieved))
+	{
+		log::error << L"Unable to query achievement \"" << achievementId << L"\"; GetAchievement failed" << Endl;
+		return false;
+	}
+
+	return achieved;
+}
+
 Ref< ILeaderboard > SessionSteam::getLeaderboard(const std::wstring& id)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);

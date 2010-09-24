@@ -35,6 +35,8 @@ public:
 
 	virtual bool withdrawAchievement(const std::wstring& achievementId);
 
+	virtual bool haveAchievement(const std::wstring& achievementId);
+
 	virtual Ref< ILeaderboard > getLeaderboard(const std::wstring& id);
 
 	virtual bool setStatValue(const std::wstring& statId, float value);

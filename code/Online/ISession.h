@@ -60,6 +60,12 @@ public:
 	 */
 	virtual bool withdrawAchievement(const std::wstring& achievementId) = 0;
 
+	/*! \brief Have achievement.
+	 *
+	 * \return True if achievement is awared.
+	 */
+	virtual bool haveAchievement(const std::wstring& achievementId) = 0;
+
 	/*! \brief Get leaderboard.
 	 *
 	 * \param id Leaderboard id.

@@ -63,6 +63,24 @@ bool SessionLocal::withdrawAchievement(const std::wstring& achievementId)
 	return m_db->executeUpdate(L"delete from AwardedAchievements where userId=" + toString(uid) + L" and achievementId=" + toString(aid)) >= 0;
 }
 
+bool SessionLocal::haveAchievement(const std::wstring& achievementId)
+{
+	Ref< sql::IResultSet > rs;
+
+	rs = m_db->executeQuery(L"select id from Achievements where name='" + achievementId + L"'");
+	if (!rs || !rs->next())
+		return false;
+
+	int32_t aid = rs->getInt32(0);
+	int32_t uid = m_user->getId();
+
+	rs = m_db->executeQuery(L"select count(*) from AwardedAchievements where userId=" + toString(uid) + L" and achievementId=" + toString(aid));
+	if (!rs || !rs->next())
+		return false;
+
+	return rs->getInt32(0) > 0;
+}
+
 bool SessionLocal::setStatValue(const std::wstring& statId, float value)
 {
 	if (m_db->executeUpdate(L"update Stats set value=" + toString(value) + L" where name='" + statId + L"'") > 0)
