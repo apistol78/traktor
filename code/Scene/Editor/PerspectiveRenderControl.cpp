@@ -683,10 +683,12 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 				world::PostProcessStep::Instance::RenderParams params;
 
 				params.viewFrustum = m_worldRenderView.getViewFrustum();
+				params.viewToLight = Matrix44::identity();
 				params.projection = m_worldRenderView.getProjection();
+				params.depthRange = m_worldRenderer->getSettings().depthRange;
 				params.shadowFarZ = m_worldRenderer->getSettings().shadowFarZ;
 				params.shadowMapBias = m_worldRenderer->getSettings().shadowMapBias;
-				params.deltaTime = deltaTime;				
+				params.deltaTime = deltaTime;
 
 				m_postProcess->render(
 					m_renderView,
