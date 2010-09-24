@@ -73,6 +73,7 @@ void PostProcessStepSimple::InstanceSimple::render(
 
 	shader->setFloatParameter(L"Time", m_time);
 	shader->setFloatParameter(L"DeltaTime", params.deltaTime);
+	shader->setFloatParameter(L"DepthRange", params.depthRange);
 
 	const std::vector< Source >& sources = m_step->m_sources;
 	for (std::vector< Source >::const_iterator i = sources.begin(); i != sources.end(); ++i)
