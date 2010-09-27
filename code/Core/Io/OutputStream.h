@@ -149,6 +149,11 @@ T_DLLCLASS OutputStream& DecreaseIndent(OutputStream& s);
  */
 T_DLLCLASS OutputStream& FormatMultipleLines(OutputStream& s, const std::wstring& str);
 
+/*! \brief Format as hexadecimal number.
+ * \ingroup Core
+ */
+T_DLLCLASS OutputStream& FormatHex(OutputStream& s, uint32_t number);
+
 }
 
 #endif	// traktor_OutputStream_H

@@ -45,7 +45,7 @@ Ref< Model > ModelFormatObj::read(const Path& filePath, uint32_t importFlags) co
 		if (str.empty() || str[0] == L'#')
 			continue;
 
-		if (startsWith(str, L"v "))
+		if (startsWith< std::wstring >(str, L"v "))
 		{
 			std::vector< float > values;
 			if (Split< std::wstring, float >::any(str.substr(2), L" \t", values) >= 3)
@@ -58,7 +58,7 @@ Ref< Model > ModelFormatObj::read(const Path& filePath, uint32_t importFlags) co
 				));
 			}
 		}
-		else if (startsWith(str, L"vt "))
+		else if (startsWith< std::wstring >(str, L"vt "))
 		{
 			std::vector< float > values;
 			if (Split< std::wstring, float >::any(str.substr(2), L" \t", values) >= 2)
@@ -69,7 +69,7 @@ Ref< Model > ModelFormatObj::read(const Path& filePath, uint32_t importFlags) co
 				));
 			}
 		}
-		else if (startsWith(str, L"vn "))
+		else if (startsWith< std::wstring >(str, L"vn "))
 		{
 			std::vector< float > values;
 			if (Split< std::wstring, float >::any(str.substr(2), L" \t", values) >= 3)
@@ -82,7 +82,7 @@ Ref< Model > ModelFormatObj::read(const Path& filePath, uint32_t importFlags) co
 				));
 			}
 		}
-		else if (startsWith(str, L"f "))
+		else if (startsWith< std::wstring >(str, L"f "))
 		{
 			std::vector< std::wstring > values;
 			if (Split< std::wstring >::any(str.substr(2), L" \t", values) > 0)
@@ -108,7 +108,7 @@ Ref< Model > ModelFormatObj::read(const Path& filePath, uint32_t importFlags) co
 				md->addUniquePolygon(polygon);
 			}
 		}
-		else if (startsWith(str, L"usemtl "))
+		else if (startsWith< std::wstring >(str, L"usemtl "))
 		{
 			materialId = ~0UL;
 

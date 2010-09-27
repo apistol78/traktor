@@ -194,11 +194,10 @@ Path NativeVolume::getCurrentDirectory() const
 
 void NativeVolume::mountVolumes(FileSystem& fileSystem)
 {
-	char cwd[256];
+	char cwd[512];
 	getcwd(cwd, sizeof(cwd));
 
 	std::wstring workingDirectory = std::wstring(L"C:") + mbstows(cwd);
-	log::debug << L"Initial working directory \"" << workingDirectory << L"\"" << Endl;
 
 	Ref< IVolume > volume = new NativeVolume(workingDirectory);
 	fileSystem.mount(L"C", volume);

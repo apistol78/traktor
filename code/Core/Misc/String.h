@@ -92,7 +92,8 @@ inline std::wstring toLower(const std::wstring& str)
  * \param start Match string.
  * \return True if source string starts with given match string.
  */
-inline bool startsWith(const std::wstring& str, const std::wstring& start)
+template < typename StringType >
+bool startsWith(const StringType& str, const StringType& start)
 {
 	if (str.length() < start.length())
 		return false;
@@ -108,7 +109,8 @@ inline bool startsWith(const std::wstring& str, const std::wstring& start)
  * \param end Match string.
  * \return True if source string ends with given match string.
  */
-inline bool endsWith(const std::wstring& str, const std::wstring& end)
+template < typename StringType >
+bool endsWith(const StringType& str, const StringType& end)
 {
 	if (str.length() < end.length())
 		return false;
@@ -198,7 +200,10 @@ template < typename ValueType >
 inline ValueType parseString(const std::string& text, const ValueType& defaultValue)
 {
 	ValueType value = defaultValue;
-	std::stringstream ss(text); ss >> value;
+	if (startsWith< std::string >(text, "0x"))
+		std::stringstream(text.substr(2)) >> std::hex >> value;
+	else
+		std::stringstream(text) >> value;
 	return value;
 }
 
@@ -219,7 +224,10 @@ template < typename ValueType >
 inline ValueType parseString(const std::wstring& text, const ValueType& defaultValue)
 {
 	ValueType value = defaultValue;
-	std::wstringstream ss(text); ss >> value;
+	if (startsWith< std::wstring >(text, L"0x"))
+		std::wstringstream(text.substr(2)) >> std::hex >> value;
+	else
+		std::wstringstream(text) >> value;
 	return value;
 }
 
