@@ -53,7 +53,7 @@ bool FileDialogCocoa::create(IWidget* parent, const std::wstring& title, const s
 			if (type == L"*.*")
 				continue;
 			
-			if (startsWith(type, L"*."))
+			if (startsWith< std::wstring >(type, L"*."))
 				type = type.substr(2);
 			
 			[m_types addObject: makeNSString(type)];

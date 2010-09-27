@@ -27,7 +27,7 @@ bool parseGroup(StringReader& sr, int32_t& channelCount, BvhJoint* joint)
 
 		str = trim(str);
 
-		if (startsWith(str, L"OFFSET"))
+		if (startsWith< std::wstring >(str, L"OFFSET"))
 		{
 			std::vector< float > fv;
 			if (Split< std::wstring, float >::any(str.substr(7), L" ", fv) >= 3)
@@ -39,7 +39,7 @@ bool parseGroup(StringReader& sr, int32_t& channelCount, BvhJoint* joint)
 				));
 			}
 		}
-		else if (startsWith(str, L"CHANNELS"))
+		else if (startsWith< std::wstring >(str, L"CHANNELS"))
 		{
 			std::vector< std::wstring > sv;
 			if (Split< std::wstring >::any(str.substr(9), L" ", sv) >= 1)
@@ -55,7 +55,7 @@ bool parseGroup(StringReader& sr, int32_t& channelCount, BvhJoint* joint)
 					joint->addChannel(sv[i + 1]);
 			}
 		}
-		else if (startsWith(str, L"JOINT"))
+		else if (startsWith< std::wstring >(str, L"JOINT"))
 		{
 			Ref< BvhJoint > childJoint = new BvhJoint(str.substr(6));
 			if (!parseGroup(sr, channelCount, childJoint))
@@ -88,7 +88,7 @@ Ref< BvhDocument > BvhDocument::parse(IStream* stream)
 
 	if (sr.readLine(str) <= 0 || str != L"HIERARCHY")
 		return 0;
-	if (sr.readLine(str) <= 0 || !startsWith(str, L"ROOT "))
+	if (sr.readLine(str) <= 0 || !startsWith< std::wstring >(str, L"ROOT "))
 		return 0;
 
 	Ref< BvhDocument > document = new BvhDocument();
@@ -100,9 +100,9 @@ Ref< BvhDocument > BvhDocument::parse(IStream* stream)
 
 	if (sr.readLine(str) <= 0 || str != L"MOTION")
 		return 0;
-	if (sr.readLine(str) <= 0 || !startsWith(str, L"Frames:"))
+	if (sr.readLine(str) <= 0 || !startsWith< std::wstring >(str, L"Frames:"))
 		return 0;
-	if (sr.readLine(str) <= 0 || !startsWith(str, L"Frame Time:"))
+	if (sr.readLine(str) <= 0 || !startsWith< std::wstring >(str, L"Frame Time:"))
 		return 0;
 
 	document->m_frameTime = parseString< float >(trim(str.substr(11)));

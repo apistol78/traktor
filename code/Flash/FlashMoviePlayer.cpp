@@ -349,7 +349,7 @@ ActionValue FlashMoviePlayer::getGlobal(const std::wstring& name) const
 void FlashMoviePlayer::Global_getUrl(CallArgs& ca)
 {
 	std::wstring url = ca.args[0].getString();
-	if (startsWith(url, L"FSCommand:"))
+	if (startsWith< std::wstring >(url, L"FSCommand:"))
 	{
 		m_fsCommands.push_back(std::make_pair(
 			url.substr(10),

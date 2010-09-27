@@ -446,7 +446,7 @@ ProgramOpenGL::ProgramOpenGL(ContextOpenGL* resourceContext, GLhandleARB program
 		std::wstring uniformNameW = mbstows(uniformName);
 		
 		// Skip uniforms which starts with _gl_ as they are private.
-		if (startsWith(uniformNameW, L"_gl_"))
+		if (startsWith< std::wstring >(uniformNameW, L"_gl_"))
 			continue;
 
 		// Trim indexed uniforms; seems to vary dependending on OGL implementation.
