@@ -14,7 +14,7 @@ CanvasCocoa::CanvasCocoa(NSView* view)
 ,	m_haveClipper(false)
 {
 	m_foregroundColor = [NSColor controlTextColor];
-	m_backgroundColor = [NSColor controlBackgroundColor];
+	m_backgroundColor = [NSColor windowBackgroundColor];
 	[NSBezierPath setDefaultLineWidth: 1];
 }
 

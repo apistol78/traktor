@@ -185,10 +185,7 @@ bool WidgetFactoryCocoa::getSystemColor(SystemColor systemColor, Color& outColor
 		color = [NSColor textBackgroundColor];
 		break;
 	case ScWindowBackground:
-		{
-			outColor = Color(255, 255, 255);
-			return true;
-		}
+		color = [NSColor windowBackgroundColor];		
 		break;
 	case ScWindowFrame:
 		color = [NSColor windowFrameColor];		

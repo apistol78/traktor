@@ -4,8 +4,10 @@
 #include "Core/Misc/TString.h"
 #include "Ui/EventSubject.h"
 #include "Ui/Cocoa/DialogCocoa.h"
+#include "Ui/Cocoa/NSTargetProxy.h"
 #include "Ui/Cocoa/UtilitiesCocoa.h"
 #include "Ui/Events/CloseEvent.h"
+#include "Ui/Events/CommandEvent.h"
 #include "Ui/Events/MoveEvent.h"
 #include "Ui/Events/SizeEvent.h"
 
@@ -64,7 +66,7 @@ int DialogCocoa::showModal()
 void DialogCocoa::endModal(int result)
 {
 	m_result = result;
-	[NSApp stopModal];
+	[NSApp abortModal];
 }
 
 void DialogCocoa::setMinSize(const Size& minSize)
@@ -75,6 +77,13 @@ void DialogCocoa::setMinSize(const Size& minSize)
 
 void DialogCocoa::destroy()
 {
+	// Release all timers.
+	for (std::map< int, NSTimer* >::iterator i = m_timers.begin(); i != m_timers.end(); ++i)
+		[i->second invalidate];
+		
+	m_timers.clear();
+	
+	// Release objects.
 	if (m_window)
 	{
 		[m_window setDelegate: nil];
@@ -162,10 +171,38 @@ void DialogCocoa::releaseCapture()
 
 void DialogCocoa::startTimer(int interval, int id)
 {
+	ITargetProxyCallback* targetCallback = new TargetProxyCallbackImpl< DialogCocoa >(
+		this,
+		&DialogCocoa::callbackTimer,
+		0
+	);
+
+	NSTargetProxy* targetProxy = [[NSTargetProxy alloc] init];
+	[targetProxy setCallback: targetCallback];
+		
+	NSTimer* timer = [[NSTimer alloc]
+		initWithFireDate: nil
+		interval: (double)interval / 1000.0
+		target: targetProxy
+		selector: @selector(dispatchActionCallback:)
+		userInfo: nil
+		repeats: YES
+	];
+		
+	[[NSRunLoop currentRunLoop] addTimer: timer forMode: NSDefaultRunLoopMode];
+	[[NSRunLoop currentRunLoop] addTimer: timer forMode: NSModalPanelRunLoopMode];
+	
+	m_timers[id] = timer;
 }
 
 void DialogCocoa::stopTimer(int id)
 {
+	std::map< int, NSTimer* >::iterator i = m_timers.find(id);
+	if (i != m_timers.end())
+	{
+		[i->second invalidate];
+		m_timers.erase(i);
+	}
 }
 
 void DialogCocoa::setOutline(const Point* p, int np)
@@ -174,6 +211,7 @@ void DialogCocoa::setOutline(const Point* p, int np)
 
 void DialogCocoa::setRect(const Rect& rect)
 {
+	[m_window setFrame: makeNSRect(rect) display: YES];
 }
 
 Rect DialogCocoa::getRect() const
@@ -301,6 +339,12 @@ bool DialogCocoa::event_windowShouldClose()
 	}
 	else
 		return false;
+}
+
+void DialogCocoa::callbackTimer(void* controlId)
+{
+	CommandEvent commandEvent(m_owner, 0);
+	m_owner->raiseEvent(EiTimer, &commandEvent);
 }
 
 	}
