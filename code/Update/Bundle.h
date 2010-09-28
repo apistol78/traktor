@@ -32,8 +32,6 @@ public:
 
 	int32_t getVersion() const;
 
-	const std::wstring& getBaseUrl() const;
-
 	const std::wstring& getDescription() const;
 
 	const RefArray< Item >& getItems() const;
@@ -44,7 +42,6 @@ public:
 
 private:
 	int32_t m_version;
-	std::wstring m_baseUrl;
 	std::wstring m_description;
 	RefArray< Item > m_items;
 	RefArray< IPostAction > m_postActions;

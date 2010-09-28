@@ -22,11 +22,6 @@ int32_t Bundle::getVersion() const
 	return m_version;
 }
 
-const std::wstring& Bundle::getBaseUrl() const
-{
-	return m_baseUrl;
-}
-
 const std::wstring& Bundle::getDescription() const
 {
 	return m_description;
@@ -45,7 +40,6 @@ const RefArray< IPostAction >& Bundle::getPostActions() const
 bool Bundle::serialize(ISerializer& s)
 {
 	s >> Member< int32_t >(L"version", m_version);
-	s >> Member< std::wstring >(L"baseUrl", m_baseUrl);
 	s >> Member< std::wstring >(L"description", m_description);
 	s >> MemberRefArray< Item >(L"items", m_items);
 	s >> MemberRefArray< IPostAction >(L"postActions", m_postActions);

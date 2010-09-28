@@ -32,6 +32,8 @@ public:
 	const MD5& getMD5() const;
 
 	const std::wstring& getUrl() const;
+	
+	const std::wstring& getTargetPath() const;
 
 	bool autoLaunch() const;
 
@@ -41,6 +43,7 @@ private:
 	uint32_t m_size;
 	MD5 m_md5;
 	std::wstring m_url;
+	std::wstring m_targetPath;
 	bool m_autoLaunch;
 };
 
