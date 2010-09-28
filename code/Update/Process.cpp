@@ -42,6 +42,7 @@ struct BundleDownloader : public ui::custom::BackgroundWorkerStatus
 {
 	uint8_t m_buffer[4096];
 	bool m_result;
+	std::set< Path > m_receivedFiles;
 
 	BundleDownloader()
 	:	m_result(true)
@@ -52,8 +53,6 @@ struct BundleDownloader : public ui::custom::BackgroundWorkerStatus
 	{
 		Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
 		const RefArray< Item >& bundleItems = bundle->getItems();
-		net::Url baseUrl(bundle->getBaseUrl());
-		Path bundleBasePath = baseUrl.valid() ? baseUrl.getPath() : L"/";
 
 		setSteps(1000);
 
@@ -87,24 +86,13 @@ struct BundleDownloader : public ui::custom::BackgroundWorkerStatus
 					break;
 				}
 
-				Path bundlePath = bundleItemUrl.getPath();
-				Path filePath = bundlePath;
-
-				if (!FileSystem::getInstance().getRelativePath(
-					bundlePath,
-					bundleBasePath,
-					filePath
-				))
-				{
-					log::error << L"Unable to determine file path from resource URL" << Endl;
-					m_result = false;
-					break;
-				}
-
-				FileSystem::getInstance().makeAllDirectories(filePath.getPathOnly());
+				Path filePath = resource->getTargetPath();
 
 				uint32_t progress = uint32_t((progressSize * 1000) / totalSize);
 				notify(progress, filePath.getFileName());
+
+				// Ensure all intermediate directories exist.
+				FileSystem::getInstance().makeAllDirectories(filePath.getPathOnly());
 
 				// Skip downloading if resource already exists and have same checksum
 				// as in bundle.
@@ -206,6 +194,8 @@ struct BundleDownloader : public ui::custom::BackgroundWorkerStatus
 					m_result = false;
 					break;
 				}
+				
+				m_receivedFiles.insert(filePath);
 			}
 		}
 	}
@@ -244,9 +234,15 @@ Process::CheckResult Process::check(const net::Url& bundleUrl)
 
 	bundleStream = 0;
 	connection = 0;
+	
+#if !defined(__APPLE__)
+	Path installedBundle = L"Installed.bundle";
+#else
+	Path installedBundle = L"$(BUNDLE_PATH)/Contents/Resources/Installed.bundle";
+#endif
 
 	// Check if downloaded bundle is same as we already have installed.
-	Ref< IStream > installedBundleStream = FileSystem::getInstance().open(L"Installed.bundle", File::FmRead);
+	Ref< IStream > installedBundleStream = FileSystem::getInstance().open(installedBundle, File::FmRead);
 	if (installedBundleStream)
 	{
 		Ref< Bundle > installedBundle = xml::XmlDeserializer(installedBundleStream).readObject< Bundle >();
@@ -308,8 +304,10 @@ Process::CheckResult Process::check(const net::Url& bundleUrl)
 		return CrAborted;
 	}
 
+#if defined(_WIN32)
+
 	// Update installed bundle descriptor.
-	installedBundleStream = FileSystem::getInstance().open(L"Installed.bundle.updated", File::FmWrite);
+	installedBundleStream = FileSystem::getInstance().open(installedBundle.getPathName() + L".updated", File::FmWrite);
 	if (installedBundleStream)
 	{
 		if (!xml::XmlSerializer(installedBundleStream).writeObject(bundle))
@@ -319,8 +317,6 @@ Process::CheckResult Process::check(const net::Url& bundleUrl)
 	}
 	else
 		log::error << L"Unable to update \"Installed.bundle.updated\"; failed to create file" << Endl;
-
-#if defined(_WIN32)
 
 	// Extract post binary and launch it.
 	Ref< IStream > streamPost = FileSystem::getInstance().open(c_postUpdateFileName, File::FmWrite);
@@ -358,31 +354,40 @@ Process::CheckResult Process::check(const net::Url& bundleUrl)
 	
 #else
 
-	// We've successfully downloaded entire bundle; replace existing local copies with updated items.
-	// Move updated files into place.
-	RefArray< File > files;
-	FileSystem::getInstance().find(L"*.updated", files);
-
-	for (RefArray< File >::const_iterator i = files.begin(); i != files.end(); ++i)
+	// Rename all downloaded files.
+	for (std::set< Path >::const_iterator i = bundleDownloader->m_receivedFiles.begin(); i != bundleDownloader->m_receivedFiles.end(); ++i)
 	{
-		std::wstring filePath = (*i)->getPath().getPathName();
-		if (filePath.length() > 8)
+		const Path& targetPath = *i;
+		if (!FileSystem::getInstance().move(
+			targetPath,
+			targetPath.getPathName() + L".updated",
+			true
+		))
 		{
-			if (!FileSystem::getInstance().move(
-				filePath.substr(0, filePath.length() - 8),
-				filePath,
-				true
-			))
-				log::error << L"Failed to rename updated item; installation might be broken" << Endl;
+			log::error << L"Failed to rename updated \"" << targetPath.getOriginal() << L"\"; installation might be broken" << Endl;
+			return CrFailed;
 		}
 	}
-	
+
+	// Execute post actions.
 	const RefArray< IPostAction >& postActions = bundle->getPostActions();
 	for (RefArray< IPostAction >::const_iterator i = postActions.begin(); i != postActions.end(); ++i)
 	{
 		if (!(*i)->execute())
 			log::error << L"Failed to perform post update action; installation might be broken" << Endl;
 	}
+
+	// Update installed bundle descriptor.
+	installedBundleStream = FileSystem::getInstance().open(installedBundle, File::FmWrite);
+	if (installedBundleStream)
+	{
+		if (!xml::XmlSerializer(installedBundleStream).writeObject(bundle))
+			log::error << L"Unable to update \"Installed.bundle\"; xml serialization failed" << Endl;
+		installedBundleStream->close();
+		installedBundleStream = 0;
+	}
+	else
+		log::error << L"Unable to update \"Installed.bundle\"; failed to create file" << Endl;
 
 #endif
 
