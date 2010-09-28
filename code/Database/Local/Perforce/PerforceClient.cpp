@@ -266,7 +266,7 @@ public:
 	virtual void OutputInfo(char level, const char *data)
 	{
 		std::wstring info = mbstows(data);
-		if (startsWith(info, L"Change "))
+		if (startsWith< std::wstring >(info, L"Change "))
 			m_change = parseString< uint32_t >(info.substr(7));
 		else
 			ClientUserAdapter::OutputInfo(level, data);

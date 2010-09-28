@@ -2,7 +2,7 @@
 #include <Net/Url.h>
 #include <Net/UrlConnection.h>
 #include <Core/Io/FileSystem.h>
-#include <Core/Io/Stream.h>
+#include <Core/Io/IStream.h>
 #include <Core/Misc/CommandLine.h>
 #include <Core/Log/Log.h>
 
@@ -41,10 +41,10 @@ int main(int argc, const char** argv)
 	else
 		fileName = connection->getUrl().getFile();
 
-	Ref< Stream > stream = connection->getStream();
+	Ref< traktor::IStream > stream = connection->getStream();
 	T_ASSERT (stream);
 
-	Ref< Stream > file = FileSystem::getInstance().open(fileName, File::FmWrite);
+	Ref< traktor::IStream > file = FileSystem::getInstance().open(fileName, File::FmWrite);
 	if (!file)
 	{
 		log::error << L"Unable to create file \"" << fileName << L"\"" << Endl;

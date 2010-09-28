@@ -88,7 +88,7 @@ UrlConnection::EstablishResult HttpConnection::establish(const Url& url, Url* ou
 	stream->seek(IStream::SeekSet, 0);
 
 	// Create chunked-transfer stream if such encoding is required.
-	if (response.get(L"Transfer-IEncoding") == L"chunked")
+	if (response.get(L"Transfer-Encoding") == L"chunked")
 		stream = new HttpChunkStream(stream);
 
 	// If response contains content length field we can cap stream.
