@@ -180,13 +180,17 @@ void FormCocoa::startTimer(int interval, int id)
 	NSTargetProxy* targetProxy = [[NSTargetProxy alloc] init];
 	[targetProxy setCallback: targetCallback];
 		
-	NSTimer* timer = [
-		NSTimer scheduledTimerWithTimeInterval: (double)interval / 1000.0
+	NSTimer* timer = [[NSTimer alloc]
+		initWithFireDate: nil
+		interval: (double)interval / 1000.0
 		target: targetProxy
 		selector: @selector(dispatchActionCallback:)
 		userInfo: nil
 		repeats: YES
 	];
+		
+	[[NSRunLoop currentRunLoop] addTimer: timer forMode: NSDefaultRunLoopMode];
+	[[NSRunLoop currentRunLoop] addTimer: timer forMode: NSModalPanelRunLoopMode];
 	
 	m_timers[id] = timer;
 }
