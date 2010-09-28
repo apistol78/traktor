@@ -35,8 +35,6 @@ public:
 	
 	const std::wstring& getTargetPath() const;
 
-	bool autoLaunch() const;
-
 	virtual bool serialize(ISerializer& s);
 
 private:
@@ -44,7 +42,6 @@ private:
 	MD5 m_md5;
 	std::wstring m_url;
 	std::wstring m_targetPath;
-	bool m_autoLaunch;
 };
 
 	}
