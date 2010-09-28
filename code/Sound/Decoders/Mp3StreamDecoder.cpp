@@ -27,7 +27,11 @@ inline float scale(mad_fixed_t sample)
 class Mp3StreamDecoderImpl : public Object
 {
 public:
-	enum { DecodedBufferSize = 65536 * sizeof(float) };
+	enum
+	{
+		DecodedBufferSamples = 65536,
+		DecodedBufferSize = DecodedBufferSamples * sizeof(float)
+	};
 
 	Mp3StreamDecoderImpl()
 	:	m_decodedCount(0)
@@ -152,6 +156,7 @@ public:
 
 			if (m_mad_synth.pcm.channels >= 2)
 			{
+				T_ASSERT (m_mad_synth.pcm.length + m_decodedCount < DecodedBufferSamples);
 				for (uint32_t i = 0; i < m_mad_synth.pcm.length; ++i)
 				{
 					m_decoded[SbcLeft][m_decodedCount] = scale(*left++);
@@ -161,6 +166,7 @@ public:
 			}
 			else if (m_mad_synth.pcm.channels >= 1)
 			{
+				T_ASSERT (m_mad_synth.pcm.length + m_decodedCount < DecodedBufferSamples);
 				for (uint32_t i = 0; i < m_mad_synth.pcm.length; ++i)
 				{
 					m_decoded[SbcLeft][m_decodedCount] = scale(*left++);
@@ -170,6 +176,7 @@ public:
 			}
 			else
 			{
+				T_ASSERT (m_mad_synth.pcm.length + m_decodedCount < DecodedBufferSamples);
 				for (uint32_t i = 0; i < m_mad_synth.pcm.length; ++i)
 				{
 					m_decoded[SbcLeft][m_decodedCount] = 0.0f;
