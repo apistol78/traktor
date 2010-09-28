@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "Core/RefArray.h"
+#include "Core/Thread/Semaphore.h"
 #include "Script/IScriptContext.h"
 
 // import/export mechanism.
@@ -53,6 +54,7 @@ private:
 		int metaTableRef;
 	};
 
+	mutable Semaphore m_lock;
 	lua_State* m_luaState;
 	std::vector< RegisteredClass > m_classRegistry;
 	int32_t m_pending;

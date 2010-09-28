@@ -1,10 +1,11 @@
 #include <csetjmp>
-#include "Script/Lua/ScriptContextLua.h"
-#include "Script/IScriptClass.h"
+#include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
 #include "Core/Misc/Split.h"
 #include "Core/Misc/String.h"
-#include "Core/Log/Log.h"
+#include "Core/Thread/Acquire.h"
+#include "Script/IScriptClass.h"
+#include "Script/Lua/ScriptContextLua.h"
 
 extern "C"
 {
@@ -93,6 +94,8 @@ ScriptContextLua::ScriptContextLua(const RefArray< IScriptClass >& registeredCla
 :	m_luaState(0)
 ,	m_pending(0)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	m_luaState = lua_open();
 
 	lua_atpanic(m_luaState, luaPanic);
@@ -108,12 +111,14 @@ ScriptContextLua::ScriptContextLua(const RefArray< IScriptClass >& registeredCla
 
 ScriptContextLua::~ScriptContextLua()
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	lua_close(m_luaState);
 	T_ASSERT (m_pending == 0);
 }
 
 void ScriptContextLua::setGlobal(const std::wstring& globalName, const Any& globalValue)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	CHECK_LUA_STACK(m_luaState, 0);
 	pushAny(globalValue);
 	lua_setglobal(m_luaState, wstombs(globalName).c_str());
@@ -121,6 +126,7 @@ void ScriptContextLua::setGlobal(const std::wstring& globalName, const Any& glob
 
 Any ScriptContextLua::getGlobal(const std::wstring& globalName)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	CHECK_LUA_STACK(m_luaState, 0);
 	lua_getglobal(m_luaState, wstombs(globalName).c_str());
 	return toAny(-1);
@@ -128,6 +134,7 @@ Any ScriptContextLua::getGlobal(const std::wstring& globalName)
 
 bool ScriptContextLua::executeScript(const std::wstring& script, bool compileOnly, IErrorCallback* errorCallback)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	CHECK_LUA_STACK(m_luaState, 0);
 
 	int32_t result = luaL_loadstring(m_luaState, wstombs(script).c_str());
@@ -167,6 +174,7 @@ bool ScriptContextLua::executeScript(const std::wstring& script, bool compileOnl
 
 bool ScriptContextLua::haveFunction(const std::wstring& functionName) const
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	CHECK_LUA_STACK(m_luaState, 0);
 
 	lua_getglobal(m_luaState, wstombs(functionName).c_str());
@@ -184,6 +192,7 @@ bool ScriptContextLua::haveFunction(const std::wstring& functionName) const
 
 Any ScriptContextLua::executeFunction(const std::wstring& functionName, uint32_t argc, const Any* argv)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	CHECK_LUA_STACK(m_luaState, 0);
 
 	Any returnValue;
@@ -210,6 +219,7 @@ Any ScriptContextLua::executeFunction(const std::wstring& functionName, uint32_t
 
 Any ScriptContextLua::executeMethod(Object* self, const std::wstring& methodName, uint32_t argc, const Any* argv)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	CHECK_LUA_STACK(m_luaState, 0);
 
 	Any returnValue;

@@ -188,9 +188,14 @@ bool SoundChannel::getBlock(const ISoundMixer* mixer, double time, SoundBlock& o
 		if (!soundBlock.samplesCount || !soundBlock.sampleRate || !soundBlock.maxChannel)
 			return false;
 
+		T_ASSERT (soundBlock.samplesCount <= m_hwFrameSamples);
+
 		// Apply filter on sound block.
 		if (m_filter)
+		{
 			m_filter->apply(m_filterInstance, soundBlock);
+			T_ASSERT (soundBlock.samplesCount <= m_hwFrameSamples);
+		}
 
 		// Convert sound block into hardware required sample rate.
 		if (soundBlock.sampleRate != m_hwSampleRate)
@@ -207,6 +212,7 @@ bool SoundChannel::getBlock(const ISoundMixer* mixer, double time, SoundBlock& o
 				
 				float* outputSamples = m_outputSamples[i] + m_outputSamplesIn;
 				T_ASSERT (alignUp(outputSamples, 16) == outputSamples);
+				T_ASSERT (m_outputSamplesIn + outputSamplesCount < m_hwFrameSamples * c_outputSamplesBlockCount);
 
 				if (inputSamples)
 					mixer->stretch(
@@ -228,6 +234,7 @@ bool SoundChannel::getBlock(const ISoundMixer* mixer, double time, SoundBlock& o
  			{
  				const float* inputSamples = soundBlock.samples[i];
  				float* outputSamples = m_outputSamples[i] + m_outputSamplesIn;
+				T_ASSERT (m_outputSamplesIn + soundBlock.samplesCount < m_hwFrameSamples * c_outputSamplesBlockCount);
  
  				if (inputSamples)
  					mixer->mulConst(outputSamples, inputSamples, soundBlock.samplesCount, m_volume);
