@@ -1,4 +1,5 @@
 #include <limits>
+#include "Core/Log/Log.h"
 #include "Core/Math/MathConfig.h"
 #include "Core/Math/MathUtils.h"
 #include "Core/Thread/Thread.h"
@@ -144,7 +145,8 @@ bool SoundDriverOpenAL::create(const SoundDriverCreateDesc& desc, Ref< ISoundMix
 	alSource3f(m_source, AL_VELOCITY, 0.0f, 0.0f, 0.0f);
 	alSource3f(m_source, AL_DIRECTION, 0.0f, 0.0f, 0.0f);
 	alSourcef(m_source, AL_ROLLOFF_FACTOR, 0.0f);
-	alSourcei(m_source, AL_SOURCE_RELATIVE, AL_TRUE);
+	alSourcei(m_source, AL_SOURCE_RELATIVE, AL_FALSE);
+	alSourcei(m_source, AL_LOOPING, AL_FALSE);
 
 	alSourcePlay(m_source);
 	return true;
@@ -163,21 +165,22 @@ void SoundDriverOpenAL::destroy()
 
 void SoundDriverOpenAL::wait()
 {
-	ALint processed;
-	Timer timer;
-
 	if (m_submitted < sizeof_array(m_buffers))
 		return;
 
-	Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
-
 	// Wait until at least one buffer has been processed by OpenAL.
-	double timeout = timer.getElapsedTime() + 1.0;
-	while (timer.getElapsedTime() < timeout)
+	Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
+	Timer timer; timer.start();
+	
+	while (timer.getElapsedTime() < 1.0)
 	{
+		ALint processed = 0;
 		alGetSourcei(m_source, AL_BUFFERS_PROCESSED, &processed);
 		if (processed > 0)
 			break;
+		
+		// Flush pending errors.
+		alGetError();
 			
 		currentThread->yield();
 	}
@@ -185,13 +188,23 @@ void SoundDriverOpenAL::wait()
 
 void SoundDriverOpenAL::submit(const SoundBlock& soundBlock)
 {
-	ALuint buffer;
+	ALuint buffer = 0;
 
 	// Pop processed buffer from queue.
 	if (m_submitted >= sizeof_array(m_buffers))
+	{
 		alSourceUnqueueBuffers(m_source, 1, &buffer);
+		if (alGetError() != AL_NO_ERROR)
+		{
+			log::error << L"OpenAL error detected; unable to submit sound block" << Endl;
+			return;
+		}
+	}
 	else
 		buffer = m_buffers[m_submitted];
+	
+	T_ASSERT (soundBlock.maxChannel <= m_desc.hwChannels);
+	T_ASSERT (soundBlock.samplesCount <= m_desc.frameSamples);
 	
 	if (m_desc.bitsPerSample == 8)
 	{
@@ -230,10 +243,8 @@ void SoundDriverOpenAL::submit(const SoundBlock& soundBlock)
 	// Push buffer onto queue.
 	alSourceQueueBuffers(m_source, 1, &buffer);
 	
-	// Ensure source is still playing.
-	ALint state;
-	alGetSourcei(m_source, AL_SOURCE_STATE, &state);
-	if (state != AL_PLAYING)
+	// Start playing on first buffer.
+	if (m_submitted == 0)
 		alSourcePlay(m_source);
 		
 	++m_submitted;
