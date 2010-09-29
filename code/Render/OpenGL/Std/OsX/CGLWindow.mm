@@ -61,10 +61,19 @@ void setWindowRect(NSWindow* window, int32_t x, int32_t y, int32_t width, int32_
 	[window setFrame: frame display: YES];
 }
 
-void getValidDisplayModes(std::vector< CFDictionaryRef >& outValidModes)
+CFArrayRef getValidDisplayModes()
 {
 	CFArrayRef availModes = CGDisplayAvailableModes(kCGDirectMainDisplay);
-	for (int32_t i = 0; i < CFArrayGetCount(availModes); ++i)
+	if (!availModes)
+		return 0;
+
+	int32_t availModesCount = CFArrayGetCount(availModes);
+		
+	CFMutableArrayRef validModes = CFArrayCreateMutable(kCFAllocatorDefault, availModesCount, NULL);
+	if (!validModes)
+		return 0;
+
+	for (int32_t i = 0; i < availModesCount; ++i)
 	{
 		CFDictionaryRef mode = (CFDictionaryRef)CFArrayGetValueAtIndex(availModes, i);
 		if (!mode)
@@ -82,62 +91,69 @@ void getValidDisplayModes(std::vector< CFDictionaryRef >& outValidModes)
 			continue;
 		if (CFDictionaryContainsKey(mode, kCGDisplayModeIsStretched))
 			continue;
-			
-		outValidModes.push_back(mode);
+		
+		CFArrayAppendValue(validModes, mode);
 	}
+	
+	return validModes;
 }
 
 		}
 	
 uint32_t cglwGetDisplayModeCount()
 {
-	std::vector< CFDictionaryRef > displayModes;
-	getValidDisplayModes(displayModes);
-	return uint32_t(displayModes.size());
+	CFArrayRef displayModes = getValidDisplayModes();
+	if (!displayModes)
+		return 0;
+		
+	uint32_t displayModesCount = CFArrayGetCount(displayModes);
+	CFRelease(displayModes);
+	
+	return displayModesCount;
 }
 
 bool cglwGetDisplayMode(uint32_t index, DisplayMode& outDisplayMode)
 {
-	std::vector< CFDictionaryRef > displayModes;
-	getValidDisplayModes(displayModes);
-	if (index >= displayModes.size())
+	CFArrayRef displayModes = getValidDisplayModes();
+	if (!displayModes)
 		return false;
 	
-	CFDictionaryRef mode = displayModes[index];
+	CFDictionaryRef mode = (CFDictionaryRef)CFArrayGetValueAtIndex(displayModes, index);
 	if (!mode)
+	{
+		CFRelease(displayModes);
 		return false;
+	}
 		
 	outDisplayMode.width = getDictionaryLong(mode, kCGDisplayWidth);
 	outDisplayMode.height = getDictionaryLong(mode, kCGDisplayHeight);
 	outDisplayMode.refreshRate = getDictionaryLong(mode, kCGDisplayRefreshRate);
 	outDisplayMode.colorBits = getDictionaryLong(mode, kCGDisplayBitsPerPixel);
 	
+	CFRelease(displayModes);
 	return true;
 }
 
 bool cglwSetDisplayMode(const DisplayMode& displayMode)
 {
+	CFArrayRef displayModes = getValidDisplayModes();
+	if (!displayModes)
+		return false;
+
+	uint32_t displayModesCount = CFArrayGetCount(displayModes);
 	CFDictionaryRef bestMatch = 0;
 
-	log::info << L"cglwSetDisplayMode" << Endl;
-	log::info << L"\twidth " << displayMode.width << Endl;
-	log::info << L"\theight " << displayMode.height << Endl;
-	log::info << L"\trefreshRate " << displayMode.refreshRate << Endl;
-	log::info << L"\tcolorBits " << displayMode.colorBits << Endl;
-
-	std::vector< CFDictionaryRef > displayModes;
-	getValidDisplayModes(displayModes);
-
-	for (std::vector< CFDictionaryRef >::iterator i = displayModes.begin(); i != displayModes.end(); ++i)
+	for (uint32_t i = 0; i < displayModesCount; ++i)
 	{
+		CFDictionaryRef mode = (CFDictionaryRef)CFArrayGetValueAtIndex(displayModes, i);
 		if (
-			getDictionaryLong(*i, kCGDisplayWidth) == displayMode.width &&
-			getDictionaryLong(*i, kCGDisplayHeight) == displayMode.height &&
-			getDictionaryLong(*i, kCGDisplayRefreshRate) == displayMode.refreshRate &&
-			getDictionaryLong(*i, kCGDisplayBitsPerPixel) == displayMode.colorBits
+			getDictionaryLong(mode, kCGDisplayWidth) == displayMode.width &&
+			getDictionaryLong(mode, kCGDisplayHeight) == displayMode.height &&
+			getDictionaryLong(mode, kCGDisplayRefreshRate) == displayMode.refreshRate &&
+			getDictionaryLong(mode, kCGDisplayBitsPerPixel) == displayMode.colorBits
 		)
 		{
-			bestMatch = *i;
+			bestMatch = mode;
 			break;
 		}
 	}
@@ -145,18 +161,21 @@ bool cglwSetDisplayMode(const DisplayMode& displayMode)
 	if (!bestMatch)
 	{
 		log::error << L"Unable to set display mode; no such display mode supported" << Endl;
+		CFRelease(displayModes);
 		return false;
 	}
 
 	CGDisplaySwitchToMode(kCGDirectMainDisplay, bestMatch);
+	CFRelease(displayModes);
+	
 	return true;
 }
 
 bool cglwGetCurrentDisplayMode(DisplayMode& outDisplayMode)
 {
 	CFDictionaryRef mode = CGDisplayCurrentMode(kCGDirectMainDisplay);
-//	if (!mode)
-//		return false;
+	if (!mode)
+		return false;
 	
 	outDisplayMode.width = getDictionaryLong(mode, kCGDisplayWidth);
 	outDisplayMode.height = getDictionaryLong(mode, kCGDisplayHeight);
