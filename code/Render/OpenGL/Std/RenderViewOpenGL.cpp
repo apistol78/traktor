@@ -410,7 +410,7 @@ void RenderViewOpenGL::draw(const Primitives& primitives)
 	}
 	else
 	{
-#if defined(_DEBUG) && defined(__APPLE__)
+#if 0
 		if (!cglwCheckHardwarePath())
 			log::error << L"Software path detected; serious performance issue" << Endl;
 #endif
