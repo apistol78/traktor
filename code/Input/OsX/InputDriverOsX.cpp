@@ -1,5 +1,6 @@
 #include "Core/Log/Log.h"
 #include "Input/OsX/InputDeviceGamepadOsX.h"
+#include "Input/OsX/InputDeviceJoystickOsX.h"
 #include "Input/OsX/InputDeviceKeyboardOsX.h"
 #include "Input/OsX/InputDeviceMouseOsX.h"
 #include "Input/OsX/InputDriverOsX.h"
@@ -106,6 +107,21 @@ bool InputDriverOsX::create()
 		CFRelease(matchingCFDictRef);
 	}
 
+	// Joystick matching dictionary.
+	{
+		CFDictionaryRef matchingCFDictRef = createMatchingDictionary(
+			kHIDPage_GenericDesktop,
+			kHIDUsage_GD_Joystick
+		);
+		if (!matchingCFDictRef)
+		{
+			log::error << L"Unable to create input driver; failed to create joystick matching dictionary" << Endl;
+			return false;
+		}
+		CFArrayAppendValue((__CFArray*)matchingDictionariesRef, matchingCFDictRef);
+		CFRelease(matchingCFDictRef);
+	}
+	
 	IOHIDManagerSetDeviceMatchingMultiple(managerRef, matchingDictionariesRef);
 	IOHIDManagerRegisterDeviceMatchingCallback(managerRef, callbackDeviceMatch, this);
 	IOHIDManagerScheduleWithRunLoop(managerRef, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
@@ -170,6 +186,14 @@ void InputDriverOsX::callbackDeviceMatch(void* inContext, IOReturn inResult, voi
 		log::info << L"HID device; matching gamepad device connected" << Endl;
 
 		Ref< InputDeviceGamepadOsX > device = new InputDeviceGamepadOsX(inIOHIDDeviceRef);
+		this_->m_devices.push_back(device);
+		this_->m_devicesChanged = true;
+	}
+	else if (IOHIDDeviceConformsTo(inIOHIDDeviceRef, kHIDPage_GenericDesktop, kHIDUsage_GD_Joystick))
+	{
+		log::info << L"HID device; matching joystick device connected" << Endl;
+
+		Ref< InputDeviceJoystickOsX > device = new InputDeviceJoystickOsX(inIOHIDDeviceRef);
 		this_->m_devices.push_back(device);
 		this_->m_devicesChanged = true;
 	}
