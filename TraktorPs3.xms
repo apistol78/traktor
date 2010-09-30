@@ -4489,7 +4489,12 @@
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
-					<libraries/>
+					<libraries>
+						<item>$(SCE_PS3_ROOT)/target/ppu/lib/libsysutil_np_stub.a</item>
+						<item>$(SCE_PS3_ROOT)/target/ppu/lib/libsysutil_np2_stub.a</item>
+						<item>$(SCE_PS3_ROOT)/target/ppu/lib/libsysutil_np_trophy_stub.a</item>
+						<item>$(SCE_PS3_ROOT)/target/ppu/lib/libsysutil_np_tus_stub.a</item>
+					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
 				</item>
@@ -4506,7 +4511,12 @@
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
-					<libraries/>
+					<libraries>
+						<item>$(SCE_PS3_ROOT)/target/ppu/lib/libsysutil_np_stub.a</item>
+						<item>$(SCE_PS3_ROOT)/target/ppu/lib/libsysutil_np2_stub.a</item>
+						<item>$(SCE_PS3_ROOT)/target/ppu/lib/libsysutil_np_trophy_stub.a</item>
+						<item>$(SCE_PS3_ROOT)/target/ppu/lib/libsysutil_np_tus_stub.a</item>
+					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
 				</item>

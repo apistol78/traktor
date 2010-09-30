@@ -1,3 +1,4 @@
+#include <np.h>
 #include "Online/Psn/SessionPsn.h"
 #include "Online/Psn/UserPsn.h"
 
@@ -19,7 +20,11 @@ void SessionPsn::destroy()
 
 bool SessionPsn::isConnected() const
 {
-	return false;
+	int32_t state;
+	if (sceNpManagerGetStatus(&state) != 0)
+		return false;
+
+	return state == SCE_NP_MANAGER_STATUS_ONLINE;
 }
 
 Ref< IUser > SessionPsn::getUser()

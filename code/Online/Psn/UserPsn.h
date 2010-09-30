@@ -21,16 +21,13 @@ class UserPsn : public IUser
 	T_RTTI_CLASS;
 
 public:
-	UserPsn(const std::wstring& name);
+	UserPsn();
 
 	virtual std::wstring getName() const;
 
 	virtual bool getFriends(RefArray< IUser >& outFriends) const;
 
 	virtual bool sendMessage(const std::wstring& message) const;
-
-private:
-	std::wstring m_name;
 };
 
 	}

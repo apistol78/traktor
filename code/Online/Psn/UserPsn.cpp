@@ -1,3 +1,6 @@
+#include <np.h>
+#include "Core/Io/Utf8Encoding.h"
+#include "Core/Misc/TString.h"
 #include "Online/Psn/UserPsn.h"
 
 namespace traktor
@@ -7,14 +10,16 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.online.UserPsn", UserPsn, IUser)
 
-UserPsn::UserPsn(const std::wstring& name)
-:	m_name(name)
+UserPsn::UserPsn()
 {
 }
 
 std::wstring UserPsn::getName() const
 {
-	return m_name;
+	SceNpOnlineName onlineName;
+	if (sceNpManagerGetOnlineName(&onlineName) < 0)
+		return L"";
+	return mbstows(Utf8Encoding(), onlineName.data);
 }
 
 bool UserPsn::getFriends(RefArray< IUser >& outFriends) const
