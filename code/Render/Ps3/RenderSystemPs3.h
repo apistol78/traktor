@@ -61,14 +61,12 @@ public:
 
 	virtual Ref< IProgramCompiler > createProgramCompiler() const;
 
-	void compactHeaps();
+	void beginRendering();
 
-	void acquireLock() { m_lock.wait(); }
-
-	void releaseLock() { m_lock.release(); }
+	void endRendering();
 
 private:
-	Semaphore m_lock;
+	mutable Semaphore m_lock;
 	Ref< MemoryHeap > m_memoryHeapLocal;
 	Ref< MemoryHeap > m_memoryHeapMain;
 	TileArea m_tileArea;

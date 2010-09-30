@@ -55,7 +55,7 @@ public:
 
 	virtual void setStencilReference(uint32_t stencilReference);
 
-	void bind(StateCachePs3& stateCache, float targetSize[], uint32_t frameCounter);
+	void bind(StateCachePs3& stateCache, const float targetSize[], uint32_t frameCounter);
 
 	static void unbind();
 
@@ -71,15 +71,21 @@ private:
 		DfTexture = 4
 	};
 
-	enum { PatchInFifo = 128 };
+	enum
+	{
+		PatchQueues = 2,
+		MaxPatchInQueue = 64
+	};
 
+	Ref< MemoryHeap > m_memoryHeap;
 	Ref< const ProgramResourcePs3 > m_resource;
 	CGprogram m_vertexProgram;
 	CGprogram m_pixelProgram;
 	MemoryHeapObject* m_vertexShaderUCode;
 	MemoryHeapObject* m_pixelShaderUCode;
-	MemoryHeapObject* m_patchPixelShaderUCode[PatchInFifo];
+	MemoryHeapObject* m_patchPixelShaderUCode[PatchQueues][MaxPatchInQueue];
 	MemoryHeapObject* m_patchedPixelShaderUCode;
+	uint32_t m_patchFrame;
 	uint32_t m_patchCounter;
 	std::vector< uint8_t > m_inputSignature;
 	RenderState m_renderState;
@@ -95,9 +101,6 @@ private:
 	uint8_t m_dirty;
 	float m_targetSize[2];
 	int32_t& m_counter;
-
-	uint32_t m_debugFrame;
-	uint32_t m_patchesInFrame;
 };
 
 	}

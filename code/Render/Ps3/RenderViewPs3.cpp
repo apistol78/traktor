@@ -327,8 +327,7 @@ Viewport RenderViewPs3::getViewport()
 
 bool RenderViewPs3::begin()
 {
-	m_renderSystem->acquireLock();
-	m_renderSystem->compactHeaps();
+	m_renderSystem->beginRendering();
 
 	uint32_t frameIndex = m_frameCounter % sizeof_array(m_colorOffset);
 
@@ -583,7 +582,7 @@ void RenderViewPs3::present()
 
 	m_frameCounter = incrementLabel(m_frameCounter);
 
-	m_renderSystem->releaseLock();
+	m_renderSystem->endRendering();
 }
 
 void RenderViewPs3::pushMarker(const char* const marker)

@@ -25,8 +25,8 @@ namespace traktor
 		{
 
 const uint32_t c_cbSize = 256 * 1024;
-const uint32_t c_hostSize = 8 * 1024 * 1024;
-const uint32_t c_mainSize = 12 * 1024 * 1024;	//< RSX mapped main memory; used for dynamic index- and vertexbuffers.
+const uint32_t c_hostSize = 1 * 1024 * 1024;
+const uint32_t c_mainSize = 16 * 1024 * 1024;	//< RSX mapped main memory; used for dynamic index- and vertexbuffers.
 
 struct ResolutionDesc { int32_t width; int32_t height; int32_t colorBits; } c_resolutions[] =
 {
@@ -227,33 +227,17 @@ Ref< IProgramCompiler > RenderSystemPs3::createProgramCompiler() const
 	return new ProgramCompilerPs3();
 }
 
-void RenderSystemPs3::compactHeaps()
+void RenderSystemPs3::beginRendering()
 {
-#if defined(_DEBUG)
-
-	static int32_t localObjectCount = 0, mainObjectCount = 0;
-
-	if (localObjectCount != m_memoryHeapLocal->getObjectCount() || mainObjectCount != m_memoryHeapMain->getObjectCount())
-	{
-		log::debug << L"Local heap:" << Endl;
-		log::debug << IncreaseIndent;
-		log::debug << m_memoryHeapLocal->getAvailable() << L" byte(s) available" << Endl;
-		log::debug << m_memoryHeapLocal->getObjectCount() << L" alive object(s)" << Endl;
-		log::debug << DecreaseIndent;
-
-		log::debug << L"Main heap:" << Endl;
-		log::debug << IncreaseIndent;
-		log::debug << m_memoryHeapMain->getAvailable() << L" byte(s) available" << Endl;
-		log::debug << m_memoryHeapMain->getObjectCount() << L" alive object(s)" << Endl;
-		log::debug << DecreaseIndent;
-
-		localObjectCount = m_memoryHeapLocal->getObjectCount();
-		mainObjectCount = m_memoryHeapMain->getObjectCount();
-	}
-#endif
+	while (!m_lock.wait());
 
 	m_memoryHeapLocal->compact();
 	m_memoryHeapMain->compact();
+}
+
+void RenderSystemPs3::endRendering()
+{
+	m_lock.release();
 }
 
 	}

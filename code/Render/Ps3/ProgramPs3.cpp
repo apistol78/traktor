@@ -25,12 +25,12 @@ namespace traktor
 struct UCodeCacheEntry
 {
 	MemoryHeapObject* ucode;
-	uint32_t count;
+	int32_t count;
 };
 
-std::map< uint32_t, UCodeCacheEntry > m_ucodeCache;
+std::map< uint32_t, UCodeCacheEntry > g_ucodeCache;
 
-void getProgramUCode(MemoryHeap* memoryHeap, CGprogram program, MemoryHeapObject*& outUCode)
+void acquireProgramUCode(MemoryHeap* memoryHeap, CGprogram program, MemoryHeapObject*& outUCode)
 {
 	uint32_t ucodeSize;
 	void* ucode;
@@ -41,8 +41,8 @@ void getProgramUCode(MemoryHeap* memoryHeap, CGprogram program, MemoryHeapObject
 	Adler32 a32; a32.begin(); a32.feed(ucode, ucodeSize); a32.end();
 	uint32_t hash = a32.get();
 
-	std::map< uint32_t, UCodeCacheEntry >::iterator i = m_ucodeCache.find(hash);
-	if (i == m_ucodeCache.end())
+	std::map< uint32_t, UCodeCacheEntry >::iterator i = g_ucodeCache.find(hash);
+	if (i == g_ucodeCache.end())
 	{
 		outUCode = memoryHeap->alloc(ucodeSize, 64, false);
 		std::memcpy(outUCode->getPointer(), ucode, ucodeSize);
@@ -50,12 +50,28 @@ void getProgramUCode(MemoryHeap* memoryHeap, CGprogram program, MemoryHeapObject
 		UCodeCacheEntry entry;
 		entry.ucode = outUCode;
 		entry.count = 1;
-		m_ucodeCache.insert(std::make_pair(hash, entry));
+		g_ucodeCache.insert(std::make_pair(hash, entry));
 	}
 	else
 	{
 		outUCode = i->second.ucode;
 		i->second.count++;
+	}
+}
+
+void releaseProgramUCode(MemoryHeapObject* ucode)
+{
+	for (std::map< uint32_t, UCodeCacheEntry >::iterator i = g_ucodeCache.begin(); i != g_ucodeCache.end(); ++i)
+	{
+		if (i->second.ucode == ucode)
+		{
+			if (--i->second.count <= 0)
+			{
+				g_ucodeCache.erase(i);
+				ucode->free();
+				break;
+			}
+		}
 	}
 }
 
@@ -77,15 +93,16 @@ ProgramPs3::ProgramPs3(int32_t& counter)
 ,	m_vertexShaderUCode(0)
 ,	m_pixelShaderUCode(0)
 ,	m_patchedPixelShaderUCode(0)
+,	m_patchFrame(0)
 ,	m_patchCounter(0)
 ,	m_dirty(0)
 ,	m_counter(counter)
-
-,	m_debugFrame(0)
-
 {
-	for (uint32_t i = 0; i < sizeof_array(m_patchPixelShaderUCode); ++i)
-		m_patchPixelShaderUCode[i] = 0;
+	for (uint32_t i = 0; i < PatchQueues; ++i)
+	{
+		for (uint32_t j = 0; j < MaxPatchInQueue; ++j)
+			m_patchPixelShaderUCode[i][j] = 0;
+	}
 
 	m_targetSize[0] =
 	m_targetSize[1] = 0.0f;
@@ -103,13 +120,14 @@ bool ProgramPs3::create(MemoryHeap* memoryHeap, const ProgramResourcePs3* resour
 {
 	T_ASSERT (resource);
 
+	m_memoryHeap = memoryHeap;
 	m_resource = resource;
 
 	m_vertexProgram = (CGprogram)sceCgcGetBinData(resource->m_vertexShaderBin);
 	m_pixelProgram = (CGprogram)sceCgcGetBinData(resource->m_pixelShaderBin);
 
-	getProgramUCode(memoryHeap, m_vertexProgram, m_vertexShaderUCode);
-	getProgramUCode(memoryHeap, m_pixelProgram, m_pixelShaderUCode);
+	acquireProgramUCode(memoryHeap, m_vertexProgram, m_vertexShaderUCode);
+	acquireProgramUCode(memoryHeap, m_pixelProgram, m_pixelShaderUCode);
 
 	m_vertexScalars = resource->m_vertexScalars;
 	m_pixelScalars = resource->m_pixelScalars;
@@ -149,20 +167,7 @@ bool ProgramPs3::create(MemoryHeap* memoryHeap, const ProgramResourcePs3* resour
 	m_inputSignature = resource->m_inputSignature;
 	m_renderState = resource->m_renderState;
 
-	if (!m_pixelScalars.empty() || !m_pixelTargetSizeUCodeOffsets.empty())
-	{
-		// Allocate patch fragments.
-		for (uint32_t i = 0; i < sizeof_array(m_patchPixelShaderUCode); ++i)
-		{
-			m_patchPixelShaderUCode[i] = memoryHeap->alloc(m_pixelShaderUCode->getSize(), m_pixelShaderUCode->getAlignment(), false);
-			std::memcpy(
-				m_patchPixelShaderUCode[i]->getPointer(),
-				m_pixelShaderUCode->getPointer(),
-				m_pixelShaderUCode->getSize()
-			);
-		}
-	}
-	else
+	if (m_pixelScalars.empty() && m_pixelTargetSizeUCodeOffsets.empty())
 	{
 		// No parameters; ie no need to patch this fragment thus we always use same fragment.
 		m_patchedPixelShaderUCode = m_pixelShaderUCode;
@@ -176,13 +181,28 @@ void ProgramPs3::destroy()
 	if (ms_activeProgram == this)
 		ms_activeProgram = 0;
 
-	for (uint32_t i = 0; i < sizeof_array(m_patchPixelShaderUCode); ++i)
+	for (uint32_t i = 0; i < PatchQueues; ++i)
 	{
-		if (m_patchPixelShaderUCode[i])
+		for (uint32_t j = 0; j < MaxPatchInQueue; ++j)
 		{
-			m_patchPixelShaderUCode[i]->free();
-			m_patchPixelShaderUCode[i] = 0;
+			if (m_patchPixelShaderUCode[i][j])
+			{
+				m_patchPixelShaderUCode[i][j]->free();
+				m_patchPixelShaderUCode[i][j] = 0;
+			}
 		}
+	}
+
+	if (m_pixelShaderUCode)
+	{
+		releaseProgramUCode(m_pixelShaderUCode);
+		m_pixelShaderUCode = 0;
+	}
+
+	if (m_vertexShaderUCode)
+	{
+		releaseProgramUCode(m_vertexShaderUCode);
+		m_vertexShaderUCode = 0;
 	}
 
 	m_patchedPixelShaderUCode = 0;
@@ -267,7 +287,7 @@ void ProgramPs3::setStencilReference(uint32_t stencilReference)
 	m_renderState.stencilRef = stencilReference;
 }
 
-void ProgramPs3::bind(StateCachePs3& stateCache, float targetSize[], uint32_t frameCounter)
+void ProgramPs3::bind(StateCachePs3& stateCache, const float targetSize[], uint32_t frameCounter)
 {
 	stateCache.setRenderState(m_renderState);
 
@@ -298,17 +318,38 @@ void ProgramPs3::bind(StateCachePs3& stateCache, float targetSize[], uint32_t fr
 		// Get patched pixel shader.
 		if (m_dirty & DfPixel)
 		{
-			if (m_debugFrame != frameCounter)
+			if (m_patchFrame != frameCounter)
 			{
-				m_patchesInFrame = 0;
-				m_debugFrame = frameCounter;
+				m_patchCounter = 0;
+				m_patchFrame = frameCounter;
 			}
-			if (++m_patchesInFrame >= sizeof_array(m_patchPixelShaderUCode) / 2)
-				log::error << L"Too many patches" << Endl;
 
-			MemoryHeapObject* patchPixelShaderUCode = m_patchPixelShaderUCode[m_patchCounter++ % sizeof_array(m_patchPixelShaderUCode)];
-			uint8_t* patchedPixelShaderUCode = (uint8_t*)patchPixelShaderUCode->getPointer();
+			if (m_patchCounter >= MaxPatchInQueue)
+			{
+				log::error << L"ProgramPs3::bind failed; out of patches" << Endl;
+				return;
+			}
 
+			MemoryHeapObject** patchQueue = m_patchPixelShaderUCode[m_patchFrame % PatchQueues];
+
+			if (!patchQueue[m_patchCounter])
+			{
+				patchQueue[m_patchCounter] = m_memoryHeap->alloc(m_pixelShaderUCode->getSize(), m_pixelShaderUCode->getAlignment(), false);
+				if (!patchQueue[m_patchCounter])
+				{
+					log::error << L"ProgramPs3::bind failed; out of memory" << Endl;
+					return;
+				}
+				std::memcpy(
+					patchQueue[m_patchCounter]->getPointer(),
+					m_pixelShaderUCode->getPointer(),
+					m_pixelShaderUCode->getSize()
+				);
+			}
+
+			m_patchedPixelShaderUCode = patchQueue[m_patchCounter++];
+
+			uint8_t* patchedPixelShaderUCode = (uint8_t*)m_patchedPixelShaderUCode->getPointer();
 			for (std::vector< ProgramScalar >::const_iterator i = m_pixelScalars.begin(); i != m_pixelScalars.end(); ++i)
 			{
 				for (std::vector< FragmentOffset >::const_iterator j = i->fragmentOffsets.begin(); j != i->fragmentOffsets.end(); ++j)
@@ -324,11 +365,9 @@ void ProgramPs3::bind(StateCachePs3& stateCache, float targetSize[], uint32_t fr
 			for (std::vector< uint32_t >::const_iterator i = m_pixelTargetSizeUCodeOffsets.begin(); i != m_pixelTargetSizeUCodeOffsets.end(); ++i)
 			{
 				uint32_t* uc = (uint32_t*)&patchedPixelShaderUCode[*i];
-				writeFragmentScalar(&uc[0], targetSize[0]);
-				writeFragmentScalar(&uc[1], targetSize[1]);
+				writeFragmentScalar(&uc[0], m_targetSize[0]);
+				writeFragmentScalar(&uc[1], m_targetSize[1]);
 			}
-
-			m_patchedPixelShaderUCode = patchPixelShaderUCode;
 		}
 
 		for (std::vector< ProgramSampler >::iterator i = m_pixelSamplers.begin(); i != m_pixelSamplers.end(); ++i)

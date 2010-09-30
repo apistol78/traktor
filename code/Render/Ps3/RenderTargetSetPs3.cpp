@@ -6,8 +6,6 @@
 #include "Render/Ps3/RenderTargetSetPs3.h"
 #include "Render/Ps3/TileArea.h"
 
-#define USE_TILED_DEPTH 1
-
 namespace traktor
 {
 	namespace render
@@ -30,6 +28,7 @@ RenderTargetSetPs3::RenderTargetSetPs3(int32_t& counter)
 RenderTargetSetPs3::~RenderTargetSetPs3()
 {
 	destroy();
+	--m_counter;
 }
 
 bool RenderTargetSetPs3::create(MemoryHeap* memoryHeap, TileArea& tileArea, const RenderTargetSetCreateDesc& desc)
@@ -56,38 +55,38 @@ bool RenderTargetSetPs3::create(MemoryHeap* memoryHeap, TileArea& tileArea, cons
 		m_depthTexture.height = m_height;
 		m_depthTexture.depth = 1;
 		m_depthTexture.location = CELL_GCM_LOCATION_LOCAL;
-#if USE_TILED_DEPTH
-		m_depthTexture.pitch = cellGcmGetTiledPitchSize(m_width * 4);
-#else
-		m_depthTexture.pitch = m_width * 4;
-#endif
 		m_depthTexture.offset = 0;
 
-#if USE_TILED_DEPTH
-		uint32_t depthSize = m_depthTexture.pitch * alignUp(m_depthTexture.height, 64);
-#else
-		uint32_t depthSize = m_depthTexture.pitch * m_depthTexture.height;
-#endif
+		if (desc.preferTiled)
+			m_depthTexture.pitch = cellGcmGetTiledPitchSize(m_width * 4);
+		else
+			m_depthTexture.pitch = m_width * 4;
+
+		uint32_t depthSize = desc.preferTiled ?
+			m_depthTexture.pitch * alignUp(m_depthTexture.height, 64) :
+			m_depthTexture.pitch * m_depthTexture.height;
+
 		m_depthData = memoryHeap->alloc(depthSize, 4096, false);
 
-#if USE_TILED_DEPTH
-		TileArea::TileInfo depthTile;
-		if (tileArea.alloc(depthSize, depthTile))
+		if (desc.preferTiled)
 		{
-			cellGcmSetTileInfo(
-				depthTile.index,
-				m_depthTexture.location,
-				m_depthTexture.offset,
-				depthSize,
-				m_depthTexture.pitch,
-				CELL_GCM_COMPMODE_Z32_SEPSTENCIL,
-				depthTile.tagBase,
-				depthTile.dramBank
-			);
-			cellGcmBindTile(depthTile.index);
-			m_tileIndex = depthTile.index;
+			TileArea::TileInfo depthTile;
+			if (tileArea.alloc(depthSize, depthTile))
+			{
+				cellGcmSetTileInfo(
+					depthTile.index,
+					m_depthTexture.location,
+					m_depthTexture.offset,
+					depthSize,
+					m_depthTexture.pitch,
+					CELL_GCM_COMPMODE_Z32_SEPSTENCIL,
+					depthTile.tagBase,
+					depthTile.dramBank
+				);
+				cellGcmBindTile(depthTile.index);
+				m_tileIndex = depthTile.index;
+			}
 		}
-#endif
 	}
 	else
 	{
@@ -104,13 +103,11 @@ bool RenderTargetSetPs3::create(MemoryHeap* memoryHeap, TileArea& tileArea, cons
 
 void RenderTargetSetPs3::destroy()
 {
-#if USE_TILED_DEPTH
 	if (m_tileIndex != ~0UL)
 	{
 		cellGcmUnbindTile(m_tileIndex);
 		m_tileIndex = ~0UL;
 	}
-#endif
 
 	if (m_depthData)
 	{
@@ -122,7 +119,6 @@ void RenderTargetSetPs3::destroy()
 		(*i)->destroy();
 	
 	m_renderTargets.clear();
-	--m_counter;
 }
 
 int RenderTargetSetPs3::getWidth() const

@@ -83,6 +83,7 @@ bool WorldRenderer::create(
 		desc.height = height;
 		desc.multiSample = multiSample;
 		desc.depthStencil = false;
+		desc.preferTiled = true;
 		desc.targets[0].format = render::TfR8G8B8A8;
 
 		m_depthTargetSet = renderSystem->createRenderTargetSet(desc);
@@ -117,6 +118,7 @@ bool WorldRenderer::create(
 		desc.height = height;
 		desc.multiSample = multiSample;
 		desc.depthStencil = false;
+		desc.preferTiled = true;
 		desc.targets[0].format = render::TfR16G16B16A16F;
 		desc.targets[1].format = render::TfR16G16B16A16F;
 
@@ -139,6 +141,7 @@ bool WorldRenderer::create(
 		desc.height = m_settings.shadowMapResolution;
 		desc.multiSample = 0;
 		desc.depthStencil = true;
+		desc.preferTiled = true;
 		desc.targets[0].format = render::TfR8G8B8A8;
 
 		switch (m_settings.shadowsQuality)
@@ -176,6 +179,7 @@ bool WorldRenderer::create(
 		desc.multiSample = 0;
 		desc.depthStencil = false;
 		desc.targets[0].format = render::TfR8;
+		desc.preferTiled = true;
 		m_shadowMaskTargetSet = renderSystem->createRenderTargetSet(desc);
 
 		if (m_shadowTargetSet && m_shadowMaskTargetSet)

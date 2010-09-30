@@ -7,8 +7,6 @@
 #include "Render/Ps3/TileArea.h"
 #include "Render/Ps3/TypesPs3.h"
 
-#define USE_TILED_COLOR 1
-
 namespace traktor
 {
 	namespace render
@@ -89,51 +87,50 @@ bool RenderTargetPs3::create(MemoryHeap* memoryHeap, TileArea& tileArea, const R
 	m_colorTexture.height = m_height;
 	m_colorTexture.depth = 1;
 	m_colorTexture.location = CELL_GCM_LOCATION_LOCAL;
-#if USE_TILED_COLOR
-	m_colorTexture.pitch = cellGcmGetTiledPitchSize(alignUp(m_width, 64) * byteSize);
-#else
-	m_colorTexture.pitch = m_width * byteSize;
-#endif
 	m_colorTexture.offset = 0;
 
-#if USE_TILED_COLOR
-	uint32_t colorSize = m_colorTexture.pitch * alignUp(m_colorTexture.height, 64);
-#else
-	uint32_t colorSize = m_colorTexture.pitch * m_colorTexture.height;
-#endif
+	if (setDesc.preferTiled)
+		m_colorTexture.pitch = cellGcmGetTiledPitchSize(alignUp(m_width, 64) * byteSize);
+	else
+		m_colorTexture.pitch = m_width * byteSize;
+
+	uint32_t colorSize = setDesc.preferTiled ?
+		m_colorTexture.pitch * alignUp(m_colorTexture.height, 64) :
+		m_colorTexture.pitch * m_colorTexture.height;
+
 	m_colorData = memoryHeap->alloc(colorSize, 4096, false);
 
-#if USE_TILED_COLOR
-	TileArea::TileInfo colorTile;
-	if (tileArea.alloc(colorSize, colorTile))
+	if (setDesc.preferTiled)
 	{
-		cellGcmSetTileInfo(
-			colorTile.index,
-			CELL_GCM_LOCATION_LOCAL,
-			m_colorData->getOffset(),
-			colorSize,
-			m_colorTexture.pitch,
-			CELL_GCM_COMPMODE_C32_2X1,
-			colorTile.tagBase,
-			colorTile.dramBank
-		);
-		cellGcmBindTile(colorTile.index);
-		m_tileIndex = colorTile.index;
+		TileArea::TileInfo colorTile;
+		if (tileArea.alloc(colorSize, colorTile))
+		{
+			cellGcmSetTileInfo(
+				colorTile.index,
+				CELL_GCM_LOCATION_LOCAL,
+				m_colorData->getOffset(),
+				colorSize,
+				m_colorTexture.pitch,
+				CELL_GCM_COMPMODE_C32_2X1,
+				colorTile.tagBase,
+				colorTile.dramBank
+			);
+			cellGcmBindTile(colorTile.index);
+			m_tileIndex = colorTile.index;
+		}
 	}
-#endif
 
 	return true;
 }
 
 void RenderTargetPs3::destroy()
 {
-#if USE_TILED_COLOR
 	if (m_tileIndex != ~0UL)
 	{
 		cellGcmUnbindTile(m_tileIndex);
 		m_tileIndex = ~0UL;
 	}
-#endif
+
 	if (m_colorData)
 	{
 		m_colorData->free();
