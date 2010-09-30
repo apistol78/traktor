@@ -36,6 +36,11 @@ SwfCxTransform concateCxTransform(const SwfCxTransform& cxt1, const SwfCxTransfo
 	return cxtr;
 }
 
+bool isWhiteSpace(wchar_t ch)
+{
+	return ch == 0 || ch == L' ' || ch == L'\t' || ch == L'\n' || ch == L'\r';
+}
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashMovieRenderer", FlashMovieRenderer, Object)
@@ -322,7 +327,7 @@ void FlashMovieRenderer::renderCharacter(
 						wchar_t ch = word[i];
 						uint16_t glyphIndex = font->lookupIndex(ch);
 
-						if (iswgraph(ch))
+						if (!isWhiteSpace(ch))
 						{
 							const FlashShape* glyphShape = font->getShape(glyphIndex);
 							if (!glyphShape)
