@@ -243,10 +243,12 @@ void SoundDriverOpenAL::submit(const SoundBlock& soundBlock)
 	// Push buffer onto queue.
 	alSourceQueueBuffers(m_source, 1, &buffer);
 	
-	// Start playing on first buffer.
-	if (m_submitted == 0)
+	// Ensure source is still playing.
+	ALint state;
+	alGetSourcei(m_source, AL_SOURCE_STATE, &state);
+	if (state != AL_PLAYING)
 		alSourcePlay(m_source);
-		
+
 	++m_submitted;
 }
 

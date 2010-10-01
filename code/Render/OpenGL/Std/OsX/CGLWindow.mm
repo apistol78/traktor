@@ -85,10 +85,6 @@ CFArrayRef getValidDisplayModes()
 			
 		if (!CFDictionaryContainsKey(mode, kCGDisplayModeIsSafeForHardware))
 			continue;
-		if (CFDictionaryContainsKey(mode, kCGDisplayModeIsInterlaced))
-			continue;
-		if (CFDictionaryContainsKey(mode, kCGDisplayModeIsTelevisionOutput))
-			continue;
 		if (CFDictionaryContainsKey(mode, kCGDisplayModeIsStretched))
 			continue;
 		
