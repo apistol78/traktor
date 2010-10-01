@@ -21,7 +21,7 @@ wchar_t* refStringCreate(const wchar_t* s)
 		return 0;
 
 	uint16_t* base = static_cast< uint16_t* >(ptr);
-	*base = 0;
+	*base = 1;
 
 	wchar_t* c = reinterpret_cast< wchar_t* >(base + 1);
 	if (len > 0)
