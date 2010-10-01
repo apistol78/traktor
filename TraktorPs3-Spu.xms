@@ -25,8 +25,8 @@
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
 					</libraries>
-					<additionalCompilerOptions>-mspurs-job-initialize</additionalCompilerOptions>
-					<additionalLinkerOptions>-mspurs-job-initialize</additionalLinkerOptions>
+					<additionalCompilerOptions>-Wall -fno-exceptions -fno-rtti -O3 -ffast-math -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
+					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
 				</item>
 				<item type="Configuration" version="1">
 					<name>DebugStatic</name>
@@ -44,8 +44,8 @@
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
 					</libraries>
-					<additionalCompilerOptions>-mspurs-job-initialize</additionalCompilerOptions>
-					<additionalLinkerOptions>-mspurs-job-initialize</additionalLinkerOptions>
+					<additionalCompilerOptions>-g -Wall -fno-exceptions -fno-rtti -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
+					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
 				</item>
 			</configurations>
 			<items>
@@ -77,8 +77,8 @@
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
 					</libraries>
-					<additionalCompilerOptions>-mspurs-job-initialize</additionalCompilerOptions>
-					<additionalLinkerOptions>-mspurs-job-initialize</additionalLinkerOptions>
+					<additionalCompilerOptions>-g -Wall -fno-exceptions -fno-rtti -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
+					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
 				</item>
 				<item type="Configuration" version="1">
 					<name>ReleaseStatic</name>
@@ -96,8 +96,8 @@
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
 					</libraries>
-					<additionalCompilerOptions>-mspurs-job-initialize</additionalCompilerOptions>
-					<additionalLinkerOptions>-mspurs-job-initialize</additionalLinkerOptions>
+					<additionalCompilerOptions>-Wall -fno-exceptions -fno-rtti -O3 -ffast-math -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
+					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
 				</item>
 			</configurations>
 			<items>
@@ -130,8 +130,8 @@
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
 					</libraries>
-					<additionalCompilerOptions>-mspurs-job-initialize</additionalCompilerOptions>
-					<additionalLinkerOptions>-mspurs-job-initialize</additionalLinkerOptions>
+					<additionalCompilerOptions>-g -Wall -fno-exceptions -fno-rtti -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
+					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
 				</item>
 				<item type="Configuration" version="1">
 					<name>ReleaseStatic</name>
@@ -150,8 +150,8 @@
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
 					</libraries>
-					<additionalCompilerOptions>-mspurs-job-initialize</additionalCompilerOptions>
-					<additionalLinkerOptions>-mspurs-job-initialize</additionalLinkerOptions>
+					<additionalCompilerOptions>-Wall -fno-exceptions -fno-rtti -O3 -ffast-math -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
+					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
 				</item>
 			</configurations>
 			<items>
@@ -184,8 +184,8 @@
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
 					</libraries>
-					<additionalCompilerOptions>-mspurs-job-initialize</additionalCompilerOptions>
-					<additionalLinkerOptions>-mspurs-job-initialize</additionalLinkerOptions>
+					<additionalCompilerOptions>-g -Wall -fno-exceptions -fno-rtti -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
+					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
 				</item>
 				<item type="Configuration" version="1">
 					<name>ReleaseStatic</name>
@@ -204,8 +204,8 @@
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
 					</libraries>
-					<additionalCompilerOptions>-mspurs-job-initialize</additionalCompilerOptions>
-					<additionalLinkerOptions>-mspurs-job-initialize</additionalLinkerOptions>
+					<additionalCompilerOptions>-Wall -fno-exceptions -fno-rtti -O3 -ffast-math -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
+					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
 				</item>
 			</configurations>
 			<items>
@@ -440,8 +440,8 @@
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
 					</libraries>
-					<additionalCompilerOptions>-mspurs-job-initialize</additionalCompilerOptions>
-					<additionalLinkerOptions>-mspurs-job-initialize</additionalLinkerOptions>
+					<additionalCompilerOptions>-g -Wall -fno-exceptions -fno-rtti -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
+					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
 				</item>
 				<item type="Configuration" version="1">
 					<name>ReleaseStatic</name>
@@ -460,8 +460,8 @@
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
 					</libraries>
-					<additionalCompilerOptions>-mspurs-job-initialize</additionalCompilerOptions>
-					<additionalLinkerOptions>-mspurs-job-initialize</additionalLinkerOptions>
+					<additionalCompilerOptions>-Wall -fno-exceptions -fno-rtti -O3 -ffast-math -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
+					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
 				</item>
 			</configurations>
 			<items>
@@ -499,8 +499,8 @@
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
 					</libraries>
-					<additionalCompilerOptions>-mspurs-job-initialize</additionalCompilerOptions>
-					<additionalLinkerOptions>-mspurs-job-initialize</additionalLinkerOptions>
+					<additionalCompilerOptions>-g -Wall -fno-exceptions -fno-rtti -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
+					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
 				</item>
 				<item type="Configuration" version="1">
 					<name>ReleaseStatic</name>
@@ -519,8 +519,8 @@
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
 					</libraries>
-					<additionalCompilerOptions>-mspurs-job-initialize</additionalCompilerOptions>
-					<additionalLinkerOptions>-mspurs-job-initialize</additionalLinkerOptions>
+					<additionalCompilerOptions>-Wall -fno-exceptions -fno-rtti -O3 -ffast-math -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
+					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
 				</item>
 			</configurations>
 			<items>
@@ -558,8 +558,8 @@
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
 					</libraries>
-					<additionalCompilerOptions>-mspurs-job-initialize</additionalCompilerOptions>
-					<additionalLinkerOptions>-mspurs-job-initialize</additionalLinkerOptions>
+					<additionalCompilerOptions>-g -Wall -fno-exceptions -fno-rtti -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
+					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
 				</item>
 				<item type="Configuration" version="1">
 					<name>ReleaseStatic</name>
@@ -578,8 +578,8 @@
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
 					</libraries>
-					<additionalCompilerOptions>-mspurs-job-initialize</additionalCompilerOptions>
-					<additionalLinkerOptions>-mspurs-job-initialize</additionalLinkerOptions>
+					<additionalCompilerOptions>-Wall -fno-exceptions -fno-rtti -O3 -ffast-math -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
+					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
 				</item>
 			</configurations>
 			<items>
@@ -617,8 +617,8 @@
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
 					</libraries>
-					<additionalCompilerOptions>-mspurs-job-initialize</additionalCompilerOptions>
-					<additionalLinkerOptions>-mspurs-job-initialize</additionalLinkerOptions>
+					<additionalCompilerOptions>-g -Wall -fno-exceptions -fno-rtti -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
+					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
 				</item>
 				<item type="Configuration" version="1">
 					<name>ReleaseStatic</name>
@@ -637,8 +637,8 @@
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
 					</libraries>
-					<additionalCompilerOptions>-mspurs-job-initialize</additionalCompilerOptions>
-					<additionalLinkerOptions>-mspurs-job-initialize</additionalLinkerOptions>
+					<additionalCompilerOptions>-Wall -fno-exceptions -fno-rtti -O3 -ffast-math -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
+					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
 				</item>
 			</configurations>
 			<items>
@@ -676,8 +676,8 @@
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
 					</libraries>
-					<additionalCompilerOptions>-mspurs-job-initialize</additionalCompilerOptions>
-					<additionalLinkerOptions>-mspurs-job-initialize</additionalLinkerOptions>
+					<additionalCompilerOptions>-g -Wall -fno-exceptions -fno-rtti -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
+					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
 				</item>
 				<item type="Configuration" version="1">
 					<name>ReleaseStatic</name>
@@ -696,8 +696,8 @@
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
 						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
 					</libraries>
-					<additionalCompilerOptions>-mspurs-job-initialize</additionalCompilerOptions>
-					<additionalLinkerOptions>-mspurs-job-initialize</additionalLinkerOptions>
+					<additionalCompilerOptions>-Wall -fno-exceptions -fno-rtti -O3 -ffast-math -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
+					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
 				</item>
 			</configurations>
 			<items>
@@ -733,8 +733,8 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
+					<additionalCompilerOptions>-g -Wall -fno-exceptions -fno-rtti -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
+					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
 				</item>
 				<item type="Configuration" version="1">
 					<name>ReleaseStatic</name>
@@ -750,8 +750,8 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
+					<additionalCompilerOptions>-Wall -fno-exceptions -fno-rtti -O3 -ffast-math -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
+					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
 				</item>
 			</configurations>
 			<items>

@@ -23,7 +23,7 @@ struct StaticSoundBufferCursor : public RefCountImpl< ISoundBufferCursor >
 		for (uint32_t i = 0; i < channelsCount; ++i)
 		{
 			m_blocks[i] = (float*)Alloc::acquireAlign(blockSize, 16, T_FILE_LINE);
-			T_FATAL_ASSERT_M (m_blocks[i], L"Out of memory");
+			T_FATAL_ASSERT_M (m_blocks[i], L"Out of memory (Static sound buffer)");
 
 			std::memset(m_blocks[i], 0, blockSize);
 		}

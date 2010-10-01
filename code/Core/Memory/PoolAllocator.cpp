@@ -66,7 +66,7 @@ void PoolAllocator::leave()
 
 void* PoolAllocator::alloc(uint32_t size)
 {
-	T_ASSERT_M (uint32_t(m_tail - m_head) + size < m_totalSize, L"Out of memory");
+	T_ASSERT_M (uint32_t(m_tail - m_head) + size < m_totalSize, L"Out of memory (pool)");
 	void* ptr = m_tail;
 	m_tail += size;
 	return ptr;

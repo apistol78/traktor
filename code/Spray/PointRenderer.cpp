@@ -23,8 +23,6 @@ const uint32_t c_pointCount = 3000;
 const uint32_t c_pointCount = 1000;
 #elif defined(_WINCE)
 const uint32_t c_pointCount = 1000;
-#elif defined(_PS3)
-const uint32_t c_pointCount = 2000;
 #else
 const uint32_t c_pointCount = 4000;
 #endif
@@ -215,9 +213,15 @@ void PointRenderer::render(
 
 		for (int j = 0; j < 4; ++j)
 		{
+#if !defined(_PS3)
 			point.position.storeUnaligned(m_vertex->positionAndOrientation.position);
 			point.velocity.storeUnaligned(m_vertex->velocityAndRandom.velocity);
 			point.color.storeUnaligned(m_vertex->attrib2.color);
+#else
+			point.position.storeAligned(m_vertex->positionAndOrientation.position);
+			point.velocity.storeAligned(m_vertex->velocityAndRandom.velocity);
+			point.color.storeAligned(m_vertex->attrib2.color);
+#endif
 
 			m_vertex->positionAndOrientation.orientation = point.orientation;
 			m_vertex->velocityAndRandom.random = point.random;
