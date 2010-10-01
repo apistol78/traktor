@@ -23,7 +23,7 @@ const struct { const wchar_t* steam; const wchar_t* code; } c_languageCodes[] =
 	{ L"german", L"de" },
 	{ L"italian", L"it" },
 	{ L"spanish", L"es" },
-	{ L"swedish", L"se" }
+	{ L"swedish", L"sv" }
 };
 
 #if defined(_WIN32)
