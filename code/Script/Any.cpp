@@ -33,7 +33,8 @@ wchar_t* refStringCreate(const wchar_t* s)
 
 wchar_t* refStringInc(wchar_t* s)
 {
-	uint16_t* base = reinterpret_cast< uint16_t* >(s) - 1; *base++;
+	uint16_t* base = reinterpret_cast< uint16_t* >(s) - 1;
+	(*base)++;
 	return s;
 }
 
