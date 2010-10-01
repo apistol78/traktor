@@ -10,7 +10,7 @@ void cellSpursJobQueueMain(CellSpursJobContext2* context, CellSpursJob256* job25
 {
 	spray::JobModifierUpdate* job = (spray::JobModifierUpdate*)job256;
 
-	static spray::Point points[128];
+	static spray::Point points[1024];
 
 	Scalar vc = Scalar(1.0f - job->modifier.drag.linearDrag * job->common.deltaTime);
 	float ac = 1.0f - job->modifier.drag.angularDrag * job->common.deltaTime;
@@ -21,14 +21,22 @@ void cellSpursJobQueueMain(CellSpursJobContext2* context, CellSpursJob256* job25
 		if (pointsCount > sizeof_array(points))
 			pointsCount = sizeof_array(points);
 
-		cellDmaGet(
-			points,
-			job->common.pointsEA + i * sizeof(spray::Point),
-			pointsCount * sizeof(spray::Point),
-			context->dmaTag,
-			0,
-			0
-		);
+		// Issue several DMA get tasks to get as many points as possible.
+		for (uint32_t j = 0; j < pointsCount; j += 128)
+		{
+			uint32_t pointsDmaCount = pointsCount - j;
+			if (pointsDmaCount > 128)
+				pointsDmaCount = 128;
+
+			cellDmaGet(
+				&points[j],
+				job->common.pointsEA + (i + j) * sizeof(spray::Point),
+				pointsDmaCount * sizeof(spray::Point),
+				context->dmaTag,
+				0,
+				0
+			);
+		}
 		cellSpursJobQueueDmaWaitTagStatusAll(1 << context->dmaTag);
 
 		for (uint32_t j = 0; j < pointsCount; ++j)
@@ -37,14 +45,22 @@ void cellSpursJobQueueMain(CellSpursJobContext2* context, CellSpursJob256* job25
 			points[j].angularVelocity *= ac;
 		}
 
-		cellDmaPut(
-			points,
-			job->common.pointsEA + i * sizeof(spray::Point),
-			pointsCount * sizeof(spray::Point),
-			context->dmaTag,
-			0,
-			0
-		);
+		// Issue DMA put tasks to update PPU points.
+		for (uint32_t j = 0; j < pointsCount; j += 128)
+		{
+			uint32_t pointsDmaCount = pointsCount - j;
+			if (pointsDmaCount > 128)
+				pointsDmaCount = 128;
+
+			cellDmaPut(
+				&points[j],
+				job->common.pointsEA + (i + j) * sizeof(spray::Point),
+				pointsDmaCount * sizeof(spray::Point),
+				context->dmaTag,
+				0,
+				0
+			);
+		}
 		cellSpursJobQueueDmaWaitTagStatusAll(1 << context->dmaTag);
 	}
 }

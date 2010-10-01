@@ -142,7 +142,11 @@ typedef long unsigned int uint64_t;
 #	define T_EXCEPTION_GUARD_BEGIN try {
 #endif
 #if !defined(T_EXCEPTION_GUARD_END)
-#	define T_EXCEPTION_GUARD_END } catch (...) { T_BREAKPOINT; }
+#	if defined(_DEBUG)
+#		define T_EXCEPTION_GUARD_END } catch (...) { T_BREAKPOINT; }
+#	else
+#		define T_EXCEPTION_GUARD_END } catch (...) { }
+#	endif
 #endif
 
 // Anonymous variable

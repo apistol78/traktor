@@ -38,7 +38,7 @@ public:
 
 	void setSamplerState(int32_t stage, const SamplerState& ss);
 
-	void setSamplerTexture(int32_t stage, const CellGcmTexture* texture, uint16_t maxLod);
+	void setSamplerTexture(int32_t stage, const CellGcmTexture* texture, uint16_t maxLod, uint8_t anisotropy);
 
 	void setProgram(
 		const CGprogram vertexProgram,
@@ -76,6 +76,7 @@ private:
 	const CellGcmTexture* m_textures[SamplerCount];
 	uint32_t m_textureOffsets[SamplerCount];
 	uint16_t m_textureLods[SamplerCount];
+	uint8_t m_textureAnisotropy[SamplerCount];
 	uint32_t m_colorMask;
 	Viewport m_viewport;
 	VertexAttribute m_vertexAttributes[VertexAttributeCount];

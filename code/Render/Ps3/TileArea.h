@@ -17,6 +17,14 @@ public:
 		uint32_t tagBase;
 		uint32_t tagSize;
 		uint32_t dramBank;
+
+		TileInfo()
+		:	index(~0UL)
+		,	tagBase(~0UL)
+		,	tagSize(~0UL)
+		,	dramBank(~0UL)
+		{
+		}
 	};
 	
 	TileArea();

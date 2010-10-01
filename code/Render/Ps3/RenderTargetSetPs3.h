@@ -4,6 +4,7 @@
 #include "Core/RefArray.h"
 #include "Render/RenderTargetSet.h"
 #include "Render/Types.h"
+#include "Render/Ps3/TileArea.h"
 #include "Render/Ps3/PlatformPs3.h"
 
 // import/export mechanism.
@@ -22,7 +23,6 @@ namespace traktor
 class MemoryHeap;
 class MemoryHeapObject;
 class RenderTargetPs3;
-class TileArea;
 
 class T_DLLCLASS RenderTargetSetPs3 : public RenderTargetSet
 {
@@ -59,7 +59,8 @@ private:
 	RefArray< RenderTargetPs3 > m_renderTargets;
 	CellGcmTexture m_depthTexture;
 	MemoryHeapObject* m_depthData;
-	uint32_t m_tileIndex;
+	TileArea::TileInfo m_tileInfo;
+	uint32_t m_tileOffset;
 	int32_t& m_counter;
 };
 

@@ -11,7 +11,7 @@ void cellSpursJobQueueMain(CellSpursJobContext2* context, CellSpursJob256* job25
 {
 	spray::JobModifierUpdate* job = (spray::JobModifierUpdate*)job256;
 
-	static spray::Point points[128];
+	static spray::Point points[1024];
 
 	Scalar deltaTime(job->common.deltaTime);
 	Plane plane(
@@ -27,14 +27,22 @@ void cellSpursJobQueueMain(CellSpursJobContext2* context, CellSpursJob256* job25
 		if (pointsCount > sizeof_array(points))
 			pointsCount = sizeof_array(points);
 
-		cellDmaGet(
-			points,
-			job->common.pointsEA + i * sizeof(spray::Point),
-			pointsCount * sizeof(spray::Point),
-			context->dmaTag,
-			0,
-			0
-		);
+		// Issue several DMA get tasks to get as many points as possible.
+		for (uint32_t j = 0; j < pointsCount; j += 128)
+		{
+			uint32_t pointsDmaCount = pointsCount - j;
+			if (pointsDmaCount > 128)
+				pointsDmaCount = 128;
+
+			cellDmaGet(
+				&points[j],
+				job->common.pointsEA + (i + j) * sizeof(spray::Point),
+				pointsDmaCount * sizeof(spray::Point),
+				context->dmaTag,
+				0,
+				0
+			);
+		}
 		cellSpursJobQueueDmaWaitTagStatusAll(1 << context->dmaTag);
 
 		for (uint32_t j = 0; j < pointsCount; ++j)
@@ -50,14 +58,22 @@ void cellSpursJobQueueMain(CellSpursJobContext2* context, CellSpursJob256* job25
 			points[j].velocity = -reflect(points[j].velocity, plane.normal()) * Scalar(job->modifier.planeCollision.restitution);
 		}
 
-		cellDmaPut(
-			points,
-			job->common.pointsEA + i * sizeof(spray::Point),
-			pointsCount * sizeof(spray::Point),
-			context->dmaTag,
-			0,
-			0
-		);
+		// Issue DMA put tasks to update PPU points.
+		for (uint32_t j = 0; j < pointsCount; j += 128)
+		{
+			uint32_t pointsDmaCount = pointsCount - j;
+			if (pointsDmaCount > 128)
+				pointsDmaCount = 128;
+
+			cellDmaPut(
+				&points[j],
+				job->common.pointsEA + (i + j) * sizeof(spray::Point),
+				pointsDmaCount * sizeof(spray::Point),
+				context->dmaTag,
+				0,
+				0
+			);
+		}
 		cellSpursJobQueueDmaWaitTagStatusAll(1 << context->dmaTag);
 	}
 }

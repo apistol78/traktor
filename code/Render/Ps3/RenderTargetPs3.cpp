@@ -4,7 +4,6 @@
 #include "Render/Ps3/MemoryHeapObject.h"
 #include "Render/Ps3/RenderTargetPs3.h"
 #include "Render/Ps3/StateCachePs3.h"
-#include "Render/Ps3/TileArea.h"
 #include "Render/Ps3/TypesPs3.h"
 
 namespace traktor
@@ -19,7 +18,7 @@ RenderTargetPs3::RenderTargetPs3()
 ,	m_height(0)
 ,	m_colorSurfaceFormat(0)
 ,	m_colorData(0)
-,	m_tileIndex(~0UL)
+,	m_tileOffset(0)
 ,	m_inRender(false)
 {
 	std::memset(&m_colorTexture, 0, sizeof(m_colorTexture));
@@ -89,47 +88,46 @@ bool RenderTargetPs3::create(MemoryHeap* memoryHeap, TileArea& tileArea, const R
 	m_colorTexture.location = CELL_GCM_LOCATION_LOCAL;
 	m_colorTexture.offset = 0;
 
-	if (setDesc.preferTiled)
-		m_colorTexture.pitch = cellGcmGetTiledPitchSize(alignUp(m_width, 64) * byteSize);
-	else
+	//if (setDesc.preferTiled)
+	//	m_colorTexture.pitch = cellGcmGetTiledPitchSize(alignUp(m_width, 64) * byteSize);
+	//else
 		m_colorTexture.pitch = m_width * byteSize;
 
-	uint32_t colorSize = setDesc.preferTiled ?
-		m_colorTexture.pitch * alignUp(m_colorTexture.height, 64) :
+	uint32_t colorSize = /*setDesc.preferTiled ?
+		m_colorTexture.pitch * alignUp(m_colorTexture.height, 64) :*/
 		m_colorTexture.pitch * m_colorTexture.height;
 
 	m_colorData = memoryHeap->alloc(colorSize, 4096, false);
 
-	if (setDesc.preferTiled)
-	{
-		TileArea::TileInfo colorTile;
-		if (tileArea.alloc(colorSize, colorTile))
-		{
-			cellGcmSetTileInfo(
-				colorTile.index,
-				CELL_GCM_LOCATION_LOCAL,
-				m_colorData->getOffset(),
-				colorSize,
-				m_colorTexture.pitch,
-				CELL_GCM_COMPMODE_C32_2X1,
-				colorTile.tagBase,
-				colorTile.dramBank
-			);
-			cellGcmBindTile(colorTile.index);
-			m_tileIndex = colorTile.index;
-		}
-	}
+	//if (setDesc.preferTiled)
+	//{
+	//	if (tileArea.alloc(colorSize, m_tileInfo))
+	//	{
+	//		cellGcmSetTileInfo(
+	//			m_tileInfo.index,
+	//			CELL_GCM_LOCATION_LOCAL,
+	//			m_colorData->getOffset(),
+	//			m_colorData->getSize(),
+	//			m_colorTexture.pitch,
+	//			CELL_GCM_COMPMODE_C32_2X1,
+	//			m_tileInfo.tagBase,
+	//			m_tileInfo.dramBank
+	//		);
+	//		cellGcmBindTile(m_tileInfo.index);
+	//		m_tileOffset = m_colorData->getOffset();
+	//	}
+	//}
 
 	return true;
 }
 
 void RenderTargetPs3::destroy()
 {
-	if (m_tileIndex != ~0UL)
-	{
-		cellGcmUnbindTile(m_tileIndex);
-		m_tileIndex = ~0UL;
-	}
+	//if (m_tileInfo.index != ~0UL)
+	//{
+	//	cellGcmUnbindTile(m_tileInfo.index);
+	//	m_tileInfo.index = ~0UL;
+	//}
 
 	if (m_colorData)
 	{
@@ -157,12 +155,28 @@ void RenderTargetPs3::bind(StateCachePs3& stateCache, int stage, const SamplerSt
 {
 	T_ASSERT (!m_inRender);
 
+	//if (m_tileInfo.index != ~0UL && m_tileOffset != m_colorData->getOffset())
+	//{
+	//	cellGcmSetTileInfo(
+	//		m_tileInfo.index,
+	//		CELL_GCM_LOCATION_LOCAL,
+	//		m_colorData->getOffset(),
+	//		m_colorData->getSize(),
+	//		m_colorTexture.pitch,
+	//		CELL_GCM_COMPMODE_C32_2X1,
+	//		m_tileInfo.tagBase,
+	//		m_tileInfo.dramBank
+	//	);
+	//	cellGcmBindTile(m_tileInfo.index);
+	//	m_tileOffset = m_colorData->getOffset();
+	//}
+
 	m_colorTexture.offset = m_colorData->getOffset();
 
 	if (m_colorSurfaceFormat == CELL_GCM_SURFACE_B8 || m_colorSurfaceFormat == CELL_GCM_SURFACE_A8R8G8B8)
 	{
 		stateCache.setSamplerState(stage, samplerState);
-		stateCache.setSamplerTexture(stage, &m_colorTexture, 0);
+		stateCache.setSamplerTexture(stage, &m_colorTexture, 0, CELL_GCM_TEXTURE_MAX_ANISO_1);
 	}
 	else	// FP targets.
 	{
@@ -174,13 +188,30 @@ void RenderTargetPs3::bind(StateCachePs3& stateCache, int stage, const SamplerSt
 		fpss.wrapW = CELL_GCM_TEXTURE_CLAMP;
 
 		stateCache.setSamplerState(stage, fpss);
-		stateCache.setSamplerTexture(stage, &m_colorTexture, 0);
+		stateCache.setSamplerTexture(stage, &m_colorTexture, 0, CELL_GCM_TEXTURE_MAX_ANISO_1);
 	}
 }
 
 void RenderTargetPs3::beginRender()
 {
 	T_ASSERT (m_inRender == false);
+
+	//if (m_tileInfo.index != ~0UL && m_tileOffset != m_colorData->getOffset())
+	//{
+	//	cellGcmSetTileInfo(
+	//		m_tileInfo.index,
+	//		CELL_GCM_LOCATION_LOCAL,
+	//		m_colorData->getOffset(),
+	//		m_colorData->getSize(),
+	//		m_colorTexture.pitch,
+	//		CELL_GCM_COMPMODE_C32_2X1,
+	//		m_tileInfo.tagBase,
+	//		m_tileInfo.dramBank
+	//	);
+	//	cellGcmBindTile(m_tileInfo.index);
+	//	m_tileOffset = m_colorData->getOffset();
+	//}
+
 	m_colorTexture.offset = m_colorData->getOffset();
 	m_inRender = true;
 }

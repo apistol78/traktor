@@ -59,6 +59,8 @@ public:
 		typedef int difference_type;
 		typedef const value_type* pointer;
 		typedef const value_type& reference;
+		typedef const value_type* const_pointer;
+		typedef const value_type& const_reference;
 
 		const_iterator()
 		:	m_ptr(0)
@@ -141,7 +143,7 @@ public:
 			return *this;
 		}
 
-		const pointer _const_ptr() const
+		const_pointer _const_ptr() const
 		{
 			return m_ptr;
 		}

@@ -59,6 +59,10 @@ StateCachePs3::StateCachePs3()
 	m_vertexConstantsShadow = (float*)Alloc::acquireAlign(VertexConstantCount * 4 * sizeof(float), 16, T_FILE_LINE);
 	std::memset(m_vertexConstantsShadow, 0, VertexConstantCount * 4 * sizeof(float));
 	std::memset(m_vertexAttributes, 0, sizeof(m_vertexAttributes));
+	std::memset(m_textures, 0, sizeof(m_textures));
+	std::memset(m_textureOffsets, 0, sizeof(m_textureOffsets));
+	std::memset(m_textureLods, 0, sizeof(m_textureLods));
+	std::memset(m_textureAnisotropy, 0, sizeof(m_textureAnisotropy));
 }
 
 StateCachePs3::~StateCachePs3()
@@ -253,9 +257,12 @@ void StateCachePs3::setSamplerState(int32_t stage, const SamplerState& ss)
 	}
 }
 
-void StateCachePs3::setSamplerTexture(int32_t stage, const CellGcmTexture* texture, uint16_t maxLod)
+void StateCachePs3::setSamplerTexture(int32_t stage, const CellGcmTexture* texture, uint16_t maxLod, uint8_t anisotropy)
 {
-	if (maxLod != m_textureLods[stage])
+	if (
+		maxLod != m_textureLods[stage] ||
+		anisotropy != m_textureAnisotropy[stage]
+	)
 	{
 		T_GCM_CALL(cellGcmSetTextureControl)(
 			gCellGcmCurrentContext,
@@ -263,9 +270,10 @@ void StateCachePs3::setSamplerTexture(int32_t stage, const CellGcmTexture* textu
 			CELL_GCM_TRUE,
 			0,
 			maxLod,
-			CELL_GCM_TEXTURE_MAX_ANISO_1
+			anisotropy
 		);
 		m_textureLods[stage] = maxLod;
+		m_textureAnisotropy[stage] = anisotropy;
 	}
 	if (texture != m_textures[stage] || texture->offset != m_textureOffsets[stage])
 	{
@@ -409,7 +417,7 @@ void StateCachePs3::reset(uint32_t flags)
 			{
 				setSamplerState(i, SamplerState());
 
-				if (m_textureLods[i] != uint16_t(~0))
+				if (m_textureLods[i] != uint16_t(~0) || m_textureAnisotropy[i] != CELL_GCM_TEXTURE_MAX_ANISO_1)
 				{
 					T_GCM_CALL(cellGcmSetTextureControl)(
 						gCellGcmCurrentContext,
@@ -419,7 +427,6 @@ void StateCachePs3::reset(uint32_t flags)
 						0,
 						CELL_GCM_TEXTURE_MAX_ANISO_1
 					);
-					m_textureLods[i] = uint16_t(~0);
 				}
 			}
 		}
@@ -527,14 +534,13 @@ void StateCachePs3::reset(uint32_t flags)
 
 	if (flags & RfSamplerStates)
 	{
-		for (int i = 0; i < sizeof_array(m_textures); ++i)
+		for (int i = 0; i < SamplerCount; ++i)
+		{
 			m_textures[i] = 0;
-
-		for (int i = 0; i < sizeof_array(m_textureOffsets); ++i)
 			m_textureOffsets[i] = 0;
-
-		for (int i = 0; i < sizeof_array(m_textureLods); ++i)
 			m_textureLods[i] = uint16_t(~0);
+			m_textureAnisotropy[i] = CELL_GCM_TEXTURE_MAX_ANISO_1;
+		}
 	}
 
 	m_colorMask = CELL_GCM_COLOR_MASK_R | CELL_GCM_COLOR_MASK_G | CELL_GCM_COLOR_MASK_B | CELL_GCM_COLOR_MASK_A;

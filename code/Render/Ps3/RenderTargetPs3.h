@@ -2,6 +2,7 @@
 #define traktor_render_RenderTargetPs3_H
 
 #include "Render/ITexture.h"
+#include "Render/Ps3/TileArea.h"
 #include "Render/Ps3/TypesPs3.h"
 
 // import/export mechanism.
@@ -20,7 +21,6 @@ namespace traktor
 class MemoryHeap;
 class MemoryHeapObject;
 class StateCachePs3;
-class TileArea;
 
 class T_DLLCLASS RenderTargetPs3 : public ITexture
 {
@@ -59,7 +59,8 @@ private:
 	uint32_t m_colorSurfaceFormat;
 	CellGcmTexture m_colorTexture;
 	MemoryHeapObject* m_colorData;
-	uint32_t m_tileIndex;
+	TileArea::TileInfo m_tileInfo;
+	uint32_t m_tileOffset;
 	bool m_inRender;
 };
 

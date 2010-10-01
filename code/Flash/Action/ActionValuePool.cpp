@@ -17,12 +17,12 @@ ActionValuePool::ActionValuePool()
 ,	m_peek(0)
 {
 	m_top.reset(new ActionValue [c_poolValueCount]);
-	T_FATAL_ASSERT_M (m_top.ptr(), L"Out of memory");
+	T_FATAL_ASSERT_M (m_top.ptr(), L"Out of memory (AS)");
 }
 
 ActionValue* ActionValuePool::alloc(uint32_t count)
 {
-	T_FATAL_ASSERT_M (m_next + count < c_poolValueCount, L"Out of memory; increase pool size");
+	T_FATAL_ASSERT_M (m_next + count < c_poolValueCount, L"Out of memory (AS)");
 	ActionValue* value = &m_top[m_next];
 	m_next += count;
 	m_peek = std::max(m_peek, m_next);

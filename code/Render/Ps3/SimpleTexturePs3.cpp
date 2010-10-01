@@ -200,7 +200,7 @@ void SimpleTexturePs3::bind(StateCachePs3& stateCache, int stage, const SamplerS
 	{
 		m_texture.offset = m_data->getOffset();
 		stateCache.setSamplerState(stage, samplerState);
-		stateCache.setSamplerTexture(stage, &m_texture, m_texture.mipmap << 8);
+		stateCache.setSamplerTexture(stage, &m_texture, m_texture.mipmap << 8, CELL_GCM_TEXTURE_MAX_ANISO_4);
 	}
 }
 

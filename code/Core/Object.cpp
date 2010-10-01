@@ -89,7 +89,7 @@ void* Object::operator new (size_t size)
 	IAllocator* allocator = getAllocator();
 
 	ObjectHeader* header = static_cast< ObjectHeader* >(allocator->alloc(size + objectHeaderSize, 16, "Object"));
-	T_FATAL_ASSERT_M (header, L"Out of memory");
+	T_FATAL_ASSERT_M (header, L"Out of memory (object)");
 
 	header->magic = c_magic;
 
