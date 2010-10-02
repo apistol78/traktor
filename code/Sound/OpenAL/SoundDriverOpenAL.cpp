@@ -196,7 +196,7 @@ void SoundDriverOpenAL::submit(const SoundBlock& soundBlock)
 		alSourceUnqueueBuffers(m_source, 1, &buffer);
 		if (alGetError() != AL_NO_ERROR)
 		{
-			log::error << L"OpenAL error detected; unable to submit sound block" << Endl;
+			log::error << L"OpenAL error detected; unable to unqueue sound block" << Endl;
 			return;
 		}
 	}
@@ -239,12 +239,22 @@ void SoundDriverOpenAL::submit(const SoundBlock& soundBlock)
 		soundBlock.samplesCount * m_desc.hwChannels * m_desc.bitsPerSample / 8,
 		m_desc.sampleRate
 	);
-	
+	if (alGetError() != AL_NO_ERROR)
+	{
+		log::error << L"OpenAL error detected; unable to buffer sound block" << Endl;
+		return;
+	}
+
 	// Push buffer onto queue.
 	alSourceQueueBuffers(m_source, 1, &buffer);
+	if (alGetError() != AL_NO_ERROR)
+	{
+		log::error << L"OpenAL error detected; unable to queue sound block" << Endl;
+		return;
+	}
 	
 	// Ensure source is still playing.
-	ALint state;
+	ALint state = AL_PLAYING;
 	alGetSourcei(m_source, AL_SOURCE_STATE, &state);
 	if (state != AL_PLAYING)
 		alSourcePlay(m_source);

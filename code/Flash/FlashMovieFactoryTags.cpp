@@ -542,8 +542,8 @@ bool FlashTagJpegTables::read(SwfReader* swf, ReadContext& context)
 
 	// Read entire tag's content into memory buffer first, need to correct SWF
 	// bugs in data.
-	std::vector< uint8_t > buffer(context.tagSize);
-	bs.getStream()->read(&buffer[0], context.tagSize);
+	AutoArrayPtr< uint8_t > buffer(new uint8_t [context.tagSize]);
+	bs.getStream()->read(buffer.ptr(), context.tagSize);
 
 	// Prior to SWF 8.0 there could be a problem with incorrect JFIF start tag->
 	if (buffer[0] == 0xff && buffer[1] == 0xd9 && buffer[2] == 0xff && buffer[3] == 0xd8)
@@ -555,7 +555,7 @@ bool FlashTagJpegTables::read(SwfReader* swf, ReadContext& context)
 	// Ensure data appears to be correct(ed).
 	T_ASSERT (buffer[0] == 0xff && buffer[1] == 0xd8);
 
-	MemoryStream bufferStream(&buffer[0], int(buffer.size()), true, false);
+	MemoryStream bufferStream(buffer.ptr(), int(context.tagSize), true, false);
 	context.jpegFormat->readJpegHeader(&bufferStream);
 
 	return true;
