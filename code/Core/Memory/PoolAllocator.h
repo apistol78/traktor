@@ -105,6 +105,7 @@ private:
 	uint8_t* m_head;
 	uint8_t* m_tail;
 	std::stack< uint8_t* > m_scope;
+	std::vector< void* > m_heaps;
 };
 
 }

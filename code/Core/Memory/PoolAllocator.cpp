@@ -47,7 +47,11 @@ PoolAllocator::~PoolAllocator()
 	T_EXCEPTION_GUARD_BEGIN;
 
 	if (m_allocator)
+	{
 		m_allocator->free(m_head);
+		for (std::vector< void* >::iterator i = m_heaps.begin(); i != m_heaps.end(); ++i)
+			m_allocator->free(*i);
+	}
 
 	T_EXCEPTION_GUARD_END;
 }
@@ -60,15 +64,47 @@ void PoolAllocator::enter()
 void PoolAllocator::leave()
 {
 	T_ASSERT (!m_scope.empty());
-	m_tail = m_scope.top();
+	
+	uint8_t* tail = m_scope.top();
+	if (m_allocator)
+	{
+		if (tail >= m_head && tail < m_head + m_totalSize)
+			m_tail = tail;
+		else
+		{
+			// Pop;ed tail isn't part of current heap
+			// due to another heap has been allocated. Thus
+			// we only restore tail to beginning of current heap.
+			m_tail = m_head;
+		}
+	}
+	else
+		m_tail = tail;
+	
 	m_scope.pop();
 }
 
 void* PoolAllocator::alloc(uint32_t size)
 {
-	T_ASSERT_M (uint32_t(m_tail - m_head) + size < m_totalSize, L"Out of memory (pool)");
+	T_ASSERT (size <= m_totalSize);
+
+	if (uint32_t(m_tail - m_head) + size >= m_totalSize)
+	{
+		if (m_allocator)
+		{
+			m_heaps.push_back(m_head);
+			m_head = m_tail = (uint8_t*)m_allocator->alloc(m_totalSize, 16, T_FILE_LINE);
+			T_ASSERT_M (m_head, L"Out of memory (pool)");
+		}
+		else
+			T_FATAL_ERROR;
+	}
+	else
+		T_FATAL_ERROR;
+	
 	void* ptr = m_tail;
 	m_tail += size;
+	
 	return ptr;
 }
 
