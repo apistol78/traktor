@@ -59,10 +59,8 @@ Mutex::~Mutex()
 bool Mutex::wait(int32_t timeout)
 {
 	InternalData* data = reinterpret_cast< InternalData* >(m_handle);
-
-	int rc = pthread_mutex_lock(&data->outer);
-	T_ASSERT(rc == 0);
-
+	while (pthread_mutex_lock(&data->outer) != 0)
+		;
 	return true;
 }
 
