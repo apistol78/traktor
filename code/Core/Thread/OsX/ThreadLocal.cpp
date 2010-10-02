@@ -3,13 +3,14 @@
 
 namespace traktor
 {
-
+	
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ThreadLocal", ThreadLocal, Object)
 
 ThreadLocal::ThreadLocal()
 {
 	pthread_key_t& key = *reinterpret_cast< pthread_key_t* >(&m_handle);
-	pthread_key_create(&key, 0);
+	int32_t rc = pthread_key_create(&key, 0);
+	T_FATAL_ASSERT_M(rc == 0, L"Unable to create thread key");
 }
 
 ThreadLocal::~ThreadLocal()
