@@ -51,13 +51,12 @@ private:
 	struct RegisteredClass
 	{
 		Ref< IScriptClass > scriptClass;
-		int metaTableRef;
+		int32_t metaTableRef;
 	};
 
 	mutable Semaphore m_lock;
 	lua_State* m_luaState;
 	std::vector< RegisteredClass > m_classRegistry;
-	int32_t m_pending;
 
 	void registerClass(IScriptClass* scriptClass);
 

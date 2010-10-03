@@ -92,7 +92,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptContextLua", ScriptContextLua, ISc
 
 ScriptContextLua::ScriptContextLua(const RefArray< IScriptClass >& registeredClasses)
 :	m_luaState(0)
-,	m_pending(0)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
@@ -113,7 +112,6 @@ ScriptContextLua::~ScriptContextLua()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	lua_close(m_luaState);
-	T_ASSERT (m_pending == 0);
 }
 
 void ScriptContextLua::setGlobal(const std::wstring& globalName, const Any& globalValue)
@@ -327,6 +325,8 @@ void ScriptContextLua::registerClass(IScriptClass* scriptClass)
 
 void ScriptContextLua::pushAny(const Any& any)
 {
+	CHECK_LUA_STACK(m_luaState, 1);
+
 	if (any.isBoolean())
 		lua_pushboolean(m_luaState, any.getBoolean() ? 1 : 0);
 	else if (any.isInteger())
@@ -353,14 +353,10 @@ void ScriptContextLua::pushAny(const Any& any)
 					Object** object = reinterpret_cast< Object** >(lua_newuserdata(m_luaState, sizeof(Object*)));	// +1
 					*object = any.getObject();
 					T_SAFE_ADDREF(*object);
-					++m_pending;
 
 					// Associate __gc with object userdata.
 					lua_newtable(m_luaState);						// +1
-					//lua_pushcfunction(m_luaState, gcMethod);		// +1
-
-					lua_pushlightuserdata(m_luaState, (void*)this);
-					lua_pushcclosure(m_luaState, gcMethod, 1);
+					lua_pushcfunction(m_luaState, gcMethod);		// +1
 
 					lua_setfield(m_luaState, -2, "__gc");			// -1
 					lua_setmetatable(m_luaState, -2);				// -1
@@ -390,6 +386,8 @@ void ScriptContextLua::pushAny(const Any& any)
 
 Any ScriptContextLua::toAny(int32_t index)
 {
+	CHECK_LUA_STACK(m_luaState, 0);
+
 	if (lua_isnumber(m_luaState, index))
 		return Any(float(lua_tonumber(m_luaState, index)));
 	if (lua_isboolean(m_luaState, index))
@@ -405,6 +403,7 @@ Any ScriptContextLua::toAny(int32_t index)
 		if (object)
 			return Any(object);
 	}
+	
 	return Any();
 }
 
@@ -433,7 +432,6 @@ int ScriptContextLua::classIndexLookup(lua_State* luaState)
 
 int ScriptContextLua::callConstructor(lua_State* luaState)
 {
-	CHECK_LUA_STACK(luaState, 1);
 	Any argv[16];
 
 	ScriptContextLua* context = reinterpret_cast< ScriptContextLua* >(lua_touserdata(luaState, lua_upvalueindex(1)));
@@ -462,7 +460,6 @@ int ScriptContextLua::callConstructor(lua_State* luaState)
 
 int ScriptContextLua::callMethod(lua_State* luaState)
 {
-	CHECK_LUA_STACK(luaState, 1);
 	Any argv[16];
 
 	ScriptContextLua* context = reinterpret_cast< ScriptContextLua* >(lua_touserdata(luaState, lua_upvalueindex(2)));
@@ -576,13 +573,8 @@ int ScriptContextLua::callProperty(lua_State* luaState)
 
 int ScriptContextLua::gcMethod(lua_State* luaState)
 {
-	ScriptContextLua* context = reinterpret_cast< ScriptContextLua* >(lua_touserdata(luaState, lua_upvalueindex(1)));
-	T_ASSERT (context);
-
 	Object* object = *reinterpret_cast< Object** >(lua_touserdata(luaState, 1));
 	T_SAFE_ANONYMOUS_RELEASE(object);
-
-	--context->m_pending;
 	return 0;
 }
 

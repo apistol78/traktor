@@ -86,21 +86,25 @@ void PoolAllocator::leave()
 
 void* PoolAllocator::alloc(uint32_t size)
 {
-	T_ASSERT (size <= m_totalSize);
-
 	if (uint32_t(m_tail - m_head) + size >= m_totalSize)
 	{
 		if (m_allocator)
 		{
+			// Expand total size if allocation cannot fit within
+			// specified size.
+			if (size > m_totalSize)
+				m_totalSize = size;
+
+			// Save full heap in order to be released later.
 			m_heaps.push_back(m_head);
+			
+			// Allocate new heap.
 			m_head = m_tail = (uint8_t*)m_allocator->alloc(m_totalSize, 16, T_FILE_LINE);
 			T_ASSERT_M (m_head, L"Out of memory (pool)");
 		}
 		else
 			T_FATAL_ERROR;
 	}
-	else
-		T_FATAL_ERROR;
 	
 	void* ptr = m_tail;
 	m_tail += size;
