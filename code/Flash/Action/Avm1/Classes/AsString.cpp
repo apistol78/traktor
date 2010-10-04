@@ -109,12 +109,18 @@ void AsString::String_slice(CallArgs& ca)
 	{
 		uint32_t start = uint32_t(ca.args[0].getNumberSafe());
 		uint32_t end = uint32_t(ca.args[1].getNumberSafe());
-		ca.ret = ActionValue(st.substr(start, end - start));
+		if (start < st.length())
+			ca.ret = ActionValue(st.substr(start, end - start));
+		else
+			ca.ret = ActionValue(L"");
 	}
 	else if (ca.args.size() >= 1)
 	{
 		uint32_t start = uint32_t(ca.args[0].getNumberSafe());
-		ca.ret = ActionValue(st.substr(start));
+		if (start < st.length())
+			ca.ret = ActionValue(st.substr(start));
+		else
+			ca.ret = ActionValue(L"");
 	}
 }
 
@@ -151,7 +157,10 @@ void AsString::String_substr(CallArgs& ca)
 	uint32_t index = uint32_t(ca.args[0].getNumberSafe());
 	uint32_t count = uint32_t(ca.args[1].getNumberSafe());
 
-	ca.ret = ActionValue(st.substr(index, count));
+	if (index < st.length())
+		ca.ret = ActionValue(st.substr(index, count));
+	else
+		ca.ret = ActionValue(L"");
 }
 
 void AsString::String_substring(CallArgs& ca)
@@ -162,7 +171,10 @@ void AsString::String_substring(CallArgs& ca)
 	uint32_t start = uint32_t(ca.args[0].getNumberSafe());
 	uint32_t end = uint32_t(ca.args[1].getNumberSafe());
 
-	ca.ret = ActionValue(st.substr(start, end - start));
+	if (start < st.length())
+		ca.ret = ActionValue(st.substr(start, end - start));
+	else
+		ca.ret = ActionValue(L"");
 }
 
 void AsString::String_toLowerCase(CallArgs& ca)

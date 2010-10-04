@@ -29,7 +29,10 @@ public:
 
 		string_type operator * () const
 		{
-			return m_this->m_str.substr(m_st, m_en - m_st);
+			if (m_st != string_type::npos)
+				return m_this->m_str.substr(m_st, m_en - m_st);
+			else
+				return L"";
 		}
 
 		const_iterator operator ++ ()
