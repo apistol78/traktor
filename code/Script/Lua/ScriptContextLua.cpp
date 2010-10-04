@@ -98,6 +98,8 @@ ScriptContextLua::ScriptContextLua(const RefArray< IScriptClass >& registeredCla
 	m_luaState = lua_open();
 
 	lua_atpanic(m_luaState, luaPanic);
+	
+	lua_gc(m_luaState, LUA_GCSTOP, 0);
 
 	luaopen_base(m_luaState);
 	luaopen_table(m_luaState);
@@ -106,6 +108,8 @@ ScriptContextLua::ScriptContextLua(const RefArray< IScriptClass >& registeredCla
 
 	for (RefArray< IScriptClass >::const_iterator i = registeredClasses.begin(); i != registeredClasses.end(); ++i)
 		registerClass(*i);
+		
+	lua_gc(m_luaState, LUA_GCRESTART, 0);
 }
 
 ScriptContextLua::~ScriptContextLua()
@@ -166,7 +170,8 @@ bool ScriptContextLua::executeScript(const std::wstring& script, bool compileOnl
 		lua_pcall(m_luaState, 0, LUA_MULTRET, 0);
 	else
 		lua_pop(m_luaState, 1);
-
+		
+	lua_gc(m_luaState, LUA_GCCOLLECT, 0);
 	return true;
 }
 
@@ -204,14 +209,19 @@ Any ScriptContextLua::executeFunction(const std::wstring& functionName, uint32_t
 		lua_getglobal(m_luaState, wstombs(functionName).c_str());
 		if (!lua_isnil(m_luaState, -1))
 		{
+			// Push arguments; prevent GC while pushing arguments.
+			lua_gc(m_luaState, LUA_GCSTOP, 0);
 			for (uint32_t i = 0; i < argc; ++i)
 				pushAny(argv[i]);
+			lua_gc(m_luaState, LUA_GCRESTART, 0);
+			
 			lua_call(m_luaState, argc, 1);
 			returnValue = toAny(-1);
 		}
 		lua_pop(m_luaState, 1);
 	}
 
+	lua_gc(m_luaState, LUA_GCCOLLECT, 0);
 	return returnValue;
 }
 
@@ -231,15 +241,20 @@ Any ScriptContextLua::executeMethod(Object* self, const std::wstring& methodName
 		lua_getglobal(m_luaState, wstombs(methodName).c_str());
 		if (!lua_isnil(m_luaState, -1))
 		{
+			// Push arguments; prevent GC while pushing arguments.
+			lua_gc(m_luaState, LUA_GCSTOP, 0);
 			pushAny(Any(self));
 			for (uint32_t i = 0; i < argc; ++i)
 				pushAny(argv[i]);
+			lua_gc(m_luaState, LUA_GCRESTART, 0);
+
 			lua_call(m_luaState, int32_t(argc + 1), 1);
 			returnValue = toAny(-1);
 		}
 		lua_pop(m_luaState, 1);
 	}
 
+	lua_gc(m_luaState, LUA_GCCOLLECT, 0);
 	return returnValue;
 }
 
