@@ -1,6 +1,7 @@
 #ifndef traktor_PoolAllocator_H
 #define traktor_PoolAllocator_H
 
+#include <list>
 #include <stack>
 #include "Core/Object.h"
 
@@ -105,7 +106,7 @@ private:
 	uint8_t* m_head;
 	uint8_t* m_tail;
 	std::stack< uint8_t* > m_scope;
-	std::vector< void* > m_heaps;
+	std::list< uint8_t* > m_heaps;
 };
 
 }

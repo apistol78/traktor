@@ -13,7 +13,7 @@ namespace traktor
 		namespace
 		{
 
-const uint32_t c_allocSize = 64UL * 1024UL;
+const uint32_t c_allocSize = 256UL * 1024UL;
 
 		}
 
