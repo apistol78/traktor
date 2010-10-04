@@ -34,6 +34,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphOptimizer", ShaderGraphOptimi
 ShaderGraphOptimizer::ShaderGraphOptimizer(const ShaderGraph* shaderGraph)
 :	m_shaderGraph(shaderGraph)
 ,	m_insertedCount(0)
+,	m_frequentUniformsAsLinear(false)
 {
 }
 
@@ -201,14 +202,16 @@ Ref< ShaderGraph > ShaderGraphOptimizer::mergeBranches() const
 	return shaderGraph;
 }
 
-Ref< ShaderGraph > ShaderGraphOptimizer::insertInterpolators() const
+Ref< ShaderGraph > ShaderGraphOptimizer::insertInterpolators(bool frequentUniformsAsLinear) const
 {
 	Ref< ShaderGraph > shaderGraph = new ShaderGraph(
 		m_shaderGraph->getNodes(),
 		m_shaderGraph->getEdges()
 	);
 
+	m_frequentUniformsAsLinear = frequentUniformsAsLinear;
 	m_insertedCount = 0;
+	
 	updateOrderComplexity(shaderGraph);
 
 	RefArray< PixelOutput > pixelOutputNodes;
@@ -306,7 +309,7 @@ void ShaderGraphOptimizer::insertInterpolators(ShaderGraph* shaderGraph, Node* n
 
 void ShaderGraphOptimizer::updateOrderComplexity(ShaderGraph* shaderGraph) const
 {
-	ShaderGraphOrderEvaluator evaluator(shaderGraph);
+	ShaderGraphOrderEvaluator evaluator(shaderGraph, m_frequentUniformsAsLinear);
 	const RefArray< Node >& nodes = shaderGraph->getNodes();
 	for (RefArray< Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
 		m_orderComplexity[*i] = evaluator.evaluate(*i);

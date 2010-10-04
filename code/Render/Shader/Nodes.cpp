@@ -454,15 +454,21 @@ FragmentPosition::FragmentPosition()
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.IndexedUniform", 0, IndexedUniform, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.IndexedUniform", 1, IndexedUniform, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_IndexedUniform_i[] = { { L"Index", false }, 0 };
 const ImmutableNode::OutputPinDesc c_IndexedUniform_o[] = { L"Output", 0 };
 
-IndexedUniform::IndexedUniform(const std::wstring& parameterName, ParameterType type, int32_t length)
+IndexedUniform::IndexedUniform(
+	const std::wstring& parameterName,
+	ParameterType type,
+	UpdateFrequency frequency,
+	int32_t length
+)
 :	ImmutableNode(c_IndexedUniform_i, c_IndexedUniform_o)
 ,	m_parameterName(parameterName)
 ,	m_type(type)
+,	m_frequency(frequency)
 ,	m_length(length)
 {
 }
@@ -487,6 +493,16 @@ ParameterType IndexedUniform::getParameterType() const
 	return m_type;
 }
 
+void IndexedUniform::setFrequency(UpdateFrequency frequency)
+{
+	m_frequency = frequency;
+}
+	
+UpdateFrequency IndexedUniform::getFrequency() const
+{
+	return m_frequency;
+}
+
 void IndexedUniform::setLength(int32_t length)
 {
 	m_length = length;
@@ -509,7 +525,7 @@ bool IndexedUniform::serialize(ISerializer& s)
 	if (!Node::serialize(s))
 		return false;
 
-	const MemberEnum< ParameterType >::Key kType[] =
+	const MemberEnum< ParameterType >::Key kParameterType_Keys[] =
 	{
 		{ L"PtScalar", PtScalar },
 		{ L"PtVector", PtVector },
@@ -517,8 +533,20 @@ bool IndexedUniform::serialize(ISerializer& s)
 		{ 0, 0 }
 	};
 
+	const MemberEnum< UpdateFrequency >::Key kUpdateFrequency_Keys[] =
+	{
+		{ L"UfOnce", UfOnce },
+		{ L"UfFrame", UfFrame },
+		{ L"UfDraw", UfDraw },
+		{ 0, 0 }
+	};
+
 	s >> Member< std::wstring >(L"parameterName", m_parameterName);
-	s >> MemberEnum< ParameterType >(L"type", m_type, kType);
+	s >> MemberEnum< ParameterType >(L"type", m_type, kParameterType_Keys);
+	
+	if (s.getVersion() >= 1)
+		s >> MemberEnum< UpdateFrequency >(L"frequency", m_frequency, kUpdateFrequency_Keys);
+	
 	s >> Member< int32_t >(L"length", m_length);
 
 	return true;
@@ -1793,14 +1821,19 @@ Type::Type()
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Uniform", 0, Uniform, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Uniform", 1, Uniform, ImmutableNode)
 
 const ImmutableNode::OutputPinDesc c_Uniform_o[] = { L"Output", 0 };
 
-Uniform::Uniform(const std::wstring& parameterName, ParameterType type)
+Uniform::Uniform(
+	const std::wstring& parameterName,
+	ParameterType type,
+	UpdateFrequency frequency
+)
 :	ImmutableNode(0, c_Uniform_o)
 ,	m_parameterName(parameterName)
 ,	m_type(type)
+,	m_frequency(frequency)
 {
 }
 
@@ -1824,6 +1857,16 @@ ParameterType Uniform::getParameterType() const
 	return m_type;
 }
 
+void Uniform::setFrequency(UpdateFrequency frequency)
+{
+	m_frequency = frequency;
+}
+	
+UpdateFrequency Uniform::getFrequency() const
+{
+	return m_frequency;
+}
+
 std::wstring Uniform::getInformation() const
 {
 	return m_parameterName;
@@ -1834,7 +1877,7 @@ bool Uniform::serialize(ISerializer& s)
 	if (!Node::serialize(s))
 		return false;
 
-	const MemberEnum< ParameterType >::Key kType[] =
+	const MemberEnum< ParameterType >::Key kParameterType_Keys[] =
 	{
 		{ L"PtScalar", PtScalar },
 		{ L"PtVector", PtVector },
@@ -1842,9 +1885,20 @@ bool Uniform::serialize(ISerializer& s)
 		{ L"PtTexture", PtTexture },
 		{ 0, 0 }
 	};
+	
+	const MemberEnum< UpdateFrequency >::Key kUpdateFrequency_Keys[] =
+	{
+		{ L"UfOnce", UfOnce },
+		{ L"UfFrame", UfFrame },
+		{ L"UfDraw", UfDraw },
+		{ 0, 0 }
+	};
 
 	s >> Member< std::wstring >(L"parameterName", m_parameterName);
-	s >> MemberEnum< ParameterType >(L"type", m_type, kType);
+	s >> MemberEnum< ParameterType >(L"type", m_type, kParameterType_Keys);
+	
+	if (s.getVersion() >= 1)
+		s >> MemberEnum< UpdateFrequency >(L"frequency", m_frequency, kUpdateFrequency_Keys);
 
 	return true;
 }

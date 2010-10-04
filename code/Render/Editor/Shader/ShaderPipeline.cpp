@@ -60,6 +60,7 @@ struct BuildCombinationTask
 	ShaderResource::Combination* shaderResourceCombination;
 	render::IProgramCompiler* programCompiler;
 	render::IProgramCompiler::Stats stats;
+	bool frequentUniformsAsLinear;
 	int optimize;
 	bool validate;
 	bool result;
@@ -105,7 +106,7 @@ struct BuildCombinationTask
 		}
 
 		// Insert interpolation nodes at optimal locations.
-		programGraph = ShaderGraphOptimizer(programGraph).insertInterpolators();
+		programGraph = ShaderGraphOptimizer(programGraph).insertInterpolators(frequentUniformsAsLinear);
 		if (!programGraph)
 		{
 			log::error << L"ShaderPipeline failed; unable to optimize shader graph" << Endl;
@@ -143,7 +144,8 @@ struct BuildCombinationTask
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 26, ShaderPipeline, editor::IPipeline)
 
 ShaderPipeline::ShaderPipeline()
-:	m_optimize(4)
+:	m_frequentUniformsAsLinear(false)
+,	m_optimize(4)
 ,	m_validate(true)
 ,	m_debugCompleteGraphs(false)
 {
@@ -167,6 +169,7 @@ bool ShaderPipeline::create(const editor::IPipelineSettings* settings)
 		return false;
 	}
 
+	m_frequentUniformsAsLinear = settings->getProperty< PropertyBoolean >(L"ShaderPipeline.FrequentUniformsAsLinear", m_frequentUniformsAsLinear);
 	m_optimize = settings->getProperty< PropertyInteger >(L"ShaderPipeline.Optimize", m_optimize);
 	m_validate = settings->getProperty< PropertyBoolean >(L"ShaderPipeline.Validate", m_validate);
 	m_debugCompleteGraphs = settings->getProperty< PropertyBoolean >(L"ShaderPipeline.DebugCompleteGraphs", false);
@@ -303,6 +306,7 @@ bool ShaderPipeline::buildOutput(
 			task->shaderResourceCombination = new ShaderResource::Combination;
 			task->shaderResourceCombination->parameterValue = 0;
 			task->programCompiler = m_programCompiler;
+			task->frequentUniformsAsLinear = m_frequentUniformsAsLinear;
 			task->optimize = m_optimize;
 			task->validate = m_validate;
 			task->result = false;

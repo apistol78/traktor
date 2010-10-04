@@ -66,6 +66,14 @@ enum ParameterType
 	PtTexture	= 3		//!< Texture parameter.
 };
 
+/*! \brief Shader parameter update frequency. */
+enum UpdateFrequency
+{
+	UfOnce		= 0,	//!< Once per life time.
+	UfFrame		= 1,	//!< Once per frame.
+	UfDraw		= 2		//!< Per draw call.
+};
+
 /*! \brief Index type. */
 enum IndexType
 {

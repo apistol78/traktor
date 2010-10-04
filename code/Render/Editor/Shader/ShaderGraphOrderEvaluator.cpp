@@ -9,8 +9,12 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphOrderEvaluator", ShaderGraphOrderEvaluator, Object)
 
-ShaderGraphOrderEvaluator::ShaderGraphOrderEvaluator(const ShaderGraph* shaderGraph)
+ShaderGraphOrderEvaluator::ShaderGraphOrderEvaluator(
+	const ShaderGraph* shaderGraph,
+	bool frequentUniformsAsLinear
+)
 :	m_shaderGraph(shaderGraph)
+,	m_frequentUniformsAsLinear(frequentUniformsAsLinear)
 {
 }
 
@@ -47,6 +51,8 @@ int ShaderGraphOrderEvaluator::evaluate(const Node* node) const
 		order = nodeTrig(node);
 	else if (is_a< ArcusTan >(node))
 		order = nodeArcusTan(node);
+	else if (is_a< Uniform >(node))
+		order = nodeUniform(node);
 	else if (is_a< IndexedUniform >(node))
 		order = nodeIndexedUniform(node);
 	else if (
@@ -146,10 +152,31 @@ int ShaderGraphOrderEvaluator::nodeArcusTan(const Node* node) const
 	return order <= 0 ? OrConstant : OrNonLinear;
 }
 
+int ShaderGraphOrderEvaluator::nodeUniform(const Node* node) const
+{
+	const Uniform* uniform = checked_type_cast< const Uniform* >(node);
+	if (m_frequentUniformsAsLinear)
+	{
+		if (uniform->getFrequency() >= UfDraw)
+			return OrLinear;
+	}
+	return OrConstant;
+}
+
 int ShaderGraphOrderEvaluator::nodeIndexedUniform(const Node* node) const
 {
 	int order = evaluate(node, L"Index");
-	return order <= 0 ? OrConstant : OrNonLinear;
+	if (order > 0)
+		return OrNonLinear;
+		
+	const IndexedUniform* uniform = checked_type_cast< const IndexedUniform* >(node);
+	if (m_frequentUniformsAsLinear)
+	{
+		if (uniform->getFrequency() >= UfDraw)
+			return OrLinear;
+	}
+	
+	return OrConstant;
 }
 
 int ShaderGraphOrderEvaluator::nodeMatrix(const Node* node) const

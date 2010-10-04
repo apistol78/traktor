@@ -35,7 +35,10 @@ public:
 		OrNonLinear = 2		/*!< Non-linear order, i.e. cubic or higher. */
 	};
 
-	ShaderGraphOrderEvaluator(const ShaderGraph* shaderGraph);
+	ShaderGraphOrderEvaluator(
+		const ShaderGraph* shaderGraph,
+		bool frequentUniformsAsLinear
+	);
 
 	int evaluate(const Node* node, const std::wstring& inputPinName) const;
 
@@ -43,6 +46,7 @@ public:
 
 private:
 	Ref< const ShaderGraph > m_shaderGraph;
+	bool m_frequentUniformsAsLinear;
 	mutable std::map< const Node*, int > m_evaluated;
 
 	int nodeDefault(const Node* node, int initialOrder) const;
@@ -56,6 +60,8 @@ private:
 	int nodeTrig(const Node* node) const;
 
 	int nodeArcusTan(const Node* node) const;
+	
+	int nodeUniform(const Node* node) const;
 
 	int nodeIndexedUniform(const Node* node) const;
 
