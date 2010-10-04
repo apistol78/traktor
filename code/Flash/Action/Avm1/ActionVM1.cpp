@@ -302,9 +302,15 @@ void ActionVM1::execute(ActionFrame* frame) const
 			ActionValue strng = stack.pop();
 			if (count.isNumeric() && index.isNumeric())
 			{
-				std::wstring str = strng.getString();
-				std::wstring res = str.substr(int(index.getNumber()), int(count.getNumber()));
-				stack.push(ActionValue(res));
+				std::wstring str = strng.getStringSafe();
+				int32_t offset = int32_t(index.getNumber());
+				if (offset >= 0 && offset < str.length())
+				{
+					std::wstring res = str.substr(offset, int(count.getNumber()));
+					stack.push(ActionValue(res));
+				}
+				else
+					stack.push(ActionValue(L""));
 			}
 			else
 				stack.push(ActionValue(L""));
