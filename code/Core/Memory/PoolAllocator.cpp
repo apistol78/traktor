@@ -18,19 +18,17 @@ PoolAllocator::PoolAllocator()
 PoolAllocator::PoolAllocator(IAllocator* allocator, uint32_t totalSize)
 :	m_allocator(allocator)
 ,	m_totalSize(totalSize)
+,	m_head(0)
+,	m_tail(0)
 {
-	m_head = static_cast< uint8_t* >(m_allocator->alloc(totalSize, 16, T_FILE_LINE));
-	m_tail = m_head;
-	T_ASSERT (m_head);
 }
 
 PoolAllocator::PoolAllocator(uint32_t totalSize)
 :	m_allocator(new StdAllocator())
 ,	m_totalSize(totalSize)
+,	m_head(0)
+,	m_tail(0)
 {
-	m_head = static_cast< uint8_t* >(m_allocator->alloc(totalSize, 16, T_FILE_LINE));
-	m_tail = m_head;
-	T_ASSERT (m_head);
 }
 
 PoolAllocator::PoolAllocator(void* heap, uint32_t totalSize)
@@ -48,8 +46,7 @@ PoolAllocator::~PoolAllocator()
 
 	if (m_allocator)
 	{
-		m_allocator->free(m_head);
-		for (std::vector< void* >::iterator i = m_heaps.begin(); i != m_heaps.end(); ++i)
+		for (std::list< uint8_t* >::iterator i = m_heaps.begin(); i != m_heaps.end(); ++i)
 			m_allocator->free(*i);
 	}
 
@@ -66,41 +63,50 @@ void PoolAllocator::leave()
 	T_ASSERT (!m_scope.empty());
 	
 	uint8_t* tail = m_scope.top();
-	if (m_allocator)
-	{
-		if (tail >= m_head && tail < m_head + m_totalSize)
-			m_tail = tail;
-		else
-		{
-			// Pop;ed tail isn't part of current heap
-			// due to another heap has been allocated. Thus
-			// we only restore tail to beginning of current heap.
-			m_tail = m_head;
-		}
-	}
-	else
-		m_tail = tail;
-	
 	m_scope.pop();
+
+	// Free exceeding heaps.
+	if (m_allocator && !(tail >= m_head && tail <= m_head + m_totalSize))
+	{
+		m_head = 0;
+
+		// Find heap in which the tail is stored.
+		std::list< uint8_t* >::iterator i = m_heaps.begin();
+		for ( ;i != m_heaps.end(); ++i)
+		{
+			if (tail >= (*i) && tail <= (*i) + m_totalSize)
+				break;
+		}
+		T_ASSERT (i != m_heaps.end());
+
+		m_head = *i;
+
+		// Free heaps beyond pop;ed tail.
+		for (std::list< uint8_t* >::iterator j = ++i; j != m_heaps.end(); ++j)
+			m_allocator->free(*j);
+
+		m_heaps.erase(i, m_heaps.end());
+	}
+
+	m_tail = tail;
 }
 
 void* PoolAllocator::alloc(uint32_t size)
 {
-	if (uint32_t(m_tail - m_head) + size >= m_totalSize)
+	T_ASSERT (size <= m_totalSize);
+
+	if (!m_head || uint32_t(m_tail - m_head) + size >= m_totalSize)
 	{
 		if (m_allocator)
 		{
-			// Expand total size if allocation cannot fit within
-			// specified size.
-			if (size > m_totalSize)
-				m_totalSize = size;
-
-			// Save full heap in order to be released later.
-			m_heaps.push_back(m_head);
-			
 			// Allocate new heap.
-			m_head = m_tail = (uint8_t*)m_allocator->alloc(m_totalSize, 16, T_FILE_LINE);
-			T_ASSERT_M (m_head, L"Out of memory (pool)");
+			uint8_t* heap = (uint8_t*)m_allocator->alloc(m_totalSize, 16, T_FILE_LINE);
+			T_FATAL_ASSERT_M (heap, L"Out of memory (pool)");
+
+			m_head =
+			m_tail = heap;
+
+			m_heaps.push_back(heap);
 		}
 		else
 			T_FATAL_ERROR;
