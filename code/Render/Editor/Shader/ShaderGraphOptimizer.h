@@ -53,16 +53,17 @@ public:
 	 * in order to split calculations into vertex and pixel
 	 * shaders.
 	 *
-	 * \param shaderGraph Source shader graph.
+	 * \param frequentUniformsAsLinear Treat uniforms with high update frequency with linear complexity.
 	 * \return Shader graph with inserted interpolators.
 	 */
-	Ref< ShaderGraph > insertInterpolators() const;
+	Ref< ShaderGraph > insertInterpolators(bool frequentUniformsAsLinear) const;
 
 private:
 	Ref< const ShaderGraph > m_shaderGraph;
 	mutable std::set< const Node* > m_visited;
 	mutable std::map< const Node*, int > m_orderComplexity;
 	mutable int32_t m_insertedCount;
+	mutable bool m_frequentUniformsAsLinear;
 
 	void insertInterpolators(ShaderGraph* shaderGraph, Node* node) const;
 

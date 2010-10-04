@@ -306,7 +306,12 @@ class T_DLLCLASS IndexedUniform : public ImmutableNode
 	T_RTTI_CLASS;
 
 public:
-	IndexedUniform(const std::wstring& parameterName = L"", ParameterType type = PtScalar, int32_t length = 0);
+	IndexedUniform(
+		const std::wstring& parameterName = L"",
+		ParameterType type = PtScalar,
+		UpdateFrequency frequency = UfFrame,
+		int32_t length = 0
+	);
 
 	void setParameterName(const std::wstring& parameterName);
 
@@ -315,6 +320,10 @@ public:
 	void setParameterType(ParameterType type);
 
 	ParameterType getParameterType() const;
+
+	void setFrequency(UpdateFrequency frequency);
+	
+	UpdateFrequency getFrequency() const;
 
 	void setLength(int32_t length);
 
@@ -327,6 +336,7 @@ public:
 private:
 	std::wstring m_parameterName;
 	ParameterType m_type;
+	UpdateFrequency m_frequency;
 	int32_t m_length;
 };
 
@@ -1048,7 +1058,11 @@ class T_DLLCLASS Uniform : public ImmutableNode
 	T_RTTI_CLASS;
 
 public:
-	Uniform(const std::wstring& parameterName = L"", ParameterType type = PtScalar);
+	Uniform(
+		const std::wstring& parameterName = L"",
+		ParameterType type = PtScalar,
+		UpdateFrequency frequency = UfFrame
+	);
 
 	void setParameterName(const std::wstring& parameterName);
 
@@ -1057,6 +1071,10 @@ public:
 	void setParameterType(ParameterType type);
 
 	ParameterType getParameterType() const;
+	
+	void setFrequency(UpdateFrequency frequency);
+	
+	UpdateFrequency getFrequency() const;
 
 	virtual std::wstring getInformation() const;
 
@@ -1065,6 +1083,7 @@ public:
 private:
 	std::wstring m_parameterName;
 	ParameterType m_type;
+	UpdateFrequency m_frequency;
 };
 
 /*! \brief Vector constant. */
