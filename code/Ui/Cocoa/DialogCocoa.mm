@@ -347,5 +347,21 @@ void DialogCocoa::callbackTimer(void* controlId)
 	m_owner->raiseEvent(EiTimer, &commandEvent);
 }
 
+void DialogCocoa::event_windowDidBecomeKey()
+{
+}
+	
+void DialogCocoa::event_windowDidResignKey()
+{
+}
+	
+void DialogCocoa::event_windowDidBecomeMain()
+{
+}
+	
+void DialogCocoa::event_windowDidResignMain()
+{
+}
+
 	}
 }

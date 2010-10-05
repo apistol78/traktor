@@ -336,5 +336,21 @@ bool FormCocoa::event_windowShouldClose()
 	return !closeEvent.consumed() || !closeEvent.cancelled();
 }
 
+void FormCocoa::event_windowDidBecomeKey()
+{
+}
+	
+void FormCocoa::event_windowDidResignKey()
+{
+}
+	
+void FormCocoa::event_windowDidBecomeMain()
+{
+}
+	
+void FormCocoa::event_windowDidResignMain()
+{
+}
+
 	}
 }

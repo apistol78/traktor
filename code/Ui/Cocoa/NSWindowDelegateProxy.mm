@@ -24,9 +24,29 @@
 	m_eventsCallback->event_windowDidResize();
 }
 
-- (BOOL) windowShouldClose: (id)sender
+- (BOOL)windowShouldClose: (id)sender
 {
 	return m_eventsCallback->event_windowShouldClose();
+}
+
+- (void)windowDidBecomeKey: (NSNotification*)notification
+{
+	m_eventsCallback->event_windowDidBecomeKey();
+}
+
+- (void)windowDidResignKey: (NSNotification*)notification
+{
+	m_eventsCallback->event_windowDidResignKey();
+}
+
+- (void)windowDidBecomeMain: (NSNotification*)notification
+{
+	m_eventsCallback->event_windowDidBecomeMain();
+}
+
+- (void)windowDidResignMain: (NSNotification*)notification
+{
+	m_eventsCallback->event_windowDidResignMain();
 }
 
 @end

@@ -318,5 +318,21 @@ bool ToolFormCocoa::event_windowShouldClose()
 	return !closeEvent.consumed() || !closeEvent.cancelled();
 }
 
+void ToolFormCocoa::event_windowDidBecomeKey()
+{
+}
+	
+void ToolFormCocoa::event_windowDidResignKey()
+{
+}
+	
+void ToolFormCocoa::event_windowDidBecomeMain()
+{
+}
+	
+void ToolFormCocoa::event_windowDidResignMain()
+{
+}
+
 	}
 }

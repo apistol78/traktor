@@ -123,6 +123,14 @@ public:
 	
 	virtual bool event_windowShouldClose();
 
+	virtual void event_windowDidBecomeKey();
+	
+	virtual void event_windowDidResignKey();
+	
+	virtual void event_windowDidBecomeMain();
+	
+	virtual void event_windowDidResignMain();
+
 private:
 	EventSubject* m_owner;
 	NSWindow* m_window;
