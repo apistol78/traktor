@@ -12,7 +12,7 @@
 			<type>DtFloat2</type>
 			<index>0</index>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>-140</first>
@@ -20,6 +20,7 @@
 			</position>
 			<parameterName>FrameSize</parameterName>
 			<type>PtVector</type>
+			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
@@ -58,7 +59,7 @@
 				<second>217</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>-326</first>
@@ -66,6 +67,7 @@
 			</position>
 			<parameterName>Transform</parameterName>
 			<type>PtMatrix</type>
+			<frequency>UfDraw</frequency>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
@@ -140,7 +142,7 @@
 			</position>
 			<name>Color</name>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>1012</first>
@@ -148,6 +150,7 @@
 			</position>
 			<parameterName>ViewSize</parameterName>
 			<type>PtVector</type>
+			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
@@ -207,7 +210,7 @@
 			</position>
 			<swizzle>zw</swizzle>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>357</first>
@@ -215,6 +218,7 @@
 			</position>
 			<parameterName>ViewOffset</parameterName>
 			<type>PtVector</type>
+			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.MulAdd">
 			<comment/>

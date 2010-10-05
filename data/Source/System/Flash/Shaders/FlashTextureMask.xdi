@@ -4,8 +4,8 @@
 		<item type="traktor.render.VertexInput">
 			<comment/>
 			<position>
-				<first>-91</first>
-				<second>175</second>
+				<first>-125</first>
+				<second>173</second>
 			</position>
 			<name>Position</name>
 			<usage>DuPosition</usage>
@@ -77,25 +77,26 @@
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>89</first>
-				<second>175</second>
+				<first>55</first>
+				<second>173</second>
 			</position>
 			<swizzle>xy10</swizzle>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>-5</first>
-				<second>214</second>
+				<first>-39</first>
+				<second>212</second>
 			</position>
 			<parameterName>TextureMatrix</parameterName>
 			<type>PtMatrix</type>
+			<frequency>UfDraw</frequency>
 		</item>
 		<item type="traktor.render.Transform">
 			<comment/>
 			<position>
-				<first>196</first>
-				<second>170</second>
+				<first>162</first>
+				<second>168</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="1">
@@ -116,7 +117,7 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>557</first>
@@ -124,8 +125,9 @@
 			</position>
 			<parameterName>CxFormMul</parameterName>
 			<type>PtVector</type>
+			<frequency>UfDraw</frequency>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>557</first>
@@ -133,6 +135,7 @@
 			</position>
 			<parameterName>CxFormAdd</parameterName>
 			<type>PtVector</type>
+			<frequency>UfDraw</frequency>
 		</item>
 		<item type="traktor.render.MulAdd">
 			<comment/>
@@ -141,7 +144,7 @@
 				<second>138</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>227</first>
@@ -149,6 +152,14 @@
 			</position>
 			<parameterName>Texture</parameterName>
 			<type>PtTexture</type>
+			<frequency>UfDraw</frequency>
+		</item>
+		<item type="traktor.render.Interpolator">
+			<comment/>
+			<position>
+				<first>296</first>
+				<second>188</second>
+			</position>
 		</item>
 	</nodes>
 	<edges>
@@ -170,16 +181,6 @@
 			<destination>
 				<node ref="/object/nodes/item[7]"/>
 				<name>Transform</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[7]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[3]"/>
-				<name>TexCoord</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -270,6 +271,26 @@
 			<destination>
 				<node ref="/object/nodes/item[3]"/>
 				<name>Texture</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[7]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[13]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[13]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<name>TexCoord</name>
 			</destination>
 		</item>
 	</edges>

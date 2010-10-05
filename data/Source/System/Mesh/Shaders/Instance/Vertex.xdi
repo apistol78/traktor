@@ -34,7 +34,7 @@
 			<type>DtHalf4</type>
 			<index>0</index>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>1446</first>
@@ -42,6 +42,7 @@
 			</position>
 			<parameterName>Projection</parameterName>
 			<type>PtMatrix</type>
+			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Transform">
 			<comment/>
@@ -120,7 +121,7 @@
 			</position>
 			<name>TexCoord</name>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>1016</first>
@@ -128,6 +129,7 @@
 			</position>
 			<parameterName>View</parameterName>
 			<type>PtMatrix</type>
+			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Transform">
 			<comment/>
@@ -170,7 +172,7 @@
 			<type>DtFloat1</type>
 			<index>1</index>
 		</item>
-		<item type="traktor.render.IndexedUniform">
+		<item type="traktor.render.IndexedUniform" version="1">
 			<comment>
 			<![CDATA[
 rotation
@@ -182,6 +184,7 @@ rotation
 			</position>
 			<parameterName>InstanceWorld</parameterName>
 			<type>PtVector</type>
+			<frequency>UfDraw</frequency>
 			<length>20</length>
 		</item>
 		<item type="traktor.render.Mul">
@@ -199,7 +202,7 @@ rotation
 			</position>
 			<value>2</value>
 		</item>
-		<item type="traktor.render.IndexedUniform">
+		<item type="traktor.render.IndexedUniform" version="1">
 			<comment>
 			<![CDATA[
 translation
@@ -211,6 +214,7 @@ translation
 			</position>
 			<parameterName>InstanceWorld</parameterName>
 			<type>PtVector</type>
+			<frequency>UfDraw</frequency>
 			<length>20</length>
 		</item>
 		<item type="traktor.render.Add">
@@ -274,7 +278,7 @@ translation
 			</position>
 			<name>WorldEyeDirection</name>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>1338</first>
@@ -282,6 +286,7 @@ translation
 			</position>
 			<parameterName>EyePosition</parameterName>
 			<type>PtVector</type>
+			<frequency>UfDraw</frequency>
 		</item>
 		<item type="traktor.render.Normalize">
 			<comment/>
@@ -428,14 +433,15 @@ translation
 				<second>718</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>1411</first>
+				<first>1412</first>
 				<second>791</second>
 			</position>
 			<parameterName>Projection</parameterName>
 			<type>PtMatrix</type>
+			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Transform">
 			<comment/>
@@ -444,7 +450,7 @@ translation
 				<second>739</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>1192</first>
@@ -452,6 +458,7 @@ translation
 			</position>
 			<parameterName>ViewPrevious</parameterName>
 			<type>PtMatrix</type>
+			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Transform">
 			<comment/>
@@ -696,7 +703,7 @@ translation
 				<second>575</second>
 			</position>
 		</item>
-		<item type="traktor.render.IndexedUniform">
+		<item type="traktor.render.IndexedUniform" version="1">
 			<comment>
 			<![CDATA[
 translation
@@ -708,9 +715,10 @@ translation
 			</position>
 			<parameterName>InstanceWorld</parameterName>
 			<type>PtVector</type>
+			<frequency>UfDraw</frequency>
 			<length>60</length>
 		</item>
-		<item type="traktor.render.IndexedUniform">
+		<item type="traktor.render.IndexedUniform" version="1">
 			<comment>
 			<![CDATA[
 rotation
@@ -722,9 +730,10 @@ rotation
 			</position>
 			<parameterName>InstanceWorld</parameterName>
 			<type>PtVector</type>
+			<frequency>UfDraw</frequency>
 			<length>60</length>
 		</item>
-		<item type="traktor.render.IndexedUniform">
+		<item type="traktor.render.IndexedUniform" version="1">
 			<comment>
 			<![CDATA[
 translation
@@ -736,9 +745,10 @@ translation
 			</position>
 			<parameterName>InstanceWorld</parameterName>
 			<type>PtVector</type>
+			<frequency>UfDraw</frequency>
 			<length>120</length>
 		</item>
-		<item type="traktor.render.IndexedUniform">
+		<item type="traktor.render.IndexedUniform" version="1">
 			<comment>
 			<![CDATA[
 rotation
@@ -750,6 +760,7 @@ rotation
 			</position>
 			<parameterName>InstanceWorld</parameterName>
 			<type>PtVector</type>
+			<frequency>UfDraw</frequency>
 			<length>120</length>
 		</item>
 		<item type="traktor.render.Platform">

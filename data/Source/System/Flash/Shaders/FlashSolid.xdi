@@ -2,7 +2,7 @@
 <object type="traktor.render.ShaderGraph">
 	<nodes>
 		<item type="traktor.render.VertexOutput" version="1">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>415</first>
 				<second>69</second>
@@ -10,7 +10,7 @@
 			<technique>Default</technique>
 		</item>
 		<item type="traktor.render.PixelOutput" version="2">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>596</first>
 				<second>127</second>
@@ -42,8 +42,8 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>4294967295</stencilMask>
 		</item>
-		<item type="traktor.render.External">
-			<comment></comment>
+		<item type="traktor.render.External" version="1">
+			<comment/>
 			<position>
 				<first>181</first>
 				<second>78</second>
@@ -58,27 +58,30 @@
 					<name>Color</name>
 				</item>
 			</outputPins>
+			<values/>
 		</item>
-		<item type="traktor.render.Uniform">
-			<comment></comment>
+		<item type="traktor.render.Uniform" version="1">
+			<comment/>
 			<position>
 				<first>230</first>
 				<second>208</second>
 			</position>
 			<parameterName>CxFormAdd</parameterName>
 			<type>PtVector</type>
+			<frequency>UfDraw</frequency>
 		</item>
-		<item type="traktor.render.Uniform">
-			<comment></comment>
+		<item type="traktor.render.Uniform" version="1">
+			<comment/>
 			<position>
 				<first>230</first>
 				<second>166</second>
 			</position>
 			<parameterName>CxFormMul</parameterName>
 			<type>PtVector</type>
+			<frequency>UfDraw</frequency>
 		</item>
 		<item type="traktor.render.MulAdd">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>411</first>
 				<second>131</second>

@@ -54,7 +54,7 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>224</first>
@@ -62,6 +62,7 @@
 			</position>
 			<parameterName>DepthMap</parameterName>
 			<type>PtTexture</type>
+			<frequency>UfOnce</frequency>
 		</item>
 	</nodes>
 	<edges>

@@ -50,7 +50,7 @@
 				<second>254</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>527</first>
@@ -58,6 +58,7 @@
 			</position>
 			<parameterName>Direction</parameterName>
 			<type>PtVector</type>
+			<frequency>UfDraw</frequency>
 		</item>
 		<item type="traktor.render.Mul">
 			<comment/>
@@ -112,7 +113,7 @@
 				<second>254</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>353</first>
@@ -120,6 +121,7 @@
 			</position>
 			<parameterName>Source_Size</parameterName>
 			<type>PtVector</type>
+			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Scalar">
 			<comment/>
@@ -129,7 +131,7 @@
 			</position>
 			<value>0.5</value>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>966</first>
@@ -137,6 +139,7 @@
 			</position>
 			<parameterName>Source</parameterName>
 			<type>PtTexture</type>
+			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Platform">
 			<comment/>
@@ -152,7 +155,7 @@
 				<second>651</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>520</first>
@@ -160,6 +163,7 @@
 			</position>
 			<parameterName>Direction</parameterName>
 			<type>PtVector</type>
+			<frequency>UfDraw</frequency>
 		</item>
 		<item type="traktor.render.Div">
 			<comment/>
@@ -168,7 +172,7 @@
 				<second>705</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>347</first>
@@ -176,6 +180,7 @@
 			</position>
 			<parameterName>Source_Size</parameterName>
 			<type>PtVector</type>
+			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Scalar">
 			<comment/>
@@ -260,7 +265,7 @@
 			<addressV>AdClamp</addressV>
 			<addressW>AdClamp</addressW>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>926</first>
@@ -268,6 +273,7 @@
 			</position>
 			<parameterName>Source</parameterName>
 			<type>PtTexture</type>
+			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.External" version="1">
 			<comment/>

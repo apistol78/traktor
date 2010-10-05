@@ -47,7 +47,7 @@
 			</position>
 			<swizzle>x</swizzle>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>1233</first>
@@ -55,6 +55,7 @@
 			</position>
 			<parameterName>ShadowMask</parameterName>
 			<type>PtTexture</type>
+			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.TargetSize">
 			<comment/>
@@ -91,7 +92,7 @@
 				<second>898</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>894</first>
@@ -99,6 +100,7 @@
 			</position>
 			<parameterName>ShadowMaskSize</parameterName>
 			<type>PtScalar</type>
+			<frequency>UfOnce</frequency>
 		</item>
 	</nodes>
 	<edges>

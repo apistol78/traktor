@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>-120</first>
@@ -9,6 +9,7 @@
 			</position>
 			<parameterName>World</parameterName>
 			<type>PtMatrix</type>
+			<frequency>UfDraw</frequency>
 		</item>
 		<item type="traktor.render.VertexInput">
 			<comment/>
@@ -53,7 +54,7 @@
 				<second>582</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>645</first>
@@ -61,6 +62,7 @@
 			</position>
 			<parameterName>Projection</parameterName>
 			<type>PtMatrix</type>
+			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Transform">
 			<comment/>
@@ -176,7 +178,7 @@
 				<second>82</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>257</first>
@@ -184,6 +186,7 @@
 			</position>
 			<parameterName>View</parameterName>
 			<type>PtMatrix</type>
+			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
@@ -288,7 +291,7 @@
 				<second>471</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>543</first>
@@ -296,6 +299,7 @@
 			</position>
 			<parameterName>EyePosition</parameterName>
 			<type>PtVector</type>
+			<frequency>UfDraw</frequency>
 		</item>
 		<item type="traktor.render.Interpolator">
 			<comment/>
