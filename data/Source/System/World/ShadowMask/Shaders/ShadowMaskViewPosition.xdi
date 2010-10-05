@@ -54,7 +54,7 @@
 				</item>
 			</values>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>257</first>
@@ -62,6 +62,7 @@
 			</position>
 			<parameterName>DepthRange</parameterName>
 			<type>PtScalar</type>
+			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.Sampler">
 			<comment/>
@@ -95,7 +96,7 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>127</first>
@@ -103,6 +104,7 @@
 			</position>
 			<parameterName>Depth</parameterName>
 			<type>PtTexture</type>
+			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.Comment">
 			<comment>
@@ -153,7 +155,7 @@ be in mask.
 				<second>215</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>923</first>
@@ -161,6 +163,7 @@ be in mask.
 			</position>
 			<parameterName>MagicCoeffs</parameterName>
 			<type>PtVector</type>
+			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.Discard">
 			<comment/>
@@ -170,7 +173,7 @@ be in mask.
 			</position>
 			<operator>CoLess</operator>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>532</first>
@@ -178,6 +181,7 @@ be in mask.
 			</position>
 			<parameterName>ShadowFarZ</parameterName>
 			<type>PtScalar</type>
+			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>

@@ -62,7 +62,7 @@
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>-308</first>
@@ -70,6 +70,7 @@
 			</position>
 			<parameterName>ViewOffset</parameterName>
 			<type>PtVector</type>
+			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
@@ -101,7 +102,7 @@
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>-805</first>
@@ -109,6 +110,7 @@
 			</position>
 			<parameterName>FrameSize</parameterName>
 			<type>PtVector</type>
+			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
@@ -159,7 +161,7 @@
 			</position>
 			<swizzle>zw</swizzle>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>347</first>
@@ -167,6 +169,7 @@
 			</position>
 			<parameterName>ViewSize</parameterName>
 			<type>PtVector</type>
+			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.Vector">
 			<comment/>
@@ -209,7 +212,7 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>-503</first>
@@ -217,6 +220,7 @@
 			</position>
 			<parameterName>Texture</parameterName>
 			<type>PtTexture</type>
+			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.Sampler">
 			<comment/>

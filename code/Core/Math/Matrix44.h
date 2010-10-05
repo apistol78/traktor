@@ -79,7 +79,13 @@ public:
 	 *
 	 * \param in Pointer to 16 floats.
 	 */
-	T_MATH_INLINE void load(const float* in);
+	static T_MATH_INLINE Matrix44 loadAligned(const float* in);
+
+	/*! \brief Load elements column major.
+	 *
+	 * \param in Pointer to 16 floats.
+	 */
+	static T_MATH_INLINE Matrix44 loadUnaligned(const float* in);
 
 	/*! \brief Store elements column major.
 	 *

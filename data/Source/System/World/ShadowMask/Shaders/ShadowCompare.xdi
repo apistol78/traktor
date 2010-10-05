@@ -45,7 +45,7 @@
 			</position>
 			<name>Output</name>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>196</first>
@@ -53,6 +53,7 @@
 			</position>
 			<parameterName>ShadowMapSizeAndBias</parameterName>
 			<type>PtVector</type>
+			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment>
@@ -91,7 +92,7 @@ Constant bias
 			</position>
 			<value>0</value>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>187</first>
@@ -99,6 +100,7 @@ Constant bias
 			</position>
 			<parameterName>ShadowMap</parameterName>
 			<type>PtTexture</type>
+			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.External" version="1">
 			<comment/>
@@ -137,7 +139,7 @@ Constant bias
 				</item>
 			</values>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>324</first>
@@ -145,6 +147,7 @@ Constant bias
 			</position>
 			<parameterName>DepthRange</parameterName>
 			<type>PtScalar</type>
+			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.Sub">
 			<comment/>

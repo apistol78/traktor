@@ -242,12 +242,24 @@ T_MATH_INLINE Matrix44 Matrix44::inverseOrtho() const
 	.transpose();	// @fixme remove transpose...
 }
 
-T_MATH_INLINE void Matrix44::load(const float* in)
+T_MATH_INLINE Matrix44 Matrix44::loadAligned(const float* in)
 {
-	m_c[0] = Vector4(&in[0]);
-	m_c[1] = Vector4(&in[4]);
-	m_c[2] = Vector4(&in[8]);
-	m_c[3] = Vector4(&in[12]);
+	Matrix44 m;
+	m.m_c[0] = Vector4::loadAligned(&in[0]);
+	m.m_c[1] = Vector4::loadAligned(&in[4]);
+	m.m_c[2] = Vector4::loadAligned(&in[8]);
+	m.m_c[3] = Vector4::loadAligned(&in[12]);
+	return m;
+}
+
+T_MATH_INLINE Matrix44 Matrix44::loadUnaligned(const float* in)
+{
+	Matrix44 m;
+	m.m_c[0] = Vector4::loadUnaligned(&in[0]);
+	m.m_c[1] = Vector4::loadUnaligned(&in[4]);
+	m.m_c[2] = Vector4::loadUnaligned(&in[8]);
+	m.m_c[3] = Vector4::loadUnaligned(&in[12]);
+	return m;
 }
 
 T_MATH_INLINE void Matrix44::storeAligned(float* out) const

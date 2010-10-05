@@ -60,7 +60,7 @@
 				</item>
 			</values>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>479</first>
@@ -68,6 +68,7 @@
 			</position>
 			<parameterName>DepthRange</parameterName>
 			<type>PtScalar</type>
+			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>

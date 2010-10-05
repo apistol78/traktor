@@ -55,7 +55,7 @@ public:
 
 	virtual void setStencilReference(uint32_t stencilReference);
 
-	void bind(StateCachePs3& stateCache, const float targetSize[], uint32_t frameCounter);
+	void bind(StateCachePs3& stateCache, const float targetSize[], uint32_t frameCounter, uint32_t& outPatchCounter);
 
 	static void unbind();
 
@@ -101,6 +101,10 @@ private:
 	uint8_t m_dirty;
 	float m_targetSize[2];
 	int32_t& m_counter;
+
+#if defined(_DEBUG)
+	std::map< handle_t, std::wstring > m_parameterName;
+#endif
 };
 
 	}

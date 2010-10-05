@@ -276,7 +276,6 @@ void SoundSystem::threadMixer()
 		}
 		m_channelAttachLock.release();
 
-		// Synchronize mixer as we've pending stretches etc from channels.
 		m_mixer->synchronize();
 
 		// Final combine channels into hardware channels using "combine matrix".
@@ -288,9 +287,9 @@ void SoundSystem::threadMixer()
 			T_ASSERT (m_requestBlocks[i].sampleRate == m_desc.driverDesc.sampleRate);
 			T_ASSERT (m_requestBlocks[i].samplesCount == m_desc.driverDesc.frameSamples);
 			
-			for (uint32_t j = 0; j < m_desc.driverDesc.hwChannels; ++j)
+			for (uint32_t k = 0; k < m_requestBlocks[i].maxChannel; ++k)
 			{
-				for (uint32_t k = 0; k < m_requestBlocks[i].maxChannel; ++k)
+				for (uint32_t j = 0; j < m_desc.driverDesc.hwChannels; ++j)
 				{
 					float strength = m_desc.cm[j][k] * m_volume;
 					if (m_requestBlocks[i].samples[k] && abs(strength) >= FUZZY_EPSILON)
@@ -303,11 +302,9 @@ void SoundSystem::threadMixer()
 						);
 					}
 				}
+				m_mixer->synchronize();
 			}
 		}
-
-		// Synchronize mixer as we want ready blocks passed to submission.
-		m_mixer->synchronize();
 
 		m_time += double(m_desc.driverDesc.frameSamples) / m_desc.driverDesc.sampleRate;
 

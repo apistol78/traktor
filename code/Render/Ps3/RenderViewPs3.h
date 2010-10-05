@@ -117,6 +117,7 @@ private:
 	void* m_depthAddr;
 	CellGcmTexture m_depthTexture;
 	uint32_t m_frameCounter;
+	uint32_t m_patchCounter;
 	volatile uint32_t* m_frameSyncLabelData;
 	std::list< RenderState > m_renderTargetStack;
 	bool m_renderTargetDirty;

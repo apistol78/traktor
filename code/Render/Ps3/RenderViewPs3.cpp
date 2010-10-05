@@ -70,6 +70,7 @@ RenderViewPs3::RenderViewPs3(MemoryHeap* localMemoryHeap, TileArea& tileArea, Re
 ,	m_depthObject(0)
 ,	m_depthAddr(0)
 ,	m_frameCounter(1)
+,	m_patchCounter(0)
 ,	m_frameSyncLabelData(0)
 ,	m_renderTargetDirty(false)
 {
@@ -476,7 +477,7 @@ void RenderViewPs3::draw(const Primitives& primitives)
 	if (m_renderTargetDirty)
 		setCurrentRenderState();
 
-	m_currentProgram->bind(m_stateCache, m_targetSize, m_frameCounter);
+	m_currentProgram->bind(m_stateCache, m_targetSize, m_frameCounter, m_patchCounter);
 	m_currentVertexBuffer->bind(m_stateCache, m_currentProgram->getInputSignature());
 
 	uint32_t count = 0;
@@ -583,6 +584,11 @@ void RenderViewPs3::present()
 	m_frameCounter = incrementLabel(m_frameCounter);
 
 	m_renderSystem->endRendering();
+
+#if defined(_DEBUG)
+	log::debug << m_patchCounter << L" fragment shader(s) patched" << Endl;
+#endif
+	m_patchCounter = 0;
 }
 
 void RenderViewPs3::pushMarker(const char* const marker)

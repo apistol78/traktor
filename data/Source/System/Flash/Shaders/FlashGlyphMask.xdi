@@ -96,7 +96,7 @@ Y
 			</position>
 			<value>-1, 1, 0, 0</value>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>1218</first>
@@ -104,6 +104,7 @@ Y
 			</position>
 			<parameterName>ViewSize</parameterName>
 			<type>PtVector</type>
+			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
@@ -154,7 +155,7 @@ Y
 			</position>
 			<swizzle>zw</swizzle>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>66</first>
@@ -162,6 +163,7 @@ Y
 			</position>
 			<parameterName>FrameSize</parameterName>
 			<type>PtVector</type>
+			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
@@ -193,7 +195,7 @@ Y
 			</position>
 			<swizzle>zw</swizzle>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>563</first>
@@ -201,6 +203,7 @@ Y
 			</position>
 			<parameterName>ViewOffset</parameterName>
 			<type>PtVector</type>
+			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
@@ -295,7 +298,7 @@ Y
 			<type>DtFloat2</type>
 			<index>0</index>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>368</first>
@@ -303,6 +306,7 @@ Y
 			</position>
 			<parameterName>Texture</parameterName>
 			<type>PtTexture</type>
+			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>

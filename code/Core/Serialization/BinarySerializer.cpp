@@ -507,7 +507,7 @@ bool BinarySerializer::operator >> (const Member< Matrix44 >& m)
 	{
 		for (int i = 0; i < 16; ++i)
 			result &= read_primitive< float >(m_stream, values[i]);
-		(*m).load(values);
+		(*m) = Matrix44::loadAligned(values);
 	}
 	else
 	{

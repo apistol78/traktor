@@ -155,7 +155,7 @@ int ShaderGraphOrderEvaluator::nodeArcusTan(const Node* node) const
 int ShaderGraphOrderEvaluator::nodeUniform(const Node* node) const
 {
 	const Uniform* uniform = checked_type_cast< const Uniform* >(node);
-	if (m_frequentUniformsAsLinear)
+	if (uniform->getParameterType() != PtTexture && m_frequentUniformsAsLinear)
 	{
 		if (uniform->getFrequency() >= UfDraw)
 			return OrLinear;
@@ -170,7 +170,7 @@ int ShaderGraphOrderEvaluator::nodeIndexedUniform(const Node* node) const
 		return OrNonLinear;
 		
 	const IndexedUniform* uniform = checked_type_cast< const IndexedUniform* >(node);
-	if (m_frequentUniformsAsLinear)
+	if (uniform->getParameterType() != PtTexture && m_frequentUniformsAsLinear)
 	{
 		if (uniform->getFrequency() >= UfDraw)
 			return OrLinear;

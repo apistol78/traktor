@@ -137,10 +137,14 @@ bool ProgramPs3::create(MemoryHeap* memoryHeap, const ProgramResourcePs3* resour
 
 	for (std::map< std::wstring, ScalarParameter >::const_iterator i = resource->m_scalarParameterMap.begin(); i != resource->m_scalarParameterMap.end(); ++i)
 	{
+		handle_t parameterHandle = getParameterHandle(i->first);
 		m_scalarParameterMap.insert(std::make_pair(
-			getParameterHandle(i->first),
+			parameterHandle,
 			i->second
 		));
+#if defined(_DEBUG)
+		m_parameterName[parameterHandle] = i->first;
+#endif
 	}
 
 	for (std::map< std::wstring, uint32_t >::const_iterator i = resource->m_textureParameterMap.begin(); i != resource->m_textureParameterMap.end(); ++i)
@@ -149,7 +153,7 @@ bool ProgramPs3::create(MemoryHeap* memoryHeap, const ProgramResourcePs3* resour
 			i->second
 		));
 
-	m_scalarParameterData.resize(resource->m_scalarParameterDataSize);
+	m_scalarParameterData.resize(resource->m_scalarParameterDataSize, 0.0f);
 	m_textureParameterData.resize(resource->m_textureParameterDataSize);
 
 	// Get patch offsets of internal parameters.
@@ -214,8 +218,25 @@ void ProgramPs3::setFloatParameter(handle_t handle, float param)
 	if (i == m_scalarParameterMap.end())
 		return;
 
-	m_scalarParameterData[i->second.offset] = param;
-	m_dirty |= i->second.usage;
+	float* parameterData = &m_scalarParameterData[i->second.offset];
+	uint8_t usage = i->second.usage;
+
+	if (usage & DfPixel)
+	{
+		if (*parameterData == param)
+		{
+			if ((usage &= ~DfPixel) == 0)
+				return;
+		}
+	}
+
+#if defined(_DEBUG)
+	if (usage & DfPixel)
+		log::debug << L"Patch caused by \"" << m_parameterName[handle] << L"\" (F)" << Endl;
+#endif
+
+	*parameterData = param;
+	m_dirty |= usage;
 }
 
 void ProgramPs3::setFloatArrayParameter(handle_t handle, const float* param, int length)
@@ -224,8 +245,34 @@ void ProgramPs3::setFloatArrayParameter(handle_t handle, const float* param, int
 	if (i == m_scalarParameterMap.end())
 		return;
 
-	__builtin_memcpy(&m_scalarParameterData[i->second.offset], param, length * sizeof(float));
-	m_dirty |= i->second.usage;
+	float* parameterData = &m_scalarParameterData[i->second.offset];
+	uint8_t usage = i->second.usage;
+
+	if (usage & DfPixel)
+	{
+		bool equal = true;
+		for (int32_t i = 0; i < length; ++i)
+		{
+			if (parameterData[i] != param[i])
+			{
+				equal = false;
+				break;
+			}
+		}
+		if (equal)
+		{
+			if ((usage &= ~DfPixel) == 0)
+				return;
+		}
+	}
+
+#if defined(_DEBUG)
+	if (usage & DfPixel)
+		log::debug << L"Patch caused by \"" << m_parameterName[handle] << L"\" (F+)" << Endl;
+#endif
+
+	__builtin_memcpy(parameterData, param, length * sizeof(float));
+	m_dirty |= usage;
 }
 
 void ProgramPs3::setVectorParameter(handle_t handle, const Vector4& param)
@@ -234,8 +281,25 @@ void ProgramPs3::setVectorParameter(handle_t handle, const Vector4& param)
 	if (i == m_scalarParameterMap.end())
 		return;
 
-	param.storeAligned(&m_scalarParameterData[i->second.offset]);
-	m_dirty |= i->second.usage;
+	float* parameterData = &m_scalarParameterData[i->second.offset];
+	uint8_t usage = i->second.usage;
+
+	if (usage & DfPixel)
+	{
+		if (Vector4::loadAligned(parameterData) == param)
+		{
+			if ((usage &= ~DfPixel) == 0)
+				return;
+		}
+	}
+
+#if defined(_DEBUG)
+	if (usage & DfPixel)
+		log::debug << L"Patch caused by \"" << m_parameterName[handle] << L"\" (V)" << Endl;
+#endif
+
+	param.storeAligned(parameterData);
+	m_dirty |= usage;
 }
 
 void ProgramPs3::setVectorArrayParameter(handle_t handle, const Vector4* param, int length)
@@ -244,10 +308,36 @@ void ProgramPs3::setVectorArrayParameter(handle_t handle, const Vector4* param, 
 	if (i == m_scalarParameterMap.end())
 		return;
 
-	for (int j = 0; j < length; ++j)
-		param[j].storeAligned(&m_scalarParameterData[i->second.offset + j * 4]);
+	float* parameterData = &m_scalarParameterData[i->second.offset];
+	uint8_t usage = i->second.usage;
 
-	m_dirty |= i->second.usage;
+	if (usage & DfPixel)
+	{
+		bool equal = true;
+		for (int32_t i = 0; i < length; ++i)
+		{
+			if (Vector4::loadAligned(parameterData + i * 4) != param[i])
+			{
+				equal = false;
+				break;
+			}
+		}
+		if (equal)
+		{
+			if ((usage &= ~DfPixel) == 0)
+				return;
+		}
+	}
+
+#if defined(_DEBUG)
+	if (usage & DfPixel)
+		log::debug << L"Patch caused by \"" << m_parameterName[handle] << L"\" (V+)" << Endl;
+#endif
+
+	for (int j = 0; j < length; ++j)
+		param[j].storeAligned(&parameterData[j * 4]);
+
+	m_dirty |= usage;
 }
 
 void ProgramPs3::setMatrixParameter(handle_t handle, const Matrix44& param)
@@ -256,8 +346,25 @@ void ProgramPs3::setMatrixParameter(handle_t handle, const Matrix44& param)
 	if (i == m_scalarParameterMap.end())
 		return;
 
-	param.storeAligned(&m_scalarParameterData[i->second.offset]);
-	m_dirty |= i->second.usage;
+	float* parameterData = &m_scalarParameterData[i->second.offset];
+	uint8_t usage = i->second.usage;
+
+	if (usage & DfPixel)
+	{
+		if (Matrix44::loadAligned(parameterData) == param)
+		{
+			if ((usage &= ~DfPixel) == 0)
+				return;
+		}
+	}
+
+#if defined(_DEBUG)
+	if (usage & DfPixel)
+		log::debug << L"Patch caused by \"" << m_parameterName[handle] << L"\" (M)" << Endl;
+#endif
+
+	param.storeAligned(parameterData);
+	m_dirty |= usage;
 }
 
 void ProgramPs3::setMatrixArrayParameter(handle_t handle, const Matrix44* param, int length)
@@ -266,10 +373,36 @@ void ProgramPs3::setMatrixArrayParameter(handle_t handle, const Matrix44* param,
 	if (i == m_scalarParameterMap.end())
 		return;
 
-	for (int j = 0; j < length; ++j)
-		param[j].storeAligned(&m_scalarParameterData[i->second.offset + j * 16]);
+	float* parameterData = &m_scalarParameterData[i->second.offset];
+	uint8_t usage = i->second.usage;
 
-	m_dirty |= i->second.usage;
+	if (usage & DfPixel)
+	{
+		bool equal = true;
+		for (int32_t i = 0; i < length; ++i)
+		{
+			if (Matrix44::loadAligned(parameterData + i * 16) != param[i])
+			{
+				equal = false;
+				break;
+			}
+		}
+		if (equal)
+		{
+			if ((usage &= ~DfPixel) == 0)
+				return;
+		}
+	}
+
+#if defined(_DEBUG)
+	if (usage & DfPixel)
+		log::debug << L"Patch caused by \"" << m_parameterName[handle] << L"\" (M+)" << Endl;
+#endif
+
+	for (int j = 0; j < length; ++j)
+		param[j].storeAligned(&parameterData[j * 16]);
+
+	m_dirty |= usage;
 }
 
 void ProgramPs3::setTextureParameter(handle_t handle, ITexture* texture)
@@ -287,7 +420,7 @@ void ProgramPs3::setStencilReference(uint32_t stencilReference)
 	m_renderState.stencilRef = stencilReference;
 }
 
-void ProgramPs3::bind(StateCachePs3& stateCache, const float targetSize[], uint32_t frameCounter)
+void ProgramPs3::bind(StateCachePs3& stateCache, const float targetSize[], uint32_t frameCounter, uint32_t& outPatchCounter)
 {
 	stateCache.setRenderState(m_renderState);
 
@@ -368,6 +501,8 @@ void ProgramPs3::bind(StateCachePs3& stateCache, const float targetSize[], uint3
 				writeFragmentScalar(&uc[0], m_targetSize[0]);
 				writeFragmentScalar(&uc[1], m_targetSize[1]);
 			}
+
+			++outPatchCounter;
 		}
 
 		for (std::vector< ProgramSampler >::iterator i = m_pixelSamplers.begin(); i != m_pixelSamplers.end(); ++i)

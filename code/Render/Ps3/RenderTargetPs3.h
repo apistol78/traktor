@@ -60,7 +60,6 @@ private:
 	CellGcmTexture m_colorTexture;
 	MemoryHeapObject* m_colorData;
 	TileArea::TileInfo m_tileInfo;
-	uint32_t m_tileOffset;
 	bool m_inRender;
 };
 

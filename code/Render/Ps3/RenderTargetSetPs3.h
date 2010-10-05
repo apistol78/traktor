@@ -60,7 +60,6 @@ private:
 	CellGcmTexture m_depthTexture;
 	MemoryHeapObject* m_depthData;
 	TileArea::TileInfo m_tileInfo;
-	uint32_t m_tileOffset;
 	int32_t& m_counter;
 };
 

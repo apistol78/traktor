@@ -1,6 +1,7 @@
 #include <cmath>
 #include <cell/dma.h>
 #include <cell/spurs/job_queue.h>
+#include "Core/Misc/Align.h"
 #include "Sound/Ps3/Spu/JobMC.h"
 
 using namespace traktor;
@@ -9,13 +10,15 @@ void cellSpursJobQueueMain(CellSpursJobContext2* context, CellSpursJob256* job25
 {
 	sound::JobMC* job = (sound::JobMC*)job256;
 
-	static float samples[1024] __attribute__((aligned(16)));
+	static float samples[4096] __attribute__((aligned(16)));
 
-	for (uint32_t offset = 0; offset < job->mixer.count; offset += 1024)
+	for (uint32_t offset = 0; offset < job->mixer.count; offset += 4096)
 	{
 		uint32_t count = job->mixer.count - offset;
-		if (count > 1024)
-			count = 1024;
+		if (count > 4096)
+			count = 4096;
+		else
+			count = alignUp(count, 16);
 
 		cellDmaGet(
 			samples,

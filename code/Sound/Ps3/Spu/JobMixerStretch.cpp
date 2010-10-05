@@ -1,6 +1,7 @@
 #include <cmath>
 #include <cell/dma.h>
 #include <cell/spurs/job_queue.h>
+#include "Core/Misc/Align.h"
 #include "Sound/Ps3/Spu/JobMC.h"
 
 using namespace traktor;
@@ -9,13 +10,13 @@ void cellSpursJobQueueMain(CellSpursJobContext2* context, CellSpursJob256* job25
 {
 	sound::JobMC* job = (sound::JobMC*)job256;
 
-	static float lsb[2048] __attribute__((aligned(16)));
-	static float rsb[2048] __attribute__((aligned(16)));
+	static float lsb[4096] __attribute__((aligned(16)));
+	static float rsb[4096] __attribute__((aligned(16)));
 
 	cellDmaGet(
 		rsb,
 		job->mixer.rsbEA,
-		job->mixer.rcount * sizeof(float),
+		alignUp(job->mixer.rcount, 16) * sizeof(float),
 		context->dmaTag,
 		0,
 		0
@@ -31,7 +32,7 @@ void cellSpursJobQueueMain(CellSpursJobContext2* context, CellSpursJob256* job25
 	cellDmaPut(
 		lsb,
 		job->mixer.lsbEA,
-		job->mixer.count * sizeof(float),
+		alignUp(job->mixer.count, 16) * sizeof(float),
 		context->dmaTag,
 		0,
 		0

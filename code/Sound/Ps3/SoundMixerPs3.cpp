@@ -43,7 +43,7 @@ static char* job_stretch_size = _binary_jqjob_Traktor_Sound_JobStretch_d_bin_siz
 
 #endif
 
-#define T_USE_PPU_MIXER	1
+#define T_USE_PPU_MIXER	0
 #define T_SPU_SYNCHRONIZED 0
 
 namespace traktor
