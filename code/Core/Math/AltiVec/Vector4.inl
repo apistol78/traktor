@@ -125,7 +125,8 @@ T_MATH_INLINE Vector4 Vector4::absolute() const
 T_MATH_INLINE Vector4 Vector4::loadAligned(const float* in)
 {
 	T_ASSERT (in);
-	return Vector4(in);
+	Vector4 v; v.m_data = vec_ld(0, in);
+	return v;
 }
 
 T_MATH_INLINE Vector4 Vector4::loadUnaligned(const float* in)
