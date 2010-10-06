@@ -70,6 +70,7 @@ private:
 	Ref< MemoryHeap > m_memoryHeapLocal;
 	Ref< MemoryHeap > m_memoryHeapMain;
 	TileArea m_tileArea;
+	TileArea m_zcullArea;
 	int32_t m_counterVertexBuffers;
 	int32_t m_counterIndexBuffers;
 	int32_t m_counterSimpleTextures;

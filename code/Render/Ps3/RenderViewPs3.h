@@ -33,7 +33,12 @@ class T_DLLCLASS RenderViewPs3 : public IRenderView
 	T_RTTI_CLASS;
 
 public:
-	RenderViewPs3(MemoryHeap* localMemoryHeap, TileArea& tileArea, RenderSystemPs3* renderSystem);
+	RenderViewPs3(
+		MemoryHeap* localMemoryHeap,
+		TileArea& tileArea,
+		TileArea& zcullArea,
+		RenderSystemPs3* renderSystem
+	);
 
 	virtual ~RenderViewPs3();
 
@@ -102,6 +107,7 @@ private:
 
 	Ref< MemoryHeap > m_localMemoryHeap;
 	TileArea& m_tileArea;
+	TileArea& m_zcullArea;
 	Ref< RenderSystemPs3 > m_renderSystem;
 	Ref< VertexBufferPs3 > m_currentVertexBuffer;
 	Ref< IndexBufferPs3 > m_currentIndexBuffer;

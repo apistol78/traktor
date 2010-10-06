@@ -81,9 +81,9 @@ MemoryHeapObject* MemoryHeap::alloc(size_t size, size_t align, bool immutable)
 		{
 			// Find last immutable object.
 			int32_t last = -1;
-			for (int32_t i = 0; i < count - 1; ++i)
+			for (int32_t i = count - 1; i >= 0; --i)
 			{
-				if (m_objects[i]->m_immutable && !m_objects[i + 1]->m_immutable)
+				if (m_objects[i]->m_immutable)
 				{
 					last = i;
 					break;
@@ -100,35 +100,46 @@ MemoryHeapObject* MemoryHeap::alloc(size_t size, size_t align, bool immutable)
 				return 0;
 			}
 
-			// Find maximum alignment of all other mutable objects.
-			size_t alignMax = 0;
-			for (int32_t i = last + 1; i < count; ++i)
-				alignMax = std::max(alignMax, m_objects[i]->m_alignment);
-
-			size_t offset = alignUp((size_t)(immPtrEnd - immPtrStart), alignMax);
-
-			// Move mutable objects to make room for this object.
-			for (int32_t i = count - 1; i > last; --i)
+			// Move mutable objects occupying desired space to the back
+			// of all mutables.
+			MemoryHeapObject* mutLast = m_objects.back();
+			if (!mutLast->m_immutable)
 			{
-				MemoryHeapObject* object1 = m_objects[i];
+				uint8_t* mutPtrEnd = (uint8_t*)mutLast->m_pointer + mutLast->m_size;
+				for (;;)
+				{
+					MemoryHeapObject* mutObject = m_objects[last + 1];
+					T_ASSERT (!mutObject->m_immutable);
 
-				uint8_t* ptr1 = (uint8_t*)object1->m_pointer;
-				uint8_t* ptr1New = ptr1 + offset;
+					uint8_t* ptr1 = (uint8_t*)mutObject->m_pointer;
+					uint8_t* ptr1End = ptr1 + mutObject->m_size;
 
-				// Ensure object are still satisfy it's alignment requirement.
-				T_ASSERT (alignUp(ptr1New, object1->m_alignment) == ptr1New);
+					if (ptr1 > immPtrEnd)
+						break;
 
-				std::memmove(
-					ptr1New,
-					ptr1,
-					object1->m_size
-				);
+					uint8_t* ptr2 = alignUp(mutPtrEnd, mutObject->m_alignment);
+					if (ptr2 > m_heap + m_heapSize)
+					{
+						T_FATAL_ERROR;
+						return 0;
+					}
 
-				object1->m_pointer = ptr1New;
-				object1->m_offset = 0;
+					std::memcpy(
+						ptr2,
+						ptr1,
+						mutObject->m_size
+					);
 
-				int err = cellGcmAddressToOffset(object1->m_pointer, &object1->m_offset);
-				T_FATAL_ASSERT (err == CELL_OK);
+					mutObject->m_pointer = ptr2;
+					int err = cellGcmAddressToOffset(mutObject->m_pointer, &mutObject->m_offset);
+					T_FATAL_ASSERT (err == CELL_OK);
+
+					mutPtrEnd = ptr2 + mutObject->m_size;
+
+					// Place object last in sorted array.
+					m_objects.erase(m_objects.begin() + (last + 1));
+					m_objects.push_back(mutObject);
+				}
 			}
 
 			object = new MemoryHeapObject();

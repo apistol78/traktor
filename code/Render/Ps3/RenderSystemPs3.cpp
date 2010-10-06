@@ -45,7 +45,9 @@ struct ResolutionDesc { int32_t width; int32_t height; int32_t colorBits; } c_re
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderSystemPs3", 0, RenderSystemPs3, IRenderSystem)
 
 RenderSystemPs3::RenderSystemPs3()
-:	m_counterVertexBuffers(0)
+:	m_tileArea(15, 2047)
+,	m_zcullArea(8, 3145728)
+,	m_counterVertexBuffers(0)
 ,	m_counterIndexBuffers(0)
 ,	m_counterSimpleTextures(0)
 ,	m_counterRenderTargetSets(0)
@@ -141,7 +143,7 @@ bool RenderSystemPs3::handleMessages()
 
 Ref< IRenderView > RenderSystemPs3::createRenderView(const RenderViewDefaultDesc& desc)
 {
-	Ref< RenderViewPs3 > renderView = new RenderViewPs3(m_memoryHeapLocal, m_tileArea, this);
+	Ref< RenderViewPs3 > renderView = new RenderViewPs3(m_memoryHeapLocal, m_tileArea, m_zcullArea, this);
 	if (renderView->create(desc))
 		return renderView;
 	else
@@ -201,7 +203,7 @@ Ref< RenderTargetSet > RenderSystemPs3::createRenderTargetSet(const RenderTarget
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	Ref< RenderTargetSetPs3 > renderTargetSet = new RenderTargetSetPs3(m_counterRenderTargetSets);
-	if (renderTargetSet->create(m_memoryHeapLocal, m_tileArea, desc))
+	if (renderTargetSet->create(m_memoryHeapLocal, m_tileArea, m_zcullArea, desc))
 		return renderTargetSet;
 	else
 		return 0;

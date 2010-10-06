@@ -29,7 +29,12 @@ RenderTargetSetPs3::~RenderTargetSetPs3()
 	--m_counter;
 }
 
-bool RenderTargetSetPs3::create(MemoryHeap* memoryHeap, TileArea& tileArea, const RenderTargetSetCreateDesc& desc)
+bool RenderTargetSetPs3::create(
+	MemoryHeap* memoryHeap,
+	TileArea& tileArea,
+	TileArea& zcullArea,
+	const RenderTargetSetCreateDesc& desc
+)
 {
 	m_width = desc.width;
 	m_height = desc.height;
@@ -49,8 +54,8 @@ bool RenderTargetSetPs3::create(MemoryHeap* memoryHeap, TileArea& tileArea, cons
 		m_depthTexture.dimension = CELL_GCM_TEXTURE_DIMENSION_2;
 		m_depthTexture.cubemap = 0;
 		m_depthTexture.remap = 0;
-		m_depthTexture.width = m_width;
-		m_depthTexture.height = m_height;
+		m_depthTexture.width = alignUp(m_width, 64);
+		m_depthTexture.height = alignUp(m_height, 64);
 		m_depthTexture.depth = 1;
 		m_depthTexture.location = CELL_GCM_LOCATION_LOCAL;
 		m_depthTexture.offset = 0;
@@ -60,16 +65,13 @@ bool RenderTargetSetPs3::create(MemoryHeap* memoryHeap, TileArea& tileArea, cons
 		else
 			m_depthTexture.pitch = m_width * 4;
 
-		uint32_t depthSize = desc.preferTiled ?
-			m_depthTexture.pitch * alignUp(m_depthTexture.height, 64) :
-			m_depthTexture.pitch * m_depthTexture.height;
-
 		// Tiled RT are immutable as we don't want to rebind tile area.
+		uint32_t depthSize = m_depthTexture.pitch * m_depthTexture.height;
 		m_depthData = memoryHeap->alloc(depthSize, 4096, desc.preferTiled);
 
 		if (desc.preferTiled)
 		{
-			if (tileArea.alloc(depthSize, m_tileInfo))
+			if (tileArea.alloc(depthSize / 0x10000, 1, m_tileInfo))
 			{
 				cellGcmSetTileInfo(
 					m_tileInfo.index,
@@ -78,10 +80,28 @@ bool RenderTargetSetPs3::create(MemoryHeap* memoryHeap, TileArea& tileArea, cons
 					m_depthData->getSize(),
 					m_depthTexture.pitch,
 					CELL_GCM_COMPMODE_Z32_SEPSTENCIL,
-					m_tileInfo.tagBase,
+					m_tileInfo.base,
 					m_tileInfo.dramBank
 				);
 				cellGcmBindTile(m_tileInfo.index);
+
+				if (zcullArea.alloc(m_depthTexture.width * m_depthTexture.height, 4096, m_zcullInfo))
+				{
+					cellGcmBindZcull(
+						m_zcullInfo.index,
+						m_depthTexture.offset,
+						m_depthTexture.width,
+						m_depthTexture.height,
+						m_zcullInfo.base,
+						CELL_GCM_ZCULL_Z24S8,
+						CELL_GCM_SURFACE_CENTER_1,
+						CELL_GCM_ZCULL_GREATER,
+						CELL_GCM_ZCULL_MSB,
+						CELL_GCM_SCULL_SFUNC_ALWAYS,
+						0,
+						0
+					);
+				}
 			}
 		}
 	}
@@ -100,6 +120,12 @@ bool RenderTargetSetPs3::create(MemoryHeap* memoryHeap, TileArea& tileArea, cons
 
 void RenderTargetSetPs3::destroy()
 {
+	if (m_zcullInfo.index != ~0UL)
+	{
+		cellGcmUnbindZcull(m_zcullInfo.index);
+		m_zcullInfo.index = ~0UL;
+	}
+
 	if (m_tileInfo.index != ~0UL)
 	{
 		cellGcmUnbindTile(m_tileInfo.index);

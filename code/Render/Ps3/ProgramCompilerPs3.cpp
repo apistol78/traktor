@@ -213,7 +213,7 @@ bool collectInputSignature(const ShaderGraph* shaderGraph, std::vector< uint8_t 
 	return true;
 }
 
-bool compileShader(CGCcontext* cgc, int32_t optimize, const std::wstring& shader, const char* profile, CGCbin*& outShaderBin)
+bool compileShader(CGCcontext* cgc, int32_t optimize, const std::wstring& shader, bool fragmentProfile, CGCbin*& outShaderBin)
 {
 	CGCstatus status;
 
@@ -224,7 +224,8 @@ bool compileShader(CGCcontext* cgc, int32_t optimize, const std::wstring& shader
 	if (optimize < 4)
 	{
 		const char* opt[] = { "-O0", "-O1", "-O2", "-O3", "-O3" };
-		const char* argv[] = { opt[optimize], "--fastmath", 0 };
+		const char* argvVertex[] = { opt[optimize], "--fastmath", 0 };
+		const char* argvFragment[] = { opt[optimize], "--fastmath", 0 };
 
 		outShaderBin = sceCgcNewBin();
 		if (!outShaderBin)
@@ -233,9 +234,9 @@ bool compileShader(CGCcontext* cgc, int32_t optimize, const std::wstring& shader
 		status = sceCgcCompileString(
 			cgc,
 			wstombs(shader).c_str(),
-			profile,
+			fragmentProfile ? "sce_fp_rsx" : "sce_vp_rsx",
 			"main",
-			argv,
+			fragmentProfile ? argvFragment : argvVertex,
 			outShaderBin,
 			msg
 		);
@@ -279,7 +280,7 @@ bool compileShader(CGCcontext* cgc, int32_t optimize, const std::wstring& shader
 					status = sceCgcCompileString(
 						cgc,
 						wstombs(shader).c_str(),
-						profile,
+						fragmentProfile ? "sce_fp_rsx" : "sce_vp_rsx",
 						"main",
 						argv,
 						shaderBin,
@@ -383,9 +384,9 @@ Ref< ProgramResource > ProgramCompilerPs3::compile(
 		const std::wstring& vertexShader = cgProgram.getVertexShader();
 		const std::wstring& pixelShader = cgProgram.getPixelShader();
 
-		if (!compileShader(cgc, optimize, vertexShader, "sce_vp_rsx", resource->m_vertexShaderBin))
+		if (!compileShader(cgc, optimize, vertexShader, false, resource->m_vertexShaderBin))
 			return 0;
-		if (!compileShader(cgc, optimize, pixelShader, "sce_fp_rsx", resource->m_pixelShaderBin))
+		if (!compileShader(cgc, optimize, pixelShader, true, resource->m_pixelShaderBin))
 			return 0;
 
 		// Create scalar parameters.

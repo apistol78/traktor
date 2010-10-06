@@ -14,27 +14,29 @@ public:
 	struct TileInfo
 	{
 		uint32_t index;
-		uint32_t tagBase;
-		uint32_t tagSize;
+		uint32_t base;
+		uint32_t size;
 		uint32_t dramBank;
 
 		TileInfo()
 		:	index(~0UL)
-		,	tagBase(~0UL)
-		,	tagSize(~0UL)
+		,	base(~0UL)
+		,	size(~0UL)
 		,	dramBank(~0UL)
 		{
 		}
 	};
 	
-	TileArea();
+	TileArea(uint32_t areaCount, uint32_t tagSize);
 	
-	bool alloc(uint32_t size, TileInfo& outTileInfo);
+	bool alloc(uint32_t size, uint32_t alignment, TileInfo& outTileInfo);
 	
 	void free(uint32_t index);
 	
 private:
-	TileInfo m_tiles[15];
+	uint32_t m_areaCount;
+	uint32_t m_tagSize;
+	TileInfo m_tiles[32];
 	uint32_t m_allocated;
 	uint32_t m_tagTop;
 	uint32_t m_dramBank;

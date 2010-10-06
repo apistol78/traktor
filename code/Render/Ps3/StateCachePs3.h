@@ -20,14 +20,6 @@ public:
 		SamplerCount = 8
 	};
 
-	enum ResetFlags
-	{
-		RfVertexConstants = 1,
-		RfRenderState = 2,
-		RfSamplerStates = 4,
-		RfForced = 8
-	};
-
 	StateCachePs3();
 
 	~StateCachePs3();
@@ -55,7 +47,7 @@ public:
 
 	void setVertexDataArray(uint8_t index, uint8_t stride, uint8_t size, uint8_t type, uint8_t location, uint32_t offset);
 
-	void reset(uint32_t flags);
+	void reset();
 
 private:
 	struct VertexAttribute
@@ -77,8 +69,6 @@ private:
 	uint32_t m_textureOffsets[SamplerCount];
 	uint16_t m_textureLods[SamplerCount];
 	uint8_t m_textureAnisotropy[SamplerCount];
-	uint32_t m_colorMask;
-	Viewport m_viewport;
 	VertexAttribute m_vertexAttributes[VertexAttributeCount];
 };
 

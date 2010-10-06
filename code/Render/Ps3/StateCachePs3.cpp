@@ -328,50 +328,38 @@ void StateCachePs3::setVertexShaderConstant(uint32_t registerOffset, uint32_t re
 
 void StateCachePs3::setViewport(const Viewport& viewport)
 {
-	/*if (
-		viewport.left != m_viewport.left ||
-		viewport.top != m_viewport.top ||
-		viewport.width != m_viewport.width ||
-		viewport.height != m_viewport.height ||
-		viewport.nearZ != m_viewport.nearZ ||
-		viewport.farZ != m_viewport.farZ
-	)*/
-	{
-		float scale[4];
-		float offset[4];
+	float scale[4];
+	float offset[4];
 
-		scale[0] = viewport.width * 0.5f;
-		scale[1] = viewport.height * -0.5f;
-		scale[2] = -(viewport.farZ - viewport.nearZ) * 0.5f;	// Scale negative if we use a "1-Z" depth buffer.
-		scale[3] = 0.0f;
+	scale[0] = viewport.width * 0.5f;
+	scale[1] = viewport.height * -0.5f;
+	scale[2] = -(viewport.farZ - viewport.nearZ) * 0.5f;	// Scale negative if we use a "1-Z" depth buffer.
+	scale[3] = 0.0f;
 
-		offset[0] = viewport.left + scale[0];
-		offset[1] = viewport.height - viewport.top + scale[1];
-		offset[2] = (viewport.farZ + viewport.nearZ) * 0.5f;
-		offset[3] = 0.0f;
+	offset[0] = viewport.left + scale[0];
+	offset[1] = viewport.height - viewport.top + scale[1];
+	offset[2] = (viewport.farZ + viewport.nearZ) * 0.5f;
+	offset[3] = 0.0f;
 
-		T_GCM_CALL(cellGcmSetViewport)(
-			gCellGcmCurrentContext,
-			viewport.left,
-			viewport.top,
-			viewport.width,
-			viewport.height,
-			viewport.nearZ,
-			viewport.farZ,
-			scale,
-			offset
-		);
+	T_GCM_CALL(cellGcmSetViewport)(
+		gCellGcmCurrentContext,
+		viewport.left,
+		viewport.top,
+		viewport.width,
+		viewport.height,
+		viewport.nearZ,
+		viewport.farZ,
+		scale,
+		offset
+	);
 
-		T_GCM_CALL(cellGcmSetScissor)(
-			gCellGcmCurrentContext,
-			viewport.left,
-			viewport.top,
-			viewport.width,
-			viewport.height
-		);
-
-		m_viewport = viewport;
-	}
+	T_GCM_CALL(cellGcmSetScissor)(
+		gCellGcmCurrentContext,
+		viewport.left,
+		viewport.top,
+		viewport.width,
+		viewport.height
+	);
 }
 
 void StateCachePs3::setVertexDataArray(uint8_t index, uint8_t stride, uint8_t size, uint8_t type, uint8_t location, uint32_t offset)
@@ -404,146 +392,24 @@ void StateCachePs3::setVertexDataArray(uint8_t index, uint8_t stride, uint8_t si
 	}
 }
 
-void StateCachePs3::reset(uint32_t flags)
+void StateCachePs3::reset()
 {
-	if (!(flags & RfForced))
+	m_renderState = RenderState();
+	for (int i = 0; i < SamplerCount; ++i)
 	{
-		if (flags & RfRenderState)
-			setRenderState(RenderState());
-
-		if (flags & RfSamplerStates)
-		{
-			for (int i = 0; i < SamplerCount; ++i)
-			{
-				setSamplerState(i, SamplerState());
-
-				if (m_textureLods[i] != uint16_t(~0) || m_textureAnisotropy[i] != CELL_GCM_TEXTURE_MAX_ANISO_1)
-				{
-					T_GCM_CALL(cellGcmSetTextureControl)(
-						gCellGcmCurrentContext,
-						i,
-						CELL_GCM_FALSE,
-						0,
-						0,
-						CELL_GCM_TEXTURE_MAX_ANISO_1
-					);
-				}
-			}
-		}
+		m_samplerStates[i] = SamplerState();
+		m_textureOffsets[i] = 0;
+		m_textureLods[i] = 12 << 8;
+		m_textureAnisotropy[i] = CELL_GCM_TEXTURE_MAX_ANISO_1;
 	}
-	else
+	for (int i = 0; i < sizeof_array(m_vertexAttributes); ++i)
 	{
-		if (flags & RfVertexConstants)
-		{
-			T_GCM_CALL(cellGcmSetVertexProgramParameterBlock)(
-				gCellGcmCurrentContext,
-				0,
-				VertexConstantCount,
-				m_vertexConstantsShadow
-			);
-		}
-
-		if (flags & RfRenderState)
-		{
-			m_renderState = RenderState();
-
-			// Reverse depth function if we use a "1-Z" depth buffer.
-			uint32_t depthFunc = m_renderState.depthFunc;
-			switch (m_renderState.depthFunc)
-			{
-			case CELL_GCM_NEVER:
-				depthFunc = CELL_GCM_NEVER;
-				break;
-			case CELL_GCM_LESS:
-				depthFunc = CELL_GCM_GREATER;
-				break;
-			case CELL_GCM_EQUAL:
-				depthFunc = CELL_GCM_EQUAL;
-				break;
-			case CELL_GCM_LEQUAL:
-				depthFunc = CELL_GCM_GEQUAL;
-				break;
-			case CELL_GCM_GREATER:
-				depthFunc = CELL_GCM_LESS;
-				break;
-			case CELL_GCM_NOTEQUAL:
-				depthFunc = CELL_GCM_NOTEQUAL;
-				break;
-			case CELL_GCM_GEQUAL:
-				depthFunc = CELL_GCM_LEQUAL;
-				break;
-			case CELL_GCM_ALWAYS:
-				depthFunc = CELL_GCM_ALWAYS;
-				break;
-			}
-
-			T_GCM_CALL(cellGcmSetCullFaceEnable)(gCellGcmCurrentContext, m_renderState.cullFaceEnable);
-			T_GCM_CALL(cellGcmSetCullFace)(gCellGcmCurrentContext, m_renderState.cullFace);
-			T_GCM_CALL(cellGcmSetDepthTestEnable)(gCellGcmCurrentContext, m_renderState.depthTestEnable);
-			T_GCM_CALL(cellGcmSetColorMask)(gCellGcmCurrentContext, m_renderState.colorMask);
-			T_GCM_CALL(cellGcmSetDepthMask)(gCellGcmCurrentContext, m_renderState.depthMask);
-			T_GCM_CALL(cellGcmSetDepthFunc)(gCellGcmCurrentContext, depthFunc);
-
-			T_GCM_CALL(cellGcmSetBlendEnable)(gCellGcmCurrentContext, m_renderState.blendEnable);
-			T_GCM_CALL(cellGcmSetBlendEquation)(gCellGcmCurrentContext, m_renderState.blendEquation, m_renderState.blendEquation);
-			T_GCM_CALL(cellGcmSetBlendFunc)(gCellGcmCurrentContext, m_renderState.blendFuncSrc, m_renderState.blendFuncDest,  m_renderState.blendFuncSrc, m_renderState.blendFuncDest);
-			T_GCM_CALL(cellGcmSetAlphaTestEnable)(gCellGcmCurrentContext, m_renderState.alphaTestEnable);
-			T_GCM_CALL(cellGcmSetAlphaFunc)(gCellGcmCurrentContext, m_renderState.alphaFunc, m_renderState.alphaRef);
-		}
-
-		if (flags & RfSamplerStates)
-		{
-			for (int i = 0; i < SamplerCount; ++i)
-			{
-				m_samplerStates[i] = SamplerState();
-
-				T_GCM_CALL(cellGcmSetTextureFilter)(
-					gCellGcmCurrentContext,
-					i,
-					0,
-					m_samplerStates[i].minFilter,
-					m_samplerStates[i].magFilter,
-					CELL_GCM_TEXTURE_CONVOLUTION_QUINCUNX
-				);
-
-				T_GCM_CALL(cellGcmSetTextureAddress)(
-					gCellGcmCurrentContext,
-					i,
-					m_samplerStates[i].wrapU,
-					m_samplerStates[i].wrapV,
-					m_samplerStates[i].wrapW,
-					CELL_GCM_TEXTURE_UNSIGNED_REMAP_NORMAL,
-					CELL_GCM_TEXTURE_ZFUNC_NEVER,
-					0
-				);
-
-				T_GCM_CALL(cellGcmSetTextureControl)(
-					gCellGcmCurrentContext,
-					i,
-					CELL_GCM_FALSE,
-					0,
-					0,
-					CELL_GCM_TEXTURE_MAX_ANISO_1
-				);
-			}
-		}
+		m_vertexAttributes[i].stride = 0;
+		m_vertexAttributes[i].size = 0;
+		m_vertexAttributes[i].type = CELL_GCM_VERTEX_F;
+		m_vertexAttributes[i].location = CELL_GCM_LOCATION_LOCAL;
+		m_vertexAttributes[i].offset = 0;
 	}
-
-	m_vertexUCode = 0;
-	m_fragmentOffset = 0;
-
-	if (flags & RfSamplerStates)
-	{
-		for (int i = 0; i < SamplerCount; ++i)
-		{
-			m_textures[i] = 0;
-			m_textureOffsets[i] = 0;
-			m_textureLods[i] = uint16_t(~0);
-			m_textureAnisotropy[i] = CELL_GCM_TEXTURE_MAX_ANISO_1;
-		}
-	}
-
-	m_colorMask = CELL_GCM_COLOR_MASK_R | CELL_GCM_COLOR_MASK_G | CELL_GCM_COLOR_MASK_B | CELL_GCM_COLOR_MASK_A;
 }
 
 	}

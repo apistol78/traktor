@@ -82,7 +82,7 @@ void ClearFpPs3::clear(StateCachePs3& stateCache, const float color[4])
 {
 	cellGcmSetPerfMonPushMarker(gCellGcmCurrentContext, "Clear FP target");
 
-	stateCache.reset(StateCachePs3::RfRenderState);
+	//stateCache.reset(StateCachePs3::RfRenderState);
 	stateCache.setProgram(
 		m_clearVertexProgram, m_clearVertexProgramUcode,
 		m_clearFragmentProgram, m_clearFragmentProgramUcode->getOffset(),

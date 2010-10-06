@@ -33,7 +33,12 @@ public:
 
 	virtual ~RenderTargetSetPs3();
 
-	bool create(MemoryHeap* memoryHeap, TileArea& tileArea, const RenderTargetSetCreateDesc& desc);
+	bool create(
+		MemoryHeap* memoryHeap,
+		TileArea& tileArea,
+		TileArea& zcullArea,
+		const RenderTargetSetCreateDesc& desc
+	);
 
 	virtual void destroy();
 
@@ -49,9 +54,9 @@ public:
 
 	const CellGcmTexture& getGcmDepthTexture();
 
-	RenderTargetPs3* getRenderTarget(int index) {
-		return m_renderTargets[index];
-	}
+	bool getGcmZCull() const { return m_zcullInfo.index != ~0UL; }
+
+	RenderTargetPs3* getRenderTarget(int index) { return m_renderTargets[index]; }
 
 private:
 	int32_t m_width;
@@ -60,6 +65,7 @@ private:
 	CellGcmTexture m_depthTexture;
 	MemoryHeapObject* m_depthData;
 	TileArea::TileInfo m_tileInfo;
+	TileArea::TileInfo m_zcullInfo;
 	int32_t& m_counter;
 };
 

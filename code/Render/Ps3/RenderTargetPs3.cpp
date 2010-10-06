@@ -101,7 +101,7 @@ bool RenderTargetPs3::create(MemoryHeap* memoryHeap, TileArea& tileArea, const R
 
 	if (setDesc.preferTiled)
 	{
-		if (tileArea.alloc(colorSize, m_tileInfo))
+		if (tileArea.alloc(colorSize / 0x10000, 1, m_tileInfo))
 		{
 			cellGcmSetTileInfo(
 				m_tileInfo.index,
@@ -110,7 +110,7 @@ bool RenderTargetPs3::create(MemoryHeap* memoryHeap, TileArea& tileArea, const R
 				m_colorData->getSize(),
 				m_colorTexture.pitch,
 				CELL_GCM_COMPMODE_C32_2X1,
-				m_tileInfo.tagBase,
+				m_tileInfo.base,
 				m_tileInfo.dramBank
 			);
 			cellGcmBindTile(m_tileInfo.index);
