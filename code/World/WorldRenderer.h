@@ -2,19 +2,20 @@
 #define traktor_world_WorldRenderer_H
 
 #include "Core/Object.h"
-#include "Core/Math/Const.h"
-#include "Core/Math/Matrix44.h"
-#include "Core/Math/Frustum.h"
 #include "Core/Containers/AlignedVector.h"
-#include "World/WorldRenderSettings.h"
+#include "Core/Math/Const.h"
+#include "Core/Math/Frustum.h"
+#include "Core/Math/Matrix44.h"
 #include "Render/Types.h"
+#include "World/WorldRenderSettings.h"
+#include "World/WorldRenderView.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_WORLD_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -31,8 +32,9 @@ class IResourceManager;
 
 class IRenderSystem;
 class IRenderView;
-class RenderTargetSet;
 class ISimpleTexture;
+class RenderContext;
+class RenderTargetSet;
 
 	}
 
@@ -41,7 +43,6 @@ class ISimpleTexture;
 
 class Entity;
 class WorldContext;
-class WorldRenderView;
 class WorldEntityRenderers;
 class PostProcess;
 
@@ -150,7 +151,7 @@ public:
 	 * \param flags Combination of world render flags.
 	 * \param frame Multi threaded context frame.
 	 */
-	void render(uint32_t flags, int frame);
+	void render(uint32_t flags, int frame, render::EyeType eye);
 
 	//@}
 
@@ -197,17 +198,21 @@ private:
 		Ref< WorldContext > visual;
 		Ref< WorldContext > velocity;
 		Ref< WorldContext > depth;
-		Frustum viewFrustum;
-		Matrix44 viewToLightSpace;
+
+		WorldRenderView depthRenderView;
+		WorldRenderView velocityRenderView;
+		WorldRenderView shadowRenderView;
+
 		Matrix44 projection;
-		float deltaTime;
+		Matrix44 viewToLightSpace;
+		Frustum viewFrustum;
+
 		bool haveDepth;
 		bool haveVelocity;
 		bool haveShadows;
 
 		Frame()
-		:	deltaTime(0.0f)
-		,	haveDepth(false)
+		:	haveDepth(false)
 		,	haveVelocity(false)
 		,	haveShadows(false)
 		{
@@ -218,6 +223,8 @@ private:
 	static render::handle_t ms_techniqueDepth;
 	static render::handle_t ms_techniqueVelocity;
 	static render::handle_t ms_techniqueShadow;
+	static render::handle_t ms_handleTime;
+	static render::handle_t ms_handleProjection;
 
 	WorldRenderSettings m_settings;
 	Ref< render::IRenderView > m_renderView;
@@ -226,6 +233,7 @@ private:
 	Ref< render::RenderTargetSet > m_shadowTargetSet;
 	Ref< render::RenderTargetSet > m_shadowMaskTargetSet;
 	Ref< render::ISimpleTexture > m_shadowDiscRotation[2];
+	Ref< render::RenderContext > m_globalContext;
 	Ref< PostProcess > m_shadowMaskProjection;
 	AlignedVector< Frame > m_frames;
 	uint32_t m_count;

@@ -587,7 +587,7 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 	Ref< world::Entity > rootEntity = rootEntityAdapter ? rootEntityAdapter->getEntity() : 0;
 
 	// Render world.
-	if (m_renderView->begin())
+	if (m_renderView->begin(render::EtCyclop))
 	{
 		m_renderView->clear(
 			render::CfColor | render::CfDepth,
@@ -661,7 +661,11 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 		if (rootEntity)
 		{
 			m_worldRenderer->build(m_worldRenderView, rootEntity, 0);
-			m_worldRenderer->render(world::WrfDepthMap | world::WrfVelocityMap | world::WrfShadowMap, 0);
+			m_worldRenderer->render(
+				world::WrfDepthMap | world::WrfVelocityMap | world::WrfShadowMap,
+				0,
+				render::EtCyclop
+			);
 
 			if (m_postProcessEnable && m_renderTarget)
 			{
@@ -674,7 +678,11 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 				);
 			}
 
-			m_worldRenderer->render(world::WrfVisualOpaque | world::WrfVisualAlphaBlend, 0);
+			m_worldRenderer->render(
+				world::WrfVisualOpaque | world::WrfVisualAlphaBlend,
+				0,
+				render::EtCyclop
+			);
 
 			if (m_postProcessEnable && m_renderTarget)
 			{

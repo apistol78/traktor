@@ -17,9 +17,7 @@ render::handle_t s_handleVelocityTechnique;
 render::handle_t s_handleProjection;
 render::handle_t s_handleView;
 render::handle_t s_handleViewPrevious;
-//render::handle_t s_handleViewSize;
 render::handle_t s_handleWorld;
-//render::handle_t s_handleWorldInverse;
 render::handle_t s_handleWorldPrevious;
 render::handle_t s_handleEyePosition;
 render::handle_t s_handleLightEnableComplex;
@@ -74,9 +72,7 @@ WorldRenderView::WorldRenderView()
 		s_handleProjection = render::getParameterHandle(L"Projection");
 		s_handleView = render::getParameterHandle(L"View");
 		s_handleViewPrevious = render::getParameterHandle(L"ViewPrevious");
-		//s_handleViewSize = render::getParameterHandle(L"ViewSize");
 		s_handleWorld = render::getParameterHandle(L"World");
-		//s_handleWorldInverse = render::getParameterHandle(L"WorldInverse");
 		s_handleWorldPrevious = render::getParameterHandle(L"WorldPrevious");
 		s_handleEyePosition = render::getParameterHandle(L"EyePosition");
 		s_handleLightEnableComplex = render::getParameterHandle(L"LightEnableComplex");
@@ -271,8 +267,6 @@ void WorldRenderView::setWorldProgramParameters(render::ProgramParameters* progr
 	programParams->setMatrixParameter(s_handleProjection, m_projection);
 	programParams->setMatrixParameter(s_handleView, m_view);
 	programParams->setMatrixParameter(s_handleWorld, world);
-	//programParams->setMatrixParameter(s_handleWorldInverse, world.inverse());
-	//programParams->setVectorParameter(s_handleViewSize, Vector4(m_viewSize.x, m_viewSize.y, viewSizeInvX, viewSizeInvY));
 	programParams->setVectorParameter(s_handleEyePosition, m_eyePosition);
 	programParams->setFloatParameter(s_handleDepthRange, m_depthRange);
 

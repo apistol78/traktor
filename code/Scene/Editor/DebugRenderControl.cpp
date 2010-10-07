@@ -111,7 +111,7 @@ void DebugRenderControl::eventPaint(ui::Event* event)
 	if (!m_renderView || !m_primitiveRenderer)
 		return;
 
-	if (m_renderView->begin())
+	if (m_renderView->begin(render::EtCyclop))
 	{
 		const float clearColor[] = { 0.7f, 0.7f, 0.7f, 0.0f };
 		m_renderView->clear(

@@ -73,9 +73,10 @@ public:
 
 	/*! \brief Begin rendering to back buffer.
 	 *
+	 * \param eye Left or right eye.
 	 * \return True if successful.
 	 */
-	virtual bool begin() = 0;
+	virtual bool begin(EyeType eye) = 0;
 
 	/*! \brief Begin rendering to a render target set.
 	 *

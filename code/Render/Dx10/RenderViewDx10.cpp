@@ -219,7 +219,7 @@ Viewport RenderViewDx10::getViewport()
 	);
 }
 
-bool RenderViewDx10::begin()
+bool RenderViewDx10::begin(EyeType eye)
 {
 	T_ASSERT (m_renderStateStack.empty());
 

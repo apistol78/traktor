@@ -245,7 +245,7 @@ void EffectPreviewControl::eventPaint(ui::Event* event)
 	if (!m_renderView)
 		return;
 
-	if (!m_renderView->begin())
+	if (!m_renderView->begin(render::EtCyclop))
 		return;
 
 	const float clearColor[] = { 0.2f, 0.2f, 0.2f, 0.0f };
@@ -353,7 +353,7 @@ void EffectPreviewControl::eventPaint(ui::Event* event)
 			&worldRenderView
 		);
 
-		m_renderContext->render(m_renderView, render::RfAll);
+		m_renderContext->render(m_renderView, render::RfAll, 0);
 		m_renderContext->flush();
 
 		m_lastDeltaTime = deltaTime;

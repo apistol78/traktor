@@ -182,7 +182,7 @@ void VideoEditorPage::eventPaint(ui::Event* event)
 	if (!m_renderView || !m_shader.validate())
 		return;
 
-	if (m_renderView->begin())
+	if (m_renderView->begin(render::EtCyclop))
 	{
 		const float clearColor[] = { 0.8f, 0.8f, 0.8f, 0.0 };
 		m_renderView->clear(

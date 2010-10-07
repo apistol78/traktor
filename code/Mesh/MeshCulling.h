@@ -99,7 +99,7 @@ inline bool isMeshVisible(
 
 #endif
 
-	outDistance = center.length();
+	outDistance = center.length() + radius;
 	return true;
 }
 

@@ -42,6 +42,7 @@ render::handle_t WorldRenderer::ms_techniqueDefault = 0;
 render::handle_t WorldRenderer::ms_techniqueDepth = 0;
 render::handle_t WorldRenderer::ms_techniqueShadow = 0;
 render::handle_t WorldRenderer::ms_techniqueVelocity = 0;
+render::handle_t WorldRenderer::ms_handleProjection = 0;
 
 WorldRenderer::WorldRenderer()
 :	m_count(0)
@@ -51,6 +52,7 @@ WorldRenderer::WorldRenderer()
 	ms_techniqueDepth = render::getParameterHandle(L"Depth");
 	ms_techniqueShadow = render::getParameterHandle(L"Shadow");
 	ms_techniqueVelocity = render::getParameterHandle(L"Velocity");
+	ms_handleProjection = render::getParameterHandle(L"Projection");
 }
 
 bool WorldRenderer::create(
@@ -259,6 +261,10 @@ bool WorldRenderer::create(
 	for (AlignedVector< Frame >::iterator i = m_frames.begin(); i != m_frames.end(); ++i)
 		i->visual = new WorldContext(this, entityRenderers);
 
+	// Allocate "global" parameter context; as it's reset for each render
+	// call this can be fairly small.
+	m_globalContext = new render::RenderContext(4096);
+
 	m_count = 0;
 	return true;
 }
@@ -333,11 +339,11 @@ void WorldRenderer::build(WorldRenderView& worldRenderView, Entity* entity, int 
 
 	if (m_settings.depthPassEnabled || m_settings.shadowsEnabled)
 	{
-		WorldRenderView depthRenderView = worldRenderView;
-		depthRenderView.setTechnique(ms_techniqueDepth);
+		f.depthRenderView = worldRenderView;
+		f.depthRenderView.setTechnique(ms_techniqueDepth);
 
-		f.depth->build(&depthRenderView, entity);
-		f.depth->flush(&depthRenderView);
+		f.depth->build(&f.depthRenderView, entity);
+		f.depth->flush(&f.depthRenderView);
 
 		f.haveDepth = true;
 	}
@@ -346,11 +352,11 @@ void WorldRenderer::build(WorldRenderView& worldRenderView, Entity* entity, int 
 
 	if (m_settings.velocityPassEnable)
 	{
-		WorldRenderView velocityRenderView = worldRenderView;
-		velocityRenderView.setTechnique(ms_techniqueVelocity);
+		f.velocityRenderView = worldRenderView;
+		f.velocityRenderView.setTechnique(ms_techniqueVelocity);
 
-		f.velocity->build(&velocityRenderView, entity);
-		f.velocity->flush(&velocityRenderView);
+		f.velocity->build(&f.velocityRenderView, entity);
+		f.velocity->flush(&f.velocityRenderView);
 
 		f.haveVelocity = true;
 	}
@@ -362,32 +368,62 @@ void WorldRenderer::build(WorldRenderView& worldRenderView, Entity* entity, int 
 	else
 		buildNoShadows(worldRenderView, entity, frame);
 
-	f.viewFrustum = worldRenderView.getViewFrustum();
-	f.projection = worldRenderView.getProjection();
-	f.deltaTime = worldRenderView.getDeltaTime();
-
 	m_count++;
 }
 
-void WorldRenderer::render(uint32_t flags, int frame)
+void WorldRenderer::render(uint32_t flags, int frame, render::EyeType eye)
 {
 	Frame& f = m_frames[frame];
+	Matrix44 projection;
+
+	// Prepare stereoscopic projection.
+	if (eye != render::EtCyclop)
+	{
+		const float c_interocularDistance = 10.0f;
+		const float c_distortionValue = 0.8f;
+		const float c_screenPlaneDistance = 12.0f;
+
+		float screenWidth = m_renderView->getWidth();
+		
+		float A = std::abs((c_distortionValue * c_interocularDistance) / screenWidth);
+		float B = std::abs(A * c_screenPlaneDistance * (1.0f / f.projection(1, 1)));
+
+		if (eye == render::EtLeft)
+			A = -A;
+		else
+			B = -B;
+
+		projection = translate(A, 0.0f, 0.0f) * f.projection * translate(B, 0.0f, 0.0f);
+	}
+	else
+	{
+		projection = f.projection;
+	}
+
+	// Prepare global program parameters.
+	render::ProgramParameters programParams;
+	programParams.beginParameters(m_globalContext);
+	programParams.setMatrixParameter(ms_handleProjection, projection);
+	programParams.endParameters(m_globalContext);
 
 	const float nullColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
 	m_renderView->clear(render::CfDepth, nullColor, 1.0f, 0);
 
 	// Render shadow map.
-	if ((flags & WrfShadowMap) != 0 && f.haveShadows)
+	if (eye == render::EtCyclop || eye == render::EtLeft)
 	{
-		T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow map");
-		if (m_renderView->begin(m_shadowTargetSet, 0, false))
+		if ((flags & WrfShadowMap) != 0 && f.haveShadows)
 		{
-			const float shadowClear[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-			m_renderView->clear(render::CfColor | render::CfDepth, shadowClear, 1.0f, 0);
-			f.shadow->getRenderContext()->render(m_renderView, render::RfOpaque);
-			m_renderView->end();
+			T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow map");
+			if (m_renderView->begin(m_shadowTargetSet, 0, false))
+			{
+				const float shadowClear[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+				m_renderView->clear(render::CfColor | render::CfDepth, shadowClear, 1.0f, 0);
+				f.shadow->getRenderContext()->render(m_renderView, render::RfOpaque, 0);
+				m_renderView->end();
+			}
+			T_RENDER_POP_MARKER(m_renderView);
 		}
-		T_RENDER_POP_MARKER(m_renderView);
 	}
 
 	// Render depth map; use as z-prepass if able to share depth buffer with primary.
@@ -403,7 +439,7 @@ void WorldRenderer::render(uint32_t flags, int frame)
 			else
 				m_renderView->clear(render::CfColor | render::CfDepth, depthColor, 1.0f, 0);
 
-			f.depth->getRenderContext()->render(m_renderView, render::RfOpaque);
+			f.depth->getRenderContext()->render(m_renderView, render::RfOpaque, &programParams);
 			m_renderView->end();
 		}
 		T_RENDER_POP_MARKER(m_renderView);
@@ -419,7 +455,7 @@ void WorldRenderer::render(uint32_t flags, int frame)
 		{
 			const float velocityColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
 			m_renderView->clear(render::CfColor, velocityColor, 1.0f, 0);
-			f.velocity->getRenderContext()->render(m_renderView, render::RfOpaque);
+			f.velocity->getRenderContext()->render(m_renderView, render::RfOpaque, &programParams);
 			m_renderView->end();
 		}
 		T_RENDER_POP_MARKER(m_renderView);
@@ -435,7 +471,7 @@ void WorldRenderer::render(uint32_t flags, int frame)
 
 			params.viewFrustum = f.viewFrustum;
 			params.viewToLight = f.viewToLightSpace;
-			params.projection = f.projection;
+			params.projection = projection;
 			params.depthRange = m_settings.depthRange;
 			params.shadowFarZ = m_settings.shadowFarZ;
 			params.shadowMapBias = m_settings.shadowMapBias;
@@ -465,9 +501,11 @@ void WorldRenderer::render(uint32_t flags, int frame)
 			renderFlags |= render::RfAlphaBlend;
 
 		T_RENDER_PUSH_MARKER(m_renderView, "World: Visual");
-		f.visual->getRenderContext()->render(m_renderView, renderFlags);
+		f.visual->getRenderContext()->render(m_renderView, renderFlags, &programParams);
 		T_RENDER_POP_MARKER(m_renderView);
 	}
+
+	m_globalContext->flush();
 }
 
 void WorldRenderer::buildShadows(WorldRenderView& worldRenderView, Entity* entity, int frame)
@@ -482,10 +520,8 @@ void WorldRenderer::buildShadows(WorldRenderView& worldRenderView, Entity* entit
 
 	Frame& f = m_frames[frame];
 
-	Matrix44 projection = worldRenderView.getProjection();
 	Matrix44 viewInverse = worldRenderView.getView().inverse();
 	Frustum viewFrustum = worldRenderView.getViewFrustum();
-	Frustum cullFrustum = worldRenderView.getCullFrustum();
 	Aabb shadowBox = worldRenderView.getShadowBox();
 	
 	Vector4 eyePosition = viewInverse.translation();
@@ -553,23 +589,22 @@ void WorldRenderer::buildShadows(WorldRenderView& worldRenderView, Entity* entit
 	f.viewToLightSpace = shadowLightProjection * shadowLightView * viewInverse;
 
 	// Render shadow map.
-	WorldRenderView shadowRenderView;
-	shadowRenderView.resetLights();
-	shadowRenderView.setTechnique(ms_techniqueShadow);
-	shadowRenderView.setProjection(shadowLightProjection);
-	shadowRenderView.setView(shadowLightView);
-	shadowRenderView.setEyePosition(eyePosition);
-	shadowRenderView.setViewFrustum(shadowFrustum);
-	shadowRenderView.setCullFrustum(shadowFrustum);
-	shadowRenderView.setDepthRange(m_settings.depthRange);
-	shadowRenderView.setTimes(
+	f.shadowRenderView.resetLights();
+	f.shadowRenderView.setTechnique(ms_techniqueShadow);
+	f.shadowRenderView.setProjection(shadowLightProjection);
+	f.shadowRenderView.setView(shadowLightView);
+	f.shadowRenderView.setEyePosition(eyePosition);
+	f.shadowRenderView.setViewFrustum(shadowFrustum);
+	f.shadowRenderView.setCullFrustum(shadowFrustum);
+	f.shadowRenderView.setDepthRange(m_settings.depthRange);
+	f.shadowRenderView.setTimes(
 		worldRenderView.getTime(),
 		worldRenderView.getDeltaTime(),
 		worldRenderView.getInterval()
 	);
 
-	f.shadow->build(&shadowRenderView, entity);
-	f.shadow->flush(&shadowRenderView);
+	f.shadow->build(&f.shadowRenderView, entity);
+	f.shadow->flush(&f.shadowRenderView);
 
 	// Render visuals.
 	worldRenderView.resetLights();
@@ -583,6 +618,8 @@ void WorldRenderer::buildShadows(WorldRenderView& worldRenderView, Entity* entit
 	f.visual->build(&worldRenderView, entity);
 	f.visual->flush(&worldRenderView);
 
+	f.projection = worldRenderView.getProjection();
+	f.viewFrustum = worldRenderView.getViewFrustum();
 	f.haveShadows = true;
 }
 
@@ -604,6 +641,8 @@ void WorldRenderer::buildNoShadows(WorldRenderView& worldRenderView, Entity* ent
 	f.visual->build(&worldRenderView, entity);
 	f.visual->flush(&worldRenderView);
 
+	f.projection = worldRenderView.getProjection();
+	f.viewFrustum = worldRenderView.getViewFrustum();
 	f.haveShadows = false;
 }
 

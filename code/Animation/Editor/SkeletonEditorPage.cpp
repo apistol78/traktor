@@ -407,7 +407,7 @@ void SkeletonEditorPage::eventPaint(ui::Event* event)
 	if (!m_skeleton)
 		return;
 
-	if (!m_renderView->begin())
+	if (!m_renderView->begin(render::EtCyclop))
 		return;
 
 	const float clearColor[] = { 0.5f, 0.5f, 0.44f, 0.0f };
