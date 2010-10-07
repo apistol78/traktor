@@ -94,27 +94,27 @@ void RenderContext::draw(uint32_t type, RenderBlock* renderBlock)
 		m_renderQueue[2].push_back(renderBlock);
 }
 
-void RenderContext::render(render::IRenderView* renderView, uint32_t flags) const
+void RenderContext::render(render::IRenderView* renderView, uint32_t flags, const ProgramParameters* globalParameters) const
 {
 	// Render opaque blocks, sorted by shader.
 	if (flags & RfOpaque)
 	{
 		for (std::vector< RenderBlock* >::const_iterator i = m_renderQueue[0].begin(); i != m_renderQueue[0].end(); ++i)
-			(*i)->render(renderView);
+			(*i)->render(renderView, globalParameters);
 	}
 
 	// Render alpha blend blocks back to front.
 	if (flags & RfAlphaBlend)
 	{
 		for (std::vector< RenderBlock* >::const_iterator i = m_renderQueue[1].begin(); i != m_renderQueue[1].end(); ++i)
-			(*i)->render(renderView);
+			(*i)->render(renderView, globalParameters);
 	}
 
 	// Render overlay blocks unsorted.
 	if (flags & RfOverlay)
 	{
 		for (std::vector< RenderBlock* >::const_iterator i = m_renderQueue[2].begin(); i != m_renderQueue[2].end(); ++i)
-			(*i)->render(renderView);
+			(*i)->render(renderView, globalParameters);
 	}
 }
 

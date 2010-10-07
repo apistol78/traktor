@@ -60,13 +60,14 @@ public:
 		render::IRenderSystem* renderSystem,
 		float viewWidth,
 		float viewHeight,
+		float aspectRatio,
 		uint32_t frameCount,
 		bool clearBackground
 	);
 
 	void destroy();
 
-	void build(uint32_t frame, bool correctAspectRatio);
+	void build(uint32_t frame);
 
 	void render(render::IRenderView* renderView, uint32_t frame);
 

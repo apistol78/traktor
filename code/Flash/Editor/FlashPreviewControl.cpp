@@ -110,6 +110,7 @@ bool FlashPreviewControl::create(ui::Widget* parent, int style, resource::IResou
 		renderSystem,
 		float(viewport.width),
 		float(viewport.height),
+		1.0f,
 		1,
 		true
 	);
@@ -275,12 +276,12 @@ void FlashPreviewControl::eventPaint(ui::Event* event)
 	if (!m_renderView)
 		return;
 
-	if (m_renderView->begin())
+	if (m_renderView->begin(render::EtCyclop))
 	{
 		// Build render context.
 		if (m_movie)
 		{
-			m_displayRenderer->build(0, true);
+			m_displayRenderer->build(0);
 			m_moviePlayer->renderFrame();
 		}
 

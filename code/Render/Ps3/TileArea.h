@@ -2,6 +2,7 @@
 #define traktor_render_TileArea_H
 
 #include "Core/Config.h"
+#include "Render/Ps3/BlockList.h"
 
 namespace traktor
 {
@@ -35,11 +36,10 @@ public:
 	
 private:
 	uint32_t m_areaCount;
-	uint32_t m_tagSize;
 	TileInfo m_tiles[32];
 	uint32_t m_allocated;
-	uint32_t m_tagTop;
 	uint32_t m_dramBank;
+	BlockList m_tag;
 };
 
 	}

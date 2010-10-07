@@ -29,14 +29,16 @@ class T_DLLCLASS RenderTargetSetPs3 : public RenderTargetSet
 	T_RTTI_CLASS;
 
 public:
-	RenderTargetSetPs3(int32_t& counter);
+	RenderTargetSetPs3(
+		TileArea& tileArea,
+		TileArea& zcullArea,
+		int32_t& counter
+	);
 
 	virtual ~RenderTargetSetPs3();
 
 	bool create(
 		MemoryHeap* memoryHeap,
-		TileArea& tileArea,
-		TileArea& zcullArea,
 		const RenderTargetSetCreateDesc& desc
 	);
 
@@ -59,6 +61,8 @@ public:
 	RenderTargetPs3* getRenderTarget(int index) { return m_renderTargets[index]; }
 
 private:
+	TileArea& m_tileArea;
+	TileArea& m_zcullArea;
 	int32_t m_width;
 	int32_t m_height;
 	RefArray< RenderTargetPs3 > m_renderTargets;

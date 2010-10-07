@@ -90,6 +90,7 @@ bool AccDisplayRenderer::create(
 	render::IRenderSystem* renderSystem,
 	float viewWidth,
 	float viewHeight,
+	float aspectRatio,
 	uint32_t frameCount,
 	bool clearBackground
 )
@@ -98,6 +99,7 @@ bool AccDisplayRenderer::create(
 	m_renderSystem = renderSystem;
 	m_textureCache = new AccTextureCache(m_renderSystem);
 	m_viewSize.set(viewWidth, viewHeight, 1.0f / viewWidth, 1.0f / viewHeight);
+	m_aspectRatio = aspectRatio;
 	m_clearBackground = clearBackground;
 
 	m_glyph = new AccGlyph();
@@ -144,22 +146,16 @@ void AccDisplayRenderer::destroy()
 	m_renderContext = 0;
 }
 
-void AccDisplayRenderer::build(uint32_t frame, bool correctAspectRatio)
+void AccDisplayRenderer::build(uint32_t frame)
 {
 	m_renderContext = m_renderContexts[frame];
 	m_renderContext->flush();
-
-	if (correctAspectRatio)
-		m_aspectRatio = m_viewSize.x() / m_viewSize.y();
-	else
-		m_aspectRatio = 0.0f;
-
 	m_viewOffset.set(0.0f, 0.0f, 1.0f, 1.0f);
 }
 
 void AccDisplayRenderer::render(render::IRenderView* renderView, uint32_t frame)
 {
-	m_renderContexts[frame]->render(renderView, render::RfOverlay);
+	m_renderContexts[frame]->render(renderView, render::RfOverlay, 0);
 }
 
 void AccDisplayRenderer::setViewSize(float width, float height)

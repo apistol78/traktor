@@ -880,7 +880,7 @@ void AnimationEditorPage::eventRenderPaint(ui::Event* event)
 	if (!m_animation)
 		return;
 
-	if (!data->renderView->begin())
+	if (!data->renderView->begin(render::EtCyclop))
 		return;
 
 	float tmp[4];

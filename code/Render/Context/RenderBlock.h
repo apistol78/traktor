@@ -43,7 +43,7 @@ public:
 	{
 	}
 
-	virtual void render(IRenderView* renderView) const = 0;
+	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const = 0;
 };
 
 /*! \brief Null render block.
@@ -55,7 +55,7 @@ public:
 class T_DLLCLASS NullRenderBlock : public RenderBlock
 {
 public:
-	virtual void render(IRenderView* renderView) const;
+	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const;
 };
 
 /*! \brief Simple render block.
@@ -75,7 +75,7 @@ public:
 	{
 	}
 
-	virtual void render(IRenderView* renderView) const;
+	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const;
 };
 
 /*! \brief Non-indexed primitives render block.
@@ -97,7 +97,7 @@ public:
 	{
 	}
 
-	virtual void render(IRenderView* renderView) const;
+	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const;
 };
 
 /*! \brief Indexed primitives render block.
@@ -125,7 +125,7 @@ public:
 	{
 	}
 
-	virtual void render(IRenderView* renderView) const;
+	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const;
 };
 
 /*! \brief Begin target render block.
@@ -146,7 +146,7 @@ public:
 	{
 	}
 
-	virtual void render(IRenderView* renderView) const;
+	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const;
 };
 
 /*! \brief End target render block.
@@ -155,7 +155,7 @@ public:
 class T_DLLCLASS TargetEndRenderBlock : public RenderBlock
 {
 public:
-	virtual void render(IRenderView* renderView) const;
+	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const;
 };
 
 /*! \brief Clear target render block.
@@ -181,7 +181,7 @@ public:
 		clearColor[3] = 0.0f;
 	}
 
-	virtual void render(IRenderView* renderView) const;
+	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const;
 };
 
 /*! \brief Chain render block.
@@ -200,7 +200,7 @@ public:
 	{
 	}
 
-	virtual void render(IRenderView* renderView) const;
+	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const;
 };
 
 	}

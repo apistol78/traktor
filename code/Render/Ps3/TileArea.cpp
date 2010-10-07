@@ -9,10 +9,9 @@ namespace traktor
 
 TileArea::TileArea(uint32_t areaCount, uint32_t tagSize)
 :	m_areaCount(areaCount)
-,	m_tagSize(tagSize)
 ,	m_allocated(0)
-,	m_tagTop(0)
 ,	m_dramBank(0)
+,	m_tag(tagSize)
 {
 	for (uint32_t i = 0; i < sizeof_array(m_tiles); ++i)
 	{
@@ -25,11 +24,12 @@ TileArea::TileArea(uint32_t areaCount, uint32_t tagSize)
 
 bool TileArea::alloc(uint32_t size, uint32_t alignment, TileInfo& outTileInfo)
 {
-	uint32_t base = alignUp(m_tagTop, alignment);
+	T_ASSERT (outTileInfo.index == ~0UL);
 
-	if (size > m_tagSize - base)
+	uint32_t base = m_tag.alloc(size, alignment);
+	if (base == BlockList::NotEnoughSpace)
 	{
-		log::error << L"Unable to allocate tile area; out of compression space" << Endl;
+		log::error << L"Unable to allocate tile area; out of tag space" << Endl;
 		return false;
 	}
 	
@@ -54,24 +54,22 @@ bool TileArea::alloc(uint32_t size, uint32_t alignment, TileInfo& outTileInfo)
 	m_tiles[index].size = size;
 	m_tiles[index].dramBank = m_dramBank++ % 4;
 	
-	m_tagTop += size;
-	
 	outTileInfo = m_tiles[index];
 	return true;
 }
 
 void TileArea::free(uint32_t index)
 {
-	T_ASSERT (m_allocated & (1 << index));
-	
-	if (m_tiles[index].base + m_tiles[index].size == m_tagTop)
-		m_tagTop = m_tiles[index].base;
-	
-	m_tiles[index].base = 0;
-	m_tiles[index].size = 0;
-	m_tiles[index].dramBank = 0;
-	
-	m_allocated &= ~(1 << index);
+	if (m_allocated & (1 << index))
+	{
+		m_tag.free(m_tiles[index].base);
+		
+		m_tiles[index].base = 0;
+		m_tiles[index].size = 0;
+		m_tiles[index].dramBank = 0;
+		
+		m_allocated &= ~(1 << index);
+	}
 }
 
 	}

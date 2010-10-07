@@ -18,6 +18,7 @@ namespace traktor
 	namespace render
 	{
 
+class ResolutionDesc;
 class MemoryHeap;
 
 class T_DLLCLASS RenderSystemPs3 : public IRenderSystem
@@ -71,6 +72,7 @@ private:
 	Ref< MemoryHeap > m_memoryHeapMain;
 	TileArea m_tileArea;
 	TileArea m_zcullArea;
+	std::vector< const ResolutionDesc* > m_resolutions;
 	int32_t m_counterVertexBuffers;
 	int32_t m_counterIndexBuffers;
 	int32_t m_counterSimpleTextures;

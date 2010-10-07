@@ -62,7 +62,7 @@ public:
 
 	virtual Viewport getViewport();
 
-	virtual bool begin();
+	virtual bool begin(EyeType eye);
 
 	virtual bool begin(RenderTargetSet* renderTargetSet, int renderTarget, bool keepDepthStencil);
 
@@ -95,6 +95,7 @@ private:
 		uint32_t colorPitch;
 		uint32_t depthOffset;
 		uint32_t depthPitch;
+		uint32_t windowOffset;
 		RenderTargetPs3* renderTarget;
 		bool zcull;
 
@@ -108,6 +109,9 @@ private:
 	Ref< MemoryHeap > m_localMemoryHeap;
 	TileArea& m_tileArea;
 	TileArea& m_zcullArea;
+	TileArea::TileInfo m_colorTile[2];
+	TileArea::TileInfo m_depthTile;
+	TileArea::TileInfo m_zcullTile;
 	Ref< RenderSystemPs3 > m_renderSystem;
 	Ref< VertexBufferPs3 > m_currentVertexBuffer;
 	Ref< IndexBufferPs3 > m_currentIndexBuffer;

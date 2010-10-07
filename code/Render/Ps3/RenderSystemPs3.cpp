@@ -28,18 +28,6 @@ const uint32_t c_cbSize = 256 * 1024;
 const uint32_t c_hostSize = 1 * 1024 * 1024;
 const uint32_t c_mainSize = 16 * 1024 * 1024;	//< RSX mapped main memory; used for dynamic index- and vertexbuffers.
 
-struct ResolutionDesc { int32_t width; int32_t height; int32_t colorBits; } c_resolutions[] =
-{
-	{ 1920, 1080, 24 },
-	{ 1280, 720, 24 },
-	{ 640, 480, 24 },
-	{ 720, 576, 24 },
-	{ 1600, 1080, 24 },
-	{ 1440, 1080, 24 },
-	{ 1280, 1080, 24 },
-	{ 960, 1080, 24 }
-};
-
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderSystemPs3", 0, RenderSystemPs3, IRenderSystem)
@@ -91,6 +79,13 @@ bool RenderSystemPs3::create(const RenderSystemCreateDesc& desc)
 		L"\tMain address 0x" << mainAddr << Endl <<
 		L"\t      size " << c_mainSize / (1024 * 1024) << L" MiB" << Endl;
 
+	// Determine supported display modes.
+	for (const ResolutionDesc* i = c_resolutionDescs; i->id; ++i)
+	{
+		if (cellVideoOutGetResolutionAvailability(CELL_VIDEO_OUT_PRIMARY, i->id, CELL_VIDEO_OUT_ASPECT_AUTO, 0))
+			m_resolutions.push_back(i);
+	}
+
 	return true;
 }
 
@@ -102,16 +97,17 @@ void RenderSystemPs3::destroy()
 
 uint32_t RenderSystemPs3::getDisplayModeCount() const
 {
-	return sizeof_array(c_resolutions);
+	return m_resolutions.size();
 }
 
 DisplayMode RenderSystemPs3::getDisplayMode(uint32_t index) const
 {
 	DisplayMode dm;
-	dm.width = c_resolutions[index].width;
-	dm.height = c_resolutions[index].height;
+	dm.width = m_resolutions[index]->width;
+	dm.height = m_resolutions[index]->height;
 	dm.refreshRate = 0;
-	dm.colorBits = c_resolutions[index].colorBits;
+	dm.colorBits = 24;
+	dm.stereoscopic = m_resolutions[index]->stereoscopic;
 	return dm;
 }
 
@@ -122,18 +118,22 @@ DisplayMode RenderSystemPs3::getCurrentDisplayMode() const
 	int32_t ret;
 
 	ret = cellVideoOutGetState(CELL_VIDEO_OUT_PRIMARY, 0, &videoState);
-	if (ret != CELL_OK)
-		log::error << L"Get display mode failed, cellVideoOutGetState failed" << Endl;
+	if (ret == CELL_OK)
+	{
+		ret = cellVideoOutGetResolution(videoState.displayMode.resolutionId, &videoResolution);
+		if (ret == CELL_OK)
+		{
+			DisplayMode dm;
+			dm.width = videoResolution.width;
+			dm.height = videoResolution.height;
+			dm.refreshRate = 0;
+			dm.colorBits = 24;
+			dm.stereoscopic = false;
+			return dm;
+		}
+	}
 
-	cellVideoOutGetResolution(videoState.displayMode.resolutionId, &videoResolution);
-
-	DisplayMode dm;
-	dm.width = videoResolution.width;
-	dm.height = videoResolution.height;
-	dm.refreshRate = 0;
-	dm.colorBits = 24;
-
-	return dm;
+	return DisplayMode();
 }
 
 bool RenderSystemPs3::handleMessages()
@@ -202,8 +202,8 @@ Ref< IVolumeTexture > RenderSystemPs3::createVolumeTexture(const VolumeTextureCr
 Ref< RenderTargetSet > RenderSystemPs3::createRenderTargetSet(const RenderTargetSetCreateDesc& desc)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	Ref< RenderTargetSetPs3 > renderTargetSet = new RenderTargetSetPs3(m_counterRenderTargetSets);
-	if (renderTargetSet->create(m_memoryHeapLocal, m_tileArea, m_zcullArea, desc))
+	Ref< RenderTargetSetPs3 > renderTargetSet = new RenderTargetSetPs3(m_tileArea, m_zcullArea, m_counterRenderTargetSets);
+	if (renderTargetSet->create(m_memoryHeapLocal, desc))
 		return renderTargetSet;
 	else
 		return 0;

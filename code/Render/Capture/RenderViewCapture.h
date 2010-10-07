@@ -54,7 +54,7 @@ public:
 
 	virtual Viewport getViewport();
 
-	virtual bool begin();
+	virtual bool begin(EyeType eye);
 
 	virtual bool begin(RenderTargetSet* renderTargetSet, int renderTarget, bool keepDepthStencil);
 

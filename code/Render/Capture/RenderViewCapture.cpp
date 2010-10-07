@@ -72,9 +72,9 @@ Viewport RenderViewCapture::getViewport()
 	return m_renderView->getViewport();
 }
 
-bool RenderViewCapture::begin()
+bool RenderViewCapture::begin(EyeType eye)
 {
-	if (!m_renderView->begin())
+	if (!m_renderView->begin(eye))
 		return false;
 
 #if defined(_DEBUG)
@@ -111,7 +111,7 @@ bool RenderViewCapture::begin()
 		if (!m_captureTarget)
 		{
 			m_captureFrame = false;
-			return m_renderView->begin();
+			return m_renderView->begin(EtCyclop);
 		}
 
 		if (!m_renderView->begin(m_captureTarget, 0, false))
@@ -119,7 +119,7 @@ bool RenderViewCapture::begin()
 			m_captureFrame = false;
 			m_captureTarget->destroy();
 			m_captureTarget = 0;
-			return m_renderView->begin();
+			return m_renderView->begin(EtCyclop);
 		}
 
 		m_captureImage = new drawing::Image(

@@ -181,7 +181,7 @@ void ProgramParameters::setTextureParameter(handle_t handle, ITexture* texture)
 	T_ASSERT (m_parameterLast);
 	T_ASSERT (texture);
 
-	T_SAFE_ADDREF(texture);
+	//T_SAFE_ADDREF(texture);
 
 	align< handle_t >(m_parameterLast);
 	write< handle_t >(m_parameterLast, handle);
@@ -251,7 +251,7 @@ void ProgramParameters::fixup(IProgram* program) const
 			{
 				ITexture* texture = read< ITexture* >(parameter);
 				program->setTextureParameter(handle, texture);
-				T_SAFE_RELEASE(texture);
+				//T_SAFE_RELEASE(texture);
 			}
 			break;
 

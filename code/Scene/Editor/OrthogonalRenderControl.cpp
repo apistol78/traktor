@@ -514,7 +514,7 @@ void OrthogonalRenderControl::eventPaint(ui::Event* event)
 	Ref< world::Entity > rootEntity = rootEntityAdapter ? rootEntityAdapter->getEntity() : 0;
 
 	// Render world.
-	if (m_renderView->begin())
+	if (m_renderView->begin(render::EtCyclop))
 	{
 		float tmp[4];
 		m_colorClear.getRGBA32F(tmp);
@@ -658,7 +658,11 @@ void OrthogonalRenderControl::eventPaint(ui::Event* event)
 		if (rootEntity)
 		{
 			m_worldRenderer->build(worldRenderView, rootEntity, 0);
-			m_worldRenderer->render(world::WrfDepthMap | world::WrfShadowMap | world::WrfVisualOpaque | world::WrfVisualAlphaBlend, 0);
+			m_worldRenderer->render(
+				world::WrfDepthMap | world::WrfShadowMap | world::WrfVisualOpaque | world::WrfVisualAlphaBlend,
+				0,
+				render::EtCyclop
+			);
 		}
 
 		m_primitiveRenderer->end(m_renderView);

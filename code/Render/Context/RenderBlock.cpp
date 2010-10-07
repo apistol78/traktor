@@ -7,22 +7,26 @@ namespace traktor
 	namespace render
 	{
 
-void NullRenderBlock::render(IRenderView* renderView) const
+void NullRenderBlock::render(IRenderView* renderView, const ProgramParameters* globalParameters) const
 {
 	T_RENDER_PUSH_MARKER(renderView, name);
 
 	if (programParams)
 		programParams->fixup(program);
+	if (globalParameters)
+		globalParameters->fixup(program);
 
 	T_RENDER_POP_MARKER(renderView);
 }
 
-void SimpleRenderBlock::render(IRenderView* renderView) const
+void SimpleRenderBlock::render(IRenderView* renderView, const ProgramParameters* globalParameters) const
 {
 	T_RENDER_PUSH_MARKER(renderView, name);
 
 	if (programParams)
 		programParams->fixup(program);
+	if (globalParameters)
+		globalParameters->fixup(program);
 
 	renderView->setIndexBuffer(indexBuffer);
 	renderView->setVertexBuffer(vertexBuffer);
@@ -32,7 +36,7 @@ void SimpleRenderBlock::render(IRenderView* renderView) const
 	T_RENDER_POP_MARKER(renderView);
 }
 
-void NonIndexedRenderBlock::render(IRenderView* renderView) const
+void NonIndexedRenderBlock::render(IRenderView* renderView, const ProgramParameters* globalParameters) const
 {
 	Primitives p(primitive, offset, count);
 
@@ -40,6 +44,8 @@ void NonIndexedRenderBlock::render(IRenderView* renderView) const
 
 	if (programParams)
 		programParams->fixup(program);
+	if (globalParameters)
+		globalParameters->fixup(program);
 
 	renderView->setVertexBuffer(vertexBuffer);
 	renderView->setProgram(program);
@@ -48,7 +54,7 @@ void NonIndexedRenderBlock::render(IRenderView* renderView) const
 	T_RENDER_POP_MARKER(renderView);
 }
 
-void IndexedRenderBlock::render(IRenderView* renderView) const
+void IndexedRenderBlock::render(IRenderView* renderView, const ProgramParameters* globalParameters) const
 {
 	Primitives p(primitive, offset, count, minIndex, maxIndex);
 
@@ -56,6 +62,8 @@ void IndexedRenderBlock::render(IRenderView* renderView) const
 
 	if (programParams)
 		programParams->fixup(program);
+	if (globalParameters)
+		globalParameters->fixup(program);
 
 	renderView->setIndexBuffer(indexBuffer);
 	renderView->setVertexBuffer(vertexBuffer);
@@ -65,7 +73,7 @@ void IndexedRenderBlock::render(IRenderView* renderView) const
 	T_RENDER_POP_MARKER(renderView);
 }
 
-void TargetBeginRenderBlock::render(IRenderView* renderView) const
+void TargetBeginRenderBlock::render(IRenderView* renderView, const ProgramParameters* globalParameters) const
 {
 	T_RENDER_PUSH_MARKER(renderView, name);
 
@@ -74,7 +82,7 @@ void TargetBeginRenderBlock::render(IRenderView* renderView) const
 	T_RENDER_POP_MARKER(renderView);
 }
 
-void TargetEndRenderBlock::render(IRenderView* renderView) const
+void TargetEndRenderBlock::render(IRenderView* renderView, const ProgramParameters* globalParameters) const
 {
 	T_RENDER_PUSH_MARKER(renderView, name);
 
@@ -83,7 +91,7 @@ void TargetEndRenderBlock::render(IRenderView* renderView) const
 	T_RENDER_POP_MARKER(renderView);
 }
 
-void TargetClearRenderBlock::render(IRenderView* renderView) const
+void TargetClearRenderBlock::render(IRenderView* renderView, const ProgramParameters* globalParameters) const
 {
 	T_RENDER_PUSH_MARKER(renderView, name);
 
@@ -100,15 +108,15 @@ void TargetClearRenderBlock::render(IRenderView* renderView) const
 	T_RENDER_POP_MARKER(renderView);
 }
 
-void ChainRenderBlock::render(IRenderView* renderView) const
+void ChainRenderBlock::render(IRenderView* renderView, const ProgramParameters* globalParameters) const
 {
 	T_RENDER_PUSH_MARKER(renderView, name);
 
 	if (inner)
-		inner->render(renderView);
+		inner->render(renderView, globalParameters);
 
 	if (next)
-		next->render(renderView);
+		next->render(renderView, globalParameters);
 
 	T_RENDER_POP_MARKER(renderView);
 }

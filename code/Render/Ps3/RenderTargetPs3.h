@@ -27,9 +27,9 @@ class T_DLLCLASS RenderTargetPs3 : public ITexture
 	T_RTTI_CLASS;
 
 public:
-	RenderTargetPs3();
+	RenderTargetPs3(TileArea& tileArea);
 
-	bool create(MemoryHeap* memoryHeap, TileArea& tileArea, const RenderTargetSetCreateDesc& setDesc, const RenderTargetCreateDesc& desc);
+	bool create(MemoryHeap* memoryHeap, const RenderTargetSetCreateDesc& setDesc, const RenderTargetCreateDesc& desc);
 
 	virtual void destroy();
 
@@ -54,6 +54,7 @@ public:
 	}
 
 private:
+	TileArea& m_tileArea;
 	int32_t m_width;
 	int32_t m_height;
 	uint32_t m_colorSurfaceFormat;

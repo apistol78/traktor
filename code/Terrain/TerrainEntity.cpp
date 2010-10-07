@@ -48,12 +48,12 @@ struct TerrainRenderBlock : public render::SimpleRenderBlock
 	{
 	}
 
-	virtual void render(render::IRenderView* renderView) const
+	virtual void render(render::IRenderView* renderView, const render::ProgramParameters* globalParameters) const
 	{
 		if (nested)
-			nested->render(renderView);
+			nested->render(renderView, globalParameters);
 
-		render::SimpleRenderBlock::render(renderView);
+		render::SimpleRenderBlock::render(renderView, globalParameters);
 	}
 };
 

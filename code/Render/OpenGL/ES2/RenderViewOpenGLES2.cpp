@@ -164,7 +164,7 @@ Viewport RenderViewOpenGLES2::getViewport()
 	return viewport;
 }
 
-bool RenderViewOpenGLES2::begin()
+bool RenderViewOpenGLES2::begin(EyeType eye)
 {
 #	if TARGET_OS_IPHONE
 	m_wrapper->setCurrent();

@@ -13,8 +13,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetPs3", RenderTargetPs3, ITexture)
 
-RenderTargetPs3::RenderTargetPs3()
-:	m_width(0)
+RenderTargetPs3::RenderTargetPs3(TileArea& tileArea)
+:	m_tileArea(tileArea)
+,	m_width(0)
 ,	m_height(0)
 ,	m_colorSurfaceFormat(0)
 ,	m_colorData(0)
@@ -23,7 +24,7 @@ RenderTargetPs3::RenderTargetPs3()
 	std::memset(&m_colorTexture, 0, sizeof(m_colorTexture));
 }
 
-bool RenderTargetPs3::create(MemoryHeap* memoryHeap, TileArea& tileArea, const RenderTargetSetCreateDesc& setDesc, const RenderTargetCreateDesc& desc)
+bool RenderTargetPs3::create(MemoryHeap* memoryHeap, const RenderTargetSetCreateDesc& setDesc, const RenderTargetCreateDesc& desc)
 {
 	int byteSize;
 
@@ -101,7 +102,7 @@ bool RenderTargetPs3::create(MemoryHeap* memoryHeap, TileArea& tileArea, const R
 
 	if (setDesc.preferTiled)
 	{
-		if (tileArea.alloc(colorSize / 0x10000, 1, m_tileInfo))
+		if (m_tileArea.alloc(colorSize / 0x10000, 1, m_tileInfo))
 		{
 			cellGcmSetTileInfo(
 				m_tileInfo.index,
@@ -125,6 +126,7 @@ void RenderTargetPs3::destroy()
 	if (m_tileInfo.index != ~0UL)
 	{
 		cellGcmUnbindTile(m_tileInfo.index);
+		m_tileArea.free(m_tileInfo.index);
 		m_tileInfo.index = ~0UL;
 	}
 

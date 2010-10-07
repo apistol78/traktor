@@ -106,6 +106,18 @@ struct ScalarParameter
 	uint8_t usage;
 };
 
+struct ResolutionDesc
+{
+	int32_t width;
+	int32_t height;
+	bool stereoscopic;
+	int32_t id;
+};
+
+extern const ResolutionDesc c_resolutionDescs[];
+
+const ResolutionDesc* findResolutionDesc(int32_t width, int32_t height, bool stereoscopic);
+
 bool getGcmTextureInfo(TextureFormat textureFormat, uint8_t& outGcmFormat);
 
 void cellUtilConvertLinearToSwizzle(

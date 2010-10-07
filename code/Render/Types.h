@@ -123,6 +123,14 @@ enum PrimitiveType
 	PtTriangles
 };
 
+/*! \brief Eye in stereoscopic rendering */
+enum EyeType
+{
+	EtCyclop,	//< Not using stereoscopic rendering.
+	EtLeft,
+	EtRight,
+};
+
 /*! \brief Render view port. */
 struct Viewport
 {
@@ -161,12 +169,14 @@ struct DisplayMode
 	uint32_t height;
 	uint16_t refreshRate;
 	uint16_t colorBits;
+	bool stereoscopic;
 
 	DisplayMode()
 	:	width(0)
 	,	height(0)
 	,	refreshRate(0)
 	,	colorBits(0)
+	,	stereoscopic(false)
 	{
 	}
 };
@@ -220,10 +230,12 @@ struct RenderViewDefaultDesc : public RenderViewDesc
 struct RenderViewEmbeddedDesc : public RenderViewDesc
 {
 	void* nativeWindowHandle;
+	bool stereoscopic;
 
 	RenderViewEmbeddedDesc()
 	:	RenderViewDesc()
 	,	nativeWindowHandle(0)
+	,	stereoscopic(false)
 	{
 	}
 };

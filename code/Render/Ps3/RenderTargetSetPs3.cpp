@@ -12,8 +12,14 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetSetPs3", RenderTargetSetPs3, RenderTargetSet)
 
-RenderTargetSetPs3::RenderTargetSetPs3(int32_t& counter)
+RenderTargetSetPs3::RenderTargetSetPs3(
+	TileArea& tileArea,
+	TileArea& zcullArea,
+	int32_t& counter
+)
 :	RenderTargetSet()
+,	m_tileArea(tileArea)
+,	m_zcullArea(zcullArea)
 ,	m_width(0)
 ,	m_height(0)
 ,	m_depthData(0)
@@ -31,8 +37,6 @@ RenderTargetSetPs3::~RenderTargetSetPs3()
 
 bool RenderTargetSetPs3::create(
 	MemoryHeap* memoryHeap,
-	TileArea& tileArea,
-	TileArea& zcullArea,
 	const RenderTargetSetCreateDesc& desc
 )
 {
@@ -42,8 +46,8 @@ bool RenderTargetSetPs3::create(
 	m_renderTargets.resize(desc.count);
 	for (int32_t i = 0; i < desc.count; ++i)
 	{
-		m_renderTargets[i] = new RenderTargetPs3();
-		if (!m_renderTargets[i]->create(memoryHeap, tileArea, desc, desc.targets[i]))
+		m_renderTargets[i] = new RenderTargetPs3(m_tileArea);
+		if (!m_renderTargets[i]->create(memoryHeap, desc, desc.targets[i]))
 			return false;
 	}
 
@@ -71,7 +75,7 @@ bool RenderTargetSetPs3::create(
 
 		if (desc.preferTiled)
 		{
-			if (tileArea.alloc(depthSize / 0x10000, 1, m_tileInfo))
+			if (m_tileArea.alloc(depthSize / 0x10000, 1, m_tileInfo))
 			{
 				cellGcmSetTileInfo(
 					m_tileInfo.index,
@@ -85,7 +89,7 @@ bool RenderTargetSetPs3::create(
 				);
 				cellGcmBindTile(m_tileInfo.index);
 
-				if (zcullArea.alloc(m_depthTexture.width * m_depthTexture.height, 4096, m_zcullInfo))
+				if (m_zcullArea.alloc(m_depthTexture.width * m_depthTexture.height, 4096, m_zcullInfo))
 				{
 					cellGcmBindZcull(
 						m_zcullInfo.index,
@@ -123,12 +127,14 @@ void RenderTargetSetPs3::destroy()
 	if (m_zcullInfo.index != ~0UL)
 	{
 		cellGcmUnbindZcull(m_zcullInfo.index);
+		m_zcullArea.free(m_zcullInfo.index);
 		m_zcullInfo.index = ~0UL;
 	}
 
 	if (m_tileInfo.index != ~0UL)
 	{
 		cellGcmUnbindTile(m_tileInfo.index);
+		m_tileArea.free(m_tileInfo.index);
 		m_tileInfo.index = ~0UL;
 	}
 

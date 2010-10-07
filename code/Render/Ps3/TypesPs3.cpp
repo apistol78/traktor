@@ -1,10 +1,38 @@
-#include "Render/Ps3/TypesPs3.h"
 #include "Core/Log/Log.h"
+#include "Render/Ps3/TypesPs3.h"
 
 namespace traktor
 {
 	namespace render
 	{
+
+const ResolutionDesc c_resolutionDescs[] =
+{
+	{ 1920, 1080, false, CELL_VIDEO_OUT_RESOLUTION_1080 },
+	{ 1280, 720, false, CELL_VIDEO_OUT_RESOLUTION_720 },
+	{ 640, 480, false, CELL_VIDEO_OUT_RESOLUTION_480 },
+	{ 720, 576, false, CELL_VIDEO_OUT_RESOLUTION_576 },
+	{ 1600, 1080, false, CELL_VIDEO_OUT_RESOLUTION_1600x1080 },
+	{ 1440, 1080, false, CELL_VIDEO_OUT_RESOLUTION_1440x1080 },
+	{ 1280, 1080, false, CELL_VIDEO_OUT_RESOLUTION_1280x1080 },
+	{ 960, 1080, false, CELL_VIDEO_OUT_RESOLUTION_960x1080 },
+	{ 1280, 720, true, CELL_VIDEO_OUT_RESOLUTION_720_3D_FRAME_PACKING },
+	{ 1024, 720, true, CELL_VIDEO_OUT_RESOLUTION_1024x720_3D_FRAME_PACKING },
+	{ 960, 720, true, CELL_VIDEO_OUT_RESOLUTION_960x720_3D_FRAME_PACKING },
+	{ 800, 720, true, CELL_VIDEO_OUT_RESOLUTION_800x720_3D_FRAME_PACKING },
+	{ 640, 720, true, CELL_VIDEO_OUT_RESOLUTION_640x720_3D_FRAME_PACKING },
+	{ 0, 0, false, 0 }
+};
+
+const ResolutionDesc* findResolutionDesc(int32_t width, int32_t height, bool stereoscopic)
+{
+	for (const ResolutionDesc* i = c_resolutionDescs; i->id; ++i)
+	{
+		if (i->width == width && i->height == height && i->stereoscopic == stereoscopic)
+			return i;
+	}
+	return 0;
+}
 
 bool getGcmTextureInfo(TextureFormat textureFormat, uint8_t& outGcmFormat)
 {

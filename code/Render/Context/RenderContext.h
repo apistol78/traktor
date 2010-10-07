@@ -88,7 +88,7 @@ public:
 	void draw(uint32_t type, RenderBlock* renderBlock);
 
 	/*! \brief Render blocks. */
-	void render(IRenderView* renderView, uint32_t flags) const;
+	void render(IRenderView* renderView, uint32_t flags, const ProgramParameters* globalParameters) const;
 
 	/*! \brief Flush blocks. */
 	void flush();

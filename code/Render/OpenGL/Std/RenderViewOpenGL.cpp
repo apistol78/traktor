@@ -227,7 +227,7 @@ Viewport RenderViewOpenGL::getViewport()
 	return viewport;
 }
 
-bool RenderViewOpenGL::begin()
+bool RenderViewOpenGL::begin(EyeType eye)
 {
 	if (!m_primaryTarget)
 		return false;

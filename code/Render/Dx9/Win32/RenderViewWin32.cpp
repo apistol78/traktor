@@ -183,7 +183,7 @@ Viewport RenderViewWin32::getViewport()
 	);
 }
 
-bool RenderViewWin32::begin()
+bool RenderViewWin32::begin(EyeType eye)
 {
 	T_ASSERT (m_renderStateStack.empty());
 
