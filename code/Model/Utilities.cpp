@@ -759,7 +759,7 @@ void cullDistantFaces(Model& model)
 	}
 	model.setPolygons(polygons);
 
-	log::info << L"Culled " << (originalCount - polygons.size()) << L" polygon(s)" << Endl;
+	log::info << L"Culled " << uint32_t(originalCount - polygons.size()) << L" polygon(s)" << Endl;
 }
 
 	}
