@@ -117,7 +117,8 @@ void splitPolygon(
 
 void splitPolygons(
 	model::Model& model,
-	const Plane& plane,
+	int axis,
+	float splitDistance,
 	const std::vector< model::Polygon >& polygons,
 	std::vector< model::Polygon >& outBackPolygons,
 	std::vector< model::Polygon >& outFrontPolygons
@@ -127,12 +128,27 @@ void splitPolygons(
 	outFrontPolygons.reserve((2 * polygons.size()) / 3);
 	for (std::vector< model::Polygon >::const_iterator i = polygons.begin(); i != polygons.end(); ++i)
 	{
-		model::Polygon backPolygon, frontPolygon;
-		splitPolygon(model, plane, *i, backPolygon, frontPolygon);
-		if (backPolygon.getVertexCount() >= 3)
-			outBackPolygons.push_back(backPolygon);
-		if (frontPolygon.getVertexCount() >= 3)
-			outFrontPolygons.push_back(frontPolygon);
+		float range[2] = { std::numeric_limits< float >::max(), -std::numeric_limits< float >::max() };
+		
+		for (uint32_t j = 0; j < i->getVertexCount(); ++j)
+		{
+			const model::Vertex& vertex = model.getVertex(i->getVertex(j));
+			const Vector4& position = model.getPosition(vertex.getPosition());
+			range[0] = std::min< float >(range[0], position[axis]);
+			range[1] = std::max< float >(range[1], position[axis]);
+		}
+		
+		if (range[0] >= splitDistance)
+			outFrontPolygons.push_back(*i);
+		else if (range[1] <= splitDistance)
+			outBackPolygons.push_back(*i);
+		else
+		{
+			if (std::abs(range[0] - splitDistance) > std::abs(range[1] - splitDistance))
+				outFrontPolygons.push_back(*i);
+			else
+				outBackPolygons.push_back(*i);
+		}
 	}
 }
 
@@ -191,22 +207,21 @@ Ref< OctreeNodeTemplate > buildOctreeTemplate(
 
 	Vector4 center = boundingBox.getCenter();
 
-	// Split polygons into eight buckets.
+	// Split polygons into eight buckets; polygons arn't actually split
+	// but instead put into "closest" bucket and instead it's bound are overlapped
+	// with it's neighbor.
 	std::vector< model::Polygon > backPolygons[3], frontPolygons[3];
 	std::vector< model::Polygon > octPolygons[8];
 
-	Plane planeX(Vector4(1.0f, 0.0f, 0.0f), center.x());
-	splitPolygons(model, planeX, polygons, backPolygons[0], frontPolygons[0]);
+	splitPolygons(model, 0, center.x(), polygons, backPolygons[0], frontPolygons[0]);
 
-	Plane planeY(Vector4(0.0f, 1.0f, 0.0f), center.y());
-	splitPolygons(model, planeY, backPolygons[0], backPolygons[1], frontPolygons[1]);
-	splitPolygons(model, planeY, frontPolygons[0], backPolygons[2], frontPolygons[2]);
+	splitPolygons(model, 1, center.y(), backPolygons[0], backPolygons[1], frontPolygons[1]);
+	splitPolygons(model, 1, center.y(), frontPolygons[0], backPolygons[2], frontPolygons[2]);
 
-	Plane planeZ(Vector4(0.0f, 0.0f, 1.0f), center.z());
-	splitPolygons(model, planeZ, backPolygons[1], octPolygons[0], octPolygons[4]);
-	splitPolygons(model, planeZ, frontPolygons[1], octPolygons[2], octPolygons[6]);
-	splitPolygons(model, planeZ, backPolygons[2], octPolygons[1], octPolygons[5]);
-	splitPolygons(model, planeZ, frontPolygons[2], octPolygons[3], octPolygons[7]);
+	splitPolygons(model, 2, center.z(), backPolygons[1], octPolygons[0], octPolygons[4]);
+	splitPolygons(model, 2, center.z(), frontPolygons[1], octPolygons[2], octPolygons[6]);
+	splitPolygons(model, 2, center.z(), backPolygons[2], octPolygons[1], octPolygons[5]);
+	splitPolygons(model, 2, center.z(), frontPolygons[2], octPolygons[3], octPolygons[7]);
 
 	// Recurse with each child bucket.
 	for (int32_t i = 0; i < 8; ++i)
