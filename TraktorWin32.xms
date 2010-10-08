@@ -6771,6 +6771,15 @@
 									</item>
 								</items>
 							</item>
+							<item type="Filter">
+								<name>Partition</name>
+								<items>
+									<item type="File">
+										<fileName>Partition/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
 						</items>
 						<dependencies>
 							<item type="ProjectDependency" version="1">
@@ -10923,6 +10932,15 @@
 					<items>
 						<item type="File">
 							<fileName>Stream/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>Partition</name>
+					<items>
+						<item type="File">
+							<fileName>Partition/*.*</fileName>
 							<items/>
 						</item>
 					</items>

@@ -386,7 +386,7 @@ void TerrainEntity::render(render::RenderContext* renderContext, const world::Wo
 			Vector4 patchCenterWorld = patchOrigin + patchExtent * Scalar(0.5f);
 			Vector4 patchCenterView = worldRenderView->getView() * patchCenterWorld;
 
-			if (worldRenderView->getCullFrustum().inside(patchCenterView, patchRadius))
+			if (worldRenderView->getCullFrustum().inside(patchCenterView, patchRadius) != Frustum::IrOutside)
 			{
 				CullPatch cp;
 

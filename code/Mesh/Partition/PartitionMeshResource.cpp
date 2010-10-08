@@ -1,0 +1,88 @@
+#include "Core/Log/Log.h"
+#include "Core/Misc/TString.h"
+#include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberComposite.h"
+#include "Core/Serialization/MemberRef.h"
+#include "Core/Serialization/MemberStl.h"
+#include "Mesh/Partition/IPartitionData.h"
+#include "Mesh/Partition/PartitionMesh.h"
+#include "Mesh/Partition/PartitionMeshResource.h"
+#include "Render/Mesh/Mesh.h"
+#include "Render/Mesh/MeshReader.h"
+#include "Resource/IResourceManager.h"
+
+namespace traktor
+{
+	namespace mesh
+	{
+
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.PartitionMeshResource", 0, PartitionMeshResource, IMeshResource)
+
+Ref< IMesh > PartitionMeshResource::createMesh(
+	const std::wstring& name,
+	IStream* dataStream,
+	resource::IResourceManager* resourceManager,
+	render::IRenderSystem* renderSystem,
+	render::MeshFactory* meshFactory
+) const
+{
+	T_ASSERT (m_partitionData);
+
+	Ref< render::Mesh > mesh = render::MeshReader(meshFactory).read(dataStream);
+	if (!mesh)
+	{
+		log::error << L"Partition mesh create failed; unable to read mesh" << Endl;
+		return 0;
+	}
+
+	Ref< PartitionMesh > partitionMesh = new PartitionMesh();
+	partitionMesh->m_shader = m_shader;
+	partitionMesh->m_mesh = mesh;
+
+	for (std::list< Part >::const_iterator i = m_parts.begin(); i != m_parts.end(); ++i)
+	{
+		PartitionMesh::Part part;
+		part.shaderTechnique = render::getParameterHandle(i->shaderTechnique);
+		part.meshPart = i->meshPart;
+		part.opaque = i->opaque;
+		partitionMesh->m_parts.push_back(part);
+	}
+
+	if (!resourceManager->bind(partitionMesh->m_shader))
+		return 0;
+
+	partitionMesh->m_partition = m_partitionData->createPartition();
+	if (!partitionMesh->m_partition)
+		return 0;
+	
+#if defined(_DEBUG)
+	partitionMesh->m_name = wstombs(name);
+#endif
+
+	return partitionMesh;
+}
+
+bool PartitionMeshResource::serialize(ISerializer& s)
+{
+	s >> Member< Guid >(L"shader", m_shader);
+	s >> MemberStlList< Part, MemberComposite< Part > >(L"parts", m_parts);
+	s >> MemberRef< IPartitionData >(L"partitionData", m_partitionData);
+	return true;
+}
+
+PartitionMeshResource::Part::Part()
+:	meshPart(0)
+,	opaque(true)
+{
+}
+
+bool PartitionMeshResource::Part::serialize(ISerializer& s)
+{
+	s >> Member< std::wstring >(L"shaderTechnique", shaderTechnique);
+	s >> Member< uint32_t >(L"meshPart", meshPart);
+	s >> Member< bool >(L"opaque", opaque);
+	return true;
+}
+
+	}
+}

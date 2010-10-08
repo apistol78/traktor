@@ -167,7 +167,7 @@ void UndergrowthEntity::updateTask(int start, int end, Vertex* outVertex)
 	for (int i = start; i < end; ++i)
 	{
 		Vector4 position = m_lastView * m_cells[i].position;
-		if (m_lastFrustum.inside(position, Scalar(m_settings.cellRadius)))
+		if (m_lastFrustum.inside(position, Scalar(m_settings.cellRadius)) != Frustum::IrOutside)
 			continue;
 
 		Vector4 seed(

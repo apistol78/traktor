@@ -21,7 +21,7 @@ namespace traktor
 /*! \brief Axis aligned bounding box.
  * \ingroup Core
  */
-class T_DLLCLASS Aabb
+class T_MATH_ALIGN16 T_DLLCLASS Aabb
 {
 public:
 	Vector4 mn;

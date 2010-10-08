@@ -26,7 +26,7 @@ class T_DLLCLASS Vertex
 public:
 	Vertex();
 
-	Vertex(uint32_t position);
+	explicit Vertex(uint32_t position);
 
 	void setPosition(uint32_t position);
 
@@ -53,6 +53,8 @@ public:
 	void setTexCoord(uint32_t channel, uint32_t texCoord);
 
 	uint32_t getTexCoord(uint32_t channel) const;
+
+	uint32_t getTexCoordCount() const;
 
 	void clearBoneInfluences();
 

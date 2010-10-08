@@ -65,32 +65,37 @@ Scalar Frustum::getFarZ() const
 	return -planes[PsFar].distance();
 }
 
-bool Frustum::inside(const Vector4& point) const
+Frustum::InsideResult Frustum::inside(const Vector4& point) const
 {
 	const Scalar c_zero(0.0f);
 
 	for (uint32_t i = 0; i < planes.size(); ++i)
 	{
 		if (planes[i].distance(point) < c_zero)
-			return false;
+			return IrOutside;
 	}
 
-	return true;
+	return IrInside;
 }
 
-bool Frustum::inside(const Vector4& center_, const Scalar& radius) const
+Frustum::InsideResult Frustum::inside(const Vector4& center_, const Scalar& radius) const
 {
+	bool partial = false;
 	for (uint32_t i = 0; i < planes.size(); ++i)
 	{
-		if (planes[i].distance(center_) < -radius)
-			return false;
+		Scalar distance = planes[i].distance(center_);
+		if (distance < -radius)
+			return IrOutside;
+		if (distance < radius)
+			partial |= true;
 	}
-	return true;
+	return partial ? IrPartial : IrInside;
 }
 
-bool Frustum::inside(const Aabb& aabb) const
+Frustum::InsideResult Frustum::inside(const Aabb& aabb) const
 {
 	const Scalar c_zero(0.0f);
+	bool partial = false;
 	for (uint32_t i = 0; i < planes.size(); ++i)
 	{
 		Vector4 n(
@@ -103,14 +108,12 @@ bool Frustum::inside(const Aabb& aabb) const
 			select(planes[i].normal().y(), aabb.mn.y(), aabb.mx.y()),
 			select(planes[i].normal().z(), aabb.mn.z(), aabb.mx.z())
 		);
-
-		if (planes[i].distance(n) > c_zero)	// outside
-			return false;
-
-		if (planes[i].distance(p) > c_zero)	// intersecting
-			return true;
+		if (planes[i].distance(n) < c_zero)	// outside
+			return IrOutside;
+		if (planes[i].distance(p) < c_zero)	// intersecting
+			partial |= true;
 	}
-	return true;	// totally inside.
+	return partial ? IrPartial : IrInside;
 }
 
 void Frustum::update()

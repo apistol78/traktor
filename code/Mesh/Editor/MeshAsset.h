@@ -29,6 +29,7 @@ public:
 		MtBlend,
 		MtIndoor,
 		MtInstance,
+		MtPartition,
 		MtSkinned,
 		MtStatic,
 		MtStream
@@ -52,10 +53,15 @@ public:
 	
 	bool getBakeOcclusion() const { return m_bakeOcclusion; }
 
+	void setCullDistantFaces(bool cullDistantFaces) { m_cullDistantFaces = cullDistantFaces; }
+
+	bool getCullDistantFaces() const { return m_cullDistantFaces; }
+
 private:
 	MeshType m_meshType;
 	std::map< std::wstring, Guid > m_materialShaders;
 	bool m_bakeOcclusion;
+	bool m_cullDistantFaces;
 };
 
 	}

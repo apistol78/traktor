@@ -84,6 +84,13 @@ void T_DLLCLASS flattenDoubleSided(Model& model);
  */
 void T_DLLCLASS bakeVertexOcclusion(Model& model);
 
+/*! \brief Cull distant faces.
+ * \ingroup Model.
+ *
+ * \param model Source model.
+ */
+void T_DLLCLASS cullDistantFaces(Model& model);
+
 	}
 }
 
