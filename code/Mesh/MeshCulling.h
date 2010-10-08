@@ -46,7 +46,7 @@ inline bool isMeshVisible(
 	Vector4 center = worldView * meshBoundingBox.getCenter().xyz1();
 	Scalar radius = meshBoundingBox.getExtent().length();
 
-	if (!frustum.inside(center, radius))
+	if (frustum.inside(center, radius) == Frustum::IrOutside)
 		return false;
 
 #if T_ENABLE_SCREENSPACE_CULLING

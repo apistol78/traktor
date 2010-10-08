@@ -95,6 +95,11 @@ uint32_t Vertex::getTexCoord(uint32_t channel) const
 		return c_InvalidIndex;
 }
 
+uint32_t Vertex::getTexCoordCount() const
+{
+	return m_texCoords.size();
+}
+
 void Vertex::clearBoneInfluences()
 {
 	m_boneInfluences.resize(0);

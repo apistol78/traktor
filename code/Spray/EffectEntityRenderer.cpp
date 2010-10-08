@@ -44,7 +44,7 @@ void EffectEntityRenderer::render(
 	// Early out of bounding sphere is outside of frustum.
 	Vector4 center = worldRenderView->getView() * boundingBox.getCenter();
 	Scalar radius = boundingBox.getExtent().length();
-	if (!worldRenderView->getCullFrustum().inside(center, radius))
+	if (worldRenderView->getCullFrustum().inside(center, radius) == Frustum::IrOutside)
 		return;
 
 	resource::Proxy< Effect >& effect = effectEntity->getEffect();

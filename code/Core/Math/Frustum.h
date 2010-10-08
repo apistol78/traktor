@@ -35,6 +35,13 @@ public:
 		PsFar
 	};
 
+	enum InsideResult
+	{
+		IrOutside = 0,
+		IrInside = 1,
+		IrPartial = 2
+	};
+
 	StaticVector< Plane, 12 > planes;
 	Vector4 corners[8];
 	Vector4 center;
@@ -53,11 +60,11 @@ public:
 
 	Scalar getFarZ() const;
 
-	bool inside(const Vector4& point) const;
+	InsideResult inside(const Vector4& point) const;
 	
-	bool inside(const Vector4& center, const Scalar& radius) const;
+	InsideResult inside(const Vector4& center, const Scalar& radius) const;
 	
-	bool inside(const Aabb& aabb) const;
+	InsideResult inside(const Aabb& aabb) const;
 
 private:
 	void update();

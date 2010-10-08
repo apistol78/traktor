@@ -8,6 +8,8 @@
 #include "Mesh/Indoor/IndoorMeshEntity.h"
 #include "Mesh/Instance/InstanceMesh.h"
 #include "Mesh/Instance/InstanceMeshEntity.h"
+#include "Mesh/Partition/PartitionMesh.h"
+#include "Mesh/Partition/PartitionMeshEntity.h"
 #include "Mesh/Skinned/SkinnedMesh.h"
 #include "Mesh/Skinned/SkinnedMeshEntity.h"
 #include "Mesh/Static/StaticMesh.h"
@@ -37,6 +39,8 @@ Ref< MeshEntity > MeshEntityData::createEntity(resource::IResourceManager* resou
 		meshEntity = new IndoorMeshEntity(getTransform(), resource::Proxy< IndoorMesh >(m_mesh.getHandle()));
 	else if (is_a< InstanceMesh >(m_mesh))
 		meshEntity = new InstanceMeshEntity(getTransform(), resource::Proxy< InstanceMesh >(m_mesh.getHandle()));
+	else if (is_a< PartitionMesh >(m_mesh))
+		meshEntity = new PartitionMeshEntity(getTransform(), resource::Proxy< PartitionMesh >(m_mesh.getHandle()));
 	else if (is_a< SkinnedMesh >(m_mesh))
 		meshEntity = new SkinnedMeshEntity(getTransform(), resource::Proxy< SkinnedMesh >(m_mesh.getHandle()));
 	else if (is_a< StaticMesh >(m_mesh))

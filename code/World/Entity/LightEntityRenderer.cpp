@@ -54,7 +54,7 @@ void LightEntityRenderer::render(
 		pointLightEntity->getTransform(transform);
 
 		Vector4 center = worldRenderView->getView() * transform.translation().xyz1();
-		if (!worldRenderView->getCullFrustum().inside(center, Scalar(pointLightEntity->getRange())))
+		if (worldRenderView->getCullFrustum().inside(center, Scalar(pointLightEntity->getRange())) == Frustum::IrOutside)
 			return;
 
 		light.type = WorldRenderView::LtPoint;
