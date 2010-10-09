@@ -18,7 +18,6 @@
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
-#include "Sound/Delta.h"
 #include "Sound/StaticSoundResource.h"
 #include "Sound/StreamSoundResource.h"
 #include "Sound/IStreamDecoder.h"
@@ -58,11 +57,10 @@ void analyzeDeltaRange(const int16_t* samples, uint32_t nsamples, int32_t& outNe
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundPipeline", 7, SoundPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundPipeline", 10, SoundPipeline, editor::IPipeline)
 
 SoundPipeline::SoundPipeline()
 :	m_sampleRate(44100)
-,	m_enableDeltaCompression(false)
 ,	m_enableZLibCompression(true)
 {
 }
@@ -71,7 +69,6 @@ bool SoundPipeline::create(const editor::IPipelineSettings* settings)
 {
 	m_assetPath = settings->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
 	m_sampleRate = settings->getProperty< PropertyInteger >(L"SoundPipeline.SampleRate", m_sampleRate);
-	m_enableDeltaCompression = settings->getProperty< PropertyBoolean >(L"SoundPipeline.EnableDeltaCompression", false);
 	m_enableZLibCompression = settings->getProperty< PropertyBoolean >(L"SoundPipeline.EnableZLibCompression", true);
 	return true;
 }
@@ -189,8 +186,6 @@ bool SoundPipeline::buildOutput(
 			return false;
 		}
 
-		instance->setObject(resource);
-
 		Ref< IStream > stream = instance->writeData(L"Data");
 		if (!stream)
 		{
@@ -209,7 +204,7 @@ bool SoundPipeline::buildOutput(
 		// Decode source stream.
 		uint32_t samplesCount = 0;
 		uint32_t maxChannel = 0;
-		std::vector< int16_t > samples[SbcMaxChannelCount];
+		std::vector< int16_t > samples;
 
 		SoundBlock soundBlock;
 		std::memset(&soundBlock, 0, sizeof(soundBlock));
@@ -220,22 +215,19 @@ bool SoundPipeline::buildOutput(
 		{
 			uint32_t outputSamplesCount = (soundBlock.samplesCount * m_sampleRate) / soundBlock.sampleRate;
 
-			for (uint32_t i = 0; i < soundBlock.maxChannel; ++i)
+			for (uint32_t i = 0; i < outputSamplesCount; ++i)
 			{
-				if (soundBlock.samples[i])
+				for (uint32_t j = 0; j < soundBlock.maxChannel; ++j)
 				{
-					for (uint32_t j = 0; j < outputSamplesCount; ++j)
+					if (soundBlock.samples[j])
 					{
-						uint32_t p = (j * soundBlock.samplesCount) / outputSamplesCount;
-						float s = soundBlock.samples[i][p];
-						samples[i].push_back(quantify(s));
+						uint32_t p = (i * soundBlock.samplesCount) / outputSamplesCount;
+						float s = soundBlock.samples[j][i];
+						samples.push_back(quantify(s));
 						peek = max(peek, s);
 					}
-				}
-				else
-				{
-					for (uint32_t j = 0; j < outputSamplesCount; ++j)
-						samples[i].push_back(quantify(0.0f));
+					else
+						samples.push_back(quantify(0.0f));
 				}
 			}
 
@@ -248,65 +240,35 @@ bool SoundPipeline::buildOutput(
 
 		sourceStream->close();
 
-		// Write asset.
-		Writer writer(stream);
-		writer << uint32_t(5);
-		writer << uint32_t(m_sampleRate);
-		writer << uint32_t(samplesCount);
-		writer << uint32_t(maxChannel);
+		resource->m_sampleRate = m_sampleRate;
+		resource->m_samplesCount = samplesCount;
+		resource->m_channelsCount = maxChannel;
+		resource->m_flags = 0;
 
 		if (samplesCount > 0)
 		{
-			uint32_t originalSize = maxChannel * samplesCount * sizeof(int16_t);
+			uint32_t originalSize = samples.size() * sizeof(int16_t);
 
 			// Compress ZLib
 			Ref< DynamicMemoryStream > streamZLib = new DynamicMemoryStream(false, true);
 			if (m_enableZLibCompression)
 			{
 				Ref< compress::DeflateStream > deflateZLib = new compress::DeflateStream(streamZLib);
-				for (uint32_t i = 0; i < maxChannel; ++i)
-				{
-					if (deflateZLib->write(&samples[i][0], samplesCount * sizeof(int16_t)) != samplesCount * sizeof(int16_t))
-					{
-						log::error << L"Failed to build sound asset, unable to write samples" << Endl;
-						return false;
-					}
-				}
-				deflateZLib->close();
-			}
-
-			// Compress Delta+ZLib
-			Ref< DynamicMemoryStream > streamDeltaZLib = new DynamicMemoryStream(false, true);
-			if (m_enableDeltaCompression)
-			{
-				Ref< compress::DeflateStream > deflateDeltaZLib = new compress::DeflateStream(streamDeltaZLib);
-				for (uint32_t i = 0; i < maxChannel; ++i)
-				{
-					BitWriter bw(deflateDeltaZLib);
-					deltaEncode(&samples[i][0], samplesCount, bw);
-				}
-				deflateDeltaZLib->close();
-			}
-
-			const std::vector< uint8_t >& zlibBuffer = streamZLib->getBuffer();
-			const std::vector< uint8_t >& deltaZLibBuffer = streamDeltaZLib->getBuffer();
-
-			if (m_enableDeltaCompression && (deltaZLibBuffer.size() < zlibBuffer.size() || !m_enableZLibCompression))
-			{
-				log::info << L"Using Delta+ZLib, " << uint32_t(deltaZLibBuffer.size()) << L" / " << originalSize << L" byte(s)" << Endl;
-
-				writer << uint8_t(SrfZLib | SrfDelta);
-				if (stream->write(&deltaZLibBuffer[0], deltaZLibBuffer.size()) != deltaZLibBuffer.size())
+				if (deflateZLib->write(&samples[0], samples.size() * sizeof(int16_t)) != samples.size() * sizeof(int16_t))
 				{
 					log::error << L"Failed to build sound asset, unable to write samples" << Endl;
 					return false;
 				}
+				deflateZLib->close();
 			}
-			else if (m_enableZLibCompression && zlibBuffer.size() < originalSize)
+
+			const std::vector< uint8_t >& zlibBuffer = streamZLib->getBuffer();
+			if (m_enableZLibCompression && zlibBuffer.size() < originalSize)
 			{
 				log::info << L"Using ZLib, " << uint32_t(zlibBuffer.size()) << L" / " << originalSize << L" byte(s)" << Endl;
 
-				writer << uint8_t(SrfZLib);
+				resource->m_flags |= SrfZLib;
+				
 				if (stream->write(&zlibBuffer[0], zlibBuffer.size()) != zlibBuffer.size())
 				{
 					log::error << L"Failed to build sound asset, unable to write samples" << Endl;
@@ -317,19 +279,17 @@ bool SoundPipeline::buildOutput(
 			{
 				log::info << L"Using no compression, " << originalSize << L" byte(s)" << Endl;
 
-				writer << uint8_t(0);
-				for (uint32_t i = 0; i < maxChannel; ++i)
+				if (stream->write(&samples[0], samples.size() * sizeof(int16_t)) != samples.size() * sizeof(int16_t))
 				{
-					if (stream->write(&samples[i][0], samplesCount * sizeof(int16_t)) != samplesCount * sizeof(int16_t))
-					{
-						log::error << L"Failed to build sound asset, unable to write samples" << Endl;
-						return false;
-					}
+					log::error << L"Failed to build sound asset, unable to write samples" << Endl;
+					return false;
 				}
 			}
 		}
 
 		stream->close();
+
+		instance->setObject(resource);
 
 		if (!instance->commit())
 		{

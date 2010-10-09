@@ -49,7 +49,6 @@ public:
 private:
 	std::wstring m_assetPath;
 	int32_t m_sampleRate;
-	bool m_enableDeltaCompression;
 	bool m_enableZLibCompression;
 };
 
