@@ -91,6 +91,10 @@ void SwDisplayRenderer::setRasterTarget(void* bits, uint32_t width, uint32_t hei
 	m_spanlines.resize(m_height);
 }
 
+void SwDisplayRenderer::preload(const FlashMovie& movie)
+{
+}
+
 void SwDisplayRenderer::begin(const FlashMovie& movie, const SwfColor& backgroundColor)
 {
 	uint32_t color = castColor(backgroundColor);

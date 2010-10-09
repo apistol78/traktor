@@ -29,6 +29,8 @@ public:
 	void setTransform(const Matrix33& transform);
 
 	void setRasterTarget(void* bits, uint32_t width, uint32_t height, uint32_t pitch);
+	
+	virtual void preload(const FlashMovie& movie);
 
 	virtual void begin(const FlashMovie& movie, const SwfColor& backgroundColor);
 

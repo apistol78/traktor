@@ -75,6 +75,8 @@ public:
 
 	// \name IDisplayRenderer
 	// \{
+	
+	virtual void preload(const FlashMovie& movie);
 
 	virtual void begin(const FlashMovie& movie, const SwfColor& backgroundColor);
 
