@@ -1,6 +1,10 @@
+#include "Compress/Zip/InflateStream.h"
+#include "Core/Io/IStream.h"
 #include "Core/Memory/Alloc.h"
 #include "Core/Misc/Align.h"
+#include "Database/Instance.h"
 #include "Sound/StaticSoundBuffer.h"
+#include "Sound/StaticSoundResource.h"
 
 namespace traktor
 {
@@ -11,36 +15,40 @@ namespace traktor
 
 struct StaticSoundBufferCursor : public RefCountImpl< ISoundBufferCursor >
 {
+	Ref< const StaticSoundResource > m_resource;
+	Ref< IStream > m_stream;
+	float* m_samples[SbcMaxChannelCount];
 	uint32_t m_position;
-	float* m_blocks[SbcMaxChannelCount];
 
-	StaticSoundBufferCursor(uint32_t channelsCount)
-	:	m_position(0)
+	StaticSoundBufferCursor(const StaticSoundResource* resource, IStream* stream)
+	:	m_resource(resource)
+	,	m_stream(stream)
+	,	m_position(0)
 	{
 		const uint32_t blockSize = sizeof(float) * (4096 + 16);	// 16 samples padding.
 
-		std::memset(m_blocks, 0, sizeof(m_blocks));
-		for (uint32_t i = 0; i < channelsCount; ++i)
+		std::memset(m_samples, 0, sizeof(m_samples));
+		for (uint32_t i = 0; i < m_resource->getChannelsCount(); ++i)
 		{
-			m_blocks[i] = (float*)Alloc::acquireAlign(blockSize, 16, T_FILE_LINE);
-			T_FATAL_ASSERT_M (m_blocks[i], L"Out of memory (Static sound buffer)");
+			m_samples[i] = (float*)Alloc::acquireAlign(blockSize, 16, T_FILE_LINE);
+			T_FATAL_ASSERT_M (m_samples[i], L"Out of memory (Static sound buffer)");
 
-			std::memset(m_blocks[i], 0, blockSize);
+			std::memset(m_samples[i], 0, blockSize);
 		}
 	}
 
 	virtual ~StaticSoundBufferCursor()
 	{
-		for (uint32_t i = 0; i < sizeof_array(m_blocks); ++i)
+		for (uint32_t i = 0; i < sizeof_array(m_samples); ++i)
 		{
-			if (m_blocks[i])
-				Alloc::freeAlign(m_blocks[i]);
+			if (m_samples[i])
+				Alloc::freeAlign(m_samples[i]);
 		}
 	}
 
 	virtual void reset()
 	{
-		m_position = 0;
+		// \fixme
 	}
 };
 
@@ -48,73 +56,86 @@ struct StaticSoundBufferCursor : public RefCountImpl< ISoundBufferCursor >
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.StaticSoundBuffer", StaticSoundBuffer, ISoundBuffer)
 
-StaticSoundBuffer::StaticSoundBuffer()
-:	m_sampleRate(0)
-,	m_samplesCount(0)
-,	m_channelsCount(0)
-{
-}
-
 StaticSoundBuffer::~StaticSoundBuffer()
 {
 	destroy();
 }
 
-bool StaticSoundBuffer::create(uint32_t sampleRate, uint32_t samplesCount, uint32_t channelsCount)
+bool StaticSoundBuffer::create(const StaticSoundResource* resource, db::Instance* resourceInstance)
 {
-	m_sampleRate = sampleRate;
-	m_samplesCount = samplesCount;
-	m_channelsCount = channelsCount;
-
-	for (uint32_t i = 0; i < m_channelsCount; ++i)
-	{
-		m_samples[i].reset(new int16_t [m_samplesCount]);
-		if (!m_samples[i].ptr())
-			return false;
-	}
+	m_resource = resource;
+	m_resourceInstance = resourceInstance;
+	
+	uint32_t bufferSize = m_resource->getChannelsCount() * 4096;
+	m_buffer.reset(new int16_t [bufferSize]);
 
 	return true;
 }
 
 void StaticSoundBuffer::destroy()
 {
-	for (uint32_t i = 0; i < m_channelsCount; ++i)
-		m_samples[i].release();
-}
-
-int16_t* StaticSoundBuffer::getSamplesData(uint32_t channel)
-{
-	return m_samples[channel].ptr();
+	m_resource = 0;
+	m_resourceInstance = 0;
+	m_buffer.release();
 }
 
 Ref< ISoundBufferCursor > StaticSoundBuffer::createCursor() const
 {
-	return new StaticSoundBufferCursor(m_channelsCount);
+	Ref< IStream > stream = m_resourceInstance->readData(L"Data");
+	if (!stream)
+		return 0;
+				
+	Ref< IStream > streamData;
+	if (m_resource->getFlags() & SrfZLib)
+		streamData = new compress::InflateStream(stream);
+	else
+		streamData = stream;
+
+	return new StaticSoundBufferCursor(
+		m_resource,
+		streamData
+	);
 }
 
 bool StaticSoundBuffer::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const
 {
 	StaticSoundBufferCursor* ssbc = static_cast< StaticSoundBufferCursor* >(cursor);
 
-	uint32_t position = ssbc->m_position;
-	if (position >= m_samplesCount)
+	uint32_t samplesCount = m_resource->getSamplesCount();
+	uint32_t channelCount = m_resource->getChannelsCount();
+
+	if (ssbc->m_position >= samplesCount)
 		return false;
 
-	uint32_t samplesCount = m_samplesCount - position;
+	samplesCount = samplesCount - ssbc->m_position;
 	samplesCount = std::min< uint32_t >(samplesCount, outBlock.samplesCount);
-	samplesCount = alignUp(samplesCount, 4);
 	samplesCount = std::min< uint32_t >(samplesCount, 4096);
+	samplesCount = alignUp(samplesCount, 4);
 
-	for (uint32_t i = 0; i < m_channelsCount; ++i)
+	uint32_t byteCount = channelCount * samplesCount * sizeof(int16_t);
+	int32_t bytesRead = ssbc->m_stream->read(m_buffer.ptr(), byteCount);
+	if (bytesRead < 0)
+		return false;
+		
+	if (bytesRead < byteCount)
+		std::memset(m_buffer.ptr() + bytesRead, 0, byteCount - bytesRead);
+
+	int16_t* bufferPtr = m_buffer.ptr();
+	for (uint32_t i = 0; i < samplesCount; ++i)
 	{
-		outBlock.samples[i] = ssbc->m_blocks[i];
-		for (uint32_t j = 0; j < samplesCount; ++j)
-			ssbc->m_blocks[i][j] = float(m_samples[i][position + j] / 32767.0f);
+		for (uint32_t j = 0; j < channelCount; ++j)
+		{
+			ssbc->m_samples[j][i] = float(*bufferPtr / 32767.0f);
+			++bufferPtr;
+		}
 	}
+	
+	for (uint32_t i = 0; i < channelCount; ++i)
+		outBlock.samples[i] = ssbc->m_samples[i];
 
 	outBlock.samplesCount = samplesCount;
-	outBlock.sampleRate = m_sampleRate;
-	outBlock.maxChannel = m_channelsCount;
+	outBlock.sampleRate = m_resource->getSampleRate();
+	outBlock.maxChannel = channelCount;
 
 	ssbc->m_position += samplesCount;
 	return true;
