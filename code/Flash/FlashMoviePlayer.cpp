@@ -7,6 +7,7 @@
 #include "Flash/FlashMovie.h"
 #include "Flash/FlashSprite.h"
 #include "Flash/FlashSpriteInstance.h"
+#include "Flash/IDisplayRenderer.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFrame.h"
 #include "Flash/Action/ActionFunctionNative.h"
@@ -82,7 +83,9 @@ bool FlashMoviePlayer::create(FlashMovie* movie)
 	Ref< AsMouse > mouse;
 	if (global->getLocalMember(L"Mouse", memberValue))
 		m_mouse = memberValue.getObject< AsMouse >();
-
+		
+	// Preload resources into display renderer.
+	m_displayRenderer->preload(*m_movie);
 	return true;
 }
 

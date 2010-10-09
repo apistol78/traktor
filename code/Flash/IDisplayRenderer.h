@@ -31,6 +31,12 @@ class T_DLLCLASS IDisplayRenderer : public Object
 	T_RTTI_CLASS;
 
 public:
+	/*! \brief Preload movie resources.
+	 *
+	 * \param movie Flash movie.
+	 */
+	virtual void preload(const FlashMovie& movie) = 0;
+	
 	/*! \brief Begin rendering frame.
 	 *
 	 * \param movie Flash movie.
