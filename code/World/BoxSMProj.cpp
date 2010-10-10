@@ -74,7 +74,7 @@ void calculateBoxSMProj(
 	for (uint32_t i = 0; i < viewFrustum.planes.size(); ++i)
 	{
 		Plane viewFrustumPlane = view2Light * viewFrustum.planes[i];
-		if (dot3(viewFrustumPlane.normal(), lightAxisZ) >= 0.0f)
+		if (viewFrustumPlane.normal().z() <= 0.0f)
 			outShadowFrustum.planes.push_back(viewFrustumPlane);
 	}
 }

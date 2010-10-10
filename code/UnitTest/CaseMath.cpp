@@ -1,10 +1,11 @@
 #include <cmath>
 #include "UnitTest/CaseMath.h"
 #include "Core/Math/Const.h"
+#include "Core/Math/Matrix44.h"
+#include "Core/Math/Plane.h"
+#include "Core/Math/Quaternion.h"
 #include "Core/Math/Vector2.h"
 #include "Core/Math/Vector4.h"
-#include "Core/Math/Matrix44.h"
-#include "Core/Math/Quaternion.h"
 
 namespace traktor
 {
@@ -29,6 +30,11 @@ bool compareNotEqual(const Vector4& a, const Vector4& b)
 			return true;
 	}
 	return false;
+}
+
+bool compareFuzzyEqual(float a, float b)
+{
+	return a >= b - FUZZY_EPSILON && a <= b + FUZZY_EPSILON;
 }
 
 	}
@@ -132,6 +138,22 @@ void CaseMath::run()
 	CASE_ASSERT_COMPARE(pp1, pp2, compareEqual);
 	CASE_ASSERT_COMPARE(pp1, pp3, compareEqual);
 	CASE_ASSERT_COMPARE(pp1, pp4, compareNotEqual);
+	
+	// Plane test.
+	Vector4 pt(1.0f, 0.0f, 3.0f, 1.0f);
+	
+	Plane pl1(Vector4(0.0f, 0.0f, 1.0f), Scalar(-2.0f));
+	CASE_ASSERT_COMPARE(pl1.distance(pt), 5.0f, compareFuzzyEqual);
+	
+	Plane pl2 = translate(0.0f, 0.0f, 1.0f) * pl1;
+	CASE_ASSERT_COMPARE(pl2.distance(pt), 4.0f, compareFuzzyEqual);
+	
+	Plane pl3 = rotateY(deg2rad(90.0f)) * pl1;
+	
+	Vector4 pt3 = rotateY(deg2rad(90.0f)) * pt;
+	Scalar pl3d = pl3.distance(pt);	// 1.0f
+	
+	CASE_ASSERT_COMPARE(pl3.distance(pt), 3.0f, compareFuzzyEqual);
 }
 
 }
