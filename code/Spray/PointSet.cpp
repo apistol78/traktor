@@ -1,34 +1,46 @@
+#include "Core/Io/Reader.h"
+#include "Core/Io/Writer.h"
 #include "Spray/PointSet.h"
-#include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/MemberAlignedVector.h"
-#include "Core/Serialization/MemberComposite.h"
 
 namespace traktor
 {
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.PointSet", 0, PointSet, ISerializable)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.PointSet", PointSet, Object)
 
 PointSet::PointSet()
 {
 }
 
-PointSet::PointSet(const AlignedVector< Point >& points)
-:	m_points(points)
+void PointSet::add(const Point& point)
 {
+	m_points.push_back(point);
 }
 
-bool PointSet::serialize(ISerializer& s)
+bool PointSet::read(IStream* stream)
 {
-	return s >> MemberAlignedVector< Point, MemberComposite< Point > >(L"points", m_points);
+	Reader r(stream);
+	
+	uint32_t pointCount;
+	r >> pointCount;
+	
+	m_points.resize(pointCount);
+	if (r.read(&m_points[0], pointCount, sizeof(Point)) != pointCount * sizeof(Point))
+		return false;
+		
+	return true;
 }
 
-bool PointSet::Point::serialize(ISerializer& s)
+bool PointSet::write(IStream* stream) const
 {
-	s >> Member< Vector4 >(L"position", position);
-	s >> Member< Vector4 >(L"normal", normal);
-	s >> Member< Vector4 >(L"color", color);
+	Writer w(stream);
+	
+	w << uint32_t(m_points.size());
+	
+	if (w.write(&m_points[0], m_points.size(), sizeof(Point)) != m_points.size() * sizeof(Point))
+		return false;
+		
 	return true;
 }
 

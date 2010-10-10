@@ -17,7 +17,7 @@ void PointSetSourceRenderer::render(render::PrimitiveRenderer* primitiveRenderer
 	if (!pointSet.validate())
 		return;
 
-	const AlignedVector< PointSet::Point >& points = pointSet->getPoints();
+	const AlignedVector< PointSet::Point >& points = pointSet->get();
 	for (AlignedVector< PointSet::Point >::const_iterator i = points.begin(); i != points.end(); ++i)
 		primitiveRenderer->drawSolidPoint(i->position + pointSetSource->getOffset(), 3.0f, Color(255, 255, 0));
 }

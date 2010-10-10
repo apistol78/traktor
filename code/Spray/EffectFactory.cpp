@@ -1,7 +1,10 @@
+#include "Core/Io/Reader.h"
 #include "Spray/EffectFactory.h"
 #include "Spray/Effect.h"
 #include "Spray/PointSet.h"
+#include "Spray/PointSetResource.h"
 #include "Database/Database.h"
+#include "Database/Instance.h"
 
 namespace traktor
 {
@@ -38,7 +41,21 @@ Ref< Object > EffectFactory::create(resource::IResourceManager* resourceManager,
 		return effect;
 	}
 	else if (is_type_a< PointSet >(resourceType))
-		return m_db->getObjectReadOnly< PointSet >(guid);
+	{
+		Ref< db::Instance > instance = m_db->getInstance(guid);
+		if (!instance)
+			return 0;
+	
+		Ref< IStream > stream = instance->readData(L"Data");
+		if (!stream)
+			return 0;
+			
+		Ref< PointSet > pointSet = new PointSet();
+		if (!pointSet->read(stream))
+			return 0;
+
+		return pointSet;
+	}
 	else
 		return 0;
 }

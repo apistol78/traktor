@@ -1,6 +1,7 @@
 #include "Spray/Editor/PointSetPipeline.h"
 #include "Spray/Editor/PointSetAsset.h"
 #include "Spray/PointSet.h"
+#include "Spray/PointSetResource.h"
 #include "Model/Formats/ModelFormat.h"
 #include "Model/Model.h"
 #include "Editor/IPipelineDepends.h"
@@ -16,7 +17,7 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.PointSetPipeline", 1, PointSetPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.PointSetPipeline", 2, PointSetPipeline, editor::IPipeline)
 
 bool PointSetPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -61,7 +62,7 @@ bool PointSetPipeline::buildOutput(
 	const PointSetAsset* pointSetAsset = checked_type_cast< const PointSetAsset* >(sourceAsset);
 	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, pointSetAsset->getFileName());
 
-	AlignedVector< PointSet::Point > points;
+	Ref< PointSet > pointSet = new PointSet();
 
 	if (!pointSetAsset->fromFaces())
 	{
@@ -76,8 +77,6 @@ bool PointSetPipeline::buildOutput(
 		}
 
 		const std::vector< model::Vertex >& vertices = model->getVertices();
-		points.reserve(vertices.size());
-
 		for (std::vector< model::Vertex >::const_iterator i = vertices.begin(); i != vertices.end(); ++i)
 		{
 			PointSet::Point point;
@@ -94,7 +93,7 @@ bool PointSetPipeline::buildOutput(
 			else
 				point.color = Vector4::one();
 
-			points.push_back(point);
+			pointSet->add(point);
 		}
 	}
 	else
@@ -110,8 +109,6 @@ bool PointSetPipeline::buildOutput(
 		}
 
 		const std::vector< model::Polygon >& polygons = model->getPolygons();
-		points.reserve(polygons.size());
-
 		for (std::vector< model::Polygon >::const_iterator i = polygons.begin(); i != polygons.end(); ++i)
 		{
 			const std::vector< uint32_t >& vertices = i->getVertices();
@@ -140,11 +137,10 @@ bool PointSetPipeline::buildOutput(
 			point.normal = (point.normal * norm).xyz0();
 			point.color = (point.color * norm).xyz1();
 
-			points.push_back(point);
+			pointSet->add(point);
 		}
 	}
 
-	Ref< PointSet > pointSet = new PointSet(points);
 
 	Ref< db::Instance > instance = pipelineBuilder->createOutputInstance(
 		outputPath,
@@ -153,7 +149,14 @@ bool PointSetPipeline::buildOutput(
 	if (!instance)
 		return false;
 
-	instance->setObject(pointSet);
+	instance->setObject(new PointSetResource());
+	
+	Ref< IStream > stream = instance->writeData(L"Data");
+	if (!stream)
+		return false;
+		
+	if (!pointSet->write(stream))
+		return false;
 
 	return instance->commit();
 }

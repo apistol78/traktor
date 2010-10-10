@@ -2,6 +2,7 @@
 #include "Spray/EmitterUpdateContext.h"
 #include "Spray/EmitterInstance.h"
 #include "Spray/PointSet.h"
+#include "Spray/PointSetResource.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
 #include "Core/Serialization/ISerializer.h"
@@ -41,7 +42,7 @@ void PointSetSource::emit(
 	if (!m_pointSet.validate())
 		return;
 
-	const AlignedVector< PointSet::Point >& points = m_pointSet->getPoints();
+	const AlignedVector< PointSet::Point >& points = m_pointSet->get();
 	if (points.empty())
 		return;
 
@@ -72,7 +73,7 @@ bool PointSetSource::serialize(ISerializer& s)
 	if (!Source::serialize(s))
 		return false;
 
-	s >> resource::Member< PointSet >(L"pointSet", m_pointSet);
+	s >> resource::Member< PointSet, PointSetResource >(L"pointSet", m_pointSet);
 	s >> MemberComposite< Range< float > >(L"velocity", m_velocity);
 	s >> MemberComposite< Range< float > >(L"orientation", m_orientation);
 	s >> MemberComposite< Range< float > >(L"angularVelocity", m_angularVelocity);
