@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "Core/Memory/Alloc.h"
 #include "Render/Context/RenderContext.h"
 
@@ -8,42 +9,18 @@ namespace traktor
 		namespace
 		{
 
-struct SortOpaquePredicate
+T_FORCE_INLINE bool SortOpaquePredicate(const RenderBlock* renderBlock1, const RenderBlock* renderBlock2)
 {
-	T_FORCE_INLINE bool operator () (const RenderBlock* renderBlock1, const RenderBlock* renderBlock2) const
-	{
-		if (renderBlock1->program < renderBlock2->program)
-			return true;
-		if (renderBlock1->program > renderBlock2->program)
-			return false;
-		return renderBlock1->distance < renderBlock2->distance;
-	}
-};
+	if (renderBlock1->program < renderBlock2->program)
+		return true;
+	if (renderBlock1->program > renderBlock2->program)
+		return false;
+	return renderBlock1->distance < renderBlock2->distance;
+}
 
-struct SortAlphaBlendPredicate
+T_FORCE_INLINE bool SortAlphaBlendPredicate(const RenderBlock* renderBlock1, const RenderBlock* renderBlock2)
 {
-	T_FORCE_INLINE bool operator () (const RenderBlock* renderBlock1, const RenderBlock* renderBlock2) const
-	{
-		return renderBlock1->distance > renderBlock2->distance;
-	}
-};
-
-template < typename Predicate >
-T_FORCE_INLINE void insert(std::vector< RenderBlock* >& queue, RenderBlock* renderBlock, Predicate predicate)
-{
-	int32_t a = 0;
-	int32_t b = int32_t(queue.size());
-
-	while (a < b)
-	{
-		int32_t i = (a + b) >> 1;
-		if (predicate(queue[i], renderBlock))
-			a = i + 1;
-		else
-			b = i;
-	}
-
-	queue.insert(queue.begin() + a, renderBlock);
+	return renderBlock1->distance > renderBlock2->distance;
 }
 
 		}
@@ -87,9 +64,9 @@ void* RenderContext::alloc(int blockSize, int align)
 void RenderContext::draw(uint32_t type, RenderBlock* renderBlock)
 {
 	if (type == RfOpaque)
-		insert(m_renderQueue[0], renderBlock, SortOpaquePredicate());
+		m_renderQueue[0].push_back(renderBlock);
 	else if (type == RfAlphaBlend)
-		insert(m_renderQueue[1], renderBlock, SortAlphaBlendPredicate());
+		m_renderQueue[1].push_back(renderBlock);
 	else	// RbtOverlay
 		m_renderQueue[2].push_back(renderBlock);
 }
@@ -99,6 +76,7 @@ void RenderContext::render(render::IRenderView* renderView, uint32_t flags, cons
 	// Render opaque blocks, sorted by shader.
 	if (flags & RfOpaque)
 	{
+		std::sort(m_renderQueue[0].begin(), m_renderQueue[0].end(), SortOpaquePredicate);
 		for (std::vector< RenderBlock* >::const_iterator i = m_renderQueue[0].begin(); i != m_renderQueue[0].end(); ++i)
 			(*i)->render(renderView, globalParameters);
 	}
@@ -106,6 +84,7 @@ void RenderContext::render(render::IRenderView* renderView, uint32_t flags, cons
 	// Render alpha blend blocks back to front.
 	if (flags & RfAlphaBlend)
 	{
+		std::sort(m_renderQueue[1].begin(), m_renderQueue[1].end(), SortAlphaBlendPredicate);
 		for (std::vector< RenderBlock* >::const_iterator i = m_renderQueue[1].begin(); i != m_renderQueue[1].end(); ++i)
 			(*i)->render(renderView, globalParameters);
 	}

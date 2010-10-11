@@ -2,6 +2,7 @@
 #define traktor_mesh_PartitionMeshResource_H
 
 #include "Core/Guid.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Mesh/IMeshResource.h"
 
 // import/export mechanism.
@@ -28,6 +29,7 @@ public:
 	{
 		std::wstring shaderTechnique;
 		uint32_t meshPart;
+		Aabb boundingBox;
 		bool opaque;
 
 		Part();
@@ -49,7 +51,7 @@ private:
 	friend class PartitionMeshConverter;
 
 	Guid m_shader;
-	std::list< Part > m_parts;
+	AlignedVector< Part > m_parts;
 	Ref< IPartitionData > m_partitionData;
 };
 

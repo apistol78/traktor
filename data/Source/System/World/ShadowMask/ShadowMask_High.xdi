@@ -2,22 +2,24 @@
 <object type="traktor.world.PostProcessSettings" version="1">
 	<requireHighRange>false</requireHighRange>
 	<definitions>
-		<item type="traktor.world.PostProcessDefineTarget">
+		<item type="traktor.world.PostProcessDefineTarget" version="1">
 			<id>1</id>
 			<width>0</width>
 			<height>0</height>
 			<screenDenom>1</screenDenom>
 			<format>TfR8</format>
 			<depthStencil>false</depthStencil>
+			<preferTiled>true</preferTiled>
 			<multiSample>0</multiSample>
 		</item>
-		<item type="traktor.world.PostProcessDefineTarget">
+		<item type="traktor.world.PostProcessDefineTarget" version="1">
 			<id>2</id>
 			<width>0</width>
 			<height>0</height>
 			<screenDenom>1</screenDenom>
 			<format>TfR8</format>
 			<depthStencil>false</depthStencil>
+			<preferTiled>true</preferTiled>
 			<multiSample>0</multiSample>
 		</item>
 	</definitions>

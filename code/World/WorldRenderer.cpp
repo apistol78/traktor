@@ -406,9 +406,6 @@ void WorldRenderer::render(uint32_t flags, int frame, render::EyeType eye)
 	programParams.setMatrixParameter(ms_handleProjection, projection);
 	programParams.endParameters(m_globalContext);
 
-	const float nullColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
-	m_renderView->clear(render::CfDepth, nullColor, 1.0f, 0);
-
 	// Render shadow map.
 	if (eye == render::EtCyclop || eye == render::EtLeft)
 	{
@@ -433,16 +430,17 @@ void WorldRenderer::render(uint32_t flags, int frame, render::EyeType eye)
 		if (m_renderView->begin(m_depthTargetSet, 0, !m_depthTargetHaveOwnZBuffer))
 		{
 			const float depthColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-			
-			if (!m_depthTargetHaveOwnZBuffer)
-				m_renderView->clear(render::CfColor, depthColor, 1.0f, 0);
-			else
-				m_renderView->clear(render::CfColor | render::CfDepth, depthColor, 1.0f, 0);
-
+			m_renderView->clear(render::CfColor | render::CfDepth, depthColor, 1.0f, 0);
 			f.depth->getRenderContext()->render(m_renderView, render::RfOpaque, &programParams);
 			m_renderView->end();
 		}
 		T_RENDER_POP_MARKER(m_renderView);
+	}
+	else if (!f.haveDepth)
+	{
+		// No depth pass; ensure primary depth is cleared.
+		const float nullColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+		m_renderView->clear(render::CfDepth, nullColor, 1.0f, 0);
 	}
 
 	// Render velocity map.

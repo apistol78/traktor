@@ -42,7 +42,7 @@ bool InstanceMeshConverter::convert(
 	model::triangulateModel(model);
 
 	log::info << L"Sorting materials..." << Endl;
-	sortMaterialsByProjectedArea(model);
+	sortMaterialsByProjectedArea(model, false);
 
 	log::info << L"Sorting indices..." << Endl;
 	model::sortPolygonsCacheCoherent(model);

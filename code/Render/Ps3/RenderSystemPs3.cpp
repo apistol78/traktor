@@ -157,10 +157,7 @@ Ref< IRenderView > RenderSystemPs3::createRenderView(const RenderViewEmbeddedDes
 
 Ref< VertexBuffer > RenderSystemPs3::createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	
 	MemoryHeapObject* vbo = (dynamic ? m_memoryHeapMain : m_memoryHeapLocal)->alloc(bufferSize, 16, false);
-
 	if (vbo)
 		return new VertexBufferPs3(vertexElements, vbo, bufferSize, m_counterVertexBuffers);
 	else
@@ -169,10 +166,7 @@ Ref< VertexBuffer > RenderSystemPs3::createVertexBuffer(const std::vector< Verte
 
 Ref< IndexBuffer > RenderSystemPs3::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	
 	MemoryHeapObject* ibo = (dynamic ? m_memoryHeapMain : m_memoryHeapLocal)->alloc(bufferSize, 16, false);
-
 	if (ibo)
 		return new IndexBufferPs3(ibo, indexType, bufferSize, m_counterIndexBuffers);
 	else
@@ -181,7 +175,6 @@ Ref< IndexBuffer > RenderSystemPs3::createIndexBuffer(IndexType indexType, uint3
 
 Ref< ISimpleTexture > RenderSystemPs3::createSimpleTexture(const SimpleTextureCreateDesc& desc)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	Ref< SimpleTexturePs3 > texture = new SimpleTexturePs3(m_counterSimpleTextures);
 	if (texture->create(m_memoryHeapLocal, desc))
 		return texture;
@@ -211,8 +204,6 @@ Ref< RenderTargetSet > RenderSystemPs3::createRenderTargetSet(const RenderTarget
 
 Ref< IProgram > RenderSystemPs3::createProgram(const ProgramResource* programResource)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-
 	Ref< const ProgramResourcePs3 > resource = dynamic_type_cast< const ProgramResourcePs3* >(programResource);
 	if (!resource)
 		return 0;

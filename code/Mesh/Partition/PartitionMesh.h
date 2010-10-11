@@ -1,6 +1,7 @@
 #ifndef traktor_mesh_PartitionMesh_H
 #define traktor_mesh_PartitionMesh_H
 
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Aabb.h"
 #include "Core/Math/Matrix44.h"
 #include "Mesh/IMesh.h"
@@ -50,6 +51,7 @@ public:
 	{
 		render::handle_t shaderTechnique;
 		uint32_t meshPart;
+		Aabb boundingBox;
 		bool opaque;
 	};
 
@@ -72,7 +74,7 @@ private:
 
 	resource::Proxy< render::Shader > m_shader;
 	Ref< render::Mesh > m_mesh;
-	std::vector< Part > m_parts;
+	AlignedVector< Part > m_parts;
 	Ref< IPartition > m_partition;
 #if defined(_DEBUG)
 	std::string m_name;

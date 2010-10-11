@@ -246,7 +246,7 @@ Ref< OctreeNodeData > createOctreeParts(
 	const uint32_t* indexFirst,
 	uint32_t*& index,
 	std::vector< render::Mesh::Part >& renderParts,
-	std::list< PartitionMeshResource::Part >& partitionParts,
+	AlignedVector< PartitionMeshResource::Part >& partitionParts,
 	std::vector< std::wstring >& worldTechniques
 )
 {
@@ -301,6 +301,7 @@ Ref< OctreeNodeData > createOctreeParts(
 			PartitionMeshResource::Part partitionPart;
 			partitionPart.shaderTechnique = shaderTechnique;
 			partitionPart.meshPart = uint32_t(renderParts.size());
+			partitionPart.boundingBox = nodeTemplate->boundingBox;
 			partitionPart.opaque = j->opaque;
 
 			for (uint32_t k = 0; k < uint32_t(renderParts.size()); ++k)
@@ -387,7 +388,7 @@ bool PartitionMeshConverter::convert(
 	model::triangulateModel(model);
 
 	log::info << L"Sorting materials..." << Endl;
-	sortMaterialsByProjectedArea(model);
+	sortMaterialsByProjectedArea(model, true);
 
 	log::info << L"Sorting indices..." << Endl;
 	model::sortPolygonsCacheCoherent(model);
@@ -453,7 +454,7 @@ bool PartitionMeshConverter::convert(
 	uint32_t* indexFirst = index;
 
 	std::vector< render::Mesh::Part > renderParts;
-	std::list< PartitionMeshResource::Part > partitionParts;
+	AlignedVector< PartitionMeshResource::Part > partitionParts;
 
 	Ref< OctreePartitionData > partitionData = new OctreePartitionData();
 	partitionData->m_nodeData = createOctreeParts(

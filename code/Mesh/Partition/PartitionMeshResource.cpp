@@ -1,6 +1,8 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
 #include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberAabb.h"
+#include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberRef.h"
 #include "Core/Serialization/MemberStl.h"
@@ -39,11 +41,12 @@ Ref< IMesh > PartitionMeshResource::createMesh(
 	partitionMesh->m_shader = m_shader;
 	partitionMesh->m_mesh = mesh;
 
-	for (std::list< Part >::const_iterator i = m_parts.begin(); i != m_parts.end(); ++i)
+	for (AlignedVector< Part >::const_iterator i = m_parts.begin(); i != m_parts.end(); ++i)
 	{
 		PartitionMesh::Part part;
 		part.shaderTechnique = render::getParameterHandle(i->shaderTechnique);
 		part.meshPart = i->meshPart;
+		part.boundingBox = i->boundingBox;
 		part.opaque = i->opaque;
 		partitionMesh->m_parts.push_back(part);
 	}
@@ -65,7 +68,7 @@ Ref< IMesh > PartitionMeshResource::createMesh(
 bool PartitionMeshResource::serialize(ISerializer& s)
 {
 	s >> Member< Guid >(L"shader", m_shader);
-	s >> MemberStlList< Part, MemberComposite< Part > >(L"parts", m_parts);
+	s >> MemberAlignedVector< Part, MemberComposite< Part > >(L"parts", m_parts);
 	s >> MemberRef< IPartitionData >(L"partitionData", m_partitionData);
 	return true;
 }
@@ -80,6 +83,7 @@ bool PartitionMeshResource::Part::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"shaderTechnique", shaderTechnique);
 	s >> Member< uint32_t >(L"meshPart", meshPart);
+	s >> MemberAabb(L"boundingBox", boundingBox);
 	s >> Member< bool >(L"opaque", opaque);
 	return true;
 }
