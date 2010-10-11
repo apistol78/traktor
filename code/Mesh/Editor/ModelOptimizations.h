@@ -12,8 +12,10 @@ namespace traktor
  *
  * Sorting materials by projecting triangles onto axis aligned planes and use it's projected area as sorting key.
  * Thus sorting material by greatest "view independent z cover" in order to minimize overdraw.
+ *
+ * \param insideOut Reverse sorting; if camera is expected to be "inside" mesh.
  */
-void sortMaterialsByProjectedArea(model::Model& model);
+void sortMaterialsByProjectedArea(model::Model& model, bool insideOut);
 
 	}
 }

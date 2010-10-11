@@ -2,6 +2,7 @@
 #include "Core/Io/IStream.h"
 #include "Core/Memory/Alloc.h"
 #include "Core/Misc/Align.h"
+#include "Core/Misc/Endian.h"
 #include "Database/Instance.h"
 #include "Sound/StaticSoundBuffer.h"
 #include "Sound/StaticSoundResource.h"
@@ -125,6 +126,9 @@ bool StaticSoundBuffer::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBloc
 	{
 		for (uint32_t j = 0; j < channelCount; ++j)
 		{
+#if defined(T_BIG_ENDIAN)
+			swap8in16(*bufferPtr);
+#endif
 			ssbc->m_samples[j][i] = float(*bufferPtr / 32767.0f);
 			++bufferPtr;
 		}

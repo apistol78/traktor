@@ -99,7 +99,7 @@ private:
 	uint8_t* m_heap;
 	uint8_t* m_heapEnd;
 	uint8_t* m_heapPtr;
-	std::vector< RenderBlock* > m_renderQueue[3];
+	mutable std::vector< RenderBlock* > m_renderQueue[3];
 };
 
 	}

@@ -11,7 +11,7 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.PostProcessDefineTarget", 0, PostProcessDefineTarget, PostProcessDefine)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.PostProcessDefineTarget", 1, PostProcessDefineTarget, PostProcessDefine)
 
 PostProcessDefineTarget::PostProcessDefineTarget()
 :	m_id(0)
@@ -20,6 +20,7 @@ PostProcessDefineTarget::PostProcessDefineTarget()
 ,	m_screenDenom(0)
 ,	m_format(render::TfInvalid)
 ,	m_depthStencil(false)
+,	m_preferTiled(false)
 ,	m_multiSample(0)
 {
 }
@@ -33,6 +34,7 @@ bool PostProcessDefineTarget::define(PostProcess* postProcess, render::IRenderSy
 	desc.height = m_height + (m_screenDenom ? screenHeight / m_screenDenom : 0);
 	desc.multiSample = m_multiSample;
 	desc.depthStencil = m_depthStencil;
+	desc.preferTiled = m_preferTiled;
 	desc.targets[0].format = m_format;
 
 	Ref< render::RenderTargetSet > renderTargetSet = renderSystem->createRenderTargetSet(desc);
@@ -67,6 +69,8 @@ bool PostProcessDefineTarget::serialize(ISerializer& s)
 	s >> Member< uint32_t >(L"screenDenom", m_screenDenom);
 	s >> MemberEnum< render::TextureFormat >(L"format", m_format, kFormats);
 	s >> Member< bool >(L"depthStencil", m_depthStencil);
+	if (s.getVersion() >= 1)
+		s >> Member< bool >(L"preferTiled", m_preferTiled);
 	s >> Member< int32_t >(L"multiSample", m_multiSample);
 
 	return true;

@@ -147,15 +147,23 @@ Ref< render::RenderTargetSet >& PostProcess::getTargetRef(int32_t id)
 	return m_targets[id];
 }
 
+void PostProcess::setParameter(render::handle_t handle, bool value)
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	m_booleanParameters[handle] = value;
+}
+
 void PostProcess::setParameter(render::handle_t handle, float value)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	m_parameters[handle] = value;
+	m_scalarParameters[handle] = value;
 }
 
 void PostProcess::prepareShader(render::Shader* shader) const
 {
-	for (std::map< render::handle_t, float >::const_iterator i = m_parameters.begin(); i != m_parameters.end(); ++i)
+	for (std::map< render::handle_t, bool >::const_iterator i = m_booleanParameters.begin(); i != m_booleanParameters.end(); ++i)
+		shader->setCombination(i->first, i->second);
+	for (std::map< render::handle_t, float >::const_iterator i = m_scalarParameters.begin(); i != m_scalarParameters.end(); ++i)
 		shader->setFloatParameter(i->first, i->second);
 }
 

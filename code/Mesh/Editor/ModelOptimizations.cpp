@@ -149,9 +149,17 @@ struct SortCovers
 	}
 };
 
+struct SortCoversInsideOut
+{
+	bool operator () (const std::pair< uint32_t, uint32_t >& c1, const std::pair< uint32_t, uint32_t >& c2)
+	{
+		return c1.second < c2.second;
+	}
+};
+
 		}
 
-void sortMaterialsByProjectedArea(model::Model& model)
+void sortMaterialsByProjectedArea(model::Model& model, bool insideOut)
 {
 	uint8_t face[3][64 * 64];
 
@@ -237,7 +245,11 @@ void sortMaterialsByProjectedArea(model::Model& model)
 	}
 
 	// Sort materials by cover.
-	std::sort(covers.begin(), covers.end(), SortCovers());
+	if (!insideOut)
+		std::sort(covers.begin(), covers.end(), SortCovers());
+	else
+		std::sort(covers.begin(), covers.end(), SortCoversInsideOut());
+
 	for (uint32_t i = 0; i < covers.size(); ++i)
 		materials[i] = model.getMaterial(covers[i].first);
 

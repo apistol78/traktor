@@ -92,6 +92,8 @@ public:
 
 	Ref< render::RenderTargetSet >& getTargetRef(int32_t id);
 
+	void setParameter(render::handle_t handle, bool value);
+
 	void setParameter(render::handle_t handle, float value);
 
 	void prepareShader(render::Shader* shader) const;
@@ -102,7 +104,8 @@ private:
 	Ref< render::ScreenRenderer > m_screenRenderer;
 	std::map< int32_t, Ref< render::RenderTargetSet > > m_targets;
 	RefArray< PostProcessStep::Instance > m_instances;
-	std::map< render::handle_t, float > m_parameters;
+	std::map< render::handle_t, bool > m_booleanParameters;
+	std::map< render::handle_t, float > m_scalarParameters;
 	Ref< render::RenderTargetSet > m_currentTarget;
 	bool m_requireHighRange;
 	Semaphore m_lock;

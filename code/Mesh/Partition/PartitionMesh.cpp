@@ -55,6 +55,7 @@ void PartitionMesh::render(
 	if (partIndices.empty())
 		return;
 
+	Matrix44 worldView = worldRenderView->getView() * worldTransform.toMatrix44();
 	uint32_t primitiveCount = 0;
 
 	const std::vector< render::Mesh::Part >& meshParts = m_mesh->getParts();
@@ -75,13 +76,16 @@ void PartitionMesh::render(
 		if (!program)
 			continue;
 
+		Vector4 center = worldView * part.boundingBox.getCenter().xyz1();
+		Scalar distancePart = center.length() + part.boundingBox.getExtent().length();
+
 #if !defined(_DEBUG)
 		render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >("PartitionMesh");
 #else
 		render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >(m_name.c_str());
 #endif
 		
-		renderBlock->distance = distance;
+		renderBlock->distance = distancePart;
 		renderBlock->program = program;
 		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 		renderBlock->indexBuffer = m_mesh->getIndexBuffer();

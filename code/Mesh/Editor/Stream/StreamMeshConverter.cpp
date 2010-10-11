@@ -51,7 +51,7 @@ bool StreamMeshConverter::convert(
 		model::triangulateModel(model);
 
 		log::info << L"Sorting materials " << i << L"..." << Endl;
-		sortMaterialsByProjectedArea(model);
+		sortMaterialsByProjectedArea(model, false);
 
 		log::info << L"Sorting indices " << i << L"..." << Endl;
 		model::sortPolygonsCacheCoherent(model);

@@ -38,6 +38,7 @@ private:
 	uint32_t m_screenDenom;
 	render::TextureFormat m_format;
 	bool m_depthStencil;
+	bool m_preferTiled;
 	int32_t m_multiSample;
 };
 

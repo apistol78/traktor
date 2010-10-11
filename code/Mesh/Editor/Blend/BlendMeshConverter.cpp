@@ -47,7 +47,7 @@ bool BlendMeshConverter::convert(
 	model::calculateModelTangents(model, true);
 
 	log::info << L"Sorting materials..." << Endl;
-	sortMaterialsByProjectedArea(model);
+	sortMaterialsByProjectedArea(model, false);
 
 	log::info << L"Flatten materials..." << Endl;
 	flattenDoubleSided(model);
