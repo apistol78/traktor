@@ -809,6 +809,7 @@ bool emitPixelOutput(CgContext& cx, PixelOutput* node)
 	if (node->getColorWriteMask() & PixelOutput::CwAlpha)
 		rs.colorMask |= CELL_GCM_COLOR_MASK_A;
 
+	cx.setRegisterCount(node->getRegisterCount());
 	return true;
 }
 

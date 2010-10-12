@@ -47,7 +47,8 @@ bool Cg::generate(
 		cx.getPixelShader().getGeneratedShader(cx.needVPos()),
 		cx.getVertexShader().getSamplerTextures(),
 		cx.getPixelShader().getSamplerTextures(),
-		cx.getRenderState()
+		cx.getRenderState(),
+		cx.getRegisterCount()
 	);
 
 	return true;

@@ -43,6 +43,8 @@ public:
 
 	void allocateVPos();
 
+	void setRegisterCount(uint32_t registerCount);
+
 	inline CgShader& getVertexShader() { return m_vertexShader; }
 
 	inline CgShader& getPixelShader() { return m_pixelShader; }
@@ -55,6 +57,8 @@ public:
 
 	inline bool needVPos() const { return m_needVPos; }
 
+	inline uint32_t getRegisterCount() const { return m_registerCount; }
+
 private:
 	Ref< const ShaderGraph > m_shaderGraph;
 	CgShader m_vertexShader;
@@ -65,6 +69,7 @@ private:
 	std::vector< uint8_t > m_interpolatorMap;
 	int32_t m_booleanRegisterCount;
 	bool m_needVPos;
+	uint32_t m_registerCount;
 };
 
 	}

@@ -6,6 +6,7 @@ namespace traktor
 	{
 
 CgProgram::CgProgram()
+:	m_registerCount(0)
 {
 }
 
@@ -14,13 +15,15 @@ CgProgram::CgProgram(
 	const std::wstring& pixelShader,
 	const std::map< std::wstring, int32_t >& vertexTextures,
 	const std::map< std::wstring, int32_t >& pixelTextures,
-	const RenderState& renderState
+	const RenderState& renderState,
+	uint32_t registerCount
 )
 :	m_vertexShader(vertexShader)
 ,	m_pixelShader(pixelShader)
 ,	m_vertexTextures(vertexTextures)
 ,	m_pixelTextures(pixelTextures)
 ,	m_renderState(renderState)
+,	m_registerCount(registerCount)
 {
 }
 
@@ -47,6 +50,11 @@ const std::map< std::wstring, int32_t >& CgProgram::getPixelTextures() const
 const RenderState& CgProgram::getRenderState() const
 {
 	return m_renderState;
+}
+
+uint32_t CgProgram::getRegisterCount() const
+{
+	return m_registerCount;
 }
 
 	}

@@ -22,7 +22,8 @@ public:
 		const std::wstring& pixelShader,
 		const std::map< std::wstring, int32_t >& vertexTextures,
 		const std::map< std::wstring, int32_t >& pixelTextures,
-		const RenderState& renderState
+		const RenderState& renderState,
+		uint32_t registerCount
 	);
 
 	const std::wstring& getVertexShader() const;
@@ -35,12 +36,15 @@ public:
 
 	const RenderState& getRenderState() const;
 
+	uint32_t getRegisterCount() const;
+
 private:
 	std::wstring m_vertexShader;
 	std::wstring m_pixelShader;
 	std::map< std::wstring, int32_t > m_vertexTextures;
 	std::map< std::wstring, int32_t > m_pixelTextures;
 	RenderState m_renderState;
+	uint32_t m_registerCount;
 };
 
 	}

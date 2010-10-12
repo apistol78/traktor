@@ -213,7 +213,14 @@ bool collectInputSignature(const ShaderGraph* shaderGraph, std::vector< uint8_t 
 	return true;
 }
 
-bool compileShader(CGCcontext* cgc, int32_t optimize, const std::wstring& shader, bool fragmentProfile, CGCbin*& outShaderBin)
+bool compileShader(
+	CGCcontext* cgc,
+	int32_t optimize,
+	const std::wstring& shader,
+	bool fragmentProfile,
+	uint32_t temporaryRegisterCount,
+	CGCbin*& outShaderBin
+)
 {
 	CGCstatus status;
 
@@ -223,9 +230,12 @@ bool compileShader(CGCcontext* cgc, int32_t optimize, const std::wstring& shader
 
 	if (optimize < 4)
 	{
+		char optRegisterCount[32];
+		sprintf(optRegisterCount, "%d", temporaryRegisterCount > 0 ? temporaryRegisterCount : 2);
+
 		const char* opt[] = { "-O0", "-O1", "-O2", "-O3", "-O3" };
-		const char* argvVertex[] = { opt[optimize], "--fastmath", 0 };
-		const char* argvFragment[] = { opt[optimize], "--fastmath", 0 };
+		const char* argvVertex[] = { opt[optimize], 0 };
+		const char* argvFragment[] = { opt[optimize], "--fastmath", "--unroll", "all", "--regcount", optRegisterCount, 0 };
 
 		outShaderBin = sceCgcNewBin();
 		if (!outShaderBin)
@@ -384,9 +394,9 @@ Ref< ProgramResource > ProgramCompilerPs3::compile(
 		const std::wstring& vertexShader = cgProgram.getVertexShader();
 		const std::wstring& pixelShader = cgProgram.getPixelShader();
 
-		if (!compileShader(cgc, optimize, vertexShader, false, resource->m_vertexShaderBin))
+		if (!compileShader(cgc, optimize, vertexShader, false, 0, resource->m_vertexShaderBin))
 			return 0;
-		if (!compileShader(cgc, optimize, pixelShader, true, resource->m_pixelShaderBin))
+		if (!compileShader(cgc, optimize, pixelShader, true, cgProgram.getRegisterCount(), resource->m_pixelShaderBin))
 			return 0;
 
 		// Create scalar parameters.

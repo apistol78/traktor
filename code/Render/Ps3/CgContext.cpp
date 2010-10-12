@@ -19,6 +19,7 @@ CgContext::CgContext(const ShaderGraph* shaderGraph)
 ,	m_currentShader(0)
 ,	m_booleanRegisterCount(0)
 ,	m_needVPos(false)
+,	m_registerCount(0)
 {
 }
 
@@ -112,6 +113,11 @@ int32_t CgContext::allocateBooleanRegister()
 void CgContext::allocateVPos()
 {
 	m_needVPos = true;
+}
+
+void CgContext::setRegisterCount(uint32_t registerCount)
+{
+	m_registerCount = registerCount;
 }
 
 	}
