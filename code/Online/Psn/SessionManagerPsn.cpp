@@ -61,7 +61,6 @@ SessionManagerPsn::SessionManagerPsn()
 
 bool SessionManagerPsn::create()
 {
-	SceNpId selfNpId;
 	int32_t err;
 
 	err = cellSysmoduleLoadModule(CELL_SYSMODULE_SYSUTIL_NP2);
@@ -161,7 +160,14 @@ Ref< IUser > SessionManagerPsn::getCurrentUser()
 
 Ref< ISession > SessionManagerPsn::createSession(IUser* user, const std::set< std::wstring >& leaderboards)
 {
-	return new SessionPsn(checked_type_cast< UserPsn*, false >(user));
+	Ref< SessionPsn > session = new SessionPsn(checked_type_cast< UserPsn*, false >(user));
+	if (session->create())
+	{
+		m_sessions.push_back(session);
+		return session;
+	}
+	else
+		return 0;
 }
 
 bool SessionManagerPsn::requireUserAttention() const
@@ -171,6 +177,9 @@ bool SessionManagerPsn::requireUserAttention() const
 
 bool SessionManagerPsn::update()
 {
+	for (RefArray< SessionPsn >::iterator i = m_sessions.begin(); i != m_sessions.end(); ++i)
+		(*i)->update();
+
 	return true;
 }
 
