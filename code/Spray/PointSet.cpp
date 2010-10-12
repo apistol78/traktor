@@ -26,8 +26,15 @@ bool PointSet::read(IStream* stream)
 	r >> pointCount;
 	
 	m_points.resize(pointCount);
-	if (r.read(&m_points[0], pointCount, sizeof(Point)) != pointCount * sizeof(Point))
-		return false;
+	for (uint32_t i = 0; i < pointCount; ++i)
+	{
+		float tmp[3+3+4];
+		if (r.read(tmp, 3+3+4, sizeof(float)) != (3+3+4) * sizeof(float))
+			return false;
+		m_points[i].position = Vector4::loadUnaligned(&tmp[0]).xyz1();
+		m_points[i].normal = Vector4::loadUnaligned(&tmp[3]).xyz1();
+		m_points[i].color = Vector4::loadUnaligned(&tmp[6]);
+	}
 		
 	return true;
 }
@@ -38,8 +45,15 @@ bool PointSet::write(IStream* stream) const
 	
 	w << uint32_t(m_points.size());
 	
-	if (w.write(&m_points[0], m_points.size(), sizeof(Point)) != m_points.size() * sizeof(Point))
-		return false;
+	for (uint32_t i = 0; i < m_points.size(); ++i)
+	{
+		float tmp[3+3+4];
+		m_points[i].position.storeUnaligned(&tmp[0]);
+		m_points[i].normal.storeUnaligned(&tmp[3]);
+		m_points[i].color.storeUnaligned(&tmp[6]);
+		if (w.write(tmp, 3+3+4, sizeof(float)) != (3+3+4) * sizeof(float))
+			return false;
+	}
 		
 	return true;
 }
