@@ -725,6 +725,10 @@ public:
 
 	uint32_t getStencilMask() const;
 
+	void setRegisterCount(uint32_t registerCount);
+
+	uint32_t getRegisterCount() const;
+
 	virtual std::wstring getInformation() const;
 	
 	virtual bool serialize(ISerializer& s);
@@ -751,6 +755,7 @@ private:
 	CompareFunction m_stencilFunction;
 	uint32_t m_stencilReference;
 	uint32_t m_stencilMask;
+	uint32_t m_registerCount;
 };
 
 /*! \brief Conditional based on render platform. */

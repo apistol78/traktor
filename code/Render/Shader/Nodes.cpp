@@ -914,7 +914,7 @@ bool OutputPort::serialize(ISerializer& s)
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.PixelOutput", 2, PixelOutput, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.PixelOutput", 3, PixelOutput, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_PixelOutput_i[] = { { L"Input", false }, 0 };
 
@@ -941,6 +941,7 @@ PixelOutput::PixelOutput()
 ,	m_stencilFunction(CfAlways)
 ,	m_stencilReference(0x00000000)
 ,	m_stencilMask(0xffffffff)
+,	m_registerCount(0)
 {
 }
 
@@ -1154,6 +1155,16 @@ uint32_t PixelOutput::getStencilMask() const
 	return m_stencilMask;
 }
 
+void PixelOutput::setRegisterCount(uint32_t registerCount)
+{
+	m_registerCount = registerCount;
+}
+
+uint32_t PixelOutput::getRegisterCount() const
+{
+	return m_registerCount;
+}
+
 std::wstring PixelOutput::getInformation() const
 {
 	return m_technique;
@@ -1260,6 +1271,11 @@ bool PixelOutput::serialize(ISerializer& s)
 		s >> MemberEnum< CompareFunction >(L"stencilFunction", m_stencilFunction, kCompareFunctions);
 		s >> Member< uint32_t >(L"stencilReference", m_stencilReference);
 		s >> Member< uint32_t >(L"stencilMask", m_stencilMask);
+	}
+
+	if (s.getVersion() >= 3)
+	{
+		s >> Member< uint32_t >(L"registerCount", m_registerCount);
 	}
 
 	return true;
