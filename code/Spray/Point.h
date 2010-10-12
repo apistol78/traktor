@@ -13,6 +13,9 @@ namespace traktor
 
 /*! \brief Particle point.
  * \ingroup Spray
+ *
+ * \note
+ * 48 bytes
  */
 struct Point
 {

@@ -276,7 +276,7 @@ void RenderViewOpenGL::clear(uint32_t clearMask, const float color[4], float dep
 	};
 	
 	RenderTargetOpenGL* rt = m_renderTargetStack.top();
-	GLuint cm = c_clearMask[clearMask] & rt->clearMask();
+	GLuint cm = c_clearMask[clearMask]; // & rt->clearMask();
 
 	if (cm & GL_COLOR_BUFFER_BIT)
 	{
