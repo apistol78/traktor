@@ -16,6 +16,7 @@ namespace traktor
 	namespace online
 	{
 
+class SessionPsn;
 class UserPsn;
 
 /*! \brief PlayStation Network online session manager.
@@ -46,6 +47,7 @@ public:
 
 private:
 	Ref< UserPsn > m_user;
+	RefArray< SessionPsn > m_sessions;
 };
 
 	}
