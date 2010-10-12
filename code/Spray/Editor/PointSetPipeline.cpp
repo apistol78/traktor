@@ -17,7 +17,7 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.PointSetPipeline", 2, PointSetPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.PointSetPipeline", 4, PointSetPipeline, editor::IPipeline)
 
 bool PointSetPipeline::create(const editor::IPipelineSettings* settings)
 {
