@@ -3,6 +3,7 @@
 #include <sysutil/sysutil_sysparam.h>
 #include <np.h>
 #include "Core/Log/Log.h"
+#include "Online/Psn/SaveGameQueue.h"
 #include "Online/Psn/SessionPsn.h"
 #include "Online/Psn/SessionManagerPsn.h"
 #include "Online/Psn/UserPsn.h"
@@ -105,6 +106,13 @@ bool SessionManagerPsn::create()
 		return false;
 	}
 
+	m_saveGameQueue = new SaveGameQueue();
+	if (!m_saveGameQueue->create())
+	{
+		log::error << L"Unable to create session manager; failed to create save game queue" << Endl;
+		return false;
+	}
+
 	m_user = new UserPsn();
 
 	return true;
@@ -112,8 +120,15 @@ bool SessionManagerPsn::create()
 
 void SessionManagerPsn::destroy()
 {
+	if (m_saveGameQueue)
+	{
+		m_saveGameQueue->destroy();
+		m_saveGameQueue = 0;
+	}
+
 	sceNpTusTerm();
 	sceNpTrophyTerm();
+
 	cellSysmoduleUnloadModule(CELL_SYSMODULE_SYSUTIL_NP_TROPHY);
 }
 
@@ -160,7 +175,7 @@ Ref< IUser > SessionManagerPsn::getCurrentUser()
 
 Ref< ISession > SessionManagerPsn::createSession(IUser* user, const std::set< std::wstring >& leaderboards)
 {
-	Ref< SessionPsn > session = new SessionPsn(checked_type_cast< UserPsn*, false >(user));
+	Ref< SessionPsn > session = new SessionPsn(m_saveGameQueue, checked_type_cast< UserPsn*, false >(user));
 	if (session->create())
 	{
 		m_sessions.push_back(session);

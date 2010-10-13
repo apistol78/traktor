@@ -67,8 +67,8 @@ bool StaticSoundBuffer::create(const StaticSoundResource* resource, db::Instance
 	m_resource = resource;
 	m_resourceInstance = resourceInstance;
 	
-	uint32_t bufferSize = m_resource->getChannelsCount() * 4096;
-	m_buffer.reset(new int16_t [bufferSize]);
+	uint32_t readBufferSize = m_resource->getChannelsCount() * 4096;
+	m_readBuffer.reset(new int16_t [readBufferSize]);
 
 	return true;
 }
@@ -77,7 +77,7 @@ void StaticSoundBuffer::destroy()
 {
 	m_resource = 0;
 	m_resourceInstance = 0;
-	m_buffer.release();
+	m_readBuffer.release();
 }
 
 Ref< ISoundBufferCursor > StaticSoundBuffer::createCursor() const
@@ -114,14 +114,11 @@ bool StaticSoundBuffer::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBloc
 	samplesCount = alignUp(samplesCount, 4);
 
 	uint32_t byteCount = channelCount * samplesCount * sizeof(int16_t);
-	int32_t bytesRead = ssbc->m_stream->read(m_buffer.ptr(), byteCount);
+	int32_t bytesRead = ssbc->m_stream->read(m_readBuffer.ptr(), byteCount);
 	if (bytesRead < 0)
 		return false;
 		
-	if (bytesRead < byteCount)
-		std::memset(m_buffer.ptr() + bytesRead, 0, byteCount - bytesRead);
-
-	int16_t* bufferPtr = m_buffer.ptr();
+	int16_t* bufferPtr = m_readBuffer.ptr();
 	for (uint32_t i = 0; i < samplesCount; ++i)
 	{
 		for (uint32_t j = 0; j < channelCount; ++j)

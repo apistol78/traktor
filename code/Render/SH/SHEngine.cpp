@@ -131,23 +131,12 @@ void SHEngine::generateCoefficients(SHFunction* function, SHCoeffs& outResult)
 
 	uint32_t sc = uint32_t(m_samplePoints.size() >> 2);
 
-	Job jobs[] =
-	{
-		Job(makeFunctor(this, &SHEngine::generateCoefficientsJob, function, 0 * sc, 1 * sc, &outResult)),
-		Job(makeFunctor(this, &SHEngine::generateCoefficientsJob, function, 1 * sc, 2 * sc, &outResult)),
-		Job(makeFunctor(this, &SHEngine::generateCoefficientsJob, function, 2 * sc, 3 * sc, &outResult)),
-		Job(makeFunctor(this, &SHEngine::generateCoefficientsJob, function, 3 * sc, 4 * sc, &outResult))
-	};
-
-	JobManager::getInstance().add(jobs[0]);
-	JobManager::getInstance().add(jobs[1]);
-	JobManager::getInstance().add(jobs[2]);
-	JobManager::getInstance().add(jobs[3]);
-
-	jobs[0].wait();
-	jobs[1].wait();
-	jobs[2].wait();
-	jobs[3].wait();
+	RefArray< Functor > jobs(4);
+	jobs[0] = makeFunctor(this, &SHEngine::generateCoefficientsJob, function, 0 * sc, 1 * sc, &outResult);
+	jobs[1] = makeFunctor(this, &SHEngine::generateCoefficientsJob, function, 1 * sc, 2 * sc, &outResult);
+	jobs[2] = makeFunctor(this, &SHEngine::generateCoefficientsJob, function, 2 * sc, 3 * sc, &outResult);
+	jobs[3] = makeFunctor(this, &SHEngine::generateCoefficientsJob, function, 3 * sc, 4 * sc, &outResult);
+	JobManager::getInstance().fork(jobs);
 
 	float factor = float(weight / m_samplePoints.size());
 	for (uint32_t i = 0; i < m_coefficientCount; ++i)

@@ -1,3 +1,4 @@
+#include <limits>
 #include "Core/Platform.h"
 #include "Core/Thread/JobManager.h"
 #include "Core/Thread/ThreadManager.h"
@@ -9,40 +10,21 @@
 namespace traktor
 {
 
-Job::Job(Functor* functor)
-:	m_functor(functor)
-,	m_finished(1)
-{
-}
-
-void Job::begin()
-{
-	m_finished = 0;
-}
-
-void Job::execute()
-{
-	T_ASSERT (!m_finished);
-	if (m_functor)
-	{
-		(*m_functor)();
-		m_finished = 1;
-	}
-}
-
 bool Job::wait(int32_t timeout)
 {
-	Thread* thread = ThreadManager::getInstance().getCurrentThread();
-	while (m_finished == 0)
-		thread->yield();
+	while (!m_finished)
+	{
+		if (!m_jobFinishedEvent.wait(1))
+			return false;
+	}
 	return true;
 }
 
-Job& Job::operator = (Functor* functor)
+Job::Job(Functor* functor, Event& jobFinishedEvent)
+:	m_functor(functor)
+,	m_jobFinishedEvent(jobFinishedEvent)
+,	m_finished(false)
 {
-	m_functor = functor;
-	m_finished = 1;
-	return *this;
 }
 
 JobManager& JobManager::getInstance()
@@ -56,44 +38,49 @@ JobManager& JobManager::getInstance()
 	return *s_instance;
 }
 
-void JobManager::add(Job& job)
+Ref< Job > JobManager::add(Functor* functor)
 {
-	job.begin();
-	m_jobQueue.put(&job);
-	m_jobQueueEvent.pulse();
+	Ref< Job > job = new Job(functor, m_jobFinishedEvent);
+	m_jobQueue.put(job);
+	m_jobQueuedEvent.pulse(std::numeric_limits< int >::max());
+	return job;
 }
 
-void JobManager::fork(Job* jobs, int count)
+void JobManager::fork(const RefArray< Functor >& functors)
 {
-	if (count > 1)
+	RefArray< Job > jobs;
+	if (functors.size() > 1)
 	{
-		for (int i = 1; i < count; ++i)
+		jobs.resize(functors.size());
+		for (uint32_t i = 1; i < functors.size(); ++i)
 		{
-			jobs[i].begin();
-			m_jobQueue.put(&jobs[i]);
+			jobs[i] = new Job(functors[i], m_jobFinishedEvent);
+			m_jobQueue.put(jobs[i]);
 		}
-
-		m_jobQueueEvent.pulse(count - 1);
+		m_jobQueuedEvent.pulse(std::numeric_limits< int >::max());
 	}
 
-	jobs[0].begin();
-	jobs[0].execute();
+	(*functors[0])();
 
-	for (int i = 1; i < count; ++i)
-		jobs[i].wait();
+	for (uint32_t i = 1; i < jobs.size(); ++i)
+		jobs[i]->wait();
 }
 
 void JobManager::threadWorker(int id)
 {
 	Thread* thread = m_workerThreads[id];
-	Job* job;
+	Ref< Job > job;
 
 	while (!thread->stopped())
 	{
 		while (m_jobQueue.get(job))
-			job->execute();
+		{
+			(*job->m_functor)();
+			job->m_finished = true;
+			m_jobFinishedEvent.pulse(std::numeric_limits< int >::max());
+		}
 
-		if (!m_jobQueueEvent.wait(100))
+		if (!m_jobQueuedEvent.wait(100))
 			continue;
 	}
 }
@@ -115,7 +102,7 @@ JobManager::JobManager()
 			L"Job worker thread " + toString(i),
 			i + 1
 		);
-		m_workerThreads[i]->start();
+		m_workerThreads[i]->start(Thread::Above);
 	}
 }
 
@@ -126,15 +113,6 @@ JobManager::~JobManager()
 	{
 		m_workerThreads[i]->stop();
 		ThreadManager::getInstance().destroy(m_workerThreads[i]);
-	}
-
-	// Ensure all pending jobs are dropped.
-	Job* job;
-	while (m_jobQueue.get(job))
-	{
-		T_ASSERT (job);
-		delete job->m_functor;
-		job->m_finished = true;
 	}
 }
 

@@ -44,14 +44,11 @@ void CaseJob::run()
 	{
 		g_job = 0;
 
-		Job jobs[] =
-		{
-			Job(makeStaticFunctor(job_1)),
-			Job(makeStaticFunctor(job_2)),
-			Job(makeStaticFunctor(job_3))
-		};
-
-		JobManager::getInstance().fork(jobs, sizeof_array(jobs));
+		RefArray< Functor > jobs(3);
+		jobs[0] = makeStaticFunctor(job_1);
+		jobs[1] = makeStaticFunctor(job_2);
+		jobs[2] = makeStaticFunctor(job_3);
+		JobManager::getInstance().fork(jobs);
 
 		CASE_ASSERT_EQUAL(g_job, 3);
 	}
@@ -62,15 +59,12 @@ void CaseJob::run()
 		Timer timerJob;
 		timerJob.start();
 
-		Job jobs[] =
-		{
-			Job(makeStaticFunctor(job_stress, 0)),
-			Job(makeStaticFunctor(job_stress, 200000)),
-			Job(makeStaticFunctor(job_stress, 400000)),
-			Job(makeStaticFunctor(job_stress, 600000))
-		};
-
-		JobManager::getInstance().fork(jobs, sizeof_array(jobs));
+		RefArray< Functor > jobs(4);
+		jobs[0] = makeStaticFunctor(job_stress, 0);
+		jobs[1] = makeStaticFunctor(job_stress, 200000);
+		jobs[2] = makeStaticFunctor(job_stress, 400000);
+		jobs[3] = makeStaticFunctor(job_stress, 600000);
+		JobManager::getInstance().fork(jobs);
 
 		timerJob.stop();
 		double timeJob = timerJob.getElapsedTime();

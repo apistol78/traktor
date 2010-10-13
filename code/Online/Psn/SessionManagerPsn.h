@@ -16,6 +16,7 @@ namespace traktor
 	namespace online
 	{
 
+class SaveGameQueue;
 class SessionPsn;
 class UserPsn;
 
@@ -46,6 +47,7 @@ public:
 	virtual bool update();
 
 private:
+	Ref< SaveGameQueue > m_saveGameQueue;
 	Ref< UserPsn > m_user;
 	RefArray< SessionPsn > m_sessions;
 };

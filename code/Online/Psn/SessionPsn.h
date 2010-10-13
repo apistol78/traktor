@@ -1,7 +1,6 @@
 #ifndef traktor_online_SessionLocal_H
 #define traktor_online_SessionLocal_H
 
-#include <sysutil/sysutil_savedata.h>
 #include "Online/ISession.h"
 
 // import/export mechanism.
@@ -17,6 +16,7 @@ namespace traktor
 	namespace online
 	{
 
+class SaveGameQueue;
 class UserPsn;
 
 class T_DLLCLASS SessionPsn : public ISession
@@ -24,7 +24,7 @@ class T_DLLCLASS SessionPsn : public ISession
 	T_RTTI_CLASS;
 
 public:
-	SessionPsn(UserPsn* user);
+	SessionPsn(SaveGameQueue* saveGameQueue, UserPsn* user);
 
 	bool create();
 
@@ -53,22 +53,10 @@ public:
 	void update();
 
 private:
+	Ref< SaveGameQueue > m_saveGameQueue;
 	Ref< UserPsn > m_user;
 	bool m_connected;
 	int32_t m_titleContextId;
-	std::vector< uint8_t > m_saveBuffer;
-	bool m_saveBufferPending;
-	mutable RefArray< ISaveGame > m_saveGames;
-
-	static void loadFixedCallback(CellSaveDataCBResult* cbResult, CellSaveDataListGet* get, CellSaveDataFixedSet* set);
-
-	static void loadStatCallback(CellSaveDataCBResult* cbResult, CellSaveDataStatGet* get, CellSaveDataStatSet* set);
-
-	static void loadFileCallback(CellSaveDataCBResult* cbResult, CellSaveDataFileGet* get, CellSaveDataFileSet* set);
-
-	static void saveStatCallback(CellSaveDataCBResult* cbResult, CellSaveDataStatGet* get, CellSaveDataStatSet* set);
-
-	static void saveFileCallback(CellSaveDataCBResult* cbResult, CellSaveDataFileGet* get, CellSaveDataFileSet* set);
 };
 
 	}

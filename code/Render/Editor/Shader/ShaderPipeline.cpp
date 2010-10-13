@@ -311,8 +311,7 @@ bool ShaderPipeline::buildOutput(
 			task->validate = m_validate;
 			task->result = false;
 
-			Job* job = new Job(makeFunctor(task, &BuildCombinationTask::execute));
-			JobManager::getInstance().add(*job);
+			Ref< Job > job = JobManager::getInstance().add(makeFunctor(task, &BuildCombinationTask::execute));
 
 			tasks.push_back(task);
 			jobs.push_back(job);
@@ -329,6 +328,7 @@ bool ShaderPipeline::buildOutput(
 	for (size_t i = 0; i < jobs.size(); ++i)
 	{
 		jobs[i]->wait();
+		jobs[i] = 0;
 
 		if (tasks[i]->result)
 		{
@@ -344,7 +344,6 @@ bool ShaderPipeline::buildOutput(
 
 		delete tasks[i]->shaderResourceCombination;
 		delete tasks[i];
-		delete jobs[i];
 	}
 
 	for (std::vector< ShaderResource::Technique* >::iterator i = shaderResourceTechniques.begin(); i != shaderResourceTechniques.end(); ++i)

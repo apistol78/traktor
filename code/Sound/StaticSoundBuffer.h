@@ -47,7 +47,7 @@ public:
 private:
 	Ref< const StaticSoundResource > m_resource;
 	Ref< db::Instance > m_resourceInstance;
-	mutable AutoArrayPtr< int16_t > m_buffer;
+	mutable AutoArrayPtr< int16_t > m_readBuffer;
 };
 
 	}

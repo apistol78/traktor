@@ -219,16 +219,11 @@ void EmitterInstance::update(EmitterUpdateContext& context, const Transform& tra
 			size
 		};
 
-		m_jobs[0] = makeFunctor< EmitterInstance, float, const Transform&, size_t, size_t >(this, &EmitterInstance::updateTask, context.deltaTime, transform, pivots[0], pivots[1]);
-		m_jobs[1] = makeFunctor< EmitterInstance, float, const Transform&, size_t, size_t >(this, &EmitterInstance::updateTask, context.deltaTime, transform, pivots[1], pivots[2]);
-		m_jobs[2] = makeFunctor< EmitterInstance, float, const Transform&, size_t, size_t >(this, &EmitterInstance::updateTask, context.deltaTime, transform, pivots[2], pivots[3]);
-		m_jobs[3] = makeFunctor< EmitterInstance, float, const Transform&, size_t, size_t >(this, &EmitterInstance::updateTask, context.deltaTime, transform, pivots[3], pivots[4]);
-
 		JobManager& jobManager = JobManager::getInstance();
-		jobManager.add(m_jobs[0]);
-		jobManager.add(m_jobs[1]);
-		jobManager.add(m_jobs[2]);
-		jobManager.add(m_jobs[3]);
+		m_jobs[0] = jobManager.add(makeFunctor< EmitterInstance, float, const Transform&, size_t, size_t >(this, &EmitterInstance::updateTask, context.deltaTime, transform, pivots[0], pivots[1]));
+		m_jobs[1] = jobManager.add(makeFunctor< EmitterInstance, float, const Transform&, size_t, size_t >(this, &EmitterInstance::updateTask, context.deltaTime, transform, pivots[1], pivots[2]));
+		m_jobs[2] = jobManager.add(makeFunctor< EmitterInstance, float, const Transform&, size_t, size_t >(this, &EmitterInstance::updateTask, context.deltaTime, transform, pivots[2], pivots[3]));
+		m_jobs[3] = jobManager.add(makeFunctor< EmitterInstance, float, const Transform&, size_t, size_t >(this, &EmitterInstance::updateTask, context.deltaTime, transform, pivots[3], pivots[4]));
 	}
 #	else
 	updateTask(context.deltaTime, transform, 0, m_points.size());
@@ -267,10 +262,10 @@ void EmitterInstance::synchronize() const
 #else
 
 #	if defined(T_USE_UPDATE_JOBS)
-	m_jobs[0].wait(); m_jobs[0] = 0;
-	m_jobs[1].wait(); m_jobs[1] = 0;
-	m_jobs[2].wait(); m_jobs[2] = 0;
-	m_jobs[3].wait(); m_jobs[3] = 0;
+	m_jobs[0]->wait(); m_jobs[0] = 0;
+	m_jobs[1]->wait(); m_jobs[1] = 0;
+	m_jobs[2]->wait(); m_jobs[2] = 0;
+	m_jobs[3]->wait(); m_jobs[3] = 0;
 #	endif
 
 #endif

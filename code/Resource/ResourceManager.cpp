@@ -182,8 +182,9 @@ void ResourceManager::load(const Guid& guid, IResourceFactory* factory, Resource
 		handle->replace(object);
 
 		// Yield current thread; we want other threads to get some periodic CPU time to
-		// render loading screens etc.
-		ThreadManager::getInstance().getCurrentThread()->yield();
+		// render loading screens etc. Use sleep as we want lower priority threads also
+		// to be able to run.
+		ThreadManager::getInstance().getCurrentThread()->sleep(0);
 	}
 	else
 		log::error << L"Unable to create resource \"" << guid.format() << L"\" (" << resourceType.getName() << L")" << Endl;

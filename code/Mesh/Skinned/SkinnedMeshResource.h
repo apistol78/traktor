@@ -1,6 +1,7 @@
 #ifndef traktor_mesh_SkinnedMeshResource_H
 #define traktor_mesh_SkinnedMeshResource_H
 
+#include <list>
 #include <map>
 #include "Core/Guid.h"
 #include "Mesh/IMeshResource.h"
