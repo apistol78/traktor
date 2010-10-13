@@ -262,10 +262,14 @@ void EmitterInstance::synchronize() const
 #else
 
 #	if defined(T_USE_UPDATE_JOBS)
-	m_jobs[0]->wait(); m_jobs[0] = 0;
-	m_jobs[1]->wait(); m_jobs[1] = 0;
-	m_jobs[2]->wait(); m_jobs[2] = 0;
-	m_jobs[3]->wait(); m_jobs[3] = 0;
+	for (int i = 0; i < 4; ++i)
+	{
+		if (m_jobs[i])
+		{
+			m_jobs[i]->wait();
+			m_jobs[i] = 0;
+		}
+	}
 #	endif
 
 #endif
