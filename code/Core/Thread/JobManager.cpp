@@ -14,8 +14,10 @@ bool Job::wait(int32_t timeout)
 {
 	while (!m_finished)
 	{
-		if (!m_jobFinishedEvent.wait(1))
+		if (!m_jobFinishedEvent.wait(timeout))
 			return false;
+		// A job has been finished; check if it this
+		// and in such case return true.
 	}
 	return true;
 }
@@ -75,6 +77,7 @@ void JobManager::threadWorker(int id)
 	{
 		while (m_jobQueue.get(job))
 		{
+			T_ASSERT (!job->m_finished);
 			(*job->m_functor)();
 			job->m_finished = true;
 			m_jobFinishedEvent.pulse(std::numeric_limits< int >::max());

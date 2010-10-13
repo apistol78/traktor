@@ -25,7 +25,7 @@ namespace traktor
  * \ingroup Core
  */
 class T_DLLCLASS Job
-:	public Object
+:	public RefCountImpl< IRefCount >
 ,	public IWaitable
 {
 public:
