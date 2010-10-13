@@ -51,7 +51,7 @@ private:
 	Ref< editor::IPipelineBuilder > m_pipelineBuilder;
 };
 
-struct BuildCombinationTask
+struct BuildCombinationTask : public Object
 {
 	ShaderGraphCombinations* combinations;
 	uint32_t combination;
@@ -257,8 +257,8 @@ bool ShaderPipeline::buildOutput(
 
 	RefArray< ShaderGraphCombinations > shaderGraphCombinations;
 	std::vector< ShaderResource::Technique* > shaderResourceTechniques;
-	std::vector< BuildCombinationTask* > tasks;
-	std::vector< Job* > jobs;
+	RefArray< BuildCombinationTask > tasks;
+	RefArray< Job > jobs;
 
 	// Generate shader graphs from techniques and combinations.
 	ShaderGraphTechniques techniques(shaderGraph);
@@ -298,7 +298,7 @@ bool ShaderPipeline::buildOutput(
 
 		for (uint32_t combination = 0; combination < combinationCount; ++combination)
 		{
-			BuildCombinationTask* task = new BuildCombinationTask();
+			Ref< BuildCombinationTask > task = new BuildCombinationTask();
 			task->combinations = combinations;
 			task->combination = combination;
 			task->shaderResource = shaderResource;
@@ -311,7 +311,7 @@ bool ShaderPipeline::buildOutput(
 			task->validate = m_validate;
 			task->result = false;
 
-			Ref< Job > job = JobManager::getInstance().add(makeFunctor(task, &BuildCombinationTask::execute));
+			Ref< Job > job = JobManager::getInstance().add(makeFunctor(task.ptr(), &BuildCombinationTask::execute));
 
 			tasks.push_back(task);
 			jobs.push_back(job);
@@ -343,7 +343,7 @@ bool ShaderPipeline::buildOutput(
 			++failed;
 
 		delete tasks[i]->shaderResourceCombination;
-		delete tasks[i];
+		tasks[i] = 0;
 	}
 
 	for (std::vector< ShaderResource::Technique* >::iterator i = shaderResourceTechniques.begin(); i != shaderResourceTechniques.end(); ++i)

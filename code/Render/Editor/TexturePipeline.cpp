@@ -63,7 +63,7 @@ bool isBinaryAlpha(const drawing::Image* image)
 	return true;
 }
 
-struct ScaleTextureTask
+struct ScaleTextureTask : public Object
 {
 	Ref< const drawing::Image > image;
 	Ref< drawing::ScaleFilter > filter;
@@ -76,7 +76,7 @@ struct ScaleTextureTask
 	}
 };
 
-struct CompressTextureTask
+struct CompressTextureTask : public Object
 {
 	const drawing::Image* image;
 	int32_t top;
@@ -506,8 +506,8 @@ bool TexturePipeline::buildOutput(
 
 		// Generate each mip level.
 		{
-			std::vector< ScaleTextureTask* > tasks;
-			std::vector< Job* > jobs;
+			RefArray< ScaleTextureTask > tasks;
+			RefArray< Job > jobs;
 
 			log::info << L"Executing mip generation task(s)..." << Endl;
 
@@ -518,7 +518,7 @@ bool TexturePipeline::buildOutput(
 
 				log::info << L"Executing mip generation task " << i << L" (" << mipWidth << L"*" << mipHeight << L")..." << Endl;
 
-				ScaleTextureTask* task = new ScaleTextureTask();
+				Ref< ScaleTextureTask > task = new ScaleTextureTask();
 
 				task->image = image;
 				task->filter = new drawing::ScaleFilter(
@@ -529,7 +529,7 @@ bool TexturePipeline::buildOutput(
 						textureAsset->m_keepZeroAlpha
 					);
 
-				Ref< Job > job = JobManager::getInstance().add(makeFunctor(task, &ScaleTextureTask::execute));
+				Ref< Job > job = JobManager::getInstance().add(makeFunctor(task.ptr(), &ScaleTextureTask::execute));
 
 				tasks.push_back(task);
 				jobs.push_back(job);
@@ -545,7 +545,7 @@ bool TexturePipeline::buildOutput(
 				mipImages[i] = tasks[i]->output;
 				T_ASSERT (mipImages[i]);
 
-				delete tasks[i];
+				tasks[i] = 0;
 			}
 
 			log::info << L"All task(s) collected" << Endl;
@@ -553,8 +553,8 @@ bool TexturePipeline::buildOutput(
 
 		// Create multiple jobs for compressing mips; split big mips into several jobs.
 		{
-			std::vector< CompressTextureTask* > tasks;
-			std::vector< Job* > jobs;
+			RefArray< CompressTextureTask > tasks;
+			RefArray< Job > jobs;
 
 			for (int32_t i = 0; i < mipCount; ++i)
 			{
@@ -568,7 +568,7 @@ bool TexturePipeline::buildOutput(
 
 				for (int32_t j = 0; j < split; ++j)
 				{
-					CompressTextureTask* task = new CompressTextureTask();
+					Ref< CompressTextureTask > task = new CompressTextureTask();
 					task->image = mipImages[i];
 					task->top = (height * j) / split;
 					task->bottom = (height * (j + 1)) / split;
@@ -576,7 +576,7 @@ bool TexturePipeline::buildOutput(
 					task->needAlpha = needAlpha;
 					task->compressionQuality = m_compressionQuality;
 
-					Ref< Job > job = JobManager::getInstance().add(makeFunctor(task, &CompressTextureTask::execute));
+					Ref< Job > job = JobManager::getInstance().add(makeFunctor(task.ptr(), &CompressTextureTask::execute));
 
 					tasks.push_back(task);
 					jobs.push_back(job);
@@ -592,7 +592,7 @@ bool TexturePipeline::buildOutput(
 
 				dataSize += writerData.write(&tasks[i]->output[0], uint32_t(tasks[i]->output.size()), 1);
 
-				delete tasks[i];
+				tasks[i] = 0;
 			}
 
 			log::info << L"All task(s) collected" << Endl;
