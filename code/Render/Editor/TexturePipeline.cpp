@@ -529,8 +529,7 @@ bool TexturePipeline::buildOutput(
 						textureAsset->m_keepZeroAlpha
 					);
 
-				Job* job = new Job(makeFunctor(task, &ScaleTextureTask::execute));
-				JobManager::getInstance().add(*job);
+				Ref< Job > job = JobManager::getInstance().add(makeFunctor(task, &ScaleTextureTask::execute));
 
 				tasks.push_back(task);
 				jobs.push_back(job);
@@ -541,12 +540,12 @@ bool TexturePipeline::buildOutput(
 			for (size_t i = 0; i < jobs.size(); ++i)
 			{
 				jobs[i]->wait();
+				jobs[i] = 0;
 
 				mipImages[i] = tasks[i]->output;
 				T_ASSERT (mipImages[i]);
 
 				delete tasks[i];
-				delete jobs[i];
 			}
 
 			log::info << L"All task(s) collected" << Endl;
@@ -577,8 +576,7 @@ bool TexturePipeline::buildOutput(
 					task->needAlpha = needAlpha;
 					task->compressionQuality = m_compressionQuality;
 
-					Job* job = new Job(makeFunctor(task, &CompressTextureTask::execute));
-					JobManager::getInstance().add(*job);
+					Ref< Job > job = JobManager::getInstance().add(makeFunctor(task, &CompressTextureTask::execute));
 
 					tasks.push_back(task);
 					jobs.push_back(job);
@@ -590,10 +588,11 @@ bool TexturePipeline::buildOutput(
 			for (size_t i = 0; i < jobs.size(); ++i)
 			{
 				jobs[i]->wait();
+				jobs[i] = 0;
+
 				dataSize += writerData.write(&tasks[i]->output[0], uint32_t(tasks[i]->output.size()), 1);
 
 				delete tasks[i];
-				delete jobs[i];
 			}
 
 			log::info << L"All task(s) collected" << Endl;

@@ -119,7 +119,7 @@ private:
 	Cell m_cells[16];
 	Matrix44 m_lastView;
 	Frustum m_lastFrustum;
-	Job m_jobs[4];
+	RefArray< Job > m_jobs;
 	bool m_sync;
 
 	void synchronize();

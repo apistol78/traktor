@@ -1,7 +1,7 @@
 #ifndef traktor_ThreadsafeFifo_H
 #define traktor_ThreadsafeFifo_H
 
-#include <list>
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Semaphore.h"
 
@@ -27,7 +27,7 @@ public:
 		if (!m_items.empty())
 		{
 			outItem = m_items.front();
-			m_items.pop_front();
+			m_items.erase(m_items.begin());
 			return true;
 		}
 		else
@@ -42,7 +42,7 @@ public:
 
 private:
 	LockType m_lock; 
-	std::list< ItemType > m_items;
+	AlignedVector< ItemType > m_items;
 };
 
 }

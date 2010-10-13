@@ -86,7 +86,7 @@ private:
 	volatile uint32_t m_eventQueueTail;
 
 #if T_XML_PARSER_THREAD
-	Job m_parseJob;
+	Ref< Job > m_parseJob;
 	Thread* m_threadJob;
 	Signal m_eventQueueSignal;
 #endif
@@ -134,15 +134,18 @@ XmlPullParserImpl::XmlPullParserImpl(IStream* stream)
 	m_eventQueueTail++;
 
 #if T_XML_PARSER_THREAD
-	m_parseJob = makeFunctor(this, &XmlPullParserImpl::parseJob);
-	JobManager::getInstance().add(m_parseJob);
+	m_parseJob = JobManager::getInstance().add(makeFunctor(this, &XmlPullParserImpl::parseJob));
 #endif
 }
 
 XmlPullParserImpl::~XmlPullParserImpl()
 {
 #if T_XML_PARSER_THREAD
-	m_parseJob.wait();
+	if (m_parseJob)
+	{
+		m_parseJob->wait();
+		m_parseJob = 0;
+	}
 #endif
 	if (m_parser)
 		XML_ParserFree(m_parser);
@@ -228,7 +231,7 @@ XmlPullParser::Event& XmlPullParserImpl::allocEvent()
 	// Check if event queue full; wait until event has been consumed.
 	int32_t tail = (m_eventQueueTail + 1) % sizeof_array(m_eventQueue);
 	while (tail == m_eventQueueHead)
-		m_threadJob->yield();
+		m_threadJob->sleep(0);
 #endif
 
 	XmlPullParser::Event& evt = m_eventQueue[m_eventQueueTail];

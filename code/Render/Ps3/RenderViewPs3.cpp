@@ -687,7 +687,8 @@ void RenderViewPs3::present()
 	m_stateCache.reset();
 
 #if defined(_DEBUG)
-	log::debug << m_patchCounter << L" fragment shader(s) patched" << Endl;
+	if (m_patchCounter > 0)
+		log::debug << m_patchCounter << L" fragment shader(s) patched" << Endl;
 #endif
 	m_patchCounter = 0;
 }

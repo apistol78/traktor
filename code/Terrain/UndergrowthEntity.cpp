@@ -46,6 +46,7 @@ UndergrowthEntity::UndergrowthEntity(
 ,	m_primitives(primitives)
 ,	m_shader(shader)
 ,	m_lastView(Matrix44::identity())
+,	m_jobs(4)
 ,	m_sync(false)
 {
 	resourceManager->bind(m_heightfield);
@@ -129,16 +130,11 @@ void UndergrowthEntity::update(const world::EntityUpdate* update)
 
 	m_lastFrustum.setFarZ(m_lastFrustum.getNearZ() + Scalar(m_settings.spreadDistance));
 
-	m_jobs[0] = makeFunctor(this, &UndergrowthEntity::updateTask, 0, 4, vertexTop);
-	m_jobs[1] = makeFunctor(this, &UndergrowthEntity::updateTask, 4, 8, vertexTop);
-	m_jobs[2] = makeFunctor(this, &UndergrowthEntity::updateTask, 8, 12, vertexTop);
-	m_jobs[3] = makeFunctor(this, &UndergrowthEntity::updateTask, 12, 16, vertexTop);
-
 	JobManager& jobManager = JobManager::getInstance();
-	jobManager.add(m_jobs[0]);
-	jobManager.add(m_jobs[1]);
-	jobManager.add(m_jobs[2]);
-	jobManager.add(m_jobs[3]);
+	m_jobs[0] = jobManager.add(makeFunctor(this, &UndergrowthEntity::updateTask, 0, 4, vertexTop));
+	m_jobs[1] = jobManager.add(makeFunctor(this, &UndergrowthEntity::updateTask, 4, 8, vertexTop));
+	m_jobs[2] = jobManager.add(makeFunctor(this, &UndergrowthEntity::updateTask, 8, 12, vertexTop));
+	m_jobs[3] = jobManager.add(makeFunctor(this, &UndergrowthEntity::updateTask, 12, 16, vertexTop));
 
 	m_sync = true;
 }
@@ -148,10 +144,10 @@ void UndergrowthEntity::synchronize()
 	if (!m_sync)
 		return;
 
-	m_jobs[0].wait();
-	m_jobs[1].wait();
-	m_jobs[2].wait();
-	m_jobs[3].wait();
+	m_jobs[0]->wait();
+	m_jobs[1]->wait();
+	m_jobs[2]->wait();
+	m_jobs[3]->wait();
 
 	m_vertexBuffer->unlock();
 

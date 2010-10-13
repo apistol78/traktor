@@ -84,7 +84,7 @@ private:
 	AlignedVector< Vector4 > m_skinTransforms;
 	float m_totalTime;
 	bool m_updateController;
-	mutable Job m_updatePoseControllerJob;
+	mutable Ref< Job > m_updatePoseControllerJob;
 
 	void synchronize() const;
 

@@ -107,12 +107,11 @@ void AnimatedMeshEntity::update(const world::EntityUpdate* update)
 	m_updateController = false;
 
 #if defined(T_USE_UPDATE_JOBS)
-	m_updatePoseControllerJob = makeFunctor< AnimatedMeshEntity, float >(
+	m_updatePoseControllerJob = JobManager::getInstance().add(makeFunctor< AnimatedMeshEntity, float >(
 		this,
 		&AnimatedMeshEntity::updatePoseController,
 		update->getDeltaTime()
-	);
-	JobManager::getInstance().add(m_updatePoseControllerJob);
+	));
 #else
 	updatePoseController(update->getDeltaTime());
 #endif
@@ -185,8 +184,11 @@ bool AnimatedMeshEntity::getSkinTransform(const std::wstring& boneName, Transfor
 void AnimatedMeshEntity::synchronize() const
 {
 #if defined(T_USE_UPDATE_JOBS)
-	m_updatePoseControllerJob.wait();
-	m_updatePoseControllerJob = 0;
+	if (m_updatePoseControllerJob)
+	{
+		m_updatePoseControllerJob->wait();
+		m_updatePoseControllerJob = 0;
+	}
 #endif
 }
 

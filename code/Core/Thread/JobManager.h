@@ -2,41 +2,43 @@
 #define traktor_JobManager_H
 
 #include <vector>
+#include "Core/Object.h"
+#include "Core/RefArray.h"
 #include "Core/Containers/ThreadsafeFifo.h"
 #include "Core/Functor/Functor.h"
 #include "Core/Singleton/ISingleton.h"
 #include "Core/Thread/Event.h"
 #include "Core/Thread/Thread.h"
 
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_CORE_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
 namespace traktor
 {
 
-/*! \brief Job container.
+/*! \brief Job handle object.
  * \ingroup Core
- *
- * Each job is maintained by this class.
  */
-class T_DLLCLASS Job : public IWaitable
+class T_DLLCLASS Job
+:	public Object
+,	public IWaitable
 {
 public:
-	Job(Functor* functor = 0);
-
-	/*! \brief Prepare job for execution. */
-	void begin();
-
-	/*! \brief Execute job in caller thread. */
-	void execute();
-
-	/*! \brief Wait until finished. */
 	virtual bool wait(int32_t timeout = -1);
-
-	Job& operator = (Functor* functor);
 
 private:
 	friend class JobManager;
 
 	Ref< Functor > m_functor;
-	int32_t m_finished;
+	Event& m_jobFinishedEvent;
+	volatile bool m_finished;
+
+	Job(Functor* functor, Event& jobFinishedEvent);
 };
 
 /*! \brief Job manager.
@@ -57,13 +59,8 @@ public:
 	 * Add job to internal worker queue, as soon as
 	 * a worker thread is idle the scheduler assigns
 	 * a new job to that thread from this queue.
-	 *
-	 * \note
-	 * As the queue only stores a pointer to the job
-	 * it's important to remember to keep the job object
-	 * alive until it's finished.
 	 */
-	void add(Job& job);
+	Ref< Job > add(Functor* functor);
 
 	/*! \brief Enqueue jobs and wait for all to finish.
 	 *
@@ -71,22 +68,22 @@ public:
 	 * is always run on the caller thread to reduce
 	 * work for kernel scheduler.
 	 */
-	void fork(Job* jobs, int count);
+	void fork(const RefArray< Functor >& functors);
 
 protected:
 	virtual void destroy();
 
 private:
 	std::vector< Thread* > m_workerThreads;
-	ThreadsafeFifo< Job* > m_jobQueue;
-	Event m_jobQueueEvent;
+	ThreadsafeFifo< Ref< Job > > m_jobQueue;
+	Event m_jobQueuedEvent;
 	Event m_jobFinishedEvent;
 
 	void threadWorker(int id);
 
 	JobManager();
 
-	~JobManager();
+	virtual ~JobManager();
 };
 
 }

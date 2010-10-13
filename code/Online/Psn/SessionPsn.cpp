@@ -1,10 +1,8 @@
 #include <np.h>
-#include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/AutoPtr.h"
 #include "Core/Misc/TString.h"
-#include "Core/Serialization/BinarySerializer.h"
-#include "Online/Psn/SaveGamePsn.h"
+#include "Online/Psn/SaveGameQueue.h"
 #include "Online/Psn/SessionPsn.h"
 #include "Online/Psn/UserPsn.h"
 
@@ -15,8 +13,6 @@ namespace traktor
 		namespace
 		{
 
-const uint32_t c_maxDirCount = 32;
-const uint32_t c_maxFileCount = 32;
 const char c_signature[] = "NPWR01625";
 
 const SceNpCommunicationPassphrase c_passphrase =
@@ -45,8 +41,9 @@ const SceNpCommunicationPassphrase c_passphrase =
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.online.SessionPsn", SessionPsn, ISession)
 
-SessionPsn::SessionPsn(UserPsn* user)
-:	m_user(user)
+SessionPsn::SessionPsn(SaveGameQueue* saveGameQueue, UserPsn* user)
+:	m_saveGameQueue(saveGameQueue)
+,	m_user(user)
 ,	m_connected(false)
 ,	m_titleContextId(0)
 {
@@ -108,243 +105,12 @@ bool SessionPsn::getStatValue(const std::wstring& statId, float& outValue)
 
 Ref< ISaveGame > SessionPsn::createSaveGame(const std::wstring& name, ISerializable* attachment)
 {
-	uint32_t tmpSize = std::max< uint32_t >(c_maxDirCount * sizeof(CellSaveDataDirList), c_maxFileCount * sizeof(CellSaveDataFileStat));
-	AutoArrayPtr< uint8_t > tmp(new uint8_t [tmpSize]);
-
-	m_saveBuffer.resize(0);
-
-	// Create a serialized image of the attachment.
-	DynamicMemoryStream dms(m_saveBuffer, false, true);
-	BinarySerializer(&dms).writeObject(attachment);
-
-	// Create save game.
-	CellSaveDataSetBuf buf;
-	std::memset(&buf, 0, sizeof(buf));
-	buf.dirListMax = c_maxDirCount;
-	buf.fileListMax = c_maxFileCount;
-	buf.bufSize = tmpSize;
-	buf.buf = tmp.ptr();
-
-	int32_t err = cellSaveDataAutoSave2(
-		CELL_SAVEDATA_VERSION_CURRENT,
-		"NPEB00401-PUZZLED-0001",
-		CELL_SAVEDATA_ERRDIALOG_ALWAYS,
-		&buf,
-		&saveStatCallback,
-		&saveFileCallback,
-		SYS_MEMORY_CONTAINER_ID_INVALID,
-		(void*)this
-	);
-	if (err != CELL_SAVEDATA_RET_OK)
-		return 0;
-
-	return new SaveGamePsn(name, attachment);
+	return m_saveGameQueue->createSaveGame(name, attachment);
 }
 
 bool SessionPsn::getAvailableSaveGames(RefArray< ISaveGame >& outSaveGames) const
 {
-	uint32_t tmpSize = std::max< uint32_t >(c_maxDirCount * sizeof(CellSaveDataDirList), c_maxFileCount * sizeof(CellSaveDataFileStat));
-	AutoArrayPtr< uint8_t > tmp(new uint8_t [tmpSize]);
-
-	CellSaveDataSetList list;
-	std::memset(&list, 0, sizeof(list));
-	list.sortType = CELL_SAVEDATA_SORTTYPE_MODIFIEDTIME;
-	list.sortOrder = CELL_SAVEDATA_SORTORDER_DESCENT;
-	list.dirNamePrefix = "NPEB00401-PUZZLED-";
-
-	CellSaveDataSetBuf buf;
-	std::memset(&buf, 0, sizeof(buf));
-	buf.dirListMax = c_maxDirCount;
-	buf.fileListMax = c_maxFileCount;
-	buf.bufSize = tmpSize;
-	buf.buf = tmp.ptr();
-
-	int32_t err = cellSaveDataListAutoLoad(
-		CELL_SAVEDATA_VERSION_CURRENT,
-		CELL_SAVEDATA_ERRDIALOG_NOREPEAT,
-		&list,
-		&buf,
-		&loadFixedCallback,
-		&loadStatCallback,
-		&loadFileCallback,
-		SYS_MEMORY_CONTAINER_ID_INVALID,
-		(void*)this
-	);
-	if (err != CELL_SAVEDATA_RET_OK)
-		return false;
-
-	outSaveGames = m_saveGames;
-	m_saveGames.resize(0);
-
-	return true;
-}
-
-void SessionPsn::loadFixedCallback(CellSaveDataCBResult* cbResult, CellSaveDataListGet* get, CellSaveDataFixedSet* set)
-{
-	log::debug << L"Save data; load fixed callback" << Endl;
-
-	set->dirName = "NPEB00401-PUZZLED-0001";
-	set->newIcon = 0;
-	set->option = CELL_SAVEDATA_OPTION_NONE;
-
-	int32_t i = 0;
-	for (; i < get->dirListNum; ++i)
-	{
-		if (strcmp(get->dirList[i].dirName, set->dirName) == 0)
-			break;
-	}
-
-	if (i < get->dirListNum)
-		cbResult->result = CELL_SAVEDATA_CBRESULT_OK_NEXT;
-	else
-		cbResult->result = CELL_SAVEDATA_CBRESULT_ERR_NODATA;
-}
-
-void SessionPsn::loadStatCallback(CellSaveDataCBResult* cbResult, CellSaveDataStatGet* get, CellSaveDataStatSet* set)
-{
-	SessionPsn* this_ = static_cast< SessionPsn* >(cbResult->userdata);
-	T_ASSERT (this_);
-
-	log::debug << L"Save data; load stat callback" << Endl;
-
-	if (get->isNewData)
-	{
-		log::error << L"Save data; no attachment in save game" << Endl;
-		cbResult->result = CELL_SAVEDATA_CBRESULT_ERR_NODATA;
-		return;
-	}
-
-	if (get->fileNum > get->fileListNum)
-	{
-		log::error << L"Save data; file number overflow" << Endl;
-		cbResult->result = CELL_SAVEDATA_CBRESULT_ERR_BROKEN;
-		return;
-	}
-
-	int32_t i = 0;
-	for (; i < get->fileListNum; ++i)
-	{
-		if (strcmp(get->fileList[i].fileName, "ATT.BIN") == 0)
-		{
-			this_->m_saveBuffer.resize(get->fileList[i].st_size);
-			break;
-		}
-	}
-	if (i >= get->fileListNum)
-	{
-		log::error << L"Save data; no attachment in save game (2)" << Endl;
-		cbResult->result = CELL_SAVEDATA_CBRESULT_ERR_BROKEN;
-		return;
-	}
-
-	this_->m_saveBufferPending = true;
-
-	set->reCreateMode = CELL_SAVEDATA_RECREATE_NO_NOBROKEN;
-	set->setParam = 0;
-	set->indicator = 0;
-
-	cbResult->result = CELL_SAVEDATA_CBRESULT_OK_NEXT;
-}
-
-void SessionPsn::loadFileCallback(CellSaveDataCBResult* cbResult, CellSaveDataFileGet* get, CellSaveDataFileSet* set)
-{
-	SessionPsn* this_ = static_cast< SessionPsn* >(cbResult->userdata);
-	T_ASSERT (this_);
-
-	log::debug << L"Save data; load file callback" << Endl;
-
-	cbResult->progressBarInc = 50;
-
-	if (this_->m_saveBufferPending)
-	{
-		set->fileOperation = CELL_SAVEDATA_FILEOP_READ;
-		set->fileType = CELL_SAVEDATA_FILETYPE_NORMALFILE;
-		set->fileName = (char*)"ATT.BIN";
-		set->fileOffset = 0;
-		set->fileSize = this_->m_saveBuffer.size();
-		set->fileBufSize = this_->m_saveBuffer.size();
-		set->fileBuf = &this_->m_saveBuffer[0];
-		set->reserved = 0;
-
-		cbResult->result = CELL_SAVEDATA_CBRESULT_OK_NEXT;
-
-		this_->m_saveBufferPending = false;
-	}
-	else
-	{
-		// De-serialize attachment.
-		DynamicMemoryStream dms(this_->m_saveBuffer, true, false);
-		Ref< ISerializable > attachment = BinarySerializer(&dms).readObject();
-		if (attachment)
-		{
-			this_->m_saveGames.push_back(new SaveGamePsn(L"", attachment));
-			cbResult->result = CELL_SAVEDATA_CBRESULT_OK_LAST;
-		}
-		else
-		{
-			log::error << L"Save data; corrupt attachment" << Endl;
-			cbResult->result = CELL_SAVEDATA_CBRESULT_ERR_BROKEN;
-		}
-	}
-}
-
-void SessionPsn::saveStatCallback(CellSaveDataCBResult* cbResult, CellSaveDataStatGet* get, CellSaveDataStatSet* set)
-{
-	SessionPsn* this_ = static_cast< SessionPsn* >(cbResult->userdata);
-	T_ASSERT (this_);
-
-	log::debug << L"Save data; save stat callback" << Endl;
-
-	set->setParam = &get->getParam;
-	set->reCreateMode = CELL_SAVEDATA_RECREATE_YES;
-	set->indicator = 0;
-
-	if (get->isNewData)
-	{
-		strncpy(set->setParam->title, "Puzzle Dimension", CELL_SAVEDATA_SYSP_TITLE_SIZE);
-		strncpy(set->setParam->subTitle, "", CELL_SAVEDATA_SYSP_SUBTITLE_SIZE);
-		strncpy(set->setParam->detail, "", CELL_SAVEDATA_SYSP_DETAIL_SIZE);
-		strncpy(set->setParam->listParam, "", CELL_SAVEDATA_SYSP_LPARAM_SIZE);
-
-		set->setParam->attribute = CELL_SAVEDATA_ATTR_NORMAL;
-
-		std::memset(set->setParam->reserved, 0, sizeof(set->setParam->reserved));
-		std::memset(set->setParam->reserved2, 0, sizeof(set->setParam->reserved2));	
-	}
-
-	this_->m_saveBufferPending = true;
-
-	cbResult->result = CELL_SAVEDATA_CBRESULT_OK_NEXT;
-}
-
-void SessionPsn::saveFileCallback(CellSaveDataCBResult* cbResult, CellSaveDataFileGet* get, CellSaveDataFileSet* set)
-{
-	SessionPsn* this_ = static_cast< SessionPsn* >(cbResult->userdata);
-	T_ASSERT (this_);
-
-	log::debug << L"Save data; save file callback" << Endl;
-
-	if (this_->m_saveBufferPending)
-	{
-		set->fileOperation = CELL_SAVEDATA_FILEOP_WRITE;
-		set->fileType = CELL_SAVEDATA_FILETYPE_NORMALFILE;
-		set->fileName = (char*)"ATT.BIN";
-		set->fileOffset = 0;
-		set->fileSize = this_->m_saveBuffer.size();
-		set->fileBufSize = this_->m_saveBuffer.size();
-		set->fileBuf = &this_->m_saveBuffer[0];
-		set->reserved = 0;
-
-		cbResult->progressBarInc = 50;
-		cbResult->result = CELL_SAVEDATA_CBRESULT_OK_NEXT;
-
-		this_->m_saveBufferPending = false;
-	}
-	else
-	{
-		cbResult->progressBarInc = 50;
-		cbResult->result = CELL_SAVEDATA_CBRESULT_OK_LAST;
-	}
+	return m_saveGameQueue->getAvailableSaveGames(outSaveGames);
 }
 
 void SessionPsn::update()

@@ -10,7 +10,7 @@ struct Internal
 {
 	sys_mutex_t mutex;
 	sys_cond_t cond;
-	uint32_t count;
+	volatile uint32_t count;
 };
 	
 	}
@@ -53,7 +53,7 @@ void Event::pulse(int count)
 	
 	if (in->count)
 	{
-		if (count <= in->count)
+		if (count < in->count)
 			in->count -= count;
 		else
 			in->count = 0;
