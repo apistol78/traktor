@@ -301,7 +301,7 @@ void StateCachePs3::setProgram(
 		T_GCM_CALL(cellGcmSetVertexProgram)(gCellGcmCurrentContext, vertexProgram, vertexUCode);
 		m_vertexUCode = vertexUCode;
 	}
-	if (fragmentOffset != m_fragmentOffset || updateFragmentTextures)
+	if (fragmentOffset != m_fragmentOffset/* || updateFragmentTextures*/)
 	{
 		T_GCM_CALL(cellGcmSetFragmentProgram)(gCellGcmCurrentContext, fragmentProgram, fragmentOffset);
 		m_fragmentOffset = fragmentOffset;
