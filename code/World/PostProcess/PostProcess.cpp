@@ -74,7 +74,6 @@ void PostProcess::destroy()
 			i->first != PdtFrame &&
 			i->first != PdtSourceColor &&
 			i->first != PdtSourceDepth &&
-			i->first != PdtSourceVelocity &&
 			i->first != PdtSourceShadowMask
 		)
 			i->second->destroy();
@@ -92,7 +91,6 @@ bool PostProcess::render(
 	render::IRenderView* renderView,
 	render::RenderTargetSet* colorBuffer,
 	render::RenderTargetSet* depthBuffer,
-	render::RenderTargetSet* velocityBuffer,
 	render::RenderTargetSet* shadowMask,
 	const PostProcessStep::Instance::RenderParams& params
 )
@@ -101,7 +99,6 @@ bool PostProcess::render(
 
 	m_targets[PdtSourceColor] = colorBuffer;
 	m_targets[PdtSourceDepth] = depthBuffer;
-	m_targets[PdtSourceVelocity] = velocityBuffer;
 	m_targets[PdtSourceShadowMask] = shadowMask;
 	m_currentTarget = 0;
 
@@ -127,7 +124,6 @@ void PostProcess::setTarget(render::IRenderView* renderView, int32_t id)
 {
 	T_ASSERT_M(id != PdtSourceColor, L"Cannot bind source color buffer as output");
 	T_ASSERT_M(id != PdtSourceDepth, L"Cannot bind source depth buffer as output");
-	T_ASSERT_M(id != PdtSourceVelocity, L"Cannot bind source velocity buffer as output");
 	T_ASSERT_M(id != PdtSourceShadowMask, L"Cannot bind source shadow mask as output");
 
 	if (m_currentTarget)

@@ -13,12 +13,9 @@ namespace traktor
 bool s_handlesInitialized = false;
 render::handle_t s_handleDefaultTechnique;
 render::handle_t s_handleShadowTechnique;
-render::handle_t s_handleVelocityTechnique;
 render::handle_t s_handleProjection;
 render::handle_t s_handleView;
-render::handle_t s_handleViewPrevious;
 render::handle_t s_handleWorld;
-render::handle_t s_handleWorldPrevious;
 render::handle_t s_handleEyePosition;
 render::handle_t s_handleLightEnableComplex;
 render::handle_t s_handleLightPositionAndType;
@@ -42,7 +39,6 @@ WorldRenderView::WorldRenderView()
 :	m_technique(render::getParameterHandle(L"Default"))
 ,	m_projection(Matrix44::identity())
 ,	m_view(Matrix44::identity())
-,	m_viewPrevious(Matrix44::identity())
 ,	m_viewSize(0.0f, 0.0f)
 ,	m_eyePosition(0.0f, 0.0f, 0.0f, 1.0f)
 ,	m_lightCount(0)
@@ -67,13 +63,9 @@ WorldRenderView::WorldRenderView()
 	{
 		s_handleDefaultTechnique = render::getParameterHandle(L"Default");
 		s_handleShadowTechnique = render::getParameterHandle(L"Shadow");
-		s_handleVelocityTechnique = render::getParameterHandle(L"Velocity");
-
 		s_handleProjection = render::getParameterHandle(L"Projection");
 		s_handleView = render::getParameterHandle(L"View");
-		s_handleViewPrevious = render::getParameterHandle(L"ViewPrevious");
 		s_handleWorld = render::getParameterHandle(L"World");
-		s_handleWorldPrevious = render::getParameterHandle(L"WorldPrevious");
 		s_handleEyePosition = render::getParameterHandle(L"EyePosition");
 		s_handleLightEnableComplex = render::getParameterHandle(L"LightEnableComplex");
 		s_handleLightPositionAndType = render::getParameterHandle(L"LightPositionAndType");
@@ -113,7 +105,6 @@ void WorldRenderView::setProjection(const Matrix44& projection)
 
 void WorldRenderView::setView(const Matrix44& view)
 {
-	m_viewPrevious = m_view;
 	m_view = view;
 }
 
@@ -191,7 +182,7 @@ void WorldRenderView::setShaderCombination(render::Shader* shader) const
 	}
 }
 
-void WorldRenderView::setShaderCombination(render::Shader* shader, const Matrix44& world, const Matrix44& worldPrevious, const Aabb& bounds) const
+void WorldRenderView::setShaderCombination(render::Shader* shader, const Matrix44& world, const Aabb& bounds) const
 {
 	if (m_technique == s_handleDefaultTechnique)
 	{
@@ -234,7 +225,7 @@ void WorldRenderView::setShaderCombination(render::Shader* shader, const Matrix4
 
 void WorldRenderView::setProgramParameters(render::ProgramParameters* programParams) const
 {
-	setWorldProgramParameters(programParams, Matrix44::identity(), Matrix44::identity());
+	setWorldProgramParameters(programParams, Matrix44::identity());
 
 	// Set these parameters only if we're rendering using default technique.
 	if (m_technique == s_handleDefaultTechnique)
@@ -245,9 +236,9 @@ void WorldRenderView::setProgramParameters(render::ProgramParameters* programPar
 	}
 }
 
-void WorldRenderView::setProgramParameters(render::ProgramParameters* programParams, const Matrix44& world, const Matrix44& worldPrevious, const Aabb& bounds) const
+void WorldRenderView::setProgramParameters(render::ProgramParameters* programParams, const Matrix44& world, const Aabb& bounds) const
 {
-	setWorldProgramParameters(programParams, world, worldPrevious);
+	setWorldProgramParameters(programParams, world);
 
 	// Set these parameters only if we're rendering using default technique.
 	if (m_technique == s_handleDefaultTechnique)
@@ -258,7 +249,7 @@ void WorldRenderView::setProgramParameters(render::ProgramParameters* programPar
 	}
 }
 
-void WorldRenderView::setWorldProgramParameters(render::ProgramParameters* programParams, const Matrix44& world, const Matrix44& worldPrevious) const
+void WorldRenderView::setWorldProgramParameters(render::ProgramParameters* programParams, const Matrix44& world) const
 {
 	float viewSizeInvX = m_viewSize.x != 0.0f ? 1.0f / m_viewSize.x : 0.0f;
 	float viewSizeInvY = m_viewSize.y != 0.0f ? 1.0f / m_viewSize.y : 0.0f;
@@ -269,13 +260,6 @@ void WorldRenderView::setWorldProgramParameters(render::ProgramParameters* progr
 	programParams->setMatrixParameter(s_handleWorld, world);
 	programParams->setVectorParameter(s_handleEyePosition, m_eyePosition);
 	programParams->setFloatParameter(s_handleDepthRange, m_depthRange);
-
-	if (m_technique == s_handleVelocityTechnique)
-	{
-		// Write velocity map technique.
-		programParams->setMatrixParameter(s_handleViewPrevious, m_viewPrevious);
-		programParams->setMatrixParameter(s_handleWorldPrevious, worldPrevious);
-	}
 }
 
 void WorldRenderView::setLightProgramParameters(render::ProgramParameters* programParams) const

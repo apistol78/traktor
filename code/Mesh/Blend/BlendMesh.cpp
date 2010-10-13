@@ -282,7 +282,6 @@ void BlendMesh::render(
 		worldRenderView->setShaderCombination(
 			m_shader,
 			worldTransform.toMatrix44(),
-			worldTransform.toMatrix44(),
 			getBoundingBox()
 		);
 
@@ -303,7 +302,6 @@ void BlendMesh::render(
 		m_shader->setProgramParameters(renderBlock->programParams);
 		worldRenderView->setProgramParameters(
 			renderBlock->programParams,
-			worldTransform.toMatrix44(),
 			worldTransform.toMatrix44(),
 			getBoundingBox()
 		);

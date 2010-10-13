@@ -20,7 +20,6 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.ScenePipeline", 5, ScenePipeline,
 
 ScenePipeline::ScenePipeline()
 :	m_suppressDepthPass(false)
-,	m_suppressVelocity(false)
 ,	m_suppressShadows(false)
 ,	m_suppressPostProcess(false)
 ,	m_shadowMapSizeDenom(1)
@@ -30,7 +29,6 @@ ScenePipeline::ScenePipeline()
 bool ScenePipeline::create(const editor::IPipelineSettings* settings)
 {
 	m_suppressDepthPass = settings->getProperty< PropertyBoolean >(L"ScenePipeline.SuppressDepthPass");
-	m_suppressVelocity = settings->getProperty< PropertyBoolean >(L"ScenePipeline.SuppressVelocityPass");
 	m_suppressShadows = settings->getProperty< PropertyBoolean >(L"ScenePipeline.SuppressShadows");
 	m_suppressPostProcess = settings->getProperty< PropertyBoolean >(L"ScenePipeline.SuppressPostProcess");
 	m_shadowMapSizeDenom = settings->getProperty< PropertyBoolean >(L"ScenePipeline.ShadowMapSizeDenom");
@@ -83,11 +81,6 @@ bool ScenePipeline::buildOutput(
 	{
 		sceneResource->getWorldRenderSettings()->depthPassEnabled = false;
 		log::info << L"Depth pass suppressed" << Endl;
-	}
-	if (m_suppressVelocity && sceneResource->getWorldRenderSettings()->velocityPassEnable)
-	{
-		sceneResource->getWorldRenderSettings()->velocityPassEnable = false;
-		log::info << L"Velocity pass suppressed" << Endl;
 	}
 	if (m_suppressShadows && sceneResource->getWorldRenderSettings()->shadowsEnabled)
 	{

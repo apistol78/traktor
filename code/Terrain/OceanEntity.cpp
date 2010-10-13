@@ -144,7 +144,6 @@ void OceanEntity::render(render::RenderContext* renderContext, const world::Worl
 	worldRenderView->setProgramParameters(
 		renderBlock->programParams,
 		oceanWorld,
-		oceanWorld,	// @fixme
 		Aabb()
 	);
 

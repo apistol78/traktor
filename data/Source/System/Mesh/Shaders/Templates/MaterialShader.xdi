@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.External">
-			<comment></comment>
+		<item type="traktor.render.External" version="1">
+			<comment/>
 			<position>
 				<first>1261</first>
-				<second>524</second>
+				<second>525</second>
 			</position>
 			<fragmentGuid>{6DA4BE0A-BE19-4440-9B08-FC3FD1FFECDC}</fragmentGuid>
 			<inputPins>
 				<item>
 					<name>T_FragmentColor</name>
+					<optional>false</optional>
 				</item>
 				<item>
 					<name>T_ViewPosition</name>
-				</item>
-				<item>
-					<name>T_Velocity</name>
+					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins/>
+			<values/>
 		</item>
-		<item type="traktor.render.External">
-			<comment></comment>
+		<item type="traktor.render.External" version="1">
+			<comment/>
 			<position>
 				<first>924</first>
 				<second>391</second>
@@ -31,27 +31,35 @@
 			<inputPins>
 				<item>
 					<name>T_DiffuseTerm</name>
+					<optional>false</optional>
 				</item>
 				<item>
 					<name>T_EyeDirection</name>
+					<optional>false</optional>
 				</item>
 				<item>
 					<name>T_SpecularRoughness</name>
+					<optional>false</optional>
 				</item>
 				<item>
 					<name>T_SpecularTerm</name>
+					<optional>false</optional>
 				</item>
 				<item>
 					<name>T_ViewPosition</name>
+					<optional>false</optional>
 				</item>
 				<item>
 					<name>T_WorldNormal</name>
+					<optional>false</optional>
 				</item>
 				<item>
 					<name>T_WorldPosition</name>
+					<optional>false</optional>
 				</item>
 				<item>
 					<name>T_DiffuseColor</name>
+					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
@@ -59,9 +67,10 @@
 					<name>T_FragmentColor</name>
 				</item>
 			</outputPins>
+			<values/>
 		</item>
-		<item type="traktor.render.External">
-			<comment></comment>
+		<item type="traktor.render.External" version="1">
+			<comment/>
 			<position>
 				<first>405</first>
 				<second>115</second>
@@ -70,6 +79,7 @@
 			<inputPins>
 				<item>
 					<name>T_TexCoord</name>
+					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
@@ -80,9 +90,10 @@
 					<name>T_DiffuseTerm</name>
 				</item>
 			</outputPins>
+			<values/>
 		</item>
-		<item type="traktor.render.External">
-			<comment></comment>
+		<item type="traktor.render.External" version="1">
+			<comment/>
 			<position>
 				<first>368</first>
 				<second>194</second>
@@ -91,6 +102,7 @@
 			<inputPins>
 				<item>
 					<name>T_TexCoord</name>
+					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
@@ -101,9 +113,10 @@
 					<name>T_SpecularTerm</name>
 				</item>
 			</outputPins>
+			<values/>
 		</item>
-		<item type="traktor.render.External">
-			<comment></comment>
+		<item type="traktor.render.External" version="1">
+			<comment/>
 			<position>
 				<first>362</first>
 				<second>273</second>
@@ -112,18 +125,23 @@
 			<inputPins>
 				<item>
 					<name>T_TexCoord</name>
+					<optional>false</optional>
 				</item>
 				<item>
 					<name>T_WorldBinormal</name>
+					<optional>false</optional>
 				</item>
 				<item>
 					<name>T_WorldNormal</name>
+					<optional>false</optional>
 				</item>
 				<item>
 					<name>T_WorldPosition</name>
+					<optional>false</optional>
 				</item>
 				<item>
 					<name>T_WorldTangent</name>
+					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
@@ -140,9 +158,10 @@
 					<name>T_WorldTangent</name>
 				</item>
 			</outputPins>
+			<values/>
 		</item>
-		<item type="traktor.render.External">
-			<comment></comment>
+		<item type="traktor.render.External" version="1">
+			<comment/>
 			<position>
 				<first>-27</first>
 				<second>359</second>
@@ -183,10 +202,8 @@
 				<item>
 					<name>T_WorldTangent</name>
 				</item>
-				<item>
-					<name>T_Velocity</name>
-				</item>
 			</outputPins>
+			<values/>
 		</item>
 	</nodes>
 	<edges>
@@ -358,16 +375,6 @@
 			<destination>
 				<node ref="/object/nodes/item[4]"/>
 				<name>T_WorldTangent</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[5]"/>
-				<name>T_Velocity</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item"/>
-				<name>T_Velocity</name>
 			</destination>
 		</item>
 	</edges>

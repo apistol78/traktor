@@ -63,7 +63,6 @@ public:
 		render::RenderContext* renderContext,
 		const world::WorldRenderView* worldRenderView,
 		const Transform& worldTransform,
-		const Transform& worldTransformPrevious,
 		float distance,
 		float userParameter,
 		const IMeshParameterCallback* parameterCallback

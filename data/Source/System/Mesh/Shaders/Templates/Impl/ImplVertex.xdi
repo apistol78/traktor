@@ -2,7 +2,7 @@
 <object type="traktor.render.ShaderGraph">
 	<nodes>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>956</first>
 				<second>359</second>
@@ -10,7 +10,7 @@
 			<name>T_ViewPosition</name>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>956</first>
 				<second>388</second>
@@ -18,7 +18,7 @@
 			<name>T_ViewNormal</name>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>956</first>
 				<second>417</second>
@@ -26,7 +26,7 @@
 			<name>T_ViewTangent</name>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>956</first>
 				<second>446</second>
@@ -34,7 +34,7 @@
 			<name>T_ViewBinormal</name>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>956</first>
 				<second>475</second>
@@ -42,7 +42,7 @@
 			<name>T_WorldPosition</name>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>956</first>
 				<second>504</second>
@@ -50,7 +50,7 @@
 			<name>T_WorldNormal</name>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>956</first>
 				<second>533</second>
@@ -58,7 +58,7 @@
 			<name>T_WorldTangent</name>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>956</first>
 				<second>562</second>
@@ -66,7 +66,7 @@
 			<name>T_WorldBinormal</name>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>956</first>
 				<second>591</second>
@@ -74,7 +74,7 @@
 			<name>T_WorldEyeDirection</name>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>956</first>
 				<second>620</second>
@@ -82,23 +82,15 @@
 			<name>T_TexCoord</name>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>956</first>
 				<second>649</second>
 			</position>
 			<name>T_Color</name>
 		</item>
-		<item type="traktor.render.OutputPort">
-			<comment></comment>
-			<position>
-				<first>956</first>
-				<second>678</second>
-			</position>
-			<name>T_Velocity</name>
-		</item>
 		<item type="traktor.render.External" version="1">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>570</first>
 				<second>387</second>
@@ -117,9 +109,6 @@
 				</item>
 				<item>
 					<name>UserParameter</name>
-				</item>
-				<item>
-					<name>Velocity</name>
 				</item>
 				<item>
 					<name>ViewBinormal</name>
@@ -155,7 +144,7 @@
 	<edges>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[12]"/>
+				<node ref="/object/nodes/item[11]"/>
 				<name>Color</name>
 			</source>
 			<destination>
@@ -165,7 +154,7 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[12]"/>
+				<node ref="/object/nodes/item[11]"/>
 				<name>TexCoord</name>
 			</source>
 			<destination>
@@ -175,17 +164,7 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[12]"/>
-				<name>Velocity</name>
-			</source>
-			<destination>
 				<node ref="/object/nodes/item[11]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[12]"/>
 				<name>ViewBinormal</name>
 			</source>
 			<destination>
@@ -195,7 +174,7 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[12]"/>
+				<node ref="/object/nodes/item[11]"/>
 				<name>ViewNormal</name>
 			</source>
 			<destination>
@@ -205,7 +184,7 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[12]"/>
+				<node ref="/object/nodes/item[11]"/>
 				<name>ViewPosition</name>
 			</source>
 			<destination>
@@ -215,7 +194,7 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[12]"/>
+				<node ref="/object/nodes/item[11]"/>
 				<name>ViewTangent</name>
 			</source>
 			<destination>
@@ -225,7 +204,7 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[12]"/>
+				<node ref="/object/nodes/item[11]"/>
 				<name>WorldBinormal</name>
 			</source>
 			<destination>
@@ -235,7 +214,7 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[12]"/>
+				<node ref="/object/nodes/item[11]"/>
 				<name>WorldEyeDirection</name>
 			</source>
 			<destination>
@@ -245,7 +224,7 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[12]"/>
+				<node ref="/object/nodes/item[11]"/>
 				<name>WorldNormal</name>
 			</source>
 			<destination>
@@ -255,7 +234,7 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[12]"/>
+				<node ref="/object/nodes/item[11]"/>
 				<name>WorldPosition</name>
 			</source>
 			<destination>
@@ -265,7 +244,7 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[12]"/>
+				<node ref="/object/nodes/item[11]"/>
 				<name>WorldTangent</name>
 			</source>
 			<destination>

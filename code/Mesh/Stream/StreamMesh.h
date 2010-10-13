@@ -67,7 +67,6 @@ public:
 		render::RenderContext* renderContext,
 		const world::WorldRenderView* worldRenderView,
 		const Transform& worldTransform,
-		const Transform& worldTransformPrevious,
 		Instance* instance,
 		uint32_t frame,
 		float distance,

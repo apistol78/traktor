@@ -30,7 +30,6 @@ void PartitionMeshEntity::render(world::WorldContext* worldContext, world::World
 		worldContext->getRenderContext(),
 		worldRenderView,
 		getTransform(worldRenderView->getInterval()),
-		m_transformPrevious,
 		distance,
 		getUserParameter(),
 		getParameterCallback()

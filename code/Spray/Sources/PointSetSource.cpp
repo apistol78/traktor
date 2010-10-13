@@ -46,6 +46,8 @@ void PointSetSource::emit(
 	if (points.empty())
 		return;
 
+	emitterInstance.reservePoints(points.size());
+
 	for (uint32_t i = 0; i < uint32_t(points.size()); ++i)
 	{
 		Vector4 position = transform * (points[i].position + m_offset).xyz1();

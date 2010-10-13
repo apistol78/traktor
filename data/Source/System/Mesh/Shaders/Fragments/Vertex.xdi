@@ -2,7 +2,7 @@
 <object type="traktor.render.ShaderGraph">
 	<nodes>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>148</first>
 				<second>677</second>
@@ -10,7 +10,7 @@
 			<name>UserParameter</name>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>148</first>
 				<second>280</second>
@@ -18,7 +18,7 @@
 			<name>ViewBinormal</name>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>148</first>
 				<second>226</second>
@@ -26,7 +26,7 @@
 			<name>ViewNormal</name>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>148</first>
 				<second>435</second>
@@ -34,7 +34,7 @@
 			<name>WorldBinormal</name>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>148</first>
 				<second>553</second>
@@ -42,7 +42,7 @@
 			<name>TexCoord</name>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>148</first>
 				<second>407</second>
@@ -50,7 +50,7 @@
 			<name>WorldTangent</name>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>148</first>
 				<second>379</second>
@@ -58,7 +58,7 @@
 			<name>WorldNormal</name>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>148</first>
 				<second>351</second>
@@ -66,7 +66,7 @@
 			<name>WorldPosition</name>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>148</first>
 				<second>253</second>
@@ -74,7 +74,7 @@
 			<name>ViewTangent</name>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>148</first>
 				<second>199</second>
@@ -82,7 +82,11 @@
 			<name>ViewPosition</name>
 		</item>
 		<item type="traktor.render.Scalar">
-			<comment>This fragment is just a placeholder for an appropriate vertex fragment; it&apos;s automatically replaced in MeshPipeline</comment>
+			<comment>
+			<![CDATA[
+This fragment is just a placeholder for an appropriate vertex fragment; it's automatically replaced in MeshPipeline
+			]]>
+			</comment>
 			<position>
 				<first>25</first>
 				<second>122</second>
@@ -90,7 +94,7 @@
 			<value>0</value>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>148</first>
 				<second>522</second>
@@ -98,7 +102,7 @@
 			<name>WorldEyeDirection</name>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>148</first>
 				<second>725</second>
@@ -106,15 +110,7 @@
 			<name>Color</name>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
-			<position>
-				<first>148</first>
-				<second>754</second>
-			</position>
-			<name>Velocity</name>
-		</item>
-		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>148</first>
 				<second>580</second>
@@ -250,16 +246,6 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[13]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[10]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[14]"/>
 				<name>Input</name>
 			</destination>
 		</item>

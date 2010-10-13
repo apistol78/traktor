@@ -47,7 +47,6 @@ void StreamMeshEntity::render(world::WorldContext* worldContext, world::WorldRen
 		worldContext->getRenderContext(),
 		worldRenderView,
 		getTransform(worldRenderView->getInterval()),
-		m_transformPrevious,
 		m_instance,
 		m_frame,
 		distance,
