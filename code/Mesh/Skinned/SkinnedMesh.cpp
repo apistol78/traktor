@@ -56,7 +56,6 @@ void SkinnedMesh::render(
 		worldRenderView->setShaderCombination(
 			m_shader,
 			worldTransform.toMatrix44(),
-			worldTransform.toMatrix44(),
 			getBoundingBox()
 		);
 
@@ -78,7 +77,6 @@ void SkinnedMesh::render(
 		worldRenderView->setProgramParameters(
 			renderBlock->programParams,
 			worldTransform.toMatrix44(),
-			worldTransform.toMatrix44(),	// \fixme
 			getBoundingBox()
 		);
 		if (parameterCallback)

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.External">
-			<comment></comment>
+		<item type="traktor.render.External" version="1">
+			<comment/>
 			<position>
 				<first>456</first>
 				<second>308</second>
@@ -11,12 +11,14 @@
 			<inputPins>
 				<item>
 					<name>ViewPosition</name>
+					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins/>
+			<values/>
 		</item>
-		<item type="traktor.render.External">
-			<comment></comment>
+		<item type="traktor.render.External" version="1">
+			<comment/>
 			<position>
 				<first>456</first>
 				<second>371</second>
@@ -25,42 +27,22 @@
 			<inputPins>
 				<item>
 					<name>ViewPosition</name>
+					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins/>
+			<values/>
 		</item>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
 			<position>
 				<first>258</first>
 				<second>353</second>
 			</position>
 			<name>ViewPosition</name>
-		</item>
-		<item type="traktor.render.External">
-			<comment></comment>
-			<position>
-				<first>456</first>
-				<second>431</second>
-			</position>
-			<fragmentGuid>{69C3F979-FDDE-BD42-83E9-1381DAB63266}</fragmentGuid>
-			<inputPins>
-				<item>
-					<name>ViewPosition</name>
-				</item>
-				<item>
-					<name>Velocity</name>
-				</item>
-			</inputPins>
-			<outputPins/>
-		</item>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
-			<position>
-				<first>259</first>
-				<second>428</second>
-			</position>
-			<name>Velocity</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
 	</nodes>
 	<edges>
@@ -82,26 +64,6 @@
 			<destination>
 				<node ref="/object/nodes/item[1]"/>
 				<name>ViewPosition</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[2]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[3]"/>
-				<name>ViewPosition</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[4]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[3]"/>
-				<name>Velocity</name>
 			</destination>
 		</item>
 	</edges>

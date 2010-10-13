@@ -116,7 +116,6 @@ void InstanceMesh::render(render::RenderContext* renderContext, const world::Wor
 		worldRenderView->setShaderCombination(
 			m_shader,
 			boundingBoxCenter,
-			boundingBoxCenter,
 			boundingBoxWorld
 		);
 
@@ -149,7 +148,6 @@ void InstanceMesh::render(render::RenderContext* renderContext, const world::Wor
 			worldRenderView->setProgramParameters(
 				renderBlock->programParams,
 				boundingBoxCenter,
-				boundingBoxCenter,
 				boundingBoxWorld
 			);
 			renderBlock->programParams->setVectorArrayParameter(
@@ -180,9 +178,8 @@ void InstanceMesh::render(render::RenderContext* renderContext, const world::Wor
 			worldRenderView->setShaderCombination(
 				m_shader,
 				boundingBoxCenter,
-				boundingBoxCenter,
 				boundingBoxWorld
-				);
+			);
 
 			render::IProgram* program = m_shader->getCurrentProgram();
 			if (!program)

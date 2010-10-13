@@ -50,7 +50,6 @@ class PostProcessSettings;
  * 0  - Frame buffer, write only.
  * -1 - Source color buffer, read only.
  * -2 - Source depth buffer, read only.
- * -3 - Source velocity buffer, read only.
  * -4 - Source shadow mask, read only.
  */
 class T_DLLCLASS PostProcess : public Object
@@ -63,7 +62,6 @@ public:
 		PdtFrame = 0,
 		PdtSourceColor = -1,
 		PdtSourceDepth = -2,
-		PdtSourceVelocity = -3,
 		PdtSourceShadowMask = -4
 	};
 
@@ -83,7 +81,6 @@ public:
 		render::IRenderView* renderView,
 		render::RenderTargetSet* colorBuffer,
 		render::RenderTargetSet* depthBuffer,
-		render::RenderTargetSet* velocityBuffer,
 		render::RenderTargetSet* shadowMask,
 		const PostProcessStep::Instance::RenderParams& params
 	);

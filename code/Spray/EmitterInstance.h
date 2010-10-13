@@ -50,6 +50,8 @@ public:
 
 	inline float getTotalTime() const { return m_totalTime; }
 
+	inline void reservePoints(uint32_t npoints) { m_points.reserve(m_points.size() + npoints); }
+
 	inline void addPoint(const Point& point) { m_points.push_back(point); m_emitted++; }
 
 	inline const PointVector& getPoints() const { return m_points; }

@@ -160,16 +160,13 @@ void EmitterInstance::update(EmitterUpdateContext& context, const Transform& tra
 			{
 				// Single shot emit; emit all particles in one frame and then no more.
 				uint32_t emitCount = std::min< uint32_t >(uint32_t(source->getRate()), c_maxEmitSingleShot);
-				if (emitCount > 0)
-				{
-					m_points.reserve(size + emitCount);
-					source->emit(
-						context,
-						transform,
-						emitCount,
-						*this
-					);
-				}
+				m_points.reserve(size + emitCount);
+				source->emit(
+					context,
+					transform,
+					emitCount,
+					*this
+				);
 			}
 		}
 	}
@@ -198,11 +195,11 @@ void EmitterInstance::update(EmitterUpdateContext& context, const Transform& tra
 		{
 			if (*i)
 				(*i)->update(
-				jobQueue,
-				Scalar(context.deltaTime),
-				transform,
-				m_points
-			);
+					jobQueue,
+					Scalar(context.deltaTime),
+					transform,
+					m_points
+				);
 		}
 	}
 #else

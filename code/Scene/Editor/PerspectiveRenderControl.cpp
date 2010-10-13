@@ -662,7 +662,7 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 		{
 			m_worldRenderer->build(m_worldRenderView, rootEntity, 0);
 			m_worldRenderer->render(
-				world::WrfDepthMap | world::WrfVelocityMap | world::WrfShadowMap,
+				world::WrfDepthMap | world::WrfShadowMap,
 				0,
 				render::EtCyclop
 			);
@@ -702,7 +702,6 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 					m_renderView,
 					m_renderTarget,
 					m_worldRenderer->getDepthTargetSet(),
-					m_worldRenderer->getVelocityTargetSet(),
 					m_worldRenderer->getShadowMaskTargetSet(),
 					params
 				);

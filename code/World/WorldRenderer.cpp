@@ -41,7 +41,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.WorldRenderer", WorldRenderer, Object)
 render::handle_t WorldRenderer::ms_techniqueDefault = 0;
 render::handle_t WorldRenderer::ms_techniqueDepth = 0;
 render::handle_t WorldRenderer::ms_techniqueShadow = 0;
-render::handle_t WorldRenderer::ms_techniqueVelocity = 0;
 render::handle_t WorldRenderer::ms_handleProjection = 0;
 
 WorldRenderer::WorldRenderer()
@@ -51,7 +50,6 @@ WorldRenderer::WorldRenderer()
 	ms_techniqueDefault = render::getParameterHandle(L"Default");
 	ms_techniqueDepth = render::getParameterHandle(L"Depth");
 	ms_techniqueShadow = render::getParameterHandle(L"Shadow");
-	ms_techniqueVelocity = render::getParameterHandle(L"Velocity");
 	ms_handleProjection = render::getParameterHandle(L"Projection");
 }
 
@@ -107,28 +105,6 @@ bool WorldRenderer::create(
 		{
 			log::warning << L"Unable to create depth render target; depth disabled" << Endl;
 			m_settings.depthPassEnabled = false;
-		}
-	}
-
-	// Create "velocity map" target.
-	if (m_settings.velocityPassEnable)
-	{
-		render::RenderTargetSetCreateDesc desc;
-
-		desc.count = 2;
-		desc.width = width;
-		desc.height = height;
-		desc.multiSample = multiSample;
-		desc.depthStencil = false;
-		desc.preferTiled = true;
-		desc.targets[0].format = render::TfR16G16B16A16F;
-		desc.targets[1].format = render::TfR16G16B16A16F;
-
-		m_velocityTargetSet = renderSystem->createRenderTargetSet(desc);
-		if (!m_velocityTargetSet)
-		{
-			log::warning << L"Unable to create velocity render target; velocity disabled" << Endl;
-			m_settings.velocityPassEnable = false;
 		}
 	}
 
@@ -243,13 +219,6 @@ bool WorldRenderer::create(
 			i->depth = new WorldContext(this, entityRenderers);
 	}
 
-	// Allocate "velocity" context.
-	if (m_settings.velocityPassEnable)
-	{
-		for (AlignedVector< Frame >::iterator i = m_frames.begin(); i != m_frames.end(); ++i)
-			i->velocity = new WorldContext(this, entityRenderers);
-	}
-
 	// Allocate "shadow" contexts for each slice.
 	if (m_settings.shadowsEnabled)
 	{
@@ -275,7 +244,6 @@ void WorldRenderer::destroy()
 	{
 		i->shadow = 0;
 		i->visual = 0;
-		i->velocity = 0;
 		i->depth = 0;
 	}
 
@@ -285,7 +253,6 @@ void WorldRenderer::destroy()
 	safeDestroy(m_shadowMaskProjection);
 	safeDestroy(m_shadowMaskTargetSet);
 	safeDestroy(m_shadowTargetSet);
-	safeDestroy(m_velocityTargetSet);
 	safeDestroy(m_depthTargetSet);
 
 	m_renderView = 0;
@@ -329,9 +296,6 @@ void WorldRenderer::build(WorldRenderView& worldRenderView, Entity* entity, int 
 	if (f.haveDepth)
 		f.depth->getRenderContext()->flush();
 
-	if (f.haveVelocity)
-		f.velocity->getRenderContext()->flush();
-
 	if (f.haveShadows)
 		f.shadow->getRenderContext()->flush();
 
@@ -349,19 +313,6 @@ void WorldRenderer::build(WorldRenderView& worldRenderView, Entity* entity, int 
 	}
 	else
 		f.haveDepth = false;
-
-	if (m_settings.velocityPassEnable)
-	{
-		f.velocityRenderView = worldRenderView;
-		f.velocityRenderView.setTechnique(ms_techniqueVelocity);
-
-		f.velocity->build(&f.velocityRenderView, entity);
-		f.velocity->flush(&f.velocityRenderView);
-
-		f.haveVelocity = true;
-	}
-	else
-		f.haveVelocity = false;
 
 	if (m_settings.shadowsEnabled)
 		buildShadows(worldRenderView, entity, frame);
@@ -443,22 +394,6 @@ void WorldRenderer::render(uint32_t flags, int frame, render::EyeType eye)
 		m_renderView->clear(render::CfDepth, nullColor, 1.0f, 0);
 	}
 
-	// Render velocity map.
-	if ((flags & WrfVelocityMap) != 0 && f.haveVelocity)
-	{
-		m_velocityTargetSet->swap(0, 1);
-
-		T_RENDER_PUSH_MARKER(m_renderView, "World: Velocity");
-		if (m_renderView->begin(m_velocityTargetSet, 0, true))
-		{
-			const float velocityColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
-			m_renderView->clear(render::CfColor, velocityColor, 1.0f, 0);
-			f.velocity->getRenderContext()->render(m_renderView, render::RfOpaque, &programParams);
-			m_renderView->end();
-		}
-		T_RENDER_POP_MARKER(m_renderView);
-	}
-
 	// Render shadow mask.
 	if ((flags & WrfShadowMap) != 0 && f.haveShadows)
 	{
@@ -479,7 +414,6 @@ void WorldRenderer::render(uint32_t flags, int frame, render::EyeType eye)
 				m_renderView,
 				m_shadowTargetSet,
 				m_depthTargetSet,
-				0,
 				0,
 				params
 			);

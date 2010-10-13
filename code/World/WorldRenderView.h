@@ -96,7 +96,7 @@ public:
 
 	void setShaderCombination(render::Shader* shader) const;
 
-	void setShaderCombination(render::Shader* shader, const Matrix44& world, const Matrix44& worldPrevious, const Aabb& bounds) const;
+	void setShaderCombination(render::Shader* shader, const Matrix44& world, const Aabb& bounds) const;
 
 	/*! \brief Set program parameters defined by world renderer.
 	 *
@@ -108,10 +108,9 @@ public:
 	 *
 	 * \param programParams Pointer to program parameter container.
 	 * \param world Entity world transform.
-	 * \param worldPrevious Entity previous world transform.
 	 * \param bounds Entity bounds in object space.
 	 */
-	void setProgramParameters(render::ProgramParameters* programParams, const Matrix44& world, const Matrix44& worldPrevious, const Aabb& bounds) const;
+	void setProgramParameters(render::ProgramParameters* programParams, const Matrix44& world, const Aabb& bounds) const;
 
 	T_FORCE_INLINE render::handle_t getTechnique() const {
 		return m_technique;
@@ -131,10 +130,6 @@ public:
 
 	T_FORCE_INLINE const Matrix44& getView() const {
 		return m_view;
-	}
-
-	T_FORCE_INLINE const Matrix44& getViewPrevious() const {
-		return m_viewPrevious;
 	}
 
 	T_FORCE_INLINE const Vector2& getViewSize() const {
@@ -179,7 +174,6 @@ private:
 	Frustum m_cullFrustum;
 	Matrix44 m_projection;
 	Matrix44 m_view;
-	Matrix44 m_viewPrevious;
 	Vector2 m_viewSize;
 	Vector4 m_eyePosition;
 	Light m_lights[MaxLightCount];
@@ -193,7 +187,7 @@ private:
 	float m_deltaTime;
 	float m_interval;
 
-	void setWorldProgramParameters(render::ProgramParameters* programParams, const Matrix44& world, const Matrix44& worldPrevious) const;
+	void setWorldProgramParameters(render::ProgramParameters* programParams, const Matrix44& world) const;
 
 	void setLightProgramParameters(render::ProgramParameters* programParams) const;
 

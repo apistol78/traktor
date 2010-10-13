@@ -35,7 +35,6 @@ void PartitionMesh::render(
 	render::RenderContext* renderContext,
 	const world::WorldRenderView* worldRenderView,
 	const Transform& worldTransform,
-	const Transform& worldTransformPrevious,
 	float distance,
 	float userParameter,
 	const IMeshParameterCallback* parameterCallback
@@ -68,7 +67,6 @@ void PartitionMesh::render(
 		worldRenderView->setShaderCombination(
 			m_shader,
 			worldTransform.toMatrix44(),
-			worldTransformPrevious.toMatrix44(),
 			getBoundingBox()
 		);
 
@@ -97,7 +95,6 @@ void PartitionMesh::render(
 		worldRenderView->setProgramParameters(
 			renderBlock->programParams,
 			worldTransform.toMatrix44(),
-			worldTransformPrevious.toMatrix44(),
 			getBoundingBox()
 		);
 		renderBlock->programParams->setFloatParameter(s_handleUserParameter, userParameter);

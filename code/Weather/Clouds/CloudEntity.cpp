@@ -514,7 +514,7 @@ void CloudEntity::renderCluster(
 		renderBlock->programParams->beginParameters(renderContext);
 
 		m_impostorShader->setProgramParameters(renderBlock->programParams);
-		worldRenderView->setProgramParameters(renderBlock->programParams, m_transform.toMatrix44(), Matrix44::identity(), clusterBoundingBox);
+		worldRenderView->setProgramParameters(renderBlock->programParams, m_transform.toMatrix44(), clusterBoundingBox);
 
 		renderBlock->programParams->setMatrixParameter(L"View", billboardView);
 		renderBlock->programParams->setFloatParameter(L"SliceDistance", sliceDistance);

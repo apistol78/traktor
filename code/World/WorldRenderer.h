@@ -87,9 +87,8 @@ enum WorldRenderFlags
 {
 	WrfDepthMap = 1,
 	WrfShadowMap = 2,
-	WrfVelocityMap = 4,
-	WrfVisualOpaque = 8,
-	WrfVisualAlphaBlend = 16
+	WrfVisualOpaque = 4,
+	WrfVisualAlphaBlend = 8
 };
 
 /*! \brief World renderer.
@@ -167,20 +166,12 @@ public:
 		return ms_techniqueDepth;
 	}
 
-	static render::handle_t getTechniqueVelocity() {
-		return ms_techniqueVelocity;
-	}
-
 	static render::handle_t getTechniqueShadow() {
 		return ms_techniqueShadow;
 	}
 
 	render::RenderTargetSet* getDepthTargetSet() const {
 		return m_depthTargetSet;
-	}
-
-	render::RenderTargetSet* getVelocityTargetSet() const {
-		return m_velocityTargetSet;
 	}
 
 	render::RenderTargetSet* getShadowTargetSet() const {
@@ -194,13 +185,11 @@ public:
 private:
 	struct Frame
 	{
+		Ref< WorldContext > depth;
 		Ref< WorldContext > shadow;
 		Ref< WorldContext > visual;
-		Ref< WorldContext > velocity;
-		Ref< WorldContext > depth;
 
 		WorldRenderView depthRenderView;
-		WorldRenderView velocityRenderView;
 		WorldRenderView shadowRenderView;
 
 		Matrix44 projection;
@@ -208,12 +197,10 @@ private:
 		Frustum viewFrustum;
 
 		bool haveDepth;
-		bool haveVelocity;
 		bool haveShadows;
 
 		Frame()
 		:	haveDepth(false)
-		,	haveVelocity(false)
 		,	haveShadows(false)
 		{
 		}
@@ -221,7 +208,6 @@ private:
 
 	static render::handle_t ms_techniqueDefault;
 	static render::handle_t ms_techniqueDepth;
-	static render::handle_t ms_techniqueVelocity;
 	static render::handle_t ms_techniqueShadow;
 	static render::handle_t ms_handleTime;
 	static render::handle_t ms_handleProjection;
@@ -229,7 +215,6 @@ private:
 	WorldRenderSettings m_settings;
 	Ref< render::IRenderView > m_renderView;
 	Ref< render::RenderTargetSet > m_depthTargetSet;
-	Ref< render::RenderTargetSet > m_velocityTargetSet;
 	Ref< render::RenderTargetSet > m_shadowTargetSet;
 	Ref< render::RenderTargetSet > m_shadowMaskTargetSet;
 	Ref< render::ISimpleTexture > m_shadowDiscRotation[2];

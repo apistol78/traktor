@@ -48,7 +48,6 @@ public:
 
 private:
 	bool m_suppressDepthPass;
-	bool m_suppressVelocity;
 	bool m_suppressShadows;
 	bool m_suppressPostProcess;
 	int32_t m_shadowMapSizeDenom;
