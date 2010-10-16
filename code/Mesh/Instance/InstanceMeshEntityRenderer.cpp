@@ -59,7 +59,7 @@ void InstanceMeshEntityRenderer::flush(
 	world::WorldRenderView* worldRenderView
 )
 {
-	for (std::map< Ref< InstanceMesh >, AlignedVector< InstanceMesh::instance_distance_t > >::iterator i = m_meshInstances.begin(); i != m_meshInstances.end(); ++i)
+	for (std::map< InstanceMesh*, AlignedVector< InstanceMesh::instance_distance_t > >::iterator i = m_meshInstances.begin(); i != m_meshInstances.end(); ++i)
 	{
 		if (i->second.empty())
 			continue;

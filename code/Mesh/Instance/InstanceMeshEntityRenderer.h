@@ -39,7 +39,7 @@ public:
 	);
 
 private:
-	std::map< Ref< InstanceMesh >, AlignedVector< InstanceMesh::instance_distance_t > > m_meshInstances;
+	std::map< InstanceMesh*, AlignedVector< InstanceMesh::instance_distance_t > > m_meshInstances;
 };
 
 	}

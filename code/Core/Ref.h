@@ -1,7 +1,7 @@
 #ifndef traktor_Ref_H
 #define traktor_Ref_H
 
-#include "Core/IRefCount.h"
+#include "Core/InplaceRef.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -17,16 +17,23 @@ namespace traktor
 /*! \brief Single object reference container.
  * \ingroup Core
  */
-template < typename Class >
+template < typename ClassType >
 class Ref
 {
 public:
-	typedef Class* value_type;
-	typedef value_type pointer;
+	typedef ClassType* value_type;
+	typedef ClassType* pointer;
+	typedef ClassType& reference;
 
 	Ref()
 	:	m_ptr(0)
 	{
+	}
+	
+	Ref(const Ref& ref)
+	:	m_ptr(ref.m_ptr)
+	{
+		T_SAFE_ADDREF(m_ptr);
 	}
 
 	Ref(pointer ptr)
@@ -35,15 +42,16 @@ public:
 		T_SAFE_ADDREF(m_ptr);
 	}
 
-	Ref(const Ref& ref)
-	:	m_ptr(ref.m_ptr)
+	template < typename RefClassType >
+	Ref(const Ref< RefClassType >& ref)
+	:	m_ptr(static_cast< pointer >(ref))
 	{
 		T_SAFE_ADDREF(m_ptr);
 	}
 
-	template < typename ArgumentClass >
-	Ref(const Ref< ArgumentClass >& ref)
-	:	m_ptr(ref.ptr())
+	template < typename InplaceClassType >
+	Ref(const InplaceRef< InplaceClassType >& ref)
+	:	m_ptr(static_cast< pointer >(ref))
 	{
 		T_SAFE_ADDREF(m_ptr);
 	}
@@ -77,11 +85,31 @@ public:
 	{
 		return m_ptr;
 	}
+	
+	const pointer c_ptr() const
+	{
+		return m_ptr;
+	}
 
 	// \name Dereference operators
 	// @{
 
-	pointer operator -> () const
+	reference operator * ()
+	{
+		return *m_ptr;
+	}
+	
+	const reference operator * () const
+	{
+		return *m_ptr;
+	}
+	
+	pointer operator -> ()
+	{
+		return m_ptr;
+	}
+	
+	const pointer operator -> () const
 	{
 		return m_ptr;
 	}
@@ -91,15 +119,30 @@ public:
 	// \name Assignment operator.
 	// @{
 
-	//Ref& operator = (pointer ptr)
-	//{
-	//	replace(ptr);
-	//	return *this;
-	//}
 
 	Ref& operator = (const Ref& ref)
 	{
 		replace(ref.m_ptr);
+		return *this;
+	}
+
+	Ref& operator = (pointer ptr)
+	{
+		replace(ptr);
+		return *this;
+	}
+
+	template < typename RefClassType >
+	Ref& operator = (const Ref< RefClassType >& ref)
+	{
+		replace(static_cast< pointer >(ref));
+		return *this;
+	}
+	
+	template < typename InplaceClassType >
+	Ref& operator = (const InplaceRef< InplaceClassType >& ref)
+	{
+		replace(static_cast< pointer >(ref));
 		return *this;
 	}
 
@@ -108,7 +151,12 @@ public:
 	// \name Cast operators.
 	// @{
 
-	operator pointer () const
+	operator pointer ()
+	{
+		return m_ptr;
+	}
+	
+	operator const pointer () const
 	{
 		return m_ptr;
 	}
