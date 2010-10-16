@@ -2,7 +2,7 @@
 #define traktor_RefArray_H
 
 #include <algorithm>
-#include "Core/Ref.h"
+#include "Core/InplaceRef.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -18,7 +18,7 @@ namespace traktor
 /*! \brief Object array reference container.
  * \ingroup Core
  */
-template < typename Class >
+template < typename ClassType >
 class RefArray
 {
 	enum
@@ -27,98 +27,11 @@ class RefArray
 	};
 
 public:
-	typedef Class* value_type;
-	typedef value_type pointer;
+	typedef ClassType* value_type;
+	typedef ClassType* pointer;
+	typedef ClassType& reference;
 	typedef int32_t difference_type;
 	typedef size_t size_type;
-
-	/*! \brief In-place reference handle. */
-	template < typename HandleClass >
-	class Handle
-	{
-	public:
-		Handle(pointer& ptr, void* owner)
-		:	m_ptr(ptr)
-		,	m_owner(owner)
-		{
-		}
-
-		void replace(pointer ptr)
-		{
-			T_SAFE_EXPLICIT_ADDREF(ptr, m_owner);
-			T_SAFE_EXPLICIT_RELEASE(m_ptr, m_owner);
-			m_ptr = ptr;
-		}
-
-		pointer ptr() const
-		{
-			return m_ptr;
-		}
-
-		// \name Dereference operators
-		// @{
-
-		pointer operator -> () const
-		{
-			return m_ptr;
-		}
-
-		// @}
-
-		// \name Assign operators
-		// @{
-
-		Handle< Class >& operator = (pointer ptr)
-		{
-			replace(ptr);
-			return *this;
-		}
-		
-		Handle< Class >& operator = (const Handle< Class >& href)
-		{
-			replace(href.m_ptr);
-			return *this;
-		}
-
-		template < typename ArgumentClass >
-		Handle< Class >& operator = (const Ref< ArgumentClass >& ref)
-		{
-			replace(ref.ptr());
-			return *this;
-		}
-
-		// @}
-
-		// \name Cast operators
-		// @{
-
-		operator HandleClass* () const
-		{
-			return m_ptr;
-		}
-
-		template < typename ReturnClass >
-		operator Ref< ReturnClass > () const
-		{
-			return Ref< ReturnClass >(static_cast< ReturnClass* >(m_ptr));
-		}
-
-		// @}
-
-		// \name Compare operators
-		// @{
-
-		bool operator < (const Handle& rh) const
-		{
-			return m_ptr < rh.m_ptr;
-		}
-
-		// @}
-
-	private:
-		pointer& m_ptr;
-		void* m_owner;
-	};
 
 	/*! \brief Constant iterator. */
 	class const_iterator
@@ -144,12 +57,22 @@ public:
 		{
 		}
 
-		reference operator * () const
+		reference operator * ()
 		{
 			return *m_item;
 		}
 
-		pointer operator -> () const
+		const reference operator * () const
+		{
+			return *m_item;
+		}
+		
+		pointer operator -> ()
+		{
+			return *m_item;
+		}
+
+		const pointer operator -> () const
 		{
 			return *m_item;
 		}
@@ -257,9 +180,9 @@ public:
 		{
 		}
 
-		Handle< Class > operator * ()
+		InplaceRef< ClassType > operator * ()
 		{
-			return Handle< Class >(*_O::m_item, m_owner);
+			return InplaceRef< ClassType >(*_O::m_item);
 		}
 
 		pointer operator -> ()
@@ -357,7 +280,7 @@ public:
 	}
 
 	/*! \brief Copy array. */
-	RefArray(const RefArray< Class >& s)
+	RefArray(const RefArray< ClassType >& s)
 	{
 		m_items = new value_type [s.m_size];
 		m_size = s.m_size;
@@ -385,7 +308,7 @@ public:
 		for (size_type i = 0; i < m_size; ++i)
 			T_SAFE_RELEASE(m_items[i]);
 
-		delete[] m_items, m_items = 0;
+		delete[] m_items; m_items = 0;
 		m_size = 0;
 		m_capacity = 0;
 	}
@@ -415,35 +338,35 @@ public:
 	}
 
 	/*! \brief Get front element. */
-	Class* front()
+	ClassType* front()
 	{
 		T_ASSERT (m_items);
 		return m_items[0];
 	}
 
 	/*! \brief Get back element. */
-	Class* back()
+	ClassType* back()
 	{
 		T_ASSERT (m_items);
 		return m_items[m_size - 1];
 	}
 
 	/*! \brief Get front element. */
-	const Class* front() const
+	const ClassType* front() const
 	{
 		T_ASSERT (m_items);
 		return m_items[0];
 	}
 
 	/*! \brief Get back element. */
-	const Class* back() const
+	const ClassType* back() const
 	{
 		T_ASSERT (m_items);
 		return m_items[m_size - 1];
 	}
 
 	/*! \brief Push element as front. */
-	void push_front(Class* const val)
+	void push_front(ClassType* const val)
 	{
 		T_SAFE_ADDREF(val);
 		grow(1);
@@ -462,7 +385,7 @@ public:
 	}
 
 	/*! \brief Push element as back. */
-	void push_back(Class* const val)
+	void push_back(ClassType* const val)
 	{
 		T_SAFE_ADDREF(val);
 		grow(1);
@@ -477,7 +400,7 @@ public:
 	}
 
 	/*! \brief Insert element at specified location. */
-	void insert(iterator at, Class* const val)
+	void insert(iterator at, ClassType* const val)
 	{
 		T_SAFE_ADDREF(val);
 
@@ -566,7 +489,7 @@ public:
 	}
 
 	/*! \brief Swap content with another array. */
-	void swap(RefArray< Class >& src)
+	void swap(RefArray< ClassType >& src)
 	{
 		std::swap(m_items, src.m_items);
 		std::swap(m_size, src.m_size);
@@ -638,16 +561,16 @@ public:
 		}
 	}
 
-	/*! \brief Return handle to element at specified location. */
-	Handle< Class > at(size_type index)
-	{
-		return Handle< Class >(m_items[index], (void*)this);
-	}
-
 	/*! \brief Return element at specified location. */
-	Class* at(size_type index) const
+	const pointer at(size_type index) const
 	{
 		return m_items[index];
+	}
+
+	/*! \brief Return handle to element at specified location. */
+	InplaceRef< ClassType > at(size_type index)
+	{
+		return InplaceRef< ClassType >(m_items[index]);
 	}
 
 	/*! \brief Sort array.
@@ -666,17 +589,17 @@ public:
 			std::sort(&m_items[0], &m_items[m_size], predicate);
 	}
 
-	Handle< Class > operator [] (size_type index)
-	{
-		return Handle< Class >(m_items[index], (void*)this);
-	}
-
-	Class* operator [] (size_type index) const
+	const pointer operator [] (size_type index) const
 	{
 		return m_items[index];
 	}
 
-	RefArray< Class >& operator = (const RefArray< Class >& src)
+	InplaceRef< ClassType > operator [] (size_type index)
+	{
+		return InplaceRef< ClassType >(m_items[index]);
+	}
+
+	RefArray< ClassType >& operator = (const RefArray< ClassType >& src)
 	{
 		for (size_type i = 0; i < m_size; ++i)
 		{

@@ -81,7 +81,7 @@ std::wstring KeyboardInputSource::getDescription() const
 			
 		for (RefArray< DeviceControl >::const_iterator j = i->deviceControls.begin(); j != i->deviceControls.end(); ++j)
 		{
-			std::wstring controlName = j->getControlName();
+			std::wstring controlName = (*j)->getControlName();
 			if (!controlName.empty())
 			{
 				ss << controlName;

@@ -129,11 +129,6 @@ public:
 		return m_resource;
 	}
 
-	inline operator Ref< ResourceType > ()
-	{
-		return m_resource;
-	}
-
 	inline ResourceType& operator * ()
 	{
 		T_ASSERT_M (m_resource, L"Trying to dereference null pointer");
