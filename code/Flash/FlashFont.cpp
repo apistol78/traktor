@@ -51,9 +51,14 @@ bool FlashFont::create(
 	m_leading = leading;
 	m_advanceTable = advanceTable;
 	m_boundsTable = boundsTable;
-	m_kerningRecords = kerningRecords;
 	m_codeTable = codeTable;
 	m_coordinateType = coordinateType;
+	
+	for (AlignedVector< SwfKerningRecord >::const_iterator i = kerningRecords.begin(); i != kerningRecords.end(); ++i)
+	{
+		uint32_t codePair = (uint32_t(i->code1) << 16) | i->code2;
+		m_kerningLookup[codePair] = i->adjustment;
+	}
 
 	return true;
 }
@@ -88,14 +93,11 @@ const SwfRect* FlashFont::getBounds(uint16_t index) const
 	return index < m_boundsTable.size() ? &m_boundsTable[index] : 0;
 }
 
-const SwfKerningRecord* FlashFont::lookupKerningRecord(uint16_t leftCode, uint16_t rightCode) const
+int16_t FlashFont::lookupKerning(uint16_t leftCode, uint16_t rightCode) const
 {
-	for (AlignedVector< SwfKerningRecord >::const_iterator i = m_kerningRecords.begin(); i != m_kerningRecords.end(); ++i)
-	{
-		if (i->code1 == leftCode && i->code2 == rightCode)
-			return &(*i);
-	}
-	return 0;
+	uint32_t codePair = (uint32_t(leftCode) << 16) | rightCode;
+	std::map< uint32_t, int16_t >::const_iterator i = m_kerningLookup.find(codePair);
+	return i != m_kerningLookup.end() ? i->second : 0;
 }
 
 uint16_t FlashFont::lookupIndex(uint16_t code) const

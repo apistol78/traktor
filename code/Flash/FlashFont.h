@@ -62,7 +62,7 @@ public:
 
 	const SwfRect* getBounds(uint16_t index) const;
 
-	const SwfKerningRecord* lookupKerningRecord(uint16_t leftCode, uint16_t rightCode) const;
+	int16_t lookupKerning(uint16_t leftCode, uint16_t rightCode) const;
 
 	uint16_t lookupIndex(uint16_t code) const;
 
@@ -80,7 +80,7 @@ private:
 	int16_t m_leading;
 	AlignedVector< int16_t > m_advanceTable;
 	AlignedVector< SwfRect > m_boundsTable;
-	AlignedVector< SwfKerningRecord > m_kerningRecords;
+	std::map< uint32_t, int16_t > m_kerningLookup;
 	AlignedVector< uint16_t > m_codeTable;
 	CoordinateType m_coordinateType;
 };
