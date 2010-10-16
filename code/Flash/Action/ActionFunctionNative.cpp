@@ -12,7 +12,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.ActionFunctionNative", ActionFunctionNative, ActionFunction)
 
 ActionFunctionNative::ActionFunctionNative(INativeFunction* nativeFunction)
-:	ActionFunction(L"<native>")
+:	ActionFunction("<native>")
 ,	m_nativeFunction(nativeFunction)
 {
 }

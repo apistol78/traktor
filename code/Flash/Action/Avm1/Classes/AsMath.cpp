@@ -11,40 +11,40 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsMath", AsMath, ActionClass)
 
 AsMath::AsMath()
-:	ActionClass(L"Math")
+:	ActionClass("Math")
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"e", ActionValue(avm_number_t(2.7182818284590452354)));
-	prototype->setMember(L"ln2", ActionValue(avm_number_t(0.69314718055994530942)));
-	prototype->setMember(L"log2e", ActionValue(avm_number_t(1.4426950408889634074)));
-	prototype->setMember(L"ln10", ActionValue(avm_number_t(2.30258509299404568402)));
-	prototype->setMember(L"log10e", ActionValue(avm_number_t(0.43429448190325182765)));
-	prototype->setMember(L"pi", ActionValue(avm_number_t(3.14159265358979323846)));
-	prototype->setMember(L"sqrt1_2", ActionValue(avm_number_t(0.7071067811865475244)));
-	prototype->setMember(L"sqrt2", ActionValue(avm_number_t(1.4142135623730950488)));
-	prototype->setMember(L"abs", ActionValue(createNativeFunction(this, &AsMath::Math_abs)));
-	prototype->setMember(L"acos", ActionValue(createNativeFunction(this, &AsMath::Math_acos)));
-	prototype->setMember(L"asin", ActionValue(createNativeFunction(this, &AsMath::Math_asin)));
-	prototype->setMember(L"atan", ActionValue(createNativeFunction(this, &AsMath::Math_atan)));
-	prototype->setMember(L"atan2", ActionValue(createNativeFunction(this, &AsMath::Math_atan2)));
-	prototype->setMember(L"ceil", ActionValue(createNativeFunction(this, &AsMath::Math_ceil)));
-	prototype->setMember(L"cos", ActionValue(createNativeFunction(this, &AsMath::Math_cos)));
-	prototype->setMember(L"exp", ActionValue(createNativeFunction(this, &AsMath::Math_exp)));
-	prototype->setMember(L"floor", ActionValue(createNativeFunction(this, &AsMath::Math_floor)));
-	prototype->setMember(L"log", ActionValue(createNativeFunction(this, &AsMath::Math_log)));
-	prototype->setMember(L"max", ActionValue(createNativeFunction(this, &AsMath::Math_max)));
-	prototype->setMember(L"min", ActionValue(createNativeFunction(this, &AsMath::Math_min)));
-	prototype->setMember(L"pow", ActionValue(createNativeFunction(this, &AsMath::Math_pow)));
-	prototype->setMember(L"random", ActionValue(createNativeFunction(this, &AsMath::Math_random)));
-	prototype->setMember(L"round", ActionValue(createNativeFunction(this, &AsMath::Math_round)));
-	prototype->setMember(L"sin", ActionValue(createNativeFunction(this, &AsMath::Math_sin)));
-	prototype->setMember(L"sqrt", ActionValue(createNativeFunction(this, &AsMath::Math_sqrt)));
-	prototype->setMember(L"tan", ActionValue(createNativeFunction(this, &AsMath::Math_tan)));
+	prototype->setMember("e", ActionValue(avm_number_t(2.7182818284590452354)));
+	prototype->setMember("ln2", ActionValue(avm_number_t(0.69314718055994530942)));
+	prototype->setMember("log2e", ActionValue(avm_number_t(1.4426950408889634074)));
+	prototype->setMember("ln10", ActionValue(avm_number_t(2.30258509299404568402)));
+	prototype->setMember("log10e", ActionValue(avm_number_t(0.43429448190325182765)));
+	prototype->setMember("pi", ActionValue(avm_number_t(3.14159265358979323846)));
+	prototype->setMember("sqrt1_2", ActionValue(avm_number_t(0.7071067811865475244)));
+	prototype->setMember("sqrt2", ActionValue(avm_number_t(1.4142135623730950488)));
+	prototype->setMember("abs", ActionValue(createNativeFunction(this, &AsMath::Math_abs)));
+	prototype->setMember("acos", ActionValue(createNativeFunction(this, &AsMath::Math_acos)));
+	prototype->setMember("asin", ActionValue(createNativeFunction(this, &AsMath::Math_asin)));
+	prototype->setMember("atan", ActionValue(createNativeFunction(this, &AsMath::Math_atan)));
+	prototype->setMember("atan2", ActionValue(createNativeFunction(this, &AsMath::Math_atan2)));
+	prototype->setMember("ceil", ActionValue(createNativeFunction(this, &AsMath::Math_ceil)));
+	prototype->setMember("cos", ActionValue(createNativeFunction(this, &AsMath::Math_cos)));
+	prototype->setMember("exp", ActionValue(createNativeFunction(this, &AsMath::Math_exp)));
+	prototype->setMember("floor", ActionValue(createNativeFunction(this, &AsMath::Math_floor)));
+	prototype->setMember("log", ActionValue(createNativeFunction(this, &AsMath::Math_log)));
+	prototype->setMember("max", ActionValue(createNativeFunction(this, &AsMath::Math_max)));
+	prototype->setMember("min", ActionValue(createNativeFunction(this, &AsMath::Math_min)));
+	prototype->setMember("pow", ActionValue(createNativeFunction(this, &AsMath::Math_pow)));
+	prototype->setMember("random", ActionValue(createNativeFunction(this, &AsMath::Math_random)));
+	prototype->setMember("round", ActionValue(createNativeFunction(this, &AsMath::Math_round)));
+	prototype->setMember("sin", ActionValue(createNativeFunction(this, &AsMath::Math_sin)));
+	prototype->setMember("sqrt", ActionValue(createNativeFunction(this, &AsMath::Math_sqrt)));
+	prototype->setMember("tan", ActionValue(createNativeFunction(this, &AsMath::Math_tan)));
 
 	prototype->setReadOnly();
 
-	setMember(L"prototype", ActionValue(prototype));
+	setMember("prototype", ActionValue(prototype));
 }
 
 ActionValue AsMath::construct(ActionContext* context, const ActionValueArray& args)

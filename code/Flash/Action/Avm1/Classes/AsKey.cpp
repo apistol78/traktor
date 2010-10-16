@@ -13,42 +13,42 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsKey", AsKey, ActionClass)
 
 AsKey::AsKey()
-:	ActionClass(L"Key")
+:	ActionClass("Key")
 ,	m_lastKeyCode(0)
 {
 	std::memset(m_keyState, 0, sizeof(m_keyState));
 
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"BACKSPACE", ActionValue(avm_number_t(AkBackspace)));
-	prototype->setMember(L"CAPSLOCK", ActionValue(avm_number_t(AkCapsLock)));
-	prototype->setMember(L"CONTROL", ActionValue(avm_number_t(AkControl)));
-	prototype->setMember(L"DELETEKEY", ActionValue(avm_number_t(AkDeleteKey)));
-	prototype->setMember(L"DOWN", ActionValue(avm_number_t(AkDown)));
-	prototype->setMember(L"END", ActionValue(avm_number_t(AkEnd)));
-	prototype->setMember(L"ENTER", ActionValue(avm_number_t(AkEnter)));
-	prototype->setMember(L"ESCAPE", ActionValue(avm_number_t(AkEscape)));
-	prototype->setMember(L"HOME", ActionValue(avm_number_t(AkHome)));
-	prototype->setMember(L"INSERT", ActionValue(avm_number_t(AkInsert)));
-	prototype->setMember(L"LEFT", ActionValue(avm_number_t(AkLeft)));
-	prototype->setMember(L"PGDN", ActionValue(avm_number_t(AkPgDn)));
-	prototype->setMember(L"PGUP", ActionValue(avm_number_t(AkPgUp)));
-	prototype->setMember(L"RIGHT", ActionValue(avm_number_t(AkRight)));
-	prototype->setMember(L"SHIFT", ActionValue(avm_number_t(AkShift)));
-	prototype->setMember(L"SPACE", ActionValue(avm_number_t(AkSpace)));
-	prototype->setMember(L"TAB", ActionValue(avm_number_t(AkTab)));
-	prototype->setMember(L"UP", ActionValue(avm_number_t(AkUp)));
-	prototype->setMember(L"addListener", ActionValue(createNativeFunction(this, &AsKey::Key_addListener)));
-	prototype->setMember(L"getAscii", ActionValue(createNativeFunction(this, &AsKey::Key_getAscii)));
-	prototype->setMember(L"getCode", ActionValue(createNativeFunction(this, &AsKey::Key_getCode)));
-	prototype->setMember(L"isAccessible", ActionValue(createNativeFunction(this, &AsKey::Key_isAccessible)));
-	prototype->setMember(L"isDown", ActionValue(createNativeFunction(this, &AsKey::Key_isDown)));
-	prototype->setMember(L"isToggled", ActionValue(createNativeFunction(this, &AsKey::Key_isToggled)));
-	prototype->setMember(L"removeListener", ActionValue(createNativeFunction(this, &AsKey::Key_removeListener)));
+	prototype->setMember("BACKSPACE", ActionValue(avm_number_t(AkBackspace)));
+	prototype->setMember("CAPSLOCK", ActionValue(avm_number_t(AkCapsLock)));
+	prototype->setMember("CONTROL", ActionValue(avm_number_t(AkControl)));
+	prototype->setMember("DELETEKEY", ActionValue(avm_number_t(AkDeleteKey)));
+	prototype->setMember("DOWN", ActionValue(avm_number_t(AkDown)));
+	prototype->setMember("END", ActionValue(avm_number_t(AkEnd)));
+	prototype->setMember("ENTER", ActionValue(avm_number_t(AkEnter)));
+	prototype->setMember("ESCAPE", ActionValue(avm_number_t(AkEscape)));
+	prototype->setMember("HOME", ActionValue(avm_number_t(AkHome)));
+	prototype->setMember("INSERT", ActionValue(avm_number_t(AkInsert)));
+	prototype->setMember("LEFT", ActionValue(avm_number_t(AkLeft)));
+	prototype->setMember("PGDN", ActionValue(avm_number_t(AkPgDn)));
+	prototype->setMember("PGUP", ActionValue(avm_number_t(AkPgUp)));
+	prototype->setMember("RIGHT", ActionValue(avm_number_t(AkRight)));
+	prototype->setMember("SHIFT", ActionValue(avm_number_t(AkShift)));
+	prototype->setMember("SPACE", ActionValue(avm_number_t(AkSpace)));
+	prototype->setMember("TAB", ActionValue(avm_number_t(AkTab)));
+	prototype->setMember("UP", ActionValue(avm_number_t(AkUp)));
+	prototype->setMember("addListener", ActionValue(createNativeFunction(this, &AsKey::Key_addListener)));
+	prototype->setMember("getAscii", ActionValue(createNativeFunction(this, &AsKey::Key_getAscii)));
+	prototype->setMember("getCode", ActionValue(createNativeFunction(this, &AsKey::Key_getCode)));
+	prototype->setMember("isAccessible", ActionValue(createNativeFunction(this, &AsKey::Key_isAccessible)));
+	prototype->setMember("isDown", ActionValue(createNativeFunction(this, &AsKey::Key_isDown)));
+	prototype->setMember("isToggled", ActionValue(createNativeFunction(this, &AsKey::Key_isToggled)));
+	prototype->setMember("removeListener", ActionValue(createNativeFunction(this, &AsKey::Key_removeListener)));
 
 	prototype->setReadOnly();
 
-	setMember(L"prototype", ActionValue(prototype));
+	setMember("prototype", ActionValue(prototype));
 }
 
 void AsKey::eventKeyDown(ActionContext* context, int keyCode)
@@ -62,7 +62,7 @@ void AsKey::eventKeyDown(ActionContext* context, int keyCode)
 	for (RefArray< ActionObject >::iterator i = listeners.begin(); i != listeners.end(); ++i)
 	{
 		ActionValue member;
-		(*i)->getMember(context, L"onKeyDown", member);
+		(*i)->getMember(context, "onKeyDown", member);
 		if (member.isUndefined())
 			continue;
 
@@ -85,7 +85,7 @@ void AsKey::eventKeyUp(ActionContext* context, int keyCode)
 	for (RefArray< ActionObject >::iterator i = listeners.begin(); i != listeners.end(); ++i)
 	{
 		ActionValue member;
-		(*i)->getMember(context, L"onKeyUp", member);
+		(*i)->getMember(context, "onKeyUp", member);
 		if (member.isUndefined())
 			continue;
 

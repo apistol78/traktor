@@ -109,7 +109,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 	{
 		// Not a movie clip; get root movie clip from global object.
 		ActionValue root;
-		context->getGlobal()->getLocalMember(L"_root", root);
+		context->getGlobal()->getLocalMember("_root", root);
 		movieClip = root.getObject< FlashSpriteInstance >();
 	}
 
@@ -174,14 +174,14 @@ void ActionVM1::execute(ActionFrame* frame) const
 			const char T_UNALIGNED * url = reinterpret_cast< const char T_UNALIGNED * >(data);
 			const char T_UNALIGNED * query = url + strlen(url) + 1;
 			ActionValue getUrl;
-			context->getGlobal()->getLocalMember(L"getUrl", getUrl);
+			context->getGlobal()->getLocalMember("getUrl", getUrl);
 			if (getUrl.isObject())
 			{
 				Ref< ActionFunction > function = dynamic_type_cast< ActionFunction* >(getUrl.getObject());
 				if (function)
 				{
-					stack.push(ActionValue(mbstows(query)));
-					stack.push(ActionValue(mbstows(url)));
+					stack.push(ActionValue(query));
+					stack.push(ActionValue(url));
 					stack.push(ActionValue(avm_number_t(2)));
 					function->call(frame, 0);
 				}
@@ -200,7 +200,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 		VM_BEGIN(AopGotoLabel)
 			T_ASSERT (movieClip);
 			const char T_UNALIGNED * label = reinterpret_cast< const char T_UNALIGNED * >(data);
-			int frame = movie->findFrame(mbstows(label));
+			int frame = movie->findFrame(label);
 			if (frame >= 0)
 			{
 				movieClip->setPlaying(false);
@@ -302,18 +302,18 @@ void ActionVM1::execute(ActionFrame* frame) const
 			ActionValue strng = stack.pop();
 			if (count.isNumeric() && index.isNumeric())
 			{
-				std::wstring str = strng.getStringSafe();
+				std::string str = strng.getStringSafe();
 				int32_t offset = int32_t(index.getNumber());
-				if (offset >= 0 && offset < str.length())
+				if (offset >= 0 && offset < int32_t(str.length()))
 				{
-					std::wstring res = str.substr(offset, int(count.getNumber()));
+					std::string res = str.substr(offset, int(count.getNumber()));
 					stack.push(ActionValue(res));
 				}
 				else
-					stack.push(ActionValue(L""));
+					stack.push(ActionValue(""));
 			}
 			else
-				stack.push(ActionValue(L""));
+				stack.push(ActionValue(""));
 		VM_END()
 
 		VM_BEGIN(AopPop)
@@ -330,7 +330,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 		VM_END()
 
 		VM_BEGIN(AopGetVariable)
-			std::wstring variableName = stack.pop().getStringSafe();
+			std::string variableName = stack.pop().getStringSafe();
 			ActionValue value;
 
 			if (frame->getVariable(variableName, value))
@@ -341,7 +341,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 				stack.push(value);
 			else if (context->getGlobal()->getLocalMember(variableName, value))
 				stack.push(value);
-			else if (variableName == L"_global")
+			else if (variableName == "_global")
 			{
 				value = ActionValue(context->getGlobal());
 				stack.push(value);
@@ -354,19 +354,19 @@ void ActionVM1::execute(ActionFrame* frame) const
 				stack.push(value);
 			}
 
-			VM_LOG(L"Get variable \"" << variableName << L"\" = " << value.getStringSafe());
+			VM_LOG(L"Get variable \"" << mbstows(variableName) << L"\" = " << value.getWideStringSafe());
 		VM_END()
 
 		VM_BEGIN(AopSetVariable)
 			ActionValue value = stack.pop();
-			std::wstring variableName = stack.pop().getStringSafe();
+			std::string variableName = stack.pop().getStringSafe();
 
 			if (frame->hasVariable(variableName))
 				frame->setVariable(variableName, value);
 			else
 				movieClip->setMember(variableName, value);
 
-			VM_LOG(L"Set variable \"" << variableName << L"\" = " << value.getStringSafe());
+			VM_LOG(L"Set variable \"" << mbstows(variableName) << L"\" = " << value.getWideStringSafe());
 		VM_END()
 
 		VM_BEGIN(AopSetTargetExpression)
@@ -381,7 +381,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 		VM_BEGIN(AopGetProperty)
 			ActionValue index = stack.pop();
 			ActionValue target = stack.pop();
-			T_ASSERT (target.getStringSafe() == L"");
+			T_ASSERT (target.getStringSafe() == "");
 
 			switch (int(index.getNumberSafe()))
 			{
@@ -431,7 +431,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 			ActionValue value = stack.pop();
 			ActionValue index = stack.pop();
 			ActionValue target = stack.pop();
-			T_ASSERT (target.getStringSafe() == L"");
+			T_ASSERT (target.getStringSafe() == "");
 
 			switch (int(index.getNumberSafe()))
 			{
@@ -492,7 +492,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 		VM_END()
 
 		VM_BEGIN(AopTrace)
-			std::wstring trace = stack.pop().getStringSafe();
+			std::wstring trace = stack.pop().getWideStringSafe();
 			if (trace != L"** BREAK **")
 				log::debug << L"TRACE \"" << trace << L"\"" << Endl;
 			else
@@ -595,15 +595,15 @@ void ActionVM1::execute(ActionFrame* frame) const
 				if (type == 0)		// String
 				{
 					uint32_t length = uint32_t(strlen(reinterpret_cast< const char T_UNALIGNED * >(data)));
-					value = ActionValue(mbstows(reinterpret_cast< const char T_UNALIGNED * >(data)));
+					value = ActionValue(reinterpret_cast< const char T_UNALIGNED * >(data));
 					data += length + 1;
-					VM_LOG(L"Push data, string " << value.getStringSafe());
+					VM_LOG(L"Push data, string " << value.getWideStringSafe());
 				}
 				else if (type == 1)	// Number
 				{
 					value = ActionValue(avm_number_t(readFloat(data)));
 					data += sizeof(float);
-					VM_LOG(L"Push data, number " << value.getStringSafe());
+					VM_LOG(L"Push data, number " << value.getWideStringSafe());
 				}
 				else if (type == 2)	// Null
 				{
@@ -620,13 +620,13 @@ void ActionVM1::execute(ActionFrame* frame) const
 					uint8_t index = *data;
 					value = frame->getRegister(index);
 					data += sizeof(uint8_t);
-					VM_LOG(L"Push data, register " << int32_t(index) << L" (" << value.getStringSafe() << L")");
+					VM_LOG(L"Push data, register " << int32_t(index) << L" (" << value.getWideStringSafe() << L")");
 				}
 				else if (type == 5)	// Boolean
 				{
 					value = ActionValue(bool(*data ? true : false));
 					data += sizeof(uint8_t);
-					VM_LOG(L"Push data, boolean " << value.getStringSafe());
+					VM_LOG(L"Push data, boolean " << value.getWideStringSafe());
 				}
 				else if (type == 6)	// Double
 				{
@@ -648,27 +648,27 @@ void ActionVM1::execute(ActionFrame* frame) const
 					
 					value = ActionValue(avm_number_t(w.d));
 					data += sizeof(double);
-					VM_LOG(L"Push data, double " << value.getStringSafe());
+					VM_LOG(L"Push data, double " << value.getWideStringSafe());
 				}
 				else if (type == 7)	// Integer (32bit)
 				{
 					value = ActionValue(avm_number_t(readInt32(data)));
 					data += sizeof(int32_t);
-					VM_LOG(L"Push data, integer " << value.getStringSafe());
+					VM_LOG(L"Push data, integer " << value.getWideStringSafe());
 				}
 				else if (type == 8)	// Dictionary (8bit index)
 				{
 					uint8_t index = *data;
-					value = ActionValue(mbstows(frame->getDictionary()->get(index)));
+					value = ActionValue(frame->getDictionary()->get(index));
 					data += sizeof(uint8_t);
-					VM_LOG(L"Push data, dictionary " << int32_t(index) << L" (" << value.getStringSafe() << L")");
+					VM_LOG(L"Push data, dictionary " << int32_t(index) << L" (" << value.getWideStringSafe() << L")");
 				}
 				else if (type == 9)	// Dictionary (16bit index)
 				{
 					uint16_t index = readUInt16(data);
-					value = ActionValue(mbstows(frame->getDictionary()->get(index)));
+					value = ActionValue(frame->getDictionary()->get(index));
 					data += sizeof(uint16_t);
-					VM_LOG(L"Push data, dictionary " << int32_t(index) << L" (" << value.getStringSafe() << L")");
+					VM_LOG(L"Push data, dictionary " << int32_t(index) << L" (" << value.getWideStringSafe() << L")");
 				}
 				else
 				{
@@ -686,7 +686,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 
 		VM_BEGIN(AopGetUrl2)
 			ActionValue getUrl;
-			context->getGlobal()->getLocalMember(L"getUrl", getUrl);
+			context->getGlobal()->getLocalMember("getUrl", getUrl);
 			if (getUrl.isObject())
 			{
 				Ref< ActionFunction > function = dynamic_type_cast< ActionFunction* >(getUrl.getObject());
@@ -760,7 +760,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 		VM_END()
 
 		VM_BEGIN(AopDelete)
-			std::wstring memberName = stack.pop().getStringSafe();
+			std::string memberName = stack.pop().getStringSafe();
 			ActionValue objectValue = stack.pop();
 			if (objectValue.isObject())
 			{
@@ -772,23 +772,23 @@ void ActionVM1::execute(ActionFrame* frame) const
 		VM_END()
 
 		VM_BEGIN(AopDelete2)
-			std::wstring variableName = stack.pop().getStringSafe();
+			std::string variableName = stack.pop().getStringSafe();
 			bool deleted = movieClip->deleteMember(variableName);
 			stack.push(ActionValue(deleted));
 		VM_END()
 
 		VM_BEGIN(AopDefineLocal)
 			ActionValue variableValue = stack.pop();
-			std::wstring variableName = stack.pop().getStringSafe();
+			std::string variableName = stack.pop().getStringSafe();
 			if (frame->getCallee())
 				frame->setVariable(variableName, variableValue);
 			else
 				movieClip->setMember(variableName, variableValue);
-			VM_LOG(L"Set local variable \"" << variableName << L"\" = " << variableValue.getStringSafe());
+			VM_LOG(L"Set local variable \"" << mbstows(variableName) << L"\" = " << variableValue.getWideStringSafe());
 		VM_END()
 
 		VM_BEGIN(AopCallFunction)
-			std::wstring functionName = stack.pop().getStringSafe();
+			std::string functionName = stack.pop().getStringSafe();
 			ActionValue functionObject;
 
 			if (!frame->getVariable(functionName, functionObject))
@@ -809,7 +809,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 			}
 			else
 			{
-				log::warning << L"Undefined function \"" << functionName << L"\"" << Endl;
+				log::warning << L"Undefined function \"" << mbstows(functionName) << L"\"" << Endl;
 				int argCount = int(stack.pop().getNumber());
 				stack.drop(argCount);
 				stack.push(ActionValue());
@@ -837,7 +837,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 				classConstructor = classFunction.getObject< ActionFunction >();
 			else
 			{
-				std::wstring classConstructorName = classFunction.getStringSafe();
+				std::string classConstructorName = classFunction.getStringSafe();
 				context->getGlobal()->getLocalMember(classConstructorName, classFunction);
 				classConstructor = classFunction.getObjectSafe< ActionFunction >();
 			}
@@ -845,7 +845,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 			if (classConstructor)
 			{
 				ActionValue prototype;
-				classConstructor->getLocalMember(L"prototype", prototype);
+				classConstructor->getLocalMember("prototype", prototype);
 
 				// Create instance of class.
 				Ref< ActionObject > self = new ActionObject(prototype.getObjectSafe());
@@ -865,7 +865,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 		VM_END()
 
 		VM_BEGIN(AopDefineLocal2)
-			std::wstring variableName = stack.pop().getStringSafe();
+			std::string variableName = stack.pop().getStringSafe();
 			if (frame->getCallee())
 				frame->setVariable(variableName, ActionValue());
 			else
@@ -874,7 +874,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 
 		VM_BEGIN(AopInitArray)
 			ActionValue arrayClassMember;
-			if (context->getGlobal()->getLocalMember(L"Array", arrayClassMember) && arrayClassMember.isObject())
+			if (context->getGlobal()->getLocalMember("Array", arrayClassMember) && arrayClassMember.isObject())
 			{
 				ActionValue arrayObject = arrayClassMember.getObject< ActionFunction >()->call(frame, 0);
 				stack.push(arrayObject);
@@ -892,7 +892,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 				ActionValue value = stack.pop();
 				ActionValue name = stack.pop();
 				scriptObject->setMember(name.getStringSafe(), value);
-				VM_LOG(L"Initial property " << i << L" \"" << name.getStringSafe() << L"\" = " << value.getStringSafe());
+				VM_LOG(L"Initial property " << i << L" \"" << name.getWideStringSafe() << L"\" = " << value.getWideStringSafe());
 			}
 
 			stack.push(ActionValue(scriptObject));
@@ -902,28 +902,28 @@ void ActionVM1::execute(ActionFrame* frame) const
 			ActionValue value = stack.pop();
 			if (value.isNumeric())
 			{
-				stack.push(ActionValue(L"number"));
+				stack.push(ActionValue("number"));
 			}
 			else if (value.isBoolean())
 			{
-				stack.push(ActionValue(L"boolean"));
+				stack.push(ActionValue("boolean"));
 			}
 			else if (value.isString())
 			{
-				stack.push(ActionValue(L"string"));
+				stack.push(ActionValue("string"));
 			}
 			else if (value.isObject())
 			{
 				Ref< ActionObject > object = value.getObject();
 				if (is_a< AsMovieClip >(object))
-					stack.push(ActionValue(L"movieclip"));
+					stack.push(ActionValue("movieclip"));
 				else if (is_a< AsFunction >(object))
-					stack.push(ActionValue(L"function"));
+					stack.push(ActionValue("function"));
 				else
-					stack.push(ActionValue(L"object"));
+					stack.push(ActionValue("object"));
 			}
 			else
-				stack.push(ActionValue(L"undefined"));
+				stack.push(ActionValue("undefined"));
 		VM_END()
 
 		VM_BEGIN(AopTargetPath)
@@ -943,8 +943,8 @@ void ActionVM1::execute(ActionFrame* frame) const
 				ActionValue string1 = value1.toString();
 				if (string2.isString() && string1.isString())
 				{
-					std::wstring str2 = string2.getString();
-					std::wstring str1 = string1.getString();
+					std::string str2 = string2.getString();
+					std::string str1 = string1.getString();
 					stack.push(ActionValue(str1 + str2));
 				}
 				else
@@ -974,8 +974,8 @@ void ActionVM1::execute(ActionFrame* frame) const
 				ActionValue string1 = value1.toString();
 				if (string2.isString() && string1.isString())
 				{
-					std::wstring str2 = string2.getString();
-					std::wstring str1 = string1.getString();
+					std::string str2 = string2.getString();
+					std::string str1 = string1.getString();
 					stack.push(ActionValue(bool(str1.compare(str2) < 0)));
 				}
 				else
@@ -1017,8 +1017,8 @@ void ActionVM1::execute(ActionFrame* frame) const
 				}
 				else if (predicateType == ActionValue::AvtString)
 				{
-					std::wstring v2 = value2.getStringSafe();
-					std::wstring v1 = value1.getStringSafe();
+					std::string v2 = value2.getStringSafe();
+					std::string v1 = value1.getStringSafe();
 					stack.push(ActionValue(v1 == v2));
 				}
 				else	// AvtObject
@@ -1065,7 +1065,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 		VM_END()
 
 		VM_BEGIN(AopGetMember)
-			std::wstring memberName = stack.pop().getStringSafe();
+			std::string memberName = stack.pop().getStringSafe();
 			ActionValue targetValue = stack.pop();
 			ActionValue memberValue;
 
@@ -1090,13 +1090,13 @@ void ActionVM1::execute(ActionFrame* frame) const
 				VM_LOG(L"Target undefined");
 			
 			stack.push(memberValue);
-			VM_LOG(L"Get member \"" << memberName << L"\" = " << memberValue.getStringSafe());
+			VM_LOG(L"Get member \"" << mbstows(memberName) << L"\" = " << memberValue.getWideStringSafe());
 		VM_END()
 
 		VM_BEGIN(AopSetMember)
 			ActionValue memberValue = stack.pop();
-			std::wstring memberName = stack.pop().getStringSafe();
-			VM_LOG(L"Set member \"" << memberName << L"\" = \"" << memberValue.getStringSafe() << L"\"");
+			std::string memberName = stack.pop().getStringSafe();
+			VM_LOG(L"Set member \"" << mbstows(memberName) << L"\" = \"" << memberValue.getWideStringSafe() << L"\"");
 
 			ActionValue targetValue = stack.pop();
 			if (targetValue.isObject())
@@ -1111,7 +1111,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 				}
 				else
 				{
-					VM_LOG(L"on target " << target->toString());
+					VM_LOG(L"on target " << target->toString().getWideStringSafe());
 					target->setMember(memberName, memberValue);
 				}
 			}
@@ -1168,7 +1168,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 				returnValue = method->call(frame, target);
 			else
 			{
-				log::warning << L"Undefined method \"" << classConstructorName.getStringSafe() << L"\"" << Endl;
+				log::warning << L"Undefined method \"" << classConstructorName.getWideStringSafe() << L"\"" << Endl;
 				int argCount = int(stack.pop().getNumber());
 				stack.drop(argCount);
 			}
@@ -1177,7 +1177,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 		VM_END()
 
 		VM_BEGIN(AopNewMethod)
-			std::wstring classConstructorName = stack.pop().getStringSafe();
+			std::string classConstructorName = stack.pop().getStringSafe();
 			Ref< ActionObject > classConstructorObject = stack.pop().getObjectSafe();
 			if (classConstructorObject)
 			{
@@ -1195,7 +1195,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 				if (classConstructor)
 				{
 					ActionValue prototype;
-					classConstructor->getLocalMember(L"prototype", prototype);
+					classConstructor->getLocalMember("prototype", prototype);
 
 					// Create instance of class.
 					Ref< ActionObject > self = new ActionObject(prototype.getObjectSafe());
@@ -1308,8 +1308,8 @@ void ActionVM1::execute(ActionFrame* frame) const
 				}
 				else if (value1.isString())
 				{
-					std::wstring s2 = value2.getString();
-					std::wstring s1 = value1.getString();
+					std::string s2 = value2.getString();
+					std::string s1 = value1.getString();
 					stack.push(ActionValue(s1 == s2));
 				}
 				else if (value1.isObject())
@@ -1334,8 +1334,8 @@ void ActionVM1::execute(ActionFrame* frame) const
 				ActionValue string1 = value1.toString();
 				if (string2.isString() && string1.isString())
 				{
-					std::wstring str2 = string2.getString();
-					std::wstring str1 = string1.getString();
+					std::string str2 = string2.getString();
+					std::string str1 = string1.getString();
 					stack.push(ActionValue(bool(str1.compare(str2) > 0)));
 				}
 				else
@@ -1369,13 +1369,13 @@ void ActionVM1::execute(ActionFrame* frame) const
 			VM_LOG(subClass.getObject< ActionFunction >()->getName() << L" extends " << superClass.getObject< ActionFunction >()->getName());
 
 			ActionValue superPrototype;
-			superClass.getObject()->getMember(context, L"prototype", superPrototype);
+			superClass.getObject()->getMember(context, "prototype", superPrototype);
 
 			Ref< ActionObject > prototype = new ActionObject();
-			prototype->setMember(L"__proto__", superPrototype);
-			prototype->setMember(L"__constructor__", ActionValue(superClass.getObject()));
+			prototype->setMember("__proto__", superPrototype);
+			prototype->setMember("__constructor__", ActionValue(superClass.getObject()));
 
-			subClass.getObject()->setMember(L"prototype", ActionValue(prototype));
+			subClass.getObject()->setMember("prototype", ActionValue(prototype));
 		VM_END()
 
 		VM_BEGIN(AopConstantPool)
@@ -1402,7 +1402,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 			uint16_t flags = readUInt16(data);
 			data += sizeof(uint16_t);
 
-			std::vector< std::pair< std::wstring, uint8_t > > argumentsIntoRegisters(argumentCount);
+			std::vector< std::pair< std::string, uint8_t > > argumentsIntoRegisters(argumentCount);
 			for (int i = 0; i  < argumentCount; ++i)
 			{
 				uint8_t registerIndex = *data;
@@ -1411,14 +1411,14 @@ void ActionVM1::execute(ActionFrame* frame) const
 				const char* variableName = reinterpret_cast< const char* >(data);
 				data += strlen(variableName) + 1;
 
-				argumentsIntoRegisters[i] = std::make_pair(mbstows(variableName), registerIndex);
+				argumentsIntoRegisters[i] = std::make_pair(variableName, registerIndex);
 			}
 
 			uint16_t codeSize = readUInt16(data);
 			data += sizeof(uint16_t);
 
 			Ref< ActionFunction > function = new ActionFunction2(
-				mbstows(functionName),
+				functionName,
 				npc,
 				codeSize,
 				registerCount,
@@ -1430,12 +1430,12 @@ void ActionVM1::execute(ActionFrame* frame) const
 
 			// Create our own prototype member as it will probably be filled with additional members.
 			// Default extends the Object class.
-			function->setMember(L"prototype", ActionValue(new ActionObject()));
+			function->setMember("prototype", ActionValue(new ActionObject()));
 
 			if (*functionName != 0)
 			{
 				// Assign function object into variable with the same name as the function.
-				movieClip->setMember(mbstows(functionName), ActionValue(function));
+				movieClip->setMember(functionName, ActionValue(function));
 			}
 			else
 			{
@@ -1473,7 +1473,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 			data += sizeof(uint16_t);
 
 			Ref< ActionFunction > function = new ActionFunction1(
-				mbstows(functionName),
+				functionName,
 				npc,
 				codeSize,
 				argumentCount,
@@ -1481,12 +1481,12 @@ void ActionVM1::execute(ActionFrame* frame) const
 			);
 
 			// Create our own prototype member as it will probably be filled with additional members.
-			function->setMember(L"prototype", ActionValue(new ActionObject()));
+			function->setMember("prototype", ActionValue(new ActionObject()));
 
 			if (*functionName != 0)
 			{
 				// Assign function object into variable with the same name as the function.
-				movieClip->setMember(mbstows(functionName), ActionValue(function));
+				movieClip->setMember(functionName, ActionValue(function));
 			}
 			else
 			{
@@ -1501,7 +1501,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 			uint8_t registerIndex = *data;
 			data += sizeof(uint8_t);
 			frame->setRegister(registerIndex, !stack.empty() ? stack.top() : ActionValue());
-			VM_LOG(L"Set register " << int32_t(registerIndex) << L" = " << (!stack.empty() ? stack.top().getStringSafe() : L"< Stack empty >"));
+			VM_LOG(L"Set register " << int32_t(registerIndex) << L" = " << (!stack.empty() ? stack.top().getWideStringSafe() : L"< Stack empty >"));
 		VM_END()
 		}
 

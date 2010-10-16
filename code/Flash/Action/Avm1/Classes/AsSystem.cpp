@@ -11,15 +11,15 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsSystem", AsSystem, ActionClass)
 
 AsSystem::AsSystem()
-:	ActionClass(L"System")
+:	ActionClass("System")
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"security", ActionValue(new AsSecurity()));
+	prototype->setMember("security", ActionValue(new AsSecurity()));
 
 	prototype->setReadOnly();
 
-	setMember(L"prototype", ActionValue(prototype));
+	setMember("prototype", ActionValue(prototype));
 }
 
 ActionValue AsSystem::construct(ActionContext* context, const ActionValueArray& args)

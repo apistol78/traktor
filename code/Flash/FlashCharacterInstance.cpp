@@ -11,7 +11,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashCharacterInstance", FlashCharacterInstance, ActionObject)
 
-FlashCharacterInstance::FlashCharacterInstance(ActionContext* context, const std::wstring& prototypeName, FlashCharacterInstance* parent)
+FlashCharacterInstance::FlashCharacterInstance(ActionContext* context, const std::string& prototypeName, FlashCharacterInstance* parent)
 :	ActionObject(prototypeName)
 ,	m_context(context)
 ,	m_parent(parent)
@@ -47,12 +47,12 @@ FlashCharacterInstance* FlashCharacterInstance::getParent() const
 	return m_parent;
 }
 
-void FlashCharacterInstance::setName(const std::wstring& name)
+void FlashCharacterInstance::setName(const std::string& name)
 {
 	m_name = name;
 }
 
-const std::wstring& FlashCharacterInstance::getName() const
+const std::string& FlashCharacterInstance::getName() const
 {
 	return m_name;
 }

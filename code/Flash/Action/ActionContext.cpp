@@ -20,7 +20,7 @@ ActionContext::ActionContext(const IActionVM* vm, const FlashMovie* movie, Actio
 void ActionContext::addFrameListener(ActionObject* frameListener)
 {
 	ActionValue memberValue;
-	if (frameListener->getLocalMember(L"onFrame", memberValue))
+	if (frameListener->getLocalMember("onFrame", memberValue))
 	{
 		Ref< ActionFunction > listenerFunction = memberValue.getObject< ActionFunction >();
 		if (listenerFunction)
@@ -53,12 +53,12 @@ void ActionContext::notifyFrameListeners(avm_number_t time)
 		i->listenerFunction->call(this, i->listenerTarget, argv);
 }
 
-ActionObject* ActionContext::lookupClass(const std::wstring& className)
+ActionObject* ActionContext::lookupClass(const std::string& className)
 {
 	Ref< ActionObject > clazz = m_global;
 
-	StringSplit< std::wstring > classNameSplit(className, L".");
-	for (StringSplit< std::wstring >::const_iterator i = classNameSplit.begin(); i != classNameSplit.end(); ++i)
+	StringSplit< std::string > classNameSplit(className, ".");
+	for (StringSplit< std::string >::const_iterator i = classNameSplit.begin(); i != classNameSplit.end(); ++i)
 	{
 		ActionValue clazzMember;
 		if (!clazz->getLocalMember(*i, clazzMember) || !clazzMember.isObject())
@@ -71,7 +71,7 @@ ActionObject* ActionContext::lookupClass(const std::wstring& className)
 		return 0;
 
 	ActionValue prototypeMember;
-	if (!clazz->getLocalMember(L"prototype", prototypeMember) || !prototypeMember.isObject())
+	if (!clazz->getLocalMember("prototype", prototypeMember) || !prototypeMember.isObject())
 		return 0;
 
 	return prototypeMember.getObject();

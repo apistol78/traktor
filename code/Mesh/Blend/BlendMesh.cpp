@@ -11,6 +11,10 @@
 #include "World/WorldRenderer.h"
 #include "World/WorldRenderView.h"
 
+#if !TARGET_OS_IPHONE && !defined(_WINCE)
+#	define T_USE_UPDATE_JOBS
+#endif
+
 namespace traktor
 {
 	namespace mesh
@@ -220,7 +224,7 @@ void BlendMesh::render(
 			uint8_t* destinationVertices = static_cast< uint8_t* >(vertexBuffer->lock());
 			if (destinationVertices)
 			{
-#if 1
+#if defined(T_USE_UPDATE_JOBS)
 				if (vertexCount > c_vertexCountFork)
 				{
 					uint32_t pivots[] =

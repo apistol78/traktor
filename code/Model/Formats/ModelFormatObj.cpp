@@ -23,7 +23,7 @@ void ModelFormatObj::getExtensions(std::wstring& outDescription, std::vector< st
 
 bool ModelFormatObj::supportFormat(const Path& filePath) const
 {
-	return compareIgnoreCase(filePath.getExtension(), L"obj") == 0;
+	return compareIgnoreCase< std::wstring >(filePath.getExtension(), L"obj") == 0;
 }
 
 Ref< Model > ModelFormatObj::read(const Path& filePath, uint32_t importFlags) const

@@ -39,25 +39,21 @@ Aabb::Aabb(const Vector4& mn_, const Vector4& mx_)
 
 void Aabb::getExtents(Vector4 extents[8]) const
 {
-	extents[0] = Vector4(mn.x(), mn.y(), mn.z(), 1.0f);
+	extents[0] = mn.xyz1();
 	extents[1] = Vector4(mn.x(), mx.y(), mn.z(), 1.0f);
 	extents[2] = Vector4(mx.x(), mx.y(), mn.z(), 1.0f);
 	extents[3] = Vector4(mx.x(), mn.y(), mn.z(), 1.0f);
 	extents[4] = Vector4(mn.x(), mn.y(), mx.z(), 1.0f);
 	extents[5] = Vector4(mn.x(), mx.y(), mx.z(), 1.0f);
-	extents[6] = Vector4(mx.x(), mx.y(), mx.z(), 1.0f);
+	extents[6] = mx.xyz1();
 	extents[7] = Vector4(mx.x(), mn.y(), mx.z(), 1.0f);
 }
 
 bool Aabb::inside(const Vector4& pt) const
 {
 	return
-		(pt.x() >= mn.x()) &&
-		(pt.y() >= mn.y()) &&
-		(pt.z() >= mn.z()) &&
-		(pt.x() <= mx.x()) &&
-		(pt.y() <= mx.y()) &&
-		(pt.z() <= mx.z());
+		compareAllGreaterEqual(pt.xyz1(), mn.xyz0()) &&
+		compareAllLessEqual(pt.xyz0(), mx.xyz1());
 }
 
 bool Aabb::intersectRay(const Vector4& p, const Vector4& d, Scalar& outDistance) const

@@ -49,11 +49,11 @@ public:
 
 	const FlashCharacter* getCharacter(uint16_t characterId) const;
 
-	void setExport(const std::wstring& name, uint16_t exportId);
+	void setExport(const std::string& name, uint16_t exportId);
 
-	bool getExportId(const std::wstring& name, uint16_t& outExportId) const;
+	bool getExportId(const std::string& name, uint16_t& outExportId) const;
 
-	bool getExportName(uint16_t exportId, std::wstring& outName) const;
+	bool getExportName(uint16_t exportId, std::string& outName) const;
 
 	const SwfRect& getFrameBounds() const;
 
@@ -69,7 +69,7 @@ public:
 
 	const std::map< uint16_t, Ref< FlashCharacter > >& getCharacters() const { return m_characters; }
 
-	const std::map< std::wstring, uint16_t >& getExports() const { return m_exports; }
+	const std::map< std::string, uint16_t >& getExports() const { return m_exports; }
 
 private:
 	SwfRect m_frameBounds;
@@ -77,7 +77,7 @@ private:
 	std::map< uint16_t, Ref< FlashFont > > m_fonts;
 	std::map< uint16_t, Ref< FlashBitmap > > m_bitmaps;
 	std::map< uint16_t, Ref< FlashCharacter > > m_characters;
-	std::map< std::wstring, uint16_t > m_exports;
+	std::map< std::string, uint16_t > m_exports;
 };
 
 	}

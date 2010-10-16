@@ -24,18 +24,19 @@ class OctreePartition : public IPartition
 	T_RTTI_CLASS;
 
 public:
-	OctreePartition(OctreeNode* node);
+	OctreePartition(OctreeNode* node, const std::vector< render::handle_t >& worldTechniques);
 
 	virtual void traverse(
 		const Frustum& frustum,
 		const Matrix44& world,
 		const Matrix44& view,
 		render::handle_t worldTechnique,
-		std::set< uint32_t >& outPartIndices
+		std::vector< uint32_t >& outPartIndices
 	) const;
 
 private:
 	Ref< OctreeNode > m_node;
+	std::vector< render::handle_t > m_worldTechniques;
 };
 
 	}

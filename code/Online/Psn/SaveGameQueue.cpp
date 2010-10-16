@@ -24,6 +24,7 @@ bool SaveGameQueue::create()
 	{
 		m_queueLock.wait();
 		m_queue.push_back(task);
+		m_queuedSignal.set();
 		m_queueLock.release();
 
 		// \fixme Wait for save games in first getAvailableSaveGames.
@@ -53,6 +54,7 @@ Ref< ISaveGame > SaveGameQueue::createSaveGame(const std::wstring& name, ISerial
 
 	m_queueLock.wait();
 	m_queue.push_back(task);
+	m_queuedSignal.set();
 	m_queueLock.release();
 
 	// Add another save game to our list.
@@ -85,11 +87,16 @@ void SaveGameQueue::threadQueue()
 {
 	while (!m_thread->stopped())
 	{
+		if (!m_queuedSignal.wait(200))
+			continue;
+
 		if (!m_queueLock.wait(100))
 			continue;
 
 		if (m_queue.empty())
 		{
+			// No more queued tasks.
+			m_queuedSignal.reset();
 			m_queueLock.release();
 			continue;
 		}

@@ -11,31 +11,31 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsSound", AsSound, ActionClass)
 
 AsSound::AsSound()
-:	ActionClass(L"Sound")
+:	ActionClass("Sound")
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"attachSound", ActionValue(createNativeFunction(this, &AsSound::Sound_attachSound)));
-	prototype->setMember(L"getBytesLoaded", ActionValue(createNativeFunction(this, &AsSound::Sound_getBytesLoaded)));
-	prototype->setMember(L"getBytesTotal", ActionValue(createNativeFunction(this, &AsSound::Sound_getBytesTotal)));
-	prototype->setMember(L"getPan", ActionValue(createNativeFunction(this, &AsSound::Sound_getPan)));
-	prototype->setMember(L"getTransform", ActionValue(createNativeFunction(this, &AsSound::Sound_getTransform)));
-	prototype->setMember(L"getVolume", ActionValue(createNativeFunction(this, &AsSound::Sound_getVolume)));
-	prototype->setMember(L"loadSound", ActionValue(createNativeFunction(this, &AsSound::Sound_loadSound)));
-	prototype->setMember(L"setPan", ActionValue(createNativeFunction(this, &AsSound::Sound_setPan)));
-	prototype->setMember(L"setTransform", ActionValue(createNativeFunction(this, &AsSound::Sound_setTransform)));
-	prototype->setMember(L"setVolume", ActionValue(createNativeFunction(this, &AsSound::Sound_setVolume)));
-	prototype->setMember(L"start", ActionValue(createNativeFunction(this, &AsSound::Sound_start)));
-	prototype->setMember(L"stop", ActionValue(createNativeFunction(this, &AsSound::Sound_stop)));
+	prototype->setMember("attachSound", ActionValue(createNativeFunction(this, &AsSound::Sound_attachSound)));
+	prototype->setMember("getBytesLoaded", ActionValue(createNativeFunction(this, &AsSound::Sound_getBytesLoaded)));
+	prototype->setMember("getBytesTotal", ActionValue(createNativeFunction(this, &AsSound::Sound_getBytesTotal)));
+	prototype->setMember("getPan", ActionValue(createNativeFunction(this, &AsSound::Sound_getPan)));
+	prototype->setMember("getTransform", ActionValue(createNativeFunction(this, &AsSound::Sound_getTransform)));
+	prototype->setMember("getVolume", ActionValue(createNativeFunction(this, &AsSound::Sound_getVolume)));
+	prototype->setMember("loadSound", ActionValue(createNativeFunction(this, &AsSound::Sound_loadSound)));
+	prototype->setMember("setPan", ActionValue(createNativeFunction(this, &AsSound::Sound_setPan)));
+	prototype->setMember("setTransform", ActionValue(createNativeFunction(this, &AsSound::Sound_setTransform)));
+	prototype->setMember("setVolume", ActionValue(createNativeFunction(this, &AsSound::Sound_setVolume)));
+	prototype->setMember("start", ActionValue(createNativeFunction(this, &AsSound::Sound_start)));
+	prototype->setMember("stop", ActionValue(createNativeFunction(this, &AsSound::Sound_stop)));
 
-	prototype->addProperty(L"checkPolicyFile", createNativeFunction(this, &AsSound::Sound_get_checkPolicyFile), createNativeFunction(this, &AsSound::Sound_set_checkPolicyFile));
-	prototype->addProperty(L"duration", createNativeFunction(this, &AsSound::Sound_get_duration), 0);
-	prototype->addProperty(L"id3", createNativeFunction(this, &AsSound::Sound_get_id3), 0);
-	prototype->addProperty(L"position", createNativeFunction(this, &AsSound::Sound_get_position), 0);
+	prototype->addProperty("checkPolicyFile", createNativeFunction(this, &AsSound::Sound_get_checkPolicyFile), createNativeFunction(this, &AsSound::Sound_set_checkPolicyFile));
+	prototype->addProperty("duration", createNativeFunction(this, &AsSound::Sound_get_duration), 0);
+	prototype->addProperty("id3", createNativeFunction(this, &AsSound::Sound_get_id3), 0);
+	prototype->addProperty("position", createNativeFunction(this, &AsSound::Sound_get_position), 0);
 
 	prototype->setReadOnly();
 
-	setMember(L"prototype", ActionValue(prototype));
+	setMember("prototype", ActionValue(prototype));
 }
 
 ActionValue AsSound::construct(ActionContext* context, const ActionValueArray& args)

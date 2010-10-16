@@ -13,16 +13,16 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsStage", AsStage, ActionClass)
 
 AsStage::AsStage()
-:	ActionClass(L"Stage")
+:	ActionClass("Stage")
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->addProperty(L"width", createNativeFunction(this, &AsStage::Stage_get_width), createNativeFunction(this, &AsStage::Stage_set_width));
-	prototype->addProperty(L"height", createNativeFunction(this, &AsStage::Stage_get_height), createNativeFunction(this, &AsStage::Stage_set_height));
+	prototype->addProperty("width", createNativeFunction(this, &AsStage::Stage_get_width), createNativeFunction(this, &AsStage::Stage_set_width));
+	prototype->addProperty("height", createNativeFunction(this, &AsStage::Stage_get_height), createNativeFunction(this, &AsStage::Stage_set_height));
 
 	prototype->setReadOnly();
 
-	setMember(L"prototype", ActionValue(prototype));
+	setMember("prototype", ActionValue(prototype));
 }
 
 ActionValue AsStage::construct(ActionContext* context, const ActionValueArray& args)

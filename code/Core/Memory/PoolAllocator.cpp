@@ -8,8 +8,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.PoolAllocator", PoolAllocator, Object)
 
 PoolAllocator::PoolAllocator()
-:	m_allocator(0)
-,	m_totalSize(0)
+:	m_totalSize(0)
 ,	m_head(0)
 ,	m_tail(0)
 {
@@ -32,8 +31,7 @@ PoolAllocator::PoolAllocator(uint32_t totalSize)
 }
 
 PoolAllocator::PoolAllocator(void* heap, uint32_t totalSize)
-:	m_allocator(0)
-,	m_totalSize(totalSize)
+:	m_totalSize(totalSize)
 ,	m_head(static_cast< uint8_t* >(heap))
 ,	m_tail(static_cast< uint8_t* >(heap))
 {

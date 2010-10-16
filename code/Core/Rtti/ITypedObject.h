@@ -293,6 +293,35 @@ T checked_type_cast(const ITypedObject* obj)
 	return static_cast< T >(obj);
 }
 
+/*! \brief Safe cast object.
+ *
+ * The cast will assert if object is of incorrect type.
+ *
+ * \param T Cast to type.
+ * \param o Object.
+ * \return Casted value.
+ */
+template < typename T, typename T0 >
+Ref< typename IsPointer< T >::base_t > checked_type_cast(const Ref< T0 >& obj)
+{
+	return checked_type_cast< typename IsPointer< T >::base_t* >(obj.ptr());
+}
+
+/*! \brief Safe cast object.
+ *
+ * The cast will assert if object is of incorrect type.
+ *
+ * \param T Cast to type.
+ * \param o Object.
+ * \return Casted value.
+ */
+template < typename T, bool AllowNull, typename T0 >
+Ref< typename IsPointer< T >::base_t > checked_type_cast(const Ref< T0 >& obj)
+{
+	T_ASSERT ((AllowNull || obj) && is_a< T >(obj.ptr()));
+	return checked_type_cast< typename IsPointer< T >::base_t* >(obj.ptr());
+}
+
 }
 
 #endif	// traktor_ITypedObject_H

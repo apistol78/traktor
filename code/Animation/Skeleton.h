@@ -37,7 +37,7 @@ public:
 
 	inline uint32_t getBoneCount() const { return uint32_t(m_bones.size()); }
 
-	inline Ref< Bone > getBone(uint32_t index) const { return m_bones[index]; }
+	inline Bone* getBone(uint32_t index) const { return m_bones[index]; }
 
 private:
 	RefArray< Bone > m_bones;

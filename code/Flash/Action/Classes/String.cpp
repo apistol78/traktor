@@ -8,25 +8,25 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.String", String, ActionObject)
 
 String::String()
-:	ActionObject(L"String")
+:	ActionObject("String")
 {
 }
 
-String::String(wchar_t ch)
-:	ActionObject(L"String")
+String::String(char ch)
+:	ActionObject("String")
 {
 	m_str.resize(1, ch);
 }
 
-String::String(const std::wstring& str)
-:	ActionObject(L"String")
+String::String(const std::string& str)
+:	ActionObject("String")
 ,	m_str(str)
 {
 }
 
-std::wstring String::toString() const
+ActionValue String::toString() const
 {
-	return m_str;
+	return ActionValue(m_str);
 }
 
 	}

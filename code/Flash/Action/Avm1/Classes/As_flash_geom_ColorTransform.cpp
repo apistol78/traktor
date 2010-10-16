@@ -11,23 +11,23 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.As_flash_geom_ColorTransform", As_flash_geom_ColorTransform, ActionClass)
 
 As_flash_geom_ColorTransform::As_flash_geom_ColorTransform()
-:	ActionClass(L"flash.geom.Transform")
+:	ActionClass("flash.geom.Transform")
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->addProperty(L"alphaMultiplier", createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_get_alphaMultiplier), createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_set_alphaMultiplier));
-	prototype->addProperty(L"alphaOffset", createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_get_alphaOffset), createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_set_alphaOffset));
-	prototype->addProperty(L"blueMultiplier", createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_get_blueMultiplier), createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_set_blueMultiplier));
-	prototype->addProperty(L"blueOffset", createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_get_blueOffset), createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_set_blueOffset));
-	prototype->addProperty(L"greenMultiplier", createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_get_greenMultiplier), createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_set_greenMultiplier));
-	prototype->addProperty(L"greenOffset", createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_get_greenOffset), createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_set_greenOffset));
-	prototype->addProperty(L"redMultiplier", createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_get_redMultiplier), createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_set_redMultiplier));
-	prototype->addProperty(L"redOffset", createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_get_redOffset), createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_set_redOffset));
-	prototype->addProperty(L"rgb", createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_get_rgb), createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_set_rgb));
+	prototype->addProperty("alphaMultiplier", createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_get_alphaMultiplier), createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_set_alphaMultiplier));
+	prototype->addProperty("alphaOffset", createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_get_alphaOffset), createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_set_alphaOffset));
+	prototype->addProperty("blueMultiplier", createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_get_blueMultiplier), createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_set_blueMultiplier));
+	prototype->addProperty("blueOffset", createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_get_blueOffset), createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_set_blueOffset));
+	prototype->addProperty("greenMultiplier", createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_get_greenMultiplier), createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_set_greenMultiplier));
+	prototype->addProperty("greenOffset", createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_get_greenOffset), createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_set_greenOffset));
+	prototype->addProperty("redMultiplier", createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_get_redMultiplier), createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_set_redMultiplier));
+	prototype->addProperty("redOffset", createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_get_redOffset), createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_set_redOffset));
+	prototype->addProperty("rgb", createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_get_rgb), createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_set_rgb));
 
 	prototype->setReadOnly();
 
-	setMember(L"prototype", ActionValue(prototype));
+	setMember("prototype", ActionValue(prototype));
 }
 
 ActionValue As_flash_geom_ColorTransform::construct(ActionContext* context, const ActionValueArray& args)

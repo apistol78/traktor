@@ -12,21 +12,21 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsNumber", AsNumber, ActionClass)
 
 AsNumber::AsNumber()
-:	ActionClass(L"Number")
+:	ActionClass("Number")
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"MAX_VALUE", ActionValue(std::numeric_limits< avm_number_t >::max()));
-	prototype->setMember(L"MIN_VALUE", ActionValue(std::numeric_limits< avm_number_t >::min()));
-	prototype->setMember(L"NaN", ActionValue(std::numeric_limits< avm_number_t >::signaling_NaN()));
-	prototype->setMember(L"NEGATIVE_INFINITY", ActionValue(-std::numeric_limits< avm_number_t >::infinity()));
-	prototype->setMember(L"POSITIVE_INFINITY", ActionValue(std::numeric_limits< avm_number_t >::infinity()));
-	prototype->setMember(L"toString", ActionValue(createNativeFunction(this, &AsNumber::Number_toString)));
-	prototype->setMember(L"valueOf", ActionValue(createNativeFunction(this, &AsNumber::Number_valueOf)));
+	prototype->setMember("MAX_VALUE", ActionValue(std::numeric_limits< avm_number_t >::max()));
+	prototype->setMember("MIN_VALUE", ActionValue(std::numeric_limits< avm_number_t >::min()));
+	prototype->setMember("NaN", ActionValue(std::numeric_limits< avm_number_t >::signaling_NaN()));
+	prototype->setMember("NEGATIVE_INFINITY", ActionValue(-std::numeric_limits< avm_number_t >::infinity()));
+	prototype->setMember("POSITIVE_INFINITY", ActionValue(std::numeric_limits< avm_number_t >::infinity()));
+	prototype->setMember("toString", ActionValue(createNativeFunction(this, &AsNumber::Number_toString)));
+	prototype->setMember("valueOf", ActionValue(createNativeFunction(this, &AsNumber::Number_valueOf)));
 
 	prototype->setReadOnly();
 
-	setMember(L"prototype", ActionValue(prototype));
+	setMember("prototype", ActionValue(prototype));
 }
 
 ActionValue AsNumber::construct(ActionContext* context, const ActionValueArray& args)

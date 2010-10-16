@@ -38,7 +38,7 @@ public:
 
 	void notifyFrameListeners(avm_number_t time);
 
-	ActionObject* lookupClass(const std::wstring& className);
+	ActionObject* lookupClass(const std::string& className);
 
 	const IActionVM* getVM() const { return m_vm; }
 

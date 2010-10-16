@@ -9,26 +9,26 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsTextField_StyleSheet", AsTextField_StyleSheet, ActionClass)
 
 AsTextField_StyleSheet::AsTextField_StyleSheet()
-:	ActionClass(L"TextField.StyleSheet")
+:	ActionClass("TextField.StyleSheet")
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"clear", ActionValue(createNativeFunction(this, &AsTextField_StyleSheet::TextField_StyleSheet_clear)));
-	prototype->setMember(L"getStyle", ActionValue(createNativeFunction(this, &AsTextField_StyleSheet::TextField_StyleSheet_getStyle)));
-	prototype->setMember(L"getStyleNames", ActionValue(createNativeFunction(this, &AsTextField_StyleSheet::TextField_StyleSheet_getStyleNames)));
-	prototype->setMember(L"load", ActionValue(createNativeFunction(this, &AsTextField_StyleSheet::TextField_StyleSheet_load)));
-	prototype->setMember(L"parseCSS", ActionValue(createNativeFunction(this, &AsTextField_StyleSheet::TextField_StyleSheet_parseCSS)));
-	prototype->setMember(L"setStyle", ActionValue(createNativeFunction(this, &AsTextField_StyleSheet::TextField_StyleSheet_setStyle)));
-	prototype->setMember(L"transform", ActionValue(createNativeFunction(this, &AsTextField_StyleSheet::TextField_StyleSheet_transform)));
+	prototype->setMember("clear", ActionValue(createNativeFunction(this, &AsTextField_StyleSheet::TextField_StyleSheet_clear)));
+	prototype->setMember("getStyle", ActionValue(createNativeFunction(this, &AsTextField_StyleSheet::TextField_StyleSheet_getStyle)));
+	prototype->setMember("getStyleNames", ActionValue(createNativeFunction(this, &AsTextField_StyleSheet::TextField_StyleSheet_getStyleNames)));
+	prototype->setMember("load", ActionValue(createNativeFunction(this, &AsTextField_StyleSheet::TextField_StyleSheet_load)));
+	prototype->setMember("parseCSS", ActionValue(createNativeFunction(this, &AsTextField_StyleSheet::TextField_StyleSheet_parseCSS)));
+	prototype->setMember("setStyle", ActionValue(createNativeFunction(this, &AsTextField_StyleSheet::TextField_StyleSheet_setStyle)));
+	prototype->setMember("transform", ActionValue(createNativeFunction(this, &AsTextField_StyleSheet::TextField_StyleSheet_transform)));
 
 	prototype->setReadOnly();
 
-	setMember(L"prototype", ActionValue(prototype));
+	setMember("prototype", ActionValue(prototype));
 }
 
 ActionValue AsTextField_StyleSheet::construct(ActionContext* context, const ActionValueArray& args)
 {
-	return ActionValue(new ActionObject(L"TextField.StyleSheet"));
+	return ActionValue(new ActionObject("TextField.StyleSheet"));
 }
 
 void AsTextField_StyleSheet::TextField_StyleSheet_clear(CallArgs& ca)

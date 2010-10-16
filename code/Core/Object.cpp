@@ -1,10 +1,7 @@
 #include "Core/IObjectRefDebugger.h"
 #include "Core/Object.h"
-#include "Core/Memory/Alloc.h"
-#include "Core/Memory/FastAllocator.h"
-#include "Core/Memory/StdAllocator.h"
-#include "Core/Memory/TrackAllocator.h"
-#include "Core/Misc/AutoPtr.h"
+#include "Core/Memory/IAllocator.h"
+#include "Core/Memory/MemoryConfig.h"
 
 namespace traktor
 {
@@ -34,53 +31,28 @@ inline bool isObjectHeapAllocated(const void* ptr)
 	return bool(header->magic == c_magic);
 }
 
-IAllocator* getAllocator()
-{
-	static AutoPtr< IAllocator > s_allocator;
-	if (!s_allocator.ptr())
-	{
-#if !defined(_DEBUG)
-		s_allocator.reset(new FastAllocator(
-			new StdAllocator()
-		));
-#else
-		s_allocator.reset(new TrackAllocator(
-			new StdAllocator()
-		));
-#endif
-	}
-	return s_allocator.ptr();
-}
-
 	}
 
 T_IMPLEMENT_RTTI_CLASS_ROOT(L"traktor.Object", Object)
 
 IObjectRefDebugger* Object::ms_refDebugger = 0;
 
+#if defined(_DEBUG)
 void Object::addRef(void* owner) const
 {
 	++m_refCount;
-
-#if defined(_DEBUG)
 	if (ms_refDebugger)
 		ms_refDebugger->addObjectRef(owner, (void*)this);
-#endif
 }
 
 void Object::release(void* owner) const
 {
-#if defined(_DEBUG)
 	if (ms_refDebugger)
 		ms_refDebugger->removeObjectRef(owner, (void*)this);
-#endif
-
 	if (--m_refCount == 0)
-	{
-		if (isObjectHeapAllocated(this))
-			delete this;
-	}
+		finalRelease();
 }
+#endif
 
 void* Object::operator new (size_t size)
 {
@@ -120,14 +92,22 @@ void Object::operator delete (void* ptr)
 	}
 }
 
+#if defined(_DEBUG)
 int32_t Object::getReferenceCount() const
 {
 	return m_refCount;
 }
+#endif
 
 void Object::setReferenceDebugger(IObjectRefDebugger* refDebugger)
 {
 	ms_refDebugger = refDebugger;
+}
+
+void Object::finalRelease() const
+{
+	if (isObjectHeapAllocated(this))
+		delete this;
 }
 
 }

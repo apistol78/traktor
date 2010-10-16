@@ -30,20 +30,20 @@ class T_DLLCLASS ActionFunction : public ActionObject
 	T_RTTI_CLASS;
 
 public:
-	ActionFunction(const std::wstring& name);
+	ActionFunction(const std::string& name);
 
 	virtual ActionValue call(ActionContext* context, ActionObject* self, const ActionValueArray& args) = 0;
 
 	virtual ActionValue call(ActionFrame* callerFrame, ActionObject* self) = 0;
 
-	virtual std::wstring toString() const;
+	virtual ActionValue toString() const;
 
-	void setName(const std::wstring& name) { m_name = name; }
+	void setName(const std::string& name) { m_name = name; }
 
-	const std::wstring& getName() const { return m_name; }
+	const std::string& getName() const { return m_name; }
 
 private:
-	std::wstring m_name;
+	std::string m_name;
 };
 
 	}

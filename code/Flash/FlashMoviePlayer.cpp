@@ -68,20 +68,20 @@ bool FlashMoviePlayer::create(FlashMovie* movie)
 	m_movieInstance = m_movie->createMovieClipInstance(m_actionVM);
 
 	// Override some global methods.
-	setGlobal(L"getUrl", ActionValue(createNativeFunction(this, &FlashMoviePlayer::Global_getUrl)));
-	setGlobal(L"setInterval", ActionValue(createNativeFunction(this, &FlashMoviePlayer::Global_setInterval)));
-	setGlobal(L"clearInterval", ActionValue(createNativeFunction(this, &FlashMoviePlayer::Global_clearInterval)));
+	setGlobal("getUrl", ActionValue(createNativeFunction(this, &FlashMoviePlayer::Global_getUrl)));
+	setGlobal("setInterval", ActionValue(createNativeFunction(this, &FlashMoviePlayer::Global_setInterval)));
+	setGlobal("clearInterval", ActionValue(createNativeFunction(this, &FlashMoviePlayer::Global_clearInterval)));
 
 	// Get references to key and mouse singletons.
 	Ref< ActionContext > context = m_movieInstance->getContext();
 	Ref< ActionObject > global = context->getGlobal();
 
 	Ref< AsKey > key;
-	if (global->getLocalMember(L"Key", memberValue))
+	if (global->getLocalMember("Key", memberValue))
 		m_key = memberValue.getObject< AsKey >();
 
 	Ref< AsMouse > mouse;
-	if (global->getLocalMember(L"Mouse", memberValue))
+	if (global->getLocalMember("Mouse", memberValue))
 		m_mouse = memberValue.getObject< AsMouse >();
 		
 	// Preload resources into display renderer.
@@ -134,7 +134,7 @@ void FlashMoviePlayer::gotoAndStop(uint32_t frame)
 	m_movieInstance->gotoFrame(frame);
 }
 
-void FlashMoviePlayer::gotoAndPlay(const std::wstring& frameLabel)
+void FlashMoviePlayer::gotoAndPlay(const std::string& frameLabel)
 {
 	int frame = m_movie->getMovieClip()->findFrame(frameLabel);
 	if (frame >= 0)
@@ -144,7 +144,7 @@ void FlashMoviePlayer::gotoAndPlay(const std::wstring& frameLabel)
 	}
 }
 
-void FlashMoviePlayer::gotoAndStop(const std::wstring& frameLabel)
+void FlashMoviePlayer::gotoAndStop(const std::string& frameLabel)
 {
 	int frame = m_movie->getMovieClip()->findFrame(frameLabel);
 	if (frame >= 0)
@@ -324,7 +324,7 @@ IActionVM* FlashMoviePlayer::getVM() const
 	return m_actionVM;
 }
 
-void FlashMoviePlayer::setGlobal(const std::wstring& name, const ActionValue& value)
+void FlashMoviePlayer::setGlobal(const std::string& name, const ActionValue& value)
 {
 	ActionContext* actionContext = m_movieInstance->getContext();
 	T_ASSERT (actionContext);
@@ -335,7 +335,7 @@ void FlashMoviePlayer::setGlobal(const std::wstring& name, const ActionValue& va
 	global->setMember(name, value);
 }
 
-ActionValue FlashMoviePlayer::getGlobal(const std::wstring& name) const
+ActionValue FlashMoviePlayer::getGlobal(const std::string& name) const
 {
 	ActionContext* actionContext = m_movieInstance->getContext();
 	T_ASSERT (actionContext);
@@ -351,12 +351,12 @@ ActionValue FlashMoviePlayer::getGlobal(const std::wstring& name) const
 
 void FlashMoviePlayer::Global_getUrl(CallArgs& ca)
 {
-	std::wstring url = ca.args[0].getString();
-	if (startsWith< std::wstring >(url, L"FSCommand:"))
+	std::string url = ca.args[0].getString();
+	if (startsWith< std::string >(url, "FSCommand:"))
 	{
 		m_fsCommands.push_back(std::make_pair(
-			url.substr(10),
-			ca.args[1].getStringSafe()
+			mbstows(url.substr(10)),
+			ca.args[1].getWideStringSafe()
 		));
 	}
 }

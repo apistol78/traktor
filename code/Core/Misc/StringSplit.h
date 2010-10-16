@@ -32,7 +32,7 @@ public:
 			if (m_st != string_type::npos)
 				return m_this->m_str.substr(m_st, m_en - m_st);
 			else
-				return L"";
+				return string_type();
 		}
 
 		const_iterator operator ++ ()

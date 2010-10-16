@@ -16,7 +16,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashButtonInstance", FlashButtonInstance, FlashCharacterInstance)
 
 FlashButtonInstance::FlashButtonInstance(ActionContext* context, FlashCharacterInstance* parent, const FlashButton* button)
-:	FlashCharacterInstance(context, L"Button", parent)
+:	FlashCharacterInstance(context, "Button", parent)
 ,	m_button(button)
 ,	m_state(FlashButton::SmUp)
 ,	m_inside(false)
@@ -58,7 +58,7 @@ void FlashButtonInstance::eventMouseDown(int x, int y, int button)
 	if (m_inside && !m_pushed)
 	{
 		executeCondition(FlashButton::CmOverUpToOverDown);
-		executeScriptEvent(L"onPress");
+		executeScriptEvent("onPress");
 		m_state = FlashButton::SmDown;
 		m_pushed = true;
 	}
@@ -69,14 +69,14 @@ void FlashButtonInstance::eventMouseUp(int x, int y, int button)
 	if (m_inside && m_pushed)
 	{
 		executeCondition(FlashButton::CmOverDownToOverUp);
-		executeScriptEvent(L"onRelease");
+		executeScriptEvent("onRelease");
 		m_state = FlashButton::SmOver;
 		m_pushed = false;
 	}
 	else if (!m_inside && m_pushed)
 	{
 		executeCondition(FlashButton::CmOutDownToIdle);
-		executeScriptEvent(L"onReleaseOutside");
+		executeScriptEvent("onReleaseOutside");
 		m_state = FlashButton::SmUp;
 		m_pushed = false;
 	}
@@ -93,7 +93,7 @@ void FlashButtonInstance::eventMouseMove(int x, int y, int button)
 			if (button == 0)
 			{
 				executeCondition(FlashButton::CmIdleToOverUp);
-				executeScriptEvent(L"onRollOver");
+				executeScriptEvent("onRollOver");
 				m_state = FlashButton::SmOver;
 			}
 			else
@@ -107,7 +107,7 @@ void FlashButtonInstance::eventMouseMove(int x, int y, int button)
 			if (button == 0)
 			{
 				executeCondition(FlashButton::CmOverUpToIdle);
-				executeScriptEvent(L"onRollOut");
+				executeScriptEvent("onRollOut");
 				m_state = FlashButton::SmUp;
 			}
 			else
@@ -177,7 +177,7 @@ void FlashButtonInstance::executeCondition(uint32_t conditionMask)
 	}
 }
 
-void FlashButtonInstance::executeScriptEvent(const std::wstring& eventName)
+void FlashButtonInstance::executeScriptEvent(const std::string& eventName)
 {
 	ActionValue memberValue;
 	if (!getLocalMember(eventName, memberValue))

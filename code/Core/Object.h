@@ -24,21 +24,45 @@ class T_DLLCLASS Object : public ITypedObject
 	T_RTTI_CLASS;
 
 public:
-	virtual void addRef(void* owner) const;
+	virtual void addRef(void* owner) const
+#if !defined(_DEBUG)
+	{
+		++m_refCount;
+	}
+#else
+	;
+#endif
 
-	virtual void release(void* owner) const;
+	virtual void release(void* owner) const
+#if !defined(_DEBUG)
+	{
+		if (--m_refCount == 0)
+			finalRelease();
+	}
+#else
+	;
+#endif
 
 	void* operator new (size_t size);
 
 	void operator delete (void* ptr);
 
-	int32_t getReferenceCount() const;
+	int32_t getReferenceCount() const
+#if !defined(_DEBUG)
+	{
+		return m_refCount;
+	}
+#else
+	;
+#endif
 
 	static void setReferenceDebugger(IObjectRefDebugger* refDebugger);
 
 private:
 	static IObjectRefDebugger* ms_refDebugger;
 	mutable AtomicRefCount m_refCount;
+
+	void finalRelease() const;
 };	
 
 }

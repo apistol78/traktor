@@ -8,7 +8,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.Date", Date, ActionObject)
 
 Date::Date()
-:	ActionObject(L"Date")
+:	ActionObject("Date")
 {
 }
 

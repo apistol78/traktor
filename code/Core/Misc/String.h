@@ -69,9 +69,10 @@ String transform(const String& str, int (*func)(int c))
  * \param str Source string.
  * \return All uppercase string.
  */
-inline std::wstring toUpper(const std::wstring& str)
+template < typename String >
+String toUpper(const String& str)
 {
-	return transform< std::wstring >(str, std::toupper);
+	return transform< String >(str, std::toupper);
 }
 
 /*! \brief Transform a string to all lowercase.
@@ -80,9 +81,10 @@ inline std::wstring toUpper(const std::wstring& str)
  * \param str Source string.
  * \return All lowercase string.
  */
-inline std::wstring toLower(const std::wstring& str)
+template < typename String >
+String toLower(const String& str)
 {
-	return transform< std::wstring >(str, std::tolower);
+	return transform< String >(str, std::tolower);
 }
 
 /*! \brief See if the start of a string matches a given string.
@@ -126,9 +128,10 @@ bool endsWith(const StringType& str, const StringType& end)
  * \param b Right hand string.
  * \return See basic_string::compare().
  */
-inline int compareIgnoreCase(const std::wstring& a, const std::wstring& b)
+template < typename StringType >
+int compareIgnoreCase(const StringType& a, const StringType& b)
 {
-	return toLower(a).compare(toLower(b));
+	return toLower< StringType >(a).compare(toLower< StringType >(b));
 }
 
 /*! \brief Trim leading white-space.
@@ -246,9 +249,9 @@ inline ValueType parseString(const std::wstring& text)
 template < >
 inline bool parseString< bool >(const std::wstring& text)
 {
-	if (compareIgnoreCase(text, L"true") == 0)
+	if (compareIgnoreCase< std::wstring >(text, L"true") == 0)
 		return true;
-	else if (compareIgnoreCase(text, L"yes") == 0)
+	else if (compareIgnoreCase< std::wstring >(text, L"yes") == 0)
 		return true;
 	else
 	{

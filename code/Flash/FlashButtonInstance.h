@@ -70,7 +70,7 @@ private:
 
 	void executeCondition(uint32_t conditionMask);
 
-	void executeScriptEvent(const std::wstring& eventName);
+	void executeScriptEvent(const std::string& eventName);
 };
 
 	}

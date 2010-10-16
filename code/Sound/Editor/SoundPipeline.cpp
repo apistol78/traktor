@@ -111,13 +111,13 @@ bool SoundPipeline::buildOutput(
 	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, soundAsset->getFileName());
 
 	Ref< IStreamDecoder > decoder;
-	if (compareIgnoreCase(fileName.getExtension(), L"wav") == 0)
+	if (compareIgnoreCase< std::wstring >(fileName.getExtension(), L"wav") == 0)
 		decoder = new sound::WavStreamDecoder();
-	else if (compareIgnoreCase(fileName.getExtension(), L"flac") == 0)
+	else if (compareIgnoreCase< std::wstring >(fileName.getExtension(), L"flac") == 0)
 		decoder = new sound::FlacStreamDecoder();
-	else if (compareIgnoreCase(fileName.getExtension(), L"mp3") == 0)
+	else if (compareIgnoreCase< std::wstring >(fileName.getExtension(), L"mp3") == 0)
 		decoder = new sound::Mp3StreamDecoder();
-	else if (compareIgnoreCase(fileName.getExtension(), L"ogg") == 0)
+	else if (compareIgnoreCase< std::wstring >(fileName.getExtension(), L"ogg") == 0)
 		decoder = new sound::OggStreamDecoder();
 	else
 	{

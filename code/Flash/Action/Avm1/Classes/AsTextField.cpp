@@ -14,19 +14,19 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsTextField", AsTextField, ActionClass)
 
 AsTextField::AsTextField()
-:	ActionClass(L"TextField")
+:	ActionClass("TextField")
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"StyleSheet", ActionValue(new AsTextField_StyleSheet()));
+	prototype->setMember("StyleSheet", ActionValue(new AsTextField_StyleSheet()));
 
-	prototype->addProperty(L"text", createNativeFunction(this, &AsTextField::TextField_get_text), createNativeFunction(this, &AsTextField::TextField_set_text));
-	prototype->addProperty(L"textWidth", createNativeFunction(this, &AsTextField::TextField_get_textWidth), 0);
-	prototype->addProperty(L"textHeight", createNativeFunction(this, &AsTextField::TextField_get_textHeight), 0);
+	prototype->addProperty("text", createNativeFunction(this, &AsTextField::TextField_get_text), createNativeFunction(this, &AsTextField::TextField_set_text));
+	prototype->addProperty("textWidth", createNativeFunction(this, &AsTextField::TextField_get_textWidth), 0);
+	prototype->addProperty("textHeight", createNativeFunction(this, &AsTextField::TextField_get_textHeight), 0);
 
 	prototype->setReadOnly();
 
-	setMember(L"prototype", ActionValue(prototype));
+	setMember("prototype", ActionValue(prototype));
 }
 
 ActionValue AsTextField::construct(ActionContext* context, const ActionValueArray& args)

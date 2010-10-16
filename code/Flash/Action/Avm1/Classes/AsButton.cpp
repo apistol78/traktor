@@ -11,43 +11,43 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsButton", AsButton, ActionClass)
 
 AsButton::AsButton()
-:	ActionClass(L"Button")
+:	ActionClass("Button")
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->addProperty(L"_alpha", createNativeFunction(this, &AsButton::Button_get_alpha), createNativeFunction(this, &AsButton::Button_set_alpha));
-	prototype->addProperty(L"blendMode", createNativeFunction(this, &AsButton::Button_get_blendMode), createNativeFunction(this, &AsButton::Button_set_blendMode));
-	prototype->addProperty(L"cacheAsBitmap", createNativeFunction(this, &AsButton::Button_get_cacheAsBitmap), createNativeFunction(this, &AsButton::Button_set_cacheAsBitmap));
-	prototype->addProperty(L"enabled", createNativeFunction(this, &AsButton::Button_get_enabled), createNativeFunction(this, &AsButton::Button_set_enabled));
-	prototype->addProperty(L"filters", createNativeFunction(this, &AsButton::Button_get_filters), createNativeFunction(this, &AsButton::Button_set_filters));
-	prototype->addProperty(L"_focusrect", createNativeFunction(this, &AsButton::Button_get_focusrect), createNativeFunction(this, &AsButton::Button_set_focusrect));
-	prototype->addProperty(L"_height", createNativeFunction(this, &AsButton::Button_get_height), createNativeFunction(this, &AsButton::Button_set_height));
-	prototype->addProperty(L"_highquality", createNativeFunction(this, &AsButton::Button_get_highquality), createNativeFunction(this, &AsButton::Button_set_highquality));
-	prototype->addProperty(L"menu", createNativeFunction(this, &AsButton::Button_get_menu), createNativeFunction(this, &AsButton::Button_set_menu));
-	prototype->addProperty(L"_name", createNativeFunction(this, &AsButton::Button_get_name), createNativeFunction(this, &AsButton::Button_set_name));
-	prototype->addProperty(L"_parent", createNativeFunction(this, &AsButton::Button_get_parent), createNativeFunction(this, &AsButton::Button_set_parent));
-	prototype->addProperty(L"_quality", createNativeFunction(this, &AsButton::Button_get_quality), createNativeFunction(this, &AsButton::Button_set_quality));
-	prototype->addProperty(L"_rotation", createNativeFunction(this, &AsButton::Button_get_rotation), createNativeFunction(this, &AsButton::Button_set_rotation));
-	prototype->addProperty(L"scale9Grid", createNativeFunction(this, &AsButton::Button_get_scale9Grid), createNativeFunction(this, &AsButton::Button_set_scale9Grid));
-	prototype->addProperty(L"_soundbuftime", createNativeFunction(this, &AsButton::Button_get_soundbuftime), createNativeFunction(this, &AsButton::Button_set_soundbuftime));
-	prototype->addProperty(L"tabEnabled", createNativeFunction(this, &AsButton::Button_get_tabEnabled), createNativeFunction(this, &AsButton::Button_set_tabEnabled));
-	prototype->addProperty(L"tabIndex", createNativeFunction(this, &AsButton::Button_get_tabIndex), createNativeFunction(this, &AsButton::Button_set_tabIndex));
-	prototype->addProperty(L"_target", createNativeFunction(this, &AsButton::Button_get_target), 0);
-	prototype->addProperty(L"trackAsMenu", createNativeFunction(this, &AsButton::Button_get_trackAsMenu), createNativeFunction(this, &AsButton::Button_set_trackAsMenu));
-	prototype->addProperty(L"_url", createNativeFunction(this, &AsButton::Button_get_url), createNativeFunction(this, &AsButton::Button_set_url));
-	prototype->addProperty(L"useHandCursor", createNativeFunction(this, &AsButton::Button_get_useHandCursor), createNativeFunction(this, &AsButton::Button_set_useHandCursor));
-	prototype->addProperty(L"_visible", createNativeFunction(this, &AsButton::Button_get_visible), createNativeFunction(this, &AsButton::Button_set_visible));
-	prototype->addProperty(L"_width", createNativeFunction(this, &AsButton::Button_get_width), createNativeFunction(this, &AsButton::Button_set_width));
-	prototype->addProperty(L"_x", createNativeFunction(this, &AsButton::Button_get_x), createNativeFunction(this, &AsButton::Button_set_x));
-	prototype->addProperty(L"_xmouse", createNativeFunction(this, &AsButton::Button_get_xmouse), 0);
-	prototype->addProperty(L"_xscale", createNativeFunction(this, &AsButton::Button_get_xscale), createNativeFunction(this, &AsButton::Button_set_xscale));
-	prototype->addProperty(L"_y", createNativeFunction(this, &AsButton::Button_get_y), createNativeFunction(this, &AsButton::Button_set_y));
-	prototype->addProperty(L"_ymouse", createNativeFunction(this, &AsButton::Button_get_ymouse), 0);
-	prototype->addProperty(L"_yscale", createNativeFunction(this, &AsButton::Button_get_yscale), createNativeFunction(this, &AsButton::Button_set_yscale));
+	prototype->addProperty("_alpha", createNativeFunction(this, &AsButton::Button_get_alpha), createNativeFunction(this, &AsButton::Button_set_alpha));
+	prototype->addProperty("blendMode", createNativeFunction(this, &AsButton::Button_get_blendMode), createNativeFunction(this, &AsButton::Button_set_blendMode));
+	prototype->addProperty("cacheAsBitmap", createNativeFunction(this, &AsButton::Button_get_cacheAsBitmap), createNativeFunction(this, &AsButton::Button_set_cacheAsBitmap));
+	prototype->addProperty("enabled", createNativeFunction(this, &AsButton::Button_get_enabled), createNativeFunction(this, &AsButton::Button_set_enabled));
+	prototype->addProperty("filters", createNativeFunction(this, &AsButton::Button_get_filters), createNativeFunction(this, &AsButton::Button_set_filters));
+	prototype->addProperty("_focusrect", createNativeFunction(this, &AsButton::Button_get_focusrect), createNativeFunction(this, &AsButton::Button_set_focusrect));
+	prototype->addProperty("_height", createNativeFunction(this, &AsButton::Button_get_height), createNativeFunction(this, &AsButton::Button_set_height));
+	prototype->addProperty("_highquality", createNativeFunction(this, &AsButton::Button_get_highquality), createNativeFunction(this, &AsButton::Button_set_highquality));
+	prototype->addProperty("menu", createNativeFunction(this, &AsButton::Button_get_menu), createNativeFunction(this, &AsButton::Button_set_menu));
+	prototype->addProperty("_name", createNativeFunction(this, &AsButton::Button_get_name), createNativeFunction(this, &AsButton::Button_set_name));
+	prototype->addProperty("_parent", createNativeFunction(this, &AsButton::Button_get_parent), createNativeFunction(this, &AsButton::Button_set_parent));
+	prototype->addProperty("_quality", createNativeFunction(this, &AsButton::Button_get_quality), createNativeFunction(this, &AsButton::Button_set_quality));
+	prototype->addProperty("_rotation", createNativeFunction(this, &AsButton::Button_get_rotation), createNativeFunction(this, &AsButton::Button_set_rotation));
+	prototype->addProperty("scale9Grid", createNativeFunction(this, &AsButton::Button_get_scale9Grid), createNativeFunction(this, &AsButton::Button_set_scale9Grid));
+	prototype->addProperty("_soundbuftime", createNativeFunction(this, &AsButton::Button_get_soundbuftime), createNativeFunction(this, &AsButton::Button_set_soundbuftime));
+	prototype->addProperty("tabEnabled", createNativeFunction(this, &AsButton::Button_get_tabEnabled), createNativeFunction(this, &AsButton::Button_set_tabEnabled));
+	prototype->addProperty("tabIndex", createNativeFunction(this, &AsButton::Button_get_tabIndex), createNativeFunction(this, &AsButton::Button_set_tabIndex));
+	prototype->addProperty("_target", createNativeFunction(this, &AsButton::Button_get_target), 0);
+	prototype->addProperty("trackAsMenu", createNativeFunction(this, &AsButton::Button_get_trackAsMenu), createNativeFunction(this, &AsButton::Button_set_trackAsMenu));
+	prototype->addProperty("_url", createNativeFunction(this, &AsButton::Button_get_url), createNativeFunction(this, &AsButton::Button_set_url));
+	prototype->addProperty("useHandCursor", createNativeFunction(this, &AsButton::Button_get_useHandCursor), createNativeFunction(this, &AsButton::Button_set_useHandCursor));
+	prototype->addProperty("_visible", createNativeFunction(this, &AsButton::Button_get_visible), createNativeFunction(this, &AsButton::Button_set_visible));
+	prototype->addProperty("_width", createNativeFunction(this, &AsButton::Button_get_width), createNativeFunction(this, &AsButton::Button_set_width));
+	prototype->addProperty("_x", createNativeFunction(this, &AsButton::Button_get_x), createNativeFunction(this, &AsButton::Button_set_x));
+	prototype->addProperty("_xmouse", createNativeFunction(this, &AsButton::Button_get_xmouse), 0);
+	prototype->addProperty("_xscale", createNativeFunction(this, &AsButton::Button_get_xscale), createNativeFunction(this, &AsButton::Button_set_xscale));
+	prototype->addProperty("_y", createNativeFunction(this, &AsButton::Button_get_y), createNativeFunction(this, &AsButton::Button_set_y));
+	prototype->addProperty("_ymouse", createNativeFunction(this, &AsButton::Button_get_ymouse), 0);
+	prototype->addProperty("_yscale", createNativeFunction(this, &AsButton::Button_get_yscale), createNativeFunction(this, &AsButton::Button_set_yscale));
 
 	prototype->setReadOnly();
 
-	setMember(L"prototype", ActionValue(prototype));
+	setMember("prototype", ActionValue(prototype));
 }
 
 ActionValue AsButton::construct(ActionContext* context, const ActionValueArray& args)

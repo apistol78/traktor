@@ -29,7 +29,7 @@ class T_DLLCLASS FlashCharacterInstance : public ActionObject
 	T_RTTI_CLASS;
 
 public:
-	FlashCharacterInstance(ActionContext* context, const std::wstring& prototypeName, FlashCharacterInstance* parent);
+	FlashCharacterInstance(ActionContext* context, const std::string& prototypeName, FlashCharacterInstance* parent);
 	
 	/*! \brief Destroy instance. */
 	virtual void destroy();
@@ -50,13 +50,13 @@ public:
 	 *
 	 * \param name New name of instance.
 	 */
-	void setName(const std::wstring& name);
+	void setName(const std::string& name);
 
 	/*! \brief Get instance name.
 	 *
 	 * \return Name of instance, empty string if not named.
 	 */
-	const std::wstring& getName() const;
+	const std::string& getName() const;
 
 	/*! \brief Set color transform.
 	 *
@@ -136,7 +136,7 @@ public:
 private:
 	Ref< ActionContext > m_context;
 	FlashCharacterInstance* m_parent;
-	std::wstring m_name;
+	std::string m_name;
 	SwfCxTransform m_cxform;
 	Matrix33 m_transform;
 	std::map< uint32_t, Ref< ActionScript > > m_eventScripts;

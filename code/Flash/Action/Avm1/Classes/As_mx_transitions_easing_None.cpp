@@ -9,18 +9,18 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.As_mx_transitions_easing_None", As_mx_transitions_easing_None, ActionClass)
 
 As_mx_transitions_easing_None::As_mx_transitions_easing_None()
-:	ActionClass(L"mx.transitions.easing.None")
+:	ActionClass("mx.transitions.easing.None")
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"easeIn", ActionValue(createNativeFunction(this, &As_mx_transitions_easing_None::None_easeIn)));
-	prototype->setMember(L"easeInOut", ActionValue(createNativeFunction(this, &As_mx_transitions_easing_None::None_easeInOut)));
-	prototype->setMember(L"easeOut", ActionValue(createNativeFunction(this, &As_mx_transitions_easing_None::None_easeOut)));
-	prototype->setMember(L"easeNone", ActionValue(createNativeFunction(this, &As_mx_transitions_easing_None::None_easeNone)));
+	prototype->setMember("easeIn", ActionValue(createNativeFunction(this, &As_mx_transitions_easing_None::None_easeIn)));
+	prototype->setMember("easeInOut", ActionValue(createNativeFunction(this, &As_mx_transitions_easing_None::None_easeInOut)));
+	prototype->setMember("easeOut", ActionValue(createNativeFunction(this, &As_mx_transitions_easing_None::None_easeOut)));
+	prototype->setMember("easeNone", ActionValue(createNativeFunction(this, &As_mx_transitions_easing_None::None_easeNone)));
 
 	prototype->setReadOnly();
 
-	setMember(L"prototype", ActionValue(prototype));
+	setMember("prototype", ActionValue(prototype));
 }
 
 ActionValue As_mx_transitions_easing_None::construct(ActionContext* context, const ActionValueArray& args)

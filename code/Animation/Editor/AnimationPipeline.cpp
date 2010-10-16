@@ -60,7 +60,7 @@ bool AnimationPipeline::buildOutput(
 
 	Ref< IAnimationFormat > format;
 
-	if (compareIgnoreCase(fileName.getExtension(), L"bvh") == 0)
+	if (compareIgnoreCase< std::wstring >(fileName.getExtension(), L"bvh") == 0)
 		format = new AnimationFormatBvh();
 
 	if (!format)

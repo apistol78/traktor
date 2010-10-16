@@ -171,7 +171,6 @@ bool ScriptContextLua::executeScript(const std::wstring& script, bool compileOnl
 	else
 		lua_pop(m_luaState, 1);
 		
-	lua_gc(m_luaState, LUA_GCCOLLECT, 0);
 	return true;
 }
 
@@ -221,7 +220,6 @@ Any ScriptContextLua::executeFunction(const std::wstring& functionName, uint32_t
 		lua_pop(m_luaState, 1);
 	}
 
-	lua_gc(m_luaState, LUA_GCCOLLECT, 0);
 	return returnValue;
 }
 
@@ -254,7 +252,6 @@ Any ScriptContextLua::executeMethod(Object* self, const std::wstring& methodName
 		lua_pop(m_luaState, 1);
 	}
 
-	lua_gc(m_luaState, LUA_GCCOLLECT, 0);
 	return returnValue;
 }
 
@@ -335,6 +332,7 @@ void ScriptContextLua::registerClass(IScriptClass* scriptClass)
 	else
 		lua_pop(m_luaState, 1);
 
+	m_classRegistryLookup[&exportType] = m_classRegistry.size();
 	m_classRegistry.push_back(rc);
 }
 
@@ -355,42 +353,42 @@ void ScriptContextLua::pushAny(const Any& any)
 		if (any.getObject())
 		{
 			const TypeInfo* objectType = &type_of(any.getObject());
-			for (std::vector< RegisteredClass >::iterator i = m_classRegistry.begin(); i != m_classRegistry.end(); ++i)
+			std::map< const TypeInfo*, uint32_t >::const_iterator i = m_classRegistryLookup.find(objectType);
+			if (i != m_classRegistryLookup.end())
 			{
-				if (&i->scriptClass->getExportType() == objectType)
-				{
-					lua_newtable(m_luaState);						// +1
+				const RegisteredClass& rc = m_classRegistry[i->second];
 
-					lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, i->metaTableRef);	// +1
-					lua_setmetatable(m_luaState, -2);								// -1
+				lua_newtable(m_luaState);						// +1
 
-					// Associate object with instance table.
-					Object** object = reinterpret_cast< Object** >(lua_newuserdata(m_luaState, sizeof(Object*)));	// +1
-					*object = any.getObject();
-					T_SAFE_ADDREF(*object);
+				lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, rc.metaTableRef);	// +1
+				lua_setmetatable(m_luaState, -2);								// -1
 
-					// Associate __gc with object userdata.
-					lua_newtable(m_luaState);						// +1
-					lua_pushcfunction(m_luaState, gcMethod);		// +1
+				// Associate object with instance table.
+				Object** object = reinterpret_cast< Object** >(lua_newuserdata(m_luaState, sizeof(Object*)));	// +1
+				*object = any.getObject();
+				T_SAFE_ADDREF(*object);
 
-					lua_setfield(m_luaState, -2, "__gc");			// -1
-					lua_setmetatable(m_luaState, -2);				// -1
+				// Associate __gc with object userdata.
+				lua_newtable(m_luaState);						// +1
+				lua_pushcfunction(m_luaState, gcMethod);		// +1
 
-					lua_rawseti(m_luaState, -2, c_tableKey_this);	// -1
+				lua_setfield(m_luaState, -2, "__gc");			// -1
+				lua_setmetatable(m_luaState, -2);				// -1
 
-					//// Expose properties.
-					//uint32_t propertyCount = i->scriptClass->getPropertyCount();
-					//for (uint32_t j = 0; j < propertyCount; ++j)
-					//{
-					//	std::wstring propertyName = i->scriptClass->getPropertyName(j);
-					//	lua_pushlightuserdata(m_luaState, (void*)this);
-					//	lua_pushlightuserdata(m_luaState, (void*)i->scriptClass);
-					//	lua_pushcclosure(m_luaState, callProperty, 2);
-					//	lua_setfield(m_luaState, -2, wstombs(propertyName).c_str());
-					//}
+				lua_rawseti(m_luaState, -2, c_tableKey_this);	// -1
 
-					return;
-				}
+				//// Expose properties.
+				//uint32_t propertyCount = i->scriptClass->getPropertyCount();
+				//for (uint32_t j = 0; j < propertyCount; ++j)
+				//{
+				//	std::wstring propertyName = i->scriptClass->getPropertyName(j);
+				//	lua_pushlightuserdata(m_luaState, (void*)this);
+				//	lua_pushlightuserdata(m_luaState, (void*)i->scriptClass);
+				//	lua_pushcclosure(m_luaState, callProperty, 2);
+				//	lua_setfield(m_luaState, -2, wstombs(propertyName).c_str());
+				//}
+
+				return;
 			}
 		}
 		lua_pushnil(m_luaState);

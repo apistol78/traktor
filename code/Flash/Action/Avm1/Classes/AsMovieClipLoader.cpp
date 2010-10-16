@@ -10,24 +10,24 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsMovieClipLoader", AsMovieClipLoader, ActionClass)
 
 AsMovieClipLoader::AsMovieClipLoader()
-:	ActionClass(L"MovieClipLoader")
+:	ActionClass("MovieClipLoader")
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"addListener", ActionValue(createNativeFunction(this, &AsMovieClipLoader::MovieClipLoader_addListener)));
-	prototype->setMember(L"getProgress", ActionValue(createNativeFunction(this, &AsMovieClipLoader::MovieClipLoader_getProgress)));
-	prototype->setMember(L"loadClip", ActionValue(createNativeFunction(this, &AsMovieClipLoader::MovieClipLoader_loadClip)));
-	prototype->setMember(L"removeListener", ActionValue(createNativeFunction(this, &AsMovieClipLoader::MovieClipLoader_removeListener)));
-	prototype->setMember(L"unloadClip", ActionValue(createNativeFunction(this, &AsMovieClipLoader::MovieClipLoader_unloadClip)));
+	prototype->setMember("addListener", ActionValue(createNativeFunction(this, &AsMovieClipLoader::MovieClipLoader_addListener)));
+	prototype->setMember("getProgress", ActionValue(createNativeFunction(this, &AsMovieClipLoader::MovieClipLoader_getProgress)));
+	prototype->setMember("loadClip", ActionValue(createNativeFunction(this, &AsMovieClipLoader::MovieClipLoader_loadClip)));
+	prototype->setMember("removeListener", ActionValue(createNativeFunction(this, &AsMovieClipLoader::MovieClipLoader_removeListener)));
+	prototype->setMember("unloadClip", ActionValue(createNativeFunction(this, &AsMovieClipLoader::MovieClipLoader_unloadClip)));
 
 	prototype->setReadOnly();
 
-	setMember(L"prototype", ActionValue(prototype));
+	setMember("prototype", ActionValue(prototype));
 }
 
 ActionValue AsMovieClipLoader::construct(ActionContext* context, const ActionValueArray& args)
 {
-	return ActionValue(new ActionObject(L"MovieClipLoader"));
+	return ActionValue(new ActionObject("MovieClipLoader"));
 }
 
 void AsMovieClipLoader::MovieClipLoader_addListener(CallArgs& ca)

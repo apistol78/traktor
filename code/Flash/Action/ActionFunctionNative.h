@@ -74,17 +74,31 @@ struct ActionValueCast< double, false >
 };
 
 template < >
+struct ActionValueCast< std::string, false >
+{
+	static ActionValue set(const std::string& v) { return ActionValue(v); }
+	static std::string get(const ActionValue& av) { return av.getStringSafe(); }
+};
+
+template < >
+struct ActionValueCast< const std::string&, false >
+{
+	static ActionValue set(const std::string& v) { return ActionValue(v); }
+	static std::string get(const ActionValue& av) { return av.getStringSafe(); }
+};
+
+template < >
 struct ActionValueCast< std::wstring, false >
 {
 	static ActionValue set(const std::wstring& v) { return ActionValue(v); }
-	static std::wstring get(const ActionValue& av) { return av.getStringSafe(); }
+	static std::wstring get(const ActionValue& av) { return av.getWideStringSafe(); }
 };
 
 template < >
 struct ActionValueCast< const std::wstring&, false >
 {
 	static ActionValue set(const std::wstring& v) { return ActionValue(v); }
-	static std::wstring get(const ActionValue& av) { return av.getStringSafe(); }
+	static std::wstring get(const ActionValue& av) { return av.getWideStringSafe(); }
 };
 
 template < typename Type >

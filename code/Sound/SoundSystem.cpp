@@ -167,7 +167,7 @@ Ref< SoundChannel > SoundSystem::play(const Sound* sound, uint32_t priority, boo
 			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_channelAttachLock);
 			
 			uint32_t currentLeastPriority = priority;
-			Ref< SoundChannel > channel;
+			SoundChannel* channel = 0;
 
 			for (RefArray< SoundChannel >::iterator i = m_channels.begin(); i != m_channels.end(); ++i)
 			{

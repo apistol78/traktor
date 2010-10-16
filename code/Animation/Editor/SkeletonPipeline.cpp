@@ -60,7 +60,7 @@ bool SkeletonPipeline::buildOutput(
 
 	Ref< ISkeletonFormat > format;
 
-	if (compareIgnoreCase(fileName.getExtension(), L"bvh") == 0)
+	if (compareIgnoreCase< std::wstring >(fileName.getExtension(), L"bvh") == 0)
 		format = new SkeletonFormatBvh();
 
 	if (!format)

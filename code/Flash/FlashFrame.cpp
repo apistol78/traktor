@@ -8,7 +8,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashFrame", FlashFrame, ActionObject)
 
 FlashFrame::FlashFrame()
-:	ActionObject(L"Object")
+:	ActionObject("Object")
 ,	m_backgroundColorChange(false)
 {
 	m_backgroundColor.red =
@@ -17,12 +17,12 @@ FlashFrame::FlashFrame()
 	m_backgroundColor.alpha = 255;
 }
 
-void FlashFrame::setLabel(const std::wstring& label)
+void FlashFrame::setLabel(const std::string& label)
 {
 	m_label = label;
 }
 
-const std::wstring& FlashFrame::getLabel() const
+const std::string& FlashFrame::getLabel() const
 {
 	return m_label;
 }

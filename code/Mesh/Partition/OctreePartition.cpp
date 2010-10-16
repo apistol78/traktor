@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "Mesh/Partition/OctreeNode.h"
 #include "Mesh/Partition/OctreePartition.h"
 
@@ -8,8 +9,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.OctreePartition", OctreePartition, IPartition)
 
-OctreePartition::OctreePartition(OctreeNode* node)
+OctreePartition::OctreePartition(OctreeNode* node, const std::vector< render::handle_t >& worldTechniques)
 :	m_node(node)
+,	m_worldTechniques(worldTechniques)
 {
 }
 
@@ -18,16 +20,22 @@ void OctreePartition::traverse(
 	const Matrix44& world,
 	const Matrix44& view,
 	render::handle_t worldTechnique,
-	std::set< uint32_t >& outPartIndices
+	std::vector< uint32_t >& outPartIndices
 ) const
 {
+	std::vector< render::handle_t >::const_iterator i = std::find(m_worldTechniques.begin(), m_worldTechniques.end(), worldTechnique);
+	if (i == m_worldTechniques.end())
+		return;
+
+	uint8_t worldTechniqueId = uint8_t(std::distance(m_worldTechniques.begin(), i));
+
 	Matrix44 worldViewInv = (view * world).inverse();
 	Frustum frustumObject;
 
 	for (int32_t i = 0; i < 6; ++i)
 		frustumObject.planes[i] = worldViewInv * frustum.planes[i];
 
-	m_node->traverse(frustumObject, worldTechnique, outPartIndices);
+	m_node->traverse(frustumObject, worldTechniqueId, outPartIndices);
 }
 
 	}

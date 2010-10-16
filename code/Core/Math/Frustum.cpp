@@ -94,25 +94,20 @@ Frustum::InsideResult Frustum::inside(const Vector4& center_, const Scalar& radi
 
 Frustum::InsideResult Frustum::inside(const Aabb& aabb) const
 {
-	const Scalar c_zero(0.0f);
+	const static Scalar c_zero(0.0f);
 	bool partial = false;
+
 	for (uint32_t i = 0; i < planes.size(); ++i)
 	{
-		Vector4 n(
-			select(planes[i].normal().x(), aabb.mx.x(), aabb.mn.x()),
-			select(planes[i].normal().y(), aabb.mx.y(), aabb.mn.y()),
-			select(planes[i].normal().z(), aabb.mx.z(), aabb.mn.z())
-		);
-		Vector4 p(
-			select(planes[i].normal().x(), aabb.mn.x(), aabb.mx.x()),
-			select(planes[i].normal().y(), aabb.mn.y(), aabb.mx.y()),
-			select(planes[i].normal().z(), aabb.mn.z(), aabb.mx.z())
-		);
+		Vector4 n = select(planes[i].normal(), aabb.mx, aabb.mn);
 		if (planes[i].distance(n) < c_zero)	// outside
 			return IrOutside;
+
+		Vector4 p = select(planes[i].normal(), aabb.mn, aabb.mx);
 		if (planes[i].distance(p) < c_zero)	// intersecting
 			partial |= true;
 	}
+
 	return partial ? IrPartial : IrInside;
 }
 

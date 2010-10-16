@@ -10,22 +10,22 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.As_mx_transitions_Tween", As_mx_transitions_Tween, ActionClass)
 
 As_mx_transitions_Tween::As_mx_transitions_Tween()
-:	ActionClass(L"mx.transitions.Tween")
+:	ActionClass("mx.transitions.Tween")
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"continueTo", ActionValue(createNativeFunction(this, &As_mx_transitions_Tween::Tween_continueTo)));
-	prototype->setMember(L"fforward", ActionValue(createNativeFunction(this, &As_mx_transitions_Tween::Tween_fforward)));
-	prototype->setMember(L"nextFrame", ActionValue(createNativeFunction(this, &As_mx_transitions_Tween::Tween_nextFrame)));
-	prototype->setMember(L"prevFrame", ActionValue(createNativeFunction(this, &As_mx_transitions_Tween::Tween_prevFrame)));
-	prototype->setMember(L"resume", ActionValue(createNativeFunction(this, &As_mx_transitions_Tween::Tween_resume)));
-	prototype->setMember(L"rewind", ActionValue(createNativeFunction(this, &As_mx_transitions_Tween::Tween_rewind)));
-	prototype->setMember(L"start", ActionValue(createNativeFunction(this, &As_mx_transitions_Tween::Tween_start)));
-	prototype->setMember(L"stop", ActionValue(createNativeFunction(this, &As_mx_transitions_Tween::Tween_stop)));
-	prototype->setMember(L"yoyo", ActionValue(createNativeFunction(this, &As_mx_transitions_Tween::Tween_yoyo)));
+	prototype->setMember("continueTo", ActionValue(createNativeFunction(this, &As_mx_transitions_Tween::Tween_continueTo)));
+	prototype->setMember("fforward", ActionValue(createNativeFunction(this, &As_mx_transitions_Tween::Tween_fforward)));
+	prototype->setMember("nextFrame", ActionValue(createNativeFunction(this, &As_mx_transitions_Tween::Tween_nextFrame)));
+	prototype->setMember("prevFrame", ActionValue(createNativeFunction(this, &As_mx_transitions_Tween::Tween_prevFrame)));
+	prototype->setMember("resume", ActionValue(createNativeFunction(this, &As_mx_transitions_Tween::Tween_resume)));
+	prototype->setMember("rewind", ActionValue(createNativeFunction(this, &As_mx_transitions_Tween::Tween_rewind)));
+	prototype->setMember("start", ActionValue(createNativeFunction(this, &As_mx_transitions_Tween::Tween_start)));
+	prototype->setMember("stop", ActionValue(createNativeFunction(this, &As_mx_transitions_Tween::Tween_stop)));
+	prototype->setMember("yoyo", ActionValue(createNativeFunction(this, &As_mx_transitions_Tween::Tween_yoyo)));
 	prototype->setReadOnly();
 
-	setMember(L"prototype", ActionValue(prototype));
+	setMember("prototype", ActionValue(prototype));
 }
 
 ActionValue As_mx_transitions_Tween::construct(ActionContext* context, const ActionValueArray& args)

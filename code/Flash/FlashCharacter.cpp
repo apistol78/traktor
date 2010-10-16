@@ -8,7 +8,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashCharacter", FlashCharacter, ActionObject)
 
 FlashCharacter::FlashCharacter(uint16_t id)
-:	ActionObject(L"Object")
+:	ActionObject("Object")
 ,	m_id(id)
 {
 }

@@ -94,12 +94,7 @@ public:
 	// \name Dereference operators
 	// @{
 
-	reference operator * ()
-	{
-		return *m_ptr;
-	}
-	
-	const reference operator * () const
+	reference operator * () const
 	{
 		return *m_ptr;
 	}

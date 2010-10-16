@@ -1,6 +1,7 @@
 #ifndef traktor_script_ScriptContextLua_H
 #define traktor_script_ScriptContextLua_H
 
+#include <map>
 #include <vector>
 #include "Core/RefArray.h"
 #include "Core/Thread/Semaphore.h"
@@ -57,6 +58,7 @@ private:
 	mutable Semaphore m_lock;
 	lua_State* m_luaState;
 	std::vector< RegisteredClass > m_classRegistry;
+	std::map< const TypeInfo*, uint32_t > m_classRegistryLookup;
 
 	void registerClass(IScriptClass* scriptClass);
 

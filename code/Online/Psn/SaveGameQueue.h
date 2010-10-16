@@ -4,6 +4,7 @@
 #include "Core/Object.h"
 #include "Core/RefArray.h"
 #include "Core/Thread/Semaphore.h"
+#include "Core/Thread/Signal.h"
 
 namespace traktor
 {
@@ -33,6 +34,7 @@ public:
 private:
 	Thread* m_thread;
 	Semaphore m_queueLock;
+	Signal m_queuedSignal;
 	RefArray< ISaveGameQueueTask > m_queue;
 	RefArray< ISaveGame > m_saveGames;
 

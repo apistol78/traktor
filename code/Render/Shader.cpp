@@ -103,7 +103,15 @@ void Shader::setMatrixArrayParameter(handle_t handle, const Matrix44* param, int
 
 void Shader::setTextureParameter(handle_t handle, const resource::Proxy< ITexture >& texture)
 {
-	m_textures[handle] = texture;
+	std::map< handle_t, int32_t >::iterator i = m_textureMap.find(handle);
+	if (i != m_textureMap.end())
+		m_textureProxies[i->second] = texture;
+	else
+	{
+		int32_t textureProxyId = int32_t(m_textureProxies.size());
+		m_textureProxies.push_back(texture);
+		m_textureMap[handle] = textureProxyId;
+	}
 }
 
 void Shader::setStencilReference(uint32_t stencilReference)
@@ -117,11 +125,11 @@ void Shader::draw(IRenderView* renderView, const Primitives& primitives)
 	if (!m_currentProgram)
 		return;
 
-	// Update textures here as resource proxies might have been updated.
-	for (std::map< handle_t, resource::Proxy< ITexture > >::iterator i = m_textures.begin(); i != m_textures.end(); ++i)
+	for (std::map< handle_t, int32_t >::iterator i = m_textureMap.begin(); i != m_textureMap.end(); ++i)
 	{
-		if (i->second.validate())
-			m_currentProgram->setTextureParameter(i->first, i->second);
+		resource::Proxy< ITexture >& textureProxy = m_textureProxies[i->second];
+		if (textureProxy.validate())
+			m_currentProgram->setTextureParameter(i->first, textureProxy);
 		else
 			m_currentProgram->setTextureParameter(i->first, 0);
 	}
@@ -137,10 +145,11 @@ IProgram* Shader::getCurrentProgram() const
 
 void Shader::setProgramParameters(ProgramParameters* programParameters)
 {
-	for (std::map< handle_t, resource::Proxy< ITexture > >::iterator i = m_textures.begin(); i != m_textures.end(); ++i)
+	for (std::map< handle_t, int32_t >::iterator i = m_textureMap.begin(); i != m_textureMap.end(); ++i)
 	{
-		if (i->second.validate())
-			programParameters->setTextureParameter(i->first, i->second);
+		resource::Proxy< ITexture >& textureProxy = m_textureProxies[i->second];
+		if (textureProxy.validate())
+			programParameters->setTextureParameter(i->first, textureProxy);
 		else
 			programParameters->setTextureParameter(i->first, 0);
 	}

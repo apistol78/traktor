@@ -43,33 +43,33 @@ struct ArrayDefaultSort
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsArray", AsArray, ActionClass)
 
 AsArray::AsArray()
-:	ActionClass(L"Array")
+:	ActionClass("Array")
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"CASEINSENSITIVE", ActionValue(avm_number_t(0)));
-	prototype->setMember(L"DESCENDING", ActionValue(avm_number_t(1)));
-	prototype->setMember(L"NUMERIC", ActionValue(avm_number_t(2)));
-	prototype->setMember(L"RETURNINDEXEDARRAY", ActionValue(avm_number_t(3)));
-	prototype->setMember(L"UNIQUESORT", ActionValue(avm_number_t(4)));
-	prototype->setMember(L"concat", ActionValue(createNativeFunction(this, &AsArray::Array_concat)));
-	prototype->setMember(L"join", ActionValue(createNativeFunction(this, &AsArray::Array_join)));
-	prototype->setMember(L"pop", ActionValue(createNativeFunction(this, &AsArray::Array_pop)));
-	prototype->setMember(L"push", ActionValue(createNativeFunction(this, &AsArray::Array_push)));
-	prototype->setMember(L"reverse", ActionValue(createNativeFunction(this, &AsArray::Array_reverse)));
-	prototype->setMember(L"shift", ActionValue(createNativeFunction(this, &AsArray::Array_shift)));
-	prototype->setMember(L"slice", ActionValue(createNativeFunction(this, &AsArray::Array_slice)));
-	prototype->setMember(L"sort", ActionValue(createNativeFunction(this, &AsArray::Array_sort)));
-	prototype->setMember(L"sortOn", ActionValue(createNativeFunction(this, &AsArray::Array_sortOn)));
-	prototype->setMember(L"splice", ActionValue(createNativeFunction(this, &AsArray::Array_splice)));
-	prototype->setMember(L"toString", ActionValue(createNativeFunction(this, &AsArray::Array_toString)));
-	prototype->setMember(L"unshift", ActionValue(createNativeFunction(this, &AsArray::Array_unshift)));
+	prototype->setMember("CASEINSENSITIVE", ActionValue(avm_number_t(0)));
+	prototype->setMember("DESCENDING", ActionValue(avm_number_t(1)));
+	prototype->setMember("NUMERIC", ActionValue(avm_number_t(2)));
+	prototype->setMember("RETURNINDEXEDARRAY", ActionValue(avm_number_t(3)));
+	prototype->setMember("UNIQUESORT", ActionValue(avm_number_t(4)));
+	prototype->setMember("concat", ActionValue(createNativeFunction(this, &AsArray::Array_concat)));
+	prototype->setMember("join", ActionValue(createNativeFunction(this, &AsArray::Array_join)));
+	prototype->setMember("pop", ActionValue(createNativeFunction(this, &AsArray::Array_pop)));
+	prototype->setMember("push", ActionValue(createNativeFunction(this, &AsArray::Array_push)));
+	prototype->setMember("reverse", ActionValue(createNativeFunction(this, &AsArray::Array_reverse)));
+	prototype->setMember("shift", ActionValue(createNativeFunction(this, &AsArray::Array_shift)));
+	prototype->setMember("slice", ActionValue(createNativeFunction(this, &AsArray::Array_slice)));
+	prototype->setMember("sort", ActionValue(createNativeFunction(this, &AsArray::Array_sort)));
+	prototype->setMember("sortOn", ActionValue(createNativeFunction(this, &AsArray::Array_sortOn)));
+	prototype->setMember("splice", ActionValue(createNativeFunction(this, &AsArray::Array_splice)));
+	prototype->setMember("toString", ActionValue(createNativeFunction(this, &AsArray::Array_toString)));
+	prototype->setMember("unshift", ActionValue(createNativeFunction(this, &AsArray::Array_unshift)));
 
-	prototype->addProperty(L"length", createNativeFunction(this, &AsArray::Array_get_length), 0);
+	prototype->addProperty("length", createNativeFunction(this, &AsArray::Array_get_length), 0);
 
 	prototype->setReadOnly();
 
-	setMember(L"prototype", ActionValue(prototype));
+	setMember("prototype", ActionValue(prototype));
 }
 
 ActionValue AsArray::construct(ActionContext* context, const ActionValueArray& args)
@@ -93,7 +93,7 @@ void AsArray::Array_join(CallArgs& ca)
 {
 	Array* arr = checked_type_cast< Array*, false >(ca.self);
 	if (ca.args.empty())
-		ca.ret = ActionValue(arr->join(L","));
+		ca.ret = ActionValue(arr->join(","));
 	else
 		ca.ret = ActionValue(arr->join(ca.args[0].getStringSafe()));
 }
@@ -183,7 +183,7 @@ void AsArray::Array_splice(CallArgs& ca)
 void AsArray::Array_toString(CallArgs& ca)
 {
 	Ref< Array > arr = checked_type_cast< Array* >(ca.self);
-	ca.ret = ActionValue(arr->join(L","));
+	ca.ret = ActionValue(arr->join(","));
 }
 
 void AsArray::Array_unshift(CallArgs& ca)

@@ -11,17 +11,17 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsSecurity", AsSecurity, ActionClass)
 
 AsSecurity::AsSecurity()
-:	ActionClass(L"Security")
+:	ActionClass("Security")
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"allowDomain", ActionValue(createNativeFunction(this, &AsSecurity::Security_allowDomain)));
-	prototype->setMember(L"allowInsecureDomain", ActionValue(createNativeFunction(this, &AsSecurity::Security_allowInsecureDomain)));
-	prototype->setMember(L"loadPolicyFile", ActionValue(createNativeFunction(this, &AsSecurity::Security_loadPolicyFile)));
+	prototype->setMember("allowDomain", ActionValue(createNativeFunction(this, &AsSecurity::Security_allowDomain)));
+	prototype->setMember("allowInsecureDomain", ActionValue(createNativeFunction(this, &AsSecurity::Security_allowInsecureDomain)));
+	prototype->setMember("loadPolicyFile", ActionValue(createNativeFunction(this, &AsSecurity::Security_loadPolicyFile)));
 
 	prototype->setReadOnly();
 
-	setMember(L"prototype", ActionValue(prototype));
+	setMember("prototype", ActionValue(prototype));
 }
 
 ActionValue AsSecurity::construct(ActionContext* context, const ActionValueArray& args)

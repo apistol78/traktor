@@ -32,18 +32,22 @@ class T_DLLCLASS ActionObject : public Object
 	T_RTTI_CLASS;
 
 public:
-	typedef std::map< std::wstring, ActionValue > member_map_t;
-	typedef std::map< std::wstring, std::pair< Ref< ActionFunction >, Ref< ActionFunction > > > property_map_t;
+	typedef std::map< std::string, ActionValue > member_map_t;
+	typedef std::map< std::string, std::pair< Ref< ActionFunction >, Ref< ActionFunction > > > property_map_t;
 
 	ActionObject();
 
-	explicit ActionObject(const std::wstring& prototypeName);
+	explicit ActionObject(const std::string& prototypeName);
 
 	explicit ActionObject(ActionObject* prototype);
 
 	virtual ~ActionObject();
 
-	virtual void addRef(void* owner) const;
+	virtual void addRef(void* owner) const
+	{
+		m_traceColor = TcBlack;
+		Object::addRef(owner);
+	}
 	
 	virtual void release(void* owner) const;
 
@@ -51,19 +55,19 @@ public:
 
 	virtual ActionObject* getPrototype(ActionContext* context);
 
-	virtual void setMember(const std::wstring& memberName, const ActionValue& memberValue);
+	virtual void setMember(const std::string& memberName, const ActionValue& memberValue);
 
-	virtual bool getMember(ActionContext* context, const std::wstring& memberName, ActionValue& outMemberValue);
+	virtual bool getMember(ActionContext* context, const std::string& memberName, ActionValue& outMemberValue);
 
-	virtual bool deleteMember(const std::wstring& memberName);
+	virtual bool deleteMember(const std::string& memberName);
 
 	virtual void deleteAllMembers();
 
-	virtual void addProperty(const std::wstring& propertyName, ActionFunction* propertyGet, ActionFunction* propertySet);
+	virtual void addProperty(const std::string& propertyName, ActionFunction* propertyGet, ActionFunction* propertySet);
 
-	virtual bool getPropertyGet(ActionContext* context, const std::wstring& propertyName, Ref< ActionFunction >& outPropertyGet);
+	virtual bool getPropertyGet(ActionContext* context, const std::string& propertyName, Ref< ActionFunction >& outPropertyGet);
 
-	virtual bool getPropertySet(ActionContext* context, const std::wstring& propertyName, Ref< ActionFunction >& outPropertySet);
+	virtual bool getPropertySet(ActionContext* context, const std::string& propertyName, Ref< ActionFunction >& outPropertySet);
 
 	virtual const property_map_t& getProperties() const;
 
@@ -71,17 +75,17 @@ public:
 
 	virtual avm_number_t valueOf() const;
 
-	virtual std::wstring toString() const;
+	virtual ActionValue toString() const;
 
 	void setReadOnly();
 
-	bool getLocalMember(const std::wstring& memberName, ActionValue& outMemberValue) const;
+	bool getLocalMember(const std::string& memberName, ActionValue& outMemberValue) const;
 
-	bool hasOwnProperty(const std::wstring& propertyName) const;
+	bool hasOwnProperty(const std::string& propertyName) const;
 
-	bool getLocalPropertyGet(const std::wstring& propertyName, Ref< ActionFunction >& outPropertyGet) const;
+	bool getLocalPropertyGet(const std::string& propertyName, Ref< ActionFunction >& outPropertyGet) const;
 
-	bool getLocalPropertySet(const std::wstring& propertyName, Ref< ActionFunction >& outPropertySet) const;
+	bool getLocalPropertySet(const std::string& propertyName, Ref< ActionFunction >& outPropertySet) const;
 
 protected:
 	struct IVisitor

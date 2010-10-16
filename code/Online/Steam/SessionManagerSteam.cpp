@@ -81,7 +81,7 @@ std::wstring SessionManagerSteam::getLanguageCode() const
 
 	for (uint32_t i = 0; i < sizeof_array(c_languageCodes); ++i)
 	{
-		if (compareIgnoreCase(mbstows(language), c_languageCodes[i].steam) == 0)
+		if (compareIgnoreCase< std::wstring >(mbstows(language), c_languageCodes[i].steam) == 0)
 			return c_languageCodes[i].code;
 	}
 

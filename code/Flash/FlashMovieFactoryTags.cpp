@@ -945,7 +945,7 @@ bool FlashTagPlaceObject::read(SwfReader* swf, ReadContext& context)
 			placeObject.ratio = bs.readUInt16();
 
 		if (placeObject.hasName)
-			placeObject.name = mbstows(swf->readString());
+			placeObject.name = swf->readString();
 
 		if (placeObject.hasClipDepth)
 			placeObject.clipDepth = bs.readUInt16();
@@ -1075,7 +1075,7 @@ bool FlashTagExportAssets::read(SwfReader* swf, ReadContext& context)
 	for (int i = 0; i < exportCount; ++i)
 	{
 		uint16_t id = bs.readUInt16();
-		std::wstring symbol = mbstows(swf->readString());
+		std::string symbol = swf->readString();
 		context.movie->setExport(symbol, id);
 	}
 
@@ -1152,7 +1152,7 @@ bool FlashTagFrameLabel::read(SwfReader* swf, ReadContext& context)
 {
 	std::string label = swf->readString();
 	if (context.frame)
-		context.frame->setLabel(mbstows(label));
+		context.frame->setLabel(label);
 	return true;
 }
 

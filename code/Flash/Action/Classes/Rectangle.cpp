@@ -11,7 +11,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.Rectangle", Rectangle, ActionObject)
 
 Rectangle::Rectangle()
-:	ActionObject(L"flash.geom.Rectangle")
+:	ActionObject("flash.geom.Rectangle")
 ,	left(0.0)
 ,	top(0.0)
 ,	width(0.0)
@@ -20,7 +20,7 @@ Rectangle::Rectangle()
 }
 
 Rectangle::Rectangle(avm_number_t left_, avm_number_t top_, avm_number_t width_, avm_number_t height_)
-:	ActionObject(L"flash.geom.Rectangle")
+:	ActionObject("flash.geom.Rectangle")
 ,	left(left_)
 ,	top(top_)
 ,	width(width_)
@@ -52,11 +52,11 @@ void Rectangle::offset(avm_number_t dx, avm_number_t dy)
 	top += dy;
 }
 
-std::wstring Rectangle::toString() const
+ActionValue Rectangle::toString() const
 {
 	StringOutputStream ss;
 	ss << L"(x=" << left << L", y=" << top << L", w=" << width << L", h=" << height << L")";
-	return ss.str();
+	return ActionValue(ss.str());
 }
 
 	}

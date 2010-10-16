@@ -39,30 +39,30 @@ ActionValue ActionFrame::getRegister(uint16_t index) const
 	return m_localRegisters[index];
 }
 
-bool ActionFrame::hasVariable(const std::wstring& variableName) const
+bool ActionFrame::hasVariable(const std::string& variableName) const
 {
-	if (variableName == L"this")
+	if (variableName == "this")
 		return true;
 
-	std::map< std::wstring, ActionValue >::const_iterator i = m_localVariables.find(variableName);
+	std::map< std::string, ActionValue >::const_iterator i = m_localVariables.find(variableName);
 	return i != m_localVariables.end();
 }
 
-void ActionFrame::setVariable(const std::wstring& variableName, const ActionValue& variableValue)
+void ActionFrame::setVariable(const std::string& variableName, const ActionValue& variableValue)
 {
-	T_ASSERT (variableName != L"this");
+	T_ASSERT (variableName != "this");
 	m_localVariables[variableName] = variableValue;
 }
 
-bool ActionFrame::getVariable(const std::wstring& variableName, ActionValue& outVariableValue) const
+bool ActionFrame::getVariable(const std::string& variableName, ActionValue& outVariableValue) const
 {
-	if (variableName == L"this")
+	if (variableName == "this")
 	{
 		outVariableValue = ActionValue(m_self);
 		return true;
 	}
 
-	std::map< std::wstring, ActionValue >::const_iterator i = m_localVariables.find(variableName);
+	std::map< std::string, ActionValue >::const_iterator i = m_localVariables.find(variableName);
 	if (i == m_localVariables.end())
 		return false;
 

@@ -41,7 +41,7 @@ public:
 
 	void offset(avm_number_t dx, avm_number_t dy);
 
-	virtual std::wstring toString() const;
+	virtual ActionValue toString() const;
 };
 
 	}

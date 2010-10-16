@@ -26,16 +26,16 @@ class T_DLLCLASS String : public ActionObject
 public:
 	String();
 
-	explicit String(wchar_t ch);
+	explicit String(char ch);
 
-	explicit String(const std::wstring& str);
+	explicit String(const std::string& str);
 
-	const std::wstring& get() const { return m_str; }
+	const std::string& get() const { return m_str; }
 
-	virtual std::wstring toString() const;
+	virtual ActionValue toString() const;
 
 private:
-	std::wstring m_str;
+	std::string m_str;
 };
 
 	}

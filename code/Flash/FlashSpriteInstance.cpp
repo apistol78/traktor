@@ -16,7 +16,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashSpriteInstance", FlashSpriteInstance, FlashCharacterInstance)
 
 FlashSpriteInstance::FlashSpriteInstance(ActionContext* context, FlashCharacterInstance* parent, const FlashSprite* sprite)
-:	FlashCharacterInstance(context, L"MovieClip", parent)
+:	FlashCharacterInstance(context, "MovieClip", parent)
 ,	m_sprite(sprite)
 ,	m_displayList(context)
 ,	m_currentFrame(0)
@@ -271,7 +271,7 @@ FlashSpriteInstance* FlashSpriteInstance::getMask()
 	return m_mask;
 }
 
-bool FlashSpriteInstance::getMember(ActionContext* context, const std::wstring& memberName, ActionValue& outMemberValue)
+bool FlashSpriteInstance::getMember(ActionContext* context, const std::string& memberName, ActionValue& outMemberValue)
 {
 	// Get names instance from display list.
 	FlashDisplayList::layer_map_t::const_iterator i = m_displayList.findLayer(memberName);
@@ -309,7 +309,7 @@ void FlashSpriteInstance::eventLoad()
 	}
 
 	// Issue script assigned event.
-	executeScriptEvent(L"onLoad");
+	executeScriptEvent("onLoad");
 
 	FlashCharacterInstance::eventLoad();
 }
@@ -321,7 +321,7 @@ void FlashSpriteInstance::eventFrame()
 
 	// Issue script assigned event; hack to skip events when using goto methods.
 	if (!m_skipEnterFrame)
-		executeScriptEvent(L"onEnterFrame");
+		executeScriptEvent("onEnterFrame");
 	else
 		--m_skipEnterFrame;
 
@@ -354,7 +354,7 @@ void FlashSpriteInstance::eventFrame()
 void FlashSpriteInstance::eventKeyDown(int32_t keyCode)
 {
 	// Issue script assigned event.
-	executeScriptEvent(L"onKeyDown");
+	executeScriptEvent("onKeyDown");
 
 	// Issue events on "visible" characters.
 	const FlashDisplayList::layer_map_t& layers = m_displayList.getLayers();
@@ -370,7 +370,7 @@ void FlashSpriteInstance::eventKeyDown(int32_t keyCode)
 void FlashSpriteInstance::eventKeyUp(int32_t keyCode)
 {
 	// Issue script assigned event.
-	executeScriptEvent(L"onKeyUp");
+	executeScriptEvent("onKeyUp");
 
 	// Issue events on "visible" characters.
 	const FlashDisplayList::layer_map_t& layers = m_displayList.getLayers();
@@ -389,7 +389,7 @@ void FlashSpriteInstance::eventMouseDown(int32_t x, int32_t y, int32_t button)
 	m_mouseY = y;
 
 	// Issue script assigned event.
-	executeScriptEvent(L"onMouseDown");
+	executeScriptEvent("onMouseDown");
 
 	// Issue events on "visible" characters.
 	const FlashDisplayList::layer_map_t& layers = m_displayList.getLayers();
@@ -408,7 +408,7 @@ void FlashSpriteInstance::eventMouseUp(int32_t x, int32_t y, int32_t button)
 	m_mouseY = y;
 
 	// Issue script assigned event.
-	executeScriptEvent(L"onMouseUp");
+	executeScriptEvent("onMouseUp");
 
 	// Issue events on "visible" characters.
 	const FlashDisplayList::layer_map_t& layers = m_displayList.getLayers();
@@ -427,7 +427,7 @@ void FlashSpriteInstance::eventMouseMove(int32_t x, int32_t y, int32_t button)
 	m_mouseY = y;
 
 	// Issue script assigned event.
-	executeScriptEvent(L"onMouseMove");
+	executeScriptEvent("onMouseMove");
 
 	// Issue events on "visible" characters.
 	const FlashDisplayList::layer_map_t& layers = m_displayList.getLayers();
@@ -468,7 +468,7 @@ void FlashSpriteInstance::dereference()
 	FlashCharacterInstance::dereference();
 }
 
-void FlashSpriteInstance::executeScriptEvent(const std::wstring& eventName)
+void FlashSpriteInstance::executeScriptEvent(const std::string& eventName)
 {
 	ActionValue memberValue;
 	if (!getLocalMember(eventName, memberValue))

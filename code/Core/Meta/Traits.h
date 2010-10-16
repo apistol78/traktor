@@ -27,6 +27,20 @@ struct IsPointer < Type* >
 	enum { value = true };
 };
 
+/*! \brief Is type const. */
+template < typename Type >
+struct IsConst
+{
+	enum { value = false };
+};
+
+/*! \brief Is type const, specialization. */
+template < typename Type >
+struct IsConst < const Type >
+{
+	enum { value = true };
+};
+
 //@}
 
 }

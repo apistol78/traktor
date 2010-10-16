@@ -10,7 +10,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.Transform", Transform, ActionObject)
 
 Transform::Transform(FlashCharacterInstance* instance)
-:	ActionObject(L"flash.geom.Transform")
+:	ActionObject("flash.geom.Transform")
 ,	m_instance(instance)
 {
 }

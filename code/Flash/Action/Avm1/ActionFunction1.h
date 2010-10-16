@@ -27,7 +27,7 @@ class T_DLLCLASS ActionFunction1 : public ActionFunction
 
 public:
 	ActionFunction1(
-		const std::wstring& name,
+		const std::string& name,
 		const uint8_t* code,
 		uint16_t codeSize,
 		uint16_t argumentCount,

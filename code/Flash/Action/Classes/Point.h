@@ -31,7 +31,7 @@ public:
 
 	Point(avm_number_t x_, avm_number_t y_);
 
-	virtual std::wstring toString() const;
+	virtual ActionValue toString() const;
 };
 
 	}

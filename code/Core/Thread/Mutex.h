@@ -1,6 +1,9 @@
 #ifndef traktor_Mutex_H
 #define traktor_Mutex_H
 
+#if defined(_PS3)
+#	include <sys/synchronization.h>
+#endif
 #include <string>
 #include "Core/Guid.h"
 #include "Core/Thread/IWaitable.h"
@@ -26,7 +29,7 @@ public:
 	
 	Mutex(const Guid& id);
 	
-	~Mutex();
+	virtual ~Mutex();
 
 	virtual bool wait(int32_t timeout = -1);
 	
@@ -35,7 +38,11 @@ public:
 	bool existing() const;
 
 private:
+#if defined(_PS3)
+	sys_mutex_t m_mutex;
+#else
 	void* m_handle;
+#endif
 	bool m_existing;
 };
 

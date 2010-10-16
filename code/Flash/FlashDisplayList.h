@@ -113,20 +113,20 @@ public:
 	 *
 	 * \return Background colors.
 	 */
-	const SwfColor& getBackgroundColor() const;
+	const SwfColor& getBackgroundColor() const { return m_backgroundColor; }
 
 	/*! \brief Get depth layers.
 	 *
 	 * \return Layers.
 	 */
-	const layer_map_t& getLayers() const;
+	const layer_map_t& getLayers() const { return m_layers; }
 
 	/*! \brief Find layer from label.
 	 *
 	 * \param name Name of layer.
 	 * \return Iterator to named layer.
 	 */
-	const layer_map_t::const_iterator findLayer(const std::wstring& name) const;
+	const layer_map_t::const_iterator findLayer(const std::string& name) const;
 
 private:
 	ActionContext* m_context;
