@@ -80,7 +80,7 @@ bool LocalGroup::getChildGroups(RefArray< IProviderGroup >& outChildGroups)
 				path
 			));
 		}
-		else if (!(*i)->isDirectory() && compareIgnoreCase(path.getExtension(), L"xgl") == 0)
+		else if (!(*i)->isDirectory() && compareIgnoreCase< std::wstring >(path.getExtension(), L"xgl") == 0)
 		{
 			Ref< LocalFileLink > link = readPhysicalObject< LocalFileLink >(path);
 			if (link)
@@ -107,13 +107,13 @@ bool LocalGroup::getChildInstances(RefArray< IProviderInstance >& outChildInstan
 	for (RefArray< File >::iterator i = groupFiles.begin(); i != groupFiles.end(); ++i)
 	{
 		const Path& path = (*i)->getPath();
-		if (compareIgnoreCase(path.getExtension(), L"xdm") == 0)
+		if (compareIgnoreCase< std::wstring >(path.getExtension(), L"xdm") == 0)
 		{
 			Ref< LocalInstance > instance = new LocalInstance(m_context);
 			if (instance->internalCreate(path.getPathNameNoExtension()))
 				outChildInstances.push_back(instance);
 		}
-		else if (compareIgnoreCase(path.getExtension(), L"xil") == 0)
+		else if (compareIgnoreCase< std::wstring >(path.getExtension(), L"xil") == 0)
 		{
 			Ref< LocalFileLink > link = readPhysicalObject< LocalFileLink >(path);
 			if (link)
