@@ -30,18 +30,19 @@ class T_DLLCLASS OctreeNode : public Object
 	T_RTTI_CLASS;
 
 public:
-	OctreeNode(const OctreeNodeData* nodeData, const std::vector< render::handle_t >& worldTechniques);
+	OctreeNode(const OctreeNodeData* nodeData);
 
 	void traverse(
 		const Frustum& frustumObject,
-		render::handle_t worldTechnique,
-		std::set< uint32_t >& outPartIndices
+		uint8_t worldTechniqueId,
+		std::vector< uint32_t >& outPartIndices
 	) const;
 
 private:
 	Aabb m_boundingBox;
-	std::map< render::handle_t, std::vector< uint32_t > > m_partIndices;
+	std::vector< std::vector< uint32_t > > m_partIndices;
 	Ref< OctreeNode > m_children[8];
+	bool m_leaf;
 };
 
 	}

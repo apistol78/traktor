@@ -12,19 +12,19 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.As_flash_geom_Transform", As_flash_geom_Transform, ActionClass)
 
 As_flash_geom_Transform::As_flash_geom_Transform()
-:	ActionClass(L"flash.geom.Transform")
+:	ActionClass("flash.geom.Transform")
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->addProperty(L"colorTransform", createNativeFunction(this, &As_flash_geom_Transform::Transform_get_colorTransform), createNativeFunction(this, &As_flash_geom_Transform::Transform_set_colorTransform));
-	//prototype->addProperty(L"concatenatedColorTransform", createNativeFunction(this, &Transform_get_concatenatedColorTransform), 0);
-	//prototype->addProperty(L"concatenatedMatrix", createNativeFunction(this, &Transform_get_concatenatedMatrix), 0);
-	//prototype->addProperty(L"matrix", createNativeFunction(this, &Transform_get_matrix), createNativeFunction(this, &Transform_set_matrix));
-	//prototype->addProperty(L"pixelBounds", createNativeFunction(this, &Transform_get_pixelBounds), createNativeFunction(this, &Transform_set_pixelBounds));
+	prototype->addProperty("colorTransform", createNativeFunction(this, &As_flash_geom_Transform::Transform_get_colorTransform), createNativeFunction(this, &As_flash_geom_Transform::Transform_set_colorTransform));
+	//prototype->addProperty("concatenatedColorTransform", createNativeFunction(this, &Transform_get_concatenatedColorTransform), 0);
+	//prototype->addProperty("concatenatedMatrix", createNativeFunction(this, &Transform_get_concatenatedMatrix), 0);
+	//prototype->addProperty("matrix", createNativeFunction(this, &Transform_get_matrix), createNativeFunction(this, &Transform_set_matrix));
+	//prototype->addProperty("pixelBounds", createNativeFunction(this, &Transform_get_pixelBounds), createNativeFunction(this, &Transform_set_pixelBounds));
 
 	prototype->setReadOnly();
 
-	setMember(L"prototype", ActionValue(prototype));
+	setMember("prototype", ActionValue(prototype));
 }
 
 ActionValue As_flash_geom_Transform::construct(ActionContext* context, const ActionValueArray& args)

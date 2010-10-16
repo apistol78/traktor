@@ -5,36 +5,27 @@ namespace traktor
 {
 
 CriticalSection::CriticalSection()
-:	m_handle(0)
 {
 	sys_lwmutex_attribute_t attr;
 	sys_lwmutex_attribute_initialize(attr);
-
-	sys_lwmutex_t* lwm = new sys_lwmutex_t();
-	sys_lwmutex_create(lwm, &attr);
-
-	m_handle = lwm;
+	sys_lwmutex_create(&m_mutex, &attr);
 }
 
 CriticalSection::~CriticalSection()
 {
-	sys_lwmutex_t* mutex = reinterpret_cast< sys_lwmutex_t* >(m_handle);
-	sys_lwmutex_destroy(mutex);
-
-	delete mutex;
+	sys_lwmutex_destroy(&m_mutex);
 }
 
 bool CriticalSection::wait(int32_t timeout)
 {
-	sys_lwmutex_t* mutex = reinterpret_cast< sys_lwmutex_t* >(m_handle);
 	if (timeout >= 0)
 	{
-		int rc = sys_lwmutex_lock(mutex, usecond_t(timeout) * 1000);
+		int rc = sys_lwmutex_lock(&m_mutex, usecond_t(timeout) * 1000);
 		return bool(rc == CELL_OK);
 	}
 	else
 	{
-		while (sys_lwmutex_lock(mutex, SYS_NO_TIMEOUT) != CELL_OK)
+		while (sys_lwmutex_lock(&m_mutex, SYS_NO_TIMEOUT) != CELL_OK)
 			;
 		return true;
 	}
@@ -42,8 +33,7 @@ bool CriticalSection::wait(int32_t timeout)
 
 void CriticalSection::release()
 {
-	sys_lwmutex_t* mutex = reinterpret_cast< sys_lwmutex_t* >(m_handle);
-	sys_lwmutex_unlock(mutex);
+	sys_lwmutex_unlock(&m_mutex);
 }
 
 }

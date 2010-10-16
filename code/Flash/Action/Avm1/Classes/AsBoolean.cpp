@@ -10,16 +10,16 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsBoolean", AsBoolean, ActionClass)
 
 AsBoolean::AsBoolean()
-:	ActionClass(L"Boolean")
+:	ActionClass("Boolean")
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"toString", ActionValue(createNativeFunction(this, &AsBoolean::Boolean_toString)));
-	prototype->setMember(L"valueOf", ActionValue(createNativeFunction(this, &AsBoolean::Boolean_valueOf)));
+	prototype->setMember("toString", ActionValue(createNativeFunction(this, &AsBoolean::Boolean_toString)));
+	prototype->setMember("valueOf", ActionValue(createNativeFunction(this, &AsBoolean::Boolean_valueOf)));
 
 	prototype->setReadOnly();
 
-	setMember(L"prototype", ActionValue(prototype));
+	setMember("prototype", ActionValue(prototype));
 }
 
 ActionValue AsBoolean::construct(ActionContext* context, const ActionValueArray& args)

@@ -14,7 +14,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashBitmap", FlashBitmap, ActionObject)
 
 FlashBitmap::FlashBitmap()
-:	ActionObject(L"Object")
+:	ActionObject("Object")
 ,	m_originalWidth(0)
 ,	m_originalHeight(0)
 ,	m_bitsWidth(0)

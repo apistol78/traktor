@@ -32,13 +32,18 @@ public:
 	:	m_ref(ref)
 	{
 	}
-	
-	reference operator * ()
+
+	pointer ptr() const
 	{
-		return *m_ref;
+		return m_ref;
+	}
+
+	const pointer c_ptr() const
+	{
+		return m_ref;
 	}
 	
-	const reference operator * () const
+	reference operator * () const
 	{
 		return *m_ref;
 	}

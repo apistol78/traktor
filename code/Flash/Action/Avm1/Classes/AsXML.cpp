@@ -10,36 +10,36 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsXML", AsXML, ActionClass)
 
 AsXML::AsXML()
-:	ActionClass(L"XML")
+:	ActionClass("XML")
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"addRequestHeader", ActionValue(createNativeFunction(this, &AsXML::XML_addRequestHeader)));
-	prototype->setMember(L"createElement", ActionValue(createNativeFunction(this, &AsXML::XML_createElement)));
-	prototype->setMember(L"createTextNode", ActionValue(createNativeFunction(this, &AsXML::XML_createTextNode)));
-	prototype->setMember(L"getBytesLoaded", ActionValue(createNativeFunction(this, &AsXML::XML_getBytesLoaded)));
-	prototype->setMember(L"getBytesTotal", ActionValue(createNativeFunction(this, &AsXML::XML_getBytesTotal)));
-	prototype->setMember(L"load", ActionValue(createNativeFunction(this, &AsXML::XML_load)));
-	prototype->setMember(L"parseXML", ActionValue(createNativeFunction(this, &AsXML::XML_parseXML)));
-	prototype->setMember(L"send", ActionValue(createNativeFunction(this, &AsXML::XML_send)));
-	prototype->setMember(L"sendAndLoad", ActionValue(createNativeFunction(this, &AsXML::XML_sendAndLoad)));
+	prototype->setMember("addRequestHeader", ActionValue(createNativeFunction(this, &AsXML::XML_addRequestHeader)));
+	prototype->setMember("createElement", ActionValue(createNativeFunction(this, &AsXML::XML_createElement)));
+	prototype->setMember("createTextNode", ActionValue(createNativeFunction(this, &AsXML::XML_createTextNode)));
+	prototype->setMember("getBytesLoaded", ActionValue(createNativeFunction(this, &AsXML::XML_getBytesLoaded)));
+	prototype->setMember("getBytesTotal", ActionValue(createNativeFunction(this, &AsXML::XML_getBytesTotal)));
+	prototype->setMember("load", ActionValue(createNativeFunction(this, &AsXML::XML_load)));
+	prototype->setMember("parseXML", ActionValue(createNativeFunction(this, &AsXML::XML_parseXML)));
+	prototype->setMember("send", ActionValue(createNativeFunction(this, &AsXML::XML_send)));
+	prototype->setMember("sendAndLoad", ActionValue(createNativeFunction(this, &AsXML::XML_sendAndLoad)));
 
-	prototype->addProperty(L"contentType", createNativeFunction(this, &AsXML::XML_get_contentType), createNativeFunction(this, &AsXML::XML_set_contentType));
-	prototype->addProperty(L"docTypeDecl", createNativeFunction(this, &AsXML::XML_get_docTypeDecl), createNativeFunction(this, &AsXML::XML_set_docTypeDecl));
-	prototype->addProperty(L"idMap", createNativeFunction(this, &AsXML::XML_get_idMap), createNativeFunction(this, &AsXML::XML_set_idMap));
-	prototype->addProperty(L"ignoreWhite", createNativeFunction(this, &AsXML::XML_get_ignoreWhite), createNativeFunction(this, &AsXML::XML_set_ignoreWhite));
-	prototype->addProperty(L"loaded", createNativeFunction(this, &AsXML::XML_get_loaded), createNativeFunction(this, &AsXML::XML_set_loaded));
-	prototype->addProperty(L"status", createNativeFunction(this, &AsXML::XML_get_status), createNativeFunction(this, &AsXML::XML_set_status));
-	prototype->addProperty(L"xmlDecl", createNativeFunction(this, &AsXML::XML_get_xmlDecl), createNativeFunction(this, &AsXML::XML_set_xmlDecl));
+	prototype->addProperty("contentType", createNativeFunction(this, &AsXML::XML_get_contentType), createNativeFunction(this, &AsXML::XML_set_contentType));
+	prototype->addProperty("docTypeDecl", createNativeFunction(this, &AsXML::XML_get_docTypeDecl), createNativeFunction(this, &AsXML::XML_set_docTypeDecl));
+	prototype->addProperty("idMap", createNativeFunction(this, &AsXML::XML_get_idMap), createNativeFunction(this, &AsXML::XML_set_idMap));
+	prototype->addProperty("ignoreWhite", createNativeFunction(this, &AsXML::XML_get_ignoreWhite), createNativeFunction(this, &AsXML::XML_set_ignoreWhite));
+	prototype->addProperty("loaded", createNativeFunction(this, &AsXML::XML_get_loaded), createNativeFunction(this, &AsXML::XML_set_loaded));
+	prototype->addProperty("status", createNativeFunction(this, &AsXML::XML_get_status), createNativeFunction(this, &AsXML::XML_set_status));
+	prototype->addProperty("xmlDecl", createNativeFunction(this, &AsXML::XML_get_xmlDecl), createNativeFunction(this, &AsXML::XML_set_xmlDecl));
 
 	prototype->setReadOnly();
 
-	setMember(L"prototype", ActionValue(prototype));
+	setMember("prototype", ActionValue(prototype));
 }
 
 ActionValue AsXML::construct(ActionContext* context, const ActionValueArray& args)
 {
-	return ActionValue(new ActionObject(L"XML"));
+	return ActionValue(new ActionObject("XML"));
 }
 
 void AsXML::XML_addRequestHeader(CallArgs& ca)

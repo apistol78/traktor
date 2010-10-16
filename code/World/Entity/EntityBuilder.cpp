@@ -48,7 +48,7 @@ Ref< Entity > EntityBuilder::create(const EntityData* entityData)
 		return 0;
 
 	uint32_t minClassDifference = std::numeric_limits< uint32_t >::max();
-	Ref< IEntityFactory > entityFactory;
+	IEntityFactory* entityFactory = 0;
 
 	for (RefArray< IEntityFactory >::iterator i = m_entityFactories.begin(); i != m_entityFactories.end() && minClassDifference > 0; ++i)
 	{

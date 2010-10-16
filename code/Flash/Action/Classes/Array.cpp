@@ -11,7 +11,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.Array", Array, ActionObject)
 
 Array::Array()
-:	ActionObject(L"Array")
+:	ActionObject("Array")
 {
 }
 
@@ -31,9 +31,9 @@ Ref< Array > Array::concat(const ActionValueArray& values) const
 	return out;
 }
 
-std::wstring Array::join(const std::wstring& delimiter) const
+std::string Array::join(const std::string& delimiter) const
 {
-	StringOutputStream ss;
+	std::stringstream ss;
 	if (m_values.size() >= 1)
 	{
 		ss << m_values[0].getStringSafe();
@@ -137,7 +137,7 @@ uint32_t Array::length() const
 	return uint32_t(m_values.size());
 }
 
-void Array::setMember(const std::wstring& memberName, const ActionValue& memberValue)
+void Array::setMember(const std::string& memberName, const ActionValue& memberValue)
 {
 	int32_t index = parseString< int32_t >(memberName, -1);
 	if (index >= 0 && index < int32_t(m_values.size()))
@@ -146,7 +146,7 @@ void Array::setMember(const std::wstring& memberName, const ActionValue& memberV
 		ActionObject::setMember(memberName, memberValue);
 }
 
-bool Array::getMember(ActionContext* context, const std::wstring& memberName, ActionValue& outMemberValue)
+bool Array::getMember(ActionContext* context, const std::string& memberName, ActionValue& outMemberValue)
 {
 	int32_t index = parseString< int32_t >(memberName, -1);
 	if (index >= 0 && index < int32_t(m_values.size()))
@@ -157,16 +157,16 @@ bool Array::getMember(ActionContext* context, const std::wstring& memberName, Ac
 	return ActionObject::getMember(context, memberName, outMemberValue);
 }
 
-std::wstring Array::toString() const
+ActionValue Array::toString() const
 {
 	StringOutputStream ss;
 	for (std::vector< ActionValue >::const_iterator i = m_values.begin(); i != m_values.end(); ++i)
 	{
-		if (!ss.empty())
+		if (i != m_values.begin())
 			ss << L", ";
-		ss << i->getStringSafe();
+		ss << i->getWideStringSafe();
 	}
-	return ss.str();
+	return ActionValue(ss.str());
 }
 
 void Array::trace(const IVisitor& visitor) const

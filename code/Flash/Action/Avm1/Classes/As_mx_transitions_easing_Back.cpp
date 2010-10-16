@@ -9,17 +9,17 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.As_mx_transitions_easing_Back", As_mx_transitions_easing_Back, ActionClass)
 
 As_mx_transitions_easing_Back::As_mx_transitions_easing_Back()
-:	ActionClass(L"mx.transitions.easing.Back")
+:	ActionClass("mx.transitions.easing.Back")
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"easeIn", ActionValue(createNativeFunction(this, &As_mx_transitions_easing_Back::Back_easeIn)));
-	prototype->setMember(L"easeInOut", ActionValue(createNativeFunction(this, &As_mx_transitions_easing_Back::Back_easeInOut)));
-	prototype->setMember(L"easeOut", ActionValue(createNativeFunction(this, &As_mx_transitions_easing_Back::Back_easeOut)));
+	prototype->setMember("easeIn", ActionValue(createNativeFunction(this, &As_mx_transitions_easing_Back::Back_easeIn)));
+	prototype->setMember("easeInOut", ActionValue(createNativeFunction(this, &As_mx_transitions_easing_Back::Back_easeInOut)));
+	prototype->setMember("easeOut", ActionValue(createNativeFunction(this, &As_mx_transitions_easing_Back::Back_easeOut)));
 
 	prototype->setReadOnly();
 
-	setMember(L"prototype", ActionValue(prototype));
+	setMember("prototype", ActionValue(prototype));
 }
 
 ActionValue As_mx_transitions_easing_Back::construct(ActionContext* context, const ActionValueArray& args)

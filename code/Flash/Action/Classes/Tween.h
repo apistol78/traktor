@@ -18,7 +18,7 @@ public:
 	Tween(
 		ActionContext* context,
 		ActionObject* target,
-		const std::wstring& propertyName,
+		const std::string& propertyName,
 		ActionFunction* function,
 		avm_number_t begin,
 		avm_number_t finish,

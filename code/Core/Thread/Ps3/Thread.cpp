@@ -43,7 +43,7 @@ bool Thread::start(Priority priority)
 	int res;
 
 	Internal* in = new Internal();
-	in->functor = m_functor;
+	in->functor = m_functor.ptr();
 	in->finished = false;
 
 	sys_mutex_attribute_t attr;

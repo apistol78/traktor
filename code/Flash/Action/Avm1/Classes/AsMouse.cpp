@@ -12,18 +12,18 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsMouse", AsMouse, ActionClass)
 
 AsMouse::AsMouse()
-:	ActionClass(L"Mouse")
+:	ActionClass("Mouse")
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"addListener", ActionValue(createNativeFunction(this, &AsMouse::Mouse_addListener)));
-	prototype->setMember(L"removeListener", ActionValue(createNativeFunction(this, &AsMouse::Mouse_removeListener)));
-	prototype->setMember(L"show", ActionValue(createNativeFunction(this, &AsMouse::Mouse_show)));
-	prototype->setMember(L"hide", ActionValue(createNativeFunction(this, &AsMouse::Mouse_hide)));
+	prototype->setMember("addListener", ActionValue(createNativeFunction(this, &AsMouse::Mouse_addListener)));
+	prototype->setMember("removeListener", ActionValue(createNativeFunction(this, &AsMouse::Mouse_removeListener)));
+	prototype->setMember("show", ActionValue(createNativeFunction(this, &AsMouse::Mouse_show)));
+	prototype->setMember("hide", ActionValue(createNativeFunction(this, &AsMouse::Mouse_hide)));
 
 	prototype->setReadOnly();
 
-	setMember(L"prototype", ActionValue(prototype));
+	setMember("prototype", ActionValue(prototype));
 }
 
 void AsMouse::eventMouseDown(ActionContext* context, int x, int y, int button)
@@ -34,7 +34,7 @@ void AsMouse::eventMouseDown(ActionContext* context, int x, int y, int button)
 	for (RefArray< ActionObject >::iterator i = listeners.begin(); i != listeners.end(); ++i)
 	{
 		ActionValue member;
-		(*i)->getMember(context, L"onButtonDown", member);
+		(*i)->getMember(context, "onButtonDown", member);
 		if (member.isUndefined())
 			continue;
 
@@ -55,7 +55,7 @@ void AsMouse::eventMouseUp(ActionContext* context, int x, int y, int button)
 	for (RefArray< ActionObject >::iterator i = listeners.begin(); i != listeners.end(); ++i)
 	{
 		ActionValue member;
-		(*i)->getMember(context, L"onButtonUp", member);
+		(*i)->getMember(context, "onButtonUp", member);
 		if (member.isUndefined())
 			continue;
 
@@ -76,7 +76,7 @@ void AsMouse::eventMouseMove(ActionContext* context, int x, int y, int button)
 	for (RefArray< ActionObject >::iterator i = listeners.begin(); i != listeners.end(); ++i)
 	{
 		ActionValue member;
-		(*i)->getMember(context, L"onMove", member);
+		(*i)->getMember(context, "onMove", member);
 		if (member.isUndefined())
 			continue;
 

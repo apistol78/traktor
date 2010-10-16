@@ -10,23 +10,23 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsLocalConnection", AsLocalConnection, ActionClass)
 
 AsLocalConnection::AsLocalConnection()
-:	ActionClass(L"LocalConnection")
+:	ActionClass("LocalConnection")
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"close", ActionValue(createNativeFunction(this, &AsLocalConnection::LocalConnection_close)));
-	prototype->setMember(L"connect", ActionValue(createNativeFunction(this, &AsLocalConnection::LocalConnection_connect)));
-	prototype->setMember(L"domain", ActionValue(createNativeFunction(this, &AsLocalConnection::LocalConnection_domain)));
-	prototype->setMember(L"send", ActionValue(createNativeFunction(this, &AsLocalConnection::LocalConnection_send)));
+	prototype->setMember("close", ActionValue(createNativeFunction(this, &AsLocalConnection::LocalConnection_close)));
+	prototype->setMember("connect", ActionValue(createNativeFunction(this, &AsLocalConnection::LocalConnection_connect)));
+	prototype->setMember("domain", ActionValue(createNativeFunction(this, &AsLocalConnection::LocalConnection_domain)));
+	prototype->setMember("send", ActionValue(createNativeFunction(this, &AsLocalConnection::LocalConnection_send)));
 
 	prototype->setReadOnly();
 
-	setMember(L"prototype", ActionValue(prototype));
+	setMember("prototype", ActionValue(prototype));
 }
 
 ActionValue AsLocalConnection::construct(ActionContext* context, const ActionValueArray& args)
 {
-	return ActionValue(new ActionObject(L"LocalConnection"));
+	return ActionValue(new ActionObject("LocalConnection"));
 }
 
 void AsLocalConnection::LocalConnection_close(CallArgs& ca)

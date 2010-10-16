@@ -9,16 +9,16 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsError", AsError, ActionClass)
 
 AsError::AsError()
-:	ActionClass(L"Error")
+:	ActionClass("Error")
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"message", ActionValue(L""));
-	prototype->setMember(L"name", ActionValue(L""));
+	prototype->setMember("message", ActionValue(L""));
+	prototype->setMember("name", ActionValue(L""));
 
 	prototype->setReadOnly();
 
-	setMember(L"prototype", ActionValue(prototype));
+	setMember("prototype", ActionValue(prototype));
 }
 
 ActionValue AsError::construct(ActionContext* context, const ActionValueArray& args)
@@ -26,7 +26,7 @@ ActionValue AsError::construct(ActionContext* context, const ActionValueArray& a
 	Ref< ActionObject > errorObject = new ActionObject(this);
 
 	if (args.size() > 0)
-		errorObject->setMember(L"message", args[0]);
+		errorObject->setMember("message", args[0]);
 
 	return ActionValue(errorObject);
 }

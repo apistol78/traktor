@@ -46,11 +46,11 @@ public:
 
 	ActionValue getRegister(uint16_t index) const;
 
-	bool hasVariable(const std::wstring& variableName) const;
+	bool hasVariable(const std::string& variableName) const;
 
-	void setVariable(const std::wstring& variableName, const ActionValue& variableValue);
+	void setVariable(const std::string& variableName, const ActionValue& variableValue);
 
-	bool getVariable(const std::wstring& variableName, ActionValue& outVariableValue) const;
+	bool getVariable(const std::string& variableName, ActionValue& outVariableValue) const;
 
 	void setDictionary(ActionDictionary* dictionary);
 
@@ -62,7 +62,7 @@ public:
 
 	inline uint16_t getCodeSize() const { return m_codeSize; }
 
-	inline const std::map< std::wstring, ActionValue >& getVariables() const { return m_localVariables; }
+	inline const std::map< std::string, ActionValue >& getVariables() const { return m_localVariables; }
 
 	inline ActionDictionary* getDictionary() const { return m_dictionary; }
 
@@ -76,7 +76,7 @@ private:
 	const uint8_t* m_code;
 	uint16_t m_codeSize;
 	ActionValueArray m_localRegisters;
-	std::map< std::wstring, ActionValue > m_localVariables;
+	std::map< std::string, ActionValue > m_localVariables;
 	Ref< ActionDictionary > m_dictionary;
 	ActionFunction* m_callee;
 	ActionValueStack m_stack;

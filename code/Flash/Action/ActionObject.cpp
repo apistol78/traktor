@@ -22,17 +22,17 @@ ActionObject::ActionObject()
 ,	m_traceBuffered(false)
 ,	m_traceRefCount(0)
 {
-	setMember(L"__proto__", ActionValue(L"Object"));
+	setMember("__proto__", ActionValue("Object"));
 	++s_objectCount;
 }
 
-ActionObject::ActionObject(const std::wstring& prototypeName)
+ActionObject::ActionObject(const std::string& prototypeName)
 :	m_readOnly(false)
 ,	m_traceColor(TcBlack)
 ,	m_traceBuffered(false)
 ,	m_traceRefCount(0)
 {
-	setMember(L"__proto__", ActionValue(prototypeName));
+	setMember("__proto__", ActionValue(prototypeName));
 	++s_objectCount;
 }
 
@@ -42,19 +42,13 @@ ActionObject::ActionObject(ActionObject* prototype)
 ,	m_traceBuffered(false)
 ,	m_traceRefCount(0)
 {
-	setMember(L"__proto__", ActionValue(prototype));
+	setMember("__proto__", ActionValue(prototype));
 	++s_objectCount;
 }
 
 ActionObject::~ActionObject()
 {
 	--s_objectCount;
-}
-
-void ActionObject::addRef(void* owner) const
-{
-	m_traceColor = TcBlack;
-	Object::addRef(owner);
 }
 
 void ActionObject::release(void* owner) const
@@ -93,7 +87,7 @@ ActionObject* ActionObject::getPrototype(ActionContext* context)
 	Ref< ActionObject > classObject;
 	ActionValue protoValue;
 
-	if (getLocalMember(L"__proto__", protoValue))
+	if (getLocalMember("__proto__", protoValue))
 	{
 		if (protoValue.isObject())
 			return protoValue.getObject();
@@ -104,21 +98,21 @@ ActionObject* ActionObject::getPrototype(ActionContext* context)
 	if (!classObject)
 	{
 		// No such class exist; default to plain "Object".
-		if (!(classObject = context->lookupClass(L"Object")))
+		if (!(classObject = context->lookupClass("Object")))
 			return 0;
 	}
 
-	m_members[L"__proto__"] = ActionValue(classObject);
+	m_members["__proto__"] = ActionValue(classObject);
 	return classObject;
 }
 
-void ActionObject::setMember(const std::wstring& memberName, const ActionValue& memberValue)
+void ActionObject::setMember(const std::string& memberName, const ActionValue& memberValue)
 {
 	T_ASSERT (!m_readOnly);
 	m_members[memberName] = memberValue;
 }
 
-bool ActionObject::getMember(ActionContext* context, const std::wstring& memberName, ActionValue& outMemberValue)
+bool ActionObject::getMember(ActionContext* context, const std::string& memberName, ActionValue& outMemberValue)
 {
 	if (getLocalMember(memberName, outMemberValue))
 		return true;
@@ -144,7 +138,7 @@ bool ActionObject::getMember(ActionContext* context, const std::wstring& memberN
 	// Not available through __proto__ chain; assume class object and try from "prototype".
 	{
 		ActionValue prototypeValue;
-		if (getLocalMember(L"prototype", prototypeValue))
+		if (getLocalMember("prototype", prototypeValue))
 		{
 			Ref< ActionObject > prototype = prototypeValue.getObjectSafe();
 			T_ASSERT (prototype != this);
@@ -158,7 +152,7 @@ bool ActionObject::getMember(ActionContext* context, const std::wstring& memberN
 	return false;
 }
 
-bool ActionObject::deleteMember(const std::wstring& memberName)
+bool ActionObject::deleteMember(const std::string& memberName)
 {
 	T_ASSERT (!m_readOnly);
 
@@ -175,13 +169,13 @@ void ActionObject::deleteAllMembers()
 	m_members.clear();
 }
 
-void ActionObject::addProperty(const std::wstring& propertyName, ActionFunction* propertyGet, ActionFunction* propertySet)
+void ActionObject::addProperty(const std::string& propertyName, ActionFunction* propertyGet, ActionFunction* propertySet)
 {
 	T_ASSERT (!m_readOnly);
 	m_properties[propertyName] = std::make_pair(propertyGet, propertySet);
 }
 
-bool ActionObject::getPropertyGet(ActionContext* context, const std::wstring& propertyName, Ref< ActionFunction >& outPropertyGet)
+bool ActionObject::getPropertyGet(ActionContext* context, const std::string& propertyName, Ref< ActionFunction >& outPropertyGet)
 {
 	if (getLocalPropertyGet(propertyName, outPropertyGet))
 		return true;
@@ -207,7 +201,7 @@ bool ActionObject::getPropertyGet(ActionContext* context, const std::wstring& pr
 	// Not available through __proto__ chain; assume class object and try from "prototype".
 	{
 		ActionValue prototypeValue;
-		if (getLocalMember(L"prototype", prototypeValue))
+		if (getLocalMember("prototype", prototypeValue))
 		{
 			Ref< ActionObject > prototype = prototypeValue.getObjectSafe();
 			T_ASSERT (prototype != this);
@@ -221,7 +215,7 @@ bool ActionObject::getPropertyGet(ActionContext* context, const std::wstring& pr
 	return false;
 }
 
-bool ActionObject::getPropertySet(ActionContext* context, const std::wstring& propertyName, Ref< ActionFunction >& outPropertySet)
+bool ActionObject::getPropertySet(ActionContext* context, const std::string& propertyName, Ref< ActionFunction >& outPropertySet)
 {
 	T_ASSERT (!m_readOnly);
 
@@ -248,7 +242,7 @@ bool ActionObject::getPropertySet(ActionContext* context, const std::wstring& pr
 	// Not available through __proto__ chain; assume class object and try from "prototype".
 	{
 		ActionValue prototypeValue;
-		if (getLocalMember(L"prototype", prototypeValue))
+		if (getLocalMember("prototype", prototypeValue))
 		{
 			Ref< ActionObject > prototype = prototypeValue.getObjectSafe();
 			T_ASSERT (prototype != this);
@@ -277,10 +271,11 @@ avm_number_t ActionObject::valueOf() const
 	return 0.0;
 }
 
-std::wstring ActionObject::toString() const
+ActionValue ActionObject::toString() const
 {
-	StringOutputStream ss; ss << L"object (" << type_name(this) << L")";
-	return ss.str();
+	StringOutputStream ss;
+	ss << L"object (" << type_name(this) << L")";
+	return ActionValue(ss.str());
 }
 
 void ActionObject::setReadOnly()
@@ -288,7 +283,7 @@ void ActionObject::setReadOnly()
 	m_readOnly = true;
 }
 
-bool ActionObject::getLocalMember(const std::wstring& memberName, ActionValue& outMemberValue) const
+bool ActionObject::getLocalMember(const std::string& memberName, ActionValue& outMemberValue) const
 {
 	member_map_t::const_iterator i = m_members.find(memberName);
 	if (i == m_members.end())
@@ -298,13 +293,13 @@ bool ActionObject::getLocalMember(const std::wstring& memberName, ActionValue& o
 	return true;
 }
 
-bool ActionObject::hasOwnProperty(const std::wstring& propertyName) const
+bool ActionObject::hasOwnProperty(const std::string& propertyName) const
 {
 	property_map_t::const_iterator i = m_properties.find(propertyName);
 	return i != m_properties.end();
 }
 
-bool ActionObject::getLocalPropertyGet(const std::wstring& propertyName, Ref< ActionFunction >& outPropertyGet) const
+bool ActionObject::getLocalPropertyGet(const std::string& propertyName, Ref< ActionFunction >& outPropertyGet) const
 {
 	property_map_t::const_iterator i = m_properties.find(propertyName);
 	if (i == m_properties.end())
@@ -314,7 +309,7 @@ bool ActionObject::getLocalPropertyGet(const std::wstring& propertyName, Ref< Ac
 	return true;
 }
 
-bool ActionObject::getLocalPropertySet(const std::wstring& propertyName, Ref< ActionFunction >& outPropertySet) const
+bool ActionObject::getLocalPropertySet(const std::string& propertyName, Ref< ActionFunction >& outPropertySet) const
 {
 	property_map_t::const_iterator i = m_properties.find(propertyName);
 	if (i == m_properties.end())

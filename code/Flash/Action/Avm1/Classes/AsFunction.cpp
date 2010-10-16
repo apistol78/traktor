@@ -12,16 +12,16 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsFunction", AsFunction, ActionClass)
 
 AsFunction::AsFunction()
-:	ActionClass(L"Function")
+:	ActionClass("Function")
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"apply", ActionValue(createNativeFunction(this, &AsFunction::Function_apply)));
-	prototype->setMember(L"call", ActionValue(createNativeFunction(this, &AsFunction::Function_call)));
+	prototype->setMember("apply", ActionValue(createNativeFunction(this, &AsFunction::Function_apply)));
+	prototype->setMember("call", ActionValue(createNativeFunction(this, &AsFunction::Function_call)));
 
 	prototype->setReadOnly();
 
-	setMember(L"prototype", ActionValue(prototype));
+	setMember("prototype", ActionValue(prototype));
 }
 
 ActionValue AsFunction::construct(ActionContext* context, const ActionValueArray& args)

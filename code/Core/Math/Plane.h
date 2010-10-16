@@ -79,6 +79,8 @@ public:
 
 	T_MATH_INLINE Plane& operator = (const Plane& src);
 
+	friend T_DLLCLASS Plane operator * (const Matrix44& m, const Plane& pl);
+
 private:
 	Vector4 m_normal;
 	Scalar m_distance;

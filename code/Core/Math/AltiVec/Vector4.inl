@@ -378,4 +378,20 @@ T_MATH_INLINE Vector4 max(const Vector4& l, const Vector4& r)
 	return Vector4(vec_max(l.m_data, r.m_data));
 }
 
+T_MATH_INLINE Vector4 select(const Vector4& condition, const Vector4& negative, const Vector4& positive)
+{
+	vec_uint4 mask = (vec_uint4)vec_cmple(condition.m_data, (vec_float4)(0.0f));
+	return Vector4(vec_sel(negative.m_data, positive.m_data, mask));
+}
+
+T_MATH_INLINE T_DLLCLASS bool compareAllGreaterEqual(const Vector4& l, const Vector4& r)
+{
+	return vec_all_ge(l.m_data, r.m_data) != 0;
+}
+
+T_MATH_INLINE T_DLLCLASS bool compareAllLessEqual(const Vector4& l, const Vector4& r)
+{
+	return vec_all_le(l.m_data, r.m_data) != 0;
+}
+
 }

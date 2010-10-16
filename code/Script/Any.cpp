@@ -1,6 +1,7 @@
 #include <cstring>
 #include "Script/Any.h"
-#include "Core/Memory/Alloc.h"
+#include "Core/Memory/IAllocator.h"
+#include "Core/Memory/MemoryConfig.h"
 #include "Core/Misc/String.h"
 #include "Core/Singleton/ISingleton.h"
 #include "Core/Singleton/SingletonManager.h"
@@ -16,7 +17,7 @@ wchar_t* refStringCreate(const wchar_t* s)
 {
 	uint32_t len = wcslen(s);
 	
-	void* ptr = Alloc::acquire(sizeof(uint16_t) + (len + 1) * sizeof(wchar_t), T_FILE_LINE);
+	void* ptr = getAllocator()->alloc(sizeof(uint16_t) + (len + 1) * sizeof(wchar_t), 4, T_FILE_LINE);
 	if (!ptr)
 		return 0;
 
@@ -43,7 +44,7 @@ wchar_t* refStringDec(wchar_t* s)
 	uint16_t* base = reinterpret_cast< uint16_t* >(s) - 1;
 	if (--*base == 0)
 	{
-		Alloc::free(base);
+		getAllocator()->free(base);
 		return 0;
 	}
 	return s;

@@ -1,6 +1,9 @@
 #ifndef traktor_CriticalSection_H
 #define traktor_CriticalSection_H
 
+#if defined(_PS3)
+#	include <sys/synchronization.h>
+#endif
 #include "Core/Thread/IWaitable.h"
 
 // import/export mechanism.
@@ -22,14 +25,18 @@ class T_DLLCLASS CriticalSection : public IWaitable
 public:
 	CriticalSection();
 	
-	~CriticalSection();
+	virtual ~CriticalSection();
 
 	virtual bool wait(int32_t timeout = -1);
 
 	void release();
 
 private:
+#if defined(_PS3)
+	sys_lwmutex_t m_mutex;
+#else
 	void* m_handle;
+#endif
 };
 
 }

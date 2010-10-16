@@ -9,7 +9,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.ActionSuper", ActionSuper, ActionFunction)
 
 ActionSuper::ActionSuper(ActionContext* context, ActionObject* object)
-:	ActionFunction(L"super")
+:	ActionFunction("super")
 ,	m_object(object)
 {
 	ActionValue memberValue;
@@ -21,21 +21,14 @@ ActionSuper::ActionSuper(ActionContext* context, ActionObject* object)
 	m_superPrototype = prototype->getPrototype(context);
 
 	// __proto__.__constructor__
-	if (prototype->getLocalMember(L"__constructor__", memberValue))
+	if (prototype->getLocalMember("__constructor__", memberValue))
 		m_superClass = memberValue.getObject();
 	else
 		m_superClass = dynamic_type_cast< ActionFunction* >(m_superPrototype);
 
 	// Set super prototype as our __proto__.
-	setMember(L"__proto__", ActionValue(m_superPrototype));
+	setMember("__proto__", ActionValue(m_superPrototype));
 	setReadOnly();
-
-#if defined(_DEBUG)
-	if (m_superClass)
-		log::debug << L"ActionSuper; using class " << checked_type_cast< ActionFunction* >(m_superClass)->getName() << Endl;
-	else
-		log::debug << L"ActionSuper; no constructor" << Endl;
-#endif
 }
 
 ActionValue ActionSuper::call(ActionContext* context, ActionObject* self, const ActionValueArray& args)

@@ -26,7 +26,7 @@ void __registerTypeInfo(const TypeInfo* typeInfo)
 		T_ASSERT (s_typeInfoRegistry);
 	}
 
-	std::wstring typeName(typeInfo->getName());
+	const wchar_t* typeName = typeInfo->getName();
 
 	uint32_t index = 0;
 	while (index < s_typeInfoCount)
@@ -34,8 +34,8 @@ void __registerTypeInfo(const TypeInfo* typeInfo)
 		const TypeInfo* typeInfo2 = s_typeInfoRegistry[index];
 		T_ASSERT (typeInfo2);
 
-		std::wstring typeName2(typeInfo2->getName());
-		int32_t res = typeName2.compare(typeName);
+		const wchar_t* typeName2 = typeInfo2->getName();
+		int32_t res = wcscmp(typeName2, typeName);
 		if (res > 0)
 			break;
 
@@ -124,7 +124,8 @@ const TypeInfo* TypeInfo::find(const std::wstring& name)
 	{
 		uint32_t index = (last + first) >> 1;
 
-		int32_t res = std::wstring(s_typeInfoRegistry[index]->getName()).compare(name);
+		const wchar_t* typeName = s_typeInfoRegistry[index]->getName();
+		int32_t res = wcscmp(typeName, name.c_str());
 		if (res == 0)
 			return s_typeInfoRegistry[index];
 		else if (res > 0)

@@ -28,27 +28,27 @@ Ref< IImageFormat > IImageFormat::determineFormat(const std::wstring& extension)
 {
 	Ref< IImageFormat > imageFormat;
 
-	if (compareIgnoreCase(extension, L"bmp") == 0)
+	if (compareIgnoreCase< std::wstring >(extension, L"bmp") == 0)
 		imageFormat = new ImageFormatBmp();
 #if defined(DRAWING_INCLUDE_PNG)
-	else if (compareIgnoreCase(extension, L"png") == 0)
+	else if (compareIgnoreCase< std::wstring >(extension, L"png") == 0)
 		imageFormat = new ImageFormatPng();
 #endif
 #if defined(DRAWING_INCLUDE_JPEG)
-	else if (compareIgnoreCase(extension, L"jpg") == 0 || compareIgnoreCase(extension, L"jpeg") == 0)
+	else if (compareIgnoreCase< std::wstring >(extension, L"jpg") == 0 || compareIgnoreCase< std::wstring >(extension, L"jpeg") == 0)
 		imageFormat = new ImageFormatJpeg();
 #endif
 #if defined(DRAWING_INCLUDE_GIF)
-	else if (compareIgnoreCase(extension, L"gif") == 0)
+	else if (compareIgnoreCase< std::wstring >(extension, L"gif") == 0)
 		imageFormat = new ImageFormatGif();
 #endif
 #if defined(DRAWING_INCLUDE_EXR)
-	else if (compareIgnoreCase(extension, L"exr") == 0)
+	else if (compareIgnoreCase< std::wstring >(extension, L"exr") == 0)
 		imageFormat = new ImageFormatExr();
 #endif
-	else if (compareIgnoreCase(extension, L"tga") == 0)
+	else if (compareIgnoreCase< std::wstring >(extension, L"tga") == 0)
 		imageFormat = new ImageFormatTga();
-	else if (compareIgnoreCase(extension, L"pcx") == 0)
+	else if (compareIgnoreCase< std::wstring >(extension, L"pcx") == 0)
 		imageFormat = new ImageFormatPcx();
 
 	return imageFormat;

@@ -65,7 +65,7 @@ public:
 		uint8_t blendMode;
 		std::vector< PlaceAction > actions;
 		uint16_t clipDepth;
-		std::wstring name;
+		std::string name;
 		uint16_t ratio;
 		SwfCxTransform cxTransform;
 		Matrix33 matrix;
@@ -97,13 +97,13 @@ public:
 	 *
 	 * \param label Frame label.
 	 */
-	void setLabel(const std::wstring& label);
+	void setLabel(const std::string& label);
 
 	/*! \brief Get frame label.
 	 *
 	 * \return Frame label.
 	 */
-	const std::wstring& getLabel() const;
+	const std::string& getLabel() const;
 
 	/*! \brief Change background color used to clear frame.
 	 *
@@ -160,7 +160,7 @@ public:
 	const RefArray< ActionScript >& getActionScripts() const;
 
 private:
-	std::wstring m_label;
+	std::string m_label;
 	bool m_backgroundColorChange;
 	SwfColor m_backgroundColor;
 	std::map< uint16_t, PlaceObject > m_placeObjects;

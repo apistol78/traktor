@@ -74,7 +74,7 @@ void InstanceMeshEntityRenderer::flush(
 		i->second.resize(0);
 	}
 
-	m_meshInstances.clear();
+	//m_meshInstances.clear();
 }
 
 	}

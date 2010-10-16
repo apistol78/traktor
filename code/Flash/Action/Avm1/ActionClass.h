@@ -27,7 +27,7 @@ class T_DLLCLASS ActionClass : public ActionFunction
 	T_RTTI_CLASS;
 
 public:
-	ActionClass(const std::wstring& name);
+	ActionClass(const std::string& name);
 
 	virtual ActionValue call(ActionContext* context, ActionObject* self, const ActionValueArray& args);
 

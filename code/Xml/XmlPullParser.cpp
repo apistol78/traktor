@@ -322,7 +322,7 @@ int XMLCALL XmlPullParserImpl::unknownEncoding(void* userData, const XML_Char* n
 {
 	// Map Windows encoding as iso-8859-1; not completely accurat.
 	// @fixme Should use IEncoding classes from Core.
-	if (compareIgnoreCase(xmltows(name), L"Windows-1252") == 0)
+	if (compareIgnoreCase< std::wstring >(xmltows(name), L"Windows-1252") == 0)
 	{
 		for (int i = 0; i < 256; ++i)
 			info->map[i] = i;

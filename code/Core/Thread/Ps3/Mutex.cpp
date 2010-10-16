@@ -7,42 +7,34 @@ namespace traktor
 
 Mutex::Mutex()
 :	m_existing(false)
-,	m_handle(0)
 {
-	sys_mutex_t* mutex = new sys_mutex_t();
-
 	sys_mutex_attribute_t attr;
 	sys_mutex_attribute_initialize(attr);
-	sys_mutex_create(mutex, &attr);
-
-	m_handle = mutex;
+	attr.attr_recursive = SYS_SYNC_RECURSIVE;
+	sys_mutex_create(&m_mutex, &attr);
 }
 
 Mutex::Mutex(const Guid& id)
 :	m_existing(false)
-,	m_handle(0)
 {
 	T_FATAL_ERROR;
 }
 
 Mutex::~Mutex()
 {
-	sys_mutex_t* mutex = reinterpret_cast< sys_mutex_t* >(m_handle);
-	sys_mutex_destroy(*mutex);
-	delete mutex;
+	sys_mutex_destroy(m_mutex);
 }
 
 bool Mutex::wait(int32_t timeout)
 {
-	sys_mutex_t* mutex = reinterpret_cast< sys_mutex_t* >(m_handle);
 	if (timeout >= 0)
 	{
-		int rc = sys_mutex_lock(*mutex, usecond_t(timeout) * 1000);
+		int rc = sys_mutex_lock(m_mutex, usecond_t(timeout) * 1000);
 		return bool(rc == CELL_OK);
 	}
 	else
 	{
-		while (sys_mutex_lock(*mutex, SYS_NO_TIMEOUT) != CELL_OK)
+		while (sys_mutex_lock(m_mutex, SYS_NO_TIMEOUT) != CELL_OK)
 			;
 		return true;
 	}
@@ -50,8 +42,7 @@ bool Mutex::wait(int32_t timeout)
 
 void Mutex::release()
 {
-	sys_mutex_t* mutex = reinterpret_cast< sys_mutex_t* >(m_handle);
-	sys_mutex_unlock(*mutex);
+	sys_mutex_unlock(m_mutex);
 }
 
 bool Mutex::existing() const

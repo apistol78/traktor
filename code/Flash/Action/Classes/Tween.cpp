@@ -14,14 +14,14 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.Tween", Tween, ActionObject)
 Tween::Tween(
 	ActionContext* context,
 	ActionObject* target,
-	const std::wstring& propertyName,
+	const std::string& propertyName,
 	ActionFunction* function,
 	avm_number_t begin,
 	avm_number_t finish,
 	avm_number_t duration,
 	bool useSeconds
 )
-:	ActionObject(L"mx.transitions.Tween")
+:	ActionObject("mx.transitions.Tween")
 ,	m_context(context)
 ,	m_begin(begin)
 ,	m_finish(finish)
@@ -33,17 +33,17 @@ Tween::Tween(
 {
 	if (target)
 	{
-		setMember(L"_target", ActionValue(target));
+		setMember("_target", ActionValue(target));
 
 		Ref< ActionFunction > propertySet;
 		if (target->getPropertySet(context, propertyName, propertySet))
-			setMember(L"_targetProperty", ActionValue(propertySet));
+			setMember("_targetProperty", ActionValue(propertySet));
 	}
 	
 	if (function)
-		setMember(L"_function", ActionValue(function));
+		setMember("_function", ActionValue(function));
 
-	setMember(L"onFrame", ActionValue(createNativeFunction(this, &Tween::onFrame)));
+	setMember("onFrame", ActionValue(createNativeFunction(this, &Tween::onFrame)));
 	start();
 }
 
@@ -91,9 +91,9 @@ void Tween::start()
 		ActionValue propertySet;
 		ActionValue function;
 
-		getLocalMember(L"_target", target);
-		getLocalMember(L"_targetProperty", propertySet);
-		getLocalMember(L"_function", function);
+		getLocalMember("_target", target);
+		getLocalMember("_targetProperty", propertySet);
+		getLocalMember("_function", function);
 
 		// Ensure property is set to initial value.
 		if (propertySet.isObject() && function.isObject())
@@ -154,9 +154,9 @@ void Tween::onFrame(CallArgs& ca)
 	ActionValue propertySet;
 	ActionValue function;
 
-	getLocalMember(L"_target", target);
-	getLocalMember(L"_targetProperty", propertySet);
-	getLocalMember(L"_function", function);
+	getLocalMember("_target", target);
+	getLocalMember("_targetProperty", propertySet);
+	getLocalMember("_function", function);
 
 	if (!function.isObject() || !propertySet.isObject() || !m_playing || m_duration <= 0.0f)
 		return;
@@ -205,7 +205,7 @@ void Tween::onFrame(CallArgs& ca)
 
 		// Notify listener when we've reached the end.
 		ActionValue memberValue;
-		if (getLocalMember(L"onMotionFinished", memberValue))
+		if (getLocalMember("onMotionFinished", memberValue))
 		{
 			Ref< ActionFunction > motionFinished = memberValue.getObjectSafe< ActionFunction >();
 			if (motionFinished)

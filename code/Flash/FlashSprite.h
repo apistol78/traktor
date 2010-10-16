@@ -42,7 +42,7 @@ public:
 
 	FlashFrame* getFrame(uint32_t frameId) const;
 
-	int findFrame(const std::wstring& frameLabel) const;
+	int findFrame(const std::string& frameLabel) const;
 
 	void addInitActionScript(ActionScript* initActionScript);
 

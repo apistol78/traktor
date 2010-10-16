@@ -36,6 +36,7 @@ JobManager& JobManager::getInstance()
 	{
 		s_instance = new JobManager();
 		SingletonManager::getInstance().addBefore(s_instance, &ThreadManager::getInstance());
+		s_instance->create();
 	}
 	return *s_instance;
 }
@@ -88,7 +89,7 @@ void JobManager::threadWorker(int id)
 	}
 }
 
-JobManager::JobManager()
+void JobManager::create()
 {
 	uint32_t cores = OS::getInstance().getCPUCoreCount();
 	T_ASSERT (cores > 0);
@@ -101,12 +102,16 @@ JobManager::JobManager()
 				this,
 				&JobManager::threadWorker,
 				int(i)
-			),
+			).ptr(),
 			L"Job worker thread " + toString(i),
 			i + 1
 		);
 		m_workerThreads[i]->start(Thread::Above);
 	}
+}
+
+JobManager::JobManager()
+{
 }
 
 JobManager::~JobManager()

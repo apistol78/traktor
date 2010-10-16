@@ -135,7 +135,7 @@
               <staticOptions>
                 <item>
                   <first>AdditionalOptions</first>
-                  <second>-O3 -ffast-math -funroll-loops</second>
+                  <second>-O3 -ftree-vectorize -maltivec -ffast-math -funroll-loops</second>
                 </item>
                 <item>
                   <first>AdditionalIncludeDirectories</first>
@@ -350,7 +350,7 @@
               <staticOptions>
                 <item>
                   <first>AdditionalOptions</first>
-                  <second>-O3 -ffast-math -funroll-loops</second>
+                  <second>-O3 -ftree-vectorize -maltivec -ffast-math -funroll-loops</second>
                 </item>
                 <item>
                   <first>AdditionalIncludeDirectories</first>
@@ -601,7 +601,7 @@
               <staticOptions>
                 <item>
                   <first>AdditionalOptions</first>
-                  <second>-O3 -ffast-math -funroll-loops</second>
+                  <second>-O3 -ftree-vectorize -maltivec -ffast-math -funroll-loops</second>
                 </item>
                 <item>
                   <first>AdditionalIncludeDirectories</first>
@@ -844,7 +844,7 @@
               <staticOptions>
                 <item>
                   <first>AdditionalOptions</first>
-                  <second>-O3 -ffast-math -funroll-loops</second>
+                  <second>-O3 -ftree-vectorize -maltivec -ffast-math -funroll-loops</second>
                 </item>
                 <item>
                   <first>AdditionalIncludeDirectories</first>

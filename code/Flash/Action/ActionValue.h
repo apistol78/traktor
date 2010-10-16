@@ -1,6 +1,8 @@
 #ifndef traktor_flash_ActionValue_H
 #define traktor_flash_ActionValue_H
 
+#include "Core/Io/Utf8Encoding.h"
+#include "Core/Misc/TString.h"
 #include "Flash/Action/ActionTypes.h"
 #include "Flash/Action/ActionObject.h"
 
@@ -45,6 +47,10 @@ public:
 
 	explicit ActionValue(avm_number_t n);
 
+	explicit ActionValue(const char* s);
+
+	explicit ActionValue(const std::string& s);
+
 	explicit ActionValue(const wchar_t* s);
 
 	explicit ActionValue(const std::wstring& s);
@@ -86,7 +92,10 @@ public:
 	avm_number_t getNumber() const { T_ASSERT_M (m_type == AvtNumber, L"Incorrect type"); return m_value.n; }
 
 	/*! \brief Get string value. */
-	std::wstring getString() const { T_ASSERT_M (m_type == AvtString, L"Incorrect type"); return m_value.s; }
+	std::string getString() const { T_ASSERT_M (m_type == AvtString, L"Incorrect type"); return m_value.s; }
+
+	/*! \brief Get wide string value. */
+	std::wstring getWideString() const { T_ASSERT_M (m_type == AvtString, L"Incorrect type"); return mbstows(Utf8Encoding(), m_value.s); }
 
 	/*! \brief Get object value. */
 	ActionObject* getObject() const { T_ASSERT_M (m_type == AvtObject, L"Incorrect type"); return m_value.o; }
@@ -98,7 +107,10 @@ public:
 	avm_number_t getNumberSafe() const;
 
 	/*! \brief Get string value safe. */
-	std::wstring getStringSafe() const;
+	std::string getStringSafe() const;
+
+	/*! \brief Get wide string value safe. */
+	std::wstring getWideStringSafe() const;
 
 	/*! \brief Get object safe. */
 	Ref< ActionObject > getObjectSafe() const;
@@ -122,7 +134,7 @@ private:
 	{
 		bool b;
 		avm_number_t n;
-		wchar_t* s;
+		char* s;
 		ActionObject* o;
 	};
 

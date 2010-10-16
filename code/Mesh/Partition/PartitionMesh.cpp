@@ -43,22 +43,22 @@ void PartitionMesh::render(
 	if (!m_shader.validate() || !m_partition)
 		return;
 
-	std::set< uint32_t > partIndices;
+	m_partIndices.resize(0);
 	m_partition->traverse(
 		worldRenderView->getCullFrustum(),
 		worldTransform.toMatrix44(),
 		worldRenderView->getView(),
 		worldRenderView->getTechnique(),
-		partIndices
+		m_partIndices
 	);
-	if (partIndices.empty())
+	if (m_partIndices.empty())
 		return;
 
 	Matrix44 worldView = worldRenderView->getView() * worldTransform.toMatrix44();
 	uint32_t primitiveCount = 0;
 
 	const std::vector< render::Mesh::Part >& meshParts = m_mesh->getParts();
-	for (std::set< uint32_t >::const_iterator i = partIndices.begin(); i != partIndices.end(); ++i)
+	for (std::vector< uint32_t >::const_iterator i = m_partIndices.begin(); i != m_partIndices.end(); ++i)
 	{
 		const Part& part = m_parts[*i];
 
@@ -107,12 +107,14 @@ void PartitionMesh::render(
 			renderBlock
 		);
 
-		primitiveCount += renderBlock->primitives->count;
+#if defined(_DEBUG)
+		primitiveCount += meshParts[part.meshPart].primitives.count;
+#endif
 	}
 
 #if defined(_DEBUG)
 	if (worldRenderView->getTechnique() == world::WorldRenderer::getTechniqueDefault())
-		log::debug << L"PartitionMesh; " << primitiveCount << L" primitive(s) in " << uint32_t(partIndices.size()) << L" part(s)" << Endl;
+		log::debug << L"PartitionMesh; " << primitiveCount << L" primitive(s) in " << uint32_t(m_partIndices.size()) << L" part(s)" << Endl;
 #endif
 }
 

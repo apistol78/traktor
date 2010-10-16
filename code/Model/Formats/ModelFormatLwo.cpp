@@ -372,8 +372,8 @@ void ModelFormatLwo::getExtensions(std::wstring& outDescription, std::vector< st
 bool ModelFormatLwo::supportFormat(const Path& filePath) const
 {
 	return 
-		compareIgnoreCase(filePath.getExtension(), L"lwo") == 0 ||
-		compareIgnoreCase(filePath.getExtension(), L"lw") == 0;
+		compareIgnoreCase< std::wstring >(filePath.getExtension(), L"lwo") == 0 ||
+		compareIgnoreCase< std::wstring >(filePath.getExtension(), L"lw") == 0;
 }
 
 Ref< Model > ModelFormatLwo::read(const Path& filePath, uint32_t importFlags) const

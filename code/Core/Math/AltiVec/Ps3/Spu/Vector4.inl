@@ -357,4 +357,21 @@ T_MATH_INLINE Vector4 max(const Vector4& l, const Vector4& r)
 	return l;//Vector4(spu_max(l.m_data, r.m_data));
 }
 
+T_MATH_INLINE Vector4 select(const Vector4& condition, const Vector4& negative, const Vector4& positive)
+{
+	// \fixme
+	return positive;
+}
+
+T_MATH_INLINE bool compareAllGreaterEqual(const Vector4& l, const Vector4& r)
+{
+	// \fixme
+	return false;
+}
+
+T_MATH_INLINE bool compareAllLessEqual(const Vector4& l, const Vector4& r)
+{
+	// \fixme
+	return false;
+}
 }

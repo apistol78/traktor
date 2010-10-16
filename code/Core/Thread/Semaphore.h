@@ -1,6 +1,9 @@
 #ifndef traktor_Semaphore_H
 #define traktor_Semaphore_H
 
+#if defined(_PS3)
+#	include <sys/synchronization.h>
+#endif
 #include "Core/Thread/IWaitable.h"
 
 // import/export mechanism.
@@ -22,14 +25,18 @@ class T_DLLCLASS Semaphore : public IWaitable
 public:
 	Semaphore();
 	
-	~Semaphore();
+	virtual ~Semaphore();
 
 	virtual bool wait(int32_t timeout = -1);
 	
 	void release();
 
 private:
+#if defined(_PS3)
+	sys_lwmutex_t m_mutex;
+#else
 	void* m_handle;
+#endif
 };
 
 }

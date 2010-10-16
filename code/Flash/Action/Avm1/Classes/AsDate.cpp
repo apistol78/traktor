@@ -10,53 +10,53 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsDate", AsDate, ActionClass)
 
 AsDate::AsDate()
-:	ActionClass(L"Date")
+:	ActionClass("Date")
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"getDate", ActionValue(createNativeFunction(this, &AsDate::Date_getDate)));
-	prototype->setMember(L"getDay", ActionValue(createNativeFunction(this, &AsDate::Date_getDay)));
-	prototype->setMember(L"getFullYear", ActionValue(createNativeFunction(this, &AsDate::Date_getFullYear)));
-	prototype->setMember(L"getHours", ActionValue(createNativeFunction(this, &AsDate::Date_getHours)));
-	prototype->setMember(L"getMilliseconds", ActionValue(createNativeFunction(this, &AsDate::Date_getMilliseconds)));
-	prototype->setMember(L"getMinutes", ActionValue(createNativeFunction(this, &AsDate::Date_getMinutes)));
-	prototype->setMember(L"getMonth", ActionValue(createNativeFunction(this, &AsDate::Date_getMonth)));
-	prototype->setMember(L"getSeconds", ActionValue(createNativeFunction(this, &AsDate::Date_getSeconds)));
-	prototype->setMember(L"getTime", ActionValue(createNativeFunction(this, &AsDate::Date_getTime)));
-	prototype->setMember(L"getTimezoneOffset", ActionValue(createNativeFunction(this, &AsDate::Date_getTimezoneOffset)));
-	prototype->setMember(L"getUTCDate", ActionValue(createNativeFunction(this, &AsDate::Date_getUTCDate)));
-	prototype->setMember(L"getUTCDay", ActionValue(createNativeFunction(this, &AsDate::Date_getUTCDay)));
-	prototype->setMember(L"getUTCFullYear", ActionValue(createNativeFunction(this, &AsDate::Date_getUTCFullYear)));
-	prototype->setMember(L"getUTCHours", ActionValue(createNativeFunction(this, &AsDate::Date_getUTCHours)));
-	prototype->setMember(L"getUTCMilliseconds", ActionValue(createNativeFunction(this, &AsDate::Date_getUTCMilliseconds)));
-	prototype->setMember(L"getUTCMinutes", ActionValue(createNativeFunction(this, &AsDate::Date_getUTCMinutes)));
-	prototype->setMember(L"getUTCMonth", ActionValue(createNativeFunction(this, &AsDate::Date_getUTCMonth)));
-	prototype->setMember(L"getUTCSeconds", ActionValue(createNativeFunction(this, &AsDate::Date_getUTCSeconds)));
-	prototype->setMember(L"getUTCYear", ActionValue(createNativeFunction(this, &AsDate::Date_getUTCYear)));
-	prototype->setMember(L"getYear", ActionValue(createNativeFunction(this, &AsDate::Date_getYear)));
-	prototype->setMember(L"setDate", ActionValue(createNativeFunction(this, &AsDate::Date_setDate)));
-	prototype->setMember(L"setFullYear", ActionValue(createNativeFunction(this, &AsDate::Date_setFullYear)));
-	prototype->setMember(L"setHours", ActionValue(createNativeFunction(this, &AsDate::Date_setHours)));
-	prototype->setMember(L"setMilliseconds", ActionValue(createNativeFunction(this, &AsDate::Date_setMilliseconds)));
-	prototype->setMember(L"setMinutes", ActionValue(createNativeFunction(this, &AsDate::Date_setMinutes)));
-	prototype->setMember(L"setMonth", ActionValue(createNativeFunction(this, &AsDate::Date_setMonth)));
-	prototype->setMember(L"setSeconds", ActionValue(createNativeFunction(this, &AsDate::Date_setSeconds)));
-	prototype->setMember(L"setTime", ActionValue(createNativeFunction(this, &AsDate::Date_setTime)));
-	prototype->setMember(L"setUTCDate", ActionValue(createNativeFunction(this, &AsDate::Date_setUTCDate)));
-	prototype->setMember(L"setUTCFullYear", ActionValue(createNativeFunction(this, &AsDate::Date_setUTCFullYear)));
-	prototype->setMember(L"setUTCHours", ActionValue(createNativeFunction(this, &AsDate::Date_setUTCHours)));
-	prototype->setMember(L"setUTCMilliseconds", ActionValue(createNativeFunction(this, &AsDate::Date_setUTCMilliseconds)));
-	prototype->setMember(L"setUTCMinutes", ActionValue(createNativeFunction(this, &AsDate::Date_setUTCMinutes)));
-	prototype->setMember(L"setUTCMonth", ActionValue(createNativeFunction(this, &AsDate::Date_setUTCMonth)));
-	prototype->setMember(L"setUTCSeconds", ActionValue(createNativeFunction(this, &AsDate::Date_setUTCSeconds)));
-	prototype->setMember(L"setYear", ActionValue(createNativeFunction(this, &AsDate::Date_setYear)));
-	prototype->setMember(L"toString", ActionValue(createNativeFunction(this, &AsDate::Date_toString)));
-	prototype->setMember(L"UTC", ActionValue(createNativeFunction(this, &AsDate::Date_UTC)));
-	prototype->setMember(L"valueOf", ActionValue(createNativeFunction(this, &AsDate::Date_valueOf)));
+	prototype->setMember("getDate", ActionValue(createNativeFunction(this, &AsDate::Date_getDate)));
+	prototype->setMember("getDay", ActionValue(createNativeFunction(this, &AsDate::Date_getDay)));
+	prototype->setMember("getFullYear", ActionValue(createNativeFunction(this, &AsDate::Date_getFullYear)));
+	prototype->setMember("getHours", ActionValue(createNativeFunction(this, &AsDate::Date_getHours)));
+	prototype->setMember("getMilliseconds", ActionValue(createNativeFunction(this, &AsDate::Date_getMilliseconds)));
+	prototype->setMember("getMinutes", ActionValue(createNativeFunction(this, &AsDate::Date_getMinutes)));
+	prototype->setMember("getMonth", ActionValue(createNativeFunction(this, &AsDate::Date_getMonth)));
+	prototype->setMember("getSeconds", ActionValue(createNativeFunction(this, &AsDate::Date_getSeconds)));
+	prototype->setMember("getTime", ActionValue(createNativeFunction(this, &AsDate::Date_getTime)));
+	prototype->setMember("getTimezoneOffset", ActionValue(createNativeFunction(this, &AsDate::Date_getTimezoneOffset)));
+	prototype->setMember("getUTCDate", ActionValue(createNativeFunction(this, &AsDate::Date_getUTCDate)));
+	prototype->setMember("getUTCDay", ActionValue(createNativeFunction(this, &AsDate::Date_getUTCDay)));
+	prototype->setMember("getUTCFullYear", ActionValue(createNativeFunction(this, &AsDate::Date_getUTCFullYear)));
+	prototype->setMember("getUTCHours", ActionValue(createNativeFunction(this, &AsDate::Date_getUTCHours)));
+	prototype->setMember("getUTCMilliseconds", ActionValue(createNativeFunction(this, &AsDate::Date_getUTCMilliseconds)));
+	prototype->setMember("getUTCMinutes", ActionValue(createNativeFunction(this, &AsDate::Date_getUTCMinutes)));
+	prototype->setMember("getUTCMonth", ActionValue(createNativeFunction(this, &AsDate::Date_getUTCMonth)));
+	prototype->setMember("getUTCSeconds", ActionValue(createNativeFunction(this, &AsDate::Date_getUTCSeconds)));
+	prototype->setMember("getUTCYear", ActionValue(createNativeFunction(this, &AsDate::Date_getUTCYear)));
+	prototype->setMember("getYear", ActionValue(createNativeFunction(this, &AsDate::Date_getYear)));
+	prototype->setMember("setDate", ActionValue(createNativeFunction(this, &AsDate::Date_setDate)));
+	prototype->setMember("setFullYear", ActionValue(createNativeFunction(this, &AsDate::Date_setFullYear)));
+	prototype->setMember("setHours", ActionValue(createNativeFunction(this, &AsDate::Date_setHours)));
+	prototype->setMember("setMilliseconds", ActionValue(createNativeFunction(this, &AsDate::Date_setMilliseconds)));
+	prototype->setMember("setMinutes", ActionValue(createNativeFunction(this, &AsDate::Date_setMinutes)));
+	prototype->setMember("setMonth", ActionValue(createNativeFunction(this, &AsDate::Date_setMonth)));
+	prototype->setMember("setSeconds", ActionValue(createNativeFunction(this, &AsDate::Date_setSeconds)));
+	prototype->setMember("setTime", ActionValue(createNativeFunction(this, &AsDate::Date_setTime)));
+	prototype->setMember("setUTCDate", ActionValue(createNativeFunction(this, &AsDate::Date_setUTCDate)));
+	prototype->setMember("setUTCFullYear", ActionValue(createNativeFunction(this, &AsDate::Date_setUTCFullYear)));
+	prototype->setMember("setUTCHours", ActionValue(createNativeFunction(this, &AsDate::Date_setUTCHours)));
+	prototype->setMember("setUTCMilliseconds", ActionValue(createNativeFunction(this, &AsDate::Date_setUTCMilliseconds)));
+	prototype->setMember("setUTCMinutes", ActionValue(createNativeFunction(this, &AsDate::Date_setUTCMinutes)));
+	prototype->setMember("setUTCMonth", ActionValue(createNativeFunction(this, &AsDate::Date_setUTCMonth)));
+	prototype->setMember("setUTCSeconds", ActionValue(createNativeFunction(this, &AsDate::Date_setUTCSeconds)));
+	prototype->setMember("setYear", ActionValue(createNativeFunction(this, &AsDate::Date_setYear)));
+	prototype->setMember("toString", ActionValue(createNativeFunction(this, &AsDate::Date_toString)));
+	prototype->setMember("UTC", ActionValue(createNativeFunction(this, &AsDate::Date_UTC)));
+	prototype->setMember("valueOf", ActionValue(createNativeFunction(this, &AsDate::Date_valueOf)));
 
 	prototype->setReadOnly();
 
-	setMember(L"prototype", ActionValue(prototype));
+	setMember("prototype", ActionValue(prototype));
 }
 
 ActionValue AsDate::construct(ActionContext* context, const ActionValueArray& args)

@@ -37,7 +37,7 @@ bool traverseRenameUpdated(const Path& path)
 		else
 		{
 			Path filePath = (*i)->getPath();
-			if (compareIgnoreCase(filePath.getExtension(), L"updated") == 0)
+			if (compareIgnoreCase< std::wstring >(filePath.getExtension(), L"updated") == 0)
 			{
 				std::wstring targetFilePath = filePath.getPathName();
 				targetFilePath = targetFilePath.substr(0, targetFilePath.length() - 8);

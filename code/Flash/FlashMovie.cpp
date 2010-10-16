@@ -65,14 +65,14 @@ const FlashCharacter* FlashMovie::getCharacter(uint16_t characterId) const
 	return i != m_characters.end() ? i->second.ptr() : 0;
 }
 
-void FlashMovie::setExport(const std::wstring& name, uint16_t exportId)
+void FlashMovie::setExport(const std::string& name, uint16_t exportId)
 {
 	m_exports[name] = exportId;
 }
 
-bool FlashMovie::getExportId(const std::wstring& name, uint16_t& outExportId) const
+bool FlashMovie::getExportId(const std::string& name, uint16_t& outExportId) const
 {
-	std::map< std::wstring, uint16_t >::const_iterator i = m_exports.find(name);
+	std::map< std::string, uint16_t >::const_iterator i = m_exports.find(name);
 	if (i != m_exports.end())
 	{
 		outExportId = i->second;
@@ -81,9 +81,9 @@ bool FlashMovie::getExportId(const std::wstring& name, uint16_t& outExportId) co
 	return false;
 }
 
-bool FlashMovie::getExportName(uint16_t exportId, std::wstring& outName) const
+bool FlashMovie::getExportName(uint16_t exportId, std::string& outName) const
 {
-	for (std::map< std::wstring, uint16_t >::const_iterator i = m_exports.begin(); i != m_exports.end(); ++i)
+	for (std::map< std::string, uint16_t >::const_iterator i = m_exports.begin(); i != m_exports.end(); ++i)
 	{
 		if (i->second == exportId)
 		{
@@ -113,8 +113,8 @@ Ref< FlashSpriteInstance > FlashMovie::createMovieClipInstance(const IActionVM* 
 		m_movieClip->createInstance(context, 0)
 	);
 
-	global->setMember(L"_root", ActionValue(spriteInstance));
-	global->setMember(L"_level0", ActionValue(spriteInstance));
+	global->setMember("_root", ActionValue(spriteInstance.ptr()));
+	global->setMember("_level0", ActionValue(spriteInstance.ptr()));
 
 	return spriteInstance;
 }

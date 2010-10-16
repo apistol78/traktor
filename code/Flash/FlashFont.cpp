@@ -10,7 +10,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashFont", FlashFont, ActionObject)
 
 FlashFont::FlashFont()
-:	ActionObject(L"Object")
+:	ActionObject("Object")
 ,	m_ascent(0)
 ,	m_descent(0)
 ,	m_leading(0)

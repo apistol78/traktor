@@ -71,7 +71,7 @@ public:
 
 	int32_t getMouseY() const { return m_mouseY; }
 
-	virtual bool getMember(ActionContext* context, const std::wstring& memberName, ActionValue& outMemberValue);
+	virtual bool getMember(ActionContext* context, const std::string& memberName, ActionValue& outMemberValue);
 
 	virtual void eventInit();
 
@@ -114,7 +114,7 @@ private:
 	int32_t m_mouseY;
 	int32_t m_maskCount;
 
-	void executeScriptEvent(const std::wstring& eventName);
+	void executeScriptEvent(const std::string& eventName);
 };
 
 	}

@@ -32,7 +32,7 @@ public:
 
 	Ref< Array > concat(const ActionValueArray& values) const;
 
-	std::wstring join(const std::wstring& delimiter) const;
+	std::string join(const std::string& delimiter) const;
 
 	void push(const ActionValue& value);
 
@@ -56,11 +56,11 @@ public:
 		std::sort(m_values.begin(), m_values.end(), predicate);
 	}
 
-	virtual void setMember(const std::wstring& memberName, const ActionValue& memberValue);
+	virtual void setMember(const std::string& memberName, const ActionValue& memberValue);
 
-	virtual bool getMember(ActionContext* context, const std::wstring& memberName, ActionValue& outMemberValue);
+	virtual bool getMember(ActionContext* context, const std::string& memberName, ActionValue& outMemberValue);
 
-	virtual std::wstring toString() const;
+	virtual ActionValue toString() const;
 
 	const std::vector< ActionValue >& getValues() const { return m_values; }
 

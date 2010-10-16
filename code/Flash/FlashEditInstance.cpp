@@ -30,7 +30,7 @@ void concateHtmlText(const html::Node* node, StringOutputStream& ss)
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashEditInstance", FlashEditInstance, FlashCharacterInstance)
 
 FlashEditInstance::FlashEditInstance(ActionContext* context, FlashCharacterInstance* parent, const FlashEdit* edit, const std::wstring& html)
-:	FlashCharacterInstance(context, L"TextField", parent)
+:	FlashCharacterInstance(context, "TextField", parent)
 ,	m_edit(edit)
 {
 	if (m_edit->renderHtml())
@@ -64,7 +64,7 @@ bool FlashEditInstance::parseHtml(const std::wstring& html)
 	m_text.clear();
 
 	Ref< const html::Element > element = document.getDocumentElement();
-	for (element = element->getFirstElementChild(); element; element = element->getNextElementSibling())
+	for (element = element->getFirstElementChild().ptr(); element; element = element->getNextElementSibling().ptr())
 	{
 		StringOutputStream ss;
 		concateHtmlText(element, ss);

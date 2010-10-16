@@ -12,28 +12,28 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.As_flash_geom_Point", As_flash_geom_Point, ActionClass)
 
 As_flash_geom_Point::As_flash_geom_Point()
-:	ActionClass(L"flash.geom.Point")
+:	ActionClass("flash.geom.Point")
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"add", ActionValue(createNativeFunction(this, &As_flash_geom_Point::Point_add)));
-	prototype->setMember(L"clone", ActionValue(createNativeFunction(this, &As_flash_geom_Point::Point_clone)));
-	prototype->setMember(L"distance", ActionValue(createNativeFunction(this, &As_flash_geom_Point::Point_distance)));
-	prototype->setMember(L"equals", ActionValue(createNativeFunction(this, &As_flash_geom_Point::Point_equals)));
-	prototype->setMember(L"interpolate", ActionValue(createNativeFunction(this, &As_flash_geom_Point::Point_interpolate)));
-	prototype->setMember(L"normalize", ActionValue(createNativeFunction(this, &As_flash_geom_Point::Point_normalize)));
-	prototype->setMember(L"offset", ActionValue(createNativeFunction(this, &As_flash_geom_Point::Point_offset)));
-	prototype->setMember(L"polar", ActionValue(createNativeFunction(this, &As_flash_geom_Point::Point_polar)));
-	prototype->setMember(L"subtract", ActionValue(createNativeFunction(this, &As_flash_geom_Point::Point_subtract)));
-	prototype->setMember(L"toString", ActionValue(createNativeFunction(this, &As_flash_geom_Point::Point_toString)));
+	prototype->setMember("add", ActionValue(createNativeFunction(this, &As_flash_geom_Point::Point_add)));
+	prototype->setMember("clone", ActionValue(createNativeFunction(this, &As_flash_geom_Point::Point_clone)));
+	prototype->setMember("distance", ActionValue(createNativeFunction(this, &As_flash_geom_Point::Point_distance)));
+	prototype->setMember("equals", ActionValue(createNativeFunction(this, &As_flash_geom_Point::Point_equals)));
+	prototype->setMember("interpolate", ActionValue(createNativeFunction(this, &As_flash_geom_Point::Point_interpolate)));
+	prototype->setMember("normalize", ActionValue(createNativeFunction(this, &As_flash_geom_Point::Point_normalize)));
+	prototype->setMember("offset", ActionValue(createNativeFunction(this, &As_flash_geom_Point::Point_offset)));
+	prototype->setMember("polar", ActionValue(createNativeFunction(this, &As_flash_geom_Point::Point_polar)));
+	prototype->setMember("subtract", ActionValue(createNativeFunction(this, &As_flash_geom_Point::Point_subtract)));
+	prototype->setMember("toString", ActionValue(createNativeFunction(this, &As_flash_geom_Point::Point_toString)));
 
-	prototype->addProperty(L"length", createNativeFunction(this, &As_flash_geom_Point::Point_get_length), createNativeFunction(this, &As_flash_geom_Point::Point_set_length));
-	prototype->addProperty(L"x", createNativeFunction(this, &As_flash_geom_Point::Point_get_x), createNativeFunction(this, &As_flash_geom_Point::Point_set_x));
-	prototype->addProperty(L"y", createNativeFunction(this, &As_flash_geom_Point::Point_get_y), createNativeFunction(this, &As_flash_geom_Point::Point_set_y));
+	prototype->addProperty("length", createNativeFunction(this, &As_flash_geom_Point::Point_get_length), createNativeFunction(this, &As_flash_geom_Point::Point_set_length));
+	prototype->addProperty("x", createNativeFunction(this, &As_flash_geom_Point::Point_get_x), createNativeFunction(this, &As_flash_geom_Point::Point_set_x));
+	prototype->addProperty("y", createNativeFunction(this, &As_flash_geom_Point::Point_get_y), createNativeFunction(this, &As_flash_geom_Point::Point_set_y));
 
 	prototype->setReadOnly();
 
-	setMember(L"prototype", ActionValue(prototype));
+	setMember("prototype", ActionValue(prototype));
 }
 
 ActionValue As_flash_geom_Point::construct(ActionContext* context, const ActionValueArray& args)
@@ -127,7 +127,7 @@ void As_flash_geom_Point::Point_subtract(CallArgs& ca)
 void As_flash_geom_Point::Point_toString(CallArgs& ca)
 {
 	Point* pt = checked_type_cast< Point*, false >(ca.self);
-	ca.ret = ActionValue(pt->toString());
+	ca.ret = pt->toString();
 }
 
 void As_flash_geom_Point::Point_get_length(CallArgs& ca)

@@ -1,5 +1,6 @@
 #include <cstring>
-#include "Core/Memory/Alloc.h"
+#include "Core/Memory/IAllocator.h"
+#include "Core/Memory/MemoryConfig.h"
 #include "Core/Misc/String.h"
 #include "Flash/Action/ActionValue.h"
 #include "Flash/Action/Classes/Boolean.h"
@@ -15,41 +16,41 @@ namespace traktor
 
 static int32_t s_stringCount = 0;
 
-wchar_t* refStringCreate(const wchar_t* s)
+char* refStringCreate(const char* s)
 {
-	uint32_t len = wcslen(s);
+	uint32_t len = strlen(s);
 	T_ASSERT (len < 4096);
 	
-	void* ptr = Alloc::acquire(sizeof(uint16_t) + (len + 1) * sizeof(wchar_t), T_FILE_LINE);
+	void* ptr = getAllocator()->alloc(sizeof(uint16_t) + (len + 1) * sizeof(char), 4, T_FILE_LINE);
 	if (!ptr)
 		return 0;
 
 	uint16_t* base = static_cast< uint16_t* >(ptr);
 	*base = 1;
 
-	wchar_t* c = reinterpret_cast< wchar_t* >(base + 1);
+	char* c = reinterpret_cast< char* >(base + 1);
 	if (len > 0)
-		std::memcpy(c, s, len * sizeof(wchar_t));
+		std::memcpy(c, s, len * sizeof(char));
 
-	c[len] = L'\0';
+	c[len] = '\0';
 
 	++s_stringCount;
 	return c;
 }
 
-wchar_t* refStringInc(wchar_t* s)
+char* refStringInc(char* s)
 {
 	uint16_t* base = reinterpret_cast< uint16_t* >(s) - 1;
 	(*base)++;
 	return s;
 }
 
-wchar_t* refStringDec(wchar_t* s)
+char* refStringDec(char* s)
 {
 	uint16_t* base = reinterpret_cast< uint16_t* >(s) - 1;
 	if (--(*base) == 0)
 	{
-		Alloc::free(base);
+		getAllocator()->free(base);
 		--s_stringCount;
 		return 0;
 	}
@@ -93,16 +94,29 @@ ActionValue::ActionValue(avm_number_t n)
 	m_value.n = n;
 }
 
-ActionValue::ActionValue(const wchar_t* s)
+ActionValue::ActionValue(const char* s)
 :	m_type(AvtString)
 {
 	m_value.s = refStringCreate(s);
 }
 
-ActionValue::ActionValue(const std::wstring& s)
+ActionValue::ActionValue(const std::string& s)
 :	m_type(AvtString)
 {
 	m_value.s = refStringCreate(s.c_str());
+}
+
+
+ActionValue::ActionValue(const wchar_t* s)
+:	m_type(AvtString)
+{
+	m_value.s = refStringCreate(wstombs(Utf8Encoding(), s).c_str());
+}
+
+ActionValue::ActionValue(const std::wstring& s)
+:	m_type(AvtString)
+{
+	m_value.s = refStringCreate(wstombs(Utf8Encoding(), s).c_str());
 }
 
 ActionValue::ActionValue(ActionObject* o)
@@ -148,7 +162,7 @@ bool ActionValue::getBooleanSafe() const
 	case AvtNumber:
 		return bool(m_value.n != 0.0);
 	case AvtString:
-		return bool(wcscmp(m_value.s, L"true") == 0);
+		return bool(strcmp(m_value.s, "true") == 0);
 	case AvtObject:
 		return bool(m_value.o != 0);
 	}
@@ -167,20 +181,25 @@ avm_number_t ActionValue::getNumberSafe() const
 	return avm_number_t(0);
 }
 
-std::wstring ActionValue::getStringSafe() const
+std::string ActionValue::getStringSafe() const
 {
 	switch (m_type)
 	{
 	case AvtBoolean:
-		return m_value.b ? L"true" : L"false";
+		return m_value.b ? "true" : "false";
 	case AvtNumber:
-		return traktor::toString(m_value.n);
+		return wstombs(traktor::toString(m_value.n));
 	case AvtString:
 		return m_value.s;
 	case AvtObject:
-		return m_value.o ? m_value.o->toString() : L"null";
+		return m_value.o ? m_value.o->toString().getStringSafe() : "null";
 	}
-	return L"undefined";
+	return "undefined";
+}
+
+std::wstring ActionValue::getWideStringSafe() const
+{
+	return mbstows(Utf8Encoding(), getStringSafe());
 }
 
 Ref< ActionObject > ActionValue::getObjectSafe() const

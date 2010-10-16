@@ -40,13 +40,13 @@ public:
 	};
 
 	ActionFunction2(
-		const std::wstring& name,
+		const std::string& name,
 		const uint8_t* code,
 		uint16_t codeSize,
 		uint8_t registerCount,
 		uint16_t flags,
-		const std::vector< std::pair< std::wstring, uint8_t > >& argumentsIntoRegisters,
-		const std::map< std::wstring, ActionValue >& variables,
+		const std::vector< std::pair< std::string, uint8_t > >& argumentsIntoRegisters,
+		const std::map< std::string, ActionValue >& variables,
 		ActionDictionary* dictionary
 	);
 
@@ -64,8 +64,8 @@ private:
 	uint16_t m_codeSize;
 	uint8_t m_registerCount;
 	uint16_t m_flags;
-	std::vector< std::pair< std::wstring, uint8_t > > m_argumentsIntoRegisters;
-	std::map< std::wstring, ActionValue > m_variables;
+	std::vector< std::pair< std::string, uint8_t > > m_argumentsIntoRegisters;
+	std::map< std::string, ActionValue > m_variables;
 	Ref< ActionDictionary > m_dictionary;
 };
 

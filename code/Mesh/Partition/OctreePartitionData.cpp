@@ -18,7 +18,7 @@ Ref< IPartition > OctreePartitionData::createPartition() const
 	std::vector< render::handle_t > worldTechniques(m_worldTechniques.size());
 	for (uint32_t i = 0; i < m_worldTechniques.size(); ++i)
 		worldTechniques[i] = render::getParameterHandle(m_worldTechniques[i]);
-	return new OctreePartition(new OctreeNode(m_nodeData, worldTechniques));
+	return new OctreePartition(new OctreeNode(m_nodeData), worldTechniques);
 }
 
 bool OctreePartitionData::serialize(ISerializer& s)

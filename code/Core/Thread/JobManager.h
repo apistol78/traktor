@@ -81,6 +81,8 @@ private:
 
 	void threadWorker(int id);
 
+	void create();
+
 	JobManager();
 
 	virtual ~JobManager();

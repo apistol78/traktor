@@ -75,6 +75,7 @@ private:
 	Ref< render::Mesh > m_mesh;
 	AlignedVector< Part > m_parts;
 	Ref< IPartition > m_partition;
+	std::vector< uint32_t > m_partIndices;
 #if defined(_DEBUG)
 	std::string m_name;
 #endif

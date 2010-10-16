@@ -12,28 +12,28 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsObject", AsObject, ActionClass)
 
 AsObject::AsObject()
-:	ActionClass(L"Object")
+:	ActionClass("Object")
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"addProperty", ActionValue(createNativeFunction(this, &AsObject::Object_addProperty)));
-	prototype->setMember(L"hasOwnProperty", ActionValue(createNativeFunction(this, &AsObject::Object_hasOwnProperty)));
-	prototype->setMember(L"isPropertyEnumerable", ActionValue(createNativeFunction(this, &AsObject::Object_isPropertyEnumerable)));
-	prototype->setMember(L"isPrototypeOf", ActionValue(createNativeFunction(this, &AsObject::Object_isPrototypeOf)));
-	prototype->setMember(L"registerClass", ActionValue(createNativeFunction(this, &AsObject::Object_registerClass)));
-	prototype->setMember(L"toString", ActionValue(createNativeFunction(this, &AsObject::Object_toString)));
-	prototype->setMember(L"unwatch", ActionValue(createNativeFunction(this, &AsObject::Object_unwatch)));
-	prototype->setMember(L"valueOf", ActionValue(createNativeFunction(this, &AsObject::Object_valueOf)));
-	prototype->setMember(L"watch", ActionValue(createNativeFunction(this, &AsObject::Object_watch)));
+	prototype->setMember("addProperty", ActionValue(createNativeFunction(this, &AsObject::Object_addProperty)));
+	prototype->setMember("hasOwnProperty", ActionValue(createNativeFunction(this, &AsObject::Object_hasOwnProperty)));
+	prototype->setMember("isPropertyEnumerable", ActionValue(createNativeFunction(this, &AsObject::Object_isPropertyEnumerable)));
+	prototype->setMember("isPrototypeOf", ActionValue(createNativeFunction(this, &AsObject::Object_isPrototypeOf)));
+	prototype->setMember("registerClass", ActionValue(createNativeFunction(this, &AsObject::Object_registerClass)));
+	prototype->setMember("toString", ActionValue(createNativeFunction(this, &AsObject::Object_toString)));
+	prototype->setMember("unwatch", ActionValue(createNativeFunction(this, &AsObject::Object_unwatch)));
+	prototype->setMember("valueOf", ActionValue(createNativeFunction(this, &AsObject::Object_valueOf)));
+	prototype->setMember("watch", ActionValue(createNativeFunction(this, &AsObject::Object_watch)));
 
 	prototype->setReadOnly();
 
-	setMember(L"prototype", ActionValue(prototype));
+	setMember("prototype", ActionValue(prototype));
 }
 
 ActionValue AsObject::construct(ActionContext* context, const ActionValueArray& args)
 {
-	return ActionValue(new ActionObject(L"Object"));
+	return ActionValue(new ActionObject("Object"));
 }
 
 void AsObject::Object_addProperty(CallArgs& ca)
@@ -41,7 +41,7 @@ void AsObject::Object_addProperty(CallArgs& ca)
 	T_ASSERT (ca.self);
 	T_ASSERT (ca.args.size() >= 3);
 
-	std::wstring propertyName = ca.args[0].getStringSafe();
+	std::string propertyName = ca.args[0].getStringSafe();
 	Ref< ActionFunction > propertyGet = checked_type_cast< ActionFunction* >(ca.args[1].getObject());
 	Ref< ActionFunction > propertySet = checked_type_cast< ActionFunction* >(ca.args[2].getObject());
 
@@ -53,7 +53,7 @@ void AsObject::Object_hasOwnProperty(CallArgs& ca)
 	T_ASSERT (ca.self);
 	T_ASSERT (ca.args.size() >= 1);
 
-	std::wstring propertyName = ca.args[0].getStringSafe();
+	std::string propertyName = ca.args[0].getStringSafe();
 	ca.ret = ActionValue(ca.self->hasOwnProperty(propertyName));
 }
 
@@ -70,7 +70,7 @@ void AsObject::Object_isPrototypeOf(CallArgs& ca)
 void AsObject::Object_registerClass(CallArgs& ca)
 {
 	Ref< ActionObject > global = ca.context->getGlobal();
-	std::wstring movieClipName = ca.args[0].getStringSafe();
+	std::string movieClipName = ca.args[0].getStringSafe();
 	
 	if (ca.args.size() >= 2)
 	{
@@ -90,7 +90,7 @@ void AsObject::Object_registerClass(CallArgs& ca)
 void AsObject::Object_toString(CallArgs& ca)
 {
 	T_ASSERT (ca.self);
-	ca.ret = ActionValue(ca.self->toString());
+	ca.ret = ca.self->toString();
 }
 
 void AsObject::Object_unwatch(CallArgs& ca)

@@ -73,13 +73,13 @@ public:
 	 *
 	 * \param frameLabel Frame label.
 	 */
-	void gotoAndPlay(const std::wstring& frameLabel);
+	void gotoAndPlay(const std::string& frameLabel);
 
 	/*! \brief Goto frame and stop playing.
 	 *
 	 * \param frameLabel Frame label.
 	 */
-	void gotoAndStop(const std::wstring& frameLabel);
+	void gotoAndStop(const std::string& frameLabel);
 
 	/*! \brief Get number of frames in root movie.
 	 *
@@ -161,14 +161,14 @@ public:
 	 * \param name Name of global member.
 	 * \param value Value of global member.
 	 */
-	void setGlobal(const std::wstring& name, const ActionValue& value);
+	void setGlobal(const std::string& name, const ActionValue& value);
 
 	/*! \brief Get global ActionScript value.
 	 *
 	 * \param name Name of global member.
 	 * \return Value of global member; undefined if no such member.
 	 */
-	ActionValue getGlobal(const std::wstring& name) const;
+	ActionValue getGlobal(const std::string& name) const;
 
 private:
 	struct Event

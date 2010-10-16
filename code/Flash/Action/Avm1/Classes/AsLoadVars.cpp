@@ -10,30 +10,30 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsLoadVars", AsLoadVars, ActionClass)
 
 AsLoadVars::AsLoadVars()
-:	ActionClass(L"LoadVars")
+:	ActionClass("LoadVars")
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"addRequestHeader", ActionValue(createNativeFunction(this, &AsLoadVars::LoadVars_addRequestHeader)));
-	prototype->setMember(L"decode", ActionValue(createNativeFunction(this, &AsLoadVars::LoadVars_decode)));
-	prototype->setMember(L"getBytesLoaded", ActionValue(createNativeFunction(this, &AsLoadVars::LoadVars_getBytesLoaded)));
-	prototype->setMember(L"getBytesTotal", ActionValue(createNativeFunction(this, &AsLoadVars::LoadVars_getBytesTotal)));
-	prototype->setMember(L"load", ActionValue(createNativeFunction(this, &AsLoadVars::LoadVars_load)));
-	prototype->setMember(L"send", ActionValue(createNativeFunction(this, &AsLoadVars::LoadVars_send)));
-	prototype->setMember(L"sendAndLoad", ActionValue(createNativeFunction(this, &AsLoadVars::LoadVars_sendAndLoad)));
-	prototype->setMember(L"toString", ActionValue(createNativeFunction(this, &AsLoadVars::LoadVars_toString)));
+	prototype->setMember("addRequestHeader", ActionValue(createNativeFunction(this, &AsLoadVars::LoadVars_addRequestHeader)));
+	prototype->setMember("decode", ActionValue(createNativeFunction(this, &AsLoadVars::LoadVars_decode)));
+	prototype->setMember("getBytesLoaded", ActionValue(createNativeFunction(this, &AsLoadVars::LoadVars_getBytesLoaded)));
+	prototype->setMember("getBytesTotal", ActionValue(createNativeFunction(this, &AsLoadVars::LoadVars_getBytesTotal)));
+	prototype->setMember("load", ActionValue(createNativeFunction(this, &AsLoadVars::LoadVars_load)));
+	prototype->setMember("send", ActionValue(createNativeFunction(this, &AsLoadVars::LoadVars_send)));
+	prototype->setMember("sendAndLoad", ActionValue(createNativeFunction(this, &AsLoadVars::LoadVars_sendAndLoad)));
+	prototype->setMember("toString", ActionValue(createNativeFunction(this, &AsLoadVars::LoadVars_toString)));
 
-	prototype->addProperty(L"contentType", createNativeFunction(this, &AsLoadVars::LoadVars_get_contentType), createNativeFunction(this, &AsLoadVars::LoadVars_set_contentType));
-	prototype->addProperty(L"loaded", createNativeFunction(this, &AsLoadVars::LoadVars_get_loaded), createNativeFunction(this, &AsLoadVars::LoadVars_set_loaded));
+	prototype->addProperty("contentType", createNativeFunction(this, &AsLoadVars::LoadVars_get_contentType), createNativeFunction(this, &AsLoadVars::LoadVars_set_contentType));
+	prototype->addProperty("loaded", createNativeFunction(this, &AsLoadVars::LoadVars_get_loaded), createNativeFunction(this, &AsLoadVars::LoadVars_set_loaded));
 
 	prototype->setReadOnly();
 
-	setMember(L"prototype", ActionValue(prototype));
+	setMember("prototype", ActionValue(prototype));
 }
 
 ActionValue AsLoadVars::construct(ActionContext* context, const ActionValueArray& args)
 {
-	return ActionValue(new ActionObject(L"LoadVars"));
+	return ActionValue(new ActionObject("LoadVars"));
 }
 
 void AsLoadVars::LoadVars_addRequestHeader(CallArgs& ca)

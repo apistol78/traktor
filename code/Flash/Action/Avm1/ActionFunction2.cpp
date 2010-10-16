@@ -16,13 +16,13 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.ActionFunction2", ActionFunction2, ActionFunction)
 
 ActionFunction2::ActionFunction2(
-	const std::wstring& name,
+	const std::string& name,
 	const uint8_t* code,
 	uint16_t codeSize,
 	uint8_t registerCount,
 	uint16_t flags,
-	const std::vector< std::pair< std::wstring, uint8_t > >& argumentsIntoRegisters,
-	const std::map< std::wstring, ActionValue >& variables,
+	const std::vector< std::pair< std::string, uint8_t > >& argumentsIntoRegisters,
+	const std::map< std::string, ActionValue >& variables,
 	ActionDictionary* dictionary
 )
 :	ActionFunction(name)
@@ -53,7 +53,7 @@ ActionValue ActionFunction2::call(ActionContext* context, ActionObject* self, co
 
 	// Prepare activation scope variables; do this first
 	// as some variables will get overridden below such as "this", "arguments" etc.
-	for (std::map< std::wstring, ActionValue >::const_iterator i = m_variables.begin(); i != m_variables.end(); ++i)
+	for (std::map< std::string, ActionValue >::const_iterator i = m_variables.begin(); i != m_variables.end(); ++i)
 		callFrame.setVariable(i->first, i->second);
 
 	uint8_t preloadRegister = 1;
@@ -69,7 +69,7 @@ ActionValue ActionFunction2::call(ActionContext* context, ActionObject* self, co
 		if (m_flags & AffPreloadArguments)
 			callFrame.setRegister(preloadRegister++, ActionValue(argumentArray));
 		if (!(m_flags & AffSuppressArguments))
-			callFrame.setVariable(L"arguments", ActionValue(argumentArray));
+			callFrame.setVariable("arguments", ActionValue(argumentArray));
 	}
 
 	if ((m_flags & AffPreloadSuper) || (!(m_flags & AffSuppressSuper)))
@@ -78,13 +78,13 @@ ActionValue ActionFunction2::call(ActionContext* context, ActionObject* self, co
 		if (m_flags & AffPreloadSuper)
 			callFrame.setRegister(preloadRegister++, ActionValue(super));
 		if (!(m_flags & AffSuppressSuper))
-			callFrame.setVariable(L"super", ActionValue(super));
+			callFrame.setVariable("super", ActionValue(super));
 	}
 
 	if (m_flags & AffPreloadRoot)
 	{
 		ActionValue root; 
-		context->getGlobal()->getLocalMember(L"_root", root);
+		context->getGlobal()->getLocalMember("_root", root);
 		callFrame.setRegister(preloadRegister++, root);
 	}
 	if (m_flags & AffPreloadParent)
@@ -98,7 +98,7 @@ ActionValue ActionFunction2::call(ActionContext* context, ActionObject* self, co
 	// Pass arguments into registers.
 	size_t argumentPassed = 0;
 	for (
-		std::vector< std::pair< std::wstring, uint8_t > >::const_iterator i = m_argumentsIntoRegisters.begin();
+		std::vector< std::pair< std::string, uint8_t > >::const_iterator i = m_argumentsIntoRegisters.begin();
 		argumentPassed < args.size() && i != m_argumentsIntoRegisters.end();
 		++i
 	)
@@ -154,7 +154,7 @@ ActionValue ActionFunction2::call(ActionFrame* callerFrame, ActionObject* self)
 		if (m_flags & AffPreloadArguments)
 			callFrame.setRegister(preloadRegister++, ActionValue(argumentArray));
 		if (!(m_flags & AffSuppressArguments))
-			callFrame.setVariable(L"arguments", ActionValue(argumentArray));
+			callFrame.setVariable("arguments", ActionValue(argumentArray));
 	}
 
 	if ((m_flags & AffPreloadSuper) || (!(m_flags & AffSuppressSuper)))
@@ -163,13 +163,13 @@ ActionValue ActionFunction2::call(ActionFrame* callerFrame, ActionObject* self)
 		if (m_flags & AffPreloadSuper)
 			callFrame.setRegister(preloadRegister++, ActionValue(super));
 		if (!(m_flags & AffSuppressSuper))
-			callFrame.setVariable(L"super", ActionValue(super));
+			callFrame.setVariable("super", ActionValue(super));
 	}
 
 	if (m_flags & AffPreloadRoot)
 	{
 		ActionValue root; 
-		context->getGlobal()->getLocalMember(L"_root", root);
+		context->getGlobal()->getLocalMember("_root", root);
 		callFrame.setRegister(preloadRegister++, root);
 	}
 	if (m_flags & AffPreloadParent)
@@ -182,7 +182,7 @@ ActionValue ActionFunction2::call(ActionFrame* callerFrame, ActionObject* self)
 
 	int32_t argumentPassed = 0;
 	for (
-		std::vector< std::pair< std::wstring, uint8_t > >::const_iterator i = m_argumentsIntoRegisters.begin();
+		std::vector< std::pair< std::string, uint8_t > >::const_iterator i = m_argumentsIntoRegisters.begin();
 		i != m_argumentsIntoRegisters.end();
 		++i
 	)
@@ -216,7 +216,7 @@ ActionValue ActionFunction2::call(ActionFrame* callerFrame, ActionObject* self)
 
 void ActionFunction2::trace(const IVisitor& visitor) const
 {
-	for (std::map< std::wstring, ActionValue >::const_iterator i = m_variables.begin(); i != m_variables.end(); ++i)
+	for (std::map< std::string, ActionValue >::const_iterator i = m_variables.begin(); i != m_variables.end(); ++i)
 	{
 		if (i->second.isObject())
 			visitor(i->second.getObject());

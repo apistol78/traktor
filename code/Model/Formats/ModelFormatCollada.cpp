@@ -130,7 +130,7 @@ struct NameData
 	{
 		Ref< const xml::Element > nameArray = source->getSingle(L"Name_array");
 		if (!nameArray)
-			nameArray = source->getSingle(L"IDREF_array");
+			nameArray = source->getSingle(L"IDREF_array").ptr();
 		if (nameArray)
 		{
 			id = source->getAttribute(L"id", L"")->getValue();
@@ -909,7 +909,7 @@ void ModelFormatCollada::getExtensions(std::wstring& outDescription, std::vector
 bool ModelFormatCollada::supportFormat(const Path& filePath) const
 {
 	return 
-		compareIgnoreCase(filePath.getExtension(), L"dae") == 0;
+		compareIgnoreCase< std::wstring >(filePath.getExtension(), L"dae") == 0;
 }
 /*
 #include "Core/Math/Const.h"

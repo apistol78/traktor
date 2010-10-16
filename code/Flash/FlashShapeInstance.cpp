@@ -9,7 +9,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashShapeInstance", FlashShapeInstance, FlashCharacterInstance)
 
 FlashShapeInstance::FlashShapeInstance(ActionContext* context, FlashCharacterInstance* parent, const FlashShape* shape)
-:	FlashCharacterInstance(context, L"Object", parent)
+:	FlashCharacterInstance(context, "Object", parent)
 ,	m_shape(shape)
 {
 }

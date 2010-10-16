@@ -29,7 +29,7 @@ public:
 		const Matrix44& world,
 		const Matrix44& view,
 		render::handle_t worldTechnique,
-		std::set< uint32_t >& outPartIndices
+		std::vector< uint32_t >& outPartIndices
 	) const = 0;
 };
 

@@ -152,7 +152,9 @@ private:
 	uint32_t m_parameterValue;
 	Technique* m_currentTechnique;
 	Ref< IProgram > m_currentProgram;
-	std::map< handle_t, resource::Proxy< ITexture > > m_textures;
+
+	std::map< handle_t, int32_t > m_textureMap;
+	std::vector< resource::Proxy< ITexture > > m_textureProxies;
 
 	void updateCurrentProgram();
 };

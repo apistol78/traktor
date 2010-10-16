@@ -39,11 +39,11 @@ FlashFrame* FlashSprite::getFrame(uint32_t frameId) const
 	return m_frames[frameId];
 }
 
-int FlashSprite::findFrame(const std::wstring& frameLabel) const
+int FlashSprite::findFrame(const std::string& frameLabel) const
 {
 	for (RefArray< FlashFrame >::const_iterator i = m_frames.begin(); i != m_frames.end(); ++i)
 	{
-		if (compareIgnoreCase((*i)->getLabel(), frameLabel) == 0)
+		if (compareIgnoreCase< std::string >((*i)->getLabel(), frameLabel) == 0)
 			return int(std::distance(m_frames.begin(), i));
 	}
 	return -1;
@@ -64,16 +64,16 @@ Ref< FlashCharacterInstance > FlashSprite::createInstance(ActionContext* context
 	Ref< FlashSpriteInstance > spriteInstance = new FlashSpriteInstance(context, parent, this);
 
 	// See if MovieClip has another class registered.
-	std::wstring exportName;
+	std::string exportName;
 	if (context->getMovie()->getExportName(getId(), exportName))
 	{
 		ActionValue movieClipClass;
 		if (context->getGlobal()->getLocalMember(exportName, movieClipClass))
 		{
 			ActionValue prototype;
-			movieClipClass.getObject()->getLocalMember(L"prototype", prototype);
-			spriteInstance->setMember(L"prototype", prototype);
-			spriteInstance->setMember(L"__proto__", prototype);
+			movieClipClass.getObject()->getLocalMember("prototype", prototype);
+			spriteInstance->setMember("prototype", prototype);
+			spriteInstance->setMember("__proto__", prototype);
 		}
 	}
 

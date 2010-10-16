@@ -105,7 +105,7 @@ VirtualKey Application::translateVirtualKey(const std::wstring& keyName) const
 {
 	for (int i = 0; i < sizeof_array(c_keyTranslateTable); ++i)
 	{
-		if (compareIgnoreCase(keyName, c_keyTranslateTable[i].name) == 0)
+		if (compareIgnoreCase< std::wstring >(keyName, c_keyTranslateTable[i].name) == 0)
 			return c_keyTranslateTable[i].vkey;
 	}
 	

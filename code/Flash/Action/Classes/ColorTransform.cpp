@@ -8,7 +8,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.ColorTransform", ColorTransform, ActionObject)
 
 ColorTransform::ColorTransform(const SwfCxTransform& transform)
-:	ActionObject(L"flash.geom.Transform")
+:	ActionObject("flash.geom.Transform")
 ,	m_transform(transform)
 {
 }
