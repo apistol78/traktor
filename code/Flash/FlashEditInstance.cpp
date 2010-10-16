@@ -111,11 +111,7 @@ bool FlashEditInstance::getTextExtents(float& outWidth, float& outHeight) const
 			uint16_t glyphIndex = font->lookupIndex(line[j]);
 			int16_t glyphAdvance = font->getAdvance(glyphIndex);
 			if (j < line.length() - 1)
-			{
-				const SwfKerningRecord* kerningRecord = font->lookupKerningRecord(line[j], line[j + 1]);
-				if (kerningRecord)
-					glyphAdvance += kerningRecord->adjustment;
-			}
+				glyphAdvance += font->lookupKerning(line[j], line[j + 1]);
 			width += (glyphAdvance - c_magicX);
 		}
 

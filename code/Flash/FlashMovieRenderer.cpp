@@ -274,11 +274,7 @@ void FlashMovieRenderer::renderCharacter(
 					uint16_t glyphIndex = font->lookupIndex(word[k]);
 					int16_t glyphAdvance = font->getAdvance(glyphIndex);
 					if (k < wordLength - 1)
-					{
-						const SwfKerningRecord* kerningRecord = font->lookupKerningRecord(word[k], word[k + 1]);
-						if (kerningRecord)
-							glyphAdvance += kerningRecord->adjustment;
-					}
+						glyphAdvance += font->lookupKerning(word[k], word[k + 1]);
 					wordWidth += (glyphAdvance - c_magicX);
 				}
 
@@ -344,11 +340,7 @@ void FlashMovieRenderer::renderCharacter(
 
 						int16_t glyphAdvance = font->getAdvance(glyphIndex);
 						if (i < wordLength - 1)
-						{
-							const SwfKerningRecord* kerningRecord = font->lookupKerningRecord(word[i], word[i + 1]);
-							if (kerningRecord)
-								glyphAdvance += kerningRecord->adjustment;
-						}
+							glyphAdvance += font->lookupKerning(word[i], word[i + 1]);
 
 						offsetX += (glyphAdvance - c_magicX) * fontScale * fontHeight;
 					}
