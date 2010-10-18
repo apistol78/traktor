@@ -12879,6 +12879,14 @@
 					<fileName>ProgramResourcePs3.h</fileName>
 					<items/>
 				</item>
+				<item type="File">
+					<fileName>Blob.cpp</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>Blob.h</fileName>
+					<items/>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="1">
