@@ -3360,7 +3360,6 @@
 						<item>$(SCE_PS3_ROOT)/target/ppu/lib/libgcm_cmd.a</item>
 						<item>$(SCE_PS3_ROOT)/target/ppu/lib/libgcm_pm.a</item>
 						<item>$(SCE_PS3_ROOT)/target/ppu/lib/libgcm_sys_stub.a</item>
-						<item>$(SCE_PS3_ROOT)/target/ppu/lib/libcgc.a</item>
 						<item>$(SCE_PS3_ROOT)/target/ppu/lib/libsysutil_stub.a</item>
 						<item>$(SCE_PS3_ROOT)/target/ppu/lib/libsysutil_avconf_ext_stub.a</item>
 					</libraries>
@@ -3384,7 +3383,6 @@
 						<item>$(SCE_PS3_ROOT)/target/ppu/lib/libgcm_cmd.a</item>
 						<item>$(SCE_PS3_ROOT)/target/ppu/lib/libgcm_pm.a</item>
 						<item>$(SCE_PS3_ROOT)/target/ppu/lib/libgcm_sys_stub.a</item>
-						<item>$(SCE_PS3_ROOT)/target/ppu/lib/libcgc.a</item>
 						<item>$(SCE_PS3_ROOT)/target/ppu/lib/libsysutil_stub.a</item>
 						<item>$(SCE_PS3_ROOT)/target/ppu/lib/libsysutil_avconf_ext_stub.a</item>
 					</libraries>

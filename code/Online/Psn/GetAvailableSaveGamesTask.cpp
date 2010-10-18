@@ -80,18 +80,7 @@ void GetAvailableSaveGamesTask::callbackLoadFixed(CellSaveDataCBResult* cbResult
 	set->dirName = "NPEB00401-PUZZLED-0001";
 	set->newIcon = 0;
 	set->option = CELL_SAVEDATA_OPTION_NONE;
-
-	int32_t i = 0;
-	for (; i < get->dirListNum; ++i)
-	{
-		if (strcmp(get->dirList[i].dirName, set->dirName) == 0)
-			break;
-	}
-
-	if (i < get->dirListNum)
-		cbResult->result = CELL_SAVEDATA_CBRESULT_OK_NEXT;
-	else
-		cbResult->result = CELL_SAVEDATA_CBRESULT_ERR_NODATA;
+	cbResult->result = CELL_SAVEDATA_CBRESULT_OK_NEXT;
 }
 
 void GetAvailableSaveGamesTask::callbackLoadStat(CellSaveDataCBResult* cbResult, CellSaveDataStatGet* get, CellSaveDataStatSet* set)
