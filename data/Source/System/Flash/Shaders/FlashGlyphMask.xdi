@@ -359,7 +359,7 @@ Y
 			</position>
 			<name>Color</name>
 			<usage>DuColor</usage>
-			<type>DtFloat4</type>
+			<type>DtByte4N</type>
 			<index>0</index>
 		</item>
 		<item type="traktor.render.Scalar">
@@ -456,7 +456,7 @@ X
 				<second>-17</second>
 			</position>
 		</item>
-		<item type="traktor.render.PixelOutput" version="2">
+		<item type="traktor.render.PixelOutput" version="3">
 			<comment/>
 			<position>
 				<first>2021</first>
@@ -488,6 +488,7 @@ X
 			<stencilFunction>CfEqual</stencilFunction>
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
+			<registerCount>0</registerCount>
 		</item>
 	</nodes>
 	<edges>

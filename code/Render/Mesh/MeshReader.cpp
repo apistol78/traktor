@@ -109,11 +109,6 @@ Ref< Mesh > MeshReader::read(IStream* stream) const
 					swap8in32(*(float*)(vertexElm + 12));
 					break;
 
-				case DtByte4:
-				case DtByte4N:
-					swap8in32(*(uint32_t*)vertexElm);
-					break;
-
 				case DtShort2:
 				case DtShort2N:
 					swap8in32(*(uint16_t*)vertexElm);
