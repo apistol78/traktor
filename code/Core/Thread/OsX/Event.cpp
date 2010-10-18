@@ -10,6 +10,8 @@ namespace traktor
 	namespace
 	{
 
+const uint32_t c_broadcast = ~0UL;
+
 struct Internal
 {
 	pthread_mutex_t mutex;
@@ -54,7 +56,7 @@ void Event::broadcast()
 	Internal* in = static_cast< Internal* >(m_handle);
 	pthread_mutex_lock(&in->mutex);
 
-	in->signal = std::max< uint32_t >(1, in->waiters);
+	in->signal = c_broadcast;
 	pthread_cond_broadcast(&in->cond);
 
 	pthread_mutex_unlock(&in->mutex);
@@ -102,8 +104,13 @@ bool Event::wait(int timeout)
 		--in->waiters;
 	}
 
-	if (rc == 0 && in->signal > 0)
-		--in->signal;
+	if (rc == 0 && in->signal != 0)
+	{
+		if (in->signal != c_broadcast)
+			--in->signal;
+		else if (in->waiters == 0)
+			in->signal = 0;
+	}
 
 	pthread_mutex_unlock(&in->mutex);
 	
