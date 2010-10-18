@@ -362,7 +362,7 @@ T_MATH_INLINE Vector4 max(const Vector4& l, const Vector4& r)
 T_MATH_INLINE Vector4 select(const Vector4& condition, const Vector4& negative, const Vector4& positive)
 {
 	__m128 mask = _mm_cmpge_ps(condition.m_data, _mm_setzero_ps());
-	return Vector4(_mm_xor_ps(negative.m_data, _mm_and_ps(mask, _mm_xor_ps(positive.m_data, negative.m_data))));
+	return Vector4(_mm_xor_ps(positive.m_data, _mm_and_ps(mask, _mm_xor_ps(negative.m_data, positive.m_data))));
 }
 
 T_MATH_INLINE bool compareAllGreaterEqual(const Vector4& l, const Vector4& r)
