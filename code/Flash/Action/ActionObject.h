@@ -99,7 +99,7 @@ protected:
 	virtual void dereference();
 
 private:
-	friend class DefaultLink< ActionObject >;
+	friend struct DefaultLink< ActionObject >;
 	friend class ActionObjectCyclic;
 
 	enum TraceColor
