@@ -1,5 +1,4 @@
 #include "Render/Ps3/ProgramResourcePs3.h"
-#include "Core/Misc/AutoPtr.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberComplex.h"
 #include "Core/Serialization/MemberComposite.h"
@@ -12,59 +11,6 @@ namespace traktor
 	{
 		namespace
 		{
-
-class MemberBin : public MemberComplex
-{
-public:
-	MemberBin(const std::wstring& name, CGCbin*& ref)
-	:	MemberComplex(name, true)
-	,	m_ref(ref)
-	{
-	}
-
-	virtual bool serialize(ISerializer& s) const
-	{
-		if (s.getDirection() == ISerializer::SdRead)
-		{
-			uint32_t size;
-			if (!(s >> Member< uint32_t >(L"size", size)))
-				return false;
-
-			if (size > 0)
-			{
-				AutoPtr< uint8_t > data(new uint8_t [size]);
-
-				if (!(s >> Member< void* >(L"data", data.ptr(), size)))
-					return false;
-
-				m_ref = sceCgcNewBin();
-				if (!m_ref || sceCgcStoreBinData(m_ref, data.ptr(), size) != SCECGC_OK)
-				{
-					m_ref = 0;
-					return false;
-				}
-
-				uint32_t binSize = sceCgcGetBinSize(m_ref);
-				T_ASSERT (binSize == size);
-			}
-			else
-				m_ref = 0;
-		}
-		else	// SdWrite
-		{
-			uint32_t size = m_ref ? sceCgcGetBinSize(m_ref) : 0;
-			if (!(s >> Member< uint32_t >(L"size", size)))
-				return false;
-
-			if (size > 0)
-				s >> Member< void* >(L"data", sceCgcGetBinData(m_ref), size);
-		}
-		return true;
-	}
-
-private:
-	CGCbin*& m_ref;
-};
 
 class MemberFragmentOffset : public MemberComplex
 {
@@ -214,25 +160,17 @@ private:
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourcePs3", 1, ProgramResourcePs3, ProgramResource)
 
 ProgramResourcePs3::ProgramResourcePs3()
-:	m_vertexShaderBin(0)
-,	m_pixelShaderBin(0)
+:	m_scalarParameterDataSize(0)
+,	m_textureParameterDataSize(0)
 {
-}
-
-ProgramResourcePs3::~ProgramResourcePs3()
-{
-	if (m_vertexShaderBin)
-		sceCgcDeleteBin(m_vertexShaderBin);
-	if (m_pixelShaderBin)
-		sceCgcDeleteBin(m_pixelShaderBin);
 }
 
 bool ProgramResourcePs3::serialize(ISerializer& s)
 {
 	T_FATAL_ASSERT (s.getVersion() >= 1);
 
-	s >> MemberBin(L"vertexProgramBin", m_vertexShaderBin);
-	s >> MemberBin(L"pixelProgramBin", m_pixelShaderBin);
+	s >> MemberComposite< Blob >(L"vertexProgramBin", m_vertexShaderBin);
+	s >> MemberComposite< Blob >(L"pixelProgramBin", m_pixelShaderBin);
 	s >> MemberStlVector< ProgramScalar, MemberProgramScalar >(L"vertexScalars", m_vertexScalars);
 	s >> MemberStlVector< ProgramScalar, MemberProgramScalar >(L"pixelScalars", m_pixelScalars);
 	s >> MemberStlVector< ProgramSampler, MemberProgramSampler >(L"vertexSamplers", m_vertexSamplers);

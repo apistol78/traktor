@@ -123,8 +123,8 @@ bool ProgramPs3::create(MemoryHeap* memoryHeap, const ProgramResourcePs3* resour
 	m_memoryHeap = memoryHeap;
 	m_resource = resource;
 
-	m_vertexProgram = (CGprogram)sceCgcGetBinData(resource->m_vertexShaderBin);
-	m_pixelProgram = (CGprogram)sceCgcGetBinData(resource->m_pixelShaderBin);
+	m_vertexProgram = (CGprogram)(resource->m_vertexShaderBin.getData());
+	m_pixelProgram = (CGprogram)(resource->m_pixelShaderBin.getData());
 
 	acquireProgramUCode(memoryHeap, m_vertexProgram, m_vertexShaderUCode);
 	acquireProgramUCode(memoryHeap, m_pixelProgram, m_pixelShaderUCode);

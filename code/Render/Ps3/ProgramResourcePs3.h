@@ -3,6 +3,7 @@
 
 #include <map>
 #include "Render/Ps3/TypesPs3.h"
+#include "Render/Ps3/Blob.h"
 #include "Render/Resource/ProgramResource.h"
 
 namespace traktor
@@ -20,16 +21,14 @@ class ProgramResourcePs3 : public ProgramResource
 public:
 	ProgramResourcePs3();
 
-	virtual ~ProgramResourcePs3();
-
 	virtual bool serialize(ISerializer& s);
 
 private:
 	friend class ProgramPs3;
 	friend class ProgramCompilerPs3;
 
-	CGCbin* m_vertexShaderBin;
-	CGCbin* m_pixelShaderBin;
+	Blob m_vertexShaderBin;
+	Blob m_pixelShaderBin;
 	std::vector< ProgramScalar > m_vertexScalars;
 	std::vector< ProgramScalar > m_pixelScalars;
 	std::vector< ProgramSampler > m_vertexSamplers;

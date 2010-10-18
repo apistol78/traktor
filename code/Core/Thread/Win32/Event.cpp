@@ -6,6 +6,8 @@ namespace traktor
 	namespace
 	{
 
+const uint32_t c_broadcast = ~0UL;
+
 struct Internal
 {
 	CRITICAL_SECTION lock;
@@ -49,7 +51,7 @@ void Event::broadcast()
 	Internal* in = reinterpret_cast< Internal* >(m_handle);
 	EnterCriticalSection(&in->lock);
 
-	in->signals = in->listeners;
+	in->signals = c_broadcast;
 	SetEvent(in->handle);
 
 	LeaveCriticalSection(&in->lock);
@@ -82,10 +84,19 @@ bool Event::wait(int timeout)
 
 		EnterCriticalSection(&in->lock);
 
-		if (in->signals > 0)
+		if (in->signals != 0)
 		{
-			if (--in->signals == 0)
+			if (in->signals != c_broadcast)
+				in->signals--;
+			else
+			{
+				if (in->listeners <= 1)
+					in->signals = 0;
+			}
+
+			if (in->signals == 0)
 				ResetEvent(in->handle);
+
 			LeaveCriticalSection(&in->lock);
 			break;
 		}

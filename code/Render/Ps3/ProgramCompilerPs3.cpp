@@ -230,112 +230,26 @@ bool compileShader(
 	if (!msg)
 		return false;
 
-	if (optimize < 4)
-	{
-		char optRegisterCount[32];
-		sprintf(optRegisterCount, "%d", temporaryRegisterCount > 0 ? temporaryRegisterCount : 2);
+	outShaderBin = sceCgcNewBin();
+	if (!outShaderBin)
+		return false;
 
-		const char* opt[] = { "-O0", "-O1", "-O2", "-O3", "-O3" };
-		const char* argvVertex[] = { opt[optimize], 0 };
-		const char* argvFragment[] = { opt[optimize], "--fastmath", "--unroll", "all", "--regcount", optRegisterCount, 0 };
+	char optRegisterCount[32];
+	sprintf(optRegisterCount, "%d", temporaryRegisterCount > 0 ? temporaryRegisterCount : 2);
 
-		outShaderBin = sceCgcNewBin();
-		if (!outShaderBin)
-			return false;
+	const char* opt[] = { "-O0", "-O1", "-O2", "-O3", "-O3" };
+	const char* argvVertex[] = { opt[optimize], 0 };
+	const char* argvFragment[] = { opt[optimize], "--fastmath", "--unroll", "all", "--regcount", optRegisterCount, 0 };
 
-		status = sceCgcCompileString(
-			cgc,
-			wstombs(shader).c_str(),
-			fragmentProfile ? "sce_fp_rsx" : "sce_vp_rsx",
-			"main",
-			fragmentProfile ? argvFragment : argvVertex,
-			outShaderBin,
-			msg
-		);
-	}
-	else
-	{
-		char optDepth[10];
-		char optRandomSeed[30];
-		char optRandomSched[30];
-		SceSpMeasurementResult result;
-		SceSpMeasurementResult optimal;
-
-		int32_t depth = 0;
-		int32_t randomSeed = 0;
-		int32_t randomSched = 0;
-
-		optimal.nCycles = std::numeric_limits< uint32_t >::max();
-		optimal.nRRegisters = std::numeric_limits< uint32_t >::max();
-
-		if (sceShaderPerfInit() != SCESP_OK)
-		{
-			log::error << L"CG shader compile failed; unable to create NVShaderPerf" << Endl;
-			return false;
-		}
-
-		CGCbin* shaderBin = sceCgcNewBin();
-
-		for (int32_t depth = 2; depth <= 3; ++depth)
-		{
-			sprintf(optDepth, "-O%d", depth);
-			for (int32_t seed = 10; seed <= 100; ++seed)
-			{
-				sprintf(optRandomSeed, "randomSeed=%d", randomSeed);
-				for (int32_t sched = 8; sched <= 15; ++sched)
-				{
-					sprintf(optRandomSched, "randomSched=%d", randomSched);
-
-					const char* argv[] = { optDepth, "--fastmath", "-po", optRandomSeed, "-po", optRandomSched, 0 };
-					status = sceCgcCompileString(
-						cgc,
-						wstombs(shader).c_str(),
-						fragmentProfile ? "sce_fp_rsx" : "sce_vp_rsx",
-						"main",
-						argv,
-						shaderBin,
-						msg
-					);
-					if (status != SCECGC_OK)
-						break;
-
-					const char* optStr[] = { NULL };
-					SceSpResult res = sceShaderPerfMeasure(
-						static_cast< char* >(sceCgcGetBinData(shaderBin)),
-						sceCgcGetBinSize(shaderBin),
-						optStr,
-						&result
-					);
-					if (res != SCESP_OK)
-					{
-						log::error << L"CG shader compile failed; unable to measure performance" << Endl;
-						continue;
-					}
-
-					if (
-						result.nCycles < optimal.nCycles || 
-						(result.nCycles == optimal.nCycles && result.nRRegisters < optimal.nRRegisters)
-					)
-					{
-						log::info << L"Performance improved, depth " << depth << L", seed " << seed << L", schedule " << sched << Endl;
-						log::info << L"\t" << result.nCycles << L" vs " << optimal.nCycles << L" cycle(s)" << Endl;
-						
-						if (outShaderBin)
-							sceCgcDeleteBin(outShaderBin);
-
-						outShaderBin = shaderBin;
-						shaderBin = sceCgcNewBin();
-
-						optimal = result;
-					}
-				}
-			}
-		}
-
-		sceCgcDeleteBin(shaderBin);
-
-		sceShaderPerfExit();
-	}
+	status = sceCgcCompileString(
+		cgc,
+		wstombs(shader).c_str(),
+		fragmentProfile ? "sce_fp_rsx" : "sce_vp_rsx",
+		"main",
+		fragmentProfile ? argvFragment : argvVertex,
+		outShaderBin,
+		msg
+	);
 
 	if (status != SCECGC_OK)
 	{
@@ -343,7 +257,8 @@ bool compileShader(
 		if (sceCgcGetBinSize(msg) > 1)
 			log::error << mbstows((char*)sceCgcGetBinData(msg)) << Endl;
 		FormatMultipleLines(log::error, shader);
-		return 0;
+		sceCgcDeleteBin(msg);
+		return false;
 	}
 
 	sceCgcDeleteBin(msg);
@@ -374,6 +289,8 @@ Ref< ProgramResource > ProgramCompilerPs3::compile(
 	Stats* outStats
 ) const
 {
+	CGCbin *vertexShaderBin, *pixelShaderBin;
+
 	// Generate CG shaders.
 	CgProgram cgProgram;
 	if (!Cg().generate(shaderGraph, cgProgram))
@@ -392,9 +309,9 @@ Ref< ProgramResource > ProgramCompilerPs3::compile(
 		const std::wstring& vertexShader = cgProgram.getVertexShader();
 		const std::wstring& pixelShader = cgProgram.getPixelShader();
 
-		if (!compileShader(cgc, optimize, vertexShader, false, 0, resource->m_vertexShaderBin))
+		if (!compileShader(cgc, optimize, vertexShader, false, 0, vertexShaderBin))
 			return 0;
-		if (!compileShader(cgc, optimize, pixelShader, true, cgProgram.getRegisterCount(), resource->m_pixelShaderBin))
+		if (!compileShader(cgc, optimize, pixelShader, true, cgProgram.getRegisterCount(), pixelShaderBin))
 			return 0;
 
 		// Create scalar parameters.
@@ -402,7 +319,7 @@ Ref< ProgramResource > ProgramCompilerPs3::compile(
 
 		if (!collectScalarParameters(
 			shaderGraph,
-			resource->m_vertexShaderBin,
+			vertexShaderBin,
 			false,
 			resource->m_vertexScalars,
 			resource->m_scalarParameterMap,
@@ -412,7 +329,7 @@ Ref< ProgramResource > ProgramCompilerPs3::compile(
 
 		if (!collectScalarParameters(
 			shaderGraph,
-			resource->m_pixelShaderBin,
+			pixelShaderBin,
 			true,
 			resource->m_pixelScalars,
 			resource->m_scalarParameterMap,
@@ -443,44 +360,9 @@ Ref< ProgramResource > ProgramCompilerPs3::compile(
 		if (!collectInputSignature(shaderGraph, resource->m_inputSignature))
 			return false;
 
+		resource->m_vertexShaderBin = Blob(sceCgcGetBinSize(vertexShaderBin), sceCgcGetBinData(vertexShaderBin));
+		resource->m_pixelShaderBin = Blob(sceCgcGetBinSize(pixelShaderBin), sceCgcGetBinData(pixelShaderBin));
 		resource->m_renderState = cgProgram.getRenderState();
-
-		// Estimate performance measurement.
-#if 0
-		{
-			const char* opt[] = { NULL };
-			SceSpMeasurementResult measure;
-			SceSpResult result;
-
-			if ((result = sceShaderPerfMeasure(
-				(const char*)sceCgcGetBinData(resource->m_vertexShaderBin),
-				sceCgcGetBinSize(resource->m_vertexShaderBin),
-				opt,
-				&measure
-			)) == SCESP_OK)
-			{
-				if (outStats)
-					outStats->vertexCost = measure.nCycles;
-				log::info << measure.nCycles << L" cycle(s)/vertex" << Endl;
-			}
-			else
-				log::error << L"Unable to measure vertex performance; error " << int32_t(result) << Endl;
-
-			if ((result = sceShaderPerfMeasure(
-				(const char*)sceCgcGetBinData(resource->m_pixelShaderBin),
-				sceCgcGetBinSize(resource->m_pixelShaderBin),
-				opt,
-				&measure
-			)) == SCESP_OK)
-			{
-				if (outStats)
-					outStats->pixelCost = measure.nCycles;
-				log::info << measure.nCycles << L" cycle(s)/pixel" << Endl;
-			}
-			else
-				log::error << L"Unable to measure pixel performance; error " << int32_t(result) << Endl;
-		}
-#endif
 
 		sceCgcDeleteContext(cgc);
 	}
