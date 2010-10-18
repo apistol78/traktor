@@ -179,7 +179,7 @@
 			</position>
 			<value>-1, 1, 0, 0</value>
 		</item>
-		<item type="traktor.render.PixelOutput" version="2">
+		<item type="traktor.render.PixelOutput" version="3">
 			<comment/>
 			<position>
 				<first>1144</first>
@@ -211,6 +211,7 @@
 			<stencilFunction>CfAlways</stencilFunction>
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
+			<registerCount>0</registerCount>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
@@ -275,7 +276,7 @@
 			</position>
 			<name>Color</name>
 			<usage>DuColor</usage>
-			<type>DtFloat4</type>
+			<type>DtByte4N</type>
 			<index>0</index>
 		</item>
 		<item type="traktor.render.Mul">
@@ -773,16 +774,6 @@ Y
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[28]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[22]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[42]"/>
 				<name>Output</name>
 			</source>
@@ -1049,6 +1040,16 @@ Y
 			<destination>
 				<node ref="/object/nodes/item[47]"/>
 				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[28]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[22]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 	</edges>

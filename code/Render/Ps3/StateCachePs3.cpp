@@ -56,8 +56,11 @@ StateCachePs3::StateCachePs3()
 ,	m_vertexUCode(0)
 ,	m_fragmentOffset(0)
 {
+	const uint32_t c_invalidFloat = ~0UL;
+
 	m_vertexConstantsShadow = (float*)Alloc::acquireAlign(VertexConstantCount * 4 * sizeof(float), 16, T_FILE_LINE);
-	std::memset(m_vertexConstantsShadow, 0, VertexConstantCount * 4 * sizeof(float));
+	std::memset(m_vertexConstantsShadow, c_invalidFloat, VertexConstantCount * 4 * sizeof(float));
+
 	std::memset(m_vertexAttributes, 0, sizeof(m_vertexAttributes));
 	std::memset(m_textures, 0, sizeof(m_textures));
 	std::memset(m_textureOffsets, 0, sizeof(m_textureOffsets));

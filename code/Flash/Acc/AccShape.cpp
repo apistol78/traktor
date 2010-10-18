@@ -173,9 +173,9 @@ bool AccShape::create(
 				else if (colorRecords.size() == 1)
 				{
 					// Solid color.
-					color.r = colorRecords.front().color.blue;
+					color.r = colorRecords.front().color.red;
 					color.g = colorRecords.front().color.green;
-					color.b = colorRecords.front().color.red;
+					color.b = colorRecords.front().color.blue;
 					color.a = colorRecords.front().color.alpha;
 				}
 
@@ -209,9 +209,9 @@ bool AccShape::create(
 
 				vertex->pos[0] = j->v[k].x;
 				vertex->pos[1] = j->v[k].y;
-				vertex->color[2] = color.r;
+				vertex->color[0] = color.r;
 				vertex->color[1] = color.g;
-				vertex->color[0] = color.b;
+				vertex->color[2] = color.b;
 				vertex->color[3] = color.a;
 
 				vertex++;
