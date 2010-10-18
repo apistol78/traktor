@@ -217,7 +217,11 @@ Ref< IProgram > RenderSystemPs3::createProgram(const ProgramResource* programRes
 
 Ref< IProgramCompiler > RenderSystemPs3::createProgramCompiler() const
 {
+#if !defined(_PS3)
 	return new ProgramCompilerPs3();
+#else
+	return 0;
+#endif
 }
 
 void RenderSystemPs3::beginRendering()

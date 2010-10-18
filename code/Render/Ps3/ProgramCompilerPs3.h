@@ -8,6 +8,8 @@ namespace traktor
 	namespace render
 	{
 
+#if !defined(_PS3)
+
 class CgProgram;
 
 /*! \brief PS3 program compiler.
@@ -31,6 +33,8 @@ public:
 		Stats* outStats
 	) const;
 };
+
+#endif
 
 	}
 }

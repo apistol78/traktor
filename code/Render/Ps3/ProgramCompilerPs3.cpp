@@ -1,3 +1,5 @@
+#if !defined(_PS3)
+
 #include "Render/Ps3/PlatformPs3.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/AutoPtr.h"
@@ -253,8 +255,6 @@ bool compileShader(
 	}
 	else
 	{
-#if !defined(_PS3)
-
 		char optDepth[10];
 		char optRandomSeed[30];
 		char optRandomSched[30];
@@ -335,8 +335,6 @@ bool compileShader(
 		sceCgcDeleteBin(shaderBin);
 
 		sceShaderPerfExit();
-
-#endif
 	}
 
 	if (status != SCECGC_OK)
@@ -492,3 +490,5 @@ Ref< ProgramResource > ProgramCompilerPs3::compile(
 
 	}
 }
+
+#endif

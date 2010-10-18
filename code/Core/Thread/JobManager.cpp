@@ -45,7 +45,7 @@ Ref< Job > JobManager::add(Functor* functor)
 {
 	Ref< Job > job = new Job(functor, m_jobFinishedEvent);
 	m_jobQueue.put(job);
-	m_jobQueuedEvent.pulse(std::numeric_limits< int >::max());
+	m_jobQueuedEvent.pulse();
 	return job;
 }
 
@@ -60,7 +60,7 @@ void JobManager::fork(const RefArray< Functor >& functors)
 			jobs[i] = new Job(functors[i], m_jobFinishedEvent);
 			m_jobQueue.put(jobs[i]);
 		}
-		m_jobQueuedEvent.pulse(std::numeric_limits< int >::max());
+		m_jobQueuedEvent.pulse();
 	}
 
 	(*functors[0])();
@@ -81,7 +81,7 @@ void JobManager::threadWorker(int id)
 			T_ASSERT (!job->m_finished);
 			(*job->m_functor)();
 			job->m_finished = true;
-			m_jobFinishedEvent.pulse(std::numeric_limits< int >::max());
+			m_jobFinishedEvent.broadcast();
 		}
 
 		if (!m_jobQueuedEvent.wait(100))
