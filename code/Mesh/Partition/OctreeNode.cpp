@@ -40,8 +40,11 @@ void OctreeNode::traverse(
 	Frustum::InsideResult result = frustumObject.inside(m_boundingBox);
 	if (result == Frustum::IrInside)
 	{
-		const std::vector< uint32_t >& parts = m_partIndices[worldTechniqueId];
-		outPartIndices.insert(outPartIndices.end(), parts.begin(), parts.end());
+		if (worldTechniqueId < m_partIndices.size())
+		{
+			const std::vector< uint32_t >& parts = m_partIndices[worldTechniqueId];
+			outPartIndices.insert(outPartIndices.end(), parts.begin(), parts.end());
+		}
 	}
 	else if (result == Frustum::IrPartial)
 	{
@@ -55,8 +58,11 @@ void OctreeNode::traverse(
 		}
 		else
 		{
-			const std::vector< uint32_t >& parts = m_partIndices[worldTechniqueId];
-			outPartIndices.insert(outPartIndices.end(), parts.begin(), parts.end());
+			if (worldTechniqueId < m_partIndices.size())
+			{
+				const std::vector< uint32_t >& parts = m_partIndices[worldTechniqueId];
+				outPartIndices.insert(outPartIndices.end(), parts.begin(), parts.end());
+			}
 		}
 	}
 }
