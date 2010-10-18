@@ -14,41 +14,41 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.ActionObject", ActionObject, Object)
 
-static int32_t s_objectCount = 0;
-
 ActionObject::ActionObject()
-:	m_readOnly(false)
+:	m_prev(0)
+,	m_next(0)
+,	m_readOnly(false)
 ,	m_traceColor(TcBlack)
 ,	m_traceBuffered(false)
 ,	m_traceRefCount(0)
 {
 	setMember("__proto__", ActionValue("Object"));
-	++s_objectCount;
 }
 
 ActionObject::ActionObject(const std::string& prototypeName)
-:	m_readOnly(false)
+:	m_prev(0)
+,	m_next(0)
+,	m_readOnly(false)
 ,	m_traceColor(TcBlack)
 ,	m_traceBuffered(false)
 ,	m_traceRefCount(0)
 {
 	setMember("__proto__", ActionValue(prototypeName));
-	++s_objectCount;
 }
 
 ActionObject::ActionObject(ActionObject* prototype)
-:	m_readOnly(false)
+:	m_prev(0)
+,	m_next(0)
+,	m_readOnly(false)
 ,	m_traceColor(TcBlack)
 ,	m_traceBuffered(false)
 ,	m_traceRefCount(0)
 {
 	setMember("__proto__", ActionValue(prototype));
-	++s_objectCount;
 }
 
 ActionObject::~ActionObject()
 {
-	--s_objectCount;
 }
 
 void ActionObject::release(void* owner) const

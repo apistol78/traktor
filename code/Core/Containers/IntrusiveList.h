@@ -121,6 +121,7 @@ public:
 		typedef ItemType value_type;
 		typedef int difference_type;
 		typedef value_type* pointer;
+		typedef value_type& reference;
 		typedef const_iterator _O;
 
 		pointer operator * () const

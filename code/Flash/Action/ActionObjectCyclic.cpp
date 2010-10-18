@@ -31,7 +31,7 @@ void ActionObjectCyclic::addCandidate(ActionObject* object)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	T_ASSERT (std::find(m_candidates.begin(), m_candidates.end(), object) == m_candidates.end());
-	m_candidates.push_back(object);
+	m_candidates.push_front(object);
 }
 
 void ActionObjectCyclic::removeCandidate(ActionObject* object)
@@ -41,14 +41,17 @@ void ActionObjectCyclic::removeCandidate(ActionObject* object)
 	m_candidates.remove(object);
 }
 
-void ActionObjectCyclic::collectCycles()
+void ActionObjectCyclic::collectCycles(bool full)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
-	while (!m_candidates.empty())
+	if (m_candidates.empty())
+		return;
+		
+	do
 	{
 		// Mark roots.
-		for (std::list< ActionObject* >::iterator i = m_candidates.begin(); i != m_candidates.end(); )
+		for (IntrusiveList< ActionObject >::iterator i = m_candidates.begin(); i != m_candidates.end(); )
 		{
 			ActionObject* candidate = *i;
 			if (candidate->m_traceColor == ActionObject::TcPurple)
@@ -64,7 +67,7 @@ void ActionObjectCyclic::collectCycles()
 		}
 
 		// Scan roots.
-		for (std::list< ActionObject* >::iterator i = m_candidates.begin(); i != m_candidates.end(); ++i)
+		for (IntrusiveList< ActionObject >::iterator i = m_candidates.begin(); i != m_candidates.end(); ++i)
 		{
 			ActionObject* candidate = *i;
 			candidate->traceScan();
@@ -86,6 +89,7 @@ void ActionObjectCyclic::collectCycles()
 			candidate->traceCollectWhite();
 		}
 	}
+	while (full && !m_candidates.empty());
 }
 
 void ActionObjectCyclic::destroy()
@@ -96,7 +100,7 @@ void ActionObjectCyclic::destroy()
 
 ActionObjectCyclic::~ActionObjectCyclic()
 {
-	collectCycles();
+	collectCycles(true);
 }
 
 	}

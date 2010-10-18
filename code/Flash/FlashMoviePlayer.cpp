@@ -119,7 +119,7 @@ void FlashMoviePlayer::destroy()
 	m_fsCommands.clear();
 	m_interval.clear();
 
-	ActionObjectCyclic::getInstance().collectCycles();
+	ActionObjectCyclic::getInstance().collectCycles(true);
 }
 
 void FlashMoviePlayer::gotoAndPlay(uint32_t frame)
@@ -232,7 +232,7 @@ void FlashMoviePlayer::executeFrame()
 	// Collect reference cycles.
 	if (--m_framesUntilCollection <= 0)
 	{
-		ActionObjectCyclic::getInstance().collectCycles();
+		ActionObjectCyclic::getInstance().collectCycles(false);
 		m_framesUntilCollection = c_framesBetweenCollections;
 	}
 }

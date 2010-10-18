@@ -152,7 +152,7 @@ void FlashMovieRenderer::renderCharacter(
 		return;
 
 	// Render basic shapes.
-	Ref< FlashShapeInstance > shapeInstance = dynamic_type_cast< FlashShapeInstance* >(characterInstance);
+	FlashShapeInstance* shapeInstance = dynamic_type_cast< FlashShapeInstance* >(characterInstance);
 	if (shapeInstance)
 	{
 		m_displayRenderer->renderShape(
@@ -165,7 +165,7 @@ void FlashMovieRenderer::renderCharacter(
 	}
 
 	// Render morph shapes.
-	Ref< FlashMorphShapeInstance > morphInstance = dynamic_type_cast< FlashMorphShapeInstance* >(characterInstance);
+	FlashMorphShapeInstance* morphInstance = dynamic_type_cast< FlashMorphShapeInstance* >(characterInstance);
 	if (morphInstance)
 	{
 		m_displayRenderer->renderMorphShape(
@@ -178,17 +178,17 @@ void FlashMovieRenderer::renderCharacter(
 	}
 
 	// Render static texts.
-	Ref< FlashTextInstance > textInstance = dynamic_type_cast< FlashTextInstance* >(characterInstance);
+	FlashTextInstance* textInstance = dynamic_type_cast< FlashTextInstance* >(characterInstance);
 	if (textInstance)
 	{
-		Ref< const FlashText > text = textInstance->getText();
+		const FlashText* text = textInstance->getText();
 
 		Matrix33 textTransform = transform * textInstance->getTransform() * text->getTextMatrix();
 
 		const AlignedVector< FlashText::Character >& characters = text->getCharacters();
 		for (AlignedVector< FlashText::Character >::const_iterator i = characters.begin(); i != characters.end(); ++i)
 		{
-			Ref< const FlashFont > font = movie->getFont(i->fontId);
+			const FlashFont* font = movie->getFont(i->fontId);
 			if (!font)
 				continue;
 
@@ -224,11 +224,11 @@ void FlashMovieRenderer::renderCharacter(
 	}
 
 	// Render dynamic texts.
-	Ref< FlashEditInstance > editInstance = dynamic_type_cast< FlashEditInstance* >(characterInstance);
+	FlashEditInstance* editInstance = dynamic_type_cast< FlashEditInstance* >(characterInstance);
 	if (editInstance)
 	{
-		Ref< const FlashEdit > edit = editInstance->getEdit();
-		Ref< const FlashFont > font = movie->getFont(edit->getFontId());
+		const FlashEdit* edit = editInstance->getEdit();
+		const FlashFont* font = movie->getFont(edit->getFontId());
 		if (!font)
 			return;
 
@@ -356,10 +356,10 @@ void FlashMovieRenderer::renderCharacter(
 	}
 
 	// Render buttons.
-	Ref< FlashButtonInstance > buttonInstance = dynamic_type_cast< FlashButtonInstance* >(characterInstance);
+	FlashButtonInstance* buttonInstance = dynamic_type_cast< FlashButtonInstance* >(characterInstance);
 	if (buttonInstance)
 	{
-		Ref< const FlashButton> button = buttonInstance->getButton();
+		const FlashButton* button = buttonInstance->getButton();
 
 		Matrix33 buttonTransform = transform * buttonInstance->getTransform();
 		uint8_t buttonState = buttonInstance->getState();
@@ -370,7 +370,7 @@ void FlashMovieRenderer::renderCharacter(
 			if ((j->state & buttonState) == 0)
 				continue;
 
-			Ref< FlashCharacterInstance > referenceInstance = buttonInstance->getCharacterInstance(j->characterId);
+			FlashCharacterInstance* referenceInstance = buttonInstance->getCharacterInstance(j->characterId);
 			if (!referenceInstance)
 				continue;
 
@@ -386,7 +386,7 @@ void FlashMovieRenderer::renderCharacter(
 	}
 
 	// Render sprites.
-	Ref< FlashSpriteInstance > spriteInstance = dynamic_type_cast< FlashSpriteInstance* >(characterInstance);
+	FlashSpriteInstance* spriteInstance = dynamic_type_cast< FlashSpriteInstance* >(characterInstance);
 	if (spriteInstance)
 	{
 		FlashSpriteInstance* maskInstance = spriteInstance->getMask();
