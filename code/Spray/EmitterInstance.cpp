@@ -233,7 +233,7 @@ void EmitterInstance::update(EmitterUpdateContext& context, const Transform& tra
 
 void EmitterInstance::render(PointRenderer* pointRenderer, const Plane& cameraPlane) const
 {
-	synchronize();
+	//synchronize();
 
 	if (m_points.empty())
 		return;
