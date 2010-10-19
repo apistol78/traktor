@@ -165,9 +165,6 @@ void AccDisplayRenderer::setViewSize(float width, float height)
 
 void AccDisplayRenderer::preload(const FlashMovie& movie)
 {
-	const std::map< uint16_t, Ref< FlashBitmap > >& bitmaps = movie.getBitmaps();
-	for (std::map< uint16_t, Ref< FlashBitmap > >::const_iterator i = bitmaps.begin(); i != bitmaps.end(); ++i)
-		m_textureCache->getBitmapTexture(*(i->second));
 }
 
 void AccDisplayRenderer::begin(const FlashMovie& movie, const SwfColor& backgroundColor)
