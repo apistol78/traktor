@@ -14,7 +14,8 @@
 #include "Render/Dx9/ShaderCache.h"
 #include "Render/Dx9/SimpleTextureDx9.h"
 #include "Render/Dx9/VertexDeclCache.h"
-#include "Render/Dx9/VertexBufferDx9.h"
+#include "Render/Dx9/VertexBufferDynamicDx9.h"
+#include "Render/Dx9/VertexBufferStaticDx9.h"
 #include "Render/Dx9/VolumeTextureDx9.h"
 #include "Render/Dx9/Win32/ProgramWin32.h"
 #include "Render/Dx9/Win32/ProgramCompilerWin32.h"
@@ -449,11 +450,20 @@ Ref< VertexBuffer > RenderSystemWin32::createVertexBuffer(const std::vector< Ver
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_renderLock);
 
-	Ref< VertexBufferDx9 > vertexBuffer = new VertexBufferDx9(m_resourceManager, bufferSize, m_vertexDeclCache);
-	if (!vertexBuffer->create(m_d3dDevice, vertexElements, dynamic))
-		return 0;
+	if (!dynamic)
+	{
+		Ref< VertexBufferStaticDx9 > vertexBuffer = new VertexBufferStaticDx9(bufferSize, m_vertexDeclCache);
+		if (vertexBuffer->create(m_d3dDevice, vertexElements))
+			return vertexBuffer;
+	}
+	else
+	{
+		Ref< VertexBufferDynamicDx9 > vertexBuffer = new VertexBufferDynamicDx9(m_resourceManager, bufferSize, m_vertexDeclCache);
+		if (vertexBuffer->create(m_d3dDevice, vertexElements))
+			return vertexBuffer;
+	}
 
-	return vertexBuffer;
+	return 0;
 }
 
 Ref< IndexBuffer > RenderSystemWin32::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)

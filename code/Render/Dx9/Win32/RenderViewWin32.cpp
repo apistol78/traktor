@@ -301,7 +301,8 @@ void RenderViewWin32::draw(const Primitives& primitives)
 	if (!m_currentProgram->activate())
 		return;
 
-	VertexBufferDx9::activate(m_d3dDevice, m_currentVertexBuffer);
+	m_currentVertexBuffer->activate(m_d3dDevice);
+
 	IndexBufferDx9::activate(m_d3dDevice, m_currentIndexBuffer);
 
 	if (primitives.indexed)
