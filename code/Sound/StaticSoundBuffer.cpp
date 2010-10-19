@@ -1,5 +1,6 @@
 #include "Compress/Zip/InflateStream.h"
 #include "Core/Io/IStream.h"
+#include "Core/Log/Log.h"
 #include "Core/Memory/Alloc.h"
 #include "Core/Misc/Align.h"
 #include "Core/Misc/Endian.h"
@@ -14,18 +15,24 @@ namespace traktor
 		namespace
 		{
 
+uint32_t s_cursorCount = 0;
+
 struct StaticSoundBufferCursor : public RefCountImpl< ISoundBufferCursor >
 {
 	Ref< const StaticSoundResource > m_resource;
+	Ref< db::Instance > m_resourceInstance;
 	Ref< IStream > m_stream;
 	float* m_samples[SbcMaxChannelCount];
 	uint32_t m_position;
 
-	StaticSoundBufferCursor(const StaticSoundResource* resource, IStream* stream)
+	StaticSoundBufferCursor(const StaticSoundResource* resource, db::Instance* resourceInstance)
 	:	m_resource(resource)
-	,	m_stream(stream)
+	,	m_resourceInstance(resourceInstance)
 	,	m_position(0)
 	{
+		if (++s_cursorCount > 32)
+			log::warning << L"Very many static sound cursors; leaking?" << Endl;
+	
 		const uint32_t blockSize = sizeof(float) * (4096 + 16);	// 16 samples padding.
 
 		std::memset(m_samples, 0, sizeof(m_samples));
@@ -33,9 +40,9 @@ struct StaticSoundBufferCursor : public RefCountImpl< ISoundBufferCursor >
 		{
 			m_samples[i] = (float*)Alloc::acquireAlign(blockSize, 16, T_FILE_LINE);
 			T_FATAL_ASSERT_M (m_samples[i], L"Out of memory (Static sound buffer)");
-
-			std::memset(m_samples[i], 0, blockSize);
 		}
+		
+		reset();
 	}
 
 	virtual ~StaticSoundBufferCursor()
@@ -45,11 +52,20 @@ struct StaticSoundBufferCursor : public RefCountImpl< ISoundBufferCursor >
 			if (m_samples[i])
 				Alloc::freeAlign(m_samples[i]);
 		}
+		
+		--s_cursorCount;
 	}
 
 	virtual void reset()
 	{
-		// \fixme
+		Ref< IStream > stream = m_resourceInstance->readData(L"Data");
+		if (!stream)
+			return;
+				
+		if (m_resource->getFlags() & SrfZLib)
+			m_stream = new compress::InflateStream(stream);
+		else
+			m_stream = stream;
 	}
 };
 
@@ -82,19 +98,9 @@ void StaticSoundBuffer::destroy()
 
 Ref< ISoundBufferCursor > StaticSoundBuffer::createCursor() const
 {
-	Ref< IStream > stream = m_resourceInstance->readData(L"Data");
-	if (!stream)
-		return 0;
-				
-	Ref< IStream > streamData;
-	if (m_resource->getFlags() & SrfZLib)
-		streamData = new compress::InflateStream(stream);
-	else
-		streamData = stream;
-
 	return new StaticSoundBufferCursor(
 		m_resource,
-		streamData
+		m_resourceInstance
 	);
 }
 
