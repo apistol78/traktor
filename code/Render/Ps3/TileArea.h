@@ -2,6 +2,7 @@
 #define traktor_render_TileArea_H
 
 #include "Core/Config.h"
+#include "Core/Thread/Semaphore.h"
 #include "Render/Ps3/BlockList.h"
 
 namespace traktor
@@ -35,6 +36,7 @@ public:
 	void free(uint32_t index);
 	
 private:
+	Semaphore m_lock;
 	uint32_t m_areaCount;
 	TileInfo m_tiles[32];
 	uint32_t m_allocated;

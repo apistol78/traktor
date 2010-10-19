@@ -4,6 +4,7 @@
 #include "Core/Misc/Align.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
+#include "Core/Thread/Acquire.h"
 #include "Render/Ps3/PlatformPs3.h"
 #include "Render/Ps3/MemoryHeap.h"
 #include "Render/Ps3/MemoryHeapObject.h"
@@ -28,10 +29,12 @@ struct UCodeCacheEntry
 	int32_t count;
 };
 
+Semaphore g_ucodeCacheLock;
 std::map< uint32_t, UCodeCacheEntry > g_ucodeCache;
 
 void acquireProgramUCode(MemoryHeap* memoryHeap, CGprogram program, MemoryHeapObject*& outUCode)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(g_ucodeCacheLock);
 	uint32_t ucodeSize;
 	void* ucode;
 
@@ -61,6 +64,7 @@ void acquireProgramUCode(MemoryHeap* memoryHeap, CGprogram program, MemoryHeapOb
 
 void releaseProgramUCode(MemoryHeapObject* ucode)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(g_ucodeCacheLock);
 	for (std::map< uint32_t, UCodeCacheEntry >::iterator i = g_ucodeCache.begin(); i != g_ucodeCache.end(); ++i)
 	{
 		if (i->second.ucode == ucode)

@@ -26,8 +26,7 @@ class IPartition : public Object
 public:
 	virtual void traverse(
 		const Frustum& frustum,
-		const Matrix44& world,
-		const Matrix44& view,
+		const Matrix44& worldView,
 		render::handle_t worldTechnique,
 		std::vector< uint32_t >& outPartIndices
 	) const = 0;

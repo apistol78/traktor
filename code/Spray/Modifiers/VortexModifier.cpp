@@ -55,7 +55,7 @@ void VortexModifier::update(SpursJobQueue* jobQueue, const Scalar& deltaTime, co
 	job.common.deltaTime = deltaTime;
 	job.common.pointsEA = (uintptr_t)(&points[0]);
 	job.common.pointsCount = points.size();
-	m_axis.storeUnaligned(job.modifier.vortex.axis);
+	m_axis.storeAligned(job.modifier.vortex.axis);
 	job.modifier.vortex.tangentForce = m_tangentForce;
 	job.modifier.vortex.normalConstantForce = m_normalConstantForce;
 	job.modifier.vortex.normalDistance = m_normalDistance;

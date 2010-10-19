@@ -104,6 +104,10 @@ public:
 	/*! \name Events */
 	//@{
 
+	virtual void preDispatchEvents();
+
+	virtual void postDispatchEvents();
+
 	virtual void eventInit();
 
 	virtual void eventLoad();

@@ -43,19 +43,18 @@ void PartitionMesh::render(
 	if (!m_shader.validate() || !m_partition)
 		return;
 
+	Matrix44 world = worldTransform.toMatrix44();
+	Matrix44 worldView = worldRenderView->getView() * world;
+
 	m_partIndices.resize(0);
 	m_partition->traverse(
 		worldRenderView->getCullFrustum(),
-		worldTransform.toMatrix44(),
-		worldRenderView->getView(),
+		worldView,
 		worldRenderView->getTechnique(),
 		m_partIndices
 	);
 	if (m_partIndices.empty())
 		return;
-
-	Matrix44 worldView = worldRenderView->getView() * worldTransform.toMatrix44();
-	uint32_t primitiveCount = 0;
 
 	const std::vector< render::Mesh::Part >& meshParts = m_mesh->getParts();
 	for (std::vector< uint32_t >::const_iterator i = m_partIndices.begin(); i != m_partIndices.end(); ++i)
@@ -66,7 +65,7 @@ void PartitionMesh::render(
 
 		worldRenderView->setShaderCombination(
 			m_shader,
-			worldTransform.toMatrix44(),
+			world,
 			getBoundingBox()
 		);
 
@@ -74,8 +73,8 @@ void PartitionMesh::render(
 		if (!program)
 			continue;
 
-		Vector4 center = worldView * part.boundingBox.getCenter().xyz1();
-		Scalar distancePart = center.length() + part.boundingBox.getExtent().length();
+		Vector4 center = worldView * part.boundingBox.getCenter();
+		Scalar distancePart = center.xyz0().length() + part.boundingBox.getExtent().length();
 
 #if !defined(_DEBUG)
 		render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >("PartitionMesh");
@@ -106,16 +105,7 @@ void PartitionMesh::render(
 			part.opaque ? render::RfOpaque : render::RfAlphaBlend,
 			renderBlock
 		);
-
-#if defined(_DEBUG)
-		primitiveCount += meshParts[part.meshPart].primitives.count;
-#endif
 	}
-
-#if defined(_DEBUG)
-	if (worldRenderView->getTechnique() == world::WorldRenderer::getTechniqueDefault())
-		log::debug << L"PartitionMesh; " << primitiveCount << L" primitive(s) in " << uint32_t(m_partIndices.size()) << L" part(s)" << Endl;
-#endif
 }
 
 	}

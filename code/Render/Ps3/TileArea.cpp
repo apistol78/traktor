@@ -1,5 +1,6 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/Align.h"
+#include "Core/Thread/Acquire.h"
 #include "Render/Ps3/TileArea.h"
 
 namespace traktor
@@ -24,6 +25,7 @@ TileArea::TileArea(uint32_t areaCount, uint32_t tagSize)
 
 bool TileArea::alloc(uint32_t size, uint32_t alignment, TileInfo& outTileInfo)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	T_ASSERT (outTileInfo.index == ~0UL);
 
 	uint32_t base = m_tag.alloc(size, alignment);
@@ -60,6 +62,7 @@ bool TileArea::alloc(uint32_t size, uint32_t alignment, TileInfo& outTileInfo)
 
 void TileArea::free(uint32_t index)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	if (m_allocated & (1 << index))
 	{
 		m_tag.free(m_tiles[index].base);
