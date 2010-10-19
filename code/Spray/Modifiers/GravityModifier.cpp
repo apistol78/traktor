@@ -52,7 +52,7 @@ void GravityModifier::update(SpursJobQueue* jobQueue, const Scalar& deltaTime, c
 	job.common.pointsEA = (uintptr_t)(&points[0]);
 	job.common.pointsCount = points.size();
 	job.modifier.gravity.world = m_world;
-	m_gravity.storeUnaligned(job.modifier.gravity.gravity);
+	m_gravity.storeAligned(job.modifier.gravity.gravity);
 
 	jobQueue->push(&job);
 }

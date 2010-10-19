@@ -49,10 +49,6 @@ public:
 
 	void updateDisplayList();
 
-	void preDispatchEvents();
-
-	void postDispatchEvents();
-
 	FlashDisplayList& getDisplayList();
 
 	void setVisible(bool visible);
@@ -72,6 +68,10 @@ public:
 	int32_t getMouseY() const { return m_mouseY; }
 
 	virtual bool getMember(ActionContext* context, const std::string& memberName, ActionValue& outMemberValue);
+
+	virtual void preDispatchEvents();
+
+	virtual void postDispatchEvents();
 
 	virtual void eventInit();
 

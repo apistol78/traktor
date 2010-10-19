@@ -92,6 +92,14 @@ const std::map< uint32_t, Ref< ActionScript > >& FlashCharacterInstance::getEven
 	return m_eventScripts;
 }
 
+void FlashCharacterInstance::preDispatchEvents()
+{
+}
+
+void FlashCharacterInstance::postDispatchEvents()
+{
+}
+
 void FlashCharacterInstance::eventInit()
 {
 	std::map< uint32_t, Ref< ActionScript > >::iterator i = m_eventScripts.find(EvtInitialize);

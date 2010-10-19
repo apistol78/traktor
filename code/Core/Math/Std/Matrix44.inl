@@ -129,6 +129,21 @@ T_MATH_INLINE Matrix44 Matrix44::transpose() const
 
 	return Mt;
 
+#elif defined(T_MATH_USE_ALTIVEC)
+
+	vec_float4 tmp0 = vec_mergeh(m_c[0].m_data, m_c[2].m_data);
+	vec_float4 tmp1 = vec_mergeh(m_c[1].m_data, m_c[3].m_data);
+	vec_float4 tmp2 = vec_mergel(m_c[0].m_data, m_c[2].m_data);
+	vec_float4 tmp3 = vec_mergel(m_c[1].m_data, m_c[3].m_data);
+
+	Matrix44 Mt;
+	Mt.m_c[0].m_data = vec_mergeh(tmp0, tmp1);
+	Mt.m_c[1].m_data = vec_mergel(tmp0, tmp1);
+	Mt.m_c[2].m_data = vec_mergeh(tmp2, tmp3);
+	Mt.m_c[3].m_data = vec_mergel(tmp2, tmp3);
+
+	return Mt;
+
 #else
 
 	return Matrix44(

@@ -51,7 +51,7 @@ void PlaneCollisionModifier::update(SpursJobQueue* jobQueue, const Scalar& delta
 	job.common.deltaTime = deltaTime;
 	job.common.pointsEA = (uintptr_t)(&points[0]);
 	job.common.pointsCount = points.size();
-	m_plane.normal().storeUnaligned(job.modifier.planeCollision.plane);
+	m_plane.normal().storeAligned(job.modifier.planeCollision.plane);
 	job.modifier.planeCollision.plane[3] = m_plane.distance();
 	job.modifier.planeCollision.restitution = m_restitution;
 

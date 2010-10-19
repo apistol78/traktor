@@ -163,58 +163,6 @@ void FlashSpriteInstance::updateDisplayList()
 	}
 }
 
-void FlashSpriteInstance::preDispatchEvents()
-{
-	T_ASSERT (!m_inDispatch);
-	m_inDispatch = true;
-	m_gotoIssued = false;
-
-	// Initialize sprite instance.
-	if (!m_initialized)
-	{
-		eventInit();
-		eventLoad();
-		m_initialized = true;
-	}
-
-	// Set initial next frame index, this might change during execution of events.
-	if (m_playing)
-		m_nextFrame = (m_currentFrame + 1) % m_sprite->getFrameCount();
-	else
-		m_nextFrame = m_currentFrame;
-
-	// Issue pre-dispatch event on child instances.
-	const FlashDisplayList::layer_map_t& layers = m_displayList.getLayers();
-	for (FlashDisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
-	{
-		if (FlashSpriteInstance* spriteInstance = dynamic_type_cast< FlashSpriteInstance* >(i->second.instance))
-			spriteInstance->preDispatchEvents();
-	}
-}
-
-void FlashSpriteInstance::postDispatchEvents()
-{
-	if (!m_inDispatch)
-		return;
-
-	// Update current frame index.
-	if (m_playing || m_gotoIssued)
-	{
-		T_ASSERT (m_nextFrame < m_sprite->getFrameCount());
-		m_currentFrame = m_nextFrame;
-	}
-
-	// Issue post dispatch event on child sprite instances.
-	const FlashDisplayList::layer_map_t& layers = m_displayList.getLayers();
-	for (FlashDisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
-	{
-		if (FlashSpriteInstance* spriteInstance = dynamic_type_cast< FlashSpriteInstance* >(i->second.instance))
-			spriteInstance->postDispatchEvents();
-	}
-
-	m_inDispatch = false;
-}
-
 FlashDisplayList& FlashSpriteInstance::getDisplayList()
 {
 	return m_displayList;
@@ -282,6 +230,52 @@ bool FlashSpriteInstance::getMember(ActionContext* context, const std::string& m
 	}
 
 	return FlashCharacterInstance::getMember(context, memberName, outMemberValue);
+}
+
+void FlashSpriteInstance::preDispatchEvents()
+{
+	T_ASSERT (!m_inDispatch);
+	m_inDispatch = true;
+	m_gotoIssued = false;
+
+	// Initialize sprite instance.
+	if (!m_initialized)
+	{
+		eventInit();
+		eventLoad();
+		m_initialized = true;
+	}
+
+	// Set initial next frame index, this might change during execution of events.
+	if (m_playing)
+		m_nextFrame = (m_currentFrame + 1) % m_sprite->getFrameCount();
+	else
+		m_nextFrame = m_currentFrame;
+
+	// Issue dispatch event on child instances.
+	const FlashDisplayList::layer_map_t& layers = m_displayList.getLayers();
+	for (FlashDisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
+		i->second.instance->preDispatchEvents();
+}
+
+void FlashSpriteInstance::postDispatchEvents()
+{
+	if (!m_inDispatch)
+		return;
+
+	// Update current frame index.
+	if (m_playing || m_gotoIssued)
+	{
+		T_ASSERT (m_nextFrame < m_sprite->getFrameCount());
+		m_currentFrame = m_nextFrame;
+	}
+
+	// Issue post dispatch event on child sprite instances.
+	const FlashDisplayList::layer_map_t& layers = m_displayList.getLayers();
+	for (FlashDisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
+		i->second.instance->postDispatchEvents();
+
+	m_inDispatch = false;
 }
 
 void FlashSpriteInstance::eventInit()

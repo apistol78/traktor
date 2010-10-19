@@ -17,8 +17,7 @@ OctreePartition::OctreePartition(OctreeNode* node, const std::vector< render::ha
 
 void OctreePartition::traverse(
 	const Frustum& frustum,
-	const Matrix44& world,
-	const Matrix44& view,
+	const Matrix44& worldView,
 	render::handle_t worldTechnique,
 	std::vector< uint32_t >& outPartIndices
 ) const
@@ -29,7 +28,7 @@ void OctreePartition::traverse(
 
 	uint8_t worldTechniqueId = uint8_t(std::distance(m_worldTechniques.begin(), i));
 
-	Matrix44 worldViewInv = (view * world).inverse();
+	Matrix44 worldViewInv = worldView.inverse();
 	Frustum frustumObject;
 
 	for (int32_t i = 0; i < 6; ++i)
