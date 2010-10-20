@@ -36,6 +36,8 @@ void ConeSource::emit(
 
 	Scalar wx = Scalar(sinf(m_angle1));
 	Scalar wz = Scalar(sinf(m_angle2));
+	
+	Point* point = emitterInstance.addPoints(emitCount);
 
 	while (emitCount-- > 0)
 	{
@@ -48,20 +50,18 @@ void ConeSource::emit(
 		Vector4 extent = transform.axisX() * wx * x + transform.axisZ() * wz * z;
 		Vector4 direction = (m_normal + extent * gamma).normalized();
 
-		Point point;
-
-		point.position = position;
-		point.velocity = direction * Scalar(m_velocity.random(context.random));
-		point.orientation = m_orientation.random(context.random);
-		point.angularVelocity = m_angularVelocity.random(context.random);
-		point.color = Vector4::one();
-		point.age = 0.0f;
-		point.maxAge = m_age.random(context.random);
-		point.inverseMass = 1.0f / (m_mass.random(context.random));
-		point.size = m_size.random(context.random);
-		point.random = context.random.nextFloat();
-
-		emitterInstance.addPoint(point);
+		point->position = position;
+		point->velocity = direction * Scalar(m_velocity.random(context.random));
+		point->orientation = m_orientation.random(context.random);
+		point->angularVelocity = m_angularVelocity.random(context.random);
+		point->color = Vector4::one();
+		point->age = 0.0f;
+		point->maxAge = m_age.random(context.random);
+		point->inverseMass = 1.0f / (m_mass.random(context.random));
+		point->size = m_size.random(context.random);
+		point->random = context.random.nextFloat();
+		
+		++point;
 	}
 }
 

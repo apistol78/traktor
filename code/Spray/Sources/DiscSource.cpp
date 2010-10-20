@@ -47,24 +47,24 @@ void DiscSource::emit(
 	Vector4 y = transform * m_normal;
 	Vector4 z = transform * wz;
 
+	Point* point = emitterInstance.addPoints(emitCount);
+
 	while (emitCount-- > 0)
 	{
 		Vector4 direction = (x * Scalar(context.random.nextFloat() * 2.0f - 1.0f) + z * Scalar(context.random.nextFloat() * 2.0f - 1.0f)).normalized();
 
-		Point point;
-
-		point.position = position + direction * Scalar(m_radius.random(context.random));
-		point.velocity = y * Scalar(m_velocity.random(context.random));
-		point.orientation = m_orientation.random(context.random);
-		point.angularVelocity = m_angularVelocity.random(context.random);
-		point.color = Vector4::one();
-		point.age = 0.0f;
-		point.maxAge = m_age.random(context.random);
-		point.inverseMass = 1.0f / (m_mass.random(context.random));
-		point.size = m_size.random(context.random);
-		point.random = context.random.nextFloat();
-
-		emitterInstance.addPoint(point);
+		point->position = position + direction * Scalar(m_radius.random(context.random));
+		point->velocity = y * Scalar(m_velocity.random(context.random));
+		point->orientation = m_orientation.random(context.random);
+		point->angularVelocity = m_angularVelocity.random(context.random);
+		point->color = Vector4::one();
+		point->age = 0.0f;
+		point->maxAge = m_age.random(context.random);
+		point->inverseMass = 1.0f / (m_mass.random(context.random));
+		point->size = m_size.random(context.random);
+		point->random = context.random.nextFloat();
+		
+		++point;
 	}
 }
 
