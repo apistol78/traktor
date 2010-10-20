@@ -51,7 +51,7 @@ void PointSetSource::emit(
 	for (uint32_t i = 0; i < uint32_t(points.size()); ++i)
 	{
 		Vector4 position = transform * (points[i].position + m_offset).xyz1();
-		Vector4 normal = transform * points[i].normal.xyz0();
+		Vector4 normal = transform.rotation() * points[i].normal;
 
 		point->position = position;
 		point->velocity = normal * Scalar(m_velocity.random(context.random));
