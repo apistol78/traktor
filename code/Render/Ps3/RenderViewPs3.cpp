@@ -12,7 +12,8 @@
 #include "Render/Ps3/TileArea.h"
 #include "Render/Ps3/VertexBufferPs3.h"
 
-#define USE_DEBUG_DRAW 0
+#define USE_DEBUG_DRAW		0
+#define USE_TIME_MEASURE	1
 
 namespace traktor
 {
@@ -23,6 +24,8 @@ namespace traktor
 
 const uint32_t c_reportZCullStats0 = 100;
 const uint32_t c_reportZCullStats1 = 101;
+const uint32_t c_reportTimeStamp0 = 102;
+const uint32_t c_reportTimeStamp1 = 103;
 const uint8_t c_frameSyncLabelId = 128;
 const uint8_t c_waitLabelId = 129;
 
@@ -423,8 +426,13 @@ Viewport RenderViewPs3::getViewport()
 bool RenderViewPs3::begin(EyeType eye)
 {
 	// \hack Assume we're rendering Left then Right
-	if (eye == EtLeft)
+	if (eye == EtCyclop || eye == EtLeft)
+	{
 		m_renderSystem->beginRendering();
+#if USE_TIME_MEASURE
+		T_GCM_CALL(cellGcmSetTimeStamp)(gCellGcmCurrentContext, c_reportTimeStamp0);
+#endif
+	}
 
 	uint32_t frameIndex = m_frameCounter % sizeof_array(m_colorOffset);
 
@@ -667,14 +675,19 @@ void RenderViewPs3::end()
 
 void RenderViewPs3::present()
 {
+	T_GCM_CALL(cellGcmSetWriteBackEndLabel)(gCellGcmCurrentContext, c_frameSyncLabelId, m_frameCounter);
+	T_GCM_CALL(cellGcmFlush)(gCellGcmCurrentContext);
+
+#if USE_TIME_MEASURE
+	T_GCM_CALL(cellGcmSetTimeStamp)(gCellGcmCurrentContext, c_reportTimeStamp1);
+#endif
+
 	if (cellGcmSetFlip(gCellGcmCurrentContext, m_frameCounter % sizeof_array(m_colorAddr)) != CELL_OK)
 	{
 		log::error << L"Failed to present, unable to issue flip" << Endl;
 		return;
 	}
 	T_GCM_CALL(cellGcmSetWaitFlip)(gCellGcmCurrentContext);
-	T_GCM_CALL(cellGcmSetWriteBackEndLabel)(gCellGcmCurrentContext, c_frameSyncLabelId, m_frameCounter);
-	T_GCM_CALL(cellGcmFlush)(gCellGcmCurrentContext);
 
 	while (*m_frameSyncLabelData + 1 < m_frameCounter)
 		sys_timer_usleep(100);
@@ -685,6 +698,16 @@ void RenderViewPs3::present()
 
 	// RSX context are reinitialized after each flip thus we need to reset our state cache.
 	m_stateCache.reset();
+
+#if USE_TIME_MEASURE
+	// Read timers to measure performance.
+	uint64_t timeEnd = cellGcmGetTimeStamp(c_reportTimeStamp0);
+	uint64_t timeStart = cellGcmGetTimeStamp(c_reportTimeStamp1);
+	if (timeEnd > timeStart)
+		m_statistics.duration = double(timeEnd - timeStart) / 1e9;
+	else
+		m_statistics.duration = double(timeStart - timeEnd) / 1e9;
+#endif
 
 #if defined(_DEBUG)
 	if (m_patchCounter > 0)
@@ -701,6 +724,11 @@ void RenderViewPs3::pushMarker(const char* const marker)
 void RenderViewPs3::popMarker()
 {
 	cellGcmSetPerfMonPopMarker(gCellGcmCurrentContext);
+}
+
+void RenderViewPs3::getStatistics(RenderViewStatistics& outStatistics) const
+{
+	outStatistics = m_statistics;
 }
 
 void RenderViewPs3::setCurrentRenderState()

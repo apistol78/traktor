@@ -224,6 +224,10 @@ Ref< IProgramCompiler > RenderSystemPs3::createProgramCompiler() const
 #endif
 }
 
+void RenderSystemPs3::getStatistics(RenderSystemStatistics& outStatistics) const
+{
+}
+
 void RenderSystemPs3::beginRendering()
 {
 	while (!m_lock.wait());

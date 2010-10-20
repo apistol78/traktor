@@ -389,6 +389,10 @@ void RenderViewOpenGLES2::popMarker()
 {
 }
 
+void RenderViewOpenGLES2::getStatistics(RenderViewStatistics& outStatistics) const
+{
+}
+
 	}
 }
 

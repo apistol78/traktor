@@ -131,6 +131,42 @@ enum EyeType
 	EtRight,
 };
 
+/*! \brief Render system statistics. */
+struct RenderSystemStatistics
+{
+	// Number of alive resources.
+	uint32_t vertexBuffers;
+	uint32_t simpleTextures;
+	uint32_t cubeTextures;
+	uint32_t volumeTextures;
+	uint32_t renderTargetSets;
+	uint32_t programs;
+
+	RenderSystemStatistics()
+	:	vertexBuffers(0)
+	,	simpleTextures(0)
+	,	cubeTextures(0)
+	,	volumeTextures(0)
+	,	renderTargetSets(0)
+	,	programs(0)
+	{
+	}
+};
+
+/*! \brief Render view statistics. */
+struct RenderViewStatistics
+{
+	// Last frame.
+	uint32_t primitiveCount;
+	double duration;
+
+	RenderViewStatistics()
+	:	primitiveCount(0)
+	,	duration(0.0)
+	{
+	}
+};
+
 /*! \brief Render view port. */
 struct Viewport
 {

@@ -224,6 +224,10 @@ void RenderViewCapture::popMarker()
 	m_renderView->popMarker();
 }
 
+void RenderViewCapture::getStatistics(RenderViewStatistics& outStatistics) const
+{
+	m_renderView->getStatistics(outStatistics);
+}
 
 	}
 }

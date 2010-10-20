@@ -63,6 +63,8 @@ public:
 
 	virtual Ref< IProgramCompiler > createProgramCompiler() const;
 
+	virtual void getStatistics(RenderSystemStatistics& outStatistics) const;
+
 private:
 	Ref< IRenderSystem > m_renderSystem;
 };

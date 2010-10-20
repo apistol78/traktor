@@ -13,6 +13,11 @@ namespace traktor
 		{
 
 const float c_maxDeltaTime = 1.0f / 30.0f;
+#if defined(_PS3)
+const uint32_t c_updateDenom = 2;
+#else
+const uint32_t c_updateDenom = 1;
+#endif
 
 		}
 
@@ -25,6 +30,7 @@ EffectEntity::EffectEntity(resource::IResourceManager* resourceManager, const Tr
 #if !defined(WINCE)
 ,	m_context(float(clock()))
 #endif
+,	m_counter(0)
 ,	m_enable(true)
 {
 }
@@ -65,6 +71,9 @@ Aabb EffectEntity::getWorldBoundingBox() const
 
 void EffectEntity::update(const world::EntityUpdate* update)
 {
+	if ((m_counter++ % c_updateDenom) != 0)
+		return;
+
 	if (!m_effect.valid() || !m_effectInstance)
 	{
 		if (!m_effect.valid())
@@ -79,11 +88,14 @@ void EffectEntity::update(const world::EntityUpdate* update)
 		m_effectInstance = m_effect->createInstance();
 	}
 
-	m_context.deltaTime = update->getDeltaTime();
-	m_context.deltaTime = min(m_context.deltaTime, c_maxDeltaTime);
-
 	if (m_effectInstance)
+	{
+		m_context.deltaTime = update->getDeltaTime();
+		m_context.deltaTime = min(m_context.deltaTime, c_maxDeltaTime);
+		m_context.deltaTime *= c_updateDenom;
+
 		m_effectInstance->update(m_context, m_transform, m_enable);
+	}
 }
 
 	}

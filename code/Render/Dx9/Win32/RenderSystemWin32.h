@@ -74,6 +74,8 @@ public:
 
 	virtual Ref< IProgramCompiler > createProgramCompiler() const;
 
+	virtual void getStatistics(RenderSystemStatistics& outStatistics) const;
+
 	// \name Render view management
 	// \{
 

@@ -15,10 +15,12 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.Emitter", 1, Emitter, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.Emitter", 2, Emitter, ISerializable)
 
 Emitter::Emitter()
 :	m_middleAge(0.2f)
+,	m_cullNearDistance(0.25f)
+,	m_fadeNearRange(1.0f)
 ,	m_warmUp(0.0f)
 {
 }
@@ -45,6 +47,11 @@ bool Emitter::serialize(ISerializer& s)
 	s >> MemberRefArray< Modifier >(L"modifiers", m_modifiers);
 	s >> resource::Member< render::Shader, render::ShaderGraph >(L"shader", m_shader);
 	s >> Member< float >(L"middleAge", m_middleAge);
+	if (s.getVersion() >= 2)
+	{
+		s >> Member< float >(L"cullNearDistance", m_cullNearDistance);
+		s >> Member< float >(L"fadeNearRange", m_fadeNearRange);
+	}
 	if (s.getVersion() >= 1)
 		s >> Member< float >(L"warmUp", m_warmUp);
 	return true;

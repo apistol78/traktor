@@ -416,5 +416,9 @@ void RenderViewDx10::popMarker()
 {
 }
 
+void RenderViewDx10::getStatistics(RenderViewStatistics& outStatistics) const
+{
+}
+
 	}
 }

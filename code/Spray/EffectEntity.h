@@ -64,6 +64,7 @@ private:
 	resource::Proxy< Effect > m_effect;
 	Ref< EffectInstance > m_effectInstance;
 	EmitterUpdateContext m_context;
+	uint32_t m_counter;
 	bool m_enable;
 };
 

@@ -101,5 +101,10 @@ Ref< IProgramCompiler > RenderSystemCapture::createProgramCompiler() const
 	return m_renderSystem->createProgramCompiler();
 }
 
+void RenderSystemCapture::getStatistics(RenderSystemStatistics& outStatistics) const
+{
+	m_renderSystem->getStatistics(outStatistics);
+}
+
 	}
 }

@@ -35,7 +35,7 @@ class T_DLLCLASS EffectEntityRenderer : public world::IEntityRenderer
 	T_RTTI_CLASS;
 
 public:
-	EffectEntityRenderer(render::IRenderSystem* renderSystem, float cullNearDistance, float fadeNearRange);
+	EffectEntityRenderer(render::IRenderSystem* renderSystem);
 
 	virtual const TypeInfoSet getEntityTypes() const;
 

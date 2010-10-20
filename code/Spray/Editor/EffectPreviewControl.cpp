@@ -97,7 +97,7 @@ bool EffectPreviewControl::create(ui::Widget* parent, int style, resource::IReso
 		return false;
 
 	m_renderContext = new render::RenderContext();
-	m_pointRenderer = new PointRenderer(renderSystem, 1.0f, 1.0f);
+	m_pointRenderer = new PointRenderer(renderSystem);
 
 	addButtonDownEventHandler(ui::createMethodHandler(this, &EffectPreviewControl::eventButtonDown));
 	addButtonUpEventHandler(ui::createMethodHandler(this, &EffectPreviewControl::eventButtonUp));

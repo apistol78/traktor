@@ -84,6 +84,8 @@ public:
 
 	virtual void popMarker();
 
+	virtual void getStatistics(RenderViewStatistics& outStatistics) const;
+
 private:
 	Ref< ContextDx10 > m_context;
 	ComRef< IDXGISwapChain > m_d3dSwapChain;

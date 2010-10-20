@@ -541,6 +541,10 @@ Ref< IProgramCompiler > RenderSystemWin32::createProgramCompiler() const
 	return new ProgramCompilerWin32();
 }
 
+void RenderSystemWin32::getStatistics(RenderSystemStatistics& outStatistics) const
+{
+}
+
 void RenderSystemWin32::addRenderView(RenderViewWin32* renderView)
 {
 	m_renderViews.push_back(renderView);

@@ -24,7 +24,7 @@ const uint32_t c_pointCount = 1000;
 #elif defined(_WINCE)
 const uint32_t c_pointCount = 1000;
 #elif defined(_PS3)
-const uint32_t c_pointCount = 3000;
+const uint32_t c_pointCount = 2500;
 #else
 const uint32_t c_pointCount = 4000;
 #endif
@@ -78,10 +78,8 @@ struct Vertex
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.PointRenderer", PointRenderer, Object)
 
-PointRenderer::PointRenderer(render::IRenderSystem* renderSystem, float cullNearDistance, float fadeNearRange)
-:	m_cullNearDistance(cullNearDistance)
-,	m_fadeNearRange(fadeNearRange)
-,	m_currentBuffer(0)
+PointRenderer::PointRenderer(render::IRenderSystem* renderSystem)
+:	m_currentBuffer(0)
 ,	m_vertex(0)
 ,	m_vertexOffset(0)
 {
@@ -138,7 +136,9 @@ void PointRenderer::render(
 	render::Shader* shader,
 	const Plane& cameraPlane,
 	const PointVector& points,
-	float middleAge
+	float middleAge,
+	float cullNearDistance,
+	float fadeNearRange
 )
 {
 	int32_t pointOffset = m_vertexOffset >> 2;
@@ -202,14 +202,14 @@ void PointRenderer::render(
 		const Point& point = points[i];
 
 		float distance = cameraPlane.distance(point.position);
-		if (distance < m_cullNearDistance)
+		if (distance < cullNearDistance)
 			continue;
 
 		// Calculate alpha based on point age and distance from near culling plane.
 		float age = clamp(point.age / point.maxAge, 0.0f, 1.0f);
 		float middle = age - middleAge;
 		float alpha = select(middle, 1.0f - middle / (1.0f - middleAge), age / middleAge);
-		alpha *= min((distance - m_cullNearDistance) / m_fadeNearRange, 1.0f);
+		alpha *= min((distance - cullNearDistance) / fadeNearRange, 1.0f);
 		if (alpha < FUZZY_EPSILON)
 			continue;
 

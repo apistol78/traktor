@@ -63,6 +63,8 @@ public:
 
 	virtual Ref< IProgramCompiler > createProgramCompiler() const;
 
+	virtual void getStatistics(RenderSystemStatistics& outStatistics) const;
+
 private:
 	Ref< ContextOpenGLES2 > m_globalContext;
 #if defined(T_OPENGL_ES2_HAVE_EGL)

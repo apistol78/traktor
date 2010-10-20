@@ -88,6 +88,8 @@ public:
 
 	virtual void popMarker();
 
+	virtual void getStatistics(RenderViewStatistics& outStatistics) const;
+
 private:
 	Ref< IContext > m_globalContext;
 #	if defined(T_OPENGL_ES2_HAVE_EGL)

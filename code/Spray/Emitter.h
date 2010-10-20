@@ -63,6 +63,10 @@ public:
 
 	inline float getMiddleAge() const { return m_middleAge; }
 
+	inline float getCullNearDistance() const { return m_cullNearDistance; }
+
+	inline float getFadeNearRange() const { return m_fadeNearRange; }
+
 	inline float getWarmUp() const { return m_warmUp; }
 
 	virtual bool serialize(ISerializer& s);
@@ -72,6 +76,8 @@ private:
 	RefArray< Modifier > m_modifiers;
 	resource::Proxy< render::Shader > m_shader;
 	float m_middleAge;
+	float m_cullNearDistance;
+	float m_fadeNearRange;
 	float m_warmUp;
 };
 

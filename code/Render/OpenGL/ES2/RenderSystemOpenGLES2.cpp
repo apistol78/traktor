@@ -304,6 +304,10 @@ Ref< IProgramCompiler > RenderSystemOpenGLES2::createProgramCompiler() const
 	return new ProgramCompilerOpenGLES2();
 }
 
+void RenderSystemOpenGLES2::getStatistics(RenderSystemStatistics& outStatistics) const
+{
+}
+
 #if defined(_WIN32)
 
 LRESULT RenderSystemOpenGLES2::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)

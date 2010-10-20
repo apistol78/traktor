@@ -84,6 +84,8 @@ public:
 
 	virtual void popMarker();
 
+	virtual void getStatistics(RenderViewStatistics& outStatistics) const;
+
 private:
 	struct RenderState
 	{
@@ -134,6 +136,7 @@ private:
 	ClearFpPs3 m_clearFp;
 	StateCachePs3 m_stateCache;
 	float T_ALIGN16 m_targetSize[4];
+	RenderViewStatistics m_statistics;
 
 	void setCurrentRenderState();
 
