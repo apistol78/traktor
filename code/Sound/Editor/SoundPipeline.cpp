@@ -10,6 +10,7 @@
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/MathUtils.h"
+#include "Core/Misc/Endian.h"
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyInteger.h"
@@ -57,11 +58,12 @@ void analyzeDeltaRange(const int16_t* samples, uint32_t nsamples, int32_t& outNe
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundPipeline", 10, SoundPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundPipeline", 12, SoundPipeline, editor::IPipeline)
 
 SoundPipeline::SoundPipeline()
 :	m_sampleRate(44100)
 ,	m_enableZLibCompression(true)
+,	m_bigEndian(false)
 {
 }
 
@@ -70,6 +72,7 @@ bool SoundPipeline::create(const editor::IPipelineSettings* settings)
 	m_assetPath = settings->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
 	m_sampleRate = settings->getProperty< PropertyInteger >(L"SoundPipeline.SampleRate", m_sampleRate);
 	m_enableZLibCompression = settings->getProperty< PropertyBoolean >(L"SoundPipeline.EnableZLibCompression", true);
+	m_bigEndian = settings->getProperty< PropertyBoolean >(L"SoundPipeline.BigEndian", false);
 	return true;
 }
 
@@ -219,15 +222,20 @@ bool SoundPipeline::buildOutput(
 			{
 				for (uint32_t j = 0; j < soundBlock.maxChannel; ++j)
 				{
+					int16_t sample = 0;
+
 					if (soundBlock.samples[j])
 					{
 						uint32_t p = (i * soundBlock.samplesCount) / outputSamplesCount;
-						float s = soundBlock.samples[j][i];
-						samples.push_back(quantify(s));
+						float s = soundBlock.samples[j][p];
+						sample = quantify(s);
 						peek = max(peek, s);
 					}
-					else
-						samples.push_back(quantify(0.0f));
+
+					if (m_bigEndian)
+						swap8in16(sample);
+
+					samples.push_back(sample);
 				}
 			}
 

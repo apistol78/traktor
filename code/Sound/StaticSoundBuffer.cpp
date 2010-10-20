@@ -15,12 +15,13 @@ namespace traktor
 		namespace
 		{
 
-uint32_t s_cursorCount = 0;
+const uint32_t c_blockSize = sizeof(float) * (4096 + 16);
 
 struct StaticSoundBufferCursor : public RefCountImpl< ISoundBufferCursor >
 {
 	Ref< const StaticSoundResource > m_resource;
 	Ref< db::Instance > m_resourceInstance;
+	Ref< IStream > m_resourceStream;
 	Ref< IStream > m_stream;
 	float* m_samples[SbcMaxChannelCount];
 	uint32_t m_position;
@@ -30,19 +31,7 @@ struct StaticSoundBufferCursor : public RefCountImpl< ISoundBufferCursor >
 	,	m_resourceInstance(resourceInstance)
 	,	m_position(0)
 	{
-		if (++s_cursorCount > 32)
-			log::warning << L"Very many static sound cursors; leaking?" << Endl;
-	
-		const uint32_t blockSize = sizeof(float) * (4096 + 16);	// 16 samples padding.
-
 		std::memset(m_samples, 0, sizeof(m_samples));
-		for (uint32_t i = 0; i < m_resource->getChannelsCount(); ++i)
-		{
-			m_samples[i] = (float*)Alloc::acquireAlign(blockSize, 16, T_FILE_LINE);
-			T_FATAL_ASSERT_M (m_samples[i], L"Out of memory (Static sound buffer)");
-		}
-		
-		reset();
 	}
 
 	virtual ~StaticSoundBufferCursor()
@@ -52,20 +41,35 @@ struct StaticSoundBufferCursor : public RefCountImpl< ISoundBufferCursor >
 			if (m_samples[i])
 				Alloc::freeAlign(m_samples[i]);
 		}
-		
-		--s_cursorCount;
+	}
+
+	bool create()
+	{
+		for (uint32_t i = 0; i < m_resource->getChannelsCount(); ++i)
+		{
+			m_samples[i] = (float*)Alloc::acquireAlign(c_blockSize, 16, T_FILE_LINE);
+			if (!m_samples[i])
+				return false;
+		}
+
+		m_resourceStream = m_resourceInstance->readData(L"Data");
+		if (!m_resourceStream)
+			return false;
+
+		reset();
+		return true;
 	}
 
 	virtual void reset()
 	{
-		Ref< IStream > stream = m_resourceInstance->readData(L"Data");
-		if (!stream)
-			return;
-				
-		if (m_resource->getFlags() & SrfZLib)
-			m_stream = new compress::InflateStream(stream);
-		else
-			m_stream = stream;
+		if (m_resourceStream)
+		{
+			m_resourceStream->seek(IStream::SeekSet, 0);
+			if (m_resource->getFlags() & SrfZLib)
+				m_stream = new compress::InflateStream(m_resourceStream);
+			else
+				m_stream = m_resourceStream;
+		}
 	}
 };
 
@@ -98,10 +102,14 @@ void StaticSoundBuffer::destroy()
 
 Ref< ISoundBufferCursor > StaticSoundBuffer::createCursor() const
 {
-	return new StaticSoundBufferCursor(
+	Ref< StaticSoundBufferCursor > cursor = new StaticSoundBufferCursor(
 		m_resource,
 		m_resourceInstance
 	);
+	if (cursor->create())
+		return cursor;
+	else
+		return 0;
 }
 
 bool StaticSoundBuffer::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const
@@ -124,16 +132,12 @@ bool StaticSoundBuffer::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBloc
 	if (bytesRead < 0)
 		return false;
 		
-	int16_t* bufferPtr = m_readBuffer.ptr();
+	const int16_t* bufferPtr = m_readBuffer.c_ptr();
 	for (uint32_t i = 0; i < samplesCount; ++i)
 	{
 		for (uint32_t j = 0; j < channelCount; ++j)
 		{
-#if defined(T_BIG_ENDIAN)
-			swap8in16(*bufferPtr);
-#endif
-			ssbc->m_samples[j][i] = float(*bufferPtr / 32767.0f);
-			++bufferPtr;
+			ssbc->m_samples[j][i] = float(*bufferPtr++) / 32767.0f;
 		}
 	}
 	
