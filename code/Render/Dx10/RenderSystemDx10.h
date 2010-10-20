@@ -66,6 +66,8 @@ public:
 
 	virtual Ref< IProgramCompiler > createProgramCompiler() const;
 
+	virtual void getStatistics(RenderSystemStatistics& outStatistics) const;
+
 private:
 	Ref< ContextDx10 > m_context;
 	ComRef< ID3D10Device > m_d3dDevice;

@@ -375,6 +375,10 @@ void RenderViewWin32::popMarker()
 	D3DPERF_EndEvent();
 }
 
+void RenderViewWin32::getStatistics(RenderViewStatistics& outStatistics) const
+{
+}
+
 HRESULT RenderViewWin32::lostDevice()
 {
 	log::debug << L"RenderViewWin32::lostDevice" << Endl;

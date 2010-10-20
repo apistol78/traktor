@@ -413,6 +413,10 @@ Ref< IProgramCompiler > RenderSystemDx10::createProgramCompiler() const
 	return new ProgramCompilerDx10();
 }
 
+void RenderSystemDx10::getStatistics(RenderSystemStatistics& outStatistics) const
+{
+}
+
 LRESULT RenderSystemDx10::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	RenderSystemDx10* renderSystem = reinterpret_cast< RenderSystemDx10* >(GetWindowLongPtr(hWnd, 0));

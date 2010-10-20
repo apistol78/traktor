@@ -76,6 +76,8 @@ public:
 
 	virtual void popMarker();
 
+	virtual void getStatistics(RenderViewStatistics& outStatistics) const;
+
 private:
 	Ref< IRenderSystem > m_renderSystem;
 	Ref< IRenderView > m_renderView;

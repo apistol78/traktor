@@ -468,5 +468,9 @@ void RenderViewOpenGL::popMarker()
 {
 }
 
+void RenderViewOpenGL::getStatistics(RenderViewStatistics& outStatistics) const
+{
+}
+
 	}
 }

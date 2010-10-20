@@ -2,8 +2,11 @@
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Memory/Alloc.h"
+#include "Core/Memory/BlockAllocator.h"
 #include "Core/Misc/Align.h"
 #include "Core/Misc/Endian.h"
+#include "Core/Thread/Acquire.h"
+#include "Core/Thread/Semaphore.h"
 #include "Database/Instance.h"
 #include "Sound/StaticSoundBuffer.h"
 #include "Sound/StaticSoundResource.h"
@@ -16,6 +19,45 @@ namespace traktor
 		{
 
 const uint32_t c_blockSize = sizeof(float) * (4096 + 16);
+const uint32_t c_blockCount = 64;
+
+class StaticBufferHeap
+{
+public:
+	static StaticBufferHeap& getInstance()
+	{
+		static StaticBufferHeap s_instance;
+		return s_instance;
+	}
+
+	void* alloc()
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+		return m_blockAllocator.alloc();
+	}
+
+	void free(void* ptr)
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+		m_blockAllocator.free(ptr);
+	}
+
+private:
+	void* m_block;
+	BlockAllocator m_blockAllocator;
+	Semaphore m_lock;
+
+	StaticBufferHeap()
+	:	m_block(Alloc::acquireAlign(c_blockSize * c_blockCount, 16, T_FILE_LINE))
+	,	m_blockAllocator(m_block, c_blockCount, c_blockSize)
+	{
+	}
+
+	~StaticBufferHeap()
+	{
+		Alloc::freeAlign(m_block);
+	}
+};
 
 struct StaticSoundBufferCursor : public RefCountImpl< ISoundBufferCursor >
 {
@@ -39,7 +81,7 @@ struct StaticSoundBufferCursor : public RefCountImpl< ISoundBufferCursor >
 		for (uint32_t i = 0; i < sizeof_array(m_samples); ++i)
 		{
 			if (m_samples[i])
-				Alloc::freeAlign(m_samples[i]);
+				StaticBufferHeap::getInstance().free(m_samples[i]);
 		}
 	}
 
@@ -47,7 +89,7 @@ struct StaticSoundBufferCursor : public RefCountImpl< ISoundBufferCursor >
 	{
 		for (uint32_t i = 0; i < m_resource->getChannelsCount(); ++i)
 		{
-			m_samples[i] = (float*)Alloc::acquireAlign(c_blockSize, 16, T_FILE_LINE);
+			m_samples[i] = (float*)StaticBufferHeap::getInstance().alloc();
 			if (!m_samples[i])
 				return false;
 		}

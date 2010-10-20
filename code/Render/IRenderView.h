@@ -126,11 +126,19 @@ public:
 	/*! \brief Swap back and front buffers. */
 	virtual void present() = 0;
 
+	/*! \name Statistics. */
+	//@{
+
 	/*! \brief Write push debug marker to command buffer. */
 	virtual void pushMarker(const char* const marker) = 0;
 
 	/*! \brief Write pop debug marker to command buffer. */
 	virtual void popMarker() = 0;
+
+	/*! \brief Get render view statistics. */
+	virtual void getStatistics(RenderViewStatistics& outStatistics) const = 0;
+
+	//@}
 };
 
 	}

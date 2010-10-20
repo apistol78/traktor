@@ -735,6 +735,10 @@ Ref< IProgramCompiler > RenderSystemOpenGL::createProgramCompiler() const
 	return new ProgramCompilerOpenGL();
 }
 
+void RenderSystemOpenGL::getStatistics(RenderSystemStatistics& outStatistics) const
+{
+}
+
 #if defined(_WIN32)
 
 LRESULT RenderSystemOpenGL::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)

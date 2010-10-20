@@ -151,6 +151,13 @@ public:
 	virtual Ref< IProgramCompiler > createProgramCompiler() const = 0;
 
 	//@}
+
+	/*! \name Statistics. */
+	//@{
+
+	virtual void getStatistics(RenderSystemStatistics& outStatistics) const = 0;
+
+	//@}
 };
 
 	}

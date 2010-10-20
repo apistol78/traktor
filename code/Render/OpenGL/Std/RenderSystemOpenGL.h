@@ -62,6 +62,8 @@ public:
 
 	virtual Ref< IProgramCompiler > createProgramCompiler() const;
 
+	virtual void getStatistics(RenderSystemStatistics& outStatistics) const;
+
 private:
 	friend class RenderViewOpenGL;
 

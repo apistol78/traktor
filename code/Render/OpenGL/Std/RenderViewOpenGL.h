@@ -106,6 +106,8 @@ public:
 
 	virtual void popMarker();
 
+	virtual void getStatistics(RenderViewStatistics& outStatistics) const;
+
 private:
 	Ref< RenderSystemOpenGL > m_renderSystem;
 	Ref< ContextOpenGL > m_context;

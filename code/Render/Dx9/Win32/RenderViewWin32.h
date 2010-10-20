@@ -88,6 +88,8 @@ public:
 
 	virtual void popMarker();
 
+	virtual void getStatistics(RenderViewStatistics& outStatistics) const;
+
 	// \name Swap-chain management
 	// \{
 

@@ -32,7 +32,7 @@ const uint32_t c_maxEmitPerUpdate = 4;
 const uint32_t c_maxEmitSingleShot = 10;
 #elif defined(_PS3)
 const uint32_t c_maxEmitPerUpdate = 4;
-const uint32_t c_maxEmitSingleShot = 1000;
+const uint32_t c_maxEmitSingleShot = 500;
 #else
 const uint32_t c_maxEmitPerUpdate = 8;
 const uint32_t c_maxEmitSingleShot = 3000;
@@ -92,6 +92,8 @@ EmitterInstance::EmitterInstance(Emitter* emitter)
 ,	m_warm(false)
 ,	m_count(std::rand() & 15)
 {
+	// Pre-allocate points; estimate average required.
+	m_points.reserve(std::max(c_maxEmitPerUpdate * 30 * 10, c_maxEmitSingleShot));
 }
 
 EmitterInstance::~EmitterInstance()
@@ -246,7 +248,9 @@ void EmitterInstance::render(PointRenderer* pointRenderer, const Plane& cameraPl
 		shader,
 		cameraPlane,
 		m_points,
-		m_emitter->getMiddleAge()
+		m_emitter->getMiddleAge(),
+		m_emitter->getCullNearDistance(),
+		m_emitter->getFadeNearRange()
 	);
 }
 

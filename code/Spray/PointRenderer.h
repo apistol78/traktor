@@ -49,7 +49,7 @@ class T_DLLCLASS PointRenderer : public Object
 	T_RTTI_CLASS;
 
 public:
-	PointRenderer(render::IRenderSystem* renderSystem, float cullNearDistance, float fadeNearRange);
+	PointRenderer(render::IRenderSystem* renderSystem);
 
 	virtual ~PointRenderer();
 
@@ -59,7 +59,9 @@ public:
 		render::Shader* shader,
 		const Plane& cameraPlane,
 		const PointVector& points,
-		float middleAge
+		float middleAge,
+		float cullNearDistance,
+		float fadeNearRange
 	);
 
 	void flush(
@@ -78,8 +80,6 @@ private:
 		float distance;
 	};
 
-	float m_cullNearDistance;
-	float m_fadeNearRange;
 	Ref< render::VertexBuffer > m_vertexBuffer[BufferCount];
 	Ref< render::IndexBuffer > m_indexBuffer;
 	uint32_t m_currentBuffer;
