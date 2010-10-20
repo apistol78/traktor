@@ -101,6 +101,8 @@ void PathTesselator::tesselateQuadraticSegment(const SubPath& subPath, const Sub
 	int steps = int(min(distance, c_maxDistance) * c_maxSteps / c_maxDistance);
 	if (steps <= 0)
 		steps = 1;
+		
+	outSegments.reserve(outSegments.size() + steps);
 
 	for (int i = 0; i < steps; ++i)
 	{
