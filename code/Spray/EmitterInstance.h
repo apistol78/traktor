@@ -52,13 +52,19 @@ public:
 
 	inline void reservePoints(uint32_t npoints) { m_points.reserve(m_points.size() + npoints); }
 
-	inline void addPoint(const Point& point) { m_points.push_back(point); m_emitted++; }
-
 	inline const PointVector& getPoints() const { return m_points; }
 
 	inline uint32_t getEmitted() const { return m_emitted; }
 
 	inline const Aabb& getBoundingBox() const { return m_boundingBox; }
+
+	inline Point* addPoints(uint32_t points)
+	{
+		uint32_t offset = m_points.size();
+		m_points.resize(offset + points);
+		m_emitted += points;
+		return &m_points[offset];
+	}
 
 private:
 	Ref< Emitter > m_emitter;

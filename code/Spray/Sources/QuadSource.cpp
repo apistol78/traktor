@@ -43,25 +43,25 @@ void QuadSource::emit(
 	Vector4 axis2 = transform * m_axis2;
 	Vector4 normal = transform * m_normal;
 
+	Point* point = emitterInstance.addPoints(emitCount);
+
 	while (emitCount-- > 0)
 	{
 		Scalar u = Scalar(float(context.random.nextDouble()) * 2.0f - 1.0f);
 		Scalar v = Scalar(float(context.random.nextDouble()) * 2.0f - 1.0f);
 
-		Point point;
-
-		point.position = center + u * axis1 + v * axis2;
-		point.velocity = normal * Scalar(m_velocity.random(context.random));
-		point.orientation = m_orientation.random(context.random);
-		point.angularVelocity = m_angularVelocity.random(context.random);
-		point.color = Vector4::one();
-		point.age = 0.0f;
-		point.maxAge = m_age.random(context.random);
-		point.inverseMass = 1.0f / (m_mass.random(context.random));
-		point.size = m_size.random(context.random);
-		point.random = context.random.nextFloat();
-
-		emitterInstance.addPoint(point);
+		point->position = center + u * axis1 + v * axis2;
+		point->velocity = normal * Scalar(m_velocity.random(context.random));
+		point->orientation = m_orientation.random(context.random);
+		point->angularVelocity = m_angularVelocity.random(context.random);
+		point->color = Vector4::one();
+		point->age = 0.0f;
+		point->maxAge = m_age.random(context.random);
+		point->inverseMass = 1.0f / (m_mass.random(context.random));
+		point->size = m_size.random(context.random);
+		point->random = context.random.nextFloat();
+		
+		++point;
 	}
 }
 
