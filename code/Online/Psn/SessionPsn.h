@@ -1,5 +1,5 @@
-#ifndef traktor_online_SessionLocal_H
-#define traktor_online_SessionLocal_H
+#ifndef traktor_online_SessionPsn_H
+#define traktor_online_SessionPsn_H
 
 #include "Online/ISession.h"
 
@@ -62,4 +62,4 @@ private:
 	}
 }
 
-#endif	// traktor_online_SessionLocal_H
+#endif	// traktor_online_SessionPsn_H
