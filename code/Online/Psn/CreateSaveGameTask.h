@@ -23,6 +23,7 @@ public:
 
 private:
 	std::vector< uint8_t > m_saveBuffer;
+	int m_spaceNeeded;
 	bool m_saveBufferPending;
 
 	static void callbackSaveStat(CellSaveDataCBResult* cbResult, CellSaveDataStatGet* get, CellSaveDataStatSet* set);
