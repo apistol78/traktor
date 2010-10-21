@@ -453,12 +453,21 @@ private:
 };
 
 /*! \brief Build matrix. */
-class T_DLLCLASS Matrix : public ImmutableNode
+class T_DLLCLASS MatrixIn : public ImmutableNode
 {
 	T_RTTI_CLASS;
 
 public:
-	Matrix();
+	MatrixIn();
+};
+
+/*! \brief Decompose matrix. */
+class T_DLLCLASS MatrixOut : public ImmutableNode
+{
+	T_RTTI_CLASS;
+
+public:
+	MatrixOut();
 };
 
 /*! \brief Maximum of two values. */

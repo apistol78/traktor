@@ -769,13 +769,25 @@ bool Log::serialize(ISerializer& s)
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Matrix", 0, Matrix, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.MatrixIn", 0, MatrixIn, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Matrix_i[] = { { L"XAxis", true }, { L"YAxis", true }, { L"ZAxis", true }, { L"Translate", true }, 0 };
-const ImmutableNode::OutputPinDesc c_Matrix_o[] = { L"Output", 0 };
+const ImmutableNode::InputPinDesc c_MatrixIn_i[] = { { L"XAxis", true }, { L"YAxis", true }, { L"ZAxis", true }, { L"Translate", true }, 0 };
+const ImmutableNode::OutputPinDesc c_MatrixIn_o[] = { L"Output", 0 };
 
-Matrix::Matrix()
-:	ImmutableNode(c_Matrix_i, c_Matrix_o)
+MatrixIn::MatrixIn()
+:	ImmutableNode(c_MatrixIn_i, c_MatrixIn_o)
+{
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.MatrixOut", 0, MatrixOut, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_MatrixOut_i[] = { { L"Input", false }, 0 };
+const ImmutableNode::OutputPinDesc c_MatrixOut_o[] = { L"XAxis", L"YAxis", L"ZAxis", L"Translate", 0 };
+
+MatrixOut::MatrixOut()
+:	ImmutableNode(c_MatrixOut_i, c_MatrixOut_o)
 {
 }
 

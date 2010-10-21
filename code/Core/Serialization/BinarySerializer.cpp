@@ -8,6 +8,7 @@
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/AutoPtr.h"
+#include "Core/Misc/Endian.h"
 #include "Core/Misc/TString.h"
 #include "Core/Serialization/BinarySerializer.h"
 #include "Core/Serialization/ISerializable.h"
@@ -21,12 +22,14 @@ namespace traktor
 
 #if defined(T_LITTLE_ENDIAN)
 
-template < typename T > bool read_primitive(const Ref< IStream >& stream, T& value)
+template < typename T >
+bool read_primitive(const Ref< IStream >& stream, T& value)
 {
 	return stream->read(&value, sizeof(T)) == sizeof(T);
 }
 
-template < typename T > bool write_primitive(const Ref< IStream >& stream, T v)
+template < typename T >
+bool write_primitive(const Ref< IStream >& stream, T v)
 {
 	return stream->write(&v, sizeof(T)) == sizeof(T);
 }
@@ -43,31 +46,54 @@ inline bool write_block(const Ref< IStream >& stream, const void* block, int cou
 
 #elif defined(T_BIG_ENDIAN)
 
-template < typename T > bool read_primitive(const Ref< IStream >& stream, T& value)
+template < typename T, int Size >
+struct ReadPrimitive
 {
-	switch (sizeof(T))
+	static bool read(IStream* stream, T& t)
 	{
-	case 1:
+		if (stream->read(&t, sizeof(t)) == sizeof(t))
 		{
-			if (stream->read(&value, sizeof(T)) == sizeof(T))
-				return true;
+			swap8in32(t);
+			return true;
 		}
-	default:
-		{
-			std::vector< uint8_t > tmp(sizeof(T));
-			if (stream->read(&tmp[0], sizeof(T)) == sizeof(T))
-			{
-				std::reverse(tmp.begin(), tmp.end());
-				value = *(T*)&tmp[0];
-				return true;
-			}
-			break;
-		}
+		else
+			return false;
 	}
-	return false;
+};
+
+template < typename T >
+struct ReadPrimitive < T, 1 >
+{
+	static bool read(IStream* stream, T& t)
+	{
+		return bool(stream->read(&t, 1) == 1);
+	}
+};
+
+template < typename T >
+struct ReadPrimitive < T, 8 >
+{
+	static bool read(IStream* stream, T& t)
+	{
+		if (stream->read(&t, 8) == 8)
+		{
+			swap8in32(*(((uint32_t*)&t) + 0));
+			swap8in32(*(((uint32_t*)&t) + 1));
+			return true;
+		}
+		else
+			return false;
+	}
+};
+
+template < typename T >
+bool read_primitive(const Ref< IStream >& stream, T& value)
+{
+	return ReadPrimitive< T, sizeof(T) >::read(stream, value);
 }
 
-template < typename T > bool write_primitive(const Ref< IStream >& stream, T v)
+template < typename T >
+bool write_primitive(const Ref< IStream >& stream, T v)
 {
 	switch (sizeof(T))
 	{

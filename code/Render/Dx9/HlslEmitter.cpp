@@ -546,7 +546,7 @@ bool emitLog(HlslContext& cx, Log* node)
 	return true;
 }
 
-bool emitMatrix(HlslContext& cx, Matrix* node)
+bool emitMatrixIn(HlslContext& cx, MatrixIn* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
 	HlslVariable* xaxis = cx.emitInput(node, L"XAxis");
@@ -1494,7 +1494,7 @@ HlslEmitter::HlslEmitter()
 	m_emitters[&type_of< Length >()] = new EmitterCast< Length >(emitLength);
 	m_emitters[&type_of< Lerp >()] = new EmitterCast< Lerp >(emitLerp);
 	m_emitters[&type_of< Log >()] = new EmitterCast< Log >(emitLog);
-	m_emitters[&type_of< Matrix >()] = new EmitterCast< Matrix >(emitMatrix);
+	m_emitters[&type_of< MatrixIn >()] = new EmitterCast< MatrixIn >(emitMatrixIn);
 	m_emitters[&type_of< Max >()] = new EmitterCast< Max >(emitMax);
 	m_emitters[&type_of< Min >()] = new EmitterCast< Min >(emitMin);
 	m_emitters[&type_of< MixIn >()] = new EmitterCast< MixIn >(emitMixIn);

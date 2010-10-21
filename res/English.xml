@@ -1450,8 +1450,12 @@
       <second>Log</second>
     </item>
     <item>
-      <first>SHADERGRAPH_NODE_MATRIX</first>
-      <second>Matrix</second>
+      <first>SHADERGRAPH_NODE_MATRIXIN</first>
+      <second>Matrix in</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_MATRIXOUT</first>
+      <second>Matrix out</second>
     </item>
     <item>
       <first>SHADERGRAPH_NODE_MAX</first>

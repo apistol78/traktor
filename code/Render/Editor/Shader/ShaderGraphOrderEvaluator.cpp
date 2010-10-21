@@ -88,8 +88,8 @@ int ShaderGraphOrderEvaluator::evaluate(const Node* node) const
 		order = nodeMulOrDiv(node);
 	else if (is_a< MulAdd >(node))
 		order = nodeMulAdd(node);
-	else if (is_a< Matrix >(node))
-		order = nodeMatrix(node);
+	else if (is_a< MatrixIn >(node))
+		order = nodeMatrixIn(node);
 	else if (is_a< Lerp >(node))
 		order = nodeLerp(node);
 	else if (is_a< VertexInput >(node))
@@ -179,7 +179,7 @@ int ShaderGraphOrderEvaluator::nodeIndexedUniform(const Node* node) const
 	return OrConstant;
 }
 
-int ShaderGraphOrderEvaluator::nodeMatrix(const Node* node) const
+int ShaderGraphOrderEvaluator::nodeMatrixIn(const Node* node) const
 {
 	int order1 = evaluate(node, L"XAxis");
 	int order2 = evaluate(node, L"YAxis");
