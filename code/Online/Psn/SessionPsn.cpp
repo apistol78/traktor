@@ -41,11 +41,13 @@ const SceNpCommunicationPassphrase c_passphrase =
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.online.SessionPsn", SessionPsn, ISession)
 
-SessionPsn::SessionPsn(SaveGameQueue* saveGameQueue, UserPsn* user)
+SessionPsn::SessionPsn(SaveGameQueue* saveGameQueue, UserPsn* user,	SceNpTrophyContext trophyContext, SceNpTrophyHandle trophyHandle)
 :	m_saveGameQueue(saveGameQueue)
 ,	m_user(user)
 ,	m_connected(false)
 ,	m_titleContextId(0)
+,	m_trophyContext(trophyContext)
+,	m_trophyHandle(trophyHandle)
 {
 }
 
@@ -73,9 +75,46 @@ Ref< IUser > SessionPsn::getUser()
 	return m_user;
 }
 
+
+SceNpTrophyId SessionPsn::getTrophyId(const std::wstring& achievementId)
+{
+	std::wstring achivements[] = {
+		L"ACHIEVEMENT_PIXELATE",
+		L"ACHIEVEMENT_X16",
+		L"ACHIEVEMENT_X32",
+		L"ACHIEVEMENT_REPLAY",
+		L"ACHIEVEMENT_SCORE_500",
+		L"ACHIEVEMENT_SCORE_1000",
+		L"ACHIEVEMENT_TOTALSCORE_10000",
+		L"ACHIEVEMENT_TOTALSCORE_25000",
+		L"ACHIEVEMENT_TOTALSCORE_50000"
+	};
+	for (SceNpTrophyId i = 0; i < 9; i++)
+	{
+		if (achievementId == achivements[i])
+			return i;
+	}
+	return SCE_NP_TROPHY_INVALID_TROPHY_ID;
+}
+
 bool SessionPsn::rewardAchievement(const std::wstring& achievementId)
 {
-	return true;
+	SceNpTrophyId trophyId = getTrophyId(achievementId);
+	if (trophyId != SCE_NP_TROPHY_INVALID_TROPHY_ID)
+	{
+		SceNpTrophyId platinumId = SCE_NP_TROPHY_INVALID_TROPHY_ID;
+		int32_t err = sceNpTrophyUnlockTrophy(m_trophyContext, m_trophyHandle, trophyId, &platinumId);
+		if (err < 0) 
+		{
+			return false;
+		}
+		if (platinumId != SCE_NP_TROPHY_INVALID_TROPHY_ID) 
+		{
+			// Processing to be carried out when the platinum trophy is unlocked
+		}
+		return true;
+	}
+	return false;
 }
 
 bool SessionPsn::withdrawAchievement(const std::wstring& achievementId)
@@ -85,6 +124,19 @@ bool SessionPsn::withdrawAchievement(const std::wstring& achievementId)
 
 bool SessionPsn::haveAchievement(const std::wstring& achievementId)
 {
+	SceNpTrophyId trophyId = getTrophyId(achievementId);
+	if (trophyId != SCE_NP_TROPHY_INVALID_TROPHY_ID)
+	{
+		SceNpTrophyDetails details;
+		SceNpTrophyData data;
+		memset(&details, 0x00, sizeof(details));
+		memset(&data, 0x00, sizeof(data));
+		int32_t err = sceNpTrophyGetTrophyInfo(m_trophyContext, m_trophyHandle, trophyId, &details, &data);
+		if (err < 0) {
+			return false;
+		}
+		return data.unlocked;
+	}
 	return false;
 }
 

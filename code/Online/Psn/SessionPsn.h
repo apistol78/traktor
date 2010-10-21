@@ -24,7 +24,7 @@ class T_DLLCLASS SessionPsn : public ISession
 	T_RTTI_CLASS;
 
 public:
-	SessionPsn(SaveGameQueue* saveGameQueue, UserPsn* user);
+	SessionPsn(SaveGameQueue* saveGameQueue, UserPsn* user,	SceNpTrophyContext trophyContext, SceNpTrophyHandle trophyHandle);
 
 	bool create();
 
@@ -53,10 +53,15 @@ public:
 	void update();
 
 private:
+	SceNpTrophyId getTrophyId(const std::wstring& achievementId);
+
+private:
 	Ref< SaveGameQueue > m_saveGameQueue;
 	Ref< UserPsn > m_user;
 	bool m_connected;
 	int32_t m_titleContextId;
+	SceNpTrophyContext m_trophyContext;
+	SceNpTrophyHandle m_trophyHandle;
 };
 
 	}
