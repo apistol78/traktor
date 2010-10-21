@@ -29,15 +29,10 @@ struct InstanceMeshData
 
 inline InstanceMeshData packInstanceMeshData(const Transform& transform, float userParameter)
 {
-	InstanceMeshData imd;
+	InstanceMeshData T_MATH_ALIGN16 imd;
 
-	imd.rotation[0] = transform.rotation().x;
-	imd.rotation[1] = transform.rotation().y;
-	imd.rotation[2] = transform.rotation().z;
-	imd.rotation[3] = transform.rotation().w;
-	imd.translation[0] = transform.translation().x();
-	imd.translation[1] = transform.translation().y();
-	imd.translation[2] = transform.translation().z();
+	transform.rotation().e.storeAligned(imd.rotation);
+	transform.translation().storeAligned(imd.translation);
 	imd.parameter = userParameter;
 
 	return imd;

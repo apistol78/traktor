@@ -523,13 +523,20 @@ bool BinarySerializer::operator >> (const Member< Quaternion >& m)
 	bool result = true;
 	if (m_direction == SdRead)
 	{
-		for (int i = 0; i < 4; ++i)
-			result &= read_primitive< float >(m_stream, m->e[i]);
+		float x, y, z, w;
+		result &= read_primitive< float >(m_stream, x);
+		result &= read_primitive< float >(m_stream, y);
+		result &= read_primitive< float >(m_stream, z);
+		result &= read_primitive< float >(m_stream, w);
+		if (result)
+			m->e.set(x, y, z, w);
 	}
 	else
 	{
-		for (int i = 0; i < 4; ++i)
-			result &= write_primitive< float >(m_stream, m->e[i]);
+		result &= write_primitive< float >(m_stream, m->e.x());
+		result &= write_primitive< float >(m_stream, m->e.y());
+		result &= write_primitive< float >(m_stream, m->e.z());
+		result &= write_primitive< float >(m_stream, m->e.w());
 	}
 	return result;
 }

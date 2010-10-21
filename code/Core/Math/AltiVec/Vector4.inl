@@ -236,30 +236,12 @@ T_MATH_INLINE Vector4& Vector4::operator /= (const Vector4& v)
 
 T_MATH_INLINE bool Vector4::operator == (const Vector4& v) const
 {
-	Vector4 diff = (*this - v).absolute();
-
-	float T_ALIGN16 tmp[4];
-	vec_st(diff.m_data, 0, tmp);
-
-	return
-		tmp[0] <= 1e-3f &&
-		tmp[1] <= 1e-3f &&
-		tmp[2] <= 1e-3f &&
-		tmp[3] <= 1e-3f;
+	return vec_all_eq(m_data, v.m_data) != 0;
 }
 
 T_MATH_INLINE bool Vector4::operator != (const Vector4& v) const
 {
-	Vector4 diff = (*this - v).absolute();
-
-	float T_ALIGN16 tmp[4];
-	vec_st(diff.m_data, 0, tmp);
-
-	return
-		tmp[0] > 1e-3f ||
-		tmp[1] > 1e-3f ||
-		tmp[2] > 1e-3f ||
-		tmp[3] > 1e-3f;
+	return vec_all_eq(m_data, v.m_data) == 0;
 }
 
 T_MATH_INLINE Scalar Vector4::operator [] (int index) const

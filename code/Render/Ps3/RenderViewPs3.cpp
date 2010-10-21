@@ -27,7 +27,6 @@ const uint32_t c_reportZCullStats1 = 101;
 const uint32_t c_reportTimeStamp0 = 102;
 const uint32_t c_reportTimeStamp1 = 103;
 const uint8_t c_frameSyncLabelId = 128;
-const uint8_t c_waitLabelId = 129;
 
 uint32_t incrementLabel(uint32_t label)
 {
@@ -82,9 +81,6 @@ bool RenderViewPs3::create(const RenderViewDefaultDesc& desc)
 	// Create frame synchronization labels.
 	m_frameSyncLabelData = cellGcmGetLabelAddress(c_frameSyncLabelId);
 	*m_frameSyncLabelData = m_frameCounter;
-
-	volatile uint32_t* waitLabelData = cellGcmGetLabelAddress(c_waitLabelId);
-	*waitLabelData = 0;
 
 	return true;
 }
@@ -675,29 +671,30 @@ void RenderViewPs3::end()
 
 void RenderViewPs3::present()
 {
-	T_GCM_CALL(cellGcmSetWriteBackEndLabel)(gCellGcmCurrentContext, c_frameSyncLabelId, m_frameCounter);
-	T_GCM_CALL(cellGcmFlush)(gCellGcmCurrentContext);
+	static bool firstFlip = true;
+	if (!firstFlip)
+	{
+		while (cellGcmGetFlipStatus() != 0)
+			sys_timer_usleep(100);
+	}
+	cellGcmResetFlipStatus();
+	firstFlip = false;
+	
+	cellGcmSetFlip(gCellGcmCurrentContext, m_frameCounter % sizeof_array(m_colorAddr));
+	cellGcmFlush(gCellGcmCurrentContext);
 
 #if USE_TIME_MEASURE
 	T_GCM_CALL(cellGcmSetTimeStamp)(gCellGcmCurrentContext, c_reportTimeStamp1);
 #endif
 
-	if (cellGcmSetFlip(gCellGcmCurrentContext, m_frameCounter % sizeof_array(m_colorAddr)) != CELL_OK)
-	{
-		log::error << L"Failed to present, unable to issue flip" << Endl;
-		return;
-	}
-	T_GCM_CALL(cellGcmSetWaitFlip)(gCellGcmCurrentContext);
+	// RSX context are reinitialized after each flip thus we need to reset our state cache.
+	m_stateCache.reset();
 
-	while (*m_frameSyncLabelData + 1 < m_frameCounter)
-		sys_timer_usleep(100);
+	cellGcmSetWaitFlip(gCellGcmCurrentContext);
 
 	m_frameCounter = incrementLabel(m_frameCounter);
 
 	m_renderSystem->endRendering();
-
-	// RSX context are reinitialized after each flip thus we need to reset our state cache.
-	m_stateCache.reset();
 
 #if USE_TIME_MEASURE
 	// Read timers to measure performance.

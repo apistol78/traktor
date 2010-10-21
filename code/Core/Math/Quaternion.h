@@ -23,11 +23,7 @@ namespace traktor
 class T_MATH_ALIGN16 T_DLLCLASS Quaternion
 {
 public:
-	union
-	{
-		float e[4];
-		struct { float x, y, z, w; };
-	};
+	Vector4 e;
 
 	T_MATH_INLINE Quaternion();
 
@@ -35,7 +31,7 @@ public:
 
 	explicit T_MATH_INLINE Quaternion(float x, float y, float z, float w);
 
-	explicit T_MATH_INLINE Quaternion(const Vector4& axisAngle);
+	explicit T_MATH_INLINE Quaternion(const Vector4& axis, float angle);
 
 	explicit T_MATH_INLINE Quaternion(const Matrix44& matrixOrientation);
 
@@ -70,6 +66,9 @@ public:
 	friend T_MATH_INLINE T_DLLCLASS Quaternion operator * (const Quaternion& l, const Quaternion& r);
 
 	friend T_MATH_INLINE T_DLLCLASS Vector4 operator * (const Quaternion& q, const Vector4& v);
+
+private:
+	explicit T_MATH_INLINE Quaternion(const Vector4& e);
 };
 
 T_MATH_INLINE T_DLLCLASS Quaternion lerp(const Quaternion& a, const Quaternion& b, float c);
@@ -79,7 +78,7 @@ T_MATH_INLINE T_DLLCLASS Quaternion slerp(const Quaternion& a, const Quaternion&
 }
 
 #if defined(T_MATH_USE_INLINE)
-#include "Core/Math/Std/Quaternion.inl"
+#	include "Core/Math/Std/Quaternion.inl"
 #endif
 
 #endif	// traktor_Quaternion_H

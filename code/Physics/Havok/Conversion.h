@@ -34,7 +34,7 @@ T_FORCE_INLINE Quaternion fromHkQuaternion(const hkQuaternion& q)
 /*! \brief Convert to Havok quaternion. */
 T_FORCE_INLINE hkQuaternion toHkQuaternion(const Quaternion& q)
 {
-	return hkQuaternion(q.x, q.y, q.z, q.w);
+	return hkQuaternion(q.e.x(), q.e.y(), q.e.z(), q.e.w());
 }
 
 /*! \brief Convert from Havok matrix. */

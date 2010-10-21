@@ -106,6 +106,15 @@ void CaseMath::run()
 	CASE_ASSERT_EQUAL(Quaternion(Vector4(1.0f, 0.0f, 0.0f), Vector4(0.0f, 0.0f, 1.0f)).toMatrix44(), rotateY(PI / 2.0f));
 	CASE_ASSERT_EQUAL(Quaternion(Vector4(0.0f, 1.0f, 0.0f), Vector4(0.0f, 0.0f, 1.0f)).toMatrix44(), rotateX(PI / 2.0f));
 
+
+	{
+		Quaternion Q(Vector4(1.0f, 0.0f, 0.0f), Vector4(0.0f, 1.0f, 0.0f));
+		Vector4 V(1.0f, 0.0f, 0.0f);
+		Vector4 Vr = Q * V;
+
+		CASE_ASSERT_COMPARE(Vr, Vector4(0.0f, 1.0f, 0.0f), compareEqual);
+	}
+
 	CASE_ASSERT_COMPARE(Quaternion(Vector4(1.0f, 0.0f, 0.0f), Vector4(0.0f, 1.0f, 0.0f)) * Vector4(1.0f, 0.0f, 0.0f), Vector4(0.0f, 1.0f, 0.0f), compareEqual);
 	CASE_ASSERT_COMPARE(Quaternion(Vector4(1.0f, 0.0f, 0.0f), Vector4(0.0f, 0.0f, 1.0f)) * Vector4(1.0f, 0.0f, 0.0f), Vector4(0.0f, 0.0f, 1.0f), compareEqual);
 	CASE_ASSERT_COMPARE(Quaternion(Vector4(0.0f, 1.0f, 0.0f), Vector4(0.0f, 0.0f, 1.0f)) * Vector4(0.0f, 1.0f, 0.0f), Vector4(0.0f, 0.0f, 1.0f), compareEqual);

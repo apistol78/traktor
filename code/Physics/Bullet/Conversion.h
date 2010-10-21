@@ -41,7 +41,7 @@ inline Quaternion fromBtQuaternion(const btQuaternion& q)
 /*! \brief Convert to Bullet quaternion. */
 inline btQuaternion toBtQuaternion(const Quaternion& q)
 {
-	return btQuaternion(q.x, q.y, q.z, q.w);
+	return btQuaternion(q.e.x(), q.e.y(), q.e.z(), q.e.w());
 }
 
 /*! \brief Convert from Bullet matrix. */

@@ -79,8 +79,8 @@ void Camera::rotate(float dy, float dx)
 	switch (m_lookMode)
 	{
 	case LmFree:
-		m_target.orientation *= Quaternion(Vector4(0.0f, dx, 0.0f, 0.0f));
-		m_target.orientation *= Quaternion(m_target.orientation.inverse() * Vector4(dy, 0.0f, 0.0f, 0.0f));
+		m_target.orientation *= Quaternion(Vector4(0.0f, 1.0f, 0.0f, 0.0f), dx);
+		m_target.orientation *= Quaternion(m_target.orientation.inverse() * Vector4(1.0f, 0.0f, 0.0f, 0.0f), dy);
 		m_target.orientation = m_target.orientation.normalized();
 		break;
 
