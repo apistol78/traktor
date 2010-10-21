@@ -1,7 +1,10 @@
+#include <sysutil/sysutil_gamecontent.h>
 #include "Core/Io/DynamicMemoryStream.h"
+#include "Core/Log/Log.h"
 #include "Core/Misc/AutoPtr.h"
 #include "Core/Serialization/BinarySerializer.h"
 #include "Online/Psn/CreateSaveGameTask.h"
+#include "Online/Psn/LogError.h"
 
 namespace traktor
 {
@@ -38,6 +41,7 @@ Ref< ISaveGameQueueTask > CreateSaveGameTask::create(const std::wstring& name, c
 		return 0;
 
 	task->m_saveBufferPending = true;
+	task->m_spaceNeeded = 0;
 	return task;
 }
 
@@ -66,9 +70,16 @@ bool CreateSaveGameTask::execute()
 		SYS_MEMORY_CONTAINER_ID_INVALID,
 		(void*)this
 	);
+	if (err == CELL_SAVEDATA_ERROR_CBRESULT && m_spaceNeeded)
+	{
+		cellGameContentErrorDialog(CELL_GAME_ERRDIALOG_NOSPACE_EXIT, m_spaceNeeded, NULL); 
+		log::error << L"Not enough space to save" << Endl;
+	}
 	if (err != CELL_SAVEDATA_RET_OK)
+	{
+		LogError::logErrorSaveData(err);
 		return false;
-
+	}
 	return true;
 }
 
@@ -92,8 +103,18 @@ void CreateSaveGameTask::callbackSaveStat(CellSaveDataCBResult* cbResult, CellSa
 
 		std::memset(set->setParam->reserved, 0, sizeof(set->setParam->reserved));
 		std::memset(set->setParam->reserved2, 0, sizeof(set->setParam->reserved2));	
-	}
 
+		const int32_t CONTENT_SIZEKB = (this_->m_saveBuffer.size() + 1023) / 1024; // TODO Add size of "content information files": ICON0.PNG, ICON1.PAM, PIC1.PNG, SND0.AT3
+		const int32_t NEW_SIZEKB = CONTENT_SIZEKB + get->sysSizeKB;
+		const int32_t NEED_SIZEKB = get->hddFreeSizeKB - NEW_SIZEKB;
+		if (NEED_SIZEKB < 0)
+		{
+			this_->m_spaceNeeded = -NEED_SIZEKB;
+			cbResult->errNeedSizeKB = -NEED_SIZEKB;
+			cbResult->result = CELL_SAVEDATA_CBRESULT_ERR_NOSPACE;
+			return;
+		}
+	}
 	this_->m_saveBufferPending = true;
 
 	cbResult->result = CELL_SAVEDATA_CBRESULT_OK_NEXT;
@@ -126,6 +147,5 @@ void CreateSaveGameTask::callbackSaveFile(CellSaveDataCBResult* cbResult, CellSa
 		cbResult->result = CELL_SAVEDATA_CBRESULT_OK_LAST;
 	}
 }
-
 	}
 }
