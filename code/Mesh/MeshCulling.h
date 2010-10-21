@@ -12,11 +12,7 @@ namespace traktor
 	{
 
 /*! Enable screen-space culling; quite expensive but might yield less draw calls. */
-#if defined(_PS3)
-#	define T_ENABLE_SCREENSPACE_CULLING 0
-#else
-#	define T_ENABLE_SCREENSPACE_CULLING 1
-#endif
+#define T_ENABLE_SCREENSPACE_CULLING 1
 
 /*! \brief Mesh culling.
  * First it performs a grosse culling

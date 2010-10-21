@@ -544,7 +544,7 @@ bool emitLog(CgContext& cx, Log* node)
 	return true;
 }
 
-bool emitMatrix(CgContext& cx, Matrix* node)
+bool emitMatrixIn(CgContext& cx, MatrixIn* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
 	CgVariable* xaxis = cx.emitInput(node, L"XAxis");
@@ -560,6 +560,27 @@ bool emitMatrix(CgContext& cx, Matrix* node)
 	f << (translate ? translate->cast(CtFloat4) : L"0.0f, 0.0f, 0.0f, 1.0f") << Endl;
 	f << DecreaseIndent;
 	f << L"));" << Endl;
+	return true;
+}
+
+bool emitMatrixOut(CgContext& cx, MatrixOut* node)
+{
+	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
+	CgVariable* in = cx.emitInput(node, L"Input");
+	if (!in)
+		return false;
+	CgVariable* xaxis = cx.emitOutput(node, L"XAxis", CtFloat4);
+	if (xaxis)
+		assign(f, xaxis) << in->getName() << L"._11_21_31_41;" << Endl;
+	CgVariable* yaxis = cx.emitOutput(node, L"YAxis", CtFloat4);
+	if (yaxis)
+		assign(f, yaxis) << in->getName() << L"._12_22_32_42;" << Endl;
+	CgVariable* zaxis = cx.emitOutput(node, L"ZAxis", CtFloat4);
+	if (zaxis)
+		assign(f, zaxis) << in->getName() << L"._13_23_33_43;" << Endl;
+	CgVariable* translate = cx.emitOutput(node, L"Translate", CtFloat4);
+	if (translate)
+		assign(f, translate) << in->getName() << L"._14_24_34_44;" << Endl;
 	return true;
 }
 
@@ -1466,7 +1487,8 @@ CgEmitter::CgEmitter()
 	m_emitters[&type_of< Length >()] = new EmitterCast< Length >(emitLength);
 	m_emitters[&type_of< Lerp >()] = new EmitterCast< Lerp >(emitLerp);
 	m_emitters[&type_of< Log >()] = new EmitterCast< Log >(emitLog);
-	m_emitters[&type_of< Matrix >()] = new EmitterCast< Matrix >(emitMatrix);
+	m_emitters[&type_of< MatrixIn >()] = new EmitterCast< MatrixIn >(emitMatrixIn);
+	m_emitters[&type_of< MatrixOut >()] = new EmitterCast< MatrixOut >(emitMatrixOut);
 	m_emitters[&type_of< Max >()] = new EmitterCast< Max >(emitMax);
 	m_emitters[&type_of< Min >()] = new EmitterCast< Min >(emitMin);
 	m_emitters[&type_of< MixIn >()] = new EmitterCast< MixIn >(emitMixIn);

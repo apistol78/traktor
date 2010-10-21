@@ -146,7 +146,7 @@ bool ProgramPs3::create(MemoryHeap* memoryHeap, const ProgramResourcePs3* resour
 			parameterHandle,
 			i->second
 		));
-#if defined(_DEBUG)
+#if T_ENABLE_PATCH_WARNING
 		m_parameterName[parameterHandle] = i->first;
 #endif
 	}
@@ -234,7 +234,7 @@ void ProgramPs3::setFloatParameter(handle_t handle, float param)
 		}
 	}
 
-#if defined(_DEBUG)
+#if T_ENABLE_PATCH_WARNING
 	if (usage & DfPixel)
 		log::debug << L"Patch caused by \"" << m_parameterName[handle] << L"\" (F)" << Endl;
 #endif
@@ -270,7 +270,7 @@ void ProgramPs3::setFloatArrayParameter(handle_t handle, const float* param, int
 		}
 	}
 
-#if defined(_DEBUG)
+#if T_ENABLE_PATCH_WARNING
 	if (usage & DfPixel)
 		log::debug << L"Patch caused by \"" << m_parameterName[handle] << L"\" (F+)" << Endl;
 #endif
@@ -297,7 +297,7 @@ void ProgramPs3::setVectorParameter(handle_t handle, const Vector4& param)
 		}
 	}
 
-#if defined(_DEBUG)
+#if T_ENABLE_PATCH_WARNING
 	if (usage & DfPixel)
 		log::debug << L"Patch caused by \"" << m_parameterName[handle] << L"\" (V)" << Endl;
 #endif
@@ -333,7 +333,7 @@ void ProgramPs3::setVectorArrayParameter(handle_t handle, const Vector4* param, 
 		}
 	}
 
-#if defined(_DEBUG)
+#if T_ENABLE_PATCH_WARNING
 	if (usage & DfPixel)
 		log::debug << L"Patch caused by \"" << m_parameterName[handle] << L"\" (V+)" << Endl;
 #endif
@@ -362,7 +362,7 @@ void ProgramPs3::setMatrixParameter(handle_t handle, const Matrix44& param)
 		}
 	}
 
-#if defined(_DEBUG)
+#if T_ENABLE_PATCH_WARNING
 	if (usage & DfPixel)
 		log::debug << L"Patch caused by \"" << m_parameterName[handle] << L"\" (M)" << Endl;
 #endif
@@ -398,7 +398,7 @@ void ProgramPs3::setMatrixArrayParameter(handle_t handle, const Matrix44* param,
 		}
 	}
 
-#if defined(_DEBUG)
+#if T_ENABLE_PATCH_WARNING
 	if (usage & DfPixel)
 		log::debug << L"Patch caused by \"" << m_parameterName[handle] << L"\" (M+)" << Endl;
 #endif

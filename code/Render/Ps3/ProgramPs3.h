@@ -21,6 +21,8 @@ namespace traktor
 	namespace render
 	{
 
+#define T_ENABLE_PATCH_WARNING 0
+
 class MemoryHeap;
 class MemoryHeapObject;
 class ProgramResourcePs3;
@@ -102,7 +104,7 @@ private:
 	float m_targetSize[2];
 	int32_t& m_counter;
 
-#if defined(_DEBUG)
+#if T_ENABLE_PATCH_WARNING
 	std::map< handle_t, std::wstring > m_parameterName;
 #endif
 };

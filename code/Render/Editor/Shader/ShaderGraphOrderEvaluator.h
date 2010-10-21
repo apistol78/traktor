@@ -65,7 +65,7 @@ private:
 
 	int nodeIndexedUniform(const Node* node) const;
 
-	int nodeMatrix(const Node* node) const;
+	int nodeMatrixIn(const Node* node) const;
 
 	int nodeLerp(const Node* node) const;
 };

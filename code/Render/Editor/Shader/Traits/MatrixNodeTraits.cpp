@@ -11,7 +11,8 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.MatrixNodeTraits", 0, MatrixNode
 TypeInfoSet MatrixNodeTraits::getNodeTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< Matrix >());
+	typeSet.insert(&type_of< MatrixIn >());
+	typeSet.insert(&type_of< MatrixOut >());
 	return typeSet;
 }
 
@@ -21,7 +22,12 @@ PinType MatrixNodeTraits::getOutputPinType(
 	const PinType* inputPinTypes
 ) const
 {
-	return PntMatrix;
+	if (is_a< MatrixIn >(node))
+		return PntMatrix;
+	else if (is_a< MatrixOut >(node))
+		return PntScalar4;
+	else
+		return PntVoid;
 }
 
 PinType MatrixNodeTraits::getInputPinType(
@@ -31,7 +37,12 @@ PinType MatrixNodeTraits::getInputPinType(
 	const PinType* outputPinTypes
 ) const
 {
-	return PntScalar4;
+	if (is_a< MatrixIn >(node))
+		return PntScalar4;
+	else if (is_a< MatrixOut >(node))
+		return PntMatrix;
+	else
+		return PntVoid;
 }
 
 	}

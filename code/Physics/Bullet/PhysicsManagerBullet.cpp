@@ -198,7 +198,7 @@ bool PhysicsManagerBullet::create(float simulationDeltaTime)
 		m_configuration
 	);
 
-#	if 0
+#	if 1
 	btThreadSupportInterface* constraintThreadSupport = new BulletPE2ConstraintSolverSpursSupport(
 		SpursManager::getInstance().getSpurs(),
 		SpursManager::getInstance().getSpuCount(),
@@ -211,7 +211,7 @@ bool PhysicsManagerBullet::create(float simulationDeltaTime)
 
 	m_broadphase = new btDbvtBroadphase();
 
-#	if 0
+#	if 1
 	btThreadSupportInterface* integrateThreadSupport = new BulletPEGatherScatterSpursSupport(
 		SpursManager::getInstance().getSpurs(),
 		SpursManager::getInstance().getSpuCount(),
