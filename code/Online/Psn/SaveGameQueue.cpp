@@ -1,7 +1,9 @@
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Online/Psn/CreateSaveGameTask.h"
+#include "Online/Psn/CreateTrophyContextTask.h"
 #include "Online/Psn/GetAvailableSaveGamesTask.h"
+#include "Online/Psn/LogError.h"
 #include "Online/Psn/SaveGamePsn.h"
 #include "Online/Psn/SaveGameQueue.h"
 
@@ -12,14 +14,15 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.online.SaveGameQueue", SaveGameQueue, Object)
 
-bool SaveGameQueue::create()
+bool SaveGameQueue::create(int32_t requiredTrophySizeKB)
 {
 	m_thread = ThreadManager::getInstance().create(makeFunctor(this, &SaveGameQueue::threadQueue), L"Save game queue");
 	if (!m_thread || !m_thread->start())
 		return false;
 
 	// Get stored save games.
-	Ref< ISaveGameQueueTask > task = GetAvailableSaveGamesTask::create(m_saveGames);
+	Ref< ISaveGameQueueTask > task = GetAvailableSaveGamesTask::create(m_saveGames, requiredTrophySizeKB);
+
 	if (task)
 	{
 		m_queueLock.wait();
@@ -62,6 +65,20 @@ Ref< ISaveGame > SaveGameQueue::createSaveGame(const std::wstring& name, ISerial
 	m_saveGames.push_back(saveGame);
 
 	return saveGame;
+}
+
+bool SaveGameQueue::registerTrophyContext(SceNpTrophyContext trophyContext, SceNpTrophyHandle trophyHandle)
+{
+	Ref< ISaveGameQueueTask > task = CreateTrophyContextTask::create(trophyContext, trophyHandle);
+	if (!task)
+		return false;
+
+	m_queueLock.wait();
+	m_queue.push_back(task);
+	m_queuedSignal.set();
+	m_queueLock.release();
+
+	return true;
 }
 
 bool SaveGameQueue::getAvailableSaveGames(RefArray< ISaveGame >& outSaveGames)

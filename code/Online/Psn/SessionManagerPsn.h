@@ -1,6 +1,7 @@
 #ifndef traktor_online_SessionManagerPsn_H
 #define traktor_online_SessionManagerPsn_H
 
+#include <np.h>
 #include "Online/ISessionManager.h"
 
 // import/export mechanism.
@@ -50,6 +51,8 @@ private:
 	Ref< SaveGameQueue > m_saveGameQueue;
 	Ref< UserPsn > m_user;
 	RefArray< SessionPsn > m_sessions;
+	SceNpTrophyContext m_trophyContext;
+	SceNpTrophyHandle m_trophyHandle;
 };
 
 	}

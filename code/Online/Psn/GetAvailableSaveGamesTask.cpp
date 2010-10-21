@@ -1,8 +1,11 @@
+#include <sysutil/sysutil_gamecontent.h>
 #include "Core/Io/DynamicMemoryStream.h"
+#include "Core/Log/Log.h"
 #include "Core/Misc/AutoPtr.h"
 #include "Core/Serialization/BinarySerializer.h"
 #include "Online/Psn/GetAvailableSaveGamesTask.h"
 #include "Online/Psn/SaveGamePsn.h"
+#include "Online/Psn/LogError.h"
 
 namespace traktor
 {
@@ -30,10 +33,11 @@ CellSaveDataAutoIndicator s_indicator =
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.online.GetAvailableSaveGamesTask", GetAvailableSaveGamesTask, ISaveGameQueueTask)
 
-Ref< ISaveGameQueueTask > GetAvailableSaveGamesTask::create(RefArray< ISaveGame >& outSaveGames)
+Ref< ISaveGameQueueTask > GetAvailableSaveGamesTask::create(RefArray< ISaveGame >& outSaveGames, int32_t requiredTrophySizeKB)
 {
 	Ref< GetAvailableSaveGamesTask > task = new GetAvailableSaveGamesTask();
 	task->m_outSaveGames = &outSaveGames;
+	task->m_requiredTrophySizeKB = requiredTrophySizeKB;
 	return task;
 }
 
@@ -69,8 +73,25 @@ bool GetAvailableSaveGamesTask::execute()
 		SYS_MEMORY_CONTAINER_ID_INVALID,
 		(void*)this
 	);
-	if (err != CELL_SAVEDATA_RET_OK)
+
+	bool oldSaveDataExists = !this->m_loadBuffer.empty();
+	int32_t neededGameDataSizeKB = oldSaveDataExists ? 4 : 100;
+
+	const int32_t NEED_SIZEKB = this->m_hddFreeSpaceKB - this->m_requiredTrophySizeKB - neededGameDataSizeKB;
+	if (NEED_SIZEKB < 0)
+	{
+		cellGameContentErrorDialog(CELL_GAME_ERRDIALOG_NOSPACE_EXIT, -NEED_SIZEKB, NULL); 
+		log::error << L"Unable to create session manager. Not enough space on HDD to save trophies and savegames" << Endl;
 		return false;
+	}
+	if (oldSaveDataExists)
+		return false;
+
+	if (err != CELL_SAVEDATA_RET_OK)
+	{
+		LogError::logErrorSaveData(err);
+		return false;
+	}
 
 	return true;
 }
@@ -88,9 +109,10 @@ void GetAvailableSaveGamesTask::callbackLoadStat(CellSaveDataCBResult* cbResult,
 	GetAvailableSaveGamesTask* this_ = static_cast< GetAvailableSaveGamesTask* >(cbResult->userdata);
 	T_ASSERT (this_);
 
+	this_->m_hddFreeSpaceKB = get->hddFreeSizeKB;
 	if (get->isNewData)
 	{
-		cbResult->result = CELL_SAVEDATA_CBRESULT_ERR_NODATA;
+		cbResult->result = CELL_SAVEDATA_CBRESULT_OK_LAST;
 		return;
 	}
 
