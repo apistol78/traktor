@@ -232,7 +232,7 @@ void AnimatedMeshEntity::updatePoseController(float deltaTime)
 			if (boneIndex >= 0 && boneIndex < int32_t(skinBoneCount))
 			{
 				Transform skinTransform = m_poseTransforms[i] * m_boneTransforms[i].inverse();
-				m_skinTransforms[boneIndex * 2 + 0] = Vector4::loadAligned(skinTransform.rotation().e);
+				m_skinTransforms[boneIndex * 2 + 0] = skinTransform.rotation().e;
 				m_skinTransforms[boneIndex * 2 + 1] = skinTransform.translation().xyz1();
 			}
 		}

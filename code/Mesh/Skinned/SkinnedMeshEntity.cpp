@@ -24,7 +24,7 @@ void SkinnedMeshEntity::setBoneTransforms(const AlignedVector< Matrix44 >& boneT
 		if (j < boneTransforms.size())
 		{
 			Transform bone(boneTransforms[i]);
-			m_boneTransforms[i + 0] = Vector4::loadAligned(bone.rotation().e);
+			m_boneTransforms[i + 0] = bone.rotation().e;
 			m_boneTransforms[i + 1] = bone.translation().xyz1();
 		}
 		else

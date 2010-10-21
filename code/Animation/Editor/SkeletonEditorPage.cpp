@@ -355,11 +355,11 @@ void SkeletonEditorPage::eventMouseMove(ui::Event* event)
 
 				if ((mouseEvent->getKeyState() & ui::KsMenu) == 0)
 				{
-					orientation *= Quaternion(Vector4(0.0f, mouseDelta.x, 0.0f, 0.0f));
-					orientation *= Quaternion(Vector4(mouseDelta.y, 0.0f, 0.0f, 0.0f));
+					orientation *= Quaternion(Vector4(0.0f, 1.0f, 0.0f, 0.0f), mouseDelta.x);
+					orientation *= Quaternion(Vector4(1.0f, 0.0f, 0.0f, 0.0f), mouseDelta.y);
 				}
 				else
-					orientation *= Quaternion(Vector4(0.0f, 0.0f, mouseDelta.x, 0.0f));
+					orientation *= Quaternion(Vector4(0.0f, 0.0f, 1.0f, 0.0f), mouseDelta.x);
 
 				bone->setOrientation(orientation);
 			}

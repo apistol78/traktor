@@ -80,7 +80,7 @@ void createBones(
 			pitch = -acosf(VboneDirectionInParent.y()) - HALF_PI;
 		}
 
-		Quaternion Qlocal = Quaternion(Vector4(0.0f, head, 0.0f)) * Quaternion(Vector4(pitch, 0.0f, 0.0f));
+		Quaternion Qlocal = Quaternion(Vector4(0.0f, 1.0f, 0.0f, 0.0f), head) * Quaternion(Vector4(1.0f, 0.0f, 0.0f, 0.0f), pitch);
 		Quaternion Qworld = QworldParent * Qlocal;
 
 		bone->setOrientation(Qlocal);

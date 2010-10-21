@@ -314,10 +314,12 @@ bool XmlDeserializer::operator >> (const Member< Quaternion >& m)
 	if (Split< std::wstring, float >::any(value, L",", m_values, true, 4) != 4)
 		return false;
 		
-	m->x = m_values[0];
-	m->y = m_values[1];
-	m->z = m_values[2];
-	m->w = m_values[3];
+	m->e.set(
+		m_values[0],
+		m_values[1],
+		m_values[2],
+		m_values[3]
+	);
 
 	return true;
 }

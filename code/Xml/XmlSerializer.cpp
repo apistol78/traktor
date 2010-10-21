@@ -223,7 +223,7 @@ bool XmlSerializer::operator >> (const Member< Matrix44 >& m)
 
 bool XmlSerializer::operator >> (const Member< Quaternion >& m)
 {
-	m_xml << m_indent << L"<" << m.getName() << L">" << m->x << L", " << m->y << L", " << m->z << L", " << m->w << L"</" << m.getName() << L">" << Endl;
+	m_xml << m_indent << L"<" << m.getName() << L">" << m->e.x() << L", " << m->e.y() << L", " << m->e.z() << L", " << m->e.w() << L"</" << m.getName() << L">" << Endl;
 	return true;
 }
 

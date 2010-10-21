@@ -32,8 +32,7 @@ namespace traktor
 	 */
 	inline OutputStream& operator << (OutputStream& os, const Quaternion& q)
 	{
-		os << q.x << L", " << q.y << L", " << q.z << L", " << q.w;
-		return os;
+		return os << q.e;
 	}
 
 }

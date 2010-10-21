@@ -773,7 +773,7 @@ void AnimationEditorPage::eventRenderMouseMove(ui::Event* event)
 				if (mouseEvent->getButton() == ui::MouseEvent::BtLeft)
 				{
 					Quaternion orientation = pose.getBoneOrientation(m_selectedBone);
-					orientation *= Quaternion(Vector4(0.0f, mouseDelta.x, 0.0f, 0.0f)) * Quaternion(Vector4(mouseDelta.y, 0.0f, 0.0f, 0.0f));
+					orientation *= Quaternion(Vector4(0.0f, 1.0f, 0.0f, 0.0f), mouseDelta.x) * Quaternion(Vector4(1.0f, 0.0f, 0.0f, 0.0f), mouseDelta.y);
 					pose.setBoneOrientation(m_selectedBone, orientation.normalized());
 
 					// Compensate for applied twist.
@@ -783,7 +783,7 @@ void AnimationEditorPage::eventRenderMouseMove(ui::Event* event)
 						if (calculateRelativeTwist(poseIndex, m_selectedBone, relativeTwist))
 						{
 							Quaternion orientation = pose.getBoneOrientation(m_selectedBone);
-							orientation *= Quaternion(Vector4(0.0f, 0.0f, m_relativeTwist - relativeTwist));
+							orientation *= Quaternion(Vector4(0.0f, 0.0f, 1.0f, 0.0f), m_relativeTwist - relativeTwist);
 							pose.setBoneOrientation(m_selectedBone, orientation.normalized());
 						}
 					}
@@ -791,7 +791,7 @@ void AnimationEditorPage::eventRenderMouseMove(ui::Event* event)
 				else
 				{
 					Quaternion orientation = pose.getBoneOrientation(m_selectedBone);
-					orientation *= Quaternion(Vector4(0.0f, 0.0f, mouseDelta.x, 0.0f));
+					orientation *= Quaternion(Vector4(0.0f, 0.0f, 1.0f, 0.0f), mouseDelta.x);
 					pose.setBoneOrientation(m_selectedBone, orientation.normalized());
 				}
 			}
