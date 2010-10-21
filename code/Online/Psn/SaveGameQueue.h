@@ -1,6 +1,7 @@
 #ifndef traktor_online_SaveGameQueue_H
 #define traktor_online_SaveGameQueue_H
 
+#include <np.h>
 #include "Core/Object.h"
 #include "Core/RefArray.h"
 #include "Core/Thread/Semaphore.h"
@@ -23,11 +24,13 @@ class SaveGameQueue : public Object
 	T_RTTI_CLASS;
 
 public:
-	bool create();
+	bool create(int32_t requiredTrophySizeKB);
 
 	void destroy();
 
 	Ref< ISaveGame > createSaveGame(const std::wstring& name, ISerializable* attachment);
+
+	bool registerTrophyContext(SceNpTrophyContext trophyContext, SceNpTrophyHandle trophyHandle);
 
 	bool getAvailableSaveGames(RefArray< ISaveGame >& outSaveGames);
 
@@ -37,6 +40,8 @@ private:
 	Signal m_queuedSignal;
 	RefArray< ISaveGameQueueTask > m_queue;
 	RefArray< ISaveGame > m_saveGames;
+	int32_t	m_hddFreeSpace;
+	bool m_saveGameExists;
 
 	void flush();
 

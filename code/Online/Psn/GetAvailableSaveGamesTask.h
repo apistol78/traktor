@@ -20,7 +20,7 @@ class GetAvailableSaveGamesTask : public ISaveGameQueueTask
 	T_RTTI_CLASS;
 
 public:
-	static Ref< ISaveGameQueueTask > create(RefArray< ISaveGame >& outSaveGames);
+	static Ref< ISaveGameQueueTask > create(RefArray< ISaveGame >& outSaveGames, int32_t requiredTrophySizeKB);
 
 	virtual bool execute();
 
@@ -28,6 +28,9 @@ private:
 	RefArray< ISaveGame >* m_outSaveGames;
 	std::vector< uint8_t > m_loadBuffer;
 	bool m_loadBufferPending;
+	int32_t m_hddFreeSpaceKB;
+	int32_t m_requiredTrophySizeKB;
+
 
 	static void callbackLoadFixed(CellSaveDataCBResult* cbResult, CellSaveDataListGet* get, CellSaveDataFixedSet* set);
 
