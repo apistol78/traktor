@@ -62,7 +62,6 @@ const SceNpCommunicationId c_commId = {
 	0
 };
 
-
 const SceNpCommunicationPassphrase c_passphrase =
 {
 	{
@@ -270,7 +269,7 @@ Ref< IUser > SessionManagerPsn::getCurrentUser()
 
 Ref< ISession > SessionManagerPsn::createSession(IUser* user, const std::set< std::wstring >& leaderboards)
 {
-	Ref< SessionPsn > session = new SessionPsn(m_saveGameQueue, checked_type_cast< UserPsn*, false >(user));
+	Ref< SessionPsn > session = new SessionPsn(m_saveGameQueue, checked_type_cast< UserPsn*, false >(user), m_trophyContext, m_trophyHandle);
 	if (session->create())
 	{
 		m_sessions.push_back(session);
