@@ -100,7 +100,7 @@ struct Split
 		typename String::size_type start, stop;
 
 		start = str.find_first_not_of(delimiters);
-		while (start >= 0 && start < n)
+		while (start < n)
 		{
 			stop = str.find_first_of(delimiters, start);
 			if (stop < 0 || stop > n)

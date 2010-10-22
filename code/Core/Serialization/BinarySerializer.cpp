@@ -383,7 +383,7 @@ bool BinarySerializer::operator >> (const Member< Guid >& m)
 	Guid& guid = m;
 	if (m_direction == SdRead)
 	{
-		bool validGuid;
+		bool validGuid = false;
 		
 		if (!read_primitive< bool >(m_stream, validGuid))
 			return false;
@@ -590,8 +590,8 @@ bool BinarySerializer::operator >> (const Member< ISerializable* >& m)
 {
 	if (m_direction == SdRead)
 	{
-		bool reference;
-		uint64_t hash;
+		bool reference = false;
+		uint64_t hash = 0;
 
 		if (!read_primitive< bool >(m_stream, reference))
 			return false;

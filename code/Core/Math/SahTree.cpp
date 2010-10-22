@@ -200,7 +200,7 @@ void SahTree::buildNode(Node* node, int32_t depth)
 
 	Scalar leafCost(node->indices.size());
 	Scalar lowestCost(std::numeric_limits< float >::max());
-	SplitCandidate* bestCandidate;
+	SplitCandidate* bestCandidate = 0;
 	Aabb bestLeftAabb;
 	Aabb bestRightAabb;
 
