@@ -27,7 +27,7 @@ namespace traktor
 		namespace
 		{
 
-const int32_t c_maxOctreeDepth = 4;
+const int32_t c_maxOctreeDepth = 2;
 const uint32_t c_minOctreePolygonCount = 16;
 
 void splitPolygon(

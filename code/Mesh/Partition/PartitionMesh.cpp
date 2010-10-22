@@ -74,7 +74,7 @@ void PartitionMesh::render(
 			continue;
 
 		Vector4 center = worldView * part.boundingBox.getCenter();
-		Scalar distancePart = center.xyz0().length() + part.boundingBox.getExtent().length();
+		Scalar distancePart = center.z() + part.boundingBox.getExtent().length();
 
 #if !defined(_DEBUG)
 		render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >("PartitionMesh");

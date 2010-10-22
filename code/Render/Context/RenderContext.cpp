@@ -11,11 +11,16 @@ namespace traktor
 
 T_FORCE_INLINE bool SortOpaquePredicate(const RenderBlock* renderBlock1, const RenderBlock* renderBlock2)
 {
-	if (renderBlock1->program < renderBlock2->program)
+	const float c_distanceQuantizeRangeInv = 1.0f / 4.0f;
+	float d1 = std::floorf(renderBlock1->distance * c_distanceQuantizeRangeInv);
+	float d2 = std::floorf(renderBlock2->distance * c_distanceQuantizeRangeInv);
+
+	if (d1 < d2)
 		return true;
-	if (renderBlock1->program > renderBlock2->program)
+	else if (d1 > d2)
 		return false;
-	return renderBlock1->distance < renderBlock2->distance;
+
+	return renderBlock1->program < renderBlock2->program;
 }
 
 T_FORCE_INLINE bool SortAlphaBlendPredicate(const RenderBlock* renderBlock1, const RenderBlock* renderBlock2)

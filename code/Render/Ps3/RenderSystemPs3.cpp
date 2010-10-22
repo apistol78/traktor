@@ -24,7 +24,7 @@ namespace traktor
 		namespace
 		{
 
-const uint32_t c_cbSize = 256 * 1024;
+const uint32_t c_cbSize = 64 * 1024;
 const uint32_t c_hostSize = 1 * 1024 * 1024;
 const uint32_t c_mainSize = 16 * 1024 * 1024;	//< RSX mapped main memory; used for dynamic index- and vertexbuffers.
 
@@ -143,7 +143,7 @@ bool RenderSystemPs3::handleMessages()
 
 Ref< IRenderView > RenderSystemPs3::createRenderView(const RenderViewDefaultDesc& desc)
 {
-	Ref< RenderViewPs3 > renderView = new RenderViewPs3(m_memoryHeapLocal, m_tileArea, m_zcullArea, this);
+	Ref< RenderViewPs3 > renderView = new RenderViewPs3(m_memoryHeapLocal, m_memoryHeapMain, m_tileArea, m_zcullArea, this);
 	if (renderView->create(desc))
 		return renderView;
 	else

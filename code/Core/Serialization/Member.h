@@ -26,12 +26,14 @@ class Member
 public:
 	typedef T value_type;
 
-	Member< T >(const std::wstring& name, value_type& ref, const TypeInfo* type = 0)
+	Member(const std::wstring& name, value_type& ref, const TypeInfo* type = 0)
 	:	m_name(name)
 	,	m_ref(ref)
 	,	m_type(type)
 	{
 	}
+
+	virtual ~Member() {}
 	
 	/*! \brief Get member name.
 	 *

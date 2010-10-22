@@ -35,6 +35,7 @@ class T_DLLCLASS RenderViewPs3 : public IRenderView
 public:
 	RenderViewPs3(
 		MemoryHeap* localMemoryHeap,
+		MemoryHeap* mainMemoryHeap,
 		TileArea& tileArea,
 		TileArea& zcullArea,
 		RenderSystemPs3* renderSystem
@@ -108,10 +109,14 @@ private:
 		int32_t clearStencil;
 	};
 
+	enum { FrameBufferCount = 2 };
+
+	Ref< MemoryHeap > m_mainMemoryHeap;
 	Ref< MemoryHeap > m_localMemoryHeap;
+	MemoryHeapObject* m_commandBuffers[FrameBufferCount];
 	TileArea& m_tileArea;
 	TileArea& m_zcullArea;
-	TileArea::TileInfo m_colorTile[2];
+	TileArea::TileInfo m_colorTile[FrameBufferCount];
 	TileArea::TileInfo m_depthTile;
 	TileArea::TileInfo m_zcullTile;
 	Ref< RenderSystemPs3 > m_renderSystem;
@@ -122,15 +127,14 @@ private:
 	int32_t m_height;
 	Viewport m_viewport;
 	MemoryHeapObject* m_colorObject;
-	void* m_colorAddr[2];
-	uint32_t m_colorOffset[2];
+	void* m_colorAddr[FrameBufferCount];
+	uint32_t m_colorOffset[FrameBufferCount];
 	uint32_t m_colorPitch;
 	MemoryHeapObject* m_depthObject;
 	void* m_depthAddr;
 	CellGcmTexture m_depthTexture;
 	uint32_t m_frameCounter;
 	uint32_t m_patchCounter;
-	volatile uint32_t* m_frameSyncLabelData;
 	std::list< RenderState > m_renderTargetStack;
 	bool m_renderTargetDirty;
 	ClearFpPs3 m_clearFp;

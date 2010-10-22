@@ -76,7 +76,7 @@ inline bool isMeshVisible(
 		if (p.w() <= 0.0f)
 		{
 			// Bounding box clipped to view plane; assume it's visible.
-			outDistance = center.length() + radius;
+			outDistance = center.z() + radius;
 			return true;
 		}
 
@@ -99,7 +99,7 @@ inline bool isMeshVisible(
 
 #endif
 
-	outDistance = center.length() + radius;
+	outDistance = center.z() + radius;
 	return true;
 }
 

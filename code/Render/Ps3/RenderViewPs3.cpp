@@ -22,11 +22,11 @@ namespace traktor
 		namespace
 		{
 
+const uint32_t c_commandBufferSize = 512 * 1024;
 const uint32_t c_reportZCullStats0 = 100;
 const uint32_t c_reportZCullStats1 = 101;
 const uint32_t c_reportTimeStamp0 = 102;
 const uint32_t c_reportTimeStamp1 = 103;
-const uint8_t c_frameSyncLabelId = 128;
 
 uint32_t incrementLabel(uint32_t label)
 {
@@ -39,11 +39,13 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewPs3", RenderViewPs3, IRenderVi
 
 RenderViewPs3::RenderViewPs3(
 	MemoryHeap* localMemoryHeap,
+	MemoryHeap* mainMemoryHeap,
 	TileArea& tileArea,
 	TileArea& zcullArea,
 	RenderSystemPs3* renderSystem
 )
 :	m_localMemoryHeap(localMemoryHeap)
+,	m_mainMemoryHeap(mainMemoryHeap)
 ,	m_tileArea(tileArea)
 ,	m_zcullArea(zcullArea)
 ,	m_renderSystem(renderSystem)
@@ -53,9 +55,8 @@ RenderViewPs3::RenderViewPs3(
 ,	m_colorPitch(0)
 ,	m_depthObject(0)
 ,	m_depthAddr(0)
-,	m_frameCounter(1)
+,	m_frameCounter(0)
 ,	m_patchCounter(0)
-,	m_frameSyncLabelData(0)
 ,	m_renderTargetDirty(false)
 {
 	std::memset(m_colorAddr, 0, sizeof(m_colorAddr));
@@ -72,15 +73,22 @@ RenderViewPs3::~RenderViewPs3()
 
 bool RenderViewPs3::create(const RenderViewDefaultDesc& desc)
 {
+	// Create command buffers.
+	for (uint32_t i = 0; i < sizeof_array(m_commandBuffers); ++i)
+	{
+		m_commandBuffers[i] = m_mainMemoryHeap->alloc(c_commandBufferSize, 0x100000, true);
+		if (!m_commandBuffers[i])
+			return false;
+	}
+
+	// Set our buffer.
+	cellGcmSetCurrentBuffer((const uint32_t*)m_commandBuffers[0]->getPointer(), c_commandBufferSize);
+
 	if (!reset(desc))
 		return false;
 
 	// Create FP target clear helper.
 	m_clearFp.create(m_localMemoryHeap);
-
-	// Create frame synchronization labels.
-	m_frameSyncLabelData = cellGcmGetLabelAddress(c_frameSyncLabelId);
-	*m_frameSyncLabelData = m_frameCounter;
 
 	return true;
 }
@@ -671,28 +679,40 @@ void RenderViewPs3::end()
 
 void RenderViewPs3::present()
 {
-	static bool firstFlip = true;
-	if (!firstFlip)
-	{
-		while (cellGcmGetFlipStatus() != 0)
-			sys_timer_usleep(100);
-	}
+	while (cellGcmGetFlipStatus() != 0)
+		sys_timer_usleep(300);
+
 	cellGcmResetFlipStatus();
-	firstFlip = false;
-	
-	cellGcmSetFlip(gCellGcmCurrentContext, m_frameCounter % sizeof_array(m_colorAddr));
-	cellGcmFlush(gCellGcmCurrentContext);
+
+	uint32_t frameIndex = m_frameCounter % sizeof_array(m_colorAddr);
+
+	T_GCM_CALL(cellGcmSetWaitFlip)(gCellGcmCurrentContext);
+	if (cellGcmSetFlip(gCellGcmCurrentContext, frameIndex) != CELL_OK)
+		return;
+	T_GCM_CALL(cellGcmFlush)(gCellGcmCurrentContext);
 
 #if USE_TIME_MEASURE
 	T_GCM_CALL(cellGcmSetTimeStamp)(gCellGcmCurrentContext, c_reportTimeStamp1);
 #endif
 
+	++m_frameCounter;
+
+	frameIndex = m_frameCounter % sizeof_array(m_colorAddr);
+
+	T_GCM_CALL(cellGcmSetJumpCommand)(gCellGcmCurrentContext, m_commandBuffers[frameIndex]->getOffset());
+	cellGcmSetCurrentBuffer((const uint32_t*)m_commandBuffers[frameIndex]->getPointer(), c_commandBufferSize);
+
+	volatile CellGcmControl* control = cellGcmGetControlRegister();
+	volatile uint32_t get = (volatile uint32_t)control->get;
+
+	while ((get >= m_commandBuffers[frameIndex]->getOffset() && get < (m_commandBuffers[frameIndex]->getOffset() + c_commandBufferSize)) || (get < 0x1000))
+	{
+		sys_timer_usleep(100);
+		get = (volatile uint32_t)control->get;
+	}
+
 	// RSX context are reinitialized after each flip thus we need to reset our state cache.
 	m_stateCache.reset();
-
-	cellGcmSetWaitFlip(gCellGcmCurrentContext);
-
-	m_frameCounter = incrementLabel(m_frameCounter);
 
 	m_renderSystem->endRendering();
 

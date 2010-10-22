@@ -11,6 +11,8 @@ namespace traktor
  */
 struct T_NOVTABLE IObjectRefDebugger
 {
+	virtual ~IObjectRefDebugger() {}
+
 	virtual void addObject(void* object, size_t size) = 0;
 
 	virtual void removeObject(void* object) = 0;

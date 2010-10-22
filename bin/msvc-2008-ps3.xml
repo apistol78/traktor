@@ -71,7 +71,7 @@
               <staticOptions>
                 <item>
                   <first>AdditionalOptions</first>
-                  <second>-g</second>
+                  <second>-g -Od -Xfastmath=1 -Xassumecorrectsign=1 -Xc+=exceptions</second>
                 </item>
                 <item>
                   <first>AdditionalIncludeDirectories</first>
@@ -79,7 +79,7 @@
                 </item>
                 <item>
                   <first>PreprocessorDefinitions</first>
-                  <second>_PS3;SN_TARGET_PS3;__CELLOS_LV2__;UNICODE;_UNICODE</second>
+                  <second>_PS3;SN_TARGET_PS3;__SNC__;__CELLOS_LV2__;UNICODE;_UNICODE</second>
                 </item>
                 <item>
                   <first>Optimization</first>
@@ -135,7 +135,7 @@
               <staticOptions>
                 <item>
                   <first>AdditionalOptions</first>
-                  <second>-O3 -ftree-vectorize -maltivec -ffast-math -funroll-loops</second>
+                  <second>-O3 -Xc+=exceptions -Xfltconst=8 -Xfastmath=1 -Xassumecorrectsign=1 -Xbranchless=1 -Xunrollssa=30</second>
                 </item>
                 <item>
                   <first>AdditionalIncludeDirectories</first>
@@ -143,7 +143,7 @@
                 </item>
                 <item>
                   <first>PreprocessorDefinitions</first>
-                  <second>_PS3;SN_TARGET_PS3;__CELLOS_LV2__;UNICODE;_UNICODE</second>
+                  <second>_PS3;SN_TARGET_PS3;__SNC__;__CELLOS_LV2__;UNICODE;_UNICODE</second>
                 </item>
                 <item>
                   <first>Optimization</first>
@@ -250,7 +250,7 @@
               <staticOptions>
                 <item>
                   <first>AdditionalOptions</first>
-                  <second>-g</second>
+                  <second>-g -Od -Xfastmath=1 -Xassumecorrectsign=1 -Xc+=exceptions</second>
                 </item>
                 <item>
                   <first>AdditionalIncludeDirectories</first>
@@ -258,7 +258,7 @@
                 </item>
                 <item>
                   <first>PreprocessorDefinitions</first>
-                  <second>_PS3;SN_TARGET_PS3;__CELLOS_LV2__;UNICODE;_UNICODE</second>
+                  <second>_PS3;SN_TARGET_PS3;__SNC__;__CELLOS_LV2__;UNICODE;_UNICODE</second>
                 </item>
                 <item>
                   <first>Optimization</first>
@@ -350,7 +350,7 @@
               <staticOptions>
                 <item>
                   <first>AdditionalOptions</first>
-                  <second>-O3 -ftree-vectorize -maltivec -ffast-math -funroll-loops</second>
+                  <second>-O3 -Xc+=exceptions -Xfltconst=8 -Xfastmath=1 -Xassumecorrectsign=1 -Xbranchless=1 -Xunrollssa=30</second>
                 </item>
                 <item>
                   <first>AdditionalIncludeDirectories</first>
@@ -358,7 +358,7 @@
                 </item>
                 <item>
                   <first>PreprocessorDefinitions</first>
-                  <second>_PS3;SN_TARGET_PS3;__CELLOS_LV2__;UNICODE;_UNICODE</second>
+                  <second>_PS3;SN_TARGET_PS3;__SNC__;__CELLOS_LV2__;UNICODE;_UNICODE</second>
                 </item>
                 <item>
                   <first>Optimization</first>
@@ -509,7 +509,7 @@
               <staticOptions>
                 <item>
                   <first>AdditionalOptions</first>
-                  <second>-g</second>
+                  <second>-g -Od -Xfastmath=1 -Xassumecorrectsign=1 -Xc+=exceptions</second>
                 </item>
                 <item>
                   <first>AdditionalIncludeDirectories</first>
@@ -517,7 +517,7 @@
                 </item>
                 <item>
                   <first>PreprocessorDefinitions</first>
-                  <second>_PS3;SN_TARGET_PS3;__CELLOS_LV2__;UNICODE;_UNICODE</second>
+                  <second>_PS3;SN_TARGET_PS3;__SNC__;__CELLOS_LV2__;UNICODE;_UNICODE</second>
                 </item>
                 <item>
                   <first>Optimization</first>
@@ -601,7 +601,7 @@
               <staticOptions>
                 <item>
                   <first>AdditionalOptions</first>
-                  <second>-O3 -ftree-vectorize -maltivec -ffast-math -funroll-loops</second>
+                  <second>-O3 -Xc+=exceptions -Xfltconst=8 -Xfastmath=1 -Xassumecorrectsign=1 -Xbranchless=1 -Xunrollssa=30</second>
                 </item>
                 <item>
                   <first>AdditionalIncludeDirectories</first>
@@ -609,7 +609,7 @@
                 </item>
                 <item>
                   <first>PreprocessorDefinitions</first>
-                  <second>_PS3;SN_TARGET_PS3;__CELLOS_LV2__;UNICODE;_UNICODE</second>
+                  <second>_PS3;SN_TARGET_PS3;__SNC__;__CELLOS_LV2__;UNICODE;_UNICODE</second>
                 </item>
                 <item>
                   <first>Optimization</first>
@@ -752,7 +752,7 @@
               <staticOptions>
                 <item>
                   <first>AdditionalOptions</first>
-                  <second>-g</second>
+                  <second>-g -Od -Xfastmath=1 -Xassumecorrectsign=1 -Xc+=exceptions</second>
                 </item>
                 <item>
                   <first>AdditionalIncludeDirectories</first>
@@ -760,7 +760,7 @@
                 </item>
                 <item>
                   <first>PreprocessorDefinitions</first>
-                  <second>_PS3;SN_TARGET_PS3;__CELLOS_LV2__;_CONSOLE;UNICODE;_UNICODE</second>
+                  <second>_PS3;SN_TARGET_PS3;__SNC__;__CELLOS_LV2__;_CONSOLE;UNICODE;_UNICODE</second>
                 </item>
                 <item>
                   <first>Optimization</first>
@@ -844,7 +844,7 @@
               <staticOptions>
                 <item>
                   <first>AdditionalOptions</first>
-                  <second>-O3 -ftree-vectorize -maltivec -ffast-math -funroll-loops</second>
+                  <second>-O3 -Xc+=exceptions -Xfltconst=8 -Xfastmath=1 -Xassumecorrectsign=1 -Xbranchless=1 -Xunrollssa=30</second>
                 </item>
                 <item>
                   <first>AdditionalIncludeDirectories</first>
@@ -852,7 +852,7 @@
                 </item>
                 <item>
                   <first>PreprocessorDefinitions</first>
-                  <second>_PS3;SN_TARGET_PS3;__CELLOS_LV2__;_CONSOLE;UNICODE;_UNICODE</second>
+                  <second>_PS3;SN_TARGET_PS3;__SNC__;__CELLOS_LV2__;_CONSOLE;UNICODE;_UNICODE</second>
                 </item>
                 <item>
                   <first>Optimization</first>

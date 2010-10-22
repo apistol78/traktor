@@ -25,6 +25,7 @@
 #endif
 
 //#define T_GCM_CALL(fnc) fnc
-#define T_GCM_CALL(fnc) fnc##Inline
+//#define T_GCM_CALL(fnc) fnc##Inline
+#define T_GCM_CALL(fnc) fnc##UnsafeInline
 
 #endif	// traktor_render_PlatformPs3_H

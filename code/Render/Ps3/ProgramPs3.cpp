@@ -97,7 +97,7 @@ ProgramPs3::ProgramPs3(int32_t& counter)
 ,	m_vertexShaderUCode(0)
 ,	m_pixelShaderUCode(0)
 ,	m_patchedPixelShaderUCode(0)
-,	m_patchFrame(0)
+,	m_patchFrame(~0UL)
 ,	m_patchCounter(0)
 ,	m_dirty(0)
 ,	m_counter(counter)
@@ -175,7 +175,24 @@ bool ProgramPs3::create(MemoryHeap* memoryHeap, const ProgramResourcePs3* resour
 	m_inputSignature = resource->m_inputSignature;
 	m_renderState = resource->m_renderState;
 
-	if (m_pixelScalars.empty() && m_pixelTargetSizeUCodeOffsets.empty())
+	if (!m_pixelScalars.empty() || !m_pixelTargetSizeUCodeOffsets.empty())
+	{
+		// Prepare a few patch fragments in order to reduce overhead of
+		// single patching fragments.
+		for (uint32_t i = 0; i < PatchQueues; ++i)
+		{
+			for (uint32_t j = 0; j < 2; ++j)
+			{
+				m_patchPixelShaderUCode[i][j] = m_memoryHeap->alloc(m_pixelShaderUCode->getSize(), m_pixelShaderUCode->getAlignment(), false);
+				std::memcpy(
+					m_patchPixelShaderUCode[i][j]->getPointer(),
+					m_pixelShaderUCode->getPointer(),
+					m_pixelShaderUCode->getSize()
+				);
+			}
+		}
+	}
+	else
 	{
 		// No parameters; ie no need to patch this fragment thus we always use same fragment.
 		m_patchedPixelShaderUCode = m_pixelShaderUCode;

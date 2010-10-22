@@ -19,6 +19,8 @@ class ISingleton
 protected:
 	friend class SingletonManager;
 
+	virtual ~ISingleton() {}
+
 	/*! \brief Destroy singleton.
 	 *
 	 * Called from the SingletonManager when
