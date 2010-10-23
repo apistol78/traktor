@@ -12,8 +12,8 @@ namespace traktor
 T_FORCE_INLINE bool SortOpaquePredicate(const RenderBlock* renderBlock1, const RenderBlock* renderBlock2)
 {
 	const float c_distanceQuantizeRangeInv = 1.0f / 4.0f;
-	float d1 = std::floorf(renderBlock1->distance * c_distanceQuantizeRangeInv);
-	float d2 = std::floorf(renderBlock2->distance * c_distanceQuantizeRangeInv);
+	float d1 = std::floor(renderBlock1->distance * c_distanceQuantizeRangeInv);
+	float d2 = std::floor(renderBlock2->distance * c_distanceQuantizeRangeInv);
 
 	if (d1 < d2)
 		return true;
