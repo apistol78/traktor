@@ -43,6 +43,7 @@
 #include "Ui/Events/MouseEvent.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
+#include "Ui/Custom/ToolBar/ToolBarDropDown.h"
 #include "Ui/Custom/ToolBar/ToolBarSeparator.h"
 #include "Ui/Custom/Graph/GraphControl.h"
 #include "Ui/Custom/Graph/PaintSettings.h"
@@ -144,6 +145,20 @@ bool ShaderGraphEditorPage::create(ui::Container* parent, editor::IEditorPageSit
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_REMOVE_UNUSED_NODES"), ui::Command(L"ShaderGraph.Editor.RemoveUnusedNodes"), 8));
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_AUTO_MERGE_BRANCHES"), ui::Command(L"ShaderGraph.Editor.AutoMergeBranches"), 9));
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_UPDATE_FRAGMENTS"), ui::Command(L"ShaderGraph.Editor.UpdateFragments"), 10));
+	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
+	
+	m_toolPlatform = new ui::custom::ToolBarDropDown(ui::Command(), 140, i18n::Text(L"SHADERGRAPH_PLATFORM_PERMUTATION"));
+	m_toolPlatform->add(L"DX9");
+	m_toolPlatform->add(L"DX9 Xbox360");
+	m_toolPlatform->add(L"DX10");
+	m_toolPlatform->add(L"DX11");
+	m_toolPlatform->add(L"OpenGL");
+	m_toolPlatform->add(L"OpenGL ES2");
+	m_toolPlatform->add(L"GCM");
+	m_toolPlatform->add(L"Software");
+	m_toolBar->addItem(m_toolPlatform);
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_PLATFORM_PERMUTATION"), ui::Command(L"ShaderGraph.Editor.PlatformPermutation"), 10));
+	
 	m_toolBar->addClickEventHandler(ui::createMethodHandler(this, &ShaderGraphEditorPage::eventToolClick));
 
 	// Create shader graph editor control.
@@ -627,6 +642,26 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 
 			m_site->setPropertyObject(0);
 		}
+	}
+	else if (command == L"ShaderGraph.Editor.PlatformPermutation")
+	{
+		// Save undo state.
+		m_undoStack->push(m_shaderGraph);
+
+		std::wstring platformSignature = m_toolPlatform->getSelectedItem();
+		m_shaderGraph = ShaderGraphStatic(m_shaderGraph).getPlatformPermutation(platformSignature);
+
+		m_editorGraph->removeAllEdges();
+		m_editorGraph->removeAllNodes();
+
+		createEditorNodes(
+			m_shaderGraph->getNodes(),
+			m_shaderGraph->getEdges()
+		);
+
+		updateGraph();
+
+		m_site->setPropertyObject(0);
 	}
 	else if (command == L"ShaderGraph.Editor.QuickMenu")
 	{
