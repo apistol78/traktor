@@ -36,6 +36,7 @@ class PopupMenu;
 class GraphControl;
 class Node;
 class ToolBar;
+class ToolBarDropDown;
 
 		}
 	}
@@ -84,6 +85,7 @@ private:
 	Ref< db::Instance > m_shaderGraphInstance;
 	Ref< ShaderGraph > m_shaderGraph;
 	Ref< ui::custom::ToolBar > m_toolBar;
+	Ref< ui::custom::ToolBarDropDown > m_toolPlatform;
 	Ref< ui::custom::GraphControl > m_editorGraph;
 	Ref< ui::PopupMenu > m_menuPopup;
 	Ref< QuickMenuTool > m_menuQuick;
