@@ -78,17 +78,6 @@ struct BuildCombinationTask : public Object
 		Ref< ShaderGraph > programGraph = combinations->generate(combination);
 		T_ASSERT (programGraph);
 
-		// Extract platform permutation.
-		const wchar_t* platformSignature = programCompiler->getPlatformSignature();
-		T_ASSERT (platformSignature);
-
-		programGraph = ShaderGraphStatic(programGraph).getPlatformPermutation(platformSignature);
-		if (!programGraph)
-		{
-			log::error << L"ShaderPipeline failed; unable to get platform permutation" << Endl;
-			return;
-		}
-
 		// Freeze type permutation.
 		programGraph = ShaderGraphStatic(programGraph).getTypePermutation();
 		if (!programGraph)
@@ -141,7 +130,7 @@ struct BuildCombinationTask : public Object
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 26, ShaderPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 27, ShaderPipeline, editor::IPipeline)
 
 ShaderPipeline::ShaderPipeline()
 :	m_frequentUniformsAsLinear(false)
@@ -244,6 +233,17 @@ bool ShaderPipeline::buildOutput(
 	if (!shaderGraph)
 	{
 		log::error << L"ShaderPipeline failed; unable to link shader fragments" << Endl;
+		return false;
+	}
+
+	// Extract platform permutation.
+	const wchar_t* platformSignature = m_programCompiler->getPlatformSignature();
+	T_ASSERT (platformSignature);
+
+	shaderGraph = ShaderGraphStatic(shaderGraph).getPlatformPermutation(platformSignature);
+	if (!shaderGraph)
+	{
+		log::error << L"ShaderPipeline failed; unable to get platform permutation" << Endl;
 		return false;
 	}
 
