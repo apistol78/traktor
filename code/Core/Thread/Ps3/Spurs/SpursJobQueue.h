@@ -4,6 +4,7 @@
 #include <cell/spurs.h>
 #include "Core/Object.h"
 #include "Core/Thread/IWaitable.h"
+#include "Core/Thread/Semaphore.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -52,6 +53,7 @@ private:
 	uint32_t m_descriptorSize;
 	CellSpursJobQueue* m_jobQueue;
 	CellSpursJobQueuePort* m_jobQueuePort;
+	Semaphore m_lock;
 };
 
 }

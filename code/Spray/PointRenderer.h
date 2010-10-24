@@ -12,13 +12,17 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_SPRAY_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
 {
+#if defined(_PS3)
+class SpursJobQueue;
+#endif
+
 	namespace render
 	{
 
@@ -72,13 +76,15 @@ public:
 private:
 	enum { BufferCount = 4 };
 
+#pragma pack(1)
 	struct Batch
 	{
-		render::Shader* shader;
-		uint32_t offset;
 		uint32_t count;
 		float distance;
+		render::Shader* shader;
+		uint32_t offset;
 	};
+#pragma pack()
 
 	Ref< render::VertexBuffer > m_vertexBuffer[BufferCount];
 	Ref< render::IndexBuffer > m_indexBuffer;
@@ -86,6 +92,10 @@ private:
 	Vertex* m_vertex;
 	uint32_t m_vertexOffset;
 	AlignedVector< Batch > m_batches[BufferCount];
+
+#if defined(_PS3)
+	Ref< SpursJobQueue > m_jobQueue;
+#endif
 };
 
 	}

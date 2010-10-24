@@ -1,5 +1,6 @@
 #include "Core/Log/Log.h"
 #include "Core/Memory/Alloc.h"
+#include "Core/Thread/Acquire.h"
 #include "Core/Thread/Ps3/Spurs/SpursJobQueue.h"
 
 #define SM_SPURS_SPU_COUNT 4
@@ -27,6 +28,8 @@ SpursJobQueue::~SpursJobQueue()
 
 bool SpursJobQueue::create(uint32_t descriptorSize, uint32_t submitCount)
 {
+	int32_t res;
+
 	T_FATAL_ASSERT_M (
 		descriptorSize == 64 ||
 		(descriptorSize & ~127UL) == descriptorSize,
@@ -51,7 +54,7 @@ bool SpursJobQueue::create(uint32_t descriptorSize, uint32_t submitCount)
 
 	uint8_t priorityTable[] = { 8, 8, 8, 8, 8, 8, 8, 8 };
 
-	cellSpursCreateJobQueue(
+	res = cellSpursCreateJobQueue(
 		m_spurs,
 		m_jobQueue,
 		&attributeJobQueue,
@@ -61,6 +64,8 @@ bool SpursJobQueue::create(uint32_t descriptorSize, uint32_t submitCount)
 		SM_SPURS_SPU_COUNT,
 		priorityTable
 	);
+	if (res != CELL_OK)
+		return false;
 
 	m_descriptorBuffer = (CellSpursJobHeader*)Alloc::acquireAlign(
 		descriptorSize * submitCount,
@@ -76,7 +81,7 @@ bool SpursJobQueue::create(uint32_t descriptorSize, uint32_t submitCount)
 		T_FILE_LINE
 	);
 
-	cellSpursJobQueuePortInitializeWithDescriptorBuffer(
+	res = cellSpursJobQueuePortInitializeWithDescriptorBuffer(
 		m_jobQueuePort,
 		m_jobQueue,
 		m_descriptorBuffer,
@@ -84,6 +89,8 @@ bool SpursJobQueue::create(uint32_t descriptorSize, uint32_t submitCount)
 		submitCount,
 		true
 	);
+	if (res != CELL_OK)
+		return false;
 
 	return true;
 }
@@ -135,6 +142,7 @@ void SpursJobQueue::destroy()
 
 bool SpursJobQueue::push(CellSpursJobHeader* job)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	int res = cellSpursJobQueuePortCopyPush(
 		m_jobQueuePort,
 		job,
@@ -146,6 +154,7 @@ bool SpursJobQueue::push(CellSpursJobHeader* job)
 
 bool SpursJobQueue::wait(int32_t timeout)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	T_ASSERT (timeout < 0);
 	int res = cellSpursJobQueuePortSync(m_jobQueuePort);
 	return res == CELL_OK;

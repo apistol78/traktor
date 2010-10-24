@@ -2,7 +2,7 @@
 #include "Core/Serialization/Member.h"
 #include "Spray/Modifiers/SizeModifier.h"
 
-#if defined(_PS3)
+#if defined(T_MODIFIER_USE_PS3_SPURS)
 #	include "Core/Thread/Ps3/Spurs/SpursJobQueue.h"
 #	include "Spray/Ps3/Spu/JobModifierUpdate.h"
 
@@ -37,7 +37,7 @@ SizeModifier::SizeModifier()
 {
 }
 
-#if defined(_PS3)
+#if defined(T_MODIFIER_USE_PS3_SPURS)
 void SizeModifier::update(SpursJobQueue* jobQueue, const Scalar& deltaTime, const Transform& transform, PointVector& points) const
 {
 	JobModifierUpdate job;

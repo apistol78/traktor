@@ -721,7 +721,7 @@
 			<configurations>
 				<item type="Configuration" version="1">
 					<name>DebugStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
@@ -732,13 +732,16 @@
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
-					<libraries/>
+					<libraries>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
+					</libraries>
 					<additionalCompilerOptions>-g -Wall -fno-exceptions -fno-rtti -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
 					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
 				</item>
 				<item type="Configuration" version="1">
 					<name>ReleaseStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
@@ -749,7 +752,10 @@
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
-					<libraries/>
+					<libraries>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
+					</libraries>
 					<additionalCompilerOptions>-Wall -fno-exceptions -fno-rtti -O3 -ffast-math -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
 					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
 				</item>

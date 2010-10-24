@@ -13,11 +13,7 @@ namespace traktor
 		{
 
 const float c_maxDeltaTime = 1.0f / 30.0f;
-#if defined(_PS3)
-const uint32_t c_updateDenom = 2;
-#else
 const uint32_t c_updateDenom = 1;
-#endif
 
 		}
 
