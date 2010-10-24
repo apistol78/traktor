@@ -174,27 +174,38 @@ void SurroundFilter::applyFull(IFilterInstance* instance, SoundBlock& outBlock) 
 		outBlock.samples[j] = sfi->m_buffer[j];
 
 	const Transform& listenerTransformInv = m_environment->getListenerTransformInv();
+	const float maxDistance = m_environment->getMaxDistance();
+	const float innerRadius = m_environment->getInnerRadius();
 
 	Vector4 speakerPosition = listenerTransformInv * m_speakerPosition.xyz1();
 	float speakerDistance = speakerPosition.xyz0().length();
-	float speakerAngle = angleRange(atan2f(-speakerPosition.z(), -speakerPosition.x()) + PI);
-
-	float maxDistance = m_environment->getMaxDistance();
-	float innerRadius = m_environment->getInnerRadius();
 
 	float distanceAtten = clamp(1.0f - speakerDistance / maxDistance, 0.0f, 1.0f);
 	float innerAtten = clamp(speakerDistance / innerRadius, 0.0f, 1.0f);
 
-	const float c_angleCone = deg2rad(90.0f + 30.0f);
-
-	for (uint32_t i = 0; i < sizeof_array(c_speakersFull); ++i)
+	if (distanceAtten >= FUZZY_EPSILON)
 	{
-		float angleOffset = angleDifference(c_speakersFull[i].angle, speakerAngle);
-		float angleAtten = clamp(1.0f - angleOffset / c_angleCone, 0.0f, 1.0f);
-		float attenuation = angleAtten * distanceAtten * (1.0f - c_speakersFull[i].inner * innerAtten);
-		float* samples = outBlock.samples[c_speakersFull[i].channel];
-		for (uint32_t j = 0; j < outBlock.samplesCount; ++j)
-			samples[j] *= attenuation;
+		float speakerAngle = angleRange(atan2f(-speakerPosition.z(), -speakerPosition.x()) + PI);
+		const float c_angleCone = deg2rad(90.0f + 30.0f);
+
+		for (uint32_t i = 0; i < sizeof_array(c_speakersFull); ++i)
+		{
+			float angleOffset = angleDifference(c_speakersFull[i].angle, speakerAngle);
+			float angleAtten = clamp(1.0f - angleOffset / c_angleCone, 0.0f, 1.0f);
+			float attenuation = angleAtten * distanceAtten * (1.0f - c_speakersFull[i].inner * innerAtten);
+			float* samples = outBlock.samples[c_speakersFull[i].channel];
+			for (uint32_t j = 0; j < outBlock.samplesCount; ++j)
+				samples[j] *= attenuation;
+		}
+	}
+	else
+	{
+		for (uint32_t i = 0; i < sizeof_array(c_speakersFull); ++i)
+		{
+			float* samples = outBlock.samples[c_speakersFull[i].channel];
+			for (uint32_t j = 0; j < outBlock.samplesCount; ++j)
+				samples[j] = 0.0f;
+		}
 	}
 }
 

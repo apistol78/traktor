@@ -49,8 +49,8 @@ const uint32_t c_pointCount = 3000;
 const uint32_t c_pointCount = 1000;
 #elif defined(_WINCE)
 const uint32_t c_pointCount = 1000;
-//#elif defined(_PS3)
-//const uint32_t c_pointCount = 2500;
+#elif defined(_PS3)
+const uint32_t c_pointCount = 3000;
 #else
 const uint32_t c_pointCount = 4000;
 #endif

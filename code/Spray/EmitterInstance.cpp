@@ -28,9 +28,9 @@ const float c_warmUpDeltaTime = 1.0f / 10.0f;
 #if TARGET_OS_IPHONE
 const uint32_t c_maxEmitPerUpdate = 4;
 const uint32_t c_maxEmitSingleShot = 10;
-//#elif defined(_PS3)
-//const uint32_t c_maxEmitPerUpdate = 4;
-//const uint32_t c_maxEmitSingleShot = 500;
+#elif defined(_PS3)
+const uint32_t c_maxEmitPerUpdate = 8;
+const uint32_t c_maxEmitSingleShot = 2000;
 #else
 const uint32_t c_maxEmitPerUpdate = 8;
 const uint32_t c_maxEmitSingleShot = 3000;
