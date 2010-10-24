@@ -69,6 +69,8 @@ public:
 
 	void build(uint32_t frame);
 
+	void build(render::RenderContext* renderContext);
+
 	void render(render::IRenderView* renderView, uint32_t frame);
 
 	void setViewSize(float width, float height);

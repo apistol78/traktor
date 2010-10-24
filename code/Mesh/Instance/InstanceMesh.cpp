@@ -194,7 +194,7 @@ void InstanceMesh::render(render::RenderContext* renderContext, const world::Wor
 
 				render::IndexedRenderBlock* renderBlock = renderContext->alloc< render::IndexedRenderBlock >("InstanceMesh blend");
 
-				renderBlock->distance = instanceWorld[batchOffset].second;
+				renderBlock->distance = instanceWorld[batchOffset + batchCount - 1].second;
 				renderBlock->program = program;
 				renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 				renderBlock->indexBuffer = m_mesh->getIndexBuffer();
