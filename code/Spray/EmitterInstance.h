@@ -7,6 +7,7 @@
 #include "Core/Math/Aabb.h"
 #include "Core/Thread/JobManager.h"
 #include "Spray/EmitterUpdateContext.h"
+#include "Spray/Modifier.h"
 #include "Spray/Point.h"
 
 // import/export mechanism.
@@ -75,7 +76,7 @@ private:
 	Aabb m_boundingBox;
 	uint32_t m_count;
 
-#if !defined(_PS3)
+#if !defined(T_MODIFIER_USE_PS3_SPURS)
 	mutable Ref< Job > m_jobs[4];
 
 	void updateTask(float deltaTime, const Transform& transform, size_t first, size_t last);

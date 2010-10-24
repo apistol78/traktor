@@ -7,11 +7,9 @@
 #include "Spray/PointRenderer.h"
 #include "Spray/Source.h"
 
-#if defined(_PS3)
+#if defined(T_MODIFIER_USE_PS3_SPURS)
 #	include "Core/Thread/Ps3/Spurs/SpursJobQueue.h"
-#	include "Core/Thread/Ps3/Spurs/SpursManager.h"
-#	include "Core/Singleton/ISingleton.h"
-#	include "Core/Singleton/SingletonManager.h"
+#	include "Spray/Ps3/SprayJobQueue.h"
 #	include "Spray/Ps3/Spu/JobModifierUpdate.h"
 #endif
 
@@ -30,55 +28,12 @@ const float c_warmUpDeltaTime = 1.0f / 10.0f;
 #if TARGET_OS_IPHONE
 const uint32_t c_maxEmitPerUpdate = 4;
 const uint32_t c_maxEmitSingleShot = 10;
-#elif defined(_PS3)
-const uint32_t c_maxEmitPerUpdate = 4;
-const uint32_t c_maxEmitSingleShot = 500;
+//#elif defined(_PS3)
+//const uint32_t c_maxEmitPerUpdate = 4;
+//const uint32_t c_maxEmitSingleShot = 500;
 #else
 const uint32_t c_maxEmitPerUpdate = 8;
 const uint32_t c_maxEmitSingleShot = 3000;
-#endif
-
-#if defined(_PS3)
-
-class EmitterJobQueue : public ISingleton
-{
-public:
-	static EmitterJobQueue& getInstance()
-	{
-		static EmitterJobQueue* s_instance = 0;
-		if (!s_instance)
-		{
-			s_instance = new EmitterJobQueue();
-			SingletonManager::getInstance().add(s_instance);
-		}
-		return *s_instance;
-	}
-
-	SpursJobQueue* getJobQueue() const
-	{
-		return m_jobQueue;
-	}
-
-protected:
-	virtual void destroy()
-	{
-		delete this;
-	}
-
-private:
-	Ref< SpursJobQueue > m_jobQueue;
-
-	EmitterJobQueue()
-	{
-		m_jobQueue = SpursManager::getInstance().createJobQueue(sizeof(JobModifierUpdate), 256);
-	}
-
-	virtual ~EmitterJobQueue()
-	{
-		safeDestroy(m_jobQueue);
-	}
-};
-
 #endif
 
 		}
@@ -183,13 +138,13 @@ void EmitterInstance::update(EmitterUpdateContext& context, const Transform& tra
 			m_boundingBox.contain(i->position + i->velocity * deltaTime16);
 	}
 
-#if defined(_PS3)
+#if defined(T_MODIFIER_USE_PS3_SPURS)
 	//
 	// Update particles on SPU
 	//
 	if (!m_points.empty())
 	{
-		SpursJobQueue* jobQueue = EmitterJobQueue::getInstance().getJobQueue();
+		SpursJobQueue* jobQueue = SprayJobQueue::getInstance().getJobQueue();
 		T_ASSERT (jobQueue);
 
 		const RefArray< Modifier >& modifiers = m_emitter->getModifiers();
@@ -256,9 +211,9 @@ void EmitterInstance::render(PointRenderer* pointRenderer, const Plane& cameraPl
 
 void EmitterInstance::synchronize() const
 {
-#if defined(_PS3)
+#if defined(T_MODIFIER_USE_PS3_SPURS)
 
-	SpursJobQueue* jobQueue = EmitterJobQueue::getInstance().getJobQueue();
+	SpursJobQueue* jobQueue = SprayJobQueue::getInstance().getJobQueue();
 	T_ASSERT (jobQueue);
 
 	jobQueue->wait();
@@ -279,7 +234,7 @@ void EmitterInstance::synchronize() const
 #endif
 }
 
-#if !defined(_PS3)
+#if !defined(T_MODIFIER_USE_PS3_SPURS)
 void EmitterInstance::updateTask(float deltaTime, const Transform& transform, size_t first, size_t last)
 {
 	Scalar deltaTimeScalar(deltaTime);

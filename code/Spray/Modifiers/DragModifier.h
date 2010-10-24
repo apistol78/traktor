@@ -26,7 +26,7 @@ class T_DLLCLASS DragModifier : public Modifier
 public:
 	DragModifier();
 
-#if defined(_PS3)
+#if defined(T_MODIFIER_USE_PS3_SPURS)
 	virtual void update(SpursJobQueue* jobQueue, const Scalar& deltaTime, const Transform& transform, PointVector& points) const;
 #else
 	virtual void update(const Scalar& deltaTime, const Transform& transform, PointVector& points, size_t first, size_t last) const;

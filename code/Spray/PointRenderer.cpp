@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <limits>
 #include "Core/Math/Const.h"
+#include "Core/Misc/Align.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/IRenderSystem.h"
 #include "Render/VertexElement.h"
@@ -8,7 +9,32 @@
 #include "Render/IndexBuffer.h"
 #include "Render/Context/RenderContext.h"
 #include "Spray/PointRenderer.h"
+#include "Spray/Vertex.h"
 #include "World/WorldRenderView.h"
+
+#if defined(_PS3)
+#	include "Core/Thread/Ps3/Spurs/SpursJobQueue.h"
+#	include "Core/Thread/Ps3/Spurs/SpursManager.h"
+#	include "Spray/Ps3/Spu/JobPointRenderer.h"
+
+#	if !defined(_DEBUG)
+
+extern char _binary_jqjob_Traktor_Spray_JobPointRenderer_bin_start[];
+extern char _binary_jqjob_Traktor_Spray_JobPointRenderer_bin_size[];
+
+static char* job_start = _binary_jqjob_Traktor_Spray_JobPointRenderer_bin_start;
+static char* job_size = _binary_jqjob_Traktor_Spray_JobPointRenderer_bin_size;
+
+#	else
+
+extern char _binary_jqjob_Traktor_Spray_JobPointRenderer_d_bin_start[];
+extern char _binary_jqjob_Traktor_Spray_JobPointRenderer_d_bin_size[];
+
+static char* job_start = _binary_jqjob_Traktor_Spray_JobPointRenderer_d_bin_start;
+static char* job_size = _binary_jqjob_Traktor_Spray_JobPointRenderer_d_bin_size;
+
+#	endif
+#endif
 
 namespace traktor
 {
@@ -23,8 +49,8 @@ const uint32_t c_pointCount = 3000;
 const uint32_t c_pointCount = 1000;
 #elif defined(_WINCE)
 const uint32_t c_pointCount = 1000;
-#elif defined(_PS3)
-const uint32_t c_pointCount = 2500;
+//#elif defined(_PS3)
+//const uint32_t c_pointCount = 2500;
 #else
 const uint32_t c_pointCount = 4000;
 #endif
@@ -41,40 +67,6 @@ struct PredicateZ
 };
 
 		}
-
-#pragma pack(1)
-struct Vertex
-{
-	struct PositionAndOrientation
-	{
-		float position[3];
-		float orientation;
-	}
-	positionAndOrientation;
-	
-	struct VelocityAndRandom
-	{
-		float velocity[3];
-		float random;
-	}
-	velocityAndRandom;
-
-	struct Attributes1
-	{
-		float extent[2];
-		float alpha;
-		float size;
-	}
-	attrib1;
-
-	struct Attributes2
-	{
-		float color[3];
-		float age;
-	}
-	attrib2;
-};
-#pragma pack()
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.PointRenderer", PointRenderer, Object)
 
@@ -111,6 +103,10 @@ PointRenderer::PointRenderer(render::IRenderSystem* renderSystem)
 	}
 
 	m_indexBuffer->unlock();
+
+#if defined(_PS3)
+	m_jobQueue = SpursManager::getInstance().createJobQueue(sizeof(JobPointRenderer), 256);
+#endif
 }
 
 PointRenderer::~PointRenderer()
@@ -120,6 +116,10 @@ PointRenderer::~PointRenderer()
 
 void PointRenderer::destroy()
 {
+#if defined(_PS3)
+	safeDestroy(m_jobQueue);
+#endif
+
 	if (m_vertex)
 	{
 		m_vertex = 0;
@@ -147,11 +147,11 @@ void PointRenderer::render(
 	T_ASSERT (size > 0);
 
 	int32_t avail = c_pointCount - pointOffset;
-	if (points.size() >= c_manyPointsThreshold)
+	if (size >= c_manyPointsThreshold)
 		avail -= c_fewPointsHole;
 
 	size = std::min(size, avail);
-	if (!size)
+	if (size <= 0)
 		return;
 
 	AlignedVector< Batch >& batches = m_batches[m_currentBuffer];
@@ -162,25 +162,6 @@ void PointRenderer::render(
 	batches.back().count = 0;
 	batches.back().distance = std::numeric_limits< float >::max();
 
-	const float c_extents[4][2] =
-	{
-		{ -1.0f,  1.0f },
-		{  1.0f,  1.0f },
-		{  1.0f, -1.0f },
-		{ -1.0f, -1.0f }
-	};
-
-	//static std::vector< std::pair< uint32_t, float > > sorted;
-	//sorted.resize(size);
-
-	//for (uint32_t i = 0; i < size; ++i)
-	//{
-	//	sorted[i].first = i;
-	//	sorted[i].second = cameraPlane.distance(points[i].position);
-	//}
-
-	//std::sort(sorted.begin(), sorted.end(), PredicateZ());
-
 	if (!m_vertex)
 	{
 		m_vertex = static_cast< Vertex* >(m_vertexBuffer[m_currentBuffer]->lock());
@@ -188,14 +169,41 @@ void PointRenderer::render(
 			return;
 	}
 
-	//for (std::vector< std::pair< uint32_t, float > >::iterator i = sorted.begin(); i != sorted.end(); ++i)
-	//{
-	//	// Skip particles behind near culling plane.
-	//	float distance = i->second;
-	//	if (distance < m_cullNearDistance)
-	//		continue;
+#if defined(_PS3)
 
-	//	const Point& point = points[i->first];
+	T_ASSERT (alignUp(m_vertex, 16) == m_vertex);
+	T_ASSERT (alignUp(&batches.back(), 16) == &batches.back());
+
+	JobPointRenderer job;
+
+	__builtin_memset(&job, 0, sizeof(JobPointRenderer));
+	job.header.eaBinary = (uintptr_t)job_start;
+	job.header.sizeBinary = CELL_SPURS_GET_SIZE_BINARY(job_size);
+
+	cameraPlane.normal().storeUnaligned(job.data.cameraPlane);
+	job.data.cameraPlane[3] = -cameraPlane.distance();
+	job.data.cullNearDistance = cullNearDistance;
+	job.data.fadeNearRange = fadeNearRange;
+	job.data.middleAge = middleAge;
+	job.data.pointsEA = (uintptr_t)&points[0];
+	job.data.pointsCount = size;
+	job.data.vertexOutEA = (uintptr_t)(m_vertex + m_vertexOffset);
+	job.data.batchEA = (uintptr_t)&batches.back();
+
+	m_jobQueue->push(&job);
+	//m_jobQueue->wait();
+
+	m_vertexOffset += size * 4;
+
+#else
+
+	const float c_extents[4][2] =
+	{
+		{ -1.0f,  1.0f },
+		{  1.0f,  1.0f },
+		{  1.0f, -1.0f },
+		{ -1.0f, -1.0f }
+	};
 
 	for (int32_t i = 0; i < size; ++i)
 	{
@@ -215,15 +223,9 @@ void PointRenderer::render(
 
 		for (int j = 0; j < 4; ++j)
 		{
-#if !defined(_PS3)
 			point.position.storeUnaligned(m_vertex->positionAndOrientation.position);
 			point.velocity.storeUnaligned(m_vertex->velocityAndRandom.velocity);
 			point.color.storeUnaligned(m_vertex->attrib2.color);
-#else
-			point.position.storeAligned(m_vertex->positionAndOrientation.position);
-			point.velocity.storeAligned(m_vertex->velocityAndRandom.velocity);
-			point.color.storeAligned(m_vertex->attrib2.color);
-#endif
 
 			m_vertex->positionAndOrientation.orientation = point.orientation;
 			m_vertex->velocityAndRandom.random = point.random;
@@ -241,6 +243,8 @@ void PointRenderer::render(
 
 		m_vertexOffset += 4;
 	}
+
+#endif
 }
 
 void PointRenderer::flush(
@@ -250,6 +254,10 @@ void PointRenderer::flush(
 {
 	if (m_vertexOffset > 0)
 	{
+#if defined(_PS3)
+		m_jobQueue->wait();
+#endif
+
 		T_ASSERT (m_vertex);
 
 		m_vertex = 0;

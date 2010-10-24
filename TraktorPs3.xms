@@ -3871,6 +3871,11 @@
 					<solutionFileName>$(TRAKTOR_HOME)/TraktorPs3-Spu.xms</solutionFileName>
 					<projectName>Traktor.Spray.JobPointRenderer</projectName>
 				</item>
+				<item type="ExternalDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<solutionFileName>$(TRAKTOR_HOME)/TraktorPs3-Spu.xms</solutionFileName>
+					<projectName>Traktor.Spray.JobPointRenderer</projectName>
+				</item>
 			</dependencies>
 		</item>
 		<item type="Project" version="1">
