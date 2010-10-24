@@ -56,7 +56,7 @@ StateCachePs3::StateCachePs3()
 ,	m_vertexUCode(0)
 ,	m_fragmentOffset(0)
 {
-	const uint32_t c_invalidFloat = ~0UL;
+	const uint32_t c_invalidFloat = 0;
 
 	m_vertexConstantsShadow = (float*)Alloc::acquireAlign(VertexConstantCount * 4 * sizeof(float), 16, T_FILE_LINE);
 	std::memset(m_vertexConstantsShadow, c_invalidFloat, VertexConstantCount * 4 * sizeof(float));
@@ -145,7 +145,6 @@ void StateCachePs3::setRenderState(const RenderState& rs)
 		m_renderState.depthFunc = rs.depthFunc;
 	}
 
-	/*
 	if (rs.stencilTestEnable != m_renderState.stencilTestEnable)
 	{
 		T_GCM_CALL(cellGcmSetStencilTestEnable)(gCellGcmCurrentContext, rs.stencilTestEnable);
@@ -179,7 +178,6 @@ void StateCachePs3::setRenderState(const RenderState& rs)
 		m_renderState.stencilOpZFail = rs.stencilOpZFail;
 		m_renderState.stencilOpZPass = rs.stencilOpZPass;
 	}
-	*/
 
 	if (!m_inFp32Mode)
 	{
@@ -304,7 +302,7 @@ void StateCachePs3::setProgram(
 		T_GCM_CALL(cellGcmSetVertexProgram)(gCellGcmCurrentContext, vertexProgram, vertexUCode);
 		m_vertexUCode = vertexUCode;
 	}
-	if (fragmentOffset != m_fragmentOffset/* || updateFragmentTextures*/)
+	if (fragmentOffset != m_fragmentOffset || updateFragmentTextures)
 	{
 		T_GCM_CALL(cellGcmSetFragmentProgram)(gCellGcmCurrentContext, fragmentProgram, fragmentOffset);
 		m_fragmentOffset = fragmentOffset;

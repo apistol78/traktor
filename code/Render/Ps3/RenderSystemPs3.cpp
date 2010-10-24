@@ -209,7 +209,7 @@ Ref< IProgram > RenderSystemPs3::createProgram(const ProgramResource* programRes
 		return 0;
 
 	Ref< ProgramPs3 > program = new ProgramPs3(m_counterPrograms);
-	if (!program->create(m_memoryHeapLocal, resource))
+	if (!program->create(m_memoryHeapLocal, m_memoryHeapMain, resource))
 		return 0;
 
 	return program;

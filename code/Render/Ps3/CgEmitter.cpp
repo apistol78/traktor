@@ -783,6 +783,7 @@ bool emitPixelOutput(CgContext& cx, PixelOutput* node)
 		CELL_GCM_REPLACE,
 		CELL_GCM_INCR,
 		CELL_GCM_DECR,
+		CELL_GCM_INVERT,
 		CELL_GCM_INCR_WRAP,
 		CELL_GCM_DECR_WRAP
 	};

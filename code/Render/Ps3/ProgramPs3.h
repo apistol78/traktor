@@ -37,7 +37,7 @@ public:
 
 	virtual ~ProgramPs3();
 
-	bool create(MemoryHeap* memoryHeap, const ProgramResourcePs3* resource);
+	bool create(MemoryHeap* memoryHeapLocal, MemoryHeap* memoryHeapMain, const ProgramResourcePs3* resource);
 
 	virtual void destroy();
 
@@ -79,7 +79,7 @@ private:
 		MaxPatchInQueue = 64
 	};
 
-	Ref< MemoryHeap > m_memoryHeap;
+	Ref< MemoryHeap > m_memoryHeapLocal;
 	Ref< const ProgramResourcePs3 > m_resource;
 	CGprogram m_vertexProgram;
 	CGprogram m_pixelProgram;

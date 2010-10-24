@@ -153,6 +153,11 @@ void AccDisplayRenderer::build(uint32_t frame)
 	m_viewOffset.set(0.0f, 0.0f, 1.0f, 1.0f);
 }
 
+void AccDisplayRenderer::build(render::RenderContext* renderContext)
+{
+	m_renderContext = renderContext;
+}
+
 void AccDisplayRenderer::render(render::IRenderView* renderView, uint32_t frame)
 {
 	m_renderContexts[frame]->render(renderView, render::RfOverlay, 0);
@@ -504,6 +509,8 @@ void AccDisplayRenderer::end()
 		else
 			++i;
 	}
+
+	m_renderContext = 0;
 }
 
 	}

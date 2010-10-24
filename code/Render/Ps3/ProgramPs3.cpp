@@ -120,18 +120,18 @@ ProgramPs3::~ProgramPs3()
 	--m_counter;
 }
 
-bool ProgramPs3::create(MemoryHeap* memoryHeap, const ProgramResourcePs3* resource)
+bool ProgramPs3::create(MemoryHeap* memoryHeapLocal, MemoryHeap* memoryHeapMain, const ProgramResourcePs3* resource)
 {
 	T_ASSERT (resource);
 
-	m_memoryHeap = memoryHeap;
+	m_memoryHeapLocal = memoryHeapLocal;
 	m_resource = resource;
 
 	m_vertexProgram = (CGprogram)(resource->m_vertexShaderBin.getData());
 	m_pixelProgram = (CGprogram)(resource->m_pixelShaderBin.getData());
 
-	acquireProgramUCode(memoryHeap, m_vertexProgram, m_vertexShaderUCode);
-	acquireProgramUCode(memoryHeap, m_pixelProgram, m_pixelShaderUCode);
+	acquireProgramUCode(memoryHeapMain, m_vertexProgram, m_vertexShaderUCode);
+	acquireProgramUCode(memoryHeapLocal, m_pixelProgram, m_pixelShaderUCode);
 
 	m_vertexScalars = resource->m_vertexScalars;
 	m_pixelScalars = resource->m_pixelScalars;
@@ -183,7 +183,7 @@ bool ProgramPs3::create(MemoryHeap* memoryHeap, const ProgramResourcePs3* resour
 		{
 			for (uint32_t j = 0; j < 2; ++j)
 			{
-				m_patchPixelShaderUCode[i][j] = m_memoryHeap->alloc(m_pixelShaderUCode->getSize(), m_pixelShaderUCode->getAlignment(), false);
+				m_patchPixelShaderUCode[i][j] = m_memoryHeapLocal->alloc(m_pixelShaderUCode->getSize(), m_pixelShaderUCode->getAlignment(), false);
 				std::memcpy(
 					m_patchPixelShaderUCode[i][j]->getPointer(),
 					m_pixelShaderUCode->getPointer(),
@@ -488,7 +488,7 @@ void ProgramPs3::bind(StateCachePs3& stateCache, const float targetSize[], uint3
 
 			if (!patchQueue[m_patchCounter])
 			{
-				patchQueue[m_patchCounter] = m_memoryHeap->alloc(m_pixelShaderUCode->getSize(), m_pixelShaderUCode->getAlignment(), false);
+				patchQueue[m_patchCounter] = m_memoryHeapLocal->alloc(m_pixelShaderUCode->getSize(), m_pixelShaderUCode->getAlignment(), false);
 				if (!patchQueue[m_patchCounter])
 				{
 					log::error << L"ProgramPs3::bind failed; out of memory" << Endl;

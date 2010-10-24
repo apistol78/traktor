@@ -1,4 +1,6 @@
 #include <cell/sysmodule.h>
+#include <sysutil/sysutil_common.h>
+#include <sysutil/sysutil_sysparam.h>
 #include <sysutil/sysutil_gamecontent.h>
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
@@ -41,7 +43,11 @@ std::wstring OS::getComputerName() const
 
 std::wstring OS::getCurrentUser() const
 {
-	return L"User";
+	char user[256];
+	if (cellSysutilGetSystemParamString(CELL_SYSUTIL_SYSTEMPARAM_ID_CURRENT_USERNAME, user, sizeof(user)) == CELL_OK)
+		return mbstows(user);
+	else
+		return L"";
 }
 
 std::wstring OS::getUserHomePath() const
@@ -74,7 +80,13 @@ bool OS::exploreFile(const Path& file) const
 
 OS::envmap_t OS::getEnvironment() const
 {
-	return envmap_t();
+	OSData* data = static_cast< OSData* >(m_handle);
+
+	envmap_t env;
+	env[L"CONTENT_PATH"] = data->contentPath;
+	env[L"USRDIR_PATH"] = data->usrdirPath;
+
+	return env;
 }
 
 bool OS::getEnvironment(const std::wstring& name, std::wstring& outValue) const

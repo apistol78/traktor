@@ -852,7 +852,7 @@ void RenderViewPs3::clearImmediate()
 		if (rs.depthOffset)
 		{
 			float clearDepth = 1.0f - rs.clearDepth;	// "1-Z" depth buffer.
-			gcmClearMask |= CELL_GCM_CLEAR_Z/* | CELL_GCM_CLEAR_S*/;
+			gcmClearMask |= CELL_GCM_CLEAR_Z | CELL_GCM_CLEAR_S;
 			T_GCM_CALL(cellGcmSetClearDepthStencil)(
 				gCellGcmCurrentContext,
 				(uint32_t(clearDepth * 0xffffff) << 8) | (rs.clearStencil & 0xff)
