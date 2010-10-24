@@ -4,6 +4,7 @@
 #include <map>
 #include "Core/RefArray.h"
 #include "Flash/IDisplayRenderer.h"
+#include "Render/Types.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -62,7 +63,8 @@ public:
 		float viewHeight,
 		float aspectRatio,
 		uint32_t frameCount,
-		bool clearBackground
+		bool clearBackground,
+		float stereoscopicOffset
 	);
 
 	void destroy();
@@ -71,7 +73,7 @@ public:
 
 	void build(render::RenderContext* renderContext);
 
-	void render(render::IRenderView* renderView, uint32_t frame);
+	void render(render::IRenderView* renderView, uint32_t frame, render::EyeType eye);
 
 	void setViewSize(float width, float height);
 
@@ -107,6 +109,7 @@ private:
 	render::IRenderSystem* m_renderSystem;
 	RefArray< render::RenderContext > m_renderContexts;
 	Ref< render::RenderContext > m_renderContext;
+	Ref< render::RenderContext > m_globalContext;
 	Ref< render::RenderTargetSet > m_renderTargetGlyphs;
 	Ref< AccTextureCache > m_textureCache;
 	Ref< AccGlyph > m_glyph;
@@ -119,9 +122,11 @@ private:
 	Vector4 m_viewOffset;
 	float m_aspectRatio;
 	bool m_clearBackground;
+	float m_stereoscopicOffset;
 	bool m_maskWrite;
 	bool m_maskIncrement;
 	uint8_t m_maskReference;
+	render::handle_t m_handleScreenOffset;
 };
 
 	}

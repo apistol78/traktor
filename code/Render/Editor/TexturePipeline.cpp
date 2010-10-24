@@ -193,7 +193,7 @@ struct CompressTextureTask : public Object
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TexturePipeline", 11, TexturePipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TexturePipeline", 12, TexturePipeline, editor::IPipeline)
 
 TexturePipeline::TexturePipeline()
 :	m_skipMips(0)
@@ -388,9 +388,12 @@ bool TexturePipeline::buildOutput(
 		drawing::TransformFilter transformFilter(drawing::Color(-1.0f, 1.0f, 1.0f, 1.0f), drawing::Color(1.0f, 0.0f, 0.0f, 0.0f));
 		image = image->applyFilter(&transformFilter);
 
-		// [rgba] -> [0,g,0,r]
-		drawing::SwizzleFilter swizzleFilter(L"0g0r");
+		// [rgba] -> [0,g,0,r] (or [a,g,0,r] if we cannot ignore alpha)
+		drawing::SwizzleFilter swizzleFilter(textureAsset->m_ignoreAlpha ? L"0g0r" : L"ag0r");
 		image = image->applyFilter(&swizzleFilter);
+
+		if (!textureAsset->m_ignoreAlpha)
+			log::info << L"Kept source alpha in red channel; compressed normals might have artifacts" << Endl;
 	}
 
 	// Rescale image.
