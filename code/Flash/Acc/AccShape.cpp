@@ -47,6 +47,7 @@ render::handle_t s_handleTransform;
 render::handle_t s_handleFrameSize;
 render::handle_t s_handleViewSize;
 render::handle_t s_handleViewOffset;
+render::handle_t s_handleScreenOffsetScale;
 render::handle_t s_handleCxFormMul;
 render::handle_t s_handleCxFormAdd;
 render::handle_t s_handleTexture;
@@ -68,6 +69,7 @@ bool AccShape::create(
 		s_handleFrameSize = render::getParameterHandle(L"FrameSize");
 		s_handleViewSize = render::getParameterHandle(L"ViewSize");
 		s_handleViewOffset = render::getParameterHandle(L"ViewOffset");
+		s_handleScreenOffsetScale = render::getParameterHandle(L"ScreenOffsetScale");
 		s_handleCxFormMul = render::getParameterHandle(L"CxFormMul");
 		s_handleCxFormAdd = render::getParameterHandle(L"CxFormAdd");
 		s_handleTexture = render::getParameterHandle(L"Texture");
@@ -300,6 +302,7 @@ void AccShape::render(
 	const Vector4& frameSize,
 	const Vector4& viewSize,
 	const Vector4& viewOffset,
+	float screenOffsetScale,
 	const SwfCxTransform& cxform,
 	bool maskWrite,
 	bool maskIncrement,
@@ -358,6 +361,7 @@ void AccShape::render(
 		renderBlockSolid->programParams->setVectorParameter(s_handleFrameSize, frameSize);
 		renderBlockSolid->programParams->setVectorParameter(s_handleViewSize, viewSize);
 		renderBlockSolid->programParams->setVectorParameter(s_handleViewOffset, viewOffset);
+		renderBlockSolid->programParams->setFloatParameter(s_handleScreenOffsetScale, screenOffsetScale);
 		renderBlockSolid->programParams->setVectorParameter(s_handleCxFormMul, Vector4(cxform.red[0], cxform.green[0], cxform.blue[0], cxform.alpha[0]));
 		renderBlockSolid->programParams->setVectorParameter(s_handleCxFormAdd, Vector4(cxform.red[1], cxform.green[1], cxform.blue[1], cxform.alpha[1]));
 		renderBlockSolid->programParams->setStencilReference(maskReference);
@@ -375,6 +379,7 @@ void AccShape::render(
 		renderBlockTextured->programParams->setVectorParameter(s_handleFrameSize, frameSize);
 		renderBlockTextured->programParams->setVectorParameter(s_handleViewSize, viewSize);
 		renderBlockTextured->programParams->setVectorParameter(s_handleViewOffset, viewOffset);
+		renderBlockTextured->programParams->setFloatParameter(s_handleScreenOffsetScale, screenOffsetScale);
 		renderBlockTextured->programParams->setVectorParameter(s_handleCxFormMul, Vector4(cxform.red[0], cxform.green[0], cxform.blue[0], cxform.alpha[0]));
 		renderBlockTextured->programParams->setVectorParameter(s_handleCxFormAdd, Vector4(cxform.red[1], cxform.green[1], cxform.blue[1], cxform.alpha[1]));
 		renderBlockTextured->programParams->setStencilReference(maskReference);

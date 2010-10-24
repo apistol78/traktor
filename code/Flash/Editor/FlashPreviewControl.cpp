@@ -281,7 +281,7 @@ void FlashPreviewControl::eventPaint(ui::Event* event)
 		// Build render context.
 		if (m_movie)
 		{
-			m_displayRenderer->build(0);
+			m_displayRenderer->build(uint32_t(0));
 			m_moviePlayer->renderFrame();
 		}
 

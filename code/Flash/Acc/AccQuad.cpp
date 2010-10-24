@@ -33,7 +33,7 @@ render::handle_t s_handleTransform;
 render::handle_t s_handleFrameSize;
 render::handle_t s_handleViewSize;
 render::handle_t s_handleViewOffset;
-render::handle_t s_handleStepSize;
+render::handle_t s_handleScreenOffsetScale;
 render::handle_t s_handleCxFormMul;
 render::handle_t s_handleCxFormAdd;
 render::handle_t s_handleTexture;
@@ -52,6 +52,7 @@ bool AccQuad::create(
 		s_handleFrameSize = render::getParameterHandle(L"FrameSize");
 		s_handleViewSize = render::getParameterHandle(L"ViewSize");
 		s_handleViewOffset = render::getParameterHandle(L"ViewOffset");
+		s_handleScreenOffsetScale = render::getParameterHandle(L"ScreenOffsetScale");
 		s_handleCxFormMul = render::getParameterHandle(L"CxFormMul");
 		s_handleCxFormAdd = render::getParameterHandle(L"CxFormAdd");
 		s_handleTexture = render::getParameterHandle(L"Texture");
@@ -109,6 +110,7 @@ void AccQuad::render(
 	const Vector4& frameSize,
 	const Vector4& viewSize,
 	const Vector4& viewOffset,
+	float screenOffsetScale,
 	const SwfCxTransform& cxform,
 	render::ITexture* texture,
 	const Vector4& textureOffset,
@@ -156,6 +158,7 @@ void AccQuad::render(
 	renderBlock->programParams->setVectorParameter(s_handleFrameSize, frameSize);
 	renderBlock->programParams->setVectorParameter(s_handleViewSize, viewSize);
 	renderBlock->programParams->setVectorParameter(s_handleViewOffset, viewOffset);
+	renderBlock->programParams->setFloatParameter(s_handleScreenOffsetScale, screenOffsetScale);
 	renderBlock->programParams->setVectorParameter(s_handleCxFormMul, Vector4(cxform.red[0], cxform.green[0], cxform.blue[0], cxform.alpha[0]));
 	renderBlock->programParams->setVectorParameter(s_handleCxFormAdd, Vector4(cxform.red[1], cxform.green[1], cxform.blue[1], cxform.alpha[1]));
 	renderBlock->programParams->setStencilReference(maskReference);

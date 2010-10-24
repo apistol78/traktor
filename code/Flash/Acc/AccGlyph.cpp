@@ -47,6 +47,7 @@ bool s_handleInitialized = false;
 render::handle_t s_handleFrameSize;
 render::handle_t s_handleViewSize;
 render::handle_t s_handleViewOffset;
+render::handle_t s_handleScreenOffsetScale;
 render::handle_t s_handleTexture;
 
 		}
@@ -70,6 +71,7 @@ bool AccGlyph::create(
 		s_handleFrameSize = render::getParameterHandle(L"FrameSize");
 		s_handleViewSize = render::getParameterHandle(L"ViewSize");
 		s_handleViewOffset = render::getParameterHandle(L"ViewOffset");
+		s_handleScreenOffsetScale = render::getParameterHandle(L"ScreenOffsetScale");
 		s_handleTexture = render::getParameterHandle(L"Texture");
 		s_handleInitialized = true;
 	}
@@ -206,6 +208,7 @@ void AccGlyph::render(
 	const Vector4& frameSize,
 	const Vector4& viewSize,
 	const Vector4& viewOffset,
+	float screenOffsetScale,
 	render::ITexture* texture,
 	uint8_t maskReference
 )
@@ -232,6 +235,7 @@ void AccGlyph::render(
 	renderBlock->programParams->setVectorParameter(s_handleFrameSize, frameSize);
 	renderBlock->programParams->setVectorParameter(s_handleViewSize, viewSize);
 	renderBlock->programParams->setVectorParameter(s_handleViewOffset, viewOffset);
+	renderBlock->programParams->setFloatParameter(s_handleScreenOffsetScale, screenOffsetScale);
 	renderBlock->programParams->setStencilReference(maskReference);
 	renderBlock->programParams->setTextureParameter(s_handleTexture, texture);
 

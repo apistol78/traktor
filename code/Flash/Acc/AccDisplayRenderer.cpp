@@ -70,9 +70,11 @@ AccDisplayRenderer::AccDisplayRenderer()
 ,	m_viewOffset(0.0f, 0.0f, 1.0f, 1.0f)
 ,	m_aspectRatio(1.0f)
 ,	m_clearBackground(false)
+,	m_stereoscopicOffset(0.0f)
 ,	m_maskWrite(false)
 ,	m_maskIncrement(false)
 ,	m_maskReference(0)
+,	m_handleScreenOffset(render::getParameterHandle(L"ScreenOffset"))
 {
 }
 
@@ -92,7 +94,8 @@ bool AccDisplayRenderer::create(
 	float viewHeight,
 	float aspectRatio,
 	uint32_t frameCount,
-	bool clearBackground
+	bool clearBackground,
+	float stereoscopicOffset
 )
 {
 	m_resourceManager = resourceManager;
@@ -101,6 +104,7 @@ bool AccDisplayRenderer::create(
 	m_viewSize.set(viewWidth, viewHeight, 1.0f / viewWidth, 1.0f / viewHeight);
 	m_aspectRatio = aspectRatio;
 	m_clearBackground = clearBackground;
+	m_stereoscopicOffset = stereoscopicOffset;
 
 	m_glyph = new AccGlyph();
 	if (!m_glyph->create(resourceManager, renderSystem))
@@ -126,6 +130,10 @@ bool AccDisplayRenderer::create(
 	for (uint32_t i = 0; i < frameCount; ++i)
 		m_renderContexts[i] = new render::RenderContext(256 * 1024);
 
+	// Allocate "global" parameter context; as it's reset for each render
+	// call this can be fairly small.
+	m_globalContext = new render::RenderContext(4096);
+
 	return true;
 }
 
@@ -144,6 +152,8 @@ void AccDisplayRenderer::destroy()
 
 	m_renderContexts.clear();
 	m_renderContext = 0;
+
+	m_globalContext = 0;
 }
 
 void AccDisplayRenderer::build(uint32_t frame)
@@ -158,9 +168,22 @@ void AccDisplayRenderer::build(render::RenderContext* renderContext)
 	m_renderContext = renderContext;
 }
 
-void AccDisplayRenderer::render(render::IRenderView* renderView, uint32_t frame)
+void AccDisplayRenderer::render(render::IRenderView* renderView, uint32_t frame, render::EyeType eye)
 {
-	m_renderContexts[frame]->render(renderView, render::RfOverlay, 0);
+	render::ProgramParameters programParams;
+
+	programParams.beginParameters(m_globalContext);
+	if (eye == render::EtCyclop)
+		programParams.setFloatParameter(m_handleScreenOffset, 0.0f);
+	else if (eye == render::EtLeft)
+		programParams.setFloatParameter(m_handleScreenOffset, -m_stereoscopicOffset);
+	else if (eye == render::EtRight)
+		programParams.setFloatParameter(m_handleScreenOffset, m_stereoscopicOffset);
+	programParams.endParameters(m_globalContext);
+
+	m_renderContexts[frame]->render(renderView, render::RfOverlay, &programParams);
+
+	m_globalContext->flush();
 }
 
 void AccDisplayRenderer::setViewSize(float width, float height)
@@ -226,6 +249,7 @@ void AccDisplayRenderer::beginMask(bool increment)
 		m_frameSize,
 		m_viewSize,
 		m_viewOffset,
+		1.0f,
 		m_renderTargetGlyphs->getColorTexture(0),
 		m_maskReference
 	);
@@ -241,6 +265,7 @@ void AccDisplayRenderer::endMask()
 		m_frameSize,
 		m_viewSize,
 		m_viewOffset,
+		1.0f,
 		m_renderTargetGlyphs->getColorTexture(0),
 		m_maskReference
 	);
@@ -294,6 +319,7 @@ void AccDisplayRenderer::renderShape(const FlashMovie& movie, const Matrix33& tr
 		m_frameSize,
 		m_viewSize,
 		m_viewOffset,
+		1.0f,
 		m_renderTargetGlyphs->getColorTexture(0),
 		m_maskReference
 	);
@@ -305,6 +331,7 @@ void AccDisplayRenderer::renderShape(const FlashMovie& movie, const Matrix33& tr
 		m_frameSize,
 		m_viewSize,
 		m_viewOffset,
+		1.0f,
 		cxform,
 		m_maskWrite,
 		m_maskIncrement,
@@ -408,6 +435,7 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 			frameSize,
 			viewSize,
 			viewOffset,
+			0.0f,
 			c_cxfZero,
 			0,
 			Vector4::zero(),
@@ -422,6 +450,7 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 			frameSize,
 			viewSize,
 			viewOffset,
+			0.0f,
 			c_cxfIdentity,
 			false,
 			false,
@@ -485,6 +514,7 @@ void AccDisplayRenderer::end()
 		m_frameSize,
 		m_viewSize,
 		m_viewOffset,
+		1.0f,
 		m_renderTargetGlyphs->getColorTexture(0),
 		m_maskReference
 	);
