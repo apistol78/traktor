@@ -58,14 +58,6 @@ const uint32_t c_pointCount = 4000;
 const int32_t c_manyPointsThreshold = 100;	//<! Threshold, over this value are considered dense instances.
 const int32_t c_fewPointsHole = 40;			//<! Always keep this number of points available for sparse instances.
 
-struct PredicateZ
-{
-	bool operator () (const std::pair< uint32_t, float >& i1, const std::pair< uint32_t, float >& i2) const
-	{
-		return bool(i1.second > i2.second);
-	}
-};
-
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.PointRenderer", PointRenderer, Object)
@@ -171,16 +163,13 @@ void PointRenderer::render(
 
 #if defined(_PS3)
 
-	T_ASSERT (alignUp(m_vertex, 16) == m_vertex);
-	T_ASSERT (alignUp(&batches.back(), 16) == &batches.back());
-
 	JobPointRenderer job;
 
 	__builtin_memset(&job, 0, sizeof(JobPointRenderer));
 	job.header.eaBinary = (uintptr_t)job_start;
 	job.header.sizeBinary = CELL_SPURS_GET_SIZE_BINARY(job_size);
 
-	cameraPlane.normal().storeUnaligned(job.data.cameraPlane);
+	cameraPlane.normal().storeAligned(job.data.cameraPlane);
 	job.data.cameraPlane[3] = -cameraPlane.distance();
 	job.data.cullNearDistance = cullNearDistance;
 	job.data.fadeNearRange = fadeNearRange;
@@ -191,7 +180,6 @@ void PointRenderer::render(
 	job.data.batchEA = (uintptr_t)&batches.back();
 
 	m_jobQueue->push(&job);
-	//m_jobQueue->wait();
 
 	m_vertexOffset += size * 4;
 

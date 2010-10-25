@@ -18,6 +18,7 @@
 #include "Render/Context/RenderContext.h"
 
 #define T_DEBUG_GLYPH_CACHE 0
+#define T_FLUSH_CACHE 0
 
 namespace traktor
 {
@@ -26,8 +27,10 @@ namespace traktor
 		namespace
 		{
 
+#if T_FLUSH_CACHE
 const uint32_t c_maxCacheSize = 64;
 const uint32_t c_maxUnusedCount = 40;
+#endif
 const uint32_t c_cacheGlyphSize = 128;
 const uint32_t c_cacheGlyphMargin = 6;
 const uint32_t c_cacheGlyphCountX = 8;
@@ -193,6 +196,30 @@ void AccDisplayRenderer::setViewSize(float width, float height)
 
 void AccDisplayRenderer::preload(const FlashMovie& movie)
 {
+	const std::map< uint16_t, Ref< FlashBitmap > >& bitmaps = movie.getBitmaps();
+	for (std::map< uint16_t, Ref< FlashBitmap > >::const_iterator i = bitmaps.begin(); i != bitmaps.end(); ++i)
+		m_textureCache->getBitmapTexture(*(i->second));
+
+	const std::map< uint16_t, Ref< FlashCharacter > >& characters = movie.getCharacters();
+	for (std::map< uint16_t, Ref< FlashCharacter > >::const_iterator i = characters.begin(); i != characters.end(); ++i)
+	{
+		if (const FlashShape* shape = dynamic_type_cast< const FlashShape* >(i->second))
+		{
+			Ref< AccShape > accShape = new AccShape();
+			if (accShape->create(
+				m_resourceManager,
+				m_renderSystem,
+				*m_textureCache,
+				movie,
+				*shape
+			))
+			{
+				uint64_t hash = reinterpret_cast< uint64_t >(shape);
+				m_shapeCache[hash].unusedCount = 0;
+				m_shapeCache[hash].shape = accShape;
+			}
+		}
+	}
 }
 
 void AccDisplayRenderer::begin(const FlashMovie& movie, const SwfColor& backgroundColor)
@@ -519,6 +546,7 @@ void AccDisplayRenderer::end()
 		m_maskReference
 	);
 
+#if T_FLUSH_CACHE
 	// Don't flush cache if it doesn't contain that many shapes.
 	if (m_shapeCache.size() < c_maxCacheSize)
 	{
@@ -539,6 +567,7 @@ void AccDisplayRenderer::end()
 		else
 			++i;
 	}
+#endif
 
 	m_renderContext = 0;
 }

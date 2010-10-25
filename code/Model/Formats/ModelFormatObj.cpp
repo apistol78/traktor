@@ -93,7 +93,7 @@ Ref< Model > ModelFormatObj::read(const Path& filePath, uint32_t importFlags) co
 				for (std::vector< std::wstring >::const_iterator i = values.begin(); i != values.end(); ++i)
 				{
 					std::vector< int32_t > indices;
-					if (Split< std::wstring, int32_t >::any(*i, L"/", indices) >= 0)
+					if (Split< std::wstring, int32_t >::any(*i, L"/", indices) > 0)
 					{
 						Vertex vertex;
 						vertex.setPosition(indices[0] - 1);

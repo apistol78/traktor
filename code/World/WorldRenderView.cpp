@@ -12,7 +12,6 @@ namespace traktor
 
 bool s_handlesInitialized = false;
 render::handle_t s_handleDefaultTechnique;
-render::handle_t s_handleShadowTechnique;
 render::handle_t s_handleProjection;
 render::handle_t s_handleView;
 render::handle_t s_handleWorld;
@@ -62,7 +61,6 @@ WorldRenderView::WorldRenderView()
 	if (!s_handlesInitialized)
 	{
 		s_handleDefaultTechnique = render::getParameterHandle(L"Default");
-		s_handleShadowTechnique = render::getParameterHandle(L"Shadow");
 		s_handleProjection = render::getParameterHandle(L"Projection");
 		s_handleView = render::getParameterHandle(L"View");
 		s_handleWorld = render::getParameterHandle(L"World");
@@ -251,9 +249,6 @@ void WorldRenderView::setProgramParameters(render::ProgramParameters* programPar
 
 void WorldRenderView::setWorldProgramParameters(render::ProgramParameters* programParams, const Matrix44& world) const
 {
-	float viewSizeInvX = m_viewSize.x != 0.0f ? 1.0f / m_viewSize.x : 0.0f;
-	float viewSizeInvY = m_viewSize.y != 0.0f ? 1.0f / m_viewSize.y : 0.0f;
-
 	programParams->setFloatParameter(s_handleTime, m_time);
 	programParams->setMatrixParameter(s_handleProjection, m_projection);
 	programParams->setMatrixParameter(s_handleView, m_view);

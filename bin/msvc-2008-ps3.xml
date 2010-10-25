@@ -105,6 +105,10 @@
                   <first>DebugInformationFormat</first>
                   <second>3</second>
                 </item>
+				<item>
+				  <first>DisableSpecificWarnings</first>
+				  <second>1669;1700</second>
+				</item>
               </staticOptions>
             </item>
             <item type="SolutionBuilderMsvcGenericTool">
@@ -189,6 +193,10 @@
                   <first>WarningLevel</first>
                   <second>3</second>
                 </item>
+				<item>
+				  <first>DisableSpecificWarnings</first>
+				  <second>1669;1700</second>
+				</item>
               </staticOptions>
             </item>
             <item type="SolutionBuilderMsvcGenericTool">
@@ -284,6 +292,10 @@
                   <first>DebugInformationFormat</first>
                   <second>3</second>
                 </item>
+				<item>
+				  <first>DisableSpecificWarnings</first>
+				  <second>1669;1700</second>
+				</item>
               </staticOptions>
             </item>
             <item type="SolutionBuilderMsvcGenericTool">
@@ -404,6 +416,10 @@
                   <first>WarningLevel</first>
                   <second>3</second>
                 </item>
+				<item>
+				  <first>DisableSpecificWarnings</first>
+				  <second>1669;1700</second>
+				</item>
               </staticOptions>
             </item>
             <item type="SolutionBuilderMsvcGenericTool">
@@ -543,6 +559,10 @@
                   <first>DebugInformationFormat</first>
                   <second>3</second>
                 </item>
+				<item>
+				  <first>DisableSpecificWarnings</first>
+				  <second>1669;1700</second>
+				</item>
               </staticOptions>
             </item>
             <item type="SolutionBuilderMsvcGenericTool">
@@ -655,6 +675,10 @@
                   <first>WarningLevel</first>
                   <second>3</second>
                 </item>
+				<item>
+				  <first>DisableSpecificWarnings</first>
+				  <second>1669;1700</second>
+				</item>
               </staticOptions>
             </item>
             <item type="SolutionBuilderMsvcGenericTool">
@@ -786,6 +810,10 @@
                   <first>DebugInformationFormat</first>
                   <second>3</second>
                 </item>
+				<item>
+				  <first>DisableSpecificWarnings</first>
+				  <second>1669;1700</second>
+				</item>
               </staticOptions>
             </item>
             <item type="SolutionBuilderMsvcGenericTool">
@@ -898,6 +926,10 @@
                   <first>WarningLevel</first>
                   <second>3</second>
                 </item>
+				<item>
+				  <first>DisableSpecificWarnings</first>
+				  <second>1669;1700</second>
+				</item>
               </staticOptions>
             </item>
             <item type="SolutionBuilderMsvcGenericTool">
