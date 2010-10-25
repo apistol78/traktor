@@ -110,7 +110,7 @@ bool FlashPreviewControl::create(ui::Widget* parent, int style, resource::IResou
 		renderSystem,
 		float(viewport.width),
 		float(viewport.height),
-		1.0f,
+		float(viewport.width) / viewport.height,
 		1,
 		true,
 		0.0f
@@ -259,7 +259,10 @@ void FlashPreviewControl::eventSize(ui::Event* event)
 		m_renderView->setViewport(render::Viewport(0, 0, sz.cx, sz.cy, 0, 1));
 	}
 	if (m_displayRenderer)
+	{
 		m_displayRenderer->setViewSize(float(sz.cx), float(sz.cy));
+		m_displayRenderer->setAspectRatio(float(sz.cx) / float(sz.cy));
+	}
 #else
 	if (!m_graphicsSystem)
 		return;

@@ -324,17 +324,24 @@ void AccShape::render(
 	{
 		if (maskReference == 0)
 		{
+			if (!m_shaderSolid.validate() || !m_shaderTextured.validate())
+				return;
 			shaderSolid = m_shaderSolid;
 			shaderTextured = m_shaderTextured;
 		}
 		else
 		{
+			if (!m_shaderSolidMask.validate() || !m_shaderTexturedMask.validate())
+				return;
 			shaderSolid = m_shaderSolidMask;
 			shaderTextured = m_shaderTexturedMask;
 		}
 	}
 	else
 	{
+		if (!m_shaderIncrementMask.validate() || !m_shaderDecrementMask.validate())
+			return;
+
 		if (maskIncrement)
 			shaderSolid = m_shaderIncrementMask;
 		else
