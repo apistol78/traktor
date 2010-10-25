@@ -23,6 +23,12 @@ public:
 	{
 	}
 
+	ActionValueArray(const ActionValueArray& arr)
+	:	m_values(arr.m_values)
+	,	m_size(arr.m_size)
+	{
+	}
+
 	ActionValueArray(ActionValuePool& pool, uint32_t count)
 	:	m_values(pool.alloc(count))
 	,	m_size(count)
