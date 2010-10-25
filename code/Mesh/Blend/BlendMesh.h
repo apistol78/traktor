@@ -53,7 +53,7 @@ class T_DLLCLASS BlendMesh : public IMesh
 	T_RTTI_CLASS;
 
 public:
-	enum { VertexBufferCount = 2 };
+	enum { VertexBufferCount = 3 };
 
 	struct Instance : public Object
 	{
