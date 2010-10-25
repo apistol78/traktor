@@ -51,17 +51,19 @@ bool FlashBitmap::create(drawing::Image* image)
 #endif
 	}
 	
-#if TARGET_OS_IPHONE
+#if TARGET_OS_IPHONE || defined(_PS3)
 	// Ensure bitmap is a power-of-2.
 	uint32_t log2Width = previousLog2(clone->getWidth());
 	uint32_t log2Height = previousLog2(clone->getHeight());
 	
+#	if !defined(_PS3)
 	// Clamp size; we cannot afford too big bitmaps.
 	if (log2Width > 64)
 		log2Width = 64;
 	if (log2Height > 64)
 		log2Height = 64;
-	
+#	endif
+
 	if (log2Width != clone->getWidth() || log2Height != clone->getHeight())
 	{
 		log::warning << L"Flash bitmap resized to power-of-2 " << log2Width << L"*" << log2Height << Endl;

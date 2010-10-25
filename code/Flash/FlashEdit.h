@@ -47,7 +47,7 @@ public:
 		bool renderHtml
 	);
 
-	virtual Ref< FlashCharacterInstance > createInstance(ActionContext* context, FlashCharacterInstance* parent) const;
+	virtual Ref< FlashCharacterInstance > createInstance(ActionContext* context, FlashCharacterInstance* parent, const std::string& name) const;
 
 	/*! \brief Get font identifier.
 	 *

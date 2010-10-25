@@ -497,7 +497,6 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 		T_ASSERT (b2);
 	}
 	
-	btTypedConstraint* constraint = 0;
 	Ref< Joint > joint;
 
 	if (const BallJointDesc* ballDesc = dynamic_type_cast< const BallJointDesc* >(desc))
@@ -528,7 +527,6 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 			);
 		}
 
-		constraint = pointConstraint;
 		joint = new BallJointBullet(this, pointConstraint, body1, body2);
 	}
 	else if (const ConeTwistJointDesc* coneTwistDesc = dynamic_type_cast< const ConeTwistJointDesc* >(desc))
@@ -566,8 +564,6 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 			jointConstraint->setJointSolver(coneTwistJoint);
 			joint = coneTwistJoint;
 		}
-
-		constraint = jointConstraint;
 	}
 	else if (const HingeJointDesc* hingeDesc = dynamic_type_cast< const HingeJointDesc* >(desc))
 	{
@@ -612,7 +608,6 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 		if (abs(maxAngle - minAngle) > FUZZY_EPSILON)
 			hingeConstraint->setLimit(minAngle, maxAngle);
 
-		constraint = hingeConstraint;
 		joint = new HingeJointBullet(this, hingeConstraint, body1, body2);
 	}
 
