@@ -1,4 +1,5 @@
 #include "Core/Io/StringOutputStream.h"
+#include "Core/Misc/Split.h"
 #include "Core/Thread/Acquire.h"
 #include "Flash/FlashEdit.h"
 #include "Flash/FlashEditInstance.h"
@@ -15,6 +16,10 @@ namespace traktor
 	{
 		namespace
 		{
+bool isWhiteSpace(wchar_t ch)
+{
+	return ch == 0 || ch == L' ' || ch == L'\t' || ch == L'\n' || ch == L'\r';
+}
 
 void concateHtmlText(const html::Node* node, StringOutputStream& ss)
 {
@@ -97,33 +102,101 @@ bool FlashEditInstance::getTextExtents(float& outWidth, float& outHeight) const
 	float fontHeight = m_edit->getFontHeight();
 
 	const float c_magicX = 32.0f * 20.0f;
+	const float c_magicY = 8.0f * 20.0f;
 
-	outWidth = 0.0f;
-	outHeight = 0.0f;
+	float offsetY = 0;//fontHeight - c_magicY;
 
-	for (text_t::const_iterator i = m_text.begin(); i != m_text.end(); ++i)
+	// Get space width.
+	uint16_t spaceGlyphIndex = font->lookupIndex(L' ');
+	int16_t spaceWidth = font->getAdvance(spaceGlyphIndex);
+	outWidth = 0;
+	// Render text lines.
+	for (FlashEditInstance::text_t::const_iterator i = m_text.begin(); i != m_text.end(); ++i)
 	{
-		const std::wstring& line = *i;
-		
-		float width = 0.0f;
-		for (uint32_t j = 0; j < line.length(); ++j)
+		std::vector< std::wstring > words;
+		Split< std::wstring >::any(*i, L" \t", words);
+
+		// Calculate width of each word.
+		std::vector< float > widths(words.size());
+		for (uint32_t j = 0; j < words.size(); ++j)
 		{
-			uint16_t glyphIndex = font->lookupIndex(line[j]);
-			int16_t glyphAdvance = font->getAdvance(glyphIndex);
-			if (j < line.length() - 1)
-				glyphAdvance += font->lookupKerning(line[j], line[j + 1]);
-			width += (glyphAdvance - c_magicX);
+			const std::wstring& word = words[j];
+			uint32_t wordLength = word.length();
+
+			float wordWidth = 0.0f;
+			for (uint32_t k = 0; k < wordLength; ++k)
+			{
+				uint16_t glyphIndex = font->lookupIndex(word[k]);
+				int16_t glyphAdvance = font->getAdvance(glyphIndex);
+				if (k < wordLength - 1)
+					glyphAdvance += font->lookupKerning(word[k], word[k + 1]);
+				wordWidth += (glyphAdvance - c_magicX);
+			}
+
+			widths[j] = wordWidth * fontScale * fontHeight;
 		}
 
-		width *= fontScale * fontHeight;
+		// Pack as many words as fits in bounds (only if word wrap enabled); then render each line.
+		uint32_t wordOffsetStart = 0;
+		uint32_t wordOffsetEnd = 0;
+		const FlashEdit* edit = getEdit();
+		const SwfRect& bounds = edit->getTextBounds();
+		const SwfColor& color = edit->getTextColor();
+		bool wordWrap = edit->wordWrap();
 
-		outWidth = max(outWidth, width);
-		outHeight += fontHeight;
+		while (wordOffsetStart < words.size())
+		{
+			float lineWidth = 0.0f;
+			while (wordOffsetEnd < words.size())
+			{
+				float wordWidth = widths[wordOffsetEnd];
+
+				if (wordOffsetStart >= wordOffsetEnd)
+					lineWidth = wordWidth;
+				else
+				{
+					wordWidth += spaceWidth * fontScale * fontHeight;
+					if (wordWrap && lineWidth + wordWidth >= bounds.max.x - bounds.min.x)
+						break;
+					lineWidth += wordWidth;
+				}
+
+				wordOffsetEnd++;
+			}
+
+			// Calculate line horizontal offset.
+			float offsetX = 0.0f;
+			if (edit->getAlign() == FlashEdit::AnCenter)
+				offsetX = (bounds.max.x - bounds.min.x - lineWidth) / 2.0f;
+			else if (edit->getAlign() == FlashEdit::AnRight)
+				offsetX = bounds.max.x - bounds.min.x - lineWidth;
+
+			// Render each word.
+			while (wordOffsetStart < wordOffsetEnd)
+			{
+				const std::wstring& word = words[wordOffsetStart++];
+				uint32_t wordLength = word.length();
+
+				for (uint32_t i = 0; i < wordLength; ++i)
+				{
+					wchar_t ch = word[i];
+					uint16_t glyphIndex = font->lookupIndex(ch);
+
+					int16_t glyphAdvance = font->getAdvance(glyphIndex);
+					if (i < wordLength - 1)
+						glyphAdvance += font->lookupKerning(word[i], word[i + 1]);
+
+					offsetX += (glyphAdvance - c_magicX) * fontScale * fontHeight;
+				}
+				offsetX += spaceWidth * fontScale * fontHeight;
+			}
+			outWidth = max(outWidth, offsetX);
+			offsetY += fontHeight;
+		}
 	}
-
+	outHeight = offsetY ;
 	outWidth /= 20.0f;
 	outHeight /= 20.0f;
-
 	return true;
 }
 
