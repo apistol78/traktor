@@ -156,7 +156,7 @@ ActionValue AsMovieClip::construct(ActionContext* context, const ActionValueArra
 	// Create a fake sprite character for this instance.
 	Ref< FlashSprite > sprite = new FlashSprite(0, 0);
 	sprite->addFrame(new FlashFrame());
-	return ActionValue(sprite->createInstance(context, 0));
+	return ActionValue(sprite->createInstance(context, 0, ""));
 }
 
 void AsMovieClip::MovieClip_attachAudio(CallArgs& ca)
@@ -200,8 +200,7 @@ void AsMovieClip::MovieClip_attachMovie(CallArgs& ca)
 	}
 
 	// Create new instance of movie clip.
-	Ref< FlashSpriteInstance > attachClipInstance = checked_type_cast< FlashSpriteInstance* >(attachClip->createInstance(ca.context, movieClipInstance));
-	attachClipInstance->setName(attachClipNewName);
+	Ref< FlashSpriteInstance > attachClipInstance = checked_type_cast< FlashSpriteInstance* >(attachClip->createInstance(ca.context, movieClipInstance, attachClipName));
 	
 	// Add new instance to display list.
 	FlashDisplayList& displayList = movieClipInstance->getDisplayList();
@@ -249,7 +248,7 @@ void AsMovieClip::MovieClip_createEmptyMovieClip(CallArgs& ca)
 	emptyClip->addFrame(new FlashFrame());
 
 	// Create new instance of movie clip.
-	Ref< FlashSpriteInstance > emptyClipInstance = checked_type_cast< FlashSpriteInstance* >(emptyClip->createInstance(ca.context, movieClipInstance));
+	Ref< FlashSpriteInstance > emptyClipInstance = checked_type_cast< FlashSpriteInstance* >(emptyClip->createInstance(ca.context, movieClipInstance, ""));
 	emptyClipInstance->setName(emptyClipName);
 
 	// Add new instance to display list.

@@ -30,7 +30,7 @@ FlashButtonInstance::FlashButtonInstance(ActionContext* context, FlashCharacterI
 		if (!character)
 			continue;
 
-		Ref< FlashCharacterInstance > characterInstance = character->createInstance(context, this);
+		Ref< FlashCharacterInstance > characterInstance = character->createInstance(context, this, "");
 		T_ASSERT (characterInstance);
 
 		m_characterInstances[i->characterId] = characterInstance;

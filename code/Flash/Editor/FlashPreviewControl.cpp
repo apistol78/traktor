@@ -112,7 +112,8 @@ bool FlashPreviewControl::create(ui::Widget* parent, int style, resource::IResou
 		float(viewport.height),
 		1.0f,
 		1,
-		true
+		true,
+		0.0f
 	);
 #else
 	graphics::CreateDesc desc;
@@ -294,7 +295,7 @@ void FlashPreviewControl::eventPaint(ui::Event* event)
 			0
 		);
 
-		m_displayRenderer->render(m_renderView, 0);
+		m_displayRenderer->render(m_renderView, 0, render::EtCyclop);
 
 		m_renderView->end();
 		m_renderView->present();

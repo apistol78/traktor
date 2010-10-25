@@ -20,7 +20,7 @@ inline Vector4 fromBtVector3(const btVector3& v, float w)
 	T_ASSERT (!isNan((v).y()));
 	T_ASSERT (!isNan((v).z()));
 	T_ASSERT (!isNan(w));
-	return Vector4(v.x(), v.y(), v.z(), w);
+	return Vector4::loadAligned(v.m_floats).xyz0() + Vector4(0.0f, 0.0f, 0.0f, w);
 }
 
 /*! \brief Convert to Bullet vector. */
@@ -29,7 +29,10 @@ inline btVector3 toBtVector3(const Vector4& v)
 	T_ASSERT (!isNan((v).x()));
 	T_ASSERT (!isNan((v).y()));
 	T_ASSERT (!isNan((v).z()));
-	return btVector3(v.x(), v.y(), v.z());
+
+	btVector3 vr;
+	v.storeAligned(vr.m_floats);
+	return vr;
 }
 
 /*! \brief Convert from Bullet quaternion. */
@@ -41,7 +44,9 @@ inline Quaternion fromBtQuaternion(const btQuaternion& q)
 /*! \brief Convert to Bullet quaternion. */
 inline btQuaternion toBtQuaternion(const Quaternion& q)
 {
-	return btQuaternion(q.e.x(), q.e.y(), q.e.z(), q.e.w());
+	float T_MATH_ALIGN16 e[4];
+	q.e.storeAligned(e);
+	return btQuaternion(e[0], e[1], e[2], e[3]);
 }
 
 /*! \brief Convert from Bullet matrix. */

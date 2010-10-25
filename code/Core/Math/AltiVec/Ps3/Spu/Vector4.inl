@@ -322,7 +322,7 @@ T_MATH_INLINE Vector4 cross(const Vector4& l, const Vector4& r)
 	Vector4 tmp2 = r.shuffle< 2, 0, 1, 3 >();
 	Vector4 tmp3 = l.shuffle< 2, 0, 1, 3 >();
 	Vector4 tmp4 = r.shuffle< 1, 2, 0, 3 >();
-	return (tmp1 * tmp2 - tmp3 * tmp4).xyz0();
+	return tmp1 * tmp2 - tmp3 * tmp4;
 }
 
 T_MATH_INLINE Vector4 lerp(const Vector4& a, const Vector4& b, const Scalar& c)

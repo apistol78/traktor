@@ -48,7 +48,7 @@ public:
 
 	const RefArray< ActionScript >& getInitActionScripts() const;
 
-	virtual Ref< FlashCharacterInstance > createInstance(ActionContext* context, FlashCharacterInstance* parent) const;
+	virtual Ref< FlashCharacterInstance > createInstance(ActionContext* context, FlashCharacterInstance* parent, const std::string& name) const;
 
 protected:
 	virtual void trace(const IVisitor& visitor) const;

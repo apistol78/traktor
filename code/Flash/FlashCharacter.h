@@ -40,9 +40,10 @@ public:
 	 *
 	 * \param context ActionScript execution context.
 	 * \param parent Parent instance.
+	 * \param name Character name.
 	 * \return Character instance.
 	 */
-	virtual Ref< FlashCharacterInstance > createInstance(ActionContext* context, FlashCharacterInstance* parent) const = 0;
+	virtual Ref< FlashCharacterInstance > createInstance(ActionContext* context, FlashCharacterInstance* parent, const std::string& name) const = 0;
 
 private:
 	uint16_t m_id;

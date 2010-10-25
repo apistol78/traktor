@@ -46,7 +46,7 @@ void cellSpursJobQueueMain(CellSpursJobContext2* context, CellSpursJob256* job25
 
 		for (uint32_t j = 0; j < pointsCount; ++j)
 		{
-			Vector4 pc = points[i].position - center;
+			Vector4 pc = points[j].position - center;
 
 			// Project onto plane.
 			Scalar d = dot3(pc, axis);
@@ -58,10 +58,10 @@ void cellSpursJobQueueMain(CellSpursJobContext2* context, CellSpursJob256* job25
 			Vector4 t = cross(axis, n).normalized();
 
 			// Adjust velocity from this tangent.
-			points[i].velocity += (
+			points[j].velocity += (
 				t * tangentForce +
 				n * (normalConstantForce + (distance - normalDistance) * normalDistanceForce)
-			) * Scalar(points[i].inverseMass) * deltaTime;
+			) * Scalar(points[j].inverseMass) * deltaTime;
 		}
 
 		// Issue DMA put tasks to update PPU points.
