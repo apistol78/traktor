@@ -77,6 +77,8 @@ public:
 
 	void setViewSize(float width, float height);
 
+	void setAspectRatio(float aspectRatio);
+
 	// \name IDisplayRenderer
 	// \{
 	

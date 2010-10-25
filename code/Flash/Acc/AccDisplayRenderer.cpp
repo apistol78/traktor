@@ -194,6 +194,11 @@ void AccDisplayRenderer::setViewSize(float width, float height)
 	m_viewSize.set(width, height, 1.0f / width, 1.0f / height);
 }
 
+void AccDisplayRenderer::setAspectRatio(float aspectRatio)
+{
+	m_aspectRatio = aspectRatio;
+}
+
 void AccDisplayRenderer::preload(const FlashMovie& movie)
 {
 	const std::map< uint16_t, Ref< FlashBitmap > >& bitmaps = movie.getBitmaps();

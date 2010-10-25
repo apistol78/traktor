@@ -20,7 +20,7 @@ namespace traktor
 #pragma pack(1)
 struct Vertex
 {
-	float pos[2];
+	float pos[3];
 	float texCoord[2];
 	uint8_t color[4];
 };
@@ -85,7 +85,7 @@ bool AccGlyph::create(
 		return false;
 
 	std::vector< render::VertexElement > vertexElements;
-	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat2, offsetof(Vertex, pos)));
+	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat3, offsetof(Vertex, pos)));
 	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat2, offsetof(Vertex, texCoord)));
 	vertexElements.push_back(render::VertexElement(render::DuColor, render::DtByte4N, offsetof(Vertex, color)));
 	T_ASSERT (render::getVertexSize(vertexElements) == sizeof(Vertex));
@@ -181,6 +181,8 @@ void AccGlyph::add(
 		uint8_t(cxform.alpha[0] * 255)
 	};
 
+	float sampleDistance = 1.0f / (m1(0, 0) * 11.0f);
+
 	Vertex* vertex = (Vertex*)m_vertex;
 	for (uint32_t i = 0; i < sizeof_array(c_glyphTemplate); ++i)
 	{
@@ -189,6 +191,7 @@ void AccGlyph::add(
 
 		vertex->pos[0] = pos.x();
 		vertex->pos[1] = pos.y();
+		vertex->pos[2] = sampleDistance;
 		vertex->texCoord[0] = texCoord.x;
 		vertex->texCoord[1] = texCoord.y;
 		vertex->color[0] = color[0];
@@ -219,6 +222,9 @@ void AccGlyph::render(
 	render::VertexBuffer* vertexBuffer = m_vertexBuffers[m_currentVertexBuffer];
 
 	vertexBuffer->unlock();
+
+	if (!m_shaderGlyph.validate() || !m_shaderGlyphMask.validate())
+		return;
 
 	render::IndexedRenderBlock* renderBlock = renderContext->alloc< render::IndexedRenderBlock >("Flash AccGlyph");
 	renderBlock->program = ((maskReference == 0) ? m_shaderGlyph : m_shaderGlyphMask)->getCurrentProgram();
