@@ -13,7 +13,7 @@
 #include "Render/Ps3/VertexBufferPs3.h"
 
 #define USE_DEBUG_DRAW		0
-#define USE_TIME_MEASURE	1
+#define USE_TIME_MEASURE	0
 
 namespace traktor
 {

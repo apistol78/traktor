@@ -11,7 +11,7 @@
 #include "World/WorldRenderer.h"
 #include "World/WorldRenderView.h"
 
-#if !TARGET_OS_IPHONE && !defined(_WINCE)
+#if !TARGET_OS_IPHONE && !defined(_WINCE) && !defined(_PS3)
 #	define T_USE_UPDATE_JOBS
 #endif
 
