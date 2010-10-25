@@ -215,15 +215,16 @@ Thread::Thread(Functor* functor, const std::wstring& name, int hardwareCore)
 Thread::~Thread()
 {
 	Internal* in = reinterpret_cast< Internal* >(m_handle);
-	T_ASSERT (in);
+	if (in)
+	{
+		if (!m_stopped)
+			stop();
 
-	if (!m_stopped)
-		stop();
+		sys_cond_destroy(in->cond);
+		sys_mutex_destroy(in->mutex);
 
-	sys_cond_destroy(in->cond);
-	sys_mutex_destroy(in->mutex);
-
-	delete in;
+		delete in;
+	}
 }
 
 }
