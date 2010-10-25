@@ -128,6 +128,8 @@ void cellUtilConvertLinearToSwizzle(
 	const uint32_t depth
 );
 
+std::wstring lookupGcmError(int32_t err);
+
 	}
 }
 

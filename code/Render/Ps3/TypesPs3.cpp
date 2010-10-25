@@ -102,35 +102,6 @@ namespace
 		return 31 - cellUtilCountLeadingZero(x);
 	}
 
-	inline int cellUtilIsPowerOfTwo(uint32_t x)
-	{
-		return ((x & -x) == x);
-	}
-
-	inline uint32_t cellUtilRoundDownToPowOf2(uint32_t x)
-	{
-		if (cellUtilIsPowerOfTwo(x))
-			return x;
-		
-		int i = 0;
-		while ((x >> i) != 0)
-			i++;
-
-		return (1 << (i-1));
-	}
-
-	inline uint32_t cellUtilRoundUpToPowOf2(uint32_t x)
-	{
-		if (cellUtilIsPowerOfTwo(x))
-			return x;
-		
-		int i = 0;
-		while ((x >> i) != 0)
-			i++;
-
-		return (1 << (i));
-	}
-
 	void convertSwizzle(
 		uint8_t *&dst,
 		const uint8_t *&src,
@@ -198,6 +169,28 @@ void cellUtilConvertLinearToSwizzle(
 		for (uint32_t i = 0; i < (1UL << (cellUtilLog2(height) - cellUtilLog2(width))); i++)
 				convertSwizzle(dst, src, width, depth, 0, (1U << baseLevel) * i, baseLevel + 1);
 	}
+}
+
+std::wstring lookupGcmError(int32_t err)
+{
+	switch (err)
+	{
+	case CELL_GCM_ERROR_INVALID_VALUE:
+		return L"CELL_GCM_ERROR_INVALID_VALUE";
+
+	case CELL_GCM_ERROR_INVALID_ALIGNMENT:
+		return L"CELL_GCM_ERROR_INVALID_ALIGNMENT";
+
+	case CELL_GCM_ERROR_INVALID_ENUM:
+		return L"CELL_GCM_ERROR_INVALID_ENUM";
+
+	case CELL_GCM_ERROR_ADDRESS_OVERWRAP:
+		return L"CELL_GCM_ERROR_ADDRESS_OVERWRAP";
+
+	case EINVAL:
+		return L"EINVAL";
+	}
+	return L"Unknown";
 }
 
 	}

@@ -103,7 +103,7 @@ struct Split
 		while (start < n)
 		{
 			stop = str.find_first_of(delimiters, start);
-			if (stop < 0 || stop > n)
+			if (stop > n)
 				stop = n;
 
 			if (stop > start || keepEmpty)
@@ -131,10 +131,10 @@ struct Split
 			return 0;
 
 		start = 0;
-		while (start >= 0 && start < n - x)
+		while (start < n - x)
 		{
 			stop = str.find(delimiter, start);
-			if (stop < 0 || stop > n)
+			if (stop > n)
 				stop = n;
 
 			if (stop > start)

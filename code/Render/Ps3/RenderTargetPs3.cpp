@@ -26,7 +26,8 @@ RenderTargetPs3::RenderTargetPs3(TileArea& tileArea)
 
 bool RenderTargetPs3::create(MemoryHeap* memoryHeap, const RenderTargetSetCreateDesc& setDesc, const RenderTargetCreateDesc& desc)
 {
-	int byteSize;
+	int32_t byteSize;
+	int32_t err;
 
 	switch (desc.format)
 	{
@@ -89,22 +90,19 @@ bool RenderTargetPs3::create(MemoryHeap* memoryHeap, const RenderTargetSetCreate
 	m_colorTexture.offset = 0;
 
 	if (setDesc.preferTiled)
-		m_colorTexture.pitch = cellGcmGetTiledPitchSize(alignUp(m_width, 64) * byteSize);
+		m_colorTexture.pitch = cellGcmGetTiledPitchSize(m_width * byteSize);
 	else
 		m_colorTexture.pitch = m_width * byteSize;
 
-	uint32_t colorSize = setDesc.preferTiled ?
-		m_colorTexture.pitch * alignUp(m_colorTexture.height, 64) :
-		m_colorTexture.pitch * m_colorTexture.height;
-
 	// Tiled RT are immutable as we don't want to rebind tile area.
-	m_colorData = memoryHeap->alloc(colorSize, 4096, setDesc.preferTiled);
+	uint32_t colorSize = alignUp(m_colorTexture.pitch * alignUp(m_colorTexture.height, 64), 65536);
+	m_colorData = memoryHeap->alloc(colorSize, 65536, setDesc.preferTiled);
 
 	if (setDesc.preferTiled)
 	{
 		if (m_tileArea.alloc(colorSize / 0x10000, 1, m_tileInfo))
 		{
-			cellGcmSetTileInfo(
+			err = cellGcmSetTileInfo(
 				m_tileInfo.index,
 				CELL_GCM_LOCATION_LOCAL,
 				m_colorData->getOffset(),
@@ -114,7 +112,12 @@ bool RenderTargetPs3::create(MemoryHeap* memoryHeap, const RenderTargetSetCreate
 				m_tileInfo.base,
 				m_tileInfo.dramBank
 			);
-			cellGcmBindTile(m_tileInfo.index);
+			if (err != CELL_OK)
+				log::error << L"Unable to set tile info (" << lookupGcmError(err) << L")" << Endl;
+
+			err = cellGcmBindTile(m_tileInfo.index);
+			if (err != CELL_OK)
+				log::error << L"Unable to bind tile (" << lookupGcmError(err) << L")" << Endl;
 		}
 	}
 

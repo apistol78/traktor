@@ -40,6 +40,8 @@ bool RenderTargetSetPs3::create(
 	const RenderTargetSetCreateDesc& desc
 )
 {
+	int32_t err;
+
 	m_width = desc.width;
 	m_height = desc.height;
 
@@ -70,14 +72,14 @@ bool RenderTargetSetPs3::create(
 			m_depthTexture.pitch = m_width * 4;
 
 		// Tiled RT are immutable as we don't want to rebind tile area.
-		uint32_t depthSize = m_depthTexture.pitch * m_depthTexture.height;
-		m_depthData = memoryHeap->alloc(depthSize, 4096, desc.preferTiled);
+		uint32_t depthSize = alignUp(m_depthTexture.pitch * m_depthTexture.height, 65536);
+		m_depthData = memoryHeap->alloc(depthSize, 65536, desc.preferTiled);
 
 		if (desc.preferTiled)
 		{
 			if (m_tileArea.alloc(depthSize / 0x10000, 1, m_tileInfo))
 			{
-				cellGcmSetTileInfo(
+				err = cellGcmSetTileInfo(
 					m_tileInfo.index,
 					m_depthTexture.location,
 					m_depthData->getOffset(),
@@ -87,11 +89,16 @@ bool RenderTargetSetPs3::create(
 					m_tileInfo.base,
 					m_tileInfo.dramBank
 				);
-				cellGcmBindTile(m_tileInfo.index);
+				if (err != CELL_OK)
+					log::error << L"Unable to set tile info (" << lookupGcmError(err) << L")" << Endl;
+
+				err = cellGcmBindTile(m_tileInfo.index);
+				if (err != CELL_OK)
+					log::error << L"Unable to bind tile (" << lookupGcmError(err) << L")" << Endl;
 
 				if (m_zcullArea.alloc(m_depthTexture.width * m_depthTexture.height, 4096, m_zcullInfo))
 				{
-					cellGcmBindZcull(
+					err = cellGcmBindZcull(
 						m_zcullInfo.index,
 						m_depthTexture.offset,
 						m_depthTexture.width,
@@ -105,6 +112,8 @@ bool RenderTargetSetPs3::create(
 						0,
 						0
 					);
+					if (err != CELL_OK)
+						log::error << L"Unable to bind ZCull (" << lookupGcmError(err) << L")" << Endl;
 				}
 			}
 		}

@@ -14,7 +14,6 @@ namespace traktor
 		{
 
 const uint32_t c_blockSize = 128;				//< Allocation size must be a multiple of c_blockSize.
-const uint32_t c_transferWaitLabelId = 151;
 
 uint32_t incrementLabel(uint32_t label)
 {
@@ -112,8 +111,6 @@ MemoryHeapObject* MemoryHeap::alloc(size_t size, size_t align, bool immutable)
 					T_ASSERT (!mutObject->m_immutable);
 
 					uint8_t* ptr1 = (uint8_t*)mutObject->m_pointer;
-					uint8_t* ptr1End = ptr1 + mutObject->m_size;
-
 					if (ptr1 > immPtrEnd)
 						break;
 
@@ -181,10 +178,6 @@ void MemoryHeap::free(MemoryHeapObject* object)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	T_ASSERT (object->m_heap == this);
-
-	// Ensure all pending operations have been executed.
-	cellGcmFinish(gCellGcmCurrentContext, m_waitLabel);
-	m_waitLabel = incrementLabel(m_waitLabel);
 
 	std::vector< MemoryHeapObject* >::iterator i = std::find(m_objects.begin(), m_objects.end(), object);
 	T_ASSERT (i != m_objects.end());

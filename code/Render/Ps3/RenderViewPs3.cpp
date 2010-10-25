@@ -28,11 +28,6 @@ const uint32_t c_reportZCullStats1 = 101;
 const uint32_t c_reportTimeStamp0 = 102;
 const uint32_t c_reportTimeStamp1 = 103;
 
-uint32_t incrementLabel(uint32_t label)
-{
-	return (++label != 0) ? label : 1;
-}
-
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewPs3", RenderViewPs3, IRenderView)
@@ -133,7 +128,7 @@ bool RenderViewPs3::reset(const RenderViewDefaultDesc& desc)
 {
 	CellVideoOutState videoState;
 	CellVideoOutConfiguration videoConfig;
-	int32_t ret;
+	int32_t err;
 
 	const ResolutionDesc* resolution = findResolutionDesc(
 		desc.displayMode.width,
@@ -150,7 +145,7 @@ bool RenderViewPs3::reset(const RenderViewDefaultDesc& desc)
 
 	m_width = desc.displayMode.width;
 	m_height = desc.displayMode.height;
-	m_colorPitch = cellGcmGetTiledPitchSize(alignUp(m_width, 64) * 4);
+	m_colorPitch = cellGcmGetTiledPitchSize(m_width* 4);
 
 	std::memset(&videoConfig, 0, sizeof(CellVideoOutConfiguration));
 	videoConfig.resolutionId = resolution->id;
@@ -158,15 +153,15 @@ bool RenderViewPs3::reset(const RenderViewDefaultDesc& desc)
 	videoConfig.aspect = CELL_VIDEO_OUT_ASPECT_AUTO;
 	videoConfig.pitch = m_colorPitch;
 
-	ret = cellVideoOutConfigure(CELL_VIDEO_OUT_PRIMARY, &videoConfig, NULL, 0);
-	if (ret != CELL_OK)
+	err = cellVideoOutConfigure(CELL_VIDEO_OUT_PRIMARY, &videoConfig, NULL, 0);
+	if (err != CELL_OK)
 	{
 		log::error << L"Create render view failed; unable to configure video" << Endl;
 		return false;
 	}
 
-	ret = cellVideoOutGetState(CELL_VIDEO_OUT_PRIMARY, 0, &videoState);
-	if (ret != CELL_OK)
+	err = cellVideoOutGetState(CELL_VIDEO_OUT_PRIMARY, 0, &videoState);
+	if (err != CELL_OK)
 	{
 		log::error << L"Create render view failed; unable get video state" << Endl;
 		return false;
@@ -179,8 +174,8 @@ bool RenderViewPs3::reset(const RenderViewDefaultDesc& desc)
 		else
 			cellGcmSetFlipMode(CELL_GCM_DISPLAY_HSYNC);
 
-		uint32_t colorSize = m_colorPitch * alignUp(m_height, 64);
-		m_colorObject = m_localMemoryHeap->alloc(sizeof_array(m_colorAddr) * colorSize, 4096, true);
+		uint32_t colorSize = alignUp(m_colorPitch * alignUp(m_height, 64), 65536);
+		m_colorObject = m_localMemoryHeap->alloc(sizeof_array(m_colorAddr) * colorSize, 65536, true);
 
 		for (size_t i = 0; i < sizeof_array(m_colorAddr); i++)
 		{
@@ -189,7 +184,7 @@ bool RenderViewPs3::reset(const RenderViewDefaultDesc& desc)
 
 			if (m_tileArea.alloc(colorSize / 0x10000, 1, m_colorTile[i]))
 			{
-				cellGcmSetTileInfo(
+				err = cellGcmSetTileInfo(
 					m_colorTile[i].index,
 					CELL_GCM_LOCATION_LOCAL,
 					m_colorOffset[i],
@@ -199,17 +194,22 @@ bool RenderViewPs3::reset(const RenderViewDefaultDesc& desc)
 					m_colorTile[i].base,
 					m_colorTile[i].dramBank
 				);
+				if (err != CELL_OK)
+					log::error << L"Unable to set tile info (" << lookupGcmError(err) << L")" << Endl;
+
 				cellGcmBindTile(m_colorTile[i].index);
+				if (err != CELL_OK)
+					log::error << L"Unable to bind tile (" << lookupGcmError(err) << L")" << Endl;
 			}
 
-			ret = cellGcmSetDisplayBuffer(
+			err = cellGcmSetDisplayBuffer(
 				i,
 				m_colorOffset[i],
 				m_colorPitch,
 				m_width,
 				m_height
 			);
-			if (ret != CELL_OK)
+			if (err != CELL_OK)
 			{
 				log::error << L"Create render view failed; unable to set display buffers" << Endl;
 				return false;
@@ -230,8 +230,8 @@ bool RenderViewPs3::reset(const RenderViewDefaultDesc& desc)
 			m_depthTexture.pitch = cellGcmGetTiledPitchSize(m_depthTexture.width * 4);
 			m_depthTexture.offset = 0;
 
-			uint32_t depthSize = m_depthTexture.pitch * m_depthTexture.height;
-			m_depthObject = m_localMemoryHeap->alloc(depthSize, 4096, true);
+			uint32_t depthSize = alignUp(m_depthTexture.pitch * m_depthTexture.height, 65536);
+			m_depthObject = m_localMemoryHeap->alloc(depthSize, 65536, true);
 
 			m_depthAddr = m_depthObject->getPointer();
 			m_depthTexture.offset = m_depthObject->getOffset();
@@ -239,7 +239,7 @@ bool RenderViewPs3::reset(const RenderViewDefaultDesc& desc)
 			// Allocate tile area for depth buffer.
 			if (m_tileArea.alloc(depthSize / 0x10000, 1, m_depthTile))
 			{
-				cellGcmSetTileInfo(
+				err = cellGcmSetTileInfo(
 					m_depthTile.index,
 					m_depthTexture.location,
 					m_depthTexture.offset,
@@ -249,13 +249,18 @@ bool RenderViewPs3::reset(const RenderViewDefaultDesc& desc)
 					m_depthTile.base,
 					m_depthTile.dramBank
 				);
-				cellGcmBindTile(m_depthTile.index);
+				if (err != CELL_OK)
+					log::error << L"Unable to set tile info (" << lookupGcmError(err) << L")" << Endl;
+
+				err = cellGcmBindTile(m_depthTile.index);
+				if (err != CELL_OK)
+					log::error << L"Unable to bind tile (" << lookupGcmError(err) << L")" << Endl;
 			}
 
 			// Setup Z-cull binding.
 			if (m_zcullArea.alloc(m_depthTexture.width * m_depthTexture.height, 4096, m_zcullTile))
 			{
-				cellGcmBindZcull(
+				err = cellGcmBindZcull(
 					m_zcullTile.index,
 					m_depthTexture.offset,
 					m_depthTexture.width,
@@ -269,6 +274,8 @@ bool RenderViewPs3::reset(const RenderViewDefaultDesc& desc)
 					0,
 					0
 				);
+				if (err != CELL_OK)
+					log::error << L"Unable to bind ZCull (" << lookupGcmError(err) << L")" << Endl;
 			}
 		}
 	}
@@ -277,8 +284,8 @@ bool RenderViewPs3::reset(const RenderViewDefaultDesc& desc)
 		cellGcmSetFlipMode(CELL_GCM_DISPLAY_VSYNC);
 
 		// Allocate color buffer; 30 lines gap.
-		uint32_t colorSize = m_colorPitch * alignUp(m_height * 2 + 30, 64);
-		m_colorObject = m_localMemoryHeap->alloc(sizeof_array(m_colorAddr) * colorSize, 4096, true);
+		uint32_t colorSize = alignUp(m_colorPitch * (m_height * 2 + 30), 65536);
+		m_colorObject = m_localMemoryHeap->alloc(sizeof_array(m_colorAddr) * colorSize, 65536, true);
 
 		for (size_t i = 0; i < sizeof_array(m_colorAddr); i++)
 		{
@@ -287,7 +294,7 @@ bool RenderViewPs3::reset(const RenderViewDefaultDesc& desc)
 
 			if (m_tileArea.alloc(colorSize / 0x10000, 1, m_colorTile[i]))
 			{
-				cellGcmSetTileInfo(
+				err = cellGcmSetTileInfo(
 					m_colorTile[i].index,
 					CELL_GCM_LOCATION_LOCAL,
 					m_colorOffset[i],
@@ -297,17 +304,22 @@ bool RenderViewPs3::reset(const RenderViewDefaultDesc& desc)
 					m_colorTile[i].base,
 					m_colorTile[i].dramBank
 				);
-				cellGcmBindTile(m_colorTile[i].index);
+				if (err != CELL_OK)
+					log::error << L"Unable to set tile info (" << lookupGcmError(err) << L")" << Endl;
+
+				err = cellGcmBindTile(m_colorTile[i].index);
+				if (err != CELL_OK)
+					log::error << L"Unable to bind tile (" << lookupGcmError(err) << L")" << Endl;
 			}
 
-			ret = cellGcmSetDisplayBuffer(
+			err = cellGcmSetDisplayBuffer(
 				i,
 				m_colorOffset[i],
 				m_colorPitch,
 				m_width,
 				m_height * 2 + 30
 			);
-			if (ret != CELL_OK)
+			if (err != CELL_OK)
 			{
 				log::error << L"Create render view failed; unable to set display buffers" << Endl;
 				return false;
@@ -328,8 +340,8 @@ bool RenderViewPs3::reset(const RenderViewDefaultDesc& desc)
 			m_depthTexture.pitch = cellGcmGetTiledPitchSize(m_depthTexture.width * 4);
 			m_depthTexture.offset = 0;
 
-			uint32_t depthSize = m_depthTexture.pitch * m_depthTexture.height;
-			m_depthObject = m_localMemoryHeap->alloc(depthSize, 4096, true);
+			uint32_t depthSize = alignUp(m_depthTexture.pitch * m_depthTexture.height, 65536);
+			m_depthObject = m_localMemoryHeap->alloc(depthSize, 65536, true);
 
 			m_depthAddr = m_depthObject->getPointer();
 			m_depthTexture.offset = m_depthObject->getOffset();
@@ -337,7 +349,7 @@ bool RenderViewPs3::reset(const RenderViewDefaultDesc& desc)
 			// Allocate tile area for depth buffer.
 			if (m_tileArea.alloc(depthSize / 0x10000, 1, m_depthTile))
 			{
-				cellGcmSetTileInfo(
+				err = cellGcmSetTileInfo(
 					m_depthTile.index,
 					m_depthTexture.location,
 					m_depthTexture.offset,
@@ -347,13 +359,18 @@ bool RenderViewPs3::reset(const RenderViewDefaultDesc& desc)
 					m_depthTile.base,
 					m_depthTile.dramBank
 				);
-				cellGcmBindTile(m_depthTile.index);
+				if (err != CELL_OK)
+					log::error << L"Unable to set tile info (" << lookupGcmError(err) << L")" << Endl;
+
+				err = cellGcmBindTile(m_depthTile.index);
+				if (err != CELL_OK)
+					log::error << L"Unable to bind tile (" << lookupGcmError(err) << L")" << Endl;
 			}
 
 			// Setup Z-cull binding.
 			if (m_zcullArea.alloc(m_depthTexture.width * m_depthTexture.height, 4096, m_zcullTile))
 			{
-				cellGcmBindZcull(
+				err = cellGcmBindZcull(
 					m_zcullTile.index,
 					m_depthTexture.offset,
 					m_depthTexture.width,
@@ -367,6 +384,8 @@ bool RenderViewPs3::reset(const RenderViewDefaultDesc& desc)
 					0,
 					0
 				);
+				if (err != CELL_OK)
+					log::error << L"Unable to bind ZCull (" << lookupGcmError(err) << L")" << Endl;
 			}
 		}
 	}

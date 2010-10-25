@@ -21,8 +21,8 @@ namespace traktor
 		namespace
 		{
 
-const uint32_t c_tableKey_class = -1;
-const uint32_t c_tableKey_this = -2;
+const int32_t c_tableKey_class = -1;
+const int32_t c_tableKey_this = -2;
 
 #if defined(_DEBUG)
 class CheckStack

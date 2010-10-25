@@ -124,7 +124,7 @@ void cellSpursJobQueueMain(CellSpursJobContext2* context, CellSpursJob256* job25
 				0,
 				0
 			);
-			cellSpursJobQueueDmaWaitTagStatusAll(1 << context->dmaTag);
+			//cellSpursJobQueueDmaWaitTagStatusAll(1 << context->dmaTag);
 			vertexOutOffset += vertexOffset * sizeof(spray::Vertex);
 		}
 	}
