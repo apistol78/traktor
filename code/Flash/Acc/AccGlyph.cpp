@@ -29,6 +29,8 @@ struct Vertex
 const Guid c_guidShaderGlyph(L"{A8BC2D03-EB52-B744-8D4B-29E39FF0B4F5}");
 const Guid c_guidShaderGlyphMask(L"{C8FEF24B-D775-A14D-9FF3-E34A17495FB4}");
 const uint32_t c_glyphCount = 400;
+const float c_minSampleDistance = 0.1f;
+const float c_maxSampleDistance = 5.5f;
 
 const struct TemplateVertex
 {
@@ -181,7 +183,7 @@ void AccGlyph::add(
 		uint8_t(cxform.alpha[0] * 255)
 	};
 
-	float sampleDistance = 1.0f / (m1(0, 0) * 11.0f);
+	float sampleDistance = clamp(1.0f / (m1(0, 0) * 11.0f), c_minSampleDistance, c_maxSampleDistance);
 
 	Vertex* vertex = (Vertex*)m_vertex;
 	for (uint32_t i = 0; i < sizeof_array(c_glyphTemplate); ++i)

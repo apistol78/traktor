@@ -19,7 +19,7 @@ namespace traktor
 		{
 
 const uint32_t c_blockSize = sizeof(float) * (4096 + 16);
-const uint32_t c_blockCount = 64;
+const uint32_t c_blockCount = 32;
 
 class StaticBufferHeap
 {

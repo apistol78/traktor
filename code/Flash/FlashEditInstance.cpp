@@ -16,10 +16,6 @@ namespace traktor
 	{
 		namespace
 		{
-bool isWhiteSpace(wchar_t ch)
-{
-	return ch == 0 || ch == L' ' || ch == L'\t' || ch == L'\n' || ch == L'\r';
-}
 
 void concateHtmlText(const html::Node* node, StringOutputStream& ss)
 {
@@ -91,6 +87,9 @@ bool FlashEditInstance::getTextExtents(float& outWidth, float& outHeight) const
 	const FlashMovie* movie = getContext()->getMovie();
 	T_ASSERT (movie);
 
+	outWidth = 0;
+	outHeight = 0;
+
 	const FlashFont* font = movie->getFont(m_edit->getFontId());
 	if (!font)
 		return false;
@@ -102,14 +101,13 @@ bool FlashEditInstance::getTextExtents(float& outWidth, float& outHeight) const
 	float fontHeight = m_edit->getFontHeight();
 
 	const float c_magicX = 32.0f * 20.0f;
-	const float c_magicY = 8.0f * 20.0f;
 
-	float offsetY = 0;//fontHeight - c_magicY;
+	float offsetY = 0.0f;
 
 	// Get space width.
 	uint16_t spaceGlyphIndex = font->lookupIndex(L' ');
 	int16_t spaceWidth = font->getAdvance(spaceGlyphIndex);
-	outWidth = 0;
+
 	// Render text lines.
 	for (FlashEditInstance::text_t::const_iterator i = m_text.begin(); i != m_text.end(); ++i)
 	{
@@ -136,7 +134,7 @@ bool FlashEditInstance::getTextExtents(float& outWidth, float& outHeight) const
 			widths[j] = wordWidth * fontScale * fontHeight;
 		}
 
-		// Pack as many words as fits in bounds (only if word wrap enabled); then render each line.
+		// Pack as many words as fits in bounds (only if word wrap enabled).
 		uint32_t wordOffsetStart = 0;
 		uint32_t wordOffsetEnd = 0;
 		const FlashEdit* edit = getEdit();
@@ -194,7 +192,7 @@ bool FlashEditInstance::getTextExtents(float& outWidth, float& outHeight) const
 			offsetY += fontHeight;
 		}
 	}
-	outHeight = offsetY ;
+	outHeight = offsetY;
 	outWidth /= 20.0f;
 	outHeight /= 20.0f;
 	return true;

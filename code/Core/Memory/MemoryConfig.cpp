@@ -12,6 +12,12 @@ namespace traktor
 
 IAllocator* s_allocator = 0;
 
+void destroyAllocator()
+{
+	freeDestruct(s_allocator);
+	s_allocator = 0;
+}
+
 	}
 
 IAllocator* getAllocator()
@@ -24,6 +30,7 @@ IAllocator* getAllocator()
 #else
 		s_allocator = allocConstruct< TrackAllocator >(stdAllocator);
 #endif
+		std::atexit(destroyAllocator);
 	}
 	return s_allocator;
 }
