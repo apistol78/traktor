@@ -38,6 +38,11 @@ DisplayMode RenderSystemCapture::getCurrentDisplayMode() const
 	return m_renderSystem->getCurrentDisplayMode();
 }
 
+float RenderSystemCapture::getDisplayAspectRatio() const
+{
+	return m_renderSystem->getDisplayAspectRatio();
+}
+
 bool RenderSystemCapture::handleMessages()
 {
 	return m_renderSystem->handleMessages();

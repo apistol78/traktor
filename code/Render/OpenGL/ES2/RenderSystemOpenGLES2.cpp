@@ -93,6 +93,11 @@ DisplayMode RenderSystemOpenGLES2::getCurrentDisplayMode() const
 	return DisplayMode();
 }
 
+float RenderSystemOpenGLES2::getDisplayAspectRatio() const
+{
+	return 0.0f;
+}
+
 bool RenderSystemOpenGLES2::handleMessages()
 {
 #if defined(_WIN32)

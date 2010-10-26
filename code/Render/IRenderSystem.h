@@ -79,6 +79,9 @@ public:
 	 * Get information about currently set display mode.
 	 */
 	virtual DisplayMode getCurrentDisplayMode() const = 0;
+
+	/*! \brief Get display aspect ratio. */
+	virtual float getDisplayAspectRatio() const = 0;
 	
 	//@}
 
