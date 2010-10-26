@@ -3,7 +3,8 @@
 
 #include <iterator>
 #include "Core/Config.h"
-#include "Core/Memory/Alloc.h"
+#include "Core/Memory/IAllocator.h"
+#include "Core/Memory/MemoryConfig.h"
 
 namespace traktor
 {
@@ -302,7 +303,7 @@ public:
 		for (size_t i = 0; i < m_size; ++i)
 			Constructor::destroy(m_data[i]);
 
-		Alloc::freeAlign(m_data);
+		getAllocator()->free(m_data);
 
 		m_data = 0;
 		m_size = 0;
@@ -359,7 +360,7 @@ public:
 	{
 		if (capacity > m_capacity)
 		{
-			ItemType* data = reinterpret_cast< ItemType* >(Alloc::acquireAlign(capacity * sizeof(ItemType), Alignment, T_FILE_LINE));
+			ItemType* data = reinterpret_cast< ItemType* >(getAllocator()->alloc(capacity * sizeof(ItemType), Alignment, T_FILE_LINE));
 
 			if (m_data)
 			{
@@ -368,7 +369,7 @@ public:
 					Constructor::construct(data[i], m_data[i]);
 					Constructor::destroy(m_data[i]);
 				}
-				Alloc::freeAlign(m_data);
+				getAllocator()->free(m_data);
 			}
 
 			m_data = data;

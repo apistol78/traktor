@@ -1,7 +1,7 @@
 #ifndef traktor_flash_ActionObjectCyclic_H
 #define traktor_flash_ActionObjectCyclic_H
 
-#include "Core/Containers/IntrusiveList.h"
+#include <list>
 #include "Core/Singleton/ISingleton.h"
 #include "Core/Thread/Semaphore.h"
 
@@ -36,7 +36,7 @@ protected:
 
 private:
 	Semaphore m_lock;
-	IntrusiveList< ActionObject > m_candidates;
+	std::list< ActionObject* > m_candidates;
 
 	virtual ~ActionObjectCyclic();
 };

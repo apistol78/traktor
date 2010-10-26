@@ -4,7 +4,6 @@
 #include <map>
 #include <string>
 #include "Core/Object.h"
-#include "Core/Containers/IntrusiveList.h"
 #include "Flash/Action/ActionTypes.h"
 #include "Flash/Action/ActionValue.h"
 
@@ -99,7 +98,6 @@ protected:
 	virtual void dereference();
 
 private:
-	friend struct DefaultLink< ActionObject >;
 	friend class ActionObjectCyclic;
 
 	enum TraceColor
@@ -125,8 +123,6 @@ private:
 		virtual void operator () (ActionObject* memberObject) const;
 	};
 
-	ActionObject* m_prev;	//!< Intrusive list chain members.
-	ActionObject* m_next;
 	bool m_readOnly;
 	mutable member_map_t m_members;
 	property_map_t m_properties;

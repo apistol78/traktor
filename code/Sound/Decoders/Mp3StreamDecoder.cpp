@@ -29,7 +29,7 @@ class Mp3StreamDecoderImpl : public Object
 public:
 	enum
 	{
-		DecodedBufferSamples = 65536,
+		DecodedBufferSamples = 32768,
 		DecodedBufferSize = DecodedBufferSamples * sizeof(float)
 	};
 

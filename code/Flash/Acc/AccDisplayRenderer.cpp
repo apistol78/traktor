@@ -2,6 +2,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Flash/FlashBitmap.h"
 #include "Flash/FlashMovie.h"
 #include "Flash/FlashSprite.h"
 #include "Flash/FlashSpriteInstance.h"
@@ -201,6 +202,8 @@ void AccDisplayRenderer::setAspectRatio(float aspectRatio)
 
 void AccDisplayRenderer::preload(const FlashMovie& movie)
 {
+	/*
+	// Upload all bitmaps to texture cache.
 	const std::map< uint16_t, Ref< FlashBitmap > >& bitmaps = movie.getBitmaps();
 	for (std::map< uint16_t, Ref< FlashBitmap > >::const_iterator i = bitmaps.begin(); i != bitmaps.end(); ++i)
 		m_textureCache->getBitmapTexture(*(i->second));
@@ -225,6 +228,7 @@ void AccDisplayRenderer::preload(const FlashMovie& movie)
 			}
 		}
 	}
+	*/
 }
 
 void AccDisplayRenderer::begin(const FlashMovie& movie, const SwfColor& backgroundColor)

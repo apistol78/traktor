@@ -15,9 +15,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.ActionObject", ActionObject, Object)
 
 ActionObject::ActionObject()
-:	m_prev(0)
-,	m_next(0)
-,	m_readOnly(false)
+:	m_readOnly(false)
 ,	m_traceColor(TcBlack)
 ,	m_traceBuffered(false)
 ,	m_traceRefCount(0)
@@ -26,9 +24,7 @@ ActionObject::ActionObject()
 }
 
 ActionObject::ActionObject(const std::string& prototypeName)
-:	m_prev(0)
-,	m_next(0)
-,	m_readOnly(false)
+:	m_readOnly(false)
 ,	m_traceColor(TcBlack)
 ,	m_traceBuffered(false)
 ,	m_traceRefCount(0)
@@ -37,9 +33,7 @@ ActionObject::ActionObject(const std::string& prototypeName)
 }
 
 ActionObject::ActionObject(ActionObject* prototype)
-:	m_prev(0)
-,	m_next(0)
-,	m_readOnly(false)
+:	m_readOnly(false)
 ,	m_traceColor(TcBlack)
 ,	m_traceBuffered(false)
 ,	m_traceRefCount(0)
