@@ -95,7 +95,16 @@ bool SoundDriverPs3::create(const SoundDriverCreateDesc& desc, Ref< ISoundMixer 
 		else if (channelsAvail == 2)
 		{
 			log::info << L"Trying with 7.1 -> 2.0 downmix" << Endl;
-			T_BREAKPOINT;
+
+			audioOutConfig.channel = channelsAvail;
+			audioOutConfig.downMixer = CELL_AUDIO_OUT_DOWNMIXER_TYPE_A;
+
+			err = cellAudioOutConfigure(CELL_AUDIO_OUT_PRIMARY, &audioOutConfig, NULL, 0);
+			if (err != CELL_OK)
+			{
+				log::error << L"Unable to create PS3 audio; cellAudioOutConfigure failed" << Endl;
+				return false;
+			}
 		}
 	}
 

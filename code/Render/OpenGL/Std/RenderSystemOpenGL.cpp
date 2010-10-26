@@ -297,6 +297,11 @@ DisplayMode RenderSystemOpenGL::getCurrentDisplayMode() const
 #endif
 }
 
+float RenderSystemOpenGL::getDisplayAspectRatio() const
+{
+	return 0.0f;
+}
+
 bool RenderSystemOpenGL::handleMessages()
 {
 #if defined(_WIN32)

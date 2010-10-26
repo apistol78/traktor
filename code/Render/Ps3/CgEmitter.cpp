@@ -345,7 +345,7 @@ bool emitFragmentPosition(CgContext& cx, FragmentPosition* node)
 
 	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
 	CgVariable* out = cx.emitOutput(node, L"Output", CtFloat2);
-	assign(f, out) << L"float2(vPos.x, _cg_targetSize.y - vPos.y);" << Endl;
+	assign(f, out) << L"float2(vPos.x, vPos.y);" << Endl;
 
 	return true;
 }

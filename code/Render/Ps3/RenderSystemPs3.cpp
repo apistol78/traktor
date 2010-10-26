@@ -115,25 +115,66 @@ DisplayMode RenderSystemPs3::getCurrentDisplayMode() const
 {
 	CellVideoOutState videoState;
 	CellVideoOutResolution videoResolution;
-	int32_t ret;
+	int32_t err;
 
-	ret = cellVideoOutGetState(CELL_VIDEO_OUT_PRIMARY, 0, &videoState);
-	if (ret == CELL_OK)
+	for (;;)
 	{
-		ret = cellVideoOutGetResolution(videoState.displayMode.resolutionId, &videoResolution);
-		if (ret == CELL_OK)
-		{
-			DisplayMode dm;
-			dm.width = videoResolution.width;
-			dm.height = videoResolution.height;
-			dm.refreshRate = 0;
-			dm.colorBits = 24;
-			dm.stereoscopic = false;
-			return dm;
-		}
+		err = cellVideoOutGetState(CELL_VIDEO_OUT_PRIMARY, 0, &videoState);
+		if (err != CELL_VIDEO_OUT_ERROR_CONDITION_BUSY)
+			break;
+		sys_timer_sleep(1);
+	}
+	
+	if (err != CELL_OK)
+	{
+		log::error << L"Unable to get video output state (" << lookupGcmError(err) << L")" << Endl;
+		return DisplayMode();
 	}
 
-	return DisplayMode();
+	err = cellVideoOutGetResolution(videoState.displayMode.resolutionId, &videoResolution);
+	if (err != CELL_OK)
+	{
+		log::error << L"Unable to get resolution description (" << lookupGcmError(err) << L")" << Endl;
+		return DisplayMode();
+	}
+
+	DisplayMode dm;
+	dm.width = videoResolution.width;
+	dm.height = videoResolution.height;
+	dm.refreshRate = 0;
+	dm.colorBits = 24;
+	dm.stereoscopic = false;
+	return dm;
+}
+
+float RenderSystemPs3::getDisplayAspectRatio() const
+{
+	CellVideoOutState videoState;
+	int32_t err;
+
+	for (;;)
+	{
+		err = cellVideoOutGetState(CELL_VIDEO_OUT_PRIMARY, 0, &videoState);
+		if (err != CELL_VIDEO_OUT_ERROR_CONDITION_BUSY)
+			break;
+		sys_timer_sleep(1);
+	}
+
+	if (err != CELL_OK)
+	{
+		log::error << L"Unable to get video output state (" << lookupGcmError(err) << L")" << Endl;
+		return 0.0f;
+	}
+
+	switch (videoState.displayMode.aspect)
+	{
+	case CELL_VIDEO_OUT_ASPECT_4_3:
+		return 4.0f / 3.0f;
+	case CELL_VIDEO_OUT_ASPECT_16_9:
+		return 16.0f / 9.0f;
+	}
+
+	return 0.0f;
 }
 
 bool RenderSystemPs3::handleMessages()

@@ -145,7 +145,7 @@ bool RenderViewPs3::reset(const RenderViewDefaultDesc& desc)
 
 	m_width = desc.displayMode.width;
 	m_height = desc.displayMode.height;
-	m_colorPitch = cellGcmGetTiledPitchSize(m_width* 4);
+	m_colorPitch = cellGcmGetTiledPitchSize(m_width * 4);
 
 	std::memset(&videoConfig, 0, sizeof(CellVideoOutConfiguration));
 	videoConfig.resolutionId = resolution->id;
@@ -197,7 +197,7 @@ bool RenderViewPs3::reset(const RenderViewDefaultDesc& desc)
 				if (err != CELL_OK)
 					log::error << L"Unable to set tile info (" << lookupGcmError(err) << L")" << Endl;
 
-				cellGcmBindTile(m_colorTile[i].index);
+				err = cellGcmBindTile(m_colorTile[i].index);
 				if (err != CELL_OK)
 					log::error << L"Unable to bind tile (" << lookupGcmError(err) << L")" << Endl;
 			}
@@ -802,8 +802,8 @@ void RenderViewPs3::setCurrentRenderState()
 	T_GCM_CALL(cellGcmSetSurfaceWindow)(
 		gCellGcmCurrentContext,
 		&sf,
-		CELL_GCM_WINDOW_ORIGIN_BOTTOM,
-		CELL_GCM_WINDOW_PIXEL_CENTER_INTEGER
+		CELL_GCM_WINDOW_ORIGIN_TOP,
+		CELL_GCM_WINDOW_PIXEL_CENTER_HALF
 	);
 
 	if (rs.zcull && rs.depthOffset)

@@ -98,7 +98,7 @@ bool SimpleTexturePs3::create(MemoryHeap* memoryHeap, const SimpleTextureCreateD
 	m_texture.height = desc.height;
 	m_texture.depth = 1;
 	m_texture.location = CELL_GCM_LOCATION_LOCAL;
-	m_texture.pitch = /*linear ? */texturePitch/* : 0*/;
+	m_texture.pitch = texturePitch;
 	m_texture.offset = 0;
 
 	uint32_t textureSize = getTextureSize(
@@ -200,7 +200,12 @@ void SimpleTexturePs3::bind(StateCachePs3& stateCache, int stage, const SamplerS
 	{
 		m_texture.offset = m_data->getOffset();
 		stateCache.setSamplerState(stage, samplerState);
-		stateCache.setSamplerTexture(stage, &m_texture, m_texture.mipmap << 8, CELL_GCM_TEXTURE_MAX_ANISO_2);
+		stateCache.setSamplerTexture(
+			stage,
+			&m_texture,
+			m_texture.mipmap << 8,
+			m_texture.mipmap > 1 ? CELL_GCM_TEXTURE_MAX_ANISO_2 : CELL_GCM_TEXTURE_MAX_ANISO_1
+		);
 	}
 }
 

@@ -170,6 +170,11 @@ DisplayMode RenderSystemDx10::getCurrentDisplayMode() const
 	return DisplayMode();
 }
 
+float RenderSystemDx10::getDisplayAspectRatio() const
+{
+	return 0.0f;
+}
+
 bool RenderSystemDx10::handleMessages()
 {
 	bool going = true;

@@ -287,6 +287,11 @@ DisplayMode RenderSystemWin32::getCurrentDisplayMode() const
 	return dm;
 }
 
+float RenderSystemWin32::getDisplayAspectRatio() const
+{
+	return float(m_d3dDefaultDisplayMode.Width) / m_d3dDefaultDisplayMode.Height;
+}
+
 bool RenderSystemWin32::handleMessages()
 {
 	MSG msg;
