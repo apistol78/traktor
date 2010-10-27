@@ -18,6 +18,12 @@ const uint32_t c_maxDirCount = 32;
 const uint32_t c_maxFileCount = 32;
 
 char s_indicatorDispMsg[CELL_SAVEDATA_INDICATORMSG_MAX] = "Loading...";
+const char s_secureFileId[CELL_SAVEDATA_SECUREFILEID_SIZE] = {
+	'C', 'L', 'E', 'A', 
+	'R', 'H', 'E', 'A', 
+	'D', 'G', 'A', 'M', 
+	'E', 'S', ' ', ' ', 
+};
 
 CellSaveDataAutoIndicator s_indicator = 
 {
@@ -84,12 +90,13 @@ bool GetAvailableSaveGamesTask::execute()
 		log::error << L"Unable to create session manager. Not enough space on HDD to save trophies and savegames" << Endl;
 		return false;
 	}
-	if (oldSaveDataExists)
+	if (!oldSaveDataExists)
 		return false;
 
 	if (err != CELL_SAVEDATA_RET_OK)
 	{
 		LogError::logErrorSaveData(err);
+		// EXIT APP
 		return false;
 	}
 
@@ -155,13 +162,14 @@ void GetAvailableSaveGamesTask::callbackLoadFile(CellSaveDataCBResult* cbResult,
 	if (this_->m_loadBufferPending)
 	{
 		set->fileOperation = CELL_SAVEDATA_FILEOP_READ;
-		set->fileType = CELL_SAVEDATA_FILETYPE_NORMALFILE;
+		set->fileType = CELL_SAVEDATA_FILETYPE_SECUREFILE;
 		set->fileName = (char*)"ATT.BIN";
 		set->fileOffset = 0;
 		set->fileSize = this_->m_loadBuffer.size();
 		set->fileBufSize = this_->m_loadBuffer.size();
 		set->fileBuf = &this_->m_loadBuffer[0];
 		set->reserved = 0;
+		memcpy(set->secureFileId, s_secureFileId, CELL_SAVEDATA_SECUREFILEID_SIZE);
 
 		cbResult->result = CELL_SAVEDATA_CBRESULT_OK_NEXT;
 
