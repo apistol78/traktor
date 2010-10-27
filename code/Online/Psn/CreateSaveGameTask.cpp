@@ -17,6 +17,12 @@ const uint32_t c_maxDirCount = 32;
 const uint32_t c_maxFileCount = 32;
 
 char s_indicatorDispMsg[CELL_SAVEDATA_INDICATORMSG_MAX] = "Saving...";
+const char s_secureFileId[CELL_SAVEDATA_SECUREFILEID_SIZE] = {
+	'C', 'L', 'E', 'A', 
+	'R', 'H', 'E', 'A', 
+	'D', 'G', 'A', 'M', 
+	'E', 'S', ' ', ' ', 
+};
 
 CellSaveDataAutoIndicator s_indicator = 
 {
@@ -128,12 +134,13 @@ void CreateSaveGameTask::callbackSaveFile(CellSaveDataCBResult* cbResult, CellSa
 	if (this_->m_saveBufferPending)
 	{
 		set->fileOperation = CELL_SAVEDATA_FILEOP_WRITE;
-		set->fileType = CELL_SAVEDATA_FILETYPE_NORMALFILE;
+		set->fileType = CELL_SAVEDATA_FILETYPE_SECUREFILE;
 		set->fileName = (char*)"ATT.BIN";
 		set->fileOffset = 0;
 		set->fileSize = this_->m_saveBuffer.size();
 		set->fileBufSize = this_->m_saveBuffer.size();
 		set->fileBuf = &this_->m_saveBuffer[0];
+		memcpy(set->secureFileId, s_secureFileId, CELL_SAVEDATA_SECUREFILEID_SIZE);
 		set->reserved = 0;
 
 		cbResult->progressBarInc = 50;
