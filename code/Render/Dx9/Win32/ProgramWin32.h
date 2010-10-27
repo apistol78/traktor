@@ -112,6 +112,13 @@ private:
 	AlignedVector< float > m_scalarParameterData;
 	RefArray< ITexture > m_textureParameterData;
 	bool m_dirty;
+
+#if defined(_DEBUG)
+	std::map< handle_t, std::wstring > m_scalarParameterNames;
+	std::vector< uint8_t > m_scalarParameterDataValid;
+
+	void validateParameter(const ProgramScalar& scalar);
+#endif
 };
 
 	}

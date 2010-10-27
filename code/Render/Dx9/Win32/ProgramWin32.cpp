@@ -101,10 +101,19 @@ bool ProgramWin32::create(
 	m_pixelSamplers = resource->m_pixelSamplers;
 
 	for (std::map< std::wstring, uint32_t >::const_iterator i = resource->m_scalarParameterMap.begin(); i != resource->m_scalarParameterMap.end(); ++i)
+	{
+		handle_t handle = getParameterHandle(i->first);
 		m_scalarParameterMap.insert(std::make_pair(
-			getParameterHandle(i->first),
+			handle,
 			i->second
 		));
+#if defined(_DEBUG)
+		m_scalarParameterNames.insert(std::make_pair(
+			handle,
+			i->first
+		));
+#endif
+	}
 
 	for (std::map< std::wstring, uint32_t >::const_iterator i = resource->m_textureParameterMap.begin(); i != resource->m_textureParameterMap.end(); ++i)
 		m_textureParameterMap.insert(std::make_pair(
@@ -114,6 +123,10 @@ bool ProgramWin32::create(
 
 	m_scalarParameterData.resize(resource->m_scalarParameterDataSize);
 	m_textureParameterData.resize(resource->m_textureParameterDataSize);
+
+#if defined(_DEBUG)
+	m_scalarParameterDataValid.resize(resource->m_scalarParameterDataSize, 0);
+#endif
 
 	m_state = resource->m_state;
 	m_state.prepareAnisotropy(maxAnisotropy);
@@ -133,10 +146,20 @@ bool ProgramWin32::activate()
 	m_state.apply(m_parameterCache);
 
 	for (std::vector< ProgramScalar >::iterator i = m_vertexScalars.begin(); i != m_vertexScalars.end(); ++i)
+	{
+#if defined(_DEBUG)
+		validateParameter(*i);
+#endif
 		m_parameterCache->setVertexShaderConstant(i->registerIndex, i->registerCount, &m_scalarParameterData[i->offset]);
+	}
 
 	for (std::vector< ProgramScalar >::iterator i = m_pixelScalars.begin(); i != m_pixelScalars.end(); ++i)
+	{
+#if defined(_DEBUG)
+		validateParameter(*i);
+#endif
 		m_parameterCache->setPixelShaderConstant(i->registerIndex, i->registerCount, &m_scalarParameterData[i->offset]);
+	}
 
 	for (std::vector< ProgramSampler >::iterator i = m_vertexSamplers.begin(); i != m_vertexSamplers.end(); ++i)
 		m_parameterCache->setVertexTexture(i->stage, getD3DTexture(m_textureParameterData[i->texture]));
@@ -169,6 +192,9 @@ void ProgramWin32::setFloatParameter(handle_t handle, float param)
 		return;
 
 	m_scalarParameterData[i->second] = param;
+#if defined(_DEBUG)
+	m_scalarParameterDataValid[i->second] = 1;
+#endif
 	m_dirty = true;
 }
 
@@ -179,6 +205,11 @@ void ProgramWin32::setFloatArrayParameter(handle_t handle, const float* param, i
 		return;
 
 	std::memcpy(&m_scalarParameterData[i->second], param, length * sizeof(float));
+#if defined(_DEBUG)
+	for (int j = 0; j < length; ++j)
+		m_scalarParameterDataValid[i->second + j] = 1;
+#endif
+
 	m_dirty = true;
 }
 
@@ -189,6 +220,11 @@ void ProgramWin32::setVectorParameter(handle_t handle, const Vector4& param)
 		return;
 
 	param.storeUnaligned(&m_scalarParameterData[i->second]);
+#if defined(_DEBUG)
+	for (int j = 0; j < 4; ++j)
+		m_scalarParameterDataValid[i->second + j] = 1;
+#endif
+
 	m_dirty = true;
 }
 
@@ -200,6 +236,10 @@ void ProgramWin32::setVectorArrayParameter(handle_t handle, const Vector4* param
 
 	for (int j = 0; j < length; ++j)
 		param[j].storeUnaligned(&m_scalarParameterData[i->second + j * 4]);
+#if defined(_DEBUG)
+	for (int j = 0; j < length * 4; ++j)
+		m_scalarParameterDataValid[i->second + j] = 1;
+#endif
 
 	m_dirty = true;
 }
@@ -211,6 +251,11 @@ void ProgramWin32::setMatrixParameter(handle_t handle, const Matrix44& param)
 		return;
 
 	param.storeUnaligned(&m_scalarParameterData[i->second]);
+#if defined(_DEBUG)
+	for (int j = 0; j < 16; ++j)
+		m_scalarParameterDataValid[i->second + j] = 1;
+#endif
+
 	m_dirty = true;
 }
 
@@ -222,6 +267,10 @@ void ProgramWin32::setMatrixArrayParameter(handle_t handle, const Matrix44* para
 
 	for (int j = 0; j < length; ++j)
 		param[j].storeUnaligned(&m_scalarParameterData[i->second + j * 16]);
+#if defined(_DEBUG)
+	for (int j = 0; j < length * 16; ++j)
+		m_scalarParameterDataValid[i->second + j] = 1;
+#endif
 
 	m_dirty = true;
 }
@@ -253,6 +302,29 @@ HRESULT ProgramWin32::resetDevice(IDirect3DDevice9* d3dDevice)
 {
 	return S_OK;
 }
+
+#if defined(_DEBUG)
+void ProgramWin32::validateParameter(const ProgramScalar& scalar)
+{
+	bool valid = (m_scalarParameterDataValid[scalar.offset] == 1);
+	if (!valid)
+	{
+		std::wstring parameterName;
+		for (std::map< handle_t, uint32_t >::const_iterator i = m_scalarParameterMap.begin(); i != m_scalarParameterMap.end(); ++i)
+		{
+			if (i->second == scalar.offset)
+			{
+				parameterName = m_scalarParameterNames[i->first];
+				break;
+			}
+		}
+		if (!parameterName.empty())
+			log::error << L"Parameter \"" << parameterName << L"\" not set" << Endl;
+		else
+			log::error << L"Unknown parameter not set" << Endl;
+	}
+}
+#endif
 
 	}
 }
