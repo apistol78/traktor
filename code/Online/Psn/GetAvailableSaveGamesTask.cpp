@@ -115,8 +115,13 @@ void GetAvailableSaveGamesTask::callbackLoadStat(CellSaveDataCBResult* cbResult,
 {
 	GetAvailableSaveGamesTask* this_ = static_cast< GetAvailableSaveGamesTask* >(cbResult->userdata);
 	T_ASSERT (this_);
-
 	this_->m_hddFreeSpaceKB = get->hddFreeSizeKB;
+
+	if (get->bind != 0)
+	{
+		LogError::logBindErrorSaveData(get->bind);
+	}
+
 	if (get->isNewData)
 	{
 		cbResult->result = CELL_SAVEDATA_CBRESULT_OK_LAST;

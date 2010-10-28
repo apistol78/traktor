@@ -143,5 +143,38 @@ void LogError::logTrophyError(int32_t err)
 	}
 }
 
-	}
+void LogError::logBindErrorSaveData(uint32_t err)
+{
+	if (err & CELL_SAVEDATA_BINDSTAT_ERR_CONSOLE)
+		log::error << L"[Pseudo-bind information] Saved by another PlayStation3" << Endl;
+
+	if (err & CELL_SAVEDATA_BINDSTAT_ERR_DISC)
+		log::error << L"[Pseudo-bind information] Saved by an application started on another disc" << Endl;
+
+	if (err & CELL_SAVEDATA_BINDSTAT_ERR_PROGRAM)
+		log::error << L"[Pseudo-bind information] Saved by another application (currently unsupported)" << Endl;
+
+	if (err & CELL_SAVEDATA_BINDSTAT_ERR_NOACCOUNTID)
+		log::error << L"[Pseudo-bind information] Saved by a user without an account ID" << Endl;
+
+	if (err & CELL_SAVEDATA_BINDSTAT_ERR_ACCOUNTID)
+		log::error << L"[Pseudo-bind information] Saved by a user with a different account ID" << Endl;
+
+	if (err & CELL_SAVEDATA_BINDSTAT_ERR_NOUSERID)
+		log::error << L"[Pseudo-bind information] User ID is not recorded (Saved with the save data utility of a version before Runtime Library Release 2.0.0)" << Endl;
+
+	if (err & CELL_SAVEDATA_BINDSTAT_ERR_USERID)
+		log::error << L"[Pseudo-bind information] Saved by a different user" << Endl;
+
+	if (err & CELL_SAVEDATA_BINDSTAT_ERR_NOOWNER)
+		log::error << L"[Owner information] No Owner Information (Created with the save data utility of a version before Runtime Library Release 2.4.0, and owner information was not reset when the data was overwritten)" << Endl;
+
+	if (err & CELL_SAVEDATA_BINDSTAT_ERR_OWNER)
+		log::error << L"[Owner information]	Owned by a different user" << Endl;
+
+	if (err & CELL_SAVEDATA_BINDSTAT_ERR_LOCALOWNER)
+		log::error << L"[Owner information] No Account ID in Owner Information (Saved when the user was not an online user)" << Endl;
+}
+
+}
 }
