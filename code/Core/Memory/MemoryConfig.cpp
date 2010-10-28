@@ -10,6 +10,7 @@ namespace traktor
 	namespace
 	{
 
+IAllocator* s_stdAllocator = 0;
 IAllocator* s_allocator = 0;
 
 #if !defined(_PS3)
@@ -17,6 +18,9 @@ void destroyAllocator()
 {
 	freeDestruct(s_allocator);
 	s_allocator = 0;
+
+	freeDestruct(s_stdAllocator);
+	s_stdAllocator = 0;
 }
 #endif
 
@@ -26,12 +30,16 @@ IAllocator* getAllocator()
 {
 	if (!s_allocator)
 	{
-		StdAllocator* stdAllocator = allocConstruct< StdAllocator >();
+		s_stdAllocator = allocConstruct< StdAllocator >();
+		s_stdAllocator->addRef(0);
+
 #if !defined(_DEBUG) || defined(_PS3)
-		s_allocator = allocConstruct< FastAllocator >(stdAllocator);
+		s_allocator = allocConstruct< FastAllocator >(s_stdAllocator);
 #else
-		s_allocator = allocConstruct< TrackAllocator >(stdAllocator);
+		s_allocator = allocConstruct< TrackAllocator >(s_stdAllocator);
 #endif
+		s_allocator->addRef(0);
+
 #if !defined(_PS3)
 		std::atexit(destroyAllocator);
 #endif
