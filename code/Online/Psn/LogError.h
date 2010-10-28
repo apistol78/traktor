@@ -13,6 +13,7 @@ class LogError
 public:
 	static void logErrorSaveData(int32_t err);
 	static void logTrophyError(int32_t err);
+	static void logBindErrorSaveData(uint32_t err);
 
 };
 
