@@ -3424,13 +3424,14 @@
 					<fileName>*.*</fileName>
 					<items/>
 				</item>
-				<item type="File">
-					<fileName>../../../res/ps3/ClearFp_fragment.fpo</fileName>
-					<items/>
-				</item>
-				<item type="File">
-					<fileName>../../../res/ps3/ClearFp_vertex.vpo</fileName>
-					<items/>
+				<item type="Filter">
+					<name>Shaders</name>
+					<items>
+						<item type="File">
+							<fileName>Shaders/*.*</fileName>
+							<items/>
+						</item>
+					</items>
 				</item>
 			</items>
 			<dependencies>

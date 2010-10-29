@@ -45,7 +45,6 @@ render::handle_t WorldRenderer::ms_handleProjection = 0;
 
 WorldRenderer::WorldRenderer()
 :	m_count(0)
-,	m_depthTargetHaveOwnZBuffer(false)
 {
 	ms_techniqueDefault = render::getParameterHandle(L"Default");
 	ms_techniqueDepth = render::getParameterHandle(L"Depth");
@@ -82,7 +81,8 @@ bool WorldRenderer::create(
 		desc.width = width;
 		desc.height = height;
 		desc.multiSample = multiSample;
-		desc.depthStencil = false;
+		desc.createDepthStencil = false;
+		desc.usingPrimaryDepthStencil = true;
 		desc.preferTiled = true;
 		desc.targets[0].format = render::TfR8G8B8A8;
 
@@ -91,14 +91,12 @@ bool WorldRenderer::create(
 		if (!m_depthTargetSet && multiSample > 0)
 		{
 			desc.multiSample = 0;
-			desc.depthStencil = true;
+			desc.createDepthStencil = true;
+			desc.usingPrimaryDepthStencil = false;
 
 			m_depthTargetSet = renderSystem->createRenderTargetSet(desc);
 			if (m_depthTargetSet)
-			{
 				log::warning << L"MSAA depth render target unsupported; may cause poor performance" << Endl;
-				m_depthTargetHaveOwnZBuffer = true;
-			}
 		}
 
 		if (!m_depthTargetSet)
@@ -118,7 +116,8 @@ bool WorldRenderer::create(
 		desc.width =
 		desc.height = m_settings.shadowMapResolution;
 		desc.multiSample = 0;
-		desc.depthStencil = true;
+		desc.createDepthStencil = true;
+		desc.usingPrimaryDepthStencil = false;
 		desc.preferTiled = true;
 		desc.targets[0].format = render::TfR8G8B8A8;
 
@@ -155,7 +154,8 @@ bool WorldRenderer::create(
 		// Create shadow mask target.
 		desc.count = 1;
 		desc.multiSample = 0;
-		desc.depthStencil = false;
+		desc.createDepthStencil = false;
+		desc.usingPrimaryDepthStencil = false;
 		desc.targets[0].format = render::TfR8;
 		desc.preferTiled = true;
 		m_shadowMaskTargetSet = renderSystem->createRenderTargetSet(desc);
@@ -363,7 +363,7 @@ void WorldRenderer::render(uint32_t flags, int frame, render::EyeType eye)
 		if ((flags & WrfShadowMap) != 0 && f.haveShadows)
 		{
 			T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow map");
-			if (m_renderView->begin(m_shadowTargetSet, 0, false))
+			if (m_renderView->begin(m_shadowTargetSet, 0))
 			{
 				const float shadowClear[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 				m_renderView->clear(render::CfColor | render::CfDepth, shadowClear, 1.0f, 0);
@@ -378,7 +378,7 @@ void WorldRenderer::render(uint32_t flags, int frame, render::EyeType eye)
 	if ((flags & WrfDepthMap) != 0 && f.haveDepth)
 	{
 		T_RENDER_PUSH_MARKER(m_renderView, "World: Depth");
-		if (m_renderView->begin(m_depthTargetSet, 0, !m_depthTargetHaveOwnZBuffer))
+		if (m_renderView->begin(m_depthTargetSet, 0))
 		{
 			const float depthColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 			m_renderView->clear(render::CfColor | render::CfDepth, depthColor, 1.0f, 0);
@@ -398,7 +398,7 @@ void WorldRenderer::render(uint32_t flags, int frame, render::EyeType eye)
 	if ((flags & WrfShadowMap) != 0 && f.haveShadows)
 	{
 		T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow mask");
-		if (m_renderView->begin(m_shadowMaskTargetSet, 0, false))
+		if (m_renderView->begin(m_shadowMaskTargetSet, 0))
 		{
 			PostProcessStep::Instance::RenderParams params;
 

@@ -241,7 +241,7 @@ bool RenderViewDx10::begin(EyeType eye)
 	return true;
 }
 
-bool RenderViewDx10::begin(RenderTargetSet* renderTargetSet, int renderTarget, bool keepDepthStencil)
+bool RenderViewDx10::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 {
 	T_ASSERT (!m_renderStateStack.empty());
 
@@ -257,8 +257,8 @@ bool RenderViewDx10::begin(RenderTargetSet* renderTargetSet, int renderTarget, b
 		rts->getD3D10DepthTextureView()
 	};
 
-	if (keepDepthStencil)
-		rs.d3dDepthStencilView = m_renderStateStack.back().d3dDepthStencilView;
+	if (rts->usingPrimaryDepthStencil())
+		rs.d3dDepthStencilView = m_d3dDepthStencilView;
 
 	m_renderStateStack.push_back(rs);
 

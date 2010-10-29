@@ -59,6 +59,7 @@ RenderTargetOpenGL::RenderTargetOpenGL(IContext* resourceContext)
 ,	m_targetColorBuffer(0)
 ,	m_colorTexture(0)
 ,	m_haveDepth(false)
+,	m_usingPrimaryDepthBuffer(false)
 ,	m_originAndScale(0.0f, 1.0f, 1.0f, -1.0f)
 {
 }
@@ -79,6 +80,7 @@ bool RenderTargetOpenGL::create(const RenderTargetSetCreateDesc& setDesc, const 
 	m_targetWidth = setDesc.width;
 	m_targetHeight = setDesc.height;
 	m_textureTarget = GL_TEXTURE_2D;
+	m_usingPrimaryDepthBuffer = setDesc.usingPrimaryDepthStencil;
 
 	if (!opengl_have_extension("GL_ARB_texture_non_power_of_two"))
 	{
@@ -408,48 +410,23 @@ void RenderTargetOpenGL::bind(GLuint unit, const SamplerState& samplerState, GLi
 		T_OGL_SAFE(glUniform4fvARB(locationOffset, 1, (const GLfloat*)&m_originAndScale));
 }
 
-bool RenderTargetOpenGL::bind(bool keepDepthStencil)
+bool RenderTargetOpenGL::bind(GLuint depthBuffer)
 {
-	GLuint currentDepthBuffer;
-
-	if (keepDepthStencil)
-	{
-		GLuint currentFBO;
-		T_OGL_SAFE(glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT, (GLint*)&currentFBO));
-
-		// Get currently bound depth object.
-		if (currentFBO != 0)
-		{
-			T_OGL_SAFE(glGetFramebufferAttachmentParameterivEXT(
-				GL_FRAMEBUFFER_EXT,
-				GL_DEPTH_ATTACHMENT_EXT,
-				GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME_EXT,
-				(GLint*)&currentDepthBuffer
-			));
-		}
-		else
-		{
-			// No FBO is currently bound; cannot get "master" depth buffer as object.
-			keepDepthStencil = false;
-		}
-	}
-
 	T_OGL_SAFE(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_targetFBO));
 
-	if (keepDepthStencil)
+	if (m_usingPrimaryDepthBuffer)
 	{
-		// Get currently bound depth object and reuse with this FBO.
 		T_OGL_SAFE(glFramebufferRenderbufferEXT(
 			GL_FRAMEBUFFER_EXT,
 			GL_DEPTH_ATTACHMENT_EXT,
 			GL_RENDERBUFFER_EXT,
-			currentDepthBuffer
+			depthBuffer
 		));
 		T_OGL_SAFE(glFramebufferRenderbufferEXT(
 			GL_FRAMEBUFFER_EXT,
 			GL_STENCIL_ATTACHMENT_EXT,
 			GL_RENDERBUFFER_EXT,
-			currentDepthBuffer
+			depthBuffer
 		));
 	}
 
@@ -457,11 +434,11 @@ bool RenderTargetOpenGL::bind(bool keepDepthStencil)
 	return status == GL_FRAMEBUFFER_COMPLETE_EXT;
 }
 
-void RenderTargetOpenGL::enter(bool keepDepthStencil)
+void RenderTargetOpenGL::enter(GLuint depthBuffer)
 {
 	T_OGL_SAFE(glViewport(0, 0, m_targetWidth, m_targetHeight));
 
-	if (m_haveDepth || keepDepthStencil)
+	if (m_haveDepth || m_usingPrimaryDepthBuffer)
 	{
 		T_OGL_SAFE(glEnable(GL_DEPTH_TEST));
 		T_OGL_SAFE(glDepthFunc(GL_LEQUAL));

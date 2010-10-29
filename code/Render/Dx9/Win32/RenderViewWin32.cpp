@@ -212,7 +212,7 @@ bool RenderViewWin32::begin(EyeType eye)
 	return true;
 }
 
-bool RenderViewWin32::begin(RenderTargetSet* renderTargetSet, int renderTarget, bool keepDepthStencil)
+bool RenderViewWin32::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 {
 	T_ASSERT (!m_renderStateStack.empty());
 
@@ -231,8 +231,8 @@ bool RenderViewWin32::begin(RenderTargetSet* renderTargetSet, int renderTarget, 
 		rt
 	};
 
-	if (keepDepthStencil)
-		rs.d3dDepthStencilSurface = m_renderStateStack.back().d3dDepthStencilSurface;
+	if (rts->usingPrimaryDepthStencil())
+		rs.d3dDepthStencilSurface = m_d3dDepthStencilSurface;
 
 	m_renderStateStack.push_back(rs);
 	m_targetDirty = true;

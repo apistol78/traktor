@@ -58,7 +58,7 @@ bool RenderTargetSetOpenGL::create(const RenderTargetSetCreateDesc& desc)
 		}
 	}
 
-	if (desc.depthStencil)
+	if (desc.createDepthStencil)
 	{
 		T_OGL_SAFE(glGenRenderbuffersEXT(1, &m_depthBuffer));
 		T_OGL_SAFE(glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_depthBuffer));

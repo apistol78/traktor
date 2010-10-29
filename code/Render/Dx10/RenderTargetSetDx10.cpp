@@ -18,6 +18,7 @@ RenderTargetSetDx10::RenderTargetSetDx10(ContextDx10* context)
 :	m_context(context)
 ,	m_width(0)
 ,	m_height(0)
+,	m_usingPrimaryDepthStencil(false)
 {
 }
 
@@ -40,7 +41,7 @@ bool RenderTargetSetDx10::create(ID3D10Device* d3dDevice, const RenderTargetSetC
 			return false;
 	}
 
-	if (desc.depthStencil)
+	if (desc.createDepthStencil)
 	{
 		dtd.Width = desc.width;
 		dtd.Height = desc.height;
@@ -81,6 +82,7 @@ bool RenderTargetSetDx10::create(ID3D10Device* d3dDevice, const RenderTargetSetC
 
 	m_width = desc.width;
 	m_height = desc.height;
+	m_usingPrimaryDepthStencil = desc.usingPrimaryDepthStencil;
 
 	return true;
 }

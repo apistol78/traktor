@@ -69,6 +69,8 @@ public:
 
 	IDirect3DSurface9* getD3DDepthStencilSurface() const { return m_d3dTargetDepthStencilSurface; }
 
+	bool usingPrimaryDepthStencil() const { return m_desc.usingPrimaryDepthStencil; }
+
 private:
 	Ref< ResourceManagerDx9 > m_resourceManager;
 	RenderTargetSetCreateDesc m_desc;

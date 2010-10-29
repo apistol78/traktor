@@ -33,7 +33,8 @@ bool PostProcessDefineTarget::define(PostProcess* postProcess, render::IRenderSy
 	desc.width = m_width + (m_screenDenom ? screenWidth / m_screenDenom : 0);
 	desc.height = m_height + (m_screenDenom ? screenHeight / m_screenDenom : 0);
 	desc.multiSample = m_multiSample;
-	desc.depthStencil = m_depthStencil;
+	desc.createDepthStencil = m_depthStencil;
+	desc.usingPrimaryDepthStencil = false;
 	desc.preferTiled = m_preferTiled;
 	desc.targets[0].format = m_format;
 

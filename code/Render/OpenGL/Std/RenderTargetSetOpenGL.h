@@ -48,6 +48,8 @@ public:
 
 	virtual bool read(int index, void* buffer) const;
 
+	GLuint getDepthBuffer() const { return m_depthBuffer; }
+
 private:
 	Ref< IContext > m_resourceContext;
 	int32_t m_width;

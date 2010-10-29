@@ -132,7 +132,7 @@ void PostProcess::setTarget(render::IRenderView* renderView, int32_t id)
 	if (id != PdtFrame)
 	{
 		m_currentTarget = m_targets[id];
-		renderView->begin(m_currentTarget, 0, false);
+		renderView->begin(m_currentTarget, 0);
 	}
 	else
 		m_currentTarget = 0;

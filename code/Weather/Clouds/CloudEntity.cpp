@@ -227,7 +227,8 @@ bool CloudEntity::create(
 		targetDesc.width = impostorTargetResolution;
 		targetDesc.height = impostorTargetResolution;
 		targetDesc.multiSample = 0;
-		targetDesc.depthStencil = false;
+		targetDesc.createDepthStencil = false;
+		targetDesc.usingPrimaryDepthStencil = false;
 		targetDesc.targets[0].format = render::TfR8G8B8A8;
 
 		m_impostorTargets[i] = renderSystem->createRenderTargetSet(targetDesc);

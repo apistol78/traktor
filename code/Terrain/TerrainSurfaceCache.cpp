@@ -40,7 +40,7 @@ struct TerrainSurfaceRenderBlock : public render::RenderBlock
 		if (globalParameters)
 			globalParameters->fixup(program);
 
-		renderView->begin(renderTargetSet, 0, false);
+		renderView->begin(renderTargetSet, 0);
 
 		const float clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
 		renderView->clear(render::CfColor, clearColor, 0.0f, 0);
@@ -231,7 +231,8 @@ Ref< render::RenderTargetSet > TerrainSurfaceCache::allocateTarget(uint32_t lod)
 	desc.width = c_cacheSurfaceSize[lod];
 	desc.height = c_cacheSurfaceSize[lod];
 	desc.multiSample = 0;
-	desc.depthStencil = false;
+	desc.createDepthStencil = false;
+	desc.usingPrimaryDepthStencil = false;
 	desc.targets[0].format = render::TfR8G8B8A8;
 
 	return m_renderSystem->createRenderTargetSet(desc);

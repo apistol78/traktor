@@ -70,7 +70,7 @@ void ScreenRenderer::draw(IRenderView* renderView, Shader* shader)
 
 void ScreenRenderer::draw(IRenderView* renderView, RenderTargetSet* renderTargetSet, int renderTarget, Shader* shader)
 {
-	if (renderView->begin(renderTargetSet, renderTarget, false))
+	if (renderView->begin(renderTargetSet, renderTarget))
 	{
 		renderView->setVertexBuffer(m_vertexBuffer);
 		shader->draw(renderView, m_primitives);

@@ -236,7 +236,8 @@ void PerspectiveRenderControl::updateWorldRenderer()
 			desc.width = sz.cx;
 			desc.height = sz.cy;
 			desc.multiSample = m_multiSample;
-			desc.depthStencil = false;
+			desc.createDepthStencil = false;
+			desc.usingPrimaryDepthStencil = true;
 			desc.targets[0].format = m_postProcess->requireHighRange() ? render::TfR16G16B16A16F : render::TfR8G8B8A8;
 			m_renderTarget =  m_context->getRenderSystem()->createRenderTargetSet(desc);
 		}
@@ -669,7 +670,7 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 
 			if (m_postProcessEnable && m_renderTarget)
 			{
-				m_renderView->begin(m_renderTarget, 0, true);
+				m_renderView->begin(m_renderTarget, 0);
 				m_renderView->clear(
 					render::CfColor,
 					colorClear,

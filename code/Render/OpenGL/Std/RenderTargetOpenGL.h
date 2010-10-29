@@ -47,9 +47,9 @@ public:
 	
 	virtual void bind(GLuint unit, const SamplerState& samplerState, GLint locationTexture, GLint locationOffset);
 
-	bool bind(bool keepDepthStencil);
+	bool bind(GLuint depthBuffer);
 
-	void enter(bool keepDepthStencil);
+	void enter(GLuint depthBuffer);
 	
 	void resolve();
 
@@ -72,6 +72,7 @@ private:
 	GLuint m_colorTexture;
 	Vector4 m_originAndScale;
 	bool m_haveDepth;
+	bool m_usingPrimaryDepthBuffer;
 	SamplerState m_shadowState;
 };
 
