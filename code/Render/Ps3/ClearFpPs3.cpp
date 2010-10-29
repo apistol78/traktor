@@ -3,9 +3,8 @@
 #include "Render/Ps3/MemoryHeapObject.h"
 #include "Render/Ps3/StateCachePs3.h"
 
-// Resources
-#include "Resources/ClearFp_vertex.h"
-#include "Resources/ClearFp_fragment.h"
+extern "C" unsigned long _binary_ClearFp_vpo_start;
+extern "C" unsigned long _binary_ClearFp_fpo_start;
 
 namespace traktor
 {
@@ -57,8 +56,8 @@ bool ClearFpPs3::create(MemoryHeap* memoryHeap)
 	ptr[4] = -1.0f; ptr[5] =  1.0f;
 	ptr[6] =  1.0f; ptr[7] =  1.0f;
 
-	m_clearVertexProgram = (CGprogram)c_ResourceClearFp_vertex;
-	m_clearFragmentProgram = (CGprogram)c_ResourceClearFp_fragment;
+	m_clearVertexProgram = (CGprogram)(void*)&_binary_ClearFp_vpo_start;
+	m_clearFragmentProgram = (CGprogram)(void*)&_binary_ClearFp_fpo_start;
 
 	cellGcmCgInitProgram(m_clearVertexProgram);
 	cellGcmCgInitProgram(m_clearFragmentProgram);

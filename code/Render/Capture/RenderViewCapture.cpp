@@ -104,7 +104,8 @@ bool RenderViewCapture::begin(EyeType eye)
 		rtscd.width = vp.width;
 		rtscd.height = vp.height;
 		rtscd.multiSample = 0;
-		rtscd.depthStencil = true;
+		rtscd.createDepthStencil = true;
+		rtscd.usingPrimaryDepthStencil = false;
 		rtscd.targets[0].format = TfR8G8B8A8;
 
 		m_captureTarget = m_renderSystem->createRenderTargetSet(rtscd);
@@ -114,7 +115,7 @@ bool RenderViewCapture::begin(EyeType eye)
 			return m_renderView->begin(EtCyclop);
 		}
 
-		if (!m_renderView->begin(m_captureTarget, 0, false))
+		if (!m_renderView->begin(m_captureTarget, 0))
 		{
 			m_captureFrame = false;
 			m_captureTarget->destroy();
@@ -133,9 +134,9 @@ bool RenderViewCapture::begin(EyeType eye)
 	return true;
 }
 
-bool RenderViewCapture::begin(RenderTargetSet* renderTargetSet, int renderTarget, bool keepDepthStencil)
+bool RenderViewCapture::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 {
-	if (!m_renderView->begin(renderTargetSet, renderTarget, keepDepthStencil))
+	if (!m_renderView->begin(renderTargetSet, renderTarget))
 		return false;
 
 	m_captureDepth++;
@@ -186,7 +187,7 @@ void RenderViewCapture::draw(const Primitives& primitives)
 		else
 			log::error << L"Unable to capture image" << Endl;
 
-		if (!m_renderView->begin(m_captureTarget, 0, false))
+		if (!m_renderView->begin(m_captureTarget, 0))
 			log::error << L"Unable to continue capture; failed to rebind capture target" << Endl;
 	}
 }

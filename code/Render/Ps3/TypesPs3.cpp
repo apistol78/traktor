@@ -34,6 +34,47 @@ const ResolutionDesc* findResolutionDesc(int32_t width, int32_t height, bool ste
 	return 0;
 }
 
+bool getGcmSurfaceInfo(TextureFormat textureFormat, uint8_t& outGcmTextureFormat, uint8_t& outGcmSurfaceFormat, uint8_t& outByteSize)
+{
+	switch (textureFormat)
+	{
+	case TfR8:
+		outGcmTextureFormat = CELL_GCM_TEXTURE_A8R8G8B8;
+		outGcmSurfaceFormat = CELL_GCM_SURFACE_A8R8G8B8;
+		outByteSize = 4;
+		break;
+
+	case TfR8G8B8A8:
+		outGcmTextureFormat = CELL_GCM_TEXTURE_A8R8G8B8;
+		outGcmSurfaceFormat = CELL_GCM_SURFACE_A8R8G8B8;
+		outByteSize = 4;
+		break;
+
+	case TfR16G16B16A16F:
+		outGcmTextureFormat = CELL_GCM_TEXTURE_W16_Z16_Y16_X16_FLOAT;
+		outGcmSurfaceFormat = CELL_GCM_SURFACE_F_W16Z16Y16X16;
+		outByteSize = 4 * 2;
+		break;
+
+	case TfR32G32B32A32F:
+		outGcmTextureFormat = CELL_GCM_TEXTURE_W32_Z32_Y32_X32_FLOAT;
+		outGcmSurfaceFormat = CELL_GCM_SURFACE_F_W32Z32Y32X32;
+		outByteSize = 4 * 4;
+		break;
+
+	case TfR16F:
+	case TfR32F:
+		outGcmTextureFormat = CELL_GCM_TEXTURE_X32_FLOAT;
+		outGcmSurfaceFormat = CELL_GCM_SURFACE_F_X32;
+		outByteSize = 4;
+		break;
+
+	default:
+		return false;
+	}
+	return true;
+}
+
 bool getGcmTextureInfo(TextureFormat textureFormat, uint8_t& outGcmFormat)
 {
 	switch (textureFormat)
@@ -53,9 +94,6 @@ bool getGcmTextureInfo(TextureFormat textureFormat, uint8_t& outGcmFormat)
 	case TfR32G32B32A32F:
 		outGcmFormat = CELL_GCM_TEXTURE_W32_Z32_Y32_X32_FLOAT;
 		break;
-
-	//case TfR16F:
-	//	break;
 
 	case TfR32F:
 		outGcmFormat = CELL_GCM_TEXTURE_X32_FLOAT;

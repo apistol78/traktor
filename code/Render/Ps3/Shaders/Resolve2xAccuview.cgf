@@ -1,0 +1,18 @@
+/* Resolve MSAA fragment shader */
+
+void main
+(
+	float2 tex0 : TEX0,
+	uniform texobj2D texture0,
+	uniform texobj2D texture1,
+	out float4 color : COLOR
+)
+{
+    float2 d0 = float2(0.0001, 0.0);
+    float4 color0 = f4tex2D(texture0, tex0 + d0);
+
+	float2 d1 = float2(-0.0001, -0.001);
+    float4 color1 = f4tex2D(texture1, tex0 + d1);
+
+    color = lerp(color0, color1, 0.5);
+}

@@ -118,6 +118,8 @@ extern const ResolutionDesc c_resolutionDescs[];
 
 const ResolutionDesc* findResolutionDesc(int32_t width, int32_t height, bool stereoscopic);
 
+bool getGcmSurfaceInfo(TextureFormat textureFormat, uint8_t& outGcmTextureFormat, uint8_t& outGcmSurfaceFormat, uint8_t& outByteSize);
+
 bool getGcmTextureInfo(TextureFormat textureFormat, uint8_t& outGcmFormat);
 
 void cellUtilConvertLinearToSwizzle(

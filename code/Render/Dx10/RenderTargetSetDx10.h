@@ -52,6 +52,10 @@ public:
 		return m_d3dDepthTextureView;
 	}
 
+	inline bool usingPrimaryDepthStencil() const {
+		return m_usingPrimaryDepthStencil;
+	}
+
 private:
 	Ref< ContextDx10 > m_context;
 	RefArray< RenderTargetDx10 > m_colorTextures;
@@ -59,6 +63,7 @@ private:
 	ComRef< ID3D10DepthStencilView > m_d3dDepthTextureView;
 	int m_width;
 	int m_height;
+	bool m_usingPrimaryDepthStencil;
 };
 
 	}

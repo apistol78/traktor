@@ -288,8 +288,6 @@ bool InputDriverDi8::addDevice(const DIDEVICEINSTANCE* deviceInstance)
 
 	case DI8DEVTYPE_JOYSTICK:
 	case DI8DEVTYPE_GAMEPAD:
-	case DI8DEVTYPE_DRIVING:
-	case DI8DEVTYPE_FLIGHT:
 		inputCategory = CtJoystick;
 		break;
 

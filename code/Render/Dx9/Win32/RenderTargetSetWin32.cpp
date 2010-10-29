@@ -299,7 +299,7 @@ HRESULT RenderTargetSetWin32::internalCreate()
 	}
 
 	// Create depth/stencil surface.
-	if (m_desc.depthStencil)
+	if (m_desc.createDepthStencil)
 	{
 		D3DFORMAT d3dDepthStencilFormat = determineDepthStencilFormat(d3d, 16, 8, d3dDisplayMode.Format);
 		if (d3dDepthStencilFormat == D3DFMT_UNKNOWN)
@@ -321,49 +321,21 @@ HRESULT RenderTargetSetWin32::internalCreate()
 		}
 
 		D3DMULTISAMPLE_TYPE d3dMultiSample = c_d3dMultiSample[m_desc.multiSample];
-		//if (d3dMultiSample != D3DMULTISAMPLE_NONE)
+		hr = m_d3dDevice->CreateDepthStencilSurface(
+			m_desc.width,
+			m_desc.height,
+			d3dDepthStencilFormat,
+			d3dMultiSample,
+			0,
+			TRUE,
+			&m_d3dTargetDepthStencilSurface.getAssign(),
+			NULL
+		);
+		if (FAILED(hr))
 		{
-			hr = m_d3dDevice->CreateDepthStencilSurface(
-				m_desc.width,
-				m_desc.height,
-				d3dDepthStencilFormat,
-				d3dMultiSample,
-				0,
-				TRUE,
-				&m_d3dTargetDepthStencilSurface.getAssign(),
-				NULL
-			);
-			if (FAILED(hr))
-			{
-				log::error << L"Render target create failed; Unable to create depth/stencil surface" << Endl;
-				return hr;
-			}
+			log::error << L"Render target create failed; Unable to create depth/stencil surface" << Endl;
+			return hr;
 		}
-		//else
-		//{
-		//	hr = m_d3dDevice->CreateTexture(
-		//		m_desc.width,
-		//		m_desc.height,
-		//		1,
-		//		D3DUSAGE_DEPTHSTENCIL,
-		//		d3dDepthStencilFormat,
-		//		D3DPOOL_DEFAULT,
-		//		&m_d3dTargetDepthStencilTexture.getAssign(),
-		//		NULL
-		//	);
-		//	if (FAILED(hr))
-		//	{
-		//		log::error << L"Render target create failed; Unable to create depth/stencil texture" << Endl;
-		//		return hr;
-		//	}
-
-		//	hr = m_d3dTargetDepthStencilTexture->GetSurfaceLevel(0, &m_d3dTargetDepthStencilSurface.getAssign());
-		//	if (FAILED(hr))
-		//	{
-		//		log::error << L"Render target create failed; Unable to get surface level 0" << Endl;
-		//		return hr;
-		//	}
-		//}
 	}
 
 	return S_OK;

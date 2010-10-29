@@ -77,7 +77,7 @@ void TargetBeginRenderBlock::render(IRenderView* renderView, const ProgramParame
 {
 	T_RENDER_PUSH_MARKER(renderView, name);
 
-	renderView->begin(renderTargetSet, renderTargetIndex, keepDepthStencil);
+	renderView->begin(renderTargetSet, renderTargetIndex);
 
 	T_RENDER_POP_MARKER(renderView);
 }

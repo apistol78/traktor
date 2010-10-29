@@ -123,7 +123,8 @@ bool AccDisplayRenderer::create(
 	rtscd.width = c_cacheGlyphDimX;
 	rtscd.height = c_cacheGlyphDimY;
 	rtscd.multiSample = 0;
-	rtscd.depthStencil = false;
+	rtscd.createDepthStencil = false;
+	rtscd.usingPrimaryDepthStencil = false;
 	rtscd.targets[0].format = render::TfR8;
 
 	m_renderTargetGlyphs = m_renderSystem->createRenderTargetSet(rtscd);
@@ -451,7 +452,6 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 		render::TargetBeginRenderBlock* renderBlockBegin = m_renderContext->alloc< render::TargetBeginRenderBlock >("Flash glyph render begin");
 		renderBlockBegin->renderTargetSet = m_renderTargetGlyphs;
 		renderBlockBegin->renderTargetIndex = 0;
-		renderBlockBegin->keepDepthStencil = false;
 		m_renderContext->draw(render::RfOverlay, renderBlockBegin);
 
 		Vector4 frameSize(bounds.min.x, bounds.min.y, bounds.max.x, bounds.max.y);

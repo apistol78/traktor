@@ -1,0 +1,13 @@
+/* Resolve MSAA vertex shader */
+
+void main
+(
+	float2 position,
+	float2 tex0,
+	out float2 oPosition : POSITION,
+	out float2 oTex0 : TEX0
+)
+{
+	oPosition = position;
+	oTex0 = tex0;
+} 

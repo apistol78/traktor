@@ -136,13 +136,11 @@ class T_DLLCLASS TargetBeginRenderBlock : public RenderBlock
 public:
 	RenderTargetSet* renderTargetSet;
 	int32_t renderTargetIndex;
-	bool keepDepthStencil;
 
 	TargetBeginRenderBlock()
 	:	RenderBlock()
 	,	renderTargetSet(0)
 	,	renderTargetIndex(0)
-	,	keepDepthStencil(false)
 	{
 	}
 

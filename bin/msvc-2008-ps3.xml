@@ -1069,6 +1069,46 @@
           </staticOptions>
         </second>
       </item>
+      <item>
+        <first>cgv</first>
+        <second type="SolutionBuilderMsvcGenericTool">
+          <toolName>VCCustomBuildTool</toolName>
+          <staticOptions>
+            <item>
+              <first>Description</first>
+              <second>Compiling CG shader $(InputName).cgv (vertex)</second>
+            </item>
+            <item>
+              <first>CommandLine</first>
+              <second><![CDATA[$(SCE_PS3_ROOT)\host-win32\Cg\bin\sce-cgc -profile sce_vp_rsx -o &quot;$(IntDir)\$(InputName).vpo&quot; &quot;$(InputPath)&quot;&#x0D;&#x0A;cd $(IntDir)&#x0D;&#x0A;$(SCE_PS3_ROOT)\host-win32\ppu\bin\ppu-lv2-objcopy -I binary -O elf64-powerpc-celloslv2 -B powerpc &quot;$(InputName).vpo&quot; &quot;$(InputName).vpo.obj&quot;&#x0D;&#x0A;]]></second>
+            </item>
+            <item>
+              <first>Outputs</first>
+              <second><![CDATA[&quot;$(IntDir)\$(InputName).vpo&quot;;&quot;$(IntDir)\$(InputName).vpo.obj&quot;]]></second>
+            </item>
+          </staticOptions>
+        </second>
+      </item>	  
+      <item>
+        <first>cgf</first>
+        <second type="SolutionBuilderMsvcGenericTool">
+          <toolName>VCCustomBuildTool</toolName>
+          <staticOptions>
+            <item>
+              <first>Description</first>
+              <second>Compiling CG shader $(InputName).cgf (fragment)</second>
+            </item>
+            <item>
+              <first>CommandLine</first>
+              <second><![CDATA[$(SCE_PS3_ROOT)\host-win32\Cg\bin\sce-cgc -profile sce_fp_rsx -o &quot;$(IntDir)\$(InputName).fpo&quot; &quot;$(InputPath)&quot;&#x0D;&#x0A;cd $(IntDir)&#x0D;&#x0A;$(SCE_PS3_ROOT)\host-win32\ppu\bin\ppu-lv2-objcopy -I binary -O elf64-powerpc-celloslv2 -B powerpc &quot;$(InputName).fpo&quot; &quot;$(InputName).fpo.obj&quot;&#x0D;&#x0A;]]></second>
+            </item>
+            <item>
+              <first>Outputs</first>
+              <second><![CDATA[&quot;$(IntDir)\$(InputName).fpo&quot;;&quot;$(IntDir)\$(InputName).fpo.obj&quot;]]></second>
+            </item>
+          </staticOptions>
+        </second>
+      </item>	  
     </customTools>
   </project>
 </object>

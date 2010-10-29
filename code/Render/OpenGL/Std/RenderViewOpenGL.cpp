@@ -61,7 +61,7 @@ RenderViewOpenGL::RenderViewOpenGL(
 #endif
 {
 	m_primaryTargetDesc.multiSample = desc.multiSample;
-	m_primaryTargetDesc.depthStencil = bool(desc.depthBits > 0 || desc.stencilBits > 0);
+	m_primaryTargetDesc.createDepthStencil = bool(desc.depthBits > 0 || desc.stencilBits > 0);
 	m_waitVBlank = desc.waitVBlank;
 }
 
@@ -238,20 +238,20 @@ bool RenderViewOpenGL::begin(EyeType eye)
 	T_OGL_SAFE(glEnable(GL_DEPTH_TEST));
 	T_OGL_SAFE(glDepthFunc(GL_LEQUAL));
 
-	return begin(m_primaryTarget, 0, false);
+	return begin(m_primaryTarget, 0);
 }
 
-bool RenderViewOpenGL::begin(RenderTargetSet* renderTargetSet, int renderTarget, bool keepDepthStencil)
+bool RenderViewOpenGL::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 {
 	T_OGL_SAFE(glPushAttrib(GL_VIEWPORT_BIT | GL_DEPTH_BUFFER_BIT));
 
 	RenderTargetSetOpenGL* rts = checked_type_cast< RenderTargetSetOpenGL* >(renderTargetSet);
 	RenderTargetOpenGL* rt = checked_type_cast< RenderTargetOpenGL* >(rts->getColorTexture(renderTarget));
 	
-	if (!rt->bind(keepDepthStencil))
+	if (!rt->bind(m_primaryTarget->getDepthBuffer()))
 		return false;
 	
-	rt->enter(keepDepthStencil);
+	rt->enter(m_primaryTarget->getDepthBuffer());
 
 	m_renderTargetStack.push(rt);
 

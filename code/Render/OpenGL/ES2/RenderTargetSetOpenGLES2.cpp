@@ -29,7 +29,7 @@ bool RenderTargetSetOpenGLES2::create(const RenderTargetSetCreateDesc& desc)
 	m_width = desc.width;
 	m_height = desc.height;
 
-	if (desc.depthStencil)
+	if (desc.createDepthStencil)
 	{
 		T_OGL_SAFE(glGenRenderbuffers(1, &m_depthBuffer));
 		T_OGL_SAFE(glBindRenderbuffer(GL_RENDERBUFFER, m_depthBuffer));

@@ -5,6 +5,7 @@
 #include "Render/IRenderView.h"
 #include "Render/Ps3/PlatformPs3.h"
 #include "Render/Ps3/ClearFpPs3.h"
+#include "Render/Ps3/Resolve2xMSAA.h"
 #include "Render/Ps3/StateCachePs3.h"
 
 // import/export mechanism.
@@ -34,11 +35,11 @@ class T_DLLCLASS RenderViewPs3 : public IRenderView
 
 public:
 	RenderViewPs3(
+		RenderSystemPs3* renderSystem,
 		MemoryHeap* localMemoryHeap,
 		MemoryHeap* mainMemoryHeap,
 		TileArea& tileArea,
-		TileArea& zcullArea,
-		RenderSystemPs3* renderSystem
+		TileArea& zcullArea
 	);
 
 	virtual ~RenderViewPs3();
@@ -65,7 +66,7 @@ public:
 
 	virtual bool begin(EyeType eye);
 
-	virtual bool begin(RenderTargetSet* renderTargetSet, int renderTarget, bool keepDepthStencil);
+	virtual bool begin(RenderTargetSet* renderTargetSet, int renderTarget);
 
 	virtual void clear(uint32_t clearMask, const float color[4], float depth, int32_t stencil);
 
@@ -93,7 +94,8 @@ private:
 		Viewport viewport;
 		uint32_t width;
 		uint32_t height;
-		uint32_t colorFormat;
+		uint8_t antialias;
+		uint8_t colorFormat;
 		uint32_t colorOffset;
 		uint32_t colorPitch;
 		uint32_t depthOffset;
@@ -111,33 +113,55 @@ private:
 
 	enum { FrameBufferCount = 2 };
 
+	Ref< RenderSystemPs3 > m_renderSystem;
+
+	// Heaps
 	Ref< MemoryHeap > m_mainMemoryHeap;
 	Ref< MemoryHeap > m_localMemoryHeap;
+
+	// Command buffers.
 	MemoryHeapObject* m_commandBuffers[FrameBufferCount];
+
+	// Tiled region.
 	TileArea& m_tileArea;
 	TileArea& m_zcullArea;
 	TileArea::TileInfo m_colorTile[FrameBufferCount];
 	TileArea::TileInfo m_depthTile;
 	TileArea::TileInfo m_zcullTile;
-	Ref< RenderSystemPs3 > m_renderSystem;
+
+	// Current bound resources.
 	Ref< VertexBufferPs3 > m_currentVertexBuffer;
 	Ref< IndexBufferPs3 > m_currentIndexBuffer;
 	Ref< ProgramPs3 > m_currentProgram;
+
+	// Render view.
 	int32_t m_width;
 	int32_t m_height;
 	Viewport m_viewport;
+
+	// Color buffers.
 	MemoryHeapObject* m_colorObject;
 	void* m_colorAddr[FrameBufferCount];
 	uint32_t m_colorOffset[FrameBufferCount];
 	uint32_t m_colorPitch;
+	CellGcmTexture m_colorTexture;
+	uint8_t m_targetSurfaceAntialias;
+	CellGcmTexture m_targetTexture;
+	MemoryHeapObject* m_targetData;
+	TileArea::TileInfo m_targetTileInfo;
+
+	// Depth buffers.
 	MemoryHeapObject* m_depthObject;
 	void* m_depthAddr;
 	CellGcmTexture m_depthTexture;
+
+	// State
 	uint32_t m_frameCounter;
 	uint32_t m_patchCounter;
 	std::list< RenderState > m_renderTargetStack;
 	bool m_renderTargetDirty;
 	ClearFpPs3 m_clearFp;
+	Resolve2xMSAA m_resolve2x;
 	StateCachePs3 m_stateCache;
 	float T_ALIGN16 m_targetSize[4];
 	RenderViewStatistics m_statistics;

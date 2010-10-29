@@ -60,6 +60,8 @@ public:
 
 	RenderTargetPs3* getRenderTarget(int index) { return m_renderTargets[index]; }
 
+	bool usingPrimaryDepthStencil() const { return m_usingPrimaryDepthStencil; }
+
 private:
 	TileArea& m_tileArea;
 	TileArea& m_zcullArea;
@@ -70,6 +72,7 @@ private:
 	MemoryHeapObject* m_depthData;
 	TileArea::TileInfo m_tileInfo;
 	TileArea::TileInfo m_zcullInfo;
+	bool m_usingPrimaryDepthStencil;
 	int32_t& m_counter;
 };
 

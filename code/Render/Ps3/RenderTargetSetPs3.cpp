@@ -23,6 +23,7 @@ RenderTargetSetPs3::RenderTargetSetPs3(
 ,	m_width(0)
 ,	m_height(0)
 ,	m_depthData(0)
+,	m_usingPrimaryDepthStencil(false)
 ,	m_counter(counter)
 {
 	std::memset(&m_depthTexture, 0, sizeof(m_depthTexture));
@@ -44,6 +45,7 @@ bool RenderTargetSetPs3::create(
 
 	m_width = desc.width;
 	m_height = desc.height;
+	m_usingPrimaryDepthStencil = desc.usingPrimaryDepthStencil;
 
 	m_renderTargets.resize(desc.count);
 	for (int32_t i = 0; i < desc.count; ++i)
@@ -53,23 +55,29 @@ bool RenderTargetSetPs3::create(
 			return false;
 	}
 
-	if (desc.depthStencil)
+	if (desc.createDepthStencil)
 	{
+		uint32_t depthWidth = m_width;
+		uint32_t depthHeight = m_height;
+
+		if (desc.multiSample > 1)
+			depthWidth *= 2;
+
 		m_depthTexture.format = CELL_GCM_TEXTURE_DEPTH24_D8 | CELL_GCM_TEXTURE_LN;
 		m_depthTexture.mipmap = 1;
 		m_depthTexture.dimension = CELL_GCM_TEXTURE_DIMENSION_2;
 		m_depthTexture.cubemap = 0;
 		m_depthTexture.remap = 0;
-		m_depthTexture.width = alignUp(m_width, 64);
-		m_depthTexture.height = alignUp(m_height, 64);
+		m_depthTexture.width = alignUp(depthWidth, 64);
+		m_depthTexture.height = alignUp(depthHeight, 64);
 		m_depthTexture.depth = 1;
 		m_depthTexture.location = CELL_GCM_LOCATION_LOCAL;
 		m_depthTexture.offset = 0;
 
 		if (desc.preferTiled)
-			m_depthTexture.pitch = cellGcmGetTiledPitchSize(m_width * 4);
+			m_depthTexture.pitch = cellGcmGetTiledPitchSize(depthWidth * 4);
 		else
-			m_depthTexture.pitch = m_width * 4;
+			m_depthTexture.pitch = depthWidth * 4;
 
 		// Tiled RT are immutable as we don't want to rebind tile area.
 		uint32_t depthSize = alignUp(m_depthTexture.pitch * m_depthTexture.height, 65536);
@@ -85,7 +93,9 @@ bool RenderTargetSetPs3::create(
 					m_depthData->getOffset(),
 					m_depthData->getSize(),
 					m_depthTexture.pitch,
-					CELL_GCM_COMPMODE_Z32_SEPSTENCIL,
+					(desc.multiSample > 1) ?
+						CELL_GCM_COMPMODE_Z32_SEPSTENCIL_DIAGONAL :
+						CELL_GCM_COMPMODE_Z32_SEPSTENCIL,
 					m_tileInfo.base,
 					m_tileInfo.dramBank
 				);

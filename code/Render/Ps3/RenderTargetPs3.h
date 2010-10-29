@@ -20,6 +20,7 @@ namespace traktor
 
 class MemoryHeap;
 class MemoryHeapObject;
+class Resolve2xMSAA;
 class StateCachePs3;
 
 class T_DLLCLASS RenderTargetPs3 : public ITexture
@@ -43,24 +44,36 @@ public:
 
 	void beginRender();
 
-	void finishRender();
+	void finishRender(StateCachePs3& stateCache, Resolve2xMSAA& resolve);
 
 	const CellGcmTexture& getGcmColorTexture() {
 		return m_colorTexture;
 	}
 
-	uint32_t getGcmSurfaceColorFormat() const {
-		return m_colorSurfaceFormat;
+	const CellGcmTexture& getGcmTargetTexture() {
+		return m_targetTexture;
+	}
+
+	uint8_t getGcmSurfaceColorFormat() const {
+		return m_targetSurfaceFormat;
+	}
+
+	uint8_t getGcmSurfaceAntialias() const {
+		return m_targetSurfaceAntialias;
 	}
 
 private:
 	TileArea& m_tileArea;
 	int32_t m_width;
 	int32_t m_height;
-	uint32_t m_colorSurfaceFormat;
+	uint8_t m_targetSurfaceFormat;
+	uint8_t m_targetSurfaceAntialias;
 	CellGcmTexture m_colorTexture;
+	CellGcmTexture m_targetTexture;
 	MemoryHeapObject* m_colorData;
-	TileArea::TileInfo m_tileInfo;
+	MemoryHeapObject* m_targetData;
+	TileArea::TileInfo m_colorTileInfo;
+	TileArea::TileInfo m_targetTileInfo;
 	bool m_inRender;
 };
 

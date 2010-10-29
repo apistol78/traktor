@@ -186,7 +186,7 @@ bool RenderViewOpenGLES2::begin(EyeType eye)
 	return true;
 }
 
-bool RenderViewOpenGLES2::begin(RenderTargetSet* renderTargetSet, int renderTarget, bool keepDepthStencil)
+bool RenderViewOpenGLES2::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 {
 	//T_OGL_SAFE(glPushAttrib(GL_VIEWPORT_BIT | GL_DEPTH_BUFFER_BIT));
 

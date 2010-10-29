@@ -3,6 +3,7 @@
 #include "Render/Ps3/MemoryHeap.h"
 #include "Render/Ps3/MemoryHeapObject.h"
 #include "Render/Ps3/RenderTargetPs3.h"
+#include "Render/Ps3/Resolve2xMSAA.h"
 #include "Render/Ps3/StateCachePs3.h"
 #include "Render/Ps3/TypesPs3.h"
 
@@ -17,52 +18,24 @@ RenderTargetPs3::RenderTargetPs3(TileArea& tileArea)
 :	m_tileArea(tileArea)
 ,	m_width(0)
 ,	m_height(0)
-,	m_colorSurfaceFormat(0)
+,	m_targetSurfaceFormat(0)
+,	m_targetSurfaceAntialias(CELL_GCM_SURFACE_CENTER_1)
 ,	m_colorData(0)
+,	m_targetData(0)
 ,	m_inRender(false)
 {
-	std::memset(&m_colorTexture, 0, sizeof(m_colorTexture));
 }
 
 bool RenderTargetPs3::create(MemoryHeap* memoryHeap, const RenderTargetSetCreateDesc& setDesc, const RenderTargetCreateDesc& desc)
 {
-	int32_t byteSize;
+	uint8_t byteSize;
 	int32_t err;
 
-	switch (desc.format)
+	std::memset(&m_colorTexture, 0, sizeof(m_colorTexture));
+	std::memset(&m_targetTexture, 0, sizeof(m_targetTexture));
+
+	if (!getGcmSurfaceInfo(desc.format, m_colorTexture.format, m_targetSurfaceFormat, byteSize))
 	{
-	case TfR8:
-		//m_colorTexture.format = CELL_GCM_TEXTURE_B8;
-		//m_colorSurfaceFormat = CELL_GCM_SURFACE_B8;
-		//byteSize = 1;
-		//break;
-
-	case TfR8G8B8A8:
-		m_colorTexture.format = CELL_GCM_TEXTURE_A8R8G8B8;
-		m_colorSurfaceFormat = CELL_GCM_SURFACE_A8R8G8B8;
-		byteSize = 4;
-		break;
-
-	case TfR16G16B16A16F:
-		m_colorTexture.format = CELL_GCM_TEXTURE_W16_Z16_Y16_X16_FLOAT;
-		m_colorSurfaceFormat = CELL_GCM_SURFACE_F_W16Z16Y16X16;
-		byteSize = 4 * 2;
-		break;
-
-	case TfR32G32B32A32F:
-		m_colorTexture.format = CELL_GCM_TEXTURE_W32_Z32_Y32_X32_FLOAT;
-		m_colorSurfaceFormat = CELL_GCM_SURFACE_F_W32Z32Y32X32;
-		byteSize = 4 * 4;
-		break;
-
-	case TfR16F:
-	case TfR32F:
-		m_colorTexture.format = CELL_GCM_TEXTURE_X32_FLOAT;
-		m_colorSurfaceFormat = CELL_GCM_SURFACE_F_X32;
-		byteSize = 4;
-		break;
-
-	default:
 		log::error << L"Unsupported render target surface format" << Endl;
 		return false;
 	}
@@ -94,31 +67,105 @@ bool RenderTargetPs3::create(MemoryHeap* memoryHeap, const RenderTargetSetCreate
 	else
 		m_colorTexture.pitch = m_width * byteSize;
 
-	// Tiled RT are immutable as we don't want to rebind tile area.
 	uint32_t colorSize = alignUp(m_colorTexture.pitch * alignUp(m_colorTexture.height, 64), 65536);
+	
 	m_colorData = memoryHeap->alloc(colorSize, 65536, setDesc.preferTiled);
-
-	if (setDesc.preferTiled)
+	if (!m_colorData)
 	{
-		if (m_tileArea.alloc(colorSize / 0x10000, 1, m_tileInfo))
+		log::error << L"Unable to allocate color buffer" << Endl;
+		return false;
+	}
+
+	// Don't tile color buffer if RT multi-sampled; prioritize target buffer instead.
+	if (setDesc.preferTiled && setDesc.multiSample > 1)
+	{
+		if (m_tileArea.alloc(colorSize / 0x10000, 1, m_colorTileInfo))
 		{
 			err = cellGcmSetTileInfo(
-				m_tileInfo.index,
+				m_colorTileInfo.index,
 				CELL_GCM_LOCATION_LOCAL,
 				m_colorData->getOffset(),
 				m_colorData->getSize(),
 				m_colorTexture.pitch,
-				CELL_GCM_COMPMODE_C32_2X1,
-				m_tileInfo.base,
-				m_tileInfo.dramBank
+				CELL_GCM_COMPMODE_DISABLED,
+				m_colorTileInfo.base,
+				m_colorTileInfo.dramBank
 			);
 			if (err != CELL_OK)
 				log::error << L"Unable to set tile info (" << lookupGcmError(err) << L")" << Endl;
 
-			err = cellGcmBindTile(m_tileInfo.index);
+			err = cellGcmBindTile(m_colorTileInfo.index);
 			if (err != CELL_OK)
 				log::error << L"Unable to bind tile (" << lookupGcmError(err) << L")" << Endl;
 		}
+	}
+
+	if (setDesc.multiSample > 1)
+	{
+		int32_t targetWidth = m_width * 2;
+		int32_t targetHeight = m_height;
+
+		m_targetTexture.format = m_colorTexture.format | CELL_GCM_TEXTURE_LN | CELL_GCM_TEXTURE_NR;
+		m_targetTexture.mipmap = 1;
+		m_targetTexture.dimension = CELL_GCM_TEXTURE_DIMENSION_2;
+		m_targetTexture.cubemap = CELL_GCM_FALSE;
+		m_targetTexture.remap =
+			CELL_GCM_TEXTURE_REMAP_REMAP << 14 |
+			CELL_GCM_TEXTURE_REMAP_REMAP << 12 |
+			CELL_GCM_TEXTURE_REMAP_REMAP << 10 |
+			CELL_GCM_TEXTURE_REMAP_REMAP << 8 |
+			CELL_GCM_TEXTURE_REMAP_FROM_B << 6 |
+			CELL_GCM_TEXTURE_REMAP_FROM_G << 4 |
+			CELL_GCM_TEXTURE_REMAP_FROM_R << 2 |
+			CELL_GCM_TEXTURE_REMAP_FROM_A;
+		m_targetTexture.width = targetWidth;
+		m_targetTexture.height = targetHeight;
+		m_targetTexture.depth = 1;
+		m_targetTexture.location = CELL_GCM_LOCATION_LOCAL;
+		m_targetTexture.offset = 0;
+
+		if (setDesc.preferTiled)
+			m_targetTexture.pitch = cellGcmGetTiledPitchSize(targetWidth * byteSize);
+		else
+			m_targetTexture.pitch = targetWidth * byteSize;
+
+		uint32_t targetColorSize = alignUp(m_targetTexture.pitch * alignUp(targetHeight, 64), 65536);
+
+		m_targetData = memoryHeap->alloc(targetColorSize, 65536, setDesc.preferTiled);
+		if (!m_targetData)
+		{
+			log::error << L"Unable to allocate target buffer" << Endl;
+			return false;
+		}
+
+		if (setDesc.preferTiled)
+		{
+			if (m_tileArea.alloc(targetColorSize / 0x10000, 1, m_targetTileInfo))
+			{
+				err = cellGcmSetTileInfo(
+					m_targetTileInfo.index,
+					CELL_GCM_LOCATION_LOCAL,
+					m_targetData->getOffset(),
+					m_targetData->getSize(),
+					m_targetTexture.pitch,
+					CELL_GCM_COMPMODE_C32_2X1,
+					m_targetTileInfo.base,
+					m_targetTileInfo.dramBank
+				);
+				if (err != CELL_OK)
+					log::error << L"Unable to set tile info (" << lookupGcmError(err) << L")" << Endl;
+
+				err = cellGcmBindTile(m_targetTileInfo.index);
+				if (err != CELL_OK)
+					log::error << L"Unable to bind tile (" << lookupGcmError(err) << L")" << Endl;
+			}
+		}
+
+		m_targetSurfaceAntialias = CELL_GCM_SURFACE_DIAGONAL_CENTERED_2;
+	}
+	else
+	{
+		m_targetTexture = m_colorTexture;
 	}
 
 	return true;
@@ -126,17 +173,30 @@ bool RenderTargetPs3::create(MemoryHeap* memoryHeap, const RenderTargetSetCreate
 
 void RenderTargetPs3::destroy()
 {
-	if (m_tileInfo.index != ~0UL)
+	if (m_colorTileInfo.index != ~0UL)
 	{
-		cellGcmUnbindTile(m_tileInfo.index);
-		m_tileArea.free(m_tileInfo.index);
-		m_tileInfo.index = ~0UL;
+		cellGcmUnbindTile(m_colorTileInfo.index);
+		m_tileArea.free(m_colorTileInfo.index);
+		m_colorTileInfo.index = ~0UL;
+	}
+
+	if (m_targetTileInfo.index != ~0UL)
+	{
+		cellGcmUnbindTile(m_targetTileInfo.index);
+		m_tileArea.free(m_targetTileInfo.index);
+		m_targetTileInfo.index = ~0UL;
 	}
 
 	if (m_colorData)
 	{
 		m_colorData->free();
 		m_colorData = 0;
+	}
+
+	if (m_targetData)
+	{
+		m_targetData->free();
+		m_targetData = 0;
 	}
 }
 
@@ -161,7 +221,7 @@ void RenderTargetPs3::bind(StateCachePs3& stateCache, int stage, const SamplerSt
 
 	m_colorTexture.offset = m_colorData->getOffset();
 
-	if (m_colorSurfaceFormat == CELL_GCM_SURFACE_B8 || m_colorSurfaceFormat == CELL_GCM_SURFACE_A8R8G8B8)
+	if (m_targetSurfaceFormat == CELL_GCM_SURFACE_B8 || m_targetSurfaceFormat == CELL_GCM_SURFACE_A8R8G8B8)
 	{
 		stateCache.setSamplerState(stage, samplerState);
 		stateCache.setSamplerTexture(stage, &m_colorTexture, 0, CELL_GCM_TEXTURE_MAX_ANISO_1);
@@ -185,12 +245,28 @@ void RenderTargetPs3::beginRender()
 	T_ASSERT (m_inRender == false);
 
 	m_colorTexture.offset = m_colorData->getOffset();
+
+	if (m_targetData)
+		m_targetTexture.offset = m_targetData->getOffset();
+	else
+		m_targetTexture.offset = m_colorData->getOffset();
+
 	m_inRender = true;
 }
 
-void RenderTargetPs3::finishRender()
+void RenderTargetPs3::finishRender(StateCachePs3& stateCache, Resolve2xMSAA& resolve)
 {
 	T_ASSERT (m_inRender == true);
+
+	if (m_targetData)
+	{
+		resolve.resolve(
+			stateCache,
+			&m_colorTexture,
+			&m_targetTexture
+		);
+	}
+
 	m_inRender = false;
 }
 
