@@ -317,8 +317,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 		VM_END()
 
 		VM_BEGIN(AopPop)
-			if (!stack.empty())
-				stack.pop();
+			stack.pop();
 		VM_END()
 
 		VM_BEGIN(AopInt)
