@@ -1,11 +1,13 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
-#include "Flash/FlashSpriteInstance.h"
-#include "Flash/FlashSprite.h"
+#include "Flash/FlashEdit.h"
+#include "Flash/FlashEditInstance.h"
+#include "Flash/FlashFrame.h"
 #include "Flash/FlashMovie.h"
 #include "Flash/FlashMovieFactory.h"
-#include "Flash/FlashFrame.h"
+#include "Flash/FlashSpriteInstance.h"
+#include "Flash/FlashSprite.h"
 #include "Flash/SwfReader.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFunctionNative.h"
@@ -260,6 +262,50 @@ void AsMovieClip::MovieClip_createEmptyMovieClip(CallArgs& ca)
 
 void AsMovieClip::MovieClip_createTextField(CallArgs& ca)
 {
+	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
+
+	SwfRect bounds =
+	{
+		Vector2(0.0f, 0.0f),
+		Vector2(ca.args[4].getNumberSafe(), ca.args[5].getNumberSafe())
+	};
+	SwfColor color = { 0, 0, 0, 0 };
+
+	// Create edit character.
+	Ref< FlashEdit > edit = new FlashEdit(
+		-1,
+		0,
+		12,
+		bounds,
+		color,
+		L"",
+		FlashEdit::AnLeft,
+		0,
+		0,
+		false,
+		false
+	);
+
+	// Create edit character instance.
+	Ref< FlashEditInstance > editInstance = checked_type_cast< FlashEditInstance*, false >(edit->createInstance(
+		ca.context,
+		movieClipInstance,
+		ca.args[0].getStringSafe()
+	));
+	
+	// Place character at given location.
+	editInstance->setTransform(translate(
+		ca.args[2].getNumberSafe(),
+		ca.args[3].getNumberSafe()
+	));
+	
+	// Show edit character instance.
+	movieClipInstance->getDisplayList().showObject(
+		int32_t(ca.args[1].getNumberSafe()),
+		edit->getId(),
+		editInstance,
+		true
+	);
 }
 
 void AsMovieClip::MovieClip_curveTo(CallArgs& ca)
