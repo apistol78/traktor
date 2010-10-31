@@ -2,6 +2,7 @@
 #include <iostream>
 #include "Core/Memory/Alloc.h"
 #include "Core/Misc/Align.h"
+#include "Core/Thread/Atomic.h"
 
 namespace traktor
 {
@@ -15,7 +16,7 @@ struct Block
 };
 #pragma pack()
 
-size_t s_allocated = 0;
+int32_t s_allocated = 0;
 
 	}
 
@@ -30,7 +31,8 @@ void* Alloc::acquire(size_t size, const char* tag)
 	
 	Block* block = static_cast< Block* >(ptr);
 	block->size = size;
-	s_allocated += size;
+
+	Atomic::add(s_allocated, int32_t(size));
 	return block + 1;
 }
 
@@ -38,9 +40,9 @@ void Alloc::free(void* ptr)
 {
 	if (ptr)
 	{
-		Block* block = static_cast< Block* >(ptr);
-		s_allocated -= block->size;
-		std::free(block - 1);
+		Block* block = static_cast< Block* >(ptr) - 1;
+		Atomic::add(s_allocated, -int32_t(block->size));
+		std::free(block);
 	}
 }
 

@@ -20,6 +20,14 @@ int32_t Atomic::decrement(int32_t& value)
 	return value;
 }
 
+int32_t Atomic::add(int32_t& value, int32_t delta)
+{
+#if !defined(SPU)
+	cellAtomicAdd32((uint32_t*)&value, delta);
+#endif
+	return value;
+}
+
 uint32_t Atomic::exchange(uint32_t& s, uint32_t v)
 {
 	uint32_t old = s;
