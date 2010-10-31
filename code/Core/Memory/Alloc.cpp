@@ -1,67 +1,76 @@
 #include <cstdlib>
-#if defined(_PS3)
-#	include <iostream>
-#endif
+#include <iostream>
 #include "Core/Memory/Alloc.h"
 #include "Core/Misc/Align.h"
 
 namespace traktor
 {
+	namespace
+	{
+
+#pragma pack(1)
+struct Block
+{
+	size_t size;
+};
+#pragma pack()
+
+size_t s_allocated = 0;
+
+	}
 
 void* Alloc::acquire(size_t size, const char* tag)
 {
-	void* ptr = std::malloc(size);
-#if defined(_PS3)
+	void* ptr = std::malloc(size + sizeof(Block));
 	if (!ptr)
 	{
 		std::cerr << "Out of memory; trying to allocate " << size << " byte(s)" << std::endl;
 		T_FATAL_ERROR;
 	}
-#endif
-	return ptr;
+	
+	Block* block = static_cast< Block* >(ptr);
+	block->size = size;
+	s_allocated += size;
+	return block + 1;
 }
 
 void Alloc::free(void* ptr)
 {
-	std::free(ptr);
+	if (ptr)
+	{
+		Block* block = static_cast< Block* >(ptr);
+		s_allocated -= block->size;
+		std::free(block - 1);
+	}
 }
 
 void* Alloc::acquireAlign(size_t size, size_t align, const char* tag)
 {
-#if defined(_WIN32) && !defined(WINCE)
-	void* ptr = _aligned_malloc(size, align);
-#elif defined(_PS3)
-	void* ptr = std::memalign(align, size);
+	uint8_t* ptr = (uint8_t*)acquire(size + sizeof(intptr_t) + align, tag);
 	if (!ptr)
 	{
 		std::cerr << "Out of memory; trying to allocate " << size << " byte(s)" << std::endl;
 		T_FATAL_ERROR;
 	}
-#else
-	uint8_t* uptr = (uint8_t*)acquire(size + sizeof(size_t) + align, tag);
-	if (!uptr)
-		return 0;
-	uint8_t* aptr = alignUp(uptr + sizeof(size_t), align);
-	*(size_t*)(aptr - sizeof(size_t)) = (size_t)uptr;
-	void* ptr = aptr;
-#endif
-	return ptr;
+	
+	uint8_t* alignedPtr = alignUp(ptr + sizeof(intptr_t), align);
+	*(intptr_t*)(alignedPtr - sizeof(intptr_t)) = intptr_t(ptr);
+	return alignedPtr;
+
 }
 
 void Alloc::freeAlign(void* ptr)
 {
-#if defined(_WIN32) && !defined(WINCE)
-	_aligned_free(ptr);
-#elif defined(_PS3)
-	std::free(ptr);
-#else
 	if (ptr)
 	{
-		uint8_t* aptr = (uint8_t*)ptr;
-		uint8_t* uptr = (uint8_t*)(*(size_t*)(aptr - sizeof(size_t)));
-		Alloc::free(uptr);
+		intptr_t originalPtr = *((intptr_t*)(ptr) - 1);
+		free((void*)originalPtr);
 	}
-#endif
+}
+
+size_t Alloc::allocated()
+{
+	return s_allocated;
 }
 
 }
