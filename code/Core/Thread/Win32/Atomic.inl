@@ -27,6 +27,15 @@ int32_t Atomic::decrement(int32_t& value)
 #endif
 }
 
+int32_t Atomic::add(int32_t& value, int32_t delta)
+{
+#if !defined(WINCE)
+	return _InterlockedExchangeAdd((long volatile*)&value, delta);
+#else
+	return InterlockedExchangeAdd((LPLONG*)&value, delta);
+#endif
+}
+
 uint32_t Atomic::exchange(uint32_t& s, uint32_t v)
 {
 #if !defined(WINCE)

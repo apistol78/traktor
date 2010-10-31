@@ -33,6 +33,12 @@ struct T_DLLCLASS Atomic
 	 */
 	static T_FORCE_INLINE int32_t decrement(int32_t& value);
 
+	/*! \brief Add variable.
+	 *
+	 * \return Result value of variable.
+	 */
+	static T_FORCE_INLINE int32_t add(int32_t& value, int32_t delta);
+
 	/*! \brief Set value of variable. */
 	static T_FORCE_INLINE uint32_t exchange(uint32_t& s, uint32_t v);
 
