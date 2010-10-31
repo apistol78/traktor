@@ -27,6 +27,8 @@ public:
 	static void* acquireAlign(size_t size, size_t align, const char* tag);
 
 	static void freeAlign(void* ptr);
+	
+	static size_t allocated();
 };
 
 }
