@@ -15,6 +15,11 @@ int32_t Atomic::decrement(int32_t& value)
 	return OSAtomicDecrement32((int32_t*)(&value));
 }
 
+int32_t Atomic::add(int32_t& value, int32_t delta)
+{
+	return OSAtomicAdd32(delta, (int32_t*)(&value));
+}
+
 uint32_t Atomic::exchange(uint32_t& s, uint32_t v)
 {
 	uint32_t old = s;
