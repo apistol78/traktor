@@ -23,7 +23,10 @@ int32_t Atomic::decrement(int32_t& value)
 int32_t Atomic::add(int32_t& value, int32_t delta)
 {
 #if !defined(SPU)
-	cellAtomicAdd32((uint32_t*)&value, delta);
+	if (delta >= 0)
+		cellAtomicAdd32((uint32_t*)&value, delta);
+	else
+		cellAtomicSub32((uint32_t*)&value, -delta);
 #endif
 	return value;
 }
