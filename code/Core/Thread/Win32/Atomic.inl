@@ -32,7 +32,7 @@ int32_t Atomic::add(int32_t& value, int32_t delta)
 #if !defined(WINCE)
 	return _InterlockedExchangeAdd((long volatile*)&value, delta);
 #else
-	return InterlockedExchangeAdd((LPLONG*)&value, delta);
+	return InterlockedExchangeAdd((LPLONG)&value, delta);
 #endif
 }
 

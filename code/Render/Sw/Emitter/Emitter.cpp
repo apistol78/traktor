@@ -339,7 +339,7 @@ void emitLog(EmitterContext& cx, Log* node)
 	}
 }
 
-void emitMatrix(EmitterContext& cx, Matrix* node)
+void emitMatrixIn(EmitterContext& cx, MatrixIn* node)
 {
 	Variable* axisX = cx.emitInput(node, L"XAxis");
 	Variable* axisY = cx.emitInput(node, L"YAxis");
@@ -994,7 +994,7 @@ Emitter::Emitter()
 	m_emitters[&type_of< Length >()] = new EmitterCast< Length >(emitLength);
 	m_emitters[&type_of< Lerp >()] = new EmitterCast< Lerp >(emitLerp);
 	m_emitters[&type_of< Log >()] = new EmitterCast< Log >(emitLog);
-	m_emitters[&type_of< Matrix >()] = new EmitterCast< Matrix >(emitMatrix);
+	m_emitters[&type_of< MatrixIn >()] = new EmitterCast< MatrixIn >(emitMatrixIn);
 	m_emitters[&type_of< Max >()] = new EmitterCast< Max >(emitMax);
 	m_emitters[&type_of< MixIn >()] = new EmitterCast< MixIn >(emitMixIn);
 	m_emitters[&type_of< MixOut >()] = new EmitterCast< MixOut >(emitMixOut);

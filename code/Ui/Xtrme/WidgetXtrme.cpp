@@ -87,7 +87,7 @@ void WidgetXtrme::eventPaint(Event* event)
 	if (!m_renderView)
 		return;
 
-	if (!m_renderView->begin())
+	if (!m_renderView->begin(render::EtCyclop))
 		return;
 
 	const float color[] = { 0.88f, 0.88f, 0.89f, 0.0f };

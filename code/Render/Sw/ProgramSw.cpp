@@ -42,7 +42,7 @@ ProgramSw::ProgramSw(
 ,	m_renderState(renderState)
 ,	m_interpolatorCount(interpolatorCount)
 {
-	m_parameters = (Vector4*)(Alloc::acquireAlign(256 * sizeof(Vector4), 16));
+	m_parameters = (Vector4*)(Alloc::acquireAlign(256 * sizeof(Vector4), 16, T_FILE_LINE));
 	for (int i = 0; i < 256; ++i)
 		m_parameters[i].set(0.0f, 0.0f, 0.0f, 0.0f);
 
