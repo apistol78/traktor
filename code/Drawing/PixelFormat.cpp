@@ -368,5 +368,40 @@ void PixelFormat::convert(
 	}
 }
 
+bool PixelFormat::operator == (const PixelFormat& pf) const
+{
+	if (m_palettized != pf.m_palettized)
+		return false;
+	if (m_floatPoint != pf.m_floatPoint)
+		return false;
+	if (m_colorBits != pf.m_colorBits)
+		return false;
+	if (m_byteSize != pf.m_byteSize)
+		return false;
+	if (m_redBits != pf.m_redBits)
+		return false;
+	if (m_redShift != pf.m_redShift)
+		return false;
+	if (m_greenBits != pf.m_greenBits)
+		return false;
+	if (m_greenShift != pf.m_greenShift)
+		return false;
+	if (m_blueBits != pf.m_blueBits)
+		return false;
+	if (m_blueShift != pf.m_blueShift)
+		return false;
+	if (m_alphaBits != pf.m_alphaBits)
+		return false;
+	if (m_alphaShift != pf.m_alphaShift)
+		return false;
+
+	return true;
+}
+
+bool PixelFormat::operator != (const PixelFormat& pf) const
+{
+	return !(*this == pf);
+}
+
 	}
 }

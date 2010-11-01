@@ -12,16 +12,26 @@ namespace traktor
 #pragma pack(1)
 struct Block
 {
+#if defined(_DEBUG)
+	uint32_t magic;
+#endif
 	size_t size;
 };
 #pragma pack()
 
+const uint32_t c_magic = 'LIVE';
 int32_t s_allocated = 0;
 
 	}
 
 void* Alloc::acquire(size_t size, const char* tag)
 {
+	if (size >= 1 * 1024 * 1024)
+	{
+		for (int i = 0; i < 10; ++i)
+			;
+	}
+
 	void* ptr = std::malloc(size + sizeof(Block));
 	if (!ptr)
 	{
@@ -30,9 +40,12 @@ void* Alloc::acquire(size_t size, const char* tag)
 	}
 	
 	Block* block = static_cast< Block* >(ptr);
+#if defined(_DEBUG)
+	block->magic = c_magic;
+#endif
 	block->size = size;
 
-	Atomic::add(s_allocated, int32_t(size));
+	Atomic::add(s_allocated, int32_t(size + sizeof(Block)));
 	return block + 1;
 }
 
@@ -41,18 +54,17 @@ void Alloc::free(void* ptr)
 	if (ptr)
 	{
 		Block* block = static_cast< Block* >(ptr) - 1;
-		Atomic::add(s_allocated, -int32_t(block->size));
+		T_ASSERT_M(block->magic == c_magic, L"Invalid free");
+		Atomic::add(s_allocated, -int32_t(block->size + sizeof(Block)));
 		std::free(block);
 	}
 }
 
 void* Alloc::acquireAlign(size_t size, size_t align, const char* tag)
 {
-	// Ensure minimum alignment.
-	if (align < 4)
-		align = 4;
+	T_ASSERT (align >= 1);
 
-	uint8_t* ptr = (uint8_t*)acquire(size + sizeof(intptr_t) + align, tag);
+	uint8_t* ptr = (uint8_t*)Alloc::acquire(size + sizeof(intptr_t) + align - 1, tag);
 	if (!ptr)
 	{
 		std::cerr << "Out of memory; trying to allocate " << size << " byte(s)" << std::endl;
@@ -61,8 +73,8 @@ void* Alloc::acquireAlign(size_t size, size_t align, const char* tag)
 	
 	uint8_t* alignedPtr = alignUp(ptr + sizeof(intptr_t), align);
 	*(intptr_t*)(alignedPtr - sizeof(intptr_t)) = intptr_t(ptr);
-	return alignedPtr;
 
+	return alignedPtr;
 }
 
 void Alloc::freeAlign(void* ptr)
@@ -70,7 +82,7 @@ void Alloc::freeAlign(void* ptr)
 	if (ptr)
 	{
 		intptr_t originalPtr = *((intptr_t*)(ptr) - 1);
-		free((void*)originalPtr);
+		Alloc::free((void*)originalPtr);
 	}
 }
 

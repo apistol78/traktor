@@ -58,6 +58,8 @@ public:
 
 	static void setReferenceDebugger(IObjectRefDebugger* refDebugger);
 
+	static int32_t getHeapObjectCount();
+
 private:
 	static IObjectRefDebugger* ms_refDebugger;
 	mutable AtomicRefCount m_refCount;

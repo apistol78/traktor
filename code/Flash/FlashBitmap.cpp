@@ -33,36 +33,50 @@ bool FlashBitmap::create(drawing::Image* image)
 	bool hasAlpha = image->getPixelFormat().getAlphaBits() > 0;
 
 	// Ensure pixel format match Flash bits.
-	Ref< drawing::Image > clone = image->clone();
+	Ref< drawing::Image > clone = image;
 	if (hasAlpha)
 	{
 #if defined(T_LITTLE_ENDIAN)
-		clone->convert(drawing::PixelFormat::getA8B8G8R8());
+		if (clone->getPixelFormat() != drawing::PixelFormat::getA8B8G8R8())
+		{
+			clone = clone->clone();
+			clone->convert(drawing::PixelFormat::getA8B8G8R8());
+		}
 #else	// T_BIG_ENDIAN
-		clone->convert(drawing::PixelFormat::getR8G8B8A8());
+		if (clone->getPixelFormat() != drawing::PixelFormat::getR8G8B8A8())
+		{
+			clone = clone->clone();
+			clone->convert(drawing::PixelFormat::getR8G8B8A8());
+		}
 #endif
 	}
 	else
 	{
 #if defined(T_LITTLE_ENDIAN)
-		clone->convert(drawing::PixelFormat::getX8B8G8R8());
+		if (clone->getPixelFormat() != drawing::PixelFormat::getX8B8G8R8())
+		{
+			clone = clone->clone();
+			clone->convert(drawing::PixelFormat::getX8B8G8R8());
+		}
 #else	// T_BIG_ENDIAN
-		clone->convert(drawing::PixelFormat::getR8G8B8X8());
+		if (clone->getPixelFormat() != drawing::PixelFormat::getR8G8B8X8())
+		{
+			clone = clone->clone();
+			clone->convert(drawing::PixelFormat::getR8G8B8X8());
+		}
 #endif
 	}
 	
-#if TARGET_OS_IPHONE || defined(_PS3)
+#if TARGET_OS_IPHONE
 	// Ensure bitmap is a power-of-2.
 	uint32_t log2Width = previousLog2(clone->getWidth());
 	uint32_t log2Height = previousLog2(clone->getHeight());
 	
-#	if !defined(_PS3)
 	// Clamp size; we cannot afford too big bitmaps.
 	if (log2Width > 64)
 		log2Width = 64;
 	if (log2Height > 64)
 		log2Height = 64;
-#	endif
 
 	if (log2Width != clone->getWidth() || log2Height != clone->getHeight())
 	{
