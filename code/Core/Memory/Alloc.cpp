@@ -48,6 +48,10 @@ void Alloc::free(void* ptr)
 
 void* Alloc::acquireAlign(size_t size, size_t align, const char* tag)
 {
+	// Ensure minimum alignment.
+	if (align < 4)
+		align = 4;
+
 	uint8_t* ptr = (uint8_t*)acquire(size + sizeof(intptr_t) + align, tag);
 	if (!ptr)
 	{
