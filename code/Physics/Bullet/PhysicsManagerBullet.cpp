@@ -171,11 +171,7 @@ PhysicsManagerBullet::~PhysicsManagerBullet()
 bool PhysicsManagerBullet::create(float simulationDeltaTime)
 {
 	btDefaultCollisionConstructionInfo info;
-#if !defined(WINCE)
-	info.m_defaultStackAllocatorSize = 4 * 1024 * 1024;
-#else
 	info.m_defaultStackAllocatorSize = 512 * 1024;
-#endif
 
 	m_simulationDeltaTime = simulationDeltaTime;
 	m_configuration = new btDefaultCollisionConfiguration(info);

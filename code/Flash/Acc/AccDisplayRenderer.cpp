@@ -133,7 +133,7 @@ bool AccDisplayRenderer::create(
 
 	m_renderContexts.resize(frameCount);
 	for (uint32_t i = 0; i < frameCount; ++i)
-		m_renderContexts[i] = new render::RenderContext(256 * 1024);
+		m_renderContexts[i] = new render::RenderContext(64 * 1024);
 
 	// Allocate "global" parameter context; as it's reset for each render
 	// call this can be fairly small.

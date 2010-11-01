@@ -107,6 +107,10 @@ public:
 		return m_alphaShift;
 	}
 
+	bool operator == (const PixelFormat& pf) const;
+
+	bool operator != (const PixelFormat& pf) const;
+
 	/*! \group Common pixel formats. */
 	//@{
 

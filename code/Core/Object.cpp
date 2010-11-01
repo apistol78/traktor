@@ -25,6 +25,8 @@ struct ObjectHeader
 
 #pragma pack()
 
+static int32_t s_heapObjectCount = 0;
+
 inline bool isObjectHeapAllocated(const void* ptr)
 {
 	const ObjectHeader* header = reinterpret_cast< const ObjectHeader* >(ptr) - 1;
@@ -72,6 +74,8 @@ void* Object::operator new (size_t size)
 		ms_refDebugger->addObject(object, size);
 #endif
 
+	Atomic::increment(s_heapObjectCount);
+
 	return object;
 }
 
@@ -89,6 +93,8 @@ void Object::operator delete (void* ptr)
 
 		IAllocator* allocator = getAllocator();
 		allocator->free(header);
+
+		Atomic::decrement(s_heapObjectCount);
 	}
 }
 
@@ -102,6 +108,11 @@ int32_t Object::getReferenceCount() const
 void Object::setReferenceDebugger(IObjectRefDebugger* refDebugger)
 {
 	ms_refDebugger = refDebugger;
+}
+
+int32_t Object::getHeapObjectCount()
+{
+	return s_heapObjectCount;
 }
 
 void Object::finalRelease() const
