@@ -48,7 +48,7 @@ void* VertexBufferSw::lock()
 	if (m_lock)
 		return 0;
 
-	m_lock = (uint8_t*)Alloc::acquireAlign(getBufferSize(), alignOf< Vector4 >());
+	m_lock = (uint8_t*)Alloc::acquireAlign(getBufferSize(), alignOf< Vector4 >(), T_FILE_LINE);
 	m_lockOffset = 0;
 	m_lockCount = m_vertexCount;
 
@@ -60,7 +60,7 @@ void* VertexBufferSw::lock(uint32_t vertexOffset, uint32_t vertexCount)
 	if (m_lock)
 		return 0;
 
-	m_lock = (uint8_t*)Alloc::acquireAlign(vertexCount * m_vertexStride, alignOf< Vector4 >());
+	m_lock = (uint8_t*)Alloc::acquireAlign(vertexCount * m_vertexStride, alignOf< Vector4 >(), T_FILE_LINE);
 	m_lockOffset = vertexOffset;
 	m_lockCount = vertexCount;
 

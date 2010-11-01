@@ -36,6 +36,7 @@ int32_t KeyboardDeviceWin32::getControlCount()
 
 std::wstring KeyboardDeviceWin32::getControlName(int32_t control)
 {
+#if !defined(WINCE)
 	UINT scanCode = MapVirtualKey(c_vkControlKeys[control], MAPVK_VK_TO_VSC);
 
 	switch (c_vkControlKeys[control])
@@ -52,6 +53,9 @@ std::wstring KeyboardDeviceWin32::getControlName(int32_t control)
 		return tstows(keyName);
 	else
 		return L"";
+#else
+	return L"";
+#endif
 }
 
 bool KeyboardDeviceWin32::isControlAnalogue(int32_t /*control*/) const

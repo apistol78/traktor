@@ -46,6 +46,8 @@ public:
 
 	virtual DisplayMode getCurrentDisplayMode() const;
 
+	virtual float getDisplayAspectRatio() const;
+
 	virtual bool handleMessages();
 
 	virtual Ref< IRenderView > createRenderView(const RenderViewDefaultDesc& desc);
@@ -67,6 +69,8 @@ public:
 	virtual Ref< IProgram > createProgram(const ProgramResource* programResource);
 
 	virtual Ref< IProgramCompiler > createProgramCompiler() const;
+
+	virtual void getStatistics(RenderSystemStatistics& outStatistics) const;
 
 private:
 	Ref< Processor > m_processor;

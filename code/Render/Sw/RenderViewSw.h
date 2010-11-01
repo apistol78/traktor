@@ -65,9 +65,9 @@ public:
 
 	virtual Viewport getViewport();
 
-	virtual bool begin();
+	virtual bool begin(EyeType eye);
 
-	virtual bool begin(RenderTargetSet* renderTargetSet, int renderTarget, bool keepDepthStencil);
+	virtual bool begin(RenderTargetSet* renderTargetSet, int renderTarget);
 
 	virtual void clear(uint32_t clearMask, const float color[4], float depth, int32_t stencil);
 
@@ -86,6 +86,8 @@ public:
 	virtual void pushMarker(const char* const marker);
 
 	virtual void popMarker();
+
+	virtual void getStatistics(RenderViewStatistics& outStatistics) const;
 
 private:
 	struct RenderState

@@ -99,6 +99,11 @@ DisplayMode RenderSystemSw::getCurrentDisplayMode() const
 	return DisplayMode();
 }
 
+float RenderSystemSw::getDisplayAspectRatio() const
+{
+	return 0.0f;
+}
+
 bool RenderSystemSw::handleMessages()
 {
 #if defined(_WIN32)
@@ -338,6 +343,10 @@ Ref< IProgram > RenderSystemSw::createProgram(const ProgramResource* programReso
 Ref< IProgramCompiler > RenderSystemSw::createProgramCompiler() const
 {
 	return new ProgramCompilerSw();
+}
+
+void RenderSystemSw::getStatistics(RenderSystemStatistics& outStatistics) const
+{
 }
 
 #if defined(_WIN32)

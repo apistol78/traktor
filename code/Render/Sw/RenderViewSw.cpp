@@ -199,7 +199,7 @@ Viewport RenderViewSw::getViewport()
 	return m_viewPort;
 }
 
-bool RenderViewSw::begin()
+bool RenderViewSw::begin(EyeType eye)
 {
 	T_ASSERT (m_renderStateStack.empty());
 
@@ -220,7 +220,7 @@ bool RenderViewSw::begin()
 	return true;
 }
 
-bool RenderViewSw::begin(RenderTargetSet* renderTargetSet, int renderTarget, bool keepDepthStencil)
+bool RenderViewSw::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 {
 	T_ASSERT (!m_renderStateStack.empty());
 
@@ -238,11 +238,11 @@ bool RenderViewSw::begin(RenderTargetSet* renderTargetSet, int renderTarget, boo
 		rt->getWidth() * sizeof(uint16_t)
 	};
 
-	if (keepDepthStencil)
-	{
-		rs.depthTarget = m_renderStateStack.back().depthTarget;
-		rs.depthTargetPitch = m_renderStateStack.back().depthTargetPitch;
-	}
+	//if (keepDepthStencil)
+	//{
+	//	rs.depthTarget = m_renderStateStack.back().depthTarget;
+	//	rs.depthTargetPitch = m_renderStateStack.back().depthTargetPitch;
+	//}
 
 	m_renderStateStack.push_back(rs);
 
@@ -343,6 +343,10 @@ void RenderViewSw::pushMarker(const char* const marker)
 }
 
 void RenderViewSw::popMarker()
+{
+}
+
+void RenderViewSw::getStatistics(RenderViewStatistics& outStatistics) const
 {
 }
 

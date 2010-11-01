@@ -73,14 +73,14 @@ void* TrackAllocator::alloc(size_t size, size_t align, const char* const tag)
 	block.at[3] = 0;
 
 #if defined(_WIN32)
-
+#	if !defined(WINCE)
 	CaptureStackBackTrace(
 		2,
 		sizeof_array(block.at),
 		block.at,
 		0
 	);
-
+#	endif
 #elif !defined(_PS3)
 
 	backtrace(

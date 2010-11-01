@@ -31,7 +31,7 @@ bool RenderTargetSetSw::create(const RenderTargetSetCreateDesc& desc)
 			return false;
 	}
 
-	if (desc.depthStencil)
+	if (desc.createDepthStencil)
 		m_depthSurface.reset(new uint16_t [desc.width * desc.height]);
 
 	return true;

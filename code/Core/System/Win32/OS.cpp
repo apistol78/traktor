@@ -225,12 +225,16 @@ OS::envmap_t OS::getEnvironment() const
 
 bool OS::getEnvironment(const std::wstring& name, std::wstring& outValue) const
 {
+#if !defined(WINCE)
 	const char* env = getenv(wstombs(name).c_str());
 	if (!env)
 		return false;
 
 	outValue = mbstows(env);
 	return true;
+#else
+	return false;
+#endif
 }
 
 Ref< IProcess > OS::execute(
@@ -392,7 +396,7 @@ Ref< IProcess > OS::execute(
 		_tcscpy_s(par, wstots(commandLine).c_str());
 		_tcscpy_s(cwd, wstots(workingDirectoryAbs.getPathName()).c_str());
 #else
-		_tcscpy_s(cmd, sizeof_array(cmd), wstots(ss.str()).c_str());
+		_tcscpy_s(cmd, sizeof_array(cmd), wstots(fileAbs.getPathName()).c_str());
 		_tcscpy_s(par, sizeof_array(par), wstots(commandLine).c_str());
 		_tcscpy_s(cwd, sizeof_array(cwd), wstots(workingDirectoryAbs.getPathName()).c_str());
 #endif
@@ -407,7 +411,11 @@ Ref< IProcess > OS::execute(
 		xi.lpFile = cmd;
 		xi.lpParameters = par;
 		xi.lpDirectory = cwd;
+#if !defined(WINCE)
 		xi.nShow = mute ? SW_HIDE : SW_NORMAL;
+#else
+		xi.nShow = SW_HIDE;
+#endif
 
 		if (!ShellExecuteEx(&xi))
 			return 0;
