@@ -71,7 +71,7 @@
               <staticOptions>
                 <item>
                   <first>AdditionalOptions</first>
-                  <second>-g -Od -Xfastmath=1 -Xassumecorrectsign=1 -Xc+=exceptions</second>
+                  <second>-g -Xfastmath=1 -Xassumecorrectsign=1 -Xc+=exceptions</second>
                 </item>
                 <item>
                   <first>AdditionalIncludeDirectories</first>
@@ -258,7 +258,7 @@
               <staticOptions>
                 <item>
                   <first>AdditionalOptions</first>
-                  <second>-g -Od -Xfastmath=1 -Xassumecorrectsign=1 -Xc+=exceptions</second>
+                  <second>-g -Xfastmath=1 -Xassumecorrectsign=1 -Xc+=exceptions</second>
                 </item>
                 <item>
                   <first>AdditionalIncludeDirectories</first>
@@ -525,7 +525,7 @@
               <staticOptions>
                 <item>
                   <first>AdditionalOptions</first>
-                  <second>-g -Od -Xfastmath=1 -Xassumecorrectsign=1 -Xc+=exceptions</second>
+                  <second>-g -Xfastmath=1 -Xassumecorrectsign=1 -Xc+=exceptions</second>
                 </item>
                 <item>
                   <first>AdditionalIncludeDirectories</first>
@@ -776,7 +776,7 @@
               <staticOptions>
                 <item>
                   <first>AdditionalOptions</first>
-                  <second>-g -Od -Xfastmath=1 -Xassumecorrectsign=1 -Xc+=exceptions</second>
+                  <second>-g -Xfastmath=1 -Xassumecorrectsign=1 -Xc+=exceptions</second>
                 </item>
                 <item>
                   <first>AdditionalIncludeDirectories</first>
