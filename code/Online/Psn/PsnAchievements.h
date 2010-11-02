@@ -21,6 +21,8 @@ public:
 	virtual bool set(const std::wstring& achievementId, bool reward);
 
 private:
+	static int callbackTrophyStatus(SceNpTrophyContext context, SceNpTrophyStatus status, int completed, int total, void *arg);
+
 	const PsnAchievementDesc* m_achievements;
 	SceNpTrophyContext m_trophyContext;
 	SceNpTrophyHandle m_trophyHandle;

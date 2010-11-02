@@ -1,6 +1,7 @@
 #ifndef traktor_online_PsnSaveData_H
 #define traktor_online_PsnSaveData_H
 
+#include <sysutil/sysutil_savedata.h>
 #include "Online/Provider/ISaveDataProvider.h"
 
 namespace traktor
@@ -13,11 +14,34 @@ class PsnSaveData : public ISaveDataProvider
 	T_RTTI_CLASS;
 
 public:
+	PsnSaveData(int32_t excessSpaceNeededKB);
+
 	virtual bool enumerate(std::set< std::wstring >& outSaveDataIds);
 
-	virtual bool get(std::wstring& saveDataId, Ref< ISerializable >& outAttachment);
+	virtual bool get(const std::wstring& saveDataId, Ref< ISerializable >& outAttachment);
 
-	virtual bool set(std::wstring& saveDataId, const ISerializable* attachment, bool replace);
+	virtual bool set(const std::wstring& saveDataId, const ISerializable* attachment, bool replace);
+
+private:
+
+	static void callbackEnumFixed(CellSaveDataCBResult* cbResult, CellSaveDataListGet* get, CellSaveDataFixedSet* set);
+
+	static void callbackEnumStat(CellSaveDataCBResult* cbResult, CellSaveDataStatGet* get, CellSaveDataStatSet* set);
+
+	static void callbackEnumFile(CellSaveDataCBResult* cbResult, CellSaveDataFileGet* get, CellSaveDataFileSet* set);
+
+	static void callbackLoadStat(CellSaveDataCBResult* cbResult, CellSaveDataStatGet* get, CellSaveDataStatSet* set);
+
+	static void callbackLoadFile(CellSaveDataCBResult* cbResult, CellSaveDataFileGet* get, CellSaveDataFileSet* set);
+
+	static void callbackSaveStat(CellSaveDataCBResult* cbResult, CellSaveDataStatGet* get, CellSaveDataStatSet* set);
+
+	static void callbackSaveFile(CellSaveDataCBResult* cbResult, CellSaveDataFileGet* get, CellSaveDataFileSet* set);
+
+	int32_t m_excessSpaceNeededKB;
+	int32_t m_hddFreeSpaceKB;
+	int32_t m_spaceNeededKB;
+	int32_t m_currentSavedataSizeKB;
 };
 
 	}

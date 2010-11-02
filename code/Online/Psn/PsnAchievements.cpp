@@ -1,4 +1,6 @@
+#include "Core/Log/Log.h"
 #include "Online/Psn/PsnAchievements.h"
+#include "Online/Psn/PsnLogError.h"
 
 namespace traktor
 {
@@ -32,6 +34,14 @@ bool PsnAchievements::enumerate(std::map< std::wstring, bool >& outAchievements)
 {
 	SceNpTrophyDetails details;
 	SceNpTrophyData data;
+
+	int32_t err = sceNpTrophyRegisterContext(m_trophyContext, m_trophyHandle, &callbackTrophyStatus, NULL, 0);
+
+	if (err != 0)
+	{
+		log::error << PsnLogError::getTrophyErrorString(err) << Endl;
+		return false;
+	}
 
 	for (const PsnAchievementDesc* achievement = m_achievements; achievement->id; ++achievement)
 	{
@@ -73,6 +83,51 @@ bool PsnAchievements::set(const std::wstring& achievementId, bool reward)
 
 	return true;
 }
+
+int PsnAchievements::callbackTrophyStatus(SceNpTrophyContext context, SceNpTrophyStatus status, int completed, int total, void *arg)
+{
+	switch (status)
+	{
+
+	case SCE_NP_TROPHY_STATUS_NOT_INSTALLED:
+		log::debug << L"Trophy configuration data is not installed." << Endl;
+		break;
+	case SCE_NP_TROPHY_STATUS_DATA_CORRUPT:
+		log::debug << L"Trophy configuration data is corrupted." << Endl;
+		break;
+	case SCE_NP_TROPHY_STATUS_INSTALLED:
+		log::debug << L"Trophy configuration data has been installed." << Endl;
+		break;
+	case SCE_NP_TROPHY_STATUS_REQUIRES_UPDATE:
+		log::debug << L"A new trophy pack file is available in a patch." << Endl;
+		break;
+	case SCE_NP_TROPHY_STATUS_CHANGES_DETECTED:
+		log::debug << L"Trophy configuration data was modified."  << Endl;
+		break;
+	case SCE_NP_TROPHY_STATUS_UNKNOWN:
+		log::debug << L"Trophy unknown status, internal error" << Endl;
+		break;
+	case SCE_NP_TROPHY_STATUS_PROCESSING_SETUP:
+		log::debug << L"Trophy processing setup. ";
+		log::debug << completed << L"/" << total << Endl;
+		break;
+	case SCE_NP_TROPHY_STATUS_PROCESSING_PROGRESS:
+		log::debug << L"Trophy processing. ";
+		log::debug << completed << L"/" << total << Endl;
+		break;
+	case SCE_NP_TROPHY_STATUS_PROCESSING_FINALIZE:
+		log::debug << L"Trophy processing termination processing. ";
+		log::debug << completed << L"/" << total << Endl;
+		break;
+	case SCE_NP_TROPHY_STATUS_PROCESSING_COMPLETE:
+		log::debug << L"Trophy processing completed." << Endl;
+		break;
+	default:
+		break;
+	}
+	return 0;
+}
+
 
 	}
 }

@@ -35,7 +35,7 @@ bool LocalSaveData::enumerate(std::set< std::wstring >& outSaveDataIds)
 	return true;
 }
 
-bool LocalSaveData::get(std::wstring& saveDataId, Ref< ISerializable >& outAttachment)
+bool LocalSaveData::get(const std::wstring& saveDataId, Ref< ISerializable >& outAttachment)
 {
 	Ref< sql::IResultSet > rs;
 
@@ -52,7 +52,7 @@ bool LocalSaveData::get(std::wstring& saveDataId, Ref< ISerializable >& outAttac
 	return true;
 }
 
-bool LocalSaveData::set(std::wstring& saveDataId, const ISerializable* attachment, bool replace)
+bool LocalSaveData::set(const std::wstring& saveDataId, const ISerializable* attachment, bool replace)
 {
 	Ref< sql::IResultSet > rs;
 
