@@ -1,5 +1,4 @@
 #include "Core/Memory/BlockAllocator.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -48,7 +47,7 @@ void* BlockAllocator::alloc()
 #if defined(_DEBUG)
 	else if (!m_full)
 	{
-		log::warning << L"Out of small blocks in " << uint64_t(m_size) << L" allocator" << Endl;
+		// Break here to see which block size.
 		m_full = true;
 	}
 #endif
