@@ -33,7 +33,7 @@ const uint32_t c_maxCacheSize = 64;
 const uint32_t c_maxUnusedCount = 40;
 #endif
 const uint32_t c_cacheGlyphSize = 128;
-const uint32_t c_cacheGlyphMargin = 6;
+const uint32_t c_cacheGlyphMargin = 7;
 const uint32_t c_cacheGlyphCountX = 8;
 const uint32_t c_cacheGlyphCountY = 8;
 const uint32_t c_cacheGlyphCount = c_cacheGlyphCountX * c_cacheGlyphCountY;
@@ -457,10 +457,10 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 		Vector4 frameSize(bounds.min.x, bounds.min.y, bounds.max.x, bounds.max.y);
 		Vector4 viewSize(0.0f, 0.0f, 0.0f, 0.0f);
 		Vector4 viewOffset(
-			float(column) / c_cacheGlyphCountX - 1.0f / c_cacheGlyphDimX,
-			float(row) / c_cacheGlyphCountY - 1.0f / c_cacheGlyphDimY,
-			1.0f / c_cacheGlyphCountX + 2.0f / c_cacheGlyphDimX,
-			1.0f / c_cacheGlyphCountY + 2.0f / c_cacheGlyphDimY
+			float(column) / c_cacheGlyphCountX - 2.0f / c_cacheGlyphDimX,
+			float(row) / c_cacheGlyphCountY - 2.0f / c_cacheGlyphDimY,
+			1.0f / c_cacheGlyphCountX + 4.0f / c_cacheGlyphDimX,
+			1.0f / c_cacheGlyphCountY + 4.0f / c_cacheGlyphDimY
 		);
 
 		// Clear previous glyph by drawing a solid quad at it's place.
