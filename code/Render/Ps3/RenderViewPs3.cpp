@@ -690,6 +690,7 @@ bool RenderViewPs3::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 	if (rts->usingPrimaryDepthStencil())
 	{
 		T_ASSERT_M (rt->getWidth() == m_width && rt->getHeight() == m_height, L"Target dimension mismatch");
+		T_ASSERT_M (rt->getGcmSurfaceAntialias() == m_targetSurfaceAntialias, L"Target multisampling mismatch");
 		rs.depthOffset = m_depthTexture.offset;
 		rs.depthPitch = m_depthTexture.pitch;
 		rs.zcull = true;

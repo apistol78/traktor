@@ -14,7 +14,7 @@
 
 void* operator new (size_t size)
 {
-	return traktor::getAllocator()->alloc(size, 4, "::new");
+	return traktor::getAllocator()->alloc(size, 16, "::new");
 }
 
 void* operator new (size_t size, size_t align)
