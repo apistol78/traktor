@@ -9,6 +9,7 @@
 #include "Online/Psn/PsnSaveData.h"
 #include "Online/Psn/PsnStatistics.h"
 #include "Online/Psn/PsnSessionManager.h"
+#include "Online/Psn/PsnLogError.h"
 
 namespace traktor
 {
@@ -36,8 +37,11 @@ const wchar_t* lookupLanguageCode(int32_t id)
 	case SCE_NP_LANG_ITALIAN:
 		return L"it";
 	case SCE_NP_LANG_DUTCH:
+		return L"de";
 	case SCE_NP_LANG_PORTUGUESE:
+		return L"pt";
 	case SCE_NP_LANG_RUSSIAN:
+		return L"ru";
 	case SCE_NP_LANG_KOREAN:
 	case SCE_NP_LANG_CHINESE_T:
 	case SCE_NP_LANG_CHINESE_S:
@@ -107,9 +111,18 @@ bool PsnSessionManager::create(const PsnCreateDesc& desc)
 		return false;
 	}
 
+	uint64_t reqTrophySpaceBytes = 0;
+	err = sceNpTrophyGetRequiredDiskSpace(m_trophyContext, m_trophyHandle, &reqTrophySpaceBytes, 0);
+	if (err < 0)
+	{
+		log::error << PsnLogError::getTrophyErrorString(err) << Endl;
+		return false;
+	}
+	int32_t trophySpaceKB = (reqTrophySpaceBytes + 1023) / 1024;
+
 	m_achievements = new PsnAchievements(desc.achievements, m_trophyContext, m_trophyHandle);
 	m_leaderboards = new PsnLeaderboards();
-	m_saveData = new PsnSaveData();
+	m_saveData = new PsnSaveData(trophySpaceKB);
 	m_statistics = new PsnStatistics();
 
 	return true;

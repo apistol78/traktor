@@ -26,7 +26,7 @@ bool SteamSaveData::enumerate(std::set< std::wstring >& outSaveDataIds)
 	return true;
 }
 
-bool SteamSaveData::get(std::wstring& saveDataId, Ref< ISerializable >& outAttachment)
+bool SteamSaveData::get(const std::wstring& saveDataId, Ref< ISerializable >& outAttachment)
 {
 	std::string fileName = wstombs(saveDataId);
 
@@ -45,7 +45,7 @@ bool SteamSaveData::get(std::wstring& saveDataId, Ref< ISerializable >& outAttac
 	return true;
 }
 
-bool SteamSaveData::set(std::wstring& saveDataId, const ISerializable* attachment, bool replace)
+bool SteamSaveData::set(const std::wstring& saveDataId, const ISerializable* attachment, bool replace)
 {
 	std::string fileName = wstombs(saveDataId);
 
