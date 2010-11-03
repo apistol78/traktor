@@ -22,12 +22,12 @@ SurroundEnvironment::SurroundEnvironment(
 
 void SurroundEnvironment::setMaxDistance(float maxDistance)
 {
-	m_maxDistance = maxDistance;
+	m_maxDistance = Scalar(maxDistance);
 }
 
 void SurroundEnvironment::setInnerRadius(float innerRadius)
 {
-	m_innerRadius = innerRadius;
+	m_innerRadius = Scalar(innerRadius);
 }
 
 void SurroundEnvironment::setFullSurround(bool fullSurround)

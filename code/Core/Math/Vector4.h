@@ -45,6 +45,8 @@ public:
 	explicit T_MATH_INLINE Vector4(vec_float4 v);
 #endif
 
+	explicit T_MATH_INLINE Vector4(const Scalar& s);
+
 	explicit T_MATH_INLINE Vector4(float x, float y, float z, float w = 0);
 
 	explicit T_MATH_INLINE Vector4(const float* p);
@@ -158,6 +160,10 @@ public:
 
 	friend T_MATH_INLINE T_DLLCLASS Vector4 operator / (const Vector4& l, const Vector4& r);
 };
+
+T_MATH_INLINE T_DLLCLASS Scalar horizontalAdd3(const Vector4& v);
+
+T_MATH_INLINE T_DLLCLASS Scalar horizontalAdd4(const Vector4& v);
 
 T_MATH_INLINE T_DLLCLASS Scalar dot3(const Vector4& l, const Vector4& r);
 
