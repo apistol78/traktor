@@ -30,11 +30,11 @@ public:
 
 	void setMaxDistance(float maxDistance);
 
-	float getMaxDistance() const { return m_maxDistance; }
+	const Scalar& getMaxDistance() const { return m_maxDistance; }
 
 	void setInnerRadius(float innerRadius);
 
-	float getInnerRadius() const { return m_innerRadius; }
+	const Scalar& getInnerRadius() const { return m_innerRadius; }
 
 	void setFullSurround(bool fullSurround);
 
@@ -47,8 +47,8 @@ public:
 	const Transform& getListenerTransformInv() const { return m_listenerTransformInv; }
 
 private:
-	float m_maxDistance;
-	float m_innerRadius;
+	Scalar m_maxDistance;
+	Scalar m_innerRadius;
 	bool m_fullSurround;
 	Transform m_listenerTransform;
 	Transform m_listenerTransformInv;

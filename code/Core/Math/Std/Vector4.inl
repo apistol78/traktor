@@ -3,13 +3,17 @@
 #include "Core/Math/Vector4.h"
 #include "Core/Math/Const.h"
 #if !defined(NDEBUG)
-#include "Core/Math/Float.h"
+#	include "Core/Math/Float.h"
 #endif
 
 namespace traktor
 {
 	namespace
 	{
+
+static const Vector4 c_zero(0.0f, 0.0f, 0.0f, 0.0f);
+static const Vector4 c_one(1.0f, 1.0f, 1.0f, 1.0f);
+static const Vector4 c_origo(0.0f, 0.0f, 0.0f, 1.0f);
 
 inline bool compare(float e1, float e2)
 {
@@ -47,6 +51,14 @@ T_MATH_INLINE Vector4::Vector4(const Vector4& v)
 	VALIDATE(*this);
 }
 
+T_MATH_INLINE Vector4::Vector4(const Scalar& s)
+:	_x(s.m_data)
+,	_y(s.m_data)
+,	_z(s.m_data)
+,	_w(s.m_data)
+{
+}
+
 T_MATH_INLINE Vector4::Vector4(float x, float y, float z, float w)
 :	_x(x)
 ,	_y(y)
@@ -68,20 +80,17 @@ T_MATH_INLINE Vector4::Vector4(const float* p)
 
 T_MATH_INLINE const Vector4& Vector4::zero()
 {
-	static const Vector4 zero(0.0f, 0.0f, 0.0f, 0.0f);
-	return zero;
+	return c_zero;
 }
 
 T_MATH_INLINE const Vector4& Vector4::one()
 {
-	static const Vector4 one(1.0f, 1.0f, 1.0f, 1.0f);
-	return one;
+	return c_one;
 }
 
 T_MATH_INLINE const Vector4& Vector4::origo()
 {
-	static const Vector4 origo(0.0f, 0.0f, 0.0f, 1.0f);
-	return origo;
+	return c_origo;
 }
 
 T_MATH_INLINE void Vector4::set(float x, float y, float z, float w)
@@ -433,6 +442,16 @@ T_MATH_INLINE Vector4 operator / (const Vector4& l, const Vector4& r)
 	T_ASSERT(r._z != 0.0f);
 	T_ASSERT(r._w != 0.0f);
 	return Vector4(l._x / r._x, l._y / r._y, l._z / r._z, l._w / r._w);
+}
+
+T_MATH_INLINE Scalar horizontalAdd3(const Vector4& v)
+{
+	return Scalar(v._x + v._y + v._z);
+}
+
+T_MATH_INLINE Scalar horizontalAdd4(const Vector4& v)
+{
+	return Scalar(v._x + v._y + v._z + v._w);
 }
 
 T_MATH_INLINE Scalar dot3(const Vector4& l, const Vector4& r)

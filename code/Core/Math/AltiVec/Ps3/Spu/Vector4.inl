@@ -28,6 +28,11 @@ T_MATH_INLINE Vector4::Vector4(const Vector4& v)
 {
 }
 
+T_MATH_INLINE Vector4::Vector4(const Scalar& s)
+:	m_data(s.m_data)
+{
+}
+
 T_MATH_INLINE Vector4::Vector4(vec_float4 v)
 :	m_data(v)
 {
@@ -304,16 +309,25 @@ T_MATH_INLINE Vector4 operator / (const Vector4& l, const Vector4& r)
 	return Vector4(v_vec_div(l.m_data, r.m_data));
 }
 
+T_MATH_INLINE Scalar horizontalAdd3(const Vector4& v)
+{
+	return horizontalAdd4(v.xyz0());
+}
+
+T_MATH_INLINE Scalar horizontalAdd4(const Vector4& v)
+{
+	Vector4 tmp = v + v.shuffle< 1, 0, 3, 2 >();
+	return Scalar((tmp + tmp.shuffle< 2, 2, 0, 0 >()).m_data);
+}
+
 T_MATH_INLINE Scalar dot3(const Vector4& l, const Vector4& r)
 {
-	Vector4 tmp = l * r;
-	return tmp.x() + tmp.y() + tmp.z();
+	return horizontalAdd3(l * r);
 }
 
 T_MATH_INLINE Scalar dot4(const Vector4& l, const Vector4& r)
 {
-	Vector4 tmp = l * r;
-	return tmp.x() + tmp.y() + tmp.z() + tmp.w();
+	return horizontalAdd4(l * r);
 }
 
 T_MATH_INLINE Vector4 cross(const Vector4& l, const Vector4& r)
