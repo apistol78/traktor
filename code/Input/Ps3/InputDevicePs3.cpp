@@ -27,6 +27,9 @@ float adjustDeadZone(float value)
 	return value;
 }
 
+const float c_highFrequencyThreshold = 30.0f;
+const float c_lowFrequencyOffset = 80.0f;
+
 static CellPadInfo2 s_info;
 
 struct ControlInfo
@@ -224,9 +227,9 @@ void InputDevicePs3::setRumble(const InputRumble& rumble)
 	CellPadActParam param;
 
 	std::memset(&param, 0, sizeof(param));
-	param.motor[0] = (rumble.highFrequencyRumble >= 50.0f) ? 1 : 0;
+	param.motor[0] = (rumble.highFrequencyRumble >= c_highFrequencyThreshold) ? 1 : 0;
 	if (rumble.lowFrequencyRumble > FUZZY_EPSILON)
-		param.motor[1] = (uint8_t)clamp((rumble.lowFrequencyRumble * (255 - 64) + 64) / 100.0f, 64.0f, 255.0f);
+		param.motor[1] = (uint8_t)clamp((rumble.lowFrequencyRumble * (255 - c_lowFrequencyOffset) + c_lowFrequencyOffset) / 100.0f, c_lowFrequencyOffset, 255.0f);
 	else
 		param.motor[1] = 0;
 
