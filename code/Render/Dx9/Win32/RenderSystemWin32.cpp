@@ -77,10 +77,7 @@ void setWindowStyle(HWND hWnd, int32_t clientWidth, int32_t clientHeight, bool f
 	windowWidth = (windowWidth - realClientWidth) + clientWidth;
 	windowHeight = (windowHeight - realClientHeight) + clientHeight;
 
-	if (fullScreen)
-		SetWindowPos(hWnd, NULL, 0, 0, windowWidth, windowHeight, SWP_NOZORDER | SWP_NOMOVE);
-	else
-		SetWindowPos(hWnd, NULL, 128, 128, windowWidth, windowHeight, SWP_NOZORDER);
+	SetWindowPos(hWnd, NULL, 0, 0, windowWidth, windowHeight, SWP_NOZORDER | SWP_NOMOVE);
 }
 
 		}
@@ -144,11 +141,11 @@ bool RenderSystemWin32::create(const RenderSystemCreateDesc& desc)
 	m_hWnd = CreateWindow(
 		c_classRenderName,
 		desc.windowTitle ? desc.windowTitle : _T("Traktor 2.0 DirectX 9.0 Renderer"),
-		WS_POPUPWINDOW,
-		0,
-		0,
-		0,
-		0,
+		WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION | WS_MINIMIZEBOX,
+		CW_USEDEFAULT,
+		CW_USEDEFAULT,
+		64,
+		64,
 		NULL,
 		NULL,
 		static_cast< HMODULE >(GetModuleHandle(NULL)),
