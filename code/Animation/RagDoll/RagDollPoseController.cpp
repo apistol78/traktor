@@ -90,7 +90,7 @@ bool RagDollPoseController::create(
 			return false;
 
 		limb->setTransform(worldTransform * limbTransforms[i] * Transform(centerOfMass));
-		
+
 		// Set initial velocities.
 		if (!velocities.empty())
 		{
@@ -107,7 +107,7 @@ bool RagDollPoseController::create(
 
 		Bone* bone = skeleton->getBone(i);
 		T_ASSERT (bone);
-
+		
 		const Vector4 anchor = limbTransforms[i].translation().xyz1();
 		const Vector4 twistAxis = limbTransforms[i].axisZ();
 		const Vector4 coneAxis = limbTransforms[i].axisX();
@@ -213,7 +213,7 @@ void RagDollPoseController::destroy()
 void RagDollPoseController::setTransform(const Transform& transform)
 {
 	// Calculate delta transform since last setTransform.
-	Transform deltaTransform = m_worldTransform.inverse() * transform;
+	Transform deltaTransform = transform * m_worldTransform.inverse();
 
 	// Update all limbs with delta transform.
 	for (RefArray< physics::DynamicBody >::iterator i = m_limbs.begin(); i != m_limbs.end(); ++i)
@@ -221,6 +221,12 @@ void RagDollPoseController::setTransform(const Transform& transform)
 		Transform limbTransform = (*i)->getTransform();
 		(*i)->setTransform(deltaTransform * limbTransform);
 	}
+	
+	// Update tracking pose controller.
+	if (m_trackPoseController)
+		m_trackPoseController->setTransform(transform);
+		
+	m_worldTransform = transform;
 }
 
 void RagDollPoseController::evaluate(
@@ -257,7 +263,7 @@ void RagDollPoseController::evaluate(
 
 		Transform boneP(Vector4(0.0f, 0.0f, bone->getLength(), 1.0f));
 		Transform halfBoneN(Vector4(0.0f, 0.0f, -bone->getLength() * 0.5f, 1.0f));
-
+		
 		if (m_trackPoseController)
 		{
 			const Scalar c_maxTension(10.0f);
