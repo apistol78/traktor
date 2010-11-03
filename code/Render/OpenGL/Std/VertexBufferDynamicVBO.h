@@ -1,6 +1,7 @@
-#ifndef traktor_render_VertexBufferVBO_H
-#define traktor_render_VertexBufferVBO_H
+#ifndef traktor_render_VertexBufferDynamicVBO_H
+#define traktor_render_VertexBufferDynamicVBO_H
 
+#include "Core/Misc/AutoPtr.h"
 #include "Render/OpenGL/VertexBufferOpenGL.h"
 
 // import/export mechanism.
@@ -22,14 +23,14 @@ class VertexElement;
 /*!
  * \ingroup OGL
  */
-class T_DLLCLASS VertexBufferVBO : public VertexBufferOpenGL
+class T_DLLCLASS VertexBufferDynamicVBO : public VertexBufferOpenGL
 {
 	T_RTTI_CLASS;
 
 public:
-	VertexBufferVBO(IContext* resourceContext, const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic);
+	VertexBufferDynamicVBO(IContext* resourceContext, const std::vector< VertexElement >& vertexElements, uint32_t bufferSize);
 
-	virtual ~VertexBufferVBO();
+	virtual ~VertexBufferDynamicVBO();
 
 	virtual void destroy();
 
@@ -51,15 +52,15 @@ private:
 	};
 
 	Ref< IContext > m_resourceContext;
-	GLuint m_name[2];
-	int m_current;
+	GLuint m_name;
 	GLuint m_vertexStride;
 	AttributeDesc m_attributeDesc[T_OGL_MAX_USAGE_INDEX];
 	uint8_t* m_lock;
-	bool m_dynamic;
+	AutoArrayPtr< uint8_t > m_buffer;
+	bool m_dirty;
 };
 
 	}
 }
 
-#endif	// traktor_render_VertexBufferVBO_H
+#endif	// traktor_render_VertexBufferDynamicVBO_H

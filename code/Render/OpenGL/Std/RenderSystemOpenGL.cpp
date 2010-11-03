@@ -5,18 +5,19 @@
 #include "Render/VertexElement.h"
 #include "Render/OpenGL/Platform.h"
 #include "Render/OpenGL/Std/Extensions.h"
-#include "Render/OpenGL/Std/RenderSystemOpenGL.h"
-#include "Render/OpenGL/Std/RenderViewOpenGL.h"
-#include "Render/OpenGL/Std/ProgramCompilerOpenGL.h"
-#include "Render/OpenGL/Std/ProgramOpenGL.h"
-#include "Render/OpenGL/Std/VertexBufferVAR.h"
-#include "Render/OpenGL/Std/VertexBufferVBO.h"
+#include "Render/OpenGL/Std/CubeTextureOpenGL.h"
 #include "Render/OpenGL/Std/IndexBufferIAR.h"
 #include "Render/OpenGL/Std/IndexBufferIBO.h"
-#include "Render/OpenGL/Std/SimpleTextureOpenGL.h"
-#include "Render/OpenGL/Std/CubeTextureOpenGL.h"
-#include "Render/OpenGL/Std/VolumeTextureOpenGL.h"
+#include "Render/OpenGL/Std/ProgramCompilerOpenGL.h"
+#include "Render/OpenGL/Std/ProgramOpenGL.h"
+#include "Render/OpenGL/Std/RenderSystemOpenGL.h"
 #include "Render/OpenGL/Std/RenderTargetSetOpenGL.h"
+#include "Render/OpenGL/Std/RenderViewOpenGL.h"
+#include "Render/OpenGL/Std/SimpleTextureOpenGL.h"
+#include "Render/OpenGL/Std/VertexBufferVAR.h"
+#include "Render/OpenGL/Std/VertexBufferDynamicVBO.h"
+#include "Render/OpenGL/Std/VertexBufferStaticVBO.h"
+#include "Render/OpenGL/Std/VolumeTextureOpenGL.h"
 
 #if defined(__APPLE__)
 #	include "Render/OpenGL/Std/OsX/CGLWrapper.h"
@@ -653,12 +654,22 @@ Ref< VertexBuffer > RenderSystemOpenGL::createVertexBuffer(const std::vector< Ve
 
 #if defined(_WIN32)
 	if (glGenBuffersARB)
-		return new VertexBufferVBO(m_resourceContext, vertexElements, bufferSize, dynamic);
+	{
+		if (dynamic)
+			return new VertexBufferDynamicVBO(m_resourceContext, vertexElements, bufferSize);
+		else
+			return new VertexBufferStaticVBO(m_resourceContext, vertexElements, bufferSize);
+	}
 	else
 		return new VertexBufferVAR(m_resourceContext, vertexElements, bufferSize, dynamic);
 #elif defined(__APPLE__)
 	if (opengl_have_extension("GL_ARB_vertex_buffer_object"))
-		return new VertexBufferVBO(m_resourceContext, vertexElements, bufferSize, dynamic);
+	{
+		if (dynamic)
+			return new VertexBufferDynamicVBO(m_resourceContext, vertexElements, bufferSize);
+		else
+			return new VertexBufferStaticVBO(m_resourceContext, vertexElements, bufferSize);
+	}
 	else
 		return new VertexBufferVAR(m_resourceContext, vertexElements, bufferSize, dynamic);
 #else
