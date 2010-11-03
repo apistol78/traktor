@@ -15,7 +15,7 @@ class MemoryHeapObject;
 class MemoryHeap : public Object
 {
 public:
-	MemoryHeap(void* heap, size_t heapSize, uint8_t location);
+	MemoryHeap(void* heap, size_t heapSize, size_t immutableOffset, uint8_t location);
 
 	MemoryHeapObject* alloc(size_t size, size_t align, bool immutable);
 
@@ -31,6 +31,7 @@ private:
 	mutable Semaphore m_lock;
 	uint8_t* m_heap;
 	size_t m_heapSize;
+	size_t m_immutableOffset;
 	uint8_t m_location;
 	std::vector< MemoryHeapObject* > m_objects;		//< Sorted list of alive objects.
 	bool m_shouldCompact;

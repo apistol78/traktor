@@ -13,7 +13,7 @@ namespace traktor
 		namespace
 		{
 
-const uint32_t c_blockSize = 128;				//< Allocation size must be a multiple of c_blockSize.
+const uint32_t c_blockSize = 128;					//< Allocation size must be a multiple of c_blockSize.
 
 uint32_t incrementLabel(uint32_t label)
 {
@@ -21,9 +21,10 @@ uint32_t incrementLabel(uint32_t label)
 }
 		}
 
-MemoryHeap::MemoryHeap(void* heap, size_t heapSize, uint8_t location)
+MemoryHeap::MemoryHeap(void* heap, size_t heapSize, size_t immutableOffset, uint8_t location)
 :	m_heap(static_cast< uint8_t* >(heap))
 ,	m_heapSize(heapSize)
+,	m_immutableOffset(immutableOffset)
 ,	m_location(location)
 ,	m_shouldCompact(0)
 ,	m_waitLabel(1)
@@ -42,7 +43,7 @@ MemoryHeapObject* MemoryHeap::alloc(size_t size, size_t align, bool immutable)
 
 	if (!immutable)
 	{
-		uint8_t* ptr = m_heap;
+		uint8_t* ptr = m_heap + m_immutableOffset;
 
 		if (!m_objects.empty())
 		{
@@ -121,7 +122,7 @@ MemoryHeapObject* MemoryHeap::alloc(size_t size, size_t align, bool immutable)
 						return 0;
 					}
 
-					std::memcpy(
+					__builtin_memcpy(
 						ptr2,
 						ptr1,
 						mutObject->m_size
@@ -217,10 +218,6 @@ void MemoryHeap::compact()
 		return;
 
 	m_shouldCompact = false;
-
-	// Ensure all pending operations have been executed.
-	cellGcmFinish(gCellGcmCurrentContext, m_waitLabel);
-	m_waitLabel = incrementLabel(m_waitLabel);
 
 	// Get number of alive objects; if none then there is no to move.
 	uint32_t count = uint32_t(m_objects.size());

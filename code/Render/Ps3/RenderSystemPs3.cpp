@@ -64,13 +64,23 @@ bool RenderSystemPs3::create(const RenderSystemCreateDesc& desc)
 
 	CellGcmConfig config;
 	cellGcmGetConfiguration(&config);
-	m_memoryHeapLocal = new MemoryHeap(config.localAddress, config.localSize, CELL_GCM_LOCATION_LOCAL);
+	m_memoryHeapLocal = new MemoryHeap(
+		config.localAddress,
+		config.localSize,
+		64 * 1024 * 1024,
+		CELL_GCM_LOCATION_LOCAL
+	);
 
 	uint32_t status;
 	if (cellGcmMapMainMemory(mainAddr, c_mainSize, &status) != CELL_OK)
 		return false;
 
-	m_memoryHeapMain = new MemoryHeap(mainAddr, c_mainSize, CELL_GCM_LOCATION_MAIN);
+	m_memoryHeapMain = new MemoryHeap(
+		mainAddr,
+		c_mainSize,
+		0,
+		CELL_GCM_LOCATION_MAIN
+	);
 
 	log::info << 
 		L"PS3 render system created" << Endl <<
