@@ -28,10 +28,12 @@ RenderViewOpenGL::RenderViewOpenGL(
 	const RenderViewDesc desc,
 	ContextOpenGL* context,
 	ContextOpenGL* resourceContext,
+	BlitHelper* blitHelper,
 	HWND hWnd
 )
 :	m_context(context)
 ,	m_resourceContext(resourceContext)
+,	m_blitHelper(blitHelper)
 ,	m_currentDirty(true)
 
 #elif defined(__APPLE__)
@@ -40,10 +42,12 @@ RenderViewOpenGL::RenderViewOpenGL(
 	const RenderViewDesc desc,
 	ContextOpenGL* context,
 	ContextOpenGL* resourceContext,
+	BlitHelper* blitHelper,
 	void* windowHandle
 )
 :	m_context(context)
 ,	m_resourceContext(resourceContext)
+,	m_blitHelper(blitHelper)
 ,	m_windowHandle(windowHandle)
 ,	m_currentDirty(true)
 
@@ -52,10 +56,12 @@ RenderViewOpenGL::RenderViewOpenGL(
 RenderViewOpenGL::RenderViewOpenGL(
 	const RenderViewDesc desc,
 	ContextOpenGL* context,
-	ContextOpenGL* resourceContext
+	ContextOpenGL* resourceContext,
+	BlitHelper* blitHelper
 )
 :	m_context(context)
 ,	m_resourceContext(resourceContext)
+,	m_blitHelper(blitHelper)
 ,	m_currentDirty(true)
 
 #endif
@@ -89,7 +95,7 @@ bool RenderViewOpenGL::createPrimaryTarget()
 
 	if (m_primaryTargetDesc.width > 0 && m_primaryTargetDesc.height > 0)
 	{
-		m_primaryTarget = new RenderTargetSetOpenGL(m_context);
+		m_primaryTarget = new RenderTargetSetOpenGL(m_context, m_blitHelper);
 		if (!m_primaryTarget->create(m_primaryTargetDesc))
 			return false;
 	}
@@ -129,7 +135,7 @@ bool RenderViewOpenGL::reset(const RenderViewDefaultDesc& desc)
 
 	if (m_primaryTargetDesc.width > 0 && m_primaryTargetDesc.height > 0)
 	{
-		m_primaryTarget = new RenderTargetSetOpenGL(m_context);
+		m_primaryTarget = new RenderTargetSetOpenGL(m_context, m_blitHelper);
 		if (!m_primaryTarget->create(m_primaryTargetDesc))
 			return false;
 	}
@@ -151,7 +157,7 @@ void RenderViewOpenGL::resize(int32_t width, int32_t height)
 	m_primaryTargetDesc.width = m_context->getWidth();
 	m_primaryTargetDesc.height = m_context->getHeight();
 
-	m_primaryTarget = new RenderTargetSetOpenGL(m_context);
+	m_primaryTarget = new RenderTargetSetOpenGL(m_context, m_blitHelper);
 	m_primaryTarget->create(m_primaryTargetDesc);
 }
 

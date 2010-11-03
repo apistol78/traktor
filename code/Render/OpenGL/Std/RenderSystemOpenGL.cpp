@@ -4,6 +4,7 @@
 #include "Core/Serialization/ISerializable.h"
 #include "Render/VertexElement.h"
 #include "Render/OpenGL/Platform.h"
+#include "Render/OpenGL/Std/BlitHelper.h"
 #include "Render/OpenGL/Std/Extensions.h"
 #include "Render/OpenGL/Std/CubeTextureOpenGL.h"
 #include "Render/OpenGL/Std/IndexBufferIAR.h"
@@ -133,8 +134,6 @@ bool RenderSystemOpenGL::create(const RenderSystemCreateDesc& desc)
 	if (!opengl_initialize_extensions())
 		return false;
 
-	m_resourceContext->leave();
-
 #elif defined(__APPLE__)
 
 	void* resourceContext = cglwCreateContext(0, 0, 0, 0, 0);
@@ -144,8 +143,6 @@ bool RenderSystemOpenGL::create(const RenderSystemCreateDesc& desc)
 
 	if (!opengl_initialize_extensions())
 		return false;
-
-	m_resourceContext->leave();
 
 	m_title = desc.windowTitle ? desc.windowTitle : L"Traktor (OpenGL)";
 
@@ -187,9 +184,12 @@ bool RenderSystemOpenGL::create(const RenderSystemCreateDesc& desc)
 		T_BREAKPOINT;
 	*/
 
-	m_resourceContext->leave();
-
 #endif
+
+	m_blitHelper = new BlitHelper();
+	m_blitHelper->create();
+
+	m_resourceContext->leave();
 
 	m_maxAnisotrophy = (GLfloat)desc.maxAnisotropy;
 	return true;
@@ -507,7 +507,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 
 	Ref< ContextOpenGL > context = new ContextOpenGL(glcontext);
 
-	Ref< RenderViewOpenGL > renderView = new RenderViewOpenGL(desc, context, m_resourceContext, m_windowHandle);
+	Ref< RenderViewOpenGL > renderView = new RenderViewOpenGL(desc, context, m_resourceContext, m_blitHelper, m_windowHandle);
 	if (renderView->createPrimaryTarget())
 		return renderView;
 		
@@ -570,7 +570,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewEmbedded
 
 	context->leave();
 
-	Ref< RenderViewOpenGL > renderView = new RenderViewOpenGL(desc, context, m_resourceContext, (HWND)desc.nativeWindowHandle);
+	Ref< RenderViewOpenGL > renderView = new RenderViewOpenGL(desc, context, m_resourceContext, m_blitHelper, (HWND)desc.nativeWindowHandle);
 	if (renderView->createPrimaryTarget())
 		return renderView;
 
@@ -591,7 +591,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewEmbedded
 
 	Ref< ContextOpenGL > context = new ContextOpenGL(glcontext);
 
-	Ref< RenderViewOpenGL > renderView = new RenderViewOpenGL(desc, context, m_resourceContext, 0);
+	Ref< RenderViewOpenGL > renderView = new RenderViewOpenGL(desc, context, m_resourceContext, m_blitHelper, 0);
 	if (renderView->createPrimaryTarget())
 		return renderView;
 
@@ -636,7 +636,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewEmbedded
 
 	context->leave();
 
-	Ref< RenderViewOpenGL > renderView = new RenderViewOpenGL(desc, context, m_resourceContext);
+	Ref< RenderViewOpenGL > renderView = new RenderViewOpenGL(desc, context, m_resourceContext, m_blitHelper);
 	if (renderView->createPrimaryTarget())
 		return renderView;
 		
@@ -733,7 +733,7 @@ Ref< RenderTargetSet > RenderSystemOpenGL::createRenderTargetSet(const RenderTar
 {
 	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
 
-	Ref< RenderTargetSetOpenGL > renderTargetSet = new RenderTargetSetOpenGL(m_resourceContext);
+	Ref< RenderTargetSetOpenGL > renderTargetSet = new RenderTargetSetOpenGL(m_resourceContext, m_blitHelper);
 	if (!renderTargetSet->create(desc))
 		return 0;
 

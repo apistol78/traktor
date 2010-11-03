@@ -11,8 +11,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetSetOpenGL", RenderTargetSetOpenGL, RenderTargetSet)
 
-RenderTargetSetOpenGL::RenderTargetSetOpenGL(IContext* resourceContext)
+RenderTargetSetOpenGL::RenderTargetSetOpenGL(IContext* resourceContext, BlitHelper* blitHelper)
 :	m_resourceContext(resourceContext)
+,	m_blitHelper(blitHelper)
 ,	m_width(0)
 ,	m_height(0)
 ,	m_targetWidth(0)
@@ -28,16 +29,17 @@ RenderTargetSetOpenGL::~RenderTargetSetOpenGL()
 
 bool RenderTargetSetOpenGL::create(const RenderTargetSetCreateDesc& desc)
 {
-	if (
-		!opengl_have_extension("GL_EXT_framebuffer_object") ||
-		!opengl_have_extension("GL_EXT_framebuffer_blit")
-	)
+	if (!opengl_have_extension("GL_EXT_framebuffer_object"))
 	{
 		log::error << L"Cannot create FBO; not supported by OpenGL driver" << Endl;
 		return false;
 	}
-
-	if (desc.multiSample > 1 && !opengl_have_extension("GL_EXT_framebuffer_multisample"))
+	
+	// When using MSAA we require both MSAA framebuffer extension and framebuffer blitting.
+	if (
+		desc.multiSample > 1 &&
+		!(opengl_have_extension("GL_EXT_framebuffer_multisample") && opengl_have_extension("GL_EXT_framebuffer_blit"))
+	)
 	{
 		log::error << L"Cannot create multisample FBO; not supported by OpenGL driver" << Endl;
 		return false;
@@ -87,7 +89,7 @@ bool RenderTargetSetOpenGL::create(const RenderTargetSetCreateDesc& desc)
 	m_colorTextures.resize(desc.count);
 	for (int i = 0; i < desc.count; ++i)
 	{
-		m_colorTextures[i] = new RenderTargetOpenGL(m_resourceContext);
+		m_colorTextures[i] = new RenderTargetOpenGL(m_resourceContext, m_blitHelper);
 		if (!m_colorTextures[i]->create(desc, desc.targets[i], m_depthBuffer))
 			return false;
 	}
