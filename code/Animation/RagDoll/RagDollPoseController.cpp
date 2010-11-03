@@ -260,7 +260,7 @@ void RagDollPoseController::evaluate(
 
 		if (m_trackPoseController)
 		{
-			const Scalar c_maxTension(10.0f);
+			const Scalar c_maxTension(20.0f);
 
 			Transform trackT = worldTransform * outPoseTransforms[i];
 			Transform limbT = m_limbs[i]->getTransform() * Transform(halfBoneN);
@@ -299,12 +299,15 @@ void RagDollPoseController::evaluate(
 				);
 			}
 
-			Vector4 vR = cross(limbT.axisX(), trackT.axisX());
-			Scalar lnR = vR.length();
-			if (lnR > FUZZY_EPSILON)
+			if (abs(dot3(limbT.axisX(), trackT.axisX())) > FUZZY_EPSILON)
 			{
-				Scalar m = Scalar(1.0f) - abs(dot3(trackT.axisX(), limbT.axisX()));
-				m_limbs[i]->addTorque((m * vR * m_trackAngularTension * Scalar(deltaTime)) / lnR, false);
+				Vector4 vR = cross(limbT.axisX(), trackT.axisX());
+				Scalar lnR = vR.length();
+				if (lnR > FUZZY_EPSILON)
+				{
+					Scalar m = Scalar(1.0f) - abs(dot3(trackT.axisX(), limbT.axisX()));
+					m_limbs[i]->addTorque((m * vR * m_trackAngularTension * Scalar(deltaTime)) / lnR, false);
+				}
 			}
 		}
 
