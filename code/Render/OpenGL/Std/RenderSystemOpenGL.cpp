@@ -475,7 +475,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 	Ref< ContextOpenGL > context = new ContextOpenGL(m_hWnd, hDC, hRC);
 	m_resourceContext->share(context);
 
-	Ref< RenderViewOpenGL > renderView = new RenderViewOpenGL(desc, context, m_resourceContext, m_hWnd);
+	Ref< RenderViewOpenGL > renderView = new RenderViewOpenGL(desc, context, m_resourceContext, m_blitHelper, m_hWnd);
 	if (renderView->createPrimaryTarget())
 		return renderView;
 		
