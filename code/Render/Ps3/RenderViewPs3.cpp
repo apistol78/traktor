@@ -29,6 +29,8 @@ const uint32_t c_reportZCullStats1 = 101;
 const uint32_t c_reportTimeStamp0 = 102;
 const uint32_t c_reportTimeStamp1 = 103;
 
+static uint32_t s_finishRef = 0;
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewPs3", RenderViewPs3, IRenderView)
@@ -94,6 +96,8 @@ bool RenderViewPs3::create(const RenderViewDefaultDesc& desc)
 
 void RenderViewPs3::close()
 {
+	blackOut();
+
 	if (m_zcullTile.index != ~0UL)
 	{
 		cellGcmUnbindZcull(m_zcullTile.index);
@@ -172,6 +176,8 @@ bool RenderViewPs3::reset(const RenderViewDefaultDesc& desc)
 	videoConfig.format = CELL_VIDEO_OUT_BUFFER_COLOR_FORMAT_X8R8G8B8;
 	videoConfig.aspect = CELL_VIDEO_OUT_ASPECT_AUTO;
 	videoConfig.pitch = m_colorPitch;
+
+	blackOut();
 
 	err = cellVideoOutConfigure(CELL_VIDEO_OUT_PRIMARY, &videoConfig, NULL, 0);
 	if (err != CELL_OK)
@@ -819,8 +825,7 @@ void RenderViewPs3::draw(const Primitives& primitives)
 
 #if USE_DEBUG_DRAW
 	// Synchronize RSX after each draw; help to find RSX crashes.
-	static uint32_t s_finishRef = 0; s_finishRef++;
-	cellGcmFinish(gCellGcmCurrentContext, s_finishRef);
+	cellGcmFinish(gCellGcmCurrentContext, ++s_finishRef);
 #endif
 }
 
@@ -1067,6 +1072,12 @@ void RenderViewPs3::clearImmediate()
 		T_GCM_CALL(cellGcmSetClearSurface)(gCellGcmCurrentContext, gcmClearMask);
 
 	rs.clearMask = 0;
+}
+
+void RenderViewPs3::blackOut()
+{
+	cellGcmSetWaitFlip(gCellGcmCurrentContext);
+	cellGcmFinish(gCellGcmCurrentContext, ++s_finishRef);
 }
 
 	}

@@ -169,6 +169,8 @@ private:
 	void setCurrentRenderState();
 
 	void clearImmediate();
+
+	void blackOut();
 };
 
 	}
