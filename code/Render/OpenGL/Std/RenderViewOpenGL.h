@@ -19,12 +19,13 @@ namespace traktor
 	namespace render
 	{
 
-class RenderSystemOpenGL;
-class VertexBufferOpenGL;
+class BlitHelper;
 class IndexBufferOpenGL;
 class ProgramOpenGL;
+class RenderSystemOpenGL;
 class RenderTargetOpenGL;
 class RenderTargetSetOpenGL;
+class VertexBufferOpenGL;
 
 /*!
  * \ingroup OGL
@@ -40,6 +41,7 @@ public:
 		const RenderViewDesc desc,
 		ContextOpenGL* context,
 		ContextOpenGL* resourceContext,
+		BlitHelper* blitHelper,
 		HWND hWnd
 	);
 
@@ -49,6 +51,7 @@ public:
 		const RenderViewDesc desc,
 		ContextOpenGL* context,
 		ContextOpenGL* resourceContext,
+		BlitHelper* blitHelper,
 		void* windowHandle
 	);
 
@@ -57,7 +60,8 @@ public:
 	RenderViewOpenGL(
 		const RenderViewDesc desc,
 		ContextOpenGL* context,
-		ContextOpenGL* resourceContext
+		ContextOpenGL* resourceContext,
+		BlitHelper* blitHelper
 	);
 
 #endif
@@ -112,6 +116,7 @@ private:
 	Ref< RenderSystemOpenGL > m_renderSystem;
 	Ref< ContextOpenGL > m_context;
 	Ref< ContextOpenGL > m_resourceContext;
+	Ref< BlitHelper > m_blitHelper;
 	
 #if defined(__APPLE__)
 	void* m_windowHandle;

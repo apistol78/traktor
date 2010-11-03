@@ -1,6 +1,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Log2.h"
 #include "Render/OpenGL/IContext.h"
+#include "Render/OpenGL/Std/BlitHelper.h"
 #include "Render/OpenGL/Std/Extensions.h"
 #include "Render/OpenGL/Std/RenderTargetOpenGL.h"
 
@@ -47,8 +48,9 @@ struct DeleteFramebufferCallback : public IContext::IDeleteCallback
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetOpenGL", RenderTargetOpenGL, ITexture)
 
-RenderTargetOpenGL::RenderTargetOpenGL(IContext* resourceContext)
+RenderTargetOpenGL::RenderTargetOpenGL(IContext* resourceContext, BlitHelper* blitHelper)
 :	m_resourceContext(resourceContext)
+,	m_blitHelper(blitHelper)
 ,	m_width(0)
 ,	m_height(0)
 ,	m_targetWidth(0)
@@ -60,6 +62,7 @@ RenderTargetOpenGL::RenderTargetOpenGL(IContext* resourceContext)
 ,	m_colorTexture(0)
 ,	m_haveDepth(false)
 ,	m_usingPrimaryDepthBuffer(false)
+,	m_haveBlitExt(false)
 ,	m_originAndScale(0.0f, 1.0f, 1.0f, -1.0f)
 {
 }
@@ -327,6 +330,8 @@ bool RenderTargetOpenGL::create(const RenderTargetSetCreateDesc& setDesc, const 
 	GLenum status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
 	T_OGL_SAFE(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0));
 	
+	m_haveBlitExt = opengl_have_extension("GL_EXT_framebuffer_blit");
+	
 	std::memset(&m_shadowState, 0, sizeof(m_shadowState));
 
 	return bool(status == GL_FRAMEBUFFER_COMPLETE_EXT);
@@ -469,15 +474,20 @@ void RenderTargetOpenGL::resolve()
 
 void RenderTargetOpenGL::blit()
 {
-	int32_t offsetY = m_resolveFBO ? m_height - m_targetHeight : 0;
-	T_OGL_SAFE(glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, m_targetFBO));
-	T_OGL_SAFE(glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, 0));
-	T_OGL_SAFE(glBlitFramebufferEXT(
-		0, offsetY, m_targetWidth, m_targetHeight + offsetY,
-		0, 0, m_targetWidth, m_targetHeight,
-		GL_COLOR_BUFFER_BIT,
-		GL_NEAREST
-	));
+	if (m_haveBlitExt)
+	{
+		int32_t offsetY = m_resolveFBO ? m_height - m_targetHeight : 0;
+		T_OGL_SAFE(glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, m_targetFBO));
+		T_OGL_SAFE(glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, 0));
+		T_OGL_SAFE(glBlitFramebufferEXT(
+			0, offsetY, m_targetWidth, m_targetHeight + offsetY,
+			0, 0, m_targetWidth, m_targetHeight,
+			GL_COLOR_BUFFER_BIT,
+			GL_NEAREST
+		));
+	}
+	else
+		m_blitHelper->blit(m_colorTexture);
 }
 
 bool RenderTargetOpenGL::read(void* buffer) const
