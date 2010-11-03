@@ -75,12 +75,13 @@ void calculatePoseTransforms(
 	outBoneTransforms.resize(skeleton->getBoneCount());
 	for (uint32_t i = 0; i < skeleton->getBoneCount(); ++i)
 	{
-		outBoneTransforms[i] = localPoseTransforms[i];
+		Transform boneTransform = localPoseTransforms[i];
 		for (int32_t boneIndex = skeleton->getBone(i)->getParent(); boneIndex >= 0; boneIndex = skeleton->getBone(boneIndex)->getParent())
 		{
 			Transform localParentTransform = localPoseTransforms[boneIndex] * Transform(Vector4(0.0f, 0.0f, skeleton->getBone(boneIndex)->getLength()));
-			outBoneTransforms[i] = localParentTransform * outBoneTransforms[i];
+			boneTransform = localParentTransform * boneTransform;
 		}
+		outBoneTransforms[i] = boneTransform;
 	}
 }
 

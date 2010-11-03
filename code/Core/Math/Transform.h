@@ -52,6 +52,8 @@ public:
 
 	T_MATH_INLINE Matrix44 toMatrix44() const;
 
+	T_MATH_INLINE Transform& operator = (const Transform& tf);
+
 	T_MATH_INLINE bool operator == (const Transform& rh) const;
 
 	T_MATH_INLINE bool operator != (const Transform& rh) const;

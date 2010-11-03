@@ -83,6 +83,13 @@ T_MATH_INLINE Matrix44 Transform::toMatrix44() const
 	return translate(m_translation) * m_rotation.toMatrix44();
 }
 
+T_MATH_INLINE Transform& Transform::operator = (const Transform& tf)
+{
+	m_translation = tf.m_translation;
+	m_rotation = tf.m_rotation;
+	return *this;
+}
+
 T_MATH_INLINE bool Transform::operator == (const Transform& rh) const
 {
 	return m_translation == rh.m_translation && m_rotation == rh.m_rotation;
