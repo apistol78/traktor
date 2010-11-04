@@ -36,7 +36,7 @@ T_MATH_INLINE Transform::Transform(const Quaternion& rotation)
 T_MATH_INLINE Transform::Transform(const Matrix44& mx)
 {
 	m_translation = mx.translation().xyz0();
-	m_rotation = Quaternion(mx).normalized();
+	m_rotation = Quaternion(mx);
 }
 
 T_MATH_INLINE const Transform& Transform::identity()
@@ -72,9 +72,10 @@ T_MATH_INLINE Vector4 Transform::axisZ() const
 
 T_MATH_INLINE Transform Transform::inverse() const
 {
+	Quaternion rotationInv = m_rotation.inverse().normalized();
 	return Transform(
-		-(m_rotation.inverse() * m_translation),
-		m_rotation.inverse()
+		-(rotationInv * m_translation),
+		rotationInv
 	);
 }
 
@@ -104,7 +105,7 @@ T_MATH_INLINE T_DLLCLASS Transform operator * (const Transform& lh, const Transf
 {
 	return Transform(
 		lh.translation() + lh.rotation() * rh.translation(),
-		lh.rotation() * rh.rotation()
+		(lh.rotation() * rh.rotation()).normalized()
 	);
 }
 
