@@ -70,9 +70,12 @@ bool EventLoopCocoa::process(EventSubject* owner)
 		else
 		{
 			// Get application events.
-			NSEvent* event = [NSApp nextEventMatchingMask: NSAnyEventMask untilDate: [NSDate distantFuture] inMode: NSDefaultRunLoopMode dequeue: YES];
-			if (event != nil)
+			for (;;)
 			{
+				NSEvent* event = [NSApp nextEventMatchingMask: NSAnyEventMask untilDate: nil inMode: NSDefaultRunLoopMode dequeue: YES];
+				if (event == nil)
+					break;
+
 				if (!handleGlobalEvents(owner, event))
 				{
 					// Process event.
