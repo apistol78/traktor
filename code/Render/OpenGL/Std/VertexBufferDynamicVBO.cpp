@@ -147,7 +147,7 @@ VertexBufferDynamicVBO::VertexBufferDynamicVBO(IContext* resourceContext, const 
 		m_attributeDesc[usageIndex].offset = vertexElements[i].getOffset();
 	}
 	
-	m_buffer.reset(new uint8_t [getBufferSize()]);
+	m_buffer.resize(getBufferSize(), 0);
 	m_dirty = true;
 }
 
@@ -165,14 +165,14 @@ void VertexBufferDynamicVBO::destroy()
 		m_name = 0;
 	}
 	
-	m_buffer.release();
+	m_buffer.resize(0);
 }
 
 void* VertexBufferDynamicVBO::lock()
 {
 	T_ASSERT_M(!m_lock, L"Vertex buffer already locked");
 	
-	m_lock = m_buffer.ptr();
+	m_lock = &m_buffer[0];
 	return m_lock;
 }
 
@@ -180,7 +180,7 @@ void* VertexBufferDynamicVBO::lock(uint32_t vertexOffset, uint32_t vertexCount)
 {
 	T_ASSERT_M(!m_lock, L"Vertex buffer already locked");
 
-	m_lock = m_buffer.ptr();
+	m_lock = &m_buffer[0];
 	if (!m_lock)
 		return 0;
 
@@ -209,7 +209,7 @@ void VertexBufferDynamicVBO::activate(const GLint* attributeLocs)
 		if (!mapped)
 			return;
 			
-		std::memcpy(mapped, m_buffer.c_ptr(), getBufferSize());
+		std::memcpy(mapped, &m_buffer[0], getBufferSize());
 		
 		T_OGL_SAFE(glUnmapBufferARB(GL_ARRAY_BUFFER_ARB));
 		m_dirty = false;
