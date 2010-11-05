@@ -30,6 +30,8 @@ class T_DLLCLASS Settings : public Object
 public:
 	Settings();
 
+	explicit Settings(PropertyGroup* rootGroup);
+
 	/*! \brief
 	 */
 	static Ref< Settings > read(ISerializer& s);

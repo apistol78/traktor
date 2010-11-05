@@ -45,7 +45,7 @@ bool SteamSaveData::get(const std::wstring& saveDataId, Ref< ISerializable >& ou
 	return true;
 }
 
-bool SteamSaveData::set(const std::wstring& saveDataId, const ISerializable* attachment, bool replace)
+bool SteamSaveData::set(const std::wstring& saveDataId, const SaveDataDesc& saveDataDesc, const ISerializable* attachment, bool replace)
 {
 	std::string fileName = wstombs(saveDataId);
 

@@ -52,7 +52,7 @@ bool LocalSaveData::get(const std::wstring& saveDataId, Ref< ISerializable >& ou
 	return true;
 }
 
-bool LocalSaveData::set(const std::wstring& saveDataId, const ISerializable* attachment, bool replace)
+bool LocalSaveData::set(const std::wstring& saveDataId, const SaveDataDesc& saveDataDesc, const ISerializable* attachment, bool replace)
 {
 	Ref< sql::IResultSet > rs;
 

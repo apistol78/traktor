@@ -12,13 +12,13 @@ namespace traktor
 {
 	namespace online
 	{
-
 		namespace
 		{
 
 const uint32_t c_maxDirCount = 32;
 const uint32_t c_maxFileCount = 32;
-const char c_secureFileId[CELL_SAVEDATA_SECUREFILEID_SIZE] = {
+const char c_secureFileId[CELL_SAVEDATA_SECUREFILEID_SIZE] =
+{
 	'C', 'L', 'E', 'A', 
 	'R', 'H', 'E', 'A', 
 	'D', 'G', 'A', 'M', 
@@ -51,42 +51,44 @@ CellSaveDataAutoIndicator s_saveIndicator =
 
 struct EnumerateData
 {
-	EnumerateData(std::set< std::wstring >& outSaveDataIds, PsnSaveData *this_)
-		:	m_saveDataIds(outSaveDataIds)
-		,	m_this(this_)
+	PsnSaveData* m_this;
+	std::set< std::wstring >& m_saveDataIds;
+
+	EnumerateData(PsnSaveData* this_, std::set< std::wstring >& outSaveDataIds)
+	:	m_this(this_)
+	,	m_saveDataIds(outSaveDataIds)
 	{
 		m_saveDataIds.clear();
 	}
-
-	std::set< std::wstring >& m_saveDataIds;
-	PsnSaveData *m_this;
 };
 
 struct LoadData
 {
-	LoadData(PsnSaveData *this_)
-		:	m_bufferPending(false)
-		,	m_this(this_)
-	{
-	}
-
+	PsnSaveData* m_this;
 	std::vector< uint8_t > m_buffer;
 	bool m_bufferPending;
-	PsnSaveData *m_this;
+
+	LoadData(PsnSaveData* this_)
+	:	m_this(this_)
+	,	m_bufferPending(false)
+	{
+	}
 };
 
 struct SaveData
 {
-	SaveData(PsnSaveData *this_, const std::vector< uint8_t >& buffer)
-		:	m_buffer(buffer)	
-		,	m_bufferPending(false)
-		,	m_this(this_)
-	{
-	}
-
+	PsnSaveData* m_this;
+	SaveDataDesc m_desc;
 	const std::vector< uint8_t >& m_buffer;
 	bool m_bufferPending;
-	PsnSaveData *m_this;
+
+	SaveData(PsnSaveData* this_, const SaveDataDesc& desc, const std::vector< uint8_t >& buffer)
+	:	m_this(this_)
+	,	m_desc(desc)
+	,	m_buffer(buffer)	
+	,	m_bufferPending(false)
+	{
+	}
 };
 
 		}
@@ -102,12 +104,12 @@ PsnSaveData::PsnSaveData(int32_t excessSpaceNeededKB)
 
 bool PsnSaveData::enumerate(std::set< std::wstring >& outSaveDataIds)
 {
-	EnumerateData enumerateData(outSaveDataIds, this);
+	EnumerateData enumerateData(this, outSaveDataIds);
 
 	uint32_t tmpSize = std::max< uint32_t >(
 		c_maxDirCount * sizeof(CellSaveDataDirList),
 		c_maxFileCount * sizeof(CellSaveDataFileStat)
-		);
+	);
 	AutoArrayPtr< uint8_t > tmp(new uint8_t [tmpSize]);
 
 	CellSaveDataSetBuf buf;
@@ -134,23 +136,114 @@ bool PsnSaveData::enumerate(std::set< std::wstring >& outSaveDataIds)
 		&callbackEnumStat,
 		&callbackEnumFile,
 		SYS_MEMORY_CONTAINER_ID_INVALID,
-		(void*) &enumerateData
-		);
+		(void*)&enumerateData
+	);
 
-	int32_t neededGameDataSizeKB = m_currentSavedataSizeKB > 0? 4 : 100;
+	int32_t neededGameDataSizeKB = (m_currentSavedataSizeKB > 0) ? 4 : 100;
 
-	const int32_t NEED_SIZEKB = this->m_hddFreeSpaceKB - this->m_excessSpaceNeededKB - neededGameDataSizeKB;
+	const int32_t NEED_SIZEKB = m_hddFreeSpaceKB - m_excessSpaceNeededKB - neededGameDataSizeKB;
 	if (NEED_SIZEKB < 0)
 	{
 		cellGameContentErrorDialog(CELL_GAME_ERRDIALOG_NOSPACE_EXIT, -NEED_SIZEKB, NULL); 
-		log::error << L"Unable to create session manager. Not enough space on HDD to save trophies and savegames" << Endl;
+		log::error << L"Unable to create session manager; Not enough space on HDD to save trophies and save-games." << Endl;
 		return false;
 	}
 
 	if (err != CELL_SAVEDATA_RET_OK)
 	{
 		log::error << PsnLogError::getSaveDataErrorString(err) << Endl;
-		// EXIT APP
+		return false;
+	}
+
+	return true;
+}
+
+bool PsnSaveData::get(const std::wstring& saveDataId, Ref< ISerializable >& outAttachment)
+{
+	LoadData loadData(this); 
+
+	uint32_t tmpSize = std::max< uint32_t >(
+		c_maxDirCount * sizeof(CellSaveDataDirList),
+		c_maxFileCount * sizeof(CellSaveDataFileStat)
+	);
+	AutoArrayPtr< uint8_t > tmp(new uint8_t [tmpSize]);
+
+	CellSaveDataSetBuf buf;
+	std::memset(&buf, 0, sizeof(buf));
+	buf.dirListMax = c_maxDirCount;
+	buf.fileListMax = c_maxFileCount;
+	buf.bufSize = tmpSize;
+	buf.buf = tmp.ptr();
+
+	m_currentSavedataSizeKB = 0;
+
+	char dirName[CELL_SAVEDATA_DIRNAME_SIZE];
+	std::strcpy(dirName, s_dirNamePrefix);
+	std::strcat(dirName, wstombs(toUpper(saveDataId)).c_str());
+
+	int32_t err = cellSaveDataAutoLoad2(
+		CELL_SAVEDATA_VERSION_CURRENT,
+		dirName,
+		CELL_SAVEDATA_ERRDIALOG_NOREPEAT,
+		&buf,
+		&callbackLoadStat,
+		&callbackLoadFile,
+		SYS_MEMORY_CONTAINER_ID_INVALID,
+		(void*)&loadData
+	);
+
+	if (err != CELL_SAVEDATA_RET_OK)
+	{
+		log::error << PsnLogError::getSaveDataErrorString(err) << Endl;
+		return false;
+	}
+
+	DynamicMemoryStream dms(loadData.m_buffer, true, false);
+	outAttachment = BinarySerializer(&dms).readObject();
+	return bool(outAttachment != 0);
+}
+
+bool PsnSaveData::set(const std::wstring& saveDataId, const SaveDataDesc& saveDataDesc, const ISerializable* attachment, bool replace)
+{
+	DynamicMemoryStream dms(false, true);
+	BinarySerializer(&dms).writeObject(attachment);
+
+	uint32_t tmpSize = std::max< uint32_t >(
+		c_maxDirCount * sizeof(CellSaveDataDirList),
+		c_maxFileCount * sizeof(CellSaveDataFileStat)
+	);
+	AutoArrayPtr< uint8_t > tmp(new uint8_t [tmpSize]);
+
+	CellSaveDataSetBuf buf;
+	std::memset(&buf, 0, sizeof(buf));
+	buf.dirListMax = c_maxDirCount;
+	buf.fileListMax = c_maxFileCount;
+	buf.bufSize = tmpSize;
+	buf.buf = tmp.ptr();
+
+	char dirName[CELL_SAVEDATA_DIRNAME_SIZE];
+	std::strcpy(dirName, s_dirNamePrefix);
+	std::strcat(dirName, wstombs(toUpper(saveDataId)).c_str());
+
+	SaveData saveData(this, saveDataDesc, dms.getBuffer()); 
+	int32_t err = cellSaveDataAutoSave2(
+		CELL_SAVEDATA_VERSION_CURRENT,
+		dirName,
+		CELL_SAVEDATA_ERRDIALOG_ALWAYS,
+		&buf,
+		&callbackSaveStat,
+		&callbackSaveFile,
+		SYS_MEMORY_CONTAINER_ID_INVALID,
+		(void*)&saveData
+	);
+	if (err == CELL_SAVEDATA_ERROR_CBRESULT && m_spaceNeededKB)
+	{
+		cellGameContentErrorDialog(CELL_GAME_ERRDIALOG_NOSPACE_EXIT, m_spaceNeededKB, NULL); 
+		log::error << L"Not enough space to save" << Endl;
+	}
+	if (err != CELL_SAVEDATA_RET_OK)
+	{
+		log::error << PsnLogError::getSaveDataErrorString(err) << Endl;
 		return false;
 	}
 
@@ -159,13 +252,12 @@ bool PsnSaveData::enumerate(std::set< std::wstring >& outSaveDataIds)
 
 void PsnSaveData::callbackEnumFixed(CellSaveDataCBResult* cbResult, CellSaveDataListGet* get, CellSaveDataFixedSet* set)
 {
-	EnumerateData* enumerateData =	static_cast< EnumerateData* >(cbResult->userdata);
+	EnumerateData* enumerateData = static_cast< EnumerateData* >(cbResult->userdata);
 	T_ASSERT (enumerateData);
-	PsnSaveData* this_ = enumerateData->m_this;
-	T_ASSERT (this_);
 
 	int32_t dirCount = get->dirListNum;
 	int32_t prefixLength = strlen(s_dirNamePrefix);
+
 	enumerateData->m_saveDataIds.clear();
 	for (int i = 0; i< dirCount; i++)
 	{
@@ -181,7 +273,7 @@ void PsnSaveData::callbackEnumFixed(CellSaveDataCBResult* cbResult, CellSaveData
 
 void PsnSaveData::callbackEnumStat(CellSaveDataCBResult* cbResult, CellSaveDataStatGet* get, CellSaveDataStatSet* set)
 {
-	EnumerateData* enumerateData =	static_cast< EnumerateData* >(cbResult->userdata);
+	EnumerateData* enumerateData = static_cast< EnumerateData* >(cbResult->userdata);
 	T_ASSERT (enumerateData);
 	PsnSaveData* this_ = enumerateData->m_this;
 	T_ASSERT (this_);
@@ -196,59 +288,6 @@ void PsnSaveData::callbackEnumFile(CellSaveDataCBResult* cbResult, CellSaveDataF
 	cbResult->result = CELL_SAVEDATA_CBRESULT_OK_LAST;
 }
 
-bool PsnSaveData::get(const std::wstring& saveDataId, Ref< ISerializable >& outAttachment)
-{
-	LoadData loadData(this); 
-
-	uint32_t tmpSize = std::max< uint32_t >(
-		c_maxDirCount * sizeof(CellSaveDataDirList),
-		c_maxFileCount * sizeof(CellSaveDataFileStat)
-		);
-	AutoArrayPtr< uint8_t > tmp(new uint8_t [tmpSize]);
-
-	CellSaveDataSetBuf buf;
-	std::memset(&buf, 0, sizeof(buf));
-	buf.dirListMax = c_maxDirCount;
-	buf.fileListMax = c_maxFileCount;
-	buf.bufSize = tmpSize;
-	buf.buf = tmp.ptr();
-
-	m_currentSavedataSizeKB = 0;
-
-	char dirName[CELL_SAVEDATA_DIRNAME_SIZE];
-	strcpy(dirName, s_dirNamePrefix);
-	strcat(dirName, wstombs(toUpper(saveDataId)).c_str());
-
-	int32_t err = cellSaveDataAutoLoad2(
-		CELL_SAVEDATA_VERSION_CURRENT,
-		dirName,
-		CELL_SAVEDATA_ERRDIALOG_NOREPEAT,
-		&buf,
-		&callbackLoadStat,
-		&callbackLoadFile,
-		SYS_MEMORY_CONTAINER_ID_INVALID,
-		(void*) &loadData
-		);
-
-	if (err != CELL_SAVEDATA_RET_OK)
-	{
-		log::error << PsnLogError::getSaveDataErrorString(err) << Endl;
-		// EXIT APP
-		return false;
-	}
-
-	DynamicMemoryStream dms(loadData.m_buffer, true, false);
-	outAttachment = BinarySerializer(&dms).readObject();
-	if (outAttachment)
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
-}
-
 void PsnSaveData::callbackLoadStat(CellSaveDataCBResult* cbResult, CellSaveDataStatGet* get, CellSaveDataStatSet* set)
 {
 	LoadData* loadData = static_cast< LoadData* >(cbResult->userdata);
@@ -259,9 +298,7 @@ void PsnSaveData::callbackLoadStat(CellSaveDataCBResult* cbResult, CellSaveDataS
 	this_->m_hddFreeSpaceKB = get->hddFreeSizeKB;
 
 	if (get->bind != 0)
-	{
 		log::debug << PsnLogError::getSaveDataBindErrorString(get->bind) << Endl;
-	}
 
 	if (get->isNewData)
 	{
@@ -302,8 +339,6 @@ void PsnSaveData::callbackLoadFile(CellSaveDataCBResult* cbResult, CellSaveDataF
 {
 	LoadData* loadData = static_cast< LoadData* >(cbResult->userdata);
 	T_ASSERT (loadData);
-	PsnSaveData* this_ = loadData->m_this;
-	T_ASSERT (this_);
 
 	cbResult->progressBarInc = 50;
 
@@ -317,69 +352,20 @@ void PsnSaveData::callbackLoadFile(CellSaveDataCBResult* cbResult, CellSaveDataF
 		set->fileBufSize = loadData->m_buffer.size();
 		set->fileBuf = &loadData->m_buffer[0];
 		set->reserved = 0;
-		memcpy(set->secureFileId, c_secureFileId, CELL_SAVEDATA_SECUREFILEID_SIZE);
+		std::memcpy(set->secureFileId, c_secureFileId, CELL_SAVEDATA_SECUREFILEID_SIZE);
 
 		cbResult->result = CELL_SAVEDATA_CBRESULT_OK_NEXT;
 
 		loadData->m_bufferPending = false;
 	}
 	else
-	{
 		cbResult->result = CELL_SAVEDATA_CBRESULT_OK_LAST;
-	}
-}
-
-bool PsnSaveData::set(const std::wstring& saveDataId, const ISerializable* attachment, bool replace)
-{
-	DynamicMemoryStream dms(false, true);
-	BinarySerializer(&dms).writeObject(attachment);
-	SaveData saveData(this, dms.getBuffer()); 
-
-	uint32_t tmpSize = std::max< uint32_t >(
-		c_maxDirCount * sizeof(CellSaveDataDirList),
-		c_maxFileCount * sizeof(CellSaveDataFileStat)
-		);
-	AutoArrayPtr< uint8_t > tmp(new uint8_t [tmpSize]);
-
-
-	CellSaveDataSetBuf buf;
-	std::memset(&buf, 0, sizeof(buf));
-	buf.dirListMax = c_maxDirCount;
-	buf.fileListMax = c_maxFileCount;
-	buf.bufSize = tmpSize;
-	buf.buf = tmp.ptr();
-
-	char dirName[CELL_SAVEDATA_DIRNAME_SIZE];
-	strcpy(dirName, s_dirNamePrefix);
-	strcat(dirName, wstombs(toUpper(saveDataId)).c_str());
-
-	int32_t err = cellSaveDataAutoSave2(
-		CELL_SAVEDATA_VERSION_CURRENT,
-		dirName,
-		CELL_SAVEDATA_ERRDIALOG_ALWAYS,
-		&buf,
-		&callbackSaveStat,
-		&callbackSaveFile,
-		SYS_MEMORY_CONTAINER_ID_INVALID,
-		(void*) &saveData
-		);
-	if (err == CELL_SAVEDATA_ERROR_CBRESULT && m_spaceNeededKB)
-	{
-		cellGameContentErrorDialog(CELL_GAME_ERRDIALOG_NOSPACE_EXIT, m_spaceNeededKB, NULL); 
-		log::error << L"Not enough space to save" << Endl;
-	}
-	if (err != CELL_SAVEDATA_RET_OK)
-	{
-		log::error << PsnLogError::getSaveDataErrorString(err) << Endl;
-		return false;
-	}
-	return true;
 }
 
 void PsnSaveData::callbackSaveStat(CellSaveDataCBResult* cbResult, CellSaveDataStatGet* get, CellSaveDataStatSet* set)
 {
 	SaveData* saveData = static_cast< SaveData* >(cbResult->userdata);
-	T_ASSERT (saveData );
+	T_ASSERT (saveData);
 	PsnSaveData* this_ = saveData ->m_this;
 	T_ASSERT (this_);
 
@@ -389,10 +375,10 @@ void PsnSaveData::callbackSaveStat(CellSaveDataCBResult* cbResult, CellSaveDataS
 
 	if (get->isNewData)
 	{
-		strncpy(set->setParam->title, "Puzzle Dimension", CELL_SAVEDATA_SYSP_TITLE_SIZE);
-		strncpy(set->setParam->subTitle, "", CELL_SAVEDATA_SYSP_SUBTITLE_SIZE);
-		strncpy(set->setParam->detail, "", CELL_SAVEDATA_SYSP_DETAIL_SIZE);
-		strncpy(set->setParam->listParam, "", CELL_SAVEDATA_SYSP_LPARAM_SIZE);
+		std::strncpy(set->setParam->title, wstombs(saveData->m_desc.title).c_str(), CELL_SAVEDATA_SYSP_TITLE_SIZE);
+		std::strncpy(set->setParam->subTitle, wstombs(saveData->m_desc.description).c_str(), CELL_SAVEDATA_SYSP_SUBTITLE_SIZE);
+		std::strncpy(set->setParam->detail, "", CELL_SAVEDATA_SYSP_DETAIL_SIZE);
+		std::strncpy(set->setParam->listParam, "", CELL_SAVEDATA_SYSP_LPARAM_SIZE);
 
 		set->setParam->attribute = CELL_SAVEDATA_ATTR_NORMAL;
 
@@ -419,8 +405,6 @@ void PsnSaveData::callbackSaveFile(CellSaveDataCBResult* cbResult, CellSaveDataF
 {
 	SaveData* saveData = static_cast< SaveData* >(cbResult->userdata);
 	T_ASSERT (saveData );
-	PsnSaveData* this_ = saveData ->m_this;
-	T_ASSERT (this_);
 
 	if (saveData->m_bufferPending)
 	{
@@ -431,7 +415,7 @@ void PsnSaveData::callbackSaveFile(CellSaveDataCBResult* cbResult, CellSaveDataF
 		set->fileSize = saveData->m_buffer.size();
 		set->fileBufSize = saveData->m_buffer.size();
 		set->fileBuf = (void*) &saveData->m_buffer[0];
-		memcpy(set->secureFileId, c_secureFileId, CELL_SAVEDATA_SECUREFILEID_SIZE);
+		std::memcpy(set->secureFileId, c_secureFileId, CELL_SAVEDATA_SECUREFILEID_SIZE);
 		set->reserved = 0;
 
 		cbResult->progressBarInc = 50;
@@ -445,7 +429,6 @@ void PsnSaveData::callbackSaveFile(CellSaveDataCBResult* cbResult, CellSaveDataF
 		cbResult->result = CELL_SAVEDATA_CBRESULT_OK_LAST;
 	}
 }
-
 
 	}
 }
