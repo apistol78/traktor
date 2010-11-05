@@ -29,6 +29,11 @@ void SceneFactory::setShadowQuality(world::WorldRenderSettings::ShadowQuality sh
 	m_shadowQuality = shadowQuality;
 }
 
+world::WorldRenderSettings::ShadowQuality SceneFactory::getShadowQuality() const
+{
+	return m_shadowQuality;
+}
+
 const TypeInfoSet SceneFactory::getResourceTypes() const
 {
 	TypeInfoSet typeSet;

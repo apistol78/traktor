@@ -37,6 +37,8 @@ public:
 
 	void setSkipMips(int32_t skipMips);
 
+	int32_t getSkipMips() const;
+
 	virtual const TypeInfoSet getResourceTypes() const;
 
 	virtual bool isCacheable() const;

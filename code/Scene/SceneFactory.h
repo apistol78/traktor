@@ -59,6 +59,8 @@ public:
 
 	void setShadowQuality(world::WorldRenderSettings::ShadowQuality shadowQuality);
 
+	world::WorldRenderSettings::ShadowQuality getShadowQuality() const;
+
 	virtual const TypeInfoSet getResourceTypes() const;
 
 	virtual bool isCacheable() const;
