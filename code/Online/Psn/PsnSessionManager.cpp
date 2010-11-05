@@ -130,24 +130,14 @@ bool PsnSessionManager::create(const PsnCreateDesc& desc)
 
 void PsnSessionManager::destroy()
 {
-	int32_t err;
-
 	m_statistics = 0;
 	m_saveData = 0;
 	m_leaderboards = 0;
 	m_achievements = 0;
 
-	err = sceNpTrophyDestroyHandle(m_trophyHandle);
-	if (err < 0)
-		log::error << L"Unable to destroy trophy handle; sceNpTrophyDestroyHandle failed" << Endl;
-
-	err = sceNpTrophyDestroyContext(m_trophyContext);
-	if (err < 0)
-		log::error << L"Unable to destroy trophy context; sceNpTrophyDestroyContext failed" << Endl;
-
-	err = sceNpTrophyTerm();
-	if (err < 0)
-		log::error << L"Unable to terminate trophy utility; sceNpTrophyTerm failed" << Endl;
+	sceNpTrophyDestroyHandle(m_trophyHandle);
+	sceNpTrophyDestroyContext(m_trophyContext);
+	sceNpTrophyTerm();
 
 	cellSysmoduleUnloadModule(CELL_SYSMODULE_SYSUTIL_NP_TROPHY);
 }

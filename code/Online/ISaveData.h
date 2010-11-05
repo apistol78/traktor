@@ -2,6 +2,7 @@
 #define traktor_online_ISaveData_H
 
 #include "Online/AttachmentResult.h"
+#include "Online/Types.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -30,7 +31,7 @@ public:
 
 	virtual Ref< AttachmentResult > get(const std::wstring& saveDataId) const = 0;
 
-	virtual Ref< Result > set(const std::wstring& saveDataId, const ISerializable* attachment, bool replace) = 0;
+	virtual Ref< Result > set(const std::wstring& saveDataId, const SaveDataDesc& saveDataDesc, const ISerializable* attachment, bool replace) = 0;
 };
 
 	}

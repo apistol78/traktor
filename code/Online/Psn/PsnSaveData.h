@@ -20,9 +20,13 @@ public:
 
 	virtual bool get(const std::wstring& saveDataId, Ref< ISerializable >& outAttachment);
 
-	virtual bool set(const std::wstring& saveDataId, const ISerializable* attachment, bool replace);
+	virtual bool set(const std::wstring& saveDataId, const SaveDataDesc& saveDataDesc, const ISerializable* attachment, bool replace);
 
 private:
+	int32_t m_excessSpaceNeededKB;
+	int32_t m_hddFreeSpaceKB;
+	int32_t m_spaceNeededKB;
+	int32_t m_currentSavedataSizeKB;
 
 	static void callbackEnumFixed(CellSaveDataCBResult* cbResult, CellSaveDataListGet* get, CellSaveDataFixedSet* set);
 
@@ -37,11 +41,6 @@ private:
 	static void callbackSaveStat(CellSaveDataCBResult* cbResult, CellSaveDataStatGet* get, CellSaveDataStatSet* set);
 
 	static void callbackSaveFile(CellSaveDataCBResult* cbResult, CellSaveDataFileGet* get, CellSaveDataFileSet* set);
-
-	int32_t m_excessSpaceNeededKB;
-	int32_t m_hddFreeSpaceKB;
-	int32_t m_spaceNeededKB;
-	int32_t m_currentSavedataSizeKB;
 };
 
 	}

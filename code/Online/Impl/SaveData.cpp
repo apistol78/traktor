@@ -41,7 +41,7 @@ Ref< AttachmentResult > SaveData::get(const std::wstring& saveDataId) const
 		return 0;
 }
 
-Ref< Result > SaveData::set(const std::wstring& saveDataId, const ISerializable* attachment, bool replace)
+Ref< Result > SaveData::set(const std::wstring& saveDataId, const SaveDataDesc& saveDataDesc, const ISerializable* attachment, bool replace)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
@@ -49,6 +49,7 @@ Ref< Result > SaveData::set(const std::wstring& saveDataId, const ISerializable*
 	if (m_taskQueue->add(new TaskSetSaveData(
 		m_provider,
 		saveDataId,
+		saveDataDesc,
 		attachment,
 		replace,
 		result

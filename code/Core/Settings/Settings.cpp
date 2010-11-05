@@ -61,6 +61,11 @@ Settings::Settings()
 {
 }
 
+Settings::Settings(PropertyGroup* rootGroup)
+:	m_rootGroup(rootGroup)
+{
+}
+
 Ref< Settings > Settings::read(ISerializer& s)
 {
 	T_ASSERT (s.getDirection() == ISerializer::SdRead);
@@ -69,9 +74,7 @@ Ref< Settings > Settings::read(ISerializer& s)
 	if (!(s >> MemberRef< PropertyGroup >(L"object", rootGroup)))
 		return false;
 
-	Ref< Settings > settings = new Settings();
-	settings->m_rootGroup = rootGroup;
-	return settings;
+	return new Settings(rootGroup);
 }
 
 bool Settings::write(ISerializer& s) const

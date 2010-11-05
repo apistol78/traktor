@@ -2,6 +2,7 @@
 #define traktor_online_ISaveDataProvider_H
 
 #include "Core/Object.h"
+#include "Online/Types.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -28,7 +29,7 @@ public:
 
 	virtual bool get(const std::wstring& saveDataId, Ref< ISerializable >& outAttachment) = 0;
 
-	virtual bool set(const std::wstring& saveDataId, const ISerializable* attachment, bool replace) = 0;
+	virtual bool set(const std::wstring& saveDataId, const SaveDataDesc& saveDataDesc, const ISerializable* attachment, bool replace) = 0;
 };
 
 	}
