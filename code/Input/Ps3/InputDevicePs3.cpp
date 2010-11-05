@@ -22,7 +22,7 @@ namespace traktor
 
 float adjustDeadZone(float value)
 {
-	if (value >= -0.2f && value <= 0.2f)
+	if (value >= -0.3f && value <= 0.3f)
 		value = 0.0f;
 	return value;
 }
