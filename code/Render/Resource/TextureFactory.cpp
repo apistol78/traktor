@@ -43,6 +43,11 @@ void TextureFactory::setSkipMips(int32_t skipMips)
 	m_skipMips = skipMips;
 }
 
+int32_t TextureFactory::getSkipMips() const
+{
+	return m_skipMips;
+}
+
 const TypeInfoSet TextureFactory::getResourceTypes() const
 {
 	TypeInfoSet typeSet;
