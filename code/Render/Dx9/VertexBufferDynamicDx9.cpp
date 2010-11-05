@@ -59,7 +59,7 @@ bool VertexBufferDynamicDx9::create(IDirect3DDevice9* d3dDevice, const std::vect
 		return false;
 	}
 
-	m_buffer.reset(new uint8_t [getBufferSize()]);
+	m_buffer.resize(getBufferSize(), 0);
 
 	m_d3dDevice = d3dDevice;
 
@@ -83,7 +83,7 @@ bool VertexBufferDynamicDx9::activate(IDirect3DDevice9* d3dDevice)
 		if (FAILED(m_d3dVertexBuffer->Lock(0, getBufferSize(), &ptr, flags)))
 			return 0;
 
-		std::memcpy(ptr, m_buffer.ptr(), getBufferSize());
+		std::memcpy(ptr, &m_buffer[0], getBufferSize());
 
 		m_d3dVertexBuffer->Unlock();
 		m_dirty = false;
@@ -115,7 +115,7 @@ void* VertexBufferDynamicDx9::lock()
 		return 0;
 
 	m_locked = true;
-	return m_buffer.ptr();
+	return &m_buffer[0];
 }
 
 void* VertexBufferDynamicDx9::lock(uint32_t vertexOffset, uint32_t vertexCount)
@@ -124,7 +124,7 @@ void* VertexBufferDynamicDx9::lock(uint32_t vertexOffset, uint32_t vertexCount)
 		return 0;
 
 	m_locked = true;
-	return m_buffer.ptr() + vertexOffset * m_d3dVertexStride;
+	return &m_buffer[vertexOffset * m_d3dVertexStride];
 }
 
 void VertexBufferDynamicDx9::unlock()
