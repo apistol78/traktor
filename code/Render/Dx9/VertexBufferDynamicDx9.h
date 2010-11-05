@@ -1,7 +1,7 @@
 #ifndef traktor_render_VertexBufferDynamicDx9_H
 #define traktor_render_VertexBufferDynamicDx9_H
 
-#include "Core/Misc/AutoPtr.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Misc/ComRef.h"
 #include "Render/VertexElement.h"
 #include "Render/Dx9/IResourceDx9.h"
@@ -63,7 +63,7 @@ private:
 	ComRef< IDirect3DVertexDeclaration9 > m_d3dVertexDeclaration;
 	DWORD m_d3dVertexStride;
 	ComRef< IDirect3DVertexBuffer9 > m_d3dVertexBuffer;
-	AutoArrayPtr< uint8_t > m_buffer;
+	AlignedVector< uint8_t > m_buffer;
 	bool m_dirty;
 	bool m_locked;
 };
