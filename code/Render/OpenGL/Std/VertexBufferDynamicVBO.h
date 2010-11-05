@@ -1,7 +1,7 @@
 #ifndef traktor_render_VertexBufferDynamicVBO_H
 #define traktor_render_VertexBufferDynamicVBO_H
 
-#include "Core/Misc/AutoPtr.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Render/OpenGL/VertexBufferOpenGL.h"
 
 // import/export mechanism.
@@ -56,7 +56,7 @@ private:
 	GLuint m_vertexStride;
 	AttributeDesc m_attributeDesc[T_OGL_MAX_USAGE_INDEX];
 	uint8_t* m_lock;
-	AutoArrayPtr< uint8_t > m_buffer;
+	AlignedVector< uint8_t > m_buffer;
 	bool m_dirty;
 };
 
