@@ -110,13 +110,18 @@ bool PlayGrain::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const
 	// Apply random gain.
 	if (abs(playCursor->m_gain) > FUZZY_EPSILON)
 	{
+		Scalar gain(playCursor->m_gain + 1.0f);
 		for (uint32_t i = 0; i < outBlock.maxChannel; ++i)
 		{
 			if (!outBlock.samples[i])
 				continue;
 
-			for (uint32_t j = 0; j < outBlock.samplesCount; ++j)
-				outBlock.samples[i][j] *= playCursor->m_gain + 1.0f;
+			for (uint32_t j = 0; j < outBlock.samplesCount; j += 4)
+			{
+				Vector4 s4 = Vector4::loadAligned(&outBlock.samples[i][j]);
+				s4 *= gain;
+				s4.storeAligned(&outBlock.samples[i][j]);
+			}
 		}
 	}
 

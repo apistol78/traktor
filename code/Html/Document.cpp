@@ -21,6 +21,21 @@ namespace traktor
 		namespace
 		{
 
+template < int >
+struct CreateEncoding {};
+
+template < >
+struct CreateEncoding< 2 >
+{
+	static Ref< IEncoding > createInstance() { return new Utf16Encoding(); }
+};
+
+template < >
+struct CreateEncoding< 4 >
+{
+	static Ref< IEncoding > createInstance() { return new Utf32Encoding(); }
+};
+
 class CharacterReader
 {
 public:
@@ -65,8 +80,8 @@ private:
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.html.Document", Document, Object)
 
-Document::Document(bool parseComments) :
-	m_parseComments(parseComments)
+Document::Document(bool parseComments)
+:	m_parseComments(parseComments)
 {
 }
 
@@ -302,11 +317,7 @@ bool Document::loadFromText(const std::wstring& text)
 		swap8in16(*i);
 #endif
 	Ref< MemoryStream > stream = new MemoryStream(&buffer[0], buffer.size() * sizeof(wchar_t));
-#if defined(_WIN32) || defined(_PS3)
-	Ref< IEncoding > encoding = new Utf16Encoding();
-#else
-	Ref< IEncoding > encoding = new Utf32Encoding();
-#endif
+	Ref< IEncoding > encoding = CreateEncoding< sizeof(wchar_t) >::createInstance();
 	return loadFromStream(stream, encoding);
 }
 
