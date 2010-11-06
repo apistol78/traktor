@@ -25,7 +25,7 @@ void IncludeOrder::check(const Path& fileName, const Source& source, bool isHead
 			continue;
 
 		line = trim(line.substr(1));
-		if (!startsWith(line, L"include"))
+		if (!startsWith< std::wstring >(line, L"include"))
 			continue;
 
 		if (line.length() < 9)

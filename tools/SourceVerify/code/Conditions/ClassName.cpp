@@ -31,11 +31,11 @@ void ClassName::check(const Path& fileName, const Source& source, bool isHeader,
 		{
 			std::wstring className = pieces[1];
 
-			if (startsWith(className, L"T_DLLCLASS "))
+			if (startsWith< std::wstring >(className, L"T_DLLCLASS "))
 				className = className.substr(11);
-			else if (startsWith(className, L"T_DLLEXPORT "))
+			else if (startsWith< std::wstring >(className, L"T_DLLEXPORT "))
 				className = className.substr(12);
-			else if (startsWith(className, L"T_NOVTABLE "))
+			else if (startsWith< std::wstring >(className, L"T_NOVTABLE "))
 				className = className.substr(11);
 			
 			std::wstring::size_type j = className.find(L':');
@@ -47,7 +47,7 @@ void ClassName::check(const Path& fileName, const Source& source, bool isHeader,
 			if (className.find(L'_') != std::wstring::npos)
 				report << L"Incorrect naming convention on class \"" << className << L"\" at line " << i->line << Endl;
 
-			if (!endsWith(className, L";"))
+			if (!endsWith< std::wstring >(className, L";"))
 			{
 				if (className == expectedClassName)
 				{

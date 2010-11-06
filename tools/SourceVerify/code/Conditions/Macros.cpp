@@ -22,7 +22,7 @@ void Macros::check(const Path& fileName, const Source& source, bool isHeader, Ou
 			continue;
 
 		line = trim(line.substr(1));
-		if (!startsWith(line, L"define"))
+		if (!startsWith< std::wstring >(line, L"define"))
 			continue;
 
 		for (uint32_t j = 7; j < uint32_t(line.length()); ++j)

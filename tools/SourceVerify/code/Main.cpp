@@ -73,8 +73,8 @@ void verify(ReportLogTarget& report, const Path& pathName)
 		if (source.create(file))
 		{
 			bool isHeader =
-				bool(compareIgnoreCase(pathName.getExtension(), L"h") == 0) ||
-				bool(compareIgnoreCase(pathName.getExtension(), L"hpp") == 0);
+				bool(compareIgnoreCase< std::wstring >(pathName.getExtension(), L"h") == 0) ||
+				bool(compareIgnoreCase< std::wstring >(pathName.getExtension(), L"hpp") == 0);
 
 			report.setFile(pathName);
 			LogStream reportLog(&report);
@@ -116,10 +116,10 @@ void verify(ReportLogTarget& report, const Path& pathName)
 				else
 				{
 					bool isSource =
-						bool(compareIgnoreCase(path.getExtension(), L"c") == 0) ||
-						bool(compareIgnoreCase(path.getExtension(), L"cpp") == 0) ||
-						bool(compareIgnoreCase(path.getExtension(), L"h") == 0) ||
-						bool(compareIgnoreCase(path.getExtension(), L"hpp") == 0);
+						bool(compareIgnoreCase< std::wstring >(path.getExtension(), L"c") == 0) ||
+						bool(compareIgnoreCase< std::wstring >(path.getExtension(), L"cpp") == 0) ||
+						bool(compareIgnoreCase< std::wstring >(path.getExtension(), L"h") == 0) ||
+						bool(compareIgnoreCase< std::wstring >(path.getExtension(), L"hpp") == 0);
 
 					if (isSource)
 						verify(report, path);
