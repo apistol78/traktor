@@ -128,9 +128,8 @@ void SurroundFilter::applyStereo(IFilterInstance* instance, SoundBlock& outBlock
 			if (outBlock.samples[j])
 				s4 += Vector4::loadAligned(&outBlock.samples[j][i]);
 		}
-		Vector4 s = Vector4(horizontalAdd4(s4));
 		for (uint32_t j = 0; j < sizeof_array(c_speakersStereo); ++j)
-			s.storeAligned(&sfi->m_buffer[c_speakersStereo[j].channel][i]);
+			s4.storeAligned(&sfi->m_buffer[c_speakersStereo[j].channel][i]);
 	}
 
 	outBlock.maxChannel = c_speakersStereoMaxChannel;
@@ -183,9 +182,8 @@ void SurroundFilter::applyFull(IFilterInstance* instance, SoundBlock& outBlock) 
 			if (outBlock.samples[j])
 				s4 += Vector4::loadAligned(&outBlock.samples[j][i]);
 		}
-		Vector4 s = Vector4(horizontalAdd4(s4));
 		for (uint32_t j = 0; j < sizeof_array(c_speakersFull); ++j)
-			s.storeAligned(&sfi->m_buffer[c_speakersFull[j].channel][i]);
+			s4.storeAligned(&sfi->m_buffer[c_speakersFull[j].channel][i]);
 	}
 
 	outBlock.maxChannel = c_speakersFullMaxChannel;
