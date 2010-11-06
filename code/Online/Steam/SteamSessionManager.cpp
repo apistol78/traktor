@@ -45,7 +45,21 @@ SteamSessionManager::SteamSessionManager()
 
 bool SteamSessionManager::create(const SteamCreateDesc& desc)
 {
-	if (!SteamAPI_Init())
+	Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
+	
+	bool result = false;
+	for (int32_t i = 0; i < 10; ++i)
+	{
+		if (SteamAPI_Init())
+		{
+			result = true;
+			break;
+		}
+		log::error << L"Steam API failed to initialize; retrying..." << Endl;
+		if (currentThread)
+			currentThread->sleep(500);
+	}
+	if (!result)
 	{
 		log::error << L"Session manager failed; Unable to initialize Steam API" << Endl;
 		return false;
