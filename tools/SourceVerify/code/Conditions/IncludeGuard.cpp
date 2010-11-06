@@ -25,12 +25,12 @@ void IncludeGuard::check(const Path& fileName, const Source& source, bool isHead
 
 	std::wstring lockDefine = L"(Unknown)";
 
-	if (startsWith(lines[0].text, L"#ifndef "))
+	if (startsWith< std::wstring >(lines[0].text, L"#ifndef "))
 		lockDefine = lines[0].text.substr(8);
 	else
 		report << L"First line doesn't start with \"#ifndef ...\"" << Endl;
 
-	if (startsWith(lines[1].text, L"#define "))
+	if (startsWith< std::wstring >(lines[1].text, L"#define "))
 	{
 		if (lines[1].text.substr(8) != lockDefine)
 			report << L"Second line include guard symbol mismatch, should be \"" << lockDefine << L"\"" << Endl;
@@ -38,7 +38,7 @@ void IncludeGuard::check(const Path& fileName, const Source& source, bool isHead
 	else
 		report << L"Second line doesn't start with \"#define ...\"" << Endl;
 
-	if (startsWith(lines.back().text, L"#endif\t// "))
+	if (startsWith< std::wstring >(lines.back().text, L"#endif\t// "))
 	{
 		if (lines.back().text.substr(10) != lockDefine)
 			report << L"Last line include guard symbol mismatch, should be \"#endif<tab>// " << lockDefine << L"\"" << Endl;
