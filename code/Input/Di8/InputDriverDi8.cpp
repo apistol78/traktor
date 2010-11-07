@@ -1,6 +1,5 @@
 #include <wbemidl.h>
 #include <oleauto.h>
-//#include <wmsstd.h>
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
 #include "Input/Di8/InputDriverDi8.h"
@@ -297,6 +296,10 @@ bool InputDriverDi8::addDevice(const DIDEVICEINSTANCE* deviceInstance)
 
 	if ((inputCategory & m_inputCategories) == 0)
 		return true;
+
+	log::info << L"Found DI8 device;" << Endl <<
+		L"\tInstance name \"" << deviceInstance->tszInstanceName << L"\"" << Endl <<
+		L"\tProduct name \"" << deviceInstance->tszProductName << L"\"" << Endl;
 
 	hr = m_directInput->CreateDevice(deviceInstance->guidInstance, &device.getAssign(), NULL);
 	if (FAILED(hr)) 
