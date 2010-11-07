@@ -51,6 +51,10 @@ bool SessionManager::create(ISessionManagerProvider* provider)
 	)))
 		return false;
 
+	Ref< ISaveDataProvider > saveDataProvider = m_provider->getSaveData();
+	if (saveDataProvider)
+		m_saveData = new SaveData(saveDataProvider, m_taskQueue);
+
 	Ref< IAchievementsProvider > achievementsProvider = m_provider->getAchievements();
 	if (achievementsProvider)
 		m_achievements = new Achievements(achievementsProvider, m_taskQueue);
@@ -58,10 +62,6 @@ bool SessionManager::create(ISessionManagerProvider* provider)
 	Ref< ILeaderboardsProvider > leaderboardsProvider = m_provider->getLeaderboards();
 	if (leaderboardsProvider)
 		m_leaderboards = new Leaderboards(leaderboardsProvider, m_taskQueue);
-
-	Ref< ISaveDataProvider > saveDataProvider = m_provider->getSaveData();
-	if (saveDataProvider)
-		m_saveData = new SaveData(saveDataProvider, m_taskQueue);
 
 	Ref< IStatisticsProvider > statisticsProvider = m_provider->getStatistics();
 	if (statisticsProvider)
