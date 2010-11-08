@@ -1,4 +1,6 @@
 #include "Core/Misc/TString.h"
+#include "Core/Thread/Thread.h"
+#include "Core/Thread/ThreadManager.h"
 #include "Online/Steam/SteamLeaderboards.h"
 #include "Online/Steam/SteamSessionManager.h"
 
@@ -27,6 +29,8 @@ bool SteamLeaderboards::enumerate(std::map< std::wstring, LeaderboardData >& out
 	if (!m_sessionManager->waitForStats())
 		return false;
 
+	Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
+
 	for (std::set< std::wstring >::const_iterator i = m_leaderboardIds.begin(); i != m_leaderboardIds.end(); ++i)
 	{
 		SteamAPICall_t call = SteamUserStats()->FindOrCreateLeaderboard(
@@ -42,7 +46,11 @@ bool SteamLeaderboards::enumerate(std::map< std::wstring, LeaderboardData >& out
 		m_callbackFindLeaderboard.Set(call, this, &SteamLeaderboards::OnLeaderboardFind);
 
 		while (!m_receivedLeaderboard)
+		{
 			m_sessionManager->update();
+			if (currentThread)
+				currentThread->sleep(100);
+		}
 
 		if (!m_receivedLeaderboardHandle)
 			return false;

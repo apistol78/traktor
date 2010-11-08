@@ -1,3 +1,4 @@
+#include "Core/Log/Log.h"
 #include "Online/Impl/Tasks/TaskEnumStatistics.h"
 #include "Online/Provider/IStatisticsProvider.h"
 
@@ -22,9 +23,11 @@ TaskEnumStatistics::TaskEnumStatistics(
 void TaskEnumStatistics::execute()
 {
 	T_ASSERT (m_provider);
+	log::debug << L"Online; Begin enumerating statistics" << Endl;
 	std::map< std::wstring, float > statistics;
 	m_provider->enumerate(statistics);
 	(m_sinkObject->*m_sinkMethod)(statistics);
+	log::debug << L"Online; Finished enumerating statistics" << Endl;
 }
 
 	}
