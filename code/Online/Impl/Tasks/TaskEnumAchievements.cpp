@@ -1,3 +1,4 @@
+#include "Core/Log/Log.h"
 #include "Online/Impl/Tasks/TaskEnumAchievements.h"
 #include "Online/Provider/IAchievementsProvider.h"
 
@@ -22,9 +23,11 @@ TaskEnumAchievements::TaskEnumAchievements(
 void TaskEnumAchievements::execute()
 {
 	T_ASSERT (m_provider);
+	log::debug << L"Online; Begin enumerating achievements" << Endl;
 	std::map< std::wstring, bool > achievements;
 	m_provider->enumerate(achievements);
 	(m_sinkObject->*m_sinkMethod)(achievements);
+	log::debug << L"Online; Finished enumerating achievements" << Endl;
 }
 
 	}

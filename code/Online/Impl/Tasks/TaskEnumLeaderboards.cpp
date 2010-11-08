@@ -1,3 +1,4 @@
+#include "Core/Log/Log.h"
 #include "Online/Impl/Tasks/TaskEnumLeaderboards.h"
 
 namespace traktor
@@ -21,9 +22,11 @@ TaskEnumLeaderboards::TaskEnumLeaderboards(
 void TaskEnumLeaderboards::execute()
 {
 	T_ASSERT (m_provider);
+	log::debug << L"Online; Begin enumerating leaderboards" << Endl;
 	std::map< std::wstring, ILeaderboardsProvider::LeaderboardData > leaderboards;
 	m_provider->enumerate(leaderboards);
 	(m_sinkObject->*m_sinkMethod)(leaderboards);
+	log::debug << L"Online; Finished enumerating leaderboards" << Endl;
 }
 
 	}

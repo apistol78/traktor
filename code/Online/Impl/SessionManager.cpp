@@ -1,3 +1,4 @@
+#include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
@@ -25,6 +26,7 @@ ServiceType waitUntilReady(const ServiceType& service)
 
 	if (!service->ready())
 	{
+		log::debug << L"Service \"" << type_name(service) << L"\t not ready; waiting..." << Endl;
 		Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
 		do 
 		{

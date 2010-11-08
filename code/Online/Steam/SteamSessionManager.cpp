@@ -90,7 +90,10 @@ bool SteamSessionManager::update()
 		if (SteamUser()->BLoggedOn())
 		{
 			if (SteamUserStats()->RequestCurrentStats())
+			{
+				log::debug << L"Steam; Current stats requested" << Endl;
 				m_requestedStats = true;
+			}
 		}
 	}
 	else if (m_receivedStats)
@@ -151,12 +154,18 @@ Ref< IStatisticsProvider > SteamSessionManager::getStatistics() const
 
 bool SteamSessionManager::waitForStats()
 {
-	while (!m_receivedStats)
+	if (!m_receivedStats)
 	{
-		if (!update())
-			return false;
+		log::debug << L"Steam; Waiting for stats..." << Endl;
+		Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
+		while (!m_receivedStats)
+		{
+			if (!update())
+				return false;
 
-		ThreadManager::getInstance().getCurrentThread()->sleep(200);
+			if (currentThread)
+				currentThread->sleep(100);
+		}
 	}
 	return m_receivedStatsSucceeded;
 }
@@ -165,6 +174,7 @@ void SteamSessionManager::OnUserStatsReceived(UserStatsReceived_t* pCallback)
 {
 	m_receivedStats = true;
 	m_receivedStatsSucceeded = (pCallback->m_eResult == k_EResultOK);
+	log::debug << L"Steam; Receieved stats (eResult = " << getSteamError(pCallback->m_eResult) << L")" << Endl;
 }
 
 void SteamSessionManager::OnOverlayActivated(GameOverlayActivated_t* pCallback)

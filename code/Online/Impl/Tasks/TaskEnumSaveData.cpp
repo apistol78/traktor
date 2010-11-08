@@ -1,3 +1,4 @@
+#include "Core/Log/Log.h"
 #include "Online/Impl/Tasks/TaskEnumSaveData.h"
 #include "Online/Provider/ISaveDataProvider.h"
 
@@ -22,9 +23,11 @@ TaskEnumSaveData::TaskEnumSaveData(
 void TaskEnumSaveData::execute()
 {
 	T_ASSERT (m_provider);
+	log::debug << L"Online; Begin enumerating save data" << Endl;
 	std::set< std::wstring > saveDataIds;
 	m_provider->enumerate(saveDataIds);
 	(m_sinkObject->*m_sinkMethod)(saveDataIds);
+	log::debug << L"Online; Finished enumerating save data" << Endl;
 }
 
 	}
