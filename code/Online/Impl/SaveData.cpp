@@ -15,7 +15,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.online.SaveData", SaveData, ISaveData)
 
 bool SaveData::ready() const
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	return m_ready;
 }
 

@@ -171,12 +171,36 @@ bool Guid::operator != (const Guid& r) const
 
 bool Guid::operator < (const Guid& r) const
 {
-	return (std::memcmp(m_data, r.m_data, 16) < 0);
+	const uint64_t* ld = reinterpret_cast< const uint64_t* >(m_data);
+	const uint64_t* rd = reinterpret_cast< const uint64_t* >(r.m_data);
+
+	if (ld[0] < rd[0])
+		return true;
+	if (ld[0] > rd[0])
+		return false;
+	if (ld[1] < rd[1])
+		return true;
+	if (ld[1] > rd[1])
+		return false;
+
+	return false;
 }
 
 bool Guid::operator > (const Guid& r) const
 {
-	return (std::memcmp(m_data, r.m_data, 16) < 0);
+	const uint64_t* ld = reinterpret_cast< const uint64_t* >(m_data);
+	const uint64_t* rd = reinterpret_cast< const uint64_t* >(r.m_data);
+
+	if (ld[0] > rd[0])
+		return true;
+	if (ld[0] < rd[0])
+		return false;
+	if (ld[1] > rd[1])
+		return true;
+	if (ld[1] < rd[1])
+		return false;
+
+	return false;
 }
 
 }
