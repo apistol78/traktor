@@ -63,7 +63,6 @@ bool SoundSystem::create(const SoundSystemCreateDesc& desc)
 	if (!m_samplesData)
 		return false;
 
-	log::debug << L"Using " << samplesBlockCount << L" sample blocks" << Endl;
 	for (uint32_t i = 0; i < samplesBlockCount; ++i)
 		m_samplesBlocks.push_back(&m_samplesData[i * samplesPerBlock]);
 
@@ -100,7 +99,7 @@ bool SoundSystem::create(const SoundSystemCreateDesc& desc)
 	m_time = 0.0;
 
 	// Start threads.
-	m_threadMixer->start(Thread::Highest);
+	m_threadMixer->start(Thread::Normal);
 	m_threadSubmit->start(Thread::Highest);
 
 	return true;
