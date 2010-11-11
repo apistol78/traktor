@@ -19,7 +19,7 @@ void buildInstanceMap(Group* group, std::map< Guid, Ref< Instance > >& outInstan
 {
 	for (RefArray< Instance >::iterator i = group->getBeginChildInstance(); i != group->getEndChildInstance(); ++i)
 	{
-		Ref< Instance > instance = *i;
+		Instance* instance = *i;
 		outInstanceMap.insert(std::make_pair(
 			instance->getGuid(),
 			instance
@@ -44,6 +44,10 @@ bool Database::open(IProviderDatabase* providerDatabase)
 	m_rootGroup = new Group(this, m_providerBus);
 	if (!m_rootGroup->internalCreate(m_providerDatabase->getRootGroup(), 0))
 		return false;
+
+	log::debug << L"Begin building instance cache..." << Endl;
+	buildInstanceMap(m_rootGroup, m_instanceMap);
+	log::debug << L"Building instance cache finished" << Endl;
 
 	return true;
 }
@@ -164,7 +168,7 @@ Ref< Instance > Database::getInstance(const Guid& instanceGuid)
 	// In case no instance was found or reference has been invalidated we need to rebuild instance map.
 	if (i == m_instanceMap.end() || !i->second)
 	{
-		log::debug << L"Building instance cache" << Endl;
+		log::debug << L"Re-building instance cache" << Endl;
 
 		m_instanceMap.clear();
 		buildInstanceMap(m_rootGroup, m_instanceMap);

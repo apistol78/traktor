@@ -14,7 +14,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.online.Leaderboards", Leaderboards, ILeaderboar
 
 bool Leaderboards::ready() const
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	return m_ready;
 }
 
