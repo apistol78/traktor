@@ -2,6 +2,7 @@
 #define traktor_online_SteamSessionManager_H
 
 #include <steam/steam_api.h>
+#include "Core/Thread/Semaphore.h"
 #include "Online/Provider/ISessionManagerProvider.h"
 #include "Online/Steam/SteamTypes.h"
 
@@ -53,6 +54,7 @@ public:
 	bool waitForStats();
 
 private:
+	mutable Semaphore m_lock;
 	Ref< SteamAchievements > m_achievements;
 	Ref< SteamLeaderboards > m_leaderboards;
 	Ref< SteamSaveData > m_saveData;
@@ -61,6 +63,8 @@ private:
 	bool m_requestedStats;
 	bool m_receivedStats;
 	bool m_receivedStatsSucceeded;
+	uint32_t m_maxRequestAttempts;
+	uint32_t m_requestAttempts;
 
 	STEAM_CALLBACK(SteamSessionManager, OnUserStatsReceived, UserStatsReceived_t, m_callbackUserStatsReceived);
 

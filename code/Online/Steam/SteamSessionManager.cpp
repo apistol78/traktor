@@ -1,6 +1,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
+#include "Core/Thread/Acquire.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Online/Steam/SteamAchievements.h"
@@ -38,6 +39,8 @@ SteamSessionManager::SteamSessionManager()
 ,	m_requestedStats(false)
 ,	m_receivedStats(false)
 ,	m_receivedStatsSucceeded(false)
+,	m_requestAttempts(0)
+,	m_maxRequestAttempts(0)
 ,	m_callbackUserStatsReceived(this, &SteamSessionManager::OnUserStatsReceived)
 ,	m_callbackOverlay(this, &SteamSessionManager::OnOverlayActivated)
 {
@@ -65,6 +68,8 @@ bool SteamSessionManager::create(const SteamCreateDesc& desc)
 		return false;
 	}
 
+	m_maxRequestAttempts = desc.requestAttempts;
+
 	m_achievements = new SteamAchievements(this, desc.achievementIds);
 	m_leaderboards = new SteamLeaderboards(this, desc.leaderboardIds);
 	m_saveData = new SteamSaveData();
@@ -85,6 +90,8 @@ void SteamSessionManager::destroy()
 
 bool SteamSessionManager::update()
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	if (!m_requestedStats)
 	{
 		if (SteamUser()->BLoggedOn())
@@ -99,7 +106,18 @@ bool SteamSessionManager::update()
 	else if (m_receivedStats)
 	{
 		if (!m_receivedStatsSucceeded)
-			m_requestedStats = false;
+		{
+			if (++m_requestAttempts < m_maxRequestAttempts)
+			{
+				log::error << L"Steam; Failed to request current stats, retrying later..." << Endl;
+				m_receivedStats = false;
+				m_requestedStats = false;
+			}
+			else if (m_requestAttempts == m_maxRequestAttempts)
+				log::error << L"Steam; Failed to request current stats, will not be available" << Endl;
+		}
+		else
+			m_requestAttempts = 0;
 	}
 
 	SteamAPI_RunCallbacks();
@@ -172,6 +190,7 @@ bool SteamSessionManager::waitForStats()
 
 void SteamSessionManager::OnUserStatsReceived(UserStatsReceived_t* pCallback)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	m_receivedStats = true;
 	m_receivedStatsSucceeded = (pCallback->m_eResult == k_EResultOK);
 	log::debug << L"Steam; Receieved stats (eResult = " << getSteamError(pCallback->m_eResult) << L")" << Endl;
