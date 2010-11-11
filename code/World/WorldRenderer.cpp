@@ -322,6 +322,11 @@ void WorldRenderer::build(WorldRenderView& worldRenderView, Entity* entity, int 
 	m_count++;
 }
 
+
+const static float c_interocularDistance = 6.5f; // 10.0f;
+const static float c_distortionValue = 0.8f;
+const static float c_screenPlaneDistance = 13.0f; // 12.0f;
+
 void WorldRenderer::render(uint32_t flags, int frame, render::EyeType eye)
 {
 	Frame& f = m_frames[frame];
@@ -330,10 +335,6 @@ void WorldRenderer::render(uint32_t flags, int frame, render::EyeType eye)
 	// Prepare stereoscopic projection.
 	if (eye != render::EtCyclop)
 	{
-		const float c_interocularDistance = 10.0f;
-		const float c_distortionValue = 0.8f;
-		const float c_screenPlaneDistance = 12.0f;
-
 		float screenWidth = m_renderView->getWidth();
 		
 		float A = std::abs((c_distortionValue * c_interocularDistance) / screenWidth);
