@@ -29,7 +29,31 @@ const uint32_t c_reportZCullStats1 = 101;
 const uint32_t c_reportTimeStamp0 = 102;
 const uint32_t c_reportTimeStamp1 = 103;
 
+const uint32_t c_labelFlipControl = 64;
+const uint32_t c_labelFlipControlWait = 1;
+const uint32_t c_labelFlipControlFlipIt = 2;
+
+static volatile uint32_t* s_labelFlipControlData;
+
 static uint32_t s_finishRef = 0;
+
+void callbackUser(const uint32_t head)
+{
+	// We're running slow; issue flip immediately.
+	*s_labelFlipControlData = c_labelFlipControlFlipIt;
+}
+
+void callbackVBlank(const uint32_t head)
+{
+	// We're running fast; issue flip at vblank.
+	*s_labelFlipControlData = c_labelFlipControlFlipIt;
+}
+
+void callbackFlip(const uint32_t head)
+{
+	// Flipped; reset wait label.
+	*s_labelFlipControlData = c_labelFlipControlWait;
+}
 
 		}
 
@@ -90,6 +114,14 @@ bool RenderViewPs3::create(const RenderViewDefaultDesc& desc)
 	// Create helpers.
 	m_clearFp.create(m_localMemoryHeap);
 	m_resolve2x.create(m_localMemoryHeap);
+
+	// Initialize flip control logic.
+	s_labelFlipControlData = cellGcmGetLabelAddress(c_labelFlipControl);
+	*s_labelFlipControlData = c_labelFlipControlWait;
+
+	cellGcmSetUserHandler(callbackUser);
+	cellGcmSetVBlankHandler(callbackVBlank);
+	cellGcmSetFlipHandler(callbackFlip);
 
 	return true;
 }
@@ -195,10 +227,7 @@ bool RenderViewPs3::reset(const RenderViewDefaultDesc& desc)
 
 	if (!desc.displayMode.stereoscopic)
 	{
-		if (desc.waitVBlank)
-			cellGcmSetFlipMode(CELL_GCM_DISPLAY_VSYNC);
-		else
-			cellGcmSetFlipMode(CELL_GCM_DISPLAY_HSYNC);
+		cellGcmSetFlipMode(CELL_GCM_DISPLAY_HSYNC);
 
 		uint32_t colorSize = alignUp(m_colorPitch * alignUp(m_height, 64), 65536);
 		m_colorObject = m_localMemoryHeap->alloc(sizeof_array(m_colorAddr) * colorSize, 65536, true);
@@ -405,7 +434,7 @@ bool RenderViewPs3::reset(const RenderViewDefaultDesc& desc)
 			return false;
 		}
 
-		cellGcmSetFlipMode(CELL_GCM_DISPLAY_VSYNC);
+		cellGcmSetFlipMode(CELL_GCM_DISPLAY_HSYNC);
 
 		// Allocate color buffer; 30 lines gap.
 		uint32_t colorSize = alignUp(m_colorPitch * (m_height * 2 + 30), 65536);
@@ -602,6 +631,7 @@ bool RenderViewPs3::begin(EyeType eye)
 			CELL_GCM_SURFACE_A8R8G8B8,
 			m_colorOffset[frameIndex] + eyeOffset,
 			m_colorPitch,
+			CELL_GCM_SURFACE_Z24S8,
 			m_depthTexture.offset,
 			m_depthTexture.pitch,
 			eyeWindowOffset,
@@ -626,6 +656,7 @@ bool RenderViewPs3::begin(EyeType eye)
 			CELL_GCM_SURFACE_A8R8G8B8,
 			m_targetTexture.offset,
 			m_targetTexture.pitch,
+			CELL_GCM_SURFACE_Z24S8,
 			m_depthTexture.offset,
 			m_depthTexture.pitch,
 			0,
@@ -685,6 +716,7 @@ bool RenderViewPs3::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 		rt->getGcmSurfaceColorFormat(),
 		rt->getGcmTargetTexture().offset,
 		rt->getGcmTargetTexture().pitch,
+		rts->getGcmDepthSurfaceFormat(),
 		rts->getGcmDepthTexture().offset,
 		rts->getGcmDepthTexture().pitch,
 		0,
@@ -697,6 +729,7 @@ bool RenderViewPs3::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 	{
 		T_ASSERT_M (rt->getWidth() == m_width && rt->getHeight() == m_height, L"Target dimension mismatch");
 		T_ASSERT_M (rt->getGcmSurfaceAntialias() == m_targetSurfaceAntialias, L"Target multisampling mismatch");
+		rs.depthFormat = CELL_GCM_SURFACE_Z24S8;
 		rs.depthOffset = m_depthTexture.offset;
 		rs.depthPitch = m_depthTexture.pitch;
 		rs.zcull = true;
@@ -871,10 +904,17 @@ void RenderViewPs3::present()
 
 	cellGcmResetFlipStatus();
 
+	cellGcmSetFlipWithWaitLabel(gCellGcmCurrentContext, frameIndex, c_labelFlipControl, c_labelFlipControlFlipIt);
+	//cellGcmSetWriteCommandLabel(c_labelFlipControl, c_labelFlipControlWait);
+	//cellGcmSetWaitFlip();
+	cellGcmFlush(gCellGcmCurrentContext);
+
+	/*
 	T_GCM_CALL(cellGcmSetWaitFlip)(gCellGcmCurrentContext);
 	if (cellGcmSetFlip(gCellGcmCurrentContext, frameIndex) != CELL_OK)
 		return;
 	T_GCM_CALL(cellGcmFlush)(gCellGcmCurrentContext);
+	*/
 
 #if USE_TIME_MEASURE
 	T_GCM_CALL(cellGcmSetTimeStamp)(gCellGcmCurrentContext, c_reportTimeStamp1);
@@ -956,7 +996,7 @@ void RenderViewPs3::setCurrentRenderState()
 	sf.colorLocation[3]	= CELL_GCM_LOCATION_LOCAL;
 	sf.colorOffset[3] = 0;
 	sf.colorPitch[3] = 64;
-	sf.depthFormat = CELL_GCM_SURFACE_Z24S8;
+	sf.depthFormat = rs.depthFormat;
 	sf.depthLocation = CELL_GCM_LOCATION_LOCAL;
 	sf.depthOffset = rs.depthOffset;
 	sf.depthPitch = rs.depthPitch;

@@ -98,6 +98,7 @@ private:
 		uint8_t colorFormat;
 		uint32_t colorOffset;
 		uint32_t colorPitch;
+		uint32_t depthFormat;
 		uint32_t depthOffset;
 		uint32_t depthPitch;
 		uint32_t windowOffset;

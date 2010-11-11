@@ -56,6 +56,8 @@ public:
 
 	const CellGcmTexture& getGcmDepthTexture();
 
+	uint32_t getGcmDepthSurfaceFormat() const { return m_depthFormat; }
+
 	bool getGcmZCull() const { return m_zcullInfo.index != ~0UL; }
 
 	RenderTargetPs3* getRenderTarget(int index) { return m_renderTargets[index]; }
@@ -68,6 +70,7 @@ private:
 	int32_t m_width;
 	int32_t m_height;
 	RefArray< RenderTargetPs3 > m_renderTargets;
+	uint32_t m_depthFormat;
 	CellGcmTexture m_depthTexture;
 	MemoryHeapObject* m_depthData;
 	TileArea::TileInfo m_tileInfo;
