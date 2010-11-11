@@ -94,10 +94,30 @@ void CanvasCocoa::drawLines(const Point* pnts, int npnts)
 
 void CanvasCocoa::fillCircle(int x, int y, float radius)
 {
+	[m_backgroundColor set];
+
+	NSBezierPath* path = [[[NSBezierPath alloc] init] autorelease];
+	[path appendBezierPathWithArcWithCenter:
+		makeNSPoint(Point(x, y))
+		radius: radius
+		startAngle: 0.0f
+		endAngle: 360.0f
+	];
+	[path fill];
 }
 
 void CanvasCocoa::drawCircle(int x, int y, float radius)
 {
+	[m_foregroundColor set];
+
+	NSBezierPath* path = [[[NSBezierPath alloc] init] autorelease];
+	[path appendBezierPathWithArcWithCenter:
+		makeNSPoint(Point(x, y))
+		radius: radius
+		startAngle: 0.0f
+		endAngle: 360.0f
+	];
+	[path stroke];
 }
 
 void CanvasCocoa::drawEllipticArc(int x, int y, int w, int h, float start, float end)
@@ -152,10 +172,27 @@ void CanvasCocoa::drawRoundRect(const Rect& rc, int radius)
 
 void CanvasCocoa::drawPolygon(const Point* pnts, int count)
 {
+	if (count < 2)
+		return;
+
+	for (int i = 0; i < count - 1; ++i)
+		drawLine(pnts[i].x, pnts[i].y, pnts[i + 1].x, pnts[i + 1].y);
+		
+	drawLine(pnts[count - 1].x, pnts[count - 1].y, pnts[0].x, pnts[0].y);
 }
 
 void CanvasCocoa::fillPolygon(const Point* pnts, int count)
 {
+	if (count <= 2)
+		return;
+
+	[m_backgroundColor set];
+
+	NSBezierPath* path = [[[NSBezierPath alloc] init] autorelease];
+	[path moveToPoint: makeNSPoint(pnts[0])];
+	for (int i = 1; i < count; ++i)
+		[path lineToPoint: makeNSPoint(pnts[i])];
+	[path fill];
 }
 
 void CanvasCocoa::drawBitmap(const Point& dstAt, const Point& srcAt, const Size& size, IBitmap* bitmap, uint32_t blendMode)
