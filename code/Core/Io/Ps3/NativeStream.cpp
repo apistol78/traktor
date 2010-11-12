@@ -4,6 +4,14 @@
 
 namespace traktor
 {
+	namespace
+	{
+
+const int c_pageType = CELL_FS_IO_BUFFER_PAGE_SIZE_1MB;
+const size_t c_containerSize = 1024 * 1024;
+const size_t c_bufferSize = 1024 * 1024;
+
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.NativeStream", NativeStream, IStream)
 
@@ -11,12 +19,19 @@ NativeStream::NativeStream(int32_t fd, uint32_t mode)
 :	m_fd(fd)
 ,	m_mode(mode)
 ,	m_fileSize(0)
+,	m_container(SYS_MEMORY_CONTAINER_ID_INVALID)
 {
-	if (m_mode == File::FmRead)
+	if ((m_mode & File::FmRead) != 0)
 	{
 		CellFsStat sb;
 		if (cellFsFstat(m_fd, &sb) == CELL_FS_SUCCEEDED)
 			m_fileSize = sb.st_size;
+
+		int32_t err = sys_memory_container_create(&m_container, c_containerSize);
+		if (err == CELL_OK)
+			cellFsSetIoBuffer(m_fd, c_bufferSize, c_pageType, m_container);
+		else
+			m_container = SYS_MEMORY_CONTAINER_ID_INVALID;
 	}
 }
 
@@ -32,6 +47,12 @@ void NativeStream::close()
 		flush();
 		cellFsClose(m_fd);
 		m_fd = 0;
+	}
+
+	if (m_container != SYS_MEMORY_CONTAINER_ID_INVALID)
+	{
+		sys_memory_container_destroy(m_container);
+		m_container = SYS_MEMORY_CONTAINER_ID_INVALID;
 	}
 }
 

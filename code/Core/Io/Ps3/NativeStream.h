@@ -1,6 +1,7 @@
 #ifndef traktor_NativeStream_H
 #define traktor_NativeStream_H
 
+#include <sys/memory.h>
 #include "Core/Io/IStream.h"
 
 // import/export mechanism.
@@ -47,6 +48,7 @@ private:
 	int32_t m_fd;
 	uint32_t m_mode;
 	size_t m_fileSize;
+	sys_memory_container_t m_container;
 };
 
 }
