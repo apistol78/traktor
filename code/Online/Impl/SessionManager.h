@@ -47,7 +47,7 @@ public:
 
 private:
 	Ref< ISessionManagerProvider > m_provider;
-	Ref< TaskQueue > m_taskQueue;
+	Ref< TaskQueue > m_taskQueues[2];
 	Ref< IAchievements > m_achievements;
 	Ref< ILeaderboards > m_leaderboards;
 	Ref< ISaveData > m_saveData;
