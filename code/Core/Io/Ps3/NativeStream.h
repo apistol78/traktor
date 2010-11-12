@@ -1,15 +1,14 @@
 #ifndef traktor_NativeStream_H
 #define traktor_NativeStream_H
 
-#include <cstdio>
 #include "Core/Io/IStream.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_CORE_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -20,7 +19,7 @@ class T_DLLCLASS NativeStream : public IStream
 	T_RTTI_CLASS;
 
 public:
-	NativeStream(std::FILE* fp, uint32_t mode);
+	NativeStream(int32_t fd, uint32_t mode);
 	
 	virtual ~NativeStream();
 
@@ -45,7 +44,7 @@ public:
 	virtual void flush();
 	
 private:
-	std::FILE* m_fp;
+	int32_t m_fd;
 	uint32_t m_mode;
 	size_t m_fileSize;
 };

@@ -1,7 +1,4 @@
-#include <sstream>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <dirent.h>
+#include <cell/cell_fs.h>
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/Ps3/NativeVolume.h"
 #include "Core/Io/Ps3/NativeStream.h"
@@ -32,8 +29,6 @@ Ref< File > NativeVolume::get(const Path& path)
 
 int NativeVolume::find(const Path& mask, RefArray< File >& out)
 {
-	struct dirent* dp;
-
 	std::wstring maskPath = mask.getPathOnly();
 	std::wstring systemPath = getSystemPath(maskPath);
 	std::wstring fileMask = mask.getFileName();
@@ -43,40 +38,41 @@ int NativeVolume::find(const Path& mask, RefArray< File >& out)
 		
 	WildCompare maskCompare(fileMask);
 
-	DIR* dirp = opendir(systemPath.empty() ? "." : wstombs(systemPath).c_str());
-	if (!dirp)
-	{
-		log::warning << "Unable to open directory \"" << systemPath << "\"" << Endl;
+	int32_t dd;
+	if (cellFsOpendir(systemPath.empty() ? "." : wstombs(systemPath).c_str(), &dd) != CELL_FS_SUCCEEDED)
 		return 0;
-	}
 	
 	if (!maskPath.empty())
 		maskPath += L"/";
 		
-	while ((dp = readdir(dirp)) != 0)
+	for (;;)
 	{
-		if (maskCompare.match(mbstows(dp->d_name)))
+		CellFsDirent dirent;
+		uint64_t nread;
+
+		if (cellFsReaddir(dd, &dirent, &nread) != CELL_FS_SUCCEEDED || nread == 0)
+			break;
+
+		std::wstring fileName = mbstows(dirent.d_name);
+		if (maskCompare.match(fileName))
 		{
 			int flags = 0;
 			int size = 0;
 			
-			if (dp->d_type == DT_DIR)
-			{
+			if (dirent.d_type == CELL_FS_TYPE_DIRECTORY)
 				flags = File::FfDirectory;
-			}
 			else	// Assumes it's a normal file.
-			{
 				flags = File::FfNormal;
-			}
 			
 			out.push_back(new File(
-				maskPath + mbstows(dp->d_name),
+				maskPath + fileName,
 				size,
 				flags
 			));
 		}
 	}
-	closedir(dirp);
+
+	cellFsClosedir(dd);
 	
 	return int(out.size());
 }
@@ -88,32 +84,42 @@ bool NativeVolume::modify(const Path& fileName, uint32_t flags)
 
 Ref< IStream > NativeVolume::open(const Path& filename, uint32_t mode)
 {
-	FILE* fp = fopen(
+	int32_t fd;
+
+	CellFsErrno err = cellFsOpen(
 		wstombs(getSystemPath(filename)).c_str(),
-		bool(mode == File::FmRead) ? "rb" : "wb"
+		bool(mode == File::FmRead) ? CELL_FS_O_RDONLY : (CELL_FS_O_CREAT | CELL_FS_O_TRUNC | CELL_FS_O_WRONLY),
+		&fd,
+		NULL,
+		0
 	);
-	return bool(fp != 0) ? new NativeStream(fp, mode) : 0;
+	if (err != CELL_FS_SUCCEEDED)
+		return 0;
+
+	return new NativeStream(fd, mode);
 }
 
 bool NativeVolume::exist(const Path& filename)
 {
-	return false;
+	CellFsStat sb;
+	return cellFsStat(wstombs(getSystemPath(filename)).c_str(), &sb) == CELL_FS_SUCCEEDED;
 }
 
 bool NativeVolume::remove(const Path& filename)
 {
-	return ::remove(wstombs(getSystemPath(filename)).c_str()) == 0;
+	return cellFsUnlink(wstombs(getSystemPath(filename)).c_str()) == CELL_FS_SUCCEEDED;
 }
 
 bool NativeVolume::makeDirectory(const Path& directory)
 {
-	int status = mkdir(
+	CellFsErrno err = cellFsMkdir(
 		wstombs(getSystemPath(directory)).c_str(),
-		S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH
+		CELL_FS_S_IRWXU | CELL_FS_S_IRWXG | CELL_FS_S_IRWXO
 	);
-	if (status != 0 && errno != EEXIST)
+	if (err == CELL_FS_SUCCEEDED || err == CELL_FS_EEXIST)
+		return true;
+	else
 		return false;
-	return true;
 }
 
 bool NativeVolume::removeDirectory(const Path& directory)
