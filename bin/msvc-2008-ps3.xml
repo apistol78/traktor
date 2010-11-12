@@ -439,6 +439,10 @@
               <resolvePaths>false</resolvePaths>
               <resolveFullLibraryPaths>true</resolveFullLibraryPaths>
               <staticOptions>
+				<item>
+				  <first>AdditionalOptions</first>
+				  <second>-s -strip-unused-data</second>
+				</item>
                 <item>
                   <first>LinkIncremental</first>
                   <second>1</second>
@@ -698,6 +702,10 @@
               <resolvePaths>false</resolvePaths>
               <resolveFullLibraryPaths>true</resolveFullLibraryPaths>
               <staticOptions>
+				<item>
+				  <first>AdditionalOptions</first>
+				  <second>-s -strip-unused-data</second>
+				</item>
                 <item>
                   <first>LinkIncremental</first>
                   <second>1</second>
@@ -949,6 +957,10 @@
               <resolvePaths>false</resolvePaths>
               <resolveFullLibraryPaths>true</resolveFullLibraryPaths>
               <staticOptions>
+				<item>
+				  <first>AdditionalOptions</first>
+				  <second>-s -strip-unused-data</second>
+				</item>
                 <item>
                   <first>LinkIncremental</first>
                   <second>1</second>
