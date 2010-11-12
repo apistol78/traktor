@@ -111,7 +111,7 @@ bool SoundSystem::create(const SoundSystemCreateDesc& desc)
 	m_time = 0.0;
 
 	// Start threads.
-	m_threadMixer->start(Thread::Normal);
+	m_threadMixer->start(Thread::Above);
 	m_threadSubmit->start(Thread::Highest);
 
 	return true;

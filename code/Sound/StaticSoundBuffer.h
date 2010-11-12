@@ -14,17 +14,9 @@
 
 namespace traktor
 {
-	namespace db
-	{
-	
-class Instance;
-	
-	}
-	
+
 	namespace sound
 	{
-
-class StaticSoundResource;
 
 /*! \brief Static sound buffer.
  * \ingroup Sound
@@ -36,18 +28,21 @@ class T_DLLCLASS StaticSoundBuffer : public ISoundBuffer
 public:
 	virtual ~StaticSoundBuffer();
 
-	bool create(const StaticSoundResource* resource, db::Instance* resourceInstance);
+	bool create(uint32_t sampleRate, uint32_t samplesCount, uint32_t channelsCount);
 
 	void destroy();
+
+	int16_t* getSamplesData(uint32_t channel);
 
 	virtual Ref< ISoundBufferCursor > createCursor() const;
 
 	virtual bool getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const;
 
 private:
-	Ref< const StaticSoundResource > m_resource;
-	Ref< db::Instance > m_resourceInstance;
-	mutable AutoArrayPtr< int16_t > m_readBuffer;
+	uint32_t m_sampleRate;
+	uint32_t m_samplesCount;
+	uint32_t m_channelsCount;
+	AutoArrayPtr< int16_t > m_samples[SbcMaxChannelCount];
 };
 
 	}

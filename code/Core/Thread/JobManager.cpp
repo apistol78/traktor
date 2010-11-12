@@ -106,7 +106,7 @@ void JobManager::create()
 			L"Job worker thread " + toString(i),
 			i + 1
 		);
-		m_workerThreads[i]->start(Thread::Above);
+		m_workerThreads[i]->start(Thread::Normal);
 	}
 }
 
