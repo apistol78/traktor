@@ -2,6 +2,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/MathUtils.h"
+#include "Core/Math/Vector4.h"
 #include "Core/Memory/Alloc.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Thread/Acquire.h"
@@ -18,6 +19,17 @@ namespace traktor
 {
 	namespace sound
 	{
+		namespace
+		{
+
+inline void clearSamples(float* samples, uint32_t samplesCount)
+{
+	T_ASSERT ((samplesCount & 3) == 0);
+	for (uint32_t i = 0; i < samplesCount; i += 4)
+		Vector4::zero().storeAligned(&samples[i]);
+}
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.SoundSystem", SoundSystem, Object)
 
@@ -257,7 +269,7 @@ void SoundSystem::threadMixer()
 		T_ASSERT (samples);
 
 		// Prepare new frame block.
-		std::memset (samples, 0, m_desc.driverDesc.frameSamples * m_desc.driverDesc.hwChannels * sizeof(float));
+		clearSamples(samples, m_desc.driverDesc.frameSamples * m_desc.driverDesc.hwChannels);
 		for (uint32_t i = 0; i < m_desc.driverDesc.hwChannels; ++i)
 			frameBlock.samples[i] = samples + m_desc.driverDesc.frameSamples * i;
 		frameBlock.samplesCount = m_desc.driverDesc.frameSamples;

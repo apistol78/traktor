@@ -3,6 +3,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/MathUtils.h"
+#include "Core/Math/Vector4.h"
 #include "Core/Memory/Alloc.h"
 #include "Core/Misc/Align.h"
 #include "Core/Thread/Acquire.h"
@@ -20,6 +21,13 @@ namespace traktor
 		{
 
 const uint32_t c_outputSamplesBlockCount = 3;
+
+inline void moveSamples(float* destSsamples, const float* sourceSamples, uint32_t samplesCount)
+{
+	T_ASSERT ((samplesCount & 3) == 0);
+	for (uint32_t i = 0; i < samplesCount; i += 4)
+		Vector4::loadAligned(&sourceSamples[i]).storeAligned(&destSsamples[i]);
+}
 
 		}
 
@@ -148,10 +156,10 @@ bool SoundChannel::getBlock(const ISoundMixer* mixer, double time, SoundBlock& o
 		if (m_outputSamplesIn > 0)
 		{
 			for (uint32_t i = 0; i < SbcMaxChannelCount; ++i)
-				std::memmove(
+				moveSamples(
 					m_outputSamples[i],
 					m_outputSamples[i] + m_hwFrameSamples,
-					m_outputSamplesIn * sizeof(float)
+					alignUp(m_outputSamplesIn, 4)
 				);
 		}
 	}
