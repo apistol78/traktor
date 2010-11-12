@@ -37,7 +37,7 @@ const wchar_t* lookupLanguageCode(int32_t id)
 	case SCE_NP_LANG_ITALIAN:
 		return L"it";
 	case SCE_NP_LANG_DUTCH:
-		return L"de";
+		return L"nl";
 	case SCE_NP_LANG_PORTUGUESE:
 		return L"pt";
 	case SCE_NP_LANG_RUSSIAN:
@@ -49,11 +49,13 @@ const wchar_t* lookupLanguageCode(int32_t id)
 	case SCE_NP_LANG_FINNISH:
 		return L"fi";
 	case SCE_NP_LANG_SWEDISH:
-		return L"se";
+		return L"sv";
 	case SCE_NP_LANG_DANISH:
 		return L"dk";
 	case SCE_NP_LANG_NORWEGIAN:
 		return L"no";
+	case SCE_NP_LANG_POLISH:
+		return L"pl";
 	}
 	return 0;
 }
