@@ -1,7 +1,9 @@
+#include "Compress/Zip/InflateStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberBitMask.h"
+#include "Database/Instance.h"
 #include "Sound/Sound.h"
 #include "Sound/StaticSoundBuffer.h"
 #include "Sound/StaticSoundResource.h"
@@ -23,12 +25,41 @@ StaticSoundResource::StaticSoundResource()
 
 Ref< Sound > StaticSoundResource::createSound(resource::IResourceManager* resourceManager, db::Instance* resourceInstance) const
 {
+	Ref< IStream > stream = resourceInstance->readData(L"Data");
+	if (!stream)
+	{
+		log::error << L"Failed to create sound; no data" << Endl;
+		return 0;
+	}
+
 	Ref< StaticSoundBuffer > soundBuffer = new StaticSoundBuffer();
-	if (!soundBuffer->create(this, resourceInstance))
+	if (!soundBuffer->create(m_sampleRate, m_samplesCount, m_channelsCount))
 	{
 		log::error << L"Failed to create sound; unable to create static sound buffer" << Endl;
 		return 0;
 	}
+
+	Ref< IStream > streamData;
+	if (m_flags & SrfZLib)
+		streamData = new compress::InflateStream(stream);
+	else
+		streamData = stream;
+
+	for (uint32_t i = 0; i < m_channelsCount; ++i)
+	{
+		int16_t* samples = soundBuffer->getSamplesData(i);
+		T_ASSERT (samples);
+
+		if (streamData->read(samples, m_samplesCount * sizeof(int16_t)) != m_samplesCount * sizeof(int16_t))
+		{
+			log::error << L"Failed to create sound; unable to read samples" << Endl;
+			return 0;
+		}
+	}
+
+	streamData->close();
+	stream->close();
+
 	return new Sound(soundBuffer);
 }
 
