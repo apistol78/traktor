@@ -197,7 +197,7 @@
 				<first>1377</first>
 				<second>774</second>
 			</position>
-			<value>0.1</value>
+			<value>0.125</value>
 		</item>
 		<item type="traktor.render.Scalar">
 			<comment/>
@@ -205,7 +205,7 @@
 				<first>575</first>
 				<second>601</second>
 			</position>
-			<value>-4</value>
+			<value>-3</value>
 		</item>
 		<item type="traktor.render.Sum">
 			<comment/>
@@ -214,7 +214,7 @@
 				<second>671</second>
 			</position>
 			<from>0</from>
-			<to>9</to>
+			<to>7</to>
 		</item>
 		<item type="traktor.render.MulAdd">
 			<comment/>
