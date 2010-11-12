@@ -47,27 +47,31 @@ bool SessionManager::create(ISessionManagerProvider* provider)
 	if (!(m_provider = provider))
 		return false;
 
-	m_taskQueue = new TaskQueue();
-	if (!m_taskQueue->create(new TaskUpdateSessionManager(
+	m_taskQueues[0] = new TaskQueue();
+	if (!m_taskQueues[0]->create(new TaskUpdateSessionManager(
 		m_provider
 	)))
 		return false;
 
+	m_taskQueues[1] = new TaskQueue();
+	if (!m_taskQueues[1]->create(0))
+		return false;
+
 	Ref< ISaveDataProvider > saveDataProvider = m_provider->getSaveData();
 	if (saveDataProvider)
-		m_saveData = new SaveData(saveDataProvider, m_taskQueue);
+		m_saveData = new SaveData(saveDataProvider, m_taskQueues[1]);
 
 	Ref< IAchievementsProvider > achievementsProvider = m_provider->getAchievements();
 	if (achievementsProvider)
-		m_achievements = new Achievements(achievementsProvider, m_taskQueue);
+		m_achievements = new Achievements(achievementsProvider, m_taskQueues[0]);
 
 	Ref< ILeaderboardsProvider > leaderboardsProvider = m_provider->getLeaderboards();
 	if (leaderboardsProvider)
-		m_leaderboards = new Leaderboards(leaderboardsProvider, m_taskQueue);
+		m_leaderboards = new Leaderboards(leaderboardsProvider, m_taskQueues[0]);
 
 	Ref< IStatisticsProvider > statisticsProvider = m_provider->getStatistics();
 	if (statisticsProvider)
-		m_statistics = new Statistics(statisticsProvider, m_taskQueue);
+		m_statistics = new Statistics(statisticsProvider, m_taskQueues[0]);
 
 	return true;
 }
@@ -79,7 +83,8 @@ void SessionManager::destroy()
 	m_leaderboards = 0;
 	m_achievements = 0;
 
-	safeDestroy(m_taskQueue);
+	safeDestroy(m_taskQueues[1]);
+	safeDestroy(m_taskQueues[0]);
 	safeDestroy(m_provider);
 }
 
