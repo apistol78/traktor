@@ -1,6 +1,5 @@
 #include <cell/cell_fs.h>
-#include "Core/Io/FileSystem.h"
-#include "Core/Io/Ps3/NativeVolume.h"
+#include "Core/Io/Ps3/DrmVolume.h"
 #include "Core/Io/Ps3/NativeStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
@@ -10,24 +9,25 @@
 namespace traktor
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.NativeVolume", NativeVolume, IVolume)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.DrmVolume", DrmVolume, IVolume)
 
-NativeVolume::NativeVolume(const Path& currentDirectory)
-:	m_currentDirectory(currentDirectory)
+DrmVolume::DrmVolume(const SceNpDrmKey& licensee)
+:	m_licensee(licensee)
+,	m_currentDirectory(L"/app_home")
 {
 }
 
-std::wstring NativeVolume::getDescription() const
+std::wstring DrmVolume::getDescription() const
 {
-	return L"Native volume";
+	return L"Native DRM volume";
 }
 
-Ref< File > NativeVolume::get(const Path& path)
+Ref< File > DrmVolume::get(const Path& path)
 {
 	return 0;
 }
 
-int NativeVolume::find(const Path& mask, RefArray< File >& out)
+int DrmVolume::find(const Path& mask, RefArray< File >& out)
 {
 	std::wstring maskPath = mask.getPathOnly();
 	std::wstring systemPath = getSystemPath(maskPath);
@@ -77,40 +77,44 @@ int NativeVolume::find(const Path& mask, RefArray< File >& out)
 	return int(out.size());
 }
 
-bool NativeVolume::modify(const Path& fileName, uint32_t flags)
+bool DrmVolume::modify(const Path& fileName, uint32_t flags)
 {
 	return false;
 }
 
-Ref< IStream > NativeVolume::open(const Path& filename, uint32_t mode)
+Ref< IStream > DrmVolume::open(const Path& filename, uint32_t mode)
 {
 	int32_t fd;
 
-	CellFsErrno err = cellFsOpen(
+	if (mode != File::FmRead)
+		return 0;
+
+	int32_t err = sceNpDrmOpen(
+		&m_licensee,
 		wstombs(getSystemPath(filename)).c_str(),
-		bool(mode == File::FmRead) ? CELL_FS_O_RDONLY : (CELL_FS_O_CREAT | CELL_FS_O_TRUNC | CELL_FS_O_WRONLY),
+		CELL_FS_O_RDONLY,
 		&fd,
 		NULL,
 		0
 	);
-	if (err != CELL_FS_SUCCEEDED)
+	if (err < 0)
 		return 0;
 
 	return new NativeStream(fd, mode);
 }
 
-bool NativeVolume::exist(const Path& filename)
+bool DrmVolume::exist(const Path& filename)
 {
 	CellFsStat sb;
 	return cellFsStat(wstombs(getSystemPath(filename)).c_str(), &sb) == CELL_FS_SUCCEEDED;
 }
 
-bool NativeVolume::remove(const Path& filename)
+bool DrmVolume::remove(const Path& filename)
 {
 	return cellFsUnlink(wstombs(getSystemPath(filename)).c_str()) == CELL_FS_SUCCEEDED;
 }
 
-bool NativeVolume::makeDirectory(const Path& directory)
+bool DrmVolume::makeDirectory(const Path& directory)
 {
 	CellFsErrno err = cellFsMkdir(
 		wstombs(getSystemPath(directory)).c_str(),
@@ -122,17 +126,17 @@ bool NativeVolume::makeDirectory(const Path& directory)
 		return false;
 }
 
-bool NativeVolume::removeDirectory(const Path& directory)
+bool DrmVolume::removeDirectory(const Path& directory)
 {
 	return false;
 }
 
-bool NativeVolume::renameDirectory(const Path& directory, const std::wstring& newName)
+bool DrmVolume::renameDirectory(const Path& directory, const std::wstring& newName)
 {
 	return false;
 }
 
-bool NativeVolume::setCurrentDirectory(const Path& directory)
+bool DrmVolume::setCurrentDirectory(const Path& directory)
 {
 	if (directory.isRelative())
 	{
@@ -148,19 +152,12 @@ bool NativeVolume::setCurrentDirectory(const Path& directory)
 	return true;
 }
 
-Path NativeVolume::getCurrentDirectory() const
+Path DrmVolume::getCurrentDirectory() const
 {
 	return m_currentDirectory;
 }
 
-void NativeVolume::mountVolumes(FileSystem& fileSystem)
-{
-	Ref< IVolume > volume = new NativeVolume(L"/app_home");
-	fileSystem.mount(L"C", volume);
-	fileSystem.setCurrentVolume(volume);
-}
-
-std::wstring NativeVolume::getSystemPath(const Path& path) const
+std::wstring DrmVolume::getSystemPath(const Path& path) const
 {
 	std::wstringstream ss;
 
