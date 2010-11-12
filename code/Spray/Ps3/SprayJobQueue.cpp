@@ -16,7 +16,7 @@ SprayJobQueue& SprayJobQueue::getInstance()
 	if (!s_instance)
 	{
 		s_instance = new SprayJobQueue();
-		SingletonManager::getInstance().add(s_instance);
+		SingletonManager::getInstance().addBefore(s_instance, &SpursManager::getInstance());
 	}
 	return *s_instance;
 }
