@@ -1,4 +1,5 @@
 #include <cell/cell_fs.h>
+#include <np/drm_inline.h>
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/Ps3/NativeVolume.h"
 #include "Core/Io/Ps3/NativeStream.h"
@@ -86,15 +87,34 @@ Ref< IStream > NativeVolume::open(const Path& filename, uint32_t mode)
 {
 	int32_t fd;
 
-	CellFsErrno err = cellFsOpen(
-		wstombs(getSystemPath(filename)).c_str(),
-		bool(mode == File::FmRead) ? CELL_FS_O_RDONLY : (CELL_FS_O_CREAT | CELL_FS_O_TRUNC | CELL_FS_O_WRONLY),
-		&fd,
-		NULL,
-		0
-	);
-	if (err != CELL_FS_SUCCEEDED)
-		return 0;
+	if (compareIgnoreCase< std::wstring >(filename.getExtension(), L"edat") != 0)
+	{
+		CellFsErrno err = cellFsOpen(
+			wstombs(getSystemPath(filename)).c_str(),
+			bool(mode == File::FmRead) ? CELL_FS_O_RDONLY : (CELL_FS_O_CREAT | CELL_FS_O_TRUNC | CELL_FS_O_WRONLY),
+			&fd,
+			NULL,
+			0
+		);
+		if (err != CELL_FS_SUCCEEDED)
+			return 0;
+	}
+	else
+	{
+		if (mode != File::FmRead)
+			return 0;
+
+		int32_t err = sceNpDrmOpen(
+			NULL,
+			wstombs(getSystemPath(filename)).c_str(),
+			CELL_FS_O_RDONLY,
+			&fd,
+			NULL,
+			0
+		);
+		if (err < 0)
+			return 0;
+	}
 
 	return new NativeStream(fd, mode);
 }
