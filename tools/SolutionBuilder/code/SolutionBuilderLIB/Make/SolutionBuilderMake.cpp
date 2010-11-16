@@ -478,7 +478,7 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 						libs += L" " + *it;
 					else
 					{
-						if (endsWith(*it, L".framework"))
+						if (endsWith< std::wstring >(*it, L".framework"))
 							libs += L" -framework " + it->substr(0, it->length() - 10);
 						else
 							libs += L" -l" + *it;

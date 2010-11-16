@@ -106,7 +106,7 @@ bool ImportMsvcProject::execute(traktor::ui::Widget* parent, Solution* solution,
 				std::wstring configurationName = configurationAndPlatform.substr(0, p);
 				std::wstring platformName = configurationAndPlatform.substr(p + 1);
 
-				if (compareIgnoreCase(platformName, L"Win32") != 0)
+				if (compareIgnoreCase< std::wstring >(platformName, L"Win32") != 0)
 					continue;
 
 				Ref< Configuration > configuration = new Configuration();

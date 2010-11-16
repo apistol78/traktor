@@ -1,3 +1,4 @@
+#include <Core/Log/Log.h>
 #include <Core/Serialization/ISerializer.h>
 #include <Core/Serialization/MemberRef.h>
 #include "ExternalDependency.h"
@@ -51,7 +52,10 @@ bool ExternalDependency::resolve(SolutionLoader* solutionLoader)
 
 	m_solution = solutionLoader->load(m_solutionFileName);
 	if (!m_solution)
+	{
+		traktor::log::error << L"Unable to load external solution \"" << m_solutionFileName << L"\"; corrupt or missing" << traktor::Endl;
 		return false;
+	}
 
 	const traktor::RefArray< Project >& projects = m_solution->getProjects();
 	for (traktor::RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
@@ -64,7 +68,10 @@ bool ExternalDependency::resolve(SolutionLoader* solutionLoader)
 	}
 
 	if (!m_project)
+	{
+		traktor::log::error << L"Unable to resolve external dependency \"" << m_projectName << L"\"; no such project in solution \"" << m_solutionFileName << L"\"" << traktor::Endl;
 		return false;
+	}
 
 	// Resolve other external dependencies from this dependency.
 	traktor::RefArray< Dependency > originalDependencies = m_project->getDependencies();
