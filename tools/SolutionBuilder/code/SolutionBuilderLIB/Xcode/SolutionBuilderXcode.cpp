@@ -234,7 +234,7 @@ namespace
 			const std::vector< std::wstring >& libraries = (*i)->getLibraries();
 			for (std::vector< std::wstring >::const_iterator j = libraries.begin(); j != libraries.end(); ++j)
 			{
-				if (endsWith(*j, L".framework"))
+				if (endsWith< std::wstring >(*j, L".framework"))
 					outFrameworks.insert(*j);
 			}
 		}
@@ -1453,7 +1453,7 @@ void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, 
 					bool first = true;
 					for (std::vector< std::wstring >::const_iterator j = libraries.begin(); j != libraries.end(); ++j)
 					{
-						if (endsWith(*j, L".framework"))
+						if (endsWith< std::wstring >(*j, L".framework"))
 							continue;
 
 						if (!first)
@@ -1546,7 +1546,7 @@ void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, 
 					bool first = true;
 					for (std::vector< std::wstring >::const_iterator j = libraries.begin(); j != libraries.end(); ++j)
 					{
-						if (endsWith(*j, L".framework"))
+						if (endsWith< std::wstring >(*j, L".framework"))
 							continue;
 
 						if (!first)
