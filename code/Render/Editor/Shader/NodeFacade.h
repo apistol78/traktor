@@ -47,6 +47,14 @@ public:
 	virtual void editShaderNode(
 		editor::IEditor* editor,
 		ui::custom::GraphControl* graphControl,
+		ui::custom::Node* editorNode,
+		Node* shaderNode
+	) = 0;
+
+	virtual void refreshEditorNode(
+		editor::IEditor* editor,
+		ui::custom::GraphControl* graphControl,
+		ui::custom::Node* editorNode,
 		Node* shaderNode
 	) = 0;
 

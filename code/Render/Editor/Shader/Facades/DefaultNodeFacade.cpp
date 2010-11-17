@@ -90,9 +90,21 @@ Ref< ui::custom::Node > DefaultNodeFacade::createEditorNode(
 void DefaultNodeFacade::editShaderNode(
 	editor::IEditor* editor,
 	ui::custom::GraphControl* graphControl,
+	ui::custom::Node* editorNode,
 	Node* shaderNode
 )
 {
+}
+
+void DefaultNodeFacade::refreshEditorNode(
+	editor::IEditor* editor,
+	ui::custom::GraphControl* graphControl,
+	ui::custom::Node* editorNode,
+	Node* shaderNode
+)
+{
+	editorNode->setComment(shaderNode->getComment());
+	editorNode->setInfo(shaderNode->getInformation());
 }
 
 void DefaultNodeFacade::setValidationIndicator(

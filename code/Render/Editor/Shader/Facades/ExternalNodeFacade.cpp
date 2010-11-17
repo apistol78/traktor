@@ -96,6 +96,7 @@ Ref< ui::custom::Node > ExternalNodeFacade::createEditorNode(
 void ExternalNodeFacade::editShaderNode(
 	editor::IEditor* editor,
 	ui::custom::GraphControl* graphControl,
+	ui::custom::Node* editorNode,
 	Node* shaderNode
 )
 {
@@ -104,6 +105,19 @@ void ExternalNodeFacade::editShaderNode(
 	);
 	if (instance)
 		editor->openEditor(instance);
+}
+
+void ExternalNodeFacade::refreshEditorNode(
+	editor::IEditor* editor,
+	ui::custom::GraphControl* graphControl,
+	ui::custom::Node* editorNode,
+	Node* shaderNode
+)
+{
+	External* external = checked_type_cast< External*, false >(shaderNode);
+	Ref< db::Instance > instance = editor->getSourceDatabase()->getInstance(static_cast< External* >(shaderNode)->getFragmentGuid());
+	editorNode->setTitle(instance ? instance->getName() : L"{ Null reference }");
+	editorNode->setComment(shaderNode->getComment());
 }
 
 void ExternalNodeFacade::setValidationIndicator(

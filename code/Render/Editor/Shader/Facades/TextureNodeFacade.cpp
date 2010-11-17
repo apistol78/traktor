@@ -72,8 +72,48 @@ Ref< ui::custom::Node > TextureNodeFacade::createEditorNode(
 	editorNode->setComment(shaderNode->getComment());
 	editorNode->setColor(traktor::Color(255, 255, 200));
 
-	Guid textureGuid = texture->getExternal();
-	if (!textureGuid.isNull())
+	updateThumb(editor, editorNode, texture);
+
+	return editorNode;
+}
+
+void TextureNodeFacade::editShaderNode(
+	editor::IEditor* editor,
+	ui::custom::GraphControl* graphControl,
+	ui::custom::Node* editorNode,
+	Node* shaderNode
+)
+{
+	editor::TypeBrowseFilter filter(type_of< TextureAsset >());
+	Ref< db::Instance > instance = editor->browseInstance(&filter);
+	if (instance)
+		checked_type_cast< Texture*, false >(shaderNode)->setExternal(instance->getGuid());
+}
+
+void TextureNodeFacade::refreshEditorNode(
+	editor::IEditor* editor,
+	ui::custom::GraphControl* graphControl,
+	ui::custom::Node* editorNode,
+	Node* shaderNode
+)
+{
+	editorNode->setComment(shaderNode->getComment());
+	editorNode->setInfo(shaderNode->getInformation());
+	updateThumb(editor, editorNode, checked_type_cast< Texture*, false >(shaderNode));
+}
+
+void TextureNodeFacade::setValidationIndicator(
+	ui::custom::Node* editorNode,
+	bool validationSucceeded
+)
+{
+	editorNode->setColor(validationSucceeded ? traktor::Color(200, 255, 255) : traktor::Color(255, 255, 200));
+}
+
+void TextureNodeFacade::updateThumb(editor::IEditor* editor, ui::custom::Node* editorNode, Texture* texture) const
+{
+	Guid textureGuid = texture ? texture->getExternal() : Guid();
+	if (textureGuid.isValid() && !textureGuid.isNull())
 	{
 		Ref< TextureAsset > textureAsset = editor->getSourceDatabase()->getObjectReadOnly< TextureAsset >(textureGuid);
 		if (textureAsset)
@@ -90,33 +130,17 @@ Ref< ui::custom::Node > TextureNodeFacade::createEditorNode(
 				{
 					Ref< ui::Bitmap > nodeImage = new ui::Bitmap();
 					if (nodeImage->create(thumbnail))
+					{
 						editorNode->setImage(nodeImage);
+						return;
+					}
 				}
 			}
 		}
 	}
 
-	return editorNode;
-}
-
-void TextureNodeFacade::editShaderNode(
-	editor::IEditor* editor,
-	ui::custom::GraphControl* graphControl,
-	Node* shaderNode
-)
-{
-	editor::TypeBrowseFilter filter(type_of< TextureAsset >());
-	Ref< db::Instance > instance = editor->browseInstance(&filter);
-	if (instance)
-		checked_type_cast< Texture*, false >(shaderNode)->setExternal(instance->getGuid());
-}
-
-void TextureNodeFacade::setValidationIndicator(
-	ui::custom::Node* editorNode,
-	bool validationSucceeded
-)
-{
-	editorNode->setColor(validationSucceeded ? traktor::Color(200, 255, 255) : traktor::Color(255, 255, 200));
+	// Failed to update thumb; or no texture bound yet.
+	editorNode->setImage(0);
 }
 
 	}
