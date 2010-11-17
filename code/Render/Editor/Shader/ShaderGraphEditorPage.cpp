@@ -801,21 +801,13 @@ void ShaderGraphEditorPage::refreshGraph()
 		ui::custom::Node* editorNode = *i;
 
 		Node* shaderNode = editorNode->getData< Node >(L"SHADERNODE");
-		editorNode->setComment(
-			shaderNode->getComment()
-		);
-		
-		if (is_a< External >(shaderNode))
-		{
-			Ref< db::Instance > instance = m_editor->getSourceDatabase()->getInstance(static_cast< External* >(shaderNode)->getFragmentGuid());
-			editorNode->setTitle(instance ? instance->getName() : L"{ Null reference }");
-			editorNode->setInfo(L"");
-		}
-		else
-			editorNode->setInfo(
-				shaderNode->getInformation()
-			);
+		NodeFacade* nodeFacade = editorNode->getData< NodeFacade >(L"FACADE");
 
+		if (!shaderNode || !nodeFacade)
+			continue;
+
+		nodeFacade->refreshEditorNode(m_editor, m_editorGraph, editorNode, shaderNode);
+		
 		const std::pair< int, int >& position = shaderNode->getPosition();
 		editorNode->setPosition(ui::Point(
 			position.first,
@@ -1056,6 +1048,7 @@ void ShaderGraphEditorPage::eventNodeDoubleClick(ui::Event* event)
 	m_nodeFacades[&type_of(shaderNode)]->editShaderNode(
 		m_editor,
 		m_editorGraph,
+		editorNode,
 		shaderNode
 	);
 

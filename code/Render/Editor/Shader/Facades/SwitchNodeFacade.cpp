@@ -67,6 +67,7 @@ Ref< ui::custom::Node > SwitchNodeFacade::createEditorNode(
 void SwitchNodeFacade::editShaderNode(
 	editor::IEditor* editor,
 	ui::custom::GraphControl* graphControl,
+	ui::custom::Node* editorNode,
 	Node* shaderNode
 )
 {
@@ -77,6 +78,17 @@ void SwitchNodeFacade::editShaderNode(
 	{
 	}
 	nodeDialog.destroy();
+}
+
+void SwitchNodeFacade::refreshEditorNode(
+	editor::IEditor* editor,
+	ui::custom::GraphControl* graphControl,
+	ui::custom::Node* editorNode,
+	Node* shaderNode
+)
+{
+	editorNode->setComment(shaderNode->getComment());
+	editorNode->setInfo(shaderNode->getInformation());
 }
 
 void SwitchNodeFacade::setValidationIndicator(

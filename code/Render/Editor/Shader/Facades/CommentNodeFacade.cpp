@@ -47,9 +47,21 @@ Ref< ui::custom::Node > CommentNodeFacade::createEditorNode(
 void CommentNodeFacade::editShaderNode(
 	editor::IEditor* editor,
 	ui::custom::GraphControl* graphControl,
+	ui::custom::Node* editorNode,
 	Node* shaderNode
 )
 {
+}
+
+void CommentNodeFacade::refreshEditorNode(
+	editor::IEditor* editor,
+	ui::custom::GraphControl* graphControl,
+	ui::custom::Node* editorNode,
+	Node* shaderNode
+)
+{
+	editorNode->setComment(shaderNode->getComment());
+	editorNode->setInfo(shaderNode->getInformation());
 }
 
 void CommentNodeFacade::setValidationIndicator(

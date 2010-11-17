@@ -68,6 +68,7 @@ Ref< ui::custom::Node > ColorNodeFacade::createEditorNode(
 void ColorNodeFacade::editShaderNode(
 	editor::IEditor* editor,
 	ui::custom::GraphControl* graphControl,
+	ui::custom::Node* editorNode,
 	Node* shaderNode
 )
 {
@@ -83,6 +84,17 @@ void ColorNodeFacade::editShaderNode(
 	if (colorDialog.showModal() == ui::DrOk)
 		colorNode->setColor(colorDialog.getColor());
 	colorDialog.destroy();
+}
+
+void ColorNodeFacade::refreshEditorNode(
+	editor::IEditor* editor,
+	ui::custom::GraphControl* graphControl,
+	ui::custom::Node* editorNode,
+	Node* shaderNode
+)
+{
+	editorNode->setComment(shaderNode->getComment());
+	editorNode->setInfo(shaderNode->getInformation());
 }
 
 void ColorNodeFacade::setValidationIndicator(

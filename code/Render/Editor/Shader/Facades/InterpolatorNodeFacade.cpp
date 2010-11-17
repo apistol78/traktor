@@ -66,9 +66,21 @@ Ref< ui::custom::Node > InterpolatorNodeFacade::createEditorNode(
 void InterpolatorNodeFacade::editShaderNode(
 	editor::IEditor* editor,
 	ui::custom::GraphControl* graphControl,
+	ui::custom::Node* editorNode,
 	Node* shaderNode
 )
 {
+}
+
+void InterpolatorNodeFacade::refreshEditorNode(
+	editor::IEditor* editor,
+	ui::custom::GraphControl* graphControl,
+	ui::custom::Node* editorNode,
+	Node* shaderNode
+)
+{
+	editorNode->setComment(shaderNode->getComment());
+	editorNode->setInfo(shaderNode->getInformation());
 }
 
 void InterpolatorNodeFacade::setValidationIndicator(

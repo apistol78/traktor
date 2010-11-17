@@ -40,6 +40,14 @@ public:
 	virtual void editShaderNode(
 		editor::IEditor* editor,
 		ui::custom::GraphControl* graphControl,
+		ui::custom::Node* editorNode,
+		Node* shaderNode
+	);
+
+	virtual void refreshEditorNode(
+		editor::IEditor* editor,
+		ui::custom::GraphControl* graphControl,
+		ui::custom::Node* editorNode,
 		Node* shaderNode
 	);
 
