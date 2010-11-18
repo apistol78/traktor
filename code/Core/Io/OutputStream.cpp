@@ -281,6 +281,9 @@ OutputStream& OutputStream::operator << (const std::wstring& s)
 
 void OutputStream::put(wchar_t ch)
 {
+	if (!m_buffer)
+		return;
+
 	if (m_pushIndent)
 	{
 		if (m_indent > 0)
@@ -296,6 +299,9 @@ void OutputStream::put(wchar_t ch)
 
 void OutputStream::puts(const wchar_t* s)
 {
+	if (!m_buffer)
+		return;
+
 	if (s)
 	{
 		uint32_t x = 0;
