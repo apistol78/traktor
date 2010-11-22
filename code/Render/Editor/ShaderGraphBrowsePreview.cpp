@@ -38,7 +38,7 @@ Ref< ui::Bitmap > ShaderGraphBrowsePreview::generate(const editor::IEditor* edit
 		64
 	);
 
-	shaderGraphThumb->clear(drawing::Color(0.7f, 0.7f, 0.7f));
+	shaderGraphThumb->clear(Color4f(0.7f, 0.7f, 0.7f));
 
 	drawing::Raster raster(shaderGraphThumb);
 
@@ -78,7 +78,7 @@ Ref< ui::Bitmap > ShaderGraphBrowsePreview::generate(const editor::IEditor* edit
 		int32_t x2 = ((position2.first - bounds.left) * 64) / bounds.getSize().cx;
 		int32_t y2 = ((position2.second - bounds.top) * 64) / bounds.getSize().cy;
 
-		raster.drawLine(x1, y1, x2, y2, drawing::Color(0.0f, 0.0f, 0.0f, 0.3f));
+		raster.drawLine(x1, y1, x2, y2, Color4f(0.0f, 0.0f, 0.0f, 0.3f));
 	}
 
 	for (RefArray< Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
@@ -88,8 +88,8 @@ Ref< ui::Bitmap > ShaderGraphBrowsePreview::generate(const editor::IEditor* edit
 		int32_t x = ((position.first - bounds.left) * 64) / bounds.getSize().cx;
 		int32_t y = ((position.second - bounds.top) * 64) / bounds.getSize().cy;
 		
-		raster.drawFilledRectangle(x - 1, y - 1, x + 1, y + 1, drawing::Color(1.0f, 1.0f, 0.8f, 1.0f));
-		raster.drawRectangle(x - 2, y - 2, x + 2, y + 2, drawing::Color(0.7f, 0.7f, 0.4f, 1.0f));
+		raster.drawFilledRectangle(x - 1, y - 1, x + 1, y + 1, Color4f(1.0f, 1.0f, 0.8f, 1.0f));
+		raster.drawRectangle(x - 2, y - 2, x + 2, y + 2, Color4f(0.7f, 0.7f, 0.4f, 1.0f));
 	}
 
 	return new ui::Bitmap(shaderGraphThumb);

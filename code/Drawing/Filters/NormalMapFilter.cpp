@@ -1,6 +1,5 @@
-#include "Drawing/Filters/NormalMapFilter.h"
 #include "Drawing/Image.h"
-#include "Core/Math/Vector4.h"
+#include "Drawing/Filters/NormalMapFilter.h"
 
 namespace traktor
 {
@@ -16,19 +15,19 @@ NormalMapFilter::NormalMapFilter(float scale)
 Ref< Image > NormalMapFilter::apply(const Image* image)
 {
 	Ref< Image > final = new Image(image->getPixelFormat(), image->getWidth(), image->getHeight(), image->getPalette());
-	Color in[3];
+	Color4f in0, in1, in2;
+	Scalar c[3];
 
 	for (int32_t y = 0; y < image->getHeight(); ++y)
 	{
 		for (int32_t x = 0; x < image->getWidth(); ++x)
 		{
-			image->getPixel(x, y, in[0]);
-			image->getPixel(x + 1, y, in[1]);
-			image->getPixel(x, y + 1, in[2]);
+			image->getPixel(x, y, in0);
+			image->getPixel(x + 1, y, in1);
+			image->getPixel(x, y + 1, in2);
 
-			float c[3];
 			for (int i = 0; i < 3; ++i)
-				c[i] = (in[i].getRed() + in[i].getGreen() + in[i].getBlue()) / 3.0f;
+				c[i] = (in0.getRed() + in1.getGreen() + in2.getBlue()) / Scalar(3.0f);
 
 			Vector4 normal =
 				Vector4(
@@ -39,12 +38,7 @@ Ref< Image > NormalMapFilter::apply(const Image* image)
 
 			normal = normal * Scalar(0.5f) + Scalar(0.5f);
 
-			final->setPixelUnsafe(x, y, Color(
-				normal.x(),
-				normal.y(),
-				normal.z(),
-				c[0]
-			));
+			final->setPixelUnsafe(x, y, Color4f(normal.xyz0()));
 		}
 	}
 

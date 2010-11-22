@@ -24,7 +24,7 @@ Raster::Raster(Image* image)
 	m_spanlines.resize(m_image->getHeight());
 }
 
-void Raster::drawLine(int32_t x0, int32_t y0, int32_t x1, int32_t y1, const Color& color)
+void Raster::drawLine(int32_t x0, int32_t y0, int32_t x1, int32_t y1, const Color4f& color)
 {
 	float dx = float(x1 - x0);
 	float dy = float(y1 - y0);
@@ -89,23 +89,23 @@ void Raster::drawLine(int32_t x0, int32_t y0, int32_t x1, int32_t y1, const Colo
 	}
 }
 
-void Raster::drawPixel(int32_t x, int32_t y, const Color& color)
+void Raster::drawPixel(int32_t x, int32_t y, const Color4f& color)
 {
-	Color colorDst;
+	Color4f colorDst;
 	m_image->getPixel(x, y, colorDst);
-	float alpha = color.getAlpha();
-	m_image->setPixel(x, y, color * alpha + colorDst * (1.0f -  alpha));
+	Scalar alpha = color.getAlpha();
+	m_image->setPixel(x, y, color * alpha + colorDst * (Scalar(1.0f) - alpha));
 }
 
-void Raster::drawPixel(int32_t x, int32_t y, const Color& color, float alpha)
+void Raster::drawPixel(int32_t x, int32_t y, const Color4f& color, float alpha)
 {
-	Color colorDst;
+	Color4f colorDst;
 	m_image->getPixel(x, y, colorDst);
 	alpha *= color.getAlpha();
-	m_image->setPixel(x, y, color * alpha + colorDst * (1.0f -  alpha));
+	m_image->setPixel(x, y, color * Scalar(alpha) + colorDst * Scalar(1.0f - alpha));
 }
 
-void Raster::drawCircle(int32_t x0, int32_t y0, int32_t radius, const Color& color)
+void Raster::drawCircle(int32_t x0, int32_t y0, int32_t radius, const Color4f& color)
 {
 	int f = 1 - radius;
 	int ddF_x = 1;
@@ -142,7 +142,7 @@ void Raster::drawCircle(int32_t x0, int32_t y0, int32_t radius, const Color& col
 	}
 }
 
-void Raster::drawFilledCircle(int32_t x, int32_t y, int32_t radius, const Color& color)
+void Raster::drawFilledCircle(int32_t x, int32_t y, int32_t radius, const Color4f& color)
 {
 	for (int32_t yy = -radius; yy <= radius; ++yy)
 	{
@@ -156,7 +156,7 @@ void Raster::drawFilledCircle(int32_t x, int32_t y, int32_t radius, const Color&
 	}
 }
 
-void Raster::drawRectangle(int32_t x1, int32_t y1, int32_t x2, int32_t y2, const Color& color)
+void Raster::drawRectangle(int32_t x1, int32_t y1, int32_t x2, int32_t y2, const Color4f& color)
 {
 	for (int32_t y = y1; y <= y2; ++y)
 	{
@@ -170,7 +170,7 @@ void Raster::drawRectangle(int32_t x1, int32_t y1, int32_t x2, int32_t y2, const
 	}
 }
 
-void Raster::drawFilledRectangle(int32_t x1, int32_t y1, int32_t x2, int32_t y2, const Color& color)
+void Raster::drawFilledRectangle(int32_t x1, int32_t y1, int32_t x2, int32_t y2, const Color4f& color)
 {
 	for (int32_t y = y1; y <= y2; ++y)
 	{
@@ -181,7 +181,7 @@ void Raster::drawFilledRectangle(int32_t x1, int32_t y1, int32_t x2, int32_t y2,
 	}
 }
 
-void Raster::drawPolygon(const Vector2* points, uint32_t npoints, const Color& color)
+void Raster::drawPolygon(const Vector2* points, uint32_t npoints, const Color4f& color)
 {
 	int32_t mny = m_image->getHeight() - 1;
 	int32_t mxy = 0;
@@ -288,7 +288,7 @@ void Raster::drawPolygon(const Vector2* points, uint32_t npoints, const Color& c
 	}
 }
 
-void Raster::drawPolyLine(const Vector2* points, uint32_t npoints, const Color& color)
+void Raster::drawPolyLine(const Vector2* points, uint32_t npoints, const Color4f& color)
 {
 	int32_t px = int32_t(points[0].x);
 	int32_t py = int32_t(points[0].y);

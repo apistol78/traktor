@@ -9,7 +9,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.TransformFilter", TransformFilter, IImageFilter)
 
-TransformFilter::TransformFilter(const Color& Km, const Color& Kc)
+TransformFilter::TransformFilter(const Color4f& Km, const Color4f& Kc)
 :	m_Km(Km)
 ,	m_Kc(Kc)
 {
@@ -17,7 +17,7 @@ TransformFilter::TransformFilter(const Color& Km, const Color& Kc)
 
 Ref< Image > TransformFilter::apply(const Image* image)
 {
-	Color in;
+	Color4f in;
 
 	Ref< Image > final = image->clone(false);
 	for (int32_t y = 0; y < image->getHeight(); ++y)

@@ -18,7 +18,7 @@ MirrorFilter::MirrorFilter(bool flipHorizontal, bool flipVertical)
 Ref< Image > MirrorFilter::apply(const Image* image)
 {
 	Ref< Image > final = new Image(image->getPixelFormat(), image->getWidth(), image->getHeight(), image->getPalette());
-	Color in;
+	Color4f in;
 
 	for (int32_t y = 0; y < image->getHeight(); ++y)
 	{

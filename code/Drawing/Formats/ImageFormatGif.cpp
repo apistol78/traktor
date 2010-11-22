@@ -4,7 +4,7 @@
 #include "Drawing/ImageInfo.h"
 #include "Drawing/Palette.h"
 #include "Drawing/PixelFormat.h"
-#include "Drawing/Color.h"
+#include "Core/Math/Color4f.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
@@ -170,7 +170,7 @@ Ref< Image > ImageFormatGif::read(IStream* stream)
 			if (stream->read(&pe, sizeof(PaletteEntry)) != sizeof(PaletteEntry))
 				return 0;
 			globalPalette->set(i,
-				Color(
+				Color4f(
 					pe.r / 255.0f,
 					pe.g / 255.0f,
 					pe.b / 255.0f
@@ -184,7 +184,7 @@ Ref< Image > ImageFormatGif::read(IStream* stream)
 		{
 			globalPalette->set(
 				i,
-				Color(
+				Color4f(
 					i / float((1 << bpp) - 1),
 					i / float((1 << bpp) - 1),
 					i / float((1 << bpp) - 1)
@@ -248,7 +248,7 @@ Ref< Image > ImageFormatGif::read(IStream* stream)
 					if (stream->read(&pe, sizeof(PaletteEntry)) != sizeof(PaletteEntry))
 						return 0;
 					palette->set(i,
-						Color(
+						Color4f(
 							pe.r / 255.0f,
 							pe.g / 255.0f,
 							pe.b / 255.0f

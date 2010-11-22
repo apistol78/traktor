@@ -21,7 +21,7 @@ SwizzleFilter::SwizzleFilter(const std::wstring& swizzle)
 Ref< Image > SwizzleFilter::apply(const Image* image)
 {
 	Ref< Image > final = new Image(image->getPixelFormat(), image->getWidth(), image->getHeight(), image->getPalette());
-	Color in, out;
+	Color4f in, out;
 
 	for (int32_t y = 0; y < image->getHeight(); ++y)
 	{
@@ -45,10 +45,10 @@ Ref< Image > SwizzleFilter::apply(const Image* image)
 					out.set(i, in.getBlue());
 					break;
 				case L'0':
-					out.set(i, 0.0f);
+					out.set(i, Scalar(0.0f));
 					break;
 				case L'1':
-					out.set(i, 1.0f);
+					out.set(i, Scalar(1.0f));
 					break;
 				}
 			}

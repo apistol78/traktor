@@ -1,16 +1,16 @@
 #ifndef traktor_drawing_Palette_H
 #define traktor_drawing_Palette_H
 
-#include <vector>
 #include "Core/Object.h"
-#include "Drawing/Color.h"
+#include "Core/Containers/AlignedVector.h"
+#include "Core/Math/Color4f.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_DRAWING_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -30,14 +30,14 @@ public:
 
 	int getSize() const;
 	
-	void set(int index, const Color& c);
+	void set(int index, const Color4f& c);
 	
-	const Color& get(int index) const;
+	const Color4f& get(int index) const;
 	
-	int find(const Color& c, bool exact = false) const;
+	int find(const Color4f& c, bool exact = false) const;
 	
 private:
-	std::vector< Color > m_colors;
+	AlignedVector< Color4f > m_colors;
 };
 
 	}

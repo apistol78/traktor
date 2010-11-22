@@ -157,7 +157,7 @@ bool HeightfieldPipeline::buildOutput(
 	{
 		for (int32_t x = 0; x < image->getWidth(); ++x)
 		{
-			drawing::Color imagePixel;
+			Color4f imagePixel;
 			image->getPixel(x, y, imagePixel);
 			writer << float(imagePixel.getRed() * 2.0f - 1.0f);
 		}

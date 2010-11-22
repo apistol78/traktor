@@ -127,7 +127,7 @@ Ref< Image > ImageFormatPcx::read(IStream* stream)
 	{
 		uint8_t rgb[3];
 		stream->read(rgb, 3);
-		palette->set(i, Color(
+		palette->set(i, Color4f(
 			rgb[0] / 255.0f,
 			rgb[1] / 255.0f,
 			rgb[2] / 255.0f
@@ -226,7 +226,7 @@ bool ImageFormatPcx::write(IStream* stream, Image* image)
 
 	for (int i = 0; i < palette->getSize(); ++i)
 	{
-		const Color& c = palette->get(i);
+		const Color4f& c = palette->get(i);
 		writer << uint8_t(c.getRed() * 255.0f);
 		writer << uint8_t(c.getGreen() * 255.0f);
 		writer << uint8_t(c.getBlue() * 255.0f);

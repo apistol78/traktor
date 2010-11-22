@@ -245,12 +245,12 @@ public:
 	{
 	}
 
-	AlignedVector(size_t size)
+	AlignedVector(size_t size, const ItemType& value = ItemType())
 	:	m_data(0)
 	,	m_size(0)
 	,	m_capacity(0)
 	{
-		resize(size);
+		resize(size, value);
 	}
 
 	AlignedVector(const AlignedVector< ItemType >& src)

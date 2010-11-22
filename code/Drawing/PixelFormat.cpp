@@ -203,7 +203,7 @@ void PixelFormat::convert(
 	uint8_t* dst = static_cast< uint8_t* >(dstPixels);
 	uint32_t tmp;
 	uint32_t i;
-	Color clr;
+	Color4f clr;
 
 	for (int ii = 0; ii < pixelCount; ++ii)
 	{
@@ -251,7 +251,7 @@ void PixelFormat::convert(
 				if ((src[o >> 3] & (1 << (o & 7))) != 0)
 					tmp |= 1 << (i + 8 - getRedBits());
 			}
-			clr.setRed(tmp / 255.0f);
+			clr.setRed(Scalar(tmp / 255.0f));
 
 			for (tmp = i = 0; i < uint32_t(getGreenBits()); ++i)
 			{
@@ -259,7 +259,7 @@ void PixelFormat::convert(
 				if ((src[o >> 3] & (1 << (o & 7))) != 0)
 					tmp |= 1 << (i + 8 - getGreenBits());
 			}
-			clr.setGreen(tmp / 255.0f);
+			clr.setGreen(Scalar(tmp / 255.0f));
 
 			for (tmp = i = 0; i < uint32_t(getBlueBits()); ++i)
 			{
@@ -267,7 +267,7 @@ void PixelFormat::convert(
 				if ((src[o >> 3] & (1 << (o & 7))) != 0)
 					tmp |= 1 << (i + 8 - getBlueBits());
 			}
-			clr.setBlue(tmp / 255.0f);
+			clr.setBlue(Scalar(tmp / 255.0f));
 
 			for (tmp = i = 0; i < uint32_t(getAlphaBits()); ++i)
 			{
@@ -275,7 +275,7 @@ void PixelFormat::convert(
 				if ((src[o >> 3] & (1 << (o & 7))) != 0)
 					tmp |= 1 << (i + 8 - getAlphaBits());
 			}
-			clr.setAlpha(tmp / 255.0f);
+			clr.setAlpha(Scalar(tmp / 255.0f));
 		}
 
 		// rgba => dst

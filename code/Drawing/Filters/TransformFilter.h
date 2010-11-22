@@ -26,14 +26,14 @@ class T_DLLCLASS TransformFilter : public IImageFilter
 	T_RTTI_CLASS;
 
 public:
-	TransformFilter(const Color& Km, const Color& Kc);
+	TransformFilter(const Color4f& Km, const Color4f& Kc);
 
 protected:
 	virtual Ref< Image > apply(const Image* image);
 
 private:
-	Color m_Km;
-	Color m_Kc;
+	Color4f m_Km;
+	Color4f m_Kc;
 };
 	
 	}

@@ -34,13 +34,13 @@ Ref< ConvolutionFilter > ConvolutionFilter::createEmboss()
 Ref< Image > ConvolutionFilter::apply(const Image* image)
 {
 	Ref< Image > final = new Image(image->getPixelFormat(), image->getWidth(), image->getHeight(), image->getPalette());
-	Color in;
+	Color4f in;
 
 	for (int32_t y = 1; y < image->getHeight() - 1; ++y)
 	{
 		for (int32_t x = 1; x < image->getWidth() - 1; ++x)
 		{
-			Color acc;
+			Color4f acc;
 			float norm = 0;
 
 			for (int32_t r = 0; r < 3; ++r)
@@ -48,13 +48,13 @@ Ref< Image > ConvolutionFilter::apply(const Image* image)
 				for (int32_t c = 0; c < 3; ++c)
 				{
 					image->getPixelUnsafe(x + c - 1, y + r - 1, in);
-					acc += in * m_matrix.e[r][c];
+					acc += in * Scalar(m_matrix.e[r][c]);
 					norm += m_matrix.e[r][c];
 				}
 			}
 
 			if (norm)
-				acc /= norm;
+				acc /= Scalar(norm);
 
 			final->setPixelUnsafe(x, y, acc);
 		}

@@ -62,20 +62,20 @@ Ref< drawing::Image > ThumbnailGenerator::get(const Path& fileName, int32_t widt
 
 	if (image->getPixelFormat().getAlphaBits() > 0 && visibleAlpha)
 	{
-		drawing::Color pixel;
+		Color4f pixel;
 		for (int32_t y = 0; y < height; ++y)
 		{
 			for (int32_t x = 0; x < width; ++x)
 			{
-				drawing::Color alpha =
+				Color4f alpha =
 					((x >> 2) & 1) ^ ((y >> 2) & 1) ?
-					drawing::Color(0.4f, 0.4f, 0.4f) :
-					drawing::Color(0.6f, 0.6f, 0.6f);
+					Color4f(0.4f, 0.4f, 0.4f) :
+					Color4f(0.6f, 0.6f, 0.6f);
 
 				image->getPixelUnsafe(x, y, pixel);
 
-				pixel = pixel * pixel.getAlpha() + alpha * (1.0f - pixel.getAlpha());
-				pixel.setAlpha(1.0f);
+				pixel = pixel * pixel.getAlpha() + alpha * (Scalar(1.0f) - pixel.getAlpha());
+				pixel.setAlpha(Scalar(1.0f));
 
 				image->setPixelUnsafe(x, y, pixel);
 			}
@@ -85,13 +85,13 @@ Ref< drawing::Image > ThumbnailGenerator::get(const Path& fileName, int32_t widt
 	{
 		image->convert(drawing::PixelFormat::getR8G8B8A8());
 
-		drawing::Color pixel;
+		Color4f pixel;
 		for (int32_t y = 0; y < height; ++y)
 		{
 			for (int32_t x = 0; x < width; ++x)
 			{
 				image->getPixelUnsafe(x, y, pixel);
-				pixel.setAlpha(1.0f);
+				pixel.setAlpha(Scalar(1.0f));
 				image->setPixelUnsafe(x, y, pixel);
 			}
 		}

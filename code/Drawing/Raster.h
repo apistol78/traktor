@@ -15,10 +15,12 @@
 
 namespace traktor
 {
+
+class Color4f;
+
 	namespace drawing
 	{
 
-class Color;
 class Image;
 
 /*! \brief Raster primitives.
@@ -29,23 +31,23 @@ class T_DLLCLASS Raster : public Object
 public:
 	Raster(Image* image);
 
-	void drawLine(int32_t x0, int32_t y0, int32_t x1, int32_t y1, const Color& color);
+	void drawLine(int32_t x0, int32_t y0, int32_t x1, int32_t y1, const Color4f& color);
 
-	void drawPixel(int32_t x, int32_t y, const Color& color);
+	void drawPixel(int32_t x, int32_t y, const Color4f& color);
 
-	void drawPixel(int32_t x, int32_t y, const Color& color, float alpha);
+	void drawPixel(int32_t x, int32_t y, const Color4f& color, float alpha);
 
-	void drawCircle(int32_t x, int32_t y, int32_t radius, const Color& color);
+	void drawCircle(int32_t x, int32_t y, int32_t radius, const Color4f& color);
 
-	void drawFilledCircle(int32_t x, int32_t y, int32_t radius, const Color& color);
+	void drawFilledCircle(int32_t x, int32_t y, int32_t radius, const Color4f& color);
 
-	void drawRectangle(int32_t x1, int32_t y1, int32_t x2, int32_t y2, const Color& color);
+	void drawRectangle(int32_t x1, int32_t y1, int32_t x2, int32_t y2, const Color4f& color);
 
-	void drawFilledRectangle(int32_t x1, int32_t y1, int32_t x2, int32_t y2, const Color& color);
+	void drawFilledRectangle(int32_t x1, int32_t y1, int32_t x2, int32_t y2, const Color4f& color);
 
-	void drawPolygon(const Vector2* points, uint32_t npoints, const Color& color);
+	void drawPolygon(const Vector2* points, uint32_t npoints, const Color4f& color);
 
-	void drawPolyLine(const Vector2* points, uint32_t npoints, const Color& color);
+	void drawPolyLine(const Vector2* points, uint32_t npoints, const Color4f& color);
 
 private:
 	struct Span

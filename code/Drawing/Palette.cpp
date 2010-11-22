@@ -19,20 +19,20 @@ int Palette::getSize() const
 	return int(m_colors.size());
 }
 
-void Palette::set(int index, const Color& c)
+void Palette::set(int index, const Color4f& c)
 {
 	m_colors[index] = c;
 }
 
-const Color& Palette::get(int index) const
+const Color4f& Palette::get(int index) const
 {
 	return m_colors[index];
 }
 
-int Palette::find(const Color& c, bool exact) const
+int Palette::find(const Color4f& c, bool exact) const
 {
 	std::pair< float, int > mn(std::numeric_limits< float >::max(), -1);
-	for (std::vector< Color >::const_iterator i = m_colors.begin(); i != m_colors.end(); ++i)
+	for (AlignedVector< Color4f >::const_iterator i = m_colors.begin(); i != m_colors.end(); ++i)
 	{
 		float diff =
 			std::abs(c.getRed() - i->getRed()) +
