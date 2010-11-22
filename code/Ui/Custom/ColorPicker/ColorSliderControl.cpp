@@ -53,11 +53,11 @@ void ColorSliderControl::updateGradient()
 {
 	for (int y = 0; y < 256; ++y)
 	{
-		Color color = m_gradient->get(y);
+		Color4ub color = m_gradient->get(y);
 		for (int x = 0; x < c_sliderWidth; ++x)
 		{
-			Color checkerColor = (((x >> 2) & 1) ^ ((y >> 2) & 1)) ? Color(180, 180, 180) : Color(80, 80, 80);
-			Color gradientColor = lerp(checkerColor, color, color.a / 255.0f);
+			Color4ub checkerColor = (((x >> 2) & 1) ^ ((y >> 2) & 1)) ? Color4ub(180, 180, 180) : Color4ub(80, 80, 80);
+			Color4ub gradientColor = lerp(checkerColor, color, color.a / 255.0f);
 			m_gradientBitmap->setPixel(x, y, gradientColor);
 		}
 	}
@@ -68,7 +68,7 @@ void ColorSliderControl::eventButtonDown(Event* event)
 	int y = checked_type_cast< MouseEvent* >(event)->getPosition().y;
 	T_ASSERT (y >= 0 && y < 256);
 
-	Color color = m_gradient->get(y);
+	Color4ub color = m_gradient->get(y);
 
 	ColorEvent colorEvent(this, 0, color);
 	raiseEvent(EiColorSelect, &colorEvent);
@@ -91,7 +91,7 @@ void ColorSliderControl::eventMouseMove(Event* event)
 	if (y > 255)
 		y = 255;
 
-	Color color = m_gradient->get(y);
+	Color4ub color = m_gradient->get(y);
 
 	ColorEvent colorEvent(this, 0, color);
 	raiseEvent(EiColorSelect, &colorEvent);

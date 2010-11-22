@@ -21,9 +21,9 @@ public:
 
 	virtual Size getTextExtent(Window& hWnd, const std::wstring& text) const;
 
-	virtual void setForeground(const Color& foreground);
+	virtual void setForeground(const Color4ub& foreground);
 
-	virtual void setBackground(const Color& background);
+	virtual void setBackground(const Color4ub& background);
 
 	virtual void setFont(const Font& font);
 
@@ -35,7 +35,7 @@ public:
 
 	virtual void resetClipRect();
 	
-	virtual void drawPixel(int x, int y, const Color& c);
+	virtual void drawPixel(int x, int y, const Color4ub& c);
 
 	virtual void drawLine(int x1, int y1, int x2, int y2);
 
@@ -78,8 +78,8 @@ private:
 	HBITMAP m_hOffScreenBitmap;
 	uint32_t m_offScreenBitmapWidth;
 	uint32_t m_offScreenBitmapHeight;
-	Color m_foreGround;
-	Color m_backGround;
+	Color4ub m_foreGround;
+	Color4ub m_backGround;
 	LineStyle m_lineStyle;
 	int m_thickness;
 	Font m_font;

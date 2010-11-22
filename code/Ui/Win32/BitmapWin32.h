@@ -32,9 +32,9 @@ public:
 
 	virtual Size getSize() const;
 
-	virtual void setPixel(uint32_t x, uint32_t y, const Color& color);
+	virtual void setPixel(uint32_t x, uint32_t y, const Color4ub& color);
 
-	virtual Color getPixel(uint32_t x, uint32_t y) const;
+	virtual Color4ub getPixel(uint32_t x, uint32_t y) const;
 
 	LPVOID getBits() const { return m_pBits; }
 

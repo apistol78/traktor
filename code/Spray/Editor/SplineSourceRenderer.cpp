@@ -22,14 +22,14 @@ void SplineSourceRenderer::render(render::PrimitiveRenderer* primitiveRenderer, 
 	for (float t = 0.1f; t < keys.back().T; t += 0.1f)
 	{
 		Vector4 position2 = Hermite< SplineSource::Key, Scalar, Vector4 >::evaluate(&keys[0], keys.size(), Scalar(t));
-		primitiveRenderer->drawLine(position1, position2, Color(255, 255, 0));
+		primitiveRenderer->drawLine(position1, position2, Color4ub(255, 255, 0));
 		position1 = position2;
 	}
 
 	for (AlignedVector< SplineSource::Key >::const_iterator i = keys.begin(); i != keys.end(); ++i)
 	{
 		const Vector4 c_size(0.1f, 0.1f, 0.1f, 0.0f);
-		primitiveRenderer->drawWireAabb(Aabb(i->value - c_size, i->value + c_size), Color(255, 255, 0));
+		primitiveRenderer->drawWireAabb(Aabb(i->value - c_size, i->value + c_size), Color4ub(255, 255, 0));
 	}
 }
 

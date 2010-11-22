@@ -1,10 +1,10 @@
 #include <cmath>
-#include "Core/Math/Color.h"
+#include "Core/Math/Color4ub.h"
 
 namespace traktor
 {
 
-T_MATH_INLINE Color::Color()
+T_MATH_INLINE Color4ub::Color4ub()
 {
 	r =
 	g =
@@ -12,7 +12,7 @@ T_MATH_INLINE Color::Color()
 	a = 255;
 }
 
-T_MATH_INLINE Color::Color(const Color& v)
+T_MATH_INLINE Color4ub::Color4ub(const Color4ub& v)
 {
 	r = v.r;
 	g = v.g;
@@ -20,7 +20,7 @@ T_MATH_INLINE Color::Color(const Color& v)
 	a = v.a;
 }
 
-T_MATH_INLINE Color::Color(uint8_t r, uint8_t g, uint8_t b)
+T_MATH_INLINE Color4ub::Color4ub(uint8_t r, uint8_t g, uint8_t b)
 {
 	this->r = r;
 	this->g = g;
@@ -28,7 +28,7 @@ T_MATH_INLINE Color::Color(uint8_t r, uint8_t g, uint8_t b)
 	this->a = 255;
 }
 
-T_MATH_INLINE Color::Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+T_MATH_INLINE Color4ub::Color4ub(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 {
 	this->r = r;
 	this->g = g;
@@ -36,7 +36,7 @@ T_MATH_INLINE Color::Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 	this->a = a;
 }
 
-T_MATH_INLINE Color::Color(uint32_t argb)
+T_MATH_INLINE Color4ub::Color4ub(uint32_t argb)
 {
 	this->r = (argb >> 16) & 255;
 	this->g = (argb >> 8) & 255;
@@ -44,7 +44,7 @@ T_MATH_INLINE Color::Color(uint32_t argb)
 	this->a = (argb >> 24) & 255;
 }
 
-T_MATH_INLINE void Color::set(uint8_t r, uint8_t g, uint8_t b)
+T_MATH_INLINE void Color4ub::set(uint8_t r, uint8_t g, uint8_t b)
 {
 	this->r = r;
 	this->g = g;
@@ -52,7 +52,7 @@ T_MATH_INLINE void Color::set(uint8_t r, uint8_t g, uint8_t b)
 	this->a = 255;
 }
 
-T_MATH_INLINE void Color::set(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+T_MATH_INLINE void Color4ub::set(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 {
 	this->r = r;
 	this->g = g;
@@ -60,7 +60,7 @@ T_MATH_INLINE void Color::set(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 	this->a = a;
 }
 
-T_MATH_INLINE uint32_t Color::getARGB() const
+T_MATH_INLINE uint32_t Color4ub::getARGB() const
 {
 	return 
 		(uint32_t(a) << 24) |
@@ -69,7 +69,7 @@ T_MATH_INLINE uint32_t Color::getARGB() const
 		(uint32_t(b));
 }
 
-T_MATH_INLINE uint32_t Color::getABGR() const
+T_MATH_INLINE uint32_t Color4ub::getABGR() const
 {
 	return 
 		(uint32_t(a) << 24) |
@@ -78,7 +78,7 @@ T_MATH_INLINE uint32_t Color::getABGR() const
 		(uint32_t(r));
 }
 
-T_MATH_INLINE uint32_t Color::getRGBA() const
+T_MATH_INLINE uint32_t Color4ub::getRGBA() const
 {
 	return
 		(uint32_t(r) << 24) |
@@ -87,7 +87,7 @@ T_MATH_INLINE uint32_t Color::getRGBA() const
 		(uint32_t(a));
 }
 
-T_MATH_INLINE uint32_t Color::getBGRA() const
+T_MATH_INLINE uint32_t Color4ub::getBGRA() const
 {
 	return
 		(uint32_t(b) << 24) |
@@ -96,7 +96,7 @@ T_MATH_INLINE uint32_t Color::getBGRA() const
 		(uint32_t(a));
 }
 
-T_MATH_INLINE void Color::getRGBA32F(float outRGBA[4]) const
+T_MATH_INLINE void Color4ub::getRGBA32F(float outRGBA[4]) const
 {
 	outRGBA[0] = float(r) / 255.0f;
 	outRGBA[1] = float(g) / 255.0f;
@@ -104,7 +104,7 @@ T_MATH_INLINE void Color::getRGBA32F(float outRGBA[4]) const
 	outRGBA[3] = float(a) / 255.0f;
 }
 
-T_MATH_INLINE uint16_t Color::getRGB565() const
+T_MATH_INLINE uint16_t Color4ub::getRGB565() const
 {
 	return
 		((r & 0xf8) << 8) |
@@ -112,7 +112,7 @@ T_MATH_INLINE uint16_t Color::getRGB565() const
 		((b >> 3));
 }
 
-T_MATH_INLINE Color& Color::operator = (const Color& v)
+T_MATH_INLINE Color4ub& Color4ub::operator = (const Color4ub& v)
 {
 	r = v.r;
 	g = v.g;
@@ -121,9 +121,9 @@ T_MATH_INLINE Color& Color::operator = (const Color& v)
 	return *this;
 }
 
-T_MATH_INLINE Color Color::operator + (const Color& color) const
+T_MATH_INLINE Color4ub Color4ub::operator + (const Color4ub& color) const
 {
-	return Color(
+	return Color4ub(
 		r + color.r,
 		g + color.g,
 		b + color.b,
@@ -131,9 +131,9 @@ T_MATH_INLINE Color Color::operator + (const Color& color) const
 	);
 }
 
-T_MATH_INLINE Color Color::operator * (const Color& color) const
+T_MATH_INLINE Color4ub Color4ub::operator * (const Color4ub& color) const
 {
-	return Color(
+	return Color4ub(
 		uint32_t(r * color.r) >> 8,
 		uint32_t(g * color.g) >> 8,
 		uint32_t(b * color.b) >> 8,
@@ -141,24 +141,24 @@ T_MATH_INLINE Color Color::operator * (const Color& color) const
 	);
 }
 
-T_MATH_INLINE bool Color::operator == (const Color& v) const
+T_MATH_INLINE bool Color4ub::operator == (const Color4ub& v) const
 {
 	return r == v.r && g == v.g && b == v.b && a == v.a;
 }
 
-T_MATH_INLINE bool Color::operator != (const Color& v) const
+T_MATH_INLINE bool Color4ub::operator != (const Color4ub& v) const
 {
 	return r != v.r || g != v.g || b != v.b || a != v.a;
 }
 
-T_MATH_INLINE Color::operator uint32_t () const
+T_MATH_INLINE Color4ub::operator uint32_t () const
 {
 	return getARGB();
 }
 
-T_MATH_INLINE Color lerp(const Color& a, const Color& b, float c)
+T_MATH_INLINE Color4ub lerp(const Color4ub& a, const Color4ub& b, float c)
 {
-	return Color(
+	return Color4ub(
 		uint8_t(a.r * (1.0f - c) + b.r * c),
 		uint8_t(a.g * (1.0f - c) + b.g * c),
 		uint8_t(a.b * (1.0f - c) + b.b * c),

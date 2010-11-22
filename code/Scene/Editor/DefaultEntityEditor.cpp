@@ -185,13 +185,13 @@ void DefaultEntityEditor::drawGuide(
 			lightPosition - lightDirection * Scalar(0.5f),
 			lightPosition + lightDirection * Scalar(0.5f),
 			5.0f,
-			Color(255, 255, 0)
+			Color4ub(255, 255, 0)
 		);
 		primitiveRenderer->drawArrowHead(
 			lightPosition + lightDirection * Scalar(0.5f),
 			lightPosition + lightDirection * Scalar(0.7f),
 			0.5f,
-			Color(255, 255, 0)
+			Color4ub(255, 255, 0)
 		);
 
 		primitiveRenderer->pushWorld(transform.toMatrix44());

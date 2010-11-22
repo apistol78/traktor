@@ -2,7 +2,7 @@
 #define traktor_scene_PerspectiveRenderControl_H
 
 #include "Core/RefArray.h"
-#include "Core/Math/Color.h"
+#include "Core/Math/Color4ub.h"
 #include "Core/Math/Matrix44.h"
 #include "Core/Math/Vector4.h"
 #include "Core/Timer/Timer.h"
@@ -74,9 +74,9 @@ private:
 	bool m_gridEnable;
 	bool m_guideEnable;
 	bool m_postProcessEnable;
-	Color m_colorClear;
-	Color m_colorGrid;
-	Color m_colorRef;
+	Color4ub m_colorClear;
+	Color4ub m_colorGrid;
+	Color4ub m_colorRef;
 	float m_fieldOfView;
 	int32_t m_multiSample;
 	Timer m_timer;

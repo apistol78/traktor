@@ -165,12 +165,12 @@ void EnvelopeControl::eventPaint(Event* e)
 		rcInner.bottom - y / 2 - 4
 	);
 
-	canvas.setForeground(Color(180, 180, 180));
-	canvas.setBackground(Color(255, 255, 255));
+	canvas.setForeground(Color4ub(180, 180, 180));
+	canvas.setBackground(Color4ub(255, 255, 255));
 	canvas.fillRect(rcInner);
 	canvas.drawRect(m_rcEnv.inflate(1, 1));
 
-	canvas.setForeground(Color(80, 80, 80));
+	canvas.setForeground(Color4ub(80, 80, 80));
 
 	canvas.drawText(
 		Point(m_rcEnv.left - mne.cx - 4, m_rcEnv.bottom - mne.cy / 2),
@@ -181,7 +181,7 @@ void EnvelopeControl::eventPaint(Event* e)
 		mxv.str()
 	);
 
-	canvas.setForeground(Color(120, 120, 120));
+	canvas.setForeground(Color4ub(120, 120, 120));
 
 	int zero = m_rcEnv.bottom - int(m_rcEnv.getHeight() * scaleValue(0, m_minValue, m_maxValue));
 	canvas.drawLine(m_rcEnv.left, zero, m_rcEnv.right, zero);
@@ -192,11 +192,11 @@ void EnvelopeControl::eventPaint(Event* e)
 		{
 			int sx = m_rcEnv.left + int(m_rcEnv.getWidth() * m_selectedKey->getT());
 			int sy = m_rcEnv.bottom - int(m_rcEnv.getHeight() * scaleValue(m_selectedKey->getValue(), m_minValue, m_maxValue));
-			canvas.setForeground(Color(200, 200, 200));
+			canvas.setForeground(Color4ub(200, 200, 200));
 			canvas.drawLine(m_rcEnv.left, sy, sx, sy);
 		}
 
-		canvas.setForeground(Color(0, 0, 0));
+		canvas.setForeground(Color4ub(0, 0, 0));
 
 		const float dT = 1.0f / 100.0f;
 		int px = m_rcEnv.left;
@@ -210,7 +210,7 @@ void EnvelopeControl::eventPaint(Event* e)
 			py = sy;
 		}
 
-		canvas.setBackground(Color(0, 0, 0));
+		canvas.setBackground(Color4ub(0, 0, 0));
 
 		for (RefArray< EnvelopeKey >::iterator i = m_keys.begin(); i != m_keys.end(); ++i)
 		{

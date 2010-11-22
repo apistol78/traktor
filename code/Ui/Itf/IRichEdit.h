@@ -16,7 +16,7 @@ class IRichEdit : public IWidget
 public:
 	virtual bool create(IWidget* parent, const std::wstring& text, int style) = 0;
 
-	virtual int addAttribute(const Color& textColor, const Color& backColor, bool bold, bool italic, bool underline) = 0;
+	virtual int addAttribute(const Color4ub& textColor, const Color4ub& backColor, bool bold, bool italic, bool underline) = 0;
 
 	virtual void setAttribute(int start, int length, int attribute) = 0;
 

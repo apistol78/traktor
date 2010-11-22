@@ -61,7 +61,7 @@ public:
 
 	virtual bool operator >> (const Member< Path >& m);
 
-	virtual bool operator >> (const Member< Color >& m);
+	virtual bool operator >> (const Member< Color4ub >& m);
 
 	virtual bool operator >> (const Member< Scalar >& m);
 

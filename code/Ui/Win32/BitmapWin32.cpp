@@ -1,7 +1,7 @@
 #include "Ui/Win32/BitmapWin32.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
-#include "Core/Math/Color.h"
+#include "Core/Math/Color4ub.h"
 
 #if defined(T_USE_GDI_PLUS)
 using namespace Gdiplus;
@@ -168,7 +168,7 @@ Size BitmapWin32::getSize() const
 	return Size(int(m_width), int(m_height));
 }
 
-void BitmapWin32::setPixel(uint32_t x, uint32_t y, const Color& color)
+void BitmapWin32::setPixel(uint32_t x, uint32_t y, const Color4ub& color)
 {
 	uint32_t rgba = (color.a << 24) | (color.r << 16) | (color.g << 8) | color.b;
 
@@ -190,7 +190,7 @@ void BitmapWin32::setPixel(uint32_t x, uint32_t y, const Color& color)
 #endif
 }
 
-Color BitmapWin32::getPixel(uint32_t x, uint32_t y) const
+Color4ub BitmapWin32::getPixel(uint32_t x, uint32_t y) const
 {
 	uint32_t* dstColor = reinterpret_cast< uint32_t* >(m_pBits);
 	uint32_t* dstAlpha = reinterpret_cast< uint32_t* >(m_pBitsPreMulAlpha);
@@ -204,7 +204,7 @@ Color BitmapWin32::getPixel(uint32_t x, uint32_t y) const
 	int b = (rgb & 0x000000ff);
 	int a = (alpha & 0xff000000) >> 24;
 
-	return Color(r, g, b, a);
+	return Color4ub(r, g, b, a);
 }
 
 HICON BitmapWin32::createIcon() const

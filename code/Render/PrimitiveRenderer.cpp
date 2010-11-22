@@ -1,13 +1,13 @@
-#include "Render/PrimitiveRenderer.h"
-#include "Render/IRenderSystem.h"
-#include "Render/IRenderView.h"
-#include "Render/VertexElement.h"
-#include "Render/VertexBuffer.h"
-#include "Render/Shader.h"
-#include "Resource/IResourceManager.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Plane.h"
 #include "Core/Misc/Endian.h"
+#include "Render/IRenderSystem.h"
+#include "Render/IRenderView.h"
+#include "Render/PrimitiveRenderer.h"
+#include "Render/Shader.h"
+#include "Render/VertexElement.h"
+#include "Render/VertexBuffer.h"
+#include "Resource/IResourceManager.h"
 
 namespace traktor
 {
@@ -43,13 +43,13 @@ struct Vertex
 	float texCoord[2];
 	uint32_t rgb;
 	
-	T_FORCE_INLINE void set(const Vector4& pos_, const Color& rgb_)
+	T_FORCE_INLINE void set(const Vector4& pos_, const Color4ub& rgb_)
 	{
 		pos_.storeUnaligned(pos);
 		rgb = rgb_;
 	}
 
-	T_FORCE_INLINE void set(const Vector4& pos_, const Vector2& texCoord_, const Color& rgb_)
+	T_FORCE_INLINE void set(const Vector4& pos_, const Vector2& texCoord_, const Color4ub& rgb_)
 	{
 		pos_.storeUnaligned(pos);
 		texCoord[0] = texCoord_.x;
@@ -215,7 +215,7 @@ void PrimitiveRenderer::setClipDistance(float nearZ)
 void PrimitiveRenderer::drawLine(
 	const Vector4& start,
 	const Vector4& end,
-	const Color& color
+	const Color4ub& color
 )
 {
 	if (int(m_vertex - m_vertexStart + 2) >= c_bufferCount)
@@ -246,7 +246,7 @@ void PrimitiveRenderer::drawLine(
 	const Vector4& start,
 	const Vector4& end,
 	float width,
-	const Color& color
+	const Color4ub& color
 )
 {
 	if (width < 2.0f - FUZZY_EPSILON)
@@ -345,7 +345,7 @@ void PrimitiveRenderer::drawArrowHead(
 	const Vector4& start,
 	const Vector4& end,
 	float sharpness,
-	const Color& color
+	const Color4ub& color
 )
 {
 	if (int(m_vertex - m_vertexStart + 3) >= c_bufferCount)
@@ -425,7 +425,7 @@ void PrimitiveRenderer::drawArrowHead(
 void PrimitiveRenderer::drawWireAabb(
 	const Vector4& center,
 	const Vector4& extent,
-	const Color& color
+	const Color4ub& color
 )
 {
 	drawWireAabb(
@@ -439,7 +439,7 @@ void PrimitiveRenderer::drawWireAabb(
 
 void PrimitiveRenderer::drawWireAabb(
 	const Aabb& aabb,
-	const Color& color
+	const Color4ub& color
 )
 {
 	if (aabb.empty())
@@ -463,7 +463,7 @@ void PrimitiveRenderer::drawWireTriangle(
 	const Vector4& vert1,
 	const Vector4& vert2,
 	const Vector4& vert3,
-	const Color& color
+	const Color4ub& color
 )
 {
 	drawLine(vert1, vert2, color);
@@ -473,11 +473,11 @@ void PrimitiveRenderer::drawWireTriangle(
 
 void PrimitiveRenderer::drawWireTriangle(
 	const Vector4& vert1,
-	const Color& color1,
+	const Color4ub& color1,
 	const Vector4& vert2,
-	const Color& color2,
+	const Color4ub& color2,
 	const Vector4& vert3,
-	const Color& color3
+	const Color4ub& color3
 )
 {
 	drawLine(vert1, vert2, color1);
@@ -490,7 +490,7 @@ void PrimitiveRenderer::drawWireQuad(
 	const Vector4& vert2,
 	const Vector4& vert3,
 	const Vector4& vert4,
-	const Color& color
+	const Color4ub& color
 )
 {
 	drawLine(vert1, vert2, color);
@@ -501,13 +501,13 @@ void PrimitiveRenderer::drawWireQuad(
 
 void PrimitiveRenderer::drawWireQuad(
 	const Vector4& vert1,
-	const Color& color1,
+	const Color4ub& color1,
 	const Vector4& vert2,
-	const Color& color2,
+	const Color4ub& color2,
 	const Vector4& vert3,
-	const Color& color3,
+	const Color4ub& color3,
 	const Vector4& vert4,
-	const Color& color4
+	const Color4ub& color4
 )
 {
 	drawLine(vert1, vert2, color1);
@@ -520,7 +520,7 @@ void PrimitiveRenderer::drawWireCylinder(
 	const Matrix44& frame,
 	float radius,
 	float length,
-	const Color& color
+	const Color4ub& color
 )
 {
 	const Vector4 axisU = frame.axisX();
@@ -551,7 +551,7 @@ void PrimitiveRenderer::drawWireCylinder(
 void PrimitiveRenderer::drawSolidPoint(
 	const Vector4& center,
 	float size,
-	const Color& color
+	const Color4ub& color
 )
 {
 	if (int(m_vertex - m_vertexStart + 6) >= c_bufferCount)
@@ -596,7 +596,7 @@ void PrimitiveRenderer::drawSolidPoint(
 void PrimitiveRenderer::drawSolidAabb(
 	const Vector4& center,
 	const Vector4& extent,
-	const Color& color
+	const Color4ub& color
 )
 {
 	drawSolidAabb(Aabb(center - extent * Scalar(0.5f), center + extent * Scalar(0.5f)), color);
@@ -604,7 +604,7 @@ void PrimitiveRenderer::drawSolidAabb(
 
 void PrimitiveRenderer::drawSolidAabb(
 	const Aabb& aabb,
-	const Color& color
+	const Color4ub& color
 )
 {
 	if (aabb.empty())
@@ -636,7 +636,7 @@ void PrimitiveRenderer::drawSolidAabb(
 			extents[faces[i * 4 + 1]],
 			extents[faces[i * 4 + 2]],
 			extents[faces[i * 4 + 3]],
-			lerp(Color(0, 0, 0, 0), color, phi * 0.5f + 0.5f)
+			lerp(Color4ub(0, 0, 0, 0), color, phi * 0.5f + 0.5f)
 		);
 	}
 }
@@ -645,7 +645,7 @@ void PrimitiveRenderer::drawSolidTriangle(
 	const Vector4& vert1,
 	const Vector4& vert2,
 	const Vector4& vert3,
-	const Color& color
+	const Color4ub& color
 )
 {
 	drawSolidTriangle(
@@ -657,11 +657,11 @@ void PrimitiveRenderer::drawSolidTriangle(
 
 void PrimitiveRenderer::drawSolidTriangle(
 	const Vector4& vert1,
-	const Color& color1,
+	const Color4ub& color1,
 	const Vector4& vert2,
-	const Color& color2,
+	const Color4ub& color2,
 	const Vector4& vert3,
-	const Color& color3
+	const Color4ub& color3
 )
 {
 	if (int(m_vertex - m_vertexStart + 3) >= c_bufferCount)
@@ -697,7 +697,7 @@ void PrimitiveRenderer::drawSolidQuad(
 	const Vector4& vert2,
 	const Vector4& vert3,
 	const Vector4& vert4,
-	const Color& color
+	const Color4ub& color
 )
 {
 	drawSolidQuad(
@@ -710,13 +710,13 @@ void PrimitiveRenderer::drawSolidQuad(
 
 void PrimitiveRenderer::drawSolidQuad(
 	const Vector4& vert1,
-	const Color& color1,
+	const Color4ub& color1,
 	const Vector4& vert2,
-	const Color& color2,
+	const Color4ub& color2,
 	const Vector4& vert3,
-	const Color& color3,
+	const Color4ub& color3,
 	const Vector4& vert4,
-	const Color& color4
+	const Color4ub& color4
 )
 {
 	drawSolidTriangle(vert1, color1, vert2, color2, vert3, color3);
@@ -730,7 +730,7 @@ void PrimitiveRenderer::drawTextureTriangle(
 	const Vector2& texCoord2,
 	const Vector4& vert3,
 	const Vector2& texCoord3,
-	const Color& color,
+	const Color4ub& color,
 	ITexture* texture
 )
 {
@@ -772,7 +772,7 @@ void PrimitiveRenderer::drawTextureQuad(
 	const Vector2& texCoord3,
 	const Vector4& vert4,
 	const Vector2& texCoord4,
-	const Color& color,
+	const Color4ub& color,
 	ITexture* texture
 )
 {
@@ -788,8 +788,8 @@ void PrimitiveRenderer::drawProtractor(
 	float maxAngle,
 	float angleStep,
 	float radius,
-	const Color& colorSolid,
-	const Color& colorHint
+	const Color4ub& colorSolid,
+	const Color4ub& colorHint
 )
 {
 	if (minAngle > maxAngle)
@@ -885,8 +885,8 @@ void PrimitiveRenderer::drawCone(
 	float angleX,
 	float angleY,
 	float length,
-	const Color& colorSolid,
-	const Color& colorHint
+	const Color4ub& colorSolid,
+	const Color4ub& colorHint
 )
 {
 	Vector4 c1 = frame.axisZ() * Scalar(cosf(angleX / 2.0f));

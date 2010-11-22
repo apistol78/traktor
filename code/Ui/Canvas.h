@@ -29,9 +29,9 @@ class T_DLLCLASS Canvas : public Object
 public:
 	Canvas(ICanvas* canvas);
 
-	void setForeground(const Color& foreground);
+	void setForeground(const Color4ub& foreground);
 
-	void setBackground(const Color& background);
+	void setBackground(const Color4ub& background);
 
 	void setFont(const Font& font);
 
@@ -47,9 +47,9 @@ public:
 
 	void drawPixel(const Point& p);
 
-	void drawPixel(int x, int y, const Color& c);
+	void drawPixel(int x, int y, const Color4ub& c);
 
-	void drawPixel(const Point& p, const Color& c);
+	void drawPixel(const Point& p, const Color4ub& c);
 
 	void drawLine(int x1, int y1, int x2, int y2);
 
@@ -93,8 +93,8 @@ public:
 
 private:
 	ICanvas* m_canvas;
-	Color m_foreground;
-	Color m_background;
+	Color4ub m_foreground;
+	Color4ub m_background;
 };
 	
 	}

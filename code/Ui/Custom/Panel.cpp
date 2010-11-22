@@ -48,11 +48,11 @@ void Panel::eventPaint(Event* event)
 
 	Rect rcTitle(rcInner.left, rcInner.top, rcInner.right, rcInner.top + extent.cy + 4);
 
-	canvas.setForeground(Color(51, 94, 168));
-	canvas.setBackground(Color(82, 126, 192));
+	canvas.setForeground(Color4ub(51, 94, 168));
+	canvas.setBackground(Color4ub(82, 126, 192));
 	canvas.fillGradientRect(rcTitle);
 
-	canvas.setForeground(Color(255, 255, 255));
+	canvas.setForeground(Color4ub(255, 255, 255));
 	canvas.drawText(
 		rcTitle.inflate(-4, 0),
 		text,
@@ -68,7 +68,7 @@ void Panel::eventPaint(Event* event)
 		Point(rcInner.left, rcInner.bottom - 1),
 		Point(rcInner.left, rcInner.top)
 	};
-	canvas.setForeground(Color(128, 128, 128));
+	canvas.setForeground(Color4ub(128, 128, 128));
 	canvas.drawLines(pntBorder, 5);
 
 	event->consume();

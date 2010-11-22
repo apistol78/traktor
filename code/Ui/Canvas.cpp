@@ -15,13 +15,13 @@ Canvas::Canvas(ICanvas* canvas)
 	T_ASSERT_M (m_canvas, L"Invalid canvas implementation");
 }
 
-void Canvas::setForeground(const Color& foreground)
+void Canvas::setForeground(const Color4ub& foreground)
 {
 	m_foreground = foreground;
 	m_canvas->setForeground(m_foreground);
 }
 
-void Canvas::setBackground(const Color& background)
+void Canvas::setBackground(const Color4ub& background)
 {
 	m_background = background;
 	m_canvas->setBackground(m_background);
@@ -62,12 +62,12 @@ void Canvas::drawPixel(const Point& p)
 	m_canvas->drawPixel(p.x, p.y, m_foreground);
 }
 
-void Canvas::drawPixel(int x, int y, const Color& c)
+void Canvas::drawPixel(int x, int y, const Color4ub& c)
 {
 	m_canvas->drawPixel(x, y, c);
 }
 
-void Canvas::drawPixel(const Point& p, const Color& c)
+void Canvas::drawPixel(const Point& p, const Color4ub& c)
 {
 	m_canvas->drawPixel(p.x, p.y, c);
 }

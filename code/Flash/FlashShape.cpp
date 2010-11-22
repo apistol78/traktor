@@ -94,7 +94,6 @@ bool FlashShape::create(const SwfRect& shapeBounds, const SwfShape* shape, const
 					m_fillStyles.resize(fillStyleBase + s.newStyles->numFillStyles);
 					for (int j = 0; j < s.newStyles->numFillStyles; ++j)
 					{
-						T_ASSERT (s.newStyles->fillStyles[j]);
 						if (!m_fillStyles[fillStyleBase + j].create(s.newStyles->fillStyles[j]))
 							return false;
 					}
@@ -105,7 +104,6 @@ bool FlashShape::create(const SwfRect& shapeBounds, const SwfShape* shape, const
 					m_lineStyles.resize(lineStyleBase + s.newStyles->numLineStyles);
 					for (int j = 0; j < s.newStyles->numLineStyles; ++j)
 					{
-						T_ASSERT (s.newStyles->lineStyles[j]);
 						if (!m_lineStyles[lineStyleBase + j].create(s.newStyles->lineStyles[j]))
 							return false;
 					}

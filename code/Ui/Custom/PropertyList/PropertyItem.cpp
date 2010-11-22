@@ -193,8 +193,8 @@ void PropertyItem::paintBackground(Canvas& canvas, const Rect& rc)
 {
 	if (m_selected)
 	{
-		canvas.setForeground(Color(240, 240, 250));
-		canvas.setBackground(Color(220, 220, 230));
+		canvas.setForeground(Color4ub(240, 240, 250));
+		canvas.setBackground(Color4ub(220, 220, 230));
 		canvas.fillGradientRect(rc);
 	}
 	else
@@ -204,9 +204,9 @@ void PropertyItem::paintBackground(Canvas& canvas, const Rect& rc)
 		if (!m_childItems.empty())
 			++depth;
 
-		Color color = lerp(
-			Color(255, 255, 255),
-			Color(80, 80, 80),
+		Color4ub color = lerp(
+			Color4ub(255, 255, 255),
+			Color4ub(80, 80, 80),
 			clamp(depth / 10.0f, 0.0f, 1.0f)
 		);
 

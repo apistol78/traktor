@@ -51,10 +51,10 @@ void ProfileControl::eventPaint(Event* event)
 	Canvas& canvas = p->getCanvas();
 	Rect rc = getInnerRect();
 
-	canvas.setBackground(Color(80, 80, 80));
+	canvas.setBackground(Color4ub(80, 80, 80));
 	canvas.fillRect(rc);
 
-	canvas.setForeground(Color(120, 120, 100));
+	canvas.setForeground(Color4ub(120, 120, 100));
 	for (int x = rc.left; x < rc.right; x += 16)
 		canvas.drawLine(x, rc.top, x, rc.bottom);
 	for (int y = rc.top; y < rc.bottom; y += 16)
@@ -69,10 +69,10 @@ void ProfileControl::eventPaint(Event* event)
 	StringOutputStream ss2;
 	//ss2 << stats.references << L" reference(s), " << stats.rootReferences << L" root(s)";
 
-	canvas.setForeground(Color(200, 255, 200));
+	canvas.setForeground(Color4ub(200, 255, 200));
 	canvas.drawText(Point(0,  0), ss1.str());
 
-	canvas.setForeground(Color(200, 200, 255));
+	canvas.setForeground(Color4ub(200, 200, 255));
 	canvas.drawText(Point(0, 16), ss2.str());
 
 	if (!m_samples.empty())
@@ -91,10 +91,10 @@ void ProfileControl::eventPaint(Event* event)
 			int yo2 = int(rc.bottom - (rc.getHeight() * i->objectCount) / m_peekObjectReference);
 			int yr2 = int(rc.bottom - (rc.getHeight() * i->referenceCount) / m_peekObjectReference);
 
-			canvas.setForeground(Color(200, 255, 200));
+			canvas.setForeground(Color4ub(200, 255, 200));
 			canvas.drawLine(x1, yo1, x2, yo2);
 
-			canvas.setForeground(Color(200, 200, 255));
+			canvas.setForeground(Color4ub(200, 200, 255));
 			canvas.drawLine(x1, yr1, x2, yr2);
 
 			x1 = x2;

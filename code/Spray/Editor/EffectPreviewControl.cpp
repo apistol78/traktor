@@ -283,12 +283,12 @@ void EffectPreviewControl::eventPaint(ui::Event* event)
 			m_primitiveRenderer->drawLine(
 				Vector4(float(x), 0.0f, -10.0f, 1.0f),
 				Vector4(float(x), 0.0f, 10.0f, 1.0f),
-				Color(90, 90, 90)
+				Color4ub(90, 90, 90)
 			);
 			m_primitiveRenderer->drawLine(
 				Vector4(-10.0f, 0.0f, float(x), 1.0f),
 				Vector4(10.0f, 0.0f, float(x), 1.0f),
-				Color(90, 90, 90)
+				Color4ub(90, 90, 90)
 			);
 		}
 

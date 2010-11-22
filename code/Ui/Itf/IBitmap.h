@@ -8,7 +8,7 @@
 namespace traktor
 {
 
-class Color;
+class Color4ub;
 
 	namespace drawing
 	{
@@ -36,9 +36,9 @@ public:
 
 	virtual Size getSize() const = 0;
 
-	virtual void setPixel(uint32_t x, uint32_t y, const Color& color) = 0;
+	virtual void setPixel(uint32_t x, uint32_t y, const Color4ub& color) = 0;
 
-	virtual Color getPixel(uint32_t x, uint32_t y) const = 0;
+	virtual Color4ub getPixel(uint32_t x, uint32_t y) const = 0;
 };
 
 	}

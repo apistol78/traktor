@@ -1,5 +1,5 @@
 #include "Core/Math/MathConfig.h"
 
 #if !defined(T_MATH_USE_INLINE)
-#	include "Core/Math/Std/Color.inl"
+#	include "Core/Math/Std/Color4ub.inl"
 #endif

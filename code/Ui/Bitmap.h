@@ -15,7 +15,7 @@
 namespace traktor
 {
 
-class Color;
+class Color4ub;
 
 	namespace drawing
 	{
@@ -94,10 +94,10 @@ public:
 	Size getSize() const;
 
 	/*! \brief Get pixel. */
-	Color getPixel(uint32_t x, uint32_t y) const;
+	Color4ub getPixel(uint32_t x, uint32_t y) const;
 
 	/*! \brief Set pixel. */
-	void setPixel(uint32_t x, uint32_t y, const Color& color);
+	void setPixel(uint32_t x, uint32_t y, const Color4ub& color);
 
 	/*! \brief Get bitmap implementation interface. */
 	IBitmap* getIBitmap() const;

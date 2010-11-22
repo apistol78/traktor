@@ -85,7 +85,7 @@ bool emitColor(HlslContext& cx, Color* node)
 	HlslVariable* out = cx.emitOutput(node, L"Output", HtFloat4);
 	if (!out)
 		return false;
-	traktor::Color color = node->getColor();
+	traktor::Color4ub color = node->getColor();
 	f << L"const float4 " << out->getName() << L" = float4(" << (color.r / 255.0f) << L", " << (color.g / 255.0f) << L", " << (color.b / 255.0f) << L", " << (color.a / 255.0f) << L");" << Endl;
 	return true;
 }

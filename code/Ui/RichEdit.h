@@ -26,7 +26,7 @@ class T_DLLCLASS RichEdit : public Widget
 public:
 	bool create(Widget* parent, const std::wstring& text = L"", int style = WsClientBorder);
 
-	int addAttribute(const Color& textColor, const Color& backColor, bool bold, bool italic, bool underline);
+	int addAttribute(const Color4ub& textColor, const Color4ub& backColor, bool bold, bool italic, bool underline);
 
 	void setAttribute(int start, int length, int attribute);
 

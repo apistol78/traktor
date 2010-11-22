@@ -150,8 +150,8 @@ void GridRow::paint(AutoWidget* widget, Canvas& canvas, const Rect& rect)
 	// Paint selection background.
 	if (m_state & GridRow::RsSelected)
 	{
-		canvas.setForeground(Color(240, 240, 250));
-		canvas.setBackground(Color(220, 220, 230));
+		canvas.setForeground(Color4ub(240, 240, 250));
+		canvas.setBackground(Color4ub(220, 220, 230));
 		canvas.fillGradientRect(rect);
 	}
 
@@ -168,7 +168,7 @@ void GridRow::paint(AutoWidget* widget, Canvas& canvas, const Rect& rect)
 		);
 	}
 
-	canvas.setForeground(Color(190, 190, 200));
+	canvas.setForeground(Color4ub(190, 190, 200));
 
 	if (columns.size() >= 2)
 	{

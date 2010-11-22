@@ -439,12 +439,12 @@ void SkeletonEditorPage::eventPaint(ui::Event* event)
 			m_primitiveRenderer->drawLine(
 				Vector4(float(x), 0.0f, -10.0f, 1.0f),
 				Vector4(float(x), 0.0f, 10.0f, 1.0f),
-				Color(100, 100, 100)
+				Color4ub(100, 100, 100)
 			);
 			m_primitiveRenderer->drawLine(
 				Vector4(-10.0f, 0.0f, float(x), 1.0f),
 				Vector4(10.0f, 0.0f, float(x), 1.0f),
-				Color(100, 100, 100)
+				Color4ub(100, 100, 100)
 			);
 		}
 
@@ -452,13 +452,13 @@ void SkeletonEditorPage::eventPaint(ui::Event* event)
 			Vector4(11.0f, 0.0f, 0.0f, 1.0f),
 			Vector4(13.0f, 0.0f, 0.0f, 1.0f),
 			0.8f,
-			Color(255, 64, 64)
+			Color4ub(255, 64, 64)
 		);
 		m_primitiveRenderer->drawArrowHead(
 			Vector4(0.0f, 0.0f, 11.0f, 1.0f),
 			Vector4(0.0f, 0.0f, 13.0f, 1.0f),
 			0.8f,
-			Color(64, 64, 255)
+			Color4ub(64, 64, 255)
 		);
 
 		AlignedVector< Transform > boneTransforms;
@@ -474,7 +474,7 @@ void SkeletonEditorPage::eventPaint(ui::Event* event)
 			Vector4 start = boneTransforms[i].translation();
 			Vector4 end = boneTransforms[i].translation() + boneTransforms[i] * Vector4(0.0f, 0.0f, bone->getLength(), 0.0f);
 
-			Color color = (m_selectedBone == i) ? Color(255, 128, 255, 128) : Color(255, 255, 0, 128);
+			Color4ub color = (m_selectedBone == i) ? Color4ub(255, 128, 255, 128) : Color4ub(255, 255, 0, 128);
 
 			Vector4 d = boneTransforms[i].axisZ();
 			Vector4 a = boneTransforms[i].axisX();
@@ -500,9 +500,9 @@ void SkeletonEditorPage::eventPaint(ui::Event* event)
 			m_primitiveRenderer->drawLine(start + d - a - b, start + d + a - b, color);
 			m_primitiveRenderer->drawLine(start + d + a - b, start + d + a + b, color);
 
-			m_primitiveRenderer->drawLine(start, end, Color(255, 255, 128, 128));
-			m_primitiveRenderer->drawLine(start, start + a * Scalar(2.0f), Color(255, 0, 0, 128));
-			m_primitiveRenderer->drawLine(start, start + b * Scalar(2.0f), Color(0, 255, 0, 128));
+			m_primitiveRenderer->drawLine(start, end, Color4ub(255, 255, 128, 128));
+			m_primitiveRenderer->drawLine(start, start + a * Scalar(2.0f), Color4ub(255, 0, 0, 128));
+			m_primitiveRenderer->drawLine(start, start + b * Scalar(2.0f), Color4ub(0, 255, 0, 128));
 
 			if (bone->getEnableLimits())
 			{
@@ -511,8 +511,8 @@ void SkeletonEditorPage::eventPaint(ui::Event* event)
 					bone->getConeLimit().x,
 					bone->getConeLimit().y,
 					radius,
-					Color(255, 255, 255, 64),
-					Color(0, 0, 0, 32)
+					Color4ub(255, 255, 255, 64),
+					Color4ub(0, 0, 0, 32)
 				);
 
 				m_primitiveRenderer->drawProtractor(
@@ -523,8 +523,8 @@ void SkeletonEditorPage::eventPaint(ui::Event* event)
 					bone->getTwistLimit(),
 					deg2rad(8.0f),
 					radius,
-					Color(255, 255, 255, 64),
-					Color(0, 0, 0, 32)
+					Color4ub(255, 255, 255, 64),
+					Color4ub(0, 0, 0, 32)
 				);
 			}
 		}

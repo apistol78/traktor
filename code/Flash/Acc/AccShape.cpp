@@ -1,6 +1,6 @@
 #include <limits>
 #include "Core/Log/Log.h"
-#include "Core/Math/Color.h"
+#include "Core/Math/Color4ub.h"
 #include "Flash/FlashMovie.h"
 #include "Flash/FlashShape.h"
 #include "Flash/FlashBitmap.h"
@@ -158,7 +158,7 @@ bool AccShape::create(
 		for (AlignedVector< Triangle >::iterator j = i->triangles.begin(); j != i->triangles.end(); ++j)
 		{
 			Matrix33 textureMatrix = Matrix33::identity();
-			Color color(255, 255, 255, 255);
+			Color4ub color(255, 255, 255, 255);
 			render::ITexture* texture = 0;
 
 			if (j->fillStyle && j->fillStyle - 1 < uint16_t(fillStyles.size()))
@@ -226,7 +226,7 @@ bool AccShape::create(
 
 		for (AlignedVector< Line >::iterator j = i->lines.begin(); j != i->lines.end(); ++j)
 		{
-			Color color(255, 255, 255, 255);
+			Color4ub color(255, 255, 255, 255);
 			float width = 0.0f;
 
 			if (j->lineStyle && j->lineStyle - 1 < uint16_t(lineStyles.size()))

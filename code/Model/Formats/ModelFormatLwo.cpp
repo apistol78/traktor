@@ -131,7 +131,7 @@ bool createMaterials(const lwObject* lwo, Model* outModel)
 				log::debug << L"No bump texture clip for surface \"" << mbstows(surface->name) << L"\"" << Endl;
 		}
 
-		material.setColor(Color(
+		material.setColor(Color4ub(
 			uint8_t(surface->color.rgb[0] * 255.0f),
 			uint8_t(surface->color.rgb[1] * 255.0f),
 			uint8_t(surface->color.rgb[2] * 255.0f),

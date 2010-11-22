@@ -40,7 +40,7 @@ public:
 
 	bool create(ui::Widget* parent, int32_t style);
 
-	void setBackgroundColor(const Color& color);
+	void setBackgroundColor(const Color4ub& color);
 
 	void setFocusCell(AutoWidgetCell* focusCell);
 
@@ -66,7 +66,7 @@ private:
 	Ref< AutoWidgetCell > m_focusCell;
 	Ref< AutoWidgetCell > m_captureCell;
 	Ref< ScrollBar > m_scrollBar;
-	Color m_backgroundColor;
+	Color4ub m_backgroundColor;
 	Size m_scrollOffset;
 	Rect m_bounds;
 	bool m_deferredUpdate;

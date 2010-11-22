@@ -1,16 +1,16 @@
 #ifndef traktor_weather_CloudParticleData_H
 #define traktor_weather_CloudParticleData_H
 
-#include "Core/Serialization/ISerializable.h"
+#include "Core/Math/Color4ub.h"
 #include "Core/Math/Vector4.h"
-#include "Core/Math/Color.h"
+#include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_WEATHER_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -35,11 +35,11 @@ public:
 
 	float getDensity() const { return m_density; }
 
-	const Color& getHaloColor() const { return m_haloColor; }
+	const Color4ub& getHaloColor() const { return m_haloColor; }
 
-	const Color& getSkyColor() const { return m_skyColor; }
+	const Color4ub& getSkyColor() const { return m_skyColor; }
 
-	const Color& getGroundColor() const { return m_groundColor; }
+	const Color4ub& getGroundColor() const { return m_groundColor; }
 
 	float getSunInfluence() const { return m_sunInfluence; }
 
@@ -56,9 +56,9 @@ private:
 	float m_radiusMin;
 	float m_radiusRange;
 	float m_density;
-	Color m_haloColor;
-	Color m_skyColor;
-	Color m_groundColor;
+	Color4ub m_haloColor;
+	Color4ub m_skyColor;
+	Color4ub m_groundColor;
 	float m_sunInfluence;
 	Vector4 m_size;
 	int32_t m_octaves;

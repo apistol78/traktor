@@ -63,12 +63,12 @@ void ArticulatedEntityEditor::drawGuide(
 		{
 			Vector4 anchor = jointTransform * ballJointDesc->getAnchor().xyz1();
 
-			primitiveRenderer->drawSolidPoint(anchor, 4.0f, Color(255, 255, 255));
+			primitiveRenderer->drawSolidPoint(anchor, 4.0f, Color4ub(255, 255, 255));
 
 			primitiveRenderer->drawLine(
 				body1Center,
 				anchor,
-				Color(255, 255, 255)
+				Color4ub(255, 255, 255)
 			);
 
 			if (entity2)
@@ -77,7 +77,7 @@ void ArticulatedEntityEditor::drawGuide(
 				primitiveRenderer->drawLine(
 					body2Center,
 					anchor,
-					Color(255, 255, 255)
+					Color4ub(255, 255, 255)
 				);
 			}
 		}
@@ -88,22 +88,22 @@ void ArticulatedEntityEditor::drawGuide(
 
 			Vector4 anchor = jointTransform * coneTwistJointDesc->getAnchor().xyz1();
 
-			primitiveRenderer->drawSolidPoint(anchor, 4.0f, Color(255, 255, 255));
+			primitiveRenderer->drawSolidPoint(anchor, 4.0f, Color4ub(255, 255, 255));
 
 			primitiveRenderer->drawLine(
 				anchor - coneTwistJointDesc->getTwistAxis() * c_axisLength,
 				anchor + coneTwistJointDesc->getTwistAxis() * c_axisLength,
-				Color(255, 255, 0)
+				Color4ub(255, 255, 0)
 			);
 			primitiveRenderer->drawLine(
 				anchor - coneTwistJointDesc->getConeAxis() * c_axisLength,
 				anchor + coneTwistJointDesc->getConeAxis() * c_axisLength,
-				Color(0, 255, 255)
+				Color4ub(0, 255, 255)
 			);
 			primitiveRenderer->drawLine(
 				body1Center,
 				anchor,
-				Color(255, 255, 255)
+				Color4ub(255, 255, 255)
 			);
 			if (entity2)
 			{
@@ -111,7 +111,7 @@ void ArticulatedEntityEditor::drawGuide(
 				primitiveRenderer->drawLine(
 					body2Center,
 					anchor,
-					Color(255, 255, 255)
+					Color4ub(255, 255, 255)
 				);
 			}
 
@@ -132,8 +132,8 @@ void ArticulatedEntityEditor::drawGuide(
 				coneAngle1,
 				coneAngle2,
 				c_limitLength,
-				Color(255, 255, 0, 220),
-				Color(255, 255, 0, 128)
+				Color4ub(255, 255, 0, 220),
+				Color4ub(255, 255, 0, 128)
 			);
 
 			float twistAngle = coneTwistJointDesc->getTwistAngle() / 2.0f;
@@ -146,8 +146,8 @@ void ArticulatedEntityEditor::drawGuide(
 				twistAngle,
 				deg2rad(4.0f),
 				2.0f,
-				Color(255, 255, 0, 220),
-				Color(255, 255, 0, 128)
+				Color4ub(255, 255, 0, 220),
+				Color4ub(255, 255, 0, 128)
 			);
 		}
 		else if (const HingeJointDesc* hingeJointDesc = dynamic_type_cast< const HingeJointDesc* >(constraint.jointDesc))
@@ -159,18 +159,18 @@ void ArticulatedEntityEditor::drawGuide(
 			Vector4 anchor = jointTransform * hingeJointDesc->getAnchor().xyz1();
 			Vector4 axis = jointTransform * hingeJointDesc->getAxis().xyz0();
 
-			primitiveRenderer->drawSolidPoint(anchor, 4.0f, Color(255, 255, 255));
+			primitiveRenderer->drawSolidPoint(anchor, 4.0f, Color4ub(255, 255, 255));
 
 			primitiveRenderer->drawLine(
 				anchor - axis * c_axisLength,
 				anchor + axis * c_axisLength,
-				Color(255, 255, 255)
+				Color4ub(255, 255, 255)
 			);
 
 			primitiveRenderer->drawLine(
 				body1Center,
 				anchor,
-				Color(255, 255, 255)
+				Color4ub(255, 255, 255)
 			);
 			if (entity2)
 			{
@@ -178,7 +178,7 @@ void ArticulatedEntityEditor::drawGuide(
 				primitiveRenderer->drawLine(
 					body2Center,
 					anchor,
-					Color(255, 255, 255)
+					Color4ub(255, 255, 255)
 				);
 			}
 
@@ -196,8 +196,8 @@ void ArticulatedEntityEditor::drawGuide(
 				maxAngle,
 				deg2rad(c_angleStep),
 				c_limitLength,
-				Color(255, 255, 0, 220),
-				Color(255, 255, 0, 128)
+				Color4ub(255, 255, 0, 220),
+				Color4ub(255, 255, 0, 128)
 			);
 		}
 		else if (const Hinge2JointDesc* hinge2JointDesc = dynamic_type_cast< const Hinge2JointDesc* >(constraint.jointDesc))
@@ -208,17 +208,17 @@ void ArticulatedEntityEditor::drawGuide(
 			Vector4 axis1 = jointTransform * hinge2JointDesc->getAxis1().xyz0();
 			Vector4 axis2 = jointTransform * hinge2JointDesc->getAxis2().xyz0();
 
-			primitiveRenderer->drawSolidPoint(anchor, 4.0f, Color(255, 255, 255));
+			primitiveRenderer->drawSolidPoint(anchor, 4.0f, Color4ub(255, 255, 255));
 
 			primitiveRenderer->drawLine(
 				anchor - axis1 * c_axisLength,
 				anchor + axis1 * c_axisLength,
-				Color(255, 255, 255)
+				Color4ub(255, 255, 255)
 			);
 			primitiveRenderer->drawLine(
 				anchor - axis2 * c_axisLength,
 				anchor + axis2 * c_axisLength,
-				Color(255, 255, 255)
+				Color4ub(255, 255, 255)
 			);
 		}
 	}

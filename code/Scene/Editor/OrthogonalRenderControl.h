@@ -2,7 +2,7 @@
 #define traktor_scene_OrthogonalRenderControl_H
 
 #include "Core/RefArray.h"
-#include "Core/Math/Color.h"
+#include "Core/Math/Color4ub.h"
 #include "Core/Math/Matrix44.h"
 #include "Core/Timer/Timer.h"
 #include "Scene/Editor/ISceneRenderControl.h"
@@ -74,10 +74,10 @@ private:
 	Ref< world::WorldRenderer > m_worldRenderer;
 	bool m_gridEnable;
 	bool m_guideEnable;
-	Color m_colorClear;
-	Color m_colorGrid;
-	Color m_colorRef;
-	Color m_colorCamera;
+	Color4ub m_colorClear;
+	Color4ub m_colorGrid;
+	Color4ub m_colorRef;
+	Color4ub m_colorCamera;
 	Timer m_timer;
 	ui::Point m_mousePosition;
 	int m_mouseButton;

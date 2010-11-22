@@ -46,18 +46,18 @@ void Tick::paint(ui::Canvas& canvas, const Sequence* sequence, const Rect& rcCli
 
 	if (sequence->getSelectedKey() != this)
 	{
-		canvas.setForeground(Color(220, 255, 220));
-		canvas.setBackground(Color(180, 230, 180));
+		canvas.setForeground(Color4ub(220, 255, 220));
+		canvas.setBackground(Color4ub(180, 230, 180));
 	}
 	else
 	{
-		canvas.setForeground(Color(180, 180, 255));
-		canvas.setBackground(Color(160, 160, 255));
+		canvas.setForeground(Color4ub(180, 180, 255));
+		canvas.setBackground(Color4ub(160, 160, 255));
 	}
 
 	canvas.fillGradientRect(rc);
 
-	canvas.setForeground(Color(0, 0, 0, 128));
+	canvas.setForeground(Color4ub(0, 0, 0, 128));
 	canvas.drawRect(rc);
 }
 

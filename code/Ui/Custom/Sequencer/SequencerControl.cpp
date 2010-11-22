@@ -429,8 +429,8 @@ void SequencerControl::eventPaint(Event* e)
 	canvas.setBackground(getSystemColor(ScButtonFace));
 	canvas.fillRect(Rect(rc.left, rc.top, rc.left + m_separator, rc.bottom));
 	
-	canvas.setBackground(Color(138, 137, 140));
-	canvas.setForeground(Color(118, 117, 120));
+	canvas.setBackground(Color4ub(138, 137, 140));
+	canvas.setForeground(Color4ub(118, 117, 120));
 	canvas.fillRect(Rect(rc.left + m_separator + 64, rc.top, rc.right, rc.bottom));
 	canvas.fillGradientRect(Rect(
 		rc.left + m_separator,
@@ -472,7 +472,7 @@ void SequencerControl::eventPaint(Event* e)
 	int x = m_separator + m_cursor / m_timeScale - scrollOffsetX;
 	if (x >= m_separator && x < rc.right)
 	{
-		canvas.setForeground(Color(0, 0, 0));
+		canvas.setForeground(Color4ub(0, 0, 0));
 		canvas.drawLine(x, rc.top, x, rc.bottom - scrollHeight - 1);
 	}
 
@@ -484,14 +484,14 @@ void SequencerControl::eventPaint(Event* e)
 		rc.bottom
 	);
 
-	canvas.setBackground(Color(255, 255, 255));
+	canvas.setBackground(Color4ub(255, 255, 255));
 	canvas.fillRect(rcTime);
 
 	std::wstringstream ss;
 	ss << m_cursor << L" ms";
 	Size ext = canvas.getTextExtent(ss.str());
 
-	canvas.setForeground(Color(0, 0, 0));
+	canvas.setForeground(Color4ub(0, 0, 0));
 	canvas.drawText(
 		Point(
 			rcTime.left + 4,

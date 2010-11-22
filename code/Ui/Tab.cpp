@@ -415,7 +415,7 @@ void Tab::eventPaint(Event* event)
 	
 	// Fill tab background.
 	Rect rcTabs(rcInner.left, rcInner.top, rcInner.right, rcInner.top + c_tabHeight);
-	canvas.setForeground(Color(255, 255, 255));
+	canvas.setForeground(Color4ub(255, 255, 255));
 	canvas.setBackground(getSystemColor(ScButtonFace));
 	canvas.fillGradientRect(rcTabs);
 	
@@ -424,7 +424,7 @@ void Tab::eventPaint(Event* event)
 		drawClose(canvas, rcInner.right - 16, rcInner.top + 8);
 	
 	// White separator.
-	canvas.setForeground(Color(255, 255, 255));
+	canvas.setForeground(Color4ub(255, 255, 255));
 	canvas.setBackground(getSystemColor(ScButtonFace));
 	canvas.drawLine(Point(rcTabs.left, rcTabs.bottom), Point(rcTabs.right, rcTabs.bottom));
 	
@@ -456,17 +456,17 @@ void Tab::eventPaint(Event* event)
 				);
 				
 				// Draw separator.
-				canvas.setForeground(Color(128, 128, 128));
+				canvas.setForeground(Color4ub(128, 128, 128));
 				canvas.drawLine(Point(rcTab.right, rcTab.top + 1), Point(rcTab.right, rcTab.bottom - 1));
 				
 				// Highlight selected tab.
 				if (page == m_selectedPage)
 				{
 					canvas.fillRect(rcTab);
-					canvas.setForeground(Color(128, 128, 128));
+					canvas.setForeground(Color4ub(128, 128, 128));
 					canvas.drawLine(Point(rcTab.left, rcTab.bottom - 1), Point(rcTab.left, rcTab.top));
 					canvas.drawLine(Point(rcTab.left, rcTab.top), Point(rcTab.right, rcTab.top));
-					canvas.setForeground(Color(0, 0, 0));
+					canvas.setForeground(Color4ub(0, 0, 0));
 					canvas.drawLine(Point(rcTab.right, rcTab.top), Point(rcTab.right, rcTab.bottom - 1));
 				}
 
@@ -486,17 +486,17 @@ void Tab::eventPaint(Event* event)
 				// Draw text.
 				if (isEnable())
 				{
-					canvas.setForeground((page == m_selectedPage) ? Color(0, 0, 0) : Color(128, 128, 128));
+					canvas.setForeground((page == m_selectedPage) ? Color4ub(0, 0, 0) : Color4ub(128, 128, 128));
 					canvas.drawText(rcTab, text, AnCenter, AnCenter);
 				}
 				else
 				{
-					canvas.setForeground(Color(250, 250, 250));
+					canvas.setForeground(Color4ub(250, 250, 250));
 					canvas.drawText(rcTab, text, AnCenter, AnCenter);
 					
 					rcTab.left -= 1;
 					rcTab.top -= 1;
-					canvas.setForeground(Color(120, 120, 120));
+					canvas.setForeground(Color4ub(120, 120, 120));
 					canvas.drawText(rcTab, text, AnCenter, AnCenter);
 				}
 			}
@@ -520,14 +520,14 @@ void Tab::eventPaint(Event* event)
 	// Draw line.
 	if (m_drawLine)
 	{
-		canvas.setForeground(Color(128, 128, 128));
+		canvas.setForeground(Color4ub(128, 128, 128));
 		canvas.drawLine(rcInner.left, rcInner.top + c_tabHeight - 1, rcInner.right, rcInner.top + c_tabHeight - 1);
 	}
 	
 	// Draw surrounding gray border.
 	if (m_drawBorder)
 	{
-		canvas.setForeground(Color(128, 128, 128));
+		canvas.setForeground(Color4ub(128, 128, 128));
 		canvas.drawRect(rcInner);
 	}
 
@@ -556,13 +556,13 @@ Tab::PageState* Tab::findPageState(int depth)
 
 void Tab::drawClose(Canvas& canvas, int x, int y)
 {
-	canvas.setForeground(Color(128, 128, 128));
+	canvas.setForeground(Color4ub(128, 128, 128));
 
 	if (m_closeHighlight)
 	{
 		ui::Rect rc(x - 3, y - 3, x + 11, y + 10);
-		canvas.setForeground(Color(128, 128, 144));
-		canvas.setBackground(Color(224, 224, 255));
+		canvas.setForeground(Color4ub(128, 128, 144));
+		canvas.setBackground(Color4ub(224, 224, 255));
 		canvas.fillRect(rc);
 		canvas.drawRect(rc);
 	}

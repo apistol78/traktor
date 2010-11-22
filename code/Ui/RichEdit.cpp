@@ -33,7 +33,7 @@ bool RichEdit::create(Widget* parent, const std::wstring& text, int style)
 	return Widget::create(parent, style);
 }
 
-int RichEdit::addAttribute(const Color& textColor, const Color& backColor, bool bold, bool italic, bool underline)
+int RichEdit::addAttribute(const Color4ub& textColor, const Color4ub& backColor, bool bold, bool italic, bool underline)
 {
 	return static_cast< IRichEdit* >(m_widget)->addAttribute(textColor, backColor, bold, italic, underline);
 }

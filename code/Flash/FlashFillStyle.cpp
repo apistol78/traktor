@@ -15,6 +15,14 @@ FlashFillStyle::FlashFillStyle()
 
 bool FlashFillStyle::create(const SwfFillStyle* fillStyle)
 {
+	// Create solid white if null descriptor given.
+	if (!fillStyle)
+	{
+		SwfColor dummy = { 255, 255, 255, 255 };
+		m_colorRecords.push_back(ColorRecord(0.0f, dummy));
+		return true;
+	}
+
 	if (fillStyle->type == FstSolid)
 		m_colorRecords.push_back(ColorRecord(0.0f, fillStyle->solid.color));
 	else if (fillStyle->type == FstLinearGradient || fillStyle->type == FstRadialGradient)

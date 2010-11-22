@@ -144,7 +144,7 @@ bool ApplyReflector::operator >> (const Member< Path >& m)
 	return true;
 }
 
-bool ApplyReflector::operator >> (const Member< Color >& m)
+bool ApplyReflector::operator >> (const Member< Color4ub >& m)
 {
 	ColorPropertyItem* propertyItem = checked_type_cast< ColorPropertyItem*, false >(*m_propertyItemIterator++);
 	m = propertyItem->getValue();

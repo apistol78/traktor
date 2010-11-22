@@ -89,7 +89,7 @@ void StatusBar::eventPaint(Event* event)
 			canvas.drawLine(rc.right, rc.bottom - i * 4 - 1, rc.right - i * 4 - 1, rc.bottom);
 			canvas.drawLine(rc.right, rc.bottom - i * 4 - 2, rc.right - i * 4 - 2, rc.bottom);
 
-			canvas.setForeground(Color(255, 255, 255));
+			canvas.setForeground(Color4ub(255, 255, 255));
 			canvas.drawLine(rc.right, rc.bottom - i * 4 - 3, rc.right - i * 4 - 3, rc.bottom);
 		}
 	}

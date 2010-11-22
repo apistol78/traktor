@@ -1,6 +1,6 @@
 #include <cmath>
 #include "Ui/Custom/ColorPicker/ColorUtilities.h"
-#include "Core/Math/Color.h"
+#include "Core/Math/Color4ub.h"
 
 namespace traktor
 {
@@ -9,7 +9,7 @@ namespace traktor
 		namespace custom
 		{
 
-void RGBtoHSV(const Color& rgb, float outHsv[3])
+void RGBtoHSV(const Color4ub& rgb, float outHsv[3])
 {
 	float c[] =
 	{
@@ -72,7 +72,7 @@ void RGBtoHSV(const Color& rgb, float outHsv[3])
 		outHsv[1] = 1.0f - c[mn] / c[mx];
 }
 
-void HSVtoRGB(float hsv[3], Color& outRgb)
+void HSVtoRGB(float hsv[3], Color4ub& outRgb)
 {
 	int hi = int(hsv[0] / 60.0f) % 6;
 	float f = hsv[0] / 60.0f - int(hsv[0] / 60.0f);

@@ -27,33 +27,33 @@ void SphereSourceRenderer::render(render::PrimitiveRenderer* primitiveRenderer, 
 		primitiveRenderer->drawLine(
 			position + Vector4(c1, 0.0f, s1, 0.0f) * minRadius,
 			position + Vector4(c2, 0.0f, s2, 0.0f) * minRadius,
-			Color(255, 255, 0)
+			Color4ub(255, 255, 0)
 		);
 		primitiveRenderer->drawLine(
 			position + Vector4(0.0f, c1, s1, 0.0f) * minRadius,
 			position + Vector4(0.0f, c2, s2, 0.0f) * minRadius,
-			Color(255, 255, 0)
+			Color4ub(255, 255, 0)
 		);
 		primitiveRenderer->drawLine(
 			position + Vector4(c1, s1, 0.0f, 0.0f) * minRadius,
 			position + Vector4(c2, s2, 0.0f, 0.0f) * minRadius,
-			Color(255, 255, 0)
+			Color4ub(255, 255, 0)
 		);
 
 		primitiveRenderer->drawLine(
 			position + Vector4(c1, 0.0f, s1, 0.0f) * maxRadius,
 			position + Vector4(c2, 0.0f, s2, 0.0f) * maxRadius,
-			Color(255, 255, 0)
+			Color4ub(255, 255, 0)
 		);
 		primitiveRenderer->drawLine(
 			position + Vector4(0.0f, c1, s1, 0.0f) * maxRadius,
 			position + Vector4(0.0f, c2, s2, 0.0f) * maxRadius,
-			Color(255, 255, 0)
+			Color4ub(255, 255, 0)
 		);
 		primitiveRenderer->drawLine(
 			position + Vector4(c1, s1, 0.0f, 0.0f) * maxRadius,
 			position + Vector4(c2, s2, 0.0f, 0.0f) * maxRadius,
-			Color(255, 255, 0)
+			Color4ub(255, 255, 0)
 		);
 	}
 }

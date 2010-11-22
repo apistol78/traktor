@@ -109,11 +109,11 @@ void RigidEntityEditor::drawGuide(
 
 				if (entityAdapter->isSelected())
 				{
-					primitiveRenderer->drawSolidAabb(boundingBox, Color(128, 255, 255, 128));
-					primitiveRenderer->drawWireAabb(boundingBox, Color(0, 255, 255));
+					primitiveRenderer->drawSolidAabb(boundingBox, Color4ub(128, 255, 255, 128));
+					primitiveRenderer->drawWireAabb(boundingBox, Color4ub(0, 255, 255));
 				}
 				else
-					primitiveRenderer->drawWireAabb(boundingBox, Color(0, 255, 255, 180));
+					primitiveRenderer->drawWireAabb(boundingBox, Color4ub(0, 255, 255, 180));
 			}
 			else if (const CapsuleShapeDesc* capsuleShapeDesc = dynamic_type_cast< const CapsuleShapeDesc* >(shapeDesc))
 			{
@@ -122,11 +122,11 @@ void RigidEntityEditor::drawGuide(
 
 				if (entityAdapter->isSelected())
 				{
-					primitiveRenderer->drawSolidAabb(boundingBox, Color(128, 255, 255, 128));
-					primitiveRenderer->drawWireAabb(boundingBox, Color(0, 255, 255));
+					primitiveRenderer->drawSolidAabb(boundingBox, Color4ub(128, 255, 255, 128));
+					primitiveRenderer->drawWireAabb(boundingBox, Color4ub(0, 255, 255));
 				}
 				else
-					primitiveRenderer->drawWireAabb(boundingBox, Color(0, 255, 255, 180));
+					primitiveRenderer->drawWireAabb(boundingBox, Color4ub(0, 255, 255, 180));
 			}
 			else if (const CylinderShapeDesc* cylinderShapeDesc = dynamic_type_cast< const CylinderShapeDesc* >(shapeDesc))
 			{
@@ -135,12 +135,12 @@ void RigidEntityEditor::drawGuide(
 
 				if (entityAdapter->isSelected())
 				{
-					primitiveRenderer->drawSolidAabb(boundingBox, Color(128, 255, 255, 128));
+					primitiveRenderer->drawSolidAabb(boundingBox, Color4ub(128, 255, 255, 128));
 					primitiveRenderer->drawWireCylinder(
 						Matrix44::identity(),
 						cylinderShapeDesc->getRadius(),
 						cylinderShapeDesc->getLength(),
-						Color(0, 255, 255)
+						Color4ub(0, 255, 255)
 					);
 				}
 				else
@@ -148,7 +148,7 @@ void RigidEntityEditor::drawGuide(
 						Matrix44::identity(),
 						cylinderShapeDesc->getRadius(),
 						cylinderShapeDesc->getLength(),
-						Color(0, 255, 255, 180)
+						Color4ub(0, 255, 255, 180)
 					);
 			}
 			else if (const MeshShapeDesc* meshShapeDesc = dynamic_type_cast< const MeshShapeDesc* >(shapeDesc))
@@ -170,11 +170,11 @@ void RigidEntityEditor::drawGuide(
 
 						if (entityAdapter->isSelected())
 						{
-							primitiveRenderer->drawSolidTriangle(V0, V1, V2, Color(128, 255, 255, 128));
-							primitiveRenderer->drawWireTriangle(V0, V1, V2, Color(0, 255, 255));
+							primitiveRenderer->drawSolidTriangle(V0, V1, V2, Color4ub(128, 255, 255, 128));
+							primitiveRenderer->drawWireTriangle(V0, V1, V2, Color4ub(0, 255, 255));
 						}
 						else
-							primitiveRenderer->drawWireTriangle(V0, V1, V2, Color(0, 255, 255, 180));
+							primitiveRenderer->drawWireTriangle(V0, V1, V2, Color4ub(0, 255, 255, 180));
 					}
 				}
 			}
@@ -185,11 +185,11 @@ void RigidEntityEditor::drawGuide(
 
 				if (entityAdapter->isSelected())
 				{
-					primitiveRenderer->drawSolidAabb(boundingBox, Color(128, 255, 255, 128));
-					primitiveRenderer->drawWireAabb(boundingBox, Color(0, 255, 255));
+					primitiveRenderer->drawSolidAabb(boundingBox, Color4ub(128, 255, 255, 128));
+					primitiveRenderer->drawWireAabb(boundingBox, Color4ub(0, 255, 255));
 				}
 				else
-					primitiveRenderer->drawWireAabb(boundingBox, Color(0, 255, 255, 180));
+					primitiveRenderer->drawWireAabb(boundingBox, Color4ub(0, 255, 255, 180));
 			}
 			else if (const HeightfieldShapeDesc* heightfieldShapeDesc = dynamic_type_cast< const HeightfieldShapeDesc* >(shapeDesc))
 			{
@@ -201,11 +201,11 @@ void RigidEntityEditor::drawGuide(
 
 					if (entityAdapter->isSelected())
 					{
-						primitiveRenderer->drawSolidAabb(boundingBox, Color(128, 255, 255, 128));
-						primitiveRenderer->drawWireAabb(boundingBox, Color(0, 255, 255));
+						primitiveRenderer->drawSolidAabb(boundingBox, Color4ub(128, 255, 255, 128));
+						primitiveRenderer->drawWireAabb(boundingBox, Color4ub(0, 255, 255));
 					}
 					else
-						primitiveRenderer->drawWireAabb(boundingBox, Color(0, 255, 255, 180));
+						primitiveRenderer->drawWireAabb(boundingBox, Color4ub(0, 255, 255, 180));
 				}
 			}
 

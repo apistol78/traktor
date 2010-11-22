@@ -134,17 +134,17 @@ void SequenceGroup::paint(SequencerControl* sequencer, Canvas& canvas, const Rec
 	// Draw sequence group background.
 	if (!isSelected())
 	{
-		canvas.setForeground(Color(250, 249, 250));
-		canvas.setBackground(Color(238, 237, 240));
+		canvas.setForeground(Color4ub(250, 249, 250));
+		canvas.setBackground(Color4ub(238, 237, 240));
 		canvas.fillGradientRect(rc);
 	}
 	else
 	{
-		canvas.setBackground(Color(226, 229, 238));
+		canvas.setBackground(Color4ub(226, 229, 238));
 		canvas.fillRect(rc);
 	}
 
-	canvas.setForeground(Color(128, 128, 128));
+	canvas.setForeground(Color4ub(128, 128, 128));
 	canvas.drawLine(rc.left, rc.bottom - 1, rc.right, rc.bottom - 1);
 	canvas.drawLine(separator - 1, rc.top, separator - 1, rc.bottom);
 
@@ -156,7 +156,7 @@ void SequenceGroup::paint(SequencerControl* sequencer, Canvas& canvas, const Rec
 	));
 
 	// Draw sequence group text.
-	canvas.setForeground(Color(0, 0, 0));
+	canvas.setForeground(Color4ub(0, 0, 0));
 	Size ext = canvas.getTextExtent(getName());
 	canvas.drawText(
 		Point(
@@ -203,7 +203,7 @@ void SequenceGroup::paint(SequencerControl* sequencer, Canvas& canvas, const Rec
 	int end = separator + m_end / TIME_SCALE_DIVISOR - scrollOffset;
 	int y = rc.getCenter().y;
 	
-	canvas.setBackground(Color(80, 80, 80));
+	canvas.setBackground(Color4ub(80, 80, 80));
 	canvas.drawLine(start, y - 2, start, y + 3);
 	canvas.drawLine(start, y, end, y);
 	canvas.drawLine(end, y - 2, end, y + 3);

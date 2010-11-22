@@ -26,15 +26,15 @@ void QuadSourceRenderer::render(render::PrimitiveRenderer* primitiveRenderer, So
 		center - axis1 + axis2
 	};
 
-	primitiveRenderer->drawLine(corners[0], corners[1], Color(255, 255, 0));
-	primitiveRenderer->drawLine(corners[1], corners[2], Color(255, 255, 0));
-	primitiveRenderer->drawLine(corners[2], corners[3], Color(255, 255, 0));
-	primitiveRenderer->drawLine(corners[3], corners[0], Color(255, 255, 0));
+	primitiveRenderer->drawLine(corners[0], corners[1], Color4ub(255, 255, 0));
+	primitiveRenderer->drawLine(corners[1], corners[2], Color4ub(255, 255, 0));
+	primitiveRenderer->drawLine(corners[2], corners[3], Color4ub(255, 255, 0));
+	primitiveRenderer->drawLine(corners[3], corners[0], Color4ub(255, 255, 0));
 
-	primitiveRenderer->drawLine(corners[0], corners[2], Color(255, 255, 0));
-	primitiveRenderer->drawLine(corners[1], corners[3], Color(255, 255, 0));
+	primitiveRenderer->drawLine(corners[0], corners[2], Color4ub(255, 255, 0));
+	primitiveRenderer->drawLine(corners[1], corners[3], Color4ub(255, 255, 0));
 
-	primitiveRenderer->drawLine(center, center + normal, Color(255, 255, 0));
+	primitiveRenderer->drawLine(center, center + normal, Color4ub(255, 255, 0));
 }
 
 	}

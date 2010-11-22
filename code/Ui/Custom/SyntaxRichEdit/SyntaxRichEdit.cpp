@@ -28,12 +28,12 @@ bool SyntaxRichEdit::create(Widget* parent, const std::wstring& text, int style)
 	if (!RichEdit::create(parent, text, style))
 		return false;
 
-	m_attributeDefault = addAttribute(Color(0, 0, 0), Color(255, 255, 255), false, false, false);		// Default
-	m_attributeString = addAttribute(Color(120, 120, 120), Color(255, 255, 255), false, false, false);	// String
-	m_attributeNumber = addAttribute(Color(0, 0, 120), Color(255, 255, 255), false, false, false);		// Number
-	m_attributeComment = addAttribute(Color(40, 120, 40), Color(255, 255, 255), false, true, false);	// Comment
-	m_attributeKeyword = addAttribute(Color(0, 0, 255), Color(255, 255, 255), false, false, false);		// Keyword
-	m_attributeError = addAttribute(Color(255, 255, 255), Color(255, 0, 0), false, false, false);		// Error
+	m_attributeDefault = addAttribute(Color4ub(0, 0, 0), Color4ub(255, 255, 255), false, false, false);		// Default
+	m_attributeString = addAttribute(Color4ub(120, 120, 120), Color4ub(255, 255, 255), false, false, false);	// String
+	m_attributeNumber = addAttribute(Color4ub(0, 0, 120), Color4ub(255, 255, 255), false, false, false);		// Number
+	m_attributeComment = addAttribute(Color4ub(40, 120, 40), Color4ub(255, 255, 255), false, true, false);	// Comment
+	m_attributeKeyword = addAttribute(Color4ub(0, 0, 255), Color4ub(255, 255, 255), false, false, false);		// Keyword
+	m_attributeError = addAttribute(Color4ub(255, 255, 255), Color4ub(255, 0, 0), false, false, false);		// Error
 
 	addChangeEventHandler(createMethodHandler(this, &SyntaxRichEdit::eventChange));
 	return true;

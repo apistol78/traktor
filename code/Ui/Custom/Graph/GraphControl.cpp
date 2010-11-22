@@ -884,8 +884,8 @@ void GraphControl::eventPaint(Event* e)
 	// Selection rectangle.
 	if (m_mode == MdDrawSelectionRectangle)
 	{
-		canvas.setForeground(Color(220, 220, 255, 200));
-		canvas.setBackground(Color(90, 90, 120, 80));
+		canvas.setForeground(Color4ub(220, 220, 255, 200));
+		canvas.setBackground(Color4ub(90, 90, 120, 80));
 		canvas.fillRect(Rect(m_origin, m_cursor));
 		canvas.drawRect(Rect(m_origin, m_cursor));
 	}

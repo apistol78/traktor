@@ -122,7 +122,7 @@ void LogList::eventPaint(Event* event)
 	PaintEvent* paintEvent = checked_type_cast< PaintEvent* >(event);
 	Canvas& canvas = paintEvent->getCanvas();
 
-	const Color c_color[] = { Color(255, 255, 255), Color(255, 255, 200), Color(255, 200, 200) };
+	const Color4ub c_color[] = { Color4ub(255, 255, 255), Color4ub(255, 255, 200), Color4ub(255, 200, 200) };
 
 	// Get inner rectangle, adjust for scrollbar.
 	Rect inner = getInnerRect();
@@ -170,7 +170,7 @@ void LogList::eventPaint(Event* event)
 		}
 
 		Rect textRect(rc.left + iconSize.cx, rc.top, rc.right, rc.bottom);
-		canvas.setForeground(Color(0, 0, 0));
+		canvas.setForeground(Color4ub(0, 0, 0));
 
 		size_t s = 0;
 		while (s < i->second.length())

@@ -225,7 +225,7 @@ bool InspectReflector::operator >> (const Member< Path >& m)
 	return true;
 }
 
-bool InspectReflector::operator >> (const Member< Color >& m)
+bool InspectReflector::operator >> (const Member< Color4ub >& m)
 {
 	addPropertyItem(new ColorPropertyItem(stylizeMemberName(m.getName()), m));
 	return true;

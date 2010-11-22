@@ -1,7 +1,7 @@
 #ifndef traktor_PropertyColor_H
 #define traktor_PropertyColor_H
 
-#include "Core/Math/Color.h"
+#include "Core/Math/Color4ub.h"
 #include "Core/Settings/IPropertyValue.h"
 
 // import/export mechanism.
@@ -23,7 +23,7 @@ class T_DLLCLASS PropertyColor : public IPropertyValue
 	T_RTTI_CLASS;
 
 public:
-	typedef Color value_type_t;
+	typedef Color4ub value_type_t;
 
 	PropertyColor(const value_type_t& value = value_type_t());
 

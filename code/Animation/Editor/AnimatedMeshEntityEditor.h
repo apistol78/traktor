@@ -36,7 +36,7 @@ public:
 	) const;
 
 private:
-	Color m_colorBone;
+	Color4ub m_colorBone;
 
 	void updateSettings(scene::SceneEditorContext* context);
 };

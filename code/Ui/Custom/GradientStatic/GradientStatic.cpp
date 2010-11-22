@@ -11,7 +11,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.GradientStatic", GradientStatic, Widget)
 
-bool GradientStatic::create(Widget* parent, const Color& colorLeft, const Color& colorRight, const Color& colorText, const std::wstring& text, int style)
+bool GradientStatic::create(Widget* parent, const Color4ub& colorLeft, const Color4ub& colorRight, const Color4ub& colorText, const std::wstring& text, int style)
 {
 	if (!Widget::create(parent, style))
 		return false;
@@ -32,17 +32,17 @@ Size GradientStatic::getPreferedSize() const
 	return getTextExtent(getText());
 }
 
-void GradientStatic::setColorLeft(const Color& colorLeft)
+void GradientStatic::setColorLeft(const Color4ub& colorLeft)
 {
 	m_colorLeft = colorLeft;
 }
 
-void GradientStatic::setColorRight(const Color& colorRight)
+void GradientStatic::setColorRight(const Color4ub& colorRight)
 {
 	m_colorRight = colorRight;
 }
 
-void GradientStatic::setColorText(const Color& colorText)
+void GradientStatic::setColorText(const Color4ub& colorText)
 {
 	m_colorText = colorText;
 }

@@ -128,7 +128,7 @@ void ShortcutEdit::eventPaint(Event* event)
 	if (!hasFocus())
 		canvas.setBackground(getSystemColor(ScWindowBackground));
 	else
-		canvas.setBackground(Color(220, 255, 220));
+		canvas.setBackground(Color4ub(220, 255, 220));
 
 	canvas.fillRect(rc);
 

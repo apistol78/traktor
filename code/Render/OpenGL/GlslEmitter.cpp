@@ -97,7 +97,7 @@ void emitColor(GlslContext& cx, Color* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 	GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat4);
-	traktor::Color color = node->getColor();
+	traktor::Color4ub color = node->getColor();
 	f << L"const vec4 " << out->getName() << L" = vec4(" << (color.r / 255.0f) << L", " << (color.g / 255.0f) << L", " << (color.b / 255.0f) << L", " << (color.a / 255.0f) << L");" << Endl;
 }
 

@@ -27,27 +27,27 @@ bool ColorControl::create(Widget* parent, int style)
 	addPaintEventHandler(createMethodHandler(this, &ColorControl::eventPaint));
 
 	m_preview = new ui::Bitmap(c_width, c_height);
-	setColor(Color(0, 0, 0));
+	setColor(Color4ub(0, 0, 0));
 
 	return true;
 }
 
-void ColorControl::setColor(const Color& color)
+void ColorControl::setColor(const Color4ub& color)
 {
 	m_color = color;
 	for (uint32_t y = 0; y < c_height; ++y)
 	{
 		for (uint32_t x = 0; x < c_width; ++x)
 		{
-			Color checkerColor = (((x >> 2) & 1) ^ ((y >> 2) & 1)) ? Color(180, 180, 180) : Color(80, 80, 80);
-			Color previewColor = lerp(checkerColor, color, color.a / 255.0f);
+			Color4ub checkerColor = (((x >> 2) & 1) ^ ((y >> 2) & 1)) ? Color4ub(180, 180, 180) : Color4ub(80, 80, 80);
+			Color4ub previewColor = lerp(checkerColor, color, color.a / 255.0f);
 			m_preview->setPixel(x, y, previewColor);
 		}
 	}
 	update();
 }
 
-Color ColorControl::getColor() const
+Color4ub ColorControl::getColor() const
 {
 	return m_color;
 }

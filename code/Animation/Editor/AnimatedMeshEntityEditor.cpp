@@ -95,8 +95,8 @@ void AnimatedMeshEntityEditor::drawGuide(
 				primitiveRenderer->drawLine(start + d + a - b, start + d + a + b, m_colorBone);
 
 				primitiveRenderer->drawLine(start, end, m_colorBone);
-				primitiveRenderer->drawLine(start, start + a * Scalar(2.0f), Color(255, 0, 0, 180));
-				primitiveRenderer->drawLine(start, start + b * Scalar(2.0f), Color(0, 255, 0, 180));
+				primitiveRenderer->drawLine(start, start + a * Scalar(2.0f), Color4ub(255, 0, 0, 180));
+				primitiveRenderer->drawLine(start, start + b * Scalar(2.0f), Color4ub(0, 255, 0, 180));
 			}
 		}
 	}

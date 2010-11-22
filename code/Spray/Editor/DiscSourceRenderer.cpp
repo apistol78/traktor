@@ -33,11 +33,11 @@ void DiscSourceRenderer::render(render::PrimitiveRenderer* primitiveRenderer, So
 		Vector4 d1 = Scalar(c1) * axisZ + Scalar(s1) * axisX;
 		Vector4 d2 = Scalar(c2) * axisZ + Scalar(s2) * axisX;
 
-		primitiveRenderer->drawLine(position + d1 * minRadius, position + d2 * minRadius, Color(255, 255, 0));
-		primitiveRenderer->drawLine(position + d1 * maxRadius, position + d2 * maxRadius, Color(255, 255, 0));
+		primitiveRenderer->drawLine(position + d1 * minRadius, position + d2 * minRadius, Color4ub(255, 255, 0));
+		primitiveRenderer->drawLine(position + d1 * maxRadius, position + d2 * maxRadius, Color4ub(255, 255, 0));
 	}
 
-	primitiveRenderer->drawLine(position, position + normal, Color(255, 255, 0));
+	primitiveRenderer->drawLine(position, position + normal, Color4ub(255, 255, 0));
 }
 
 	}

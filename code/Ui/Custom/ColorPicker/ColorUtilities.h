@@ -4,16 +4,16 @@
 namespace traktor
 {
 
-class Color;
+class Color4ub;
 
 	namespace ui
 	{
 		namespace custom
 		{
 
-void RGBtoHSV(const Color& rgb, float outHsv[3]);
+void RGBtoHSV(const Color4ub& rgb, float outHsv[3]);
 
-void HSVtoRGB(float hsv[3], Color& outRgb);
+void HSVtoRGB(float hsv[3], Color4ub& outRgb);
 
 		}
 	}

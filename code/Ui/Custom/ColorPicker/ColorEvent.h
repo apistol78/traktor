@@ -2,7 +2,7 @@
 #define traktor_ui_custom_ColorEvent_H
 
 #include "Ui/Event.h"
-#include "Core/Math/Color.h"
+#include "Core/Math/Color4ub.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -27,12 +27,12 @@ class T_DLLCLASS ColorEvent : public Event
 	T_RTTI_CLASS;
 
 public:
-	ColorEvent(EventSubject* sender, Object* item, const Color& color);
+	ColorEvent(EventSubject* sender, Object* item, const Color4ub& color);
 
-	const Color& getColor() const;
+	const Color4ub& getColor() const;
 
 private:
-	Color m_color;
+	Color4ub m_color;
 };
 
 		}

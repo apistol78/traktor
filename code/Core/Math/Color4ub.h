@@ -15,10 +15,10 @@
 namespace traktor
 {
 
-/*! \brief Color
+/*! \brief Color; 4 unsigned bytes representation.
  * \ingroup Core
  */
-class T_DLLCLASS Color
+class T_DLLCLASS Color4ub
 {
 public:
 	union
@@ -27,15 +27,15 @@ public:
 		struct { uint8_t r, g, b, a; };
 	};
 	
-	T_MATH_INLINE Color();
+	T_MATH_INLINE Color4ub();
 
-	T_MATH_INLINE Color(const Color& v);
+	T_MATH_INLINE Color4ub(const Color4ub& v);
 
-	explicit T_MATH_INLINE Color(uint8_t r, uint8_t g, uint8_t b);
+	explicit T_MATH_INLINE Color4ub(uint8_t r, uint8_t g, uint8_t b);
 
-	explicit T_MATH_INLINE Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+	explicit T_MATH_INLINE Color4ub(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 
-	explicit T_MATH_INLINE Color(uint32_t argb);
+	explicit T_MATH_INLINE Color4ub(uint32_t argb);
 
 	T_MATH_INLINE void set(uint8_t r, uint8_t g, uint8_t b);
 
@@ -53,25 +53,25 @@ public:
 
 	T_MATH_INLINE uint16_t getRGB565() const;
 
-	T_MATH_INLINE Color& operator = (const Color& v);
+	T_MATH_INLINE Color4ub& operator = (const Color4ub& v);
 
-	T_MATH_INLINE Color operator + (const Color& color) const;
+	T_MATH_INLINE Color4ub operator + (const Color4ub& color) const;
 
-	T_MATH_INLINE Color operator * (const Color& color) const;
+	T_MATH_INLINE Color4ub operator * (const Color4ub& color) const;
 
-	T_MATH_INLINE bool operator == (const Color& v) const;
+	T_MATH_INLINE bool operator == (const Color4ub& v) const;
 
-	T_MATH_INLINE bool operator != (const Color& v) const;
+	T_MATH_INLINE bool operator != (const Color4ub& v) const;
 
 	T_MATH_INLINE operator uint32_t () const;
 };
 
-T_MATH_INLINE T_DLLCLASS Color lerp(const Color& a, const Color& b, float c);
+T_MATH_INLINE T_DLLCLASS Color4ub lerp(const Color4ub& a, const Color4ub& b, float c);
 
 }
 
 #if defined(T_MATH_USE_INLINE)
-#include "Core/Math/Std/Color.inl"
+#include "Core/Math/Std/Color4ub.inl"
 #endif
 
 #endif	// traktor_Color_H

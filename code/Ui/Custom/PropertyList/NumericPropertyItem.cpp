@@ -179,7 +179,7 @@ void NumericPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 		Point(x + b, y - 1),
 		Point(x - b, y - 1)
 	};
-	canvas.setBackground(value < m_limitMax ? Color(80, 80, 80) : Color(180, 180, 180));
+	canvas.setBackground(value < m_limitMax ? Color4ub(80, 80, 80) : Color4ub(180, 180, 180));
 	canvas.fillPolygon(up, 3);
 
 	Point dw[] =
@@ -188,7 +188,7 @@ void NumericPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 		Point(x - b + 1, y + 1),
 		Point(x + b - 1, y + 1)
 	};
-	canvas.setBackground(value > m_limitMin ? Color(80, 80, 80) : Color(180, 180, 180));
+	canvas.setBackground(value > m_limitMin ? Color4ub(80, 80, 80) : Color4ub(180, 180, 180));
 	canvas.fillPolygon(dw, 3);
 }
 

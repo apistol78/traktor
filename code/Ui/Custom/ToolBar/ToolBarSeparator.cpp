@@ -22,7 +22,7 @@ Size ToolBarSeparator::getSize(const ToolBar* toolBar, int imageWidth, int image
 
 void ToolBarSeparator::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, Bitmap* images, int imageWidth, int imageHeight)
 {
-	canvas.setForeground(Color(160, 160, 160));
+	canvas.setForeground(Color4ub(160, 160, 160));
 	canvas.drawLine(at, at + Size(0, imageHeight));
 }
 

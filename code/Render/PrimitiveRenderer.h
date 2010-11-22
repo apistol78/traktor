@@ -2,7 +2,7 @@
 #define traktor_render_PrimitiveRenderer_H
 
 #include <stack>
-#include "Core/Math/Color.h"
+#include "Core/Math/Color4ub.h"
 #include "Core/Math/Vector2.h"
 #include "Core/Math/Vector4.h"
 #include "Core/Math/Matrix44.h"
@@ -88,48 +88,48 @@ public:
 	void drawLine(
 		const Vector4& start,
 		const Vector4& end,
-		const Color& color
+		const Color4ub& color
 	);
 
 	void drawLine(
 		const Vector4& start,
 		const Vector4& end,
 		float width,
-		const Color& color
+		const Color4ub& color
 	);
 
 	void drawArrowHead(
 		const Vector4& start,
 		const Vector4& end,
 		float sharpness,
-		const Color& color
+		const Color4ub& color
 	);
 
 	void drawWireAabb(
 		const Vector4& center,
 		const Vector4& extent,
-		const Color& color
+		const Color4ub& color
 	);
 
 	void drawWireAabb(
 		const Aabb& aabb,
-		const Color& color
+		const Color4ub& color
 	);
 
 	void drawWireTriangle(
 		const Vector4& vert1,
 		const Vector4& vert2,
 		const Vector4& vert3,
-		const Color& color
+		const Color4ub& color
 	);
 
 	void drawWireTriangle(
 		const Vector4& vert1,
-		const Color& color1,
+		const Color4ub& color1,
 		const Vector4& vert2,
-		const Color& color2,
+		const Color4ub& color2,
 		const Vector4& vert3,
-		const Color& color3
+		const Color4ub& color3
 	);
 
 	void drawWireQuad(
@@ -137,58 +137,58 @@ public:
 		const Vector4& vert2,
 		const Vector4& vert3,
 		const Vector4& vert4,
-		const Color& color
+		const Color4ub& color
 	);
 
 	void drawWireQuad(
 		const Vector4& vert1,
-		const Color& color1,
+		const Color4ub& color1,
 		const Vector4& vert2,
-		const Color& color2,
+		const Color4ub& color2,
 		const Vector4& vert3,
-		const Color& color3,
+		const Color4ub& color3,
 		const Vector4& vert4,
-		const Color& color4
+		const Color4ub& color4
 	);
 
 	void drawWireCylinder(
 		const Matrix44& frame,
 		float radius,
 		float length,
-		const Color& color
+		const Color4ub& color
 	);
 
 	void drawSolidPoint(
 		const Vector4& center,
 		float size,
-		const Color& color
+		const Color4ub& color
 	);
 
 	void drawSolidAabb(
 		const Vector4& center,
 		const Vector4& extent,
-		const Color& color
+		const Color4ub& color
 	);
 
 	void drawSolidAabb(
 		const Aabb& aabb,
-		const Color& color
+		const Color4ub& color
 	);
 
 	void drawSolidTriangle(
 		const Vector4& vert1,
 		const Vector4& vert2,
 		const Vector4& vert3,
-		const Color& color
+		const Color4ub& color
 	);
 
 	void drawSolidTriangle(
 		const Vector4& vert1,
-		const Color& color1,
+		const Color4ub& color1,
 		const Vector4& vert2,
-		const Color& color2,
+		const Color4ub& color2,
 		const Vector4& vert3,
-		const Color& color3
+		const Color4ub& color3
 	);
 
 	void drawSolidQuad(
@@ -196,18 +196,18 @@ public:
 		const Vector4& vert2,
 		const Vector4& vert3,
 		const Vector4& vert4,
-		const Color& color
+		const Color4ub& color
 	);
 
 	void drawSolidQuad(
 		const Vector4& vert1,
-		const Color& color1,
+		const Color4ub& color1,
 		const Vector4& vert2,
-		const Color& color2,
+		const Color4ub& color2,
 		const Vector4& vert3,
-		const Color& color3,
+		const Color4ub& color3,
 		const Vector4& vert4,
-		const Color& color4
+		const Color4ub& color4
 	);
 
 	void drawTextureTriangle(
@@ -217,7 +217,7 @@ public:
 		const Vector2& texCoord2,
 		const Vector4& vert3,
 		const Vector2& texCoord3,
-		const Color& color,
+		const Color4ub& color,
 		ITexture* texture
 	);
 
@@ -230,7 +230,7 @@ public:
 		const Vector2& texCoord3,
 		const Vector4& vert4,
 		const Vector2& texCoord4,
-		const Color& color,
+		const Color4ub& color,
 		ITexture* texture
 	);
 
@@ -242,8 +242,8 @@ public:
 		float maxAngle,
 		float angleStep,
 		float radius,
-		const Color& colorSolid,
-		const Color& colorHint
+		const Color4ub& colorSolid,
+		const Color4ub& colorHint
 	);
 
 	void drawCone(
@@ -251,8 +251,8 @@ public:
 		float angleX,
 		float angleY,
 		float length,
-		const Color& colorSolid,
-		const Color& colorHint
+		const Color4ub& colorSolid,
+		const Color4ub& colorHint
 	);
 
 	bool begin(IRenderView* renderView);

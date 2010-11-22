@@ -59,7 +59,7 @@ bool ColorSettingsPage::create(ui::Container* parent, Settings* settings, const 
 
 	for (uint32_t i = 0; i < sizeof_array(c_propertyColors); ++i)
 	{
-		Color color = colorGroup->getProperty< PropertyColor >(c_propertyColors[i].prop);
+		Color4ub color = colorGroup->getProperty< PropertyColor >(c_propertyColors[i].prop);
 		m_colorList->addPropertyItem(new ui::custom::ColorPropertyItem(
 			i18n::Text(c_propertyColors[i].name),
 			color
@@ -88,7 +88,7 @@ bool ColorSettingsPage::apply(Settings* settings)
 			propertyItems[i]
 		);
 
-		const Color& color = propertyItem->getValue();
+		const Color4ub& color = propertyItem->getValue();
 
 		colorGroup->setProperty< PropertyColor >(
 			c_propertyColors[i].prop,
