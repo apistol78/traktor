@@ -35,13 +35,13 @@ GammaFilter::GammaFilter(float gammaR, float gammaG, float gammaB, float gammaA)
 Ref< Image > GammaFilter::apply(const Image* image)
 {
 	Ref< Image > final = new Image(image->getPixelFormat(), image->getWidth(), image->getHeight(), image->getPalette());
-	Color in;
+	Color4f in;
 	for (int32_t y = 0; y < image->getHeight(); ++y)
 	{
 		for (int32_t x = 0; x < image->getWidth(); ++x)
 		{
 			image->getPixelUnsafe(x, y, in);
-			Color out(
+			Color4f out(
 				std::pow(in.getRed(), m_gamma[0]),
 				std::pow(in.getGreen(), m_gamma[1]),
 				std::pow(in.getBlue(), m_gamma[2]),

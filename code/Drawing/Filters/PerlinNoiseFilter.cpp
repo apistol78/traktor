@@ -92,7 +92,7 @@ Ref< Image > PerlinNoiseFilter::apply(const Image* image)
 			else if (perlin > 1.0f)
 				perlin = 1.0f;
 
-			Color out(perlin, perlin, perlin, perlin);
+			Color4f out(perlin, perlin, perlin, perlin);
 			final->setPixelUnsafe(x, y, out);
 		}
 	}

@@ -18,9 +18,9 @@ Ref< Image > BrightnessContrastFilter::apply(const Image* image)
 {
 	Ref< Image > final = new Image(image->getPixelFormat(), image->getWidth(), image->getHeight(), image->getPalette());
 	
-	Color in;
-	Color c(m_contrast, m_contrast, m_contrast, 1.0f);
-	Color b(m_brightness, m_brightness, m_brightness, 0.0f);
+	Color4f in;
+	Color4f c(m_contrast, m_contrast, m_contrast, 1.0f);
+	Color4f b(m_brightness, m_brightness, m_brightness, 0.0f);
 
 	for (int32_t y = 0; y < image->getHeight(); ++y)
 	{

@@ -12,9 +12,9 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.TonemapFilter", TonemapFilter, IImageFi
 
 Ref< Image > TonemapFilter::apply(const Image* image)
 {
-	Color in;
+	Color4f in;
 
-	float intensity = 0.0f;
+	Scalar intensity(0.0f);
 	for (int32_t y = 0; y < image->getHeight(); ++y)
 	{
 		for (int32_t x = 0; x < image->getWidth(); ++x)
@@ -23,7 +23,7 @@ Ref< Image > TonemapFilter::apply(const Image* image)
 			intensity += in.getRed() + in.getGreen() + in.getBlue();
 		}
 	}
-	intensity /= float(image->getWidth() * image->getHeight());
+	intensity /= Scalar(float(image->getWidth() * image->getHeight()));
 
 	Ref< Image > final = new Image(PixelFormat::getR8G8B8(), image->getWidth(), image->getHeight(), image->getPalette());
 

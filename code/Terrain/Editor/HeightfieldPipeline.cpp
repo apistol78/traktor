@@ -162,7 +162,7 @@ bool HeightfieldPipeline::buildOutput(
 	{
 		for (uint32_t x = 0; x < size; ++x)
 		{
-			drawing::Color imagePixel;
+			Color4f imagePixel;
 			image->getPixel(x, y, imagePixel);
 
 			Heightfield::height_t height = Heightfield::height_t(imagePixel.getRed() * std::numeric_limits< Heightfield::height_t >::max());

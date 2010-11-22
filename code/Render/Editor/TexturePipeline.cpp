@@ -51,7 +51,7 @@ bool isBinaryAlpha(const drawing::Image* image)
 	{
 		for (int32_t x = 0; x < image->getWidth(); ++x)
 		{
-			drawing::Color color;
+			Color4f color;
 			image->getPixel(x, y, color);
 
 			uint8_t alpha = uint8_t(color.getAlpha() * 255.0f);
@@ -346,7 +346,7 @@ bool TexturePipeline::buildOutput(
 					break;
 				}
 
-				drawing::Color color;
+				Color4f color;
 				if (image->getPixel(slicex + offset, slicey, color))
 					sphereImage->setPixel(x, y, color);
 			}
@@ -377,7 +377,7 @@ bool TexturePipeline::buildOutput(
 	// Inverse normal map Y; assume it's a normal map to begin with.
 	if (textureAsset->m_inverseNormalMapY)
 	{
-		drawing::TransformFilter transformFilter(drawing::Color(1.0f, -1.0f, 1.0f, 1.0f), drawing::Color(0.0f, 1.0f, 0.0f, 0.0f));
+		drawing::TransformFilter transformFilter(Color4f(1.0f, -1.0f, 1.0f, 1.0f), Color4f(0.0f, 1.0f, 0.0f, 0.0f));
 		image = image->applyFilter(&transformFilter);
 	}
 
@@ -385,7 +385,7 @@ bool TexturePipeline::buildOutput(
 	if (m_allowCompression && textureAsset->m_enableNormalMapCompression)
 	{
 		// Inverse X axis; do it here instead of in shader.
-		drawing::TransformFilter transformFilter(drawing::Color(-1.0f, 1.0f, 1.0f, 1.0f), drawing::Color(1.0f, 0.0f, 0.0f, 0.0f));
+		drawing::TransformFilter transformFilter(Color4f(-1.0f, 1.0f, 1.0f, 1.0f), Color4f(1.0f, 0.0f, 0.0f, 0.0f));
 		image = image->applyFilter(&transformFilter);
 
 		// [rgba] -> [0,g,0,r] (or [a,g,0,r] if we cannot ignore alpha)

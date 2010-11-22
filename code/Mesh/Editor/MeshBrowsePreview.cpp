@@ -48,7 +48,7 @@ Ref< ui::Bitmap > MeshBrowsePreview::generate(const editor::IEditor* editor, db:
 		64
 	);
 
-	meshThumb->clear(drawing::Color(0.6f, 0.6f, 0.6f));
+	meshThumb->clear(Color4f(0.6f, 0.6f, 0.6f));
 
 	drawing::Raster raster(meshThumb);
 
@@ -86,7 +86,7 @@ Ref< ui::Bitmap > MeshBrowsePreview::generate(const editor::IEditor* editor, db:
 		raster.drawPolyLine(
 			&screenVertices[0],
 			screenVertices.size(),
-			drawing::Color(shade, shade, shade, 1.0f)
+			Color4f(shade, shade, shade, 1.0f)
 		);
 	}
 

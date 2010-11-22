@@ -107,7 +107,7 @@ bool CloudMaskPipeline::buildOutput(
 	{
 		for (uint32_t x = 0; x < size; ++x)
 		{
-			drawing::Color imagePixel;
+			Color4f imagePixel;
 			image->getPixel(x, y, imagePixel);
 
 			uint8_t opacity = uint8_t(imagePixel.getRed() * 255);

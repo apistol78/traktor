@@ -163,7 +163,7 @@ void Image::copy(const Image* src, int32_t x, int32_t y, int32_t width, int32_t 
 	checkData(m_data, m_size);
 }
 
-void Image::clear(const Color& color)
+void Image::clear(const Color4f& color)
 {
 	float tmp[] =
 	{
@@ -191,7 +191,7 @@ void Image::clear(const Color& color)
 	checkData(m_data, m_size);
 }
 
-bool Image::getPixel(int32_t x, int32_t y, Color& outColor) const
+bool Image::getPixel(int32_t x, int32_t y, Color4f& outColor) const
 {
 	if (x < 0  || x >= m_width || y < 0 || y >= m_height)
 		return false;
@@ -200,7 +200,7 @@ bool Image::getPixel(int32_t x, int32_t y, Color& outColor) const
 	return true;
 }
 
-bool Image::setPixel(int32_t x, int32_t y, const Color& color)
+bool Image::setPixel(int32_t x, int32_t y, const Color4f& color)
 {
 	if (x < 0  || x >= m_width || y < 0 || y >= m_height)
 		return false;
@@ -209,14 +209,14 @@ bool Image::setPixel(int32_t x, int32_t y, const Color& color)
 	return true;
 }
 
-void Image::getPixelUnsafe(int32_t x, int32_t y, Color& outColor) const
+void Image::getPixelUnsafe(int32_t x, int32_t y, Color4f& outColor) const
 {
 	float tmp[] =
 	{
-		0,
-		0,
-		0,
-		0
+		0.0f,
+		0.0f,
+		0.0f,
+		0.0f
 	};
 	
 	m_pixelFormat.convert(
@@ -231,7 +231,7 @@ void Image::getPixelUnsafe(int32_t x, int32_t y, Color& outColor) const
 	outColor.set(tmp[0], tmp[1], tmp[2], tmp[3]);
 }
 
-void Image::setPixelUnsafe(int32_t x, int32_t y, const Color& color)
+void Image::setPixelUnsafe(int32_t x, int32_t y, const Color4f& color)
 {
 	float tmp[] =
 	{

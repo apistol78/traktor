@@ -2,7 +2,7 @@
 #define traktor_drawing_Image_H
 
 #include "Core/Io/Path.h"
-#include "Drawing/Color.h"
+#include "Core/Math/Color4f.h"
 #include "Drawing/ImageInfo.h"
 #include "Drawing/PixelFormat.h"
 
@@ -62,19 +62,19 @@ public:
 	void copy(const Image* src, int32_t x, int32_t y, int32_t width, int32_t height);
 	
 	/*! \brief Clear entire image. */
-	void clear(const Color& color);
+	void clear(const Color4f& color);
 
 	/*! \brief Get single pixel. */
-	bool getPixel(int32_t x, int32_t y, Color& outColor) const;
+	bool getPixel(int32_t x, int32_t y, Color4f& outColor) const;
 
 	/*! \brief Set single pixel. */
-	bool setPixel(int32_t x, int32_t y, const Color& color);
+	bool setPixel(int32_t x, int32_t y, const Color4f& color);
 	
 	/*! \brief Get single pixel, no boundary check. */
-	void getPixelUnsafe(int32_t x, int32_t y, Color& outColor) const;
+	void getPixelUnsafe(int32_t x, int32_t y, Color4f& outColor) const;
 	
 	/*! \brief Set single pixel, no boundary check. */
-	void setPixelUnsafe(int32_t x, int32_t y, const Color& color);
+	void setPixelUnsafe(int32_t x, int32_t y, const Color4f& color);
 	
 	/*! \brief Apply filter on entire image. */
 	Ref< Image > applyFilter(IImageFilter* imageFilter) const;
