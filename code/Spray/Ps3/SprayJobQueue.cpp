@@ -33,7 +33,7 @@ void SprayJobQueue::destroy()
 
 SprayJobQueue::SprayJobQueue()
 {
-	m_jobQueue = SpursManager::getInstance().createJobQueue(128, 256);
+	m_jobQueue = SpursManager::getInstance().createJobQueue(128, 256, SpursManager::Normal);
 }
 
 SprayJobQueue::~SprayJobQueue()

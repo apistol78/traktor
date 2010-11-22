@@ -34,10 +34,10 @@ uint32_t SpursManager::getSpuCount() const
 	return SM_SPURS_SPU_COUNT;
 }
 
-Ref< SpursJobQueue > SpursManager::createJobQueue(uint32_t descriptorSize, uint32_t submitCount)
+Ref< SpursJobQueue > SpursManager::createJobQueue(uint32_t descriptorSize, uint32_t submitCount, Priority priority)
 {
 	Ref< SpursJobQueue > jobQueue = new SpursJobQueue(m_spurs);
-	if (jobQueue->create(descriptorSize, submitCount))
+	if (jobQueue->create(descriptorSize, submitCount, (int)priority))
 		return jobQueue;
 	else
 		return 0;

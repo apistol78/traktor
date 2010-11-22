@@ -27,12 +27,6 @@ class T_DLLCLASS SpursJobQueue
 	T_RTTI_CLASS;
 
 public:
-	SpursJobQueue(CellSpurs* spurs);
-
-	virtual ~SpursJobQueue();
-
-	bool create(uint32_t descriptorSize, uint32_t submitCount);
-
 	void destroy();
 
 	bool push(CellSpursJobHeader* job);
@@ -47,6 +41,8 @@ public:
 	}
 
 private:
+	friend class SpursManager;
+
 	CellSpurs* m_spurs;
 	uint64_t* m_commandQueue;
 	CellSpursJobHeader* m_descriptorBuffer;
@@ -54,6 +50,12 @@ private:
 	CellSpursJobQueue* m_jobQueue;
 	CellSpursJobQueuePort* m_jobQueuePort;
 	Semaphore m_lock;
+
+	SpursJobQueue(CellSpurs* spurs);
+
+	virtual ~SpursJobQueue();
+
+	bool create(uint32_t descriptorSize, uint32_t submitCount, int priority);
 };
 
 }

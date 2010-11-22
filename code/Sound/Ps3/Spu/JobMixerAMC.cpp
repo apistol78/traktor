@@ -1,5 +1,6 @@
 #include <cell/dma.h>
 #include <cell/spurs/job_queue.h>
+#include "Core/Math/Vector4.h"
 #include "Core/Misc/Align.h"
 #include "Sound/Ps3/Spu/JobMC.h"
 
@@ -38,8 +39,14 @@ void cellSpursJobQueueMain(CellSpursJobContext2* context, CellSpursJob256* job25
 		);
 		cellSpursJobQueueDmaWaitTagStatusAll(1 << context->dmaTag);
 
-		for (uint32_t i = 0; i < count; ++i)
-			lsb[i] += rsb[i] * job->mixer.factor;
+		Vector4 f4(Scalar(job->mixer.factor));
+		for (uint32_t i = 0; i < count; i += 4)
+		{
+			Vector4 ls4 = Vector4::loadAligned(&lsb[i]);
+			Vector4 rs4 = Vector4::loadAligned(&rsb[i]);
+			ls4 += rs4 * f4;
+			ls4.storeAligned(&lsb[i]);
+		}
 
 		cellDmaPut(
 			lsb,

@@ -11,90 +11,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.SpursJobQueue", SpursJobQueue, Object)
 
-SpursJobQueue::SpursJobQueue(CellSpurs* spurs)
-:	m_spurs(spurs)
-,	m_commandQueue(0)
-,	m_descriptorBuffer(0)
-,	m_descriptorSize(0)
-,	m_jobQueue(0)
-,	m_jobQueuePort(0)
-{
-}
-
-SpursJobQueue::~SpursJobQueue()
-{
-	destroy();
-}
-
-bool SpursJobQueue::create(uint32_t descriptorSize, uint32_t submitCount)
-{
-	int32_t res;
-
-	T_FATAL_ASSERT_M (
-		descriptorSize == 64 ||
-		(descriptorSize & ~127UL) == descriptorSize,
-		L"Invalid size of descriptor"
-	);
-
-	m_commandQueue = (uint64_t*)Alloc::acquireAlign(
-		CELL_SPURS_JOBQUEUE_SIZE_COMMAND_BUFFER(SM_SPURS_QUEUE_DEPTH(submitCount)),
-		CELL_SPURS_JOBQUEUE_COMMAND_BUFFER_ALIGN,
-		T_FILE_LINE
-	);
-
-	m_jobQueue = (CellSpursJobQueue*)Alloc::acquireAlign(
-		CELL_SPURS_JOBQUEUE_SIZE,
-		CELL_SPURS_JOBQUEUE_ALIGN,
-		T_FILE_LINE
-	);
-
-	CellSpursJobQueueAttribute attributeJobQueue;
-	cellSpursJobQueueAttributeInitialize(&attributeJobQueue);
-	cellSpursJobQueueAttributeSetMaxGrab(&attributeJobQueue, 4);
-
-	uint8_t priorityTable[] = { 8, 8, 8, 8, 8, 8, 8, 8 };
-
-	res = cellSpursCreateJobQueue(
-		m_spurs,
-		m_jobQueue,
-		&attributeJobQueue,
-		"Traktor Spurs JobQueue",
-		m_commandQueue,
-		SM_SPURS_QUEUE_DEPTH(submitCount),
-		SM_SPURS_SPU_COUNT,
-		priorityTable
-	);
-	if (res != CELL_OK)
-		return false;
-
-	m_descriptorBuffer = (CellSpursJobHeader*)Alloc::acquireAlign(
-		descriptorSize * submitCount,
-		128,
-		T_FILE_LINE
-	);
-
-	m_descriptorSize = descriptorSize;
-
-	m_jobQueuePort = (CellSpursJobQueuePort*)Alloc::acquireAlign(
-		CELL_SPURS_JOBQUEUE_PORT_SIZE,
-		CELL_SPURS_JOBQUEUE_PORT_ALIGN,
-		T_FILE_LINE
-	);
-
-	res = cellSpursJobQueuePortInitializeWithDescriptorBuffer(
-		m_jobQueuePort,
-		m_jobQueue,
-		m_descriptorBuffer,
-		descriptorSize,
-		submitCount,
-		true
-	);
-	if (res != CELL_OK)
-		return false;
-
-	return true;
-}
-
 void SpursJobQueue::destroy()
 {
 	int ret;
@@ -158,6 +74,97 @@ bool SpursJobQueue::wait(int32_t timeout)
 	T_ASSERT (timeout < 0);
 	int res = cellSpursJobQueuePortSync(m_jobQueuePort);
 	return res == CELL_OK;
+}
+
+SpursJobQueue::SpursJobQueue(CellSpurs* spurs)
+:	m_spurs(spurs)
+,	m_commandQueue(0)
+,	m_descriptorBuffer(0)
+,	m_descriptorSize(0)
+,	m_jobQueue(0)
+,	m_jobQueuePort(0)
+{
+}
+
+SpursJobQueue::~SpursJobQueue()
+{
+	destroy();
+}
+
+bool SpursJobQueue::create(uint32_t descriptorSize, uint32_t submitCount, int priority)
+{
+	int32_t res;
+
+	T_FATAL_ASSERT_M (
+		descriptorSize == 64 ||
+		(descriptorSize & ~127UL) == descriptorSize,
+		L"Invalid size of descriptor"
+	);
+
+	m_commandQueue = (uint64_t*)Alloc::acquireAlign(
+		CELL_SPURS_JOBQUEUE_SIZE_COMMAND_BUFFER(SM_SPURS_QUEUE_DEPTH(submitCount)),
+		CELL_SPURS_JOBQUEUE_COMMAND_BUFFER_ALIGN,
+		T_FILE_LINE
+	);
+
+	m_jobQueue = (CellSpursJobQueue*)Alloc::acquireAlign(
+		CELL_SPURS_JOBQUEUE_SIZE,
+		CELL_SPURS_JOBQUEUE_ALIGN,
+		T_FILE_LINE
+	);
+
+	CellSpursJobQueueAttribute attributeJobQueue;
+	cellSpursJobQueueAttributeInitialize(&attributeJobQueue);
+	cellSpursJobQueueAttributeSetMaxGrab(&attributeJobQueue, 4);
+
+	const uint8_t priorityTable[5][8] =
+	{
+		{ 15, 15, 15, 15, 15, 15, 15, 15 },	// Lowest
+		{ 12, 12, 12, 12, 12, 12, 12, 12 },
+		{ 8, 8, 8, 8, 8, 8, 8, 8 },
+		{ 4, 4, 4, 4, 4, 4, 4, 4 },
+		{ 1, 1, 1, 1, 1, 1, 1, 1 }	// Highest
+	};
+
+	res = cellSpursCreateJobQueue(
+		m_spurs,
+		m_jobQueue,
+		&attributeJobQueue,
+		"Traktor Spurs JobQueue",
+		m_commandQueue,
+		SM_SPURS_QUEUE_DEPTH(submitCount),
+		SM_SPURS_SPU_COUNT,
+		priorityTable[priority]
+	);
+	if (res != CELL_OK)
+		return false;
+
+	m_descriptorBuffer = (CellSpursJobHeader*)Alloc::acquireAlign(
+		descriptorSize * submitCount,
+		128,
+		T_FILE_LINE
+	);
+
+	m_descriptorSize = descriptorSize;
+
+	m_jobQueuePort = (CellSpursJobQueuePort*)Alloc::acquireAlign(
+		CELL_SPURS_JOBQUEUE_PORT_SIZE,
+		CELL_SPURS_JOBQUEUE_PORT_ALIGN,
+		T_FILE_LINE
+	);
+
+	res = cellSpursJobQueuePortInitializeWithDescriptorBuffer(
+		m_jobQueuePort,
+		m_jobQueue,
+		m_descriptorBuffer,
+		descriptorSize,
+		submitCount,
+		true
+	);
+	if (res != CELL_OK)
+		return false;
+
+	return true;
 }
 
 }
