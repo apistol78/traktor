@@ -3,7 +3,7 @@
 
 #include <string>
 #include "Core/Config.h"
-#include "Core/Math/Color.h"
+#include "Core/Math/Color4ub.h"
 #include "Ui/Enums.h"
 
 namespace traktor
@@ -103,7 +103,7 @@ public:
 
 	virtual IClipboard* createClipboard() = 0;
 
-	virtual bool getSystemColor(SystemColor systemColor, Color& outColor) = 0;
+	virtual bool getSystemColor(SystemColor systemColor, Color4ub& outColor) = 0;
 };
 
 	}

@@ -167,7 +167,7 @@ IClipboard* WidgetFactoryWin32::createClipboard()
 	return new ClipboardWin32();
 }
 
-bool WidgetFactoryWin32::getSystemColor(SystemColor systemColor, Color& outColor)
+bool WidgetFactoryWin32::getSystemColor(SystemColor systemColor, Color4ub& outColor)
 {
 	const int c_systemColors[] =
 	{
@@ -189,7 +189,7 @@ bool WidgetFactoryWin32::getSystemColor(SystemColor systemColor, Color& outColor
 	};
 
 	DWORD c = GetSysColor(c_systemColors[systemColor]);
-	outColor = Color(
+	outColor = Color4ub(
 		GetRValue(c),
 		GetGValue(c),
 		GetBValue(c)

@@ -182,17 +182,17 @@ void LayerControl::paintItem(Canvas& canvas, Rect& rcItem, LayerItem* item, int 
 {
 	if (!item->isSelected())
 	{
-		canvas.setForeground(Color(250, 249, 250));
-		canvas.setBackground(Color(238, 237, 240));
+		canvas.setForeground(Color4ub(250, 249, 250));
+		canvas.setBackground(Color4ub(238, 237, 240));
 		canvas.fillGradientRect(rcItem);
 	}
 	else
 	{
-		canvas.setBackground(Color(226, 229, 238));
+		canvas.setBackground(Color4ub(226, 229, 238));
 		canvas.fillRect(rcItem);
 	}
 
-	canvas.setForeground(Color(128, 128, 128));
+	canvas.setForeground(Color4ub(128, 128, 128));
 	canvas.drawLine(rcItem.left + c_layerItemEnableWidth, rcItem.top, rcItem.left + c_layerItemEnableWidth, rcItem.bottom - 1);
 	canvas.drawLine(rcItem.left, rcItem.bottom - 1, rcItem.right, rcItem.bottom - 1);
 
@@ -205,7 +205,7 @@ void LayerControl::paintItem(Canvas& canvas, Rect& rcItem, LayerItem* item, int 
 
 	Size ext = canvas.getTextExtent(item->getText());
 
-	canvas.setForeground(Color(0, 0, 0));
+	canvas.setForeground(Color4ub(0, 0, 0));
 	canvas.drawText(
 		Point(
 			rcItem.left + c_layerItemEnableWidth + 4 + childLevel * 16,

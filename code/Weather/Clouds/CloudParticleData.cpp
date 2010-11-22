@@ -31,9 +31,9 @@ bool CloudParticleData::serialize(ISerializer& s)
 	s >> Member< float >(L"radiusMin", m_radiusMin, 0.0f);
 	s >> Member< float >(L"radiusRange", m_radiusRange, 0.0f);
 	s >> Member< float >(L"density", m_density, 0.0f, 1.0f);
-	s >> Member< Color >(L"haloColor", m_haloColor);
-	s >> Member< Color >(L"skyColor", m_skyColor);
-	s >> Member< Color >(L"groundColor", m_groundColor);
+	s >> Member< Color4ub >(L"haloColor", m_haloColor);
+	s >> Member< Color4ub >(L"skyColor", m_skyColor);
+	s >> Member< Color4ub >(L"groundColor", m_groundColor);
 	s >> Member< float >(L"sunInfluence", m_sunInfluence, 0.0f, 1.0f);
 	s >> Member< Vector4 >(L"size", m_size);
 	s >> Member< int32_t >(L"octaves", m_octaves);

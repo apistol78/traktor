@@ -180,12 +180,12 @@ void TheaterControllerEditor::draw(render::PrimitiveRenderer* primitiveRenderer)
 	const RefArray< TrackData >& trackData = controllerData->getTrackData();
 	for (RefArray< TrackData >::const_iterator i = trackData.begin(); i != trackData.end(); ++i)
 	{
-		Color pathColor(180, 180, 80, 120);
+		Color4ub pathColor(180, 180, 80, 120);
 		for (RefArray< ui::custom::SequenceItem >::const_iterator j = items.begin(); j != items.end(); ++j)
 		{
 			if ((*j)->getData(L"TRACK") == *i)
 			{
-				pathColor = Color(255, 255, 0, 200);
+				pathColor = Color4ub(255, 255, 0, 200);
 				break;
 			}
 		}

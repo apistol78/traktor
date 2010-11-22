@@ -8,7 +8,7 @@
 #include "Ui/Point.h"
 #include "Ui/Size.h"
 #include "Ui/Rect.h"
-#include "Core/Math/Color.h"
+#include "Core/Math/Color4ub.h"
 
 namespace traktor
 {
@@ -23,9 +23,9 @@ class IBitmap;
 class ICanvas
 {
 public:
-	virtual void setForeground(const Color& foreground) = 0;
+	virtual void setForeground(const Color4ub& foreground) = 0;
 
-	virtual void setBackground(const Color& background) = 0;
+	virtual void setBackground(const Color4ub& background) = 0;
 
 	virtual void setFont(const Font& font) = 0;
 
@@ -37,7 +37,7 @@ public:
 
 	virtual void resetClipRect() = 0;
 	
-	virtual void drawPixel(int x, int y, const Color& c) = 0;
+	virtual void drawPixel(int x, int y, const Color4ub& c) = 0;
 
 	virtual void drawLine(int x1, int y1, int x2, int y2) = 0;
 

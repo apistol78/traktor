@@ -13,19 +13,19 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.ColorPropertyItem", ColorPropertyItem, PropertyItem)
 
-ColorPropertyItem::ColorPropertyItem(const std::wstring& text, const Color& value)
+ColorPropertyItem::ColorPropertyItem(const std::wstring& text, const Color4ub& value)
 :	PropertyItem(text)
 ,	m_value(value)
 ,	m_rcColor(0, 0, 0, 0)
 {
 }
 
-void ColorPropertyItem::setValue(const Color& value)
+void ColorPropertyItem::setValue(const Color4ub& value)
 {
 	m_value = value;
 }
 
-const Color& ColorPropertyItem::getValue() const
+const Color4ub& ColorPropertyItem::getValue() const
 {
 	return m_value;
 }
@@ -44,11 +44,11 @@ void ColorPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 	canvas.drawText(rc.inflate(-2, -2).offset(22, 0), ss.str(), AnLeft, AnCenter);
 
 	// Ignore alpha when drawing color preview.
-	Color previewColor = m_value;
+	Color4ub previewColor = m_value;
 	previewColor.a = 255;
 
 	canvas.setBackground(previewColor);
-	canvas.setForeground(Color(0, 0, 0));
+	canvas.setForeground(Color4ub(0, 0, 0));
 
 	// Draw color preview with a black border.
 	m_rcColor = Rect(rc.left + 2, rc.top + 2, rc.left + 20 + 2, rc.bottom - 2);

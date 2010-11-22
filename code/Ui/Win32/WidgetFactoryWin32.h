@@ -73,7 +73,7 @@ public:
 
 	virtual IClipboard* createClipboard();
 
-	virtual bool getSystemColor(SystemColor systemColor, Color& outColor);
+	virtual bool getSystemColor(SystemColor systemColor, Color4ub& outColor);
 };
 
 	}

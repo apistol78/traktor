@@ -3,7 +3,6 @@
 
 #include "Core/Serialization/ISerializable.h"
 #include "Core/Math/Vector4.h"
-#include "Core/Math/Color.h"
 #include "Resource/Proxy.h"
 
 // import/export mechanism.

@@ -48,8 +48,8 @@ void TabPage::eventPaint(Event* event)
 	Canvas& canvas = paintEvent->getCanvas();
 	Rect rcInner = Widget::getInnerRect();
 
-	canvas.setBackground(Color(224, 224, 224));
-	canvas.setForeground(Color(196, 194, 195));
+	canvas.setBackground(Color4ub(224, 224, 224));
+	canvas.setForeground(Color4ub(196, 194, 195));
 	canvas.fillGradientRect(rcInner, true);
 
 	event->consume();

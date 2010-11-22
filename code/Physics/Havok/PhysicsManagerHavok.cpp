@@ -232,6 +232,9 @@ Ref< Body > PhysicsManagerHavok::createBody(const BodyDesc* desc)
 	if (!desc)
 		return 0;
 
+	// \fixme Should probably not call this every time.
+	hkBaseSystem::initThread(m_threadMemory);
+
 	const ShapeDesc* shapeDesc = desc->getShape();
 	if (!shapeDesc)
 	{

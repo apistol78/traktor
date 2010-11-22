@@ -141,7 +141,7 @@ void calculateVSQuad(
 	}
 }
 
-Vector4 colorAsVector4(const Color& color)
+Vector4 colorAsVector4(const Color4ub& color)
 {
 	return Vector4(
 		color.r / 255.0f,

@@ -106,9 +106,9 @@ private:
 };
 
 /*! \brief Convenience wrappers. */
-inline Color getSystemColor(SystemColor systemColor)
+inline Color4ub getSystemColor(SystemColor systemColor)
 {
-	Color color;
+	Color4ub color;
 	Application::getInstance()->getWidgetFactory()->getSystemColor(systemColor, color);
 	return color;
 }

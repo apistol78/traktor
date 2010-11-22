@@ -112,7 +112,7 @@ void ToolBarDropDown::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, B
 
 	if (m_hover)
 	{
-		canvas.setForeground(Color(128, 128, 140));
+		canvas.setForeground(Color4ub(128, 128, 140));
 		canvas.drawRect(Rect(at, size));
 		canvas.drawLine(rcButton.left - 1, rcButton.top, rcButton.left - 1, rcButton.bottom);
 	}

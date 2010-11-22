@@ -372,7 +372,7 @@ bool StateGraphEditorPage::handleCommand(const ui::Command& command)
 			// Update color to show which node is root.
 			const RefArray< ui::custom::Node >& nodes = m_editorGraph->getNodes();
 			for (RefArray< ui::custom::Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
-				(*i)->setColor(*i == selectedNodes.front() ? Color(128, 255, 128) : Color(255, 255, 255));
+				(*i)->setColor(*i == selectedNodes.front() ? Color4ub(128, 255, 128) : Color4ub(255, 255, 255));
 		}
 	}
 	else if (command == L"StateGraph.Editor.AlignLeft")
@@ -476,7 +476,7 @@ Ref< ui::custom::Node > StateGraphEditorPage::createEditorNode(State* state)
 		),
 		shape
 	);
-	node->setColor(m_stateGraph->getRootState() == state ? Color(128, 255, 128) : Color(255, 255, 255));
+	node->setColor(m_stateGraph->getRootState() == state ? Color4ub(128, 255, 128) : Color4ub(255, 255, 255));
 	node->setData(L"STATE", state);
 
 	node->createInputPin(L"Enter", true);

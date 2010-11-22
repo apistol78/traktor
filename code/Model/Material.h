@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 #include "Core/Config.h"
-#include "Core/Math/Color.h"
+#include "Core/Math/Color4ub.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -55,9 +55,9 @@ public:
 
 	const std::wstring& getNormalMap() const;
 
-	void setColor(const Color& color);
+	void setColor(const Color4ub& color);
 
-	const Color& getColor() const;
+	const Color4ub& getColor() const;
 
 	void setDiffuseTerm(float diffuseTerm);
 
@@ -81,7 +81,7 @@ private:
 	BlendOperator m_diffuseBlendOperator;
 	std::wstring m_specularMap;
 	std::wstring m_normalMap;
-	Color m_color;
+	Color4ub m_color;
 	float m_diffuseTerm;
 	float m_specularTerm;
 	float m_specularRoughness;

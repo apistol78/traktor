@@ -31,13 +31,13 @@ public:
 		EiColorSelect = EiUser + 1
 	};
 
-	bool create(Widget* parent, int style, const Color& color);
+	bool create(Widget* parent, int style, const Color4ub& color);
 
 	virtual Size getPreferedSize() const;
 
-	void setColor(const Color& color, bool updateCursor);
+	void setColor(const Color4ub& color, bool updateCursor);
 
-	Color getColor() const;
+	Color4ub getColor() const;
 
 	void addColorSelectEventHandler(EventHandler* eventHandler);
 

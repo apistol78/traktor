@@ -16,7 +16,7 @@ void BoxSourceRenderer::render(render::PrimitiveRenderer* primitiveRenderer, Sou
 	Vector4 position = boxSource->getPosition();
 	Vector4 extent = boxSource->getExtent();
 
-	primitiveRenderer->drawWireAabb(position, extent, Color(255, 255, 0));
+	primitiveRenderer->drawWireAabb(position, extent, Color4ub(255, 255, 0));
 }
 
 	}

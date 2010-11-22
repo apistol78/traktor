@@ -28,7 +28,7 @@ class T_DLLCLASS ColorSliderControl : public Widget
 public:
 	struct IGradient : public Object
 	{
-		virtual Color get(int at) const = 0;
+		virtual Color4ub get(int at) const = 0;
 	};
 
 	enum Events

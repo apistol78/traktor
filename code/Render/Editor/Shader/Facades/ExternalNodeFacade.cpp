@@ -88,7 +88,7 @@ Ref< ui::custom::Node > ExternalNodeFacade::createEditorNode(
 	}
 
 	editorNode->setComment(shaderNode->getComment());
-	editorNode->setColor(Color(255, 255, 200));
+	editorNode->setColor(Color4ub(255, 255, 200));
 
 	return editorNode;
 }
@@ -125,7 +125,7 @@ void ExternalNodeFacade::setValidationIndicator(
 	bool validationSucceeded
 )
 {
-	editorNode->setColor(validationSucceeded ? Color(255, 255, 200) : Color(255, 120, 120));
+	editorNode->setColor(validationSucceeded ? Color4ub(255, 255, 200) : Color4ub(255, 120, 120));
 }
 
 	}

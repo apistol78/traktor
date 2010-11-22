@@ -66,7 +66,7 @@ bool RichEditWin32::create(IWidget* parent, const std::wstring& text, int style)
 	return true;
 }
 
-int RichEditWin32::addAttribute(const Color& textColor, const Color& backColor, bool bold, bool italic, bool underline)
+int RichEditWin32::addAttribute(const Color4ub& textColor, const Color4ub& backColor, bool bold, bool italic, bool underline)
 {
 #if !defined(WINCE)
 	CHARFORMAT2 cf;

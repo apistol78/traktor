@@ -15,7 +15,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.ColorGradientControl", ColorGradientControl, Widget)
 
-bool ColorGradientControl::create(Widget* parent, int style, const Color& color)
+bool ColorGradientControl::create(Widget* parent, int style, const Color4ub& color)
 {
 	if (!Widget::create(parent, style))
 		return false;
@@ -38,7 +38,7 @@ Size ColorGradientControl::getPreferedSize() const
 	return Size(256, 256);
 }
 
-void ColorGradientControl::setColor(const Color& color, bool updateCursor)
+void ColorGradientControl::setColor(const Color4ub& color, bool updateCursor)
 {
 	float hsv[3];
 	RGBtoHSV(color, hsv);
@@ -54,7 +54,7 @@ void ColorGradientControl::setColor(const Color& color, bool updateCursor)
 	updateGradientImage();
 }
 
-Color ColorGradientControl::getColor() const
+Color4ub ColorGradientControl::getColor() const
 {
 	return m_gradientBitmap->getPixel(m_cursor.x, m_cursor.y);
 }
@@ -66,7 +66,7 @@ void ColorGradientControl::addColorSelectEventHandler(EventHandler* eventHandler
 
 void ColorGradientControl::updateGradientImage()
 {
-	Color color;
+	Color4ub color;
 	float hsv[3];
 
 	for (int y = 0; y < 256; ++y)
@@ -135,13 +135,13 @@ void ColorGradientControl::eventPaint(Event* event)
 		m_gradientBitmap
 	);
 
-	Color color = m_gradientBitmap->getPixel(m_cursor.x, m_cursor.y);
+	Color4ub color = m_gradientBitmap->getPixel(m_cursor.x, m_cursor.y);
 
 	int average = (color.r + color.g + color.b) / 3;
 	if (average < 128)
-		canvas.setForeground(Color(255, 255, 255));
+		canvas.setForeground(Color4ub(255, 255, 255));
 	else
-		canvas.setForeground(Color(0, 0, 0));
+		canvas.setForeground(Color4ub(0, 0, 0));
 
 	canvas.drawCircle(m_cursor, 5);
 

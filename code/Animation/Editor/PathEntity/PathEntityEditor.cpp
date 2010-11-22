@@ -138,7 +138,7 @@ void PathEntityEditor::drawGuide(
 		primitiveRenderer->drawWireAabb(
 			i->value.position,
 			Vector4(0.2f, 0.2f, 0.2f),
-			Color(255, 255, 0)
+			Color4ub(255, 255, 0)
 		);
 	}
 
@@ -150,7 +150,7 @@ void PathEntityEditor::drawGuide(
 			primitiveRenderer->drawLine(
 				keys[i].value.position,
 				keys[i + 1].value.position,
-				Color(0, 255, 0)
+				Color4ub(0, 255, 0)
 			);
 		}
 
@@ -165,13 +165,13 @@ void PathEntityEditor::drawGuide(
 			primitiveRenderer->drawLine(
 				path.evaluate(t1, loop).position,
 				path.evaluate(t2, loop).position,
-				Color(170, 170, 255)
+				Color4ub(170, 170, 255)
 			);
 		}
 
 		// Draw cursor.
 		Vector4 cursor = path.evaluate(m_time, false).position;
-		primitiveRenderer->drawSolidPoint(cursor, 3.0f, Color(255, 255, 255, 200));
+		primitiveRenderer->drawSolidPoint(cursor, 3.0f, Color4ub(255, 255, 255, 200));
 	}
 
 	// Draw attached entity's bounding box.
@@ -182,7 +182,7 @@ void PathEntityEditor::drawGuide(
 			transform = Transform::identity();
 
 		primitiveRenderer->pushWorld(transform.toMatrix44());
-		primitiveRenderer->drawWireAabb(attachedEntity->getBoundingBox(), Color(255, 255, 0));
+		primitiveRenderer->drawWireAabb(attachedEntity->getBoundingBox(), Color4ub(255, 255, 0));
 		primitiveRenderer->popWorld();
 	}
 }

@@ -56,11 +56,11 @@ void Range::paint(ui::Canvas& canvas, const Sequence* sequence, const Rect& rcCl
 
 	Rect rc(rcClient.left + x1, rcClient.top + 2, rcClient.left + x2, rcClient.bottom - 2);
 
-	canvas.setForeground(Color(220, 255, 220));
-	canvas.setBackground(Color(180, 230, 180));
+	canvas.setForeground(Color4ub(220, 255, 220));
+	canvas.setBackground(Color4ub(180, 230, 180));
 	canvas.fillGradientRect(rc);
 
-	canvas.setForeground(Color(0, 0, 0, 128));
+	canvas.setForeground(Color4ub(0, 0, 0, 128));
 	canvas.drawRect(rc);
 }
 

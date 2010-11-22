@@ -16,8 +16,11 @@ FlashLineStyle::FlashLineStyle()
 
 bool FlashLineStyle::create(const SwfLineStyle* lineStyle)
 {
-	m_lineColor = lineStyle->color;
-	m_lineWidth = lineStyle->width;
+	if (lineStyle)
+	{
+		m_lineColor = lineStyle->color;
+		m_lineWidth = lineStyle->width;
+	}
 	return true;
 }
 

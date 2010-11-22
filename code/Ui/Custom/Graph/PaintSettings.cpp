@@ -15,20 +15,20 @@ PaintSettings::PaintSettings(const ui::Font& font)
 ,	m_fontUnderline(font.getFace(), font.getSize(), false, false, true)
 ,	m_smoothSpline(false)
 {
-	m_gridBackground = Color(220, 220, 220);
-	m_nodeShadow = Color(100, 100, 100);
-	m_nodeForeground = Color(90, 90, 90);
-	m_nodeBackgroundTop = Color(230, 230, 230);
-	m_nodeBackgroundBottom = Color(198, 198, 198);
-	m_nodeText = Color(20, 30, 20);
-	m_nodeTextInfo = Color(80, 90, 80);
-	m_nodeTextUnconnected = Color(250, 40, 40);
-	m_nodeHalo = Color(80, 120, 200);
-	m_edge = Color(120, 120, 120);
-	m_edgeSelected = Color(80, 90, 220);
-	m_edgeCursor = Color(110, 110, 110);
-	m_selectionCursor = Color(0, 0, 0, 64);
-	m_guideCursor = Color(180, 180, 140);
+	m_gridBackground = Color4ub(220, 220, 220);
+	m_nodeShadow = Color4ub(100, 100, 100);
+	m_nodeForeground = Color4ub(90, 90, 90);
+	m_nodeBackgroundTop = Color4ub(230, 230, 230);
+	m_nodeBackgroundBottom = Color4ub(198, 198, 198);
+	m_nodeText = Color4ub(20, 30, 20);
+	m_nodeTextInfo = Color4ub(80, 90, 80);
+	m_nodeTextUnconnected = Color4ub(250, 40, 40);
+	m_nodeHalo = Color4ub(80, 120, 200);
+	m_edge = Color4ub(120, 120, 120);
+	m_edgeSelected = Color4ub(80, 90, 220);
+	m_edgeCursor = Color4ub(110, 110, 110);
+	m_selectionCursor = Color4ub(0, 0, 0, 64);
+	m_guideCursor = Color4ub(180, 180, 140);
 }
 
 void PaintSettings::setFont(const ui::Font& font)
@@ -61,142 +61,142 @@ const ui::Font& PaintSettings::getFontUnderline() const
 	return m_fontUnderline;
 }
 
-void PaintSettings::setGridBackground(const Color& gridBackground)
+void PaintSettings::setGridBackground(const Color4ub& gridBackground)
 {
 	m_gridBackground = gridBackground;
 }
 
-const Color& PaintSettings::getGridBackground() const
+const Color4ub& PaintSettings::getGridBackground() const
 {
 	return m_gridBackground;
 }
 
-void PaintSettings::setNodeShadow(const Color& nodeShadow)
+void PaintSettings::setNodeShadow(const Color4ub& nodeShadow)
 {
 	m_nodeShadow = nodeShadow;
 }
 
-const Color& PaintSettings::getNodeShadow() const
+const Color4ub& PaintSettings::getNodeShadow() const
 {
 	return m_nodeShadow;
 }
 
-void PaintSettings::setNodeForeground(const Color& nodeForeground)
+void PaintSettings::setNodeForeground(const Color4ub& nodeForeground)
 {
 	m_nodeForeground = nodeForeground;
 }
 
-const Color& PaintSettings::getNodeForeground() const
+const Color4ub& PaintSettings::getNodeForeground() const
 {
 	return m_nodeForeground;
 }
 
-void PaintSettings::setNodeBackgroundTop(const Color& nodeBackgroundTop)
+void PaintSettings::setNodeBackgroundTop(const Color4ub& nodeBackgroundTop)
 {
 	m_nodeBackgroundTop = nodeBackgroundTop;
 }
 
-const Color& PaintSettings::getNodeBackgroundTop() const
+const Color4ub& PaintSettings::getNodeBackgroundTop() const
 {
 	return m_nodeBackgroundTop;
 }
 
-void PaintSettings::setNodeBackgroundBottom(const Color& nodeBackgroundBottom)
+void PaintSettings::setNodeBackgroundBottom(const Color4ub& nodeBackgroundBottom)
 {
 	m_nodeBackgroundBottom = nodeBackgroundBottom;
 }
 
-const Color& PaintSettings::getNodeBackgroundBottom() const
+const Color4ub& PaintSettings::getNodeBackgroundBottom() const
 {
 	return m_nodeBackgroundBottom;
 }
 
-void PaintSettings::setNodeText(const Color& nodeText)
+void PaintSettings::setNodeText(const Color4ub& nodeText)
 {
 	m_nodeText = nodeText;
 }
 
-const Color& PaintSettings::getNodeText() const
+const Color4ub& PaintSettings::getNodeText() const
 {
 	return m_nodeText;
 }
 
-void PaintSettings::setNodeTextInfo(const Color& nodeTextInfo)
+void PaintSettings::setNodeTextInfo(const Color4ub& nodeTextInfo)
 {
 	m_nodeTextInfo = nodeTextInfo;
 }
 
-const Color& PaintSettings::getNodeTextInfo() const
+const Color4ub& PaintSettings::getNodeTextInfo() const
 {
 	return m_nodeTextInfo;
 }
 
-void PaintSettings::setNodeTextUnconnected(const Color& nodeTextUnconnected)
+void PaintSettings::setNodeTextUnconnected(const Color4ub& nodeTextUnconnected)
 {
 	m_nodeTextUnconnected = nodeTextUnconnected;
 }
 
-const Color& PaintSettings::getNodeTextUnconnected() const
+const Color4ub& PaintSettings::getNodeTextUnconnected() const
 {
 	return m_nodeTextUnconnected;
 }
 
-void PaintSettings::setNodeHalo(const Color& nodeHalo)
+void PaintSettings::setNodeHalo(const Color4ub& nodeHalo)
 {
 	m_nodeHalo = nodeHalo;
 }
 
-const Color& PaintSettings::getNodeHalo() const
+const Color4ub& PaintSettings::getNodeHalo() const
 {
 	return m_nodeHalo;
 }
 
-void PaintSettings::setEdge(const Color&  edge)
+void PaintSettings::setEdge(const Color4ub&  edge)
 {
 	m_edge = edge;
 }
 
-const Color& PaintSettings::getEdge() const
+const Color4ub& PaintSettings::getEdge() const
 {
 	return m_edge;
 }
 
-void PaintSettings::setEdgeSelected(const Color& edgeSelected)
+void PaintSettings::setEdgeSelected(const Color4ub& edgeSelected)
 {
 	m_edgeSelected = edgeSelected;
 }
 
-const Color& PaintSettings::getEdgeSelected() const
+const Color4ub& PaintSettings::getEdgeSelected() const
 {
 	return m_edgeSelected;
 }
 
-void PaintSettings::setEdgeCursor(const Color& edgeCursor)
+void PaintSettings::setEdgeCursor(const Color4ub& edgeCursor)
 {
 	m_edgeCursor = edgeCursor;
 }
 
-const Color& PaintSettings::getEdgeCursor() const
+const Color4ub& PaintSettings::getEdgeCursor() const
 {
 	return m_edgeCursor;
 }
 
-void PaintSettings::setSelectionCursor(const Color& selectionCursor)
+void PaintSettings::setSelectionCursor(const Color4ub& selectionCursor)
 {
 	m_selectionCursor = selectionCursor;
 }
 
-const Color& PaintSettings::getSelectionCursor() const
+const Color4ub& PaintSettings::getSelectionCursor() const
 {
 	return m_selectionCursor;
 }
 
-void PaintSettings::setGuideCursor(const Color& guideCursor)
+void PaintSettings::setGuideCursor(const Color4ub& guideCursor)
 {
 	m_guideCursor = guideCursor;
 }
 
-const Color& PaintSettings::getGuideCursor() const
+const Color4ub& PaintSettings::getGuideCursor() const
 {
 	return m_guideCursor;
 }

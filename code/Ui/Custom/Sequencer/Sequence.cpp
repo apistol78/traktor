@@ -123,26 +123,26 @@ void Sequence::paint(SequencerControl* sequencer, Canvas& canvas, const Rect& rc
 	// Draw sequence background.
 	if (!isSelected())
 	{
-		canvas.setForeground(Color(250, 249, 250));
-		canvas.setBackground(Color(238, 237, 240));
+		canvas.setForeground(Color4ub(250, 249, 250));
+		canvas.setBackground(Color4ub(238, 237, 240));
 		canvas.fillGradientRect(Rect(rc.left, rc.top, separator, rc.bottom));
-		canvas.setForeground(Color(170, 169, 170));
-		canvas.setBackground(Color(158, 157, 160));
+		canvas.setForeground(Color4ub(170, 169, 170));
+		canvas.setBackground(Color4ub(158, 157, 160));
 		canvas.fillGradientRect(Rect(separator, rc.top, rc.right, rc.bottom));
 	}
 	else
 	{
-		canvas.setBackground(Color(226, 229, 238));
+		canvas.setBackground(Color4ub(226, 229, 238));
 		canvas.fillRect(Rect(rc.left, rc.top, separator, rc.bottom));
-		canvas.setBackground(Color(206, 209, 218));
+		canvas.setBackground(Color4ub(206, 209, 218));
 		canvas.fillRect(Rect(separator, rc.top, rc.right, rc.bottom));
 	}
 
-	canvas.setForeground(Color(128, 128, 128));
+	canvas.setForeground(Color4ub(128, 128, 128));
 	canvas.drawLine(rc.left, rc.bottom - 1, rc.right, rc.bottom - 1);
 
 	// Draw sequence text.
-	canvas.setForeground(Color(0, 0, 0));
+	canvas.setForeground(Color4ub(0, 0, 0));
 	Size ext = canvas.getTextExtent(getName());
 	canvas.drawText(
 		Point(
@@ -161,7 +161,7 @@ void Sequence::paint(SequencerControl* sequencer, Canvas& canvas, const Rect& rc
 	));
 
 	// Draw tickers.
-	canvas.setForeground(Color(128, 128, 128));
+	canvas.setForeground(Color4ub(128, 128, 128));
 	int cy = (rc.top + rc.bottom) / 2;
 	for (int i = 0; i < sequencer->getLength(); i += 100)
 	{

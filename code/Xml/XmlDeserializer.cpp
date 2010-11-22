@@ -200,7 +200,7 @@ bool XmlDeserializer::operator >> (const Member< Path >& m)
 	return true;
 }
 
-bool XmlDeserializer::operator >> (const Member< Color >& m)
+bool XmlDeserializer::operator >> (const Member< Color4ub >& m)
 {
 	std::wstring value;
 	if (!nextElementValue(m.getName(), value))

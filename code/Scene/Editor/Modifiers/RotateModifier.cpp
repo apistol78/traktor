@@ -49,7 +49,7 @@ void RotateModifier::draw(
 			Vector4(c1, 0.0f, s1, 0.0f),
 			Vector4(c2, 0.0f, s2, 0.0f),
 			axisEnable & SceneEditorContext::AeX ? 2.0f : 0.0f,
-			Color(255, 0, 0)
+			Color4ub(255, 0, 0)
 		);
 	}
 
@@ -57,7 +57,7 @@ void RotateModifier::draw(
 		Vector4(0.0f, 0.0f, 0.0f, 1.0f),
 		Vector4(0.0f, 0.0f, guideRadius, 1.0f),
 		axisEnable & SceneEditorContext::AeX ? 2.0f : 0.0f,
-		Color(255, 0, 0)
+		Color4ub(255, 0, 0)
 	);
 
 	primitiveRenderer->popWorld();
@@ -76,7 +76,7 @@ void RotateModifier::draw(
 			Vector4(0.0f, c1, s1, 0.0f),
 			Vector4(0.0f, c2, s2, 0.0f),
 			axisEnable & SceneEditorContext::AeY ? 2.0f : 0.0f,
-			Color(0, 255, 0)
+			Color4ub(0, 255, 0)
 		);
 	}
 
@@ -84,7 +84,7 @@ void RotateModifier::draw(
 		Vector4(0.0f, 0.0f, 0.0f, 1.0f),
 		Vector4(0.0f, 0.0f, guideRadius, 1.0f),
 		axisEnable & SceneEditorContext::AeY ? 2.0f : 0.0f,
-		Color(0, 255, 0)
+		Color4ub(0, 255, 0)
 	);
 
 	primitiveRenderer->popWorld();
@@ -103,7 +103,7 @@ void RotateModifier::draw(
 			Vector4(c1, s1, 0.0f, 0.0f),
 			Vector4(c2, s2, 0.0f, 0.0f),
 			axisEnable & SceneEditorContext::AeZ ? 2.0f : 0.0f,
-			Color(0, 0, 255)
+			Color4ub(0, 0, 255)
 		);
 	}
 
@@ -111,7 +111,7 @@ void RotateModifier::draw(
 		Vector4(0.0f, 0.0f, 0.0f, 1.0f),
 		Vector4(0.0f, guideRadius, 0.0f, 1.0f),
 		axisEnable & SceneEditorContext::AeZ ? 2.0f : 0.0f,
-		Color(0, 0, 255)
+		Color4ub(0, 0, 255)
 	);
 
 	primitiveRenderer->popWorld();

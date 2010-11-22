@@ -29,7 +29,7 @@ bool PreviewList::create(Widget* parent, uint32_t style)
 	if (!AutoWidget::create(parent, style))
 		return false;
 
-	setBackgroundColor(Color(80, 80, 80));
+	setBackgroundColor(Color4ub(80, 80, 80));
 
 	addButtonDownEventHandler(createMethodHandler(this, &PreviewList::eventButtonDown));
 	return true;

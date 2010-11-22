@@ -88,7 +88,7 @@ void PreviewItem::paint(AutoWidget* widget, Canvas& canvas, const Rect& rect)
 		text += L"...";
 	}
 
-	canvas.setForeground(Color(255, 255, 255));
+	canvas.setForeground(Color4ub(255, 255, 255));
 	canvas.drawText(
 		Rect(
 			rect.left,

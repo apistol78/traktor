@@ -102,16 +102,16 @@ void MiniButton::eventPaint(Event* event)
 	{
 		if (m_state == StReleased)
 		{
-			canvas.setForeground(Color(140, 140, 140));
+			canvas.setForeground(Color4ub(140, 140, 140));
 			canvas.drawRect(rcInner);
 			
 			rcInner = rcInner.inflate(-1, -1);
 
-			canvas.setForeground(Color(255, 255, 255));
+			canvas.setForeground(Color4ub(255, 255, 255));
 			canvas.drawLine(rcInner.left, rcInner.bottom - 2, rcInner.left, rcInner.top);
 			canvas.drawLine(rcInner.left, rcInner.top, rcInner.right - 1, rcInner.top);
 			
-			canvas.setForeground(Color(64, 64, 64));
+			canvas.setForeground(Color4ub(64, 64, 64));
 			canvas.drawLine(rcInner.left + 1, rcInner.bottom - 1, rcInner.right - 1, rcInner.bottom - 1);
 			canvas.drawLine(rcInner.right - 1, rcInner.bottom - 1, rcInner.right - 1, rcInner.top);
 		}
@@ -126,7 +126,7 @@ void MiniButton::eventPaint(Event* event)
 	}
 	else
 	{
-		canvas.setForeground(Color(140, 140, 140));
+		canvas.setForeground(Color4ub(140, 140, 140));
 		canvas.drawRect(rcInner);
 	}
 
@@ -147,7 +147,7 @@ void MiniButton::eventPaint(Event* event)
 	}
 	else
 	{
-		canvas.setForeground(Color(0, 0, 0));
+		canvas.setForeground(Color4ub(0, 0, 0));
 		canvas.drawText(rcInner, getText(), AnCenter, AnCenter);
 	}
 	

@@ -100,7 +100,7 @@ bool CanvasGdiPlusWin32::beginPaint(Window& hWnd, bool doubleBuffer, HDC hDC)
 	m_graphics->SetPixelOffsetMode(PixelOffsetModeNone);
 	m_graphics->SetSmoothingMode(SmoothingModeHighSpeed);
 
-	setForeground(Color(255, 255, 255, 255));
+	setForeground(Color4ub(255, 255, 255, 255));
 	setBackground(getSystemColor(ScButtonFace));
 
 	return true;
@@ -151,13 +151,13 @@ Size CanvasGdiPlusWin32::getTextExtent(Window& hWnd, const std::wstring& text) c
 	return Size(int(boundingBox.Width), int(boundingBox.Height));
 }
 
-void CanvasGdiPlusWin32::setForeground(const Color& color)
+void CanvasGdiPlusWin32::setForeground(const Color4ub& color)
 {
 	m_foreGround = (uint32_t)color;
 	m_pen.SetColor(m_foreGround);
 }
 
-void CanvasGdiPlusWin32::setBackground(const Color& color)
+void CanvasGdiPlusWin32::setBackground(const Color4ub& color)
 {
 	m_backGround = (uint32_t)color;
 	m_brush.SetColor(m_backGround);
@@ -197,7 +197,7 @@ void CanvasGdiPlusWin32::resetClipRect()
 	m_graphics->ResetClip();
 }
 
-void CanvasGdiPlusWin32::drawPixel(int x, int y, const Color& c)
+void CanvasGdiPlusWin32::drawPixel(int x, int y, const Color4ub& c)
 {
 }
 

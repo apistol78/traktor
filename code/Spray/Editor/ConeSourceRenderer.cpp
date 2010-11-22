@@ -25,12 +25,12 @@ void ConeSourceRenderer::render(render::PrimitiveRenderer* primitiveRenderer, So
 			angle2,
 			angle1,
 			1.0f,
-			Color(255, 255, 0, 16),
-			Color(255, 255, 255, 32)
+			Color4ub(255, 255, 0, 16),
+			Color4ub(255, 255, 255, 32)
 		);
 	}
 
-	primitiveRenderer->drawLine(position, position + normal, Color(255, 255, 0));
+	primitiveRenderer->drawLine(position, position + normal, Color4ub(255, 255, 0));
 }
 
 	}

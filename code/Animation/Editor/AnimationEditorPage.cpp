@@ -608,7 +608,7 @@ bool AnimationEditorPage::calculateRelativeTwist(int poseIndex, int boneIndex, f
 	return true;
 }
 
-void AnimationEditorPage::drawSkeleton(float time, const Color& defaultColor, const Color& selectedColor, bool drawAxis) const
+void AnimationEditorPage::drawSkeleton(float time, const Color4ub& defaultColor, const Color4ub& selectedColor, bool drawAxis) const
 {
 	Pose pose;
 	m_animation->getPose(time, pose);
@@ -640,7 +640,7 @@ void AnimationEditorPage::drawSkeleton(float time, const Color& defaultColor, co
 		Vector4 start = boneTransforms[i].translation();
 		Vector4 end = boneTransforms[i].translation() + boneTransforms[i] * Vector4(0.0f, 0.0f, bone->getLength(), 0.0f);
 
-		const Color& color = (m_selectedBone == i) ? selectedColor : defaultColor;
+		const Color4ub& color = (m_selectedBone == i) ? selectedColor : defaultColor;
 
 		Vector4 d = boneTransforms[i].axisZ();
 		Vector4 a = boneTransforms[i].axisX();
@@ -670,8 +670,8 @@ void AnimationEditorPage::drawSkeleton(float time, const Color& defaultColor, co
 
 		if (drawAxis)
 		{
-			m_primitiveRenderer->drawLine(start, start + a * Scalar(2.0f), Color(255, 0, 0, color.a));
-			m_primitiveRenderer->drawLine(start, start + b * Scalar(2.0f), Color(0, 255, 0, color.a));
+			m_primitiveRenderer->drawLine(start, start + a * Scalar(2.0f), Color4ub(255, 0, 0, color.a));
+			m_primitiveRenderer->drawLine(start, start + b * Scalar(2.0f), Color4ub(0, 255, 0, color.a));
 		}
 	}
 }
@@ -947,13 +947,13 @@ void AnimationEditorPage::eventRenderPaint(ui::Event* event)
 			Vector4(11.0f, 0.0f, 0.0f, 1.0f),
 			Vector4(13.0f, 0.0f, 0.0f, 1.0f),
 			0.8f,
-			Color(255, 0, 0)
+			Color4ub(255, 0, 0)
 		);
 		m_primitiveRenderer->drawArrowHead(
 			Vector4(0.0f, 0.0f, 11.0f, 1.0f),
 			Vector4(0.0f, 0.0f, 13.0f, 1.0f),
 			0.8f,
-			Color(0, 0, 255)
+			Color4ub(0, 0, 255)
 		);
 
 		if (m_skeleton)
@@ -970,7 +970,7 @@ void AnimationEditorPage::eventRenderPaint(ui::Event* event)
 						break;
 
 					uint8_t alpha = 100 - i * 100 / 10;
-					drawSkeleton(ghostTime, Color(0, 0, 0, alpha), Color(0, 0, 0, alpha), false);
+					drawSkeleton(ghostTime, Color4ub(0, 0, 0, alpha), Color4ub(0, 0, 0, alpha), false);
 				}
 			}
 

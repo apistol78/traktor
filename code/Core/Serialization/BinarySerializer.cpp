@@ -431,7 +431,7 @@ bool BinarySerializer::operator >> (const Member< Path >& m)
 	return true;
 }
 
-bool BinarySerializer::operator >> (const Member< Color >& m)
+bool BinarySerializer::operator >> (const Member< Color4ub >& m)
 {
 	bool result = true;
 	if (m_direction == SdRead)

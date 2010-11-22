@@ -59,7 +59,7 @@ Ref< ui::custom::Node > SwizzleNodeFacade::createEditorNode(
 	}
 
 	editorNode->setComment(shaderNode->getComment());
-	editorNode->setColor(Color(220, 255, 255));
+	editorNode->setColor(Color4ub(220, 255, 255));
 
 	return editorNode;
 }
@@ -89,7 +89,7 @@ void SwizzleNodeFacade::setValidationIndicator(
 	bool validationSucceeded
 )
 {
-	editorNode->setColor(validationSucceeded ? Color(220, 255, 255) : Color(255, 120, 120));
+	editorNode->setColor(validationSucceeded ? Color4ub(220, 255, 255) : Color4ub(255, 120, 120));
 }
 
 	}

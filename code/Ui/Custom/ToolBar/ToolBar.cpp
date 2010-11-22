@@ -233,9 +233,9 @@ void ToolBar::eventPaint(Event* event)
 	Rect rc = getInnerRect();
 	int mid = rc.getCenter().y;
 
-	Color c1 = getSystemColor(ScMenuBackground);
-	Color c0 = lerp(c1, Color(255, 255, 255), 0.5f);
-	Color c2 = lerp(c1, Color(0, 0, 0), 0.2f);
+	Color4ub c1 = getSystemColor(ScMenuBackground);
+	Color4ub c0 = lerp(c1, Color4ub(255, 255, 255), 0.5f);
+	Color4ub c2 = lerp(c1, Color4ub(0, 0, 0), 0.2f);
 
 	canvas.setForeground(c0);
 	canvas.setBackground(c1);

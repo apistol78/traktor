@@ -185,28 +185,28 @@ void Tab::eventPaint(Event* event)
 	Canvas& canvas = paintEvent->getCanvas();
 	Rect rcInner = Widget::getInnerRect();
 
-	canvas.setBackground(Color(196, 194, 195));
+	canvas.setBackground(Color4ub(196, 194, 195));
 	canvas.fillRect(rcInner);
 
 	Rect rcTab = rcInner.inflate(-c_borderSize, -c_borderSize);
 
 	int gradientCenter = rcTab.getCenter().x;
 	
-	canvas.setBackground(Color(224, 224, 224));
-	canvas.setForeground(Color(196, 194, 195));
+	canvas.setBackground(Color4ub(224, 224, 224));
+	canvas.setForeground(Color4ub(196, 194, 195));
 	{
 		Rect rc(rcTab.left, rcTab.top, gradientCenter, rcTab.top + c_tabHeight);
 		canvas.fillGradientRect(rc, false);
 	}
 
-	canvas.setBackground(Color(196, 194, 195));
-	canvas.setForeground(Color(224, 224, 224));
+	canvas.setBackground(Color4ub(196, 194, 195));
+	canvas.setForeground(Color4ub(224, 224, 224));
 	{
 		Rect rc(gradientCenter, rcTab.top, rcTab.right, rcTab.top + c_tabHeight);
 		canvas.fillGradientRect(rc, false);
 	}
 
-	canvas.setForeground(Color(227, 227, 227));
+	canvas.setForeground(Color4ub(227, 227, 227));
 	canvas.drawLine(rcTab.left, rcTab.top, rcTab.right, rcTab.top);
 
 	if (!m_pages.empty())
@@ -223,8 +223,8 @@ void Tab::eventPaint(Event* event)
 
 			if (page == m_selectedPage)
 			{
-				canvas.setBackground(Color(248, 196, 94));
-				canvas.setForeground(Color(253, 229, 179));
+				canvas.setBackground(Color4ub(248, 196, 94));
+				canvas.setForeground(Color4ub(253, 229, 179));
 				canvas.fillGradientRect(
 					Rect(
 						left + 1,
@@ -235,8 +235,8 @@ void Tab::eventPaint(Event* event)
 					false
 				);
 
-				canvas.setBackground(Color(253, 229, 179));
-				canvas.setForeground(Color(248, 196, 94));
+				canvas.setBackground(Color4ub(253, 229, 179));
+				canvas.setForeground(Color4ub(248, 196, 94));
 				canvas.fillGradientRect(
 					Rect(
 						left + headerWidth / 2,
@@ -247,7 +247,7 @@ void Tab::eventPaint(Event* event)
 					false
 				);
 
-				canvas.setForeground(Color(129, 129, 129));
+				canvas.setForeground(Color4ub(129, 129, 129));
 				canvas.drawLine(
 					left,
 					rcTab.top + 4 + 1,
@@ -255,7 +255,7 @@ void Tab::eventPaint(Event* event)
 					rcTab.top + c_tabHeight + 1
 				);
 
-				canvas.setForeground(Color(159, 159, 159));
+				canvas.setForeground(Color4ub(159, 159, 159));
 				canvas.drawLine(
 					left + 1,
 					rcTab.top + 4,
@@ -263,7 +263,7 @@ void Tab::eventPaint(Event* event)
 					rcTab.top + 4
 				);
 
-				canvas.setForeground(Color(234, 234, 234));
+				canvas.setForeground(Color4ub(234, 234, 234));
 				canvas.drawLine(
 					left + headerWidth,
 					rcTab.top + 4 + 1,
@@ -271,10 +271,10 @@ void Tab::eventPaint(Event* event)
 					rcTab.top + c_tabHeight + 1
 				);
 
-				canvas.setForeground(Color(165, 95, 0));
+				canvas.setForeground(Color4ub(165, 95, 0));
 			}
 			else
-				canvas.setForeground(Color(51, 51, 101));
+				canvas.setForeground(Color4ub(51, 51, 101));
 
 			canvas.drawText(
 				Point(
@@ -290,7 +290,7 @@ void Tab::eventPaint(Event* event)
 		}
 	}
 
-	canvas.setForeground(Color(136, 136, 136));
+	canvas.setForeground(Color4ub(136, 136, 136));
 	canvas.drawRect(
 		Rect(
 			m_innerRect.left - 1,
@@ -305,7 +305,7 @@ void Tab::eventPaint(Event* event)
 
 void Tab::drawClose(Canvas& canvas, int x, int y)
 {
-	canvas.setForeground(Color(128, 128, 128));
+	canvas.setForeground(Color4ub(128, 128, 128));
 	canvas.drawLine(Point(x, y), Point(x + 7, y + 7));
 	canvas.drawLine(Point(x + 1, y), Point(x + 8, y + 7));
 	canvas.drawLine(Point(x + 6, y), Point(x - 1, y + 7));

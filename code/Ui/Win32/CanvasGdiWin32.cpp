@@ -12,7 +12,7 @@ namespace traktor
 		namespace
 		{
 
-COLORREF getColorRef(const Color& c)
+COLORREF getColorRef(const Color4ub& c)
 {
 	return RGB(
 		c.r,
@@ -120,8 +120,8 @@ bool CanvasGdiWin32::beginPaint(Window& hWnd, bool doubleBuffer, HDC hDC)
 		m_ownDC = true;
 	}
 
-	m_foreGround = Color(0, 0, 0);
-	m_backGround = Color(0, 0, 0);
+	m_foreGround = Color4ub(0, 0, 0);
+	m_backGround = Color4ub(0, 0, 0);
 	m_lineStyle = LsSolid;
 	m_thickness = 0;
 
@@ -207,7 +207,7 @@ Size CanvasGdiWin32::getTextExtent(Window& hWnd, const std::wstring& text) const
 	return Size(size.cx, size.cy);
 }
 
-void CanvasGdiWin32::setForeground(const Color& color)
+void CanvasGdiWin32::setForeground(const Color4ub& color)
 {
 	if (color != m_foreGround)
 	{
@@ -218,7 +218,7 @@ void CanvasGdiWin32::setForeground(const Color& color)
 	}
 }
 
-void CanvasGdiWin32::setBackground(const Color& color)
+void CanvasGdiWin32::setBackground(const Color4ub& color)
 {
 	if (color != m_backGround)
 	{
@@ -273,7 +273,7 @@ void CanvasGdiWin32::resetClipRect()
 	}
 }
 
-void CanvasGdiWin32::drawPixel(int x, int y, const Color& c)
+void CanvasGdiWin32::drawPixel(int x, int y, const Color4ub& c)
 {
 #if !defined(WINCE)
 	SetPixelV(m_hDC, x, y, getColorRef(c));

@@ -83,13 +83,13 @@ void ToolBarButton::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, Bit
 	{
 		if ((m_state & BstPushed) != 0)
 		{
-			canvas.setForeground(Color(128, 128, 140));
-			canvas.setBackground(Color(192, 192, 208));
+			canvas.setForeground(Color4ub(128, 128, 140));
+			canvas.setBackground(Color4ub(192, 192, 208));
 		}
 		else if ((m_state & (BstHover | BstToggled)) != 0)
 		{
-			canvas.setForeground(Color(128, 128, 140));
-			canvas.setBackground(Color(224, 224, 240));
+			canvas.setForeground(Color4ub(128, 128, 140));
+			canvas.setBackground(Color4ub(224, 224, 240));
 		}
 		canvas.fillRect(Rect(
 			at,
@@ -118,7 +118,7 @@ void ToolBarButton::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, Bit
 	{
 		Size textExtent = toolBar->getTextExtent(m_text);
 		int centerOffsetY = (size.cy - textExtent.cy) / 2;
-		canvas.setForeground(Color(64, 64, 70));
+		canvas.setForeground(Color4ub(64, 64, 70));
 		canvas.drawText(
 			at + Size(centerOffsetX, centerOffsetY),
 			m_text

@@ -31,7 +31,7 @@ void GridHeaderCell::mouseMove(AutoWidget* widget, const Point& position)
 
 void GridHeaderCell::paint(AutoWidget* widget, Canvas& canvas, const Rect& rect)
 {
-	canvas.setForeground(Color(255, 255, 255));
+	canvas.setForeground(Color4ub(255, 255, 255));
 	canvas.setBackground(getSystemColor(ScButtonFace));
 	canvas.fillGradientRect(Rect(rect.left, rect.top, rect.right, rect.bottom));
 
@@ -49,7 +49,7 @@ void GridHeaderCell::paint(AutoWidget* widget, Canvas& canvas, const Rect& rect)
 
 		if (i > 0)
 		{
-			canvas.setForeground(Color(208, 208, 208));
+			canvas.setForeground(Color4ub(208, 208, 208));
 			canvas.drawLine(left, rect.top + 4, left, rect.bottom - 4);
 		}
 

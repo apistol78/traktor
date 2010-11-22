@@ -185,19 +185,19 @@ Size Bitmap::getSize() const
 	return m_bitmap->getSize();
 }
 
-Color Bitmap::getPixel(uint32_t x, uint32_t y) const
+Color4ub Bitmap::getPixel(uint32_t x, uint32_t y) const
 {
 	if (!m_bitmap)
-		return Color(0, 0, 0);
+		return Color4ub(0, 0, 0);
 
 	Size sz = m_bitmap->getSize();
 	if (x >= sz.cx || y >= sz.cy)
-		return Color(0, 0, 0);
+		return Color4ub(0, 0, 0);
 
 	return m_bitmap->getPixel(x, y);
 }
 
-void Bitmap::setPixel(uint32_t x, uint32_t y, const Color& color)
+void Bitmap::setPixel(uint32_t x, uint32_t y, const Color4ub& color)
 {
 	if (!m_bitmap)
 		return;

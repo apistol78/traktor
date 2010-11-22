@@ -41,9 +41,9 @@ public:
 		WsAlpha = WsUser
 	};
 
-	bool create(Widget* parent, const std::wstring& text, int style = WsDefaultFixed, const Color& initialColor = Color(255, 255, 255, 255));
+	bool create(Widget* parent, const std::wstring& text, int style = WsDefaultFixed, const Color4ub& initialColor = Color4ub(255, 255, 255, 255));
 
-	Color getColor() const;
+	Color4ub getColor() const;
 
 private:
 	Ref< ColorGradientControl > m_gradientControl;
@@ -53,7 +53,7 @@ private:
 	Ref< Edit > m_editColor[4];
 	Ref< ColorGradient > m_colorGradient;
 	Ref< AlphaGradient > m_alphaGradient;
-	Color m_color;
+	Color4ub m_color;
 
 	void updateControls();
 

@@ -48,7 +48,7 @@ bool AutoWidget::create(ui::Widget* parent, int32_t style)
 	return true;
 }
 
-void AutoWidget::setBackgroundColor(const Color& color)
+void AutoWidget::setBackgroundColor(const Color4ub& color)
 {
 	m_backgroundColor = color;
 }

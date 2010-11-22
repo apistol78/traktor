@@ -29,20 +29,20 @@ class T_DLLCLASS GradientStatic : public Widget
 	T_RTTI_CLASS;
 
 public:
-	bool create(Widget* parent, const Color& colorLeft, const Color& colorRight, const Color& colorText, const std::wstring& text, int style = WsNone);
+	bool create(Widget* parent, const Color4ub& colorLeft, const Color4ub& colorRight, const Color4ub& colorText, const std::wstring& text, int style = WsNone);
 
 	virtual Size getPreferedSize() const;
 
-	void setColorLeft(const Color& colorLeft);
+	void setColorLeft(const Color4ub& colorLeft);
 
-	void setColorRight(const Color& colorRight);
+	void setColorRight(const Color4ub& colorRight);
 
-	void setColorText(const Color& colorText);
+	void setColorText(const Color4ub& colorText);
 
 private:
-	Color m_colorLeft;
-	Color m_colorRight;
-	Color m_colorText;
+	Color4ub m_colorLeft;
+	Color4ub m_colorRight;
+	Color4ub m_colorText;
 
 	void eventPaint(Event* event);
 };

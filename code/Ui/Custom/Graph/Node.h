@@ -6,7 +6,7 @@
 #include <vector>
 #include "Core/Object.h"
 #include "Core/RefArray.h"
-#include "Core/Math/Color.h"
+#include "Core/Math/Color4ub.h"
 #include "Ui/Associative.h"
 #include "Ui/Rect.h"
 
@@ -62,9 +62,9 @@ public:
 
 	Ref< Bitmap > getImage() const;
 
-	void setColor(const Color& color);
+	void setColor(const Color4ub& color);
 
-	const Color& getColor() const;
+	const Color4ub& getColor() const;
 
 	void setPosition(const Point& position);
 
@@ -101,7 +101,7 @@ private:
 	std::wstring m_info;
 	std::wstring m_comment;
 	Ref< Bitmap > m_image;
-	Color m_color;
+	Color4ub m_color;
 	Point m_position;
 	Size m_size;
 	bool m_selected;

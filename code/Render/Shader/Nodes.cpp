@@ -156,18 +156,18 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Color", 0, Color, ImmutableNode)
 
 const ImmutableNode::OutputPinDesc c_Color_o[] = { L"Output", 0 };
 
-Color::Color(const traktor::Color& color)
+Color::Color(const traktor::Color4ub& color)
 :	ImmutableNode(0, c_Color_o)
 ,	m_color(color)
 {
 }
 
-void Color::setColor(const traktor::Color& color)
+void Color::setColor(const traktor::Color4ub& color)
 {
 	m_color = color;
 }
 
-const traktor::Color& Color::getColor() const
+const traktor::Color4ub& Color::getColor() const
 {
 	return m_color;
 }
@@ -184,7 +184,7 @@ bool Color::serialize(ISerializer& s)
 	if (!Node::serialize(s))
 		return false;
 
-	s >> Member< traktor::Color >(L"color", m_color);
+	s >> Member< traktor::Color4ub >(L"color", m_color);
 
 	return true;
 }

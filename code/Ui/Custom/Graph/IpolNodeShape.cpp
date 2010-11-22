@@ -65,7 +65,7 @@ void IpolNodeShape::paint(const Node* node, const PaintSettings* settings, Canva
 {
 	Rect rc = node->calculateRect().offset(offset);
 
-	Color modulate = node->isSelected() ? Color(224, 224, 255) : Color(255, 255, 255);
+	Color4ub modulate = node->isSelected() ? Color4ub(224, 224, 255) : Color4ub(255, 255, 255);
 	canvas->setBackground(modulate * node->getColor());
 
 	canvas->drawBitmap(

@@ -79,12 +79,12 @@ const std::wstring& Material::getNormalMap() const
 	return m_normalMap;
 }
 
-void Material::setColor(const Color& color)
+void Material::setColor(const Color4ub& color)
 {
 	m_color = color;
 }
 
-const Color& Material::getColor() const
+const Color4ub& Material::getColor() const
 {
 	return m_color;
 }

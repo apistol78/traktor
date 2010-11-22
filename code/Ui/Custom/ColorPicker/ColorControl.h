@@ -28,14 +28,14 @@ class T_DLLCLASS ColorControl : public Widget
 public:
 	bool create(Widget* parent, int style);
 
-	void setColor(const Color& color);
+	void setColor(const Color4ub& color);
 
-	Color getColor() const;
+	Color4ub getColor() const;
 
 	virtual Size getPreferedSize() const;
 
 private:
-	Color m_color;
+	Color4ub m_color;
 	Ref< Bitmap > m_preview;
 
 	void eventPaint(Event* event);

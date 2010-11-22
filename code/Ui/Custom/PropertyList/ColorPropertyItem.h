@@ -29,11 +29,11 @@ class T_DLLCLASS ColorPropertyItem : public PropertyItem
 	T_RTTI_CLASS;
 
 public:
-	ColorPropertyItem(const std::wstring& text, const Color& value);
+	ColorPropertyItem(const std::wstring& text, const Color4ub& value);
 
-	void setValue(const Color& value);
+	void setValue(const Color4ub& value);
 
-	const Color& getValue() const;
+	const Color4ub& getValue() const;
 
 protected:
 	virtual void mouseButtonUp(MouseEvent* event);
@@ -41,7 +41,7 @@ protected:
 	virtual void paintValue(Canvas& canvas, const Rect& rc);
 
 private:
-	Color m_value;
+	Color4ub m_value;
 	Rect m_rcColor;
 };
 

@@ -141,7 +141,7 @@ void DebugRenderControl::eventPaint(ui::Event* event)
 			Vector4( 1.0f,  1.0f, 0.0f, 1.0f),
 			Vector4( 1.0f, -1.0f, 0.0f, 1.0f),
 			Vector4(-1.0f, -1.0f, 0.0f, 1.0f),
-			Color(0, 0, 0)
+			Color4ub(0, 0, 0)
 		);
 
 		if (m_context->getDebugTexture())
@@ -155,7 +155,7 @@ void DebugRenderControl::eventPaint(ui::Event* event)
 				Vector2(1.0f, 1.0f),
 				Vector4(-1.0f, -1.0f, 0.0f, 1.0f),
 				Vector2(0.0f, 1.0f),
-				Color(255, 255, 255),
+				Color4ub(255, 255, 255),
 				m_context->getDebugTexture()
 			);
 		}

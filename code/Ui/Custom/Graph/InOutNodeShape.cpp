@@ -75,7 +75,7 @@ void InOutNodeShape::paint(const Node* node, const PaintSettings* settings, Canv
 	int sx[] = { 0, 20, 76, 96 };
 	int dx[] = { 0, 20, rc.getWidth() - 20, rc.getWidth() };
 
-	Color modulate = node->isSelected() ? Color(224, 224, 255) : Color(255, 255, 255);
+	Color4ub modulate = node->isSelected() ? Color4ub(224, 224, 255) : Color4ub(255, 255, 255);
 	canvas->setBackground(modulate * node->getColor());
 
 	for (int ix = 0; ix < 3; ++ix)
@@ -92,7 +92,7 @@ void InOutNodeShape::paint(const Node* node, const PaintSettings* settings, Canv
 
 	Size pinSize = m_imagePin->getSize();
 
-	canvas->setBackground(Color(255, 255, 255));
+	canvas->setBackground(Color4ub(255, 255, 255));
 
 	Point inputPinPos(
 		rc.left - pinSize.cx / 2 + c_marginWidth,

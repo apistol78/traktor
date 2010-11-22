@@ -60,7 +60,7 @@ Ref< ui::custom::Node > ColorNodeFacade::createEditorNode(
 	}
 
 	editorNode->setComment(shaderNode->getComment());
-	editorNode->setColor(traktor::Color(255, 255, 200));
+	editorNode->setColor(traktor::Color4ub(255, 255, 200));
 
 	return editorNode;
 }
@@ -102,7 +102,7 @@ void ColorNodeFacade::setValidationIndicator(
 	bool validationSucceeded
 )
 {
-	editorNode->setColor(validationSucceeded ? traktor::Color(255, 255, 200) : traktor::Color(255, 120, 120));
+	editorNode->setColor(validationSucceeded ? traktor::Color4ub(255, 255, 200) : traktor::Color4ub(255, 120, 120));
 }
 
 	}

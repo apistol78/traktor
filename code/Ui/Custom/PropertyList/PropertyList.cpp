@@ -553,7 +553,7 @@ void PropertyList::eventPaint(Event* event)
 	// Draw columns.
 	if (m_columnHeader)
 	{
-		canvas.setForeground(Color(255, 255, 255));
+		canvas.setForeground(Color4ub(255, 255, 255));
 		canvas.setBackground(getSystemColor(ScButtonFace));
 		canvas.fillGradientRect(Rect(rcInner.left, rcInner.top, rcInner.right, rcInner.top + c_columnsHeight));
 
@@ -568,7 +568,7 @@ void PropertyList::eventPaint(Event* event)
 			AnCenter
 		);
 
-		canvas.setForeground(Color(208, 208, 208));
+		canvas.setForeground(Color4ub(208, 208, 208));
 		canvas.drawLine(
 			rcInner.left + m_separator, rcInner.top + 4,
 			rcInner.left + m_separator, rcInner.top + c_columnsHeight - 4
@@ -607,23 +607,23 @@ void PropertyList::eventPaint(Event* event)
 		Rect rcValue(rcItem.left + m_separator + 1, rcItem.top, rcItem.right, rcItem.bottom);
 		
 		// Draw item background.
-		canvas.setForeground(Color(0, 0, 0));
+		canvas.setForeground(Color4ub(0, 0, 0));
 		(*i)->paintBackground(canvas, rcItem);
 
 		// Draw item text and possible expand image.
 		canvas.setClipRect(rcText);
-		canvas.setForeground(Color(0, 0, 0));
+		canvas.setForeground(Color4ub(0, 0, 0));
 		(*i)->paintText(canvas, rcText);
 		canvas.resetClipRect();
 
 		// Draw item value.
 		canvas.setClipRect(rcValue);
-		canvas.setForeground(Color(0, 0, 0));
+		canvas.setForeground(Color4ub(0, 0, 0));
 		(*i)->paintValue(canvas, rcValue);
 		canvas.resetClipRect();
 
 		// Draw horizontal item separator.
-		canvas.setForeground(Color(190, 190, 200));
+		canvas.setForeground(Color4ub(190, 190, 200));
 		canvas.drawLine(Point(rcItem.left, rcItem.bottom), Point(rcItem.right, rcItem.bottom));
 
 		// Draw vertical item separator.

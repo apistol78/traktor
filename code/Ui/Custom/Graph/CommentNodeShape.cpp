@@ -53,7 +53,7 @@ void CommentNodeShape::paint(const Node* node, const PaintSettings* settings, Ca
 	int dx[] = { 0, 20, rc.getWidth() - 20, rc.getWidth() };
 	int dy[] = { 0, 20, rc.getHeight() - 20, rc.getHeight() };
 
-	Color modulate = node->isSelected() ? Color(224, 224, 255) : Color(255, 255, 255);
+	Color4ub modulate = node->isSelected() ? Color4ub(224, 224, 255) : Color4ub(255, 255, 255);
 	canvas->setBackground(modulate * node->getColor());
 
 	for (int iy = 0; iy < 3; ++iy)

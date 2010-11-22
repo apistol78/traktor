@@ -70,14 +70,14 @@ Ref< Bitmap > Node::getImage() const
 	return m_image;
 }
 
-void Node::setColor(const Color& color)
+void Node::setColor(const Color4ub& color)
 {
 	T_ASSERT (m_shape);
 	m_color = color;
 	m_size = m_shape->calculateSize(this);
 }
 
-const Color& Node::getColor() const
+const Color4ub& Node::getColor() const
 {
 	return m_color;
 }

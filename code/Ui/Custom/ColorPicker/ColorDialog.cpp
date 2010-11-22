@@ -22,7 +22,7 @@ namespace traktor
 
 struct ColorGradient : public ColorSliderControl::IGradient
 {
-	virtual Color get(int at) const
+	virtual Color4ub get(int at) const
 	{
 		int rgb[] = { 255, 0, 0 };
 		int i = 2;
@@ -41,23 +41,23 @@ struct ColorGradient : public ColorSliderControl::IGradient
 			}
 		}
 
-		return Color(rgb[0], rgb[1], rgb[2], 255);
+		return Color4ub(rgb[0], rgb[1], rgb[2], 255);
 	}
 };
 
 struct AlphaGradient : public ColorSliderControl::IGradient
 {
-	Color color;
+	Color4ub color;
 
-	virtual Color get(int at) const
+	virtual Color4ub get(int at) const
 	{
-		return Color(color.r, color.g, color.b, at);
+		return Color4ub(color.r, color.g, color.b, at);
 	}
 };
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.ColorDialog", ColorDialog, ConfigDialog)
 
-bool ColorDialog::create(Widget* parent, const std::wstring& text, int style, const Color& initialColor)
+bool ColorDialog::create(Widget* parent, const std::wstring& text, int style, const Color4ub& initialColor)
 {
 	if (!ConfigDialog::create(
 		parent,
@@ -133,7 +133,7 @@ bool ColorDialog::create(Widget* parent, const std::wstring& text, int style, co
 	return true;
 }
 
-Color ColorDialog::getColor() const
+Color4ub ColorDialog::getColor() const
 {
 	return m_color;
 }
@@ -163,7 +163,7 @@ void ColorDialog::updateControls()
 
 void ColorDialog::eventGradientColorSelect(Event* event)
 {
-	Color color = checked_type_cast< ColorEvent* >(event)->getColor();
+	Color4ub color = checked_type_cast< ColorEvent* >(event)->getColor();
 	
 	m_color.r = color.r;
 	m_color.g = color.g;
@@ -189,7 +189,7 @@ void ColorDialog::eventGradientColorSelect(Event* event)
 
 void ColorDialog::eventSliderColorSelect(Event* event)
 {
-	Color color = checked_type_cast< ColorEvent* >(event)->getColor();
+	Color4ub color = checked_type_cast< ColorEvent* >(event)->getColor();
 
 	m_gradientControl->setColor(color, false);
 	m_gradientControl->update();
@@ -222,7 +222,7 @@ void ColorDialog::eventSliderColorSelect(Event* event)
 
 void ColorDialog::eventSliderAlphaSelect(Event* event)
 {
-	Color alpha = checked_type_cast< ColorEvent* >(event)->getColor();
+	Color4ub alpha = checked_type_cast< ColorEvent* >(event)->getColor();
 
 	m_color.a = alpha.a;
 

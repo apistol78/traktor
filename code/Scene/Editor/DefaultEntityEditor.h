@@ -1,7 +1,7 @@
 #ifndef traktor_scene_DefaultEntityEditor_H
 #define traktor_scene_DefaultEntityEditor_H
 
-#include "Core/Math/Color.h"
+#include "Core/Math/Color4ub.h"
 #include "Scene/Editor/IEntityEditor.h"
 
 // import/export mechanism.
@@ -74,10 +74,10 @@ public:
 
 private:
 	bool m_inModify;
-	Color m_colorBoundingBox;
-	Color m_colorBoundingBoxSel;
-	Color m_colorBoundingBoxFaceSel;
-	Color m_colorSnap;
+	Color4ub m_colorBoundingBox;
+	Color4ub m_colorBoundingBoxSel;
+	Color4ub m_colorBoundingBoxFaceSel;
+	Color4ub m_colorSnap;
 
 	void updateSettings(SceneEditorContext* context);
 };

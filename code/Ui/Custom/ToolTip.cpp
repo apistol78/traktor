@@ -118,8 +118,8 @@ void ToolTip::eventPaint(Event* event)
 
 	Rect innerRect = getInnerRect();
 	
-	canvas.setForeground(Color(80, 80, 40));
-	canvas.setBackground(Color(255, 255, 180));
+	canvas.setForeground(Color4ub(80, 80, 40));
+	canvas.setBackground(Color4ub(255, 255, 180));
 
 	canvas.fillRect(innerRect);
 	canvas.drawRect(innerRect);

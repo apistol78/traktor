@@ -2,7 +2,7 @@
 #define traktor_ui_custom_PaintSettings_H
 
 #include "Core/Object.h"
-#include "Core/Math/Color.h"
+#include "Core/Math/Color4ub.h"
 #include "Ui/Size.h"
 #include "Ui/Point.h"
 #include "Ui/Font.h"
@@ -44,61 +44,61 @@ public:
 
 	const ui::Font& getFontUnderline() const;
 
-	void setGridBackground(const Color& gridBackground);
+	void setGridBackground(const Color4ub& gridBackground);
 
-	const Color& getGridBackground() const;
+	const Color4ub& getGridBackground() const;
 
-	void setNodeShadow(const Color& nodeShadow);
+	void setNodeShadow(const Color4ub& nodeShadow);
 
-	const Color& getNodeShadow() const;
+	const Color4ub& getNodeShadow() const;
 
-	void setNodeForeground(const Color& nodeForeground);
+	void setNodeForeground(const Color4ub& nodeForeground);
 
-	const Color& getNodeForeground() const;
+	const Color4ub& getNodeForeground() const;
 
-	void setNodeBackgroundTop(const Color& nodeBackgroundTop);
+	void setNodeBackgroundTop(const Color4ub& nodeBackgroundTop);
 
-	const Color& getNodeBackgroundTop() const;
+	const Color4ub& getNodeBackgroundTop() const;
 
-	void setNodeBackgroundBottom(const Color& nodeBackgroundBottom);
+	void setNodeBackgroundBottom(const Color4ub& nodeBackgroundBottom);
 
-	const Color& getNodeBackgroundBottom() const;
+	const Color4ub& getNodeBackgroundBottom() const;
 
-	void setNodeText(const Color& nodeText);
+	void setNodeText(const Color4ub& nodeText);
 
-	const Color& getNodeText() const;
+	const Color4ub& getNodeText() const;
 
-	void setNodeTextInfo(const Color& nodeTextInfo);
+	void setNodeTextInfo(const Color4ub& nodeTextInfo);
 
-	const Color& getNodeTextInfo() const;
+	const Color4ub& getNodeTextInfo() const;
 
-	void setNodeTextUnconnected(const Color& nodeTextUnconnected);
+	void setNodeTextUnconnected(const Color4ub& nodeTextUnconnected);
 
-	const Color& getNodeTextUnconnected() const;
+	const Color4ub& getNodeTextUnconnected() const;
 
-	void setNodeHalo(const Color& nodeHalo);
+	void setNodeHalo(const Color4ub& nodeHalo);
 
-	const Color& getNodeHalo() const;
+	const Color4ub& getNodeHalo() const;
 
-	void setEdge(const Color&  edge);
+	void setEdge(const Color4ub&  edge);
 
-	const Color& getEdge() const;
+	const Color4ub& getEdge() const;
 
-	void setEdgeSelected(const Color& edgeSelected);
+	void setEdgeSelected(const Color4ub& edgeSelected);
 
-	const Color& getEdgeSelected() const;
+	const Color4ub& getEdgeSelected() const;
 
-	void setEdgeCursor(const Color& edgeCursor);
+	void setEdgeCursor(const Color4ub& edgeCursor);
 
-	const Color& getEdgeCursor() const;
+	const Color4ub& getEdgeCursor() const;
 
-	void setSelectionCursor(const Color& selectionCursor);
+	void setSelectionCursor(const Color4ub& selectionCursor);
 
-	const Color& getSelectionCursor() const;
+	const Color4ub& getSelectionCursor() const;
 
-	void setGuideCursor(const Color& guideCursor);
+	void setGuideCursor(const Color4ub& guideCursor);
 
-	const Color& getGuideCursor() const;
+	const Color4ub& getGuideCursor() const;
 
 	void setSmoothSpline(bool smoothSpline);
 
@@ -109,20 +109,20 @@ private:
 	ui::Font m_font;
 	ui::Font m_fontBold;
 	ui::Font m_fontUnderline;
-	Color m_gridBackground;
-	Color m_nodeShadow;
-	Color m_nodeForeground;
-	Color m_nodeBackgroundTop;
-	Color m_nodeBackgroundBottom;
-	Color m_nodeText;
-	Color m_nodeTextInfo;
-	Color m_nodeTextUnconnected;
-	Color m_nodeHalo;
-	Color m_edge;
-	Color m_edgeSelected;
-	Color m_edgeCursor;
-	Color m_selectionCursor;
-	Color m_guideCursor;
+	Color4ub m_gridBackground;
+	Color4ub m_nodeShadow;
+	Color4ub m_nodeForeground;
+	Color4ub m_nodeBackgroundTop;
+	Color4ub m_nodeBackgroundBottom;
+	Color4ub m_nodeText;
+	Color4ub m_nodeTextInfo;
+	Color4ub m_nodeTextUnconnected;
+	Color4ub m_nodeHalo;
+	Color4ub m_edge;
+	Color4ub m_edgeSelected;
+	Color4ub m_edgeCursor;
+	Color4ub m_selectionCursor;
+	Color4ub m_guideCursor;
 	bool m_smoothSpline;
 };
 		
