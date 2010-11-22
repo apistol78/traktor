@@ -97,7 +97,7 @@ PointRenderer::PointRenderer(render::IRenderSystem* renderSystem)
 	m_indexBuffer->unlock();
 
 #if defined(_PS3)
-	m_jobQueue = SpursManager::getInstance().createJobQueue(sizeof(JobPointRenderer), 256);
+	m_jobQueue = SpursManager::getInstance().createJobQueue(sizeof(JobPointRenderer), 256, SpursManager::Normal);
 #endif
 }
 
