@@ -4,7 +4,7 @@
 #include <string>
 #include "Ui/Rect.h"
 #include "Ui/Enums.h"
-#include "Core/Math/Color.h"
+#include "Core/Math/Color4ub.h"
 
 namespace traktor
 {
@@ -15,7 +15,7 @@ struct NSString* makeNSString(const std::wstring& str);
 
 std::wstring fromNSString(const NSString* str);
 
-struct NSColor* makeNSColor(const Color& color);
+struct NSColor* makeNSColor(const Color4ub& color);
 
 NSSize makeNSSize(const Size& sz);
 

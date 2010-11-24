@@ -17,9 +17,9 @@ public:
 	
 	virtual ~CanvasCocoa();
 	
-	virtual void setForeground(const Color& foreground);
+	virtual void setForeground(const Color4ub& foreground);
 
-	virtual void setBackground(const Color& background);
+	virtual void setBackground(const Color4ub& background);
 
 	virtual void setFont(const Font& font);
 
@@ -31,7 +31,7 @@ public:
 
 	virtual void resetClipRect();
 	
-	virtual void drawPixel(int x, int y, const Color& c);
+	virtual void drawPixel(int x, int y, const Color4ub& c);
 
 	virtual void drawLine(int x1, int y1, int x2, int y2);
 
