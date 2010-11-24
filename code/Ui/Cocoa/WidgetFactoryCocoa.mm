@@ -161,7 +161,7 @@ IClipboard* WidgetFactoryCocoa::createClipboard()
 	return new ClipboardCocoa();
 }
 
-bool WidgetFactoryCocoa::getSystemColor(SystemColor systemColor, Color& outColor)
+bool WidgetFactoryCocoa::getSystemColor(SystemColor systemColor, Color4ub& outColor)
 {
 	NSColor* color;
 	switch (systemColor)
@@ -171,13 +171,13 @@ bool WidgetFactoryCocoa::getSystemColor(SystemColor systemColor, Color& outColor
 		break;
 	case ScActiveCaption:
 		{
-			outColor = Color(153, 180, 209);
+			outColor = Color4ub(153, 180, 209);
 			return true;
 		}
 		break;
 	case ScInactiveCaption:
 		{
-			outColor = Color(163, 190, 219);
+			outColor = Color4ub(163, 190, 219);
 			return true;
 		}
 		break;
@@ -186,7 +186,7 @@ bool WidgetFactoryCocoa::getSystemColor(SystemColor systemColor, Color& outColor
 		break;
 	case ScWindowBackground:
 		{
-			outColor = Color(241, 241, 241);
+			outColor = Color4ub(241, 241, 241);
 			return true;
 		}
 		break;
@@ -201,13 +201,13 @@ bool WidgetFactoryCocoa::getSystemColor(SystemColor systemColor, Color& outColor
 		break;
 	case ScActiveCaptionText:
 		{
-			outColor = Color(255, 255, 255);
+			outColor = Color4ub(255, 255, 255);
 			return true;
 		}
 		break;
 	case ScInactiveCaptionText:
 		{
-			outColor = Color(0, 0, 0);
+			outColor = Color4ub(0, 0, 0);
 			return true;
 		}
 		break;
@@ -219,7 +219,7 @@ bool WidgetFactoryCocoa::getSystemColor(SystemColor systemColor, Color& outColor
 		break;
 	case ScButtonFace:
 		{
-			outColor = Color(200, 200, 200);
+			outColor = Color4ub(200, 200, 200);
 			return true;
 		}
 		break;
@@ -241,7 +241,7 @@ bool WidgetFactoryCocoa::getSystemColor(SystemColor systemColor, Color& outColor
 	float g = [color greenComponent];
 	float b = [color blueComponent];
 	
-	outColor = Color(
+	outColor = Color4ub(
 		uint8_t(r * 255),
 		uint8_t(g * 255),
 		uint8_t(b * 255)

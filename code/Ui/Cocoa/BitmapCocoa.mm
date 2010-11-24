@@ -1,4 +1,4 @@
-#include "Core/Math/Color.h"
+#include "Core/Math/Color4ub.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
 #include "Ui/Cocoa/BitmapCocoa.h"
@@ -171,16 +171,16 @@ Size BitmapCocoa::getSize() const
 	return Size(size.width, size.height);
 }
 
-void BitmapCocoa::setPixel(uint32_t x, uint32_t y, const Color& color)
+void BitmapCocoa::setPixel(uint32_t x, uint32_t y, const Color4ub& color)
 {
 }
 
-Color BitmapCocoa::getPixel(uint32_t x, uint32_t y) const
+Color4ub BitmapCocoa::getPixel(uint32_t x, uint32_t y) const
 {
 	Size size = getSize();
 	
 	if (x >= size.cx || y >= size.cx)
-		return Color(0, 0, 0);
+		return Color4ub(0, 0, 0);
 
 	const uint32_t* sourceBits = (const uint32_t*)[m_imageRep bitmapData];
 	uint32_t c = sourceBits[x + (size.cy - y - 1) * size.cx];
@@ -189,7 +189,7 @@ Color BitmapCocoa::getPixel(uint32_t x, uint32_t y) const
 	uint32_t pg = (c & 0x0000ff00) >> 8;
 	uint32_t pb = (c & 0x00ff0000) >> 16;
 
-	return Color(pr, pg, pb);
+	return Color4ub(pr, pg, pb);
 }
 
 	}

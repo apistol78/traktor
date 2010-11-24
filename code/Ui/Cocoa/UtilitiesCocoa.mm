@@ -52,7 +52,7 @@ std::wstring fromNSString(const NSString* str)
 	return mbstows(buffer);
 }
 
-NSColor* makeNSColor(const Color& color)
+NSColor* makeNSColor(const Color4ub& color)
 {
 	return [NSColor
 		colorWithCalibratedRed:(color.r / 255.0f)

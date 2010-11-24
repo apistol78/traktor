@@ -23,12 +23,12 @@ CanvasCocoa::~CanvasCocoa()
 	resetClipRect();
 }
 
-void CanvasCocoa::setForeground(const Color& foreground)
+void CanvasCocoa::setForeground(const Color4ub& foreground)
 {
 	m_foregroundColor = makeNSColor(foreground);
 }
 
-void CanvasCocoa::setBackground(const Color& background)
+void CanvasCocoa::setBackground(const Color4ub& background)
 {
 	m_backgroundColor = makeNSColor(background);
 }
@@ -67,7 +67,7 @@ void CanvasCocoa::resetClipRect()
 	}
 }
 
-void CanvasCocoa::drawPixel(int x, int y, const Color& c)
+void CanvasCocoa::drawPixel(int x, int y, const Color4ub& c)
 {
 }
 
