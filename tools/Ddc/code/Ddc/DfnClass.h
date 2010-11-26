@@ -1,7 +1,7 @@
 #ifndef ddc_DfnClass_H
 #define ddc_DfnClass_H
 
-#include <Core/Heap/Ref.h>
+#include <Core/Ref.h>
 #include "Ddc/DfnNode.h"
 
 namespace ddc
@@ -9,7 +9,7 @@ namespace ddc
 
 class DfnClass : public DfnNode
 {
-	T_RTTI_CLASS(DfnClass)
+	T_RTTI_CLASS;
 
 public:
 	enum Access
@@ -18,9 +18,13 @@ public:
 		AccPublic
 	};
 
+	DfnClass();
+
 	DfnClass(Access access, const std::wstring& name, DfnNode* members);
 
 	DfnClass(Access access, const std::wstring& name, const std::wstring& super, DfnNode* members);
+
+	virtual bool serialize(traktor::ISerializer& s);
 
 	Access getAccess() const { return m_access; }
 

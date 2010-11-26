@@ -3,24 +3,25 @@
 %token_type { Token* }
 %default_type { Token* }
 %token_destructor { delete $$; }
+%extra_argument { ddc::ParseState* state }
  
 %include
 {
 
 #include <cassert>
-#include <Core/Heap/GcNew.h>
 #include <Core/Log/Log.h>
-#include "Ddc/DfnBranch.h"
+#include "Ddc/DfnAlias.h"
 #include "Ddc/DfnClass.h"
+#include "Ddc/DfnImport.h"
 #include "Ddc/DfnMember.h"
 #include "Ddc/DfnNamespace.h"
 #include "Ddc/DfnType.h"
+#include "Ddc/DfnTypeSubst.h"
+#include "Ddc/ParseState.h"
 #include "Ddc/Token.h"
 
 using namespace traktor;
 using namespace ddc;
-
-extern Ref< DfnNode > g_resultNode;
 
 }
 
@@ -33,17 +34,13 @@ log::error << L"Syntax error; unable to generate data definition class" << Endl;
 
 program ::= statements(A).
 {
-	g_resultNode = A->node;
+	state->root = A->node;
 }
 
 statements(A) ::= statement(B) statements(C).
 {
-	A = new Token(
-		gc_new< DfnBranch >(
-			B->node,
-			C->node
-		)
-	);
+	B->node->setNext(C->node);
+	A = new Token(B->node);
 }
 	
 statements(A) ::= statement(B).
@@ -51,10 +48,73 @@ statements(A) ::= statement(B).
 	A = new Token(B->node);
 }
 
+statement(A) ::= IMPORT STRING(B) SEMI_COLON.
+{
+	A = new Token(
+		new DfnImport(
+			B->literal
+		)
+	);
+}
+
+statement(A) ::= ALIAS STRING(B) alias_type(C) OPEN_BRACE STRING(D) COMMA STRING(E) COMMA STRING(F) CLOSE_BRACE.
+{
+	A = new Token(
+		new DfnAlias(
+			B->literal,	// language
+			C->node,	// type
+			D->literal,	// language declare type
+			E->literal,	// language in/out type
+			F->literal	// language member
+		)
+	);
+}
+
+alias_type(A) ::= LITERAL(B).
+{
+	A = new Token(new DfnType(B->literal, 0, false, 0));
+}
+
+alias_type(A) ::= LITERAL(B) LESS alias_type_subst(C) GREATER.
+{
+	A = new Token(new DfnType(B->literal, C->node, false, 0));
+}
+
+alias_type(A) ::= LITERAL(B) OPEN_BRACKET CLOSE_BRACKET.
+{
+	A = new Token(new DfnType(B->literal, 0, true, 0));
+}
+
+alias_type(A) ::= LITERAL(B) OPEN_BRACKET LITERAL(C) CLOSE_BRACKET.
+{
+	A = new Token(new DfnType(B->literal, 0, true, 0));
+}
+
+alias_type(A) ::= LITERAL(B) LESS alias_type_subst(C) GREATER OPEN_BRACKET CLOSE_BRACKET.
+{
+	A = new Token(new DfnType(B->literal, C->node, true, 0));
+}
+
+alias_type(A) ::= LITERAL(B) LESS alias_type_subst(C) GREATER OPEN_BRACKET LITERAL(D) CLOSE_BRACKET.
+{
+	A = new Token(new DfnType(B->literal, C->node, true, 0));
+}
+
+alias_type_subst(A) ::= alias_type_subst(B) COMMA alias_type(C).
+{
+	B->node->setNext(C->node);
+	A = new Token(B->node);
+}
+
+alias_type_subst(A) ::= alias_type(B).
+{
+	A = new Token(B->node);
+}
+
 statement(A) ::= NAMESPACE LITERAL(B) OPEN_BRACE statements(C) CLOSE_BRACE.
 {
 	A = new Token(
-		gc_new< DfnNamespace >(
+		new DfnNamespace(
 			B->literal,
 			C->node
 		)
@@ -64,7 +124,7 @@ statement(A) ::= NAMESPACE LITERAL(B) OPEN_BRACE statements(C) CLOSE_BRACE.
 statement(A) ::= CLASS LITERAL(B) OPEN_BRACE members(C) CLOSE_BRACE.
 {
 	A = new Token(
-		gc_new< DfnClass >(
+		new DfnClass(
 			DfnClass::AccPrivate,
 			B->literal,
 			C->node
@@ -75,7 +135,7 @@ statement(A) ::= CLASS LITERAL(B) OPEN_BRACE members(C) CLOSE_BRACE.
 statement(A) ::= PUBLIC CLASS LITERAL(B) OPEN_BRACE members(C) CLOSE_BRACE.
 {
 	A = new Token(
-		gc_new< DfnClass >(
+		new DfnClass(
 			DfnClass::AccPublic,
 			B->literal,
 			C->node
@@ -86,7 +146,7 @@ statement(A) ::= PUBLIC CLASS LITERAL(B) OPEN_BRACE members(C) CLOSE_BRACE.
 statement(A) ::= PRIVATE CLASS LITERAL(B) OPEN_BRACE members(C) CLOSE_BRACE.
 {
 	A = new Token(
-		gc_new< DfnClass >(
+		new DfnClass(
 			DfnClass::AccPrivate,
 			B->literal,
 			C->node
@@ -97,7 +157,7 @@ statement(A) ::= PRIVATE CLASS LITERAL(B) OPEN_BRACE members(C) CLOSE_BRACE.
 statement(A) ::= CLASS LITERAL(B) COLON LITERAL(C) OPEN_BRACE members(D) CLOSE_BRACE.
 {
 	A = new Token(
-		gc_new< DfnClass >(
+		new DfnClass(
 			DfnClass::AccPrivate,
 			B->literal,
 			C->literal,
@@ -109,7 +169,7 @@ statement(A) ::= CLASS LITERAL(B) COLON LITERAL(C) OPEN_BRACE members(D) CLOSE_B
 statement(A) ::= PUBLIC CLASS LITERAL(B) COLON LITERAL(C) OPEN_BRACE members(D) CLOSE_BRACE.
 {
 	A = new Token(
-		gc_new< DfnClass >(
+		new DfnClass(
 			DfnClass::AccPublic,
 			B->literal,
 			C->literal,
@@ -121,7 +181,7 @@ statement(A) ::= PUBLIC CLASS LITERAL(B) COLON LITERAL(C) OPEN_BRACE members(D) 
 statement(A) ::= PRIVATE CLASS LITERAL(B) COLON LITERAL(C) OPEN_BRACE members(D) CLOSE_BRACE.
 {
 	A = new Token(
-		gc_new< DfnClass >(
+		new DfnClass(
 			DfnClass::AccPrivate,
 			B->literal,
 			C->literal,
@@ -132,9 +192,8 @@ statement(A) ::= PRIVATE CLASS LITERAL(B) COLON LITERAL(C) OPEN_BRACE members(D)
 
 members(A) ::= member(B) members(C).
 {
-	A = new Token(
-		gc_new< DfnBranch >(B->node, C->node)
-	);
+	B->node->setNext(C->node);
+	A = new Token(B->node);
 }
 
 members(A) ::= member(B).
@@ -144,23 +203,60 @@ members(A) ::= member(B).
 	);
 }
 
-member(A) ::= type(B) LITERAL(C) SEMI_COLON.
+member(A) ::= member_type(B) LITERAL(C) SEMI_COLON.
 {
 	A = new Token(
-		gc_new< DfnMember >(B->node, C->literal)
+		new DfnMember(B->node, C->literal)
 	);
 }
 
-type(A) ::= LITERAL(B).
+member_type(A) ::= qualified_literal(B).
 {
-	A = new Token(
-		gc_new< DfnType >(B->literal, false)
-	);
+	A = new Token(new DfnType(B->literal, 0, false, 0));
 }
 
-type(A) ::= LITERAL(B) OPEN_BRACKET CLOSE_BRACKET.
+member_type(A) ::= qualified_literal(B) LESS member_type_subst(C) GREATER.
 {
-	A = new Token(
-		gc_new< DfnType >(B->literal, true)
-	);
+	A = new Token(new DfnType(B->literal, C->node, false, 0));
+}
+
+member_type(A) ::= qualified_literal(B) OPEN_BRACKET CLOSE_BRACKET.
+{
+	A = new Token(new DfnType(B->literal, 0, true, 0));
+}
+
+member_type(A) ::= qualified_literal(B) OPEN_BRACKET NUMBER(C) CLOSE_BRACKET.
+{
+	A = new Token(new DfnType(B->literal, 0, true, int32_t(C->number)));
+}
+
+member_type(A) ::= qualified_literal(B) LESS member_type_subst(C) GREATER OPEN_BRACKET CLOSE_BRACKET.
+{
+	A = new Token(new DfnType(B->literal, C->node, true, 0));
+}
+
+member_type(A) ::= qualified_literal(B) LESS member_type_subst(C) GREATER OPEN_BRACKET NUMBER(D) CLOSE_BRACKET.
+{
+	A = new Token(new DfnType(B->literal, C->node, true, int32_t(D->number)));
+}
+
+member_type_subst(A) ::= member_type_subst(B) COMMA member_type(C).
+{
+	B->node->setNext(C->node);
+	A = new Token(B->node);
+}
+
+member_type_subst(A) ::= member_type(B).
+{
+	A = new Token(B->node);
+}
+
+qualified_literal(A) ::= LITERAL(B) DOT qualified_literal(C).
+{
+	A = new Token(B->literal + L"." + C->literal);
+}
+
+qualified_literal(A) ::= LITERAL(B).
+{
+	A = B;
 }
