@@ -3,6 +3,7 @@
 #include "Amalgam/Editor/Target.h"
 #include "Amalgam/Editor/TargetInstance.h"
 #include "Core/Io/FileSystem.h"
+#include "Core/Log/Log.h"
 #include "Core/Misc/Split.h"
 #include "Core/Misc/String.h"
 #include "Core/System/IProcess.h"
@@ -58,6 +59,7 @@ bool BuildTargetAction::execute()
 	);
 	if (!process)
 	{
+		log::error << L"Failed to launch process \"" << deployTool << L"\"" << Endl;
 		m_targetInstance->setState(TsIdle);
 		return false;
 	}

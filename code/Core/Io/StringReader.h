@@ -27,6 +27,9 @@ class T_DLLCLASS StringReader : public Object
 public:
 	StringReader(IStream* stream, IEncoding* encoding);
 
+	/*! \brief Read character from stream. */
+	wchar_t readChar();
+
 	/*! \brief Read string from stream until end-of-line or end-of-file. */
 	int readLine(std::wstring& out);
 

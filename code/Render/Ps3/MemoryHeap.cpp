@@ -48,7 +48,9 @@ MemoryHeapObject* MemoryHeap::alloc(size_t size, size_t align, bool immutable)
 		if (!m_objects.empty())
 		{
 			MemoryHeapObject* last = m_objects.back();
-			ptr = (uint8_t*)last->m_pointer + last->m_size;
+			uint8_t* lastTailPtr = (uint8_t*)last->m_pointer + last->m_size;
+			if (lastTailPtr > ptr)
+				ptr = lastTailPtr;
 		}
 
 		uint8_t* alignedPtrStart = alignUp(ptr, align);
@@ -121,6 +123,8 @@ MemoryHeapObject* MemoryHeap::alloc(size_t size, size_t align, bool immutable)
 						T_FATAL_ERROR;
 						return 0;
 					}
+
+					log::debug << L"Moving immutable block from " << uint32_t(ptr1 - m_heap) << L" to " << uint32_t(ptr2 - m_heap) << (m_location == CELL_GCM_LOCATION_LOCAL ? L" (local)" : L" (main)") << Endl;
 
 					__builtin_memcpy(
 						ptr2,
@@ -244,6 +248,13 @@ void MemoryHeap::compact()
 		uint8_t* ptr2 = (uint8_t*)object2->m_pointer;
 
 		uint8_t* ptr1Tail = ptr1 + object1->m_size;
+
+		// Don't compact into immutable space.
+		if (ptr1Tail < m_heap + m_immutableOffset)
+		{
+			ptr1Tail = m_heap + m_immutableOffset;
+			T_ASSERT (ptr1Tail <= ptr2);
+		}
 
 		uint32_t gap = ptr2 - ptr1Tail;
 		uint32_t alignmentGaps = gap / object2->m_alignment;
