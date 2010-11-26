@@ -1,4 +1,5 @@
 #include "Core/Io/FileSystem.h"
+#include "Core/Log/Log.h"
 #include "Core/System/IProcess.h"
 #include "Core/System/OS.h"
 #include "Amalgam/Editor/DeployTargetAction.h"
@@ -48,6 +49,7 @@ bool DeployTargetAction::execute()
 	);
 	if (!process)
 	{
+		log::error << L"Failed to launch process \"" << deployTool << L"\"" << Endl;
 		m_targetInstance->setState(TsIdle);
 		return false;
 	}

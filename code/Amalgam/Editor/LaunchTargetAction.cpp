@@ -60,13 +60,19 @@ bool LaunchTargetAction::execute()
 
 	// Load application configuration.
 	if (!(file = FileSystem::getInstance().open(configuration, File::FmRead)))
+	{
+		log::error << L"Unable to open template configuration \"" << configuration << L"\"" << Endl;
 		return false;
+	}
 
 	Ref< Settings > settings = Settings::read< xml::XmlDeserializer >(file);
 	file->close();
 
 	if (!settings)
+	{
+		log::error << L"Unable to read template configuration \"" << configuration << L"\"" << Endl;
 		return false;
+	}
 
 	// Build application database connection string; applications should
 	// connect to our database server.
@@ -85,7 +91,10 @@ bool LaunchTargetAction::execute()
 
 	// Write modified configuration file to target.
 	if (!(file = FileSystem::getInstance().open(targetPath + L"/Application.config", File::FmWrite)))
+	{
+		log::error << L"Unable to create configuration \"" << targetPath << L"/Application.config\"" << Endl;
 		return false;
+	}
 
 	settings->write< xml::XmlSerializer >(file);
 	file->close();
@@ -108,6 +117,7 @@ bool LaunchTargetAction::execute()
 	);
 	if (!process)
 	{
+		log::error << L"Failed to launch process \"" << deployTool << L"\"" << Endl;
 		m_targetInstance->setState(TsIdle);
 		return false;
 	}
