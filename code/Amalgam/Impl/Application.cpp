@@ -279,10 +279,13 @@ bool Application::create(
 
 	m_stateManager = new StateManager();
 
-	log::debug << L"Creating online server..." << Endl;
-	m_onlineServer = new OnlineServer();
-	if (!m_onlineServer->create(sessionManagerProvider))
-		return false;
+	if (sessionManagerProvider)
+	{
+		log::debug << L"Creating online server..." << Endl;
+		m_onlineServer = new OnlineServer();
+		if (!m_onlineServer->create(sessionManagerProvider))
+			return false;
+	}
 
 	log::debug << L"Creating resource server..." << Endl;
 	m_resourceServer = new ResourceServer();
@@ -464,9 +467,12 @@ bool Application::update()
 	m_renderServer->update(m_settings);
 
 	// Update online session manager.
-	online::ISessionManager* sessionManager = m_onlineServer->getSessionManager();
-	if (sessionManager)
-		sessionManager->update();
+	if (m_onlineServer)
+	{
+		online::ISessionManager* sessionManager = m_onlineServer->getSessionManager();
+		if (sessionManager)
+			sessionManager->update();
+	}
 
 	// Handle state transitions.
 	if (m_stateManager->beginTransition())
@@ -518,7 +524,9 @@ bool Application::update()
 		}
 		
 		// Determine if input should be enabled.
-		bool inputEnabled = m_renderViewActive && !m_onlineServer->getSessionManager()->requireUserAttention();
+		bool inputEnabled = m_renderViewActive;
+		if (m_onlineServer)
+			inputEnabled &= !m_onlineServer->getSessionManager()->requireUserAttention();
 
 		// Measure delta time; filter frame delta time to prevent unneccessary jitter.
 		float deltaTime = float(m_timer.getDeltaTime());
