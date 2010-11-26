@@ -4,23 +4,23 @@
 /* First off, code is included that follows the "include" declaration
 ** in the input grammar file. */
 #include <stdio.h>
-#line 8 ".\\code\\Ddc\\Parser.y"
+#line 9 ".\\code\\Ddc\\Parser.y"
 
 
 #include <cassert>
-#include <Core/Heap/GcNew.h>
 #include <Core/Log/Log.h>
-#include "Ddc/DfnBranch.h"
+#include "Ddc/DfnAlias.h"
 #include "Ddc/DfnClass.h"
+#include "Ddc/DfnImport.h"
 #include "Ddc/DfnMember.h"
 #include "Ddc/DfnNamespace.h"
 #include "Ddc/DfnType.h"
+#include "Ddc/DfnTypeSubst.h"
+#include "Ddc/ParseState.h"
 #include "Ddc/Token.h"
 
 using namespace traktor;
 using namespace ddc;
-
-extern Ref< DfnNode > g_resultNode;
 
 #line 26 ".\\code\\Ddc\\Parser.c"
 /* Next is all token values, in a form suitable for use by makeheaders.
@@ -73,23 +73,23 @@ extern Ref< DfnNode > g_resultNode;
 **                       defined, then do no error processing.
 */
 #define YYCODETYPE unsigned char
-#define YYNOCODE 20
+#define YYNOCODE 32
 #define YYACTIONTYPE unsigned char
 #define ParseTOKENTYPE  Token* 
 typedef union {
   int yyinit;
   ParseTOKENTYPE yy0;
-  Token* yy12;
+  Token* yy30;
 } YYMINORTYPE;
 #ifndef YYSTACKDEPTH
 #define YYSTACKDEPTH 100
 #endif
-#define ParseARG_SDECL
-#define ParseARG_PDECL
-#define ParseARG_FETCH
-#define ParseARG_STORE
-#define YYNSTATE 49
-#define YYNRULE 15
+#define ParseARG_SDECL  ddc::ParseState* state ;
+#define ParseARG_PDECL , ddc::ParseState* state 
+#define ParseARG_FETCH  ddc::ParseState* state  = yypParser->state 
+#define ParseARG_STORE yypParser->state  = state 
+#define YYNSTATE 92
+#define YYNRULE 33
 #define YY_NO_ACTION      (YYNSTATE+YYNRULE+2)
 #define YY_ACCEPT_ACTION  (YYNSTATE+YYNRULE+1)
 #define YY_ERROR_ACTION   (YYNSTATE+YYNRULE)
@@ -159,42 +159,61 @@ static const YYMINORTYPE yyzerominor = { 0 };
 **  yy_default[]       Default action for each state.
 */
 static const YYACTIONTYPE yy_action[] = {
- /*     0 */    16,   36,    5,   30,   24,   27,   37,   65,   35,    8,
- /*    10 */    19,   25,    5,   30,   17,    5,   30,   18,    5,   30,
- /*    20 */    44,    5,   30,   31,    5,   30,   21,    5,   30,    3,
- /*    30 */    29,    8,    6,    4,   15,   47,    8,   22,   33,   38,
- /*    40 */    49,    1,    7,   34,   20,    9,   12,   39,   13,   14,
- /*    50 */    26,   66,   66,   45,   46,   43,   41,   11,   66,   32,
- /*    60 */    66,   28,   48,    2,   23,   66,   42,   40,   66,   10,
+ /*     0 */    58,   35,   10,   54,   62,    6,   44,   18,   52,    6,
+ /*    10 */    44,   18,   32,   37,   60,   29,   31,    6,   44,   18,
+ /*    20 */    76,    6,   44,   18,   46,    6,   44,   18,   89,   10,
+ /*    30 */    40,    6,   44,   18,   61,    6,   44,   18,   70,   18,
+ /*    40 */    20,  126,   64,   10,   30,   14,   74,   51,   81,   34,
+ /*    50 */    12,    8,   53,   22,   50,   68,   11,    7,   23,   28,
+ /*    60 */     5,   63,    2,   85,   82,   19,   72,   18,   25,   43,
+ /*    70 */    83,   57,   65,    1,   36,   66,   92,   71,   67,   69,
+ /*    80 */    80,   56,   17,   59,   15,   88,   26,   84,    3,   13,
+ /*    90 */    49,   27,   73,   79,   33,   75,   86,    9,   48,   47,
+ /*   100 */    42,   24,   21,   55,   78,   90,   91,   38,   16,   45,
+ /*   110 */    87,  127,   41,   77,   39,    4,
 };
 static const YYCODETYPE yy_lookahead[] = {
- /*     0 */     1,   16,   17,   18,    5,    6,    7,   13,   14,   15,
- /*    10 */     2,   16,   17,   18,   16,   17,   18,   16,   17,   18,
- /*    20 */    16,   17,   18,   16,   17,   18,   16,   17,   18,    3,
- /*    30 */    14,   15,    3,    3,    8,   14,   15,    8,    8,    4,
- /*    40 */     0,    3,    3,    2,   10,    3,    2,    4,    2,    2,
- /*    50 */     2,   19,   19,    4,    4,    4,   11,    2,   19,    5,
- /*    60 */    19,    5,    4,    3,    2,   19,    9,    4,   19,    2,
+ /*     0 */     1,   22,   23,    4,   26,   27,   28,   29,   26,   27,
+ /*    10 */    28,   29,   13,   14,   15,   16,   26,   27,   28,   29,
+ /*    20 */    26,   27,   28,   29,   26,   27,   28,   29,   22,   23,
+ /*    30 */    26,   27,   28,   29,   26,   27,   28,   29,   28,   29,
+ /*    40 */    30,   21,   22,   23,    8,    6,   12,   24,   12,   10,
+ /*    50 */     6,    9,   18,   11,   10,   12,    9,    5,   11,    8,
+ /*    60 */     5,   18,    5,   12,   24,   25,   28,   29,    8,   17,
+ /*    70 */    24,    8,   17,    5,   17,    8,    0,   29,   12,    7,
+ /*    80 */     7,    2,    8,   14,   19,    3,    8,   12,    5,    2,
+ /*    90 */     5,   14,   12,   12,    8,    7,    7,    5,    2,    6,
+ /*   100 */     2,   11,   11,    8,    7,    3,    7,    2,    8,    8,
+ /*   110 */     7,   31,    8,    7,    6,    5,
 };
 #define YY_SHIFT_USE_DFLT (-2)
-#define YY_SHIFT_MAX 37
+#define YY_SHIFT_MAX 66
 static const signed char yy_shift_ofst[] = {
- /*     0 */    -1,    8,    8,    8,    8,    8,    8,    8,   -1,   -1,
- /*    10 */    29,   30,   26,   39,   42,   46,   47,   49,   51,   34,
- /*    20 */    45,   58,   62,   60,   67,   63,   57,   56,   55,   50,
- /*    30 */    48,   43,   44,   41,   38,   40,   35,   54,
+ /*     0 */    -1,   63,   63,   63,   63,   63,   63,   63,   63,   -1,
+ /*    10 */    -1,   60,   63,   60,   60,   63,   55,   52,   42,   39,
+ /*    20 */    44,   51,   43,   36,   34,   47,   57,   78,   75,   77,
+ /*    30 */    81,   89,   86,   92,   91,   97,   95,  100,  103,  105,
+ /*    40 */   106,  110,  108,  104,  101,  102,   99,   98,   93,   96,
+ /*    50 */    90,   85,   88,   80,   87,   83,   82,   65,   79,   74,
+ /*    60 */    69,   73,   72,   66,   76,   67,   68,
 };
-#define YY_REDUCE_USE_DFLT (-16)
-#define YY_REDUCE_MAX 9
+#define YY_REDUCE_USE_DFLT (-23)
+#define YY_REDUCE_MAX 15
 static const signed char yy_reduce_ofst[] = {
- /*     0 */    -6,  -15,   -5,    1,    7,    4,   -2,   10,   21,   16,
+ /*     0 */    20,  -22,  -10,   -2,    8,    4,   -6,  -18,   10,  -21,
+ /*    10 */     6,   40,   38,   23,   46,   48,
 };
 static const YYACTIONTYPE yy_default[] = {
- /*     0 */    64,   64,   64,   64,   64,   60,   64,   64,   51,   64,
- /*    10 */    64,   64,   64,   64,   64,   64,   64,   64,   64,   62,
- /*    20 */    64,   64,   64,   64,   64,   64,   64,   64,   64,   64,
- /*    30 */    64,   64,   64,   64,   64,   64,   64,   64,   57,   54,
- /*    40 */    56,   63,   61,   55,   59,   53,   52,   50,   58,
+ /*     0 */   125,  125,  125,  125,  125,  125,  113,  125,  125,  125,
+ /*    10 */    94,  125,  125,  125,  125,  125,  125,  125,  115,  125,
+ /*    20 */   125,  125,  125,  125,  125,   97,  125,  125,  125,  125,
+ /*    30 */   125,  125,  125,  125,   98,  125,  125,  125,  125,  125,
+ /*    40 */   125,  125,  125,  125,  125,  125,  125,  125,  125,  125,
+ /*    50 */   116,  125,  125,  125,  125,  125,  125,  124,  125,  125,
+ /*    60 */   125,  125,  125,  125,  125,  125,  125,  118,  117,  109,
+ /*    70 */   122,  123,  121,  120,  119,  107,  112,  106,  105,  100,
+ /*    80 */   110,   99,  104,  103,  102,  101,  108,   96,   95,   93,
+ /*    90 */   114,  111,
 };
 #define YY_SZ_ACTTAB (int)(sizeof(yy_action)/sizeof(yy_action[0]))
 
@@ -288,11 +307,14 @@ void ParseTrace(FILE *TraceFILE, char *zTracePrompt){
 /* For tracing shifts, the names of all terminals and nonterminals
 ** are required.  The following table supplies these names */
 static const char *const yyTokenName[] = { 
-  "$",             "NAMESPACE",     "LITERAL",       "OPEN_BRACE",  
-  "CLOSE_BRACE",   "CLASS",         "PUBLIC",        "PRIVATE",     
-  "COLON",         "SEMI_COLON",    "OPEN_BRACKET",  "CLOSE_BRACKET",
+  "$",             "IMPORT",        "STRING",        "SEMI_COLON",  
+  "ALIAS",         "OPEN_BRACE",    "COMMA",         "CLOSE_BRACE", 
+  "LITERAL",       "LESS",          "GREATER",       "OPEN_BRACKET",
+  "CLOSE_BRACKET",  "NAMESPACE",     "CLASS",         "PUBLIC",      
+  "PRIVATE",       "COLON",         "NUMBER",        "DOT",         
   "error",         "program",       "statements",    "statement",   
-  "members",       "member",        "type",        
+  "alias_type",    "alias_type_subst",  "members",       "member",      
+  "member_type",   "qualified_literal",  "member_type_subst",
 };
 #endif /* NDEBUG */
 
@@ -303,18 +325,36 @@ static const char *const yyRuleName[] = {
  /*   0 */ "program ::= statements",
  /*   1 */ "statements ::= statement statements",
  /*   2 */ "statements ::= statement",
- /*   3 */ "statement ::= NAMESPACE LITERAL OPEN_BRACE statements CLOSE_BRACE",
- /*   4 */ "statement ::= CLASS LITERAL OPEN_BRACE members CLOSE_BRACE",
- /*   5 */ "statement ::= PUBLIC CLASS LITERAL OPEN_BRACE members CLOSE_BRACE",
- /*   6 */ "statement ::= PRIVATE CLASS LITERAL OPEN_BRACE members CLOSE_BRACE",
- /*   7 */ "statement ::= CLASS LITERAL COLON LITERAL OPEN_BRACE members CLOSE_BRACE",
- /*   8 */ "statement ::= PUBLIC CLASS LITERAL COLON LITERAL OPEN_BRACE members CLOSE_BRACE",
- /*   9 */ "statement ::= PRIVATE CLASS LITERAL COLON LITERAL OPEN_BRACE members CLOSE_BRACE",
- /*  10 */ "members ::= member members",
- /*  11 */ "members ::= member",
- /*  12 */ "member ::= type LITERAL SEMI_COLON",
- /*  13 */ "type ::= LITERAL",
- /*  14 */ "type ::= LITERAL OPEN_BRACKET CLOSE_BRACKET",
+ /*   3 */ "statement ::= IMPORT STRING SEMI_COLON",
+ /*   4 */ "statement ::= ALIAS STRING alias_type OPEN_BRACE STRING COMMA STRING COMMA STRING CLOSE_BRACE",
+ /*   5 */ "alias_type ::= LITERAL",
+ /*   6 */ "alias_type ::= LITERAL LESS alias_type_subst GREATER",
+ /*   7 */ "alias_type ::= LITERAL OPEN_BRACKET CLOSE_BRACKET",
+ /*   8 */ "alias_type ::= LITERAL OPEN_BRACKET LITERAL CLOSE_BRACKET",
+ /*   9 */ "alias_type ::= LITERAL LESS alias_type_subst GREATER OPEN_BRACKET CLOSE_BRACKET",
+ /*  10 */ "alias_type ::= LITERAL LESS alias_type_subst GREATER OPEN_BRACKET LITERAL CLOSE_BRACKET",
+ /*  11 */ "alias_type_subst ::= alias_type_subst COMMA alias_type",
+ /*  12 */ "alias_type_subst ::= alias_type",
+ /*  13 */ "statement ::= NAMESPACE LITERAL OPEN_BRACE statements CLOSE_BRACE",
+ /*  14 */ "statement ::= CLASS LITERAL OPEN_BRACE members CLOSE_BRACE",
+ /*  15 */ "statement ::= PUBLIC CLASS LITERAL OPEN_BRACE members CLOSE_BRACE",
+ /*  16 */ "statement ::= PRIVATE CLASS LITERAL OPEN_BRACE members CLOSE_BRACE",
+ /*  17 */ "statement ::= CLASS LITERAL COLON LITERAL OPEN_BRACE members CLOSE_BRACE",
+ /*  18 */ "statement ::= PUBLIC CLASS LITERAL COLON LITERAL OPEN_BRACE members CLOSE_BRACE",
+ /*  19 */ "statement ::= PRIVATE CLASS LITERAL COLON LITERAL OPEN_BRACE members CLOSE_BRACE",
+ /*  20 */ "members ::= member members",
+ /*  21 */ "members ::= member",
+ /*  22 */ "member ::= member_type LITERAL SEMI_COLON",
+ /*  23 */ "member_type ::= qualified_literal",
+ /*  24 */ "member_type ::= qualified_literal LESS member_type_subst GREATER",
+ /*  25 */ "member_type ::= qualified_literal OPEN_BRACKET CLOSE_BRACKET",
+ /*  26 */ "member_type ::= qualified_literal OPEN_BRACKET NUMBER CLOSE_BRACKET",
+ /*  27 */ "member_type ::= qualified_literal LESS member_type_subst GREATER OPEN_BRACKET CLOSE_BRACKET",
+ /*  28 */ "member_type ::= qualified_literal LESS member_type_subst GREATER OPEN_BRACKET NUMBER CLOSE_BRACKET",
+ /*  29 */ "member_type_subst ::= member_type_subst COMMA member_type",
+ /*  30 */ "member_type_subst ::= member_type",
+ /*  31 */ "qualified_literal ::= LITERAL DOT qualified_literal",
+ /*  32 */ "qualified_literal ::= LITERAL",
 };
 #endif /* NDEBUG */
 
@@ -394,21 +434,29 @@ static void yy_destructor(
     ** inside the C code.
     */
       /* TERMINAL Destructor */
-    case 1: /* NAMESPACE */
-    case 2: /* LITERAL */
-    case 3: /* OPEN_BRACE */
-    case 4: /* CLOSE_BRACE */
-    case 5: /* CLASS */
-    case 6: /* PUBLIC */
-    case 7: /* PRIVATE */
-    case 8: /* COLON */
-    case 9: /* SEMI_COLON */
-    case 10: /* OPEN_BRACKET */
-    case 11: /* CLOSE_BRACKET */
+    case 1: /* IMPORT */
+    case 2: /* STRING */
+    case 3: /* SEMI_COLON */
+    case 4: /* ALIAS */
+    case 5: /* OPEN_BRACE */
+    case 6: /* COMMA */
+    case 7: /* CLOSE_BRACE */
+    case 8: /* LITERAL */
+    case 9: /* LESS */
+    case 10: /* GREATER */
+    case 11: /* OPEN_BRACKET */
+    case 12: /* CLOSE_BRACKET */
+    case 13: /* NAMESPACE */
+    case 14: /* CLASS */
+    case 15: /* PUBLIC */
+    case 16: /* PRIVATE */
+    case 17: /* COLON */
+    case 18: /* NUMBER */
+    case 19: /* DOT */
 {
 #line 5 ".\\code\\Ddc\\Parser.y"
  delete (yypminor->yy0); 
-#line 412 ".\\code\\Ddc\\Parser.c"
+#line 460 ".\\code\\Ddc\\Parser.c"
 }
       break;
     default:  break;   /* If no destructor action specified: do nothing */
@@ -637,21 +685,39 @@ static const struct {
   YYCODETYPE lhs;         /* Symbol on the left-hand side of the rule */
   unsigned char nrhs;     /* Number of right-hand side symbols in the rule */
 } yyRuleInfo[] = {
-  { 13, 1 },
-  { 14, 2 },
-  { 14, 1 },
-  { 15, 5 },
-  { 15, 5 },
-  { 15, 6 },
-  { 15, 6 },
-  { 15, 7 },
-  { 15, 8 },
-  { 15, 8 },
-  { 16, 2 },
-  { 16, 1 },
-  { 17, 3 },
-  { 18, 1 },
-  { 18, 3 },
+  { 21, 1 },
+  { 22, 2 },
+  { 22, 1 },
+  { 23, 3 },
+  { 23, 10 },
+  { 24, 1 },
+  { 24, 4 },
+  { 24, 3 },
+  { 24, 4 },
+  { 24, 6 },
+  { 24, 7 },
+  { 25, 3 },
+  { 25, 1 },
+  { 23, 5 },
+  { 23, 5 },
+  { 23, 6 },
+  { 23, 6 },
+  { 23, 7 },
+  { 23, 8 },
+  { 23, 8 },
+  { 26, 2 },
+  { 26, 1 },
+  { 27, 3 },
+  { 28, 1 },
+  { 28, 4 },
+  { 28, 3 },
+  { 28, 4 },
+  { 28, 6 },
+  { 28, 7 },
+  { 30, 3 },
+  { 30, 1 },
+  { 29, 3 },
+  { 29, 1 },
 };
 
 static void yy_accept(yyParser*);  /* Forward Declaration */
@@ -707,199 +773,339 @@ static void yy_reduce(
   **     break;
   */
       case 0: /* program ::= statements */
-#line 35 ".\\code\\Ddc\\Parser.y"
+#line 36 ".\\code\\Ddc\\Parser.y"
 {
-	g_resultNode = yymsp[0].minor.yy12->node;
+	state->root = yymsp[0].minor.yy30->node;
 }
-#line 715 ".\\code\\Ddc\\Parser.c"
+#line 781 ".\\code\\Ddc\\Parser.c"
         break;
       case 1: /* statements ::= statement statements */
-#line 40 ".\\code\\Ddc\\Parser.y"
+      case 20: /* members ::= member members */ yytestcase(yyruleno==20);
+#line 41 ".\\code\\Ddc\\Parser.y"
 {
-	yygotominor.yy12 = new Token(
-		gc_new< DfnBranch >(
-			yymsp[-1].minor.yy12->node,
-			yymsp[0].minor.yy12->node
-		)
-	);
+	yymsp[-1].minor.yy30->node->setNext(yymsp[0].minor.yy30->node);
+	yygotominor.yy30 = new Token(yymsp[-1].minor.yy30->node);
 }
-#line 727 ".\\code\\Ddc\\Parser.c"
+#line 790 ".\\code\\Ddc\\Parser.c"
         break;
       case 2: /* statements ::= statement */
-#line 50 ".\\code\\Ddc\\Parser.y"
+      case 12: /* alias_type_subst ::= alias_type */ yytestcase(yyruleno==12);
+      case 30: /* member_type_subst ::= member_type */ yytestcase(yyruleno==30);
+#line 47 ".\\code\\Ddc\\Parser.y"
 {
-	yygotominor.yy12 = new Token(yymsp[0].minor.yy12->node);
-}
-#line 734 ".\\code\\Ddc\\Parser.c"
-        break;
-      case 3: /* statement ::= NAMESPACE LITERAL OPEN_BRACE statements CLOSE_BRACE */
-#line 55 ".\\code\\Ddc\\Parser.y"
-{
-	yygotominor.yy12 = new Token(
-		gc_new< DfnNamespace >(
-			yymsp[-3].minor.yy0->literal,
-			yymsp[-1].minor.yy12->node
-		)
-	);
-  yy_destructor(yypParser,1,&yymsp[-4].minor);
-  yy_destructor(yypParser,3,&yymsp[-2].minor);
-  yy_destructor(yypParser,4,&yymsp[0].minor);
-}
-#line 749 ".\\code\\Ddc\\Parser.c"
-        break;
-      case 4: /* statement ::= CLASS LITERAL OPEN_BRACE members CLOSE_BRACE */
-#line 65 ".\\code\\Ddc\\Parser.y"
-{
-	yygotominor.yy12 = new Token(
-		gc_new< DfnClass >(
-			DfnClass::AccPrivate,
-			yymsp[-3].minor.yy0->literal,
-			yymsp[-1].minor.yy12->node
-		)
-	);
-  yy_destructor(yypParser,5,&yymsp[-4].minor);
-  yy_destructor(yypParser,3,&yymsp[-2].minor);
-  yy_destructor(yypParser,4,&yymsp[0].minor);
-}
-#line 765 ".\\code\\Ddc\\Parser.c"
-        break;
-      case 5: /* statement ::= PUBLIC CLASS LITERAL OPEN_BRACE members CLOSE_BRACE */
-#line 76 ".\\code\\Ddc\\Parser.y"
-{
-	yygotominor.yy12 = new Token(
-		gc_new< DfnClass >(
-			DfnClass::AccPublic,
-			yymsp[-3].minor.yy0->literal,
-			yymsp[-1].minor.yy12->node
-		)
-	);
-  yy_destructor(yypParser,6,&yymsp[-5].minor);
-  yy_destructor(yypParser,5,&yymsp[-4].minor);
-  yy_destructor(yypParser,3,&yymsp[-2].minor);
-  yy_destructor(yypParser,4,&yymsp[0].minor);
-}
-#line 782 ".\\code\\Ddc\\Parser.c"
-        break;
-      case 6: /* statement ::= PRIVATE CLASS LITERAL OPEN_BRACE members CLOSE_BRACE */
-#line 87 ".\\code\\Ddc\\Parser.y"
-{
-	yygotominor.yy12 = new Token(
-		gc_new< DfnClass >(
-			DfnClass::AccPrivate,
-			yymsp[-3].minor.yy0->literal,
-			yymsp[-1].minor.yy12->node
-		)
-	);
-  yy_destructor(yypParser,7,&yymsp[-5].minor);
-  yy_destructor(yypParser,5,&yymsp[-4].minor);
-  yy_destructor(yypParser,3,&yymsp[-2].minor);
-  yy_destructor(yypParser,4,&yymsp[0].minor);
+	yygotominor.yy30 = new Token(yymsp[0].minor.yy30->node);
 }
 #line 799 ".\\code\\Ddc\\Parser.c"
         break;
-      case 7: /* statement ::= CLASS LITERAL COLON LITERAL OPEN_BRACE members CLOSE_BRACE */
-#line 98 ".\\code\\Ddc\\Parser.y"
+      case 3: /* statement ::= IMPORT STRING SEMI_COLON */
+#line 52 ".\\code\\Ddc\\Parser.y"
 {
-	yygotominor.yy12 = new Token(
-		gc_new< DfnClass >(
+	yygotominor.yy30 = new Token(
+		new DfnImport(
+			yymsp[-1].minor.yy0->literal
+		)
+	);
+  yy_destructor(yypParser,1,&yymsp[-2].minor);
+  yy_destructor(yypParser,3,&yymsp[0].minor);
+}
+#line 812 ".\\code\\Ddc\\Parser.c"
+        break;
+      case 4: /* statement ::= ALIAS STRING alias_type OPEN_BRACE STRING COMMA STRING COMMA STRING CLOSE_BRACE */
+#line 61 ".\\code\\Ddc\\Parser.y"
+{
+	yygotominor.yy30 = new Token(
+		new DfnAlias(
+			yymsp[-8].minor.yy0->literal,	// language
+			yymsp[-7].minor.yy30->node,	// type
+			yymsp[-5].minor.yy0->literal,	// language declare type
+			yymsp[-3].minor.yy0->literal,	// language in/out type
+			yymsp[-1].minor.yy0->literal	// language member
+		)
+	);
+  yy_destructor(yypParser,4,&yymsp[-9].minor);
+  yy_destructor(yypParser,5,&yymsp[-6].minor);
+  yy_destructor(yypParser,6,&yymsp[-4].minor);
+  yy_destructor(yypParser,6,&yymsp[-2].minor);
+  yy_destructor(yypParser,7,&yymsp[0].minor);
+}
+#line 832 ".\\code\\Ddc\\Parser.c"
+        break;
+      case 5: /* alias_type ::= LITERAL */
+#line 74 ".\\code\\Ddc\\Parser.y"
+{
+	yygotominor.yy30 = new Token(new DfnType(yymsp[0].minor.yy0->literal, 0, false, 0));
+}
+#line 839 ".\\code\\Ddc\\Parser.c"
+        break;
+      case 6: /* alias_type ::= LITERAL LESS alias_type_subst GREATER */
+#line 79 ".\\code\\Ddc\\Parser.y"
+{
+	yygotominor.yy30 = new Token(new DfnType(yymsp[-3].minor.yy0->literal, yymsp[-1].minor.yy30->node, false, 0));
+  yy_destructor(yypParser,9,&yymsp[-2].minor);
+  yy_destructor(yypParser,10,&yymsp[0].minor);
+}
+#line 848 ".\\code\\Ddc\\Parser.c"
+        break;
+      case 7: /* alias_type ::= LITERAL OPEN_BRACKET CLOSE_BRACKET */
+#line 84 ".\\code\\Ddc\\Parser.y"
+{
+	yygotominor.yy30 = new Token(new DfnType(yymsp[-2].minor.yy0->literal, 0, true, 0));
+  yy_destructor(yypParser,11,&yymsp[-1].minor);
+  yy_destructor(yypParser,12,&yymsp[0].minor);
+}
+#line 857 ".\\code\\Ddc\\Parser.c"
+        break;
+      case 8: /* alias_type ::= LITERAL OPEN_BRACKET LITERAL CLOSE_BRACKET */
+#line 89 ".\\code\\Ddc\\Parser.y"
+{
+	yygotominor.yy30 = new Token(new DfnType(yymsp[-3].minor.yy0->literal, 0, true, 0));
+  yy_destructor(yypParser,11,&yymsp[-2].minor);
+  yy_destructor(yypParser,12,&yymsp[0].minor);
+}
+#line 866 ".\\code\\Ddc\\Parser.c"
+        break;
+      case 9: /* alias_type ::= LITERAL LESS alias_type_subst GREATER OPEN_BRACKET CLOSE_BRACKET */
+#line 94 ".\\code\\Ddc\\Parser.y"
+{
+	yygotominor.yy30 = new Token(new DfnType(yymsp[-5].minor.yy0->literal, yymsp[-3].minor.yy30->node, true, 0));
+  yy_destructor(yypParser,9,&yymsp[-4].minor);
+  yy_destructor(yypParser,10,&yymsp[-2].minor);
+  yy_destructor(yypParser,11,&yymsp[-1].minor);
+  yy_destructor(yypParser,12,&yymsp[0].minor);
+}
+#line 877 ".\\code\\Ddc\\Parser.c"
+        break;
+      case 10: /* alias_type ::= LITERAL LESS alias_type_subst GREATER OPEN_BRACKET LITERAL CLOSE_BRACKET */
+#line 99 ".\\code\\Ddc\\Parser.y"
+{
+	yygotominor.yy30 = new Token(new DfnType(yymsp[-6].minor.yy0->literal, yymsp[-4].minor.yy30->node, true, 0));
+  yy_destructor(yypParser,9,&yymsp[-5].minor);
+  yy_destructor(yypParser,10,&yymsp[-3].minor);
+  yy_destructor(yypParser,11,&yymsp[-2].minor);
+  yy_destructor(yypParser,12,&yymsp[0].minor);
+}
+#line 888 ".\\code\\Ddc\\Parser.c"
+        break;
+      case 11: /* alias_type_subst ::= alias_type_subst COMMA alias_type */
+      case 29: /* member_type_subst ::= member_type_subst COMMA member_type */ yytestcase(yyruleno==29);
+#line 104 ".\\code\\Ddc\\Parser.y"
+{
+	yymsp[-2].minor.yy30->node->setNext(yymsp[0].minor.yy30->node);
+	yygotominor.yy30 = new Token(yymsp[-2].minor.yy30->node);
+  yy_destructor(yypParser,6,&yymsp[-1].minor);
+}
+#line 898 ".\\code\\Ddc\\Parser.c"
+        break;
+      case 13: /* statement ::= NAMESPACE LITERAL OPEN_BRACE statements CLOSE_BRACE */
+#line 115 ".\\code\\Ddc\\Parser.y"
+{
+	yygotominor.yy30 = new Token(
+		new DfnNamespace(
+			yymsp[-3].minor.yy0->literal,
+			yymsp[-1].minor.yy30->node
+		)
+	);
+  yy_destructor(yypParser,13,&yymsp[-4].minor);
+  yy_destructor(yypParser,5,&yymsp[-2].minor);
+  yy_destructor(yypParser,7,&yymsp[0].minor);
+}
+#line 913 ".\\code\\Ddc\\Parser.c"
+        break;
+      case 14: /* statement ::= CLASS LITERAL OPEN_BRACE members CLOSE_BRACE */
+#line 125 ".\\code\\Ddc\\Parser.y"
+{
+	yygotominor.yy30 = new Token(
+		new DfnClass(
+			DfnClass::AccPrivate,
+			yymsp[-3].minor.yy0->literal,
+			yymsp[-1].minor.yy30->node
+		)
+	);
+  yy_destructor(yypParser,14,&yymsp[-4].minor);
+  yy_destructor(yypParser,5,&yymsp[-2].minor);
+  yy_destructor(yypParser,7,&yymsp[0].minor);
+}
+#line 929 ".\\code\\Ddc\\Parser.c"
+        break;
+      case 15: /* statement ::= PUBLIC CLASS LITERAL OPEN_BRACE members CLOSE_BRACE */
+#line 136 ".\\code\\Ddc\\Parser.y"
+{
+	yygotominor.yy30 = new Token(
+		new DfnClass(
+			DfnClass::AccPublic,
+			yymsp[-3].minor.yy0->literal,
+			yymsp[-1].minor.yy30->node
+		)
+	);
+  yy_destructor(yypParser,15,&yymsp[-5].minor);
+  yy_destructor(yypParser,14,&yymsp[-4].minor);
+  yy_destructor(yypParser,5,&yymsp[-2].minor);
+  yy_destructor(yypParser,7,&yymsp[0].minor);
+}
+#line 946 ".\\code\\Ddc\\Parser.c"
+        break;
+      case 16: /* statement ::= PRIVATE CLASS LITERAL OPEN_BRACE members CLOSE_BRACE */
+#line 147 ".\\code\\Ddc\\Parser.y"
+{
+	yygotominor.yy30 = new Token(
+		new DfnClass(
+			DfnClass::AccPrivate,
+			yymsp[-3].minor.yy0->literal,
+			yymsp[-1].minor.yy30->node
+		)
+	);
+  yy_destructor(yypParser,16,&yymsp[-5].minor);
+  yy_destructor(yypParser,14,&yymsp[-4].minor);
+  yy_destructor(yypParser,5,&yymsp[-2].minor);
+  yy_destructor(yypParser,7,&yymsp[0].minor);
+}
+#line 963 ".\\code\\Ddc\\Parser.c"
+        break;
+      case 17: /* statement ::= CLASS LITERAL COLON LITERAL OPEN_BRACE members CLOSE_BRACE */
+#line 158 ".\\code\\Ddc\\Parser.y"
+{
+	yygotominor.yy30 = new Token(
+		new DfnClass(
 			DfnClass::AccPrivate,
 			yymsp[-5].minor.yy0->literal,
 			yymsp[-3].minor.yy0->literal,
-			yymsp[-1].minor.yy12->node
+			yymsp[-1].minor.yy30->node
 		)
 	);
-  yy_destructor(yypParser,5,&yymsp[-6].minor);
-  yy_destructor(yypParser,8,&yymsp[-4].minor);
-  yy_destructor(yypParser,3,&yymsp[-2].minor);
-  yy_destructor(yypParser,4,&yymsp[0].minor);
+  yy_destructor(yypParser,14,&yymsp[-6].minor);
+  yy_destructor(yypParser,17,&yymsp[-4].minor);
+  yy_destructor(yypParser,5,&yymsp[-2].minor);
+  yy_destructor(yypParser,7,&yymsp[0].minor);
 }
-#line 817 ".\\code\\Ddc\\Parser.c"
+#line 981 ".\\code\\Ddc\\Parser.c"
         break;
-      case 8: /* statement ::= PUBLIC CLASS LITERAL COLON LITERAL OPEN_BRACE members CLOSE_BRACE */
-#line 110 ".\\code\\Ddc\\Parser.y"
+      case 18: /* statement ::= PUBLIC CLASS LITERAL COLON LITERAL OPEN_BRACE members CLOSE_BRACE */
+#line 170 ".\\code\\Ddc\\Parser.y"
 {
-	yygotominor.yy12 = new Token(
-		gc_new< DfnClass >(
+	yygotominor.yy30 = new Token(
+		new DfnClass(
 			DfnClass::AccPublic,
 			yymsp[-5].minor.yy0->literal,
 			yymsp[-3].minor.yy0->literal,
-			yymsp[-1].minor.yy12->node
+			yymsp[-1].minor.yy30->node
 		)
 	);
-  yy_destructor(yypParser,6,&yymsp[-7].minor);
-  yy_destructor(yypParser,5,&yymsp[-6].minor);
-  yy_destructor(yypParser,8,&yymsp[-4].minor);
-  yy_destructor(yypParser,3,&yymsp[-2].minor);
-  yy_destructor(yypParser,4,&yymsp[0].minor);
+  yy_destructor(yypParser,15,&yymsp[-7].minor);
+  yy_destructor(yypParser,14,&yymsp[-6].minor);
+  yy_destructor(yypParser,17,&yymsp[-4].minor);
+  yy_destructor(yypParser,5,&yymsp[-2].minor);
+  yy_destructor(yypParser,7,&yymsp[0].minor);
 }
-#line 836 ".\\code\\Ddc\\Parser.c"
+#line 1000 ".\\code\\Ddc\\Parser.c"
         break;
-      case 9: /* statement ::= PRIVATE CLASS LITERAL COLON LITERAL OPEN_BRACE members CLOSE_BRACE */
-#line 122 ".\\code\\Ddc\\Parser.y"
+      case 19: /* statement ::= PRIVATE CLASS LITERAL COLON LITERAL OPEN_BRACE members CLOSE_BRACE */
+#line 182 ".\\code\\Ddc\\Parser.y"
 {
-	yygotominor.yy12 = new Token(
-		gc_new< DfnClass >(
+	yygotominor.yy30 = new Token(
+		new DfnClass(
 			DfnClass::AccPrivate,
 			yymsp[-5].minor.yy0->literal,
 			yymsp[-3].minor.yy0->literal,
-			yymsp[-1].minor.yy12->node
+			yymsp[-1].minor.yy30->node
 		)
 	);
-  yy_destructor(yypParser,7,&yymsp[-7].minor);
-  yy_destructor(yypParser,5,&yymsp[-6].minor);
-  yy_destructor(yypParser,8,&yymsp[-4].minor);
-  yy_destructor(yypParser,3,&yymsp[-2].minor);
-  yy_destructor(yypParser,4,&yymsp[0].minor);
+  yy_destructor(yypParser,16,&yymsp[-7].minor);
+  yy_destructor(yypParser,14,&yymsp[-6].minor);
+  yy_destructor(yypParser,17,&yymsp[-4].minor);
+  yy_destructor(yypParser,5,&yymsp[-2].minor);
+  yy_destructor(yypParser,7,&yymsp[0].minor);
 }
-#line 855 ".\\code\\Ddc\\Parser.c"
+#line 1019 ".\\code\\Ddc\\Parser.c"
         break;
-      case 10: /* members ::= member members */
-#line 134 ".\\code\\Ddc\\Parser.y"
+      case 21: /* members ::= member */
+#line 200 ".\\code\\Ddc\\Parser.y"
 {
-	yygotominor.yy12 = new Token(
-		gc_new< DfnBranch >(yymsp[-1].minor.yy12->node, yymsp[0].minor.yy12->node)
+	yygotominor.yy30 = new Token(
+		yymsp[0].minor.yy30->node
 	);
 }
-#line 864 ".\\code\\Ddc\\Parser.c"
+#line 1028 ".\\code\\Ddc\\Parser.c"
         break;
-      case 11: /* members ::= member */
-#line 141 ".\\code\\Ddc\\Parser.y"
+      case 22: /* member ::= member_type LITERAL SEMI_COLON */
+#line 207 ".\\code\\Ddc\\Parser.y"
 {
-	yygotominor.yy12 = new Token(
-		yymsp[0].minor.yy12->node
+	yygotominor.yy30 = new Token(
+		new DfnMember(yymsp[-2].minor.yy30->node, yymsp[-1].minor.yy0->literal)
 	);
+  yy_destructor(yypParser,3,&yymsp[0].minor);
 }
-#line 873 ".\\code\\Ddc\\Parser.c"
+#line 1038 ".\\code\\Ddc\\Parser.c"
         break;
-      case 12: /* member ::= type LITERAL SEMI_COLON */
-#line 148 ".\\code\\Ddc\\Parser.y"
+      case 23: /* member_type ::= qualified_literal */
+#line 214 ".\\code\\Ddc\\Parser.y"
 {
-	yygotominor.yy12 = new Token(
-		gc_new< DfnMember >(yymsp[-2].minor.yy12->node, yymsp[-1].minor.yy0->literal)
-	);
-  yy_destructor(yypParser,9,&yymsp[0].minor);
+	yygotominor.yy30 = new Token(new DfnType(yymsp[0].minor.yy30->literal, 0, false, 0));
 }
-#line 883 ".\\code\\Ddc\\Parser.c"
+#line 1045 ".\\code\\Ddc\\Parser.c"
         break;
-      case 13: /* type ::= LITERAL */
-#line 155 ".\\code\\Ddc\\Parser.y"
+      case 24: /* member_type ::= qualified_literal LESS member_type_subst GREATER */
+#line 219 ".\\code\\Ddc\\Parser.y"
 {
-	yygotominor.yy12 = new Token(
-		gc_new< DfnType >(yymsp[0].minor.yy0->literal, false)
-	);
+	yygotominor.yy30 = new Token(new DfnType(yymsp[-3].minor.yy30->literal, yymsp[-1].minor.yy30->node, false, 0));
+  yy_destructor(yypParser,9,&yymsp[-2].minor);
+  yy_destructor(yypParser,10,&yymsp[0].minor);
 }
-#line 892 ".\\code\\Ddc\\Parser.c"
+#line 1054 ".\\code\\Ddc\\Parser.c"
         break;
-      case 14: /* type ::= LITERAL OPEN_BRACKET CLOSE_BRACKET */
-#line 162 ".\\code\\Ddc\\Parser.y"
+      case 25: /* member_type ::= qualified_literal OPEN_BRACKET CLOSE_BRACKET */
+#line 224 ".\\code\\Ddc\\Parser.y"
 {
-	yygotominor.yy12 = new Token(
-		gc_new< DfnType >(yymsp[-2].minor.yy0->literal, true)
-	);
-  yy_destructor(yypParser,10,&yymsp[-1].minor);
-  yy_destructor(yypParser,11,&yymsp[0].minor);
+	yygotominor.yy30 = new Token(new DfnType(yymsp[-2].minor.yy30->literal, 0, true, 0));
+  yy_destructor(yypParser,11,&yymsp[-1].minor);
+  yy_destructor(yypParser,12,&yymsp[0].minor);
 }
-#line 903 ".\\code\\Ddc\\Parser.c"
+#line 1063 ".\\code\\Ddc\\Parser.c"
+        break;
+      case 26: /* member_type ::= qualified_literal OPEN_BRACKET NUMBER CLOSE_BRACKET */
+#line 229 ".\\code\\Ddc\\Parser.y"
+{
+	yygotominor.yy30 = new Token(new DfnType(yymsp[-3].minor.yy30->literal, 0, true, int32_t(yymsp[-1].minor.yy0->number)));
+  yy_destructor(yypParser,11,&yymsp[-2].minor);
+  yy_destructor(yypParser,12,&yymsp[0].minor);
+}
+#line 1072 ".\\code\\Ddc\\Parser.c"
+        break;
+      case 27: /* member_type ::= qualified_literal LESS member_type_subst GREATER OPEN_BRACKET CLOSE_BRACKET */
+#line 234 ".\\code\\Ddc\\Parser.y"
+{
+	yygotominor.yy30 = new Token(new DfnType(yymsp[-5].minor.yy30->literal, yymsp[-3].minor.yy30->node, true, 0));
+  yy_destructor(yypParser,9,&yymsp[-4].minor);
+  yy_destructor(yypParser,10,&yymsp[-2].minor);
+  yy_destructor(yypParser,11,&yymsp[-1].minor);
+  yy_destructor(yypParser,12,&yymsp[0].minor);
+}
+#line 1083 ".\\code\\Ddc\\Parser.c"
+        break;
+      case 28: /* member_type ::= qualified_literal LESS member_type_subst GREATER OPEN_BRACKET NUMBER CLOSE_BRACKET */
+#line 239 ".\\code\\Ddc\\Parser.y"
+{
+	yygotominor.yy30 = new Token(new DfnType(yymsp[-6].minor.yy30->literal, yymsp[-4].minor.yy30->node, true, int32_t(yymsp[-1].minor.yy0->number)));
+  yy_destructor(yypParser,9,&yymsp[-5].minor);
+  yy_destructor(yypParser,10,&yymsp[-3].minor);
+  yy_destructor(yypParser,11,&yymsp[-2].minor);
+  yy_destructor(yypParser,12,&yymsp[0].minor);
+}
+#line 1094 ".\\code\\Ddc\\Parser.c"
+        break;
+      case 31: /* qualified_literal ::= LITERAL DOT qualified_literal */
+#line 255 ".\\code\\Ddc\\Parser.y"
+{
+	yygotominor.yy30 = new Token(yymsp[-2].minor.yy0->literal + L"." + yymsp[0].minor.yy30->literal);
+  yy_destructor(yypParser,19,&yymsp[-1].minor);
+}
+#line 1102 ".\\code\\Ddc\\Parser.c"
+        break;
+      case 32: /* qualified_literal ::= LITERAL */
+#line 260 ".\\code\\Ddc\\Parser.y"
+{
+	yygotominor.yy30 = yymsp[0].minor.yy0;
+}
+#line 1109 ".\\code\\Ddc\\Parser.c"
         break;
       default:
         break;
@@ -961,12 +1167,12 @@ static void yy_syntax_error(
 ){
   ParseARG_FETCH;
 #define TOKEN (yyminor.yy0)
-#line 28 ".\\code\\Ddc\\Parser.y"
+#line 29 ".\\code\\Ddc\\Parser.y"
 
 
 log::error << L"Syntax error; unable to generate data definition class" << Endl;
 
-#line 970 ".\\code\\Ddc\\Parser.c"
+#line 1176 ".\\code\\Ddc\\Parser.c"
   ParseARG_STORE; /* Suppress warning about unused %extra_argument variable */
 }
 

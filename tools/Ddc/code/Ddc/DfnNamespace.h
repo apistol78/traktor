@@ -1,7 +1,7 @@
 #ifndef ddc_DfnNamespace_H
 #define ddc_DfnNamespace_H
 
-#include <Core/Heap/Ref.h>
+#include <Core/Ref.h>
 #include "Ddc/DfnNode.h"
 
 namespace ddc
@@ -9,10 +9,14 @@ namespace ddc
 
 class DfnNamespace : public DfnNode
 {
-	T_RTTI_CLASS(DfnNamespace)
+	T_RTTI_CLASS;
 
 public:
+	DfnNamespace();
+
 	DfnNamespace(const std::wstring& name, DfnNode* statements);
+
+	virtual bool serialize(traktor::ISerializer& s);
 
 	const std::wstring& getName() const { return m_name; }
 

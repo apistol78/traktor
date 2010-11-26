@@ -1,7 +1,7 @@
 #ifndef ddc_DfnMember_H
 #define ddc_DfnMember_H
 
-#include <Core/Heap/Ref.h>
+#include <Core/Ref.h>
 #include "Ddc/DfnNode.h"
 
 namespace ddc
@@ -9,10 +9,14 @@ namespace ddc
 
 class DfnMember : public DfnNode
 {
-	T_RTTI_CLASS(DfnMember)
+	T_RTTI_CLASS;
 
 public:
+	DfnMember();
+
 	DfnMember(DfnNode* type, const std::wstring& name);
+
+	virtual bool serialize(traktor::ISerializer& s);
 
 	const DfnNode* getMemberType() const { return m_type; }
 

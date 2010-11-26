@@ -11,7 +11,7 @@ class DfnNode;
 
 class ICodeGenerator : public traktor::Object
 {
-	T_RTTI_CLASS(ICodeGenerator)
+	T_RTTI_CLASS;
 
 public:
 	virtual bool generate(const traktor::Path& sourceFilePath, const DfnNode* node) const = 0;
