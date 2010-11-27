@@ -1,9 +1,10 @@
 #include <v8.h>
+#include "Core/Serialization/ISerializable.h"
 #define T_HAVE_TYPES
+#include "Script/Boxes.h"
+#include "Script/IScriptClass.h"
 #include "Script/Js/ScriptManagerJs.h"
 #include "Script/Js/ScriptContextJs.h"
-#include "Script/IScriptClass.h"
-#include "Core/Serialization/ISerializable.h"
 
 namespace traktor
 {
@@ -11,6 +12,11 @@ namespace traktor
 	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptManagerJs", 0, ScriptManagerJs, IScriptManager)
+
+ScriptManagerJs::ScriptManagerJs()
+{
+	registerBoxClasses(this);
+}
 
 void ScriptManagerJs::registerClass(IScriptClass* scriptClass)
 {

@@ -7,9 +7,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_SCRIPT_JS_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -25,6 +25,8 @@ class T_DLLCLASS ScriptManagerJs : public IScriptManager
 	T_RTTI_CLASS;
 
 public:
+	ScriptManagerJs();
+	
 	virtual void registerClass(IScriptClass* scriptClass);
 
 	virtual Ref< IScriptClass > findScriptClass(const TypeInfo& type) const;
