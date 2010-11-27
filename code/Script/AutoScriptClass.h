@@ -1,8 +1,9 @@
 #ifndef traktor_script_AutoScriptClass_H
 #define traktor_script_AutoScriptClass_H
 
-#include "Script/IScriptClass.h"
 #include "Core/Meta/TypeList.h"
+#include "Script/Boxes.h"
+#include "Script/IScriptClass.h"
 
 namespace traktor
 {
@@ -35,31 +36,163 @@ struct T_NOVTABLE IProperty
 /*! \{ */
 
 template < typename Type, bool IsTypePtr = IsPointer< Type >::value >
-struct CastAny { };
+struct CastAny
+{
+};
 
 template < >
-struct CastAny < bool, false > { static bool get(const Any& value) { return value.getBoolean(); } };
+struct CastAny < bool, false >
+{
+	static Any set(bool value) {
+		return Any(value);
+	}
+	static bool get(const Any& value) {
+		return value.getBoolean();
+	}
+};
 
 template < >
-struct CastAny < int32_t, false > { static int32_t get(const Any& value) { return value.getInteger(); } };
+struct CastAny < int32_t, false >
+{
+	static Any set(int32_t value) {
+		return Any(value);
+	}
+	static int32_t get(const Any& value) {
+		return value.getInteger();
+	}
+};
 
 template < >
-struct CastAny < uint32_t, false > { static uint32_t get(const Any& value) { return (uint32_t)value.getInteger(); } };
+struct CastAny < uint32_t, false >
+{
+	static Any set(uint32_t value) {
+		return Any(int32_t(value));
+	}
+	static uint32_t get(const Any& value) {
+		return (uint32_t)value.getInteger();
+	}
+};
 
 template < >
-struct CastAny < float, false > { static float get(const Any& value) { return value.getFloat(); } };
+struct CastAny < float, false >
+{
+	static Any set(float value) {
+		return Any(value);
+	}
+	static float get(const Any& value) {
+		return value.getFloat();
+	}
+};
 
 template < >
-struct CastAny < std::wstring, false > { static std::wstring get(const Any& value) { return value.getString(); } };
+struct CastAny < std::wstring, false >
+{
+	static Any set(const std::wstring& value) {
+		return Any(value);
+	}
+	static std::wstring get(const Any& value) {
+		return value.getString();
+	}
+};
 
 template < >
-struct CastAny < const std::wstring&, false > { static std::wstring get(const Any& value) { return value.getString(); } };
+struct CastAny < const std::wstring&, false >
+{
+	static Any set(const std::wstring& value) {
+		return Any(value);
+	}
+	static std::wstring get(const Any& value) {
+		return value.getString();
+	}
+};
 
 template < >
-struct CastAny < const wchar_t, true > { static const wchar_t* get(const Any& value) { return value.getString().c_str(); } };
+struct CastAny < const wchar_t, true >
+{
+	static Any set(const wchar_t* value) {
+		return Any(value);
+	}
+	static const wchar_t* get(const Any& value) {
+		return value.getString().c_str();
+	}
+};
 
 template < typename Type >
-struct CastAny < Type, true > { static Type get(const Any& value) { return checked_type_cast< Type >(value.getObject()); } };
+struct CastAny < Type, true >
+{
+	static Any set(Type value) {
+		return Any(value);
+	}
+	static Type get(const Any& value) {
+		return checked_type_cast< Type >(value.getObject());
+	}
+};
+
+template < >
+struct CastAny < Vector4 >
+{
+	static Any set(const Vector4& value) {
+		return Any(new BoxedVector4(value));
+	}	
+	static Vector4 get(const Any& value) {
+		return checked_type_cast< BoxedVector4*, false >(value.getObject())->unbox();
+	}
+};
+
+template < >
+struct CastAny < const Vector4& >
+{
+	static Any set(const Vector4& value) {
+		return Any(new BoxedVector4(value));
+	}	
+	static Vector4 get(const Any& value) {
+		return checked_type_cast< BoxedVector4*, false >(value.getObject())->unbox();
+	}
+};
+
+template < >
+struct CastAny < Quaternion >
+{
+	static Any set(const Quaternion& value) {
+		return Any(new BoxedQuaternion(value));
+	}
+	static Quaternion get(const Any& value) {
+		return checked_type_cast< BoxedQuaternion*, false >(value.getObject())->unbox();
+	}
+};
+
+template < >
+struct CastAny < const Quaternion& >
+{
+	static Any set(const Quaternion& value) {
+		return Any(new BoxedQuaternion(value));
+	}
+	static Quaternion get(const Any& value) {
+		return checked_type_cast< BoxedQuaternion*, false >(value.getObject())->unbox();
+	}
+};
+
+template < >
+struct CastAny < Transform >
+{
+	static Any set(const Transform& value) {
+		return Any(new BoxedTransform(value));
+	}
+	static Transform get(const Any& value) {
+		return checked_type_cast< BoxedTransform*, false >(value.getObject())->unbox();
+	}
+};
+
+template < >
+struct CastAny < const Transform& >
+{
+	static Any set(const Transform& value) {
+		return Any(new BoxedTransform(value));
+	}
+	static Transform get(const Any& value) {
+		return checked_type_cast< BoxedTransform*, false >(value.getObject())->unbox();
+	}
+};
 
 /*! \} */
 
@@ -298,7 +431,6 @@ struct MethodSignature_5 < ClassType, ReturnType, Argument1Type, Argument2Type, 
 
 /*! \} */
 
-
 /*! \name Method invocations */
 /*! \{ */
 
@@ -321,7 +453,7 @@ struct Method_0 : public IMethod
 	virtual Any invoke(Object* object, const Any* argv) const
 	{
 		ReturnType returnValue = (checked_type_cast< ClassType*, false >(object)->*m_method)();
-		return Any(returnValue);
+		return CastAny< ReturnType >::set(returnValue);
 	}
 };
 
@@ -369,7 +501,7 @@ struct Method_1 : public IMethod
 		ReturnType returnValue = (checked_type_cast< ClassType*, false >(object)->*m_method)(
 			CastAny< Argument1Type >::get(argv[0])
 		);
-		return Any(returnValue);
+		return CastAny< ReturnType >::set(returnValue);
 	}
 };
 
@@ -422,7 +554,7 @@ struct Method_2 : public IMethod
 			CastAny< Argument1Type >::get(argv[0]),
 			CastAny< Argument2Type >::get(argv[1])
 		);
-		return Any(returnValue);
+		return CastAny< ReturnType >::set(returnValue);
 	}
 };
 
@@ -479,7 +611,7 @@ struct Method_3 : public IMethod
 			CastAny< Argument2Type >::get(argv[1]),
 			CastAny< Argument3Type >::get(argv[2])
 		);
-		return Any(returnValue);
+		return CastAny< ReturnType >::set(returnValue);
 	}
 };
 
@@ -540,7 +672,7 @@ struct Method_4 : public IMethod
 			CastAny< Argument3Type >::get(argv[2]),
 			CastAny< Argument4Type >::get(argv[3])
 		);
-		return Any(returnValue);
+		return CastAny< ReturnType >::set(returnValue);
 	}
 };
 
@@ -605,7 +737,7 @@ struct Method_5 : public IMethod
 			CastAny< Argument4Type >::get(argv[3]),
 			CastAny< Argument5Type >::get(argv[4])
 		);
-		return Any(returnValue);
+		return CastAny< ReturnType >::set(returnValue);
 	}
 };
 
@@ -665,7 +797,7 @@ struct Property : public IProperty
 
 	virtual Any get(const Object* object) const
 	{
-		return Any(checked_type_cast< const ClassType*, false >(object)->*m_member);
+		return CastAny< MemberType >::set(checked_type_cast< const ClassType*, false >(object)->*m_member);
 	}
 
 	virtual void set(Object* object, const Any& value) const

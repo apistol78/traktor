@@ -1,7 +1,8 @@
+#include "Core/Serialization/ISerializable.h"
+#include "Script/Boxes.h"
+#include "Script/IScriptClass.h"
 #include "Script/Lua/ScriptManagerLua.h"
 #include "Script/Lua/ScriptContextLua.h"
-#include "Script/IScriptClass.h"
-#include "Core/Serialization/ISerializable.h"
 
 namespace traktor
 {
@@ -9,6 +10,11 @@ namespace traktor
 	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptManagerLua", 0, ScriptManagerLua, IScriptManager)
+
+ScriptManagerLua::ScriptManagerLua()
+{
+	registerBoxClasses(this);
+}
 
 void ScriptManagerLua::registerClass(IScriptClass* scriptClass)
 {
