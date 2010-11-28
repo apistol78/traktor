@@ -105,6 +105,16 @@ void EntityManager::removeEntity(Entity* entity)
 	}
 }
 
+Entity* EntityManager::getEntity(const std::wstring& name) const
+{
+	for (named_entity_vector_t::const_iterator i = m_entities.begin(); i != m_entities.end(); ++i)
+	{
+		if (i->first == name)
+			return i->second;
+	}
+	return 0;
+}
+
 uint32_t EntityManager::getEntitiesOf(const TypeInfo& entityType, RefArray< Entity >& outEntities) const
 {
 	for (std::map< const TypeInfo*, Range >::const_iterator i = m_typeRanges.begin(); i != m_typeRanges.end(); ++i)
@@ -124,7 +134,7 @@ uint32_t EntityManager::getEntityCount(const TypeInfo& entityType) const
 	return i != m_typeRanges.end() ? i->second.count : 0UL;
 }
 
-Ref< Entity > EntityManager::getEntity(const TypeInfo& entityType, uint32_t index) const
+Entity* EntityManager::getEntity(const TypeInfo& entityType, uint32_t index) const
 {
 	std::map< const TypeInfo*, Range >::const_iterator i = m_typeRanges.find(&entityType);
 	if (i == m_typeRanges.end() || index >= i->second.count)
@@ -133,7 +143,7 @@ Ref< Entity > EntityManager::getEntity(const TypeInfo& entityType, uint32_t inde
 	return m_entities[i->second.start + index].second;
 }
 
-Ref< Entity > EntityManager::getEntity(const TypeInfo& entityType, const std::wstring& name) const
+Entity* EntityManager::getEntity(const TypeInfo& entityType, const std::wstring& name) const
 {
 	std::map< const TypeInfo*, Range >::const_iterator i = m_typeRanges.find(&entityType);
 	if (i == m_typeRanges.end())

@@ -7,9 +7,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_WORLD_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -35,13 +35,15 @@ public:
 
 	virtual void removeEntity(Entity* entity);
 
+	virtual Entity* getEntity(const std::wstring& name) const;
+
 	virtual uint32_t getEntitiesOf(const TypeInfo& entityType, RefArray< Entity >& outEntities) const;
 
 	virtual uint32_t getEntityCount(const TypeInfo& entityType) const;
 
-	virtual Ref< Entity > getEntity(const TypeInfo& entityType, uint32_t index) const;
+	virtual Entity* getEntity(const TypeInfo& entityType, uint32_t index) const;
 
-	virtual Ref< Entity > getEntity(const TypeInfo& entityType, const std::wstring& name) const;
+	virtual Entity* getEntity(const TypeInfo& entityType, const std::wstring& name) const;
 
 private:
 	typedef std::pair< std::wstring, Ref< Entity > > named_entity_t;

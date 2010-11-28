@@ -19,7 +19,7 @@ namespace traktor
 	namespace script
 	{
 	
-class BoxedVector4 : public Object
+class T_DLLCLASS BoxedVector4 : public Object
 {
 	T_RTTI_CLASS;
 	
@@ -48,7 +48,7 @@ private:
 	Vector4 m_value;
 };
 
-class BoxedQuaternion : public Object
+class T_DLLCLASS BoxedQuaternion : public Object
 {
 	T_RTTI_CLASS;
 	
@@ -73,7 +73,7 @@ private:
 	Quaternion m_value;
 };
 
-class BoxedTransform : public Object
+class T_DLLCLASS BoxedTransform : public Object
 {
 	T_RTTI_CLASS;
 	
