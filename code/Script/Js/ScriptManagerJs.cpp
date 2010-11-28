@@ -1,6 +1,6 @@
 #include <v8.h>
-#include "Core/Serialization/ISerializable.h"
 #define T_HAVE_TYPES
+#include "Core/Serialization/ISerializable.h"
 #include "Script/Boxes.h"
 #include "Script/IScriptClass.h"
 #include "Script/Js/ScriptManagerJs.h"

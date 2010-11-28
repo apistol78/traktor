@@ -7,9 +7,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_WORLD_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -54,6 +54,13 @@ public:
 	 */
 	virtual void removeEntity(Entity* entity) = 0;
 
+	/*! \brief Get named entity.
+	 *
+	 * \param name Name of entity.
+	 * \return Found entity.
+	 */
+	virtual Entity* getEntity(const std::wstring& name) const = 0;
+
 	/*! \brief Get all entities of certain type.
 	 *
 	 * \param entityType Type of entity.
@@ -75,7 +82,7 @@ public:
 	 * \param index Index of entity of same type.
 	 * \return Found entity, null if no entity found.
 	 */
-	virtual Ref< Entity > getEntity(const TypeInfo& entityType, uint32_t index) const = 0;
+	virtual Entity* getEntity(const TypeInfo& entityType, uint32_t index) const = 0;
 
 	/*! \brief Get named entity of certain type.
 	 *
@@ -83,7 +90,7 @@ public:
 	 * \param name Name of entity instance.
 	 * \return Found entity, null if no entity found.
 	 */
-	virtual Ref< Entity > getEntity(const TypeInfo& entityType, const std::wstring& name) const = 0;
+	virtual Entity* getEntity(const TypeInfo& entityType, const std::wstring& name) const = 0;
 
 	/*! \brief Get all entities of certain type.
 	 *
@@ -118,10 +125,10 @@ public:
 	 * \return Found entity, null if no entity found.
 	 */
 	template < typename EntityType >
-	Ref< EntityType > getEntity(uint32_t index) const
+	EntityType* getEntity(uint32_t index) const
 	{
-		Ref< Entity > entity = getEntity(type_of< EntityType >(), index);
-		return static_cast< EntityType* >(entity.ptr());
+		Entity* entity = getEntity(type_of< EntityType >(), index);
+		return static_cast< EntityType* >(entity);
 	}
 
 	/*! \brief Get named entity of certain type.
@@ -131,10 +138,10 @@ public:
 	 * \return Found entity, null if no entity found.
 	 */
 	template < typename EntityType >
-	Ref< EntityType > getEntity(const std::wstring& name) const
+	EntityType* getEntity(const std::wstring& name) const
 	{
-		Ref< Entity > entity = getEntity(type_of< EntityType >(), name);
-		return static_cast< EntityType* >(entity.ptr());
+		Entity* entity = getEntity(type_of< EntityType >(), name);
+		return static_cast< EntityType* >(entity);
 	}
 };
 

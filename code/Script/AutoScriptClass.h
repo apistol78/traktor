@@ -110,7 +110,7 @@ template < >
 struct CastAny < const wchar_t, true >
 {
 	static Any set(const wchar_t* value) {
-		return Any(value);
+		return Any(std::wstring(value));
 	}
 	static const wchar_t* get(const Any& value) {
 		return value.getString().c_str();
