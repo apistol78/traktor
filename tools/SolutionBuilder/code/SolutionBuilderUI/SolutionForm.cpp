@@ -41,7 +41,7 @@
 
 using namespace traktor;
 
-#define TITLE L"SolutionBuilder v2.2"
+#define TITLE L"SolutionBuilder v2.3"
 
 T_IMPLEMENT_RTTI_CLASS(L"SolutionForm", SolutionForm, ui::Form)
 
@@ -148,6 +148,7 @@ bool SolutionForm::create(const traktor::CommandLine& cmdLine)
 
 	m_menuFile = new ui::PopupMenu();
 	m_menuFile->create();
+	m_menuFile->add(new ui::MenuItem(ui::Command(L"File.Flatten"), L"Flatten Wild-card..."));
 	m_menuFile->add(new ui::MenuItem(ui::Command(L"File.Remove"), L"Remove"));
 
 	Ref< ui::Container > pageContainer = new ui::Container();
@@ -757,7 +758,48 @@ void SolutionForm::eventTreeButtonDown(ui::Event* event)
 		if (menuItem)
 		{
 			const ui::Command& command = menuItem->getCommand();
-			if (command == L"File.Remove")
+			if (command == L"File.Flatten")
+			{
+				Ref< Project > project = selectedItem->getData< Project >(L"PROJECT");
+				Ref< ui::TreeViewItem > parentItem = selectedItem->getParent();
+				if (project && parentItem)
+				{
+					Ref< Filter > parentFilter = parentItem->getData< Filter >(L"PRIMARY");
+					if (parentFilter)
+						parentFilter->removeItem(file);
+					else
+						project->removeItem(file);
+
+					m_treeSolution->removeItem(selectedItem);
+
+					Path sourcePath = FileSystem::getInstance().getAbsolutePath(project->getSourcePath());
+
+					std::set< Path > files;
+					file->getSystemFiles(project->getSourcePath(), files);
+
+					for (std::set< Path >::const_iterator i = files.begin(); i != files.end(); ++i)
+					{
+						Path flattenPath;
+						if (FileSystem::getInstance().getRelativePath(
+							*i,
+							sourcePath,
+							flattenPath
+						))
+						{
+							Ref< ::File > flattenFile = new ::File();
+							flattenFile->setFileName(flattenPath.getPathName());
+
+							if (parentFilter)
+								parentFilter->addItem(flattenFile);
+							else
+								project->addItem(flattenFile);
+
+							createTreeFileItem(parentItem, project, flattenFile);
+						}
+					}
+				}
+			}
+			else if (command == L"File.Remove")
 			{
 				Ref< ui::TreeViewItem > parentItem = selectedItem->getParent();
 				if (parentItem)
