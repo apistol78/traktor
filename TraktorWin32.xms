@@ -3042,7 +3042,7 @@
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Extern.v8</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/v8/src</sourcePath>
+			<sourcePath>$(TRAKTOR_HOME)/3rdp/v8-1.3.18.22/src</sourcePath>
 			<configurations>
 				<item type="Configuration" version="1">
 					<name>DebugShared</name>
@@ -3050,7 +3050,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/v8/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/v8-1.3.18.22/src</item>
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
@@ -3070,7 +3070,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/v8/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/v8-1.3.18.22/src</item>
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
@@ -3090,7 +3090,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/v8/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/v8-1.3.18.22/src</item>
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
@@ -3110,7 +3110,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/v8/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/v8-1.3.18.22/src</item>
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
@@ -3129,6 +3129,23 @@
 				<item type="Filter">
 					<name>src</name>
 					<items>
+						<item type="Filter">
+							<name>ia32</name>
+							<items>
+								<item type="File">
+									<fileName>ia32/*.cc</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>ia32/*.h</fileName>
+									<items/>
+								</item>
+							</items>
+						</item>
+						<item type="File">
+							<fileName>*.h</fileName>
+							<items/>
+						</item>
 						<item type="File">
 							<fileName>accessors.cc</fileName>
 							<items/>
@@ -3162,11 +3179,11 @@
 							<items/>
 						</item>
 						<item type="File">
-							<fileName>codegen.cc</fileName>
+							<fileName>code-stubs.cc</fileName>
 							<items/>
 						</item>
 						<item type="File">
-							<fileName>code-stubs.cc</fileName>
+							<fileName>codegen.cc</fileName>
 							<items/>
 						</item>
 						<item type="File">
@@ -3194,11 +3211,11 @@
 							<items/>
 						</item>
 						<item type="File">
-							<fileName>debug.cc</fileName>
+							<fileName>debug-agent.cc</fileName>
 							<items/>
 						</item>
 						<item type="File">
-							<fileName>debug-agent.cc</fileName>
+							<fileName>debug.cc</fileName>
 							<items/>
 						</item>
 						<item type="File">
@@ -3214,7 +3231,15 @@
 							<items/>
 						</item>
 						<item type="File">
+							<fileName>fast-codegen.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
 							<fileName>flags.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>frame-element.cc</fileName>
 							<items/>
 						</item>
 						<item type="File">
@@ -3238,6 +3263,10 @@
 							<items/>
 						</item>
 						<item type="File">
+							<fileName>heap-profiler.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
 							<fileName>heap.cc</fileName>
 							<items/>
 						</item>
@@ -3258,11 +3287,11 @@
 							<items/>
 						</item>
 						<item type="File">
-							<fileName>log.cc</fileName>
+							<fileName>log-utils.cc</fileName>
 							<items/>
 						</item>
 						<item type="File">
-							<fileName>log-utils.cc</fileName>
+							<fileName>log.cc</fileName>
 							<items/>
 						</item>
 						<item type="File">
@@ -3274,11 +3303,15 @@
 							<items/>
 						</item>
 						<item type="File">
-							<fileName>objects.cc</fileName>
+							<fileName>mksnapshot.cc</fileName>
 							<items/>
 						</item>
 						<item type="File">
 							<fileName>objects-debug.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>objects.cc</fileName>
 							<items/>
 						</item>
 						<item type="File">
@@ -3302,15 +3335,15 @@
 							<items/>
 						</item>
 						<item type="File">
-							<fileName>regexp-macro-assembler.cc</fileName>
-							<items/>
-						</item>
-						<item type="File">
 							<fileName>regexp-macro-assembler-irregexp.cc</fileName>
 							<items/>
 						</item>
 						<item type="File">
 							<fileName>regexp-macro-assembler-tracer.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>regexp-macro-assembler.cc</fileName>
 							<items/>
 						</item>
 						<item type="File">
@@ -3386,11 +3419,11 @@
 							<items/>
 						</item>
 						<item type="File">
-							<fileName>v8.cc</fileName>
+							<fileName>v8-counters.cc</fileName>
 							<items/>
 						</item>
 						<item type="File">
-							<fileName>v8-counters.cc</fileName>
+							<fileName>v8.cc</fileName>
 							<items/>
 						</item>
 						<item type="File">
@@ -3414,518 +3447,8 @@
 							<items/>
 						</item>
 						<item type="File">
-							<fileName>accessors.h</fileName>
+							<fileName>dtoa-config.c</fileName>
 							<items/>
-						</item>
-						<item type="File">
-							<fileName>allocation.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>api.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>apiutils.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>arguments.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>assembler.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>ast.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>bootstrapper.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>builtins.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>bytecodes-irregexp.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>char-predicates.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>char-predicates-inl.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>checks.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>code.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>codegen.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>codegen-inl.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>code-stubs.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>compilation-cache.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>compiler.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>contexts.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>conversions.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>conversions-inl.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>counters.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>cpu.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>dateparser.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>dateparser-inl.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>debug.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>debug-agent.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>disasm.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>disassembler.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>execution.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>factory.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>flag-definitions.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>flags.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>frame-element.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>frames.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>frames-inl.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>func-name-inferrer.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>global-handles.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>globals.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>handles.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>handles-inl.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>hashmap.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>heap.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>heap-inl.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>ic.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>ic-inl.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>interpreter-irregexp.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>jsregexp.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>jsregexp-inl.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>jump-target.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>jump-target-inl.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>list.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>list-inl.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>log.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>log-inl.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>log-utils.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>macro-assembler.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>mark-compact.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>memory.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>messages.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>natives.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>objects.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>objects-inl.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>oprofile-agent.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>parser.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>platform.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>prettyprinter.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>property.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>regexp-macro-assembler.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>regexp-macro-assembler-irregexp.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>regexp-macro-assembler-irregexp-inl.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>regexp-macro-assembler-tracer.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>regexp-stack.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>register-allocator.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>register-allocator-inl.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>rewriter.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>runtime.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>scanner.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>scopeinfo.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>scopes.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>serialize.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>shell.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>smart-pointer.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>snapshot.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>spaces.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>spaces-inl.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>string-stream.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>stub-cache.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>token.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>top.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>unicode.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>unicode-inl.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>usage-analyzer.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>utils.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>v8.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>v8-counters.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>v8threads.h</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>variables.h</fileName>
-							<items/>
-						</item>
-						<item type="Filter">
-							<name>ia32</name>
-							<items>
-								<item type="File">
-									<fileName>ia32/assembler-ia32.cc</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>ia32/assembler-ia32.h</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>ia32/assembler-ia32-inl.h</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>ia32/builtins-ia32.cc</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>ia32/codegen-ia32.cc</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>ia32/codegen-ia32.h</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>ia32/codegen-ia32-inl.h</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>ia32/cpu-ia32.cc</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>ia32/debug-ia32.cc</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>ia32/disasm-ia32.cc</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>ia32/frames-ia32.cc</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>ia32/frames-ia32.h</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>ia32/ic-ia32.cc</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>ia32/jump-target-ia32.cc</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>ia32/macro-assembler-ia32.cc</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>ia32/macro-assembler-ia32.h</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>ia32/regexp-macro-assembler-ia32.cc</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>ia32/regexp-macro-assembler-ia32.h</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>ia32/register-allocator-ia32.cc</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>ia32/register-allocator-ia32.h</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>ia32/register-allocator-ia32-inl.h</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>ia32/simulator-ia32.cc</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>ia32/simulator-ia32.h</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>ia32/stub-cache-ia32.cc</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>ia32/virtual-frame-ia32.cc</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>ia32/virtual-frame-ia32.h</fileName>
-									<items/>
-								</item>
-							</items>
-						</item>
-						<item type="Filter">
-							<name>derived</name>
-							<items>
-								<item type="File">
-									<fileName>derived/natives.cc</fileName>
-									<items/>
-								</item>
-							</items>
 						</item>
 					</items>
 				</item>
@@ -3942,14 +3465,9 @@
 						</item>
 					</items>
 				</item>
-				<item type="Filter">
-					<name>dtoa</name>
-					<items>
-						<item type="File">
-							<fileName>dtoa-config.c</fileName>
-							<items/>
-						</item>
-					</items>
+				<item type="File">
+					<fileName>../natives.cc</fileName>
+					<items/>
 				</item>
 			</items>
 			<dependencies/>
@@ -13285,7 +12803,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/v8/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/v8-1.3.18.22/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_SCRIPT_JS_EXPORT</item>
@@ -13303,7 +12821,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/v8/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/v8-1.3.18.22/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_SCRIPT_JS_EXPORT</item>
@@ -13321,7 +12839,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/v8/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/v8-1.3.18.22/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -13339,7 +12857,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/v8/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/v8-1.3.18.22/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
