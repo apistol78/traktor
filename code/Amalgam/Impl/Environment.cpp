@@ -13,7 +13,7 @@ namespace traktor
 	namespace amalgam
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.Environment", Environment, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.Environment", Environment, IEnvironment)
 
 Environment::Environment(
 	Settings* settings,

@@ -65,16 +65,15 @@ Ref< IResourceHandle > ResourceManager::bind(const TypeInfo& type, const Guid& g
 
 	bool cacheable = factory->isCacheable();
 
-	if (!cacheable)
-		handle = new ResourceHandle(type);
-	else
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-		handle = m_cache[guid];
-		if (!handle/* || &handle->getResourceType() != &type*/)
+		RefArray< ResourceHandle >& cache = m_cache[guid];
+		if (cacheable && !cache.empty())
+			handle = cache.front();
+		else
 		{
 			handle = new ResourceHandle(type);
-			m_cache[guid] = handle;
+			cache.push_back(handle);
 		}
 	}
 	
@@ -90,42 +89,43 @@ void ResourceManager::update(const Guid& guid, bool force)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
-	std::map< Guid, Ref< ResourceHandle > >::iterator i = m_cache.find(guid);
+	std::map< Guid, RefArray< ResourceHandle > >::iterator i = m_cache.find(guid);
 	if (i == m_cache.end())
 		return;
 
-	Ref< ResourceHandle > handle = i->second;
-	T_ASSERT (handle);
+	const RefArray< ResourceHandle >& handles = i->second;
+	for (RefArray< ResourceHandle >::const_iterator i = handles.begin(); i != handles.end(); ++i)
+	{
+		if (!force && (*i)->get())
+			continue;
 
-	if (!force && handle->get())
-		return;
-
-	Ref< IResourceFactory > factory = findFactory(handle->getResourceType());
-	if (!factory)
-		return;
-
-	load(guid, factory, handle);
+		Ref< IResourceFactory > factory = findFactory((*i)->getResourceType());
+		if (factory)
+			load(guid, factory, *i);
+	}
 }
 
 void ResourceManager::flush(const Guid& guid)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
-	std::map< Guid, Ref< ResourceHandle > >::iterator i = m_cache.find(guid);
+	std::map< Guid, RefArray< ResourceHandle > >::iterator i = m_cache.find(guid);
 	if (i == m_cache.end())
 		return;
 
-	Ref< ResourceHandle > handle = i->second;
-	T_ASSERT (handle);
-
-	handle->flush();
+	const RefArray< ResourceHandle >& handles = i->second;
+	for (RefArray< ResourceHandle >::const_iterator i = handles.begin(); i != handles.end(); ++i)
+		(*i)->flush();
 }
 
 void ResourceManager::flush()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	for (std::map< Guid, Ref< ResourceHandle > >::iterator i = m_cache.begin(); i != m_cache.end(); ++i)
-		i->second->flush();
+	for (std::map< Guid, RefArray< ResourceHandle > >::iterator i = m_cache.begin(); i != m_cache.end(); ++i)
+	{
+		for (RefArray< ResourceHandle >::const_iterator j = i->second.begin(); j != i->second.end(); ++j)
+			(*j)->flush();
+	}
 }
 
 void ResourceManager::dumpStatistics()
@@ -137,6 +137,7 @@ void ResourceManager::dumpStatistics()
 	
 	log::debug << uint32_t(m_cache.size()) << L" cache entries" << Endl;
 	
+	/*
 	uint32_t count = 0;
 	for (std::map< Guid, Ref< ResourceHandle > >::iterator i = m_cache.begin(); i != m_cache.end(); ++i)
 	{
@@ -144,6 +145,7 @@ void ResourceManager::dumpStatistics()
 			++count;
 	}
 	log::debug << count << L" resource(s)" << Endl;
+	*/
 
 	double totalTime = 0.0;
 	for (std::map< const TypeInfo*, TimeCount >::const_iterator i = m_times.begin(); i != m_times.end(); ++i)

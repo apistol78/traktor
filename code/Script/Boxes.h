@@ -31,6 +31,8 @@ public:
 	explicit BoxedVector4(float x, float y, float z);
 	
 	explicit BoxedVector4(float x, float y, float z, float w);
+
+	void set(float x, float y, float z, float w);
 	
 	float x() const;
 	
@@ -39,6 +41,10 @@ public:
 	float z() const;
 	
 	float w() const;
+
+	float length() const;
+
+	Vector4 normalized() const;
 	
 	const Vector4& unbox() const {
 		return m_value;
@@ -58,6 +64,12 @@ public:
 	explicit BoxedQuaternion(const Quaternion& value);
 	
 	explicit BoxedQuaternion(float x, float y, float z, float w);
+
+	explicit BoxedQuaternion(const Vector4& axis, float angle);
+
+	explicit BoxedQuaternion(float head, float pitch, float bank);
+
+	explicit BoxedQuaternion(const Vector4& from, const Vector4& to);
 	
 	float x() const;
 	
@@ -66,6 +78,10 @@ public:
 	float z() const;
 	
 	float w() const;
+
+	Quaternion normalized() const;
+
+	Quaternion inverse() const;
 	
 	const Quaternion& unbox() const;
 

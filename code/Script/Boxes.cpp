@@ -7,7 +7,7 @@ namespace traktor
 	namespace script
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.script.BoxedVector4", BoxedVector4, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.Vector4", BoxedVector4, Object)
 
 BoxedVector4::BoxedVector4()
 :	m_value(Vector4::zero())
@@ -27,6 +27,11 @@ BoxedVector4::BoxedVector4(float x, float y, float z)
 BoxedVector4::BoxedVector4(float x, float y, float z, float w)
 :	m_value(x, y, z, w)
 {
+}
+
+void BoxedVector4::set(float x, float y, float z, float w)
+{
+	m_value.set(x, y, z, w);
 }
 
 float BoxedVector4::x() const
@@ -49,7 +54,17 @@ float BoxedVector4::w() const
 	return m_value.w();
 }
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.script.BoxedQuaternion", BoxedQuaternion, Object)
+float BoxedVector4::length() const
+{
+	return m_value.length();
+}
+
+Vector4 BoxedVector4::normalized() const
+{
+	return m_value.normalized();
+}
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.Quaternion", BoxedQuaternion, Object)
 
 BoxedQuaternion::BoxedQuaternion()
 :	m_value(Quaternion::identity())
@@ -63,6 +78,21 @@ BoxedQuaternion::BoxedQuaternion(const Quaternion& value)
 
 BoxedQuaternion::BoxedQuaternion(float x, float y, float z, float w)
 :	m_value(x, y, z, w)
+{
+}
+
+BoxedQuaternion::BoxedQuaternion(const Vector4& axis, float angle)
+:	m_value(axis, angle)
+{
+}
+
+BoxedQuaternion::BoxedQuaternion(float head, float pitch, float bank)
+:	m_value(head, pitch, bank)
+{
+}
+
+BoxedQuaternion::BoxedQuaternion(const Vector4& from, const Vector4& to)
+:	m_value(from, to)
 {
 }
 
@@ -86,12 +116,22 @@ float BoxedQuaternion::w() const
 	return m_value.e.w();
 }
 
+Quaternion BoxedQuaternion::normalized() const
+{
+	return m_value.normalized();
+}
+
+Quaternion BoxedQuaternion::inverse() const
+{
+	return m_value.inverse();
+}
+
 const Quaternion& BoxedQuaternion::unbox() const
 {
 	return m_value;
 }
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.script.BoxedTransform", BoxedTransform, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.Transform", BoxedTransform, Object)
 
 BoxedTransform::BoxedTransform()
 {
@@ -125,25 +165,35 @@ const Transform& BoxedTransform::unbox() const
 void registerBoxClasses(IScriptManager* scriptManager)
 {
 	Ref< AutoScriptClass< BoxedVector4 > > classBoxedVector4 = new AutoScriptClass< BoxedVector4 >();
+	classBoxedVector4->addConstructor();
 	classBoxedVector4->addConstructor< float, float, float >();
 	classBoxedVector4->addConstructor< float, float, float, float >();
+	classBoxedVector4->addMethod(L"set", &BoxedVector4::set);
 	classBoxedVector4->addMethod(L"x", &BoxedVector4::x);
 	classBoxedVector4->addMethod(L"y", &BoxedVector4::y);
 	classBoxedVector4->addMethod(L"z", &BoxedVector4::z);
 	classBoxedVector4->addMethod(L"w", &BoxedVector4::w);
+	classBoxedVector4->addMethod(L"length", &BoxedVector4::length);
+	classBoxedVector4->addMethod(L"normalized", &BoxedVector4::normalized);
 	scriptManager->registerClass(classBoxedVector4);
 
 	Ref< AutoScriptClass< BoxedQuaternion > > classBoxedQuaternion = new AutoScriptClass< BoxedQuaternion >();
+	classBoxedQuaternion->addConstructor();
 	classBoxedQuaternion->addConstructor< float, float, float, float >();
+	classBoxedQuaternion->addConstructor< const Vector4&, float >();
+	classBoxedQuaternion->addConstructor< float, float, float >();
+	classBoxedQuaternion->addConstructor< const Vector4&, const Vector4& >();
 	classBoxedQuaternion->addMethod(L"x", &BoxedQuaternion::x);
 	classBoxedQuaternion->addMethod(L"y", &BoxedQuaternion::y);
 	classBoxedQuaternion->addMethod(L"z", &BoxedQuaternion::z);
 	classBoxedQuaternion->addMethod(L"w", &BoxedQuaternion::w);
+	classBoxedQuaternion->addMethod(L"normalized", &BoxedQuaternion::normalized);
+	classBoxedQuaternion->addMethod(L"inverse", &BoxedQuaternion::inverse);
 	scriptManager->registerClass(classBoxedQuaternion);
 	
 	Ref< AutoScriptClass< BoxedTransform > > classBoxedTransform = new AutoScriptClass< BoxedTransform >();
 	classBoxedTransform->addConstructor();
-	classBoxedTransform->addConstructor< Vector4, Quaternion >();
+	classBoxedTransform->addConstructor< const Vector4&, const Quaternion& >();
 	classBoxedTransform->addMethod(L"translation", &BoxedTransform::translation);
 	classBoxedTransform->addMethod(L"rotation", &BoxedTransform::rotation);
 	scriptManager->registerClass(classBoxedTransform);

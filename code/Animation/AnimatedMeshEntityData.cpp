@@ -6,8 +6,8 @@
 #include "Core/Log/Log.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRef.h"
+#include "Mesh/IMeshResource.h"
 #include "Mesh/Skinned/SkinnedMesh.h"
-#include "Mesh/Skinned/SkinnedMeshResource.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
 
@@ -67,7 +67,7 @@ bool AnimatedMeshEntityData::serialize(ISerializer& s)
 	if (!world::SpatialEntityData::serialize(s))
 		return false;
 	
-	s >> resource::Member< mesh::SkinnedMesh, mesh::SkinnedMeshResource >(L"mesh", m_mesh);
+	s >> resource::Member< mesh::SkinnedMesh, mesh::IMeshResource >(L"mesh", m_mesh);
 	s >> resource::Member< Skeleton >(L"skeleton", m_skeleton);
 	s >> MemberRef< IPoseControllerData >(L"poseController", m_poseController);
 

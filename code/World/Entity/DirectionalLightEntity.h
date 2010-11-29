@@ -39,11 +39,17 @@ public:
 
 	virtual Aabb getBoundingBox() const;
 
-	inline const Vector4& getSunColor() const { return m_sunColor; }
+	void setSunColor(const Vector4& sunColor) { m_sunColor = sunColor; }
 
-	inline const Vector4& getBaseColor() const { return m_baseColor; }
+	const Vector4& getSunColor() const { return m_sunColor; }
 
-	inline const Vector4& getShadowColor() const { return m_shadowColor; }
+	void setBaseColor(const Vector4& baseColor) { m_baseColor = baseColor; }
+
+	const Vector4& getBaseColor() const { return m_baseColor; }
+
+	void setShadowColor(const Vector4& shadowColor) { m_shadowColor = shadowColor; }
+
+	const Vector4& getShadowColor() const { return m_shadowColor; }
 
 private:
 	Transform m_transform;
