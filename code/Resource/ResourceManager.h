@@ -64,7 +64,7 @@ private:
 
 	RefArray< IResourceFactory > m_factories;
 	Ref< IResourceHandle > m_nullHandle;
-	std::map< Guid, Ref< ResourceHandle > > m_cache;
+	std::map< Guid, RefArray< ResourceHandle > > m_cache;
 	std::map< const TypeInfo*, TimeCount > m_times;
 	std::stack< double > m_timeStack;
 	Semaphore m_lock;

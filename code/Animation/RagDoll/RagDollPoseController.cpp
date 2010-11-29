@@ -69,36 +69,41 @@ bool RagDollPoseController::create(
 	for (uint32_t i = 0; i < skeleton->getBoneCount(); ++i)
 	{
 		Bone* bone = skeleton->getBone(i);
-
-		Vector4 centerOfMass = Vector4(0.0f, 0.0f, bone->getLength() * 0.5f, 1.0f);
-
-		physics::CapsuleShapeDesc shapeDesc;
-		shapeDesc.setGroup(collisionGroup);
-		shapeDesc.setRadius(bone->getRadius());
-		shapeDesc.setLength(bone->getLength());
-
-		physics::DynamicBodyDesc bodyDesc;
-		bodyDesc.setShape(&shapeDesc);
-		bodyDesc.setMass(limbMass);
-		bodyDesc.setAutoDeactivate(autoDeactivate);
-		bodyDesc.setActive(!autoDeactivate);
-		bodyDesc.setLinearDamping(linearDamping);
-		bodyDesc.setAngularDamping(angularDamping);
-
-		Ref< physics::DynamicBody > limb = checked_type_cast< physics::DynamicBody* >(physicsManager->createBody(&bodyDesc));
-		if (!limb)
-			return false;
-
-		limb->setTransform(worldTransform * limbTransforms[i] * Transform(centerOfMass));
-
-		// Set initial velocities.
-		if (!velocities.empty())
+		float boneLength = bone->getLength();
+		if (boneLength > bone->getRadius() * 2.0f)
 		{
-			limb->setLinearVelocity(velocities[i].linear);
-			limb->setAngularVelocity(velocities[i].angular);
-		}
+			Vector4 centerOfMass = Vector4(0.0f, 0.0f, bone->getLength() * 0.5f, 1.0f);
 
-		m_limbs.push_back(limb);
+			physics::CapsuleShapeDesc shapeDesc;
+			shapeDesc.setGroup(collisionGroup);
+			shapeDesc.setRadius(bone->getRadius());
+			shapeDesc.setLength(bone->getLength());
+
+			physics::DynamicBodyDesc bodyDesc;
+			bodyDesc.setShape(&shapeDesc);
+			bodyDesc.setMass(limbMass);
+			bodyDesc.setAutoDeactivate(autoDeactivate);
+			bodyDesc.setActive(!autoDeactivate);
+			bodyDesc.setLinearDamping(linearDamping);
+			bodyDesc.setAngularDamping(angularDamping);
+
+			Ref< physics::DynamicBody > limb = checked_type_cast< physics::DynamicBody* >(physicsManager->createBody(&bodyDesc));
+			if (!limb)
+				return false;
+
+			limb->setTransform(worldTransform * limbTransforms[i] * Transform(centerOfMass));
+
+			// Set initial velocities.
+			if (!velocities.empty())
+			{
+				limb->setLinearVelocity(velocities[i].linear);
+				limb->setAngularVelocity(velocities[i].angular);
+			}
+
+			m_limbs.push_back(limb);
+		}
+		else
+			m_limbs.push_back(0);
 	}
 
 	for (uint32_t i = 0; i < skeleton->getBoneCount(); ++i)
@@ -113,8 +118,11 @@ bool RagDollPoseController::create(
 		const Vector4 coneAxis = limbTransforms[i].axisX();
 
 		int parentIndex = bone->getParent();
-		if (parentIndex < 0)
+		if (parentIndex < 0 || !m_limbs[parentIndex])
 		{
+			if (!m_limbs[i])
+				continue;
+
 			if (fixateBones)
 			{
 				if (bone->getEnableLimits())
@@ -179,9 +187,6 @@ bool RagDollPoseController::create(
 			}
 		}
 
-		if (!joint)
-			return false;
-
 		m_joints.push_back(joint);
 	}
 
@@ -201,10 +206,16 @@ void RagDollPoseController::destroy()
 	safeDestroy(m_trackPoseController);
 
 	for (RefArray< physics::Joint >::iterator i = m_joints.begin(); i != m_joints.end(); ++i)
-		(*i)->destroy();
+	{
+		if (*i)
+			(*i)->destroy();
+	}
 
 	for (RefArray< physics::DynamicBody >::iterator i = m_limbs.begin(); i != m_limbs.end(); ++i)
-		(*i)->destroy();
+	{
+		if (*i)
+			(*i)->destroy();
+	}
 
 	m_limbs.resize(0);
 	m_joints.resize(0);
@@ -218,8 +229,11 @@ void RagDollPoseController::setTransform(const Transform& transform)
 	// Update all limbs with delta transform.
 	for (RefArray< physics::DynamicBody >::iterator i = m_limbs.begin(); i != m_limbs.end(); ++i)
 	{
-		Transform limbTransform = (*i)->getTransform();
-		(*i)->setTransform(deltaTransform * limbTransform);
+		if (*i)
+		{
+			Transform limbTransform = (*i)->getTransform();
+			(*i)->setTransform(deltaTransform * limbTransform);
+		}
 	}
 	
 	// Update tracking pose controller.
@@ -258,6 +272,9 @@ void RagDollPoseController::evaluate(
 	outPoseTransforms.resize(limbCount);
 	for (uint32_t i = 0; i < limbCount; ++i)
 	{
+		if (!m_limbs[i])
+			continue;
+
 		const Bone* bone = skeleton->getBone(i);
 		T_ASSERT (bone);
 
@@ -338,16 +355,28 @@ void RagDollPoseController::setEnable(bool enable)
 	if (enable)
 	{
 		for (RefArray< physics::DynamicBody >::iterator i = m_limbs.begin(); i != m_limbs.end(); ++i)
-			(*i)->setEnable(true);
+		{
+			if (*i)
+				(*i)->setEnable(true);
+		}
 		for (RefArray< physics::Joint >::iterator i = m_joints.begin(); i != m_joints.end(); ++i)
-			(*i)->setEnable(true);
+		{
+			if (*i)
+				(*i)->setEnable(true);
+		}
 	}
 	else
 	{
 		for (RefArray< physics::Joint >::iterator i = m_joints.begin(); i != m_joints.end(); ++i)
-			(*i)->setEnable(false);
+		{
+			if (*i)
+				(*i)->setEnable(false);
+		}
 		for (RefArray< physics::DynamicBody >::iterator i = m_limbs.begin(); i != m_limbs.end(); ++i)
-			(*i)->setEnable(false);
+		{
+			if (*i)
+				(*i)->setEnable(false);
+		}
 	}
 
 	m_enable = enable;

@@ -55,7 +55,7 @@ void AnimatedMeshEntityEditor::drawGuide(
 	primitiveRenderer->pushDepthEnable(false);
 
 	resource::Proxy< Skeleton > skeleton = animatedEntityData->getSkeleton();
-	if (skeleton.valid())
+	if (skeleton.valid() && animatedEntity)
 	{
 		AlignedVector< Transform > poseTransforms = animatedEntity->getPoseTransforms();
 		if (poseTransforms.empty())

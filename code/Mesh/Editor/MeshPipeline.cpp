@@ -256,6 +256,12 @@ bool MeshPipeline::buildOutput(
 		models.push_back(model);
 	}
 
+	if (models.empty())
+	{
+		log::error << L"Mesh pipeline failed; no models" << Endl;
+		return false;
+	}
+
 	// Build materials.
 	std::vector< render::VertexElement > vertexElements;
 	uint32_t vertexElementOffset = 0;
@@ -272,6 +278,8 @@ bool MeshPipeline::buildOutput(
 	MaterialShaderGenerator generator(
 		pipelineBuilder->getSourceDatabase()
 	);
+
+	int32_t boneCount = models[0]->getBoneCount();
 
 	for (std::map< std::wstring, model::Material >::const_iterator i = materials.begin(); i != materials.end(); ++i)
 	{
@@ -318,6 +326,17 @@ bool MeshPipeline::buildOutput(
 		{
 			log::error << L"MeshPipeline failed; unable to remove unused branches, material shader \"" << i->first << L"\"" << Endl;
 			return false;
+		}
+
+		// Update bone count from model.
+		const RefArray< render::Node >& nodes = materialShaderGraph->getNodes();
+		for (RefArray< render::Node >::const_iterator j = nodes.begin(); j != nodes.end(); ++j)
+		{
+			if (render::IndexedUniform* indexedUniform = dynamic_type_cast< render::IndexedUniform* >(*j))
+			{
+				if (indexedUniform->getParameterName() == L"Bones")
+					indexedUniform->setLength(boneCount * 2);		// Each bone is represented of a quaternion and a vector thus multiply by 2.
+			}
 		}
 
 		// Extract each material technique.
