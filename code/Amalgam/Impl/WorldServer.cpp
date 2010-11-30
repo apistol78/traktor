@@ -18,6 +18,7 @@
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldRenderer.h"
 #include "World/Entity/EntityBuilder.h"
+#include "World/Entity/EntityResourceFactory.h"
 #include "World/Entity/GroupEntityRenderer.h"
 #include "World/Entity/LightEntityRenderer.h"
 #include "World/Entity/WorldEntityFactory.h"
@@ -58,6 +59,7 @@ void WorldServer::createResourceFactories(IEnvironment* environment)
 	db::Database* database = environment->getDatabase();
 
 	resourceManager->addFactory(new world::PostProcessFactory(database));
+	resourceManager->addFactory(new world::EntityResourceFactory(database));
 
 	int32_t shadowQuality = environment->getSettings()->getProperty< PropertyInteger >(L"World.ShadowQuality", world::WorldRenderSettings::SqHigh);
 	m_sceneFactory = new scene::SceneFactory(
