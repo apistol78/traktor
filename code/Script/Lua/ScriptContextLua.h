@@ -10,9 +10,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_SCRIPT_LUA_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 struct lua_State;
@@ -35,6 +35,8 @@ public:
 	ScriptContextLua(const RefArray< IScriptClass >& registeredClasses);
 
 	virtual ~ScriptContextLua();
+
+	virtual void destroy();
 
 	virtual void setGlobal(const std::wstring& globalName, const Any& globalValue);
 

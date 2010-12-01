@@ -43,7 +43,7 @@ const TypeInfoSet SceneFactory::getResourceTypes() const
 
 bool SceneFactory::isCacheable() const
 {
-	return true;
+	return false;
 }
 
 Ref< Object > SceneFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid)

@@ -37,6 +37,8 @@ public:
 
 	bool create(const RefArray< IScriptClass >& registeredClasses);
 
+	virtual void destroy();
+
 	virtual void setGlobal(const std::wstring& globalName, const Any& globalValue);
 
 	virtual Any getGlobal(const std::wstring& globalName);

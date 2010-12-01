@@ -41,7 +41,7 @@ public:
 private:
 	struct Jacobian
 	{
-		float diagABInv;
+		Scalar diagABInv;
 	};
 
 	Ref< const ConeTwistJointDesc > m_desc;
@@ -54,10 +54,10 @@ private:
 	Ref< DynamicBody > m_dynamicBody1;
 	Ref< DynamicBody > m_dynamicBody2;
 	Jacobian m_jac[3];
-	float m_kCone;
-	float m_coneAngleLimit;
+	Scalar m_kCone;
+	Scalar m_coneAngleLimit;
 	Vector4 m_coneImpulseAxis;
-	float m_kTwist;
+	Scalar m_kTwist;
 	Vector4 m_twistImpulseAxis;
 };
 

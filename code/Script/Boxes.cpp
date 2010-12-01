@@ -162,6 +162,36 @@ const Transform& BoxedTransform::unbox() const
 	return m_value;
 }
 
+T_IMPLEMENT_RTTI_CLASS(L"traktor.Array", BoxedArray, Object)
+
+BoxedArray::BoxedArray()
+{
+}
+
+int32_t BoxedArray::length() const
+{
+	return int32_t(m_arr.size());
+}
+
+Object* BoxedArray::get(int32_t index)
+{
+	if (index >= 0 && index < int32_t(m_arr.size()))
+		return m_arr[index];
+	else
+		return 0;
+}
+
+const RefArray< Object >& BoxedArray::unbox() const
+{
+	return m_arr;
+}
+
+void BoxedArray::set(int32_t index, Object* object)
+{
+	if (index >= 0 && index < int32_t(m_arr.size()))
+		m_arr[index] = object;
+}
+
 void registerBoxClasses(IScriptManager* scriptManager)
 {
 	Ref< AutoScriptClass< BoxedVector4 > > classBoxedVector4 = new AutoScriptClass< BoxedVector4 >();
@@ -197,6 +227,14 @@ void registerBoxClasses(IScriptManager* scriptManager)
 	classBoxedTransform->addMethod(L"translation", &BoxedTransform::translation);
 	classBoxedTransform->addMethod(L"rotation", &BoxedTransform::rotation);
 	scriptManager->registerClass(classBoxedTransform);
+
+	Ref< AutoScriptClass< BoxedArray > > classBoxedArray = new AutoScriptClass< BoxedArray >();
+	classBoxedArray->addConstructor();
+	classBoxedArray->addConstructor< const RefArray< Object >& >();
+	classBoxedArray->addMethod(L"length", &BoxedArray::length);
+	classBoxedArray->addMethod(L"set", &BoxedArray::set);
+	classBoxedArray->addMethod(L"get", &BoxedArray::get);
+	scriptManager->registerClass(classBoxedArray);
 }
 	
 	}

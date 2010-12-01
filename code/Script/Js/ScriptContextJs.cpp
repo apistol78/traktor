@@ -51,7 +51,7 @@ ScriptContextJs::ScriptContextJs()
 
 ScriptContextJs::~ScriptContextJs()
 {
-	m_context.Dispose();
+	destroy();
 }
 
 bool ScriptContextJs::create(const RefArray< IScriptClass >& registeredClasses)
@@ -158,6 +158,11 @@ bool ScriptContextJs::create(const RefArray< IScriptClass >& registeredClasses)
 	}
 
 	return true;
+}
+
+void ScriptContextJs::destroy()
+{
+	m_context.Dispose();
 }
 
 void ScriptContextJs::setGlobal(const std::wstring& globalName, const Any& globalValue)

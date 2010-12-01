@@ -87,9 +87,13 @@ void createBones(
 
 		bone->setLength(boneLength);
 		bone->setRadius(Scalar(0.25f));
+
+		/*
 		bone->setTwistLimit(0.1f);
 		bone->setConeLimit(Vector2(0.75f, 0.75f));
 		bone->setEnableLimits(true);
+		*/
+		bone->setEnableLimits(false);
 
 		int32_t index = skeleton->addBone(bone);
 
