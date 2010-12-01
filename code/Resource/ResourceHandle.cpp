@@ -12,6 +12,15 @@ ResourceHandle::ResourceHandle(const TypeInfo& resourceType)
 {
 }
 
+void ResourceHandle::release(void* owner) const
+{
+	// 2 -> 1 case; final external reference released, flush ourself.
+	if (getReferenceCount() == 2)
+		m_object = 0;
+
+	Object::release(owner);
+}
+
 void ResourceHandle::replace(Object* object)
 {
 	m_object = object;

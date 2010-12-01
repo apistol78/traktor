@@ -2,6 +2,7 @@
 #define traktor_script_Boxes_H
 
 #include "Core/Object.h"
+#include "Core/RefArray.h"
 #include "Core/Math/Vector4.h"
 #include "Core/Math/Quaternion.h"
 #include "Core/Math/Transform.h"
@@ -108,6 +109,33 @@ public:
 
 private:
 	Transform m_value;
+};
+
+class T_DLLCLASS BoxedArray : public Object
+{
+	T_RTTI_CLASS;
+
+public:
+	BoxedArray();
+
+	template < typename ObjectType >
+	BoxedArray(const RefArray< ObjectType >& arr)
+	{
+		m_arr.resize(arr.size());
+		for (uint32_t i = 0; i < arr.size(); ++i)
+			m_arr[i] = arr[i];
+	}
+
+	int32_t length() const;
+
+	void set(int32_t index, Object* object);
+
+	Object* get(int32_t index);
+
+	const RefArray< Object >& unbox() const;
+
+private:
+	RefArray< Object > m_arr;
 };
 
 void T_DLLCLASS registerBoxClasses(class IScriptManager* scriptManager);

@@ -26,6 +26,8 @@ class T_DLLCLASS ResourceHandle : public IResourceHandle
 public:
 	ResourceHandle(const TypeInfo& type);
 
+	virtual void release(void* owner) const;
+
 	virtual void replace(Object* object);
 
 	virtual Object* get() const;
@@ -36,7 +38,7 @@ public:
 
 private:
 	const TypeInfo& m_resourceType;
-	Ref< Object > m_object;
+	mutable Ref< Object > m_object;
 };
 
 	}

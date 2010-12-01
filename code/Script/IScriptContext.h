@@ -43,6 +43,9 @@ class T_DLLCLASS IScriptContext : public Object
 	T_RTTI_CLASS;
 
 public:
+	/*! \brief Explicit destroy context. */
+	virtual void destroy() = 0;
+
 	/*! \brief Set global variable value.
 	 *
 	 * \param globalName Name of global variable.

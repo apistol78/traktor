@@ -114,8 +114,17 @@ ScriptContextLua::ScriptContextLua(const RefArray< IScriptClass >& registeredCla
 
 ScriptContextLua::~ScriptContextLua()
 {
+	destroy();
+}
+
+void ScriptContextLua::destroy()
+{
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	lua_close(m_luaState);
+	if (m_luaState)
+	{
+		lua_close(m_luaState);
+		m_luaState = 0;
+	}
 }
 
 void ScriptContextLua::setGlobal(const std::wstring& globalName, const Any& globalValue)
