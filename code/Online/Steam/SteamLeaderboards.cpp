@@ -26,40 +26,49 @@ SteamLeaderboards::SteamLeaderboards(SteamSessionManager* sessionManager, const 
 
 bool SteamLeaderboards::enumerate(std::map< std::wstring, LeaderboardData >& outLeaderboards)
 {
-	if (!m_sessionManager->waitForStats())
-		return false;
+	bool haveStats = m_sessionManager->waitForStats();
 
 	Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
-
 	for (std::set< std::wstring >::const_iterator i = m_leaderboardIds.begin(); i != m_leaderboardIds.end(); ++i)
 	{
-		SteamAPICall_t call = SteamUserStats()->FindOrCreateLeaderboard(
-			wstombs(*i).c_str(),
-			k_ELeaderboardSortMethodDescending,
-			k_ELeaderboardDisplayTypeNumeric
-		);
-		if (call == 0)
-			return false;
-
-		m_receivedLeaderboard = false;
-		m_receivedLeaderboardHandle = 0;
-		m_callbackFindLeaderboard.Set(call, this, &SteamLeaderboards::OnLeaderboardFind);
-
-		while (!m_receivedLeaderboard)
+		if (haveStats)
 		{
-			m_sessionManager->update();
-			if (currentThread)
-				currentThread->sleep(100);
+			SteamAPICall_t call = SteamUserStats()->FindOrCreateLeaderboard(
+				wstombs(*i).c_str(),
+				k_ELeaderboardSortMethodDescending,
+				k_ELeaderboardDisplayTypeNumeric
+			);
+			if (call == 0)
+				return false;
+
+			m_receivedLeaderboard = false;
+			m_receivedLeaderboardHandle = 0;
+			m_callbackFindLeaderboard.Set(call, this, &SteamLeaderboards::OnLeaderboardFind);
+
+			while (!m_receivedLeaderboard)
+			{
+				m_sessionManager->update();
+				if (currentThread)
+					currentThread->sleep(100);
+			}
+
+			if (!m_receivedLeaderboardHandle)
+				return false;
+
+			LeaderboardData data;
+			data.handle = m_receivedLeaderboardHandle;
+			data.score = m_receivedLeaderboardScore;
+			data.rank = m_receivedLeaderboardRank;
+			outLeaderboards.insert(std::make_pair(*i, data));
 		}
-
-		if (!m_receivedLeaderboardHandle)
-			return false;
-
-		LeaderboardData data;
-		data.handle = m_receivedLeaderboardHandle;
-		data.score = m_receivedLeaderboardScore;
-		data.rank = m_receivedLeaderboardRank;
-		outLeaderboards.insert(std::make_pair(*i, data));
+		else
+		{
+			LeaderboardData data;
+			data.handle = 0;
+			data.score = 0;
+			data.rank = 0;
+			outLeaderboards.insert(std::make_pair(*i, data));
+		}
 	}
 
 	return true;
@@ -67,6 +76,9 @@ bool SteamLeaderboards::enumerate(std::map< std::wstring, LeaderboardData >& out
 
 bool SteamLeaderboards::set(const uint64_t handle, int32_t score)
 {
+	if (!handle || !SteamUser()->BLoggedOn())
+		return false;
+
 	SteamAPICall_t call = SteamUserStats()->UploadLeaderboardScore(handle, k_ELeaderboardUploadScoreMethodForceUpdate, score, 0, 0);
 	if (call == 0)
 		return false;
