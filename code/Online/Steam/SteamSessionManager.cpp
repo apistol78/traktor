@@ -174,7 +174,10 @@ bool SteamSessionManager::waitForStats()
 {
 	if (!m_receivedStats)
 	{
-		log::debug << L"Steam; Waiting for stats..." << Endl;
+		if (!SteamUser()->BLoggedOn())
+			return false;
+
+		log::debug << L"Steam is online; Waiting for stats..." << Endl;
 		Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
 		while (!m_receivedStats)
 		{

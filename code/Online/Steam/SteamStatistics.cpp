@@ -22,26 +22,28 @@ SteamStatistics::SteamStatistics(SteamSessionManager* sessionManager, const wcha
 
 bool SteamStatistics::enumerate(std::map< std::wstring, float >& outStats)
 {
-	if (!m_sessionManager->waitForStats())
-		return false;
-
+	bool haveStats = m_sessionManager->waitForStats();
 	for (std::set< std::wstring >::const_iterator i = m_statIds.begin(); i != m_statIds.end(); ++i)
 	{
-		float value;
-		if (!SteamUserStats()->GetStat(wstombs(*i).c_str(), &value))
-			return false;
-
+		float value = 0.0f;
+		if (haveStats)
+		{
+			if (!SteamUserStats()->GetStat(wstombs(*i).c_str(), &value))
+				return false;
+		}
 		outStats.insert(std::make_pair(
 			*i,
 			value
 		));
 	}
-
 	return true;
 }
 
 bool SteamStatistics::set(const std::wstring& statId, float value)
 {
+	if (!m_sessionManager->waitForStats())
+		return false;
+
 	if (!SteamUserStats()->SetStat(wstombs(statId).c_str(), value))
 		return false;
 

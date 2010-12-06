@@ -20,21 +20,20 @@ SteamAchievements::SteamAchievements(SteamSessionManager* sessionManager, const 
 
 bool SteamAchievements::enumerate(std::map< std::wstring, bool >& outAchievements)
 {
-	if (!m_sessionManager->waitForStats())
-		return false;
-
+	bool haveStats = m_sessionManager->waitForStats();
 	for (std::set< std::wstring >::const_iterator i = m_achievementIds.begin(); i != m_achievementIds.end(); ++i)
 	{
 		bool achieved = false;
-		if (!SteamUserStats()->GetAchievement(wstombs(*i).c_str(), &achieved))
-			return false;
-
+		if (haveStats)
+		{
+			if (!SteamUserStats()->GetAchievement(wstombs(*i).c_str(), &achieved))
+				return false;
+		}
 		outAchievements.insert(std::make_pair(
 			*i,
 			achieved
 		));
 	}
-
 	return true;
 }
 
