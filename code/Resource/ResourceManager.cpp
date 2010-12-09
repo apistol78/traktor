@@ -34,6 +34,19 @@ ResourceManager::ResourceManager()
 {
 }
 
+ResourceManager::~ResourceManager()
+{
+	destroy();
+}
+
+void ResourceManager::destroy()
+{
+	m_factories.clear();
+	m_nullHandle = 0;
+	m_cache.clear();
+	m_times.clear();
+}
+
 void ResourceManager::addFactory(IResourceFactory* factory)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
@@ -72,8 +85,21 @@ Ref< IResourceHandle > ResourceManager::bind(const TypeInfo& type, const Guid& g
 			handle = cache.front();
 		else
 		{
-			handle = new ResourceHandle(type);
-			cache.push_back(handle);
+			// First try to reuse empty handles; as final proxy reference is released resource
+			// handles becomes empty and thus it's safe to reuse them.
+			for (RefArray< ResourceHandle >::iterator i = cache.begin(); i != cache.end(); ++i)
+			{
+				if (!(*i)->get())
+				{
+					handle = *i;
+					break;
+				}
+			}
+			if (!handle)
+			{
+				handle = new ResourceHandle(type, cacheable);
+				cache.push_back(handle);
+			}
 		}
 	}
 	

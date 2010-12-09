@@ -106,7 +106,7 @@ public:
 	/*! \brief Validate proxy; ie get resource from handle. */
 	bool validate()
 	{
-		if (m_handle)
+		if (m_handle && (ResourceType*)m_handle->get() != m_resource)
 			m_resource = (ResourceType*)m_handle->get();
 		return m_resource != 0;
 	}
