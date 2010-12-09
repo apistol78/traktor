@@ -29,6 +29,8 @@ class T_DLLCLASS IResourceManager : public Object
 	T_RTTI_CLASS;
 
 public:
+	virtual void destroy() = 0;
+
 	/*! \brief Add resource factory to manager.
 	 *
 	 * \param factory Resource factory.

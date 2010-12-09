@@ -33,6 +33,10 @@ class T_DLLCLASS ResourceManager : public IResourceManager
 public:
 	ResourceManager();
 
+	virtual ~ResourceManager();
+
+	virtual void destroy();
+
 	virtual void addFactory(IResourceFactory* factory);
 
 	virtual void removeFactory(IResourceFactory* factory);
