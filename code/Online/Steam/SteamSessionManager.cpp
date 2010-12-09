@@ -68,6 +68,9 @@ bool SteamSessionManager::create(const SteamCreateDesc& desc)
 		return false;
 	}
 
+	if (!SteamUser()->BLoggedOn())
+		log::warning << L"Steam running in offline mode; Some features will be disabled or postponed until connected" << Endl;
+
 	m_maxRequestAttempts = desc.requestAttempts;
 
 	m_achievements = new SteamAchievements(this, desc.achievementIds);
@@ -136,7 +139,7 @@ std::wstring SteamSessionManager::getLanguageCode() const
 			return c_languageCodes[i].code;
 	}
 
-	log::error << L"Unable to map language \"" << mbstows(language) << L"\" to ISO 639-1 code" << Endl;
+	log::error << L"Steam; Unable to map language \"" << mbstows(language) << L"\" to ISO 639-1 code" << Endl;
 	return L"";
 }
 
@@ -177,7 +180,7 @@ bool SteamSessionManager::waitForStats()
 		if (!SteamUser()->BLoggedOn())
 			return false;
 
-		log::debug << L"Steam is online; Waiting for stats..." << Endl;
+		log::info << L"Steam; Waiting for stats..." << Endl;
 		Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
 		while (!m_receivedStats)
 		{
@@ -186,6 +189,9 @@ bool SteamSessionManager::waitForStats()
 
 			if (currentThread)
 				currentThread->sleep(100);
+
+			if (!SteamUser()->BLoggedOn())
+				break;
 		}
 	}
 	return m_receivedStatsSucceeded;
