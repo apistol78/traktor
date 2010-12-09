@@ -28,6 +28,8 @@ public:
 
 	int32_t reconfigure(const Settings* settings);
 
+	void update();
+
 	virtual physics::PhysicsManager* getPhysicsManager();
 
 private:

@@ -1,8 +1,9 @@
+#include "Amalgam/Impl/TargetManagerConnection.h"
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
 #include "Core/Serialization/BinarySerializer.h"
+#include "Net/Network.h"
 #include "Net/SocketAddressIPv4.h"
-#include "Amalgam/Impl/TargetManagerConnection.h"
 
 namespace traktor
 {
@@ -17,16 +18,22 @@ TargetManagerConnection::TargetManagerConnection()
 
 bool TargetManagerConnection::connect(const std::wstring& host, uint16_t port)
 {
+	if (!net::Network::initialize())
+	{
+		log::error << L"Failed to create target manager connection; network initialization failed" << Endl;
+		return false;
+	}
+
 	m_socket = new net::TcpSocket();
 	if (!m_socket->connect(net::SocketAddressIPv4(host, port)))
 	{
-		log::error << L"Unable to connect to target manager" << Endl;
+		log::error << L"Failed to create target manager connection; unable to connect" << Endl;
 		return false;
 	}
 
 	m_socketStream = new net::SocketStream(m_socket, false, true);
 
-	log::info << L"Connnection to target manager established successfully" << Endl;
+	log::info << L"Connection to target manager established successfully" << Endl;
 	return true;
 }
 

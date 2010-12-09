@@ -13,7 +13,6 @@
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Database/Database.h"
-#include "Net/Network.h"
 #include "Online/ISessionManager.h"
 #include "Physics/PhysicsManager.h"
 #include "Render/IRenderSystem.h"
@@ -166,12 +165,6 @@ bool Application::create(
 	IStateFactory* stateFactory
 )
 {
-	if (!net::Network::initialize())
-	{
-		log::error << L"Application failed; unable to initialize network" << Endl;
-		return false;
-	}
-
 	std::wstring targetManagerHost = settings->getProperty< PropertyString >(L"Amalgam.TargetManager/Host");
 	int32_t targetManagerPort = settings->getProperty< PropertyInteger >(L"Amalgam.TargetManager/Port");
 	if (!targetManagerHost.empty() && targetManagerPort)
@@ -559,7 +552,7 @@ bool Application::update()
 #if T_MEASURE_PERFORMANCE
 				double physicsTimeStart = m_timer.getElapsedTime();
 #endif
-				physicsManager->update();
+				m_physicsServer->update();
 #if T_MEASURE_PERFORMANCE
 				double physicsTimeEnd = m_timer.getElapsedTime();
 				physicsDuration += physicsTimeEnd - physicsTimeStart;
