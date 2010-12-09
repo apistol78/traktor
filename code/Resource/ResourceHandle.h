@@ -24,7 +24,7 @@ class T_DLLCLASS ResourceHandle : public IResourceHandle
 	T_RTTI_CLASS;
 
 public:
-	ResourceHandle(const TypeInfo& type);
+	ResourceHandle(const TypeInfo& type, bool cacheable);
 
 	virtual void release(void* owner) const;
 
@@ -38,6 +38,7 @@ public:
 
 private:
 	const TypeInfo& m_resourceType;
+	bool m_cacheable;
 	mutable Ref< Object > m_object;
 };
 
