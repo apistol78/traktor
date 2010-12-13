@@ -9,6 +9,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.EntityData", EntityData, ISerializable)
 
+void EntityData::setName(const std::wstring& name)
+{
+	m_name = name;
+}
+
 const std::wstring& EntityData::getName() const
 {
 	return m_name;

@@ -29,6 +29,8 @@ class T_DLLCLASS EntityData : public ISerializable
 	T_RTTI_CLASS;
 
 public:
+	void setName(const std::wstring& name);
+
 	const std::wstring& getName() const;
 
 	virtual bool serialize(ISerializer& s);

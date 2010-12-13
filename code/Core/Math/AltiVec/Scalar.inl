@@ -143,25 +143,24 @@ T_MATH_INLINE Scalar abs(const Scalar& s)
 
 T_MATH_INLINE Scalar squareRoot(const Scalar& s)
 {
-#if 1
-	float fs = sqrtf(s);
-	return Scalar(fs);
-#else
-	// @fixme Too inaccurate
-	vec_float4 rsqrt = vec_rsqrte(s.m_data);
-	return Scalar(vec_re(rsqrt));
-#endif
+	return Scalar(1.0f) / reciprocalSquareRoot(s);
 }
 
 T_MATH_INLINE Scalar reciprocalSquareRoot(const Scalar& s)
 {
-#if 1
-	float rfs = 1.0f / sqrtf(s);
-	return Scalar(rfs);
-#else
-	// @fixme Too inaccurate
-	return Scalar(vec_rsqrte(s.m_data));
-#endif
+	const vec_float4 zero = (vec_float4)(0.0f);
+	const vec_float4 half = (vec_float4)(0.5f);
+	const vec_float4 one = (vec_float4)(1.0f);
+	
+	vec_float4 estimate, estimateSquared, halfEstimate;
+
+	estimate = vec_rsqrte(s.m_data); 
+
+	estimateSquared = vec_madd(estimate, estimate, zero);
+	halfEstimate = vec_madd(estimate, half, zero);
+	estimate = vec_madd(vec_nmsub(s.m_data, estimateSquared, one), halfEstimate, estimate);
+
+	return Scalar(estimate);
 }
 
 T_MATH_INLINE Scalar lerp(const Scalar& a, const Scalar& b, const Scalar& c)

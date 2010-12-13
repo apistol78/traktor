@@ -1,5 +1,5 @@
 #include "Animation/Animation/Animation.h"
-#include "Animation/Animation/State.h"
+#include "Animation/Animation/StateNode.h"
 #include "Animation/Animation/StateGraph.h"
 #include "Animation/Animation/StatePoseController.h"
 #include "Animation/Animation/StatePoseControllerData.h"
@@ -35,10 +35,10 @@ Ref< IPoseController > StatePoseControllerData::createInstance(resource::IResour
 	if (!m_stateGraph.validate())
 		return 0;
 
-	const RefArray< State >& states = m_stateGraph->getStates();
-	for (RefArray< State >::const_iterator i = states.begin(); i != states.end(); ++i)
+	const RefArray< StateNode >& states = m_stateGraph->getStates();
+	for (RefArray< StateNode >::const_iterator i = states.begin(); i != states.end(); ++i)
 	{
-		if (!resourceManager->bind((*i)->getAnimation()))
+		if (!(*i)->bind(resourceManager))
 			return 0;
 	}
 

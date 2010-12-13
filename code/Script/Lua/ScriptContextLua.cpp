@@ -362,7 +362,15 @@ void ScriptContextLua::pushAny(const Any& any)
 		if (any.getObject())
 		{
 			const TypeInfo* objectType = &type_of(any.getObject());
+
 			std::map< const TypeInfo*, uint32_t >::const_iterator i = m_classRegistryLookup.find(objectType);
+			while (i == m_classRegistryLookup.end())
+			{
+				if ((objectType = objectType->getSuper()) == 0)
+					break;
+				i = m_classRegistryLookup.find(objectType);
+			}
+
 			if (i != m_classRegistryLookup.end())
 			{
 				const RegisteredClass& rc = m_classRegistry[i->second];
@@ -399,6 +407,8 @@ void ScriptContextLua::pushAny(const Any& any)
 
 				return;
 			}
+			else
+				log::debug << L"Class \"" << type_name(any.getObject()) << L"\" not exported; passing nil" << Endl;
 		}
 		lua_pushnil(m_luaState);
 	}
@@ -474,7 +484,11 @@ int ScriptContextLua::callConstructor(lua_State* luaState)
 		argv[i] = context->toAny(2 + i);
 
 	// Invoke native method.
-	Any returnValue(scriptClass->construct(argc, argv));
+	IScriptClass::InvokeParam param;
+	param.context = context;
+	param.object = 0;
+
+	Any returnValue(scriptClass->construct(param, argc, argv));
 	context->pushAny(returnValue);
 
 	return 1;
@@ -512,7 +526,11 @@ int ScriptContextLua::callMethod(lua_State* luaState)
 		argv[i] = context->toAny(2 + i);
 
 	// Invoke native method.
-	Any returnValue = scriptClass->invoke(object, methodId, argc, argv);
+	IScriptClass::InvokeParam param;
+	param.context = context;
+	param.object = object;
+
+	Any returnValue = scriptClass->invoke(param, methodId, argc, argv);
 	context->pushAny(returnValue);
 
 	return 1;
@@ -549,7 +567,11 @@ int ScriptContextLua::callUnknownMethod(lua_State* luaState)
 		argv[i] = context->toAny(2 + i);
 
 	// Invoke native method.
-	Any returnValue = scriptClass->invokeUnknown(object, mbstows(methodName), argc, argv);
+	IScriptClass::InvokeParam param;
+	param.context = context;
+	param.object = object;
+
+	Any returnValue = scriptClass->invokeUnknown(param, mbstows(methodName), argc, argv);
 	context->pushAny(returnValue);
 
 	return 1;
@@ -579,8 +601,12 @@ int ScriptContextLua::callProperty(lua_State* luaState)
 	int32_t argc = lua_gettop(luaState) - 1;
 	if (argc == 2)
 	{
+		IScriptClass::InvokeParam param;
+		param.context = context;
+		param.object = object;
+
 		// Get property value.
-		Any propertyValue = scriptClass->getPropertyValue(object, propertyId);
+		Any propertyValue = scriptClass->getPropertyValue(param, propertyId);
 		context->pushAny(propertyValue);
 		return 1;
 	}

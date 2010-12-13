@@ -1,6 +1,6 @@
 #include "Animation/Editor/StateGraphEditorPage.h"
 #include "Animation/Animation/StateGraph.h"
-#include "Animation/Animation/State.h"
+#include "Animation/Animation/StateNodeAnimation.h"
 #include "Animation/Animation/Transition.h"
 #include "Animation/Animation/Animation.h"
 #include "Editor/IEditor.h"
@@ -135,10 +135,12 @@ bool StateGraphEditorPage::dropInstance(db::Instance* instance, const ui::Point&
 
 	if (is_type_of< Animation >(*primaryType))
 	{
-		Ref< State > state = new State(instance->getName(), instance->getGuid());
+		Ref< StateNode > state = new StateNodeAnimation(instance->getName(), instance->getGuid());
 
 		ui::Point absolutePosition = m_editorGraph->screenToClient(position) - m_editorGraph->getOffset();
 		state->setPosition(std::pair< int, int >(absolutePosition.x, absolutePosition.y));
+
+		m_stateGraph->addState(state);
 
 		Ref< ui::custom::Node > node = createEditorNode(state);
 		m_editorGraph->addNode(node);
@@ -160,7 +162,7 @@ bool StateGraphEditorPage::handleCommand(const ui::Command& command)
 		{
 			Ref< ui::custom::Node > node = *i;
 
-			Ref< State > state = node->getData< State >(L"STATE");
+			Ref< StateNode > state = node->getData< StateNode >(L"STATE");
 			node->setTitle(state->getName());
 
 			const std::pair< int, int >& position = state->getPosition();
@@ -305,7 +307,7 @@ bool StateGraphEditorPage::handleCommand(const ui::Command& command)
 		for (RefArray< ui::custom::Node >::iterator i = nodes.begin(); i != nodes.end(); ++i)
 		{
 			Ref< ui::custom::Node > node = *i;
-			Ref< State > state = node->getData< State >(L"STATE");
+			Ref< StateNode > state = node->getData< StateNode >(L"STATE");
 
 			m_editorGraph->removeNode(node);
 			m_stateGraph->removeState(state);
@@ -364,7 +366,7 @@ bool StateGraphEditorPage::handleCommand(const ui::Command& command)
 		RefArray< ui::custom::Node > selectedNodes;
 		if (m_editorGraph->getSelectedNodes(selectedNodes) == 1)
 		{
-			Ref< State > state = selectedNodes.front()->getData< State >(L"STATE");
+			Ref< StateNode > state = selectedNodes.front()->getData< StateNode >(L"STATE");
 			T_ASSERT (state);
 
 			m_stateGraph->setRootState(state);
@@ -423,14 +425,14 @@ void StateGraphEditorPage::handleDatabaseEvent(const Guid& eventId)
 {
 }
 
-void StateGraphEditorPage::createEditorNodes(const RefArray< State >& states, const RefArray< Transition >& transitions)
+void StateGraphEditorPage::createEditorNodes(const RefArray< StateNode >& states, const RefArray< Transition >& transitions)
 {
-	std::map< Ref< State >, Ref< ui::custom::Node > > nodeMap;
+	std::map< Ref< StateNode >, Ref< ui::custom::Node > > nodeMap;
 
 	// Create editor nodes for each state.
-	for (RefArray< State >::const_iterator i = states.begin(); i != states.end(); ++i)
+	for (RefArray< StateNode >::const_iterator i = states.begin(); i != states.end(); ++i)
 	{
-		Ref< State > state = *i;
+		Ref< StateNode > state = *i;
 		Ref< ui::custom::Node > node = createEditorNode(state);
 		m_editorGraph->addNode(node);
 		nodeMap[state] = node;
@@ -441,8 +443,8 @@ void StateGraphEditorPage::createEditorNodes(const RefArray< State >& states, co
 	{
 		Ref< Transition > transition = *i;
 
-		Ref< State > from = transition->from();
-		Ref< State > to = transition->to();
+		Ref< StateNode > from = transition->from();
+		Ref< StateNode > to = transition->to();
 
 		Ref< ui::custom::Node > fromNode = nodeMap[from];
 		Ref< ui::custom::Node > toNode = nodeMap[to];
@@ -463,7 +465,7 @@ void StateGraphEditorPage::createEditorNodes(const RefArray< State >& states, co
 	}
 }
 
-Ref< ui::custom::Node > StateGraphEditorPage::createEditorNode(State* state)
+Ref< ui::custom::Node > StateGraphEditorPage::createEditorNode(StateNode* state)
 {
 	Ref< ui::custom::NodeShape > shape = new ui::custom::DefaultNodeShape(m_editorGraph);
 
@@ -487,7 +489,7 @@ Ref< ui::custom::Node > StateGraphEditorPage::createEditorNode(State* state)
 
 void StateGraphEditorPage::createState(const ui::Point& at)
 {
-	Ref< State > state = new State(i18n::Text(L"STATEGRAPH_UNNAMED"), Guid());
+	Ref< StateNode > state = new StateNodeAnimation(i18n::Text(L"STATEGRAPH_UNNAMED"), Guid());
 	state->setPosition(std::pair< int, int >(at.x, at.y));
 	m_stateGraph->addState(state);
 
@@ -534,7 +536,7 @@ void StateGraphEditorPage::eventSelect(ui::Event* event)
 
 	if (m_editorGraph->getSelectedNodes(nodes) == 1)
 	{
-		Ref< State > state = nodes[0]->getData< State >(L"STATE");
+		Ref< StateNode > state = nodes[0]->getData< StateNode >(L"STATE");
 		T_ASSERT (state);
 
 		m_site->setPropertyObject(state);
@@ -556,7 +558,7 @@ void StateGraphEditorPage::eventNodeMoved(ui::Event* event)
 	T_ASSERT (node);
 
 	// Get state from editor node.
-	Ref< State > state = node->getData< State >(L"STATE");
+	Ref< StateNode > state = node->getData< StateNode >(L"STATE");
 	T_ASSERT (state);
 
 	ui::Point position = node->getPosition();
@@ -583,10 +585,10 @@ void StateGraphEditorPage::eventEdgeConnect(ui::Event* event)
 	Ref< ui::custom::Pin > enterPin = edge->getDestinationPin();
 	T_ASSERT (enterPin);
 
-	Ref< State > leaveState = leavePin->getNode()->getData< State >(L"STATE");
+	Ref< StateNode > leaveState = leavePin->getNode()->getData< StateNode >(L"STATE");
 	T_ASSERT (leaveState);
 
-	Ref< State > enterState = enterPin->getNode()->getData< State >(L"STATE");
+	Ref< StateNode > enterState = enterPin->getNode()->getData< StateNode >(L"STATE");
 	T_ASSERT (enterState);
 
 	Ref< Transition > transition = new Transition(leaveState, enterState);

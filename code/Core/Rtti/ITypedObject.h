@@ -2,6 +2,7 @@
 #define traktor_ITypedObject_H
 
 #include "Core/Ref.h"
+#include "Core/InplaceRef.h"
 #include "Core/Meta/Traits.h"
 #include "Core/Rtti/TypeInfo.h"
 
@@ -239,8 +240,8 @@ Ref< typename IsPointer< T >::base_t > dynamic_type_cast(const Ref< T0 >& obj)
  * \param o Object.
  * \return Casted value.
  */
-template < typename T >
-T checked_type_cast(ITypedObject* obj)
+template < typename T, typename T0 >
+T checked_type_cast(T0* obj)
 {
 	T_ASSERT (!obj || is_a< T >(obj));
 	return static_cast< T >(obj);
@@ -255,8 +256,8 @@ T checked_type_cast(ITypedObject* obj)
  * \param o Object.
  * \return Casted value.
  */
-template < typename T, bool AllowNull >
-T checked_type_cast(ITypedObject* obj)
+template < typename T, bool AllowNull, typename T0 >
+T checked_type_cast(T0* obj)
 {
 	T_ASSERT ((AllowNull || obj) && is_a< T >(obj));
 	return static_cast< T >(obj);
@@ -270,8 +271,8 @@ T checked_type_cast(ITypedObject* obj)
  * \param o Object.
  * \return Casted value.
  */
-template < typename T >
-T checked_type_cast(const ITypedObject* obj)
+template < typename T, typename T0 >
+T checked_type_cast(const T0* obj)
 {
 	T_ASSERT (!obj || is_a< T >(obj));
 	return static_cast< T >(obj);
@@ -286,8 +287,8 @@ T checked_type_cast(const ITypedObject* obj)
  * \param o Object.
  * \return Casted value.
  */
-template < typename T, bool AllowNull >
-T checked_type_cast(const ITypedObject* obj)
+template < typename T, bool AllowNull, typename T0 >
+T checked_type_cast(const T0* obj)
 {
 	T_ASSERT ((AllowNull || obj) && is_a< T >(obj));
 	return static_cast< T >(obj);
@@ -317,6 +318,35 @@ Ref< typename IsPointer< T >::base_t > checked_type_cast(const Ref< T0 >& obj)
  */
 template < typename T, bool AllowNull, typename T0 >
 Ref< typename IsPointer< T >::base_t > checked_type_cast(const Ref< T0 >& obj)
+{
+	T_ASSERT ((AllowNull || obj) && is_a< T >(obj.ptr()));
+	return checked_type_cast< typename IsPointer< T >::base_t* >(obj.ptr());
+}
+
+/*! \brief Safe cast object.
+ *
+ * The cast will assert if object is of incorrect type.
+ *
+ * \param T Cast to type.
+ * \param o Object.
+ * \return Casted value.
+ */
+template < typename T, typename T0 >
+Ref< typename IsPointer< T >::base_t > checked_type_cast(const InplaceRef< T0 >& obj)
+{
+	return checked_type_cast< typename IsPointer< T >::base_t* >(obj.ptr());
+}
+
+/*! \brief Safe cast object.
+ *
+ * The cast will assert if object is of incorrect type.
+ *
+ * \param T Cast to type.
+ * \param o Object.
+ * \return Casted value.
+ */
+template < typename T, bool AllowNull, typename T0 >
+Ref< typename IsPointer< T >::base_t > checked_type_cast(const InplaceRef< T0 >& obj)
 {
 	T_ASSERT ((AllowNull || obj) && is_a< T >(obj.ptr()));
 	return checked_type_cast< typename IsPointer< T >::base_t* >(obj.ptr());

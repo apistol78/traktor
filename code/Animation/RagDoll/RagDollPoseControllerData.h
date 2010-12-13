@@ -45,9 +45,12 @@ private:
 	float m_limbMass;
 	float m_linearDamping;
 	float m_angularDamping;
+	float m_linearThreshold;
+	float m_angularThreshold;
 	Ref< IPoseControllerData > m_trackPoseController;
 	float m_trackLinearTension;
 	float m_trackAngularTension;
+	float m_trackDuration;
 };
 
 	}

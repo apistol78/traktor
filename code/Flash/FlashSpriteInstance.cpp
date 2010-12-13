@@ -255,7 +255,10 @@ void FlashSpriteInstance::preDispatchEvents()
 	// Issue dispatch event on child instances.
 	const FlashDisplayList::layer_map_t& layers = m_displayList.getLayers();
 	for (FlashDisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
-		i->second.instance->preDispatchEvents();
+	{
+		if (i->second.instance)
+			i->second.instance->preDispatchEvents();
+	}
 }
 
 void FlashSpriteInstance::postDispatchEvents()
@@ -273,7 +276,10 @@ void FlashSpriteInstance::postDispatchEvents()
 	// Issue post dispatch event on child sprite instances.
 	const FlashDisplayList::layer_map_t& layers = m_displayList.getLayers();
 	for (FlashDisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
-		i->second.instance->postDispatchEvents();
+	{
+		if (i->second.instance)
+			i->second.instance->postDispatchEvents();
+	}
 
 	m_inDispatch = false;
 }

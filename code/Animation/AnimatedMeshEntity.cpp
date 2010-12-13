@@ -24,13 +24,17 @@ AnimatedMeshEntity::AnimatedMeshEntity(
 	const resource::Proxy< mesh::SkinnedMesh >& mesh,
 	const resource::Proxy< Skeleton >& skeleton,
 	IPoseController* poseController,
-	const std::vector< int >& boneRemap
+	const std::vector< int >& boneRemap,
+	bool normalizePose,
+	bool normalizeTransform
 )
 :	mesh::MeshEntity(transform)
 ,	m_mesh(mesh)
 ,	m_skeleton(skeleton)
 ,	m_poseController(poseController)
 ,	m_boneRemap(boneRemap)
+,	m_normalizePose(normalizePose)
+,	m_normalizeTransform(normalizeTransform)
 ,	m_totalTime(0.0f)
 ,	m_updateController(true)
 {
@@ -199,11 +203,13 @@ void AnimatedMeshEntity::updatePoseController(float deltaTime)
 		m_boneTransforms.resize(0);
 		m_poseTransforms.resize(0);
 
+		// Calculate original bone transforms in object space.
 		calculateBoneTransforms(
 			m_skeleton,
 			m_boneTransforms
 		);
 
+		// Evaluate pose transforms in object space.
 		m_poseController->evaluate(
 			deltaTime,
 			m_transform,
@@ -215,10 +221,36 @@ void AnimatedMeshEntity::updatePoseController(float deltaTime)
 
 		size_t skeletonBoneCount = m_boneTransforms.size();
 		size_t skinBoneCount = m_mesh->getBoneCount();
+		
+		// Ensure we have same number of pose transforms as bones.
+		for (size_t i = m_poseTransforms.size(); i < skeletonBoneCount; ++i)
+			m_poseTransforms.push_back(m_boneTransforms[i]);
 
-		while (m_poseTransforms.size() < skeletonBoneCount)
-			m_poseTransforms.push_back(Transform::identity());
+		if (m_normalizePose)
+		{
+			// Calculate pose offset in object space.
+			Vector4 poseOffset = Vector4::zero();
+			for (size_t i = 0; i < skeletonBoneCount; ++i)
+				poseOffset += m_poseTransforms[i].translation();
+			poseOffset /= Scalar(float(skeletonBoneCount));
+	
+			// Normalize pose transforms; update entity transform from offset.
+			for (size_t i = 0; i < skeletonBoneCount; ++i)
+			{
+				m_poseTransforms[i] = Transform(
+					m_poseTransforms[i].translation() - poseOffset.xyz0(),
+					m_poseTransforms[i].rotation()
+				);
+			}
+	
+			if (m_normalizeTransform)
+				m_transform = Transform(
+					m_transform.translation() + poseOffset.xyz1(),
+					m_transform.rotation()
+				);
+		}
 
+		// Initialize skin transforms.
 		m_skinTransforms.resize(skinBoneCount * 2);
 		for (size_t i = 0; i < skinBoneCount * 2; i += 2)
 		{
@@ -226,6 +258,7 @@ void AnimatedMeshEntity::updatePoseController(float deltaTime)
 			m_skinTransforms[i + 1] = Vector4::origo();
 		}
 
+		// Calculate skin transforms in delta space.
 		for (size_t i = 0; i < skeletonBoneCount; ++i)
 		{
 			int32_t boneIndex = m_boneRemap[i];

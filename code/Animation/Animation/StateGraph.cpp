@@ -1,6 +1,6 @@
 #include <algorithm>
 #include "Animation/Animation/StateGraph.h"
-#include "Animation/Animation/State.h"
+#include "Animation/Animation/StateNode.h"
 #include "Animation/Animation/Transition.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRef.h"
@@ -13,18 +13,18 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.StateGraph", 0, StateGraph, ISerializable)
 
-void StateGraph::addState(State* state)
+void StateGraph::addState(StateNode* state)
 {
 	m_states.push_back(state);
 }
 
-void StateGraph::removeState(State* state)
+void StateGraph::removeState(StateNode* state)
 {
-	RefArray< State >::iterator i = std::find(m_states.begin(), m_states.end(), state);
+	RefArray< StateNode >::iterator i = std::find(m_states.begin(), m_states.end(), state);
 	m_states.erase(i);
 }
 
-const RefArray< State >& StateGraph::getStates() const
+const RefArray< StateNode >& StateGraph::getStates() const
 {
 	return m_states;
 }
@@ -45,21 +45,21 @@ const RefArray< Transition >& StateGraph::getTransitions() const
 	return m_transitions;
 }
 
-void StateGraph::setRootState(State* rootState)
+void StateGraph::setRootState(StateNode* rootState)
 {
 	m_rootState = rootState;
 }
 
-Ref< State > StateGraph::getRootState() const
+Ref< StateNode > StateGraph::getRootState() const
 {
 	return m_rootState;
 }
 
 bool StateGraph::serialize(ISerializer& s)
 {
-	s >> MemberRefArray< State >(L"states", m_states);
+	s >> MemberRefArray< StateNode >(L"states", m_states);
 	s >> MemberRefArray< Transition >(L"transitions", m_transitions);
-	s >> MemberRef< State >(L"rootState", m_rootState);
+	s >> MemberRef< StateNode >(L"rootState", m_rootState);
 	return true;
 }
 

@@ -17,6 +17,8 @@ namespace traktor
 	namespace script
 	{
 
+class IScriptContext;
+
 /*! \brief Script class definition.
  * \ingroup Script
  *
@@ -29,16 +31,20 @@ class T_DLLCLASS IScriptClass : public Object
 	T_RTTI_CLASS;
 
 public:
+	struct InvokeParam
+	{
+		IScriptContext* context;	//< Caller context.
+		Object* object;				//< Current object.
+	};
+
 	/*! \brief Get exported native type. */
 	virtual const TypeInfo& getExportType() const = 0;
-
 
 	/*! \brief Have constructor. */
 	virtual bool haveConstructor() const = 0;
 
 	/*! \brief Construct new object. */
-	virtual Ref< Object > construct(uint32_t argc, const Any* argv) const = 0;
-
+	virtual Ref< Object > construct(const InvokeParam& param, uint32_t argc, const Any* argv) const = 0;
 
 	/*! \brief Get exported method count. */
 	virtual uint32_t getMethodCount() const = 0;
@@ -47,11 +53,10 @@ public:
 	virtual std::wstring getMethodName(uint32_t methodId) const = 0;
 
 	/*! \brief Invoke exported method. */
-	virtual Any invoke(Object* object, uint32_t methodId, uint32_t argc, const Any* argv) const = 0;
+	virtual Any invoke(const InvokeParam& param, uint32_t methodId, uint32_t argc, const Any* argv) const = 0;
 
 	/*! \brief Invoke unknown method. */
-	virtual Any invokeUnknown(Object* object, const std::wstring& methodName, uint32_t argc, const Any* argv) const = 0;
-
+	virtual Any invokeUnknown(const InvokeParam& param, const std::wstring& methodName, uint32_t argc, const Any* argv) const = 0;
 
 	/*! \brief Get exported properties count. */
 	virtual uint32_t getPropertyCount() const = 0;
@@ -60,10 +65,10 @@ public:
 	virtual std::wstring getPropertyName(uint32_t propertyId) const = 0;
 
 	/*! \brief Get property value. */
-	virtual Any getPropertyValue(const Object* object, uint32_t propertyId) const = 0;
+	virtual Any getPropertyValue(const InvokeParam& param, uint32_t propertyId) const = 0;
 
 	/*! \brief Set property value. */
-	virtual void setPropertyValue(Object* object, uint32_t propertyId, const Any& value) const = 0;
+	virtual void setPropertyValue(const InvokeParam& param, uint32_t propertyId, const Any& value) const = 0;
 };
 
 	}

@@ -1,4 +1,7 @@
+#include "Amalgam/IEnvironment.h"
+#include "Amalgam/Impl/ResourceServer.h"
 #include "Animation/Animation/AnimationFactory.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Flash/FlashMovieResourceFactory.h"
 #include "Mesh/MeshFactory.h"
 #include "Spray/EffectFactory.h"
@@ -7,8 +10,6 @@
 #include "Video/VideoFactory.h"
 #include "Weather/Clouds/CloudMaskFactory.h"
 #include "Resource/ResourceManager.h"
-#include "Amalgam/IEnvironment.h"
-#include "Amalgam/Impl/ResourceServer.h"
 
 namespace traktor
 {
@@ -25,12 +26,7 @@ bool ResourceServer::create()
 
 void ResourceServer::destroy()
 {
-	if (m_resourceManager)
-	{
-		m_resourceManager->flush();
-		m_resourceManager->removeAllFactories();
-		m_resourceManager = 0;
-	}
+	safeDestroy(m_resourceManager);
 }
 
 void ResourceServer::createResourceFactories(IEnvironment* environment)

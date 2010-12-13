@@ -43,6 +43,12 @@ public:
 	
 	float w() const;
 
+	Vector4 add(const Vector4& v) const;
+
+	Vector4 sub(const Vector4& v) const;
+
+	float dot(const Vector4& v) const;
+
 	float length() const;
 
 	Vector4 normalized() const;
@@ -83,6 +89,10 @@ public:
 	Quaternion normalized() const;
 
 	Quaternion inverse() const;
+
+	Quaternion concat(const Quaternion& q) const;
+
+	Vector4 transform(const Vector4& v) const;
 	
 	const Quaternion& unbox() const;
 
@@ -104,6 +114,12 @@ public:
 	const Vector4& translation() const;
 	
 	const Quaternion& rotation() const;
+
+	Transform inverse() const;
+
+	Transform concat(const Transform& t) const;
+
+	Vector4 transform(const Vector4& v) const;
 	
 	const Transform& unbox() const;
 

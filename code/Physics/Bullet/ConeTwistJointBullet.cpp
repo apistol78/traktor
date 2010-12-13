@@ -144,7 +144,7 @@ void ConeTwistJointBullet::prepare()
 
 void ConeTwistJointBullet::update(float deltaTime)
 {
-	const Scalar c_tau(0.1f);
+	const Scalar c_tau(0.3f);
 	const Scalar c_damping(1.0f);
 
 	Transform tf1 = m_body1->getTransform();

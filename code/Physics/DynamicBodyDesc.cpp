@@ -7,7 +7,7 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.DynamicBodyDesc", 4, DynamicBodyDesc, BodyDesc)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.DynamicBodyDesc", 5, DynamicBodyDesc, BodyDesc)
 
 DynamicBodyDesc::DynamicBodyDesc()
 :	m_mass(1.0f)
@@ -16,6 +16,8 @@ DynamicBodyDesc::DynamicBodyDesc()
 ,	m_linearDamping(0.0f)
 ,	m_angularDamping(0.0f)
 ,	m_friction(0.75f)
+,	m_linearThreshold(0.8f)
+,	m_angularThreshold(1.0f)
 {
 }
 
@@ -79,6 +81,26 @@ float DynamicBodyDesc::getFriction() const
 	return m_friction;
 }
 
+void DynamicBodyDesc::setLinearThreshold(float linearThreshold)
+{
+	m_linearThreshold = linearThreshold;
+}
+
+float DynamicBodyDesc::getLinearThreshold() const
+{
+	return m_linearThreshold;
+}
+
+void DynamicBodyDesc::setAngularThreshold(float angularThreshold)
+{
+	m_angularThreshold = angularThreshold;
+}
+
+float DynamicBodyDesc::getAngularThreshold() const
+{
+	return m_angularThreshold;
+}
+
 bool DynamicBodyDesc::serialize(ISerializer& s)
 {
 	T_ASSERT (s.getVersion() >= 4);
@@ -92,6 +114,12 @@ bool DynamicBodyDesc::serialize(ISerializer& s)
 	s >> Member< float >(L"linearDamping", m_linearDamping, 0.0f, 1.0f);
 	s >> Member< float >(L"angularDamping", m_angularDamping, 0.0f, 1.0f);
 	s >> Member< float >(L"friction", m_friction, 0.0f);
+
+	if (s.getVersion() >= 5)
+	{
+		s >> Member< float >(L"linearThreshold", m_linearThreshold);
+		s >> Member< float >(L"angularThreshold", m_angularThreshold);
+	}
 	
 	return true;
 }

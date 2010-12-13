@@ -2,6 +2,7 @@
 #define T_HAVE_TYPES
 #include "Core/Serialization/ISerializable.h"
 #include "Script/Boxes.h"
+#include "Script/Delegate.h"
 #include "Script/IScriptClass.h"
 #include "Script/Js/ScriptManagerJs.h"
 #include "Script/Js/ScriptContextJs.h"
@@ -16,6 +17,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptManagerJs", 0, ScriptManag
 ScriptManagerJs::ScriptManagerJs()
 {
 	registerBoxClasses(this);
+	registerDelegateClasses(this);
 }
 
 void ScriptManagerJs::registerClass(IScriptClass* scriptClass)

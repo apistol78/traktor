@@ -16,7 +16,13 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.AnimatedMeshEntityData", 0, AnimatedMeshEntityData, world::SpatialEntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.AnimatedMeshEntityData", 1, AnimatedMeshEntityData, world::SpatialEntityData)
+
+AnimatedMeshEntityData::AnimatedMeshEntityData()
+:	m_normalizePose(false)
+,	m_normalizeTransform(false)
+{
+}
 
 Ref< AnimatedMeshEntity > AnimatedMeshEntityData::createEntity(resource::IResourceManager* resourceManager, physics::PhysicsManager* physicsManager) const
 {
@@ -58,7 +64,9 @@ Ref< AnimatedMeshEntity > AnimatedMeshEntityData::createEntity(resource::IResour
 		m_mesh,
 		m_skeleton,
 		poseController,
-		boneRemap
+		boneRemap,
+		m_normalizePose,
+		m_normalizeTransform
 	);
 }
 
@@ -70,6 +78,12 @@ bool AnimatedMeshEntityData::serialize(ISerializer& s)
 	s >> resource::Member< mesh::SkinnedMesh, mesh::IMeshResource >(L"mesh", m_mesh);
 	s >> resource::Member< Skeleton >(L"skeleton", m_skeleton);
 	s >> MemberRef< IPoseControllerData >(L"poseController", m_poseController);
+
+	if (s.getVersion() >= 1)
+	{
+		s >> Member< bool >(L"normalizePose", m_normalizePose);
+		s >> Member< bool >(L"normalizeTransform", m_normalizeTransform);
+	}
 
 	return true;
 }

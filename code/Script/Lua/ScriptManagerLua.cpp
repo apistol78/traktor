@@ -1,5 +1,6 @@
 #include "Core/Serialization/ISerializable.h"
 #include "Script/Boxes.h"
+#include "Script/Delegate.h"
 #include "Script/IScriptClass.h"
 #include "Script/Lua/ScriptManagerLua.h"
 #include "Script/Lua/ScriptContextLua.h"
@@ -14,6 +15,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptManagerLua", 0, ScriptMana
 ScriptManagerLua::ScriptManagerLua()
 {
 	registerBoxClasses(this);
+	registerDelegateClasses(this);
 }
 
 void ScriptManagerLua::registerClass(IScriptClass* scriptClass)

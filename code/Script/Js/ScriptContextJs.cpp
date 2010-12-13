@@ -29,9 +29,9 @@ struct FunctionData
 // spaces and ending with a newline.
 v8::Handle< v8::Value > printCallback(const v8::Arguments& args)
 {
+	v8::HandleScope handleScope;
 	for (int i = 0; i < args.Length(); i++)
 	{
-		v8::HandleScope handleScope;
 		if (i > 0)
 			log::info << L" ";
 		v8::String::Utf8Value str(args[i]);
@@ -74,6 +74,7 @@ bool ScriptContextJs::create(const RefArray< IScriptClass >& registeredClasses)
 		IScriptClass* scriptClass = *i;
 		T_ASSERT (scriptClass);
 
+		// Split class type name into an array.
 		const TypeInfo& exportType = scriptClass->getExportType();
 		std::vector< std::wstring > exportPath;
 		Split< std::wstring >::any(exportType.getName(), L".", exportPath);
@@ -127,12 +128,11 @@ bool ScriptContextJs::create(const RefArray< IScriptClass >& registeredClasses)
 		v8::Local< v8::ObjectTemplate > objectTemplate = classTemplate->InstanceTemplate();
 		objectTemplate->SetInternalFieldCount(1);
 
-		// Export class function.
+		// Export class function; create namespace structure as we go.
 		v8::Local< v8::Object > classNsObject = m_context->Global();
 		for (std::vector< std::wstring >::const_iterator j = exportPath.begin(); j != exportPath.end() - 1; ++j)
 		{
 			v8::Handle< v8::String > exportPathName = createString(*j);
-
 			v8::Local< v8::Value > exportPathObject = classNsObject->Get(exportPathName);
 			if (exportPathObject->IsUndefined())
 			{
@@ -148,6 +148,7 @@ bool ScriptContextJs::create(const RefArray< IScriptClass >& registeredClasses)
 			classTemplate->GetFunction()
 		);
 
+		// Save script class in registry.
 		RegisteredClass registeredClass =
 		{ 
 			scriptClass,
@@ -167,8 +168,8 @@ void ScriptContextJs::destroy()
 
 void ScriptContextJs::setGlobal(const std::wstring& globalName, const Any& globalValue)
 {
-	v8::Context::Scope contextScope(m_context);
 	v8::HandleScope handleScope;
+	v8::Context::Scope contextScope(m_context);
 
 	m_context->Global()->Set(
 		createString(globalName),
@@ -178,8 +179,8 @@ void ScriptContextJs::setGlobal(const std::wstring& globalName, const Any& globa
 
 Any ScriptContextJs::getGlobal(const std::wstring& globalName)
 {
-	v8::Context::Scope contextScope(m_context);
 	v8::HandleScope handleScope;
+	v8::Context::Scope contextScope(m_context);
 
 	v8::Local< v8::Value > value = m_context->Global()->Get(createString(globalName));
 	return fromValue(value);
@@ -187,8 +188,8 @@ Any ScriptContextJs::getGlobal(const std::wstring& globalName)
 
 bool ScriptContextJs::executeScript(const std::wstring& script, bool compileOnly, IErrorCallback* errorCallback)
 {
-	v8::Context::Scope contextScope(m_context);
 	v8::HandleScope handleScope;
+	v8::Context::Scope contextScope(m_context);
 	v8::TryCatch trycatch;
 
 	v8::Local< v8::String > str = v8::Local< v8::String >::New(createString(script));
@@ -225,16 +226,16 @@ bool ScriptContextJs::executeScript(const std::wstring& script, bool compileOnly
 
 bool ScriptContextJs::haveFunction(const std::wstring& functionName) const
 {
-	v8::Context::Scope contextScope(m_context);
 	v8::HandleScope handleScope;
+	v8::Context::Scope contextScope(m_context);
 
 	return m_context->Global()->Has(createString(functionName));
 }
 
 Any ScriptContextJs::executeFunction(const std::wstring& functionName, uint32_t argc, const Any* argv)
 {
-	v8::Context::Scope contextScope(m_context);
 	v8::HandleScope handleScope;
+	v8::Context::Scope contextScope(m_context);
 	v8::TryCatch trycatch;
 
 	v8::Local< v8::Value > value = m_context->Global()->Get(createString(functionName));
@@ -268,8 +269,8 @@ Any ScriptContextJs::executeFunction(const std::wstring& functionName, uint32_t 
 
 Any ScriptContextJs::executeMethod(Object* self, const std::wstring& methodName, uint32_t argc, const Any* argv)
 {
-	v8::Context::Scope contextScope(m_context);
 	v8::HandleScope handleScope;
+	v8::Context::Scope contextScope(m_context);
 	v8::TryCatch trycatch;
 
 	v8::Local< v8::Value > value = m_context->Global()->Get(createString(methodName));
@@ -284,7 +285,7 @@ Any ScriptContextJs::executeMethod(Object* self, const std::wstring& methodName,
 	for (uint32_t i = 0; i < argc; ++i)
 		av[i] = v8::Local< v8::Value >::New(toValue(argv[i]));
 
-	v8::Handle< v8::Value > recv = createObject(self);
+	v8::Handle< v8::Value > recv = createObject(self, true);
 
 	v8::Local< v8::Value > result = function->Call(
 		recv->ToObject(),
@@ -305,6 +306,8 @@ Any ScriptContextJs::executeMethod(Object* self, const std::wstring& methodName,
 
 v8::Handle< v8::Value > ScriptContextJs::invokeConstructor(const v8::Arguments& arguments)
 {
+	v8::HandleScope handleScope;
+
 	v8::Local< v8::External > constructorDataX = v8::Local< v8::External >::Cast(arguments.Data());
 	ConstructorData* constructorData = static_cast< ConstructorData* >(constructorDataX->Value());
 
@@ -322,10 +325,16 @@ v8::Handle< v8::Value > ScriptContextJs::invokeConstructor(const v8::Arguments& 
 		for (int i = 0; i < arguments.Length(); ++i)
 			argv[i] = constructorData->scriptContext->fromValue(arguments[i]);
 
-		Ref< Object > object = constructorData->scriptClass->construct(arguments.Length(), argv);
-		Ref< Object >* objectRef = new Ref< Object >(object);
+		IScriptClass::InvokeParam param;
+		param.context = constructorData->scriptContext;
+		param.object = 0;
 
-		objectRefExternal = v8::External::New(objectRef);
+		Ref< Object > object = constructorData->scriptClass->construct(param, arguments.Length(), argv);
+		if (!object)
+			return v8::Undefined();
+
+		T_SAFE_ANONYMOUS_ADDREF(object);
+		objectRefExternal = v8::External::New(object);
 	}
 
 	arguments.This()->SetInternalField(0, objectRefExternal);
@@ -334,13 +343,14 @@ v8::Handle< v8::Value > ScriptContextJs::invokeConstructor(const v8::Arguments& 
 
 v8::Handle< v8::Value > ScriptContextJs::invokeMethod(const v8::Arguments& arguments)
 {
+	v8::HandleScope handleScope;
+
 	v8::Local< v8::Object > vthis = arguments.This();
 	if (vthis->InternalFieldCount() <= 0)
 		return v8::Undefined();
 
 	v8::Local< v8::External > objectX = v8::Local< v8::External >::Cast(vthis->GetInternalField(0));
-	Ref< Object >* objectRef = static_cast< Ref< Object >* >(objectX->Value());
-	Ref< Object > object = *objectRef;
+	Ref< Object > object = static_cast< Object* >(objectX->Value());
 
 	v8::Local< v8::External > functionDataX = v8::Local< v8::External >::Cast(arguments.Data());
 	FunctionData* functionData = static_cast< FunctionData* >(functionDataX->Value());
@@ -349,8 +359,12 @@ v8::Handle< v8::Value > ScriptContextJs::invokeMethod(const v8::Arguments& argum
 	for (int i = 0; i < arguments.Length(); ++i)
 		argv[i] = functionData->scriptContext->fromValue(arguments[i]);
 
+	IScriptClass::InvokeParam param;
+	param.context = functionData->scriptContext;
+	param.object = object;
+
 	Any result = functionData->scriptClass->invoke(
-		object,
+		param,
 		functionData->methodId,
 		arguments.Length(),
 		argv
@@ -361,10 +375,8 @@ v8::Handle< v8::Value > ScriptContextJs::invokeMethod(const v8::Arguments& argum
 
 void ScriptContextJs::weakHandleCallback(v8::Persistent< v8::Value > object, void* parameter)
 {
-	Ref< Object >* objectRef = reinterpret_cast< Ref< Object >* >(parameter);
-	T_ASSERT (objectRef);
-
-	delete objectRef;
+	Object* objectRef = reinterpret_cast< Object* >(parameter);
+	T_SAFE_ANONYMOUS_RELEASE(objectRef);
 }
 
 v8::Handle< v8::String > ScriptContextJs::createString(const std::wstring& s) const
@@ -372,40 +384,44 @@ v8::Handle< v8::String > ScriptContextJs::createString(const std::wstring& s) co
 	return v8::String::New((const uint16_t*)s.c_str());
 }
 
-v8::Handle< v8::Value > ScriptContextJs::createObject(Object* object) const
+v8::Handle< v8::Value > ScriptContextJs::createObject(Object* object, bool weakReference) const
 {
-	if (object)
+	v8::HandleScope handleScope;
+
+	if (!object)
+		return v8::Null();
+
+	const TypeInfo* objectType = &type_of(object);
+	T_ASSERT (objectType);
+
+	v8::Handle< v8::Function > minFunction;
+	uint32_t minScriptClassDiff = ~0UL;
+
+	for (std::vector< RegisteredClass >::const_iterator i = m_classRegistry.begin(); i != m_classRegistry.end(); ++i)
 	{
-		const TypeInfo* objectType = &type_of(object);
-		T_ASSERT (objectType);
-
-		v8::Handle< v8::Function > minFunction;
-		uint32_t minScriptClassDiff = ~0UL;
-
-		for (std::vector< RegisteredClass >::const_iterator i = m_classRegistry.begin(); i != m_classRegistry.end(); ++i)
+		uint32_t scriptClassDiff = type_difference(i->scriptClass->getExportType(), *objectType);
+		if (scriptClassDiff < minScriptClassDiff)
 		{
-			uint32_t scriptClassDiff = type_difference(i->scriptClass->getExportType(), *objectType);
-			if (scriptClassDiff < minScriptClassDiff)
-			{
-				minFunction = i->function;
-				minScriptClassDiff = scriptClassDiff;
-			}
-		}
-
-		if (!minFunction.IsEmpty())
-		{
-			Ref< Object >* objectRef = new Ref< Object >(object);
-
-			v8::Local< v8::External > objectRefExternal = v8::External::New(objectRef);
-
-			v8::Handle< v8::Value > args(objectRefExternal);
-			v8::Persistent< v8::Object > instanceHandle(minFunction->NewInstance(1, &args));
-
-			instanceHandle.MakeWeak(objectRef, &ScriptContextJs::weakHandleCallback);
-			return instanceHandle;
+			minFunction = i->function;
+			minScriptClassDiff = scriptClassDiff;
 		}
 	}
-	return v8::Null();
+
+	if (minFunction.IsEmpty())
+		return v8::Null();
+
+	v8::Local< v8::External > objectExternal = v8::External::New(object);
+	v8::Handle< v8::Value > args(objectExternal);
+	v8::Persistent< v8::Object > instanceHandle(minFunction->NewInstance(1, &args));
+
+	// Strong reference to C++ object; managed by a weak reference from script side.
+	if (!weakReference)
+	{
+		instanceHandle.MakeWeak(object, &ScriptContextJs::weakHandleCallback);
+		T_SAFE_ADDREF(object);
+	}
+
+	return instanceHandle;
 }
 
 v8::Handle< v8::Value > ScriptContextJs::toValue(const Any& value) const
@@ -424,7 +440,7 @@ v8::Handle< v8::Value > ScriptContextJs::toValue(const Any& value) const
 	if (value.isString())
 		return createString(value.getString());
 	if (value.isObject())
-		return createObject(value.getObject());	
+		return createObject(value.getObject(), false);	
 	
 	return v8::Undefined();
 }
@@ -452,8 +468,7 @@ Any ScriptContextJs::fromValue(v8::Handle< v8::Value > value) const
 		v8::Local< v8::External > objectExternal = v8::Local< v8::External >::Cast(objectWrapper->GetInternalField(0));
 		if (objectExternal->IsExternal())
 		{
-			Ref< Object >* objectRef = static_cast< Ref< Object >* >(objectExternal->Value());
-			Ref< Object > object = *objectRef;
+			Object* object = static_cast< Object* >(objectExternal->Value());
 			return Any(object);
 		}
 	}

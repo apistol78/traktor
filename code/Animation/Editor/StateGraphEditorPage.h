@@ -8,9 +8,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_ANIMATION_EDITOR_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -43,7 +43,7 @@ class Node;
 	{
 
 class StateGraph;
-class State;
+class StateNode;
 class Transition;
 
 class T_DLLEXPORT StateGraphEditorPage : public editor::IEditorPage
@@ -82,9 +82,9 @@ private:
 	Ref< ui::custom::GraphControl > m_editorGraph;
 	Ref< ui::PopupMenu > m_menuPopup;
 
-	void createEditorNodes(const RefArray< State >& states, const RefArray< Transition >& transitions);
+	void createEditorNodes(const RefArray< StateNode >& states, const RefArray< Transition >& transitions);
 
-	Ref< ui::custom::Node > createEditorNode(State* state);
+	Ref< ui::custom::Node > createEditorNode(StateNode* state);
 
 	void createState(const ui::Point& at);
 

@@ -2,7 +2,7 @@
 #define traktor_script_AutoScriptClass_H
 
 #include "Core/Meta/TypeList.h"
-#include "Script/Boxes.h"
+#include "Script/CastAny.h"
 #include "Script/IScriptClass.h"
 
 namespace traktor
@@ -30,197 +30,6 @@ struct T_NOVTABLE IProperty
 
 	virtual void set(Object* object, const Any& value) const = 0;
 };
-
-
-/*! \name Any cast */
-/*! \{ */
-
-template < typename Type, bool IsTypePtr = IsPointer< Type >::value >
-struct CastAny
-{
-	static Any set(Type value) {
-		return Any(value);
-	}
-};
-
-template < >
-struct CastAny < bool, false >
-{
-	static Any set(bool value) {
-		return Any(value);
-	}
-	static bool get(const Any& value) {
-		return value.getBoolean();
-	}
-};
-
-template < >
-struct CastAny < int32_t, false >
-{
-	static Any set(int32_t value) {
-		return Any(value);
-	}
-	static int32_t get(const Any& value) {
-		return value.getInteger();
-	}
-};
-
-template < >
-struct CastAny < uint32_t, false >
-{
-	static Any set(uint32_t value) {
-		return Any(int32_t(value));
-	}
-	static uint32_t get(const Any& value) {
-		return (uint32_t)value.getInteger();
-	}
-};
-
-template < >
-struct CastAny < float, false >
-{
-	static Any set(float value) {
-		return Any(value);
-	}
-	static float get(const Any& value) {
-		return value.getFloat();
-	}
-};
-
-template < >
-struct CastAny < std::wstring, false >
-{
-	static Any set(const std::wstring& value) {
-		return Any(value);
-	}
-	static std::wstring get(const Any& value) {
-		return value.getString();
-	}
-};
-
-template < >
-struct CastAny < const std::wstring&, false >
-{
-	static Any set(const std::wstring& value) {
-		return Any(value);
-	}
-	static std::wstring get(const Any& value) {
-		return value.getString();
-	}
-};
-
-template < >
-struct CastAny < const wchar_t, true >
-{
-	static Any set(const wchar_t* value) {
-		return Any(std::wstring(value));
-	}
-	static const wchar_t* get(const Any& value) {
-		return value.getString().c_str();
-	}
-};
-
-template < typename Type >
-struct CastAny < Type, true >
-{
-	static Any set(Type value) {
-		return Any(value);
-	}
-	static Type get(const Any& value) {
-		return checked_type_cast< Type >(value.getObject());
-	}
-};
-
-template < >
-struct CastAny < Vector4, false >
-{
-	static Any set(const Vector4& value) {
-		return Any(new BoxedVector4(value));
-	}	
-	static Vector4 get(const Any& value) {
-		return checked_type_cast< BoxedVector4*, false >(value.getObject())->unbox();
-	}
-};
-
-template < >
-struct CastAny < const Vector4&, false >
-{
-	static Any set(const Vector4& value) {
-		return Any(new BoxedVector4(value));
-	}	
-	static Vector4 get(const Any& value) {
-		return checked_type_cast< BoxedVector4*, false >(value.getObject())->unbox();
-	}
-};
-
-template < >
-struct CastAny < Quaternion, false >
-{
-	static Any set(const Quaternion& value) {
-		return Any(new BoxedQuaternion(value));
-	}
-	static Quaternion get(const Any& value) {
-		return checked_type_cast< BoxedQuaternion*, false >(value.getObject())->unbox();
-	}
-};
-
-template < >
-struct CastAny < const Quaternion&, false >
-{
-	static Any set(const Quaternion& value) {
-		return Any(new BoxedQuaternion(value));
-	}
-	static Quaternion get(const Any& value) {
-		return checked_type_cast< BoxedQuaternion*, false >(value.getObject())->unbox();
-	}
-};
-
-template < >
-struct CastAny < Transform, false >
-{
-	static Any set(const Transform& value) {
-		return Any(new BoxedTransform(value));
-	}
-	static Transform get(const Any& value) {
-		return checked_type_cast< BoxedTransform*, false >(value.getObject())->unbox();
-	}
-};
-
-template < >
-struct CastAny < const Transform&, false >
-{
-	static Any set(const Transform& value) {
-		return Any(new BoxedTransform(value));
-	}
-	static Transform get(const Any& value) {
-		return checked_type_cast< BoxedTransform*, false >(value.getObject())->unbox();
-	}
-};
-
-template < typename InnerType >
-struct CastAny < RefArray< InnerType >, false >
-{
-	static Any set(const RefArray< InnerType >& value) {
-		return Any(new BoxedArray(value));
-	}
-	static RefArray< InnerType > get(const Any& value) {
-		return checked_type_cast< BoxedArray*, false >(value.getObject())->unbox();
-	}
-};
-
-template < typename InnerType >
-struct CastAny < const RefArray< InnerType >&, false >
-{
-	static Any set(const RefArray< InnerType >& value) {
-		return Any(new BoxedArray(value));
-	}
-	static RefArray< InnerType > get(const Any& value) {
-		return checked_type_cast< BoxedArray*, false >(value.getObject())->unbox();
-	}
-};
-
-/*! \} */
-
 
 /*! \name Constructors */
 /*! \{ */
@@ -801,6 +610,218 @@ struct Method_5 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, 
 
 /*! \} */
 
+/*! \name Method through trunks */
+/*! \{ */
+
+template <
+	typename ClassType,
+	typename ReturnType
+>
+struct MethodTrunk_0 : public IMethod
+{
+	typedef ReturnType (*method_t)(ClassType*);
+
+	method_t m_method;
+
+	MethodTrunk_0(method_t method)
+	:	m_method(method)
+	{
+	}
+
+	virtual Any invoke(Object* object, const Any* argv) const
+	{
+		ReturnType returnValue = (*m_method)(checked_type_cast< ClassType*, false >(object));
+		return CastAny< ReturnType >::set(returnValue);
+	}
+};
+
+template <
+	typename ClassType,
+	typename ReturnType,
+	typename Argument1Type
+>
+struct MethodTrunk_1 : public IMethod
+{
+	typedef ReturnType (*method_t)(ClassType*, Argument1Type);
+
+	method_t m_method;
+
+	MethodTrunk_1(method_t method)
+	:	m_method(method)
+	{
+	}
+
+	virtual Any invoke(Object* object, const Any* argv) const
+	{
+		ReturnType returnValue = (*m_method)(
+			checked_type_cast< ClassType*, false >(object),
+			CastAny< Argument1Type >::get(argv[0])
+		);
+		return CastAny< ReturnType >::set(returnValue);
+	}
+};
+
+template <
+	typename ClassType,
+	typename ReturnType,
+	typename Argument1Type,
+	typename Argument2Type
+>
+struct MethodTrunk_2 : public IMethod
+{
+	typedef ReturnType (*method_t)(ClassType*, Argument1Type, Argument2Type);
+
+	method_t m_method;
+
+	MethodTrunk_2(method_t method)
+	:	m_method(method)
+	{
+	}
+
+	virtual Any invoke(Object* object, const Any* argv) const
+	{
+		ReturnType returnValue = (*m_method)(
+			checked_type_cast< ClassType*, false >(object),
+			CastAny< Argument1Type >::get(argv[0]),
+			CastAny< Argument2Type >::get(argv[1])
+		);
+		return CastAny< ReturnType >::set(returnValue);
+	}
+};
+
+template <
+	typename ClassType,
+	typename ReturnType,
+	typename Argument1Type,
+	typename Argument2Type,
+	typename Argument3Type
+>
+struct MethodTrunk_3 : public IMethod
+{
+	typedef ReturnType (*method_t)(ClassType*, Argument1Type, Argument2Type, Argument3Type);
+
+	method_t m_method;
+
+	MethodTrunk_3(method_t method)
+	:	m_method(method)
+	{
+	}
+
+	virtual Any invoke(Object* object, const Any* argv) const
+	{
+		ReturnType returnValue = (*m_method)(
+			checked_type_cast< ClassType*, false >(object),
+			CastAny< Argument1Type >::get(argv[0]),
+			CastAny< Argument2Type >::get(argv[1]),
+			CastAny< Argument3Type >::get(argv[2])
+		);
+		return CastAny< ReturnType >::set(returnValue);
+	}
+};
+
+template <
+	typename ClassType,
+	typename ReturnType,
+	typename Argument1Type,
+	typename Argument2Type,
+	typename Argument3Type,
+	typename Argument4Type
+>
+struct MethodTrunk_4 : public IMethod
+{
+	typedef ReturnType (*method_t)(ClassType*, Argument1Type, Argument2Type, Argument3Type, Argument4Type);
+
+	method_t m_method;
+
+	MethodTrunk_4(method_t method)
+	:	m_method(method)
+	{
+	}
+
+	virtual Any invoke(Object* object, const Any* argv) const
+	{
+		ReturnType returnValue = (*m_method)(
+			checked_type_cast< ClassType*, false >(object),
+			CastAny< Argument1Type >::get(argv[0]),
+			CastAny< Argument2Type >::get(argv[1]),
+			CastAny< Argument3Type >::get(argv[2]),
+			CastAny< Argument4Type >::get(argv[3])
+		);
+		return CastAny< ReturnType >::set(returnValue);
+	}
+};
+
+template <
+	typename ClassType,
+	typename ReturnType,
+	typename Argument1Type,
+	typename Argument2Type,
+	typename Argument3Type,
+	typename Argument4Type,
+	typename Argument5Type
+>
+struct MethodTrunk_5 : public IMethod
+{
+	typedef ReturnType (*method_t)(ClassType*, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type);
+
+	method_t m_method;
+
+	MethodTrunk_5(method_t method)
+	:	m_method(method)
+	{
+	}
+
+	virtual Any invoke(Object* object, const Any* argv) const
+	{
+		ReturnType returnValue = (*m_method)(
+			checked_type_cast< ClassType*, false >(object),
+			CastAny< Argument1Type >::get(argv[0]),
+			CastAny< Argument2Type >::get(argv[1]),
+			CastAny< Argument3Type >::get(argv[2]),
+			CastAny< Argument4Type >::get(argv[3]),
+			CastAny< Argument5Type >::get(argv[4])
+		);
+		return CastAny< ReturnType >::set(returnValue);
+	}
+};
+
+template <
+	typename ClassType,
+	typename ReturnType,
+	typename Argument1Type,
+	typename Argument2Type,
+	typename Argument3Type,
+	typename Argument4Type,
+	typename Argument5Type,
+	typename Argument6Type
+>
+struct MethodTrunk_6 : public IMethod
+{
+	typedef ReturnType (*method_t)(ClassType*, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type);
+
+	method_t m_method;
+
+	MethodTrunk_6(method_t method)
+	:	m_method(method)
+	{
+	}
+
+	virtual Any invoke(Object* object, const Any* argv) const
+	{
+		ReturnType returnValue = (*m_method)(
+			checked_type_cast< ClassType*, false >(object),
+			CastAny< Argument1Type >::get(argv[0]),
+			CastAny< Argument2Type >::get(argv[1]),
+			CastAny< Argument3Type >::get(argv[2]),
+			CastAny< Argument4Type >::get(argv[3]),
+			CastAny< Argument5Type >::get(argv[4]),
+			CastAny< Argument6Type >::get(argv[5])
+		);
+		return CastAny< ReturnType >::set(returnValue);
+	}
+};
+
+/*! \} */
 
 /*! \name Property accessor */
 /*! \{ */
@@ -872,6 +893,9 @@ public:
 		T_EXCEPTION_GUARD_END
 	}
 
+	/*! \name Constructors */
+	/*! \{ */
+
 	void addConstructor()
 	{
 		addConstructor(0, new Constructor_0< ClassType >());
@@ -915,6 +939,11 @@ public:
 		addConstructor(4, new Constructor_4< ClassType, Argument1Type, Argument2Type, Argument3Type, Argument4Type >());
 	}
 
+	/*! \} */
+
+	/*! \name Methods */
+	/*! \{ */
+
 	template <
 		typename ReturnType
 	>
@@ -929,6 +958,14 @@ public:
 	void addMethod(const std::wstring& methodName, ReturnType (ClassType::*method)() const)
 	{
 		addMethod(methodName, 0, new Method_0< ClassType, ReturnType, true >(method));
+	}
+
+	template <
+		typename ReturnType
+	>
+	void addMethod(const std::wstring& methodName, ReturnType (*method)(ClassType*))
+	{
+		addMethod(methodName, 0, new MethodTrunk_0< ClassType, ReturnType >(method));
 	}
 
 	template <
@@ -947,6 +984,15 @@ public:
 	void addMethod(const std::wstring& methodName, ReturnType (ClassType::*method)(Argument1Type) const)
 	{
 		addMethod(methodName, 1, new Method_1< ClassType, ReturnType, Argument1Type, true >(method));
+	}
+
+	template <
+		typename ReturnType,
+		typename Argument1Type
+	>
+	void addMethod(const std::wstring& methodName, ReturnType (*method)(ClassType*, Argument1Type))
+	{
+		addMethod(methodName, 1, new MethodTrunk_1< ClassType, ReturnType, Argument1Type >(method));
 	}
 
 	template <
@@ -972,6 +1018,16 @@ public:
 	template <
 		typename ReturnType,
 		typename Argument1Type,
+		typename Argument2Type
+	>
+	void addMethod(const std::wstring& methodName, ReturnType (*method)(ClassType*, Argument1Type, Argument2Type))
+	{
+		addMethod(methodName, 2, new MethodTrunk_2< ClassType, ReturnType, Argument1Type, Argument2Type >(method));
+	}
+
+	template <
+		typename ReturnType,
+		typename Argument1Type,
 		typename Argument2Type,
 		typename Argument3Type
 	>
@@ -989,6 +1045,17 @@ public:
 	void addMethod(const std::wstring& methodName, ReturnType (ClassType::*method)(Argument1Type, Argument2Type, Argument3Type) const)
 	{
 		addMethod(methodName, 3, new Method_3< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, true >(method));
+	}
+
+	template <
+		typename ReturnType,
+		typename Argument1Type,
+		typename Argument2Type,
+		typename Argument3Type
+	>
+	void addMethod(const std::wstring& methodName, ReturnType (*method)(ClassType*, Argument1Type, Argument2Type, Argument3Type))
+	{
+		addMethod(methodName, 3, new MethodTrunk_3< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type >(method));
 	}
 
 	template <
@@ -1020,6 +1087,18 @@ public:
 		typename Argument1Type,
 		typename Argument2Type,
 		typename Argument3Type,
+		typename Argument4Type
+	>
+	void addMethod(const std::wstring& methodName, ReturnType (*method)(ClassType*, Argument1Type, Argument2Type, Argument3Type, Argument4Type))
+	{
+		addMethod(methodName, 4, new MethodTrunk_4< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type >(method));
+	}
+
+	template <
+		typename ReturnType,
+		typename Argument1Type,
+		typename Argument2Type,
+		typename Argument3Type,
 		typename Argument4Type,
 		typename Argument5Type
 	>
@@ -1041,10 +1120,39 @@ public:
 		addMethod(methodName, 5, new Method_5< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, true >(method));
 	}
 
+	template <
+		typename ReturnType,
+		typename Argument1Type,
+		typename Argument2Type,
+		typename Argument3Type,
+		typename Argument4Type,
+		typename Argument5Type
+	>
+	void addMethod(const std::wstring& methodName, ReturnType (*method)(ClassType*, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type))
+	{
+		addMethod(methodName, 5, new MethodTrunk_5< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type >(method));
+	}
+
+	template <
+		typename ReturnType,
+		typename Argument1Type,
+		typename Argument2Type,
+		typename Argument3Type,
+		typename Argument4Type,
+		typename Argument5Type,
+		typename Argument6Type
+	>
+	void addMethod(const std::wstring& methodName, ReturnType (*method)(ClassType*, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type))
+	{
+		addMethod(methodName, 6, new MethodTrunk_6< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type >(method));
+	}
+
 	void setUnknownMethod(unknown_method_t unknown)
 	{
 		m_unknown = unknown;
 	}
+
+	/*! \} */
 
 	template <
 		typename MemberType
@@ -1067,7 +1175,7 @@ public:
 		return !m_constructors.empty();
 	}
 
-	virtual Ref< Object > construct(uint32_t argc, const Any* argv) const
+	virtual Ref< Object > construct(const InvokeParam& param, uint32_t argc, const Any* argv) const
 	{
 		if (argc < m_constructors.size() && m_constructors[argc] != 0)
 			return m_constructors[argc]->construct(argv);
@@ -1085,19 +1193,19 @@ public:
 		return m_methods[methodId].first;
 	}
 
-	virtual Any invoke(Object* object, uint32_t methodId, uint32_t argc, const Any* argv) const
+	virtual Any invoke(const InvokeParam& param, uint32_t methodId, uint32_t argc, const Any* argv) const
 	{
 		const std::vector< IMethod* >& methods = m_methods[methodId].second;
 		if (argc < methods.size() && methods[argc] != 0)
-			return methods[argc]->invoke(object, argv);
+			return methods[argc]->invoke(param.object, argv);
 		else
 			return Any();
 	}
 
-	virtual Any invokeUnknown(Object* object, const std::wstring& methodName, uint32_t argc, const Any* argv) const
+	virtual Any invokeUnknown(const InvokeParam& param, const std::wstring& methodName, uint32_t argc, const Any* argv) const
 	{
 		if (m_unknown)
-			return (checked_type_cast< ClassType* >(object)->*m_unknown)(methodName, argc, argv);
+			return (checked_type_cast< ClassType* >(param.object)->*m_unknown)(methodName, argc, argv);
 		else
 			return Any();
 	}
@@ -1112,14 +1220,14 @@ public:
 		return m_properties[propertyId].first;
 	}
 
-	virtual Any getPropertyValue(const Object* object, uint32_t propertyId) const
+	virtual Any getPropertyValue(const InvokeParam& param, uint32_t propertyId) const
 	{
-		return m_properties[propertyId].second->get(object);
+		return m_properties[propertyId].second->get(param.object);
 	}
 
-	virtual void setPropertyValue(Object* object, uint32_t propertyId, const Any& value) const
+	virtual void setPropertyValue(const InvokeParam& param, uint32_t propertyId, const Any& value) const
 	{
-		m_properties[propertyId].second->set(object, value);
+		m_properties[propertyId].second->set(param.object, value);
 	}
 
 private:

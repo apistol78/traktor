@@ -20,7 +20,8 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.RagDollPoseController", RagDollPoseController, IPoseController)
 
 RagDollPoseController::RagDollPoseController()
-:	m_enable(false)
+:	m_trackDuration(0.0f)
+,	m_enable(false)
 {
 }
 
@@ -42,9 +43,12 @@ bool RagDollPoseController::create(
 	float limbMass,
 	float linearDamping,
 	float angularDamping,
+	float linearThreshold,
+	float angularThreshold,
 	IPoseController* trackPoseController,
 	float trackLinearTension,
-	float trackAngularTension
+	float trackAngularTension,
+	float trackDuration
 )
 {
 	if (!physicsManager)
@@ -86,6 +90,8 @@ bool RagDollPoseController::create(
 			bodyDesc.setActive(true);
 			bodyDesc.setLinearDamping(linearDamping);
 			bodyDesc.setAngularDamping(angularDamping);
+			bodyDesc.setLinearThreshold(linearThreshold);
+			bodyDesc.setAngularThreshold(angularThreshold);
 
 			Ref< physics::DynamicBody > limb = checked_type_cast< physics::DynamicBody* >(physicsManager->createBody(&bodyDesc));
 			if (!limb)
@@ -195,6 +201,7 @@ bool RagDollPoseController::create(
 	m_trackPoseController = trackPoseController;
 	m_trackLinearTension = Scalar(trackLinearTension);
 	m_trackAngularTension = Scalar(trackAngularTension);
+	m_trackDuration = trackDuration;
 
 	setEnable(enabled);
 
@@ -254,16 +261,24 @@ void RagDollPoseController::evaluate(
 {
 	T_ASSERT (boneTransforms.size() == m_limbs.size());
 
+	// Update tracking pose controller.
 	if (m_trackPoseController)
 	{
-		m_trackPoseController->evaluate(
-			deltaTime,
-			worldTransform,
-			skeleton,
-			boneTransforms,
-			outPoseTransforms,
-			outUpdateController
-		);
+		if (m_trackDuration > 0.0f)
+		{
+			m_trackDuration -= deltaTime;
+			if (m_trackDuration <= 0.0f)
+				m_trackPoseController = 0;
+		}
+		if (m_trackPoseController)
+			m_trackPoseController->evaluate(
+				deltaTime,
+				worldTransform,
+				skeleton,
+				boneTransforms,
+				outPoseTransforms,
+				outUpdateController
+			);
 	}
 
 	Transform worldTransformInv = worldTransform.inverse();
@@ -336,6 +351,8 @@ void RagDollPoseController::evaluate(
 
 		outPoseTransforms[i] = worldTransformInv * m_limbs[i]->getTransform() * Transform(halfBoneN);
 	}
+
+	m_worldTransform = worldTransform;
 
 	outUpdateController = true;
 }

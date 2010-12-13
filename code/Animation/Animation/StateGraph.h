@@ -7,9 +7,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_ANIMATION_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -17,7 +17,7 @@ namespace traktor
 	namespace animation
 	{
 
-class State;
+class StateNode;
 class Transition;
 
 /*! \brief Animation state graph.
@@ -28,11 +28,11 @@ class T_DLLCLASS StateGraph : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	void addState(State* state);
+	void addState(StateNode* state);
 
-	void removeState(State* state);
+	void removeState(StateNode* state);
 
-	const RefArray< State >& getStates() const;
+	const RefArray< StateNode >& getStates() const;
 
 	void addTransition(Transition* transition);
 
@@ -40,16 +40,16 @@ public:
 
 	const RefArray< Transition >& getTransitions() const;
 
-	void setRootState(State* rootState);
+	void setRootState(StateNode* rootState);
 
-	Ref< State > getRootState() const;
+	Ref< StateNode > getRootState() const;
 
 	virtual bool serialize(ISerializer& s);
 
 private:
-	RefArray< State > m_states;
+	RefArray< StateNode > m_states;
 	RefArray< Transition > m_transitions;
-	Ref< State > m_rootState;
+	Ref< StateNode > m_rootState;
 };
 
 	}
