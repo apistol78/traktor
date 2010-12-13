@@ -1,9 +1,9 @@
 #include <Ui/MenuItem.h>
 #include <Ui/MessageBox.h>
 #include <Core/Io/FileSystem.h>
-#include <Core/Io/Stream.h>
+#include <Core/Io/IStream.h>
 #include <Core/Io/StringOutputStream.h>
-#include <Core/Serialization/MemberAggregate.h>
+#include <Core/Serialization/MemberComposite.h>
 #include <Core/Misc/String.h>
 #include <Core/Log/Log.h>
 #include <Xml/XmlSerializer.h>
@@ -19,7 +19,7 @@ namespace traktor
 	namespace drone
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.drone.DroneToolP4Restore", DroneToolP4Restore, DroneTool)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.drone.DroneToolP4Restore", 0, DroneToolP4Restore, DroneTool)
 
 DroneToolP4Restore::DroneToolP4Restore()
 :	m_title(L"Restore P4 changelist...")
@@ -29,7 +29,7 @@ DroneToolP4Restore::DroneToolP4Restore()
 
 void DroneToolP4Restore::getMenuItems(RefArray< ui::MenuItem >& outItems)
 {
-	Ref< ui::MenuItem > menuItem = gc_new< ui::MenuItem >(ui::Command(L"Drone.Perforce.RestoreChangeList"), m_title);
+	Ref< ui::MenuItem > menuItem = new ui::MenuItem(ui::Command(L"Drone.Perforce.RestoreChangeList"), m_title);
 	menuItem->setData(L"TOOL", this);
 	outItems.push_back(menuItem);
 }
@@ -37,7 +37,7 @@ void DroneToolP4Restore::getMenuItems(RefArray< ui::MenuItem >& outItems)
 bool DroneToolP4Restore::execute(ui::Widget* parent, ui::MenuItem* menuItem)
 {
 	if (!m_p4client)
-		m_p4client = gc_new< PerforceClient >(cref(m_clientDesc));
+		m_p4client = new PerforceClient(m_clientDesc);
 
 	RefArray< File > changeListDirectories;
 	FileSystem::getInstance().find(m_backupPath + L"/*.*", changeListDirectories);
@@ -168,10 +168,10 @@ bool DroneToolP4Restore::execute(ui::Widget* parent, ui::MenuItem* menuItem)
 	return true;
 }
 
-bool DroneToolP4Restore::serialize(Serializer& s)
+bool DroneToolP4Restore::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"title", m_title);
-	s >> MemberAggregate< PerforceClientDesc >(L"clientDesc", m_clientDesc);
+	s >> MemberComposite< PerforceClientDesc >(L"clientDesc", m_clientDesc);
 	s >> Member< std::wstring >(L"backupPath", m_backupPath);
 	s >> Member< bool >(L"verbose", m_verbose);
 	return true;

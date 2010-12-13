@@ -8,7 +8,7 @@ namespace traktor
 	namespace drone
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.drone.DroneToolTimer", DroneToolTimer, DroneTool)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.drone.DroneToolTimer", 0, DroneToolTimer, DroneTool)
 
 DroneToolTimer::DroneToolTimer()
 :	m_started(false)
@@ -18,11 +18,11 @@ DroneToolTimer::DroneToolTimer()
 
 void DroneToolTimer::getMenuItems(RefArray< ui::MenuItem >& outItems)
 {
-	Ref< ui::MenuItem > toggleItem = gc_new< ui::MenuItem >(ui::Command(L"Drone.Timer.Toggle"), L"Start timer");
+	Ref< ui::MenuItem > toggleItem = new ui::MenuItem(ui::Command(L"Drone.Timer.Toggle"), L"Start timer");
 	toggleItem->setData(L"TOOL", this);
 	outItems.push_back(toggleItem);
 
-	Ref< ui::MenuItem > resetItem = gc_new< ui::MenuItem >(ui::Command(L"Drone.Timer.Reset"), L"Reset timer");
+	Ref< ui::MenuItem > resetItem = new ui::MenuItem(ui::Command(L"Drone.Timer.Reset"), L"Reset timer");
 	resetItem->setData(L"TOOL", this);
 	outItems.push_back(resetItem);
 }
@@ -66,7 +66,7 @@ bool DroneToolTimer::execute(ui::Widget* parent, ui::MenuItem* menuItem)
 	return true;
 }
 
-bool DroneToolTimer::serialize(Serializer& s)
+bool DroneToolTimer::serialize(ISerializer& s)
 {
 	return true;
 }

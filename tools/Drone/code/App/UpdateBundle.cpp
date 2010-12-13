@@ -1,4 +1,4 @@
-#include <Core/Serialization/Serializer.h>
+#include <Core/Serialization/ISerializer.h>
 #include <Core/Serialization/Member.h>
 #include <Core/Serialization/MemberStl.h>
 #include <Core/Serialization/MemberComposite.h>
@@ -9,7 +9,7 @@ namespace traktor
 	namespace drone
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.drone.UpdateBundle", UpdateBundle, Serializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.drone.UpdateBundle", 0, UpdateBundle, ISerializable)
 
 UpdateBundle::UpdateBundle()
 :	m_version(0)
@@ -31,7 +31,7 @@ const std::vector< UpdateBundle::BundledItem >& UpdateBundle::getItems() const
 	return m_items;
 }
 
-bool UpdateBundle::serialize(Serializer& s)
+bool UpdateBundle::serialize(ISerializer& s)
 {
 	s >> Member< uint32_t >(L"version", m_version);
 	s >> Member< std::wstring >(L"description", m_description);
@@ -39,7 +39,7 @@ bool UpdateBundle::serialize(Serializer& s)
 	return true;
 }
 
-bool UpdateBundle::BundledItem::serialize(Serializer& s)
+bool UpdateBundle::BundledItem::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"url", url);
 	s >> Member< std::wstring >(L"path", path);

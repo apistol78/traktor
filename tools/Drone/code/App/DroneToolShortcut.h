@@ -10,7 +10,7 @@ namespace traktor
 
 class DroneToolShortcut : public DroneTool
 {
-	T_RTTI_CLASS(DroneToolShortcut)
+	T_RTTI_CLASS
 
 public:
 	DroneToolShortcut(
@@ -32,7 +32,7 @@ public:
 
 	virtual bool execute(ui::Widget* parent, ui::MenuItem* menuItem);
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	std::wstring m_title;

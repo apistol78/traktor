@@ -11,7 +11,7 @@ namespace traktor
 
 class DroneToolTimer : public DroneTool
 {
-	T_RTTI_CLASS(DroneToolTimer)
+	T_RTTI_CLASS
 
 public:
 	DroneToolTimer();
@@ -20,7 +20,7 @@ public:
 
 	virtual bool execute(ui::Widget* parent, ui::MenuItem* menuItem);
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	bool m_started;

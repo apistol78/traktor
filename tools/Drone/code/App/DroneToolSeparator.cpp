@@ -6,11 +6,11 @@ namespace traktor
 	namespace drone
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.drone.DroneToolSeparator", DroneToolSeparator, DroneTool)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.drone.DroneToolSeparator", 0, DroneToolSeparator, DroneTool)
 
 void DroneToolSeparator::getMenuItems(RefArray< ui::MenuItem >& outItems)
 {
-	outItems.push_back(gc_new< ui::MenuItem >(L"-"));
+	outItems.push_back(new ui::MenuItem(L"-"));
 }
 
 bool DroneToolSeparator::execute(ui::Widget* parent, ui::MenuItem* menuItem)
@@ -18,7 +18,7 @@ bool DroneToolSeparator::execute(ui::Widget* parent, ui::MenuItem* menuItem)
 	return false;
 }
 
-bool DroneToolSeparator::serialize(Serializer& s)
+bool DroneToolSeparator::serialize(ISerializer& s)
 {
 	return true;
 }

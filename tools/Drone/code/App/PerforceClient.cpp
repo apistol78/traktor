@@ -110,7 +110,7 @@ public:
 		StrPtr* description = varList->GetVar("desc");
 		if (change && user && client && description)
 		{
-			m_outChangeLists.push_back(gc_new< PerforceChangeList >(
+			m_outChangeLists.push_back(new PerforceChangeList(
 				change->Atoi(),
 				trim(mbstows(user->Text())),
 				trim(mbstows(client->Text())),
@@ -149,7 +149,7 @@ public:
 			if (!action || !depotFile)
 				break;
 
-			Ref< PerforceChangeListFile > changeListFile = gc_new< PerforceChangeListFile >();
+			Ref< PerforceChangeListFile > changeListFile = new PerforceChangeListFile();
 
 			changeListFile->setDepotPath(mbstows(depotFile->Text()));
 
@@ -266,7 +266,7 @@ public:
 	virtual void OutputInfo(char level, const char *data)
 	{
 		std::wstring info = mbstows(data);
-		if (startsWith(info, L"Change "))
+		if (startsWith< std::wstring >(info, L"Change "))
 			m_change = parseString< uint32_t >(info.substr(7));
 		else
 			ClientUserAdapter::OutputInfo(level, data);
@@ -390,7 +390,7 @@ PerforceChangeList* PerforceClient::createChangeList(const std::wstring& descrip
 	if (createChangeListAdapter.failed())
 		return 0;
 
-	return gc_new< PerforceChangeList >(
+	return new PerforceChangeList(
 		createChangeListAdapter.getChange(),
 		m_clientDesc.m_user,
 		m_clientDesc.m_client,

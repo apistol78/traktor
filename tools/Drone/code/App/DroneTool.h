@@ -1,8 +1,8 @@
 #ifndef traktor_drone_DroneTool_H
 #define traktor_drone_DroneTool_H
 
-#include <Core/Heap/Ref.h>
-#include <Core/Serialization/Serializable.h>
+#include <Core/RefArray.h>
+#include <Core/Serialization/ISerializable.h>
 
 namespace traktor
 {
@@ -17,9 +17,9 @@ class MenuItem;
 	namespace drone
 	{
 
-class DroneTool : public Serializable
+class DroneTool : public ISerializable
 {
-	T_RTTI_CLASS(DroneTool)
+	T_RTTI_CLASS
 
 public:
 	virtual void getMenuItems(RefArray< ui::MenuItem >& outItems) = 0;

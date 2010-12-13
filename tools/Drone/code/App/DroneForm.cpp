@@ -9,7 +9,7 @@
 #include <Ui/Events/MouseEvent.h>
 #include <Xml/XmlDeserializer.h>
 #include <Core/Io/FileSystem.h>
-#include <Core/Io/Stream.h>
+#include <Core/Io/IStream.h>
 #include <Core/Misc/CommandLine.h>
 #include <Core/Log/Log.h>
 #include "App/DroneForm.h"
@@ -24,7 +24,7 @@ namespace traktor
 	namespace drone
 	{
 
-const wchar_t c_title[] = { L"Traktor Drone; v0.1.2" };
+const wchar_t c_title[] = { L"Traktor Drone; v0.2" };
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drone.DroneForm", DroneForm, ui::Form)
 
@@ -38,7 +38,7 @@ bool DroneForm::create(const CommandLine& cmdLine)
 	if (!ui::Form::create(L"Traktor Drone", 0, 0, ui::WsNone))
 		return false;
 
-	Ref< Stream > file = FileSystem::getInstance().open(configurationFile, File::FmRead);
+	Ref< IStream > file = FileSystem::getInstance().open(configurationFile, File::FmRead);
 	if (!file)
 	{
 		log::error << L"Unable to open configuration \"" << configurationFile << L"\"" << Endl;
@@ -55,7 +55,7 @@ bool DroneForm::create(const CommandLine& cmdLine)
 		return false;
 	}
 
-	m_menuTools = gc_new< ui::PopupMenu >();
+	m_menuTools = new ui::PopupMenu();
 	m_menuTools->create();
 
 	const RefArray< DroneTool >& tools = m_settings->getTools();
@@ -68,10 +68,10 @@ bool DroneForm::create(const CommandLine& cmdLine)
 			m_menuTools->add(*i);
 	}
 
-	m_menuTools->add(gc_new< ui::MenuItem >(L"-"));
-	m_menuTools->add(gc_new< ui::MenuItem >(ui::Command(L"Drone.Exit"), L"Exit"));
+	m_menuTools->add(new ui::MenuItem(L"-"));
+	m_menuTools->add(new ui::MenuItem(ui::Command(L"Drone.Exit"), L"Exit"));
 
-	m_notificationIcon = gc_new< ui::NotificationIcon >();
+	m_notificationIcon = new ui::NotificationIcon();
 	m_notificationIcon->create(c_title, ui::Bitmap::load(c_ResourceTraktorTiny, sizeof(c_ResourceTraktorTiny), L"png"));
 	m_notificationIcon->addButtonDownEventHandler(ui::createMethodHandler(this, &DroneForm::eventNotificationButtonDown));
 
@@ -105,7 +105,7 @@ void DroneForm::eventNotificationButtonDown(ui::Event* event)
 	if (item->getCommand() == L"Drone.Exit")
 	{
 		if (ui::MessageBox::show(this, L"Sure you want to exit Drone?", L"Exit", ui::MbIconQuestion | ui::MbYesNo) == ui::DrYes)
-			ui::Application::getInstance().exit(0);
+			ui::Application::getInstance()->exit(0);
 	}
 	else
 	{

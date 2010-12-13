@@ -14,7 +14,7 @@ namespace traktor
 
 class Process : public Object
 {
-	T_RTTI_CLASS(Process)
+	T_RTTI_CLASS
 
 public:
 	Process();

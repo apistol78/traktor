@@ -1,7 +1,7 @@
 #ifndef traktor_drone_DroneToolP4Backup_H
 #define traktor_drone_DroneToolP4Backup_H
 
-#include <Core/Heap/Ref.h>
+#include <Core/Ref.h>
 #include <Core/Io/Path.h>
 #include "App/DroneTool.h"
 #include "App/PerforceClientDesc.h"
@@ -15,7 +15,7 @@ class PerforceClient;
 
 class DroneToolP4Backup : public DroneTool
 {
-	T_RTTI_CLASS(DroneToolP4Backup)
+	T_RTTI_CLASS
 
 public:
 	DroneToolP4Backup();
@@ -24,7 +24,7 @@ public:
 
 	virtual bool execute(ui::Widget* parent, ui::MenuItem* menuItem);
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	std::wstring m_title;

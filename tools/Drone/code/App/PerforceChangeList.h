@@ -1,8 +1,8 @@
 #ifndef traktor_drone_PerforceChangeList_H
 #define traktor_drone_PerforceChangeList_H
 
-#include <Core/Heap/Ref.h>
-#include <Core/Serialization/Serializable.h>
+#include <Core/RefArray.h>
+#include <Core/Serialization/ISerializable.h>
 
 namespace traktor
 {
@@ -11,9 +11,9 @@ namespace traktor
 
 class PerforceChangeListFile;
 
-class PerforceChangeList : public Serializable
+class PerforceChangeList : public ISerializable
 {
-	T_RTTI_CLASS(PerforceChangeList)
+	T_RTTI_CLASS
 
 public:
 	PerforceChangeList();
@@ -37,7 +37,7 @@ public:
 
 	const RefArray< PerforceChangeListFile >& getFiles() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	uint32_t m_change;

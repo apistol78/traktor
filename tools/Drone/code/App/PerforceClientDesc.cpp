@@ -1,4 +1,4 @@
-#include <Core/Serialization/Serializer.h>
+#include <Core/Serialization/ISerializer.h>
 #include <Core/Serialization/Member.h>
 #include <Core/Serialization/MemberEnum.h>
 #include "App/PerforceClientDesc.h"
@@ -8,9 +8,9 @@ namespace traktor
 	namespace drone
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.drone.PerforceClientDesc", PerforceClientDesc, Serializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.drone.PerforceClientDesc", 0, PerforceClientDesc, ISerializable)
 
-bool PerforceClientDesc::serialize(Serializer& s)
+bool PerforceClientDesc::serialize(ISerializer& s)
 {
 	const MemberEnum< SecurityLevel >::Key c_SecurityLevel_Keys[] =
 	{

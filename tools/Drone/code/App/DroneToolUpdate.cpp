@@ -4,6 +4,7 @@
 #include <Ui/Custom/BackgroundWorkerStatus.h>
 #include <Core/Io/FileSystem.h>
 #include <Core/Io/BufferedStream.h>
+#include <Core/Thread/Thread.h>
 #include <Core/Thread/ThreadManager.h>
 #include <Core/Misc/Split.h>
 #include <Net/Network.h>
@@ -19,7 +20,7 @@ namespace traktor
 	namespace drone
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.drone.DroneToolUpdate", DroneToolUpdate, DroneTool)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.drone.DroneToolUpdate", 0, DroneToolUpdate, DroneTool)
 
 DroneToolUpdate::DroneToolUpdate()
 {
@@ -33,7 +34,7 @@ DroneToolUpdate::~DroneToolUpdate()
 
 void DroneToolUpdate::getMenuItems(RefArray< ui::MenuItem >& outItems)
 {
-	Ref< ui::MenuItem > checkItem = gc_new< ui::MenuItem >(ui::Command(L"Drone.Update.Check"), L"Check updates...");
+	Ref< ui::MenuItem > checkItem = new ui::MenuItem(ui::Command(L"Drone.Update.Check"), L"Check updates...");
 	checkItem->setData(L"TOOL", this);
 	outItems.push_back(checkItem);
 }
@@ -53,7 +54,7 @@ bool DroneToolUpdate::execute(ui::Widget* parent, ui::MenuItem* menuItem)
 			return true;
 		}
 
-		Ref< Stream > stream = gc_new< BufferedStream >(connection->getStream());
+		Ref< IStream > stream = new BufferedStream(connection->getStream());
 		T_ASSERT (stream);
 
 		Ref< UpdateBundle > bundle = xml::XmlDeserializer(stream).readObject< UpdateBundle >();
@@ -75,7 +76,7 @@ bool DroneToolUpdate::execute(ui::Widget* parent, ui::MenuItem* menuItem)
 			this,
 			&DroneToolUpdate::updateThread,
 			parent,
-			bundle.getPtr(),
+			bundle.ptr(),
 			&status
 		), L"Update thread");
 
@@ -92,7 +93,7 @@ bool DroneToolUpdate::execute(ui::Widget* parent, ui::MenuItem* menuItem)
 	return true;
 }
 
-bool DroneToolUpdate::serialize(Serializer& s)
+bool DroneToolUpdate::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"url", m_url);
 	s >> Member< std::wstring >(L"rootPath", m_rootPath);
@@ -147,7 +148,7 @@ void DroneToolUpdate::updateThread(ui::Widget* parent, UpdateBundle* bundle, ui:
 			}
 		}
 
-		Ref< Stream > destinationStream = FileSystem::getInstance().open(destinationPath, File::FmWrite);
+		Ref< IStream > destinationStream = FileSystem::getInstance().open(destinationPath, File::FmWrite);
 		if (!destinationStream)
 		{
 			if (ui::MessageBox::show(parent, L"Unable to create file " + i->path + L",\ncontinue with update?", L"Unable to connect", ui::MbIconError | ui::MbYesNo) == ui::DrYes)
@@ -156,7 +157,7 @@ void DroneToolUpdate::updateThread(ui::Widget* parent, UpdateBundle* bundle, ui:
 				return;
 		}
 
-		Ref< Stream > sourceStream = gc_new< BufferedStream >(connection->getStream());
+		Ref< IStream > sourceStream = new BufferedStream(connection->getStream());
 		T_ASSERT (sourceStream);
 
 		uint8_t buf[4096];

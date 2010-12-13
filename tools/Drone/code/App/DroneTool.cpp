@@ -5,7 +5,7 @@ namespace traktor
 	namespace drone
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.drone.DroneTool", DroneTool, Serializable)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.drone.DroneTool", DroneTool, ISerializable)
 
 	}
 }

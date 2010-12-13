@@ -3,8 +3,9 @@
 
 #include <vector>
 #include <clientapi.h>
-#include <Core/Heap/Ref.h>
 #include <Core/Object.h>
+#include <Core/Ref.h>
+#include <Core/RefArray.h>
 #include <Core/Io/Path.h>
 #include "App/PerforceTypes.h"
 #include "App/PerforceClientDesc.h"
@@ -19,7 +20,7 @@ class PerforceChangeListFile;
 
 class PerforceClient : public Object
 {
-	T_RTTI_CLASS(PerforceClient)
+	T_RTTI_CLASS
 
 public:
 	PerforceClient(const PerforceClientDesc& clientDesc);

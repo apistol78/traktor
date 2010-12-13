@@ -24,7 +24,7 @@ class DroneSettings;
 
 class DroneForm : public ui::Form
 {
-	T_RTTI_CLASS(DroneForm)
+	T_RTTI_CLASS
 
 public:
 	bool create(const CommandLine& cmdLine);

@@ -23,15 +23,15 @@ bool PerforceChangeListDialog::create(ui::Widget* parent, const std::wstring& te
 		700,
 		600,
 		ui::ConfigDialog::WsDefaultResizable | ui::ConfigDialog::WsCenterDesktop,
-		gc_new< ui::TableLayout >(L"100%", L"100%", 4, 4)
+		new ui::TableLayout(L"100%", L"100%", 4, 4)
 	))
 		return false;
 
-	m_changeLists = gc_new< ui::custom::GridView >();
+	m_changeLists = new ui::custom::GridView();
 	m_changeLists->create(this, ui::custom::GridView::WsColumnHeader | ui::WsClientBorder | ui::WsDoubleBuffer);
-	m_changeLists->addColumn(gc_new< ui::custom::GridColumn >(L"User", 100));
-	m_changeLists->addColumn(gc_new< ui::custom::GridColumn >(L"Change list", 100));
-	m_changeLists->addColumn(gc_new< ui::custom::GridColumn >(L"Description", 400));
+	m_changeLists->addColumn(new ui::custom::GridColumn(L"User", 100));
+	m_changeLists->addColumn(new ui::custom::GridColumn(L"Change list", 100));
+	m_changeLists->addColumn(new ui::custom::GridColumn(L"Description", 400));
 
 	std::map< std::wstring, RefArray< PerforceChangeList > > userChangeLists;
 	for (RefArray< PerforceChangeList >::const_iterator i = changeLists.begin(); i != changeLists.end(); ++i)
@@ -39,15 +39,15 @@ bool PerforceChangeListDialog::create(ui::Widget* parent, const std::wstring& te
 
 	for (std::map< std::wstring, RefArray< PerforceChangeList > >::iterator i = userChangeLists.begin(); i != userChangeLists.end(); ++i)
 	{
-		Ref< ui::custom::GridRow > userRow = gc_new< ui::custom::GridRow >();
-		userRow->addItem(gc_new< ui::custom::GridItem >(i->first));
+		Ref< ui::custom::GridRow > userRow = new ui::custom::GridRow();
+		userRow->add(new ui::custom::GridItem(i->first));
 
 		for (RefArray< PerforceChangeList >::iterator j = i->second.begin(); j != i->second.end(); ++j)
 		{
-			Ref< ui::custom::GridRow > changeRow = gc_new< ui::custom::GridRow >();
-			changeRow->addItem(gc_new< ui::custom::GridItem >(L""));
-			changeRow->addItem(gc_new< ui::custom::GridItem >(toString((*j)->getChange())));
-			changeRow->addItem(gc_new< ui::custom::GridItem >((*j)->getDescription()));
+			Ref< ui::custom::GridRow > changeRow = new ui::custom::GridRow();
+			changeRow->add(new ui::custom::GridItem(L""));
+			changeRow->add(new ui::custom::GridItem(toString((*j)->getChange())));
+			changeRow->add(new ui::custom::GridItem((*j)->getDescription()));
 			changeRow->setData(L"CHANGELIST", *j);
 
 			const RefArray< PerforceChangeListFile >& changeListFiles = (*j)->getFiles();
@@ -55,10 +55,10 @@ bool PerforceChangeListDialog::create(ui::Widget* parent, const std::wstring& te
 			{
 				const wchar_t* c_actions[] = { L"", L"(add)", L"(edit)", L"(delete)" };
 
-				Ref< ui::custom::GridRow > fileRow = gc_new< ui::custom::GridRow >();
-				fileRow->addItem(gc_new< ui::custom::GridItem >(L""));
-				fileRow->addItem(gc_new< ui::custom::GridItem >(c_actions[(*k)->getAction()]));
-				fileRow->addItem(gc_new< ui::custom::GridItem >((*k)->getDepotPath()));
+				Ref< ui::custom::GridRow > fileRow = new ui::custom::GridRow();
+				fileRow->add(new ui::custom::GridItem(L""));
+				fileRow->add(new ui::custom::GridItem(c_actions[(*k)->getAction()]));
+				fileRow->add(new ui::custom::GridItem((*k)->getDepotPath()));
 				changeRow->addChild(fileRow);
 			}
 

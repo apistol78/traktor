@@ -1,7 +1,8 @@
 #ifndef traktor_drone_PerforceChangeListDialog_H
 #define traktor_drone_PerforceChangeListDialog_H
 
-#include <Core/Heap/Ref.h>
+#include <Core/Ref.h>
+#include <Core/RefArray.h>
 #include <Ui/ConfigDialog.h>
 
 namespace traktor
@@ -23,7 +24,7 @@ class PerforceChangeList;
 
 class PerforceChangeListDialog : public ui::ConfigDialog
 {
-	T_RTTI_CLASS(PerforceChangeListDialog)
+	T_RTTI_CLASS
 
 public:
 	bool create(ui::Widget* parent, const std::wstring& text, const RefArray< PerforceChangeList >& changeLists);

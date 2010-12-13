@@ -1,11 +1,11 @@
 #include <Ui/MenuItem.h>
 #include <Ui/MessageBox.h>
 #include <Core/Io/FileSystem.h>
-#include <Core/Io/Stream.h>
+#include <Core/Io/IStream.h>
 #include <Core/Io/StringOutputStream.h>
 #include <Core/System/OS.h>
-#include <Core/System/Process.h>
-#include <Core/Serialization/MemberAggregate.h>
+#include <Core/System/IProcess.h>
+#include <Core/Serialization/MemberComposite.h>
 #include <Core/Misc/String.h>
 #include <Core/Misc/TString.h>
 #include <Core/Log/Log.h>
@@ -22,7 +22,7 @@ namespace traktor
 	namespace drone
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.drone.DroneToolP4Import", DroneToolP4Import, DroneTool)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.drone.DroneToolP4Import", 0, DroneToolP4Import, DroneTool)
 
 DroneToolP4Import::DroneToolP4Import()
 :	m_title(L"Import P4 changelist...")
@@ -33,7 +33,7 @@ DroneToolP4Import::DroneToolP4Import()
 
 void DroneToolP4Import::getMenuItems(RefArray< ui::MenuItem >& outItems)
 {
-	Ref< ui::MenuItem > menuItem = gc_new< ui::MenuItem >(ui::Command(L"Drone.Perforce.ImportChangeList"), m_title);
+	Ref< ui::MenuItem > menuItem = new ui::MenuItem(ui::Command(L"Drone.Perforce.ImportChangeList"), m_title);
 	menuItem->setData(L"TOOL", this);
 	outItems.push_back(menuItem);
 }
@@ -41,7 +41,7 @@ void DroneToolP4Import::getMenuItems(RefArray< ui::MenuItem >& outItems)
 bool DroneToolP4Import::execute(ui::Widget* parent, ui::MenuItem* menuItem)
 {
 	if (!m_p4client)
-		m_p4client = gc_new< PerforceClient >(cref(m_clientDesc));
+		m_p4client = new PerforceClient(m_clientDesc);
 
 	RefArray< File > files;
 	FileSystem::getInstance().find(std::wstring(m_exportPath) + L"/*.*", files);
@@ -53,7 +53,7 @@ bool DroneToolP4Import::execute(ui::Widget* parent, ui::MenuItem* menuItem)
 			continue;
 
 		std::wstring descriptionFilePath = (*i)->getPath().getPathName() + L"/ChangeList.xml";
-		Ref< Stream > descriptionFile = FileSystem::getInstance().open(descriptionFilePath, File::FmRead);
+		Ref< IStream > descriptionFile = FileSystem::getInstance().open(descriptionFilePath, File::FmRead);
 		if (!descriptionFile)
 			continue;
 
@@ -157,7 +157,15 @@ bool DroneToolP4Import::execute(ui::Widget* parent, ui::MenuItem* menuItem)
 					ss << Path(localFile).getPathName() << L" ";	// Right
 					ss << mbstows(mergeFile);		// Merge
 
-					Ref< Process > process = OS::getInstance().execute(m_mergeExecutable, ss.str(), L"");
+					Ref< IProcess > process = OS::getInstance().execute(
+						m_mergeExecutable,
+						ss.str(),
+						L"",
+						0,
+						false,
+						false,
+						false
+					);
 					if (!process)
 					{
 						importError = L"File \"" + localFile + L"\" already opened in another changelist, unable to start merge tool.";
@@ -232,10 +240,10 @@ bool DroneToolP4Import::execute(ui::Widget* parent, ui::MenuItem* menuItem)
 	return true;
 }
 
-bool DroneToolP4Import::serialize(Serializer& s)
+bool DroneToolP4Import::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"title", m_title);
-	s >> MemberAggregate< PerforceClientDesc >(L"clientDesc", m_clientDesc);
+	s >> MemberComposite< PerforceClientDesc >(L"clientDesc", m_clientDesc);
 	s >> Member< std::wstring >(L"exportPath", m_exportPath);
 	s >> Member< std::wstring >(L"mergeExecutable", m_mergeExecutable);
 	s >> Member< bool >(L"verbose", m_verbose);

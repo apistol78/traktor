@@ -10,7 +10,7 @@ namespace traktor
 
 class DroneToolGroup : public DroneTool
 {
-	T_RTTI_CLASS(DroneToolGroup)
+	T_RTTI_CLASS
 
 public:
 	DroneToolGroup(const std::wstring& title = L"Unnamed");
@@ -21,7 +21,7 @@ public:
 
 	virtual bool execute(ui::Widget* parent, ui::MenuItem* menuItem);
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	std::wstring m_title;
