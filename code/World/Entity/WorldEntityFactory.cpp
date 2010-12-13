@@ -49,6 +49,8 @@ Ref< Entity > WorldEntityFactory::createEntity(IEntityBuilder* builder, const En
 	{
 		Guid entityGuid = externalEntityData->getGuid();
 		Ref< EntityData > resolvedEntityData = m_database->getObjectReadOnly< EntityData >(entityGuid);
+		if (resolvedEntityData)
+			resolvedEntityData->setName(externalEntityData->getName());
 		return builder->create(resolvedEntityData);
 	}
 
@@ -57,7 +59,10 @@ Ref< Entity > WorldEntityFactory::createEntity(IEntityBuilder* builder, const En
 		Guid entityGuid = externalSpatialEntityData->getGuid();
 		Ref< SpatialEntityData > resolvedEntityData = m_database->getObjectReadOnly< SpatialEntityData >(entityGuid);
 		if (resolvedEntityData)
+		{
+			resolvedEntityData->setName(externalSpatialEntityData->getName());
 			resolvedEntityData->setTransform(externalSpatialEntityData->getTransform());
+		}
 		return builder->create(resolvedEntityData);
 	}
 

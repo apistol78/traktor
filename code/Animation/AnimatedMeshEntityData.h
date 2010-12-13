@@ -50,6 +50,8 @@ class T_DLLCLASS AnimatedMeshEntityData : public world::SpatialEntityData
 	T_RTTI_CLASS;
 
 public:
+	AnimatedMeshEntityData();
+
 	Ref< AnimatedMeshEntity > createEntity(resource::IResourceManager* resourceManager, physics::PhysicsManager* physicsManager) const;
 
 	virtual bool serialize(ISerializer& s);
@@ -64,6 +66,8 @@ private:
 	mutable resource::Proxy< mesh::SkinnedMesh > m_mesh;
 	mutable resource::Proxy< Skeleton > m_skeleton;
 	Ref< IPoseControllerData > m_poseController;
+	bool m_normalizePose;
+	bool m_normalizeTransform;
 };
 
 	}

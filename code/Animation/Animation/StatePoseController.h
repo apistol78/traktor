@@ -20,7 +20,7 @@ namespace traktor
 	{
 
 class StateGraph;
-class State;
+class StateNode;
 class StateContext;
 
 /*! \brief Animation pose evaluation controller.
@@ -57,9 +57,9 @@ public:
 
 private:
 	resource::Proxy< StateGraph > m_stateGraph;
-	Ref< State > m_currentState;
+	Ref< StateNode > m_currentState;
 	StateContext m_currentStateContext;
-	Ref< State > m_nextState;
+	Ref< StateNode > m_nextState;
 	StateContext m_nextStateContext;
 	float m_blendState;
 	float m_blendDuration;

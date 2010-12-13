@@ -1,8 +1,8 @@
-#include "Ui/Custom/SyntaxRichEdit/SyntaxRichEdit.h"
-#include "Ui/Custom/SyntaxRichEdit/SyntaxLanguage.h"
-#include "Ui/MethodHandler.h"
-#include "Core/Misc/String.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/String.h"
+#include "Ui/MethodHandler.h"
+#include "Ui/Custom/SyntaxRichEdit/SyntaxLanguage.h"
+#include "Ui/Custom/SyntaxRichEdit/SyntaxRichEdit.h"
 
 namespace traktor
 {
@@ -25,7 +25,7 @@ SyntaxRichEdit::SyntaxRichEdit()
 
 bool SyntaxRichEdit::create(Widget* parent, const std::wstring& text, int style)
 {
-	if (!RichEdit::create(parent, text, style))
+	if (!RichEdit::create(parent, text/*, style*/))
 		return false;
 
 	m_attributeDefault = addAttribute(Color4ub(0, 0, 0), Color4ub(255, 255, 255), false, false, false);		// Default
@@ -42,124 +42,124 @@ bool SyntaxRichEdit::create(Widget* parent, const std::wstring& text, int style)
 void SyntaxRichEdit::setLanguage(SyntaxLanguage* language)
 {
 	m_language = language;
-	updateLanguage(0, getLineCount() - 1);
+	//updateLanguage(0, getLineCount() - 1);
 }
 
 void SyntaxRichEdit::setErrorHighlight(int line)
 {
-	updateLanguage(0, getLineCount() - 1);
-	if (line >= 0)
-	{
-		int offset = getLineOffset(line);
-		int length = getLineLength(line);
-		setAttribute(offset, length, m_attributeError);
-	}
+	//updateLanguage(0, getLineCount() - 1);
+	//if (line >= 0)
+	//{
+	//	int offset = getLineOffset(line);
+	//	int length = getLineLength(line);
+	//	setAttribute(offset, length, m_attributeError);
+	//}
 }
 
 void SyntaxRichEdit::updateLanguage(int fromLine, int toLine)
 {
-	if (!m_language)
-		return;
+	//if (!m_language)
+	//	return;
 
-	m_language->begin();
+	//m_language->begin();
 
-	SyntaxLanguage::State currentState = SyntaxLanguage::StInvalid;
-	int startOffset = getLineOffset(fromLine);
-	int endOffset = startOffset;
+	//SyntaxLanguage::State currentState = SyntaxLanguage::StInvalid;
+	//int startOffset = getLineOffset(fromLine);
+	//int endOffset = startOffset;
 
-	for (int line = fromLine; line <= toLine; ++line)
-	{
-		std::wstring text = getLine(line);
-		for (int i = 0; i < int(text.length()); )
-		{
-			SyntaxLanguage::State state = SyntaxLanguage::StInvalid;
-			int consumedChars = 0;
+	//for (int line = fromLine; line <= toLine; ++line)
+	//{
+	//	std::wstring text = getLine(line);
+	//	for (int i = 0; i < int(text.length()); )
+	//	{
+	//		SyntaxLanguage::State state = SyntaxLanguage::StInvalid;
+	//		int consumedChars = 0;
 
-			if (!m_language->consume(text.substr(i), state, consumedChars))
-				break;
+	//		if (!m_language->consume(text.substr(i), state, consumedChars))
+	//			break;
 
-			if (state != currentState)
-			{
-				if (endOffset > startOffset)
-				{
-					switch (currentState)
-					{
-					case SyntaxLanguage::StDefault:
-						setAttribute(startOffset, endOffset - startOffset, m_attributeDefault);
-						break;
+	//		if (state != currentState)
+	//		{
+	//			if (endOffset > startOffset)
+	//			{
+	//				switch (currentState)
+	//				{
+	//				case SyntaxLanguage::StDefault:
+	//					setAttribute(startOffset, endOffset - startOffset, m_attributeDefault);
+	//					break;
 
-					case SyntaxLanguage::StString:
-						setAttribute(startOffset, endOffset - startOffset, m_attributeString);
-						break;
+	//				case SyntaxLanguage::StString:
+	//					setAttribute(startOffset, endOffset - startOffset, m_attributeString);
+	//					break;
 
-					case SyntaxLanguage::StNumber:
-						setAttribute(startOffset, endOffset - startOffset, m_attributeNumber);
-						break;
+	//				case SyntaxLanguage::StNumber:
+	//					setAttribute(startOffset, endOffset - startOffset, m_attributeNumber);
+	//					break;
 
-					case SyntaxLanguage::StComment:
-						setAttribute(startOffset, endOffset - startOffset, m_attributeComment);
-						break;
+	//				case SyntaxLanguage::StComment:
+	//					setAttribute(startOffset, endOffset - startOffset, m_attributeComment);
+	//					break;
 
-					case SyntaxLanguage::StKeyword:
-						setAttribute(startOffset, endOffset - startOffset, m_attributeKeyword);
-						break;
-					}
+	//				case SyntaxLanguage::StKeyword:
+	//					setAttribute(startOffset, endOffset - startOffset, m_attributeKeyword);
+	//					break;
+	//				}
 
-					currentState = state;
-					startOffset = endOffset;
-					endOffset += consumedChars;
-				}
-				else
-				{
-					currentState = state;
-					endOffset += consumedChars;
-				}
-			}
-			else
-			{
-				endOffset += consumedChars;
-			}
+	//				currentState = state;
+	//				startOffset = endOffset;
+	//				endOffset += consumedChars;
+	//			}
+	//			else
+	//			{
+	//				currentState = state;
+	//				endOffset += consumedChars;
+	//			}
+	//		}
+	//		else
+	//		{
+	//			endOffset += consumedChars;
+	//		}
 
-			i += consumedChars;
-		}
+	//		i += consumedChars;
+	//	}
 
-		m_language->newLine();
-	}
+	//	m_language->newLine();
+	//}
 
-	if (endOffset > startOffset)
-	{
-		switch (currentState)
-		{
-		case SyntaxLanguage::StDefault:
-			setAttribute(startOffset, endOffset - startOffset, m_attributeDefault);
-			break;
+	//if (endOffset > startOffset)
+	//{
+	//	switch (currentState)
+	//	{
+	//	case SyntaxLanguage::StDefault:
+	//		setAttribute(startOffset, endOffset - startOffset, m_attributeDefault);
+	//		break;
 
-		case SyntaxLanguage::StString:
-			setAttribute(startOffset, endOffset - startOffset, m_attributeString);
-			break;
+	//	case SyntaxLanguage::StString:
+	//		setAttribute(startOffset, endOffset - startOffset, m_attributeString);
+	//		break;
 
-		case SyntaxLanguage::StNumber:
-			setAttribute(startOffset, endOffset - startOffset, m_attributeNumber);
-			break;
+	//	case SyntaxLanguage::StNumber:
+	//		setAttribute(startOffset, endOffset - startOffset, m_attributeNumber);
+	//		break;
 
-		case SyntaxLanguage::StComment:
-			setAttribute(startOffset, endOffset - startOffset, m_attributeComment);
-			break;
+	//	case SyntaxLanguage::StComment:
+	//		setAttribute(startOffset, endOffset - startOffset, m_attributeComment);
+	//		break;
 
-		case SyntaxLanguage::StKeyword:
-			setAttribute(startOffset, endOffset - startOffset, m_attributeKeyword);
-			break;
-		}
-	}
+	//	case SyntaxLanguage::StKeyword:
+	//		setAttribute(startOffset, endOffset - startOffset, m_attributeKeyword);
+	//		break;
+	//	}
+	//}
 
-	setAttribute(endOffset, 0, m_attributeDefault);
+	//setAttribute(endOffset, 0, m_attributeDefault);
 }
 
 void SyntaxRichEdit::eventChange(Event* event)
 {
 	int caretOffset = getCaretOffset();
 	int caretLine = getLineFromOffset(caretOffset);
-	updateLanguage(caretLine, caretLine);
+	//updateLanguage(caretLine, caretLine);
 }
 
 		}

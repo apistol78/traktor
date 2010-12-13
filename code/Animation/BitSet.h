@@ -42,12 +42,38 @@ public:
 		{
 			if (m_bits[i])
 			{
-				for (int j = 0; j < 32; ++j)
+				int start = 0;
+				if (!(m_bits[i] & 0x000000ff))
+				{
+					start = 8;
+					if (!(m_bits[i] & 0x0000ffff))
+					{
+						start = 16;
+						if (!(m_bits[i] & 0x00ffffff))
+							start = 24;
+					}
+				}
+
+				int end = 32;
+				if (!(m_bits[i] & 0xff000000))
+				{
+					end = 24;
+					if (!(m_bits[i] & 0xffff0000))
+					{
+						end = 16;
+						if (!(m_bits[i] & 0xffffff00))
+							end = 8;
+					}
+				}
+
+				outMin += start;
+				for (int j = start; j < end; ++j)
 				{
 					if (m_bits[i] & (1 << j))
 						break;
 					++outMin;
 				}
+
 				break;
 			}
 			outMin += 32;
@@ -57,12 +83,38 @@ public:
 		{
 			if (m_bits[i])
 			{
-				for (int j = 31; j >= 0; --j)
+				int end = 0;
+				if (!(m_bits[i] & 0x000000ff))
+				{
+					end = 8;
+					if (!(m_bits[i] & 0x0000ffff))
+					{
+						end = 16;
+						if (!(m_bits[i] & 0x00ffffff))
+							end = 24;
+					}
+				}
+
+				int start = 31;
+				if (!(m_bits[i] & 0xff000000))
+				{
+					start = 23;
+					if (!(m_bits[i] & 0xffff0000))
+					{
+						start = 15;
+						if (!(m_bits[i] & 0xffffff00))
+							start = 7;
+					}
+				}
+
+				outMax -= (31 - start);
+				for (int j = start; j >= end; --j)
 				{
 					if (m_bits[i] & (1 << j))
 						break;
 					--outMax;
 				}
+
 				break;
 			}
 			outMax -= 32;

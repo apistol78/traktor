@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_ANIMATION_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -16,7 +16,7 @@ namespace traktor
 	namespace animation
 	{
 
-class State;
+class StateNode;
 
 /*! \brief Animation graph transition.
  * \ingroup Animation
@@ -34,11 +34,11 @@ public:
 
 	Transition();
 
-	Transition(State* from, State* to);
+	Transition(StateNode* from, StateNode* to);
 
-	Ref< State > from() const;
+	StateNode* from() const;
 
-	Ref< State > to() const;
+	StateNode* to() const;
 
 	Moment getMoment() const;
 
@@ -49,8 +49,8 @@ public:
 	virtual bool serialize(ISerializer& s);
 
 private:
-	Ref< State > m_from;
-	Ref< State > m_to;
+	Ref< StateNode > m_from;
+	Ref< StateNode > m_to;
 	Moment m_moment;
 	float m_duration;
 	std::wstring m_condition;

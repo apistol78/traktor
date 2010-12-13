@@ -154,7 +154,7 @@ void RigidEntityEditor::drawGuide(
 			else if (const MeshShapeDesc* meshShapeDesc = dynamic_type_cast< const MeshShapeDesc* >(shapeDesc))
 			{
 				resource::Proxy< Mesh > mesh = meshShapeDesc->getMesh();
-				if (context->getResourceManager()->bind(mesh))
+				if (context->getResourceManager()->bind(mesh) && mesh.validate())
 				{
 					const AlignedVector< Vector4 >& vertices = mesh->getVertices();
 					const std::vector< Mesh::Triangle >& triangles = 

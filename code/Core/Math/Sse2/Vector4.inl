@@ -9,6 +9,8 @@ namespace traktor
 static const Vector4 c_zero(0.0f, 0.0f, 0.0f, 0.0f);
 static const Vector4 c_one(1.0f, 1.0f, 1.0f, 1.0f);
 static const Vector4 c_origo(0.0f, 0.0f, 0.0f, 1.0f);
+static const Vector4 c_xyz0mask(1.0f, 1.0f, 1.0f, 0.0f);
+static const Vector4 c_xyz1mask(0.0f, 0.0f, 0.0f, 1.0f);
 
 	}
 
@@ -88,14 +90,12 @@ T_MATH_INLINE Scalar Vector4::w() const
 
 T_MATH_INLINE Vector4 Vector4::xyz0() const
 {
-	static const Vector4 c_mask(1.0f, 1.0f, 1.0f, 0.0f);
-	return *this * c_mask; 
+	return *this * c_xyz0mask; 
 }
 
 T_MATH_INLINE Vector4 Vector4::xyz1() const
 {
-	static const Vector4 c_wone(0.0f, 0.0f, 0.0f, 1.0f);
-	return xyz0() + c_wone;
+	return xyz0() + c_xyz1mask;
 }
 
 T_MATH_INLINE Scalar Vector4::length() const

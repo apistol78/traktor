@@ -1,5 +1,5 @@
 #include "Animation/Editor/StatePipeline.h"
-#include "Animation/Animation/State.h"
+#include "Animation/Animation/StateNodeAnimation.h"
 #include "Animation/Animation/StateGraph.h"
 #include "Animation/Animation/StatePoseControllerData.h"
 #include "Editor/IPipelineDepends.h"
@@ -14,7 +14,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.StatePipeline", 0, StatePipel
 TypeInfoSet StatePipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< State >());
+	typeSet.insert(&type_of< StateNodeAnimation >());
 	typeSet.insert(&type_of< StateGraph >());
 	typeSet.insert(&type_of< StatePoseControllerData >());
 	return typeSet;
@@ -27,12 +27,12 @@ bool StatePipeline::buildDependencies(
 	Ref< const Object >& outBuildParams
 ) const
 {
-	if (const State* state = dynamic_type_cast< const State* >(sourceAsset))
+	if (const StateNodeAnimation* state = dynamic_type_cast< const StateNodeAnimation* >(sourceAsset))
 		pipelineDepends->addDependency(state->getAnimation().getGuid(), editor::PdfBuild);
 	else if (const StateGraph* stateGraph = dynamic_type_cast< const StateGraph* >(sourceAsset))
 	{
-		const RefArray< State >& states = stateGraph->getStates();
-		for (RefArray< State >::const_iterator i = states.begin(); i != states.end(); ++i)
+		const RefArray< StateNode >& states = stateGraph->getStates();
+		for (RefArray< StateNode >::const_iterator i = states.begin(); i != states.end(); ++i)
 			pipelineDepends->addDependency(*i);
 	}
 	else if (const StatePoseControllerData* controllerData = dynamic_type_cast< const StatePoseControllerData* >(sourceAsset))

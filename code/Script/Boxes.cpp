@@ -54,6 +54,21 @@ float BoxedVector4::w() const
 	return m_value.w();
 }
 
+Vector4 BoxedVector4::add(const Vector4& v) const
+{
+	return m_value + v;
+}
+
+Vector4 BoxedVector4::sub(const Vector4& v) const
+{
+	return m_value - v;
+}
+
+float BoxedVector4::dot(const Vector4& v) const
+{
+	return dot3(m_value, v);
+}
+
 float BoxedVector4::length() const
 {
 	return m_value.length();
@@ -126,6 +141,16 @@ Quaternion BoxedQuaternion::inverse() const
 	return m_value.inverse();
 }
 
+Quaternion BoxedQuaternion::concat(const Quaternion& q) const
+{
+	return m_value * q;
+}
+
+Vector4 BoxedQuaternion::transform(const Vector4& v) const
+{
+	return m_value * v;
+}
+
 const Quaternion& BoxedQuaternion::unbox() const
 {
 	return m_value;
@@ -155,6 +180,21 @@ const Vector4& BoxedTransform::translation() const
 const Quaternion& BoxedTransform::rotation() const
 {
 	return m_value.rotation();
+}
+
+Transform BoxedTransform::inverse() const
+{
+	return m_value.inverse();
+}
+
+Transform BoxedTransform::concat(const Transform& t) const
+{
+	return m_value * t;
+}
+
+Vector4 BoxedTransform::transform(const Vector4& v) const
+{
+	return m_value * v;
 }
 
 const Transform& BoxedTransform::unbox() const
@@ -203,6 +243,9 @@ void registerBoxClasses(IScriptManager* scriptManager)
 	classBoxedVector4->addMethod(L"y", &BoxedVector4::y);
 	classBoxedVector4->addMethod(L"z", &BoxedVector4::z);
 	classBoxedVector4->addMethod(L"w", &BoxedVector4::w);
+	classBoxedVector4->addMethod(L"add", &BoxedVector4::add);
+	classBoxedVector4->addMethod(L"sub", &BoxedVector4::sub);
+	classBoxedVector4->addMethod(L"dot", &BoxedVector4::dot);
 	classBoxedVector4->addMethod(L"length", &BoxedVector4::length);
 	classBoxedVector4->addMethod(L"normalized", &BoxedVector4::normalized);
 	scriptManager->registerClass(classBoxedVector4);
@@ -219,6 +262,8 @@ void registerBoxClasses(IScriptManager* scriptManager)
 	classBoxedQuaternion->addMethod(L"w", &BoxedQuaternion::w);
 	classBoxedQuaternion->addMethod(L"normalized", &BoxedQuaternion::normalized);
 	classBoxedQuaternion->addMethod(L"inverse", &BoxedQuaternion::inverse);
+	classBoxedQuaternion->addMethod(L"concat", &BoxedQuaternion::concat);
+	classBoxedQuaternion->addMethod(L"transform", &BoxedQuaternion::transform);
 	scriptManager->registerClass(classBoxedQuaternion);
 	
 	Ref< AutoScriptClass< BoxedTransform > > classBoxedTransform = new AutoScriptClass< BoxedTransform >();
@@ -226,6 +271,9 @@ void registerBoxClasses(IScriptManager* scriptManager)
 	classBoxedTransform->addConstructor< const Vector4&, const Quaternion& >();
 	classBoxedTransform->addMethod(L"translation", &BoxedTransform::translation);
 	classBoxedTransform->addMethod(L"rotation", &BoxedTransform::rotation);
+	classBoxedTransform->addMethod(L"inverse", &BoxedTransform::inverse);
+	classBoxedTransform->addMethod(L"concat", &BoxedTransform::concat);
+	classBoxedTransform->addMethod(L"transform", &BoxedTransform::transform);
 	scriptManager->registerClass(classBoxedTransform);
 
 	Ref< AutoScriptClass< BoxedArray > > classBoxedArray = new AutoScriptClass< BoxedArray >();

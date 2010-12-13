@@ -10,9 +10,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_ANIMATION_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -43,7 +43,9 @@ public:
 		const resource::Proxy< mesh::SkinnedMesh >& mesh,
 		const resource::Proxy< Skeleton >& skeleton,
 		IPoseController* poseController,
-		const std::vector< int >& boneRemap
+		const std::vector< int >& boneRemap,
+		bool normalizePose,
+		bool normalizeTransform
 	);
 
 	virtual ~AnimatedMeshEntity();
@@ -79,6 +81,8 @@ private:
 	mutable resource::Proxy< Skeleton > m_skeleton;
 	Ref< IPoseController > m_poseController;
 	std::vector< int32_t > m_boneRemap;
+	bool m_normalizePose;
+	bool m_normalizeTransform;
 	AlignedVector< Transform > m_boneTransforms;
 	AlignedVector< Transform > m_poseTransforms;
 	AlignedVector< Vector4 > m_skinTransforms;

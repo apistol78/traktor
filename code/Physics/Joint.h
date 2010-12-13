@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_PHYSICS_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -29,7 +29,7 @@ public:
 	virtual void destroy() = 0;
 
 	/*! \brief Get first constraint body. */
-	virtual Ref< Body > getBody1() = 0;
+	virtual Body* getBody1() = 0;
 
 	/*! \brief Get second constraint body.
 	 *
@@ -37,7 +37,7 @@ public:
 	 * This return null if first body is constrained
 	 * to world.
 	 */
-	virtual Ref< Body > getBody2() = 0;
+	virtual Body* getBody2() = 0;
 
 	/*! \brief Set joint enable state.
 	 *

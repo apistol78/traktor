@@ -21,6 +21,7 @@
 #include "World/Entity/EntityResourceFactory.h"
 #include "World/Entity/GroupEntityRenderer.h"
 #include "World/Entity/LightEntityRenderer.h"
+#include "World/Entity/TransientEntityRenderer.h"
 #include "World/Entity/WorldEntityFactory.h"
 #include "World/PostProcess/PostProcessFactory.h"
 #include "Amalgam/IEnvironment.h"
@@ -113,6 +114,7 @@ Ref< world::WorldRenderer > WorldServer::createWorldRenderer(
 
 	worldEntityRenderers->add(new world::GroupEntityRenderer());
 	worldEntityRenderers->add(new world::LightEntityRenderer());
+	worldEntityRenderers->add(new world::TransientEntityRenderer());
 	worldEntityRenderers->add(new mesh::MeshEntityRenderer());
 	worldEntityRenderers->add(new mesh::InstanceMeshEntityRenderer());
 	worldEntityRenderers->add(new spray::EffectEntityRenderer(m_renderServer->getRenderSystem()));

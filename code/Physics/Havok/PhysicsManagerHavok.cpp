@@ -30,6 +30,7 @@
 #include "Physics/Havok/StaticBodyHavok.h"
 #include "Physics/Havok/DynamicBodyHavok.h"
 #include "Physics/Havok/BallJointHavok.h"
+#include "Physics/Havok/ConeTwistJointHavok.h"
 #include "Physics/Havok/HingeJointHavok.h"
 #include "Physics/Havok/Conversion.h"
 #include "Physics/BoxShapeDesc.h"
@@ -526,6 +527,37 @@ Ref< Joint > PhysicsManagerHavok::createJoint(const JointDesc* desc, const Trans
 
 		constraint = new hkpConstraintInstance(b1, b2, ballConstraintData);
 		joint = new BallJointHavok(this, constraint, body1, body2);
+	}
+	else if (const ConeTwistJointDesc* coneTwistDesc = dynamic_type_cast< const ConeTwistJointDesc* >(desc))
+	{
+		HvkRef< hkpBallAndSocketConstraintData > ballConstraintData;
+
+		if (b1 && b2)
+		{
+			Vector4 anchor = transform * coneTwistDesc->getAnchor().xyz1();
+			Vector4 anchorIn1 = body1->getTransform().inverse() * anchor;
+			Vector4 anchorIn2 = body2->getTransform().inverse() * anchor;
+
+			ballConstraintData = new hkpBallAndSocketConstraintData();
+			ballConstraintData->setInBodySpace(
+				toHkVector4(anchorIn1),
+				toHkVector4(anchorIn2)
+			);
+		}
+		else
+		{
+			Vector4 anchor = transform * coneTwistDesc->getAnchor().xyz1();
+			Vector4 anchorIn1 = body1->getTransform().inverse() * anchor;
+
+			ballConstraintData = new hkpBallAndSocketConstraintData();
+			ballConstraintData->setInBodySpace(
+				toHkVector4(anchorIn1),
+				toHkVector4(anchor)
+			);
+		}
+
+		constraint = new hkpConstraintInstance(b1, b2, ballConstraintData);
+		joint = new ConeTwistJointHavok(this, constraint, body1, body2);
 	}
 	else if (const HingeJointDesc* hingeDesc = dynamic_type_cast< const HingeJointDesc* >(desc))
 	{

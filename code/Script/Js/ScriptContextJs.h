@@ -9,9 +9,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_SCRIPT_JS_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 struct lua_State;
@@ -70,7 +70,7 @@ private:
 
 	v8::Handle< v8::String > createString(const std::wstring& s) const;
 
-	v8::Handle< v8::Value > createObject(Object* object) const;
+	v8::Handle< v8::Value > createObject(Object* object, bool weakReference) const;
 
 	v8::Handle< v8::Value > toValue(const Any& value) const;
 

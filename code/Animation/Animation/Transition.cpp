@@ -1,5 +1,5 @@
 #include "Animation/Animation/Transition.h"
-#include "Animation/Animation/State.h"
+#include "Animation/Animation/StateNode.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRef.h"
 #include "Core/Serialization/MemberEnum.h"
@@ -17,7 +17,7 @@ Transition::Transition()
 {
 }
 
-Transition::Transition(State* from, State* to)
+Transition::Transition(StateNode* from, StateNode* to)
 :	m_from(from)
 ,	m_to(to)
 ,	m_moment(TmImmediatly)
@@ -25,12 +25,12 @@ Transition::Transition(State* from, State* to)
 {
 }
 
-Ref< State > Transition::from() const
+StateNode* Transition::from() const
 {
 	return m_from;
 }
 
-Ref< State > Transition::to() const
+StateNode* Transition::to() const
 {
 	return m_to;
 }
@@ -59,8 +59,8 @@ bool Transition::serialize(ISerializer& s)
 		{ 0 }
 	};
 
-	s >> MemberRef< State >(L"from", m_from);
-	s >> MemberRef< State >(L"to", m_to);
+	s >> MemberRef< StateNode >(L"from", m_from);
+	s >> MemberRef< StateNode >(L"to", m_to);
 	s >> Member< float >(L"duration", m_duration, 0.0f);
 	s >> MemberEnum< Moment >(L"moment", m_moment, c_Moment_Keys);
 	s >> Member< std::wstring >(L"condition", m_condition);

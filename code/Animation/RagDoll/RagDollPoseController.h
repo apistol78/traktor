@@ -56,9 +56,12 @@ public:
 		float limbMass,
 		float linearDamping,
 		float angularDamping,
+		float linearThreshold,
+		float angularThreshold,
 		IPoseController* trackPoseController,
 		float trackLinearTension,
-		float trackAngularTension
+		float trackAngularTension,
+		float trackDuration
 	);
 
 	virtual void destroy();
@@ -89,6 +92,7 @@ private:
 	Ref< IPoseController > m_trackPoseController;
 	Scalar m_trackLinearTension;
 	Scalar m_trackAngularTension;
+	float m_trackDuration;
 	RefArray< physics::DynamicBody > m_limbs;
 	RefArray< physics::Joint > m_joints;
 	Transform m_worldTransform;

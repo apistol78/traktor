@@ -383,7 +383,9 @@ void FlashMoviePlayer::Global_setInterval(CallArgs& ca)
 	else
 	{
 		// (functionReference:Function, interval:Number, [param1:Object, param2, ..., paramN])
-		return;
+		target = ca.self;
+		function = ca.args[0].getObjectSafe< ActionFunction >();
+		interval = uint32_t(ca.args[1].getNumberSafe());
 	}
 
 	if (!function)

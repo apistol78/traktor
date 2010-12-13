@@ -429,6 +429,8 @@ Ref< Body > PhysicsManagerBullet::createBody(const BodyDesc* desc)
 		info.m_linearDamping = dynamicDesc->getLinearDamping();
 		info.m_angularDamping = dynamicDesc->getAngularDamping();
 		info.m_friction = dynamicDesc->getFriction();
+		info.m_linearSleepingThreshold = dynamicDesc->getLinearThreshold();
+		info.m_angularSleepingThreshold = dynamicDesc->getAngularThreshold();
 		btRigidBody* rigidBody = new btRigidBody(info);
 
 		if (!dynamicDesc->getActive())
@@ -614,7 +616,6 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 	}
 
 	m_joints.push_back(joint);
-
 	return joint;
 }
 
@@ -625,21 +626,23 @@ void PhysicsManagerBullet::update()
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	T_ANONYMOUS_VAR(Save< PhysicsManagerBullet* >)(ms_this, this);
 
+	// Save current state of all dynamic bodies.
 	for (RefArray< DynamicBodyBullet >::iterator i = m_dynamicBodies.begin(); i != m_dynamicBodies.end(); ++i)
 		(*i)->setPreviousState((*i)->getState());
 
+	// Step simulation.
 	m_dynamicsWorld->stepSimulation(m_simulationDeltaTime, 0);
-}
 
-uint32_t PhysicsManagerBullet::getCollidingPairs(std::vector< CollisionPair >& outCollidingPairs) const
-{
+	// Issue collision events.
 	int manifoldCount = m_dispatcher->getNumManifolds();
-
-	outCollidingPairs.resize(manifoldCount);
 	for (int i = 0; i < manifoldCount; ++i)
 	{
-		const btPersistentManifold* manifold = m_dispatcher->getManifoldByIndexInternal(i);
+		btPersistentManifold* manifold = m_dispatcher->getManifoldByIndexInternal(i);
 		T_ASSERT (manifold);
+
+		// Only call to listeners when a new manifold has been created.
+		if (!manifold->m_fresh)
+			continue;
 
 		const btRigidBody* body0 = reinterpret_cast< const btRigidBody* >(manifold->getBody0());
 		const btRigidBody* body1 = reinterpret_cast< const btRigidBody* >(manifold->getBody1());
@@ -647,8 +650,76 @@ uint32_t PhysicsManagerBullet::getCollidingPairs(std::vector< CollisionPair >& o
 		Body* wrapperBody0 = body0 ? static_cast< Body* >(body0->getUserPointer()) : 0;
 		Body* wrapperBody1 = body1 ? static_cast< Body* >(body1->getUserPointer()) : 0;
 
-		outCollidingPairs[i].body1 = wrapperBody0;
-		outCollidingPairs[i].body2 = wrapperBody1;
+		// Don't issue collision events between joined bodies.
+		if (wrapperBody0 && wrapperBody1)
+		{
+			for (RefArray< Joint >::const_iterator i = m_joints.begin(); i != m_joints.end(); ++i)
+			{
+				if (
+					((*i)->getBody1() == wrapperBody0 && (*i)->getBody2() == wrapperBody1) ||
+					((*i)->getBody1() == wrapperBody1 && (*i)->getBody2() == wrapperBody0)
+				)
+					return;
+			}
+		}
+
+		CollisionInfo info;
+		info.body1 = wrapperBody0;
+		info.body2 = wrapperBody1;
+
+		int contacts = manifold->getNumContacts();
+		for (int j = 0; j < contacts; ++j)
+		{
+			const btManifoldPoint& pt = manifold->getContactPoint(j);
+			if (pt.getDistance() < 0.0f)
+			{
+				CollisionContact cc;
+				cc.depth = -pt.getDistance();
+				cc.normal = fromBtVector3(pt.m_normalWorldOnB, 0.0f);
+				cc.position = fromBtVector3(pt.m_positionWorldOnA, 1.0f);
+				info.contacts.push_back(cc);
+			}
+		}
+		if (info.contacts.empty())
+			continue;
+
+		notifyCollisionListeners(info);
+		manifold->m_fresh = false;
+	}
+}
+
+uint32_t PhysicsManagerBullet::getCollidingPairs(std::vector< CollisionPair >& outCollidingPairs) const
+{
+	int manifoldCount = m_dispatcher->getNumManifolds();
+
+	outCollidingPairs.reserve(manifoldCount);
+	for (int i = 0; i < manifoldCount; ++i)
+	{
+		const btPersistentManifold* manifold = m_dispatcher->getManifoldByIndexInternal(i);
+		T_ASSERT (manifold);
+
+		bool validContact = false;
+		int contacts = manifold->getNumContacts();
+		for (int j = 0; j < contacts; ++j)
+		{
+			const btManifoldPoint& pt = manifold->getContactPoint(j);
+			if (pt.getDistance() < 0.0f)
+			{
+				validContact = true;
+				break;
+			}
+		}
+		if (!validContact)
+			continue;
+
+		const btRigidBody* body0 = reinterpret_cast< const btRigidBody* >(manifold->getBody0());
+		const btRigidBody* body1 = reinterpret_cast< const btRigidBody* >(manifold->getBody1());
+
+		Body* wrapperBody0 = body0 ? static_cast< Body* >(body0->getUserPointer()) : 0;
+		Body* wrapperBody1 = body1 ? static_cast< Body* >(body1->getUserPointer()) : 0;
+
+		CollisionPair pair = { wrapperBody0, wrapperBody1 };
+		outCollidingPairs.push_back(pair);
 	}
 
 	return manifoldCount;
@@ -869,6 +940,7 @@ void PhysicsManagerBullet::nearCallback(btBroadphasePair& collisionPair, btColli
 			return;
 
 		// Skip bodies which are directly connected through a joint.
+		// \fixme Doesn't scale whatsoever..
 		for (RefArray< Joint >::const_iterator i = ms_this->m_joints.begin(); i != ms_this->m_joints.end(); ++i)
 		{
 			if (
@@ -877,11 +949,6 @@ void PhysicsManagerBullet::nearCallback(btBroadphasePair& collisionPair, btColli
 			)
 				return;
 		}
-
-		CollisionInfo info;
-		info.body1 = body1;
-		info.body2 = body2;
-		ms_this->notifyCollisionListeners(info);
 	}
 
 	btCollisionDispatcher::defaultNearCallback(collisionPair, dispatcher, dispatchInfo);

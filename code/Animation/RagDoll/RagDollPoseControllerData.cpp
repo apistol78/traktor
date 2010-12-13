@@ -9,7 +9,7 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.RagDollPoseControllerData", 2, RagDollPoseControllerData, IPoseControllerData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.RagDollPoseControllerData", 4, RagDollPoseControllerData, IPoseControllerData)
 
 RagDollPoseControllerData::RagDollPoseControllerData()
 :	m_collisionGroup(~0UL)
@@ -19,8 +19,11 @@ RagDollPoseControllerData::RagDollPoseControllerData()
 ,	m_limbMass(1.0f)
 ,	m_linearDamping(0.1f)
 ,	m_angularDamping(0.1f)
+,	m_linearThreshold(0.8f)
+,	m_angularThreshold(1.0f)
 ,	m_trackLinearTension(0.0f)
 ,	m_trackAngularTension(0.0f)
+,	m_trackDuration(0.0f)
 {
 }
 
@@ -75,9 +78,12 @@ Ref< IPoseController > RagDollPoseControllerData::createInstance(
 		m_limbMass,
 		m_linearDamping,
 		m_angularDamping,
+		m_linearThreshold,
+		m_angularThreshold,
 		trackPoseController,
 		m_trackLinearTension,
-		m_trackAngularTension
+		m_trackAngularTension,
+		m_trackDuration
 	))
 		return 0;
 
@@ -96,11 +102,20 @@ bool RagDollPoseControllerData::serialize(ISerializer& s)
 		s >> Member< float >(L"linearDamping", m_linearDamping);
 		s >> Member< float >(L"angularDamping", m_angularDamping);
 	}
+	if (s.getVersion() >= 4)
+	{
+		s >> Member< float >(L"linearThreshold", m_linearThreshold);
+		s >> Member< float >(L"angularThreshold", m_angularThreshold);
+	}
 	if (s.getVersion() >= 2)
 	{
 		s >> MemberRef< IPoseControllerData >(L"trackPoseController", m_trackPoseController);
 		s >> Member< float >(L"trackLinearTension", m_trackLinearTension);
 		s >> Member< float >(L"trackAngularTension", m_trackAngularTension);
+	}
+	if (s.getVersion() >= 3)
+	{
+		s >> Member< float >(L"trackDuration", m_trackDuration);
 	}
 	return true;
 }

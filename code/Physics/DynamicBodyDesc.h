@@ -50,6 +50,14 @@ public:
 
 	float getFriction() const;
 
+	void setLinearThreshold(float linearThreshold);
+
+	float getLinearThreshold() const;
+
+	void setAngularThreshold(float angularThreshold);
+
+	float getAngularThreshold() const;
+
 	virtual bool serialize(ISerializer& s);
 
 private:
@@ -59,6 +67,8 @@ private:
 	float m_linearDamping;
 	float m_angularDamping;
 	float m_friction;
+	float m_linearThreshold;
+	float m_angularThreshold;
 };
 
 	}
