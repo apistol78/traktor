@@ -728,6 +728,13 @@
         <message>Building embedded resource file %(FileName).h</message>
         <outputs>.\\Resources\\%(FileName).h;%(Outputs)</outputs>
       </item>
+      <item type="SolutionBuilderMsvcVCXCustomBuildTool">
+        <name>CustomBuild</name>
+        <fileType>exe</fileType>
+        <command>$(TRAKTOR_HOME)/bin/BinaryInclude %(FullPath) .\\Resources\\%(FileName).h c_Resource%(FileName)</command>
+        <message>Building embedded resource file %(FileName).h</message>
+        <outputs>.\\Resources\\%(FileName).h;%(Outputs)</outputs>
+      </item>
       <item type="SolutionBuilderMsvcVCXBuildTool">
         <name>ClInclude</name>
         <fileType>h</fileType>
