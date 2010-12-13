@@ -1,16 +1,16 @@
 #ifndef traktor_drone_PerforceClientDesc_H
 #define traktor_drone_PerforceClientDesc_H
 
-#include <Core/Serialization/Serializable.h>
+#include <Core/Serialization/ISerializable.h>
 
 namespace traktor
 {
 	namespace drone
 	{
 
-class PerforceClientDesc : public Serializable
+class PerforceClientDesc : public ISerializable
 {
-	T_RTTI_CLASS(PerforceClientDesc)
+	T_RTTI_CLASS
 
 public:
 	enum SecurityLevel
@@ -26,7 +26,7 @@ public:
 	std::wstring m_client;
 	SecurityLevel m_securityLevel;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 };
 
 	}

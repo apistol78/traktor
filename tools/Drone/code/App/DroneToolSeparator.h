@@ -10,14 +10,14 @@ namespace traktor
 
 class DroneToolSeparator : public DroneTool
 {
-	T_RTTI_CLASS(DroneToolSeparator)
+	T_RTTI_CLASS
 
 public:
 	virtual void getMenuItems(RefArray< ui::MenuItem >& outItems);
 
 	virtual bool execute(ui::Widget* parent, ui::MenuItem* menuItem);
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 };
 
 	}

@@ -1,6 +1,6 @@
-#include <Core/Serialization/Serializer.h>
+#include <Core/Serialization/ISerializer.h>
 #include <Core/Serialization/Member.h>
-#include <Core/Serialization/MemberRef.h>
+#include <Core/Serialization/MemberRefArray.h>
 #include "App/PerforceChangeList.h"
 #include "App/PerforceChangeListFile.h"
 
@@ -9,7 +9,7 @@ namespace traktor
 	namespace drone
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.drone.PerforceChangeList", PerforceChangeList, Serializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.drone.PerforceChangeList", 0, PerforceChangeList, ISerializable)
 
 PerforceChangeList::PerforceChangeList()
 :	m_change(0)
@@ -59,7 +59,7 @@ const RefArray< PerforceChangeListFile >& PerforceChangeList::getFiles() const
 	return m_files;
 }
 
-bool PerforceChangeList::serialize(Serializer& s)
+bool PerforceChangeList::serialize(ISerializer& s)
 {
 	s >> Member< uint32_t >(L"change", m_change);
 	s >> Member< std::wstring >(L"user", m_user);

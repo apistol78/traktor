@@ -10,7 +10,7 @@ namespace traktor
 	namespace drone
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.drone.DroneToolShortcut", DroneToolShortcut, DroneTool)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.drone.DroneToolShortcut", 0, DroneToolShortcut, DroneTool)
 
 DroneToolShortcut::DroneToolShortcut(
 	const std::wstring& title,
@@ -47,18 +47,26 @@ const std::wstring& DroneToolShortcut::getWorkingDirectory() const
 
 void DroneToolShortcut::getMenuItems(RefArray< ui::MenuItem >& outItems)
 {
-	Ref< ui::MenuItem > menuItem = gc_new< ui::MenuItem >(m_title);
+	Ref< ui::MenuItem > menuItem = new ui::MenuItem(m_title);
 	menuItem->setData(L"TOOL", this);
 	outItems.push_back(menuItem);
 }
 
 bool DroneToolShortcut::execute(ui::Widget* parent, ui::MenuItem* menuItem)
 {
-	Ref< Process > process = OS::getInstance().execute(m_command, m_commandArguments, m_workingDirectory);
+	Ref< IProcess > process = OS::getInstance().execute(
+		m_command,
+		m_commandArguments,
+		m_workingDirectory,
+		0,
+		false,
+		true,
+		false
+	);
 	return process != 0;
 }
 
-bool DroneToolShortcut::serialize(Serializer& s)
+bool DroneToolShortcut::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"title", m_title);
 	s >> Member< std::wstring >(L"command", m_command);

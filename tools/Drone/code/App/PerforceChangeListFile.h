@@ -1,7 +1,7 @@
 #ifndef traktor_drone_PerforceChangeListFile_H
 #define traktor_drone_PerforceChangeListFile_H
 
-#include <Core/Serialization/Serializable.h>
+#include <Core/Serialization/ISerializable.h>
 #include "App/PerforceTypes.h"
 
 namespace traktor
@@ -9,9 +9,9 @@ namespace traktor
 	namespace drone
 	{
 
-class PerforceChangeListFile : public Serializable
+class PerforceChangeListFile : public ISerializable
 {
-	T_RTTI_CLASS(PerforceChangeListFile)
+	T_RTTI_CLASS
 
 public:
 	PerforceChangeListFile();
@@ -28,7 +28,7 @@ public:
 
 	PerforceAction getAction() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	std::wstring m_depotPath;

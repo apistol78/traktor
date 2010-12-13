@@ -1,9 +1,9 @@
 #include <Ui/MenuItem.h>
 #include <Ui/MessageBox.h>
 #include <Core/Io/FileSystem.h>
-#include <Core/Io/Stream.h>
+#include <Core/Io/IStream.h>
 #include <Core/Io/StringOutputStream.h>
-#include <Core/Serialization/MemberAggregate.h>
+#include <Core/Serialization/MemberComposite.h>
 #include <Core/Misc/String.h>
 #include <Core/Log/Log.h>
 #include <Xml/XmlSerializer.h>
@@ -19,7 +19,7 @@ namespace traktor
 	namespace drone
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.drone.DroneToolP4Export", DroneToolP4Export, DroneTool)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.drone.DroneToolP4Export", 0, DroneToolP4Export, DroneTool)
 
 DroneToolP4Export::DroneToolP4Export()
 :	m_title(L"Export P4 changelist...")
@@ -29,7 +29,7 @@ DroneToolP4Export::DroneToolP4Export()
 
 void DroneToolP4Export::getMenuItems(RefArray< ui::MenuItem >& outItems)
 {
-	Ref< ui::MenuItem > menuItem = gc_new< ui::MenuItem >(ui::Command(L"Drone.Perforce.ExportChangeList"), m_title);
+	Ref< ui::MenuItem > menuItem = new ui::MenuItem(ui::Command(L"Drone.Perforce.ExportChangeList"), m_title);
 	menuItem->setData(L"TOOL", this);
 	outItems.push_back(menuItem);
 }
@@ -37,7 +37,7 @@ void DroneToolP4Export::getMenuItems(RefArray< ui::MenuItem >& outItems)
 bool DroneToolP4Export::execute(ui::Widget* parent, ui::MenuItem* menuItem)
 {
 	if (!m_p4client)
-		m_p4client = gc_new< PerforceClient >(cref(m_clientDesc));
+		m_p4client = new PerforceClient(m_clientDesc);
 
 	RefArray< PerforceChangeList > changeLists;
 	if (!m_p4client->getChangeLists(changeLists))
@@ -68,7 +68,7 @@ bool DroneToolP4Export::execute(ui::Widget* parent, ui::MenuItem* menuItem)
 		}
 
 		std::wstring descriptionFilePath = exportPath.getPathName() + L"/ChangeList.xml";
-		Ref< Stream > descriptionFile = FileSystem::getInstance().open(descriptionFilePath, File::FmWrite);
+		Ref< IStream > descriptionFile = FileSystem::getInstance().open(descriptionFilePath, File::FmWrite);
 		if (!descriptionFile)
 		{
 			exportError = L"Unable to create changelist description file";
@@ -119,10 +119,10 @@ bool DroneToolP4Export::execute(ui::Widget* parent, ui::MenuItem* menuItem)
 	return true;
 }
 
-bool DroneToolP4Export::serialize(Serializer& s)
+bool DroneToolP4Export::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"title", m_title);
-	s >> MemberAggregate< PerforceClientDesc >(L"clientDesc", m_clientDesc);
+	s >> MemberComposite< PerforceClientDesc >(L"clientDesc", m_clientDesc);
 	s >> Member< std::wstring >(L"exportPath", m_exportPath);
 	s >> Member< bool >(L"verbose", m_verbose);
 	return true;

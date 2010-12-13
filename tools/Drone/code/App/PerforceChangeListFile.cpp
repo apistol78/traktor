@@ -1,4 +1,4 @@
-#include <Core/Serialization/Serializer.h>
+#include <Core/Serialization/ISerializer.h>
 #include <Core/Serialization/Member.h>
 #include <Core/Serialization/MemberEnum.h>
 #include "App/PerforceChangeListFile.h"
@@ -8,7 +8,7 @@ namespace traktor
 	namespace drone
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.drone.PerforceChangeListFile", PerforceChangeListFile, Serializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.drone.PerforceChangeListFile", 0, PerforceChangeListFile, ISerializable)
 
 PerforceChangeListFile::PerforceChangeListFile()
 :	m_action(AtNotOpened)
@@ -45,7 +45,7 @@ PerforceAction PerforceChangeListFile::getAction() const
 	return m_action;
 }
 
-bool PerforceChangeListFile::serialize(Serializer& s)
+bool PerforceChangeListFile::serialize(ISerializer& s)
 {
 	const MemberEnum< PerforceAction >::Key c_PerforceAction_Keys[] =
 	{

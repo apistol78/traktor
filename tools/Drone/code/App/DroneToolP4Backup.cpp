@@ -1,9 +1,9 @@
 #include <Ui/MenuItem.h>
 #include <Ui/MessageBox.h>
 #include <Core/Io/FileSystem.h>
-#include <Core/Io/Stream.h>
+#include <Core/Io/IStream.h>
 #include <Core/Io/StringOutputStream.h>
-#include <Core/Serialization/MemberAggregate.h>
+#include <Core/Serialization/MemberComposite.h>
 #include <Core/Misc/String.h>
 #include <Core/Log/Log.h>
 #include <Xml/XmlSerializer.h>
@@ -19,7 +19,7 @@ namespace traktor
 	namespace drone
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.drone.DroneToolP4Backup", DroneToolP4Backup, DroneTool)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.drone.DroneToolP4Backup", 0, DroneToolP4Backup, DroneTool)
 
 DroneToolP4Backup::DroneToolP4Backup()
 :	m_title(L"Backup P4 changelist...")
@@ -29,7 +29,7 @@ DroneToolP4Backup::DroneToolP4Backup()
 
 void DroneToolP4Backup::getMenuItems(RefArray< ui::MenuItem >& outItems)
 {
-	Ref< ui::MenuItem > menuItem = gc_new< ui::MenuItem >(ui::Command(L"Drone.Perforce.BackupChangeList"), m_title);
+	Ref< ui::MenuItem > menuItem = new ui::MenuItem(ui::Command(L"Drone.Perforce.BackupChangeList"), m_title);
 	menuItem->setData(L"TOOL", this);
 	outItems.push_back(menuItem);
 }
@@ -37,7 +37,7 @@ void DroneToolP4Backup::getMenuItems(RefArray< ui::MenuItem >& outItems)
 bool DroneToolP4Backup::execute(ui::Widget* parent, ui::MenuItem* menuItem)
 {
 	if (!m_p4client)
-		m_p4client = gc_new< PerforceClient >(cref(m_clientDesc));
+		m_p4client = new PerforceClient(m_clientDesc);
 
 	RefArray< PerforceChangeList > changeLists;
 	if (!m_p4client->getChangeLists(changeLists))
@@ -86,7 +86,7 @@ bool DroneToolP4Backup::execute(ui::Widget* parent, ui::MenuItem* menuItem)
 
 		std::wstring descriptionPath = backupChangePath + L"/ChangeList.xml";
 
-		Ref< Stream > descriptionFile = FileSystem::getInstance().open(descriptionPath, File::FmWrite);
+		Ref< IStream > descriptionFile = FileSystem::getInstance().open(descriptionPath, File::FmWrite);
 		if (!descriptionFile)
 		{
 			backupError = L"Unable to create changelist description file";
@@ -137,10 +137,10 @@ bool DroneToolP4Backup::execute(ui::Widget* parent, ui::MenuItem* menuItem)
 	return true;
 }
 
-bool DroneToolP4Backup::serialize(Serializer& s)
+bool DroneToolP4Backup::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"title", m_title);
-	s >> MemberAggregate< PerforceClientDesc >(L"clientDesc", m_clientDesc);
+	s >> MemberComposite< PerforceClientDesc >(L"clientDesc", m_clientDesc);
 	s >> Member< std::wstring >(L"backupPath", m_backupPath);
 	s >> Member< bool >(L"verbose", m_verbose);
 	return true;

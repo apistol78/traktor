@@ -1,7 +1,7 @@
 #ifndef traktor_drone_DroneSettings_H
 #define traktor_drone_DroneSettings_H
 
-#include <Core/Serialization/Serializable.h>
+#include <Core/Serialization/ISerializable.h>
 
 namespace traktor
 {
@@ -10,16 +10,16 @@ namespace traktor
 
 class DroneTool;
 
-class DroneSettings : public Serializable
+class DroneSettings : public ISerializable
 {
-	T_RTTI_CLASS(DroneSettings)
+	T_RTTI_CLASS
 
 public:
 	void addTool(DroneTool* tool);
 
 	const RefArray< DroneTool >& getTools() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	RefArray< DroneTool > m_tools;

@@ -1,7 +1,7 @@
 #ifndef traktor_drone_UpdateBundle_H
 #define traktor_drone_UpdateBundle_H
 
-#include <Core/Serialization/Serializable.h>
+#include <Core/Serialization/ISerializable.h>
 #include <Net/Url.h>
 
 namespace traktor
@@ -9,9 +9,9 @@ namespace traktor
 	namespace drone
 	{
 
-class UpdateBundle : public Serializable
+class UpdateBundle : public ISerializable
 {
-	T_RTTI_CLASS(UpdateBundle);
+	T_RTTI_CLASS
 
 public:
 	struct BundledItem
@@ -19,7 +19,7 @@ public:
 		std::wstring url;
 		std::wstring path;
 
-		bool serialize(Serializer& s);
+		bool serialize(ISerializer& s);
 	};
 
 	UpdateBundle();
@@ -30,7 +30,7 @@ public:
 
 	const std::vector< BundledItem >& getItems() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	uint32_t m_version;

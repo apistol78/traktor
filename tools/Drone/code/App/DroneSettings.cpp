@@ -1,5 +1,5 @@
-#include <Core/Serialization/Serializer.h>
-#include <Core/Serialization/MemberRef.h>
+#include <Core/Serialization/ISerializer.h>
+#include <Core/Serialization/MemberRefArray.h>
 #include "App/DroneSettings.h"
 #include "App/DroneTool.h"
 
@@ -8,7 +8,7 @@ namespace traktor
 	namespace drone
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.drone.DroneSettings", DroneSettings, Serializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.drone.DroneSettings", 0, DroneSettings, ISerializable)
 
 void DroneSettings::addTool(DroneTool* tool)
 {
@@ -20,7 +20,7 @@ const RefArray< DroneTool >& DroneSettings::getTools() const
 	return m_tools;
 }
 
-bool DroneSettings::serialize(Serializer& s)
+bool DroneSettings::serialize(ISerializer& s)
 {
 	return s >> MemberRefArray< DroneTool >(L"tools", m_tools);
 }
