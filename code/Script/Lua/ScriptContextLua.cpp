@@ -1,5 +1,7 @@
 #include <csetjmp>
 #include "Core/Log/Log.h"
+#include "Core/Memory/IAllocator.h"
+#include "Core/Memory/MemoryConfig.h"
 #include "Core/Misc/TString.h"
 #include "Core/Misc/Split.h"
 #include "Core/Misc/String.h"
@@ -84,6 +86,32 @@ void stackDump(lua_State* luaState)
 #	define DUMP_LUA_STACK(state)
 #endif
 
+void* luaAlloc(void* ud, void* ptr, size_t osize, size_t nsize)
+{
+	if (osize >= nsize)
+		return ptr;
+
+	if (nsize > 0)
+	{
+		void* nptr = getAllocator()->alloc(nsize, 16, "LUA");
+		if (!nptr)
+			return 0;
+
+		if (ptr && osize > 0)
+		{
+			std::memcpy(nptr, ptr, std::min(osize, nsize));
+			getAllocator()->free(ptr);
+		}
+
+		return nptr;
+	}
+	else
+	{
+		getAllocator()->free(ptr);
+		return 0;
+	}
+}
+
 std::jmp_buf s_jb;
 
 		}
@@ -95,10 +123,9 @@ ScriptContextLua::ScriptContextLua(const RefArray< IScriptClass >& registeredCla
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
-	m_luaState = lua_open();
+	m_luaState = lua_newstate(&luaAlloc, 0);
 
 	lua_atpanic(m_luaState, luaPanic);
-	
 	lua_gc(m_luaState, LUA_GCSTOP, 0);
 
 	luaopen_base(m_luaState);

@@ -237,15 +237,17 @@ void Path::resolve()
 		tmp = tmp.substr(vol + 1);
 	}
 
-	if (tmp[0] == L'/')
+	m_relative = true;
+	if (!tmp.empty())
 	{
-		m_relative = false;
-		tmp = tmp.substr(1);
+		if (tmp[0] == L'/')
+		{
+			m_relative = false;
+			tmp = tmp.substr(1);
+		}
+		else if (tmp[0] == L'~')
+			m_relative = false;
 	}
-	else if (tmp[0] == L'~')
-		m_relative = false;
-	else
-		m_relative = true;
 	
 	std::wstring::size_type sls = tmp.find_last_of(L'/');
 	if (sls != std::wstring::npos)
