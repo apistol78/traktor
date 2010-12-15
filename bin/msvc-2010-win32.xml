@@ -767,6 +767,10 @@
         <name>Midl</name>
         <fileType>idl</fileType>
       </item>
+      <item type="SolutionBuilderMsvcVCXBuildTool">
+        <name>Object</name>
+        <fileType>obj</fileType>
+      </item>
     </buildTools>
   </project>
 </object>

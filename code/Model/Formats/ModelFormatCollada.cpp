@@ -378,7 +378,7 @@ private:
 				return source_data_info_t(&sourceData[i], offset);
 		}
 
-		return source_data_info_t(0, offset);
+		return source_data_info_t((const FloatData*)0, offset);
 	}
 
 private:
