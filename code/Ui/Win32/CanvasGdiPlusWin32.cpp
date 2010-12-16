@@ -135,7 +135,8 @@ Size CanvasGdiPlusWin32::getTextExtent(Window& hWnd, const std::wstring& text) c
 	AutoPtr< Gdiplus::Font > font(new Gdiplus::Font(hDC, hWnd.getFont()));
 
 	AutoPtr< Gdiplus::StringFormat > stringFormat(StringFormat::GenericTypographic()->Clone());
-	stringFormat->SetFormatFlags(StringFormatFlagsNoWrap);
+	stringFormat->SetFormatFlags(StringFormatFlagsNoWrap | StringFormatFlagsMeasureTrailingSpaces);
+	stringFormat->SetTrimming(StringTrimmingNone);
 
 	graphics->MeasureString(
 		text.c_str(),
@@ -381,7 +382,8 @@ void CanvasGdiPlusWin32::drawText(const Point& at, const std::wstring& text)
 	if (!m_stringFormat.ptr())
 	{
 		m_stringFormat.reset(StringFormat::GenericTypographic()->Clone());
-		m_stringFormat->SetFormatFlags(StringFormatFlagsNoWrap);
+		m_stringFormat->SetFormatFlags(StringFormatFlagsNoWrap | StringFormatFlagsMeasureTrailingSpaces);
+		m_stringFormat->SetTrimming(StringTrimmingNone);
 	}
 
 	m_graphics->DrawString(
@@ -431,7 +433,7 @@ void CanvasGdiPlusWin32::drawText(const Rect& rc, const std::wstring& text, Alig
 		break;
 	}
 
-	stringFormat->SetFormatFlags(StringFormatFlagsNoWrap);
+	stringFormat->SetFormatFlags(StringFormatFlagsNoWrap | StringFormatFlagsMeasureTrailingSpaces);
 
 	m_graphics->DrawString(
 		text.c_str(),
@@ -453,7 +455,8 @@ Size CanvasGdiPlusWin32::getTextExtent(const std::wstring& text) const
 	if (!m_stringFormat.ptr())
 	{
 		m_stringFormat.reset(StringFormat::GenericTypographic()->Clone());
-		m_stringFormat->SetFormatFlags(StringFormatFlagsNoWrap);
+		m_stringFormat->SetFormatFlags(StringFormatFlagsNoWrap | StringFormatFlagsMeasureTrailingSpaces);
+		m_stringFormat->SetTrimming(StringTrimmingNone);
 	}
 
 	m_graphics->MeasureString(
