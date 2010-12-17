@@ -34,6 +34,10 @@ public:
 
 	bool create(Widget* parent, const std::wstring& text);
 
+	virtual void setText(const std::wstring& text);
+	
+	virtual std::wstring getText() const;
+
 	int addAttribute(const Color4ub& textColor, const Color4ub& backColor, bool bold, bool italic, bool underline);
 
 	void setAttribute(int start, int length, int attribute);
@@ -70,13 +74,6 @@ private:
 		bool underline;
 	};
 
-	struct Format
-	{
-		uint32_t start;
-		uint32_t stop;
-		uint32_t attribute;
-	};
-
 	struct Line
 	{
 		uint32_t start;
@@ -85,10 +82,16 @@ private:
 
 	Ref< ScrollBar > m_scrollBar;
 	std::vector< Attribute > m_attributes;
-	std::vector< Format > m_formats;
 	std::vector< Line > m_lines;
 	std::vector< wchar_t > m_text;
+	std::vector< uint16_t > m_meta;
 	uint32_t m_caret;
+	uint32_t m_selectionStart;
+	uint32_t m_selectionStop;
+
+#if defined(_DEBUG)
+	std::vector< Line > m_linesLastGood;
+#endif
 
 	void updateScrollBars();
 
@@ -96,11 +99,17 @@ private:
 
 	void eventKey(Event* event);
 
+	void eventButtonDown(Event* event);
+
 	void eventPaint(Event* event);
 
 	void eventSize(Event* event);
 
 	void eventScroll(Event* event);
+
+#if defined(_DEBUG)
+	void checkConsistency();
+#endif
 };
 
 		}
