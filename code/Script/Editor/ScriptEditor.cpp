@@ -1,10 +1,16 @@
-#include "Script/Editor/ScriptEditor.h"
-#include "Script/IScriptManager.h"
-#include "Script/Script.h"
-#include "Editor/IEditor.h"
-#include "Editor/TypeBrowseFilter.h"
+#include "Core/Io/StringOutputStream.h"
+#include "Core/Log/Log.h"
+#include "Core/Misc/SafeDestroy.h"
+#include "Core/Settings/PropertyString.h"
+#include "Core/Settings/Settings.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
+#include "Editor/IEditor.h"
+#include "Editor/TypeBrowseFilter.h"
+#include "I18N/Text.h"
+#include "Script/IScriptManager.h"
+#include "Script/Script.h"
+#include "Script/Editor/ScriptEditor.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Container.h"
 #include "Ui/ListBox.h"
@@ -18,11 +24,6 @@
 #include "Ui/Custom/SyntaxRichEdit/SyntaxRichEdit.h"
 #include "Ui/Custom/SyntaxRichEdit/SyntaxLanguageLua.h"
 #include "Ui/Custom/StatusBar/StatusBar.h"
-#include "I18N/Text.h"
-#include "Core/Io/StringOutputStream.h"
-#include "Core/Log/Log.h"
-#include "Core/Settings/PropertyString.h"
-#include "Core/Settings/Settings.h"
 
 // Resources
 #include "Resources/PlusMinus.h"
@@ -127,7 +128,9 @@ bool ScriptEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 
 void ScriptEditor::destroy()
 {
-	m_splitter->destroy();
+	safeDestroy(m_splitter);
+	safeDestroy(m_scriptContext);
+	m_scriptManager = 0;
 }
 
 void ScriptEditor::apply()
