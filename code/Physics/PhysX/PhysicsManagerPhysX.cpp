@@ -500,6 +500,20 @@ bool PhysicsManagerPhysX::querySweep(const Vector4& at, const Vector4& direction
 	return false;
 }
 
+bool PhysicsManagerPhysX::querySweep(
+	const Body* body,
+	const Quaternion& orientation,
+	const Vector4& at,
+	const Vector4& direction,
+	float maxLength,
+	uint32_t group,
+	const Body* ignoreBody,
+	QueryResult& outResult
+) const
+{
+	return false;
+}
+
 void PhysicsManagerPhysX::getBodyCount(uint32_t& outCount, uint32_t& outActiveCount) const
 {
 }

@@ -731,6 +731,20 @@ bool PhysicsManagerOde::querySweep(const Vector4& at, const Vector4& direction, 
 	return false;
 }
 
+bool PhysicsManagerOde::querySweep(
+	const Body* body,
+	const Quaternion& orientation,
+	const Vector4& at,
+	const Vector4& direction,
+	float maxLength,
+	uint32_t group,
+	const Body* ignoreBody,
+	QueryResult& outResult
+) const
+{
+	return false;
+}
+
 void PhysicsManagerOde::getBodyCount(uint32_t& outCount, uint32_t& outActiveCount) const
 {
 }

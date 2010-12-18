@@ -9,9 +9,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_PHYSICS_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -36,6 +36,7 @@ struct QueryResult
 	Vector4 position;
 	Vector4 normal;
 	float distance;
+	float fraction;
 };
 
 /*! \brief Collision pair.
@@ -169,7 +170,11 @@ public:
 	 * \param outResult Query result.
 	 * \return True if point is in collision shape and result was found.
 	 */
-	virtual bool queryPoint(const Vector4& at, float margin, QueryResult& outResult) const = 0;
+	virtual bool queryPoint(
+		const Vector4& at,
+		float margin,
+		QueryResult& outResult
+	) const = 0;
 
 	/*! \brief Ray cast world.
 	 *
@@ -183,7 +188,13 @@ public:
 	 * \param outResult Intersection result, only modified if method returns true.
 	 * \return True if intersection found.
 	 */
-	virtual bool queryRay(const Vector4& at, const Vector4& direction, float maxLength, const Body* ignoreBody, QueryResult& outResult) const = 0;
+	virtual bool queryRay(
+		const Vector4& at,
+		const Vector4& direction,
+		float maxLength,
+		const Body* ignoreBody,
+		QueryResult& outResult
+	) const = 0;
 
 	/*! \brief Get all bodies within a sphere.
 	 *
@@ -193,7 +204,12 @@ public:
 	 * \param outBodies Array of intersecting bodies.
 	 * \return Number of bodies found.
 	 */
-	virtual uint32_t querySphere(const Vector4& at, float radius, uint32_t queryTypes, RefArray< Body >& outBodies) const = 0;
+	virtual uint32_t querySphere(
+		const Vector4& at,
+		float radius,
+		uint32_t queryTypes,
+		RefArray< Body >& outBodies
+	) const = 0;
 
 	/*! \brief Get closest contact from a swept sphere.
 	 *
@@ -211,6 +227,30 @@ public:
 		const Vector4& direction,
 		float maxLength,
 		float radius,
+		uint32_t group,
+		const Body* ignoreBody,
+		QueryResult& outResult
+	) const = 0;
+
+	/*! \brief Get closest contact from a swept shape.
+	 *
+	 * \param body Sweeping body; using body's shape when sweeping.
+	 * \param orientation Shape orientation when sweeping.
+	 * \param at Shape origin in world space.
+	 * \param direction Sweep direction in world space.
+	 * \param maxLength Max sweep length.
+	 * \param radius Sphere radius.
+	 * \param group Collision groups.
+	 * \param ignoreBody Ignore ray casting body, can be null if no body is to be ignored.
+	 * \param outResult Intersection result, only modified if method returns true.
+	 * \return True if intersection found.
+	 */
+	virtual bool querySweep(
+		const Body* body,
+		const Quaternion& orientation,
+		const Vector4& at,
+		const Vector4& direction,
+		float maxLength,
 		uint32_t group,
 		const Body* ignoreBody,
 		QueryResult& outResult

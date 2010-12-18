@@ -784,6 +784,20 @@ bool PhysicsManagerHavok::querySweep(const Vector4& at, const Vector4& direction
 	return true;
 }
 
+bool PhysicsManagerHavok::querySweep(
+	const Body* body,
+	const Quaternion& orientation,
+	const Vector4& at,
+	const Vector4& direction,
+	float maxLength,
+	uint32_t group,
+	const Body* ignoreBody,
+	QueryResult& outResult
+) const
+{
+	return false;
+}
+
 void PhysicsManagerHavok::getBodyCount(uint32_t& outCount, uint32_t& outActiveCount) const
 {
 	outCount = uint32_t(m_staticBodies.size() + m_dynamicBodies.size());

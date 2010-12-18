@@ -7,9 +7,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_PHYSICS_PHYSX_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 class NxPhysicsSDK;
@@ -60,6 +60,17 @@ public:
 	virtual uint32_t querySphere(const Vector4& at, float radius, uint32_t queryTypes, RefArray< Body >& outBodies) const;
 
 	virtual bool querySweep(const Vector4& at, const Vector4& direction, float maxLength, float radius, uint32_t group, const Body* ignoreBody, QueryResult& outResult) const;
+
+	virtual bool querySweep(
+		const Body* body,
+		const Quaternion& orientation,
+		const Vector4& at,
+		const Vector4& direction,
+		float maxLength,
+		uint32_t group,
+		const Body* ignoreBody,
+		QueryResult& outResult
+	) const;
 
 	virtual void getBodyCount(uint32_t& outCount, uint32_t& outActiveCount) const;
 

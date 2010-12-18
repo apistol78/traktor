@@ -838,6 +838,76 @@ bool PhysicsManagerBullet::querySweep(
 	outResult.position = fromBtVector3(callback.m_hitPointWorld, 1.0f);
 	outResult.normal = fromBtVector3(callback.m_hitNormalWorld, 0.0).normalized();
 	outResult.distance = dot3(direction, outResult.position - at);
+	outResult.fraction = callback.m_closestHitFraction;
+
+	return true;
+}
+
+bool PhysicsManagerBullet::querySweep(
+	const Body* body,
+	const Quaternion& orientation,
+	const Vector4& at,
+	const Vector4& direction,
+	float maxLength,
+	uint32_t group,
+	const Body* ignoreBody,
+	QueryResult& outResult
+) const
+{
+	btCollisionShape* shape = 0;
+
+	if (const DynamicBodyBullet* dynamicBody = dynamic_type_cast< const DynamicBodyBullet* >(body))
+		shape = dynamicBody->getBtRigidBody()->getCollisionShape();
+	else if (const StaticBodyBullet* staticBody = dynamic_type_cast< const StaticBodyBullet* >(body))
+		shape = staticBody->getBtRigidBody()->getCollisionShape();
+
+	T_ASSERT (shape);
+
+	// If shape is a compound we assume it's first child is a convex shape.
+	btQuaternion localRotation(0.0f, 0.0f, 0.0f, 1.0f);
+	if (shape->isCompound())
+	{
+		btCompoundShape* compoundShape = static_cast< btCompoundShape* >(shape);
+		shape = compoundShape->getChildShape(0);
+		localRotation = compoundShape->getChildTransform(0).getRotation();
+	}
+
+	// Ensure shape is a convex shape; required when performing sweep test.
+	if (!shape->isConvex())
+		return false;
+
+	btTransform from, to;
+
+	from.setIdentity();
+	from.setRotation(localRotation * toBtQuaternion(orientation));
+	from.setOrigin(toBtVector3(at));
+
+	to.setIdentity();
+	to.setRotation(localRotation * toBtQuaternion(orientation));
+	to.setOrigin(toBtVector3(at + direction * Scalar(maxLength)));
+
+	btRigidBody* excludeBody = 0;
+
+	if (const DynamicBodyBullet* dynamicBody = dynamic_type_cast< const DynamicBodyBullet* >(ignoreBody))
+		excludeBody = dynamicBody->getBtRigidBody();
+	else if (const StaticBodyBullet* staticBody = dynamic_type_cast< const StaticBodyBullet* >(ignoreBody))
+		excludeBody = staticBody->getBtRigidBody();
+
+	ClosestConvexExcludeResultCallback callback(group, excludeBody, from.getOrigin(), to.getOrigin());
+	m_dynamicsWorld->convexSweepTest(
+		static_cast< const btConvexShape* >(shape),
+		from,
+		to,
+		callback
+	);
+	if (!callback.hasHit())
+		return false;
+
+	outResult.body = callback.m_hitCollisionObject ? reinterpret_cast< Body* >(callback.m_hitCollisionObject->getUserPointer()) : 0;
+	outResult.position = fromBtVector3(callback.m_hitPointWorld, 1.0f);
+	outResult.normal = fromBtVector3(callback.m_hitNormalWorld, 0.0).normalized();
+	outResult.distance = dot3(direction, outResult.position - at);
+	outResult.fraction = callback.m_closestHitFraction;
 
 	return true;
 }
