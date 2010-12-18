@@ -47,6 +47,18 @@ public:
 
 	Vector4 sub(const Vector4& v) const;
 
+	Vector4 mul(const Vector4& v) const;
+
+	Vector4 div(const Vector4& v) const;
+
+	Vector4 add(float v) const;
+
+	Vector4 sub(float v) const;
+
+	Vector4 mul(float v) const;
+
+	Vector4 div(float v) const;
+
 	float dot(const Vector4& v) const;
 
 	float length() const;

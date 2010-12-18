@@ -821,6 +821,44 @@ struct MethodTrunk_6 : public IMethod
 	}
 };
 
+template <
+	typename ClassType,
+	typename ReturnType,
+	typename Argument1Type,
+	typename Argument2Type,
+	typename Argument3Type,
+	typename Argument4Type,
+	typename Argument5Type,
+	typename Argument6Type,
+	typename Argument7Type
+>
+struct MethodTrunk_7 : public IMethod
+{
+	typedef ReturnType (*method_t)(ClassType*, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type);
+
+	method_t m_method;
+
+	MethodTrunk_7(method_t method)
+	:	m_method(method)
+	{
+	}
+
+	virtual Any invoke(Object* object, const Any* argv) const
+	{
+		ReturnType returnValue = (*m_method)(
+			checked_type_cast< ClassType*, false >(object),
+			CastAny< Argument1Type >::get(argv[0]),
+			CastAny< Argument2Type >::get(argv[1]),
+			CastAny< Argument3Type >::get(argv[2]),
+			CastAny< Argument4Type >::get(argv[3]),
+			CastAny< Argument5Type >::get(argv[4]),
+			CastAny< Argument6Type >::get(argv[5]),
+			CastAny< Argument7Type >::get(argv[6])
+		);
+		return CastAny< ReturnType >::set(returnValue);
+	}
+};
+
 /*! \} */
 
 /*! \name Property accessor */
@@ -1145,6 +1183,21 @@ public:
 	void addMethod(const std::wstring& methodName, ReturnType (*method)(ClassType*, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type))
 	{
 		addMethod(methodName, 6, new MethodTrunk_6< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type >(method));
+	}
+
+	template <
+		typename ReturnType,
+		typename Argument1Type,
+		typename Argument2Type,
+		typename Argument3Type,
+		typename Argument4Type,
+		typename Argument5Type,
+		typename Argument6Type,
+		typename Argument7Type
+	>
+	void addMethod(const std::wstring& methodName, ReturnType (*method)(ClassType*, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type))
+	{
+		addMethod(methodName, 7, new MethodTrunk_7< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type >(method));
 	}
 
 	void setUnknownMethod(unknown_method_t unknown)
