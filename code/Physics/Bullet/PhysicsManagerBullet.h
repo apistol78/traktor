@@ -61,17 +61,43 @@ public:
 
 	virtual uint32_t getCollidingPairs(std::vector< CollisionPair >& outCollidingPairs) const;
 
-	virtual bool queryPoint(const Vector4& at, float margin, QueryResult& outResult) const;
+	virtual bool queryPoint(
+		const Vector4& at,
+		float margin,
+		QueryResult& outResult
+	) const;
 
-	virtual bool queryRay(const Vector4& at, const Vector4& direction, float maxLength, const Body* ignoreBody, QueryResult& outResult) const;
+	virtual bool queryRay(
+		const Vector4& at,
+		const Vector4& direction,
+		float maxLength,
+		const Body* ignoreBody,
+		QueryResult& outResult
+	) const;
 
-	virtual uint32_t querySphere(const Vector4& at, float radius, uint32_t queryTypes, RefArray< Body >& outBodies) const;
+	virtual uint32_t querySphere(
+		const Vector4& at,
+		float radius,
+		uint32_t queryTypes,
+		RefArray< Body >& outBodies
+	) const;
 
 	virtual bool querySweep(
 		const Vector4& at,
 		const Vector4& direction,
 		float maxLength,
 		float radius,
+		uint32_t group,
+		const Body* ignoreBody,
+		QueryResult& outResult
+	) const;
+
+	virtual bool querySweep(
+		const Body* body,
+		const Quaternion& orientation,
+		const Vector4& at,
+		const Vector4& direction,
+		float maxLength,
 		uint32_t group,
 		const Body* ignoreBody,
 		QueryResult& outResult
