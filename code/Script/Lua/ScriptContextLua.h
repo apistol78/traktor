@@ -64,6 +64,8 @@ private:
 
 	void registerClass(IScriptClass* scriptClass);
 
+	void pushObject(Object* object);
+
 	void pushAny(const Any& any);
 
 	Any toAny(int32_t index);
