@@ -64,6 +64,36 @@ Vector4 BoxedVector4::sub(const Vector4& v) const
 	return m_value - v;
 }
 
+Vector4 BoxedVector4::mul(const Vector4& v) const
+{
+	return m_value * v;
+}
+
+Vector4 BoxedVector4::div(const Vector4& v) const
+{
+	return m_value / v;
+}
+
+Vector4 BoxedVector4::add(float v) const
+{
+	return m_value + Scalar(v);
+}
+
+Vector4 BoxedVector4::sub(float v) const
+{
+	return m_value - Scalar(v);
+}
+
+Vector4 BoxedVector4::mul(float v) const
+{
+	return m_value * Scalar(v);
+}
+
+Vector4 BoxedVector4::div(float v) const
+{
+	return m_value / Scalar(v);
+}
+
 float BoxedVector4::dot(const Vector4& v) const
 {
 	return dot3(m_value, v);
@@ -243,8 +273,14 @@ void registerBoxClasses(IScriptManager* scriptManager)
 	classBoxedVector4->addMethod(L"y", &BoxedVector4::y);
 	classBoxedVector4->addMethod(L"z", &BoxedVector4::z);
 	classBoxedVector4->addMethod(L"w", &BoxedVector4::w);
-	classBoxedVector4->addMethod(L"add", &BoxedVector4::add);
-	classBoxedVector4->addMethod(L"sub", &BoxedVector4::sub);
+	classBoxedVector4->addMethod< Vector4, const Vector4& >(L"add", &BoxedVector4::add);
+	classBoxedVector4->addMethod< Vector4, const Vector4& >(L"sub", &BoxedVector4::sub);
+	classBoxedVector4->addMethod< Vector4, const Vector4& >(L"mul", &BoxedVector4::mul);
+	classBoxedVector4->addMethod< Vector4, const Vector4& >(L"div", &BoxedVector4::div);
+	classBoxedVector4->addMethod< Vector4, float >(L"addf", &BoxedVector4::add);
+	classBoxedVector4->addMethod< Vector4, float >(L"subf", &BoxedVector4::sub);
+	classBoxedVector4->addMethod< Vector4, float >(L"mulf", &BoxedVector4::mul);
+	classBoxedVector4->addMethod< Vector4, float >(L"divf", &BoxedVector4::div);
 	classBoxedVector4->addMethod(L"dot", &BoxedVector4::dot);
 	classBoxedVector4->addMethod(L"length", &BoxedVector4::length);
 	classBoxedVector4->addMethod(L"normalized", &BoxedVector4::normalized);
