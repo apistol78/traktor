@@ -112,6 +112,31 @@ void* luaAlloc(void* ud, void* ptr, size_t osize, size_t nsize)
 	}
 }
 
+int luaPrint(lua_State *L) 
+{
+	int n = lua_gettop(L);
+	int i;
+
+	lua_getglobal(L, "tostring");
+	for (i = 1; i <= n; ++i)
+	{
+		const char* s;
+		lua_pushvalue(L, -1);
+		lua_pushvalue(L, i);
+		lua_call(L, 1, 1);
+		s = lua_tostring(L, -1);
+		if (s == NULL)
+			return luaL_error(L, LUA_QL("tostring") " must return a string to " LUA_QL("print"));
+		if (i > 1)
+			log::info << L"\t";
+		log::info << mbstows(s);
+		lua_pop(L, 1);
+	}
+
+	log::info << Endl;
+	return 0;
+}
+
 std::jmp_buf s_jb;
 
 		}
@@ -132,6 +157,8 @@ ScriptContextLua::ScriptContextLua(const RefArray< IScriptClass >& registeredCla
 	luaopen_table(m_luaState);
 	luaopen_string(m_luaState);
 	luaopen_math(m_luaState);
+
+	lua_register(m_luaState, "print", luaPrint);
 
 	for (RefArray< IScriptClass >::const_iterator i = registeredClasses.begin(); i != registeredClasses.end(); ++i)
 		registerClass(*i);
