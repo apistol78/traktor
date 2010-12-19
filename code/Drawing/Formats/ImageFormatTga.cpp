@@ -90,10 +90,13 @@ Ref< Image > ImageFormatTga::read(IStream* stream)
 		bool hz = false, ve = true;
 		if ((header.descriptor & 0x10) == 0x10)
 			hz = true;
-		if ((header.descriptor & 0x20) != 0x20)
-			ve = true;
-		MirrorFilter mirrorFilter(hz, ve);
-		image = image->applyFilter(&mirrorFilter);
+		if ((header.descriptor & 0x20) == 0x20)
+			ve = false;
+		if (hz || ve)
+		{
+			MirrorFilter mirrorFilter(hz, ve);
+			image = image->applyFilter(&mirrorFilter);
+		}
 	}
 
 	Ref< ImageInfo > imageInfo = new ImageInfo();
