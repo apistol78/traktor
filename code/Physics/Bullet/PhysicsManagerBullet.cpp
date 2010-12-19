@@ -854,13 +854,16 @@ bool PhysicsManagerBullet::querySweep(
 	QueryResult& outResult
 ) const
 {
+	btRigidBody* rigidBody = 0;
 	btCollisionShape* shape = 0;
 
 	if (const DynamicBodyBullet* dynamicBody = dynamic_type_cast< const DynamicBodyBullet* >(body))
-		shape = dynamicBody->getBtRigidBody()->getCollisionShape();
+		rigidBody = dynamicBody->getBtRigidBody();
 	else if (const StaticBodyBullet* staticBody = dynamic_type_cast< const StaticBodyBullet* >(body))
-		shape = staticBody->getBtRigidBody()->getCollisionShape();
+		rigidBody = staticBody->getBtRigidBody();
+	T_ASSERT (rigidBody);
 
+	shape = rigidBody->getCollisionShape();
 	T_ASSERT (shape);
 
 	// If shape is a compound we assume it's first child is a convex shape.
@@ -886,14 +889,14 @@ bool PhysicsManagerBullet::querySweep(
 	to.setRotation(localRotation * toBtQuaternion(orientation));
 	to.setOrigin(toBtVector3(at + direction * Scalar(maxLength)));
 
-	btRigidBody* excludeBody = 0;
+	//btRigidBody* excludeBody = 0;
 
-	if (const DynamicBodyBullet* dynamicBody = dynamic_type_cast< const DynamicBodyBullet* >(ignoreBody))
-		excludeBody = dynamicBody->getBtRigidBody();
-	else if (const StaticBodyBullet* staticBody = dynamic_type_cast< const StaticBodyBullet* >(ignoreBody))
-		excludeBody = staticBody->getBtRigidBody();
+	//if (const DynamicBodyBullet* dynamicBody = dynamic_type_cast< const DynamicBodyBullet* >(ignoreBody))
+	//	excludeBody = dynamicBody->getBtRigidBody();
+	//else if (const StaticBodyBullet* staticBody = dynamic_type_cast< const StaticBodyBullet* >(ignoreBody))
+	//	excludeBody = staticBody->getBtRigidBody();
 
-	ClosestConvexExcludeResultCallback callback(group, excludeBody, from.getOrigin(), to.getOrigin());
+	ClosestConvexExcludeResultCallback callback(group, rigidBody/*excludeBody*/, from.getOrigin(), to.getOrigin());
 	m_dynamicsWorld->convexSweepTest(
 		static_cast< const btConvexShape* >(shape),
 		from,
