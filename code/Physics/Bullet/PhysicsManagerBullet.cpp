@@ -882,11 +882,11 @@ bool PhysicsManagerBullet::querySweep(
 	btTransform from, to;
 
 	from.setIdentity();
-	from.setRotation(localRotation * toBtQuaternion(orientation));
+	from.setRotation(toBtQuaternion(orientation) * localRotation);
 	from.setOrigin(toBtVector3(at));
 
 	to.setIdentity();
-	to.setRotation(localRotation * toBtQuaternion(orientation));
+	to.setRotation(toBtQuaternion(orientation) * localRotation);
 	to.setOrigin(toBtVector3(at + direction * Scalar(maxLength)));
 
 	//btRigidBody* excludeBody = 0;
