@@ -1,4 +1,5 @@
 #include "Script/Js/ScriptContextJs.h"
+#include "Script/Js/ScriptResourceJs.h"
 #include "Script/IScriptClass.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/Split.h"
@@ -186,40 +187,22 @@ Any ScriptContextJs::getGlobal(const std::wstring& globalName)
 	return fromValue(value);
 }
 
-bool ScriptContextJs::executeScript(const std::wstring& script, bool compileOnly, IErrorCallback* errorCallback)
+bool ScriptContextJs::executeScript(const IScriptResource* scriptResource)
 {
 	v8::HandleScope handleScope;
 	v8::Context::Scope contextScope(m_context);
 	v8::TryCatch trycatch;
 
-	v8::Local< v8::String > str = v8::Local< v8::String >::New(createString(script));
+	const ScriptResourceJs* scriptResourceJs = checked_type_cast< const ScriptResourceJs*, false >(scriptResource);
+	v8::Local< v8::String > str = v8::Local< v8::String >::New(createString(scriptResourceJs->getScript()));
 	
 	v8::Local< v8::Script > obj = v8::Script::Compile(str);
 	if (obj.IsEmpty())
-	{
-		v8::Handle< v8::Value > exception = trycatch.Exception();
-		v8::String::AsciiValue xs(exception);
-		if (errorCallback)
-			errorCallback->syntaxError(0, mbstows(*xs));
-		else
-			log::error << L"Unhandled JavaScript exception occurred \"" << mbstows(*xs) << L"\"" << Endl;
 		return false;
-	}
-
-	if (compileOnly)
-		return true;
 
 	v8::Local< v8::Value > result = obj->Run();
 	if (result.IsEmpty())
-	{
-		v8::Handle< v8::Value > exception = trycatch.Exception();
-		v8::String::AsciiValue xs(exception);
-		if (errorCallback)
-			errorCallback->otherError(mbstows(*xs));
-		else
-			log::error << L"Unhandled JavaScript exception occurred \"" << mbstows(*xs) << L"\"" << Endl;
 		return false;
-	}
 
 	return true;
 }

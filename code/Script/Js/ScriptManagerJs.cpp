@@ -4,8 +4,9 @@
 #include "Script/Boxes.h"
 #include "Script/Delegate.h"
 #include "Script/IScriptClass.h"
-#include "Script/Js/ScriptManagerJs.h"
 #include "Script/Js/ScriptContextJs.h"
+#include "Script/Js/ScriptManagerJs.h"
+#include "Script/Js/ScriptResourceJs.h"
 
 namespace traktor
 {
@@ -41,6 +42,11 @@ Ref< IScriptClass > ScriptManagerJs::findScriptClass(const TypeInfo& type) const
 	}
 
 	return minScriptClass;
+}
+
+Ref< IScriptResource > ScriptManagerJs::compile(const std::wstring& script, bool strip, IErrorCallback* errorCallback) const
+{
+	return new ScriptResourceJs(script);
 }
 
 Ref< IScriptContext > ScriptManagerJs::createContext()

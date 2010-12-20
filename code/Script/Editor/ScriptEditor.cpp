@@ -8,7 +8,6 @@
 #include "Editor/IEditor.h"
 #include "Editor/TypeBrowseFilter.h"
 #include "I18N/Text.h"
-#include "Script/IScriptManager.h"
 #include "Script/Script.h"
 #include "Script/Editor/ScriptEditor.h"
 #include "Ui/Bitmap.h"
@@ -105,13 +104,6 @@ bool ScriptEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 		{
 			m_scriptManager = dynamic_type_cast< IScriptManager* >(scriptManagerType->createInstance());
 			T_ASSERT (m_scriptManager);
-
-			m_scriptContext = m_scriptManager->createContext();
-			if (!m_scriptContext)
-			{
-				log::warning << L"Failed to create script context; interactive syntax check disabled" << Endl;
-				m_scriptManager = 0;
-			}
 		}
 	}
 
@@ -129,7 +121,6 @@ bool ScriptEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 void ScriptEditor::destroy()
 {
 	safeDestroy(m_splitter);
-	safeDestroy(m_scriptContext);
 	m_scriptManager = 0;
 }
 
@@ -218,11 +209,11 @@ void ScriptEditor::eventTimer(ui::Event* event)
 {
 	T_ASSERT (m_scriptManager);
 
-	if (--m_compileCountDown == 0 && m_scriptContext)
+	if (--m_compileCountDown == 0 && m_scriptManager)
 	{
 		// Take snapshot of script and try to compile it.
 		std::wstring script = m_edit->getText();
-		if (m_scriptContext->executeScript(script, true, this))
+		if (m_scriptManager->compile(script, false, this))
 		{
 			m_compileStatus->setText(L"");
 			m_edit->setErrorHighlight(-1);

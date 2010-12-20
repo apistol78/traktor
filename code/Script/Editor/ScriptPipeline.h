@@ -6,15 +6,17 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_SCRIPT_EDITOR_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
 {
 	namespace script
 	{
+
+class IScriptManager;
 
 /*! \brief Script pipeline.
  * \ingroup Script
@@ -24,6 +26,8 @@ class T_DLLCLASS ScriptPipeline : public editor::DefaultPipeline
 	T_RTTI_CLASS;
 
 public:
+	virtual bool create(const editor::IPipelineSettings* settings);
+
 	virtual TypeInfoSet getAssetTypes() const;
 
 	virtual bool buildDependencies(
@@ -42,6 +46,9 @@ public:
 		const Guid& outputGuid,
 		uint32_t reason
 	) const;
+
+private:
+	Ref< IScriptManager > m_scriptManager;
 };
 
 	}

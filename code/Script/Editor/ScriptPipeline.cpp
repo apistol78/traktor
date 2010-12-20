@@ -1,9 +1,13 @@
-#include "Script/Editor/ScriptPipeline.h"
-#include "Script/Script.h"
-#include "Editor/IPipelineDepends.h"
-#include "Editor/IPipelineBuilder.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Settings/PropertyString.h"
+#include "Editor/IPipelineBuilder.h"
+#include "Editor/IPipelineDepends.h"
+#include "Editor/IPipelineSettings.h"
+#include "Script/IScriptManager.h"
+#include "Script/IScriptResource.h"
+#include "Script/Script.h"
+#include "Script/Editor/ScriptPipeline.h"
 
 namespace traktor
 {
@@ -27,10 +31,7 @@ Script* resolveScript(editor::IPipelineBuilder* pipelineBuilder, const Script* u
 	{
 		Ref< const Script > unresolvedDependency = pipelineBuilder->getObjectReadOnly< Script >(*i);
 		if (!unresolvedDependency)
-		{
-			log::error << L"Script pipeline failed; unable to resolve dependency" << Endl;
 			return 0;
-		}
 
 		Ref< Script > resolvedDependency = resolveScript(pipelineBuilder, unresolvedDependency);
 		if (!resolvedDependency)
@@ -46,7 +47,25 @@ Script* resolveScript(editor::IPipelineBuilder* pipelineBuilder, const Script* u
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptPipeline", 0, ScriptPipeline, editor::DefaultPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptPipeline", 2, ScriptPipeline, editor::DefaultPipeline)
+
+bool ScriptPipeline::create(const editor::IPipelineSettings* settings)
+{
+	std::wstring scriptManagerTypeName = settings->getProperty< PropertyString >(L"Editor.ScriptManagerType");
+
+	// Create script manager instance.
+	const TypeInfo* scriptManagerType = TypeInfo::find(scriptManagerTypeName);
+	if (!scriptManagerType)
+	{
+		log::error << L"Script pipeline failed; no such type \"" << scriptManagerTypeName << L"\"" << Endl;
+		return false;
+	}
+
+	m_scriptManager = dynamic_type_cast< IScriptManager* >(scriptManagerType->createInstance());
+	T_ASSERT (m_scriptManager);
+
+	return editor::DefaultPipeline::create(settings);
+}
 
 TypeInfoSet ScriptPipeline::getAssetTypes() const
 {
@@ -84,13 +103,24 @@ bool ScriptPipeline::buildOutput(
 	Ref< const Script > sourceScript = checked_type_cast< const Script* >(sourceAsset);
 
 	// Resolve script; ie. concate all dependent scripts.
-	Ref< Script > outputScript = resolveScript(pipelineBuilder, sourceScript);
-	if (!outputScript)
+	Ref< Script > script = resolveScript(pipelineBuilder, sourceScript);
+	if (!script)
+	{
+		log::error << L"Script pipeline failed; unable to resolve script dependencies" << Endl;
 		return false;
+	}
+
+	// Compile script; save binary blobs if possible.
+	Ref< IScriptResource > resource = m_scriptManager->compile(script->getText(), true, 0);
+	if (!resource)
+	{
+		log::error << L"Script pipeline failed; unable to compile script" << Endl;
+		return false;
+	}
 
 	return DefaultPipeline::buildOutput(
 		pipelineBuilder,
-		outputScript,
+		resource,
 		sourceAssetHash,
 		buildParams,
 		outputPath,

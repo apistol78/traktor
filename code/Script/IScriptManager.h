@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_SCRIPT_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -18,6 +18,18 @@ namespace traktor
 
 class IScriptClass;
 class IScriptContext;
+class IScriptResource;
+
+/*! \brief Script error callback.
+* \ingroup Script
+*/
+class IErrorCallback
+{
+public:
+	virtual void syntaxError(uint32_t line, const std::wstring& message) = 0;
+
+	virtual void otherError(const std::wstring& message) = 0;
+};
 
 /*! \brief Script manager.
  * \ingroup Script
@@ -42,10 +54,19 @@ public:
 
 	/*! \brief Find script class from type.
 	 *
-	 * \type Type from which we want a IScriptClass interface.
+	 * \param Type from which we want a IScriptClass interface.
 	 * \return IScriptClass interface able to call object of 'type'.
 	 */
 	virtual Ref< IScriptClass > findScriptClass(const TypeInfo& type) const = 0;
+
+	/*! \brief Compile script.
+	 *
+	 * \param script Script
+	 * \param strip Strip debug information if available.
+	 * \param errorCallback Optional callback which is called for each error found during compilation.
+	 * \return Script resource; null if failed to compile.
+	 */
+	virtual Ref< IScriptResource > compile(const std::wstring& script, bool strip, IErrorCallback* errorCallback) const = 0;
 
 	/*! \brief Create script context.
 	 *
@@ -55,7 +76,7 @@ public:
 
 	/*! \brief Find script class from type.
 	 *
-	 * \type Type from which we want a IScriptClass interface.
+	 * \param Type from which we want a IScriptClass interface.
 	 * \return IScriptClass interface able to call object of 'type'.
 	 */
 	template < typename Type >

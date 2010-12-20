@@ -18,16 +18,7 @@ namespace traktor
 	namespace script
 	{
 
-/*! \brief Script error callback.
- * \ingroup Script
- */
-class IErrorCallback
-{
-public:
-	virtual void syntaxError(uint32_t line, const std::wstring& message) = 0;
-
-	virtual void otherError(const std::wstring& message) = 0;
-};
+class IScriptResource;
 
 /*! \brief Script context.
  * \ingroup Script
@@ -62,12 +53,10 @@ public:
 
 	/*! \brief Execute script.
 	 *
-	 * \param script Script.
-	 * \param compileOnly If script should only be compiled but not executed.
-	 * \param errorCallback Optional error callback object.
+	 * \param scriptResource Pre-compiled script resource.
 	 * \return True if executed successfully.
 	 */
-	virtual bool executeScript(const std::wstring& script, bool compileOnly, IErrorCallback* errorCallback) = 0;
+	virtual bool executeScript(const IScriptResource* scriptResource) = 0;
 
 	/*! \brief Return true if context contains function (or method).
 	 *
