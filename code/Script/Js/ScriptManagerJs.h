@@ -31,6 +31,8 @@ public:
 
 	virtual Ref< IScriptClass > findScriptClass(const TypeInfo& type) const;
 
+	virtual Ref< IScriptResource > compile(const std::wstring& script, bool strip, IErrorCallback* errorCallback) const;
+
 	virtual Ref< IScriptContext > createContext();
 
 private:

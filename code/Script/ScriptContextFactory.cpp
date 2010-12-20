@@ -1,9 +1,9 @@
-#include "Script/ScriptContextFactory.h"
-#include "Script/IScriptManager.h"
-#include "Script/IScriptContext.h"
-#include "Script/Script.h"
-#include "Database/Database.h"
 #include "Core/Log/Log.h"
+#include "Database/Database.h"
+#include "Script/IScriptContext.h"
+#include "Script/IScriptManager.h"
+#include "Script/IScriptResource.h"
+#include "Script/ScriptContextFactory.h"
 
 namespace traktor
 {
@@ -32,8 +32,8 @@ bool ScriptContextFactory::isCacheable() const
 
 Ref< Object > ScriptContextFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid)
 {
-	Ref< Script > s = m_database->getObjectReadOnly< Script >(guid);
-	if (!s)
+	Ref< IScriptResource > scriptResource = m_database->getObjectReadOnly< IScriptResource >(guid);
+	if (!scriptResource)
 	{
 		log::error << L"Unable to create script context; no such instance" << Endl;
 		return 0;
@@ -46,7 +46,7 @@ Ref< Object > ScriptContextFactory::create(resource::IResourceManager* resourceM
 		return 0;
 	}
 
-	if (!scriptContext->executeScript(s->getText(), false, 0))
+	if (!scriptContext->executeScript(scriptResource))
 	{
 		log::error << L"Unable to create script context; execute script failed" << Endl;
 		return 0;

@@ -2,14 +2,14 @@
 #define traktor_script_ScriptEditor_H
 
 #include "Editor/IObjectEditor.h"
-#include "Script/IScriptContext.h"
+#include "Script/IScriptManager.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_SCRIPT_EDITOR_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -63,7 +63,6 @@ private:
 	editor::IEditor* m_editor;
 	Ref< Script > m_script;
 	Ref< IScriptManager > m_scriptManager;
-	Ref< IScriptContext > m_scriptContext;
 	Ref< ui::custom::Splitter > m_splitter;
 	Ref< ui::ListBox > m_dependencyList;
 	Ref< ui::custom::SyntaxRichEdit > m_edit;
