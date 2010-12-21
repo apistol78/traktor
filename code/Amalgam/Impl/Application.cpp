@@ -39,6 +39,7 @@
 // Static symbols.
 #if defined(T_STATIC)
 #	include <Animation/Animation/Animation.h>
+#	include <Animation/Animation/StateNodeAnimation.h>
 #	include <Animation/Animation/StatePoseControllerData.h>
 #	include <Animation/IK/IKPoseControllerData.h>
 #	include <Animation/PathEntity/PathEntityData.h>
@@ -78,6 +79,7 @@
 #	include <Mesh/Skinned/SkinnedMeshResource.h>
 #	include <Mesh/Static/StaticMeshResource.h>
 #	include <Mesh/Stream/StreamMeshResource.h>
+#	include <Script/Lua/ScriptResourceLua.h>
 #	include <Sound/StaticSoundResource.h>
 #	include <Sound/StreamSoundResource.h>
 #	include <Sound/Decoders/FlacStreamDecoder.h>
@@ -201,11 +203,12 @@ bool Application::create(
 	T_FORCE_LINK_REF(db::LocalDatabase);
 	T_FORCE_LINK_REF(db::RemoteDatabase);
 	T_FORCE_LINK_REF(animation::Animation);
-	T_FORCE_LINK_REF(animation::StatePoseControllerData);
+	T_FORCE_LINK_REF(animation::AnimatedMeshEntityData);
 	T_FORCE_LINK_REF(animation::IKPoseControllerData);
 	T_FORCE_LINK_REF(animation::PathEntityData);
 	T_FORCE_LINK_REF(animation::RagDollPoseControllerData);
-	T_FORCE_LINK_REF(animation::AnimatedMeshEntityData);
+	T_FORCE_LINK_REF(animation::StateNodeAnimation);
+	T_FORCE_LINK_REF(animation::StatePoseControllerData);
 	T_FORCE_LINK_REF(input::CombinedInputSourceData);
 	T_FORCE_LINK_REF(input::ConstantInputSourceData);
 	T_FORCE_LINK_REF(input::GenericInputSourceData);
@@ -230,6 +233,7 @@ bool Application::create(
 	T_FORCE_LINK_REF(mesh::SkinnedMeshResource);
 	T_FORCE_LINK_REF(mesh::StaticMeshResource);
 	T_FORCE_LINK_REF(mesh::StreamMeshResource);
+	T_FORCE_LINK_REF(script::ScriptResourceLua);
 	T_FORCE_LINK_REF(sound::StaticSoundResource);
 	T_FORCE_LINK_REF(sound::StreamSoundResource);
 	T_FORCE_LINK_REF(sound::BankResource);

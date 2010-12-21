@@ -1,6 +1,7 @@
 #include <cmath>
 #include "Core/Io/IOutputStreamBuffer.h"
 #include "Core/Io/OutputStream.h"
+#include "Core/Math/Float.h"
 #include "Core/Math/MathUtils.h"
 #include "Core/Thread/Acquire.h"
 
@@ -68,6 +69,11 @@ template < typename T, int size >
 wchar_t* ftoa__(T value, int fractions, wchar_t* buf)
 {
 	typedef typename ftoa_int_type< T >::int_t int_t;
+
+	if (isNan(value))
+		return L"NaN";
+	else if (isInfinite(value))
+		return L"Inf";
 
 	bool negative = value < 0;
 	T un = negative ? -value : value;

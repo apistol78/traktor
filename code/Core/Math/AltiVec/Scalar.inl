@@ -143,7 +143,12 @@ T_MATH_INLINE Scalar abs(const Scalar& s)
 
 T_MATH_INLINE Scalar squareRoot(const Scalar& s)
 {
-	return Scalar(1.0f) / reciprocalSquareRoot(s);
+#if 0
+	float fs = sqrtf(s);
+	return Scalar(fs);
+#else
+	return abs(s) > Scalar(1e-8f) ? Scalar(1.0f) / reciprocalSquareRoot(s) : Scalar(0.0f);
+#endif
 }
 
 T_MATH_INLINE Scalar reciprocalSquareRoot(const Scalar& s)

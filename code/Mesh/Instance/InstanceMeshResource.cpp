@@ -69,9 +69,10 @@ Ref< IMesh > InstanceMeshResource::createMesh(
 
 	// Fill instancing vertex buffer.
 	uint8_t* destinationVertex = static_cast< uint8_t* >(renderMesh->getVertexBuffer()->lock());
+	const uint8_t* sourceVertexTop = static_cast< const uint8_t* >(singleInstanceMesh->getVertexBuffer()->lock());
 	for (uint32_t i = 0; i < InstanceMesh::MaxInstanceCount; ++i)
 	{
-		const uint8_t* sourceVertex = static_cast< const uint8_t* >(singleInstanceMesh->getVertexBuffer()->lock());
+		const uint8_t* sourceVertex = sourceVertexTop;
 		for (uint32_t j = 0; j < singleInstanceMesh->getVertexBuffer()->getBufferSize(); j += vertexSize)
 		{
 			T_ASSERT (j / vertexSize < vertexCount);
@@ -83,8 +84,8 @@ Ref< IMesh > InstanceMeshResource::createMesh(
 			destinationVertex += vertexSize;
 			sourceVertex += vertexSize;
 		}
-		singleInstanceMesh->getVertexBuffer()->unlock();
 	}
+	singleInstanceMesh->getVertexBuffer()->unlock();
 	renderMesh->getVertexBuffer()->unlock();
 
 	// Fill instancing index buffer.
@@ -148,6 +149,7 @@ Ref< IMesh > InstanceMeshResource::createMesh(
 	{
 		render::handle_t worldTechnique = render::getParameterHandle(i->first);
 
+		instanceMesh->m_parts[worldTechnique].reserve(i->second.size());
 		for (parts_t::const_iterator j = i->second.begin(); j != i->second.end(); ++j)
 		{
 			InstanceMesh::Part part;

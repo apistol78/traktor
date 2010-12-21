@@ -11,23 +11,17 @@ namespace traktor
 		namespace
 		{
 
-class HandleRegistry : public ISingleton
+class HandleRegistry
 {
 public:
-	static HandleRegistry& getInstance()
+	HandleRegistry()
+	:	m_nextUnusedHandle(1)
 	{
-		static HandleRegistry* s_instance = 0;
-		if (!s_instance)
-		{
-			s_instance = new HandleRegistry();
-			SingletonManager::getInstance().add(s_instance);
-		}
-		return *s_instance;
 	}
 
 	handle_t getHandle(const std::wstring& name)
 	{
-		std::map< std::wstring, handle_t >::iterator i = m_handles.find(name);
+		std::map< std::wstring, handle_t >::const_iterator i = m_handles.find(name);
 		if (i != m_handles.end())
 			return i->second;
 
@@ -37,27 +31,18 @@ public:
 		return handle;
 	}
 
-protected:
-	virtual void destroy()
-	{
-		delete this;
-	}
-
 private:
 	std::map< std::wstring, handle_t > m_handles;
 	handle_t m_nextUnusedHandle;
-
-	HandleRegistry()
-	:	m_nextUnusedHandle(1)
-	{
-	}
 };
+
+HandleRegistry s_handleRegistry;
 
 		}
 
 handle_t getParameterHandle(const std::wstring& name)
 {
-	return HandleRegistry::getInstance().getHandle(name);
+	return s_handleRegistry.getHandle(name);
 }
 
 std::wstring getParameterNameFromGuid(const Guid& guid)

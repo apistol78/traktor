@@ -94,6 +94,10 @@ PostProcessStepBlur::InstanceBlur::InstanceBlur(
 :	m_step(step)
 ,	m_gaussianOffsetWeights(gaussianOffsetWeights)
 {
+	m_handleGaussianOffsetWeights = render::getParameterHandle(L"GaussianOffsetWeights");
+	m_handleDirection = render::getParameterHandle(L"Direction");
+	m_handleViewFar = render::getParameterHandle(L"ViewFar");
+	m_handleDepthRange = render::getParameterHandle(L"DepthRange");
 }
 
 void PostProcessStepBlur::InstanceBlur::destroy()
@@ -129,10 +133,10 @@ void PostProcessStepBlur::InstanceBlur::render(
 		}
 	}
 
-	shader->setVectorArrayParameter(L"GaussianOffsetWeights", &m_gaussianOffsetWeights[0], m_gaussianOffsetWeights.size());
-	shader->setVectorParameter(L"Direction", m_step->m_direction);
-	shader->setFloatParameter(L"ViewFar", params.viewFrustum.getFarZ());
-	shader->setFloatParameter(L"DepthRange", params.depthRange);
+	shader->setVectorArrayParameter(m_handleGaussianOffsetWeights, &m_gaussianOffsetWeights[0], m_gaussianOffsetWeights.size());
+	shader->setVectorParameter(m_handleDirection, m_step->m_direction);
+	shader->setFloatParameter(m_handleViewFar, params.viewFrustum.getFarZ());
+	shader->setFloatParameter(m_handleDepthRange, params.depthRange);
 
 	screenRenderer->draw(renderView, shader);
 }
