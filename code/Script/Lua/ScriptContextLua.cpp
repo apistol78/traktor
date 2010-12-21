@@ -89,11 +89,11 @@ void stackDump(lua_State* luaState)
 
 void* luaAlloc(void* ud, void* ptr, size_t osize, size_t nsize)
 {
-	if (osize >= nsize)
-		return ptr;
-
 	if (nsize > 0)
 	{
+		if (osize >= nsize)
+			return ptr;
+
 		void* nptr = getAllocator()->alloc(nsize, 16, "LUA");
 		if (!nptr)
 			return 0;
