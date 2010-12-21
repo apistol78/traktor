@@ -1,15 +1,16 @@
 #ifndef traktor_world_PostProcessStepSmProj_H
 #define traktor_world_PostProcessStepSmProj_H
 
-#include "World/PostProcess/PostProcessStep.h"
+#include "Render/Types.h"
 #include "Resource/Proxy.h"
+#include "World/PostProcess/PostProcessStep.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_WORLD_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -54,6 +55,20 @@ public:
 		Ref< const PostProcessStepSmProj > m_step;
 		Ref< render::ISimpleTexture > m_shadowMapDiscRotation[2];
 		uint32_t m_frame;
+		render::handle_t m_handleShadowMap;
+		render::handle_t m_handleShadowMapDiscRotation;
+		render::handle_t m_handleShadowMapSizeAndBias;
+		render::handle_t m_handleShadowMapPoissonTaps;
+		render::handle_t m_handleShadowFarZ;
+		render::handle_t m_handleDepth;
+		render::handle_t m_handleDepthRange;
+		render::handle_t m_handleDepth_Size;
+		render::handle_t m_handleMagicCoeffs;
+		render::handle_t m_handleViewEdgeTopLeft;
+		render::handle_t m_handleViewEdgeTopRight;
+		render::handle_t m_handleViewEdgeBottomLeft;
+		render::handle_t m_handleViewEdgeBottomRight;
+		render::handle_t m_handleViewToLight;
 	};
 
 	virtual Ref< Instance > create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const;

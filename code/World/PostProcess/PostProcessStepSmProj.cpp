@@ -101,6 +101,21 @@ PostProcessStepSmProj::InstanceSmProj::InstanceSmProj(
 {
 	m_shadowMapDiscRotation[0] = shadowMapDiscRotation[0];
 	m_shadowMapDiscRotation[1] = shadowMapDiscRotation[1];
+
+	m_handleShadowMap = render::getParameterHandle(L"ShadowMap");
+	m_handleShadowMapDiscRotation = render::getParameterHandle(L"ShadowMapDiscRotation");
+	m_handleShadowMapSizeAndBias = render::getParameterHandle(L"ShadowMapSizeAndBias");
+	m_handleShadowMapPoissonTaps = render::getParameterHandle(L"ShadowMapPoissonTaps");
+	m_handleShadowFarZ = render::getParameterHandle(L"ShadowFarZ");
+	m_handleDepth = render::getParameterHandle(L"Depth");
+	m_handleDepthRange = render::getParameterHandle(L"DepthRange");
+	m_handleDepth_Size = render::getParameterHandle(L"Depth_Size");
+	m_handleMagicCoeffs = render::getParameterHandle(L"MagicCoeffs");
+	m_handleViewEdgeTopLeft = render::getParameterHandle(L"ViewEdgeTopLeft");
+	m_handleViewEdgeTopRight = render::getParameterHandle(L"ViewEdgeTopRight");
+	m_handleViewEdgeBottomLeft = render::getParameterHandle(L"ViewEdgeBottomLeft");
+	m_handleViewEdgeBottomRight = render::getParameterHandle(L"ViewEdgeBottomRight");
+	m_handleViewToLight = render::getParameterHandle(L"ViewToLight");
 }
 
 void PostProcessStepSmProj::InstanceSmProj::destroy()
@@ -149,20 +164,20 @@ void PostProcessStepSmProj::InstanceSmProj::render(
 	Scalar p11 = params.projection.get(0, 0);
 	Scalar p22 = params.projection.get(1, 1);
 
-	shader->setTextureParameter(L"ShadowMap", sourceShMap->getColorTexture(0));
-	shader->setTextureParameter(L"ShadowMapDiscRotation", m_shadowMapDiscRotation[m_frame & 1]);
-	shader->setVectorParameter(L"ShadowMapSizeAndBias", shadowMapSizeAndBias);
-	shader->setVectorArrayParameter(L"ShadowMapPoissonTaps", c_poissonTaps, sizeof_array(c_poissonTaps));
-	shader->setFloatParameter(L"ShadowFarZ", params.shadowFarZ);
-	shader->setTextureParameter(L"Depth", sourceDepth->getColorTexture(0));
-	shader->setFloatParameter(L"DepthRange", params.depthRange);
-	shader->setVectorParameter(L"Depth_Size", sourceDepthSize);	
-	shader->setVectorParameter(L"MagicCoeffs", Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
-	shader->setVectorParameter(L"ViewEdgeTopLeft", viewEdgeTopLeft);
-	shader->setVectorParameter(L"ViewEdgeTopRight", viewEdgeTopRight);
-	shader->setVectorParameter(L"ViewEdgeBottomLeft", viewEdgeBottomLeft);
-	shader->setVectorParameter(L"ViewEdgeBottomRight", viewEdgeBottomRight);
-	shader->setMatrixParameter(L"ViewToLight", params.viewToLight);
+	shader->setTextureParameter(m_handleShadowMap, sourceShMap->getColorTexture(0));
+	shader->setTextureParameter(m_handleShadowMapDiscRotation, m_shadowMapDiscRotation[m_frame & 1]);
+	shader->setVectorParameter(m_handleShadowMapSizeAndBias, shadowMapSizeAndBias);
+	shader->setVectorArrayParameter(m_handleShadowMapPoissonTaps, c_poissonTaps, sizeof_array(c_poissonTaps));
+	shader->setFloatParameter(m_handleShadowFarZ, params.shadowFarZ);
+	shader->setTextureParameter(m_handleDepth, sourceDepth->getColorTexture(0));
+	shader->setFloatParameter(m_handleDepthRange, params.depthRange);
+	shader->setVectorParameter(m_handleDepth_Size, sourceDepthSize);	
+	shader->setVectorParameter(m_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
+	shader->setVectorParameter(m_handleViewEdgeTopLeft, viewEdgeTopLeft);
+	shader->setVectorParameter(m_handleViewEdgeTopRight, viewEdgeTopRight);
+	shader->setVectorParameter(m_handleViewEdgeBottomLeft, viewEdgeBottomLeft);
+	shader->setVectorParameter(m_handleViewEdgeBottomRight, viewEdgeBottomRight);
+	shader->setMatrixParameter(m_handleViewToLight, params.viewToLight);
 
 	const float maskClear[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 	renderView->clear(render::CfColor, maskClear, 1.0f, 0);

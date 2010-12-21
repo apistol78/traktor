@@ -2,6 +2,7 @@
 #define traktor_world_PostProcessStepBlur_H
 
 #include "Core/Containers/AlignedVector.h"
+#include "Render/Types.h"
 #include "Resource/Proxy.h"
 #include "World/PostProcess/PostProcessStep.h"
 
@@ -64,6 +65,10 @@ public:
 	private:
 		Ref< const PostProcessStepBlur > m_step;
 		AlignedVector< Vector4 > m_gaussianOffsetWeights;
+		render::handle_t m_handleGaussianOffsetWeights;
+		render::handle_t m_handleDirection;
+		render::handle_t m_handleViewFar;
+		render::handle_t m_handleDepthRange;
 	};
 
 	PostProcessStepBlur();

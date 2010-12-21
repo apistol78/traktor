@@ -39,6 +39,7 @@ Ref< IMesh > StaticMeshResource::createMesh(
 	{
 		render::handle_t worldTechnique = render::getParameterHandle(i->first);
 
+		staticMesh->m_parts[worldTechnique].reserve(i->second.size());
 		for (parts_t::const_iterator j = i->second.begin(); j != i->second.end(); ++j)
 		{
 			StaticMesh::Part part;

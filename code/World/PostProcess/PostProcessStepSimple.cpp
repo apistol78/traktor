@@ -52,6 +52,9 @@ PostProcessStepSimple::InstanceSimple::InstanceSimple(const PostProcessStepSimpl
 :	m_step(step)
 ,	m_time(0.0f)
 {
+	m_handleTime = render::getParameterHandle(L"Time");
+	m_handleDeltaTime = render::getParameterHandle(L"DeltaTime");
+	m_handleDepthRange = render::getParameterHandle(L"DepthRange");
 }
 
 void PostProcessStepSimple::InstanceSimple::destroy()
@@ -71,9 +74,9 @@ void PostProcessStepSimple::InstanceSimple::render(
 
 	postProcess->prepareShader(shader);
 
-	shader->setFloatParameter(L"Time", m_time);
-	shader->setFloatParameter(L"DeltaTime", params.deltaTime);
-	shader->setFloatParameter(L"DepthRange", params.depthRange);
+	shader->setFloatParameter(m_handleTime, m_time);
+	shader->setFloatParameter(m_handleDeltaTime, params.deltaTime);
+	shader->setFloatParameter(m_handleDepthRange, params.depthRange);
 
 	const std::vector< Source >& sources = m_step->m_sources;
 	for (std::vector< Source >::const_iterator i = sources.begin(); i != sources.end(); ++i)

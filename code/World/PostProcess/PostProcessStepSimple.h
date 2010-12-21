@@ -2,8 +2,9 @@
 #define traktor_world_PostProcessStepSimple_H
 
 #include <vector>
-#include "World/PostProcess/PostProcessStep.h"
+#include "Render/Types.h"
 #include "Resource/Proxy.h"
+#include "World/PostProcess/PostProcessStep.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -61,6 +62,9 @@ public:
 	private:
 		Ref< const PostProcessStepSimple > m_step;
 		float m_time;
+		render::handle_t m_handleTime;
+		render::handle_t m_handleDeltaTime;
+		render::handle_t m_handleDepthRange;
 	};
 
 	virtual Ref< Instance > create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const;
