@@ -71,16 +71,11 @@ bool MeshPipeline::buildOutput(
 
 	model::triangulateModel(*model);
 
-	model::Model hull = *model;
-	model::calculateConvexHull(hull);
-
 	// Create physics mesh.
 	std::vector< Mesh::Triangle > outShapeTriangles;
 	std::vector< Mesh::Triangle > outHullTriangles;
 
 	const std::vector< model::Polygon >& shapeTriangles = model->getPolygons();
-	const std::vector< model::Polygon >& hullTriangles = hull.getPolygons();
-
 	for (std::vector< model::Polygon >::const_iterator i = shapeTriangles.begin(); i != shapeTriangles.end(); ++i)
 	{
 		T_ASSERT (i->getVertices().size() == 3);
@@ -92,19 +87,25 @@ bool MeshPipeline::buildOutput(
 		outShapeTriangles.push_back(shapeTriangle);
 	}
 
-	for (std::vector< model::Polygon >::const_iterator i = hullTriangles.begin(); i != hullTriangles.end(); ++i)
+	if (meshAsset->m_calculateConvexHull)
 	{
-		T_ASSERT (i->getVertices().size() == 3);
+		model::Model hull = *model;
+		model::calculateConvexHull(hull);
 
-		Mesh::Triangle hullTriangle;
-		for (int j = 0; j < 3; ++j)
-			hullTriangle.indices[j] = hull.getVertex(i->getVertex(j)).getPosition();
+		const std::vector< model::Polygon >& hullTriangles = hull.getPolygons();
+		for (std::vector< model::Polygon >::const_iterator i = hullTriangles.begin(); i != hullTriangles.end(); ++i)
+		{
+			T_ASSERT (i->getVertices().size() == 3);
 
-		outHullTriangles.push_back(hullTriangle);
+			Mesh::Triangle hullTriangle;
+			for (int j = 0; j < 3; ++j)
+				hullTriangle.indices[j] = hull.getVertex(i->getVertex(j)).getPosition();
+
+			outHullTriangles.push_back(hullTriangle);
+		}
 	}
 
 	Mesh mesh;
-
 	mesh.setVertices(model->getPositions());
 	mesh.setShapeTriangles(outShapeTriangles);
 	mesh.setHullTriangles(outHullTriangles);

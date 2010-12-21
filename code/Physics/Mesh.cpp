@@ -66,13 +66,16 @@ bool Mesh::read(IStream* stream)
 	rd >> hullTriangleCount;
 
 	m_vertices.resize(vertexCount);
-	rd.read(&m_vertices[0], vertexCount, sizeof(Vector4));
+	if (vertexCount > 0)
+		rd.read(&m_vertices[0], vertexCount, sizeof(Vector4));
 
 	m_shapeTriangles.resize(shapeTriangleCount);
-	rd.read(&m_shapeTriangles[0], shapeTriangleCount, sizeof(Triangle));
+	if (shapeTriangleCount > 0)
+		rd.read(&m_shapeTriangles[0], shapeTriangleCount, sizeof(Triangle));
 
 	m_hullTriangles.resize(hullTriangleCount);
-	rd.read(&m_hullTriangles[0], hullTriangleCount, sizeof(Triangle));
+	if (hullTriangleCount > 0)
+		rd.read(&m_hullTriangles[0], hullTriangleCount, sizeof(Triangle));
 
 	return true;
 }

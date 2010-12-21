@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_PHYSICS_EDITOR_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -21,7 +21,16 @@ class T_DLLCLASS MeshAsset : public editor::Asset
 	T_RTTI_CLASS;
 
 public:
+	MeshAsset();
+
 	virtual const TypeInfo* getOutputType() const;
+
+	virtual bool serialize(ISerializer& s);
+
+private:
+	friend class MeshPipeline;
+
+	bool m_calculateConvexHull;
 };
 
 	}
