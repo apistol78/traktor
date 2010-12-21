@@ -80,7 +80,8 @@ private:
 		uint32_t stop;
 	};
 
-	Ref< ScrollBar > m_scrollBar;
+	Ref< ScrollBar > m_scrollBarV;
+	Ref< ScrollBar > m_scrollBarH;
 	std::vector< Attribute > m_attributes;
 	std::vector< Line > m_lines;
 	std::vector< wchar_t > m_text;
@@ -94,6 +95,16 @@ private:
 #endif
 
 	void updateScrollBars();
+
+	void deleteCharacters(bool backspace);
+
+	void lineBreak();
+
+	void insertCharacter(wchar_t ch);
+
+	void scrollToCaret();
+
+	int32_t getCharacterStops(const std::wstring& text, std::vector< int32_t >& outStops) const;
 
 	void eventKeyDown(Event* event);
 
