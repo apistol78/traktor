@@ -360,10 +360,10 @@ namespace
 				}
 			}
 
-			if (adj.n[0] != ~0U && adj.n[1] != ~0U && adj.n[2] != ~0U)
-				outAdjacency.push_back(adj);
-			else
-				log::warning << L"Unable to build adjacency of face " << i << Endl;
+			if (adj.n[0] == ~0U || adj.n[1] == ~0U || adj.n[2] == ~0U)
+				log::warning << L"Unable to build complete adjacency of face " << i << Endl;
+
+			outAdjacency.push_back(adj);
 		}
 	}
 
@@ -419,8 +419,8 @@ void calculateConvexHull(Model& model)
 		{
 			for (uint32_t k = 0; k < 3; ++k)
 			{
-				int n = adjacency[j].n[k];
-				if (!visible[j] && visible[n])
+				uint32_t n = adjacency[j].n[k];
+				if (n != ~0UL && !visible[j] && visible[n])
 				{
 					silouette.push_back(std::make_pair(
 						faces[j].i[k],
