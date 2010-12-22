@@ -1,11 +1,11 @@
-#include <Core/Io/IStream.h>
-#include <Core/Io/StreamCopy.h>
-#include <Core/Library/Library.h>
-#include <Core/Log/Log.h>
-#include <Core/Misc/CommandLine.h>
-#include <Database/Database.h>
-#include <Database/Group.h>
-#include <Database/Instance.h>
+#include "Core/Io/IStream.h"
+#include "Core/Io/StreamCopy.h"
+#include "Core/Library/Library.h"
+#include "Core/Log/Log.h"
+#include "Core/Misc/CommandLine.h"
+#include "Database/Database.h"
+#include "Database/Group.h"
+#include "Database/Instance.h"
 
 using namespace traktor;
 
@@ -100,7 +100,7 @@ int main(int argc, const char** argv)
 	CommandLine cmdLine(argc, argv);
 	if (cmdLine.getCount() < 2)
 	{
-		log::info << L"Usage: MigrateDb [source database] [destination database] (module)*" << Endl;
+		log::info << L"Usage: Traktor.Database.Migrate.App [source database] [destination database] (module)*" << Endl;
 		return 0;
 	}
 
