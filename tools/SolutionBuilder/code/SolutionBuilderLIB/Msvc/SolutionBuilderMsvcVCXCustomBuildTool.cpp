@@ -9,10 +9,11 @@ using namespace traktor;
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"SolutionBuilderMsvcVCXCustomBuildTool", 0, SolutionBuilderMsvcVCXCustomBuildTool, SolutionBuilderMsvcVCXBuildTool)
 
-bool SolutionBuilderMsvcVCXCustomBuildTool::generate(
+bool SolutionBuilderMsvcVCXCustomBuildTool::generateProject(
 	GeneratorContext& context,
 	Solution* solution,
 	Project* project,
+	const std::wstring& filter,
 	const Path& fileName,
 	OutputStream& os
 ) const
@@ -31,7 +32,6 @@ bool SolutionBuilderMsvcVCXCustomBuildTool::generate(
 	os << L"</" << m_name << L">" << Endl;
 
 	return true;
-
 }
 
 bool SolutionBuilderMsvcVCXCustomBuildTool::serialize(ISerializer& s)

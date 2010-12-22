@@ -8,10 +8,11 @@ using namespace traktor;
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"SolutionBuilderMsvcVCXBuildTool", 0, SolutionBuilderMsvcVCXBuildTool, ISerializable)
 
-bool SolutionBuilderMsvcVCXBuildTool::generate(
+bool SolutionBuilderMsvcVCXBuildTool::generateProject(
 	GeneratorContext& context,
 	Solution* solution,
 	Project* project,
+	const std::wstring& filter,
 	const Path& fileName,
 	OutputStream& os
 ) const
@@ -20,6 +21,30 @@ bool SolutionBuilderMsvcVCXBuildTool::generate(
 		return true;
 
 	os << L"<" << m_name << L" Include=\"" << fileName.getPathName() << L"\" />" << Endl;
+	return true;
+}
+
+bool SolutionBuilderMsvcVCXBuildTool::generateFilter(
+	GeneratorContext& context,
+	Solution* solution,
+	Project* project,
+	const std::wstring& filter,
+	const Path& fileName,
+	OutputStream& os
+) const
+{
+	if (compareIgnoreCase(m_fileType, fileName.getExtension()) != 0)
+		return true;
+
+	if (filter.empty())
+		os << L"<" << m_name << L" Include=\"" << fileName.getPathName() << L"\" />" << Endl;
+	else
+	{
+		os << L"<" << m_name << L" Include=\"" << fileName.getPathName() << L"\">" << Endl;
+		os << L"\t<Filter>" << filter << L"</Filter>" << Endl;
+		os << L"</" << m_name << L">" << Endl;
+	}
+
 	return true;
 }
 

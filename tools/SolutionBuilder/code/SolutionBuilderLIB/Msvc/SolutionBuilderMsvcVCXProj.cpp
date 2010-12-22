@@ -61,8 +61,47 @@ bool SolutionBuilderMsvcVCXProj::generate(
 	Project* project
 ) const
 {
+	if (!generateProject(context, solution, project))
+		return false;
+	if (!generateFilters(context, solution, project))
+		return false;
+	return true;
+}
+
+
+bool SolutionBuilderMsvcVCXProj::serialize(traktor::ISerializer& s)
+{
+	s >> Member< std::wstring >(L"platform", m_platform);
+	s >> Member< std::wstring >(L"keyword", m_keyword);
+	s >> MemberStaticArray<
+			RefArray< SolutionBuilderMsvcVCXDefinition >,
+			sizeof_array(m_buildDefinitionsDebug),
+			MemberRefArray< SolutionBuilderMsvcVCXDefinition >
+		>(L"buildDefinitionsDebug", m_buildDefinitionsDebug);
+	s >> MemberStaticArray<
+			RefArray< SolutionBuilderMsvcVCXDefinition >,
+			sizeof_array(m_buildDefinitionsRelease),
+			MemberRefArray< SolutionBuilderMsvcVCXDefinition >
+		>(L"buildDefinitionsRelease", m_buildDefinitionsRelease);
+	s >> MemberRefArray< SolutionBuilderMsvcVCXBuildTool >(L"buildTools", m_buildTools);
+	return true;
+}
+
+bool SolutionBuilderMsvcVCXProj::generateProject(
+	GeneratorContext& context,
+	Solution* solution,
+	Project* project
+) const
+{
 	std::wstring projectPath, projectFileName, projectGuid;
-	if (!getInformation(context, solution, project, projectPath, projectFileName, projectGuid))
+	if (!getInformation(
+		context,
+		solution,
+		project,
+		projectPath,
+		projectFileName,
+		projectGuid
+	))
 		return false;
 
 	if (!FileSystem::getInstance().makeDirectory(projectPath))
@@ -229,11 +268,11 @@ bool SolutionBuilderMsvcVCXProj::generate(
 	}
 
 	// Collect all files.
-	std::vector< Path > files;
+	std::vector< std::pair< std::wstring, Path > > files;
 	const RefArray< ProjectItem >& items = project->getItems();
 	for (RefArray< ProjectItem >::const_iterator i = items.begin(); i != items.end(); ++i)
 	{
-		if (!collectFiles(project, *i, files))
+		if (!collectFiles(project, *i, L"", files))
 			return false;
 	}
 
@@ -243,15 +282,22 @@ bool SolutionBuilderMsvcVCXProj::generate(
 		os << L"<ItemGroup>" << Endl;
 		os << IncreaseIndent;
 
-		for (std::vector< Path >::const_iterator j = files.begin(); j != files.end(); ++j)
+		for (std::vector< std::pair< std::wstring, Path > >::const_iterator j = files.begin(); j != files.end(); ++j)
 		{
 			Path itemPath;
 			FileSystem::getInstance().getRelativePath(
-				FileSystem::getInstance().getAbsolutePath(*j),
+				FileSystem::getInstance().getAbsolutePath(j->second),
 				FileSystem::getInstance().getAbsolutePath(projectPath),
 				itemPath
 			);
-			(*i)->generate(context, solution, project, itemPath, os);
+			(*i)->generateProject(
+				context,
+				solution,
+				project,
+				j->first,
+				itemPath,
+				os
+			);
 		}
 
 		os << DecreaseIndent;
@@ -325,38 +371,148 @@ bool SolutionBuilderMsvcVCXProj::generate(
 	return true;
 }
 
-bool SolutionBuilderMsvcVCXProj::serialize(traktor::ISerializer& s)
+bool SolutionBuilderMsvcVCXProj::generateFilters(
+	GeneratorContext& context,
+	Solution* solution,
+	Project* project
+) const
 {
-	s >> Member< std::wstring >(L"platform", m_platform);
-	s >> Member< std::wstring >(L"keyword", m_keyword);
-	s >> MemberStaticArray<
-			RefArray< SolutionBuilderMsvcVCXDefinition >,
-			sizeof_array(m_buildDefinitionsDebug),
-			MemberRefArray< SolutionBuilderMsvcVCXDefinition >
-		>(L"buildDefinitionsDebug", m_buildDefinitionsDebug);
-	s >> MemberStaticArray<
-			RefArray< SolutionBuilderMsvcVCXDefinition >,
-			sizeof_array(m_buildDefinitionsRelease),
-			MemberRefArray< SolutionBuilderMsvcVCXDefinition >
-		>(L"buildDefinitionsRelease", m_buildDefinitionsRelease);
-	s >> MemberRefArray< SolutionBuilderMsvcVCXBuildTool >(L"buildTools", m_buildTools);
+	std::wstring projectPath, projectFileName, projectGuid;
+	if (!getInformation(
+		context,
+		solution,
+		project,
+		projectPath,
+		projectFileName,
+		projectGuid
+	))
+		return false;
+
+	if (!FileSystem::getInstance().makeDirectory(projectPath))
+		return false;
+
+	traktor::log::info << L"Generating msbuild filters \"" << projectFileName << L".filters\"" << Endl;
+
+	context.set(L"PROJECT_PLATFORM", m_platform);
+	context.set(L"PROJECT_NAME", project->getName());
+	context.set(L"PROJECT_PATH", projectPath);
+	context.set(L"PROJECT_FILENAME", projectFileName);
+	context.set(L"PROJECT_GUID", projectGuid);
+
+	std::vector< uint8_t > buffer;
+	buffer.reserve(40000);
+
+	DynamicMemoryStream bufferStream(buffer, false, true);
+	FileOutputStream os(&bufferStream, new AnsiEncoding());
+
+	os << L"<Project ToolsVersion=\"4.0\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">" << Endl;
+	os << IncreaseIndent;
+
+	// Collect all files.
+	std::vector< std::pair< std::wstring, Path > > files;
+	const RefArray< ProjectItem >& items = project->getItems();
+	for (RefArray< ProjectItem >::const_iterator i = items.begin(); i != items.end(); ++i)
+	{
+		if (!collectFiles(project, *i, L"", files))
+			return false;
+	}
+
+	// Create item groups.
+	for (RefArray< SolutionBuilderMsvcVCXBuildTool >::const_iterator i = m_buildTools.begin(); i != m_buildTools.end(); ++i)
+	{
+		os << L"<ItemGroup>" << Endl;
+		os << IncreaseIndent;
+
+		for (std::vector< std::pair< std::wstring, Path > >::const_iterator j = files.begin(); j != files.end(); ++j)
+		{
+			Path itemPath;
+			FileSystem::getInstance().getRelativePath(
+				FileSystem::getInstance().getAbsolutePath(j->second),
+				FileSystem::getInstance().getAbsolutePath(projectPath),
+				itemPath
+			);
+			(*i)->generateFilter(
+				context,
+				solution,
+				project,
+				j->first,
+				itemPath,
+				os
+			);
+		}
+
+		os << DecreaseIndent;
+		os << L"</ItemGroup>" << Endl;
+	}
+
+	// Create filter guids.
+	std::set< std::wstring > filters;
+	for (std::vector< std::pair< std::wstring, Path > >::const_iterator i = files.begin(); i != files.end(); ++i)
+	{
+		if (i->first != L"")
+			filters.insert(i->first);
+	}
+	if (!filters.empty())
+	{
+		for (std::set< std::wstring >::const_iterator i = filters.begin(); i != filters.end(); ++i)
+		{
+			Guid filterGuid = Guid::create();
+
+			os << L"<ItemGroup>" << Endl;
+			os << IncreaseIndent;
+
+			os << L"<Filter Include=\"" << *i << L"\">" << Endl;
+			os << L"<UniqueIdentifier>" << filterGuid.format() << L"</UniqueIdentifier>" << Endl;
+			os << L"</Filter>" << Endl;
+
+			os << DecreaseIndent;
+			os << L"</ItemGroup>" << Endl;
+		}
+	}
+
+	os << DecreaseIndent;
+	os << L"</Project>" << Endl;
+
+	os.close();
+
+	if (!buffer.empty())
+	{
+		Ref< IStream > file = FileSystem::getInstance().open(
+			projectFileName + L".filters",
+			traktor::File::FmWrite
+		);
+		if (!file)
+			return false;
+		file->write(&buffer[0], int(buffer.size()));
+		file->close();
+	}
+
 	return true;
 }
 
 bool SolutionBuilderMsvcVCXProj::collectFiles(
 	Project* project,
 	ProjectItem* item,
-	std::vector< Path >& outFiles
+	const std::wstring& filterPath,
+	std::vector< std::pair< std::wstring, Path > >& outFiles
 ) const
 {
 	Ref< Filter > filter = dynamic_type_cast< Filter* >(item);
 	if (filter)
 	{
+		std::wstring childFilterPath;
+
+		if (!filterPath.empty())
+			childFilterPath = filterPath + L"\\" + filter->getName();
+		else
+			childFilterPath = filter->getName();
+
 		const RefArray< ProjectItem >& items = item->getItems();
 		for (RefArray< ProjectItem >::const_iterator i = items.begin(); i != items.end(); ++i)
 			collectFiles(
 				project,
 				*i,
+				childFilterPath,
 				outFiles
 			);
 	}
@@ -367,7 +523,7 @@ bool SolutionBuilderMsvcVCXProj::collectFiles(
 		std::set< Path > systemFiles;
 		file->getSystemFiles(project->getSourcePath(), systemFiles);
 		for (std::set< Path >::iterator i = systemFiles.begin(); i != systemFiles.end(); ++i)
-			outFiles.push_back(*i);
+			outFiles.push_back(std::make_pair(filterPath, *i));
 	}
 
 	return true;
