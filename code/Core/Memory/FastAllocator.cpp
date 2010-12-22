@@ -26,11 +26,11 @@ const uint32_t c_blockCounts[] =
 	8192,				// 128
 	4096				// 256
 #else
-	8192,
-	8192,
-	8192,
-	8192,
-	4096
+	32768,				// 16
+	36864,				// 32
+	20480,				// 64
+	8192,				// 128
+	4096				// 256
 #endif
 };
 
@@ -93,14 +93,15 @@ void* FastAllocator::alloc(size_t size, size_t align, const char* const tag)
 
 void FastAllocator::free(void* ptr)
 {
+	for (size_t i = 0; i < sizeof_array(m_blockAlloc); ++i)
 	{
-		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-		for (size_t i = 0; i < sizeof_array(m_blockAlloc); ++i)
+		if (m_blockAlloc[i] && m_blockAlloc[i]->belong(ptr))
 		{
-			if (m_blockAlloc[i] && m_blockAlloc[i]->free(ptr))
-				return;
+			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+			m_blockAlloc[i]->free(ptr);
+			return;
 		}
-	}	
+	}
 	m_systemAllocator->free(ptr);
 }
 

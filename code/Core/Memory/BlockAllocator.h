@@ -30,6 +30,8 @@ public:
 	void* alloc();
 	
 	bool free(void* p);
+
+	bool belong(const void* p) const;
 	
 private:
 	size_t* m_top;

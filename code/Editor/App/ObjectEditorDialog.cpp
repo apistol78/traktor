@@ -125,8 +125,10 @@ void ObjectEditorDialog::eventClick(ui::Event* event)
 
 void ObjectEditorDialog::eventClose(ui::Event* event)
 {
-	m_instance->revert();
+	if (m_instance)
+		m_instance->revert();
 	destroy();
+	event->consume();
 }
 
 	}
