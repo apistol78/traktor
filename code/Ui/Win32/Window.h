@@ -96,7 +96,7 @@ private:
 	WNDPROC m_originalWndProc;
 	std::map< UINT, IMessageHandler* > m_messageHandlers;
 
-	static LRESULT invokeMessageHandlers(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass);
+	static LRESULT invokeMessageHandlers(HWND hWnd, DWORD dwIndex, UINT message, WPARAM wParam, LPARAM lParam, bool& pass);
 
 	static LRESULT CALLBACK wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 

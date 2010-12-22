@@ -77,7 +77,10 @@ bool Window::create(
 		return false;
 	}
 
-	SET_WINDOW_LONG_PTR(m_hWnd, GWLP_USERDATA, (LONG_PTR)this);
+	if (_tcscmp(className, _T("TraktorDialogWin32Class")) != 0)
+		SET_WINDOW_LONG_PTR(m_hWnd, GWLP_USERDATA, (LONG_PTR)this);
+	else
+		SET_WINDOW_LONG_PTR(m_hWnd, DWLP_USER, (LONG_PTR)this);
 
 	if (subClass)
 	{
@@ -204,11 +207,11 @@ void Window::unregisterDialogClass()
 	UnregisterClass(_T("TraktorDialogWin32Class"), g_hInstance);
 }
 
-LRESULT Window::invokeMessageHandlers(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass)
+LRESULT Window::invokeMessageHandlers(HWND hWnd, DWORD dwIndex, UINT message, WPARAM wParam, LPARAM lParam, bool& pass)
 {
 	LRESULT result = FALSE;
 
-	Window* window = reinterpret_cast< Window* >(GET_WINDOW_LONG_PTR(hWnd, GWLP_USERDATA));
+	Window* window = reinterpret_cast< Window* >(GET_WINDOW_LONG_PTR(hWnd, dwIndex));
 	if (window)
 	{
 		IMessageHandler* messageHandler = window->m_messageHandlers[message];
@@ -232,7 +235,7 @@ LRESULT CALLBACK Window::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 	bool pass;
 
 	// Lookup handler of issued message.
-	result = invokeMessageHandlers(hWnd, message, wParam, lParam, pass);
+	result = invokeMessageHandlers(hWnd, GWLP_USERDATA, message, wParam, lParam, pass);
 	if (!pass)
 		return result;
 
@@ -242,7 +245,7 @@ LRESULT CALLBACK Window::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 		HWND hWndControl = (HWND)lParam;
 		if (hWndControl)
 		{
-			result = invokeMessageHandlers(hWndControl, WM_REFLECTED_COMMAND, wParam, lParam, pass);
+			result = invokeMessageHandlers(hWndControl, GWLP_USERDATA, WM_REFLECTED_COMMAND, wParam, lParam, pass);
 			if (!pass)
 				return result;
 		}
@@ -252,7 +255,7 @@ LRESULT CALLBACK Window::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 		LPNMHDR nmhdr = reinterpret_cast< LPNMHDR >(lParam);
 		if (nmhdr && nmhdr->hwndFrom)
 		{
-			result = invokeMessageHandlers(nmhdr->hwndFrom, WM_REFLECTED_NOTIFY, wParam, lParam, pass);
+			result = invokeMessageHandlers(nmhdr->hwndFrom, GWLP_USERDATA, WM_REFLECTED_NOTIFY, wParam, lParam, pass);
 			if (!pass)
 				return result;
 		}
@@ -263,7 +266,7 @@ LRESULT CALLBACK Window::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 		if (hWndControl)
 		{
 			UINT reflectMsg = (message == WM_HSCROLL) ? WM_REFLECTED_HSCROLL : WM_REFLECTED_VSCROLL;
-			result = invokeMessageHandlers(hWndControl, reflectMsg, wParam, lParam, pass);
+			result = invokeMessageHandlers(hWndControl, GWLP_USERDATA, reflectMsg, wParam, lParam, pass);
 			if (!pass)
 				return result;
 		}
@@ -279,7 +282,7 @@ LRESULT CALLBACK Window::dlgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 	bool pass;
 
 	// Lookup handler of issued message.
-	result = invokeMessageHandlers(hWnd, message, wParam, lParam, pass);
+	result = invokeMessageHandlers(hWnd, DWLP_USER, message, wParam, lParam, pass);
 	if (!pass)
 		return result;
 
@@ -289,7 +292,7 @@ LRESULT CALLBACK Window::dlgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 		HWND hWndControl = (HWND)lParam;
 		if (hWndControl)
 		{
-			result = invokeMessageHandlers(hWndControl, WM_REFLECTED_COMMAND, wParam, lParam, pass);
+			result = invokeMessageHandlers(hWndControl, GWLP_USERDATA, WM_REFLECTED_COMMAND, wParam, lParam, pass);
 			if (!pass)
 				return result;
 		}
@@ -299,7 +302,7 @@ LRESULT CALLBACK Window::dlgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 		LPNMHDR nmhdr = reinterpret_cast< LPNMHDR >(lParam);
 		if (nmhdr && nmhdr->hwndFrom)
 		{
-			result = invokeMessageHandlers(nmhdr->hwndFrom, WM_REFLECTED_NOTIFY, wParam, lParam, pass);
+			result = invokeMessageHandlers(nmhdr->hwndFrom, GWLP_USERDATA, WM_REFLECTED_NOTIFY, wParam, lParam, pass);
 			if (!pass)
 				return result;
 		}
@@ -310,7 +313,7 @@ LRESULT CALLBACK Window::dlgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 		if (hWndControl)
 		{
 			UINT reflectMsg = (message == WM_HSCROLL) ? WM_REFLECTED_HSCROLL : WM_REFLECTED_VSCROLL;
-			result = invokeMessageHandlers(hWndControl, reflectMsg, wParam, lParam, pass);
+			result = invokeMessageHandlers(hWndControl, GWLP_USERDATA, reflectMsg, wParam, lParam, pass);
 			if (!pass)
 				return result;
 		}

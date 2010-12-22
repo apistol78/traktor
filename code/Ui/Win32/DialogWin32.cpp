@@ -239,23 +239,20 @@ LRESULT DialogWin32::eventSizing(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 
 LRESULT DialogWin32::eventClose(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& skip)
 {
+	skip = false;
+
 	CloseEvent closeEvent(m_owner, 0);
 	m_owner->raiseEvent(EiClose, &closeEvent);
 
-	if (closeEvent.consumed() && closeEvent.cancelled())
-	{
-		skip = false;
+	// Note: It's possible we've been destroyed atm thus it's not
+	// really safe to assume "this" is valid.
+
+	if (closeEvent.consumed())
 		return 0;
-	}
 
 	if (m_modal)
-	{
 		endModal(DrCancel);
-		skip = false;
-		return 0;
-	}
 
-	skip = true;
 	return 0;
 }
 

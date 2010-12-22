@@ -180,7 +180,7 @@ std::wstring Any::getString() const
 	return L"";
 }
 
-Ref< Object > Any::getObject() const
+Object* Any::getObject() const
 {
 	return m_type == AtObject ? m_data.m_object : 0;
 }

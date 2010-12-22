@@ -72,4 +72,10 @@ bool BlockAllocator::free(void* p)
 	return true;
 }
 
+bool BlockAllocator::belong(const void* p) const
+{
+	const size_t* block = static_cast< const size_t* >(p);
+	return (block >= m_top && block < m_end);
+}
+
 }
