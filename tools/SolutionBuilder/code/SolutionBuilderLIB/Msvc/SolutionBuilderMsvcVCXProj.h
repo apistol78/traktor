@@ -40,10 +40,23 @@ private:
 	traktor::RefArray< SolutionBuilderMsvcVCXDefinition > m_buildDefinitionsRelease[4];
 	traktor::RefArray< SolutionBuilderMsvcVCXBuildTool > m_buildTools;
 
+	bool generateProject(
+		GeneratorContext& context,
+		Solution* solution,
+		Project* project
+	) const;
+
+	bool generateFilters(
+		GeneratorContext& context,
+		Solution* solution,
+		Project* project
+	) const;
+
 	bool collectFiles(
 		Project* project,
 		ProjectItem* item,
-		std::vector< traktor::Path >& outFiles
+		const std::wstring& filterPath,
+		std::vector< std::pair< std::wstring, traktor::Path > >& outFiles
 	) const;
 };
 

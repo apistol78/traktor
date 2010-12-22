@@ -13,10 +13,20 @@ class SolutionBuilderMsvcVCXBuildTool : public traktor::ISerializable
 	T_RTTI_CLASS;
 
 public:
-	virtual bool generate(
+	virtual bool generateProject(
 		GeneratorContext& context,
 		Solution* solution,
 		Project* project,
+		const std::wstring& filter,
+		const traktor::Path& fileName,
+		traktor::OutputStream& os
+	) const;
+
+	virtual bool generateFilter(
+		GeneratorContext& context,
+		Solution* solution,
+		Project* project,
+		const std::wstring& filter,
 		const traktor::Path& fileName,
 		traktor::OutputStream& os
 	) const;
