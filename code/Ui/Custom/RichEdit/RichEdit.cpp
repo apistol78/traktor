@@ -475,7 +475,7 @@ void RichEdit::eventKeyDown(Event* event)
 				if (m_caret >= m_lines[i].start && m_caret <= m_lines[i].stop)
 				{
 					uint32_t offset = m_caret - m_lines[i].start;
-					uint32_t di = std::min(pageLines, m_lines.size() - 1 - i);
+					uint32_t di = std::min< uint32_t >(pageLines, m_lines.size() - 1 - i);
 					offset = std::min(offset, m_lines[i + di].stop - m_lines[i + di].start);
 					m_caret = m_lines[i + di].start + offset;
 					break;
