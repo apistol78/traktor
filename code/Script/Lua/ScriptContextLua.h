@@ -1,10 +1,6 @@
 #ifndef traktor_script_ScriptContextLua_H
 #define traktor_script_ScriptContextLua_H
 
-#include <map>
-#include <vector>
-#include "Core/RefArray.h"
-#include "Core/Thread/Semaphore.h"
 #include "Script/IScriptContext.h"
 
 // import/export mechanism.
@@ -23,6 +19,7 @@ namespace traktor
 	{
 
 class IScriptClass;
+class ScriptManagerLua;
 
 /*! \brief LUA scripting context.
  * \ingroup LUA Script
@@ -32,7 +29,7 @@ class T_DLLCLASS ScriptContextLua : public IScriptContext
 	T_RTTI_CLASS;
 
 public:
-	ScriptContextLua(const RefArray< IScriptClass >& registeredClasses);
+	ScriptContextLua(ScriptManagerLua* scriptManager, lua_State* luaState);
 
 	virtual ~ScriptContextLua();
 
@@ -51,38 +48,9 @@ public:
 	virtual Any executeMethod(Object* self, const std::wstring& methodName, uint32_t argc, const Any* argv);
 
 private:
-	struct RegisteredClass
-	{
-		Ref< IScriptClass > scriptClass;
-		int32_t metaTableRef;
-	};
-
-	mutable Semaphore m_lock;
+	Ref< ScriptManagerLua > m_scriptManager;
 	lua_State* m_luaState;
-	std::vector< RegisteredClass > m_classRegistry;
-	std::map< const TypeInfo*, uint32_t > m_classRegistryLookup;
-
-	void registerClass(IScriptClass* scriptClass);
-
-	void pushObject(Object* object);
-
-	void pushAny(const Any& any);
-
-	Any toAny(int32_t index);
-
-	static int classIndexLookup(lua_State* luaState);
-
-	static int callConstructor(lua_State* luaState);
-
-	static int callMethod(lua_State* luaState);
-
-	static int callUnknownMethod(lua_State* luaState);
-
-	static int callProperty(lua_State* luaState);
-
-	static int gcMethod(lua_State* luaState);
-
-	static int luaPanic(lua_State* luaState);
+	int32_t m_environmentRef;
 };
 
 	}

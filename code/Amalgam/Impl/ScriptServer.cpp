@@ -1,3 +1,4 @@
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyString.h"
 #include "Core/Settings/Settings.h"
 #include "Resource/IResourceManager.h"
@@ -27,7 +28,7 @@ bool ScriptServer::create(const Settings* settings)
 
 void ScriptServer::destroy()
 {
-	m_scriptManager = 0;
+	safeDestroy(m_scriptManager);
 }
 
 void ScriptServer::createResourceFactories(IEnvironment* environment)
