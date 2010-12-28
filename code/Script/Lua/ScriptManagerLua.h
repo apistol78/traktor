@@ -73,9 +73,13 @@ private:
 
 	bool setPanicJump();
 
+	static int classIndexLookup(lua_State* luaState);
+
 	static int classCallConstructor(lua_State* luaState);
 
 	static int classCallMethod(lua_State* luaState);
+
+	static int classCallUnknownMethod(lua_State* luaState);
 
 	static int classGcMethod(lua_State* luaState);
 

@@ -100,14 +100,28 @@ void ScriptManagerLua::registerClass(IScriptClass* scriptClass)
 	const TypeInfo* superType = exportType.getSuper();
 	T_ASSERT (superType);
 
+	bool exportedAsRoot = true;
 	for (std::vector< RegisteredClass >::iterator i = m_classRegistry.begin(); i != m_classRegistry.end(); ++i)
 	{
 		if (superType == &i->scriptClass->getExportType())
 		{
 			lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, i->metaTableRef);	// +1	-> 2
 			lua_setmetatable(m_luaState, -2);								// -1	-> 1
+			exportedAsRoot = false;
 			break;
 		}
+	}
+
+	if (exportedAsRoot)
+	{
+		lua_newtable(m_luaState);
+
+		lua_pushlightuserdata(m_luaState, (void*)this);
+		lua_pushlightuserdata(m_luaState, (void*)scriptClass);
+		lua_pushcclosure(m_luaState, classIndexLookup, 2);
+		lua_setfield(m_luaState, -2, "__index");
+
+		lua_setmetatable(m_luaState, -2);
 	}
 
 	if (scriptClass->haveConstructor())
@@ -246,6 +260,29 @@ bool ScriptManagerLua::setPanicJump()
 #endif
 }
 
+int ScriptManagerLua::classIndexLookup(lua_State* luaState)
+{
+	ScriptManagerLua* manager = reinterpret_cast< ScriptManagerLua* >(lua_touserdata(luaState, lua_upvalueindex(1)));
+	T_ASSERT (manager);
+
+	// Get script class from closure.
+	const IScriptClass* scriptClass = reinterpret_cast< IScriptClass* >(lua_touserdata(luaState, lua_upvalueindex(2)));
+	if (!scriptClass)
+		return 0;
+
+	// Get index key.
+	const char* key = lua_tostring(luaState, 2);
+	T_ASSERT (key);
+
+	// Create unknown method closure.
+	lua_pushstring(luaState, key);
+	lua_pushlightuserdata(luaState, (void*)manager);
+	lua_pushlightuserdata(luaState, (void*)scriptClass);
+	lua_pushcclosure(luaState, classCallUnknownMethod, 3);
+
+	return 1;
+}
+
 int ScriptManagerLua::classCallConstructor(lua_State* luaState)
 {
 	Any argv[16];
@@ -315,6 +352,47 @@ int ScriptManagerLua::classCallMethod(lua_State* luaState)
 	param.object = object;
 
 	Any returnValue = scriptClass->invoke(param, methodId, argc, argv);
+	manager->pushAny(returnValue);
+
+	return 1;
+}
+
+int ScriptManagerLua::classCallUnknownMethod(lua_State* luaState)
+{
+	ScriptManagerLua* manager = reinterpret_cast< ScriptManagerLua* >(lua_touserdata(luaState, lua_upvalueindex(2)));
+	T_ASSERT (manager);
+
+	Any argv[16];
+
+	if (!lua_istable(luaState, 1))
+		return 0;
+
+	const char* methodName = lua_tostring(luaState, lua_upvalueindex(1));
+	T_ASSERT (methodName);
+
+	const IScriptClass* scriptClass = reinterpret_cast< IScriptClass* >(lua_touserdata(luaState, lua_upvalueindex(3)));
+	if (!scriptClass)
+		return 0;
+
+	// Get object pointer.
+	lua_rawgeti(luaState, 1, c_tableKey_this);
+	Object* object = *reinterpret_cast< Object** >(lua_touserdata(luaState, -1));
+	lua_pop(luaState, 1);
+	if (!object)
+		return 0;
+
+	// Convert arguments.
+	int32_t argc = lua_gettop(luaState) - 1;
+	T_ASSERT (argc <= sizeof_array(argv));
+	for (int32_t i = 0; i < argc; ++i)
+		argv[i] = manager->toAny(2 + i);
+
+	// Invoke native method.
+	IScriptClass::InvokeParam param;
+	param.context = manager->m_currentContext;
+	param.object = object;
+
+	Any returnValue = scriptClass->invokeUnknown(param, mbstows(methodName), argc, argv);
 	manager->pushAny(returnValue);
 
 	return 1;
