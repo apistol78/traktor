@@ -67,7 +67,7 @@ bool RenderSystemPs3::create(const RenderSystemCreateDesc& desc)
 	m_memoryHeapLocal = new MemoryHeap(
 		config.localAddress,
 		config.localSize,
-		48 * 1024 * 1024,
+		64 * 1024 * 1024,
 		CELL_GCM_LOCATION_LOCAL
 	);
 
