@@ -26,10 +26,10 @@ class T_DLLCLASS ScriptManagerJs : public IScriptManager
 
 public:
 	ScriptManagerJs();
+
+	virtual void destroy();
 	
 	virtual void registerClass(IScriptClass* scriptClass);
-
-	virtual Ref< IScriptClass > findScriptClass(const TypeInfo& type) const;
 
 	virtual Ref< IScriptResource > compile(const std::wstring& script, bool strip, IErrorCallback* errorCallback) const;
 

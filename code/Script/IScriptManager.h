@@ -46,18 +46,14 @@ class T_DLLCLASS IScriptManager : public Object
 	T_RTTI_CLASS;
 
 public:
+	/*! \brief Destroy script manager. */
+	virtual void destroy() = 0;
+
 	/*! \brief Register script class.
 	 *
 	 * \param scriptClass Script class interface.
 	 */
 	virtual void registerClass(IScriptClass* scriptClass) = 0;
-
-	/*! \brief Find script class from type.
-	 *
-	 * \param Type from which we want a IScriptClass interface.
-	 * \return IScriptClass interface able to call object of 'type'.
-	 */
-	virtual Ref< IScriptClass > findScriptClass(const TypeInfo& type) const = 0;
 
 	/*! \brief Compile script.
 	 *
@@ -73,17 +69,6 @@ public:
 	 * \return Script context interface.
 	 */
 	virtual Ref< IScriptContext > createContext() = 0;
-
-	/*! \brief Find script class from type.
-	 *
-	 * \param Type from which we want a IScriptClass interface.
-	 * \return IScriptClass interface able to call object of 'type'.
-	 */
-	template < typename Type >
-	Ref< IScriptClass > findScriptClass() const
-	{
-		return findScriptClass(type_of< Type >());
-	}
 };
 
 	}

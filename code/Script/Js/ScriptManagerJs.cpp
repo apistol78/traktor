@@ -21,27 +21,13 @@ ScriptManagerJs::ScriptManagerJs()
 	registerDelegateClasses(this);
 }
 
+void ScriptManagerJs::destroy()
+{
+}
+
 void ScriptManagerJs::registerClass(IScriptClass* scriptClass)
 {
 	m_registeredClasses.push_back(scriptClass);
-}
-
-Ref< IScriptClass > ScriptManagerJs::findScriptClass(const TypeInfo& type) const
-{
-	Ref< IScriptClass > minScriptClass;
-	uint32_t minScriptClassDiff = ~0UL;
-
-	for (RefArray< IScriptClass >::const_iterator i = m_registeredClasses.begin(); i != m_registeredClasses.end(); ++i)
-	{
-		uint32_t scriptClassDiff = type_difference((*i)->getExportType(), type);
-		if (scriptClassDiff < minScriptClassDiff)
-		{
-			minScriptClass = *i;
-			minScriptClassDiff = scriptClassDiff;
-		}
-	}
-
-	return minScriptClass;
 }
 
 Ref< IScriptResource > ScriptManagerJs::compile(const std::wstring& script, bool strip, IErrorCallback* errorCallback) const
