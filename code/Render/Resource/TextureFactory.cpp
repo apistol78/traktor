@@ -136,7 +136,7 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 				desc.initialData[i - skipMips].data = data;
 				desc.initialData[i - skipMips].pitch = getTextureRowPitch(desc.format, mipWidth);
 
-				int nread = readerData.read(data, blockCount * blockSize, 1);
+				int nread = readerData.read(data, blockCount * blockSize);
 				T_ASSERT (nread == blockCount * blockSize);
 
 				data += blockCount * blockSize;
