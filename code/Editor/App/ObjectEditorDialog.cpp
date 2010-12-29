@@ -95,12 +95,13 @@ bool ObjectEditorDialog::apply(bool keep)
 
 void ObjectEditorDialog::cancel()
 {
+	destroy();
+
 	if (m_instance)
 	{
 		m_instance->revert();
 		m_instance = 0;
 	}
-	destroy();
 }
 
 void ObjectEditorDialog::eventClick(ui::Event* event)
@@ -125,9 +126,7 @@ void ObjectEditorDialog::eventClick(ui::Event* event)
 
 void ObjectEditorDialog::eventClose(ui::Event* event)
 {
-	if (m_instance)
-		m_instance->revert();
-	destroy();
+	cancel();
 	event->consume();
 }
 
