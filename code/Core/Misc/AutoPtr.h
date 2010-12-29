@@ -19,6 +19,18 @@ namespace traktor
 		}
 	};
 
+	/*! \brief Default delete operator policy.
+	 * \ingroup Core
+	 */
+	template < typename Type >
+	struct DeleteArrayOperator
+	{
+		static void release(Type* ptr)
+		{
+			delete[] ptr;
+		}
+	};
+
 	/*! \brief Use freeAlign method to release memory.
 	 * \ingroup Core
 	 */
@@ -90,7 +102,7 @@ namespace traktor
 		AutoPtr< Type >& operator = (const AutoPtr< Type >& lh) { T_FATAL_ERROR; return *this; }
 	};
 
-	template < typename Type >
+	template < typename Type, typename ReleasePolicy = DeleteArrayOperator< Type > >
 	class AutoArrayPtr
 	{
 	public:
@@ -119,7 +131,7 @@ namespace traktor
 		{
 			if (m_ptr)
 			{
-				delete[] m_ptr;
+				ReleasePolicy::release(m_ptr);
 				m_ptr = 0;
 			}
 		}
