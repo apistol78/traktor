@@ -13,7 +13,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.online.SteamStatistics", SteamStatistics, IStat
 
 SteamStatistics::SteamStatistics(SteamSessionManager* sessionManager, const wchar_t** statIds)
 :	m_sessionManager(sessionManager)
-,	m_storeStats(false)
 ,	m_callbackUserStatsStored(this, &SteamStatistics::OnUserStatsStored)
 {
 	for (const wchar_t** statId = statIds; *statId; ++statId)
@@ -47,13 +46,12 @@ bool SteamStatistics::set(const std::wstring& statId, float value)
 	if (!SteamUserStats()->SetStat(wstombs(statId).c_str(), value))
 		return false;
 
-	m_storeStats = true;
+	m_sessionManager->storeStats();
 	return true;
 }
 
 void SteamStatistics::OnUserStatsStored(UserStatsStored_t* pCallback)
 {
-	m_storeStats = false;
 }
 
 	}

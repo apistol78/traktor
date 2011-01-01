@@ -11,7 +11,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.online.SteamAchievements", SteamAchievements, I
 
 SteamAchievements::SteamAchievements(SteamSessionManager* sessionManager, const wchar_t** achievementIds)
 :	m_sessionManager(sessionManager)
-,	m_storeAchievement(false)
 ,	m_callbackAchievementStored(this, &SteamAchievements::OnAchievementStored)
 {
 	for (const wchar_t** achievementId = achievementIds; *achievementId; ++achievementId)
@@ -53,13 +52,12 @@ bool SteamAchievements::set(const std::wstring& achievementId, bool reward)
 			return false;
 	}
 
-	m_storeAchievement = true;
+	m_sessionManager->storeStats();
 	return true;
 }
 
 void SteamAchievements::OnAchievementStored(UserAchievementStored_t* pCallback)
 {
-	m_storeAchievement = false;
 }
 
 	}

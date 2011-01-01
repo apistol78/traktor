@@ -197,6 +197,11 @@ bool SteamSessionManager::waitForStats()
 	return m_receivedStatsSucceeded;
 }
 
+bool SteamSessionManager::storeStats()
+{
+	return SteamUserStats()->StoreStats();
+}
+
 void SteamSessionManager::OnUserStatsReceived(UserStatsReceived_t* pCallback)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
