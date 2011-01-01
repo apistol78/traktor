@@ -31,12 +31,20 @@ SocketAddressIPv4::SocketAddressIPv4(uint16_t port)
 	m_sockaddr.sin_addr.s_addr = htonl(INADDR_ANY);
 }
 
-SocketAddressIPv4::SocketAddressIPv4(const uint8_t ip[4], uint16_t port)
+SocketAddressIPv4::SocketAddressIPv4(const uint32_t addr, uint16_t port)
 {
 	std::memset(&m_sockaddr, 0, sizeof(m_sockaddr));
 	m_sockaddr.sin_family = AF_INET;
 	m_sockaddr.sin_port = htons(port);
-	m_sockaddr.sin_addr.s_addr = *reinterpret_cast< const uint32_t* >(ip);
+	m_sockaddr.sin_addr.s_addr = htonl(addr);
+}
+
+SocketAddressIPv4::SocketAddressIPv4(const uint8_t addr[4], uint16_t port)
+{
+	std::memset(&m_sockaddr, 0, sizeof(m_sockaddr));
+	m_sockaddr.sin_family = AF_INET;
+	m_sockaddr.sin_port = htons(port);
+	m_sockaddr.sin_addr.s_addr = htonl(*reinterpret_cast< const uint32_t* >(addr));
 }
 
 SocketAddressIPv4::SocketAddressIPv4(const std::wstring& host, uint16_t port)
@@ -72,6 +80,11 @@ std::wstring SocketAddressIPv4::getHostName() const
 #else
 	return L"<unsupported>";
 #endif
+}
+
+uint32_t SocketAddressIPv4::getAddr() const
+{
+	return ntohl(m_sockaddr.sin_addr.s_addr);
 }
 
 uint16_t SocketAddressIPv4::getPort() const

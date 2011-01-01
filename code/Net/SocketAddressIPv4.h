@@ -33,13 +33,17 @@ public:
 	
 	SocketAddressIPv4(uint16_t port);
 
-	SocketAddressIPv4(const uint8_t ip[4], uint16_t port);
+	SocketAddressIPv4(const uint32_t addr, uint16_t port);
+
+	SocketAddressIPv4(const uint8_t add[4], uint16_t port);
 	
 	SocketAddressIPv4(const std::wstring& host, uint16_t port);
 	
 	bool valid() const;
 	
 	std::wstring getHostName() const;
+
+	uint32_t getAddr() const;
 
 	uint16_t getPort() const;
 
