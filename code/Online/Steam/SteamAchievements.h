@@ -25,7 +25,6 @@ public:
 private:
 	SteamSessionManager* m_sessionManager;
 	std::set< std::wstring > m_achievementIds;
-	bool m_storeAchievement;
 
 	STEAM_CALLBACK(SteamAchievements, OnAchievementStored, UserAchievementStored_t, m_callbackAchievementStored);
 };

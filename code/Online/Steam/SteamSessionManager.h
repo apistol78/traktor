@@ -53,6 +53,8 @@ public:
 
 	bool waitForStats();
 
+	bool storeStats();
+
 private:
 	mutable Semaphore m_lock;
 	Ref< SteamAchievements > m_achievements;

@@ -26,7 +26,6 @@ public:
 private:
 	SteamSessionManager* m_sessionManager;
 	std::set< std::wstring > m_statIds;
-	bool m_storeStats;
 
 	STEAM_CALLBACK(SteamStatistics, OnUserStatsStored, UserStatsStored_t, m_callbackUserStatsStored);
 };
