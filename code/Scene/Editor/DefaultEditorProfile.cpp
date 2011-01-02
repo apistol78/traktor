@@ -13,6 +13,7 @@
 // Entity factories
 #include "Mesh/MeshEntityFactory.h"
 #include "Weather/WeatherEntityFactory.h"
+#include "World/Entity/ExternalEntityDataCache.h"
 #include "World/Entity/WorldEntityFactory.h"
 
 // Entity renderers
@@ -31,6 +32,11 @@ namespace traktor
 	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.DefaultEditorProfile", 0, DefaultEditorProfile, ISceneEditorProfile)
+
+DefaultEditorProfile::DefaultEditorProfile()
+:	m_externalCache(new world::ExternalEntityDataCache())
+{
+}
 
 void DefaultEditorProfile::getCommands(
 	std::list< ui::Command >& outCommands
@@ -62,7 +68,7 @@ void DefaultEditorProfile::createEntityFactories(
 	RefArray< world::IEntityFactory >& outEntityFactories
 ) const
 {
-	outEntityFactories.push_back(new world::WorldEntityFactory(context->getSourceDatabase()));
+	outEntityFactories.push_back(new world::WorldEntityFactory(context->getSourceDatabase(), m_externalCache));
 	outEntityFactories.push_back(new mesh::MeshEntityFactory(context->getResourceManager()));
 	outEntityFactories.push_back(new weather::WeatherEntityFactory(context->getResourceManager(), context->getRenderSystem()));
 }

@@ -129,7 +129,7 @@ public:
 
 	void setVisible(bool visible);
 	
-	bool isVisible() const;
+	bool isVisible(bool includingParents = true) const;
 
 	//@}
 

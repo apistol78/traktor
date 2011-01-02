@@ -619,7 +619,7 @@ Ref< ui::custom::GridRow > SceneEditorPage::createEntityListRow(EntityAdapter* e
 
 	// Create "visible" check box.
 	row->add(new ui::custom::GridItem(
-		entityAdapter->isVisible() ? m_imageVisible : m_imageHidden
+		entityAdapter->isVisible(false) ? m_imageVisible : m_imageHidden
 	));
 
 	// Recursively add children.
@@ -868,7 +868,7 @@ void SceneEditorPage::eventInstanceClick(ui::Event* event)
 		EntityAdapter* entityAdapter = row->getData< EntityAdapter >(L"ENTITY");
 		T_ASSERT (entityAdapter);
 
-		if (entityAdapter->isVisible())
+		if (entityAdapter->isVisible(false))
 		{
 			item->setImage(m_imageHidden);
 			entityAdapter->setVisible(false);

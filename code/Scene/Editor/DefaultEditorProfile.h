@@ -5,6 +5,13 @@
 
 namespace traktor
 {
+	namespace world
+	{
+
+class ExternalEntityDataCache;
+
+	}
+
 	namespace scene
 	{
 
@@ -14,6 +21,8 @@ class DefaultEditorProfile : public ISceneEditorProfile
 	T_RTTI_CLASS;
 
 public:
+	DefaultEditorProfile();
+
 	virtual void getCommands(
 		std::list< ui::Command >& outCommands
 	) const;
@@ -49,6 +58,9 @@ public:
 		SceneEditorContext* context,
 		RefArray< IEntityEditorFactory >& outEntityEditorFactories
 	) const;
+
+private:
+	Ref< world::ExternalEntityDataCache > m_externalCache;
 };
 
 	}

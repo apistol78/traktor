@@ -241,15 +241,18 @@ void EntityAdapter::setVisible(bool visible)
 	m_visible = visible;
 }
 
-bool EntityAdapter::isVisible() const
+bool EntityAdapter::isVisible(bool includingParents) const
 {
 	if (!m_visible)
 		return false;
 
-	for (EntityAdapter* parent = m_parent; parent; parent = parent->m_parent)
+	if (includingParents)
 	{
-		if (!parent->m_visible)
-			return false;
+		for (EntityAdapter* parent = m_parent; parent; parent = parent->m_parent)
+		{
+			if (!parent->m_visible)
+				return false;
+		}
 	}
 
 	return true;
