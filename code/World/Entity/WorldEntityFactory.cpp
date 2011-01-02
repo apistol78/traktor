@@ -2,6 +2,7 @@
 #include "World/Entity/DirectionalLightEntity.h"
 #include "World/Entity/DirectionalLightEntityData.h"
 #include "World/Entity/ExternalEntityData.h"
+#include "World/Entity/ExternalEntityDataCache.h"
 #include "World/Entity/ExternalSpatialEntityData.h"
 #include "World/Entity/GroupEntity.h"
 #include "World/Entity/GroupEntityData.h"
@@ -21,8 +22,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.WorldEntityFactory", WorldEntityFactory, IEntityFactory)
 
-WorldEntityFactory::WorldEntityFactory(db::Database* database)
+WorldEntityFactory::WorldEntityFactory(db::Database* database, ExternalEntityDataCache* externalCache)
 :	m_database(database)
+,	m_externalCache(externalCache)
 {
 }
 
@@ -48,21 +50,45 @@ Ref< Entity > WorldEntityFactory::createEntity(IEntityBuilder* builder, const En
 	if (const ExternalEntityData* externalEntityData = dynamic_type_cast< const ExternalEntityData* >(&entityData))
 	{
 		Guid entityGuid = externalEntityData->getGuid();
-		Ref< EntityData > resolvedEntityData = m_database->getObjectReadOnly< EntityData >(entityGuid);
+		Ref< EntityData > resolvedEntityData;
+
+		if (m_externalCache)
+			resolvedEntityData = m_externalCache->get(entityGuid);
+
+		if (!resolvedEntityData)
+		{
+			resolvedEntityData = m_database->getObjectReadOnly< EntityData >(entityGuid);
+			if (m_externalCache && resolvedEntityData)
+				m_externalCache->put(entityGuid, resolvedEntityData);
+		}
+
 		if (resolvedEntityData)
 			resolvedEntityData->setName(externalEntityData->getName());
+
 		return builder->create(resolvedEntityData);
 	}
 
 	if (const ExternalSpatialEntityData* externalSpatialEntityData = dynamic_type_cast< const ExternalSpatialEntityData* >(&entityData))
 	{
 		Guid entityGuid = externalSpatialEntityData->getGuid();
-		Ref< SpatialEntityData > resolvedEntityData = m_database->getObjectReadOnly< SpatialEntityData >(entityGuid);
+		Ref< SpatialEntityData > resolvedEntityData;
+
+		if (m_externalCache)
+			resolvedEntityData = dynamic_type_cast< SpatialEntityData* >(m_externalCache->get(entityGuid));
+
+		if (!resolvedEntityData)
+		{
+			resolvedEntityData = m_database->getObjectReadOnly< SpatialEntityData >(entityGuid);
+			if (m_externalCache && resolvedEntityData)
+				m_externalCache->put(entityGuid, resolvedEntityData);
+		}
+
 		if (resolvedEntityData)
 		{
 			resolvedEntityData->setName(externalSpatialEntityData->getName());
 			resolvedEntityData->setTransform(externalSpatialEntityData->getTransform());
 		}
+
 		return builder->create(resolvedEntityData);
 	}
 

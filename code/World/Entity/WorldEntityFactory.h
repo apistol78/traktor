@@ -23,6 +23,8 @@ class Database;
 	namespace world
 	{
 
+class ExternalEntityDataCache;
+
 /*! \brief World entity factory.
  * \ingroup World
  */
@@ -31,7 +33,7 @@ class T_DLLCLASS WorldEntityFactory : public IEntityFactory
 	T_RTTI_CLASS;
 	
 public:
-	WorldEntityFactory(db::Database* database);
+	WorldEntityFactory(db::Database* database, ExternalEntityDataCache* externalCache);
 
 	virtual const TypeInfoSet getEntityTypes() const;
 
@@ -39,6 +41,7 @@ public:
 
 private:
 	Ref< db::Database > m_database;
+	mutable Ref< ExternalEntityDataCache > m_externalCache;
 };
 	
 	}

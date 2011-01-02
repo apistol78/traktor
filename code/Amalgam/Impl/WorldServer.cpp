@@ -80,7 +80,7 @@ void WorldServer::createEntityFactories(IEnvironment* environment)
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
 	db::Database* database = environment->getDatabase();
 
-	m_entityBuilder->addFactory(new world::WorldEntityFactory(database));
+	m_entityBuilder->addFactory(new world::WorldEntityFactory(database, 0));
 	m_entityBuilder->addFactory(new mesh::MeshEntityFactory(resourceManager));
 	m_entityBuilder->addFactory(new animation::AnimatedMeshEntityFactory(resourceManager, physicsManager));
 	m_entityBuilder->addFactory(new animation::PathEntityFactory());
