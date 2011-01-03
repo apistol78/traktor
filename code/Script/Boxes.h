@@ -43,6 +43,10 @@ public:
 	
 	float w() const;
 
+	Vector4 xyz0() const;
+
+	Vector4 xyz1() const;
+
 	Vector4 add(const Vector4& v) const;
 
 	Vector4 sub(const Vector4& v) const;
