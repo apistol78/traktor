@@ -114,11 +114,13 @@ struct ClosestRayExcludeResultCallback : public btCollisionWorld::RayResultCallb
 	btVector3 m_hitNormalWorld;
 	btVector3 m_hitPointWorld;
 	btCollisionObject* m_excludeObject;
+	uint32_t m_collisionPart;
 
 	ClosestRayExcludeResultCallback(btCollisionObject* excludeObject, const btVector3& rayFromWorld, const btVector3& rayToWorld)
 	:	m_rayFromWorld(rayFromWorld)
 	,	m_rayToWorld(rayToWorld)
 	,	m_excludeObject(excludeObject)
+	,	m_collisionPart(0)
 	{
 	}
 
@@ -130,6 +132,7 @@ struct ClosestRayExcludeResultCallback : public btCollisionWorld::RayResultCallb
 		{
 			m_closestHitFraction = rayResult.m_hitFraction;
 			m_collisionObject = rayResult.m_collisionObject;
+			m_collisionPart = rayResult.m_localShapeInfo ? rayResult.m_localShapeInfo->m_shapePart : 0;
 
 			if (normalInWorldSpace)
 				m_hitNormalWorld = rayResult.m_hitNormalLocal;
@@ -751,6 +754,7 @@ bool PhysicsManagerBullet::queryRay(const Vector4& at, const Vector4& direction,
 	outResult.position = fromBtVector3(callback.m_hitPointWorld, 1.0f);
 	outResult.normal = fromBtVector3(callback.m_hitNormalWorld, 0.0).normalized();
 	outResult.distance = dot3(direction, outResult.position - at);
+	outResult.part = callback.m_collisionPart;
 
 	return true;
 }
@@ -839,6 +843,7 @@ bool PhysicsManagerBullet::querySweep(
 	outResult.normal = fromBtVector3(callback.m_hitNormalWorld, 0.0).normalized();
 	outResult.distance = dot3(direction, outResult.position - at);
 	outResult.fraction = callback.m_closestHitFraction;
+	outResult.part = 0;
 
 	return true;
 }
@@ -911,6 +916,7 @@ bool PhysicsManagerBullet::querySweep(
 	outResult.normal = fromBtVector3(callback.m_hitNormalWorld, 0.0).normalized();
 	outResult.distance = dot3(direction, outResult.position - at);
 	outResult.fraction = callback.m_closestHitFraction;
+	outResult.part = 0;
 
 	return true;
 }
