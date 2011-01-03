@@ -55,6 +55,7 @@ private:
 	};
 
 	lua_State* m_luaState;
+	int32_t m_gcMetaRef;
 	Semaphore m_lock;
 	ScriptContextLua* m_currentContext;
 	std::vector< RegisteredClass > m_classRegistry;
@@ -82,6 +83,8 @@ private:
 	static int classCallUnknownMethod(lua_State* luaState);
 
 	static int classGcMethod(lua_State* luaState);
+
+	static int classEqualMethod(lua_State* luaState);
 
 	static int luaPanic(lua_State* luaState);
 };

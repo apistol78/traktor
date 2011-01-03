@@ -88,6 +88,7 @@ bool ScriptContextLua::executeScript(const IScriptResource* scriptResource)
 	int32_t result = luaL_loadstring(m_luaState, wstombs(scriptResourceLua->getScript()).c_str());
 	if (result != 0)
 	{
+		lua_pop(m_luaState, 1);
 		m_scriptManager->unlock();
 		return false;
 	}

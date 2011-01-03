@@ -29,6 +29,7 @@ std::jmp_buf ScriptManagerLua::ms_jmpbuf;
 
 ScriptManagerLua::ScriptManagerLua()
 :	m_currentContext(0)
+,	m_gcMetaRef(0)
 {
 	m_luaState = lua_newstate(&luaAlloc, 0);
 
@@ -43,6 +44,17 @@ ScriptManagerLua::ScriptManagerLua()
 
 	registerBoxClasses(this);
 	registerDelegateClasses(this);
+
+	// Create meta table for C++ objects.
+	lua_newtable(m_luaState);
+	m_gcMetaRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
+	lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_gcMetaRef);
+
+	lua_pushcfunction(m_luaState, classGcMethod);
+	lua_setfield(m_luaState, -2, "__gc");
+
+	lua_pop(m_luaState, 1);
+
 }
 
 ScriptManagerLua::~ScriptManagerLua()
@@ -54,6 +66,7 @@ void ScriptManagerLua::destroy()
 {
 	if (m_luaState)
 	{
+		lua_unref(m_luaState, m_gcMetaRef);
 		lua_close(m_luaState);
 		m_luaState = 0;
 	}
@@ -74,16 +87,13 @@ void ScriptManagerLua::registerClass(IScriptClass* scriptClass)
 	lua_pushvalue(m_luaState, -1);									// +1	-> 2
 	lua_setfield(m_luaState, -2, "__index");						// -1	-> 1
 
+	lua_pushlightuserdata(m_luaState, (void*)this);
+	lua_pushlightuserdata(m_luaState, (void*)scriptClass);
+	lua_pushcclosure(m_luaState, classEqualMethod, 2);
+	lua_setfield(m_luaState, -2, "__eq");
+
 	lua_pushlightuserdata(m_luaState, (void*)scriptClass);			// +1	-> 2
 	lua_rawseti(m_luaState, -2, c_tableKey_class);					// -1	-> 1
-
-	if (scriptClass->haveConstructor())
-	{
-		lua_pushlightuserdata(m_luaState, (void*)this);				// +1	-> 2
-		lua_pushlightuserdata(m_luaState, (void*)scriptClass);		// +1	-> 3
-		lua_pushcclosure(m_luaState, classCallConstructor, 2);		// -1	-> 2
-		lua_setfield(m_luaState, -2, "new");						// -1	-> 1
-	}
 
 	uint32_t methodCount = scriptClass->getMethodCount();
 	for (uint32_t i = 0; i < methodCount; ++i)
@@ -100,6 +110,8 @@ void ScriptManagerLua::registerClass(IScriptClass* scriptClass)
 	const TypeInfo* superType = exportType.getSuper();
 	T_ASSERT (superType);
 
+	lua_newtable(m_luaState);
+
 	bool exportedAsRoot = true;
 	for (std::vector< RegisteredClass >::iterator i = m_classRegistry.begin(); i != m_classRegistry.end(); ++i)
 	{
@@ -114,15 +126,26 @@ void ScriptManagerLua::registerClass(IScriptClass* scriptClass)
 
 	if (exportedAsRoot)
 	{
-		lua_newtable(m_luaState);
-
 		lua_pushlightuserdata(m_luaState, (void*)this);
 		lua_pushlightuserdata(m_luaState, (void*)scriptClass);
 		lua_pushcclosure(m_luaState, classIndexLookup, 2);
 		lua_setfield(m_luaState, -2, "__index");
-
-		lua_setmetatable(m_luaState, -2);
 	}
+	else
+	{
+		lua_pushvalue(m_luaState, -1);									// +1	-> 2
+		lua_setfield(m_luaState, -2, "__index");						// -1	-> 1
+	}
+
+	if (scriptClass->haveConstructor())
+	{
+		lua_pushlightuserdata(m_luaState, (void*)this);				// +1	-> 2
+		lua_pushlightuserdata(m_luaState, (void*)scriptClass);		// +1	-> 3
+		lua_pushcclosure(m_luaState, classCallConstructor, 2);		// -1	-> 2
+		lua_setfield(m_luaState, -2, "__call");						// -1	-> 1
+	}
+
+	lua_setmetatable(m_luaState, -2);
 
 	if (scriptClass->haveConstructor())
 	{
@@ -195,17 +218,13 @@ void ScriptManagerLua::pushObject(Object* object)
 	lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, rc.metaTableRef);	// +1
 	lua_setmetatable(m_luaState, -2);								// -1
 
-	// Associate object with instance table.
+	// Associate object with instance table; attach GC meta table.
 	Object** objectRef = reinterpret_cast< Object** >(lua_newuserdata(m_luaState, sizeof(Object*)));	// +1
 	*objectRef = object;
 	T_SAFE_ADDREF(*objectRef);
 
-	// Associate __gc with object userdata.
-	lua_newtable(m_luaState);						// +1
-	lua_pushcfunction(m_luaState, classGcMethod);	// +1
-
-	lua_setfield(m_luaState, -2, "__gc");			// -1
-	lua_setmetatable(m_luaState, -2);				// -1
+	lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_gcMetaRef);
+	lua_setmetatable(m_luaState, -2);
 
 	lua_rawseti(m_luaState, -2, c_tableKey_this);	// -1
 }
@@ -402,6 +421,23 @@ int ScriptManagerLua::classGcMethod(lua_State* luaState)
 {
 	Object* object = *reinterpret_cast< Object** >(lua_touserdata(luaState, 1));
 	T_SAFE_ANONYMOUS_RELEASE(object);
+	return 0;
+}
+
+int ScriptManagerLua::classEqualMethod(lua_State* luaState)
+{
+	ScriptManagerLua* manager = reinterpret_cast< ScriptManagerLua* >(lua_touserdata(luaState, lua_upvalueindex(1)));
+	T_ASSERT (manager);
+
+	Any object0 = manager->toAny(1);
+	Any object1 = manager->toAny(2);
+
+	if (object0.isObject() && object1.isObject())
+	{
+		if (object0.getObject() == object1.getObject())
+			return 1;
+	}
+
 	return 0;
 }
 

@@ -54,6 +54,16 @@ float BoxedVector4::w() const
 	return m_value.w();
 }
 
+Vector4 BoxedVector4::xyz0() const
+{
+	return m_value.xyz0();
+}
+
+Vector4 BoxedVector4::xyz1() const
+{
+	return m_value.xyz1();
+}
+
 Vector4 BoxedVector4::add(const Vector4& v) const
 {
 	return m_value + v;
@@ -273,6 +283,8 @@ void registerBoxClasses(IScriptManager* scriptManager)
 	classBoxedVector4->addMethod(L"y", &BoxedVector4::y);
 	classBoxedVector4->addMethod(L"z", &BoxedVector4::z);
 	classBoxedVector4->addMethod(L"w", &BoxedVector4::w);
+	classBoxedVector4->addMethod(L"xyz0", &BoxedVector4::xyz0);
+	classBoxedVector4->addMethod(L"xyz1", &BoxedVector4::xyz1);
 	classBoxedVector4->addMethod< Vector4, const Vector4& >(L"add", &BoxedVector4::add);
 	classBoxedVector4->addMethod< Vector4, const Vector4& >(L"sub", &BoxedVector4::sub);
 	classBoxedVector4->addMethod< Vector4, const Vector4& >(L"mul", &BoxedVector4::mul);
