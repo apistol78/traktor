@@ -501,6 +501,7 @@ void RichEdit::eventKeyDown(Event* event)
 		m_selectionStop = 0;
 	}
 
+	updateScrollBars();
 	scrollToCaret();
 	update();
 }
@@ -520,6 +521,7 @@ void RichEdit::eventKey(Event* event)
 
 	CHECK;
 
+	updateScrollBars();
 	scrollToCaret();
 	update();
 }
@@ -575,13 +577,15 @@ void RichEdit::eventPaint(Event* event)
 
 	Font font = getFont();
 	Rect rc = getInnerRect();
+
+	canvas.setBackground(Color4ub(255, 255, 255));
+	canvas.fillRect(rc);
+
+	// Adjust client area if scrollbars are visible.
 	if (m_scrollBarV->isVisible(false))
 		rc.right -= m_scrollBarV->getPreferedSize().cx;
 	if (m_scrollBarH->isVisible(false))
 		rc.bottom -= m_scrollBarH->getPreferedSize().cy;
-
-	canvas.setBackground(Color4ub(255, 255, 255));
-	canvas.fillRect(rc);
 
 	uint32_t lineCount = m_lines.size();
 	uint32_t lineOffset = m_scrollBarV->getPosition();
