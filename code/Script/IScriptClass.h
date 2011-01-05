@@ -43,6 +43,9 @@ public:
 	/*! \brief Have constructor. */
 	virtual bool haveConstructor() const = 0;
 
+	/*! \brief Have unknown method. */
+	virtual bool haveUnknown() const = 0;
+
 	/*! \brief Construct new object. */
 	virtual Ref< Object > construct(const InvokeParam& param, uint32_t argc, const Any* argv) const = 0;
 

@@ -135,6 +135,28 @@ struct CastAny < Type, true >
 };
 
 template < >
+struct CastAny < const TypeInfo&, false >
+{
+	static Any set(const TypeInfo& value) {
+		return Any(&value);
+	}
+	static const TypeInfo& get(const Any& value) {
+		return *value.getType();
+	}
+};
+
+template < >
+struct CastAny < const TypeInfo, true >
+{
+	static Any set(const TypeInfo* value) {
+		return Any(value);
+	}
+	static const TypeInfo* get(const Any& value) {
+		return value.getType();
+	}
+};
+
+template < >
 struct CastAny < Vector4, false >
 {
 	static Any set(const Vector4& value) {

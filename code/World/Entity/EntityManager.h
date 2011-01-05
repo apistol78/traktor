@@ -37,6 +37,8 @@ public:
 
 	virtual Entity* getEntity(const std::wstring& name) const;
 
+	virtual uint32_t getEntities(const std::wstring& name, RefArray< Entity >& outEntities) const;
+
 	virtual uint32_t getEntitiesOf(const TypeInfo& entityType, RefArray< Entity >& outEntities) const;
 
 	virtual uint32_t getEntityCount(const TypeInfo& entityType) const;

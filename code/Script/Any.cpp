@@ -102,6 +102,12 @@ Any::Any(Object* value)
 	m_data.m_object = value;
 }
 
+Any::Any(const TypeInfo* value)
+:	m_type(AtType)
+{
+	m_data.m_type = value;
+}
+
 Any::~Any()
 {
 	T_EXCEPTION_GUARD_BEGIN
@@ -128,6 +134,8 @@ bool Any::getBoolean() const
 		return parseString< int32_t >(m_data.m_string) != 0;
 	case AtObject:
 		return m_data.m_object != 0;
+	case AtType:
+		return m_data.m_type != 0;
 	}
 	return false;
 }
@@ -176,6 +184,8 @@ std::wstring Any::getString() const
 		return toString(m_data.m_float);
 	case AtString:
 		return m_data.m_string;
+	case AtType:
+		return m_data.m_type->getName();
 	}
 	return L"";
 }
@@ -183,6 +193,11 @@ std::wstring Any::getString() const
 Object* Any::getObject() const
 {
 	return m_type == AtObject ? m_data.m_object : 0;
+}
+
+const TypeInfo* Any::getType() const
+{
+	return m_type == AtType ? m_data.m_type : 0;
 }
 
 Any& Any::operator = (const Any& src)

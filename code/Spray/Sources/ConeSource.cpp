@@ -33,6 +33,7 @@ void ConeSource::emit(
 ) const
 {
 	Vector4 position = transform * m_position;
+	Vector4 normal = transform * m_normal;
 
 	Scalar wx = Scalar(sinf(m_angle1));
 	Scalar wz = Scalar(sinf(m_angle2));
@@ -48,7 +49,7 @@ void ConeSource::emit(
 		Scalar z = Scalar(sinf(phi));
 
 		Vector4 extent = transform.axisX() * wx * x + transform.axisZ() * wz * z;
-		Vector4 direction = (m_normal + extent * gamma).normalized();
+		Vector4 direction = (normal + extent * gamma).normalized();
 
 		point->position = position;
 		point->velocity = direction * Scalar(m_velocity.random(context.random));

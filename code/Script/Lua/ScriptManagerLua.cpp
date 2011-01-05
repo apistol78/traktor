@@ -124,14 +124,14 @@ void ScriptManagerLua::registerClass(IScriptClass* scriptClass)
 		}
 	}
 
-	if (exportedAsRoot)
+	if (exportedAsRoot && scriptClass->haveUnknown())
 	{
 		lua_pushlightuserdata(m_luaState, (void*)this);
 		lua_pushlightuserdata(m_luaState, (void*)scriptClass);
 		lua_pushcclosure(m_luaState, classIndexLookup, 2);
 		lua_setfield(m_luaState, -2, "__index");
 	}
-	else
+	else if (!exportedAsRoot)
 	{
 		lua_pushvalue(m_luaState, -1);									// +1	-> 2
 		lua_setfield(m_luaState, -2, "__index");						// -1	-> 1
@@ -147,17 +147,11 @@ void ScriptManagerLua::registerClass(IScriptClass* scriptClass)
 
 	lua_setmetatable(m_luaState, -2);
 
-	if (scriptClass->haveConstructor())
-	{
-		std::wstring exportName = exportType.getName();
-
-		std::vector< std::wstring > exportPath;
-		Split< std::wstring >::any(exportName, L".", exportPath);
-
-		lua_setglobal(m_luaState, wstombs(exportPath.back()).c_str());
-	}
-	else
-		lua_pop(m_luaState, 1);
+	// Export class in global scope.
+	std::wstring exportName = exportType.getName();
+	std::vector< std::wstring > exportPath;
+	Split< std::wstring >::any(exportName, L".", exportPath);
+	lua_setglobal(m_luaState, wstombs(exportPath.back()).c_str());
 
 	m_classRegistryLookup[&exportType] = m_classRegistry.size();
 	m_classRegistry.push_back(rc);
@@ -213,12 +207,16 @@ void ScriptManagerLua::pushObject(Object* object)
 
 	const RegisteredClass& rc = m_classRegistry[i->second];
 
+	//// Bind class meta table to instance.
+	//lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, rc.metaTableRef);	// +1
+	//lua_setfield(m_luaState, -2, "__class");						// -1
+
+	// Create user data entry with C++ instance and GC callback.
 	lua_newtable(m_luaState);						// +1
 
 	lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, rc.metaTableRef);	// +1
 	lua_setmetatable(m_luaState, -2);								// -1
 
-	// Associate object with instance table; attach GC meta table.
 	Object** objectRef = reinterpret_cast< Object** >(lua_newuserdata(m_luaState, sizeof(Object*)));	// +1
 	*objectRef = object;
 	T_SAFE_ADDREF(*objectRef);
@@ -259,12 +257,27 @@ Any ScriptManagerLua::toAny(int32_t index)
 		return Any(mbstows(lua_tostring(m_luaState, index)));
 	if (lua_istable(m_luaState, index))
 	{
+		// Instance table; as C++ object.
 		lua_rawgeti(m_luaState, index, c_tableKey_this);
-
-		Object* object = *reinterpret_cast< Object** >(lua_touserdata(m_luaState, -1));
+		if (lua_isuserdata(m_luaState, -1))
+		{
+			Object* object = *reinterpret_cast< Object** >(lua_touserdata(m_luaState, -1));
+			lua_pop(m_luaState, 1);
+			if (object)
+				return Any(object);
+		}
 		lua_pop(m_luaState, 1);
-		if (object)
-			return Any(object);
+
+		// Class table; as C++ type.
+		lua_rawgeti(m_luaState, index, c_tableKey_class);
+		if (lua_isuserdata(m_luaState, -1))
+		{
+			const IScriptClass* scriptClass = reinterpret_cast< const IScriptClass* >(lua_touserdata(m_luaState, -1));
+			lua_pop(m_luaState, 1);
+			if (scriptClass)
+				return Any(&scriptClass->getExportType());
+		}
+		lua_pop(m_luaState, 1);
 	}
 
 	return Any();

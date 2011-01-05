@@ -23,6 +23,11 @@ public:
 		return true;
 	}
 
+	virtual bool haveUnknown() const
+	{
+		return false;
+	}
+
 	virtual Ref< Object > construct(const InvokeParam& param, uint32_t argc, const Any* argv) const
 	{
 		return new Delegate(param.context, argv[0].getObject(), argv[1].getString());
