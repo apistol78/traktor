@@ -909,6 +909,7 @@ public:
 	typedef Any (ClassType::*unknown_method_t)(const std::wstring& methodName, uint32_t argc, const Any* argv);
 
 	AutoScriptClass()
+	:	m_unknown(0)
 	{
 	}
 
@@ -1226,6 +1227,11 @@ public:
 	virtual bool haveConstructor() const
 	{
 		return !m_constructors.empty();
+	}
+
+	virtual bool haveUnknown() const
+	{
+		return m_unknown != 0;
 	}
 
 	virtual Ref< Object > construct(const InvokeParam& param, uint32_t argc, const Any* argv) const

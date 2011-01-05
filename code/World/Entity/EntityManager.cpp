@@ -115,6 +115,16 @@ Entity* EntityManager::getEntity(const std::wstring& name) const
 	return 0;
 }
 
+uint32_t EntityManager::getEntities(const std::wstring& name, RefArray< Entity >& outEntities) const
+{
+	for (named_entity_vector_t::const_iterator i = m_entities.begin(); i != m_entities.end(); ++i)
+	{
+		if (i->first == name)
+			outEntities.push_back(i->second);
+	}
+	return outEntities.size();
+}
+
 uint32_t EntityManager::getEntitiesOf(const TypeInfo& entityType, RefArray< Entity >& outEntities) const
 {
 	for (std::map< const TypeInfo*, Range >::const_iterator i = m_typeRanges.begin(); i != m_typeRanges.end(); ++i)

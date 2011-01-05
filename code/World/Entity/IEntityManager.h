@@ -61,6 +61,14 @@ public:
 	 */
 	virtual Entity* getEntity(const std::wstring& name) const = 0;
 
+	/*! \brief Get named entities.
+	 *
+	 * \param name Name of entities.
+	 * \param outEntities Array of found entities.
+	 * \return Number of entities found.
+	 */
+	virtual uint32_t getEntities(const std::wstring& name, RefArray< Entity >& outEntities) const = 0;
+
 	/*! \brief Get all entities of certain type.
 	 *
 	 * \param entityType Type of entity.

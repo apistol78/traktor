@@ -3,6 +3,7 @@
 
 #include "Core/Config.h"
 #include "Core/Ref.h"
+#include "Core/Rtti/TypeInfo.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -44,6 +45,8 @@ public:
 
 	explicit Any(Object* value);
 
+	explicit Any(const TypeInfo* value);
+
 	virtual ~Any();
 
 	bool getBoolean() const;
@@ -55,6 +58,8 @@ public:
 	std::wstring getString() const;
 
 	Object* getObject() const;
+
+	const TypeInfo* getType() const;
 
 	bool isVoid() const { return m_type == AtVoid; }
 
@@ -68,6 +73,8 @@ public:
 
 	bool isObject() const { return m_type == AtObject; }
 
+	bool isType() const { return m_type == AtType; }
+
 	Any& operator = (const Any& src);
 
 private:
@@ -78,7 +85,8 @@ private:
 		AtInteger,
 		AtFloat,
 		AtString,
-		AtObject
+		AtObject,
+		AtType
 	};
 
 	union AnyData
@@ -88,6 +96,7 @@ private:
 		float m_float;
 		wchar_t* m_string;
 		Object* m_object;
+		const TypeInfo* m_type;
 	};
 
 	AnyType m_type;
