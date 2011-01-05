@@ -24,7 +24,7 @@ EffectEntity::EffectEntity(resource::IResourceManager* resourceManager, const Tr
 ,	m_transform(transform)
 ,	m_effect(effect)
 #if !defined(WINCE)
-,	m_context(float(clock()))
+,	m_context(0.0f, uint32_t(clock()))
 #endif
 ,	m_counter(0)
 ,	m_enable(true)
