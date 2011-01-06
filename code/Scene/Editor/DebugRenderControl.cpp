@@ -123,12 +123,25 @@ void DebugRenderControl::eventPaint(ui::Event* event)
 
 		float ratio = float(m_dirtySize.cx) / m_dirtySize.cy;
 
-		Matrix44 projection = orthoLh(
-			3.0f * ratio,
-			3.0f,
-			-1.0f,
-			1.0f
-		);
+		Matrix44 projection;
+		if (ratio < 1.0f)
+		{
+			projection = orthoLh(
+				4.0f,
+				4.0f / ratio,
+				-1.0f,
+				1.0f
+			);
+		}
+		else
+		{
+			projection = orthoLh(
+				4.0f * ratio,
+				4.0f,
+				-1.0f,
+				1.0f
+			);
+		}
 
 		m_primitiveRenderer->begin(m_renderView);
 		m_primitiveRenderer->setClipDistance(100.0f);
@@ -136,28 +149,29 @@ void DebugRenderControl::eventPaint(ui::Event* event)
 		m_primitiveRenderer->pushView(Matrix44::identity());
 		m_primitiveRenderer->pushDepthEnable(false);
 
-		m_primitiveRenderer->drawWireQuad(
-			Vector4(-1.0f,  1.0f, 0.0f, 1.0f),
-			Vector4( 1.0f,  1.0f, 0.0f, 1.0f),
-			Vector4( 1.0f, -1.0f, 0.0f, 1.0f),
-			Vector4(-1.0f, -1.0f, 0.0f, 1.0f),
-			Color4ub(0, 0, 0)
-		);
-
-		if (m_context->getDebugTexture())
+		for (uint32_t i = 0; i < 2; ++i)
 		{
-			m_primitiveRenderer->drawTextureQuad(
-				Vector4(-1.0f,  1.0f, 0.0f, 1.0f),
-				Vector2(0.0f, 0.0f),
-				Vector4( 1.0f,  1.0f, 0.0f, 1.0f),
-				Vector2(1.0f, 0.0f),
-				Vector4( 1.0f, -1.0f, 0.0f, 1.0f),
-				Vector2(1.0f, 1.0f),
-				Vector4(-1.0f, -1.0f, 0.0f, 1.0f),
-				Vector2(0.0f, 1.0f),
-				Color4ub(255, 255, 255),
-				m_context->getDebugTexture()
+			float ox = float(i * 2) - 1.0f;
+
+			m_primitiveRenderer->drawWireQuad(
+				Vector4(-1.0f + ox,  1.0f, 0.0f, 1.0f),
+				Vector4( 1.0f + ox,  1.0f, 0.0f, 1.0f),
+				Vector4( 1.0f + ox, -1.0f, 0.0f, 1.0f),
+				Vector4(-1.0f + ox, -1.0f, 0.0f, 1.0f),
+				Color4ub(0, 0, 0)
 			);
+
+			if (m_context->getDebugTexture(i))
+			{
+				m_primitiveRenderer->drawTextureQuad(
+					Vector4(-1.0f + ox,  1.0f, 0.0f, 1.0f), Vector2(0.0f, 0.0f),
+					Vector4( 1.0f + ox,  1.0f, 0.0f, 1.0f), Vector2(1.0f, 0.0f),
+					Vector4( 1.0f + ox, -1.0f, 0.0f, 1.0f), Vector2(1.0f, 1.0f),
+					Vector4(-1.0f + ox, -1.0f, 0.0f, 1.0f), Vector2(0.0f, 1.0f),
+					Color4ub(255, 255, 255),
+					m_context->getDebugTexture(i)
+				);
+			}
 		}
 
 		m_primitiveRenderer->end(m_renderView);

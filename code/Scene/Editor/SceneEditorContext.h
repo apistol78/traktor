@@ -199,9 +199,9 @@ public:
 	/*! \name Debug texture view. */
 	//@{
 
-	void setDebugTexture(render::ITexture* debugTexture);
+	void setDebugTexture(uint32_t index, render::ITexture* debugTexture);
 
-	Ref< render::ITexture > getDebugTexture();
+	render::ITexture* getDebugTexture(uint32_t index);
 
 	//@}
 
@@ -278,7 +278,7 @@ private:
 	Ref< db::Database > m_sourceDb;
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::IRenderSystem > m_renderSystem;
-	Ref< render::ITexture > m_debugTexture;
+	Ref< render::ITexture > m_debugTexture[2];
 	Ref< physics::PhysicsManager > m_physicsManager;
 	Ref< db::Instance > m_instance;
 	RefArray< ISceneEditorProfile > m_editorProfiles;
