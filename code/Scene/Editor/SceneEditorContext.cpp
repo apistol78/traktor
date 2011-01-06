@@ -477,14 +477,14 @@ void SceneEditorContext::cloneSelected()
 	raiseSelect(this);
 }
 
-void SceneEditorContext::setDebugTexture(render::ITexture* debugTexture)
+void SceneEditorContext::setDebugTexture(uint32_t index, render::ITexture* debugTexture)
 {
-	m_debugTexture = debugTexture;
+	m_debugTexture[index] = debugTexture;
 }
 
-Ref< render::ITexture > SceneEditorContext::getDebugTexture()
+render::ITexture* SceneEditorContext::getDebugTexture(uint32_t index)
 {
-	return m_debugTexture;
+	return m_debugTexture[index];
 }
 
 void SceneEditorContext::raisePreModify()

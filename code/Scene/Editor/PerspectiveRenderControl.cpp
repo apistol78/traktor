@@ -243,11 +243,11 @@ void PerspectiveRenderControl::updateWorldRenderer()
 		}
 
 		// Expose shadow mask to debug view.
-		Ref< render::RenderTargetSet > debugTarget = m_worldRenderer->getShadowMaskTargetSet();
-		if (debugTarget)
-			m_context->setDebugTexture(debugTarget->getColorTexture(0));
-		else
-			m_context->setDebugTexture(0);
+		Ref< render::RenderTargetSet > shadowTarget = m_worldRenderer->getShadowTargetSet();
+		m_context->setDebugTexture(0, shadowTarget ? shadowTarget->getColorTexture(0) : 0);
+
+		Ref< render::RenderTargetSet > shadowMaskTarget = m_worldRenderer->getShadowMaskTargetSet();
+		m_context->setDebugTexture(1, shadowMaskTarget ? shadowMaskTarget->getColorTexture(0) : 0);
 	}
 	else
 		m_worldRenderer = 0;
