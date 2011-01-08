@@ -2,7 +2,7 @@
 #include "Mesh/Skinned/SkinnedMesh.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Mesh/Mesh.h"
-#include "World/WorldRenderView.h"
+#include "World/IWorldRenderPass.h"
 
 namespace traktor
 {
@@ -34,7 +34,7 @@ const Aabb& SkinnedMesh::getBoundingBox() const
 
 void SkinnedMesh::render(
 	render::RenderContext* renderContext,
-	const world::WorldRenderView* worldRenderView,
+	world::IWorldRenderPass& worldRenderPass,
 	const Transform& worldTransform,
 	const AlignedVector< Vector4 >& boneTransforms,
 	float distance,
@@ -44,7 +44,7 @@ void SkinnedMesh::render(
 	if (!m_shader.validate())
 		return;
 
-	std::map< render::handle_t, std::vector< Part > >::const_iterator it = m_parts.find(worldRenderView->getTechnique());
+	std::map< render::handle_t, std::vector< Part > >::const_iterator it = m_parts.find(worldRenderPass.getTechnique());
 	if (it == m_parts.end())
 		return;
 
@@ -53,7 +53,7 @@ void SkinnedMesh::render(
 	{
 		m_shader->setTechnique(i->shaderTechnique);
 
-		worldRenderView->setShaderCombination(
+		worldRenderPass.setShaderCombination(
 			m_shader,
 			worldTransform.toMatrix44(),
 			getBoundingBox()
@@ -74,7 +74,7 @@ void SkinnedMesh::render(
 
 		renderBlock->programParams->beginParameters(renderContext);
 		m_shader->setProgramParameters(renderBlock->programParams);
-		worldRenderView->setProgramParameters(
+		worldRenderPass.setProgramParameters(
 			renderBlock->programParams,
 			worldTransform.toMatrix44(),
 			getBoundingBox()

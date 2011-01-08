@@ -1,19 +1,19 @@
-#include <limits>
 #include <algorithm>
-#include "Terrain/TerrainEntity.h"
-#include "Terrain/TerrainEntityData.h"
-#include "Terrain/Heightfield.h"
-#include "Terrain/TerrainSurfaceCache.h"
-#include "World/WorldRenderer.h"
-#include "World/WorldRenderView.h"
-#include "Resource/IResourceManager.h"
-#include "Render/IRenderSystem.h"
-#include "Render/VertexElement.h"
-#include "Render/VertexBuffer.h"
-#include "Render/IndexBuffer.h"
-#include "Render/Context/RenderContext.h"
+#include <limits>
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Half.h"
+#include "Render/IndexBuffer.h"
+#include "Render/IRenderSystem.h"
+#include "Render/VertexBuffer.h"
+#include "Render/VertexElement.h"
+#include "Render/Context/RenderContext.h"
+#include "Resource/IResourceManager.h"
+#include "Terrain/Heightfield.h"
+#include "Terrain/TerrainEntity.h"
+#include "Terrain/TerrainEntityData.h"
+#include "Terrain/TerrainSurfaceCache.h"
+#include "World/IWorldRenderPass.h"
+#include "World/WorldRenderView.h"
 
 namespace traktor
 {
@@ -340,31 +340,35 @@ bool TerrainEntity::create(resource::IResourceManager* resourceManager, render::
 	return true;
 }
 
-void TerrainEntity::render(render::RenderContext* renderContext, const world::WorldRenderView* worldRenderView)
+void TerrainEntity::render(
+	render::RenderContext* renderContext,
+	world::WorldRenderView& worldRenderView,
+	world::IWorldRenderPass& worldRenderPass
+)
 {
 	Ref< render::ITexture > surface;
 
 	if (!m_heightfield.validate() || !m_shader.validate() || !m_surface)
 		return;
 
-	worldRenderView->setShaderTechnique(m_shader);
-	worldRenderView->setShaderCombination(m_shader);
+	worldRenderPass.setShaderTechnique(m_shader);
+	worldRenderPass.setShaderCombination(m_shader);
 
 	render::IProgram* program = m_shader->getCurrentProgram();
 	if (!program)
 		return;
 
 	bool updateCache =
-		bool(worldRenderView->getTechnique() != world::WorldRenderer::getTechniqueShadow()) &&
-		bool(worldRenderView->getTechnique() != world::WorldRenderer::getTechniqueDepth());
+		bool(worldRenderPass.getTechnique() != render::getParameterHandle(L"Shadow")) &&
+		bool(worldRenderPass.getTechnique() != render::getParameterHandle(L"Depth"));
 
 	const Vector4& worldExtent = m_heightfield->getResource().getWorldExtent();
 
 	Vector4 patchExtent(worldExtent.x() / float(m_patchCount), worldExtent.y(), worldExtent.z() / float(m_patchCount), 0.0f);
 	Scalar patchRadius = patchExtent.length();
 
-	const Vector4& eyePosition = worldRenderView->getEyePosition();
-	const Vector4& eyeDirection = worldRenderView->getView().axisZ();
+	const Vector4& eyePosition = worldRenderView.getEyePosition();
+	const Vector4& eyeDirection = worldRenderView.getView().axisZ();
 
 	// Cull patches.
 	static AlignedVector< CullPatch > visiblePatches;
@@ -383,9 +387,9 @@ void TerrainEntity::render(render::RenderContext* renderContext, const world::Wo
 			const Patch& patch = m_patches[patchId];
 
 			Vector4 patchCenterWorld = patchOrigin + patchExtent * Scalar(0.5f);
-			Vector4 patchCenterView = worldRenderView->getView() * patchCenterWorld;
+			Vector4 patchCenterView = worldRenderView.getView() * patchCenterWorld;
 
-			if (worldRenderView->getCullFrustum().inside(patchCenterView, patchRadius) != Frustum::IrOutside)
+			if (worldRenderView.getCullFrustum().inside(patchCenterView, patchRadius) != Frustum::IrOutside)
 			{
 				CullPatch cp;
 
@@ -429,7 +433,7 @@ void TerrainEntity::render(render::RenderContext* renderContext, const world::Wo
 		if (updateCache)
 		{
 			m_surfaceCache->get(
-				worldRenderView,
+				worldRenderPass,
 				renderContext,
 				m_surface,
 				m_heightfield->getHeightTexture(),
@@ -459,7 +463,7 @@ void TerrainEntity::render(render::RenderContext* renderContext, const world::Wo
 		renderBlock->programParams->beginParameters(renderContext);
 
 		m_shader->setProgramParameters(renderBlock->programParams);
-		worldRenderView->setProgramParameters(renderBlock->programParams);
+		worldRenderPass.setProgramParameters(renderBlock->programParams);
 
 		renderBlock->programParams->setTextureParameter(m_handleSurface, surface);
 		renderBlock->programParams->setTextureParameter(m_handleHeightfield, m_heightfield->getHeightTexture());

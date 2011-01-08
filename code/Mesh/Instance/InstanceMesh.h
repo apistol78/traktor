@@ -33,7 +33,7 @@ class Shader;
 	namespace world
 	{
 
-class WorldRenderView;
+class IWorldRenderPass;
 
 	}
 
@@ -72,7 +72,11 @@ public:
 
 	const Aabb& getBoundingBox() const;
 	
-	void render(render::RenderContext* renderContext, const world::WorldRenderView* worldRenderView, AlignedVector< instance_distance_t >& instanceWorld);
+	void render(
+		render::RenderContext* renderContext,
+		const world::IWorldRenderPass& worldRenderPass,
+		AlignedVector< instance_distance_t >& instanceWorld
+	);
 
 private:
 	friend class InstanceMeshResource;

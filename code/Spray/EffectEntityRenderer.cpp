@@ -2,8 +2,8 @@
 #include "Spray/EffectEntity.h"
 #include "Spray/Effect.h"
 #include "Spray/PointRenderer.h"
+#include "World/IWorldRenderPass.h"
 #include "World/WorldContext.h"
-#include "World/WorldRenderer.h"
 #include "World/WorldRenderView.h"
 
 namespace traktor
@@ -15,7 +15,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectEntityRenderer", EffectEntityRender
 
 EffectEntityRenderer::EffectEntityRenderer(render::IRenderSystem* renderSystem)
 :	m_pointRenderer(new PointRenderer(renderSystem))
-,	m_defaltTechnique(render::getParameterHandle(L"Default"))
+,	m_defaultTechnique(render::getParameterHandle(L"Default"))
 {
 }
 
@@ -27,12 +27,13 @@ const TypeInfoSet EffectEntityRenderer::getEntityTypes() const
 }
 
 void EffectEntityRenderer::render(
-	world::WorldContext* worldContext,
-	world::WorldRenderView* worldRenderView,
+	world::WorldContext& worldContext,
+	world::WorldRenderView& worldRenderView,
+	world::IWorldRenderPass& worldRenderPass,
 	world::Entity* entity
 )
 {
-	if (worldRenderView->getTechnique() != m_defaltTechnique)
+	if (worldRenderPass.getTechnique() != m_defaultTechnique)
 		return;
 
 	EffectEntity* effectEntity = checked_type_cast< EffectEntity* >(entity);
@@ -42,16 +43,16 @@ void EffectEntityRenderer::render(
 		return;
 
 	// Early out of bounding sphere is outside of frustum.
-	Vector4 center = worldRenderView->getView() * boundingBox.getCenter();
+	Vector4 center = worldRenderView.getView() * boundingBox.getCenter();
 	Scalar radius = boundingBox.getExtent().length();
-	if (worldRenderView->getCullFrustum().inside(center, radius) == Frustum::IrOutside)
+	if (worldRenderView.getCullFrustum().inside(center, radius) == Frustum::IrOutside)
 		return;
 
 	resource::Proxy< Effect >& effect = effectEntity->getEffect();
 	if (!effect.validate())
 		return;
 
-	Matrix44 viewInverse = worldRenderView->getView().inverseOrtho();
+	Matrix44 viewInverse = worldRenderView.getView().inverseOrtho();
 	Plane cameraPlane(
 		viewInverse.axisZ(),
 		viewInverse.translation()
@@ -64,16 +65,17 @@ void EffectEntityRenderer::render(
 }
 
 void EffectEntityRenderer::flush(
-	world::WorldContext* worldContext,
-	world::WorldRenderView* worldRenderView
+	world::WorldContext& worldContext,
+	world::WorldRenderView& worldRenderView,
+	world::IWorldRenderPass& worldRenderPass
 )
 {
-	if (worldRenderView->getTechnique() != m_defaltTechnique)
+	if (worldRenderPass.getTechnique() != m_defaultTechnique)
 		return;
 
 	m_pointRenderer->flush(
-		worldContext->getRenderContext(),
-		worldRenderView
+		worldContext.getRenderContext(),
+		worldRenderPass
 	);
 }
 

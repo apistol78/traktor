@@ -5,7 +5,7 @@
 #include "Render/Context/RenderContext.h"
 #include "Render/Mesh/Mesh.h"
 #include "Render/Mesh/MeshReader.h"
-#include "World/WorldRenderView.h"
+#include "World/IWorldRenderPass.h"
 
 namespace traktor
 {
@@ -56,7 +56,7 @@ Ref< StreamMesh::Instance > StreamMesh::createInstance() const
 
 void StreamMesh::render(
 	render::RenderContext* renderContext,
-	const world::WorldRenderView* worldRenderView,
+	world::IWorldRenderPass& worldRenderPass,
 	const Transform& worldTransform,
 	Instance* instance,
 	uint32_t frame,
@@ -79,7 +79,7 @@ void StreamMesh::render(
 	if (!instance->mesh[0])
 		return;
 
-	std::map< render::handle_t, std::vector< Part > >::const_iterator it = m_parts.find(worldRenderView->getTechnique());
+	std::map< render::handle_t, std::vector< Part > >::const_iterator it = m_parts.find(worldRenderPass.getTechnique());
 	if (it == m_parts.end())
 		return;
 
@@ -88,7 +88,7 @@ void StreamMesh::render(
 	{
 		m_shader->setTechnique(i->shaderTechnique);
 
-		worldRenderView->setShaderCombination(
+		worldRenderPass.setShaderCombination(
 			m_shader,
 			worldTransform.toMatrix44(),
 			getBoundingBox()
@@ -114,7 +114,7 @@ void StreamMesh::render(
 
 		renderBlock->programParams->beginParameters(renderContext);
 		m_shader->setProgramParameters(renderBlock->programParams);
-		worldRenderView->setProgramParameters(
+		worldRenderPass.setProgramParameters(
 			renderBlock->programParams,
 			worldTransform.toMatrix44(),
 			getBoundingBox()

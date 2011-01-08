@@ -22,11 +22,12 @@ TransientEntity::TransientEntity(
 }
 
 void TransientEntity::render(
-	WorldContext* worldContext,
-	WorldRenderView* worldRenderView
+	WorldContext& worldContext,
+	WorldRenderView& worldRenderView,
+	IWorldRenderPass& worldRenderPass
 )
 {
-	worldContext->build(worldRenderView, m_otherEntity);
+	worldContext.build(worldRenderView, worldRenderPass, m_otherEntity);
 }
 
 void TransientEntity::update(const EntityUpdate* update)

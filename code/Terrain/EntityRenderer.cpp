@@ -22,22 +22,24 @@ const TypeInfoSet EntityRenderer::getEntityTypes() const
 }
 
 void EntityRenderer::render(
-	world::WorldContext* worldContext,
-	world::WorldRenderView* worldRenderView,
+	world::WorldContext& worldContext,
+	world::WorldRenderView& worldRenderView,
+	world::IWorldRenderPass& worldRenderPass,
 	world::Entity* entity
 )
 {
 	if (TerrainEntity* terrainEntity = dynamic_type_cast< TerrainEntity* >(entity))
-		terrainEntity->render(worldContext->getRenderContext(), worldRenderView);
+		terrainEntity->render(worldContext.getRenderContext(), worldRenderView, worldRenderPass);
 	if (OceanEntity* oceanEntity = dynamic_type_cast< OceanEntity* >(entity))
-		oceanEntity->render(worldContext->getRenderContext(), worldRenderView);
+		oceanEntity->render(worldContext.getRenderContext(), worldRenderView, worldRenderPass);
 	if (UndergrowthEntity* undergrowthEntity = dynamic_type_cast< UndergrowthEntity* >(entity))
-		undergrowthEntity->render(worldContext->getRenderContext(), worldRenderView);
+		undergrowthEntity->render(worldContext.getRenderContext(), worldRenderView, worldRenderPass);
 }
 
 void EntityRenderer::flush(
-	world::WorldContext* worldContext,
-	world::WorldRenderView* worldRenderView
+	world::WorldContext& worldContext,
+	world::WorldRenderView& worldRenderView,
+	world::IWorldRenderPass& worldRenderPass
 )
 {
 }

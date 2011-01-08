@@ -17,6 +17,7 @@ namespace traktor
 	{
 
 class GroupEntity;
+class IWorldRenderPass;
 class WorldContext;
 class WorldRenderView;
 
@@ -40,8 +41,9 @@ public:
 	);
 
 	void render(
-		WorldContext* worldContext,
-		WorldRenderView* worldRenderView
+		WorldContext& worldContext,
+		WorldRenderView& worldRenderView,
+		IWorldRenderPass& worldRenderPass
 	);
 
 	virtual void update(const EntityUpdate* update);

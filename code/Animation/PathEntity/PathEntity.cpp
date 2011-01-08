@@ -95,10 +95,14 @@ void PathEntity::update(const world::EntityUpdate* update)
 	m_entity->update(update);
 }
 
-void PathEntity::render(world::WorldContext* worldContext, world::WorldRenderView* worldRenderView)
+void PathEntity::render(
+	world::WorldContext& worldContext,
+	world::WorldRenderView& worldRenderView,
+	world::IWorldRenderPass& worldRenderPass
+)
 {
 	if (m_entity)
-		worldContext->build(worldRenderView, m_entity);
+		worldContext.build(worldRenderView, worldRenderPass, m_entity);
 }
 
 	}

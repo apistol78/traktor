@@ -1,18 +1,25 @@
 #include <ctime>
-#include "Spray/Editor/EffectPreviewControl.h"
+#include "Core/Math/Const.h"
+#include "Core/Math/MathUtils.h"
+#include "I18N/Text.h"
+#include "Render/IRenderSystem.h"
+#include "Render/IRenderView.h"
+#include "Render/PrimitiveRenderer.h"
+#include "Render/Context/RenderContext.h"
+#include "Spray/Effect.h"
+#include "Spray/EffectLayer.h"
+#include "Spray/EffectInstance.h"
+#include "Spray/Emitter.h"
+#include "Spray/PointRenderer.h"
 #include "Spray/Editor/BoxSourceRenderer.h"
 #include "Spray/Editor/ConeSourceRenderer.h"
 #include "Spray/Editor/DiscSourceRenderer.h"
+#include "Spray/Editor/EffectPreviewControl.h"
 #include "Spray/Editor/PointSourceRenderer.h"
 #include "Spray/Editor/PointSetSourceRenderer.h"
 #include "Spray/Editor/QuadSourceRenderer.h"
 #include "Spray/Editor/SphereSourceRenderer.h"
 #include "Spray/Editor/SplineSourceRenderer.h"
-#include "Spray/PointRenderer.h"
-#include "Spray/Effect.h"
-#include "Spray/EffectLayer.h"
-#include "Spray/EffectInstance.h"
-#include "Spray/Emitter.h"
 #include "Spray/Sources/BoxSource.h"
 #include "Spray/Sources/ConeSource.h"
 #include "Spray/Sources/DiscSource.h"
@@ -29,14 +36,8 @@
 #include "Ui/Events/MouseEvent.h"
 #include "Ui/Events/SizeEvent.h"
 #include "Ui/Events/IdleEvent.h"
-#include "I18N/Text.h"
-#include "Render/IRenderSystem.h"
-#include "Render/IRenderView.h"
-#include "Render/PrimitiveRenderer.h"
-#include "Render/Context/RenderContext.h"
 #include "World/WorldRenderView.h"
-#include "Core/Math/MathUtils.h"
-#include "Core/Math/Const.h"
+#include "World/Forward/WorldRenderPassForward.h"
 
 namespace traktor
 {
@@ -330,7 +331,6 @@ void EffectPreviewControl::eventPaint(ui::Event* event)
 		viewFrustum.buildPerspective(80.0f * PI / 180.0f, aspect, 0.1f, 2000.0f);
 
 		world::WorldRenderView worldRenderView;
-		worldRenderView.setTechnique(render::getParameterHandle(L"Default"));
 		worldRenderView.setProjection(projectionTransform);
 		worldRenderView.setView(viewTransform);
 		worldRenderView.setViewSize(Vector2(float(viewport.width), float(viewport.height)));
@@ -348,9 +348,17 @@ void EffectPreviewControl::eventPaint(ui::Event* event)
 		globalLight.range = Scalar(0.0f);
 		worldRenderView.addLight(globalLight);
 
+		world::WorldRenderPassForward defaultPass(
+			render::getParameterHandle(L"Default"),
+			worldRenderView,
+			0.0f,
+			0,
+			0
+		);
+
 		m_pointRenderer->flush(
 			m_renderContext,
-			&worldRenderView
+			defaultPass
 		);
 
 		m_renderContext->render(m_renderView, render::RfAll, 0);

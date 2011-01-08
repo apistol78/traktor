@@ -1,8 +1,9 @@
 #include <limits>
+#include "Render/Context/RenderContext.h"
 #include "Weather/Sky/SkyEntity.h"
+#include "World/IWorldRenderPass.h"
 #include "World/WorldRenderView.h"
 #include "World/Entity/EntityUpdate.h"
-#include "Render/Context/RenderContext.h"
 
 namespace traktor
 {
@@ -25,13 +26,17 @@ SkyEntity::SkyEntity(
 {
 }
 
-void SkyEntity::render(render::RenderContext* renderContext, const world::WorldRenderView* worldRenderView)
+void SkyEntity::render(
+	render::RenderContext* renderContext,
+	world::WorldRenderView& worldRenderView,
+	world::IWorldRenderPass& worldRenderPass
+)
 {
 	if (!m_shader.validate())
 		return;
 
-	worldRenderView->setShaderTechnique(m_shader);
-	worldRenderView->setShaderCombination(m_shader);
+	worldRenderPass.setShaderTechnique(m_shader);
+	worldRenderPass.setShaderCombination(m_shader);
 
 	render::IProgram* program = m_shader->getCurrentProgram();
 	if (!program)
@@ -50,9 +55,9 @@ void SkyEntity::render(render::RenderContext* renderContext, const world::WorldR
 	renderBlock->programParams->beginParameters(renderContext);
 
 	m_shader->setProgramParameters(renderBlock->programParams);
-	worldRenderView->setProgramParameters(renderBlock->programParams);
+	worldRenderPass.setProgramParameters(renderBlock->programParams);
 	
-	renderBlock->programParams->setFloatParameter(m_handleSkyDomeRadius, worldRenderView->getViewFrustum().getFarZ());
+	renderBlock->programParams->setFloatParameter(m_handleSkyDomeRadius, worldRenderView.getViewFrustum().getFarZ());
 
 	renderBlock->programParams->endParameters(renderContext);
 

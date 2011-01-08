@@ -16,13 +16,11 @@ namespace traktor
 
 const Guid c_materialShader(L"{CCDB27F2-644B-0742-857D-680E846B5BA3}");
 const Guid c_tplDiffuseParams(L"{4AC7418D-FF43-FE40-ADDC-33A162636FDC}");
-const Guid c_tplLight(L"{82BE16C3-31CF-FB49-ADD4-F53977FE2690}");
 const Guid c_tplNormalParams(L"{77489017-FBE8-4A4F-B11A-FDE48C69E021}");
 const Guid c_tplOutput(L"{6DA4BE0A-BE19-4440-9B08-FC3FD1FFECDC}");
 const Guid c_tplSpecularParams(L"{68DA66E7-1D9E-FD4C-9692-D947BEA3EBAD}");
 const Guid c_tplVertexParams(L"{AEBE83FB-68D4-9D45-A672-0A8487A197CD}");
 const Guid c_implDiffuseConst(L"{BA68E2CA-77EB-684E-AD2B-0CD4BC35608D}");
-const Guid c_implLight(L"{5FF92F8D-8AD2-624A-9BEC-6679D7F7E27C}");
 const Guid c_implNormalConst(L"{5D881AE1-B99D-8941-B949-4E95AEF1CB7A}");
 const Guid c_implOutputOpaque(L"{31FD2B2B-3D3C-024F-9AA6-544B73D6009C}");
 const Guid c_implOutputTransparent(L"{1CDA749C-D713-974F-8E84-895AFEE8D552}");
@@ -70,8 +68,6 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(const model::Materi
 
 		if (fragmentGuid == c_tplDiffuseParams)
 			(*i)->setFragmentGuid(c_implDiffuseConst);
-		else if (fragmentGuid == c_tplLight)
-			(*i)->setFragmentGuid(c_implLight);
 		else if (fragmentGuid == c_tplNormalParams)
 			(*i)->setFragmentGuid(c_implNormalConst);
 		else if (fragmentGuid == c_tplOutput)
@@ -125,13 +121,11 @@ void MaterialShaderGenerator::addDependencies(editor::IPipelineDepends* pipeline
 {
 	pipelineDepends->addDependency(c_materialShader, editor::PdfUse);
 	pipelineDepends->addDependency(c_tplDiffuseParams, editor::PdfUse);
-	pipelineDepends->addDependency(c_tplLight, editor::PdfUse);
 	pipelineDepends->addDependency(c_tplNormalParams, editor::PdfUse);
 	pipelineDepends->addDependency(c_tplOutput, editor::PdfUse);
 	pipelineDepends->addDependency(c_tplSpecularParams, editor::PdfUse);
 	pipelineDepends->addDependency(c_tplVertexParams, editor::PdfUse);
 	pipelineDepends->addDependency(c_implDiffuseConst, editor::PdfUse);
-	pipelineDepends->addDependency(c_implLight, editor::PdfUse);
 	pipelineDepends->addDependency(c_implNormalConst, editor::PdfUse);
 	pipelineDepends->addDependency(c_implOutputOpaque, editor::PdfUse);
 	pipelineDepends->addDependency(c_implOutputTransparent, editor::PdfUse);

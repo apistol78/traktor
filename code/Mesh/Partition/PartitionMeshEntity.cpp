@@ -21,15 +21,21 @@ Aabb PartitionMeshEntity::getBoundingBox() const
 	return m_mesh.validate() ? m_mesh->getBoundingBox() : Aabb();
 }
 
-void PartitionMeshEntity::render(world::WorldContext* worldContext, world::WorldRenderView* worldRenderView, float distance)
+void PartitionMeshEntity::render(
+	world::WorldContext& worldContext,
+	world::WorldRenderView& worldRenderView,
+	world::IWorldRenderPass& worldRenderPass,
+	float distance
+)
 {
 	if (!m_mesh.validate())
 		return;
 
 	m_mesh->render(
-		worldContext->getRenderContext(),
+		worldContext.getRenderContext(),
 		worldRenderView,
-		getTransform(worldRenderView->getInterval()),
+		worldRenderPass,
+		getTransform(worldRenderView.getInterval()),
 		distance,
 		getUserParameter(),
 		getParameterCallback()

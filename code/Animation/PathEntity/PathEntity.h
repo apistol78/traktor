@@ -7,9 +7,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_ANIMATION_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -17,6 +17,7 @@ namespace traktor
 	namespace world
 	{
 
+class IWorldRenderPass;
 class WorldContext;
 class WorldRenderView;
 
@@ -55,7 +56,11 @@ public:
 
 	virtual void update(const world::EntityUpdate* update);
 
-	void render(world::WorldContext* worldContext, world::WorldRenderView* worldRenderView);
+	void render(
+		world::WorldContext& worldContext,
+		world::WorldRenderView& worldRenderView,
+		world::IWorldRenderPass& worldRenderPass
+	);
 
 	void setPath(const TransformPath& path) { m_path = path; }
 

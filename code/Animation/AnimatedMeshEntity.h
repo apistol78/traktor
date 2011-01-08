@@ -54,7 +54,12 @@ public:
 	
 	virtual Aabb getBoundingBox() const;
 
-	virtual void render(world::WorldContext* worldContext, world::WorldRenderView* worldRenderView, float distance);
+	virtual void render(
+		world::WorldContext& worldContext,
+		world::WorldRenderView& worldRenderView,
+		world::IWorldRenderPass& worldRenderPass,
+		float distance
+	);
 
 	virtual void update(const world::EntityUpdate* update);
 

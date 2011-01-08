@@ -21,8 +21,9 @@ const TypeInfoSet EntityRendererAdapter::getEntityTypes() const
 }
 
 void EntityRendererAdapter::render(
-	world::WorldContext* worldContext,
-	world::WorldRenderView* worldRenderView,
+	world::WorldContext& worldContext,
+	world::WorldRenderView& worldRenderView,
+	world::IWorldRenderPass& worldRenderPass,
 	world::Entity* entity
 )
 {
@@ -32,19 +33,22 @@ void EntityRendererAdapter::render(
 		m_entityRenderer->render(
 			worldContext,
 			worldRenderView,
+			worldRenderPass,
 			entity
 		);
 	}
 }
 
 void EntityRendererAdapter::flush(
-	world::WorldContext* worldContext,
-	world::WorldRenderView* worldRenderView
+	world::WorldContext& worldContext,
+	world::WorldRenderView& worldRenderView,
+	world::IWorldRenderPass& worldRenderPass
 )
 {
 	m_entityRenderer->flush(
 		worldContext,
-		worldRenderView
+		worldRenderView,
+		worldRenderPass
 	);
 }
 	

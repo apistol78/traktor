@@ -30,7 +30,12 @@ public:
 
 	virtual void update(const world::EntityUpdate* update);
 
-	virtual void render(world::WorldContext* worldContext, world::WorldRenderView* worldRenderView, float distance);
+	virtual void render(
+		world::WorldContext& worldContext,
+		world::WorldRenderView& worldRenderView,
+		world::IWorldRenderPass& worldRenderPass,
+		float distance
+	);
 
 	inline resource::Proxy< InstanceMesh >& getMesh() { return m_mesh; }
 

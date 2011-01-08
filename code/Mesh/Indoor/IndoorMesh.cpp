@@ -3,6 +3,7 @@
 #include "Mesh/Indoor/IndoorMesh.h"
 #include "Render/Mesh/Mesh.h"
 #include "Render/Context/RenderContext.h"
+#include "World/IWorldRenderPass.h"
 #include "World/WorldRenderView.h"
 
 namespace traktor
@@ -31,7 +32,8 @@ const Aabb& IndoorMesh::getBoundingBox() const
 
 void IndoorMesh::render(
 	render::RenderContext* renderContext,
-	const world::WorldRenderView* worldRenderView,
+	world::WorldRenderView& worldRenderView,
+	world::IWorldRenderPass& worldRenderPass,
 	const Transform& worldTransform,
 	float distance,
 	const IMeshParameterCallback* parameterCallback
@@ -40,13 +42,13 @@ void IndoorMesh::render(
 	if (!m_shader.validate())
 		return;
 
-	Vector4 cameraPosition = worldRenderView->getView().inverse().translation();
+	Vector4 cameraPosition = worldRenderView.getView().inverse().translation();
 	
 	// Create initial clipper frustum, clipper frustums can have more than
 	// 6 planes as it's later reconstructed from clipped portals.
 	AlignedVector< Plane > frustum(6);
 	for (int i = 0; i < 6; ++i)
-		frustum[i] = worldRenderView->getCullFrustum().planes[i];
+		frustum[i] = worldRenderView.getCullFrustum().planes[i];
 
 	// Find initially active sectors which are the sectors that the camera is within,
 	// as sector bounding boxes are lousily calculated more than one sector
@@ -68,7 +70,7 @@ void IndoorMesh::render(
 			for (std::set< int >::iterator i = activeSectors.begin(); i != activeSectors.end(); ++i)
 				findVisibleSectors(
 					frustum,
-					worldRenderView->getView(),
+					worldRenderView.getView(),
 					*i,
 					visibleSectors
 				);
@@ -82,8 +84,8 @@ void IndoorMesh::render(
 			activeSectors.insert(i);
 	}
 
-	// Render sectors, should probarly sort all visible parts by their shader as
-	// it will otherwise be alot of state changes.
+	// Render sectors, should probably sort all visible parts by their shader as
+	// it will otherwise be a lot of state changes.
 
 	const std::vector< render::Mesh::Part >& meshParts = m_mesh->getParts();
 
@@ -91,7 +93,7 @@ void IndoorMesh::render(
 	{
 		Sector& sector = m_sectors[*i];
 		
-		std::map< render::handle_t, std::vector< Part > >::const_iterator it = sector.parts.find(worldRenderView->getTechnique());
+		std::map< render::handle_t, std::vector< Part > >::const_iterator it = sector.parts.find(worldRenderPass.getTechnique());
 		if (it == sector.parts.end())
 			continue;
 
@@ -99,7 +101,7 @@ void IndoorMesh::render(
 		{
 			m_shader->setTechnique(j->shaderTechnique);
 
-			worldRenderView->setShaderCombination(
+			worldRenderPass.setShaderCombination(
 				m_shader,
 				worldTransform.toMatrix44(),
 				getBoundingBox()
@@ -120,7 +122,7 @@ void IndoorMesh::render(
 
 			renderBlock->programParams->beginParameters(renderContext);
 			m_shader->setProgramParameters(renderBlock->programParams);
-			worldRenderView->setProgramParameters(
+			worldRenderPass.setProgramParameters(
 				renderBlock->programParams,
 				worldTransform.toMatrix44(),
 				getBoundingBox()

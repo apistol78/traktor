@@ -5,9 +5,9 @@
 
 #undef T_DLLCLASS
 #if defined(T_PHYSICS_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -26,14 +26,16 @@ public:
 	virtual const TypeInfoSet getEntityTypes() const;
 
 	virtual void render(
-		world::WorldContext* worldContext,
-		world::WorldRenderView* worldRenderView,
+		world::WorldContext& worldContext,
+		world::WorldRenderView& worldRenderView,
+		world::IWorldRenderPass& worldRenderPass,
 		world::Entity* entity
 	);
 
 	virtual void flush(
-		world::WorldContext* worldContext,
-		world::WorldRenderView* worldRenderView
+		world::WorldContext& worldContext,
+		world::WorldRenderView& worldRenderView,
+		world::IWorldRenderPass& worldRenderPass
 	)
 	{ /* Not implemented */ }
 };

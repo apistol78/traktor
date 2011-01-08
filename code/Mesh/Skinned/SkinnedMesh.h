@@ -29,7 +29,7 @@ class ITexture;
 	namespace world
 	{
 
-class WorldRenderView;
+class IWorldRenderPass;
 
 	}
 
@@ -55,7 +55,7 @@ public:
 
 	void render(
 		render::RenderContext* renderContext,
-		const world::WorldRenderView* worldRenderView,
+		world::IWorldRenderPass& worldRenderPass,
 		const Transform& worldTransform,
 		const AlignedVector< Vector4 >& boneTransforms,
 		float distance,

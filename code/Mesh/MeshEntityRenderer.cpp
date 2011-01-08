@@ -1,6 +1,6 @@
-#include "Mesh/MeshEntityRenderer.h"
-#include "Mesh/MeshEntity.h"
 #include "Mesh/MeshCulling.h"
+#include "Mesh/MeshEntity.h"
+#include "Mesh/MeshEntityRenderer.h"
 #include "World/WorldContext.h"
 #include "World/WorldRenderView.h"
 
@@ -19,8 +19,9 @@ const TypeInfoSet MeshEntityRenderer::getEntityTypes() const
 }
 
 void MeshEntityRenderer::render(
-	world::WorldContext* worldContext,
-	world::WorldRenderView* worldRenderView,
+	world::WorldContext& worldContext,
+	world::WorldRenderView& worldRenderView,
+	world::IWorldRenderPass& worldRenderPass,
 	world::Entity* entity
 )
 {
@@ -31,9 +32,9 @@ void MeshEntityRenderer::render(
 	float distance = 0.0f;
 	if (!isMeshVisible(
 		boundingBox,
-		worldRenderView->getCullFrustum(),
-		worldRenderView->getView() * transform.toMatrix44(),
-		worldRenderView->getProjection(),
+		worldRenderView.getCullFrustum(),
+		worldRenderView.getView() * transform.toMatrix44(),
+		worldRenderView.getProjection(),
 		1e-4f,
 		distance
 	))
@@ -42,13 +43,15 @@ void MeshEntityRenderer::render(
 	meshEntity->render(
 		worldContext,
 		worldRenderView,
+		worldRenderPass,
 		distance
 	);
 }
 
 void MeshEntityRenderer::flush(
-	world::WorldContext* worldContext,
-	world::WorldRenderView* worldRenderView
+	world::WorldContext& worldContext,
+	world::WorldRenderView& worldRenderView,
+	world::IWorldRenderPass& worldRenderPass
 )
 {
 }

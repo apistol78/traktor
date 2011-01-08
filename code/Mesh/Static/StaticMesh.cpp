@@ -2,7 +2,7 @@
 #include "Mesh/Static/StaticMesh.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Mesh/Mesh.h"
-#include "World/WorldRenderView.h"
+#include "World/IWorldRenderPass.h"
 
 namespace traktor
 {
@@ -30,7 +30,7 @@ const Aabb& StaticMesh::getBoundingBox() const
 
 void StaticMesh::render(
 	render::RenderContext* renderContext,
-	const world::WorldRenderView* worldRenderView,
+	const world::IWorldRenderPass& worldRenderPass,
 	const Transform& worldTransform,
 	float distance,
 	float userParameter,
@@ -40,7 +40,7 @@ void StaticMesh::render(
 	if (!m_shader.validate())
 		return;
 
-	std::map< render::handle_t, std::vector< Part > >::const_iterator it = m_parts.find(worldRenderView->getTechnique());
+	std::map< render::handle_t, std::vector< Part > >::const_iterator it = m_parts.find(worldRenderPass.getTechnique());
 	if (it == m_parts.end())
 		return;
 
@@ -49,7 +49,7 @@ void StaticMesh::render(
 	{
 		m_shader->setTechnique(i->shaderTechnique);
 
-		worldRenderView->setShaderCombination(
+		worldRenderPass.setShaderCombination(
 			m_shader,
 			worldTransform.toMatrix44(),
 			getBoundingBox()
@@ -74,7 +74,7 @@ void StaticMesh::render(
 
 		renderBlock->programParams->beginParameters(renderContext);
 		m_shader->setProgramParameters(renderBlock->programParams);
-		worldRenderView->setProgramParameters(
+		worldRenderPass.setProgramParameters(
 			renderBlock->programParams,
 			worldTransform.toMatrix44(),
 			getBoundingBox()

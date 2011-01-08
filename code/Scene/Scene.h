@@ -18,8 +18,8 @@ namespace traktor
 
 class Entity;
 class IEntityManager;
+class IWorldRenderer;
 class PostProcessSettings;
-class WorldRenderer;
 class WorldRenderSettings;
 class WorldRenderView;
 
@@ -49,7 +49,7 @@ public:
 
 	void update(float time, float deltaTime);
 
-	void build(world::WorldRenderer* worldRenderer, world::WorldRenderView& worldRenderView, int frame);
+	void build(world::IWorldRenderer* worldRenderer, world::WorldRenderView& worldRenderView, int frame);
 
 	Ref< world::IEntityManager > getEntityManager() const;
 

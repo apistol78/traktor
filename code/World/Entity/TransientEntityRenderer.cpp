@@ -16,18 +16,20 @@ const TypeInfoSet TransientEntityRenderer::getEntityTypes() const
 }
 
 void TransientEntityRenderer::render(
-	WorldContext* worldContext,
-	WorldRenderView* worldRenderView,
+	WorldContext& worldContext,
+	WorldRenderView& worldRenderView,
+	IWorldRenderPass& worldRenderPass,
 	Entity* entity
 )
 {
 	if (TransientEntity* transientEntity = checked_type_cast< TransientEntity* >(entity))
-		transientEntity->render(worldContext, worldRenderView);
+		transientEntity->render(worldContext, worldRenderView, worldRenderPass);
 }
 
 void TransientEntityRenderer::flush(
-	WorldContext* worldContext,
-	WorldRenderView* worldRenderView
+	WorldContext& worldContext,
+	WorldRenderView& worldRenderView,
+	IWorldRenderPass& worldRenderPass
 )
 {
 }

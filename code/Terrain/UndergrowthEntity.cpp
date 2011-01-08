@@ -1,14 +1,15 @@
 #include <limits>
-#include "Terrain/UndergrowthEntity.h"
+#include "Core/Log/Log.h"
+#include "Core/Math/Const.h"
+#include "Render/Shader.h"
+#include "Render/VertexBuffer.h"
+#include "Render/Context/RenderContext.h"
+#include "Resource/IResourceManager.h"
 #include "Terrain/Heightfield.h"
 #include "Terrain/MaterialMask.h"
-#include "Resource/IResourceManager.h"
-#include "Render/VertexBuffer.h"
-#include "Render/Shader.h"
-#include "Render/Context/RenderContext.h"
+#include "Terrain/UndergrowthEntity.h"
+#include "World/IWorldRenderPass.h"
 #include "World/WorldRenderView.h"
-#include "Core/Math/Const.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -76,16 +77,20 @@ UndergrowthEntity::~UndergrowthEntity()
 	synchronize();
 }
 
-void UndergrowthEntity::render(render::RenderContext* renderContext, const world::WorldRenderView* worldRenderView)
+void UndergrowthEntity::render(
+	render::RenderContext* renderContext,
+	world::WorldRenderView& worldRenderView,
+	world::IWorldRenderPass& worldRenderPass
+)
 {
-	m_lastView = worldRenderView->getView();
-	m_lastFrustum = worldRenderView->getViewFrustum();
+	m_lastView = worldRenderView.getView();
+	m_lastFrustum = worldRenderView.getViewFrustum();
 
 	if (!m_heightfield.validate() || !m_shader.validate())
 		return;
 
-	worldRenderView->setShaderTechnique(m_shader);
-	worldRenderView->setShaderCombination(m_shader);
+	worldRenderPass.setShaderTechnique(m_shader);
+	worldRenderPass.setShaderCombination(m_shader);
 
 	render::IProgram* program = m_shader->getCurrentProgram();
 	if (!program)
@@ -106,7 +111,7 @@ void UndergrowthEntity::render(render::RenderContext* renderContext, const world
 	renderBlock->programParams->beginParameters(renderContext);
 
 	m_shader->setProgramParameters(renderBlock->programParams);
-	worldRenderView->setProgramParameters(renderBlock->programParams);
+	worldRenderPass.setProgramParameters(renderBlock->programParams);
 
 	renderBlock->programParams->setFloatParameter(L"MaxRadius", m_settings.spreadDistance + m_settings.cellRadius);
 

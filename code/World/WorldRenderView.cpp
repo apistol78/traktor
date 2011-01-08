@@ -1,48 +1,18 @@
-#include "Render/ITexture.h"
-#include "Render/Shader.h"
-#include "Render/Context/ProgramParameters.h"
 #include "World/WorldRenderView.h"
 
 namespace traktor
 {
 	namespace world
 	{
-		namespace
-		{
-
-bool s_handlesInitialized = false;
-render::handle_t s_handleDefaultTechnique;
-render::handle_t s_handleProjection;
-render::handle_t s_handleView;
-render::handle_t s_handleWorld;
-render::handle_t s_handleEyePosition;
-render::handle_t s_handleLightEnableComplex;
-render::handle_t s_handleLightPositionAndType;
-render::handle_t s_handleLightDirectionAndRange;
-render::handle_t s_handleLightSunColor;
-render::handle_t s_handleLightBaseColor;
-render::handle_t s_handleLightShadowColor;
-render::handle_t s_handleShadowEnable;
-render::handle_t s_handleShadowMask;
-render::handle_t s_handleShadowMaskSize;
-render::handle_t s_handleDepthEnable;
-render::handle_t s_handleDepthRange;
-render::handle_t s_handleDepthMap;
-render::handle_t s_handleTime;
-
-		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.WorldRenderView", WorldRenderView, Object)
 
 WorldRenderView::WorldRenderView()
-:	m_technique(render::getParameterHandle(L"Default"))
-,	m_projection(Matrix44::identity())
+:	m_projection(Matrix44::identity())
 ,	m_view(Matrix44::identity())
 ,	m_viewSize(0.0f, 0.0f)
 ,	m_eyePosition(0.0f, 0.0f, 0.0f, 1.0f)
 ,	m_lightCount(0)
-,	m_shadowMaskSize(0.0f)
-,	m_depthRange(0.0f)
 ,	m_time(0.0f)
 ,	m_deltaTime(0.0f)
 ,	m_interval(0.0f)
@@ -57,33 +27,6 @@ WorldRenderView::WorldRenderView()
 		m_lights[i].shadowColor = Vector4(0.0f, 0.0f, 0.0f, 0.0f);
 		m_lights[i].range = Scalar(0.0f);
 	}
-
-	if (!s_handlesInitialized)
-	{
-		s_handleDefaultTechnique = render::getParameterHandle(L"Default");
-		s_handleProjection = render::getParameterHandle(L"Projection");
-		s_handleView = render::getParameterHandle(L"View");
-		s_handleWorld = render::getParameterHandle(L"World");
-		s_handleEyePosition = render::getParameterHandle(L"EyePosition");
-		s_handleLightEnableComplex = render::getParameterHandle(L"LightEnableComplex");
-		s_handleLightPositionAndType = render::getParameterHandle(L"LightPositionAndType");
-		s_handleLightDirectionAndRange = render::getParameterHandle(L"LightDirectionAndRange");
-		s_handleLightSunColor = render::getParameterHandle(L"LightSunColor");
-		s_handleLightBaseColor = render::getParameterHandle(L"LightBaseColor");
-		s_handleLightShadowColor = render::getParameterHandle(L"LightShadowColor");
-		s_handleShadowEnable = render::getParameterHandle(L"ShadowEnable");
-		s_handleShadowMask = render::getParameterHandle(L"ShadowMask");
-		s_handleShadowMaskSize = render::getParameterHandle(L"ShadowMaskSize");
-		s_handleDepthEnable = render::getParameterHandle(L"DepthEnable");
-		s_handleDepthRange = render::getParameterHandle(L"DepthRange");
-		s_handleDepthMap = render::getParameterHandle(L"DepthMap");
-		s_handleTime = render::getParameterHandle(L"Time");
-	}
-}
-
-void WorldRenderView::setTechnique(render::handle_t technique)
-{
-	m_technique = technique;
 }
 
 void WorldRenderView::setViewFrustum(const Frustum& viewFrustum)
@@ -121,22 +64,6 @@ void WorldRenderView::setShadowBox(const Aabb& shadowBox)
 	m_shadowBox = shadowBox;
 }
 
-void WorldRenderView::setShadowMask(render::ITexture* shadowMask)
-{
-	if ((m_shadowMask = shadowMask) != 0)
-		m_shadowMaskSize = float(0.5f / m_shadowMask->getWidth());
-}
-
-void WorldRenderView::setDepthMap(render::ITexture* depthMap)
-{
-	m_depthMap = depthMap;
-}
-
-void WorldRenderView::setDepthRange(float depthRange)
-{
-	m_depthRange = depthRange;
-}
-
 void WorldRenderView::setTimes(float time, float deltaTime, float interval)
 {
 	m_time = time;
@@ -153,232 +80,6 @@ void WorldRenderView::addLight(const Light& light)
 void WorldRenderView::resetLights()
 {
 	m_lightCount = 0;
-}
-
-void WorldRenderView::setShaderTechnique(render::Shader* shader) const
-{
-	shader->setTechnique(m_technique);
-}
-
-void WorldRenderView::setShaderCombination(render::Shader* shader) const
-{
-	if (m_technique == s_handleDefaultTechnique)
-	{
-		if (m_lightCount == 1 && m_lights[0].type == LtDirectional)
-		{
-			// Single directional light; enable simple lighting path.
-			shader->setCombination(s_handleLightEnableComplex, false);
-		}
-		else
-		{
-			// Enable complex lighting path with dynamic branching.
-			shader->setCombination(s_handleLightEnableComplex, true);
-		}
-
-		shader->setCombination(s_handleShadowEnable, m_shadowMask != 0);
-		shader->setCombination(s_handleDepthEnable, m_depthMap != 0);
-	}
-}
-
-void WorldRenderView::setShaderCombination(render::Shader* shader, const Matrix44& world, const Aabb& bounds) const
-{
-	if (m_technique == s_handleDefaultTechnique)
-	{
-		int lightDirectionalCount = 0;
-		int lightPointCount = 0;
-
-		Scalar radius = bounds.empty() ? Scalar(0.0f) : bounds.getExtent().length();
-
-		// Collect lights affecting entity.
-		for (int i = 0; i < m_lightCount; ++i)
-		{
-			const Light& light = m_lights[i];
-			if (light.type == LtDirectional)
-			{
-				lightDirectionalCount++;
-			}
-			else if (light.type == LtPoint)
-			{
-				Scalar distance = (world.translation() - light.position).length();
-				if (distance - radius <= light.range)
-					lightPointCount++;
-			}
-		}
-
-		if (lightPointCount > 0 || lightDirectionalCount > 1)
-		{
-			// Enable complex lighting path with dynamic branching.
-			shader->setCombination(s_handleLightEnableComplex, true);
-		}
-		else
-		{
-			// Single directional light; enable simple lighting path.
-			shader->setCombination(s_handleLightEnableComplex, false);
-		}
-
-		shader->setCombination(s_handleShadowEnable, m_shadowMask != 0);
-		shader->setCombination(s_handleDepthEnable, m_depthMap != 0);
-	}
-}
-
-void WorldRenderView::setProgramParameters(render::ProgramParameters* programParams) const
-{
-	setWorldProgramParameters(programParams, Matrix44::identity());
-
-	// Set these parameters only if we're rendering using default technique.
-	if (m_technique == s_handleDefaultTechnique)
-	{
-		setLightProgramParameters(programParams);
-		setShadowMapProgramParameters(programParams);
-		setDepthMapProgramParameters(programParams);
-	}
-}
-
-void WorldRenderView::setProgramParameters(render::ProgramParameters* programParams, const Matrix44& world, const Aabb& bounds) const
-{
-	setWorldProgramParameters(programParams, world);
-
-	// Set these parameters only if we're rendering using default technique.
-	if (m_technique == s_handleDefaultTechnique)
-	{
-		setLightProgramParameters(programParams, world, bounds);
-		setShadowMapProgramParameters(programParams);
-		setDepthMapProgramParameters(programParams);
-	}
-}
-
-void WorldRenderView::setWorldProgramParameters(render::ProgramParameters* programParams, const Matrix44& world) const
-{
-	programParams->setFloatParameter(s_handleTime, m_time);
-	programParams->setMatrixParameter(s_handleProjection, m_projection);
-	programParams->setMatrixParameter(s_handleView, m_view);
-	programParams->setMatrixParameter(s_handleWorld, world);
-	programParams->setVectorParameter(s_handleEyePosition, m_eyePosition);
-	programParams->setFloatParameter(s_handleDepthRange, m_depthRange);
-}
-
-void WorldRenderView::setLightProgramParameters(render::ProgramParameters* programParams) const
-{
-	T_ASSERT (m_lightCount <= MaxLightCount);
-
-	// Pack light parameters.
-	Vector4 lightPositionAndType[MaxLightCount], *lightPositionAndTypePtr = lightPositionAndType;
-	Vector4 lightDirectionAndRange[MaxLightCount], *lightDirectionAndRangePtr = lightDirectionAndRange;
-	Vector4 lightSunColor[MaxLightCount], *lightSunColorPtr = lightSunColor;
-	Vector4 lightBaseColor[MaxLightCount], *lightBaseColorPtr = lightBaseColor;
-	Vector4 lightShadowColor[MaxLightCount], *lightShadowColorPtr = lightShadowColor;
-
-	for (int i = 0; i < m_lightCount; ++i)
-	{
-		*lightPositionAndTypePtr++ = m_lights[i].position.xyz0() + Vector4(0.0f, 0.0f, 0.0f, float(m_lights[i].type));
-		*lightDirectionAndRangePtr++ = m_lights[i].direction.xyz0() + Vector4(0.0f, 0.0f, 0.0f, m_lights[i].range);
-		*lightSunColorPtr++ = m_lights[i].sunColor;
-		*lightBaseColorPtr++ = m_lights[i].baseColor;
-		*lightShadowColorPtr++ = m_lights[i].shadowColor;
-	}
-
-	// Disable excessive lights.
-	for (int i = m_lightCount; i < MaxLightCount; ++i)
-	{
-		const static Vector4 c_typeDisabled(0.0f, 0.0f, 0.0f, float(LtDisabled));
-		*lightPositionAndTypePtr++ = c_typeDisabled;
-		*lightDirectionAndRangePtr++ = Vector4::zero();
-		*lightSunColorPtr++ = Vector4::zero();
-		*lightBaseColorPtr++ = Vector4::zero();
-		*lightShadowColorPtr++ = Vector4::zero();
-	}
-
-	// Finally set shader parameters.
-	programParams->setVectorArrayParameter(s_handleLightPositionAndType, lightPositionAndType, MaxLightCount);
-	programParams->setVectorArrayParameter(s_handleLightDirectionAndRange, lightDirectionAndRange, MaxLightCount);
-	programParams->setVectorArrayParameter(s_handleLightSunColor, lightSunColor, MaxLightCount);
-	programParams->setVectorArrayParameter(s_handleLightBaseColor, lightBaseColor, MaxLightCount);
-	programParams->setVectorArrayParameter(s_handleLightShadowColor, lightShadowColor, MaxLightCount);
-}
-
-void WorldRenderView::setLightProgramParameters(render::ProgramParameters* programParams, const Matrix44& world, const Aabb& bounds) const
-{
-	T_ASSERT (m_lightCount <= MaxLightCount);
-
-	const Light* lightDirectional[MaxLightCount]; int lightDirectionalCount = 0;
-	const Light* lightPoint[MaxLightCount]; int lightPointCount = 0;
-
-	Scalar radius = bounds.empty() ? Scalar(0.0f) : bounds.getExtent().length();
-
-	// Collect lights affecting entity.
-	for (int i = 0; i < m_lightCount; ++i)
-	{
-		const Light& light = m_lights[i];
-		if (light.type == LtDirectional)
-		{
-			lightDirectional[lightDirectionalCount++] = &light;
-		}
-		else if (light.type == LtPoint)
-		{
-			Scalar distance = (world.translation() - light.position).length();
-			if (distance - radius <= light.range)
-				lightPoint[lightPointCount++] = &light;
-		}
-	}
-
-	// Pack light parameters.
-	Vector4 lightPositionAndType[MaxLightCount], *lightPositionAndTypePtr = lightPositionAndType;
-	Vector4 lightDirectionAndRange[MaxLightCount], *lightDirectionAndRangePtr = lightDirectionAndRange;
-	Vector4 lightSunColor[MaxLightCount], *lightSunColorPtr = lightSunColor;
-	Vector4 lightBaseColor[MaxLightCount], *lightBaseColorPtr = lightBaseColor;
-	Vector4 lightShadowColor[MaxLightCount], *lightShadowColorPtr = lightShadowColor;
-
-	for (int i = 0; i < lightDirectionalCount; ++i)
-	{
-		const static Vector4 c_typeDirectional(0.0f, 0.0f, 0.0f, float(LtDirectional));
-		*lightPositionAndTypePtr++ = c_typeDirectional;
-		*lightDirectionAndRangePtr++ = lightDirectional[i]->direction.xyz0();
-		*lightSunColorPtr++ = lightDirectional[i]->sunColor;
-		*lightBaseColorPtr++ = lightDirectional[i]->baseColor;
-		*lightShadowColorPtr++ = lightDirectional[i]->shadowColor;
-	}
-	for (int i = 0; i < lightPointCount; ++i)
-	{
-		const static Vector4 c_typePoint(0.0f, 0.0f, 0.0f, float(LtPoint));
-		*lightPositionAndTypePtr++ = lightPoint[i]->position.xyz0() + c_typePoint;
-		*lightDirectionAndRangePtr++ = Vector4(0.0f, 0.0f, 0.0f, lightPoint[i]->range);
-		*lightSunColorPtr++ = lightPoint[i]->sunColor;
-		*lightBaseColorPtr++ = lightPoint[i]->baseColor;
-		*lightShadowColorPtr++ = lightPoint[i]->shadowColor;
-	}
-
-	// Disable excessive lights.
-	for (int i = lightDirectionalCount + lightPointCount; i < MaxLightCount; ++i)
-	{
-		const static Vector4 c_typeDisabled(0.0f, 0.0f, 0.0f, float(LtDisabled));
-		*lightPositionAndTypePtr++ = c_typeDisabled;
-		*lightDirectionAndRangePtr++ = Vector4::zero();
-		*lightSunColorPtr++ = Vector4::zero();
-		*lightBaseColorPtr++ = Vector4::zero();
-		*lightShadowColorPtr++ = Vector4::zero();
-	}
-
-	// Finally set shader parameters.
-	programParams->setVectorArrayParameter(s_handleLightPositionAndType, lightPositionAndType, MaxLightCount);
-	programParams->setVectorArrayParameter(s_handleLightDirectionAndRange, lightDirectionAndRange, MaxLightCount);
-	programParams->setVectorArrayParameter(s_handleLightSunColor, lightSunColor, MaxLightCount);
-	programParams->setVectorArrayParameter(s_handleLightBaseColor, lightBaseColor, MaxLightCount);
-	programParams->setVectorArrayParameter(s_handleLightShadowColor, lightShadowColor, MaxLightCount);
-}
-
-void WorldRenderView::setShadowMapProgramParameters(render::ProgramParameters* programParams) const
-{
-	if (m_shadowMask)
-	{
-		programParams->setTextureParameter(s_handleShadowMask, m_shadowMask);
-		programParams->setFloatParameter(s_handleShadowMaskSize, m_shadowMaskSize);
-	}
-}
-
-void WorldRenderView::setDepthMapProgramParameters(render::ProgramParameters* programParams) const
-{
-	if (m_depthMap)
-		programParams->setTextureParameter(s_handleDepthMap, m_depthMap);
 }
 
 	}

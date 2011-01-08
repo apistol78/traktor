@@ -29,7 +29,7 @@ class PrimitiveRenderer;
 	namespace world
 	{
 
-class WorldRenderer;
+class IWorldRenderer;
 
 	}
 
@@ -71,7 +71,7 @@ private:
 	Ref< ui::Widget > m_renderWidget;
 	Ref< render::IRenderView > m_renderView;
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
-	Ref< world::WorldRenderer > m_worldRenderer;
+	Ref< world::IWorldRenderer > m_worldRenderer;
 	bool m_gridEnable;
 	bool m_guideEnable;
 	Color4ub m_colorClear;

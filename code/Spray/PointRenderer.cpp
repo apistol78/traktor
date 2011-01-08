@@ -10,7 +10,7 @@
 #include "Render/Context/RenderContext.h"
 #include "Spray/PointRenderer.h"
 #include "Spray/Vertex.h"
-#include "World/WorldRenderView.h"
+#include "World/IWorldRenderPass.h"
 
 #if defined(_PS3)
 #	include "Core/Thread/Ps3/Spurs/SpursJobQueue.h"
@@ -237,7 +237,7 @@ void PointRenderer::render(
 
 void PointRenderer::flush(
 	render::RenderContext* renderContext,
-	world::WorldRenderView* worldRenderView
+	world::IWorldRenderPass& worldRenderPass
 )
 {
 	if (m_vertexOffset > 0)
@@ -256,8 +256,8 @@ void PointRenderer::flush(
 			if (!i->shader || !i->count)
 				continue;
 
-			worldRenderView->setShaderTechnique(i->shader);
-			worldRenderView->setShaderCombination(i->shader);
+			worldRenderPass.setShaderTechnique(i->shader);
+			worldRenderPass.setShaderCombination(i->shader);
 
 			render::IProgram* program = i->shader->getCurrentProgram();
 			if (!program)
@@ -278,7 +278,7 @@ void PointRenderer::flush(
 
 			renderBlock->programParams->beginParameters(renderContext);
 			i->shader->setProgramParameters(renderBlock->programParams);
-			worldRenderView->setProgramParameters(renderBlock->programParams);
+			worldRenderPass.setProgramParameters(renderBlock->programParams);
 			renderBlock->programParams->endParameters(renderContext);
 
 			renderContext->draw(render::RfAlphaBlend, renderBlock);

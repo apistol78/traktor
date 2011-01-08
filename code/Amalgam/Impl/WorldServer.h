@@ -39,7 +39,7 @@ public:
 
 	virtual world::IEntityBuilder* getEntityBuilder();
 
-	virtual Ref< world::WorldRenderer > createWorldRenderer(
+	virtual Ref< world::IWorldRenderer > createWorldRenderer(
 		const world::WorldRenderSettings* worldRenderSettings,
 		const world::WorldEntityRenderers* entityRenderers
 	);

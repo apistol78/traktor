@@ -1,7 +1,5 @@
-#include "Mesh/Instance/InstanceMeshEntity.h"
 #include "Mesh/Instance/InstanceMesh.h"
-#include "World/WorldContext.h"
-#include "World/WorldRenderView.h"
+#include "Mesh/Instance/InstanceMeshEntity.h"
 
 namespace traktor
 {
@@ -27,7 +25,12 @@ void InstanceMeshEntity::update(const world::EntityUpdate* update)
 	m_mesh.validate();
 }
 
-void InstanceMeshEntity::render(world::WorldContext* worldContext, world::WorldRenderView* worldRenderView, float distance)
+void InstanceMeshEntity::render(
+	world::WorldContext& worldContext,
+	world::WorldRenderView& worldRenderView,
+	world::IWorldRenderPass& worldRenderPass,
+	float distance
+)
 {
 	T_ASSERT_M (0, L"Forgot to register InstanceMeshEntityRenderer?");
 }

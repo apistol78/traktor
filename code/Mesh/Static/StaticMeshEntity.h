@@ -7,9 +7,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_MESH_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -28,7 +28,12 @@ public:
 	
 	virtual Aabb getBoundingBox() const;
 
-	virtual void render(world::WorldContext* worldContext, world::WorldRenderView* worldRenderView, float distance);
+	virtual void render(
+		world::WorldContext& worldContext,
+		world::WorldRenderView& worldRenderView,
+		world::IWorldRenderPass& worldRenderPass,
+		float distance
+	);
 
 private:
 	mutable resource::Proxy< StaticMesh > m_mesh;

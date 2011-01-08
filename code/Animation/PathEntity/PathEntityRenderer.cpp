@@ -1,5 +1,5 @@
-#include "Animation/PathEntity/PathEntityRenderer.h"
 #include "Animation/PathEntity/PathEntity.h"
+#include "Animation/PathEntity/PathEntityRenderer.h"
 
 namespace traktor
 {
@@ -16,18 +16,20 @@ const TypeInfoSet PathEntityRenderer::getEntityTypes() const
 }
 
 void PathEntityRenderer::render(
-	world::WorldContext* worldContext,
-	world::WorldRenderView* worldRenderView,
+	world::WorldContext& worldContext,
+	world::WorldRenderView& worldRenderView,
+	world::IWorldRenderPass& worldRenderPass,
 	world::Entity* entity
 )
 {
 	if (PathEntity* pathEntity = dynamic_type_cast< PathEntity* >(entity))
-		pathEntity->render(worldContext, worldRenderView);
+		pathEntity->render(worldContext, worldRenderView, worldRenderPass);
 }
 
 void PathEntityRenderer::flush(
-	world::WorldContext* worldContext,
-	world::WorldRenderView* worldRenderView
+	world::WorldContext& worldContext,
+	world::WorldRenderView& worldRenderView,
+	world::IWorldRenderPass& worldRenderPass
 )
 {
 }

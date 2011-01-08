@@ -4,7 +4,7 @@
 #include "Mesh/Partition/PartitionMesh.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Mesh/Mesh.h"
-#include "World/WorldRenderer.h"
+#include "World/IWorldRenderPass.h"
 #include "World/WorldRenderView.h"
 
 namespace traktor
@@ -33,7 +33,8 @@ const Aabb& PartitionMesh::getBoundingBox() const
 
 void PartitionMesh::render(
 	render::RenderContext* renderContext,
-	const world::WorldRenderView* worldRenderView,
+	world::WorldRenderView& worldRenderView,
+	world::IWorldRenderPass& worldRenderPass,
 	const Transform& worldTransform,
 	float distance,
 	float userParameter,
@@ -44,13 +45,13 @@ void PartitionMesh::render(
 		return;
 
 	Matrix44 world = worldTransform.toMatrix44();
-	Matrix44 worldView = worldRenderView->getView() * world;
+	Matrix44 worldView = worldRenderView.getView() * world;
 
 	m_partIndices.resize(0);
 	m_partition->traverse(
-		worldRenderView->getCullFrustum(),
+		worldRenderView.getCullFrustum(),
 		worldView,
-		worldRenderView->getTechnique(),
+		worldRenderPass.getTechnique(),
 		m_partIndices
 	);
 	if (m_partIndices.empty())
@@ -63,7 +64,7 @@ void PartitionMesh::render(
 
 		m_shader->setTechnique(part.shaderTechnique);
 
-		worldRenderView->setShaderCombination(
+		worldRenderPass.setShaderCombination(
 			m_shader,
 			world,
 			getBoundingBox()
@@ -91,7 +92,7 @@ void PartitionMesh::render(
 
 		renderBlock->programParams->beginParameters(renderContext);
 		m_shader->setProgramParameters(renderBlock->programParams);
-		worldRenderView->setProgramParameters(
+		worldRenderPass.setProgramParameters(
 			renderBlock->programParams,
 			worldTransform.toMatrix44(),
 			getBoundingBox()

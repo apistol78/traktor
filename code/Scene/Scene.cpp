@@ -1,6 +1,6 @@
 #include "Scene/ISceneController.h"
 #include "Scene/Scene.h"
-#include "World/WorldRenderer.h"
+#include "World/IWorldRenderer.h"
 #include "World/WorldRenderSettings.h"
 #include "World/Entity/Entity.h"
 #include "World/Entity/EntityUpdate.h"
@@ -62,7 +62,7 @@ void Scene::update(float time, float deltaTime)
 	}
 }
 
-void Scene::build(world::WorldRenderer* worldRenderer, world::WorldRenderView& worldRenderView, int frame)
+void Scene::build(world::IWorldRenderer* worldRenderer, world::WorldRenderView& worldRenderView, int frame)
 {
 	if (m_rootEntity)
 		worldRenderer->build(worldRenderView, m_rootEntity, frame);

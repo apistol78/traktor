@@ -46,12 +46,17 @@ Aabb CompositeMeshEntity::getBoundingBox() const
 	return boundingBox;
 }
 
-void CompositeMeshEntity::render(world::WorldContext* worldContext, world::WorldRenderView* worldRenderView, float distance)
+void CompositeMeshEntity::render(
+	world::WorldContext& worldContext,
+	world::WorldRenderView& worldRenderView,
+	world::IWorldRenderPass& worldRenderPass,
+	float distance
+)
 {
 	for (std::map< std::wstring, Ref< MeshEntity > >::iterator i = m_meshEntities.begin(); i != m_meshEntities.end(); ++i)
 	{
 		i->second->setUserParameter(m_userParameter);
-		worldContext->build(worldRenderView, i->second);
+		worldContext.build(worldRenderView, worldRenderPass, i->second);
 	}
 	m_first = false;
 }

@@ -30,6 +30,7 @@ class ITexture;
 	namespace world
 	{
 
+class IWorldRenderPass;
 class WorldRenderView;
 
 	}
@@ -61,7 +62,8 @@ public:
 	
 	void render(
 		render::RenderContext* renderContext,
-		const world::WorldRenderView* worldRenderView,
+		world::WorldRenderView& worldRenderView,
+		world::IWorldRenderPass& worldRenderPass,
 		const Transform& worldTransform,
 		float distance,
 		float userParameter,

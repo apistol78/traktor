@@ -32,7 +32,7 @@ class VertexBuffer;
 	namespace world
 	{
 
-class WorldRenderView;
+class IWorldRenderPass;
 
 	}
 
@@ -78,7 +78,7 @@ public:
 
 	void render(
 		render::RenderContext* renderContext,
-		const world::WorldRenderView* worldRenderView,
+		world::IWorldRenderPass& worldRenderPass,
 		const Transform& worldTransform,
 		Instance* instance,
 		const std::vector< float >& blendWeights,

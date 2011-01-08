@@ -40,15 +40,20 @@ Aabb SkinnedMeshEntity::getBoundingBox() const
 	return validate() ? m_mesh->getBoundingBox() : Aabb();
 }
 
-void SkinnedMeshEntity::render(world::WorldContext* worldContext, world::WorldRenderView* worldRenderView, float distance)
+void SkinnedMeshEntity::render(
+	world::WorldContext& worldContext,
+	world::WorldRenderView& worldRenderView,
+	world::IWorldRenderPass& worldRenderPass,
+	float distance
+)
 {
 	if (!validate())
 		return;
 
 	m_mesh->render(
-		worldContext->getRenderContext(),
-		worldRenderView,
-		getTransform(worldRenderView->getInterval()),
+		worldContext.getRenderContext(),
+		worldRenderPass,
+		getTransform(worldRenderView.getInterval()),
 		m_boneTransforms,
 		distance,
 		getParameterCallback()
