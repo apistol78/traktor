@@ -34,10 +34,10 @@
 #include "Ui/Events/KeyEvent.h"
 #include "Ui/Itf/IWidget.h"
 #include "World/WorldEntityRenderers.h"
-#include "World/WorldRenderer.h"
 #include "World/WorldRenderView.h"
 #include "World/WorldRenderSettings.h"
 #include "World/Entity/Entity.h"
+#include "World/Forward/WorldRendererForward.h"
 #include "World/PostProcess/PostProcess.h"
 
 namespace traktor
@@ -215,8 +215,8 @@ void PerspectiveRenderControl::updateWorldRenderer()
 	}
 
 	// Create world renderer.
-	m_worldRenderer = new world::WorldRenderer();
-	if (m_worldRenderer->create(
+	Ref< world::WorldRendererForward > worldRenderer = new world::WorldRendererForward();
+	if (worldRenderer->create(
 		worldRenderSettings,
 		worldEntityRenderers,
 		m_context->getResourceManager(),
@@ -226,6 +226,8 @@ void PerspectiveRenderControl::updateWorldRenderer()
 		1
 	))
 	{
+		m_worldRenderer = worldRenderer;
+
 		updateWorldRenderView();
 
 		// Create render target used for post processing.
@@ -243,10 +245,10 @@ void PerspectiveRenderControl::updateWorldRenderer()
 		}
 
 		// Expose shadow mask to debug view.
-		Ref< render::RenderTargetSet > shadowTarget = m_worldRenderer->getShadowTargetSet();
+		Ref< render::RenderTargetSet > shadowTarget = worldRenderer->getShadowTargetSet();
 		m_context->setDebugTexture(0, shadowTarget ? shadowTarget->getColorTexture(0) : 0);
 
-		Ref< render::RenderTargetSet > shadowMaskTarget = m_worldRenderer->getShadowMaskTargetSet();
+		Ref< render::RenderTargetSet > shadowMaskTarget = worldRenderer->getShadowMaskTargetSet();
 		m_context->setDebugTexture(1, shadowMaskTarget ? shadowMaskTarget->getColorTexture(0) : 0);
 	}
 	else
@@ -694,16 +696,16 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 				params.viewFrustum = m_worldRenderView.getViewFrustum();
 				params.viewToLight = Matrix44::identity();
 				params.projection = m_worldRenderView.getProjection();
-				params.depthRange = m_worldRenderer->getSettings().depthRange;
-				params.shadowFarZ = m_worldRenderer->getSettings().shadowFarZ;
-				params.shadowMapBias = m_worldRenderer->getSettings().shadowMapBias;
+				//params.depthRange = m_worldRenderer->getSettings().depthRange;
+				//params.shadowFarZ = m_worldRenderer->getSettings().shadowFarZ;
+				//params.shadowMapBias = m_worldRenderer->getSettings().shadowMapBias;
 				params.deltaTime = deltaTime;
 
 				m_postProcess->render(
 					m_renderView,
 					m_renderTarget,
-					m_worldRenderer->getDepthTargetSet(),
-					m_worldRenderer->getShadowMaskTargetSet(),
+					0, //m_worldRenderer->getDepthTargetSet(),
+					0, //m_worldRenderer->getShadowMaskTargetSet(),
 					params
 				);
 			}

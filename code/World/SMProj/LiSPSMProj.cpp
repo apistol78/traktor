@@ -1,13 +1,12 @@
-#include "World/LiSPSMProj.h"
 #include "World/WorldRenderSettings.h"
-#include "Core/Math/Vector2.h"
+#include "World/SMProj/LiSPSMProj.h"
 
 namespace traktor
 {
 	namespace world
 	{
 
-void calculateTSMProj(
+void calculateLiSPSMProj(
 	const WorldRenderSettings& settings,
 	const Matrix44& viewInverse,
 	const Vector4& lightPosition,

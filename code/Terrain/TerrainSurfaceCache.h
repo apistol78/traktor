@@ -9,9 +9,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_TERRAIN_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -19,7 +19,7 @@ namespace traktor
 	namespace world
 	{
 
-class WorldRenderView;
+class IWorldRenderPass;
 
 	}
 
@@ -66,7 +66,7 @@ public:
 	void flush();
 
 	void get(
-		const world::WorldRenderView* worldRenderView,
+		world::IWorldRenderPass& worldRenderPass,
 		render::RenderContext* renderContext,
 		TerrainSurface* surface,
 		render::ITexture* heightfieldTexture,

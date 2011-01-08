@@ -3,16 +3,16 @@
 
 #include <map>
 #include "Core/Containers/AlignedVector.h"
-#include "World/Entity/IEntityRenderer.h"
 #include "Mesh/Instance/InstanceMesh.h"
 #include "Mesh/Instance/InstanceMeshData.h"
+#include "World/Entity/IEntityRenderer.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_MESH_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -28,14 +28,16 @@ public:
 	virtual const TypeInfoSet getEntityTypes() const;
 
 	virtual void render(
-		world::WorldContext* worldContext,
-		world::WorldRenderView* worldRenderView,
+		world::WorldContext& worldContext,
+		world::WorldRenderView& worldRenderView,
+		world::IWorldRenderPass& worldRenderPass,
 		world::Entity* entity
 	);
 
 	virtual void flush(
-		world::WorldContext* worldContext,
-		world::WorldRenderView* worldRenderView
+		world::WorldContext& worldContext,
+		world::WorldRenderView& worldRenderView,
+		world::IWorldRenderPass& worldRenderPass
 	);
 
 private:

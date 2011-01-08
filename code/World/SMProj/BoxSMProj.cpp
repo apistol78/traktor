@@ -1,5 +1,5 @@
-#include "World/BoxSMProj.h"
 #include "World/WorldRenderSettings.h"
+#include "World/SMProj/BoxSMProj.h"
 
 namespace traktor
 {

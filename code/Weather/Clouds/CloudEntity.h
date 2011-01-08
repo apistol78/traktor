@@ -2,18 +2,18 @@
 #define traktor_weather_CloudEntity_H
 
 #include "Core/RefArray.h"
+#include "Render/Shader.h"
 #include "Resource/Proxy.h"
 #include "World/Entity/SpatialEntity.h"
 #include "Weather/Clouds/CloudParticleCluster.h"
 #include "Weather/Clouds/CloudParticleData.h"
-#include "Render/Shader.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_WEATHER_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -34,6 +34,7 @@ class IndexBuffer;
 	namespace world
 	{
 
+class IWorldRenderPass;
 class WorldRenderView;
 
 	}
@@ -64,7 +65,12 @@ public:
 		const CloudParticleData& particleData
 	);
 
-	void render(render::RenderContext* renderContext, const world::WorldRenderView* worldRenderView, render::PrimitiveRenderer* primitiveRenderer);
+	void render(
+		render::RenderContext* renderContext,
+		world::WorldRenderView& worldRenderView,
+		world::IWorldRenderPass& worldRenderPass,
+		render::PrimitiveRenderer* primitiveRenderer
+	);
 
 	virtual void update(const world::EntityUpdate* update);
 
@@ -98,7 +104,8 @@ private:
 
 	void renderCluster(
 		render::RenderContext* renderContext,
-		const world::WorldRenderView* worldRenderView,
+		world::WorldRenderView& worldRenderView,
+		world::IWorldRenderPass& worldRenderPass,
 		render::PrimitiveRenderer* primitiveRenderer,
 		const CloudParticleCluster& cluster
 	);

@@ -1,8 +1,8 @@
 #include <limits>
-#include "World/Entity/LightEntityRenderer.h"
-#include "World/Entity/DirectionalLightEntity.h"
-#include "World/Entity/PointLightEntity.h"
 #include "World/WorldRenderView.h"
+#include "World/Entity/DirectionalLightEntity.h"
+#include "World/Entity/LightEntityRenderer.h"
+#include "World/Entity/PointLightEntity.h"
 
 namespace traktor
 {
@@ -25,8 +25,9 @@ const TypeInfoSet LightEntityRenderer::getEntityTypes() const
 }
 
 void LightEntityRenderer::render(
-	WorldContext* worldContext,
-	WorldRenderView* worldRenderView,
+	WorldContext& worldContext,
+	WorldRenderView& worldRenderView,
+	IWorldRenderPass& worldRenderPass,
 	Entity* entity
 )
 {
@@ -46,15 +47,15 @@ void LightEntityRenderer::render(
 		light.shadowColor = directionalLightEntity->getShadowColor();
 		light.range = Scalar(0.0f);
 
-		worldRenderView->addLight(light);
+		worldRenderView.addLight(light);
 	}
 	else if (PointLightEntity* pointLightEntity = dynamic_type_cast< PointLightEntity* >(entity))
 	{
 		Transform transform;
 		pointLightEntity->getTransform(transform);
 
-		Vector4 center = worldRenderView->getView() * transform.translation().xyz1();
-		if (worldRenderView->getCullFrustum().inside(center, Scalar(pointLightEntity->getRange())) == Frustum::IrOutside)
+		Vector4 center = worldRenderView.getView() * transform.translation().xyz1();
+		if (worldRenderView.getCullFrustum().inside(center, Scalar(pointLightEntity->getRange())) == Frustum::IrOutside)
 			return;
 
 		light.type = WorldRenderView::LtPoint;
@@ -73,13 +74,14 @@ void LightEntityRenderer::render(
 			light.shadowColor *= randomFlicker;
 		}
 
-		worldRenderView->addLight(light);
+		worldRenderView.addLight(light);
 	}
 }
 
 void LightEntityRenderer::flush(
-	WorldContext* worldContext,
-	WorldRenderView* worldRenderView
+	WorldContext& worldContext,
+	WorldRenderView& worldRenderView,
+	IWorldRenderPass& worldRenderPass
 )
 {
 	m_randomFlicker = m_random.nextFloat() * 0.5f + m_randomFlicker * 0.5f;

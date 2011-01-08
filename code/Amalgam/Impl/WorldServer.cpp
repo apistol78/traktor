@@ -16,13 +16,13 @@
 #include "Weather/WeatherEntityFactory.h"
 #include "Weather/WeatherEntityRenderer.h"
 #include "World/WorldEntityRenderers.h"
-#include "World/WorldRenderer.h"
 #include "World/Entity/EntityBuilder.h"
 #include "World/Entity/EntityResourceFactory.h"
 #include "World/Entity/GroupEntityRenderer.h"
 #include "World/Entity/LightEntityRenderer.h"
 #include "World/Entity/TransientEntityRenderer.h"
 #include "World/Entity/WorldEntityFactory.h"
+#include "World/Forward/WorldRendererForward.h"
 #include "World/PostProcess/PostProcessFactory.h"
 #include "Amalgam/IEnvironment.h"
 #include "Amalgam/Impl/AudioServer.h"
@@ -105,7 +105,7 @@ world::IEntityBuilder* WorldServer::getEntityBuilder()
 	return m_entityBuilder;
 }
 
-Ref< world::WorldRenderer > WorldServer::createWorldRenderer(
+Ref< world::IWorldRenderer > WorldServer::createWorldRenderer(
 	const world::WorldRenderSettings* worldRenderSettings,
 	const world::WorldEntityRenderers* entityRenderers
 )
@@ -130,7 +130,7 @@ Ref< world::WorldRenderer > WorldServer::createWorldRenderer(
 			worldEntityRenderers->add(*i);
 	}
 
-	Ref< world::WorldRenderer > worldRenderer = new world::WorldRenderer();
+	Ref< world::WorldRendererForward > worldRenderer = new world::WorldRendererForward();
 	if (!worldRenderer->create(
 		worldRenderSettings,
 		worldEntityRenderers,

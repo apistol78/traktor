@@ -9,6 +9,7 @@
 #include "Terrain/OceanEntity.h"
 #include "Terrain/OceanEntityData.h"
 #include "Terrain/Heightfield.h"
+#include "World/IWorldRenderPass.h"
 #include "World/WorldRenderView.h"
 
 namespace traktor
@@ -112,21 +113,25 @@ bool OceanEntity::create(resource::IResourceManager* resourceManager, render::IR
 	return true;
 }
 
-void OceanEntity::render(render::RenderContext* renderContext, const world::WorldRenderView* worldRenderView)
+void OceanEntity::render(
+	render::RenderContext* renderContext,
+	world::WorldRenderView& worldRenderView,
+	world::IWorldRenderPass& worldRenderPass
+)
 {
 	if (!m_shader.validate())
 		return;
 
-	worldRenderView->setShaderTechnique(m_shader);
-	worldRenderView->setShaderCombination(m_shader);
+	worldRenderPass.setShaderTechnique(m_shader);
+	worldRenderPass.setShaderCombination(m_shader);
 
 	render::IProgram* program = m_shader->getCurrentProgram();
 	if (!program)
 		return;
 
-	Matrix44 viewInverse = worldRenderView->getView().inverse();
+	Matrix44 viewInverse = worldRenderView.getView().inverse();
 
-	Vector4 cameraPosition = worldRenderView->getEyePosition();
+	Vector4 cameraPosition = worldRenderView.getEyePosition();
 	Matrix44 oceanWorld = translate(-cameraPosition.x(), -m_altitude, -cameraPosition.z());
 
 	render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >();
@@ -141,19 +146,19 @@ void OceanEntity::render(render::RenderContext* renderContext, const world::Worl
 	renderBlock->programParams->beginParameters(renderContext);
 	
 	m_shader->setProgramParameters(renderBlock->programParams);
-	worldRenderView->setProgramParameters(
+	worldRenderPass.setProgramParameters(
 		renderBlock->programParams,
 		oceanWorld,
 		Aabb()
 	);
 
-	renderBlock->programParams->setFloatParameter(L"ViewPlane", worldRenderView->getViewFrustum().getNearZ());
-	renderBlock->programParams->setFloatParameter(L"OceanRadius", worldRenderView->getViewFrustum().getFarZ());
+	renderBlock->programParams->setFloatParameter(L"ViewPlane", worldRenderView.getViewFrustum().getNearZ());
+	renderBlock->programParams->setFloatParameter(L"OceanRadius", worldRenderView.getViewFrustum().getFarZ());
 	renderBlock->programParams->setFloatParameter(L"OceanAltitude", m_altitude);
 	renderBlock->programParams->setVectorParameter(L"CameraPosition", cameraPosition);
 	renderBlock->programParams->setVectorArrayParameter(L"WaveData", m_waveData, MaxWaves);
 	renderBlock->programParams->setMatrixParameter(L"ViewInverse", viewInverse);
-	renderBlock->programParams->setFloatParameter(L"ViewRatio", worldRenderView->getViewSize().x / worldRenderView->getViewSize().y);
+	renderBlock->programParams->setFloatParameter(L"ViewRatio", worldRenderView.getViewSize().x / worldRenderView.getViewSize().y);
 
 	if (m_heightfield.validate())
 	{

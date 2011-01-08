@@ -21,14 +21,20 @@ Aabb IndoorMeshEntity::getBoundingBox() const
 	return m_mesh.validate() ? m_mesh->getBoundingBox() : Aabb();
 }
 
-void IndoorMeshEntity::render(world::WorldContext* worldContext, world::WorldRenderView* worldRenderView, float distance)
+void IndoorMeshEntity::render(
+	world::WorldContext& worldContext,
+	world::WorldRenderView& worldRenderView,
+	world::IWorldRenderPass& worldRenderPass,
+	float distance
+)
 {
 	if (!m_mesh.validate())
 		return;
 
 	m_mesh->render(
-		worldContext->getRenderContext(),
+		worldContext.getRenderContext(),
 		worldRenderView,
+		worldRenderPass,
 		m_transform,
 		distance,
 		getParameterCallback()

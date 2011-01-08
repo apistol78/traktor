@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_WORLD_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -17,13 +17,14 @@ namespace traktor
 	{
 
 class Entity;
+class IWorldRenderPass;
 class WorldContext;
 class WorldRenderView;
 
 /*! \brief Entity renderer.
  * \ingroup World
  *
- * Each renderable entity type should have
+ * Each render:able entity type should have
  * a matching EntityRenderer.
  * The entity renderer is responsible of
  * producing render commands from entity instances.
@@ -40,9 +41,10 @@ public:
 	 * Render entities into render context.
 	 */
 	virtual void render(
-		world::WorldContext* worldContext,
-		world::WorldRenderView* worldRenderView,
-		world::Entity* entity
+		WorldContext& worldContext,
+		WorldRenderView& worldRenderView,
+		IWorldRenderPass& worldRenderPass,
+		Entity* entity
 	) = 0;
 
 	/*! \brief Render flush.
@@ -50,8 +52,9 @@ public:
 	 * Flush whatever queues that the entity renderer might have used.
 	 */
 	virtual void flush(
-		world::WorldContext* worldContext,
-		world::WorldRenderView* worldRenderView
+		WorldContext& worldContext,
+		WorldRenderView& worldRenderView,
+		IWorldRenderPass& worldRenderPass
 	) = 0;
 };
 

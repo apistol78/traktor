@@ -1,4 +1,5 @@
 #include <cstring>
+#include "Core/Math/Const.h"
 #include "Core/Thread/JobManager.h"
 #include "Mesh/IMeshParameterCallback.h"
 #include "Mesh/Blend/BlendMesh.h"
@@ -8,8 +9,7 @@
 #include "Render/VertexBuffer.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Mesh/Mesh.h"
-#include "World/WorldRenderer.h"
-#include "World/WorldRenderView.h"
+#include "World/IWorldRenderPass.h"
 
 #if !TARGET_OS_IPHONE && !defined(_WINCE) && !defined(_PS3)
 #	define T_USE_UPDATE_JOBS
@@ -178,7 +178,7 @@ Ref< BlendMesh::Instance > BlendMesh::createInstance() const
 
 void BlendMesh::render(
 	render::RenderContext* renderContext,
-	const world::WorldRenderView* worldRenderView,
+	world::IWorldRenderPass& worldRenderPass,
 	const Transform& worldTransform,
 	Instance* instance,
 	const std::vector< float >& blendWeights,
@@ -271,7 +271,7 @@ void BlendMesh::render(
 		return;
 
 	// Render mesh.
-	std::map< render::handle_t, std::vector< Part > >::const_iterator it = m_parts.find(worldRenderView->getTechnique());
+	std::map< render::handle_t, std::vector< Part > >::const_iterator it = m_parts.find(worldRenderPass.getTechnique());
 	if (it == m_parts.end())
 		return;
 
@@ -280,7 +280,7 @@ void BlendMesh::render(
 	{
 		m_shader->setTechnique(i->shaderTechnique);
 
-		worldRenderView->setShaderCombination(
+		worldRenderPass.setShaderCombination(
 			m_shader,
 			worldTransform.toMatrix44(),
 			getBoundingBox()
@@ -301,7 +301,7 @@ void BlendMesh::render(
 
 		renderBlock->programParams->beginParameters(renderContext);
 		m_shader->setProgramParameters(renderBlock->programParams);
-		worldRenderView->setProgramParameters(
+		worldRenderPass.setProgramParameters(
 			renderBlock->programParams,
 			worldTransform.toMatrix44(),
 			getBoundingBox()

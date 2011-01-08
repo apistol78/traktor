@@ -28,8 +28,8 @@
 #include "Ui/Events/KeyEvent.h"
 #include "Ui/Itf/IWidget.h"
 #include "World/WorldEntityRenderers.h"
-#include "World/WorldRenderer.h"
 #include "World/WorldRenderView.h"
+#include "World/Forward/WorldRendererForward.h"
 
 namespace traktor
 {
@@ -175,8 +175,8 @@ void OrthogonalRenderControl::updateWorldRenderer()
 	wrs.velocityPassEnable = false;
 	wrs.shadowsEnabled = false;
 
-	m_worldRenderer = new world::WorldRenderer();
-	if (!m_worldRenderer->create(
+	Ref< world::WorldRendererForward > worldRenderer = new world::WorldRendererForward();
+	if (worldRenderer->create(
 		&wrs,
 		worldEntityRenderers,
 		m_context->getResourceManager(),
@@ -185,6 +185,8 @@ void OrthogonalRenderControl::updateWorldRenderer()
 		m_multiSample,
 		1
 	))
+		m_worldRenderer = worldRenderer;
+	else
 		m_worldRenderer = 0;
 
 	m_viewFarZ = wrs.viewFarZ;

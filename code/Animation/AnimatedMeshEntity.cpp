@@ -77,7 +77,12 @@ Aabb AnimatedMeshEntity::getBoundingBox() const
 	return boundingBox;
 }
 
-void AnimatedMeshEntity::render(world::WorldContext* worldContext, world::WorldRenderView* worldRenderView, float distance)
+void AnimatedMeshEntity::render(
+	world::WorldContext& worldContext,
+	world::WorldRenderView& worldRenderView,
+	world::IWorldRenderPass& worldRenderPass,
+	float distance
+)
 {
 	if (!m_mesh.validate())
 		return;
@@ -85,8 +90,8 @@ void AnimatedMeshEntity::render(world::WorldContext* worldContext, world::WorldR
 	synchronize();
 
 	m_mesh->render(
-		worldContext->getRenderContext(),
-		worldRenderView,
+		worldContext.getRenderContext(),
+		worldRenderPass,
 		m_transform,
 		m_skinTransforms,
 		distance,

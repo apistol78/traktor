@@ -1,7 +1,6 @@
-#include <limits>
 #include "Weather/WeatherEntityRenderer.h"
-#include "Weather/Sky/SkyEntity.h"
 #include "Weather/Clouds/CloudEntity.h"
+#include "Weather/Sky/SkyEntity.h"
 #include "World/WorldContext.h"
 
 namespace traktor
@@ -25,20 +24,22 @@ const TypeInfoSet WeatherEntityRenderer::getEntityTypes() const
 }
 
 void WeatherEntityRenderer::render(
-	world::WorldContext* worldContext,
-	world::WorldRenderView* worldRenderView,
+	world::WorldContext& worldContext,
+	world::WorldRenderView& worldRenderView,
+	world::IWorldRenderPass& worldRenderPass,
 	world::Entity* entity
 )
 {
 	if (SkyEntity* skyEntity = dynamic_type_cast< SkyEntity* >(entity))
-		skyEntity->render(worldContext->getRenderContext(), worldRenderView);
+		skyEntity->render(worldContext.getRenderContext(), worldRenderView, worldRenderPass);
 	else if (CloudEntity* cloudEntity = dynamic_type_cast< CloudEntity* >(entity))
-		cloudEntity->render(worldContext->getRenderContext(), worldRenderView, m_primitiveRenderer);
+		cloudEntity->render(worldContext.getRenderContext(), worldRenderView, worldRenderPass, m_primitiveRenderer);
 }
 
 void WeatherEntityRenderer::flush(
-	world::WorldContext* worldContext,
-	world::WorldRenderView* worldRenderView
+	world::WorldContext& worldContext,
+	world::WorldRenderView& worldRenderView,
+	world::IWorldRenderPass& worldRenderPass
 )
 {
 }

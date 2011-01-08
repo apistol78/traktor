@@ -41,7 +41,6 @@ class IResourceFactory;
 	namespace world
 	{
 
-class WorldRenderer;
 class IEntityFactory;
 class IEntityRenderer;
 

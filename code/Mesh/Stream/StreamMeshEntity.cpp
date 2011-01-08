@@ -35,7 +35,12 @@ Aabb StreamMeshEntity::getBoundingBox() const
 	return validate() ? m_mesh->getBoundingBox() : Aabb();
 }
 
-void StreamMeshEntity::render(world::WorldContext* worldContext, world::WorldRenderView* worldRenderView, float distance)
+void StreamMeshEntity::render(
+	world::WorldContext& worldContext,
+	world::WorldRenderView& worldRenderView,
+	world::IWorldRenderPass& worldRenderPass,
+	float distance
+)
 {
 	if (!validate())
 		return;
@@ -44,9 +49,9 @@ void StreamMeshEntity::render(world::WorldContext* worldContext, world::WorldRen
 		return;
 
 	m_mesh->render(
-		worldContext->getRenderContext(),
-		worldRenderView,
-		getTransform(worldRenderView->getInterval()),
+		worldContext.getRenderContext(),
+		worldRenderPass,
+		getTransform(worldRenderView.getInterval()),
 		m_instance,
 		m_frame,
 		distance,

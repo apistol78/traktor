@@ -1,13 +1,11 @@
 #ifndef traktor_world_WorldRenderView_H
 #define traktor_world_WorldRenderView_H
 
-#include <string>
 #include "Core/Object.h"
-#include "Core/Math/Vector2.h"
-#include "Core/Math/Matrix44.h"
-#include "Core/Math/Frustum.h"
 #include "Core/Math/Aabb.h"
-#include "Render/Types.h"
+#include "Core/Math/Frustum.h"
+#include "Core/Math/Matrix44.h"
+#include "Core/Math/Vector2.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,19 +17,10 @@
 
 namespace traktor
 {
-	namespace render
-	{
-
-class ITexture;
-class ProgramParameters;
-class Shader;
-
-	}
-
 	namespace world
 	{
 
-/*! \brief World render's view.
+/*! \brief World render view.
  * \ingroup World
  *
  * WorldRenderView represent the view of the world from the WorldRenderer's
@@ -64,8 +53,6 @@ public:
 
 	WorldRenderView();
 
-	void setTechnique(const render::handle_t technique);
-
 	void setViewFrustum(const Frustum& viewFrustum);
 
 	void setCullFrustum(const Frustum& cullFrustum);
@@ -80,41 +67,11 @@ public:
 
 	void setShadowBox(const Aabb& shadowBox);
 
-	void setShadowMask(render::ITexture* shadowMask);
-
-	void setDepthMap(render::ITexture* depthMap);
-
-	void setDepthRange(float depthRange);
-
 	void setTimes(float time, float deltaTime, float interval);
 
 	void addLight(const Light& light);
 
 	void resetLights();
-
-	void setShaderTechnique(render::Shader* shader) const;
-
-	void setShaderCombination(render::Shader* shader) const;
-
-	void setShaderCombination(render::Shader* shader, const Matrix44& world, const Aabb& bounds) const;
-
-	/*! \brief Set program parameters defined by world renderer.
-	 *
-	 * \param programParams Pointer to program parameter container.
-	 */
-	void setProgramParameters(render::ProgramParameters* programParams) const;
-
-	/*! \brief Set program parameters defined by world renderer.
-	 *
-	 * \param programParams Pointer to program parameter container.
-	 * \param world Entity world transform.
-	 * \param bounds Entity bounds in object space.
-	 */
-	void setProgramParameters(render::ProgramParameters* programParams, const Matrix44& world, const Aabb& bounds) const;
-
-	T_FORCE_INLINE render::handle_t getTechnique() const {
-		return m_technique;
-	}
 
 	T_FORCE_INLINE const Frustum& getViewFrustum() const {
 		return m_viewFrustum;
@@ -144,16 +101,12 @@ public:
 		return m_lights[index];
 	}
 
+	T_FORCE_INLINE int getLightCount() const {
+		return m_lightCount;
+	}
+
 	T_FORCE_INLINE const Aabb& getShadowBox() const {
 		return m_shadowBox;
-	}
-
-	T_FORCE_INLINE Ref< render::ITexture > getShadowMask() const {
-		return m_shadowMask;
-	}
-
-	T_FORCE_INLINE Ref< render::ITexture > getDepthMap() const {
-		return m_depthMap;
 	}
 
 	T_FORCE_INLINE float getTime() const {
@@ -169,7 +122,6 @@ public:
 	}
 	
 private:
-	render::handle_t m_technique;
 	Frustum m_viewFrustum;
 	Frustum m_cullFrustum;
 	Matrix44 m_projection;
@@ -179,23 +131,9 @@ private:
 	Light m_lights[MaxLightCount];
 	int m_lightCount;
 	Aabb m_shadowBox;
-	float m_shadowMaskSize;
-	Ref< render::ITexture > m_shadowMask;
-	float m_depthRange;
-	Ref< render::ITexture > m_depthMap;
 	float m_time;
 	float m_deltaTime;
 	float m_interval;
-
-	void setWorldProgramParameters(render::ProgramParameters* programParams, const Matrix44& world) const;
-
-	void setLightProgramParameters(render::ProgramParameters* programParams) const;
-
-	void setLightProgramParameters(render::ProgramParameters* programParams, const Matrix44& world, const Aabb& bounds) const;
-
-	void setShadowMapProgramParameters(render::ProgramParameters* programParams) const;
-
-	void setDepthMapProgramParameters(render::ProgramParameters* programParams) const;
 };
 	
 	}

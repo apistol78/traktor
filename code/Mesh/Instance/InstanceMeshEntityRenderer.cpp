@@ -20,8 +20,9 @@ const TypeInfoSet InstanceMeshEntityRenderer::getEntityTypes() const
 }
 
 void InstanceMeshEntityRenderer::render(
-	world::WorldContext* worldContext,
-	world::WorldRenderView* worldRenderView,
+	world::WorldContext& worldContext,
+	world::WorldRenderView& worldRenderView,
+	world::IWorldRenderPass& worldRenderPass,
 	world::Entity* entity
 )
 {
@@ -33,14 +34,14 @@ void InstanceMeshEntityRenderer::render(
 		return;
 
 	Aabb boundingBox = meshEntity->getBoundingBox();
-	Transform transform = meshEntity->getTransform(worldRenderView->getInterval());
+	Transform transform = meshEntity->getTransform(worldRenderView.getInterval());
 
 	float distance = 0.0f;
 	if (!isMeshVisible(
 		boundingBox,
-		worldRenderView->getCullFrustum(),
-		worldRenderView->getView() * transform.toMatrix44(),
-		worldRenderView->getProjection(),
+		worldRenderView.getCullFrustum(),
+		worldRenderView.getView() * transform.toMatrix44(),
+		worldRenderView.getProjection(),
 		1e-4f,
 		distance
 	))
@@ -55,8 +56,9 @@ void InstanceMeshEntityRenderer::render(
 }
 
 void InstanceMeshEntityRenderer::flush(
-	world::WorldContext* worldContext,
-	world::WorldRenderView* worldRenderView
+	world::WorldContext& worldContext,
+	world::WorldRenderView& worldRenderView,
+	world::IWorldRenderPass& worldRenderPass
 )
 {
 	for (std::map< InstanceMesh*, AlignedVector< InstanceMesh::instance_distance_t > >::iterator i = m_meshInstances.begin(); i != m_meshInstances.end(); ++i)
@@ -66,8 +68,8 @@ void InstanceMeshEntityRenderer::flush(
 
 		T_ASSERT (i->first);
 		i->first->render(
-			worldContext->getRenderContext(),
-			worldRenderView,
+			worldContext.getRenderContext(),
+			worldRenderPass,
 			i->second
 		);
 

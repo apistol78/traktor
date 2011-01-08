@@ -1,15 +1,15 @@
 #ifndef traktor_mesh_MeshEntity_H
 #define traktor_mesh_MeshEntity_H
 
-#include "World/Entity/SpatialEntity.h"
 #include "Core/Math/Aabb.h"
+#include "World/Entity/SpatialEntity.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_MESH_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -17,6 +17,7 @@ namespace traktor
 	namespace world
 	{
 
+class IWorldRenderPass;
 class WorldContext;
 class WorldRenderView;
 
@@ -47,15 +48,20 @@ public:
 
 	virtual bool getTransform(Transform& outTransform) const;
 
-	virtual void render(world::WorldContext* worldContext, world::WorldRenderView* worldRenderView, float distance) = 0;
+	virtual void render(
+		world::WorldContext& worldContext,
+		world::WorldRenderView& worldRenderView,
+		world::IWorldRenderPass& worldRenderPass,
+		float distance
+	) = 0;
 
-	inline void setUserParameter(const float userParameter) { m_userParameter = userParameter; }
+	void setUserParameter(const float userParameter) { m_userParameter = userParameter; }
 
-	inline float getUserParameter() const { return m_userParameter; }
+	float getUserParameter() const { return m_userParameter; }
 
-	inline void setParameterCallback(IMeshParameterCallback* parameterCallback) { m_parameterCallback = parameterCallback; }
+	void setParameterCallback(IMeshParameterCallback* parameterCallback) { m_parameterCallback = parameterCallback; }
 
-	inline IMeshParameterCallback* getParameterCallback() const { return m_parameterCallback; }
+	IMeshParameterCallback* getParameterCallback() const { return m_parameterCallback; }
 
 protected:
 	Transform m_transform;

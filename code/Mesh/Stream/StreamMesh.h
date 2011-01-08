@@ -33,7 +33,7 @@ class RenderContext;
 	namespace world
 	{
 
-class WorldRenderView;
+class IWorldRenderPass;
 
 	}
 
@@ -65,7 +65,7 @@ public:
 	
 	void render(
 		render::RenderContext* renderContext,
-		const world::WorldRenderView* worldRenderView,
+		world::IWorldRenderPass& worldRenderPass,
 		const Transform& worldTransform,
 		Instance* instance,
 		uint32_t frame,

@@ -1,13 +1,13 @@
-#include "Terrain/TerrainSurfaceCache.h"
-#include "Terrain/TerrainSurface.h"
-#include "World/WorldRenderView.h"
-#include "Resource/IResourceManager.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Render/RenderTargetSet.h"
 #include "Render/ScreenRenderer.h"
 #include "Render/Shader.h"
 #include "Render/Context/RenderContext.h"
+#include "Resource/IResourceManager.h"
+#include "World/IWorldRenderPass.h"
+#include "Terrain/TerrainSurface.h"
+#include "Terrain/TerrainSurfaceCache.h"
 
 namespace traktor
 {
@@ -129,7 +129,7 @@ void TerrainSurfaceCache::flush()
 }
 
 void TerrainSurfaceCache::get(
-	const world::WorldRenderView* worldRenderView,
+	world::IWorldRenderPass& worldRenderPass,
 	render::RenderContext* renderContext,
 	TerrainSurface* surface,
 	render::ITexture* heightfieldTexture,
@@ -188,8 +188,8 @@ void TerrainSurfaceCache::get(
 	if (!m_resourceManager->bind(shader))
 		return;
 
-	worldRenderView->setShaderTechnique(shader);
-	worldRenderView->setShaderCombination(shader);
+	worldRenderPass.setShaderTechnique(shader);
+	worldRenderPass.setShaderCombination(shader);
 
 	// Create render block.
 	TerrainSurfaceRenderBlock* renderBlock = renderContext->alloc< TerrainSurfaceRenderBlock >();
@@ -204,7 +204,7 @@ void TerrainSurfaceCache::get(
 	renderBlock->programParams->beginParameters(renderContext);
 
 	shader->setProgramParameters(renderBlock->programParams);
-	worldRenderView->setProgramParameters(renderBlock->programParams);
+	worldRenderPass.setProgramParameters(renderBlock->programParams);
 
 	renderBlock->programParams->setTextureParameter(m_handleHeightfield, heightfieldTexture);
 	renderBlock->programParams->setFloatParameter(m_handleHeightfieldSize, float(heightfieldTexture->getWidth()));

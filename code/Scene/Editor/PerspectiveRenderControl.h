@@ -32,7 +32,7 @@ class PrimitiveRenderer;
 	namespace world
 	{
 
-class WorldRenderer;
+class IWorldRenderer;
 class PostProcess;
 class Entity;
 
@@ -68,7 +68,7 @@ private:
 	Ref< render::IRenderView > m_renderView;
 	Ref< render::RenderTargetSet > m_renderTarget;
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
-	Ref< world::WorldRenderer > m_worldRenderer;
+	Ref< world::IWorldRenderer > m_worldRenderer;
 	Ref< world::PostProcess > m_postProcess;
 	world::WorldRenderView m_worldRenderView;
 	bool m_gridEnable;

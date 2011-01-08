@@ -1,21 +1,21 @@
 #include <algorithm>
 #include <limits>
-#include "Weather/Clouds/CloudEntity.h"
-#include "Weather/Clouds/CloudMask.h"
-#include "World/WorldRenderer.h"
-#include "World/WorldRenderView.h"
-#include "World/Entity/EntityUpdate.h"
+#include "Core/Log/Log.h"
+#include "Core/Math/Matrix44.h"
+#include "Core/Math/Vector2.h"
+#include "Render/IndexBuffer.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Render/PrimitiveRenderer.h"
 #include "Render/RenderTargetSet.h"
-#include "Render/VertexElement.h"
 #include "Render/VertexBuffer.h"
-#include "Render/IndexBuffer.h"
+#include "Render/VertexElement.h"
 #include "Render/Context/RenderContext.h"
-#include "Core/Math/Vector2.h"
-#include "Core/Math/Matrix44.h"
-#include "Core/Log/Log.h"
+#include "Weather/Clouds/CloudEntity.h"
+#include "Weather/Clouds/CloudMask.h"
+#include "World/IWorldRenderPass.h"
+#include "World/WorldRenderView.h"
+#include "World/Entity/EntityUpdate.h"
 
 namespace traktor
 {
@@ -256,7 +256,12 @@ bool CloudEntity::create(
 	return true;
 }
 
-void CloudEntity::render(render::RenderContext* renderContext, const world::WorldRenderView* worldRenderView, render::PrimitiveRenderer* primitiveRenderer)
+void CloudEntity::render(
+	render::RenderContext* renderContext,
+	world::WorldRenderView& worldRenderView,
+	world::IWorldRenderPass& worldRenderPass,
+	render::PrimitiveRenderer* primitiveRenderer
+)
 {
 	// Ensure all proxies are validated.
 	if (!m_particleShader.validate() || !m_particleTexture.validate() || !m_impostorShader.validate())
@@ -265,7 +270,7 @@ void CloudEntity::render(render::RenderContext* renderContext, const world::Worl
 	// Validate optional mask.
 	m_mask.validate();
 
-	renderCluster(renderContext, worldRenderView, primitiveRenderer, m_cluster);
+	renderCluster(renderContext, worldRenderView, worldRenderPass, primitiveRenderer, m_cluster);
 }
 
 void CloudEntity::update(const world::EntityUpdate* update)
@@ -276,16 +281,17 @@ void CloudEntity::update(const world::EntityUpdate* update)
 
 void CloudEntity::renderCluster(
 	render::RenderContext* renderContext,
-	const world::WorldRenderView* worldRenderView,
+	world::WorldRenderView& worldRenderView,
+	world::IWorldRenderPass& worldRenderPass,
 	render::PrimitiveRenderer* primitiveRenderer,
 	const CloudParticleCluster& cluster
 )
 {
-	if (worldRenderView->getTechnique() != world::WorldRenderer::getTechniqueDefault())
+	if (worldRenderPass.getTechnique() != render::getParameterHandle(L"Default"))
 		return;
 
-	const Frustum& viewFrustum = worldRenderView->getViewFrustum();
-	const Matrix44& view = worldRenderView->getView();
+	const Frustum& viewFrustum = worldRenderView.getViewFrustum();
+	const Matrix44& view = worldRenderView.getView();
 
 	Matrix44 worldView = view * m_transform.toMatrix44();
 	Vector4 cameraDirection = worldView.inverse().axisZ();
@@ -515,7 +521,7 @@ void CloudEntity::renderCluster(
 		renderBlock->programParams->beginParameters(renderContext);
 
 		m_impostorShader->setProgramParameters(renderBlock->programParams);
-		worldRenderView->setProgramParameters(renderBlock->programParams, m_transform.toMatrix44(), clusterBoundingBox);
+		worldRenderPass.setProgramParameters(renderBlock->programParams, m_transform.toMatrix44(), clusterBoundingBox);
 
 		renderBlock->programParams->setMatrixParameter(L"View", billboardView);
 		renderBlock->programParams->setFloatParameter(L"SliceDistance", sliceDistance);

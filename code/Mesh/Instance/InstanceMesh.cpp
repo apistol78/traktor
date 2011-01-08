@@ -3,7 +3,7 @@
 #include "Mesh/Instance/InstanceMesh.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Mesh/Mesh.h"
-#include "World/WorldRenderView.h"
+#include "World/IWorldRenderPass.h"
 
 namespace traktor
 {
@@ -48,7 +48,11 @@ const Aabb& InstanceMesh::getBoundingBox() const
 	return m_mesh->getBoundingBox();
 }
 
-void InstanceMesh::render(render::RenderContext* renderContext, const world::WorldRenderView* worldRenderView, AlignedVector< instance_distance_t >& instanceWorld)
+void InstanceMesh::render(
+	render::RenderContext* renderContext,
+	const world::IWorldRenderPass& worldRenderPass,
+	AlignedVector< instance_distance_t >& instanceWorld
+)
 {
 	InstanceMeshData T_ALIGN16 instanceBatch[MaxInstanceCount];
 	bool haveAlphaBlend = false;
@@ -64,7 +68,7 @@ void InstanceMesh::render(render::RenderContext* renderContext, const world::Wor
 	if (!m_shader.validate())
 		return;
 
-	std::map< render::handle_t, std::vector< Part > >::const_iterator it = m_parts.find(worldRenderView->getTechnique());
+	std::map< render::handle_t, std::vector< Part > >::const_iterator it = m_parts.find(worldRenderPass.getTechnique());
 	if (it == m_parts.end())
 		return;
 
@@ -113,7 +117,7 @@ void InstanceMesh::render(render::RenderContext* renderContext, const world::Wor
 
 		m_shader->setTechnique(i->shaderTechnique);
 
-		worldRenderView->setShaderCombination(
+		worldRenderPass.setShaderCombination(
 			m_shader,
 			boundingBoxCenter,
 			boundingBoxWorld
@@ -145,7 +149,7 @@ void InstanceMesh::render(render::RenderContext* renderContext, const world::Wor
 
 			renderBlock->programParams->beginParameters(renderContext);
 			m_shader->setProgramParameters(renderBlock->programParams);
-			worldRenderView->setProgramParameters(
+			worldRenderPass.setProgramParameters(
 				renderBlock->programParams,
 				boundingBoxCenter,
 				boundingBoxWorld
@@ -175,7 +179,7 @@ void InstanceMesh::render(render::RenderContext* renderContext, const world::Wor
 
 			m_shader->setTechnique(i->shaderTechnique);
 
-			worldRenderView->setShaderCombination(
+			worldRenderPass.setShaderCombination(
 				m_shader,
 				boundingBoxCenter,
 				boundingBoxWorld
@@ -207,7 +211,7 @@ void InstanceMesh::render(render::RenderContext* renderContext, const world::Wor
 
 				renderBlock->programParams->beginParameters(renderContext);
 				m_shader->setProgramParameters(renderBlock->programParams);
-				worldRenderView->setProgramParameters(renderBlock->programParams);
+				worldRenderPass.setProgramParameters(renderBlock->programParams);
 				renderBlock->programParams->setVectorArrayParameter(
 					s_handleInstanceWorld,
 					reinterpret_cast< const Vector4* >(instanceBatch),

@@ -32,14 +32,19 @@ Aabb BlendMeshEntity::getBoundingBox() const
 	return validate() ? m_mesh->getBoundingBox() : Aabb();
 }
 
-void BlendMeshEntity::render(world::WorldContext* worldContext, world::WorldRenderView* worldRenderView, float distance)
+void BlendMeshEntity::render(
+	world::WorldContext& worldContext,
+	world::WorldRenderView& worldRenderView,
+	world::IWorldRenderPass& worldRenderPass,
+	float distance
+)
 {
 	if (!validate())
 		return;
 
 	m_mesh->render(
-		worldContext->getRenderContext(),
-		worldRenderView,
+		worldContext.getRenderContext(),
+		worldRenderPass,
 		m_transform,
 		m_instance,
 		m_blendWeights,

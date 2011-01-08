@@ -5497,6 +5497,33 @@
 									</item>
 								</items>
 							</item>
+							<item type="Filter">
+								<name>SMProj</name>
+								<items>
+									<item type="File">
+										<fileName>SMProj/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+							<item type="Filter">
+								<name>Forward</name>
+								<items>
+									<item type="File">
+										<fileName>Forward/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+							<item type="Filter">
+								<name>PreLit</name>
+								<items>
+									<item type="File">
+										<fileName>PreLit/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
 						</items>
 						<dependencies>
 							<item type="ProjectDependency" version="1">

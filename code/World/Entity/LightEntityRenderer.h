@@ -30,14 +30,16 @@ public:
 	virtual const TypeInfoSet getEntityTypes() const;
 
 	virtual void render(
-		WorldContext* worldContext,
-		WorldRenderView* worldRenderView,
+		WorldContext& worldContext,
+		WorldRenderView& worldRenderView,
+		IWorldRenderPass& worldRenderPass,
 		Entity* entity
 	);
 
 	virtual void flush(
-		WorldContext* worldContext,
-		WorldRenderView* worldRenderView
+		WorldContext& worldContext,
+		WorldRenderView& worldRenderView,
+		IWorldRenderPass& worldRenderPass
 	);
 
 private:

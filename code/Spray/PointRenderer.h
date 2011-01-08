@@ -36,7 +36,7 @@ class IndexBuffer;
 	namespace world
 	{
 
-class WorldRenderView;
+class IWorldRenderPass;
 
 	}
 
@@ -70,7 +70,7 @@ public:
 
 	void flush(
 		render::RenderContext* renderContext,
-		world::WorldRenderView* worldRenderView
+		world::IWorldRenderPass& worldRenderPass
 	);
 
 private:

@@ -1,5 +1,5 @@
-#include "World/UniformSMProj.h"
 #include "World/WorldRenderSettings.h"
+#include "World/SMProj/UniformSMProj.h"
 
 namespace traktor
 {

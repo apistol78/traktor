@@ -1,9 +1,8 @@
+#include "Render/Context/RenderContext.h"
 #include "World/WorldContext.h"
-#include "World/WorldRenderer.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/Entity/Entity.h"
 #include "World/Entity/IEntityRenderer.h"
-#include "Render/Context/RenderContext.h"
 
 namespace traktor
 {
@@ -12,16 +11,15 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.WorldContext", WorldContext, Object)
 
-WorldContext::WorldContext(WorldRenderer* worldRenderer, WorldEntityRenderers* entityRenderers)
-:	m_worldRenderer(worldRenderer)
-,	m_entityRenderers(entityRenderers)
+WorldContext::WorldContext(WorldEntityRenderers* entityRenderers)
+:	m_entityRenderers(entityRenderers)
 ,	m_renderContext(new render::RenderContext())
 ,	m_lastEntityType(0)
 ,	m_lastEntityRenderer(0)
 {
 }
 
-void WorldContext::build(WorldRenderView* worldRenderView, Entity* entity)
+void WorldContext::build(WorldRenderView& worldRenderView, IWorldRenderPass& worldRenderPass, Entity* entity)
 {
 	if (!entity)
 		return;
@@ -44,15 +42,15 @@ void WorldContext::build(WorldRenderView* worldRenderView, Entity* entity)
 	}
 
 	if (entityRenderer)
-		entityRenderer->render(this, worldRenderView, entity);
+		entityRenderer->render(*this, worldRenderView, worldRenderPass, entity);
 }
 
-void WorldContext::flush(WorldRenderView* worldRenderView)
+void WorldContext::flush(WorldRenderView& worldRenderView, IWorldRenderPass& worldRenderPass)
 {
 	T_ASSERT (m_entityRenderers);
 	const RefArray< IEntityRenderer >& entityRenderers = m_entityRenderers->get();
 	for (RefArray< IEntityRenderer >::const_iterator i = entityRenderers.begin(); i != entityRenderers.end(); ++i)
-		(*i)->flush(this, worldRenderView);
+		(*i)->flush(*this, worldRenderView, worldRenderPass);
 }
 
 	}

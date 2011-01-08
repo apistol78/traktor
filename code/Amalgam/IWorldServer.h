@@ -17,8 +17,8 @@ namespace traktor
 	{
 
 class IEntityBuilder;
+class IWorldRenderer;
 class WorldEntityRenderers;
-class WorldRenderer;
 class WorldRenderSettings;
 
 	}
@@ -37,7 +37,7 @@ class T_DLLCLASS IWorldServer : public IServer
 public:
 	virtual world::IEntityBuilder* getEntityBuilder() = 0;
 
-	virtual Ref< world::WorldRenderer > createWorldRenderer(
+	virtual Ref< world::IWorldRenderer > createWorldRenderer(
 		const world::WorldRenderSettings* worldRenderSettings,
 		const world::WorldEntityRenderers* entityRenderers
 	) = 0;
