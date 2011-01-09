@@ -110,6 +110,8 @@ Ref< world::IWorldRenderer > WorldServer::createWorldRenderer(
 	const world::WorldEntityRenderers* entityRenderers
 )
 {
+	T_ASSERT (worldRenderSettings);
+
 	Ref< world::WorldEntityRenderers > worldEntityRenderers = new world::WorldEntityRenderers();
 
 	worldEntityRenderers->add(new world::GroupEntityRenderer());
@@ -132,7 +134,7 @@ Ref< world::IWorldRenderer > WorldServer::createWorldRenderer(
 
 	Ref< world::WorldRendererForward > worldRenderer = new world::WorldRendererForward();
 	if (!worldRenderer->create(
-		worldRenderSettings,
+		*worldRenderSettings,
 		worldEntityRenderers,
 		m_resourceServer->getResourceManager(),
 		m_renderServer->getRenderSystem(),

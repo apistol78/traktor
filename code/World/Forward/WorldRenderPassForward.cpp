@@ -12,6 +12,8 @@ namespace traktor
 		namespace
 		{
 
+enum { MaxLightCount = 2 };
+
 bool s_handlesInitialized = false;
 render::handle_t s_handleDefaultTechnique;
 render::handle_t s_handleProjection;
@@ -182,13 +184,14 @@ void WorldRenderPassForward::setWorldProgramParameters(render::ProgramParameters
 void WorldRenderPassForward::setLightProgramParameters(render::ProgramParameters* programParams) const
 {
 	// Pack light parameters.
-	Vector4 lightPositionAndType[WorldRenderView::MaxLightCount], *lightPositionAndTypePtr = lightPositionAndType;
-	Vector4 lightDirectionAndRange[WorldRenderView::MaxLightCount], *lightDirectionAndRangePtr = lightDirectionAndRange;
-	Vector4 lightSunColor[WorldRenderView::MaxLightCount], *lightSunColorPtr = lightSunColor;
-	Vector4 lightBaseColor[WorldRenderView::MaxLightCount], *lightBaseColorPtr = lightBaseColor;
-	Vector4 lightShadowColor[WorldRenderView::MaxLightCount], *lightShadowColorPtr = lightShadowColor;
+	Vector4 lightPositionAndType[MaxLightCount], *lightPositionAndTypePtr = lightPositionAndType;
+	Vector4 lightDirectionAndRange[MaxLightCount], *lightDirectionAndRangePtr = lightDirectionAndRange;
+	Vector4 lightSunColor[MaxLightCount], *lightSunColorPtr = lightSunColor;
+	Vector4 lightBaseColor[MaxLightCount], *lightBaseColorPtr = lightBaseColor;
+	Vector4 lightShadowColor[MaxLightCount], *lightShadowColorPtr = lightShadowColor;
 
-	for (int i = 0; i < m_worldRenderView.getLightCount(); ++i)
+	int lightCount = std::min< int >(m_worldRenderView.getLightCount(), MaxLightCount);
+	for (int i = 0; i < lightCount; ++i)
 	{
 		const WorldRenderView::Light& light = m_worldRenderView.getLight(i);
 		*lightPositionAndTypePtr++ = light.position.xyz0() + Vector4(0.0f, 0.0f, 0.0f, float(light.type));
@@ -199,7 +202,7 @@ void WorldRenderPassForward::setLightProgramParameters(render::ProgramParameters
 	}
 
 	// Disable excessive lights.
-	for (int i = m_worldRenderView.getLightCount(); i < WorldRenderView::MaxLightCount; ++i)
+	for (int i = lightCount; i < MaxLightCount; ++i)
 	{
 		const static Vector4 c_typeDisabled(0.0f, 0.0f, 0.0f, float(WorldRenderView::LtDisabled));
 		*lightPositionAndTypePtr++ = c_typeDisabled;
@@ -210,22 +213,23 @@ void WorldRenderPassForward::setLightProgramParameters(render::ProgramParameters
 	}
 
 	// Finally set shader parameters.
-	programParams->setVectorArrayParameter(s_handleLightPositionAndType, lightPositionAndType, WorldRenderView::MaxLightCount);
-	programParams->setVectorArrayParameter(s_handleLightDirectionAndRange, lightDirectionAndRange, WorldRenderView::MaxLightCount);
-	programParams->setVectorArrayParameter(s_handleLightSunColor, lightSunColor, WorldRenderView::MaxLightCount);
-	programParams->setVectorArrayParameter(s_handleLightBaseColor, lightBaseColor, WorldRenderView::MaxLightCount);
-	programParams->setVectorArrayParameter(s_handleLightShadowColor, lightShadowColor, WorldRenderView::MaxLightCount);
+	programParams->setVectorArrayParameter(s_handleLightPositionAndType, lightPositionAndType, MaxLightCount);
+	programParams->setVectorArrayParameter(s_handleLightDirectionAndRange, lightDirectionAndRange, MaxLightCount);
+	programParams->setVectorArrayParameter(s_handleLightSunColor, lightSunColor, MaxLightCount);
+	programParams->setVectorArrayParameter(s_handleLightBaseColor, lightBaseColor, MaxLightCount);
+	programParams->setVectorArrayParameter(s_handleLightShadowColor, lightShadowColor, MaxLightCount);
 }
 
 void WorldRenderPassForward::setLightProgramParameters(render::ProgramParameters* programParams, const Matrix44& world, const Aabb& bounds) const
 {
-	const WorldRenderView::Light* lightDirectional[WorldRenderView::MaxLightCount]; int lightDirectionalCount = 0;
-	const WorldRenderView::Light* lightPoint[WorldRenderView::MaxLightCount]; int lightPointCount = 0;
+	const WorldRenderView::Light* lightDirectional[MaxLightCount]; int lightDirectionalCount = 0;
+	const WorldRenderView::Light* lightPoint[MaxLightCount]; int lightPointCount = 0;
 
 	Scalar radius = bounds.empty() ? Scalar(0.0f) : bounds.getExtent().length();
 
 	// Collect lights affecting entity.
-	for (int i = 0; i < m_worldRenderView.getLightCount(); ++i)
+	int lightCount = std::min< int >(m_worldRenderView.getLightCount(), MaxLightCount);
+	for (int i = 0; i < lightCount; ++i)
 	{
 		const WorldRenderView::Light& light = m_worldRenderView.getLight(i);
 		if (light.type == WorldRenderView::LtDirectional)
@@ -241,11 +245,11 @@ void WorldRenderPassForward::setLightProgramParameters(render::ProgramParameters
 	}
 
 	// Pack light parameters.
-	Vector4 lightPositionAndType[WorldRenderView::MaxLightCount], *lightPositionAndTypePtr = lightPositionAndType;
-	Vector4 lightDirectionAndRange[WorldRenderView::MaxLightCount], *lightDirectionAndRangePtr = lightDirectionAndRange;
-	Vector4 lightSunColor[WorldRenderView::MaxLightCount], *lightSunColorPtr = lightSunColor;
-	Vector4 lightBaseColor[WorldRenderView::MaxLightCount], *lightBaseColorPtr = lightBaseColor;
-	Vector4 lightShadowColor[WorldRenderView::MaxLightCount], *lightShadowColorPtr = lightShadowColor;
+	Vector4 lightPositionAndType[MaxLightCount], *lightPositionAndTypePtr = lightPositionAndType;
+	Vector4 lightDirectionAndRange[MaxLightCount], *lightDirectionAndRangePtr = lightDirectionAndRange;
+	Vector4 lightSunColor[MaxLightCount], *lightSunColorPtr = lightSunColor;
+	Vector4 lightBaseColor[MaxLightCount], *lightBaseColorPtr = lightBaseColor;
+	Vector4 lightShadowColor[MaxLightCount], *lightShadowColorPtr = lightShadowColor;
 
 	for (int i = 0; i < lightDirectionalCount; ++i)
 	{
@@ -267,7 +271,7 @@ void WorldRenderPassForward::setLightProgramParameters(render::ProgramParameters
 	}
 
 	// Disable excessive lights.
-	for (int i = lightDirectionalCount + lightPointCount; i < WorldRenderView::MaxLightCount; ++i)
+	for (int i = lightDirectionalCount + lightPointCount; i < MaxLightCount; ++i)
 	{
 		const static Vector4 c_typeDisabled(0.0f, 0.0f, 0.0f, float(WorldRenderView::LtDisabled));
 		*lightPositionAndTypePtr++ = c_typeDisabled;
@@ -278,11 +282,11 @@ void WorldRenderPassForward::setLightProgramParameters(render::ProgramParameters
 	}
 
 	// Finally set shader parameters.
-	programParams->setVectorArrayParameter(s_handleLightPositionAndType, lightPositionAndType, WorldRenderView::MaxLightCount);
-	programParams->setVectorArrayParameter(s_handleLightDirectionAndRange, lightDirectionAndRange, WorldRenderView::MaxLightCount);
-	programParams->setVectorArrayParameter(s_handleLightSunColor, lightSunColor, WorldRenderView::MaxLightCount);
-	programParams->setVectorArrayParameter(s_handleLightBaseColor, lightBaseColor, WorldRenderView::MaxLightCount);
-	programParams->setVectorArrayParameter(s_handleLightShadowColor, lightShadowColor, WorldRenderView::MaxLightCount);
+	programParams->setVectorArrayParameter(s_handleLightPositionAndType, lightPositionAndType, MaxLightCount);
+	programParams->setVectorArrayParameter(s_handleLightDirectionAndRange, lightDirectionAndRange, MaxLightCount);
+	programParams->setVectorArrayParameter(s_handleLightSunColor, lightSunColor, MaxLightCount);
+	programParams->setVectorArrayParameter(s_handleLightBaseColor, lightBaseColor, MaxLightCount);
+	programParams->setVectorArrayParameter(s_handleLightShadowColor, lightShadowColor, MaxLightCount);
 }
 
 void WorldRenderPassForward::setShadowMapProgramParameters(render::ProgramParameters* programParams) const

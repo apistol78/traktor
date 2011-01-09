@@ -41,7 +41,7 @@ const static float c_screenPlaneDistance = 13.0f;
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.world.WorldRendererForward", WorldRendererForward, IWorldRenderer)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRendererForward", 0, WorldRendererForward, IWorldRenderer)
 
 render::handle_t WorldRendererForward::ms_techniqueDefault = 0;
 render::handle_t WorldRendererForward::ms_techniqueDepth = 0;
@@ -58,19 +58,18 @@ WorldRendererForward::WorldRendererForward()
 }
 
 bool WorldRendererForward::create(
-	const WorldRenderSettings* settings,
+	const WorldRenderSettings& settings,
 	WorldEntityRenderers* entityRenderers,
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem,
 	render::IRenderView* renderView,
-	int multiSample,
-	int frameCount
+	uint32_t multiSample,
+	uint32_t frameCount
 )
 {
-	T_ASSERT_M (settings, L"No world renderer settings");
 	T_ASSERT_M (renderView, L"Render view required");
 
-	m_settings = *settings;
+	m_settings = settings;
 	m_renderView = renderView;
 	m_frames.resize(frameCount);
 
@@ -252,9 +251,6 @@ void WorldRendererForward::destroy()
 		i->depth = 0;
 	}
 
-	for (int i = 0; i < sizeof_array(m_shadowDiscRotation); ++i)
-		safeDestroy(m_shadowDiscRotation[i]);
-
 	safeDestroy(m_shadowMaskProjection);
 	safeDestroy(m_shadowMaskTargetSet);
 	safeDestroy(m_shadowTargetSet);
@@ -306,15 +302,18 @@ void WorldRendererForward::build(WorldRenderView& worldRenderView, Entity* entit
 
 	if (m_settings.depthPassEnabled || m_settings.shadowsEnabled)
 	{
+		f.depthRenderView = worldRenderView;
+		f.depthRenderView.resetLights();
+
 		WorldRenderPassForward pass(
 			ms_techniqueDepth,
-			worldRenderView,
+			f.depthRenderView,
 			m_settings.depthRange,
 			0,
 			0
 		);
-		f.depth->build(worldRenderView, pass, entity);
-		f.depth->flush(worldRenderView, pass);
+		f.depth->build(f.depthRenderView, pass, entity);
+		f.depth->flush(f.depthRenderView, pass);
 
 		f.haveDepth = true;
 	}
@@ -441,6 +440,14 @@ void WorldRendererForward::render(uint32_t flags, int frame, render::EyeType eye
 	}
 
 	m_globalContext->flush();
+}
+
+void WorldRendererForward::getTargets(RefArray< render::ITexture >& outTargets) const
+{
+	outTargets.resize(3);
+	outTargets[0] = m_depthTargetSet ? m_depthTargetSet->getColorTexture(0) : 0;
+	outTargets[1] = m_shadowTargetSet ? m_shadowTargetSet->getColorTexture(0) : 0;
+	outTargets[2] = m_shadowMaskTargetSet ? m_shadowMaskTargetSet->getColorTexture(0) : 0;
 }
 
 void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, Entity* entity, int frame)

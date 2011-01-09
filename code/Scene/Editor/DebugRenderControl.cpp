@@ -127,8 +127,8 @@ void DebugRenderControl::eventPaint(ui::Event* event)
 		if (ratio < 1.0f)
 		{
 			projection = orthoLh(
-				4.0f,
-				4.0f / ratio,
+				4.1f,
+				4.1f / ratio,
 				-1.0f,
 				1.0f
 			);
@@ -136,8 +136,8 @@ void DebugRenderControl::eventPaint(ui::Event* event)
 		else
 		{
 			projection = orthoLh(
-				4.0f * ratio,
-				4.0f,
+				4.1f * ratio,
+				4.1f,
 				-1.0f,
 				1.0f
 			);
@@ -149,25 +149,26 @@ void DebugRenderControl::eventPaint(ui::Event* event)
 		m_primitiveRenderer->pushView(Matrix44::identity());
 		m_primitiveRenderer->pushDepthEnable(false);
 
-		for (uint32_t i = 0; i < 2; ++i)
+		for (uint32_t i = 0; i < 4; ++i)
 		{
-			float ox = float(i * 2) - 1.0f;
+			float ox = float((i % 2) * 2) - 1.0f;
+			float oy = 1.0f - float((i / 2) * 2);
 
 			m_primitiveRenderer->drawWireQuad(
-				Vector4(-1.0f + ox,  1.0f, 0.0f, 1.0f),
-				Vector4( 1.0f + ox,  1.0f, 0.0f, 1.0f),
-				Vector4( 1.0f + ox, -1.0f, 0.0f, 1.0f),
-				Vector4(-1.0f + ox, -1.0f, 0.0f, 1.0f),
+				Vector4(-1.0f + ox,  1.0f + oy, 0.0f, 1.0f),
+				Vector4( 1.0f + ox,  1.0f + oy, 0.0f, 1.0f),
+				Vector4( 1.0f + ox, -1.0f + oy, 0.0f, 1.0f),
+				Vector4(-1.0f + ox, -1.0f + oy, 0.0f, 1.0f),
 				Color4ub(0, 0, 0)
 			);
 
 			if (m_context->getDebugTexture(i))
 			{
 				m_primitiveRenderer->drawTextureQuad(
-					Vector4(-1.0f + ox,  1.0f, 0.0f, 1.0f), Vector2(0.0f, 0.0f),
-					Vector4( 1.0f + ox,  1.0f, 0.0f, 1.0f), Vector2(1.0f, 0.0f),
-					Vector4( 1.0f + ox, -1.0f, 0.0f, 1.0f), Vector2(1.0f, 1.0f),
-					Vector4(-1.0f + ox, -1.0f, 0.0f, 1.0f), Vector2(0.0f, 1.0f),
+					Vector4(-1.0f + ox,  1.0f + oy, 0.0f, 1.0f), Vector2(0.0f, 0.0f),
+					Vector4( 1.0f + ox,  1.0f + oy, 0.0f, 1.0f), Vector2(1.0f, 0.0f),
+					Vector4( 1.0f + ox, -1.0f + oy, 0.0f, 1.0f), Vector2(1.0f, 1.0f),
+					Vector4(-1.0f + ox, -1.0f + oy, 0.0f, 1.0f), Vector2(0.0f, 1.0f),
 					Color4ub(255, 255, 255),
 					m_context->getDebugTexture(i)
 				);

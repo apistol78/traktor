@@ -66,11 +66,11 @@ private:
 
 	void setLightProgramParameters(render::ProgramParameters* programParams) const;
 
-	void setLightProgramParameters(render::ProgramParameters* programParams, const Matrix44& world, const Aabb& bounds) const;
-
 	void setShadowMapProgramParameters(render::ProgramParameters* programParams) const;
 
 	void setDepthMapProgramParameters(render::ProgramParameters* programParams) const;
+
+	void setLightMapProgramParameters(render::ProgramParameters* programParams) const;
 };
 	
 	}

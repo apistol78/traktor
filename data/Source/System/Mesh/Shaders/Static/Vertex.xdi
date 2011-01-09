@@ -96,7 +96,7 @@
 				<first>883</first>
 				<second>141</second>
 			</position>
-			<technique>Default</technique>
+			<technique/>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>

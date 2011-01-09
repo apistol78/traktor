@@ -3,6 +3,7 @@
 #include "Core/Settings/PropertyColor.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
+#include "Core/Settings/PropertyString.h"
 #include "Core/Settings/Settings.h"
 #include "Database/Database.h"
 #include "Editor/IEditor.h"
@@ -27,9 +28,10 @@
 #include "Ui/Events/MouseEvent.h"
 #include "Ui/Events/KeyEvent.h"
 #include "Ui/Itf/IWidget.h"
+#include "World/IWorldRenderer.h"
 #include "World/WorldEntityRenderers.h"
+#include "World/WorldRenderSettings.h"
 #include "World/WorldRenderView.h"
-#include "World/Forward/WorldRendererForward.h"
 
 namespace traktor
 {
@@ -175,19 +177,24 @@ void OrthogonalRenderControl::updateWorldRenderer()
 	wrs.velocityPassEnable = false;
 	wrs.shadowsEnabled = false;
 
-	Ref< world::WorldRendererForward > worldRenderer = new world::WorldRendererForward();
-	if (worldRenderer->create(
-		&wrs,
-		worldEntityRenderers,
-		m_context->getResourceManager(),
-		m_context->getRenderSystem(),
-		m_renderView,
-		m_multiSample,
-		1
-	))
-		m_worldRenderer = worldRenderer;
-	else
-		m_worldRenderer = 0;
+	std::wstring worldRendererTypeName = m_context->getEditor()->getSettings()->getProperty< PropertyString >(L"Editor.WorldRenderer");
+	const TypeInfo* worldRendererType = TypeInfo::find(worldRendererTypeName);
+	if (worldRendererType)
+	{
+		Ref< world::IWorldRenderer > worldRenderer = checked_type_cast< world::IWorldRenderer* >(worldRendererType->createInstance());
+		T_ASSERT (worldRenderer);
+
+		if (worldRenderer->create(
+			wrs,
+			worldEntityRenderers,
+			m_context->getResourceManager(),
+			m_context->getRenderSystem(),
+			m_renderView,
+			m_multiSample,
+			1
+		))
+			m_worldRenderer = worldRenderer;
+	}
 
 	m_viewFarZ = wrs.viewFarZ;
 }

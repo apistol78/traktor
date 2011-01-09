@@ -41,7 +41,7 @@ const static float c_screenPlaneDistance = 13.0f;
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.world.WorldRendererPreLit", WorldRendererPreLit, IWorldRenderer)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRendererPreLit", 0, WorldRendererPreLit, IWorldRenderer)
 
 render::handle_t WorldRendererPreLit::ms_techniqueDefault = 0;
 render::handle_t WorldRendererPreLit::ms_techniqueLight = 0;
@@ -52,26 +52,29 @@ render::handle_t WorldRendererPreLit::ms_handleProjection = 0;
 WorldRendererPreLit::WorldRendererPreLit()
 :	m_count(0)
 {
+	// Techniques
 	ms_techniqueDefault = render::getParameterHandle(L"Default");
+	ms_techniqueLight = render::getParameterHandle(L"Light");
 	ms_techniqueDepth = render::getParameterHandle(L"Depth");
 	ms_techniqueShadow = render::getParameterHandle(L"Shadow");
+
+	// Global parameters.
 	ms_handleProjection = render::getParameterHandle(L"Projection");
 }
 
 bool WorldRendererPreLit::create(
-	const WorldRenderSettings* settings,
+	const WorldRenderSettings& settings,
 	WorldEntityRenderers* entityRenderers,
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem,
 	render::IRenderView* renderView,
-	int multiSample,
-	int frameCount
+	uint32_t multiSample,
+	uint32_t frameCount
 )
 {
-	T_ASSERT_M (settings, L"No world renderer settings");
 	T_ASSERT_M (renderView, L"Render view required");
 
-	m_settings = *settings;
+	m_settings = settings;
 	m_renderView = renderView;
 	m_frames.resize(frameCount);
 
@@ -285,9 +288,6 @@ void WorldRendererPreLit::destroy()
 		i->depth = 0;
 	}
 
-	for (int i = 0; i < sizeof_array(m_shadowDiscRotation); ++i)
-		safeDestroy(m_shadowDiscRotation[i]);
-
 	safeDestroy(m_shadowMaskProjection);
 	safeDestroy(m_shadowMaskTargetSet);
 	safeDestroy(m_shadowTargetSet);
@@ -329,32 +329,37 @@ void WorldRendererPreLit::build(WorldRenderView& worldRenderView, Entity* entity
 {
 	Frame& f = m_frames[frame];
 
+	// Flush previous frame.
 	if (f.haveDepth)
 		f.depth->getRenderContext()->flush();
 
-	if (f.haveShadows)
+	for (uint32_t i = 0; i < f.lightCount; ++i)
 	{
-		for (uint32_t i = 0; i < WorldRenderView::MaxLightCount; ++i)
+		if (f.haveShadows[i])
 			f.shadow[i]->getRenderContext()->flush();
 	}
 
-	for (uint32_t i = 0; i < WorldRenderView::MaxLightCount; ++i)
+	for (uint32_t i = 0; i < f.lightCount; ++i)
 		f.light[i]->getRenderContext()->flush();
 
 	f.visual->getRenderContext()->flush();
 
+	// Build this frame's render contexts.
 	if (m_settings.depthPassEnabled || m_settings.shadowsEnabled)
 	{
+		WorldRenderView depthRenderView = worldRenderView;
+		depthRenderView.resetLights();
+
 		WorldRenderPassPreLit depthPass(
 			ms_techniqueDepth,
-			worldRenderView,
+			depthRenderView,
 			m_settings.depthRange,
 			0,
 			0,
 			0
 		);
-		f.depth->build(worldRenderView, depthPass, entity);
-		f.depth->flush(worldRenderView, depthPass);
+		f.depth->build(depthRenderView, depthPass, entity);
+		f.depth->flush(depthRenderView, depthPass);
 
 		f.haveDepth = true;
 	}
@@ -402,23 +407,6 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 	programParams.setMatrixParameter(ms_handleProjection, projection);
 	programParams.endParameters(m_globalContext);
 
-	//// Render shadow map.
-	//if (eye == render::EtCyclop || eye == render::EtLeft)
-	//{
-	//	if ((flags & WrfShadowMap) != 0 && f.haveShadows)
-	//	{
-	//		T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow map");
-	//		if (m_renderView->begin(m_shadowTargetSet, 0))
-	//		{
-	//			const float shadowClear[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-	//			m_renderView->clear(render::CfColor | render::CfDepth, shadowClear, 1.0f, 0);
-	//			f.shadow->getRenderContext()->render(m_renderView, render::RfOpaque, 0);
-	//			m_renderView->end();
-	//		}
-	//		T_RENDER_POP_MARKER(m_renderView);
-	//	}
-	//}
-
 	// Render depth map; use as z-prepass if able to share depth buffer with primary.
 	if ((flags & WrfDepthMap) != 0 && f.haveDepth)
 	{
@@ -439,33 +427,76 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 		m_renderView->clear(render::CfDepth, nullColor, 1.0f, 0);
 	}
 
-	// Render shadow mask.
-	//if ((flags & WrfShadowMap) != 0 && f.haveShadows)
-	//{
-	//	T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow mask");
-	//	if (m_renderView->begin(m_shadowMaskTargetSet, 0))
-	//	{
-	//		PostProcessStep::Instance::RenderParams params;
+	// Render light map.
+	if (f.lightCount > 0)
+	{
+		for (uint32_t i = 0; i < f.lightCount; ++i)
+		{
+			// Render shadow mask.
+			if ((flags & WrfShadowMap) != 0 && f.haveShadows[i])
+			{
+				T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow map");
+				if (m_renderView->begin(m_shadowTargetSet, 0))
+				{
+					const float shadowClear[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+					m_renderView->clear(render::CfColor | render::CfDepth, shadowClear, 1.0f, 0);
+					f.shadow[i]->getRenderContext()->render(m_renderView, render::RfOpaque, 0);
+					m_renderView->end();
+				}
+				T_RENDER_POP_MARKER(m_renderView);
 
-	//		params.viewFrustum = f.viewFrustum;
-	//		params.viewToLight = f.viewToLightSpace;
-	//		params.projection = projection;
-	//		params.depthRange = m_settings.depthRange;
-	//		params.shadowFarZ = m_settings.shadowFarZ;
-	//		params.shadowMapBias = m_settings.shadowMapBias;
-	//		params.deltaTime = 0.0f;
+				T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow mask");
+				if (m_renderView->begin(m_shadowMaskTargetSet, 0))
+				{
+					PostProcessStep::Instance::RenderParams params;
 
-	//		m_shadowMaskProjection->render(
-	//			m_renderView,
-	//			m_shadowTargetSet,
-	//			m_depthTargetSet,
-	//			0,
-	//			params
-	//		);
-	//		m_renderView->end();
-	//	}
-	//	T_RENDER_POP_MARKER(m_renderView);
-	//}
+					params.viewFrustum = f.viewFrustum;
+					params.viewToLight = f.viewToLightSpace[i];
+					params.projection = projection;
+					params.depthRange = m_settings.depthRange;
+					params.shadowFarZ = m_settings.shadowFarZ;
+					params.shadowMapBias = m_settings.shadowMapBias;
+					params.deltaTime = 0.0f;
+
+					m_shadowMaskProjection->render(
+						m_renderView,
+						m_shadowTargetSet,
+						m_depthTargetSet,
+						0,
+						params
+					);
+					m_renderView->end();
+				}
+				T_RENDER_POP_MARKER(m_renderView);
+			}
+
+			// Render light.
+			T_RENDER_PUSH_MARKER(m_renderView, "World: Light map");
+			if (m_renderView->begin(m_lightTargetSet, 0))
+			{
+				if (i == 0)
+				{
+					const float lightClear[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+					m_renderView->clear(render::CfColor, lightClear, 0.0f, 0);
+				}
+				f.light[i]->getRenderContext()->render(m_renderView, render::RfOpaque | render::RfAlphaBlend, 0);
+				m_renderView->end();
+			}
+			T_RENDER_POP_MARKER(m_renderView);
+		}
+	}
+	else
+	{
+		// No active lights; ensure light map is cleared.
+		T_RENDER_PUSH_MARKER(m_renderView, "World: Light map");
+		if (m_renderView->begin(m_lightTargetSet, 0))
+		{
+			const float lightClear[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+			m_renderView->clear(render::CfColor, lightClear, 0.0f, 0);
+			m_renderView->end();
+		}
+		T_RENDER_POP_MARKER(m_renderView);
+	}
 
 	// Render visuals.
 	if ((flags & (WrfVisualOpaque | WrfVisualAlphaBlend)) != 0)
@@ -485,6 +516,15 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 	m_globalContext->flush();
 }
 
+void WorldRendererPreLit::getTargets(RefArray< render::ITexture >& outTargets) const
+{
+	outTargets.resize(4);
+	outTargets[0] = m_depthTargetSet ? m_depthTargetSet->getColorTexture(0) : 0;
+	outTargets[1] = m_shadowTargetSet ? m_shadowTargetSet->getColorTexture(0) : 0;
+	outTargets[2] = m_shadowMaskTargetSet ? m_shadowMaskTargetSet->getColorTexture(0) : 0;
+	outTargets[3] = m_lightTargetSet ? m_lightTargetSet->getColorTexture(0) : 0;
+}
+
 void WorldRendererPreLit::buildLightWithShadows(WorldRenderView& worldRenderView, Entity* entity, int frame)
 {
 	Frame& f = m_frames[frame];
@@ -494,7 +534,7 @@ void WorldRendererPreLit::buildLightWithShadows(WorldRenderView& worldRenderView
 	Aabb shadowBox = worldRenderView.getShadowBox();
 	Vector4 eyePosition = viewInverse.translation();
 
-	for (int32_t i = 0; i < WorldRenderView::MaxLightCount; ++i)
+	for (int32_t i = 0; i < worldRenderView.getLightCount(); ++i)
 	{
 		const WorldRenderView::Light& light = worldRenderView.getLight(i);
 		if (light.type == WorldRenderView::LtDirectional)
@@ -585,7 +625,11 @@ void WorldRendererPreLit::buildLightWithShadows(WorldRenderView& worldRenderView
 			);
 			f.shadow[i]->build(shadowRenderView, shadowPass, entity);
 			f.shadow[i]->flush(shadowRenderView, shadowPass);
+
+			f.haveShadows[i] = true;
 		}
+		else
+			f.haveShadows[i] = false;
 
 		// Render lighting.
 		WorldRenderView lightRenderView = worldRenderView;
@@ -597,12 +641,14 @@ void WorldRendererPreLit::buildLightWithShadows(WorldRenderView& worldRenderView
 			lightRenderView,
 			m_settings.depthRange,
 			m_depthTargetSet->getColorTexture(0),
-			m_shadowMaskTargetSet->getColorTexture(0),
+			f.haveShadows[i] ? m_shadowMaskTargetSet->getColorTexture(0) : 0,
 			0
 		);
 		f.light[i]->build(lightRenderView, lightPass, entity);
 		f.light[i]->flush(lightRenderView, lightPass);
 	}
+
+	f.lightCount = worldRenderView.getLightCount();
 }
 
 void WorldRendererPreLit::buildLightWithNoShadows(WorldRenderView& worldRenderView, Entity* entity, int frame)
@@ -614,7 +660,7 @@ void WorldRendererPreLit::buildLightWithNoShadows(WorldRenderView& worldRenderVi
 	Aabb shadowBox = worldRenderView.getShadowBox();
 	Vector4 eyePosition = viewInverse.translation();
 
-	for (int32_t i = 0; i < WorldRenderView::MaxLightCount; ++i)
+	for (int32_t i = 0; i < worldRenderView.getLightCount(); ++i)
 	{
 		const WorldRenderView::Light& light = worldRenderView.getLight(i);
 
@@ -633,6 +679,8 @@ void WorldRendererPreLit::buildLightWithNoShadows(WorldRenderView& worldRenderVi
 		f.light[i]->build(lightRenderView, lightPass, entity);
 		f.light[i]->flush(lightRenderView, lightPass);
 	}
+
+	f.lightCount = worldRenderView.getLightCount();
 }
 
 void WorldRendererPreLit::buildVisual(WorldRenderView& worldRenderView, Entity* entity, int frame)
