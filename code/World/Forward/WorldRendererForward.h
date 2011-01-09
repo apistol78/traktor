@@ -57,14 +57,14 @@ class T_DLLCLASS WorldRendererForward : public IWorldRenderer
 public:
 	WorldRendererForward();
 
-	bool create(
-		const WorldRenderSettings* settings,
+	virtual bool create(
+		const WorldRenderSettings& settings,
 		WorldEntityRenderers* entityRenderers,
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
 		render::IRenderView* renderView,
-		int multiSample,
-		int frameCount
+		uint32_t multiSample,
+		uint32_t frameCount
 	);
 
 	virtual void destroy();
@@ -77,17 +77,7 @@ public:
 
 	virtual void render(uint32_t flags, int frame, render::EyeType eye);
 
-	render::RenderTargetSet* getDepthTargetSet() const {
-		return m_depthTargetSet;
-	}
-
-	render::RenderTargetSet* getShadowTargetSet() const {
-		return m_shadowTargetSet;
-	}
-
-	render::RenderTargetSet* getShadowMaskTargetSet() const {
-		return m_shadowMaskTargetSet;
-	}
+	virtual void getTargets(RefArray< render::ITexture >& outTargets) const;
 
 private:
 	struct Frame
@@ -95,6 +85,7 @@ private:
 		Ref< WorldContext > depth;
 		Ref< WorldContext > shadow;
 		Ref< WorldContext > visual;
+		WorldRenderView depthRenderView;
 		WorldRenderView shadowRenderView;
 		Matrix44 projection;
 		Matrix44 viewToLightSpace;
@@ -120,7 +111,6 @@ private:
 	Ref< render::RenderTargetSet > m_depthTargetSet;
 	Ref< render::RenderTargetSet > m_shadowTargetSet;
 	Ref< render::RenderTargetSet > m_shadowMaskTargetSet;
-	Ref< render::ISimpleTexture > m_shadowDiscRotation[2];
 	Ref< render::RenderContext > m_globalContext;
 	Ref< PostProcess > m_shadowMaskProjection;
 	AlignedVector< Frame > m_frames;

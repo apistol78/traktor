@@ -31,7 +31,7 @@ class T_DLLCLASS WorldRenderView : public Object
 	T_RTTI_CLASS;
 	
 public:
-	enum { MaxLightCount = 2 };
+	enum { MaxLightCount = 16 };
 
 	enum LightType
 	{

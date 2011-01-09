@@ -30,7 +30,6 @@ class RenderTargetSet;
 
 class PostProcess;
 class WorldContext;
-class WorldEntityRenderers;
 
 /*! \brief World renderer (P)re-(L)ighting implementation.
  * \ingroup World
@@ -61,14 +60,14 @@ class T_DLLCLASS WorldRendererPreLit : public IWorldRenderer
 public:
 	WorldRendererPreLit();
 
-	bool create(
-		const WorldRenderSettings* settings,
+	virtual bool create(
+		const WorldRenderSettings& settings,
 		WorldEntityRenderers* entityRenderers,
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
 		render::IRenderView* renderView,
-		int multiSample,
-		int frameCount
+		uint32_t multiSample,
+		uint32_t frameCount
 	);
 
 	virtual void destroy();
@@ -81,21 +80,7 @@ public:
 
 	virtual void render(uint32_t flags, int frame, render::EyeType eye);
 
-	render::RenderTargetSet* getDepthTargetSet() const {
-		return m_depthTargetSet;
-	}
-
-	render::RenderTargetSet* getShadowTargetSet() const {
-		return m_shadowTargetSet;
-	}
-
-	render::RenderTargetSet* getShadowMaskTargetSet() const {
-		return m_shadowMaskTargetSet;
-	}
-	
-	render::RenderTargetSet* getLightTargetSet() const {
-		return m_lightTargetSet;
-	}
+	virtual void getTargets(RefArray< render::ITexture >& outTargets) const;
 
 private:
 	struct Frame
@@ -108,12 +93,15 @@ private:
 		Matrix44 viewToLightSpace[WorldRenderView::MaxLightCount];
 		Frustum viewFrustum;
 		bool haveDepth;
-		bool haveShadows;
+		bool haveShadows[WorldRenderView::MaxLightCount];
+		uint32_t lightCount;
 
 		Frame()
 		:	haveDepth(false)
-		,	haveShadows(false)
+		,	lightCount(0)
 		{
+			for (uint32_t i = 0; i < WorldRenderView::MaxLightCount; ++i)
+				haveShadows[i] = false;
 		}
 	};
 
@@ -130,7 +118,6 @@ private:
 	Ref< render::RenderTargetSet > m_shadowTargetSet;
 	Ref< render::RenderTargetSet > m_shadowMaskTargetSet;
 	Ref< render::RenderTargetSet > m_lightTargetSet;
-	Ref< render::ISimpleTexture > m_shadowDiscRotation[2];
 	Ref< render::RenderContext > m_globalContext;
 	Ref< PostProcess > m_shadowMaskProjection;
 	AlignedVector< Frame > m_frames;

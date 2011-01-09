@@ -42,7 +42,10 @@ std::set< std::wstring > ShaderGraphTechniques::getNames() const
 	for (RefArray< Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
 	{
 		if (VertexOutput* vertexOutput = dynamic_type_cast< VertexOutput* >(*i))
-			names.insert(vertexOutput->getTechnique());
+		{
+			if (!vertexOutput->getTechnique().empty())
+				names.insert(vertexOutput->getTechnique());
+		}
 		else if (PixelOutput* pixelOutput = dynamic_type_cast< PixelOutput* >(*i))
 			names.insert(pixelOutput->getTechnique());
 	}
@@ -55,17 +58,34 @@ Ref< ShaderGraph > ShaderGraphTechniques::generate(const std::wstring& name) con
 	RefArray< Node > roots;
 
 	const RefArray< Node >& nodes = m_shaderGraph->getNodes();
+	bool foundNamedVertexOutput = false;
+	
+	// Find named output nodes.
 	for (RefArray< Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
 	{
 		if (VertexOutput* vertexOutput = dynamic_type_cast< VertexOutput* >(*i))
 		{
 			if (vertexOutput->getTechnique() == name)
+			{
 				roots.push_back(vertexOutput);
+				foundNamedVertexOutput = true;
+			}
 		}
 		else if (PixelOutput* pixelOutput = dynamic_type_cast< PixelOutput* >(*i))
 		{
 			if (pixelOutput->getTechnique() == name)
 				roots.push_back(pixelOutput);
+		}
+	}
+
+	// If no explicit named vertex output we'll try to find an unnamed vertex output.
+	if (!foundNamedVertexOutput)
+	{
+		for (RefArray< Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
+		{
+			VertexOutput* vertexOutput = dynamic_type_cast< VertexOutput* >(*i);
+			if (vertexOutput && vertexOutput->getTechnique().empty())
+				roots.push_back(vertexOutput);
 		}
 	}
 

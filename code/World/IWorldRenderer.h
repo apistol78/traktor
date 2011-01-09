@@ -2,6 +2,7 @@
 #define traktor_world_IWorldRenderer_H
 
 #include "Core/Object.h"
+#include "Core/RefArray.h"
 #include "Core/Math/Const.h"
 #include "Render/Types.h"
 
@@ -15,10 +16,28 @@
 
 namespace traktor
 {
+	namespace render
+	{
+
+class IRenderSystem;
+class IRenderView;
+class ITexture;
+
+	}
+
+	namespace resource
+	{
+
+class IResourceManager;
+
+	}
+
 	namespace world
 	{
 
 class Entity;
+class WorldEntityRenderers;
+class WorldRenderSettings;
 class WorldRenderView;
 
 /*! \brief Perspective view port.
@@ -81,6 +100,18 @@ class T_DLLCLASS IWorldRenderer : public Object
 	T_RTTI_CLASS;
 
 public:
+	/*! \brief Create world renderer. */
+	virtual bool create(
+		const WorldRenderSettings& settings,
+		WorldEntityRenderers* entityRenderers,
+		resource::IResourceManager* resourceManager,
+		render::IRenderSystem* renderSystem,
+		render::IRenderView* renderView,
+		uint32_t multiSample,
+		uint32_t frameCount
+	) = 0;
+
+	/*! \brief Destroy world renderer. */
 	virtual void destroy() = 0;
 
 	/*! \brief Create a world render view.
@@ -114,6 +145,13 @@ public:
 	 * \param frame Multi threaded context frame.
 	 */
 	virtual void render(uint32_t flags, int frame, render::EyeType eye) = 0;
+
+	//@}
+
+	/*! \name Debug target accessor. */
+	//@{
+
+	virtual void getTargets(RefArray< render::ITexture >& outTargets) const = 0;
 
 	//@}
 };

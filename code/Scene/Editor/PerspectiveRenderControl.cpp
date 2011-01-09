@@ -7,6 +7,7 @@
 #include "Core/Settings/PropertyFloat.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
+#include "Core/Settings/PropertyString.h"
 #include "Core/Settings/Settings.h"
 #include "Database/Database.h"
 #include "Editor/IEditor.h"
@@ -33,11 +34,11 @@
 #include "Ui/Events/MouseEvent.h"
 #include "Ui/Events/KeyEvent.h"
 #include "Ui/Itf/IWidget.h"
+#include "World/IWorldRenderer.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldRenderView.h"
 #include "World/WorldRenderSettings.h"
 #include "World/Entity/Entity.h"
-#include "World/Forward/WorldRendererForward.h"
 #include "World/PostProcess/PostProcess.h"
 
 namespace traktor
@@ -215,44 +216,48 @@ void PerspectiveRenderControl::updateWorldRenderer()
 	}
 
 	// Create world renderer.
-	Ref< world::WorldRendererForward > worldRenderer = new world::WorldRendererForward();
-	if (worldRenderer->create(
-		worldRenderSettings,
-		worldEntityRenderers,
-		m_context->getResourceManager(),
-		m_context->getRenderSystem(),
-		m_renderView,
-		m_multiSample,
-		1
-	))
+	std::wstring worldRendererTypeName = m_context->getEditor()->getSettings()->getProperty< PropertyString >(L"Editor.WorldRenderer");
+	const TypeInfo* worldRendererType = TypeInfo::find(worldRendererTypeName);
+	if (worldRendererType)
 	{
-		m_worldRenderer = worldRenderer;
+		Ref< world::IWorldRenderer > worldRenderer = checked_type_cast< world::IWorldRenderer* >(worldRendererType->createInstance());
+		T_ASSERT (worldRenderer);
 
-		updateWorldRenderView();
-
-		// Create render target used for post processing.
-		if (m_postProcess)
+		if (worldRenderer->create(
+			*worldRenderSettings,
+			worldEntityRenderers,
+			m_context->getResourceManager(),
+			m_context->getRenderSystem(),
+			m_renderView,
+			m_multiSample,
+			1
+		))
 		{
-			render::RenderTargetSetCreateDesc desc;
-			desc.count = 1;
-			desc.width = sz.cx;
-			desc.height = sz.cy;
-			desc.multiSample = m_multiSample;
-			desc.createDepthStencil = false;
-			desc.usingPrimaryDepthStencil = true;
-			desc.targets[0].format = m_postProcess->requireHighRange() ? render::TfR16G16B16A16F : render::TfR8G8B8A8;
-			m_renderTarget =  m_context->getRenderSystem()->createRenderTargetSet(desc);
+			m_worldRenderer = worldRenderer;
+
+			updateWorldRenderView();
+
+			// Create render target used for post processing.
+			if (m_postProcess)
+			{
+				render::RenderTargetSetCreateDesc desc;
+				desc.count = 1;
+				desc.width = sz.cx;
+				desc.height = sz.cy;
+				desc.multiSample = m_multiSample;
+				desc.createDepthStencil = false;
+				desc.usingPrimaryDepthStencil = true;
+				desc.targets[0].format = m_postProcess->requireHighRange() ? render::TfR16G16B16A16F : render::TfR8G8B8A8;
+				m_renderTarget =  m_context->getRenderSystem()->createRenderTargetSet(desc);
+			}
+
+			// Expose world targets to debug view.
+			RefArray< render::ITexture > worldTargets;
+			m_worldRenderer->getTargets(worldTargets);
+			for (uint32_t i = 0; i < worldTargets.size(); ++i)
+				m_context->setDebugTexture(i, worldTargets[i]);
 		}
-
-		// Expose shadow mask to debug view.
-		Ref< render::RenderTargetSet > shadowTarget = worldRenderer->getShadowTargetSet();
-		m_context->setDebugTexture(0, shadowTarget ? shadowTarget->getColorTexture(0) : 0);
-
-		Ref< render::RenderTargetSet > shadowMaskTarget = worldRenderer->getShadowMaskTargetSet();
-		m_context->setDebugTexture(1, shadowMaskTarget ? shadowMaskTarget->getColorTexture(0) : 0);
 	}
-	else
-		m_worldRenderer = 0;
 }
 
 bool PerspectiveRenderControl::handleCommand(const ui::Command& command)
