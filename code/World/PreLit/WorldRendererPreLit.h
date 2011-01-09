@@ -92,6 +92,10 @@ public:
 	render::RenderTargetSet* getShadowMaskTargetSet() const {
 		return m_shadowMaskTargetSet;
 	}
+	
+	render::RenderTargetSet* getLightTargetSet() const {
+		return m_lightTargetSet;
+	}
 
 private:
 	struct Frame
