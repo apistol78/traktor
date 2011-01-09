@@ -109,10 +109,11 @@ bool WorldRendererPreLit::create(
 		{
 			log::warning << L"Unable to create depth render target; depth disabled" << Endl;
 			m_settings.depthPassEnabled = false;
+			m_settings.shadowsEnabled = false;
 		}
 	}
 
-	// Allocate "shadow map" targets.
+	// Create "shadow map" targets.
 	if (m_settings.shadowsEnabled)
 	{
 		render::RenderTargetSetCreateDesc desc;
@@ -218,6 +219,25 @@ bool WorldRendererPreLit::create(
 		}
 	}
 
+	// Create light map target.
+	render::RenderTargetSetCreateDesc desc;
+
+	desc.count = 1;
+	desc.width = width;
+	desc.height = height;
+	desc.multiSample = multiSample;
+	desc.createDepthStencil = false;
+	desc.usingPrimaryDepthStencil = true;
+	desc.preferTiled = true;
+	desc.targets[0].format = render::TfR8G8B8A8;
+
+	m_lightTargetSet = renderSystem->createRenderTargetSet(desc);
+	if (!m_lightTargetSet)
+	{
+		log::error << L"Unable to create light render target" << Endl;
+		return false;
+	}
+
 	// Allocate "depth" context.
 	if (m_settings.depthPassEnabled || m_settings.shadowsEnabled)
 	{
@@ -228,13 +248,14 @@ bool WorldRendererPreLit::create(
 	// For each possible light.
 	for (uint32_t i = 0; i < WorldRenderView::MaxLightCount; ++i)
 	{
-		// Allocate "shadow" contexts for each slice.
+		// Allocate "shadow" contexts.
 		if (m_settings.shadowsEnabled)
 		{
 			for (AlignedVector< Frame >::iterator j = m_frames.begin(); j != m_frames.end(); ++j)
 				j->shadow[i] = new WorldContext(entityRenderers);
 		}
 
+		// Allocate "light" contexts.
 		for (AlignedVector< Frame >::iterator j = m_frames.begin(); j != m_frames.end(); ++j)
 			j->light[i] = new WorldContext(entityRenderers);
 	}
