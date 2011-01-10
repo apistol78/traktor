@@ -1,7 +1,8 @@
-#include "Physics/Hinge2JointDesc.h"
+#include "Core/Math/Const.h"
+#include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
-#include "Core/Math/Const.h"
+#include "Physics/Hinge2JointDesc.h"
 
 namespace traktor
 {
@@ -96,10 +97,10 @@ bool Hinge2JointDesc::serialize(ISerializer& s)
 	s >> Member< Vector4 >(L"anchor", m_anchor);
 	s >> Member< Vector4 >(L"axis1", m_axis1);
 	s >> Member< Vector4 >(L"axis2", m_axis2);
-	s >> Member< float >(L"lowStop", m_lowStop, -PI, PI);
-	s >> Member< float >(L"highStop", m_highStop, -PI, PI);
-	s >> Member< float >(L"suspensionErp", m_suspensionErp, 0.0f, 1.0f);
-	s >> Member< float >(L"suspensionCfm", m_suspensionCfm, 0.0f, 1.0f);
+	s >> Member< float >(L"lowStop", m_lowStop, AttributeRange(-PI, PI));
+	s >> Member< float >(L"highStop", m_highStop, AttributeRange(-PI, PI));
+	s >> Member< float >(L"suspensionErp", m_suspensionErp, AttributeRange(0.0f, 1.0f));
+	s >> Member< float >(L"suspensionCfm", m_suspensionCfm, AttributeRange(0.0f, 1.0f));
 	return true;
 }
 

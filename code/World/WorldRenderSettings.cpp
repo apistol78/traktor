@@ -1,9 +1,10 @@
-#include "World/WorldRenderSettings.h"
+#include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberEnum.h"
 #include "Core/Serialization/MemberRef.h"
 #include "Resource/Member.h"
+#include "World/WorldRenderSettings.h"
 
 namespace traktor
 {
@@ -65,8 +66,8 @@ bool WorldRenderSettings::serialize(ISerializer& s)
 		{ 0 }
 	};
 
-	s >> Member< float >(L"viewNearZ", viewNearZ, 0.0f);
-	s >> Member< float >(L"viewFarZ", viewFarZ, 0.0f);
+	s >> Member< float >(L"viewNearZ", viewNearZ, AttributeRange(0.0f));
+	s >> Member< float >(L"viewFarZ", viewFarZ, AttributeRange(0.0f));
 	s >> Member< bool >(L"depthPassEnabled", depthPassEnabled);
 
 	if (s.getVersion() >= 6)
@@ -92,10 +93,10 @@ bool WorldRenderSettings::serialize(ISerializer& s)
 	{
 		int32_t shadowCascadingSlices; float shadowCascadingLambda;
 		s >> Member< int32_t >(L"shadowCascadingSlices", shadowCascadingSlices);
-		s >> Member< float >(L"shadowCascadingLambda", shadowCascadingLambda, 0.0f, 1.0f);
+		s >> Member< float >(L"shadowCascadingLambda", shadowCascadingLambda, AttributeRange(0.0f, 1.0f));
 	}
 
-	s >> Member< float >(L"shadowFarZ", shadowFarZ, 0.0f);
+	s >> Member< float >(L"shadowFarZ", shadowFarZ, AttributeRange(0.0f));
 	s >> Member< int32_t >(L"shadowMapResolution", shadowMapResolution);
 	s >> Member< float >(L"shadowMapBias", shadowMapBias);
 

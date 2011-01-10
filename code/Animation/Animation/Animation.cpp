@@ -1,6 +1,7 @@
 #include "Animation/Animation/Animation.h"
 #include "Animation/SkeletonUtils.h"
 #include "Core/Math/Hermite.h"
+#include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberComposite.h"
@@ -133,7 +134,7 @@ bool Animation::serialize(ISerializer& s)
 
 bool Animation::KeyPose::serialize(ISerializer& s)
 {
-	s >> Member< float >(L"at", at, 0.0f);
+	s >> Member< float >(L"at", at, AttributeRange(0.0f));
 	s >> MemberComposite< Pose >(L"pose", pose);
 	return true;
 }

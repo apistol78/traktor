@@ -2,6 +2,7 @@
 #include "Xml/XmlSerializer.h"
 #include "Core/Io/IStream.h"
 #include "Core/Io/Utf8Encoding.h"
+#include "Core/Serialization/AttributeMultiLine.h"
 #include "Core/Serialization/MemberArray.h"
 #include "Core/Serialization/MemberComplex.h"
 #include "Core/Serialization/ISerializable.h"
@@ -130,7 +131,11 @@ bool XmlSerializer::operator >> (const Member< std::wstring >& m)
 {
 	if (!m->empty())
 	{
-		if (!m.isMultiLine())
+		const Attribute* attributes = m.getAttributes();
+		if (attributes)
+			attributes = attributes->find< AttributeMultiLine >();
+
+		if (!attributes)
 			m_xml << m_indent << L"<" << m.getName() << L">" << characterEntity(m) << L"</" << m.getName() << L">" << Endl;
 		else
 		{

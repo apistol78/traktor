@@ -173,8 +173,7 @@ void OrthogonalRenderControl::updateWorldRenderer()
 	// Create a copy of the render settings; we don't want to enable shadows nor velocity in this view.
 	world::WorldRenderSettings wrs;
 	wrs = *worldRenderSettings;
-	wrs.depthPassEnabled = false;
-	wrs.velocityPassEnable = false;
+	wrs.depthPassEnabled = wrs.shadowsEnabled;
 	wrs.shadowsEnabled = false;
 
 	std::wstring worldRendererTypeName = m_context->getEditor()->getSettings()->getProperty< PropertyString >(L"Editor.WorldRenderer");

@@ -1,4 +1,6 @@
 #include "Script/Script.h"
+#include "Core/Serialization/AttributeMultiLine.h"
+#include "Core/Serialization/AttributeType.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberStl.h"
@@ -14,7 +16,7 @@ class MemberDependency : public Member< Guid >
 {
 public:
 	MemberDependency(const std::wstring& name, Member< Guid >::value_type& ref)
-	:	Member< Guid >(name, ref, &type_of< Script >())
+	:	Member< Guid >(name, ref, AttributeType(type_of< Script >()))
 	{
 	}
 };
@@ -61,7 +63,7 @@ bool Script::serialize(ISerializer& s)
 {
 	if (s.getVersion() >= 1)
 		s >> MemberStlVector< Guid, MemberDependency >(L"dependencies", m_dependencies);
-	return s >> Member< std::wstring >(L"text", m_text, true);
+	return s >> Member< std::wstring >(L"text", m_text, AttributeMultiLine());
 }
 
 	}

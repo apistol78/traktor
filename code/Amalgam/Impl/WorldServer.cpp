@@ -2,6 +2,7 @@
 #include "Animation/PathEntity/PathEntityFactory.h"
 #include "Animation/PathEntity/PathEntityRenderer.h"
 #include "Core/Settings/PropertyInteger.h"
+#include "Core/Settings/PropertyString.h"
 #include "Core/Settings/Settings.h"
 #include "Mesh/MeshEntityFactory.h"
 #include "Mesh/MeshEntityRenderer.h"
@@ -15,6 +16,7 @@
 #include "Terrain/EntityRenderer.h"
 #include "Weather/WeatherEntityFactory.h"
 #include "Weather/WeatherEntityRenderer.h"
+#include "World/IWorldRenderer.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/Entity/EntityBuilder.h"
 #include "World/Entity/EntityResourceFactory.h"
@@ -22,7 +24,6 @@
 #include "World/Entity/LightEntityRenderer.h"
 #include "World/Entity/TransientEntityRenderer.h"
 #include "World/Entity/WorldEntityFactory.h"
-#include "World/Forward/WorldRendererForward.h"
 #include "World/PostProcess/PostProcessFactory.h"
 #include "Amalgam/IEnvironment.h"
 #include "Amalgam/Impl/AudioServer.h"
@@ -38,11 +39,21 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.WorldServer", WorldServer, IWorldServer)
 
+WorldServer::WorldServer()
+:	m_worldRendererType(0)
+{
+}
+
 bool WorldServer::create(const Settings* settings, IRenderServer* renderServer, IResourceServer* resourceServer)
 {
+	m_worldRendererType = TypeInfo::find(settings->getProperty< PropertyString >(L"Amalgam.WorldRenderer", L"traktor.world.WorldRendererForward"));
+	if (!m_worldRendererType)
+		return false;
+
 	m_entityBuilder = new world::EntityBuilder();
 	m_renderServer = renderServer;
 	m_resourceServer = resourceServer;
+	
 	return true;
 }
 
@@ -132,7 +143,7 @@ Ref< world::IWorldRenderer > WorldServer::createWorldRenderer(
 			worldEntityRenderers->add(*i);
 	}
 
-	Ref< world::WorldRendererForward > worldRenderer = new world::WorldRendererForward();
+	Ref< world::IWorldRenderer > worldRenderer = checked_type_cast< world::IWorldRenderer*, false >(m_worldRendererType->createInstance());
 	if (!worldRenderer->create(
 		*worldRenderSettings,
 		worldEntityRenderers,

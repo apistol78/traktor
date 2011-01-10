@@ -1242,6 +1242,10 @@
       <second>Invert mouse wheel</second>
     </item>
     <item>
+      <first>SCENE_EDITOR_SETTINGS_WORLDRENDERER_TYPE</first>
+      <second>World renderer</second>
+    </item>
+    <item>
       <first>SCRIPT_EDITOR_ADD_DEPENDENCY</first>
       <second>Add dependency</second>
     </item>

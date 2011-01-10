@@ -1,3 +1,4 @@
+#include "Core/Serialization/AttributeType.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "World/Entity/ExternalEntityData.h"
@@ -33,7 +34,11 @@ bool ExternalEntityData::serialize(ISerializer& s)
 	if (!EntityData::serialize(s))
 		return false;
 
-	return s >> Member< Guid >(L"guid", m_guid, &type_of< EntityData >());
+	return s >> Member< Guid >(
+		L"guid",
+		m_guid,
+		AttributeType(type_of< EntityData >())
+	);
 }
 
 	}

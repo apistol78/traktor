@@ -1,3 +1,4 @@
+#include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Physics/StaticBodyDesc.h"
@@ -42,7 +43,7 @@ bool StaticBodyDesc::serialize(ISerializer& s)
 	if (!BodyDesc::serialize(s))
 		return false;
 
-	s >> Member< float >(L"friction", m_friction, 0.0f, 1.0f);
+	s >> Member< float >(L"friction", m_friction, AttributeRange(0.0f, 1.0f));
 	s >> Member< bool >(L"kinematic", m_kinematic);
 	
 	return true;

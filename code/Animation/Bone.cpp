@@ -1,4 +1,5 @@
 #include "Animation/Bone.h"
+#include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Math/Const.h"
@@ -28,13 +29,13 @@ bool Bone::serialize(ISerializer& s)
 	s >> Member< int32_t >(L"parent", m_parent);
 	s >> Member< Vector4 >(L"position", m_position);
 	s >> Member< Quaternion >(L"orientation", m_orientation);
-	s >> Member< Scalar >(L"length", m_length);
-	s >> Member< Scalar >(L"radius", m_radius);
+	s >> Member< Scalar >(L"length", m_length, AttributeRange(0.0f));
+	s >> Member< Scalar >(L"radius", m_radius, AttributeRange(0.0f));
 	
 	if (s.getVersion() >= 1)
 	{
 		s >> Member< bool >(L"enableLimits", m_enableLimits);
-		s >> Member< float >(L"twistLimit", m_twistLimit, -PI, PI);
+		s >> Member< float >(L"twistLimit", m_twistLimit, AttributeRange(-PI, PI));
 		s >> Member< Vector2 >(L"coneLimit", m_coneLimit);
 	}
 

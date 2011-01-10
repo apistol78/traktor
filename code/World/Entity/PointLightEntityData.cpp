@@ -1,6 +1,7 @@
-#include "World/Entity/PointLightEntityData.h"
+#include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
+#include "World/Entity/PointLightEntityData.h"
 
 namespace traktor
 {
@@ -29,7 +30,7 @@ bool PointLightEntityData::serialize(ISerializer& s)
 	s >> Member< float >(L"range", m_range);
 
 	if (s.getVersion() >= 1)
-		s >> Member< float >(L"randomFlicker", m_randomFlicker, 0.0f, 1.0f);
+		s >> Member< float >(L"randomFlicker", m_randomFlicker, AttributeRange(0.0f, 1.0f));
 
 	return true;
 }

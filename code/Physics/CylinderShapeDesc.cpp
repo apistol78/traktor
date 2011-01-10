@@ -1,6 +1,7 @@
-#include "Physics/CylinderShapeDesc.h"
+#include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
+#include "Physics/CylinderShapeDesc.h"
 
 namespace traktor
 {
@@ -40,8 +41,8 @@ bool CylinderShapeDesc::serialize(ISerializer& s)
 	if (!ShapeDesc::serialize(s))
 		return false;
 
-	s >> Member< float >(L"radius", m_radius, 0.0f);
-	s >> Member< float >(L"length", m_length, 0.0f);
+	s >> Member< float >(L"radius", m_radius, AttributeRange(0.0f));
+	s >> Member< float >(L"length", m_length, AttributeRange(0.0f));
 
 	return true;
 }

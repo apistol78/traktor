@@ -1,3 +1,4 @@
+#include "Core/Serialization/AttributeMultiLine.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Render/Shader/InputPin.h"
@@ -71,7 +72,7 @@ const OutputPin* Node::findOutputPin(const std::wstring& name) const
 
 bool Node::serialize(ISerializer& s)
 {
-	s >> Member< std::wstring >(L"comment", m_comment, true);
+	s >> Member< std::wstring >(L"comment", m_comment, AttributeMultiLine());
 	s >> MemberStlPair< int, int >(L"position", m_position);
 	return true;
 }

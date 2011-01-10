@@ -1,6 +1,7 @@
 #ifndef traktor_MemberRef_H
 #define traktor_MemberRef_H
 
+#include "Core/Serialization/AttributeType.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberComplex.h"
 #include "Core/Serialization/ISerializable.h"
@@ -26,7 +27,11 @@ public:
 	virtual bool serialize(ISerializer& s) const
 	{
 		ISerializable* object = const_cast< ISerializable* >(static_cast< const ISerializable* >(m_ref.ptr()));
-		if (!(s >> Member< ISerializable* >(getName(), object, &type_of< Class >())))
+		if (!(s >> Member< ISerializable* >(
+			getName(),
+			object,
+			AttributeType(type_of< Class >())
+		)))
 			return false;
 		m_ref = checked_type_cast< Class* >(object);
 		return true;

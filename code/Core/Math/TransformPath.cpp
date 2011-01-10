@@ -1,6 +1,7 @@
 #include <limits>
 #include "Core/Math/TcbSpline.h"
 #include "Core/Math/TransformPath.h"
+#include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberAlignedVector.h"
@@ -198,7 +199,7 @@ bool TransformPath::serialize(ISerializer& s)
 
 bool TransformPath::Key::serialize(ISerializer& s)
 {
-	s >> Member< float >(L"T", T, 0.0f);
+	s >> Member< float >(L"T", T, AttributeRange(0.0f));
 	s >> Member< Vector4 >(L"tcb", tcb);
 	s >> MemberComposite< Frame >(L"value", value);
 	return true;

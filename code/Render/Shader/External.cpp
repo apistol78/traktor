@@ -1,4 +1,5 @@
 #include <algorithm>
+#include "Core/Serialization/AttributeType.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberComplex.h"
 #include "Core/Serialization/MemberRefArray.h"
@@ -256,7 +257,7 @@ bool External::serialize(ISerializer& s)
 	if (!Node::serialize(s))
 		return false;
 
-	s >> Member< Guid >(L"fragmentGuid", m_fragmentGuid, &type_of< ShaderGraph >());
+	s >> Member< Guid >(L"fragmentGuid", m_fragmentGuid, AttributeType(type_of< ShaderGraph >()));
 	s >> MemberStlVector< InputPin*, MemberInputPin >(L"inputPins", m_inputPins);
 	s >> MemberStlVector< OutputPin*, MemberOutputPin >(L"outputPins", m_outputPins);
 
