@@ -60,7 +60,8 @@ public:
 	bool bind(
 		ID3D10Device* d3dDevice,
 		size_t d3dInputElementsHash,
-		const std::vector< D3D10_INPUT_ELEMENT_DESC >& d3dInputElements
+		const std::vector< D3D10_INPUT_ELEMENT_DESC >& d3dInputElements,
+		const int32_t targetSize[2]
 	);
 
 private:

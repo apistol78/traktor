@@ -209,22 +209,44 @@ void ProgramDx10::setFloatArrayParameter(handle_t handle, const float* param, in
 
 void ProgramDx10::setVectorParameter(handle_t handle, const Vector4& param)
 {
-	setFloatArrayParameter(handle, reinterpret_cast< const float* >(&param), 4);
+	std::map< handle_t, uint32_t >::iterator i = m_parameterMap.find(handle);
+	if (i != m_parameterMap.end())
+	{
+		param.storeUnaligned(&m_parameterFloatArray[i->second]);
+		m_parameterArrayDirty = true;
+	}
 }
 
 void ProgramDx10::setVectorArrayParameter(handle_t handle, const Vector4* param, int length)
 {
-	setFloatArrayParameter(handle, reinterpret_cast< const float* >(param), length * 4);
+	std::map< handle_t, uint32_t >::iterator i = m_parameterMap.find(handle);
+	if (i != m_parameterMap.end())
+	{
+		for (int j = 0; j < length; ++j)
+			param[j].storeUnaligned(&m_parameterFloatArray[i->second + j * 4]);
+		m_parameterArrayDirty = true;
+	}
 }
 
 void ProgramDx10::setMatrixParameter(handle_t handle, const Matrix44& param)
 {
-	setFloatArrayParameter(handle, reinterpret_cast< const float* >(&param), 16);
+	std::map< handle_t, uint32_t >::iterator i = m_parameterMap.find(handle);
+	if (i != m_parameterMap.end())
+	{
+		param.storeUnaligned(&m_parameterFloatArray[i->second]);
+		m_parameterArrayDirty = true;
+	}
 }
 
 void ProgramDx10::setMatrixArrayParameter(handle_t handle, const Matrix44* param, int length)
 {
-	setFloatArrayParameter(handle, reinterpret_cast< const float* >(param), length * 16);
+	std::map< handle_t, uint32_t >::iterator i = m_parameterMap.find(handle);
+	if (i != m_parameterMap.end())
+	{
+		for (int j = 0; j < length; ++j)
+			param[j].storeUnaligned(&m_parameterFloatArray[i->second + j * 16]);
+		m_parameterArrayDirty = true;
+	}
 }
 
 void ProgramDx10::setTextureParameter(handle_t handle, ITexture* texture)
@@ -256,7 +278,8 @@ void ProgramDx10::setStencilReference(uint32_t stencilReference)
 bool ProgramDx10::bind(
 	ID3D10Device* d3dDevice,
 	size_t d3dInputElementsHash,
-	const std::vector< D3D10_INPUT_ELEMENT_DESC >& d3dInputElements
+	const std::vector< D3D10_INPUT_ELEMENT_DESC >& d3dInputElements,
+	const int32_t targetSize[2]
 )
 {
 	static float blendFactors[] = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -266,6 +289,9 @@ bool ProgramDx10::bind(
 	d3dDevice->RSSetState(m_d3dRasterizerState);
 	d3dDevice->OMSetDepthStencilState(m_d3dDepthStencilState, m_stencilReference);
 	d3dDevice->OMSetBlendState(m_d3dBlendState, blendFactors, 0xffffffff);
+
+	// Update target size parameter.
+	setVectorParameter(getParameterHandle(L"_dx10_targetSize"), Vector4(targetSize[0], targetSize[1], 0.0f, 0.0f));
 
 	// Update constant buffers.
 	if (m_parameterArrayDirty || ms_activeProgram != this)

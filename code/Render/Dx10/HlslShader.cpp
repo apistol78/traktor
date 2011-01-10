@@ -153,7 +153,7 @@ std::wstring HlslShader::getGeneratedShader()
 	ss << L"// THIS SHADER IS AUTOMATICALLY GENERATED! DO NOT EDIT!" << Endl;
 	ss << Endl;
 
-	ss << L"uniform float2 _dx10_targetSize;" << Endl;
+	ss << L"uniform float4 _dx10_targetSize;" << Endl;
 
 	std::wstring uniformText = getOutputStream(BtUniform).str();
 	if (!uniformText.empty())
