@@ -107,9 +107,11 @@ private:
 		D3D10_VIEWPORT d3dViewport;
 		ID3D10RenderTargetView* d3dRenderView;
 		ID3D10DepthStencilView* d3dDepthStencilView;
+		int32_t targetSize[2];
 	};
 
 	std::list< RenderState > m_renderStateStack;
+	int32_t m_targetSize[2];
 };
 
 	}

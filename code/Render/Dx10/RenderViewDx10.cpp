@@ -80,6 +80,9 @@ RenderViewDx10::RenderViewDx10(
 	m_d3dViewport.Height = scd.BufferDesc.Height;
 	m_d3dViewport.MinDepth = 0.0f;
 	m_d3dViewport.MaxDepth = 1.0f;
+
+	m_targetSize[0] = scd.BufferDesc.Width;
+	m_targetSize[1] = scd.BufferDesc.Height;
 }
 
 RenderViewDx10::~RenderViewDx10()
@@ -153,20 +156,19 @@ void RenderViewDx10::resize(int32_t width, int32_t height)
 	m_d3dViewport.Height = height;
 	m_d3dViewport.MinDepth = 0.0f;
 	m_d3dViewport.MaxDepth = 1.0f;
+
+	m_targetSize[0] = width;
+	m_targetSize[1] = height;
 }
 
 int RenderViewDx10::getWidth() const
 {
-	DXGI_SWAP_CHAIN_DESC desc;
-	m_d3dSwapChain->GetDesc(&desc);
-	return int(desc.BufferDesc.Width);
+	return m_targetSize[0];
 }
 
 int RenderViewDx10::getHeight() const
 {
-	DXGI_SWAP_CHAIN_DESC desc;
-	m_d3dSwapChain->GetDesc(&desc);
-	return int(desc.BufferDesc.Height);
+	return m_targetSize[1];
 }
 
 bool RenderViewDx10::isActive() const
@@ -230,7 +232,8 @@ bool RenderViewDx10::begin(EyeType eye)
 	{
 		m_d3dViewport,
 		m_d3dRenderTargetView,
-		m_d3dDepthStencilView
+		m_d3dDepthStencilView,
+		{ m_targetSize[0], m_targetSize[1] }
 	};
 
 	m_renderStateStack.push_back(rs);
@@ -254,7 +257,8 @@ bool RenderViewDx10::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 	{
 		{ 0, 0, rts->getWidth(), rts->getHeight(), 0.0f, 1.0f },
 		rt->getD3D10RenderTargetView(),
-		rts->getD3D10DepthTextureView()
+		rts->getD3D10DepthTextureView(),
+		{ rts->getWidth(), rts->getHeight() }
 	};
 
 	if (rts->usingPrimaryDepthStencil())
@@ -312,6 +316,8 @@ void RenderViewDx10::draw(const Primitives& primitives)
 {
 	T_ASSERT (!m_renderStateStack.empty());
 
+	const RenderState& rs = m_renderStateStack.back();
+
 	// Handle dirty resources.
 	if (m_dirty)
 	{
@@ -350,7 +356,8 @@ void RenderViewDx10::draw(const Primitives& primitives)
 	if (!m_currentProgram->bind(
 		m_d3dDevice,
 		size_t(m_currentVertexBuffer.ptr()),
-		m_currentVertexBuffer->getD3D10InputElements()
+		m_currentVertexBuffer->getD3D10InputElements(),
+		rs.targetSize
 	))
 		return;
 
