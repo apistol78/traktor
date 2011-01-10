@@ -1,6 +1,7 @@
-#include "Physics/SphereShapeDesc.h"
+#include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
+#include "Physics/SphereShapeDesc.h"
 
 namespace traktor
 {
@@ -29,7 +30,7 @@ bool SphereShapeDesc::serialize(ISerializer& s)
 	if (!ShapeDesc::serialize(s))
 		return false;
 
-	return s >> Member< float >(L"radius", m_radius, 0.0f);
+	return s >> Member< float >(L"radius", m_radius, AttributeRange(0.0f));
 }
 
 	}

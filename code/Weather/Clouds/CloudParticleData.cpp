@@ -1,6 +1,7 @@
-#include "Weather/Clouds/CloudParticleData.h"
+#include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
+#include "Weather/Clouds/CloudParticleData.h"
 
 namespace traktor
 {
@@ -28,13 +29,13 @@ CloudParticleData::CloudParticleData()
 bool CloudParticleData::serialize(ISerializer& s)
 {
 	s >> Member< uint32_t >(L"count", m_count);
-	s >> Member< float >(L"radiusMin", m_radiusMin, 0.0f);
-	s >> Member< float >(L"radiusRange", m_radiusRange, 0.0f);
-	s >> Member< float >(L"density", m_density, 0.0f, 1.0f);
+	s >> Member< float >(L"radiusMin", m_radiusMin, AttributeRange(0.0f));
+	s >> Member< float >(L"radiusRange", m_radiusRange, AttributeRange(0.0f));
+	s >> Member< float >(L"density", m_density, AttributeRange(0.0f, 1.0f));
 	s >> Member< Color4ub >(L"haloColor", m_haloColor);
 	s >> Member< Color4ub >(L"skyColor", m_skyColor);
 	s >> Member< Color4ub >(L"groundColor", m_groundColor);
-	s >> Member< float >(L"sunInfluence", m_sunInfluence, 0.0f, 1.0f);
+	s >> Member< float >(L"sunInfluence", m_sunInfluence, AttributeRange(0.0f, 1.0f));
 	s >> Member< Vector4 >(L"size", m_size);
 	s >> Member< int32_t >(L"octaves", m_octaves);
 	s >> Member< float >(L"persistence", m_persistence);

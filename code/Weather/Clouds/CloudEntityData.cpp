@@ -1,16 +1,17 @@
-#include "Weather/Clouds/CloudEntityData.h"
-#include "Weather/Clouds/CloudEntity.h"
-#include "Weather/Clouds/CloudMask.h"
-#include "Weather/Clouds/CloudMaskResource.h"
+#include "Core/Serialization/AttributeRange.h"
+#include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberComposite.h"
 #include "Resource/IResourceManager.h"
+#include "Resource/Member.h"
 #include "Render/ITexture.h"
 #include "Render/Shader.h"
 #include "Render/Shader/ShaderGraph.h"
 #include "Render/Resource/TextureResource.h"
-#include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/Member.h"
-#include "Core/Serialization/MemberComposite.h"
-#include "Resource/Member.h"
+#include "Weather/Clouds/CloudEntityData.h"
+#include "Weather/Clouds/CloudEntity.h"
+#include "Weather/Clouds/CloudMask.h"
+#include "Weather/Clouds/CloudMaskResource.h"
 
 namespace traktor
 {
@@ -76,8 +77,8 @@ bool CloudEntityData::serialize(ISerializer& s)
 	s >> Member< uint32_t >(L"impostorTargetResolution", m_impostorTargetResolution);
 	s >> Member< uint32_t >(L"impostorSliceCount", m_impostorSliceCount);
 	s >> Member< uint32_t >(L"updateFrequency", m_updateFrequency);
-	s >> Member< float >(L"updatePositionThreshold", m_updatePositionThreshold, 0.0f);
-	s >> Member< float >(L"updateDirectionThreshold", m_updateDirectionThreshold, 0.0f, 180.0f);
+	s >> Member< float >(L"updatePositionThreshold", m_updatePositionThreshold, AttributeRange(0.0f));
+	s >> Member< float >(L"updateDirectionThreshold", m_updateDirectionThreshold, AttributeRange(0.0f, 180.0f));
 	s >> MemberComposite< CloudParticleData >(L"particleData", m_particleData);
 
 	return true;

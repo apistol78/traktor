@@ -2,6 +2,9 @@
 #include <sstream>
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Misc/Split.h"
+#include "Core/Serialization/AttributeMultiLine.h"
+#include "Core/Serialization/AttributeRange.h"
+#include "Core/Serialization/AttributeType.h"
 #include "Core/Serialization/MemberArray.h"
 #include "Core/Serialization/MemberComplex.h"
 #include "Core/Serialization/MemberEnum.h"
@@ -59,6 +62,13 @@ std::wstring stylizeMemberName(const std::wstring& memberName)
 	return ss.str();
 }
 
+template < typename AttributeType, typename MemberType >
+const AttributeType* findAttribute(const MemberType& m)
+{
+	const Attribute* attributes = m.getAttributes();
+	return attributes ? attributes->find< AttributeType >() : 0;
+}
+
 			}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.InspectReflector", InspectReflector, Serializer)
@@ -83,121 +93,231 @@ bool InspectReflector::operator >> (const Member< bool >& m)
 
 bool InspectReflector::operator >> (const Member< int8_t >& m)
 {
+	float min = std::numeric_limits< int8_t >::min();
+	float max = std::numeric_limits< int8_t >::max();
+
+	const AttributeRange* range = findAttribute< AttributeRange >(m);
+	if (range)
+	{
+		min = range->getMin();
+		max = range->getMax();
+	}
+
 	addPropertyItem(new NumericPropertyItem(
 		stylizeMemberName(m.getName()),
 		m,
-		std::numeric_limits< int8_t >::min(),
-		std::numeric_limits< int8_t >::max(),
+		min,
+		max,
 		false
 	));
+
 	return true;
 }
 
 bool InspectReflector::operator >> (const Member< uint8_t >& m)
 {
+	float min = std::numeric_limits< uint8_t >::min();
+	float max = std::numeric_limits< uint8_t >::max();
+
+	const AttributeRange* range = findAttribute< AttributeRange >(m);
+	if (range)
+	{
+		min = range->getMin();
+		max = range->getMax();
+	}
+
 	addPropertyItem(new NumericPropertyItem(
 		stylizeMemberName(m.getName()),
 		m,
-		std::numeric_limits< uint8_t >::min(),
-		std::numeric_limits< uint8_t >::max(),
+		min,
+		max,
 		false
 	));
+
 	return true;
 }
 
 bool InspectReflector::operator >> (const Member< int16_t >& m)
 {
+	float min = std::numeric_limits< int16_t >::min();
+	float max = std::numeric_limits< int16_t >::max();
+
+	const AttributeRange* range = findAttribute< AttributeRange >(m);
+	if (range)
+	{
+		min = range->getMin();
+		max = range->getMax();
+	}
+
 	addPropertyItem(new NumericPropertyItem(
 		stylizeMemberName(m.getName()),
 		m,
-		std::numeric_limits< int16_t >::min(),
-		std::numeric_limits< int16_t >::max(),
+		min,
+		max,
 		false
 	));
+
 	return true;
 }
 
 bool InspectReflector::operator >> (const Member< uint16_t >& m)
 {
+	float min = std::numeric_limits< uint16_t >::min();
+	float max = std::numeric_limits< uint16_t >::max();
+
+	const AttributeRange* range = findAttribute< AttributeRange >(m);
+	if (range)
+	{
+		min = range->getMin();
+		max = range->getMax();
+	}
+
 	addPropertyItem(new NumericPropertyItem(
 		stylizeMemberName(m.getName()),
 		m,
-		std::numeric_limits< uint16_t >::min(),
-		std::numeric_limits< uint16_t >::max(),
+		min,
+		max,
 		false
 	));
+
 	return true;
 }
 
 bool InspectReflector::operator >> (const Member< int32_t >& m)
 {
+	float min = std::numeric_limits< int32_t >::min();
+	float max = std::numeric_limits< int32_t >::max();
+
+	const AttributeRange* range = findAttribute< AttributeRange >(m);
+	if (range)
+	{
+		min = range->getMin();
+		max = range->getMax();
+	}
+
 	addPropertyItem(new NumericPropertyItem(
 		stylizeMemberName(m.getName()),
 		m,
-		std::numeric_limits< int32_t >::min(),
-		std::numeric_limits< int32_t >::max(),
+		min,
+		max,
 		false
 	));
+
 	return true;
 }
 
 bool InspectReflector::operator >> (const Member< uint32_t >& m)
 {
+	double min = std::numeric_limits< uint32_t >::min();
+	double max = std::numeric_limits< uint32_t >::max();
+
+	const AttributeRange* range = findAttribute< AttributeRange >(m);
+	if (range)
+	{
+		min = range->getMin();
+		max = range->getMax();
+	}
+
 	addPropertyItem(new NumericPropertyItem(
 		stylizeMemberName(m.getName()),
 		m,
-		std::numeric_limits< uint32_t >::min(),
-		std::numeric_limits< uint32_t >::max(),
+		min,
+		max,
 		false
 	));
+
 	return true;
 }
 
 bool InspectReflector::operator >> (const Member< int64_t >& m)
 {
+	double min = std::numeric_limits< int64_t >::min();
+	double max = std::numeric_limits< int64_t >::max();
+
+	const AttributeRange* range = findAttribute< AttributeRange >(m);
+	if (range)
+	{
+		min = range->getMin();
+		max = range->getMax();
+	}
+
 	addPropertyItem(new NumericPropertyItem(
 		stylizeMemberName(m.getName()),
 		(double)m,
-		(double)std::numeric_limits< int64_t >::min(),
-		(double)std::numeric_limits< int64_t >::max(),
+		min,
+		max,
 		false
 	));
+
 	return true;
 }
 
 bool InspectReflector::operator >> (const Member< uint64_t >& m)
 {
+	double min = std::numeric_limits< uint64_t >::min();
+	double max = std::numeric_limits< uint64_t >::max();
+
+	const AttributeRange* range = findAttribute< AttributeRange >(m);
+	if (range)
+	{
+		min = range->getMin();
+		max = range->getMax();
+	}
+
 	addPropertyItem(new NumericPropertyItem(
 		stylizeMemberName(m.getName()),
 		(double)m,
-		(double)std::numeric_limits< uint64_t >::min(),
-		(double)std::numeric_limits< uint64_t >::max(),
+		min,
+		max,
 		false
 	));
+
 	return true;
 }
 
 bool InspectReflector::operator >> (const Member< float >& m)
 {
+	float min = std::numeric_limits< float >::min();
+	float max = std::numeric_limits< float >::max();
+
+	const AttributeRange* range = findAttribute< AttributeRange >(m);
+	if (range)
+	{
+		min = range->getMin();
+		max = range->getMax();
+	}
+
 	addPropertyItem(new NumericPropertyItem(
 		stylizeMemberName(m.getName()),
 		m,
-		m.getLimitMin(),
-		m.getLimitMax(),
+		min,
+		max,
 		true
 	));
+
 	return true;
 }
 
 bool InspectReflector::operator >> (const Member< double >& m)
 {
+	double min = std::numeric_limits< double >::min();
+	double max = std::numeric_limits< double >::max();
+
+	const AttributeRange* range = findAttribute< AttributeRange >(m);
+	if (range)
+	{
+		min = range->getMin();
+		max = range->getMax();
+	}
+
 	addPropertyItem(new NumericPropertyItem(
 		stylizeMemberName(m.getName()),
 		m,
-		-std::numeric_limits< double >::max(),
-		std::numeric_limits< double >::max(),
+		min,
+		max,
 		true
 	));
+
 	return true;
 }
 
@@ -209,13 +329,23 @@ bool InspectReflector::operator >> (const Member< std::string >& m)
 
 bool InspectReflector::operator >> (const Member< std::wstring >& m)
 {
-	addPropertyItem(new TextPropertyItem(stylizeMemberName(m.getName()), m, m.isMultiLine()));
+	const AttributeMultiLine* multiLine = findAttribute< AttributeMultiLine >(m);
+	addPropertyItem(new TextPropertyItem(
+		stylizeMemberName(m.getName()),
+		m,
+		multiLine != 0
+	));
 	return true;
 }
 
 bool InspectReflector::operator >> (const Member< Guid >& m)
 {
-	addPropertyItem(new BrowsePropertyItem(stylizeMemberName(m.getName()), m.getType(), m));
+	const AttributeType* memberType = findAttribute< AttributeType >(m);
+	addPropertyItem(new BrowsePropertyItem(stylizeMemberName(
+		m.getName()),
+		memberType ? &(memberType->getMemberType()) : 0,
+		m
+	));
 	return true;
 }
 
@@ -233,14 +363,25 @@ bool InspectReflector::operator >> (const Member< Color4ub >& m)
 
 bool InspectReflector::operator >> (const Member< Scalar >& m)
 {
+	float min = std::numeric_limits< float >::min();
+	float max = std::numeric_limits< float >::max();
+
+	const AttributeRange* range = findAttribute< AttributeRange >(m);
+	if (range)
+	{
+		min = range->getMin();
+		max = range->getMax();
+	}
+
 	Scalar& v = m;
 	addPropertyItem(new NumericPropertyItem(
 		stylizeMemberName(m.getName()),
 		float(v),
-		-std::numeric_limits< float >::max(),
-		std::numeric_limits< float >::max(),
+		min,
+		max,
 		true
 	));
+
 	return true;
 }
 
@@ -276,9 +417,11 @@ bool InspectReflector::operator >> (const Member< Quaternion >& m)
 
 bool InspectReflector::operator >> (const Member< ISerializable >& m)
 {
+	const AttributeType* memberType = findAttribute< AttributeType >(m);
+
 	Ref< ObjectPropertyItem > propertyItem = new ObjectPropertyItem(
 		stylizeMemberName(m.getName()),
-		m.getType(),
+		memberType ? &(memberType->getMemberType()) : 0,
 		&(*m)
 	);
 	addPropertyItem(propertyItem);
@@ -292,11 +435,13 @@ bool InspectReflector::operator >> (const Member< ISerializable >& m)
 
 bool InspectReflector::operator >> (const Member< ISerializable* >& m)
 {
+	const AttributeType* memberType = findAttribute< AttributeType >(m);
+
 	ISerializable* object = m;
 
 	Ref< ObjectPropertyItem > propertyItem = new ObjectPropertyItem(
 		stylizeMemberName(m.getName()),
-		m.getType(),
+		memberType ? &(memberType->getMemberType()) : 0,
 		object
 	);
 	addPropertyItem(propertyItem);

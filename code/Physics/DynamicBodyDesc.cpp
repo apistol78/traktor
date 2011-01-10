@@ -1,6 +1,7 @@
+#include "Physics/DynamicBodyDesc.h"
+#include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
-#include "Physics/DynamicBodyDesc.h"
 
 namespace traktor
 {
@@ -108,17 +109,17 @@ bool DynamicBodyDesc::serialize(ISerializer& s)
 	if (!BodyDesc::serialize(s))
 		return false;
 
-	s >> Member< float >(L"mass", m_mass, 0.0f);
+	s >> Member< float >(L"mass", m_mass, AttributeRange(0.0f));
 	s >> Member< bool >(L"autoDeactivate", m_autoDeactivate);
 	s >> Member< bool >(L"active", m_active);
-	s >> Member< float >(L"linearDamping", m_linearDamping, 0.0f, 1.0f);
-	s >> Member< float >(L"angularDamping", m_angularDamping, 0.0f, 1.0f);
-	s >> Member< float >(L"friction", m_friction, 0.0f);
+	s >> Member< float >(L"linearDamping", m_linearDamping, AttributeRange(0.0f, 1.0f));
+	s >> Member< float >(L"angularDamping", m_angularDamping, AttributeRange(0.0f, 1.0f));
+	s >> Member< float >(L"friction", m_friction, AttributeRange(0.0f));
 
 	if (s.getVersion() >= 5)
 	{
-		s >> Member< float >(L"linearThreshold", m_linearThreshold);
-		s >> Member< float >(L"angularThreshold", m_angularThreshold);
+		s >> Member< float >(L"linearThreshold", m_linearThreshold, AttributeRange(0.0f));
+		s >> Member< float >(L"angularThreshold", m_angularThreshold, AttributeRange(0.0f));
 	}
 	
 	return true;

@@ -1,6 +1,7 @@
 #ifndef traktor_resource_Member_H
 #define traktor_resource_Member_H
 
+#include "Core/Serialization/AttributeType.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberComplex.h"
 #include "Core/Serialization/Member.h"
@@ -41,7 +42,11 @@ public:
 	{
 		Guid guid = m_ref.getGuid();
 		
-		bool result = (s >> traktor::Member< traktor::Guid >(getName(), guid, &type_of< AssetClass >()));
+		bool result = (s >> traktor::Member< traktor::Guid >(
+			getName(),
+			guid,
+			AttributeType(type_of< AssetClass >())
+		));
 		if (!result)
 			return false;
 

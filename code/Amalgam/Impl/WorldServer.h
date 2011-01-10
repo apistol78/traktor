@@ -27,6 +27,8 @@ class WorldServer : public IWorldServer
 	T_RTTI_CLASS;
 
 public:
+	WorldServer();
+
 	bool create(const Settings* settings, IRenderServer* renderServer, IResourceServer* resourceServer);
 
 	void destroy();
@@ -47,6 +49,7 @@ public:
 	virtual int32_t getFrameCount() const;
 
 private:
+	const TypeInfo* m_worldRendererType;
 	Ref< world::IEntityBuilder > m_entityBuilder;
 	Ref< IRenderServer > m_renderServer;
 	Ref< IResourceServer > m_resourceServer;

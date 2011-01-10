@@ -1,5 +1,6 @@
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Math/Format.h"
+#include "Core/Serialization/AttributeType.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberEnum.h"
 #include "Core/Serialization/MemberBitMask.h"
@@ -1807,7 +1808,7 @@ bool Texture::serialize(ISerializer& s)
 	if (!Node::serialize(s))
 		return false;
 
-	s >> Member< Guid >(L"external", m_external, &type_of< render::TextureResource >());
+	s >> Member< Guid >(L"external", m_external, AttributeType(type_of< render::TextureResource >()));
 	return true;
 }
 

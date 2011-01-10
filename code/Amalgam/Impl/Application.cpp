@@ -108,6 +108,7 @@
 #	include <Spray/Sources/SplineSource.h>
 #	include <Theater/TheaterControllerData.h>
 #	include <World/Entity/NullEntityData.h>
+#	include <World/Forward/WorldRendererForward.h>
 #	include <World/PostProcess/PostProcessDefineTarget.h>
 #	include <World/PostProcess/PostProcessStepBlur.h>
 #	include <World/PostProcess/PostProcessStepChain.h>
@@ -118,6 +119,7 @@
 #	include <World/PostProcess/PostProcessStepSmProj.h>
 #	include <World/PostProcess/PostProcessStepSsao.h>
 #	include <World/PostProcess/PostProcessStepSwapTargets.h>
+#	include <World/PreLit/WorldRendererPreLit.h>
 #endif
 
 namespace traktor
@@ -262,6 +264,8 @@ bool Application::create(
 	T_FORCE_LINK_REF(spray::SplineSource);
 	T_FORCE_LINK_REF(world::NullEntityData);
 	T_FORCE_LINK_REF(theater::TheaterControllerData);
+	T_FORCE_LINK_REF(world::WorldRendererForward);
+	T_FORCE_LINK_REF(world::WorldRendererPreLit);
 	T_FORCE_LINK_REF(world::PostProcessDefineTarget);
 	T_FORCE_LINK_REF(world::PostProcessStepBlur);
 	T_FORCE_LINK_REF(world::PostProcessStepChain);

@@ -1,6 +1,7 @@
-#include "World/Entity/ExternalSpatialEntityData.h"
+#include "Core/Serialization/AttributeType.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
+#include "World/Entity/ExternalSpatialEntityData.h"
 
 namespace traktor
 {
@@ -33,7 +34,11 @@ bool ExternalSpatialEntityData::serialize(ISerializer& s)
 	if (!SpatialEntityData::serialize(s))
 		return false;
 
-	return s >> Member< Guid >(L"guid", m_guid, &type_of< SpatialEntityData >());
+	return s >> Member< Guid >(
+		L"guid",
+		m_guid,
+		AttributeType(type_of< SpatialEntityData >())
+	);
 }
 
 	}
