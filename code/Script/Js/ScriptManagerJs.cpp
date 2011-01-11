@@ -43,5 +43,10 @@ Ref< IScriptContext > ScriptManagerJs::createContext()
 	return scriptContext;
 }
 
+Ref< IScriptDebugger > ScriptManagerJs::createDebugger()
+{
+	return 0;
+}
+
 	}
 }

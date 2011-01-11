@@ -7,6 +7,7 @@
 #include "Script/Delegate.h"
 #include "Script/IScriptClass.h"
 #include "Script/Lua/ScriptContextLua.h"
+#include "Script/Lua/ScriptDebuggerLua.h"
 #include "Script/Lua/ScriptManagerLua.h"
 #include "Script/Lua/ScriptResourceLua.h"
 #include "Script/Lua/ScriptUtilitiesLua.h"
@@ -165,6 +166,11 @@ Ref< IScriptResource > ScriptManagerLua::compile(const std::wstring& script, boo
 Ref< IScriptContext > ScriptManagerLua::createContext()
 {
 	return new ScriptContextLua(this, m_luaState);
+}
+
+Ref< IScriptDebugger > ScriptManagerLua::createDebugger()
+{
+	return new ScriptDebuggerLua(this, m_luaState);
 }
 
 void ScriptManagerLua::lock(ScriptContextLua* context)

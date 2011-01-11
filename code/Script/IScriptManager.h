@@ -18,6 +18,7 @@ namespace traktor
 
 class IScriptClass;
 class IScriptContext;
+class IScriptDebugger;
 class IScriptResource;
 
 /*! \brief Script error callback.
@@ -69,6 +70,12 @@ public:
 	 * \return Script context interface.
 	 */
 	virtual Ref< IScriptContext > createContext() = 0;
+
+	/*! \brief Create debugger.
+	 *
+	 * \return Debugger instance.
+	 */
+	virtual Ref< IScriptDebugger > createDebugger() = 0;
 };
 
 	}

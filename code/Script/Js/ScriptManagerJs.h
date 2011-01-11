@@ -35,6 +35,8 @@ public:
 
 	virtual Ref< IScriptContext > createContext();
 
+	virtual Ref< IScriptDebugger > createDebugger();
+
 private:
 	RefArray< IScriptClass > m_registeredClasses;
 };
