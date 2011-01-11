@@ -45,6 +45,8 @@ public:
 
 	virtual Ref< IScriptContext > createContext();
 
+	virtual Ref< IScriptDebugger > createDebugger();
+
 private:
 	friend class ScriptContextLua;
 
