@@ -95,21 +95,25 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(const model::Materi
 		if (comment == L"Tag_DiffuseColor")
 		{
 			render::Color* colorNode = checked_type_cast< render::Color* >(*i);
+			colorNode->setComment(L"");
 			colorNode->setColor(material.getColor());
 		}
 		else if (comment == L"Tag_DiffuseTerm")
 		{
 			render::Scalar* diffuseTermNode = checked_type_cast< render::Scalar* >(*i);
+			diffuseTermNode->setComment(L"");
 			diffuseTermNode->set(material.getDiffuseTerm());
 		}
 		else if (comment == L"Tag_SpecularTerm")
 		{
 			render::Scalar* specularTermNode = checked_type_cast< render::Scalar* >(*i);
+			specularTermNode->setComment(L"");
 			specularTermNode->set(material.getSpecularTerm());
 		}
 		else if (comment == L"Tag_SpecularRoughness")
 		{
 			render::Scalar* specularRoughnessNode = checked_type_cast< render::Scalar* >(*i);
+			specularRoughnessNode->setComment(L"");
 			specularRoughnessNode->set(material.getSpecularRoughness());
 		}
 	}
