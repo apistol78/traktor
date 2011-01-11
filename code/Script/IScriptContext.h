@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "Core/Object.h"
+#include "Core/Guid.h"
 #include "Script/Any.h"
 
 // import/export mechanism.
@@ -54,9 +55,10 @@ public:
 	/*! \brief Execute script.
 	 *
 	 * \param scriptResource Pre-compiled script resource.
+	 * \param scriptGuid Guid identifier of script; used for debugging.
 	 * \return True if executed successfully.
 	 */
-	virtual bool executeScript(const IScriptResource* scriptResource) = 0;
+	virtual bool executeScript(const IScriptResource* scriptResource, const Guid& scriptGuid) = 0;
 
 	/*! \brief Return true if context contains function (or method).
 	 *

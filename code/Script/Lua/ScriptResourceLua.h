@@ -24,14 +24,14 @@ class T_DLLCLASS ScriptResourceLua : public IScriptResource
 public:
 	ScriptResourceLua();
 
-	ScriptResourceLua(const std::wstring& script);
+	ScriptResourceLua(const std::string& script);
 
-	const std::wstring& getScript() const;
+	const std::string& getScript() const;
 
 	virtual bool serialize(ISerializer& s);
 
 private:
-	std::wstring m_script;
+	std::string m_script;
 };
 
 	}

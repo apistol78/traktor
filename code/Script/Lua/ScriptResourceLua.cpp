@@ -12,19 +12,19 @@ ScriptResourceLua::ScriptResourceLua()
 {
 }
 
-ScriptResourceLua::ScriptResourceLua(const std::wstring& script)
+ScriptResourceLua::ScriptResourceLua(const std::string& script)
 :	m_script(script)
 {
 }
 
-const std::wstring& ScriptResourceLua::getScript() const
+const std::string& ScriptResourceLua::getScript() const
 {
 	return m_script;
 }
 
 bool ScriptResourceLua::serialize(ISerializer& s)
 {
-	return s >> Member< std::wstring >(L"script", m_script);
+	return s >> Member< std::string >(L"script", m_script);
 }
 
 	}

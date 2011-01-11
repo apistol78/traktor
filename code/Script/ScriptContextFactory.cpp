@@ -46,7 +46,7 @@ Ref< Object > ScriptContextFactory::create(resource::IResourceManager* resourceM
 		return 0;
 	}
 
-	if (!scriptContext->executeScript(scriptResource))
+	if (!scriptContext->executeScript(scriptResource, guid))
 	{
 		log::error << L"Unable to create script context; execute script failed" << Endl;
 		return 0;

@@ -39,7 +39,7 @@ public:
 
 	virtual Any getGlobal(const std::wstring& globalName);
 
-	virtual bool executeScript(const IScriptResource* scriptResource);
+	virtual bool executeScript(const IScriptResource* scriptResource, const Guid& scriptGuid);
 
 	virtual bool haveFunction(const std::wstring& functionName) const;
 

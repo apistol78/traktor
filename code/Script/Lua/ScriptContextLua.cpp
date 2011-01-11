@@ -78,14 +78,22 @@ Any ScriptContextLua::getGlobal(const std::wstring& globalName)
 	return value;
 }
 
-bool ScriptContextLua::executeScript(const IScriptResource* scriptResource)
+bool ScriptContextLua::executeScript(const IScriptResource* scriptResource, const Guid& scriptGuid)
 {
 	CHECK_LUA_STACK(m_luaState, 0);
 
 	m_scriptManager->lock(this);
 
 	const ScriptResourceLua* scriptResourceLua = checked_type_cast< const ScriptResourceLua*, false >(scriptResource);
-	int32_t result = luaL_loadstring(m_luaState, wstombs(scriptResourceLua->getScript()).c_str());
+	
+	const std::string& text = scriptResourceLua->getScript();
+	int32_t result = luaL_loadbuffer(
+		m_luaState,
+		text.c_str(),
+		text.length(),
+		wstombs(scriptGuid.format()).c_str()
+	);
+
 	if (result != 0)
 	{
 		lua_pop(m_luaState, 1);
