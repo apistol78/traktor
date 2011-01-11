@@ -159,7 +159,7 @@ void ScriptManagerLua::registerClass(IScriptClass* scriptClass)
 
 Ref< IScriptResource > ScriptManagerLua::compile(const std::wstring& script, bool strip, IErrorCallback* errorCallback) const
 {
-	return new ScriptResourceLua(script);
+	return new ScriptResourceLua(wstombs(script));
 }
 
 Ref< IScriptContext > ScriptManagerLua::createContext()

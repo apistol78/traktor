@@ -187,7 +187,7 @@ Any ScriptContextJs::getGlobal(const std::wstring& globalName)
 	return fromValue(value);
 }
 
-bool ScriptContextJs::executeScript(const IScriptResource* scriptResource)
+bool ScriptContextJs::executeScript(const IScriptResource* scriptResource, const Guid& scriptGuid)
 {
 	v8::HandleScope handleScope;
 	v8::Context::Scope contextScope(m_context);
