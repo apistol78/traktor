@@ -55,7 +55,23 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	m_parent = parent;
 	m_site = site;
 
-	collectTargets();
+	// Create target manager.
+	int32_t timeout = m_editor->getSettings()->getProperty< PropertyInteger >(L"Amalgam.TargetTimeout", c_targetConnectTimeout);
+	
+	m_targetManager = new TargetManager();
+	if (m_targetManager->create(c_targetConnectionPort))
+	{
+		collectTargets();
+
+		// Create target manager communication thread.
+		m_threadTargetManager = ThreadManager::getInstance().create(makeFunctor(this, &EditorPlugin::threadTargetManager), L"Target manager");
+		m_threadTargetManager->start();
+	}
+	else
+	{
+		log::error << L"Unable to create target manager; target manager disabled" << Endl;
+		m_targetManager = 0;
+	}
 
 	// Create interface.
 	m_targetList = new TargetListControl();
@@ -65,25 +81,9 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 		m_targetList->add(*i);
 
 	m_targetList->addPlayEventHandler(ui::createMethodHandler(this, &EditorPlugin::eventTargetPlay));
-	m_targetList->addBuildEventHandler(ui::createMethodHandler(this, &EditorPlugin::eventTargetBuild));
 	m_targetList->addStopEventHandler(ui::createMethodHandler(this, &EditorPlugin::eventTargetStop));
 
 	m_site->createAdditionalPanel(m_targetList, 200, false);
-
-	// Create target manager.
-	int32_t timeout = m_editor->getSettings()->getProperty< PropertyInteger >(L"Amalgam.TargetTimeout", c_targetConnectTimeout);
-	
-	m_targetManager = new TargetManager();
-	if (m_targetManager->create(c_targetConnectionPort, timeout))
-	{
-		m_threadTargetManager = ThreadManager::getInstance().create(makeFunctor(this, &EditorPlugin::threadTargetManager), L"Target manager");
-		m_threadTargetManager->start();
-	}
-	else
-	{
-		log::error << L"Unable to create target manager; target manager disabled" << Endl;
-		m_targetManager = 0;
-	}
 
 	// Create database server; create configuration from targets.
 	Ref< db::Configuration > configuration = new db::Configuration();
@@ -153,7 +153,9 @@ bool EditorPlugin::handleCommand(const ui::Command& command, bool result_)
 		{
 			TargetInstance* targetInstance = *i;
 
-			if (targetInstance->getState() != TsRunning)
+			if (targetInstance->getState() != TsIdle)
+				continue;
+			if (targetInstance->getConnections().empty())
 				continue;
 
 			targetInstance->setState(TsPending);
@@ -162,7 +164,7 @@ bool EditorPlugin::handleCommand(const ui::Command& command, bool result_)
 			{
 				T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_targetActionQueueLock);
 				m_targetActionQueue.push_back(new BuildTargetAction(targetInstance));
-				m_targetActionQueue.push_back(new PostTargetAction(targetInstance, TsRunning));
+				m_targetActionQueue.push_back(new PostTargetAction(targetInstance, TsIdle));
 				m_targetActionQueueSignal.set();
 			}
 		}
@@ -194,8 +196,9 @@ void EditorPlugin::collectTargets()
 			Ref< const Target > target = (*i)->getObject< Target >();
 			T_ASSERT (target);
 
-			Ref< TargetInstance > targetInstance = new TargetInstance((*i)->getName(), target);
-			m_targetInstances.push_back(targetInstance);
+			Ref< TargetInstance > targetInstance = m_targetManager->createInstance((*i)->getName(), target);
+			if (targetInstance)
+				m_targetInstances.push_back(targetInstance);
 		}
 	}
 }
@@ -231,33 +234,10 @@ void EditorPlugin::eventTargetPlay(ui::Event* event)
 		if ((event->getKeyState() & ui::KsShift) == 0)
 		{
 			m_targetActionQueue.push_back(new DeployTargetAction(targetInstance));
-			m_targetActionQueue.push_back(new LaunchTargetAction(targetInstance, m_targetManager, activeGuid));
-			m_targetActionQueue.push_back(new PostTargetAction(targetInstance, TsRunning));
+			m_targetActionQueue.push_back(new LaunchTargetAction(targetInstance, activeGuid));
 		}
-		else
-			m_targetActionQueue.push_back(new PostTargetAction(targetInstance, TsIdle));
 
-		m_targetActionQueueSignal.set();
-	}
-
-	m_targetList->update();
-}
-
-void EditorPlugin::eventTargetBuild(ui::Event* event)
-{
-	TargetInstance* targetInstance = checked_type_cast< TargetInstance*, false >(event->getItem());
-
-	TargetState currentState = targetInstance->getState();
-	if (currentState != TsIdle && currentState != TsRunning)
-		return;
-
-	targetInstance->setState(TsPending);
-	targetInstance->setBuildProgress(0);
-
-	{
-		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_targetActionQueueLock);
-		m_targetActionQueue.push_back(new BuildTargetAction(targetInstance));
-		m_targetActionQueue.push_back(new PostTargetAction(targetInstance, currentState));
+		m_targetActionQueue.push_back(new PostTargetAction(targetInstance, TsIdle));
 		m_targetActionQueueSignal.set();
 	}
 

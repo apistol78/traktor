@@ -1,7 +1,6 @@
 #include "Amalgam/Editor/LaunchTargetAction.h"
 #include "Amalgam/Editor/Target.h"
 #include "Amalgam/Editor/TargetInstance.h"
-#include "Amalgam/Editor/TargetManager.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Io/StringOutputStream.h"
@@ -31,9 +30,8 @@ const uint16_t c_remoteDatabasePort = 35000;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.LaunchTargetAction", LaunchTargetAction, ITargetAction)
 
-LaunchTargetAction::LaunchTargetAction(TargetInstance* targetInstance, TargetManager* targetManager, const Guid& activeGuid)
+LaunchTargetAction::LaunchTargetAction(TargetInstance* targetInstance, const Guid& activeGuid)
 :	m_targetInstance(targetInstance)
-,	m_targetManager(targetManager)
 ,	m_activeGuid(activeGuid)
 {
 }
@@ -83,6 +81,7 @@ bool LaunchTargetAction::execute()
 	// Expose target connection host.
 	settings->setProperty< PropertyString >(L"Amalgam.TargetManager/Host", host);
 	settings->setProperty< PropertyInteger >(L"Amalgam.TargetManager/Port", c_targetConnectionPort);
+	settings->setProperty< PropertyString >(L"Amalgam.TargetManager/Id", m_targetInstance->getId().format());
 
 	// Append optional "active guid" to application configuration; it's the applications responsibility
 	// to determine what to do with it.
@@ -118,13 +117,6 @@ bool LaunchTargetAction::execute()
 	if (!process)
 	{
 		log::error << L"Failed to launch process \"" << deployTool << L"\"" << Endl;
-		m_targetInstance->setState(TsIdle);
-		return false;
-	}
-
-	// Accept connection from launched target.
-	if (!m_targetManager->accept(m_targetInstance))
-	{
 		m_targetInstance->setState(TsIdle);
 		return false;
 	}

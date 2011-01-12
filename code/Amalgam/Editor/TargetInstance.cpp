@@ -1,4 +1,6 @@
+#include "Amalgam/Editor/TargetConnection.h"
 #include "Amalgam/Editor/TargetInstance.h"
+#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -8,10 +10,24 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.TargetInstance", TargetInstance, Object)
 
 TargetInstance::TargetInstance(const std::wstring& name, const Target* target)
-:	m_name(name)
+:	m_id(Guid::create())
+,	m_name(name)
 ,	m_target(target)
 ,	m_state(TsIdle)
 {
+}
+
+void TargetInstance::destroy()
+{
+	for (RefArray< TargetConnection >::iterator i = m_connections.begin(); i != m_connections.end(); ++i)
+		(*i)->destroy();
+
+	m_connections.clear();
+}
+
+const Guid& TargetInstance::getId() const
+{
+	return m_id;
 }
 
 const std::wstring& TargetInstance::getName() const
@@ -44,14 +60,28 @@ int32_t TargetInstance::getBuildProgress() const
 	return m_buildProgress;
 }
 
-void TargetInstance::setPerformance(const TargetPerformance& performance)
+void TargetInstance::update()
 {
-	m_performance = performance;
+	for (RefArray< TargetConnection >::iterator i = m_connections.begin(); i != m_connections.end(); )
+	{
+		if (!(*i)->update())
+		{
+			i = m_connections.erase(i);
+			log::info << L"Target disconnected; connection removed" << Endl;
+		}
+		else
+			++i;
+	}
 }
 
-const TargetPerformance& TargetInstance::getPerformance() const
+void TargetInstance::addConnection(TargetConnection* connection)
 {
-	return m_performance;
+	m_connections.push_back(connection);
+}
+
+const RefArray< TargetConnection>& TargetInstance::getConnections() const
+{
+	return m_connections;
 }
 
 	}

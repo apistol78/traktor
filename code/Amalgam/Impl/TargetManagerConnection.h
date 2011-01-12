@@ -17,7 +17,7 @@ class TargetManagerConnection : public Object
 public:
 	TargetManagerConnection();
 
-	bool connect(const std::wstring& host, uint16_t port);
+	bool connect(const std::wstring& host, uint16_t port, const Guid& id);
 
 	void setPerformance(const TargetPerformance& performance);
 

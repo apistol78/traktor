@@ -171,10 +171,11 @@ bool Application::create(
 {
 	std::wstring targetManagerHost = settings->getProperty< PropertyString >(L"Amalgam.TargetManager/Host");
 	int32_t targetManagerPort = settings->getProperty< PropertyInteger >(L"Amalgam.TargetManager/Port");
-	if (!targetManagerHost.empty() && targetManagerPort)
+	Guid targetManagerId = Guid(settings->getProperty< PropertyString >(L"Amalgam.TargetManager/Id"));
+	if (!targetManagerHost.empty() && targetManagerPort && targetManagerId.isValid())
 	{
 		m_targetManagerConnection = new TargetManagerConnection();
-		if (!m_targetManagerConnection->connect(targetManagerHost, targetManagerPort))
+		if (!m_targetManagerConnection->connect(targetManagerHost, targetManagerPort, targetManagerId))
 		{
 			log::warning << L"Unable to connect to Target Manager; unable to debug" << Endl;
 			m_targetManagerConnection = 0;
