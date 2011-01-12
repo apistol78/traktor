@@ -1,10 +1,11 @@
 #include "Amalgam/Editor/TargetConnection.h"
+#include "Amalgam/Editor/TargetInstance.h"
 #include "Amalgam/Editor/TargetManager.h"
+#include "Amalgam/Impl/TargetID.h"
 #include "Core/Log/Log.h"
-#include "Core/Thread/Acquire.h"
-#include "Core/Thread/Thread.h"
-#include "Core/Thread/ThreadManager.h"
+#include "Core/Serialization/BinarySerializer.h"
 #include "Net/SocketAddressIPv4.h"
+#include "Net/SocketStream.h"
 
 namespace traktor
 {
@@ -13,8 +14,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.TargetManager", TargetManager, Object)
 
-bool TargetManager::create(uint16_t port, int32_t timeout)
+bool TargetManager::create(uint16_t port)
 {
+	// Create our server socket.
 	m_listenSocket = new net::TcpSocket();
 	if (!m_listenSocket->bind(net::SocketAddressIPv4(port)))
 		return false;
@@ -22,12 +24,18 @@ bool TargetManager::create(uint16_t port, int32_t timeout)
 	if (!m_listenSocket->listen())
 		return false;
 
-	m_timeout = timeout;
 	return true;
 }
 
 void TargetManager::destroy()
 {
+	// Destroy instances.
+	for (RefArray< TargetInstance >::iterator i = m_instances.begin(); i != m_instances.end(); ++i)
+		(*i)->destroy();
+
+	m_instances.clear();
+
+	// Close server socket.
 	if (m_listenSocket)
 	{
 		m_listenSocket->close();
@@ -35,61 +43,63 @@ void TargetManager::destroy()
 	}
 }
 
-bool TargetManager::accept(TargetInstance* targetInstance)
+TargetInstance* TargetManager::createInstance(const std::wstring& name, const Target* target)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_acceptLock);
-
-	for (RefArray< TargetConnection >::iterator i = m_connections.begin(); i != m_connections.end(); )
-	{
-		if ((*i)->getTargetInstance() == targetInstance)
-			i = m_connections.erase(i);
-		else
-			++i;
-	}
-
-	if (!m_listenSocket->select(true, false, false, m_timeout))
-	{
-		log::warning << L"Target connection timeout" << Endl;
-		return false;
-	}
-
-	Ref< net::TcpSocket > targetSocket = m_listenSocket->accept();
-	if (!targetSocket)
-		return false;
-
-	m_targetSockets.add(targetSocket);
-	m_connections.push_back(new TargetConnection(targetInstance, targetSocket));
-	
-	log::info << L"Target connected successfully" << Endl;
-	return true;
+	// Create target instance; add to our list of instances.
+	Ref< TargetInstance > instance = new TargetInstance(name, target);
+	m_instances.push_back(instance);
+	return instance;
 }
 
 void TargetManager::update()
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_acceptLock);
-
-	if (m_connections.empty())
+	// Check if any pending connection available.
+	if (m_listenSocket->select(true, false, false, 0))
 	{
-		ThreadManager::getInstance().getCurrentThread()->sleep(100);
-		return;
-	}
-
-	net::SocketSet rs;
-	if (m_targetSockets.select(true, false, false, 100, rs) <= 0)
-		return;
-
-	RefArray< TargetConnection >::iterator i = m_connections.begin();
-	while (i != m_connections.end())
-	{
-		if ((*i)->update())
-			++i;
-		else
+		// Accept new connection.
+		Ref< net::TcpSocket > socket = m_listenSocket->accept();
+		if (socket)
 		{
-			m_targetSockets.remove((*i)->getSocket());
-			i = m_connections.erase(i);
-			log::info << L"Target connection terminated" << Endl;
+			// Target must send it's identifier upon connection.
+			Ref< TargetID > targetId = BinarySerializer(&net::SocketStream(socket, true, false)).readObject< TargetID >();
+			if (targetId)
+			{
+				// Find instance with matching identifier.
+				TargetInstance* instance = 0;
+				for (RefArray< TargetInstance >::iterator i = m_instances.begin(); i != m_instances.end(); ++i)
+				{
+					if ((*i)->getId() == targetId->getId())
+					{
+						instance = *i;
+						break;
+					}
+				}
+
+				if (instance)
+				{
+					// Create connection object and add to instance.
+					instance->addConnection(new TargetConnection(socket));
+					log::info << L"New target connection accepted; ID " << targetId->getId().format() << Endl;
+				}
+				else
+				{
+					// Unknown target; refusing connection.
+					socket->close();
+					log::error << L"Unknown target; connection refused" << Endl;
+				}
+			}
+			else
+			{
+				// Invalid target ID message; refusing connection.
+				socket->close();
+				log::error << L"Invalid target ID message; connection refused" << Endl;
+			}
 		}
 	}
+
+	// Update all instances.
+	for (RefArray< TargetInstance >::iterator i = m_instances.begin(); i != m_instances.end(); ++i)
+		(*i)->update();
 }
 
 	}

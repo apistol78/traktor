@@ -1,15 +1,25 @@
 #ifndef traktor_amalgam_TargetInstance_H
 #define traktor_amalgam_TargetInstance_H
 
+#include "Core/Guid.h"
 #include "Core/Object.h"
+#include "Core/RefArray.h"
 #include "Amalgam/Impl/TargetPerformance.h"
 
 namespace traktor
 {
+	namespace net
+	{
+
+class TcpSocket;
+
+	}
+
 	namespace amalgam
 	{
 
 class Target;
+class TargetConnection;
 
 enum TargetState
 {
@@ -17,8 +27,7 @@ enum TargetState
 	TsPending,
 	TsBuilding,
 	TsDeploying,
-	TsLaunching,
-	TsRunning
+	TsLaunching
 };
 
 class TargetInstance : public Object
@@ -27,6 +36,10 @@ class TargetInstance : public Object
 
 public:
 	TargetInstance(const std::wstring& name, const Target* target);
+
+	void destroy();
+
+	const Guid& getId() const;
 
 	const std::wstring& getName() const;
 
@@ -40,16 +53,19 @@ public:
 
 	int32_t getBuildProgress() const;
 
-	void setPerformance(const TargetPerformance& performance);
+	void update();
 
-	const TargetPerformance& getPerformance() const;
+	void addConnection(TargetConnection* connection);
+
+	const RefArray< TargetConnection >& getConnections() const;
 
 private:
+	Guid m_id;
 	std::wstring m_name;
 	Ref< const Target > m_target;
 	TargetState m_state;
 	int32_t m_buildProgress;
-	TargetPerformance m_performance;
+	RefArray< TargetConnection > m_connections;
 };
 
 	}

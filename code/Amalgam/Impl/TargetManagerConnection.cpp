@@ -1,3 +1,4 @@
+#include "Amalgam/Impl/TargetID.h"
 #include "Amalgam/Impl/TargetManagerConnection.h"
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
@@ -16,7 +17,7 @@ TargetManagerConnection::TargetManagerConnection()
 {
 }
 
-bool TargetManagerConnection::connect(const std::wstring& host, uint16_t port)
+bool TargetManagerConnection::connect(const std::wstring& host, uint16_t port, const Guid& id)
 {
 	if (!net::Network::initialize())
 	{
@@ -32,6 +33,12 @@ bool TargetManagerConnection::connect(const std::wstring& host, uint16_t port)
 	}
 
 	m_socketStream = new net::SocketStream(m_socket, false, true);
+
+	if (!BinarySerializer(m_socketStream).writeObject(&TargetID(id)))
+	{
+		log::error << L"Failed to create target manager connection; unable to send ID" << Endl;
+		return false;
+	}
 
 	log::info << L"Connection to target manager established successfully" << Endl;
 	return true;

@@ -41,14 +41,9 @@ void TargetListControl::addPlayEventHandler(ui::EventHandler* eventHandler)
 	addEventHandler(ui::EiUser + 1, eventHandler);
 }
 
-void TargetListControl::addBuildEventHandler(ui::EventHandler* eventHandler)
-{
-	addEventHandler(ui::EiUser + 2, eventHandler);
-}
-
 void TargetListControl::addStopEventHandler(ui::EventHandler* eventHandler)
 {
-	addEventHandler(ui::EiUser + 3, eventHandler);
+	addEventHandler(ui::EiUser + 2, eventHandler);
 }
 
 void TargetListControl::layoutCells(const ui::Rect& rc)

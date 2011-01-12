@@ -31,7 +31,6 @@ public:
 
 private:
 	Ref< ui::CheckBox > m_checkPublishActiveGuid;
-	Ref< ui::Edit > m_editTargetTimeout;
 };
 
 	}

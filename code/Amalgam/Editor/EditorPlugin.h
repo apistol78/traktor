@@ -40,16 +40,12 @@ private:
 	Ref< ui::Widget > m_parent;
 	Ref< editor::IEditorPageSite > m_site;
 	Ref< TargetListControl > m_targetList;
-
 	Ref< TargetManager > m_targetManager;							//!< Target connection manager.
 	Ref< db::ConnectionManager > m_connectionManager;		//!< Remote database connection manager.
-
 	RefArray< TargetInstance > m_targetInstances;
-
 	Semaphore m_targetActionQueueLock;
 	Signal m_targetActionQueueSignal;
 	RefArray< ITargetAction > m_targetActionQueue;
-
 	Thread* m_threadTargetManager;
 	Thread* m_threadConnectionManager;
 	Thread* m_threadTargetActions;
@@ -57,8 +53,6 @@ private:
 	void collectTargets();
 
 	void eventTargetPlay(ui::Event* event);
-
-	void eventTargetBuild(ui::Event* event);
 
 	void eventTargetStop(ui::Event* event);
 

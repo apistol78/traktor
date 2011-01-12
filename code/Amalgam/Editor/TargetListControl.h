@@ -25,8 +25,6 @@ public:
 
 	void addPlayEventHandler(ui::EventHandler* eventHandler);
 
-	void addBuildEventHandler(ui::EventHandler* eventHandler);
-
 	void addStopEventHandler(ui::EventHandler* eventHandler);
 
 private:

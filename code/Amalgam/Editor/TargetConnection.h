@@ -1,31 +1,37 @@
 #ifndef traktor_amalgam_TargetConnection_H
 #define traktor_amalgam_TargetConnection_H
 
-#include "Net/TcpSocket.h"
 #include "Amalgam/Impl/TargetPerformance.h"
+#include "Core/Object.h"
 
 namespace traktor
 {
-	namespace amalgam
+	namespace net
 	{
 
-class TargetInstance;
+class TcpSocket;
+
+	}
+
+	namespace amalgam
+	{
 
 class TargetConnection : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	TargetConnection(TargetInstance* targetInstance, net::TcpSocket* socket);
+	TargetConnection(net::TcpSocket* socket);
+
+	void destroy();
 
 	bool update();
 
-	TargetInstance* getTargetInstance() const { return m_targetInstance; }
-
 	net::TcpSocket* getSocket() const { return m_socket; }
 
+	const TargetPerformance& getPerformance() const { return m_performance; }
+
 private:
-	Ref< TargetInstance > m_targetInstance;
 	Ref< net::TcpSocket > m_socket;
 	TargetPerformance m_performance;
 };
