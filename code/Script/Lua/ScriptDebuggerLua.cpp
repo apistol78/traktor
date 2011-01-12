@@ -1,6 +1,6 @@
 #include "Core/Guid.h"
-#include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
+#include "Script/CallStack.h"
 #include "Script/Lua/ScriptDebuggerLua.h"
 #include "Script/Lua/ScriptUtilitiesLua.h"
 
@@ -57,32 +57,41 @@ void ScriptDebuggerLua::analyzeState(lua_State* L, lua_Debug* ar)
 	{
 		if (lua_getstack(L, 0, ar))
 		{
-			lua_getinfo(L, "S", ar);
+			lua_getinfo(L, "Sn", ar);
 
 			Guid scriptId(mbstows(ar->source));
 			if (scriptId.isValid() && !scriptId.isNull())
 			{
 				if (i->second.find(scriptId) != i->second.end())
 				{
-					log::info << L"BREAKPOINT HIT" << Endl;
-					log::info << L"AT: " << mbstows(ar->source) << L"; line " << (ar->currentline - 1) << Endl;
+					CallStack cs;
+
+					CallStack::Frame f;
+					f.name = ar->name ? mbstows(ar->name) : L"";
+					f.scriptId = scriptId;
+					f.lineNumber = ar->currentline - 1;
 
 					const char* localName;
 					for (int n = 1; (localName = lua_getlocal(L, ar, n)) != 0; ++n)
 					{
 						if (*localName != '(')
 						{
+							CallStack::Local l;
+							l.name = mbstows(localName);
+
 							const char* localValue = lua_tostring(L, 1);
 							if (localValue)
-								log::info << L"\t" << n << L". \"" << mbstows(localName) << L"\" = " << mbstows(localValue) << Endl;
-							else
-								log::info << L"\t" << n << L". \"" << mbstows(localName) << L"\" = nil" << Endl;
+								l.value = mbstows(localValue);
+
+							f.locals.push_back(l);
 						}
 						lua_pop(L, 1);
 					}
 
+					cs.pushFrame(f);
+
 					for (std::set< IListener* >::const_iterator j = m_listeners.begin(); j != m_listeners.end(); ++j)
-						(*j)->breakpointReached(this, scriptId, ar->currentline - 1);
+						(*j)->breakpointReached(this, cs);
 				}
 			}
 		}

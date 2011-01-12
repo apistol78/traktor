@@ -19,6 +19,8 @@ class Guid;
 	namespace script
 	{
 
+class CallStack;
+
 /*! \brief Script debugger
  * \ingroup Script
  */
@@ -29,7 +31,7 @@ class T_DLLCLASS IScriptDebugger : public Object
 public:
 	struct IListener
 	{
-		virtual void breakpointReached(IScriptDebugger* scriptDebugger, const Guid& scriptId, uint32_t lineNumber) = 0;
+		virtual void breakpointReached(IScriptDebugger* scriptDebugger, const CallStack& callStack) = 0;
 	};
 
 	virtual bool setBreakpoint(const Guid& scriptId, uint32_t lineNumber) = 0;
