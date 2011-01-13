@@ -5,7 +5,7 @@
 #include "Core/Ref.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Aabb.h"
-#include "Core/Math/Winding.h"
+#include "Core/Math/Winding3.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -39,7 +39,7 @@ public:
 	 * \param polygons Polygon set.
 	 * \return True if built successfully.
 	 */
-	void build(const AlignedVector< Winding >& polygons);
+	void build(const AlignedVector< Winding3 >& polygons);
 
 	/*! \brief Query for closest intersection.
 	 *
@@ -92,7 +92,7 @@ private:
 	};
 
 	Node* m_root;
-	AlignedVector< Winding > m_polygons;
+	AlignedVector< Winding3 > m_polygons;
 	AlignedVector< Node* > m_nodes;
 	mutable AlignedVector< Stack > m_stack;
 	mutable std::vector< int32_t > m_query;

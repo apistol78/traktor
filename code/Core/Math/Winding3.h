@@ -1,9 +1,8 @@
-#ifndef traktor_Winding_H
-#define traktor_Winding_H
+#ifndef traktor_Winding3_H
+#define traktor_Winding3_H
 
-#include "Core/Math/Vector4.h"
-#include "Core/Math/Plane.h"
 #include "Core/Containers/AlignedVector.h"
+#include "Core/Math/Plane.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -16,10 +15,10 @@
 namespace traktor
 {
 
-/*! \brief Point winding.
+/*! \brief 3d point winding.
  * \ingroup Core
  */
-class T_DLLCLASS Winding
+class T_DLLCLASS Winding3
 {
 public:
 	enum Classification
@@ -32,17 +31,17 @@ public:
 
 	AlignedVector< Vector4 > points;
 
-	Winding();
+	Winding3();
 
-	Winding(const AlignedVector< Vector4 >& points);
+	Winding3(const AlignedVector< Vector4 >& points);
 
-	Winding(const Vector4* points, size_t npoints);
+	Winding3(const Vector4* points, size_t npoints);
 
 	bool angleIndices(uint32_t& outI1, uint32_t& outI2, uint32_t& outI3) const;
 
 	bool getPlane(Plane& outPlane) const;
 
-	void split(const Plane& plane, Winding& outFront, Winding& outBack) const;
+	void split(const Plane& plane, Winding3& outFront, Winding3& outBack) const;
 
 	int classify(const Plane& plane) const;
 	
@@ -56,4 +55,4 @@ public:
 
 }
 
-#endif	// traktor_Winding_H
+#endif	// traktor_Winding3_H

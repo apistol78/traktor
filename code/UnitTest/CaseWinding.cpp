@@ -1,6 +1,7 @@
 #include "UnitTest/CaseWinding.h"
 #include "Core/Math/Const.h"
-#include "Core/Math/Winding.h"
+#include "Core/Math/Winding2.h"
+#include "Core/Math/Winding3.h"
 
 namespace traktor
 {
@@ -31,6 +32,21 @@ bool compareNotEqual(const Vector4& a, const Vector4& b)
 
 void CaseWinding::run()
 {
+	// Build 2D convex hull.
+	{
+		const Vector2 points[] =
+		{
+			Vector2(-2.0f, 0.0f),
+			Vector2(2.0f, 0.0f),
+			Vector2(0.0f, -3.0f),
+			Vector2(0.0f, 3.0f),
+			Vector2(0.0f, 0.0f)
+		};
+
+		Winding2 hull = Winding2::convexHull(points, sizeof_array(points));
+		CASE_ASSERT_EQUAL (hull.p.size(), 4);
+	}
+
 	// Find angle indices.
 	{
 		const Vector4 points_1[] =
@@ -41,7 +57,7 @@ void CaseWinding::run()
 			Vector4(0.0f, 0.0f, 0.0f, 1.0f)
 		};
 
-		Winding winding_1(points_1, sizeof_array(points_1));
+		Winding3 winding_1(points_1, sizeof_array(points_1));
 		
 		uint32_t i1, i2, i3;
 		CASE_ASSERT (winding_1.angleIndices(i1, i2, i3));
@@ -65,7 +81,7 @@ void CaseWinding::run()
 			Vector4(4.0f, 0.0f, 0.0f, 1.0f)
 		};
 
-		Winding winding_1(points_1, sizeof_array(points_1));
+		Winding3 winding_1(points_1, sizeof_array(points_1));
 
 		uint32_t i1 = 0, i2 = 0, i3 = 0;
 		CASE_ASSERT (!winding_1.angleIndices(i1, i2, i3));

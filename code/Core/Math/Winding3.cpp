@@ -1,28 +1,28 @@
 #include "Core/Math/Const.h"
 #include "Core/Math/Float.h"
 #include "Core/Math/Vector2.h"
-#include "Core/Math/Winding.h"
+#include "Core/Math/Winding3.h"
 
 namespace traktor
 {
 
-Winding::Winding()
+Winding3::Winding3()
 {
 }
 
-Winding::Winding(const AlignedVector< Vector4 >& points_)
+Winding3::Winding3(const AlignedVector< Vector4 >& points_)
 :	points(points_)
 {
 }
 
-Winding::Winding(const Vector4* points_, size_t npoints)
+Winding3::Winding3(const Vector4* points_, size_t npoints)
 :	points(npoints)
 {
 	for (size_t i = 0; i < npoints; ++i)
 		points[i] = points_[i];
 }
 
-bool Winding::angleIndices(uint32_t& outI1, uint32_t& outI2, uint32_t& outI3) const
+bool Winding3::angleIndices(uint32_t& outI1, uint32_t& outI2, uint32_t& outI3) const
 {
 	if (points.size() < 3)
 		return false;
@@ -60,7 +60,7 @@ bool Winding::angleIndices(uint32_t& outI1, uint32_t& outI2, uint32_t& outI3) co
 	return false;
 }
 
-bool Winding::getPlane(Plane& outPlane) const
+bool Winding3::getPlane(Plane& outPlane) const
 {
 	// Get indices to points which form a good frame.
 	uint32_t i1, i2, i3;
@@ -72,7 +72,7 @@ bool Winding::getPlane(Plane& outPlane) const
 	return true;
 }
 
-void Winding::split(const Plane& plane, Winding& outFront, Winding& outBack) const
+void Winding3::split(const Plane& plane, Winding3& outFront, Winding3& outBack) const
 {
 	for (size_t i = 0, j = points.size() - 1; i < points.size(); j = i++)
 	{
@@ -100,7 +100,7 @@ void Winding::split(const Plane& plane, Winding& outFront, Winding& outBack) con
 	}
 }
 
-int Winding::classify(const Plane& plane) const
+int Winding3::classify(const Plane& plane) const
 {
 	int side[2] = { 0, 0 };
 	for (size_t i = 0; i < points.size(); ++i)
@@ -123,7 +123,7 @@ int Winding::classify(const Plane& plane) const
 	return CfSpan;
 }
 
-bool Winding::rayIntersection(
+bool Winding3::rayIntersection(
 	const Vector4& origin,
 	const Vector4& direction,
 	Scalar& outK,
