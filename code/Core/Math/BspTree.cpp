@@ -1,11 +1,11 @@
+#include "Core/Log/Log.h"
 #include "Core/Math/BspTree.h"
 #include "Core/Math/Const.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
 
-bool BspTree::build(const AlignedVector< Winding >& polygons)
+bool BspTree::build(const AlignedVector< Winding3 >& polygons)
 {
 	// Calculate polygon planes.
 	AlignedVector< Plane > planes(polygons.size());
@@ -26,37 +26,37 @@ bool BspTree::inside(const Vector4& pt) const
 	return inside(m_root, pt);
 }
 
-bool BspTree::inside(const Winding& w) const
+bool BspTree::inside(const Winding3& w) const
 {
 	T_ASSERT (m_root);
 	return inside(m_root, w);
 }
 
-Ref< BspTree::BspNode > BspTree::recursiveBuild(const AlignedVector< Winding >& polygons, const AlignedVector< Plane >& planes)
+Ref< BspTree::BspNode > BspTree::recursiveBuild(const AlignedVector< Winding3 >& polygons, const AlignedVector< Plane >& planes)
 {
 	Ref< BspNode > node = new BspNode();
 	node->plane = planes[0];
 
-	AlignedVector< Winding > frontPolygons, backPolygons;
+	AlignedVector< Winding3 > frontPolygons, backPolygons;
 	AlignedVector< Plane > frontPlanes, backPlanes;
 
 	for (size_t i = 1; i < polygons.size(); ++i)
 	{
 		int cf = polygons[i].classify(node->plane);
-		if (cf == Winding::CfFront || cf == Winding::CfCoplanar)
+		if (cf == Winding3::CfFront || cf == Winding3::CfCoplanar)
 		{
 			frontPolygons.push_back(polygons[i]);
 			frontPlanes.push_back(planes[i]);
 		}
-		else if (cf == Winding::CfBack)
+		else if (cf == Winding3::CfBack)
 		{
 			backPolygons.push_back(polygons[i]);
 			backPlanes.push_back(planes[i]);
 		}
 		else
 		{
-			T_ASSERT (cf == Winding::CfSpan);
-			Winding f, b;
+			T_ASSERT (cf == Winding3::CfSpan);
+			Winding3 f, b;
 			
 			polygons[i].split(node->plane, f, b);
 			T_ASSERT (f.points.size() >= 3);
@@ -97,19 +97,19 @@ bool BspTree::inside(const BspNode* node, const Vector4& pt) const
 	return false;
 }
 
-bool BspTree::inside(const BspNode* node, const Winding& w) const
+bool BspTree::inside(const BspNode* node, const Winding3& w) const
 {
 	bool result = false;
 
 	int cf = w.classify(node->plane);
-	if (cf == Winding::CfFront || cf == Winding::CfCoplanar)
+	if (cf == Winding3::CfFront || cf == Winding3::CfCoplanar)
 		result = node->front ? inside(node->front, w) : true;
-	else if (cf == Winding::CfBack)
+	else if (cf == Winding3::CfBack)
 		result = node->back ? inside(node->back, w) : false;
 	else
 	{
-		T_ASSERT (cf == Winding::CfSpan);
-		Winding f, b;
+		T_ASSERT (cf == Winding3::CfSpan);
+		Winding3 f, b;
 
 		w.split(node->plane, f, b);
 		T_ASSERT (!f.points.empty());

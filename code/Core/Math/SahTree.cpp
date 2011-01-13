@@ -34,14 +34,14 @@ SahTree::~SahTree()
 		Alloc::freeAlign(*i);
 }
 
-void SahTree::build(const AlignedVector< Winding >& polygons)
+void SahTree::build(const AlignedVector< Winding3 >& polygons)
 {
 	// Create root node.
 	m_root = allocNode();
 
 	// Build list of transformed triangles from each shape.
 	m_polygons.reserve(polygons.size());
-	for (AlignedVector< Winding >::const_iterator i = polygons.begin(); i != polygons.end(); ++i)
+	for (AlignedVector< Winding3 >::const_iterator i = polygons.begin(); i != polygons.end(); ++i)
 	{
 		for (AlignedVector< Vector4 >::const_iterator j = i->points.begin(); j != i->points.end(); ++j)
 			m_root->aabb.contain(*j);
@@ -98,7 +98,7 @@ bool SahTree::queryAnyIntersection(const Vector4& origin, const Vector4& directi
 				if (m_query[*i] == m_queryTag)
 					continue;
 
-				const Winding& polygon = m_polygons[*i];
+				const Winding3& polygon = m_polygons[*i];
 				if (polygon.rayIntersection(origin, direction, T))
 				{
 					if (T >= -F && (md <= F || T <= md))
@@ -155,7 +155,7 @@ void SahTree::buildNode(Node* node, int32_t depth)
 	AlignedVector< std::pair< Scalar, Scalar > > spatialRanges;
 	for (std::vector< int32_t >::const_iterator i = node->indices.begin(); i != node->indices.end(); ++i)
 	{
-		const Winding& polygon = m_polygons[*i];
+		const Winding3& polygon = m_polygons[*i];
 		
 		std::pair< Scalar, Scalar > range(
 			Scalar(std::numeric_limits< float >::max()),

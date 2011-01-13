@@ -4,7 +4,7 @@
 #include "Core/Math/Aabb.h"
 #include "Core/Math/Frustum.h"
 #include "Core/Math/Matrix44.h"
-#include "Core/Math/Winding.h"
+#include "Core/Math/Winding3.h"
 #include "Mesh/IMesh.h"
 #include "Render/Shader.h"
 #include "Resource/Proxy.h"
@@ -77,7 +77,7 @@ private:
 
 	struct Portal
 	{
-		Winding winding;
+		Winding3 winding;
 		int sectorA;
 		int sectorB;
 	};

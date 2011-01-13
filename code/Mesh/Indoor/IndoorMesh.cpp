@@ -154,7 +154,7 @@ void IndoorMesh::findVisibleSectors(
 			if (outVisibleSectors.find(nextSector) != outVisibleSectors.end())
 				continue;
 
-			Winding clipped;
+			Winding3 clipped;
 			for (AlignedVector< Vector4 >::const_iterator j = i->winding.points.begin(); j != i->winding.points.end(); ++j)
 				clipped.points.push_back(
 					view * *j
@@ -166,7 +166,7 @@ void IndoorMesh::findVisibleSectors(
 
 			for (AlignedVector< Plane >::const_iterator j = frustum.begin(); j != frustum.end(); ++j)
 			{
-				Winding front, back;
+				Winding3 front, back;
 				clipped.split(*j, front, back);
 				clipped = front;
 

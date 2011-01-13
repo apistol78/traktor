@@ -3,7 +3,7 @@
 
 #include "Core/Ref.h"
 #include "Core/Containers/AlignedVector.h"
-#include "Core/Math/Winding.h"
+#include "Core/Math/Winding3.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -27,7 +27,7 @@ public:
 	 * \param polygons Polygon set.
 	 * \return True if built successfully.
 	 */
-	bool build(const AlignedVector< Winding >& polygons);
+	bool build(const AlignedVector< Winding3 >& polygons);
 
 	/*! \brief Check if point is inside "solid" space.
 	 *
@@ -39,7 +39,7 @@ public:
 	 *
 	 * \return True if all points inside "solid" space.
 	 */
-	bool inside(const Winding& w) const;
+	bool inside(const Winding3& w) const;
 
 	/*! \brief Clip polygon to BSP.
 	 *
@@ -63,40 +63,40 @@ private:
 
 	Ref< BspNode > m_root;
 
-	Ref< BspNode > recursiveBuild(const AlignedVector< Winding >& polygons, const AlignedVector< Plane >& planes);
+	Ref< BspNode > recursiveBuild(const AlignedVector< Winding3 >& polygons, const AlignedVector< Plane >& planes);
 
 	bool inside(const BspNode* node, const Vector4& pt) const;
 
-	bool inside(const BspNode* node, const Winding& w) const;
+	bool inside(const BspNode* node, const Winding3& w) const;
 
 	template < typename PolygonType >
 	void clip(const BspNode* node, const PolygonType& polygon, AlignedVector< PolygonType >& outClipped) const
 	{
-		Winding w = polygon.winding();
+		Winding3 w = polygon.winding();
 
 		int cf = w.classify(node->plane);
-		if (cf == Winding::CfCoplanar)
+		if (cf == Winding3::CfCoplanar)
 		{
 			Plane polygonPlane;
 			if (w.getPlane(polygonPlane))
-				cf = dot3(node->plane.normal(), polygonPlane.normal()) >= 0.0f ? Winding::CfFront : Winding::CfBack;
+				cf = dot3(node->plane.normal(), polygonPlane.normal()) >= 0.0f ? Winding3::CfFront : Winding3::CfBack;
 			else
-				cf = Winding::CfFront;
+				cf = Winding3::CfFront;
 		}
 
-		if (cf == Winding::CfFront)
+		if (cf == Winding3::CfFront)
 		{
 			if (node->front)
 				clip(node->front, polygon, outClipped);
 			else if (polygon.valid())
 				outClipped.push_back(polygon);
 		}
-		else if (cf == Winding::CfBack)
+		else if (cf == Winding3::CfBack)
 		{
 			if (node->back)
 				clip(node->back, polygon, outClipped);
 		}
-		else if (cf == Winding::CfSpan)
+		else if (cf == Winding3::CfSpan)
 		{
 			PolygonType f, b;
 			polygon.split(node->plane, f, b);

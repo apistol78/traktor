@@ -2,6 +2,14 @@
 #include <limits>
 #include <list>
 #include <map>
+#include "Core/Log/Log.h"
+#include "Core/Math/Const.h"
+#include "Core/Math/Float.h"
+#include "Core/Math/Half.h"
+#include "Core/Math/BspTree.h"
+#include "Core/Math/Triangulator.h"
+#include "Core/Math/Format.h"
+#include "Core/Misc/String.h"
 #include "Mesh/Editor/Indoor/IndoorMeshConverter.h"
 #include "Mesh/Editor/MeshVertexWriter.h"
 #include "Mesh/Indoor/IndoorMeshResource.h"
@@ -12,14 +20,7 @@
 #include "Render/Mesh/MeshWriter.h"
 #include "Render/VertexBuffer.h"
 #include "Render/IndexBuffer.h"
-#include "Core/Misc/String.h"
-#include "Core/Math/Const.h"
-#include "Core/Math/Float.h"
-#include "Core/Math/Half.h"
-#include "Core/Math/BspTree.h"
-#include "Core/Math/Triangulator.h"
-#include "Core/Math/Format.h"
-#include "Core/Log/Log.h"
+
 
 namespace traktor
 {
@@ -154,16 +155,16 @@ void createHulls(const model::Model& model, std::map< std::wstring, Hull >& outH
 
 	for (std::map< std::wstring, Hull >::iterator i = outHulls.begin(); i != outHulls.end(); ++i)
 	{
-		AlignedVector< Winding > bw;
+		AlignedVector< Winding3 > bw;
 		for (std::vector< Hull::polygon_t >::const_iterator j = i->second.polygons.begin(); j != i->second.polygons.end(); ++j)
 		{
-			bw.push_back(Winding());
+			bw.push_back(Winding3());
 			for (Hull::polygon_t::const_iterator k = j->begin(); k != j->end(); ++k)
 				bw.back().points.push_back(i->second.points[*k]);
 		}
 		for (std::vector< Hull::portal_t >::const_iterator j = i->second.portals.begin(); j != i->second.portals.end(); ++j)
 		{
-			bw.push_back(Winding());
+			bw.push_back(Winding3());
 			for (Hull::portal_t::const_iterator k = j->begin(); k != j->end(); ++k)
 				bw.back().points.push_back(i->second.points[k->first]);
 		}
@@ -206,7 +207,7 @@ struct Sector
 
 struct Portal
 {
-	Winding winding;
+	Winding3 winding;
 	int32_t sectors[2];
 };
 
@@ -214,9 +215,9 @@ struct BspPolygon
 {
 	AlignedVector< Vertex > vertices;
 
-	Winding winding() const
+	Winding3 winding() const
 	{
-		Winding w;
+		Winding3 w;
 		for (AlignedVector< Vertex >::const_iterator i = vertices.begin(); i != vertices.end(); ++i)
 			w.points.push_back(i->position);
 		return w;
@@ -350,7 +351,7 @@ void createSectors(
 		const Hull& hull = hulls.find(i->name)->second;
 		for (std::vector< Hull::portal_t >::const_iterator j = hull.portals.begin(); j != hull.portals.end(); ++j)
 		{
-			Winding wp;
+			Winding3 wp;
 			for (Hull::portal_t::const_iterator k = j->begin(); k != j->end(); ++k)
 				wp.points.push_back(hull.points[k->first]);
 
@@ -470,7 +471,7 @@ void createSectors(
 		std::vector< Polygon > triangles;
 		for (std::vector< Polygon >::const_iterator j = i->polygons.begin(); j != i->polygons.end(); ++j)
 		{
-			Winding winding;
+			Winding3 winding;
 			for (std::vector< size_t >::const_iterator k = j->indices.begin(); k != j->indices.end(); ++k)
 				winding.points.push_back(i->vertices[*k].position);
 

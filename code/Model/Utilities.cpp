@@ -7,7 +7,7 @@
 #include "Core/Math/Plane.h"
 #include "Core/Math/RandomGeometry.h"
 #include "Core/Math/SahTree.h"
-#include "Core/Math/Winding.h"
+#include "Core/Math/Winding3.h"
 #include "Model/ContainerHelpers.h"
 #include "Model/Model.h"
 #include "Model/TriangleOrderForsyth.h"
@@ -249,7 +249,7 @@ void triangulateModel(Model& model)
 		const std::vector< uint32_t >& vertices = i->getVertices();
 		if (vertices.size() > 3)
 		{
-			Winding polygonWinding;
+			Winding3 polygonWinding;
 
 			polygonWinding.points.resize(vertices.size());
 			for (size_t j = 0; j < vertices.size(); ++j)
@@ -655,10 +655,10 @@ void bakeVertexOcclusion(Model& model)
 	AlignedVector< Vector4 > colors = model.getColors();
 	model.clear(Model::CfColors);
 	
-	AlignedVector< Winding > windings(polygons.size());
+	AlignedVector< Winding3 > windings(polygons.size());
 	for (uint32_t i = 0; i < polygons.size(); ++i)
 	{
-		Winding& w = windings[i];
+		Winding3& w = windings[i];
 		const std::vector< uint32_t >& vertexIndices = polygons[i].getVertices();
 		for (std::vector< uint32_t >::const_iterator j = vertexIndices.begin(); j != vertexIndices.end(); ++j)
 		{
@@ -723,7 +723,7 @@ void cullDistantFaces(Model& model)
 			continue;
 		}
 
-		Winding winding;
+		Winding3 winding;
 		for (uint32_t j = 0; j < vertexCount; ++j)
 		{
 			const Vertex& vertex = model.getVertex(polygons[i].getVertex(j));
