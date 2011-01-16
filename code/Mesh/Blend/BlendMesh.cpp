@@ -120,7 +120,7 @@ BlendMesh::BlendMesh()
 		s_handleUserParameter = render::getParameterHandle(L"UserParameter");
 }
 
-const Aabb& BlendMesh::getBoundingBox() const
+const Aabb3& BlendMesh::getBoundingBox() const
 {
 	T_ASSERT (!m_meshes.empty());
 	return m_meshes[0]->getBoundingBox();

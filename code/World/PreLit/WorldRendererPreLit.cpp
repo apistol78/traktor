@@ -453,6 +453,7 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 					params.viewFrustum = f.viewFrustum;
 					params.viewToLight = f.viewToLightSpace[i];
 					params.projection = projection;
+					params.squareProjection = f.squareProjection[i];
 					params.depthRange = m_settings.depthRange;
 					params.shadowFarZ = m_settings.shadowFarZ;
 					params.shadowMapBias = m_settings.shadowMapBias;
@@ -531,7 +532,7 @@ void WorldRendererPreLit::buildLightWithShadows(WorldRenderView& worldRenderView
 
 	Matrix44 viewInverse = worldRenderView.getView().inverse();
 	Frustum viewFrustum = worldRenderView.getViewFrustum();
-	Aabb shadowBox = worldRenderView.getShadowBox();
+	Aabb3 shadowBox = worldRenderView.getShadowBox();
 	Vector4 eyePosition = viewInverse.translation();
 
 	for (int32_t i = 0; i < worldRenderView.getLightCount(); ++i)
@@ -541,6 +542,7 @@ void WorldRendererPreLit::buildLightWithShadows(WorldRenderView& worldRenderView
 		{
 			Matrix44 shadowLightView;
 			Matrix44 shadowLightProjection;
+			Matrix44 shadowLightSquareProjection;
 			Frustum shadowFrustum;
 
 			switch (m_settings.shadowsProjection)
@@ -581,6 +583,7 @@ void WorldRendererPreLit::buildLightWithShadows(WorldRenderView& worldRenderView
 					viewFrustum,
 					shadowLightView,
 					shadowLightProjection,
+					shadowLightSquareProjection,
 					shadowFrustum
 				);
 				break;
@@ -600,11 +603,13 @@ void WorldRendererPreLit::buildLightWithShadows(WorldRenderView& worldRenderView
 			}
 
 			f.viewToLightSpace[i] = shadowLightProjection * shadowLightView * viewInverse;
+			f.squareProjection[i] = shadowLightSquareProjection;
 
 			// Render shadow map.
 			WorldRenderView shadowRenderView;
 			shadowRenderView.resetLights();
 			shadowRenderView.setProjection(shadowLightProjection);
+			shadowRenderView.setSquareProjection(shadowLightSquareProjection);
 			shadowRenderView.setView(shadowLightView);
 			shadowRenderView.setEyePosition(eyePosition);
 			shadowRenderView.setViewFrustum(shadowFrustum);
@@ -657,7 +662,7 @@ void WorldRendererPreLit::buildLightWithNoShadows(WorldRenderView& worldRenderVi
 
 	Matrix44 viewInverse = worldRenderView.getView().inverse();
 	Frustum viewFrustum = worldRenderView.getViewFrustum();
-	Aabb shadowBox = worldRenderView.getShadowBox();
+	Aabb3 shadowBox = worldRenderView.getShadowBox();
 	Vector4 eyePosition = viewInverse.translation();
 
 	for (int32_t i = 0; i < worldRenderView.getLightCount(); ++i)
@@ -689,7 +694,7 @@ void WorldRendererPreLit::buildVisual(WorldRenderView& worldRenderView, Entity* 
 
 	Matrix44 viewInverse = worldRenderView.getView().inverse();
 	Frustum viewFrustum = worldRenderView.getViewFrustum();
-	Aabb shadowBox = worldRenderView.getShadowBox();
+	Aabb3 shadowBox = worldRenderView.getShadowBox();
 	Vector4 eyePosition = viewInverse.translation();
 
 	worldRenderView.resetLights();

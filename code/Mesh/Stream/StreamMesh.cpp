@@ -37,7 +37,7 @@ StreamMesh::StreamMesh()
 {
 }
 
-const Aabb& StreamMesh::getBoundingBox() const
+const Aabb3& StreamMesh::getBoundingBox() const
 {
 	return m_boundingBox;
 }

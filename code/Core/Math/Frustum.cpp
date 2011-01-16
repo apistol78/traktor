@@ -92,7 +92,7 @@ Frustum::InsideResult Frustum::inside(const Vector4& center_, const Scalar& radi
 	return partial ? IrPartial : IrInside;
 }
 
-Frustum::InsideResult Frustum::inside(const Aabb& aabb) const
+Frustum::InsideResult Frustum::inside(const Aabb3& aabb) const
 {
 	const static Scalar c_zero(0.0f);
 	bool partial = false;

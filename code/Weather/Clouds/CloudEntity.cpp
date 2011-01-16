@@ -93,7 +93,7 @@ void calculateVSQuad(
 			infront[i] = viewExtents[i].z() >= nearZ;
 
 		// Clip edges with view plane.
-		const int* edges = Aabb::getEdges();
+		const int* edges = Aabb3::getEdges();
 		for (int i = 0; i < 12; ++i)
 		{
 			int i1 = edges[i * 2 + 0];
@@ -300,7 +300,7 @@ void CloudEntity::renderCluster(
 	float nearZ = viewFrustum.getNearZ();
 
 	// Cluster extents in view space.
-	const Aabb& clusterBoundingBox = cluster.getBoundingBox();
+	const Aabb3& clusterBoundingBox = cluster.getBoundingBox();
 
 	Vector4 extents[8];
 	clusterBoundingBox.getExtents(extents);
@@ -543,7 +543,7 @@ bool CloudEntity::getTransform(Transform& outTransform) const
 	return true;
 }
 
-Aabb CloudEntity::getBoundingBox() const
+Aabb3 CloudEntity::getBoundingBox() const
 {
 	return m_cluster.getBoundingBox();
 }

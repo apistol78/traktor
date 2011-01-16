@@ -2,7 +2,7 @@
 #define traktor_mesh_SkinnedMesh_H
 
 #include "Core/Containers/AlignedVector.h"
-#include "Core/Math/Aabb.h"
+#include "Core/Math/Aabb3.h"
 #include "Mesh/IMesh.h"
 #include "Render/Shader.h"
 #include "Resource/Proxy.h"
@@ -51,7 +51,7 @@ class T_DLLCLASS SkinnedMesh : public IMesh
 public:
 	SkinnedMesh();
 
-	const Aabb& getBoundingBox() const;
+	const Aabb3& getBoundingBox() const;
 
 	void render(
 		render::RenderContext* renderContext,

@@ -1,5 +1,5 @@
 #include <limits>
-#include "Core/Math/Aabb.h"
+#include "Core/Math/Aabb3.h"
 
 namespace traktor
 {
@@ -19,25 +19,25 @@ T_FORCE_INLINE uint32_t outcode(const Vector4& p, const Vector4& halfExtent)
 
 	}
 
-Aabb::Aabb()
+Aabb3::Aabb3()
 :	mn(std::numeric_limits< float >::max(), std::numeric_limits< float >::max(), std::numeric_limits< float >::max())
 ,	mx(-std::numeric_limits< float >::max(), -std::numeric_limits< float >::max(), -std::numeric_limits< float >::max())
 {
 }
 
-Aabb::Aabb(const Aabb& aabb)
+Aabb3::Aabb3(const Aabb3& aabb)
 :	mn(aabb.mn)
 ,	mx(aabb.mx)
 {
 }
 
-Aabb::Aabb(const Vector4& mn_, const Vector4& mx_)
+Aabb3::Aabb3(const Vector4& mn_, const Vector4& mx_)
 :	mn(mn_)
 ,	mx(mx_)
 {
 }
 
-void Aabb::getExtents(Vector4 extents[8]) const
+void Aabb3::getExtents(Vector4 extents[8]) const
 {
 	extents[0] = mn.xyz1();
 	extents[1] = Vector4(mn.x(), mx.y(), mn.z(), 1.0f);
@@ -49,20 +49,20 @@ void Aabb::getExtents(Vector4 extents[8]) const
 	extents[7] = Vector4(mx.x(), mn.y(), mx.z(), 1.0f);
 }
 
-bool Aabb::inside(const Vector4& pt) const
+bool Aabb3::inside(const Vector4& pt) const
 {
 	return
 		compareAllGreaterEqual(pt.xyz1(), mn.xyz0()) &&
 		compareAllLessEqual(pt.xyz0(), mx.xyz1());
 }
 
-bool Aabb::intersectRay(const Vector4& p, const Vector4& d, Scalar& outDistance) const
+bool Aabb3::intersectRay(const Vector4& p, const Vector4& d, Scalar& outDistance) const
 {
 	Scalar distanceExitDummy;
 	return intersectRay(p, d, outDistance, distanceExitDummy);
 }
 
-bool Aabb::intersectRay(const Vector4& p, const Vector4& d, Scalar& outDistanceEnter, Scalar& outDistanceExit) const
+bool Aabb3::intersectRay(const Vector4& p, const Vector4& d, Scalar& outDistanceEnter, Scalar& outDistanceExit) const
 {
 	Vector4 id = Scalar(1.0f) / d;
 	int32_t sign[] =
@@ -102,7 +102,7 @@ bool Aabb::intersectRay(const Vector4& p, const Vector4& d, Scalar& outDistanceE
 	return true;
 }
 
-bool Aabb::intersectSegment(const Vector4& p1, const Vector4& p2, Scalar& outDistance) const
+bool Aabb3::intersectSegment(const Vector4& p1, const Vector4& p2, Scalar& outDistance) const
 {
 	Vector4 start = p1 - getCenter();
 	Vector4 end = p2 - getCenter();
@@ -152,7 +152,7 @@ bool Aabb::intersectSegment(const Vector4& p1, const Vector4& p2, Scalar& outDis
 	return false;
 }
 
-Aabb Aabb::transform(const Matrix44& m) const
+Aabb3 Aabb3::transform(const Matrix44& m) const
 {
 	Vector4 c = m * getCenter();
 
@@ -162,7 +162,7 @@ Aabb Aabb::transform(const Matrix44& m) const
 	Vector4 z = m.axisZ() * e.z();
 
 	Vector4 first = c + x + y + z;
-	Aabb aabb(first, first);
+	Aabb3 aabb(first, first);
 
 	aabb.contain(c - x + y + z);
 	aabb.contain(c + x - y + z);
@@ -175,7 +175,7 @@ Aabb Aabb::transform(const Matrix44& m) const
 	return aabb;
 }
 
-Aabb Aabb::transform(const Transform& tf) const
+Aabb3 Aabb3::transform(const Transform& tf) const
 {
 	Vector4 c = tf * getCenter();
 
@@ -189,7 +189,7 @@ Aabb Aabb::transform(const Transform& tf) const
 	Vector4 z = az * e.z();
 
 	Vector4 first = c + x + y + z;
-	Aabb aabb(first, first);
+	Aabb3 aabb(first, first);
 
 	aabb.contain(c - x + y + z);
 	aabb.contain(c + x - y + z);
@@ -202,7 +202,7 @@ Aabb Aabb::transform(const Transform& tf) const
 	return aabb;
 }
 
-const int* Aabb::getFaces()
+const int* Aabb3::getFaces()
 {
 	static const int s_faces[] =
 	{
@@ -216,7 +216,7 @@ const int* Aabb::getFaces()
 	return s_faces;
 }
 
-const int* Aabb::getEdges()
+const int* Aabb3::getEdges()
 {
 	static const int s_edges[] =
 	{
@@ -236,7 +236,7 @@ const int* Aabb::getEdges()
 	return s_edges;
 }
 
-const int* Aabb::getEdgeAdjacency()
+const int* Aabb3::getEdgeAdjacency()
 {
 	static const int s_edgeAdjacency[] =
 	{
@@ -256,7 +256,7 @@ const int* Aabb::getEdgeAdjacency()
 	return s_edgeAdjacency;
 }
 
-const Vector4* Aabb::getNormals()
+const Vector4* Aabb3::getNormals()
 {
 	static const Vector4 s_normals[] =
 	{

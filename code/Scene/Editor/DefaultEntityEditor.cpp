@@ -170,7 +170,7 @@ void DefaultEntityEditor::drawGuide(
 
 	Transform transform = entityAdapter->getTransform();
 	
-	Aabb boundingBox = entityAdapter->getBoundingBox();
+	Aabb3 boundingBox = entityAdapter->getBoundingBox();
 	boundingBox.mn -= c_expandBoundingBox;
 	boundingBox.mx += c_expandBoundingBox;
 
@@ -195,7 +195,7 @@ void DefaultEntityEditor::drawGuide(
 		);
 
 		primitiveRenderer->pushWorld(transform.toMatrix44());
-		primitiveRenderer->drawWireAabb(Aabb(Vector4(-0.25f, -0.25f, -0.25f, 1.0f), Vector4(0.25f, 0.25f, 0.25f, 1.0f)), m_colorBoundingBox);
+		primitiveRenderer->drawWireAabb(Aabb3(Vector4(-0.25f, -0.25f, -0.25f, 1.0f), Vector4(0.25f, 0.25f, 0.25f, 1.0f)), m_colorBoundingBox);
 		primitiveRenderer->popWorld();
 	}
 	else

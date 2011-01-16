@@ -6,7 +6,7 @@
 #include "Core/Math/MathConfig.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Plane.h"
-#include "Core/Math/Aabb.h"
+#include "Core/Math/Aabb3.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -64,7 +64,7 @@ public:
 	
 	InsideResult inside(const Vector4& center, const Scalar& radius) const;
 	
-	InsideResult inside(const Aabb& aabb) const;
+	InsideResult inside(const Aabb3& aabb) const;
 
 private:
 	void update();

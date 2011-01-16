@@ -29,7 +29,7 @@ void SplineSourceRenderer::render(render::PrimitiveRenderer* primitiveRenderer, 
 	for (AlignedVector< SplineSource::Key >::const_iterator i = keys.begin(); i != keys.end(); ++i)
 	{
 		const Vector4 c_size(0.1f, 0.1f, 0.1f, 0.0f);
-		primitiveRenderer->drawWireAabb(Aabb(i->value - c_size, i->value + c_size), Color4ub(255, 255, 0));
+		primitiveRenderer->drawWireAabb(Aabb3(i->value - c_size, i->value + c_size), Color4ub(255, 255, 0));
 	}
 }
 

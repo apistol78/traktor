@@ -23,7 +23,7 @@ void VolumePicker::removeAllVolumes()
 	m_volumes.resize(0);
 }
 
-void VolumePicker::addVolume(const Matrix44& worldTransform, const Aabb& volume, int id)
+void VolumePicker::addVolume(const Matrix44& worldTransform, const Aabb3& volume, int id)
 {
 	Volume v = { worldTransform, volume, id };
 	m_volumes.push_back(v);

@@ -12,7 +12,7 @@
 			<optional>false</optional>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>205</first>
@@ -20,16 +20,17 @@
 			</position>
 			<parameterName>Projection</parameterName>
 			<type>PtMatrix</type>
+			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.VertexOutput" version="1">
 			<comment/>
 			<position>
-				<first>756</first>
-				<second>368</second>
+				<first>1043</first>
+				<second>436</second>
 			</position>
 			<technique>Shadow</technique>
 		</item>
-		<item type="traktor.render.PixelOutput" version="2">
+		<item type="traktor.render.PixelOutput" version="3">
 			<comment/>
 			<position>
 				<first>1370</first>
@@ -61,6 +62,7 @@
 			<stencilFunction>CfAlways</stencilFunction>
 			<stencilReference>0</stencilReference>
 			<stencilMask>0</stencilMask>
+			<registerCount>0</registerCount>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
@@ -125,7 +127,7 @@
 				</item>
 			</values>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>629</first>
@@ -133,6 +135,7 @@
 			</position>
 			<parameterName>DepthRange</parameterName>
 			<type>PtScalar</type>
+			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
@@ -155,6 +158,35 @@
 			<position>
 				<first>1169</first>
 				<second>240</second>
+			</position>
+		</item>
+		<item type="traktor.render.Comment">
+			<comment>
+			<![CDATA[
+Perform special mapping as some algorithms, such as PSM, makes Z perform
+"unlinearly".
+			]]>
+			</comment>
+			<position>
+				<first>742</first>
+				<second>546</second>
+			</position>
+		</item>
+		<item type="traktor.render.Uniform" version="1">
+			<comment/>
+			<position>
+				<first>528</first>
+				<second>483</second>
+			</position>
+			<parameterName>SquareProjection</parameterName>
+			<type>PtMatrix</type>
+			<frequency>UfFrame</frequency>
+		</item>
+		<item type="traktor.render.Transform">
+			<comment/>
+			<position>
+				<first>821</first>
+				<second>430</second>
 			</position>
 		</item>
 	</nodes>
@@ -186,16 +218,6 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[4]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[5]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[2]"/>
 				<name>Input</name>
 			</destination>
 		</item>
@@ -266,6 +288,36 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[3]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[13]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[14]"/>
+				<name>Transform</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[5]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[14]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[14]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
 				<name>Input</name>
 			</destination>
 		</item>

@@ -2,7 +2,7 @@
 #define traktor_mesh_BlendMesh_H
 
 #include "Core/RefArray.h"
-#include "Core/Math/Aabb.h"
+#include "Core/Math/Aabb3.h"
 #include "Core/Math/Transform.h"
 #include "Mesh/IMesh.h"
 #include "Render/Shader.h"
@@ -70,7 +70,7 @@ public:
 
 	BlendMesh();
 
-	const Aabb& getBoundingBox() const;
+	const Aabb3& getBoundingBox() const;
 
 	uint32_t getBlendTargetCount() const;
 

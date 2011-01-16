@@ -1,25 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.scene.SceneAsset" version="3">	
-	<worldRenderSettings type="traktor.world.WorldRenderSettings">
-		<viewNearZ>0.1</viewNearZ>
-		<viewFarZ>20</viewFarZ>
-		<depthPassEnabled>false</depthPassEnabled>
-		<shadowsEnabled>false</shadowsEnabled>
-		<shadowCascadingSlices>4</shadowCascadingSlices>
-		<shadowCascadingLambda>0.75</shadowCascadingLambda>
-		<shadowFarZ>50</shadowFarZ>
-		<shadowMapResolution>1024</shadowMapResolution>
-		<shadowMapBias>0.001</shadowMapBias>
+<object type="traktor.scene.SceneAsset" version="3">
+	<worldRenderSettings type="traktor.world.WorldRenderSettings" version="6">
+		<viewNearZ>0.5</viewNearZ>
+		<viewFarZ>1000</viewFarZ>
+		<depthPassEnabled>true</depthPassEnabled>
+		<depthRange>100</depthRange>
+		<velocityPassEnable>false</velocityPassEnable>
+		<shadowsEnabled>true</shadowsEnabled>
+		<shadowsProjection>SpTrapezoid</shadowsProjection>
+		<shadowsQuality>SqNoFilter</shadowsQuality>
+		<ssaoEnabled>false</ssaoEnabled>
+		<shadowFarZ>10</shadowFarZ>
+		<shadowMapResolution>256</shadowMapResolution>
+		<shadowMapBias>0.4</shadowMapBias>
 	</worldRenderSettings>
-	<postProcessSettings/>
+	<postProcessSettings>{00000000-0000-0000-0000-000000000000}</postProcessSettings>
 	<entityData type="traktor.world.GroupEntityData">
 		<name>Root</name>
 		<entityData>
 			<item type="traktor.world.DirectionalLightEntityData">
 				<name>Light</name>
 				<transform>
-					<translation>0.297718, 2.08424, -2.3101, 0</translation>
-					<rotation>-0.00308665, -0.917948, 0.327454, 0.224112</rotation>
+					<translation>0, 1.963386, -0.021778, 0</translation>
+					<rotation>0, 0, 0, 1</rotation>
 				</transform>
 				<sunColor>1, 1, 1, 0</sunColor>
 				<baseColor>0.5, 0.5, 0.5, 0</baseColor>
@@ -29,9 +32,16 @@
 				<name>MyGroupEntity</name>
 				<transform>
 					<translation>0, 0, 0, 0</translation>
-					<rotation>0.240722, 0.311216, 0.0906309, 0.914868</rotation>
+					<rotation>0.17903, 0, 0, 0.983844</rotation>
 				</transform>
 				<guid>{1C8568DB-3C11-314B-AF1D-BD80486B45BE}</guid>
+			</item>
+			<item type="traktor.world.NullEntityData">
+				<name>Track Z</name>
+				<transform>
+					<translation>0, 0, -1.49186, 0</translation>
+					<rotation>0, 0, 0, 1</rotation>
+				</transform>
 			</item>
 		</entityData>
 	</entityData>

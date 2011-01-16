@@ -429,7 +429,7 @@ void PrimitiveRenderer::drawWireAabb(
 )
 {
 	drawWireAabb(
-		Aabb(
+		Aabb3(
 			center - extent * Scalar(0.5f),
 			center + extent * Scalar(0.5f)
 		),
@@ -438,7 +438,7 @@ void PrimitiveRenderer::drawWireAabb(
 }
 
 void PrimitiveRenderer::drawWireAabb(
-	const Aabb& aabb,
+	const Aabb3& aabb,
 	const Color4ub& color
 )
 {
@@ -448,7 +448,7 @@ void PrimitiveRenderer::drawWireAabb(
 	Vector4 extents[8];
 	aabb.getExtents(extents);
 
-	const int* edges = Aabb::getEdges();
+	const int* edges = Aabb3::getEdges();
 	for (int i = 0; i < 12; ++i)
 	{
 		drawLine(
@@ -599,11 +599,11 @@ void PrimitiveRenderer::drawSolidAabb(
 	const Color4ub& color
 )
 {
-	drawSolidAabb(Aabb(center - extent * Scalar(0.5f), center + extent * Scalar(0.5f)), color);
+	drawSolidAabb(Aabb3(center - extent * Scalar(0.5f), center + extent * Scalar(0.5f)), color);
 }
 
 void PrimitiveRenderer::drawSolidAabb(
-	const Aabb& aabb,
+	const Aabb3& aabb,
 	const Color4ub& color
 )
 {
@@ -615,8 +615,8 @@ void PrimitiveRenderer::drawSolidAabb(
 	Vector4 extents[8];
 	aabb.getExtents(extents);
 
-	const int* faces = Aabb::getFaces();
-	const Vector4* normals = Aabb::getNormals();
+	const int* faces = Aabb3::getFaces();
+	const Vector4* normals = Aabb3::getNormals();
 
 	for (int i = 0; i < 6; ++i)
 	{

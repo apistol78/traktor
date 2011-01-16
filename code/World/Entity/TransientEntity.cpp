@@ -48,7 +48,7 @@ bool TransientEntity::getTransform(Transform& outTransform) const
 	return m_otherEntity->getTransform(outTransform);
 }
 
-Aabb TransientEntity::getBoundingBox() const
+Aabb3 TransientEntity::getBoundingBox() const
 {
 	return m_otherEntity->getBoundingBox();
 }

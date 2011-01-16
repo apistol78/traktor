@@ -3,7 +3,7 @@
 
 #include "World/Entity/Entity.h"
 #include "Core/Math/Transform.h"
-#include "Core/Math/Aabb.h"
+#include "Core/Math/Aabb3.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -44,14 +44,14 @@ public:
 	 *
 	 * \return Entity bounding box.
 	 */
-	virtual Aabb getBoundingBox() const = 0;
+	virtual Aabb3 getBoundingBox() const = 0;
 
 	/*! \brief Get entity bounding box.
 	 * Return entity bounding box in world space.
 	 *
 	 * \return Entity bounding box.
 	 */
-	virtual Aabb getWorldBoundingBox() const;
+	virtual Aabb3 getWorldBoundingBox() const;
 };
 
 	}

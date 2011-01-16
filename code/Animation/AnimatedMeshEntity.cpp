@@ -52,11 +52,11 @@ void AnimatedMeshEntity::destroy()
 	mesh::MeshEntity::destroy();
 }
 
-Aabb AnimatedMeshEntity::getBoundingBox() const
+Aabb3 AnimatedMeshEntity::getBoundingBox() const
 {
 	synchronize();
 
-	Aabb boundingBox = m_mesh.valid() ? m_mesh->getBoundingBox() : Aabb();
+	Aabb3 boundingBox = m_mesh.valid() ? m_mesh->getBoundingBox() : Aabb3();
 
 	if (!m_poseTransforms.empty())
 	{
@@ -67,8 +67,8 @@ Aabb AnimatedMeshEntity::getBoundingBox() const
 			float length = bone->getLength();
 			float radius = bone->getRadius();
 
-			Aabb boneLocalAabb(Vector4(-radius, -radius, 0.0f), Vector4(radius, radius, length));
-			Aabb boneAabb = boneLocalAabb.transform(m_poseTransforms[i]);
+			Aabb3 boneLocalAabb(Vector4(-radius, -radius, 0.0f), Vector4(radius, radius, length));
+			Aabb3 boneAabb = boneLocalAabb.transform(m_poseTransforms[i]);
 
 			boundingBox.contain(boneAabb);
 		}

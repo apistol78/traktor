@@ -1,5 +1,5 @@
-#ifndef traktor_Aabb_H
-#define traktor_Aabb_H
+#ifndef traktor_Aabb3_H
+#define traktor_Aabb3_H
 
 #include "Core/Config.h"
 #include "Core/Math/MathConfig.h"
@@ -21,17 +21,17 @@ namespace traktor
 /*! \brief Axis aligned bounding box.
  * \ingroup Core
  */
-class T_MATH_ALIGN16 T_DLLCLASS Aabb
+class T_MATH_ALIGN16 T_DLLCLASS Aabb3
 {
 public:
 	Vector4 mn;
 	Vector4 mx;
 
-	Aabb();
+	Aabb3();
 	
-	Aabb(const Aabb& aabb);
+	Aabb3(const Aabb3& aabb);
 	
-	explicit Aabb(const Vector4& mn_, const Vector4& mx_);
+	explicit Aabb3(const Vector4& mn_, const Vector4& mx_);
 
 	/*! \brief Get bounding box corners.
 	 *
@@ -79,14 +79,14 @@ public:
 	 * \param m Transformation matrix.
 	 * \return Transformed bounding box.
 	 */
-	Aabb transform(const Matrix44& m) const;
+	Aabb3 transform(const Matrix44& m) const;
 
 	/*! \brief Transform bounding box.
 	*
 	* \param m Transformation.
 	* \return Transformed bounding box.
 	*/
-	Aabb transform(const Transform& tf) const;
+	Aabb3 transform(const Transform& tf) const;
 
 	/*! \brief Return 6 faces, 4 indices each (24 integers total). */
 	static const int* getFaces();
@@ -101,7 +101,7 @@ public:
 	static const Vector4* getNormals();
 
 	/*! \brief Expand bounding box to contain point. */
-	T_MATH_INLINE Aabb& contain(const Vector4& pt)
+	T_MATH_INLINE Aabb3& contain(const Vector4& pt)
 	{
 		mn = min(mn, pt);
 		mx = max(mx, pt);
@@ -109,7 +109,7 @@ public:
 	}
 
 	/*! \brief Expand bounding box to contain sphere. */
-	T_MATH_INLINE Aabb& contain(const Vector4& center, const Scalar& radius)
+	T_MATH_INLINE Aabb3& contain(const Vector4& center, const Scalar& radius)
 	{
 		mn = min(mn, center - radius);
 		mx = max(mx, center + radius);
@@ -117,7 +117,7 @@ public:
 	}
 
 	/*! \brief Expand bounding box to contain bounding box. */
-	T_MATH_INLINE Aabb& contain(const Aabb& aabb)
+	T_MATH_INLINE Aabb3& contain(const Aabb3& aabb)
 	{
 		if (!aabb.empty())
 		{
@@ -148,4 +148,4 @@ public:
 
 }
 
-#endif	// traktor_Aabb_H
+#endif	// traktor_Aabb3_H

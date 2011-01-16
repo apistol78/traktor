@@ -16,9 +16,9 @@ IndoorMeshEntity::IndoorMeshEntity(const Transform& transform, const resource::P
 {
 }
 
-Aabb IndoorMeshEntity::getBoundingBox() const
+Aabb3 IndoorMeshEntity::getBoundingBox() const
 {
-	return m_mesh.validate() ? m_mesh->getBoundingBox() : Aabb();
+	return m_mesh.validate() ? m_mesh->getBoundingBox() : Aabb3();
 }
 
 void IndoorMeshEntity::render(

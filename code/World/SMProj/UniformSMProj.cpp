@@ -31,7 +31,7 @@ void calculateUniformSMProj(
 	shadowViewFrustum.setFarZ(Scalar(settings.shadowFarZ));
 
 	// Calculate bounding box of view frustum in light space.
-	Aabb viewFrustumBox;
+	Aabb3 viewFrustumBox;
 	for (int i = 0; i < 8; ++i)
 	{
 		Vector4 worldCorner = viewInverse * shadowViewFrustum.corners[i];

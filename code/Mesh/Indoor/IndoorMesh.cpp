@@ -25,7 +25,7 @@ IndoorMesh::IndoorMesh()
 		s_handleUserParameter = render::getParameterHandle(L"UserParameter");
 }
 
-const Aabb& IndoorMesh::getBoundingBox() const
+const Aabb3& IndoorMesh::getBoundingBox() const
 {
 	return m_mesh->getBoundingBox();
 }

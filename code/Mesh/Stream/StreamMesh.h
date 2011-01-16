@@ -1,7 +1,7 @@
 #ifndef traktor_mesh_StreamMesh_H
 #define traktor_mesh_StreamMesh_H
 
-#include "Core/Math/Aabb.h"
+#include "Core/Math/Aabb3.h"
 #include "Core/Math/Matrix44.h"
 #include "Mesh/IMesh.h"
 #include "Render/Shader.h"
@@ -57,7 +57,7 @@ public:
 
 	StreamMesh();
 
-	const Aabb& getBoundingBox() const;
+	const Aabb3& getBoundingBox() const;
 
 	uint32_t getFrameCount() const;
 
@@ -87,7 +87,7 @@ private:
 	Ref< IStream > m_stream;
 	Ref< render::MeshReader > m_meshReader;
 	std::vector< uint32_t > m_frameOffsets;
-	Aabb m_boundingBox;
+	Aabb3 m_boundingBox;
 	std::map< render::handle_t, std::vector< Part > > m_parts;
 };
 

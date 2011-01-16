@@ -4,6 +4,13 @@
 #include "Core/Config.h"
 #include "Core/Math/MathConfig.h"
 
+#if defined(min)
+#	undef min
+#endif
+#if defined(max)
+#	undef max
+#endif
+
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_CORE_EXPORT)
@@ -96,10 +103,16 @@ T_MATH_INLINE T_DLLCLASS float dot(const Vector2& l, const Vector2& r);
 
 T_MATH_INLINE T_DLLCLASS Vector2 lerp(const Vector2& a, const Vector2& b, float c);
 
+T_MATH_INLINE T_DLLCLASS float determinant(const Vector2& a, const Vector2& b);
+
+T_MATH_INLINE T_DLLCLASS Vector2 min(const Vector2& l, const Vector2& r);
+
+T_MATH_INLINE T_DLLCLASS Vector2 max(const Vector2& l, const Vector2& r);
+
 }
 
 #if defined(T_MATH_USE_INLINE)
-#include "Core/Math/Std/Vector2.inl"
+#	include "Core/Math/Std/Vector2.inl"
 #endif
 
 #endif	// traktor_Vector2_H

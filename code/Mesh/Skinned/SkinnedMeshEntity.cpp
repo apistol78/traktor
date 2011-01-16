@@ -35,9 +35,9 @@ void SkinnedMeshEntity::setBoneTransforms(const AlignedVector< Matrix44 >& boneT
 	}
 }
 
-Aabb SkinnedMeshEntity::getBoundingBox() const
+Aabb3 SkinnedMeshEntity::getBoundingBox() const
 {
-	return validate() ? m_mesh->getBoundingBox() : Aabb();
+	return validate() ? m_mesh->getBoundingBox() : Aabb3();
 }
 
 void SkinnedMeshEntity::render(

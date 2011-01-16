@@ -30,7 +30,7 @@ namespace traktor
  * \return True if mesh is deemed visible.
  */
 inline bool isMeshVisible(
-	const Aabb& meshBoundingBox,
+	const Aabb3& meshBoundingBox,
 	const Frustum& frustum,
 	const Matrix44& worldView,
 	const Matrix44& projection,

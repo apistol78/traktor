@@ -436,7 +436,7 @@ EntityAdapter* SceneEditorContext::queryRay(const Vector4& worldRayOrigin, const
 		Vector4 objectRayDirection = worldInv * worldRayDirection;
 
 		// Get entity bounding box; do not pick if origin of ray is within box.
-		Aabb boundingBox = (*i)->getBoundingBox();
+		Aabb3 boundingBox = (*i)->getBoundingBox();
 		if (boundingBox.empty() || boundingBox.inside(objectRayOrigin))
 			continue;
 

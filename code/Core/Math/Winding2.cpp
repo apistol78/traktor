@@ -10,6 +10,7 @@ struct ChainSortPred
 {
 	T_MATH_INLINE bool operator () (const Vector2& lh, const Vector2& rh) const
 	{
+		/*
 		if (lh.x < rh.x)
 			return true;
 		else if (lh.x > rh.x)
@@ -20,6 +21,8 @@ struct ChainSortPred
 			return false;
 		else
 			return false;
+		*/
+		return lh.x < rh.x || (lh.x == rh.x && lh.y < rh.y);
 	}
 };	
 
@@ -34,15 +37,38 @@ Winding2 Winding2::convexHull(const Vector2* pnts, int npnts)
 {
 	Winding2 hull;
 	
-	// Allocate hull for maximum number of points.
-	hull.p.resize(npnts);
-	
 	// Sort points in increasing x- and y-coordinates.
 	AlignedVector< Vector2 > P(npnts);
 	for (int i = 0; i < npnts; ++i)
 		P[i] = pnts[i];
 	std::sort(P.begin(), P.end(), ChainSortPred());
 	
+	hull.p.resize(2 * npnts);
+
+	int k = 0;
+	for (int i = 0; i < npnts; ++i)
+	{
+		while (k >= 2 && isLeft(hull.p[k - 2], hull.p[k - 1], P[i]) <= 0.0f)
+			--k;
+		hull.p[k++] = P[i];
+	}
+	for (int i = npnts - 2, t = k + 1; i >= 0; --i)
+	{
+		while (k >= t && isLeft(hull.p[k - 2], hull.p[k - 1], P[i]) <= 0.0f)
+			--k;
+		hull.p[k++] = P[i];
+	}
+	
+	if (k > 0)
+		--k;
+
+	hull.p.resize(k);
+	return hull;
+
+	/*
+	// Allocate hull for maximum number of points.
+	hull.p.resize(npnts);
+
 	const int N = npnts;
 	int bot = 0;	// Indices for bottom and top of the stack.
 	int top = -1;
@@ -131,6 +157,7 @@ Winding2 Winding2::convexHull(const Vector2* pnts, int npnts)
 
 	hull.p.resize(top);
 	return hull;
+	*/
 }
 
 Winding2 Winding2::convexHull(const AlignedVector< Vector2 >& pnts)

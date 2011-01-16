@@ -69,9 +69,9 @@ bool RigidEntity::getTransform(Transform& outTransform) const
 	return false;
 }
 
-Aabb RigidEntity::getBoundingBox() const
+Aabb3 RigidEntity::getBoundingBox() const
 {
-	return m_entity ? m_entity->getBoundingBox() : Aabb();
+	return m_entity ? m_entity->getBoundingBox() : Aabb3();
 }
 
 	}

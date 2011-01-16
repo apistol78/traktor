@@ -3,7 +3,7 @@
 
 #include "Core/Guid.h"
 #include "Core/Containers/AlignedVector.h"
-#include "Core/Math/Aabb.h"
+#include "Core/Math/Aabb3.h"
 #include "Mesh/IMeshResource.h"
 
 // import/export mechanism.

@@ -63,14 +63,14 @@ bool ArticulatedEntity::getTransform(Transform& outTransform) const
 	return true;
 }
 
-Aabb ArticulatedEntity::getBoundingBox() const
+Aabb3 ArticulatedEntity::getBoundingBox() const
 {
 	Transform invTransform = m_transform.inverse();
 
-	Aabb boundingBox;
+	Aabb3 boundingBox;
 	for (RefArray< RigidEntity >::const_iterator i = m_entities.begin(); i != m_entities.end(); ++i)
 	{
-		Aabb childBoundingBox = (*i)->getWorldBoundingBox();
+		Aabb3 childBoundingBox = (*i)->getWorldBoundingBox();
 		if (!childBoundingBox.empty())
 			boundingBox.contain(childBoundingBox.transform(invTransform));
 	}

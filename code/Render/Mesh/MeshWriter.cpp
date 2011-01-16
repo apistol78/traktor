@@ -134,7 +134,7 @@ bool MeshWriter::write(IStream* stream, const Mesh* mesh) const
 		writer << parts[i].primitives.maxIndex;
 	}
 	
-	const Aabb& boundingBox = mesh->getBoundingBox();
+	const Aabb3& boundingBox = mesh->getBoundingBox();
 	writer << boundingBox.mn.x();
 	writer << boundingBox.mn.y();
 	writer << boundingBox.mn.z();

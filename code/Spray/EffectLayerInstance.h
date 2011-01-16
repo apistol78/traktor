@@ -4,7 +4,7 @@
 #include "Core/Object.h"
 #include "Core/Math/Transform.h"
 #include "Core/Math/Plane.h"
-#include "Core/Math/Aabb.h"
+#include "Core/Math/Aabb3.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -37,7 +37,7 @@ public:
 
 	void render(PointRenderer* pointRenderer, const Plane& cameraPlane, float time) const;
 
-	const Aabb& getBoundingBox() const;
+	const Aabb3& getBoundingBox() const;
 
 private:
 	Ref< const EffectLayer > m_layer;

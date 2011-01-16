@@ -105,7 +105,7 @@ void CloudParticleCluster::update(const CloudParticleData& particleData, float d
 	}
 }
 
-const Aabb& CloudParticleCluster::getBoundingBox() const
+const Aabb3& CloudParticleCluster::getBoundingBox() const
 {
 	return m_boundingBox;
 }

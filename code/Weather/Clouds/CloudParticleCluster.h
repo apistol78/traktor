@@ -1,7 +1,7 @@
 #ifndef traktor_weather_CloudParticleCluster_H
 #define traktor_weather_CloudParticleCluster_H
 
-#include "Core/Math/Aabb.h"
+#include "Core/Math/Aabb3.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Weather/Clouds/CloudParticle.h"
 
@@ -19,12 +19,12 @@ public:
 
 	void update(const CloudParticleData& particleData, float deltaTime);
 
-	const Aabb& getBoundingBox() const;
+	const Aabb3& getBoundingBox() const;
 
 	const AlignedVector< CloudParticle >& getParticles() const;
 
 private:
-	Aabb m_boundingBox;
+	Aabb3 m_boundingBox;
 	AlignedVector< CloudParticle > m_particles;
 };
 

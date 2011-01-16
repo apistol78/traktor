@@ -27,9 +27,9 @@ bool NullEntity::getTransform(Transform& outTransform) const
 	return true;
 }
 
-Aabb NullEntity::getBoundingBox() const
+Aabb3 NullEntity::getBoundingBox() const
 {
-	return Aabb(
+	return Aabb3(
 		Vector4::zero(),
 		Vector4::zero()
 	);

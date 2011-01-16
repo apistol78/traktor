@@ -39,9 +39,9 @@ bool PointLightEntity::getTransform(Transform& outTransform) const
 	return true;
 }
 
-Aabb PointLightEntity::getBoundingBox() const
+Aabb3 PointLightEntity::getBoundingBox() const
 {
-	return Aabb(Vector4(-m_range, -m_range, -m_range, 1.0f), Vector4(m_range, m_range, m_range, 1.0f));
+	return Aabb3(Vector4(-m_range, -m_range, -m_range, 1.0f), Vector4(m_range, m_range, m_range, 1.0f));
 }
 
 	}

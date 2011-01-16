@@ -407,6 +407,7 @@ void WorldRendererForward::render(uint32_t flags, int frame, render::EyeType eye
 			params.viewFrustum = f.viewFrustum;
 			params.viewToLight = f.viewToLightSpace;
 			params.projection = projection;
+			params.squareProjection = f.squareProjection;
 			params.depthRange = m_settings.depthRange;
 			params.shadowFarZ = m_settings.shadowFarZ;
 			params.shadowMapBias = m_settings.shadowMapBias;
@@ -464,12 +465,13 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, Entity
 
 	Matrix44 viewInverse = worldRenderView.getView().inverse();
 	Frustum viewFrustum = worldRenderView.getViewFrustum();
-	Aabb shadowBox = worldRenderView.getShadowBox();
+	Aabb3 shadowBox = worldRenderView.getShadowBox();
 	
 	Vector4 eyePosition = viewInverse.translation();
 
 	Matrix44 shadowLightView;
 	Matrix44 shadowLightProjection;
+	Matrix44 shadowLightSquareProjection = Matrix44::identity();
 	Frustum shadowFrustum;
 
 	switch (m_settings.shadowsProjection)
@@ -510,6 +512,7 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, Entity
 			viewFrustum,
 			shadowLightView,
 			shadowLightProjection,
+			shadowLightSquareProjection,
 			shadowFrustum
 		);
 		break;
@@ -529,10 +532,12 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, Entity
 	}
 
 	f.viewToLightSpace = shadowLightProjection * shadowLightView * viewInverse;
+	f.squareProjection = shadowLightSquareProjection;
 
 	// Render shadow map.
 	f.shadowRenderView.resetLights();
 	f.shadowRenderView.setProjection(shadowLightProjection);
+	f.shadowRenderView.setSquareProjection(shadowLightSquareProjection);
 	f.shadowRenderView.setView(shadowLightView);
 	f.shadowRenderView.setEyePosition(eyePosition);
 	f.shadowRenderView.setViewFrustum(shadowFrustum);

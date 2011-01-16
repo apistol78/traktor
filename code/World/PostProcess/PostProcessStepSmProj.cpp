@@ -116,6 +116,7 @@ PostProcessStepSmProj::InstanceSmProj::InstanceSmProj(
 	m_handleViewEdgeBottomLeft = render::getParameterHandle(L"ViewEdgeBottomLeft");
 	m_handleViewEdgeBottomRight = render::getParameterHandle(L"ViewEdgeBottomRight");
 	m_handleViewToLight = render::getParameterHandle(L"ViewToLight");
+	m_handleSquareProjection = render::getParameterHandle(L"SquareProjection");
 }
 
 void PostProcessStepSmProj::InstanceSmProj::destroy()
@@ -178,6 +179,7 @@ void PostProcessStepSmProj::InstanceSmProj::render(
 	shader->setVectorParameter(m_handleViewEdgeBottomLeft, viewEdgeBottomLeft);
 	shader->setVectorParameter(m_handleViewEdgeBottomRight, viewEdgeBottomRight);
 	shader->setMatrixParameter(m_handleViewToLight, params.viewToLight);
+	shader->setMatrixParameter(m_handleSquareProjection, params.squareProjection);
 
 	const float maskClear[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 	renderView->clear(render::CfColor, maskClear, 1.0f, 0);

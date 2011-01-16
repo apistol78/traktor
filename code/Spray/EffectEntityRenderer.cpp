@@ -38,7 +38,7 @@ void EffectEntityRenderer::render(
 
 	EffectEntity* effectEntity = checked_type_cast< EffectEntity* >(entity);
 	
-	Aabb boundingBox = effectEntity->getWorldBoundingBox();
+	Aabb3 boundingBox = effectEntity->getWorldBoundingBox();
 	if (boundingBox.empty())
 		return;
 

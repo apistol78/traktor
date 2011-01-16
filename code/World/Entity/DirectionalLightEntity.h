@@ -37,7 +37,7 @@ public:
 
 	virtual bool getTransform(Transform& outTransform) const;
 
-	virtual Aabb getBoundingBox() const;
+	virtual Aabb3 getBoundingBox() const;
 
 	void setSunColor(const Vector4& sunColor) { m_sunColor = sunColor; }
 

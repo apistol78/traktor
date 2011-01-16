@@ -1,7 +1,7 @@
 #ifndef traktor_mesh_MeshEntity_H
 #define traktor_mesh_MeshEntity_H
 
-#include "Core/Math/Aabb.h"
+#include "Core/Math/Aabb3.h"
 #include "World/Entity/SpatialEntity.h"
 
 // import/export mechanism.

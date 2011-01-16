@@ -163,7 +163,7 @@ void sortMaterialsByProjectedArea(model::Model& model, bool insideOut)
 {
 	uint8_t face[3][64 * 64];
 
-	Aabb boundingBox = model::calculateModelBoundingBox(model);
+	Aabb3 boundingBox = model::calculateModelBoundingBox(model);
 
 	std::vector< std::pair< uint32_t, uint32_t > > covers;
 

@@ -27,7 +27,7 @@ SkinnedMesh::SkinnedMesh()
 		s_handleUserParameter = render::getParameterHandle(L"UserParameter");
 }
 
-const Aabb& SkinnedMesh::getBoundingBox() const
+const Aabb3& SkinnedMesh::getBoundingBox() const
 {
 	return m_mesh->getBoundingBox();
 }

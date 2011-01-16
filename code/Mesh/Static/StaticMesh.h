@@ -1,7 +1,7 @@
 #ifndef traktor_mesh_StaticMesh_H
 #define traktor_mesh_StaticMesh_H
 
-#include "Core/Math/Aabb.h"
+#include "Core/Math/Aabb3.h"
 #include "Core/Math/Matrix44.h"
 #include "Mesh/IMesh.h"
 #include "Render/Shader.h"
@@ -58,7 +58,7 @@ public:
 
 	StaticMesh();
 
-	const Aabb& getBoundingBox() const;
+	const Aabb3& getBoundingBox() const;
 	
 	void render(
 		render::RenderContext* renderContext,

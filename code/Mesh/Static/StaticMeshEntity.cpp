@@ -16,9 +16,9 @@ StaticMeshEntity::StaticMeshEntity(const Transform& transform, const resource::P
 {
 }
 
-Aabb StaticMeshEntity::getBoundingBox() const
+Aabb3 StaticMeshEntity::getBoundingBox() const
 {
-	return m_mesh.validate() ? m_mesh->getBoundingBox() : Aabb();
+	return m_mesh.validate() ? m_mesh->getBoundingBox() : Aabb3();
 }
 
 void StaticMeshEntity::render(

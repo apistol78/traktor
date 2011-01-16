@@ -149,7 +149,7 @@ void OceanEntity::render(
 	worldRenderPass.setProgramParameters(
 		renderBlock->programParams,
 		oceanWorld,
-		Aabb()
+		Aabb3()
 	);
 
 	renderBlock->programParams->setFloatParameter(L"ViewPlane", worldRenderView.getViewFrustum().getNearZ());

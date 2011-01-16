@@ -154,7 +154,7 @@ void splitPolygons(
 
 struct T_ALIGN16 OctreeNodeTemplate : public Object
 {
-	Aabb boundingBox;
+	Aabb3 boundingBox;
 	std::vector< uint32_t > polygonIds;
 	Ref< OctreeNodeTemplate > children[8];
 };
@@ -165,7 +165,7 @@ Ref< OctreeNodeTemplate > buildOctreeTemplate(
 	int32_t depth
 )
 {
-	Aabb boundingBox;
+	Aabb3 boundingBox;
 	for (std::vector< model::Polygon >::const_iterator i = polygons.begin(); i != polygons.end(); ++i)
 	{
 		for (uint32_t j = 0; j < i->getVertexCount(); ++j)

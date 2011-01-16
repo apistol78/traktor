@@ -40,7 +40,7 @@ Ref< ui::Bitmap > MeshBrowsePreview::generate(const editor::IEditor* editor, db:
 	if (!model)
 		return 0;
 
-	Aabb boundingBox = model::calculateModelBoundingBox(*model);
+	Aabb3 boundingBox = model::calculateModelBoundingBox(*model);
 
 	Ref< drawing::Image > meshThumb = new drawing::Image(
 		drawing::PixelFormat::getR8G8B8(),

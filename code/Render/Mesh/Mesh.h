@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 #include "Core/Object.h"
-#include "Core/Math/Aabb.h"
+#include "Core/Math/Aabb3.h"
 #include "Render/VertexElement.h"
 
 // import/export mechanism.
@@ -53,16 +53,16 @@ public:
 
 	const std::vector< Part >& getParts() const;
 	
-	void setBoundingBox(const Aabb& boundingBox);
+	void setBoundingBox(const Aabb3& boundingBox);
 	
-	const Aabb& getBoundingBox() const;
+	const Aabb3& getBoundingBox() const;
 
 private:
 	std::vector< VertexElement > m_vertexElements;
 	Ref< VertexBuffer > m_vertexBuffer;
 	Ref< IndexBuffer > m_indexBuffer;
 	std::vector< Part > m_parts;
-	Aabb m_boundingBox;
+	Aabb3 m_boundingBox;
 };
 
 	}

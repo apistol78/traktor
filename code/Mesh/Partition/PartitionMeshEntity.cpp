@@ -16,9 +16,9 @@ PartitionMeshEntity::PartitionMeshEntity(const Transform& transform, const resou
 {
 }
 
-Aabb PartitionMeshEntity::getBoundingBox() const
+Aabb3 PartitionMeshEntity::getBoundingBox() const
 {
-	return m_mesh.validate() ? m_mesh->getBoundingBox() : Aabb();
+	return m_mesh.validate() ? m_mesh->getBoundingBox() : Aabb3();
 }
 
 void PartitionMeshEntity::render(

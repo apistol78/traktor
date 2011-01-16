@@ -2,7 +2,7 @@
 #define traktor_mesh_InstanceMesh_H
 
 #include <map>
-#include "Core/Math/Aabb.h"
+#include "Core/Math/Aabb3.h"
 #include "Core/Math/Quaternion.h"
 #include "Core/Math/Vector4.h"
 #include "Core/Containers/AlignedVector.h"
@@ -70,7 +70,7 @@ public:
 
 	virtual ~InstanceMesh();
 
-	const Aabb& getBoundingBox() const;
+	const Aabb3& getBoundingBox() const;
 	
 	void render(
 		render::RenderContext* renderContext,

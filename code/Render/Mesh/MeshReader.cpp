@@ -197,7 +197,7 @@ Ref< Mesh > MeshReader::read(IStream* stream) const
 	reader >> ext[4];
 	reader >> ext[5];
 
-	Aabb boundingBox;
+	Aabb3 boundingBox;
 	boundingBox.mn.set(ext[0], ext[1], ext[2]);
 	boundingBox.mx.set(ext[3], ext[4], ext[5]);
 	mesh->setBoundingBox(boundingBox);

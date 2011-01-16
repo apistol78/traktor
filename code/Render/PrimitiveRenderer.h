@@ -6,7 +6,7 @@
 #include "Core/Math/Vector2.h"
 #include "Core/Math/Vector4.h"
 #include "Core/Math/Matrix44.h"
-#include "Core/Math/Aabb.h"
+#include "Core/Math/Aabb3.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Resource/Proxy.h"
 #include "Render/Types.h"
@@ -112,7 +112,7 @@ public:
 	);
 
 	void drawWireAabb(
-		const Aabb& aabb,
+		const Aabb3& aabb,
 		const Color4ub& color
 	);
 
@@ -171,7 +171,7 @@ public:
 	);
 
 	void drawSolidAabb(
-		const Aabb& aabb,
+		const Aabb3& aabb,
 		const Color4ub& color
 	);
 

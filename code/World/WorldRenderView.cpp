@@ -9,6 +9,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.WorldRenderView", WorldRenderView, Object
 
 WorldRenderView::WorldRenderView()
 :	m_projection(Matrix44::identity())
+,	m_squareProjection(Matrix44::identity())
 ,	m_view(Matrix44::identity())
 ,	m_viewSize(0.0f, 0.0f)
 ,	m_eyePosition(0.0f, 0.0f, 0.0f, 1.0f)
@@ -44,6 +45,11 @@ void WorldRenderView::setProjection(const Matrix44& projection)
 	m_projection = projection;
 }
 
+void WorldRenderView::setSquareProjection(const Matrix44& squareProjection)
+{
+	m_squareProjection = squareProjection;
+}
+
 void WorldRenderView::setView(const Matrix44& view)
 {
 	m_view = view;
@@ -59,7 +65,7 @@ void WorldRenderView::setEyePosition(const Vector4& eyePosition)
 	m_eyePosition = eyePosition;
 }
 
-void WorldRenderView::setShadowBox(const Aabb& shadowBox)
+void WorldRenderView::setShadowBox(const Aabb3& shadowBox)
 {
 	m_shadowBox = shadowBox;
 }

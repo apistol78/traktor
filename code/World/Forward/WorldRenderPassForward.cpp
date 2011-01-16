@@ -17,6 +17,7 @@ enum { MaxLightCount = 2 };
 bool s_handlesInitialized = false;
 render::handle_t s_handleDefaultTechnique;
 render::handle_t s_handleProjection;
+render::handle_t s_handleSquareProjection;
 render::handle_t s_handleView;
 render::handle_t s_handleWorld;
 render::handle_t s_handleEyePosition;
@@ -55,6 +56,7 @@ WorldRenderPassForward::WorldRenderPassForward(
 	{
 		s_handleDefaultTechnique = render::getParameterHandle(L"Default");
 		s_handleProjection = render::getParameterHandle(L"Projection");
+		s_handleSquareProjection = render::getParameterHandle(L"SquareProjection");
 		s_handleView = render::getParameterHandle(L"View");
 		s_handleWorld = render::getParameterHandle(L"World");
 		s_handleEyePosition = render::getParameterHandle(L"EyePosition");
@@ -104,7 +106,7 @@ void WorldRenderPassForward::setShaderCombination(render::Shader* shader) const
 	}
 }
 
-void WorldRenderPassForward::setShaderCombination(render::Shader* shader, const Matrix44& world, const Aabb& bounds) const
+void WorldRenderPassForward::setShaderCombination(render::Shader* shader, const Matrix44& world, const Aabb3& bounds) const
 {
 	if (m_technique == s_handleDefaultTechnique)
 	{
@@ -158,7 +160,7 @@ void WorldRenderPassForward::setProgramParameters(render::ProgramParameters* pro
 	}
 }
 
-void WorldRenderPassForward::setProgramParameters(render::ProgramParameters* programParams, const Matrix44& world, const Aabb& bounds) const
+void WorldRenderPassForward::setProgramParameters(render::ProgramParameters* programParams, const Matrix44& world, const Aabb3& bounds) const
 {
 	setWorldProgramParameters(programParams, world);
 
@@ -175,6 +177,7 @@ void WorldRenderPassForward::setWorldProgramParameters(render::ProgramParameters
 {
 	programParams->setFloatParameter(s_handleTime, m_worldRenderView.getTime());
 	programParams->setMatrixParameter(s_handleProjection, m_worldRenderView.getProjection());
+	programParams->setMatrixParameter(s_handleSquareProjection, m_worldRenderView.getSquareProjection());
 	programParams->setMatrixParameter(s_handleView, m_worldRenderView.getView());
 	programParams->setMatrixParameter(s_handleWorld, world);
 	programParams->setVectorParameter(s_handleEyePosition, m_worldRenderView.getEyePosition());
@@ -220,7 +223,7 @@ void WorldRenderPassForward::setLightProgramParameters(render::ProgramParameters
 	programParams->setVectorArrayParameter(s_handleLightShadowColor, lightShadowColor, MaxLightCount);
 }
 
-void WorldRenderPassForward::setLightProgramParameters(render::ProgramParameters* programParams, const Matrix44& world, const Aabb& bounds) const
+void WorldRenderPassForward::setLightProgramParameters(render::ProgramParameters* programParams, const Matrix44& world, const Aabb3& bounds) const
 {
 	const WorldRenderView::Light* lightDirectional[MaxLightCount]; int lightDirectionalCount = 0;
 	const WorldRenderView::Light* lightPoint[MaxLightCount]; int lightPointCount = 0;

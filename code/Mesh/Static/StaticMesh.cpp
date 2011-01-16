@@ -23,7 +23,7 @@ StaticMesh::StaticMesh()
 		s_handleUserParameter = render::getParameterHandle(L"UserParameter");
 }
 
-const Aabb& StaticMesh::getBoundingBox() const
+const Aabb3& StaticMesh::getBoundingBox() const
 {
 	return m_mesh->getBoundingBox();
 }

@@ -4,7 +4,7 @@
 #include <vector>
 #include "Core/Ref.h"
 #include "Core/Containers/AlignedVector.h"
-#include "Core/Math/Aabb.h"
+#include "Core/Math/Aabb3.h"
 #include "Core/Math/Winding3.h"
 
 // import/export mechanism.
@@ -62,7 +62,7 @@ public:
 private:
 	struct Node
 	{
-		Aabb aabb;
+		Aabb3 aabb;
 		std::vector< int32_t > indices;
 		int32_t axis;
 		float split;
