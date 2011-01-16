@@ -542,7 +542,7 @@ void WorldRendererPreLit::buildLightWithShadows(WorldRenderView& worldRenderView
 		{
 			Matrix44 shadowLightView;
 			Matrix44 shadowLightProjection;
-			Matrix44 shadowLightSquareProjection;
+			Matrix44 shadowLightSquareProjection = Matrix44::identity();
 			Frustum shadowFrustum;
 
 			switch (m_settings.shadowsProjection)
