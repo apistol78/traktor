@@ -3,7 +3,7 @@
 
 #include <map>
 #include "Core/Object.h"
-#include "Core/Math/Aabb.h"
+#include "Core/Math/Aabb3.h"
 #include "Render/Types.h"
 
 // import/export mechanism.
@@ -39,7 +39,7 @@ public:
 	) const;
 
 private:
-	Aabb m_boundingBox;
+	Aabb3 m_boundingBox;
 	std::vector< std::vector< uint32_t > > m_partIndices;
 	Ref< OctreeNode > m_children[8];
 	bool m_leaf;

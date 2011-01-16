@@ -14,9 +14,9 @@ InstanceMeshEntity::InstanceMeshEntity(const Transform& transform, const resourc
 {
 }
 
-Aabb InstanceMeshEntity::getBoundingBox() const
+Aabb3 InstanceMeshEntity::getBoundingBox() const
 {
-	return m_mesh.validate() ? m_mesh->getBoundingBox() : Aabb();
+	return m_mesh.validate() ? m_mesh->getBoundingBox() : Aabb3();
 }
 
 void InstanceMeshEntity::update(const world::EntityUpdate* update)

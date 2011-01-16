@@ -2,7 +2,7 @@
 #define traktor_world_WorldRenderView_H
 
 #include "Core/Object.h"
-#include "Core/Math/Aabb.h"
+#include "Core/Math/Aabb3.h"
 #include "Core/Math/Frustum.h"
 #include "Core/Math/Matrix44.h"
 #include "Core/Math/Vector2.h"
@@ -59,13 +59,15 @@ public:
 
 	void setProjection(const Matrix44& projection);
 
+	void setSquareProjection(const Matrix44& squareProjection);
+
 	void setView(const Matrix44& view);
 
 	void setViewSize(const Vector2& viewSize);
 
 	void setEyePosition(const Vector4& eyePosition);
 
-	void setShadowBox(const Aabb& shadowBox);
+	void setShadowBox(const Aabb3& shadowBox);
 
 	void setTimes(float time, float deltaTime, float interval);
 
@@ -83,6 +85,10 @@ public:
 
 	T_FORCE_INLINE const Matrix44& getProjection() const {
 		return m_projection;
+	}
+
+	T_FORCE_INLINE const Matrix44& getSquareProjection() const {
+		return m_squareProjection;
 	}
 
 	T_FORCE_INLINE const Matrix44& getView() const {
@@ -105,7 +111,7 @@ public:
 		return m_lightCount;
 	}
 
-	T_FORCE_INLINE const Aabb& getShadowBox() const {
+	T_FORCE_INLINE const Aabb3& getShadowBox() const {
 		return m_shadowBox;
 	}
 
@@ -125,12 +131,13 @@ private:
 	Frustum m_viewFrustum;
 	Frustum m_cullFrustum;
 	Matrix44 m_projection;
+	Matrix44 m_squareProjection;
 	Matrix44 m_view;
 	Vector2 m_viewSize;
 	Vector4 m_eyePosition;
 	Light m_lights[MaxLightCount];
 	int m_lightCount;
-	Aabb m_shadowBox;
+	Aabb3 m_shadowBox;
 	float m_time;
 	float m_deltaTime;
 	float m_interval;

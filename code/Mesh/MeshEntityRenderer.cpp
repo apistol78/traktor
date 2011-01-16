@@ -26,7 +26,7 @@ void MeshEntityRenderer::render(
 )
 {
 	MeshEntity* meshEntity = checked_type_cast< MeshEntity* >(entity);
-	Aabb boundingBox = meshEntity->getBoundingBox();
+	Aabb3 boundingBox = meshEntity->getBoundingBox();
 	Transform transform; meshEntity->getTransform(transform);
 
 	float distance = 0.0f;

@@ -29,7 +29,7 @@ public:
 
 	void setBoneTransforms(const AlignedVector< Matrix44 >& boneTransforms);
 
-	virtual Aabb getBoundingBox() const;
+	virtual Aabb3 getBoundingBox() const;
 
 	virtual void render(
 		world::WorldContext& worldContext,

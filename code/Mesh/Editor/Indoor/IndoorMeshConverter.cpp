@@ -202,7 +202,7 @@ struct Sector
 	std::wstring name;
 	AlignedVector< Vertex > vertices;
 	std::vector< Polygon > polygons;
-	Aabb boundingBox;
+	Aabb3 boundingBox;
 };
 
 struct Portal

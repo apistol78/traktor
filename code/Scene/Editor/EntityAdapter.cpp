@@ -80,11 +80,11 @@ Transform EntityAdapter::getTransform() const
 	return Transform::identity();
 }
 
-Aabb EntityAdapter::getBoundingBox() const
+Aabb3 EntityAdapter::getBoundingBox() const
 {
 	if (world::SpatialEntity* spatialEntity = dynamic_type_cast< world::SpatialEntity* >(m_entity))
 		return spatialEntity->getBoundingBox();
-	return Aabb();
+	return Aabb3();
 }
 
 bool EntityAdapter::isExternal() const
@@ -266,14 +266,14 @@ AlignedVector< EntityAdapter::SnapPoint > EntityAdapter::getSnapPoints() const
 	if (spatialEntity)
 	{
 		Transform transform = getTransform();
-		Aabb boundingBox = spatialEntity->getBoundingBox();
+		Aabb3 boundingBox = spatialEntity->getBoundingBox();
 		if (!boundingBox.empty())
 		{
 			Vector4 extents[8];
 			boundingBox.getExtents(extents);
 
-			const Vector4* normals = Aabb::getNormals();
-			const int* faces = Aabb::getFaces();
+			const Vector4* normals = Aabb3::getNormals();
+			const int* faces = Aabb3::getFaces();
 
 			for (int i = 0; i < 6; ++i)
 			{

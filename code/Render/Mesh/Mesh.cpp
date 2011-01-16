@@ -47,12 +47,12 @@ const std::vector< Mesh::Part >& Mesh::getParts() const
 	return m_parts;
 }
 
-void Mesh::setBoundingBox(const Aabb& boundingBox)
+void Mesh::setBoundingBox(const Aabb3& boundingBox)
 {
 	m_boundingBox = boundingBox;
 }
 
-const Aabb& Mesh::getBoundingBox() const
+const Aabb3& Mesh::getBoundingBox() const
 {
 	return m_boundingBox;
 }

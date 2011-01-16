@@ -26,7 +26,7 @@ PartitionMesh::PartitionMesh()
 		s_handleUserParameter = render::getParameterHandle(L"UserParameter");
 }
 
-const Aabb& PartitionMesh::getBoundingBox() const
+const Aabb3& PartitionMesh::getBoundingBox() const
 {
 	return m_mesh->getBoundingBox();
 }

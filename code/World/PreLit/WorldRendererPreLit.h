@@ -91,6 +91,7 @@ private:
 		Ref< WorldContext > visual;
 		Matrix44 projection;
 		Matrix44 viewToLightSpace[WorldRenderView::MaxLightCount];
+		Matrix44 squareProjection[WorldRenderView::MaxLightCount];
 		Frustum viewFrustum;
 		bool haveDepth;
 		bool haveShadows[WorldRenderView::MaxLightCount];

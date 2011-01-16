@@ -36,9 +36,9 @@ struct TangentBase
 
 		}
 
-Aabb calculateModelBoundingBox(const Model& model)
+Aabb3 calculateModelBoundingBox(const Model& model)
 {
-	Aabb boundingBox;
+	Aabb3 boundingBox;
 	const AlignedVector< Vector4 >& positions = model.getPositions();
 	for (AlignedVector< Vector4 >::const_iterator i = positions.begin(); i != positions.end(); ++i)
 		boundingBox.contain(*i);
@@ -703,7 +703,7 @@ void bakeVertexOcclusion(Model& model)
 
 void cullDistantFaces(Model& model)
 {
-	Aabb viewerRegion(
+	Aabb3 viewerRegion(
 		Vector4(-40.0f, -40.0f, -40.0f),
 		Vector4( 40.0f,  40.0f,  40.0f)
 	);

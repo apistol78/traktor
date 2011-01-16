@@ -105,7 +105,7 @@ void RigidEntityEditor::drawGuide(
 
 			if (const BoxShapeDesc* boxShapeDesc = dynamic_type_cast< const BoxShapeDesc* >(shapeDesc))
 			{
-				Aabb boundingBox(-boxShapeDesc->getExtent(), boxShapeDesc->getExtent());
+				Aabb3 boundingBox(-boxShapeDesc->getExtent(), boxShapeDesc->getExtent());
 
 				if (entityAdapter->isSelected())
 				{
@@ -118,7 +118,7 @@ void RigidEntityEditor::drawGuide(
 			else if (const CapsuleShapeDesc* capsuleShapeDesc = dynamic_type_cast< const CapsuleShapeDesc* >(shapeDesc))
 			{
 				Vector4 extent(capsuleShapeDesc->getRadius(), capsuleShapeDesc->getRadius(), capsuleShapeDesc->getLength() * 0.5f);
-				Aabb boundingBox(-extent, extent);
+				Aabb3 boundingBox(-extent, extent);
 
 				if (entityAdapter->isSelected())
 				{
@@ -131,7 +131,7 @@ void RigidEntityEditor::drawGuide(
 			else if (const CylinderShapeDesc* cylinderShapeDesc = dynamic_type_cast< const CylinderShapeDesc* >(shapeDesc))
 			{
 				Vector4 extent(cylinderShapeDesc->getRadius(), cylinderShapeDesc->getRadius(), cylinderShapeDesc->getLength() * 0.5f);
-				Aabb boundingBox(-extent, extent);
+				Aabb3 boundingBox(-extent, extent);
 
 				if (entityAdapter->isSelected())
 				{
@@ -181,7 +181,7 @@ void RigidEntityEditor::drawGuide(
 			else if (const SphereShapeDesc* sphereShapeDesc = dynamic_type_cast< const SphereShapeDesc* >(shapeDesc))
 			{
 				float radius = sphereShapeDesc->getRadius();
-				Aabb boundingBox(-Vector4(radius, radius, radius, 0.0f), Vector4(radius, radius, radius, 0.0f));
+				Aabb3 boundingBox(-Vector4(radius, radius, radius, 0.0f), Vector4(radius, radius, radius, 0.0f));
 
 				if (entityAdapter->isSelected())
 				{
@@ -197,7 +197,7 @@ void RigidEntityEditor::drawGuide(
 				if (context->getResourceManager()->bind(heightfield))
 				{
 					const Vector4& extent = heightfield->getWorldExtent();
-					Aabb boundingBox(-extent / Scalar(2.0f), extent / Scalar(2.0f));
+					Aabb3 boundingBox(-extent / Scalar(2.0f), extent / Scalar(2.0f));
 
 					if (entityAdapter->isSelected())
 					{

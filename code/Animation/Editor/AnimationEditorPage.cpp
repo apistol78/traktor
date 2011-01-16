@@ -508,7 +508,7 @@ void AnimationEditorPage::setSkeleton(Skeleton* skeleton)
 	m_skeleton = skeleton;
 	T_ASSERT (m_skeleton);
 
-	Aabb boundingBox = calculateBoundingBox(m_skeleton);
+	Aabb3 boundingBox = calculateBoundingBox(m_skeleton);
 	
 	int majorAxis = majorAxis3(boundingBox.getExtent());
 	float majorExtent = boundingBox.getExtent()[majorAxis];
@@ -1001,7 +1001,7 @@ void AnimationEditorPage::eventRenderPaint(ui::Event* event)
 				Vector4 center(0.0f, 0.0f, bone->getLength() / 2.0f, 1.0f);
 				Vector4 extent(bone->getRadius(), bone->getRadius(), bone->getLength() / 2.0f, 0.0f);
 
-				Aabb boneVolume(
+				Aabb3 boneVolume(
 					center - extent,
 					center + extent
 				);

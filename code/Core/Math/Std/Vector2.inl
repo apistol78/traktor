@@ -196,6 +196,27 @@ T_MATH_INLINE Vector2 lerp(const Vector2& a, const Vector2& b, float c)
 	return a + (b - a) * c;
 }
 
+T_MATH_INLINE float determinant(const Vector2& a, const Vector2& b)
+{
+	return a.x * b.y - a.y * b.x;
+}
+
+T_MATH_INLINE Vector2 min(const Vector2& l, const Vector2& r)
+{
+	return Vector2(
+		std::min(l.x, r.x),
+		std::min(l.y, r.y)
+	);
+}
+
+T_MATH_INLINE Vector2 max(const Vector2& l, const Vector2& r)
+{
+	return Vector2(
+		std::max(l.x, r.x),
+		std::max(l.y, r.y)
+	);
+}
+
 T_MATH_INLINE Vector2 reflect(const Vector2& v, const Vector2& at)
 {
 	Vector2 N = at.normalized();

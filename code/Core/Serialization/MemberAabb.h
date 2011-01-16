@@ -1,7 +1,7 @@
 #ifndef traktor_MemberAabb_H
 #define traktor_MemberAabb_H
 
-#include "Core/Math/Aabb.h"
+#include "Core/Math/Aabb3.h"
 #include "Core/Serialization/MemberComplex.h"
 
 namespace traktor
@@ -10,7 +10,7 @@ namespace traktor
 class MemberAabb : public MemberComplex
 {
 public:
-	MemberAabb(const std::wstring& name, Aabb& ref)
+	MemberAabb(const std::wstring& name, Aabb3& ref)
 	:	MemberComplex(name, true)
 	,	m_ref(ref)
 	{
@@ -26,7 +26,7 @@ public:
 	}
 
 private:
-	Aabb& m_ref;
+	Aabb3& m_ref;
 };
 
 }

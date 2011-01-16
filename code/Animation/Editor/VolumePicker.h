@@ -4,7 +4,7 @@
 #include "Core/Object.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Matrix44.h"
-#include "Core/Math/Aabb.h"
+#include "Core/Math/Aabb3.h"
 
 namespace traktor
 {
@@ -22,7 +22,7 @@ public:
 
 	void removeAllVolumes();
 
-	void addVolume(const Matrix44& worldTransform, const Aabb& volume, int id);
+	void addVolume(const Matrix44& worldTransform, const Aabb3& volume, int id);
 
 	int traceVolume(const Vector4& clipPosition) const;
 
@@ -30,7 +30,7 @@ private:
 	struct Volume
 	{
 		Matrix44 worldTransform;
-		Aabb volume;
+		Aabb3 volume;
 		int id;
 	};
 

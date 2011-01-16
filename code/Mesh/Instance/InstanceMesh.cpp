@@ -43,7 +43,7 @@ InstanceMesh::~InstanceMesh()
 #endif
 }
 
-const Aabb& InstanceMesh::getBoundingBox() const
+const Aabb3& InstanceMesh::getBoundingBox() const
 {
 	return m_mesh->getBoundingBox();
 }
@@ -76,8 +76,8 @@ void InstanceMesh::render(
 	std::sort(instanceWorld.begin(), instanceWorld.end(), SortInstanceDistance());
 
 	// Calculate bounding box of all instances.
-	Aabb boundingBoxLocal = m_mesh->getBoundingBox();
-	Aabb boundingBoxWorld;
+	Aabb3 boundingBoxLocal = m_mesh->getBoundingBox();
+	Aabb3 boundingBoxWorld;
 	for (AlignedVector< instance_distance_t >::const_iterator i = instanceWorld.begin(); i != instanceWorld.end(); ++i)
 	{
 		Vector4 translation(

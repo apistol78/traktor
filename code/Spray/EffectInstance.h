@@ -3,7 +3,7 @@
 
 #include "Core/Object.h"
 #include "Core/RefArray.h"
-#include "Core/Math/Aabb.h"
+#include "Core/Math/Aabb3.h"
 #include "Core/Math/Plane.h"
 #include "Core/Math/Transform.h"
 
@@ -49,7 +49,7 @@ public:
 
 	inline bool getLoopEnable() const { return m_loopEnable; }
 
-	inline const Aabb& getBoundingBox() const { return m_boundingBox; }
+	inline const Aabb3& getBoundingBox() const { return m_boundingBox; }
 
 private:
 	friend class Effect;
@@ -57,7 +57,7 @@ private:
 	Ref< const Effect > m_effect;
 	float m_time;
 	bool m_loopEnable;
-	Aabb m_boundingBox;
+	Aabb3 m_boundingBox;
 	RefArray< EffectLayerInstance > m_layerInstances;
 };
 

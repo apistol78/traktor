@@ -78,7 +78,7 @@ public:
 
 	virtual bool getTransform(Transform& outTransform) const;
 
-	virtual Aabb getBoundingBox() const;
+	virtual Aabb3 getBoundingBox() const;
 
 private:
 	resource::Proxy< render::Shader > m_particleShader;

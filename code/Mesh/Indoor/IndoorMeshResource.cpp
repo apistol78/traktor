@@ -43,7 +43,7 @@ Ref< IMesh > IndoorMeshResource::createMesh(
 	indoorMesh->m_sectors.resize(m_sectors.size());
 	for (size_t i = 0; i < m_sectors.size(); ++i)
 	{
-		indoorMesh->m_sectors[i].boundingBox = Aabb(m_sectors[i].min, m_sectors[i].max);
+		indoorMesh->m_sectors[i].boundingBox = Aabb3(m_sectors[i].min, m_sectors[i].max);
 
 		const std::map< std::wstring, parts_t >& sectorParts = m_sectors[i].parts;
 		for (std::map< std::wstring, parts_t >::const_iterator j = sectorParts.begin(); j != sectorParts.end(); ++j)

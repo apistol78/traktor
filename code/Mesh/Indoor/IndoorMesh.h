@@ -1,7 +1,7 @@
 #ifndef traktor_mesh_IndoorMesh_H
 #define traktor_mesh_IndoorMesh_H
 
-#include "Core/Math/Aabb.h"
+#include "Core/Math/Aabb3.h"
 #include "Core/Math/Frustum.h"
 #include "Core/Math/Matrix44.h"
 #include "Core/Math/Winding3.h"
@@ -48,7 +48,7 @@ class T_DLLCLASS IndoorMesh : public IMesh
 public:
 	IndoorMesh();
 
-	const Aabb& getBoundingBox() const;
+	const Aabb3& getBoundingBox() const;
 
 	void render(
 		render::RenderContext* renderContext,
@@ -71,7 +71,7 @@ private:
 
 	struct Sector
 	{
-		Aabb boundingBox;
+		Aabb3 boundingBox;
 		std::map< render::handle_t, std::vector< Part > > parts;
 	};
 

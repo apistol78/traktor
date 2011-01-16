@@ -26,7 +26,7 @@ class T_DLLCLASS StaticMeshEntity : public MeshEntity
 public:
 	StaticMeshEntity(const Transform& transform, const resource::Proxy< StaticMesh >& mesh);
 	
-	virtual Aabb getBoundingBox() const;
+	virtual Aabb3 getBoundingBox() const;
 
 	virtual void render(
 		world::WorldContext& worldContext,

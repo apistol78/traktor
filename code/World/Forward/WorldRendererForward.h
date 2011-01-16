@@ -89,6 +89,7 @@ private:
 		WorldRenderView shadowRenderView;
 		Matrix44 projection;
 		Matrix44 viewToLightSpace;
+		Matrix44 squareProjection;
 		Frustum viewFrustum;
 		bool haveDepth;
 		bool haveShadows;

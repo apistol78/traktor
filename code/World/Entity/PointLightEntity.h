@@ -39,7 +39,7 @@ public:
 
 	virtual bool getTransform(Transform& outTransform) const;
 
-	virtual Aabb getBoundingBox() const;
+	virtual Aabb3 getBoundingBox() const;
 
 	const Vector4& getSunColor() const { return m_sunColor; }
 

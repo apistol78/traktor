@@ -18,11 +18,11 @@ bool SpatialEntity::getTransform(Transform& outTransform) const
 	return false;
 }
 
-Aabb SpatialEntity::getWorldBoundingBox() const
+Aabb3 SpatialEntity::getWorldBoundingBox() const
 {
-	Aabb boundingBox = getBoundingBox();
+	Aabb3 boundingBox = getBoundingBox();
 	if (boundingBox.empty())
-		return Aabb();
+		return Aabb3();
 
 	Transform transform;
 	return getTransform(transform) ? boundingBox.transform(transform) : boundingBox;

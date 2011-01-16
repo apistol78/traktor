@@ -52,7 +52,7 @@ public:
 
 	virtual bool getTransform(Transform& outTransform) const;
 
-	virtual Aabb getBoundingBox() const;
+	virtual Aabb3 getBoundingBox() const;
 
 	virtual void update(const world::EntityUpdate* update);
 

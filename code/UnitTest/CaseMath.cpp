@@ -1,6 +1,7 @@
 #include <cmath>
 #include "UnitTest/CaseMath.h"
 #include "Core/Math/Const.h"
+#include "Core/Math/Line2.h"
 #include "Core/Math/Matrix44.h"
 #include "Core/Math/Plane.h"
 #include "Core/Math/Quaternion.h"
@@ -41,6 +42,28 @@ bool compareFuzzyEqual(float a, float b)
 
 void CaseMath::run()
 {
+	// Line point distance.
+	{
+		Line2 ln(Vector2(0.0f, 0.0f), Vector2(10.0f, 0.0f));
+
+		float d1 = ln.distance(Vector2(5.0f, -1.0f));
+		CASE_ASSERT_COMPARE(d1, 1.0f, compareFuzzyEqual);
+
+		float d2 = ln.distance(Vector2(5.0f, 1.0f));
+		CASE_ASSERT_COMPARE(d2, -1.0f, compareFuzzyEqual);
+	}
+
+	// Line ray intersection.
+	{
+		Line2 ln(Vector2(0.0f, 0.0f), Vector2(10.0f, 0.0f));
+
+		float r, k;
+		ln.intersect(Ray2(Vector2(1.0f, -1.0f), Vector2(0.0f, 1.0f)), r, k);
+
+		CASE_ASSERT_COMPARE(r, 0.1f, compareFuzzyEqual);
+		CASE_ASSERT_COMPARE(k, 1.0f, compareFuzzyEqual);
+	}
+
 	Vector2 v1(1.5f, 2.5f);
 
 	CASE_ASSERT_EQUAL(v1.x, 1.5f);

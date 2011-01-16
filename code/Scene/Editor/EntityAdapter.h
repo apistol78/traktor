@@ -4,7 +4,7 @@
 #include "Core/Guid.h"
 #include "Core/Object.h"
 #include "Core/RefArray.h"
-#include "Core/Math/Aabb.h"
+#include "Core/Math/Aabb3.h"
 #include "Core/Containers/AlignedVector.h"
 
 // import/export mechanism.
@@ -71,7 +71,7 @@ public:
 
 	Transform getTransform() const;
 
-	Aabb getBoundingBox() const;
+	Aabb3 getBoundingBox() const;
 
 	//@}
 

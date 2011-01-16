@@ -85,9 +85,9 @@ void calculatePoseTransforms(
 	}
 }
 
-Aabb calculateBoundingBox(const Skeleton* skeleton)
+Aabb3 calculateBoundingBox(const Skeleton* skeleton)
 {
-	Aabb boundingBox;
+	Aabb3 boundingBox;
 
 	AlignedVector< Transform > boneTransforms;
 	calculateBoneTransforms(skeleton, boneTransforms);
@@ -99,8 +99,8 @@ Aabb calculateBoundingBox(const Skeleton* skeleton)
 		float length = bone->getLength();
 		float radius = bone->getRadius();
 
-		Aabb boneLocalAabb(Vector4(-radius, -radius, 0.0f), Vector4(radius, radius, length));
-		Aabb boneAabb = boneLocalAabb.transform(boneTransforms[i]);
+		Aabb3 boneLocalAabb(Vector4(-radius, -radius, 0.0f), Vector4(radius, radius, length));
+		Aabb3 boneAabb = boneLocalAabb.transform(boneTransforms[i]);
 
 		boundingBox.contain(boneAabb);
 	}
@@ -108,9 +108,9 @@ Aabb calculateBoundingBox(const Skeleton* skeleton)
 	return boundingBox;
 }
 
-Aabb calculateBoundingBox(const Skeleton* skeleton, const Pose* pose)
+Aabb3 calculateBoundingBox(const Skeleton* skeleton, const Pose* pose)
 {
-	Aabb boundingBox;
+	Aabb3 boundingBox;
 
 	AlignedVector< Transform > poseTransforms;
 	calculatePoseTransforms(skeleton, pose, poseTransforms);
@@ -122,8 +122,8 @@ Aabb calculateBoundingBox(const Skeleton* skeleton, const Pose* pose)
 		float length = bone->getLength();
 		float radius = bone->getRadius();
 
-		Aabb boneLocalAabb(Vector4(-radius, -radius, 0.0f), Vector4(radius, radius, length));
-		Aabb boneAabb = boneLocalAabb.transform(poseTransforms[i]);
+		Aabb3 boneLocalAabb(Vector4(-radius, -radius, 0.0f), Vector4(radius, radius, length));
+		Aabb3 boneAabb = boneLocalAabb.transform(poseTransforms[i]);
 
 		boundingBox.contain(boneAabb);
 	}

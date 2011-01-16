@@ -38,7 +38,7 @@ bool StreamMeshConverter::convert(
 	StreamMeshResource* streamMeshResource = checked_type_cast< StreamMeshResource*, false >(meshResource);
 
 	std::vector< uint32_t > frameOffsets;
-	Aabb boundingBox;
+	Aabb3 boundingBox;
 
 	uint32_t vertexSize = render::getVertexSize(vertexElements);
 	T_ASSERT (vertexSize > 0);

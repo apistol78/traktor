@@ -41,6 +41,8 @@
 #include "World/Entity/Entity.h"
 #include "World/PostProcess/PostProcess.h"
 
+#include "World/SMProj/TSMProj.h"
+
 namespace traktor
 {
 	namespace scene
@@ -715,6 +717,49 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 				);
 			}
 		}
+
+
+		// HACK; render TSM shadow debugging.
+		/*
+		m_primitiveRenderer->pushProjection(orthoLh(10.0, 10.0f, 0.0f, 1.0));
+		m_primitiveRenderer->pushView(translate(0.0f, 0.0f, 1.0f));
+		m_primitiveRenderer->pushWorld(Matrix44::identity());
+		m_primitiveRenderer->pushDepthEnable(false);
+
+		m_primitiveRenderer->drawWireQuad(
+			Vector4(-1.0f, -1.0f, 0.0f, 0.0f),
+			Vector4( 1.0f, -1.0f, 0.0f, 0.0f),
+			Vector4( 1.0f,  1.0f, 0.0f, 0.0f),
+			Vector4(-1.0f,  1.0f, 0.0f, 0.0f),
+			Color4ub(255, 255, 255, 255)
+		);
+		m_primitiveRenderer->drawLine(Vector4(-10.0f, 0.0f, 0.0f, 1.0f), Vector4(10.0f, 0.0f, 0.0f, 1.0f), 1, Color4ub(255, 255, 255, 255));
+		m_primitiveRenderer->drawLine(Vector4(0.0f, -10.0f, 0.0f, 1.0f), Vector4(0.0f, 10.0f, 0.0f, 1.0f), 1, Color4ub(255, 255, 255, 255));
+
+		Ref< scene::Scene > sceneInstance = m_context->getScene();
+		Ref< const world::WorldRenderSettings > worldRenderSettings = sceneInstance->getWorldRenderSettings();
+		Matrix44 lightView, lightProjection, lightSquareProjection;
+		Frustum shadowFrustum;
+		world::calculateTSMProj(
+			*worldRenderSettings,
+			view.inverse(),
+			m_worldRenderView.getLight(0).position,
+			m_worldRenderView.getLight(0).direction,
+			m_worldRenderView.getViewFrustum(),
+			lightView,
+			lightProjection,
+			lightSquareProjection,
+			shadowFrustum,
+
+			m_primitiveRenderer
+		);
+
+		m_primitiveRenderer->popDepthEnable();
+		m_primitiveRenderer->popWorld();
+		m_primitiveRenderer->popView();
+		m_primitiveRenderer->popProjection();
+		*/
+
 
 		m_primitiveRenderer->end(m_renderView);
 

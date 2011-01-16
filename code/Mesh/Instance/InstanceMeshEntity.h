@@ -26,7 +26,7 @@ class T_DLLCLASS InstanceMeshEntity : public MeshEntity
 public:
 	InstanceMeshEntity(const Transform& transform, const resource::Proxy< InstanceMesh >& mesh);
 	
-	virtual Aabb getBoundingBox() const;
+	virtual Aabb3 getBoundingBox() const;
 
 	virtual void update(const world::EntityUpdate* update);
 

@@ -48,21 +48,21 @@ bool EffectEntity::getTransform(Transform& outTransform) const
 	return true;
 }
 
-Aabb EffectEntity::getBoundingBox() const
+Aabb3 EffectEntity::getBoundingBox() const
 {
 	if (!m_effectInstance)
-		return Aabb();
+		return Aabb3();
 
-	const Aabb& worldBoundingBox = m_effectInstance->getBoundingBox();
+	const Aabb3& worldBoundingBox = m_effectInstance->getBoundingBox();
 	if (worldBoundingBox.empty())
-		return Aabb();
+		return Aabb3();
 
 	return worldBoundingBox.transform(m_transform.inverse());
 }
 
-Aabb EffectEntity::getWorldBoundingBox() const
+Aabb3 EffectEntity::getWorldBoundingBox() const
 {
-	return m_effectInstance ? m_effectInstance->getBoundingBox() : Aabb();
+	return m_effectInstance ? m_effectInstance->getBoundingBox() : Aabb3();
 }
 
 void EffectEntity::update(const world::EntityUpdate* update)

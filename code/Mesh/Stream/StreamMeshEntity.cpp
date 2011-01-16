@@ -30,9 +30,9 @@ void StreamMeshEntity::setFrame(uint32_t frame)
 	m_frame = frame;
 }
 
-Aabb StreamMeshEntity::getBoundingBox() const
+Aabb3 StreamMeshEntity::getBoundingBox() const
 {
-	return validate() ? m_mesh->getBoundingBox() : Aabb();
+	return validate() ? m_mesh->getBoundingBox() : Aabb3();
 }
 
 void StreamMeshEntity::render(

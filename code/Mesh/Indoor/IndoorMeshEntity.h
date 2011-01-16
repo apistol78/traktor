@@ -26,7 +26,7 @@ class T_DLLCLASS IndoorMeshEntity : public MeshEntity
 public:
 	IndoorMeshEntity(const Transform& transform, const resource::Proxy< IndoorMesh >& mesh);
 
-	virtual Aabb getBoundingBox() const;
+	virtual Aabb3 getBoundingBox() const;
 
 	virtual void render(
 		world::WorldContext& worldContext,

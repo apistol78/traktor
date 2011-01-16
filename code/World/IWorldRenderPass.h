@@ -2,7 +2,7 @@
 #define traktor_world_IWorldRenderPass_H
 
 #include "Core/Object.h"
-#include "Core/Math/Aabb.h"
+#include "Core/Math/Aabb3.h"
 #include "Core/Math/Matrix44.h"
 #include "Render/Types.h"
 
@@ -41,11 +41,11 @@ public:
 
 	virtual void setShaderCombination(render::Shader* shader) const = 0;
 
-	virtual void setShaderCombination(render::Shader* shader, const Matrix44& world, const Aabb& bounds) const = 0;
+	virtual void setShaderCombination(render::Shader* shader, const Matrix44& world, const Aabb3& bounds) const = 0;
 
 	virtual void setProgramParameters(render::ProgramParameters* programParams) const = 0;
 
-	virtual void setProgramParameters(render::ProgramParameters* programParams, const Matrix44& world, const Aabb& bounds) const = 0;
+	virtual void setProgramParameters(render::ProgramParameters* programParams, const Matrix44& world, const Aabb3& bounds) const = 0;
 };
 	
 	}

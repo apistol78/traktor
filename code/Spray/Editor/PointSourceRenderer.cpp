@@ -16,7 +16,7 @@ void PointSourceRenderer::render(render::PrimitiveRenderer* primitiveRenderer, S
 	Vector4 position = pointSource->getPosition();
 
 	const Vector4 c_size(0.1f, 0.1f, 0.1f, 0.0f);
-	primitiveRenderer->drawWireAabb(Aabb(position - c_size, position + c_size), Color4ub(255, 255, 0));
+	primitiveRenderer->drawWireAabb(Aabb3(position - c_size, position + c_size), Color4ub(255, 255, 0));
 }
 
 	}

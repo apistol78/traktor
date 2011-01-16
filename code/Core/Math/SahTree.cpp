@@ -201,15 +201,15 @@ void SahTree::buildNode(Node* node, int32_t depth)
 	Scalar leafCost(node->indices.size());
 	Scalar lowestCost(std::numeric_limits< float >::max());
 	SplitCandidate* bestCandidate = 0;
-	Aabb bestLeftAabb;
-	Aabb bestRightAabb;
+	Aabb3 bestLeftAabb;
+	Aabb3 bestRightAabb;
 
 	for (AlignedVector< SplitCandidate >::iterator i = splitCandidates.begin(); i != splitCandidates.end(); ++i)
 	{
-		Aabb leftAabb = node->aabb;
+		Aabb3 leftAabb = node->aabb;
 		leftAabb.mx.set(node->axis, i->position);
 
-		Aabb rightAabb = node->aabb;
+		Aabb3 rightAabb = node->aabb;
 		rightAabb.mn.set(node->axis, i->position);
 
 		Vector4 leftAabbExtent = leftAabb.getExtent();

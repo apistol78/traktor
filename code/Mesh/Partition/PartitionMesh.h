@@ -2,7 +2,7 @@
 #define traktor_mesh_PartitionMesh_H
 
 #include "Core/Containers/AlignedVector.h"
-#include "Core/Math/Aabb.h"
+#include "Core/Math/Aabb3.h"
 #include "Core/Math/Matrix44.h"
 #include "Mesh/IMesh.h"
 #include "Render/Shader.h"
@@ -52,13 +52,13 @@ public:
 	{
 		render::handle_t shaderTechnique;
 		uint32_t meshPart;
-		Aabb boundingBox;
+		Aabb3 boundingBox;
 		bool opaque;
 	};
 
 	PartitionMesh();
 
-	const Aabb& getBoundingBox() const;
+	const Aabb3& getBoundingBox() const;
 	
 	void render(
 		render::RenderContext* renderContext,

@@ -16,6 +16,7 @@ bool s_handlesInitialized = false;
 render::handle_t s_handleDefaultTechnique;
 render::handle_t s_handleLightTechnique;
 render::handle_t s_handleProjection;
+render::handle_t s_handleSquareProjection;
 render::handle_t s_handleView;
 render::handle_t s_handleWorld;
 render::handle_t s_handleEyePosition;
@@ -60,6 +61,7 @@ WorldRenderPassPreLit::WorldRenderPassPreLit(
 
 		// Parameters
 		s_handleProjection = render::getParameterHandle(L"Projection");
+		s_handleSquareProjection = render::getParameterHandle(L"SquareProjection");
 		s_handleView = render::getParameterHandle(L"View");
 		s_handleWorld = render::getParameterHandle(L"World");
 		s_handleEyePosition = render::getParameterHandle(L"EyePosition");
@@ -97,7 +99,7 @@ void WorldRenderPassPreLit::setShaderCombination(render::Shader* shader) const
 		shader->setCombination(s_handleDepthEnable, m_depthMap != 0);
 }
 
-void WorldRenderPassPreLit::setShaderCombination(render::Shader* shader, const Matrix44& world, const Aabb& bounds) const
+void WorldRenderPassPreLit::setShaderCombination(render::Shader* shader, const Matrix44& world, const Aabb3& bounds) const
 {
 	if (m_technique == s_handleLightTechnique)
 		shader->setCombination(s_handleShadowEnable, m_shadowMask != 0);
@@ -121,7 +123,7 @@ void WorldRenderPassPreLit::setProgramParameters(render::ProgramParameters* prog
 	}
 }
 
-void WorldRenderPassPreLit::setProgramParameters(render::ProgramParameters* programParams, const Matrix44& world, const Aabb& bounds) const
+void WorldRenderPassPreLit::setProgramParameters(render::ProgramParameters* programParams, const Matrix44& world, const Aabb3& bounds) const
 {
 	setWorldProgramParameters(programParams, world);
 
@@ -141,6 +143,7 @@ void WorldRenderPassPreLit::setWorldProgramParameters(render::ProgramParameters*
 {
 	programParams->setFloatParameter(s_handleTime, m_worldRenderView.getTime());
 	programParams->setMatrixParameter(s_handleProjection, m_worldRenderView.getProjection());
+	programParams->setMatrixParameter(s_handleSquareProjection, m_worldRenderView.getSquareProjection());
 	programParams->setMatrixParameter(s_handleView, m_worldRenderView.getView());
 	programParams->setMatrixParameter(s_handleWorld, world);
 	programParams->setVectorParameter(s_handleEyePosition, m_worldRenderView.getEyePosition());

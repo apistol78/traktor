@@ -121,14 +121,14 @@ bool SpatialGroupEntity::getTransform(Transform& outTransform) const
 	return true;
 }
 
-Aabb SpatialGroupEntity::getBoundingBox() const
+Aabb3 SpatialGroupEntity::getBoundingBox() const
 {
 	Transform invTransform = m_transform.inverse();
 
-	Aabb boundingBox;
+	Aabb3 boundingBox;
 	for (RefArray< SpatialEntity >::const_iterator i = m_entities.begin(); i != m_entities.end(); ++i)
 	{
-		Aabb childBoundingBox = (*i)->getBoundingBox();
+		Aabb3 childBoundingBox = (*i)->getBoundingBox();
 		if (!childBoundingBox.empty())
 		{
 			Transform childTransform;

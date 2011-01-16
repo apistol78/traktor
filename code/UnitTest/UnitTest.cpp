@@ -54,8 +54,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	//log::info << L"Case heap" << Endl;
 	//traktor::CaseHeap().run();
 
-	//log::info << L"Case math" << Endl;
-	//traktor::CaseMath().run();
+	log::info << L"Case math" << Endl;
+	traktor::CaseMath().run();
 
 	//log::info << L"Case matrix 3x3" << Endl;
 	//traktor::CaseMatrix33().run();

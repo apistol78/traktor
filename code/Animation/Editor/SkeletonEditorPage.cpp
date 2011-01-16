@@ -160,7 +160,7 @@ bool SkeletonEditorPage::setDataObject(db::Instance* instance, Object* data)
 	m_skeleton = checked_type_cast< Skeleton* >(data);
 	m_site->setPropertyObject(m_skeleton);
 
-	Aabb boundingBox = calculateBoundingBox(m_skeleton);
+	Aabb3 boundingBox = calculateBoundingBox(m_skeleton);
 	
 	int majorAxis = majorAxis3(boundingBox.getExtent());
 	float majorExtent = boundingBox.getExtent()[majorAxis];

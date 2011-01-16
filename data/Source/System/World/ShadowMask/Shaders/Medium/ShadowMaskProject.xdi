@@ -19,22 +19,6 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Vector">
-			<comment/>
-			<position>
-				<first>460</first>
-				<second>530</second>
-			</position>
-			<value>0.5, 0.5, 0, 0</value>
-		</item>
-		<item type="traktor.render.Vector">
-			<comment/>
-			<position>
-				<first>455</first>
-				<second>503</second>
-			</position>
-			<value>0.5, -0.5, 0, 0</value>
-		</item>
 		<item type="traktor.render.Transform">
 			<comment>
 			<![CDATA[
@@ -46,6 +30,119 @@ Light space position
 				<second>385</second>
 			</position>
 		</item>
+		<item type="traktor.render.Uniform" version="1">
+			<comment>
+			<![CDATA[
+View to light space transform
+			]]>
+			</comment>
+			<position>
+				<first>-327</first>
+				<second>627</second>
+			</position>
+			<parameterName>ViewToLight</parameterName>
+			<type>PtMatrix</type>
+			<frequency>UfDraw</frequency>
+		</item>
+		<item type="traktor.render.Platform">
+			<comment/>
+			<position>
+				<first>100</first>
+				<second>496</second>
+			</position>
+		</item>
+		<item type="traktor.render.Comment">
+			<comment>
+			<![CDATA[
+Load ViewToLight in vertex shader and pass to fragment
+through interpolators on PS3 in order to prevent patching.
+			]]>
+			</comment>
+			<position>
+				<first>-435</first>
+				<second>408</second>
+			</position>
+		</item>
+		<item type="traktor.render.External" version="1">
+			<comment/>
+			<position>
+				<first>-105</first>
+				<second>570</second>
+			</position>
+			<fragmentGuid>{25697192-5E06-844D-9AE3-25337E046F6C}</fragmentGuid>
+			<inputPins>
+				<item>
+					<name>Input</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<name>Output</name>
+				</item>
+			</outputPins>
+			<values/>
+		</item>
+		<item type="traktor.render.Platform">
+			<comment/>
+			<position>
+				<first>100</first>
+				<second>746</second>
+			</position>
+		</item>
+		<item type="traktor.render.External" version="1">
+			<comment/>
+			<position>
+				<first>-105</first>
+				<second>820</second>
+			</position>
+			<fragmentGuid>{25697192-5E06-844D-9AE3-25337E046F6C}</fragmentGuid>
+			<inputPins>
+				<item>
+					<name>Input</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<name>Output</name>
+				</item>
+			</outputPins>
+			<values/>
+		</item>
+		<item type="traktor.render.Uniform" version="1">
+			<comment/>
+			<position>
+				<first>-327</first>
+				<second>877</second>
+			</position>
+			<parameterName>SquareProjection</parameterName>
+			<type>PtMatrix</type>
+			<frequency>UfDraw</frequency>
+		</item>
+		<item type="traktor.render.Transform">
+			<comment/>
+			<position>
+				<first>434</first>
+				<second>644</second>
+			</position>
+		</item>
+		<item type="traktor.render.Vector">
+			<comment/>
+			<position>
+				<first>657</first>
+				<second>778</second>
+			</position>
+			<value>0.5, 0.5, 0, 0</value>
+		</item>
+		<item type="traktor.render.Vector">
+			<comment/>
+			<position>
+				<first>652</first>
+				<second>751</second>
+			</position>
+			<value>0.5, -0.5, 0, 0</value>
+		</item>
 		<item type="traktor.render.MulAdd">
 			<comment>
 			<![CDATA[
@@ -53,23 +150,23 @@ Shadow map texcoord
 			]]>
 			</comment>
 			<position>
-				<first>660</first>
-				<second>428</second>
+				<first>864</first>
+				<second>690</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>689</first>
-				<second>349</second>
+				<first>893</first>
+				<second>611</second>
 			</position>
 			<swizzle>z</swizzle>
 		</item>
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>895</first>
-				<second>371</second>
+				<first>1099</first>
+				<second>633</second>
 			</position>
 			<fragmentGuid>{9DB2FD24-E52F-0048-A1AF-82A82CDD24E8}</fragmentGuid>
 			<inputPins>
@@ -92,8 +189,8 @@ Shadow map texcoord
 		<item type="traktor.render.PixelOutput" version="3">
 			<comment/>
 			<position>
-				<first>1128</first>
-				<second>407</second>
+				<first>1332</first>
+				<second>669</second>
 			</position>
 			<technique>Default</technique>
 			<cullMode>CmNever</cullMode>
@@ -123,91 +220,31 @@ Shadow map texcoord
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
-			<comment>
-			<![CDATA[
-View to light space transform
-			]]>
-			</comment>
-			<position>
-				<first>-812</first>
-				<second>705</second>
-			</position>
-			<parameterName>ViewToLight</parameterName>
-			<type>PtMatrix</type>
-			<frequency>UfDraw</frequency>
-		</item>
-		<item type="traktor.render.Interpolator">
+		<item type="traktor.render.Div">
 			<comment/>
 			<position>
-				<first>-306</first>
-				<second>536</second>
+				<first>697</first>
+				<second>652</second>
 			</position>
 		</item>
-		<item type="traktor.render.MatrixOut">
+		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>-602</first>
-				<second>538</second>
+				<first>608</first>
+				<second>696</second>
 			</position>
-		</item>
-		<item type="traktor.render.Interpolator">
-			<comment/>
-			<position>
-				<first>-306</first>
-				<second>567</second>
-			</position>
-		</item>
-		<item type="traktor.render.Interpolator">
-			<comment/>
-			<position>
-				<first>-306</first>
-				<second>598</second>
-			</position>
-		</item>
-		<item type="traktor.render.Interpolator">
-			<comment/>
-			<position>
-				<first>-306</first>
-				<second>629</second>
-			</position>
-		</item>
-		<item type="traktor.render.MatrixIn">
-			<comment/>
-			<position>
-				<first>-217</first>
-				<second>537</second>
-			</position>
-		</item>
-		<item type="traktor.render.Platform">
-			<comment/>
-			<position>
-				<first>100</first>
-				<second>496</second>
-			</position>
-		</item>
-		<item type="traktor.render.Comment">
-			<comment>
-			<![CDATA[
-Load ViewToLight in vertex shader and pass to fragment
-through interpolators on PS3 in order to prevent patching.
-			]]>
-			</comment>
-			<position>
-				<first>-435</first>
-				<second>408</second>
-			</position>
+			<swizzle>w</swizzle>
 		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[3]"/>
+				<node ref="/object/nodes/item"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[4]"/>
-				<name>Input1</name>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -216,33 +253,23 @@ through interpolators on PS3 in order to prevent patching.
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[4]"/>
-				<name>Input2</name>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Other</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Output</name>
+			</source>
+			<destination>
 				<node ref="/object/nodes/item[1]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[4]"/>
-				<name>Input3</name>
+				<name>Transform</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[3]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[3]"/>
+				<node ref="/object/nodes/item[2]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -252,27 +279,27 @@ through interpolators on PS3 in order to prevent patching.
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[4]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[6]"/>
-				<name>ShadowMapUV</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[5]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[6]"/>
-				<name>ReferenceZ</name>
+				<node ref="/object/nodes/item[3]"/>
+				<name>GCM</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
+				<node ref="/object/nodes/item[8]"/>
+				<name>Output</name>
+			</source>
+			<destination>
 				<node ref="/object/nodes/item[6]"/>
+				<name>Other</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[8]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -282,72 +309,32 @@ through interpolators on PS3 in order to prevent patching.
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[8]"/>
+				<node ref="/object/nodes/item[7]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[10]"/>
-				<name>Input</name>
+				<node ref="/object/nodes/item[6]"/>
+				<name>GCM</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[10]"/>
-				<name>XAxis</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[9]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[10]"/>
-				<name>YAxis</name>
-			</source>
-			<destination>
 				<node ref="/object/nodes/item[11]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[10]"/>
-				<name>ZAxis</name>
+				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[12]"/>
-				<name>Input</name>
+				<name>Input2</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
 				<node ref="/object/nodes/item[10]"/>
-				<name>Translate</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[13]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[9]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[14]"/>
-				<name>XAxis</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[11]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[14]"/>
-				<name>YAxis</name>
+				<node ref="/object/nodes/item[12]"/>
+				<name>Input3</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -357,7 +344,7 @@ through interpolators on PS3 in order to prevent patching.
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[14]"/>
-				<name>ZAxis</name>
+				<name>ShadowMapUV</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -367,37 +354,87 @@ through interpolators on PS3 in order to prevent patching.
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[14]"/>
-				<name>Translate</name>
+				<name>ReferenceZ</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[8]"/>
+				<node ref="/object/nodes/item[14]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[15]"/>
-				<name>Other</name>
+				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[15]"/>
+				<node ref="/object/nodes/item[9]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[3]"/>
+				<node ref="/object/nodes/item[17]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[17]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[16]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[9]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[16]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[16]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[12]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[6]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[9]"/>
 				<name>Transform</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[14]"/>
+				<node ref="/object/nodes/item[1]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[15]"/>
-				<name>GCM</name>
+				<node ref="/object/nodes/item[9]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[13]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 	</edges>

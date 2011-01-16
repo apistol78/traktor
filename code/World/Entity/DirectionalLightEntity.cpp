@@ -35,9 +35,9 @@ bool DirectionalLightEntity::getTransform(Transform& outTransform) const
 	return true;
 }
 
-Aabb DirectionalLightEntity::getBoundingBox() const
+Aabb3 DirectionalLightEntity::getBoundingBox() const
 {
-	return Aabb(Vector4(-1.0f, -1.0f, -1.0f, 1.0f), Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+	return Aabb3(Vector4(-1.0f, -1.0f, -1.0f, 1.0f), Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 }
 
 	}

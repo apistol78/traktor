@@ -69,6 +69,7 @@ public:
 		render::handle_t m_handleViewEdgeBottomLeft;
 		render::handle_t m_handleViewEdgeBottomRight;
 		render::handle_t m_handleViewToLight;
+		render::handle_t m_handleSquareProjection;
 	};
 
 	virtual Ref< Instance > create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const;

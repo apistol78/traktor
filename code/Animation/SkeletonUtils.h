@@ -4,7 +4,7 @@
 #include "Core/Config.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Transform.h"
-#include "Core/Math/Aabb.h"
+#include "Core/Math/Aabb3.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -47,9 +47,9 @@ void T_DLLCLASS calculatePoseTransforms(
 	AlignedVector< Transform >& outBoneTransforms
 );
 
-Aabb T_DLLCLASS calculateBoundingBox(const Skeleton* skeleton);
+Aabb3 T_DLLCLASS calculateBoundingBox(const Skeleton* skeleton);
 
-Aabb T_DLLCLASS calculateBoundingBox(const Skeleton* skeleton, const Pose* pose);
+Aabb3 T_DLLCLASS calculateBoundingBox(const Skeleton* skeleton, const Pose* pose);
 
 void T_DLLCLASS blendPoses(
 	const Pose* pose1,

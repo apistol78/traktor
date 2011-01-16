@@ -47,11 +47,11 @@ public:
 
 	virtual void setShaderCombination(render::Shader* shader) const;
 
-	virtual void setShaderCombination(render::Shader* shader, const Matrix44& world, const Aabb& bounds) const;
+	virtual void setShaderCombination(render::Shader* shader, const Matrix44& world, const Aabb3& bounds) const;
 
 	virtual void setProgramParameters(render::ProgramParameters* programParams) const;
 
-	virtual void setProgramParameters(render::ProgramParameters* programParams, const Matrix44& world, const Aabb& bounds) const;
+	virtual void setProgramParameters(render::ProgramParameters* programParams, const Matrix44& world, const Aabb3& bounds) const;
 
 private:
 	render::handle_t m_technique;
@@ -64,7 +64,7 @@ private:
 
 	void setLightProgramParameters(render::ProgramParameters* programParams) const;
 
-	void setLightProgramParameters(render::ProgramParameters* programParams, const Matrix44& world, const Aabb& bounds) const;
+	void setLightProgramParameters(render::ProgramParameters* programParams, const Matrix44& world, const Aabb3& bounds) const;
 
 	void setShadowMapProgramParameters(render::ProgramParameters* programParams) const;
 

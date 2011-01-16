@@ -56,7 +56,7 @@ void EffectLayerInstance::render(PointRenderer* pointRenderer, const Plane& came
 		m_emitterInstance->render(pointRenderer, cameraPlane);
 }
 
-const Aabb& EffectLayerInstance::getBoundingBox() const
+const Aabb3& EffectLayerInstance::getBoundingBox() const
 {
 	return m_emitterInstance->getBoundingBox();
 }

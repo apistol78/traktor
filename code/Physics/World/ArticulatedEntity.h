@@ -41,7 +41,7 @@ public:
 
 	virtual bool getTransform(Transform& outTransform) const;
 
-	virtual Aabb getBoundingBox() const;
+	virtual Aabb3 getBoundingBox() const;
 
 	const RefArray< RigidEntity >& getEntities() const { return m_entities; }
 

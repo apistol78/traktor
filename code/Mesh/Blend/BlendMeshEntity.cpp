@@ -27,9 +27,9 @@ const std::vector< float >& BlendMeshEntity::getBlendWeights() const
 	return m_blendWeights;
 }
 
-Aabb BlendMeshEntity::getBoundingBox() const
+Aabb3 BlendMeshEntity::getBoundingBox() const
 {
-	return validate() ? m_mesh->getBoundingBox() : Aabb();
+	return validate() ? m_mesh->getBoundingBox() : Aabb3();
 }
 
 void BlendMeshEntity::render(

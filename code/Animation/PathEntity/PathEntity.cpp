@@ -45,9 +45,9 @@ bool PathEntity::getTransform(Transform& outTransform) const
 	return true;
 }
 
-Aabb PathEntity::getBoundingBox() const
+Aabb3 PathEntity::getBoundingBox() const
 {
-	return m_entity ? m_entity->getBoundingBox() : Aabb();
+	return m_entity ? m_entity->getBoundingBox() : Aabb3();
 }
 
 void PathEntity::update(const world::EntityUpdate* update)

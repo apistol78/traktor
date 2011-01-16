@@ -2,7 +2,7 @@
 #define traktor_model_Utilities_H
 
 #include "Core/Config.h"
-#include "Core/Math/Aabb.h"
+#include "Core/Math/Aabb3.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -25,7 +25,7 @@ class Model;
  * \param model Source model.
  * \return Bounding box.
  */
-Aabb T_DLLCLASS calculateModelBoundingBox(const Model& model);
+Aabb3 T_DLLCLASS calculateModelBoundingBox(const Model& model);
 
 /*! \brief Calculate tangent space bases.
  * \ingroup Model

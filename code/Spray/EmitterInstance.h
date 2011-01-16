@@ -4,7 +4,7 @@
 #include "Core/Object.h"
 #include "Core/Math/Transform.h"
 #include "Core/Math/Plane.h"
-#include "Core/Math/Aabb.h"
+#include "Core/Math/Aabb3.h"
 #include "Core/Thread/JobManager.h"
 #include "Spray/EmitterUpdateContext.h"
 #include "Spray/Modifier.h"
@@ -57,7 +57,7 @@ public:
 
 	inline uint32_t getEmitted() const { return m_emitted; }
 
-	inline const Aabb& getBoundingBox() const { return m_boundingBox; }
+	inline const Aabb3& getBoundingBox() const { return m_boundingBox; }
 
 	inline Point* addPoints(uint32_t points)
 	{
@@ -73,7 +73,7 @@ private:
 	PointVector m_points;
 	uint32_t m_emitted;
 	bool m_warm;
-	Aabb m_boundingBox;
+	Aabb3 m_boundingBox;
 	uint32_t m_count;
 
 #if !defined(T_MODIFIER_USE_PS3_SPURS)

@@ -1,7 +1,7 @@
 #ifndef traktor_mesh_OctreeNodeData_H
 #define traktor_mesh_OctreeNodeData_H
 
-#include "Core/Math/Aabb.h"
+#include "Core/Math/Aabb3.h"
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
@@ -25,7 +25,7 @@ public:
 	virtual bool serialize(ISerializer& s);
 
 //private:
-	Aabb m_boundingBox;
+	Aabb3 m_boundingBox;
 	std::map< uint8_t, std::vector< uint32_t > > m_partIndices;
 	Ref< OctreeNodeData > m_children[8];
 };

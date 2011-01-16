@@ -25,14 +25,14 @@ void CompositeMeshEntity::setTransform(const Transform& transform)
 	m_transform = transform;
 }
 
-Aabb CompositeMeshEntity::getBoundingBox() const
+Aabb3 CompositeMeshEntity::getBoundingBox() const
 {
 	Transform invTransform = m_transform.inverse();
 
-	Aabb boundingBox;
+	Aabb3 boundingBox;
 	for (std::map< std::wstring, Ref< MeshEntity > >::const_iterator i = m_meshEntities.begin(); i != m_meshEntities.end(); ++i)
 	{
-		Aabb childBoundingBox = i->second->getBoundingBox();
+		Aabb3 childBoundingBox = i->second->getBoundingBox();
 		if (!childBoundingBox.empty())
 		{
 			Transform childTransform;

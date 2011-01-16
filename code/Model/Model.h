@@ -5,7 +5,7 @@
 #include "Core/Object.h"
 #include "Core/Math/Vector4.h"
 #include "Core/Math/Vector2.h"
-#include "Core/Math/Aabb.h"
+#include "Core/Math/Aabb3.h"
 #include "Model/Types.h"
 #include "Model/Material.h"
 #include "Model/Vertex.h"

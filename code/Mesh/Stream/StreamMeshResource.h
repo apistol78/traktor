@@ -2,7 +2,7 @@
 #define traktor_mesh_StreamMeshResource_H
 
 #include "Core/Guid.h"
-#include "Core/Math/Aabb.h"
+#include "Core/Math/Aabb3.h"
 #include "Mesh/IMeshResource.h"
 
 // import/export mechanism.
@@ -50,7 +50,7 @@ private:
 
 	Guid m_shader;
 	std::vector< uint32_t > m_frameOffsets;
-	Aabb m_boundingBox;
+	Aabb3 m_boundingBox;
 	std::map< std::wstring, parts_t > m_parts;
 };
 

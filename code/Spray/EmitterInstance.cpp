@@ -132,7 +132,7 @@ void EmitterInstance::update(EmitterUpdateContext& context, const Transform& tra
 	// asynchronously.
 	if ((m_count++ & 15) == 0)
 	{
-		m_boundingBox = Aabb();
+		m_boundingBox = Aabb3();
 		Scalar deltaTime16 = Scalar(context.deltaTime * 16.0f);
 		for (PointVector::iterator i = m_points.begin(); i != m_points.end(); ++i)
 			m_boundingBox.contain(i->position + i->velocity * deltaTime16);

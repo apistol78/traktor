@@ -26,7 +26,7 @@ class T_DLLCLASS PartitionMeshEntity : public MeshEntity
 public:
 	PartitionMeshEntity(const Transform& transform, const resource::Proxy< PartitionMesh >& mesh);
 	
-	virtual Aabb getBoundingBox() const;
+	virtual Aabb3 getBoundingBox() const;
 
 	virtual void render(
 		world::WorldContext& worldContext,
