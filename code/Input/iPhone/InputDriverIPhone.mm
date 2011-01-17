@@ -33,6 +33,11 @@ Ref< IInputDevice > InputDriverIPhone::getDevice(int index)
 	else
 		return 0;
 }
-	
+
+IInputDriver::UpdateResult InputDriverIPhone::update()
+{
+	return UrOk;
+}
+
 	}
 }

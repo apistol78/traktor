@@ -31,6 +31,8 @@ public:
 	
 	virtual Ref< IInputDevice > getDevice(int index);
 
+	virtual UpdateResult update();
+
 private:
 	Ref< InputDeviceTouch > m_inputDeviceTouch;
 };
