@@ -69,22 +69,22 @@ bool InputDeviceTouch::isConnected() const
 	return true;
 }
 
-int InputDeviceTouch::getControlCount()
+int32_t InputDeviceTouch::getControlCount()
 {
 	return 0;
 }
 
-std::wstring InputDeviceTouch::getControlName(int control)
+std::wstring InputDeviceTouch::getControlName(int32_t control)
 {
 	return L"";
 }
 
-bool InputDeviceTouch::isControlAnalogue(int control) const
+bool InputDeviceTouch::isControlAnalogue(int32_t control) const
 {
 	return true;
 }
 
-float InputDeviceTouch::getControlValue(int control)
+float InputDeviceTouch::getControlValue(int32_t control)
 {
 	if (control == -1)
 		return m_leftPad.axisX;
@@ -106,46 +106,57 @@ float InputDeviceTouch::getControlValue(int control)
 		return 0.0f;
 }
 
-bool InputDeviceTouch::getDefaultControl(InputDefaultControlType controlType, int& control) const
+bool InputDeviceTouch::getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const
 {
+	control = 0;
+
 	switch (controlType)
 	{
 	case DtThumbLeftX:
-		control = -1;
+		if (analogue)
+			control = -1;
 		break;
 		
 	case DtThumbLeftY:
-		control = -2;
+		if (analogue)
+			control = -2;
 		break;
 		
 	case DtThumbRightX:
-		control = -3;
+		if (analogue)
+			control = -3;
 		break;
 		
 	case DtThumbRightY:
-		control = -4;
+		if (analogue)
+			control = -4;
 		break;
 		
 	case DtButton1:
-		control = -5;
+		if (!analogue)
+			control = -5;
 		break;
 		
 	case DtButton2:
-		control = -6;
+		if (!analogue)
+			control = -6;
 		break;
 	
 	case DtUp:
-		control = -7;
+		if (!analogue)
+			control = -7;
 		break;
 		
 	case DtDown:
-		control = -8;
+		if (!analogue)
+			control = -8;
 		break;
 	
 	default:
 		return false;
 	}
-	return true;
+	
+	return control != 0;
 }
 
 void InputDeviceTouch::resetState()
