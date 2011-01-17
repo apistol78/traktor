@@ -128,9 +128,9 @@ void calculateTSMProj(
 	const float k = fw - 1.0f;
 	const float s = (2.0f * k + 2.0f) / h;
 	Matrix44 M0(
-		1.0f / nw, 0.0f, 0.0f, 0.0f,
+		1.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, s, 0.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
 		0.0f, k / h, 0.0f, 1.0f
 	);
 
