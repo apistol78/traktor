@@ -457,11 +457,14 @@ void SceneEditorContext::cloneSelected()
 {
 	RefArray< EntityAdapter > selectedEntityAdapters;
 	getEntities(selectedEntityAdapters, GfDescendants | GfSelectedOnly);
+	if (selectedEntityAdapters.empty())
+		return;
 
 	for (RefArray< EntityAdapter >::iterator i = selectedEntityAdapters.begin(); i != selectedEntityAdapters.end(); ++i)
 	{
 		Ref< EntityAdapter > parentContainerGroup = (*i)->getParentContainerGroup();
-		T_ASSERT (parentContainerGroup);
+		if (!parentContainerGroup)
+			continue;
 
 		Ref< world::EntityData > clonedEntityData = DeepClone((*i)->getEntityData()).create< world::EntityData >();
 		T_ASSERT (clonedEntityData);
