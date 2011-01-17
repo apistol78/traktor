@@ -44,8 +44,8 @@ void calculateTSMProj(
 	Vector4 lightAxisX, lightAxisY, lightAxisZ;
 
 	lightAxisZ = -lightDirection.normalized();
-	lightAxisX = cross(lightAxisZ, -viewDirection).normalized();
-	lightAxisY = -cross(lightAxisX, lightAxisZ).normalized();
+	lightAxisX = -cross(lightAxisZ, -viewDirection).normalized();
+	lightAxisY = cross(lightAxisX, lightAxisZ).normalized();
 
 	// Adjust view frustum to shadowing far z.
 	Frustum shadowViewFrustum = viewFrustum;
@@ -92,9 +92,15 @@ void calculateTSMProj(
 	for (int i = 0; i < 8; ++i)
 	{
 		Vector2 p = lightFrustumProj[i] - lightFrustumProjBox.getCenter();
-		if (i < 4)
+		if (p.y < -0.8f * ey)
 			nw = std::max(nw, abs(p.x));
-		else
+	}
+	if (nw < 1.0f)
+		nw = 1.0f;
+	for (int i = 0; i < 8; ++i)
+	{
+		Vector2 p = lightFrustumProj[i] - lightFrustumProjBox.getCenter();
+		if (p.y >= -0.8f * ey)
 		{
 			Vector2 p0(p.x < 0.0f ? -nw : nw, -ey);
 			Vector2 p1(p.x, p.y);
@@ -103,6 +109,7 @@ void calculateTSMProj(
 			fw = std::max(fw, w);
 		}
 	}
+
 	Line2 tz[2] =
 	{
 		Line2(Vector2(-nw, 0.0f), Vector2(nw, 0.0f)),
@@ -117,65 +124,42 @@ void calculateTSMProj(
 		primitiveRenderer->drawLine(v2top4(tz[0].p[1]), v2top4(tz[1].p[1]), Color4ub(0, 0, 255, 255));
 	}
 
-	Vector4 u, v, i;
+	const float h = ey * 2.0f;
+	const float k = fw - 1.0f;
+	const float s = (2.0f * k + 2.0f) / h;
+	Matrix44 M0(
+		1.0f / nw, 0.0f, 0.0f, 0.0f,
+		0.0f, s, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, k / h, 0.0f, 1.0f
+	);
 
-	// Calculate intersection of trapezoid edges.
-	Ray2 r1(tz[1].p[0], (tz[0].p[0] - tz[1].p[0]).normalized());
-	Ray2 r2(tz[1].p[1], (tz[0].p[1] - tz[1].p[1]).normalized());
-	float r, k;
-	if (r1.intersect(r2, r, k))
-		i = v2top4(r1 * r);
-	else
-		i.set(0.0f, 0.0f, 0.0f, 0.0f);
+	if (primitiveRenderer)
+	{
+		primitiveRenderer->pushWorld(M0);
+		primitiveRenderer->drawLine(v2top4(tz[0].p[0]), v2top4(tz[0].p[1]), Color4ub(255, 0, 255, 255));
+		primitiveRenderer->drawLine(v2top4(tz[1].p[0]), v2top4(tz[1].p[1]), Color4ub(255, 0, 255, 255));
+		primitiveRenderer->drawLine(v2top4(tz[0].p[0]), v2top4(tz[1].p[0]), Color4ub(255, 0, 255, 255));
+		primitiveRenderer->drawLine(v2top4(tz[0].p[1]), v2top4(tz[1].p[1]), Color4ub(255, 0, 255, 255));
+		primitiveRenderer->popWorld();
+	}
 
-	Matrix44 T2(
+	Matrix44 T0(
 		1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 1.0f, 0.0f, -i.y(),
+		0.0f, 1.0f, 0.0f, -1.0f,
 		0.0f, 0.0f, 1.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f
 	);
 
-	u = T2 * v2top4(tz[0].p[1]);
-	Matrix44 S1(
-		1.0f / u.x(), 0.0f, 0.0f, 0.0f,
-		0.0f, 1.0f / u.y(), 0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f
-	);
-
-	Matrix44 N(
-		1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 1.0f, 0.0f, 1.0f,
-		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 1.0f, 0.0f, 0.0f
-	);
-
-	Matrix44 N_S1_T2 = N * S1 * T2;
-	u = N_S1_T2 * v2top4(tz[1].p[0]);
-	v = N_S1_T2 * v2top4(tz[0].p[1]);
-	Matrix44 T3(
-		1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 1.0f, 0.0f, -(u.y() / u.w() + v.y() / v.w()) / 2.0f,
-		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f
-	);
-
-	Matrix44 T3_N_S1_T2 = T3 * N_S1_T2;
-	u = T3_N_S1_T2 * v2top4(tz[1].p[0]);
-	Matrix44 S2(
-		1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, u.w() / u.y(), 0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f
-	);
-
-	Matrix44 NT = S2 * T3_N_S1_T2;
+	Matrix44 NT = T0 * M0;
 
 	if (primitiveRenderer)
 	{
 		primitiveRenderer->pushWorld(NT);
-		primitiveRenderer->drawLine(v2top4(tz[0].p[0]), v2top4(tz[0].p[1]), 3, Color4ub(255, 0, 0, 255));
-		primitiveRenderer->drawLine(v2top4(tz[1].p[0]), v2top4(tz[1].p[1]), 3, Color4ub(255, 0, 255, 255));
+		primitiveRenderer->drawLine(v2top4(tz[0].p[0]), v2top4(tz[0].p[1]), Color4ub(255, 0, 0, 255));
+		primitiveRenderer->drawLine(v2top4(tz[1].p[0]), v2top4(tz[1].p[1]), Color4ub(255, 0, 0, 255));
+		primitiveRenderer->drawLine(v2top4(tz[0].p[0]), v2top4(tz[1].p[0]), Color4ub(255, 0, 0, 255));
+		primitiveRenderer->drawLine(v2top4(tz[0].p[1]), v2top4(tz[1].p[1]), Color4ub(255, 0, 0, 255));
 		primitiveRenderer->popWorld();
 	}
 
@@ -183,11 +167,11 @@ void calculateTSMProj(
 	Vector4 center = viewFrustumBox.getCenter();
 	Vector4 extent = viewFrustumBox.getExtent() * Vector4(2.0f, 2.0f, 1.0f, 0.0f);
 
-	float cy = center.y();
+	float fz = shadowViewFrustum.getFarZ();
 	float nz = shadowViewFrustum.getNearZ();
 
 	// Calculate light view and projection matrices.
-	Vector4 worldCenter = viewInverse * Vector4(0.0f, 0.0f, shadowViewFrustum.getNearZ(), 1.0f);
+	Vector4 worldCenter = viewInverse * Vector4(0.0f, 0.0f, nz, 1.0f);
 	Scalar lightDistance = Scalar(settings.depthRange);
 
 	outLightView = Matrix44(
@@ -210,7 +194,7 @@ void calculateTSMProj(
 
 	outShadowFrustum.buildOrtho(
 		extent.x(),
-		extent.y(),
+		extent.y() * 2.0f,	// \hack View transform is at near plane thus need to encompass all.
 		0.0f,
 		lightDistance + extent.z()
 	);
