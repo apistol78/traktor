@@ -2,11 +2,14 @@
 #include "Amalgam/Editor/DeployTargetAction.h"
 #include "Amalgam/Editor/EditorPlugin.h"
 #include "Amalgam/Editor/LaunchTargetAction.h"
+#include "Amalgam/Editor/Platform.h"
+#include "Amalgam/Editor/PlatformInstance.h"
 #include "Amalgam/Editor/PostTargetAction.h"
 #include "Amalgam/Editor/Target.h"
 #include "Amalgam/Editor/TargetInstance.h"
 #include "Amalgam/Editor/TargetListControl.h"
 #include "Amalgam/Editor/TargetManager.h"
+#include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyBoolean.h"
@@ -21,9 +24,14 @@
 #include "Database/Remote/Server/Configuration.h"
 #include "Editor/IEditorPage.h"
 #include "Editor/IEditorPageSite.h"
+#include "I18N/Text.h"
 #include "Net/Network.h"
 #include "Ui/Command.h"
+#include "Ui/Container.h"
 #include "Ui/MethodHandler.h"
+#include "Ui/TableLayout.h"
+#include "Ui/Custom/ToolBar/ToolBar.h"
+#include "Ui/Custom/ToolBar/ToolBarDropDown.h"
 
 namespace traktor
 {
@@ -55,6 +63,9 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	m_parent = parent;
 	m_site = site;
 
+	// Get defined platforms.
+	collectPlatforms();
+
 	// Create target manager.
 	int32_t timeout = m_editor->getSettings()->getProperty< PropertyInteger >(L"Amalgam.TargetTimeout", c_targetConnectTimeout);
 	
@@ -74,16 +85,28 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	}
 
 	// Create interface.
+	Ref< ui::Container > container = new ui::Container();
+	container->create(m_parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
+	container->setText(L"Targets");
+
+	m_toolBar = new ui::custom::ToolBar();
+	m_toolBar->create(container);
+
+	m_toolPlatforms = new ui::custom::ToolBarDropDown(ui::Command(L"Amalgam.View"), 100, i18n::Text(L"AMALGAM_PLATFORMS"));
+	for (RefArray< PlatformInstance >::const_iterator i = m_platformInstances.begin(); i != m_platformInstances.end(); ++i)
+		m_toolPlatforms->add((*i)->getName());
+	m_toolPlatforms->select(0);
+	m_toolBar->addItem(m_toolPlatforms);
+
 	m_targetList = new TargetListControl();
-	m_targetList->create(m_parent);
-	m_targetList->setText(L"Targets");
+	m_targetList->create(container);
 	for (RefArray< TargetInstance >::iterator i = m_targetInstances.begin(); i != m_targetInstances.end(); ++i)
 		m_targetList->add(*i);
 
 	m_targetList->addPlayEventHandler(ui::createMethodHandler(this, &EditorPlugin::eventTargetPlay));
 	m_targetList->addStopEventHandler(ui::createMethodHandler(this, &EditorPlugin::eventTargetStop));
 
-	m_site->createAdditionalPanel(m_targetList, 200, false);
+	m_site->createAdditionalPanel(container, 200, false);
 
 	// Create database server; create configuration from targets.
 	Ref< db::Configuration > configuration = new db::Configuration();
@@ -91,11 +114,24 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 
 	for (RefArray< TargetInstance >::iterator i = m_targetInstances.begin(); i != m_targetInstances.end(); ++i)
 	{
-		Ref< const Target > target = (*i)->getTarget();
-		configuration->setConnectionString(
-			(*i)->getName(),
-			target->getDatabase()
-		);
+		std::wstring targetName = (*i)->getName();
+		const Target* target = (*i)->getTarget();
+
+		for (RefArray< PlatformInstance >::const_iterator j = m_platformInstances.begin(); j != m_platformInstances.end(); ++j)
+		{
+			std::wstring platformName = (*j)->getName();
+			const Platform* platform = (*j)->getPlatform();
+
+			std::wstring remoteId = targetName + L"|" + platformName;
+			std::wstring outputPath = L"output/" + targetName + L"/" + platformName;
+			std::wstring databasePath = outputPath + L"/db";
+			std::wstring databaseCs = L"provider=traktor.db.LocalDatabase;groupPath=" + databasePath + L";binary=true";
+
+			if (FileSystem::getInstance().makeAllDirectories(databasePath))
+				configuration->setConnectionString(remoteId, databaseCs);
+			else
+				log::error << L"Unable to create output database \""<< databasePath << L"\"" << Endl;
+		}
 	}
 
 	m_connectionManager = new db::ConnectionManager();
@@ -148,6 +184,7 @@ bool EditorPlugin::handleCommand(const ui::Command& command, bool result_)
 
 	if (command == L"Editor.Build")
 	{
+		/*
 		// Refresh all running targets.
 		for (RefArray< TargetInstance >::iterator i = m_targetInstances.begin(); i != m_targetInstances.end(); ++i)
 		{
@@ -163,13 +200,14 @@ bool EditorPlugin::handleCommand(const ui::Command& command, bool result_)
 
 			{
 				T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_targetActionQueueLock);
-				m_targetActionQueue.push_back(new BuildTargetAction(targetInstance));
+				m_targetActionQueue.push_back(new BuildTargetAction(m_editor, targetInstance));
 				m_targetActionQueue.push_back(new PostTargetAction(targetInstance, TsIdle));
 				m_targetActionQueueSignal.set();
 			}
 		}
 
 		m_targetList->update();
+		*/
 	}
 	else
 		result = false;
@@ -179,6 +217,26 @@ bool EditorPlugin::handleCommand(const ui::Command& command, bool result_)
 
 void EditorPlugin::handleDatabaseEvent(const Guid& eventId)
 {
+}
+
+void EditorPlugin::collectPlatforms()
+{
+	m_platformInstances.clear();
+
+	Ref< db::Database > sourceDatabase = m_editor->getSourceDatabase();
+	if (sourceDatabase)
+	{
+		RefArray< db::Instance > platformInstances;
+		db::recursiveFindChildInstances(sourceDatabase->getRootGroup(), db::FindInstanceByType(type_of< Platform >()), platformInstances);
+
+		for (RefArray< db::Instance >::iterator i = platformInstances.begin(); i != platformInstances.end(); ++i)
+		{
+			Ref< const Platform > platform = (*i)->getObject< Platform >();
+			T_ASSERT (platform);
+
+			m_platformInstances.push_back(new PlatformInstance((*i)->getName(), platform));
+		}
+	}
 }
 
 void EditorPlugin::collectTargets()
@@ -205,6 +263,11 @@ void EditorPlugin::collectTargets()
 
 void EditorPlugin::eventTargetPlay(ui::Event* event)
 {
+	int32_t platformIndex = m_toolPlatforms->getSelected();
+	if (platformIndex < 0)
+		return;
+
+	PlatformInstance* platformInstance = m_platformInstances[platformIndex];
 	TargetInstance* targetInstance = checked_type_cast< TargetInstance*, false >(event->getItem());
 	Guid activeGuid;
 
@@ -229,12 +292,12 @@ void EditorPlugin::eventTargetPlay(ui::Event* event)
 
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_targetActionQueueLock);
-		m_targetActionQueue.push_back(new BuildTargetAction(targetInstance));
+		m_targetActionQueue.push_back(new BuildTargetAction(m_editor, platformInstance, targetInstance));
 
 		if ((event->getKeyState() & ui::KsShift) == 0)
 		{
-			m_targetActionQueue.push_back(new DeployTargetAction(targetInstance));
-			m_targetActionQueue.push_back(new LaunchTargetAction(targetInstance, activeGuid));
+			m_targetActionQueue.push_back(new DeployTargetAction(platformInstance, targetInstance, activeGuid));
+			m_targetActionQueue.push_back(new LaunchTargetAction(platformInstance, targetInstance));
 		}
 
 		m_targetActionQueue.push_back(new PostTargetAction(targetInstance, TsIdle));
@@ -296,7 +359,9 @@ void EditorPlugin::threadTargetActions()
 				m_targetActionQueueSignal.reset();
 		}
 
-		targetAction->execute();
+		bool success = targetAction->execute();
+		if (!success)
+			log::error << L"Deploy action \"" << type_name(targetAction) << L"\" failed; unable to continue." << Endl;
 	}
 }
 

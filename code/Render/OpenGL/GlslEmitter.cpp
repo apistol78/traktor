@@ -1147,7 +1147,11 @@ void emitTargetSize(GlslContext& cx, TargetSize* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 	GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat2);
+#if defined(T_OPENGL_ES2)
+	assign(f, out) << L"_gl_targetSize.xy;";
+#else
 	assign(f, out) << L"_gl_targetSize;";
+#endif
 }
 
 void emitTexture(GlslContext& cx, Texture* node)

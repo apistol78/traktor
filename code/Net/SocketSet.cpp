@@ -65,7 +65,6 @@ int SocketSet::select(bool read, bool write, bool except, int timeout, SocketSet
 		fds[2] = &exceptfds;
 	}
 
-	Ref< SocketSet > result = new SocketSet();
 #if !defined(_PS3)
 	if (::select(0, fds[0], fds[1], fds[2], &to) > 0)
 #else

@@ -21,6 +21,11 @@ PropertyObject::value_type_t PropertyObject::get(const IPropertyValue* value)
 	return value ? checked_type_cast< const PropertyObject* >(value)->m_value : value_type_t(0);
 }
 
+IPropertyValue* PropertyObject::merge(IPropertyValue* right, bool join)
+{
+	return right;
+}
+
 bool PropertyObject::serialize(ISerializer& s)
 {
 	return s >> MemberRef< ISerializable >(L"value", m_value);

@@ -22,7 +22,12 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewOpenGLES2", RenderViewOpenGLES2, IRenderView)
 
 #	if defined(T_OPENGL_ES2_HAVE_EGL)
-RenderViewOpenGLES2::RenderViewOpenGLES2(IContext* globalContext, EGLDisplay display, EGLContext context, EGLSurface surface)
+RenderViewOpenGLES2::RenderViewOpenGLES2(
+	IContext* globalContext,
+	EGLDisplay display,
+	EGLContext context,
+	EGLSurface surface
+)
 :	m_globalContext(globalContext)
 ,	m_display(display)
 ,	m_context(context)
@@ -31,7 +36,10 @@ RenderViewOpenGLES2::RenderViewOpenGLES2(IContext* globalContext, EGLDisplay dis
 {
 }
 #	elif TARGET_OS_IPHONE
-RenderViewOpenGLES2::RenderViewOpenGLES2(IContext* globalContext, EAGLContextWrapper* wrapper)
+RenderViewOpenGLES2::RenderViewOpenGLES2(
+	IContext* globalContext,
+	EAGLContextWrapper* wrapper
+)
 :	m_globalContext(globalContext)
 ,	m_wrapper(wrapper)
 {
@@ -43,7 +51,9 @@ RenderViewOpenGLES2::RenderViewOpenGLES2(IContext* globalContext, EAGLContextWra
 	));
 }
 #	else
-RenderViewOpenGLES2::RenderViewOpenGLES2(IContext* globalContext)
+RenderViewOpenGLES2::RenderViewOpenGLES2(
+	IContext* globalContext
+)
 :	m_globalContext(globalContext)
 {
 }
@@ -81,14 +91,28 @@ void RenderViewOpenGLES2::resize(int32_t width, int32_t height)
 
 int RenderViewOpenGLES2::getWidth() const
 {
-	T_FATAL_ERROR;
+#if TARGET_OS_IPHONE
+	return m_wrapper->getWidth();
+#elif defined(T_OPENGL_ES2_HAVE_EGL)
+	EGLint width;
+	eglQuerySurface(m_display, m_surface, EGL_WIDTH, &width);
+	return width;
+#else
 	return 0;
+#endif
 }
 
 int RenderViewOpenGLES2::getHeight() const
 {
-	T_FATAL_ERROR;
+#if TARGET_OS_IPHONE
+	return m_wrapper->getHeight();
+#elif defined(T_OPENGL_ES2_HAVE_EGL)
+	EGLint height;
+	eglQuerySurface(m_display, m_surface, EGL_HEIGHT, &height);
+	return height;
+#else
 	return 0;
+#endif
 }
 
 bool RenderViewOpenGLES2::isActive() const

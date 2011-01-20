@@ -126,9 +126,6 @@ std::wstring GlslShader::getGeneratedShader()
 	ss << L"// THIS SHADER IS AUTOMATICALLY GENERATED! DO NOT EDIT!" << Endl;
 	ss << Endl;
 
-	ss << L"#version 120" << Endl;
-	ss << Endl;
-
 #if defined(T_OPENGL_ES2)
 	ss << L"precision mediump float;" << Endl;
 	ss << Endl;
@@ -149,9 +146,16 @@ std::wstring GlslShader::getGeneratedShader()
 		ss << L"}" << Endl;
 		ss << Endl;
 	}
+#else
+	ss << L"#version 120" << Endl;
+	ss << Endl;
 #endif
 
+#if defined(T_OPENGL_ES2)
+	ss << L"uniform vec4 _gl_targetSize;" << Endl;
+#else
 	ss << L"uniform vec2 _gl_targetSize;" << Endl;
+#endif
 	ss << Endl;
 
 	ss << getOutputStream(BtUniform).str();

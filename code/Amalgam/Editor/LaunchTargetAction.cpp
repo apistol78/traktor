@@ -1,4 +1,6 @@
 #include "Amalgam/Editor/LaunchTargetAction.h"
+#include "Amalgam/Editor/Platform.h"
+#include "Amalgam/Editor/PlatformInstance.h"
 #include "Amalgam/Editor/Target.h"
 #include "Amalgam/Editor/TargetInstance.h"
 #include "Core/Io/FileSystem.h"
@@ -12,111 +14,53 @@
 #include "Core/Settings/Settings.h"
 #include "Core/System/IProcess.h"
 #include "Core/System/OS.h"
-#include "Net/SocketAddressIPv4.h"
-#include "Xml/XmlDeserializer.h"
-#include "Xml/XmlSerializer.h"
 
 namespace traktor
 {
 	namespace amalgam
 	{
-		namespace
-		{
-
-const uint16_t c_targetConnectionPort = 34000;
-const uint16_t c_remoteDatabasePort = 35000;
-
-		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.LaunchTargetAction", LaunchTargetAction, ITargetAction)
 
-LaunchTargetAction::LaunchTargetAction(TargetInstance* targetInstance, const Guid& activeGuid)
-:	m_targetInstance(targetInstance)
-,	m_activeGuid(activeGuid)
+LaunchTargetAction::LaunchTargetAction(PlatformInstance* platformInstance, TargetInstance* targetInstance)
+:	m_platformInstance(platformInstance)
+,	m_targetInstance(targetInstance)
 {
 }
 
 bool LaunchTargetAction::execute()
 {
-	Ref< IStream > file;
+	const Platform* platform = m_platformInstance->getPlatform();
+	T_ASSERT (platform);
 
 	const Target* target = m_targetInstance->getTarget();
 	T_ASSERT (target);
 
 	m_targetInstance->setState(TsLaunching);
 
+	std::wstring outputPath = L"output/" + m_targetInstance->getName() + L"/" + m_platformInstance->getName();
+
+	// Launch application through deploy tool.
 	Path projectRoot = FileSystem::getInstance().getCurrentVolume()->getCurrentDirectory();
-
-	std::wstring targetPath = target->getTargetPath();
-	std::wstring deployTool = target->getDeployTool();
-	std::wstring executable = target->getExecutable();
-	std::wstring configuration = target->getConfiguration();
-
-	// Determine our interface address; we let applications know where to find data.
-	RefArray< net::SocketAddressIPv4 > interfaces = net::SocketAddressIPv4::getInterfaces();
-	std::wstring host = !interfaces.empty() ? interfaces[0]->getHostName() : L"localhost";
-
-	// Load application configuration.
-	if (!(file = FileSystem::getInstance().open(configuration, File::FmRead)))
-	{
-		log::error << L"Unable to open template configuration \"" << configuration << L"\"" << Endl;
-		return false;
-	}
-
-	Ref< Settings > settings = Settings::read< xml::XmlDeserializer >(file);
-	file->close();
-
-	if (!settings)
-	{
-		log::error << L"Unable to read template configuration \"" << configuration << L"\"" << Endl;
-		return false;
-	}
-
-	// Build application database connection string; applications should
-	// connect to our database server.
-	StringOutputStream ss;
-	ss << L"provider=traktor.db.RemoteDatabase;host=" << host << L":" << c_remoteDatabasePort << L";database=" << m_targetInstance->getName();
-	settings->setProperty< PropertyString >(L"Amalgam.Database", ss.str());
-
-	// Expose target connection host.
-	settings->setProperty< PropertyString >(L"Amalgam.TargetManager/Host", host);
-	settings->setProperty< PropertyInteger >(L"Amalgam.TargetManager/Port", c_targetConnectionPort);
-	settings->setProperty< PropertyString >(L"Amalgam.TargetManager/Id", m_targetInstance->getId().format());
-
-	// Append optional "active guid" to application configuration; it's the applications responsibility
-	// to determine what to do with it.
-	if (m_activeGuid.isValid() && !m_activeGuid.isNull())
-		settings->setProperty< PropertyString >(L"Amalgam.ActiveGuid", m_activeGuid.format());
-
-	// Write modified configuration file to target.
-	if (!(file = FileSystem::getInstance().open(targetPath + L"/Application.config", File::FmWrite)))
-	{
-		log::error << L"Unable to create configuration \"" << targetPath << L"/Application.config\"" << Endl;
-		return false;
-	}
-
-	settings->write< xml::XmlSerializer >(file);
-	file->close();
-
 	OS::envmap_t envmap = OS::getInstance().getEnvironment();
-
+	envmap[L"DEPLOY_PROJECTNAME"] = m_targetInstance->getName();
 	envmap[L"DEPLOY_PROJECTROOT"] = projectRoot.getPathName();
-	envmap[L"DEPLOY_TARGETPATH"] = targetPath;
-	envmap[L"DEPLOY_DEPLOYTOOL"] = deployTool;
-	envmap[L"DEPLOY_EXECUTABLE"] = executable;
+	envmap[L"DEPLOY_EXECUTABLE"] = target->getExecutable();
 
 	Ref< IProcess > process = OS::getInstance().execute(
-		deployTool,
+		platform->getDeployTool(),
 		L"launch",
-		targetPath,
+		outputPath,
 		&envmap,
-		true,
-		true,
-		false
+#if defined(_DEBUG)
+		false, false, false
+#else
+		true, true, false
+#endif
 	);
 	if (!process)
 	{
-		log::error << L"Failed to launch process \"" << deployTool << L"\"" << Endl;
+		log::error << L"Failed to launch process \"" << platform->getDeployTool() << L"\"" << Endl;
 		m_targetInstance->setState(TsIdle);
 		return false;
 	}

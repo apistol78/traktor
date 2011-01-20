@@ -21,6 +21,11 @@ PropertyKey::value_type_t PropertyKey::get(const IPropertyValue* value)
 	return value ? checked_type_cast< const PropertyKey* >(value)->m_value : value_type_t(0, ui::VkNull);
 }
 
+IPropertyValue* PropertyKey::merge(IPropertyValue* right, bool join)
+{
+	return right;
+}
+
 bool PropertyKey::serialize(ISerializer& s)
 {
 	if (s.getDirection() == ISerializer::SdRead)

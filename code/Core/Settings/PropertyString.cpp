@@ -17,6 +17,11 @@ PropertyString::value_type_t PropertyString::get(const IPropertyValue* value)
 	return value ? checked_type_cast< const PropertyString* >(value)->m_value : L"";
 }
 
+IPropertyValue* PropertyString::merge(IPropertyValue* right, bool join)
+{
+	return right;
+}
+
 bool PropertyString::serialize(ISerializer& s)
 {
 	return s >> Member< value_type_t >(L"value", m_value);

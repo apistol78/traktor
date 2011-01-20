@@ -1,6 +1,7 @@
 #ifndef traktor_amalgam_EditorPlugin_H
 #define traktor_amalgam_EditorPlugin_H
 
+#include <map>
 #include "Core/RefArray.h"
 #include "Core/Thread/Semaphore.h"
 #include "Core/Thread/Signal.h"
@@ -12,10 +13,22 @@
 
 namespace traktor
 {
+	namespace ui
+	{
+		namespace custom
+		{
+
+class ToolBar;
+class ToolBarDropDown;
+
+		}
+	}
+
 	namespace amalgam
 	{
 
 class ITargetAction;
+class PlatformInstance;
 class TargetInstance;
 class TargetListControl;
 class TargetManager;
@@ -39,9 +52,12 @@ private:
 	editor::IEditor* m_editor;
 	Ref< ui::Widget > m_parent;
 	Ref< editor::IEditorPageSite > m_site;
+	Ref< ui::custom::ToolBar > m_toolBar;
+	Ref< ui::custom::ToolBarDropDown > m_toolPlatforms;
 	Ref< TargetListControl > m_targetList;
-	Ref< TargetManager > m_targetManager;							//!< Target connection manager.
+	Ref< TargetManager > m_targetManager;					//!< Target connection manager.
 	Ref< db::ConnectionManager > m_connectionManager;		//!< Remote database connection manager.
+	RefArray< PlatformInstance > m_platformInstances;
 	RefArray< TargetInstance > m_targetInstances;
 	Semaphore m_targetActionQueueLock;
 	Signal m_targetActionQueueSignal;
@@ -49,6 +65,8 @@ private:
 	Thread* m_threadTargetManager;
 	Thread* m_threadConnectionManager;
 	Thread* m_threadTargetActions;
+
+	void collectPlatforms();
 
 	void collectTargets();
 

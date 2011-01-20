@@ -166,7 +166,7 @@ int32_t amalgamMain(
 			Ref< Settings > userSettings = loadSettings(environment, settingsSaveDataId);
 			if (userSettings)
 			{
-				settings->merge(userSettings);
+				settings->merge(userSettings, false);
 				environment->executeReconfigure();
 			}
 		}

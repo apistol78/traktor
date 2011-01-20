@@ -22,27 +22,24 @@ class T_DLLCLASS Target : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	const std::wstring& getDatabase() const;
+	const std::wstring& getPipelineConfiguration() const;
 
-	const std::wstring& getTargetPath() const;
-
-	const std::wstring& getDeployTool() const;
+	const std::wstring& getApplicationConfiguration() const;
 
 	const std::wstring& getExecutable() const;
 
-	const std::wstring& getConfiguration() const;
-
 	const Guid& getRootAsset() const;
+
+	const Guid& getStartupInstance() const;
 
 	virtual bool serialize(ISerializer& s);
 
 private:
-	std::wstring m_database;
-	std::wstring m_targetPath;
-	std::wstring m_deployTool;
+	std::wstring m_pipelineConfiguration;
+	std::wstring m_applicationConfiguration;
 	std::wstring m_executable;
-	std::wstring m_configuration;
 	Guid m_rootAsset;
+	Guid m_startupInstance;
 };
 
 	}

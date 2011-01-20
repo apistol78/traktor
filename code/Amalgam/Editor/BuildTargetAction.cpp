@@ -1,13 +1,22 @@
 #include "Amalgam/Editor/BuildTargetAction.h"
 #include "Amalgam/Editor/PipeReader.h"
+#include "Amalgam/Editor/Platform.h"
+#include "Amalgam/Editor/PlatformInstance.h"
 #include "Amalgam/Editor/Target.h"
 #include "Amalgam/Editor/TargetInstance.h"
 #include "Core/Io/FileSystem.h"
+#include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/Split.h"
 #include "Core/Misc/String.h"
+#include "Core/Settings/PropertyString.h"
+#include "Core/Settings/Settings.h"
 #include "Core/System/IProcess.h"
 #include "Core/System/OS.h"
+#include "Database/ConnectionString.h"
+#include "Editor/IEditor.h"
+#include "Xml/XmlDeserializer.h"
+#include "Xml/XmlSerializer.h"
 
 namespace traktor
 {
@@ -16,30 +25,74 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.BuildTargetAction", BuildTargetAction, ITargetAction)
 
-BuildTargetAction::BuildTargetAction(TargetInstance* targetInstance)
-:	m_targetInstance(targetInstance)
+BuildTargetAction::BuildTargetAction(const editor::IEditor* editor, PlatformInstance* platformInstance, TargetInstance* targetInstance)
+:	m_editor(editor)
+,	m_platformInstance(platformInstance)
+,	m_targetInstance(targetInstance)
 {
 }
 
 bool BuildTargetAction::execute()
 {
+	const Platform* platform = m_platformInstance->getPlatform();
+	T_ASSERT (platform);
+
 	const Target* target = m_targetInstance->getTarget();
 	T_ASSERT (target);
 
 	m_targetInstance->setState(TsBuilding);
 
+	// Read platform default pipeline configuration.
+	Ref< Settings > pipelineConfiguration = Settings::read< xml::XmlDeserializer >(FileSystem::getInstance().open(
+		platform->getPipelineConfiguration(),
+		File::FmRead
+	));
+	if (!pipelineConfiguration)
+		return false;
+
+	// Merge with target pipeline configuration.
+	if (!target->getPipelineConfiguration().empty())
+	{
+		Ref< Settings > targetPipelineConfiguration = Settings::read< xml::XmlDeserializer >(FileSystem::getInstance().open(
+			target->getPipelineConfiguration(),
+			File::FmRead
+		));
+		if (!targetPipelineConfiguration)
+			return false;
+
+		pipelineConfiguration->merge(targetPipelineConfiguration, true);
+	}
+
+	// Set database connection strings.
+	db::ConnectionString sourceDatabaseCs = m_editor->getSettings()->getProperty< PropertyString >(L"Editor.SourceDatabase");
+	db::ConnectionString outputDatabaseCs = L"provider=traktor.db.LocalDatabase;groupPath=db;binary=true";
+
+	if (sourceDatabaseCs.have(L"groupPath"))
+	{
+		Path groupPath = FileSystem::getInstance().getAbsolutePath(sourceDatabaseCs.get(L"groupPath"));
+		sourceDatabaseCs.set(L"groupPath", groupPath.getPathName());
+	}
+
+	pipelineConfiguration->setProperty< PropertyString >(L"Editor.SourceDatabase", sourceDatabaseCs.format());
+	pipelineConfiguration->setProperty< PropertyString >(L"Editor.OutputDatabase", outputDatabaseCs.format());
+
+	// Set asset path.
+	Path assetPath = m_editor->getSettings()->getProperty< PropertyString >(L"Pipeline.AssetPath");
+	assetPath = FileSystem::getInstance().getAbsolutePath(assetPath);
+	pipelineConfiguration->setProperty< PropertyString >(L"Pipeline.AssetPath", assetPath.getPathName());
+
+	// Write generated pipeline configuration in output directory.
+	std::wstring outputPath = L"output/" + m_targetInstance->getName() + L"/" + m_platformInstance->getName();
+	pipelineConfiguration->write< xml::XmlSerializer >(FileSystem::getInstance().open(
+		outputPath + L"/Pipeline.config",
+		File::FmWrite
+	));
+
+	// Launch pipeline through deploy tool; set cwd to output directory.
 	Path projectRoot = FileSystem::getInstance().getCurrentVolume()->getCurrentDirectory();
-
-	std::wstring targetPath = target->getTargetPath();
-	std::wstring deployTool = target->getDeployTool();
-	std::wstring executable = target->getExecutable();
-
 	OS::envmap_t envmap = OS::getInstance().getEnvironment();
-
+	envmap[L"DEPLOY_PROJECTNAME"] = m_targetInstance->getName();
 	envmap[L"DEPLOY_PROJECTROOT"] = projectRoot.getPathName();
-	envmap[L"DEPLOY_TARGETPATH"] = targetPath;
-	envmap[L"DEPLOY_DEPLOYTOOL"] = deployTool;
-	envmap[L"DEPLOY_EXECUTABLE"] = executable;
 
 	StringOutputStream ss;
 	ss << L"build";
@@ -49,17 +102,19 @@ bool BuildTargetAction::execute()
 		ss << L" " << rootAsset.format();
 
 	Ref< IProcess > process = OS::getInstance().execute(
-		deployTool,
+		platform->getDeployTool(),
 		ss.str(),
-		targetPath,
+		outputPath,
 		&envmap,
-		true,
-		true,
-		false
+#if defined(_DEBUG)
+		false, false, false
+#else
+		true, true, false
+#endif
 	);
 	if (!process)
 	{
-		log::error << L"Failed to launch process \"" << deployTool << L"\"" << Endl;
+		log::error << L"Failed to launch process \"" << platform->getDeployTool() << L"\"" << Endl;
 		m_targetInstance->setState(TsIdle);
 		return false;
 	}

@@ -2,19 +2,16 @@
 
 if "%1"=="build" (
 
-	%DEPLOY_PROJECTROOT%\bin\latest\win32\releaseshared\Traktor.Pipeline.App -p -s=Traktor.Pipeline -l=Pipeline.log %2
+	%DEPLOY_PROJECTROOT%\bin\latest\win32\releaseshared\Traktor.Pipeline.App -p -s=Pipeline -l=Pipeline.log %2
 
 ) else if "%1"=="deploy" (
 
-	%TRAKTOR_HOME%bin\CeDeploy "\Program Files\Amalgam" $(TRAKTOR_HOME)/build/mobile6/releaseshared/*.dll
-	%TRAKTOR_HOME%bin\CeDeploy "\Program Files\Amalgam" $(AMALGAM_HOME)/build/mobile6/releaseshared/*.dll
-	%TRAKTOR_HOME%bin\CeDeploy "\Program Files\Amalgam" $(AMALGAM_HOME)/build/mobile6/releaseshared/*.exe
-	%TRAKTOR_HOME%bin\CeDeploy "\Program Files\Amalgam" Application.config
+	%TRAKTOR_HOME%bin\CeDeploy "\Program Files\%DEPLOY_PROJECTNAME%" %DEPLOY_PROJECTROOT:/=\%\bin\latest\mobile6\releaseshared\*.dll
+	%TRAKTOR_HOME%bin\CeDeploy "\Program Files\%DEPLOY_PROJECTNAME%" %DEPLOY_PROJECTROOT:/=\%\bin\latest\mobile6\releaseshared\*.exe
+	%TRAKTOR_HOME%bin\CeDeploy "\Program Files\%DEPLOY_PROJECTNAME%" Application.config
 
 ) else if "%1"=="launch" (
 
-	%TRAKTOR_HOME%bin\CeLaunch "\Program Files\Amalgam\Amalgam.Viewer" Application.config
+	%TRAKTOR_HOME%bin\CeLaunch "\Program Files\%DEPLOY_PROJECTNAME%\%DEPLOY_EXECUTABLE%" Application.config
 	
-) else (
-	echo "Usage: [deploy] command (args...)"
 )
