@@ -67,8 +67,6 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	collectPlatforms();
 
 	// Create target manager.
-	int32_t timeout = m_editor->getSettings()->getProperty< PropertyInteger >(L"Amalgam.TargetTimeout", c_targetConnectTimeout);
-	
 	m_targetManager = new TargetManager();
 	if (m_targetManager->create(c_targetConnectionPort))
 	{
@@ -92,7 +90,7 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	m_toolBar = new ui::custom::ToolBar();
 	m_toolBar->create(container);
 
-	m_toolPlatforms = new ui::custom::ToolBarDropDown(ui::Command(L"Amalgam.View"), 100, i18n::Text(L"AMALGAM_PLATFORMS"));
+	m_toolPlatforms = new ui::custom::ToolBarDropDown(ui::Command(L"Amalgam.View"), 150, i18n::Text(L"AMALGAM_PLATFORMS"));
 	for (RefArray< PlatformInstance >::const_iterator i = m_platformInstances.begin(); i != m_platformInstances.end(); ++i)
 		m_toolPlatforms->add((*i)->getName());
 	m_toolPlatforms->select(0);
