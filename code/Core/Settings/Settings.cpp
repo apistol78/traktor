@@ -102,11 +102,17 @@ Ref< const IPropertyValue > Settings::getProperty(const std::wstring& propertyNa
 	return traverseGetProperty(m_rootGroup, propertyName);
 }
 
-void Settings::merge(Settings* right)
+void Settings::merge(Settings* right, bool join)
 {
 	const std::map< std::wstring, Ref< IPropertyValue > >& rightValues = right->m_rootGroup->getValues();
 	for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = rightValues.begin(); i != rightValues.end(); ++i)
-		setProperty(i->first, i->second);
+	{
+		Ref< IPropertyValue > leftValue = m_rootGroup->getProperty(i->first);
+		if (leftValue)
+			m_rootGroup->setProperty(i->first, leftValue->merge(i->second, join));
+		else
+			m_rootGroup->setProperty(i->first, i->second);
+	}
 }
 
 }

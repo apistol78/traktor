@@ -5,6 +5,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Serialization/BinarySerializer.h"
 #include "Net/SocketAddressIPv4.h"
+#include "Net/SocketSet.h"
 #include "Net/SocketStream.h"
 
 namespace traktor
@@ -53,6 +54,21 @@ TargetInstance* TargetManager::createInstance(const std::wstring& name, const Ta
 
 void TargetManager::update()
 {
+	net::SocketSet socketSet, socketSetResult;
+
+	// Gather all sockets so we can wait on all simultaneously.
+	socketSet.add(m_listenSocket);
+	for (RefArray< TargetInstance >::iterator i = m_instances.begin(); i != m_instances.end(); ++i)
+	{
+		const RefArray< TargetConnection>& connections = (*i)->getConnections();
+		for (RefArray< TargetConnection >::const_iterator j = connections.begin(); j != connections.end(); ++j)
+			socketSet.add((*j)->getSocket());
+	}
+
+	// Wait on all sockets.
+	if (socketSet.select(true, false, false, 100, socketSetResult) <= 0)
+		return;
+
 	// Check if any pending connection available.
 	if (m_listenSocket->select(true, false, false, 0))
 	{
@@ -97,7 +113,7 @@ void TargetManager::update()
 		}
 	}
 
-	// Update all instances.
+	// Update all targets.
 	for (RefArray< TargetInstance >::iterator i = m_instances.begin(); i != m_instances.end(); ++i)
 		(*i)->update();
 }

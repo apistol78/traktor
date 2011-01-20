@@ -3,6 +3,7 @@
 
 #include "Core/Io/IOutputStreamBuffer.h"
 #include "Core/Misc/AutoPtr.h"
+#include "Core/Thread/Semaphore.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -31,6 +32,7 @@ public:
 	virtual int overflow(const wchar_t* buffer, int count);
 
 private:
+	Semaphore m_lock;
 	Ref< IStream > m_stream;
 	Ref< IEncoding > m_encoding;
 	AutoArrayPtr< uint8_t > m_encoded;

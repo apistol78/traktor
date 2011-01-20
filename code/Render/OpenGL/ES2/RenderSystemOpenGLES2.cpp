@@ -127,23 +127,47 @@ Ref< IRenderView > RenderSystemOpenGLES2::createRenderView(const RenderViewDefau
 	if (m_hWnd)
 		return 0;
 
-	m_hWnd = CreateWindow(
-		_T("RenderSystemOpenGLES2_FullScreen"),
-		_T("Traktor 2.0 OpenGL ES 2.0 Renderer"),
-		WS_POPUPWINDOW,
-		0,
-		0,
-		0,
-		0,
-		NULL,
-		NULL,
-		static_cast< HMODULE >(GetModuleHandle(NULL)),
-		this
-	);
-	if (!m_hWnd)
-		return 0;
+	if (desc.fullscreen)
+	{
+		m_hWnd = CreateWindow(
+			_T("RenderSystemOpenGLES2_FullScreen"),
+			_T("Traktor 2.0 OpenGL ES 2.0 Renderer"),
+			WS_POPUPWINDOW,
+			0,
+			0,
+			0,
+			0,
+			NULL,
+			NULL,
+			static_cast< HMODULE >(GetModuleHandle(NULL)),
+			this
+		);
+		if (!m_hWnd)
+			return 0;
 
-	SetWindowPos(m_hWnd, HWND_TOPMOST, 0, 0, desc.displayMode.width, desc.displayMode.height, SWP_NOMOVE);
+		SetWindowPos(m_hWnd, HWND_TOPMOST, 0, 0, desc.displayMode.width, desc.displayMode.height, SWP_NOMOVE);
+	}
+	else
+	{
+		m_hWnd = CreateWindow(
+			_T("RenderSystemOpenGLES2_FullScreen"),
+			_T("Traktor 2.0 OpenGL ES 2.0 Renderer"),
+			WS_OVERLAPPEDWINDOW,
+			CW_USEDEFAULT,
+			CW_USEDEFAULT,
+			desc.displayMode.width,
+			desc.displayMode.height,
+			NULL,
+			NULL,
+			static_cast< HMODULE >(GetModuleHandle(NULL)),
+			this
+		);
+		if (!m_hWnd)
+			return 0;
+	}
+
+	ShowWindow(m_hWnd, SW_SHOWNORMAL);
+	UpdateWindow(m_hWnd);
 
 	RenderViewEmbeddedDesc desc2;
 	desc2.depthBits = desc.depthBits;
@@ -151,6 +175,7 @@ Ref< IRenderView > RenderSystemOpenGLES2::createRenderView(const RenderViewDefau
 	desc2.multiSample = desc.multiSample;
 	desc2.waitVBlank = desc.waitVBlank;
 	desc2.nativeWindowHandle = m_hWnd;
+	desc2.stereoscopic = false;
 
 	return createRenderView(desc2);
 #else

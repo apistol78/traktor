@@ -1,6 +1,7 @@
 #include "Core/Io/FileOutputStreamBuffer.h"
 #include "Core/Io/IEncoding.h"
 #include "Core/Io/IStream.h"
+#include "Core/Thread/Acquire.h"
 
 namespace traktor
 {
@@ -23,6 +24,7 @@ void FileOutputStreamBuffer::close()
 
 int FileOutputStreamBuffer::overflow(const wchar_t* buffer, int count)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	T_ASSERT (count > 0);
 
 	uint32_t maxEncodedSize = count * IEncoding::MaxEncodingSize;

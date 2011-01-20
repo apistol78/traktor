@@ -33,6 +33,8 @@ bool TargetPipeline::buildDependencies(
 	Ref< const Object >& outBuildParams
 ) const
 {
+	const Target* target = checked_type_cast< const Target*, false >(sourceAsset);
+	pipelineDepends->addDependency(target->getRootAsset(), editor::PdfBuild);
 	return true;
 }
 

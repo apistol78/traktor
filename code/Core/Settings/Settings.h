@@ -114,8 +114,9 @@ public:
 	 * settings.
 	 *
 	 * \param right Right-hand settings.
+	 * \param join Join merge; i.e. whenever possible, left and right are joined.
 	 */
-	void merge(Settings* right);
+	void merge(Settings* right, bool join);
 
 	/*! \brief
 	 */

@@ -261,7 +261,7 @@ int main(int argc, const char** argv)
 
 	traktor::log::info << IncreaseIndent;
 
-	pipelineBuilder.build(dependencies, rebuild);
+	bool succeess = pipelineBuilder.build(dependencies, rebuild);
 
 	traktor::log::info << DecreaseIndent;
 	traktor::log::info << L"Finished" << Endl;
@@ -281,5 +281,5 @@ int main(int argc, const char** argv)
 		logFile = 0;
 	}
 
-	return 0;
+	return succeess ? 0 : 8;
 }

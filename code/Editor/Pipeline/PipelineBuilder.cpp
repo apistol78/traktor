@@ -89,7 +89,7 @@ bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, 
 	else
 		log::info << L"Build finished; aborted" << Endl;
 
-	return true;
+	return failed == 0;
 }
 
 bool PipelineBuilder::buildOutput(const ISerializable* sourceAsset, const Object* buildParams, const std::wstring& name, const std::wstring& outputPath, const Guid& outputGuid)

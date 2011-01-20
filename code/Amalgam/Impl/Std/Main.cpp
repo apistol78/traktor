@@ -257,7 +257,7 @@ int32_t amalgamMain(
 	{
 		Ref< Settings > userSettings = loadSettings(userSettingsPath);
 		if (userSettings)
-			settings->merge(userSettings);
+			settings->merge(userSettings, false);
 	}
 
 	if (!settings)

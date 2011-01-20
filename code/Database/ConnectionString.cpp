@@ -1,3 +1,4 @@
+#include "Core/Io/StringOutputStream.h"
 #include "Core/Misc/Split.h"
 #include "Core/Misc/String.h"
 #include "Database/ConnectionString.h"
@@ -9,6 +10,10 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.db.ConnectionString", ConnectionString, Object)
 
+ConnectionString::ConnectionString()
+{
+}
+
 ConnectionString::ConnectionString(const std::wstring& connectionString)
 {
 	std::vector< std::wstring > kv;
@@ -19,7 +24,7 @@ ConnectionString::ConnectionString(const std::wstring& connectionString)
 		if (p == std::wstring::npos)
 			continue;
 
-		std::wstring key = toLower(trim(i->substr(0, p)));
+		std::wstring key = trim(i->substr(0, p));
 		std::wstring value = trim(i->substr(p + 1));
 
 		m_values.insert(std::make_pair(key, value));
@@ -28,13 +33,30 @@ ConnectionString::ConnectionString(const std::wstring& connectionString)
 
 bool ConnectionString::have(const std::wstring& key) const
 {
-	return m_values.find(toLower(key)) != m_values.end();
+	return m_values.find(key) != m_values.end();
+}
+
+void ConnectionString::set(const std::wstring& key, const std::wstring& value)
+{
+	m_values[key] = value;
 }
 
 std::wstring ConnectionString::get(const std::wstring& key) const
 {
-	std::map< std::wstring, std::wstring >::const_iterator i = m_values.find(toLower(key));
+	std::map< std::wstring, std::wstring >::const_iterator i = m_values.find(key);
 	return i != m_values.end() ? i->second : L"";
+}
+
+std::wstring ConnectionString::format() const
+{
+	StringOutputStream ss;
+	for (std::map< std::wstring, std::wstring >::const_iterator i = m_values.begin(); i != m_values.end(); ++i)
+	{
+		if (i != m_values.begin())
+			ss << L";";
+		ss << i->first << L"=" << i->second;
+	}
+	return ss.str();
 }
 
 	}

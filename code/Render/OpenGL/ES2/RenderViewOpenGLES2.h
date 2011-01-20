@@ -39,11 +39,21 @@ class T_DLLCLASS RenderViewOpenGLES2 : public IRenderView
 
 public:
 #	if defined(T_OPENGL_ES2_HAVE_EGL)
-	RenderViewOpenGLES2(IContext* globalContext, EGLDisplay display, EGLContext context, EGLSurface surface);
+	RenderViewOpenGLES2(
+		IContext* globalContext,
+		EGLDisplay display,
+		EGLContext context,
+		EGLSurface surface
+	);
 #	elif TARGET_OS_IPHONE
-	RenderViewOpenGLES2(IContext* globalContext, EAGLContextWrapper* wrapper);
+	RenderViewOpenGLES2(
+		IContext* globalContext,
+		EAGLContextWrapper* wrapper
+	);
 #	else
-	RenderViewOpenGLES2(IContext* globalContext);
+	RenderViewOpenGLES2(
+		IContext* globalContext
+	);
 #	endif
 
 	virtual ~RenderViewOpenGLES2();

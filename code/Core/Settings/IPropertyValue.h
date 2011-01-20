@@ -20,6 +20,9 @@ namespace traktor
 class T_DLLCLASS IPropertyValue : public ISerializable
 {
 	T_RTTI_CLASS;
+
+public:
+	virtual IPropertyValue* merge(IPropertyValue* right, bool join) = 0;
 };
 
 }

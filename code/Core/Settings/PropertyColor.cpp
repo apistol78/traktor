@@ -17,6 +17,11 @@ PropertyColor::value_type_t PropertyColor::get(const IPropertyValue* value)
 	return value ? checked_type_cast< const PropertyColor* >(value)->m_value : value_type_t();
 }
 
+IPropertyValue* PropertyColor::merge(IPropertyValue* right, bool join)
+{
+	return right;
+}
+
 bool PropertyColor::serialize(ISerializer& s)
 {
 	return s >> Member< value_type_t >(L"value", m_value);

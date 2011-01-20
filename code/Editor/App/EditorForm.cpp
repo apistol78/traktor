@@ -1389,7 +1389,7 @@ Ref< Settings > EditorForm::loadSettings(const std::wstring& settingsFile)
 		if (userSettings)
 		{
 			if (settings)
-				settings->merge(userSettings);
+				settings->merge(userSettings, false);
 			else
 				settings = userSettings;
 		}

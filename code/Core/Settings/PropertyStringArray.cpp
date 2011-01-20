@@ -17,6 +17,19 @@ PropertyStringArray::value_type_t PropertyStringArray::get(const IPropertyValue*
 	return value ? checked_type_cast< const PropertyStringArray* >(value)->m_value : value_type_t();
 }
 
+IPropertyValue* PropertyStringArray::merge(IPropertyValue* right, bool join)
+{
+	if (join)
+	{
+		if (PropertyStringArray* rightStringArray = dynamic_type_cast< PropertyStringArray* >(right))
+		{
+			m_value.insert(m_value.end(), rightStringArray->m_value.begin(), rightStringArray->m_value.end());
+			return this;
+		}
+	}
+	return right;
+}
+
 bool PropertyStringArray::serialize(ISerializer& s)
 {
 	return s >> MemberStlVector< std::wstring >(L"value", m_value);
