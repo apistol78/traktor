@@ -28,8 +28,11 @@ public:
 
 	virtual void deleteResources();
 
+	GLuint createShaderObject(const char* shader, GLenum shaderType);
+
 private:
 	std::vector< IDeleteCallback* > m_deleteResources;
+	std::map< uint32_t, GLuint > m_shaderObjects;
 };
 
 	}

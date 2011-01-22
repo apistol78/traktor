@@ -40,9 +40,8 @@ namespace traktor
 		namespace
 		{
 
-const int32_t c_targetConnectTimeout = 10000;
-const uint16_t c_targetConnectionPort = 34000;
 const uint16_t c_remoteDatabasePort = 35000;
+const uint16_t c_targetConnectionPort = 36000;
 
 		}
 
@@ -68,7 +67,9 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 
 	// Create target manager.
 	m_targetManager = new TargetManager();
-	if (m_targetManager->create(c_targetConnectionPort))
+	if (m_targetManager->create(
+		m_editor->getSettings()->getProperty< PropertyInteger >(L"Amalgam.TargetManagerPort", c_targetConnectionPort)
+	))
 	{
 		collectTargets();
 
@@ -108,7 +109,9 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 
 	// Create database server; create configuration from targets.
 	Ref< db::Configuration > configuration = new db::Configuration();
-	configuration->setListenPort(c_remoteDatabasePort);
+	configuration->setListenPort(
+		m_editor->getSettings()->getProperty< PropertyInteger >(L"Amalgam.RemoteDatabasePort", c_remoteDatabasePort)
+	);
 
 	for (RefArray< TargetInstance >::iterator i = m_targetInstances.begin(); i != m_targetInstances.end(); ++i)
 	{
@@ -294,7 +297,7 @@ void EditorPlugin::eventTargetPlay(ui::Event* event)
 
 		if ((event->getKeyState() & ui::KsShift) == 0)
 		{
-			m_targetActionQueue.push_back(new DeployTargetAction(platformInstance, targetInstance, activeGuid));
+			m_targetActionQueue.push_back(new DeployTargetAction(m_editor, platformInstance, targetInstance, activeGuid));
 			m_targetActionQueue.push_back(new LaunchTargetAction(platformInstance, targetInstance));
 		}
 

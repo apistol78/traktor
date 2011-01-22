@@ -19,8 +19,9 @@ namespace traktor
 	namespace render
 	{
 
-class IContext;
+class ContextOpenGLES2;
 class GlslProgram;
+class ITextureBinding;
 class ProgramResource;
 
 /*!
@@ -31,13 +32,11 @@ class T_DLLCLASS ProgramOpenGLES2 : public IProgram
 	T_RTTI_CLASS;
 
 public:
-	ProgramOpenGLES2(IContext* context);
-
 	virtual ~ProgramOpenGLES2();
 
 	static Ref< ProgramResource > compile(const GlslProgram& glslProgram, int optimize, bool validate);
 
-	bool create(const ProgramResource* resource);
+	static Ref< ProgramOpenGLES2 > create(ContextOpenGLES2* resourceContext, const ProgramResource* resource);
 
 	virtual void destroy();
 
@@ -57,7 +56,7 @@ public:
 
 	virtual void setStencilReference(uint32_t stencilReference);
 
-	bool activate(bool landspace);
+	bool activate(bool landscape, float targetSize[2]);
 
 	const GLint* getAttributeLocs() const;
 
@@ -68,11 +67,13 @@ private:
 		GLenum type;
 		uint32_t offset;
 		uint32_t length;
+		bool dirty;
 	};
 
 	struct Sampler
 	{
-		GLint location;
+		GLint locationTexture;
+		GLint locationOffset;
 		uint32_t texture;
 		uint32_t stage;
 	};
@@ -81,31 +82,27 @@ private:
 	{
 		GLenum target;
 		GLuint name;
+		GLint mipCount;
+		float offset[4];
 	};
 
-	Ref< IContext > m_context;
+	Ref< ContextOpenGLES2 > m_resourceContext;
 	GLuint m_program;
 	RenderState m_renderState;
-	
-	GLint m_postOrientationCoeffs;
-	GLint m_attributeLocs[T_OGL_MAX_USAGE_INDEX];
-
-	std::map< handle_t, uint32_t > m_parameterMap;
-
-	std::vector< Uniform > m_uniforms;
-	std::vector< Sampler > m_samplers;
-	
-	AlignedVector< float > m_uniformData;
-	std::vector< bool > m_uniformDataDirty;
-
-	AlignedVector< TextureData > m_textureData;
-
+	GLint m_locationTargetSize;
+	GLint m_locationPostOrientationCoeffs;
+	GLint m_attributeLocs[T_OGL_MAX_USAGE_INDEX];			//!< Vertex attribute locations.
+	std::map< handle_t, uint32_t > m_parameterMap;			//!< Parameter to data map.
+	std::vector< Uniform > m_uniforms;						//!< Scalar uniforms.
+	std::vector< Sampler > m_samplers;						//!< Samplers.
+	AlignedVector< float > m_uniformData;					//!< Scalar uniform data.
+	AlignedVector< ITextureBinding* > m_textureBindings;	//!< Texture bindings.
+	float m_targetSize[2];
+	GLint m_stencilRef;
+	bool m_textureDirty;
 	static ProgramOpenGLES2* ms_activeProgram;
-	bool m_dirty;
-
-	bool createFromSource(const ProgramResource* resource);
-
-	bool createFromBinary(const ProgramResource* resource);
+	
+	ProgramOpenGLES2(ContextOpenGLES2* resourceContext, GLuint program, const ProgramResource* resource);
 };
 
 	}

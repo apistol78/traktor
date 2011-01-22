@@ -12,6 +12,7 @@
 #include "Core/System/IProcess.h"
 #include "Core/System/OS.h"
 #include "Database/ConnectionString.h"
+#include "Editor/IEditor.h"
 #include "Net/SocketAddressIPv4.h"
 #include "Xml/XmlDeserializer.h"
 #include "Xml/XmlSerializer.h"
@@ -23,15 +24,16 @@ namespace traktor
 		namespace
 		{
 
-const uint16_t c_targetConnectionPort = 34000;
 const uint16_t c_remoteDatabasePort = 35000;
+const uint16_t c_targetConnectionPort = 36000;
 
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.DeployTargetAction", DeployTargetAction, ITargetAction)
 
-DeployTargetAction::DeployTargetAction(PlatformInstance* platformInstance, TargetInstance* targetInstance, const Guid& activeGuid)
-:	m_platformInstance(platformInstance)
+DeployTargetAction::DeployTargetAction(const editor::IEditor* editor, PlatformInstance* platformInstance, TargetInstance* targetInstance, const Guid& activeGuid)
+:	m_editor(editor)
+,	m_platformInstance(platformInstance)
 ,	m_targetInstance(targetInstance)
 ,	m_activeGuid(activeGuid)
 {
@@ -68,6 +70,9 @@ bool DeployTargetAction::execute()
 		applicationConfiguration->merge(targetApplicationConfiguration, true);
 	}
 
+	int32_t remoteDatabasePort = m_editor->getSettings()->getProperty< PropertyInteger >(L"Amalgam.RemoteDatabasePort", c_remoteDatabasePort);
+	int32_t targetManagerPort = m_editor->getSettings()->getProperty< PropertyInteger >(L"Amalgam.TargetManagerPort", c_targetConnectionPort);
+
 	// Determine our interface address; we let applications know where to find data.
 	RefArray< net::SocketAddressIPv4 > interfaces = net::SocketAddressIPv4::getInterfaces();
 	std::wstring host = !interfaces.empty() ? interfaces[0]->getHostName() : L"localhost";
@@ -75,13 +80,13 @@ bool DeployTargetAction::execute()
 	// Modify configuration to connect to embedded database server.
 	db::ConnectionString remoteCs;
 	remoteCs.set(L"provider", L"traktor.db.RemoteDatabase");
-	remoteCs.set(L"host", host + L":" + toString(c_remoteDatabasePort));
+	remoteCs.set(L"host", host + L":" + toString(remoteDatabasePort));
 	remoteCs.set(L"database", m_targetInstance->getName() + L"|" + m_platformInstance->getName());
 	applicationConfiguration->setProperty< PropertyString >(L"Amalgam.Database", remoteCs.format());
 
 	// Modify configuration to connect to embedded target manager.
 	applicationConfiguration->setProperty< PropertyString >(L"Amalgam.TargetManager/Host", host);
-	applicationConfiguration->setProperty< PropertyInteger >(L"Amalgam.TargetManager/Port", c_targetConnectionPort);
+	applicationConfiguration->setProperty< PropertyInteger >(L"Amalgam.TargetManager/Port", targetManagerPort);
 	applicationConfiguration->setProperty< PropertyString >(L"Amalgam.TargetManager/Id", m_targetInstance->getId().format());
 
 	// Append optional "active guid" to application configuration.

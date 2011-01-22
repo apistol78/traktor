@@ -289,11 +289,24 @@ void RenderViewOpenGLES2::draw(const Primitives& primitives)
 		if (!m_currentProgram || !m_currentVertexBuffer)
 			return;
 
+		float targetSize[2];
+		if (!m_renderTargetStack.empty())
+		{	
+			const RenderTargetOpenGLES2* rt = m_renderTargetStack.top();
+			targetSize[0] = float(rt->getWidth());
+			targetSize[1] = float(rt->getHeight());
+		}
+		else
+		{	
+			targetSize[0] = float(getWidth());
+			targetSize[1] = float(getHeight());
+		}
+
 #	if TARGET_OS_IPHONE
-		if (!m_currentProgram->activate(m_wrapper->landscape()))
+		if (!m_currentProgram->activate(m_wrapper->landscape(), targetSize))
 			return;
 #	else
-		if (!m_currentProgram->activate(false))
+		if (!m_currentProgram->activate(false, targetSize))
 			return;
 #	endif
 

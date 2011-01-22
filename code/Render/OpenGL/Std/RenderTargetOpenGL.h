@@ -1,10 +1,10 @@
 #ifndef traktor_render_RenderTargetOpenGL_H
 #define traktor_render_RenderTargetOpenGL_H
 
+#include "Core/Math/Vector4.h"
 #include "Render/ITexture.h"
 #include "Render/Types.h"
-#include "Render/OpenGL/Std/ITextureBinding.h"
-#include "Core/Math/Vector4.h"
+#include "Render/OpenGL/ITextureBinding.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

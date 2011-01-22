@@ -66,6 +66,9 @@ bool RenderSystemOpenGLES2::create(const RenderSystemCreateDesc& desc)
 void RenderSystemOpenGLES2::destroy()
 {
 #if defined(T_OPENGL_ES2_HAVE_EGL)
+	if (m_display == EGL_NO_DISPLAY)
+		return;
+
 	eglMakeCurrent(m_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
 
 	eglDestroyContext(m_display, m_context);
@@ -322,11 +325,7 @@ Ref< RenderTargetSet > RenderSystemOpenGLES2::createRenderTargetSet(const Render
 
 Ref< IProgram > RenderSystemOpenGLES2::createProgram(const ProgramResource* programResource)
 {
-	Ref< ProgramOpenGLES2 > program = new ProgramOpenGLES2(m_globalContext);
-	if (!program->create(programResource))
-		return 0;
-
-	return program;
+	return ProgramOpenGLES2::create(m_globalContext, programResource);
 }
 
 Ref< IProgramCompiler > RenderSystemOpenGLES2::createProgramCompiler() const

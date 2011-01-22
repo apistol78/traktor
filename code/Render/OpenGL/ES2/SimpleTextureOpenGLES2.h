@@ -1,16 +1,17 @@
 #ifndef traktor_render_SimpleTextureOpenGLES2_H
 #define traktor_render_SimpleTextureOpenGLES2_H
 
+#include "Core/Math/Vector4.h"
 #include "Render/ISimpleTexture.h"
 #include "Render/Types.h"
-#include "Core/Math/Vector4.h"
+#include "Render/OpenGL/ITextureBinding.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RENDER_OPENGL_ES2_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -23,7 +24,9 @@ class IContext;
 /*!
  * \ingroup OGL
  */
-class T_DLLCLASS SimpleTextureOpenGLES2 : public ISimpleTexture
+class T_DLLCLASS SimpleTextureOpenGLES2
+:	public ISimpleTexture
+,	public ITextureBinding
 {
 	T_RTTI_CLASS;
 
@@ -46,11 +49,7 @@ public:
 
 	virtual void unlock(int level);
 
-	GLuint getTextureName() const { return m_textureName; }
-
-	Vector4 getTextureOriginAndScale() const { return Vector4(0.0f, 0.0f, 1.0f, 1.0f);	}
-
-	uint32_t getMipCount() const { return m_mipCount; }
+	virtual void bind(GLuint unit, const SamplerState& samplerState, GLint locationTexture, GLint locationOffset);
 
 private:
 	Ref< IContext > m_context;
@@ -63,6 +62,7 @@ private:
 	GLenum m_type;
 	uint32_t m_mipCount;
 	std::vector< uint8_t > m_data;
+	SamplerState m_shadowState;
 };
 		
 	}

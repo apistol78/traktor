@@ -5,7 +5,7 @@
 #include "Core/Misc/AutoPtr.h"
 #include "Render/ISimpleTexture.h"
 #include "Render/Types.h"
-#include "Render/OpenGL/Std/ITextureBinding.h"
+#include "Render/OpenGL/ITextureBinding.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
