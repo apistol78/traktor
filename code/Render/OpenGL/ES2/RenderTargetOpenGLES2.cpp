@@ -76,6 +76,7 @@ bool RenderTargetOpenGLES2::create(const RenderTargetSetCreateDesc& setDesc, con
 
 	switch (desc.format)
 	{
+	case TfR8:
 	case TfR8G8B8A8:
 		internalFormat = GL_RGBA;
 		format = GL_RGBA;
