@@ -1,16 +1,17 @@
 #ifndef traktor_render_RenderTargetOpenGLES2_H
 #define traktor_render_RenderTargetOpenGLES2_H
 
+#include "Core/Math/Vector4.h"
 #include "Render/ITexture.h"
 #include "Render/Types.h"
-#include "Core/Math/Vector4.h"
+#include "Render/OpenGL/ITextureBinding.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RENDER_OPENGL_ES2_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -25,7 +26,9 @@ class IContext;
 /*!
  * \ingroup OGL
  */
-class T_DLLCLASS RenderTargetOpenGLES2 : public ITexture
+class T_DLLCLASS RenderTargetOpenGLES2
+:	public ITexture
+,	public ITextureBinding
 {
 	T_RTTI_CLASS;
 
@@ -44,15 +47,11 @@ public:
 	
 	virtual int getDepth() const;
 
+	virtual void bind(GLuint unit, const SamplerState& samplerState, GLint locationTexture, GLint locationOffset);
+
 	void bind();
 
 	void enter();
-
-	inline GLenum getTextureTarget() const { return m_textureTarget; }
-
-	inline GLuint getTextureName() const { return m_colorTexture; }
-
-	inline const Vector4& getTextureOriginAndScale() const { return m_originAndScale; }
 
 private:
 	Ref< IContext > m_context;
@@ -63,6 +62,7 @@ private:
 	GLuint m_colorTexture;
 	Vector4 m_originAndScale;
 	bool m_haveDepth;
+	SamplerState m_shadowState;
 };
 
 #endif

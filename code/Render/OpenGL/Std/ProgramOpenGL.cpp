@@ -7,6 +7,7 @@
 #include "Render/OpenGL/Platform.h"
 #include "Render/OpenGL/GlslType.h"
 #include "Render/OpenGL/GlslProgram.h"
+#include "Render/OpenGL/ITextureBinding.h"
 #include "Render/OpenGL/ProgramResourceOpenGL.h"
 #include "Render/OpenGL/Std/Extensions.h"
 #include "Render/OpenGL/Std/ProgramOpenGL.h"
@@ -15,7 +16,6 @@
 #include "Render/OpenGL/Std/VolumeTextureOpenGL.h"
 #include "Render/OpenGL/Std/RenderTargetOpenGL.h"
 #include "Render/OpenGL/Std/ContextOpenGL.h"
-#include "Render/OpenGL/Std/ITextureBinding.h"
 
 namespace traktor
 {

@@ -179,6 +179,47 @@ int RenderTargetOpenGLES2::getDepth() const
 	return 0;
 }
 
+void RenderTargetOpenGLES2::bind(GLuint unit, const SamplerState& samplerState, GLint locationTexture, GLint locationOffset)
+{
+	T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + unit));
+	T_OGL_SAFE(glBindTexture(m_textureTarget, m_colorTexture));
+
+	GLenum minFilter = GL_NEAREST;
+	if (samplerState.minFilter != GL_NEAREST)
+		minFilter = GL_LINEAR;
+	else
+		minFilter = GL_NEAREST;
+
+	if (m_shadowState.minFilter != minFilter)
+	{
+		T_OGL_SAFE(glTexParameteri(m_textureTarget, GL_TEXTURE_MIN_FILTER, minFilter));
+		m_shadowState.minFilter = minFilter;
+	}
+
+	if (m_shadowState.magFilter != samplerState.magFilter)
+	{
+		T_OGL_SAFE(glTexParameteri(m_textureTarget, GL_TEXTURE_MAG_FILTER, samplerState.magFilter));
+		m_shadowState.magFilter = samplerState.magFilter;
+	}
+
+	if (m_shadowState.wrapS != samplerState.wrapS)
+	{
+		T_OGL_SAFE(glTexParameteri(m_textureTarget, GL_TEXTURE_WRAP_S, samplerState.wrapS));
+		m_shadowState.wrapS = samplerState.wrapS;
+	}
+
+	if (m_shadowState.wrapT != samplerState.wrapT)
+	{
+		T_OGL_SAFE(glTexParameteri(m_textureTarget, GL_TEXTURE_WRAP_T, samplerState.wrapT));
+		m_shadowState.wrapT = samplerState.wrapT;
+	}
+
+	T_OGL_SAFE(glUniform1i(locationTexture, unit));
+
+	if (locationOffset != -1)
+		T_OGL_SAFE(glUniform4fv(locationOffset, 1, (const GLfloat*)&m_originAndScale));
+}
+
 void RenderTargetOpenGLES2::bind()
 {
 	T_OGL_SAFE(glBindFramebuffer(GL_FRAMEBUFFER, m_frameBufferObject));
