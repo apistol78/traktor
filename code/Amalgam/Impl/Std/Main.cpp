@@ -293,7 +293,8 @@ int32_t amalgamMain(
 		defaultSettings,
 		settings,
 		sessionManagerProvider,
-		stateFactory
+		stateFactory,
+		0
 	))
 	{
 		for (;;)
