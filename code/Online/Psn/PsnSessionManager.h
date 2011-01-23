@@ -58,6 +58,9 @@ private:
 	Ref< PsnSaveData > m_saveData;
 	Ref< PsnStatistics > m_statistics;
 	bool m_connected;
+	static bool ms_requireUserAttention;
+
+	static void systemCallback(uint64_t status, uint64_t param);
 };
 
 	}
