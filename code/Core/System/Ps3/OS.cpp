@@ -144,8 +144,10 @@ OS::OS()
 	data->contentPath = mbstows(contentInfoPath);
 	data->usrdirPath = mbstows(usrdirPath);
 
+#if defined(_DEBUG)
 	log::debug << L"contentPath \"" << data->contentPath << L"\"" << Endl;
 	log::debug << L"usrdirPath \"" << data->usrdirPath << L"\"" << Endl;
+#endif
 
 	m_handle = data;
 }

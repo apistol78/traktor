@@ -124,6 +124,7 @@ int32_t amalgamMain(
 	traktor::log::debug.setBuffer(0);
 	traktor::log::info.setBuffer(0);
 	traktor::log::warning.setBuffer(0);
+	traktor::log::error.setBuffer(0);
 #endif
 
 	traktor::log::info << L"Using settings \"" << settingsPath.getPathName() << L"\"" << Endl;
