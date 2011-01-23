@@ -3,15 +3,20 @@
 
 #include <Core/Ref.h>
 
-namespace amalgam
+namespace traktor
 {
-	class Application;
+	namespace amalgam
+	{
+
+class Application;
+
+	}
 }
 
 @interface EAGLView : UIView
 {    
 @private
-	traktor::Ref< amalgam::Application > m_application;
+	traktor::Ref< traktor::amalgam::Application > m_application;
 	
 	BOOL animating;
 	BOOL displayLinkSupported;

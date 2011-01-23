@@ -28,7 +28,8 @@
 #include "Amalgam/Impl/InputServer.h"
 #include "Amalgam/Impl/OnlineServer.h"
 #include "Amalgam/Impl/PhysicsServer.h"
-#include "Amalgam/Impl/RenderServer.h"
+#include "Amalgam/Impl/RenderServerDefault.h"
+#include "Amalgam/Impl/RenderServerEmbedded.h"
 #include "Amalgam/Impl/ResourceServer.h"
 #include "Amalgam/Impl/ScriptServer.h"
 #include "Amalgam/Impl/TargetManagerConnection.h"
@@ -166,7 +167,8 @@ bool Application::create(
 	const Settings* defaultSettings,
 	Settings* settings,
 	online::ISessionManagerProvider* sessionManagerProvider,
-	IStateFactory* stateFactory
+	IStateFactory* stateFactory,
+	void* nativeWindowHandle
 )
 {
 	std::wstring targetManagerHost = settings->getProperty< PropertyString >(L"Amalgam.TargetManager/Host");
@@ -295,9 +297,20 @@ bool Application::create(
 		return false;
 
 	log::debug << L"Creating render server..." << Endl;
-	m_renderServer = new RenderServer();
-	if (!m_renderServer->create(settings))
-		return false;
+	if (nativeWindowHandle)
+	{
+		Ref< RenderServerEmbedded > renderServer = new RenderServerEmbedded();
+		if (!renderServer->create(settings, nativeWindowHandle))
+			return false;
+		m_renderServer = renderServer;
+	}
+	else
+	{
+		Ref< RenderServerDefault > renderServer = new RenderServerDefault();
+		if (!renderServer->create(settings))
+			return false;
+		m_renderServer = renderServer;
+	}
 
 	log::debug << L"Creating input server..." << Endl;
 	m_inputServer = new InputServer();

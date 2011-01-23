@@ -1,5 +1,5 @@
-#import "Launch/App/IPhone/LaunchAppDelegate.h"
-#import "Launch/App/IPhone/EAGLView.h"
+#import "Amalgam/Impl/IPhone/LaunchAppDelegate.h"
+#import "Amalgam/Impl/IPhone/EAGLView.h"
 
 @implementation LaunchAppDelegate
 

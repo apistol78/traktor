@@ -45,7 +45,7 @@ private:
 	Ref< IContext > m_context;
 	bool m_dynamic;
 	GLuint m_name;
-	AutoArrayPtr< uint8_t > m_buffer;
+	AutoPtr< uint8_t, AllocFreeAlign< uint8_t > > m_buffer;
 };
 	
 	}

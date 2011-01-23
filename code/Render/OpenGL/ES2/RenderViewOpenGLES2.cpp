@@ -92,7 +92,10 @@ void RenderViewOpenGLES2::resize(int32_t width, int32_t height)
 int RenderViewOpenGLES2::getWidth() const
 {
 #if TARGET_OS_IPHONE
-	return m_wrapper->getWidth();
+	if (!m_wrapper->landscape())
+		return m_wrapper->getWidth();
+	else
+		return m_wrapper->getHeight();
 #elif defined(T_OPENGL_ES2_HAVE_EGL)
 	EGLint width;
 	eglQuerySurface(m_display, m_surface, EGL_WIDTH, &width);
@@ -105,7 +108,10 @@ int RenderViewOpenGLES2::getWidth() const
 int RenderViewOpenGLES2::getHeight() const
 {
 #if TARGET_OS_IPHONE
-	return m_wrapper->getHeight();
+	if (!m_wrapper->landscape())
+		return m_wrapper->getHeight();
+	else
+		return m_wrapper->getWidth();
 #elif defined(T_OPENGL_ES2_HAVE_EGL)
 	EGLint height;
 	eglQuerySurface(m_display, m_surface, EGL_HEIGHT, &height);
@@ -290,20 +296,24 @@ void RenderViewOpenGLES2::draw(const Primitives& primitives)
 			return;
 
 		float targetSize[2];
+		bool landscape;
+		
 		if (!m_renderTargetStack.empty())
 		{	
 			const RenderTargetOpenGLES2* rt = m_renderTargetStack.top();
 			targetSize[0] = float(rt->getWidth());
 			targetSize[1] = float(rt->getHeight());
+			landscape = false;
 		}
 		else
 		{	
 			targetSize[0] = float(getWidth());
 			targetSize[1] = float(getHeight());
+			landscape = true;
 		}
 
 #	if TARGET_OS_IPHONE
-		if (!m_currentProgram->activate(m_wrapper->landscape(), targetSize))
+		if (!m_currentProgram->activate(landscape, targetSize))
 			return;
 #	else
 		if (!m_currentProgram->activate(false, targetSize))

@@ -60,7 +60,7 @@ void* IndexBufferOpenGLES2::lock()
 		return 0;
 
 	int32_t bufferSize = getBufferSize();
-	m_buffer.reset(new uint8_t [bufferSize]);
+	m_buffer.reset((uint8_t*)Alloc::acquireAlign(bufferSize, 16, "IB"));
 
 	return m_buffer.ptr();
 }
@@ -72,7 +72,7 @@ void IndexBufferOpenGLES2::unlock()
 		int32_t bufferSize = getBufferSize();
 		T_OGL_SAFE(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_name));
 		T_OGL_SAFE(glBufferData(GL_ELEMENT_ARRAY_BUFFER, bufferSize, m_buffer.ptr(), m_dynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW));
-		m_buffer.release();
+		//m_buffer.release();
 	}
 }
 

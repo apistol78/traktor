@@ -1,18 +1,43 @@
-#import "Launch/App/IPhone/EAGLView.h"
+#import "Amalgam/Impl/IPhone/EAGLView.h"
 
-#include "Launch/App/Application.h"
-#include "Launch/App/Configuration.h"
-#include "Xml/XmlDeserializer.h"
+#include "Amalgam/Impl/Application.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
-#include "Core/Misc/CommandLine.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/CommandLine.h"
+#include "Core/Settings/Settings.h"
+#include "Xml/XmlDeserializer.h"
 
 using namespace traktor;
 
-// @fixme
-extern const traktor::CommandLine* g_cmdLine;
-extern amalgam::IStateFactory* g_stateFactory;
+namespace traktor
+{
+	namespace amalgam
+	{
+	
+extern const CommandLine* g_cmdLine;
+extern traktor::online::ISessionManagerProvider* g_sessionManagerProvider;
+extern traktor::amalgam::IStateFactory* g_stateFactory;
+
+	}
+}
+
+namespace
+{
+
+Ref< Settings > loadSettings(const Path& settingsPath)
+{
+	Ref< Settings > settings;
+	Ref< IStream > file = FileSystem::getInstance().open(settingsPath, File::FmRead);
+	if (file)
+	{
+		settings = Settings::read< xml::XmlDeserializer >(file);
+		file->close();
+	}
+	return settings;
+}
+
+}
 
 @implementation EAGLView
 
@@ -38,56 +63,27 @@ extern amalgam::IStateFactory* g_stateFactory;
 		NSString* currSysVer = [[UIDevice currentDevice] systemVersion];
 		if ([currSysVer compare:reqSysVer options:NSNumericSearch] != NSOrderedAscending)
 			displayLinkSupported = TRUE;
-/*					
-		// Read configuration file.
-		std::wstring configurationFileName;
-		if (g_cmdLine->getCount() >= 1)
-			configurationFileName = g_cmdLine->getString(0);
 
-		if (configurationFileName.empty())
+		// Load settings.
+		Path settingsPath = L"$(BUNDLE_PATH)/Application.config";
+		Ref< Settings > defaultSettings = loadSettings(settingsPath);
+		if (!defaultSettings)
 		{
-			traktor::log::error << L"No configuration file" << Endl;
+			traktor::log::error << L"Unable to read application settings \"" << settingsPath.getPathName() << L"\"" << Endl;
 			return 0;
 		}
 		
-		configurationFileName = FileSystem::getInstance().getAbsolutePath(configurationFileName).getPathName();
-		traktor::log::info << L"Using configuration \"" << configurationFileName << L"\"" << Endl;
-
-		Ref< IStream > configurationFile = FileSystem::getInstance().open(configurationFileName, File::FmRead);
-		if (!configurationFile)
-		{
-			traktor::log::error << L"Unable to open configuration file \"" << configurationFileName << L"\"" << Endl;
-			return 0;
-		}
-
-		Ref< amalgam::Configuration > configuration = xml::XmlDeserializer(configurationFile).readObject< amalgam::Configuration >();
-		if (!configuration)
-		{
-			traktor::log::error << L"Unable to parse configuration file \"" << configurationFileName << L"\"" << Endl;
-			return 0;
-		}
-
-		configurationFile->close();
-*/
-		Ref< amalgam::Configuration > configuration = new amalgam::Configuration();
-		configuration->setDatabase(L"192.168.143.23:33666/Output-IPhone-OpenGLES2");
-		configuration->setRenderSystem(L"traktor.render.RenderSystemOpenGLES2");
+		Ref< Settings > settings = defaultSettings->clone();
+		T_FATAL_ASSERT (settings);
 
 		// Create application.
 		m_application = new amalgam::Application();
 		if (!m_application->create(
-			g_stateFactory,
-			self,
-			0,
-			0,
-			0,
-			0,
-			2,
-			false,
-			false,
-			false,
-			false,
-			configuration
+			defaultSettings,
+			settings,
+			traktor::amalgam::g_sessionManagerProvider,
+			traktor::amalgam::g_stateFactory,
+			(void*)self
 		))
 			return 0;
     }
