@@ -4663,6 +4663,7 @@
 					<definitions>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
+						<item>T_MUTE_LOGS</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>

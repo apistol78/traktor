@@ -4,6 +4,7 @@
 #include <sysutil/sysutil_sysparam.h>
 #include "Core/Log/Log.h"
 #include "Core/System/OS.h"
+#include "Core/System/PS3/SystemCallback.h"
 #include "Online/Psn/PsnAchievements.h"
 #include "Online/Psn/PsnLeaderboards.h"
 #include "Online/Psn/PsnSaveData.h"
@@ -64,6 +65,8 @@ const wchar_t* lookupLanguageCode(int32_t id)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.online.PsnSessionManager", PsnSessionManager, ISessionManagerProvider)
 
+bool PsnSessionManager::ms_requireUserAttention = false;
+
 PsnSessionManager::PsnSessionManager()
 :	m_connected(false)
 {
@@ -71,6 +74,7 @@ PsnSessionManager::PsnSessionManager()
 
 bool PsnSessionManager::create(const PsnCreateDesc& desc)
 {
+	uint64_t reqTrophySpaceBytes = 0;
 	int32_t err;
 
 	err = cellSysmoduleLoadModule(CELL_SYSMODULE_SYSUTIL_NP2);
@@ -113,19 +117,21 @@ bool PsnSessionManager::create(const PsnCreateDesc& desc)
 		return false;
 	}
 
-	uint64_t reqTrophySpaceBytes = 0;
 	err = sceNpTrophyGetRequiredDiskSpace(m_trophyContext, m_trophyHandle, &reqTrophySpaceBytes, 0);
 	if (err < 0)
 	{
 		log::error << PsnLogError::getTrophyErrorString(err) << Endl;
 		return false;
 	}
+
 	int32_t trophySpaceKB = (reqTrophySpaceBytes + 1023) / 1024;
 
 	m_achievements = new PsnAchievements(desc.achievements, m_trophyContext, m_trophyHandle);
 	m_leaderboards = new PsnLeaderboards();
 	m_saveData = new PsnSaveData(trophySpaceKB);
 	m_statistics = new PsnStatistics();
+
+	SystemCallback::getInstance().add(&PsnSessionManager::systemCallback);
 
 	return true;
 }
@@ -198,7 +204,7 @@ bool PsnSessionManager::isConnected() const
 
 bool PsnSessionManager::requireUserAttention() const
 {
-	return false;
+	return ms_requireUserAttention;
 }
 
 Ref< IAchievementsProvider > PsnSessionManager::getAchievements() const
@@ -219,6 +225,14 @@ Ref< ISaveDataProvider > PsnSessionManager::getSaveData() const
 Ref< IStatisticsProvider > PsnSessionManager::getStatistics() const
 {
 	return m_statistics;
+}
+
+void PsnSessionManager::systemCallback(uint64_t status, uint64_t param)
+{
+	if (status == CELL_SYSUTIL_SYSTEM_MENU_OPEN)
+		ms_requireUserAttention = true;
+	else if (status == CELL_SYSUTIL_SYSTEM_MENU_CLOSE)
+		ms_requireUserAttention = false;
 }
 
 	}
