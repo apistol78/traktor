@@ -153,7 +153,8 @@ int32_t amalgamMain(
 		defaultSettings,
 		settings,
 		sessionManagerProvider,
-		stateFactory
+		stateFactory,
+		0
 	))
 	{
 		Environment* environment = checked_type_cast< Environment* >(application->getEnvironment());
