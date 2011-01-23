@@ -62,7 +62,8 @@ public:
 		const Settings* defaultSettings,
 		Settings* settings,
 		online::ISessionManagerProvider* sessionManagerProvider,
-		IStateFactory* stateFactory
+		IStateFactory* stateFactory,
+		void* nativeWindowHandle
 	);
 
 	void destroy();
@@ -76,10 +77,8 @@ public:
 private:
 	Ref< Settings > m_settings;
 	std::vector< Library > m_libraries;
-	
 	Ref< TargetManagerConnection > m_targetManagerConnection;
 	Ref< db::Database > m_database;
-	
 	Ref< AudioServer > m_audioServer;
 	Ref< InputServer > m_inputServer;
 	Ref< OnlineServer > m_onlineServer;
@@ -89,7 +88,6 @@ private:
 	Ref< ScriptServer > m_scriptServer;
 	Ref< WorldServer > m_worldServer;
 	Ref< Environment > m_environment;
-
 	Ref< StateManager > m_stateManager;
 	Semaphore m_lockUpdate;
 	Thread* m_threadDatabase;

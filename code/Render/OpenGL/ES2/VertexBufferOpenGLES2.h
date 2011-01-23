@@ -56,7 +56,7 @@ private:
 	GLuint m_name;
 	GLuint m_vertexStride;
 	AttributeDesc m_attributeDesc[T_OGL_MAX_USAGE_INDEX];
-	AutoArrayPtr< uint8_t > m_buffer;
+	AutoPtr< uint8_t, AllocFreeAlign< uint8_t > > m_buffer;
 };
 
 	}

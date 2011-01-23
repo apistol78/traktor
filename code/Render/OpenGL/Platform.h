@@ -3,7 +3,7 @@
 
 #include "Core/Config.h"
 
-#if TARGET_OS_IPHONE
+#if TARGET_OS_IPHONE || TARGET_OS_IPAD
 #	if !defined(T_OPENGL_ES2)
 #		define T_OPENGL_ES2
 #	endif
@@ -36,7 +36,7 @@
 #		include <GL/glx.h>
 #	endif
 #elif defined(T_OPENGL_ES2)
-#	if TARGET_OS_IPHONE
+#	if TARGET_OS_IPHONE || TARGET_OS_IPAD
 #		include <OpenGLES/ES2/gl.h>
 #		include <OpenGLES/ES2/glext.h>
 #	elif TARGET_OS_MAC

@@ -98,7 +98,13 @@ DisplayMode RenderSystemOpenGLES2::getCurrentDisplayMode() const
 
 float RenderSystemOpenGLES2::getDisplayAspectRatio() const
 {
+#if defined(TARGET_OS_IPHONE)
+	return 480.0f / 320.0f;
+#elif defined(TARGET_OS_IPAD)
+	return 1024.0f / 768.0f;
+#else
 	return 0.0f;
+#endif
 }
 
 bool RenderSystemOpenGLES2::handleMessages()
