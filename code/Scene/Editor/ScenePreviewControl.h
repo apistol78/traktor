@@ -25,6 +25,7 @@ class Command;
 
 class ToolBar;
 class ToolBarButton;
+class ToolBarDropDown;
 
 		}
 	}
@@ -67,6 +68,7 @@ private:
 	Ref< ui::custom::ToolBarButton > m_toolToggleY;
 	Ref< ui::custom::ToolBarButton > m_toolToggleZ;
 	Ref< ui::custom::ToolBarButton > m_toolToggleSnap;
+	Ref< ui::custom::ToolBarDropDown > m_toolSnapSpacing;
 	int32_t m_splitCount;
 	Ref< ui::Widget > m_splitterRenderControls;
 	RefArray< ISceneRenderControl > m_renderControls;

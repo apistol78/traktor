@@ -33,6 +33,7 @@
 #include "Ui/Events/IdleEvent.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
+#include "Ui/Custom/ToolBar/ToolBarDropDown.h"
 #include "Ui/Custom/ToolBar/ToolBarSeparator.h"
 #include "Ui/Custom/StatusBar/StatusBar.h"
 #include "Ui/Custom/Splitter.h"
@@ -67,6 +68,15 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 	m_toolToggleZ = new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_TOGGLE_Z"), ui::Command(1, L"Scene.Editor.ToggleZ"), 4, ui::custom::ToolBarButton::BsDefaultToggle);
 	m_toolToggleSnap = new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_TOGGLE_SNAP"), ui::Command(1, L"Scene.Editor.ToggleSnap"), 7, ui::custom::ToolBarButton::BsDefaultToggle);
 
+	m_toolSnapSpacing = new ui::custom::ToolBarDropDown(ui::Command(L"Scene.Editor.SnapSpacing"), 60, i18n::Text(L"SCENE_EDITOR_TOGGLE_SNAP_SPACING"));
+	m_toolSnapSpacing->add(L"None");
+	m_toolSnapSpacing->add(L"1/2");
+	m_toolSnapSpacing->add(L"1");
+	m_toolSnapSpacing->add(L"2");
+	m_toolSnapSpacing->add(L"3");
+	m_toolSnapSpacing->add(L"4");
+	m_toolSnapSpacing->select(0);
+
 	Ref< Settings > settings = context->getEditor()->getSettings();
 	T_ASSERT (settings);
 
@@ -90,6 +100,7 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 	m_toolBarActions->addItem(m_toolToggleZ);
 	m_toolBarActions->addItem(new ui::custom::ToolBarSeparator());
 	m_toolBarActions->addItem(m_toolToggleSnap);
+	m_toolBarActions->addItem(m_toolSnapSpacing);
 	m_toolBarActions->addClickEventHandler(ui::createMethodHandler(this, &ScenePreviewControl::eventToolBarActionClicked));
 	m_toolBarActions->addItem(new ui::custom::ToolBarSeparator());
 	m_toolBarActions->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_REWIND"), ui::Command(L"Scene.Editor.Rewind"), 17));
@@ -195,6 +206,10 @@ bool ScenePreviewControl::handleCommand(const ui::Command& command)
 	{
 		if (command.getId() == 0)
 			m_toolToggleSnap->setToggled(!m_toolToggleSnap->isToggled());
+		updateEditState();
+	}
+	else if (command == L"Scene.Editor.SnapSpacing")
+	{
 		updateEditState();
 	}
 	else if (command == L"Scene.Editor.Rewind")
@@ -372,8 +387,39 @@ void ScenePreviewControl::updateEditState()
 		axisEnabled |= SceneEditorContext::AeZ;
 	m_context->setAxisEnable(axisEnabled);
 
-	// Guides enabled.
-	m_context->setSnapEnable(m_toolToggleSnap->isToggled());
+	// Snap mode.
+	if (m_toolToggleSnap->isToggled())
+		m_context->setSnapMode(SceneEditorContext::SmNeighbour);
+	else
+	{
+		switch (m_toolSnapSpacing->getSelected())
+		{
+		default:
+		case 0:
+			m_context->setSnapMode(SceneEditorContext::SmNone);
+			break;
+		case 1:
+			m_context->setSnapSpacing(0.5f);
+			m_context->setSnapMode(SceneEditorContext::SmGrid);
+			break;
+		case 2:
+			m_context->setSnapSpacing(1.0f);
+			m_context->setSnapMode(SceneEditorContext::SmGrid);
+			break;
+		case 3:
+			m_context->setSnapSpacing(2.0f);
+			m_context->setSnapMode(SceneEditorContext::SmGrid);
+			break;
+		case 4:
+			m_context->setSnapSpacing(3.0f);
+			m_context->setSnapMode(SceneEditorContext::SmGrid);
+			break;
+		case 5:
+			m_context->setSnapSpacing(4.0f);
+			m_context->setSnapMode(SceneEditorContext::SmGrid);
+			break;
+		}
+	}
 
 	// Ensure toolbar is up-to-date.
 	m_toolBarActions->update();

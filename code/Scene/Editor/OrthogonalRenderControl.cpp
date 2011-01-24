@@ -406,9 +406,9 @@ void OrthogonalRenderControl::eventMouseMove(ui::Event* event)
 			{
 				if ((*i)->getEntityEditor())
 					(*i)->getEntityEditor()->beginModifier(
-					m_context,
-					*i
-				);
+						m_context,
+						*i
+					);
 			}
 
 			// Issue begin modification event.

@@ -99,6 +99,13 @@ public:
 		AeXYZ = AeX | AeY | AeZ
 	};
 
+	enum SnapMode
+	{
+		SmNone,
+		SmGrid,
+		SmNeighbour
+	};
+
 	SceneEditorContext(
 		editor::IEditor* editor,
 		db::Database* resourceDb,
@@ -131,9 +138,13 @@ public:
 
 	uint32_t getAxisEnable() const;
 
-	void setSnapEnable(bool snapEnable);
+	void setSnapMode(SnapMode snapMode);
 
-	bool getSnapEnable() const;
+	SnapMode getSnapMode() const;
+
+	void setSnapSpacing(float snapSpacing);
+
+	float getSnapSpacing() const;
 
 	void setPhysicsEnable(bool physicsEnable);
 
@@ -287,7 +298,8 @@ private:
 	Ref< IModifier > m_modifier;
 	bool m_pickEnable;
 	uint32_t m_axisEnable;
-	bool m_snapEnable;
+	SnapMode m_snapMode;
+	float m_snapSpacing;
 	bool m_physicsEnable;
 	bool m_playing;
 	float m_timeScale;
