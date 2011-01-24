@@ -25,15 +25,23 @@
 #if defined(__GNUC__)
 #	define T_MATH_ALIGN16 T_ALIGN16
 
+#	if defined(__APPLE__)
+#		include <TargetConditionals.h>
+#	endif
+
 #	if !defined(_DEBUG)
 #		define T_MATH_USE_INLINE
 #		define T_MATH_INLINE inline
 #		if defined(__APPLE__)
-#			define T_MATH_USE_SSE2
+#			if !TARGET_OS_IPHONE
+#				define T_MATH_USE_SSE2
+#			endif
 #		endif
 #	else	// _DEBUG
 #		if defined(__APPLE__)
-#			define T_MATH_USE_SSE2
+#			if !TARGET_OS_IPHONE
+#				define T_MATH_USE_SSE2
+#			endif
 #		endif
 #	endif
 

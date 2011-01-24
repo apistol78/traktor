@@ -15,7 +15,11 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.online.LocalSessionManager", LocalSessionManage
 
 bool LocalSessionManager::create(const LocalCreateDesc& desc)
 {
-	std::wstring dbPath = OS::getInstance().getUserApplicationDataPath() + L"/Doctor Entertainment AB/" + std::wstring(desc.dbName) + L".db";
+#if TARGET_OS_IPHONE
+	std::wstring dbPath = OS::getInstance().getWritableFolderPath() + L"/" + std::wstring(desc.dbName) + L".db";
+#else
+	std::wstring dbPath = OS::getInstance().getWritableFolderPath() + L"/Doctor Entertainment AB/" + std::wstring(desc.dbName) + L".db";
+#endif
 
 	m_db = new sql::ConnectionSqlite3();
 	if (!m_db->connect(L"fileName=" + dbPath))

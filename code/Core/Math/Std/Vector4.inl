@@ -523,6 +523,27 @@ T_MATH_INLINE Vector4 max(const Vector4& l, const Vector4& r)
 	);
 }
 
+T_MATH_INLINE Vector4 select(const Vector4& condition, const Vector4& negative, const Vector4& positive)
+{
+	return Vector4(
+		condition._x < 0.0f ? negative._x : positive._x,
+		condition._y < 0.0f ? negative._y : positive._y,
+		condition._z < 0.0f ? negative._z : positive._z,
+		condition._w < 0.0f ? negative._w : positive._w
+	);		
+}
+
+T_MATH_INLINE bool compareAllGreaterEqual(const Vector4& l, const Vector4& r)
+{
+	return l._x >= r._x && l._y >= r._y && l._z >= r._z && l._w >= r._w;
+}
+
+T_MATH_INLINE bool compareAllLessEqual(const Vector4& l, const Vector4& r)
+{
+	return l._x <= r._x && l._y <= r._y && l._z <= r._z && l._w <= r._w;
+}
+
+
 #if defined(VALIDATE)
 #undef VALIDATE
 #endif

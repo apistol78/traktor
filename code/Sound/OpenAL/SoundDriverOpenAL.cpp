@@ -14,9 +14,6 @@ namespace traktor
 		namespace
 		{
 
-static const __m128 c_clampMin(_mm_set1_ps(-1.0f));
-static const __m128 c_clampMax(_mm_set1_ps(1.0f));
-
 template < typename SampleType >
 struct CastSample
 {
@@ -25,6 +22,11 @@ struct CastSample
 		return static_cast< SampleType >(sample * std::numeric_limits< SampleType >::max());
 	}
 };
+
+#if !TARGET_OS_IPHONE
+
+static const __m128 c_clampMin(_mm_set1_ps(-1.0f));
+static const __m128 c_clampMax(_mm_set1_ps(1.0f));
 
 template < >
 struct CastSample < int8_t >
@@ -67,6 +69,10 @@ struct CastSample < int16_t >
 		return (int16_t)_mm_cvtt_ss2si(sf);
 	}
 };
+
+#else
+
+#endif
 
 template < typename SampleType >
 void writeSamples(void* dest, const float* samples, uint32_t samplesCount, uint32_t writeStride)
