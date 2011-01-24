@@ -138,7 +138,8 @@ SceneEditorContext::SceneEditorContext(
 ,	m_physicsManager(physicsManager)
 ,	m_pickEnable(true)
 ,	m_axisEnable(AeXYZ)
-,	m_snapEnable(true)
+,	m_snapMode(SmNone)
+,	m_snapSpacing(0.0f)
 ,	m_physicsEnable(false)
 ,	m_playing(false)
 ,	m_timeScale(1.0f)
@@ -203,14 +204,24 @@ uint32_t SceneEditorContext::getAxisEnable() const
 	return m_axisEnable;
 }
 
-void SceneEditorContext::setSnapEnable(bool snapEnable)
+void SceneEditorContext::setSnapMode(SnapMode snapMode)
 {
-	m_snapEnable = snapEnable;
+	m_snapMode = snapMode;
 }
 
-bool SceneEditorContext::getSnapEnable() const
+SceneEditorContext::SnapMode SceneEditorContext::getSnapMode() const
 {
-	return m_snapEnable;
+	return m_snapMode;
+}
+
+void SceneEditorContext::setSnapSpacing(float snapSpacing)
+{
+	m_snapSpacing = snapSpacing;
+}
+
+float SceneEditorContext::getSnapSpacing() const
+{
+	return m_snapSpacing;
 }
 
 void SceneEditorContext::setPhysicsEnable(bool physicsEnable)

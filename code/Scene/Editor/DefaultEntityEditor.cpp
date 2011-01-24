@@ -49,6 +49,7 @@ void DefaultEntityEditor::beginModifier(
 {
 	T_ASSERT (!m_inModify);
 	m_inModify = true;
+	m_modifyTransform = entityAdapter->getTransform();
 }
 
 void DefaultEntityEditor::applyModifier(
@@ -68,7 +69,7 @@ void DefaultEntityEditor::applyModifier(
 	if (!modifier)
 		return;
 
-	Transform transform = entityAdapter->getTransform();
+	Transform transform = m_modifyTransform;
 	
 	modifier->adjust(
 		context,
@@ -80,10 +81,27 @@ void DefaultEntityEditor::applyModifier(
 		transform
 	);
 
-	entityAdapter->setTransform(transform);
+	// Save "unsnapped" transform.
+	m_modifyTransform = transform;
 
-	// \hack Snap entity.
-	if (context->getSnapEnable())
+	// Snap to grid.
+	if (context->getSnapMode() == SceneEditorContext::SmGrid)
+	{
+		float spacing = context->getSnapSpacing();
+		if (spacing > 0.0f)
+		{
+			Vector4 t = transform.translation();
+			t.set(
+				floor(t[0] / spacing + 0.5f) * spacing,
+				floor(t[1] / spacing + 0.5f) * spacing,
+				floor(t[2] / spacing + 0.5f) * spacing,
+				1.0f
+			);
+			transform = Transform(t, transform.rotation());
+		}
+	}
+	// Snap to neighbour entity.
+	else if (context->getSnapMode() == SceneEditorContext::SmNeighbour)
 	{
 		AlignedVector< EntityAdapter::SnapPoint > snapPoints = entityAdapter->getSnapPoints();
 
@@ -136,8 +154,10 @@ void DefaultEntityEditor::applyModifier(
 		}
 		
 		if (minDistance <= 0.2f)
-			entityAdapter->setTransform(transform * Transform(minTranslate));
+			transform = transform * Transform(minTranslate);
 	}
+
+	entityAdapter->setTransform(transform);
 }
 
 void DefaultEntityEditor::endModifier(
@@ -210,7 +230,7 @@ void DefaultEntityEditor::drawGuide(
 			primitiveRenderer->drawWireAabb(boundingBox, m_colorBoundingBox);
 		primitiveRenderer->popWorld();
 
-		if (entityAdapter->isSelected() && context->getSnapEnable())
+		if (entityAdapter->isSelected() && context->getSnapMode() == SceneEditorContext::SmNeighbour)
 		{
 			AlignedVector< EntityAdapter::SnapPoint > snapPoints = entityAdapter->getSnapPoints();
 			for (AlignedVector< EntityAdapter::SnapPoint >::const_iterator i = snapPoints.begin(); i != snapPoints.end(); ++i)
