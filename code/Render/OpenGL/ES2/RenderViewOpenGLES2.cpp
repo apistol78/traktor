@@ -1,4 +1,4 @@
-#include "Render/OpenGL/IContext.h"
+#include "Render/OpenGL/ES2/ContextOpenGLES2.h"
 #include "Render/OpenGL/ES2/RenderViewOpenGLES2.h"
 
 #if !defined(T_OFFLINE_ONLY)
@@ -9,9 +9,6 @@
 #	include "Render/OpenGL/ES2/ProgramOpenGLES2.h"
 #	include "Render/OpenGL/ES2/RenderTargetSetOpenGLES2.h"
 #	include "Render/OpenGL/ES2/RenderTargetOpenGLES2.h"
-#	if TARGET_OS_IPHONE
-#		include "Render/OpenGL/ES2/IPhone/EAGLContextWrapper.h"
-#	endif
 #	include "Core/Log/Log.h"
 
 namespace traktor
@@ -21,43 +18,14 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewOpenGLES2", RenderViewOpenGLES2, IRenderView)
 
-#	if defined(T_OPENGL_ES2_HAVE_EGL)
 RenderViewOpenGLES2::RenderViewOpenGLES2(
-	IContext* globalContext,
-	EGLDisplay display,
-	EGLContext context,
-	EGLSurface surface
+	ContextOpenGLES2* globalContext,
+	ContextOpenGLES2* context
 )
 :	m_globalContext(globalContext)
-,	m_display(display)
 ,	m_context(context)
-,	m_surface(surface)
-,	m_currentDirty(true)
-{
+,	m_currentDirty(true){
 }
-#	elif TARGET_OS_IPHONE
-RenderViewOpenGLES2::RenderViewOpenGLES2(
-	IContext* globalContext,
-	EAGLContextWrapper* wrapper
-)
-:	m_globalContext(globalContext)
-,	m_wrapper(wrapper)
-{
-	T_OGL_SAFE(glViewport(
-		0,
-		0,
-		wrapper->getWidth(),
-		wrapper->getHeight()
-	));
-}
-#	else
-RenderViewOpenGLES2::RenderViewOpenGLES2(
-	IContext* globalContext
-)
-:	m_globalContext(globalContext)
-{
-}
-#	endif
 
 RenderViewOpenGLES2::~RenderViewOpenGLES2()
 {
@@ -65,13 +33,8 @@ RenderViewOpenGLES2::~RenderViewOpenGLES2()
 
 void RenderViewOpenGLES2::close()
 {
-#	if TARGET_OS_IPHONE
-	if (m_wrapper)
-	{
-		m_wrapper->destroy();
-		delete m_wrapper, m_wrapper = 0;
-	}
-#	endif
+	m_context = 0;
+	m_globalContext = 0;
 }
 
 bool RenderViewOpenGLES2::reset(const RenderViewDefaultDesc& desc)
@@ -81,44 +44,17 @@ bool RenderViewOpenGLES2::reset(const RenderViewDefaultDesc& desc)
 
 void RenderViewOpenGLES2::resize(int32_t width, int32_t height)
 {
-#	if TARGET_OS_IPHONE
-	if (!m_wrapper->landscape())
-		m_wrapper->resize(width, height);
-	else
-		m_wrapper->resize(height, width);
-#	endif
+	m_context->resize(width, height);
 }
 
 int RenderViewOpenGLES2::getWidth() const
 {
-#if TARGET_OS_IPHONE
-	if (!m_wrapper->landscape())
-		return m_wrapper->getWidth();
-	else
-		return m_wrapper->getHeight();
-#elif defined(T_OPENGL_ES2_HAVE_EGL)
-	EGLint width;
-	eglQuerySurface(m_display, m_surface, EGL_WIDTH, &width);
-	return width;
-#else
-	return 0;
-#endif
+	return m_context->getWidth();
 }
 
 int RenderViewOpenGLES2::getHeight() const
 {
-#if TARGET_OS_IPHONE
-	if (!m_wrapper->landscape())
-		return m_wrapper->getHeight();
-	else
-		return m_wrapper->getWidth();
-#elif defined(T_OPENGL_ES2_HAVE_EGL)
-	EGLint height;
-	eglQuerySurface(m_display, m_surface, EGL_HEIGHT, &height);
-	return height;
-#else
-	return 0;
-#endif
+	return m_context->getHeight();
 }
 
 bool RenderViewOpenGLES2::isActive() const
@@ -128,13 +64,14 @@ bool RenderViewOpenGLES2::isActive() const
 
 bool RenderViewOpenGLES2::isFullScreen() const
 {
-	return false;
+	return true;
 }
 
 void RenderViewOpenGLES2::setViewport(const Viewport& viewport)
 {
-#	if TARGET_OS_IPHONE
-	if (!m_wrapper->landscape())
+	T_ANONYMOUS_VAR(IContext::Scope)(m_context);
+
+	if (!m_context->getLandscape())
 	{
 		T_OGL_SAFE(glViewport(
 			viewport.top,
@@ -152,14 +89,6 @@ void RenderViewOpenGLES2::setViewport(const Viewport& viewport)
 			viewport.height
 		));
 	}
-#	else
-	T_OGL_SAFE(glViewport(
-		viewport.left,
-		viewport.top,
-		viewport.width,
-		viewport.height
-	));
-#	endif
 
 	T_OGL_SAFE(glDepthRangef(
 		viewport.nearZ,
@@ -169,19 +98,19 @@ void RenderViewOpenGLES2::setViewport(const Viewport& viewport)
 
 Viewport RenderViewOpenGLES2::getViewport()
 {
+	T_ANONYMOUS_VAR(IContext::Scope)(m_context);
+
 	GLint ext[4];
 	T_OGL_SAFE(glGetIntegerv(GL_VIEWPORT, ext));
 
 	GLfloat range[2];
 	T_OGL_SAFE(glGetFloatv(GL_DEPTH_RANGE, range));
 
-#	if TARGET_OS_IPHONE
-	if (m_wrapper->landscape())
+	if (m_context->getLandscape())
 	{
 		std::swap(ext[0], ext[1]);
 		std::swap(ext[2], ext[3]);
 	}
-#	endif
 
 	Viewport viewport;
 	viewport.left = ext[0];
@@ -196,19 +125,16 @@ Viewport RenderViewOpenGLES2::getViewport()
 
 bool RenderViewOpenGLES2::begin(EyeType eye)
 {
-#	if TARGET_OS_IPHONE
-	m_wrapper->setCurrent();
+	if (!m_context->enter())
+		return false;
 	
-	glViewport(
+	T_OGL_SAFE(glViewport(
 		0,
 		0,
-		m_wrapper->getWidth(),
-		m_wrapper->getHeight()
-	);
+		m_context->getWidth(),
+		m_context->getHeight()
+	));
 
-#	endif
-
-	//T_OGL_SAFE(glPushAttrib(GL_VIEWPORT_BIT | GL_DEPTH_BUFFER_BIT));
 	T_OGL_SAFE(glEnable(GL_DEPTH_TEST));
 	T_OGL_SAFE(glDepthFunc(GL_LEQUAL));
 
@@ -218,8 +144,6 @@ bool RenderViewOpenGLES2::begin(EyeType eye)
 
 bool RenderViewOpenGLES2::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 {
-	//T_OGL_SAFE(glPushAttrib(GL_VIEWPORT_BIT | GL_DEPTH_BUFFER_BIT));
-
 	RenderTargetSetOpenGLES2* rts = checked_type_cast< RenderTargetSetOpenGLES2* >(renderTargetSet);
 	RenderTargetOpenGLES2* rt = checked_type_cast< RenderTargetOpenGLES2* >(rts->getColorTexture(renderTarget));
 	
@@ -309,16 +233,11 @@ void RenderViewOpenGLES2::draw(const Primitives& primitives)
 		{	
 			targetSize[0] = float(getWidth());
 			targetSize[1] = float(getHeight());
-			landscape = true;
+			landscape = m_context->getLandscape();
 		}
 
-#	if TARGET_OS_IPHONE
 		if (!m_currentProgram->activate(landscape, targetSize))
 			return;
-#	else
-		if (!m_currentProgram->activate(false, targetSize))
-			return;
-#	endif
 
 		m_currentVertexBuffer->activate(
 			m_currentProgram->getAttributeLocs()
@@ -418,14 +337,15 @@ void RenderViewOpenGLES2::end()
 
 void RenderViewOpenGLES2::present()
 {
-#	if defined(T_OPENGL_ES2_HAVE_EGL)
-	eglSwapBuffers(m_display, m_surface);
-#	elif TARGET_OS_IPHONE
-	m_wrapper->swapBuffers();
-#	endif
+	m_context->swapBuffers();
+	m_context->leave();
 
-	if (m_globalContext)
-		m_globalContext->deleteResources();
+	//// Clean pending resources.
+	//if (m_globalContext->enter())
+	//{
+	//	m_globalContext->deleteResources();
+	//	m_globalContext->leave();
+	//}
 }
 
 void RenderViewOpenGLES2::pushMarker(const char* const marker)
