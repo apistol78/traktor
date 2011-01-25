@@ -69,11 +69,6 @@ public:
 
 private:
 	Ref< ContextOpenGLES2 > m_globalContext;
-#if defined(T_OPENGL_ES2_HAVE_EGL)
-	EGLDisplay m_display;
-	EGLContext m_context;
-	EGLSurface m_surface;
-#endif
 #if defined(_WIN32)
 	HWND m_hWnd;
 

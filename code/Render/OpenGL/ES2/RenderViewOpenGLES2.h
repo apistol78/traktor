@@ -20,11 +20,7 @@ namespace traktor
 
 #if !defined(T_OFFLINE_ONLY)
 
-#	if TARGET_OS_IPHONE
-class EAGLContextWrapper;
-#	endif
-
-class IContext;
+class ContextOpenGLES2;
 class VertexBufferOpenGLES2;
 class IndexBufferOpenGLES2;
 class ProgramOpenGLES2;
@@ -38,23 +34,10 @@ class T_DLLCLASS RenderViewOpenGLES2 : public IRenderView
 	T_RTTI_CLASS;
 
 public:
-#	if defined(T_OPENGL_ES2_HAVE_EGL)
 	RenderViewOpenGLES2(
-		IContext* globalContext,
-		EGLDisplay display,
-		EGLContext context,
-		EGLSurface surface
+		ContextOpenGLES2* globalContext,
+		ContextOpenGLES2* context
 	);
-#	elif TARGET_OS_IPHONE
-	RenderViewOpenGLES2(
-		IContext* globalContext,
-		EAGLContextWrapper* wrapper
-	);
-#	else
-	RenderViewOpenGLES2(
-		IContext* globalContext
-	);
-#	endif
 
 	virtual ~RenderViewOpenGLES2();
 
@@ -101,14 +84,8 @@ public:
 	virtual void getStatistics(RenderViewStatistics& outStatistics) const;
 
 private:
-	Ref< IContext > m_globalContext;
-#	if defined(T_OPENGL_ES2_HAVE_EGL)
-	EGLDisplay m_display;
-	EGLContext m_context;
-	EGLSurface m_surface;
-#	elif TARGET_OS_IPHONE
-	EAGLContextWrapper* m_wrapper;
-#	endif
+	Ref< ContextOpenGLES2 > m_globalContext;
+	Ref< ContextOpenGLES2 > m_context;
 	std::stack< RenderTargetOpenGLES2* > m_renderTargetStack;
 	Ref< VertexBufferOpenGLES2 > m_currentVertexBuffer;
 	Ref< IndexBufferOpenGLES2 > m_currentIndexBuffer;

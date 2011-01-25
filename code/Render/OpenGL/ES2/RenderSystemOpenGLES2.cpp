@@ -25,13 +25,8 @@ namespace traktor
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderSystemOpenGLES2", 0, RenderSystemOpenGLES2, IRenderSystem)
 
 RenderSystemOpenGLES2::RenderSystemOpenGLES2()
-#if defined(T_OPENGL_ES2_HAVE_EGL)
-:	m_display(EGL_NO_DISPLAY)
-,	m_context(EGL_NO_CONTEXT)
-,	m_surface(EGL_NO_SURFACE)
-#endif
 #if defined(_WIN32)
-,	m_hWnd(0)
+:	m_hWnd(0)
 #endif
 {
 }
@@ -59,26 +54,29 @@ bool RenderSystemOpenGLES2::create(const RenderSystemCreateDesc& desc)
 	RegisterClass(&wc);
 #endif
 
-	m_globalContext = new ContextOpenGLES2();
+	m_globalContext = ContextOpenGLES2::createResourceContext();
+	if (!m_globalContext)
+		return false;
+
 	return true;
 }
 
 void RenderSystemOpenGLES2::destroy()
 {
-#if defined(T_OPENGL_ES2_HAVE_EGL)
-	if (m_display == EGL_NO_DISPLAY)
-		return;
-
-	eglMakeCurrent(m_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-
-	eglDestroyContext(m_display, m_context);
-	eglDestroySurface(m_display, m_surface);
-	eglTerminate(m_display);
-
-	m_display = EGL_NO_DISPLAY;
-	m_context = EGL_NO_CONTEXT;
-	m_surface = EGL_NO_SURFACE;
-#endif
+//#if defined(T_OPENGL_ES2_HAVE_EGL)
+//	if (m_display == EGL_NO_DISPLAY)
+//		return;
+//
+//	eglMakeCurrent(m_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+//
+//	eglDestroyContext(m_display, m_context);
+//	eglDestroySurface(m_display, m_surface);
+//	eglTerminate(m_display);
+//
+//	m_display = EGL_NO_DISPLAY;
+//	m_context = EGL_NO_CONTEXT;
+//	m_surface = EGL_NO_SURFACE;
+//#endif
 }
 
 uint32_t RenderSystemOpenGLES2::getDisplayModeCount() const
@@ -195,93 +193,13 @@ Ref< IRenderView > RenderSystemOpenGLES2::createRenderView(const RenderViewDefau
 Ref< IRenderView > RenderSystemOpenGLES2::createRenderView(const RenderViewEmbeddedDesc& desc)
 {
 #if !defined(T_OFFLINE_ONLY)
-#	if defined(TARGET_OS_IPHONE)
-	EAGLContextWrapper* wrapper = new EAGLContextWrapper();
-	if (!wrapper->create(desc.nativeWindowHandle, desc.depthBits != 0))
-		return 0;
-		
-	return new RenderViewOpenGLES2(m_globalContext, wrapper);
-#	elif defined(T_OPENGL_ES2_HAVE_EGL)
-	const uint32_t c_maxConfigAttrSize = 32;
-	const uint32_t c_maxMatchConfigs = 64;
-
-	EGLNativeWindowType nativeWindow = (EGLNativeWindowType)desc.nativeWindowHandle;
-
-	m_display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
-	if (m_display == EGL_NO_DISPLAY) 
-	{
-		EGLint error = eglGetError();
-		log::error << L"Create render view failed; unable to get EGL display (" << getEGLErrorString(error) << L")" << Endl;
-		return 0;
-	}
-
-	if (!eglInitialize(m_display, 0, 0)) 
-	{
-		EGLint error = eglGetError();
-		log::error << L"Create render view failed; unable to initialize EGL (" << getEGLErrorString(error) << L")" << Endl;
-		return 0;
-	}
-
-	EGLint configAttrs[c_maxConfigAttrSize];
-	EGLint i = 0;
-
-	configAttrs[i] = EGL_RENDERABLE_TYPE;
-	configAttrs[++i] = EGL_OPENGL_ES2_BIT;
-	configAttrs[++i] = EGL_DEPTH_SIZE;
-	configAttrs[++i] = desc.depthBits;
-	configAttrs[++i] = EGL_STENCIL_SIZE;
-	configAttrs[++i] = desc.stencilBits;
-	configAttrs[++i] = EGL_NONE;
-
-	EGLConfig matchingConfigs[c_maxMatchConfigs];
-	EGLint numMatchingConfigs = 0;
-
-	EGLBoolean success = eglChooseConfig(m_display, configAttrs, matchingConfigs, c_maxMatchConfigs, &numMatchingConfigs);
-	if (!success)
-	{
-		EGLint error = eglGetError();
-		log::error << L"Create render view failed; unable to create choose EGL config (" << getEGLErrorString(error) << L")" << Endl;
-		return 0;
-	}
-
-	if (numMatchingConfigs == 0)
-	{
-		EGLint error = eglGetError();
-		log::error << L"Create render view failed; no matching configurations" << Endl;
-		return 0;
-	}
-
-	EGLConfig config = matchingConfigs[0];
-
-	m_surface = eglCreateWindowSurface(m_display, config, nativeWindow, 0);
-	if (m_surface == EGL_NO_SURFACE)
-	{
-		EGLint error = eglGetError();
-		log::error << L"Create render view failed; unable to create EGL surface (" << getEGLErrorString(error) << L")" << Endl;
-		return 0;
-	}
-
-	EGLint contextAttrs[] = 
-	{
-		EGL_CONTEXT_CLIENT_VERSION, 2,
-		EGL_NONE
-	};
-
-	m_context = eglCreateContext(m_display, config, EGL_NO_CONTEXT, contextAttrs);
-	if (m_context == EGL_NO_CONTEXT)
-	{
-		EGLint error = eglGetError();
-		log::error << L"Create render view failed; unable to create EGL context (" << getEGLErrorString(error) << L")" << Endl;
-		return 0;
-	}
-
-	if (!eglMakeCurrent(m_display, m_surface, m_surface, m_context))
-		return 0;
-
-	return new RenderViewOpenGLES2(m_globalContext, m_display, m_context, m_surface);
-#	else
-	return 0;
-#	endif
+	Ref< ContextOpenGLES2 > context = ContextOpenGLES2::createContext(
+		m_globalContext,
+		desc.nativeWindowHandle,
+		desc.depthBits,
+		desc.stencilBits
+	);
+	return new RenderViewOpenGLES2(m_globalContext, context);
 #else
 	return 0;
 #endif
@@ -289,16 +207,19 @@ Ref< IRenderView > RenderSystemOpenGLES2::createRenderView(const RenderViewEmbed
 
 Ref< VertexBuffer > RenderSystemOpenGLES2::createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
 {
+	T_ANONYMOUS_VAR(IContext::Scope)(m_globalContext);
 	return new VertexBufferOpenGLES2(m_globalContext, vertexElements, bufferSize, dynamic);
 }
 
 Ref< IndexBuffer > RenderSystemOpenGLES2::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
 {
+	T_ANONYMOUS_VAR(IContext::Scope)(m_globalContext);
 	return new IndexBufferOpenGLES2(m_globalContext, indexType, bufferSize, dynamic);
 }
 
 Ref< ISimpleTexture > RenderSystemOpenGLES2::createSimpleTexture(const SimpleTextureCreateDesc& desc)
 {
+	T_ANONYMOUS_VAR(IContext::Scope)(m_globalContext);
 	Ref< SimpleTextureOpenGLES2 > texture = new SimpleTextureOpenGLES2(m_globalContext);
 	if (texture->create(desc))
 		return texture;
@@ -318,6 +239,7 @@ Ref< IVolumeTexture > RenderSystemOpenGLES2::createVolumeTexture(const VolumeTex
 
 Ref< RenderTargetSet > RenderSystemOpenGLES2::createRenderTargetSet(const RenderTargetSetCreateDesc& desc)
 {
+	T_ANONYMOUS_VAR(IContext::Scope)(m_globalContext);
 #if !defined(T_OFFLINE_ONLY)
 	Ref< RenderTargetSetOpenGLES2 > renderTargetSet = new RenderTargetSetOpenGLES2(m_globalContext);
 	if (renderTargetSet->create(desc))
@@ -331,6 +253,7 @@ Ref< RenderTargetSet > RenderSystemOpenGLES2::createRenderTargetSet(const Render
 
 Ref< IProgram > RenderSystemOpenGLES2::createProgram(const ProgramResource* programResource)
 {
+	T_ANONYMOUS_VAR(IContext::Scope)(m_globalContext);
 	return ProgramOpenGLES2::create(m_globalContext, programResource);
 }
 

@@ -175,6 +175,8 @@ void VertexBufferOpenGLES2::unlock()
 	if (!m_buffer.ptr())
 		return;
 
+	T_ANONYMOUS_VAR(IContext::Scope)(m_context);
+
 	int32_t bufferSize = getBufferSize();
 	T_OGL_SAFE(glBindBuffer(GL_ARRAY_BUFFER, m_name));
 	T_OGL_SAFE(glBufferData(GL_ARRAY_BUFFER, bufferSize, m_buffer.ptr(), m_dynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW));
