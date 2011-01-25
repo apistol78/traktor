@@ -1,6 +1,7 @@
 #include <cstring>
 #include "Core/Memory/PoolAllocator.h"
 #include "Core/Memory/StdAllocator.h"
+#include "Core/Misc/Align.h"
 
 namespace traktor
 {
@@ -89,11 +90,11 @@ void PoolAllocator::leave()
 	m_tail = tail;
 }
 
-void* PoolAllocator::alloc(uint32_t size)
+void* PoolAllocator::alloc(uint32_t size, uint32_t align)
 {
 	T_ASSERT (size <= m_totalSize);
 
-	if (!m_head || uint32_t(m_tail - m_head) + size >= m_totalSize)
+	if (!m_head || uint32_t(m_tail - m_head) + (size + align - 1) >= m_totalSize)
 	{
 		if (m_allocator)
 		{
@@ -110,9 +111,10 @@ void* PoolAllocator::alloc(uint32_t size)
 			T_FATAL_ERROR;
 	}
 	
-	void* ptr = m_tail;
-	m_tail += size;
-	
+	uint8_t* ptr = (uint8_t*)m_tail;
+	ptr = alignUp(ptr, align);
+
+	m_tail = ptr + size;
 	return ptr;
 }
 

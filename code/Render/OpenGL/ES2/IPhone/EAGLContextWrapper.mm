@@ -21,7 +21,14 @@ EAGLContextWrapper::EAGLContextWrapper()
 {
 }
 
-bool EAGLContextWrapper::create(void* nativeHandle, bool wantDepthBuffer)
+bool EAGLContextWrapper::create()
+{
+	EAGLContext* context = [[EAGLContext alloc] initWithAPI: kEAGLRenderingAPIOpenGLES2];
+	m_context = (void*)context;
+	return true;
+}
+
+bool EAGLContextWrapper::create(EAGLContextWrapper* shareContext, void* nativeHandle, bool wantDepthBuffer)
 {
 	// Native handle are pointer to UIView object;
 	// these UIViews must have CAEAGLLayer as layerClass.
@@ -37,8 +44,10 @@ bool EAGLContextWrapper::create(void* nativeHandle, bool wantDepthBuffer)
 		kEAGLColorFormatRGB565,
 		kEAGLDrawablePropertyColorFormat,
 		nil];
-		
-	EAGLContext* context = [[EAGLContext alloc] initWithAPI : kEAGLRenderingAPIOpenGLES2];
+	
+	EAGLContext* shareCtx = (EAGLContext*)shareContext->m_context;
+	EAGLSharegroup* shareGroup = [shareCtx sharegroup];
+	EAGLContext* context = [[EAGLContext alloc] initWithAPI: kEAGLRenderingAPIOpenGLES2 sharegroup: shareGroup];
 	
 	m_layer = layer;
 	m_context = (void*)context;
@@ -49,7 +58,7 @@ bool EAGLContextWrapper::create(void* nativeHandle, bool wantDepthBuffer)
 	m_height = bounds.size.height;
 	m_landscape = true;	// @fixme Get from view and reset view transforms.
 
-	setCurrent();
+	setCurrent(this);
 	createFrameBuffer();
 
 	return true;
@@ -60,11 +69,20 @@ void EAGLContextWrapper::destroy()
 	destroyFrameBuffer();
 }
 
-void EAGLContextWrapper::setCurrent()
+bool EAGLContextWrapper::setCurrent(EAGLContextWrapper* context)
 {
-	EAGLContext* context = (EAGLContext*)m_context;
-	[EAGLContext setCurrentContext:context];
-	glBindFramebuffer(GL_FRAMEBUFFER, m_frameBuffer);
+	if (context)
+	{
+		EAGLContext* eaglctx = (EAGLContext*)context->m_context;
+		[EAGLContext setCurrentContext:eaglctx];
+		glBindFramebuffer(GL_FRAMEBUFFER, context->m_frameBuffer);
+	}
+	else
+	{
+		[EAGLContext setCurrentContext:nil];
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	}
+	return true;
 }
 
 void EAGLContextWrapper::swapBuffers()
@@ -76,7 +94,7 @@ void EAGLContextWrapper::swapBuffers()
 
 void EAGLContextWrapper::resize(GLint width, GLint height)
 {
-	setCurrent();
+	setCurrent(this);
 	destroyFrameBuffer();
 	m_width = width;
 	m_height = height;

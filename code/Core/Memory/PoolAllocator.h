@@ -55,9 +55,10 @@ public:
 	/*! \brief Allocate chunk.
 	 *
 	 * \param size Size of chunk.
+	 * \param align Alignment of chunk.
 	 * \return Pointer to chunk.
 	 */
-	void* alloc(uint32_t size);
+	void* alloc(uint32_t size, uint32_t align);
 
 	/*! \brief Allocate object.
 	 *
@@ -66,7 +67,7 @@ public:
 	template < typename Type >
 	Type* alloc()
 	{
-		void* ptr = alloc(sizeof(Type));
+		void* ptr = alloc(sizeof(Type), alignOf< Type >());
 		return new (ptr) Type();
 	}
 
@@ -81,7 +82,7 @@ public:
 		if (!count)
 			return 0;
 
-		void* ptr = alloc(sizeof(Type) * count);
+		void* ptr = alloc(sizeof(Type) * count, alignOf< Type >());
 		return new (ptr) Type [count];
 	}
 
@@ -96,7 +97,7 @@ public:
 		if (!count)
 			return 0;
 
-		void* ptr = alloc(sizeof(Type*) * count);
+		void* ptr = alloc(sizeof(Type*) * count, alignOf< Type* >());
 		return static_cast< Type** >(ptr);
 	}
 

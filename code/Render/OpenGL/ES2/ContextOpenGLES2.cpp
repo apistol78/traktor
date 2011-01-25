@@ -4,6 +4,10 @@
 #include "Core/Misc/TString.h"
 #include "Render/OpenGL/ES2/ContextOpenGLES2.h"
 
+#if TARGET_OS_IPHONE
+#	include "Render/OpenGL/ES2/IPhone/EAGLContextWrapper.h"
+#endif
+
 namespace traktor
 {
 	namespace render
@@ -21,7 +25,9 @@ typedef RefArray< ContextOpenGLES2 > context_stack_t;
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ContextOpenGLES2", ContextOpenGLES2, IContext)
 
 ThreadLocal ContextOpenGLES2::ms_contextStack;
+#if defined(T_OPENGL_ES2_HAVE_EGL)
 EGLDisplay ContextOpenGLES2::ms_display = EGL_NO_DISPLAY;
+#endif
 
 Ref< ContextOpenGLES2 > ContextOpenGLES2::createResourceContext()
 {
@@ -82,7 +88,7 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createResourceContext()
 
 	EGLConfig config = matchingConfigs[0];
 
-#if defined(_WIN32)
+#	if defined(_WIN32)
 	HWND nativeWindow = CreateWindow(
 		_T("RenderSystemOpenGLES2_FullScreen"),
 		_T("Traktor 2.0 OpenGL ES 2.0 Renderer (Resource)"),
@@ -98,7 +104,7 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createResourceContext()
 	);
 	T_ASSERT (nativeWindow != NULL);
 	EGLSurface surface = eglCreateWindowSurface(ms_display, config, nativeWindow, 0);
-#else
+#	else
 	EGLint surfaceAttrs[] =
 	{
 		EGL_NONE
@@ -110,7 +116,7 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createResourceContext()
 		log::error << L"Create OpenGL ES2.0 context failed; unable to create EGL surface (" << getEGLErrorString(error) << L")" << Endl;
 		return 0;
 	}
-#endif
+#	endif
 
 	EGLint contextAttrs[] = 
 	{
@@ -134,9 +140,17 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createResourceContext()
 	return new ContextOpenGLES2(surface, context);
 
 #elif TARGET_OS_IPHONE
-	// \fixme
+
+	EAGLContextWrapper* wrapper = new EAGLContextWrapper();
+	if (!wrapper->create())
+		return 0;
+
+	return new ContextOpenGLES2(wrapper);
+
 #else
+
 	return 0;
+
 #endif
 }
 
@@ -269,7 +283,7 @@ bool ContextOpenGLES2::enter()
 	}
 
 #if TARGET_OS_IPHONE
-	if (!EAGLContextWrapper::makeCurrent(m_context))
+	if (!EAGLContextWrapper::setCurrent(m_context))
 #elif defined(T_OPENGL_ES2_HAVE_EGL)
 	if (!eglMakeCurrent(ms_display, m_surface, m_surface, m_context))
 #endif
@@ -305,9 +319,9 @@ void ContextOpenGLES2::leave()
 #if TARGET_OS_IPHONE
 
 	if (!stack->empty())
-		EAGLContextWrapper::makeCurrent(stack->back());
+		EAGLContextWrapper::setCurrent(stack->back()->m_context);
 	else
-		EAGLContextWrapper::makeCurrent(0);
+		EAGLContextWrapper::setCurrent(0);
 
 #elif defined(T_OPENGL_ES2_HAVE_EGL)
 

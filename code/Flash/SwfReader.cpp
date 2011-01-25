@@ -474,7 +474,11 @@ SwfShapeRecord* SwfReader::readShapeRecord(uint32_t numFillBits, uint32_t numLin
 
 bool SwfReader::readShapeWithStyle(SwfShape*& outShape, SwfStyles*& outStyles, int shapeType)
 {
+#if TARGET_OS_IPHONE
 	const uint32_t c_maxRecordCount = 8 * 4096UL;
+#else
+	const uint32_t c_maxRecordCount = 1024UL;
+#endif
 
 	outStyles = readStyles(shapeType);
 	if (!outStyles)
@@ -484,7 +488,7 @@ bool SwfReader::readShapeWithStyle(SwfShape*& outShape, SwfStyles*& outStyles, i
 	outShape->numShapeRecords = 0;
 	outShape->shapeRecords = m_pool->allocArray< SwfShapeRecord >(c_maxRecordCount);
 
-	for (;;)
+	while (outShape->numShapeRecords < c_maxRecordCount)
 	{
 		SwfShapeRecord* shapeRecord = readShapeRecord(
 			outStyles->numFillBits,
@@ -526,7 +530,7 @@ SwfShape* SwfReader::readShape(int shapeType)
 	uint32_t numFillBits = m_bs->readUnsigned(4);
 	uint32_t numLineBits = m_bs->readUnsigned(4);
 
-	for (;;)
+	while (shape->numShapeRecords < 256)
 	{
 		SwfShapeRecord* shapeRecord = readShapeRecord(numFillBits, numLineBits, shapeType);
 		if (!shapeRecord)
