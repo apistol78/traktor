@@ -53,9 +53,6 @@
 #		include <EGL/egl.h>
 #		include <GLES2/gl2.h>
 #		include <GLES2/gl2ext.h>
-#		if defined(_WIN32)
-#			include <GLES2/gl2amdext.h>
-#		endif
 #		define T_OPENGL_ES2_HAVE_EGL
 #	endif
 #endif
