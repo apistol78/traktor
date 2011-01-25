@@ -20,8 +20,7 @@ Guid::Guid()
 Guid::Guid(const std::wstring& s)
 :	m_valid(false)
 {
-	bool result = create(s);
-	T_ASSERT_M (result, L"Invalid GUID string");
+	create(s);
 }
 
 Guid::Guid(const uint8_t data[16])
@@ -130,10 +129,12 @@ bool Guid::isValid() const
 
 bool Guid::isNull() const
 {
-	return bool(
-		*(uint64_t*)&m_data[0] == 0ULL &&
-		*(uint64_t*)&m_data[8] == 0ULL
-	);
+	for (int i = 0; i < sizeof_array(m_data); ++i)
+	{
+		if (m_data[i] != 0)
+			return false;
+	}
+	return true;
 }
 
 Guid::operator const uint8_t* () const
@@ -143,64 +144,22 @@ Guid::operator const uint8_t* () const
 
 bool Guid::operator == (const Guid& r) const
 {
-	const uint64_t* d1 = reinterpret_cast< const uint64_t* >(m_data);
-	const uint64_t* d2 = reinterpret_cast< const uint64_t* >(r.m_data);
-
-	if (d1[0] != d2[0])
-		return false;
-
-	if (d1[1] != d2[1])
-		return false;
-
-	return true;
+	return std::memcmp(m_data, r.m_data, 16) == 0;
 }
 
 bool Guid::operator != (const Guid& r) const
 {
-	const uint64_t* d1 = reinterpret_cast< const uint64_t* >(m_data);
-	const uint64_t* d2 = reinterpret_cast< const uint64_t* >(r.m_data);
-
-	if (d1[0] != d2[0])
-		return true;
-
-	if (d1[1] != d2[1])
-		return true;
-
-	return false;
+	return std::memcmp(m_data, r.m_data, 16) != 0;
 }
 
 bool Guid::operator < (const Guid& r) const
 {
-	const uint64_t* ld = reinterpret_cast< const uint64_t* >(m_data);
-	const uint64_t* rd = reinterpret_cast< const uint64_t* >(r.m_data);
-
-	if (ld[0] < rd[0])
-		return true;
-	if (ld[0] > rd[0])
-		return false;
-	if (ld[1] < rd[1])
-		return true;
-	if (ld[1] > rd[1])
-		return false;
-
-	return false;
+	return std::memcmp(m_data, r.m_data, 16) < 0;
 }
 
 bool Guid::operator > (const Guid& r) const
 {
-	const uint64_t* ld = reinterpret_cast< const uint64_t* >(m_data);
-	const uint64_t* rd = reinterpret_cast< const uint64_t* >(r.m_data);
-
-	if (ld[0] > rd[0])
-		return true;
-	if (ld[0] < rd[0])
-		return false;
-	if (ld[1] > rd[1])
-		return true;
-	if (ld[1] < rd[1])
-		return false;
-
-	return false;
+	return std::memcmp(m_data, r.m_data, 16) > 0;
 }
 
 }

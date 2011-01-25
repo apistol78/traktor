@@ -32,7 +32,11 @@ namespace traktor
 const uint32_t c_maxCacheSize = 64;
 const uint32_t c_maxUnusedCount = 40;
 #endif
+#if TARGET_OS_IPHONE
+const uint32_t c_cacheGlyphSize = 64;
+#else
 const uint32_t c_cacheGlyphSize = 128;
+#endif
 const uint32_t c_cacheGlyphMargin = 7;
 const uint32_t c_cacheGlyphCountX = 8;
 const uint32_t c_cacheGlyphCountY = 8;

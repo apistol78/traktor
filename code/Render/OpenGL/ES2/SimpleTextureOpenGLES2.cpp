@@ -123,8 +123,6 @@ bool SimpleTextureOpenGLES2::create(const SimpleTextureCreateDesc& desc)
 
 	// Allocate data buffer.
 	uint32_t texturePitch = getTextureMipPitch(desc.format, desc.width, desc.height);
-	m_data.resize(texturePitch);
-
 	if (desc.immutable)
 	{
 		T_OGL_SAFE(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
@@ -166,6 +164,8 @@ bool SimpleTextureOpenGLES2::create(const SimpleTextureCreateDesc& desc)
 			}
 		}
 	}
+	else
+		m_data.resize(texturePitch);
 
 	m_mipCount = desc.mipCount;
 	return true;

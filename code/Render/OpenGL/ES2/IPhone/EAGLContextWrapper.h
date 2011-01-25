@@ -13,11 +13,13 @@ class EAGLContextWrapper
 public:
 	EAGLContextWrapper();
 	
-	bool create(void* nativeHandle, bool wantDepthBuffer);
+	bool create();
+	
+	bool create(EAGLContextWrapper* shareContext, void* nativeHandle, bool wantDepthBuffer);
 	
 	void destroy();
 	
-	void setCurrent();
+	static bool setCurrent(EAGLContextWrapper* context);
 	
 	void swapBuffers();
 	

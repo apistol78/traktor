@@ -12,6 +12,8 @@ namespace traktor
 {
 	namespace render
 	{
+	
+class EAGLContextWrapper;
 
 /*! \brief OpenGL ES2 context.
  * \ingroup OGL
