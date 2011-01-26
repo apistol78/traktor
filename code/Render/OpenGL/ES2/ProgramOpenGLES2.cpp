@@ -262,7 +262,7 @@ void ProgramOpenGLES2::setTextureParameter(handle_t handle, ITexture* texture)
 
 void ProgramOpenGLES2::setStencilReference(uint32_t stencilReference)
 {
-	m_stencilRef = stencilReference;
+	m_renderState.stencilRef = stencilReference;
 }
 
 bool ProgramOpenGLES2::activate(bool landscape, float targetSize[2])
@@ -270,65 +270,7 @@ bool ProgramOpenGLES2::activate(bool landscape, float targetSize[2])
 	// Bind program and set state display list.
 	if (ms_activeProgram != this)
 	{
-		if (m_renderState.cullFaceEnable)
-		{
-			T_OGL_SAFE(glEnable(GL_CULL_FACE));
-			T_OGL_SAFE(glCullFace(m_renderState.cullFace));
-		}
-		else
-			T_OGL_SAFE(glDisable(GL_CULL_FACE));
-
-		if (m_renderState.blendEnable)
-		{
-			T_OGL_SAFE(glEnable(GL_BLEND));
-			T_OGL_SAFE(glBlendFunc(m_renderState.blendFuncSrc, m_renderState.blendFuncDest));
-//			T_OGL_SAFE(glBlendEquationEXT(m_renderState.blendEquation));
-		}
-		else
-			T_OGL_SAFE(glDisable(GL_BLEND));
-
-		if (m_renderState.depthTestEnable)
-		{
-			T_OGL_SAFE(glEnable(GL_DEPTH_TEST));
-			T_OGL_SAFE(glDepthFunc(m_renderState.depthFunc));
-		}
-		else
-			T_OGL_SAFE(glDisable(GL_DEPTH_TEST));
-
-		T_OGL_SAFE(glColorMask(
-			(m_renderState.colorMask & RenderState::CmRed) ? GL_TRUE : GL_FALSE,
-			(m_renderState.colorMask & RenderState::CmGreen) ? GL_TRUE : GL_FALSE,
-			(m_renderState.colorMask & RenderState::CmBlue) ? GL_TRUE : GL_FALSE,
-			(m_renderState.colorMask & RenderState::CmAlpha) ? GL_TRUE : GL_FALSE
-		));
-
-		T_OGL_SAFE(glDepthMask(m_renderState.depthMask));
-
-		//if (m_renderState.alphaTestEnable)
-		//{
-		//	T_OGL_SAFE(glEnable(GL_ALPHA_TEST));
-		//	T_OGL_SAFE(glAlphaFunc(m_renderState.alphaFunc, m_renderState.alphaRef));
-		//}
-		//else
-		//	T_OGL_SAFE(glDisable(GL_ALPHA_TEST));
-			
-		if (m_renderState.stencilTestEnable)
-		{
-			T_OGL_SAFE(glEnable(GL_STENCIL_TEST));
-			T_OGL_SAFE(glStencilFunc(m_renderState.stencilFunc, m_renderState.stencilRef, ~0UL));
-			T_OGL_SAFE(glStencilOp(
-				m_renderState.stencilOpFail,
-				m_renderState.stencilOpZFail,
-				m_renderState.stencilOpZPass
-			));
-		}
-		else
-			T_OGL_SAFE(glDisable(GL_STENCIL_TEST));
-
-		// Manually set stencil reference value if different from state.
-		if (m_renderState.stencilTestEnable && m_stencilRef != m_renderState.stencilRef)
-			T_OGL_SAFE(glStencilFunc(m_renderState.stencilFunc, m_stencilRef, ~0UL));
-
+		m_resourceContext->setRenderState(m_renderState);
 		T_OGL_SAFE(glUseProgram(m_program));
 	}
 	
@@ -417,7 +359,6 @@ ProgramOpenGLES2::ProgramOpenGLES2(ContextOpenGLES2* resourceContext, GLuint pro
 ,	m_program(program)
 ,	m_locationTargetSize(0)
 ,	m_locationPostOrientationCoeffs(0)
-,	m_stencilRef(0)
 ,	m_textureDirty(true)
 {
 	const ProgramResourceOpenGL* resourceOpenGL = checked_type_cast< const ProgramResourceOpenGL* >(resource);
@@ -532,7 +473,6 @@ ProgramOpenGLES2::ProgramOpenGLES2(ContextOpenGLES2* resourceContext, GLuint pro
 
 	// Create a display list from the render states.
 	m_renderState = resourceOpenGL->getRenderState();
-	m_stencilRef = m_renderState.stencilRef;
 }
 
 	}

@@ -116,7 +116,7 @@ VertexBufferOpenGLES2::VertexBufferOpenGLES2(IContext* context, const std::vecto
 			m_attributeDesc[usageIndex].normalized = GL_TRUE;
 			break;
 
-#if defined(GL_OES_texture_half_float)
+#if defined(GL_OES_vertex_half_float)
 		case DtHalf2:
 			m_attributeDesc[usageIndex].size = 2;
 			m_attributeDesc[usageIndex].type = GL_HALF_FLOAT_OES;

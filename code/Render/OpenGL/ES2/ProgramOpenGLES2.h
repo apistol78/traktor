@@ -98,7 +98,6 @@ private:
 	AlignedVector< float > m_uniformData;					//!< Scalar uniform data.
 	AlignedVector< ITextureBinding* > m_textureBindings;	//!< Texture bindings.
 	float m_targetSize[2];
-	GLint m_stencilRef;
 	bool m_textureDirty;
 	static ProgramOpenGLES2* ms_activeProgram;
 	

@@ -156,14 +156,18 @@ Ref< IRenderView > RenderSystemOpenGLES2::createRenderView(const RenderViewDefau
 	}
 	else
 	{
+		RECT rc;
+		SetRect(&rc, 0, 0, desc.displayMode.width, desc.displayMode.height);
+		AdjustWindowRectEx(&rc, WS_OVERLAPPEDWINDOW, false, 0);
+
 		m_hWnd = CreateWindow(
 			_T("RenderSystemOpenGLES2_FullScreen"),
 			_T("Traktor 2.0 OpenGL ES 2.0 Renderer"),
 			WS_OVERLAPPEDWINDOW,
 			CW_USEDEFAULT,
 			CW_USEDEFAULT,
-			desc.displayMode.width,
-			desc.displayMode.height,
+			rc.right - rc.left,
+			rc.bottom - rc.top,
 			NULL,
 			NULL,
 			static_cast< HMODULE >(GetModuleHandle(NULL)),

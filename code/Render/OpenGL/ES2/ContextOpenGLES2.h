@@ -6,6 +6,7 @@
 #include "Core/Thread/Semaphore.h"
 #include "Core/Thread/ThreadLocal.h"
 #include "Render/OpenGL/Platform.h"
+#include "Render/OpenGL/TypesOpenGL.h"
 #include "Render/OpenGL/IContext.h"
 
 namespace traktor
@@ -52,24 +53,28 @@ public:
 
 	void swapBuffers();
 
+	Semaphore& lock();
+
+	void setRenderState(const RenderState& renderState);
+
 private:
 	static ThreadLocal ms_contextStack;
 #if defined(TARGET_OS_IPHONE)
 	EAGLContextWrapper* m_context;
 #elif defined(T_OPENGL_ES2_HAVE_EGL)
-	static EGLDisplay ms_display;
+	EGLDisplay m_display;
 	EGLSurface m_surface;
 	EGLContext m_context;
 #endif
 	Semaphore m_lock;
 	std::vector< IDeleteCallback* > m_deleteResources;
 	std::map< uint32_t, GLuint > m_shaderObjects;
-	int32_t m_count;
+	RenderState m_renderState;
 
 #if defined(TARGET_OS_IPHONE)
 	ContextOpenGLES2(EAGLContextWrapper* context);
 #elif defined(T_OPENGL_ES2_HAVE_EGL)
-	ContextOpenGLES2(EGLSurface surface, EGLConfig context);
+	ContextOpenGLES2(EGLDisplay display, EGLSurface surface, EGLConfig context);
 #endif
 };
 

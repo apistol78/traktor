@@ -2,6 +2,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/Adler32.h"
 #include "Core/Misc/TString.h"
+#include "Core/Thread/Acquire.h"
 #include "Render/OpenGL/ES2/ContextOpenGLES2.h"
 
 #if TARGET_OS_IPHONE
@@ -15,7 +16,6 @@ namespace traktor
 		namespace
 		{
 
-const uint32_t c_maxConfigAttrSize = 32;
 const uint32_t c_maxMatchConfigs = 64;
 
 typedef RefArray< ContextOpenGLES2 > context_stack_t;
@@ -25,49 +25,64 @@ typedef RefArray< ContextOpenGLES2 > context_stack_t;
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ContextOpenGLES2", ContextOpenGLES2, IContext)
 
 ThreadLocal ContextOpenGLES2::ms_contextStack;
-#if defined(T_OPENGL_ES2_HAVE_EGL)
-EGLDisplay ContextOpenGLES2::ms_display = EGL_NO_DISPLAY;
-#endif
 
 Ref< ContextOpenGLES2 > ContextOpenGLES2::createResourceContext()
 {
 #if defined(T_OPENGL_ES2_HAVE_EGL)
+	EGLDisplay display;
 
-	if (ms_display == EGL_NO_DISPLAY)
+#	if defined(_WIN32)
+	HWND nativeWindow = CreateWindow(
+		_T("RenderSystemOpenGLES2_FullScreen"),
+		_T("Traktor 2.0 OpenGL ES 2.0 Renderer (Resource)"),
+		WS_POPUPWINDOW,
+		0,
+		0,
+		16,
+		16,
+		NULL,
+		NULL,
+		static_cast< HMODULE >(GetModuleHandle(NULL)),
+		0
+	);
+	T_ASSERT (nativeWindow != NULL);
+
+	display = eglGetDisplay(GetDC(nativeWindow));
+	if (display == EGL_NO_DISPLAY) 
+#	endif
 	{
-		ms_display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
-		if (ms_display == EGL_NO_DISPLAY) 
+		display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+		if (display == EGL_NO_DISPLAY)
 		{
 			EGLint error = eglGetError();
 			log::error << L"Create OpenGL ES2.0 context failed; unable to get EGL display (" << getEGLErrorString(error) << L")" << Endl;
 			return 0;
 		}
-
-		if (!eglInitialize(ms_display, 0, 0)) 
-		{
-			EGLint error = eglGetError();
-			log::error << L"Create OpenGL ES2.0 context failed; unable to initialize EGL (" << getEGLErrorString(error) << L")" << Endl;
-			return 0;
-		}
-
-		eglBindAPI(EGL_OPENGL_ES_API);
 	}
 
-	EGLint configAttrs[c_maxConfigAttrSize];
-	EGLint i = 0;
+	if (!eglInitialize(display, 0, 0)) 
+	{
+		EGLint error = eglGetError();
+		log::error << L"Create OpenGL ES2.0 context failed; unable to initialize EGL (" << getEGLErrorString(error) << L")" << Endl;
+		return 0;
+	}
 
-	configAttrs[i++] = EGL_SURFACE_TYPE;
-	configAttrs[i++] = EGL_WINDOW_BIT;
-	configAttrs[i++] = EGL_RENDERABLE_TYPE;
-	configAttrs[i++] = EGL_OPENGL_ES2_BIT;
-	configAttrs[i++] = EGL_NONE;
+	const EGLint configAttribs[] =
+	{
+		EGL_LEVEL, 0,
+		EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
+		EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+		EGL_NATIVE_RENDERABLE, EGL_FALSE,
+		EGL_DEPTH_SIZE, EGL_DONT_CARE,
+		EGL_NONE
+	};
 
 	EGLConfig matchingConfigs[c_maxMatchConfigs];
 	EGLint numMatchingConfigs = 0;
 
 	EGLBoolean success = eglChooseConfig(
-		ms_display,
-		configAttrs,
+		display,
+		configAttribs,
 		matchingConfigs,
 		c_maxMatchConfigs,
 		&numMatchingConfigs
@@ -89,27 +104,13 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createResourceContext()
 	EGLConfig config = matchingConfigs[0];
 
 #	if defined(_WIN32)
-	HWND nativeWindow = CreateWindow(
-		_T("RenderSystemOpenGLES2_FullScreen"),
-		_T("Traktor 2.0 OpenGL ES 2.0 Renderer (Resource)"),
-		WS_POPUPWINDOW,
-		0,
-		0,
-		16,
-		16,
-		NULL,
-		NULL,
-		static_cast< HMODULE >(GetModuleHandle(NULL)),
-		0
-	);
-	T_ASSERT (nativeWindow != NULL);
-	EGLSurface surface = eglCreateWindowSurface(ms_display, config, nativeWindow, 0);
+	EGLSurface surface = eglCreateWindowSurface(display, config, nativeWindow, 0);
 #	else
 	EGLint surfaceAttrs[] =
 	{
 		EGL_NONE
 	};
-	EGLSurface surface = eglCreatePbufferSurface(ms_display, config, surfaceAttrs);
+	EGLSurface surface = eglCreatePbufferSurface(display, config, surfaceAttrs);
 	if (surface == EGL_NO_SURFACE)
 	{
 		EGLint error = eglGetError();
@@ -118,17 +119,19 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createResourceContext()
 	}
 #	endif
 
-	EGLint contextAttrs[] = 
+	eglBindAPI(EGL_OPENGL_ES_API);
+
+	const EGLint contextAttribs[] = 
 	{
 		EGL_CONTEXT_CLIENT_VERSION, 2,
 		EGL_NONE
 	};
 
 	EGLContext context = eglCreateContext(
-		ms_display,
+		display,
 		config,
 		EGL_NO_CONTEXT,
-		contextAttrs
+		contextAttribs
 	);
 	if (context == EGL_NO_CONTEXT)
 	{
@@ -137,7 +140,7 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createResourceContext()
 		return 0;
 	}
 
-	return new ContextOpenGLES2(surface, context);
+	return new ContextOpenGLES2(display, surface, context);
 
 #elif TARGET_OS_IPHONE
 
@@ -176,46 +179,46 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(
 #elif defined(T_OPENGL_ES2_HAVE_EGL)
 
 	EGLNativeWindowType nativeWindow = (EGLNativeWindowType)nativeWindowHandle;
+	EGLDisplay display;
 
-	if (ms_display == EGL_NO_DISPLAY)
+#	if defined(_WIN32)
+	display = eglGetDisplay(GetDC(nativeWindow));
+	if (display == EGL_NO_DISPLAY) 
+#	endif
 	{
-		ms_display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
-		if (ms_display == EGL_NO_DISPLAY) 
+		display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+		if (display == EGL_NO_DISPLAY) 
 		{
 			EGLint error = eglGetError();
 			log::error << L"Create OpenGL ES2.0 context failed; unable to get EGL display (" << getEGLErrorString(error) << L")" << Endl;
 			return 0;
 		}
-
-		if (!eglInitialize(ms_display, 0, 0)) 
-		{
-			EGLint error = eglGetError();
-			log::error << L"Create OpenGL ES2.0 context failed; unable to initialize EGL (" << getEGLErrorString(error) << L")" << Endl;
-			return 0;
-		}
-
-		eglBindAPI(EGL_OPENGL_ES_API);
 	}
 
-	EGLint configAttrs[c_maxConfigAttrSize];
-	EGLint i = 0;
+	if (!eglInitialize(display, 0, 0)) 
+	{
+		EGLint error = eglGetError();
+		log::error << L"Create OpenGL ES2.0 context failed; unable to initialize EGL (" << getEGLErrorString(error) << L")" << Endl;
+		return 0;
+	}
 
-	configAttrs[i++] = EGL_SURFACE_TYPE;
-	configAttrs[i++] = EGL_WINDOW_BIT;
-	configAttrs[i++] = EGL_RENDERABLE_TYPE;
-	configAttrs[i++] = EGL_OPENGL_ES2_BIT;
-	configAttrs[i++] = EGL_DEPTH_SIZE;
-	configAttrs[i++] = depthBits;
-	configAttrs[i++] = EGL_STENCIL_SIZE;
-	configAttrs[i++] = stencilBits;
-	configAttrs[i++] = EGL_NONE;
+	const EGLint configAttribs[] =
+	{
+		EGL_LEVEL, 0,
+		EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
+		EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+		EGL_NATIVE_RENDERABLE, EGL_FALSE,
+		EGL_DEPTH_SIZE, depthBits,
+		EGL_STENCIL_SIZE, stencilBits,
+		EGL_NONE
+	};
 
 	EGLConfig matchingConfigs[c_maxMatchConfigs];
 	EGLint numMatchingConfigs = 0;
 
 	EGLBoolean success = eglChooseConfig(
-		ms_display,
-		configAttrs,
+		display,
+		configAttribs,
 		matchingConfigs,
 		c_maxMatchConfigs,
 		&numMatchingConfigs
@@ -236,7 +239,7 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(
 
 	EGLConfig config = matchingConfigs[0];
 
-	EGLSurface surface = eglCreateWindowSurface(ms_display, config, nativeWindow, 0);
+	EGLSurface surface = eglCreateWindowSurface(display, config, nativeWindow, 0);
 	if (surface == EGL_NO_SURFACE)
 	{
 		EGLint error = eglGetError();
@@ -244,17 +247,19 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(
 		return 0;
 	}
 
-	EGLint contextAttrs[] = 
+	eglBindAPI(EGL_OPENGL_ES_API);
+
+	const EGLint contextAttribs[] = 
 	{
 		EGL_CONTEXT_CLIENT_VERSION, 2,
 		EGL_NONE
 	};
 
 	EGLContext context = eglCreateContext(
-		ms_display,
+		display,
 		config,
 		resourceContext ? resourceContext->m_context : EGL_NO_CONTEXT,
-		contextAttrs
+		contextAttribs
 	);
 	if (context == EGL_NO_CONTEXT)
 	{
@@ -263,7 +268,7 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(
 		return 0;
 	}
 
-	return new ContextOpenGLES2(surface, context);
+	return new ContextOpenGLES2(display, surface, context);
 
 #else
 	return 0;
@@ -285,7 +290,7 @@ bool ContextOpenGLES2::enter()
 #if TARGET_OS_IPHONE
 	if (!EAGLContextWrapper::setCurrent(m_context))
 #elif defined(T_OPENGL_ES2_HAVE_EGL)
-	if (!eglMakeCurrent(ms_display, m_surface, m_surface, m_context))
+	if (!eglMakeCurrent(m_display, m_surface, m_surface, m_context))
 #endif
 	{
 #if defined(T_OPENGL_ES2_HAVE_EGL)
@@ -297,12 +302,6 @@ bool ContextOpenGLES2::enter()
 	}
 
 	stack->push_back(this);
-
-#if defined(T_OPENGL_ES2_HAVE_EGL) && defined(_WIN32)
-	// Pop error code; seems to be some weird issue with ATI ES emulator.
-	glGetError();
-#endif
-
 	return true;
 }
 
@@ -325,18 +324,16 @@ void ContextOpenGLES2::leave()
 
 #elif defined(T_OPENGL_ES2_HAVE_EGL)
 
+	eglMakeCurrent(m_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+	eglReleaseThread();
+
 	if (!stack->empty())
 		eglMakeCurrent(
-			ms_display,
+			stack->back()->m_display,
 			stack->back()->m_surface,
 			stack->back()->m_surface,
 			stack->back()->m_context
 		);
-	else
-	{
-		eglMakeCurrent(ms_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-		eglReleaseThread();
-	}
 
 #endif
 
@@ -345,14 +342,21 @@ void ContextOpenGLES2::leave()
 
 void ContextOpenGLES2::deleteResource(IDeleteCallback* callback)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	m_deleteResources.push_back(callback);
 }
 
 void ContextOpenGLES2::deleteResources()
 {
-	for (std::vector< IDeleteCallback* >::iterator i = m_deleteResources.begin(); i != m_deleteResources.end(); ++i)
-		(*i)->deleteResource();
-	m_deleteResources.resize(0);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	if (!m_deleteResources.empty())
+	{
+		enter();
+		for (std::vector< IDeleteCallback* >::iterator i = m_deleteResources.begin(); i != m_deleteResources.end(); ++i)
+			(*i)->deleteResource();
+		m_deleteResources.resize(0);
+		leave();
+	}
 }
 
 GLuint ContextOpenGLES2::createShaderObject(const char* shader, GLenum shaderType)
@@ -404,7 +408,7 @@ int32_t ContextOpenGLES2::getWidth() const
 		return m_context->getHeight();
 #elif defined(T_OPENGL_ES2_HAVE_EGL)
 	EGLint width;
-	eglQuerySurface(ms_display, m_surface, EGL_WIDTH, &width);
+	eglQuerySurface(m_display, m_surface, EGL_WIDTH, &width);
 	return width;
 #else
 	return 0;
@@ -420,7 +424,7 @@ int32_t ContextOpenGLES2::getHeight() const
 		return m_context->getWidth();
 #elif defined(T_OPENGL_ES2_HAVE_EGL)
 	EGLint height;
-	eglQuerySurface(ms_display, m_surface, EGL_HEIGHT, &height);
+	eglQuerySurface(m_display, m_surface, EGL_HEIGHT, &height);
 	return height;
 #else
 	return 0;
@@ -439,24 +443,150 @@ bool ContextOpenGLES2::getLandscape() const
 void ContextOpenGLES2::swapBuffers()
 {
 #if defined(T_OPENGL_ES2_HAVE_EGL)
-	eglSwapBuffers(ms_display, m_surface);
+	eglSwapBuffers(m_display, m_surface);
 #elif TARGET_OS_IPHONE
 	m_context->swapBuffers();
 #endif
 }
 
+Semaphore& ContextOpenGLES2::lock()
+{
+	return m_lock;
+}
+
+void ContextOpenGLES2::setRenderState(const RenderState& renderState)
+{
+	if (renderState.cullFaceEnable)
+	{
+		if (!m_renderState.cullFaceEnable)
+		{
+			T_OGL_SAFE(glEnable(GL_CULL_FACE));
+			m_renderState.cullFaceEnable = true;
+		}
+		if (renderState.cullFace != m_renderState.cullFace)
+		{
+			T_OGL_SAFE(glCullFace(renderState.cullFace));
+			m_renderState.cullFace = renderState.cullFace;
+		}
+	}
+	else
+	{
+		if (m_renderState.cullFaceEnable)
+		{
+			T_OGL_SAFE(glDisable(GL_CULL_FACE));
+			m_renderState.cullFaceEnable = false;
+		}
+	}
+
+	if (renderState.blendEnable)
+	{
+		if (!m_renderState.blendEnable)
+		{
+			T_OGL_SAFE(glEnable(GL_BLEND));
+			m_renderState.blendEnable = true;
+		}
+		if (renderState.blendFuncSrc != m_renderState.blendFuncSrc || renderState.blendFuncDest != m_renderState.blendFuncDest)
+		{
+			T_OGL_SAFE(glBlendFunc(renderState.blendFuncSrc, renderState.blendFuncDest));
+			m_renderState.blendFuncSrc = renderState.blendFuncSrc;
+			m_renderState.blendFuncDest = renderState.blendFuncDest;
+		}
+		if (renderState.blendEquation != m_renderState.blendEquation)
+		{
+			T_OGL_SAFE(glBlendEquation(renderState.blendEquation));
+			m_renderState.blendEquation = renderState.blendEquation;
+		}
+	}
+	else
+	{
+		if (m_renderState.blendEnable)
+		{
+			T_OGL_SAFE(glDisable(GL_BLEND));
+			m_renderState.blendEnable = false;
+		}
+	}
+
+	if (renderState.depthTestEnable)
+	{
+		if (!m_renderState.depthTestEnable)
+		{
+			T_OGL_SAFE(glEnable(GL_DEPTH_TEST));
+			m_renderState.depthTestEnable = true;
+		}
+		if (renderState.depthFunc != m_renderState.depthFunc)
+		{
+			T_OGL_SAFE(glDepthFunc(renderState.depthFunc));
+			m_renderState.depthFunc = renderState.depthFunc;
+		}
+	}
+	else
+	{
+		T_OGL_SAFE(glDisable(GL_DEPTH_TEST));
+		m_renderState.depthTestEnable = false;
+	}
+
+	if (renderState.colorMask != m_renderState.colorMask)
+	{
+		T_OGL_SAFE(glColorMask(
+			(renderState.colorMask & RenderState::CmRed) ? GL_TRUE : GL_FALSE,
+			(renderState.colorMask & RenderState::CmGreen) ? GL_TRUE : GL_FALSE,
+			(renderState.colorMask & RenderState::CmBlue) ? GL_TRUE : GL_FALSE,
+			(renderState.colorMask & RenderState::CmAlpha) ? GL_TRUE : GL_FALSE
+		));
+		m_renderState.colorMask = renderState.colorMask;
+	}
+
+	if (renderState.depthMask != m_renderState.depthMask)
+	{
+		T_OGL_SAFE(glDepthMask(renderState.depthMask));
+		m_renderState.depthMask = renderState.depthMask;
+	}
+
+	if (renderState.stencilTestEnable)
+	{
+		if (!m_renderState.stencilTestEnable)
+		{
+			T_OGL_SAFE(glEnable(GL_STENCIL_TEST));
+			m_renderState.stencilTestEnable = true;
+		}
+		if (renderState.stencilFunc != m_renderState.stencilFunc || renderState.stencilRef != m_renderState.stencilRef)
+		{
+			T_OGL_SAFE(glStencilFunc(renderState.stencilFunc, renderState.stencilRef, ~0UL));
+			m_renderState.stencilFunc = renderState.stencilFunc;
+			m_renderState.stencilRef = renderState.stencilRef;
+		}
+		if (renderState.stencilOpFail != m_renderState.stencilOpFail || renderState.stencilOpZFail != m_renderState.stencilOpZFail || renderState.stencilOpZPass != m_renderState.stencilOpZPass)
+		{
+			T_OGL_SAFE(glStencilOp(
+				renderState.stencilOpFail,
+				renderState.stencilOpZFail,
+				renderState.stencilOpZPass
+			));
+			m_renderState.stencilOpFail = renderState.stencilOpFail;
+			m_renderState.stencilOpZFail = renderState.stencilOpZFail;
+			m_renderState.stencilOpZPass = renderState.stencilOpZPass;
+		}
+	}
+	else
+	{
+		T_OGL_SAFE(glDisable(GL_STENCIL_TEST));
+		m_renderState.stencilTestEnable = false;
+	}
+}
+
 #if defined(TARGET_OS_IPHONE)
 ContextOpenGLES2::ContextOpenGLES2(EAGLContextWrapper* context)
 :	m_context(context)
-,	m_count(0)
 {
+	std::memset(&m_renderState, 0, sizeof(m_renderState));
 }
 #elif defined(T_OPENGL_ES2_HAVE_EGL)
-ContextOpenGLES2::ContextOpenGLES2(EGLSurface surface, EGLConfig context)
-:	m_surface(surface)
+ContextOpenGLES2::ContextOpenGLES2(EGLDisplay display, EGLSurface surface, EGLConfig context)
+:	m_display(display)
+,	m_surface(surface)
 ,	m_context(context)
-,	m_count(0)
 {
+	std::memset(&m_renderState, 0, sizeof(m_renderState));
 }
 #endif
 
