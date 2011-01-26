@@ -64,7 +64,11 @@ bool RenderViewOpenGLES2::isActive() const
 
 bool RenderViewOpenGLES2::isFullScreen() const
 {
+#if defined(T_OPENGL_ES2_HAVE_EGL)
+	return false;
+#else
 	return true;
+#endif
 }
 
 void RenderViewOpenGLES2::setViewport(const Viewport& viewport)
@@ -125,6 +129,9 @@ Viewport RenderViewOpenGLES2::getViewport()
 
 bool RenderViewOpenGLES2::begin(EyeType eye)
 {
+	if (!m_globalContext->lock().wait())
+		return false;
+
 	if (!m_context->enter())
 		return false;
 	
@@ -340,12 +347,8 @@ void RenderViewOpenGLES2::present()
 	m_context->swapBuffers();
 	m_context->leave();
 
-	//// Clean pending resources.
-	//if (m_globalContext->enter())
-	//{
-	//	m_globalContext->deleteResources();
-	//	m_globalContext->leave();
-	//}
+	m_globalContext->lock().release();
+	m_globalContext->deleteResources();
 }
 
 void RenderViewOpenGLES2::pushMarker(const char* const marker)

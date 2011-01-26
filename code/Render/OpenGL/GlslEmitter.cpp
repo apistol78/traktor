@@ -220,7 +220,6 @@ void emitDerivative(GlslContext& cx, Derivative* node)
 	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 	GlslVariable* input = cx.emitInput(node, L"Input");
 	GlslVariable* out = cx.emitOutput(node, L"Output", input->getType());
-#if defined(T_OPENGL_STD)
 	switch (node->getAxis())
 	{
 	case Derivative::DaX:
@@ -230,23 +229,6 @@ void emitDerivative(GlslContext& cx, Derivative* node)
 		assign(f, out) << L"dFdy(" << input->getName() << L");" << Endl;
 		break;
 	}
-#elif defined(T_OPENGL_ES2)
-	switch (input->getType())
-	{
-	case GtFloat:
-		assign(f, out) << L"0.0;" << Endl;
-		break;
-	case GtFloat2:
-		assign(f, out) << L"vec2(0.0, 0.0);" << Endl;
-		break;
-	case GtFloat3:
-		assign(f, out) << L"vec3(0.0, 0.0, 0.0);" << Endl;
-		break;
-	case GtFloat4:
-		assign(f, out) << L"vec4(0.0, 0.0, 0.0, 0.0);" << Endl;
-		break;
-	}
-#endif
 }
 
 void emitDiscard(GlslContext& cx, Discard* node)
@@ -1178,11 +1160,7 @@ void emitTranspose(GlslContext& cx, Transpose* node)
 	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 	GlslVariable* in = cx.emitInput(node, L"Input");
 	GlslVariable* out = cx.emitOutput(node, L"Output", in->getType());
-#if defined(T_OPENGL_STD)
 	assign(f, out) << L"transpose(" << in->getName() << L");" << Endl;
-#elif defined(T_OPENGL_ES2)
-	assign(f, out) << in->getName() << L";" << Endl;
-#endif
 }
 
 void emitUniform(GlslContext& cx, Uniform* node)

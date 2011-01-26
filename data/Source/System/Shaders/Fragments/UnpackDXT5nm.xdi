@@ -83,8 +83,8 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>1572</first>
-				<second>230</second>
+				<first>1727</first>
+				<second>82</second>
 			</position>
 			<name>Output</name>
 		</item>
@@ -112,6 +112,25 @@ http://developer.nvidia.com/object/real-time-normal-map-dxt-compression.html
 			<position>
 				<first>990</first>
 				<second>306</second>
+			</position>
+		</item>
+		<item type="traktor.render.Platform">
+			<comment/>
+			<position>
+				<first>1533</first>
+				<second>46</second>
+			</position>
+		</item>
+		<item type="traktor.render.Comment">
+			<comment>
+			<![CDATA[
+No compression available in OpenGL ES 2
+thus normals are stored uncompressed.
+			]]>
+			</comment>
+			<position>
+				<first>1614</first>
+				<second>254</second>
 			</position>
 		</item>
 	</nodes>
@@ -248,7 +267,27 @@ http://developer.nvidia.com/object/real-time-normal-map-dxt-compression.html
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
+				<node ref="/object/nodes/item"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[14]"/>
+				<name>OpenGL ES2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
 				<node ref="/object/nodes/item[9]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[14]"/>
+				<name>Other</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[14]"/>
 				<name>Output</name>
 			</source>
 			<destination>
