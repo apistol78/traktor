@@ -1706,7 +1706,7 @@ void SolutionBuilderXcode::collectDependencies(
 			Configuration::TargetFormat targetFormat = getTargetFormat(dependency.project);
 
 			// Determine if we need to recurse.
-			if (!copyFilesDependencies && targetFormat == Configuration::TfStaticLibrary)
+			if (targetFormat == Configuration::TfStaticLibrary)
 				collectDependencies(dependency.solution, dependency.project, outDependencies, copyFilesDependencies, dependency.external);
 			if (copyFilesDependencies && targetFormat == Configuration::TfSharedLibrary)
 				collectDependencies(dependency.solution, dependency.project, outDependencies, copyFilesDependencies, dependency.external);
