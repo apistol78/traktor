@@ -27,7 +27,7 @@ class InputServer : public IInputServer
 	T_RTTI_CLASS;
 
 public:
-	bool create(const Settings* defaultSettings, const Settings* settings);
+	bool create(const Settings* defaultSettings, const Settings* settings, void* nativeWindowHandle);
 
 	void destroy();
 

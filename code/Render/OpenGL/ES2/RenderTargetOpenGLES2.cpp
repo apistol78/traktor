@@ -123,6 +123,10 @@ bool RenderTargetOpenGLES2::create(const RenderTargetSetCreateDesc& setDesc, con
 	if (depthBuffer)
 	{
 		T_OGL_SAFE(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthBuffer));
+		if (!setDesc.ignoreStencil)
+		{
+			T_OGL_SAFE(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, depthBuffer));
+		}
 		m_haveDepth = true;
 	}
 
@@ -230,6 +234,7 @@ void RenderTargetOpenGLES2::enter()
 {
 	T_OGL_SAFE(glViewport(0, 0, m_width, m_height));
 
+	/*
 	if (m_haveDepth)
 	{
 		T_OGL_SAFE(glEnable(GL_DEPTH_TEST));
@@ -244,6 +249,7 @@ void RenderTargetOpenGLES2::enter()
 
 	T_OGL_SAFE(glActiveTexture(GL_TEXTURE0));
 	T_OGL_SAFE(glBindTexture(m_textureTarget, m_colorTexture));
+	*/
 }
 
 	}

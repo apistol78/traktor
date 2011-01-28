@@ -24,6 +24,7 @@ class ContextOpenGLES2;
 class VertexBufferOpenGLES2;
 class IndexBufferOpenGLES2;
 class ProgramOpenGLES2;
+class RenderTargetSetOpenGLES2;
 class RenderTargetOpenGLES2;
 
 /*!
@@ -84,9 +85,15 @@ public:
 	virtual void getStatistics(RenderViewStatistics& outStatistics) const;
 
 private:
+	struct RenderTargetScope
+	{
+		RenderTargetSetOpenGLES2* renderTargetSet;
+		RenderTargetOpenGLES2* renderTarget;
+	};
+	
 	Ref< ContextOpenGLES2 > m_globalContext;
 	Ref< ContextOpenGLES2 > m_context;
-	std::stack< RenderTargetOpenGLES2* > m_renderTargetStack;
+	std::stack< RenderTargetScope > m_renderTargetStack;
 	Ref< VertexBufferOpenGLES2 > m_currentVertexBuffer;
 	Ref< IndexBufferOpenGLES2 > m_currentIndexBuffer;
 	Ref< ProgramOpenGLES2 > m_currentProgram;

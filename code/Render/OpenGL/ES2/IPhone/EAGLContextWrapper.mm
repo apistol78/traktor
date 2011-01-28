@@ -1,6 +1,7 @@
 #import <UIKit/UIKit.h>
 #import <QuartzCore/QuartzCore.h>
 
+#include "Core/Log/Log.h"
 #include "Render/OpenGL/ES2/IPhone/EAGLContextWrapper.h"
 
 namespace traktor
@@ -38,10 +39,9 @@ bool EAGLContextWrapper::create(EAGLContextWrapper* shareContext, void* nativeHa
 
 	layer.opaque = YES;
 	layer.drawableProperties = [NSDictionary dictionaryWithObjectsAndKeys:
-//		[NSNumber numberWithBool:NO],
-//		kEAGLDrawablePropertyRetainedBacking,
-//		kEAGLColorFormatRGBA8,
-		kEAGLColorFormatRGB565,
+		[NSNumber numberWithBool:NO],
+		kEAGLDrawablePropertyRetainedBacking,
+		kEAGLColorFormatRGBA8,
 		kEAGLDrawablePropertyColorFormat,
 		nil];
 	
@@ -75,12 +75,10 @@ bool EAGLContextWrapper::setCurrent(EAGLContextWrapper* context)
 	{
 		EAGLContext* eaglctx = (EAGLContext*)context->m_context;
 		[EAGLContext setCurrentContext:eaglctx];
-		glBindFramebuffer(GL_FRAMEBUFFER, context->m_frameBuffer);
 	}
 	else
 	{
 		[EAGLContext setCurrentContext:nil];
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 	return true;
 }
@@ -110,11 +108,14 @@ void EAGLContextWrapper::createFrameBuffer()
 	
 	glBindFramebuffer(GL_FRAMEBUFFER, m_frameBuffer);
 	glBindRenderbuffer(GL_RENDERBUFFER, m_renderBuffer);
+	
 	[context renderbufferStorage:GL_RENDERBUFFER fromDrawable:(CAEAGLLayer*)m_layer];
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, m_renderBuffer);
 	
 	glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH, &m_width);
 	glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, &m_height);
+	
+	log::info << L"Framebuffer " << m_width << L"*" << m_height << Endl;
 	
 	if (m_wantDepthBuffer)
 	{

@@ -6,6 +6,8 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/CommandLine.h"
 #include "Core/Settings/Settings.h"
+#include "Core/Thread/Thread.h"
+#include "Core/Thread/ThreadManager.h"
 #include "Xml/XmlDeserializer.h"
 
 using namespace traktor;
@@ -37,12 +39,19 @@ Ref< Settings > loadSettings(const Path& settingsPath)
 	return settings;
 }
 
+void updateApplicationThread(amalgam::Application* app)
+{
+	Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
+	while (!currentThread->stopped())
+	{
+		if (!app->update())
+			break;
+	}
+}
+
 }
 
 @implementation EAGLView
-
-@synthesize animating;
-@dynamic animationFrameInterval;
 
 + (Class) layerClass
 {
@@ -53,16 +62,7 @@ Ref< Settings > loadSettings(const Path& settingsPath)
 {    
     if ((self = [super initWithCoder:coder]))
 	{
-		animating = FALSE;
-		displayLinkSupported = FALSE;
-		animationFrameInterval = 1;
-		displayLink = nil;
-		animationTimer = nil;
-		
-		NSString* reqSysVer = @"3.1";
-		NSString* currSysVer = [[UIDevice currentDevice] systemVersion];
-		if ([currSysVer compare:reqSysVer options:NSNumericSearch] != NSOrderedAscending)
-			displayLinkSupported = TRUE;
+		m_thread = 0;
 
 		// Load settings.
 		Path settingsPath = L"$(BUNDLE_PATH)/Application.config";
@@ -93,66 +93,30 @@ Ref< Settings > loadSettings(const Path& settingsPath)
 
 - (void) drawView:(id)sender
 {
-	m_application->update();
 }
 
 - (void) layoutSubviews
 {
-	//[renderer resizeFromLayer:(CAEAGLLayer*)self.layer];
-    [self drawView:nil];
-}
-
-- (NSInteger) animationFrameInterval
-{
-	return animationFrameInterval;
-}
-
-- (void) setAnimationFrameInterval:(NSInteger)frameInterval
-{
-	if (frameInterval >= 1)
-	{
-		animationFrameInterval = frameInterval;		
-		if (animating)
-		{
-			[self stopAnimation];
-			[self startAnimation];
-		}
-	}
 }
 
 - (void) startAnimation
 {
-	if (!animating)
+	if (!m_thread)
 	{
-		if (displayLinkSupported)
-		{
-			displayLink = [NSClassFromString(@"CADisplayLink") displayLinkWithTarget:self selector:@selector(drawView:)];
-			[displayLink setFrameInterval:animationFrameInterval];
-			[displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
-		}
-		else
-			animationTimer = [NSTimer scheduledTimerWithTimeInterval:(NSTimeInterval)((1.0 / 60.0) * animationFrameInterval) target:self selector:@selector(drawView:) userInfo:nil repeats:TRUE];
-		
-		animating = TRUE;
+		m_thread = ThreadManager::getInstance().create(
+			makeStaticFunctor(updateApplicationThread, m_application.ptr()),
+			L"Application update thread"
+		);
+		m_thread->start();
 	}
 }
 
 - (void)stopAnimation
 {
-	if (animating)
+	if (m_thread)
 	{
-		if (displayLinkSupported)
-		{
-			[displayLink invalidate];
-			displayLink = nil;
-		}
-		else
-		{
-			[animationTimer invalidate];
-			animationTimer = nil;
-		}
-		
-		animating = FALSE;
+		m_thread->stop();
+		m_thread = 0;
 	}
 }
 

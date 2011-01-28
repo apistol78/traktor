@@ -5,6 +5,9 @@
 
 namespace traktor
 {
+
+class Thread;
+
 	namespace amalgam
 	{
 
@@ -17,16 +20,8 @@ class Application;
 {    
 @private
 	traktor::Ref< traktor::amalgam::Application > m_application;
-	
-	BOOL animating;
-	BOOL displayLinkSupported;
-	NSInteger animationFrameInterval;
-	id displayLink;
-    NSTimer *animationTimer;
+	traktor::Thread* m_thread;
 }
-
-@property (readonly, nonatomic, getter=isAnimating) BOOL animating;
-@property (nonatomic) NSInteger animationFrameInterval;
 
 - (void) startAnimation;
 - (void) stopAnimation;

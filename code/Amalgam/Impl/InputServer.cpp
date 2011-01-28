@@ -39,7 +39,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.InputServer", InputServer, IInputServer)
 
-bool InputServer::create(const Settings* defaultSettings, const Settings* settings)
+bool InputServer::create(const Settings* defaultSettings, const Settings* settings, void* nativeWindowHandle)
 {
 	m_inputSystem = new input::InputSystem();
 
@@ -60,7 +60,7 @@ bool InputServer::create(const Settings* defaultSettings, const Settings* settin
 #	if TARGET_OS_IPHONE
 
 	Ref< input::InputDriverIPhone > inputDriverIPhone = new input::InputDriverIPhone();
-	if (inputDriverIPhone->create(0))
+	if (inputDriverIPhone->create(nativeWindowHandle))
 		m_inputSystem->addDriver(inputDriverIPhone);
 
 #	else

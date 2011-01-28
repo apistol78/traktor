@@ -521,8 +521,11 @@ void ContextOpenGLES2::setRenderState(const RenderState& renderState)
 	}
 	else
 	{
-		T_OGL_SAFE(glDisable(GL_DEPTH_TEST));
-		m_renderState.depthTestEnable = false;
+		if (m_renderState.depthTestEnable)
+		{
+			T_OGL_SAFE(glDisable(GL_DEPTH_TEST));
+			m_renderState.depthTestEnable = false;
+		}
 	}
 
 	if (renderState.colorMask != m_renderState.colorMask)
@@ -569,9 +572,21 @@ void ContextOpenGLES2::setRenderState(const RenderState& renderState)
 	}
 	else
 	{
-		T_OGL_SAFE(glDisable(GL_STENCIL_TEST));
-		m_renderState.stencilTestEnable = false;
+		if (m_renderState.stencilTestEnable)
+		{
+			T_OGL_SAFE(glDisable(GL_STENCIL_TEST));
+			m_renderState.stencilTestEnable = false;
+		}
 	}
+}
+
+void ContextOpenGLES2::bindPrimary()
+{
+#if defined(TARGET_OS_IPHONE)
+	T_OGL_SAFE(glBindFramebuffer(GL_FRAMEBUFFER, m_context->getFrameBuffer()));
+#else
+	T_OGL_SAFE(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+#endif
 }
 
 #if defined(TARGET_OS_IPHONE)

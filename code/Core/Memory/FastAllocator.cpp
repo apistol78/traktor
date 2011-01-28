@@ -67,8 +67,8 @@ void* FastAllocator::alloc(size_t size, size_t align, const char* const tag)
 
 		size = nearestLog2(size);
 
-		size_t qid = log2(size);
-		size_t qsize = 1 << qid;
+		uint32_t qid = log2(size);
+		uint32_t qsize = 1UL << qid;
 
 		qid -= 4;
 

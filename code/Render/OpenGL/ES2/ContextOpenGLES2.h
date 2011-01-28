@@ -56,6 +56,8 @@ public:
 	Semaphore& lock();
 
 	void setRenderState(const RenderState& renderState);
+	
+	void bindPrimary();
 
 private:
 	static ThreadLocal ms_contextStack;

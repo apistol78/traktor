@@ -75,7 +75,7 @@ void RenderViewOpenGLES2::setViewport(const Viewport& viewport)
 {
 	T_ANONYMOUS_VAR(IContext::Scope)(m_context);
 
-	if (!m_context->getLandscape())
+	if (m_context->getLandscape())
 	{
 		T_OGL_SAFE(glViewport(
 			viewport.top,
@@ -129,18 +129,34 @@ Viewport RenderViewOpenGLES2::getViewport()
 
 bool RenderViewOpenGLES2::begin(EyeType eye)
 {
+#if !TARGET_OS_IPHONE
 	if (!m_globalContext->lock().wait())
 		return false;
+#endif
 
 	if (!m_context->enter())
 		return false;
+		
+	m_context->bindPrimary();
 	
-	T_OGL_SAFE(glViewport(
-		0,
-		0,
-		m_context->getWidth(),
-		m_context->getHeight()
-	));
+	if (m_context->getLandscape())
+	{
+		T_OGL_SAFE(glViewport(
+			0,
+			0,
+			m_context->getHeight(),
+			m_context->getWidth()
+		));
+	}
+	else
+	{
+		T_OGL_SAFE(glViewport(
+			0,
+			0,
+			m_context->getWidth(),
+			m_context->getHeight()
+		));
+	}
 
 	T_OGL_SAFE(glEnable(GL_DEPTH_TEST));
 	T_OGL_SAFE(glDepthFunc(GL_LEQUAL));
@@ -157,7 +173,10 @@ bool RenderViewOpenGLES2::begin(RenderTargetSet* renderTargetSet, int renderTarg
 	rt->bind();
 	rt->enter();
 
-	m_renderTargetStack.push(rt);
+	RenderTargetScope scope;
+	scope.renderTargetSet = rts;
+	scope.renderTarget = rt;
+	m_renderTargetStack.push(scope);
 
 	rts->setContentValid(true);
 	m_currentDirty = true;
@@ -178,8 +197,18 @@ void RenderViewOpenGLES2::clear(uint32_t clearMask, const float color[4], float 
 		GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT,
 		GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT
 	};
+	
+	GLuint cm = c_clearMask[clearMask];
+	
+	if (!m_renderTargetStack.empty())
+		cm &= m_renderTargetStack.top().renderTargetSet->getClearMask();
+	else
+		cm &= ~GL_STENCIL_BUFFER_BIT;
+	
+	if (!cm)
+		return;
 
-	if (clearMask & CfColor)
+	if (cm & GL_COLOR_BUFFER_BIT)
 	{
 		float r = color[0];
 		float g = color[1];
@@ -189,16 +218,16 @@ void RenderViewOpenGLES2::clear(uint32_t clearMask, const float color[4], float 
 		T_OGL_SAFE(glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE));
 	}
 
-	if (clearMask & CfDepth)
+	if (cm & GL_DEPTH_BUFFER_BIT)
 	{
 		T_OGL_SAFE(glClearDepthf(depth));
 		T_OGL_SAFE(glDepthMask(GL_TRUE));
 	}
 
-	if (clearMask & CfStencil)
+	if (cm & GL_STENCIL_BUFFER_BIT)
 		T_OGL_SAFE(glClearStencil(stencil));
 
-	T_OGL_SAFE(glClear(c_clearMask[clearMask]));
+	T_OGL_SAFE(glClear(cm));
 }
 
 void RenderViewOpenGLES2::setVertexBuffer(VertexBuffer* vertexBuffer)
@@ -231,7 +260,7 @@ void RenderViewOpenGLES2::draw(const Primitives& primitives)
 		
 		if (!m_renderTargetStack.empty())
 		{	
-			const RenderTargetOpenGLES2* rt = m_renderTargetStack.top();
+			const RenderTargetOpenGLES2* rt = m_renderTargetStack.top().renderTarget;
 			targetSize[0] = float(rt->getWidth());
 			targetSize[1] = float(rt->getHeight());
 			landscape = false;
@@ -332,11 +361,10 @@ void RenderViewOpenGLES2::end()
 	if (!m_renderTargetStack.empty())
 	{
 		m_renderTargetStack.pop();
-
 		if (!m_renderTargetStack.empty())
-			m_renderTargetStack.top()->bind();
+			m_renderTargetStack.top().renderTarget->bind();
 		else
-			T_OGL_SAFE(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+			m_context->bindPrimary();
 	}
 
 	//T_OGL_SAFE(glPopAttrib());
@@ -347,7 +375,9 @@ void RenderViewOpenGLES2::present()
 	m_context->swapBuffers();
 	m_context->leave();
 
+#if !TARGET_OS_IPHONE
 	m_globalContext->lock().release();
+#endif
 	m_globalContext->deleteResources();
 }
 
