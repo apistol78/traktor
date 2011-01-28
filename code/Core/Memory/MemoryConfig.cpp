@@ -36,11 +36,7 @@ IAllocator* getAllocator()
 		s_stdAllocator->addRef(0);
 
 #if !defined(_DEBUG)
-#	if TARGET_OS_IPHONE
-		s_allocator = s_stdAllocator;
-#	else
-		s_allocator = allocConstruct< FastAllocator >(s_stdAllocator);
-#	endif
+	s_allocator = allocConstruct< FastAllocator >(s_stdAllocator);
 #else
 #	if defined(_PS3)
 		s_allocator = s_stdAllocator;

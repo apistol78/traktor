@@ -49,6 +49,8 @@ public:
 	virtual void swap(int index1, int index2);
 
 	virtual bool read(int index, void* buffer) const;
+	
+	GLuint getClearMask() const { return m_clearMask; }
 
 private:
 	Ref< IContext > m_context;
@@ -56,6 +58,7 @@ private:
 	int m_height;
 	GLuint m_depthBuffer;
 	RefArray< RenderTargetOpenGLES2 > m_colorTextures;
+	GLuint m_clearMask;
 };
 
 #endif

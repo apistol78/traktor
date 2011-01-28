@@ -16,6 +16,7 @@ RenderTargetSetOpenGLES2::RenderTargetSetOpenGLES2(IContext* context)
 ,	m_width(0)
 ,	m_height(0)
 ,	m_depthBuffer(0)
+,	m_clearMask(0)
 {
 }
 
@@ -28,12 +29,22 @@ bool RenderTargetSetOpenGLES2::create(const RenderTargetSetCreateDesc& desc)
 {
 	m_width = desc.width;
 	m_height = desc.height;
+	m_clearMask = GL_COLOR_BUFFER_BIT;
 
 	if (desc.createDepthStencil)
 	{
 		T_OGL_SAFE(glGenRenderbuffers(1, &m_depthBuffer));
 		T_OGL_SAFE(glBindRenderbuffer(GL_RENDERBUFFER, m_depthBuffer));
-		T_OGL_SAFE(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, m_width, m_height));
+		if (!desc.ignoreStencil)
+		{
+			T_OGL_SAFE(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8_OES, m_width, m_height));
+			m_clearMask |= GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT;
+		}
+		else
+		{
+			T_OGL_SAFE(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, m_width, m_height));
+			m_clearMask |= GL_DEPTH_BUFFER_BIT;
+		}
 	}
 
 	m_colorTextures.resize(desc.count);

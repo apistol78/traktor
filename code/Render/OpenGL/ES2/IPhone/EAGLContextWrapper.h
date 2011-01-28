@@ -25,6 +25,8 @@ public:
 	
 	void resize(GLint width, GLint height);
 	
+	GLuint getFrameBuffer() const { return m_frameBuffer; }
+	
 	GLint getWidth() const { return m_width; }
 	
 	GLint getHeight() const { return m_height; }

@@ -314,7 +314,7 @@ bool Application::create(
 
 	log::debug << L"Creating input server..." << Endl;
 	m_inputServer = new InputServer();
-	if (!m_inputServer->create(defaultSettings, settings))
+	if (!m_inputServer->create(defaultSettings, settings, nativeWindowHandle))
 		return false;
 
 	log::debug << L"Creating physics server..." << Endl;
