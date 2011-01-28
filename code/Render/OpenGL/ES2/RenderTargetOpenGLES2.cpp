@@ -65,7 +65,7 @@ RenderTargetOpenGLES2::~RenderTargetOpenGLES2()
 	destroy();
 }
 
-bool RenderTargetOpenGLES2::create(const RenderTargetSetCreateDesc& setDesc, const RenderTargetCreateDesc& desc, GLuint depthBuffer)
+bool RenderTargetOpenGLES2::create(const RenderTargetSetCreateDesc& setDesc, const RenderTargetCreateDesc& desc, GLuint depthBuffer, GLuint stencilBuffer)
 {
 	GLenum internalFormat;
 	GLint format;
@@ -84,34 +84,6 @@ bool RenderTargetOpenGLES2::create(const RenderTargetSetCreateDesc& setDesc, con
 		m_textureTarget = GL_TEXTURE_2D;
 		break;
 
-	//case TfR16G16B16A16F:
-	//	internalFormat = GL_RGBA16F;
-	//	format = GL_RGBA;
-	//	type = GL_HALF_FLOAT_ARB;
-	//	m_textureTarget = GL_TEXTURE_2D;
-	//	break;
-
-	//case TfR32G32B32A32F:
-	//	internalFormat = GL_RGBA32F;
-	//	format = GL_RGBA;
-	//	type = GL_FLOAT;
-	//	m_textureTarget = GL_TEXTURE_2D;
-	//	break;
-
-	//case TfR16F:
-	//	internalFormat = GL_RGBA16F_ARB;
-	//	format = GL_RGBA;
-	//	type = GL_FLOAT;
-	//	m_textureTarget = GL_TEXTURE_2D;
-	//	break;
-	//		
-	//case TfR32F:
-	//	internalFormat = GL_RGBA32F_ARB;
-	//	format = GL_RGBA;
-	//	type = GL_FLOAT;
-	//	m_textureTarget = GL_TEXTURE_2D;
-	//	break;
-
 	default:
 		log::error << L"Unable to create render target, unsupported format" << Endl;
 		return false;
@@ -123,9 +95,9 @@ bool RenderTargetOpenGLES2::create(const RenderTargetSetCreateDesc& setDesc, con
 	if (depthBuffer)
 	{
 		T_OGL_SAFE(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthBuffer));
-		if (!setDesc.ignoreStencil)
+		if (stencilBuffer != 0)
 		{
-			T_OGL_SAFE(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, depthBuffer));
+			T_OGL_SAFE(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, stencilBuffer));
 		}
 		m_haveDepth = true;
 	}

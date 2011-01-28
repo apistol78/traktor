@@ -225,6 +225,7 @@ void emitDerivative(GlslContext& cx, Derivative* node)
 		assign(f, out) << L"dFdy(" << input->getName() << L");" << Endl;
 		break;
 	}
+	cx.setRequireDerivatives();
 }
 
 void emitDiscard(GlslContext& cx, Discard* node)
@@ -1161,6 +1162,7 @@ void emitTranspose(GlslContext& cx, Transpose* node)
 	GlslVariable* in = cx.emitInput(node, L"Input");
 	GlslVariable* out = cx.emitOutput(node, L"Output", in->getType());
 	assign(f, out) << L"transpose(" << in->getName() << L");" << Endl;
+	cx.setRequireTranspose();
 }
 
 void emitUniform(GlslContext& cx, Uniform* node)

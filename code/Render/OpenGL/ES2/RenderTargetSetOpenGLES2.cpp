@@ -16,6 +16,7 @@ RenderTargetSetOpenGLES2::RenderTargetSetOpenGLES2(IContext* context)
 ,	m_width(0)
 ,	m_height(0)
 ,	m_depthBuffer(0)
+,	m_stencilBuffer(0)
 ,	m_clearMask(0)
 {
 }
@@ -35,12 +36,22 @@ bool RenderTargetSetOpenGLES2::create(const RenderTargetSetCreateDesc& desc)
 	{
 		T_OGL_SAFE(glGenRenderbuffers(1, &m_depthBuffer));
 		T_OGL_SAFE(glBindRenderbuffer(GL_RENDERBUFFER, m_depthBuffer));
-		if (!desc.ignoreStencil)
-		{
-			T_OGL_SAFE(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8_OES, m_width, m_height));
-			m_clearMask |= GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT;
-		}
-		else
+
+//		if (!desc.ignoreStencil)
+//		{
+//#if TARGET_OS_IPHONE
+//			T_OGL_SAFE(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8_OES, m_width, m_height));
+//			m_stencilBuffer = m_depthBuffer;
+//#else
+//			T_OGL_SAFE(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, m_width, m_height));
+//
+//			T_OGL_SAFE(glGenRenderbuffers(1, &m_stencilBuffer));
+//			T_OGL_SAFE(glBindRenderbuffer(GL_RENDERBUFFER, m_stencilBuffer));
+//			T_OGL_SAFE(glRenderbufferStorage(GL_RENDERBUFFER, GL_STENCIL_INDEX8, m_width, m_height));
+//#endif
+//			m_clearMask |= GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT;
+//		}
+//		else
 		{
 			T_OGL_SAFE(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, m_width, m_height));
 			m_clearMask |= GL_DEPTH_BUFFER_BIT;
@@ -51,7 +62,7 @@ bool RenderTargetSetOpenGLES2::create(const RenderTargetSetCreateDesc& desc)
 	for (int i = 0; i < desc.count; ++i)
 	{
 		m_colorTextures[i] = new RenderTargetOpenGLES2(m_context);
-		if (!m_colorTextures[i]->create(desc, desc.targets[i], m_depthBuffer))
+		if (!m_colorTextures[i]->create(desc, desc.targets[i], m_depthBuffer, m_stencilBuffer))
 			return false;
 	}
 

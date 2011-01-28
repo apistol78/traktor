@@ -119,12 +119,12 @@ StringOutputStream& GlslShader::getOutputStream(BlockType blockType)
 	return *(m_outputStreams[int(blockType)].back());
 }
 
-std::wstring GlslShader::getGeneratedShader()
+std::wstring GlslShader::getGeneratedShader(bool requireDerivatives, bool requireTranspose)
 {
 	StringOutputStream ss;
 
 #if defined(T_OPENGL_ES2)
-	if (m_shaderType == StFragment)
+	if (m_shaderType == StFragment && requireDerivatives)
 	{
 		ss << L"#extension GL_OES_standard_derivatives : enable" << Endl;
 		ss << Endl;
@@ -156,17 +156,19 @@ std::wstring GlslShader::getGeneratedShader()
 	}
 
 	// Add transpose function; not implemented by default in GLSL 1.0
-	ss << L"mat4 transpose(in mat4 m)" << Endl;
-	ss << L"{" << Endl;
-	ss << L"\treturn mat4(" << Endl;
-	ss << L"\t\tm[0][0], m[1][0], m[2][0], m[3][0]," << Endl;
-	ss << L"\t\tm[0][1], m[1][1], m[2][1], m[3][1]," << Endl;
-	ss << L"\t\tm[0][2], m[1][2], m[2][2], m[3][2]," << Endl;
-	ss << L"\t\tm[0][3], m[1][3], m[2][3], m[3][3]" << Endl;
-	ss << L"\t);" << Endl;
-	ss << L"}" << Endl;
-	ss << Endl;
-
+	if (requireTranspose)
+	{
+		ss << L"mat4 transpose(in mat4 m)" << Endl;
+		ss << L"{" << Endl;
+		ss << L"\treturn mat4(" << Endl;
+		ss << L"\t\tm[0][0], m[1][0], m[2][0], m[3][0]," << Endl;
+		ss << L"\t\tm[0][1], m[1][1], m[2][1], m[3][1]," << Endl;
+		ss << L"\t\tm[0][2], m[1][2], m[2][2], m[3][2]," << Endl;
+		ss << L"\t\tm[0][3], m[1][3], m[2][3], m[3][3]" << Endl;
+		ss << L"\t);" << Endl;
+		ss << L"}" << Endl;
+		ss << Endl;
+	}
 #else
 	ss << L"#version 120" << Endl;
 	ss << Endl;

@@ -57,6 +57,7 @@ private:
 	int m_width;
 	int m_height;
 	GLuint m_depthBuffer;
+	GLuint m_stencilBuffer;
 	RefArray< RenderTargetOpenGLES2 > m_colorTextures;
 	GLuint m_clearMask;
 };

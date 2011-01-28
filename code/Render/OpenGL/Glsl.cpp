@@ -32,9 +32,12 @@ bool Glsl::generate(
 	cx.getEmitter().emit(cx, pixelOutputs[0]);
 	cx.getEmitter().emit(cx, vertexOutputs[0]);
 
+	bool requireDerivatives = cx.getRequireDerivatives();
+	bool requireTranspose = cx.getRequireTranspose();
+
 	outProgram = GlslProgram(
-		cx.getVertexShader().getGeneratedShader(),
-		cx.getFragmentShader().getGeneratedShader(),
+		cx.getVertexShader().getGeneratedShader(false, requireTranspose),
+		cx.getFragmentShader().getGeneratedShader(requireDerivatives, requireTranspose),
 		cx.getSamplerTextures(),
 		cx.getRenderState()
 	);

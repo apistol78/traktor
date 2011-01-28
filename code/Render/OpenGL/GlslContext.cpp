@@ -17,6 +17,8 @@ GlslContext::GlslContext(const ShaderGraph* shaderGraph)
 ,	m_fragmentShader(GlslShader::StFragment)
 ,	m_currentShader(0)
 ,	m_nextStage(0)
+,	m_requireDerivatives(false)
+,	m_requireTranspose(false)
 {
 }
 
@@ -108,6 +110,26 @@ bool GlslContext::allocateInterpolator(int32_t width, int32_t& outId, int32_t& o
 	m_interpolatorMap.push_back(width);
 
 	return true;
+}
+
+void GlslContext::setRequireDerivatives()
+{
+	m_requireDerivatives = true;
+}
+	
+bool GlslContext::getRequireDerivatives() const
+{
+	return m_requireDerivatives;
+}
+
+void GlslContext::setRequireTranspose()
+{
+	m_requireTranspose = true;
+}
+
+bool GlslContext::getRequireTranspose() const
+{
+	return m_requireTranspose;
 }
 
 GlslShader& GlslContext::getVertexShader()

@@ -545,6 +545,7 @@ void ContextOpenGLES2::setRenderState(const RenderState& renderState)
 		m_renderState.depthMask = renderState.depthMask;
 	}
 
+	/*
 	if (renderState.stencilTestEnable)
 	{
 		if (!m_renderState.stencilTestEnable)
@@ -578,6 +579,7 @@ void ContextOpenGLES2::setRenderState(const RenderState& renderState)
 			m_renderState.stencilTestEnable = false;
 		}
 	}
+	*/
 }
 
 void ContextOpenGLES2::bindPrimary()
