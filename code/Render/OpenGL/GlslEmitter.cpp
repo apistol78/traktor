@@ -41,11 +41,7 @@ std::wstring expandScalar(float v, GlslType type)
 
 StringOutputStream& assign(StringOutputStream& f, GlslVariable* out)
 {
-#if defined(T_OPENGL_STD)
 	f << glsl_type_name(out->getType()) << L" " << out->getName() << L" = ";
-#elif defined(T_OPENGL_ES2)
-	f << glsl_type_name(out->getType()) << L" " << out->getName() << L"; " << out->getName() << L" = ";
-#endif
 	return f;
 }
 
@@ -828,7 +824,11 @@ void emitSampler(GlslContext& cx, Sampler* node)
 			else if (minLinear && !mipLinear)
 				rs.samplerStates[stage].minFilter = GL_LINEAR_MIPMAP_NEAREST;
 			else
+#if defined(T_OPENGL_STD)
 				rs.samplerStates[stage].minFilter = GL_LINEAR_MIPMAP_LINEAR;
+#else
+				rs.samplerStates[stage].minFilter = GL_LINEAR_MIPMAP_NEAREST;	// Don't use trilinear filtering on OpenGL ES as it's too expensive.
+#endif
 
 			rs.samplerStates[stage].magFilter = c_glFilter[node->getMagFilter()];
 			rs.samplerStates[stage].wrapS = c_glWrap[node->getAddressU()];

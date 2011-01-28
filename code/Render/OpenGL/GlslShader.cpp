@@ -159,10 +159,10 @@ std::wstring GlslShader::getGeneratedShader()
 	ss << L"mat4 transpose(in mat4 m)" << Endl;
 	ss << L"{" << Endl;
 	ss << L"\treturn mat4(" << Endl;
-	ss << L"\t\tm[0][0], m[0][1], m[0][2], m[0][3]," << Endl;
-	ss << L"\t\tm[1][0], m[1][1], m[1][2], m[1][3]," << Endl;
-	ss << L"\t\tm[2][0], m[2][1], m[2][2], m[2][3]," << Endl;
-	ss << L"\t\tm[3][0], m[3][1], m[3][2], m[3][3]" << Endl;
+	ss << L"\t\tm[0][0], m[1][0], m[2][0], m[3][0]," << Endl;
+	ss << L"\t\tm[0][1], m[1][1], m[2][1], m[3][1]," << Endl;
+	ss << L"\t\tm[0][2], m[1][2], m[2][2], m[3][2]," << Endl;
+	ss << L"\t\tm[0][3], m[1][3], m[2][3], m[3][3]" << Endl;
 	ss << L"\t);" << Endl;
 	ss << L"}" << Endl;
 	ss << Endl;
