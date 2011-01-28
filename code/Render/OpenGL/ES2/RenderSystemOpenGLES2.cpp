@@ -286,15 +286,12 @@ LRESULT RenderSystemOpenGLES2::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 		SetWindowLongPtr(hWnd, 0, reinterpret_cast< LONG_PTR >(renderSystem));
 		break;
 
-	case WM_KEYDOWN:
-		if (wParam != VK_ESCAPE)
-			break;
-
 	case WM_CLOSE:
 		DestroyWindow(hWnd);
 		break;
 
 	case WM_DESTROY:
+		SetWindowLongPtr(hWnd, 0, 0);
 		PostQuitMessage(0);
 		break;
 

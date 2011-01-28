@@ -71,7 +71,7 @@ public:
 
 	StringOutputStream& getOutputStream(BlockType blockType);
 
-	std::wstring getGeneratedShader();
+	std::wstring getGeneratedShader(bool requireDerivatives, bool requireTranspose);
 
 private:
 	typedef std::map< const OutputPin*, Ref< GlslVariable > > scope_t;

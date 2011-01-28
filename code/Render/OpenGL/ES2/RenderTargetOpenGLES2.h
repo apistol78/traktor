@@ -37,7 +37,7 @@ public:
 
 	virtual ~RenderTargetOpenGLES2();
 
-	bool create(const RenderTargetSetCreateDesc& setDesc, const RenderTargetCreateDesc& desc, GLuint depthBuffer);
+	bool create(const RenderTargetSetCreateDesc& setDesc, const RenderTargetCreateDesc& desc, GLuint depthBuffer, GLuint stencilBuffer);
 
 	virtual void destroy();
 
