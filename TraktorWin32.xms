@@ -11714,7 +11714,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/OpenGL ES 2.0 Emulator v1.4/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/POWERVR SDK/OGLES2_WINDOWS_PCEMULATION_2.07.27.0484/Builds/OGLES2/Include</item>
 					</includePaths>
 					<definitions>
 						<item>T_RENDER_OPENGL_ES2_EXPORT</item>
@@ -11722,7 +11722,7 @@
 						<item>T_OPENGL_ES2</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/OpenGL ES 2.0 Emulator v1.4/lib</item>
+						<item>$(TRAKTOR_HOME)/3rdp/POWERVR SDK/OGLES2_WINDOWS_PCEMULATION_2.07.27.0484/Builds/OGLES2/WindowsPC/Lib</item>
 					</libraryPaths>
 					<libraries>
 						<item>libEGL.lib</item>
@@ -11738,7 +11738,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/OpenGL ES 2.0 Emulator v1.4/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/POWERVR SDK/OGLES2_WINDOWS_PCEMULATION_2.07.27.0484/Builds/OGLES2/Include</item>
 					</includePaths>
 					<definitions>
 						<item>T_RENDER_OPENGL_ES2_EXPORT</item>
@@ -11746,7 +11746,7 @@
 						<item>T_OPENGL_ES2</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/OpenGL ES 2.0 Emulator v1.4/lib</item>
+						<item>$(TRAKTOR_HOME)/3rdp/POWERVR SDK/OGLES2_WINDOWS_PCEMULATION_2.07.27.0484/Builds/OGLES2/WindowsPC/Lib</item>
 					</libraryPaths>
 					<libraries>
 						<item>libEGL.lib</item>
@@ -11762,7 +11762,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/OpenGL ES 2.0 Emulator v1.4/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/POWERVR SDK/OGLES2_WINDOWS_PCEMULATION_2.07.27.0484/Builds/OGLES2/Include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -11770,7 +11770,7 @@
 						<item>T_OPENGL_ES2</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/OpenGL ES 2.0 Emulator v1.4/lib</item>
+						<item>$(TRAKTOR_HOME)/3rdp/POWERVR SDK/OGLES2_WINDOWS_PCEMULATION_2.07.27.0484/Builds/OGLES2/WindowsPC/Lib</item>
 					</libraryPaths>
 					<libraries>
 						<item>libEGL.lib</item>
@@ -11786,7 +11786,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/OpenGL ES 2.0 Emulator v1.4/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/POWERVR SDK/OGLES2_WINDOWS_PCEMULATION_2.07.27.0484/Builds/OGLES2/Include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -11794,7 +11794,7 @@
 						<item>T_OPENGL_ES2</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/OpenGL ES 2.0 Emulator v1.4/lib</item>
+						<item>$(TRAKTOR_HOME)/3rdp/POWERVR SDK/OGLES2_WINDOWS_PCEMULATION_2.07.27.0484/Builds/OGLES2/WindowsPC/Lib</item>
 					</libraryPaths>
 					<libraries>
 						<item>libEGL.lib</item>
