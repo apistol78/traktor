@@ -24,7 +24,8 @@ RenderViewOpenGLES2::RenderViewOpenGLES2(
 )
 :	m_globalContext(globalContext)
 ,	m_context(context)
-,	m_currentDirty(true){
+,	m_currentDirty(true)
+{
 }
 
 RenderViewOpenGLES2::~RenderViewOpenGLES2()
@@ -257,6 +258,7 @@ void RenderViewOpenGLES2::draw(const Primitives& primitives)
 
 		float targetSize[2];
 		bool landscape;
+		bool flipY;
 		
 		if (!m_renderTargetStack.empty())
 		{	
@@ -264,15 +266,17 @@ void RenderViewOpenGLES2::draw(const Primitives& primitives)
 			targetSize[0] = float(rt->getWidth());
 			targetSize[1] = float(rt->getHeight());
 			landscape = false;
+			flipY = true;
 		}
 		else
 		{	
 			targetSize[0] = float(getWidth());
 			targetSize[1] = float(getHeight());
 			landscape = m_context->getLandscape();
+			flipY = false;
 		}
 
-		if (!m_currentProgram->activate(landscape, targetSize))
+		if (!m_currentProgram->activate(landscape, flipY, targetSize))
 			return;
 
 		m_currentVertexBuffer->activate(

@@ -192,9 +192,6 @@ void RenderTargetOpenGLES2::bind(GLuint unit, const SamplerState& samplerState, 
 	}
 
 	T_OGL_SAFE(glUniform1i(locationTexture, unit));
-
-	if (locationOffset != -1)
-		T_OGL_SAFE(glUniform4fv(locationOffset, 1, (const GLfloat*)&m_originAndScale));
 }
 
 void RenderTargetOpenGLES2::bind()
@@ -205,23 +202,6 @@ void RenderTargetOpenGLES2::bind()
 void RenderTargetOpenGLES2::enter()
 {
 	T_OGL_SAFE(glViewport(0, 0, m_width, m_height));
-
-	/*
-	if (m_haveDepth)
-	{
-		T_OGL_SAFE(glEnable(GL_DEPTH_TEST));
-		T_OGL_SAFE(glDepthFunc(GL_LEQUAL));
-		T_OGL_SAFE(glDepthMask(GL_TRUE));
-	}
-	else
-	{
-		T_OGL_SAFE(glDisable(GL_DEPTH_TEST));
-		T_OGL_SAFE(glDepthMask(GL_FALSE));
-	}
-
-	T_OGL_SAFE(glActiveTexture(GL_TEXTURE0));
-	T_OGL_SAFE(glBindTexture(m_textureTarget, m_colorTexture));
-	*/
 }
 
 	}

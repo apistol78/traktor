@@ -454,7 +454,7 @@ Semaphore& ContextOpenGLES2::lock()
 	return m_lock;
 }
 
-void ContextOpenGLES2::setRenderState(const RenderState& renderState)
+void ContextOpenGLES2::setRenderState(const RenderState& renderState, bool invertCull)
 {
 	if (renderState.cullFaceEnable)
 	{
@@ -465,8 +465,16 @@ void ContextOpenGLES2::setRenderState(const RenderState& renderState)
 		}
 		if (renderState.cullFace != m_renderState.cullFace)
 		{
-			T_OGL_SAFE(glCullFace(renderState.cullFace));
-			m_renderState.cullFace = renderState.cullFace;
+			GLuint cullFace = renderState.cullFace;
+			if (invertCull)
+			{
+				if (cullFace == GL_FRONT)
+					cullFace = GL_BACK;
+				else
+					cullFace = GL_FRONT;
+			}
+			T_OGL_SAFE(glCullFace(cullFace));
+			m_renderState.cullFace = cullFace;
 		}
 	}
 	else
