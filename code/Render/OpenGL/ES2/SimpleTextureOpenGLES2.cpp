@@ -265,12 +265,6 @@ void SimpleTextureOpenGLES2::bind(GLuint unit, const SamplerState& samplerState,
 	}
 
 	T_OGL_SAFE(glUniform1i(locationTexture, unit));
-
-	if (locationOffset != -1)
-	{
-		const float offset[] = { 0.0f, 0.0f, 1.0f, 1.0f };
-		T_OGL_SAFE(glUniform4fv(locationOffset, 1, offset));
-	}
 }
 
 	}

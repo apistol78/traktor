@@ -265,12 +265,12 @@ void ProgramOpenGLES2::setStencilReference(uint32_t stencilReference)
 	m_renderState.stencilRef = stencilReference;
 }
 
-bool ProgramOpenGLES2::activate(bool landscape, float targetSize[2])
+bool ProgramOpenGLES2::activate(bool landscape, bool flipY, float targetSize[2])
 {
 	// Bind program and set state display list.
 	if (ms_activeProgram != this)
 	{
-		m_resourceContext->setRenderState(m_renderState);
+		m_resourceContext->setRenderState(m_renderState, flipY);
 		T_OGL_SAFE(glUseProgram(m_program));
 	}
 	
@@ -304,7 +304,12 @@ bool ProgramOpenGLES2::activate(bool landscape, float targetSize[2])
 
 	// Update post orientation coefficients.
 	if (!landscape)
-		glUniform4f(m_locationPostOrientationCoeffs, 1.0f, 0.0f, 0.0f, 1.0f);
+	{
+		if (!flipY)
+			glUniform4f(m_locationPostOrientationCoeffs, 1.0f, 0.0f, 0.0f, 1.0f);
+		else
+			glUniform4f(m_locationPostOrientationCoeffs, 1.0f, 0.0f, 0.0f, -1.0f);
+	}
 	else
 		glUniform4f(m_locationPostOrientationCoeffs, 0.0f, -1.0f, 1.0f, 0.0f);
 
@@ -338,7 +343,7 @@ bool ProgramOpenGLES2::activate(bool landscape, float targetSize[2])
 					i,
 					samplerState,
 					sampler.locationTexture,
-					sampler.locationOffset
+					0
 				);
 			}
 		}
@@ -383,11 +388,9 @@ ProgramOpenGLES2::ProgramOpenGLES2(ContextOpenGLES2* resourceContext, GLuint pro
 		}
 		
 		std::wstring samplerName = L"_gl_sampler_" + toString(i->second);
-		std::wstring samplerOffset = L"_gl_sampler_" + toString(i->second) + L"_offset";
 		
 		Sampler sampler;
 		sampler.locationTexture = glGetUniformLocation(m_program, wstombs(samplerName).c_str());
-		sampler.locationOffset = glGetUniformLocation(m_program, wstombs(samplerOffset).c_str());
 		sampler.texture = m_parameterMap[handle];
 		sampler.stage = i->second;
 

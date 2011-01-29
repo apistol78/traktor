@@ -798,8 +798,12 @@ void emitSampler(GlslContext& cx, Sampler* node)
 		switch (node->getLookup())
 		{
 		case Sampler::LuSimple:
+#if defined(T_OPENGL_STD)
 			fu << L"uniform sampler2D " << samplerName << L";" << Endl;
 			fu << L"uniform vec4 " << samplerOffset << L";" << Endl;
+#elif defined(T_OPENGL_ES2)
+			fu << L"uniform lowp sampler2D " << samplerName << L";" << Endl;
+#endif
 			break;
 
 		case Sampler::LuCube:
@@ -850,8 +854,12 @@ void emitSampler(GlslContext& cx, Sampler* node)
 		{
 		case Sampler::LuSimple:
 			{
+#if defined(T_OPENGL_STD)
 				std::wstring texCoordOffset = texCoord->cast(GtFloat2) + L" * " + samplerOffset + L".zw + " + samplerOffset + L".xy";
 				assign(f, out) << L"texture2D(" << samplerName << L", " << texCoordOffset << L");" << Endl;
+#elif defined(T_OPENGL_ES2)
+				assign(f, out) << L"texture2D(" << samplerName << L", " << texCoord->cast(GtFloat2) << L");" << Endl;
+#endif
 			}
 			break;
 
@@ -871,8 +879,12 @@ void emitSampler(GlslContext& cx, Sampler* node)
 		{
 		case Sampler::LuSimple:
 			{
+#if defined(T_OPENGL_STD)
 				std::wstring texCoordOffset = texCoord->cast(GtFloat2) + L" * " + samplerOffset + L".xy + " + samplerOffset + L".zw";
 				assign(f, out) << L"texture2DLod(" << samplerName << L", " << texCoordOffset << L");" << Endl;
+#elif defined(T_OPENGL_ES2)
+				assign(f, out) << L"texture2DLod(" << samplerName << L", " << texCoord->cast(GtFloat2) << L");" << Endl;
+#endif
 			}
 			break;
 

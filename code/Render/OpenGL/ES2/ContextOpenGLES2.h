@@ -55,7 +55,7 @@ public:
 
 	Semaphore& lock();
 
-	void setRenderState(const RenderState& renderState);
+	void setRenderState(const RenderState& renderState, bool invertCull);
 	
 	void bindPrimary();
 

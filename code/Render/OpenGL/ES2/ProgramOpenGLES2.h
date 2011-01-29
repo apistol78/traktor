@@ -56,7 +56,7 @@ public:
 
 	virtual void setStencilReference(uint32_t stencilReference);
 
-	bool activate(bool landscape, float targetSize[2]);
+	bool activate(bool landscape, bool flipY, float targetSize[2]);
 
 	const GLint* getAttributeLocs() const;
 
@@ -73,7 +73,6 @@ private:
 	struct Sampler
 	{
 		GLint locationTexture;
-		GLint locationOffset;
 		uint32_t texture;
 		uint32_t stage;
 	};
