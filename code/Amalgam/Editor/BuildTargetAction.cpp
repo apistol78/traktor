@@ -65,7 +65,7 @@ bool BuildTargetAction::execute()
 
 	// Set database connection strings.
 	db::ConnectionString sourceDatabaseCs = m_editor->getSettings()->getProperty< PropertyString >(L"Editor.SourceDatabase");
-	db::ConnectionString outputDatabaseCs = L"provider=traktor.db.LocalDatabase;groupPath=db;binary=true";
+	db::ConnectionString outputDatabaseCs(L"provider=traktor.db.LocalDatabase;groupPath=db;binary=true");
 
 	if (sourceDatabaseCs.have(L"groupPath"))
 	{

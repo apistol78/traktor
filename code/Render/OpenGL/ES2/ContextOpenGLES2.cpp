@@ -9,6 +9,8 @@
 #	include "Render/OpenGL/ES2/IPhone/EAGLContextWrapper.h"
 #endif
 
+#if !defined(T_OFFLINE_ONLY)
+
 namespace traktor
 {
 	namespace render
@@ -617,3 +619,5 @@ ContextOpenGLES2::ContextOpenGLES2(EGLDisplay display, EGLSurface surface, EGLCo
 
 	}
 }
+
+#endif
