@@ -54,9 +54,13 @@ bool RenderSystemOpenGLES2::create(const RenderSystemCreateDesc& desc)
 	RegisterClass(&wc);
 #endif
 
+#if !defined(T_OFFLINE_ONLY)
+
 	m_globalContext = ContextOpenGLES2::createResourceContext();
 	if (!m_globalContext)
 		return false;
+
+#endif
 
 	return true;
 }
@@ -211,24 +215,36 @@ Ref< IRenderView > RenderSystemOpenGLES2::createRenderView(const RenderViewEmbed
 
 Ref< VertexBuffer > RenderSystemOpenGLES2::createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
 {
+#if !defined(T_OFFLINE_ONLY)
 	T_ANONYMOUS_VAR(IContext::Scope)(m_globalContext);
 	return new VertexBufferOpenGLES2(m_globalContext, vertexElements, bufferSize, dynamic);
+#else
+	return 0;
+#endif
 }
 
 Ref< IndexBuffer > RenderSystemOpenGLES2::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
 {
+#if !defined(T_OFFLINE_ONLY)
 	T_ANONYMOUS_VAR(IContext::Scope)(m_globalContext);
 	return new IndexBufferOpenGLES2(m_globalContext, indexType, bufferSize, dynamic);
+#else
+	return 0;
+#endif
 }
 
 Ref< ISimpleTexture > RenderSystemOpenGLES2::createSimpleTexture(const SimpleTextureCreateDesc& desc)
 {
+#if !defined(T_OFFLINE_ONLY)
 	T_ANONYMOUS_VAR(IContext::Scope)(m_globalContext);
 	Ref< SimpleTextureOpenGLES2 > texture = new SimpleTextureOpenGLES2(m_globalContext);
 	if (texture->create(desc))
 		return texture;
 	else
 		return texture;
+#else
+	return 0;
+#endif
 }
 
 Ref< ICubeTexture > RenderSystemOpenGLES2::createCubeTexture(const CubeTextureCreateDesc& desc)
@@ -243,8 +259,8 @@ Ref< IVolumeTexture > RenderSystemOpenGLES2::createVolumeTexture(const VolumeTex
 
 Ref< RenderTargetSet > RenderSystemOpenGLES2::createRenderTargetSet(const RenderTargetSetCreateDesc& desc)
 {
-	T_ANONYMOUS_VAR(IContext::Scope)(m_globalContext);
 #if !defined(T_OFFLINE_ONLY)
+	T_ANONYMOUS_VAR(IContext::Scope)(m_globalContext);
 	Ref< RenderTargetSetOpenGLES2 > renderTargetSet = new RenderTargetSetOpenGLES2(m_globalContext);
 	if (renderTargetSet->create(desc))
 		return renderTargetSet;
@@ -257,8 +273,12 @@ Ref< RenderTargetSet > RenderSystemOpenGLES2::createRenderTargetSet(const Render
 
 Ref< IProgram > RenderSystemOpenGLES2::createProgram(const ProgramResource* programResource)
 {
+#if !defined(T_OFFLINE_ONLY)
 	T_ANONYMOUS_VAR(IContext::Scope)(m_globalContext);
 	return ProgramOpenGLES2::create(m_globalContext, programResource);
+#else
+	return 0;
+#endif
 }
 
 Ref< IProgramCompiler > RenderSystemOpenGLES2::createProgramCompiler() const

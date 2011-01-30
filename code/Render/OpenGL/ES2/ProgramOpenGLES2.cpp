@@ -115,6 +115,8 @@ Ref< ProgramResource > ProgramOpenGLES2::compile(const GlslProgram& glslProgram,
 
 Ref< ProgramOpenGLES2 > ProgramOpenGLES2::create(ContextOpenGLES2* resourceContext, const ProgramResource* resource)
 {
+#if !defined(T_OFFLINE_ONLY)
+
 	const ProgramResourceOpenGL* resourceOpenGL = checked_type_cast< const ProgramResourceOpenGL* >(resource);
 	char errorBuf[32000];
 	GLsizei errorBufLen;
@@ -166,10 +168,16 @@ Ref< ProgramOpenGLES2 > ProgramOpenGLES2::create(ContextOpenGLES2* resourceConte
 	s_programCache.insert(std::make_pair(hash, program));
 	
 	return program;
+	
+#else
+	return 0;
+#endif
 }
 
 void ProgramOpenGLES2::destroy()
 {
+#if !defined(T_OFFLINE_ONLY)
+
 	if (ms_activeProgram == this)
 		ms_activeProgram = 0;
 		
@@ -188,6 +196,8 @@ void ProgramOpenGLES2::destroy()
 			m_resourceContext->deleteResource(new DeleteProgramCallback(m_program));
 		m_program = 0;
 	}
+	
+#endif
 }
 
 void ProgramOpenGLES2::setFloatParameter(handle_t handle, float param)
@@ -246,6 +256,8 @@ void ProgramOpenGLES2::setMatrixArrayParameter(handle_t handle, const Matrix44* 
 
 void ProgramOpenGLES2::setTextureParameter(handle_t handle, ITexture* texture)
 {
+#if !defined(T_OFFLINE_ONLY)
+
 	std::map< handle_t, uint32_t >::iterator i = m_parameterMap.find(handle);
 	if (i == m_parameterMap.end())
 		return;
@@ -258,6 +270,8 @@ void ProgramOpenGLES2::setTextureParameter(handle_t handle, ITexture* texture)
 		m_textureBindings[i->second] = 0;
 
 	m_textureDirty = true;
+	
+#endif
 }
 
 void ProgramOpenGLES2::setStencilReference(uint32_t stencilReference)
@@ -267,6 +281,8 @@ void ProgramOpenGLES2::setStencilReference(uint32_t stencilReference)
 
 bool ProgramOpenGLES2::activate(bool landscape, bool flipY, float targetSize[2])
 {
+#if !defined(T_OFFLINE_ONLY)
+
 	// Bind program and set state display list.
 	if (ms_activeProgram != this)
 	{
@@ -350,6 +366,8 @@ bool ProgramOpenGLES2::activate(bool landscape, bool flipY, float targetSize[2])
 	}
 
 	ms_activeProgram = this;
+	
+#endif
 	return true;
 }
 

@@ -13,7 +13,9 @@ namespace traktor
 {
 	namespace render
 	{
-	
+
+#if !defined(T_OFFLINE_ONLY)
+
 class EAGLContextWrapper;
 
 /*! \brief OpenGL ES2 context.
@@ -79,6 +81,8 @@ private:
 	ContextOpenGLES2(EGLDisplay display, EGLSurface surface, EGLConfig context);
 #endif
 };
+
+#endif
 
 	}
 }
