@@ -81,8 +81,15 @@ bool BuildTargetAction::execute()
 	assetPath = FileSystem::getInstance().getAbsolutePath(assetPath);
 	pipelineConfiguration->setProperty< PropertyString >(L"Pipeline.AssetPath", assetPath.getPathName());
 
-	// Write generated pipeline configuration in output directory.
+	// Ensure output directory exists.
 	std::wstring outputPath = L"output/" + m_targetInstance->getName() + L"/" + m_platformInstance->getName();
+	if (!FileSystem::getInstance().makeAllDirectories(outputPath))
+	{
+		log::error << L"Unable to create output path \"" << outputPath << L"\"" << Endl;
+		return false;
+	}
+
+	// Write generated pipeline configuration in output directory.
 	pipelineConfiguration->write< xml::XmlSerializer >(FileSystem::getInstance().open(
 		outputPath + L"/Pipeline.config",
 		File::FmWrite
@@ -106,11 +113,7 @@ bool BuildTargetAction::execute()
 		ss.str(),
 		outputPath,
 		&envmap,
-#if defined(_DEBUG)
-		false, false, false
-#else
 		true, true, false
-#endif
 	);
 	if (!process)
 	{
@@ -126,10 +129,12 @@ bool BuildTargetAction::execute()
 		process->getPipeStream(IProcess::SpStdErr)
 	);
 
+	std::list< std::wstring > errors;
 	std::wstring str;
+
 	while (!process->wait(100))
 	{
-		while (stdOutReader.readLine(str, 0))
+		while (stdOutReader.readLine(str, 10))
 		{
 			str = trim(str);
 			if (str.empty())
@@ -147,6 +152,20 @@ bool BuildTargetAction::execute()
 				}
 			}
 		}
+
+		while (stdErrReader.readLine(str, 10))
+		{
+			str = trim(str);
+			if (!str.empty())
+				errors.push_back(str);
+		}
+	}
+
+	if (!errors.empty())
+	{
+		log::error << L"Unsuccessful build, error(s):" << Endl;
+		for (std::list< std::wstring >::const_iterator i = errors.begin(); i != errors.end(); ++i)
+			log::error << L"\t" << *i << Endl;
 	}
 
 	return process->exitCode() == 0;

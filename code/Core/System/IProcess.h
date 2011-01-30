@@ -37,11 +37,24 @@ public:
 		SpStdErr
 	};
 
+	enum SignalType
+	{
+		StCtrlC,
+		StCtrlBreak
+	};
+
 	/*! \brief Get pipe stream.
 	 *
 	 * \return Exit code.
 	 */
 	virtual Ref< IStream > getPipeStream(StdPipe pipe) = 0;
+
+	/*! \brief Send signal to process.
+	 *
+	 * \param signalType Type of signal \sa SignalType.
+	 * \return True if signal reached process.
+	 */
+	virtual bool signal(SignalType signalType) = 0;
 
 	/*! \brief Get exit code returned by process.
 	 *

@@ -26,6 +26,7 @@ class T_DLLCLASS ProcessWin32 : public IProcess
 public:
 	ProcessWin32(
 		HANDLE hProcess,
+		DWORD dwProcessId,
 		HANDLE hStdInRead,
 		HANDLE hStdInWrite,
 		HANDLE hStdOutRead,
@@ -40,10 +41,13 @@ public:
 
 	virtual Ref< IStream > getPipeStream(StdPipe pipe);
 
+	virtual bool signal(SignalType signalType);
+
 	virtual int32_t exitCode() const;
 
 private:
 	HANDLE m_hProcess;
+	DWORD m_dwProcessId;
 	HANDLE m_hStdInRead;
 	HANDLE m_hStdInWrite;
 	HANDLE m_hStdOutRead;

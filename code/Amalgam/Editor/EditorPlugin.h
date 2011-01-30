@@ -1,6 +1,7 @@
 #ifndef traktor_amalgam_EditorPlugin_H
 #define traktor_amalgam_EditorPlugin_H
 
+#include <list>
 #include <map>
 #include "Core/RefArray.h"
 #include "Core/Thread/Semaphore.h"
@@ -49,6 +50,13 @@ public:
 	virtual void handleDatabaseEvent(const Guid& eventId);
 
 private:
+	struct ActionChain
+	{
+		RefArray< ITargetAction > actions;
+		Ref< ITargetAction > postSuccess;
+		Ref< ITargetAction > postFailure;
+	};
+
 	editor::IEditor* m_editor;
 	Ref< ui::Widget > m_parent;
 	Ref< editor::IEditorPageSite > m_site;
@@ -61,7 +69,7 @@ private:
 	RefArray< TargetInstance > m_targetInstances;
 	Semaphore m_targetActionQueueLock;
 	Signal m_targetActionQueueSignal;
-	RefArray< ITargetAction > m_targetActionQueue;
+	std::list< ActionChain > m_targetActionQueue;
 	Thread* m_threadTargetManager;
 	Thread* m_threadConnectionManager;
 	Thread* m_threadTargetActions;
