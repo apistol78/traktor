@@ -197,7 +197,7 @@ void SimpleTextureOpenGL::unlock(int level)
 	));
 }
 
-void SimpleTextureOpenGL::bind(GLuint unit, const SamplerState& samplerState, GLint locationTexture, GLint locationOffset)
+void SimpleTextureOpenGL::bind(GLuint unit, const SamplerState& samplerState, GLint locationTexture)
 {
 	T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + unit));
 	T_OGL_SAFE(glBindTexture(GL_TEXTURE_2D, m_textureName));
@@ -238,12 +238,6 @@ void SimpleTextureOpenGL::bind(GLuint unit, const SamplerState& samplerState, GL
 	}
 	
 	T_OGL_SAFE(glUniform1iARB(locationTexture, unit));
-	
-	if (locationOffset != -1)
-	{
-		const float offset[] = { 0.0f, 0.0f, 1.0f, 1.0f };
-		T_OGL_SAFE(glUniform4fvARB(locationOffset, 1, offset));
-	}
 }
 
 	}

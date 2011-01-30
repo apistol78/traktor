@@ -67,7 +67,7 @@ int VolumeTextureOpenGL::getDepth() const
 	return m_depth;
 }
 
-void VolumeTextureOpenGL::bind(GLuint unit, const SamplerState& samplerState, GLint locationTexture, GLint locationOffset)
+void VolumeTextureOpenGL::bind(GLuint unit, const SamplerState& samplerState, GLint locationTexture)
 {
 	T_FATAL_ERROR;
 }

@@ -155,7 +155,7 @@ void CubeTextureOpenGL::unlock(int side, int level)
 {
 }
 
-void CubeTextureOpenGL::bind(GLuint unit, const SamplerState& samplerState, GLint locationTexture, GLint locationOffset)
+void CubeTextureOpenGL::bind(GLuint unit, const SamplerState& samplerState, GLint locationTexture)
 {
 	T_FATAL_ERROR;
 }

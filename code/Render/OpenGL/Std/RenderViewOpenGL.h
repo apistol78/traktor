@@ -1,7 +1,6 @@
 #ifndef traktor_render_RenderViewOpenGL_H
 #define traktor_render_RenderViewOpenGL_H
 
-#include <stack>
 #include "Render/IRenderView.h"
 #include "Render/OpenGL/Platform.h"
 #include "Render/OpenGL/Std/ContextOpenGL.h"
@@ -127,7 +126,7 @@ private:
 	
 	bool m_waitVBlank;
 
-	std::stack< RenderTargetOpenGL* > m_renderTargetStack;
+	std::vector< RenderTargetOpenGL* > m_renderTargetStack;
 	Ref< VertexBufferOpenGL > m_currentVertexBuffer;
 	Ref< IndexBufferOpenGL > m_currentIndexBuffer;
 	Ref< ProgramOpenGL > m_currentProgram;

@@ -11,7 +11,7 @@ namespace traktor
 class ITextureBinding
 {
 public:
-	virtual void bind(GLuint unit, const SamplerState& samplerState, GLint locationTexture, GLint locationOffset) = 0;
+	virtual void bind(GLuint unit, const SamplerState& samplerState, GLint locationTexture) = 0;
 };
 	
 	}

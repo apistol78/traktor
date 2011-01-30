@@ -342,8 +342,7 @@ bool ProgramOpenGLES2::activate(bool landscape, bool flipY, float targetSize[2])
 				tb->bind(
 					i,
 					samplerState,
-					sampler.locationTexture,
-					0
+					sampler.locationTexture
 				);
 			}
 		}
