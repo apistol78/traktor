@@ -347,7 +347,7 @@ Ref< IProcess > OS::execute(
 		PROCESS_INFORMATION pi;
 		std::memset(&pi, 0, sizeof(pi));
 
-		DWORD dwCreationFlags = 0;
+		DWORD dwCreationFlags = CREATE_NEW_PROCESS_GROUP;
 #if !defined(WINCE)
 		if (mute)
 			dwCreationFlags = CREATE_NO_WINDOW;
@@ -380,6 +380,7 @@ Ref< IProcess > OS::execute(
 
 		return new ProcessWin32(
 			pi.hProcess,
+			pi.dwProcessId,
 			hStdInRead,
 			hStdInWrite,
 			hStdOutRead,
@@ -422,6 +423,7 @@ Ref< IProcess > OS::execute(
 
 		return new ProcessWin32(
 			xi.hProcess,
+			GetProcessId(xi.hProcess),
 			hStdInRead,
 			hStdInWrite,
 			hStdOutRead,

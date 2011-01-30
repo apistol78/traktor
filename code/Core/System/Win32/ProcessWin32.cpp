@@ -90,6 +90,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ProcessWin32", ProcessWin32, IProcess)
 
 ProcessWin32::ProcessWin32(
 	HANDLE hProcess,
+	DWORD dwProcessId,
 	HANDLE hStdInRead,
 	HANDLE hStdInWrite,
 	HANDLE hStdOutRead,
@@ -98,6 +99,7 @@ ProcessWin32::ProcessWin32(
 	HANDLE hStdErrWrite
 )
 :	m_hProcess(hProcess)
+,	m_dwProcessId(dwProcessId)
 ,	m_hStdInRead(hStdInRead)
 ,	m_hStdInWrite(hStdInWrite)
 ,	m_hStdOutRead(hStdOutRead)
@@ -132,13 +134,31 @@ bool ProcessWin32::wait(int32_t timeout)
 Ref< IStream > ProcessWin32::getPipeStream(StdPipe pipe)
 {
 #if !defined(WINCE)
-	if (pipe = SpStdOut)
+	if (pipe == SpStdOut)
 		return m_pipeStdOut;
 	else if (pipe == SpStdErr)
 		return m_pipeStdErr;
 	else
 #endif
 		return 0;
+}
+
+bool ProcessWin32::signal(SignalType signalType)
+{
+	switch (signalType)
+	{
+	case StCtrlC:
+		if (!GenerateConsoleCtrlEvent(CTRL_C_EVENT, m_dwProcessId))
+			return false;
+		break;
+	case StCtrlBreak:
+		if (!GenerateConsoleCtrlEvent(CTRL_BREAK_EVENT, m_dwProcessId))
+			return false;
+		break;
+	default:
+		return false;
+	}
+	return true;
 }
 
 int32_t ProcessWin32::exitCode() const

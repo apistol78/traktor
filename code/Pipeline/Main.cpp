@@ -1,6 +1,9 @@
+#if defined(_WIN32)
+#	include <Windows.h>
+#endif
 #include <iostream>
 #include "Core/Io/FileSystem.h"
-#include "Core/Io/FileOutputStreamBuffer.h"
+#include "Core/Io/FileOutputStream.h"
 #include "Core/Io/IStream.h"
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Library/Library.h"
@@ -15,6 +18,8 @@
 #include "Core/Settings/PropertyStringArray.h"
 #include "Core/Settings/Settings.h"
 #include "Core/System/OS.h"
+#include "Core/Thread/Thread.h"
+#include "Core/Thread/ThreadManager.h"
 #include "Database/Database.h"
 #include "Database/Group.h"
 #include "Database/Instance.h"
@@ -32,6 +37,43 @@
 #include "Xml/XmlDeserializer.h"
 
 using namespace traktor;
+
+class LogStreamTarget : public ILogTarget
+{
+public:
+	LogStreamTarget(OutputStream* stream)
+	:	m_stream(stream)
+	{
+	}
+
+	virtual void log(const std::wstring& str)
+	{
+		(*m_stream) << str << Endl;
+	}
+
+private:
+	Ref< OutputStream > m_stream;
+};
+
+class LogDualTarget : public ILogTarget
+{
+public:
+	LogDualTarget(ILogTarget* target1, ILogTarget* target2)
+	:	m_target1(target1)
+	,	m_target2(target2)
+	{
+	}
+
+	virtual void log(const std::wstring& str)
+	{
+		m_target1->log(str);
+		m_target2->log(str);
+	}
+
+private:
+	Ref< ILogTarget > m_target1;
+	Ref< ILogTarget > m_target2;
+};
 
 struct StatusListener : public editor::PipelineBuilder::IListener
 {
@@ -59,7 +101,7 @@ Ref< db::Database > openDatabase(const std::wstring& connectionString, bool crea
 Ref< Settings > loadSettings(const std::wstring& settingsFile)
 {
 	Ref< Settings > settings;
-	Ref< IStream > file;
+	Ref< traktor::IStream > file;
 
 	std::wstring globalConfig = settingsFile + L".config";
 	std::wstring userConfig = settingsFile + L"." + OS::getInstance().getCurrentUser() + L".config";
@@ -82,6 +124,24 @@ Ref< Settings > loadSettings(const std::wstring& settingsFile)
 	return settings;
 }
 
+bool g_receivedBreakSignal = false;
+bool g_success = false;
+
+#if defined(_WIN32)
+
+BOOL consoleCtrlHandler(DWORD fdwCtrlType)
+{
+	g_receivedBreakSignal = true;
+	return TRUE;
+}
+
+#endif
+
+void threadBuild(editor::PipelineBuilder& pipelineBuilder, const RefArray< editor::PipelineDependency >& dependencies, bool rebuild)
+{
+	g_success = pipelineBuilder.build(dependencies, rebuild);
+}
+
 int main(int argc, const char** argv)
 {
 	CommandLine cmdLine(argc, argv);
@@ -93,25 +153,27 @@ int main(int argc, const char** argv)
 		traktor::log::info << L"       -f           Force rebuild" << Endl;
 		traktor::log::info << L"       -s           Settings (default \"Traktor.Editor\")" << Endl;
 		traktor::log::info << L"       -l=logfile   Save log file" << Endl;
-		traktor::log::info << L"       -n           Disable memcached" << Endl;
+		traktor::log::info << L"       -n           Disable cache" << Endl;
 		traktor::log::info << L"       -p           Write progress to stdout" << Endl;
 		traktor::log::info << L"       -h           Show this help" << Endl;
 		return 0;
 	}
+
+#if defined(_WIN32)
+	SetConsoleCtrlHandler((PHANDLER_ROUTINE)consoleCtrlHandler, TRUE);
+#endif
 
 	if (cmdLine.hasOption('l'))
 	{
 		std::wstring logPath = cmdLine.getOption('l').getString();
 		if ((logFile = FileSystem::getInstance().open(logPath, File::FmWrite)) != 0)
 		{
-			traktor::log::info   .setBuffer(new FileOutputStreamBuffer(logFile, new Utf8Encoding()));
-			traktor::log::info   .setLineEnd(OutputStream::LeWin);
-			traktor::log::warning.setBuffer(new FileOutputStreamBuffer(logFile, new Utf8Encoding()));
-			traktor::log::warning.setLineEnd(OutputStream::LeWin);
-			traktor::log::error  .setBuffer(new FileOutputStreamBuffer(logFile, new Utf8Encoding()));
-			traktor::log::error  .setLineEnd(OutputStream::LeWin);
-			traktor::log::debug  .setBuffer(new FileOutputStreamBuffer(logFile, new Utf8Encoding()));
-			traktor::log::debug  .setLineEnd(OutputStream::LeWin);
+			Ref< FileOutputStream > logStream = new FileOutputStream(logFile, new Utf8Encoding());
+			Ref< LogStreamTarget > logStreamTarget = new LogStreamTarget(logStream);
+
+			log::info   .setTarget(new LogDualTarget(logStreamTarget, log::info   .getTarget()));
+			log::warning.setTarget(new LogDualTarget(logStreamTarget, log::warning.getTarget()));
+			log::error  .setTarget(new LogDualTarget(logStreamTarget, log::error  .getTarget()));
 
 			traktor::log::info << L"Log file \"Application.log\" created" << Endl;
 		}
@@ -214,7 +276,7 @@ int main(int argc, const char** argv)
 			Guid assetGuid(cmdLine.getString(i));
 			if (assetGuid.isNull() || !assetGuid.isValid())
 			{
-				traktor::log::error << L"Invalid asset guid (" << i << L")" << Endl;
+				traktor::log::error << L"Invalid root asset guid (" << i << L")" << Endl;
 				return 7;
 			}
 
@@ -261,7 +323,25 @@ int main(int argc, const char** argv)
 
 	traktor::log::info << IncreaseIndent;
 
-	bool succeess = pipelineBuilder.build(dependencies, rebuild);
+	Thread* bt = ThreadManager::getInstance().create(
+		makeStaticFunctor< editor::PipelineBuilder&, const RefArray< editor::PipelineDependency >&, bool >(&threadBuild, pipelineBuilder, dependencies, rebuild),
+		L"Build thread"
+	);
+
+	// Execute build thread; keep watching if we've
+	// recevied a break signal thus terminate thread early.
+	bt->start();
+	while (!bt->wait(100))
+	{
+		if (g_receivedBreakSignal)
+		{
+			traktor::log::info << L"Received BREAK signal; aborting build..." << Endl;
+			bt->stop();
+			bt->wait();
+		}
+	}
+
+	ThreadManager::getInstance().destroy(bt);
 
 	traktor::log::info << DecreaseIndent;
 	traktor::log::info << L"Finished" << Endl;
@@ -281,5 +361,5 @@ int main(int argc, const char** argv)
 		logFile = 0;
 	}
 
-	return succeess ? 0 : 8;
+	return g_success ? 0 : 8;
 }

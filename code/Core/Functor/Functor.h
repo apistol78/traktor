@@ -324,6 +324,44 @@ inline Ref< StaticFunctor2< P1, P2 > > makeStaticFunctor(typename StaticFunctor2
 /*! \brief Static function functor.
  * \ingroup Core
  */
+template < typename P1, typename P2, typename P3 >
+class StaticFunctor3 : public Functor
+{
+public:
+	typedef void (*function_t)(P1 p1, P2 p2, P3 p3);
+
+	StaticFunctor3(function_t function, P1 p1, P2 p2, P3 p3)
+	:	m_function(function)
+	,	m_p1(p1)
+	,	m_p2(p2)
+	,	m_p3(p3)
+	{
+	}
+
+	virtual void operator () ()
+	{
+		(*m_function)(m_p1, m_p2, m_p3);
+	}
+
+private:
+	function_t m_function;
+	P1 m_p1;
+	P2 m_p2;
+	P3 m_p3;
+};
+
+/*! \brief Create functor object.
+ * \ingroup Core
+ */
+template < typename P1, typename P2, typename P3 >
+inline Ref< StaticFunctor3< P1, P2, P3 > > makeStaticFunctor(typename StaticFunctor3< P1, P2, P3 >::function_t function, P1 p1, P2 p2, P3 p3)
+{
+	return new StaticFunctor3< P1, P2, P3 >(function, p1, p2, p3);
+}
+
+/*! \brief Static function functor.
+ * \ingroup Core
+ */
 template < typename P1, typename P2, typename P3, typename P4 >
 class StaticFunctor4 : public Functor
 {

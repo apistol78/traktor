@@ -128,10 +128,7 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 			std::wstring databasePath = outputPath + L"/db";
 			std::wstring databaseCs = L"provider=traktor.db.LocalDatabase;groupPath=" + databasePath + L";binary=true";
 
-			if (FileSystem::getInstance().makeAllDirectories(databasePath))
-				configuration->setConnectionString(remoteId, databaseCs);
-			else
-				log::error << L"Unable to create output database \""<< databasePath << L"\"" << Endl;
+			configuration->setConnectionString(remoteId, databaseCs);
 		}
 	}
 
@@ -293,15 +290,20 @@ void EditorPlugin::eventTargetPlay(ui::Event* event)
 
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_targetActionQueueLock);
-		m_targetActionQueue.push_back(new BuildTargetAction(m_editor, platformInstance, targetInstance));
+
+		ActionChain chain;
+		chain.actions.push_back(new BuildTargetAction(m_editor, platformInstance, targetInstance));
 
 		if ((event->getKeyState() & ui::KsShift) == 0)
 		{
-			m_targetActionQueue.push_back(new DeployTargetAction(m_editor, platformInstance, targetInstance, activeGuid));
-			m_targetActionQueue.push_back(new LaunchTargetAction(platformInstance, targetInstance));
+			chain.actions.push_back(new DeployTargetAction(m_editor, platformInstance, targetInstance, activeGuid));
+			chain.actions.push_back(new LaunchTargetAction(platformInstance, targetInstance));
 		}
 
-		m_targetActionQueue.push_back(new PostTargetAction(targetInstance, TsIdle));
+		chain.postSuccess =
+		chain.postFailure = new PostTargetAction(targetInstance, TsIdle);
+
+		m_targetActionQueue.push_back(chain);
 		m_targetActionQueueSignal.set();
 	}
 
@@ -310,22 +312,7 @@ void EditorPlugin::eventTargetPlay(ui::Event* event)
 
 void EditorPlugin::eventTargetStop(ui::Event* event)
 {
-	TargetInstance* targetInstance = checked_type_cast< TargetInstance*, false >(event->getItem());
-
-	if (targetInstance->getState() == TsIdle)
-		return;
-
-	targetInstance->setState(TsPending);
-	targetInstance->setBuildProgress(0);
-
-	{
-		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_targetActionQueueLock);
-		//m_targetActionQueue.push_back(new ActionStopTarget(targetInstance));
-		m_targetActionQueue.push_back(new PostTargetAction(targetInstance, TsIdle));
-		m_targetActionQueueSignal.set();
-	}
-
-	m_targetList->update();
+	// \fixme
 }
 
 void EditorPlugin::threadTargetManager()
@@ -342,7 +329,7 @@ void EditorPlugin::threadConnectionManager()
 
 void EditorPlugin::threadTargetActions()
 {
-	Ref< ITargetAction > targetAction;
+	ActionChain chain;
 	while (!m_threadTargetActions->stopped())
 	{
 		if (!m_targetActionQueueSignal.wait(100))
@@ -353,16 +340,28 @@ void EditorPlugin::threadTargetActions()
 			if (m_targetActionQueue.empty())
 				continue;
 
-			targetAction = m_targetActionQueue.front();
+			chain = m_targetActionQueue.front();
 			m_targetActionQueue.pop_front();
 
 			if (m_targetActionQueue.empty())
 				m_targetActionQueueSignal.reset();
 		}
 
-		bool success = targetAction->execute();
-		if (!success)
-			log::error << L"Deploy action \"" << type_name(targetAction) << L"\" failed; unable to continue." << Endl;
+		bool success = true;
+		for (RefArray< ITargetAction >::const_iterator i = chain.actions.begin(); i != chain.actions.end(); ++i)
+		{
+			success &= (*i)->execute();
+			if (!success)
+			{
+				log::error << L"Deploy action \"" << type_name(*i) << L"\" failed; unable to continue." << Endl;
+				break;
+			}
+		}
+
+		if (success && chain.postSuccess)
+			chain.postSuccess->execute();
+		else if (!success && chain.postFailure)
+			chain.postFailure->execute();
 	}
 }
 
