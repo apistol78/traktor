@@ -46,7 +46,7 @@ public:
 	
 	virtual int getDepth() const;
 	
-	virtual void bind(GLuint unit, const SamplerState& samplerState, GLint locationTexture, GLint locationOffset);
+	virtual void bind(GLuint unit, const SamplerState& samplerState, GLint locationTexture);
 
 	bool bind(GLuint depthBuffer);
 
@@ -72,7 +72,6 @@ private:
 	GLuint m_resolveFBO;
 	GLuint m_targetColorBuffer;
 	GLuint m_colorTexture;
-	Vector4 m_originAndScale;
 	bool m_haveDepth;
 	bool m_usingPrimaryDepthBuffer;
 	bool m_haveBlitExt;

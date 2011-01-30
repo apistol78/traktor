@@ -308,7 +308,7 @@ void emitFragmentPosition(GlslContext& cx, FragmentPosition* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 	GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat2);
-	assign(f, out) << L"vec2(gl_FragCoord.x, _gl_targetSize.y - gl_FragCoord.y);" << Endl;
+	assign(f, out) << L"vec2(gl_FragCoord.x, gl_FragCoord.y);" << Endl;
 }
 
 void emitIndexedUniform(GlslContext& cx, IndexedUniform* node)
@@ -787,7 +787,6 @@ void emitSampler(GlslContext& cx, Sampler* node)
 	bool defineSampler = cx.defineSamplerTexture(texture->getName(), stage);
 
 	std::wstring samplerName = L"_gl_sampler_" + toString(stage);
-	std::wstring samplerOffset = L"_gl_sampler_" + toString(stage) + L"_offset";
 	
 	if (defineSampler)
 	{
@@ -800,7 +799,6 @@ void emitSampler(GlslContext& cx, Sampler* node)
 		case Sampler::LuSimple:
 #if defined(T_OPENGL_STD)
 			fu << L"uniform sampler2D " << samplerName << L";" << Endl;
-			fu << L"uniform vec4 " << samplerOffset << L";" << Endl;
 #elif defined(T_OPENGL_ES2)
 			fu << L"uniform lowp sampler2D " << samplerName << L";" << Endl;
 #endif
@@ -853,14 +851,7 @@ void emitSampler(GlslContext& cx, Sampler* node)
 		switch (node->getLookup())
 		{
 		case Sampler::LuSimple:
-			{
-#if defined(T_OPENGL_STD)
-				std::wstring texCoordOffset = texCoord->cast(GtFloat2) + L" * " + samplerOffset + L".zw + " + samplerOffset + L".xy";
-				assign(f, out) << L"texture2D(" << samplerName << L", " << texCoordOffset << L");" << Endl;
-#elif defined(T_OPENGL_ES2)
-				assign(f, out) << L"texture2D(" << samplerName << L", " << texCoord->cast(GtFloat2) << L");" << Endl;
-#endif
-			}
+			assign(f, out) << L"texture2D(" << samplerName << L", " << texCoord->cast(GtFloat2) << L");" << Endl;
 			break;
 
 		case Sampler::LuCube:
@@ -878,14 +869,7 @@ void emitSampler(GlslContext& cx, Sampler* node)
 		switch (node->getLookup())
 		{
 		case Sampler::LuSimple:
-			{
-#if defined(T_OPENGL_STD)
-				std::wstring texCoordOffset = texCoord->cast(GtFloat2) + L" * " + samplerOffset + L".xy + " + samplerOffset + L".zw";
-				assign(f, out) << L"texture2DLod(" << samplerName << L", " << texCoordOffset << L");" << Endl;
-#elif defined(T_OPENGL_ES2)
-				assign(f, out) << L"texture2DLod(" << samplerName << L", " << texCoord->cast(GtFloat2) << L");" << Endl;
-#endif
-			}
+			assign(f, out) << L"texture2DLod(" << samplerName << L", " << texCoord->cast(GtFloat2) << L");" << Endl;
 			break;
 
 		case Sampler::LuCube:
@@ -1314,7 +1298,6 @@ void emitVertexOutput(GlslContext& cx, VertexOutput* node)
 	GlslVariable* in = cx.emitInput(node, L"Input");
 
 	StringOutputStream& fb = cx.getVertexShader().getOutputStream(GlslShader::BtBody);
-#if defined(T_OPENGL_ES2)
 	switch (in->getType())
 	{
 	case GtFloat:
@@ -1333,26 +1316,6 @@ void emitVertexOutput(GlslContext& cx, VertexOutput* node)
 		fb << L"gl_Position = PV(" << in->getName() << L");" << Endl;
 		break;
 	}
-#else
-	switch (in->getType())
-	{
-	case GtFloat:
-		fb << L"gl_Position = vec4(" << in->getName() << L", 0.0, 0.0, 1.0);" << Endl;
-		break;
-
-	case GtFloat2:
-		fb << L"gl_Position = vec4(" << in->getName() << L".xy, 0.0, 1.0);" << Endl;
-		break;
-
-	case GtFloat3:
-		fb << L"gl_Position = vec4(" << in->getName() << L".xyz, 1.0);" << Endl;
-		break;
-
-	case GtFloat4:
-		fb << L"gl_Position = " << in->getName() << L";" << Endl;
-		break;
-	}
-#endif
 }
 
 		}

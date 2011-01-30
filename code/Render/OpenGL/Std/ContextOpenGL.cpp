@@ -55,6 +55,7 @@ ContextOpenGL::ContextOpenGL(Display* display, Window window, GLXContext context
 
 #endif
 {
+	std::memset(&m_renderState, 0, sizeof(m_renderState));
 	update();
 }
 
@@ -233,90 +234,160 @@ void ContextOpenGL::disable(GLenum state)
 	}
 }
 
-GLuint ContextOpenGL::createStateList(const RenderState& renderState)
+void ContextOpenGL::setRenderState(const RenderState& renderState, bool invertCull)
 {
-	Adler32 adler;
-	
-	adler.begin();
-	adler.feed(&renderState, sizeof(renderState));
-	adler.end();
-	
-	uint32_t hash = adler.get();
-	
-	std::map< uint32_t, GLuint >::const_iterator i = m_stateLists.find(hash);
-	if (i != m_stateLists.end())
-		return i->second;
-		
-	GLuint stateList = glGenLists(1);
-	glNewList(stateList, GL_COMPILE);
-
 	if (renderState.cullFaceEnable)
 	{
-		T_OGL_SAFE(glEnable(GL_CULL_FACE));
-		T_OGL_SAFE(glCullFace(renderState.cullFace));
+		if (!m_renderState.cullFaceEnable)
+		{
+			T_OGL_SAFE(glEnable(GL_CULL_FACE));
+			m_renderState.cullFaceEnable = true;
+		}
+		if (renderState.cullFace != m_renderState.cullFace)
+		{
+			GLuint cullFace = renderState.cullFace;
+			if (invertCull)
+			{
+				if (cullFace == GL_FRONT)
+					cullFace = GL_BACK;
+				else
+					cullFace = GL_FRONT;
+			}
+			T_OGL_SAFE(glCullFace(cullFace));
+			m_renderState.cullFace = cullFace;
+		}
 	}
 	else
-		T_OGL_SAFE(glDisable(GL_CULL_FACE));
+	{
+		if (m_renderState.cullFaceEnable)
+		{
+			T_OGL_SAFE(glDisable(GL_CULL_FACE));
+			m_renderState.cullFaceEnable = false;
+		}
+	}
 
 	if (renderState.blendEnable)
 	{
-		T_OGL_SAFE(glEnable(GL_BLEND));
-		T_OGL_SAFE(glBlendFunc(renderState.blendFuncSrc, renderState.blendFuncDest));
-		T_OGL_SAFE(glBlendEquationEXT(renderState.blendEquation));
+		if (!m_renderState.blendEnable)
+		{
+			T_OGL_SAFE(glEnable(GL_BLEND));
+			m_renderState.blendEnable = true;
+		}
+		if (renderState.blendFuncSrc != m_renderState.blendFuncSrc || renderState.blendFuncDest != m_renderState.blendFuncDest)
+		{
+			T_OGL_SAFE(glBlendFunc(renderState.blendFuncSrc, renderState.blendFuncDest));
+			m_renderState.blendFuncSrc = renderState.blendFuncSrc;
+			m_renderState.blendFuncDest = renderState.blendFuncDest;
+		}
+		if (renderState.blendEquation != m_renderState.blendEquation)
+		{
+			T_OGL_SAFE(glBlendEquationEXT(renderState.blendEquation));
+			m_renderState.blendEquation = renderState.blendEquation;
+		}
 	}
 	else
-		T_OGL_SAFE(glDisable(GL_BLEND));
-
-	if (renderState.depthTestEnable)
 	{
-		T_OGL_SAFE(glEnable(GL_DEPTH_TEST));
-		T_OGL_SAFE(glDepthFunc(renderState.depthFunc));
+		if (m_renderState.blendEnable)
+		{
+			T_OGL_SAFE(glDisable(GL_BLEND));
+			m_renderState.blendEnable = false;
+		}
 	}
-	else
-		T_OGL_SAFE(glDisable(GL_DEPTH_TEST));
-
-	T_OGL_SAFE(glColorMask(
-		(renderState.colorMask & RenderState::CmRed) ? GL_TRUE : GL_FALSE,
-		(renderState.colorMask & RenderState::CmGreen) ? GL_TRUE : GL_FALSE,
-		(renderState.colorMask & RenderState::CmBlue) ? GL_TRUE : GL_FALSE,
-		(renderState.colorMask & RenderState::CmAlpha) ? GL_TRUE : GL_FALSE
-	));
-
-	T_OGL_SAFE(glDepthMask(renderState.depthMask));
 
 	if (renderState.alphaTestEnable)
 	{
-		T_OGL_SAFE(glEnable(GL_ALPHA_TEST));
-		T_OGL_SAFE(glAlphaFunc(renderState.alphaFunc, renderState.alphaRef));
+		if (!m_renderState.alphaTestEnable)
+		{
+			T_OGL_SAFE(glEnable(GL_ALPHA_TEST));
+			m_renderState.alphaTestEnable = true;
+		}
+		if (renderState.alphaFunc != m_renderState.alphaFunc || renderState.alphaRef != m_renderState.alphaRef)
+		{
+			T_OGL_SAFE(glAlphaFunc(renderState.alphaFunc, renderState.alphaRef));
+			m_renderState.alphaFunc = renderState.alphaFunc;
+			m_renderState.alphaRef = renderState.alphaRef;
+		}
 	}
 	else
-		T_OGL_SAFE(glDisable(GL_ALPHA_TEST));
-		
+	{
+		if (m_renderState.alphaTestEnable)
+		{
+			T_OGL_SAFE(glDisable(GL_ALPHA_TEST));
+			m_renderState.alphaTestEnable = false;
+		}
+	}
+
+	if (renderState.depthTestEnable)
+	{
+		if (!m_renderState.depthTestEnable)
+		{
+			T_OGL_SAFE(glEnable(GL_DEPTH_TEST));
+			m_renderState.depthTestEnable = true;
+		}
+		if (renderState.depthFunc != m_renderState.depthFunc)
+		{
+			T_OGL_SAFE(glDepthFunc(renderState.depthFunc));
+			m_renderState.depthFunc = renderState.depthFunc;
+		}
+	}
+	else
+	{
+		if (m_renderState.depthTestEnable)
+		{
+			T_OGL_SAFE(glDisable(GL_DEPTH_TEST));
+			m_renderState.depthTestEnable = false;
+		}
+	}
+
+	if (renderState.colorMask != m_renderState.colorMask)
+	{
+		T_OGL_SAFE(glColorMask(
+			(renderState.colorMask & RenderState::CmRed) ? GL_TRUE : GL_FALSE,
+			(renderState.colorMask & RenderState::CmGreen) ? GL_TRUE : GL_FALSE,
+			(renderState.colorMask & RenderState::CmBlue) ? GL_TRUE : GL_FALSE,
+			(renderState.colorMask & RenderState::CmAlpha) ? GL_TRUE : GL_FALSE
+		));
+		m_renderState.colorMask = renderState.colorMask;
+	}
+
+	if (renderState.depthMask != m_renderState.depthMask)
+	{
+		T_OGL_SAFE(glDepthMask(renderState.depthMask));
+		m_renderState.depthMask = renderState.depthMask;
+	}
+
 	if (renderState.stencilTestEnable)
 	{
-		T_OGL_SAFE(glEnable(GL_STENCIL_TEST));
-		T_OGL_SAFE(glStencilFunc(renderState.stencilFunc, renderState.stencilRef, ~0UL));
-		T_OGL_SAFE(glStencilOp(
-			renderState.stencilOpFail,
-			renderState.stencilOpZFail,
-			renderState.stencilOpZPass
-		));
+		if (!m_renderState.stencilTestEnable)
+		{
+			T_OGL_SAFE(glEnable(GL_STENCIL_TEST));
+			m_renderState.stencilTestEnable = true;
+		}
+		if (renderState.stencilFunc != m_renderState.stencilFunc || renderState.stencilRef != m_renderState.stencilRef)
+		{
+			T_OGL_SAFE(glStencilFunc(renderState.stencilFunc, renderState.stencilRef, ~0UL));
+			m_renderState.stencilFunc = renderState.stencilFunc;
+			m_renderState.stencilRef = renderState.stencilRef;
+		}
+		if (renderState.stencilOpFail != m_renderState.stencilOpFail || renderState.stencilOpZFail != m_renderState.stencilOpZFail || renderState.stencilOpZPass != m_renderState.stencilOpZPass)
+		{
+			T_OGL_SAFE(glStencilOp(
+				renderState.stencilOpFail,
+				renderState.stencilOpZFail,
+				renderState.stencilOpZPass
+			));
+			m_renderState.stencilOpFail = renderState.stencilOpFail;
+			m_renderState.stencilOpZFail = renderState.stencilOpZFail;
+			m_renderState.stencilOpZPass = renderState.stencilOpZPass;
+		}
 	}
 	else
-		T_OGL_SAFE(glDisable(GL_STENCIL_TEST));
-
-	glEndList();
-	
-	m_stateLists.insert(std::make_pair(hash, stateList));
-	return stateList;
-}
-
-void ContextOpenGL::callStateList(GLuint stateList)
-{
-	if (m_currentStateList != stateList)
 	{
-		T_OGL_SAFE(glCallList(stateList));
-		m_currentStateList = stateList;
+		if (m_renderState.stencilTestEnable)
+		{
+			T_OGL_SAFE(glDisable(GL_STENCIL_TEST));
+			m_renderState.stencilTestEnable = false;
+		}
 	}
 }
 

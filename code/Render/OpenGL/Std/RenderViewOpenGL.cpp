@@ -259,7 +259,7 @@ bool RenderViewOpenGL::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 	
 	rt->enter(m_primaryTarget->getDepthBuffer());
 
-	m_renderTargetStack.push(rt);
+	m_renderTargetStack.push_back(rt);
 
 	rts->setContentValid(true);
 	m_currentDirty = true;
@@ -281,7 +281,7 @@ void RenderViewOpenGL::clear(uint32_t clearMask, const float color[4], float dep
 		GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT
 	};
 	
-	RenderTargetOpenGL* rt = m_renderTargetStack.top();
+	RenderTargetOpenGL* rt = m_renderTargetStack.back();
 	GLuint cm = c_clearMask[clearMask]; // & rt->clearMask();
 
 	if (cm & GL_COLOR_BUFFER_BIT)
@@ -331,7 +331,7 @@ void RenderViewOpenGL::draw(const Primitives& primitives)
 		if (!m_currentProgram || !m_currentVertexBuffer)
 			return;
 
-		const RenderTargetOpenGL* rt = m_renderTargetStack.top();
+		const RenderTargetOpenGL* rt = m_renderTargetStack.back();
 		float targetSize[] = { float(rt->getWidth()), float(rt->getHeight()) };
 		
 		if (!m_currentProgram->activate(targetSize))
@@ -433,8 +433,8 @@ void RenderViewOpenGL::end()
 {
 	T_ASSERT (!m_renderTargetStack.empty());
 
-	RenderTargetOpenGL* rt = m_renderTargetStack.top();
-	m_renderTargetStack.pop();
+	RenderTargetOpenGL* rt = m_renderTargetStack.back();
+	m_renderTargetStack.pop_back();
 
 	if (m_renderTargetStack.empty())
 	{
@@ -448,7 +448,7 @@ void RenderViewOpenGL::end()
 		rt->resolve();
 
 		// Rebind parent target.
-		RenderTargetOpenGL* rt = m_renderTargetStack.top();
+		RenderTargetOpenGL* rt = m_renderTargetStack.back();
 		rt->bind(false);
 	}
 

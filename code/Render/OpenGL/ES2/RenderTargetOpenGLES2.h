@@ -47,7 +47,7 @@ public:
 	
 	virtual int getDepth() const;
 
-	virtual void bind(GLuint unit, const SamplerState& samplerState, GLint locationTexture, GLint locationOffset);
+	virtual void bind(GLuint unit, const SamplerState& samplerState, GLint locationTexture);
 
 	void bind();
 

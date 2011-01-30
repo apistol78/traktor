@@ -172,6 +172,16 @@ std::wstring GlslShader::getGeneratedShader(bool requireDerivatives, bool requir
 #else
 	ss << L"#version 120" << Endl;
 	ss << Endl;
+
+	if (m_shaderType == StVertex)
+	{
+		// Add post-scale transform function.
+		ss << L"vec4 PV(in vec4 cp0)" << Endl;
+		ss << L"{" << Endl;
+		ss << L"\treturn vec4(cp0.x, -cp0.y, cp0.z, cp0.w);" << Endl;
+		ss << L"}" << Endl;
+		ss << Endl;
+	}
 #endif
 
 #if defined(T_OPENGL_ES2)

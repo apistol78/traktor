@@ -49,7 +49,7 @@ public:
 
 	virtual void unlock(int level);
 
-	virtual void bind(GLuint unit, const SamplerState& samplerState, GLint locationTexture, GLint locationOffset);
+	virtual void bind(GLuint unit, const SamplerState& samplerState, GLint locationTexture);
 
 private:
 	Ref< IContext > m_context;

@@ -63,7 +63,6 @@ RenderTargetOpenGL::RenderTargetOpenGL(IContext* resourceContext, BlitHelper* bl
 ,	m_haveDepth(false)
 ,	m_usingPrimaryDepthBuffer(false)
 ,	m_haveBlitExt(false)
-,	m_originAndScale(0.0f, 1.0f, 1.0f, -1.0f)
 {
 }
 
@@ -91,13 +90,6 @@ bool RenderTargetOpenGL::create(const RenderTargetSetCreateDesc& setDesc, const 
 		{
 			m_width = nearestLog2(m_width);
 			m_height = nearestLog2(m_height);
-			
-			m_originAndScale.set(
-				0.0f,
-				m_targetHeight / float(m_height),
-				m_targetWidth / float(m_width),
-				-m_targetHeight / float(m_height)
-			);
 		}
 	}
 
@@ -374,7 +366,7 @@ int RenderTargetOpenGL::getDepth() const
 	return 0;
 }
 
-void RenderTargetOpenGL::bind(GLuint unit, const SamplerState& samplerState, GLint locationTexture, GLint locationOffset)
+void RenderTargetOpenGL::bind(GLuint unit, const SamplerState& samplerState, GLint locationTexture)
 {
 	T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + unit));
 	T_OGL_SAFE(glBindTexture(m_textureTarget, m_colorTexture));
@@ -410,9 +402,6 @@ void RenderTargetOpenGL::bind(GLuint unit, const SamplerState& samplerState, GLi
 	}
 	
 	T_OGL_SAFE(glUniform1iARB(locationTexture, unit));
-	
-	if (locationOffset != -1)
-		T_OGL_SAFE(glUniform4fvARB(locationOffset, 1, (const GLfloat*)&m_originAndScale));
 }
 
 bool RenderTargetOpenGL::bind(GLuint depthBuffer)
@@ -481,7 +470,7 @@ void RenderTargetOpenGL::blit()
 		T_OGL_SAFE(glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, 0));
 		T_OGL_SAFE(glBlitFramebufferEXT(
 			0, offsetY, m_targetWidth, m_targetHeight + offsetY,
-			0, 0, m_targetWidth, m_targetHeight,
+			0, m_targetHeight, m_targetWidth, 0,
 			GL_COLOR_BUFFER_BIT,
 			GL_NEAREST
 		));

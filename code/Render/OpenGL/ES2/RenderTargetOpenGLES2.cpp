@@ -156,7 +156,7 @@ int RenderTargetOpenGLES2::getDepth() const
 	return 0;
 }
 
-void RenderTargetOpenGLES2::bind(GLuint unit, const SamplerState& samplerState, GLint locationTexture, GLint locationOffset)
+void RenderTargetOpenGLES2::bind(GLuint unit, const SamplerState& samplerState, GLint locationTexture)
 {
 	T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + unit));
 	T_OGL_SAFE(glBindTexture(m_textureTarget, m_colorTexture));

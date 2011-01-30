@@ -73,7 +73,6 @@ private:
 	struct Sampler
 	{
 		GLint locationTexture;
-		GLint locationOffset;
 		uint32_t texture;
 		uint32_t stage;
 	};
@@ -89,7 +88,6 @@ private:
 	Ref< ContextOpenGL > m_resourceContext;
 	GLhandleARB m_program;
 	RenderState m_renderState;
-	GLuint m_state;
 	GLint m_locationTargetSize;
 	GLint m_attributeLocs[T_OGL_MAX_USAGE_INDEX];			//!< Vertex attribute locations.
 	std::map< handle_t, uint32_t > m_parameterMap;			//!< Parameter to data map.
