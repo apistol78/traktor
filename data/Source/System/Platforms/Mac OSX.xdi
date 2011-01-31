@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.amalgam.Platform">
+<object type="traktor.amalgam.Platform" version="1">
 	<pipelineConfiguration>$(TRAKTOR_HOME)/bin/platforms/osx/Pipeline.config</pipelineConfiguration>
 	<applicationConfiguration>$(TRAKTOR_HOME)/bin/platforms/osx/Application.config</applicationConfiguration>
 	<deployTool>$(TRAKTOR_HOME)/bin/deploy/win32/deploy-osx.bat</deployTool>
+	<deployToolOsX>$(TRAKTOR_HOME)/bin/deploy/osx/deploy-osx.sh</deployToolOsX>
 </object>

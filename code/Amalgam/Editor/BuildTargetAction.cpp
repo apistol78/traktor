@@ -99,7 +99,11 @@ bool BuildTargetAction::execute()
 	Path projectRoot = FileSystem::getInstance().getCurrentVolume()->getCurrentDirectory();
 	OS::envmap_t envmap = OS::getInstance().getEnvironment();
 	envmap[L"DEPLOY_PROJECTNAME"] = m_targetInstance->getName();
+#if defined(_WIN32)
 	envmap[L"DEPLOY_PROJECTROOT"] = projectRoot.getPathName();
+#else
+	envmap[L"DEPLOY_PROJECTROOT"] = projectRoot.getPathNameNoVolume();
+#endif
 
 	StringOutputStream ss;
 	ss << L"build";

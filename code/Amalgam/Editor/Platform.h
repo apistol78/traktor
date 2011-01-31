@@ -33,6 +33,7 @@ private:
 	std::wstring m_pipelineConfiguration;
 	std::wstring m_applicationConfiguration;
 	std::wstring m_deployTool;
+	std::wstring m_deployToolOsX;
 };
 
 	}
