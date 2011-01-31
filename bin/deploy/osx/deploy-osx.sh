@@ -12,6 +12,6 @@ elif [[ ${1} == "deploy" ]]; then
 
 elif [[ ${1} == "launch" ]]; then
 
-	open bin/$DEPLOY_EXECUTABLE.app --args "$PWD/Application.config"
+	open -n bin/$DEPLOY_EXECUTABLE.app --args -s "$PWD/Application.config"
 
 fi
