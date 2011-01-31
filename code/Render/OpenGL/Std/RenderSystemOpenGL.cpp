@@ -734,7 +734,7 @@ Ref< RenderTargetSet > RenderSystemOpenGL::createRenderTargetSet(const RenderTar
 	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
 
 	Ref< RenderTargetSetOpenGL > renderTargetSet = new RenderTargetSetOpenGL(m_resourceContext, m_blitHelper);
-	if (!renderTargetSet->create(desc))
+	if (!renderTargetSet->create(desc, false))
 		return 0;
 
 	return renderTargetSet;

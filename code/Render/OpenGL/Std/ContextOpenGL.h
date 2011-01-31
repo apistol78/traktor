@@ -40,11 +40,9 @@ public:
 
 	void destroy();
 	
-	void enable(GLenum state);
+	GLuint createStateList(const RenderState& renderState);
 	
-	void disable(GLenum state);
-	
-	void setRenderState(const RenderState& renderState, bool invertCull);
+	void callStateList(GLuint stateList);
 	
 	GLhandleARB createShaderObject(const char* shader, GLenum shaderType);
 
@@ -82,7 +80,7 @@ private:
 	static ThreadLocal ms_contextStack;
 	Semaphore m_lock;
 	std::map< GLenum, bool > m_enableStates;
-	RenderState m_renderState;
+	std::map< uint32_t, GLuint > m_stateLists;
 	std::map< uint32_t, GLhandleARB > m_shaderObjects;
 	GLuint m_currentStateList;
 	std::vector< IDeleteCallback* > m_deleteResources;

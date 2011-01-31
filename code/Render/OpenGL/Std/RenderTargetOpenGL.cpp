@@ -71,7 +71,7 @@ RenderTargetOpenGL::~RenderTargetOpenGL()
 	destroy();
 }
 
-bool RenderTargetOpenGL::create(const RenderTargetSetCreateDesc& setDesc, const RenderTargetCreateDesc& desc, GLuint depthBuffer)
+bool RenderTargetOpenGL::create(const RenderTargetSetCreateDesc& setDesc, const RenderTargetCreateDesc& desc, GLuint depthBuffer, bool backBuffer)
 {
 	GLenum internalFormat;
 	GLint format;
@@ -90,6 +90,14 @@ bool RenderTargetOpenGL::create(const RenderTargetSetCreateDesc& setDesc, const 
 		{
 			m_width = nearestLog2(m_width);
 			m_height = nearestLog2(m_height);
+		}
+
+		// Only backbuffer allowed to be partially rendered; if expected
+		// to be used as texture then we need to ensure everything is renderered.
+		if (!backBuffer)
+		{
+			m_targetWidth = m_width;
+			m_targetHeight = m_height;
 		}
 	}
 

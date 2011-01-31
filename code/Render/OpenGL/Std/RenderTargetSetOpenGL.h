@@ -35,7 +35,7 @@ public:
 
 	virtual ~RenderTargetSetOpenGL();
 
-	bool create(const RenderTargetSetCreateDesc& desc);
+	bool create(const RenderTargetSetCreateDesc& desc, bool backBuffer);
 
 	virtual void destroy();
 

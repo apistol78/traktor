@@ -88,6 +88,7 @@ private:
 	Ref< ContextOpenGL > m_resourceContext;
 	GLhandleARB m_program;
 	RenderState m_renderState;
+	GLint m_state;
 	GLint m_locationTargetSize;
 	GLint m_attributeLocs[T_OGL_MAX_USAGE_INDEX];			//!< Vertex attribute locations.
 	std::map< handle_t, uint32_t > m_parameterMap;			//!< Parameter to data map.
