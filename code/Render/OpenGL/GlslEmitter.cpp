@@ -308,7 +308,7 @@ void emitFragmentPosition(GlslContext& cx, FragmentPosition* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 	GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat2);
-	assign(f, out) << L"vec2(gl_FragCoord.x, gl_FragCoord.y);" << Endl;
+	assign(f, out) << L"gl_FragCoord.xy;" << Endl;
 }
 
 void emitIndexedUniform(GlslContext& cx, IndexedUniform* node)
@@ -989,35 +989,58 @@ void emitSwizzle(GlslContext& cx, Swizzle* node)
 	{
 		GlslVariable* out = cx.emitOutput(node, L"Output", type);
 
-		std::wstringstream ss;
-		ss << glsl_type_name(type) << L"(";
-		for (size_t i = 0; i < map.length(); ++i)
+		bool containConstant = false;
+		for (size_t i = 0; i < map.length() && !containConstant; ++i)
 		{
-			if (i > 0)
-				ss << L", ";
-			switch (map[i])
+			if (map[i] == L'0' || map[i] == L'1')
+				containConstant = true;
+		}
+
+		StringOutputStream ss;
+		if (containConstant)
+		{
+			ss << glsl_type_name(type) << L"(";
+			for (size_t i = 0; i < map.length(); ++i)
 			{
-			case 'x':
-				if (in->getType() == GtFloat)
+				if (i > 0)
+					ss << L", ";
+				switch (map[i])
 				{
-					ss << in->getName();
+				case 'x':
+					if (in->getType() == GtFloat)
+					{
+						ss << in->getName();
+						break;
+					}
+					// Don't break, multidimensional source.
+				case 'y':
+				case 'z':
+				case 'w':
+					ss << in->getName() << L'.' << map[i];
+					break;
+				case '0':
+					ss << L"0.0";
+					break;
+				case '1':
+					ss << L"1.0";
 					break;
 				}
-				// Don't break, multidimensional source.
-			case 'y':
-			case 'z':
-			case 'w':
-				ss << in->getName() << L'.' << char(tolower(map[i]));
-				break;
-			case '0':
-				ss << L"0.0";
-				break;
-			case '1':
-				ss << L"1.0";
-				break;
 			}
+			ss << L")";
 		}
-		ss << L")";
+		else if (map.length() > 1)
+		{
+			ss << in->getName() << L'.';
+			for (size_t i = 0; i < map.length(); ++i)
+				ss << map[i];
+		}
+		else if (map.length() == 1)
+		{
+			if (map[0] == L'x' && in->getType() == GtFloat)
+				ss << in->getName();
+			else
+				ss << in->getName() << L'.' << map[0];
+		}
 
 		assign(f, out) << ss.str() << L";" << Endl;
 	}
