@@ -96,7 +96,7 @@ bool RenderViewOpenGL::createPrimaryTarget()
 	if (m_primaryTargetDesc.width > 0 && m_primaryTargetDesc.height > 0)
 	{
 		m_primaryTarget = new RenderTargetSetOpenGL(m_context, m_blitHelper);
-		if (!m_primaryTarget->create(m_primaryTargetDesc))
+		if (!m_primaryTarget->create(m_primaryTargetDesc, true))
 			return false;
 	}
 	
@@ -136,7 +136,7 @@ bool RenderViewOpenGL::reset(const RenderViewDefaultDesc& desc)
 	if (m_primaryTargetDesc.width > 0 && m_primaryTargetDesc.height > 0)
 	{
 		m_primaryTarget = new RenderTargetSetOpenGL(m_context, m_blitHelper);
-		if (!m_primaryTarget->create(m_primaryTargetDesc))
+		if (!m_primaryTarget->create(m_primaryTargetDesc, true))
 			return false;
 	}
 	
@@ -158,7 +158,7 @@ void RenderViewOpenGL::resize(int32_t width, int32_t height)
 	m_primaryTargetDesc.height = m_context->getHeight();
 
 	m_primaryTarget = new RenderTargetSetOpenGL(m_context, m_blitHelper);
-	m_primaryTarget->create(m_primaryTargetDesc);
+	m_primaryTarget->create(m_primaryTargetDesc, true);
 }
 
 int RenderViewOpenGL::getWidth() const

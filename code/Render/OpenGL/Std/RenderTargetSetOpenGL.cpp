@@ -27,14 +27,14 @@ RenderTargetSetOpenGL::~RenderTargetSetOpenGL()
 	destroy();
 }
 
-bool RenderTargetSetOpenGL::create(const RenderTargetSetCreateDesc& desc)
+bool RenderTargetSetOpenGL::create(const RenderTargetSetCreateDesc& desc, bool backBuffer)
 {
 	if (!opengl_have_extension("GL_EXT_framebuffer_object"))
 	{
 		log::error << L"Cannot create FBO; not supported by OpenGL driver" << Endl;
 		return false;
 	}
-	
+
 	// When using MSAA we require both MSAA framebuffer extension and framebuffer blitting.
 	if (
 		desc.multiSample > 1 &&
@@ -57,6 +57,14 @@ bool RenderTargetSetOpenGL::create(const RenderTargetSetCreateDesc& desc)
 			log::warning << L"Trying to create non-power-of-2 render target but OpenGL doesn't support NPOT; scaling applied" << Endl;
 			m_width = nearestLog2(m_width);
 			m_height = nearestLog2(m_height);
+		}
+		
+		// Only backbuffer allowed to be partially rendered; if expected
+		// to be used as texture then we need to ensure everything is renderered.
+		if (!backBuffer)
+		{
+			m_targetWidth = m_width;
+			m_targetHeight = m_height;
 		}
 	}
 
@@ -90,7 +98,7 @@ bool RenderTargetSetOpenGL::create(const RenderTargetSetCreateDesc& desc)
 	for (int i = 0; i < desc.count; ++i)
 	{
 		m_colorTextures[i] = new RenderTargetOpenGL(m_resourceContext, m_blitHelper);
-		if (!m_colorTextures[i]->create(desc, desc.targets[i], m_depthBuffer))
+		if (!m_colorTextures[i]->create(desc, desc.targets[i], m_depthBuffer, backBuffer))
 			return false;
 	}
 
