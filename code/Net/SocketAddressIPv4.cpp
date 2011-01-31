@@ -106,11 +106,15 @@ RefArray< SocketAddressIPv4 > SocketAddressIPv4::getInterfaces()
 {
 	RefArray< SocketAddressIPv4 > interfaces;
 
-#if defined(_WIN32)
+#if defined(_WIN32) || TARGET_OS_MAC
 	char hostName[200];
 	if (gethostname(hostName, sizeof(hostName)) == 0)
 	{
+#	if defined(_WIN32)
 		LPHOSTENT host;
+#	else
+		hostent* host;
+#endif
 		host = gethostbyname(hostName);
 		if (host && host->h_addr)
 		{
@@ -124,12 +128,12 @@ RefArray< SocketAddressIPv4 > SocketAddressIPv4::getInterfaces()
 		}
 		else
 		{
-			log::error << L"Unable to get network interface(s); gethostbyname failed (" << WSAGetLastError() << L")" << Endl;
+			log::error << L"Unable to get network interface(s); gethostbyname failed." << Endl;
 		}
 	}
 	else
 	{
-		log::error << L"Unable to get network interface(s); gethostname failed (" << WSAGetLastError() << L")" << Endl;
+		log::error << L"Unable to get network interface(s); gethostname failed." << Endl;
 	}
 #endif
 
