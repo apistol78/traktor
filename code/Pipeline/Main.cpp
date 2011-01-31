@@ -171,9 +171,9 @@ int main(int argc, const char** argv)
 			Ref< FileOutputStream > logStream = new FileOutputStream(logFile, new Utf8Encoding());
 			Ref< LogStreamTarget > logStreamTarget = new LogStreamTarget(logStream);
 
-			log::info   .setTarget(new LogDualTarget(logStreamTarget, log::info   .getTarget()));
-			log::warning.setTarget(new LogDualTarget(logStreamTarget, log::warning.getTarget()));
-			log::error  .setTarget(new LogDualTarget(logStreamTarget, log::error  .getTarget()));
+			traktor::log::info   .setTarget(new LogDualTarget(logStreamTarget, traktor::log::info   .getTarget()));
+			traktor::log::warning.setTarget(new LogDualTarget(logStreamTarget, traktor::log::warning.getTarget()));
+			traktor::log::error  .setTarget(new LogDualTarget(logStreamTarget, traktor::log::error  .getTarget()));
 
 			traktor::log::info << L"Log file \"Application.log\" created" << Endl;
 		}

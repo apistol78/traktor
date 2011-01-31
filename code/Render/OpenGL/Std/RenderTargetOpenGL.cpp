@@ -465,11 +465,10 @@ void RenderTargetOpenGL::blit()
 {
 	if (m_haveBlitExt)
 	{
-		int32_t offsetY = m_resolveFBO ? m_height - m_targetHeight : 0;
 		T_OGL_SAFE(glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, m_targetFBO));
 		T_OGL_SAFE(glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, 0));
 		T_OGL_SAFE(glBlitFramebufferEXT(
-			0, offsetY, m_targetWidth, m_targetHeight + offsetY,
+			0, 0, m_targetWidth, m_targetHeight,
 			0, m_targetHeight, m_targetWidth, 0,
 			GL_COLOR_BUFFER_BIT,
 			GL_NEAREST
