@@ -997,7 +997,7 @@ void emitSwizzle(GlslContext& cx, Swizzle* node)
 		}
 
 		StringOutputStream ss;
-		if (containConstant)
+		if (containConstant || (map.length() > 1 && in->getType() == GtFloat))
 		{
 			ss << glsl_type_name(type) << L"(";
 			for (size_t i = 0; i < map.length(); ++i)
