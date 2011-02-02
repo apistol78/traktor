@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_WORLD_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -22,8 +22,8 @@ class EntityUpdate;
  * \ingroup World
  *
  * All accessible entities must be derived from this class.
- * Not all entities must be renderable, it's also
- * designed to be able to handle non-renderables such as triggers etc.
+ * Not all entities must be "renderable", it's also
+ * designed to be able to handle "non-renderables" such as triggers etc.
  */
 class T_DLLCLASS Entity : public Object
 {
@@ -46,33 +46,9 @@ public:
 
 	/*! \brief Update entity.
 	 *
-	 * Simulate entity's state dT.
-	 *
 	 * \param update Update state.
 	 */
 	virtual void update(const EntityUpdate* update) = 0;
-
-	/*! \brief Add entity reference.
-	 *
-	 * \note This method doesn't do anything,
-	 * if you want to keep references then you
-	 * have to overload this method.
-	 *
-	 * \param name Name of reference.
-	 * \param reference Entity reference.
-	 */
-	virtual void addReference(const std::wstring& name, Entity* reference);
-
-	/*! \brief Add entity referee.
-	 *
-	 * \note This method doesn't do anything,
-	 * if you want to keep references then you
-	 * have to overload this method.
-	 *
-	 * \param name Name of referee.
-	 * \param reference Entity referee.
-	 */
-	virtual void addReferee(const std::wstring& name, Entity* referee);
 };
 
 	}
