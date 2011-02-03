@@ -34,7 +34,8 @@ public:
 		btDynamicsWorld* dynamicsWorld,
 		btRigidBody* body,
 		btCollisionShape* shape,
-		uint32_t group
+		uint32_t collisionGroup,
+		uint32_t collisionMask
 	);
 
 	virtual void setTransform(const Transform& transform);

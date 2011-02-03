@@ -14,12 +14,12 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.Scene", Scene, Object)
 
 Scene::Scene(
 	ISceneController* controller,
-	world::IEntityManager* entityManager,
+	world::IEntitySchema* entitySchema,
 	world::Entity* rootEntity,
 	world::WorldRenderSettings* worldRenderSettings,
 	world::PostProcessSettings* postProcessSettings
 )
-:	m_entityManager(entityManager)
+:	m_entitySchema(entitySchema)
 ,	m_rootEntity(rootEntity)
 ,	m_controller(controller)
 ,	m_worldRenderSettings(worldRenderSettings)
@@ -30,7 +30,7 @@ Scene::Scene(
 Scene::~Scene()
 {
 	m_rootEntity = 0;
-	m_entityManager = 0;
+	m_entitySchema = 0;
 	m_controller = 0;
 	m_worldRenderSettings = 0;
 	m_postProcessSettings = 0;
@@ -44,7 +44,7 @@ void Scene::destroy()
 		m_rootEntity = 0;
 	}
 
-	m_entityManager = 0;
+	m_entitySchema = 0;
 	m_controller = 0;
 	m_worldRenderSettings = 0;
 	m_postProcessSettings = 0;
@@ -68,27 +68,27 @@ void Scene::build(world::IWorldRenderer* worldRenderer, world::WorldRenderView& 
 		worldRenderer->build(worldRenderView, m_rootEntity, frame);
 }
 
-Ref< world::IEntityManager > Scene::getEntityManager() const
+world::IEntitySchema* Scene::getEntitySchema() const
 {
-	return m_entityManager;
+	return m_entitySchema;
 }
 
-Ref< world::Entity > Scene::getRootEntity() const
+world::Entity* Scene::getRootEntity() const
 {
 	return m_rootEntity;
 }
 
-Ref< ISceneController > Scene::getController() const
+ISceneController* Scene::getController() const
 {
 	return m_controller;
 }
 
-Ref< world::WorldRenderSettings > Scene::getWorldRenderSettings() const
+world::WorldRenderSettings* Scene::getWorldRenderSettings() const
 {
 	return m_worldRenderSettings;
 }
 
-Ref< world::PostProcessSettings > Scene::getPostProcessSettings() const
+world::PostProcessSettings* Scene::getPostProcessSettings() const
 {
 	return m_postProcessSettings;
 }

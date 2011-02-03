@@ -2,6 +2,7 @@
 #include <sstream>
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Misc/Split.h"
+#include "Core/Serialization/AttributeHex.h"
 #include "Core/Serialization/AttributeMultiLine.h"
 #include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/AttributeType.h"
@@ -126,12 +127,15 @@ bool InspectReflector::operator >> (const Member< uint8_t >& m)
 		max = range->getMax();
 	}
 
+	const AttributeHex* hex = findAttribute< AttributeHex >(m);
+
 	addPropertyItem(new NumericPropertyItem(
 		stylizeMemberName(m.getName()),
 		m,
 		min,
 		max,
-		false
+		false,
+		hex != 0
 	));
 
 	return true;
@@ -172,12 +176,15 @@ bool InspectReflector::operator >> (const Member< uint16_t >& m)
 		max = range->getMax();
 	}
 
+	const AttributeHex* hex = findAttribute< AttributeHex >(m);
+
 	addPropertyItem(new NumericPropertyItem(
 		stylizeMemberName(m.getName()),
 		m,
 		min,
 		max,
-		false
+		false,
+		hex != 0
 	));
 
 	return true;
@@ -218,12 +225,15 @@ bool InspectReflector::operator >> (const Member< uint32_t >& m)
 		max = range->getMax();
 	}
 
+	const AttributeHex* hex = findAttribute< AttributeHex >(m);
+
 	addPropertyItem(new NumericPropertyItem(
 		stylizeMemberName(m.getName()),
 		m,
 		min,
 		max,
-		false
+		false,
+		hex != 0
 	));
 
 	return true;
@@ -264,12 +274,15 @@ bool InspectReflector::operator >> (const Member< uint64_t >& m)
 		max = range->getMax();
 	}
 
+	const AttributeHex* hex = findAttribute< AttributeHex >(m);
+
 	addPropertyItem(new NumericPropertyItem(
 		stylizeMemberName(m.getName()),
 		(double)m,
 		min,
 		max,
-		false
+		false,
+		hex != 0
 	));
 
 	return true;

@@ -12,7 +12,8 @@ namespace traktor
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.RagDollPoseControllerData", 4, RagDollPoseControllerData, IPoseControllerData)
 
 RagDollPoseControllerData::RagDollPoseControllerData()
-:	m_collisionGroup(~0UL)
+:	m_collisionGroup(1)
+,	m_collisionMask(~0UL)
 ,	m_autoDeactivate(true)
 ,	m_enabled(true)
 ,	m_fixateBones(false)
@@ -72,6 +73,7 @@ Ref< IPoseController > RagDollPoseControllerData::createInstance(
 		boneTransforms,
 		velocities,
 		m_collisionGroup,
+		m_collisionMask,
 		m_autoDeactivate,
 		m_enabled,
 		m_fixateBones,

@@ -68,6 +68,8 @@ public:
 	float length() const;
 
 	Vector4 normalized() const;
+
+	Vector4 neg() const;
 	
 	const Vector4& unbox() const {
 		return m_value;

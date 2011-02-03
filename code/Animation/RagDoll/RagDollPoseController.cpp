@@ -37,6 +37,7 @@ bool RagDollPoseController::create(
 	const AlignedVector< Transform >& boneTransforms,
 	const AlignedVector< Velocity >& velocities,
 	uint32_t collisionGroup,
+	uint32_t collisionMask,
 	bool autoDeactivate,
 	bool enabled,
 	bool fixateBones,
@@ -79,7 +80,8 @@ bool RagDollPoseController::create(
 			Vector4 centerOfMass = Vector4(0.0f, 0.0f, bone->getLength() * 0.5f, 1.0f);
 
 			physics::CapsuleShapeDesc shapeDesc;
-			shapeDesc.setGroup(collisionGroup);
+			shapeDesc.setCollisionGroup(collisionGroup);
+			shapeDesc.setCollisionMask(collisionMask);
 			shapeDesc.setRadius(bone->getRadius());
 			shapeDesc.setLength(bone->getLength());
 

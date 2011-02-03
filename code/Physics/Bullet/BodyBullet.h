@@ -22,13 +22,15 @@ public:
 		btDynamicsWorld* dynamicsWorld,
 		btRigidBody* body,
 		btCollisionShape* shape,
-		uint32_t group
+		uint32_t collisionGroup,
+		uint32_t collisionMask
 	)
 	:	m_callback(callback)
 	,	m_dynamicsWorld(dynamicsWorld)
 	,	m_body(body)
 	,	m_shape(shape)
-	,	m_group(group)
+	,	m_collisionGroup(collisionGroup)
+	,	m_collisionMask(collisionMask)
 	,	m_enable(false)
 	{
 	}
@@ -77,14 +79,17 @@ public:
 
 	btCollisionShape* getBtCollisionShape() const { return m_shape; }
 
-	uint32_t getGroup() const { return m_group; }
+	uint32_t getCollisionGroup() const { return m_collisionGroup; }
+
+	uint32_t getCollisionMask() const { return m_collisionMask; }
 
 protected:
 	IWorldCallback* m_callback;
 	btDynamicsWorld* m_dynamicsWorld;
 	btRigidBody* m_body;
 	btCollisionShape* m_shape;
-	uint32_t m_group;
+	uint32_t m_collisionGroup;
+	uint32_t m_collisionMask;
 	bool m_enable;
 };
 

@@ -38,9 +38,13 @@ public:
 
 	const Transform& getLocalTransform() const;
 
-	void setGroup(uint32_t group);
+	void setCollisionGroup(uint32_t collisionGroup);
 
-	uint32_t getGroup() const;
+	uint32_t getCollisionGroup() const;
+
+	void setCollisionMask(uint32_t collisionMask);
+
+	uint32_t getCollisionMask() const;
 
 	virtual bool bind(resource::IResourceManager* resourceManager);
 
@@ -48,7 +52,8 @@ public:
 
 private:
 	Transform m_localTransform;
-	uint32_t m_group;
+	uint32_t m_collisionGroup;
+	uint32_t m_collisionMask;
 };
 
 	}

@@ -33,7 +33,7 @@ class IRenderSystem;
 	{
 
 class IEntityBuilder;
-class IEntityManager;
+class IEntitySchema;
 class EntityData;
 class WorldRenderSettings;
 class PostProcessSettings;
@@ -57,7 +57,7 @@ public:
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
 		world::IEntityBuilder* entityBuilder,
-		world::IEntityManager* entityManager,
+		world::IEntitySchema* entitySchema,
 		world::WorldRenderSettings::ShadowQuality shadowQuality
 	) const;
 

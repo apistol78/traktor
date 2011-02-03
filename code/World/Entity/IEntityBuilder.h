@@ -17,7 +17,7 @@ namespace traktor
 	{
 
 class IEntityFactory;
-class IEntityManager;
+class IEntitySchema;
 class EntityData;
 class Entity;
 
@@ -33,7 +33,7 @@ public:
 
 	virtual void removeFactory(IEntityFactory* entityFactory) = 0;
 
-	virtual void begin(IEntityManager* entityManager) = 0;
+	virtual void begin(IEntitySchema* entitySchema) = 0;
 
 	virtual Ref< Entity > create(const EntityData* entityData) = 0;
 

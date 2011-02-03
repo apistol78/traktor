@@ -2,7 +2,7 @@
 #include "Scene/Scene.h"
 #include "Scene/SceneFactory.h"
 #include "Scene/SceneResource.h"
-#include "World/Entity/EntityManager.h"
+#include "World/Entity/EntitySchema.h"
 
 namespace traktor
 {
@@ -52,12 +52,12 @@ Ref< Object > SceneFactory::create(resource::IResourceManager* resourceManager, 
 	if (!sceneResource)
 		return 0;
 
-	Ref< world::IEntityManager > entityManager = new world::EntityManager();
+	Ref< world::IEntitySchema > entitySchema = new world::EntitySchema();
 	return sceneResource->createScene(
 		resourceManager,
 		m_renderSystem,
 		m_entityBuilder,
-		entityManager,
+		entitySchema,
 		m_shadowQuality
 	);
 }
