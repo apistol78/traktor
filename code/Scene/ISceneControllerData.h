@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_SCENE_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -17,7 +17,7 @@ namespace traktor
 	{
 
 class IEntityBuilder;
-class IEntityManager;
+class IEntitySchema;
 
 	}
 
@@ -31,7 +31,7 @@ class T_DLLCLASS ISceneControllerData : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< ISceneController > createController(world::IEntityBuilder* entityBuilder, world::IEntityManager* entityManager) const = 0;
+	virtual Ref< ISceneController > createController(world::IEntityBuilder* entityBuilder, world::IEntitySchema* entitySchema) const = 0;
 };
 
 	}

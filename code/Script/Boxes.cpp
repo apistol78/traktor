@@ -119,6 +119,11 @@ Vector4 BoxedVector4::normalized() const
 	return m_value.normalized();
 }
 
+Vector4 BoxedVector4::neg() const
+{
+	return -m_value;
+}
+
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Quaternion", BoxedQuaternion, Object)
 
 BoxedQuaternion::BoxedQuaternion()
@@ -296,6 +301,7 @@ void registerBoxClasses(IScriptManager* scriptManager)
 	classBoxedVector4->addMethod(L"dot", &BoxedVector4::dot);
 	classBoxedVector4->addMethod(L"length", &BoxedVector4::length);
 	classBoxedVector4->addMethod(L"normalized", &BoxedVector4::normalized);
+	classBoxedVector4->addMethod(L"neg", &BoxedVector4::neg);
 	scriptManager->registerClass(classBoxedVector4);
 
 	Ref< AutoScriptClass< BoxedQuaternion > > classBoxedQuaternion = new AutoScriptClass< BoxedQuaternion >();

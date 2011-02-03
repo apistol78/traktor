@@ -17,7 +17,7 @@ namespace traktor
 	{
 
 class Entity;
-class IEntityManager;
+class IEntitySchema;
 class IWorldRenderer;
 class PostProcessSettings;
 class WorldRenderSettings;
@@ -37,7 +37,7 @@ class T_DLLCLASS Scene : public Object
 public:
 	Scene(
 		ISceneController* controller,
-		world::IEntityManager* entityManager,
+		world::IEntitySchema* entitySchema,
 		world::Entity* rootEntity,
 		world::WorldRenderSettings* worldRenderSettings,
 		world::PostProcessSettings* postProcessSettings
@@ -51,18 +51,18 @@ public:
 
 	void build(world::IWorldRenderer* worldRenderer, world::WorldRenderView& worldRenderView, int frame);
 
-	Ref< world::IEntityManager > getEntityManager() const;
+	world::IEntitySchema* getEntitySchema() const;
 
-	Ref< world::Entity > getRootEntity() const;
+	world::Entity* getRootEntity() const;
 
-	Ref< ISceneController > getController() const;
+	ISceneController* getController() const;
 
-	Ref< world::WorldRenderSettings > getWorldRenderSettings() const;
+	world::WorldRenderSettings* getWorldRenderSettings() const;
 
-	Ref< world::PostProcessSettings > getPostProcessSettings() const;
+	world::PostProcessSettings* getPostProcessSettings() const;
 
 private:
-	Ref< world::IEntityManager > m_entityManager;
+	Ref< world::IEntitySchema > m_entitySchema;
 	Ref< world::Entity > m_rootEntity;
 	Ref< ISceneController > m_controller;
 	Ref< world::WorldRenderSettings > m_worldRenderSettings;

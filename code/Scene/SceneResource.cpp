@@ -27,7 +27,7 @@ Ref< Scene > SceneResource::createScene(
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem,
 	world::IEntityBuilder* entityBuilder,
-	world::IEntityManager* entityManager,
+	world::IEntitySchema* entitySchema,
 	world::WorldRenderSettings::ShadowQuality shadowQuality
 ) const
 {
@@ -39,14 +39,14 @@ Ref< Scene > SceneResource::createScene(
 			log::error << L"Unable to validate post processing settings" << Endl;
 	}
 
-	entityBuilder->begin(entityManager);
+	entityBuilder->begin(entitySchema);
 
 	Ref< world::Entity > rootEntity = entityBuilder->create(m_entityData);
 
 	Ref< ISceneController > controller;
 	if (m_controllerData)
 	{
-		controller = m_controllerData->createController(entityBuilder, entityManager);
+		controller = m_controllerData->createController(entityBuilder, entitySchema);
 		if (!controller)
 			return 0;
 	}
@@ -58,7 +58,7 @@ Ref< Scene > SceneResource::createScene(
 
 	return new Scene(
 		controller,
-		entityManager,
+		entitySchema,
 		rootEntity,
 		worldRenderSettings,
 		m_postProcessSettings

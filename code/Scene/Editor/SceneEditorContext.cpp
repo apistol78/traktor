@@ -19,7 +19,7 @@
 #include "Ui/Event.h"
 #include "World/Entity/Entity.h"
 #include "World/Entity/EntityData.h"
-#include "World/Entity/EntityManager.h"
+#include "World/Entity/EntitySchema.h"
 #include "World/PostProcess/PostProcessSettings.h"
 
 namespace traktor
@@ -302,16 +302,16 @@ void SceneEditorContext::buildEntities()
 				entityBuilder->addFactory(*j);
 		}
 
-		// Create entity manager and build root instance.
-		Ref< world::IEntityManager > entityManager = new world::EntityManager();
+		// Create entity schema and build root instance.
+		Ref< world::IEntitySchema > entitySchema = new world::EntitySchema();
 
-		entityBuilder->begin(entityManager);
+		entityBuilder->begin(entitySchema);
 		Ref< world::Entity > rootEntity = entityBuilder->create(m_sceneAsset->getEntityData());
 
 		// Update scene controller also.
 		Ref< ISceneController > controller;
 		if (m_sceneAsset->getControllerData())
-			controller = m_sceneAsset->getControllerData()->createController(entityBuilder, entityManager);
+			controller = m_sceneAsset->getControllerData()->createController(entityBuilder, entitySchema);
 
 		entityBuilder->end();
 
@@ -334,7 +334,7 @@ void SceneEditorContext::buildEntities()
 		// Create our scene.
 		m_scene = new Scene(
 			controller,
-			entityManager,
+			entitySchema,
 			rootEntity,
 			m_sceneAsset->getWorldRenderSettings(),
 			postProcessSettings

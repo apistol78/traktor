@@ -1,11 +1,11 @@
-#include "Theater/TheaterControllerData.h"
-#include "Theater/TheaterController.h"
-#include "Theater/TrackData.h"
-#include "Theater/Track.h"
-#include "World/Entity/IEntityBuilder.h"
-#include "World/Entity/SpatialEntity.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRefArray.h"
+#include "Theater/TheaterController.h"
+#include "Theater/TheaterControllerData.h"
+#include "Theater/Track.h"
+#include "Theater/TrackData.h"
+#include "World/Entity/IEntityBuilder.h"
+#include "World/Entity/SpatialEntity.h"
 
 namespace traktor
 {
@@ -20,7 +20,7 @@ TheaterControllerData::TheaterControllerData()
 {
 }
 
-Ref< scene::ISceneController > TheaterControllerData::createController(world::IEntityBuilder* entityBuilder, world::IEntityManager* entityManager) const
+Ref< scene::ISceneController > TheaterControllerData::createController(world::IEntityBuilder* entityBuilder, world::IEntitySchema* entitySchema) const
 {
 	RefArray< Track > tracks(m_trackData.size());
 	for (size_t i = 0; i < m_trackData.size(); ++i)

@@ -14,9 +14,10 @@ StaticBodyBullet::StaticBodyBullet(
 	btDynamicsWorld* dynamicsWorld,
 	btRigidBody* body,
 	btCollisionShape* shape,
-	uint32_t group
+	uint32_t collisionGroup,
+	uint32_t collisionMask
 )
-:	BodyBullet< StaticBody >(callback, dynamicsWorld, body, shape, group)
+:	BodyBullet< StaticBody >(callback, dynamicsWorld, body, shape, collisionGroup, collisionMask)
 {
 }
 

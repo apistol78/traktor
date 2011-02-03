@@ -64,7 +64,7 @@ namespace traktor
 		namespace
 		{
 
-uint32_t getGroup(const btCollisionObject* collisionObject)
+uint32_t getCollisionGroup(const btCollisionObject* collisionObject)
 {
 	if (!collisionObject)
 		return ~0UL;
@@ -74,9 +74,9 @@ uint32_t getGroup(const btCollisionObject* collisionObject)
 		return ~0UL;
 
 	if (DynamicBodyBullet* dynamicBody = dynamic_type_cast< DynamicBodyBullet* >(body))
-		return dynamicBody->getGroup();
+		return dynamicBody->getCollisionGroup();
 	if (StaticBodyBullet* staticBody = dynamic_type_cast< StaticBodyBullet* >(body))
-		return staticBody->getGroup();
+		return staticBody->getCollisionGroup();
 
 	return ~0UL;
 }
@@ -98,10 +98,10 @@ struct ClosestConvexExcludeResultCallback : public btCollisionWorld::ClosestConv
 		T_ASSERT (convexResult.m_hitFraction <= m_closestHitFraction);
 
 		if (m_excludeObject == convexResult.m_hitCollisionObject)
-			return convexResult.m_hitFraction;
+			return 1.0f;
 
-		if (m_group != ~0UL && (getGroup(convexResult.m_hitCollisionObject) & m_group) == 0)
-			return convexResult.m_hitFraction;
+		if (m_group != ~0UL && (getCollisionGroup(convexResult.m_hitCollisionObject) & m_group) == 0)
+			return 1.0f;
 		
 		return btCollisionWorld::ClosestConvexResultCallback::addSingleResult(convexResult, normalInWorldSpace);
 	}
@@ -412,7 +412,8 @@ Ref< Body > PhysicsManagerBullet::createBody(const BodyDesc* desc)
 			m_dynamicsWorld,
 			rigidBody,
 			shape,
-			shapeDesc->getGroup()
+			shapeDesc->getCollisionGroup(),
+			shapeDesc->getCollisionMask()
 		);
 		m_staticBodies.push_back(staticBody);
 
@@ -455,7 +456,8 @@ Ref< Body > PhysicsManagerBullet::createBody(const BodyDesc* desc)
 			m_dynamicsWorld,
 			rigidBody,
 			shape,
-			shapeDesc->getGroup()
+			shapeDesc->getCollisionGroup(),
+			shapeDesc->getCollisionMask()
 		);
 		m_dynamicBodies.push_back(dynamicBody);
 
@@ -1004,18 +1006,31 @@ void PhysicsManagerBullet::nearCallback(btBroadphasePair& collisionPair, btColli
 	if (body1 && body2)
 	{
 		uint32_t group1 = 0, group2 = 0;
+		uint32_t mask1 = 0, mask2 = 0;
 
 		if (DynamicBodyBullet* dynamicBody1 = dynamic_type_cast< DynamicBodyBullet* >(body1))
-			group1 = dynamicBody1->getGroup();
+		{
+			group1 = dynamicBody1->getCollisionGroup();
+			mask1 = dynamicBody1->getCollisionMask();
+		}
 		else if (StaticBodyBullet* staticBody1 = dynamic_type_cast< StaticBodyBullet* >(body1))
-			group1 = staticBody1->getGroup();
+		{
+			group1 = staticBody1->getCollisionGroup();
+			mask1 = staticBody1->getCollisionMask();
+		}
 
 		if (DynamicBodyBullet* dynamicBody2 = dynamic_type_cast< DynamicBodyBullet* >(body2))
-			group2 = dynamicBody2->getGroup();
+		{
+			group2 = dynamicBody2->getCollisionGroup();
+			mask2 = dynamicBody2->getCollisionMask();
+		}
 		else if (StaticBodyBullet* staticBody2 = dynamic_type_cast< StaticBodyBullet* >(body2))
-			group2 = staticBody2->getGroup();
+		{
+			group2 = staticBody2->getCollisionGroup();
+			mask2 = staticBody2->getCollisionMask();
+		}
 
-		if ((group1 & group2) == 0)
+		if ((group1 & mask2) == 0 && (group2 & mask1) == 0)
 			return;
 
 		// Skip bodies which are directly connected through a joint.

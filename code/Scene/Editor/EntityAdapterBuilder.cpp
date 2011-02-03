@@ -7,7 +7,7 @@
 #include "World/Entity/Entity.h"
 #include "World/Entity/EntityData.h"
 #include "World/Entity/IEntityFactory.h"
-#include "World/Entity/IEntityManager.h"
+#include "World/Entity/IEntitySchema.h"
 #include "Scene/Editor/SceneEditorContext.h"
 
 namespace traktor
@@ -32,9 +32,9 @@ void EntityAdapterBuilder::removeFactory(world::IEntityFactory* entityFactory)
 	T_BREAKPOINT;
 }
 
-void EntityAdapterBuilder::begin(world::IEntityManager* entityManager)
+void EntityAdapterBuilder::begin(world::IEntitySchema* entitySchema)
 {
-	m_entityManager = entityManager;
+	m_entitySchema = entitySchema;
 
 	RefArray< EntityAdapter > entityAdapters;
 	m_context->getEntities(entityAdapters, SceneEditorContext::GfDescendants | SceneEditorContext::GfExternals);
@@ -128,8 +128,8 @@ Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entit
 
 	m_entities[entityData] = entity;
 	
-	if (m_entityManager)
-		m_entityManager->insertEntity(entityData->getName(), entity);
+	if (m_entitySchema)
+		m_entitySchema->insertEntity(0, entityData->getName(), entity);
 
 	return entity;
 }

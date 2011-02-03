@@ -1,7 +1,9 @@
 #ifndef traktor_world_EntitySetBuilder_H
 #define traktor_world_EntitySetBuilder_H
 
+#include <list>
 #include <map>
+#include <stack>
 #include "Core/RefArray.h"
 #include "World/Entity/IEntityBuilder.h"
 
@@ -32,7 +34,7 @@ public:
 
 	virtual void removeFactory(IEntityFactory* entityFactory);
 
-	virtual void begin(IEntityManager* entityManager);
+	virtual void begin(IEntitySchema* entitySchema);
 
 	virtual Ref< Entity > create(const EntityData* entityData);
 
@@ -41,8 +43,11 @@ public:
 	virtual void end();
 
 private:
-	Ref< IEntityManager > m_entityManager;
+	typedef std::list< std::pair< std::wstring, Ref< Entity > > > scope_t;
+
+	Ref< IEntitySchema > m_entitySchema;
 	RefArray< IEntityFactory > m_entityFactories;
+	std::stack< scope_t > m_entityScope;
 	std::map< const EntityData*, Ref< Entity > > m_entities;
 	bool m_inbuild;
 };

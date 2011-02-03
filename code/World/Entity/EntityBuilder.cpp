@@ -4,7 +4,7 @@
 #include "World/Entity/Entity.h"
 #include "World/Entity/EntityBuilder.h"
 #include "World/Entity/EntityData.h"
-#include "World/Entity/IEntityManager.h"
+#include "World/Entity/IEntitySchema.h"
 #include "World/Entity/IEntityFactory.h"
 
 namespace traktor
@@ -33,10 +33,10 @@ void EntityBuilder::removeFactory(IEntityFactory* entityFactory)
 		m_entityFactories.erase(i);
 }
 
-void EntityBuilder::begin(IEntityManager* entityManager)
+void EntityBuilder::begin(IEntitySchema* entitySchema)
 {
 	T_FATAL_ASSERT_M (!m_inbuild, L"EntityBuilder already begun");
-	m_entityManager = entityManager;
+	m_entitySchema = entitySchema;
 	m_inbuild = true;
 }
 
@@ -73,6 +73,8 @@ Ref< Entity > EntityBuilder::create(const EntityData* entityData)
 		return 0;
 	}
 
+	m_entityScope.push(scope_t());
+
 	Ref< Entity > entity = entityFactory->createEntity(this, *entityData);
 	if (!entity)
 	{
@@ -80,10 +82,32 @@ Ref< Entity > EntityBuilder::create(const EntityData* entityData)
 		return 0;
 	}
 
-	m_entities[entityData] = entity;
+	if (m_entitySchema)
+	{
+		const scope_t& scope = m_entityScope.top();
+		for (scope_t::const_iterator i = scope.begin(); i != scope.end(); ++i)
+		{
+			if (i->second != entity)
+				m_entitySchema->insertEntity(entity, i->first, i->second);
+		}
+	}
 
-	if (m_entityManager)
-		m_entityManager->insertEntity(entityData->getName(), entity);
+	m_entityScope.pop();
+
+	if (m_entitySchema)
+	{
+		if (!m_entityScope.empty())
+		{
+			scope_t& scope = m_entityScope.top();
+			scope.push_back(std::make_pair(entityData->getName(), entity));
+		}
+		else
+		{
+			m_entitySchema->insertEntity(0, entityData->getName(), entity);
+		}
+	}
+
+	m_entities[entityData] = entity;
 
 	return entity;
 }
@@ -98,7 +122,7 @@ void EntityBuilder::end()
 {
 	T_FATAL_ASSERT_M (m_inbuild, L"EntityBuilder not begun");
 	m_entities.clear();
-	m_entityManager = 0;
+	m_entitySchema = 0;
 	m_inbuild = false;
 }
 

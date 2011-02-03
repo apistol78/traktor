@@ -25,7 +25,7 @@ public:
 
 	virtual void removeFactory(world::IEntityFactory* entityFactory);
 
-	virtual void begin(world::IEntityManager* entityManager);
+	virtual void begin(world::IEntitySchema* entitySchema);
 
 	virtual Ref< world::Entity > create(const world::EntityData* entityData);
 
@@ -37,7 +37,7 @@ public:
 
 private:
 	Ref< SceneEditorContext > m_context;
-	Ref< world::IEntityManager > m_entityManager;
+	Ref< world::IEntitySchema > m_entitySchema;
 	RefArray< world::IEntityFactory > m_entityFactories;
 	std::map< const world::EntityData*, Ref< world::Entity > > m_entities;
 	std::map< const world::EntityData*, RefArray< EntityAdapter > > m_cachedAdapters;

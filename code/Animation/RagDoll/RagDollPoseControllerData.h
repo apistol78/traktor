@@ -39,6 +39,7 @@ public:
 
 private:
 	uint32_t m_collisionGroup;
+	uint32_t m_collisionMask;
 	bool m_autoDeactivate;
 	bool m_enabled;
 	bool m_fixateBones;

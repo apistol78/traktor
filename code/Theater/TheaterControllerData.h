@@ -7,9 +7,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_THEATER_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -26,7 +26,7 @@ class T_DLLCLASS TheaterControllerData : public scene::ISceneControllerData
 public:
 	TheaterControllerData();
 
-	virtual Ref< scene::ISceneController > createController(world::IEntityBuilder* entityBuilder, world::IEntityManager* entityManager) const;
+	virtual Ref< scene::ISceneController > createController(world::IEntityBuilder* entityBuilder, world::IEntitySchema* entitySchema) const;
 
 	virtual bool serialize(ISerializer& s);
 

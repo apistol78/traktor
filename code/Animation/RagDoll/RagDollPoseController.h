@@ -50,6 +50,7 @@ public:
 		const AlignedVector< Transform >& boneTransforms,
 		const AlignedVector< Velocity >& velocities,
 		uint32_t collisionGroup,
+		uint32_t collisionMask,
 		bool autoDeactivate,
 		bool enabled,
 		bool fixateBones,
