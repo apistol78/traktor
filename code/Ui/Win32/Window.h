@@ -3,16 +3,18 @@
 
 #define _WIN32_LEAN_AND_MEAN
 #ifndef _WIN32_WINNT
-#define _WIN32_WINNT 0x0501
+#	define _WIN32_WINNT 0x0501
 #endif
 #include <windows.h>
 #include <windowsx.h>
 #include <commctrl.h>
 #include <tchar.h>
 #if defined(WINCE)
-#include <aygshell.h>
+#	include <aygshell.h>
 #endif
 #include <map>
+#include "Core/Object.h"
+#include "Core/Ref.h"
 
 namespace traktor
 {
@@ -24,7 +26,7 @@ namespace traktor
 #define WM_REFLECTED_HSCROLL	(WM_USER + 1002)
 #define WM_REFLECTED_VSCROLL	(WM_USER + 1003)
 
-struct IMessageHandler
+struct IMessageHandler : public Object
 {
 	virtual LRESULT handle(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass) = 0;
 };
@@ -94,7 +96,7 @@ private:
 	HWND m_hWnd;
 	HFONT m_hFont;
 	WNDPROC m_originalWndProc;
-	std::map< UINT, IMessageHandler* > m_messageHandlers;
+	std::map< UINT, Ref< IMessageHandler > > m_messageHandlers;
 
 	static LRESULT invokeMessageHandlers(HWND hWnd, DWORD dwIndex, UINT message, WPARAM wParam, LPARAM lParam, bool& pass);
 

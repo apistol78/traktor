@@ -55,6 +55,8 @@ bool EventSubject::hasEventHandler(int eventId)
 
 void EventSubject::raiseEvent(int eventId, Event* event)
 {
+	T_ANONYMOUS_VAR(Ref< EventSubject >)(this);
+
 	if (m_eventHandlers.find(eventId) == m_eventHandlers.end())
 		return;
 	

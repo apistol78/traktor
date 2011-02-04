@@ -31,8 +31,6 @@ Window::~Window()
 		SET_WINDOW_LONG_PTR(m_hWnd, GWLP_WNDPROC, (LONG_PTR)m_originalWndProc);
 
 	SET_WINDOW_LONG_PTR(m_hWnd, GWLP_USERDATA, (LONG_PTR)0);
-	for (std::map< UINT, IMessageHandler* >::iterator i = m_messageHandlers.begin(); i != m_messageHandlers.end(); ++i)
-		delete i->second;
 
 #if !defined(WINCE)
 	DeleteObject(m_hFont);
@@ -145,7 +143,6 @@ Window::operator HWND () const
 
 void Window::registerMessageHandler(UINT message, IMessageHandler* messageHandler)
 {
-	delete m_messageHandlers[message];
 	m_messageHandlers[message] = messageHandler;
 }
 
@@ -214,7 +211,7 @@ LRESULT Window::invokeMessageHandlers(HWND hWnd, DWORD dwIndex, UINT message, WP
 	Window* window = reinterpret_cast< Window* >(GET_WINDOW_LONG_PTR(hWnd, dwIndex));
 	if (window)
 	{
-		IMessageHandler* messageHandler = window->m_messageHandlers[message];
+		Ref< IMessageHandler > messageHandler = window->m_messageHandlers[message];
 		if (messageHandler)
 		{
 			pass = false;
