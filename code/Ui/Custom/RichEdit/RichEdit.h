@@ -58,9 +58,15 @@ public:
 
 	std::wstring getLine(int line) const;
 
+	std::wstring getSelectedText() const;
+
 	bool redo();
 
 	bool undo();
+
+	bool copy();
+
+	bool paste();
 
 	void addChangeEventHandler(EventHandler* eventHandler);
 
@@ -97,8 +103,6 @@ private:
 	void updateScrollBars();
 
 	void deleteCharacters(bool backspace);
-
-	void lineBreak();
 
 	void insertCharacter(wchar_t ch);
 

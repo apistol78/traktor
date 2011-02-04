@@ -117,13 +117,13 @@ Ref< ISerializable > ClipboardWin32::getObject() const
 std::wstring ClipboardWin32::getText() const
 {
 	if (!OpenClipboard(NULL))
-		return 0;
+		return L"";
 
-	HANDLE handle = GetClipboardData(m_objectFormat);
+	HANDLE handle = GetClipboardData(CF_UNICODETEXT);
 	if (!handle)
 	{
 		CloseClipboard();
-		return 0;
+		return L"";
 	}
 
 	wchar_t* ptr = (wchar_t*)GlobalLock(handle);

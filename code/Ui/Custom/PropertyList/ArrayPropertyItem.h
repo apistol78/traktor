@@ -49,6 +49,7 @@ protected:
 private:
 	const TypeInfo* m_elementType;
 	Ref< MiniButton > m_buttonEdit;
+	Ref< MiniButton > m_buttonRemove;
 
 	void eventClick(Event* event);
 };

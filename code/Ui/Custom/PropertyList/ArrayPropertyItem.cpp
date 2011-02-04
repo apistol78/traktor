@@ -1,6 +1,8 @@
 #include "Core/Io/StringOutputStream.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Command.h"
+#include "Ui/Event.h"
 #include "Ui/MethodHandler.h"
 #include "Ui/Custom/MiniButton.h"
 #include "Ui/Custom/PropertyList/ArrayPropertyItem.h"
@@ -8,6 +10,7 @@
 #include "Ui/Custom/PropertyList/PropertyList.h"
 
 // Resources
+#include "Resources/SmallCross.h"
 #include "Resources/SmallDots.h"
 #include "Resources/SmallPlus.h"
 
@@ -38,7 +41,6 @@ const TypeInfo* ArrayPropertyItem::getElementType() const
 
 void ArrayPropertyItem::createInPlaceControls(Widget* parent)
 {
-	T_ASSERT (!m_buttonEdit);
 	m_buttonEdit = new MiniButton();
 	m_buttonEdit->create(
 		parent,
@@ -47,25 +49,39 @@ void ArrayPropertyItem::createInPlaceControls(Widget* parent)
 			ui::Bitmap::load(c_ResourceSmallPlus, sizeof(c_ResourceSmallPlus), L"png")
 	);
 	m_buttonEdit->addClickEventHandler(createMethodHandler(this, &ArrayPropertyItem::eventClick));
+
+	m_buttonRemove = new MiniButton();
+	m_buttonRemove->create(
+		parent,
+		ui::Bitmap::load(c_ResourceSmallCross, sizeof(c_ResourceSmallCross), L"png")
+	);
+	m_buttonRemove->addClickEventHandler(createMethodHandler(this, &ArrayPropertyItem::eventClick));
 }
 
 void ArrayPropertyItem::destroyInPlaceControls()
 {
-	if (m_buttonEdit)
-	{
-		m_buttonEdit->destroy();
-		m_buttonEdit = 0;
-	}
+	safeDestroy(m_buttonRemove);
+	safeDestroy(m_buttonEdit);
 }
 
 void ArrayPropertyItem::resizeInPlaceControls(const Rect& rc, std::vector< WidgetRect >& outChildRects)
 {
 	if (m_buttonEdit)
 	{
+		int32_t dim = rc.getHeight();
 		outChildRects.push_back(WidgetRect(
 			m_buttonEdit,
 			Rect(
-				rc.right - rc.getHeight(),
+				rc.right - dim * 2,
+				rc.top,
+				rc.right - dim,
+				rc.bottom
+			)
+		));
+		outChildRects.push_back(WidgetRect(
+			m_buttonRemove,
+			Rect(
+				rc.right - dim,
 				rc.top,
 				rc.right,
 				rc.bottom
@@ -86,14 +102,29 @@ void ArrayPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 
 void ArrayPropertyItem::eventClick(Event* event)
 {
-	if (m_elementType)
-		notifyCommand(Command(L"Property.Edit"));
+	if (event->getSender() == m_buttonEdit)
+	{
+		if (m_elementType)
+			notifyCommand(Command(L"Property.Edit"));
+		else
+		{
+			// Add dummy item to indicate where we want to add new element;
+			// the ApplyReflector will detect this item and insert the new element.
+			addChildItem(new NullPropertyItem());
+			notifyCommand(Command(L"Property.Edit"));
+		}
+	}
 	else
 	{
-		// Add dummy item to indicate where we want to add new element;
-		// the ApplyReflector will detect this item and insert the new element.
-		addChildItem(new NullPropertyItem());
-		notifyCommand(Command(L"Property.Edit"));
+		// Remove selected children.
+		RefArray< PropertyItem > selectedItems;
+		getPropertyList()->getPropertyItems(selectedItems, PropertyList::GfDescendants | PropertyList::GfSelectedOnly);
+		for (RefArray< PropertyItem >::iterator i = selectedItems.begin(); i != selectedItems.end(); ++i)
+		{
+			if ((*i)->getParentItem() == this)
+				getPropertyList()->removePropertyItem(this, *i);
+		}
+		notifyCommand(Command(L"Property.Remove"));
 	}
 }
 

@@ -180,21 +180,29 @@ void DefaultObjectEditor::eventPropertyCommand(ui::Event* event)
 	Ref< ui::custom::ArrayPropertyItem > arrayItem = dynamic_type_cast< ui::custom::ArrayPropertyItem* >(event->getItem());
 	if (arrayItem)
 	{
-		if (arrayItem->getElementType())
+		if (cmd == L"Property.Browse")
 		{
-			const TypeInfo* objectType = m_editor->browseType(arrayItem->getElementType());
-			if (objectType)
+			if (arrayItem->getElementType())
 			{
-				Ref< ISerializable > object = dynamic_type_cast< ISerializable* >(objectType->createInstance());
-				if (object)
+				const TypeInfo* objectType = m_editor->browseType(arrayItem->getElementType());
+				if (objectType)
 				{
-					m_propertyList->addObject(arrayItem, object);
-					m_propertyList->apply();
-					m_propertyList->refresh();
+					Ref< ISerializable > object = dynamic_type_cast< ISerializable* >(objectType->createInstance());
+					if (object)
+					{
+						m_propertyList->addObject(arrayItem, object);
+						m_propertyList->apply();
+						m_propertyList->refresh();
+					}
 				}
 			}
+			else	// Non-complex array; just apply and refresh.
+			{
+				m_propertyList->apply();
+				m_propertyList->refresh();
+			}
 		}
-		else	// Non-complex array; just apply and refresh.
+		else if (cmd == L"Property.Remove")
 		{
 			m_propertyList->apply();
 			m_propertyList->refresh();
