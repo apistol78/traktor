@@ -2,6 +2,8 @@
 #include "Core/Misc/Align.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/StringSplit.h"
+#include "Ui/Application.h"
+#include "Ui/Clipboard.h"
 #include "Ui/MethodHandler.h"
 #include "Ui/ScrollBar.h"
 #include "Ui/Events/KeyEvent.h"
@@ -166,6 +168,8 @@ void RichEdit::clear(bool attributes, bool content)
 
 void RichEdit::insert(const std::wstring& text)
 {
+	for (std::wstring::const_iterator i = text.begin(); i != text.end(); ++i)
+		insertCharacter(*i);
 }
 
 int RichEdit::getCaretOffset() const
@@ -212,6 +216,15 @@ std::wstring RichEdit::getLine(int line) const
 		return L"";
 }
 
+std::wstring RichEdit::getSelectedText() const
+{
+	if (m_selectionStart >= m_selectionStop || m_text.empty())
+		return L"";
+
+	const wchar_t* text = &m_text[0];
+	return std::wstring(text + m_selectionStart, text + m_selectionStop + 1);
+}
+
 bool RichEdit::redo()
 {
 	return false;
@@ -220,6 +233,28 @@ bool RichEdit::redo()
 bool RichEdit::undo()
 {
 	return false;
+}
+
+bool RichEdit::copy()
+{
+	Clipboard* clipboard = Application::getInstance()->getClipboard();
+	if (!clipboard)
+		return false;
+
+	std::wstring selectedText = getSelectedText();
+	return clipboard->setText(selectedText);
+}
+
+bool RichEdit::paste()
+{
+	Clipboard* clipboard = Application::getInstance()->getClipboard();
+	if (!clipboard)
+		return false;
+
+	std::wstring pasteText = clipboard->getText();
+	insert(pasteText);
+
+	return true;
 }
 
 void RichEdit::addChangeEventHandler(EventHandler* eventHandler)
@@ -289,52 +324,55 @@ void RichEdit::deleteCharacters(bool backspace)
 	raiseEvent(EiContentChange, 0);
 }
 
-void RichEdit::lineBreak()
-{
-	m_text.insert(m_text.begin() + m_caret, L'\n');
-	m_meta.insert(m_meta.begin() + m_caret, 0);
-
-	// Break line.
-	for (std::vector< Line >::iterator i = m_lines.begin(); i != m_lines.end(); ++i)
-	{
-		if (m_caret >= i->start && m_caret <= i->stop)
-		{
-			Line line;
-			line.start = i->start;
-			line.stop = m_caret;
-			i->start = m_caret + 1;
-			i->stop++;
-			i = m_lines.insert(i, line) + 1;
-		}
-		else if (i->start > m_caret)
-		{
-			i->start++;
-			i->stop++;
-		}
-	}
-
-	++m_caret;
-	raiseEvent(EiContentChange, 0);
-}
-
 void RichEdit::insertCharacter(wchar_t ch)
 {
-	m_text.insert(m_text.begin() + m_caret, ch);
-	m_meta.insert(m_meta.begin() + m_caret, 0);
-
-	for (std::vector< Line >::iterator i = m_lines.begin(); i != m_lines.end(); ++i)
+	if (ch == 8)
+		deleteCharacters(true);
+	else if (ch == L'\n' || ch == L'\r')
 	{
-		if (m_caret >= i->start && m_caret <= i->stop)
-			i->stop++;
-		else if (m_caret < i->start)
-		{
-			i->start++;
-			i->stop++;
-		}
-	}
+		m_text.insert(m_text.begin() + m_caret, L'\n');
+		m_meta.insert(m_meta.begin() + m_caret, 0);
 
-	++m_caret;
-	raiseEvent(EiContentChange, 0);
+		for (std::vector< Line >::iterator i = m_lines.begin(); i != m_lines.end(); ++i)
+		{
+			if (m_caret >= i->start && m_caret <= i->stop)
+			{
+				Line line;
+				line.start = i->start;
+				line.stop = m_caret;
+				i->start = m_caret + 1;
+				i->stop++;
+				i = m_lines.insert(i, line) + 1;
+			}
+			else if (i->start > m_caret)
+			{
+				i->start++;
+				i->stop++;
+			}
+		}
+
+		++m_caret;
+		raiseEvent(EiContentChange, 0);
+	}
+	else if (ch >= 32)
+	{
+		m_text.insert(m_text.begin() + m_caret, ch);
+		m_meta.insert(m_meta.begin() + m_caret, 0);
+
+		for (std::vector< Line >::iterator i = m_lines.begin(); i != m_lines.end(); ++i)
+		{
+			if (m_caret >= i->start && m_caret <= i->stop)
+				i->stop++;
+			else if (m_caret < i->start)
+			{
+				i->start++;
+				i->stop++;
+			}
+		}
+
+		++m_caret;
+		raiseEvent(EiContentChange, 0);
+	}
 }
 
 void RichEdit::scrollToCaret()
@@ -495,11 +533,6 @@ void RichEdit::eventKeyDown(Event* event)
 		m_selectionStart = std::min(m_selectionStart, m_caret);
 		m_selectionStop = std::max(m_selectionStop, m_caret);
 	}
-	else
-	{
-		m_selectionStart = ~0UL;
-		m_selectionStop = 0;
-	}
 
 	updateScrollBars();
 	scrollToCaret();
@@ -510,14 +543,22 @@ void RichEdit::eventKey(Event* event)
 {
 	KeyEvent* keyEvent = checked_type_cast< KeyEvent*, false >(event);
 
-	// Insert character; need to update line offsets.
 	wchar_t ch = keyEvent->getCharacter();
-	if (ch == 8)
-		deleteCharacters(true);
-	else if (ch == L'\n' || ch == L'\r')
-		lineBreak();
+	if (ch == 3)
+		copy();
+	else if (ch == 22)
+		paste();
+	else if (ch == 24)
+	{
+		copy();
+		deleteCharacters(false);
+	}
 	else
 		insertCharacter(ch);
+
+	// Remove selection.
+	m_selectionStart = ~0UL;
+	m_selectionStop = 0;
 
 	CHECK;
 
