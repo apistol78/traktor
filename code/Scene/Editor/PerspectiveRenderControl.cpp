@@ -362,7 +362,7 @@ void PerspectiveRenderControl::eventButtonDown(ui::Event* event)
 	else
 	{
 		// Handle entity picking if enabled.
-		if (m_context->getPickEnable())
+		if (!m_modifyAlternative && m_context->getPickEnable())
 		{
 			Ref< EntityAdapter > entityAdapter = pickEntity(m_mousePosition);
 			
