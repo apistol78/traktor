@@ -113,13 +113,15 @@ struct ClosestRayExcludeResultCallback : public btCollisionWorld::RayResultCallb
 	btVector3 m_rayToWorld;
 	btVector3 m_hitNormalWorld;
 	btVector3 m_hitPointWorld;
+	uint32_t m_group;
 	btCollisionObject* m_excludeObject;
 	uint32_t m_collisionPart;
 
-	ClosestRayExcludeResultCallback(btCollisionObject* excludeObject, const btVector3& rayFromWorld, const btVector3& rayToWorld)
+	ClosestRayExcludeResultCallback(btCollisionObject* excludeObject, uint32_t group, const btVector3& rayFromWorld, const btVector3& rayToWorld)
 	:	m_rayFromWorld(rayFromWorld)
 	,	m_rayToWorld(rayToWorld)
 	,	m_excludeObject(excludeObject)
+	,	m_group(group)
 	,	m_collisionPart(0)
 	{
 	}
@@ -128,19 +130,22 @@ struct ClosestRayExcludeResultCallback : public btCollisionWorld::RayResultCallb
 	{
 		T_ASSERT (rayResult.m_hitFraction <= m_closestHitFraction);
 		
-		if (m_excludeObject != rayResult.m_collisionObject)
-		{
-			m_closestHitFraction = rayResult.m_hitFraction;
-			m_collisionObject = rayResult.m_collisionObject;
-			m_collisionPart = rayResult.m_localShapeInfo ? rayResult.m_localShapeInfo->m_shapePart : 0;
+		if (m_excludeObject == rayResult.m_collisionObject)
+			return m_closestHitFraction;
 
-			if (normalInWorldSpace)
-				m_hitNormalWorld = rayResult.m_hitNormalLocal;
-			else
-				m_hitNormalWorld = m_collisionObject->getWorldTransform().getBasis() * rayResult.m_hitNormalLocal;
+		if (m_group != ~0UL && (getCollisionGroup(rayResult.m_collisionObject) & m_group) == 0)
+			return m_closestHitFraction;
 
-			m_hitPointWorld.setInterpolate3(m_rayFromWorld, m_rayToWorld, rayResult.m_hitFraction);
-		}
+		m_closestHitFraction = rayResult.m_hitFraction;
+		m_collisionObject = rayResult.m_collisionObject;
+		m_collisionPart = rayResult.m_localShapeInfo ? rayResult.m_localShapeInfo->m_shapePart : 0;
+
+		if (normalInWorldSpace)
+			m_hitNormalWorld = rayResult.m_hitNormalLocal;
+		else
+			m_hitNormalWorld = m_collisionObject->getWorldTransform().getBasis() * rayResult.m_hitNormalLocal;
+
+		m_hitPointWorld.setInterpolate3(m_rayFromWorld, m_rayToWorld, rayResult.m_hitFraction);
 
 		return m_closestHitFraction;
 	}
@@ -735,7 +740,14 @@ bool PhysicsManagerBullet::queryPoint(const Vector4& at, float margin, QueryResu
 	return false;
 }
 
-bool PhysicsManagerBullet::queryRay(const Vector4& at, const Vector4& direction, float maxLength, const Body* ignoreBody, QueryResult& outResult) const
+bool PhysicsManagerBullet::queryRay(
+	const Vector4& at,
+	const Vector4& direction,
+	float maxLength,
+	uint32_t group,
+	const Body* ignoreBody,
+	QueryResult& outResult
+) const
 {
 	btVector3 from = toBtVector3(at);
 	btVector3 to = toBtVector3(at + direction * Scalar(maxLength));
@@ -747,7 +759,7 @@ bool PhysicsManagerBullet::queryRay(const Vector4& at, const Vector4& direction,
 	else if (const StaticBodyBullet* staticBody = dynamic_type_cast< const StaticBodyBullet* >(ignoreBody))
 		excludeBody = staticBody->getBtRigidBody();
 
-	ClosestRayExcludeResultCallback callback(excludeBody, from, to);
+	ClosestRayExcludeResultCallback callback(excludeBody, group, from, to);
 	m_dynamicsWorld->rayTest(from, to, callback);
 	if (!callback.hasHit())
 		return false;

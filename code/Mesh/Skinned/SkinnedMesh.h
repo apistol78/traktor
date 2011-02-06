@@ -1,7 +1,8 @@
 #ifndef traktor_mesh_SkinnedMesh_H
 #define traktor_mesh_SkinnedMesh_H
 
-#include "Core/Containers/AlignedVector.h"
+#include <map>
+#include "Core/Containers/SmallMap.h"
 #include "Core/Math/Aabb3.h"
 #include "Mesh/IMesh.h"
 #include "Render/Shader.h"
@@ -53,6 +54,8 @@ public:
 
 	const Aabb3& getBoundingBox() const;
 
+	bool supportTechnique(render::handle_t technique) const;
+
 	void render(
 		render::RenderContext* renderContext,
 		world::IWorldRenderPass& worldRenderPass,
@@ -78,7 +81,7 @@ private:
 
 	resource::Proxy< render::Shader > m_shader;
 	Ref< render::Mesh > m_mesh;
-	std::map< render::handle_t, std::vector< Part > > m_parts;
+	SmallMap< render::handle_t, std::vector< Part > > m_parts;
 	std::map< std::wstring, int32_t > m_boneMap;
 	int32_t m_boneCount;
 };

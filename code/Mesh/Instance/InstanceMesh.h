@@ -1,11 +1,10 @@
 #ifndef traktor_mesh_InstanceMesh_H
 #define traktor_mesh_InstanceMesh_H
 
-#include <map>
+#include "Core/Containers/SmallMap.h"
 #include "Core/Math/Aabb3.h"
 #include "Core/Math/Quaternion.h"
 #include "Core/Math/Vector4.h"
-#include "Core/Containers/AlignedVector.h"
 #include "Mesh/IMesh.h"
 #include "Mesh/Instance/InstanceMeshData.h"
 #include "Render/Shader.h"
@@ -71,6 +70,8 @@ public:
 	virtual ~InstanceMesh();
 
 	const Aabb3& getBoundingBox() const;
+
+	bool supportTechnique(render::handle_t technique) const;
 	
 	void render(
 		render::RenderContext* renderContext,
@@ -83,7 +84,7 @@ private:
 
 	resource::Proxy< render::Shader > m_shader;
 	Ref< render::Mesh > m_mesh;
-	std::map< render::handle_t, std::vector< Part > > m_parts;
+	SmallMap< render::handle_t, std::vector< Part > > m_parts;
 
 #if defined(_DEBUG)
 	uint32_t m_instanceUsedCount;

@@ -631,12 +631,23 @@ uint32_t PhysicsManagerHavok::getCollidingPairs(std::vector< CollisionPair >& ou
 	return 0;
 }
 
-bool PhysicsManagerHavok::queryPoint(const Vector4& at, float margin, QueryResult& outResult) const
+bool PhysicsManagerHavok::queryPoint(
+	const Vector4& at,
+	float margin,
+	QueryResult& outResult
+) const
 {
 	return false;
 }
 
-bool PhysicsManagerHavok::queryRay(const Vector4& at, const Vector4& direction, float maxLength, const Body* ignoreBody, QueryResult& outResult) const
+bool PhysicsManagerHavok::queryRay(
+	const Vector4& at,
+	const Vector4& direction,
+	float maxLength,
+	uint32_t group,
+	const Body* ignoreBody,
+	QueryResult& outResult
+) const
 {
 	T_ASSERT (m_world);
 
@@ -679,7 +690,12 @@ bool PhysicsManagerHavok::queryRay(const Vector4& at, const Vector4& direction, 
 	return true;
 }
 
-uint32_t PhysicsManagerHavok::querySphere(const Vector4& at, float radius, uint32_t queryTypes, RefArray< Body >& outBodies) const
+uint32_t PhysicsManagerHavok::querySphere(
+	const Vector4& at,
+	float radius,
+	uint32_t queryTypes,
+	RefArray< Body >& outBodies
+) const
 {
 	outBodies.resize(0);
 
@@ -736,7 +752,15 @@ uint32_t PhysicsManagerHavok::querySphere(const Vector4& at, float radius, uint3
 	return uint32_t(outBodies.size());
 }
 
-bool PhysicsManagerHavok::querySweep(const Vector4& at, const Vector4& direction, float maxLength, float radius, uint32_t group, const Body* ignoreBody, QueryResult& outResult) const
+bool PhysicsManagerHavok::querySweep(
+	const Vector4& at,
+	const Vector4& direction,
+	float maxLength,
+	float radius,
+	uint32_t group,
+	const Body* ignoreBody,
+	QueryResult& outResult
+) const
 {
 	hkTransform sphereTransform;
 	sphereTransform.setIdentity();

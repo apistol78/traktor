@@ -25,6 +25,11 @@ void InstanceMeshEntity::update(const world::EntityUpdate* update)
 	m_mesh.validate();
 }
 
+bool InstanceMeshEntity::supportTechnique(render::handle_t technique) const
+{
+	return m_mesh.validate() ? m_mesh->supportTechnique(technique) : false;
+}
+
 void InstanceMeshEntity::render(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,

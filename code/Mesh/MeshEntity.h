@@ -2,6 +2,7 @@
 #define traktor_mesh_MeshEntity_H
 
 #include "Core/Math/Aabb3.h"
+#include "Render/Types.h"
 #include "World/Entity/SpatialEntity.h"
 
 // import/export mechanism.
@@ -47,6 +48,8 @@ public:
 	virtual void setTransform(const Transform& transform);
 
 	virtual bool getTransform(Transform& outTransform) const;
+
+	virtual bool supportTechnique(render::handle_t technique) const = 0;
 
 	virtual void render(
 		world::WorldContext& worldContext,

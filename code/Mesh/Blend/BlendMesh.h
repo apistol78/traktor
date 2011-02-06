@@ -1,7 +1,9 @@
 #ifndef traktor_mesh_BlendMesh_H
 #define traktor_mesh_BlendMesh_H
 
+#include <map>
 #include "Core/RefArray.h"
+#include "Core/Containers/SmallMap.h"
 #include "Core/Math/Aabb3.h"
 #include "Core/Math/Transform.h"
 #include "Mesh/IMesh.h"
@@ -72,6 +74,8 @@ public:
 
 	const Aabb3& getBoundingBox() const;
 
+	bool supportTechnique(render::handle_t technique) const;
+
 	uint32_t getBlendTargetCount() const;
 
 	Ref< Instance > createInstance() const;
@@ -102,7 +106,7 @@ private:
 	resource::Proxy< render::Shader > m_shader;
 	RefArray< render::Mesh > m_meshes;
 	std::vector< const uint8_t* > m_vertices;
-	std::map< render::handle_t, std::vector< Part > > m_parts;
+	SmallMap< render::handle_t, std::vector< Part > > m_parts;
 	std::map< std::wstring, int > m_targetMap;
 };
 

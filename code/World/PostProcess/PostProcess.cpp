@@ -67,7 +67,7 @@ void PostProcess::destroy()
 
 	m_instances.resize(0);
 
-	for (std::map< int32_t, Ref< render::RenderTargetSet > >::iterator i = m_targets.begin(); i != m_targets.end(); ++i)
+	for (SmallMap< int32_t, Ref< render::RenderTargetSet > >::iterator i = m_targets.begin(); i != m_targets.end(); ++i)
 	{
 		if (
 			i->second &&
@@ -146,20 +146,20 @@ Ref< render::RenderTargetSet >& PostProcess::getTargetRef(int32_t id)
 void PostProcess::setParameter(render::handle_t handle, bool value)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	m_booleanParameters[handle] = value;
+	m_booleanParameters.insert(handle, value);
 }
 
 void PostProcess::setParameter(render::handle_t handle, float value)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	m_scalarParameters[handle] = value;
+	m_scalarParameters.insert(handle, value);
 }
 
 void PostProcess::prepareShader(render::Shader* shader) const
 {
-	for (std::map< render::handle_t, bool >::const_iterator i = m_booleanParameters.begin(); i != m_booleanParameters.end(); ++i)
+	for (SmallMap< render::handle_t, bool >::const_iterator i = m_booleanParameters.begin(); i != m_booleanParameters.end(); ++i)
 		shader->setCombination(i->first, i->second);
-	for (std::map< render::handle_t, float >::const_iterator i = m_scalarParameters.begin(); i != m_scalarParameters.end(); ++i)
+	for (SmallMap< render::handle_t, float >::const_iterator i = m_scalarParameters.begin(); i != m_scalarParameters.end(); ++i)
 		shader->setFloatParameter(i->first, i->second);
 }
 

@@ -59,6 +59,8 @@ public:
 	PartitionMesh();
 
 	const Aabb3& getBoundingBox() const;
+
+	bool supportTechnique(render::handle_t technique) const;
 	
 	void render(
 		render::RenderContext* renderContext,

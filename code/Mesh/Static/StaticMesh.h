@@ -1,6 +1,7 @@
 #ifndef traktor_mesh_StaticMesh_H
 #define traktor_mesh_StaticMesh_H
 
+#include "Core/Containers/SmallMap.h"
 #include "Core/Math/Aabb3.h"
 #include "Core/Math/Matrix44.h"
 #include "Mesh/IMesh.h"
@@ -59,6 +60,8 @@ public:
 	StaticMesh();
 
 	const Aabb3& getBoundingBox() const;
+
+	bool supportTechnique(render::handle_t technique) const;
 	
 	void render(
 		render::RenderContext* renderContext,
@@ -74,7 +77,7 @@ private:
 
 	resource::Proxy< render::Shader > m_shader;
 	Ref< render::Mesh > m_mesh;
-	std::map< render::handle_t, std::vector< Part > > m_parts;
+	SmallMap< render::handle_t, std::vector< Part > > m_parts;
 #if defined(_DEBUG)
 	std::string m_name;
 #endif

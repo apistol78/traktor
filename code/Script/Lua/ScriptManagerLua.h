@@ -2,8 +2,8 @@
 #define traktor_script_ScriptManagerLua_H
 
 #include <csetjmp>
-#include <map>
 #include "Core/RefArray.h"
+#include "Core/Containers/SmallMap.h"
 #include "Core/Thread/Semaphore.h"
 #include "Script/IScriptManager.h"
 
@@ -61,7 +61,7 @@ private:
 	Semaphore m_lock;
 	ScriptContextLua* m_currentContext;
 	std::vector< RegisteredClass > m_classRegistry;
-	std::map< const TypeInfo*, uint32_t > m_classRegistryLookup;
+	SmallMap< const TypeInfo*, uint32_t > m_classRegistryLookup;
 	static std::jmp_buf ms_jmpbuf;
 
 	void lock(ScriptContextLua* context);

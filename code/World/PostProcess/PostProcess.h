@@ -1,9 +1,9 @@
 #ifndef traktor_world_PostProcess_H
 #define traktor_world_PostProcess_H
 
-#include <map>
 #include "Core/Object.h"
 #include "Core/RefArray.h"
+#include "Core/Containers/SmallMap.h"
 #include "Core/Math/Frustum.h"
 #include "Core/Math/Matrix44.h"
 #include "Core/Thread/Semaphore.h"
@@ -99,10 +99,10 @@ public:
 
 private:
 	Ref< render::ScreenRenderer > m_screenRenderer;
-	std::map< int32_t, Ref< render::RenderTargetSet > > m_targets;
+	SmallMap< int32_t, Ref< render::RenderTargetSet > > m_targets;
 	RefArray< PostProcessStep::Instance > m_instances;
-	std::map< render::handle_t, bool > m_booleanParameters;
-	std::map< render::handle_t, float > m_scalarParameters;
+	SmallMap< render::handle_t, bool > m_booleanParameters;
+	SmallMap< render::handle_t, float > m_scalarParameters;
 	Ref< render::RenderTargetSet > m_currentTarget;
 	bool m_requireHighRange;
 	Semaphore m_lock;

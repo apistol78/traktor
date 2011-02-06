@@ -327,8 +327,7 @@ void AccDisplayRenderer::endMask()
 void AccDisplayRenderer::renderShape(const FlashMovie& movie, const Matrix33& transform, const FlashShape& shape, const SwfCxTransform& cxform)
 {
 	uint64_t hash = reinterpret_cast< uint64_t >(&shape);
-
-	Ref< AccShape > accShape;
+	AccShape* accShape;
 
 	std::map< uint64_t, CacheEntry >::iterator it = m_shapeCache.find(hash);
 	if (it == m_shapeCache.end())
@@ -387,7 +386,7 @@ void AccDisplayRenderer::renderMorphShape(const FlashMovie& movie, const Matrix3
 void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& transform, const FlashShape& shape, const SwfColor& color, const SwfCxTransform& cxform)
 {
 	uint64_t hash = reinterpret_cast< uint64_t >(&shape);
-	Ref< AccShape > accShape;
+	AccShape* accShape;
 	int32_t index;
 
 	// Get glyph shape; create if not already cached.

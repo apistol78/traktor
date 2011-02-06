@@ -77,6 +77,11 @@ Aabb3 AnimatedMeshEntity::getBoundingBox() const
 	return boundingBox;
 }
 
+bool AnimatedMeshEntity::supportTechnique(render::handle_t technique) const
+{
+	return m_mesh.validate() ? m_mesh->supportTechnique(technique) : false;
+}
+
 void AnimatedMeshEntity::render(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,

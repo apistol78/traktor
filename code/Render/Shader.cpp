@@ -27,7 +27,7 @@ void Shader::destroy()
 	m_currentTechnique = 0;
 	m_currentProgram = 0;
 
-	for (std::map< handle_t, Technique >::iterator i = m_techniques.begin(); i != m_techniques.end(); ++i)
+	for (SmallMap< handle_t, Technique >::iterator i = m_techniques.begin(); i != m_techniques.end(); ++i)
 	{
 		for (std::vector< Combination >::iterator j = i->second.combinations.begin(); j != i->second.combinations.end(); ++j)
 		{
@@ -50,7 +50,7 @@ bool Shader::hasTechnique(handle_t handle) const
 
 void Shader::setTechnique(handle_t handle)
 {
-	std::map< handle_t, Technique >::iterator i = m_techniques.find(handle);
+	SmallMap< handle_t, Technique >::iterator i = m_techniques.find(handle);
 	m_currentTechnique = (i != m_techniques.end()) ? &i->second : 0;
 	updateCurrentProgram();
 }
@@ -103,14 +103,14 @@ void Shader::setMatrixArrayParameter(handle_t handle, const Matrix44* param, int
 
 void Shader::setTextureParameter(handle_t handle, const resource::Proxy< ITexture >& texture)
 {
-	std::map< handle_t, int32_t >::iterator i = m_textureMap.find(handle);
+	SmallMap< handle_t, int32_t >::iterator i = m_textureMap.find(handle);
 	if (i != m_textureMap.end())
 		m_textureProxies[i->second] = texture;
 	else
 	{
 		int32_t textureProxyId = int32_t(m_textureProxies.size());
 		m_textureProxies.push_back(texture);
-		m_textureMap[handle] = textureProxyId;
+		m_textureMap.insert(handle, textureProxyId);
 	}
 }
 
@@ -125,7 +125,7 @@ void Shader::draw(IRenderView* renderView, const Primitives& primitives)
 	if (!m_currentProgram)
 		return;
 
-	for (std::map< handle_t, int32_t >::iterator i = m_textureMap.begin(); i != m_textureMap.end(); ++i)
+	for (SmallMap< handle_t, int32_t >::iterator i = m_textureMap.begin(); i != m_textureMap.end(); ++i)
 	{
 		resource::Proxy< ITexture >& textureProxy = m_textureProxies[i->second];
 		if (textureProxy.validate())
@@ -145,7 +145,7 @@ IProgram* Shader::getCurrentProgram() const
 
 void Shader::setProgramParameters(ProgramParameters* programParameters)
 {
-	for (std::map< handle_t, int32_t >::iterator i = m_textureMap.begin(); i != m_textureMap.end(); ++i)
+	for (SmallMap< handle_t, int32_t >::iterator i = m_textureMap.begin(); i != m_textureMap.end(); ++i)
 	{
 		resource::Proxy< ITexture >& textureProxy = m_textureProxies[i->second];
 		if (textureProxy.validate())

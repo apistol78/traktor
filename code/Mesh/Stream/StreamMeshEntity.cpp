@@ -35,6 +35,11 @@ Aabb3 StreamMeshEntity::getBoundingBox() const
 	return validate() ? m_mesh->getBoundingBox() : Aabb3();
 }
 
+bool StreamMeshEntity::supportTechnique(render::handle_t technique) const
+{
+	return validate() ? m_mesh->supportTechnique(technique) : false;
+}
+
 void StreamMeshEntity::render(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,

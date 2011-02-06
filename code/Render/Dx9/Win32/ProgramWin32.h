@@ -1,11 +1,10 @@
 #ifndef traktor_render_ProgramWin32_H
 #define traktor_render_ProgramWin32_H
 
-#include <map>
 #include <string>
 #include <vector>
 #include "Core/RefArray.h"
-#include "Core/Containers/AlignedVector.h"
+#include "Core/Containers/SmallMap.h"
 #include "Core/Misc/ComRef.h"
 #include "Render/IProgram.h"
 #include "Render/Types.h"
@@ -107,14 +106,14 @@ private:
 	std::vector< ProgramScalar > m_pixelScalars;
 	std::vector< ProgramSampler > m_vertexSamplers;
 	std::vector< ProgramSampler > m_pixelSamplers;
-	std::map< handle_t, uint32_t > m_scalarParameterMap;
-	std::map< handle_t, uint32_t > m_textureParameterMap;
+	SmallMap< handle_t, uint32_t > m_scalarParameterMap;
+	SmallMap< handle_t, uint32_t > m_textureParameterMap;
 	AlignedVector< float > m_scalarParameterData;
 	RefArray< ITexture > m_textureParameterData;
 	bool m_dirty;
 
 #if defined(_DEBUG)
-	std::map< handle_t, std::wstring > m_scalarParameterNames;
+	SmallMap< handle_t, std::wstring > m_scalarParameterNames;
 	std::vector< uint8_t > m_scalarParameterDataValid;
 
 	void validateParameter(const ProgramScalar& scalar);

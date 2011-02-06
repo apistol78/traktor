@@ -71,6 +71,7 @@ public:
 		const Vector4& at,
 		const Vector4& direction,
 		float maxLength,
+		uint32_t group,
 		const Body* ignoreBody,
 		QueryResult& outResult
 	) const;

@@ -232,7 +232,7 @@ void ProgramOpenGL::setFloatParameter(handle_t handle, float param)
 
 void ProgramOpenGL::setFloatArrayParameter(handle_t handle, const float* param, int length)
 {
-	std::map< handle_t, uint32_t >::iterator i = m_parameterMap.find(handle);
+	SmallMap< handle_t, uint32_t >::const_iterator i = m_parameterMap.find(handle);
 	if (i == m_parameterMap.end())
 		return;
 		
@@ -250,7 +250,7 @@ void ProgramOpenGL::setVectorParameter(handle_t handle, const Vector4& param)
 
 void ProgramOpenGL::setVectorArrayParameter(handle_t handle, const Vector4* param, int length)
 {
-	std::map< handle_t, uint32_t >::iterator i = m_parameterMap.find(handle);
+	SmallMap< handle_t, uint32_t >::const_iterator i = m_parameterMap.find(handle);
 	if (i == m_parameterMap.end())
 		return;
 		
@@ -268,7 +268,7 @@ void ProgramOpenGL::setMatrixParameter(handle_t handle, const Matrix44& param)
 
 void ProgramOpenGL::setMatrixArrayParameter(handle_t handle, const Matrix44* param, int length)
 {
-	std::map< handle_t, uint32_t >::iterator i = m_parameterMap.find(handle);
+	SmallMap< handle_t, uint32_t >::const_iterator i = m_parameterMap.find(handle);
 	if (i == m_parameterMap.end())
 		return;
 		
@@ -281,7 +281,7 @@ void ProgramOpenGL::setMatrixArrayParameter(handle_t handle, const Matrix44* par
 
 void ProgramOpenGL::setTextureParameter(handle_t handle, ITexture* texture)
 {
-	std::map< handle_t, uint32_t >::iterator i = m_parameterMap.find(handle);
+	SmallMap< handle_t, uint32_t >::const_iterator i = m_parameterMap.find(handle);
 	if (i == m_parameterMap.end())
 		return;
 
