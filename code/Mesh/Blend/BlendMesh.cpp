@@ -126,6 +126,11 @@ const Aabb3& BlendMesh::getBoundingBox() const
 	return m_meshes[0]->getBoundingBox();
 }
 
+bool BlendMesh::supportTechnique(render::handle_t technique) const
+{
+	return m_parts.find(technique) != m_parts.end();
+}
+
 uint32_t BlendMesh::getBlendTargetCount() const
 {
 	return uint32_t(m_meshes.size() - 1);
@@ -271,9 +276,8 @@ void BlendMesh::render(
 		return;
 
 	// Render mesh.
-	std::map< render::handle_t, std::vector< Part > >::const_iterator it = m_parts.find(worldRenderPass.getTechnique());
-	if (it == m_parts.end())
-		return;
+	SmallMap< render::handle_t, std::vector< Part > >::const_iterator it = m_parts.find(worldRenderPass.getTechnique());
+	T_ASSERT (it != m_parts.end());
 
 	const std::vector< render::Mesh::Part >& meshParts = instance->mesh->getParts();
 	for (std::vector< Part >::const_iterator i = it->second.begin(); i != it->second.end(); ++i)

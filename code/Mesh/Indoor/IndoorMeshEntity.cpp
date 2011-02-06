@@ -21,6 +21,11 @@ Aabb3 IndoorMeshEntity::getBoundingBox() const
 	return m_mesh.validate() ? m_mesh->getBoundingBox() : Aabb3();
 }
 
+bool IndoorMeshEntity::supportTechnique(render::handle_t technique) const
+{
+	return m_mesh.validate() ? m_mesh->supportTechnique(technique) : false;
+}
+
 void IndoorMeshEntity::render(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,

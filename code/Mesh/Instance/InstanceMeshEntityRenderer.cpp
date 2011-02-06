@@ -2,6 +2,7 @@
 #include "Mesh/Instance/InstanceMeshEntity.h"
 #include "Mesh/Instance/InstanceMesh.h"
 #include "Mesh/MeshCulling.h"
+#include "World/IWorldRenderPass.h"
 #include "World/WorldContext.h"
 #include "World/WorldRenderView.h"
 
@@ -33,6 +34,9 @@ void InstanceMeshEntityRenderer::render(
 	if (!mesh.validate())
 		return;
 
+	if (!mesh->supportTechnique(worldRenderPass.getTechnique()))
+		return;
+
 	Aabb3 boundingBox = meshEntity->getBoundingBox();
 	Transform transform = meshEntity->getTransform(worldRenderView.getInterval());
 
@@ -61,7 +65,7 @@ void InstanceMeshEntityRenderer::flush(
 	world::IWorldRenderPass& worldRenderPass
 )
 {
-	for (std::map< InstanceMesh*, AlignedVector< InstanceMesh::instance_distance_t > >::iterator i = m_meshInstances.begin(); i != m_meshInstances.end(); ++i)
+	for (SmallMap< InstanceMesh*, AlignedVector< InstanceMesh::instance_distance_t > >::iterator i = m_meshInstances.begin(); i != m_meshInstances.end(); ++i)
 	{
 		if (i->second.empty())
 			continue;

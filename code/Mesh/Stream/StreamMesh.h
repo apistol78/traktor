@@ -1,6 +1,7 @@
 #ifndef traktor_mesh_StreamMesh_H
 #define traktor_mesh_StreamMesh_H
 
+#include "Core/Containers/SmallMap.h"
 #include "Core/Math/Aabb3.h"
 #include "Core/Math/Matrix44.h"
 #include "Mesh/IMesh.h"
@@ -59,6 +60,8 @@ public:
 
 	const Aabb3& getBoundingBox() const;
 
+	bool supportTechnique(render::handle_t technique) const;
+
 	uint32_t getFrameCount() const;
 
 	Ref< Instance > createInstance() const;
@@ -88,7 +91,7 @@ private:
 	Ref< render::MeshReader > m_meshReader;
 	std::vector< uint32_t > m_frameOffsets;
 	Aabb3 m_boundingBox;
-	std::map< render::handle_t, std::vector< Part > > m_parts;
+	SmallMap< render::handle_t, std::vector< Part > > m_parts;
 };
 
 	}

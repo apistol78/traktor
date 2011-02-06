@@ -32,6 +32,11 @@ const Aabb3& SkinnedMesh::getBoundingBox() const
 	return m_mesh->getBoundingBox();
 }
 
+bool SkinnedMesh::supportTechnique(render::handle_t technique) const
+{
+	return m_parts.find(technique) != m_parts.end();
+}
+
 void SkinnedMesh::render(
 	render::RenderContext* renderContext,
 	world::IWorldRenderPass& worldRenderPass,
@@ -44,9 +49,8 @@ void SkinnedMesh::render(
 	if (!m_shader.validate())
 		return;
 
-	std::map< render::handle_t, std::vector< Part > >::const_iterator it = m_parts.find(worldRenderPass.getTechnique());
-	if (it == m_parts.end())
-		return;
+	SmallMap< render::handle_t, std::vector< Part > >::const_iterator it = m_parts.find(worldRenderPass.getTechnique());
+	T_ASSERT (it != m_parts.end());
 
 	const std::vector< render::Mesh::Part >& meshParts = m_mesh->getParts();
 	for (std::vector< Part >::const_iterator i = it->second.begin(); i != it->second.end(); ++i)

@@ -30,6 +30,11 @@ const Aabb3& IndoorMesh::getBoundingBox() const
 	return m_mesh->getBoundingBox();
 }
 
+bool IndoorMesh::supportTechnique(render::handle_t technique) const
+{
+	return true;
+}
+
 void IndoorMesh::render(
 	render::RenderContext* renderContext,
 	world::WorldRenderView& worldRenderView,
@@ -93,7 +98,7 @@ void IndoorMesh::render(
 	{
 		Sector& sector = m_sectors[*i];
 		
-		std::map< render::handle_t, std::vector< Part > >::const_iterator it = sector.parts.find(worldRenderPass.getTechnique());
+		SmallMap< render::handle_t, std::vector< Part > >::const_iterator it = sector.parts.find(worldRenderPass.getTechnique());
 		if (it == sector.parts.end())
 			continue;
 

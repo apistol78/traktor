@@ -1,6 +1,7 @@
 #ifndef traktor_mesh_IndoorMesh_H
 #define traktor_mesh_IndoorMesh_H
 
+#include "Core/Containers/SmallMap.h"
 #include "Core/Math/Aabb3.h"
 #include "Core/Math/Frustum.h"
 #include "Core/Math/Matrix44.h"
@@ -50,6 +51,8 @@ public:
 
 	const Aabb3& getBoundingBox() const;
 
+	bool supportTechnique(render::handle_t technique) const;
+
 	void render(
 		render::RenderContext* renderContext,
 		world::WorldRenderView& worldRenderView,
@@ -72,7 +75,7 @@ private:
 	struct Sector
 	{
 		Aabb3 boundingBox;
-		std::map< render::handle_t, std::vector< Part > > parts;
+		SmallMap< render::handle_t, std::vector< Part > > parts;
 	};
 
 	struct Portal

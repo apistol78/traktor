@@ -42,6 +42,11 @@ const Aabb3& StreamMesh::getBoundingBox() const
 	return m_boundingBox;
 }
 
+bool StreamMesh::supportTechnique(render::handle_t technique) const
+{
+	return m_parts.find(technique) != m_parts.end();
+}
+
 uint32_t StreamMesh::getFrameCount() const
 {
 	return m_frameOffsets.size();
@@ -79,9 +84,8 @@ void StreamMesh::render(
 	if (!instance->mesh[0])
 		return;
 
-	std::map< render::handle_t, std::vector< Part > >::const_iterator it = m_parts.find(worldRenderPass.getTechnique());
-	if (it == m_parts.end())
-		return;
+	SmallMap< render::handle_t, std::vector< Part > >::const_iterator it = m_parts.find(worldRenderPass.getTechnique());
+	T_ASSERT (it != m_parts.end());
 
 	const std::vector< render::Mesh::Part >& meshParts = instance->mesh[0]->getParts();
 	for (std::vector< Part >::const_iterator i = it->second.begin(); i != it->second.end(); ++i)

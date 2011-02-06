@@ -1,6 +1,7 @@
 #include "Mesh/MeshCulling.h"
 #include "Mesh/MeshEntity.h"
 #include "Mesh/MeshEntityRenderer.h"
+#include "World/IWorldRenderPass.h"
 #include "World/WorldContext.h"
 #include "World/WorldRenderView.h"
 
@@ -25,7 +26,11 @@ void MeshEntityRenderer::render(
 	world::Entity* entity
 )
 {
-	MeshEntity* meshEntity = checked_type_cast< MeshEntity* >(entity);
+	MeshEntity* meshEntity = checked_type_cast< MeshEntity*, false >(entity);
+
+	if (!meshEntity->supportTechnique(worldRenderPass.getTechnique()))
+		return;
+
 	Aabb3 boundingBox = meshEntity->getBoundingBox();
 	Transform transform; meshEntity->getTransform(transform);
 

@@ -22,11 +22,27 @@ namespace traktor
 
 const uint32_t c_outputSamplesBlockCount = 3;
 
-inline void moveSamples(float* destSsamples, const float* sourceSamples, uint32_t samplesCount)
+inline void moveSamples(float* destSamples, const float* sourceSamples, int32_t samplesCount)
 {
 	T_ASSERT ((samplesCount & 3) == 0);
-	for (uint32_t i = 0; i < samplesCount; i += 4)
-		Vector4::loadAligned(&sourceSamples[i]).storeAligned(&destSsamples[i]);
+	Vector4 tmp[4];
+	int32_t i;
+
+	for (i = 0; i < samplesCount - 16; i += 16)
+	{
+		tmp[0] = Vector4::loadAligned(&sourceSamples[i + 0]);
+		tmp[1] = Vector4::loadAligned(&sourceSamples[i + 4]);
+		tmp[2] = Vector4::loadAligned(&sourceSamples[i + 8]);
+		tmp[3] = Vector4::loadAligned(&sourceSamples[i + 12]);
+
+		tmp[0].storeAligned(&destSamples[i + 0]);
+		tmp[1].storeAligned(&destSamples[i + 4]);
+		tmp[2].storeAligned(&destSamples[i + 8]);
+		tmp[3].storeAligned(&destSamples[i + 12]);
+	}
+
+	for (; i < samplesCount; i += 4)
+		Vector4::loadAligned(&sourceSamples[i]).storeAligned(&destSamples[i]);
 }
 
 		}

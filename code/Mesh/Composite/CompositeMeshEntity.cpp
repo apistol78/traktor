@@ -46,6 +46,16 @@ Aabb3 CompositeMeshEntity::getBoundingBox() const
 	return boundingBox;
 }
 
+bool CompositeMeshEntity::supportTechnique(render::handle_t technique) const
+{
+	for (std::map< std::wstring, Ref< MeshEntity > >::const_iterator i = m_meshEntities.begin(); i != m_meshEntities.end(); ++i)
+	{
+		if (i->second->supportTechnique(technique))
+			return true;
+	}
+	return false;
+}
+
 void CompositeMeshEntity::render(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,

@@ -198,7 +198,7 @@ void ScriptManagerLua::pushObject(Object* object)
 	const TypeInfo* objectType = &type_of(object);
 
 	// Find registered script class entry.
-	std::map< const TypeInfo*, uint32_t >::const_iterator i = m_classRegistryLookup.find(objectType);
+	SmallMap< const TypeInfo*, uint32_t >::const_iterator i = m_classRegistryLookup.find(objectType);
 	while (i == m_classRegistryLookup.end())
 	{
 		if ((objectType = objectType->getSuper()) == 0)

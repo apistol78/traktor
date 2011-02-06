@@ -39,23 +39,23 @@ public:
 
 	void setVertexElements(const std::vector< VertexElement >& vertexDeclaration);
 
-	const std::vector< VertexElement >& getVertexElements() const;
-
 	void setVertexBuffer(VertexBuffer* vertexBuffer);
-
-	Ref< VertexBuffer > getVertexBuffer() const;
 
 	void setIndexBuffer(IndexBuffer* indexBuffer);
 
-	Ref< IndexBuffer > getIndexBuffer() const;
-
 	void setParts(const std::vector< Part >& parts);
 
-	const std::vector< Part >& getParts() const;
-	
 	void setBoundingBox(const Aabb3& boundingBox);
-	
-	const Aabb3& getBoundingBox() const;
+
+	const std::vector< VertexElement >& getVertexElements() const { return m_vertexElements; }
+
+	VertexBuffer* getVertexBuffer() const { return m_vertexBuffer; }
+
+	IndexBuffer* getIndexBuffer() const { return m_indexBuffer; }
+
+	const std::vector< Part >& getParts() const { return m_parts; }
+
+	const Aabb3& getBoundingBox() const { return m_boundingBox; }
 
 private:
 	std::vector< VertexElement > m_vertexElements;

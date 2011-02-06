@@ -446,12 +446,23 @@ uint32_t PhysicsManagerPhysX::getCollidingPairs(std::vector< CollisionPair >& ou
 	return 0;
 }
 
-bool PhysicsManagerPhysX::queryPoint(const Vector4& at, float margin, QueryResult& outResult) const
+bool PhysicsManagerPhysX::queryPoint(
+	const Vector4& at,
+	float margin,
+	QueryResult& outResult
+) const
 {
 	return false;
 }
 
-bool PhysicsManagerPhysX::queryRay(const Vector4& at, const Vector4& direction, float maxLength, const Body* ignoreBody, QueryResult& outResult) const
+bool PhysicsManagerPhysX::queryRay(
+	const Vector4& at,
+	const Vector4& direction,
+	float maxLength,
+	uint32_t group,
+	const Body* ignoreBody,
+	QueryResult& outResult
+) const
 {
 	NxRaycastHit hit;
 
@@ -490,12 +501,25 @@ bool PhysicsManagerPhysX::queryRay(const Vector4& at, const Vector4& direction, 
 	return bool(hitShape != 0);
 }
 
-uint32_t PhysicsManagerPhysX::querySphere(const Vector4& at, float radius, uint32_t queryTypes, RefArray< Body >& outBodies) const
+uint32_t PhysicsManagerPhysX::querySphere(
+	const Vector4& at,
+	float radius,
+	uint32_t queryTypes,
+	RefArray< Body >& outBodies
+) const
 {
 	return 0;
 }
 
-bool PhysicsManagerPhysX::querySweep(const Vector4& at, const Vector4& direction, float maxLength, float radius, uint32_t group, const Body* ignoreBody, QueryResult& outResult) const
+bool PhysicsManagerPhysX::querySweep(
+	const Vector4& at,
+	const Vector4& direction,
+	float maxLength,
+	float radius,
+	uint32_t group,
+	const Body* ignoreBody,
+	QueryResult& outResult
+) const
 {
 	return false;
 }

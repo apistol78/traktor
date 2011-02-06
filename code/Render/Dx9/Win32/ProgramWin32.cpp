@@ -187,7 +187,7 @@ void ProgramWin32::destroy()
 
 void ProgramWin32::setFloatParameter(handle_t handle, float param)
 {
-	std::map< handle_t, uint32_t >::const_iterator i = m_scalarParameterMap.find(handle);
+	SmallMap< handle_t, uint32_t >::const_iterator i = m_scalarParameterMap.find(handle);
 	if (i == m_scalarParameterMap.end())
 		return;
 
@@ -200,7 +200,7 @@ void ProgramWin32::setFloatParameter(handle_t handle, float param)
 
 void ProgramWin32::setFloatArrayParameter(handle_t handle, const float* param, int length)
 {
-	std::map< handle_t, uint32_t >::const_iterator i = m_scalarParameterMap.find(handle);
+	SmallMap< handle_t, uint32_t >::const_iterator i = m_scalarParameterMap.find(handle);
 	if (i == m_scalarParameterMap.end())
 		return;
 
@@ -215,7 +215,7 @@ void ProgramWin32::setFloatArrayParameter(handle_t handle, const float* param, i
 
 void ProgramWin32::setVectorParameter(handle_t handle, const Vector4& param)
 {
-	std::map< handle_t, uint32_t >::const_iterator i = m_scalarParameterMap.find(handle);
+	SmallMap< handle_t, uint32_t >::const_iterator i = m_scalarParameterMap.find(handle);
 	if (i == m_scalarParameterMap.end())
 		return;
 
@@ -230,7 +230,7 @@ void ProgramWin32::setVectorParameter(handle_t handle, const Vector4& param)
 
 void ProgramWin32::setVectorArrayParameter(handle_t handle, const Vector4* param, int length)
 {
-	std::map< handle_t, uint32_t >::const_iterator i = m_scalarParameterMap.find(handle);
+	SmallMap< handle_t, uint32_t >::const_iterator i = m_scalarParameterMap.find(handle);
 	if (i == m_scalarParameterMap.end())
 		return;
 
@@ -246,7 +246,7 @@ void ProgramWin32::setVectorArrayParameter(handle_t handle, const Vector4* param
 
 void ProgramWin32::setMatrixParameter(handle_t handle, const Matrix44& param)
 {
-	std::map< handle_t, uint32_t >::const_iterator i = m_scalarParameterMap.find(handle);
+	SmallMap< handle_t, uint32_t >::const_iterator i = m_scalarParameterMap.find(handle);
 	if (i == m_scalarParameterMap.end())
 		return;
 
@@ -261,7 +261,7 @@ void ProgramWin32::setMatrixParameter(handle_t handle, const Matrix44& param)
 
 void ProgramWin32::setMatrixArrayParameter(handle_t handle, const Matrix44* param, int length)
 {
-	std::map< handle_t, uint32_t >::const_iterator i = m_scalarParameterMap.find(handle);
+	SmallMap< handle_t, uint32_t >::const_iterator i = m_scalarParameterMap.find(handle);
 	if (i == m_scalarParameterMap.end())
 		return;
 
@@ -277,7 +277,7 @@ void ProgramWin32::setMatrixArrayParameter(handle_t handle, const Matrix44* para
 
 void ProgramWin32::setTextureParameter(handle_t handle, ITexture* texture)
 {
-	std::map< handle_t, uint32_t >::const_iterator i = m_textureParameterMap.find(handle);
+	SmallMap< handle_t, uint32_t >::const_iterator i = m_textureParameterMap.find(handle);
 	if (i == m_textureParameterMap.end() || m_textureParameterData[i->second] == texture)
 		return;
 
@@ -310,7 +310,7 @@ void ProgramWin32::validateParameter(const ProgramScalar& scalar)
 	if (!valid)
 	{
 		std::wstring parameterName;
-		for (std::map< handle_t, uint32_t >::const_iterator i = m_scalarParameterMap.begin(); i != m_scalarParameterMap.end(); ++i)
+		for (SmallMap< handle_t, uint32_t >::const_iterator i = m_scalarParameterMap.begin(); i != m_scalarParameterMap.end(); ++i)
 		{
 			if (i->second == scalar.offset)
 			{

@@ -185,6 +185,7 @@ public:
 	 * \param at Ray origin in world space.
 	 * \param direction Ray direction in world space.
 	 * \param maxLength Maximum length of ray.
+	 * \param group Collision groups.
 	 * \param ignoreBody Ignore ray casting body, can be null if no body is to be ignored.
 	 * \param outResult Intersection result, only modified if method returns true.
 	 * \return True if intersection found.
@@ -193,6 +194,7 @@ public:
 		const Vector4& at,
 		const Vector4& direction,
 		float maxLength,
+		uint32_t group,
 		const Body* ignoreBody,
 		QueryResult& outResult
 	) const = 0;

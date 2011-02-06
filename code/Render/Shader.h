@@ -1,8 +1,8 @@
 #ifndef traktor_render_Shader_H
 #define traktor_render_Shader_H
 
-#include <map>
 #include "Core/Object.h"
+#include "Core/Containers/SmallMap.h"
 #include "Core/Math/Vector4.h"
 #include "Core/Math/Matrix44.h"
 #include "Render/Types.h"
@@ -147,13 +147,13 @@ private:
 		std::vector< Combination > combinations;
 	};
 
-	std::map< handle_t, Technique > m_techniques;
-	std::map< handle_t, uint32_t > m_parameterBits;
+	SmallMap< handle_t, Technique > m_techniques;
+	SmallMap< handle_t, uint32_t > m_parameterBits;
 	uint32_t m_parameterValue;
 	Technique* m_currentTechnique;
-	Ref< IProgram > m_currentProgram;
+	IProgram* m_currentProgram;
 
-	std::map< handle_t, int32_t > m_textureMap;
+	SmallMap< handle_t, int32_t > m_textureMap;
 	std::vector< resource::Proxy< ITexture > > m_textureProxies;
 
 	void updateCurrentProgram();

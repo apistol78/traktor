@@ -48,6 +48,11 @@ const Aabb3& InstanceMesh::getBoundingBox() const
 	return m_mesh->getBoundingBox();
 }
 
+bool InstanceMesh::supportTechnique(render::handle_t technique) const
+{
+	return m_parts.find(technique) != m_parts.end();
+}
+
 void InstanceMesh::render(
 	render::RenderContext* renderContext,
 	const world::IWorldRenderPass& worldRenderPass,
@@ -68,9 +73,8 @@ void InstanceMesh::render(
 	if (!m_shader.validate())
 		return;
 
-	std::map< render::handle_t, std::vector< Part > >::const_iterator it = m_parts.find(worldRenderPass.getTechnique());
-	if (it == m_parts.end())
-		return;
+	SmallMap< render::handle_t, std::vector< Part > >::const_iterator it = m_parts.find(worldRenderPass.getTechnique());
+	T_ASSERT (it != m_parts.end());
 
 	// Sort instances by ascending distance; note we're sorting caller's vector.
 	std::sort(instanceWorld.begin(), instanceWorld.end(), SortInstanceDistance());

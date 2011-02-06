@@ -31,6 +31,11 @@ const Aabb3& PartitionMesh::getBoundingBox() const
 	return m_mesh->getBoundingBox();
 }
 
+bool PartitionMesh::supportTechnique(render::handle_t technique) const
+{
+	return true;
+}
+
 void PartitionMesh::render(
 	render::RenderContext* renderContext,
 	world::WorldRenderView& worldRenderView,

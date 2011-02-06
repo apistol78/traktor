@@ -31,6 +31,8 @@ public:
 
 	virtual Aabb3 getBoundingBox() const;
 
+	virtual bool supportTechnique(render::handle_t technique) const;
+
 	virtual void render(
 		world::WorldContext& worldContext,
 		world::WorldRenderView& worldRenderView,
