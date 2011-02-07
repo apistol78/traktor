@@ -55,7 +55,10 @@ bool DeployTargetAction::execute()
 		File::FmRead
 	));
 	if (!applicationConfiguration)
+	{
+		log::error << L"Unable to open platform application configuration \"" << platform->getApplicationConfiguration() << L"\"" << Endl;
 		return false;
+	}
 
 	// Merge with target application configuration.
 	if (!target->getApplicationConfiguration().empty())
@@ -65,7 +68,10 @@ bool DeployTargetAction::execute()
 			File::FmRead
 		));
 		if (!targetApplicationConfiguration)
+		{
+			log::error << L"Unable to open target application configuration \"" << target->getApplicationConfiguration() << L"\"" << Endl;
 			return false;
+		}
 
 		applicationConfiguration->merge(targetApplicationConfiguration, true);
 	}
@@ -125,22 +131,18 @@ bool DeployTargetAction::execute()
 		true, true, false
 #endif
 	);
-	if (!process)
+	if (!process || !process->wait())
 	{
 		log::error << L"Failed to launch process \"" << platform->getDeployTool() << L"\"" << Endl;
 		m_targetInstance->setState(TsIdle);
 		return false;
 	}
 
-	if (!process->wait())
-	{
-		m_targetInstance->setState(TsIdle);
-		return false;
-	}
+	int32_t exitCode = process->exitCode();
+	if (exitCode != 0)
+		log::error << L"Process failed with exit code " << exitCode << Endl;
 
-	// Deployment finished.
-
-	return process->exitCode() == 0;
+	return exitCode == 0;
 }
 
 	}
