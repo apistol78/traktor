@@ -17,7 +17,7 @@ namespace traktor
 
 #define SWIZZLE_MASK(x, y, z, w) ( ((x) << 6) | ((y) << 4) | ((z) << 2) | (w) )
 
-void expandTypes(EmitterContext& cx, Variable*& in, VariableType intoType)
+Variable* expandTypes(EmitterContext& cx, Variable* in, VariableType intoType)
 {
 	T_ASSERT (in->type != VtFloat4x4);
 	T_ASSERT (intoType != VtFloat4x4);
@@ -31,7 +31,7 @@ void expandTypes(EmitterContext& cx, Variable*& in, VariableType intoType)
 			Instruction inst(OpSplat, tmp->reg, in->reg, 0, 0, 0);
 			cx.emitInstruction(inst);
 
-			in = tmp;
+			return tmp;
 		}
 		else
 		{
@@ -49,9 +49,16 @@ void expandTypes(EmitterContext& cx, Variable*& in, VariableType intoType)
 			Instruction inst(OpExpandWithZero, tmp->reg, in->reg, mask, 0, 0);
 			cx.emitInstruction(inst);
 
-			in = tmp;
+			return tmp;
 		}
 	}
+	return in;
+}
+
+void collapseTypes(EmitterContext& cx, Variable* in, Variable*& xin)
+{
+	if (in != xin)
+		cx.freeTemporary(xin);
 }
 
 void emitAbs(EmitterContext& cx, Abs* node)
@@ -66,9 +73,14 @@ void emitAdd(EmitterContext& cx, Add* node)
 	Variable* in1 = cx.emitInput(node, L"Input1");
 	Variable* in2 = cx.emitInput(node, L"Input2");
 	Variable* out = cx.emitOutput(node, L"Output", std::max(in1->type, in2->type));
-	expandTypes(cx, in1, out->type);
-	expandTypes(cx, in2, out->type);
-	cx.emitInstruction(OpAdd, out, in1, in2);
+
+	Variable* xin1 = expandTypes(cx, in1, out->type);
+	Variable* xin2 = expandTypes(cx, in2, out->type);
+
+	cx.emitInstruction(OpAdd, out, xin1, xin2);
+
+	collapseTypes(cx, in1, xin1);
+	collapseTypes(cx, in2, xin2);
 }
 
 void emitArcusCos(EmitterContext& cx, ArcusCos* node)
@@ -97,7 +109,7 @@ void emitClamp(EmitterContext& cx, Clamp* node)
 void emitColor(EmitterContext& cx, Color* node)
 {
 	Variable* out = cx.emitOutput(node, L"Output", VtFloat4);
-	traktor::Color color = node->getColor();
+	Color4ub color = node->getColor();
 	Variable* in = cx.emitConstant(Vector4(color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, color.a / 255.0f));
 	cx.emitInstruction(OpFetchConstant, out, in);
 }
@@ -184,9 +196,14 @@ void emitCross(EmitterContext& cx, Cross* node)
 	Variable* in1 = cx.emitInput(node, L"Input1");
 	Variable* in2 = cx.emitInput(node, L"Input2");
 	Variable* out = cx.emitOutput(node, L"Output", VtFloat3);
-	expandTypes(cx, in1, VtFloat3);
-	expandTypes(cx, in2, VtFloat3);
-	cx.emitInstruction(OpCross, out, in1, in2);
+
+	Variable* xin1 = expandTypes(cx, in1, VtFloat3);
+	Variable* xin2 = expandTypes(cx, in2, VtFloat3);
+
+	cx.emitInstruction(OpCross, out, xin1, xin2);
+
+	collapseTypes(cx, in1, xin1);
+	collapseTypes(cx, in2, xin2);
 }
 
 void emitDerivative(EmitterContext& cx, Derivative* node)
@@ -209,9 +226,14 @@ void emitDiv(EmitterContext& cx, Div* node)
 	Variable* in1 = cx.emitInput(node, L"Input1");
 	Variable* in2 = cx.emitInput(node, L"Input2");
 	Variable* out = cx.emitOutput(node, L"Output", std::max(in1->type, in2->type));
-	expandTypes(cx, in1, out->type);
-	expandTypes(cx, in2, out->type);
-	cx.emitInstruction(OpDiv, out, in1, in2);
+
+	Variable* xin1 = expandTypes(cx, in1, out->type);
+	Variable* xin2 = expandTypes(cx, in2, out->type);
+
+	cx.emitInstruction(OpDiv, out, xin1, xin2);
+
+	collapseTypes(cx, in1, xin1);
+	collapseTypes(cx, in2, xin2);
 }
 
 void emitDot(EmitterContext& cx, Dot* node)
@@ -219,13 +241,19 @@ void emitDot(EmitterContext& cx, Dot* node)
 	Variable* in1 = cx.emitInput(node, L"Input1");
 	Variable* in2 = cx.emitInput(node, L"Input2");
 	Variable* out = cx.emitOutput(node, L"Output", VtFloat);
+	
 	VariableType type = std::max(in1->type, in2->type);
-	expandTypes(cx, in1, type);
-	expandTypes(cx, in2, type);
+	
+	Variable* xin1 = expandTypes(cx, in1, type);
+	Variable* xin2 = expandTypes(cx, in2, type);
+
 	if (type > VtFloat3)
-		cx.emitInstruction(OpDot4, out, in1, in2);
+		cx.emitInstruction(OpDot4, out, xin1, xin2);
 	else
-		cx.emitInstruction(OpDot3, out, in1, in2);
+		cx.emitInstruction(OpDot3, out, xin1, xin2);
+
+	collapseTypes(cx, in1, xin1);
+	collapseTypes(cx, in2, xin2);
 }
 
 void emitExp(EmitterContext& cx, Exp* node)
@@ -350,9 +378,10 @@ void emitMatrixIn(EmitterContext& cx, MatrixIn* node)
 
 	if (axisX)
 	{
-		expandTypes(cx, axisX, VtFloat4);
-		Instruction is0(OpMove, tmp->reg + 0, axisX->reg, 0, 0, 0);
+		Variable* xaxisX = expandTypes(cx, axisX, VtFloat4);
+		Instruction is0(OpMove, tmp->reg + 0, xaxisX->reg, 0, 0, 0);
 		cx.emitInstruction(is0);
+		collapseTypes(cx, axisX, xaxisX);
 	}
 	// else set 1,0,0,0
 	else
@@ -364,9 +393,10 @@ void emitMatrixIn(EmitterContext& cx, MatrixIn* node)
 
 	if (axisY)
 	{
-		expandTypes(cx, axisY, VtFloat4);
-		Instruction is1(OpMove, tmp->reg + 1, axisY->reg, 0, 0, 0);
+		Variable* xaxisY = expandTypes(cx, axisY, VtFloat4);
+		Instruction is1(OpMove, tmp->reg + 1, xaxisY->reg, 0, 0, 0);
 		cx.emitInstruction(is1);
+		collapseTypes(cx, axisY, xaxisY);
 	}
 	// else set 0,1,0,0
 	else
@@ -378,9 +408,10 @@ void emitMatrixIn(EmitterContext& cx, MatrixIn* node)
 
 	if (axisZ)
 	{
-		expandTypes(cx, axisZ, VtFloat4);
-		Instruction is2(OpMove, tmp->reg + 2, axisZ->reg, 0, 0, 0);
+		Variable* xaxisZ = expandTypes(cx, axisZ, VtFloat4);
+		Instruction is2(OpMove, tmp->reg + 2, xaxisZ->reg, 0, 0, 0);
 		cx.emitInstruction(is2);
+		collapseTypes(cx, axisZ, xaxisZ);
 	}
 	// else set 0,0,1,0
 	else
@@ -392,9 +423,10 @@ void emitMatrixIn(EmitterContext& cx, MatrixIn* node)
 
 	if (translate)
 	{
-		expandTypes(cx, translate, VtFloat4);
-		Instruction is3(OpMove, tmp->reg + 3, translate->reg, 0, 0, 0);
+		Variable* xtranslate = expandTypes(cx, translate, VtFloat4);
+		Instruction is3(OpMove, tmp->reg + 3, xtranslate->reg, 0, 0, 0);
 		cx.emitInstruction(is3);
+		collapseTypes(cx, translate, xtranslate);
 	}
 	// else set 0,0,0,1
 	else
@@ -414,9 +446,14 @@ void emitMax(EmitterContext& cx, Max* node)
 	Variable* in1 = cx.emitInput(node, L"Input1");
 	Variable* in2 = cx.emitInput(node, L"Input2");
 	Variable* out = cx.emitOutput(node, L"Output", std::max(in1->type, in2->type));
-	expandTypes(cx, in1, out->type);
-	expandTypes(cx, in2, out->type);
-	cx.emitInstruction(OpMax, out, in1, in2);
+
+	Variable* xin1 = expandTypes(cx, in1, out->type);
+	Variable* xin2 = expandTypes(cx, in2, out->type);
+
+	cx.emitInstruction(OpMax, out, xin1, xin2);
+
+	collapseTypes(cx, in1, xin1);
+	collapseTypes(cx, in2, xin2);
 }
 
 void emitMixIn(EmitterContext& cx, MixIn* node)
@@ -480,9 +517,14 @@ void emitMul(EmitterContext& cx, Mul* node)
 	Variable* in1 = cx.emitInput(node, L"Input1");
 	Variable* in2 = cx.emitInput(node, L"Input2");
 	Variable* out = cx.emitOutput(node, L"Output", std::max(in1->type, in2->type));
-	expandTypes(cx, in1, out->type);
-	expandTypes(cx, in2, out->type);
-	cx.emitInstruction(OpMul, out, in1, in2);
+	
+	Variable* xin1 = expandTypes(cx, in1, out->type);
+	Variable* xin2 = expandTypes(cx, in2, out->type);
+
+	cx.emitInstruction(OpMul, out, xin1, xin2);
+
+	collapseTypes(cx, in1, xin1);
+	collapseTypes(cx, in2, xin2);
 }
 
 void emitMulAdd(EmitterContext& cx, MulAdd* node)
@@ -490,12 +532,19 @@ void emitMulAdd(EmitterContext& cx, MulAdd* node)
 	Variable* in1 = cx.emitInput(node, L"Input1");
 	Variable* in2 = cx.emitInput(node, L"Input2");
 	Variable* in3 = cx.emitInput(node, L"Input3");
+	
 	VariableType type = std::max(std::max(in1->type, in2->type), in3->type);
 	Variable* out = cx.emitOutput(node, L"Output", type);
-	expandTypes(cx, in1, out->type);
-	expandTypes(cx, in2, out->type);
-	expandTypes(cx, in3, out->type);
-	cx.emitInstruction(OpMulAdd, out, in1, in2, in3);
+
+	Variable* xin1 = expandTypes(cx, in1, out->type);
+	Variable* xin2 = expandTypes(cx, in2, out->type);
+	Variable* xin3 = expandTypes(cx, in3, out->type);
+
+	cx.emitInstruction(OpMulAdd, out, xin1, xin2, xin3);
+
+	collapseTypes(cx, in1, xin1);
+	collapseTypes(cx, in2, xin2);
+	collapseTypes(cx, in3, xin3);
 }
 
 void emitNeg(EmitterContext& cx, Neg* node)
@@ -543,10 +592,12 @@ void emitReflect(EmitterContext& cx, Reflect* node)
 	Variable* tmp2 = cx.allocTemporary(VtFloat);
 	cx.emitInstruction(OpMul, tmp2, tmp1, two);
 
-	expandTypes(cx, tmp2, out->type);
+	Variable* xtmp2 = expandTypes(cx, tmp2, out->type);
 
 	Variable* tmp3 = cx.allocTemporary(out->type);
-	cx.emitInstruction(OpMul, tmp3, normal, tmp2);
+	cx.emitInstruction(OpMul, tmp3, normal, xtmp2);
+
+	collapseTypes(cx, tmp2, xtmp2);
 
 	cx.emitInstruction(OpSub, out, tmp3, direction);
 }
@@ -636,9 +687,14 @@ void emitSub(EmitterContext& cx, Sub* node)
 	Variable* in1 = cx.emitInput(node, L"Input1");
 	Variable* in2 = cx.emitInput(node, L"Input2");
 	Variable* out = cx.emitOutput(node, L"Output", std::max(in1->type, in2->type));
-	expandTypes(cx, in1, out->type);
-	expandTypes(cx, in2, out->type);
-	cx.emitInstruction(OpSub, out, in1, in2);
+
+	Variable* xin1 = expandTypes(cx, in1, out->type);
+	Variable* xin2 = expandTypes(cx, in2, out->type);
+
+	cx.emitInstruction(OpSub, out, xin1, xin2);
+
+	collapseTypes(cx, in1, xin1);
+	collapseTypes(cx, in2, xin2);
 }
 
 void emitSum(EmitterContext& cx, Sum* node)
@@ -664,9 +720,11 @@ void emitSum(EmitterContext& cx, Sum* node)
 	uint32_t address = cx.getCurrentAddress();
 
 	Variable* in = cx.emitInput(node, L"Input");
-	expandTypes(cx, in, VtFloat4);
+	Variable* xin = expandTypes(cx, in, VtFloat4);
 
-	cx.emitInstruction(OpAdd, out, out, in);
+	cx.emitInstruction(OpAdd, out, out, xin);
+
+	collapseTypes(cx, in, xin);
 	
 	// Increment counter, repeat loop if not at target.
 	cx.emitInstruction(OpIncrement, N);
@@ -705,8 +763,9 @@ void emitSwitch(EmitterContext& cx, Switch* node)
 		Variable* in = cx.emitInput(caseInputPin);
 		T_ASSERT (in);
 
-		expandTypes(cx, in, VtFloat4);
-		cx.emitInstruction(OpMove, out, in);
+		Variable* xin = expandTypes(cx, in, VtFloat4);
+		cx.emitInstruction(OpMove, out, xin);
+		collapseTypes(cx, in, xin);
 
 		Instruction is2(OpJump, 0, 0, 0, 0, 0);
 		addressBreaks.push_back(cx.emitInstruction(is2));
@@ -721,8 +780,9 @@ void emitSwitch(EmitterContext& cx, Switch* node)
 	Variable* in = cx.emitInput(node, L"Default");
 	T_ASSERT (in);
 
-	expandTypes(cx, in, VtFloat4);
-	cx.emitInstruction(OpMove, out, in);
+	Variable* xin = expandTypes(cx, in, VtFloat4);
+	cx.emitInstruction(OpMove, out, xin);
+	collapseTypes(cx, in, xin);
 
 	// Patch break instructions.
 	uint32_t addressEnd = cx.getCurrentAddress();
@@ -838,6 +898,10 @@ void emitUniform(EmitterContext& cx, Uniform* node)
 
 	case PtMatrix:
 		variableType = VtFloat4x4;
+		break;
+
+	case PtTexture:
+		variableType = VtTexture;
 		break;
 	}
 

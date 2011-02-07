@@ -1,5 +1,6 @@
 #include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Io/FileSystem.h"
+#include "Core/Log/Log.h"
 #include "Database/Local/ActionWriteData.h"
 #include "Database/Local/Context.h"
 #include "Database/Local/IFileStore.h"
@@ -33,41 +34,62 @@ bool ActionWriteData::execute(Context* context)
 
 	Ref< LocalInstanceMeta > instanceMeta = readPhysicalObject< LocalInstanceMeta >(instanceMetaPath);
 	if (!instanceMeta)
+	{
+		log::error << L"Unable to read instance meta \"" << instanceMetaPath.getPathName() << L"\"." << Endl;
 		return false;
+	}
 
 	m_existingBlob = instanceMeta->haveBlob(m_dataName);
 
 	if (m_existingBlob)
 	{
 		if (!fileStore->edit(instanceDataPath))
+		{
+			log::error << L"Unable to open \"" << instanceDataPath.getPathName() << L"\" for edit." << Endl;
 			return false;
+		}
+	}
+
+	Ref< IStream > writeStream = FileSystem::getInstance().open(instanceDataPath, File::FmWrite);
+	if (!writeStream)
+	{
+		log::error << L"Unable to open file \"" << instanceDataPath.getPathName() << L"\"." << Endl;
+		return false;
 	}
 
 	int dataBufferSize = int(m_dataBuffer.size());
 	if (dataBufferSize > 0)
 	{
-		Ref< IStream > writeStream = FileSystem::getInstance().open(instanceDataPath, File::FmWrite);
-		if (!writeStream)
-			return false;
-
 		if (writeStream->write(&m_dataBuffer[0], dataBufferSize) != dataBufferSize)
+		{
+			log::error << L"Unable to write " << dataBufferSize << L" byte(s) to file \"" << instanceDataPath.getPathName() << L"\"." << Endl;
 			return false;
-
-		writeStream->close();
-		writeStream = 0;
+		}
 	}
+
+	writeStream->close();
+	writeStream = 0;
 
 	if (!m_existingBlob)
 	{
 		if (!fileStore->edit(instanceMetaPath))
+		{
+			log::error << L"Unable to open \"" << instanceMetaPath.getPathName() << L"\" for edit." << Endl;
 			return false;
+		}
 
 		instanceMeta->addBlob(m_dataName);
 		if (!writePhysicalObject(instanceMetaPath, instanceMeta, context->preferBinary()))
+		{
+			log::error << L"Unable to write instance meta \"" << instanceMetaPath.getPathName() << L"\"." << Endl;
 			return false;
+		}
 
 		if (!fileStore->add(instanceDataPath))
+		{
+			log::error << L"Unable to add file \"" << instanceDataPath.getPathName() << L"\"." << Endl;
 			return false;
+		}
 	}
 
 	return true;

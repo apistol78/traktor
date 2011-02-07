@@ -1,8 +1,9 @@
 #ifndef traktor_render_EmitterContext_H
 #define traktor_render_EmitterContext_H
 
-#include <map>
 #include <bitset>
+#include <map>
+#include <stack>
 #include "Core/Math/Vector4.h"
 #include "Render/Sw/Emitter/Emitter.h"
 #include "Render/Sw/Emitter/Variable.h"
@@ -123,6 +124,7 @@ private:
 	{
 		IntrProgram program;
 		std::bitset< 256 > free;
+		std::set< Variable* > vars;
 	};
 
 	struct TransientInput
@@ -131,12 +133,18 @@ private:
 		uint32_t count;
 	};
 
+	struct InputScope
+	{
+		std::vector< const OutputPin* > inputReferences;
+	};
+
 	Emitter m_emitter;
 	Ref< const ShaderGraph > m_shaderGraph;
 	Parameters& m_parameters;
 	State m_states[2];
 	State* m_currentState;
 	std::map< const OutputPin*, TransientInput > m_inputs;
+	std::stack< InputScope > m_scope;
 	uint32_t m_interpolatorCount;
 	uint32_t m_samplerCount;
 	RenderStateDesc m_renderState;
