@@ -53,6 +53,8 @@ public:
 
 	HlslVariable* createOuterVariable(const OutputPin* outputPin, const std::wstring& variableName, HlslType type);
 
+	void associateVariable(const OutputPin* outputPin, HlslVariable* variable);
+
 	HlslVariable* getVariable(const OutputPin* outputPin) const;
 
 	void pushScope();
@@ -76,7 +78,7 @@ public:
 	std::wstring getGeneratedShader(bool needVPos);
 
 private:
-	typedef std::map< const OutputPin*, HlslVariable* > scope_t;
+	typedef std::map< const OutputPin*, Ref< HlslVariable > > scope_t;
 
 	ShaderType m_shaderType;
 	std::set< std::wstring > m_inputs;

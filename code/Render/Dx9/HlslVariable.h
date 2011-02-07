@@ -2,7 +2,7 @@
 #define traktor_render_HlslVariable_H
 
 #include <string>
-#include "Core/Config.h"
+#include "Core/Object.h"
 #include "Render/Dx9/HlslType.h"
 
 namespace traktor
@@ -13,8 +13,10 @@ namespace traktor
 /*!
  * \ingroup DX9 Xbox360
  */
-class HlslVariable
+class HlslVariable : public Object
 {
+	T_RTTI_CLASS;
+
 public:
 	HlslVariable();
 

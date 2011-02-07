@@ -58,6 +58,14 @@ HlslVariable* HlslContext::emitOutput(Node* node, const std::wstring& outputPinN
 	return out;
 }
 
+void HlslContext::emitOutput(Node* node, const std::wstring& outputPinName, HlslVariable* variable)
+{
+	const OutputPin* outputPin = node->findOutputPin(outputPinName);
+	T_ASSERT (outputPin);
+
+	m_currentShader->associateVariable(outputPin, variable);
+}
+
 void HlslContext::enterVertex()
 {
 	m_currentShader = &m_vertexShader;
