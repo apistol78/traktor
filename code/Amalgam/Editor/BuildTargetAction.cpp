@@ -48,7 +48,10 @@ bool BuildTargetAction::execute()
 		File::FmRead
 	));
 	if (!pipelineConfiguration)
+	{
+		log::error << L"Unable to open platform pipeline configuration \"" << platform->getPipelineConfiguration() << L"\"" << Endl;
 		return false;
+	}
 
 	// Merge with target pipeline configuration.
 	if (!target->getPipelineConfiguration().empty())
@@ -58,7 +61,10 @@ bool BuildTargetAction::execute()
 			File::FmRead
 		));
 		if (!targetPipelineConfiguration)
+		{
+			log::error << L"Unable to open target pipeline configuration \"" << target->getPipelineConfiguration() << L"\"" << Endl;
 			return false;
+		}
 
 		pipelineConfiguration->merge(targetPipelineConfiguration, true);
 	}
@@ -172,7 +178,11 @@ bool BuildTargetAction::execute()
 			log::error << L"\t" << *i << Endl;
 	}
 
-	return process->exitCode() == 0;
+	int32_t exitCode = process->exitCode();
+	if (exitCode != 0)
+		log::error << L"Process failed with exit code " << exitCode << Endl;
+
+	return exitCode == 0;
 }
 
 	}

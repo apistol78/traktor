@@ -18,7 +18,6 @@ TargetCell::TargetCell(ui::Bitmap* bitmap, TargetInstance* instance)
 {
 	m_progressCell = new ProgressCell();
 	m_playCell = new ButtonCell(bitmap, 0, true, ui::EiUser + 1, instance);
-	m_stopCell = new ButtonCell(bitmap, 2, false, ui::EiUser + 2, instance);
 }
 
 int32_t TargetCell::getHeight() const
@@ -36,23 +35,13 @@ void TargetCell::placeCells(ui::custom::AutoWidget* widget, const ui::Rect& rect
 		ui::Rect(
 			controlRect.left + 4,
 			controlRect.getCenter().y - 8,
-			controlRect.right - 24 * 2 - 8,
+			controlRect.right - 24 * 1 - 8,
 			controlRect.getCenter().y + 8
 		)
 	);
 
 	widget->placeCell(
 		m_playCell,
-		ui::Rect(
-			controlRect.right - 24 * 2 - 4,
-			controlRect.top,
-			controlRect.right - 24 * 1 - 4,
-			controlRect.bottom
-		)
-	);
-
-	widget->placeCell(
-		m_stopCell,
 		ui::Rect(
 			controlRect.right - 24 * 1 - 4,
 			controlRect.top,
@@ -147,33 +136,7 @@ void TargetCell::paint(ui::custom::AutoWidget* widget, ui::Canvas& canvas, const
 
 	canvas.setFont(widgetFont);
 
-	switch (m_instance->getState())
-	{
-	case TsIdle:
-		m_playCell->setEnable(true);
-		m_stopCell->setEnable(false);
-		break;
-
-	case TsPending:
-		m_playCell->setEnable(false);
-		m_stopCell->setEnable(false);
-		break;
-
-	case TsBuilding:
-		m_playCell->setEnable(false);
-		m_stopCell->setEnable(true);
-		break;
-
-	case TsDeploying:
-		m_playCell->setEnable(false);
-		m_stopCell->setEnable(false);
-		break;
-
-	case TsLaunching:
-		m_playCell->setEnable(false);
-		m_stopCell->setEnable(false);
-		break;
-	}
+	m_playCell->setEnable(m_instance->getState() == TsIdle);
 
 	// Re-issue update; we need to refresh continiously.
 	widget->requestLayout();

@@ -33,7 +33,6 @@ public:
 private:
 	Ref< ProgressCell > m_progressCell;
 	Ref< ButtonCell > m_playCell;
-	Ref< ButtonCell > m_stopCell;
 	Ref< TargetInstance > m_instance;
 };
 
