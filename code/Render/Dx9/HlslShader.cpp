@@ -59,7 +59,7 @@ HlslVariable* HlslShader::createVariable(const OutputPin* outputPin, const std::
 {
 	T_ASSERT (!m_variables.empty());
 
-	HlslVariable* variable = new HlslVariable(variableName, type);
+	Ref< HlslVariable > variable = new HlslVariable(variableName, type);
 	m_variables.back().insert(std::make_pair(outputPin, variable));
 
 	return variable;
@@ -69,10 +69,15 @@ HlslVariable* HlslShader::createOuterVariable(const OutputPin* outputPin, const 
 {
 	T_ASSERT (!m_variables.empty());
 
-	HlslVariable* variable = new HlslVariable(variableName, type);
+	Ref< HlslVariable > variable = new HlslVariable(variableName, type);
 	m_variables.front().insert(std::make_pair(outputPin, variable));
 
 	return variable;
+}
+
+void HlslShader::associateVariable(const OutputPin* outputPin, HlslVariable* variable)
+{
+	m_variables.back().insert(std::make_pair(outputPin, variable));
 }
 
 HlslVariable* HlslShader::getVariable(const OutputPin* outputPin) const
@@ -97,8 +102,6 @@ void HlslShader::pushScope()
 void HlslShader::popScope()
 {
 	T_ASSERT (!m_variables.empty());
-	for (scope_t::iterator i = m_variables.back().begin(); i != m_variables.back().end(); ++i)
-		delete i->second;
 	m_variables.pop_back();
 }
 

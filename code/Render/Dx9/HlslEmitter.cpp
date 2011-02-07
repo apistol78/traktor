@@ -1105,7 +1105,7 @@ bool emitSwizzle(HlslContext& cx, Swizzle* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
 
-	std::wstring map = node->get();
+	std::wstring map = toLower(node->get());
 	if (map.length() == 0)
 		return false;
 
@@ -1115,33 +1115,77 @@ bool emitSwizzle(HlslContext& cx, Swizzle* node)
 	HlslVariable* in = cx.emitInput(node, L"Input");
 	if (!in)
 		return false;
-	HlslVariable* out = cx.emitOutput(node, L"Output", type);
 
-	std::wstringstream ss;
-	ss << hlsl_type_name(type) << L"(";
-	for (size_t i = 0; i < map.length(); ++i)
+	if (
+		(map == L"xyzw" && in->getType() == HtFloat4) ||
+		(map == L"xyz" && in->getType() == HtFloat3) ||
+		(map == L"xy" && in->getType() == HtFloat2) ||
+		(map == L"x" && in->getType() == HtFloat)
+	)
 	{
-		if (i > 0)
-			ss << L", ";
-		switch (tolower(map[i]))
-		{
-		case 'x':
-		case 'y':
-		case 'z':
-		case 'w':
-			ss << in->getName() << L'.' << char(tolower(map[i]));
-			break;
-		case '0':
-			ss << L"0.0f";
-			break;
-		case '1':
-			ss << L"1.0f";
-			break;
-		}
+		// No need to swizzle; pass variable further.
+		cx.emitOutput(node, L"Output", in);
 	}
-	ss << L")";
+	else
+	{
+		HlslVariable* out = cx.emitOutput(node, L"Output", type);
 
-	assign(f, out) << ss.str() << L";" << Endl;
+		bool containConstant = false;
+		for (size_t i = 0; i < map.length() && !containConstant; ++i)
+		{
+			if (map[i] == L'0' || map[i] == L'1')
+				containConstant = true;
+		}
+
+		StringOutputStream ss;
+		if (containConstant || (map.length() > 1 && in->getType() == HtFloat))
+		{
+			ss << hlsl_type_name(type) << L"(";
+			for (size_t i = 0; i < map.length(); ++i)
+			{
+				if (i > 0)
+					ss << L", ";
+				switch (map[i])
+				{
+				case 'x':
+					if (in->getType() == HtFloat)
+					{
+						ss << in->getName();
+						break;
+					}
+					// Don't break, multidimensional source.
+				case 'y':
+				case 'z':
+				case 'w':
+					ss << in->getName() << L'.' << map[i];
+					break;
+				case '0':
+					ss << L"0.0f";
+					break;
+				case '1':
+					ss << L"1.0f";
+					break;
+				}
+			}
+			ss << L")";
+		}
+		else if (map.length() > 1)
+		{
+			ss << in->getName() << L'.';
+			for (size_t i = 0; i < map.length(); ++i)
+				ss << map[i];
+		}
+		else if (map.length() == 1)
+		{
+			if (map[0] == L'x' && in->getType() == HtFloat)
+				ss << in->getName();
+			else
+				ss << in->getName() << L'.' << map[0];
+		}
+
+		assign(f, out) << ss.str() << L";" << Endl;
+	}
+
 	return true;
 }
 
