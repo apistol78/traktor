@@ -17,22 +17,22 @@
 
 #if defined(_WIN32)
 #	if !defined(WINCE)
-#		include "Graphics/Dd7/GraphicsSystemDd7.h"
+#		include "Graphics/Gdi/GraphicsSystemGdi.h"
 #	else
 #		include "Graphics/DdWm5/GraphicsSystemDdWm5.h"
 #	endif
 #endif
 
-#if defined(_WIN32) && !defined(WINCE) && !defined(_WIN64)
-#	include "Render/Sw/Core/x86/JitX86.h"
-typedef traktor::render::JitX86 ProcessorImpl;
-#elif !defined(WINCE)
+//#if defined(_WIN32) && !defined(WINCE) && !defined(_WIN64)
+//#	include "Render/Sw/Core/x86/JitX86.h"
+//typedef traktor::render::JitX86 ProcessorImpl;
+//#elif !defined(WINCE)
 #	include "Render/Sw/Core/Interpreter.h"
 typedef traktor::render::Interpreter ProcessorImpl;
-#else
-#	include "Render/Sw/Core/InterpreterFixed.h"
-typedef traktor::render::InterpreterFixed ProcessorImpl;
-#endif
+//#else
+//#	include "Render/Sw/Core/InterpreterFixed.h"
+//typedef traktor::render::InterpreterFixed ProcessorImpl;
+//#endif
 
 namespace traktor
 {
@@ -188,7 +188,7 @@ Ref< IRenderView > RenderSystemSw::createRenderView(const RenderViewDefaultDesc&
 
 #if defined(_WIN32)
 #	if !defined(WINCE)
-	graphicsSystem = new graphics::GraphicsSystemDd7();
+	graphicsSystem = new graphics::GraphicsSystemGdi();
 #	else
 	graphicsSystem = new graphics::GraphicsSystemDdWm5();
 #	endif
@@ -221,7 +221,7 @@ Ref< IRenderView > RenderSystemSw::createRenderView(const RenderViewEmbeddedDesc
 
 #if defined(_WIN32)
 #	if !defined(WINCE)
-	graphicsSystem = new graphics::GraphicsSystemDd7();
+	graphicsSystem = new graphics::GraphicsSystemGdi();
 #	else
 	graphicsSystem = new graphics::GraphicsSystemDdWm5();
 #	endif
@@ -322,9 +322,9 @@ Ref< IProgram > RenderSystemSw::createProgram(const ProgramResource* programReso
 #endif
 
 	// Get emitter parameters.
-	std::map< handle_t, int > parameterMap;
+	std::map< handle_t, std::pair< int, int > > parameterMap;
 	for (std::map< std::wstring, Variable* >::const_iterator i = parameters.uniforms.begin(); i != parameters.uniforms.end(); ++i)
-		parameterMap[getParameterHandle(i->first)] = i->second->reg;
+		parameterMap[getParameterHandle(i->first)] = std::make_pair(i->second->reg, i->second->size);
 
 	std::map< handle_t, int > samplerMap;
 	for (std::map< std::wstring, int >::const_iterator i = parameters.samplers.begin(); i != parameters.samplers.end(); ++i)

@@ -1,11 +1,12 @@
 #include <windows.h>
-#include "Render/Sw/Core/x86/JitX86.h"
-#include "Render/Sw/Core/x86/Assembler.h"
+#include "Core/Log/Log.h"
+#include "Core/Math/Const.h"
+#include "Core/Math/Matrix44.h"
+#include "Core/Memory/Alloc.h"
 #include "Render/Sw/Core/IntrProgram.h"
 #include "Render/Sw/Core/Sampler.h"
-#include "Core/Math/Matrix44.h"
-#include "Core/Math/Const.h"
-#include "Core/Log/Log.h"
+#include "Render/Sw/Core/x86/Assembler.h"
+#include "Render/Sw/Core/x86/JitX86.h"
 
 namespace traktor
 {
@@ -858,7 +859,7 @@ Processor::image_t JitX86::compile(const IntrProgram& program) const
 	a.ret();
 	a.fixup();
 
-	InternalImage* image = (InternalImage*)Alloc::acquireAlign(sizeof(InternalImage), 16);
+	InternalImage* image = (InternalImage*)Alloc::acquireAlign(sizeof(InternalImage), 16, T_FILE_LINE);
 	image->native = VirtualAlloc(NULL, a.get().size(), MEM_COMMIT, PAGE_EXECUTE_READWRITE);
 
 	memset(image->constants, 0, 256 * 4 * sizeof(float));

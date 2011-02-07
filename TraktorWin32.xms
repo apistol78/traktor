@@ -9628,9 +9628,9 @@
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
 					<project type="Project" version="1">
-						<enable>false</enable>
-						<name>Traktor.Graphics.Dd7</name>
-						<sourcePath>$(TRAKTOR_HOME)/code/Graphics/Dd7</sourcePath>
+						<enable>true</enable>
+						<name>Traktor.Graphics.Gdi</name>
+						<sourcePath>$(TRAKTOR_HOME)/code/Graphics/Gdi</sourcePath>
 						<configurations>
 							<item type="Configuration" version="1">
 								<name>DebugShared</name>
@@ -9641,14 +9641,11 @@
 									<item>$(TRAKTOR_HOME)/code</item>
 								</includePaths>
 								<definitions>
-									<item>T_GRAPHICS_DD7_EXPORT</item>
+									<item>T_GRAPHICS_GDI_EXPORT</item>
 									<item>_DEBUG</item>
 								</definitions>
 								<libraryPaths/>
-								<libraries>
-									<item>ddraw.lib</item>
-									<item>dxguid.lib</item>
-								</libraries>
+								<libraries/>
 								<additionalCompilerOptions/>
 								<additionalLinkerOptions/>
 							</item>
@@ -9661,14 +9658,11 @@
 									<item>$(TRAKTOR_HOME)/code</item>
 								</includePaths>
 								<definitions>
-									<item>T_GRAPHICS_DD7_EXPORT</item>
+									<item>T_GRAPHICS_GDI_EXPORT</item>
 									<item>NDEBUG</item>
 								</definitions>
 								<libraryPaths/>
-								<libraries>
-									<item>ddraw.lib</item>
-									<item>dxguid.lib</item>
-								</libraries>
+								<libraries/>
 								<additionalCompilerOptions/>
 								<additionalLinkerOptions/>
 							</item>
@@ -9685,10 +9679,7 @@
 									<item>_DEBUG</item>
 								</definitions>
 								<libraryPaths/>
-								<libraries>
-									<item>ddraw.lib</item>
-									<item>dxguid.lib</item>
-								</libraries>
+								<libraries/>
 								<additionalCompilerOptions/>
 								<additionalLinkerOptions/>
 							</item>
@@ -9705,10 +9696,7 @@
 									<item>NDEBUG</item>
 								</definitions>
 								<libraryPaths/>
-								<libraries>
-									<item>ddraw.lib</item>
-									<item>dxguid.lib</item>
-								</libraries>
+								<libraries/>
 								<additionalCompilerOptions/>
 								<additionalLinkerOptions/>
 							</item>
@@ -12046,7 +12034,7 @@
 			</dependencies>
 		</item>
 		<item type="Project" version="1">
-			<enable>false</enable>
+			<enable>true</enable>
 			<name>Traktor.Render.Sw</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Render/Sw</sourcePath>
 			<configurations>
@@ -12171,11 +12159,11 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[29]/dependencies/item[9]/project"/>
+					<project ref="/object/projects/item[11]"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[11]"/>
+					<project ref="/object/projects/item[29]/dependencies/item[9]/project"/>
 				</item>
 			</dependencies>
 		</item>

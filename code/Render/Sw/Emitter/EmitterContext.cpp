@@ -44,19 +44,24 @@ EmitterContext::EmitterContext(const ShaderGraph* shaderGraph, Parameters& param
 
 void EmitterContext::emit(Node* node)
 {
+	m_scope.push(InputScope());
+	
 	m_emitter.emit(*this, node);
 
-	// Clean all used inputs.
-	for (std::map< const OutputPin*, TransientInput >::iterator i = m_inputs.begin(); i != m_inputs.end(); )
+	InputScope& scope = m_scope.top();
+	for (std::vector< const OutputPin* >::const_iterator i = scope.inputReferences.begin(); i != scope.inputReferences.end(); ++i)
 	{
-		if (!i->second.count)
+		std::map< const OutputPin*, TransientInput >::iterator j = m_inputs.find(*i);
+		T_ASSERT (j != m_inputs.end());
+		T_ASSERT (j->second.count > 0);
+		if (--j->second.count <= 0)
 		{
-			freeTemporary(i->second.var);
-			i = m_inputs.erase(i);
+			freeTemporary(j->second.var);
+			//m_inputs.erase(j);
 		}
-		else
-			++i;
 	}
+
+	m_scope.pop();
 }
 
 Variable* EmitterContext::emitInput(const InputPin* inputPin)
@@ -69,16 +74,14 @@ Variable* EmitterContext::emitInput(const InputPin* inputPin)
 	std::map< const OutputPin*, TransientInput >::iterator i = m_inputs.find(sourcePin);
 	if (i == m_inputs.end())
 	{
-		m_emitter.emit(*this, sourcePin->getNode());
-
-		// The source pin should now have been emitted and thus be in the m_temporaries map.
+		emit(sourcePin->getNode());
 		i = m_inputs.find(sourcePin);
 		T_ASSERT (i != m_inputs.end());
 	}
-
-	// Consume a reference.
 	T_ASSERT (i->second.count > 0);
-	i->second.count--;
+
+	InputScope& scope = m_scope.top();
+	scope.inputReferences.push_back(sourcePin);
 
 	return i->second.var;
 }
@@ -276,6 +279,8 @@ Variable* EmitterContext::allocTemporary(VariableType variableType)
 	var->reg = reg;
 	var->size = size;
 
+	m_currentState->vars.insert(var);
+
 	return var;
 }
 
@@ -284,11 +289,21 @@ void EmitterContext::freeTemporary(Variable*& var)
 	if (!var)
 		return;
 
-	for (int i = var->reg; i < var->reg + var->size; ++i)
-		m_currentState->free[i] = true;
+	for (int i = 0; i < sizeof_array(m_states); ++i)
+	{
+		State& state = m_states[i];
+		if (state.vars.find(var) != state.vars.end())
+		{
+			for (int j = var->reg; j < var->reg + var->size; ++j)
+			{
+				T_ASSERT (!state.free[j]);
+				state.free[j] = true;
+			}
+			state.vars.erase(var);
+		}
+	}
 
-	delete var;
-	var = 0;
+	delete var; var = 0;
 }
 
 void EmitterContext::setRenderState(const RenderStateDesc& renderState)

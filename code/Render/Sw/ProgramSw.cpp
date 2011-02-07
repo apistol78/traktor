@@ -28,7 +28,7 @@ void T_FORCE_INLINE checkRegister(const Vector4& r)
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProgramSw", ProgramSw, IProgram)
 
 ProgramSw::ProgramSw(
-	const std::map< handle_t, int >& parameterMap,
+	const std::map< handle_t, std::pair< int, int > >& parameterMap,
 	const std::map< handle_t, int >& samplerMap,
 	Processor::image_t vertexProgram,
 	Processor::image_t pixelProgram,
@@ -61,87 +61,90 @@ void ProgramSw::destroy()
 
 void ProgramSw::setFloatParameter(handle_t handle, float param)
 {
-	std::map< handle_t, int >::const_iterator i = m_parameterMap.find(handle);
+	std::map< handle_t, std::pair< int, int > >::const_iterator i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
 	{
-		T_FATAL_ASSERT (i->second < 256);
-		m_parameters[i->second].set(param, param, param, param);
-		CHECK(m_parameters[i->second]);
+		T_FATAL_ASSERT (i->second.first < 256);
+		m_parameters[i->second.first].set(param, param, param, param);
+		CHECK(m_parameters[i->second.first]);
 	}
 }
 
 void ProgramSw::setFloatArrayParameter(handle_t handle, const float* param, int length)
 {
-	std::map< handle_t, int >::const_iterator i = m_parameterMap.find(handle);
+	std::map< handle_t, std::pair< int, int > >::const_iterator i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
 	{
-		T_FATAL_ASSERT (i->second + length < 256)
+		length = std::min(length, i->second.second);
+		T_FATAL_ASSERT (i->second.first + length < 256)
 		for (int j = 0; j < length; ++j)
 		{
-			m_parameters[i->second + j].set(param[j], param[j], param[j], param[j]);
-			CHECK(m_parameters[i->second + j]);
+			m_parameters[i->second.first + j].set(param[j], param[j], param[j], param[j]);
+			CHECK(m_parameters[i->second.first + j]);
 		}
 	}
 }
 
 void ProgramSw::setVectorParameter(handle_t handle, const Vector4& param)
 {
-	std::map< handle_t, int >::const_iterator i = m_parameterMap.find(handle);
+	std::map< handle_t, std::pair< int, int > >::const_iterator i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
 	{
-		T_FATAL_ASSERT (i->second < 256);
-		m_parameters[i->second] = param;
+		T_FATAL_ASSERT (i->second.first < 256);
+		m_parameters[i->second.first] = param;
 		CHECK(param);
 	}
 }
 
 void ProgramSw::setVectorArrayParameter(handle_t handle, const Vector4* param, int length)
 {
-	std::map< handle_t, int >::const_iterator i = m_parameterMap.find(handle);
+	std::map< handle_t, std::pair< int, int > >::const_iterator i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
 	{
-		T_FATAL_ASSERT (i->second + length < 256);
+		length = std::min(length, i->second.second);
+		T_FATAL_ASSERT (i->second.first + length < 256);
 		for (int j = 0; j < length; ++j)
 		{
-			m_parameters[i->second + j] = param[j];
-			CHECK(m_parameters[i->second + j]);
+			m_parameters[i->second.first + j] = param[j];
+			CHECK(m_parameters[i->second.first + j]);
 		}
 	}
 }
 
 void ProgramSw::setMatrixParameter(handle_t handle, const Matrix44& param)
 {
-	std::map< handle_t, int >::const_iterator i = m_parameterMap.find(handle);
+	std::map< handle_t, std::pair< int, int > >::const_iterator i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
 	{
-		T_FATAL_ASSERT (i->second + 4 < 256);
-		m_parameters[i->second    ] = param.axisX();
-		m_parameters[i->second + 1] = param.axisY();
-		m_parameters[i->second + 2] = param.axisZ();
-		m_parameters[i->second + 3] = param.translation();
-		CHECK(m_parameters[i->second    ]);
-		CHECK(m_parameters[i->second + 1]);
-		CHECK(m_parameters[i->second + 2]);
-		CHECK(m_parameters[i->second + 3]);
+		T_FATAL_ASSERT (i->second.first + 4 < 256);
+		m_parameters[i->second.first    ] = param.axisX();
+		m_parameters[i->second.first + 1] = param.axisY();
+		m_parameters[i->second.first + 2] = param.axisZ();
+		m_parameters[i->second.first + 3] = param.translation();
+		CHECK(m_parameters[i->second.first    ]);
+		CHECK(m_parameters[i->second.first + 1]);
+		CHECK(m_parameters[i->second.first + 2]);
+		CHECK(m_parameters[i->second.first + 3]);
 	}
 }
 
 void ProgramSw::setMatrixArrayParameter(handle_t handle, const Matrix44* param, int length)
 {
-	std::map< handle_t, int >::const_iterator i = m_parameterMap.find(handle);
+	std::map< handle_t, std::pair< int, int > >::const_iterator i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
 	{
-		T_FATAL_ASSERT (i->second + length * 4 < 256);
+		length = std::min(length, i->second.second / 4);
+		T_FATAL_ASSERT (i->second.first + length * 4 < 256);
 		for (int j = 0; j < length; ++j)
 		{
-			m_parameters[i->second + j * 4    ] = param[j].axisX();
-			m_parameters[i->second + j * 4 + 1] = param[j].axisY();
-			m_parameters[i->second + j * 4 + 2] = param[j].axisZ();
-			m_parameters[i->second + j * 4 + 3] = param[j].translation();
-			CHECK(m_parameters[i->second + j * 4    ]);
-			CHECK(m_parameters[i->second + j * 4 + 1]);
-			CHECK(m_parameters[i->second + j * 4 + 2]);
-			CHECK(m_parameters[i->second + j * 4 + 3]);
+			m_parameters[i->second.first + j * 4    ] = param[j].axisX();
+			m_parameters[i->second.first + j * 4 + 1] = param[j].axisY();
+			m_parameters[i->second.first + j * 4 + 2] = param[j].axisZ();
+			m_parameters[i->second.first + j * 4 + 3] = param[j].translation();
+			CHECK(m_parameters[i->second.first + j * 4    ]);
+			CHECK(m_parameters[i->second.first + j * 4 + 1]);
+			CHECK(m_parameters[i->second.first + j * 4 + 2]);
+			CHECK(m_parameters[i->second.first + j * 4 + 3]);
 		}
 	}
 }

@@ -32,7 +32,7 @@ class T_DLLCLASS ProgramSw : public IProgram
 
 public:
 	ProgramSw(
-		const std::map< handle_t, int >& parameterMap,
+		const std::map< handle_t, std::pair< int, int > >& parameterMap,
 		const std::map< handle_t, int >& samplerMap,
 		Processor::image_t vertexProgram,
 		Processor::image_t pixelProgram,
@@ -87,7 +87,7 @@ private:
 	Processor::image_t m_pixelProgram;
 	RenderStateDesc m_renderState;
 	uint32_t m_interpolatorCount;
-	std::map< handle_t, int > m_parameterMap;
+	std::map< handle_t, std::pair< int, int > > m_parameterMap;
 	std::map< handle_t, int > m_samplerMap;
 	Vector4* m_parameters;
 	Ref< AbstractSampler > m_samplers[8];
