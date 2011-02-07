@@ -24,6 +24,35 @@ namespace traktor
 
 const TCHAR* c_className = _T("TraktorRenderSystem");
 
+void setWindowStyle(HWND hWnd, int32_t clientWidth, int32_t clientHeight, bool fullScreen)
+{
+	if (fullScreen)
+	{
+		SetWindowLong(hWnd, GWL_STYLE, WS_POPUPWINDOW);
+		SetWindowPos(hWnd, HWND_TOP, 0, 0, clientWidth, clientHeight, SWP_FRAMECHANGED | SWP_NOMOVE);
+	}
+	else
+	{
+		SetWindowLong(hWnd, GWL_STYLE, WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION | WS_MINIMIZEBOX);
+		SetWindowPos(hWnd, HWND_NOTOPMOST, 0, 0, clientWidth, clientHeight, SWP_FRAMECHANGED | SWP_NOMOVE);
+	}
+
+	RECT rcWindow, rcClient;
+	GetWindowRect(hWnd, &rcWindow);
+	GetClientRect(hWnd, &rcClient);
+
+	int32_t windowWidth = rcWindow.right - rcWindow.left;
+	int32_t windowHeight = rcWindow.bottom - rcWindow.top;
+
+	int32_t realClientWidth = rcClient.right - rcClient.left;
+	int32_t realClientHeight = rcClient.bottom - rcClient.top;
+
+	windowWidth = (windowWidth - realClientWidth) + clientWidth;
+	windowHeight = (windowHeight - realClientHeight) + clientHeight;
+
+	SetWindowPos(hWnd, NULL, 0, 0, windowWidth, windowHeight, SWP_NOZORDER | SWP_NOMOVE);
+}
+
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderSystemDx10", 0, RenderSystemDx10, IRenderSystem)
@@ -103,6 +132,7 @@ bool RenderSystemDx10::create(const RenderSystemCreateDesc& desc)
 		m_displayModes[i].colorBits = 32;
 	}
 
+	// Render window class.
 	WNDCLASS wc;
 	std::memset(&wc, 0, sizeof(wc));
 	wc.style = CS_HREDRAW | CS_VREDRAW;
@@ -115,14 +145,15 @@ bool RenderSystemDx10::create(const RenderSystemCreateDesc& desc)
 	wc.lpszClassName = c_className;
 	RegisterClass(&wc);
 
+	// Render window.
 	m_hWnd = CreateWindow(
 		c_className,
-		_T("Traktor 2.0 DirectX 10.0 Renderer"),
-		WS_POPUPWINDOW,
-		0,
-		0,
-		0,
-		0,
+		desc.windowTitle ? desc.windowTitle : _T("Traktor 2.0 DirectX 10.0 Renderer"),
+		WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION | WS_MINIMIZEBOX,
+		CW_USEDEFAULT,
+		CW_USEDEFAULT,
+		64,
+		64,
 		NULL,
 		NULL,
 		static_cast< HMODULE >(GetModuleHandle(NULL)),
@@ -200,9 +231,8 @@ Ref< IRenderView > RenderSystemDx10::createRenderView(const RenderViewDefaultDes
 	DXGI_MODE_DESC* dmd;
 	HRESULT hr;
 
-	SetWindowPos(m_hWnd, HWND_TOPMOST, 0, 0, desc.displayMode.width, desc.displayMode.height, SWP_SHOWWINDOW);
-	ShowWindow(m_hWnd, SW_MAXIMIZE);
-	UpdateWindow(m_hWnd);
+	setWindowStyle(m_hWnd, desc.displayMode.width, desc.displayMode.height, desc.fullscreen);
+	ShowWindow(m_hWnd, SW_NORMAL);
 
 	// Find matching display mode.
 	dmd = 0;
@@ -231,7 +261,7 @@ Ref< IRenderView > RenderSystemDx10::createRenderView(const RenderViewDefaultDes
 	std::memcpy(&scd.BufferDesc, dmd, sizeof(DXGI_MODE_DESC));
 	scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	scd.OutputWindow = m_hWnd;
-	scd.Windowed = FALSE;
+	scd.Windowed = desc.fullscreen ? FALSE : TRUE;
 
 	if (!setupSampleDesc(m_d3dDevice, desc.multiSample, scd.BufferDesc.Format, DXGI_FORMAT_D16_UNORM, scd.SampleDesc))
 	{

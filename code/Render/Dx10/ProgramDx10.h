@@ -2,6 +2,7 @@
 #define traktor_render_ProgramDx10_H
 
 #include <map>
+#include "Core/Containers/SmallMap.h"
 #include "Core/Misc/ComRef.h"
 #include "Render/IProgram.h"
 #include "Render/Types.h"
@@ -105,11 +106,11 @@ private:
 	State m_vertexState;
 	State m_pixelState;
 	ComRef< ID3D10Blob > m_d3dVertexShaderBlob;
-	std::map< size_t, ComRef< ID3D10InputLayout > > m_d3dInputLayouts;
+	SmallMap< size_t, ComRef< ID3D10InputLayout > > m_d3dInputLayouts;
 	ComRef< ID3D10InputLayout > m_d3dInputLayout;
 	size_t m_d3dInputElementsHash;
-	std::map< handle_t, uint32_t > m_parameterMap;
-	std::vector< float > m_parameterFloatArray;
+	SmallMap< handle_t, uint32_t > m_parameterMap;
+	AlignedVector< float > m_parameterFloatArray;
 	ComRefArray< ID3D10ShaderResourceView > m_parameterResArray;
 	bool m_parameterArrayDirty;
 	bool m_parameterResArrayDirty;

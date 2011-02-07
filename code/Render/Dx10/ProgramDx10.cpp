@@ -1,13 +1,14 @@
+#include "Core/Log/Log.h"
+#include "Core/Misc/Align.h"
+#include "Core/Misc/TString.h"
 #include "Render/Dx10/Platform.h"
+#include "Render/Dx10/ContextDx10.h"
+#include "Render/Dx10/CubeTextureDx10.h"
+#include "Render/Dx10/HlslProgram.h"
 #include "Render/Dx10/ProgramDx10.h"
 #include "Render/Dx10/ProgramResourceDx10.h"
-#include "Render/Dx10/ContextDx10.h"
-#include "Render/Dx10/SimpleTextureDx10.h"
-#include "Render/Dx10/CubeTextureDx10.h"
 #include "Render/Dx10/RenderTargetDx10.h"
-#include "Render/Dx10/HlslProgram.h"
-#include "Core/Misc/TString.h"
-#include "Core/Log/Log.h"
+#include "Render/Dx10/SimpleTextureDx10.h"
 
 namespace traktor
 {
@@ -182,7 +183,7 @@ void ProgramDx10::destroy()
 	m_context->releaseComRef(m_pixelState.d3dConstantBuffer);
 	m_context->releaseComRef(m_pixelState.d3dSamplerStates);
 	m_context->releaseComRef(m_d3dVertexShaderBlob);
-	for (std::map< size_t, ComRef< ID3D10InputLayout > >::iterator i = m_d3dInputLayouts.begin(); i != m_d3dInputLayouts.end(); ++i)
+	for (SmallMap< size_t, ComRef< ID3D10InputLayout > >::iterator i = m_d3dInputLayouts.begin(); i != m_d3dInputLayouts.end(); ++i)
 		m_context->releaseComRef(i->second);
 	m_d3dInputLayouts.clear();
 	m_context->releaseComRef(m_d3dInputLayout);
@@ -199,7 +200,7 @@ void ProgramDx10::setFloatParameter(handle_t handle, float param)
 
 void ProgramDx10::setFloatArrayParameter(handle_t handle, const float* param, int length)
 {
-	std::map< handle_t, uint32_t >::iterator i = m_parameterMap.find(handle);
+	SmallMap< handle_t, uint32_t >::iterator i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
 	{
 		std::memcpy(&m_parameterFloatArray[i->second], param, length * sizeof(float));
@@ -209,49 +210,49 @@ void ProgramDx10::setFloatArrayParameter(handle_t handle, const float* param, in
 
 void ProgramDx10::setVectorParameter(handle_t handle, const Vector4& param)
 {
-	std::map< handle_t, uint32_t >::iterator i = m_parameterMap.find(handle);
+	SmallMap< handle_t, uint32_t >::iterator i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
 	{
-		param.storeUnaligned(&m_parameterFloatArray[i->second]);
+		param.storeAligned(&m_parameterFloatArray[i->second]);
 		m_parameterArrayDirty = true;
 	}
 }
 
 void ProgramDx10::setVectorArrayParameter(handle_t handle, const Vector4* param, int length)
 {
-	std::map< handle_t, uint32_t >::iterator i = m_parameterMap.find(handle);
+	SmallMap< handle_t, uint32_t >::iterator i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
 	{
 		for (int j = 0; j < length; ++j)
-			param[j].storeUnaligned(&m_parameterFloatArray[i->second + j * 4]);
+			param[j].storeAligned(&m_parameterFloatArray[i->second + j * 4]);
 		m_parameterArrayDirty = true;
 	}
 }
 
 void ProgramDx10::setMatrixParameter(handle_t handle, const Matrix44& param)
 {
-	std::map< handle_t, uint32_t >::iterator i = m_parameterMap.find(handle);
+	SmallMap< handle_t, uint32_t >::iterator i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
 	{
-		param.storeUnaligned(&m_parameterFloatArray[i->second]);
+		param.storeAligned(&m_parameterFloatArray[i->second]);
 		m_parameterArrayDirty = true;
 	}
 }
 
 void ProgramDx10::setMatrixArrayParameter(handle_t handle, const Matrix44* param, int length)
 {
-	std::map< handle_t, uint32_t >::iterator i = m_parameterMap.find(handle);
+	SmallMap< handle_t, uint32_t >::iterator i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
 	{
 		for (int j = 0; j < length; ++j)
-			param[j].storeUnaligned(&m_parameterFloatArray[i->second + j * 16]);
+			param[j].storeAligned(&m_parameterFloatArray[i->second + j * 16]);
 		m_parameterArrayDirty = true;
 	}
 }
 
 void ProgramDx10::setTextureParameter(handle_t handle, ITexture* texture)
 {
-	std::map< handle_t, uint32_t >::iterator i = m_parameterMap.find(handle);
+	SmallMap< handle_t, uint32_t >::iterator i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
 	{
 		ID3D10ShaderResourceView* d3dTextureResourceView = 0;
@@ -349,7 +350,7 @@ bool ProgramDx10::bind(
 	{
 		d3dDevice->IASetInputLayout(NULL);
 
-		std::map< size_t, ComRef< ID3D10InputLayout > >::iterator i = m_d3dInputLayouts.find(d3dInputElementsHash);
+		SmallMap< size_t, ComRef< ID3D10InputLayout > >::iterator i = m_d3dInputLayouts.find(d3dInputElementsHash);
 		if (i != m_d3dInputLayouts.end())
 			m_d3dInputLayout = i->second;
 		else
@@ -441,10 +442,10 @@ bool ProgramDx10::createState(
 			d3dTypeReflection->GetDesc(&dstd);
 			T_ASSERT (dstd.Type == D3D10_SVT_FLOAT);
 
-			std::map< handle_t, uint32_t >::iterator it = m_parameterMap.find(getParameterHandle(mbstows(dsvd.Name)));
+			SmallMap< handle_t, uint32_t >::iterator it = m_parameterMap.find(getParameterHandle(mbstows(dsvd.Name)));
 			if (it == m_parameterMap.end())
 			{
-				uint32_t parameterOffset = uint32_t(m_parameterFloatArray.size());
+				uint32_t parameterOffset = alignUp(uint32_t(m_parameterFloatArray.size()), 4);
 				uint32_t parameterCount = dsvd.Size >> 2;
 
 				m_parameterFloatArray.resize(parameterOffset + parameterCount);
@@ -479,7 +480,7 @@ bool ProgramDx10::createState(
 		{
 			T_ASSERT (dsibd.BindCount == 1);
 
-			std::map< handle_t, uint32_t >::iterator it = m_parameterMap.find(getParameterHandle(mbstows(dsibd.Name)));
+			SmallMap< handle_t, uint32_t >::iterator it = m_parameterMap.find(getParameterHandle(mbstows(dsibd.Name)));
 			if (it == m_parameterMap.end())
 			{
 				uint32_t resourceIndex = uint32_t(m_parameterResArray.size());
