@@ -133,6 +133,7 @@ namespace traktor
 const int32_t c_databasePollInterval = 5;
 const uint32_t c_simulationFrequency = 60;
 const float c_simulationDeltaTime = 1.0f / c_simulationFrequency;
+const int32_t c_maxSimulationUpdates = 2;
 const float c_maxDeltaTime = 1.0f / 10.0f;
 const float c_minDeltaTime = 0.0f;
 #if defined(__APPLE__)
@@ -569,7 +570,7 @@ bool Application::update()
 			float simulationEndTime = m_updateInfo.m_stateTime; // + m_updateInfo.m_frameDeltaTime;
 
 			// Execute fixed update(s).
-			for (; m_updateInfo.m_simulationTime < simulationEndTime; m_updateInfo.m_simulationTime += c_simulationDeltaTime)
+			for (int32_t i = 0; i < c_maxSimulationUpdates && m_updateInfo.m_simulationTime < simulationEndTime; ++i, m_updateInfo.m_simulationTime += c_simulationDeltaTime)
 			{
 #if T_MEASURE_PERFORMANCE
 				double physicsTimeStart = m_timer.getElapsedTime();
