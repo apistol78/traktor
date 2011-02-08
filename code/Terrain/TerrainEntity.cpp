@@ -11,6 +11,7 @@
 #include "Terrain/Heightfield.h"
 #include "Terrain/TerrainEntity.h"
 #include "Terrain/TerrainEntityData.h"
+#include "Terrain/TerrainSurface.h"
 #include "Terrain/TerrainSurfaceCache.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldRenderView.h"
@@ -336,6 +337,16 @@ bool TerrainEntity::create(resource::IResourceManager* resourceManager, render::
 	m_patchCount = patchCount;
 	m_patchLodDistance = data.m_patchLodDistance;
 	m_surfaceLodDistance = data.m_surfaceLodDistance;
+
+	if (m_surface)
+	{
+		std::vector< resource::Proxy< render::Shader > >& layers = m_surface->getLayers();
+		for (std::vector< resource::Proxy< render::Shader > >::iterator i = layers.begin(); i != layers.end(); ++i)
+		{
+			if (!resourceManager->bind(*i))
+				return false;
+		}
+	}
 
 	return true;
 }
