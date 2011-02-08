@@ -179,7 +179,7 @@ bool read_string(const Ref< IStream >& stream, uint32_t u8len, std::wstring& out
 
 	if (u8len > 0)
 	{
-		AutoArrayPtr< uint8_t > u8str(new uint8_t [u8len]);
+		AutoArrayPtr< uint8_t, AllocatorFree > u8str((uint8_t*)getAllocator()->alloc(u8len, 4, T_FILE_LINE));
 
 		if (!read_block(stream, u8str.ptr(), u8len, sizeof(uint8_t)))
 			return false;
@@ -218,7 +218,7 @@ bool write_string(const Ref< IStream >& stream, const std::wstring& str)
 	uint32_t length = uint32_t(str.length());
 	if (length > 0)
 	{
-		AutoArrayPtr< uint8_t > u8str(new uint8_t [length * 4]);
+		AutoArrayPtr< uint8_t, AllocatorFree > u8str((uint8_t*)getAllocator()->alloc(length * 4, 4, T_FILE_LINE));
 		uint32_t u8len;
 		
 		Utf8Encoding utf8enc;
