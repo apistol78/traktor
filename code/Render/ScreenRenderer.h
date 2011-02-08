@@ -2,7 +2,7 @@
 #define traktor_render_ScreenRenderer_H
 
 #include "Core/Object.h"
-#include "Render/Shader.h"
+#include "Render/Types.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -17,9 +17,11 @@ namespace traktor
 	namespace render
 	{
 
-class IRenderSystem;
+class IProgram;
 class IRenderView;
+class IRenderSystem;
 class RenderTargetSet;
+class Shader;
 class VertexBuffer;
 
 /*! \brief Screen renderer.
@@ -39,6 +41,8 @@ public:
 	bool create(IRenderSystem* renderSystem);
 
 	void destroy();
+
+	void draw(IRenderView* renderView, IProgram* program);
 
 	void draw(IRenderView* renderView, Shader* shader);
 

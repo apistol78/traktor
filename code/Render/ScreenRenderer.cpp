@@ -1,9 +1,10 @@
-#include "Render/ScreenRenderer.h"
-#include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
+#include "Render/IRenderSystem.h"
 #include "Render/RenderTargetSet.h"
-#include "Render/VertexElement.h"
+#include "Render/ScreenRenderer.h"
+#include "Render/Shader.h"
 #include "Render/VertexBuffer.h"
+#include "Render/VertexElement.h"
 
 namespace traktor
 {
@@ -12,11 +13,13 @@ namespace traktor
 		namespace
 		{
 
+#pragma pack(1)
 struct ScreenVertex
 {
 	float pos[2];
 	float texCoord[2];
 };
+#pragma pack()
 
 		}
 
@@ -60,6 +63,13 @@ void ScreenRenderer::destroy()
 		m_vertexBuffer->destroy();
 		m_vertexBuffer = 0;
 	}
+}
+
+void ScreenRenderer::draw(IRenderView* renderView, IProgram* program)
+{
+	renderView->setVertexBuffer(m_vertexBuffer);
+	renderView->setProgram(program);
+	renderView->draw(m_primitives);
 }
 
 void ScreenRenderer::draw(IRenderView* renderView, Shader* shader)
