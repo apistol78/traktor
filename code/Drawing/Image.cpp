@@ -1,10 +1,12 @@
 #include <cstring>
+#include "Core/Io/FileSystem.h"
+#include "Core/Io/MemoryStream.h"
+#include "Core/Memory/IAllocator.h"
+#include "Core/Memory/MemoryConfig.h"
 #include "Drawing/Image.h"
 #include "Drawing/Palette.h"
 #include "Drawing/IImageFormat.h"
 #include "Drawing/IImageFilter.h"
-#include "Core/Io/FileSystem.h"
-#include "Core/Io/MemoryStream.h"
 
 namespace traktor
 {
@@ -38,7 +40,7 @@ void checkData(uint8_t* ptr, size_t size)
 
 uint8_t* allocData(size_t size)
 {
-	uint8_t* ptr = new uint8_t [size + c_wallSize * 2];
+	uint8_t* ptr = (uint8_t*)getAllocator()->alloc(size + c_wallSize * 2, 16, T_FILE_LINE);
 	if (!ptr)
 		T_FATAL_ERROR;
 	for (uint32_t i = 0; i < c_wallSize; ++i)
@@ -55,7 +57,7 @@ void freeData(uint8_t* ptr, size_t size)
 	{
 		checkData(ptr, size);
 		ptr -= c_wallSize;
-		delete[] ptr;
+		getAllocator()->free(ptr);
 	}
 }
 
