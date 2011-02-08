@@ -203,7 +203,7 @@ void PixelFormat::convert(
 	uint8_t* dst = static_cast< uint8_t* >(dstPixels);
 	uint32_t tmp;
 	uint32_t i;
-	Color4f clr;
+	float clr[4];
 
 	for (int ii = 0; ii < pixelCount; ++ii)
 	{
@@ -211,16 +211,14 @@ void PixelFormat::convert(
 		if (isPalettized())
 		{
 			uint32_t s = unpack(src, m_byteSize);
-			clr = srcPalette->get(s);
+			srcPalette->get(s).storeUnaligned(clr);
 		}
 		else if (isFloatPoint())
 		{
-			clr.set(
-				*(const float *)&src[getRedShift()   >> 3],
-				*(const float *)&src[getGreenShift() >> 3],
-				*(const float *)&src[getBlueShift()  >> 3],
-				*(const float *)&src[getAlphaShift() >> 3]
-			);
+			clr[0] = *(const float *)&src[getRedShift()   >> 3];
+			clr[1] = *(const float *)&src[getGreenShift() >> 3];
+			clr[2] = *(const float *)&src[getBlueShift()  >> 3];
+			clr[3] = *(const float *)&src[getAlphaShift() >> 3];
 		}
 		else if (getColorBits() <= 32)
 		{
@@ -236,12 +234,10 @@ void PixelFormat::convert(
 			uint32_t b = (s >> getBlueShift()) & bmx;
 			uint32_t a = (s >> getAlphaShift()) & amx;
 
-			clr.set(
-				rmx ? (float(r) / rmx) : 0.0f,
-				gmx ? (float(g) / gmx) : 0.0f,
-				bmx ? (float(b) / bmx) : 0.0f,
-				amx ? (float(a) / amx) : 0.0f
-			);
+			clr[0] = rmx ? (float(r) / rmx) : 0.0f;
+			clr[1] = gmx ? (float(g) / gmx) : 0.0f;
+			clr[2] = bmx ? (float(b) / bmx) : 0.0f;
+			clr[3] = amx ? (float(a) / amx) : 0.0f;
 		}
 		else	// getColorBits() > 32
 		{
@@ -251,7 +247,7 @@ void PixelFormat::convert(
 				if ((src[o >> 3] & (1 << (o & 7))) != 0)
 					tmp |= 1 << (i + 8 - getRedBits());
 			}
-			clr.setRed(Scalar(tmp / 255.0f));
+			clr[0] = tmp / 255.0f;
 
 			for (tmp = i = 0; i < uint32_t(getGreenBits()); ++i)
 			{
@@ -259,7 +255,7 @@ void PixelFormat::convert(
 				if ((src[o >> 3] & (1 << (o & 7))) != 0)
 					tmp |= 1 << (i + 8 - getGreenBits());
 			}
-			clr.setGreen(Scalar(tmp / 255.0f));
+			clr[1] = tmp / 255.0f;
 
 			for (tmp = i = 0; i < uint32_t(getBlueBits()); ++i)
 			{
@@ -267,7 +263,7 @@ void PixelFormat::convert(
 				if ((src[o >> 3] & (1 << (o & 7))) != 0)
 					tmp |= 1 << (i + 8 - getBlueBits());
 			}
-			clr.setBlue(Scalar(tmp / 255.0f));
+			clr[2] = tmp / 255.0f;
 
 			for (tmp = i = 0; i < uint32_t(getAlphaBits()); ++i)
 			{
@@ -275,7 +271,7 @@ void PixelFormat::convert(
 				if ((src[o >> 3] & (1 << (o & 7))) != 0)
 					tmp |= 1 << (i + 8 - getAlphaBits());
 			}
-			clr.setAlpha(Scalar(tmp / 255.0f));
+			clr[3] = tmp / 255.0f;
 		}
 
 		// rgba => dst
@@ -284,15 +280,15 @@ void PixelFormat::convert(
 			pack(
 				dst,
 				dstFormat.getByteSize(),
-				dstPalette->find(clr)
+				dstPalette->find(Color4f::loadUnaligned(clr))
 			);
 		}
 		else if (dstFormat.isFloatPoint())
 		{
-			*(float *)&dst[dstFormat.getRedShift()   >> 3] = clr.getRed();
-			*(float *)&dst[dstFormat.getGreenShift() >> 3] = clr.getGreen();
-			*(float *)&dst[dstFormat.getBlueShift()  >> 3] = clr.getBlue();
-			*(float *)&dst[dstFormat.getAlphaShift() >> 3] = clr.getAlpha();
+			*(float *)&dst[dstFormat.getRedShift()   >> 3] = clr[0];
+			*(float *)&dst[dstFormat.getGreenShift() >> 3] = clr[1];
+			*(float *)&dst[dstFormat.getBlueShift()  >> 3] = clr[2];
+			*(float *)&dst[dstFormat.getAlphaShift() >> 3] = clr[3];
 		}
 		else if (dstFormat.getColorBits() <= 32)
 		{
@@ -301,10 +297,10 @@ void PixelFormat::convert(
 			uint32_t bmx = ((1 << dstFormat.getBlueBits() ) - 1);
 			uint32_t amx = ((1 << dstFormat.getAlphaBits()) - 1);
 
-			uint32_t r = uint32_t(clamp(clr.getRed()) * rmx);
-			uint32_t g = uint32_t(clamp(clr.getGreen()) * gmx);
-			uint32_t b = uint32_t(clamp(clr.getBlue()) * bmx);
-			uint32_t a = uint32_t(clamp(clr.getAlpha()) * amx);
+			uint32_t r = uint32_t(clamp(clr[0]) * rmx);
+			uint32_t g = uint32_t(clamp(clr[1]) * gmx);
+			uint32_t b = uint32_t(clamp(clr[2]) * bmx);
+			uint32_t a = uint32_t(clamp(clr[3]) * amx);
 
 			pack(
 				dst,
@@ -317,7 +313,7 @@ void PixelFormat::convert(
 		}
 		else	// dstFormat.getColorBits() > 32
 		{
-			tmp = static_cast< uint8_t >(clamp(clr.getRed()) * 255);
+			tmp = static_cast< uint8_t >(clamp(clr[0]) * 255);
 			tmp >>= (8 - dstFormat.getRedBits());
 			for (i = 0; i < uint32_t(dstFormat.getRedBits()); ++i)
 			{
@@ -328,7 +324,7 @@ void PixelFormat::convert(
 					dst[o >> 3] &= ~(1 << (o & 7));
 			}
 		
-			tmp = static_cast< uint8_t >(clamp(clr.getGreen()) * 255);
+			tmp = static_cast< uint8_t >(clamp(clr[1]) * 255);
 			tmp >>= (8 - dstFormat.getGreenBits());
 			for (i = 0; i < uint32_t(dstFormat.getGreenBits()); ++i)
 			{
@@ -339,7 +335,7 @@ void PixelFormat::convert(
 					dst[o >> 3] &= ~(1 << (o & 7));
 			}
 			
-			tmp = static_cast< uint8_t >(clamp(clr.getBlue()) * 255);
+			tmp = static_cast< uint8_t >(clamp(clr[2]) * 255);
 			tmp >>= (8 - dstFormat.getBlueBits());
 			for (i = 0; i < uint32_t(dstFormat.getBlueBits()); ++i)
 			{
@@ -350,7 +346,7 @@ void PixelFormat::convert(
 					dst[o >> 3] &= ~(1 << (o & 7));
 			}
 			
-			tmp = static_cast< uint8_t >(clamp(clr.getAlpha()) * 255);
+			tmp = static_cast< uint8_t >(clamp(clr[3]) * 255);
 			tmp >>= (8 - dstFormat.getAlphaBits());
 			for (i = 0; i < uint32_t(dstFormat.getAlphaBits()); ++i)
 			{

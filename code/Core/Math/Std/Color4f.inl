@@ -79,6 +79,30 @@ T_MATH_INLINE void Color4f::setAlpha(const Scalar& alpha)
 	m_data.set(3, alpha);
 }
 
+T_MATH_INLINE Color4f Color4f::loadAligned(const float* in)
+{
+	T_ASSERT (in);
+	return Color4f(Vector4::loadAligned(in));
+}
+
+T_MATH_INLINE Color4f Color4f::loadUnaligned(const float* in)
+{
+	T_ASSERT (in);
+	return Color4f(Vector4::loadUnaligned(in));
+}
+
+T_MATH_INLINE void Color4f::storeAligned(float* out) const
+{
+	T_ASSERT (out);
+	m_data.storeAligned(out);
+}
+
+T_MATH_INLINE void Color4f::storeUnaligned(float* out) const
+{
+	T_ASSERT (out);
+	m_data.storeUnaligned(out);
+}
+
 T_MATH_INLINE Color4f& Color4f::operator = (const Color4f& src)
 {
 	m_data = src.m_data;
