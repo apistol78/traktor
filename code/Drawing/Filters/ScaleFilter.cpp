@@ -50,11 +50,12 @@ Ref< Image > ScaleFilter::apply(const Image* image)
 			else	// MgLinear
 			{
 				int yy = int(std::floor(y * sy));
+				int yn = std::min(yy + 1, image->getHeight() - 1);
 				Scalar k(y * sy - yy);
 				for (int32_t x = 0; x < image->getWidth(); ++x)
 				{
 					image->getPixelUnsafe(x, yy, c1);
-					image->getPixelUnsafe(x, yy + 1, c2);
+					image->getPixelUnsafe(x, yn, c2);
 					row[x] = c1 + (c2 - c1) * k;
 				}
 			}
@@ -122,7 +123,8 @@ Ref< Image > ScaleFilter::apply(const Image* image)
 				else	// MgLinear
 				{
 					int32_t xx = int32_t(std::floor(x * sx));
-					final->setPixelUnsafe(x, y, row[xx] + (row[xx + 1] - row[xx]) * Scalar(x * sx - xx));
+					int32_t xn = std::min(xx + 1, image->getWidth() - 1);
+					final->setPixelUnsafe(x, y, row[xx] + (row[xn] - row[xx]) * Scalar(x * sx - xx));
 				}
 			}
 			else if (sx > 1.0f)	// Minify
