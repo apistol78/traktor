@@ -184,7 +184,7 @@ void TerrainSurfaceCache::get(
 	}
 
 	resource::Proxy< render::Shader >& shader = surface->getLayers().front();
-	if (!m_resourceManager->bind(shader))
+	if (!shader.validate())
 		return;
 
 	worldRenderPass.setShaderTechnique(shader);

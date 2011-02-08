@@ -1,18 +1,19 @@
 #include <limits>
-#include "Terrain/HeightfieldFactory.h"
-#include "Terrain/HeightfieldResource.h"
-#include "Terrain/Heightfield.h"
-#include "Database/Database.h"
-#include "Database/Instance.h"
-#include "Render/IRenderSystem.h"
-#include "Render/ISimpleTexture.h"
 #include "Core/Io/IStream.h"
 #include "Core/Io/Reader.h"
+#include "Core/Log/Log.h"
 #include "Core/Math/MathUtils.h"
 #include "Core/Math/Half.h"
 #include "Core/Misc/Endian.h"
 #include "Core/Misc/AutoPtr.h"
 #include "Core/Thread/JobManager.h"
+#include "Database/Database.h"
+#include "Database/Instance.h"
+#include "Render/IRenderSystem.h"
+#include "Render/ISimpleTexture.h"
+#include "Terrain/HeightfieldFactory.h"
+#include "Terrain/HeightfieldResource.h"
+#include "Terrain/Heightfield.h"
 
 namespace traktor
 {
@@ -22,7 +23,7 @@ namespace traktor
 		{
 
 const int c_skipHeightTexture = 4;
-const int c_skipNormalTexture = 2;
+const int c_skipNormalTexture = 1;
 
 uint32_t nearestLod2(uint32_t value)
 {
@@ -71,6 +72,8 @@ Ref< render::ITexture > createHeightTexture(render::IRenderSystem* renderSystem,
 	dim /= c_skipHeightTexture;
 	T_ASSERT (dim > 0);
 
+	log::info << L"Terrain height texture " << dim << L"*" << dim << Endl;
+
 	AutoArrayPtr< half_t > data(new half_t [dim * dim]);
 	T_ASSERT (data.ptr());
 
@@ -102,7 +105,7 @@ void createNormalTextureJob(
 	uint32_t to
 )
 {
-	const float c_scaleHeight = 100.0f;
+	const float c_scaleHeight = 300.0f;
 	float s = 1.0f / size;
 
 	for (uint32_t y = from; y < to; ++y)
@@ -141,6 +144,8 @@ Ref< render::ITexture > createNormalTexture(render::IRenderSystem* renderSystem,
 	uint32_t dim = nearestLod2(size);
 	dim /= c_skipNormalTexture;
 	T_ASSERT (dim > 0);
+
+	log::info << L"Terrain normal texture " << dim << L"*" << dim << Endl;
 
 	AutoArrayPtr< uint8_t > data(new uint8_t [dim * dim * 4]);
 	T_ASSERT (data.ptr());
