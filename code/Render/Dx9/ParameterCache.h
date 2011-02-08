@@ -51,8 +51,8 @@ private:
 	ComRef< IDirect3DDevice9 > m_d3dDevice;
 	IDirect3DVertexShader9* m_d3dVertexShader;
 	IDirect3DPixelShader9* m_d3dPixelShader;
-	AutoPtr< float, AllocFreeAlign< float > > m_vertexConstantsShadow;
-	AutoPtr< float, AllocFreeAlign< float > > m_pixelConstantsShadow;
+	AutoPtr< float, AllocFreeAlign > m_vertexConstantsShadow;
+	AutoPtr< float, AllocFreeAlign > m_pixelConstantsShadow;
 	IDirect3DBaseTexture9* m_vertexTextureShadow[VertexTextureCount];
 	IDirect3DBaseTexture9* m_pixelTextureShadow[PixelTextureCount];
 	std::vector< uint32_t > m_renderStates;

@@ -3,6 +3,8 @@
 
 #include "Core/Config.h"
 #include "Core/Memory/Alloc.h"
+#include "Core/Memory/IAllocator.h"
+#include "Core/Memory/MemoryConfig.h"
 
 namespace traktor
 {
@@ -43,10 +45,26 @@ namespace traktor
 		}
 	};
 
+	/*! \brief Use getAllocator()->free to release memory.
+	 * \ingroup Core
+	 */
+	template < typename Type >
+	struct AllocatorFree
+	{
+		static void release(Type* ptr)
+		{
+			getAllocator()->free(ptr);
+		}
+	};
+
 	/*! \brief Auto pointer
 	 * \ingroup Core
 	 */
-	template < typename Type, typename ReleasePolicy = DeleteOperator< Type > >
+	template
+	<
+		typename Type,
+		template < typename Type > class ReleasePolicy = DeleteOperator
+	>
 	class AutoPtr
 	{
 	public:
@@ -60,7 +78,7 @@ namespace traktor
 		{
 		}
 
-		explicit AutoPtr(AutoPtr< Type >& lh)
+		explicit AutoPtr(AutoPtr< Type, ReleasePolicy >& lh)
 		{
 			m_ptr = lh.m_ptr;
 			lh.m_ptr = 0;
@@ -75,7 +93,7 @@ namespace traktor
 		{
 			if (m_ptr)
 			{
-				ReleasePolicy::release(m_ptr);
+				ReleasePolicy< Type >::release(m_ptr);
 				m_ptr = 0;
 			}
 		}
@@ -99,10 +117,14 @@ namespace traktor
 	private:
 		Type* m_ptr;
 		
-		AutoPtr< Type >& operator = (const AutoPtr< Type >& lh) { T_FATAL_ERROR; return *this; }
+		AutoPtr< Type, ReleasePolicy >& operator = (const AutoPtr< Type, ReleasePolicy >& lh) { T_FATAL_ERROR; return *this; }
 	};
 
-	template < typename Type, typename ReleasePolicy = DeleteArrayOperator< Type > >
+	template
+	<
+		typename Type,
+		template < typename Type > class ReleasePolicy = DeleteArrayOperator
+	>
 	class AutoArrayPtr
 	{
 	public:
@@ -116,7 +138,7 @@ namespace traktor
 		{
 		}
 
-		explicit AutoArrayPtr(AutoArrayPtr< Type >& lh)
+		explicit AutoArrayPtr(AutoArrayPtr< Type, ReleasePolicy >& lh)
 		{
 			m_ptr = lh.m_ptr;
 			lh.m_ptr = 0;
@@ -131,7 +153,7 @@ namespace traktor
 		{
 			if (m_ptr)
 			{
-				ReleasePolicy::release(m_ptr);
+				ReleasePolicy< Type >::release(m_ptr);
 				m_ptr = 0;
 			}
 		}
@@ -165,7 +187,7 @@ namespace traktor
 	private:
 		Type* m_ptr;
 		
-		AutoArrayPtr& operator = (const AutoArrayPtr< Type >& lh) { T_FATAL_ERROR; return *this; }
+		AutoArrayPtr< Type, ReleasePolicy >& operator = (const AutoArrayPtr< Type, ReleasePolicy >& lh) { T_FATAL_ERROR; return *this; }
 	};
 
 }
