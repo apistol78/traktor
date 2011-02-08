@@ -2,6 +2,7 @@
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Render/ScreenRenderer.h"
+#include "Render/Shader.h"
 #include "Render/VertexBuffer.h"
 #include "Render/VertexElement.h"
 #include "Render/Context/RenderContext.h"

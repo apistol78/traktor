@@ -45,8 +45,7 @@ struct TerrainSurfaceRenderBlock : public render::RenderBlock
 		const float clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
 		renderView->clear(render::CfColor, clearColor, 0.0f, 0);
 
-		// \fixme
-		//screenRenderer->draw(renderView, shader);
+		screenRenderer->draw(renderView, program);
 
 		renderView->end();
 	}

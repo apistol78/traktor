@@ -19,6 +19,7 @@ void TranslateModifier::draw(
 {
 	const Scalar c_guideScale(0.1f);
 	const Scalar c_guideMinLength(1.0f);
+	const float c_infinite = 1e4f;
 
 	Scalar cameraDistance = (worldTransform.toMatrix44() * viewTransform).translation().length();
 	Scalar guideLength = max(cameraDistance * c_guideScale, c_guideMinLength);
@@ -26,48 +27,80 @@ void TranslateModifier::draw(
 
 	primitiveRenderer->pushView(viewTransform);
 	primitiveRenderer->pushWorld(translate(worldTransform.translation()));
-	primitiveRenderer->pushDepthEnable(false);
 
 	uint32_t axisEnable = context->getAxisEnable();
 
-	primitiveRenderer->drawLine(
-		Vector4(0.0f, 0.0f, 0.0f, 1.0f),
-		Vector4(guideLength, 0.0f, 0.0f, 0.0f),
-		3.0f,
-		Color4ub(255, 0, 0, (axisEnable & SceneEditorContext::AeX) ? 255 : 64)
-	);
-	primitiveRenderer->drawArrowHead(
-		Vector4(guideLength, 0.0f, 0.0f, 0.0f),
-		Vector4(guideLength + arrowLength, 0.0f, 0.0f, 0.0f),
-		0.5f,
-		Color4ub(255, 0, 0, 255)
-	);
+	primitiveRenderer->pushDepthEnable(true);
 
 	primitiveRenderer->drawLine(
-		Vector4(0.0f, 0.0f, 0.0f, 1.0f),
-		Vector4(0.0f, guideLength, 0.0f, 0.0f),
-		3.0f,
-		Color4ub(0, 255, 0, (axisEnable & SceneEditorContext::AeY) ? 255 : 64)
+		Vector4(-c_infinite, 0.0f, 0.0f, 1.0f),
+		Vector4(c_infinite, 0.0f, 0.0f, 1.0f),
+		1.0f,
+		Color4ub(255, 0, 0, 100)
 	);
-	primitiveRenderer->drawArrowHead(
-		Vector4(0.0f, guideLength, 0.0f, 0.0f),
-		Vector4(0.0f, guideLength + arrowLength, 0.0f, 0.0f),
-		0.5f,
-		Color4ub(0, 255, 0, 255)
+	primitiveRenderer->drawLine(
+		Vector4(0.0f, -c_infinite, 0.0f, 1.0f),
+		Vector4(0.0f, c_infinite, 0.0f, 1.0f),
+		1.0f,
+		Color4ub(0, 255, 0, 100)
+	);
+	primitiveRenderer->drawLine(
+		Vector4(0.0f, 0.0f, -c_infinite, 1.0f),
+		Vector4(0.0f, 0.0f, c_infinite, 1.0f),
+		1.0f,
+		Color4ub(0, 0, 255, 100)
 	);
 
-	primitiveRenderer->drawLine(
-		Vector4(0.0f, 0.0f, 0.0f, 1.0f),
-		Vector4(0.0f, 0.0f, guideLength, 0.0f),
-		3.0f,
-		Color4ub(0, 0, 255, (axisEnable & SceneEditorContext::AeZ) ? 255 : 64)
-	);
-	primitiveRenderer->drawArrowHead(
-		Vector4(0.0f, 0.0f, guideLength, 0.0f),
-		Vector4(0.0f, 0.0f, guideLength + arrowLength, 0.0f),
-		0.5f,
-		Color4ub(0, 0, 255, 255)
-	);
+	primitiveRenderer->popDepthEnable();
+	primitiveRenderer->pushDepthEnable(false);
+
+	if (axisEnable & SceneEditorContext::AeX)
+	{
+		primitiveRenderer->drawLine(
+			Vector4(0.0f, 0.0f, 0.0f, 1.0f),
+			Vector4(guideLength, 0.0f, 0.0f, 1.0f),
+			3.0f,
+			Color4ub(255, 0, 0, 255)
+		);
+		primitiveRenderer->drawArrowHead(
+			Vector4(guideLength, 0.0f, 0.0f, 1.0f),
+			Vector4(guideLength + arrowLength, 0.0f, 0.0f, 1.0f),
+			0.5f,
+			Color4ub(255, 0, 0, 255)
+		);
+	}
+
+	if (axisEnable & SceneEditorContext::AeY)
+	{
+		primitiveRenderer->drawLine(
+			Vector4(0.0f, 0.0f, 0.0f, 1.0f),
+			Vector4(0.0f, guideLength, 0.0f, 1.0f),
+			3.0f,
+			Color4ub(0, 255, 0, 255)
+		);
+		primitiveRenderer->drawArrowHead(
+			Vector4(0.0f, guideLength, 0.0f, 1.0f),
+			Vector4(0.0f, guideLength + arrowLength, 0.0f, 1.0f),
+			0.5f,
+			Color4ub(0, 255, 0, 255)
+		);
+	}
+
+	if (axisEnable & SceneEditorContext::AeZ)
+	{
+		primitiveRenderer->drawLine(
+			Vector4(0.0f, 0.0f, 0.0f, 1.0f),
+			Vector4(0.0f, 0.0f, guideLength, 1.0f),
+			3.0f,
+			Color4ub(0, 0, 255, 255)
+		);
+		primitiveRenderer->drawArrowHead(
+			Vector4(0.0f, 0.0f, guideLength, 1.0f),
+			Vector4(0.0f, 0.0f, guideLength + arrowLength, 1.0f),
+			0.5f,
+			Color4ub(0, 0, 255, 255)
+		);
+	}
 
 	primitiveRenderer->popDepthEnable();
 	primitiveRenderer->popWorld();

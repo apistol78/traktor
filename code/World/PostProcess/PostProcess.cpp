@@ -4,6 +4,7 @@
 #include "Render/IRenderView.h"
 #include "Render/RenderTargetSet.h"
 #include "Render/ScreenRenderer.h"
+#include "Render/Shader.h"
 #include "World/PostProcess/PostProcess.h"
 #include "World/PostProcess/PostProcessDefine.h"
 #include "World/PostProcess/PostProcessSettings.h"
