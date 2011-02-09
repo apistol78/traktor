@@ -51,8 +51,11 @@ bool LaunchTargetAction::execute()
 #endif
 	envmap[L"DEPLOY_EXECUTABLE"] = target->getExecutable();
 
+	const DeployTool& deployTool = platform->getDeployTool();
+	envmap.insert(deployTool.getEnvironment().begin(), deployTool.getEnvironment().end());
+
 	Ref< IProcess > process = OS::getInstance().execute(
-		platform->getDeployTool(),
+		deployTool.getExecutable(),
 		L"launch",
 		outputPath,
 		&envmap,
@@ -64,7 +67,7 @@ bool LaunchTargetAction::execute()
 	);
 	if (!process)
 	{
-		log::error << L"Failed to launch process \"" << platform->getDeployTool() << L"\"" << Endl;
+		log::error << L"Failed to launch process \"" << deployTool.getExecutable() << L"\"" << Endl;
 		m_targetInstance->setState(TsIdle);
 		return false;
 	}

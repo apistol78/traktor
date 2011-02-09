@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.amalgam.Platform" version="1">
+<object type="traktor.amalgam.Platform">
 	<pipelineConfiguration>$(TRAKTOR_HOME)/bin/platforms/iphone/Pipeline.config</pipelineConfiguration>
 	<applicationConfiguration>$(TRAKTOR_HOME)/bin/platforms/iphone/Application.config</applicationConfiguration>
-	<deployTool>$(TRAKTOR_HOME)/bin/deploy/win32/deploy-ios.bat</deployTool>
-	<deployToolOsX>$(TRAKTOR_HOME)/bin/deploy/osx/deploy-ios.sh</deployToolOsX>
+	<deployToolWin32>
+		<executable>$(TRAKTOR_HOME)/bin/deploy/win32/deploy-ios.bat</executable>
+		<environment/>
+	</deployToolWin32>
+	<deployToolOsX>
+		<executable>$(TRAKTOR_HOME)/bin/deploy/osx/deploy-ios.sh</executable>
+		<environment/>
+	</deployToolOsX>
 </object>

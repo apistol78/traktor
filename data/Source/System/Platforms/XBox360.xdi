@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.amalgam.Platform" version="1">
+<object type="traktor.amalgam.Platform">
 	<pipelineConfiguration>$(TRAKTOR_HOME)/bin/platforms/xbox360/Pipeline.config</pipelineConfiguration>
 	<applicationConfiguration>$(TRAKTOR_HOME)/bin/platforms/xbox360/Application.config</applicationConfiguration>
-	<deployTool>$(TRAKTOR_HOME)/bin/deploy/win32/deploy-xbox360.bat</deployTool>
-	<deployToolOsX>$(TRAKTOR_HOME)/bin/deploy/osx/deploy-xbox360.sh</deployToolOsX>
+	<deployToolWin32>
+		<executable>$(TRAKTOR_HOME)/bin/deploy/win32/deploy-xbox360.bat</executable>
+		<environment/>
+	</deployToolWin32>
+	<deployToolOsX>
+		<executable>$(TRAKTOR_HOME)/bin/deploy/osx/deploy-xbox360.sh</executable>
+		<environment/>
+	</deployToolOsX>
 </object>

@@ -61,6 +61,10 @@ void ReferencesRenderControl::updateWorldRenderer()
 {
 }
 
+void ReferencesRenderControl::setAspect(float aspect)
+{
+}
+
 bool ReferencesRenderControl::handleCommand(const ui::Command& command)
 {
 	return false;

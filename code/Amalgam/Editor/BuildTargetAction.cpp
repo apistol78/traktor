@@ -111,6 +111,9 @@ bool BuildTargetAction::execute()
 	envmap[L"DEPLOY_PROJECTROOT"] = projectRoot.getPathNameNoVolume();
 #endif
 
+	const DeployTool& deployTool = platform->getDeployTool();
+	envmap.insert(deployTool.getEnvironment().begin(), deployTool.getEnvironment().end());
+
 	StringOutputStream ss;
 	ss << L"build";
 
@@ -119,7 +122,7 @@ bool BuildTargetAction::execute()
 		ss << L" " << rootAsset.format();
 
 	Ref< IProcess > process = OS::getInstance().execute(
-		platform->getDeployTool(),
+		deployTool.getExecutable(),
 		ss.str(),
 		outputPath,
 		&envmap,
@@ -127,7 +130,7 @@ bool BuildTargetAction::execute()
 	);
 	if (!process)
 	{
-		log::error << L"Failed to launch process \"" << platform->getDeployTool() << L"\"" << Endl;
+		log::error << L"Failed to launch process \"" << deployTool.getExecutable() << L"\"" << Endl;
 		m_targetInstance->setState(TsIdle);
 		return false;
 	}

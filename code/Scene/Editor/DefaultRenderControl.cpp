@@ -20,6 +20,7 @@
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
 #include "Ui/Custom/ToolBar/ToolBarDropDown.h"
+#include "Ui/Custom/ToolBar/ToolBarSeparator.h"
 
 // Resources
 #include "Resources/SceneEdit.h"
@@ -89,10 +90,23 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 		postProcessEnable ? ui::custom::ToolBarButton::BsDefaultToggled : ui::custom::ToolBarButton::BsDefaultToggle
 	);
 
+	m_toolAspect = new ui::custom::ToolBarDropDown(ui::Command(1, L"Scene.Editor.Aspect"), 60, i18n::Text(L"SCENE_EDITOR_ASPECT"));
+	m_toolAspect->add(L"Full");
+	m_toolAspect->add(L"1:1");
+	m_toolAspect->add(L"4:3");
+	m_toolAspect->add(L"6:4");
+	m_toolAspect->add(L"16:9");
+	m_toolAspect->add(L"16:10");
+	m_toolAspect->add(L"3:4");
+	m_toolAspect->add(L"4:6");
+	m_toolAspect->select(0);
+
 	m_toolBar->addItem(m_toolView);
 	m_toolBar->addItem(m_toolToggleGrid);
 	m_toolBar->addItem(m_toolToggleGuide);
 	m_toolBar->addItem(m_toolTogglePostProcess);
+	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
+	m_toolBar->addItem(m_toolAspect);
 	m_toolBar->addClickEventHandler(ui::createMethodHandler(this, &DefaultRenderControl::eventToolClick));
 
 	createRenderControl(viewType);
@@ -128,6 +142,12 @@ void DefaultRenderControl::updateWorldRenderer()
 {
 	if (m_renderControl)
 		m_renderControl->updateWorldRenderer();
+}
+
+void DefaultRenderControl::setAspect(float aspect)
+{
+	if (m_renderControl)
+		m_renderControl->setAspect(aspect);
 }
 
 bool DefaultRenderControl::handleCommand(const ui::Command& command)
@@ -282,6 +302,21 @@ void DefaultRenderControl::eventToolClick(ui::Event* event)
 			m_renderControl->handleCommand(ui::Command(L"Scene.Editor.EnablePostProcess"));
 		else
 			m_renderControl->handleCommand(ui::Command(L"Scene.Editor.DisablePostProcess"));
+	}
+	else if (cmdEvent->getCommand() == L"Scene.Editor.Aspect")
+	{
+		const float c_aspects[] =
+		{
+			0.0f,
+			1.0f,
+			4.0f / 3.0f,
+			6.0f / 4.0f,
+			16.0f / 9.0f,
+			16.0f / 10.0f,
+			3.0f / 4.0f,
+			4.0f / 6.0f
+		};
+		m_renderControl->setAspect(c_aspects[m_toolAspect->getSelected()]);
 	}
 }
 

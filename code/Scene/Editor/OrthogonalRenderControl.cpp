@@ -198,6 +198,10 @@ void OrthogonalRenderControl::updateWorldRenderer()
 	m_viewFarZ = wrs.viewFarZ;
 }
 
+void OrthogonalRenderControl::setAspect(float aspect)
+{
+}
+
 bool OrthogonalRenderControl::handleCommand(const ui::Command& command)
 {
 	bool result = false;
