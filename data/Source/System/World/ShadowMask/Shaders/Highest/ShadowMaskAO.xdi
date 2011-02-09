@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.PixelOutput" version="2">
+		<item type="traktor.render.PixelOutput" version="3">
 			<comment/>
 			<position>
 				<first>1598</first>
@@ -33,6 +33,7 @@
 			<stencilFunction>CfAlways</stencilFunction>
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
+			<registerCount>0</registerCount>
 		</item>
 		<item type="traktor.render.Mul">
 			<comment/>
@@ -107,7 +108,7 @@
 				<first>1141</first>
 				<second>1422</second>
 			</position>
-			<value>15</value>
+			<value>10</value>
 		</item>
 		<item type="traktor.render.Sub">
 			<comment/>
@@ -212,7 +213,7 @@ Clip space
 				<second>1162</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>888</first>
@@ -220,6 +221,7 @@ Clip space
 			</position>
 			<parameterName>Projection</parameterName>
 			<type>PtMatrix</type>
+			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Add">
 			<comment/>
@@ -241,7 +243,7 @@ Clip space
 				<first>657</first>
 				<second>1209</second>
 			</position>
-			<value>0.2</value>
+			<value>0.15</value>
 		</item>
 		<item type="traktor.render.Reflect">
 			<comment/>
@@ -250,7 +252,7 @@ Clip space
 				<second>1090</second>
 			</position>
 		</item>
-		<item type="traktor.render.IndexedUniform">
+		<item type="traktor.render.IndexedUniform" version="1">
 			<comment/>
 			<position>
 				<first>454</first>
@@ -258,6 +260,7 @@ Clip space
 			</position>
 			<parameterName>Offsets</parameterName>
 			<type>PtVector</type>
+			<frequency>UfFrame</frequency>
 			<length>32</length>
 		</item>
 		<item type="traktor.render.External" version="1">
@@ -330,7 +333,7 @@ Clip space
 				<second>1018</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>91</first>
@@ -338,6 +341,7 @@ Clip space
 			</position>
 			<parameterName>RandomNormals</parameterName>
 			<type>PtTexture</type>
+			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Add">
 			<comment/>
@@ -368,7 +372,7 @@ Clip space
 				<second>770</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>151</first>
@@ -376,6 +380,7 @@ Clip space
 			</position>
 			<parameterName>MagicCoeffs</parameterName>
 			<type>PtVector</type>
+			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.External" version="1">
 			<comment/>
@@ -427,7 +432,7 @@ Clip space
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>-40</first>
@@ -435,6 +440,7 @@ Clip space
 			</position>
 			<parameterName>Depth</parameterName>
 			<type>PtTexture</type>
+			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Add">
 			<comment/>
@@ -450,7 +456,7 @@ Clip space
 				<second>1034</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>1609</first>
@@ -458,6 +464,7 @@ Clip space
 			</position>
 			<parameterName>Depth_Size</parameterName>
 			<type>PtVector</type>
+			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Scalar">
 			<comment/>
@@ -467,7 +474,7 @@ Clip space
 			</position>
 			<value>-0.5</value>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>2158</first>
@@ -475,6 +482,7 @@ Clip space
 			</position>
 			<parameterName>Depth</parameterName>
 			<type>PtTexture</type>
+			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
@@ -506,7 +514,7 @@ Clip space
 			<addressV>AdClamp</addressV>
 			<addressW>AdClamp</addressW>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>970</first>
@@ -514,6 +522,7 @@ Clip space
 			</position>
 			<parameterName>Source</parameterName>
 			<type>PtTexture</type>
+			<frequency>UfFrame</frequency>
 		</item>
 	</nodes>
 	<edges>
