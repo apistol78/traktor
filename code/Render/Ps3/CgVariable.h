@@ -2,7 +2,7 @@
 #define traktor_render_CgVariable_H
 
 #include <string>
-#include "Core/Config.h"
+#include "Core/Object.h"
 #include "Render/Ps3/CgType.h"
 
 namespace traktor
@@ -13,8 +13,10 @@ namespace traktor
 /*!
  * \ingroup PS3
  */
-class CgVariable
+class CgVariable : public Object
 {
+	T_RTTI_CLASS;
+
 public:
 	CgVariable();
 

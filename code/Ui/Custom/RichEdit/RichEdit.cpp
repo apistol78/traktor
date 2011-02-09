@@ -354,7 +354,7 @@ void RichEdit::insertCharacter(wchar_t ch)
 		++m_caret;
 		raiseEvent(EiContentChange, 0);
 	}
-	else if (ch >= 32)
+	else if (ch == '\t' || ch >= 32)
 	{
 		m_text.insert(m_text.begin() + m_caret, ch);
 		m_meta.insert(m_meta.begin() + m_caret, 0);

@@ -124,15 +124,24 @@ void calculateTSMProj(
 		primitiveRenderer->drawLine(v2top4(tz[0].p[1]), v2top4(tz[1].p[1]), Color4ub(0, 0, 255, 255));
 	}
 
+	Matrix44 Mn(
+		1.0f / nw, 0.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f
+	);
+
 	const float h = ey * 2.0f;
-	const float k = fw - 1.0f;
+	const float k = fw / nw - 1.0f;
 	const float s = (2.0f * k + 2.0f) / h;
-	Matrix44 M0(
+	Matrix44 Ms(
 		1.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, s, 0.0f, 0.0f,
 		0.0f, 0.0f, 1.0f, 0.0f,
 		0.0f, k / h, 0.0f, 1.0f
 	);
+
+	Matrix44 M0 = Ms * Mn;
 
 	if (primitiveRenderer)
 	{
@@ -165,7 +174,7 @@ void calculateTSMProj(
 
 	// Update light view matrix with bounding box centered.
 	Vector4 center = viewFrustumBox.getCenter();
-	Vector4 extent = viewFrustumBox.getExtent() * Vector4(2.0f, 2.0f, 1.0f, 0.0f);
+	Vector4 extent = viewFrustumBox.getExtent() * Scalar(2.0f);
 
 	float fz = shadowViewFrustum.getFarZ();
 	float nz = shadowViewFrustum.getNearZ();

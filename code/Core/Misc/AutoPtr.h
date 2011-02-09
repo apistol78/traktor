@@ -63,7 +63,7 @@ namespace traktor
 	template
 	<
 		typename Type,
-		template < typename Type > class ReleasePolicy = DeleteOperator
+		template < typename DeleteTypePtr > class ReleasePolicy = DeleteOperator
 	>
 	class AutoPtr
 	{
@@ -123,7 +123,7 @@ namespace traktor
 	template
 	<
 		typename Type,
-		template < typename Type > class ReleasePolicy = DeleteArrayOperator
+		template < typename DeleteTypePtr > class ReleasePolicy = DeleteArrayOperator
 	>
 	class AutoArrayPtr
 	{

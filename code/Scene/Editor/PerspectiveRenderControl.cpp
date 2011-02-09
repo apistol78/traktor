@@ -3,6 +3,7 @@
 #include "Core/Math/Vector2.h"
 #include "Core/Math/Format.h"
 #include "Core/Misc/EnterLeave.h"
+#include "Core/Misc/String.h"
 #include "Core/Settings/PropertyColor.h"
 #include "Core/Settings/PropertyFloat.h"
 #include "Core/Settings/PropertyGroup.h"
@@ -28,8 +29,11 @@
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/SelectEvent.h"
 #include "Ui/Command.h"
+#include "Ui/Container.h"
+#include "Ui/FloodLayout.h"
 #include "Ui/MethodHandler.h"
 #include "Ui/Widget.h"
+#include "Ui/Custom/AspectLayout.h"
 #include "Ui/Events/SizeEvent.h"
 #include "Ui/Events/MouseEvent.h"
 #include "Ui/Events/KeyEvent.h"
@@ -64,7 +68,8 @@ const float c_deltaAdjustSmall = 0.01f;
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.PerspectiveRenderControl", PerspectiveRenderControl, ISceneRenderControl)
 
 PerspectiveRenderControl::PerspectiveRenderControl()
-:	m_gridEnable(true)
+:	m_index(0)
+,	m_gridEnable(true)
 ,	m_guideEnable(true)
 ,	m_postProcessEnable(true)
 ,	m_fieldOfView(c_defaultFieldOfView)
@@ -83,11 +88,16 @@ bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* co
 	m_context = context;
 	T_ASSERT (m_context);
 
-	m_fieldOfView = m_context->getEditor()->getSettings()->getProperty< PropertyFloat >(L"SceneEditor.FieldOfView", c_defaultFieldOfView);
+	m_index = index;
+
+	m_fieldOfView = m_context->getEditor()->getSettings()->getProperty< PropertyFloat >(L"SceneEditor.FieldOfView" + toString(index), c_defaultFieldOfView);
 	m_multiSample = m_context->getEditor()->getSettings()->getProperty< PropertyInteger >(L"SceneEditor.MultiSample", c_defaultMultiSample);
 
+	m_containerAspect = new ui::Container();
+	m_containerAspect->create(parent, ui::WsNone, new ui::FloodLayout());
+
 	m_renderWidget = new ui::Widget();
-	if (!m_renderWidget->create(parent))
+	if (!m_renderWidget->create(m_containerAspect))
 		return false;
 
 	render::RenderViewEmbeddedDesc desc;
@@ -152,10 +162,10 @@ void PerspectiveRenderControl::destroy()
 		m_renderView = 0;
 	}
 
-	if (m_renderWidget)
+	if (m_containerAspect)
 	{
-		m_renderWidget->destroy();
-		m_renderWidget = 0;
+		m_containerAspect->destroy();
+		m_containerAspect = 0;
 	}
 }
 
@@ -260,6 +270,16 @@ void PerspectiveRenderControl::updateWorldRenderer()
 				m_context->setDebugTexture(i, worldTargets[i]);
 		}
 	}
+}
+
+void PerspectiveRenderControl::setAspect(float aspect)
+{
+	if (aspect > 0.0f)
+		m_containerAspect->setLayout(new ui::custom::AspectLayout(aspect));
+	else
+		m_containerAspect->setLayout(new ui::FloodLayout());
+
+	m_containerAspect->update();
 }
 
 bool PerspectiveRenderControl::handleCommand(const ui::Command& command)
@@ -548,6 +568,8 @@ void PerspectiveRenderControl::eventMouseWheel(ui::Event* event)
 	m_fieldOfView = max(m_fieldOfView, c_minFieldOfView);
 	m_fieldOfView = min(m_fieldOfView, c_maxFieldOfView);
 
+	m_context->getEditor()->getSettings()->setProperty< PropertyFloat >(L"SceneEditor.FieldOfView" + toString(m_index), m_fieldOfView);
+
 	updateWorldRenderView();
 }
 
@@ -718,7 +740,6 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 			}
 		}
 
-
 		// HACK; render TSM shadow debugging.
 		/*
 		m_primitiveRenderer->pushProjection(orthoLh(10.0, 10.0f, 0.0f, 1.0));
@@ -759,7 +780,6 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 		m_primitiveRenderer->popView();
 		m_primitiveRenderer->popProjection();
 		*/
-
 
 		m_primitiveRenderer->end(m_renderView);
 

@@ -168,7 +168,9 @@ bool PsnSessionManager::update()
 
 std::wstring PsnSessionManager::getLanguageCode() const
 {
+#if defined(PREFER_NP_LANGUAGE)
 	// Try first from user profile; requires the user to be online.
+	// \note Apparently this fail TRC so it should not be used.
 	SceNpMyLanguages languages;
 	if (sceNpManagerGetMyLanguages(&languages) >= 0)
 	{
@@ -184,6 +186,7 @@ std::wstring PsnSessionManager::getLanguageCode() const
 		if (languageCode)
 			return languageCode;
 	}
+#endif
 
 	// Use system language.
 	int32_t languageId;

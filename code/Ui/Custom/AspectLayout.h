@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_UI_CUSTOM_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -26,9 +26,14 @@ class T_DLLCLASS AspectLayout : public Layout
 	T_RTTI_CLASS;
 
 public:
+	AspectLayout(float ratio = -1.0f);
+
 	virtual bool fit(Widget* widget, const Size& bounds, Size& result);
 
 	virtual void update(Widget* widget);
+
+private:
+	float m_ratio;
 };
 
 		}

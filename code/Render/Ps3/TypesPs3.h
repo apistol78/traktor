@@ -110,6 +110,7 @@ struct ResolutionDesc
 {
 	int32_t width;
 	int32_t height;
+	uint32_t refreshRates;
 	bool stereoscopic;
 	int32_t id;
 };

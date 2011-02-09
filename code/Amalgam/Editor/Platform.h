@@ -1,7 +1,7 @@
 #ifndef traktor_amalgam_Platform_H
 #define traktor_amalgam_Platform_H
 
-#include "Core/Serialization/ISerializable.h"
+#include "Amalgam/Editor/DeployTool.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -25,15 +25,15 @@ public:
 
 	const std::wstring& getApplicationConfiguration() const;
 
-	const std::wstring& getDeployTool() const;
+	const DeployTool& getDeployTool() const;
 
 	virtual bool serialize(ISerializer& s);
 
 private:
 	std::wstring m_pipelineConfiguration;
 	std::wstring m_applicationConfiguration;
-	std::wstring m_deployTool;
-	std::wstring m_deployToolOsX;
+	DeployTool m_deployToolWin32;
+	DeployTool m_deployToolOsX;
 };
 
 	}

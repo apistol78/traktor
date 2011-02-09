@@ -38,6 +38,8 @@ public:
 
 	virtual void updateWorldRenderer();
 
+	virtual void setAspect(float aspect);
+
 	virtual bool handleCommand(const ui::Command& command);
 
 	virtual void update();
@@ -51,6 +53,7 @@ private:
 	Ref< ui::custom::ToolBarButton > m_toolToggleGuide;
 	Ref< ui::custom::ToolBarButton > m_toolTogglePostProcess;
 	Ref< ui::custom::ToolBarDropDown > m_toolView;
+	Ref< ui::custom::ToolBarDropDown > m_toolAspect;
 	Ref< ISceneRenderControl > m_renderControl;
 
 	void createRenderControl(int32_t type);

@@ -10,6 +10,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.AspectLayout", AspectLayout, Layout)
 
+AspectLayout::AspectLayout(float ratio)
+:	m_ratio(ratio)
+{
+}
+
 bool AspectLayout::fit(Widget* widget, const Size& bounds, Size& result)
 {
 	Widget* child = widget->getFirstChild();
@@ -17,7 +22,7 @@ bool AspectLayout::fit(Widget* widget, const Size& bounds, Size& result)
 		return false;
 
 	Size sz = child->getPreferedSize();
-	float ratio = float(sz.cx) / sz.cy;
+	float ratio = m_ratio > 0.0f ? m_ratio : float(sz.cx) / sz.cy;
 
 	int width = bounds.cx;
 	int height = int(width / ratio);
@@ -38,7 +43,7 @@ void AspectLayout::update(Widget* widget)
 	if (child != 0)
 	{
 		Size sz = child->getPreferedSize();
-		float ratio = float(sz.cx) / sz.cy;
+		float ratio = m_ratio > 0.0f ? m_ratio : float(sz.cx) / sz.cy;
 
 		Rect rc = widget->getInnerRect();
 

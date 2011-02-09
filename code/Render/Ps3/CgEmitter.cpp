@@ -723,11 +723,8 @@ bool emitNormalize(CgContext& cx, Normalize* node)
 	if (!in)
 		return false;
 	
-	CgVariable* tmp = cx.getShader().createTemporaryVariable(0, CtFloat);
 	CgVariable* out = cx.emitOutput(node, L"Output", in->getType());
-	
-	assign(f, tmp) << L"rsqrt(dot(" << in->getName() << L", " << in->getName() << L"));" << Endl;
-	assign(f, out) << in->getName() << L" * " << tmp->getName() << L";" << Endl;
+	assign(f, out) << in->getName() << L" * rsqrt(dot(" << in->getName() << L", " << in->getName() << L"));" << Endl;
 
 	return true;
 }
@@ -1109,33 +1106,77 @@ bool emitSwizzle(CgContext& cx, Swizzle* node)
 	CgVariable* in = cx.emitInput(node, L"Input");
 	if (!in)
 		return false;
-	CgVariable* out = cx.emitOutput(node, L"Output", type);
 
-	std::wstringstream ss;
-	ss << cg_type_name(type) << L"(";
-	for (size_t i = 0; i < map.length(); ++i)
+	if (
+		(map == L"xyzw" && in->getType() == CtFloat4) ||
+		(map == L"xyz" && in->getType() == CtFloat3) ||
+		(map == L"xy" && in->getType() == CtFloat2) ||
+		(map == L"x" && in->getType() == CtFloat)
+	)
 	{
-		if (i > 0)
-			ss << L", ";
-		switch (std::tolower(map[i]))
-		{
-		case 'x':
-		case 'y':
-		case 'z':
-		case 'w':
-			ss << in->getName() << L'.' << char(std::tolower(map[i]));
-			break;
-		case '0':
-			ss << L"0.0f";
-			break;
-		case '1':
-			ss << L"1.0f";
-			break;
-		}
+		// No need to swizzle; pass variable further.
+		cx.emitOutput(node, L"Output", in);
 	}
-	ss << L")";
+	else
+	{
+		CgVariable* out = cx.emitOutput(node, L"Output", type);
 
-	assign(f, out) << ss.str() << L";" << Endl;
+		bool containConstant = false;
+		for (size_t i = 0; i < map.length() && !containConstant; ++i)
+		{
+			if (map[i] == L'0' || map[i] == L'1')
+				containConstant = true;
+		}
+
+		StringOutputStream ss;
+		if (containConstant || (map.length() > 1 && in->getType() == CtFloat))
+		{
+			ss << cg_type_name(type) << L"(";
+			for (size_t i = 0; i < map.length(); ++i)
+			{
+				if (i > 0)
+					ss << L", ";
+				switch (map[i])
+				{
+				case 'x':
+					if (in->getType() == CtFloat)
+					{
+						ss << in->getName();
+						break;
+					}
+					// Don't break, multidimensional source.
+				case 'y':
+				case 'z':
+				case 'w':
+					ss << in->getName() << L'.' << map[i];
+					break;
+				case '0':
+					ss << L"0.0f";
+					break;
+				case '1':
+					ss << L"1.0f";
+					break;
+				}
+			}
+			ss << L")";
+		}
+		else if (map.length() > 1)
+		{
+			ss << in->getName() << L'.';
+			for (size_t i = 0; i < map.length(); ++i)
+				ss << map[i];
+		}
+		else if (map.length() == 1)
+		{
+			if (map[0] == L'x' && in->getType() == CtFloat)
+				ss << in->getName();
+			else
+				ss << in->getName() << L'.' << map[0];
+		}
+
+		assign(f, out) << ss.str() << L";" << Endl;
+	}
+
 	return true;
 }
 

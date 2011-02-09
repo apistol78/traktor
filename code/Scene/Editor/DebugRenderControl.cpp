@@ -79,6 +79,10 @@ void DebugRenderControl::updateWorldRenderer()
 {
 }
 
+void DebugRenderControl::setAspect(float aspect)
+{
+}
+
 bool DebugRenderControl::handleCommand(const ui::Command& command)
 {
 	return false;

@@ -29,6 +29,8 @@ public:
 
 	CgVariable* emitOutput(Node* node, const std::wstring& outputPinName, CgType type);
 
+	void emitOutput(Node* node, const std::wstring& outputPinName, CgVariable* variable);
+
 	void enterVertex();
 
 	void enterPixel();

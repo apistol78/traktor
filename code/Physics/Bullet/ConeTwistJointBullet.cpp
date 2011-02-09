@@ -128,14 +128,14 @@ void ConeTwistJointBullet::prepare()
 	if (m_coneImpulseAxis.length() > FUZZY_EPSILON)
 		m_coneImpulseAxis = m_coneImpulseAxis.normalized();
 	else
-		m_coneImpulseAxis.set(1.0f, 0.0f, 0.0f, 0.0f);
+		m_coneImpulseAxis = c_axis[0];
 
 	Scalar angularImpulseDenom1 = dot3(inertiaInv1 * m_coneImpulseAxis, m_coneImpulseAxis);
 	Scalar angularImpulseDenom2 = dot3(inertiaInv2 * m_coneImpulseAxis, m_coneImpulseAxis);
 	m_kCone = Scalar(1.0f) / (angularImpulseDenom1 + angularImpulseDenom2);
 
 	// Twist constraint.
-	m_twistImpulseAxis = twistAxis2;
+	m_twistImpulseAxis = (twistAxis1 + twistAxis2) * Scalar(0.5f);
 
 	angularImpulseDenom1 = dot3(inertiaInv1 * m_twistImpulseAxis, m_twistImpulseAxis);
 	angularImpulseDenom2 = dot3(inertiaInv2 * m_twistImpulseAxis, m_twistImpulseAxis);

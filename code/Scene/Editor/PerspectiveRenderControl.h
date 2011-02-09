@@ -15,8 +15,9 @@ namespace traktor
 	namespace ui
 	{
 
-class Widget;
+class Container;
 class Event;
+class Widget;
 
 	}
 
@@ -58,12 +59,15 @@ public:
 
 	virtual void updateWorldRenderer();
 
+	virtual void setAspect(float aspect);
+
 	virtual bool handleCommand(const ui::Command& command);
 
 	virtual void update();
 
 private:
 	Ref< SceneEditorContext > m_context;
+	Ref< ui::Container > m_containerAspect;
 	Ref< ui::Widget > m_renderWidget;
 	Ref< render::IRenderView > m_renderView;
 	Ref< render::RenderTargetSet > m_renderTarget;
@@ -71,6 +75,7 @@ private:
 	Ref< world::IWorldRenderer > m_worldRenderer;
 	Ref< world::PostProcess > m_postProcess;
 	world::WorldRenderView m_worldRenderView;
+	int32_t m_index;
 	bool m_gridEnable;
 	bool m_guideEnable;
 	bool m_postProcessEnable;

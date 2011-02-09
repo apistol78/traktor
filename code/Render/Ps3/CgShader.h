@@ -53,6 +53,8 @@ public:
 
 	CgVariable* createOuterVariable(const OutputPin* outputPin, const std::wstring& variableName, CgType type);
 
+	void associateVariable(const OutputPin* outputPin, CgVariable* variable);
+
 	CgVariable* getVariable(const OutputPin* outputPin) const;
 
 	void pushScope();
@@ -76,7 +78,7 @@ public:
 	std::wstring getGeneratedShader(bool needVPos);
 
 private:
-	typedef std::map< const OutputPin*, CgVariable* > scope_t;
+	typedef std::map< const OutputPin*, Ref< CgVariable > > scope_t;
 
 	ShaderType m_shaderType;
 	std::set< std::wstring > m_inputs;

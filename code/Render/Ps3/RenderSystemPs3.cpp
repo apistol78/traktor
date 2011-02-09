@@ -49,6 +49,8 @@ RenderSystemPs3::~RenderSystemPs3()
 
 bool RenderSystemPs3::create(const RenderSystemCreateDesc& desc)
 {
+	int32_t err;
+
 	// Load A/V configuration module; necessary in order to change gamma.
 	cellSysmoduleLoadModule(CELL_SYSMODULE_AVCONF_EXT);
 
@@ -89,9 +91,22 @@ bool RenderSystemPs3::create(const RenderSystemCreateDesc& desc)
 		L"\tMain address 0x" << mainAddr << Endl <<
 		L"\t      size " << c_mainSize / (1024 * 1024) << L" MiB" << Endl;
 
+	// Get video state.
+	CellVideoOutState videoState;
+	for (;;)
+	{
+		err = cellVideoOutGetState(CELL_VIDEO_OUT_PRIMARY, 0, &videoState);
+		if (err != CELL_VIDEO_OUT_ERROR_CONDITION_BUSY)
+			break;
+		sys_timer_sleep(1);
+	}
+
 	// Determine supported display modes.
 	for (const ResolutionDesc* i = c_resolutionDescs; i->id; ++i)
 	{
+		if (!(i->refreshRates & videoState.displayMode.refreshRates))
+			continue;
+
 		if (cellVideoOutGetResolutionAvailability(CELL_VIDEO_OUT_PRIMARY, i->id, CELL_VIDEO_OUT_ASPECT_AUTO, 0))
 			m_resolutions.push_back(i);
 	}
@@ -146,6 +161,18 @@ DisplayMode RenderSystemPs3::getCurrentDisplayMode() const
 	{
 		log::error << L"Unable to get resolution description (" << lookupGcmError(err) << L")" << Endl;
 		return DisplayMode();
+	}
+
+	// Need to ensure 50Hz output if 576i display mode; otherwise
+	// we fall back to 480i as we're not in PAL region.
+	if (videoResolution.height == 576)
+	{
+		if (!(videoState.displayMode.refreshRates & CELL_VIDEO_OUT_REFRESH_RATE_50HZ))
+		{
+			log::debug << L"576i resolution only available on PAL; using 480i instead" << Endl;
+			videoResolution.width = 640;
+			videoResolution.height = 480;
+		}
 	}
 
 	DisplayMode dm;

@@ -59,7 +59,7 @@ CgVariable* CgShader::createVariable(const OutputPin* outputPin, const std::wstr
 {
 	T_ASSERT (!m_variables.empty());
 
-	CgVariable* variable = new CgVariable(variableName, type);
+	Ref< CgVariable > variable = new CgVariable(variableName, type);
 	m_variables.back().insert(std::make_pair(outputPin, variable));
 
 	return variable;
@@ -69,10 +69,15 @@ CgVariable* CgShader::createOuterVariable(const OutputPin* outputPin, const std:
 {
 	T_ASSERT (!m_variables.empty());
 
-	CgVariable* variable = new CgVariable(variableName, type);
+	Ref< CgVariable > variable = new CgVariable(variableName, type);
 	m_variables.front().insert(std::make_pair(outputPin, variable));
 
 	return variable;
+}
+
+void CgShader::associateVariable(const OutputPin* outputPin, CgVariable* variable)
+{
+	m_variables.back().insert(std::make_pair(outputPin, variable));
 }
 
 CgVariable* CgShader::getVariable(const OutputPin* outputPin) const
@@ -97,8 +102,6 @@ void CgShader::pushScope()
 void CgShader::popScope()
 {
 	T_ASSERT (!m_variables.empty());
-	for (scope_t::iterator i = m_variables.back().begin(); i != m_variables.back().end(); ++i)
-		delete i->second;
 	m_variables.pop_back();
 }
 

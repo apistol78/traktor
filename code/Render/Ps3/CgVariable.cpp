@@ -1,10 +1,12 @@
-#include "Render/Ps3/CgVariable.h"
 #include "Core/Misc/String.h"
+#include "Render/Ps3/CgVariable.h"
 
 namespace traktor
 {
 	namespace render
 	{
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.CgVariable", CgVariable, Object)
 
 CgVariable::CgVariable()
 :	m_type(CtVoid)

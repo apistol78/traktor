@@ -41,6 +41,8 @@ public:
 
 	virtual void updateWorldRenderer();
 
+	virtual void setAspect(float aspect);
+
 	virtual bool handleCommand(const ui::Command& command);
 
 	virtual void update();

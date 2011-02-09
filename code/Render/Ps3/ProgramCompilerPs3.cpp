@@ -364,6 +364,13 @@ Ref< ProgramResource > ProgramCompilerPs3::compile(
 		resource->m_pixelShaderBin = Blob(sceCgcGetBinSize(pixelShaderBin), sceCgcGetBinData(pixelShaderBin));
 		resource->m_renderState = cgProgram.getRenderState();
 
+		// Pretty bad way of measuring cost but we assume size equals cost.
+		if (outStats)
+		{
+			outStats->vertexCost = sceCgcGetBinSize(vertexShaderBin);
+			outStats->pixelCost = sceCgcGetBinSize(pixelShaderBin);
+		}
+
 		sceCgcDeleteContext(cgc);
 	}
 

@@ -59,6 +59,14 @@ CgVariable* CgContext::emitOutput(Node* node, const std::wstring& outputPinName,
 	return out;
 }
 
+void CgContext::emitOutput(Node* node, const std::wstring& outputPinName, CgVariable* variable)
+{
+	const OutputPin* outputPin = node->findOutputPin(outputPinName);
+	T_ASSERT (outputPin);
+
+	m_currentShader->associateVariable(outputPin, variable);
+}
+
 void CgContext::enterVertex()
 {
 	m_currentShader = &m_vertexShader;
