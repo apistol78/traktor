@@ -180,7 +180,7 @@ void DefaultObjectEditor::eventPropertyCommand(ui::Event* event)
 	Ref< ui::custom::ArrayPropertyItem > arrayItem = dynamic_type_cast< ui::custom::ArrayPropertyItem* >(event->getItem());
 	if (arrayItem)
 	{
-		if (cmd == L"Property.Browse")
+		if (cmd == L"Property.Edit")
 		{
 			if (arrayItem->getElementType())
 			{
