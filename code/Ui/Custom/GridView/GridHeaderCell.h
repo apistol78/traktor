@@ -38,6 +38,9 @@ public:
 
 private:
 	RefArray< GridColumn > m_columns;
+	Ref< GridColumn > m_resizeColumn;
+	int32_t m_resizeWidth;
+	int32_t m_resizePosition;
 };
 
 		}
