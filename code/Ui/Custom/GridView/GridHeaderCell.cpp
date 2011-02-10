@@ -1,5 +1,6 @@
 #include "Ui/Application.h"
 #include "Ui/Canvas.h"
+#include "Ui/Custom/Auto/AutoWidget.h"
 #include "Ui/Custom/GridView/GridHeaderCell.h"
 #include "Ui/Custom/GridView/GridColumn.h"
 
@@ -19,14 +20,41 @@ void GridHeaderCell::setColumns(const RefArray< GridColumn >& columns)
 
 void GridHeaderCell::mouseDown(AutoWidget* widget, const Point& position)
 {
+	if (m_columns.size() < 2)
+		return;
+
+	int32_t x = 0;
+	for (uint32_t i = 0; i < m_columns.size() - 1; ++i)
+	{
+		GridColumn* column = m_columns[i];
+		x += column->getWidth();
+
+		if (position.x >= x - 1 && position.x <= x + 1)
+		{
+			m_resizeColumn = column;
+			m_resizeWidth = column->getWidth();
+			m_resizePosition = x;
+			break;
+		}
+	}
 }
 
 void GridHeaderCell::mouseUp(AutoWidget* widget, const Point& position)
 {
+	m_resizeColumn = 0;
 }
 
 void GridHeaderCell::mouseMove(AutoWidget* widget, const Point& position)
 {
+	if (!m_resizeColumn)
+		return;
+
+	int32_t width = m_resizeWidth + position.x - m_resizePosition;
+	if (width < 16)
+		width = 16;
+
+	m_resizeColumn->setWidth(width);
+	widget->requestLayout();
 }
 
 void GridHeaderCell::paint(AutoWidget* widget, Canvas& canvas, const Rect& rect)
