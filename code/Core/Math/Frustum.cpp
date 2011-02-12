@@ -99,11 +99,11 @@ Frustum::InsideResult Frustum::inside(const Aabb3& aabb) const
 
 	for (uint32_t i = 0; i < planes.size(); ++i)
 	{
-		Vector4 n = select(planes[i].normal(), aabb.mx, aabb.mn);
+		Vector4 n = select(planes[i].normal(), aabb.mn, aabb.mx);
 		if (planes[i].distance(n) < c_zero)	// outside
 			return IrOutside;
 
-		Vector4 p = select(planes[i].normal(), aabb.mn, aabb.mx);
+		Vector4 p = select(planes[i].normal(), aabb.mx, aabb.mn);
 		if (planes[i].distance(p) < c_zero)	// intersecting
 			partial |= true;
 	}
