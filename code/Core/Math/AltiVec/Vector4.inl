@@ -378,7 +378,7 @@ T_MATH_INLINE Vector4 max(const Vector4& l, const Vector4& r)
 T_MATH_INLINE Vector4 select(const Vector4& condition, const Vector4& negative, const Vector4& positive)
 {
 	vec_uint4 mask = (vec_uint4)vec_cmple(condition.m_data, (vec_float4)(0.0f));
-	return Vector4(vec_sel(negative.m_data, positive.m_data, mask));
+	return Vector4(vec_sel(positive.m_data, negative.m_data, mask));
 }
 
 T_MATH_INLINE T_DLLCLASS bool compareAllGreaterEqual(const Vector4& l, const Vector4& r)
