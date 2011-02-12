@@ -23,7 +23,6 @@ Heightfield::~Heightfield()
 
 float Heightfield::getGridHeight(float gridX, float gridZ) const
 {
-	const Vector4& worldExtent = m_resource.getWorldExtent();
 	uint32_t size = m_resource.getSize();
 
 	int igridX = int(std::floor(gridX));

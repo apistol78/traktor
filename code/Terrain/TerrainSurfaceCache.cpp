@@ -1,3 +1,4 @@
+#include "Core/Log/Log.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Render/RenderTargetSet.h"
@@ -5,9 +6,9 @@
 #include "Render/Shader.h"
 #include "Render/Context/RenderContext.h"
 #include "Resource/IResourceManager.h"
-#include "World/IWorldRenderPass.h"
 #include "Terrain/TerrainSurface.h"
 #include "Terrain/TerrainSurfaceCache.h"
+#include "World/IWorldRenderPass.h"
 
 namespace traktor
 {
@@ -21,6 +22,14 @@ const uint32_t c_cacheSurfaceSize[] = { 1024, 512, 256, 128 };
 #else
 const uint32_t c_cacheSurfaceSize[] = { 512, 256, 128, 64 };
 #endif
+
+const Vector4 c_cacheSurfaceColor[] =
+{
+	Vector4(1.0f, 0.0f, 0.0f, 0.0f),
+	Vector4(0.0f, 1.0f, 0.0f, 0.0f),
+	Vector4(0.0f, 0.0f, 1.0f, 0.0f),
+	Vector4(1.0f, 1.0f, 0.0f, 0.0f)
+};
 
 struct TerrainSurfaceRenderBlock : public render::RenderBlock
 {
@@ -62,6 +71,7 @@ TerrainSurfaceCache::TerrainSurfaceCache()
 ,	m_handleWorldExtent(render::getParameterHandle(L"WorldExtent"))
 ,	m_handlePatchOrigin(render::getParameterHandle(L"PatchOrigin"))
 ,	m_handlePatchExtent(render::getParameterHandle(L"PatchExtent"))
+,	m_handlePatchLodColor(render::getParameterHandle(L"PatchLodColor"))
 {
 }
 
@@ -211,6 +221,7 @@ void TerrainSurfaceCache::get(
 	renderBlock->programParams->setVectorParameter(m_handleWorldExtent, worldExtent);
 	renderBlock->programParams->setVectorParameter(m_handlePatchOrigin, patchOrigin);
 	renderBlock->programParams->setVectorParameter(m_handlePatchExtent, patchExtent);
+	renderBlock->programParams->setVectorParameter(m_handlePatchLodColor, c_cacheSurfaceColor[surfaceLod]);
 
 	renderBlock->programParams->endParameters(renderContext);
 
@@ -233,6 +244,8 @@ Ref< render::RenderTargetSet > TerrainSurfaceCache::allocateTarget(uint32_t lod)
 	desc.createDepthStencil = false;
 	desc.usingPrimaryDepthStencil = false;
 	desc.targets[0].format = render::TfR8G8B8A8;
+
+	log::info << L"Creating terrain surface cache target " << desc.width << L"*" << desc.height << L"..." << Endl;
 
 	return m_renderSystem->createRenderTargetSet(desc);
 }

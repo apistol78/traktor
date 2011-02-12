@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.scene.SceneAsset" version="3">	
-	<worldRenderSettings type="traktor.world.WorldRenderSettings">
+<object type="traktor.scene.SceneAsset" version="3">
+	<worldRenderSettings type="traktor.world.WorldRenderSettings" version="6">
 		<viewNearZ>0.1</viewNearZ>
-		<viewFarZ>1000</viewFarZ>
-		<depthPassEnabled>true</depthPassEnabled>
+		<viewFarZ>10000</viewFarZ>
+		<depthPassEnabled>false</depthPassEnabled>
+		<depthRange>10000</depthRange>
+		<velocityPassEnable>false</velocityPassEnable>
 		<shadowsEnabled>false</shadowsEnabled>
-		<shadowCascadingSlices>4</shadowCascadingSlices>
-		<shadowCascadingLambda>0.5</shadowCascadingLambda>
+		<shadowsProjection>SpUniform</shadowsProjection>
+		<shadowsQuality>SqMedium</shadowsQuality>
+		<ssaoEnabled>false</ssaoEnabled>
 		<shadowFarZ>100</shadowFarZ>
 		<shadowMapResolution>1024</shadowMapResolution>
 		<shadowMapBias>1</shadowMapBias>
 	</worldRenderSettings>
-	<postProcessSettings/>
+	<postProcessSettings>{00000000-0000-0000-0000-000000000000}</postProcessSettings>
 	<entityData type="traktor.world.GroupEntityData">
 		<name>Root</name>
 		<entityData>

@@ -23,7 +23,7 @@ namespace traktor
 		{
 
 const int c_skipHeightTexture = 4;
-const int c_skipNormalTexture = 1;
+const int c_skipNormalTexture = 2;
 
 uint32_t nearestLod2(uint32_t value)
 {

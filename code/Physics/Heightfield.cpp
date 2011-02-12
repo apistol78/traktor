@@ -25,16 +25,26 @@ Heightfield::~Heightfield()
 
 float Heightfield::getSampleBilinear(float x, float z) const
 {
-	float hx = m_size * (x + float(m_worldExtent.x()) * 0.5f) / float(m_worldExtent.x());
-	float hz = m_size * (z + float(m_worldExtent.z()) * 0.5f) / float(m_worldExtent.z());
+	float hx = m_size * (x + m_worldExtent.x() * 0.5f) / m_worldExtent.x() - 0.5f;
+	float hz = m_size * (z + m_worldExtent.z() * 0.5f) / m_worldExtent.z() - 0.5f;
 
-	int ix1 = int(hx);
-	int iz1 = int(hz);
+	int ix1 = int(std::floor(hx));
+	int iz1 = int(std::floor(hz));
+
+	int32_t size = int32_t(m_size - 1);
+
+	if (ix1 < 0)
+		ix1 = 0;
+	else if (ix1 >= size - 1)
+		ix1 = size - 2;
+
+	if (iz1 < 0)
+		iz1 = 0;
+	else if (iz1 >= size - 1)
+		iz1 = size - 2;
 
 	int ix2 = ix1 + 1;
 	int iz2 = iz1 + 1;
-
-	uint32_t size = m_size - 1;
 
 	float hc[] =
 	{
