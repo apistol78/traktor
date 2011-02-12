@@ -99,6 +99,7 @@ private:
 	render::handle_t m_handleWorldExtent;
 	render::handle_t m_handlePatchOrigin;
 	render::handle_t m_handlePatchExtent;
+	render::handle_t m_handlePatchLodColor;
 
 	Ref< render::RenderTargetSet > allocateTarget(uint32_t lod);
 };

@@ -376,10 +376,10 @@ void TerrainEntity::render(
 	const Vector4& worldExtent = m_heightfield->getResource().getWorldExtent();
 
 	Vector4 patchExtent(worldExtent.x() / float(m_patchCount), worldExtent.y(), worldExtent.z() / float(m_patchCount), 0.0f);
-	Scalar patchRadius = patchExtent.length();
+	Scalar patchRadius = patchExtent.length() * Scalar(0.5f);
 
 	const Vector4& eyePosition = worldRenderView.getEyePosition();
-	const Vector4& eyeDirection = worldRenderView.getView().axisZ();
+	//const Vector4& eyeDirection = worldRenderView.getView().inverse().axisZ();
 
 	// Cull patches.
 	static AlignedVector< CullPatch > visiblePatches;
@@ -397,14 +397,22 @@ void TerrainEntity::render(
 			uint32_t patchId = px + pz * m_patchCount;
 			const Patch& patch = m_patches[patchId];
 
-			Vector4 patchCenterWorld = patchOrigin + patchExtent * Scalar(0.5f);
+			Vector4 patchCenterWorld = (patchOrigin + patchExtent * Scalar(0.5f)).xyz1();
 			Vector4 patchCenterView = worldRenderView.getView() * patchCenterWorld;
 
 			if (worldRenderView.getCullFrustum().inside(patchCenterView, patchRadius) != Frustum::IrOutside)
 			{
 				CullPatch cp;
 
-				cp.distance = dot3(patchCenterWorld - eyePosition, eyeDirection);
+				Aabb3 patchAabb(
+					patchCenterWorld - patchExtent * Scalar(0.5f),
+					patchCenterWorld + patchExtent * Scalar(0.5f)
+				);
+
+				Scalar lodDistance(0.0f);
+				patchAabb.intersectRay(eyePosition, (patchCenterWorld - eyePosition).xyz0().normalized(), lodDistance);
+
+				cp.distance = lodDistance;
 				cp.patchId = patchId;
 				cp.patchOrigin = patchOrigin;
 
@@ -430,13 +438,14 @@ void TerrainEntity::render(
 		const Vector4& patchOrigin = i->patchOrigin;
 
 		// Calculate which lods to use based one distance to patch center.
-		int patchLod = int(i->distance / m_patchLodDistance);
-		patchLod = std::max< int >(patchLod, 0);
-		patchLod = std::min< int >(patchLod, sizeof_array(m_primitives) - 1);
+		float lodDistance1 = pow(clamp(i->distance / m_patchLodDistance, 0.0f, 1.0f), 1.0f);
+		float lodDistance2 = pow(clamp(i->distance / m_surfaceLodDistance, 0.0f, 1.0f), 1.0f);
 
-		int surfaceLod = int(i->distance / m_surfaceLodDistance);
-		surfaceLod = std::max< int >(surfaceLod, 0);
-		surfaceLod = std::min< int >(surfaceLod, 3);
+		const int c_patchLodSteps = sizeof_array(m_primitives) - 1;
+		const int c_surfaceLodSteps = 3;
+
+		int patchLod = int(lodDistance1 * c_patchLodSteps);
+		int surfaceLod = int(lodDistance2 * c_surfaceLodSteps);
 
 		TerrainRenderBlock* renderBlock = renderContext->alloc< TerrainRenderBlock >();
 
