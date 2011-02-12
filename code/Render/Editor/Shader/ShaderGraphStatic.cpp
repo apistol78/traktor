@@ -1,3 +1,5 @@
+#include "Core/Containers/AlignedVector.h"
+#include "Core/Log/Log.h"
 #include "Render/Shader/Edge.h"
 #include "Render/Shader/Nodes.h"
 #include "Render/Shader/ShaderGraph.h"
@@ -5,6 +7,7 @@
 #include "Render/Editor/Shader/ShaderGraphOptimizer.h"
 #include "Render/Editor/Shader/ShaderGraphStatic.h"
 #include "Render/Editor/Shader/ShaderGraphTypeEvaluator.h"
+#include "Render/Editor/Shader/ShaderGraphUtilities.h"
 
 namespace traktor
 {
@@ -18,6 +21,82 @@ struct OutputWidth
 	PinType type;
 	int32_t count;	//<! Number of destinations until width is determined; when reached zero we can be sure width is determined.
 	bool parent;
+};
+
+struct ConstantFoldingVisitor
+{
+	Ref< ShaderGraph > m_shaderGraph;
+	std::map< const OutputPin*, Constant > m_outputConstants;
+
+	bool operator () (Node* node)
+	{
+		m_shaderGraph->addNode(node);
+		return true;
+	}
+
+	bool operator () (Edge* edge)
+	{
+		const OutputPin* source = edge->getSource();
+
+		std::map< const OutputPin*, Constant >::const_iterator it = m_outputConstants.find(source);
+		if (it != m_outputConstants.end())
+		{
+			std::pair< int, int > position = source->getNode()->getPosition();
+			Ref< Node > node;
+
+			switch (it->second.getType())
+			{
+			case PntScalar1:
+				node = new Scalar(it->second[0]);
+				break;
+
+			case PntScalar2:
+				{
+					Ref< Vector > value = new Vector(Vector4(it->second[0], it->second[1], 0.0f, 0.0f));
+					Ref< Swizzle > swizzle = new Swizzle(L"xy");
+
+					m_shaderGraph->addNode(value);
+					m_shaderGraph->addEdge(new Edge(value->getOutputPin(0), swizzle->getInputPin(0)));
+
+					value->setPosition(position);
+					position.first += 32;
+
+					node = swizzle;
+				}
+				break;
+
+			case PntScalar3:
+				{
+					Ref< Vector > value = new Vector(Vector4(it->second[0], it->second[1], it->second[2], 0.0f));
+					Ref< Swizzle > swizzle = new Swizzle(L"xyz");
+
+					m_shaderGraph->addNode(value);
+					m_shaderGraph->addEdge(new Edge(value->getOutputPin(0), swizzle->getInputPin(0)));
+
+					value->setPosition(position);
+					position.first += 32;
+
+					node = swizzle;
+				}
+				break;
+
+			case PntScalar4:
+				node = new Vector(Vector4(it->second[0], it->second[1], it->second[2], it->second[3]));
+				break;
+			}
+
+			if (node)
+			{
+				node->setPosition(position);
+				m_shaderGraph->addNode(node);
+				m_shaderGraph->addEdge(new Edge(node->getOutputPin(0), edge->getDestination()));
+				return false;
+			}
+		}
+
+		m_shaderGraph->addEdge(edge);
+		return true;
+	}
 };
 
 		}
@@ -287,6 +366,181 @@ Ref< ShaderGraph > ShaderGraphStatic::getSwizzledPermutation() const
 	}
 
 	return shaderGraph;
+}
+
+Ref< ShaderGraph > ShaderGraphStatic::getConstantFolded() const
+{
+	std::map< const OutputPin*, Constant > outputConstants;
+	AlignedVector< Constant > inputConstants;
+	AlignedVector< Constant > inputConstantsCast;
+
+	// Repeat folding nodes until there is no more to fold.
+	RefArray< Node > nodes = m_shaderGraph->getNodes();
+	for (;;)
+	{
+		uint32_t constantQualifiedCount = 0;
+		for (RefArray< Node >::iterator i = nodes.begin(); i != nodes.end(); )
+		{
+			int32_t inputPinCount = (*i)->getInputPinCount();
+			inputConstants.resize(inputPinCount);
+
+			// Check if all inputs is available with constant inputs.
+			int32_t constantInputCount = 0;
+			for (int32_t j = 0; j < inputPinCount; ++j)
+			{
+				const InputPin* inputPin = (*i)->getInputPin(j);
+				T_ASSERT (inputPin);
+
+				const OutputPin* outputPin = m_shaderGraph->findSourcePin(inputPin);
+				if (!outputPin)
+					continue;
+
+				std::map< const OutputPin*, Constant >::const_iterator it = outputConstants.find(outputPin);
+				if (it != outputConstants.end())
+				{
+					inputConstants[j] = it->second;
+					++constantInputCount;
+				}
+			}
+
+			if (constantInputCount == inputPinCount)
+			{
+				// Full constant input; should be able to calculate output.
+				const INodeTraits* nodeTraits = findNodeTraits(*i);
+				if (nodeTraits)
+				{
+					int32_t outputPinCount = (*i)->getOutputPinCount();
+
+					// Prepare input pin types from found constants.
+					PinType inputPinTypes[16];
+					for (int32_t j = 0; j < inputPinCount; ++j)
+						inputPinTypes[j] = inputConstants[j].getType();
+
+					// Determine output pin types from given set of inputs.
+					PinType outputPinTypes[16];
+					for (int32_t j = 0; j < outputPinCount; ++j)
+					{
+						const OutputPin* outputPin = (*i)->getOutputPin(j);
+						T_ASSERT (outputPin);
+
+						outputPinTypes[j] = nodeTraits->getOutputPinType(*i, outputPin, inputPinTypes);
+					}
+
+					inputConstantsCast.resize(inputPinCount);
+					for (int32_t j = 0; j < outputPinCount; ++j)
+					{
+						const OutputPin* outputPin = (*i)->getOutputPin(j);
+						T_ASSERT (outputPin);
+
+						// Cast input constants to required types.
+						for (int32_t k = 0; k < inputPinCount; ++k)
+						{
+							const InputPin* inputPin = (*i)->getInputPin(k);
+							T_ASSERT (inputPin);
+
+							PinType inputPinType = nodeTraits->getInputPinType(
+								m_shaderGraph,
+								*i,
+								inputPin,
+								outputPinTypes
+							);
+
+							inputConstantsCast[k] = inputConstants[k].cast(inputPinType);
+						}
+					
+						// Evaluate output constant.
+						Constant outputConstant(outputPinTypes[j]);
+						if (nodeTraits->evaluate(
+							m_shaderGraph,
+							*i,
+							outputPin,
+							inputPinCount > 0 ? &inputConstantsCast[0] : 0,
+							outputConstant
+						))
+						{
+							outputConstants[outputPin] = outputConstant;
+						}
+					}
+				}
+
+				++constantQualifiedCount;
+				i = nodes.erase(i);
+			}
+			else
+			{
+				// Partial constant input; need to reiterate.
+				++i;
+			}
+		}
+
+		if (!constantQualifiedCount)
+		{
+			// No more constant nodes found; see if we can collapse partially constant nodes
+			// such as multiply with zero etc.
+
+			uint32_t partialQualifiedCount = 0;
+			for (RefArray< Node >::iterator i = nodes.begin(); i != nodes.end(); )
+			{
+				// \hack Only valid for multiplications; need to add some sort of partial
+				// evaluation to traits.
+				if (!is_a< Mul >(*i))
+				{
+					++i;
+					continue;
+				}
+
+				bool inputZero = false;
+
+				int32_t inputPinCount = (*i)->getInputPinCount();
+				for (int32_t j = 0; j < inputPinCount; ++j)
+				{
+					const InputPin* inputPin = (*i)->getInputPin(j);
+					T_ASSERT (inputPin);
+
+					const OutputPin* outputPin = m_shaderGraph->findSourcePin(inputPin);
+					if (!outputPin)
+						continue;
+
+					std::map< const OutputPin*, Constant >::const_iterator it = outputConstants.find(outputPin);
+					if (it != outputConstants.end() && it->second.isZero())
+					{
+						inputZero = true;
+						break;
+					}
+				}
+
+				if (inputZero)
+				{
+					outputConstants[(*i)->getOutputPin(0)] = Constant(0.0f);
+					++partialQualifiedCount;
+
+					i = nodes.erase(i);
+				}
+				else
+					++i;
+			}
+
+			if (!partialQualifiedCount)
+				break;
+		}
+	}
+
+	// Collect root nodes; assume all nodes with no output pins to be roots.
+	RefArray< Node > roots;
+	nodes = m_shaderGraph->getNodes();
+	for (RefArray< Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
+	{
+		if ((*i)->getOutputPinCount() <= 0)
+			roots.push_back(*i);
+	}
+
+	// Traverse copy shader graph; replace inputs if constant.
+	ConstantFoldingVisitor visitor;
+	visitor.m_shaderGraph = new ShaderGraph();
+	visitor.m_outputConstants = outputConstants;
+	shaderGraphTraverse(m_shaderGraph, roots, visitor);
+
+	return visitor.m_shaderGraph;
 }
 
 	}

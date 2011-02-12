@@ -37,5 +37,16 @@ PinType PolynomialNodeTraits::getInputPinType(
 		return PntScalar4;
 }
 
+bool PolynomialNodeTraits::evaluate(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const OutputPin* outputPin,
+	const Constant* inputConstants,
+	Constant& outputConstant
+) const
+{
+	return false;
+}
+
 	}
 }

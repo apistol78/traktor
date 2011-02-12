@@ -27,6 +27,14 @@ public:
 		const InputPin* inputPin,
 		const PinType* outputPinTypes
 	) const;
+
+	virtual bool evaluate(
+		const ShaderGraph* shaderGraph,
+		const Node* node,
+		const OutputPin* outputPin,
+		const Constant* inputConstants,
+		Constant& outputConstant
+	) const;
 };
 
 	}

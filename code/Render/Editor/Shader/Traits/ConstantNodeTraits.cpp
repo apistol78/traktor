@@ -48,5 +48,37 @@ PinType ConstantNodeTraits::getInputPinType(
 	return PntVoid;
 }
 
+bool ConstantNodeTraits::evaluate(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const OutputPin* outputPin,
+	const Constant* inputConstants,
+	Constant& outputConstant
+) const
+{
+	if (const Color* color = dynamic_type_cast< const Color* >(node))
+	{
+		outputConstant[0] = color->getColor().r / 255.0f;
+		outputConstant[1] = color->getColor().g / 255.0f;
+		outputConstant[2] = color->getColor().b / 255.0f;
+		outputConstant[3] = color->getColor().a / 255.0f;
+	}
+	else if (const Vector* vectr = dynamic_type_cast< const Vector* >(node))
+	{
+		outputConstant[0] = vectr->get().x();
+		outputConstant[1] = vectr->get().y();
+		outputConstant[2] = vectr->get().z();
+		outputConstant[3] = vectr->get().w();
+	}
+	else if (const Scalar* scalar = dynamic_type_cast< const Scalar* >(node))
+	{
+		outputConstant[0] = scalar->get();
+	}
+	else
+		return false;
+
+	return true;
+}
+
 	}
 }

@@ -59,5 +59,16 @@ PinType UniformNodeTraits::getInputPinType(
 		return PntVoid;
 }
 
+bool UniformNodeTraits::evaluate(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const OutputPin* outputPin,
+	const Constant* inputConstants,
+	Constant& outputConstant
+) const
+{
+	return false;
+}
+
 	}
 }

@@ -2,6 +2,7 @@
 #define traktor_render_INodeTraits_H
 
 #include "Core/Object.h"
+#include "Render/Editor/Shader/Constant.h"
 #include "Render/Editor/Shader/PinType.h"
 
 namespace traktor
@@ -46,6 +47,16 @@ public:
 		const Node* node,
 		const InputPin* inputPin,
 		const PinType* outputPinTypes
+	) const = 0;
+
+	/*! \brief Evaluate output pin.
+	 */
+	virtual bool evaluate(
+		const ShaderGraph* shaderGraph,
+		const Node* node,
+		const OutputPin* outputPin,
+		const Constant* inputConstants,
+		Constant& outputConstant
 	) const = 0;
 };
 

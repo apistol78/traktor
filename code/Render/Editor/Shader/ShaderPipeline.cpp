@@ -86,6 +86,14 @@ struct BuildCombinationTask : public Object
 			return;
 		}
 
+		// Constant propagation; calculate constant branches.
+		programGraph = ShaderGraphStatic(programGraph).getConstantFolded();
+		if (!programGraph)
+		{
+			log::error << L"ShaderPipeline failed; unable to perform constant folding" << Endl;
+			return;
+		}
+
 		// Merge identical branches.
 		programGraph = ShaderGraphOptimizer(programGraph).mergeBranches();
 		if (!programGraph)
@@ -130,7 +138,7 @@ struct BuildCombinationTask : public Object
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 32, ShaderPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 33, ShaderPipeline, editor::IPipeline)
 
 ShaderPipeline::ShaderPipeline()
 :	m_frequentUniformsAsLinear(false)

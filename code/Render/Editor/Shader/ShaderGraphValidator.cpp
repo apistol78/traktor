@@ -22,11 +22,14 @@ struct CollectVisitor
 {
 	std::set< const Node* > m_nodes;
 
-	void operator () (Node* node) {
+	bool operator () (Node* node)
+	{
 		m_nodes.insert(node);
+		return true;
 	}
 
-	void operator () (Edge* edge) {
+	bool operator () (Edge* edge) {
+		return true;
 	}
 };
 

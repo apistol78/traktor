@@ -46,5 +46,57 @@ PinType ConditionalNodeTraits::getInputPinType(
 		return outputPinTypes[0];
 }
 
+bool ConditionalNodeTraits::evaluate(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const OutputPin* outputPin,
+	const Constant* inputConstants,
+	Constant& outputConstant
+) const
+{
+	if (const Conditional* conditional = dynamic_type_cast< const Conditional* >(node))
+	{
+		bool result = false;
+		switch (conditional->getOperator())
+		{
+		case Conditional::CoLess:
+			result = inputConstants[0][0] < inputConstants[1][0];
+			break;
+
+		case Conditional::CoLessEqual:
+			result = inputConstants[0][0] <= inputConstants[1][0];
+			break;
+
+		case Conditional::CoEqual:
+			result = inputConstants[0][0] == inputConstants[1][0];
+			break;
+
+		case Conditional::CoNotEqual:
+			result = inputConstants[0][0] != inputConstants[1][0];
+			break;
+
+		case Conditional::CoGreater:
+			result = inputConstants[0][0] > inputConstants[1][0];
+			break;
+
+		case Conditional::CoGreaterEqual:
+			result = inputConstants[0][0] >= inputConstants[1][0];
+			break;
+
+		default:
+			return false;
+		}
+
+		if (result)
+			outputConstant = inputConstants[2];
+		else
+			outputConstant = inputConstants[3];
+
+		return true;
+	}
+
+	return false;
+}
+
 	}
 }
