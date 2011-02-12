@@ -243,8 +243,8 @@ Ref< OctreeNodeData > createOctreeParts(
 	const model::Model& model,
 	const OctreeNodeTemplate* nodeTemplate,
 	const std::map< std::wstring, std::list< MeshMaterialTechnique > >& materialTechniqueMap,
-	const uint32_t* indexFirst,
-	uint32_t*& index,
+	const uint16_t* indexFirst,
+	uint16_t*& index,
 	std::vector< render::Mesh::Part >& renderParts,
 	AlignedVector< PartitionMeshResource::Part >& partitionParts,
 	std::vector< std::wstring >& worldTechniques
@@ -273,7 +273,7 @@ Ref< OctreeNodeData > createOctreeParts(
 
 			for (int k = 0; k < 3; ++k)
 			{
-				*index++ = uint32_t(polygon.getVertex(k));
+				*index++ = uint16_t(polygon.getVertex(k));
 				range.minIndex = std::min< int32_t >(range.minIndex, polygon.getVertex(k));
 				range.maxIndex = std::max< int32_t >(range.maxIndex, polygon.getVertex(k));
 			}
@@ -414,12 +414,12 @@ bool PartitionMeshConverter::convert(
 
 	// Create render mesh.
 	uint32_t vertexBufferSize = uint32_t(model.getVertices().size() * vertexSize);
-	uint32_t indexBufferSize = uint32_t(model.getPolygons().size() * 3 * sizeof(uint32_t));
+	uint32_t indexBufferSize = uint32_t(model.getPolygons().size() * 3 * sizeof(uint16_t));
 
 	Ref< render::Mesh > mesh = render::SystemMeshFactory().createMesh(
 		vertexElements,
 		vertexBufferSize,
-		render::ItUInt32,
+		render::ItUInt16,
 		indexBufferSize
 	);
 
@@ -450,8 +450,8 @@ bool PartitionMeshConverter::convert(
 	mesh->getVertexBuffer()->unlock();
 
 	// Create index buffer.
-	uint32_t* index = static_cast< uint32_t* >(mesh->getIndexBuffer()->lock());
-	uint32_t* indexFirst = index;
+	uint16_t* index = static_cast< uint16_t* >(mesh->getIndexBuffer()->lock());
+	uint16_t* indexFirst = index;
 
 	std::vector< render::Mesh::Part > renderParts;
 	AlignedVector< PartitionMeshResource::Part > partitionParts;
