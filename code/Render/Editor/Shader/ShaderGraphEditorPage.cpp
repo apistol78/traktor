@@ -145,6 +145,7 @@ bool ShaderGraphEditorPage::create(ui::Container* parent, editor::IEditorPageSit
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_REMOVE_UNUSED_NODES"), ui::Command(L"ShaderGraph.Editor.RemoveUnusedNodes"), 8));
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_AUTO_MERGE_BRANCHES"), ui::Command(L"ShaderGraph.Editor.AutoMergeBranches"), 9));
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_UPDATE_FRAGMENTS"), ui::Command(L"ShaderGraph.Editor.UpdateFragments"), 10));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_CONSTANT_FOLD"), ui::Command(L"ShaderGraph.Editor.ConstantFold"), 10));
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
 	
 	m_toolPlatform = new ui::custom::ToolBarDropDown(ui::Command(), 140, i18n::Text(L"SHADERGRAPH_PLATFORM_PERMUTATION"));
@@ -642,6 +643,25 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 
 			m_site->setPropertyObject(0);
 		}
+	}
+	else if (command == L"ShaderGraph.Editor.ConstantFold")
+	{
+		// Save undo state.
+		m_undoStack->push(m_shaderGraph);
+
+		m_shaderGraph = ShaderGraphStatic(m_shaderGraph).getConstantFolded();
+
+		m_editorGraph->removeAllEdges();
+		m_editorGraph->removeAllNodes();
+
+		createEditorNodes(
+			m_shaderGraph->getNodes(),
+			m_shaderGraph->getEdges()
+		);
+
+		updateGraph();
+
+		m_site->setPropertyObject(0);
 	}
 	else if (command == L"ShaderGraph.Editor.PlatformPermutation")
 	{

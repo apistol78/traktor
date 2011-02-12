@@ -55,7 +55,7 @@ bool compileShader(
 	{
 		if (d3dErrorMsgs)
 			log::error << L"HLSL compile error : \"" << trim(mbstows((LPCSTR)d3dErrorMsgs->GetBufferPointer())) << L"\"" << Endl;
-		log::error << hlslShader << Endl;
+		FormatMultipleLines(log::error, hlslShader);
 		return false;
 	}
 

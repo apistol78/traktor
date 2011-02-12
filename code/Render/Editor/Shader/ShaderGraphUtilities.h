@@ -40,7 +40,8 @@ void shaderGraphTraverse(const ShaderGraph* shaderGraph, const RefArray< Node >&
 		nodeVisited.insert(node);
 		
 		// Invoke visitors with this node.
-		visitor(node);
+		if (!visitor(node))
+			continue;
 
 		// Push all input nodes onto stack.
 		int inputPinCount = node->getInputPinCount();
@@ -53,7 +54,8 @@ void shaderGraphTraverse(const ShaderGraph* shaderGraph, const RefArray< Node >&
 			if (edge)
 			{
 				// Invoke visitor with this edge.
-				visitor(edge);
+				if (!visitor(edge))
+					continue;
 				
 				// Push node onto stack.
 				nodeStack.push_back(edge->getSource()->getNode());

@@ -34,5 +34,16 @@ PinType TransposeNodeTraits::getInputPinType(
 	return PntMatrix;
 }
 
+bool TransposeNodeTraits::evaluate(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const OutputPin* outputPin,
+	const Constant* inputConstants,
+	Constant& outputConstant
+) const
+{
+	return false;
+}
+
 	}
 }

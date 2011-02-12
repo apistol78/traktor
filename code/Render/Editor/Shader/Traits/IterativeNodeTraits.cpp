@@ -45,5 +45,16 @@ PinType IterativeNodeTraits::getInputPinType(
 	return outputPinTypes[1];	// Output
 }
 
+bool IterativeNodeTraits::evaluate(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const OutputPin* outputPin,
+	const Constant* inputConstants,
+	Constant& outputConstant
+) const
+{
+	return false;
+}
+
 	}
 }

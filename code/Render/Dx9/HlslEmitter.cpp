@@ -1301,7 +1301,7 @@ bool emitTargetSize(HlslContext& cx, TargetSize* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
 	HlslVariable* out = cx.emitOutput(node, L"Output", HtFloat2);
-	assign(f, out) << L"_dx9_targetSize;";
+	assign(f, out) << L"_dx9_targetSize;" << Endl;
 	return true;
 }
 

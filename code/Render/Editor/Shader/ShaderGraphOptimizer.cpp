@@ -18,12 +18,16 @@ struct CopyVisitor
 {
 	Ref< ShaderGraph > m_shaderGraph;
 
-	void operator () (Node* node) {
+	bool operator () (Node* node)
+	{
 		m_shaderGraph->addNode(node);
+		return true;
 	}
 
-	void operator () (Edge* edge) {
+	bool operator () (Edge* edge)
+	{
 		m_shaderGraph->addEdge(edge);
+		return true;
 	}
 };
 

@@ -35,6 +35,8 @@ public:
 
 	Ref< ShaderGraph > getSwizzledPermutation() const;
 
+	Ref< ShaderGraph > getConstantFolded() const;
+
 private:
 	Ref< const ShaderGraph > m_shaderGraph;
 };

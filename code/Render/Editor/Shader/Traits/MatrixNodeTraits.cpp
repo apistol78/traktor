@@ -45,5 +45,16 @@ PinType MatrixNodeTraits::getInputPinType(
 		return PntVoid;
 }
 
+bool MatrixNodeTraits::evaluate(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const OutputPin* outputPin,
+	const Constant* inputConstants,
+	Constant& outputConstant
+) const
+{
+	return false;
+}
+
 	}
 }

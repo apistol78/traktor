@@ -70,5 +70,43 @@ PinType SwizzleNodeTraits::getInputPinType(
 	return inputPinType;
 }
 
+bool SwizzleNodeTraits::evaluate(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const OutputPin* outputPin,
+	const Constant* inputConstants,
+	Constant& outputConstant
+) const
+{
+	const std::wstring& pattern = checked_type_cast< const Swizzle* >(node)->get();
+
+	for (size_t i = 0; i < pattern.length(); ++i)
+	{
+		switch (std::tolower(pattern[i]))
+		{
+		case L'x':
+			outputConstant[i] = inputConstants[0][0];
+			break;
+		case L'y':
+			outputConstant[i] = inputConstants[0][1];
+			break;
+		case L'z':
+			outputConstant[i] = inputConstants[0][2];
+			break;
+		case L'w':
+			outputConstant[i] = inputConstants[0][3];
+			break;
+		case L'0':
+			outputConstant[i] = 0.0f;
+			break;
+		case L'1':
+			outputConstant[i] = 1.0f;
+			break;
+		}
+	}
+
+	return true;
+}
+
 	}
 }
