@@ -73,7 +73,7 @@ bool Network::initialize()
 	if (state != CELL_NET_CTL_STATE_IPObtained)
 	{
 		log::error << L"No IP obtained, check cables" << Endl;
-		return false;
+		return true;
 	}
 
 #endif
