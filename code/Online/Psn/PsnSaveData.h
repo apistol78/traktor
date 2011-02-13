@@ -6,6 +6,11 @@
 
 namespace traktor
 {
+	class Thread;
+}
+
+namespace traktor
+{
 	namespace online
 	{
 
@@ -16,6 +21,7 @@ class PsnSaveData : public ISaveDataProvider
 public:
 	PsnSaveData(int32_t excessSpaceNeededKB);
 
+	~PsnSaveData();
 	virtual bool enumerate(std::set< std::wstring >& outSaveDataIds);
 
 	virtual bool get(const std::wstring& saveDataId, Ref< ISerializable >& outAttachment);
@@ -28,6 +34,10 @@ private:
 	int32_t m_spaceNeededKB;
 	int32_t m_currentSavedataSizeKB;
 
+	Thread* m_threadDialog;
+
+	void dialogThread();
+	
 	static void callbackEnumFixed(CellSaveDataCBResult* cbResult, CellSaveDataListGet* get, CellSaveDataFixedSet* set);
 
 	static void callbackEnumStat(CellSaveDataCBResult* cbResult, CellSaveDataStatGet* get, CellSaveDataStatSet* set);
