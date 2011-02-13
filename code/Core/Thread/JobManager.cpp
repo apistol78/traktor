@@ -12,10 +12,14 @@ namespace traktor
 
 bool Job::wait(int32_t timeout)
 {
-	while (!m_finished)
+	Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
+	while (!m_finished && !currentThread->stopped())
 	{
-		if (!m_jobFinishedEvent.wait(timeout))
-			return false;
+		if (!m_jobFinishedEvent.wait(timeout >= 0 ? timeout : 100))
+		{
+			if (timeout >= 0)
+				return false;
+		}
 		// A job has been finished; check if it this
 		// and in such case return true.
 	}
@@ -74,15 +78,18 @@ void JobManager::threadWorker(int id)
 	Thread* thread = m_workerThreads[id];
 	Ref< Job > job;
 
-	while (!thread->stopped())
+	for (;;)
 	{
-		while (m_jobQueue.get(job))
+		while (m_jobQueue.get(job) && !thread->stopped())
 		{
 			T_ASSERT (!job->m_finished);
 			(*job->m_functor)();
 			job->m_finished = true;
 			m_jobFinishedEvent.broadcast();
 		}
+
+		if (thread->stopped())
+			break;
 
 		if (!m_jobQueuedEvent.wait(100))
 			continue;
@@ -116,10 +123,14 @@ JobManager::JobManager()
 
 JobManager::~JobManager()
 {
+	// Signal all worker threads we're stopping.
+	for (uint32_t i = 0; i < uint32_t(m_workerThreads.size()); ++i)
+		m_workerThreads[i]->stop(0);
+
 	// Destroy worker threads.
 	for (uint32_t i = 0; i < uint32_t(m_workerThreads.size()); ++i)
 	{
-		m_workerThreads[i]->stop();
+		m_workerThreads[i]->wait();
 		ThreadManager::getInstance().destroy(m_workerThreads[i]);
 	}
 }
