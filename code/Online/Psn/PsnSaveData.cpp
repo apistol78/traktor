@@ -5,6 +5,8 @@
 #include "Core/Misc/TString.h"
 #include "Core/Misc/String.h"
 #include "Core/Serialization/BinarySerializer.h"
+#include "Core/Thread/Thread.h"
+#include "Core/Thread/ThreadManager.h"
 #include "Online/Psn/PsnLogError.h"
 #include "Online/Psn/PsnSaveData.h"
 
@@ -99,7 +101,17 @@ PsnSaveData::PsnSaveData(int32_t excessSpaceNeededKB)
 :	m_excessSpaceNeededKB(excessSpaceNeededKB)
 ,	m_hddFreeSpaceKB(0)
 ,	m_spaceNeededKB(0)
+,	m_threadDialog(0)
 {
+}
+
+PsnSaveData::~PsnSaveData()
+{
+	if (m_threadDialog)
+	{
+		m_threadDialog->stop();
+		ThreadManager::getInstance().destroy(m_threadDialog);
+	}
 }
 
 bool PsnSaveData::enumerate(std::set< std::wstring >& outSaveDataIds)
@@ -140,14 +152,16 @@ bool PsnSaveData::enumerate(std::set< std::wstring >& outSaveDataIds)
 	);
 
 	int32_t neededGameDataSizeKB = (m_currentSavedataSizeKB > 0) ? 4 : 100;
-
 	const int32_t NEED_SIZEKB = m_hddFreeSpaceKB - m_excessSpaceNeededKB - neededGameDataSizeKB;
 	if (NEED_SIZEKB < 0)
 	{
-		cellGameContentErrorDialog(CELL_GAME_ERRDIALOG_NOSPACE_EXIT, -NEED_SIZEKB, NULL); 
+		m_spaceNeededKB = -NEED_SIZEKB;
+		m_threadDialog = ThreadManager::getInstance().create(makeFunctor(this, &PsnSaveData::dialogThread), L"Savedata dialog");
+		m_threadDialog->start(Thread::Normal);
 		log::error << L"Unable to create session manager; Not enough space on HDD to save trophies and save-games." << Endl;
 		return false;
 	}
+
 
 	if (err != CELL_SAVEDATA_RET_OK)
 	{
@@ -158,8 +172,15 @@ bool PsnSaveData::enumerate(std::set< std::wstring >& outSaveDataIds)
 	return true;
 }
 
+void PsnSaveData::dialogThread()
+{
+	cellGameContentErrorDialog(CELL_GAME_ERRDIALOG_NOSPACE_EXIT, m_spaceNeededKB, NULL); 
+}
+
 bool PsnSaveData::get(const std::wstring& saveDataId, Ref< ISerializable >& outAttachment)
 {
+	if (m_spaceNeededKB)
+		return false;
 	LoadData loadData(this); 
 
 	uint32_t tmpSize = std::max< uint32_t >(
@@ -205,6 +226,8 @@ bool PsnSaveData::get(const std::wstring& saveDataId, Ref< ISerializable >& outA
 
 bool PsnSaveData::set(const std::wstring& saveDataId, const SaveDataDesc& saveDataDesc, const ISerializable* attachment, bool replace)
 {
+	if (m_spaceNeededKB)
+		return false;
 	DynamicMemoryStream dms(false, true);
 	BinarySerializer(&dms).writeObject(attachment);
 
@@ -236,11 +259,13 @@ bool PsnSaveData::set(const std::wstring& saveDataId, const SaveDataDesc& saveDa
 		SYS_MEMORY_CONTAINER_ID_INVALID,
 		(void*)&saveData
 	);
+/*
 	if (err == CELL_SAVEDATA_ERROR_CBRESULT && m_spaceNeededKB)
 	{
 		cellGameContentErrorDialog(CELL_GAME_ERRDIALOG_NOSPACE_EXIT, m_spaceNeededKB, NULL); 
 		log::error << L"Not enough space to save" << Endl;
 	}
+*/
 	if (err != CELL_SAVEDATA_RET_OK)
 	{
 		log::error << PsnLogError::getSaveDataErrorString(err) << Endl;
