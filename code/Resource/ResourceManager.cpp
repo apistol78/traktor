@@ -163,16 +163,6 @@ void ResourceManager::dumpStatistics()
 	
 	log::debug << uint32_t(m_cache.size()) << L" cache entries" << Endl;
 	
-	/*
-	uint32_t count = 0;
-	for (std::map< Guid, Ref< ResourceHandle > >::iterator i = m_cache.begin(); i != m_cache.end(); ++i)
-	{
-		if (i->second->get())
-			++count;
-	}
-	log::debug << count << L" resource(s)" << Endl;
-	*/
-
 	double totalTime = 0.0;
 	for (std::map< const TypeInfo*, TimeCount >::const_iterator i = m_times.begin(); i != m_times.end(); ++i)
 		totalTime += i->second.time;
@@ -195,6 +185,16 @@ Ref< IResourceFactory > ResourceManager::findFactory(const TypeInfo& type)
 
 void ResourceManager::load(const Guid& guid, IResourceFactory* factory, ResourceHandle* handle)
 {
+	Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
+
+	// Do not attempt to load resource if thread has been stopped; application probably terminating
+	// so we try to leave early.
+	if (currentThread->stopped())
+	{
+		log::info << L"Resource loader thread stopped; skipped loading resource" << Endl;
+		return;
+	}
+
 	m_timeStack.push(0.0);
 
 	Timer timer;
@@ -212,7 +212,7 @@ void ResourceManager::load(const Guid& guid, IResourceFactory* factory, Resource
 		// Yield current thread; we want other threads to get some periodic CPU time to
 		// render loading screens etc. Use sleep as we want lower priority threads also
 		// to be able to run.
-		ThreadManager::getInstance().getCurrentThread()->sleep(0);
+		currentThread->sleep(0);
 	}
 	else
 		log::error << L"Unable to create resource \"" << guid.format() << L"\" (" << resourceType.getName() << L")" << Endl;
