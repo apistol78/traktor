@@ -450,7 +450,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getConstantFolded() const
 					
 						// Evaluate output constant.
 						Constant outputConstant(outputPinTypes[j]);
-						if (nodeTraits->evaluate(
+						if (nodeTraits->evaluateFull(
 							m_shaderGraph,
 							*i,
 							outputPin,
@@ -481,17 +481,18 @@ Ref< ShaderGraph > ShaderGraphStatic::getConstantFolded() const
 			uint32_t partialQualifiedCount = 0;
 			for (RefArray< Node >::iterator i = nodes.begin(); i != nodes.end(); )
 			{
-				// \hack Only valid for multiplications; need to add some sort of partial
-				// evaluation to traits.
-				if (!is_a< Mul >(*i))
+				// Partial nodes must have at least two inputs (at least one being constant).
+				int32_t inputPinCount = (*i)->getInputPinCount();
+				if (inputPinCount < 2)
 				{
 					++i;
 					continue;
 				}
 
-				bool inputZero = false;
+				// Get available constants.
+				inputConstants.resize(inputPinCount);
 
-				int32_t inputPinCount = (*i)->getInputPinCount();
+				int32_t constantInputCount = 0;
 				for (int32_t j = 0; j < inputPinCount; ++j)
 				{
 					const InputPin* inputPin = (*i)->getInputPin(j);
@@ -502,22 +503,83 @@ Ref< ShaderGraph > ShaderGraphStatic::getConstantFolded() const
 						continue;
 
 					std::map< const OutputPin*, Constant >::const_iterator it = outputConstants.find(outputPin);
-					if (it != outputConstants.end() && it->second.isZero())
+					if (it != outputConstants.end())
 					{
-						inputZero = true;
-						break;
+						inputConstants[j] = it->second;
+						++constantInputCount;
+					}
+					else
+						inputConstants[j] = Constant(PntVoid);	// All inputs which isn't constant is void.
+				}
+
+				// If no inputs are constant then we cannot evaluate a conclusive result.
+				if (constantInputCount <= 0)
+				{
+					++i;
+					continue;
+				}
+
+				const INodeTraits* nodeTraits = findNodeTraits(*i);
+				if (!nodeTraits)
+				{
+					++i;
+					continue;
+				}
+
+				// Evaluate output constant from partial constant input set.
+				int32_t outputPinCount = (*i)->getOutputPinCount();
+				int32_t outputConstantEvaluated = 0;
+				for (int32_t j = 0; j < outputPinCount; ++j)
+				{
+					const OutputPin* outputPin = (*i)->getOutputPin(j);
+					T_ASSERT (outputPin);
+						
+					Constant outputConstant;
+					if (nodeTraits->evaluatePartial(
+						m_shaderGraph,
+						*i,
+						outputPin,
+						&inputConstants[0],
+						outputConstant
+					))
+					{
+						outputConstants[outputPin] = outputConstant;
+						++partialQualifiedCount;
+						++outputConstantEvaluated;
 					}
 				}
 
-				if (inputZero)
-				{
-					outputConstants[(*i)->getOutputPin(0)] = Constant(0.0f);
-					++partialQualifiedCount;
-
+				if (outputConstantEvaluated >= outputPinCount)
 					i = nodes.erase(i);
-				}
 				else
 					++i;
+
+				//for (int32_t j = 0; j < inputPinCount; ++j)
+				//{
+				//	const InputPin* inputPin = (*i)->getInputPin(j);
+				//	T_ASSERT (inputPin);
+
+				//	const OutputPin* outputPin = m_shaderGraph->findSourcePin(inputPin);
+				//	if (!outputPin)
+				//		continue;
+
+				//	std::map< const OutputPin*, Constant >::const_iterator it = outputConstants.find(outputPin);
+				//	if (it != outputConstants.end() && it->second.isZero())
+				//	{
+				//		inputZero = true;
+				//		break;
+				//	}
+				//}
+
+				//if (inputZero)
+				//{
+				//	outputConstants[(*i)->getOutputPin(0)] = Constant(0.0f);
+				//	++partialQualifiedCount;
+
+				//	i = nodes.erase(i);
+				//}
+				//else
+				//	++i;
 			}
 
 			if (!partialQualifiedCount)

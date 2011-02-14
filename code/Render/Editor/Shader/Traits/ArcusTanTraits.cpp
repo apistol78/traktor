@@ -34,7 +34,7 @@ PinType ArcusTanTraits::getInputPinType(
 	return PntScalar2;
 }
 
-bool ArcusTanTraits::evaluate(
+bool ArcusTanTraits::evaluateFull(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const OutputPin* outputPin,
@@ -44,6 +44,17 @@ bool ArcusTanTraits::evaluate(
 {
 	outputConstant[0] = std::atan2(inputConstants[0][0], inputConstants[0][1]);
 	return true;
+}
+
+bool ArcusTanTraits::evaluatePartial(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const OutputPin* outputPin,
+	const Constant* inputConstants,
+	Constant& outputConstant
+) const
+{
+	return false;
 }
 
 	}

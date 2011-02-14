@@ -46,7 +46,18 @@ PinType SwitchNodeTraits::getInputPinType(
 		return outputPinTypes[0];
 }
 
-bool SwitchNodeTraits::evaluate(
+bool SwitchNodeTraits::evaluateFull(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const OutputPin* outputPin,
+	const Constant* inputConstants,
+	Constant& outputConstant
+) const
+{
+	return false;
+}
+
+bool SwitchNodeTraits::evaluatePartial(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const OutputPin* outputPin,

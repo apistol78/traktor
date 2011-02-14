@@ -67,7 +67,7 @@ PinType MathNodeTraits::getInputPinType(
 	return outputPinTypes[0];
 }
 
-bool MathNodeTraits::evaluate(
+bool MathNodeTraits::evaluateFull(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const OutputPin* outputPin,
@@ -198,6 +198,49 @@ bool MathNodeTraits::evaluate(
 		return false;
 
 	return true;
+}
+
+bool MathNodeTraits::evaluatePartial(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const OutputPin* outputPin,
+	const Constant* inputConstants,
+	Constant& outputConstant
+) const
+{
+	if (is_a< Div >(node))
+	{
+		if (inputConstants[0].isZero() || inputConstants[1].isZero())
+		{
+			outputConstant = Constant(0.0f);
+			return true;
+		}
+	}
+	else if (is_a< Mul >(node))
+	{
+		if (inputConstants[0].isZero() || inputConstants[1].isZero())
+		{
+			outputConstant = Constant(0.0f);
+			return true;
+		}
+	}
+	else if (is_a< MulAdd >(node))
+	{
+		if (inputConstants[2].isZero() && (inputConstants[0].isZero() || inputConstants[1].isZero()))
+		{
+			outputConstant = Constant(0.0f);
+			return true;
+		}
+	}
+	else if (is_a< Pow >(node))
+	{
+		if (inputConstants[0].isZero())
+		{
+			outputConstant = Constant(1.0f);
+			return true;
+		}
+	}
+	return false;
 }
 
 	}

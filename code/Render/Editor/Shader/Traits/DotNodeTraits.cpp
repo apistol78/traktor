@@ -34,7 +34,7 @@ PinType DotNodeTraits::getInputPinType(
 	return PntScalar4;
 }
 
-bool DotNodeTraits::evaluate(
+bool DotNodeTraits::evaluateFull(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const OutputPin* outputPin,
@@ -48,6 +48,22 @@ bool DotNodeTraits::evaluate(
 		inputConstants[0][2] * inputConstants[1][2] +
 		inputConstants[0][3] * inputConstants[1][3];
 	return true;
+}
+
+bool DotNodeTraits::evaluatePartial(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const OutputPin* outputPin,
+	const Constant* inputConstants,
+	Constant& outputConstant
+) const
+{
+	if (inputConstants[0].isZero() || inputConstants[1].isZero())
+	{
+		outputConstant = Constant(0.0f);
+		return true;
+	}
+	return false;
 }
 
 	}

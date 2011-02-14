@@ -34,7 +34,7 @@ PinType LengthNodeTraits::getInputPinType(
 	return PntScalar4;
 }
 
-bool LengthNodeTraits::evaluate(
+bool LengthNodeTraits::evaluateFull(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const OutputPin* outputPin,
@@ -49,6 +49,17 @@ bool LengthNodeTraits::evaluate(
 		inputConstants[0][3] * inputConstants[0][3]
 	);
 	return true;
+}
+
+bool LengthNodeTraits::evaluatePartial(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const OutputPin* outputPin,
+	const Constant* inputConstants,
+	Constant& outputConstant
+) const
+{
+	return false;
 }
 
 	}

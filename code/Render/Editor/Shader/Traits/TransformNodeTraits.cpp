@@ -37,7 +37,18 @@ PinType TransformNodeTraits::getInputPinType(
 		return PntMatrix;
 }
 
-bool TransformNodeTraits::evaluate(
+bool TransformNodeTraits::evaluateFull(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const OutputPin* outputPin,
+	const Constant* inputConstants,
+	Constant& outputConstant
+) const
+{
+	return false;
+}
+
+bool TransformNodeTraits::evaluatePartial(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const OutputPin* outputPin,

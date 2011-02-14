@@ -60,7 +60,18 @@ PinType MixNodeTraits::getInputPinType(
 		return PntVoid;
 }
 
-bool MixNodeTraits::evaluate(
+bool MixNodeTraits::evaluateFull(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const OutputPin* outputPin,
+	const Constant* inputConstants,
+	Constant& outputConstant
+) const
+{
+	return false;
+}
+
+bool MixNodeTraits::evaluatePartial(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const OutputPin* outputPin,

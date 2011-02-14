@@ -70,7 +70,7 @@ PinType SwizzleNodeTraits::getInputPinType(
 	return inputPinType;
 }
 
-bool SwizzleNodeTraits::evaluate(
+bool SwizzleNodeTraits::evaluateFull(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const OutputPin* outputPin,
@@ -106,6 +106,17 @@ bool SwizzleNodeTraits::evaluate(
 	}
 
 	return true;
+}
+
+bool SwizzleNodeTraits::evaluatePartial(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const OutputPin* outputPin,
+	const Constant* inputConstants,
+	Constant& outputConstant
+) const
+{
+	return false;
 }
 
 	}

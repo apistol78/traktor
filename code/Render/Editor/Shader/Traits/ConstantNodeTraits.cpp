@@ -48,7 +48,7 @@ PinType ConstantNodeTraits::getInputPinType(
 	return PntVoid;
 }
 
-bool ConstantNodeTraits::evaluate(
+bool ConstantNodeTraits::evaluateFull(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const OutputPin* outputPin,
@@ -78,6 +78,17 @@ bool ConstantNodeTraits::evaluate(
 		return false;
 
 	return true;
+}
+
+bool ConstantNodeTraits::evaluatePartial(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const OutputPin* outputPin,
+	const Constant* inputConstants,
+	Constant& outputConstant
+) const
+{
+	return false;
 }
 
 	}

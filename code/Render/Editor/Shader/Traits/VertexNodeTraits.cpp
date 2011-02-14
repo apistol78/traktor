@@ -64,7 +64,18 @@ PinType VertexNodeTraits::getInputPinType(
 		return PntVoid;
 }
 
-bool VertexNodeTraits::evaluate(
+bool VertexNodeTraits::evaluateFull(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const OutputPin* outputPin,
+	const Constant* inputConstants,
+	Constant& outputConstant
+) const
+{
+	return false;
+}
+
+bool VertexNodeTraits::evaluatePartial(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const OutputPin* outputPin,

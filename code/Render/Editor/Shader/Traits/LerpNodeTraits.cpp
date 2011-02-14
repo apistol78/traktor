@@ -40,7 +40,18 @@ PinType LerpNodeTraits::getInputPinType(
 		return outputPinTypes[0];
 }
 
-bool LerpNodeTraits::evaluate(
+bool LerpNodeTraits::evaluateFull(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const OutputPin* outputPin,
+	const Constant* inputConstants,
+	Constant& outputConstant
+) const
+{
+	return false;
+}
+
+bool LerpNodeTraits::evaluatePartial(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const OutputPin* outputPin,
