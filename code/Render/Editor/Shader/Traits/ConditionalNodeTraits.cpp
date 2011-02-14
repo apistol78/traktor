@@ -46,7 +46,7 @@ PinType ConditionalNodeTraits::getInputPinType(
 		return outputPinTypes[0];
 }
 
-bool ConditionalNodeTraits::evaluate(
+bool ConditionalNodeTraits::evaluateFull(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const OutputPin* outputPin,
@@ -95,6 +95,17 @@ bool ConditionalNodeTraits::evaluate(
 		return true;
 	}
 
+	return false;
+}
+
+bool ConditionalNodeTraits::evaluatePartial(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const OutputPin* outputPin,
+	const Constant* inputConstants,
+	Constant& outputConstant
+) const
+{
 	return false;
 }
 

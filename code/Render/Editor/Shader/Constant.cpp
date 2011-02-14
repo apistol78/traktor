@@ -56,11 +56,16 @@ int32_t Constant::getWidth() const
 
 bool Constant::isZero() const
 {
-	for (int32_t i = 0; i < getWidth(); ++i)
+	int32_t width = getWidth();
+	if (width <= 0)
+		return false;
+
+	for (int32_t i = 0; i < width; ++i)
 	{
 		if (std::abs(m_data[i]) >= FUZZY_EPSILON)
 			return false;
 	}
+
 	return true;
 }
 

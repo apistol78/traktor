@@ -49,7 +49,18 @@ PinType SamplerNodeTraits::getInputPinType(
 	}
 }
 
-bool SamplerNodeTraits::evaluate(
+bool SamplerNodeTraits::evaluateFull(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const OutputPin* outputPin,
+	const Constant* inputConstants,
+	Constant& outputConstant
+) const
+{
+	return false;
+}
+
+bool SamplerNodeTraits::evaluatePartial(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const OutputPin* outputPin,
