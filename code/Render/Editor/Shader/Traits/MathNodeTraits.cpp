@@ -166,7 +166,7 @@ bool MathNodeTraits::evaluateFull(
 	else if (is_a< Pow >(node))
 	{
 		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
-			outputConstant[i] = std::powf(inputConstants[0][i], inputConstants[1][i]);
+			outputConstant[i] = std::pow(inputConstants[0][i], inputConstants[1][i]);
 	}
 	//else if (is_a< Reflect >(node))
 	else if (is_a< Sign >(node))
@@ -182,7 +182,7 @@ bool MathNodeTraits::evaluateFull(
 	else if (is_a< Sqrt >(node))
 	{
 		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
-			outputConstant[i] = std::sqrtf(inputConstants[0][i]);
+			outputConstant[i] = std::sqrt(inputConstants[0][i]);
 	}
 	else if (is_a< Sub >(node))
 	{

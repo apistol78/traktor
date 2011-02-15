@@ -1,3 +1,4 @@
+#include <cmath>
 #include "Core/Math/Const.h"
 #include "Render/Editor/Shader/Constant.h"
 
@@ -62,7 +63,7 @@ bool Constant::isZero() const
 
 	for (int32_t i = 0; i < width; ++i)
 	{
-		if (std::abs(m_data[i]) >= FUZZY_EPSILON)
+		if (fabs(m_data[i]) >= FUZZY_EPSILON)
 			return false;
 	}
 
