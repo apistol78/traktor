@@ -438,8 +438,8 @@ void TerrainEntity::render(
 		const Vector4& patchOrigin = i->patchOrigin;
 
 		// Calculate which lods to use based one distance to patch center.
-		float lodDistance1 = pow(clamp(i->distance / m_patchLodDistance, 0.0f, 1.0f), 1.0f);
-		float lodDistance2 = pow(clamp(i->distance / m_surfaceLodDistance, 0.0f, 1.0f), 1.0f);
+		float lodDistance1 = std::pow(clamp(i->distance / m_patchLodDistance, 0.0f, 1.0f), 1.0f);
+		float lodDistance2 = std::pow(clamp(i->distance / m_surfaceLodDistance, 0.0f, 1.0f), 1.0f);
 
 		const int c_patchLodSteps = sizeof_array(m_primitives) - 1;
 		const int c_surfaceLodSteps = 3;
