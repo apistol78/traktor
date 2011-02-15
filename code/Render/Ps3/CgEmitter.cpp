@@ -1190,7 +1190,7 @@ bool emitSwitch(CgContext& cx, Switch* node)
 
 	const std::vector< int32_t >& caseConditions = node->getCases();
 	std::vector< std::wstring > caseBranches;
-	std::vector< CgVariable > caseInputs;
+	RefArray< CgVariable > caseInputs;
 	CgType outputType = CtVoid;
 
 	// Conditional branches.
@@ -1204,11 +1204,11 @@ bool emitSwitch(CgContext& cx, Switch* node)
 		const InputPin* caseInput = node->getInputPin(i + 2);
 		T_ASSERT (caseInput);
 
-		CgVariable* caseInputVariable = cx.emitInput(caseInput);
+		Ref< CgVariable > caseInputVariable = cx.emitInput(caseInput);
 		T_ASSERT (caseInputVariable);
 
 		caseBranches.push_back(fs.str());
-		caseInputs.push_back(*caseInputVariable);
+		caseInputs.push_back(caseInputVariable);
 		outputType = std::max(outputType, caseInputVariable->getType());
 
 		cx.getShader().popScope();
@@ -1225,11 +1225,11 @@ bool emitSwitch(CgContext& cx, Switch* node)
 		const InputPin* caseInput = node->getInputPin(1);
 		T_ASSERT (caseInput);
 
-		CgVariable* caseInputVariable = cx.emitInput(caseInput);
+		Ref< CgVariable > caseInputVariable = cx.emitInput(caseInput);
 		T_ASSERT (caseInputVariable);
 
 		caseBranches.push_back(fs.str());
-		caseInputs.push_back(*caseInputVariable);
+		caseInputs.push_back(caseInputVariable);
 		outputType = std::max(outputType, caseInputVariable->getType());
 
 		cx.getShader().popScope();
@@ -1237,7 +1237,7 @@ bool emitSwitch(CgContext& cx, Switch* node)
 	}
 
 	// Create output variable.
-	CgVariable* out = cx.emitOutput(node, L"Output", outputType);
+	Ref< CgVariable > out = cx.emitOutput(node, L"Output", outputType);
 	assign(f, out) << L"0;" << Endl;
 
 	//if (node->getBranch() == Switch::BrStatic)
@@ -1252,7 +1252,7 @@ bool emitSwitch(CgContext& cx, Switch* node)
 		f << IncreaseIndent;
 
 		f << caseBranches[i];
-		f << out->getName() << L" = " << caseInputs[i].cast(outputType) << L";" << Endl;
+		f << out->getName() << L" = " << caseInputs[i]->cast(outputType) << L";" << Endl;
 
 		f << DecreaseIndent;
 		f << L"}" << Endl;
@@ -1266,7 +1266,7 @@ bool emitSwitch(CgContext& cx, Switch* node)
 	}
 
 	f << caseBranches.back();
-	f << out->getName() << L" = " << caseInputs.back().cast(outputType) << L";" << Endl;
+	f << out->getName() << L" = " << caseInputs.back()->cast(outputType) << L";" << Endl;
 
 	if (!caseConditions.empty())
 	{
