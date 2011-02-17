@@ -30,6 +30,8 @@ private:
 	void Stage_get_height(CallArgs& ca);
 
 	void Stage_set_height(CallArgs& ca);
+
+	void Stage_addListener(CallArgs& ca);
 };
 
 	}

@@ -20,6 +20,8 @@ AsStage::AsStage()
 	prototype->addProperty("width", createNativeFunction(this, &AsStage::Stage_get_width), createNativeFunction(this, &AsStage::Stage_set_width));
 	prototype->addProperty("height", createNativeFunction(this, &AsStage::Stage_get_height), createNativeFunction(this, &AsStage::Stage_set_height));
 
+	prototype->setMember("addListener", ActionValue(createNativeFunction(this, &AsStage::Stage_addListener)));
+
 	prototype->setReadOnly();
 
 	setMember("prototype", ActionValue(prototype));
@@ -50,6 +52,11 @@ void AsStage::Stage_get_height(CallArgs& ca)
 void AsStage::Stage_set_height(CallArgs& ca)
 {
 	log::error << L"Stage.height is read-only" << Endl;
+}
+
+void AsStage::Stage_addListener(CallArgs& ca)
+{
+	log::error << L"Stage.addListener not implemented" << Endl;
 }
 
 	}

@@ -1,7 +1,8 @@
 #include <windows.h>
 #include <tchar.h>
-#include <sstream>
 #include <csignal>
+#include <set>
+#include <sstream>
 #include "Core/Debug/Debugger.h"
 #include "Core/Debug/Win32/Resource.h"
 #include "Core/Misc/TString.h"
@@ -11,6 +12,14 @@ namespace traktor
 	namespace
 	{
 
+enum EndCode
+{
+	EcBreak,
+	EcAbort,
+	EcIgnore,
+	EcIgnoreAlways
+};
+
 struct DialogParams
 {
 	std::string expression;
@@ -18,6 +27,8 @@ struct DialogParams
 	int line;
 	std::wstring message;
 };
+
+std::set< std::string > s_ignored;
 
 INT_PTR CALLBACK DialogProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -38,9 +49,19 @@ INT_PTR CALLBACK DialogProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 		switch (wParam)
 		{
 		case ID_BREAK:
-		case ID_IGNORE:
+			EndDialog(hWnd, EcBreak);
+			return TRUE;
+
 		case ID_ABORT:
-			EndDialog(hWnd, wParam);
+			EndDialog(hWnd, EcAbort);
+			return TRUE;
+
+		case ID_IGNORE:
+			{
+				// If user hold shift then we assume "Ignore always".
+				bool always = bool(GetAsyncKeyState(VK_SHIFT) != 0);
+				EndDialog(hWnd, always ? EcIgnoreAlways : EcIgnore);
+			}
 			return TRUE;
 		}
 		break;
@@ -68,6 +89,13 @@ void Debugger::assertionFailed(const std::string& expression, const std::string&
 	HINSTANCE hInstance = GetModuleHandle(NULL);
 #endif
 
+	std::stringstream fileId;
+	fileId << file << ":" << line;
+
+	// Have this assert been ignored forever then we just keep going.
+	if (s_ignored.find(fileId.str()) != s_ignored.end())
+		return;
+
 	DialogParams params = { expression, file, line, message };
 
 	INT_PTR result = DialogBoxParam(
@@ -78,13 +106,15 @@ void Debugger::assertionFailed(const std::string& expression, const std::string&
 		reinterpret_cast< LPARAM >(&params)
 	);
 
-	if (result == ID_BREAK)
+	if (result == EcBreak)
 		__debugbreak();
-	else if (result == ID_ABORT)
+	else if (result == EcAbort)
 	{
 		raise(SIGABRT);
 		exit(3);
 	}
+	else if (result == EcIgnoreAlways)
+		s_ignored.insert(fileId.str());
 }
 
 void Debugger::breakDebugger()

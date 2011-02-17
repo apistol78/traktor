@@ -1151,6 +1151,9 @@ void ActionVM1::execute(ActionFrame* frame) const
 			Ref< ActionObject > target = targetValue.getObjectSafe();
 			Ref< ActionFunction > method;
 
+			if (!target)
+				target = movieClip;
+
 			if (target)
 			{
 				if (classConstructorName.isString())
