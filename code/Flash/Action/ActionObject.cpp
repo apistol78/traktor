@@ -86,17 +86,25 @@ ActionObject* ActionObject::getPrototype(ActionContext* context)
 		if (protoValue.isObject())
 			return protoValue.getObject();
 		else if (protoValue.isString())
+		{
 			classObject = context->lookupClass(protoValue.getString());
+			if (classObject)
+			{
+				// Replace string identifier with pointer to actual class.
+				m_members["__proto__"] = ActionValue(classObject);
+				return classObject;
+			}
+		}
 	}
 
-	if (!classObject)
+	// No prototype defined; assume plain object.
+	classObject = context->lookupClass("Object");
+	if (classObject)
 	{
-		// No such class exist; default to plain "Object".
-		if (!(classObject = context->lookupClass("Object")))
-			return 0;
+		// Replace string identifier with pointer to actual class.
+		m_members["__proto__"] = ActionValue(classObject);
 	}
 
-	m_members["__proto__"] = ActionValue(classObject);
 	return classObject;
 }
 

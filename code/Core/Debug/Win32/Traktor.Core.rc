@@ -74,8 +74,9 @@ BEGIN
     PUSHBUTTON      "Ignore",ID_IGNORE,156,126,50,14
     PUSHBUTTON      "Abort",ID_ABORT,209,126,50,14
     LTEXT           "[ Expression ]",IDC_EXPRESSION,7,7,252,13,SS_SUNKEN
-    LTEXT           "[ Message ]",IDC_MESSAGE,7,39,252,80,SS_SUNKEN
+    LTEXT           "[ Message ]",IDC_MESSAGE,7,39,252,75,SS_SUNKEN
     LTEXT           "[ File ]",IDC_FILE,7,23,252,13,SS_SUNKEN
+    LTEXT           "Shift+Ignore to always ignore",IDC_STATIC,128,116,131,8,0,WS_EX_RIGHT
 END
 
 

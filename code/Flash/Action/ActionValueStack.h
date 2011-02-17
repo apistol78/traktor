@@ -94,7 +94,7 @@ public:
 	}
 
 private:
-	enum { MaxStackDepth = 32 };
+	enum { MaxStackDepth = 64 };
 	ActionValue* m_stack;
 	int32_t m_index;
 };
