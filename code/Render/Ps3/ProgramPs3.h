@@ -1,10 +1,9 @@
 #ifndef traktor_render_ProgramPs3_H
 #define traktor_render_ProgramPs3_H
 
-#include <map>
 #include <vector>
 #include "Core/RefArray.h"
-#include "Core/Containers/AlignedVector.h"
+#include "Core/Containers/SmallMap.h"
 #include "Render/IProgram.h"
 #include "Render/Ps3/TypesPs3.h"
 
@@ -96,8 +95,8 @@ private:
 	std::vector< uint32_t > m_pixelTargetSizeUCodeOffsets;
 	std::vector< ProgramSampler > m_vertexSamplers;
 	std::vector< ProgramSampler > m_pixelSamplers;
-	std::map< handle_t, ScalarParameter > m_scalarParameterMap;
-	std::map< handle_t, uint32_t > m_textureParameterMap;
+	SmallMap< handle_t, ScalarParameter > m_scalarParameterMap;
+	SmallMap< handle_t, uint32_t > m_textureParameterMap;
 	AlignedVector< float > m_scalarParameterData;
 	RefArray< ITexture > m_textureParameterData;
 	uint8_t m_dirty;
