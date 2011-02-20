@@ -173,6 +173,9 @@ uint32_t EmitterContext::emitInstruction(
 	}
 	else
 	{
+		if (opcode == OpMove && dest->reg == src1->reg)
+			return getCurrentAddress();
+
 		if (dest)
 			inst.dest = dest->reg;
 		if (src1)
