@@ -116,18 +116,24 @@ void GraphicsSystemGdi::flip(bool waitVBlank)
 	// 565
 	if (secondarySurfaceDesc.pixelFormat == PfeR5G6B5)
 	{
+		uint32_t* pm = static_cast< uint32_t* >(primaryMemory);
+		uint16_t* sm = static_cast< uint16_t* >(secondaryMemory);
+
 		for (uint32_t y = 0; y < primarySurfaceDesc.height; ++y)
 		{
 			for (uint32_t x = 0; x < primarySurfaceDesc.width; ++x)
 			{
-				uint16_t c = ((uint16_t*)secondaryMemory)[x + y * secondarySurfaceDesc.pitch / 2];
+				uint16_t c = sm[x];
 
 				uint32_t r = (c & 0xf800) >> 8;
 				uint32_t g = (c & 0x07e0) >> 3;
 				uint32_t b = (c & 0x001f) << 3;
 
-				((uint32_t*)primaryMemory)[x + y * primarySurfaceDesc.pitch / 4] = 0xff000000 | (r << 16) | (g << 8) | b;
+				pm[x] = 0xff000000 | (r << 16) | (g << 8) | b;
 			}
+
+			pm += primarySurfaceDesc.pitch / 4;
+			sm += secondarySurfaceDesc.pitch / 2;
 		}
 	}
 
