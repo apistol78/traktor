@@ -128,7 +128,7 @@ bool PsnSessionManager::create(const PsnCreateDesc& desc)
 
 	m_achievements = new PsnAchievements(desc.achievements, m_trophyContext, m_trophyHandle);
 	m_leaderboards = new PsnLeaderboards();
-	m_saveData = new PsnSaveData(trophySpaceKB);
+	m_saveData = new PsnSaveData(trophySpaceKB, desc.saveIconBuffer, desc.saveIconSize);
 	m_statistics = new PsnStatistics();
 
 	SystemCallback::getInstance().add(&PsnSessionManager::systemCallback);
