@@ -17,6 +17,9 @@ WorldRenderView::WorldRenderView()
 ,	m_time(0.0f)
 ,	m_deltaTime(0.0f)
 ,	m_interval(0.0f)
+,	m_interocularDistance(4.5f)
+,	m_distortionValue(0.8f)
+,	m_screenPlaneDistance(13.0f)
 {
 	for (int i = 0; i < MaxLightCount; ++i)
 	{
@@ -75,6 +78,21 @@ void WorldRenderView::setTimes(float time, float deltaTime, float interval)
 	m_time = time;
 	m_deltaTime = deltaTime;
 	m_interval = interval;
+}
+
+void WorldRenderView::setInterocularDistance(float interocularDistance)
+{
+	m_interocularDistance = interocularDistance;
+}
+
+void WorldRenderView::setDistortionValue(float distortionValue)
+{
+	m_distortionValue = distortionValue;
+}
+
+void WorldRenderView::setScreenPlaneDistance(float screenPlaneDistance)
+{
+	m_screenPlaneDistance = screenPlaneDistance;
 }
 
 void WorldRenderView::addLight(const Light& light)

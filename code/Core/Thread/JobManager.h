@@ -31,12 +31,17 @@ class T_DLLCLASS Job
 public:
 	virtual bool wait(int32_t timeout = -1);
 
+	bool stopped() const;
+
+	void stop() { m_stopped = true; }
+
 private:
 	friend class JobManager;
 
 	Ref< Functor > m_functor;
 	Event& m_jobFinishedEvent;
 	volatile bool m_finished;
+	volatile bool m_stopped;
 
 	Job(Functor* functor, Event& jobFinishedEvent);
 };
@@ -69,6 +74,9 @@ public:
 	 * work for kernel scheduler.
 	 */
 	void fork(const RefArray< Functor >& functors);
+
+	/*! \brief Stop all worker threads. */
+	void stop();
 
 protected:
 	virtual void destroy();

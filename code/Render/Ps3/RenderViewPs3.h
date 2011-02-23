@@ -60,6 +60,8 @@ public:
 
 	virtual bool isFullScreen() const;
 
+	virtual bool setGamma(float gamma);
+
 	virtual void setViewport(const Viewport& viewport);
 
 	virtual Viewport getViewport();
@@ -139,6 +141,7 @@ private:
 	int32_t m_width;
 	int32_t m_height;
 	Viewport m_viewport;
+	float m_gamma;
 
 	// Color buffers.
 	MemoryHeapObject* m_colorObject;

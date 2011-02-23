@@ -195,6 +195,11 @@ bool RenderViewOpenGL::isFullScreen() const
 #endif
 }
 
+bool RenderViewOpenGL::setGamma(float gamma)
+{
+	return false;
+}
+
 void RenderViewOpenGL::setViewport(const Viewport& viewport)
 {
 	T_ANONYMOUS_VAR(IContext::Scope)(m_context);

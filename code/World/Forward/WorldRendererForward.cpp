@@ -35,10 +35,6 @@ const Guid c_shadowMaskProjectionSettingsMedium(L"{57FD53AF-547A-9F46-8C94-B4D24
 const Guid c_shadowMaskProjectionSettingsHigh(L"{FABC4017-4D65-604D-B9AB-9FC03FE3CE43}");
 const Guid c_shadowMaskProjectionSettingsHighest(L"{5AFC153E-6FCE-3142-9E1B-DD3722DA447F}");
 
-const static float c_interocularDistance = 6.5f;
-const static float c_distortionValue = 0.8f;
-const static float c_screenPlaneDistance = 13.0f;
-
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRendererForward", 0, WorldRendererForward, IWorldRenderer)
@@ -263,7 +259,6 @@ void WorldRendererForward::createRenderView(const WorldViewPerspective& worldVie
 {
 	float viewNearZ = m_settings.viewNearZ;
 	float viewFarZ = m_settings.viewFarZ;
-	float depthRange = m_settings.depthRange;
 
 	Frustum viewFrustum;
 	viewFrustum.buildPerspective(worldView.fov, worldView.aspect, viewNearZ, viewFarZ);
@@ -277,7 +272,6 @@ void WorldRendererForward::createRenderView(const WorldViewPerspective& worldVie
 void WorldRendererForward::createRenderView(const WorldViewOrtho& worldView, WorldRenderView& outRenderView) const
 {
 	float viewFarZ = m_settings.viewFarZ;
-	float depthRange = m_settings.depthRange;
 
 	Frustum viewFrustum;
 	viewFrustum.buildOrtho(worldView.width, worldView.height, -viewFarZ, viewFarZ);
@@ -325,6 +319,11 @@ void WorldRendererForward::build(WorldRenderView& worldRenderView, Entity* entit
 	else
 		buildNoShadows(worldRenderView, entity, frame);
 
+	// Prepare stereoscopic projection.
+	float screenWidth = float(m_renderView->getWidth());
+	f.A = std::abs((worldRenderView.getDistortionValue() * worldRenderView.getInterocularDistance()) / screenWidth);
+	f.B = std::abs(f.A * worldRenderView.getScreenPlaneDistance() * (1.0f / f.projection(1, 1)));
+
 	m_count++;
 }
 
@@ -333,13 +332,11 @@ void WorldRendererForward::render(uint32_t flags, int frame, render::EyeType eye
 	Frame& f = m_frames[frame];
 	Matrix44 projection;
 
-	// Prepare stereoscopic projection.
+	// Calculate stereoscopic projection.
 	if (eye != render::EtCyclop)
 	{
-		float screenWidth = float(m_renderView->getWidth());
-		
-		float A = std::abs((c_distortionValue * c_interocularDistance) / screenWidth);
-		float B = std::abs(A * c_screenPlaneDistance * (1.0f / f.projection(1, 1)));
+		float A = f.A;
+		float B = f.B;
 
 		if (eye == render::EtLeft)
 			A = -A;

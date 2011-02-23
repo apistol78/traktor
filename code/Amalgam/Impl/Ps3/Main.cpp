@@ -192,6 +192,7 @@ int32_t amalgamMain(
 		// Save user settings as a save-data.
 		saveSettings(environment, settings, settingsSaveDataId, settingsSaveDataDesc, true);
 
+		log::debug << L"Destroying application..." << Endl;
 		application->destroy();
 		application = 0;
 	}

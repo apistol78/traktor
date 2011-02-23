@@ -56,6 +56,8 @@ public:
 
 	virtual bool isFullScreen() const;
 
+	virtual bool setGamma(float gamma);
+
 	virtual void setViewport(const Viewport& viewport);
 
 	virtual Viewport getViewport();

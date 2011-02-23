@@ -62,6 +62,11 @@ bool RenderViewCapture::isFullScreen() const
 	return m_renderView->isFullScreen();
 }
 
+bool RenderViewCapture::setGamma(float gamma)
+{
+	return m_renderView->setGamma(gamma);
+}
+
 void RenderViewCapture::setViewport(const Viewport& viewport)
 {
 	m_renderView->setViewport(viewport);

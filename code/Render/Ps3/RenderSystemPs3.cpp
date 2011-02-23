@@ -101,11 +101,27 @@ bool RenderSystemPs3::create(const RenderSystemCreateDesc& desc)
 		sys_timer_sleep(1);
 	}
 
+#if defined(_DEBUG)
+	log::debug << L"Supported video output refresh rate(s):";
+	if (videoState.displayMode.refreshRates & CELL_VIDEO_OUT_REFRESH_RATE_59_94HZ)
+		log::debug << L" 59.94Hz";
+	if (videoState.displayMode.refreshRates & CELL_VIDEO_OUT_REFRESH_RATE_50HZ)
+		log::debug << L" 50Hz";
+	if (videoState.displayMode.refreshRates & CELL_VIDEO_OUT_REFRESH_RATE_60HZ)
+		log::debug << L" 60Hz";
+	if (videoState.displayMode.refreshRates & CELL_VIDEO_OUT_REFRESH_RATE_30HZ)
+		log::debug << L" 30Hz";
+	log::debug << Endl;
+#endif
+
 	// Determine supported display modes.
 	for (const ResolutionDesc* i = c_resolutionDescs; i->id; ++i)
 	{
-		if (!(i->refreshRates & videoState.displayMode.refreshRates))
+		if (!i->stereoscopic && !(i->refreshRates & videoState.displayMode.refreshRates))
+		{
+			log::debug << L"Skipping unsupported display mode " << i->width << L"*" << i->height << Endl;
 			continue;
+		}
 
 		if (cellVideoOutGetResolutionAvailability(CELL_VIDEO_OUT_PRIMARY, i->id, CELL_VIDEO_OUT_ASPECT_AUTO, 0))
 			m_resolutions.push_back(i);
@@ -116,8 +132,8 @@ bool RenderSystemPs3::create(const RenderSystemCreateDesc& desc)
 
 void RenderSystemPs3::destroy()
 {
-	cellGcmSetWaitFlip();
-	cellGcmFinish(1);
+	//cellGcmSetWaitFlip();
+	//cellGcmFinish(1);
 }
 
 uint32_t RenderSystemPs3::getDisplayModeCount() const

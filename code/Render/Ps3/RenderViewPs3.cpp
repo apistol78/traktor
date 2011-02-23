@@ -73,6 +73,7 @@ RenderViewPs3::RenderViewPs3(
 ,	m_zcullArea(zcullArea)
 ,	m_width(0)
 ,	m_height(0)
+,	m_gamma(1.0f)
 ,	m_colorObject(0)
 ,	m_colorPitch(0)
 ,	m_targetSurfaceAntialias(CELL_GCM_SURFACE_CENTER_1)
@@ -128,56 +129,56 @@ bool RenderViewPs3::create(const RenderViewDefaultDesc& desc)
 
 void RenderViewPs3::close()
 {
-	blackOut();
+	//blackOut();
 
-	if (m_zcullTile.index != ~0UL)
-	{
-		cellGcmUnbindZcull(m_zcullTile.index);
-		m_zcullArea.free(m_zcullTile.index);
-		m_zcullTile.index = ~0UL;
-	}
+	//if (m_zcullTile.index != ~0UL)
+	//{
+	//	cellGcmUnbindZcull(m_zcullTile.index);
+	//	m_zcullArea.free(m_zcullTile.index);
+	//	m_zcullTile.index = ~0UL;
+	//}
 
-	if (m_depthTile.index != ~0UL)
-	{
-		cellGcmUnbindTile(m_depthTile.index);
-		m_tileArea.free(m_depthTile.index);
-		m_depthTile.index = ~0UL;
-	}
+	//if (m_depthTile.index != ~0UL)
+	//{
+	//	cellGcmUnbindTile(m_depthTile.index);
+	//	m_tileArea.free(m_depthTile.index);
+	//	m_depthTile.index = ~0UL;
+	//}
 
-	if (m_targetTileInfo.index != ~0UL)
-	{
-		cellGcmUnbindTile(m_targetTileInfo.index);
-		m_tileArea.free(m_targetTileInfo.index);
-		m_targetTileInfo.index = ~0UL;
-	}
+	//if (m_targetTileInfo.index != ~0UL)
+	//{
+	//	cellGcmUnbindTile(m_targetTileInfo.index);
+	//	m_tileArea.free(m_targetTileInfo.index);
+	//	m_targetTileInfo.index = ~0UL;
+	//}
 
-	for (int i = 0; i < sizeof_array(m_colorTile); ++i)
-	{
-		if (m_colorTile[i].index != ~0UL)
-		{
-			cellGcmUnbindTile(m_colorTile[i].index);
-			m_tileArea.free(m_colorTile[i].index);
-			m_colorTile[i].index = ~0UL;
-		}
-	}
+	//for (int i = 0; i < sizeof_array(m_colorTile); ++i)
+	//{
+	//	if (m_colorTile[i].index != ~0UL)
+	//	{
+	//		cellGcmUnbindTile(m_colorTile[i].index);
+	//		m_tileArea.free(m_colorTile[i].index);
+	//		m_colorTile[i].index = ~0UL;
+	//	}
+	//}
 
-	if (m_depthObject)
-	{
-		m_depthObject->free();
-		m_depthObject = 0;
-	}
+	//if (m_depthObject)
+	//{
+	//	m_depthObject->free();
+	//	m_depthObject = 0;
+	//}
 
-	if (m_targetData)
-	{
-		m_targetData->free();
-		m_targetData = 0;
-	}
+	//if (m_targetData)
+	//{
+	//	m_targetData->free();
+	//	m_targetData = 0;
+	//}
 
-	if (m_colorObject)
-	{
-		m_colorObject->free();
-		m_colorObject = 0;
-	}
+	//if (m_colorObject)
+	//{
+	//	m_colorObject->free();
+	//	m_colorObject = 0;
+	//}
 }
 
 bool RenderViewPs3::reset(const RenderViewDefaultDesc& desc)
@@ -576,6 +577,19 @@ bool RenderViewPs3::isActive() const
 
 bool RenderViewPs3::isFullScreen() const
 {
+	return true;
+}
+
+bool RenderViewPs3::setGamma(float gamma)
+{
+	if (m_gamma == gamma)
+		return true;
+
+	int32_t res = cellVideoOutSetGamma(CELL_VIDEO_OUT_PRIMARY, clamp(gamma, 0.8f, 1.2f));
+	if (res < 0)
+		return false;
+
+	m_gamma = gamma;
 	return true;
 }
 

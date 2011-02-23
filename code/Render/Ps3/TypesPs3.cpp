@@ -16,7 +16,7 @@ const ResolutionDesc c_resolutionDescs[] =
 {
 	{ 1920, 1080, c_allRefreshRates, false, CELL_VIDEO_OUT_RESOLUTION_1080 },
 	{ 1280, 720, c_allRefreshRates, false, CELL_VIDEO_OUT_RESOLUTION_720 },
-	{ 720, 576, CELL_VIDEO_OUT_REFRESH_RATE_50HZ, CELL_VIDEO_OUT_RESOLUTION_576 },
+	{ 720, 576, CELL_VIDEO_OUT_REFRESH_RATE_50HZ, false, CELL_VIDEO_OUT_RESOLUTION_576 },
 	{ 720, 480, c_allRefreshRates, false, CELL_VIDEO_OUT_RESOLUTION_480 },
 	{ 1600, 1080, c_allRefreshRates, false, CELL_VIDEO_OUT_RESOLUTION_1600x1080 },
 	{ 1440, 1080, c_allRefreshRates, false, CELL_VIDEO_OUT_RESOLUTION_1440x1080 },

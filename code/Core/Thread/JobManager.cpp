@@ -26,10 +26,19 @@ bool Job::wait(int32_t timeout)
 	return true;
 }
 
+bool Job::stopped() const
+{
+	if (m_stopped)
+		return true;
+	else
+		return ThreadManager::getInstance().getCurrentThread()->stopped();
+}
+
 Job::Job(Functor* functor, Event& jobFinishedEvent)
 :	m_functor(functor)
 ,	m_jobFinishedEvent(jobFinishedEvent)
 ,	m_finished(false)
+,	m_stopped(false)
 {
 }
 
@@ -73,6 +82,12 @@ void JobManager::fork(const RefArray< Functor >& functors)
 		jobs[i]->wait();
 }
 
+void JobManager::stop()
+{
+	for (uint32_t i = 0; i < uint32_t(m_workerThreads.size()); ++i)
+		m_workerThreads[i]->stop(0);
+}
+
 void JobManager::threadWorker(int id)
 {
 	Thread* thread = m_workerThreads[id];
@@ -85,6 +100,7 @@ void JobManager::threadWorker(int id)
 			T_ASSERT (!job->m_finished);
 			(*job->m_functor)();
 			job->m_finished = true;
+			job->m_stopped = true;
 			m_jobFinishedEvent.broadcast();
 		}
 
