@@ -19,7 +19,7 @@ class PsnSaveData : public ISaveDataProvider
 	T_RTTI_CLASS;
 
 public:
-	PsnSaveData(int32_t excessSpaceNeededKB);
+	PsnSaveData(int32_t excessSpaceNeededKB, const uint8_t* saveIconBuffer, int32_t saveIconSize);
 
 	~PsnSaveData();
 	virtual bool enumerate(std::set< std::wstring >& outSaveDataIds);
@@ -33,6 +33,8 @@ private:
 	int32_t m_hddFreeSpaceKB;
 	int32_t m_spaceNeededKB;
 	int32_t m_currentSavedataSizeKB;
+	const uint8_t* m_saveIconBuffer;
+	int32_t m_saveIconSize;
 
 	Thread* m_threadDialog;
 

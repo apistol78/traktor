@@ -77,18 +77,24 @@ struct LoadData
 	}
 };
 
-struct SaveData
+struct SaveDataHelper
 {
 	PsnSaveData* m_this;
 	SaveDataDesc m_desc;
-	const std::vector< uint8_t >& m_buffer;
-	bool m_bufferPending;
+	const std::vector< uint8_t >& m_dataBuffer;
+	const uint8_t* m_iconBuffer;
+	int32_t m_iconSize;
+	bool m_dataPending;
+	bool m_iconPending;
 
-	SaveData(PsnSaveData* this_, const SaveDataDesc& desc, const std::vector< uint8_t >& buffer)
+	SaveDataHelper(PsnSaveData* this_, const SaveDataDesc& desc, const std::vector< uint8_t >& dataBuffer, const uint8_t* iconBuffer, int32_t iconSize)
 	:	m_this(this_)
 	,	m_desc(desc)
-	,	m_buffer(buffer)	
-	,	m_bufferPending(false)
+	,	m_dataBuffer(dataBuffer)
+	,	m_iconBuffer(iconBuffer)
+	,	m_iconSize(iconSize)
+	,	m_dataPending(false)
+	,	m_iconPending(false)
 	{
 	}
 };
@@ -97,11 +103,13 @@ struct SaveData
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.online.PsnSaveData", PsnSaveData, ISaveDataProvider)
 
-PsnSaveData::PsnSaveData(int32_t excessSpaceNeededKB)
+PsnSaveData::PsnSaveData(int32_t excessSpaceNeededKB, const uint8_t* saveIconBuffer, int32_t saveIconSize)
 :	m_excessSpaceNeededKB(excessSpaceNeededKB)
 ,	m_hddFreeSpaceKB(0)
 ,	m_spaceNeededKB(0)
 ,	m_threadDialog(0)
+,	m_saveIconBuffer(saveIconBuffer)
+,	m_saveIconSize(saveIconSize)
 {
 }
 
@@ -248,7 +256,7 @@ bool PsnSaveData::set(const std::wstring& saveDataId, const SaveDataDesc& saveDa
 	std::strcpy(dirName, s_dirNamePrefix);
 	std::strcat(dirName, wstombs(toUpper(saveDataId)).c_str());
 
-	SaveData saveData(this, saveDataDesc, dms.getBuffer()); 
+	SaveDataHelper saveDataHelper(this, saveDataDesc, dms.getBuffer(), m_saveIconBuffer, m_saveIconSize); 
 	int32_t err = cellSaveDataAutoSave2(
 		CELL_SAVEDATA_VERSION_CURRENT,
 		dirName,
@@ -257,7 +265,7 @@ bool PsnSaveData::set(const std::wstring& saveDataId, const SaveDataDesc& saveDa
 		&callbackSaveStat,
 		&callbackSaveFile,
 		SYS_MEMORY_CONTAINER_ID_INVALID,
-		(void*)&saveData
+		(void*)&saveDataHelper
 	);
 /*
 	if (err == CELL_SAVEDATA_ERROR_CBRESULT && m_spaceNeededKB)
@@ -389,9 +397,9 @@ void PsnSaveData::callbackLoadFile(CellSaveDataCBResult* cbResult, CellSaveDataF
 
 void PsnSaveData::callbackSaveStat(CellSaveDataCBResult* cbResult, CellSaveDataStatGet* get, CellSaveDataStatSet* set)
 {
-	SaveData* saveData = static_cast< SaveData* >(cbResult->userdata);
-	T_ASSERT (saveData);
-	PsnSaveData* this_ = saveData ->m_this;
+	SaveDataHelper* saveDataHelper = static_cast< SaveDataHelper* >(cbResult->userdata);
+	T_ASSERT (saveDataHelper);
+	PsnSaveData* this_ = saveDataHelper->m_this;
 	T_ASSERT (this_);
 
 	set->setParam = &get->getParam;
@@ -400,8 +408,8 @@ void PsnSaveData::callbackSaveStat(CellSaveDataCBResult* cbResult, CellSaveDataS
 
 	if (get->isNewData)
 	{
-		std::strncpy(set->setParam->title, wstombs(saveData->m_desc.title).c_str(), CELL_SAVEDATA_SYSP_TITLE_SIZE);
-		std::strncpy(set->setParam->subTitle, wstombs(saveData->m_desc.description).c_str(), CELL_SAVEDATA_SYSP_SUBTITLE_SIZE);
+		std::strncpy(set->setParam->title, wstombs(saveDataHelper->m_desc.title).c_str(), CELL_SAVEDATA_SYSP_TITLE_SIZE);
+		std::strncpy(set->setParam->subTitle, wstombs(saveDataHelper->m_desc.description).c_str(), CELL_SAVEDATA_SYSP_SUBTITLE_SIZE);
 		std::strncpy(set->setParam->detail, "", CELL_SAVEDATA_SYSP_DETAIL_SIZE);
 		std::strncpy(set->setParam->listParam, "", CELL_SAVEDATA_SYSP_LPARAM_SIZE);
 
@@ -410,7 +418,7 @@ void PsnSaveData::callbackSaveStat(CellSaveDataCBResult* cbResult, CellSaveDataS
 		std::memset(set->setParam->reserved, 0, sizeof(set->setParam->reserved));
 		std::memset(set->setParam->reserved2, 0, sizeof(set->setParam->reserved2));	
 
-		const int32_t CONTENT_SIZEKB = (saveData->m_buffer.size() + 1023) / 1024; // TODO Add size of "content information files": ICON0.PNG, ICON1.PAM, PIC1.PNG, SND0.AT3
+		const int32_t CONTENT_SIZEKB = (saveDataHelper->m_dataBuffer.size() + 1023) / 1024 + (saveDataHelper->m_iconSize + 1023) / 1024; 
 		const int32_t NEW_SIZEKB = CONTENT_SIZEKB + get->sysSizeKB;
 		const int32_t NEED_SIZEKB = get->hddFreeSizeKB - NEW_SIZEKB;
 		if (NEED_SIZEKB < 0)
@@ -421,36 +429,53 @@ void PsnSaveData::callbackSaveStat(CellSaveDataCBResult* cbResult, CellSaveDataS
 			return;
 		}
 	}
-	saveData->m_bufferPending = true;
+	saveDataHelper->m_dataPending = true;
+	saveDataHelper->m_iconPending = true;
 
 	cbResult->result = CELL_SAVEDATA_CBRESULT_OK_NEXT;
 }
 
 void PsnSaveData::callbackSaveFile(CellSaveDataCBResult* cbResult, CellSaveDataFileGet* get, CellSaveDataFileSet* set)
 {
-	SaveData* saveData = static_cast< SaveData* >(cbResult->userdata);
-	T_ASSERT (saveData );
+	SaveDataHelper* saveDataHelper = static_cast< SaveDataHelper* >(cbResult->userdata);
+	T_ASSERT (saveDataHelper );
 
-	if (saveData->m_bufferPending)
+	if (saveDataHelper->m_dataPending)
 	{
 		set->fileOperation = CELL_SAVEDATA_FILEOP_WRITE;
 		set->fileType = CELL_SAVEDATA_FILETYPE_SECUREFILE;
 		set->fileName = (char*)"ATT.BIN";
 		set->fileOffset = 0;
-		set->fileSize = saveData->m_buffer.size();
-		set->fileBufSize = saveData->m_buffer.size();
-		set->fileBuf = (void*) &saveData->m_buffer[0];
+		set->fileSize = saveDataHelper->m_dataBuffer.size();
+		set->fileBufSize = saveDataHelper->m_dataBuffer.size();
+		set->fileBuf = (void*) &saveDataHelper->m_dataBuffer[0];
 		std::memcpy(set->secureFileId, c_secureFileId, CELL_SAVEDATA_SECUREFILEID_SIZE);
 		set->reserved = 0;
 
-		cbResult->progressBarInc = 50;
+		cbResult->progressBarInc = 33;
 		cbResult->result = CELL_SAVEDATA_CBRESULT_OK_NEXT;
 
-		saveData->m_bufferPending = false;
+		saveDataHelper->m_dataPending = false;
+	}
+	else if (saveDataHelper->m_iconPending)
+	{
+		set->fileOperation = CELL_SAVEDATA_FILEOP_WRITE;
+		set->fileType = CELL_SAVEDATA_FILETYPE_CONTENT_ICON0;
+		set->fileOffset = 0;
+		set->fileSize = saveDataHelper->m_iconSize;
+		set->fileBufSize = saveDataHelper->m_iconSize;
+		set->fileBuf = (void*) saveDataHelper->m_iconBuffer;
+		std::memcpy(set->secureFileId, c_secureFileId, CELL_SAVEDATA_SECUREFILEID_SIZE);
+		set->reserved = 0;
+
+		cbResult->progressBarInc = 33;
+		cbResult->result = CELL_SAVEDATA_CBRESULT_OK_NEXT;
+
+		saveDataHelper->m_iconPending = false;
 	}
 	else
 	{
-		cbResult->progressBarInc = 50;
+		cbResult->progressBarInc = 34;
 		cbResult->result = CELL_SAVEDATA_CBRESULT_OK_LAST;
 	}
 }
