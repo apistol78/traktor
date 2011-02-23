@@ -26,7 +26,7 @@ const wchar_t* lookupLanguageCode(int32_t id)
 	switch (id)
 	{
 	case SCE_NP_LANG_JAPANESE:
-		return L"jp";
+		break;
 	case SCE_NP_LANG_ENGLISH:
 		return L"en";
 	case SCE_NP_LANG_FRENCH:
