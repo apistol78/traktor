@@ -11,9 +11,6 @@ if "%1"=="build" (
 	
 ) else if "%1"=="launch" (
 
-	xcopy /Q /Y Application.config bin
-	pushd bin
-	ps3run -k -r -f . %DEPLOY_EXECUTABLE% Application.config
-	popd
+	ps3run -k -r -f . bin/%DEPLOY_EXECUTABLE%.self Application.config
 	
 )
