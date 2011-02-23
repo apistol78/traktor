@@ -27,10 +27,6 @@ struct SortInstanceDistance
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.InstanceMesh", InstanceMesh, IMesh)
 
 InstanceMesh::InstanceMesh()
-#if defined(_DEBUG)
-:	m_instanceUsedCount(0)
-,	m_instanceRenderedCount(0)
-#endif
 {
 	if (!s_handleInstanceWorld)
 		s_handleInstanceWorld = render::getParameterHandle(L"InstanceWorld");
@@ -38,9 +34,6 @@ InstanceMesh::InstanceMesh()
 
 InstanceMesh::~InstanceMesh()
 {
-#if defined(_DEBUG)
-	log::info << L"InstanceMesh " << (uint32_t)this << L": Average batch size " << (float(m_instanceUsedCount) / m_instanceRenderedCount) << Endl;
-#endif
 }
 
 const Aabb3& InstanceMesh::getBoundingBox() const
@@ -61,11 +54,6 @@ void InstanceMesh::render(
 {
 	InstanceMeshData T_ALIGN16 instanceBatch[MaxInstanceCount];
 	bool haveAlphaBlend = false;
-
-#if defined(_DEBUG)
-	m_instanceUsedCount += instanceWorld.size();
-	m_instanceRenderedCount++;
-#endif
 
 	if (instanceWorld.empty())
 		return;

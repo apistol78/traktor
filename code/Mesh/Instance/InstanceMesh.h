@@ -85,11 +85,6 @@ private:
 	resource::Proxy< render::Shader > m_shader;
 	Ref< render::Mesh > m_mesh;
 	SmallMap< render::handle_t, std::vector< Part > > m_parts;
-
-#if defined(_DEBUG)
-	uint32_t m_instanceUsedCount;
-	uint32_t m_instanceRenderedCount;
-#endif
 };
 
 	}

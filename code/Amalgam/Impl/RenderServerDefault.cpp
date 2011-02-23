@@ -1,5 +1,6 @@
 #include "limits"
 #include "Core/Log/Log.h"
+#include "Core/Math/Float.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyFloat.h"
@@ -359,6 +360,18 @@ void RenderServerDefault::update(Settings* settings)
 	{
 		m_renderViewDesc.fullscreen = m_renderView->isFullScreen();
 		settings->setProperty< PropertyBoolean >(L"Render.FullScreen", m_renderViewDesc.fullscreen);
+	}
+
+#else
+
+	// Reflect gamma real-time as we need to preview gamma changes before
+	// they are applied.
+	if (m_renderView)
+	{
+		float gamma = settings->getProperty< PropertyFloat >(L"Render.Gamma", 1.0f);
+
+		// \fixme gamma Inverted and from 0.5 to 1.5 range.
+		m_renderView->setGamma(lerp(1.2f, 0.8f, gamma - 0.5f));
 	}
 
 #endif

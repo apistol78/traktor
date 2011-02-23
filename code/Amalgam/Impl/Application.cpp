@@ -10,6 +10,7 @@
 #include "Core/Settings/PropertyStringArray.h"
 #include "Core/Settings/Settings.h"
 #include "Core/Thread/Acquire.h"
+#include "Core/Thread/JobManager.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Database/Database.h"
@@ -429,16 +430,18 @@ void Application::destroy()
 		m_threadDatabase = 0;
 	}
 
+	JobManager::getInstance().stop();
+
 	safeDestroy(m_stateManager);
 
 	safeDestroy(m_resourceServer);
 	safeDestroy(m_worldServer);
 	safeDestroy(m_scriptServer);
-	safeDestroy(m_renderServer);
 	safeDestroy(m_physicsServer);
 	safeDestroy(m_onlineServer);
 	safeDestroy(m_inputServer);
 	safeDestroy(m_audioServer);
+	safeDestroy(m_renderServer);
 
 	m_environment = 0;
 

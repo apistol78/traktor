@@ -71,6 +71,12 @@ public:
 
 	void setTimes(float time, float deltaTime, float interval);
 
+	void setInterocularDistance(float interocularDistance);
+
+	void setDistortionValue(float distortionValue);
+
+	void setScreenPlaneDistance(float screenPlaneDistance);
+
 	void addLight(const Light& light);
 
 	void resetLights();
@@ -126,6 +132,18 @@ public:
 	T_FORCE_INLINE float getInterval() const {
 		return m_interval;
 	}
+
+	T_FORCE_INLINE float getInterocularDistance() const {
+		return m_interocularDistance;
+	}
+
+	T_FORCE_INLINE float getDistortionValue() const {
+		return m_distortionValue;
+	}
+
+	T_FORCE_INLINE float getScreenPlaneDistance() const {
+		return m_screenPlaneDistance;
+	}
 	
 private:
 	Frustum m_viewFrustum;
@@ -141,6 +159,9 @@ private:
 	float m_time;
 	float m_deltaTime;
 	float m_interval;
+	float m_interocularDistance;
+	float m_distortionValue;
+	float m_screenPlaneDistance;
 };
 	
 	}

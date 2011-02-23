@@ -184,6 +184,11 @@ bool RenderViewSw::isFullScreen() const
 	return false;
 }
 
+bool RenderViewSw::setGamma(float gamma)
+{
+	return false;
+}
+
 void RenderViewSw::setViewport(const Viewport& viewport)
 {
 	m_viewPort.left = viewport.left / c_targetScale;

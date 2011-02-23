@@ -91,11 +91,15 @@ private:
 		Matrix44 viewToLightSpace;
 		Matrix44 squareProjection;
 		Frustum viewFrustum;
+		float A;
+		float B;
 		bool haveDepth;
 		bool haveShadows;
 
 		Frame()
-		:	haveDepth(false)
+		:	A(0.0f)
+		,	B(0.0f)
+		,	haveDepth(false)
 		,	haveShadows(false)
 		{
 		}

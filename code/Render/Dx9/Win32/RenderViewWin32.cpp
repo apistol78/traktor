@@ -143,6 +143,11 @@ bool RenderViewWin32::isFullScreen() const
 	return !m_d3dPresent.Windowed;
 }
 
+bool RenderViewWin32::setGamma(float gamma)
+{
+	return false;
+}
+
 void RenderViewWin32::setViewport(const Viewport& viewport)
 {
 	if (m_renderStateStack.empty())

@@ -181,6 +181,11 @@ bool RenderViewDx10::isFullScreen() const
 	return false;
 }
 
+bool RenderViewDx10::setGamma(float gamma)
+{
+	return false;
+}
+
 void RenderViewDx10::setViewport(const Viewport& viewport)
 {
 	if (m_renderStateStack.empty())

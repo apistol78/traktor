@@ -72,6 +72,11 @@ bool RenderViewOpenGLES2::isFullScreen() const
 #endif
 }
 
+bool RenderViewOpenGLES2::setGamma(float gamma)
+{
+	return false;
+}
+
 void RenderViewOpenGLES2::setViewport(const Viewport& viewport)
 {
 	T_ANONYMOUS_VAR(IContext::Scope)(m_context);
