@@ -162,7 +162,6 @@ Ref< SoundChannel > SoundSystem::getChannel(uint32_t channelId)
 Ref< SoundChannel > SoundSystem::play(uint32_t channelId, const Sound* sound, uint32_t priority, uint32_t repeat)
 {
 	T_ASSERT (channelId < m_channels.size());
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_channelAttachLock);
 	
 	if (!m_channels[channelId]->playSound(sound, m_time, priority, repeat))
 		return 0;
@@ -175,8 +174,6 @@ Ref< SoundChannel > SoundSystem::play(const Sound* sound, uint32_t priority, boo
 	for (;;)
 	{
 		{
-			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_channelAttachLock);
-			
 			uint32_t currentLeastPriority = priority;
 			SoundChannel* channel = 0;
 
@@ -215,14 +212,12 @@ Ref< SoundChannel > SoundSystem::play(const Sound* sound, uint32_t priority, boo
 
 void SoundSystem::stop(uint32_t channelId)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_channelAttachLock);
 	T_ASSERT (channelId < m_channels.size());
 	m_channels[channelId]->stop();
 }
 
 void SoundSystem::stopAll()
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_channelAttachLock);
 	for (RefArray< SoundChannel >::iterator i = m_channels.begin(); i != m_channels.end(); ++i)
 		(*i)->stop();
 }
@@ -277,7 +272,6 @@ void SoundSystem::threadMixer()
 		frameBlock.maxChannel = m_desc.driverDesc.hwChannels;
 
 		// Read blocks from channels.
-		m_channelAttachLock.wait();
 		uint32_t channelsCount = uint32_t(m_channels.size());
 		for (uint32_t i = 0; i < channelsCount; ++i)
 		{
@@ -285,7 +279,6 @@ void SoundSystem::threadMixer()
 			m_requestBlocks[i].maxChannel = 0;
 			m_channels[i]->getBlock(m_mixer, m_time, m_requestBlocks[i]);
 		}
-		m_channelAttachLock.release();
 
 		m_mixer->synchronize();
 

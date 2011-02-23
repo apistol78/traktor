@@ -108,7 +108,6 @@ private:
 	float m_volume;
 	Thread* m_threadMixer;
 	Thread* m_threadSubmit;
-	Semaphore m_channelAttachLock;
 	Event m_channelFinishEvent;
 	RefArray< SoundChannel > m_channels;
 	AlignedVector< SoundBlock > m_requestBlocks;
