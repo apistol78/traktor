@@ -22,7 +22,17 @@ class IStateManager;
 class IUpdateControl;
 class IUpdateInfo;
 
-/*! \brief Runtime state. */
+/*! \brief Runtime state.
+ * \ingroup Amalgam
+ *
+ * User applications implement multiple
+ * classes from IState which represent
+ * various states which the application can
+ * be in such as FrontEnd, Loading, InGame etc.
+ * Amalgam is responsible of managing the
+ * transition safely between different states
+ * by, for instance, synchronizing the renderer etc.
+ */
 class T_DLLCLASS IState : public Object
 {
 	T_RTTI_CLASS;

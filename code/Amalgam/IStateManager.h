@@ -18,7 +18,13 @@ namespace traktor
 
 class IState;
 
-/*! \brief State manager. */
+/*! \brief State manager.
+ * \ingroup Amalgam
+ *
+ * The state manager interface, it provide
+ * an interface for user applications to
+ * enter another state.
+ */
 class T_DLLCLASS IStateManager : public Object
 {
 	T_RTTI_CLASS;

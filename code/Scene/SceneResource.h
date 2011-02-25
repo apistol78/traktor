@@ -46,6 +46,9 @@ class PostProcessSettings;
 class ISceneControllerData;
 class Scene;
 
+/*! \brief Scene resource.
+ * \ingroup Scene
+ */
 class T_DLLCLASS SceneResource : public ISerializable
 {
 	T_RTTI_CLASS;

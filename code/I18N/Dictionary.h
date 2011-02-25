@@ -8,9 +8,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_I18N_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif 
 
 namespace traktor
@@ -18,6 +18,9 @@ namespace traktor
 	namespace i18n
 	{
 
+/*! \brief Dictionary
+ * \ingroup I18N
+ */
 class T_DLLCLASS Dictionary : public ISerializable
 {
 	T_RTTI_CLASS;

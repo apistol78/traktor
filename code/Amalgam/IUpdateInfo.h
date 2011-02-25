@@ -18,6 +18,9 @@ namespace traktor
 
 /*! \brief Update information.
  * \ingroup Amalgam
+ *
+ * Update information provide time measurements
+ * to user applications.
  */
 class T_DLLCLASS IUpdateInfo : public Object
 {

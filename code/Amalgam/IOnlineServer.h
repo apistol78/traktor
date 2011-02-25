@@ -23,7 +23,9 @@ class ISessionManager;
 	namespace amalgam
 	{
 
-/*! \brief Online server. */
+/*! \brief Online server.
+ * \ingroup Amalgam
+ */
 class T_DLLCLASS IOnlineServer : public IServer
 {
 	T_RTTI_CLASS;

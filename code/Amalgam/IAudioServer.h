@@ -25,6 +25,7 @@ class SurroundEnvironment;
 	{
 
 /*! \brief Audio server.
+ * \ingroup Amalgam
  *
  * "Audio.Type"					- Sound system type.
  * "Audio.MasterVolume"			- Master volume.

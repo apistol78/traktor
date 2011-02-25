@@ -19,7 +19,14 @@ namespace traktor
 class IEnvironment;
 class IState;
 
-/*! \brief Runtime state factory. */
+/*! \brief Runtime state factory.
+ * \ingroup Amalgam
+ *
+ * In order for Amalgam to be able to
+ * create an initial state the user
+ * application must provide a concrete
+ * implementation of this class.
+ */
 class T_DLLCLASS IStateFactory : public Object
 {
 	T_RTTI_CLASS;

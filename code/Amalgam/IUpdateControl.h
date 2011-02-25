@@ -16,7 +16,16 @@ namespace traktor
 	namespace amalgam
 	{
 
-/*! \brief Update control. */
+/*! \brief Update control.
+ * \ingroup Amalgam
+ *
+ * Application update control interface, as
+ * applications can become paused or similar
+ * either internally, from application itself,
+ * or externally, window minimized, this
+ * interface provide a two-way method of
+ * handling update scenarios.
+ */
 class IUpdateControl : public Object
 {
 	T_RTTI_CLASS;

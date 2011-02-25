@@ -16,6 +16,9 @@ namespace traktor
 	namespace graphics
 	{
 
+/*! \brief Pixel formats.
+ * \ingroup Graphics
+ */
 enum PixelFormatEnum
 {
 	PfeUnknown  = 0,
@@ -26,20 +29,44 @@ enum PixelFormatEnum
 	PfeA8R8G8B8	= 5
 };
 
+/*! \brief Get size, in bytes, of pixel format.
+ * \ingroup Graphics
+ */
 int T_DLLCLASS getByteSize(PixelFormatEnum pixelFormat);
 
+/*! \brief Get number of color bits of pixel format.
+ * \ingroup Graphics
+ */
 int T_DLLCLASS getColorBits(PixelFormatEnum pixelFormat);
 
+/*! \brief Get number of alpha bits of pixel format.
+ * \ingroup Graphics
+ */
 int T_DLLCLASS getAlphaBits(PixelFormatEnum pixelFormat);
 
+/*! \brief Get red bit-mask of pixel format.
+ * \ingroup Graphics
+ */
 uint32_t T_DLLCLASS getRedMask(PixelFormatEnum pixelFormat);
 
+/*! \brief Get green bit-mask of pixel format.
+ * \ingroup Graphics
+ */
 uint32_t T_DLLCLASS getGreenMask(PixelFormatEnum pixelFormat);
 
+/*! \brief Get blue bit-mask of pixel format.
+ * \ingroup Graphics
+ */
 uint32_t T_DLLCLASS getBlueMask(PixelFormatEnum pixelFormat);
 
+/*! \brief Check if pixel format has alpha channel defined.
+ * \ingroup Graphics
+ */
 bool T_DLLCLASS hasAlpha(PixelFormatEnum pixelFormat);
 
+/*! \brief Convert pixel from one pixel format to another.
+ * \ingroup Graphics
+ */
 void T_DLLCLASS convertPixel(
 	PixelFormatEnum targetPixelFormat,
 	void* targetPixel,

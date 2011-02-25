@@ -17,6 +17,7 @@ namespace traktor
 	{
 
 /*! \brief Application fullscreen action.
+ * \ingroup Amalgam
  *
  * Applications are notified with this
  * action when Amalgam is entering or leaving fullscreen.

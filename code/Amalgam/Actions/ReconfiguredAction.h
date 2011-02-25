@@ -18,6 +18,7 @@ namespace traktor
 	{
 
 /*! \brief Reconfigured action.
+ * \ingroup Amalgam
  *
  * Applications are notified with this
  * action when any server has been reconfigured.

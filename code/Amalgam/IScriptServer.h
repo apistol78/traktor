@@ -24,6 +24,7 @@ class IScriptManager;
 	{
 
 /*! \brief Script server.
+ * \ingroup Amalgam
  *
  * "Script.Library"	- Script library.
  * "Script.Type"	- Script manager type.

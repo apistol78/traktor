@@ -16,7 +16,12 @@ namespace traktor
 	namespace amalgam
 	{
 
-/*! \brief Action message interface. */
+/*! \brief Action message interface.
+ * \ingroup Amalgam
+ *
+ * Actions are system messages, such as toggle fullscreen etc,
+ * which are sent to current state.
+ */
 class T_DLLCLASS IAction : public Object
 {
 	T_RTTI_CLASS;

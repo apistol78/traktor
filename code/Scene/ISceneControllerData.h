@@ -26,6 +26,13 @@ class IEntitySchema;
 
 class ISceneController;
 
+/*! \brief Scene controller data.
+ * \ingroup Scene
+ *
+ * Scene controller data is a persistent
+ * means of storing specific scene controller
+ * data on disc.
+ */
 class T_DLLCLASS ISceneControllerData : public ISerializable
 {
 	T_RTTI_CLASS;

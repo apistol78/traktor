@@ -20,6 +20,9 @@ namespace traktor
 class ISurface;
 struct SurfaceDesc;
 
+/*! \brief Display mode description.
+ * \ingroup Graphics
+ */
 struct DisplayMode
 {
 	int width;
@@ -27,6 +30,9 @@ struct DisplayMode
 	uint8_t bits;
 };
 
+/*! \brief Graphics system create description.
+ * \ingroup Graphics
+ */
 struct CreateDesc
 {
 	void* windowHandle;
@@ -35,6 +41,9 @@ struct CreateDesc
 	PixelFormatEnum pixelFormat;	//< Secondary surface pixel format, primary surface has unknown pixel format.
 };
 
+/*! \brief Graphics system interface.
+ * \ingroup Graphics
+ */
 class T_DLLCLASS IGraphicsSystem : public Object
 {
 	T_RTTI_CLASS;

@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_SCENE_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -30,6 +30,12 @@ class WorldRenderView;
 
 class ISceneController;
 
+/*! \brief Scene
+ * \ingroup Scene
+ *
+ * A scene holds information about entities,
+ * world renderer configuration and post processing.
+ */
 class T_DLLCLASS Scene : public Object
 {
 	T_RTTI_CLASS;

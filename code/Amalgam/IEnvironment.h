@@ -35,6 +35,13 @@ class Database;
 	namespace amalgam
 	{
 
+/*! \brief Runtime environment.
+ * \ingroup Amalgam
+ *
+ * This class represent the runtime environment.
+ * It's a single accessor for applications to access
+ * various system objects.
+ */
 class T_DLLCLASS IEnvironment : public Object
 {
 	T_RTTI_CLASS;
