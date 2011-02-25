@@ -78,6 +78,8 @@ WorldRenderPassPreLit::WorldRenderPassPreLit(
 		s_handleDepthRange = render::getParameterHandle(L"DepthRange");
 		s_handleDepthMap = render::getParameterHandle(L"DepthMap");
 		s_handleTime = render::getParameterHandle(L"Time");
+
+		s_handlesInitialized = true;
 	}
 }
 
