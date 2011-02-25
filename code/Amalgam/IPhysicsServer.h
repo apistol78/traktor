@@ -24,6 +24,7 @@ class PhysicsManager;
 	{
 
 /*! \brief Physics server.
+ * \ingroup Amalgam
  *
  * "Physics.Type"		- Physics manager type.
  */

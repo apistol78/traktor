@@ -1,4 +1,6 @@
 
+/*! \defgroup Amalgam Amalgam */
+
 /*! \defgroup Core Core */
 
 /*! \defgroup Database Database */
@@ -10,6 +12,9 @@
 /*! \defgroup UIC User interface - Custom widgets */
 
 /*! \defgroup Editor Editor */
+
+/*! \defgroup Graphics Graphics */
+/*! \defgroup GDI Graphics - GDI */
 
 /*! \defgroup Render Render */
 /*! \defgroup DX9 Render - DirectX 9 */
@@ -27,7 +32,6 @@
 /*! \defgroup Physics Physics */
 /*! \defgroup Bullet Physics - Bullet */
 /*! \defgroup Havok Physics - Havok */
-/*! \defgroup ODE Physics - ODE */
 /*! \defgroup PhysX Physics - PhysX */
 
 /*! \defgroup Sound Sound */
@@ -47,3 +51,13 @@
 /*! \defgroup XML XML Parser */
 
 /*! \defgroup Online Online services */
+
+/*! \defgroup I18N Internatialization */
+
+/*! \defgroup Mesh Mesh renderer */
+
+/*! \defgroup Scene Scene */
+
+/*! \defgroup SQL SQL database */
+
+/*! \defgroup Video Video playback */

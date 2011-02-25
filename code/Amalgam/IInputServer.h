@@ -28,6 +28,7 @@ class RumbleEffectPlayer;
 	{
 
 /*! \brief Input server.
+ * \ingroup Amalgam
  *
  * "Input.Rumble"	- Rumble enable.
  */

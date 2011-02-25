@@ -17,6 +17,9 @@ namespace traktor
 	namespace graphics
 	{
 
+/*! \brief Surface description.
+ * \ingroup Graphics
+ */
 struct SurfaceDesc
 {
 	uint32_t width;
@@ -25,6 +28,9 @@ struct SurfaceDesc
 	PixelFormatEnum pixelFormat;
 };
 
+/*! \brief Surface interface.
+ * \ingroup Graphics
+ */
 class T_DLLCLASS ISurface : public Object
 {
 	T_RTTI_CLASS;

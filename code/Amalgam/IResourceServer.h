@@ -24,6 +24,7 @@ class IResourceManager;
 	{
 
 /*! \brief Resource server.
+ * \ingroup Amalgam
  */
 class T_DLLCLASS IResourceServer : public IServer
 {

@@ -38,6 +38,9 @@ class IEntityBuilder;
 	namespace scene
 	{
 
+/*! \brief Scene factory.
+ * \ingroup Scene
+ */
 class T_DLLCLASS SceneFactory : public resource::IResourceFactory
 {
 	T_RTTI_CLASS;

@@ -17,6 +17,9 @@ namespace traktor
 	namespace graphics
 	{
 
+/*! \brief GDI surface implementation.
+ * \ingroup GDI
+ */
 class T_DLLCLASS SurfaceGdi : public ISurface
 {
 	T_RTTI_CLASS;

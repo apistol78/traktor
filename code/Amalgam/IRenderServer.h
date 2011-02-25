@@ -27,6 +27,7 @@ class RenderTargetSet;
 	{
 
 /*! \brief Render server.
+ * \ingroup Amalgam
  *
  * "Render.Type"				- Render system type.
  * "Render.DepthBits"			- Depth buffer bits.

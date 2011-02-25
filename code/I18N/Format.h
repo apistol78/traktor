@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_I18N_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif 
 
 namespace traktor
@@ -17,6 +17,7 @@ namespace traktor
 	{
 
 /*! \brief Automatic text localization with formating.
+ * \ingroup I18N
  *
  * Used as an implicit bridge from ID to localized text.
  * This class is more advanced than Text as it support

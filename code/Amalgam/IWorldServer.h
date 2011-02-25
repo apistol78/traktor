@@ -27,6 +27,7 @@ class WorldRenderSettings;
 	{
 
 /*! \brief World server.
+ * \ingroup Amalgam
  *
  * "World.ShadowQuality" - Shadow filter quality.
  */

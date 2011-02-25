@@ -19,7 +19,12 @@ namespace traktor
 class IEnvironment;
 class IStateManager;
 
-/*! \brief Amalgam application. */
+/*! \brief Amalgam application.
+ * \ingroup Amalgam
+ *
+ * This interface represent the running
+ * instance of the application.
+ */
 class T_DLLCLASS IApplication : public Object
 {
 	T_RTTI_CLASS;
