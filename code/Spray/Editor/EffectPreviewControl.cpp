@@ -48,7 +48,7 @@ namespace traktor
 
 const uint32_t c_initialRandomSeed = 5489UL;
 const int c_updateInterval = 30;
-const float c_deltaScaleZ = 0.025f;
+const float c_deltaMoveScale = 0.025f;
 const float c_deltaScaleHead = 0.015f;
 const float c_deltaScalePitch = 0.005f;
 
@@ -215,8 +215,20 @@ void EffectPreviewControl::eventMouseMove(ui::Event* event)
 	
 	if (mouseEvent->getButton() == ui::MouseEvent::BtLeft)
 	{
-		m_effectPosition += Vector4(0.0f, 0.0f, -float(m_lastMousePosition.y - mouseEvent->getPosition().y) * c_deltaScaleZ, 0.0f);
-		m_angleHead += float(m_lastMousePosition.x - mouseEvent->getPosition().x) * c_deltaScaleHead;
+		if ((mouseEvent->getKeyState() & ui::KsControl) == 0)
+		{
+			// Move X/Y direction.
+			float dx = -float(m_lastMousePosition.x - mouseEvent->getPosition().x) * c_deltaMoveScale;
+			float dy = -float(m_lastMousePosition.y - mouseEvent->getPosition().y) * c_deltaMoveScale;
+			m_effectPosition += Vector4(dx, dy, 0.0f, 0.0f);
+		}
+		else
+		{
+			// Move X/Z direction.
+			float dx = -float(m_lastMousePosition.x - mouseEvent->getPosition().x) * c_deltaMoveScale;
+			float dz = -float(m_lastMousePosition.y - mouseEvent->getPosition().y) * c_deltaMoveScale;
+			m_effectPosition += Vector4(dx, 0.0f, dz, 0.0f);
+		}
 	}
 	else
 	{

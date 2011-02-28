@@ -219,6 +219,7 @@ void EffectEditorPage::updateSequencer()
 	if (!m_effect)
 	{
 		m_sequencer->setEnable(false);
+		m_sequencer->update();
 		return;
 	}
 
@@ -246,6 +247,7 @@ void EffectEditorPage::updateSequencer()
 
 	m_sequencer->setEnable(true);
 	m_sequencer->setLength(int(m_effect->getDuration() * 1000.0f));
+	m_sequencer->update();
 }
 
 void EffectEditorPage::eventToolClick(ui::Event* event)
