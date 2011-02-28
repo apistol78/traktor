@@ -290,7 +290,7 @@ bool InspectReflector::operator >> (const Member< uint64_t >& m)
 
 bool InspectReflector::operator >> (const Member< float >& m)
 {
-	float min = std::numeric_limits< float >::min();
+	float min = -std::numeric_limits< float >::max();
 	float max = std::numeric_limits< float >::max();
 
 	const AttributeRange* range = findAttribute< AttributeRange >(m);
@@ -313,7 +313,7 @@ bool InspectReflector::operator >> (const Member< float >& m)
 
 bool InspectReflector::operator >> (const Member< double >& m)
 {
-	double min = std::numeric_limits< double >::min();
+	double min = -std::numeric_limits< double >::max();
 	double max = std::numeric_limits< double >::max();
 
 	const AttributeRange* range = findAttribute< AttributeRange >(m);
