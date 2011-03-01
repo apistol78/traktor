@@ -289,8 +289,8 @@ int32_t RenderServerDefault::reconfigure(const Settings* settings)
 
 		default:
 			log::info << L"Using default television settings" << Endl;
-			m_renderViewDesc.displayMode.width = m_originalDisplayMode.width;
-			m_renderViewDesc.displayMode.height = m_originalDisplayMode.height;
+			rvdd.displayMode.width = m_originalDisplayMode.width;
+			rvdd.displayMode.height = m_originalDisplayMode.height;
 			rvdd.multiSample = settings->getProperty< PropertyInteger >(L"Render.DisplayMode/TelevisionStandard/MultiSample", 0);
 		}
 	}
