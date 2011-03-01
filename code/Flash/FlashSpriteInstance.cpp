@@ -393,10 +393,17 @@ void FlashSpriteInstance::eventMouseDown(int32_t x, int32_t y, int32_t button)
 
 	// Issue events on "visible" characters.
 	const FlashDisplayList::layer_map_t& layers = m_displayList.getLayers();
-	for (FlashDisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
+	if (!layers.empty())
 	{
-		if (i->second.instance)
-			i->second.instance->eventMouseDown(x, y, button);
+		// Transform coordinates into local.
+		Vector2 xy = getTransform().inverse() * Vector2(x, y);
+
+		// Propagate event to children.
+		for (FlashDisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
+		{
+			if (i->second.instance)
+				i->second.instance->eventMouseDown(xy.x, xy.y, button);
+		}
 	}
 
 	FlashCharacterInstance::eventMouseDown(x, y, button);
@@ -412,10 +419,17 @@ void FlashSpriteInstance::eventMouseUp(int32_t x, int32_t y, int32_t button)
 
 	// Issue events on "visible" characters.
 	const FlashDisplayList::layer_map_t& layers = m_displayList.getLayers();
-	for (FlashDisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
+	if (!layers.empty())
 	{
-		if (i->second.instance)
-			i->second.instance->eventMouseUp(x, y, button);
+		// Transform coordinates into local.
+		Vector2 xy = getTransform().inverse() * Vector2(x, y);
+
+		// Propagate event to children.
+		for (FlashDisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
+		{
+			if (i->second.instance)
+				i->second.instance->eventMouseUp(xy.x, xy.y, button);
+		}
 	}
 
 	FlashCharacterInstance::eventMouseUp(x, y, button);
@@ -431,10 +445,17 @@ void FlashSpriteInstance::eventMouseMove(int32_t x, int32_t y, int32_t button)
 
 	// Issue events on "visible" characters.
 	const FlashDisplayList::layer_map_t& layers = m_displayList.getLayers();
-	for (FlashDisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
+	if (!layers.empty())
 	{
-		if (i->second.instance)
-			i->second.instance->eventMouseMove(x, y, button);
+		// Transform coordinates into local.
+		Vector2 xy = getTransform().inverse() * Vector2(x, y);
+
+		// Propagate event to children.
+		for (FlashDisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
+		{
+			if (i->second.instance)
+				i->second.instance->eventMouseMove(xy.x, xy.y, button);
+		}
 	}
 
 	FlashCharacterInstance::eventMouseMove(x, y, button);

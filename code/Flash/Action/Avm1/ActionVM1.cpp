@@ -1101,18 +1101,23 @@ void ActionVM1::execute(ActionFrame* frame) const
 			if (targetValue.isObject())
 			{
 				Ref< ActionObject > target = targetValue.getObject();
-				Ref< ActionFunction > propertySet;
-				if (target->getPropertySet(context, memberName, propertySet))
+				if (target)
 				{
-					stack.push(memberValue);
-					stack.push(ActionValue(avm_number_t(1)));
-					propertySet->call(frame, target);
+					Ref< ActionFunction > propertySet;
+					if (target->getPropertySet(context, memberName, propertySet))
+					{
+						stack.push(memberValue);
+						stack.push(ActionValue(avm_number_t(1)));
+						propertySet->call(frame, target);
+					}
+					else
+					{
+						VM_LOG(L"on target " << target->toString().getWideStringSafe());
+						target->setMember(memberName, memberValue);
+					}
 				}
 				else
-				{
-					VM_LOG(L"on target " << target->toString().getWideStringSafe());
-					target->setMember(memberName, memberValue);
-				}
+					VM_LOG(L"Unable to set member " + memberName + L"; null object");
 			}
 			else
 				VM_LOG(L"Target undefined");
