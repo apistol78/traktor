@@ -47,11 +47,11 @@ void ActionObjectCyclic::collectCycles(bool full)
 
 	if (m_candidates.empty())
 		return;
-
+		
 	do
 	{
 		// Mark roots.
-		for (std::list< ActionObject* >::iterator i = m_candidates.begin(); i != m_candidates.end(); )
+		for (IntrusiveList< ActionObject >::iterator i = m_candidates.begin(); i != m_candidates.end(); )
 		{
 			ActionObject* candidate = *i;
 			if (candidate->m_traceColor == ActionObject::TcPurple)
@@ -67,7 +67,7 @@ void ActionObjectCyclic::collectCycles(bool full)
 		}
 
 		// Scan roots.
-		for (std::list< ActionObject* >::iterator i = m_candidates.begin(); i != m_candidates.end(); ++i)
+		for (IntrusiveList< ActionObject >::iterator i = m_candidates.begin(); i != m_candidates.end(); ++i)
 		{
 			ActionObject* candidate = *i;
 			candidate->traceScan();
