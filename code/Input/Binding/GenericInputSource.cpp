@@ -79,17 +79,25 @@ float GenericInputSource::read(float T, float dT)
 		m_matchingDeviceCount = deviceCount;
 	}
 
-	// Return first found modified value.
-	for (RefArray< DeviceControl >::const_iterator i = m_deviceControls.begin(); i != m_deviceControls.end(); ++i)
+	if (!m_deviceControls.empty())
 	{
-		float previousValue = (*i)->getPreviousValue();
-		float currentValue = (*i)->getCurrentValue();
-
-		if (abs< float >(currentValue - previousValue) > FUZZY_EPSILON)
+		// Return first found modified value.
+		for (RefArray< DeviceControl >::const_iterator i = m_deviceControls.begin(); i != m_deviceControls.end(); ++i)
 		{
-			m_lastValue = currentValue;
-			break;
+			float previousValue = (*i)->getPreviousValue();
+			float currentValue = (*i)->getCurrentValue();
+
+			if (abs< float >(currentValue - previousValue) > FUZZY_EPSILON)
+			{
+				m_lastValue = currentValue;
+				break;
+			}
 		}
+	}
+	else
+	{
+		// No control available; ensure we reset our state as control might have been disconnected.
+		m_lastValue = 0.0f;
 	}
 
 	return m_lastValue;
