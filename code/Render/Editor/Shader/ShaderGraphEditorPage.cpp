@@ -130,7 +130,7 @@ bool ShaderGraphEditorPage::create(ui::Container* parent, editor::IEditorPageSit
 	// Create our custom toolbar.
 	m_toolBar = new ui::custom::ToolBar();
 	m_toolBar->create(container);
-	m_toolBar->addImage(ui::Bitmap::load(c_ResourceAlignment, sizeof(c_ResourceAlignment), L"png"), 11);
+	m_toolBar->addImage(ui::Bitmap::load(c_ResourceAlignment, sizeof(c_ResourceAlignment), L"png"), 12);
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_OPEN_REFEREE"), ui::Command(L"ShaderGraph.Editor.OpenReferee"), 6));
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_CENTER"), ui::Command(L"ShaderGraph.Editor.Center"), 7));
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
@@ -145,10 +145,10 @@ bool ShaderGraphEditorPage::create(ui::Container* parent, editor::IEditorPageSit
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_REMOVE_UNUSED_NODES"), ui::Command(L"ShaderGraph.Editor.RemoveUnusedNodes"), 8));
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_AUTO_MERGE_BRANCHES"), ui::Command(L"ShaderGraph.Editor.AutoMergeBranches"), 9));
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_UPDATE_FRAGMENTS"), ui::Command(L"ShaderGraph.Editor.UpdateFragments"), 10));
-	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_CONSTANT_FOLD"), ui::Command(L"ShaderGraph.Editor.ConstantFold"), 10));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_CONSTANT_FOLD"), ui::Command(L"ShaderGraph.Editor.ConstantFold"), 11));
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
 	
-	m_toolPlatform = new ui::custom::ToolBarDropDown(ui::Command(), 140, i18n::Text(L"SHADERGRAPH_PLATFORM_PERMUTATION"));
+	m_toolPlatform = new ui::custom::ToolBarDropDown(ui::Command(), 80, i18n::Text(L"SHADERGRAPH_PLATFORM_PERMUTATION"));
 	m_toolPlatform->add(L"DX9");
 	m_toolPlatform->add(L"DX9 Xbox360");
 	m_toolPlatform->add(L"DX10");
