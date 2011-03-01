@@ -185,19 +185,17 @@ public:
 
 	IntrusiveList()
 	:	m_front(0)
+	,	m_back(0)
 	{
 	}
 
 	bool empty() const
 	{
-		sanityCheck();
 		return m_front == 0;
 	}
 
 	void push_front(ItemType* item)
 	{
-		sanityCheck();
-
 		T_ASSERT (L(item).prev() == 0);
 		T_ASSERT (L(item).next() == 0);
 
@@ -211,17 +209,43 @@ public:
 			T_ASSERT (L(m_front).prev() == 0);
 			L(m_front).prev() = item;
 		}
+		else
+		{
+			T_ASSERT (!m_back);
+			m_back = item;
+		}
 		m_front = item;
 
 		T_ASSERT (L(m_front).prev() == 0);
+	}
 
-		sanityCheck();
+	void push_back(ItemType* item)
+	{
+		T_ASSERT (L(item).prev() == 0);
+		T_ASSERT (L(item).next() == 0);
+
+		if (m_back)
+		{
+			T_ASSERT (item != m_back);
+
+			L(item).prev() = m_back;
+			L(item).next() = 0;
+
+			T_ASSERT (L(m_back).next() == 0);
+			L(m_back).next() = item;
+		}
+		else
+		{
+			T_ASSERT (!m_front);
+			m_front = item;
+		}
+		m_back = item;
+
+		T_ASSERT (L(m_back).next() == 0);
 	}
 
 	void pop_front()
 	{
-		sanityCheck();
-
 		T_ASSERT (m_front);
 
 		ItemType* front = L(m_front).next();
@@ -231,14 +255,18 @@ public:
 		L(m_front).prev() =
 		L(m_front).next() = 0;
 
-		m_front = front;
-
-		sanityCheck();
+		if ((m_front = front) == 0)
+			m_back = 0;
 	}
 
 	ItemType* front()
 	{
 		return m_front;
+	}
+
+	ItemType* back()
+	{
+		return m_back;
 	}
 
 	iterator begin()
@@ -264,21 +292,13 @@ public:
 	iterator erase(const iterator& it)
 	{
 		T_ASSERT (it.m_list == this);
-
-		sanityCheck();
-
 		iterator it2(this, L(it.m_current).next());
 		remove(it.m_current);
-
-		sanityCheck();
-
 		return it2;
 	}
 
 	void remove(ItemType* item)
 	{
-		sanityCheck();
-
 		ItemType* prev = L(item).prev();
 		ItemType* next = L(item).next();
 
@@ -297,36 +317,21 @@ public:
 
 		if (next)
 			L(next).prev() = prev;
+		else
+		{
+			T_ASSERT (item == m_back);
+			m_back = prev;
+			if (m_back)
+				L(m_back).next() = 0;
+		}
 
 		L(item).prev() =
 		L(item).next() = 0;
-
-		sanityCheck();
 	}
 
 private:
 	ItemType* m_front;
-
-	void sanityCheck() const
-	{
-#if defined(_DEBUG)
-		ItemType* prev = 0;
-		for (ItemType* item = m_front; item; )
-		{
-			ItemType* P = L(item).prev();
-			T_FATAL_ASSERT (P == prev);
-
-			ItemType* N = L(item).next();
-			T_FATAL_ASSERT (N != item);
-
-			if (N != 0 && prev != 0)
-				T_FATAL_ASSERT (N != prev);
-
-			prev = item;
-			item = N;
-		}
-#endif
-	}
+	ItemType* m_back;
 };
 
 }
