@@ -82,7 +82,7 @@ AccDisplayRenderer::AccDisplayRenderer()
 ,	m_maskWrite(false)
 ,	m_maskIncrement(false)
 ,	m_maskReference(0)
-,	m_handleScreenOffset(render::getParameterHandle(L"ScreenOffset"))
+,	m_handleScreenOffset(render::getParameterHandle(L"Flash_ScreenOffset"))
 {
 }
 

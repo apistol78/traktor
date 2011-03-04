@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.PixelOutput" version="2">
+		<item type="traktor.render.PixelOutput" version="3">
 			<comment/>
 			<position>
 				<first>1768</first>
@@ -33,14 +33,15 @@
 			<stencilFunction>CfAlways</stencilFunction>
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
+			<registerCount>0</registerCount>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>1081</first>
-				<second>150</second>
+				<first>1049</first>
+				<second>145</second>
 			</position>
-			<parameterName>Texture</parameterName>
+			<parameterName>Flash_Texture</parameterName>
 			<type>PtTexture</type>
 			<frequency>UfDraw</frequency>
 		</item>
@@ -74,10 +75,10 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>715</first>
-				<second>286</second>
+				<first>682</first>
+				<second>272</second>
 			</position>
-			<parameterName>TextureOffset</parameterName>
+			<parameterName>Flash_TextureOffset</parameterName>
 			<type>PtVector</type>
 			<frequency>UfDraw</frequency>
 		</item>
@@ -121,10 +122,10 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>1424</first>
-				<second>252</second>
+				<first>1379</first>
+				<second>253</second>
 			</position>
-			<parameterName>CxFormAdd</parameterName>
+			<parameterName>Flash_CxFormAdd</parameterName>
 			<type>PtVector</type>
 			<frequency>UfDraw</frequency>
 		</item>
@@ -164,10 +165,10 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>1426</first>
-				<second>219</second>
+				<first>1381</first>
+				<second>220</second>
 			</position>
-			<parameterName>CxFormMul</parameterName>
+			<parameterName>Flash_CxFormMul</parameterName>
 			<type>PtVector</type>
 			<frequency>UfDraw</frequency>
 		</item>

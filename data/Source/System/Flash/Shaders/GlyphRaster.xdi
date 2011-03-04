@@ -4,17 +4,17 @@
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>1692</first>
+				<first>1722</first>
 				<second>307</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>1486</first>
+				<first>1515</first>
 				<second>315</second>
 			</position>
-			<parameterName>ScreenOffset</parameterName>
+			<parameterName>Flash_ScreenOffset</parameterName>
 			<type>PtScalar</type>
 			<frequency>UfDraw</frequency>
 		</item>
@@ -24,21 +24,21 @@
 				<first>1488</first>
 				<second>359</second>
 			</position>
-			<parameterName>ScreenOffsetScale</parameterName>
+			<parameterName>Flash_ScreenOffsetScale</parameterName>
 			<type>PtScalar</type>
 			<frequency>UfDraw</frequency>
 		</item>
 		<item type="traktor.render.Add">
 			<comment/>
 			<position>
-				<first>1924</first>
+				<first>1954</first>
 				<second>265</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>1819</first>
+				<first>1849</first>
 				<second>274</second>
 			</position>
 			<swizzle>xy01</swizzle>
@@ -46,7 +46,7 @@
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>1822</first>
+				<first>1852</first>
 				<second>327</second>
 			</position>
 			<swizzle>x000</swizzle>
@@ -313,10 +313,10 @@ X
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>11</first>
-				<second>559</second>
+				<first>-29</first>
+				<second>563</second>
 			</position>
-			<parameterName>Texture</parameterName>
+			<parameterName>Flash_Texture</parameterName>
 			<type>PtTexture</type>
 			<frequency>UfOnce</frequency>
 		</item>
@@ -331,10 +331,10 @@ X
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>861</first>
-				<second>230</second>
+				<first>845</first>
+				<second>219</second>
 			</position>
-			<parameterName>ViewSize</parameterName>
+			<parameterName>Flash_ViewSize</parameterName>
 			<type>PtVector</type>
 			<frequency>UfOnce</frequency>
 		</item>
@@ -379,10 +379,10 @@ X
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>-291</first>
+				<first>-306</first>
 				<second>255</second>
 			</position>
-			<parameterName>FrameSize</parameterName>
+			<parameterName>Flash_FrameSize</parameterName>
 			<type>PtVector</type>
 			<frequency>UfOnce</frequency>
 		</item>
@@ -422,7 +422,7 @@ X
 				<first>206</first>
 				<second>313</second>
 			</position>
-			<parameterName>ViewOffset</parameterName>
+			<parameterName>Flash_ViewOffset</parameterName>
 			<type>PtVector</type>
 			<frequency>UfOnce</frequency>
 		</item>
