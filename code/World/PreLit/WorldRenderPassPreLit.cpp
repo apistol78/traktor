@@ -14,17 +14,10 @@ namespace traktor
 
 bool s_handlesInitialized = false;
 render::handle_t s_handleDefaultTechnique;
-render::handle_t s_handleLightTechnique;
 render::handle_t s_handleProjection;
 render::handle_t s_handleSquareProjection;
 render::handle_t s_handleView;
 render::handle_t s_handleWorld;
-render::handle_t s_handleEyePosition;
-render::handle_t s_handleLightPositionAndType;
-render::handle_t s_handleLightDirectionAndRange;
-render::handle_t s_handleLightSunColor;
-render::handle_t s_handleLightBaseColor;
-render::handle_t s_handleLightShadowColor;
 render::handle_t s_handleLightMap;
 render::handle_t s_handleShadowEnable;
 render::handle_t s_handleShadowMask;
@@ -57,19 +50,12 @@ WorldRenderPassPreLit::WorldRenderPassPreLit(
 	{
 		// Techniques
 		s_handleDefaultTechnique = render::getParameterHandle(L"Default");
-		s_handleLightTechnique = render::getParameterHandle(L"Light");
 
 		// Parameters
 		s_handleProjection = render::getParameterHandle(L"Projection");
 		s_handleSquareProjection = render::getParameterHandle(L"SquareProjection");
 		s_handleView = render::getParameterHandle(L"View");
 		s_handleWorld = render::getParameterHandle(L"World");
-		s_handleEyePosition = render::getParameterHandle(L"EyePosition");
-		s_handleLightPositionAndType = render::getParameterHandle(L"LightPositionAndType");
-		s_handleLightDirectionAndRange = render::getParameterHandle(L"LightDirectionAndRange");
-		s_handleLightSunColor = render::getParameterHandle(L"LightSunColor");
-		s_handleLightBaseColor = render::getParameterHandle(L"LightBaseColor");
-		s_handleLightShadowColor = render::getParameterHandle(L"LightShadowColor");
 		s_handleLightMap = render::getParameterHandle(L"LightMap");
 		s_handleShadowEnable = render::getParameterHandle(L"ShadowEnable");
 		s_handleShadowMask = render::getParameterHandle(L"ShadowMask");
@@ -95,16 +81,12 @@ void WorldRenderPassPreLit::setShaderTechnique(render::Shader* shader) const
 
 void WorldRenderPassPreLit::setShaderCombination(render::Shader* shader) const
 {
-	if (m_technique == s_handleLightTechnique)
-		shader->setCombination(s_handleShadowEnable, m_shadowMask != 0);
 	if (m_technique == s_handleDefaultTechnique)
 		shader->setCombination(s_handleDepthEnable, m_depthMap != 0);
 }
 
 void WorldRenderPassPreLit::setShaderCombination(render::Shader* shader, const Matrix44& world, const Aabb3& bounds) const
 {
-	if (m_technique == s_handleLightTechnique)
-		shader->setCombination(s_handleShadowEnable, m_shadowMask != 0);
 	if (m_technique == s_handleDefaultTechnique)
 		shader->setCombination(s_handleDepthEnable, m_depthMap != 0);
 }
@@ -113,12 +95,7 @@ void WorldRenderPassPreLit::setProgramParameters(render::ProgramParameters* prog
 {
 	setWorldProgramParameters(programParams, Matrix44::identity());
 
-	if (m_technique == s_handleLightTechnique)
-	{
-		setLightProgramParameters(programParams);
-		setShadowMapProgramParameters(programParams);
-	}
-	else if (m_technique == s_handleDefaultTechnique)
+	if (m_technique == s_handleDefaultTechnique)
 	{
 		setDepthMapProgramParameters(programParams);
 		setLightMapProgramParameters(programParams);
@@ -129,12 +106,7 @@ void WorldRenderPassPreLit::setProgramParameters(render::ProgramParameters* prog
 {
 	setWorldProgramParameters(programParams, world);
 
-	if (m_technique == s_handleLightTechnique)
-	{
-		setLightProgramParameters(programParams);
-		setShadowMapProgramParameters(programParams);
-	}
-	else if (m_technique == s_handleDefaultTechnique)
+	if (m_technique == s_handleDefaultTechnique)
 	{
 		setDepthMapProgramParameters(programParams);
 		setLightMapProgramParameters(programParams);
@@ -148,24 +120,7 @@ void WorldRenderPassPreLit::setWorldProgramParameters(render::ProgramParameters*
 	programParams->setMatrixParameter(s_handleSquareProjection, m_worldRenderView.getSquareProjection());
 	programParams->setMatrixParameter(s_handleView, m_worldRenderView.getView());
 	programParams->setMatrixParameter(s_handleWorld, world);
-	programParams->setVectorParameter(s_handleEyePosition, m_worldRenderView.getEyePosition());
 	programParams->setFloatParameter(s_handleDepthRange, m_depthRange);
-}
-
-void WorldRenderPassPreLit::setLightProgramParameters(render::ProgramParameters* programParams) const
-{
-	const WorldRenderView::Light& light = m_worldRenderView.getLight(0);
-	Vector4 lightPositionAndType = light.position.xyz0() + Vector4(0.0f, 0.0f, 0.0f, float(light.type));
-	Vector4 lightDirectionAndRange = light.direction.xyz0() + Vector4(0.0f, 0.0f, 0.0f, light.range);
-	Vector4 lightSunColor = light.sunColor;
-	Vector4 lightBaseColor = light.baseColor;
-	Vector4 lightShadowColor = light.shadowColor;
-
-	programParams->setVectorParameter(s_handleLightPositionAndType, lightPositionAndType);
-	programParams->setVectorParameter(s_handleLightDirectionAndRange, lightDirectionAndRange);
-	programParams->setVectorParameter(s_handleLightSunColor, lightSunColor);
-	programParams->setVectorParameter(s_handleLightBaseColor, lightBaseColor);
-	programParams->setVectorParameter(s_handleLightShadowColor, lightShadowColor);
 }
 
 void WorldRenderPassPreLit::setShadowMapProgramParameters(render::ProgramParameters* programParams) const

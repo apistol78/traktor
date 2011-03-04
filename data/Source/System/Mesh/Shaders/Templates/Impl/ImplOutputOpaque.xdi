@@ -5,7 +5,7 @@
 			<comment/>
 			<position>
 				<first>489</first>
-				<second>339</second>
+				<second>375</second>
 			</position>
 			<name>T_ViewPosition</name>
 			<connectable>true</connectable>
@@ -48,6 +48,10 @@
 					<optional>false</optional>
 				</item>
 				<item>
+					<name>ViewNormal</name>
+					<optional>false</optional>
+				</item>
+				<item>
 					<name>ViewPosition</name>
 					<optional>false</optional>
 				</item>
@@ -84,7 +88,7 @@
 			<comment/>
 			<position>
 				<first>485</first>
-				<second>447</second>
+				<second>483</second>
 			</position>
 			<name>T_SpecularTerm</name>
 			<connectable>true</connectable>
@@ -106,7 +110,7 @@
 			<comment/>
 			<position>
 				<first>454</first>
-				<second>411</second>
+				<second>447</second>
 			</position>
 			<name>T_SpecularRoughness</name>
 			<connectable>true</connectable>
@@ -117,7 +121,7 @@
 			<comment/>
 			<position>
 				<first>493</first>
-				<second>375</second>
+				<second>411</second>
 			</position>
 			<name>T_DiffuseTerm</name>
 			<connectable>true</connectable>
@@ -142,6 +146,17 @@
 				<second>231</second>
 			</position>
 			<name>T_WorldNormal</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>492</first>
+				<second>339</second>
+			</position>
+			<name>T_ViewNormal</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
 			<defaultValue>0</defaultValue>
@@ -226,6 +241,16 @@
 			<destination>
 				<node ref="/object/nodes/item[2]"/>
 				<name>EyeDirection</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[9]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<name>ViewNormal</name>
 			</destination>
 		</item>
 	</edges>

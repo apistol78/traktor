@@ -28,6 +28,7 @@ class RenderTargetSet;
 	namespace world
 	{
 
+class LightRenderer;
 class PostProcess;
 class WorldContext;
 
@@ -41,6 +42,7 @@ class WorldContext;
  *
  * Operation
  * 1. Render depth pass.
+ * 2. Render normal pass.
  * For each light
  *   2. Render shadow map from light if directional.
  *   3. Render screen-space shadow. mask.
@@ -50,8 +52,8 @@ class WorldContext;
  * Techniques used
  * "Default" - Visual, final, color output.
  * "Depth"   - Depth pass; write view distance into depth buffer.
+ * "Normal"  - Normal pass; write world normals into normal buffer.
  * "Shadow"  - Shadow map pass; write distance from light into shadow map.
- * "Light"   - Light pass; add lighting from light into light buffer.
  */
 class T_DLLCLASS WorldRendererPreLit : public IWorldRenderer
 {
@@ -86,19 +88,24 @@ private:
 	struct Frame
 	{
 		Ref< WorldContext > depth;
+		Ref< WorldContext > normal;
 		Ref< WorldContext > shadow[WorldRenderView::MaxLightCount];
-		Ref< WorldContext > light[WorldRenderView::MaxLightCount];
 		Ref< WorldContext > visual;
 		Matrix44 projection;
+		Matrix44 view;
 		Matrix44 viewToLightSpace[WorldRenderView::MaxLightCount];
 		Matrix44 squareProjection[WorldRenderView::MaxLightCount];
 		Frustum viewFrustum;
+		Vector4 eyePosition;
+		WorldRenderView::Light lights[WorldRenderView::MaxLightCount];
 		bool haveDepth;
+		bool haveNormal;
 		bool haveShadows[WorldRenderView::MaxLightCount];
 		uint32_t lightCount;
 
 		Frame()
 		:	haveDepth(false)
+		,	haveNormal(false)
 		,	lightCount(0)
 		{
 			for (uint32_t i = 0; i < WorldRenderView::MaxLightCount; ++i)
@@ -107,8 +114,8 @@ private:
 	};
 
 	static render::handle_t ms_techniqueDefault;
-	static render::handle_t ms_techniqueLight;
 	static render::handle_t ms_techniqueDepth;
+	static render::handle_t ms_techniqueNormal;
 	static render::handle_t ms_techniqueShadow;
 	static render::handle_t ms_handleTime;
 	static render::handle_t ms_handleProjection;
@@ -116,11 +123,13 @@ private:
 	WorldRenderSettings m_settings;
 	Ref< render::IRenderView > m_renderView;
 	Ref< render::RenderTargetSet > m_depthTargetSet;
+	Ref< render::RenderTargetSet > m_normalTargetSet;
 	Ref< render::RenderTargetSet > m_shadowTargetSet;
 	Ref< render::RenderTargetSet > m_shadowMaskTargetSet;
-	Ref< render::RenderTargetSet > m_lightTargetSet;
+	Ref< render::RenderTargetSet > m_lightMapTargetSet;
 	Ref< render::RenderContext > m_globalContext;
 	Ref< PostProcess > m_shadowMaskProjection;
+	Ref< LightRenderer > m_lightRenderer;
 	AlignedVector< Frame > m_frames;
 	uint32_t m_count;
 
