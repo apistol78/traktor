@@ -21,10 +21,20 @@ void Canvas::setForeground(const Color4ub& foreground)
 	m_canvas->setForeground(m_foreground);
 }
 
+const Color4ub& Canvas::getForeground() const
+{
+	return m_foreground;
+}
+
 void Canvas::setBackground(const Color4ub& background)
 {
 	m_background = background;
 	m_canvas->setBackground(m_background);
+}
+
+const Color4ub& Canvas::getBackground() const
+{
+	return m_background;
 }
 
 void Canvas::setFont(const Font& font)

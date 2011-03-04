@@ -31,7 +31,11 @@ public:
 
 	void setForeground(const Color4ub& foreground);
 
+	const Color4ub& getForeground() const;
+
 	void setBackground(const Color4ub& background);
+
+	const Color4ub& getBackground() const;
 
 	void setFont(const Font& font);
 
