@@ -114,7 +114,9 @@ void BrowsePropertyItem::resizeInPlaceControls(const Rect& rc, std::vector< Widg
 void BrowsePropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 {
 	std::wstring text;
-	if (!getPropertyList()->resolvePropertyGuid(m_value, text))
+
+	bool resolved = getPropertyList()->resolvePropertyGuid(m_value, text);
+	if (!resolved)
 	{
 		if (m_value.isNull())
 			return;
@@ -126,7 +128,15 @@ void BrowsePropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 	font.setBold(true);
 
 	canvas.setFont(font);
+
+	Color4ub currentColor = canvas.getForeground();
+	if (!resolved)
+		canvas.setForeground(Color4ub(255, 0, 0));
+
 	canvas.drawText(rc.inflate(-2, -2), text, AnLeft, AnCenter);
+
+	if (!resolved)
+		canvas.setForeground(currentColor);
 
 	canvas.setFont(getPropertyList()->getFont());
 }
