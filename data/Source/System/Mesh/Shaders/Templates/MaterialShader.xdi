@@ -4,7 +4,7 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>921</first>
+				<first>922</first>
 				<second>355</second>
 			</position>
 			<fragmentGuid>{6DA4BE0A-BE19-4440-9B08-FC3FD1FFECDC}</fragmentGuid>
@@ -27,6 +27,10 @@
 				</item>
 				<item>
 					<name>T_SurfaceColor</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<name>T_ViewNormal</name>
 					<optional>false</optional>
 				</item>
 				<item>
@@ -331,6 +335,16 @@
 			<destination>
 				<node ref="/object/nodes/item"/>
 				<name>T_SurfaceColor</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<name>T_ViewNormal</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>T_ViewNormal</name>
 			</destination>
 		</item>
 	</edges>

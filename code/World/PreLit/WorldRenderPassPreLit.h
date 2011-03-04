@@ -64,8 +64,6 @@ private:
 
 	void setWorldProgramParameters(render::ProgramParameters* programParams, const Matrix44& world) const;
 
-	void setLightProgramParameters(render::ProgramParameters* programParams) const;
-
 	void setShadowMapProgramParameters(render::ProgramParameters* programParams) const;
 
 	void setDepthMapProgramParameters(render::ProgramParameters* programParams) const;
