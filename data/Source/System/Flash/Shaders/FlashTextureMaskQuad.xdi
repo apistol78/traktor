@@ -4,16 +4,16 @@
 		<item type="traktor.render.VertexOutput" version="1">
 			<comment/>
 			<position>
-				<first>292</first>
-				<second>-184</second>
+				<first>186</first>
+				<second>-120</second>
 			</position>
 			<technique>Default</technique>
 		</item>
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>59</first>
-				<second>-176</second>
+				<first>-47</first>
+				<second>-112</second>
 			</position>
 			<fragmentGuid>{46AAC087-9D83-3047-93E2-36B77218D3C7}</fragmentGuid>
 			<inputPins/>
@@ -27,7 +27,7 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.PixelOutput" version="2">
+		<item type="traktor.render.PixelOutput" version="3">
 			<comment/>
 			<position>
 				<first>586</first>
@@ -59,6 +59,7 @@
 			<stencilFunction>CfEqual</stencilFunction>
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
+			<registerCount>0</registerCount>
 		</item>
 		<item type="traktor.render.MulAdd">
 			<comment/>
@@ -70,20 +71,20 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>226</first>
-				<second>145</second>
+				<first>190</first>
+				<second>142</second>
 			</position>
-			<parameterName>CxFormAdd</parameterName>
+			<parameterName>Flash_CxFormAdd</parameterName>
 			<type>PtVector</type>
 			<frequency>UfDraw</frequency>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>228</first>
-				<second>112</second>
+				<first>192</first>
+				<second>109</second>
 			</position>
-			<parameterName>CxFormMul</parameterName>
+			<parameterName>Flash_CxFormMul</parameterName>
 			<type>PtVector</type>
 			<frequency>UfDraw</frequency>
 		</item>
@@ -127,10 +128,10 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>-506</first>
-				<second>167</second>
+				<first>-539</first>
+				<second>154</second>
 			</position>
-			<parameterName>TextureOffset</parameterName>
+			<parameterName>Flash_TextureOffset</parameterName>
 			<type>PtVector</type>
 			<frequency>UfDraw</frequency>
 		</item>
@@ -164,10 +165,10 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>-117</first>
-				<second>43</second>
+				<first>-145</first>
+				<second>35</second>
 			</position>
-			<parameterName>Texture</parameterName>
+			<parameterName>Flash_Texture</parameterName>
 			<type>PtTexture</type>
 			<frequency>UfDraw</frequency>
 		</item>

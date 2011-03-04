@@ -20,7 +20,7 @@
 			</position>
 			<technique>Default</technique>
 		</item>
-		<item type="traktor.render.PixelOutput" version="2">
+		<item type="traktor.render.PixelOutput" version="3">
 			<comment/>
 			<position>
 				<first>972</first>
@@ -52,6 +52,7 @@
 			<stencilFunction>CfAlways</stencilFunction>
 			<stencilReference>0</stencilReference>
 			<stencilMask>4294967295</stencilMask>
+			<registerCount>0</registerCount>
 		</item>
 		<item type="traktor.render.Sampler">
 			<comment/>
@@ -77,7 +78,7 @@
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>-22</first>
+				<first>-20</first>
 				<second>185</second>
 			</position>
 			<swizzle>xy10</swizzle>
@@ -85,10 +86,10 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>-112</first>
-				<second>221</second>
+				<first>-147</first>
+				<second>227</second>
 			</position>
-			<parameterName>TextureMatrix</parameterName>
+			<parameterName>Flash_TextureMatrix</parameterName>
 			<type>PtMatrix</type>
 			<frequency>UfDraw</frequency>
 		</item>
@@ -120,20 +121,20 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>557</first>
-				<second>173</second>
+				<first>510</first>
+				<second>186</second>
 			</position>
-			<parameterName>CxFormMul</parameterName>
+			<parameterName>Flash_CxFormMul</parameterName>
 			<type>PtVector</type>
 			<frequency>UfDraw</frequency>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>557</first>
-				<second>215</second>
+				<first>510</first>
+				<second>228</second>
 			</position>
-			<parameterName>CxFormAdd</parameterName>
+			<parameterName>Flash_CxFormAdd</parameterName>
 			<type>PtVector</type>
 			<frequency>UfDraw</frequency>
 		</item>
@@ -147,10 +148,10 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>215</first>
-				<second>87</second>
+				<first>192</first>
+				<second>102</second>
 			</position>
-			<parameterName>Texture</parameterName>
+			<parameterName>Flash_Texture</parameterName>
 			<type>PtTexture</type>
 			<frequency>UfDraw</frequency>
 		</item>

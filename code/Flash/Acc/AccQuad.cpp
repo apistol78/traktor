@@ -48,15 +48,15 @@ bool AccQuad::create(
 {
 	if (!s_handleInitialized)
 	{
-		s_handleTransform = render::getParameterHandle(L"Transform");
-		s_handleFrameSize = render::getParameterHandle(L"FrameSize");
-		s_handleViewSize = render::getParameterHandle(L"ViewSize");
-		s_handleViewOffset = render::getParameterHandle(L"ViewOffset");
-		s_handleScreenOffsetScale = render::getParameterHandle(L"ScreenOffsetScale");
-		s_handleCxFormMul = render::getParameterHandle(L"CxFormMul");
-		s_handleCxFormAdd = render::getParameterHandle(L"CxFormAdd");
-		s_handleTexture = render::getParameterHandle(L"Texture");
-		s_handleTextureOffset = render::getParameterHandle(L"TextureOffset");
+		s_handleTransform = render::getParameterHandle(L"Flash_Transform");
+		s_handleFrameSize = render::getParameterHandle(L"Flash_FrameSize");
+		s_handleViewSize = render::getParameterHandle(L"Flash_ViewSize");
+		s_handleViewOffset = render::getParameterHandle(L"Flash_ViewOffset");
+		s_handleScreenOffsetScale = render::getParameterHandle(L"Flash_ScreenOffsetScale");
+		s_handleCxFormMul = render::getParameterHandle(L"Flash_CxFormMul");
+		s_handleCxFormAdd = render::getParameterHandle(L"Flash_CxFormAdd");
+		s_handleTexture = render::getParameterHandle(L"Flash_Texture");
+		s_handleTextureOffset = render::getParameterHandle(L"Flash_TextureOffset");
 		s_handleInitialized = true;
 	}
 

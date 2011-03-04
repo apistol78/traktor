@@ -70,11 +70,11 @@ bool AccGlyph::create(
 {
 	if (!s_handleInitialized)
 	{
-		s_handleFrameSize = render::getParameterHandle(L"FrameSize");
-		s_handleViewSize = render::getParameterHandle(L"ViewSize");
-		s_handleViewOffset = render::getParameterHandle(L"ViewOffset");
-		s_handleScreenOffsetScale = render::getParameterHandle(L"ScreenOffsetScale");
-		s_handleTexture = render::getParameterHandle(L"Texture");
+		s_handleFrameSize = render::getParameterHandle(L"Flash_FrameSize");
+		s_handleViewSize = render::getParameterHandle(L"Flash_ViewSize");
+		s_handleViewOffset = render::getParameterHandle(L"Flash_ViewOffset");
+		s_handleScreenOffsetScale = render::getParameterHandle(L"Flash_ScreenOffsetScale");
+		s_handleTexture = render::getParameterHandle(L"Flash_Texture");
 		s_handleInitialized = true;
 	}
 
