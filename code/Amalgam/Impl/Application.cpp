@@ -553,6 +553,9 @@ bool Application::update()
 		deltaTime = max(deltaTime, c_minDeltaTime);
 		m_updateInfo.m_frameDeltaTime = deltaTime * c_deltaTimeFilterCoeff + m_updateInfo.m_frameDeltaTime * (1.0f - c_deltaTimeFilterCoeff);
 
+		// Update audio.
+		m_audioServer->update(m_updateInfo.m_frameDeltaTime, m_renderViewActive);
+
 		// Update rumble.
 		m_inputServer->updateRumble(m_updateInfo.m_frameDeltaTime, m_updateControl.m_pause);
 

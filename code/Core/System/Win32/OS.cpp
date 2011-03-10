@@ -347,8 +347,9 @@ Ref< IProcess > OS::execute(
 		PROCESS_INFORMATION pi;
 		std::memset(&pi, 0, sizeof(pi));
 
-		DWORD dwCreationFlags = CREATE_NEW_PROCESS_GROUP;
 #if !defined(WINCE)
+		DWORD dwCreationFlags = CREATE_NEW_PROCESS_GROUP;
+
 		if (mute)
 			dwCreationFlags = CREATE_NO_WINDOW;
 		else
@@ -357,7 +358,7 @@ Ref< IProcess > OS::execute(
 		if (environment.ptr())
 			dwCreationFlags |= CREATE_UNICODE_ENVIRONMENT;
 #else
-		dwCreationFlags = mute ? 0 : CREATE_NEW_CONSOLE;
+		DWORD dwCreationFlags = mute ? 0 : CREATE_NEW_CONSOLE;
 #endif
 
 		BOOL result = CreateProcess(
@@ -423,7 +424,11 @@ Ref< IProcess > OS::execute(
 
 		return new ProcessWin32(
 			xi.hProcess,
+#if !defined(WINCE)
 			GetProcessId(xi.hProcess),
+#else
+			0,
+#endif
 			hStdInRead,
 			hStdInWrite,
 			hStdOutRead,
