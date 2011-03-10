@@ -52,6 +52,12 @@ public:
 	 */
 	void setVolume(float volume);
 
+	/*! \brief Get global volume.
+	 *
+	 * \return Global volume.
+	 */
+	float getVolume() const;
+
 	/*! \brief Set global combination matrix.
 	 *
 	 * [hardware channel][virtual channel]

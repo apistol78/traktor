@@ -1,3 +1,6 @@
+#include "Amalgam/IEnvironment.h"
+#include "Amalgam/Impl/AudioServer.h"
+#include "Amalgam/Impl/LibraryHelper.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyBoolean.h"
@@ -10,9 +13,6 @@
 #include "Sound/SoundSystem.h"
 #include "Sound/SoundFactory.h"
 #include "Sound/Filters/SurroundEnvironment.h"
-#include "Amalgam/IEnvironment.h"
-#include "Amalgam/Impl/AudioServer.h"
-#include "Amalgam/Impl/LibraryHelper.h"
 
 namespace traktor
 {
@@ -20,6 +20,12 @@ namespace traktor
 	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.AudioServer", AudioServer, IAudioServer)
+
+AudioServer::AudioServer()
+:	m_soundMuted(false)
+,	m_soundMutedVolume(1.0f)
+{
+}
 
 bool AudioServer::create(const Settings* settings)
 {
@@ -86,6 +92,43 @@ void AudioServer::createResourceFactories(IEnvironment* environment)
 
 	if (m_soundSystem)
 		resourceManager->addFactory(new sound::SoundFactory(database, m_soundSystem));
+}
+
+void AudioServer::update(float dT, bool renderViewActive)
+{
+	if (!m_soundSystem)
+		return;
+
+	if (!renderViewActive)
+	{
+		// Should we become muted?
+		if (!m_soundMuted)
+		{
+			log::debug << L"Audio server muted; application inactive" << Endl;
+			m_soundMutedVolume = m_soundSystem->getVolume();
+			m_soundMuted = true;
+		}
+
+		// Fade down volume until zero.
+		float volume = m_soundSystem->getVolume();
+		volume = std::max(volume - dT, 0.0f);
+		m_soundSystem->setVolume(volume);
+	}
+	// Fade up volume until "un-muted".
+	else if (m_soundMuted)
+	{
+		float volume = m_soundSystem->getVolume();
+
+		volume += dT;
+		if (volume >= m_soundMutedVolume)
+		{
+			log::debug << L"Audio server un-muted; application active" << Endl;
+			volume = m_soundMutedVolume;
+			m_soundMuted = false;
+		}
+
+		m_soundSystem->setVolume(volume);
+	}
 }
 
 int32_t AudioServer::reconfigure(const Settings* settings)

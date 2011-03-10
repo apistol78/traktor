@@ -148,6 +148,11 @@ void SoundSystem::setVolume(float volume)
 	m_volume = volume;
 }
 
+float SoundSystem::getVolume() const
+{
+	return m_volume;
+}
+
 void SoundSystem::setCombineMatrix(float cm[SbcMaxChannelCount][SbcMaxChannelCount])
 {
 	std::memcpy(m_desc.cm, cm, sizeof(cm));

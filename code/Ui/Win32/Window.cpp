@@ -75,10 +75,14 @@ bool Window::create(
 		return false;
 	}
 
+#if !defined(WINCE)
 	if (_tcscmp(className, _T("TraktorDialogWin32Class")) != 0)
 		SET_WINDOW_LONG_PTR(m_hWnd, GWLP_USERDATA, (LONG_PTR)this);
 	else
 		SET_WINDOW_LONG_PTR(m_hWnd, DWLP_USER, (LONG_PTR)this);
+#else
+	SET_WINDOW_LONG_PTR(m_hWnd, GWLP_USERDATA, (LONG_PTR)this);
+#endif
 
 	if (subClass)
 	{
@@ -279,7 +283,11 @@ LRESULT CALLBACK Window::dlgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 	bool pass;
 
 	// Lookup handler of issued message.
+#if !defined(WINCE)
 	result = invokeMessageHandlers(hWnd, DWLP_USER, message, wParam, lParam, pass);
+#else
+	result = invokeMessageHandlers(hWnd, GWLP_USERDATA, message, wParam, lParam, pass);
+#endif
 	if (!pass)
 		return result;
 

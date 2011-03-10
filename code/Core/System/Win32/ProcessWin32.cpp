@@ -145,6 +145,7 @@ Ref< IStream > ProcessWin32::getPipeStream(StdPipe pipe)
 
 bool ProcessWin32::signal(SignalType signalType)
 {
+#if !defined(WINCE)
 	switch (signalType)
 	{
 	case StCtrlC:
@@ -159,6 +160,9 @@ bool ProcessWin32::signal(SignalType signalType)
 		return false;
 	}
 	return true;
+#else
+	return false;
+#endif
 }
 
 int32_t ProcessWin32::exitCode() const

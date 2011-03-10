@@ -221,8 +221,8 @@ void PrimitiveRenderer::drawLine(
 	if (int(m_vertex - m_vertexStart + 2) >= c_bufferCount)
 		return;
 
-	Vector4 v1 = m_worldViewProj * Vector4(start.x(), start.y(), start.z(), 1.0f);
-	Vector4 v2 = m_worldViewProj * Vector4(  end.x(),   end.y(),   end.z(), 1.0f);
+	Vector4 v1 = m_worldViewProj * start.xyz1();
+	Vector4 v2 = m_worldViewProj * end.xyz1();
 
 	uint8_t shaderId = m_depthEnable.back() ? SiWireDepth : SiWire;
 	if (m_batches.empty() || m_batches.back().shaderId != shaderId || m_batches.back().primitives.type != PtLines)
