@@ -45,7 +45,7 @@ Ref< ProgramResourceDx11 > ProgramDx11::compile(const HlslProgram& hlslProgram)
 	hr = D3DX11CompileFromMemory(
 		wstombs(hlslProgram.getVertexShader()).c_str(),
 		hlslProgram.getVertexShader().length(),
-		"",
+		"generated.vs",
 		NULL,
 		NULL,
 		"main",
@@ -70,7 +70,7 @@ Ref< ProgramResourceDx11 > ProgramDx11::compile(const HlslProgram& hlslProgram)
 	hr = D3DX11CompileFromMemory(
 		wstombs(hlslProgram.getPixelShader()).c_str(),
 		hlslProgram.getPixelShader().length(),
-		"",
+		"generated.ps",
 		NULL,
 		NULL,
 		"main",

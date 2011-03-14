@@ -54,9 +54,14 @@ RenderViewDx11::RenderViewDx11(
 
 	d3dBackBuffer->GetDesc(&dtd);
 
+	std::memset(&dtd, 0, sizeof(dtd));
+	dtd.Width = scd.BufferDesc.Width;
+	dtd.Height = scd.BufferDesc.Height;
 	dtd.MipLevels = 1;
 	dtd.ArraySize = 1;
 	dtd.Format = DXGI_FORMAT_D16_UNORM;
+	dtd.SampleDesc.Count = scd.SampleDesc.Count;
+	dtd.SampleDesc.Quality = scd.SampleDesc.Quality;
 	dtd.Usage = D3D11_USAGE_DEFAULT;
 	dtd.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 	dtd.CPUAccessFlags = 0;
@@ -65,7 +70,9 @@ RenderViewDx11::RenderViewDx11(
 	hr = m_context->getD3DDevice()->CreateTexture2D(&dtd, NULL, &m_d3dDepthStencil.getAssign());
 	T_ASSERT (SUCCEEDED(hr));
 	
+	std::memset(&ddsvd, 0, sizeof(ddsvd));
 	ddsvd.Format = dtd.Format;
+	ddsvd.Flags = 0;
 	ddsvd.ViewDimension = dtd.SampleDesc.Count > 1 ? D3D11_DSV_DIMENSION_TEXTURE2DMS : D3D11_DSV_DIMENSION_TEXTURE2D;
 	ddsvd.Texture2D.MipSlice = 0;
 

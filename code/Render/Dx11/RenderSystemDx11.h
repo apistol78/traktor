@@ -74,7 +74,7 @@ private:
 	Ref< ContextDx11 > m_context;
 	ComRef< ID3D11Device > m_d3dDevice;
 	ComRef< ID3D11DeviceContext > m_d3dDeviceContext;
-	ComRef< IDXGIFactory > m_dxgiFactory;
+	ComRef< IDXGIFactory1 > m_dxgiFactory;
 	AutoArrayPtr< DXGI_MODE_DESC > m_dxgiDisplayModes;
 	std::vector< DisplayMode > m_displayModes;
 	HWND m_hWnd;
