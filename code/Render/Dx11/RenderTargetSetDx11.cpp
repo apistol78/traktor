@@ -43,6 +43,7 @@ bool RenderTargetSetDx11::create(ID3D11Device* d3dDevice, const RenderTargetSetC
 
 	if (desc.createDepthStencil)
 	{
+		std::memset(&dtd, 0, sizeof(dtd));
 		dtd.Width = desc.width;
 		dtd.Height = desc.height;
 		dtd.MipLevels = 1;
@@ -68,7 +69,9 @@ bool RenderTargetSetDx11::create(ID3D11Device* d3dDevice, const RenderTargetSetC
 			return false;
 		}
 		
+		std::memset(&ddsvd, 0, sizeof(ddsvd));
 		ddsvd.Format = dtd.Format;
+		ddsvd.Flags = 0;
 		ddsvd.ViewDimension = dtd.SampleDesc.Count > 1 ? D3D11_DSV_DIMENSION_TEXTURE2DMS : D3D11_DSV_DIMENSION_TEXTURE2D;
 		ddsvd.Texture2D.MipSlice = 0;
 

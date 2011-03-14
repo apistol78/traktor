@@ -64,12 +64,23 @@ RenderSystemDx11::RenderSystemDx11()
 
 bool RenderSystemDx11::create(const RenderSystemCreateDesc& desc)
 {
-	ComRef< IDXGIDevice > dxgiDevice;
-	ComRef< IDXGIAdapter > dxgiAdapter;
+	ComRef< IDXGIDevice1 > dxgiDevice;
+	ComRef< IDXGIAdapter1 > dxgiAdapter;
 	ComRef< IDXGIOutput > dxgiOutput;
 	D3D_FEATURE_LEVEL d3dFeatureLevel;
 	HRESULT hr;
 
+	/*
+	// Create DXGI factory instance.
+	hr = CreateDXGIFactory1(
+		__uuidof(IDXGIFactory1),
+		(void**)(&m_dxgiFactory.getAssign())
+	);
+	if (FAILED(hr))
+		return false;
+	*/
+
+	// Create D3D11 device instance.
 	hr = D3D11CreateDevice(
 		NULL,
 		D3D_DRIVER_TYPE_HARDWARE,
@@ -89,20 +100,21 @@ bool RenderSystemDx11::create(const RenderSystemCreateDesc& desc)
 	if (FAILED(hr))
 		return false;
 
-	hr = CreateDXGIFactory(
-		__uuidof(IDXGIFactory),
-		(void**)(&m_dxgiFactory.getAssign())
-	);
-	if (FAILED(hr))
-		return false;
-
-	hr = m_d3dDevice->QueryInterface(__uuidof(IDXGIDevice), (void **)&dxgiDevice.getAssign());
+	hr = m_d3dDevice->QueryInterface(__uuidof(IDXGIDevice1), (void **)&dxgiDevice.getAssign());
 	if (FAILED(hr))
 		return 0;
 
-	hr = dxgiDevice->GetAdapter(&dxgiAdapter.getAssign());
+	hr = dxgiDevice->GetParent(__uuidof(IDXGIAdapter1), (void **)&dxgiAdapter.getAssign());
 	if (FAILED(hr))
 		return 0;
+
+	hr = dxgiAdapter->GetParent(__uuidof(IDXGIFactory1), (void **)&m_dxgiFactory.getAssign());
+	if (FAILED(hr))
+		return 0;
+
+	//hr = dxgiDevice->GetAdapter(&dxgiAdapter.getAssign());
+	//if (FAILED(hr))
+	//	return 0;
 
 	hr = dxgiAdapter->EnumOutputs(0, &dxgiOutput.getAssign());
 	if (FAILED(hr))
