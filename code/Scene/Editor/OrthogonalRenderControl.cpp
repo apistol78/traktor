@@ -71,7 +71,7 @@ bool OrthogonalRenderControl::create(ui::Widget* parent, SceneEditorContext* con
 	m_context = context;
 	T_ASSERT (m_context);
 
-	m_multiSample = m_context->getEditor()->getSettings()->getProperty< PropertyInteger >(L"SceneEditor.MultiSample", c_defaultMultiSample);
+	m_multiSample = m_context->getEditor()->getSettings()->getProperty< PropertyInteger >(L"Editor.MultiSample", c_defaultMultiSample);
 	m_viewPlane = viewPlane;
 
 	m_renderWidget = new ui::Widget();

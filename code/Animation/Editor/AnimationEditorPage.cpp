@@ -8,12 +8,13 @@
 #include "Animation/SkeletonUtils.h"
 #include "Animation/IK/IKPoseController.h"
 #include "Core/Settings/PropertyColor.h"
+#include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/Settings.h"
+#include "Database/Instance.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPageSite.h"
 #include "Editor/TypeBrowseFilter.h"
 #include "Editor/UndoStack.h"
-#include "Database/Instance.h"
 #include "Resource/ResourceManager.h"
 #include "Ui/Application.h"
 #include "Ui/Clipboard.h"
@@ -237,7 +238,7 @@ bool AnimationEditorPage::create(ui::Container* parent, editor::IEditorPageSite*
 		render::RenderViewEmbeddedDesc desc;
 		desc.depthBits = 16;
 		desc.stencilBits = 0;
-		desc.multiSample = 4;
+		desc.multiSample = m_editor->getSettings()->getProperty< PropertyInteger >(L"Editor.MultiSample", 4);
 		desc.waitVBlank = false;
 		desc.nativeWindowHandle = m_renderWidgets[i]->getIWidget()->getSystemHandle();
 

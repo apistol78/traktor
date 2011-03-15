@@ -33,7 +33,7 @@ bool DebugRenderControl::create(ui::Widget* parent, SceneEditorContext* context)
 	render::RenderViewEmbeddedDesc desc;
 	desc.depthBits = 0;
 	desc.stencilBits = 0;
-	desc.multiSample = 4;
+	desc.multiSample = 0;
 	desc.waitVBlank = false;
 	desc.nativeWindowHandle = m_renderWidget->getIWidget()->getSystemHandle();
 

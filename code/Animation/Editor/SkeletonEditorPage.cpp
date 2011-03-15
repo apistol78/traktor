@@ -3,6 +3,8 @@
 #include "Animation/Skeleton.h"
 #include "Animation/Bone.h"
 #include "Animation/SkeletonUtils.h"
+#include "Core/Settings/PropertyInteger.h"
+#include "Core/Settings/Settings.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPageSite.h"
 #include "Editor/UndoStack.h"
@@ -106,7 +108,7 @@ bool SkeletonEditorPage::create(ui::Container* parent, editor::IEditorPageSite* 
 	render::RenderViewEmbeddedDesc desc;
 	desc.depthBits = 16;
 	desc.stencilBits = 0;
-	desc.multiSample = 4;
+	desc.multiSample = m_editor->getSettings()->getProperty< PropertyInteger >(L"Editor.MultiSample", 4);
 	desc.waitVBlank = false;
 	desc.nativeWindowHandle = m_renderWidget->getIWidget()->getSystemHandle();
 

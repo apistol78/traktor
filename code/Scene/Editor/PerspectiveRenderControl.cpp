@@ -91,7 +91,7 @@ bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* co
 	m_index = index;
 
 	m_fieldOfView = m_context->getEditor()->getSettings()->getProperty< PropertyFloat >(L"SceneEditor.FieldOfView" + toString(index), c_defaultFieldOfView);
-	m_multiSample = m_context->getEditor()->getSettings()->getProperty< PropertyInteger >(L"SceneEditor.MultiSample", c_defaultMultiSample);
+	m_multiSample = m_context->getEditor()->getSettings()->getProperty< PropertyInteger >(L"Editor.MultiSample", c_defaultMultiSample);
 
 	m_containerAspect = new ui::Container();
 	m_containerAspect->create(parent, ui::WsNone, new ui::FloodLayout());

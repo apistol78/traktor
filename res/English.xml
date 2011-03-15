@@ -420,7 +420,11 @@
     <item>
       <first>EDITOR_SETTINGS_RENDERER_MAX_ANISOTROPY</first>
       <second>Max anisotropy</second>
-    </item>    
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_RENDERER_MULTISAMPLE</first>
+      <second>Multisample</second>
+    </item>
     <item>
       <first>EDITOR_SETTINGS_REMOVE_MODULE</first>
       <second>Remove module</second>
