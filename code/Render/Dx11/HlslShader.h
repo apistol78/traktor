@@ -53,6 +53,8 @@ public:
 
 	HlslVariable* createOuterVariable(const OutputPin* outputPin, const std::wstring& variableName, HlslType type);
 
+	void associateVariable(const OutputPin* outputPin, HlslVariable* variable);
+
 	HlslVariable* getVariable(const OutputPin* outputPin);
 
 	void pushScope();

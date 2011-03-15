@@ -68,6 +68,11 @@ HlslVariable* HlslShader::createOuterVariable(const OutputPin* outputPin, const 
 	return variable;
 }
 
+void HlslShader::associateVariable(const OutputPin* outputPin, HlslVariable* variable)
+{
+	m_variables.back().insert(std::make_pair(outputPin, variable));
+}
+
 HlslVariable* HlslShader::getVariable(const OutputPin* outputPin)
 {
 	T_ASSERT (!m_variables.empty());
