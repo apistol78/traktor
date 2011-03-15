@@ -107,7 +107,7 @@ void LightRenderer::render(
 	const Matrix44& projection,
 	const Matrix44& view,
 	const Vector4& eyePosition,
-	const WorldRenderView::Light& light,
+	const Light& light,
 	float depthRange,
 	render::ITexture* depthMap,
 	render::ITexture* normalMap,
@@ -118,7 +118,7 @@ void LightRenderer::render(
 	Scalar p11 = projection.get(0, 0);
 	Scalar p22 = projection.get(1, 1);
 
-	if (light.type == WorldRenderView::LtDirectional)
+	if (light.type == LtDirectional)
 	{
 		if (!m_lightDirectionalShader.validate())
 			return;
@@ -145,7 +145,7 @@ void LightRenderer::render(
 
 		m_lightDirectionalShader->draw(renderView, m_primitivesQuad);
 	}
-	else if (light.type == WorldRenderView::LtPoint)
+	else if (light.type == LtPoint)
 	{
 		if (!m_lightPointShader.validate())
 			return;

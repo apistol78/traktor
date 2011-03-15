@@ -114,8 +114,8 @@ be in mask.
 			]]>
 			</comment>
 			<position>
-				<first>542</first>
-				<second>-5</second>
+				<first>624</first>
+				<second>-51</second>
 			</position>
 		</item>
 		<item type="traktor.render.OutputPort">
@@ -168,20 +168,38 @@ be in mask.
 		<item type="traktor.render.Discard">
 			<comment/>
 			<position>
-				<first>739</first>
-				<second>116</second>
+				<first>925</first>
+				<second>100</second>
+			</position>
+			<operator>CoGreater</operator>
+		</item>
+		<item type="traktor.render.Discard">
+			<comment/>
+			<position>
+				<first>752</first>
+				<second>100</second>
 			</position>
 			<operator>CoLess</operator>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>532</first>
-				<second>110</second>
+				<first>584</first>
+				<second>90</second>
 			</position>
-			<parameterName>ShadowFarZ</parameterName>
+			<parameterName>SliceNearZ</parameterName>
 			<type>PtScalar</type>
-			<frequency>UfOnce</frequency>
+			<frequency>UfDraw</frequency>
+		</item>
+		<item type="traktor.render.Uniform" version="1">
+			<comment/>
+			<position>
+				<first>594</first>
+				<second>54</second>
+			</position>
+			<parameterName>SliceFarZ</parameterName>
+			<type>PtScalar</type>
+			<frequency>UfDraw</frequency>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
@@ -265,7 +283,7 @@ be in mask.
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[16]"/>
+				<node ref="/object/nodes/item[18]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -335,7 +353,7 @@ be in mask.
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[1]"/>
+				<node ref="/object/nodes/item[17]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -345,7 +363,7 @@ be in mask.
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[15]"/>
+				<node ref="/object/nodes/item[1]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -355,7 +373,7 @@ be in mask.
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[1]"/>
+				<node ref="/object/nodes/item[15]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -365,11 +383,41 @@ be in mask.
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
+				<node ref="/object/nodes/item[16]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[15]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[15]"/>
+				<name>Reference</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[15]"/>
+				<name>Pass</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
 				<node ref="/object/nodes/item[14]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[16]"/>
+				<node ref="/object/nodes/item[18]"/>
 				<name>Input</name>
 			</destination>
 		</item>

@@ -2,7 +2,6 @@
 #include "Core/Math/Aabb2.h"
 #include "Core/Math/Line2.h"
 #include "Core/Math/Winding2.h"
-#include "Render/PrimitiveRenderer.h"
 #include "World/WorldRenderSettings.h"
 #include "World/SMProj/TSMProj.h"
 
@@ -34,8 +33,7 @@ void calculateTSMProj(
 	Matrix44& outLightView,
 	Matrix44& outLightProjection,
 	Matrix44& outLightSquareProjection,
-	Frustum& outShadowFrustum,
-	render::PrimitiveRenderer* primitiveRenderer
+	Frustum& outShadowFrustum
 )
 {
 	Vector4 viewDirection = viewInverse.axisZ();
@@ -47,17 +45,13 @@ void calculateTSMProj(
 	lightAxisX = -cross(lightAxisZ, -viewDirection).normalized();
 	lightAxisY = cross(lightAxisX, lightAxisZ).normalized();
 
-	// Adjust view frustum to shadowing far z.
-	Frustum shadowViewFrustum = viewFrustum;
-	shadowViewFrustum.setFarZ(Scalar(settings.shadowFarZ));
-
 	// Calculate X/Y projection of view frustum in light space.
 	AlignedVector< Vector2 > lightFrustumProj;
 	Aabb3 viewFrustumBox;
 	Aabb2 lightFrustumProjBox;
 	for (int i = 0; i < 8; ++i)
 	{
-		Vector4 worldCorner = viewInverse * shadowViewFrustum.corners[i];
+		Vector4 worldCorner = viewInverse * viewFrustum.corners[i];
 		Vector4 lightCorner(
 			dot3(lightAxisX, worldCorner),
 			dot3(lightAxisY, worldCorner),
@@ -70,19 +64,6 @@ void calculateTSMProj(
 			lightCorner.y()
 		));
 		lightFrustumProjBox.contain(lightFrustumProj.back());
-	}
-
-	if (primitiveRenderer)
-	{
-		const int* edges = Aabb3::getEdges();
-		for (int i = 0; i < 12; ++i)
-		{
-			primitiveRenderer->drawLine(
-				v2top4(lightFrustumProj[edges[i * 2 + 0]] - lightFrustumProjBox.getCenter()),
-				v2top4(lightFrustumProj[edges[i * 2 + 1]] - lightFrustumProjBox.getCenter()),
-				Color4ub(255, 255, 0, 255)
-			);
-		}
 	}
 
 	// Projection is already orientated properly; thus we can
@@ -116,14 +97,6 @@ void calculateTSMProj(
 		Line2(Vector2(-fw, ey * 2.0f), Vector2(fw, ey * 2.0f))
 	};
 
-	if (primitiveRenderer)
-	{
-		primitiveRenderer->drawLine(v2top4(tz[0].p[0]), v2top4(tz[0].p[1]), Color4ub(0, 0, 255, 255));
-		primitiveRenderer->drawLine(v2top4(tz[1].p[0]), v2top4(tz[1].p[1]), Color4ub(0, 0, 255, 255));
-		primitiveRenderer->drawLine(v2top4(tz[0].p[0]), v2top4(tz[1].p[0]), Color4ub(0, 0, 255, 255));
-		primitiveRenderer->drawLine(v2top4(tz[0].p[1]), v2top4(tz[1].p[1]), Color4ub(0, 0, 255, 255));
-	}
-
 	Matrix44 Mn(
 		1.0f / nw, 0.0f, 0.0f, 0.0f,
 		0.0f, 1.0f, 0.0f, 0.0f,
@@ -143,16 +116,6 @@ void calculateTSMProj(
 
 	Matrix44 M0 = Ms * Mn;
 
-	if (primitiveRenderer)
-	{
-		primitiveRenderer->pushWorld(M0);
-		primitiveRenderer->drawLine(v2top4(tz[0].p[0]), v2top4(tz[0].p[1]), Color4ub(255, 0, 255, 255));
-		primitiveRenderer->drawLine(v2top4(tz[1].p[0]), v2top4(tz[1].p[1]), Color4ub(255, 0, 255, 255));
-		primitiveRenderer->drawLine(v2top4(tz[0].p[0]), v2top4(tz[1].p[0]), Color4ub(255, 0, 255, 255));
-		primitiveRenderer->drawLine(v2top4(tz[0].p[1]), v2top4(tz[1].p[1]), Color4ub(255, 0, 255, 255));
-		primitiveRenderer->popWorld();
-	}
-
 	Matrix44 T0(
 		1.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 1.0f, 0.0f, -1.0f,
@@ -162,22 +125,12 @@ void calculateTSMProj(
 
 	Matrix44 NT = T0 * M0;
 
-	if (primitiveRenderer)
-	{
-		primitiveRenderer->pushWorld(NT);
-		primitiveRenderer->drawLine(v2top4(tz[0].p[0]), v2top4(tz[0].p[1]), Color4ub(255, 0, 0, 255));
-		primitiveRenderer->drawLine(v2top4(tz[1].p[0]), v2top4(tz[1].p[1]), Color4ub(255, 0, 0, 255));
-		primitiveRenderer->drawLine(v2top4(tz[0].p[0]), v2top4(tz[1].p[0]), Color4ub(255, 0, 0, 255));
-		primitiveRenderer->drawLine(v2top4(tz[0].p[1]), v2top4(tz[1].p[1]), Color4ub(255, 0, 0, 255));
-		primitiveRenderer->popWorld();
-	}
-
 	// Update light view matrix with bounding box centered.
 	Vector4 center = viewFrustumBox.getCenter();
 	Vector4 extent = viewFrustumBox.getExtent() * Scalar(2.0f);
 
-	float fz = shadowViewFrustum.getFarZ();
-	float nz = shadowViewFrustum.getNearZ();
+	float fz = viewFrustum.getFarZ();
+	float nz = viewFrustum.getNearZ();
 
 	// Calculate light view and projection matrices.
 	Vector4 worldCenter = viewInverse * Vector4(0.0f, 0.0f, nz, 1.0f);

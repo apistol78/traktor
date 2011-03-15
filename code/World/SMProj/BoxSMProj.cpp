@@ -15,6 +15,7 @@ void calculateBoxSMProj(
 	const Aabb3& shadowBox,
 	Matrix44& outLightView,
 	Matrix44& outLightProjection,
+	Matrix44& outLightSquareProjection,
 	Frustum& outShadowFrustum
 )
 {
@@ -77,6 +78,8 @@ void calculateBoxSMProj(
 		if (viewFrustumPlane.normal().z() <= 0.0f)
 			outShadowFrustum.planes.push_back(viewFrustumPlane);
 	}
+
+	outLightSquareProjection = Matrix44::identity();
 }
 
 	}

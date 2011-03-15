@@ -350,8 +350,8 @@ void EffectPreviewControl::eventPaint(ui::Event* event)
 		worldRenderView.setViewFrustum(viewFrustum);
 		worldRenderView.setTimes(time, deltaTime, 0.0f);
 
-		world::WorldRenderView::Light globalLight;
-		globalLight.type = world::WorldRenderView::LtDirectional;
+		world::Light globalLight;
+		globalLight.type = world::LtDirectional;
 		globalLight.position = Vector4(0.0f, 0.0f, 0.0f, 1.0f);
 		globalLight.direction = Vector4(0.0f, 0.0f, 1.0f, 0.0f);
 		globalLight.sunColor = Vector4(1.0f, 1.0f, 1.0f, 1.0f);

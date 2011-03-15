@@ -6,6 +6,7 @@
 #include "Core/Math/Frustum.h"
 #include "Core/Math/Matrix44.h"
 #include "Core/Math/Vector2.h"
+#include "World/WorldTypes.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -31,26 +32,6 @@ class T_DLLCLASS WorldRenderView : public Object
 	T_RTTI_CLASS;
 	
 public:
-	enum { MaxLightCount = 16 };
-
-	enum LightType
-	{
-		LtDisabled = 0,
-		LtDirectional = 1,
-		LtPoint = 2
-	};
-
-	struct Light
-	{
-		LightType type;
-		Vector4 position;
-		Vector4 direction;
-		Vector4 sunColor;
-		Vector4 baseColor;
-		Vector4 shadowColor;
-		Scalar range;
-	};
-
 	WorldRenderView();
 
 	void setViewFrustum(const Frustum& viewFrustum);

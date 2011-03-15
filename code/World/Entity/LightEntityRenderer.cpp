@@ -31,7 +31,7 @@ void LightEntityRenderer::render(
 	Entity* entity
 )
 {
-	WorldRenderView::Light light;
+	Light light;
 
 	// Note: Even though we modify the light here the shadow map isn't affected until next frame.
 	if (DirectionalLightEntity* directionalLightEntity = dynamic_type_cast< DirectionalLightEntity* >(entity))
@@ -39,7 +39,7 @@ void LightEntityRenderer::render(
 		Transform transform;
 		directionalLightEntity->getTransform(transform);
 
-		light.type = WorldRenderView::LtDirectional;
+		light.type = LtDirectional;
 		light.position = transform.translation();
 		light.direction = transform.rotation() * Vector4(0.0f, 1.0f, 0.0f);
 		light.sunColor = directionalLightEntity->getSunColor();
@@ -58,7 +58,7 @@ void LightEntityRenderer::render(
 		if (worldRenderView.getCullFrustum().inside(center, Scalar(pointLightEntity->getRange())) == Frustum::IrOutside)
 			return;
 
-		light.type = WorldRenderView::LtPoint;
+		light.type = LtPoint;
 		light.position = transform.translation();
 		light.direction = Vector4::zero();
 		light.sunColor = pointLightEntity->getSunColor();

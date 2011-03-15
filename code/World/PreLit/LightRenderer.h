@@ -4,7 +4,7 @@
 #include "Core/Object.h"
 #include "Render/Types.h"
 #include "Resource/Proxy.h"
-#include "World/WorldRenderView.h"
+#include "World/WorldTypes.h"
 
 namespace traktor
 {
@@ -54,7 +54,7 @@ public:
 		const Matrix44& projection,
 		const Matrix44& view,
 		const Vector4& eyePosition,
-		const WorldRenderView::Light& light,
+		const Light& light,
 		float depthRange,
 		render::ITexture* depthMap,
 		render::ITexture* normalMap,

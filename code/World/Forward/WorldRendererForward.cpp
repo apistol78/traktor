@@ -138,6 +138,7 @@ bool WorldRendererForward::create(
 
 		// Determine shadow mask size; high quality is same as entire screen.
 		if (
+			m_settings.shadowsQuality == WorldRenderSettings::SqNoFilter ||
 			m_settings.shadowsQuality == WorldRenderSettings::SqHigh ||
 			m_settings.shadowsQuality == WorldRenderSettings::SqHighest
 		)
@@ -399,14 +400,17 @@ void WorldRendererForward::render(uint32_t flags, int frame, render::EyeType eye
 		T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow mask");
 		if (m_renderView->begin(m_shadowMaskTargetSet, 0))
 		{
-			PostProcessStep::Instance::RenderParams params;
+			const float maskClear[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+			m_renderView->clear(render::CfColor, maskClear, 1.0f, 0);
 
+			PostProcessStep::Instance::RenderParams params;
 			params.viewFrustum = f.viewFrustum;
 			params.viewToLight = f.viewToLightSpace;
 			params.projection = projection;
 			params.squareProjection = f.squareProjection;
 			params.depthRange = m_settings.depthRange;
-			params.shadowFarZ = m_settings.shadowFarZ;
+			params.sliceNearZ = m_settings.viewNearZ;
+			params.sliceFarZ = m_settings.shadowFarZ;
 			params.shadowMapBias = m_settings.shadowMapBias;
 			params.deltaTime = 0.0f;
 
@@ -450,8 +454,8 @@ void WorldRendererForward::getTargets(RefArray< render::ITexture >& outTargets) 
 
 void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, Entity* entity, int frame)
 {
-	const WorldRenderView::Light& light = worldRenderView.getLight(0);
-	if (light.type != WorldRenderView::LtDirectional)
+	const Light& light = worldRenderView.getLight(0);
+	if (light.type != LtDirectional)
 	{
 		// Only primary light as directional enables shadows; do no-shadows path instead.
 		buildNoShadows(worldRenderView, entity, frame);
@@ -463,13 +467,14 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, Entity
 	Matrix44 viewInverse = worldRenderView.getView().inverse();
 	Frustum viewFrustum = worldRenderView.getViewFrustum();
 	Aabb3 shadowBox = worldRenderView.getShadowBox();
-	
 	Vector4 eyePosition = viewInverse.translation();
 
 	Matrix44 shadowLightView;
 	Matrix44 shadowLightProjection;
-	Matrix44 shadowLightSquareProjection = Matrix44::identity();
+	Matrix44 shadowLightSquareProjection;
 	Frustum shadowFrustum;
+
+	viewFrustum.setFarZ(Scalar(m_settings.shadowFarZ));
 
 	switch (m_settings.shadowsProjection)
 	{
@@ -483,6 +488,7 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, Entity
 			shadowBox,
 			shadowLightView,
 			shadowLightProjection,
+			shadowLightSquareProjection,
 			shadowFrustum
 		);
 		break;
@@ -496,6 +502,7 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, Entity
 			viewFrustum,
 			shadowLightView,
 			shadowLightProjection,
+			shadowLightSquareProjection,
 			shadowFrustum
 		);
 		break;
@@ -523,6 +530,7 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, Entity
 			viewFrustum,
 			shadowLightView,
 			shadowLightProjection,
+			shadowLightSquareProjection,
 			shadowFrustum
 		);
 		break;

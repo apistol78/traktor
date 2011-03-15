@@ -180,6 +180,7 @@ bool WorldRendererPreLit::create(
 
 		// Determine shadow mask size; high quality is same as entire screen.
 		if (
+			m_settings.shadowsQuality == WorldRenderSettings::SqNoFilter ||
 			m_settings.shadowsQuality == WorldRenderSettings::SqHigh ||
 			m_settings.shadowsQuality == WorldRenderSettings::SqHighest
 		)
@@ -287,14 +288,16 @@ bool WorldRendererPreLit::create(
 			i->normal = new WorldContext(entityRenderers);
 	}
 
-	// For each possible light.
-	for (uint32_t i = 0; i < WorldRenderView::MaxLightCount; ++i)
+	// Allocate "shadow" contexts.
+	if (m_settings.shadowsEnabled)
 	{
-		// Allocate "shadow" contexts.
-		if (m_settings.shadowsEnabled)
+		for (AlignedVector< Frame >::iterator i = m_frames.begin(); i != m_frames.end(); ++i)
 		{
-			for (AlignedVector< Frame >::iterator j = m_frames.begin(); j != m_frames.end(); ++j)
-				j->shadow[i] = new WorldContext(entityRenderers);
+			for (int32_t j = 0; j < MaxSliceCount; ++j)
+			{
+				for (int32_t k = 0; k < MaxLightCount; ++k)
+					i->slice[j].shadow[k] = new WorldContext(entityRenderers);
+			}
 		}
 	}
 
@@ -314,6 +317,16 @@ bool WorldRendererPreLit::create(
 		return false;
 	}
 
+	// Determine slice distances.
+	for (int32_t i = 0; i < m_settings.shadowCascadingSlices; ++i)
+	{
+		float ii = float(i) / m_settings.shadowCascadingSlices;
+		float log = m_settings.viewNearZ * powf(m_settings.shadowFarZ / m_settings.viewNearZ, ii);
+		float uni = m_settings.viewNearZ + (m_settings.shadowFarZ - m_settings.viewNearZ) * ii;
+		m_slicePositions[i] = log * m_settings.shadowCascadingLambda + uni * (1.0f - m_settings.shadowCascadingLambda);
+	}
+	m_slicePositions[m_settings.shadowCascadingSlices] = m_settings.shadowFarZ;
+
 	m_count = 0;
 	return true;
 }
@@ -324,8 +337,11 @@ void WorldRendererPreLit::destroy()
 
 	for (AlignedVector< Frame >::iterator i = m_frames.begin(); i != m_frames.end(); ++i)
 	{
-		for (uint32_t j = 0; j < WorldRenderView::MaxLightCount; ++j)
-			i->shadow[j] = 0;
+		for (int32_t j = 0; j < MaxSliceCount; ++j)
+		{
+			for (int32_t k = 0; k < MaxLightCount; ++k)
+				i->slice[j].shadow[k] = 0;
+		}
 
 		i->visual = 0;
 		i->depth = 0;
@@ -385,7 +401,10 @@ void WorldRendererPreLit::build(WorldRenderView& worldRenderView, Entity* entity
 	for (uint32_t i = 0; i < f.lightCount; ++i)
 	{
 		if (f.haveShadows[i])
-			f.shadow[i]->getRenderContext()->flush();
+		{
+			for (int32_t j = 0; j < MaxSliceCount; ++j)
+				f.slice[j].shadow[i]->getRenderContext()->flush();
+		}
 	}
 
 	f.visual->getRenderContext()->flush();
@@ -513,43 +532,56 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 	{
 		for (uint32_t i = 0; i < f.lightCount; ++i)
 		{
-			// Render shadow mask.
+			// Combine all shadow slices into a screen shadow mask.
 			if ((flags & WrfShadowMap) != 0 && f.haveShadows[i])
 			{
-				T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow map");
-				if (m_renderView->begin(m_shadowTargetSet, 0))
+				for (int32_t j = 0; j < m_settings.shadowCascadingSlices; ++j)
 				{
-					const float shadowClear[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-					m_renderView->clear(render::CfColor | render::CfDepth, shadowClear, 1.0f, 0);
-					f.shadow[i]->getRenderContext()->render(m_renderView, render::RfOpaque, 0);
-					m_renderView->end();
+					T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow map");
+					if (m_renderView->begin(m_shadowTargetSet, 0))
+					{
+						const float shadowClear[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+						m_renderView->clear(render::CfColor | render::CfDepth, shadowClear, 1.0f, 0);
+						f.slice[j].shadow[i]->getRenderContext()->render(m_renderView, render::RfOpaque, 0);
+						m_renderView->end();
+					}
+					T_RENDER_POP_MARKER(m_renderView);
+
+					T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow mask");
+					if (m_renderView->begin(m_shadowMaskTargetSet, 0))
+					{
+						if (j == 0)
+						{
+							const float maskClear[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+							m_renderView->clear(render::CfColor, maskClear, 0.0f, 0);
+						}
+
+						Scalar zn(max(m_slicePositions[j], m_settings.viewNearZ));
+						Scalar zf(min(m_slicePositions[j + 1], m_settings.shadowFarZ));
+
+						PostProcessStep::Instance::RenderParams params;
+						params.viewFrustum = f.viewFrustum;
+						params.viewToLight = f.slice[j].viewToLightSpace[i];
+						params.projection = projection;
+						params.squareProjection = f.slice[j].squareProjection[i];
+						params.depthRange = m_settings.depthRange;
+						params.sliceNearZ = zn;
+						params.sliceFarZ = zf;
+						params.shadowMapBias = m_settings.shadowMapBias;
+						params.deltaTime = 0.0f;
+
+						m_shadowMaskProjection->render(
+							m_renderView,
+							m_shadowTargetSet,
+							m_depthTargetSet,
+							0,
+							params
+						);
+
+						m_renderView->end();
+					}
+					T_RENDER_POP_MARKER(m_renderView);
 				}
-				T_RENDER_POP_MARKER(m_renderView);
-
-				T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow mask");
-				if (m_renderView->begin(m_shadowMaskTargetSet, 0))
-				{
-					PostProcessStep::Instance::RenderParams params;
-
-					params.viewFrustum = f.viewFrustum;
-					params.viewToLight = f.viewToLightSpace[i];
-					params.projection = projection;
-					params.squareProjection = f.squareProjection[i];
-					params.depthRange = m_settings.depthRange;
-					params.shadowFarZ = m_settings.shadowFarZ;
-					params.shadowMapBias = m_settings.shadowMapBias;
-					params.deltaTime = 0.0f;
-
-					m_shadowMaskProjection->render(
-						m_renderView,
-						m_shadowTargetSet,
-						m_depthTargetSet,
-						0,
-						params
-					);
-					m_renderView->end();
-				}
-				T_RENDER_POP_MARKER(m_renderView);
 			}
 
 			T_RENDER_PUSH_MARKER(m_renderView, "World: Light primitive");
@@ -610,10 +642,11 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 
 void WorldRendererPreLit::getTargets(RefArray< render::ITexture >& outTargets) const
 {
-	outTargets.resize(3);
+	outTargets.resize(4);
 	outTargets[0] = m_depthTargetSet ? m_depthTargetSet->getColorTexture(0) : 0;
 	outTargets[1] = m_normalTargetSet ? m_normalTargetSet->getColorTexture(0) : 0;
 	outTargets[2] = m_lightMapTargetSet ? m_lightMapTargetSet->getColorTexture(0) : 0;
+	outTargets[3] = m_shadowMaskTargetSet ? m_shadowMaskTargetSet->getColorTexture(0) : 0;
 }
 
 void WorldRendererPreLit::buildLightWithShadows(WorldRenderView& worldRenderView, Entity* entity, int frame)
@@ -629,102 +662,117 @@ void WorldRendererPreLit::buildLightWithShadows(WorldRenderView& worldRenderView
 
 	for (int32_t i = 0; i < worldRenderView.getLightCount(); ++i)
 	{
-		const WorldRenderView::Light& light = worldRenderView.getLight(i);
+		const Light& light = worldRenderView.getLight(i);
 
 		f.lights[i] = light;
 
-		if (light.type == WorldRenderView::LtDirectional)
+		if (light.type == LtDirectional)
 		{
-			Matrix44 shadowLightView;
-			Matrix44 shadowLightProjection;
-			Matrix44 shadowLightSquareProjection = Matrix44::identity();
-			Frustum shadowFrustum;
-
-			switch (m_settings.shadowsProjection)
+			for (int32_t slice = 0; slice < m_settings.shadowCascadingSlices; ++slice)
 			{
-			case WorldRenderSettings::SpBox:
-				calculateBoxSMProj(
-					m_settings,
-					viewInverse,
-					light.position,
-					light.direction,
-					viewFrustum,
-					shadowBox,
-					shadowLightView,
-					shadowLightProjection,
-					shadowFrustum
-				);
-				break;
+				Scalar zn(max(m_slicePositions[slice], m_settings.viewNearZ));
+				Scalar zf(min(m_slicePositions[slice + 1], m_settings.shadowFarZ));
 
-			case WorldRenderSettings::SpLiSP:
-				calculateLiSPSMProj(
-					m_settings,
-					viewInverse,
-					light.position,
-					light.direction,
-					viewFrustum,
-					shadowLightView,
-					shadowLightProjection,
-					shadowFrustum
-				);
-				break;
+				// Create sliced view frustum.
+				Frustum sliceViewFrustum = viewFrustum;
+				sliceViewFrustum.setNearZ(zn);
+				sliceViewFrustum.setFarZ(zf);
 
-			case WorldRenderSettings::SpTrapezoid:
-				calculateTSMProj(
-					m_settings,
-					viewInverse,
-					light.position,
-					light.direction,
-					viewFrustum,
-					shadowLightView,
-					shadowLightProjection,
-					shadowLightSquareProjection,
-					shadowFrustum
-				);
-				break;
+				// Calculate shadow map projection.
+				Matrix44 shadowLightView;
+				Matrix44 shadowLightProjection;
+				Matrix44 shadowLightSquareProjection = Matrix44::identity();
+				Frustum shadowFrustum;
 
-			case WorldRenderSettings::SpUniform:
-				calculateUniformSMProj(
-					m_settings,
-					viewInverse,
-					light.position,
-					light.direction,
-					viewFrustum,
-					shadowLightView,
-					shadowLightProjection,
-					shadowFrustum
+				switch (m_settings.shadowsProjection)
+				{
+				case WorldRenderSettings::SpBox:
+					calculateBoxSMProj(
+						m_settings,
+						viewInverse,
+						light.position,
+						light.direction,
+						sliceViewFrustum,
+						shadowBox,
+						shadowLightView,
+						shadowLightProjection,
+						shadowLightSquareProjection,
+						shadowFrustum
+					);
+					break;
+
+				case WorldRenderSettings::SpLiSP:
+					calculateLiSPSMProj(
+						m_settings,
+						viewInverse,
+						light.position,
+						light.direction,
+						sliceViewFrustum,
+						shadowLightView,
+						shadowLightProjection,
+						shadowLightSquareProjection,
+						shadowFrustum
+					);
+					break;
+
+				case WorldRenderSettings::SpTrapezoid:
+					calculateTSMProj(
+						m_settings,
+						viewInverse,
+						light.position,
+						light.direction,
+						sliceViewFrustum,
+						shadowLightView,
+						shadowLightProjection,
+						shadowLightSquareProjection,
+						shadowFrustum
+					);
+					break;
+
+				case WorldRenderSettings::SpUniform:
+					calculateUniformSMProj(
+						m_settings,
+						viewInverse,
+						light.position,
+						light.direction,
+						sliceViewFrustum,
+						shadowLightView,
+						shadowLightProjection,
+						shadowLightSquareProjection,
+						shadowFrustum
+					);
+					break;
+				}
+
+				// Render shadow map.
+				WorldRenderView shadowRenderView;
+				shadowRenderView.resetLights();
+				shadowRenderView.setProjection(shadowLightProjection);
+				shadowRenderView.setSquareProjection(shadowLightSquareProjection);
+				shadowRenderView.setView(shadowLightView);
+				shadowRenderView.setEyePosition(f.eyePosition);
+				shadowRenderView.setViewFrustum(shadowFrustum);
+				shadowRenderView.setCullFrustum(shadowFrustum);
+				shadowRenderView.setTimes(
+					worldRenderView.getTime(),
+					worldRenderView.getDeltaTime(),
+					worldRenderView.getInterval()
 				);
-				break;
+
+				WorldRenderPassPreLit shadowPass(
+					ms_techniqueShadow,
+					shadowRenderView,
+					m_settings.depthRange,
+					0,
+					0,
+					0
+				);
+				f.slice[slice].shadow[i]->build(shadowRenderView, shadowPass, entity);
+				f.slice[slice].shadow[i]->flush(shadowRenderView, shadowPass);
+				
+				f.slice[slice].viewToLightSpace[i] = shadowLightProjection * shadowLightView * viewInverse;
+				f.slice[slice].squareProjection[i] = shadowLightSquareProjection;
 			}
-
-			f.viewToLightSpace[i] = shadowLightProjection * shadowLightView * viewInverse;
-			f.squareProjection[i] = shadowLightSquareProjection;
-
-			// Render shadow map.
-			WorldRenderView shadowRenderView;
-			shadowRenderView.resetLights();
-			shadowRenderView.setProjection(shadowLightProjection);
-			shadowRenderView.setSquareProjection(shadowLightSquareProjection);
-			shadowRenderView.setView(shadowLightView);
-			shadowRenderView.setEyePosition(f.eyePosition);
-			shadowRenderView.setViewFrustum(shadowFrustum);
-			shadowRenderView.setCullFrustum(shadowFrustum);
-			shadowRenderView.setTimes(
-				worldRenderView.getTime(),
-				worldRenderView.getDeltaTime(),
-				worldRenderView.getInterval()
-			);
-
-			WorldRenderPassPreLit shadowPass(
-				ms_techniqueShadow,
-				shadowRenderView,
-				m_settings.depthRange,
-				0,
-				0,
-				0
-			);
-			f.shadow[i]->build(shadowRenderView, shadowPass, entity);
-			f.shadow[i]->flush(shadowRenderView, shadowPass);
 
 			f.haveShadows[i] = true;
 		}
@@ -740,7 +788,7 @@ void WorldRendererPreLit::buildLightWithNoShadows(WorldRenderView& worldRenderVi
 	f.lightCount = worldRenderView.getLightCount();
 	for (int32_t i = 0; i < worldRenderView.getLightCount(); ++i)
 	{
-		const WorldRenderView::Light& light = worldRenderView.getLight(i);
+		const Light& light = worldRenderView.getLight(i);
 		f.lights[i] = light;
 	}
 }

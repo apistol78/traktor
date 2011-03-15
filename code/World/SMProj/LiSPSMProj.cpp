@@ -14,11 +14,13 @@ void calculateLiSPSMProj(
 	const Frustum& viewFrustum,
 	Matrix44& outLightView,
 	Matrix44& outLightProjection,
+	Matrix44& outLightSquareProjection,
 	Frustum& outShadowFrustum
 )
 {
 	outLightView = Matrix44::identity();
 	outLightProjection = Matrix44::identity();
+	outLightSquareProjection = Matrix44::identity();
 }
 
 	}

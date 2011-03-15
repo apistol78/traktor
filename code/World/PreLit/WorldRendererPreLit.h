@@ -44,10 +44,17 @@ class WorldContext;
  * 1. Render depth pass.
  * 2. Render normal pass.
  * For each light
- *   2. Render shadow map from light if directional.
- *   3. Render screen-space shadow. mask.
- *   4. Render screen-space lighting; accumulate in lighting target.
- * 5. Render visuals.
+ *   3. Clear shadow mask target.
+ *   If light is directional
+ *     For each slice
+ *       4. Render slice shadow map.
+ *       5. Render screen-space shadow mask; accumulate shadow mask target.
+ *     End
+ *     6. Filter shadow mask target.
+ *   End
+ *   7. Render screen-space lighting; accumulate in lighting target.
+ * End
+ * 8. Render visuals.
  *
  * Techniques used
  * "Default" - Visual, final, color output.
@@ -85,30 +92,38 @@ public:
 	virtual void getTargets(RefArray< render::ITexture >& outTargets) const;
 
 private:
+	struct Slice
+	{
+		Ref< WorldContext > shadow[MaxLightCount];
+		Matrix44 viewToLightSpace[MaxLightCount];
+		Matrix44 squareProjection[MaxLightCount];
+	};
+
 	struct Frame
 	{
+		Slice slice[MaxSliceCount];
 		Ref< WorldContext > depth;
 		Ref< WorldContext > normal;
-		Ref< WorldContext > shadow[WorldRenderView::MaxLightCount];
 		Ref< WorldContext > visual;
+
 		Matrix44 projection;
 		Matrix44 view;
-		Matrix44 viewToLightSpace[WorldRenderView::MaxLightCount];
-		Matrix44 squareProjection[WorldRenderView::MaxLightCount];
 		Frustum viewFrustum;
 		Vector4 eyePosition;
-		WorldRenderView::Light lights[WorldRenderView::MaxLightCount];
+
+		Light lights[MaxLightCount];
+		uint32_t lightCount;
+
 		bool haveDepth;
 		bool haveNormal;
-		bool haveShadows[WorldRenderView::MaxLightCount];
-		uint32_t lightCount;
+		bool haveShadows[MaxLightCount];
 
 		Frame()
 		:	haveDepth(false)
 		,	haveNormal(false)
 		,	lightCount(0)
 		{
-			for (uint32_t i = 0; i < WorldRenderView::MaxLightCount; ++i)
+			for (uint32_t i = 0; i < MaxLightCount; ++i)
 				haveShadows[i] = false;
 		}
 	};
@@ -131,6 +146,7 @@ private:
 	Ref< PostProcess > m_shadowMaskProjection;
 	Ref< LightRenderer > m_lightRenderer;
 	AlignedVector< Frame > m_frames;
+	float m_slicePositions[MaxSliceCount + 1];
 	uint32_t m_count;
 
 	void buildLightWithShadows(WorldRenderView& worldRenderView, Entity* entity, int frame);
