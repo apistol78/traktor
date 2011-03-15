@@ -29,6 +29,8 @@ public:
 
 	HlslVariable* emitOutput(Node* node, const std::wstring& outputPinName, HlslType type);
 
+	void emitOutput(Node* node, const std::wstring& outputPinName, HlslVariable* variable);
+
 	void enterVertex();
 
 	void enterPixel();

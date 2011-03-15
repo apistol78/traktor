@@ -20,7 +20,7 @@ HlslContext::HlslContext(const ShaderGraph* shaderGraph)
 ,	m_currentShader(0)
 ,	m_stencilReference(0)
 {
-	memset (&m_d3dRasterizerDesc, 0, sizeof(m_d3dRasterizerDesc));
+	std::memset(&m_d3dRasterizerDesc, 0, sizeof(m_d3dRasterizerDesc));
 	m_d3dRasterizerDesc.FillMode = D3D10_FILL_SOLID;
 	m_d3dRasterizerDesc.CullMode = D3D10_CULL_BACK;
 	m_d3dRasterizerDesc.FrontCounterClockwise = FALSE;
@@ -32,13 +32,13 @@ HlslContext::HlslContext(const ShaderGraph* shaderGraph)
 	m_d3dRasterizerDesc.MultisampleEnable = TRUE;
 	m_d3dRasterizerDesc.AntialiasedLineEnable = TRUE;
 
-	memset (&m_d3dDepthStencilDesc, 0, sizeof(m_d3dDepthStencilDesc));
+	std::memset(&m_d3dDepthStencilDesc, 0, sizeof(m_d3dDepthStencilDesc));
 	m_d3dDepthStencilDesc.DepthEnable = TRUE;
 	m_d3dDepthStencilDesc.DepthWriteMask = D3D10_DEPTH_WRITE_MASK_ALL;
 	m_d3dDepthStencilDesc.DepthFunc = D3D10_COMPARISON_LESS_EQUAL;
 	m_d3dDepthStencilDesc.StencilEnable = FALSE;
 
-	memset (&m_d3dBlendDesc, 0, sizeof(m_d3dBlendDesc));
+	std::memset(&m_d3dBlendDesc, 0, sizeof(m_d3dBlendDesc));
 	m_d3dBlendDesc.AlphaToCoverageEnable = FALSE;
 	m_d3dBlendDesc.RenderTargetWriteMask[0] = D3D10_COLOR_WRITE_ENABLE_ALL;
 	m_d3dBlendDesc.SrcBlend = D3D10_BLEND_ONE;
@@ -85,6 +85,14 @@ HlslVariable* HlslContext::emitOutput(Node* node, const std::wstring& outputPinN
 	T_ASSERT (out);
 
 	return out;
+}
+
+void HlslContext::emitOutput(Node* node, const std::wstring& outputPinName, HlslVariable* variable)
+{
+	const OutputPin* outputPin = node->findOutputPin(outputPinName);
+	T_ASSERT (outputPin);
+
+	m_currentShader->associateVariable(outputPin, variable);
 }
 
 void HlslContext::enterVertex()
