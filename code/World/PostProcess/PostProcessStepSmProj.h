@@ -59,7 +59,8 @@ public:
 		render::handle_t m_handleShadowMapDiscRotation;
 		render::handle_t m_handleShadowMapSizeAndBias;
 		render::handle_t m_handleShadowMapPoissonTaps;
-		render::handle_t m_handleShadowFarZ;
+		render::handle_t m_handleSliceNearZ;
+		render::handle_t m_handleSliceFarZ;
 		render::handle_t m_handleDepth;
 		render::handle_t m_handleDepthRange;
 		render::handle_t m_handleDepth_Size;

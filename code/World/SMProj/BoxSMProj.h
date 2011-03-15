@@ -21,6 +21,7 @@ void calculateBoxSMProj(
 	const Aabb3& shadowBox,
 	Matrix44& outLightView,
 	Matrix44& outLightProjection,
+	Matrix44& outLightSquareProjection,
 	Frustum& outShadowFrustum
 );
 

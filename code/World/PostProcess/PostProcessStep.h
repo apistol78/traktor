@@ -55,7 +55,8 @@ public:
 			Matrix44 projection;
 			Matrix44 squareProjection;
 			float depthRange;
-			float shadowFarZ;
+			float sliceNearZ;
+			float sliceFarZ;
 			float shadowMapBias;
 			float deltaTime;
 		};

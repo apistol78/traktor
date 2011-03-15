@@ -20,6 +20,7 @@ void calculateLiSPSMProj(
 	const Frustum& viewFrustum,
 	Matrix44& outLightView,
 	Matrix44& outLightProjection,
+	Matrix44& outLightSquareProjection,
 	Frustum& outShadowFrustum
 );
 

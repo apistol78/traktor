@@ -106,7 +106,8 @@ PostProcessStepSmProj::InstanceSmProj::InstanceSmProj(
 	m_handleShadowMapDiscRotation = render::getParameterHandle(L"ShadowMapDiscRotation");
 	m_handleShadowMapSizeAndBias = render::getParameterHandle(L"ShadowMapSizeAndBias");
 	m_handleShadowMapPoissonTaps = render::getParameterHandle(L"ShadowMapPoissonTaps");
-	m_handleShadowFarZ = render::getParameterHandle(L"ShadowFarZ");
+	m_handleSliceNearZ = render::getParameterHandle(L"SliceNearZ");
+	m_handleSliceFarZ = render::getParameterHandle(L"SliceFarZ");
 	m_handleDepth = render::getParameterHandle(L"Depth");
 	m_handleDepthRange = render::getParameterHandle(L"DepthRange");
 	m_handleDepth_Size = render::getParameterHandle(L"Depth_Size");
@@ -169,7 +170,8 @@ void PostProcessStepSmProj::InstanceSmProj::render(
 	shader->setTextureParameter(m_handleShadowMapDiscRotation, m_shadowMapDiscRotation[m_frame & 1]);
 	shader->setVectorParameter(m_handleShadowMapSizeAndBias, shadowMapSizeAndBias);
 	shader->setVectorArrayParameter(m_handleShadowMapPoissonTaps, c_poissonTaps, sizeof_array(c_poissonTaps));
-	shader->setFloatParameter(m_handleShadowFarZ, params.shadowFarZ);
+	shader->setFloatParameter(m_handleSliceNearZ, params.sliceNearZ);
+	shader->setFloatParameter(m_handleSliceFarZ, params.sliceFarZ);
 	shader->setTextureParameter(m_handleDepth, sourceDepth->getColorTexture(0));
 	shader->setFloatParameter(m_handleDepthRange, params.depthRange);
 	shader->setVectorParameter(m_handleDepth_Size, sourceDepthSize);	
@@ -180,9 +182,6 @@ void PostProcessStepSmProj::InstanceSmProj::render(
 	shader->setVectorParameter(m_handleViewEdgeBottomRight, viewEdgeBottomRight);
 	shader->setMatrixParameter(m_handleViewToLight, params.viewToLight);
 	shader->setMatrixParameter(m_handleSquareProjection, params.squareProjection);
-
-	const float maskClear[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-	renderView->clear(render::CfColor, maskClear, 1.0f, 0);
 
 	screenRenderer->draw(renderView, shader);
 

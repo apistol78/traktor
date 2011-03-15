@@ -5,13 +5,14 @@
 #include "Core/Serialization/MemberRef.h"
 #include "Resource/Member.h"
 #include "World/WorldRenderSettings.h"
+#include "World/WorldTypes.h"
 
 namespace traktor
 {
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 6, WorldRenderSettings, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 7, WorldRenderSettings, ISerializable)
 
 WorldRenderSettings::WorldRenderSettings()
 :	viewNearZ(1.0f)
@@ -26,6 +27,8 @@ WorldRenderSettings::WorldRenderSettings()
 ,	shadowFarZ(100.0f)
 ,	shadowMapResolution(1024)
 ,	shadowMapBias(0.001f)
+,	shadowCascadingSlices(1)
+,	shadowCascadingLambda(0.5f)
 {
 }
 
@@ -42,6 +45,8 @@ WorldRenderSettings::WorldRenderSettings(const WorldRenderSettings& settings)
 ,	shadowFarZ(settings.shadowFarZ)
 ,	shadowMapResolution(settings.shadowMapResolution)
 ,	shadowMapBias(settings.shadowMapBias)
+,	shadowCascadingSlices(settings.shadowCascadingSlices)
+,	shadowCascadingLambda(settings.shadowCascadingLambda)
 {
 }
 
@@ -99,6 +104,12 @@ bool WorldRenderSettings::serialize(ISerializer& s)
 	s >> Member< float >(L"shadowFarZ", shadowFarZ, AttributeRange(0.0f));
 	s >> Member< int32_t >(L"shadowMapResolution", shadowMapResolution);
 	s >> Member< float >(L"shadowMapBias", shadowMapBias);
+
+	if (s.getVersion() >= 7)
+	{
+		s >> Member< int32_t >(L"shadowCascadingSlices", shadowCascadingSlices, AttributeRange(1, MaxSliceCount));
+		s >> Member< float >(L"shadowCascadingLambda", shadowCascadingLambda, AttributeRange(0.0f, 1.0f));
+	}
 
 	return true;
 }

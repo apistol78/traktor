@@ -8,10 +8,10 @@
 		<velocityPassEnable>false</velocityPassEnable>
 		<shadowsEnabled>true</shadowsEnabled>
 		<shadowsProjection>SpUniform</shadowsProjection>
-		<shadowsQuality>SqHigh</shadowsQuality>
+		<shadowsQuality>SqNoFilter</shadowsQuality>
 		<ssaoEnabled>false</ssaoEnabled>
-		<shadowFarZ>10</shadowFarZ>
-		<shadowMapResolution>1024</shadowMapResolution>
+		<shadowFarZ>20</shadowFarZ>
+		<shadowMapResolution>512</shadowMapResolution>
 		<shadowMapBias>0.1</shadowMapBias>
 	</worldRenderSettings>
 	<postProcessSettings>{00000000-0000-0000-0000-000000000000}</postProcessSettings>
@@ -22,10 +22,10 @@
 				<name>Light</name>
 				<transform>
 					<translation>0, 0, 1.057417, 0</translation>
-					<rotation>0.105801, -0.265121, 0.029282, 0.957946</rotation>
+					<rotation>0.103493, 0.331472, -0.036611, 0.937057</rotation>
 				</transform>
-				<sunColor>1, 0, 0, 0</sunColor>
-				<baseColor>0.5, 0, 0, 0</baseColor>
+				<sunColor>0, 0, 1, 0</sunColor>
+				<baseColor>0, 0, 0.5, 0</baseColor>
 				<shadowColor>0, 0, 0, 0</shadowColor>
 			</item>
 			<item type="traktor.mesh.MeshEntityData">
@@ -36,110 +36,6 @@
 				</transform>
 				<mesh>{2BEECC12-C76D-974A-B0AE-02CE93F6C466}</mesh>
 			</item>
-			<item type="traktor.world.DirectionalLightEntityData">
-				<name>Light</name>
-				<transform>
-					<translation>0, 0, 1.057417, 0</translation>
-					<rotation>0.657074, -0.333032, -0.402853, -0.543187</rotation>
-				</transform>
-				<sunColor>0, 1, 0, 0</sunColor>
-				<baseColor>0, 0.5, 0, 0</baseColor>
-				<shadowColor>0, 0, 0, 0</shadowColor>
-			</item>
-			<item type="traktor.world.DirectionalLightEntityData">
-				<name>Light</name>
-				<transform>
-					<translation>0, 0, 1.057417, 0</translation>
-					<rotation>0.204303, -0.194319, 0.041428, 0.958532</rotation>
-				</transform>
-				<sunColor>0, 0, 1, 0</sunColor>
-				<baseColor>0, 0, 0.5, 0</baseColor>
-				<shadowColor>0, 0, 0, 0</shadowColor>
-			</item>
-			<item type="traktor.world.PointLightEntityData" version="1">
-				<name>Point light</name>
-				<transform>
-					<translation>0.17243, 0.54617, 0.225832, 0</translation>
-					<rotation>0, 0, 0, 1</rotation>
-				</transform>
-				<sunColor>1, 1, 1, 0</sunColor>
-				<baseColor>0.5, 0.5, 0.5, 0</baseColor>
-				<shadowColor>0, 0, 0, 0</shadowColor>
-				<range>1</range>
-				<randomFlicker>0.3</randomFlicker>
-			</item>
-			<item type="traktor.world.PointLightEntityData" version="1">
-				<name>Point light</name>
-				<transform>
-					<translation>-0.176093, 0.54617, -0.317673, 0</translation>
-					<rotation>0, 0, 0, 1</rotation>
-				</transform>
-				<sunColor>1, 1, 1, 0</sunColor>
-				<baseColor>0.5, 0.5, 0.5, 0</baseColor>
-				<shadowColor>0, 0, 0, 0</shadowColor>
-				<range>1</range>
-				<randomFlicker>0.3</randomFlicker>
-			</item>
-			<item type="traktor.world.PointLightEntityData" version="1">
-				<name>Point light</name>
-				<transform>
-					<translation>-0.323782, 0.54617, -0.165211, 0</translation>
-					<rotation>0, 0, 0, 1</rotation>
-				</transform>
-				<sunColor>1, 1, 1, 0</sunColor>
-				<baseColor>0.5, 0.5, 0.5, 0</baseColor>
-				<shadowColor>0, 0, 0, 0</shadowColor>
-				<range>1</range>
-				<randomFlicker>0.3</randomFlicker>
-			</item>
-			<item type="traktor.world.PointLightEntityData" version="1">
-				<name>Point light</name>
-				<transform>
-					<translation>-0.310424, 0.54617, 0.098677, 0</translation>
-					<rotation>0, 0, 0, 1</rotation>
-				</transform>
-				<sunColor>1, 1, 1, 0</sunColor>
-				<baseColor>0.5, 0.5, 0.5, 0</baseColor>
-				<shadowColor>0, 0, 0, 0</shadowColor>
-				<range>1</range>
-				<randomFlicker>0.3</randomFlicker>
-			</item>
-			<item type="traktor.world.PointLightEntityData" version="1">
-				<name>Point light</name>
-				<transform>
-					<translation>-0.150706, 0.54617, 0.32329, 0</translation>
-					<rotation>0, 0, 0, 1</rotation>
-				</transform>
-				<sunColor>1, 1, 1, 0</sunColor>
-				<baseColor>0.5, 0.5, 0.5, 0</baseColor>
-				<shadowColor>0, 0, 0, 0</shadowColor>
-				<range>1</range>
-				<randomFlicker>0.3</randomFlicker>
-			</item>
-			<item type="traktor.world.PointLightEntityData" version="1">
-				<name>Point light</name>
-				<transform>
-					<translation>0.315249, 0.54617, -0.038268, 0</translation>
-					<rotation>0, 0, 0, 1</rotation>
-				</transform>
-				<sunColor>1, 1, 1, 0</sunColor>
-				<baseColor>0.5, 0.5, 0.5, 0</baseColor>
-				<shadowColor>0, 0, 0, 0</shadowColor>
-				<range>1</range>
-				<randomFlicker>0.3</randomFlicker>
-			</item>
-			<item type="traktor.world.PointLightEntityData" version="1">
-				<name>Point light</name>
-				<transform>
-					<translation>0.126064, 0.54617, -0.292573, 0</translation>
-					<rotation>0, 0, 0, 1</rotation>
-				</transform>
-				<sunColor>1, 1, 1, 0</sunColor>
-				<baseColor>0.5, 0.5, 0.5, 0</baseColor>
-				<shadowColor>0, 0, 0, 0</shadowColor>
-				<range>1</range>
-				<randomFlicker>0.3</randomFlicker>
-			</item>
 			<item type="traktor.mesh.MeshEntityData">
 				<name>Instance Mesh</name>
 				<transform>
@@ -147,6 +43,18 @@
 					<rotation>0, 0, 0, 1</rotation>
 				</transform>
 				<mesh>{2BEECC12-C76D-974A-B0AE-02CE93F6C466}</mesh>
+			</item>
+			<item type="traktor.world.PointLightEntityData" version="1">
+				<name>Point light</name>
+				<transform>
+					<translation>-0.381214, 0.577605, -0.163862, 0</translation>
+					<rotation>0, 0, 0, 1</rotation>
+				</transform>
+				<sunColor>1, 1, 1, 0</sunColor>
+				<baseColor>0.5, 0.5, 0.5, 0</baseColor>
+				<shadowColor>0, 0, 0, 0</shadowColor>
+				<range>2</range>
+				<randomFlicker>0.8</randomFlicker>
 			</item>
 		</entityData>
 	</entityData>

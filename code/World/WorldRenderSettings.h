@@ -60,6 +60,8 @@ public:
 	float shadowFarZ;
 	int32_t shadowMapResolution;
 	float shadowMapBias;
+	int32_t shadowCascadingSlices;
+	float shadowCascadingLambda;
 
 	WorldRenderSettings();
 

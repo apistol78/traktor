@@ -16,13 +16,6 @@
 
 namespace traktor
 {
-	namespace render
-	{
-
-class PrimitiveRenderer;
-
-	}
-
 	namespace world
 	{
 
@@ -38,9 +31,7 @@ void T_DLLCLASS calculateTSMProj(
 	Matrix44& outLightView,
 	Matrix44& outLightProjection,
 	Matrix44& outLightSquareProjection,
-	Frustum& outShadowFrustum,
-
-	render::PrimitiveRenderer* primitiveRenderer = 0
+	Frustum& outShadowFrustum
 );
 
 	}
