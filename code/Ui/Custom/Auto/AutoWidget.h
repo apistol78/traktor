@@ -65,7 +65,8 @@ private:
 	std::vector< CellInstance > m_cells;
 	Ref< AutoWidgetCell > m_focusCell;
 	Ref< AutoWidgetCell > m_captureCell;
-	Ref< ScrollBar > m_scrollBar;
+	Ref< ScrollBar > m_scrollBarH;
+	Ref< ScrollBar > m_scrollBarV;
 	Color4ub m_backgroundColor;
 	Size m_scrollOffset;
 	Rect m_bounds;

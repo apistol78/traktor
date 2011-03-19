@@ -36,11 +36,16 @@ bool AutoWidget::create(ui::Widget* parent, int32_t style)
 	addSizeEventHandler(createMethodHandler(this, &AutoWidget::eventSize));
 	addTimerEventHandler(createMethodHandler(this, &AutoWidget::eventTimer));
 
-	m_scrollBar = new ScrollBar();
-	if (!m_scrollBar->create(this, ScrollBar::WsVertical))
+	m_scrollBarH = new ScrollBar();
+	if (!m_scrollBarH->create(this, ScrollBar::WsHorizontal))
 		return false;
 
-	m_scrollBar->addScrollEventHandler(createMethodHandler(this, &AutoWidget::eventScroll));
+	m_scrollBarV = new ScrollBar();
+	if (!m_scrollBarV->create(this, ScrollBar::WsVertical))
+		return false;
+
+	m_scrollBarH->addScrollEventHandler(createMethodHandler(this, &AutoWidget::eventScroll));
+	m_scrollBarV->addScrollEventHandler(createMethodHandler(this, &AutoWidget::eventScroll));
 
 	m_backgroundColor = getSystemColor(ScButtonFace);
 
@@ -108,9 +113,13 @@ void AutoWidget::updateLayout()
 
 	Rect innerRect = getInnerRect();
 
-	bool scrollBarVisible = m_scrollBar->isVisible(false);
-	if (scrollBarVisible)
-		innerRect.right -= m_scrollBar->getPreferedSize().cx;
+	bool scrollBarVisibleH = m_scrollBarH->isVisible(false);
+	bool scrollBarVisibleV = m_scrollBarV->isVisible(false);
+
+	if (scrollBarVisibleH)
+		innerRect.bottom -= m_scrollBarH->getPreferedSize().cy;
+	if (scrollBarVisibleV)
+		innerRect.right -= m_scrollBarV->getPreferedSize().cx;
 
 	if (innerRect.getWidth() <= 0 || innerRect.getHeight() <= 0)
 		return;
@@ -132,28 +141,41 @@ void AutoWidget::updateLayout()
 	}
 
 	// Update scrollbar ranges.
-	int32_t clientHeight = innerRect.getHeight();
-	int32_t rowCount = (m_bounds.getHeight() + 15) / 16;
-	int32_t pageCount = clientHeight / 16;
+	int32_t columnCount = (m_bounds.right + 15) / 16;
+	int32_t columnPageCount = (innerRect.right + 15) / 16;
+	int32_t rowCount = (m_bounds.bottom + 15) / 16;
+	int32_t rowPageCount = (innerRect.bottom + 15) / 16;
 
-	m_scrollBar->setRange(rowCount);
-	m_scrollBar->setPage(pageCount);
-	m_scrollBar->setVisible(rowCount > pageCount);
-	m_scrollBar->update();
+	m_scrollBarH->setRange(columnCount);
+	m_scrollBarH->setPage(columnPageCount);
+	m_scrollBarH->setVisible(columnCount > columnPageCount);
+	m_scrollBarH->update();
 
-	if (m_scrollBar->isVisible(false) != scrollBarVisible)
+	m_scrollBarV->setRange(rowCount);
+	m_scrollBarV->setPage(rowPageCount);
+	m_scrollBarV->setVisible(rowCount > rowPageCount);
+	m_scrollBarV->update();
+
+	if (
+		m_scrollBarH->isVisible(false) != scrollBarVisibleH ||
+		m_scrollBarV->isVisible(false) != scrollBarVisibleV
+	)
 	{
 		Rect innerRect = getInnerRect();
 
-		if (!scrollBarVisible)
-			innerRect.right -= m_scrollBar->getPreferedSize().cx;
+		if (m_scrollBarH->isVisible(false))
+			innerRect.bottom -= m_scrollBarH->getPreferedSize().cy;
+		if (m_scrollBarV->isVisible(false))
+			innerRect.right -= m_scrollBarV->getPreferedSize().cx;
 
 		m_cells.resize(0);
 		layoutCells(innerRect);
 	}
 
-	if (!m_scrollBar->isVisible(false))
-		m_scrollOffset = Size(0, 0);
+	if (!m_scrollBarH->isVisible(false))
+		m_scrollOffset.cx = 0;
+	if (!m_scrollBarV->isVisible(false))
+		m_scrollOffset.cy = 0;
 }
 
 void AutoWidget::eventButtonDown(Event* event)
@@ -211,11 +233,11 @@ void AutoWidget::eventMouseWheel(Event* event)
 {
 	MouseEvent* mouseEvent = checked_type_cast< MouseEvent* >(event);
 
-	int32_t position = m_scrollBar->getPosition();
+	int32_t position = m_scrollBarV->getPosition();
 	position -= mouseEvent->getWheelRotation() * 4;
-	m_scrollBar->setPosition(position);
+	m_scrollBarV->setPosition(position);
 
-	m_scrollOffset.cy = -m_scrollBar->getPosition() * 16;
+	m_scrollOffset.cy = -m_scrollBarV->getPosition() * 16;
 	update();
 }
 
@@ -249,16 +271,30 @@ void AutoWidget::eventPaint(Event* event)
 
 void AutoWidget::eventSize(Event* event)
 {
-	int32_t width = m_scrollBar->getPreferedSize().cx;
+	updateLayout();
+
+	int32_t width = m_scrollBarV->getPreferedSize().cx;
+	int32_t height = m_scrollBarH->getPreferedSize().cy;
 
 	Rect innerRect = getInnerRect();
-	Rect scrollBarRect(
-		Point(innerRect.getWidth() - width, 0),
-		Size(width, innerRect.getHeight())
-	);
-	m_scrollBar->setRect(scrollBarRect);
 
-	updateLayout();
+	int32_t widthH = innerRect.getWidth();
+	if (m_scrollBarV->isVisible(false))
+		widthH -= width;
+
+	int32_t heightV = innerRect.getHeight();
+	if (m_scrollBarH->isVisible(false))
+		heightV -= height;
+
+	m_scrollBarH->setRect(Rect(
+		Point(0, innerRect.getHeight() - height),
+		Size(widthH, height)
+	));
+	m_scrollBarV->setRect(Rect(
+		Point(innerRect.getWidth() - width, 0),
+		Size(width, heightV)
+	));
+
 	update();
 }
 
@@ -278,7 +314,8 @@ void AutoWidget::eventTimer(Event* event)
 
 void AutoWidget::eventScroll(Event* event)
 {
-	m_scrollOffset.cy = -m_scrollBar->getPosition() * 16;
+	m_scrollOffset.cx = -m_scrollBarH->getPosition() * 16;
+	m_scrollOffset.cy = -m_scrollBarV->getPosition() * 16;
 	update();
 }
 

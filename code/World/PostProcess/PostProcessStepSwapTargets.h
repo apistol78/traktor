@@ -1,6 +1,7 @@
 #ifndef traktor_world_PostProcessStepSwapTargets_H
 #define traktor_world_PostProcessStepSwapTargets_H
 
+#include "Render/Types.h"
 #include "World/PostProcess/PostProcessStep.h"
 
 // import/export mechanism.
@@ -27,7 +28,7 @@ public:
 	class InstanceSwapTargets : public Instance
 	{
 	public:
-		InstanceSwapTargets(int32_t destination, int32_t source);
+		InstanceSwapTargets(render::handle_t destination, render::handle_t source);
 
 		virtual void destroy();
 
@@ -39,17 +40,21 @@ public:
 		);
 
 	private:
-		int32_t m_destination;
-		int32_t m_source;
+		render::handle_t m_destination;
+		render::handle_t m_source;
 	};
 
 	virtual Ref< Instance > create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const;
 
 	virtual bool serialize(ISerializer& s);
 
+	const std::wstring& getDestination() const { return m_destination; }
+
+	const std::wstring& getSource() const { return m_source; }
+
 private:
-	int32_t m_destination;
-	int32_t m_source;
+	std::wstring m_destination;
+	std::wstring m_source;
 };
 
 	}

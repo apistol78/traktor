@@ -36,9 +36,9 @@ class T_DLLCLASS PostProcessStepBlur : public PostProcessStep
 public:
 	struct Source
 	{
-		std::wstring param;	/*!< Shader parameter name. */
-		int32_t source;		/*!< Render target set source. */
-		uint32_t index;		/*!< Render target index. */
+		std::wstring param;		/*!< Shader parameter name. */
+		std::wstring source;	/*!< Render target set source. */
+		uint32_t index;			/*!< Render target index. */
 
 		Source();
 
@@ -48,8 +48,18 @@ public:
 	class InstanceBlur : public Instance
 	{
 	public:
+		struct Source
+		{
+			render::handle_t param;
+			render::handle_t paramSize;
+			render::handle_t source;
+			uint32_t index;
+		};
+
 		InstanceBlur(
-			const PostProcessStepBlur* step,
+			const resource::Proxy< render::Shader >& shader,
+			const std::vector< Source >& sources,
+			const Vector4& direction,
 			const AlignedVector< Vector4 >& gaussianOffsetWeights
 		);
 
@@ -63,7 +73,9 @@ public:
 		);
 
 	private:
-		Ref< const PostProcessStepBlur > m_step;
+		resource::Proxy< render::Shader > m_shader;
+		std::vector< Source > m_sources;
+		Vector4 m_direction;
 		AlignedVector< Vector4 > m_gaussianOffsetWeights;
 		render::handle_t m_handleGaussianOffsetWeights;
 		render::handle_t m_handleDirection;
@@ -80,7 +92,7 @@ public:
 	inline const resource::Proxy< render::Shader >& getShader() const { return m_shader; }
 
 private:
-	mutable resource::Proxy< render::Shader > m_shader;
+	resource::Proxy< render::Shader > m_shader;
 	std::vector< Source > m_sources;
 	Vector4 m_direction;
 	int32_t m_taps;

@@ -102,6 +102,9 @@ PostProcessStepSmProj::InstanceSmProj::InstanceSmProj(
 	m_shadowMapDiscRotation[0] = shadowMapDiscRotation[0];
 	m_shadowMapDiscRotation[1] = shadowMapDiscRotation[1];
 
+	m_handleInputColor = render::getParameterHandle(L"InputColor");
+	m_handleInputDepth = render::getParameterHandle(L"InputDepth");
+
 	m_handleShadowMap = render::getParameterHandle(L"ShadowMap");
 	m_handleShadowMapDiscRotation = render::getParameterHandle(L"ShadowMapDiscRotation");
 	m_handleShadowMapSizeAndBias = render::getParameterHandle(L"ShadowMapSizeAndBias");
@@ -135,8 +138,8 @@ void PostProcessStepSmProj::InstanceSmProj::render(
 	if (!shader.validate())
 		return;
 
-	Ref< render::RenderTargetSet > sourceShMap = postProcess->getTargetRef(PostProcess::PdtSourceColor);
-	Ref< render::RenderTargetSet > sourceDepth = postProcess->getTargetRef(PostProcess::PdtSourceDepth);
+	Ref< render::RenderTargetSet > sourceShMap = postProcess->getTargetRef(m_handleInputColor);
+	Ref< render::RenderTargetSet > sourceDepth = postProcess->getTargetRef(m_handleInputDepth);
 	if (!sourceShMap || !sourceDepth)
 		return;
 

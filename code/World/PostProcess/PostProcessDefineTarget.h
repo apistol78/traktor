@@ -7,9 +7,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_WORLD_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -32,7 +32,7 @@ public:
 	virtual bool serialize(ISerializer& s);
 
 private:
-	uint32_t m_id;
+	std::wstring m_id;
 	uint32_t m_width;
 	uint32_t m_height;
 	uint32_t m_screenDenom;

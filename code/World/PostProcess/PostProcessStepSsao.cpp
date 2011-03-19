@@ -28,6 +28,15 @@ Ref< PostProcessStep::Instance > PostProcessStepSsao::create(resource::IResource
 	if (!resourceManager->bind(m_shader))
 		return false;
 
+	std::vector< InstanceSsao::Source > sources(m_sources.size());
+	for (uint32_t i = 0; i < m_sources.size(); ++i)
+	{
+		sources[i].param = render::getParameterHandle(m_sources[i].param);
+		sources[i].paramSize = render::getParameterHandle(m_sources[i].param + L"_Size");
+		sources[i].source = render::getParameterHandle(m_sources[i].source);
+		sources[i].index = m_sources[i].index;
+	}
+
 	RandomGeometry random;
 	Vector4 offsets[32];
 
@@ -64,7 +73,7 @@ Ref< PostProcessStep::Instance > PostProcessStepSsao::create(resource::IResource
 	if (!randomNormals)
 		return 0;
 
-	return new InstanceSsao(this, offsets, randomNormals);
+	return new InstanceSsao(this, sources, offsets, randomNormals);
 }
 
 bool PostProcessStepSsao::serialize(ISerializer& s)
@@ -78,15 +87,14 @@ bool PostProcessStepSsao::serialize(ISerializer& s)
 }
 
 PostProcessStepSsao::Source::Source()
-:	source(0)
-,	index(0)
+:	index(0)
 {
 }
 
 bool PostProcessStepSsao::Source::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"param", param);
-	s >> Member< int32_t >(L"source", source);
+	s >> Member< std::wstring >(L"source", source);
 	s >> Member< uint32_t >(L"index", index);
 	return true;
 }
@@ -95,11 +103,15 @@ bool PostProcessStepSsao::Source::serialize(ISerializer& s)
 
 PostProcessStepSsao::InstanceSsao::InstanceSsao(
 	const PostProcessStepSsao* step,
+	const std::vector< Source >& sources,
 	const Vector4 offsets[32],
 	render::ISimpleTexture* randomNormals
 )
 :	m_step(step)
+,	m_sources(sources)
 ,	m_randomNormals(randomNormals)
+,	m_handleInputColor(render::getParameterHandle(L"InputColor"))
+,	m_handleInputDepth(render::getParameterHandle(L"InputDepth"))
 {
 	for (int i = 0; i < sizeof_array(m_offsets); ++i)
 		m_offsets[i] = offsets[i];
@@ -121,8 +133,8 @@ void PostProcessStepSsao::InstanceSsao::render(
 	if (!shader.validate())
 		return;
 
-	Ref< render::RenderTargetSet > sourceColor = postProcess->getTargetRef(-1);
-	Ref< render::RenderTargetSet > sourceDepth = postProcess->getTargetRef(-2);
+	Ref< render::RenderTargetSet > sourceColor = postProcess->getTargetRef(m_handleInputColor);
+	Ref< render::RenderTargetSet > sourceDepth = postProcess->getTargetRef(m_handleInputDepth);
 	if (!sourceColor || !sourceDepth)
 		return;
 
@@ -158,14 +170,13 @@ void PostProcessStepSsao::InstanceSsao::render(
 	shader->setFloatParameter(L"DepthRange", params.depthRange);
 	shader->setVectorParameter(L"MagicCoeffs", Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
 
-	const std::vector< Source >& sources = m_step->m_sources;
-	for (std::vector< Source >::const_iterator i = sources.begin(); i != sources.end(); ++i)
+	for (std::vector< Source >::const_iterator i = m_sources.begin(); i != m_sources.end(); ++i)
 	{
 		Ref< render::RenderTargetSet > source = postProcess->getTargetRef(i->source);
 		if (source)
 		{
 			shader->setTextureParameter(i->param, source->getColorTexture(i->index));
-			shader->setVectorParameter(i->param + L"_Size", Vector4(
+			shader->setVectorParameter(i->paramSize, Vector4(
 				float(source->getWidth()),
 				float(source->getHeight()),
 				0.0f,

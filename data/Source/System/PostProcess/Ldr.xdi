@@ -1,16 +1,17 @@
-<?xml version="1.0"?>
-<object type="traktor.world.PostProcessSettings">
-  <definitions/>
-  <steps>
-    <item type="traktor.world.PostProcessStepSimple">
-      <shader>{EBF6634D-CE3A-4C4A-9D27-29B34196F8FD}</shader>
-      <sources>
-        <item>
-          <param>SourceTexture</param>
-          <source>-1</source>
-          <index>0</index>
-        </item>
-      </sources>
-    </item>
-  </steps>
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.world.PostProcessSettings" version="1">
+	<requireHighRange>false</requireHighRange>
+	<definitions/>
+	<steps>
+		<item type="traktor.world.PostProcessStepSimple">
+			<shader>{EBF6634D-CE3A-4C4A-9D27-29B34196F8FD}</shader>
+			<sources>
+				<item>
+					<param>SourceTexture</param>
+					<source>InputColor</source>
+					<index>0</index>
+				</item>
+			</sources>
+		</item>
+	</steps>
 </object>

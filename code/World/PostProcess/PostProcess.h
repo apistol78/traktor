@@ -47,24 +47,16 @@ class PostProcessSettings;
  * \ingroup World
  *
  * Predefined targets:
- * 0  - Frame buffer, write only.
- * -1 - Source color buffer, read only.
- * -2 - Source depth buffer, read only.
- * -4 - Source shadow mask, read only.
+ * "Output" - Frame buffer, write only.
+ * "InputColor" - Source color buffer, read only.
+ * "InputDepth" - Source depth buffer, read only.
+ * "InputShadowMask" - Source shadow mask, read only.
  */
 class T_DLLCLASS PostProcess : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	enum PredefinedTargets
-	{
-		PdtFrame = 0,
-		PdtSourceColor = -1,
-		PdtSourceDepth = -2,
-		PdtSourceShadowMask = -4
-	};
-
 	PostProcess();
 
 	bool create(
@@ -85,9 +77,9 @@ public:
 		const PostProcessStep::Instance::RenderParams& params
 	);
 
-	void setTarget(render::IRenderView* renderView, int32_t id);
+	void setTarget(render::IRenderView* renderView, render::handle_t id);
 
-	Ref< render::RenderTargetSet >& getTargetRef(int32_t id);
+	Ref< render::RenderTargetSet >& getTargetRef(render::handle_t id);
 
 	void setParameter(render::handle_t handle, bool value);
 
@@ -99,7 +91,7 @@ public:
 
 private:
 	Ref< render::ScreenRenderer > m_screenRenderer;
-	SmallMap< int32_t, Ref< render::RenderTargetSet > > m_targets;
+	SmallMap< render::handle_t, Ref< render::RenderTargetSet > > m_targets;
 	RefArray< PostProcessStep::Instance > m_instances;
 	SmallMap< render::handle_t, bool > m_booleanParameters;
 	SmallMap< render::handle_t, float > m_scalarParameters;

@@ -1,9 +1,10 @@
 #ifndef traktor_world_PostProcessStepLuminance_H
 #define traktor_world_PostProcessStepLuminance_H
 
-#include "World/PostProcess/PostProcessStep.h"
-#include "Resource/Proxy.h"
 #include "Core/Math/Vector4.h"
+#include "Render/Types.h"
+#include "Resource/Proxy.h"
+#include "World/PostProcess/PostProcessStep.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -38,6 +39,7 @@ public:
 	public:
 		InstanceLuminance(
 			const PostProcessStepLuminance* step,
+			render::handle_t source,
 			const Vector4 sampleOffsets[16]
 		);
 
@@ -52,6 +54,7 @@ public:
 
 	private:
 		Ref< const PostProcessStepLuminance > m_step;
+		render::handle_t m_source;
 		Vector4 m_sampleOffsets[16];
 	};
 
@@ -63,7 +66,7 @@ public:
 
 private:
 	mutable resource::Proxy< render::Shader > m_shader;
-	int32_t m_source;
+	std::wstring m_source;
 };
 
 	}

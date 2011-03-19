@@ -14,12 +14,25 @@ namespace traktor
 {
 	namespace world
 	{
+		namespace
+		{
+
+render::handle_t s_handleOutput;
+render::handle_t s_handleInputColor;
+render::handle_t s_handleInputDepth;
+render::handle_t s_handleInputShadowMask;
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.PostProcess", PostProcess, Object)
 
 PostProcess::PostProcess()
 :	m_requireHighRange(false)
 {
+	s_handleOutput = render::getParameterHandle(L"Output");
+	s_handleInputColor = render::getParameterHandle(L"InputColor");
+	s_handleInputDepth = render::getParameterHandle(L"InputDepth");
+	s_handleInputShadowMask = render::getParameterHandle(L"InputShadowMask");
 }
 
 bool PostProcess::create(
@@ -68,14 +81,14 @@ void PostProcess::destroy()
 
 	m_instances.resize(0);
 
-	for (SmallMap< int32_t, Ref< render::RenderTargetSet > >::iterator i = m_targets.begin(); i != m_targets.end(); ++i)
+	for (SmallMap< render::handle_t, Ref< render::RenderTargetSet > >::iterator i = m_targets.begin(); i != m_targets.end(); ++i)
 	{
 		if (
 			i->second &&
-			i->first != PdtFrame &&
-			i->first != PdtSourceColor &&
-			i->first != PdtSourceDepth &&
-			i->first != PdtSourceShadowMask
+			i->first != s_handleOutput &&
+			i->first != s_handleInputColor &&
+			i->first != s_handleInputDepth &&
+			i->first != s_handleInputShadowMask
 		)
 			i->second->destroy();
 	}
@@ -98,9 +111,9 @@ bool PostProcess::render(
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
-	m_targets[PdtSourceColor] = colorBuffer;
-	m_targets[PdtSourceDepth] = depthBuffer;
-	m_targets[PdtSourceShadowMask] = shadowMask;
+	m_targets[s_handleInputColor] = colorBuffer;
+	m_targets[s_handleInputDepth] = depthBuffer;
+	m_targets[s_handleInputShadowMask] = shadowMask;
 	m_currentTarget = 0;
 
 	T_RENDER_PUSH_MARKER(renderView, "PostProcess");
@@ -121,16 +134,16 @@ bool PostProcess::render(
 	return true;
 }
 
-void PostProcess::setTarget(render::IRenderView* renderView, int32_t id)
+void PostProcess::setTarget(render::IRenderView* renderView, render::handle_t id)
 {
-	T_ASSERT_M(id != PdtSourceColor, L"Cannot bind source color buffer as output");
-	T_ASSERT_M(id != PdtSourceDepth, L"Cannot bind source depth buffer as output");
-	T_ASSERT_M(id != PdtSourceShadowMask, L"Cannot bind source shadow mask as output");
+	T_ASSERT_M(id != s_handleInputColor, L"Cannot bind source color buffer as output");
+	T_ASSERT_M(id != s_handleInputDepth, L"Cannot bind source depth buffer as output");
+	T_ASSERT_M(id != s_handleInputShadowMask, L"Cannot bind source shadow mask as output");
 
 	if (m_currentTarget)
 		renderView->end();
 
-	if (id != PdtFrame)
+	if (id != s_handleOutput)
 	{
 		m_currentTarget = m_targets[id];
 		renderView->begin(m_currentTarget, 0);
@@ -139,7 +152,7 @@ void PostProcess::setTarget(render::IRenderView* renderView, int32_t id)
 		m_currentTarget = 0;
 }
 
-Ref< render::RenderTargetSet >& PostProcess::getTargetRef(int32_t id)
+Ref< render::RenderTargetSet >& PostProcess::getTargetRef(render::handle_t id)
 {
 	return m_targets[id];
 }

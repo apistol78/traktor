@@ -11,17 +11,17 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.PostProcessStepSetTarget", 0, Pos
 
 Ref< PostProcessStep::Instance > PostProcessStepSetTarget::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
 {
-	return new InstanceSetTarget(m_target);
+	return new InstanceSetTarget(render::getParameterHandle(m_target));
 }
 
 bool PostProcessStepSetTarget::serialize(ISerializer& s)
 {
-	return s >> Member< int32_t >(L"target", m_target);
+	return s >> Member< std::wstring >(L"target", m_target);
 }
 
 // Instance
 
-PostProcessStepSetTarget::InstanceSetTarget::InstanceSetTarget(int32_t target)
+PostProcessStepSetTarget::InstanceSetTarget::InstanceSetTarget(render::handle_t target)
 :	m_target(target)
 {
 }
