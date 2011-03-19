@@ -200,6 +200,9 @@ void TerrainSurfaceCache::get(
 	worldRenderPass.setShaderTechnique(shader);
 	worldRenderPass.setShaderCombination(shader);
 
+	if (!shader->getCurrentProgram())
+		return;
+
 	// Create render block.
 	TerrainSurfaceRenderBlock* renderBlock = renderContext->alloc< TerrainSurfaceRenderBlock >();
 

@@ -259,6 +259,10 @@ Generated texture from surface cache.
 					<optional>false</optional>
 				</item>
 				<item>
+					<name>ViewNormal</name>
+					<optional>false</optional>
+				</item>
+				<item>
 					<name>ViewPosition</name>
 					<optional>false</optional>
 				</item>
@@ -290,6 +294,23 @@ Generated texture from surface cache.
 					<second>0.1</second>
 				</item>
 			</values>
+		</item>
+		<item type="traktor.render.Transform">
+			<comment/>
+			<position>
+				<first>1455</first>
+				<second>55</second>
+			</position>
+		</item>
+		<item type="traktor.render.Uniform" version="1">
+			<comment/>
+			<position>
+				<first>1307</first>
+				<second>150</second>
+			</position>
+			<parameterName>View</parameterName>
+			<type>PtMatrix</type>
+			<frequency>UfFrame</frequency>
 		</item>
 	</nodes>
 	<edges>
@@ -581,6 +602,36 @@ Generated texture from surface cache.
 			<destination>
 				<node ref="/object/nodes/item[25]"/>
 				<name>EyeDirection</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[27]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[26]"/>
+				<name>Transform</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[26]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[26]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[25]"/>
+				<name>ViewNormal</name>
 			</destination>
 		</item>
 	</edges>
