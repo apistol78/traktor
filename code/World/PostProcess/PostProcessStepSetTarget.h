@@ -1,8 +1,9 @@
 #ifndef traktor_world_PostProcessStepSetTarget_H
 #define traktor_world_PostProcessStepSetTarget_H
 
-#include "World/PostProcess/PostProcessStep.h"
+#include "Render/Types.h"
 #include "Resource/Proxy.h"
+#include "World/PostProcess/PostProcessStep.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -35,7 +36,7 @@ public:
 	class InstanceSetTarget : public Instance
 	{
 	public:
-		InstanceSetTarget(int32_t target);
+		InstanceSetTarget(render::handle_t target);
 
 		virtual void destroy();
 
@@ -47,15 +48,17 @@ public:
 		);
 
 	private:
-		int32_t m_target;
+		render::handle_t m_target;
 	};
 
 	virtual Ref< Instance > create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const;
 
 	virtual bool serialize(ISerializer& s);
 
+	const std::wstring& getTarget() const { return m_target; }
+
 private:
-	int32_t m_target;
+	std::wstring m_target;
 };
 
 	}

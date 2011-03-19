@@ -14,8 +14,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.PostProcessDefineTarget", 1, PostProcessDefineTarget, PostProcessDefine)
 
 PostProcessDefineTarget::PostProcessDefineTarget()
-:	m_id(0)
-,	m_width(0)
+:	m_width(0)
 ,	m_height(0)
 ,	m_screenDenom(0)
 ,	m_format(render::TfInvalid)
@@ -45,8 +44,7 @@ bool PostProcessDefineTarget::define(PostProcess* postProcess, render::IRenderSy
 		return false;
 	}
 
-	T_ASSERT_M (m_id != 0 && m_id != -1 && m_id != -2 && m_id != -3, L"Invalid target ID, 0, 1 and 2 are predefined");
-	postProcess->getTargetRef(m_id) = renderTargetSet;
+	postProcess->getTargetRef(render::getParameterHandle(m_id)) = renderTargetSet;
 
 	return true;
 }
@@ -64,7 +62,7 @@ bool PostProcessDefineTarget::serialize(ISerializer& s)
 		{ 0, 0 }
 	};
 
-	s >> Member< uint32_t >(L"id", m_id);
+	s >> Member< std::wstring >(L"id", m_id);
 	s >> Member< uint32_t >(L"width", m_width);
 	s >> Member< uint32_t >(L"height", m_height);
 	s >> Member< uint32_t >(L"screenDenom", m_screenDenom);

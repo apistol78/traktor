@@ -43,7 +43,7 @@
 				</item>
 				<item>
 					<param>Depth</param>
-					<source>-2</source>
+					<source>InputDepth</source>
 					<index>0</index>
 				</item>
 			</sources>
@@ -61,7 +61,7 @@
 				</item>
 				<item>
 					<param>Depth</param>
-					<source>-2</source>
+					<source>InputDepth</source>
 					<index>0</index>
 				</item>
 			</sources>
@@ -81,7 +81,7 @@
 				</item>
 				<item>
 					<param>Depth</param>
-					<source>-2</source>
+					<source>InputDepth</source>
 					<index>0</index>
 				</item>
 			</sources>

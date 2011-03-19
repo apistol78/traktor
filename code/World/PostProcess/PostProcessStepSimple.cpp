@@ -1,14 +1,14 @@
-#include "World/PostProcess/PostProcessStepSimple.h"
-#include "World/PostProcess/PostProcess.h"
+#include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberStl.h"
+#include "Core/Serialization/MemberComposite.h"
 #include "Render/ScreenRenderer.h"
 #include "Render/Shader.h"
 #include "Render/Shader/ShaderGraph.h"
 #include "Render/RenderTargetSet.h"
-#include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/MemberStl.h"
-#include "Core/Serialization/MemberComposite.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
+#include "World/PostProcess/PostProcessStepSimple.h"
+#include "World/PostProcess/PostProcess.h"
 
 namespace traktor
 {
@@ -22,7 +22,16 @@ Ref< PostProcessStep::Instance > PostProcessStepSimple::create(resource::IResour
 	if (!resourceManager->bind(m_shader))
 		return false;
 
-	return new InstanceSimple(this);
+	std::vector< InstanceSimple::Source > sources(m_sources.size());
+	for (uint32_t i = 0; i < m_sources.size(); ++i)
+	{
+		sources[i].param = render::getParameterHandle(m_sources[i].param);
+		sources[i].paramSize = render::getParameterHandle(m_sources[i].param + L"_Size");
+		sources[i].source = render::getParameterHandle(m_sources[i].source);
+		sources[i].index = m_sources[i].index;
+	}
+
+	return new InstanceSimple(this, sources);
 }
 
 bool PostProcessStepSimple::serialize(ISerializer& s)
@@ -33,23 +42,23 @@ bool PostProcessStepSimple::serialize(ISerializer& s)
 }
 
 PostProcessStepSimple::Source::Source()
-:	source(0)
-,	index(0)
+:	index(0)
 {
 }
 
 bool PostProcessStepSimple::Source::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"param", param);
-	s >> Member< int32_t >(L"source", source);
+	s >> Member< std::wstring >(L"source", source);
 	s >> Member< uint32_t >(L"index", index);
 	return true;
 }
 
 // Instance
 
-PostProcessStepSimple::InstanceSimple::InstanceSimple(const PostProcessStepSimple* step)
+PostProcessStepSimple::InstanceSimple::InstanceSimple(const PostProcessStepSimple* step, const std::vector< Source >& sources)
 :	m_step(step)
+,	m_sources(sources)
 ,	m_time(0.0f)
 {
 	m_handleTime = render::getParameterHandle(L"Time");
@@ -78,14 +87,13 @@ void PostProcessStepSimple::InstanceSimple::render(
 	shader->setFloatParameter(m_handleDeltaTime, params.deltaTime);
 	shader->setFloatParameter(m_handleDepthRange, params.depthRange);
 
-	const std::vector< Source >& sources = m_step->m_sources;
-	for (std::vector< Source >::const_iterator i = sources.begin(); i != sources.end(); ++i)
+	for (std::vector< Source >::const_iterator i = m_sources.begin(); i != m_sources.end(); ++i)
 	{
 		Ref< render::RenderTargetSet > source = postProcess->getTargetRef(i->source);
 		if (source)
 		{
 			shader->setTextureParameter(i->param, source->getColorTexture(i->index));
-			shader->setVectorParameter(i->param + L"_Size", Vector4(
+			shader->setVectorParameter(i->paramSize, Vector4(
 				float(source->getWidth()),
 				float(source->getHeight()),
 				0.0f,

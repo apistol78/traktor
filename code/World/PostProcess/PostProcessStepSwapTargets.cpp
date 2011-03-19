@@ -12,19 +12,22 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.PostProcessStepSwapTargets", 0, P
 
 Ref< PostProcessStep::Instance > PostProcessStepSwapTargets::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
 {
-	return new InstanceSwapTargets(m_destination, m_source);
+	return new InstanceSwapTargets(
+		render::getParameterHandle(m_destination),
+		render::getParameterHandle(m_source)
+	);
 }
 
 bool PostProcessStepSwapTargets::serialize(ISerializer& s)
 {
-	s >> Member< int32_t >(L"destination", m_destination);
-	s >> Member< int32_t >(L"source", m_source);
+	s >> Member< std::wstring >(L"destination", m_destination);
+	s >> Member< std::wstring >(L"source", m_source);
 	return true;
 }
 
 // Instance
 
-PostProcessStepSwapTargets::InstanceSwapTargets::InstanceSwapTargets(int32_t destination, int32_t source)
+PostProcessStepSwapTargets::InstanceSwapTargets::InstanceSwapTargets(render::handle_t destination, render::handle_t source)
 :	m_destination(destination)
 ,	m_source(source)
 {

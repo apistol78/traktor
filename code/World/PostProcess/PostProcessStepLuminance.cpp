@@ -39,6 +39,7 @@ Ref< PostProcessStep::Instance > PostProcessStepLuminance::create(resource::IRes
 
 	return new InstanceLuminance(
 		this,
+		render::getParameterHandle(m_source),
 		sampleOffsets
 	);
 }
@@ -46,7 +47,7 @@ Ref< PostProcessStep::Instance > PostProcessStepLuminance::create(resource::IRes
 bool PostProcessStepLuminance::serialize(ISerializer& s)
 {
 	s >> resource::Member< render::Shader, render::ShaderGraph >(L"shader", m_shader);
-	s >> Member< int32_t >(L"source", m_source);
+	s >> Member< std::wstring >(L"source", m_source);
 	return true;
 }
 
@@ -54,9 +55,11 @@ bool PostProcessStepLuminance::serialize(ISerializer& s)
 
 PostProcessStepLuminance::InstanceLuminance::InstanceLuminance(
 	const PostProcessStepLuminance* step,
+	render::handle_t source,
 	const Vector4 sampleOffsets[16]
 )
 :	m_step(step)
+,	m_source(source)
 {
 	for (int i = 0; i < sizeof_array(m_sampleOffsets); ++i)
 		m_sampleOffsets[i] = sampleOffsets[i];
@@ -77,7 +80,7 @@ void PostProcessStepLuminance::InstanceLuminance::render(
 	if (!shader.validate())
 		return;
 
-	Ref< render::RenderTargetSet > source = postProcess->getTargetRef(m_step->m_source);
+	Ref< render::RenderTargetSet > source = postProcess->getTargetRef(m_source);
 	if (!source)
 		return;
 

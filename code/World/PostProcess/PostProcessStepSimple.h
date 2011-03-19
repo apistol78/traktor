@@ -36,9 +36,9 @@ class T_DLLCLASS PostProcessStepSimple : public PostProcessStep
 public:
 	struct Source
 	{
-		std::wstring param;	/*!< Shader parameter name. */
-		int32_t source;		/*!< Render target set source. */
-		uint32_t index;		/*!< Render target index. */
+		std::wstring param;		/*!< Shader parameter name. */
+		std::wstring source;	/*!< Render target set source. */
+		uint32_t index;			/*!< Render target index. */
 
 		Source();
 
@@ -48,7 +48,15 @@ public:
 	class InstanceSimple : public Instance
 	{
 	public:
-		InstanceSimple(const PostProcessStepSimple* step);
+		struct Source
+		{
+			render::handle_t param;
+			render::handle_t paramSize;
+			render::handle_t source;
+			uint32_t index;
+		};
+
+		InstanceSimple(const PostProcessStepSimple* step, const std::vector< Source >& sources);
 
 		virtual void destroy();
 
@@ -61,6 +69,7 @@ public:
 
 	private:
 		Ref< const PostProcessStepSimple > m_step;
+		std::vector< Source > m_sources;
 		float m_time;
 		render::handle_t m_handleTime;
 		render::handle_t m_handleDeltaTime;

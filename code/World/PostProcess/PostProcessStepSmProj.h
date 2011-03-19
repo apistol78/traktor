@@ -55,6 +55,8 @@ public:
 		Ref< const PostProcessStepSmProj > m_step;
 		Ref< render::ISimpleTexture > m_shadowMapDiscRotation[2];
 		uint32_t m_frame;
+		render::handle_t m_handleInputColor;
+		render::handle_t m_handleInputDepth;
 		render::handle_t m_handleShadowMap;
 		render::handle_t m_handleShadowMapDiscRotation;
 		render::handle_t m_handleShadowMapSizeAndBias;

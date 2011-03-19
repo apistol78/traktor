@@ -36,9 +36,9 @@ class T_DLLCLASS PostProcessStepSsao : public PostProcessStep
 public:
 	struct Source
 	{
-		std::wstring param;	/*!< Shader parameter name. */
-		int32_t source;		/*!< Render target set source. */
-		uint32_t index;		/*!< Render target index. */
+		std::wstring param;		/*!< Shader parameter name. */
+		std::wstring source;	/*!< Render target set source. */
+		uint32_t index;			/*!< Render target index. */
 
 		Source();
 
@@ -48,8 +48,17 @@ public:
 	class InstanceSsao : public Instance
 	{
 	public:
+		struct Source
+		{
+			render::handle_t param;
+			render::handle_t paramSize;
+			render::handle_t source;
+			uint32_t index;
+		};
+
 		InstanceSsao(
 			const PostProcessStepSsao* step,
+			const std::vector< Source >& sources,
 			const Vector4 offsets[32],
 			render::ISimpleTexture* randomNormals
 		);
@@ -65,8 +74,11 @@ public:
 
 	private:
 		Ref< const PostProcessStepSsao > m_step;
+		std::vector< Source > m_sources;
 		Vector4 m_offsets[32];
 		Ref< render::ISimpleTexture > m_randomNormals;
+		render::handle_t m_handleInputColor;
+		render::handle_t m_handleInputDepth;
 	};
 
 	virtual Ref< Instance > create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const;

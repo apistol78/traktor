@@ -1,31 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.world.PostProcessSettings">
+<object type="traktor.world.PostProcessSettings" version="1">
+	<requireHighRange>false</requireHighRange>
 	<definitions>
-		<item type="traktor.world.PostProcessDefineTarget">
+		<item type="traktor.world.PostProcessDefineTarget" version="1">
 			<id>3</id>
 			<width>0</width>
 			<height>0</height>
 			<screenDenom>1</screenDenom>
 			<format>TfR8G8B8A8</format>
 			<depthStencil>false</depthStencil>
+			<preferTiled>false</preferTiled>
 			<multiSample>0</multiSample>
 		</item>
-		<item type="traktor.world.PostProcessDefineTarget">
+		<item type="traktor.world.PostProcessDefineTarget" version="1">
 			<id>4</id>
 			<width>0</width>
 			<height>0</height>
 			<screenDenom>1</screenDenom>
 			<format>TfR8G8B8A8</format>
 			<depthStencil>false</depthStencil>
+			<preferTiled>false</preferTiled>
 			<multiSample>0</multiSample>
 		</item>
-		<item type="traktor.world.PostProcessDefineTarget">
+		<item type="traktor.world.PostProcessDefineTarget" version="1">
 			<id>5</id>
 			<width>0</width>
 			<height>0</height>
 			<screenDenom>1</screenDenom>
 			<format>TfR8G8B8A8</format>
 			<depthStencil>false</depthStencil>
+			<preferTiled>false</preferTiled>
 			<multiSample>0</multiSample>
 		</item>
 	</definitions>
@@ -33,26 +37,27 @@
 		<item type="traktor.world.PostProcessStepSetTarget">
 			<target>3</target>
 		</item>
-		<item type="traktor.world.PostProcessStepBlur">
+		<item type="traktor.world.PostProcessStepBlur" version="1">
 			<shader>{2E0680E0-DF2A-EA45-A5B2-9889CE092CA0}</shader>
 			<sources>
 				<item>
 					<param>Source</param>
-					<source>-1</source>
+					<source>InputColor</source>
 					<index>0</index>
 				</item>
 				<item>
 					<param>Depth</param>
-					<source>-2</source>
+					<source>InputDepth</source>
 					<index>0</index>
 				</item>
 			</sources>
 			<direction>4, 0, 0, 0</direction>
+			<taps>15</taps>
 		</item>
 		<item type="traktor.world.PostProcessStepSetTarget">
 			<target>4</target>
 		</item>
-		<item type="traktor.world.PostProcessStepBlur">
+		<item type="traktor.world.PostProcessStepBlur" version="1">
 			<shader>{2E0680E0-DF2A-EA45-A5B2-9889CE092CA0}</shader>
 			<sources>
 				<item>
@@ -62,16 +67,17 @@
 				</item>
 				<item>
 					<param>Depth</param>
-					<source>-2</source>
+					<source>InputDepth</source>
 					<index>0</index>
 				</item>
 			</sources>
 			<direction>0, 4, 0, 0</direction>
+			<taps>15</taps>
 		</item>
 		<item type="traktor.world.PostProcessStepSetTarget">
 			<target>3</target>
 		</item>
-		<item type="traktor.world.PostProcessStepBlur">
+		<item type="traktor.world.PostProcessStepBlur" version="1">
 			<shader>{2E0680E0-DF2A-EA45-A5B2-9889CE092CA0}</shader>
 			<sources>
 				<item>
@@ -81,16 +87,17 @@
 				</item>
 				<item>
 					<param>Depth</param>
-					<source>-2</source>
+					<source>InputDepth</source>
 					<index>0</index>
 				</item>
 			</sources>
 			<direction>4, 0, 0, 0</direction>
+			<taps>15</taps>
 		</item>
 		<item type="traktor.world.PostProcessStepSetTarget">
 			<target>5</target>
 		</item>
-		<item type="traktor.world.PostProcessStepBlur">
+		<item type="traktor.world.PostProcessStepBlur" version="1">
 			<shader>{2E0680E0-DF2A-EA45-A5B2-9889CE092CA0}</shader>
 			<sources>
 				<item>
@@ -100,11 +107,12 @@
 				</item>
 				<item>
 					<param>Depth</param>
-					<source>-2</source>
+					<source>InputDepth</source>
 					<index>0</index>
 				</item>
 			</sources>
 			<direction>0, 4, 0, 0</direction>
+			<taps>15</taps>
 		</item>
 		<item type="traktor.world.PostProcessStepSetTarget">
 			<target>0</target>
@@ -114,12 +122,12 @@
 			<sources>
 				<item>
 					<param>Frame</param>
-					<source>-1</source>
+					<source>InputColor</source>
 					<index>0</index>
 				</item>
 				<item>
 					<param>Depth</param>
-					<source>-2</source>
+					<source>InputDepth</source>
 					<index>0</index>
 				</item>
 				<item>
