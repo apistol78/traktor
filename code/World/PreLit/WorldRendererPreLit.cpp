@@ -30,11 +30,12 @@ namespace traktor
 		namespace
 		{
 
-const Guid c_shadowMaskProjectionSettingsNoFilter(L"{19222311-363F-CB45-86E5-34D376CDA8AD}");
-const Guid c_shadowMaskProjectionSettingsLow(L"{7D4D38B9-1E43-8046-B1A4-705CFEF9B8EB}");
-const Guid c_shadowMaskProjectionSettingsMedium(L"{57FD53AF-547A-9F46-8C94-B4D24EFB63BC}");
-const Guid c_shadowMaskProjectionSettingsHigh(L"{FABC4017-4D65-604D-B9AB-9FC03FE3CE43}");
-const Guid c_shadowMaskProjectionSettingsHighest(L"{5AFC153E-6FCE-3142-9E1B-DD3722DA447F}");
+const Guid c_shadowMaskProject(L"{F751F3EB-33D2-9247-9E3F-54B1A0E3522C}");
+const Guid c_shadowMaskFilterNone(L"{19222311-363F-CB45-86E5-34D376CDA8AD}");
+const Guid c_shadowMaskFilterLow(L"{7D4D38B9-1E43-8046-B1A4-705CFEF9B8EB}");
+const Guid c_shadowMaskFilterMedium(L"{57FD53AF-547A-9F46-8C94-B4D24EFB63BC}");
+const Guid c_shadowMaskFilterHigh(L"{FABC4017-4D65-604D-B9AB-9FC03FE3CE43}");
+const Guid c_shadowMaskFilterHighest(L"{5AFC153E-6FCE-3142-9E1B-DD3722DA447F}");
 
 const static float c_interocularDistance = 6.5f;
 const static float c_distortionValue = 0.8f;
@@ -201,43 +202,73 @@ bool WorldRendererPreLit::create(
 		desc.usingPrimaryDepthStencil = false;
 		desc.targets[0].format = render::TfR8;
 		desc.preferTiled = true;
-		m_shadowMaskTargetSet = renderSystem->createRenderTargetSet(desc);
+		m_shadowMaskProjectTargetSet = renderSystem->createRenderTargetSet(desc);
 
-		if (m_shadowTargetSet && m_shadowMaskTargetSet)
+		// Create filtered shadow mask target.
+		desc.count = 1;
+		desc.multiSample = 0;
+		desc.createDepthStencil = false;
+		desc.usingPrimaryDepthStencil = false;
+		desc.targets[0].format = render::TfR8;
+		desc.preferTiled = true;
+		m_shadowMaskFilterTargetSet = renderSystem->createRenderTargetSet(desc);
+
+		if (
+			m_shadowTargetSet &&
+			m_shadowMaskProjectTargetSet &&
+			m_shadowMaskFilterTargetSet
+		)
 		{
-			resource::Proxy< PostProcessSettings > shadowMaskProjectionSettings;
+			resource::Proxy< PostProcessSettings > shadowMaskProject;
+			resource::Proxy< PostProcessSettings > shadowMaskFilter;
+
+			shadowMaskProject = c_shadowMaskProject;
 
 			switch (m_settings.shadowsQuality)
 			{
 			case WorldRenderSettings::SqNoFilter:
-				shadowMaskProjectionSettings = c_shadowMaskProjectionSettingsNoFilter;
+				shadowMaskFilter = c_shadowMaskFilterNone;
 				break;
 			case WorldRenderSettings::SqLow:
-				shadowMaskProjectionSettings = c_shadowMaskProjectionSettingsLow;
+				shadowMaskFilter = c_shadowMaskFilterLow;
 				break;
 			case WorldRenderSettings::SqMedium:
-				shadowMaskProjectionSettings = c_shadowMaskProjectionSettingsMedium;
+				shadowMaskFilter = c_shadowMaskFilterMedium;
 				break;
 			case WorldRenderSettings::SqHigh:
-				shadowMaskProjectionSettings = c_shadowMaskProjectionSettingsHigh;
+				shadowMaskFilter = c_shadowMaskFilterHigh;
 				break;
 			case WorldRenderSettings::SqHighest:
-				shadowMaskProjectionSettings = c_shadowMaskProjectionSettingsHighest;
+				shadowMaskFilter = c_shadowMaskFilterHighest;
 				break;
 			}
 
-			resourceManager->bind(shadowMaskProjectionSettings);
+			resourceManager->bind(shadowMaskProject);
+			resourceManager->bind(shadowMaskFilter);
 
-			m_shadowMaskProjection = new PostProcess();
-			if (!m_shadowMaskProjection->create(
-				shadowMaskProjectionSettings,
+			m_shadowMaskProject = new PostProcess();
+			if (!m_shadowMaskProject->create(
+				shadowMaskProject,
 				resourceManager,
 				renderSystem,
 				desc.width,
 				desc.height
 			))
 			{
-				log::warning << L"Unable to create shadow projection process; shadows disabled" << Endl;
+				log::warning << L"Unable to create shadow project process; shadows disabled" << Endl;
+				m_settings.shadowsEnabled = false;
+			}
+
+			m_shadowMaskFilter = new PostProcess();
+			if (!m_shadowMaskFilter->create(
+				shadowMaskFilter,
+				resourceManager,
+				renderSystem,
+				desc.width,
+				desc.height
+			))
+			{
+				log::warning << L"Unable to create shadow filter process; shadows disabled" << Endl;
 				m_settings.shadowsEnabled = false;
 			}
 		}
@@ -251,7 +282,8 @@ bool WorldRendererPreLit::create(
 		if (!m_settings.shadowsEnabled)
 		{
 			safeDestroy(m_shadowTargetSet);
-			safeDestroy(m_shadowMaskTargetSet);
+			safeDestroy(m_shadowMaskProjectTargetSet);
+			safeDestroy(m_shadowMaskFilterTargetSet);
 		}
 	}
 
@@ -348,10 +380,12 @@ void WorldRendererPreLit::destroy()
 		i->normal = 0;
 	}
 
-	safeDestroy(m_shadowMaskProjection);
-	safeDestroy(m_lightMapTargetSet);
-	safeDestroy(m_shadowMaskTargetSet);
+	safeDestroy(m_shadowMaskFilter);
+	safeDestroy(m_shadowMaskProject);
+	safeDestroy(m_shadowMaskFilterTargetSet);
+	safeDestroy(m_shadowMaskProjectTargetSet);
 	safeDestroy(m_shadowTargetSet);
+	safeDestroy(m_lightMapTargetSet);
 	safeDestroy(m_normalTargetSet);
 	safeDestroy(m_depthTargetSet);
 
@@ -547,8 +581,8 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 					}
 					T_RENDER_POP_MARKER(m_renderView);
 
-					T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow mask");
-					if (m_renderView->begin(m_shadowMaskTargetSet, 0))
+					T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow mask project");
+					if (m_renderView->begin(m_shadowMaskProjectTargetSet, 0))
 					{
 						if (j == 0)
 						{
@@ -570,7 +604,7 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 						params.shadowMapBias = m_settings.shadowMapBias;
 						params.deltaTime = 0.0f;
 
-						m_shadowMaskProjection->render(
+						m_shadowMaskProject->render(
 							m_renderView,
 							m_shadowTargetSet,
 							m_depthTargetSet,
@@ -582,6 +616,29 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 					}
 					T_RENDER_POP_MARKER(m_renderView);
 				}
+
+				T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow mask filter");
+				if (m_renderView->begin(m_shadowMaskFilterTargetSet, 0))
+				{
+					PostProcessStep::Instance::RenderParams params;
+					params.viewFrustum = f.viewFrustum;
+					params.projection = projection;
+					params.depthRange = m_settings.depthRange;
+					params.sliceNearZ = 0.0f;
+					params.sliceFarZ = m_settings.shadowFarZ;
+					params.shadowMapBias = m_settings.shadowMapBias;
+					params.deltaTime = 0.0f;
+
+					m_shadowMaskFilter->render(
+						m_renderView,
+						m_shadowMaskProjectTargetSet,
+						m_depthTargetSet,
+						0,
+						params
+					);
+					m_renderView->end();
+				}
+				T_RENDER_POP_MARKER(m_renderView);
 			}
 
 			T_RENDER_PUSH_MARKER(m_renderView, "World: Light primitive");
@@ -601,8 +658,8 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 					m_settings.depthRange,
 					m_depthTargetSet->getColorTexture(0),
 					m_normalTargetSet->getColorTexture(0),
-					f.haveShadows[i] ? m_shadowMaskTargetSet->getWidth() : 0,
-					f.haveShadows[i] ? m_shadowMaskTargetSet->getColorTexture(0) : 0
+					f.haveShadows[i] ? m_shadowMaskFilterTargetSet->getWidth() : 0,
+					f.haveShadows[i] ? m_shadowMaskFilterTargetSet->getColorTexture(0) : 0
 				);
 				m_renderView->end();
 			}
@@ -646,7 +703,7 @@ void WorldRendererPreLit::getTargets(RefArray< render::ITexture >& outTargets) c
 	outTargets[0] = m_depthTargetSet ? m_depthTargetSet->getColorTexture(0) : 0;
 	outTargets[1] = m_normalTargetSet ? m_normalTargetSet->getColorTexture(0) : 0;
 	outTargets[2] = m_lightMapTargetSet ? m_lightMapTargetSet->getColorTexture(0) : 0;
-	outTargets[3] = m_shadowMaskTargetSet ? m_shadowMaskTargetSet->getColorTexture(0) : 0;
+	outTargets[3] = m_shadowMaskFilterTargetSet ? m_shadowMaskFilterTargetSet->getColorTexture(0) : 0;
 }
 
 void WorldRendererPreLit::buildLightWithShadows(WorldRenderView& worldRenderView, Entity* entity, int frame)
