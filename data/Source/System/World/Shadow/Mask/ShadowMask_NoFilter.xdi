@@ -3,8 +3,15 @@
 	<requireHighRange>false</requireHighRange>
 	<definitions/>
 	<steps>
-		<item type="traktor.world.PostProcessStepSmProj">
-			<shader>{826F6985-8449-3F47-A6E8-1F15EAC59136}</shader>
+		<item type="traktor.world.PostProcessStepSimple">
+			<shader>{801D2C55-0E8C-D74A-BB10-EA1BD6AF07F2}</shader>
+			<sources>
+				<item>
+					<param>Source</param>
+					<source>InputColor</source>
+					<index>0</index>
+				</item>
+			</sources>
 		</item>
 	</steps>
 </object>

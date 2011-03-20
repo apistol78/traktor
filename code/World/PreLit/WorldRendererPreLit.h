@@ -140,10 +140,12 @@ private:
 	Ref< render::RenderTargetSet > m_depthTargetSet;
 	Ref< render::RenderTargetSet > m_normalTargetSet;
 	Ref< render::RenderTargetSet > m_shadowTargetSet;
-	Ref< render::RenderTargetSet > m_shadowMaskTargetSet;
+	Ref< render::RenderTargetSet > m_shadowMaskProjectTargetSet;
+	Ref< render::RenderTargetSet > m_shadowMaskFilterTargetSet;
 	Ref< render::RenderTargetSet > m_lightMapTargetSet;
 	Ref< render::RenderContext > m_globalContext;
-	Ref< PostProcess > m_shadowMaskProjection;
+	Ref< PostProcess > m_shadowMaskProject;
+	Ref< PostProcess > m_shadowMaskFilter;
 	Ref< LightRenderer > m_lightRenderer;
 	AlignedVector< Frame > m_frames;
 	float m_slicePositions[MaxSliceCount + 1];

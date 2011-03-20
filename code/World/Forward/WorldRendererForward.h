@@ -115,9 +115,11 @@ private:
 	Ref< render::IRenderView > m_renderView;
 	Ref< render::RenderTargetSet > m_depthTargetSet;
 	Ref< render::RenderTargetSet > m_shadowTargetSet;
-	Ref< render::RenderTargetSet > m_shadowMaskTargetSet;
+	Ref< render::RenderTargetSet > m_shadowMaskProjectTargetSet;
+	Ref< render::RenderTargetSet > m_shadowMaskFilterTargetSet;
 	Ref< render::RenderContext > m_globalContext;
-	Ref< PostProcess > m_shadowMaskProjection;
+	Ref< PostProcess > m_shadowMaskProject;
+	Ref< PostProcess > m_shadowMaskFilter;
 	AlignedVector< Frame > m_frames;
 	uint32_t m_count;
 

@@ -3,17 +3,7 @@
 	<requireHighRange>false</requireHighRange>
 	<definitions>
 		<item type="traktor.world.PostProcessDefineTarget" version="1">
-			<id>1</id>
-			<width>0</width>
-			<height>0</height>
-			<screenDenom>1</screenDenom>
-			<format>TfR8</format>
-			<depthStencil>false</depthStencil>
-			<preferTiled>true</preferTiled>
-			<multiSample>0</multiSample>
-		</item>
-		<item type="traktor.world.PostProcessDefineTarget" version="1">
-			<id>2</id>
+			<id>Flip</id>
 			<width>0</width>
 			<height>0</height>
 			<screenDenom>1</screenDenom>
@@ -25,20 +15,14 @@
 	</definitions>
 	<steps>
 		<item type="traktor.world.PostProcessStepSetTarget">
-			<target>1</target>
-		</item>
-		<item type="traktor.world.PostProcessStepSmProj">
-			<shader>{B47D3E75-E8DD-CF41-902D-1C8AF5D55FCD}</shader>
-		</item>
-		<item type="traktor.world.PostProcessStepSetTarget">
-			<target>2</target>
+			<target>Flip</target>
 		</item>
 		<item type="traktor.world.PostProcessStepBlur" version="1">
 			<shader>{7B24A14D-9B1D-7D41-8758-7EA20C944C04}</shader>
 			<sources>
 				<item>
 					<param>Source</param>
-					<source>1</source>
+					<source>InputColor</source>
 					<index>0</index>
 				</item>
 			</sources>
@@ -46,14 +30,14 @@
 			<taps>15</taps>
 		</item>
 		<item type="traktor.world.PostProcessStepSetTarget">
-			<target>0</target>
+			<target>Output</target>
 		</item>
 		<item type="traktor.world.PostProcessStepBlur" version="1">
 			<shader>{7B24A14D-9B1D-7D41-8758-7EA20C944C04}</shader>
 			<sources>
 				<item>
 					<param>Source</param>
-					<source>2</source>
+					<source>Flip</source>
 					<index>0</index>
 				</item>
 			</sources>
