@@ -32,6 +32,7 @@ class Event;
 	namespace world
 	{
 
+class IPostProcessDefineFacade;
 class IPostProcessStepFacade;
 class PostProcessDefineView;
 class PostProcessSettings;
@@ -60,6 +61,7 @@ private:
 	Ref< PostProcessView > m_postProcessView;
 	Ref< PostProcessDefineView > m_postProcessDefineView;
 	Ref< PostProcessStepProperties > m_postProcessProperties;
+	std::map< const TypeInfo*, Ref< IPostProcessDefineFacade > > m_postProcessDefineFacades;
 	std::map< const TypeInfo*, Ref< IPostProcessStepFacade > > m_postProcessStepFacades;
 
 	void updateStepView(PostProcessStepItem* parent, const RefArray< PostProcessStep >& steps);

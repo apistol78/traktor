@@ -3,6 +3,7 @@
 #include "Ui/FloodLayout.h"
 #include "Ui/MethodHandler.h"
 #include "Ui/Custom/Splitter.h"
+#include "World/PostProcess/PostProcessDefineTarget.h"
 #include "World/PostProcess/PostProcessSettings.h"
 #include "World/PostProcess/PostProcessStepBlur.h"
 #include "World/PostProcess/PostProcessStepChain.h"
@@ -14,6 +15,7 @@
 #include "World/PostProcess/PostProcessStepSsao.h"
 #include "World/PostProcess/PostProcessStepSwapTargets.h"
 #include "World/Editor/PostProcess/PostProcessDefineItem.h"
+#include "World/Editor/PostProcess/PostProcessDefineTargetFacade.h"
 #include "World/Editor/PostProcess/PostProcessDefineView.h"
 #include "World/Editor/PostProcess/PostProcessEditor.h"
 #include "World/Editor/PostProcess/PostProcessStepBlurFacade.h"
@@ -72,7 +74,10 @@ bool PostProcessEditor::create(ui::Widget* parent, db::Instance* instance, ISeri
 	m_postProcessProperties->create(container);
 	m_postProcessProperties->addEventHandler(ui::EiUser + 1, ui::createMethodHandler(this, &PostProcessEditor::eventStepPropertiesChange));
 
-	// Create grain editor facades.
+	// Create define facades.
+	m_postProcessDefineFacades[&type_of < PostProcessDefineTarget >()] = new PostProcessDefineTargetFacade();
+
+	// Create step facades.
 	m_postProcessStepFacades[&type_of< PostProcessStepBlur >()] = new PostProcessStepBlurFacade();
 	m_postProcessStepFacades[&type_of< PostProcessStepChain >()] = new PostProcessStepChainFacade();
 	m_postProcessStepFacades[&type_of< PostProcessStepLuminance >()] = new PostProcessStepLuminanceFacade();
@@ -125,10 +130,25 @@ void PostProcessEditor::updateViews()
 	const RefArray< PostProcessStep >& steps = m_asset->getSteps();
 	updateStepView(0, steps);
 
+	// Add implicit, read-only, definitions.
+	m_postProcessDefineView->add(new PostProcessDefineItem(0, L"Output", 0));
+	m_postProcessDefineView->add(new PostProcessDefineItem(0, L"InputColor", 0));
+	m_postProcessDefineView->add(new PostProcessDefineItem(0, L"InputDepth", 0));
+	m_postProcessDefineView->add(new PostProcessDefineItem(0, L"InputShadowMask", 0));
+
+	// Add user definitions.
 	const RefArray< PostProcessDefine >& definitions = m_asset->getDefinitions();
 	for (RefArray< PostProcessDefine >::const_iterator i = definitions.begin(); i != definitions.end(); ++i)
 	{
-		m_postProcessDefineView->add(new PostProcessDefineItem(*i, L"", 0));
+		const IPostProcessDefineFacade* defineFacade = m_postProcessDefineFacades[&type_of(*i)];
+		if (!defineFacade)
+			continue;
+
+		m_postProcessDefineView->add(new PostProcessDefineItem(
+			*i,
+			defineFacade->getText(*i),
+			defineFacade->getImage(*i)
+		));
 	}
 
 	m_postProcessView->update();

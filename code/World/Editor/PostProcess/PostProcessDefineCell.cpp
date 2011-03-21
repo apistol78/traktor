@@ -41,7 +41,7 @@ void PostProcessDefineCell::paint(ui::custom::AutoWidget* widget, ui::Canvas& ca
 		m_bitmapDefine,
 		ui::BmAlpha
 	);
-	canvas.drawText(rect, L"1234", ui::AnCenter, ui::AnBottom);
+	canvas.drawText(rect, m_item->getText(), ui::AnCenter, ui::AnBottom);
 }
 
 	}

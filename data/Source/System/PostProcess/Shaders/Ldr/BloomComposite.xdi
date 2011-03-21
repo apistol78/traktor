@@ -33,7 +33,7 @@
 			<addressV>AdClamp</addressV>
 			<addressW>AdClamp</addressW>
 		</item>
-		<item type="traktor.render.PixelOutput" version="2">
+		<item type="traktor.render.PixelOutput" version="3">
 			<comment/>
 			<position>
 				<first>1147</first>
@@ -65,6 +65,7 @@
 			<stencilFunction>CfAlways</stencilFunction>
 			<stencilReference>0</stencilReference>
 			<stencilMask>4294967295</stencilMask>
+			<registerCount>0</registerCount>
 		</item>
 		<item type="traktor.render.Sampler">
 			<comment/>
@@ -87,7 +88,7 @@
 				<second>445</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>663</first>
@@ -95,8 +96,9 @@
 			</position>
 			<parameterName>Frame</parameterName>
 			<type>PtTexture</type>
+			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>667</first>
@@ -104,6 +106,7 @@
 			</position>
 			<parameterName>Bloom</parameterName>
 			<type>PtTexture</type>
+			<frequency>UfFrame</frequency>
 		</item>
 	</nodes>
 	<edges>
@@ -125,16 +128,6 @@
 			<destination>
 				<node ref="/object/nodes/item[4]"/>
 				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[4]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[2]"/>
-				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -175,6 +168,16 @@
 			<destination>
 				<node ref="/object/nodes/item[1]"/>
 				<name>Texture</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 	</edges>

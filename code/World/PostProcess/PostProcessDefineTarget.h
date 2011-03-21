@@ -31,6 +31,8 @@ public:
 
 	virtual bool serialize(ISerializer& s);
 
+	const std::wstring& getId() const { return m_id; }
+
 private:
 	std::wstring m_id;
 	uint32_t m_width;
