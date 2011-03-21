@@ -601,6 +601,7 @@ public:
 	{
 		uint32_t offset = 0;
 		uint32_t stride = 2;
+
 		// Step forward to our vertex
 		for (int i = 0; i < index; i++)
 			offset += m_vertexWeightData.m_vertexCounts[i] * stride;
@@ -613,9 +614,14 @@ public:
 		{
 			uint32_t jointIndex = m_vertexWeightData.m_indicies[offset + m_vertexWeightData.m_jointInput.offset];
 			uint32_t weightIndex = m_vertexWeightData.m_indicies[offset + m_vertexWeightData.m_weightInput.offset];
+
+			if (jointIndex != ~0UL && weightIndex < m_weights.getCount())
+			{
+				float weight = m_weights.getDataWeight(weightIndex);
+				vertex.setBoneInfluence(jointIndex, weight);
+			}
+
 			offset += stride;
-			float weight = m_weights.getDataWeight(weightIndex);
-			vertex.setBoneInfluence(jointIndex, weight);
 		}
 	}
 
