@@ -30,6 +30,7 @@ struct Light
 	Vector4 baseColor;
 	Vector4 shadowColor;
 	Scalar range;
+	bool castShadow;
 };
 
 	}

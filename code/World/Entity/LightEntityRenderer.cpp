@@ -46,6 +46,7 @@ void LightEntityRenderer::render(
 		light.baseColor = directionalLightEntity->getBaseColor();
 		light.shadowColor = directionalLightEntity->getShadowColor();
 		light.range = Scalar(0.0f);
+		light.castShadow = directionalLightEntity->getCastShadow();
 
 		worldRenderView.addLight(light);
 	}
@@ -65,6 +66,7 @@ void LightEntityRenderer::render(
 		light.baseColor = pointLightEntity->getBaseColor();
 		light.shadowColor = pointLightEntity->getShadowColor();
 		light.range = Scalar(pointLightEntity->getRange());
+		light.castShadow = false;
 
 		if (pointLightEntity->getRandomFlicker() > FUZZY_EPSILON)
 		{
