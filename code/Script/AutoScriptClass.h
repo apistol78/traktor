@@ -113,6 +113,28 @@ struct Constructor_4 : public IConstructor
 	}
 };
 
+template<
+	typename ClassType,
+	typename Argument1Type,
+	typename Argument2Type,
+	typename Argument3Type,
+	typename Argument4Type,
+	typename Argument5Type
+>
+struct Constructor_5 : public IConstructor
+{
+	virtual Ref< Object > construct(const Any* argv) const
+	{
+		return new ClassType(
+			CastAny< Argument1Type >::get(argv[0]),
+			CastAny< Argument2Type >::get(argv[1]),
+			CastAny< Argument3Type >::get(argv[2]),
+			CastAny< Argument4Type >::get(argv[3]),
+			CastAny< Argument5Type >::get(argv[4])
+		);
+	}
+};
+
 /*! \} */
 
 
@@ -976,6 +998,18 @@ public:
 	void addConstructor()
 	{
 		addConstructor(4, new Constructor_4< ClassType, Argument1Type, Argument2Type, Argument3Type, Argument4Type >());
+	}
+
+	template <
+		typename Argument1Type,
+		typename Argument2Type,
+		typename Argument3Type,
+		typename Argument4Type,
+		typename Argument5Type
+	>
+	void addConstructor()
+	{
+		addConstructor(5, new Constructor_5< ClassType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type >());
 	}
 
 	/*! \} */
