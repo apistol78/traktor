@@ -50,9 +50,9 @@ void Scene::destroy()
 	m_postProcessSettings = 0;
 }
 
-void Scene::update(float time, float deltaTime)
+void Scene::update(float time, float deltaTime, bool updateController)
 {
-	if (m_controller)
+	if (m_controller && updateController)
 		m_controller->update(this, time, deltaTime);
 
 	if (m_rootEntity)
