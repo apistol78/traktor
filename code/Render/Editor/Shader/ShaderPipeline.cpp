@@ -197,7 +197,11 @@ bool ShaderPipeline::buildDependencies(
 {
 	Ref< const ShaderGraph > shaderGraph = checked_type_cast< const ShaderGraph* >(sourceAsset);
 
-	// Add fragments.
+	// Remove unused branches; don't want to add dependencies to lingering textures et al.
+	shaderGraph = ShaderGraphOptimizer(shaderGraph).removeUnusedBranches();
+	T_ASSERT (shaderGraph);
+
+	// Add fragment dependencies.
 	RefArray< External > externalNodes;
 	shaderGraph->findNodesOf< External >(externalNodes);
 
@@ -207,7 +211,7 @@ bool ShaderPipeline::buildDependencies(
 		pipelineDepends->addDependency(fragmentGuid, editor::PdfUse);
 	}
 
-	// Add external textures.
+	// Add external texture dependencies.
 	RefArray< Texture > textureNodes;
 	shaderGraph->findNodesOf< Texture >(textureNodes);
 
