@@ -128,7 +128,8 @@ Ref< Entity > WorldEntityFactory::createEntity(IEntityBuilder* builder, const En
 			directionalLightData->getTransform(),
 			directionalLightData->getSunColor(),
 			directionalLightData->getBaseColor(),
-			directionalLightData->getShadowColor()
+			directionalLightData->getShadowColor(),
+			directionalLightData->getCastShadow()
 		);
 	}
 

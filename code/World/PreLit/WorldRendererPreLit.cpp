@@ -723,7 +723,7 @@ void WorldRendererPreLit::buildLightWithShadows(WorldRenderView& worldRenderView
 
 		f.lights[i] = light;
 
-		if (light.type == LtDirectional)
+		if (light.type == LtDirectional && light.castShadow)
 		{
 			for (int32_t slice = 0; slice < m_settings.shadowCascadingSlices; ++slice)
 			{

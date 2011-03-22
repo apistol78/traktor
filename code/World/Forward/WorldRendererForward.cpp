@@ -503,10 +503,21 @@ void WorldRendererForward::getTargets(RefArray< render::ITexture >& outTargets) 
 
 void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, Entity* entity, int frame)
 {
-	const Light& light = worldRenderView.getLight(0);
-	if (light.type != LtDirectional)
+	// Find first directional light casting shadow.
+	const Light* shadowLight = 0;
+	for (int32_t i = 0; i < MaxLightCount; ++i)
 	{
-		// Only primary light as directional enables shadows; do no-shadows path instead.
+		const Light& light = worldRenderView.getLight(i);
+		if (light.type == LtDirectional && light.castShadow)
+		{
+			shadowLight = &light;
+			break;
+		}
+	}
+
+	// If no shadow casting light found, we do simple path.
+	if (!shadowLight)
+	{
 		buildNoShadows(worldRenderView, entity, frame);
 		return;
 	}
@@ -531,8 +542,8 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, Entity
 		calculateBoxSMProj(
 			m_settings,
 			viewInverse,
-			light.position,
-			light.direction,
+			shadowLight->position,
+			shadowLight->direction,
 			viewFrustum,
 			shadowBox,
 			shadowLightView,
@@ -546,8 +557,8 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, Entity
 		calculateLiSPSMProj(
 			m_settings,
 			viewInverse,
-			light.position,
-			light.direction,
+			shadowLight->position,
+			shadowLight->direction,
 			viewFrustum,
 			shadowLightView,
 			shadowLightProjection,
@@ -560,8 +571,8 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, Entity
 		calculateTSMProj(
 			m_settings,
 			viewInverse,
-			light.position,
-			light.direction,
+			shadowLight->position,
+			shadowLight->direction,
 			viewFrustum,
 			shadowLightView,
 			shadowLightProjection,
@@ -574,8 +585,8 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, Entity
 		calculateUniformSMProj(
 			m_settings,
 			viewInverse,
-			light.position,
-			light.direction,
+			shadowLight->position,
+			shadowLight->direction,
 			viewFrustum,
 			shadowLightView,
 			shadowLightProjection,
