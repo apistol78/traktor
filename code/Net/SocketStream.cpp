@@ -9,10 +9,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.SocketStream", SocketStream, IStream)
 
-SocketStream::SocketStream(Socket* socket, bool readAllowed, bool writeAllowed)
+SocketStream::SocketStream(Socket* socket, bool readAllowed, bool writeAllowed, int32_t timeout)
 :	m_socket(socket)
 ,	m_readAllowed(readAllowed)
 ,	m_writeAllowed(writeAllowed)
+,	m_timeout(timeout)
 ,	m_offset(0)
 {
 }
@@ -79,16 +80,27 @@ int SocketStream::read(void* block, int nbytes)
 	if (!m_socket)
 		return -1;
 
-	int nread = 0;
+	int32_t nread = 0;
 	while (nread < nbytes)
 	{
-		int result = m_socket->recv((char*)block + nread, nbytes - nread);
+		if (m_timeout >= 0)
+		{
+			if (m_socket->select(true, false, false, m_timeout) <= 0)
+			{
+				if (nread <= 0)
+					nread = -1;
+				break;
+			}
+		}
+
+		int32_t result = m_socket->recv((char*)block + nread, nbytes - nread);
 		if (result <= 0)
 		{
 			if (nread <= 0)
 				nread = result;
 			break;
 		}
+
 		nread += result;
 	}
 
@@ -105,16 +117,27 @@ int SocketStream::write(const void* block, int nbytes)
 	if (!m_socket)
 		return -1;
 
-	int nwritten = 0;
+	int32_t nwritten = 0;
 	while (nwritten < nbytes)
 	{
-		int result = m_socket->send((char*)block + nwritten, nbytes - nwritten);
+		if (m_timeout >= 0)
+		{
+			if (m_socket->select(false, true, false, m_timeout) <= 0)
+			{
+				if (nwritten <= 0)
+					nwritten = -1;
+				break;
+			}
+		}
+
+		int32_t result = m_socket->send((char*)block + nwritten, nbytes - nwritten);
 		if (result < 0)
 		{
 			if (nwritten <= 0)
 				nwritten = result;
 			break;
 		}
+
 		nwritten += result;
 	}
 
@@ -132,6 +155,11 @@ void SocketStream::setAccess(bool readAllowed, bool writeAllowed)
 {
 	m_readAllowed = readAllowed;
 	m_writeAllowed = writeAllowed;
+}
+
+void SocketStream::setTimeout(int32_t timeout)
+{
+	m_timeout = timeout;
 }
 
 	}
