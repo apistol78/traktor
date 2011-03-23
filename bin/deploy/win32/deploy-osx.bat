@@ -6,10 +6,13 @@ if "%1"=="build" (
 
 ) else if "%1"=="deploy" (
 
-	echo "Not available"
+	pushd %DEPLOY_PROJECTROOT:/=\%\bin\latest\osx\releaseshared
+	%TRAKTOR_HOME%\bin\RemoteDeploy %DEPLOY_TARGET_HOST_OSX% * > %DEPLOY_PROJECTROOT%\deploy.log
+	popd
 
 ) else if "%1"=="launch" (
 
-	echo "Not available"
+	%TRAKTOR_HOME%\bin\RemoteDeploy %DEPLOY_TARGET_HOST_OSX% Application.config
+	%TRAKTOR_HOME%\bin\RemoteLaunch %DEPLOY_TARGET_HOST_OSX% "%DEPLOY_EXECUTABLE%" "\-s Application.config"
 
 )

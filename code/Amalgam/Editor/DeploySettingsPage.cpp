@@ -1,12 +1,18 @@
 #include "Amalgam/Editor/DeploySettingsPage.h"
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyBoolean.h"
+#include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
+#include "Core/Settings/PropertyString.h"
 #include "Core/Settings/Settings.h"
 #include "Ui/Container.h"
 #include "Ui/NumericEditValidator.h"
 #include "Ui/Static.h"
 #include "Ui/TableLayout.h"
+#include "Ui/Custom/GridView/GridColumn.h"
+#include "Ui/Custom/GridView/GridItem.h"
+#include "Ui/Custom/GridView/GridRow.h"
+#include "Ui/Custom/GridView/GridView.h"
 
 namespace traktor
 {
@@ -25,7 +31,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.amalgam.DeploySettingsPage", 0, DeployS
 bool DeploySettingsPage::create(ui::Container* parent, Settings* settings, const std::list< ui::Command >& shortcutCommands)
 {
 	Ref< ui::Container > container = new ui::Container();
-	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*", 0, 4)))
+	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,*,100%", 0, 4)))
 		return false;
 
 	Ref< ui::Container > containerInner = new ui::Container();
@@ -55,6 +61,34 @@ bool DeploySettingsPage::create(ui::Container* parent, Settings* settings, const
 
 	bool publish = settings->getProperty< PropertyBoolean >(L"Amalgam.PublishActiveGuid", true);
 	m_checkPublishActiveGuid->setChecked(publish);
+
+	Ref< ui::Container > containerEnvironment = new ui::Container();
+	containerEnvironment->create(container, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 4));
+
+	Ref< ui::Static > staticEnvironment = new ui::Static();
+	staticEnvironment->create(containerEnvironment, L"Environment");
+
+	Ref< ui::custom::GridView > gridEnvironment = new ui::custom::GridView();
+	gridEnvironment->create(containerEnvironment, ui::WsClientBorder | ui::WsDoubleBuffer);
+	gridEnvironment->addColumn(new ui::custom::GridColumn(L"Name", 200));
+	gridEnvironment->addColumn(new ui::custom::GridColumn(L"Value", 400));
+
+	Ref< PropertyGroup > settingsEnvironment = settings->getProperty< PropertyGroup >(L"Amalgam.Environment");
+	if (settingsEnvironment)
+	{
+		const std::map< std::wstring, Ref< IPropertyValue > >& values = settingsEnvironment->getValues();
+		for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = values.begin(); i != values.end(); ++i)
+		{
+			PropertyString* value = dynamic_type_cast< PropertyString* >(i->second);
+			if (value)
+			{
+				Ref< ui::custom::GridRow > row = new ui::custom::GridRow();
+				row->add(new ui::custom::GridItem(i->first));
+				row->add(new ui::custom::GridItem(PropertyString::get(value)));
+				gridEnvironment->addRow(row);
+			}
+		}
+	}
 
 	parent->setText(L"Deploy");
 	return true;
