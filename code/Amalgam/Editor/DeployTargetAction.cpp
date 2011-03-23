@@ -6,6 +6,7 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
+#include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
 #include "Core/Settings/Settings.h"
@@ -120,9 +121,29 @@ bool DeployTargetAction::execute()
 	envmap[L"DEPLOY_PROJECTROOT"] = projectRoot.getPathNameNoVolume();
 #endif
 
+	// Merge tool environment variables.
 	const DeployTool& deployTool = platform->getDeployTool();
 	envmap.insert(deployTool.getEnvironment().begin(), deployTool.getEnvironment().end());
 
+	// Merge settings environment variables.
+	Ref< PropertyGroup > settingsEnvironment = m_editor->getSettings()->getProperty< PropertyGroup >(L"Amalgam.Environment");
+	if (settingsEnvironment)
+	{
+		const std::map< std::wstring, Ref< IPropertyValue > >& values = settingsEnvironment->getValues();
+		for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = values.begin(); i != values.end(); ++i)
+		{
+			PropertyString* value = dynamic_type_cast< PropertyString* >(i->second);
+			if (value)
+			{
+				envmap.insert(std::make_pair(
+					i->first,
+					PropertyString::get(value)
+				));
+			}
+		}
+	}
+
+	// Launch deploy process.
 	Ref< IProcess > process = OS::getInstance().execute(
 		deployTool.getExecutable(),
 		L"deploy",

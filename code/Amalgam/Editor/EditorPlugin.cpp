@@ -297,7 +297,7 @@ void EditorPlugin::eventTargetPlay(ui::Event* event)
 		if ((event->getKeyState() & ui::KsShift) == 0)
 		{
 			chain.actions.push_back(new DeployTargetAction(m_editor, platformInstance, targetInstance, activeGuid));
-			chain.actions.push_back(new LaunchTargetAction(platformInstance, targetInstance));
+			chain.actions.push_back(new LaunchTargetAction(m_editor, platformInstance, targetInstance));
 		}
 
 		chain.postSuccess =

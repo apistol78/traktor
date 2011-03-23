@@ -14,6 +14,7 @@
 #include "Core/Settings/Settings.h"
 #include "Core/System/IProcess.h"
 #include "Core/System/OS.h"
+#include "Editor/IEditor.h"
 
 namespace traktor
 {
@@ -22,8 +23,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.LaunchTargetAction", LaunchTargetAction, ITargetAction)
 
-LaunchTargetAction::LaunchTargetAction(PlatformInstance* platformInstance, TargetInstance* targetInstance)
-:	m_platformInstance(platformInstance)
+LaunchTargetAction::LaunchTargetAction(const editor::IEditor* editor, PlatformInstance* platformInstance, TargetInstance* targetInstance)
+:	m_editor(editor)
+,	m_platformInstance(platformInstance)
 ,	m_targetInstance(targetInstance)
 {
 }
@@ -51,9 +53,29 @@ bool LaunchTargetAction::execute()
 #endif
 	envmap[L"DEPLOY_EXECUTABLE"] = target->getExecutable();
 
+	// Merge tool environment variables.
 	const DeployTool& deployTool = platform->getDeployTool();
 	envmap.insert(deployTool.getEnvironment().begin(), deployTool.getEnvironment().end());
 
+	// Merge settings environment variables.
+	Ref< PropertyGroup > settingsEnvironment = m_editor->getSettings()->getProperty< PropertyGroup >(L"Amalgam.Environment");
+	if (settingsEnvironment)
+	{
+		const std::map< std::wstring, Ref< IPropertyValue > >& values = settingsEnvironment->getValues();
+		for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = values.begin(); i != values.end(); ++i)
+		{
+			PropertyString* value = dynamic_type_cast< PropertyString* >(i->second);
+			if (value)
+			{
+				envmap.insert(std::make_pair(
+					i->first,
+					PropertyString::get(value)
+				));
+			}
+		}
+	}
+
+	// Launch deploy process.
 	Ref< IProcess > process = OS::getInstance().execute(
 		deployTool.getExecutable(),
 		L"launch",

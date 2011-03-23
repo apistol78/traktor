@@ -6,6 +6,13 @@
 
 namespace traktor
 {
+	namespace editor
+	{
+
+class IEditor;
+
+	}
+
 	namespace amalgam
 	{
 
@@ -17,11 +24,12 @@ class LaunchTargetAction : public ITargetAction
 	T_RTTI_CLASS;
 
 public:
-	LaunchTargetAction(PlatformInstance* platformInstance, TargetInstance* targetInstance);
+	LaunchTargetAction(const editor::IEditor* editor, PlatformInstance* platformInstance, TargetInstance* targetInstance);
 
 	virtual bool execute();
 
 private:
+	const editor::IEditor* m_editor;
 	Ref< PlatformInstance > m_platformInstance;
 	Ref< TargetInstance > m_targetInstance;
 };
