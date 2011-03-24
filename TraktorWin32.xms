@@ -5077,6 +5077,15 @@
 						</item>
 					</items>
 				</item>
+				<item type="Filter">
+					<name>Cloth</name>
+					<items>
+						<item type="File">
+							<fileName>Cloth/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="1">
@@ -6350,6 +6359,10 @@
 						</dependencies>
 					</project>
 				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+				</item>
 			</dependencies>
 		</item>
 		<item type="Project" version="1">
@@ -6479,6 +6492,15 @@
 					<items>
 						<item type="File">
 							<fileName>BvhParser/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>Cloth</name>
+					<items>
+						<item type="File">
+							<fileName>Cloth/*.*</fileName>
 							<items/>
 						</item>
 					</items>
