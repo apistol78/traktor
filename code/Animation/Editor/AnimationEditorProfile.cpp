@@ -1,12 +1,14 @@
+#include "Animation/AnimatedMeshEntityFactory.h"
+#include "Animation/Animation/AnimationFactory.h"
+#include "Animation/Cloth/ClothEntityFactory.h"
+#include "Animation/Cloth/ClothEntityRenderer.h"
 #include "Animation/Editor/AnimationEditorProfile.h"
 #include "Animation/Editor/AnimationEntityEditorFactory.h"
-#include "Animation/AnimatedMeshEntityFactory.h"
 #include "Animation/PathEntity/PathEntityFactory.h"
 #include "Animation/PathEntity/PathEntityRenderer.h"
-#include "Animation/Animation/AnimationFactory.h"
+#include "Core/Serialization/ISerializable.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Ui/Command.h"
-#include "Core/Serialization/ISerializable.h"
 
 namespace traktor
 {
@@ -24,6 +26,7 @@ void AnimationEditorProfile::getCommands(
 	outCommands.push_back(ui::Command(L"Animation.Editor.GotoPreviousKey"));
 	outCommands.push_back(ui::Command(L"Animation.Editor.GotoNextKey"));
 	outCommands.push_back(ui::Command(L"Animation.Editor.InsertKey"));
+	outCommands.push_back(ui::Command(L"Animation.Editor.Reset"));
 }
 
 void AnimationEditorProfile::createEditorPlugins(
@@ -47,6 +50,7 @@ void AnimationEditorProfile::createEntityFactories(
 ) const
 {
 	outEntityFactories.push_back(new AnimatedMeshEntityFactory(context->getResourceManager(), context->getPhysicsManager()));
+	outEntityFactories.push_back(new ClothEntityFactory(context->getResourceManager(), context->getRenderSystem(), context->getPhysicsManager()));
 	outEntityFactories.push_back(new PathEntityFactory());
 }
 
@@ -57,6 +61,7 @@ void AnimationEditorProfile::createEntityRenderers(
 	RefArray< world::IEntityRenderer >& outEntityRenderers
 ) const
 {
+	outEntityRenderers.push_back(new ClothEntityRenderer());
 	outEntityRenderers.push_back(new PathEntityRenderer());
 }
 

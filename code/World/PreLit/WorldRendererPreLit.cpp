@@ -325,7 +325,7 @@ bool WorldRendererPreLit::create(
 	{
 		for (AlignedVector< Frame >::iterator i = m_frames.begin(); i != m_frames.end(); ++i)
 		{
-			for (int32_t j = 0; j < MaxSliceCount; ++j)
+			for (int32_t j = 0; j < m_settings.shadowCascadingSlices; ++j)
 			{
 				for (int32_t k = 0; k < MaxLightCount; ++k)
 					i->slice[j].shadow[k] = new WorldContext(entityRenderers);
@@ -436,7 +436,7 @@ void WorldRendererPreLit::build(WorldRenderView& worldRenderView, Entity* entity
 	{
 		if (f.haveShadows[i])
 		{
-			for (int32_t j = 0; j < MaxSliceCount; ++j)
+			for (int32_t j = 0; j < m_settings.shadowCascadingSlices; ++j)
 				f.slice[j].shadow[i]->getRenderContext()->flush();
 		}
 	}

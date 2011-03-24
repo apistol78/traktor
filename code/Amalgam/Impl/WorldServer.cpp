@@ -1,4 +1,6 @@
 #include "Animation/AnimatedMeshEntityFactory.h"
+#include "Animation/Cloth/ClothEntityFactory.h"
+#include "Animation/Cloth/ClothEntityRenderer.h"
 #include "Animation/PathEntity/PathEntityFactory.h"
 #include "Animation/PathEntity/PathEntityRenderer.h"
 #include "Core/Settings/PropertyInteger.h"
@@ -94,6 +96,7 @@ void WorldServer::createEntityFactories(IEnvironment* environment)
 	m_entityBuilder->addFactory(new world::WorldEntityFactory(database, 0));
 	m_entityBuilder->addFactory(new mesh::MeshEntityFactory(resourceManager));
 	m_entityBuilder->addFactory(new animation::AnimatedMeshEntityFactory(resourceManager, physicsManager));
+	m_entityBuilder->addFactory(new animation::ClothEntityFactory(resourceManager, renderSystem, physicsManager));
 	m_entityBuilder->addFactory(new animation::PathEntityFactory());
 	m_entityBuilder->addFactory(new spray::EffectEntityFactory(resourceManager));
 	m_entityBuilder->addFactory(new terrain::EntityFactory(resourceManager, renderSystem));
@@ -131,6 +134,7 @@ Ref< world::IWorldRenderer > WorldServer::createWorldRenderer(
 	worldEntityRenderers->add(new mesh::MeshEntityRenderer());
 	worldEntityRenderers->add(new mesh::InstanceMeshEntityRenderer());
 	worldEntityRenderers->add(new spray::EffectEntityRenderer(m_renderServer->getRenderSystem()));
+	worldEntityRenderers->add(new animation::ClothEntityRenderer());
 	worldEntityRenderers->add(new animation::PathEntityRenderer());
 	worldEntityRenderers->add(new physics::EntityRenderer());
 	worldEntityRenderers->add(new weather::WeatherEntityRenderer());

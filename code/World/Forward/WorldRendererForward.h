@@ -80,17 +80,24 @@ public:
 	virtual void getTargets(RefArray< render::ITexture >& outTargets) const;
 
 private:
+	struct Slice
+	{
+		Ref< WorldContext > shadow;
+		Matrix44 viewToLightSpace;
+		Matrix44 squareProjection;
+	};
+
 	struct Frame
 	{
+		Slice slice[MaxSliceCount];
 		Ref< WorldContext > depth;
-		Ref< WorldContext > shadow;
 		Ref< WorldContext > visual;
-		WorldRenderView depthRenderView;
-		WorldRenderView shadowRenderView;
+
 		Matrix44 projection;
 		Matrix44 viewToLightSpace;
 		Matrix44 squareProjection;
 		Frustum viewFrustum;
+
 		float A;
 		float B;
 		bool haveDepth;
@@ -121,6 +128,7 @@ private:
 	Ref< PostProcess > m_shadowMaskProject;
 	Ref< PostProcess > m_shadowMaskFilter;
 	AlignedVector< Frame > m_frames;
+	float m_slicePositions[MaxSliceCount + 1];
 	uint32_t m_count;
 
 	void buildShadows(WorldRenderView& worldRenderView, Entity* entity, int frame);
