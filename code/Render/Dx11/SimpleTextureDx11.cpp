@@ -45,11 +45,23 @@ bool SimpleTextureDx11::create(const SimpleTextureCreateDesc& desc)
 	dtd.CPUAccessFlags = desc.immutable ? 0 : D3D11_CPU_ACCESS_WRITE;
 	dtd.MiscFlags = 0;
 
-	hr = m_context->getD3DDevice()->CreateTexture2D(
-		&dtd,
-		desc.immutable ? reinterpret_cast< const D3D11_SUBRESOURCE_DATA* >(desc.initialData) : NULL,
-		&m_d3dTexture.getAssign()
-	);
+	if (desc.immutable)
+	{
+		D3D11_SUBRESOURCE_DATA dsrd[16];
+		for (int32_t i = 0; i < desc.mipCount; ++i)
+		{
+			T_ASSERT (desc.initialData[i].data);
+			T_ASSERT (desc.initialData[i].pitch > 0);
+			dsrd[i].pSysMem = desc.initialData[i].data;
+			dsrd[i].SysMemPitch = desc.initialData[i].pitch;
+			dsrd[i].SysMemSlicePitch = desc.initialData[i].slicePitch;
+		}
+		hr = m_context->getD3DDevice()->CreateTexture2D(&dtd, dsrd, &m_d3dTexture.getAssign());
+	}
+	else
+	{
+		hr = m_context->getD3DDevice()->CreateTexture2D(&dtd, NULL, &m_d3dTexture.getAssign());
+	}
 	if (FAILED(hr))
 	{
 		log::error << L"Unable to create texture, null texture" << Endl;

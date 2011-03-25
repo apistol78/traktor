@@ -124,8 +124,8 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 		uint8_t* data = buffer.ptr();
 		for (int i = 0; i < mipCount; ++i)
 		{
-			int mipWidth = imageWidth >> i;
-			int mipHeight = imageHeight >> i;
+			int32_t mipWidth = std::max(imageWidth >> i, 1);
+			int32_t mipHeight = std::max(imageHeight >> i, 1);
 
 			uint32_t blockWidth = (mipWidth + blockDenom - 1) / blockDenom;
 			uint32_t blockHeight = (mipHeight + blockDenom - 1) / blockDenom;
@@ -136,7 +136,7 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 				desc.initialData[i - skipMips].data = data;
 				desc.initialData[i - skipMips].pitch = getTextureRowPitch(desc.format, mipWidth);
 
-				int nread = readerData.read(data, blockCount * blockSize);
+				int32_t nread = readerData.read(data, blockCount * blockSize);
 				T_ASSERT (nread == blockCount * blockSize);
 
 				data += blockCount * blockSize;
@@ -180,14 +180,14 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 
 		Reader readerData(readerStream);
 		
-		for (int side = 0; side < 6; ++side)
+		for (int32_t side = 0; side < 6; ++side)
 		{
 			buffer[side].reset(new uint8_t [textureDataSize]);
 
 			uint8_t* data = buffer[side].ptr();
-			for (int i = 0; i < mipCount; ++i)
+			for (int32_t i = 0; i < mipCount; ++i)
 			{
-				int mipSide = imageWidth >> i;
+				int32_t mipSide = std::max(imageWidth >> i, 1);
 
 				desc.initialData[side * mipCount + i].data = data;
 				desc.initialData[side * mipCount + i].pitch = mipSide * 4;
