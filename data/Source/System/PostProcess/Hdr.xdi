@@ -240,7 +240,7 @@
 			<taps>15</taps>
 		</item>
 		<item type="traktor.world.PostProcessStepSetTarget">
-			<target>0</target>
+			<target>Output</target>
 		</item>
 		<item type="traktor.world.PostProcessStepSimple">
 			<shader>{F3963494-CF15-1441-AE32-11A71844B99B}</shader>
