@@ -268,6 +268,17 @@ TransformPath::Frame TransformPath::evaluate(float at, float end, bool loop) con
 
 		int32_t nkeys = m_keys.size();
 
+		if (m_loop)
+		{
+			while (at >= end)
+				at -= end;
+		}
+		else
+		{
+			if (at > m_keys.back().T)
+				at = m_keys.back().T;
+		}
+
 		float Tfirst = m_keys[0].T;
 		float Tlast = m_keys.back().T - Tfirst;
 		float Tat = at - Tfirst;
@@ -275,8 +286,6 @@ TransformPath::Frame TransformPath::evaluate(float at, float end, bool loop) con
 
 		if (m_loop)
 		{
-			while (Tat >= Tend)
-				Tat -= Tend;
 			while (Tat < 0.0f)
 				Tat += Tend;
 		}
@@ -284,8 +293,6 @@ TransformPath::Frame TransformPath::evaluate(float at, float end, bool loop) con
 		{
 			if (Tat < 0.0f)
 				Tat = 0.0f;
-			else if (Tat > Tlast)
-				Tat = Tlast;
 		}
 
 		float Tln = 0.0f;
