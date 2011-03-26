@@ -123,7 +123,7 @@ bool Animation::getPose(float at, Pose& outPose) const
 		}
 		return true;
 	}
-	outPose = Hermite< KeyPose, Scalar, Pose, KeyPoseAccessor, WrapTime< Scalar > >::evaluate(&m_poses[0], nposes, Scalar(at));
+	outPose = Hermite< KeyPose, Scalar, Pose, KeyPoseAccessor, WrapTime< Scalar > >(&m_poses[0], nposes).evaluate(Scalar(at));
 	return true;
 }
 

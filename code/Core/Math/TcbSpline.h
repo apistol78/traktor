@@ -3,6 +3,7 @@
 
 #include "Core/Config.h"
 #include "Core/Math/Const.h"
+#include "Core/Math/ISpline.h"
 #include "Core/Math/SplineControl.h"
 
 namespace traktor
@@ -63,41 +64,31 @@ template <
 	typename Time,
 	typename Control,
 	typename Value,
-	typename Accessor = TcbSplineAccessor< Key, Time, Control, Value >,
-	typename TimeControl = ClampTime< Time >
+	typename Accessor = TcbSplineAccessor< Key, Time, Control, Value >
 >
-struct TcbSpline
+class TcbSpline : public ISpline< Key, Time, Value >
 {
-	static Value evaluate(const Key* keys, size_t nkeys, const Time& Tat, const Time& Tend = Time(-1.0f), const Time& stiffness = Time(0.5f))
+public:
+	TcbSpline(const Accessor& accessor)
+	:	m_accessor(accessor)
 	{
-		T_ASSERT (nkeys >= 2);
+	}
 
-		Time Tfirst(Accessor::time(keys[0]));
-		Time Tlast(Accessor::time(keys[nkeys - 1]));
-		Time Tcurr = TimeControl::t(Tat, Tfirst, Tlast, Tend > Time(0.0f) ? Tend : Tlast);
+	virtual Value evaluate(const Time& Tat, const Time& Tend = Time(-1.0f), const Time& stiffness = Time(0.5f)) const
+	{
+		int32_t index = m_accessor.index(Tat);
 
-		int index = 0;
-		while (index < int(nkeys - 1) && Tcurr >= Accessor::time(keys[index + 1]))
-			++index;
+		int32_t index_n1 = m_accessor.index(index - 1);
+		int32_t index_1 = m_accessor.index(index + 1);
+		int32_t index_2 = m_accessor.index(index + 2);
 
-		int index_n1 = TimeControl::index(index - 1, int(nkeys));
-		int index_1 = TimeControl::index(index + 1, int(nkeys));
-		int index_2 = TimeControl::index(index + 2, int(nkeys));
-		
-		const Key& cp0 = keys[index];
-		const Key& cp1 = keys[index_1];
-		const Key& cpp = keys[index_n1];
-		const Key& cpn = keys[index_2];
+		Time T0(m_accessor.time(index));
+		Time T1(m_accessor.time(index_1));
+		T_ASSERT (T0 < T1);
 
-		Time T0(Accessor::time(cp0));
-		Time T1(Accessor::time(cp1));
-
-		if (T0 >= T1)
-			T1 = Tend;
-
-		Control t = Accessor::tension(cp0);
-		Control c = Accessor::continuity(cp0);
-		Control b = Accessor::bias(cp0);
+		Control t = m_accessor.tension(index);
+		Control c = m_accessor.continuity(index);
+		Control b = m_accessor.bias(index);
 
 		const static Control c_one(1);
 		const static Control c_two(2);
@@ -107,26 +98,26 @@ struct TcbSpline
 		Control k12 = ((c_one - t) * (c_one - b) * (c_one - c)) / c_two;
 		Control k22 = ((c_one - t) * (c_one - b) * (c_one + c)) / c_two;
 
-		Value v0 = Accessor::value(cp0);
-		Value v1 = Accessor::value(cp1);
-		Value vp = Accessor::value(cpp);
-		Value vn = Accessor::value(cpn);
+		Value v0 = m_accessor.value(index);
+		Value v1 = m_accessor.value(index_1);
+		Value vp = m_accessor.value(index_n1);
+		Value vn = m_accessor.value(index_2);
 
-		Value d0 = Accessor::combine(
+		Value d0 = m_accessor.combine(
 			v0, k11,
 			vp, -k11,
 			v1, k12,
 			v0, -k12
 		);
 
-		Value d1 = Accessor::combine(
+		Value d1 = m_accessor.combine(
 			v1, k21,
 			v0, -k21,
 			vn, k22,
 			v1, -k22
 		);
 
-		Time T = (T1 > T0) ? (Tcurr - T0) / (T1 - T0) : Time(0.0f);
+		Time T = (T1 > T0) ? (Tat - T0) / (T1 - T0) : Time(0.0f);
 		Time T2 = T * T;
 		Time T3 = T2 * T;
 
@@ -135,13 +126,16 @@ struct TcbSpline
 		Time h3 = T3 - Time(2.0f) * T2 + T;
 		Time h4 = T3 - T2;
 
-		return Accessor::combine(
+		return m_accessor.combine(
 			v0, h1,
 			v1, h2,
 			d0, h3,
 			d1, h4
 		);
 	}
+
+private:
+	Accessor m_accessor;
 };
 
 }

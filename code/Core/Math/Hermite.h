@@ -3,6 +3,7 @@
 
 #include "Core/Config.h"
 #include "Core/Math/Const.h"
+#include "Core/Math/ISpline.h"
 #include "Core/Math/SplineControl.h"
 
 namespace traktor
@@ -49,26 +50,33 @@ template <
 	typename Accessor = HermiteAccessor< Key, Time, Value >,
 	typename TimeControl = ClampTime< Time >
 >
-struct Hermite
+class Hermite : public ISpline< Key, Time, Value >
 {
-	static Value evaluate(const Key* keys, size_t nkeys, const Time& Tat, const Time& Tend = Time(-1.0f), const Time& stiffness = Time(0.5f))
+public:
+	Hermite(const Key* keys, size_t nkeys)
+	:	m_keys(keys)
+	,	m_nkeys(nkeys)
 	{
-		T_ASSERT (nkeys >= 2);
+	}
 
-		Time Tfirst(Accessor::time(keys[0]));
-		Time Tlast(Accessor::time(keys[nkeys - 1]));
+	virtual Value evaluate(const Time& Tat, const Time& Tend = Time(-1.0f), const Time& stiffness = Time(0.5f)) const
+	{
+		T_ASSERT (m_nkeys >= 2);
+
+		Time Tfirst(Accessor::time(m_keys[0]));
+		Time Tlast(Accessor::time(m_keys[m_nkeys - 1]));
 		Time Tcurr = TimeControl::t(Tat, Tfirst, Tlast, Tend > Time(0.0f) ? Tend : Tlast);
 
 		int index = 0;
-		while (index < int(nkeys - 1) && Tcurr >= Accessor::time(keys[index + 1]))
+		while (index < int(m_nkeys - 1) && Tcurr >= Accessor::time(m_keys[index + 1]))
 			++index;
 
-		int index_n1 = TimeControl::index(index - 1, int(nkeys));
-		int index_1 = TimeControl::index(index + 1, int(nkeys));
-		int index_2 = TimeControl::index(index + 2, int(nkeys));
+		int index_n1 = TimeControl::index(index - 1, int(m_nkeys - 1));
+		int index_1 = TimeControl::index(index + 1, int(m_nkeys - 1));
+		int index_2 = TimeControl::index(index + 2, int(m_nkeys - 1));
 		
-		const Key& cp0 = keys[index];
-		const Key& cp1 = keys[index_1];
+		const Key& cp0 = m_keys[index];
+		const Key& cp1 = m_keys[index_1];
 
 		Value v0 = Accessor::value(cp0);
 		Value v1 = Accessor::value(cp1);
@@ -79,8 +87,8 @@ struct Hermite
 		if (t0 >= t1)
 			t1 = Tend;
 
-		const Key& cpp = keys[index_n1];
-		const Key& cpn = keys[index_2];
+		const Key& cpp = m_keys[index_n1];
+		const Key& cpn = m_keys[index_2];
 
 		Value vp = Accessor::value(cpp);
 		Value vn = Accessor::value(cpn);
@@ -104,6 +112,10 @@ struct Hermite
 			vn, h4
 		);
 	}
+
+private:
+	const Key* m_keys;
+	size_t m_nkeys;
 };
 
 }
