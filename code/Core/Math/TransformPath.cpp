@@ -13,12 +13,75 @@ namespace traktor
 	namespace
 	{
 
-/*! \brief Closed uniform TCB spline accessor.
- *
- * Open : 0->1->2->...->N
- * Closed : 0->1->2->...->N->0
- *
- */
+/*! \brief Open uniform TCB spline accessor. */
+class T_MATH_ALIGN16 OpenUniformAccessor
+{
+public:
+	OpenUniformAccessor(const AlignedVector< TransformPath::Key >& keys)
+	:	m_keys(keys)
+	{
+	}
+
+	int32_t index(const Scalar& T) const
+	{
+		int32_t nkeys = int32_t(m_keys.size());
+		return clamp(int32_t(T * nkeys), 0, nkeys - 1);
+	}
+
+	Scalar time(int32_t index) const
+	{
+		int32_t nkeys = int32_t(m_keys.size());
+		return Scalar(float(index) / nkeys);
+	}
+
+	Scalar tension(int32_t index) const
+	{
+		return key(index).tcb.x();
+	}
+
+	Scalar continuity(int32_t index) const
+	{
+		return key(index).tcb.y();
+	}
+
+	Scalar bias(int32_t index) const
+	{
+		return key(index).tcb.z();
+	}
+
+	const TransformPath::Frame& value(int32_t index) const
+	{
+		return key(index).value;
+	}
+
+	TransformPath::Frame combine(
+		const TransformPath::Frame& v0, const Scalar& w0,
+		const TransformPath::Frame& v1, const Scalar& w1,
+		const TransformPath::Frame& v2, const Scalar& w2,
+		const TransformPath::Frame& v3, const Scalar& w3
+	) const
+	{
+		TransformPath::Frame f;
+		f.position = v0.position * w0 + v1.position * w1 + v2.position * w2 + v3.position * w3;
+		f.orientation = v0.orientation * w0 + v1.orientation * w1 + v2.orientation * w2 + v3.orientation * w3;
+		return f;
+	}
+
+private:
+	const AlignedVector< TransformPath::Key >& m_keys;
+
+	const TransformPath::Key& key(int32_t index) const
+	{
+		int32_t nkeys = int32_t(m_keys.size());
+		if (index < 0)
+			index = 0;
+		if (index >= nkeys)
+			index = nkeys - 1;
+		return m_keys[index];
+	}
+};
+
+/*! \brief Closed uniform TCB spline accessor. */
 class T_MATH_ALIGN16 ClosedUniformAccessor
 {
 public:
@@ -97,11 +160,13 @@ private:
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.TransformPath", 0, TransformPath, ISerializable)
 
 TransformPath::TransformPath()
+:	m_loop(false)
 {
 }
 
 TransformPath::TransformPath(const TransformPath& path)
 :	m_keys(path.m_keys)
+,	m_loop(false)
 {
 }
 
@@ -159,13 +224,22 @@ TransformPath::Frame TransformPath::evaluate(float at, float end, bool loop) con
 		const int32_t c_arcLengthSteps = 10;
 
 		// Create spline evaluator and arclength table.
-		if (!m_spline.ptr())
+		if (!m_spline.ptr() || m_loop != loop)
 		{
-			// Open : 0->1->2->...->N
-			// Closed : 0->1->2->...->N->0
-			m_spline.reset(new TcbSpline< Key, Scalar, Scalar, Frame, ClosedUniformAccessor >(
-				ClosedUniformAccessor(m_keys)
-			));
+			if (loop)
+			{
+				m_spline.reset(new TcbSpline< Key, Scalar, Scalar, Frame, ClosedUniformAccessor >(
+					ClosedUniformAccessor(m_keys)
+				));
+			}
+			else
+			{
+				m_spline.reset(new TcbSpline< Key, Scalar, Scalar, Frame, OpenUniformAccessor >(
+					OpenUniformAccessor(m_keys)
+				));
+			}
+
+			m_loop = loop;
 
 			int32_t narc = int32_t(m_keys.size() * c_arcLengthSteps);
 			m_arcLengths.resize(narc);
@@ -192,16 +266,27 @@ TransformPath::Frame TransformPath::evaluate(float at, float end, bool loop) con
 			m_arcLengths.push_back(m_arcLengths.back() + m_arcLengths[1]);
 		}
 
-		float Tfirst = m_keys[0].T;
 		int32_t nkeys = m_keys.size();
 
+		float Tfirst = m_keys[0].T;
+		float Tlast = m_keys.back().T - Tfirst;
 		float Tat = at - Tfirst;
 		float Tend = end - Tfirst;
 
-		while (Tat >= Tend)
-			Tat -= Tend;
-		while (Tat < 0.0f)
-			Tat += Tend;
+		if (m_loop)
+		{
+			while (Tat >= Tend)
+				Tat -= Tend;
+			while (Tat < 0.0f)
+				Tat += Tend;
+		}
+		else
+		{
+			if (Tat < 0.0f)
+				Tat = 0.0f;
+			else if (Tat > Tlast)
+				Tat = Tlast;
+		}
 
 		float Tln = 0.0f;
 		for (int32_t i = nkeys - 1; i >= 0; --i)

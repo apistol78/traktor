@@ -90,6 +90,7 @@ private:
 	AlignedVector< Key > m_keys;
 	mutable AutoPtr< ISpline< Key, Scalar, Frame > > m_spline;
 	mutable std::vector< float > m_arcLengths;
+	mutable bool m_loop;
 };
 
 }
