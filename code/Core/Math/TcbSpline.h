@@ -4,57 +4,11 @@
 #include "Core/Config.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/ISpline.h"
+#include "Core/Math/MathConfig.h"
 #include "Core/Math/SplineControl.h"
 
 namespace traktor
 {
-
-/*! \brief Default element accessor.
- * \ingroup Core
- */
-template <
-	typename Key,
-	typename Time,
-	typename Control,
-	typename Value
->
-struct TcbSplineAccessor
-{
-	static inline Time time(const Key& key)
-	{
-		return Time(key.T);
-	}
-
-	static inline Control tension(const Key& key)
-	{
-		return Value(key.tension);
-	}
-
-	static inline Control continuity(const Key& key)
-	{
-		return Value(key.continuity);
-	}
-
-	static inline Control bias(const Key& key)
-	{
-		return Value(key.bias);
-	}
-
-	static inline Value value(const Key& key)
-	{
-		return Value(key.value);
-	}
-
-	static inline Value combine(
-		const Value& v0, const Time& w0,
-		const Value& v1, const Time& w1,
-		const Value& v2, const Time& w2,
-		const Value& v3, const Time& w3
-	)
-	{
-		return Value(v0 * w0 + v1 * w1 + v2 * w2 + v3 * w3);
-	}
-};
 
 /*! \brief Tension-Continuity-Bias spline evaluator.
  * \ingroup Core
@@ -64,9 +18,9 @@ template <
 	typename Time,
 	typename Control,
 	typename Value,
-	typename Accessor = TcbSplineAccessor< Key, Time, Control, Value >
+	typename Accessor
 >
-class TcbSpline : public ISpline< Key, Time, Value >
+class T_MATH_ALIGN16 TcbSpline : public ISpline< Key, Time, Value >
 {
 public:
 	TcbSpline(const Accessor& accessor)
@@ -76,15 +30,19 @@ public:
 
 	virtual Value evaluate(const Time& Tat, const Time& Tend = Time(-1.0f), const Time& stiffness = Time(0.5f)) const
 	{
-		int32_t index = m_accessor.index(Tat);
+		Time Tcurr = Tat;
+		while (Tcurr >= Tend)
+			Tcurr -= Tend;
 
-		int32_t index_n1 = m_accessor.index(index - 1);
-		int32_t index_1 = m_accessor.index(index + 1);
-		int32_t index_2 = m_accessor.index(index + 2);
+		int32_t index = m_accessor.index(Tcurr);
+		int32_t index_n1 = index - 1;
+		int32_t index_1 = index + 1;
+		int32_t index_2 = index + 2;
 
 		Time T0(m_accessor.time(index));
 		Time T1(m_accessor.time(index_1));
-		T_ASSERT (T0 < T1);
+		if (T1 < T0)
+			T1 += Tend;
 
 		Control t = m_accessor.tension(index);
 		Control c = m_accessor.continuity(index);
@@ -117,7 +75,7 @@ public:
 			v1, -k22
 		);
 
-		Time T = (T1 > T0) ? (Tat - T0) / (T1 - T0) : Time(0.0f);
+		Time T = (T1 > T0) ? (Tcurr - T0) / (T1 - T0) : Time(0.0f);
 		Time T2 = T * T;
 		Time T3 = T2 * T;
 

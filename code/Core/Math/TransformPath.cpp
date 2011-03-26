@@ -1,4 +1,5 @@
 #include <limits>
+#include "Core/Math/Float.h"
 #include "Core/Math/TcbSpline.h"
 #include "Core/Math/TransformPath.h"
 #include "Core/Serialization/AttributeRange.h"
@@ -12,18 +13,13 @@ namespace traktor
 	namespace
 	{
 
-Quaternion orientationAsQuaternion(const Vector4& orientation)
-{
-	return Quaternion(orientation.x(), orientation.y(), orientation.z());
-}
-
 /*! \brief Closed uniform TCB spline accessor.
  *
  * Open : 0->1->2->...->N
  * Closed : 0->1->2->...->N->0
  *
  */
-class ClosedUniformAccessor
+class T_MATH_ALIGN16 ClosedUniformAccessor
 {
 public:
 	ClosedUniformAccessor(const AlignedVector< TransformPath::Key >& keys)
@@ -34,24 +30,16 @@ public:
 	int32_t index(const Scalar& T) const
 	{
 		int32_t nkeys = int32_t(m_keys.size());
+
 		Scalar Tn = T;
 		while (Tn < 0.0f)
 			Tn += Scalar(1.0f);
 		while (Tn > 1.0f)
 			Tn -= Scalar(1.0f);
+		
 		return int32_t(Tn * nkeys);
 	}
 
-	int32_t index(int32_t i) const
-	{
-		int32_t nkeys = int32_t(m_keys.size());
-		while (i < 0)
-			i += nkeys;
-		while (i > nkeys)
-			i -= nkeys;
-		return i;
-	}
-
 	Scalar time(int32_t index) const
 	{
 		int32_t nkeys = int32_t(m_keys.size());
@@ -60,26 +48,22 @@ public:
 
 	Scalar tension(int32_t index) const
 	{
-		int32_t nkeys = int32_t(m_keys.size());
-		return m_keys[index % nkeys].tcb.x();
+		return key(index).tcb.x();
 	}
 
 	Scalar continuity(int32_t index) const
 	{
-		int32_t nkeys = int32_t(m_keys.size());
-		return m_keys[index % nkeys].tcb.y();
+		return key(index).tcb.y();
 	}
 
 	Scalar bias(int32_t index) const
 	{
-		int32_t nkeys = int32_t(m_keys.size());
-		return m_keys[index % nkeys].tcb.z();
+		return key(index).tcb.z();
 	}
 
 	const TransformPath::Frame& value(int32_t index) const
 	{
-		int32_t nkeys = int32_t(m_keys.size());
-		return m_keys[index % nkeys].value;
+		return key(index).value;
 	}
 
 	TransformPath::Frame combine(
@@ -97,100 +81,15 @@ public:
 
 private:
 	const AlignedVector< TransformPath::Key >& m_keys;
-};
 
-/*! \brief Closed timed TCB spline accessor.
- *
- * Open : 0->1->2->...->N
- * Closed : 0->1->2->...->N->0
- *
- */
-class ClosedTimedAccessor
-{
-public:
-	ClosedTimedAccessor(const AlignedVector< TransformPath::Key >& keys, const Scalar& Tend)
-	:	m_keys(keys)
-	,	m_Tend(Tend)
-	{
-	}
-
-	int32_t index(const Scalar& T) const
+	const TransformPath::Key& key(int32_t index) const
 	{
 		int32_t nkeys = int32_t(m_keys.size());
-
-		Scalar Tfront = Scalar(m_keys.front().T);
-		Scalar Tduration = m_Tend - Tfront;
-
-		Scalar Tn = T - Tduration;
-		while (Tn > m_Tend - Tduration)
-			Tn -= m_Tend - Tduration;
-
-		int32_t i = 0;
-		for (; i < nkeys; ++i)
-		{
-			if (Tn < m_keys[i].T - Tfront)
-				break;
-		}
-
-		return i;
+		while (index < 0)
+			index += nkeys;
+		index %= nkeys;
+		return m_keys[index];
 	}
-
-	int32_t index(int32_t i) const
-	{
-		int32_t nkeys = int32_t(m_keys.size());
-		while (i < 0)
-			i += nkeys;
-		while (i > nkeys)
-			i -= nkeys;
-		return i;
-	}
-
-	Scalar time(int32_t index) const
-	{
-		int32_t nkeys = int32_t(m_keys.size());
-		return Scalar(float(index) / nkeys);
-	}
-
-	Scalar tension(int32_t index) const
-	{
-		int32_t nkeys = int32_t(m_keys.size());
-		return m_keys[index % nkeys].tcb.x();
-	}
-
-	Scalar continuity(int32_t index) const
-	{
-		int32_t nkeys = int32_t(m_keys.size());
-		return m_keys[index % nkeys].tcb.y();
-	}
-
-	Scalar bias(int32_t index) const
-	{
-		int32_t nkeys = int32_t(m_keys.size());
-		return m_keys[index % nkeys].tcb.z();
-	}
-
-	const TransformPath::Frame& value(int32_t index) const
-	{
-		int32_t nkeys = int32_t(m_keys.size());
-		return m_keys[index % nkeys].value;
-	}
-
-	TransformPath::Frame combine(
-		const TransformPath::Frame& v0, const Scalar& w0,
-		const TransformPath::Frame& v1, const Scalar& w1,
-		const TransformPath::Frame& v2, const Scalar& w2,
-		const TransformPath::Frame& v3, const Scalar& w3
-	) const
-	{
-		TransformPath::Frame f;
-		f.position = v0.position * w0 + v1.position * w1 + v2.position * w2 + v3.position * w3;
-		f.orientation = v0.orientation * w0 + v1.orientation * w1 + v2.orientation * w2 + v3.orientation * w3;
-		return f;
-	}
-
-private:
-	const AlignedVector< TransformPath::Key >& m_keys;
-	Scalar m_Tend;
 };
 
 	}
@@ -257,6 +156,8 @@ TransformPath::Frame TransformPath::evaluate(float at, float end, bool loop) con
 		return m_keys[0].value;
 	else
 	{
+		const int32_t c_arcLengthSteps = 10;
+
 		// Create spline evaluator and arclength table.
 		if (!m_spline.ptr())
 		{
@@ -266,52 +167,78 @@ TransformPath::Frame TransformPath::evaluate(float at, float end, bool loop) con
 				ClosedUniformAccessor(m_keys)
 			));
 
-			int32_t narc = int32_t(m_keys.size() * 10);
+			int32_t narc = int32_t(m_keys.size() * c_arcLengthSteps);
 			m_arcLengths.resize(narc);
 
-			Vector4 last = m_spline->evaluate(Scalar(0.0f), Scalar(1.0f)).position;
+			Frame last = m_spline->evaluate(Scalar(0.0f), Scalar(1.0f));
 			float totalLength = 0.0f;
 
 			for (int32_t i = 0; i < narc; ++i)
 			{
 				float T = float(i + 1) / narc;
-				Vector4 current = m_spline->evaluate(Scalar(T), Scalar(1.0f)).position;
-				float length = (current - last).length();
+				Frame current = m_spline->evaluate(Scalar(T), Scalar(1.0f));
+
+				Frame delta;
+				delta.position = current.position - last.position;
+				delta.orientation = current.orientation - last.orientation;
+
+				float length = sqrtf(dot3(delta.position, delta.position) + dot4(delta.orientation, delta.orientation));
+
 				m_arcLengths[i] = totalLength;
 				totalLength += length;
 				last = current;
 			}
 
-			m_spline.reset(new TcbSpline< Key, Scalar, Scalar, Frame, ClosedTimedAccessor >(
-				ClosedTimedAccessor(m_keys, Scalar(end))
-			));
+			m_arcLengths.push_back(m_arcLengths.back() + m_arcLengths[1]);
 		}
 
-		float tf = m_keys[0].T;
-		float tb = end; //m_keys.back().T;
+		float Tfirst = m_keys[0].T;
+		int32_t nkeys = m_keys.size();
 
-		// Estimate target arc length.
-		float at0 = std::fmod((at - tf) / (tb - tf), 1.0f);
-		float targetArcLength = at0 * m_arcLengths.back();
+		float Tat = at - Tfirst;
+		float Tend = end - Tfirst;
 
-		// Find index into arc length vector.
-		int32_t index = 0;
-		for (int32_t i = 1; i < int32_t(m_arcLengths.size()); ++i)
+		while (Tat >= Tend)
+			Tat -= Tend;
+		while (Tat < 0.0f)
+			Tat += Tend;
+
+		float Tln = 0.0f;
+		for (int32_t i = nkeys - 1; i >= 0; --i)
 		{
-			if (m_arcLengths[i] > targetArcLength)
+			float Tcurr = m_keys[i].T - Tfirst;
+			float Tnext = (i < nkeys - 1) ? (m_keys[i + 1].T - Tfirst): Tend;
+			T_ASSERT (Tnext > Tcurr);
+
+			if (Tat >= Tcurr)
 			{
-				index = i - 1;
+				int32_t iln0 = i * c_arcLengthSteps;
+				int32_t iln1 = iln0 + c_arcLengthSteps;
+
+				float ln0 = m_arcLengths[iln0];
+				float ln1 = m_arcLengths[iln1];
+
+				float f = (Tat - Tcurr) / (Tnext - Tcurr);
+				float ln = lerp(ln0, ln1, f);
+				
+				f = float(iln1);
+				for (int32_t j = iln0; j < iln1; ++j)
+				{
+					if (ln < m_arcLengths[j + 1])
+					{
+						ln0 = m_arcLengths[j];
+						ln1 = m_arcLengths[j + 1];
+						f = j + (ln - ln0) / (ln1 - ln0);
+						break;
+					}
+				}
+
+				Tln = f / (m_arcLengths.size() - 1);
 				break;
 			}
 		}
 
-		// Calculate parameterized t.
-		float ln0 = m_arcLengths[index];
-		float ln1 = m_arcLengths[index + 1];
-		float f = (targetArcLength - ln0) / (ln1 - ln0);
-		float t = tf + (end - tf) * (index + f) / float(m_arcLengths.size() - 1);
-
-		Frame frame = m_spline->evaluate(Scalar(t), Scalar(end));
+		Frame frame = m_spline->evaluate(Scalar(Tln), Scalar(1.0f));
 		frame.position = frame.position.xyz1();
 		frame.orientation = frame.orientation.xyz0();
 
