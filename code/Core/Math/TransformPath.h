@@ -1,8 +1,11 @@
 #ifndef traktor_TransformPath_H
 #define traktor_TransformPath_H
 
+#include <vector>
 #include "Core/Containers/AlignedVector.h"
+#include "Core/Math/ISpline.h"
 #include "Core/Math/Transform.h"
+#include "Core/Misc/AutoPtr.h"
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
@@ -55,6 +58,10 @@ public:
 		bool serialize(ISerializer& s);
 	};
 
+	TransformPath();
+
+	TransformPath(const TransformPath& path);
+
 	void insert(float at, const Frame& frame);
 
 	Frame evaluate(float at, bool loop) const;
@@ -81,6 +88,8 @@ public:
 
 private:
 	AlignedVector< Key > m_keys;
+	mutable AutoPtr< ISpline< Key, Scalar, Frame > > m_spline;
+	mutable std::vector< float > m_arcLengths;
 };
 
 }

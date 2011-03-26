@@ -114,10 +114,14 @@ namespace traktor
 			return ptr();
 		}
 
+		AutoPtr< Type, ReleasePolicy >& operator = (const AutoPtr< Type, ReleasePolicy >& lh)
+		{
+			T_FATAL_ERROR;
+			return *this;
+		}
+
 	private:
 		Type* m_ptr;
-		
-		AutoPtr< Type, ReleasePolicy >& operator = (const AutoPtr< Type, ReleasePolicy >& lh) { T_FATAL_ERROR; return *this; }
 	};
 
 	template

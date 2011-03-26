@@ -21,12 +21,12 @@ struct ClampTime
 			return T;
 	}
 
-	static inline int index(int i, int nkeys)
+	static inline int index(int i, int last)
 	{
 		if (i < 0)
 			return 0;
-		else if (i >= nkeys)
-			return nkeys - 1;
+		else if (i > last)
+			return last;
 		else
 			return i;
 	}
@@ -49,12 +49,12 @@ struct WrapTime
 		return T;
 	}
 
-	static inline int index(int i, int nkeys)
+	static inline int index(int i, int last)
 	{
 		while (i < 0)
-			i += nkeys;
-		while (i >= nkeys)
-			i -= nkeys;
+			i += last + 1;
+		while (i > last)
+			i -= last + 1;
 		return i;
 	}
 };

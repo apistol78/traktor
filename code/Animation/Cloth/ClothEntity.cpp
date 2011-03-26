@@ -1,5 +1,6 @@
 #include "Animation/Cloth/ClothEntity.h"
 #include "Core/Math/Const.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Render/VertexElement.h"
 #include "Render/Context/RenderContext.h"
 #include "World/IWorldRenderPass.h"
@@ -34,7 +35,7 @@ ClothEntity::ClothEntity(physics::PhysicsManager* physicsManager)
 ,	m_resolutionX(0)
 ,	m_resolutionY(0)
 ,	m_triangleCount(0)
-,	m_updateRequired(false)
+,	m_updateRequired(true)
 {
 }
 
@@ -174,7 +175,7 @@ void ClothEntity::render(
 	if (!m_shader.validate() || !m_shader->hasTechnique(worldRenderPass.getTechnique()))
 		return;
 
-	if (m_updateRequired)
+	if (m_updateRequired || !m_vertexBuffer->isContentValid())
 	{
 		ClothVertex* vertexFront = static_cast< ClothVertex* >(m_vertexBuffer->lock());
 		T_ASSERT (vertexFront);
@@ -254,17 +255,8 @@ void ClothEntity::render(
 
 void ClothEntity::destroy()
 {
-	if (m_vertexBuffer)
-	{
-		m_vertexBuffer->destroy();
-		m_vertexBuffer = 0;
-	}
-	if (m_indexBuffer)
-	{
-		m_indexBuffer->destroy();
-		m_indexBuffer = 0;
-	}
-
+	safeDestroy(m_vertexBuffer);
+	safeDestroy(m_indexBuffer);
 	m_physicsManager = 0;
 }
 

@@ -49,7 +49,7 @@ void SplineSource::emit(
 	while (emitCount-- > 0)
 	{
 		float at = m_mode == MdRandom ? context.random.nextFloat() * time : std::fmod(emitterInstance.getTotalTime() * m_sequentialSpeed, time);
-		Vector4 position = transform * Hermite< Key, Scalar, Vector4 >::evaluate(&m_keys[0], m_keys.size(), Scalar(at));
+		Vector4 position = transform * Hermite< Key, Scalar, Vector4 >(&m_keys[0], m_keys.size()).evaluate(Scalar(at));
 
 		point->position = position;
 		point->velocity = context.random.nextUnit() * Scalar(m_velocity.random(context.random));

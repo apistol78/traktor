@@ -18,10 +18,10 @@ void SplineSourceRenderer::render(render::PrimitiveRenderer* primitiveRenderer, 
 	if (keys.empty())
 		return;
 
-	Vector4 position1 = Hermite< SplineSource::Key, Scalar, Vector4 >::evaluate(&keys[0], keys.size(), Scalar(0.0f));
+	Vector4 position1 = Hermite< SplineSource::Key, Scalar, Vector4 >(&keys[0], keys.size()).evaluate(Scalar(0.0f));
 	for (float t = 0.1f; t < keys.back().T; t += 0.1f)
 	{
-		Vector4 position2 = Hermite< SplineSource::Key, Scalar, Vector4 >::evaluate(&keys[0], keys.size(), Scalar(t));
+		Vector4 position2 = Hermite< SplineSource::Key, Scalar, Vector4 >(&keys[0], keys.size()).evaluate(Scalar(t));
 		primitiveRenderer->drawLine(position1, position2, Color4ub(255, 255, 0));
 		position1 = position2;
 	}
