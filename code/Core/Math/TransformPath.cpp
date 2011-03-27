@@ -1,4 +1,5 @@
 #include <limits>
+#include "Core/Math/Hermite.h"
 #include "Core/Math/Float.h"
 #include "Core/Math/TcbSpline.h"
 #include "Core/Math/TransformPath.h"
@@ -155,6 +156,23 @@ private:
 	}
 };
 
+struct PairAccessor
+{
+	static inline float time(const std::pair< float, float >& key) { return key.first; }
+	
+	static inline float value(const std::pair< float, float >& key) { return key.second; }
+
+	static inline float combine(
+		const float& v0, const float& w0,
+		const float& v1, const float& w1,
+		const float& v2, const float& w2,
+		const float& v3, const float& w3
+	)
+	{
+		return float(v0 * w0 + v1 * w1 + v2 * w2 + v3 * w3);
+	}
+};
+
 	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.TransformPath", 0, TransformPath, ISerializable)
@@ -223,52 +241,7 @@ TransformPath::Frame TransformPath::evaluate(float at, float end, bool loop) con
 	{
 		const int32_t c_arcLengthSteps = 10;
 
-		// Create spline evaluator and arclength table.
-		if (!m_spline.ptr() || m_loop != loop)
-		{
-			if (loop)
-			{
-				m_spline.reset(new TcbSpline< Key, Scalar, Scalar, Frame, ClosedUniformAccessor >(
-					ClosedUniformAccessor(m_keys)
-				));
-			}
-			else
-			{
-				m_spline.reset(new TcbSpline< Key, Scalar, Scalar, Frame, OpenUniformAccessor >(
-					OpenUniformAccessor(m_keys)
-				));
-			}
-
-			m_loop = loop;
-
-			int32_t narc = int32_t(m_keys.size() * c_arcLengthSteps);
-			m_arcLengths.resize(narc);
-
-			Frame last = m_spline->evaluate(Scalar(0.0f), Scalar(1.0f));
-			float totalLength = 0.0f;
-
-			for (int32_t i = 0; i < narc; ++i)
-			{
-				float T = float(i + 1) / narc;
-				Frame current = m_spline->evaluate(Scalar(T), Scalar(1.0f));
-
-				Frame delta;
-				delta.position = current.position - last.position;
-				delta.orientation = current.orientation - last.orientation;
-
-				float length = sqrtf(dot3(delta.position, delta.position) + dot4(delta.orientation, delta.orientation));
-
-				m_arcLengths[i] = totalLength;
-				totalLength += length;
-				last = current;
-			}
-
-			m_arcLengths.push_back(m_arcLengths.back() + m_arcLengths[1]);
-		}
-
-		int32_t nkeys = m_keys.size();
-
-		if (m_loop)
+		if (loop)
 		{
 			while (at >= end)
 				at -= end;
@@ -295,6 +268,66 @@ TransformPath::Frame TransformPath::evaluate(float at, float end, bool loop) con
 				Tat = 0.0f;
 		}
 
+		int32_t nkeys = int32_t(m_keys.size());
+
+		// Create spline evaluator and arclength table.
+		if (!m_spline.ptr() || m_loop != loop)
+		{
+			if (loop)
+			{
+				m_spline.reset(new TcbSpline< Key, Scalar, Scalar, Frame, ClosedUniformAccessor >(
+					ClosedUniformAccessor(m_keys)
+				));
+			}
+			else
+			{
+				m_spline.reset(new TcbSpline< Key, Scalar, Scalar, Frame, OpenUniformAccessor >(
+					OpenUniformAccessor(m_keys)
+				));
+			}
+
+			m_loop = loop;
+
+			// Calculate arc-length table.
+			int32_t narc = nkeys * c_arcLengthSteps;
+
+			Frame last = m_spline->evaluate(Scalar(0.0f), Scalar(1.0f));
+			float totalLength = 0.0f;
+
+			m_arcLengths.resize(narc);
+			for (int32_t i = 0; i < narc; ++i)
+			{
+				float T = float(i + 1) / narc;
+				Frame current = m_spline->evaluate(Scalar(T), Scalar(1.0f));
+
+				Frame delta;
+				delta.position = current.position - last.position;
+				delta.orientation = current.orientation - last.orientation;
+
+				float length = sqrtf(dot3(delta.position, delta.position) + dot4(delta.orientation, delta.orientation));
+
+				m_arcLengths[i] = totalLength;
+				totalLength += length;
+				last = current;
+			}
+			m_arcLengths.push_back(m_arcLengths.back() + m_arcLengths[1]);
+
+			// Create time to length curve; used to map time to target length.
+			m_timeCurve.resize(nkeys + 1);
+			for (int32_t i = 0; i < nkeys; ++i)
+			{
+				m_timeCurve[i] = std::make_pair(
+					m_keys[i].T - Tfirst,
+					m_arcLengths[i * c_arcLengthSteps]
+				);
+			}
+			m_timeCurve[nkeys] = std::make_pair(
+				Tend,
+				m_arcLengths.back()
+			);
+		}
+
+		// Calculate T on spline from given time "at".
 		float Tln = 0.0f;
 		for (int32_t i = nkeys - 1; i >= 0; --i)
 		{
@@ -307,25 +340,29 @@ TransformPath::Frame TransformPath::evaluate(float at, float end, bool loop) con
 				int32_t iln0 = i * c_arcLengthSteps;
 				int32_t iln1 = iln0 + c_arcLengthSteps;
 
-				float ln0 = m_arcLengths[iln0];
-				float ln1 = m_arcLengths[iln1];
+				//float ln0 = m_arcLengths[iln0];
+				//float ln1 = m_arcLengths[iln1];
 
-				float f = (Tat - Tcurr) / (Tnext - Tcurr);
-				float ln = lerp(ln0, ln1, f);
-				
-				f = float(iln1);
+				//float f = (Tat - Tcurr) / (Tnext - Tcurr);
+				//float fln0 = lerp(ln0, ln1, f);
+
+				// Calculate target arc-length.
+				float fln1 = Hermite< std::pair< float, float >, float, float, PairAccessor >(&m_timeCurve[0], m_timeCurve.size()).evaluate(Tat, Tend);
+
+				// Parameterize T from target arc-length.
+				float ft = float(iln1);
 				for (int32_t j = iln0; j < iln1; ++j)
 				{
-					if (ln < m_arcLengths[j + 1])
+					if (fln1 < m_arcLengths[j + 1])
 					{
-						ln0 = m_arcLengths[j];
-						ln1 = m_arcLengths[j + 1];
-						f = j + (ln - ln0) / (ln1 - ln0);
+						float aln0 = m_arcLengths[j];
+						float aln1 = m_arcLengths[j + 1];
+						ft = j + (fln1 - aln0) / (aln1 - aln0);
 						break;
 					}
 				}
 
-				Tln = f / (m_arcLengths.size() - 1);
+				Tln = ft / (m_arcLengths.size() - 1);
 				break;
 			}
 		}

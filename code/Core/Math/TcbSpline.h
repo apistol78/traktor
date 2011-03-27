@@ -1,5 +1,5 @@
-#ifndef traktor_Hermite_H
-#define traktor_Hermite_H
+#ifndef traktor_TcbSpline_H
+#define traktor_TcbSpline_H
 
 #include "Core/Config.h"
 #include "Core/Math/Const.h"
@@ -98,4 +98,4 @@ private:
 
 }
 
-#endif	// traktor_Hermite_H
+#endif	// traktor_TcbSpline_H
