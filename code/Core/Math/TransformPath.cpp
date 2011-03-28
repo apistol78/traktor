@@ -333,7 +333,6 @@ TransformPath::Frame TransformPath::evaluate(float at, float end, bool loop) con
 		{
 			float Tcurr = m_keys[i].T - Tfirst;
 			float Tnext = (i < nkeys - 1) ? (m_keys[i + 1].T - Tfirst): Tend;
-			T_ASSERT (Tnext > Tcurr);
 
 			if (Tat >= Tcurr)
 			{
@@ -347,7 +346,7 @@ TransformPath::Frame TransformPath::evaluate(float at, float end, bool loop) con
 				//float fln0 = lerp(ln0, ln1, f);
 
 				// Calculate target arc-length.
-				float fln1 = Hermite< std::pair< float, float >, float, float, PairAccessor >(&m_timeCurve[0], m_timeCurve.size()).evaluate(Tat, Tend);
+				float fln1 = Hermite< std::pair< float, float >, float, float, PairAccessor >(&m_timeCurve[0], m_timeCurve.size()).evaluate(Tat, Tend, 0.25f);
 
 				// Parameterize T from target arc-length.
 				float ft = float(iln1);
