@@ -206,6 +206,12 @@ void TheaterControllerEditor::draw(render::PrimitiveRenderer* primitiveRenderer)
 				F1.position,
 				pathColor
 			);
+
+			primitiveRenderer->drawSolidPoint(
+				F0.position,
+				4.0f,
+				Color4ub(255, 255, 255, 200)
+			);
 		}
 
 		const AlignedVector< TransformPath::Key >& keys = path.getKeys();
