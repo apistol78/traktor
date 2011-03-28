@@ -12,7 +12,7 @@ if "%1"=="build" (
 
 ) else if "%1"=="launch" (
 
-	%TRAKTOR_HOME%\bin\RemoteDeploy %DEPLOY_TARGET_HOST_OSX% Application.config
-	%TRAKTOR_HOME%\bin\RemoteLaunch %DEPLOY_TARGET_HOST_OSX% "%DEPLOY_EXECUTABLE%" "\-s Application.config"
+	%TRAKTOR_HOME%\bin\RemoteDeploy %DEPLOY_TARGET_HOST_OSX% Application.config > %DEPLOY_PROJECTROOT%\deploy.log
+	%TRAKTOR_HOME%\bin\RemoteLaunch %DEPLOY_TARGET_HOST_OSX% %DEPLOY_EXECUTABLE% "\-s Application.config" >> %DEPLOY_PROJECTROOT%\deploy.log
 
 )
