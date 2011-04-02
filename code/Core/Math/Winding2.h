@@ -25,6 +25,9 @@ public:
 
 	/*! \brief Calculate convex hull from a random point set. */
 	static Winding2 convexHull(const AlignedVector< Vector2 >& pnts);
+
+	/*! \brief Check if point is within winding. */
+	bool inside(const Vector2& pnt) const;
 };
 
 }
