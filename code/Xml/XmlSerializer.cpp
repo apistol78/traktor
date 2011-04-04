@@ -332,7 +332,7 @@ bool XmlSerializer::operator >> (const MemberArray& m)
 
 		for (size_t i = 0, size = m.size(); i < size; ++i)
 		{
-			if (!m.serialize(*this, i))
+			if (!m.write(*this))
 				return false;
 		}
 

@@ -201,12 +201,8 @@ Ref< const ISerializable > PipelineDependsIncremental::getObjectReadOnly(const G
 
 Ref< PipelineDependency > PipelineDependsIncremental::findDependency(const Guid& guid) const
 {
-	for (RefArray< PipelineDependency >::const_iterator i = m_dependencies.begin(); i != m_dependencies.end(); ++i)
-	{
-		if ((*i)->outputGuid == guid)
-			return *i;
-	}
-	return 0;
+	std::map< Guid, PipelineDependency* >::const_iterator i = m_dependencyMap.find(guid);
+	return i != m_dependencyMap.end() ? i->second : 0;
 }
 
 void PipelineDependsIncremental::addUniqueDependency(
@@ -244,6 +240,7 @@ void PipelineDependsIncremental::addUniqueDependency(
 
 	uint32_t dependencyIndex = uint32_t(m_dependencies.size());
 	m_dependencies.push_back(dependency);
+	m_dependencyMap.insert(std::make_pair(outputGuid, dependency));
 
 	bool result = true;
 

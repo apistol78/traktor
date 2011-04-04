@@ -220,11 +220,11 @@ bool ApplyReflector::operator >> (const Member< void* >& m)
 bool ApplyReflector::operator >> (const MemberArray& m)
 {
 	ArrayPropertyItem* propertyItem = checked_type_cast< ArrayPropertyItem*, false >(*m_propertyItemIterator++);
-	m.reserve(0);
-	for (int i = 0; m_propertyItemIterator != m_propertyItems.end() && (*m_propertyItemIterator)->getParentItem() == propertyItem; )
+	m.reserve(0, 0);
+	while (m_propertyItemIterator != m_propertyItems.end() && (*m_propertyItemIterator)->getParentItem() == propertyItem)
 	{
 		if (!is_a< NullPropertyItem >(*m_propertyItemIterator))
-			m.serialize(*this, i++);
+			m.read(*this);
 		else
 		{
 			m.insert();

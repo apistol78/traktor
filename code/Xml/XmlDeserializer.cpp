@@ -441,7 +441,7 @@ bool XmlDeserializer::operator >> (const MemberArray& m)
 	if (!enterElement(m.getName()))
 		return false;
 
-	m.reserve(0);
+	m.reserve(0, 0);
 
 	for (size_t i = 0;; ++i)
 	{
@@ -467,7 +467,7 @@ bool XmlDeserializer::operator >> (const MemberArray& m)
 
 		m_xpp.push();
 
-		if (!m.serialize(*this, i))
+		if (!m.read(*this))
 			return false;
 	}
 

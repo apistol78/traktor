@@ -20,6 +20,7 @@ public:
 	MemberRefArray(const std::wstring& name, value_type& ref)
 	:	MemberArray(name)
 	,	m_ref(ref)
+	,	m_index(0)
 	{
 	}
 
@@ -28,10 +29,10 @@ public:
 		return &Class::getClassTypeInfo();
 	}
 
-	virtual void reserve(size_t size) const
+	virtual void reserve(size_t size, size_t capacity) const
 	{
-		m_ref.resize(0);
-		m_ref.reserve(size);
+		m_ref.resize(size);
+		m_ref.reserve(capacity);
 	}
 
 	virtual size_t size() const
@@ -45,15 +46,18 @@ public:
 		if (!(s >> MemberType(L"item", object)))
 			return false;
 
-		m_ref.push_back(object);
+		if (m_index < m_ref.size())
+			m_ref[m_index] = object;
+		else
+			m_ref.push_back(object);
+
+		++m_index;
 		return true;
 	}
 
-	virtual bool write(ISerializer& s, size_t index) const
+	virtual bool write(ISerializer& s) const
 	{
-		if (index >= m_ref.size())
-			T_FATAL_ERROR;
-		Ref< Class > object = m_ref[index];
+		Ref< Class > object = m_ref[m_index++];
 		return s >> MemberType(L"item", object);
 	}
 
@@ -64,6 +68,7 @@ public:
 
 private:
 	value_type& m_ref;
+	mutable size_t m_index;
 };
 
 }

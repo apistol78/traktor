@@ -21,12 +21,13 @@ public:
 	MemberAlignedVector(const std::wstring& name, value_type& ref)
 	:	MemberArray(name)
 	,	m_ref(ref)
+	,	m_index(0)
 	{
 	}
 
-	virtual void reserve(size_t size) const
+	virtual void reserve(size_t size, size_t capacity) const
 	{
-		m_ref.resize(0);
+		m_ref.resize(size);
 		m_ref.reserve(size);
 	}
 
@@ -37,17 +38,25 @@ public:
 	
 	virtual bool read(ISerializer& s) const
 	{
-		ValueType item;
-		if (!(s >> ValueMember(L"item", item)))
-			return false;
-
-		m_ref.push_back(item);
+		if (m_index < m_ref.size())
+		{
+			if (!(s >> ValueMember(L"item", m_ref[m_index])))
+				return false;
+		}
+		else
+		{
+			ValueType item;
+			if (!(s >> ValueMember(L"item", item)))
+				return false;
+			m_ref.push_back(item);
+		}
+		++m_index;
 		return true;
 	}
 
-	virtual bool write(ISerializer& s, size_t index) const
+	virtual bool write(ISerializer& s) const
 	{
-		return s >> ValueMember(L"item", m_ref[index]);
+		return s >> ValueMember(L"item", m_ref[m_index++]);
 	}
 
 	virtual bool insert() const
@@ -58,6 +67,7 @@ public:
 	
 private:
 	value_type& m_ref;
+	mutable size_t m_index;
 };
 
 //@}

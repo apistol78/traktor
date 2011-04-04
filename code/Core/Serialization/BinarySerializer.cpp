@@ -739,10 +739,10 @@ bool BinarySerializer::operator >> (const MemberArray& m)
 		if (!read_primitive< uint32_t >(m_stream, size))
 			return false;
 		
-		m.reserve(size);
+		m.reserve(size, size);
 		for (uint32_t i = 0; i < size; ++i)
 		{
-			if (!m.serialize(*this, i))
+			if (!m.read(*this))
 				return false;
 		}
 	}
@@ -755,7 +755,7 @@ bool BinarySerializer::operator >> (const MemberArray& m)
 
 		for (uint32_t i = 0; i < size; ++i)
 		{
-			if (!m.serialize(*this, i))
+			if (!m.write(*this))
 				return false;
 		}
 	}

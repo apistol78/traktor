@@ -16,11 +16,11 @@ public:
 	MemberStaticArray(const std::wstring& name, ValueType* arr)
 	:	MemberArray(name)
 	,	m_arr(arr)
-	,	m_last(&arr[0])
+	,	m_index(0)
 	{
 	}
 
-	virtual void reserve(size_t size) const
+	virtual void reserve(size_t size, size_t capacity) const
 	{
 	}
 
@@ -31,12 +31,12 @@ public:
 
 	virtual bool read(ISerializer& s) const
 	{
-		return s >> ValueMember(L"item", *m_last++);
+		return s >> ValueMember(L"item", m_arr[m_index++]);
 	}
 
-	virtual bool write(ISerializer& s, size_t index) const
+	virtual bool write(ISerializer& s) const
 	{
-		return s >> ValueMember(L"item", m_arr[index]);
+		return s >> ValueMember(L"item", m_arr[m_index++]);
 	}
 
 	virtual bool insert() const
@@ -46,7 +46,7 @@ public:
 
 private:
 	ValueType* m_arr;
-	mutable ValueType* m_last;
+	mutable size_t m_index;
 };
 
 }

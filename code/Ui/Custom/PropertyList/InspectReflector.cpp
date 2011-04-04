@@ -485,7 +485,7 @@ bool InspectReflector::operator >> (const MemberArray& m)
 	
 	m_propertyItemStack.push_back(propertyItem);
 	for (size_t i = 0; i < m.size(); ++i)
-		m.serialize(*this, i);
+		m.write(*this);
 	m_propertyItemStack.pop_back();
 
 	return true;
