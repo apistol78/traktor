@@ -2814,6 +2814,15 @@
 									</item>
 								</items>
 							</item>
+							<item type="Filter">
+								<name>Partition</name>
+								<items>
+									<item type="File">
+										<fileName>Partition/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
 						</items>
 						<dependencies>
 							<item type="ProjectDependency" version="1">
@@ -5943,6 +5952,10 @@
 							<fileName>../../../res/graph/Comment.png</fileName>
 							<items/>
 						</item>
+						<item type="File">
+							<fileName>../../../res/preview/PreviewFrame.png</fileName>
+							<items/>
+						</item>
 					</items>
 				</item>
 				<item type="Filter">
@@ -5972,6 +5985,24 @@
 						</item>
 					</items>
 				</item>
+				<item type="Filter">
+					<name>PreviewList</name>
+					<items>
+						<item type="File">
+							<fileName>PreviewList/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>RichEdit</name>
+					<items>
+						<item type="File">
+							<fileName>RichEdit/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="1">
@@ -5989,7 +6020,7 @@
 			</dependencies>
 		</item>
 		<item type="Project" version="1">
-			<enable>true</enable>
+			<enable>false</enable>
 			<name>Traktor.Ui.Xtrme</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Ui/Xtrme</sourcePath>
 			<configurations>
