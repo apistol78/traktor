@@ -41,11 +41,10 @@ public:
 
 	/*!
 	 * Reserve size for X number of elements.
-	 * \note
-	 *       size might not be set to the actual size, should only be
-	 *       considered to be a hint.
+	 * \param size Known number of elements.
+	 * \param capacity Estimated number of elements.
 	 */
-	virtual void reserve(size_t size) const = 0;
+	virtual void reserve(size_t size, size_t capacity) const = 0;
 
 	/*!
 	 * Return size of the array in number of elements.
@@ -53,27 +52,20 @@ public:
 	virtual size_t size() const = 0;
 
 	/*!
-	 * Read element from serializer. Add to last position
-	 * in array.
+	 * Read next element from serializer.
 	 */
 	virtual bool read(ISerializer& s) const = 0;
 
 	/*!
-	 * Write element to serializer.
+	 * Write next element to serializer.
 	 */
-	virtual bool write(ISerializer& s, size_t index) const = 0;
+	virtual bool write(ISerializer& s) const = 0;
 
 	/*!
 	* Insert default element, used by property list
 	* to add new elements.
 	*/
 	virtual bool insert() const = 0;
-
-	/*!
-	 * Serialize method, just dispatches to read or write
-	 * depending on serializer.
-	 */
-	virtual bool serialize(ISerializer& s, size_t index) const;
 
 private:
 	std::wstring m_name;

@@ -73,6 +73,7 @@ private:
 	RefArray< PipelineDependency > m_dependencies;
 	Ref< PipelineDependency > m_currentDependency;
 	std::map< Guid, Ref< ISerializable > > m_readCache;
+	std::map< Guid, PipelineDependency* > m_dependencyMap;
 
 	/*! \brief Find already added dependency.
 	 *

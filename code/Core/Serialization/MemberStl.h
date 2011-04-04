@@ -26,13 +26,14 @@ public:
 	MemberStlVector(const std::wstring& name, value_type& ref)
 	:	MemberArray(name)
 	,	m_ref(ref)
+	,	m_index(0)
 	{
 	}
 
-	virtual void reserve(size_t size) const
+	virtual void reserve(size_t size, size_t capacity) const
 	{
-		m_ref.resize(0);
-		m_ref.reserve(size);
+		m_ref.resize(size);
+		m_ref.reserve(capacity);
 	}
 
 	virtual size_t size() const
@@ -42,17 +43,25 @@ public:
 	
 	virtual bool read(ISerializer& s) const
 	{
-		ValueType item;
-		if (!(s >> ValueMember(L"item", item)))
-			return false;
-
-		m_ref.push_back(item);
+		if (m_index < m_ref.size())
+		{
+			if (!(s >> ValueMember(L"item", m_ref[m_index])))
+				return false;
+		}
+		else
+		{
+			ValueType item;
+			if (!(s >> ValueMember(L"item", item)))
+				return false;
+			m_ref.push_back(item);
+		}
+		++m_index;
 		return true;
 	}
 
-	virtual bool write(ISerializer& s, size_t index) const
+	virtual bool write(ISerializer& s) const
 	{
-		return s >> ValueMember(L"item", m_ref[index]);
+		return s >> ValueMember(L"item", m_ref[m_index++]);
 	}
 
 	virtual bool insert() const
@@ -69,6 +78,7 @@ public:
 
 private:
 	value_type& m_ref;
+	mutable size_t m_index;
 };
 
 /*! \brief STL list member. */
@@ -81,10 +91,11 @@ public:
 	MemberStlList(const std::wstring& name, value_type& ref)
 	:	MemberArray(name)
 	,	m_ref(ref)
+	,	m_iter(m_ref.begin())
 	{
 	}
 	
-	virtual void reserve(size_t size) const
+	virtual void reserve(size_t size, size_t capacity) const
 	{
 		m_ref.clear();
 	}
@@ -100,10 +111,9 @@ public:
 		return s >> ValueMember(L"item", m_ref.back());
 	}
 
-	virtual bool write(ISerializer& s, size_t index) const
+	virtual bool write(ISerializer& s) const
 	{
-		typename value_type::iterator i = m_ref.begin(); std::advance(i, index);
-		return s >> ValueMember(L"item", *i);
+		return s >> ValueMember(L"item", *m_iter++);
 	}
 
 	virtual bool insert() const
@@ -120,6 +130,7 @@ public:
 
 private:
 	value_type& m_ref;
+	mutable typename value_type::iterator m_iter;
 };
 
 /*! \brief STL set member. */
@@ -132,10 +143,11 @@ public:
 	MemberStlSet(const std::wstring& name, value_type& ref)
 	:	MemberArray(name)
 	,	m_ref(ref)
+	,	m_iter(m_ref.begin())
 	{
 	}
 	
-	virtual void reserve(size_t size) const
+	virtual void reserve(size_t size, size_t capacity) const
 	{
 		m_ref.clear();
 	}
@@ -155,11 +167,9 @@ public:
 		return true;
 	}
 
-	virtual bool write(ISerializer& s, size_t index) const
+	virtual bool write(ISerializer& s) const
 	{
-		typename value_type::iterator i = m_ref.begin(); std::advance(i, index);
-		ValueType tmp = *i;
-		return s >> ValueMember(L"item", tmp);
+		return s >> ValueMember(L"item", *m_iter++);
 	}
 
 	virtual bool insert() const
@@ -169,6 +179,7 @@ public:
 	
 private:
 	value_type& m_ref;
+	mutable typename value_type::iterator m_iter;
 };
 
 /*! \brief STL pair member. */
@@ -207,10 +218,11 @@ public:
 	MemberStlMap(const std::wstring& name, value_type& ref)
 	:	MemberArray(name)
 	,	m_ref(ref)
+	,	m_iter(m_ref.begin())
 	{
 	}
 
-	virtual void reserve(size_t size) const
+	virtual void reserve(size_t size, size_t capacity) const
 	{
 		m_ref.clear();
 	}
@@ -229,11 +241,13 @@ public:
 		return true;
 	}
 
-	virtual bool write(ISerializer& s, size_t index) const
+	virtual bool write(ISerializer& s) const
 	{
-		typename value_type::iterator i = m_ref.begin(); std::advance(i, index);
-		typename PairMember::value_type item = std::make_pair(i->first, i->second);
-		return s >> PairMember(L"item", item);
+		typename PairMember::value_type item = std::make_pair(m_iter->first, m_iter->second);
+		if (!(s >> PairMember(L"item", item)))
+			return false;
+		++m_iter;
+		return true;
 	}
 
 	virtual bool insert() const
@@ -247,6 +261,7 @@ public:
 
 private:
 	value_type& m_ref;
+	mutable typename value_type::iterator m_iter;
 };
 
 //@}
