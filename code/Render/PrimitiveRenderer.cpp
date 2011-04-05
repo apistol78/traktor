@@ -516,6 +516,38 @@ void PrimitiveRenderer::drawWireQuad(
 	drawLine(vert4, vert1, color4);
 }
 
+void PrimitiveRenderer::drawWireSphere(
+	const Vector4& center,
+	float radius,
+	const Color4ub& color
+)
+{
+	Scalar sr(radius);
+	for (int i = 0; i < 64; ++i)
+	{
+		float s1 = sinf(2.0f * PI * i / 64.0f);
+		float c1 = cosf(2.0f * PI * i / 64.0f);
+		float s2 = sinf(2.0f * PI * (i + 1) / 64.0f);
+		float c2 = cosf(2.0f * PI * (i + 1) / 64.0f);
+
+		drawLine(
+			center + Vector4(c1, 0.0f, s1, 0.0f) * sr,
+			center + Vector4(c2, 0.0f, s2, 0.0f) * sr,
+			color
+		);
+		drawLine(
+			center + Vector4(0.0f, c1, s1, 0.0f) * sr,
+			center + Vector4(0.0f, c2, s2, 0.0f) * sr,
+			color
+		);
+		drawLine(
+			center + Vector4(c1, s1, 0.0f, 0.0f) * sr,
+			center + Vector4(c2, s2, 0.0f, 0.0f) * sr,
+			color
+		);
+	}
+}
+
 void PrimitiveRenderer::drawWireCylinder(
 	const Matrix44& frame,
 	float radius,

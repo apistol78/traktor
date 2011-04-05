@@ -151,6 +151,12 @@ public:
 		const Color4ub& color4
 	);
 
+	void drawWireSphere(
+		const Vector4& center,
+		float radius,
+		const Color4ub& color
+	);
+
 	void drawWireCylinder(
 		const Matrix44& frame,
 		float radius,
