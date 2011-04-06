@@ -14,7 +14,7 @@ QuantizeFilter::QuantizeFilter(int steps)
 {
 }
 
-Ref< Image > QuantizeFilter::apply(const Image* image)
+Ref< Image > QuantizeFilter::apply(const Image* image) const
 {
 	Ref< Image > final = new Image(image->getPixelFormat(), image->getWidth(), image->getHeight(), image->getPalette());
 	

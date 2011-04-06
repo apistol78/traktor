@@ -242,8 +242,11 @@ void calculateModelTangents(Model& mdl, bool binormals)
 void triangulateModel(Model& model)
 {
 	std::vector< Polygon > triangulatedPolygons;
+	std::vector< Triangulator::Triangle > triangles;
 
 	const std::vector< Polygon >& polygons = model.getPolygons();
+	triangulatedPolygons.reserve(polygons.size());
+
 	for (std::vector< Polygon >::const_iterator i = polygons.begin(); i != polygons.end(); ++i)
 	{
 		const std::vector< uint32_t >& vertices = i->getVertices();
@@ -268,21 +271,21 @@ void triangulateModel(Model& model)
 				polygonNormal = polygonPlane.normal();
 			}
 
-			std::vector< Triangulator::Triangle > triangles;
+			triangles.resize(0);
 			Triangulator().freeze(
 				polygonWinding.points,
 				polygonNormal,
 				triangles
 			);
 
-			for (std::vector< Triangulator::Triangle >::iterator j = triangles.begin(); j != triangles.end(); ++j)
+			for (std::vector< Triangulator::Triangle >::const_iterator j = triangles.begin(); j != triangles.end(); ++j)
 			{
-				Polygon triangulatedPolygon;
-				triangulatedPolygon.setMaterial(i->getMaterial());
-
-				for (int k = 0; k < 3; ++k)
-					triangulatedPolygon.addVertex(vertices[j->indices[k]]);
-
+				Polygon triangulatedPolygon(
+					i->getMaterial(),
+					vertices[j->indices[0]],
+					vertices[j->indices[1]],
+					vertices[j->indices[2]]
+				);
 				triangulatedPolygons.push_back(triangulatedPolygon);
 			}
 		}
@@ -393,6 +396,7 @@ void calculateConvexHull(Model& model)
 	T_ASSERT (t != ~0U);
 
 	std::vector< HullFace > faces;
+	faces.reserve(32);
 	faces.push_back(HullFace(0, 1, 2));
 	faces.push_back(HullFace(1, 0, t));
 	faces.push_back(HullFace(2, 1, t));
@@ -614,7 +618,7 @@ void cleanDuplicates(Model& model)
 void flattenDoubleSided(Model& model)
 {
 	std::vector< Polygon > polygons = model.getPolygons();
-	std::vector< Polygon > flatten;
+	std::vector< Polygon > flatten; flatten.reserve(polygons.size());
 
 	for (std::vector< Polygon >::const_iterator i = polygons.begin(); i != polygons.end(); ++i)
 	{

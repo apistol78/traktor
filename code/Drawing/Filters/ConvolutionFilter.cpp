@@ -31,7 +31,7 @@ Ref< ConvolutionFilter > ConvolutionFilter::createEmboss()
 	));
 }
 
-Ref< Image > ConvolutionFilter::apply(const Image* image)
+Ref< Image > ConvolutionFilter::apply(const Image* image) const
 {
 	Ref< Image > final = new Image(image->getPixelFormat(), image->getWidth(), image->getHeight(), image->getPalette());
 	Color4f in;

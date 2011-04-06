@@ -472,10 +472,10 @@ bool TexturePipeline::buildOutput(
 			}
 			else
 			{
-#if USE_DXT_COMPRESSOR == SQUISH_COMPRESSOR
-				bool binaryAlpha = isBinaryAlpha(image);
-#elif USE_DXT_COMPRESSOR == STB_DXT_COMPRESSOR
 				bool binaryAlpha = false;
+#if USE_DXT_COMPRESSOR == SQUISH_COMPRESSOR
+				if (textureAsset->m_hasAlpha && !textureAsset->m_ignoreAlpha)
+					binaryAlpha = isBinaryAlpha(image);
 #endif
 				if (needAlpha && !binaryAlpha)
 				{

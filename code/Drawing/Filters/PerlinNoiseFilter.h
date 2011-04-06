@@ -29,7 +29,7 @@ public:
 	PerlinNoiseFilter(int octaves, float persistence, float magnify);
 
 protected:
-	virtual Ref< Image > apply(const Image* image);
+	virtual Ref< Image > apply(const Image* image) const;
 
 private:
 	int m_octaves;

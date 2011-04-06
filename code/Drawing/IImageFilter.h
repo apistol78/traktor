@@ -28,7 +28,7 @@ class T_DLLCLASS IImageFilter : public Object
 protected:
 	friend class Image;
 
-	virtual Ref< Image > apply(const Image* image) = 0;
+	virtual Ref< Image > apply(const Image* image) const = 0;
 };
 	
 	}

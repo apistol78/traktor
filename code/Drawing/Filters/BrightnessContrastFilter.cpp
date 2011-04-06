@@ -14,7 +14,7 @@ BrightnessContrastFilter::BrightnessContrastFilter(float brightness, float contr
 {
 }
 
-Ref< Image > BrightnessContrastFilter::apply(const Image* image)
+Ref< Image > BrightnessContrastFilter::apply(const Image* image) const
 {
 	Ref< Image > final = new Image(image->getPixelFormat(), image->getWidth(), image->getHeight(), image->getPalette());
 	
