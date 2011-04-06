@@ -10465,13 +10465,19 @@
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
 									<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
+									<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2011.3.1/include</item>
 								</includePaths>
 								<definitions>
 									<item>T_MODEL_EXPORT</item>
 									<item>_DEBUG</item>
 								</definitions>
-								<libraryPaths/>
-								<libraries/>
+								<libraryPaths>
+									<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2011.3.1/lib</item>
+								</libraryPaths>
+								<libraries>
+									<item>fbxsdk_md2008d.lib</item>
+									<item>wininet.lib</item>
+								</libraries>
 								<additionalCompilerOptions/>
 								<additionalLinkerOptions/>
 							</item>
@@ -10483,13 +10489,19 @@
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
 									<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
+									<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2011.3.1/include</item>
 								</includePaths>
 								<definitions>
 									<item>T_MODEL_EXPORT</item>
 									<item>NDEBUG</item>
 								</definitions>
-								<libraryPaths/>
-								<libraries/>
+								<libraryPaths>
+									<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2011.3.1/lib</item>
+								</libraryPaths>
+								<libraries>
+									<item>fbxsdk_md2008.lib</item>
+									<item>wininet.lib</item>
+								</libraries>
 								<additionalCompilerOptions/>
 								<additionalLinkerOptions/>
 							</item>
@@ -10501,13 +10513,19 @@
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
 									<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
+									<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2011.3.1/include</item>
 								</includePaths>
 								<definitions>
 									<item>T_STATIC</item>
 									<item>_DEBUG</item>
 								</definitions>
-								<libraryPaths/>
-								<libraries/>
+								<libraryPaths>
+									<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2011.3.1/lib</item>
+								</libraryPaths>
+								<libraries>
+									<item>fbxsdk_md2008d.lib</item>
+									<item>wininet.lib</item>
+								</libraries>
 								<additionalCompilerOptions/>
 								<additionalLinkerOptions/>
 							</item>
@@ -10519,13 +10537,19 @@
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
 									<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
+									<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2011.3.1/include</item>
 								</includePaths>
 								<definitions>
 									<item>T_STATIC</item>
 									<item>NDEBUG</item>
 								</definitions>
-								<libraryPaths/>
-								<libraries/>
+								<libraryPaths>
+									<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2011.3.1/lib</item>
+								</libraryPaths>
+								<libraries>
+									<item>fbxsdk_md2008.lib</item>
+									<item>wininet.lib</item>
+								</libraries>
 								<additionalCompilerOptions/>
 								<additionalLinkerOptions/>
 							</item>
