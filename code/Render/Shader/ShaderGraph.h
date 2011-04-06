@@ -1,10 +1,10 @@
 #ifndef traktor_render_ShaderGraph_H
 #define traktor_render_ShaderGraph_H
 
-#include <map>
 #include "Core/Object.h"
 #include "Core/RefArray.h"
 #include "Core/RefSet.h"
+#include "Core/Containers/SmallMap.h"
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
@@ -146,8 +146,8 @@ public:
 private:
 	RefArray< Node > m_nodes;
 	RefArray< Edge > m_edges;
-	std::map< const InputPin*, Ref< Edge > > m_inputPinEdge;
-	std::map< const OutputPin*, RefSet< Edge > > m_outputPinEdges;
+	SmallMap< const InputPin*, Ref< Edge > > m_inputPinEdge;
+	SmallMap< const OutputPin*, RefSet< Edge > > m_outputPinEdges;
 
 	void updateAdjacency();
 };

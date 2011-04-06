@@ -68,7 +68,7 @@ PerlinNoiseFilter::PerlinNoiseFilter(int octaves, float persistence, float magni
 {
 }
 
-Ref< Image > PerlinNoiseFilter::apply(const Image* image)
+Ref< Image > PerlinNoiseFilter::apply(const Image* image) const
 {
 	Ref< Image > final = new Image(image->getPixelFormat(), image->getWidth(), image->getHeight(), image->getPalette());
 	for (int32_t y = 0; y < image->getHeight(); ++y)

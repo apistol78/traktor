@@ -12,7 +12,7 @@ NormalMapFilter::NormalMapFilter(float scale)
 {
 }
 
-Ref< Image > NormalMapFilter::apply(const Image* image)
+Ref< Image > NormalMapFilter::apply(const Image* image) const
 {
 	Ref< Image > final = new Image(image->getPixelFormat(), image->getWidth(), image->getHeight(), image->getPalette());
 	Color4f in0, in1, in2;

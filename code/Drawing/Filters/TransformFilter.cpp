@@ -1,3 +1,4 @@
+#include "Core/Containers/AlignedVector.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
 #include "Drawing/Filters/TransformFilter.h"
@@ -15,18 +16,37 @@ TransformFilter::TransformFilter(const Color4f& Km, const Color4f& Kc)
 {
 }
 
-Ref< Image > TransformFilter::apply(const Image* image)
+Ref< Image > TransformFilter::apply(const Image* image) const
 {
 	Color4f in;
 
+	int32_t width = image->getWidth();
+	int32_t height = image->getHeight();
+
+	AlignedVector< Color4f > span(width);
+
 	Ref< Image > final = image->clone(false);
-	for (int32_t y = 0; y < image->getHeight(); ++y)
+	for (int32_t y = 0; y < height; ++y)
 	{
-		for (int32_t x = 0; x < image->getWidth(); ++x)
+		image->getSpanUnsafe(y, &span[0]);
+
+		Color4f Km = m_Km, Kc = m_Kc;
+		int32_t x = 0;
+		for (; x < width - 8; x += 8)
 		{
-			image->getPixelUnsafe(x, y, in);
-			final->setPixelUnsafe(x, y, in * m_Km + m_Kc);
+			span[x + 0] = span[x + 0] * Km + Kc;
+			span[x + 1] = span[x + 1] * Km + Kc;
+			span[x + 2] = span[x + 2] * Km + Kc;
+			span[x + 3] = span[x + 3] * Km + Kc;
+			span[x + 4] = span[x + 4] * Km + Kc;
+			span[x + 5] = span[x + 5] * Km + Kc;
+			span[x + 6] = span[x + 6] * Km + Kc;
+			span[x + 7] = span[x + 7] * Km + Kc;
 		}
+		for (; x < width; ++x)
+			span[x] = span[x] * Km + Kc;
+
+		final->setSpanUnsafe(y, &span[0]);
 	}
 
 	return final;

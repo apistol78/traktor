@@ -75,6 +75,12 @@ public:
 	
 	/*! \brief Set single pixel, no boundary check. */
 	void setPixelUnsafe(int32_t x, int32_t y, const Color4f& color);
+
+	/*! \brief Get span of pixels, no boundary checks. */
+	void getSpanUnsafe(int32_t y, Color4f* outSpan) const;
+
+	/*! \brief Set span of pixels, no boundary checks. */
+	void setSpanUnsafe(int32_t y, const Color4f* span);
 	
 	/*! \brief Apply filter on entire image. */
 	Ref< Image > applyFilter(IImageFilter* imageFilter) const;
@@ -125,6 +131,7 @@ private:
 	PixelFormat m_pixelFormat;
 	int32_t m_width;
 	int32_t m_height;
+	int32_t m_pitch;
 	Ref< Palette > m_palette;
 	size_t m_size;
 	uint8_t* m_data;

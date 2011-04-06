@@ -52,9 +52,11 @@ void ShaderGraph::removeEdge(Edge* edge)
 	if (i == m_edges.end())
 		return;
 
-	m_inputPinEdge.erase(edge->getDestination());
+	SmallMap< const InputPin*, Ref< Edge > >::iterator i1 = m_inputPinEdge.find(edge->getDestination());
+	if (i1 != m_inputPinEdge.end())
+		m_inputPinEdge.erase(i1);
 
-	std::map< const OutputPin*, RefSet< Edge > >::iterator i2 = m_outputPinEdges.find(edge->getSource());
+	SmallMap< const OutputPin*, RefSet< Edge > >::iterator i2 = m_outputPinEdges.find(edge->getSource());
 	if (i2 != m_outputPinEdges.end())
 		i2->second.erase(edge);
 
@@ -81,13 +83,13 @@ size_t ShaderGraph::findNodesOf(const TypeInfo& nodeType, RefArray< Node >& outN
 
 Ref< Edge > ShaderGraph::findEdge(const InputPin* inputPin) const
 {
-	std::map< const InputPin*, Ref< Edge > >::const_iterator i = m_inputPinEdge.find(inputPin);
+	SmallMap< const InputPin*, Ref< Edge > >::const_iterator i = m_inputPinEdge.find(inputPin);
 	return i != m_inputPinEdge.end() ? i->second : 0;
 }
 
 uint32_t ShaderGraph::findEdges(const OutputPin* outputPin, RefSet< Edge >& outEdges) const
 {
-	std::map< const OutputPin*, RefSet< Edge > >::const_iterator i = m_outputPinEdges.find(outputPin);
+	SmallMap< const OutputPin*, RefSet< Edge > >::const_iterator i = m_outputPinEdges.find(outputPin);
 	if (i != m_outputPinEdges.end())
 		outEdges = i->second;
 	else
@@ -116,7 +118,7 @@ uint32_t ShaderGraph::findDestinationPins(const OutputPin* outputPin, std::vecto
 
 uint32_t ShaderGraph::getDestinationCount(const OutputPin* outputPin) const
 {
-	std::map< const OutputPin*, RefSet< Edge > >::const_iterator i = m_outputPinEdges.find(outputPin);
+	SmallMap< const OutputPin*, RefSet< Edge > >::const_iterator i = m_outputPinEdges.find(outputPin);
 	return i != m_outputPinEdges.end() ? uint32_t(i->second.size()) : 0;
 }
 

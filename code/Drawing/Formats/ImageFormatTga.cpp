@@ -82,20 +82,23 @@ Ref< Image > ImageFormatTga::read(IStream* stream)
 
 	image = new Image(pf, header.width, header.height);
 
-	uint8_t* data = static_cast< uint8_t* >(image->getData());
-	stream->read(data, header.width * header.height * pf.getByteSize());
-
-	if (image != 0)
+	if (header.width > 0 && header.height > 0)
 	{
-		bool hz = false, ve = true;
-		if ((header.descriptor & 0x10) == 0x10)
-			hz = true;
-		if ((header.descriptor & 0x20) == 0x20)
-			ve = false;
-		if (hz || ve)
+		uint8_t* data = static_cast< uint8_t* >(image->getData());
+		stream->read(data, header.width * header.height * pf.getByteSize());
+
+		if (image != 0)
 		{
-			MirrorFilter mirrorFilter(hz, ve);
-			image = image->applyFilter(&mirrorFilter);
+			bool hz = false, ve = true;
+			if ((header.descriptor & 0x10) == 0x10)
+				hz = true;
+			if ((header.descriptor & 0x20) == 0x20)
+				ve = false;
+			if (hz || ve)
+			{
+				MirrorFilter mirrorFilter(hz, ve);
+				image = image->applyFilter(&mirrorFilter);
+			}
 		}
 	}
 
