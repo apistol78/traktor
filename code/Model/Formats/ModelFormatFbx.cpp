@@ -162,7 +162,7 @@ bool convertMesh(Model& outModel, KFbxScene* scene, KFbxNode* meshNode)
 				KFbxLayerElementNormal* layerNormals = mesh->GetLayer(k)->GetNormals();
 				if (layerNormals)
 				{
-					if(layerNormals->GetMappingMode() == KFbxLayerElement::eBY_POLYGON_VERTEX)
+					if (layerNormals->GetMappingMode() == KFbxLayerElement::eBY_POLYGON_VERTEX)
 					{
 						switch (layerNormals->GetReferenceMode())
 						{
@@ -191,7 +191,7 @@ bool convertMesh(Model& outModel, KFbxScene* scene, KFbxNode* meshNode)
 				KFbxLayerElementTangent* layerTangents = mesh->GetLayer(k)->GetTangents();
 				if (layerTangents)
 				{
-					if(layerTangents->GetMappingMode() == KFbxLayerElement::eBY_POLYGON_VERTEX)
+					if (layerTangents->GetMappingMode() == KFbxLayerElement::eBY_POLYGON_VERTEX)
 					{
 						switch (layerTangents->GetReferenceMode())
 						{
@@ -220,7 +220,7 @@ bool convertMesh(Model& outModel, KFbxScene* scene, KFbxNode* meshNode)
 				KFbxLayerElementBinormal* layerBinormals = mesh->GetLayer(k)->GetBinormals();
 				if (layerBinormals)
 				{
-					if(layerBinormals->GetMappingMode() == KFbxLayerElement::eBY_POLYGON_VERTEX)
+					if (layerBinormals->GetMappingMode() == KFbxLayerElement::eBY_POLYGON_VERTEX)
 					{
 						switch (layerTangents->GetReferenceMode())
 						{

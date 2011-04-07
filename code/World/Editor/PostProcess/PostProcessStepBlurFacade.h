@@ -30,4 +30,3 @@ public:
 }
 
 #endif	// traktor_world_PostProcessStepBlurFacade_H
-

@@ -21,7 +21,6 @@
 #include "Render/VertexBuffer.h"
 #include "Render/IndexBuffer.h"
 
-
 namespace traktor
 {
 	namespace mesh

@@ -40,7 +40,6 @@ public:
 	 */
 	virtual void insertEntity(const Entity* parentEntity, const std::wstring& name, Entity* entity) = 0;
 
-
 	/*! \brief
 	 */
 	virtual Entity* getEntity(uint32_t index) const = 0;
@@ -143,7 +142,6 @@ public:
 	/*! \brief
 	 */
 	virtual uint32_t getChildEntities(const Entity* parentEntity, const std::wstring& name, const TypeInfo& entityType, RefArray< Entity >& outEntities) const = 0;
-
 
 	/*! \group Template type helpers.
 	 *

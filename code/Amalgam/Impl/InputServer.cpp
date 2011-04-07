@@ -1,3 +1,5 @@
+#include "Amalgam/IEnvironment.h"
+#include "Amalgam/Impl/InputServer.h"
 #include "Core/Log/Log.h"
 #include "Core/Serialization/DeepHash.h"
 #include "Core/Settings/PropertyBoolean.h"
@@ -5,19 +7,19 @@
 #include "Core/Settings/Settings.h"
 #if defined(_WIN32) || defined(_XBOX)
 #	if !defined(WINCE)
-#		include <Input/Xi/InputDriverXi.h>
+#		include "Input/Xi/InputDriverXi.h"
 #	endif
 #	if !defined(_XBOX)
-#		include <Input/Di8/InputDriverDi8.h>
-#		include <Input/Win32/InputDriverWin32.h>
+#		include "Input/Di8/InputDriverDi8.h"
+#		include "Input/Win32/InputDriverWin32.h"
 #	endif
 #elif defined(_PS3)
-#	include <Input/Ps3/InputDriverPs3.h>
+#	include "Input/Ps3/InputDriverPs3.h"
 #elif TARGET_OS_MAC
 #	if TARGET_OS_IPHONE
-#		include <Input/iPhone/InputDriverIPhone.h>
+#		include "Input/iPhone/InputDriverIPhone.h"
 #	else
-#		include <Input/OsX/InputDriverOsX.h>
+#		include "Input/OsX/InputDriverOsX.h"
 #	endif
 #endif
 #include "Input/IInputDevice.h"
@@ -29,8 +31,6 @@
 #include "Input/Binding/InputMappingStateData.h"
 #include "Input/Binding/InputSourceFabricator.h"
 #include "Resource/IResourceManager.h"
-#include "Amalgam/IEnvironment.h"
-#include "Amalgam/Impl/InputServer.h"
 
 namespace traktor
 {

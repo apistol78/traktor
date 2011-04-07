@@ -219,7 +219,6 @@ inline ValueType parseString(const std::string& text)
 	return parseString(text, std::numeric_limits< ValueType >::has_signaling_NaN ?  std::numeric_limits< ValueType >::signaling_NaN() : 0);
 }
 
-
 /*! \brief Convert literal to value.
  * \ingroup Core
  */

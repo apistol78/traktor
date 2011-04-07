@@ -1,3 +1,6 @@
+#ifndef traktor_amalgam_EAGLView_H
+#define traktor_amalgam_EAGLView_H
+
 #import <UIKit/UIKit.h>
 #import <QuartzCore/QuartzCore.h>
 
@@ -28,3 +31,5 @@ class Application;
 - (void) drawView:(id)sender;
 
 @end
+
+#endif	// traktor_amalgam_EAGLView_H

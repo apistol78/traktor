@@ -159,17 +159,16 @@ bool PsnSaveData::enumerate(std::set< std::wstring >& outSaveDataIds)
 		(void*)&enumerateData
 	);
 
-	int32_t neededGameDataSizeKB = (m_currentSavedataSizeKB > 0) ? 4 : 100;
-	const int32_t NEED_SIZEKB = m_hddFreeSpaceKB - m_excessSpaceNeededKB - neededGameDataSizeKB;
-	if (NEED_SIZEKB < 0)
+	int32_t neededGameDataSizeKb = (m_currentSavedataSizeKB > 0) ? 4 : 100;
+	int32_t needSizeKb = m_hddFreeSpaceKB - m_excessSpaceNeededKB - neededGameDataSizeKb;
+	if (needSizeKb < 0)
 	{
-		m_spaceNeededKB = -NEED_SIZEKB;
+		m_spaceNeededKB = -needSizeKb;
 		m_threadDialog = ThreadManager::getInstance().create(makeFunctor(this, &PsnSaveData::dialogThread), L"Savedata dialog");
 		m_threadDialog->start(Thread::Normal);
 		log::error << L"Unable to create session manager; Not enough space on HDD to save trophies and save-games." << Endl;
 		return false;
 	}
-
 
 	if (err != CELL_SAVEDATA_RET_OK)
 	{

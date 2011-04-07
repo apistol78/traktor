@@ -251,21 +251,21 @@ bool SoundChannel::getBlock(const ISoundMixer* mixer, double time, SoundBlock& o
 
 			m_outputSamplesIn += outputSamplesCount;
 		}
- 		else
- 		{
- 			for (uint32_t i = 0; i < SbcMaxChannelCount; ++i)
- 			{
- 				const float* inputSamples = soundBlock.samples[i];
- 				float* outputSamples = m_outputSamples[i] + m_outputSamplesIn;
+		else
+		{
+			for (uint32_t i = 0; i < SbcMaxChannelCount; ++i)
+			{
+				const float* inputSamples = soundBlock.samples[i];
+				float* outputSamples = m_outputSamples[i] + m_outputSamplesIn;
 				T_ASSERT (m_outputSamplesIn + soundBlock.samplesCount < m_hwFrameSamples * c_outputSamplesBlockCount);
- 
- 				if (inputSamples)
- 					mixer->mulConst(outputSamples, inputSamples, soundBlock.samplesCount, m_volume);
- 				else
- 					mixer->mute(outputSamples, soundBlock.samplesCount);
- 			}
- 			m_outputSamplesIn += soundBlock.samplesCount;
- 		}
+
+				if (inputSamples)
+					mixer->mulConst(outputSamples, inputSamples, soundBlock.samplesCount, m_volume);
+				else
+					mixer->mute(outputSamples, soundBlock.samplesCount);
+			}
+			m_outputSamplesIn += soundBlock.samplesCount;
+		}
 	}
 
 	// Build output block.

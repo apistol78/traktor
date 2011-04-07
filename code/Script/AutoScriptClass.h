@@ -13,7 +13,6 @@ namespace traktor
 /*! \ingroup Script */
 /*! \{ */
 
-
 struct T_NOVTABLE IConstructor
 {
 	virtual Ref< Object > construct(const Any* argv) const = 0;
@@ -136,7 +135,6 @@ struct Constructor_5 : public IConstructor
 };
 
 /*! \} */
-
 
 /*! \name Method signatures */
 /*! \{ */
@@ -913,7 +911,6 @@ struct Property : public IProperty
 };
 
 /*! \} */
-
 
 /*! \brief Automatic generation of script class definition.
  * \ingroup Script

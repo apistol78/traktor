@@ -70,5 +70,3 @@ void SurfaceGapi::blt(
 
 	}
 }
-
-

@@ -1,7 +1,6 @@
 #ifndef traktor_ui_Enums_H
 #define traktor_ui_Enums_H
 
-
 namespace traktor
 {
 	namespace ui

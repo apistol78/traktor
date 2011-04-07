@@ -285,7 +285,6 @@ Ref< ProgramResource > ProgramCompilerWin32::compile(
 				outStats->vertexCost = atoi(costp + 14);
 		}
 
-
 		hr = D3DXDisassembleShader((const DWORD *)resource->m_pixelShader->GetBufferPointer(), FALSE, NULL, &d3dDisasmBuffer.getAssign());
 		if (SUCCEEDED(hr))
 		{

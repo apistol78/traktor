@@ -72,4 +72,4 @@ private:
 	}
 }
 
-#endif	// traktor_render_ScreenRenderer_H
+#endif	// traktor_world_LightRenderer_H

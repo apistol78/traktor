@@ -51,7 +51,6 @@ private:
 	uint8_t m_block[MaxBlockSize + 2];
 };
 
-
 	}
 }
 

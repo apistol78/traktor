@@ -106,7 +106,6 @@ ActionValue::ActionValue(const std::string& s)
 	m_value.s = refStringCreate(s.c_str());
 }
 
-
 ActionValue::ActionValue(const wchar_t* s)
 :	m_type(AvtString)
 {

@@ -16,7 +16,7 @@ struct ChainSortPred
 
 T_MATH_INLINE float isLeft(const Vector2& P0, const Vector2& P1, const Vector2& P2)
 {
-    return (P1.x - P0.x) * (P2.y - P0.y) - (P2.x - P0.x) * (P1.y - P0.y);
+	return (P1.x - P0.x) * (P2.y - P0.y) - (P2.x - P0.x) * (P1.y - P0.y);
 }
 
 	}

@@ -24,7 +24,6 @@ struct IndexRange
 	bool operator < (const IndexRange& rh) const;
 };
 
-
 	}
 }
 

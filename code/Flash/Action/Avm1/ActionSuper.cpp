@@ -58,6 +58,5 @@ void ActionSuper::dereference()
 	ActionFunction::dereference();
 }
 
-
 	}
 }

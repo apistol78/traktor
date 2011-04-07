@@ -164,7 +164,6 @@ float KeyboardInputSource::read(float T, float dT)
 		}
 	}
 	
-
 	return asFloat(m_state);
 }
 

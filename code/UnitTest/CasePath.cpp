@@ -83,5 +83,4 @@ void CasePath::run()
 	CASE_ASSERT_EQUAL (path8.normalized().getPathName(), L"c:/../bar.txt");
 }
 
-
 }

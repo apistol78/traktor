@@ -215,7 +215,6 @@ void ContextOpenGL::leave()
 	m_lock.release();
 }
 
-
 GLuint ContextOpenGL::createStateList(const RenderState& renderState)
 {
 	Adler32 adler;

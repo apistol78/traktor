@@ -32,46 +32,46 @@ namespace traktor
  */
 BOOL IsXInputDevice(const GUID* pGuidProductFromDirectInput)
 {
-    IWbemLocator* pIWbemLocator = NULL;
-    IEnumWbemClassObject* pEnumDevices = NULL;
-    IWbemClassObject* pDevices[20] = {0};
-    IWbemServices* pIWbemServices = NULL;
-    BSTR bstrNamespace = NULL;
-    BSTR bstrDeviceID = NULL;
-    BSTR bstrClassName = NULL;
-    DWORD uReturned = 0;
-    bool bIsXinputDevice = false;
-    UINT iDevice = 0;
-    VARIANT var;
-    HRESULT hr;
+	IWbemLocator* pIWbemLocator = NULL;
+	IEnumWbemClassObject* pEnumDevices = NULL;
+	IWbemClassObject* pDevices[20] = {0};
+	IWbemServices* pIWbemServices = NULL;
+	BSTR bstrNamespace = NULL;
+	BSTR bstrDeviceID = NULL;
+	BSTR bstrClassName = NULL;
+	DWORD uReturned = 0;
+	bool bIsXinputDevice = false;
+	UINT iDevice = 0;
+	VARIANT var;
+	HRESULT hr;
 
-    // CoInit if needed
-    hr = CoInitialize(NULL);
-    bool bCleanupCOM = SUCCEEDED(hr);
+	// CoInit if needed
+	hr = CoInitialize(NULL);
+	bool bCleanupCOM = SUCCEEDED(hr);
 
-    // Create WMI
-    hr = CoCreateInstance(
+	// Create WMI
+	hr = CoCreateInstance(
 		__uuidof(WbemLocator),
 		NULL,
 		CLSCTX_INPROC_SERVER,
 		__uuidof(IWbemLocator),
 		(LPVOID*)&pIWbemLocator
 	);
-    if (FAILED(hr) || pIWbemLocator == NULL)
-        goto LCleanup;
+	if (FAILED(hr) || pIWbemLocator == NULL)
+		goto LCleanup;
 
-    bstrNamespace = SysAllocString(L"\\\\.\\root\\cimv2");
+	bstrNamespace = SysAllocString(L"\\\\.\\root\\cimv2");
 	if (bstrNamespace == NULL)
 		goto LCleanup;        
-    bstrClassName = SysAllocString(L"Win32_PNPEntity");
+	bstrClassName = SysAllocString(L"Win32_PNPEntity");
 	if (bstrClassName == NULL)
 		goto LCleanup;        
-    bstrDeviceID = SysAllocString(L"DeviceID");
+	bstrDeviceID = SysAllocString(L"DeviceID");
 	if (bstrDeviceID == NULL)
 		goto LCleanup;        
-    
-    // Connect to WMI 
-    hr = pIWbemLocator->ConnectServer(
+
+	// Connect to WMI 
+	hr = pIWbemLocator->ConnectServer(
 		bstrNamespace,
 		NULL,
 		NULL,
@@ -81,11 +81,11 @@ BOOL IsXInputDevice(const GUID* pGuidProductFromDirectInput)
 		NULL,
 		&pIWbemServices
 	);
-    if (FAILED(hr) || pIWbemServices == NULL)
-        goto LCleanup;
+	if (FAILED(hr) || pIWbemServices == NULL)
+		goto LCleanup;
 
-    // Switch security level to IMPERSONATE. 
-    CoSetProxyBlanket(
+	// Switch security level to IMPERSONATE. 
+	CoSetProxyBlanket(
 		pIWbemServices,
 		RPC_C_AUTHN_WINNT,
 		RPC_C_AUTHZ_NONE,
@@ -96,69 +96,69 @@ BOOL IsXInputDevice(const GUID* pGuidProductFromDirectInput)
 		EOAC_NONE
 	);                    
 
-    hr = pIWbemServices->CreateInstanceEnum(bstrClassName, 0, NULL, &pEnumDevices);
-    if (FAILED(hr) || pEnumDevices == NULL)
-        goto LCleanup;
+	hr = pIWbemServices->CreateInstanceEnum(bstrClassName, 0, NULL, &pEnumDevices);
+	if (FAILED(hr) || pEnumDevices == NULL)
+		goto LCleanup;
 
-    // Loop over all devices
-    for (;;)
-    {
-        // Get 20 at a time
-        hr = pEnumDevices->Next(10000, 20, pDevices, &uReturned);
-        if (FAILED(hr))
-            goto LCleanup;
-        if (uReturned == 0)
-            break;
+	// Loop over all devices
+	for (;;)
+	{
+		// Get 20 at a time
+		hr = pEnumDevices->Next(10000, 20, pDevices, &uReturned);
+		if (FAILED(hr))
+			goto LCleanup;
+		if (uReturned == 0)
+			break;
 
-        for(iDevice = 0; iDevice < uReturned; iDevice++)
-        {
-            // For each device, get its device ID
-            hr = pDevices[iDevice]->Get(bstrDeviceID, 0L, &var, NULL, NULL);
-            if (SUCCEEDED( hr ) && var.vt == VT_BSTR && var.bstrVal != NULL)
-            {
+		for (iDevice = 0; iDevice < uReturned; iDevice++)
+		{
+			// For each device, get its device ID
+			hr = pDevices[iDevice]->Get(bstrDeviceID, 0L, &var, NULL, NULL);
+			if (SUCCEEDED( hr ) && var.vt == VT_BSTR && var.bstrVal != NULL)
+			{
 				// Check if the device ID contains "IG_".  If it does, then it's an XInput device
 				// This information can not be found from DirectInput 
-                if (wcsstr(var.bstrVal, L"IG_"))
-                {
-                    // If it does, then get the VID/PID from var.bstrVal
-                    DWORD dwPid = 0, dwVid = 0;
-                    WCHAR* strVid = wcsstr(var.bstrVal, L"VID_");
-                    if (strVid && swscanf(strVid, L"VID_%4X", &dwVid) != 1)
-                        dwVid = 0;
-                    WCHAR* strPid = wcsstr(var.bstrVal, L"PID_");
-                    if (strPid && swscanf(strPid, L"PID_%4X", &dwPid) != 1)
-                        dwPid = 0;
+				if (wcsstr(var.bstrVal, L"IG_"))
+				{
+					// If it does, then get the VID/PID from var.bstrVal
+					DWORD dwPid = 0, dwVid = 0;
+					WCHAR* strVid = wcsstr(var.bstrVal, L"VID_");
+					if (strVid && swscanf(strVid, L"VID_%4X", &dwVid) != 1)
+						dwVid = 0;
+					WCHAR* strPid = wcsstr(var.bstrVal, L"PID_");
+					if (strPid && swscanf(strPid, L"PID_%4X", &dwPid) != 1)
+						dwPid = 0;
 
-                    // Compare the VID/PID to the DInput device
-                    DWORD dwVidPid = MAKELONG(dwVid, dwPid);
-                    if (dwVidPid == pGuidProductFromDirectInput->Data1)
-                    {
-                        bIsXinputDevice = true;
-                        goto LCleanup;
-                    }
-                }
-            }   
-            SAFE_RELEASE(pDevices[iDevice]);
-        }
-    }
+					// Compare the VID/PID to the DInput device
+					DWORD dwVidPid = MAKELONG(dwVid, dwPid);
+					if (dwVidPid == pGuidProductFromDirectInput->Data1)
+					{
+						bIsXinputDevice = true;
+						goto LCleanup;
+					}
+				}
+			}   
+			SAFE_RELEASE(pDevices[iDevice]);
+		}
+	}
 
 LCleanup:
-    if (bstrNamespace)
-        SysFreeString(bstrNamespace);
-    if (bstrDeviceID)
-        SysFreeString(bstrDeviceID);
-    if (bstrClassName)
-        SysFreeString(bstrClassName);
-    for (iDevice = 0; iDevice < 20; iDevice++)
-        SAFE_RELEASE(pDevices[iDevice]);
-    SAFE_RELEASE(pEnumDevices);
-    SAFE_RELEASE(pIWbemLocator);
-    SAFE_RELEASE(pIWbemServices);
+	if (bstrNamespace)
+		SysFreeString(bstrNamespace);
+	if (bstrDeviceID)
+		SysFreeString(bstrDeviceID);
+	if (bstrClassName)
+		SysFreeString(bstrClassName);
+	for (iDevice = 0; iDevice < 20; iDevice++)
+		SAFE_RELEASE(pDevices[iDevice]);
+	SAFE_RELEASE(pEnumDevices);
+	SAFE_RELEASE(pIWbemLocator);
+	SAFE_RELEASE(pIWbemServices);
 
-    if (bCleanupCOM)
-        CoUninitialize();
+	if (bCleanupCOM)
+		CoUninitialize();
 
-    return bIsXinputDevice;
+	return bIsXinputDevice;
 }
 
 BOOL CALLBACK enumWindowProc(HWND hWnd, LPARAM lParam)

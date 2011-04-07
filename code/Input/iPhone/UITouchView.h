@@ -1,3 +1,5 @@
+#ifndef traktor_input_UITouchView_H
+#define traktor_input_UITouchView_H
 
 #import <UIKit/UIKit.h>
 
@@ -36,3 +38,5 @@ struct ITouchViewCallback
 - (void) touchesCancelled: (NSSet*) touches withEvent: (UIEvent*) event;
 
 @end
+
+#endif	// traktor_input_UITouchView_H
