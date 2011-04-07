@@ -31,19 +31,21 @@ class T_DLLCLASS EventSubject : public Object
 	T_RTTI_CLASS;
 
 public:
-	void addEventHandler(int eventId, EventHandler* eventHandler);
+	void addEventHandler(int32_t eventId, EventHandler* eventHandler);
 
-	void removeEventHandler(int eventId, EventHandler* eventHandler);
+	void removeEventHandler(int32_t eventId, EventHandler* eventHandler);
 
 	void removeAllEventHandlers();
 
-	bool hasEventHandler(int eventId);
+	void removeAllEventHandlers(int32_t eventId);
+
+	bool hasEventHandler(int32_t eventId);
 	
-	void raiseEvent(int eventId, Event* event);
+	void raiseEvent(int32_t eventId, Event* event);
 
 private:
 	typedef RefArray< EventHandler > EventHandlers;
-	std::map< int, std::vector< EventHandlers > > m_eventHandlers;
+	std::map< int32_t, std::vector< EventHandlers > > m_eventHandlers;
 };
 
 	}

@@ -265,9 +265,9 @@ void CanvasGdiWin32::setClipRect(const Rect& rc)
 
 void CanvasGdiWin32::resetClipRect()
 {
+	SelectClipRgn(m_hDC, NULL);
 	if (m_hClip)
 	{
-		SelectClipRgn(m_hDC, NULL);
 		DeleteObject(m_hClip);
 		m_hClip = NULL;
 	}
@@ -600,6 +600,11 @@ Size CanvasGdiWin32::getTextExtent(const std::wstring& text) const
 	SIZE size;
 	GetTextExtentPoint32(m_hDC, wstots(text).c_str(), int(text.length()), &size);
 	return Size(size.cx, size.cy);
+}
+
+void* CanvasGdiWin32::getSystemHandle()
+{
+	return m_hDC;
 }
 
 void CanvasGdiWin32::updatePen()

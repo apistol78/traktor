@@ -76,6 +76,8 @@ public:
 	
 	virtual Size getTextExtent(const std::wstring& text) const;
 
+	virtual void* getSystemHandle();
+
 	static bool startup();
 
 	static void shutdown();

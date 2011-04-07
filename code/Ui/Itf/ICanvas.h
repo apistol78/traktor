@@ -72,6 +72,8 @@ public:
 	virtual void drawText(const Rect& rc, const std::wstring& text, Align halign, Align valign) = 0;
 	
 	virtual Size getTextExtent(const std::wstring& text) const = 0;
+
+	virtual void* getSystemHandle() = 0;
 };
 	
 	}
