@@ -60,7 +60,7 @@ bool DroneToolShortcut::execute(ui::Widget* parent, ui::MenuItem* menuItem)
 		m_workingDirectory,
 		0,
 		false,
-		true,
+		false,
 		false
 	);
 	return process != 0;
