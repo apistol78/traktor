@@ -24,6 +24,7 @@ EntityAdapter::EntityAdapter(world::EntityData* entityData)
 ,	m_selected(false)
 ,	m_expanded(false)
 ,	m_visible(true)
+,	m_locked(false)
 {
 }
 
@@ -256,6 +257,30 @@ bool EntityAdapter::isVisible(bool includingParents) const
 	}
 
 	return true;
+}
+
+void EntityAdapter::setLocked(bool locked)
+{
+	m_locked = locked;
+	if (m_locked)
+		m_selected = false;
+}
+
+bool EntityAdapter::isLocked(bool includingParents) const
+{
+	if (m_locked)
+		return true;
+
+	if (includingParents)
+	{
+		for (EntityAdapter* parent = m_parent; parent; parent = parent->m_parent)
+		{
+			if (parent->m_locked)
+				return true;
+		}
+	}
+
+	return false;
 }
 
 AlignedVector< EntityAdapter::SnapPoint > EntityAdapter::getSnapPoints() const

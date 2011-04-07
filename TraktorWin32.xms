@@ -7775,6 +7775,14 @@
 										<fileName>../../../res/LayerVisible.png</fileName>
 										<items/>
 									</item>
+									<item type="File">
+										<fileName>../../../res/LayerLocked.png</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>../../../res/LayerUnlocked.png</fileName>
+										<items/>
+									</item>
 								</items>
 							</item>
 						</items>

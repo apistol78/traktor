@@ -131,6 +131,10 @@ public:
 	
 	bool isVisible(bool includingParents = true) const;
 
+	void setLocked(bool locked);
+
+	bool isLocked(bool includingParents = true) const;
+
 	//@}
 
 	/*! \name Editor aid. */
@@ -157,6 +161,7 @@ private:
 	bool m_selected;
 	bool m_expanded;
 	bool m_visible;
+	bool m_locked;
 };
 
 	}
