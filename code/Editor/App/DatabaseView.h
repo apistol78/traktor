@@ -84,6 +84,7 @@ private:
 	Ref< Filter > m_filter;
 	RefArray< IWizardTool > m_wizardTools;
 	std::set< Guid > m_rootInstances;
+	std::wstring m_filterText;
 
 	int32_t getIconIndex(const TypeInfo* instanceType) const;
 
@@ -96,6 +97,8 @@ private:
 	void eventToolSelectionClicked(ui::Event* event);
 
 	void eventFilterKey(ui::Event* event);
+
+	void eventTimer(ui::Event* event);
 
 	void eventInstanceActivate(ui::Event* event);
 
