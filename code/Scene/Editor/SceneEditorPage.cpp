@@ -59,6 +59,8 @@
 #include "Resources/EntityTypes.h"
 #include "Resources/LayerHidden.h"
 #include "Resources/LayerVisible.h"
+#include "Resources/LayerLocked.h"
+#include "Resources/LayerUnlocked.h"
 
 namespace traktor
 {
@@ -114,11 +116,14 @@ bool SceneEditorPage::create(ui::Container* parent, editor::IEditorPageSite* sit
 
 	m_imageHidden = ui::Bitmap::load(c_ResourceLayerHidden, sizeof(c_ResourceLayerHidden), L"png");
 	m_imageVisible = ui::Bitmap::load(c_ResourceLayerVisible, sizeof(c_ResourceLayerVisible), L"png");
+	m_imageLocked = ui::Bitmap::load(c_ResourceLayerLocked, sizeof(c_ResourceLayerLocked), L"png");
+	m_imageUnlocked = ui::Bitmap::load(c_ResourceLayerUnlocked, sizeof(c_ResourceLayerUnlocked), L"png");
 
 	m_instanceGrid = new ui::custom::GridView();
 	m_instanceGrid->create(m_entityPanel, ui::WsDoubleBuffer);
 	//m_instanceGrid->addImage(ui::Bitmap::load(c_ResourceEntityTypes, sizeof(c_ResourceEntityTypes), L"png"), 4);
 	m_instanceGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCENE_EDITOR_ENTITY_NAME"), 200));
+	m_instanceGrid->addColumn(new ui::custom::GridColumn(L"", 30));
 	m_instanceGrid->addColumn(new ui::custom::GridColumn(L"", 30));
 	m_instanceGrid->addSelectEventHandler(ui::createMethodHandler(this, &SceneEditorPage::eventInstanceSelect));
 	m_instanceGrid->addExpandEventHandler(ui::createMethodHandler(this, &SceneEditorPage::eventInstanceExpand));
@@ -622,6 +627,11 @@ Ref< ui::custom::GridRow > SceneEditorPage::createEntityListRow(EntityAdapter* e
 		entityAdapter->isVisible(false) ? m_imageVisible : m_imageHidden
 	));
 
+	// Create "locked" check box.
+	row->add(new ui::custom::GridItem(
+		entityAdapter->isLocked(false) ? m_imageLocked : m_imageUnlocked
+	));
+
 	// Recursively add children.
 	const RefArray< EntityAdapter >& children = entityAdapter->getChildren();
 	for (RefArray< EntityAdapter >::const_iterator i = children.begin(); i != children.end(); ++i)
@@ -877,6 +887,27 @@ void SceneEditorPage::eventInstanceClick(ui::Event* event)
 		{
 			item->setImage(m_imageVisible);
 			entityAdapter->setVisible(true);
+		}
+
+		m_instanceGrid->update();
+	}
+	else if (cmd.getId() == 2)
+	{
+		ui::custom::GridRow* row = checked_type_cast< ui::custom::GridRow*, false >(cmdEvent->getItem());
+		ui::custom::GridItem* item = checked_type_cast< ui::custom::GridItem*, false >(row->get(2));
+
+		EntityAdapter* entityAdapter = row->getData< EntityAdapter >(L"ENTITY");
+		T_ASSERT (entityAdapter);
+
+		if (entityAdapter->isLocked())
+		{
+			item->setImage(m_imageUnlocked);
+			entityAdapter->setLocked(false);
+		}
+		else
+		{
+			item->setImage(m_imageLocked);
+			entityAdapter->setLocked(true);
 		}
 
 		m_instanceGrid->update();

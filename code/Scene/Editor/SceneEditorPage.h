@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_SCENE_EDITOR_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -102,6 +102,8 @@ private:
 	Ref< ui::custom::ToolBar > m_entityToolBar;
 	Ref< ui::Bitmap > m_imageHidden;
 	Ref< ui::Bitmap > m_imageVisible;
+	Ref< ui::Bitmap > m_imageLocked;
+	Ref< ui::Bitmap > m_imageUnlocked;
 	Ref< ui::custom::GridView > m_instanceGrid;
 	Ref< ui::Font > m_instanceGridFontItalic;
 	Ref< ui::Font > m_instanceGridFontBold;

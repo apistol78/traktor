@@ -432,8 +432,9 @@ EntityAdapter* SceneEditorContext::queryRay(const Vector4& worldRayOrigin, const
 
 	for (RefArray< EntityAdapter >::iterator i = entityAdapters.begin(); i != entityAdapters.end(); ++i)
 	{
-		// Must be visible, spatial and exclusively pick-able.
+		// Must be unlocked, visible, spatial and exclusively pick-able.
 		if (
+			(*i)->isLocked() ||
 			!(*i)->isVisible() ||
 			!(*i)->isSpatial() ||
 			!(*i)->getEntityEditor() ||
