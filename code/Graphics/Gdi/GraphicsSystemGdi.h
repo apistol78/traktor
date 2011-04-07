@@ -42,6 +42,12 @@ public:
 
 	virtual void flip(bool waitVBlank);
 
+	void flip(HDC hDC);
+
+	HWND getWindow() const { return m_hWnd; }
+
+	HDC getDeviceContext() const { return m_hDC; }
+
 private:
 	HWND m_hWnd;
 	HDC m_hDC;

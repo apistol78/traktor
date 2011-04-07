@@ -105,6 +105,11 @@ Ref< ISurface > GraphicsSystemGdi::createOffScreenSurface(const SurfaceDesc& sur
 
 void GraphicsSystemGdi::flip(bool waitVBlank)
 {
+	flip(m_hDC);
+}
+
+void GraphicsSystemGdi::flip(HDC hDC)
+{
 	SurfaceDesc primarySurfaceDesc;
 	void* primaryMemory = m_primarySurface->lock(primarySurfaceDesc);
 
@@ -141,7 +146,7 @@ void GraphicsSystemGdi::flip(bool waitVBlank)
 	RECT rc;
 	GetClientRect(m_hWnd, &rc);
 	StretchDIBits(
-		m_hDC,
+		hDC,
 		0,
 		0,
 		rc.right,

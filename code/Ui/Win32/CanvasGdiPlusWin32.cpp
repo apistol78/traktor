@@ -471,6 +471,11 @@ Size CanvasGdiPlusWin32::getTextExtent(const std::wstring& text) const
 	return Size(int(boundingBox.Width + 1), int(boundingBox.Height));
 }
 
+void* CanvasGdiPlusWin32::getSystemHandle()
+{
+	return m_hDC;
+}
+
 bool CanvasGdiPlusWin32::startup()
 {
 	GdiplusStartup(&s_token, &s_si, NULL);

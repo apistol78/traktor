@@ -95,6 +95,8 @@ public:
 	
 	Size getTextExtent(const std::wstring& text) const;
 
+	ICanvas* getICanvas() const { return m_canvas; }
+
 private:
 	ICanvas* m_canvas;
 	Color4ub m_foreground;

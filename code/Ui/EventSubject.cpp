@@ -1,7 +1,7 @@
 #include <algorithm>
-#include "Ui/EventSubject.h"
-#include "Ui/EventHandler.h"
 #include "Ui/Event.h"
+#include "Ui/EventHandler.h"
+#include "Ui/EventSubject.h"
 
 namespace traktor
 {
@@ -10,10 +10,10 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.EventSubject", EventSubject, Object)
 
-void EventSubject::addEventHandler(int eventId, EventHandler* eventHandler)
+void EventSubject::addEventHandler(int32_t eventId, EventHandler* eventHandler)
 {
 	std::vector< EventHandlers >& eventHandlers = m_eventHandlers[eventId];
-	int depth = 0;
+	int32_t depth = 0;
 	
 	// Use class hierarchy depth as handler priority.
 	for (const TypeInfo* type = getTypeInfo().getSuper(); type; type = type->getSuper())
@@ -24,7 +24,7 @@ void EventSubject::addEventHandler(int eventId, EventHandler* eventHandler)
 	T_ASSERT(depth >= 0);
 	
 	// Ensure there are enough room in the event handlers vector.
-	if (depth >= int(eventHandlers.size()))
+	if (depth >= int32_t(eventHandlers.size()))
 		eventHandlers.resize(depth + 1);
 	
 	// Insert event handler into vector.
@@ -32,7 +32,7 @@ void EventSubject::addEventHandler(int eventId, EventHandler* eventHandler)
 	eventHandlers[depth].push_back(eventHandler);
 }
 
-void EventSubject::removeEventHandler(int eventId, EventHandler* eventHandler)
+void EventSubject::removeEventHandler(int32_t eventId, EventHandler* eventHandler)
 {
 	std::vector< EventHandlers >& eventHandlers = m_eventHandlers[eventId];
 	for (std::vector< EventHandlers >::iterator i = eventHandlers.begin(); i != eventHandlers.end(); ++i)
@@ -48,12 +48,18 @@ void EventSubject::removeAllEventHandlers()
 	m_eventHandlers.clear();
 }
 
-bool EventSubject::hasEventHandler(int eventId)
+void EventSubject::removeAllEventHandlers(int32_t eventId)
+{
+	std::vector< EventHandlers >& eventHandlers = m_eventHandlers[eventId];
+	eventHandlers.resize(0);
+}
+
+bool EventSubject::hasEventHandler(int32_t eventId)
 {
 	return !m_eventHandlers[eventId].empty();
 }
 
-void EventSubject::raiseEvent(int eventId, Event* event)
+void EventSubject::raiseEvent(int32_t eventId, Event* event)
 {
 	T_ANONYMOUS_VAR(Ref< EventSubject >)(this);
 

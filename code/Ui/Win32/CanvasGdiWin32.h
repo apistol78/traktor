@@ -70,7 +70,9 @@ public:
 	virtual void drawText(const Rect& rc, const std::wstring& text, Align halign = AnLeft, Align valign = AnTop);
 	
 	virtual Size getTextExtent(const std::wstring& text) const;
-	
+
+	virtual void* getSystemHandle();
+
 private:
 	PAINTSTRUCT m_ps;
 	HDC m_hDC;
