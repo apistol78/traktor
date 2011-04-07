@@ -178,5 +178,3 @@ std::wstring NativeVolume::getSystemPath(const Path& path) const
 }
 
 }
-
-

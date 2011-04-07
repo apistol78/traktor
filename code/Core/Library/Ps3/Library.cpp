@@ -40,5 +40,3 @@ void* Library::find(const std::wstring& symbol)
 }
 
 }
-
-

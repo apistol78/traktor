@@ -209,7 +209,7 @@ public:
 			{
 				if (bufferData() <= 0)
 					break;
-				while(ogg_sync_pageout(&m_oy, &m_og) > 0)
+				while (ogg_sync_pageout(&m_oy, &m_og) > 0)
 					ogg_stream_pagein(&m_to, &m_og);
 			}
 		}

@@ -63,8 +63,8 @@ public:
 		}
 		else
 			return false;
-
 	}
+
 	Matrix44 getMatrix(uint32_t index) const
 	{
 		return Matrix44::identity();
@@ -84,8 +84,9 @@ public:
 			m_data[index * m_stride + 1],
 			m_data[index * m_stride + 2],
 			1.0f
-			);
+		);
 	}
+
 	Vector4 getDataNormal(uint32_t index) const
 	{
 		T_ASSERT((index + 1) * m_stride <= m_data.size());
@@ -94,16 +95,18 @@ public:
 			m_data[index * m_stride + 1],
 			m_data[index * m_stride + 2],
 			0.0f
-			);
+		);
 	}
+
 	Vector2 getTexcoord(uint32_t index) const
 	{
 		T_ASSERT((index + 1) * m_stride <= m_data.size());
 		return Vector2(
-					m_data[index * m_stride + 0],
-			 1.0f - m_data[index * m_stride + 1]
-			);
+			m_data[index * m_stride + 0],
+			1.0f - m_data[index * m_stride + 1]
+		);
 	}
+
 	Vector4 getDataColor(uint32_t index) const
 	{
 		T_ASSERT((index + 1) * m_stride <= m_data.size());
@@ -112,8 +115,9 @@ public:
 			m_data[index * m_stride + 1],
 			m_data[index * m_stride + 2],
 			m_stride == 4 ? m_data[index * m_stride + 3] : 0
-			);
+		);
 	}
+
 private:
 	std::wstring m_id;
 	std::vector< float > m_data;
@@ -442,7 +446,6 @@ public:
 	Input m_morphTargets;
 	Input m_morphWeights;
 };
-
 
 class MorphData
 {

@@ -31,5 +31,4 @@ private:
 
 }
 
-
 #endif	// traktor_MemberAabb_H

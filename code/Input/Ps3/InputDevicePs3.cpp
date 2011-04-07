@@ -181,21 +181,21 @@ void InputDevicePs3::readState()
 			log::debug << L"Pad " << m_padIndex << L" connected" << Endl;
 
 			log::debug << L"   Capability  :" << s_info.device_capability[m_padIndex] << Endl;
-			if(s_info.device_capability[m_padIndex] & CELL_PAD_CAPABILITY_PS3_CONFORMITY)
+			if (s_info.device_capability[m_padIndex] & CELL_PAD_CAPABILITY_PS3_CONFORMITY)
 				log::debug << L"   + PS3_CONFORMITY" << Endl;
-			if(s_info.device_capability[m_padIndex] & CELL_PAD_CAPABILITY_PRESS_MODE)
+			if (s_info.device_capability[m_padIndex] & CELL_PAD_CAPABILITY_PRESS_MODE)
 				log::debug << L"   + PRESS_MODE" << Endl;
-			if(s_info.device_capability[m_padIndex] & CELL_PAD_CAPABILITY_SENSOR_MODE)
+			if (s_info.device_capability[m_padIndex] & CELL_PAD_CAPABILITY_SENSOR_MODE)
 				log::debug << L"   + SENSOR_MODE" << Endl;
-			if(s_info.device_capability[m_padIndex] & CELL_PAD_CAPABILITY_HP_ANALOG_STICK)
+			if (s_info.device_capability[m_padIndex] & CELL_PAD_CAPABILITY_HP_ANALOG_STICK)
 				log::debug << L"   + HP_ANALOG_STICK" << Endl;
-			if(s_info.device_capability[m_padIndex] & CELL_PAD_CAPABILITY_ACTUATOR)
+			if (s_info.device_capability[m_padIndex] & CELL_PAD_CAPABILITY_ACTUATOR)
 				log::debug << L"   + ACTUATOR" << Endl;
 
 			log::debug << L"   Port Setting: " << s_info.port_setting[m_padIndex] << Endl;
-			if(s_info.port_setting[m_padIndex] & CELL_PAD_SETTING_PRESS_ON)
+			if (s_info.port_setting[m_padIndex] & CELL_PAD_SETTING_PRESS_ON)
 				log::debug << L"   + PRESS_MODE ON" << Endl;
-			if(s_info.port_setting[m_padIndex] & CELL_PAD_SETTING_SENSOR_ON)
+			if (s_info.port_setting[m_padIndex] & CELL_PAD_SETTING_SENSOR_ON)
 				log::debug << L"   + SENSOR_MODE ON" << Endl;
 
 			log::debug << L"   Device Type : " << s_info.device_type[m_padIndex] << Endl;
@@ -213,7 +213,7 @@ void InputDevicePs3::readState()
 
 bool InputDevicePs3::supportRumble() const
 {
-	if(s_info.device_capability[m_padIndex] & CELL_PAD_CAPABILITY_ACTUATOR)
+	if (s_info.device_capability[m_padIndex] & CELL_PAD_CAPABILITY_ACTUATOR)
 		return true;
 	else
 		return false;

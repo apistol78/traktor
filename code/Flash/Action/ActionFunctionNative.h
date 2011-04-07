@@ -20,7 +20,6 @@ namespace traktor
 
 class ActionContext;
 
-
 /*! \brief Native call arguments.
  * \ingroup Flash
  */
@@ -32,7 +31,6 @@ struct CallArgs
 	ActionValue ret;
 };
 
-
 /*! \brief Native function wrapper.
  * \ingroup Flash
  */
@@ -40,7 +38,6 @@ struct T_DLLCLASS INativeFunction : public Object
 {
 	virtual void call(CallArgs& ca) = 0;
 };
-
 
 template < typename Type, bool IsTypePtr = IsPointer< Type >::value >
 struct ActionValueCast { };
@@ -115,7 +112,6 @@ struct ActionValueCast< Type, true >
 	static Type get(const ActionValue& value) { return value.getObjectSafe< typename IsPointer< Type >::base_t >(); }
 };
 
-
 template <
 	typename CallClassType
 >
@@ -129,7 +125,6 @@ struct MethodNativeFunction : public INativeFunction
 		(m_object->*m_method)(ca);
 	}
 };
-
 
 template <
 	typename CallClassType,
@@ -165,7 +160,6 @@ struct MethodNativeFunction_0 < CallClassType, SelfClassType, void > : public IN
 		);
 	}
 };
-
 
 template <
 	typename CallClassType,
@@ -208,7 +202,6 @@ struct MethodNativeFunction_1 < CallClassType, SelfClassType, void, Argument1Typ
 	}
 };
 
-
 template <
 	typename ClassType,
 	typename ReturnType
@@ -237,7 +230,6 @@ struct MethodNativeFunction_self_0 < ClassType, void > : public INativeFunction
 		(checked_type_cast< ClassType*, false >(ca.self)->*m_method)();
 	}
 };
-
 
 template <
 	typename ClassType,
@@ -275,7 +267,6 @@ struct MethodNativeFunction_self_1 < ClassType, void, Argument1Type > : public I
 		);
 	}
 };
-
 
 template <
 	typename ClassType,
@@ -317,7 +308,6 @@ struct MethodNativeFunction_self_2 < ClassType, void, Argument1Type, Argument2Ty
 		);
 	}
 };
-
 
 template <
 	typename ClassType,
@@ -364,7 +354,6 @@ struct MethodNativeFunction_self_3 < ClassType, void, Argument1Type, Argument2Ty
 	}
 };
 
-
 /*! \brief ActionScript native function.
  * \ingroup Flash
  */
@@ -383,7 +372,6 @@ private:
 	Ref< INativeFunction > m_nativeFunction;
 };
 
-
 template <
 	typename CallClassType
 >
@@ -394,7 +382,6 @@ Ref< ActionFunctionNative > createNativeFunction(CallClassType* object, void (Ca
 	nf->m_method = method;
 	return new ActionFunctionNative(nf);
 }
-
 
 template <
 	typename CallClassType,
@@ -408,7 +395,6 @@ Ref< ActionFunctionNative > createNativeFunction(CallClassType* object, ReturnTy
 	nf->m_method = method;
 	return new ActionFunctionNative(nf);
 }
-
 
 template <
 	typename CallClassType,
@@ -424,7 +410,6 @@ Ref< ActionFunctionNative > createNativeFunction(CallClassType* object, ReturnTy
 	return new ActionFunctionNative(nf);
 }
 
-
 template <
 	typename ClassType,
 	typename ReturnType
@@ -435,7 +420,6 @@ Ref< ActionFunctionNative > createNativeFunction(ReturnType (ClassType::*method)
 	nf->m_method = method;
 	return new ActionFunctionNative(nf);
 }
-
 
 template <
 	typename ClassType,
@@ -448,7 +432,6 @@ Ref< ActionFunctionNative > createNativeFunction(ReturnType (ClassType::*method)
 	nf->m_method = method;
 	return new ActionFunctionNative(nf);
 }
-
 
 template <
 	typename ClassType,
@@ -463,7 +446,6 @@ Ref< ActionFunctionNative > createNativeFunction(ReturnType (ClassType::*method)
 	return new ActionFunctionNative(nf);
 }
 
-
 template <
 	typename ClassType,
 	typename ReturnType,
@@ -477,7 +459,6 @@ Ref< ActionFunctionNative > createNativeFunction(ReturnType (ClassType::*method)
 	nf->m_method = method;
 	return new ActionFunctionNative(nf);
 }
-
 
 	}
 }

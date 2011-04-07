@@ -114,7 +114,6 @@ public:
 	// \name Assignment operator.
 	// @{
 
-
 	Ref& operator = (const Ref& ref)
 	{
 		replace(ref.m_ptr);

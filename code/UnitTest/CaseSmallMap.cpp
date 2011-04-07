@@ -42,7 +42,6 @@ void CaseSmallMap::run()
 
 	t0.stop();
 
-
 	Timer t1;
 	t1.start();
 
@@ -60,7 +59,6 @@ void CaseSmallMap::run()
 	}
 
 	t1.stop();
-
 
 	log::info << L"std::map " << uint32_t(t0.getElapsedTime() * 1000.0f) << L" ms" << Endl;
 	log::info << L"SmallMap " << uint32_t(t1.getElapsedTime() * 1000.0f) << L" ms" << Endl;

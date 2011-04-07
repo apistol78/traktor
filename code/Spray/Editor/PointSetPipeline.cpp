@@ -141,7 +141,6 @@ bool PointSetPipeline::buildOutput(
 		}
 	}
 
-
 	Ref< db::Instance > instance = pipelineBuilder->createOutputInstance(
 		outputPath,
 		outputGuid

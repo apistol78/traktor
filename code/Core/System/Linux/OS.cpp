@@ -75,16 +75,16 @@ bool OS::exploreFile(const Path& file) const
 
 OS::envmap_t OS::getEnvironment() const
 {
-    return envmap_t();
+	return envmap_t();
 }
 
 Ref< IProcess > OS::execute(
-    const Path& file,
-    const std::wstring& commandLine,
-    const Path& workingDirectory,
-    const envmap_t* envmap,
-    bool redirect,
-    bool mute
+	const Path& file,
+	const std::wstring& commandLine,
+	const Path& workingDirectory,
+	const envmap_t* envmap,
+	bool redirect,
+	bool mute
 ) const
 {
 	return 0;

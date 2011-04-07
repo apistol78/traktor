@@ -28,11 +28,6 @@ void cellSpursJobQueueMain(CellSpursJobContext2* context, CellSpursJob256* job25
 			0
 		);
 		cellSpursJobQueueDmaWaitTagStatusAll(1 << context->dmaTag);
-
-
-
-
-
 	}
 
 	uint32_t vertexSize = render::getVertexSize(m_vertexElements);

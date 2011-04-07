@@ -70,5 +70,3 @@ void SurfaceOffscreen::blt(
 
 	}
 }
-
-

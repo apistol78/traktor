@@ -69,4 +69,4 @@ public:
 
 }
 
-#endif	// traktor_Stream_H
+#endif	// traktor_IStream_H

@@ -128,6 +128,5 @@ int PsnAchievements::callbackTrophyStatus(SceNpTrophyContext context, SceNpTroph
 	return 0;
 }
 
-
 	}
 }
