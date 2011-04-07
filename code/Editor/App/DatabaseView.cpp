@@ -1,5 +1,6 @@
 #include "Core/Io/Path.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/WildCompare.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Settings/PropertyGroup.h"
@@ -288,15 +289,15 @@ bool DatabaseView::create(ui::Widget* parent)
 	for (std::vector< std::wstring >::const_iterator i = rootInstances.begin(); i != rootInstances.end(); ++i)
 		m_rootInstances.insert(Guid(*i));
 
+	addTimerEventHandler(createMethodHandler(this, &DatabaseView::eventTimer));
 	return true;
 }
 
 void DatabaseView::destroy()
 {
-	m_menuGroup->destroy();
-	m_menuInstance->destroy();
-	m_menuInstanceAsset->destroy();
-
+	safeDestroy(m_menuGroup);
+	safeDestroy(m_menuInstance);
+	safeDestroy(m_menuInstanceAsset);
 	ui::Container::destroy();
 }
 
@@ -749,9 +750,17 @@ void DatabaseView::eventToolSelectionClicked(ui::Event* event)
 
 void DatabaseView::eventFilterKey(ui::Event* event)
 {
-	std::wstring filter = m_editFilter->getText();
-	if (!filter.empty())
-		m_filter = new TextFilter(filter);
+	m_filterText = m_editFilter->getText();
+	stopTimer();
+	startTimer(500);
+}
+
+void DatabaseView::eventTimer(ui::Event* event)
+{
+	stopTimer();
+
+	if (!m_filterText.empty())
+		m_filter = new TextFilter(m_filterText);
 	else
 		m_filter = new DefaultFilter();
 
