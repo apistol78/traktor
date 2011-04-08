@@ -155,6 +155,7 @@ bool SceneEditorPage::create(ui::Container* parent, editor::IEditorPageSite* sit
 	m_context->addPostBuildEventHandler(ui::createMethodHandler(this, &SceneEditorPage::eventContextPostBuild));
 	m_context->addSelectEventHandler(ui::createMethodHandler(this, &SceneEditorPage::eventContextSelect));
 	m_context->addPreModifyEventHandler(ui::createMethodHandler(this, &SceneEditorPage::eventContextPreModify));
+	m_context->addPostModifyEventHandler(ui::createMethodHandler(this, &SceneEditorPage::eventContextPostModify));
 
 	// Restore camera from settings.
 	Ref< Settings > settings = m_context->getEditor()->getSettings();
@@ -931,6 +932,11 @@ void SceneEditorPage::eventContextSelect(ui::Event* event)
 void SceneEditorPage::eventContextPreModify(ui::Event* event)
 {
 	m_undoStack->push(m_dataObject);
+}
+
+void SceneEditorPage::eventContextPostModify(ui::Event* event)
+{
+	updatePropertyObject();
 }
 
 	}

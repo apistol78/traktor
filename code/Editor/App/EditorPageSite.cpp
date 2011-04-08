@@ -48,7 +48,7 @@ void EditorPageSite::hide()
 
 void EditorPageSite::setPropertyObject(Object* properties)
 {
-	if (m_active && m_properties != properties)
+	if (m_active)
 		m_editor->setPropertyObject(properties);
 	m_properties = properties;
 }
