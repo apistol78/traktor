@@ -484,9 +484,9 @@ void PerspectiveRenderControl::eventMouseMove(ui::Event* event)
 			{
 				if ((*i)->getEntityEditor())
 					(*i)->getEntityEditor()->beginModifier(
-					m_context,
-					*i
-				);
+						m_context,
+						*i
+					);
 			}
 
 			// Issue begin modification event.
@@ -496,9 +496,6 @@ void PerspectiveRenderControl::eventMouseMove(ui::Event* event)
 		}
 
 		// Apply modifier on selected entities.
-		Ref< IModifier > modifier = m_context->getModifier();
-		T_ASSERT (modifier);
-
 		Matrix44 projection = m_worldRenderView.getProjection();
 		Matrix44 projectionInverse = projection.inverse();
 
