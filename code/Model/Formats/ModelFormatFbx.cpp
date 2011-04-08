@@ -40,7 +40,7 @@ KFbxXMatrix getGeometricTransform(const KFbxNode* fbxNode)
 	return KFbxXMatrix(t, r, s);
 }
 
-bool convertMesh(Model& outModel, KFbxScene* scene, KFbxNode* meshNode)
+bool convertMesh(Model& outModel, KFbxScene* scene, KFbxNode* meshNode, uint32_t importFlags)
 {
 	int32_t vertexId = 0;
 
@@ -49,210 +49,225 @@ bool convertMesh(Model& outModel, KFbxScene* scene, KFbxNode* meshNode)
 		return false;
 
 	// Convert materials.
-	uint32_t materialBase = outModel.getMaterials().size();
-	int32_t materialCount = meshNode->GetMaterialCount();
-	for (int32_t i = 0; i < materialCount; ++i)
+	uint32_t materialBase = c_InvalidIndex;
+	int32_t materialCount = 0;
+	if (importFlags & ModelFormat::IfMaterials)
 	{
-		KFbxSurfaceMaterial* material = meshNode->GetMaterial(i);
-		if (!material)
-			continue;
+		materialBase = outModel.getMaterials().size();
+		materialCount = meshNode->GetMaterialCount();
+		for (int32_t i = 0; i < materialCount; ++i)
+		{
+			KFbxSurfaceMaterial* material = meshNode->GetMaterial(i);
+			if (!material)
+				continue;
 
-		Material mm;
-		mm.setName(mbstows(material->GetName()));
-		outModel.addMaterial(mm);
+			Material mm;
+			mm.setName(mbstows(material->GetName()));
+			outModel.addMaterial(mm);
+		}
 	}
 
 	// Convert vertex positions.
-	KFbxVector4* controlPoints = mesh->GetControlPoints();
-	if (!controlPoints)
-		return false;
+	uint32_t positionBase = c_InvalidIndex;
+	if (importFlags & ModelFormat::IfMeshPositions)
+	{
+		KFbxVector4* controlPoints = mesh->GetControlPoints();
+		if (!controlPoints)
+			return false;
 
-	uint32_t positionBase = outModel.getPositions().size();
+		positionBase = outModel.getPositions().size();
 
-	KFbxAnimEvaluator* sceneEvaluator = scene->GetEvaluator();
-	KFbxXMatrix nodeTransform = sceneEvaluator->GetNodeGlobalTransform(meshNode, KTime(0));
-	KFbxXMatrix geometricTransform = getGeometricTransform(meshNode);
-	KFbxXMatrix globalTransform = nodeTransform * geometricTransform;
+		KFbxAnimEvaluator* sceneEvaluator = scene->GetEvaluator();
+		KFbxXMatrix nodeTransform = sceneEvaluator->GetNodeGlobalTransform(meshNode, KTime(0));
+		KFbxXMatrix geometricTransform = getGeometricTransform(meshNode);
+		KFbxXMatrix globalTransform = nodeTransform * geometricTransform;
 
-	int32_t controlPointsCount = mesh->GetControlPointsCount();
-	for (int32_t i = 0; i < controlPointsCount; ++i)
-		outModel.addPosition(convertVector4(globalTransform.MultT(controlPoints[i])).xyz1());
+		int32_t controlPointsCount = mesh->GetControlPointsCount();
+		for (int32_t i = 0; i < controlPointsCount; ++i)
+			outModel.addPosition(convertVector4(globalTransform.MultT(controlPoints[i])).xyz1());
+	}
 
 	// Convert polygons.
-	int32_t polygonCount = mesh->GetPolygonCount();
-	for (int32_t i = 0; i < polygonCount; ++i)
+	if (importFlags & (ModelFormat::IfMeshPolygons | ModelFormat::IfMeshVertices))
 	{
-		Polygon polygon;
-
-		// Assign material; \fixme should probably create a polygon for each layer of material.
-		for (int32_t j = 0; j < mesh->GetLayerCount(); ++j)
+		int32_t polygonCount = mesh->GetPolygonCount();
+		for (int32_t i = 0; i < polygonCount; ++i)
 		{
-			KFbxLayerElementMaterial* layerMaterials = mesh->GetLayer(j)->GetMaterials();
-			if (layerMaterials)
+			Polygon polygon;
+
+			// Assign material; \fixme should probably create a polygon for each layer of material.
+			if (importFlags & ModelFormat::IfMaterials)
 			{
-				int32_t materialIndex = layerMaterials->GetIndexArray().GetAt(i);
-				polygon.setMaterial(materialBase + materialIndex);
-			}
-		}
-		// If no material found but mesh have a material defined then set first material.
-		if (materialCount > 0 && polygon.getMaterial() == c_InvalidIndex)
-			polygon.setMaterial(materialBase);
-
-		int32_t polygonSize = mesh->GetPolygonSize(i);
-		for (int32_t j = 0; j < polygonSize; ++j, ++vertexId)
-		{
-			int32_t pointIndex = mesh->GetPolygonVertex(i, j);
-
-			Vertex vertex;
-			vertex.setPosition(positionBase + pointIndex);
-
-			for (int32_t k = 0; k < mesh->GetLayerCount(); ++k)
-			{
-				// Vertex colors.
-				KFbxLayerElementVertexColor* layerVertexColors = mesh->GetLayer(k)->GetVertexColors();
-				if (layerVertexColors)
+				for (int32_t j = 0; j < mesh->GetLayerCount(); ++j)
 				{
-				}
-
-				// Vertex texture UVs.
-				KFbxLayerElementUV* layerUVs = mesh->GetLayer(k)->GetUVs();
-				if (layerUVs)
-				{
-					switch (layerUVs->GetMappingMode())
+					KFbxLayerElementMaterial* layerMaterials = mesh->GetLayer(j)->GetMaterials();
+					if (layerMaterials)
 					{
-					case KFbxLayerElement::eBY_CONTROL_POINT:
-						switch (layerUVs->GetReferenceMode())
-						{
-						case KFbxLayerElement::eDIRECT:
-							{
-								Vector2 uv = convertVector2(layerUVs->GetDirectArray().GetAt(pointIndex));
-								vertex.setTexCoord(0, outModel.addUniqueTexCoord(uv));
-							}
-							break;
+						int32_t materialIndex = layerMaterials->GetIndexArray().GetAt(i);
+						polygon.setMaterial(materialBase + materialIndex);
+					}
+				}
+				// If no material found but mesh have a material defined then set first material.
+				if (materialCount > 0 && polygon.getMaterial() == c_InvalidIndex)
+					polygon.setMaterial(materialBase);
+			}
 
-						case KFbxLayerElement::eINDEX_TO_DIRECT:
-							{
-								int32_t id = layerUVs->GetIndexArray().GetAt(pointIndex);
-								Vector2 uv = convertVector2(layerUVs->GetDirectArray().GetAt(id));
-								vertex.setTexCoord(0, outModel.addUniqueTexCoord(uv));
-							}
-							break;
-						}
-						break;
+			int32_t polygonSize = mesh->GetPolygonSize(i);
+			for (int32_t j = 0; j < polygonSize; ++j, ++vertexId)
+			{
+				int32_t pointIndex = mesh->GetPolygonVertex(i, j);
 
-					case KFbxLayerElement::eBY_POLYGON_VERTEX:
+				Vertex vertex;
+				vertex.setPosition(positionBase + pointIndex);
+
+				for (int32_t k = 0; k < mesh->GetLayerCount(); ++k)
+				{
+					// Vertex colors.
+					KFbxLayerElementVertexColor* layerVertexColors = mesh->GetLayer(k)->GetVertexColors();
+					if (layerVertexColors)
+					{
+					}
+
+					// Vertex texture UVs.
+					KFbxLayerElementUV* layerUVs = mesh->GetLayer(k)->GetUVs();
+					if (layerUVs)
+					{
+						switch (layerUVs->GetMappingMode())
 						{
-							int32_t textureUVIndex = mesh->GetTextureUVIndex(i, j);
+						case KFbxLayerElement::eBY_CONTROL_POINT:
 							switch (layerUVs->GetReferenceMode())
 							{
 							case KFbxLayerElement::eDIRECT:
+								{
+									Vector2 uv = convertVector2(layerUVs->GetDirectArray().GetAt(pointIndex));
+									vertex.setTexCoord(0, outModel.addUniqueTexCoord(uv));
+								}
+								break;
+
 							case KFbxLayerElement::eINDEX_TO_DIRECT:
 								{
-									Vector2 uv = convertVector2(layerUVs->GetDirectArray().GetAt(textureUVIndex));
+									int32_t id = layerUVs->GetIndexArray().GetAt(pointIndex);
+									Vector2 uv = convertVector2(layerUVs->GetDirectArray().GetAt(id));
 									vertex.setTexCoord(0, outModel.addUniqueTexCoord(uv));
 								}
 								break;
 							}
-						}
-						break;
-					}
-				}
+							break;
 
-				// Vertex normals.
-				KFbxLayerElementNormal* layerNormals = mesh->GetLayer(k)->GetNormals();
-				if (layerNormals)
-				{
-					if (layerNormals->GetMappingMode() == KFbxLayerElement::eBY_POLYGON_VERTEX)
+						case KFbxLayerElement::eBY_POLYGON_VERTEX:
+							{
+								int32_t textureUVIndex = mesh->GetTextureUVIndex(i, j);
+								switch (layerUVs->GetReferenceMode())
+								{
+								case KFbxLayerElement::eDIRECT:
+								case KFbxLayerElement::eINDEX_TO_DIRECT:
+									{
+										Vector2 uv = convertVector2(layerUVs->GetDirectArray().GetAt(textureUVIndex));
+										vertex.setTexCoord(0, outModel.addUniqueTexCoord(uv));
+									}
+									break;
+								}
+							}
+							break;
+						}
+					}
+
+					// Vertex normals.
+					KFbxLayerElementNormal* layerNormals = mesh->GetLayer(k)->GetNormals();
+					if (layerNormals)
 					{
-						switch (layerNormals->GetReferenceMode())
+						if (layerNormals->GetMappingMode() == KFbxLayerElement::eBY_POLYGON_VERTEX)
 						{
-						case KFbxLayerElement::eDIRECT:
+							switch (layerNormals->GetReferenceMode())
 							{
-								Vector4 normal = convertVector4(layerNormals->GetDirectArray().GetAt(vertexId)).xyz0().normalized();
-								vertex.setNormal(outModel.addUniqueNormal(normal));
-							}
-							break;
+							case KFbxLayerElement::eDIRECT:
+								{
+									Vector4 normal = convertVector4(layerNormals->GetDirectArray().GetAt(vertexId)).xyz0().normalized();
+									vertex.setNormal(outModel.addUniqueNormal(normal));
+								}
+								break;
 
-						case KFbxLayerElement::eINDEX_TO_DIRECT:
-							{
-								int32_t id = layerNormals->GetIndexArray().GetAt(vertexId);
-								Vector4 normal = convertVector4(layerNormals->GetDirectArray().GetAt(id)).xyz0().normalized();
-								vertex.setNormal(outModel.addUniqueNormal(normal));
-							}
-							break;
+							case KFbxLayerElement::eINDEX_TO_DIRECT:
+								{
+									int32_t id = layerNormals->GetIndexArray().GetAt(vertexId);
+									Vector4 normal = convertVector4(layerNormals->GetDirectArray().GetAt(id)).xyz0().normalized();
+									vertex.setNormal(outModel.addUniqueNormal(normal));
+								}
+								break;
 
-						default:
-							break;
+							default:
+								break;
+							}
 						}
 					}
-				}
 
-				// Vertex tangents.
-				KFbxLayerElementTangent* layerTangents = mesh->GetLayer(k)->GetTangents();
-				if (layerTangents)
-				{
-					if (layerTangents->GetMappingMode() == KFbxLayerElement::eBY_POLYGON_VERTEX)
+					// Vertex tangents.
+					KFbxLayerElementTangent* layerTangents = mesh->GetLayer(k)->GetTangents();
+					if (layerTangents)
 					{
-						switch (layerTangents->GetReferenceMode())
+						if (layerTangents->GetMappingMode() == KFbxLayerElement::eBY_POLYGON_VERTEX)
 						{
-						case KFbxLayerElement::eDIRECT:
+							switch (layerTangents->GetReferenceMode())
 							{
-								Vector4 tangent = convertVector4(layerTangents->GetDirectArray().GetAt(vertexId)).xyz0().normalized();
-								vertex.setTangent(outModel.addUniqueNormal(tangent));
-							}
-							break;
+							case KFbxLayerElement::eDIRECT:
+								{
+									Vector4 tangent = convertVector4(layerTangents->GetDirectArray().GetAt(vertexId)).xyz0().normalized();
+									vertex.setTangent(outModel.addUniqueNormal(tangent));
+								}
+								break;
 
-						case KFbxLayerElement::eINDEX_TO_DIRECT:
-							{
-								int32_t id = layerTangents->GetIndexArray().GetAt(vertexId);
-								Vector4 tangent = convertVector4(layerTangents->GetDirectArray().GetAt(id)).xyz0().normalized();
-								vertex.setTangent(outModel.addUniqueNormal(tangent));
-							}
-							break;
+							case KFbxLayerElement::eINDEX_TO_DIRECT:
+								{
+									int32_t id = layerTangents->GetIndexArray().GetAt(vertexId);
+									Vector4 tangent = convertVector4(layerTangents->GetDirectArray().GetAt(id)).xyz0().normalized();
+									vertex.setTangent(outModel.addUniqueNormal(tangent));
+								}
+								break;
 
-						default:
-							break;
+							default:
+								break;
+							}
 						}
 					}
-				}
 
-				// Vertex binormals.
-				KFbxLayerElementBinormal* layerBinormals = mesh->GetLayer(k)->GetBinormals();
-				if (layerBinormals)
-				{
-					if (layerBinormals->GetMappingMode() == KFbxLayerElement::eBY_POLYGON_VERTEX)
+					// Vertex binormals.
+					KFbxLayerElementBinormal* layerBinormals = mesh->GetLayer(k)->GetBinormals();
+					if (layerBinormals)
 					{
-						switch (layerTangents->GetReferenceMode())
+						if (layerBinormals->GetMappingMode() == KFbxLayerElement::eBY_POLYGON_VERTEX)
 						{
-						case KFbxLayerElement::eDIRECT:
+							switch (layerTangents->GetReferenceMode())
 							{
-								Vector4 binormal = convertVector4(layerBinormals->GetDirectArray().GetAt(vertexId)).xyz0().normalized();
-								vertex.setBinormal(outModel.addUniqueNormal(binormal));
-							}
-							break;
+							case KFbxLayerElement::eDIRECT:
+								{
+									Vector4 binormal = convertVector4(layerBinormals->GetDirectArray().GetAt(vertexId)).xyz0().normalized();
+									vertex.setBinormal(outModel.addUniqueNormal(binormal));
+								}
+								break;
 
-						case KFbxLayerElement::eINDEX_TO_DIRECT:
-							{
-								int32_t id = layerBinormals->GetIndexArray().GetAt(vertexId);
-								Vector4 binormal = convertVector4(layerBinormals->GetDirectArray().GetAt(id)).xyz0().normalized();
-								vertex.setBinormal(outModel.addUniqueNormal(binormal));
-							}
-							break;
+							case KFbxLayerElement::eINDEX_TO_DIRECT:
+								{
+									int32_t id = layerBinormals->GetIndexArray().GetAt(vertexId);
+									Vector4 binormal = convertVector4(layerBinormals->GetDirectArray().GetAt(id)).xyz0().normalized();
+									vertex.setBinormal(outModel.addUniqueNormal(binormal));
+								}
+								break;
 
-						default:
-							break;
+							default:
+								break;
+							}
 						}
 					}
 				}
+
+				polygon.addVertex(outModel.addUniqueVertex(vertex));
 			}
 
-			polygon.addVertex(outModel.addUniqueVertex(vertex));
+			// FBX winding is inverse to what we expect so we need to flip every polygon.
+			polygon.flipWinding();
+
+			outModel.addPolygon(polygon);
 		}
-
-		// FBX winding is inverse to what we expect so we need to flip every polygon.
-		polygon.flipWinding();
-
-		outModel.addPolygon(polygon);
 	}
 
 	return true;
@@ -328,7 +343,7 @@ Ref< Model > ModelFormatFbx::read(const Path& filePath, uint32_t importFlags) co
 			KFbxNodeAttribute::EAttributeType attributeType = childNode->GetNodeAttribute()->GetAttributeType();
 			if (attributeType == KFbxNodeAttribute::eMESH)
 			{
-				if (!convertMesh(*model, scene, childNode))
+				if (!convertMesh(*model, scene, childNode, importFlags))
 				{
 					log::error << L"Unable to import FBX model; failed to convert mesh" << Endl;
 					return 0;
@@ -338,25 +353,28 @@ Ref< Model > ModelFormatFbx::read(const Path& filePath, uint32_t importFlags) co
 	}
 
 	// Create and assign default material if anonomous faces has been created.
-	uint32_t defaultMaterialIndex = c_InvalidIndex;
-	for (uint32_t i = 0; i < model->getPolygonCount(); ++i)
+	if (importFlags & IfMaterials)
 	{
-		const Polygon& polygon = model->getPolygon(i);
-		if (polygon.getMaterial() == c_InvalidIndex)
+		uint32_t defaultMaterialIndex = c_InvalidIndex;
+		for (uint32_t i = 0; i < model->getPolygonCount(); ++i)
 		{
-			if (defaultMaterialIndex == c_InvalidIndex)
+			const Polygon& polygon = model->getPolygon(i);
+			if (polygon.getMaterial() == c_InvalidIndex)
 			{
-				Material material;
-				material.setName(L"FBX_Default");
-				material.setColor(Color4ub(255, 255, 255));
-				material.setDiffuseTerm(1.0f);
-				material.setSpecularTerm(1.0f);
-				defaultMaterialIndex = model->addMaterial(material);
-			}
+				if (defaultMaterialIndex == c_InvalidIndex)
+				{
+					Material material;
+					material.setName(L"FBX_Default");
+					material.setColor(Color4ub(255, 255, 255));
+					material.setDiffuseTerm(1.0f);
+					material.setSpecularTerm(1.0f);
+					defaultMaterialIndex = model->addMaterial(material);
+				}
 
-			Polygon replacement = polygon;
-			replacement.setMaterial(defaultMaterialIndex);
-			model->setPolygon(i, replacement);
+				Polygon replacement = polygon;
+				replacement.setMaterial(defaultMaterialIndex);
+				model->setPolygon(i, replacement);
+			}
 		}
 	}
 
