@@ -1,5 +1,6 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/EnterLeave.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Serialization/DeepHash.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRef.h"
@@ -182,11 +183,11 @@ void SceneEditorPage::destroy()
 	m_site->destroyAdditionalPanel(m_controllerPanel);
 
 	// Destroy widgets.
-	m_entityMenu->destroy();
-	m_entityPanel->destroy();
-	m_entityDependencyPanel->destroy();
-	m_controllerPanel->destroy();
-	m_editPanel->destroy();
+	safeDestroy(m_entityMenu);
+	safeDestroy(m_entityPanel);
+	safeDestroy(m_entityDependencyPanel);
+	safeDestroy(m_controllerPanel);
+	safeDestroy(m_editPanel);
 
 	// Destroy physics manager.
 	if (m_context->getPhysicsManager())

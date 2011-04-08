@@ -23,6 +23,33 @@ BufferedStream::BufferedStream(IStream* stream, uint32_t internalBufferSize)
 		m_writeBuf = new uint8_t [m_internalBufferSize];
 }
 
+BufferedStream::BufferedStream(IStream* stream, const void* appendData, uint32_t appendDataSize, uint32_t internalBufferSize)
+:	m_stream(stream)
+,	m_internalBufferSize(internalBufferSize)
+,	m_readBuf(0)
+,	m_writeBuf(0)
+{
+	T_ASSERT (appendData);
+	T_ASSERT (appendDataSize <= internalBufferSize);
+
+	m_readBufCnt[0] =
+	m_readBufCnt[1] = 0;
+	m_writeBufCnt = 0;
+
+	if (m_stream->canRead())
+	{
+		m_readBuf = new uint8_t [m_internalBufferSize];
+		std::memcpy(m_readBuf, appendData, appendDataSize);
+		m_readBufCnt[1] = appendDataSize;
+	}
+	if (m_stream->canWrite())
+	{
+		m_writeBuf = new uint8_t [m_internalBufferSize];
+		std::memcpy(m_writeBuf, appendData, appendDataSize);
+		m_writeBufCnt = appendDataSize;
+	}
+}
+
 BufferedStream::~BufferedStream()
 {
 	delete[] m_writeBuf;

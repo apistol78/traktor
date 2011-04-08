@@ -32,16 +32,16 @@ Ref< ISerializable > readPhysicalObject(const Path& objectPath)
 	if (!objectStream)
 		return 0;
 
-	BufferedStream bs(objectStream);
-
+	// Read head bytes in order to be able to determine serialization type.
 	uint8_t head[5];
-	if (bs.read(head, sizeof(head)) != sizeof(head))
+	if (objectStream->read(head, sizeof(head)) != sizeof(head))
 	{
 		objectStream->close();
 		return 0;
 	}
 
-	bs.seek(IStream::SeekSet, 0);
+	// Read object through serialization; append head to buffered stream.
+	BufferedStream bs(objectStream, head, sizeof(head));
 
 	Ref< ISerializable > object;
 	if (std::memcmp(head, "<?xml", sizeof(head)) != 0)
