@@ -148,6 +148,8 @@ private:
 	void eventContextSelect(ui::Event* event);
 
 	void eventContextPreModify(ui::Event* event);
+
+	void eventContextPostModify(ui::Event* event);
 };
 
 	}
