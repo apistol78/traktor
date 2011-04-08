@@ -27,7 +27,11 @@ class T_DLLCLASS BufferedStream : public IStream
 	T_RTTI_CLASS;
 
 public:
-	BufferedStream(IStream* stream, uint32_t internalBufferSize = 4096);
+	enum { DefaultBufferSize = 4096 };
+
+	BufferedStream(IStream* stream, uint32_t internalBufferSize = DefaultBufferSize);
+
+	BufferedStream(IStream* stream, const void* appendData, uint32_t appendDataSize, uint32_t internalBufferSize = DefaultBufferSize);
 
 	virtual ~BufferedStream();
 
