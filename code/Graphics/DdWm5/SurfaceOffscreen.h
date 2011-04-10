@@ -40,6 +40,17 @@ public:
 		int height
 	);
 
+	virtual void setFontSize(int32_t size);
+
+	virtual void getTextExtent(const std::wstring& text, int32_t& outWidth, int32_t& outHeight);
+
+	virtual void drawText(
+		int32_t x,
+		int32_t y,
+		const std::wstring& text,
+		const Color4ub& color
+	);
+
 private:
 	SurfaceDesc m_surfaceDesc;
 	AutoArrayPtr< uint8_t > m_data;

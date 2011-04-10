@@ -2,6 +2,7 @@
 #define traktor_graphics_ISurface_H
 
 #include "Core/Object.h"
+#include "Core/Math/Color4ub.h"
 #include "Graphics/PixelFormat.h"
 
 // import/export mechanism.
@@ -44,12 +45,23 @@ public:
 
 	virtual void blt(
 		ISurface* sourceSurface,
-		int sourceX,
-		int sourceY,
-		int x,
-		int y,
-		int width,
-		int height
+		int32_t sourceX,
+		int32_t sourceY,
+		int32_t x,
+		int32_t y,
+		int32_t width,
+		int32_t height
+	) = 0;
+
+	virtual void setFontSize(int32_t size) = 0;
+
+	virtual void getTextExtent(const std::wstring& text, int32_t& outWidth, int32_t& outHeight) = 0;
+
+	virtual void drawText(
+		int32_t x,
+		int32_t y,
+		const std::wstring& text,
+		const Color4ub& color
 	) = 0;
 };
 
