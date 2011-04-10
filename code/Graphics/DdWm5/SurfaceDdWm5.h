@@ -27,6 +27,8 @@ class T_DLLCLASS SurfaceDdWm5 : public ISurface
 public:
 	SurfaceDdWm5(IDirectDrawSurface* dds);
 
+	virtual ~SurfaceDdWm5();
+
 	virtual bool getSurfaceDesc(SurfaceDesc& surfaceDesc) const;
 
 	virtual void* lock(SurfaceDesc& surfaceDesc);
@@ -35,18 +37,30 @@ public:
 
 	virtual void blt(
 		ISurface* sourceSurface,
-		int sourceX,
-		int sourceY,
-		int x,
-		int y,
-		int width,
-		int height
+		int32_t sourceX,
+		int32_t sourceY,
+		int32_t x,
+		int32_t y,
+		int32_t width,
+		int32_t height
+	);
+
+	virtual void setFontSize(int32_t size);
+
+	virtual void getTextExtent(const std::wstring& text, int32_t& outWidth, int32_t& outHeight);
+
+	virtual void drawText(
+		int32_t x,
+		int32_t y,
+		const std::wstring& text,
+		const Color4ub& color
 	);
 
 	void swap(IDirectDrawSurface* dds);
 
 private:
 	ComRef< IDirectDrawSurface > m_dds;
+	HFONT m_hFont;
 	bool m_locked;
 };
 

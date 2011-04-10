@@ -68,6 +68,23 @@ void SurfaceGdi::blt(
 	}
 }
 
+void SurfaceGdi::setFontSize(int32_t size)
+{
+}
+
+void SurfaceGdi::getTextExtent(const std::wstring& text, int32_t& outWidth, int32_t& outHeight)
+{
+}
+
+void SurfaceGdi::drawText(
+	int32_t x,
+	int32_t y,
+	const std::wstring& text,
+	const Color4ub& color
+)
+{
+}
+
 	}
 }
 
