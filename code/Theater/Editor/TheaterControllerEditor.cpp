@@ -33,6 +33,7 @@ namespace traktor
 		{
 
 const float c_clampKeyDistance = 1.0f / 30.0f;
+const float c_velocityScale = 0.2f;
 
 struct FindTrackData
 {
@@ -195,11 +196,25 @@ void TheaterControllerEditor::draw(render::PrimitiveRenderer* primitiveRenderer)
 		int32_t steps = int32_t(duration) * 10;
 		for (int32_t i = 0; i < steps; ++i)
 		{
+			const float c_deltaTime = 0.01f;
+
 			float T0 = (float(i) / steps) * duration;
 			float T1 = (float(i + 1) / steps) * duration;
 
 			TransformPath::Frame F0 = path.evaluate(T0, duration, loop);
 			TransformPath::Frame F1 = path.evaluate(T1, duration, loop);
+			TransformPath::Frame Fn = path.evaluate(T0 + c_deltaTime, duration, loop);
+
+			Vector4 dP = Fn.position - F0.position;
+			Scalar velocity = dP.length() / Scalar(c_deltaTime);
+
+			Vector4 N = cross(dP.normalized(), Vector4(0.0f, 1.0f, 0.0f, 0.0f)).normalized();
+
+			primitiveRenderer->drawLine(
+				F0.position,
+				F0.position + N * velocity * Scalar(c_velocityScale),
+				Color4ub(255, 255, 255, 200)
+			);
 
 			primitiveRenderer->drawLine(
 				F0.position,

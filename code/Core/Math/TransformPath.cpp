@@ -239,7 +239,7 @@ TransformPath::Frame TransformPath::evaluate(float at, float end, bool loop) con
 		return m_keys[0].value;
 	else
 	{
-		const int32_t c_arcLengthSteps = 10;
+		const int32_t c_arcLengthSteps = 100;
 
 		if (loop)
 		{
@@ -304,27 +304,30 @@ TransformPath::Frame TransformPath::evaluate(float at, float end, bool loop) con
 				delta.position = current.position - last.position;
 				delta.orientation = current.orientation - last.orientation;
 
-				float length = sqrtf(dot3(delta.position, delta.position) + dot4(delta.orientation, delta.orientation));
+				float linearDistance = delta.position.length();
+				float orientationDistance = delta.orientation.length();
 
 				m_arcLengths[i] = totalLength;
-				totalLength += length;
+				totalLength += linearDistance;
 				last = current;
 			}
 			m_arcLengths.push_back(m_arcLengths.back() + m_arcLengths[1]);
 
-			// Create time to length curve; used to map time to target length.
-			m_timeCurve.resize(nkeys + 1);
+			m_velocities.resize(nkeys);
 			for (int32_t i = 0; i < nkeys; ++i)
 			{
-				m_timeCurve[i] = std::make_pair(
-					m_keys[i].T - Tfirst,
-					m_arcLengths[i * c_arcLengthSteps]
-				);
+				float aln0 = m_arcLengths[i * c_arcLengthSteps];
+				float aln1 = m_arcLengths[i * c_arcLengthSteps + c_arcLengthSteps];
+
+				float tc = m_keys[i].T;
+				float tn = i < nkeys - 1 ? m_keys[i + 1].T : Tend;
+
+				float dT = tn - tc;
+				T_ASSERT (dT > 0.0f);
+
+				float v = (aln1 - aln0) / dT;
+				m_velocities[i] = v;
 			}
-			m_timeCurve[nkeys] = std::make_pair(
-				Tend,
-				m_arcLengths.back()
-			);
 		}
 
 		// Calculate T on spline from given time "at".
@@ -339,29 +342,55 @@ TransformPath::Frame TransformPath::evaluate(float at, float end, bool loop) con
 				int32_t iln0 = i * c_arcLengthSteps;
 				int32_t iln1 = iln0 + c_arcLengthSteps;
 
-				//float ln0 = m_arcLengths[iln0];
-				//float ln1 = m_arcLengths[iln1];
+				float ln0 = m_arcLengths[iln0];
+				float ln1 = m_arcLengths[iln1];
 
-				//float f = (Tat - Tcurr) / (Tnext - Tcurr);
-				//float fln0 = lerp(ln0, ln1, f);
+				float f = (Tat - Tcurr) / (Tnext - Tcurr);
 
-				// Calculate target arc-length.
-				float fln1 = Hermite< std::pair< float, float >, float, float, PairAccessor >(&m_timeCurve[0], m_timeCurve.size()).evaluate(Tat, Tend, 0.25f);
+				// Estimate velocity at key points.
+				float v0 = m_velocities[i];
+				float v1 = (i < nkeys - 1) ? m_velocities[i + 1] : v0;
+
+				float A = v0 + v1 + 2.0f * (ln0 - ln1);
+				float B = 3.0f * (ln1 - ln0) - v1 - 2.0f * v0;
+				float C = v0;
+				float D = ln0;
+
+				float fln2 = A * (f * f * f) + B * (f * f) + C * f + D;
+
+				//float a0 = 0.0f;
+				//float a1 = 0.0f;
+
+				//float A = -332.0f * ln1 / 78.0f - 21.0f * a0 / 78.0f + 86.0f * v0 / 78.0f + 46.0f * v1 / 78.0f + 132.0f * ln0 / 78 - a1 / 78.0f;
+				//float B = 430.0f * ln1 / 78.0f - 3.0f * a0 / 78.0f - 16.0f * v0 / 78.0f - 14.0f * v1 / 78.0f - 30.0f * ln0 / 78.0f + 2.0f * a1 / 78.0f;
+				//float C = -20.0f * ln1 / 78.0f - 57.0f * a0 / 78.0f - 148.0f * v0 / 78.0f - 180.0f * ln0 / 78.0f - 32.0f * v1 / 78.0f - a1 / 78.0f;
+				//float D = a0 / 2.0f;
+				//float E = v0;
+				//float F = ln0;
+
+				//float f2 = f * f;
+				//float f3 = f2 * f;
+				//float f4 = f3 * f;
+				//float f5 = f4 * f;
+				//float fln2 = A * f5 + B * f4 + C * f3 + D * f2 + E * f + F;
 
 				// Parameterize T from target arc-length.
+				float fln = fln2;
 				float ft = float(iln1);
 				for (int32_t j = iln0; j < iln1; ++j)
 				{
-					if (fln1 < m_arcLengths[j + 1])
+					if (fln < m_arcLengths[j + 1])
 					{
 						float aln0 = m_arcLengths[j];
 						float aln1 = m_arcLengths[j + 1];
-						ft = j + (fln1 - aln0) / (aln1 - aln0);
+						//T_ASSERT (fln >= aln0 && fln <= aln1);
+						ft = j + (fln - aln0) / (aln1 - aln0);
 						break;
 					}
 				}
 
 				Tln = ft / (m_arcLengths.size() - 1);
+				//T_ASSERT (Tln >= 0.0f && Tln <= 1.0f);
 				break;
 			}
 		}
