@@ -39,11 +39,11 @@ const RefArray< SpatialEntityData >& SpatialGroupEntityData::getEntityData() con
 
 void SpatialGroupEntityData::setTransform(const Transform& transform)
 {
-	Transform deltaTransform = getTransform().inverse() * transform;
+	Transform deltaTransform = transform * getTransform().inverse();
 	for (RefArray< SpatialEntityData >::iterator i = m_entityData.begin(); i != m_entityData.end(); ++i)
 	{
 		Transform currentTransform = (*i)->getTransform();
-		(*i)->setTransform(currentTransform * deltaTransform);
+		(*i)->setTransform(deltaTransform * currentTransform);
 	}
 	SpatialEntityData::setTransform(transform);
 }
