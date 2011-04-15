@@ -1,5 +1,5 @@
 #include <cstring>
-#include <mad.h>
+#include <mpg123.h>
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Memory/Alloc.h"
@@ -12,17 +12,6 @@ namespace traktor
 {
 	namespace sound
 	{
-		namespace
-		{
-
-// Convert from MAD fixed point to 32-bit float sample.
-inline float scale(mad_fixed_t sample)
-{
-	double output = mad_f_todouble(sample);
-	return float(output);
-}
-
-		}
 
 class Mp3StreamDecoderImpl : public Object
 {
@@ -30,18 +19,26 @@ public:
 	enum
 	{
 		DecodedBufferSamples = 32768,
-		DecodedBufferSize = DecodedBufferSamples * sizeof(float)
+		DecodedBufferSize = DecodedBufferSamples * sizeof(float),
+		ReadBufferSize = 4096
 	};
 
 	Mp3StreamDecoderImpl()
-	:	m_decodedCount(0)
+	:	m_handle(0)
+	,	m_decodedCount(0)
 	,	m_consumedCount(0)
 	,	m_sampleRate(0)
+	,	m_channels(0)
+	,	m_encoding(0)
 	{
 	}
 
 	bool create(IStream* stream)
 	{
+		size_t nrates;
+		const long* rates;
+		int ret;
+
 		m_stream = stream;
 
 		m_decoded[0] = (float*)Alloc::acquireAlign(DecodedBufferSize, 16, T_FILE_LINE);
@@ -50,19 +47,38 @@ public:
 		if (!m_decoded[0] || !m_decoded[1])
 			return false;
 
-		mad_stream_init(&m_mad_stream);
-		mad_frame_init(&m_mad_frame);
-		mad_synth_init(&m_mad_synth);
-		mad_timer_reset(&m_mad_timer);
+		if (ms_instances++ <= 0)
+			mpg123_init();
+
+		m_handle = mpg123_new(0, &ret);
+		if (!m_handle)
+			return false;
+
+		ret = mpg123_format_none(m_handle);
+		if (ret != MPG123_OK)
+			return false;
+
+		mpg123_rates(&rates, &nrates);
+		for (size_t i = 0; i < nrates; i++)
+		{
+			ret = mpg123_format(m_handle, rates[i], MPG123_MONO | MPG123_STEREO, MPG123_ENC_FLOAT_32);
+			if (ret != MPG123_OK)
+				return false;
+		}
+
+		ret = mpg123_open_feed(m_handle);
+		if (ret != MPG123_OK)
+			return false;
 
 		return true;
 	}
 
 	void destroy()
 	{
-		mad_synth_finish(&m_mad_synth);
-		mad_frame_finish(&m_mad_frame);
-		mad_stream_finish(&m_mad_stream);
+		mpg123_delete(m_handle);
+
+		if (--ms_instances <= 0)
+			mpg123_exit();
 
 		Alloc::freeAlign(m_decoded[0]);
 		Alloc::freeAlign(m_decoded[1]);
@@ -70,16 +86,6 @@ public:
 
 	void reset()
 	{
-		mad_timer_reset(&m_mad_timer);
-
-		mad_synth_finish(&m_mad_synth);
-		mad_frame_finish(&m_mad_frame);
-		mad_stream_finish(&m_mad_stream);
-
-		mad_stream_init(&m_mad_stream);
-		mad_frame_init(&m_mad_frame);
-		mad_synth_init(&m_mad_synth);
-
 		m_decodedCount = 0;
 		m_consumedCount = 0;
 	}
@@ -91,6 +97,7 @@ public:
 
 	bool getBlock(SoundBlock& outSoundBlock)
 	{
+		// Discard consumed samples; those are lingering in the decoded buffer since last call.
 		if (m_consumedCount)
 		{
 			T_ASSERT (m_consumedCount <= m_decodedCount);
@@ -100,88 +107,49 @@ public:
 			m_consumedCount = 0;
 		}
 
-		while (
-			(m_decodedCount < outSoundBlock.samplesCount || m_sampleRate == 0) &&
-			m_decodedCount < sizeof_array(m_decoded[0]) 
-		)
+		// Read and decode until desired amount of samples have been decoded.
+		while (m_decodedCount < outSoundBlock.samplesCount || m_sampleRate == 0)
 		{
-			if (!m_mad_stream.buffer || m_mad_stream.error == MAD_ERROR_BUFLEN)
+			int32_t nread = m_stream->read(m_readBuffer, sizeof(m_readBuffer));
+			if (nread <= 0)
+				return false;
+
+			int32_t ret = mpg123_feed(m_handle, m_readBuffer, nread);
+			if (ret == MPG123_NEED_MORE)
+				continue;
+			if (ret == MPG123_ERR)
+				return false;
+
+			while (ret != MPG123_NEED_MORE)
 			{
-				uint32_t remaining = 0;
-				uint32_t readSize = 0;
-				uint8_t* readStart = 0;
+				uint8_t* audio;
+				size_t bytes;
+				off_t num;
 
-				if (m_mad_stream.next_frame)
-				{
-					remaining = uint32_t(m_mad_stream.bufend - m_mad_stream.next_frame);
-					std::memmove(m_readBuffer, m_mad_stream.next_frame, remaining);
-					readStart = &m_readBuffer[remaining];
-					readSize = sizeof(m_readBuffer) - remaining;
-				}
-				else
-				{
-					remaining = 0;
-					readStart = m_readBuffer;
-					readSize = sizeof(m_readBuffer);
-				}
-
-				int readStream = m_stream->read(readStart, readSize);
-				if (readStream <= 0)
+				ret = mpg123_decode_frame(m_handle, &num, &audio, &bytes);
+				if (ret == MPG123_ERR)
 					return false;
-
-				mad_stream_buffer(&m_mad_stream, m_readBuffer, readStream + remaining);
-
-				m_mad_stream.error = MAD_ERROR_NONE;
-			}
-
-			if (mad_frame_decode(&m_mad_frame, &m_mad_stream))
-			{
-				if (MAD_RECOVERABLE(m_mad_stream.error) || m_mad_stream.error == MAD_ERROR_BUFLEN)
-					continue;
-				else
+				if (ret == MPG123_NEW_FORMAT)
 				{
-					log::error << L"Sound - Unrecoverable MP3 decode error" << Endl;
-					return false;
+					mpg123_getformat(m_handle, &m_sampleRate, &m_channels, &m_encoding);
+					if (m_encoding != MPG123_ENC_FLOAT_32)
+						return false;
 				}
-			}
 
-			mad_timer_add(&m_mad_timer, m_mad_frame.header.duration);
-			mad_synth_frame(&m_mad_synth, &m_mad_frame);
-
-			if (m_mad_synth.pcm.samplerate != 0)
-				m_sampleRate = m_mad_synth.pcm.samplerate;
-
-			const mad_fixed_t* left = m_mad_synth.pcm.samples[0];
-			const mad_fixed_t* right = m_mad_synth.pcm.samples[1];
-
-			if (m_mad_synth.pcm.channels >= 2)
-			{
-				T_ASSERT (m_mad_synth.pcm.length + m_decodedCount < DecodedBufferSamples);
-				for (uint32_t i = 0; i < m_mad_synth.pcm.length; ++i)
+				if (m_channels > 0)
 				{
-					m_decoded[SbcLeft][m_decodedCount] = scale(*left++);
-					m_decoded[SbcRight][m_decodedCount] = scale(*right++);
-					m_decodedCount++;
-				}
-			}
-			else if (m_mad_synth.pcm.channels >= 1)
-			{
-				T_ASSERT (m_mad_synth.pcm.length + m_decodedCount < DecodedBufferSamples);
-				for (uint32_t i = 0; i < m_mad_synth.pcm.length; ++i)
-				{
-					m_decoded[SbcLeft][m_decodedCount] = scale(*left++);
-					m_decoded[SbcRight][m_decodedCount] = 0.0f;
-					m_decodedCount++;
-				}
-			}
-			else
-			{
-				T_ASSERT (m_mad_synth.pcm.length + m_decodedCount < DecodedBufferSamples);
-				for (uint32_t i = 0; i < m_mad_synth.pcm.length; ++i)
-				{
-					m_decoded[SbcLeft][m_decodedCount] = 0.0f;
-					m_decoded[SbcRight][m_decodedCount] = 0.0f;
-					m_decodedCount++;
+					int32_t sampleCount = bytes / (m_channels * sizeof(float));
+					int32_t channels = std::min(m_channels, 2);
+					for (int32_t i = 0; i < sampleCount * m_channels; i += m_channels)
+					{
+						for (int32_t j = 0; j < channels; ++j)
+						{
+							float s = ((const float*)audio)[i + j];
+							m_decoded[j][m_decodedCount] = s;
+						}
+						if (++m_decodedCount >= DecodedBufferSize)
+							break;
+					}
 				}
 			}
 		}
@@ -190,7 +158,7 @@ public:
 		outSoundBlock.samples[SbcRight] = m_decoded[SbcRight];
 		outSoundBlock.samplesCount = alignDown(std::min(m_decodedCount, outSoundBlock.samplesCount), 4);
 		outSoundBlock.sampleRate = m_sampleRate;
-		outSoundBlock.maxChannel = 2;
+		outSoundBlock.maxChannel = m_channels;
 
 		m_consumedCount = outSoundBlock.samplesCount;
 
@@ -201,17 +169,19 @@ public:
 	}
 
 private:
+	static int32_t ms_instances;
 	Ref< IStream > m_stream;
-	mad_stream m_mad_stream;
-	mad_frame m_mad_frame;
-	mad_synth m_mad_synth;
-	mad_timer_t m_mad_timer;
-	uint8_t m_readBuffer[8192];
+	mpg123_handle* m_handle;
+	uint8_t m_readBuffer[ReadBufferSize];
 	float* m_decoded[2];
 	uint32_t m_decodedCount;
 	uint32_t m_consumedCount;
-	uint32_t m_sampleRate;
+	long m_sampleRate;
+	int32_t m_channels;
+	int32_t m_encoding;
 };
+
+int32_t Mp3StreamDecoderImpl::ms_instances = 0;
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.Mp3StreamDecoder", 0, Mp3StreamDecoder, IStreamDecoder)
 
