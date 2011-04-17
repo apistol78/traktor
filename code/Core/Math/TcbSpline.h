@@ -30,11 +30,7 @@ public:
 
 	virtual Value evaluate(const Time& Tat, const Time& Tend = Time(-1.0f), const Time& stiffness = Time(0.5f)) const
 	{
-		Time Tcurr = Tat;
-		while (Tcurr >= Tend)
-			Tcurr -= Tend;
-
-		int32_t index = m_accessor.index(Tcurr);
+		int32_t index = m_accessor.index(Tat, Tend);
 		int32_t index_n1 = index - 1;
 		int32_t index_1 = index + 1;
 		int32_t index_2 = index + 2;
@@ -74,6 +70,10 @@ public:
 			vn, k22,
 			v1, -k22
 		);
+
+		Time Tcurr = Tat;
+		while (Tcurr > Tend)
+			Tcurr -= Tend;
 
 		Time T = (T1 > T0) ? (Tcurr - T0) / (T1 - T0) : Time(0.0f);
 		Time T2 = T * T;
