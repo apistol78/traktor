@@ -86,6 +86,14 @@ public:
 
 	void reset()
 	{
+		// Inform mpg123 that we're seeking to the beginning.
+		off_t offset = 0;
+		mpg123_feedseek(m_handle, 0, SEEK_SET, &offset);
+
+		// Move to correct position in our stream.
+		m_stream->seek(IStream::SeekSet, offset);
+
+		// Flush buffers.
 		m_decodedCount = 0;
 		m_consumedCount = 0;
 	}
@@ -221,7 +229,6 @@ bool Mp3StreamDecoder::getBlock(SoundBlock& outSoundBlock)
 void Mp3StreamDecoder::rewind()
 {
 	T_ASSERT (m_decoderImpl);
-	m_stream->seek(IStream::SeekSet, 0);
 	m_decoderImpl->reset();
 }
 
