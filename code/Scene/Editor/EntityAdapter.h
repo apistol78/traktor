@@ -45,11 +45,11 @@ public:
 	/*! \name Accessors */
 	//@{
 
-	Ref< world::EntityData > getEntityData() const;
+	world::EntityData* getEntityData() const;
 
 	void setEntity(world::Entity* entity);
 
-	Ref< world::Entity > getEntity() const;
+	world::Entity* getEntity() const;
 
 	//@}
 
@@ -93,9 +93,9 @@ public:
 
 	EntityAdapter* getParent() const;
 
-	Ref< EntityAdapter > getParentGroup();
+	EntityAdapter* getParentGroup();
 
-	Ref< EntityAdapter > getParentContainerGroup();
+	EntityAdapter* getParentContainerGroup();
 
 	void addChild(EntityAdapter* child);
 
@@ -114,7 +114,7 @@ public:
 
 	void setEntityEditor(IEntityEditor* entityEditor);
 
-	Ref< IEntityEditor > getEntityEditor() const;
+	IEntityEditor* getEntityEditor() const;
 
 	//@}
 

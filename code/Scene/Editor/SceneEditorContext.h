@@ -128,7 +128,7 @@ public:
 
 	void setModifier(IModifier* modifier);
 
-	Ref< IModifier > getModifier() const;
+	IModifier* getModifier() const;
 
 	void setPickEnable(bool pickEnable);
 
@@ -160,7 +160,7 @@ public:
 	 * \param index Camera index, 0 to 3.
 	 * \return Camera.
 	 */
-	Ref< Camera > getCamera(int index) const;
+	Camera* getCamera(int index) const;
 
 	void setFollowEntityAdapter(EntityAdapter* followEntityAdapter);
 
@@ -221,17 +221,17 @@ public:
 
 	editor::IEditor* getEditor() { return m_editor; }
 
-	Ref< db::Database > getResourceDatabase() { return m_resourceDb; }
+	db::Database* getResourceDatabase() { return m_resourceDb; }
 
-	Ref< db::Database > getSourceDatabase() { return m_sourceDb; }
+	db::Database* getSourceDatabase() { return m_sourceDb; }
 
-	Ref< db::Instance > getInstance() { return m_instance; }
+	db::Instance* getInstance() { return m_instance; }
 
-	Ref< resource::IResourceManager > getResourceManager() { return m_resourceManager; }
+	resource::IResourceManager* getResourceManager() { return m_resourceManager; }
 
-	Ref< render::IRenderSystem > getRenderSystem() { return m_renderSystem; }
+	render::IRenderSystem* getRenderSystem() { return m_renderSystem; }
 
-	Ref< physics::PhysicsManager > getPhysicsManager() { return m_physicsManager; }
+	physics::PhysicsManager* getPhysicsManager() { return m_physicsManager; }
 
 	RefArray< ISceneEditorProfile >& getEditorProfiles() { return m_editorProfiles; }
 
@@ -239,13 +239,13 @@ public:
 
 	Ref< ISceneControllerEditor >& getControllerEditor() { return m_controllerEditor; }
 
-	Ref< SceneAsset > getSceneAsset() { return m_sceneAsset; }
+	SceneAsset* getSceneAsset() { return m_sceneAsset; }
 
-	Ref< Scene > getScene() { return m_scene; }
+	Scene* getScene() { return m_scene; }
 
-	Ref< EntityAdapter > getRootEntityAdapter() { return m_rootEntityAdapter; }
+	EntityAdapter* getRootEntityAdapter() { return m_rootEntityAdapter; }
 
-	Ref< EntityAdapter > getFollowEntityAdapter() { return m_followEntityAdapter; }
+	EntityAdapter* getFollowEntityAdapter() { return m_followEntityAdapter; }
 
 	//@}
 
