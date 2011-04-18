@@ -47,10 +47,13 @@ public:
 		const static Control c_one(1);
 		const static Control c_two(2);
 
-		Control k11 = ((c_one - t) * (c_one + b) * (c_one + c)) / c_two;
-		Control k21 = ((c_one - t) * (c_one + b) * (c_one - c)) / c_two;
-		Control k12 = ((c_one - t) * (c_one - b) * (c_one - c)) / c_two;
-		Control k22 = ((c_one - t) * (c_one - b) * (c_one + c)) / c_two;
+		Control one_t = c_one - t;
+		Control bc = b * c;
+
+		Control k11 = (one_t * (c_one + c + b + bc)) / c_two;
+		Control k21 = (one_t * (c_one - c + b - bc)) / c_two;
+		Control k12 = (one_t * (c_one - c - b + bc)) / c_two;
+		Control k22 = (one_t * (c_one + c - b - bc)) / c_two;
 
 		Value v0 = m_accessor.value(index);
 		Value v1 = m_accessor.value(index_1);

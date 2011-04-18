@@ -42,7 +42,6 @@ public:
 	:	m_owner(owner)
 	,	m_doubleBuffer(false)
 	,	m_canvasImpl(0)
-	,	m_paintLock(0)
 	{
 	}
 
@@ -463,7 +462,6 @@ protected:
 	mutable Window m_hWnd;
 	bool m_doubleBuffer;
 	CanvasWin32* m_canvasImpl;
-	int m_paintLock;
 	SmartFont m_hFont;
 	std::map< uint32_t, uint32_t > m_timers;
 
@@ -739,11 +737,6 @@ protected:
 
 	LRESULT eventPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& outPass)
 	{
-		if (m_paintLock)
-			return TRUE;
-
-		m_paintLock++;
-
 		if (m_owner->hasEventHandler(EiPaint) && m_canvasImpl)
 		{
 			if (m_canvasImpl->beginPaint(m_hWnd, m_doubleBuffer, NULL))
@@ -763,50 +756,21 @@ protected:
 		else
 			outPass = true;
 
-		m_paintLock--;
-
 		return 0;
 	}
 
 	LRESULT eventEraseBkGnd(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& outPass)
 	{
-		if (m_owner->hasEventHandler(EiPaint) && m_canvasImpl)
+		if (m_owner->hasEventHandler(EiPaint))
 		{
-			if (m_paintLock != 0)
-			{
-				// We're in WM_PAINT message, we don't want to erase background here.
-				outPass = false;
-				return FALSE;
-			}
-			else
-			{
-				// Not in WM_PAINT message, redraw background.
-				m_paintLock++;
-
-				if (m_canvasImpl->beginPaint(m_hWnd, m_doubleBuffer, (HDC)wParam))
-				{
-					Canvas canvas(m_canvasImpl);
-					PaintEvent p(
-						m_owner,
-						0,
-						canvas,
-						Rect()
-					);
-					m_owner->raiseEvent(EiPaint, &p);
-					m_canvasImpl->endPaint(m_hWnd);
-				}
-				
-				m_paintLock--;
-
-				outPass = false;
-				return TRUE;
-			}
+			// Have paint event handler; return zero to indicate we didn't erase the background.
+			outPass = false;
+			return 0;
 		}
-		else
-		{
-			outPass = true;
-			return TRUE;
-		}
+
+		// No paint event handler; feed erase event down the chain of message handlers.
+		outPass = true;
+		return 1;
 	}
 
 	LRESULT eventTimer(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& outPass)
