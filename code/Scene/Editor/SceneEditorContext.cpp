@@ -179,7 +179,7 @@ void SceneEditorContext::setModifier(IModifier* modifier)
 	m_modifier = modifier;
 }
 
-Ref< IModifier > SceneEditorContext::getModifier() const
+IModifier* SceneEditorContext::getModifier() const
 {
 	return m_modifier;
 }
@@ -234,7 +234,7 @@ bool SceneEditorContext::getPhysicsEnable() const
 	return m_physicsEnable;
 }
 
-Ref< Camera > SceneEditorContext::getCamera(int index) const
+Camera* SceneEditorContext::getCamera(int index) const
 {
 	return m_cameras[index];
 }

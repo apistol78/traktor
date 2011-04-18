@@ -28,7 +28,7 @@ EntityAdapter::EntityAdapter(world::EntityData* entityData)
 {
 }
 
-Ref< world::EntityData > EntityAdapter::getEntityData() const
+world::EntityData* EntityAdapter::getEntityData() const
 {
 	return m_entityData;
 }
@@ -38,7 +38,7 @@ void EntityAdapter::setEntity(world::Entity* entity)
 	m_entity = entity;
 }
 
-Ref< world::Entity > EntityAdapter::getEntity() const
+world::Entity* EntityAdapter::getEntity() const
 {
 	return m_entity;
 }
@@ -136,7 +136,7 @@ EntityAdapter* EntityAdapter::getParent() const
 	return m_parent;
 }
 
-Ref< EntityAdapter > EntityAdapter::getParentGroup()
+EntityAdapter* EntityAdapter::getParentGroup()
 {
 	EntityAdapter* entity = this;
 	for (; entity; entity = entity->m_parent)
@@ -147,7 +147,7 @@ Ref< EntityAdapter > EntityAdapter::getParentGroup()
 	return entity;
 }
 
-Ref< EntityAdapter > EntityAdapter::getParentContainerGroup()
+EntityAdapter* EntityAdapter::getParentContainerGroup()
 {
 	EntityAdapter* entity = m_parent;
 	for (; entity; entity = entity->m_parent)
@@ -217,7 +217,7 @@ void EntityAdapter::setEntityEditor(IEntityEditor* entityEditor)
 	m_entityEditor = entityEditor;
 }
 
-Ref< IEntityEditor > EntityAdapter::getEntityEditor() const
+IEntityEditor* EntityAdapter::getEntityEditor() const
 {
 	return m_entityEditor;
 }
