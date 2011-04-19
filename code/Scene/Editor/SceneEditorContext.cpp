@@ -108,9 +108,27 @@ EntityAdapter* findAdapter(EntityAdapter* entityAdapter, Predicate predicate)
 	return 0;
 }
 
+// Find child adapter.
+template < typename Predicate >
+EntityAdapter* findChildAdapter(EntityAdapter* entityAdapter, Predicate predicate)
+{
+	const RefArray< EntityAdapter >& children = entityAdapter->getChildren();
+	for (RefArray< EntityAdapter >::const_iterator i = children.begin(); i != children.end(); ++i)
+	{
+		if (predicate(*i))
+			return *i;
+	}
+	return 0;
+}
+
 struct FindFromEntity
 {
 	const world::Entity* m_entity;
+
+	FindFromEntity(const world::Entity* entity)
+	:	m_entity(entity)
+	{
+	}
 
 	bool operator () (const EntityAdapter* entityAdapter) const
 	{
@@ -417,9 +435,7 @@ uint32_t SceneEditorContext::getEntities(RefArray< EntityAdapter >& outEntityAda
 
 EntityAdapter* SceneEditorContext::findAdapterFromEntity(const world::Entity* entity) const
 {
-	FindFromEntity predicate;
-	predicate.m_entity = entity;
-	return findAdapter(m_rootEntityAdapter, predicate);
+	return findAdapter(m_rootEntityAdapter, FindFromEntity(entity));
 }
 
 EntityAdapter* SceneEditorContext::queryRay(const Vector4& worldRayOrigin, const Vector4& worldRayDirection) const
@@ -490,6 +506,32 @@ void SceneEditorContext::cloneSelected()
 
 	buildEntities();
 	raiseSelect(this);
+}
+
+EntityAdapter* SceneEditorContext::beginRenderEntity(const world::Entity* entity)
+{
+	EntityAdapter* currentRenderAdapter = m_rootEntityAdapter;
+
+	if (!m_renderEntityStack.empty())
+		currentRenderAdapter = m_renderEntityStack.back();
+
+	if (currentRenderAdapter)
+	{
+		EntityAdapter* renderEntityAdapter = findChildAdapter(currentRenderAdapter, FindFromEntity(entity));
+		m_renderEntityStack.push_back(renderEntityAdapter);
+		return renderEntityAdapter;
+	}
+	else
+	{
+		m_renderEntityStack.push_back(0);
+		return 0;
+	}
+}
+
+void SceneEditorContext::endRenderEntity()
+{
+	T_ASSERT (!m_renderEntityStack.empty());
+	m_renderEntityStack.pop_back();
 }
 
 void SceneEditorContext::setDebugTexture(uint32_t index, render::ITexture* debugTexture)
