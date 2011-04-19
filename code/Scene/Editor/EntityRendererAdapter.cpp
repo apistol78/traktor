@@ -27,7 +27,7 @@ void EntityRendererAdapter::render(
 	world::Entity* entity
 )
 {
-	EntityAdapter* entityAdapter = m_context->findAdapterFromEntity(entity);
+	EntityAdapter* entityAdapter = m_context->beginRenderEntity(entity);
 	if (!entityAdapter || entityAdapter->isVisible())
 	{
 		m_entityRenderer->render(
@@ -37,6 +37,7 @@ void EntityRendererAdapter::render(
 			entity
 		);
 	}
+	 m_context->endRenderEntity();
 }
 
 void EntityRendererAdapter::flush(

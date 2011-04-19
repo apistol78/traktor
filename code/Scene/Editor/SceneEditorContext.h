@@ -207,6 +207,15 @@ public:
 
 	void cloneSelected();
 
+	/*! \name Render entity. */
+	//@{
+
+	EntityAdapter* beginRenderEntity(const world::Entity* entity);
+
+	void endRenderEntity();
+
+	//@}
+
 	/*! \name Debug texture view. */
 	//@{
 
@@ -309,6 +318,7 @@ private:
 	Ref< Scene > m_scene;
 	Ref< EntityAdapter > m_rootEntityAdapter;
 	Ref< EntityAdapter > m_followEntityAdapter;
+	RefArray< EntityAdapter > m_renderEntityStack;
 };
 
 	}
