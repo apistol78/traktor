@@ -298,7 +298,7 @@ bool WorldRendererPreLit::create(
 		desc.createDepthStencil = false;
 		desc.usingPrimaryDepthStencil = true;
 		desc.preferTiled = true;
-		desc.targets[0].format = render::TfR8G8B8A8;
+		desc.targets[0].format = render::TfR16G16B16A16F;
 
 		m_lightMapTargetSet = renderSystem->createRenderTargetSet(desc);
 		if (!m_lightMapTargetSet)
