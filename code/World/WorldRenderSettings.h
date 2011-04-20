@@ -31,6 +31,12 @@ class T_DLLCLASS WorldRenderSettings : public ISerializable
 	T_RTTI_CLASS;
 
 public:
+	enum RenderType
+	{
+		RtForward,
+		RtPreLit
+	};
+
 	enum ShadowProjection
 	{
 		SpBox,
@@ -48,6 +54,7 @@ public:
 		SqHighest
 	};
 
+	RenderType renderType;
 	float viewNearZ;
 	float viewFarZ;
 	bool depthPassEnabled;

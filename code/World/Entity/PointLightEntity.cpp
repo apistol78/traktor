@@ -1,3 +1,8 @@
+#if !defined(WINCE)
+#	include <ctime>
+#else
+#	include <time_ce.h>
+#endif
 #include "World/Entity/PointLightEntity.h"
 
 namespace traktor
@@ -13,19 +18,30 @@ PointLightEntity::PointLightEntity(
 	const Vector4& baseColor,
 	const Vector4& shadowColor,
 	float range,
-	float randomFlicker
+	float randomFlickerAmount,
+	float randomFlickerFilter
 )
 :	m_transform(transform)
 ,	m_sunColor(sunColor)
 ,	m_baseColor(baseColor)
 ,	m_shadowColor(shadowColor)
 ,	m_range(range)
-,	m_randomFlicker(randomFlicker)
+,	m_randomFlickerAmount(randomFlickerAmount)
+,	m_randomFlickerFilter(randomFlickerFilter)
+,	m_randomFlickerValue(0.0f)
+,	m_randomFlicker(0.0f)
+#if !defined(WINCE)
+,	m_random(uint32_t(clock()))
+#else
+,	m_random(uint32_t(clock_ce()))
+#endif
 {
 }
 
 void PointLightEntity::update(const EntityUpdate* update)
 {
+	m_randomFlickerValue = m_random.nextFloat() * (1.0f - m_randomFlickerFilter) + m_randomFlickerValue * m_randomFlickerFilter;
+	m_randomFlicker = 1.0f - m_randomFlickerValue * m_randomFlickerAmount;
 }
 
 void PointLightEntity::setTransform(const Transform& transform)

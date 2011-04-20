@@ -19,7 +19,7 @@
 			<type>DtFloat2</type>
 			<index>0</index>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>-10</first>
@@ -27,8 +27,9 @@
 			</position>
 			<parameterName>PatchOrigin</parameterName>
 			<type>PtVector</type>
+			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>-9</first>
@@ -36,6 +37,7 @@
 			</position>
 			<parameterName>PatchExtent</parameterName>
 			<type>PtVector</type>
+			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.MulAdd">
 			<comment/>
@@ -44,7 +46,7 @@
 				<second>197</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>218</first>
@@ -52,8 +54,9 @@
 			</position>
 			<parameterName>View</parameterName>
 			<type>PtMatrix</type>
+			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>360</first>
@@ -61,6 +64,7 @@
 			</position>
 			<parameterName>Projection</parameterName>
 			<type>PtMatrix</type>
+			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Transform">
 			<comment/>
@@ -82,7 +86,7 @@
 				<first>718</first>
 				<second>200</second>
 			</position>
-			<technique>Default</technique>
+			<technique/>
 		</item>
 		<item type="traktor.render.Sampler">
 			<comment>
@@ -102,7 +106,7 @@ Generated texture from surface cache.
 			<addressV>AdClamp</addressV>
 			<addressW>AdClamp</addressW>
 		</item>
-		<item type="traktor.render.PixelOutput" version="2">
+		<item type="traktor.render.PixelOutput" version="3">
 			<comment/>
 			<position>
 				<first>1550</first>
@@ -134,6 +138,7 @@ Generated texture from surface cache.
 			<stencilFunction>CfAlways</stencilFunction>
 			<stencilReference>0</stencilReference>
 			<stencilMask>4294967295</stencilMask>
+			<registerCount>0</registerCount>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
@@ -180,7 +185,7 @@ Generated texture from surface cache.
 			</position>
 			<swizzle>xz</swizzle>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>-855</first>
@@ -188,6 +193,7 @@ Generated texture from surface cache.
 			</position>
 			<parameterName>WorldOrigin</parameterName>
 			<type>PtVector</type>
+			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Vector">
 			<comment/>
@@ -218,7 +224,7 @@ Generated texture from surface cache.
 			<addressV>AdClamp</addressV>
 			<addressW>AdClamp</addressW>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>-720</first>
@@ -226,8 +232,9 @@ Generated texture from surface cache.
 			</position>
 			<parameterName>WorldExtent</parameterName>
 			<type>PtVector</type>
+			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>-1047</first>
@@ -235,6 +242,7 @@ Generated texture from surface cache.
 			</position>
 			<parameterName>PatchOrigin</parameterName>
 			<type>PtVector</type>
+			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.MulAdd">
 			<comment/>
@@ -243,7 +251,7 @@ Generated texture from surface cache.
 				<second>228</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>-1046</first>
@@ -251,6 +259,7 @@ Generated texture from surface cache.
 			</position>
 			<parameterName>PatchExtent</parameterName>
 			<type>PtVector</type>
+			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Interpolator">
 			<comment/>
@@ -294,7 +303,7 @@ Generated texture from surface cache.
 				<second>-324</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>58</first>
@@ -302,6 +311,7 @@ Generated texture from surface cache.
 			</position>
 			<parameterName>EyePosition</parameterName>
 			<type>PtVector</type>
+			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Interpolator">
 			<comment/>
@@ -385,7 +395,7 @@ Generated texture from surface cache.
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>437</first>
@@ -393,8 +403,9 @@ Generated texture from surface cache.
 			</position>
 			<parameterName>Surface</parameterName>
 			<type>PtTexture</type>
+			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>-385</first>
@@ -402,6 +413,7 @@ Generated texture from surface cache.
 			</position>
 			<parameterName>Heightfield</parameterName>
 			<type>PtVector</type>
+			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.External" version="1">
 			<comment/>

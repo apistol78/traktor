@@ -293,6 +293,16 @@ T_MATH_INLINE void Matrix44::storeUnaligned(float* out) const
 	m_c[3].storeUnaligned(&out[12]);
 }
 
+T_MATH_INLINE const Vector4& Matrix44::get(int c) const
+{
+	return m_c[c];
+}
+
+T_MATH_INLINE void Matrix44::set(int c, const Vector4& v)
+{
+	m_c[c] = v;
+}
+
 T_MATH_INLINE Scalar Matrix44::get(int r, int c) const
 {
 	return m_c[c].get(r);

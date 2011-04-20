@@ -95,6 +95,10 @@ public:
 
 	T_MATH_INLINE void storeUnaligned(float* out) const;
 
+	T_MATH_INLINE const Vector4& get(int c) const;
+
+	T_MATH_INLINE void set(int c, const Vector4& v);
+
 	T_MATH_INLINE Scalar get(int r, int c) const;
 
 	T_MATH_INLINE void set(int r, int c, const Scalar& v);

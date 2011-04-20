@@ -12,10 +12,11 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 7, WorldRenderSettings, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 8, WorldRenderSettings, ISerializable)
 
 WorldRenderSettings::WorldRenderSettings()
-:	viewNearZ(1.0f)
+:	renderType(RtForward)
+,	viewNearZ(1.0f)
 ,	viewFarZ(100.0f)
 ,	depthPassEnabled(true)
 ,	depthRange(100.0f)
@@ -33,7 +34,8 @@ WorldRenderSettings::WorldRenderSettings()
 }
 
 WorldRenderSettings::WorldRenderSettings(const WorldRenderSettings& settings)
-:	viewNearZ(settings.viewNearZ)
+:	renderType(settings.renderType)
+,	viewNearZ(settings.viewNearZ)
 ,	viewFarZ(settings.viewFarZ)
 ,	depthPassEnabled(settings.depthPassEnabled)
 ,	depthRange(settings.depthRange)
@@ -52,6 +54,13 @@ WorldRenderSettings::WorldRenderSettings(const WorldRenderSettings& settings)
 
 bool WorldRenderSettings::serialize(ISerializer& s)
 {
+	const MemberEnum< RenderType >::Key c_RenderType_Keys[] =
+	{
+		{ L"RtForward", RtForward },
+		{ L"RtPreLit", RtPreLit },
+		{ 0 }
+	};
+
 	const MemberEnum< ShadowProjection >::Key c_ShadowProjection_Keys[] =
 	{
 		{ L"SpBox", SpBox },
@@ -70,6 +79,9 @@ bool WorldRenderSettings::serialize(ISerializer& s)
 		{ L"SqHighest", SqHighest },
 		{ 0 }
 	};
+
+	if (s.getVersion() >= 8)
+		s >> MemberEnum< RenderType >(L"renderType", renderType, c_RenderType_Keys);
 
 	s >> Member< float >(L"viewNearZ", viewNearZ, AttributeRange(0.0f));
 	s >> Member< float >(L"viewFarZ", viewFarZ, AttributeRange(0.0f));

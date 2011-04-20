@@ -361,7 +361,8 @@ void EffectPreviewControl::eventPaint(ui::Event* event)
 		worldRenderView.addLight(globalLight);
 
 		world::WorldRenderPassForward defaultPass(
-			render::getParameterHandle(L"Default"),
+			render::getParameterHandle(L"World_ForwardColor"),
+			true,
 			worldRenderView,
 			0.0f,
 			0,

@@ -32,10 +32,10 @@ PinType PixelNodeTraits::getInputPinType(
 ) const
 {
 	const PixelOutput* pixelOutputNode = checked_type_cast< const PixelOutput* >(node);
+	uint32_t writeMask = pixelOutputNode->getColorWriteMask();
 
 	if (!pixelOutputNode->getBlendEnable() && !pixelOutputNode->getAlphaTestEnable())
 	{
-		uint32_t writeMask = pixelOutputNode->getColorWriteMask();
 		if (writeMask & PixelOutput::CwAlpha)
 			return PntScalar4;
 		else if (writeMask & PixelOutput::CwBlue)
@@ -61,6 +61,19 @@ PinType PixelNodeTraits::getInputPinType(
 		}
 		if (pixelOutputNode->getAlphaTestEnable())
 			return PntScalar4;
+
+		// Blend enable but not using alpha as a blend factor; determine
+		// from write mask as if opaque.
+		if (writeMask & PixelOutput::CwAlpha)
+			return PntScalar4;
+		else if (writeMask & PixelOutput::CwBlue)
+			return PntScalar3;
+		else if (writeMask & PixelOutput::CwGreen)
+			return PntScalar2;
+		else if (writeMask & PixelOutput::CwRed)
+			return PntScalar1;
+		else
+			return PntVoid;
 	}
 
 	return PntScalar3;

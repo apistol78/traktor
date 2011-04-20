@@ -77,6 +77,15 @@ void calculateUniformSMProj(
 		lightDistance + extent.z()
 	);
 
+	// Add part of view frustum to shadow frustum.
+	Matrix44 view2Light = outLightView * viewInverse;
+	for (uint32_t i = 0; i < viewFrustum.planes.size(); ++i)
+	{
+		Plane viewFrustumPlane = view2Light * viewFrustum.planes[i];
+		if (viewFrustumPlane.normal().z() <= 0.0f)
+			outShadowFrustum.planes.push_back(viewFrustumPlane);
+	}
+
 	outLightSquareProjection = Matrix44::identity();
 }
 

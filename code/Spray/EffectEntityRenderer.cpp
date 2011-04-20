@@ -15,7 +15,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectEntityRenderer", EffectEntityRender
 
 EffectEntityRenderer::EffectEntityRenderer(render::IRenderSystem* renderSystem)
 :	m_pointRenderer(new PointRenderer(renderSystem))
-,	m_defaultTechnique(render::getParameterHandle(L"Default"))
 {
 }
 
@@ -33,7 +32,7 @@ void EffectEntityRenderer::render(
 	world::Entity* entity
 )
 {
-	if (worldRenderPass.getTechnique() != m_defaultTechnique)
+	if (!worldRenderPass.isFinal())
 		return;
 
 	EffectEntity* effectEntity = checked_type_cast< EffectEntity* >(entity);
@@ -70,7 +69,7 @@ void EffectEntityRenderer::flush(
 	world::IWorldRenderPass& worldRenderPass
 )
 {
-	if (worldRenderPass.getTechnique() != m_defaultTechnique)
+	if (!worldRenderPass.isFinal())
 		return;
 
 	m_pointRenderer->flush(

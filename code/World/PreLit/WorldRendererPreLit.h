@@ -128,7 +128,7 @@ private:
 		}
 	};
 
-	static render::handle_t ms_techniqueDefault;
+	static render::handle_t ms_techniquePreLitColor;
 	static render::handle_t ms_techniqueDepth;
 	static render::handle_t ms_techniqueNormal;
 	static render::handle_t ms_techniqueShadow;

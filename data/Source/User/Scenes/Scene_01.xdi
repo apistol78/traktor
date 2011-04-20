@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.scene.SceneAsset" version="3">
-	<worldRenderSettings type="traktor.world.WorldRenderSettings" version="6">
+	<worldRenderSettings type="traktor.world.WorldRenderSettings" version="8">
+		<renderType>RtPreLit</renderType>
 		<viewNearZ>0.1</viewNearZ>
 		<viewFarZ>20</viewFarZ>
 		<depthPassEnabled>true</depthPassEnabled>
@@ -13,21 +14,13 @@
 		<shadowFarZ>20</shadowFarZ>
 		<shadowMapResolution>512</shadowMapResolution>
 		<shadowMapBias>0.1</shadowMapBias>
+		<shadowCascadingSlices>1</shadowCascadingSlices>
+		<shadowCascadingLambda>0.5</shadowCascadingLambda>
 	</worldRenderSettings>
 	<postProcessSettings>{00000000-0000-0000-0000-000000000000}</postProcessSettings>
 	<entityData type="traktor.world.GroupEntityData">
 		<name>Root</name>
 		<entityData>
-			<item type="traktor.world.DirectionalLightEntityData">
-				<name>Light</name>
-				<transform>
-					<translation>0, 0, 1.057417, 0</translation>
-					<rotation>0.103493, 0.331472, -0.036611, 0.937057</rotation>
-				</transform>
-				<sunColor>0, 0, 1, 0</sunColor>
-				<baseColor>0, 0, 0.5, 0</baseColor>
-				<shadowColor>0, 0, 0, 0</shadowColor>
-			</item>
 			<item type="traktor.mesh.MeshEntityData">
 				<name>Instance Mesh</name>
 				<transform>
@@ -44,17 +37,18 @@
 				</transform>
 				<mesh>{2BEECC12-C76D-974A-B0AE-02CE93F6C466}</mesh>
 			</item>
-			<item type="traktor.world.PointLightEntityData" version="1">
+			<item type="traktor.world.PointLightEntityData" version="2">
 				<name>Point light</name>
 				<transform>
-					<translation>-0.381214, 0.577605, -0.163862, 0</translation>
+					<translation>0.302691, 0.867853, -0.350698, 0</translation>
 					<rotation>0, 0, 0, 1</rotation>
 				</transform>
-				<sunColor>1, 1, 1, 0</sunColor>
-				<baseColor>0.5, 0.5, 0.5, 0</baseColor>
+				<sunColor>4, 4, 4, 0</sunColor>
+				<baseColor>4, 4, 4, 0</baseColor>
 				<shadowColor>0, 0, 0, 0</shadowColor>
-				<range>2</range>
-				<randomFlicker>0.8</randomFlicker>
+				<range>1</range>
+				<randomFlickerAmount>0</randomFlickerAmount>
+				<randomFlickerFilter>0.5</randomFlickerFilter>
 			</item>
 		</entityData>
 	</entityData>

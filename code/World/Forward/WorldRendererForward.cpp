@@ -48,9 +48,12 @@ render::handle_t WorldRendererForward::ms_handleProjection = 0;
 WorldRendererForward::WorldRendererForward()
 :	m_count(0)
 {
-	ms_techniqueDefault = render::getParameterHandle(L"Default");
-	ms_techniqueDepth = render::getParameterHandle(L"Depth");
-	ms_techniqueShadow = render::getParameterHandle(L"Shadow");
+	// Techniques
+	ms_techniqueDefault = render::getParameterHandle(L"World_ForwardColor");
+	ms_techniqueDepth = render::getParameterHandle(L"World_DepthWrite");
+	ms_techniqueShadow = render::getParameterHandle(L"World_ShadowWrite");
+
+	// Global parameters.
 	ms_handleProjection = render::getParameterHandle(L"Projection");
 }
 
@@ -354,6 +357,7 @@ void WorldRendererForward::build(WorldRenderView& worldRenderView, Entity* entit
 
 		WorldRenderPassForward pass(
 			ms_techniqueDepth,
+			false,
 			depthRenderView,
 			m_settings.depthRange,
 			0,
@@ -655,6 +659,7 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, Entity
 
 		WorldRenderPassForward shadowPass(
 			ms_techniqueShadow,
+			false,
 			shadowRenderView,
 			m_settings.depthRange,
 			0,
@@ -673,6 +678,7 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, Entity
 
 	WorldRenderPassForward defaultPass(
 		ms_techniqueDefault,
+		true,
 		worldRenderView,
 		m_settings.depthRange,
 		f.haveDepth ? m_depthTargetSet->getColorTexture(0) : 0,
@@ -698,6 +704,7 @@ void WorldRendererForward::buildNoShadows(WorldRenderView& worldRenderView, Enti
 
 	WorldRenderPassForward defaultPass(
 		ms_techniqueDefault,
+		true,
 		worldRenderView,
 		m_settings.depthRange,
 		f.haveDepth ? m_depthTargetSet->getColorTexture(0) : 0,

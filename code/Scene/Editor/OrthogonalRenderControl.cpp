@@ -28,10 +28,10 @@
 #include "Ui/Events/MouseEvent.h"
 #include "Ui/Events/KeyEvent.h"
 #include "Ui/Itf/IWidget.h"
-#include "World/IWorldRenderer.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldRenderSettings.h"
 #include "World/WorldRenderView.h"
+#include "World/Forward/WorldRendererForward.h"
 
 namespace traktor
 {
@@ -180,9 +180,7 @@ void OrthogonalRenderControl::updateWorldRenderer()
 	const TypeInfo* worldRendererType = TypeInfo::find(worldRendererTypeName);
 	if (worldRendererType)
 	{
-		Ref< world::IWorldRenderer > worldRenderer = checked_type_cast< world::IWorldRenderer* >(worldRendererType->createInstance());
-		T_ASSERT (worldRenderer);
-
+		Ref< world::IWorldRenderer > worldRenderer = new world::WorldRendererForward();
 		if (worldRenderer->create(
 			wrs,
 			worldEntityRenderers,

@@ -1,7 +1,6 @@
 #ifndef traktor_spray_EffectEntityRenderer_H
 #define traktor_spray_EffectEntityRenderer_H
 
-#include "Render/Types.h"
 #include "World/Entity/IEntityRenderer.h"
 
 // import/export mechanism.
@@ -54,7 +53,6 @@ public:
 
 private:
 	Ref< PointRenderer > m_pointRenderer;
-	render::handle_t m_defaultTechnique;
 };
 
 	}

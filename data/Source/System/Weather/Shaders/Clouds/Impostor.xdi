@@ -5,9 +5,9 @@
 			<comment/>
 			<position>
 				<first>769</first>
-				<second>243</second>
+				<second>242</second>
 			</position>
-			<technique>Default</technique>
+			<technique/>
 		</item>
 		<item type="traktor.render.VertexInput">
 			<comment/>
@@ -34,7 +34,7 @@
 				<second>212</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>363</first>
@@ -42,8 +42,9 @@
 			</position>
 			<parameterName>Projection</parameterName>
 			<type>PtMatrix</type>
+			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>147</first>
@@ -51,6 +52,7 @@
 			</position>
 			<parameterName>View</parameterName>
 			<type>PtMatrix</type>
+			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.MulAdd">
 			<comment/>
@@ -73,7 +75,7 @@
 			<addressV>AdClamp</addressV>
 			<addressW>AdClamp</addressW>
 		</item>
-		<item type="traktor.render.PixelOutput" version="2">
+		<item type="traktor.render.PixelOutput" version="3">
 			<comment/>
 			<position>
 				<first>1431</first>
@@ -105,6 +107,7 @@
 			<stencilFunction>CfAlways</stencilFunction>
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
+			<registerCount>0</registerCount>
 		</item>
 		<item type="traktor.render.Vector">
 			<comment/>
@@ -176,7 +179,7 @@
 			<min>0</min>
 			<max>1</max>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>645</first>
@@ -184,6 +187,7 @@
 			</position>
 			<parameterName>SliceDistance</parameterName>
 			<type>PtScalar</type>
+			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Div">
 			<comment/>
@@ -215,7 +219,7 @@
 				<second>404</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>564</first>
@@ -223,6 +227,7 @@
 			</position>
 			<parameterName>ImpostorTarget</parameterName>
 			<type>PtTexture</type>
+			<frequency>UfFrame</frequency>
 		</item>
 	</nodes>
 	<edges>

@@ -13,7 +13,6 @@ namespace traktor
 		{
 
 bool s_handlesInitialized = false;
-render::handle_t s_handleDefaultTechnique;
 render::handle_t s_handleProjection;
 render::handle_t s_handleSquareProjection;
 render::handle_t s_handleView;
@@ -33,6 +32,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.WorldRenderPassPreLit", WorldRenderPassPr
 
 WorldRenderPassPreLit::WorldRenderPassPreLit(
 	render::handle_t technique,
+	bool finalPass,
 	const WorldRenderView& worldRenderView,
 	float depthRange,
 	render::ITexture* depthMap,
@@ -40,6 +40,7 @@ WorldRenderPassPreLit::WorldRenderPassPreLit(
 	render::ITexture* lightMap
 )
 :	m_technique(technique)
+,	m_finalPass(finalPass)
 ,	m_worldRenderView(worldRenderView)
 ,	m_depthRange(depthRange)
 ,	m_depthMap(depthMap)
@@ -48,10 +49,6 @@ WorldRenderPassPreLit::WorldRenderPassPreLit(
 {
 	if (!s_handlesInitialized)
 	{
-		// Techniques
-		s_handleDefaultTechnique = render::getParameterHandle(L"Default");
-
-		// Parameters
 		s_handleProjection = render::getParameterHandle(L"Projection");
 		s_handleSquareProjection = render::getParameterHandle(L"SquareProjection");
 		s_handleView = render::getParameterHandle(L"View");
@@ -74,6 +71,11 @@ render::handle_t WorldRenderPassPreLit::getTechnique() const
 	return m_technique;
 }
 
+bool WorldRenderPassPreLit::isFinal() const
+{
+	return m_finalPass;
+}
+
 void WorldRenderPassPreLit::setShaderTechnique(render::Shader* shader) const
 {
 	shader->setTechnique(m_technique);
@@ -81,13 +83,13 @@ void WorldRenderPassPreLit::setShaderTechnique(render::Shader* shader) const
 
 void WorldRenderPassPreLit::setShaderCombination(render::Shader* shader) const
 {
-	if (m_technique == s_handleDefaultTechnique)
+	if (m_finalPass)
 		shader->setCombination(s_handleDepthEnable, m_depthMap != 0);
 }
 
 void WorldRenderPassPreLit::setShaderCombination(render::Shader* shader, const Matrix44& world, const Aabb3& bounds) const
 {
-	if (m_technique == s_handleDefaultTechnique)
+	if (m_finalPass)
 		shader->setCombination(s_handleDepthEnable, m_depthMap != 0);
 }
 
@@ -95,7 +97,7 @@ void WorldRenderPassPreLit::setProgramParameters(render::ProgramParameters* prog
 {
 	setWorldProgramParameters(programParams, Matrix44::identity());
 
-	if (m_technique == s_handleDefaultTechnique)
+	if (m_finalPass)
 	{
 		setDepthMapProgramParameters(programParams);
 		setLightMapProgramParameters(programParams);
@@ -106,7 +108,7 @@ void WorldRenderPassPreLit::setProgramParameters(render::ProgramParameters* prog
 {
 	setWorldProgramParameters(programParams, world);
 
-	if (m_technique == s_handleDefaultTechnique)
+	if (m_finalPass)
 	{
 		setDepthMapProgramParameters(programParams);
 		setLightMapProgramParameters(programParams);

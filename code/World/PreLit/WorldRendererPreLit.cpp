@@ -45,7 +45,7 @@ const static float c_screenPlaneDistance = 13.0f;
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRendererPreLit", 0, WorldRendererPreLit, IWorldRenderer)
 
-render::handle_t WorldRendererPreLit::ms_techniqueDefault = 0;
+render::handle_t WorldRendererPreLit::ms_techniquePreLitColor = 0;
 render::handle_t WorldRendererPreLit::ms_techniqueDepth = 0;
 render::handle_t WorldRendererPreLit::ms_techniqueNormal = 0;
 render::handle_t WorldRendererPreLit::ms_techniqueShadow = 0;
@@ -55,10 +55,10 @@ WorldRendererPreLit::WorldRendererPreLit()
 :	m_count(0)
 {
 	// Techniques
-	ms_techniqueDefault = render::getParameterHandle(L"Default");
-	ms_techniqueDepth = render::getParameterHandle(L"Depth");
-	ms_techniqueNormal = render::getParameterHandle(L"Normal");
-	ms_techniqueShadow = render::getParameterHandle(L"Shadow");
+	ms_techniquePreLitColor = render::getParameterHandle(L"World_PreLitColor");
+	ms_techniqueDepth = render::getParameterHandle(L"World_DepthWrite");
+	ms_techniqueNormal = render::getParameterHandle(L"World_NormalWrite");
+	ms_techniqueShadow = render::getParameterHandle(L"World_ShadowWrite");
 
 	// Global parameters.
 	ms_handleProjection = render::getParameterHandle(L"Projection");
@@ -450,6 +450,7 @@ void WorldRendererPreLit::build(WorldRenderView& worldRenderView, Entity* entity
 
 		WorldRenderPassPreLit depthPass(
 			ms_techniqueDepth,
+			false,
 			depthRenderView,
 			m_settings.depthRange,
 			0,
@@ -469,6 +470,7 @@ void WorldRendererPreLit::build(WorldRenderView& worldRenderView, Entity* entity
 
 		WorldRenderPassPreLit normalPass(
 			ms_techniqueNormal,
+			false,
 			normalRenderView,
 			m_settings.depthRange,
 			0,
@@ -818,6 +820,7 @@ void WorldRendererPreLit::buildLightWithShadows(WorldRenderView& worldRenderView
 
 				WorldRenderPassPreLit shadowPass(
 					ms_techniqueShadow,
+					false,
 					shadowRenderView,
 					m_settings.depthRange,
 					0,
@@ -862,16 +865,17 @@ void WorldRendererPreLit::buildVisual(WorldRenderView& worldRenderView, Entity* 
 	worldRenderView.resetLights();
 	worldRenderView.setEyePosition(eyePosition);
 
-	WorldRenderPassPreLit defaultPass(
-		ms_techniqueDefault,
+	WorldRenderPassPreLit defaultPreLitPass(
+		ms_techniquePreLitColor,
+		true,
 		worldRenderView,
 		m_settings.depthRange,
 		f.haveDepth ? m_depthTargetSet->getColorTexture(0) : 0,
 		0,
 		m_lightMapTargetSet->getColorTexture(0)
 	);
-	f.visual->build(worldRenderView, defaultPass, entity);
-	f.visual->flush(worldRenderView, defaultPass);
+	f.visual->build(worldRenderView, defaultPreLitPass, entity);
+	f.visual->flush(worldRenderView, defaultPreLitPass);
 
 	f.projection = worldRenderView.getProjection();
 	f.view = worldRenderView.getView();

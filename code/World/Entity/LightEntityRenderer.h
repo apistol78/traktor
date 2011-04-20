@@ -1,7 +1,6 @@
 #ifndef traktor_world_LightEntityRenderer_H
 #define traktor_world_LightEntityRenderer_H
 
-#include "Core/Math/Random.h"
 #include "World/Entity/IEntityRenderer.h"
 
 // import/export mechanism.
@@ -25,8 +24,6 @@ class T_DLLCLASS LightEntityRenderer : public IEntityRenderer
 	T_RTTI_CLASS;
 
 public:
-	LightEntityRenderer();
-
 	virtual const TypeInfoSet getEntityTypes() const;
 
 	virtual void render(
@@ -41,10 +38,6 @@ public:
 		WorldRenderView& worldRenderView,
 		IWorldRenderPass& worldRenderPass
 	);
-
-private:
-	Random m_random;
-	float m_randomFlicker;
 };
 
 	}

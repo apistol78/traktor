@@ -18,7 +18,7 @@
 				<first>775</first>
 				<second>45</second>
 			</position>
-			<technique>Default</technique>
+			<technique/>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
