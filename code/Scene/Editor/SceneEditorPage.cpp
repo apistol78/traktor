@@ -292,6 +292,9 @@ bool SceneEditorPage::dropInstance(db::Instance* instance, const ui::Point& posi
 		else
 			entityData = new world::ExternalEntityData(instance->getGuid());
 
+		// Use name of instance as external entity's name.
+		entityData->setName(instance->getName());
+
 		m_undoStack->push(m_dataObject);
 
 		// Create instance and adapter.
@@ -608,21 +611,25 @@ Ref< ui::custom::GridRow > SceneEditorPage::createEntityListRow(EntityAdapter* e
 		(entityAdapter->isExpanded() ? ui::custom::GridRow::RsExpanded : 0)
 	);
 	
+	std::wstring entityName = entityAdapter->getName();
+	if (entityName.empty())
+		entityName = i18n::Text(L"SCENE_EDITOR_UNNAMED_ENTITY");
+
 	// All external entities is highlighted as they shouldn't be edited.
 	if (entityAdapter->isChildOfExternal())
 	{
-		row->add(new ui::custom::GridItem(entityAdapter->getName()/*, 0*/));
+		row->add(new ui::custom::GridItem(entityName/*, 0*/));
 		row->setFont(m_instanceGridFontItalic);
 	}
 	else if (entityAdapter->isExternal())
 	{
-		row->add(new ui::custom::GridItem(entityAdapter->getName()/*, 1*/));
+		row->add(new ui::custom::GridItem(entityName/*, 1*/));
 		row->setFont(m_instanceGridFontBold);
 	}
 	else if (entityAdapter->isGroup())
-		row->add(new ui::custom::GridItem(entityAdapter->getName()/*, 2, 3*/));
+		row->add(new ui::custom::GridItem(entityName/*, 2, 3*/));
 	else
-		row->add(new ui::custom::GridItem(entityAdapter->getName()/*, 0*/));
+		row->add(new ui::custom::GridItem(entityName/*, 0*/));
 
 	// Create "visible" check box.
 	row->add(new ui::custom::GridItem(
