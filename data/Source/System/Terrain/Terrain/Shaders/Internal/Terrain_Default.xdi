@@ -145,7 +145,7 @@ Generated texture from surface cache.
 				<first>937</first>
 				<second>592</second>
 			</position>
-			<technique>Default</technique>
+			<technique/>
 		</item>
 		<item type="traktor.render.Transform">
 			<comment/>

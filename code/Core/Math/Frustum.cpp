@@ -3,6 +3,12 @@
 
 namespace traktor
 {
+	namespace
+	{
+
+const static Scalar c_scalarZero(0.0f);
+
+	}
 
 Frustum::Frustum()
 :	planes(6)
@@ -67,24 +73,22 @@ Scalar Frustum::getFarZ() const
 
 Frustum::InsideResult Frustum::inside(const Vector4& point) const
 {
-	const Scalar c_zero(0.0f);
-
 	for (uint32_t i = 0; i < planes.size(); ++i)
 	{
-		if (planes[i].distance(point) < c_zero)
+		if (planes[i].distance(point) < c_scalarZero)
 			return IrOutside;
 	}
-
 	return IrInside;
 }
 
 Frustum::InsideResult Frustum::inside(const Vector4& center_, const Scalar& radius) const
 {
 	bool partial = false;
+	Scalar nradius = -radius;
 	for (uint32_t i = 0; i < planes.size(); ++i)
 	{
 		Scalar distance = planes[i].distance(center_);
-		if (distance < -radius)
+		if (distance < nradius)
 			return IrOutside;
 		if (distance < radius)
 			partial |= true;
@@ -94,20 +98,17 @@ Frustum::InsideResult Frustum::inside(const Vector4& center_, const Scalar& radi
 
 Frustum::InsideResult Frustum::inside(const Aabb3& aabb) const
 {
-	const static Scalar c_zero(0.0f);
 	bool partial = false;
-
 	for (uint32_t i = 0; i < planes.size(); ++i)
 	{
 		Vector4 n = select(planes[i].normal(), aabb.mn, aabb.mx);
-		if (planes[i].distance(n) < c_zero)	// outside
+		if (planes[i].distance(n) < c_scalarZero)	// outside
 			return IrOutside;
 
 		Vector4 p = select(planes[i].normal(), aabb.mx, aabb.mn);
-		if (planes[i].distance(p) < c_zero)	// intersecting
+		if (planes[i].distance(p) < c_scalarZero)	// intersecting
 			partial |= true;
 	}
-
 	return partial ? IrPartial : IrInside;
 }
 

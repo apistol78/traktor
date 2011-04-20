@@ -28,7 +28,7 @@
 				<first>1043</first>
 				<second>436</second>
 			</position>
-			<technique>Shadow</technique>
+			<technique>World_ShadowWrite</technique>
 		</item>
 		<item type="traktor.render.PixelOutput" version="3">
 			<comment/>
@@ -36,7 +36,7 @@
 				<first>1370</first>
 				<second>245</second>
 			</position>
-			<technique>Shadow</technique>
+			<technique>World_ShadowWrite</technique>
 			<cullMode>CmNever</cullMode>
 			<blendEnable>false</blendEnable>
 			<blendOperation>BoAdd</blendOperation>

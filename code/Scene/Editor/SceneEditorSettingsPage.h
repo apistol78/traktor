@@ -17,7 +17,6 @@ namespace traktor
 	{
 
 class CheckBox;
-class DropDown;
 
 	}
 
@@ -40,7 +39,6 @@ public:
 
 private:
 	Ref< ui::CheckBox > m_checkInvertMouseWheel;
-	Ref< ui::DropDown > m_dropWorldRenderer;
 };
 
 	}

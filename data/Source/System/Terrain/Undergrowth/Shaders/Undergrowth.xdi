@@ -34,7 +34,7 @@
 				<first>912</first>
 				<second>-125</second>
 			</position>
-			<technique>Default</technique>
+			<technique/>
 		</item>
 		<item type="traktor.render.VertexInput">
 			<comment/>

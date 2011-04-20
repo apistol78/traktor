@@ -1,3 +1,5 @@
+#include <limits>
+#include "Core/Math/Aabb3.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Render/Shader.h"
@@ -16,7 +18,11 @@ namespace traktor
 const Guid c_lightDirectionalShader(L"{9F5076A9-A090-3242-A395-B0A75DCB2E1F}");
 const Guid c_lightPointShader(L"{6389690A-440C-364F-A5DA-5B53392F6B85}");
 
+const float c_pointLightScreenAreaThresholdDim = 4.0f;
+const float c_pointLightScreenAreaThreshold = 4.0f * (c_pointLightScreenAreaThresholdDim * c_pointLightScreenAreaThresholdDim) / (1280.0f * 720.0f);
+
 render::handle_t s_handleShadowEnable;
+render::handle_t s_handleExtent;
 render::handle_t s_handleMagicCoeffs;
 render::handle_t s_handleEyePosition;
 render::handle_t s_handleDepthRange;
@@ -47,6 +53,7 @@ LightRenderer::LightRenderer()
 ,	m_lightPointShader(c_lightPointShader)
 {
 	s_handleShadowEnable = render::getParameterHandle(L"ShadowEnable");
+	s_handleExtent = render::getParameterHandle(L"Extent");
 	s_handleMagicCoeffs = render::getParameterHandle(L"MagicCoeffs");
 	s_handleEyePosition = render::getParameterHandle(L"EyePosition");
 	s_handleDepthRange = render::getParameterHandle(L"DepthRange");
@@ -153,7 +160,65 @@ void LightRenderer::render(
 		Vector4 lightPosition = view * light.position.xyz1();
 		Vector4 lightDirectionAndRange = view * light.direction.xyz0() + Vector4(0.0f, 0.0f, 0.0f, light.range);
 
+
+		// Calculate screen bounding box of light.
+		Aabb3 lightBoundingBox;
+		lightBoundingBox.contain(light.position.xyz1(), light.range);
+
+		Vector4 extents[8];
+		lightBoundingBox.getExtents(extents);
+
+		Vector4 mn(
+			std::numeric_limits< float >::max(),
+			std::numeric_limits< float >::max(),
+			std::numeric_limits< float >::max(),
+			std::numeric_limits< float >::max()
+		);
+		Vector4 mx(
+			-std::numeric_limits< float >::max(),
+			-std::numeric_limits< float >::max(),
+			-std::numeric_limits< float >::max(),
+			-std::numeric_limits< float >::max()
+		);
+
+		Matrix44 viewProj = projection * view;
+		for (int i = 0; i < sizeof_array(extents); ++i)
+		{
+			Vector4 p = viewProj * extents[i];
+			if (p.w() <= 0.0f)
+			{
+				// Bounding box clipped to view plane; clip edge with view plane.
+				mn = Vector4(-1.0f, -1.0f, 0.0f, 0.0f);
+				mx = Vector4(1.0f, 1.0f, 0.0f, 0.0f);
+				break;
+			}
+
+			// Homogeneous divide.
+			p /= p.w();
+
+			// Track screen space extents.
+			mn = min(mn, p);
+			mx = max(mx, p);
+		}
+
+		// Ensure we're visible.
+		if (mn.x() > 1.0f || mn.y() > 1.0f || mx.x() < -1.0f || mx.y() < -1.0f)
+			return;
+
+		// Calculate area of light quad; do before clipping to screen edges as
+		// we don't want to accidentally cull near lights which are close to the edge.
+		float area = (mx.x() - mn.x()) * (mx.y() - mn.y());
+		if (area < c_pointLightScreenAreaThreshold)
+			return;
+
+		// Clip quad to screen edges.
+		mn = max(mn, Vector4(-1.0f, -1.0f, 0.0f, 0.0f));
+		mx = min(mx, Vector4(1.0f, 1.0f, 0.0f, 0.0f));
+
+		// Render quad primitive.
 		renderView->setVertexBuffer(m_vertexBufferQuad);
+
+		m_lightPointShader->setVectorParameter(s_handleExtent, Vector4(mn.x(), mn.y(), mx.x(), mx.y()));
 
 		m_lightPointShader->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
 		m_lightPointShader->setVectorParameter(s_handleEyePosition, eyePosition);

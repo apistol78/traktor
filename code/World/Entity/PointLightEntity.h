@@ -1,14 +1,15 @@
 #ifndef traktor_world_PointLightEntity_H
 #define traktor_world_PointLightEntity_H
 
+#include "Core/Math/Random.h"
 #include "World/Entity/SpatialEntity.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_WORLD_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -30,7 +31,8 @@ public:
 		const Vector4& baseColor,
 		const Vector4& shadowColor,
 		float range,
-		float randomFlicker
+		float randomFlickerAmount,
+		float randomFlickerFilter
 	);
 
 	virtual void update(const EntityUpdate* update);
@@ -57,7 +59,11 @@ private:
 	Vector4 m_baseColor;
 	Vector4 m_shadowColor;
 	float m_range;
+	float m_randomFlickerAmount;
+	float m_randomFlickerFilter;
+	float m_randomFlickerValue;
 	float m_randomFlicker;
+	Random m_random;
 };
 
 	}

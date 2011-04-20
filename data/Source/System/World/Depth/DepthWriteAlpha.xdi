@@ -65,7 +65,7 @@
 				<first>370</first>
 				<second>687</second>
 			</position>
-			<technique>Depth</technique>
+			<technique>World_DepthWrite</technique>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
@@ -126,13 +126,13 @@
 				<second>529</second>
 			</position>
 		</item>
-		<item type="traktor.render.PixelOutput" version="2">
+		<item type="traktor.render.PixelOutput" version="3">
 			<comment/>
 			<position>
 				<first>979</first>
 				<second>571</second>
 			</position>
-			<technique>Depth</technique>
+			<technique>World_DepthWrite</technique>
 			<cullMode>CmClockWise</cullMode>
 			<blendEnable>false</blendEnable>
 			<blendOperation>BoAdd</blendOperation>
@@ -158,6 +158,7 @@
 			<stencilFunction>CfAlways</stencilFunction>
 			<stencilReference>0</stencilReference>
 			<stencilMask>0</stencilMask>
+			<registerCount>0</registerCount>
 		</item>
 	</nodes>
 	<edges>

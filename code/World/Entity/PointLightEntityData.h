@@ -36,14 +36,17 @@ public:
 
 	float getRange() const { return m_range; }
 
-	float getRandomFlicker() const { return m_randomFlicker; }
+	float getRandomFlickerAmount() const { return m_randomFlickerAmount; }
+
+	float getRandomFlickerFilter() const { return m_randomFlickerFilter; }
 
 private:
 	Vector4 m_sunColor;
 	Vector4 m_baseColor;
 	Vector4 m_shadowColor;
 	float m_range;
-	float m_randomFlicker;
+	float m_randomFlickerAmount;
+	float m_randomFlickerFilter;
 };
 
 	}

@@ -141,7 +141,8 @@ Ref< Entity > WorldEntityFactory::createEntity(IEntityBuilder* builder, const En
 			pointLightData->getBaseColor(),
 			pointLightData->getShadowColor(),
 			pointLightData->getRange(),
-			pointLightData->getRandomFlicker()
+			pointLightData->getRandomFlickerAmount(),
+			pointLightData->getRandomFlickerFilter()
 		);
 	}
 

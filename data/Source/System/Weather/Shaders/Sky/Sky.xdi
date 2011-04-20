@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.PixelOutput" version="2">
+		<item type="traktor.render.PixelOutput" version="3">
 			<comment/>
 			<position>
-				<first>561</first>
-				<second>49</second>
+				<first>560</first>
+				<second>22</second>
 			</position>
-			<technique>Default</technique>
+			<technique>World_ForwardColor</technique>
 			<cullMode>CmClockWise</cullMode>
 			<blendEnable>false</blendEnable>
 			<blendOperation>BoAdd</blendOperation>
@@ -32,7 +32,8 @@
 			<stencilPass>SoKeep</stencilPass>
 			<stencilFunction>CfAlways</stencilFunction>
 			<stencilReference>0</stencilReference>
-			<stencilMask>4294967295</stencilMask>
+			<stencilMask>2147483648</stencilMask>
+			<registerCount>0</registerCount>
 		</item>
 		<item type="traktor.render.VertexInput">
 			<comment/>
@@ -51,7 +52,7 @@
 				<first>656</first>
 				<second>-55</second>
 			</position>
-			<technique>Default</technique>
+			<technique/>
 		</item>
 		<item type="traktor.render.Transform">
 			<comment/>
@@ -60,7 +61,7 @@
 				<second>-75</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>324</first>
@@ -68,6 +69,7 @@
 			</position>
 			<parameterName>Projection</parameterName>
 			<type>PtMatrix</type>
+			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Transform">
 			<comment/>
@@ -76,7 +78,7 @@
 				<second>-81</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>64</first>
@@ -84,8 +86,9 @@
 			</position>
 			<parameterName>View</parameterName>
 			<type>PtMatrix</type>
+			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>-185</first>
@@ -93,6 +96,7 @@
 			</position>
 			<parameterName>SkyDomeRadius</parameterName>
 			<type>PtScalar</type>
+			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Interpolator">
 			<comment>
@@ -244,6 +248,40 @@ Cartesian
 				<second>109</second>
 			</position>
 			<value>0</value>
+		</item>
+		<item type="traktor.render.PixelOutput" version="3">
+			<comment/>
+			<position>
+				<first>560</first>
+				<second>55</second>
+			</position>
+			<technique>World_PreLitColor</technique>
+			<cullMode>CmClockWise</cullMode>
+			<blendEnable>false</blendEnable>
+			<blendOperation>BoAdd</blendOperation>
+			<blendSource>BfOne</blendSource>
+			<blendDestination>BfZero</blendDestination>
+			<colorWriteMask>
+				<red>true</red>
+				<green>true</green>
+				<blue>true</blue>
+				<alpha>true</alpha>
+			</colorWriteMask>
+			<depthEnable>true</depthEnable>
+			<depthWriteEnable>false</depthWriteEnable>
+			<depthFunction>CfLessEqual</depthFunction>
+			<alphaTestEnable>false</alphaTestEnable>
+			<alphaTestFunction>CfLess</alphaTestFunction>
+			<alphaTestReference>128</alphaTestReference>
+			<wireframe>false</wireframe>
+			<stencilEnable>false</stencilEnable>
+			<stencilFail>SoKeep</stencilFail>
+			<stencilZFail>SoKeep</stencilZFail>
+			<stencilPass>SoKeep</stencilPass>
+			<stencilFunction>CfAlways</stencilFunction>
+			<stencilReference>0</stencilReference>
+			<stencilMask>2147483648</stencilMask>
+			<registerCount>0</registerCount>
 		</item>
 	</nodes>
 	<edges>
@@ -415,6 +453,16 @@ Cartesian
 			<destination>
 				<node ref="/object/nodes/item[13]"/>
 				<name>SunDirection</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[13]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[16]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 	</edges>

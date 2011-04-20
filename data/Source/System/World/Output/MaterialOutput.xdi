@@ -4,8 +4,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-182</first>
-				<second>166</second>
+				<first>-4</first>
+				<second>383</second>
 			</position>
 			<name>Normal</name>
 			<connectable>true</connectable>
@@ -15,8 +15,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-185</first>
-				<second>197</second>
+				<first>-7</first>
+				<second>414</second>
 			</position>
 			<name>Position</name>
 			<connectable>true</connectable>
@@ -26,8 +26,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-207</first>
-				<second>321</second>
+				<first>-29</first>
+				<second>538</second>
 			</position>
 			<name>DiffuseTerm</name>
 			<connectable>true</connectable>
@@ -37,8 +37,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-246</first>
-				<second>352</second>
+				<first>-68</first>
+				<second>569</second>
 			</position>
 			<name>SpecularRoughness</name>
 			<connectable>true</connectable>
@@ -48,8 +48,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-210</first>
-				<second>259</second>
+				<first>-32</first>
+				<second>476</second>
 			</position>
 			<name>ViewPosition</name>
 			<connectable>true</connectable>
@@ -59,8 +59,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-209</first>
-				<second>135</second>
+				<first>-31</first>
+				<second>352</second>
 			</position>
 			<name>EyeDirection</name>
 			<connectable>true</connectable>
@@ -70,8 +70,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-215</first>
-				<second>383</second>
+				<first>-37</first>
+				<second>600</second>
 			</position>
 			<name>SpecularTerm</name>
 			<connectable>true</connectable>
@@ -81,8 +81,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-210</first>
-				<second>228</second>
+				<first>-32</first>
+				<second>445</second>
 			</position>
 			<name>SurfaceColor</name>
 			<connectable>true</connectable>
@@ -92,8 +92,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-207</first>
-				<second>290</second>
+				<first>-29</first>
+				<second>507</second>
 			</position>
 			<name>ViewNormal</name>
 			<connectable>true</connectable>
@@ -103,8 +103,41 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>52</first>
-				<second>181</second>
+				<first>322</first>
+				<second>391</second>
+			</position>
+			<fragmentGuid>{7F2F8712-3B18-0000-6B1C-E9A3CADFF480}</fragmentGuid>
+			<inputPins>
+				<item>
+					<name>SurfaceColor</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<name>DiffuseTerm</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<name>SpecularTerm</name>
+					<optional>true</optional>
+				</item>
+			</inputPins>
+			<outputPins/>
+			<values>
+				<item>
+					<first>DiffuseTerm</first>
+					<second>1</second>
+				</item>
+				<item>
+					<first>SpecularTerm</first>
+					<second>1</second>
+				</item>
+			</values>
+		</item>
+		<item type="traktor.render.External" version="1">
+			<comment/>
+			<position>
+				<first>322</first>
+				<second>198</second>
 			</position>
 			<fragmentGuid>{DB61FE22-1D18-0000-A7CB-095CD836EEAD}</fragmentGuid>
 			<inputPins>
@@ -122,10 +155,6 @@
 				</item>
 				<item>
 					<name>SurfaceColor</name>
-					<optional>false</optional>
-				</item>
-				<item>
-					<name>ViewPosition</name>
 					<optional>false</optional>
 				</item>
 				<item>
@@ -157,6 +186,67 @@
 				</item>
 			</values>
 		</item>
+		<item type="traktor.render.External" version="1">
+			<comment/>
+			<position>
+				<first>322</first>
+				<second>605</second>
+			</position>
+			<fragmentGuid>{6B7A8D95-D3D4-A94F-8A99-4943A2470A55}</fragmentGuid>
+			<inputPins>
+				<item>
+					<name>ViewPosition</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
+			<outputPins/>
+			<values/>
+		</item>
+		<item type="traktor.render.External" version="1">
+			<comment/>
+			<position>
+				<first>322</first>
+				<second>542</second>
+			</position>
+			<fragmentGuid>{6EF33326-74C7-B640-BB38-5C57D2199FB4}</fragmentGuid>
+			<inputPins>
+				<item>
+					<name>ViewPosition</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
+			<outputPins/>
+			<values/>
+		</item>
+		<item type="traktor.render.External" version="1">
+			<comment/>
+			<position>
+				<first>322</first>
+				<second>685</second>
+			</position>
+			<fragmentGuid>{9375BC3C-8889-AC44-A5DE-AAF3B0E5574D}</fragmentGuid>
+			<inputPins>
+				<item>
+					<name>Normal</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<name>ViewPosition</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<name>SpecularRoughness</name>
+					<optional>true</optional>
+				</item>
+			</inputPins>
+			<outputPins/>
+			<values>
+				<item>
+					<first>SpecularRoughness</first>
+					<second>0</second>
+				</item>
+			</values>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
@@ -171,16 +261,6 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[3]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[9]"/>
-				<name>SpecularRoughness</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[2]"/>
 				<name>Output</name>
 			</source>
@@ -191,11 +271,91 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
+				<node ref="/object/nodes/item[5]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[10]"/>
+				<name>EyeDirection</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[10]"/>
+				<name>Normal</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[10]"/>
+				<name>Position</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[7]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[10]"/>
+				<name>SurfaceColor</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[10]"/>
+				<name>DiffuseTerm</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[10]"/>
+				<name>SpecularRoughness</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[6]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[10]"/>
+				<name>SpecularTerm</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
 				<node ref="/object/nodes/item[4]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[9]"/>
+				<node ref="/object/nodes/item[12]"/>
+				<name>ViewPosition</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[11]"/>
 				<name>ViewPosition</name>
 			</destination>
 		</item>
@@ -211,32 +371,32 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[1]"/>
+				<node ref="/object/nodes/item[8]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[9]"/>
-				<name>Position</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[9]"/>
+				<node ref="/object/nodes/item[13]"/>
 				<name>Normal</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[5]"/>
+				<node ref="/object/nodes/item[4]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[9]"/>
-				<name>EyeDirection</name>
+				<node ref="/object/nodes/item[13]"/>
+				<name>ViewPosition</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[13]"/>
+				<name>SpecularRoughness</name>
 			</destination>
 		</item>
 	</edges>

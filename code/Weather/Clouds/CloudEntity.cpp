@@ -287,7 +287,7 @@ void CloudEntity::renderCluster(
 	const CloudParticleCluster& cluster
 )
 {
-	if (worldRenderPass.getTechnique() != render::getParameterHandle(L"Default"))
+	if (!worldRenderPass.isFinal())
 		return;
 
 	const Frustum& viewFrustum = worldRenderView.getViewFrustum();

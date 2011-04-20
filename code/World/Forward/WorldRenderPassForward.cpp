@@ -15,7 +15,6 @@ namespace traktor
 enum { MaxForwardLightCount = 2 };
 
 bool s_handlesInitialized = false;
-render::handle_t s_handleDefaultTechnique;
 render::handle_t s_handleProjection;
 render::handle_t s_handleSquareProjection;
 render::handle_t s_handleView;
@@ -41,12 +40,14 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.WorldRenderPassForward", WorldRenderPassF
 
 WorldRenderPassForward::WorldRenderPassForward(
 	render::handle_t technique,
+	bool finalPass,
 	const WorldRenderView& worldRenderView,
 	float depthRange,
 	render::ITexture* depthMap,
 	render::ITexture* shadowMask
 )
 :	m_technique(technique)
+,	m_finalPass(finalPass)
 ,	m_worldRenderView(worldRenderView)
 ,	m_depthRange(depthRange)
 ,	m_depthMap(depthMap)
@@ -54,7 +55,6 @@ WorldRenderPassForward::WorldRenderPassForward(
 {
 	if (!s_handlesInitialized)
 	{
-		s_handleDefaultTechnique = render::getParameterHandle(L"Default");
 		s_handleProjection = render::getParameterHandle(L"Projection");
 		s_handleSquareProjection = render::getParameterHandle(L"SquareProjection");
 		s_handleView = render::getParameterHandle(L"View");
@@ -82,6 +82,11 @@ render::handle_t WorldRenderPassForward::getTechnique() const
 	return m_technique;
 }
 
+bool WorldRenderPassForward::isFinal() const
+{
+	return m_finalPass;
+}
+
 void WorldRenderPassForward::setShaderTechnique(render::Shader* shader) const
 {
 	shader->setTechnique(m_technique);
@@ -89,7 +94,7 @@ void WorldRenderPassForward::setShaderTechnique(render::Shader* shader) const
 
 void WorldRenderPassForward::setShaderCombination(render::Shader* shader) const
 {
-	if (m_technique == s_handleDefaultTechnique)
+	if (m_finalPass)
 	{
 		if (m_worldRenderView.getLightCount() == 1 && m_worldRenderView.getLight(0).type == LtDirectional)
 		{
@@ -109,7 +114,7 @@ void WorldRenderPassForward::setShaderCombination(render::Shader* shader) const
 
 void WorldRenderPassForward::setShaderCombination(render::Shader* shader, const Matrix44& world, const Aabb3& bounds) const
 {
-	if (m_technique == s_handleDefaultTechnique)
+	if (m_finalPass)
 	{
 		int lightDirectionalCount = 0;
 		int lightPointCount = 0;
@@ -153,7 +158,7 @@ void WorldRenderPassForward::setProgramParameters(render::ProgramParameters* pro
 	setWorldProgramParameters(programParams, Matrix44::identity());
 
 	// Set these parameters only if we're rendering using default technique.
-	if (m_technique == s_handleDefaultTechnique)
+	if (m_finalPass)
 	{
 		setLightProgramParameters(programParams);
 		setShadowMapProgramParameters(programParams);
@@ -166,7 +171,7 @@ void WorldRenderPassForward::setProgramParameters(render::ProgramParameters* pro
 	setWorldProgramParameters(programParams, world);
 
 	// Set these parameters only if we're rendering using default technique.
-	if (m_technique == s_handleDefaultTechnique)
+	if (m_finalPass)
 	{
 		setLightProgramParameters(programParams, world, bounds);
 		setShadowMapProgramParameters(programParams);

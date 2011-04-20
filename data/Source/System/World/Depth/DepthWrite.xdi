@@ -37,13 +37,13 @@
 			<optional>false</optional>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.PixelOutput" version="2">
+		<item type="traktor.render.PixelOutput" version="3">
 			<comment/>
 			<position>
 				<first>722</first>
 				<second>355</second>
 			</position>
-			<technique>Depth</technique>
+			<technique>World_DepthWrite</technique>
 			<cullMode>CmClockWise</cullMode>
 			<blendEnable>false</blendEnable>
 			<blendOperation>BoAdd</blendOperation>
@@ -69,6 +69,7 @@
 			<stencilFunction>CfAlways</stencilFunction>
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
+			<registerCount>0</registerCount>
 		</item>
 		<item type="traktor.render.VertexOutput" version="1">
 			<comment/>
@@ -76,7 +77,7 @@
 				<first>399</first>
 				<second>455</second>
 			</position>
-			<technique>Depth</technique>
+			<technique>World_DepthWrite</technique>
 		</item>
 		<item type="traktor.render.External" version="1">
 			<comment/>

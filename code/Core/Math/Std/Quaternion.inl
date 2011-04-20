@@ -30,47 +30,55 @@ T_MATH_INLINE Quaternion::Quaternion(const Vector4& axis, float angle)
 
 T_MATH_INLINE Quaternion::Quaternion(const Matrix44& m)
 {
-	float trace = 1.0f + m(0, 0) + m(1, 1) + m(2, 2);
+	Vector4 mc0 = m.get(0);
+	Vector4 mc1 = m.get(1);
+	Vector4 mc2 = m.get(2);
+
+	Scalar trace = Scalar(1.0f) + mc0.x() + mc1.y() + mc2.z();
 	if (trace > FUZZY_EPSILON)
 	{
-		float S = sqrtf(trace) * 2;
+		Scalar S = squareRoot(trace) * Scalar(2.0f);
+		Scalar iS = Scalar(1.0f) / S;
 		e.set(
-			(m(2, 1) - m(1, 2)) / S,
-			(m(0, 2) - m(2, 0)) / S,
-			(m(1, 0) - m(0, 1)) / S,
-			0.25f * S
+			(mc1.z() - mc2.y()) * iS,
+			(mc2.x() - mc0.z()) * iS,
+			(mc0.y() - mc1.x()) * iS,
+			Scalar(0.25f) * S
 		);
 	}
 	else
 	{
-		if (m(0, 0) > m(1, 1) && m(0, 0) > m(2, 2))
+		if (mc0.x() > mc1.y() && mc0.x() > mc2.z())
 		{
-			float S = sqrtf(1.0f + m(0, 0) - m(1, 1) - m(2, 2)) * 2.0f;
+			Scalar S = squareRoot(Scalar(1.0f) + mc0.x() - mc1.y() - mc2.z()) * Scalar(2.0f);
+			Scalar iS = Scalar(1.0f) / S;
 			e.set(
-				0.25f * S,
-				(m(1, 0) + m(0, 1)) / S,
-				(m(0, 2) + m(2, 0)) / S,
-				(m(2, 1) - m(1, 2)) / S
+				Scalar(0.25f) * S,
+				(mc0.y() + mc1.x()) * iS,
+				(mc2.x() + mc0.z()) * iS,
+				(mc1.z() - mc2.y()) * iS
 			);
 		}
 		else if (m(1, 1) > m(2, 2))
 		{
-			float S = sqrtf(1.0f + m(1, 1) - m(0, 0) - m(2, 2)) * 2.0f;
+			Scalar S = squareRoot(Scalar(1.0f) + mc1.y() - mc0.x() - mc2.z()) * Scalar(2.0f);
+			Scalar iS = Scalar(1.0f) / S;
 			e.set(
-				(m(1, 0) + m(0, 1)) / S,
-				0.25f * S,
-				(m(2, 1) + m(1, 2)) / S,
-				(m(0, 2) - m(2, 0)) / S
+				(mc0.y() + mc1.x()) * iS,
+				Scalar(0.25f) * S,
+				(mc1.z() + mc2.y()) * iS,
+				(mc2.x() - mc0.z()) * iS
 			);
 		}
 		else
 		{
-			float S = sqrtf(1.0f + m(2, 2) - m(0, 0) - m(1, 1)) * 2.0f;
+			Scalar S = squareRoot(Scalar(1.0f) + mc2.z() - mc0.x() - mc1.y()) * Scalar(2.0f);
+			Scalar iS = Scalar(1.0f) / S;
 			e.set(
-				(m(0, 2) + m(2, 0)) / S,
-				(m(2, 1) + m(1, 2)) / S,
-				0.25f * S,
-				(m(1, 0) - m(0, 1)) / S
+				(mc2.x() + mc0.z()) * iS,
+				(mc1.z() + mc2.y()) * iS,
+				Scalar(0.25f) * S,
+				(mc0.y() - mc1.x()) * iS
 			);
 		}
 	}
@@ -229,7 +237,7 @@ T_MATH_INLINE Quaternion operator * (const Quaternion& l, float r)
 
 T_MATH_INLINE Quaternion operator * (const Quaternion& l, const Quaternion& r)
 {
-	const Vector4 pppn(1.0f, 1.0f, 1.0f, -1.0f);
+	const static Vector4 pppn(1.0f, 1.0f, 1.0f, -1.0f);
 
 	Vector4 l_wwww = l.e.shuffle< 3, 3, 3, 3 >();
 	Vector4 r_wwwx = r.e.shuffle< 3, 3, 3, 0 >();
@@ -251,7 +259,7 @@ T_MATH_INLINE Vector4 operator * (const Quaternion& q, const Vector4& v)
 {
 	Quaternion qv(v.xyz0());
 	Quaternion qvp = q * qv * q.inverse();
-	return qvp.e.xyz0() + Vector4(0.0f, 0.0f, 0.0f, v.w());
+	return qvp.e.xyz0() + v * Vector4(0.0f, 0.0f, 0.0f, 1.0f);
 }
 
 T_MATH_INLINE Quaternion::Quaternion(const Vector4& _e)
