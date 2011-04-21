@@ -267,7 +267,24 @@ TransformPath::Frame TransformPath::evaluate(float at, float end, bool loop) con
 			m_loop = loop;
 		}
 
-		Frame frame = m_spline->evaluate(Scalar(at), Scalar(end));
+		Scalar Tat(at);
+		Scalar Tend(end);
+
+		if (m_loop)
+		{
+			while (Tat > Tend)
+				Tat -= Tend;
+		}
+		else
+		{
+			Scalar Tfirst(m_keys.front().T);
+			if (Tat < Tfirst)
+				Tat = Tfirst;
+			if (Tat > Tend)
+				Tat = Tend;
+		}
+
+		Frame frame = m_spline->evaluate(Tat, Tend);
 		frame.position = frame.position.xyz1();
 		frame.orientation = frame.orientation.xyz0();
 

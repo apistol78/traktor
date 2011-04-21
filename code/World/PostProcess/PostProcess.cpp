@@ -160,13 +160,13 @@ Ref< render::RenderTargetSet >& PostProcess::getTargetRef(render::handle_t id)
 void PostProcess::setParameter(render::handle_t handle, bool value)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	m_booleanParameters.insert(handle, value);
+	m_booleanParameters[handle] = value;
 }
 
 void PostProcess::setParameter(render::handle_t handle, float value)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	m_scalarParameters.insert(handle, value);
+	m_scalarParameters[handle] = value;
 }
 
 void PostProcess::prepareShader(render::Shader* shader) const
