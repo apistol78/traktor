@@ -273,6 +273,12 @@ Size CanvasCocoa::getTextExtent(const std::wstring& text) const
 	
 	return fromNSSize(size);
 }
+
+void* CanvasCocoa::getSystemHandle()
+{
+	T_FATAL_ERROR;
+	return 0;
+}
 	
 	}
 }
