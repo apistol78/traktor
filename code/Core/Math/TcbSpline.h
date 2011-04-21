@@ -37,8 +37,17 @@ public:
 
 		Time T0(m_accessor.time(index));
 		Time T1(m_accessor.time(index_1));
-		if (T1 < T0)
-			T1 += Tend;
+		if (T0 > T1)
+		{
+			if (Tat > T0)
+			{
+				T1 += Tend;
+			}
+			else
+			{
+				T0 -= Tend;
+			}
+		}
 
 		Control t = m_accessor.tension(index);
 		Control c = m_accessor.continuity(index);
@@ -74,11 +83,7 @@ public:
 			v1, -k22
 		);
 
-		Time Tcurr = Tat;
-		while (Tcurr > Tend)
-			Tcurr -= Tend;
-
-		Time T = (T1 > T0) ? (Tcurr - T0) / (T1 - T0) : Time(0.0f);
+		Time T = (T1 > T0) ? (Tat - T0) / (T1 - T0) : Time(0.0f);
 		Time T2 = T * T;
 		Time T3 = T2 * T;
 
