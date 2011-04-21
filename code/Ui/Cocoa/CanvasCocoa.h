@@ -67,6 +67,8 @@ public:
 	
 	virtual Size getTextExtent(const std::wstring& text) const;
 	
+	virtual void* getSystemHandle();
+	
 private:
 	NSView* m_view;
 	NSColor* m_foregroundColor;
