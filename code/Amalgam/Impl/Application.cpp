@@ -134,7 +134,11 @@ namespace traktor
 const int32_t c_databasePollInterval = 5;
 const uint32_t c_simulationFrequency = 60;
 const float c_simulationDeltaTime = 1.0f / c_simulationFrequency;
+#if defined(_PS3)
 const int32_t c_maxSimulationUpdates = 2;
+#else
+const int32_t c_maxSimulationUpdates = 4;
+#endif
 const float c_maxDeltaTime = 1.0f / 10.0f;
 const float c_minDeltaTime = 0.0f;
 #if defined(__APPLE__)
