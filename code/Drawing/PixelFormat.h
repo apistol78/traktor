@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_DRAWING_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -197,6 +197,8 @@ private:
 	int m_blueShift;
 	int m_alphaBits;
 	int m_alphaShift;
+	uint32_t (*m_unpack)(const void*);
+	void (*m_pack)(void*, uint32_t);
 
 	static const PixelFormat ms_pfP4;
 	static const PixelFormat ms_pfP8;
