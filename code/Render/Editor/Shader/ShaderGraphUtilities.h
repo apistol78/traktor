@@ -31,7 +31,7 @@ void shaderGraphTraverse(const ShaderGraph* shaderGraph, const RefArray< Node >&
 	// Traverse graph nodes.
 	while (!nodeStack.empty())
 	{
-		Ref< Node > node = nodeStack.back();
+		Node* node = nodeStack.back();
 		nodeStack.pop_back();
 
 		// Already visited this node?
@@ -44,13 +44,13 @@ void shaderGraphTraverse(const ShaderGraph* shaderGraph, const RefArray< Node >&
 			continue;
 
 		// Push all input nodes onto stack.
-		int inputPinCount = node->getInputPinCount();
-		for (int i = 0; i < inputPinCount; ++i)
+		int32_t inputPinCount = node->getInputPinCount();
+		for (int32_t i = 0; i < inputPinCount; ++i)
 		{
 			const InputPin* inputPin = node->getInputPin(i);
 			T_ASSERT (inputPin);
 
-			Ref< Edge > edge = shaderGraph->findEdge(inputPin);
+			Edge* edge = shaderGraph->findEdge(inputPin);
 			if (edge)
 			{
 				// Invoke visitor with this edge.

@@ -16,13 +16,23 @@ T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.render.ShaderGraph", 0, ShaderGraph, ISeri
 
 ShaderGraph::ShaderGraph()
 {
+	m_inputPinEdge.reserve(128);
+	m_outputPinEdges.reserve(128);
 }
 
 ShaderGraph::ShaderGraph(const RefArray< Node >& nodes, const RefArray< Edge >& edges)
 :	m_nodes(nodes)
 ,	m_edges(edges)
 {
+	m_inputPinEdge.reserve(m_edges.size());
+	m_outputPinEdges.reserve(m_edges.size());
+
 	updateAdjacency();
+}
+
+ShaderGraph::~ShaderGraph()
+{
+	removeAll();
 }
 
 void ShaderGraph::addNode(Node* node)
@@ -41,9 +51,16 @@ void ShaderGraph::removeNode(Node* node)
 void ShaderGraph::addEdge(Edge* edge)
 {
 	T_ASSERT (std::find(m_edges.begin(), m_edges.end(), edge) == m_edges.end());
+	
 	m_edges.push_back(edge);
+
 	m_inputPinEdge[edge->getDestination()] = edge;
-	m_outputPinEdges[edge->getSource()].insert(edge);
+
+	RefSet< Edge >*& set = m_outputPinEdges[edge->getSource()];
+	if (!set)
+		set = new RefSet< Edge >();
+
+	set->insert(edge);
 }
 
 void ShaderGraph::removeEdge(Edge* edge)
@@ -52,21 +69,25 @@ void ShaderGraph::removeEdge(Edge* edge)
 	if (i == m_edges.end())
 		return;
 
-	SmallMap< const InputPin*, Ref< Edge > >::iterator i1 = m_inputPinEdge.find(edge->getDestination());
+	SmallMap< const InputPin*, Edge* >::iterator i1 = m_inputPinEdge.find(edge->getDestination());
 	if (i1 != m_inputPinEdge.end())
 		m_inputPinEdge.erase(i1);
 
-	SmallMap< const OutputPin*, RefSet< Edge > >::iterator i2 = m_outputPinEdges.find(edge->getSource());
+	SmallMap< const OutputPin*, RefSet< Edge >* >::iterator i2 = m_outputPinEdges.find(edge->getSource());
 	if (i2 != m_outputPinEdges.end())
-		i2->second.erase(edge);
+		i2->second->erase(edge);
 
 	m_edges.erase(i);
 }
 
 void ShaderGraph::removeAll()
 {
+	for (SmallMap< const OutputPin*, RefSet< Edge >* >::iterator i = m_outputPinEdges.begin(); i != m_outputPinEdges.end(); ++i)
+		delete i->second;
+
 	m_edges.resize(0);
 	m_nodes.resize(0);
+
 	m_inputPinEdge.clear();
 	m_outputPinEdges.clear();
 }
@@ -81,17 +102,17 @@ size_t ShaderGraph::findNodesOf(const TypeInfo& nodeType, RefArray< Node >& outN
 	return outNodes.size();
 }
 
-Ref< Edge > ShaderGraph::findEdge(const InputPin* inputPin) const
+Edge* ShaderGraph::findEdge(const InputPin* inputPin) const
 {
-	SmallMap< const InputPin*, Ref< Edge > >::const_iterator i = m_inputPinEdge.find(inputPin);
+	SmallMap< const InputPin*, Edge* >::const_iterator i = m_inputPinEdge.find(inputPin);
 	return i != m_inputPinEdge.end() ? i->second : 0;
 }
 
 uint32_t ShaderGraph::findEdges(const OutputPin* outputPin, RefSet< Edge >& outEdges) const
 {
-	SmallMap< const OutputPin*, RefSet< Edge > >::const_iterator i = m_outputPinEdges.find(outputPin);
+	SmallMap< const OutputPin*, RefSet< Edge >* >::const_iterator i = m_outputPinEdges.find(outputPin);
 	if (i != m_outputPinEdges.end())
-		outEdges = i->second;
+		outEdges = *(i->second);
 	else
 		outEdges.clear();
 	return uint32_t(outEdges.size());
@@ -99,7 +120,7 @@ uint32_t ShaderGraph::findEdges(const OutputPin* outputPin, RefSet< Edge >& outE
 
 const OutputPin* ShaderGraph::findSourcePin(const InputPin* inputPin) const
 {
-	Ref< Edge > edge = findEdge(inputPin);
+	Edge* edge = findEdge(inputPin);
 	return edge ? edge->getSource() : 0;
 }
 
@@ -118,8 +139,8 @@ uint32_t ShaderGraph::findDestinationPins(const OutputPin* outputPin, std::vecto
 
 uint32_t ShaderGraph::getDestinationCount(const OutputPin* outputPin) const
 {
-	SmallMap< const OutputPin*, RefSet< Edge > >::const_iterator i = m_outputPinEdges.find(outputPin);
-	return i != m_outputPinEdges.end() ? uint32_t(i->second.size()) : 0;
+	SmallMap< const OutputPin*, RefSet< Edge >* >::const_iterator i = m_outputPinEdges.find(outputPin);
+	return i != m_outputPinEdges.end() ? uint32_t(i->second->size()) : 0;
 }
 
 bool ShaderGraph::serialize(ISerializer& s)
@@ -136,13 +157,24 @@ bool ShaderGraph::serialize(ISerializer& s)
 void ShaderGraph::updateAdjacency()
 {
 	m_inputPinEdge.clear();
-	m_outputPinEdges.clear();
 
+	// Clear all sets; keep associations so we don't have to reallocate for each update.
+	for (SmallMap< const OutputPin*, RefSet< Edge >* >::iterator i = m_outputPinEdges.begin(); i != m_outputPinEdges.end(); ++i)
+	{
+		T_ASSERT (i->second);
+		i->second->clear();
+	}
+
+	// Map edges input and output pins.
 	for (RefArray< Edge >::iterator i = m_edges.begin(); i != m_edges.end(); ++i)
 	{
-		Edge* edge = *i;
-		m_inputPinEdge[edge->getDestination()] = edge;
-		m_outputPinEdges[edge->getSource()].insert(edge);
+		m_inputPinEdge[(*i)->getDestination()] = *i;
+
+		RefSet< Edge >*& set = m_outputPinEdges[(*i)->getSource()];
+		if (!set)
+			set = new RefSet< Edge >();
+
+		set->insert(*i);
 	}
 }
 

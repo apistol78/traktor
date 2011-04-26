@@ -22,6 +22,11 @@ public:
 	typedef typename AlignedVector< pair_t >::iterator iterator;
 	typedef typename AlignedVector< pair_t >::const_iterator const_iterator;
 
+	void reserve(size_t capacity)
+	{
+		m_data.reserve(capacity);
+	}
+
 	iterator begin()
 	{
 		return m_data.begin();
