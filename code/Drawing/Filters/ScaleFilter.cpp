@@ -1,4 +1,5 @@
 #include <cmath>
+#include <limits>
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Const.h"
 #include "Drawing/Image.h"
@@ -32,10 +33,14 @@ Ref< Image > ScaleFilter::apply(const Image* image) const
 	Color4f in, out;
 	Color4f c1, c2;
 
-	float sx = image->getWidth() / float(m_width);
-	float sy = image->getHeight() / float(m_height);
+	const int32_t imageWidth = image->getWidth();
+	const int32_t imageHeight = image->getHeight();
 
-	AlignedVector< Color4f > row(image->getWidth() + 1, Color4f(0, 0, 0, 0));
+	const float sx = imageWidth / float(m_width);
+	const float sy = imageHeight / float(m_height);
+
+	AlignedVector< Color4f > span(imageWidth + 1, Color4f(0, 0, 0, 0));
+	AlignedVector< Color4f > row(imageWidth + 1, Color4f(0, 0, 0, 0));
 
 	for (int32_t y = 0; y < m_height; ++y)
 	{
@@ -43,72 +48,81 @@ Ref< Image > ScaleFilter::apply(const Image* image) const
 		{
 			if (m_magnify == MgNearest)
 			{
-				int yy = int(std::floor(y * sy));
-				for (int32_t x = 0; x < image->getWidth(); ++x)
-					image->getPixelUnsafe(x, yy, row[x]);
+				int32_t yy = int32_t(std::floor(y * sy));
+				image->getSpanUnsafe(yy, &row[0]);
 			}
 			else	// MgLinear
 			{
-				int yy = int(std::floor(y * sy));
-				int yn = std::min(yy + 1, image->getHeight() - 1);
+				int32_t yy = int32_t(std::floor(y * sy));
+				int32_t yn = std::min(yy + 1, imageHeight - 1);
+
+				image->getSpanUnsafe(yy, &row[0]);
+				image->getSpanUnsafe(yn, &span[0]);
+
 				Scalar k(y * sy - yy);
-				for (int32_t x = 0; x < image->getWidth(); ++x)
-				{
-					image->getPixelUnsafe(x, yy, c1);
-					image->getPixelUnsafe(x, yn, c2);
-					row[x] = c1 + (c2 - c1) * k;
-				}
+				for (int32_t x = 0; x < imageWidth; ++x)
+					row[x] = row[x] + (span[x] - row[x]) * k;
 			}
 		}
 		else if (sy > 1.0f)	// Minify
 		{
 			if (m_minify == MnCenter)
 			{
-				int yy = int(std::floor(y + sy * 0.5f));
-				for (int32_t x = 0; x < image->getWidth(); ++x)
-					image->getPixelUnsafe(x, yy, row[x]);
+				int32_t yy = int32_t(std::floor(y + sy * 0.5f));
+				image->getSpanUnsafe(yy, &row[0]);
 			}
 			else	// MnAverage
 			{
-				int y1 = int(std::floor(y * sy));
-				int y2 = int(std::floor(y * sy + sy));
-				
-				Scalar denom = Scalar(1.0f / float(y2 - y1));
-				for (int32_t x = 0; x < image->getWidth(); ++x)
-				{
-					bool zeroAlpha = false;
+				int32_t y1 = int32_t(std::floor(y * sy));
+				int32_t y2 = int32_t(std::floor(y * sy + sy));
 
-					row[x] = Color4f(0, 0, 0, 0);
+				image->getSpanUnsafe(y1, &row[0]);
+
+				if (m_keepZeroAlpha)
+				{
+					for (int32_t x = 0; x < imageWidth; ++x)
+					{
+						if (row[x].getAlpha() <= FUZZY_EPSILON)
+							row[x].setAlpha(Scalar(-std::numeric_limits< float >::max()));
+					}
+				}
+
+				for (int32_t yy = y1 + 1; yy < y2; ++yy)
+				{
+					image->getSpanUnsafe(yy, &span[0]);
 					if (!m_keepZeroAlpha)
 					{
-						for (int32_t yy = y1; yy < y2; ++yy)
-						{
-							image->getPixelUnsafe(x, yy, c1);
-							row[x] += c1;
-						}
+						for (int32_t x = 0; x < imageWidth; ++x)
+							row[x] += span[x];
 					}
 					else
 					{
-						for (int32_t yy = y1; yy < y2; ++yy)
+						for (int32_t x = 0; x < imageWidth; ++x)
 						{
-							image->getPixelUnsafe(x, yy, c1);
-							if (c1.getAlpha() <= FUZZY_EPSILON)
-								zeroAlpha = true;
-							row[x] += c1;
+							row[x] += span[x];
+							if (span[x].getAlpha() <= FUZZY_EPSILON)
+								row[x].setAlpha(Scalar(-std::numeric_limits< float >::max()));
 						}
 					}
-					
+				}
+
+				Scalar denom = Scalar(1.0f / float(y2 - y1));
+				for (int32_t x = 0; x < imageWidth; ++x)
 					row[x] *= denom;
-					
-					if (zeroAlpha)
-						row[x].setAlpha(Scalar(0.0f));
+
+				if (m_keepZeroAlpha)
+				{
+					for (int32_t x = 0; x < imageWidth; ++x)
+					{
+						if (row[x].getAlpha() < 0.0f)
+							row[x].setAlpha(Scalar(0.0f));
+					}
 				}
 			}
 		}
 		else	// Keep
 		{
-			for (int32_t x = 0; x < image->getWidth(); ++x)
-				image->getPixelUnsafe(x, y, row[x]);
+			image->getSpanUnsafe(y, &row[0]);
 		}
 
 		for (int32_t x = 0; x < m_width; ++x)
@@ -123,7 +137,7 @@ Ref< Image > ScaleFilter::apply(const Image* image) const
 				else	// MgLinear
 				{
 					int32_t xx = int32_t(std::floor(x * sx));
-					int32_t xn = std::min(xx + 1, image->getWidth() - 1);
+					int32_t xn = std::min(xx + 1, imageWidth - 1);
 					final->setPixelUnsafe(x, y, row[xx] + (row[xn] - row[xx]) * Scalar(x * sx - xx));
 				}
 			}
@@ -137,22 +151,29 @@ Ref< Image > ScaleFilter::apply(const Image* image) const
 				else	// MnAverage
 				{
 					int32_t x1 = int32_t(std::floor(x * sx));
-					int32_t x2 = std::min< int32_t >(int32_t(std::floor(x * sx + sx)), image->getWidth());
+					int32_t x2 = std::min< int32_t >(int32_t(std::floor(x * sx + sx)), imageWidth);
 
 					bool zeroAlpha = false;
 
 					Color4f c(0, 0, 0, 0);
-					for (int32_t xx = x1; xx < x2; ++xx)
+					if (!m_keepZeroAlpha)
 					{
-						c += row[xx];
-						if (row[xx].getAlpha() <= FUZZY_EPSILON)
-							zeroAlpha = true;
+						for (int32_t xx = x1; xx < x2; ++xx)
+							c += row[xx];
+					}
+					else
+					{
+						for (int32_t xx = x1; xx < x2; ++xx)
+						{
+							c += row[xx];
+							if (row[xx].getAlpha() <= FUZZY_EPSILON)
+								zeroAlpha = true;
+						}
 					}
 
 					c /= Scalar(float(x2 - x1));
 
-					// Keep zero alpha as it's possibly used for masking.
-					if (m_keepZeroAlpha && zeroAlpha)
+					if (zeroAlpha)
 						c.setAlpha(Scalar(0.0f));
 
 					final->setPixelUnsafe(x, y, c);

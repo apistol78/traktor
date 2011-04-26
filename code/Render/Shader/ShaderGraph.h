@@ -37,6 +37,8 @@ public:
 
 	ShaderGraph(const RefArray< Node >& nodes, const RefArray< Edge >& edges);
 
+	virtual ~ShaderGraph();
+
 	/*! \brief Add node to graph.
 	 *
 	 * \param node Node to add.
@@ -96,7 +98,7 @@ public:
 	 * \param inputPin Input pin.
 	 * \return Connected edge.
 	 */
-	Ref< Edge > findEdge(const InputPin* inputPin) const;
+	Edge* findEdge(const InputPin* inputPin) const;
 
 	/*! \brief Find edges connected from output pin.
 	 *
@@ -146,8 +148,9 @@ public:
 private:
 	RefArray< Node > m_nodes;
 	RefArray< Edge > m_edges;
-	SmallMap< const InputPin*, Ref< Edge > > m_inputPinEdge;
-	SmallMap< const OutputPin*, RefSet< Edge > > m_outputPinEdges;
+	
+	SmallMap< const InputPin*, Edge* > m_inputPinEdge;
+	SmallMap< const OutputPin*, RefSet< Edge >* > m_outputPinEdges;	//!< \note Allocating RefSets in order to reduce number of copies.
 
 	void updateAdjacency();
 };
