@@ -17,17 +17,37 @@ MirrorFilter::MirrorFilter(bool flipHorizontal, bool flipVertical)
 
 Ref< Image > MirrorFilter::apply(const Image* image) const
 {
-	Ref< Image > final = new Image(image->getPixelFormat(), image->getWidth(), image->getHeight(), image->getPalette());
-	Color4f in;
+	int32_t imageWidth = image->getWidth();
+	int32_t imageHeight = image->getHeight();
 
-	for (int32_t y = 0; y < image->getHeight(); ++y)
+	int32_t pixelPitch = image->getPixelFormat().getByteSize();
+	int32_t rowPitch = imageWidth * pixelPitch;
+
+	Ref< Image > final = new Image(image->getPixelFormat(), imageWidth, imageHeight, image->getPalette());
+
+	const uint8_t* source = static_cast< const uint8_t* >(image->getData());
+	uint8_t* destination = static_cast< uint8_t* >(final->getData());
+
+	if (m_flipHorizontal)
 	{
-		int32_t dy = m_flipVertical ? (image->getHeight() - y - 1) : y;
-		for (int32_t x = 0; x < image->getWidth(); ++x)
+		for (int32_t y = 0; y < imageHeight; ++y)
 		{
-			image->getPixelUnsafe(x, y, in);
-			int32_t dx = m_flipHorizontal ? (image->getWidth() - x - 1) : x;
-			final->setPixelUnsafe(dx, dy, in);
+			int32_t dy = m_flipVertical ? (imageHeight - y - 1) : y;
+			for (int32_t x = 0; x < imageWidth; ++x)
+			{
+				int32_t dx = imageWidth - x - 1;
+				const uint8_t* sourcePixel = &source[x * pixelPitch + y * rowPitch];
+				uint8_t* destinationPixel = &destination[dx * pixelPitch + dy * rowPitch];
+				std::memcpy(destinationPixel, sourcePixel, pixelPitch);
+			}
+		}
+	}
+	else
+	{
+		for (int32_t y = 0; y < imageHeight; ++y)
+		{
+			int32_t dy = m_flipVertical ? (imageHeight - y - 1) : y;
+			std::memcpy(&destination[dy * rowPitch], &source[y * rowPitch], rowPitch);
 		}
 	}
 

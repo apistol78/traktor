@@ -143,7 +143,42 @@ PixelFormat::PixelFormat()
 ,	m_blueShift(0)
 ,	m_alphaBits(8)
 ,	m_alphaShift(24)
+,	m_unpack(0)
+,	m_pack(0)
 {
+	// Get pointer to unpack operation.
+	switch (m_byteSize)
+	{
+	case 1:
+		m_unpack = &unpack_1;
+		break;
+	case 2:
+		m_unpack = &unpack_2;
+		break;
+	case 3:
+		m_unpack = &unpack_3;
+		break;
+	case 4:
+		m_unpack = &unpack_4;
+		break;
+	}
+
+	// Get pointer to pack operation.
+	switch (m_byteSize)
+	{
+	case 1:
+		m_pack = &pack_1;
+		break;
+	case 2:
+		m_pack = &pack_2;
+		break;
+	case 3:
+		m_pack = &pack_3;
+		break;
+	case 4:
+		m_pack = &pack_4;
+		break;
+	}
 }
 
 PixelFormat::PixelFormat(
@@ -171,8 +206,43 @@ PixelFormat::PixelFormat(
 ,	m_blueShift(blueShift)
 ,	m_alphaBits(alphaBits)
 ,	m_alphaShift(alphaShift)
+,	m_unpack(0)
+,	m_pack(0)
 {
-}	
+	// Get pointer to unpack operation.
+	switch (m_byteSize)
+	{
+	case 1:
+		m_unpack = &unpack_1;
+		break;
+	case 2:
+		m_unpack = &unpack_2;
+		break;
+	case 3:
+		m_unpack = &unpack_3;
+		break;
+	case 4:
+		m_unpack = &unpack_4;
+		break;
+	}
+
+	// Get pointer to pack operation.
+	switch (m_byteSize)
+	{
+	case 1:
+		m_pack = &pack_1;
+		break;
+	case 2:
+		m_pack = &pack_2;
+		break;
+	case 3:
+		m_pack = &pack_3;
+		break;
+	case 4:
+		m_pack = &pack_4;
+		break;
+	}
+}
 		
 PixelFormat::PixelFormat(
 	int colorBits,
@@ -195,7 +265,10 @@ PixelFormat::PixelFormat(
 ,	m_blueShift(0)
 ,	m_alphaBits(0)
 ,	m_alphaShift(0)
+,	m_unpack(0)
+,	m_pack(0)
 {
+	// Calculate shift and bits from masks.
 	for (int i = 0; i < colorBits; ++i)
 	{
 		uint32_t bit = 1 << i;
@@ -220,6 +293,40 @@ PixelFormat::PixelFormat(
 				m_alphaShift = i;
 		}
 	}
+
+	// Get pointer to unpack operation.
+	switch (m_byteSize)
+	{
+	case 1:
+		m_unpack = &unpack_1;
+		break;
+	case 2:
+		m_unpack = &unpack_2;
+		break;
+	case 3:
+		m_unpack = &unpack_3;
+		break;
+	case 4:
+		m_unpack = &unpack_4;
+		break;
+	}
+
+	// Get pointer to pack operation.
+	switch (m_byteSize)
+	{
+	case 1:
+		m_pack = &pack_1;
+		break;
+	case 2:
+		m_pack = &pack_2;
+		break;
+	case 3:
+		m_pack = &pack_3;
+		break;
+	case 4:
+		m_pack = &pack_4;
+		break;
+	}
 }
 
 void PixelFormat::convert(
@@ -237,42 +344,6 @@ void PixelFormat::convert(
 	uint32_t i;
 	float clr[4];
 
-	// Get pointer to unpack operation.
-	uint32_t (*unpack)(const void*) = 0;
-	switch (m_byteSize)
-	{
-	case 1:
-		unpack = &unpack_1;
-		break;
-	case 2:
-		unpack = &unpack_2;
-		break;
-	case 3:
-		unpack = &unpack_3;
-		break;
-	case 4:
-		unpack = &unpack_4;
-		break;
-	}
-
-	// Get pointer to pack operation.
-	void (*pack)(void*, uint32_t) = 0;
-	switch (dstFormat.m_byteSize)
-	{
-	case 1:
-		pack = &pack_1;
-		break;
-	case 2:
-		pack = &pack_2;
-		break;
-	case 3:
-		pack = &pack_3;
-		break;
-	case 4:
-		pack = &pack_4;
-		break;
-	}
-
 	// Quick path; if source and destination are <=32 bit formats.
 	if (
 		!isPalettized() && !isFloatPoint() && getColorBits() <= 32 &&
@@ -281,7 +352,7 @@ void PixelFormat::convert(
 	{
 		for (int ii = 0; ii < pixelCount; ++ii)
 		{
-			uint32_t s = (*unpack)(src);
+			uint32_t s = (*m_unpack)(src);
 
 			uint32_t r = s >> getRedShift();
 			uint32_t g = s >> getGreenShift();
@@ -298,7 +369,7 @@ void PixelFormat::convert(
 			b = b >> (8 - dstFormat.getBlueBits());
 			a = a >> (8 - dstFormat.getAlphaBits());
 
-			(*pack)(
+			(*dstFormat.m_pack)(
 				dst,
 				(r << dstFormat.getRedShift()) |
 				(g << dstFormat.getGreenShift()) |
@@ -318,7 +389,7 @@ void PixelFormat::convert(
 			// src => rgba
 			if (isPalettized())
 			{
-				uint32_t s = (*unpack)(src);
+				uint32_t s = (*m_unpack)(src);
 				srcPalette->get(s).storeUnaligned(clr);
 			}
 			else if (isFloatPoint())
@@ -330,7 +401,7 @@ void PixelFormat::convert(
 			}
 			else if (getColorBits() <= 32)
 			{
-				uint32_t s = (*unpack)(src);
+				uint32_t s = (*m_unpack)(src);
 
 				uint32_t rmx = ((1 << getRedBits()  ) - 1);
 				uint32_t gmx = ((1 << getGreenBits()) - 1);
@@ -385,7 +456,7 @@ void PixelFormat::convert(
 			// rgba => dst
 			if (dstFormat.isPalettized())
 			{
-				(*pack)(
+				(*dstFormat.m_pack)(
 					dst,
 					dstPalette->find(Color4f::loadUnaligned(clr))
 				);
@@ -409,7 +480,7 @@ void PixelFormat::convert(
 				uint32_t b = uint32_t(clamp(clr[2]) * bmx);
 				uint32_t a = uint32_t(clamp(clr[3]) * amx);
 
-				(*pack)(
+				(*dstFormat.m_pack)(
 					dst,
 					(r << dstFormat.getRedShift()) |
 					(g << dstFormat.getGreenShift()) |
