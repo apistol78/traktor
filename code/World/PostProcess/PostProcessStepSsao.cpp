@@ -51,7 +51,11 @@ Ref< PostProcessStep::Instance > PostProcessStepSsao::create(resource::IResource
 	{
 		for (uint32_t x = 0; x < 128; ++x)
 		{
-			Vector4 normal = random.nextUnit() * Scalar(0.5f) + Scalar(0.5f);
+			// Randomized normal; attenuated by horizon in order to reduce near surface noise.
+			Vector4 normal = random.nextUnit();
+			normal *= Scalar(1.0f) - squareRoot(abs(normal.z()));
+			normal = normal * Scalar(0.5f) + Scalar(0.5f);
+
 			data[(x + y * 128) * 4 + 0] = uint8_t(normal.x() * 255);
 			data[(x + y * 128) * 4 + 1] = uint8_t(normal.y() * 255);
 			data[(x + y * 128) * 4 + 2] = uint8_t(normal.z() * 255);
