@@ -129,24 +129,28 @@ Any ScriptContextLua::executeFunction(const std::wstring& functionName, uint32_t
 {
 	CHECK_LUA_STACK(m_luaState, 0);
 
+	Any returnValue;
+
 	m_scriptManager->lock(this);
 
-	Any returnValue;
-	if (m_scriptManager->setPanicJump())
+	lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_environmentRef);
+	lua_getfield(m_luaState, -1, wstombs(functionName).c_str());
+
+	if (lua_isfunction(m_luaState, -1))
 	{
-		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_environmentRef);
-		lua_getfield(m_luaState, -1, wstombs(functionName).c_str());
-
-		if (lua_isfunction(m_luaState, -1))
-		{
-			for (uint32_t i = 0; i < argc; ++i)
-				m_scriptManager->pushAny(argv[i]);
-			lua_call(m_luaState, argc, 1);
+		for (uint32_t i = 0; i < argc; ++i)
+			m_scriptManager->pushAny(argv[i]);
+		int32_t err = lua_pcall(m_luaState, argc, 1, 0);
+		if (err == 0)
 			returnValue = m_scriptManager->toAny(-1);
+		else
+		{
+			log::error << L"LUA RUNTIME ERROR; \"" << mbstows(lua_tostring(m_luaState, lua_gettop(m_luaState))) << L"\"" << Endl;
+			lua_pop(m_luaState, 1);
 		}
-
-		lua_pop(m_luaState, 2);
 	}
+
+	lua_pop(m_luaState, 2);
 
 	m_scriptManager->unlock();
 	return returnValue;
@@ -159,22 +163,32 @@ Any ScriptContextLua::executeMethod(Object* self, const std::wstring& methodName
 	m_scriptManager->lock(this);
 
 	Any returnValue;
-	if (m_scriptManager->setPanicJump())
+
+	lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_environmentRef);
+	lua_getfield(m_luaState, -1, wstombs(methodName).c_str());
+
+	if (lua_isfunction(m_luaState, -1))
 	{
-		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_environmentRef);
-		lua_getfield(m_luaState, -1, wstombs(methodName).c_str());
+		// Set _self variable in global environment.
+		m_scriptManager->pushAny(Any(self));
+		lua_setglobal(m_luaState, "_self");
 
-		if (lua_isfunction(m_luaState, -1))
-		{
-			m_scriptManager->pushAny(Any(self));
-			for (uint32_t i = 0; i < argc; ++i)
-				m_scriptManager->pushAny(argv[i]);
-			lua_call(m_luaState, int32_t(argc + 1), 1);
+		// Push arguments.
+		for (uint32_t i = 0; i < argc; ++i)
+			m_scriptManager->pushAny(argv[i]);
+		
+		// Call script function.
+		int32_t err = lua_pcall(m_luaState, argc, 1, 0);
+		if (err == 0)
 			returnValue = m_scriptManager->toAny(-1);
+		else
+		{
+			log::error << L"LUA RUNTIME ERROR; \"" << mbstows(lua_tostring(m_luaState, lua_gettop(m_luaState))) << L"\"" << Endl;
+			lua_pop(m_luaState, 1);
 		}
-
-		lua_pop(m_luaState, 2);
 	}
+
+	lua_pop(m_luaState, 2);
 
 	m_scriptManager->unlock();
 	return returnValue;
