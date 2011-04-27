@@ -26,8 +26,6 @@ const int32_t c_tableKey_this = -2;
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptManagerLua", 0, ScriptManagerLua, IScriptManager)
 
-std::jmp_buf ScriptManagerLua::ms_jmpbuf;
-
 ScriptManagerLua::ScriptManagerLua()
 :	m_currentContext(0)
 ,	m_gcMetaRef(0)
@@ -289,15 +287,6 @@ Any ScriptManagerLua::toAny(int32_t index)
 	return Any();
 }
 
-bool ScriptManagerLua::setPanicJump()
-{
-#if defined(_PS3)
-	return std::setjmp(ms_jmpbuf) == 0;
-#else
-	return setjmp(ms_jmpbuf) == 0;
-#endif
-}
-
 int ScriptManagerLua::classIndexLookup(lua_State* luaState)
 {
 	ScriptManagerLua* manager = reinterpret_cast< ScriptManagerLua* >(lua_touserdata(luaState, lua_upvalueindex(1)));
@@ -463,7 +452,6 @@ int ScriptManagerLua::classEqualMethod(lua_State* luaState)
 int ScriptManagerLua::luaPanic(lua_State* luaState)
 {
 	log::error << L"LUA PANIC; Unrecoverable error \"" << mbstows(lua_tostring(luaState, lua_gettop(luaState))) << L"\"" << Endl;
-	std::longjmp(ms_jmpbuf, 1);
 	return 0;
 }
 

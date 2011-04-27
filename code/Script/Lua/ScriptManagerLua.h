@@ -1,7 +1,6 @@
 #ifndef traktor_script_ScriptManagerLua_H
 #define traktor_script_ScriptManagerLua_H
 
-#include <csetjmp>
 #include "Core/RefArray.h"
 #include "Core/Containers/SmallMap.h"
 #include "Core/Thread/Semaphore.h"
@@ -62,7 +61,6 @@ private:
 	ScriptContextLua* m_currentContext;
 	std::vector< RegisteredClass > m_classRegistry;
 	SmallMap< const TypeInfo*, uint32_t > m_classRegistryLookup;
-	static std::jmp_buf ms_jmpbuf;
 
 	void lock(ScriptContextLua* context);
 
@@ -73,8 +71,6 @@ private:
 	void pushAny(const Any& any);
 
 	Any toAny(int32_t index);
-
-	bool setPanicJump();
 
 	static int classIndexLookup(lua_State* luaState);
 
