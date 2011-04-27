@@ -1,4 +1,5 @@
 #include <cstring>
+#include "Core/Io/BufferedStream.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/MemoryStream.h"
 #include "Core/Memory/IAllocator.h"
@@ -186,7 +187,7 @@ void Image::clear(const Color4f& color)
 		1
 	);
 
-	for (uint32_t i = 0; i < m_height * m_pitch; i += byteSize)
+	for (int32_t i = 0; i < m_height * m_pitch; i += byteSize)
 		std::memcpy(&m_data[i], &c[0], byteSize);
 
 	checkData(m_data, m_size);
@@ -372,7 +373,9 @@ Ref< Image > Image::load(const Path& fileName)
 	if (file == 0)
 		return 0;
 
-	image = imageFormat->read(file);
+	BufferedStream bufferedFile(file);
+
+	image = imageFormat->read(&bufferedFile);
 
 	if (image)
 		checkData(image->m_data, image->m_size);
