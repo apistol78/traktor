@@ -699,6 +699,16 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 	m_globalContext->flush();
 }
 
+render::RenderTargetSet* WorldRendererPreLit::getDepthTargetSet()
+{
+	return m_depthTargetSet;
+}
+
+render::RenderTargetSet* WorldRendererPreLit::getShadowMaskTargetSet()
+{
+	return m_shadowMaskFilterTargetSet;
+}
+
 void WorldRendererPreLit::getTargets(RefArray< render::ITexture >& outTargets) const
 {
 	outTargets.resize(4);

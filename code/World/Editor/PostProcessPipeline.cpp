@@ -5,6 +5,7 @@
 #include "World/Editor/PostProcessPipeline.h"
 #include "World/PostProcess/PostProcessSettings.h"
 #include "World/PostProcess/PostProcessStepBlur.h"
+#include "World/PostProcess/PostProcessStepBokeh.h"
 #include "World/PostProcess/PostProcessStepChain.h"
 #include "World/PostProcess/PostProcessStepLuminance.h"
 #include "World/PostProcess/PostProcessStepRepeat.h"
@@ -55,6 +56,8 @@ bool PostProcessPipeline::buildDependencies(
 
 		if (const PostProcessStepBlur* stepBlur = dynamic_type_cast< const PostProcessStepBlur* >(step))
 			pipelineDepends->addDependency(stepBlur->getShader().getGuid(), editor::PdfBuild);
+		else if (const PostProcessStepBokeh* stepBokeh = dynamic_type_cast< const PostProcessStepBokeh* >(step))
+			pipelineDepends->addDependency(stepBokeh->getShader().getGuid(), editor::PdfBuild);
 		else if (const PostProcessStepChain* stepChain = dynamic_type_cast< const PostProcessStepChain* >(step))
 		{
 			const RefArray< PostProcessStep >& steps = stepChain->getSteps();

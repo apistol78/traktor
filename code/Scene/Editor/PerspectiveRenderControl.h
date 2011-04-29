@@ -8,6 +8,7 @@
 #include "Core/Timer/Timer.h"
 #include "Scene/Editor/ISceneRenderControl.h"
 #include "Ui/Point.h"
+#include "World/WorldRenderSettings.h"
 #include "World/WorldRenderView.h"
 
 namespace traktor
@@ -75,6 +76,7 @@ private:
 	Ref< world::IWorldRenderer > m_worldRenderer;
 	Ref< world::PostProcess > m_postProcess;
 	world::WorldRenderView m_worldRenderView;
+	world::WorldRenderSettings m_worldRenderSettings;
 	int32_t m_index;
 	bool m_gridEnable;
 	bool m_guideEnable;

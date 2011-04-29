@@ -175,6 +175,11 @@ bool EditorForm::create(const CommandLine& cmdLine)
 {
 	// Load settings.
 	m_settings = loadSettings(L"Traktor.Editor");
+	if (!m_settings)
+	{
+		log::error << L"Unable to load settings" << Endl;
+		return false;
+	}
 
 	// Load dependent modules.
 #if !defined(T_STATIC)

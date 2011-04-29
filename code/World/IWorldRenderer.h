@@ -22,6 +22,7 @@ namespace traktor
 class IRenderSystem;
 class IRenderView;
 class ITexture;
+class RenderTargetSet;
 
 	}
 
@@ -148,8 +149,12 @@ public:
 
 	//@}
 
-	/*! \name Debug target accessor. */
+	/*! \name Target accessor. */
 	//@{
+
+	virtual render::RenderTargetSet* getDepthTargetSet() = 0;
+
+	virtual render::RenderTargetSet* getShadowMaskTargetSet() = 0;
 
 	virtual void getTargets(RefArray< render::ITexture >& outTargets) const = 0;
 

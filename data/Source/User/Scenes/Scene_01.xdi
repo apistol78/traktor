@@ -17,7 +17,7 @@
 		<shadowCascadingSlices>1</shadowCascadingSlices>
 		<shadowCascadingLambda>0.5</shadowCascadingLambda>
 	</worldRenderSettings>
-	<postProcessSettings>{00000000-0000-0000-0000-000000000000}</postProcessSettings>
+	<postProcessSettings>{AB647E69-849D-7F43-972D-D33EF6B566BD}</postProcessSettings>
 	<entityData type="traktor.world.GroupEntityData">
 		<name>Root</name>
 		<entityData>
@@ -40,7 +40,7 @@
 			<item type="traktor.world.PointLightEntityData" version="2">
 				<name>Point light</name>
 				<transform>
-					<translation>0.302691, 0.867853, -0.350698, 0</translation>
+					<translation>-0.216336, 0.867853, -0.945764, 0</translation>
 					<rotation>0, 0, 0, 1</rotation>
 				</transform>
 				<sunColor>4, 4, 4, 0</sunColor>

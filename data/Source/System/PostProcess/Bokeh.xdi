@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.world.PostProcessSettings" version="1">
+	<requireHighRange>true</requireHighRange>
+	<definitions>
+		<item type="traktor.world.PostProcessDefineTarget" version="1">
+			<id>HalfColor</id>
+			<width>0</width>
+			<height>0</height>
+			<screenDenom>2</screenDenom>
+			<format>TfR8G8B8A8</format>
+			<depthStencil>false</depthStencil>
+			<preferTiled>true</preferTiled>
+			<multiSample>0</multiSample>
+		</item>
+		<item type="traktor.world.PostProcessDefineTarget" version="1">
+			<id>BlurTemp</id>
+			<width>0</width>
+			<height>0</height>
+			<screenDenom>4</screenDenom>
+			<format>TfR8G8B8A8</format>
+			<depthStencil>false</depthStencil>
+			<preferTiled>true</preferTiled>
+			<multiSample>0</multiSample>
+		</item>
+		<item type="traktor.world.PostProcessDefineTarget" version="1">
+			<id>Blur_0</id>
+			<width>0</width>
+			<height>0</height>
+			<screenDenom>4</screenDenom>
+			<format>TfR8G8B8A8</format>
+			<depthStencil>false</depthStencil>
+			<preferTiled>true</preferTiled>
+			<multiSample>0</multiSample>
+		</item>
+		<item type="traktor.world.PostProcessDefineTarget" version="1">
+			<id>Blur_1</id>
+			<width>0</width>
+			<height>0</height>
+			<screenDenom>4</screenDenom>
+			<format>TfR8G8B8A8</format>
+			<depthStencil>false</depthStencil>
+			<preferTiled>true</preferTiled>
+			<multiSample>0</multiSample>
+		</item>
+		<item type="traktor.world.PostProcessDefineTarget" version="1">
+			<id>OffsetMap_1</id>
+			<width>0</width>
+			<height>0</height>
+			<screenDenom>2</screenDenom>
+			<format>TfR16G16B16A16F</format>
+			<depthStencil>false</depthStencil>
+			<preferTiled>false</preferTiled>
+			<multiSample>0</multiSample>
+		</item>
+		<item type="traktor.world.PostProcessDefineTarget" version="1">
+			<id>OffsetMap_2</id>
+			<width>0</width>
+			<height>0</height>
+			<screenDenom>4</screenDenom>
+			<format>TfR16G16B16A16F</format>
+			<depthStencil>false</depthStencil>
+			<preferTiled>false</preferTiled>
+			<multiSample>0</multiSample>
+		</item>
+		<item type="traktor.world.PostProcessDefineTarget" version="1">
+			<id>OffsetMap_3</id>
+			<width>0</width>
+			<height>0</height>
+			<screenDenom>4</screenDenom>
+			<format>TfR16G16B16A16F</format>
+			<depthStencil>false</depthStencil>
+			<preferTiled>false</preferTiled>
+			<multiSample>0</multiSample>
+		</item>
+	</definitions>
+	<steps>
+	
+		<!-- Downscale frame -->
+		<item type="traktor.world.PostProcessStepSetTarget">
+			<target>HalfColor</target>
+		</item>
+		<item type="traktor.world.PostProcessStepSimple">
+			<shader>{3308413C-5D12-9646-B2E4-E4FC7D90BA52}</shader>
+			<sources>
+				<item>
+					<param>Source</param>
+					<source>InputColor</source>
+					<index>0</index>
+				</item>
+			</sources>
+		</item>
+		
+		<!-- Blur frame 0 -->
+		<item type="traktor.world.PostProcessStepSetTarget">
+			<target>BlurTemp</target>
+		</item>
+		<item type="traktor.world.PostProcessStepBlur" version="1">
+			<shader>{092C9D00-54FF-6A42-8DD6-FE02B8341FCF}</shader>
+			<sources>
+				<item>
+					<param>Source</param>
+					<source>HalfColor</source>
+					<index>0</index>
+				</item>
+			</sources>
+			<direction>1, 0, 0, 0</direction>
+			<taps>7</taps>
+		</item>
+		<item type="traktor.world.PostProcessStepSetTarget">
+			<target>Blur_0</target>
+		</item>
+		<item type="traktor.world.PostProcessStepBlur" version="1">
+			<shader>{092C9D00-54FF-6A42-8DD6-FE02B8341FCF}</shader>
+			<sources>
+				<item>
+					<param>Source</param>
+					<source>BlurTemp</source>
+					<index>0</index>
+				</item>
+			</sources>
+			<direction>0, 1, 0, 0</direction>
+			<taps>7</taps>
+		</item>
+
+		<!-- Blur frame 1 -->
+		<item type="traktor.world.PostProcessStepSetTarget">
+			<target>BlurTemp</target>
+		</item>
+		<item type="traktor.world.PostProcessStepBlur" version="1">
+			<shader>{092C9D00-54FF-6A42-8DD6-FE02B8341FCF}</shader>
+			<sources>
+				<item>
+					<param>Source</param>
+					<source>Blur_0</source>
+					<index>0</index>
+				</item>
+			</sources>
+			<direction>1, 0, 0, 0</direction>
+			<taps>7</taps>
+		</item>
+		<item type="traktor.world.PostProcessStepSetTarget">
+			<target>Blur_1</target>
+		</item>
+		<item type="traktor.world.PostProcessStepBlur" version="1">
+			<shader>{092C9D00-54FF-6A42-8DD6-FE02B8341FCF}</shader>
+			<sources>
+				<item>
+					<param>Source</param>
+					<source>BlurTemp</source>
+					<index>0</index>
+				</item>
+			</sources>
+			<direction>0, 1, 0, 0</direction>
+			<taps>7</taps>
+		</item>
+		
+		<!-- Generate offset map -->
+		<item type="traktor.world.PostProcessStepSetTarget">
+			<target>OffsetMap_1</target>
+		</item>
+		<item type="traktor.world.PostProcessStepSimple">
+			<shader>{5DB6C85E-85AE-8E4B-A696-DBDF712AB26F}</shader>
+			<sources>
+				<item>
+					<param>Source</param>
+					<source>InputColor</source>
+					<index>0</index>
+				</item>
+				<item>
+					<param>Depth</param>
+					<source>InputDepth</source>
+					<index>0</index>
+				</item>
+			</sources>
+		</item>
+		<item type="traktor.world.PostProcessStepSetTarget">
+			<target>OffsetMap_2</target>
+		</item>
+		<item type="traktor.world.PostProcessStepSimple">
+			<shader>{55188CE4-1BDC-A646-8B80-BC56C4A43FE8}</shader>
+			<sources>
+				<item>
+					<param>Source</param>
+					<source>OffsetMap_1</source>
+					<index>0</index>
+				</item>
+			</sources>
+		</item>
+		<item type="traktor.world.PostProcessStepSetTarget">
+			<target>OffsetMap_3</target>
+		</item>
+		<item type="traktor.world.PostProcessStepSimple">
+			<shader>{55188CE4-1BDC-A646-8B80-BC56C4A43FE8}</shader>
+			<sources>
+				<item>
+					<param>Source</param>
+					<source>OffsetMap_2</source>
+					<index>0</index>
+				</item>
+			</sources>
+		</item>
+		
+		<!-- Copy frame then blend bokeh -->
+		<item type="traktor.world.PostProcessStepSetTarget">
+			<target>Output</target>
+		</item>
+		<item type="traktor.world.PostProcessStepSimple">
+			<shader>{E38CFE8C-35DE-8042-B862-FE19F38BD3E4}</shader>
+			<sources>
+				<item>
+					<param>Source</param>
+					<source>InputColor</source>
+					<index>0</index>
+				</item>
+				<item>
+					<param>Depth</param>
+					<source>InputDepth</source>
+					<index>0</index>
+				</item>
+				<item>
+					<param>Blur_0</param>
+					<source>Blur_0</source>
+					<index>0</index>
+				</item>
+				<item>
+					<param>Blur_1</param>
+					<source>Blur_1</source>
+					<index>0</index>
+				</item>
+			</sources>
+		</item>
+		<item type="traktor.world.PostProcessStepBokeh">
+			<shader>{750ED636-4EDE-5C40-B2AD-92365FCE659A}</shader>
+			<sources>
+				<item>
+					<param>Source</param>
+					<source>InputColor</source>
+					<index>0</index>
+				</item>
+				<item>
+					<param>Depth</param>
+					<source>InputDepth</source>
+					<index>0</index>
+				</item>
+				<item>
+					<param>OffsetMap</param>
+					<source>OffsetMap_3</source>
+					<index>0</index>
+				</item>
+			</sources>
+		</item>
+	</steps>
+</object>

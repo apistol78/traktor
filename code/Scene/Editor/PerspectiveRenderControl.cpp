@@ -196,10 +196,10 @@ void PerspectiveRenderControl::updateWorldRenderer()
 	if (sz.cx <= 0 || sz.cy <= 0)
 		return;
 
-	Ref< const world::WorldRenderSettings > worldRenderSettings = sceneInstance->getWorldRenderSettings();
-	Ref< const world::PostProcessSettings > postProcessSettings = sceneInstance->getPostProcessSettings();
+	m_worldRenderSettings = *sceneInstance->getWorldRenderSettings();
 
 	// Create post processing.
+	Ref< const world::PostProcessSettings > postProcessSettings = sceneInstance->getPostProcessSettings();
 	if (postProcessSettings)
 	{
 		m_postProcess = new world::PostProcess();
@@ -228,16 +228,16 @@ void PerspectiveRenderControl::updateWorldRenderer()
 
 	// Create world renderer.
 	Ref< world::IWorldRenderer > worldRenderer;
-	if (worldRenderSettings->renderType == world::WorldRenderSettings::RtForward)
+	if (m_worldRenderSettings.renderType == world::WorldRenderSettings::RtForward)
 		worldRenderer = new world::WorldRendererForward();
-	else if (worldRenderSettings->renderType == world::WorldRenderSettings::RtPreLit)
+	else if (m_worldRenderSettings.renderType == world::WorldRenderSettings::RtPreLit)
 		worldRenderer = new world::WorldRendererPreLit();
 
 	if (!worldRenderer)
 		return;
 
 	if (worldRenderer->create(
-		*worldRenderSettings,
+		m_worldRenderSettings,
 		worldEntityRenderers,
 		m_context->getResourceManager(),
 		m_context->getRenderSystem(),
@@ -721,17 +721,16 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 
 				params.viewFrustum = m_worldRenderView.getViewFrustum();
 				params.viewToLight = Matrix44::identity();
+				params.view = view;
 				params.projection = m_worldRenderView.getProjection();
-				//params.depthRange = m_worldRenderer->getSettings().depthRange;
-				//params.shadowFarZ = m_worldRenderer->getSettings().shadowFarZ;
-				//params.shadowMapBias = m_worldRenderer->getSettings().shadowMapBias;
+				params.depthRange = m_worldRenderSettings.depthRange;
 				params.deltaTime = deltaTime;
 
 				m_postProcess->render(
 					m_renderView,
 					m_renderTarget,
-					0, //m_worldRenderer->getDepthTargetSet(),
-					0, //m_worldRenderer->getShadowMaskTargetSet(),
+					m_worldRenderer->getDepthTargetSet(),
+					m_worldRenderer->getShadowMaskTargetSet(),
 					params
 				);
 			}

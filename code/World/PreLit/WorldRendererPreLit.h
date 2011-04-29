@@ -89,6 +89,10 @@ public:
 
 	virtual void render(uint32_t flags, int frame, render::EyeType eye);
 
+	virtual render::RenderTargetSet* getDepthTargetSet();
+
+	virtual render::RenderTargetSet* getShadowMaskTargetSet();
+
 	virtual void getTargets(RefArray< render::ITexture >& outTargets) const;
 
 private:

@@ -113,6 +113,7 @@
 #	include <World/Forward/WorldRendererForward.h>
 #	include <World/PostProcess/PostProcessDefineTarget.h>
 #	include <World/PostProcess/PostProcessStepBlur.h>
+#	include <World/PostProcess/PostProcessStepBokeh.h>
 #	include <World/PostProcess/PostProcessStepChain.h>
 #	include <World/PostProcess/PostProcessStepLuminance.h>
 #	include <World/PostProcess/PostProcessStepRepeat.h>
@@ -277,6 +278,7 @@ bool Application::create(
 	T_FORCE_LINK_REF(world::WorldRendererPreLit);
 	T_FORCE_LINK_REF(world::PostProcessDefineTarget);
 	T_FORCE_LINK_REF(world::PostProcessStepBlur);
+	T_FORCE_LINK_REF(world::PostProcessStepBokeh);
 	T_FORCE_LINK_REF(world::PostProcessStepChain);
 	T_FORCE_LINK_REF(world::PostProcessStepLuminance);
 	T_FORCE_LINK_REF(world::PostProcessStepRepeat);
