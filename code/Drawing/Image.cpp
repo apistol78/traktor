@@ -246,7 +246,7 @@ void Image::getSpanUnsafe(int32_t y, Color4f* outSpan) const
 	float T_MATH_ALIGN16 tmp[64 * 4];
 	int32_t offset = y * m_pitch;
 	int32_t x = 0;
-	for (; x < m_width - 64; x += 64)
+	for (; x <= m_width - 64; x += 64)
 	{
 		m_pixelFormat.convert(
 			m_palette,
@@ -292,7 +292,7 @@ void Image::setSpanUnsafe(int32_t y, const Color4f* span)
 	float T_MATH_ALIGN16 tmp[64 * 4];
 	int32_t offset = y * m_pitch;
 	int32_t x = 0;
-	for (; x < m_width - 64; x += 64)
+	for (; x <= m_width - 64; x += 64)
 	{
 		for (int32_t i = 0; i < 64; i += 4)
 		{
