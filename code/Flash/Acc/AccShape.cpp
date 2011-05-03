@@ -7,7 +7,6 @@
 #include "Flash/FlashBitmap.h"
 #include "Flash/Acc/AccShape.h"
 #include "Flash/Acc/AccShapeResources.h"
-#include "Flash/Acc/AccShapeVertexPool.h"
 #include "Flash/Acc/AccTextureCache.h"
 #include "Flash/Acc/PathTesselator.h"
 #include "Flash/Acc/Triangulator.h"
@@ -62,7 +61,6 @@ AccShape::AccShape(AccShapeResources* shapeResources, AccShapeVertexPool* vertex
 :	m_shapeResources(shapeResources)
 ,	m_vertexPool(vertexPool)
 ,	m_tesselationTriangleCount(0)
-,	m_vertexBuffer(0)
 ,	m_batchFlags(0)
 {
 }
@@ -123,17 +121,16 @@ bool AccShape::createRenderable(
 	m_bounds.min.x = m_bounds.min.y =  std::numeric_limits< float >::max();
 	m_bounds.max.x = m_bounds.max.y = -std::numeric_limits< float >::max();
 
-	m_vertexBuffer = m_vertexPool->acquireVertexBuffer(m_tesselationTriangleCount);
-	if (!m_vertexBuffer)
+	if (!m_vertexPool->acquireRange(m_tesselationTriangleCount * 3, m_vertexRange))
 		return false;
 
-	Vertex* vertex = static_cast< Vertex* >(m_vertexBuffer->lock());
+	Vertex* vertex = static_cast< Vertex* >(m_vertexRange.vertexBuffer->lock(m_vertexRange.offset, m_tesselationTriangleCount * 3));
 	if (!vertex)
 		return false;
 
 	const static Matrix33 textureTS = translate(0.5f, 0.5f) * scale(1.0f / 32768.0f, 1.0f / 32768.0f);
 
-	uint32_t vertexOffset = 0;
+	uint32_t vertexOffset = m_vertexRange.offset;
 	Matrix33 textureMatrix;
 
 	const AlignedVector< FlashFillStyle >& fillStyles = shape.getFillStyles();
@@ -285,14 +282,14 @@ bool AccShape::createRenderable(
 	if (!m_batchFlags)
 		m_batchFlags |= BfHaveSolid;
 
-	m_vertexBuffer->unlock();
+	m_vertexRange.vertexBuffer->unlock();
 	return true;
 }
 
 void AccShape::destroy()
 {
-	m_vertexPool->releaseVertexBuffer(m_vertexBuffer);
-	m_vertexBuffer = 0;
+	m_vertexPool->releaseRange(m_vertexRange);
+	m_vertexRange = AccShapeVertexPool::Range();
 }
 
 void AccShape::render(
@@ -309,7 +306,7 @@ void AccShape::render(
 	uint8_t maskReference
 )
 {
-	if (!m_vertexBuffer)
+	if (!m_vertexRange.vertexBuffer)
 		return;
 
 	Matrix44 m(
@@ -394,7 +391,7 @@ void AccShape::render(
 			{
 				render::NonIndexedRenderBlock* renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >("Flash AccShape; draw solid batch");
 				renderBlock->program = shaderSolid->getCurrentProgram();
-				renderBlock->vertexBuffer = m_vertexBuffer;
+				renderBlock->vertexBuffer = m_vertexRange.vertexBuffer;
 				renderBlock->primitive = i->primitives.type;
 				renderBlock->offset = i->primitives.offset;
 				renderBlock->count = i->primitives.count;
@@ -414,7 +411,7 @@ void AccShape::render(
 
 				render::NonIndexedRenderBlock* renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >("Flash AccShape; draw textured batch");
 				renderBlock->program = shaderTextured->getCurrentProgram();
-				renderBlock->vertexBuffer = m_vertexBuffer;
+				renderBlock->vertexBuffer = m_vertexRange.vertexBuffer;
 				renderBlock->primitive = i->primitives.type;
 				renderBlock->offset = i->primitives.offset;
 				renderBlock->count = i->primitives.count;

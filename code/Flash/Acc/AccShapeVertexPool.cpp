@@ -13,6 +13,8 @@ namespace traktor
 		namespace
 		{
 
+const uint32_t c_vertexPoolSize = 262144;
+
 #pragma pack(1)
 struct Vertex
 {
@@ -32,135 +34,95 @@ AccShapeVertexPool::AccShapeVertexPool(render::IRenderSystem* renderSystem)
 
 bool AccShapeVertexPool::create()
 {
-	const int32_t c_precreateBuffers[][2] =
-	{
-		{ 8, 16 },
-		{ 32, 16 },
-		{ 64, 8 },
-		{ 128, 8 },
-		{ 256, 8 },
-		{ 512, 16 },
-		{ 768, 16 },
-		{ 1024, 8 }
-	};
-
 	std::vector< render::VertexElement > vertexElements(2);
 	vertexElements[0] = render::VertexElement(render::DuPosition, render::DtFloat2, offsetof(Vertex, pos));
 	vertexElements[1] = render::VertexElement(render::DuColor, render::DtByte4N, offsetof(Vertex, color), 0);
 	T_ASSERT (render::getVertexSize(vertexElements) == sizeof(Vertex));
 
-	for (int32_t i = 0; i < sizeof_array(c_precreateBuffers); ++i)
-	{
-		for (int32_t j = 0; j < c_precreateBuffers[i][1]; ++j)
-		{
-			Ref< render::VertexBuffer > vertexBuffer = m_renderSystem->createVertexBuffer(
-				vertexElements,
-				c_precreateBuffers[i][0] * 3 * sizeof(Vertex),
-				false
-			);
-			if (!vertexBuffer)
-			{
-				log::error << L"Unable to create vertex buffer " << c_precreateBuffers[i][0] << Endl;
-				return false;
-			}
+	Ref< render::VertexBuffer > vertexBuffer = m_renderSystem->createVertexBuffer(
+		vertexElements,
+		c_vertexPoolSize * sizeof(Vertex),
+		false
+	);
+	if (!vertexBuffer)
+		return false;
 
-			PoolEntry pe;
-			pe.vertexBuffer = vertexBuffer;
-			pe.triangleCount = c_precreateBuffers[i][0];
-			m_freeBuffers.push_back(pe);
-		}
-	}
+	VertexPool pool;
+	pool.vertexBuffer = vertexBuffer;
+	pool.blockList = new BlockList(c_vertexPoolSize);
+	m_pools.push_back(pool);
 
 	return true;
 }
 
 void AccShapeVertexPool::destroy()
 {
-	for (std::list< PoolEntry >::iterator i = m_freeBuffers.begin(); i != m_freeBuffers.end(); ++i)
+	for (std::list< VertexPool >::iterator i = m_pools.begin(); i != m_pools.end(); ++i)
+	{
 		safeDestroy(i->vertexBuffer);
-	for (std::list< PoolEntry >::iterator i = m_usedBuffers.begin(); i != m_usedBuffers.end(); ++i)
-		safeDestroy(i->vertexBuffer);
+		delete i->blockList;
+	}
 
-	m_freeBuffers.clear();
-	m_usedBuffers.clear();
-
+	m_pools.clear();
 	m_renderSystem = 0;
 }
 
-render::VertexBuffer* AccShapeVertexPool::acquireVertexBuffer(int32_t triangleCount)
+bool AccShapeVertexPool::acquireRange(int32_t vertexCount, Range& outRange)
 {
-	std::list< PoolEntry >::iterator min = m_freeBuffers.end();
-	Ref< render::VertexBuffer > vertexBuffer;
+	T_ASSERT (vertexCount <= c_vertexPoolSize);
 
-	if (triangleCount <= 1024)
+	for (std::list< VertexPool >::iterator i = m_pools.begin(); i != m_pools.end(); ++i)
 	{
-		for (std::list< PoolEntry >::iterator i = m_freeBuffers.begin(); i != m_freeBuffers.end(); ++i)
+		uint32_t offset = i->blockList->alloc(vertexCount, 1);
+		if (offset != BlockList::NotEnoughSpace)
 		{
-			int32_t wastedTriangles = i->triangleCount - triangleCount;
-			if (wastedTriangles < 0)
-				continue;
-
-			if (wastedTriangles == 0)
-			{
-				min = i;
-				break;
-			}
-
-			if (min != m_freeBuffers.end())
-			{
-				if (wastedTriangles < min->triangleCount - triangleCount)
-					min = i;
-			}
-			else
-				min = i;
+			outRange.vertexBuffer = i->vertexBuffer;
+			outRange.offset = offset;
+			return true;
 		}
 	}
 
-	if (min != m_freeBuffers.end())
-	{
-		vertexBuffer = min->vertexBuffer;
-		m_usedBuffers.push_back(*min);
-		m_freeBuffers.erase(min);
-	}
-	else
-	{
-		std::vector< render::VertexElement > vertexElements(2);
-		vertexElements[0] = render::VertexElement(render::DuPosition, render::DtFloat2, offsetof(Vertex, pos));
-		vertexElements[1] = render::VertexElement(render::DuColor, render::DtByte4N, offsetof(Vertex, color), 0);
-		T_ASSERT (render::getVertexSize(vertexElements) == sizeof(Vertex));
+	log::debug << L"Out of memory in vertex pools; allocating another buffer" << Endl;
 
-		triangleCount = alignUp(triangleCount, 32);
+	std::vector< render::VertexElement > vertexElements(2);
+	vertexElements[0] = render::VertexElement(render::DuPosition, render::DtFloat2, offsetof(Vertex, pos));
+	vertexElements[1] = render::VertexElement(render::DuColor, render::DtByte4N, offsetof(Vertex, color), 0);
+	T_ASSERT (render::getVertexSize(vertexElements) == sizeof(Vertex));
 
-		vertexBuffer = m_renderSystem->createVertexBuffer(
-			vertexElements,
-			triangleCount * 3 * sizeof(Vertex),
-			false
-		);
-		if (!vertexBuffer)
-			return 0;
+	Ref< render::VertexBuffer > vertexBuffer = m_renderSystem->createVertexBuffer(
+		vertexElements,
+		c_vertexPoolSize * sizeof(Vertex),
+		false
+	);
+	if (!vertexBuffer)
+		return false;
 
-		PoolEntry pe;
-		pe.vertexBuffer = vertexBuffer;
-		pe.triangleCount = triangleCount;
-		m_usedBuffers.push_back(pe);
-	}
+	VertexPool pool;
+	pool.vertexBuffer = vertexBuffer;
+	pool.blockList = new BlockList(c_vertexPoolSize);
+	m_pools.push_back(pool);
 
-	return vertexBuffer;
+	outRange.vertexBuffer = pool.vertexBuffer;
+	outRange.offset = pool.blockList->alloc(vertexCount, 1);
+	T_ASSERT (outRange.offset != BlockList::NotEnoughSpace);
+
+	return true;
 }
 
-void AccShapeVertexPool::releaseVertexBuffer(render::VertexBuffer* vertexBuffer)
+void AccShapeVertexPool::releaseRange(const Range& range)
 {
-	if (!vertexBuffer)
+	if (!range.vertexBuffer)
 		return;
-	for (std::list< PoolEntry >::iterator i = m_usedBuffers.begin(); i != m_usedBuffers.end(); ++i)
+
+	for (std::list< VertexPool >::iterator i = m_pools.begin(); i != m_pools.end(); ++i)
 	{
-		if (i->vertexBuffer == vertexBuffer)
+		if (i->vertexBuffer == range.vertexBuffer)
 		{
-			m_freeBuffers.push_back(*i);
-			m_usedBuffers.erase(i);
+			i->blockList->free(range.offset);
 			return;
 		}
 	}
+
 	T_FATAL_ERROR;
 }
 
