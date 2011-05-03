@@ -44,6 +44,66 @@ int32_t KeyboardDeviceDi8::getControlCount()
 
 std::wstring KeyboardDeviceDi8::getControlName(int32_t control)
 {
+	HRESULT hr;
+
+	// Query key name through object info method.
+	{
+		DIDEVICEOBJECTINSTANCE didoi;
+		std::memset(&didoi, 0, sizeof(didoi));
+		didoi.dwSize = sizeof(didoi);
+		didoi.guidType = GUID_Key;
+
+		hr = m_device->GetObjectInfo(&didoi, c_di8ControlKeys[control], DIPH_BYOFFSET);
+		if (SUCCEEDED(hr))
+			return tstows(didoi.tszName);
+	}
+
+	// Query key name as a property.
+	{
+		DIPROPSTRING dips;
+		std::memset(&dips, 0, sizeof(dips));
+		dips.diph.dwSize = sizeof(DIPROPSTRING); 
+		dips.diph.dwHeaderSize = sizeof(DIPROPHEADER); 
+		dips.diph.dwObj = c_di8ControlKeys[control]; 
+		dips.diph.dwHow = DIPH_BYOFFSET; 
+		
+		hr = m_device->GetProperty(DIPROP_KEYNAME, (LPDIPROPHEADER)&dips);
+		if (SUCCEEDED(hr))
+			return dips.wsz;
+	}
+
+	// Fallback to query scan code; then use regular Win32 api to get key name.
+	{
+		DIPROPDWORD dipdw;
+		std::memset(&dipdw, 0, sizeof(dipdw));
+		dipdw.diph.dwSize = sizeof(DIPROPDWORD); 
+		dipdw.diph.dwHeaderSize = sizeof(DIPROPHEADER); 
+		dipdw.diph.dwObj = c_di8ControlKeys[control]; 
+		dipdw.diph.dwHow = DIPH_BYOFFSET; 
+
+		hr = m_device->GetProperty(DIPROP_SCANCODE, (LPDIPROPHEADER)&dipdw);
+		if (SUCCEEDED(hr))
+		{
+			UINT scanCode = dipdw.dwData;
+
+			switch (c_di8ControlKeys[control])
+			{
+			case DIK_LEFT: case DIK_UP: case DIK_RIGHT: case DIK_DOWN:
+			case DIK_PRIOR: case DIK_NEXT: case DIK_END: case DIK_HOME:
+			case DIK_INSERT: case DIK_DELETE: case DIK_DIVIDE: case DIK_NUMLOCK:
+				scanCode |= 0x100;
+				break;
+			}
+
+			TCHAR keyName[50];
+			if (GetKeyNameText(scanCode << 16, keyName, sizeof(keyName)) != 0)
+				return tstows(keyName);
+			else
+				return L"";
+		}
+	}
+
+	// Unable to resolve key name.
 	return L"";
 }
 

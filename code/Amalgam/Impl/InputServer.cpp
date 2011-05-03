@@ -51,10 +51,10 @@ bool InputServer::create(const Settings* defaultSettings, const Settings* settin
 #	endif
 
 	Ref< input::InputDriverDi8 > inputDriverDi8 = new input::InputDriverDi8();
-	if (inputDriverDi8->create(0, input::CtMouse | input::CtJoystick))
+	if (inputDriverDi8->create(0, input::CtMouse | input::CtJoystick | input::CtKeyboard))
 		m_inputSystem->addDriver(inputDriverDi8);
 
-	m_inputSystem->addDriver(new input::InputDriverWin32(input::CtKeyboard));
+	//m_inputSystem->addDriver(new input::InputDriverWin32(input::CtKeyboard));
 	
 #elif TARGET_OS_MAC
 #	if TARGET_OS_IPHONE
