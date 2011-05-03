@@ -517,7 +517,13 @@ EntityAdapter* SceneEditorContext::beginRenderEntity(const world::Entity* entity
 
 	if (currentRenderAdapter)
 	{
-		EntityAdapter* renderEntityAdapter = findChildAdapter(currentRenderAdapter, FindFromEntity(entity));
+		EntityAdapter* renderEntityAdapter = 0;
+
+		if (currentRenderAdapter->getEntity() == entity)
+			renderEntityAdapter = currentRenderAdapter;
+		else
+			renderEntityAdapter = findChildAdapter(currentRenderAdapter, FindFromEntity(entity));
+
 		m_renderEntityStack.push_back(renderEntityAdapter);
 		return renderEntityAdapter;
 	}
