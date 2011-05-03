@@ -1,4 +1,5 @@
 #include "Core/Log/Log.h"
+#include "Core/Thread/Acquire.h"
 #include "Render/Dx9/VertexDeclCache.h"
 
 namespace traktor
@@ -55,6 +56,7 @@ VertexDeclCache::VertexDeclCache(IDirect3DDevice9* d3dDevice)
 
 bool VertexDeclCache::createDeclaration(const std::vector< VertexElement >& vertexElements, ComRef< IDirect3DVertexDeclaration9 >& outVertexDeclaration, DWORD& outVertexStride)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	D3DVERTEXELEMENT9 d3dDeclaration[32];
 	D3DVERTEXELEMENT9* d3dDeclarationLast = d3dDeclaration;
 	HRESULT hr;

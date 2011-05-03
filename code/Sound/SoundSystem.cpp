@@ -168,10 +168,17 @@ Ref< SoundChannel > SoundSystem::play(uint32_t channelId, const Sound* sound, ui
 {
 	T_ASSERT (channelId < m_channels.size());
 	
-	if (!m_channels[channelId]->playSound(sound, m_time, priority, repeat))
+	SoundChannel* channel = m_channels[channelId];
+
+	// Ensure we're not overriding a higher priority sound.
+	if (channel->isPlaying() && channel->getPriority() > priority)
 		return 0;
 
-	return m_channels[channelId];
+	// Start playing sound on selected channel.
+	if (!channel->playSound(sound, m_time, priority, repeat))
+		return 0;
+
+	return channel;
 }
 
 Ref< SoundChannel > SoundSystem::play(const Sound* sound, uint32_t priority, bool wait, uint32_t repeat)

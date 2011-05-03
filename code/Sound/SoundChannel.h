@@ -77,17 +77,29 @@ public:
 private:
 	friend class SoundSystem;
 
+	struct State
+	{
+		Ref< const Sound > sound;
+		Ref< ISoundBufferCursor > cursor;
+		uint32_t priority;
+		uint32_t repeat;
+
+		State()
+		:	priority(0)
+		,	repeat(0)
+		{
+		}
+	};
+
 	uint32_t m_id;
 	Event& m_eventFinish;
 	uint32_t m_hwSampleRate;	//< Hardware sample rate.
 	uint32_t m_hwFrameSamples;	//< Hardware frame size in samples.
 	Semaphore m_lock;
+	State m_queuedState;
+	State m_currentState;
 	Ref< IFilter > m_filter;
 	Ref< IFilterInstance > m_filterInstance;
-	Ref< const Sound > m_sound;
-	Ref< ISoundBufferCursor > m_cursor;
-	uint32_t m_priority;
-	uint32_t m_repeat;
 	float* m_outputSamples[SbcMaxChannelCount];
 	uint32_t m_outputSamplesIn;
 	float m_volume;

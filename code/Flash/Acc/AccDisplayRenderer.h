@@ -37,9 +37,11 @@ class RenderTargetSet;
 	{
 
 class AccGlyph;
-class AccTextureCache;
-class AccShape;
 class AccQuad;
+class AccShape;
+class AccShapeResources;
+class AccShapeVertexPool;
+class AccTextureCache;
 
 /*! \brief Accelerated display renderer.
  * \ingroup Flash
@@ -113,6 +115,8 @@ private:
 	Ref< render::RenderContext > m_renderContext;
 	Ref< render::RenderContext > m_globalContext;
 	Ref< render::RenderTargetSet > m_renderTargetGlyphs;
+	Ref< AccShapeResources > m_shapeResources;
+	Ref< AccShapeVertexPool > m_vertexPool;
 	Ref< AccTextureCache > m_textureCache;
 	Ref< AccGlyph > m_glyph;
 	Ref< AccQuad > m_quad;

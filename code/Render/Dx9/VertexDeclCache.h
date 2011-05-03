@@ -4,6 +4,7 @@
 #include <vector>
 #include "Core/Object.h"
 #include "Core/Misc/ComRef.h"
+#include "Core/Thread/Semaphore.h"
 #include "Render/VertexElement.h"
 #include "Render/Dx9/Platform.h"
 
@@ -33,6 +34,7 @@ private:
 		DWORD d3dVertexStride;
 	};
 
+	Semaphore m_lock;
 	ComRef< IDirect3DDevice9 > m_d3dDevice;
 	std::vector< Declaration > m_cache;
 };

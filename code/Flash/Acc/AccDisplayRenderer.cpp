@@ -12,6 +12,8 @@
 #include "Flash/Acc/AccGlyph.h"
 #include "Flash/Acc/AccTextureCache.h"
 #include "Flash/Acc/AccShape.h"
+#include "Flash/Acc/AccShapeResources.h"
+#include "Flash/Acc/AccShapeVertexPool.h"
 #include "Flash/Acc/AccQuad.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
@@ -114,6 +116,14 @@ bool AccDisplayRenderer::create(
 	m_clearBackground = clearBackground;
 	m_stereoscopicOffset = stereoscopicOffset;
 
+	m_shapeResources = new AccShapeResources();
+	if (!m_shapeResources->create(resourceManager))
+		return false;
+
+	m_vertexPool = new AccShapeVertexPool(renderSystem);
+	if (!m_vertexPool->create())
+		return false;
+
 	m_glyph = new AccGlyph();
 	if (!m_glyph->create(resourceManager, renderSystem))
 		return false;
@@ -159,6 +169,9 @@ void AccDisplayRenderer::destroy()
 		safeDestroy(i->second.shape);
 	m_shapeCache.clear();
 
+	safeDestroy(m_shapeResources);
+	safeDestroy(m_vertexPool);
+
 	m_renderContexts.clear();
 	m_renderContext = 0;
 
@@ -167,6 +180,7 @@ void AccDisplayRenderer::destroy()
 
 void AccDisplayRenderer::build(uint32_t frame)
 {
+	m_shapeResources->validate();
 	m_renderContext = m_renderContexts[frame];
 	m_renderContext->flush();
 	m_viewOffset.set(0.0f, 0.0f, 1.0f, 1.0f);
@@ -332,10 +346,10 @@ void AccDisplayRenderer::renderShape(const FlashMovie& movie, const Matrix33& tr
 	std::map< uint64_t, CacheEntry >::iterator it = m_shapeCache.find(hash);
 	if (it == m_shapeCache.end())
 	{
-		accShape = new AccShape();
-		if (!accShape->create(
-			m_resourceManager,
-			m_renderSystem,
+		accShape = new AccShape(m_shapeResources, m_vertexPool);
+		if (!accShape->createTesselation(shape))
+			return;
+		if (!accShape->createRenderable(
 			*m_textureCache,
 			movie,
 			shape
@@ -393,10 +407,10 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 	std::map< uint64_t, CacheEntry >::iterator it1 = m_shapeCache.find(hash);
 	if (it1 == m_shapeCache.end())
 	{
-		accShape = new AccShape();
-		if (!accShape->create(
-			m_resourceManager,
-			m_renderSystem,
+		accShape = new AccShape(m_shapeResources, m_vertexPool);
+		if (!accShape->createTesselation(shape))
+			return;
+		if (!accShape->createRenderable(
 			*m_textureCache,
 			movie,
 			shape

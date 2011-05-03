@@ -177,15 +177,17 @@ void Triangulator::triangulate(const AlignedVector< Segment >& segments, Aligned
 	{
 		const Trapezoid& tz = trapezoids[i];
 
-		outTriangles[i * 2 + 0].fillStyle = tz.fillStyle;
-		outTriangles[i * 2 + 0].v[0] = Vector2(tz.lx[0], tz.y[0]);
-		outTriangles[i * 2 + 0].v[1] = Vector2(tz.rx[0], tz.y[0]);
-		outTriangles[i * 2 + 0].v[2] = Vector2(tz.rx[1], tz.y[1]);
+		Triangle& t0 = outTriangles[i * 2 + 0];
+		t0.fillStyle = tz.fillStyle;
+		t0.v[0] = Vector2(tz.lx[0], tz.y[0]);
+		t0.v[1] = Vector2(tz.rx[0], tz.y[0]);
+		t0.v[2] = Vector2(tz.rx[1], tz.y[1]);
 
-		outTriangles[i * 2 + 1].fillStyle = tz.fillStyle;
-		outTriangles[i * 2 + 1].v[0] = Vector2(tz.lx[0], tz.y[0]);
-		outTriangles[i * 2 + 1].v[1] = Vector2(tz.rx[1], tz.y[1]);
-		outTriangles[i * 2 + 1].v[2] = Vector2(tz.lx[1], tz.y[1]);
+		Triangle& t1 = outTriangles[i * 2 + 1];
+		t1.fillStyle = tz.fillStyle;
+		t1.v[0] = Vector2(tz.lx[0], tz.y[0]);
+		t1.v[1] = Vector2(tz.rx[1], tz.y[1]);
+		t1.v[2] = Vector2(tz.lx[1], tz.y[1]);
 	}
 }
 

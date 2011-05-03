@@ -34,6 +34,8 @@ void PathTesselator::tesselate(const Path& path, AlignedVector< Segment >& outSe
 	if (subPaths.empty())
 		return;
 
+	outSegments.reserve(subPaths.size() * 10);
+
 	// Tesselate segments into linear segments.
 	for (std::list< SubPath >::const_iterator i = subPaths.begin(); i != subPaths.end(); ++i)
 	{
@@ -101,8 +103,6 @@ void PathTesselator::tesselateQuadraticSegment(const SubPath& subPath, const Sub
 	int steps = int(min(distance, c_maxDistance) * c_maxSteps / c_maxDistance);
 	if (steps <= 0)
 		steps = 1;
-		
-	outSegments.reserve(outSegments.size() + steps);
 
 	for (int i = 0; i < steps; ++i)
 	{
