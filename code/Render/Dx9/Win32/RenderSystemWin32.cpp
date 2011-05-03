@@ -450,8 +450,6 @@ Ref< IRenderView > RenderSystemWin32::createRenderView(const RenderViewEmbeddedD
 
 Ref< VertexBuffer > RenderSystemWin32::createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_renderLock);
-
 	if (!dynamic)
 	{
 		Ref< VertexBufferStaticDx9 > vertexBuffer = new VertexBufferStaticDx9(bufferSize, m_vertexDeclCache);
@@ -464,29 +462,22 @@ Ref< VertexBuffer > RenderSystemWin32::createVertexBuffer(const std::vector< Ver
 		if (vertexBuffer->create(m_d3dDevice, vertexElements))
 			return vertexBuffer;
 	}
-
 	return 0;
 }
 
 Ref< IndexBuffer > RenderSystemWin32::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_renderLock);
-
 	Ref< IndexBufferDx9 > indexBuffer = new IndexBufferDx9(m_resourceManager, indexType, bufferSize);
 	if (!indexBuffer->create(m_d3dDevice, dynamic))
 		return 0;
-
 	return indexBuffer;
 }
 
 Ref< ISimpleTexture > RenderSystemWin32::createSimpleTexture(const SimpleTextureCreateDesc& desc)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_renderLock);
-
 	Ref< SimpleTextureDx9 > texture = new SimpleTextureDx9(m_resourceManager);
 	if (!texture->create(m_d3dDevice, desc))
 		return 0;
-
 	return texture;
 }
 

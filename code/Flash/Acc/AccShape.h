@@ -5,22 +5,15 @@
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Matrix33.h"
 #include "Core/Math/Matrix44.h"
+#include "Flash/Polygon.h"
 #include "Resource/Proxy.h"
 #include "Render/Types.h"
 
 namespace traktor
 {
-	namespace resource
-	{
-
-class IResourceManager;
-
-	}
-
 	namespace render
 	{
 
-class IRenderSystem;
 class ITexture;
 class RenderContext;
 class Shader;
@@ -31,6 +24,8 @@ class VertexBuffer;
 	namespace flash
 	{
 
+class AccShapeResources;
+class AccShapeVertexPool;
 class AccTextureCache;
 class FlashMovie;
 class FlashShape;
@@ -42,9 +37,11 @@ struct SwfCxTransform;
 class AccShape : public Object
 {
 public:
-	bool create(
-		resource::IResourceManager* resourceManager,
-		render::IRenderSystem* renderSystem,
+	AccShape(AccShapeResources* shapeResources, AccShapeVertexPool* vertexPool);
+
+	bool createTesselation(const FlashShape& shape);
+
+	bool createRenderable(
 		AccTextureCache& textureCache,
 		const FlashMovie& movie,
 		const FlashShape& shape
@@ -69,22 +66,27 @@ public:
 	const SwfRect& getBounds() const { return m_bounds; }
 
 private:
-	struct Batch
+	struct TesselationBatch
+	{
+		AlignedVector< Triangle > triangles;
+		AlignedVector< Line > lines;
+	};
+
+	struct RenderBatch
 	{
 		render::ITexture* texture;
 		Matrix33 textureMatrix;
 		render::Primitives primitives;
 	};
 
-	resource::Proxy< render::Shader > m_shaderSolid;
-	resource::Proxy< render::Shader > m_shaderTextured;
-	resource::Proxy< render::Shader > m_shaderSolidMask;
-	resource::Proxy< render::Shader > m_shaderTexturedMask;
-	resource::Proxy< render::Shader > m_shaderIncrementMask;
-	resource::Proxy< render::Shader > m_shaderDecrementMask;
-	Ref< render::VertexBuffer > m_vertexBuffer;
-	AlignedVector< Batch > m_batches;
+	Ref< AccShapeResources > m_shapeResources;
+	Ref< AccShapeVertexPool > m_vertexPool;
+	AlignedVector< TesselationBatch > m_tesselationBatches;
+	uint32_t m_tesselationTriangleCount;
+	render::VertexBuffer* m_vertexBuffer;
+	AlignedVector< RenderBatch > m_renderBatches;
 	SwfRect m_bounds;
+	uint8_t m_batchFlags;
 };
 
 	}

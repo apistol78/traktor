@@ -54,8 +54,6 @@ SoundChannel::SoundChannel(uint32_t id, Event& eventFinish, uint32_t hwSampleRat
 ,	m_eventFinish(eventFinish)
 ,	m_hwSampleRate(hwSampleRate)
 ,	m_hwFrameSamples(hwFrameSamples)
-,	m_priority(0)
-,	m_repeat(0)
 ,	m_outputSamplesIn(0)
 ,	m_volume(1.0f)
 ,	m_exclusive(false)
@@ -107,26 +105,24 @@ bool SoundChannel::isExclusive() const
 
 bool SoundChannel::isPlaying() const
 {
-	return bool(m_sound != 0);
+	return bool(m_currentState.sound != 0);
 }
 
 void SoundChannel::stop()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	m_sound = 0;
-	m_cursor = 0;
+	m_currentState.sound = 0;
+	m_currentState.cursor = 0;
 	m_eventFinish.broadcast();
 }
 
 ISoundBufferCursor* SoundChannel::getCursor() const
 {
-	return m_cursor;
+	return m_currentState.cursor;
 }
 
 bool SoundChannel::playSound(const Sound* sound, double time, uint32_t priority, uint32_t repeat)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-
 	if (!sound)
 	{
 		log::error << L"playSound failed; no sound" << Endl;
@@ -140,29 +136,44 @@ bool SoundChannel::playSound(const Sound* sound, double time, uint32_t priority,
 		return false;
 	}
 
-	m_cursor = soundBuffer->createCursor();
-	if (!m_cursor)
+	Ref< ISoundBufferCursor > cursor = soundBuffer->createCursor();
+	if (!cursor)
 	{
 		log::error << L"playSound failed; unable to create cursor" << Endl;
 		return false;
 	}
 
-	m_sound = sound;
-	m_priority = priority;
-	m_repeat = max< uint32_t >(repeat, 1U);
-	m_outputSamplesIn = 0;
+	// Queue state; activated next time channel is polled for another
+	// sound block.
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+		m_queuedState.sound = sound;
+		m_queuedState.cursor = cursor;
+		m_queuedState.priority = priority;
+		m_queuedState.repeat = max< uint32_t >(repeat, 1U);
+	}
 
 	return true;
 }
 
 bool SoundChannel::getBlock(const ISoundMixer* mixer, double time, SoundBlock& outBlock)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	// Recover playing state; swap in queued state if necessary.
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+		if (m_queuedState.sound)
+		{
+			m_currentState = m_queuedState;
+			m_queuedState.sound = 0;
+			m_queuedState.cursor = 0;
+			m_outputSamplesIn = 0;
+		}
+	}
 
-	if (!m_sound || !m_cursor)
+	if (!m_currentState.sound || !m_currentState.cursor)
 		return false;
 
-	ISoundBuffer* soundBuffer = m_sound->getSoundBuffer();
+	Ref< ISoundBuffer > soundBuffer = m_currentState.sound->getSoundBuffer();
 	T_ASSERT (soundBuffer);
 
 	// Remove old output samples.
@@ -184,24 +195,24 @@ bool SoundChannel::getBlock(const ISoundMixer* mixer, double time, SoundBlock& o
 	{
 		// Request sound block from buffer.
 		SoundBlock soundBlock = { { 0, 0, 0, 0, 0, 0, 0, 0 }, m_hwFrameSamples, 0, 0 };
-		if (!soundBuffer->getBlock(m_cursor, soundBlock))
+		if (!soundBuffer->getBlock(m_currentState.cursor, soundBlock))
 		{
 			// No more blocks from sound buffer.
-			if (--m_repeat > 0)
+			if (--m_currentState.repeat > 0)
 			{
-				m_cursor->reset();
-				if (!soundBuffer->getBlock(m_cursor, soundBlock))
+				m_currentState.cursor->reset();
+				if (!soundBuffer->getBlock(m_currentState.cursor, soundBlock))
 				{
-					m_sound = 0;
-					m_cursor = 0;
+					m_currentState.sound = 0;
+					m_currentState.cursor = 0;
 					m_eventFinish.broadcast();
 					return false;
 				}
 			}
 			else
 			{
-				m_sound = 0;
-				m_cursor = 0;
+				m_currentState.sound = 0;
+				m_currentState.cursor = 0;
 				m_eventFinish.broadcast();
 				return false;
 			}
@@ -280,7 +291,7 @@ bool SoundChannel::getBlock(const ISoundMixer* mixer, double time, SoundBlock& o
 
 uint32_t SoundChannel::getPriority() const
 {
-	return m_priority;
+	return m_currentState.priority;
 }
 
 	}

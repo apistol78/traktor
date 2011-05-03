@@ -1,18 +1,19 @@
 #include <limits>
 #include "Core/Log/Log.h"
 #include "Core/Math/Color4ub.h"
+#include "Core/Timer/Timer.h"
 #include "Flash/FlashMovie.h"
 #include "Flash/FlashShape.h"
 #include "Flash/FlashBitmap.h"
 #include "Flash/Acc/AccShape.h"
+#include "Flash/Acc/AccShapeResources.h"
+#include "Flash/Acc/AccShapeVertexPool.h"
 #include "Flash/Acc/AccTextureCache.h"
 #include "Flash/Acc/PathTesselator.h"
 #include "Flash/Acc/Triangulator.h"
 #include "Render/Shader.h"
 #include "Render/VertexBuffer.h"
-#include "Render/VertexElement.h"
 #include "Render/Context/RenderContext.h"
-#include "Resource/IResourceManager.h"
 
 namespace traktor
 {
@@ -21,12 +22,31 @@ namespace traktor
 		namespace
 		{
 
-const Guid c_guidShaderSolid(L"{4F6F6CCE-97EC-624D-96B7-842F1D99D060}");
-const Guid c_guidShaderTextured(L"{049F4B08-1A54-DB4C-86CC-B533BCFFC65D}");
-const Guid c_guidShaderSolidMask(L"{D46877B9-0F90-3A42-AB2D-7346AA607233}");
-const Guid c_guidShaderTexturedMask(L"{5CDDBEC8-1629-0A4E-ACE5-C8186072D694}");
-const Guid c_guidShaderIncrementMask(L"{8DCBCF05-4640-884E-95AC-F090510788F4}");
-const Guid c_guidShaderDecrementMask(L"{57F6F4DF-F4EE-6740-907C-027A3A2596D7}");
+class ScopeTime
+{
+public:
+	ScopeTime(const wchar_t* name)
+	:	m_name(name)
+	{
+		m_timer.start();
+	}
+
+	~ScopeTime()
+	{
+		double T1 = m_timer.getElapsedTime();
+		log::debug << L"Scope \"" << m_name << L"\" " << float(T1 * 1000.0f) << L" ms" << Endl;
+	}
+
+private:
+	const wchar_t* m_name;
+	Timer m_timer;
+};
+
+enum BatchFlags
+{
+	BfHaveSolid = 1,
+	BfHaveTextured = 2
+};
 
 #pragma pack(1)
 struct Vertex
@@ -36,92 +56,41 @@ struct Vertex
 };
 #pragma pack()
 
-struct ConstructBatch
-{
-	AlignedVector< Triangle > triangles;
-	AlignedVector< Line > lines;
-};
-
-bool s_handleInitialized = false;
-render::handle_t s_handleTransform;
-render::handle_t s_handleFrameSize;
-render::handle_t s_handleViewSize;
-render::handle_t s_handleViewOffset;
-render::handle_t s_handleScreenOffsetScale;
-render::handle_t s_handleCxFormMul;
-render::handle_t s_handleCxFormAdd;
-render::handle_t s_handleTexture;
-render::handle_t s_handleTextureMatrix;
-
 		}
 
-bool AccShape::create(
-	resource::IResourceManager* resourceManager,
-	render::IRenderSystem* renderSystem,
-	AccTextureCache& textureCache,
-	const FlashMovie& movie,
-	const FlashShape& shape
-)
+AccShape::AccShape(AccShapeResources* shapeResources, AccShapeVertexPool* vertexPool)
+:	m_shapeResources(shapeResources)
+,	m_vertexPool(vertexPool)
+,	m_tesselationTriangleCount(0)
+,	m_vertexBuffer(0)
+,	m_batchFlags(0)
 {
-	if (!s_handleInitialized)
-	{
-		s_handleTransform = render::getParameterHandle(L"Flash_Transform");
-		s_handleFrameSize = render::getParameterHandle(L"Flash_FrameSize");
-		s_handleViewSize = render::getParameterHandle(L"Flash_ViewSize");
-		s_handleViewOffset = render::getParameterHandle(L"Flash_ViewOffset");
-		s_handleScreenOffsetScale = render::getParameterHandle(L"Flash_ScreenOffsetScale");
-		s_handleCxFormMul = render::getParameterHandle(L"Flash_CxFormMul");
-		s_handleCxFormAdd = render::getParameterHandle(L"Flash_CxFormAdd");
-		s_handleTexture = render::getParameterHandle(L"Flash_Texture");
-		s_handleTextureMatrix = render::getParameterHandle(L"Flash_TextureMatrix");
-		s_handleInitialized = true;
-	}
+}
 
-	m_shaderSolid = c_guidShaderSolid;
-	if (!resourceManager->bind(m_shaderSolid))
-		return false;
+bool AccShape::createTesselation(const FlashShape& shape)
+{
+	//T_ANONYMOUS_VAR(ScopeTime)(L"AccShape::createTesselation");
 
-	m_shaderTextured = c_guidShaderTextured;
-	if (!resourceManager->bind(m_shaderTextured))
-		return false;
-
-	m_shaderSolidMask = c_guidShaderSolidMask;
-	if (!resourceManager->bind(m_shaderSolidMask))
-		return false;
-
-	m_shaderTexturedMask = c_guidShaderTexturedMask;
-	if (!resourceManager->bind(m_shaderTexturedMask))
-		return false;
-
-	m_shaderIncrementMask = c_guidShaderIncrementMask;
-	if (!resourceManager->bind(m_shaderIncrementMask))
-		return false;
-
-	m_shaderDecrementMask = c_guidShaderDecrementMask;
-	if (!resourceManager->bind(m_shaderDecrementMask))
-		return false;
-
-	m_bounds.min.x = m_bounds.min.y =  std::numeric_limits< float >::max();
-	m_bounds.max.x = m_bounds.max.y = -std::numeric_limits< float >::max();
-
-	std::vector< render::VertexElement > vertexElements;
-	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat2, offsetof(Vertex, pos)));
-	vertexElements.push_back(render::VertexElement(render::DuColor, render::DtByte4N, offsetof(Vertex, color), 0));
-	T_ASSERT (render::getVertexSize(vertexElements) == sizeof(Vertex));
-
-	AlignedVector< ConstructBatch > batches;
-	uint32_t totalTriangleCount = 0;
+	AlignedVector< Segment > segments;
+	PathTesselator tesselator;
+	Triangulator triangulator;
 
 	const std::list< Path >& paths = shape.getPaths();
+	
+	m_tesselationBatches.resize(0);
+	m_tesselationBatches.reserve(paths.size());
+
+	m_tesselationTriangleCount = 0;
+
 	for (std::list< Path >::const_iterator i = paths.begin(); i != paths.end(); ++i)
 	{
-		AlignedVector< Segment > segments;
-		PathTesselator().tesselate(*i, segments);
+		segments.resize(0);
+		tesselator.tesselate(*i, segments);
 
-		batches.push_back(ConstructBatch());
+		m_tesselationBatches.push_back(TesselationBatch());
 
-		Triangulator().triangulate(segments, batches.back().triangles);
-		totalTriangleCount += uint32_t(batches.back().triangles.size());
+		triangulator.triangulate(segments, m_tesselationBatches.back().triangles);
+		m_tesselationTriangleCount += uint32_t(m_tesselationBatches.back().triangles.size());
 
 		for (AlignedVector< Segment >::iterator j = segments.begin(); j != segments.end(); ++j)
 		{
@@ -132,15 +101,29 @@ bool AccShape::create(
 			line.v[0] = j->v[0];
 			line.v[1] = j->v[1];
 			line.lineStyle = j->lineStyle;
-			batches.back().lines.push_back(line);
+			m_tesselationBatches.back().lines.push_back(line);
 		}
-		totalTriangleCount += uint32_t(batches.back().lines.size() * 2);
+		m_tesselationTriangleCount += uint32_t(m_tesselationBatches.back().lines.size() * 2);
 	}	
 
-	if (!totalTriangleCount)
+	return true;
+}
+
+bool AccShape::createRenderable(
+	AccTextureCache& textureCache,
+	const FlashMovie& movie,
+	const FlashShape& shape
+)
+{
+	//T_ANONYMOUS_VAR(ScopeTime)(L"AccShape::createRenderable");
+
+	if (!m_tesselationTriangleCount)
 		return true;
 
-	m_vertexBuffer = renderSystem->createVertexBuffer(vertexElements, totalTriangleCount * 3 * sizeof(Vertex), false);
+	m_bounds.min.x = m_bounds.min.y =  std::numeric_limits< float >::max();
+	m_bounds.max.x = m_bounds.max.y = -std::numeric_limits< float >::max();
+
+	m_vertexBuffer = m_vertexPool->acquireVertexBuffer(m_tesselationTriangleCount);
 	if (!m_vertexBuffer)
 		return false;
 
@@ -148,16 +131,21 @@ bool AccShape::create(
 	if (!vertex)
 		return false;
 
+	const static Matrix33 textureTS = translate(0.5f, 0.5f) * scale(1.0f / 32768.0f, 1.0f / 32768.0f);
+
 	uint32_t vertexOffset = 0;
+	Matrix33 textureMatrix;
 
 	const AlignedVector< FlashFillStyle >& fillStyles = shape.getFillStyles();
 	const AlignedVector< FlashLineStyle >& lineStyles = shape.getLineStyles();
 
-	for (AlignedVector< ConstructBatch >::iterator i = batches.begin(); i != batches.end(); ++i)
+	m_renderBatches.reserve(m_tesselationBatches.size());
+	m_batchFlags = 0;
+
+	for (AlignedVector< TesselationBatch >::const_iterator i = m_tesselationBatches.begin(); i != m_tesselationBatches.end(); ++i)
 	{
-		for (AlignedVector< Triangle >::iterator j = i->triangles.begin(); j != i->triangles.end(); ++j)
+		for (AlignedVector< Triangle >::const_iterator j = i->triangles.begin(); j != i->triangles.end(); ++j)
 		{
-			Matrix33 textureMatrix = Matrix33::identity();
 			Color4ub color(255, 255, 255, 255);
 			render::ITexture* texture = 0;
 
@@ -170,7 +158,8 @@ bool AccShape::create(
 				{
 					// Create gradient texture.
 					texture = textureCache.getGradientTexture(style);
-					textureMatrix = translate(0.5f, 0.5f) * scale(1.0f / 32768.0f, 1.0f / 32768.0f) * style.getGradientMatrix().inverse();
+					textureMatrix = textureTS * style.getGradientMatrix().inverse();
+					m_batchFlags |= BfHaveTextured;
 				}
 				else if (colorRecords.size() == 1)
 				{
@@ -179,6 +168,7 @@ bool AccShape::create(
 					color.g = colorRecords.front().color.green;
 					color.b = colorRecords.front().color.blue;
 					color.a = colorRecords.front().color.alpha;
+					m_batchFlags |= BfHaveSolid;
 				}
 
 				const FlashBitmap* bitmap = movie.getBitmap(style.getFillBitmap());
@@ -186,20 +176,22 @@ bool AccShape::create(
 				{
 					T_ASSERT_M (!texture, L"Cannot combine gradients and bitmaps");
 					texture = textureCache.getBitmapTexture(*bitmap);
-					textureMatrix = scale(
-						1.0f / bitmap->getOriginalWidth(),
-						1.0f / bitmap->getOriginalHeight()
-					) *
-					style.getFillBitmapMatrix().inverse();
+					textureMatrix =
+						scale(
+							1.0f / bitmap->getOriginalWidth(),
+							1.0f / bitmap->getOriginalHeight()
+						) *
+						style.getFillBitmapMatrix().inverse();
+					m_batchFlags |= BfHaveTextured;
 				}
 			}
 
-			if (m_batches.empty() || m_batches.back().texture != texture)
+			if (m_renderBatches.empty() || m_renderBatches.back().texture != texture)
 			{
-				m_batches.push_back(Batch());
-				m_batches.back().primitives.setNonIndexed(render::PtTriangles, vertexOffset, 0);
-				m_batches.back().texture = texture;
-				m_batches.back().textureMatrix = textureMatrix;
+				m_renderBatches.push_back(RenderBatch());
+				m_renderBatches.back().primitives.setNonIndexed(render::PtTriangles, vertexOffset, 0);
+				m_renderBatches.back().texture = texture;
+				m_renderBatches.back().textureMatrix = textureMatrix;
 			}
 
 			for (int k = 0; k < 3; ++k)
@@ -219,12 +211,12 @@ bool AccShape::create(
 				vertex++;
 			}
 
-			m_batches.back().primitives.count++;
+			m_renderBatches.back().primitives.count++;
 
 			vertexOffset += 3;
 		}
 
-		for (AlignedVector< Line >::iterator j = i->lines.begin(); j != i->lines.end(); ++j)
+		for (AlignedVector< Line >::const_iterator j = i->lines.begin(); j != i->lines.end(); ++j)
 		{
 			Color4ub color(255, 255, 255, 255);
 			float width = 0.0f;
@@ -241,11 +233,16 @@ bool AccShape::create(
 				width = style.getLineWidth();
 			}
 
-			if (m_batches.empty() || m_batches.back().texture)
+			if (width <= 0.0f)
+				continue;
+
+			m_batchFlags |= BfHaveSolid;
+
+			if (m_renderBatches.empty() || m_renderBatches.back().texture)
 			{
-				m_batches.push_back(Batch());
-				m_batches.back().primitives.setNonIndexed(render::PtTriangles, vertexOffset, 0);
-				m_batches.back().texture = 0;
+				m_renderBatches.push_back(RenderBatch());
+				m_renderBatches.back().primitives.setNonIndexed(render::PtTriangles, vertexOffset, 0);
+				m_renderBatches.back().texture = 0;
 			}
 
 			Vector2 perp = (j->v[1] - j->v[0]).normalized().perpendicular() * width / 2.0f;
@@ -257,16 +254,18 @@ bool AccShape::create(
 				j->v[1] - perp
 			};
 
-			const int c_indices[6] = { 0, 1, 2, 0, 2, 3 };
+			const static int c_indices[6] = { 0, 1, 2, 0, 2, 3 };
 			for (int k = 0; k < 6; ++k)
 			{
-				m_bounds.min.x = min(m_bounds.min.x, v[c_indices[k]].x);
-				m_bounds.min.y = min(m_bounds.min.y, v[c_indices[k]].y);
-				m_bounds.max.x = max(m_bounds.max.x, v[c_indices[k]].x);
-				m_bounds.max.y = max(m_bounds.max.y, v[c_indices[k]].y);
+				const Vector2& vr = v[c_indices[k]];
 
-				vertex->pos[0] = v[c_indices[k]].x;
-				vertex->pos[1] = v[c_indices[k]].y;
+				m_bounds.min.x = min(m_bounds.min.x, vr.x);
+				m_bounds.min.y = min(m_bounds.min.y, vr.y);
+				m_bounds.max.x = max(m_bounds.max.x, vr.x);
+				m_bounds.max.y = max(m_bounds.max.y, vr.y);
+
+				vertex->pos[0] = vr.x;
+				vertex->pos[1] = vr.y;
 				vertex->color[2] = color.r;
 				vertex->color[1] = color.g;
 				vertex->color[0] = color.b;
@@ -275,24 +274,25 @@ bool AccShape::create(
 				vertex++;
 			}
 
-			m_batches.back().primitives.count += 2;
+			m_renderBatches.back().primitives.count += 2;
 
 			vertexOffset += 6;
 		}
 	}
 
-	m_vertexBuffer->unlock();
+	// Some shapes doesn't expose styles, such as glyphs, but are
+	// assumed to be solids.
+	if (!m_batchFlags)
+		m_batchFlags |= BfHaveSolid;
 
+	m_vertexBuffer->unlock();
 	return true;
 }
 
 void AccShape::destroy()
 {
-	if (m_vertexBuffer)
-	{
-		m_vertexBuffer->destroy();
-		m_vertexBuffer = 0;
-	}
+	m_vertexPool->releaseVertexBuffer(m_vertexBuffer);
+	m_vertexBuffer = 0;
 }
 
 void AccShape::render(
@@ -324,29 +324,21 @@ void AccShape::render(
 	{
 		if (maskReference == 0)
 		{
-			if (!m_shaderSolid.validate() || !m_shaderTextured.validate())
-				return;
-			shaderSolid = m_shaderSolid;
-			shaderTextured = m_shaderTextured;
+			shaderSolid = m_shapeResources->m_shaderSolid;
+			shaderTextured = m_shapeResources->m_shaderTextured;
 		}
 		else
 		{
-			if (!m_shaderSolidMask.validate() || !m_shaderTexturedMask.validate())
-				return;
-			shaderSolid = m_shaderSolidMask;
-			shaderTextured = m_shaderTexturedMask;
+			shaderSolid = m_shapeResources->m_shaderSolidMask;
+			shaderTextured = m_shapeResources->m_shaderTexturedMask;
 		}
 	}
 	else
 	{
-		if (!m_shaderIncrementMask.validate() || !m_shaderDecrementMask.validate())
-			return;
-
 		if (maskIncrement)
-			shaderSolid = m_shaderIncrementMask;
+			shaderSolid = m_shapeResources->m_shaderIncrementMask;
 		else
-			shaderSolid = m_shaderDecrementMask;
-
+			shaderSolid = m_shapeResources->m_shaderDecrementMask;
 		shaderTextured = 0;
 	}
 
@@ -358,43 +350,43 @@ void AccShape::render(
 	if (!shaderSolid && !shaderTextured)
 		return;
 
-	if (shaderSolid)
+	if (shaderSolid && (m_batchFlags & BfHaveSolid) != 0)
 	{
 		render::NullRenderBlock* renderBlockSolid = renderContext->alloc< render::NullRenderBlock >("Flash AccShape; set solid parameters");
 		renderBlockSolid->program = shaderSolid->getCurrentProgram();
 		renderBlockSolid->programParams = renderContext->alloc< render::ProgramParameters >();
 		renderBlockSolid->programParams->beginParameters(renderContext);
-		renderBlockSolid->programParams->setMatrixParameter(s_handleTransform, m);
-		renderBlockSolid->programParams->setVectorParameter(s_handleFrameSize, frameSize);
-		renderBlockSolid->programParams->setVectorParameter(s_handleViewSize, viewSize);
-		renderBlockSolid->programParams->setVectorParameter(s_handleViewOffset, viewOffset);
-		renderBlockSolid->programParams->setFloatParameter(s_handleScreenOffsetScale, screenOffsetScale);
-		renderBlockSolid->programParams->setVectorParameter(s_handleCxFormMul, Vector4(cxform.red[0], cxform.green[0], cxform.blue[0], cxform.alpha[0]));
-		renderBlockSolid->programParams->setVectorParameter(s_handleCxFormAdd, Vector4(cxform.red[1], cxform.green[1], cxform.blue[1], cxform.alpha[1]));
+		renderBlockSolid->programParams->setMatrixParameter(m_shapeResources->m_handleTransform, m);
+		renderBlockSolid->programParams->setVectorParameter(m_shapeResources->m_handleFrameSize, frameSize);
+		renderBlockSolid->programParams->setVectorParameter(m_shapeResources->m_handleViewSize, viewSize);
+		renderBlockSolid->programParams->setVectorParameter(m_shapeResources->m_handleViewOffset, viewOffset);
+		renderBlockSolid->programParams->setFloatParameter(m_shapeResources->m_handleScreenOffsetScale, screenOffsetScale);
+		renderBlockSolid->programParams->setVectorParameter(m_shapeResources->m_handleCxFormMul, Vector4(cxform.red[0], cxform.green[0], cxform.blue[0], cxform.alpha[0]));
+		renderBlockSolid->programParams->setVectorParameter(m_shapeResources->m_handleCxFormAdd, Vector4(cxform.red[1], cxform.green[1], cxform.blue[1], cxform.alpha[1]));
 		renderBlockSolid->programParams->setStencilReference(maskReference);
 		renderBlockSolid->programParams->endParameters(renderContext);
 		renderContext->draw(render::RfOverlay, renderBlockSolid);
 	}
 
-	if (shaderTextured)
+	if (shaderTextured && (m_batchFlags & BfHaveTextured) != 0)
 	{
 		render::NullRenderBlock* renderBlockTextured = renderContext->alloc< render::NullRenderBlock >("Flash AccShape; set textured parameters");
 		renderBlockTextured->program = shaderTextured->getCurrentProgram();
 		renderBlockTextured->programParams = renderContext->alloc< render::ProgramParameters >();
 		renderBlockTextured->programParams->beginParameters(renderContext);
-		renderBlockTextured->programParams->setMatrixParameter(s_handleTransform, m);
-		renderBlockTextured->programParams->setVectorParameter(s_handleFrameSize, frameSize);
-		renderBlockTextured->programParams->setVectorParameter(s_handleViewSize, viewSize);
-		renderBlockTextured->programParams->setVectorParameter(s_handleViewOffset, viewOffset);
-		renderBlockTextured->programParams->setFloatParameter(s_handleScreenOffsetScale, screenOffsetScale);
-		renderBlockTextured->programParams->setVectorParameter(s_handleCxFormMul, Vector4(cxform.red[0], cxform.green[0], cxform.blue[0], cxform.alpha[0]));
-		renderBlockTextured->programParams->setVectorParameter(s_handleCxFormAdd, Vector4(cxform.red[1], cxform.green[1], cxform.blue[1], cxform.alpha[1]));
+		renderBlockTextured->programParams->setMatrixParameter(m_shapeResources->m_handleTransform, m);
+		renderBlockTextured->programParams->setVectorParameter(m_shapeResources->m_handleFrameSize, frameSize);
+		renderBlockTextured->programParams->setVectorParameter(m_shapeResources->m_handleViewSize, viewSize);
+		renderBlockTextured->programParams->setVectorParameter(m_shapeResources->m_handleViewOffset, viewOffset);
+		renderBlockTextured->programParams->setFloatParameter(m_shapeResources->m_handleScreenOffsetScale, screenOffsetScale);
+		renderBlockTextured->programParams->setVectorParameter(m_shapeResources->m_handleCxFormMul, Vector4(cxform.red[0], cxform.green[0], cxform.blue[0], cxform.alpha[0]));
+		renderBlockTextured->programParams->setVectorParameter(m_shapeResources->m_handleCxFormAdd, Vector4(cxform.red[1], cxform.green[1], cxform.blue[1], cxform.alpha[1]));
 		renderBlockTextured->programParams->setStencilReference(maskReference);
 		renderBlockTextured->programParams->endParameters(renderContext);
 		renderContext->draw(render::RfOverlay, renderBlockTextured);
 	}
 	
-	for (AlignedVector< Batch >::iterator i = m_batches.begin(); i != m_batches.end(); ++i)
+	for (AlignedVector< RenderBatch >::iterator i = m_renderBatches.begin(); i != m_renderBatches.end(); ++i)
 	{
 		if (!i->texture)
 		{
@@ -409,27 +401,30 @@ void AccShape::render(
 				renderContext->draw(render::RfOverlay, renderBlock);
 			}
 		}
-		else if (shaderTextured)
+		else
 		{
-			Matrix44 textureMatrix(
-				i->textureMatrix.e11, i->textureMatrix.e12, i->textureMatrix.e13, 0.0f,
-				i->textureMatrix.e21, i->textureMatrix.e22, i->textureMatrix.e23, 0.0f,
-				i->textureMatrix.e31, i->textureMatrix.e32, i->textureMatrix.e33, 0.0f,
-				0.0f, 0.0f, 0.0, 0.0f
-			);
+			if (shaderTextured)
+			{
+				Matrix44 textureMatrix(
+					i->textureMatrix.e11, i->textureMatrix.e12, i->textureMatrix.e13, 0.0f,
+					i->textureMatrix.e21, i->textureMatrix.e22, i->textureMatrix.e23, 0.0f,
+					i->textureMatrix.e31, i->textureMatrix.e32, i->textureMatrix.e33, 0.0f,
+					0.0f, 0.0f, 0.0, 0.0f
+				);
 
-			render::NonIndexedRenderBlock* renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >("Flash AccShape; draw textured batch");
-			renderBlock->program = shaderTextured->getCurrentProgram();
-			renderBlock->vertexBuffer = m_vertexBuffer;
-			renderBlock->primitive = i->primitives.type;
-			renderBlock->offset = i->primitives.offset;
-			renderBlock->count = i->primitives.count;
-			renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
-			renderBlock->programParams->beginParameters(renderContext);
-			renderBlock->programParams->setTextureParameter(s_handleTexture, i->texture);
-			renderBlock->programParams->setMatrixParameter(s_handleTextureMatrix, textureMatrix);
-			renderBlock->programParams->endParameters(renderContext);
-			renderContext->draw(render::RfOverlay, renderBlock);
+				render::NonIndexedRenderBlock* renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >("Flash AccShape; draw textured batch");
+				renderBlock->program = shaderTextured->getCurrentProgram();
+				renderBlock->vertexBuffer = m_vertexBuffer;
+				renderBlock->primitive = i->primitives.type;
+				renderBlock->offset = i->primitives.offset;
+				renderBlock->count = i->primitives.count;
+				renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
+				renderBlock->programParams->beginParameters(renderContext);
+				renderBlock->programParams->setTextureParameter(m_shapeResources->m_handleTexture, i->texture);
+				renderBlock->programParams->setMatrixParameter(m_shapeResources->m_handleTextureMatrix, textureMatrix);
+				renderBlock->programParams->endParameters(renderContext);
+				renderContext->draw(render::RfOverlay, renderBlock);
+			}
 		}
 	}
 }
