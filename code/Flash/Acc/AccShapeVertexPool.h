@@ -4,6 +4,7 @@
 #include <list>
 #include "Core/Object.h"
 #include "Core/Ref.h"
+#include "Flash/Acc/BlockList.h"
 
 namespace traktor
 {
@@ -23,26 +24,37 @@ class AccShapeVertexPool : public Object
 	T_RTTI_CLASS;
 
 public:
+	struct Range
+	{
+		render::VertexBuffer* vertexBuffer;
+		int32_t offset;
+
+		Range()
+		:	vertexBuffer(0)
+		,	offset(0)
+		{
+		}
+	};
+
 	AccShapeVertexPool(render::IRenderSystem* renderSystem);
 
 	bool create();
 
 	void destroy();
 
-	render::VertexBuffer* acquireVertexBuffer(int32_t triangleCount);
+	bool acquireRange(int32_t vertexCount, Range& outRange);
 
-	void releaseVertexBuffer(render::VertexBuffer* vertexBuffer);
+	void releaseRange(const Range& range);
 
 private:
-	struct PoolEntry
+	struct VertexPool
 	{
 		Ref< render::VertexBuffer > vertexBuffer;
-		int32_t triangleCount;
+		BlockList* blockList;
 	};
 
 	Ref< render::IRenderSystem > m_renderSystem;
-	std::list< PoolEntry > m_freeBuffers;
-	std::list< PoolEntry > m_usedBuffers;
+	std::list< VertexPool > m_pools;
 };
 
 	}

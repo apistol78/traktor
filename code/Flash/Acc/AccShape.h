@@ -6,6 +6,7 @@
 #include "Core/Math/Matrix33.h"
 #include "Core/Math/Matrix44.h"
 #include "Flash/Polygon.h"
+#include "Flash/Acc/AccShapeVertexPool.h"
 #include "Resource/Proxy.h"
 #include "Render/Types.h"
 
@@ -25,7 +26,6 @@ class VertexBuffer;
 	{
 
 class AccShapeResources;
-class AccShapeVertexPool;
 class AccTextureCache;
 class FlashMovie;
 class FlashShape;
@@ -83,7 +83,7 @@ private:
 	Ref< AccShapeVertexPool > m_vertexPool;
 	AlignedVector< TesselationBatch > m_tesselationBatches;
 	uint32_t m_tesselationTriangleCount;
-	render::VertexBuffer* m_vertexBuffer;
+	AccShapeVertexPool::Range m_vertexRange;
 	AlignedVector< RenderBatch > m_renderBatches;
 	SwfRect m_bounds;
 	uint8_t m_batchFlags;
