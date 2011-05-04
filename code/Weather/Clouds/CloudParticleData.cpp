@@ -14,7 +14,7 @@ CloudParticleData::CloudParticleData()
 :	m_count(1000)
 ,	m_radiusMin(1.0f)
 ,	m_radiusRange(2.0f)
-,	m_density(0.001f)
+,	m_density(10.0f)
 ,	m_haloColor(128, 128, 128)
 ,	m_skyColor(255, 255, 255)
 ,	m_groundColor(0, 0, 0)
@@ -31,7 +31,7 @@ bool CloudParticleData::serialize(ISerializer& s)
 	s >> Member< uint32_t >(L"count", m_count);
 	s >> Member< float >(L"radiusMin", m_radiusMin, AttributeRange(0.0f));
 	s >> Member< float >(L"radiusRange", m_radiusRange, AttributeRange(0.0f));
-	s >> Member< float >(L"density", m_density, AttributeRange(0.0f, 1.0f));
+	s >> Member< float >(L"density", m_density, AttributeRange(0.0f));
 	s >> Member< Color4ub >(L"haloColor", m_haloColor);
 	s >> Member< Color4ub >(L"skyColor", m_skyColor);
 	s >> Member< Color4ub >(L"groundColor", m_groundColor);
