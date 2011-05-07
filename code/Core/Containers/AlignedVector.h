@@ -489,6 +489,33 @@ public:
 		return iterator(&m_data[offset]);
 	}
 
+	/*! \brief Erase range of elements.
+	 *
+	 * \param where Iterator at element.
+	 * \param last Iterator to last element.
+	 * \return New iterator at next element.
+	 */
+	iterator erase(const iterator& where, const iterator& last)
+	{
+		T_ASSERT (where.m_ptr <= last.m_ptr);
+
+		size_t offset = size_t(where.m_ptr - m_data);
+		size_t count = size_t(last.m_ptr - where.m_ptr);
+
+		if (count > 0)
+		{
+			for (size_t i = offset; i < m_size - count; ++i)
+				m_data[i] = m_data[i + count];
+
+			for (size_t i = m_size - count; i < m_size; ++i)
+				Constructor::destroy(m_data[i]);
+
+			shrink(count);
+		}
+
+		return iterator(&m_data[offset]);
+	}
+
 	/*! \brief Insert element into vector.
 	 *
 	 * \param where Iterator at element.

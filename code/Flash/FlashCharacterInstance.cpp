@@ -82,12 +82,12 @@ void FlashCharacterInstance::setEvent(uint32_t eventMask, ActionScript* eventScr
 	m_eventScripts[eventMask] = eventScript;
 }
 
-void FlashCharacterInstance::setEvents(const std::map< uint32_t, Ref< ActionScript > >& eventScripts)
+void FlashCharacterInstance::setEvents(const SmallMap< uint32_t, Ref< ActionScript > >& eventScripts)
 {
 	m_eventScripts = eventScripts;
 }
 
-const std::map< uint32_t, Ref< ActionScript > >& FlashCharacterInstance::getEvents() const
+const SmallMap< uint32_t, Ref< ActionScript > >& FlashCharacterInstance::getEvents() const
 {
 	return m_eventScripts;
 }
@@ -102,7 +102,7 @@ void FlashCharacterInstance::postDispatchEvents()
 
 void FlashCharacterInstance::eventInit()
 {
-	std::map< uint32_t, Ref< ActionScript > >::iterator i = m_eventScripts.find(EvtInitialize);
+	SmallMap< uint32_t, Ref< ActionScript > >::iterator i = m_eventScripts.find(EvtInitialize);
 	if (i != m_eventScripts.end())
 	{
 		ActionFrame callFrame(
@@ -120,7 +120,7 @@ void FlashCharacterInstance::eventInit()
 
 void FlashCharacterInstance::eventLoad()
 {
-	std::map< uint32_t, Ref< ActionScript > >::iterator i = m_eventScripts.find(EvtLoad);
+	SmallMap< uint32_t, Ref< ActionScript > >::iterator i = m_eventScripts.find(EvtLoad);
 	if (i != m_eventScripts.end())
 	{
 		ActionFrame callFrame(
@@ -138,7 +138,7 @@ void FlashCharacterInstance::eventLoad()
 
 void FlashCharacterInstance::eventFrame()
 {
-	std::map< uint32_t, Ref< ActionScript > >::iterator i = m_eventScripts.find(EvtEnterFrame);
+	SmallMap< uint32_t, Ref< ActionScript > >::iterator i = m_eventScripts.find(EvtEnterFrame);
 	if (i != m_eventScripts.end())
 	{
 		ActionFrame callFrame(

@@ -154,13 +154,23 @@ void FlashDisplayList::showObject(int32_t depth, uint16_t characterId, FlashChar
 
 void FlashDisplayList::removeObject(FlashCharacterInstance* characterInstance)
 {
-	for (layer_map_t::iterator i = m_layers.begin(); i != m_layers.end(); )
+	struct FindCharacter
 	{
-		if (i->second.instance == characterInstance)
-			m_layers.erase(i++);
-		else
-			++i;
-	}
+		const FlashCharacterInstance* m_instance;
+
+		FindCharacter(const FlashCharacterInstance* instance)
+		:	m_instance(instance)
+		{
+		}
+
+		bool operator () (const std::pair< int32_t, Layer >& it) const
+		{
+			return it.second.instance == m_instance;
+		}
+	};
+
+	layer_map_t::iterator i = std::remove_if(m_layers.begin(), m_layers.end(), FindCharacter(characterInstance));
+	m_layers.erase(i, m_layers.end());
 }
 
 int32_t FlashDisplayList::getObjectDepth(const FlashCharacterInstance* characterInstance) const

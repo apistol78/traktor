@@ -1,6 +1,7 @@
 #ifndef traktor_flash_FlashCharacterInstance_H
 #define traktor_flash_FlashCharacterInstance_H
 
+#include "Core/Containers/SmallMap.h"
 #include "Core/Math/Matrix33.h"
 #include "Flash/SwfTypes.h"
 #include "Flash/Action/ActionObject.h"
@@ -93,13 +94,13 @@ public:
 	 *
 	 * \param eventScripts Event scripts.
 	 */
-	void setEvents(const std::map< uint32_t, Ref< ActionScript > >& eventScripts);
+	void setEvents(const SmallMap< uint32_t, Ref< ActionScript > >& eventScripts);
 
 	/*! \brief Get event scripts.
 	 *
 	 * \return Event scripts.
 	 */
-	const std::map< uint32_t, Ref< ActionScript > >& getEvents() const;
+	const SmallMap< uint32_t, Ref< ActionScript > >& getEvents() const;
 
 	/*! \name Events */
 	//@{
@@ -143,7 +144,7 @@ private:
 	std::string m_name;
 	SwfCxTransform m_cxform;
 	Matrix33 m_transform;
-	std::map< uint32_t, Ref< ActionScript > > m_eventScripts;
+	SmallMap< uint32_t, Ref< ActionScript > > m_eventScripts;
 };
 
 	}
