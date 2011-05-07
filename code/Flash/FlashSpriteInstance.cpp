@@ -132,7 +132,7 @@ void FlashSpriteInstance::updateDisplayList()
 		m_displayList.updateBegin(true);
 		for (uint32_t i = 0; i <= m_currentFrame; ++i)
 		{
-			Ref< FlashFrame > frame = m_sprite->getFrame(i);
+			FlashFrame* frame = m_sprite->getFrame(i);
 			T_ASSERT (frame);
 
 			m_displayList.updateFrame(this, frame);
@@ -144,7 +144,7 @@ void FlashSpriteInstance::updateDisplayList()
 		m_displayList.updateBegin(false);
 		for (uint32_t i = m_lastUpdateFrame; i <= m_currentFrame; ++i)
 		{
-			Ref< FlashFrame > frame = m_sprite->getFrame(i);
+			FlashFrame* frame = m_sprite->getFrame(i);
 			T_ASSERT (frame);
 
 			m_displayList.updateFrame(this, frame);
@@ -316,7 +316,7 @@ void FlashSpriteInstance::eventLoad()
 
 void FlashSpriteInstance::eventFrame()
 {
-	Ref< FlashFrame > frame = m_sprite->getFrame(m_currentFrame);
+	FlashFrame* frame = m_sprite->getFrame(m_currentFrame);
 	T_ASSERT (frame);
 
 	// Issue script assigned event; hack to skip events when using goto methods.

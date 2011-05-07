@@ -115,9 +115,19 @@ public:
 		m_data.erase(it);
 	}
 
+	void erase(const iterator& first, const iterator& last)
+	{
+		m_data.erase(first, last);
+	}
+
 	void clear()
 	{
 		m_data.clear();
+	}
+
+	bool empty() const
+	{
+		return m_data.empty();
 	}
 
 	Item& operator [] (const Key& key)

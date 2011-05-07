@@ -1,8 +1,8 @@
 #ifndef traktor_flash_FlashDisplayList_H
 #define traktor_flash_FlashDisplayList_H
 
-#include <map>
 #include "Core/Object.h"
+#include "Core/Containers/SmallMap.h"
 #include "Flash/SwfTypes.h"
 
 // import/export mechanism.
@@ -48,7 +48,7 @@ public:
 		}
 	};
 
-	typedef std::map< int32_t, Layer > layer_map_t;
+	typedef SmallMap< int32_t, Layer > layer_map_t;
 
 	FlashDisplayList(ActionContext* context);
 

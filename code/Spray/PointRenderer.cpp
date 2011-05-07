@@ -211,9 +211,10 @@ void PointRenderer::render(
 
 		for (int j = 0; j < 4; ++j)
 		{
-			point.position.storeUnaligned(m_vertex->positionAndOrientation.position);
-			point.velocity.storeUnaligned(m_vertex->velocityAndRandom.velocity);
-			point.color.storeUnaligned(m_vertex->attrib2.color);
+			// \note We're assuming locked vertex buffer is 16-aligned.
+			point.position.storeAligned(m_vertex->positionAndOrientation.position);
+			point.velocity.storeAligned(m_vertex->velocityAndRandom.velocity);
+			point.color.storeAligned(m_vertex->attrib2.color);
 
 			m_vertex->positionAndOrientation.orientation = point.orientation;
 			m_vertex->velocityAndRandom.random = point.random;
