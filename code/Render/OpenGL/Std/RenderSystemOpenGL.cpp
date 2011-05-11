@@ -663,7 +663,7 @@ Ref< VertexBuffer > RenderSystemOpenGL::createVertexBuffer(const std::vector< Ve
 	else
 		return new VertexBufferVAR(m_resourceContext, vertexElements, bufferSize, dynamic);
 #elif defined(__APPLE__)
-	if (opengl_have_extension("GL_ARB_vertex_buffer_object"))
+	if (opengl_have_extension(E_GL_ARB_vertex_buffer_object))
 	{
 		if (dynamic)
 			return new VertexBufferDynamicVBO(m_resourceContext, vertexElements, bufferSize);
@@ -687,7 +687,7 @@ Ref< IndexBuffer > RenderSystemOpenGL::createIndexBuffer(IndexType indexType, ui
 	else
 		return new IndexBufferIAR(m_resourceContext, indexType, bufferSize);
 #elif defined(__APPLE__)
-	if (opengl_have_extension("GL_ARB_vertex_buffer_object"))
+	if (opengl_have_extension(E_GL_ARB_vertex_buffer_object))
 		return new IndexBufferIBO(m_resourceContext, indexType, bufferSize, dynamic);
 	else
 		return new IndexBufferIAR(m_resourceContext, indexType, bufferSize);

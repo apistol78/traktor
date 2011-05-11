@@ -56,7 +56,7 @@ bool SimpleTextureOpenGL::create(const SimpleTextureCreateDesc& desc, GLfloat ma
 	
 	if (!isLog2(m_width) || !isLog2(m_height))
 	{
-		if (!opengl_have_extension("GL_ARB_texture_non_power_of_two"))
+		if (!opengl_have_extension(E_GL_ARB_texture_non_power_of_two))
 		{
 			log::error << L"Cannot create non-power-of-2 texture; not supported by OpenGL driver" << Endl;
 			return false;

@@ -29,7 +29,7 @@ RenderTargetSetOpenGL::~RenderTargetSetOpenGL()
 
 bool RenderTargetSetOpenGL::create(const RenderTargetSetCreateDesc& desc, bool backBuffer)
 {
-	if (!opengl_have_extension("GL_EXT_framebuffer_object"))
+	if (!opengl_have_extension(E_GL_EXT_framebuffer_object))
 	{
 		log::error << L"Cannot create FBO; not supported by OpenGL driver" << Endl;
 		return false;
@@ -38,7 +38,7 @@ bool RenderTargetSetOpenGL::create(const RenderTargetSetCreateDesc& desc, bool b
 	// When using MSAA we require both MSAA framebuffer extension and framebuffer blitting.
 	if (
 		desc.multiSample > 1 &&
-		!(opengl_have_extension("GL_EXT_framebuffer_multisample") && opengl_have_extension("GL_EXT_framebuffer_blit"))
+		!(opengl_have_extension(E_GL_EXT_framebuffer_multisample) && opengl_have_extension(E_GL_EXT_framebuffer_blit))
 	)
 	{
 		log::error << L"Cannot create multisample FBO; not supported by OpenGL driver" << Endl;
@@ -50,7 +50,7 @@ bool RenderTargetSetOpenGL::create(const RenderTargetSetCreateDesc& desc, bool b
 	m_targetWidth = desc.width;
 	m_targetHeight = desc.height;
 
-	if (!opengl_have_extension("GL_ARB_texture_non_power_of_two"))
+	if (!opengl_have_extension(E_GL_ARB_texture_non_power_of_two))
 	{
 		if (!isLog2(m_width) || !isLog2(m_height))
 		{
