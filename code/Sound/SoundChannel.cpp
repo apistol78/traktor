@@ -56,6 +56,7 @@ SoundChannel::SoundChannel(uint32_t id, Event& eventFinish, uint32_t hwSampleRat
 ,	m_hwFrameSamples(hwFrameSamples)
 ,	m_outputSamplesIn(0)
 ,	m_volume(1.0f)
+,	m_priority(0)
 ,	m_exclusive(false)
 {
 	const uint32_t outputSamplesCount = hwFrameSamples * c_outputSamplesBlockCount;
@@ -80,17 +81,19 @@ void SoundChannel::setVolume(float volume)
 
 void SoundChannel::setFilter(IFilter* filter)
 {
-	if (m_filter != filter)
+	if (m_currentState.filter != filter)
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-		if ((m_filter = filter) != 0)
-			m_filterInstance = filter->createInstance();
+		if ((m_currentState.filter = filter) != 0)
+			m_currentState.filterInstance = filter->createInstance();
+		else
+			m_currentState.filterInstance = 0;
 	}
 }
 
 IFilter* SoundChannel::getFilter() const
 {
-	return m_filter;
+	return m_currentState.filter;
 }
 
 void SoundChannel::setExclusive(bool exclusive)
@@ -105,7 +108,8 @@ bool SoundChannel::isExclusive() const
 
 bool SoundChannel::isPlaying() const
 {
-	return bool(m_currentState.sound != 0);
+	// \note Reading from active state; ie other thread's state.
+	return bool(m_activeState.sound != 0);
 }
 
 void SoundChannel::stop()
@@ -113,6 +117,8 @@ void SoundChannel::stop()
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	m_currentState.sound = 0;
 	m_currentState.cursor = 0;
+	m_currentState.filter = 0;
+	m_currentState.filterInstance = 0;
 	m_eventFinish.broadcast();
 }
 
@@ -129,7 +135,7 @@ bool SoundChannel::playSound(const Sound* sound, double time, uint32_t priority,
 		return false;
 	}
 
-	ISoundBuffer* soundBuffer = sound->getSoundBuffer();
+	Ref< ISoundBuffer > soundBuffer = sound->getSoundBuffer();
 	if (!soundBuffer)
 	{
 		log::error << L"playSound failed; no sound buffer" << Endl;
@@ -147,33 +153,30 @@ bool SoundChannel::playSound(const Sound* sound, double time, uint32_t priority,
 	// sound block.
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-		m_queuedState.sound = sound;
-		m_queuedState.cursor = cursor;
-		m_queuedState.priority = priority;
-		m_queuedState.repeat = max< uint32_t >(repeat, 1U);
+		m_currentState.sound = sound;
+		m_currentState.cursor = cursor;
+		m_currentState.repeat = max< uint32_t >(repeat, 1U);
 	}
 
+	m_priority = priority;
 	return true;
 }
 
 bool SoundChannel::getBlock(const ISoundMixer* mixer, double time, SoundBlock& outBlock)
 {
-	// Recover playing state; swap in queued state if necessary.
+	// Update active state.
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-		if (m_queuedState.sound)
-		{
-			m_currentState = m_queuedState;
-			m_queuedState.sound = 0;
-			m_queuedState.cursor = 0;
+		if (m_currentState.sound != m_activeState.sound)
 			m_outputSamplesIn = 0;
-		}
+		if (m_currentState.sound != m_activeState.sound || m_currentState.filter != m_activeState.filter)
+			m_activeState = m_currentState;
 	}
 
-	if (!m_currentState.sound || !m_currentState.cursor)
+	if (!m_activeState.sound || !m_activeState.cursor)
 		return false;
 
-	Ref< ISoundBuffer > soundBuffer = m_currentState.sound->getSoundBuffer();
+	Ref< ISoundBuffer > soundBuffer = m_activeState.sound->getSoundBuffer();
 	T_ASSERT (soundBuffer);
 
 	// Remove old output samples.
@@ -195,24 +198,24 @@ bool SoundChannel::getBlock(const ISoundMixer* mixer, double time, SoundBlock& o
 	{
 		// Request sound block from buffer.
 		SoundBlock soundBlock = { { 0, 0, 0, 0, 0, 0, 0, 0 }, m_hwFrameSamples, 0, 0 };
-		if (!soundBuffer->getBlock(m_currentState.cursor, soundBlock))
+		if (!soundBuffer->getBlock(m_activeState.cursor, soundBlock))
 		{
 			// No more blocks from sound buffer.
-			if (--m_currentState.repeat > 0)
+			if (--m_activeState.repeat > 0)
 			{
-				m_currentState.cursor->reset();
-				if (!soundBuffer->getBlock(m_currentState.cursor, soundBlock))
+				m_activeState.cursor->reset();
+				if (!soundBuffer->getBlock(m_activeState.cursor, soundBlock))
 				{
-					m_currentState.sound = 0;
-					m_currentState.cursor = 0;
+					m_activeState.sound = 0;
+					m_activeState.cursor = 0;
 					m_eventFinish.broadcast();
 					return false;
 				}
 			}
 			else
 			{
-				m_currentState.sound = 0;
-				m_currentState.cursor = 0;
+				m_activeState.sound = 0;
+				m_activeState.cursor = 0;
 				m_eventFinish.broadcast();
 				return false;
 			}
@@ -225,9 +228,9 @@ bool SoundChannel::getBlock(const ISoundMixer* mixer, double time, SoundBlock& o
 		T_ASSERT (soundBlock.samplesCount <= m_hwFrameSamples);
 
 		// Apply filter on sound block.
-		if (m_filter)
+		if (m_activeState.filter)
 		{
-			m_filter->apply(m_filterInstance, soundBlock);
+			m_activeState.filter->apply(m_activeState.filterInstance, soundBlock);
 			T_ASSERT (soundBlock.samplesCount <= m_hwFrameSamples);
 		}
 
@@ -291,7 +294,7 @@ bool SoundChannel::getBlock(const ISoundMixer* mixer, double time, SoundBlock& o
 
 uint32_t SoundChannel::getPriority() const
 {
-	return m_currentState.priority;
+	return m_priority;
 }
 
 	}

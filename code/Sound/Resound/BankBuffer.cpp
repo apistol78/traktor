@@ -61,6 +61,11 @@ bool BankBuffer::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) cons
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	BankBufferCursor* bankCursor = static_cast< BankBufferCursor* >(cursor);
+
+	int32_t ngrains = int32_t(m_grains.size());
+	if (bankCursor->m_grainIndex >= ngrains)
+		return false;
+
 	IGrain* grain = m_grains[bankCursor->m_grainIndex];
 
 	for (;;)
@@ -71,7 +76,7 @@ bool BankBuffer::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) cons
 		))
 			break;
 
-		if (++bankCursor->m_grainIndex >= int32_t(m_grains.size()))
+		if (++bankCursor->m_grainIndex >= ngrains)
 			return false;
 
 		grain = m_grains[bankCursor->m_grainIndex];

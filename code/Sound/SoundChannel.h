@@ -81,12 +81,12 @@ private:
 	{
 		Ref< const Sound > sound;
 		Ref< ISoundBufferCursor > cursor;
-		uint32_t priority;
+		Ref< IFilter > filter;
+		Ref< IFilterInstance > filterInstance;
 		uint32_t repeat;
 
 		State()
-		:	priority(0)
-		,	repeat(0)
+		:	repeat(0)
 		{
 		}
 	};
@@ -96,13 +96,12 @@ private:
 	uint32_t m_hwSampleRate;	//< Hardware sample rate.
 	uint32_t m_hwFrameSamples;	//< Hardware frame size in samples.
 	Semaphore m_lock;
-	State m_queuedState;
 	State m_currentState;
-	Ref< IFilter > m_filter;
-	Ref< IFilterInstance > m_filterInstance;
+	State m_activeState;
 	float* m_outputSamples[SbcMaxChannelCount];
 	uint32_t m_outputSamplesIn;
 	float m_volume;
+	uint32_t m_priority;
 	bool m_exclusive;
 
 	bool playSound(const Sound* sound, double time, uint32_t priority, uint32_t repeat);
