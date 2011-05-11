@@ -65,6 +65,11 @@ const IGrain* SequenceGrain::getCurrentGrain(ISoundBufferCursor* cursor) const
 bool SequenceGrain::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const
 {
 	SequenceGrainCursor* sequenceCursor = static_cast< SequenceGrainCursor* >(cursor);
+
+	int32_t ngrains = int32_t(m_grains.size());
+	if (sequenceCursor->m_grainIndex >= ngrains)
+		return false;
+
 	IGrain* grain = m_grains[sequenceCursor->m_grainIndex];
 
 	for (;;)
@@ -75,7 +80,7 @@ bool SequenceGrain::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) c
 		))
 			break;
 
-		if (++sequenceCursor->m_grainIndex >= int32_t(m_grains.size()))
+		if (++sequenceCursor->m_grainIndex >= ngrains)
 			return false;
 
 		grain = m_grains[sequenceCursor->m_grainIndex];
