@@ -69,7 +69,8 @@ void AccShapeVertexPool::destroy()
 
 bool AccShapeVertexPool::acquireRange(int32_t vertexCount, Range& outRange)
 {
-	T_ASSERT (vertexCount <= c_vertexPoolSize);
+	if (vertexCount > c_vertexPoolSize)
+		return false;
 
 	for (std::list< VertexPool >::iterator i = m_pools.begin(); i != m_pools.end(); ++i)
 	{

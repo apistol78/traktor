@@ -53,12 +53,13 @@ void BlockList::free(uint32_t offset)
 {
 	for (std::list< Block >::iterator i = m_blocks.begin(); i != m_blocks.end(); ++i)
 	{
-		if (offset >= i->offset && offset < i->offset + i->size)
+		if (offset == i->offset)
 		{
 			m_blocks.erase(i);
-			break;
+			return;
 		}
 	}
+	T_FATAL_ERROR;
 }
 
 	}

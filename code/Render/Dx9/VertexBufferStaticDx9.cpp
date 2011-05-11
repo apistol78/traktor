@@ -85,7 +85,7 @@ void* VertexBufferStaticDx9::lock()
 	//}
 
 	VOID* ptr;
-	if (FAILED(m_d3dVertexBuffer->Lock(0, getBufferSize(), &ptr, 0)))
+	if (FAILED(m_d3dVertexBuffer->Lock(0, getBufferSize(), &ptr, D3DLOCK_DISCARD | D3DLOCK_NOOVERWRITE)))
 		return 0;
 
 	m_locked = true;
@@ -107,7 +107,7 @@ void* VertexBufferStaticDx9::lock(uint32_t vertexOffset, uint32_t vertexCount)
 	UINT size = vertexCount * m_d3dVertexStride;
 
 	VOID* ptr;
-	if (FAILED(m_d3dVertexBuffer->Lock(offset, size, &ptr, 0)))
+	if (FAILED(m_d3dVertexBuffer->Lock(offset, size, &ptr, D3DLOCK_NOOVERWRITE | D3DLOCK_NOSYSLOCK)))
 		return 0;
 
 	m_locked = true;
