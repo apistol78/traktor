@@ -119,7 +119,7 @@ VertexBufferDynamicVBO::VertexBufferDynamicVBO(IContext* resourceContext, const 
 			break;
 
 		case DtHalf2:
-			if (opengl_have_extension("GL_ARB_half_float_vertex"))
+			if (opengl_have_extension(E_GL_ARB_half_float_vertex))
 			{
 				m_attributeDesc[usageIndex].size = 2;
 				m_attributeDesc[usageIndex].type = GL_HALF_FLOAT_ARB;
@@ -130,7 +130,7 @@ VertexBufferDynamicVBO::VertexBufferDynamicVBO(IContext* resourceContext, const 
 			break;
 
 		case DtHalf4:
-			if (opengl_have_extension("GL_ARB_half_float_vertex"))
+			if (opengl_have_extension(E_GL_ARB_half_float_vertex))
 			{
 				m_attributeDesc[usageIndex].size = 4;
 				m_attributeDesc[usageIndex].type = GL_HALF_FLOAT_ARB;

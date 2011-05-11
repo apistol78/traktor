@@ -84,7 +84,7 @@ bool RenderTargetOpenGL::create(const RenderTargetSetCreateDesc& setDesc, const 
 	m_textureTarget = GL_TEXTURE_2D;
 	m_usingPrimaryDepthBuffer = setDesc.usingPrimaryDepthStencil;
 
-	if (!opengl_have_extension("GL_ARB_texture_non_power_of_two"))
+	if (!opengl_have_extension(E_GL_ARB_texture_non_power_of_two))
 	{
 		if (!isLog2(m_width) || !isLog2(m_height))
 		{
@@ -111,7 +111,7 @@ bool RenderTargetOpenGL::create(const RenderTargetSetCreateDesc& setDesc, const 
 		break;
 
 	case TfR16G16B16A16F:
-		if (opengl_have_extension("GL_ARB_texture_float"))
+		if (opengl_have_extension(E_GL_ARB_texture_float))
 		{
 			internalFormat = GL_RGBA16F_ARB;
 			format = GL_RGBA;
@@ -122,7 +122,7 @@ bool RenderTargetOpenGL::create(const RenderTargetSetCreateDesc& setDesc, const 
 		break;
 
 	case TfR32G32B32A32F:
-		if (opengl_have_extension("GL_ARB_texture_float"))
+		if (opengl_have_extension(E_GL_ARB_texture_float))
 		{
 			internalFormat = GL_RGBA32F_ARB;
 			format = GL_RGBA;
@@ -134,19 +134,19 @@ bool RenderTargetOpenGL::create(const RenderTargetSetCreateDesc& setDesc, const 
 
 #if !defined(__APPLE__)
 	case TfR16F:
-		if (opengl_have_extension("GL_ARB_texture_float"))
+		if (opengl_have_extension(E_GL_ARB_texture_float))
 		{
 			internalFormat = GL_RGBA16F_ARB;
 			format = GL_RED;
 			type = GL_HALF_FLOAT_ARB;
 		}
-		else if (opengl_have_extension("GL_NV_float_buffer"))
+		else if (opengl_have_extension(E_GL_NV_float_buffer))
 		{
 			internalFormat = GL_FLOAT_R16_NV;
 			format = GL_RED;
 			type = GL_FLOAT;
 		}
-		else if (opengl_have_extension("GL_ATI_texture_float"))
+		else if (opengl_have_extension(E_GL_ATI_texture_float))
 		{
 			internalFormat = GL_LUMINANCE_FLOAT16_ATI;
 			format = GL_RED;
@@ -157,19 +157,19 @@ bool RenderTargetOpenGL::create(const RenderTargetSetCreateDesc& setDesc, const 
 		break;
 
 	case TfR32F:
-		if (opengl_have_extension("GL_ARB_texture_float"))
+		if (opengl_have_extension(E_GL_ARB_texture_float))
 		{
 			internalFormat = GL_RGBA32F_ARB;
 			format = GL_RED;
 			type = GL_FLOAT;
 		}
-		else if (opengl_have_extension("GL_NV_float_buffer"))
+		else if (opengl_have_extension(E_GL_NV_float_buffer))
 		{
 			internalFormat = GL_FLOAT_R32_NV;
 			format = GL_RED;
 			type = GL_FLOAT;
 		}
-		else if (opengl_have_extension("GL_ATI_texture_float"))
+		else if (opengl_have_extension(E_GL_ATI_texture_float))
 		{
 			internalFormat = GL_LUMINANCE_FLOAT32_ATI;
 			format = GL_RED;
@@ -180,7 +180,7 @@ bool RenderTargetOpenGL::create(const RenderTargetSetCreateDesc& setDesc, const 
 		break;
 #else
 	case TfR16F:
-		if (opengl_have_extension("GL_ARB_texture_float"))
+		if (opengl_have_extension(E_GL_ARB_texture_float))
 		{
 			internalFormat = GL_RGBA16F_ARB;
 			format = GL_RED;
@@ -191,7 +191,7 @@ bool RenderTargetOpenGL::create(const RenderTargetSetCreateDesc& setDesc, const 
 		break;
 			
 	case TfR32F:
-		if (opengl_have_extension("GL_ARB_texture_float"))
+		if (opengl_have_extension(E_GL_ARB_texture_float))
 		{
 			internalFormat = GL_RGBA32F_ARB;
 			format = GL_RED;
@@ -330,7 +330,7 @@ bool RenderTargetOpenGL::create(const RenderTargetSetCreateDesc& setDesc, const 
 	GLenum status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
 	T_OGL_SAFE(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0));
 	
-	m_haveBlitExt = opengl_have_extension("GL_EXT_framebuffer_blit");
+	m_haveBlitExt = opengl_have_extension(E_GL_EXT_framebuffer_blit);
 	
 	std::memset(&m_shadowState, 0, sizeof(m_shadowState));
 

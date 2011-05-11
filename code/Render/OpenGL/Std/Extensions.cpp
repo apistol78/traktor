@@ -75,36 +75,67 @@ PFNGLDRAWRANGEELEMENTSPROC glDrawRangeElements = 0;
 
 #endif
 
+static struct Extension
+{
+	const char* name;
+	bool have;
+	bool use;
+}
+s_extensions[] =
+{
+	{ "GL_ARB_vertex_buffer_object", false, true },
+	{ "GL_ARB_texture_non_power_of_two", false, true },
+	{ "GL_ARB_texture_float", false, true },
+	{ "GL_NV_float_buffer", false, true },
+	{ "GL_ATI_texture_float", false, true },
+	{ "GL_EXT_framebuffer_blit", false, true },
+	{ "GL_EXT_framebuffer_object", false, true },
+	{ "GL_EXT_framebuffer_multisample", false, true },
+	{ "GL_ARB_half_float_vertex", false, true }
+};
+
 bool opengl_initialize_extensions()
 {
 	const char* renderer = (const char*)glGetString(GL_RENDERER);
 	if (renderer)
 		log::info << L"OpenGL renderer: " << mbstows(renderer) << Endl;
 
-#if defined(_DEBUG)
-	const char* supported = (const char*)glGetString(GL_EXTENSIONS);
-	if (supported)
+	for (int32_t i = 0; i < sizeof_array(s_extensions); ++i)
 	{
-		log::info << L"OpenGL extensions:" << Endl;
-		log::info << IncreaseIndent;
-	
-		while (*supported)
+		int32_t extensionLength = strlen(s_extensions[i].name);
+
+		const char* supported = (const char*)glGetString(GL_EXTENSIONS);
+		while (supported && *supported)
 		{
 			const char* end = supported;
 			while (*end && *end != ' ')
-				++end;
-		
-			log::info << mbstows(std::string(supported, end)) << Endl;
-		
-			supported = end;
-		
-			while (*supported == ' ')
-				++supported;
-		}
+			{
+				// Fail safe; if extension seems to be more than 200 characters
+				// long then we assume something has gone wrong and we abort.
+				if ((++end - supported) >= 200)
+					break;
+			}
 
-		log::info << DecreaseIndent;
+			int32_t length = end - supported;
+			if (
+				length == extensionLength &&
+				strnicmp(supported, s_extensions[i].name, length) == 0
+			)
+				s_extensions[i].have = true;
+
+			supported = end;
+			while (*supported == ' ')
+			{
+				// Fail safe; if more than 10 white space characters then
+				// we assume somethings wrong and abort.
+				if ((++supported - end) >= 10)
+					break;
+			}
+		}
 	}
-#endif
+
+	for (int32_t i = 0; i < sizeof_array(s_extensions); ++i)
+		log::info << L"\"" << mbstows(s_extensions[i].name) << L"\", have: " << (s_extensions[i].have ? L"yes" : L"no") << L", use: " << ((s_extensions[i].have && s_extensions[i].use) ? L"yes" : L"no") << Endl;
 	
 #if !defined(__APPLE__)
 
@@ -194,44 +225,10 @@ bool opengl_initialize_extensions()
 	return true;
 }
 
-bool opengl_have_extension(const char* extension)
+bool opengl_have_extension(Extentions extension)
 {
 	T_ASSERT (extension);
-
-	const char* supported = (const char*)glGetString(GL_EXTENSIONS);
-	if (!supported)
-		return false;
-	
-	int32_t extensionLength = strlen(extension);
-	while (*supported)
-	{
-		const char* end = supported;
-		while (*end && *end != ' ')
-		{
-			// Fail safe; if extension seems to be more than 200 characters
-			// long then we assume something has gone wrong and we abort.
-			if ((++end - supported) >= 200)
-				return false;
-		}
-		
-		int length = end - supported;
-		if (
-			length == extensionLength &&
-			strncmp(supported, extension, length) == 0
-		)
-			return true;
-		
-		supported = end;
-		while (*supported == ' ')
-		{
-			// Fail safe; if more than 10 white space characters then
-			// we assume somethings wrong and abort.
-			if ((++supported - end) >= 10)
-				return false;
-		}
-	}
-	
-	return false;
+	return s_extensions[int32_t(extension)].have && s_extensions[int32_t(extension)].use;
 }
 
 	}
