@@ -83,8 +83,9 @@ extern PFNGLDRAWRANGEELEMENTSPROC glDrawRangeElements;
 #	endif
 #endif
 
-enum Extentions
+enum Extensions
 {
+	// OpenGL extensions.
 	E_GL_ARB_vertex_buffer_object = 0,
 	E_GL_ARB_texture_non_power_of_two = 1,
 	E_GL_ARB_texture_float = 2,
@@ -93,12 +94,15 @@ enum Extentions
 	E_GL_EXT_framebuffer_blit = 5,
 	E_GL_EXT_framebuffer_object = 6,
 	E_GL_EXT_framebuffer_multisample = 7,
-	E_GL_ARB_half_float_vertex = 8
+	E_GL_ARB_half_float_vertex = 8,
+	
+	// Internal extensions.
+	E_T_rendertarget_non_power_of_two = 9
 };
 
 bool opengl_initialize_extensions();
 
-bool opengl_have_extension(Extentions extension);
+bool opengl_have_extension(Extensions extension);
 
 //@}
 

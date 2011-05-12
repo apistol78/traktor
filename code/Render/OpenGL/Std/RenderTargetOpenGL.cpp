@@ -84,16 +84,17 @@ bool RenderTargetOpenGL::create(const RenderTargetSetCreateDesc& setDesc, const 
 	m_textureTarget = GL_TEXTURE_2D;
 	m_usingPrimaryDepthBuffer = setDesc.usingPrimaryDepthStencil;
 
-	if (!opengl_have_extension(E_GL_ARB_texture_non_power_of_two))
+	if (!opengl_have_extension(E_T_rendertarget_non_power_of_two))
 	{
 		if (!isLog2(m_width) || !isLog2(m_height))
 		{
 			m_width = nearestLog2(m_width);
 			m_height = nearestLog2(m_height);
 		}
-
+		
 		// Only backbuffer allowed to be partially rendered; if expected
 		// to be used as texture then we need to ensure everything is renderered.
+		// \fixme SHOULD SCALE TEXTURE IN RESOLVE!
 		if (!backBuffer)
 		{
 			m_targetWidth = m_width;

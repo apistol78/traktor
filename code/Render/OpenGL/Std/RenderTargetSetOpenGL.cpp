@@ -50,11 +50,11 @@ bool RenderTargetSetOpenGL::create(const RenderTargetSetCreateDesc& desc, bool b
 	m_targetWidth = desc.width;
 	m_targetHeight = desc.height;
 
-	if (!opengl_have_extension(E_GL_ARB_texture_non_power_of_two))
+	if (!opengl_have_extension(E_T_rendertarget_non_power_of_two))
 	{
 		if (!isLog2(m_width) || !isLog2(m_height))
 		{
-			log::warning << L"Trying to create non-power-of-2 render target but OpenGL doesn't support NPOT; scaling applied" << Endl;
+			log::warning << L"Trying to create non-power-of-2 render target but OpenGL doesn't support NPO2; scaling applied" << Endl;
 			m_width = nearestLog2(m_width);
 			m_height = nearestLog2(m_height);
 		}

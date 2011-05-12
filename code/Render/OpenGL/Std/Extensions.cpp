@@ -91,7 +91,8 @@ s_extensions[] =
 	{ "GL_EXT_framebuffer_blit", false, true },
 	{ "GL_EXT_framebuffer_object", false, true },
 	{ "GL_EXT_framebuffer_multisample", false, true },
-	{ "GL_ARB_half_float_vertex", false, true }
+	{ "GL_ARB_half_float_vertex", false, true },
+	{ "", true, true }
 };
 
 bool opengl_initialize_extensions()
@@ -103,6 +104,8 @@ bool opengl_initialize_extensions()
 	for (int32_t i = 0; i < sizeof_array(s_extensions); ++i)
 	{
 		int32_t extensionLength = strlen(s_extensions[i].name);
+		if (extensionLength <= 0)
+			continue;
 
 		const char* supported = (const char*)glGetString(GL_EXTENSIONS);
 		while (supported && *supported)
@@ -119,7 +122,7 @@ bool opengl_initialize_extensions()
 			int32_t length = end - supported;
 			if (
 				length == extensionLength &&
-				strnicmp(supported, s_extensions[i].name, length) == 0
+				strncmp(supported, s_extensions[i].name, length) == 0
 			)
 				s_extensions[i].have = true;
 
@@ -133,6 +136,18 @@ bool opengl_initialize_extensions()
 			}
 		}
 	}
+	
+	// Internal extensions.
+	s_extensions[E_T_rendertarget_non_power_of_two].have = s_extensions[E_GL_ARB_texture_non_power_of_two].have;
+	
+	// Hack, apparently Apple iMac with X1600 doesn't support NPO2 render targets but still NPO2 textures.
+#if defined(__APPLE__)
+	if (strstr(renderer, "X1600") != 0)
+	{
+		log::warning << L"Broken OpenGL NPO2 extension detected; falling back to PO2 render targets" << Endl;
+		s_extensions[E_T_rendertarget_non_power_of_two].use = false;
+	}
+#endif
 
 	for (int32_t i = 0; i < sizeof_array(s_extensions); ++i)
 		log::info << L"\"" << mbstows(s_extensions[i].name) << L"\", have: " << (s_extensions[i].have ? L"yes" : L"no") << L", use: " << ((s_extensions[i].have && s_extensions[i].use) ? L"yes" : L"no") << Endl;
@@ -225,7 +240,7 @@ bool opengl_initialize_extensions()
 	return true;
 }
 
-bool opengl_have_extension(Extentions extension)
+bool opengl_have_extension(Extensions extension)
 {
 	T_ASSERT (extension);
 	return s_extensions[int32_t(extension)].have && s_extensions[int32_t(extension)].use;
