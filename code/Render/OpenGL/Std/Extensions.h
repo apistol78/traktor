@@ -97,7 +97,8 @@ enum Extensions
 	E_GL_ARB_half_float_vertex = 8,
 	
 	// Internal extensions.
-	E_T_rendertarget_non_power_of_two = 9
+	E_T_rendertarget_non_power_of_two = 9,
+	E_T_rendertarget_nearest_filter_only = 10
 };
 
 bool opengl_initialize_extensions();
