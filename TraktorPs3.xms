@@ -522,7 +522,7 @@
 			<dependencies/>
 		</item>
 		<item type="Project" version="1">
-			<enable>true</enable>
+			<enable>false</enable>
 			<name>Extern.libmad-0.15.1b</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/libmad-0.15.1b</sourcePath>
 			<configurations>
@@ -1554,6 +1554,15 @@
 					<items>
 						<item type="File">
 							<fileName>IK/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>Cloth</name>
+					<items>
+						<item type="File">
+							<fileName>Cloth/*.*</fileName>
 							<items/>
 						</item>
 					</items>
@@ -2748,70 +2757,6 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Traktor.Model</name>
-			<sourcePath>$(TRAKTOR_HOME)/code/Model</sourcePath>
-			<configurations>
-				<item type="Configuration" version="1">
-					<name>DebugStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
-					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-				</item>
-				<item type="Configuration" version="1">
-					<name>ReleaseStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
-					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-				</item>
-			</configurations>
-			<items>
-				<item type="File">
-					<fileName>*.*</fileName>
-					<items/>
-				</item>
-				<item type="Filter">
-					<name>Formats</name>
-					<items>
-						<item type="File">
-							<fileName>Formats/*.*</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-			</items>
-			<dependencies>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[12]"/>
-				</item>
-			</dependencies>
-		</item>
-		<item type="Project" version="1">
-			<enable>true</enable>
 			<name>Traktor.Net</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Net</sourcePath>
 			<configurations>
@@ -3125,7 +3070,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[28]"/>
+					<project ref="/object/projects/item[27]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -3301,7 +3246,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[30]"/>
+					<project ref="/object/projects/item[29]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -3411,7 +3356,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[32]"/>
+					<project ref="/object/projects/item[31]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -3468,7 +3413,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[32]"/>
+					<project ref="/object/projects/item[31]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -3527,7 +3472,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[34]"/>
+					<project ref="/object/projects/item[33]"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
@@ -3548,9 +3493,10 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libmad-0.15.1b/platforms/win32</item>
 						<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.1/include</item>
 						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.2.0/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src/libmpg123</item>
+						<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/ports/ps3</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -3570,9 +3516,10 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libmad-0.15.1b/platforms/win32</item>
 						<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.1/include</item>
 						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.2.0/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src/libmpg123</item>
+						<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/ports/ps3</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -3625,15 +3572,11 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[32]"/>
+					<project ref="/object/projects/item[31]"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
 					<project ref="/object/projects/item[3]"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[4]"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
@@ -3642,6 +3585,277 @@
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
 					<project ref="/object/projects/item[6]"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project type="Project" version="1">
+						<enable>true</enable>
+						<name>Extern.mpg123-1.13.2</name>
+						<sourcePath>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2</sourcePath>
+						<configurations>
+							<item type="Configuration" version="1">
+								<name>DebugStatic</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpDebug</targetProfile>
+								<precompiledHeader/>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src</item>
+									<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src/libmpg123</item>
+									<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/ports/ps3</item>
+								</includePaths>
+								<definitions>
+									<item>T_STATIC</item>
+									<item>_DEBUG</item>
+									<item>OPT_GENERIC</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
+							</item>
+							<item type="Configuration" version="1">
+								<name>ReleaseStatic</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpRelease</targetProfile>
+								<precompiledHeader/>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src</item>
+									<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src/libmpg123</item>
+									<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/ports/ps3</item>
+								</includePaths>
+								<definitions>
+									<item>T_STATIC</item>
+									<item>NDEBUG</item>
+									<item>OPT_GENERIC</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
+							</item>
+						</configurations>
+						<items>
+							<item type="Filter">
+								<name>libmpg123</name>
+								<items>
+									<item type="File">
+										<fileName>src/libmpg123/compat.c</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>src/libmpg123/dct64.c</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>src/libmpg123/equalizer.c</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>src/libmpg123/feature.c</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>src/libmpg123/format.c</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>src/libmpg123/frame.c</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>src/libmpg123/icy.c</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>src/libmpg123/icy2utf8.c</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>src/libmpg123/id3.c</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>src/libmpg123/index.c</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>src/libmpg123/layer1.c</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>src/libmpg123/layer2.c</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>src/libmpg123/layer3.c</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>src/libmpg123/libmpg123.c</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>src/libmpg123/ntom.c</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>src/libmpg123/optimize.c</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>src/libmpg123/parse.c</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>src/libmpg123/readers.c</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>src/libmpg123/stringbuf.c</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>src/libmpg123/synth.c</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>src/libmpg123/tabinit.c</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>src/libmpg123/testcpu.c</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>src/libmpg123/compat.h</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>src/libmpg123/debug.h</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>src/libmpg123/decode.h</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>src/libmpg123/frame.h</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>src/libmpg123/getbits.h</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>src/libmpg123/getcpuflags.h</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>src/libmpg123/huffman.h</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>src/libmpg123/icy.h</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>src/libmpg123/icy2utf8.h</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>src/libmpg123/id3.h</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>src/libmpg123/index.h</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>src/libmpg123/intsym.h</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>src/libmpg123/l12_integer_tables.h</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>src/libmpg123/l2tables.h</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>src/libmpg123/l3_integer_tables.h</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>src/libmpg123/mangle.h</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>src/libmpg123/mpg123lib_intern.h</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>src/libmpg123/optimize.h</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>src/libmpg123/parse.h</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>src/libmpg123/reader.h</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>src/libmpg123/sample.h</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>src/libmpg123/synth.h</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>src/libmpg123/synths.h</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>src/libmpg123/true.h</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>src/libmpg123/synth_8bit.c</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>src/libmpg123/synth_8bit.h</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>src/libmpg123/synth_real.c</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>src/libmpg123/synth_s32.c</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+							<item type="Filter">
+								<name>ports</name>
+								<items>
+									<item type="File">
+										<fileName>ports/ps3/*.c</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>ports/ps3/*.h</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+						</items>
+						<dependencies/>
+					</project>
 				</item>
 			</dependencies>
 		</item>
@@ -3729,11 +3943,11 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[32]"/>
+					<project ref="/object/projects/item[31]"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[30]"/>
+					<project ref="/object/projects/item[29]"/>
 				</item>
 				<item type="ExternalDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
@@ -3830,11 +4044,11 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[30]"/>
+					<project ref="/object/projects/item[29]"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[32]"/>
+					<project ref="/object/projects/item[31]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -3891,7 +4105,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[33]"/>
+					<project ref="/object/projects/item[32]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -3966,11 +4180,11 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[30]"/>
+					<project ref="/object/projects/item[29]"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[32]"/>
+					<project ref="/object/projects/item[31]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -4072,11 +4286,11 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[30]"/>
+					<project ref="/object/projects/item[29]"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[32]"/>
+					<project ref="/object/projects/item[31]"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
@@ -4314,15 +4528,15 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[41]"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
 					<project ref="/object/projects/item[42]"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[43]"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[36]"/>
+					<project ref="/object/projects/item[35]"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
@@ -4399,7 +4613,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[36]"/>
+					<project ref="/object/projects/item[35]"/>
 				</item>
 				<item type="ExternalDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
@@ -4481,7 +4695,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[27]"/>
+					<project ref="/object/projects/item[26]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -4614,7 +4828,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[48]"/>
+					<project ref="/object/projects/item[47]"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
@@ -4622,11 +4836,11 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[30]"/>
+					<project ref="/object/projects/item[29]"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[32]"/>
+					<project ref="/object/projects/item[31]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -4756,67 +4970,15 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[25]"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
 					<project ref="/object/projects/item[26]"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
 					<project ref="/object/projects/item[27]"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[28]"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[30]"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[32]"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[33]"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[34]"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[36]"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[37]"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[38]"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[49]"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[40]"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[41]"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[42]"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[44]"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[47]"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
@@ -4828,7 +4990,43 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[32]"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[33]"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
 					<project ref="/object/projects/item[35]"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[36]"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[37]"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[48]"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[39]"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[40]"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[41]"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[43]"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
@@ -4836,9 +5034,26 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[39]"/>
+					<project ref="/object/projects/item[28]"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[30]"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[34]"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[45]"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[38]"/>
 				</item>
 			</dependencies>
 		</item>
+		<item ref="/object/projects/item[35]/dependencies/item[5]/project"/>
 	</projects>
 </object>
