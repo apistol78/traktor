@@ -80,19 +80,22 @@ static struct Extension
 	const char* name;
 	bool have;
 	bool use;
+	bool internal;
 }
 s_extensions[] =
 {
-	{ "GL_ARB_vertex_buffer_object", false, true },
-	{ "GL_ARB_texture_non_power_of_two", false, true },
-	{ "GL_ARB_texture_float", false, true },
-	{ "GL_NV_float_buffer", false, true },
-	{ "GL_ATI_texture_float", false, true },
-	{ "GL_EXT_framebuffer_blit", false, true },
-	{ "GL_EXT_framebuffer_object", false, true },
-	{ "GL_EXT_framebuffer_multisample", false, true },
-	{ "GL_ARB_half_float_vertex", false, true },
-	{ "", true, true }
+	{ "GL_ARB_vertex_buffer_object", false, true, false },
+	{ "GL_ARB_texture_non_power_of_two", false, true, false },
+	{ "GL_ARB_texture_float", false, true, false },
+	{ "GL_NV_float_buffer", false, true, false },
+	{ "GL_ATI_texture_float", false, true, false },
+	{ "GL_EXT_framebuffer_blit", false, true, false },
+	{ "GL_EXT_framebuffer_object", false, true, false },
+	{ "GL_EXT_framebuffer_multisample", false, true, false },
+	{ "GL_ARB_half_float_vertex", false, true, false },
+
+	{ "T_rendertarget_non_power_of_two", true, true, true },
+	{ "T_rendertarget_nearest_filter_only", false, true, true }
 };
 
 bool opengl_initialize_extensions()
@@ -103,9 +106,11 @@ bool opengl_initialize_extensions()
 
 	for (int32_t i = 0; i < sizeof_array(s_extensions); ++i)
 	{
-		int32_t extensionLength = strlen(s_extensions[i].name);
-		if (extensionLength <= 0)
+		if (s_extensions[i].internal)
 			continue;
+
+		int32_t extensionLength = strlen(s_extensions[i].name);
+		T_ASSERT (extensionLength > 0);
 
 		const char* supported = (const char*)glGetString(GL_EXTENSIONS);
 		while (supported && *supported)
@@ -140,14 +145,20 @@ bool opengl_initialize_extensions()
 	// Internal extensions.
 	s_extensions[E_T_rendertarget_non_power_of_two].have = s_extensions[E_GL_ARB_texture_non_power_of_two].have;
 	
-	// Hack, apparently Apple iMac with X1600 doesn't support NPO2 render targets but still NPO2 textures.
-#if defined(__APPLE__)
-	if (strstr(renderer, "X1600") != 0)
-	{
-		log::warning << L"Broken OpenGL NPO2 extension detected; falling back to PO2 render targets" << Endl;
-		s_extensions[E_T_rendertarget_non_power_of_two].use = false;
-	}
-#endif
+	// Work-arounds for buggy drivers etc.
+//#if defined(__APPLE__)
+//	if (
+//		strstr(renderer, "X1600") != 0 ||
+//		strstr(renderer, "X1650") != 0
+//		strstr(renderer, "X1800") != 0
+//		strstr(renderer, "X1900") != 0
+//		strstr(renderer, "X1950") != 0
+//	)
+//	{
+//		log::warning << L"Apple OpenGL ATI X1xxx (R5xx) driver detected; Forcing point sampling render targets due to driver bugs" << Endl;
+//		s_extensions[E_T_rendertarget_nearest_filter_only].have = true;
+//	}
+//#endif
 
 	for (int32_t i = 0; i < sizeof_array(s_extensions); ++i)
 		log::info << L"\"" << mbstows(s_extensions[i].name) << L"\", have: " << (s_extensions[i].have ? L"yes" : L"no") << L", use: " << ((s_extensions[i].have && s_extensions[i].use) ? L"yes" : L"no") << Endl;

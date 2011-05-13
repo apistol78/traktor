@@ -380,34 +380,37 @@ void RenderTargetOpenGL::bind(GLuint unit, const SamplerState& samplerState, GLi
 	T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + unit));
 	T_OGL_SAFE(glBindTexture(m_textureTarget, m_colorTexture));
 
-	GLenum minFilter = GL_NEAREST;
-	if (samplerState.minFilter != GL_NEAREST)
-		minFilter = GL_LINEAR;
-	else
-		minFilter = GL_NEAREST;
+	if (!opengl_have_extension(E_T_rendertarget_nearest_filter_only))
+	{
+		GLenum minFilter = GL_NEAREST;
+		if (samplerState.minFilter != GL_NEAREST)
+			minFilter = GL_LINEAR;
+		else
+			minFilter = GL_NEAREST;
 
-	if (m_shadowState.minFilter != minFilter)
-	{
-		T_OGL_SAFE(glTexParameteri(m_textureTarget, GL_TEXTURE_MIN_FILTER, minFilter));
-		m_shadowState.minFilter = minFilter;
-	}
-	
-	if (m_shadowState.magFilter != samplerState.magFilter)
-	{
-		T_OGL_SAFE(glTexParameteri(m_textureTarget, GL_TEXTURE_MAG_FILTER, samplerState.magFilter));
-		m_shadowState.magFilter = samplerState.magFilter;
-	}
+		if (m_shadowState.minFilter != minFilter)
+		{
+			T_OGL_SAFE(glTexParameteri(m_textureTarget, GL_TEXTURE_MIN_FILTER, minFilter));
+			m_shadowState.minFilter = minFilter;
+		}
+		
+		if (m_shadowState.magFilter != samplerState.magFilter)
+		{
+			T_OGL_SAFE(glTexParameteri(m_textureTarget, GL_TEXTURE_MAG_FILTER, samplerState.magFilter));
+			m_shadowState.magFilter = samplerState.magFilter;
+		}
 
-	if (m_shadowState.wrapS != samplerState.wrapS)
-	{
-		T_OGL_SAFE(glTexParameteri(m_textureTarget, GL_TEXTURE_WRAP_S, samplerState.wrapS));
-		m_shadowState.wrapS = samplerState.wrapS;
-	}
-	
-	if (m_shadowState.wrapT != samplerState.wrapT)
-	{
-		T_OGL_SAFE(glTexParameteri(m_textureTarget, GL_TEXTURE_WRAP_T, samplerState.wrapT));
-		m_shadowState.wrapT = samplerState.wrapT;
+		if (m_shadowState.wrapS != samplerState.wrapS)
+		{
+			T_OGL_SAFE(glTexParameteri(m_textureTarget, GL_TEXTURE_WRAP_S, samplerState.wrapS));
+			m_shadowState.wrapS = samplerState.wrapS;
+		}
+		
+		if (m_shadowState.wrapT != samplerState.wrapT)
+		{
+			T_OGL_SAFE(glTexParameteri(m_textureTarget, GL_TEXTURE_WRAP_T, samplerState.wrapT));
+			m_shadowState.wrapT = samplerState.wrapT;
+		}
 	}
 	
 	T_OGL_SAFE(glUniform1iARB(locationTexture, unit));
