@@ -24,8 +24,6 @@ bool TaskQueue::create(ITask* idleTask)
 
 void TaskQueue::destroy()
 {
-	m_idleTask = 0;
-
 	flush();
 
 	if (m_thread)
@@ -34,6 +32,8 @@ void TaskQueue::destroy()
 		ThreadManager::getInstance().destroy(m_thread);
 		m_thread = 0;
 	}
+
+	m_idleTask = 0;
 }
 
 bool TaskQueue::add(ITask* task)

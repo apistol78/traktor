@@ -5,6 +5,7 @@
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/CommandLine.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
@@ -303,15 +304,16 @@ int32_t amalgamMain(
 				break;
 		}
 
-		application->destroy();
-		application = 0;
+		safeDestroy(application);
 
 		if (!cmdLine.hasOption('s'))
 			saveSettings(settings, userSettingsPath);
 	}
 	else
+	{
+		safeDestroy(application);
 		showErrorDialog(logTail->m_tail);
-		
+	}
 	settings = 0;
 	defaultSettings = 0;
 
