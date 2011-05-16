@@ -137,7 +137,7 @@ bool SoundPipeline::buildOutput(
 
 	if (soundAsset->m_stream)
 	{
-		Ref< StreamSoundResource > resource = new StreamSoundResource(&type_of(decoder));
+		Ref< StreamSoundResource > resource = new StreamSoundResource(&type_of(decoder), soundAsset->m_preload);
 
 		Ref< db::Instance > instance = pipelineBuilder->createOutputInstance(
 			outputPath,

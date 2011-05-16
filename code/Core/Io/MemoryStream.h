@@ -22,9 +22,11 @@ class T_DLLCLASS MemoryStream : public IStream
 	T_RTTI_CLASS;
 
 public:
-	MemoryStream(void* buffer, uint32_t bufferSize, bool readAllowed = true, bool writeAllowed = true);
+	MemoryStream(void* buffer, uint32_t bufferSize, bool readAllowed = true, bool writeAllowed = true, bool own = false);
 
 	MemoryStream(const void* buffer, uint32_t bufferSize);
+	
+	virtual ~MemoryStream();
 
 	virtual void close();
 
@@ -52,6 +54,7 @@ private:
 	uint32_t m_bufferSize;
 	bool m_readAllowed;
 	bool m_writeAllowed;
+	bool m_own;
 };
 
 }

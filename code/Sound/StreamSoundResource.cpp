@@ -1,4 +1,4 @@
-#include "Core/Io/DynamicMemoryStream.h"
+#include "Core/Io/MemoryStream.h"
 #include "Core/Io/Reader.h"
 #include "Core/Io/StreamCopy.h"
 #include "Core/Log/Log.h"
@@ -15,10 +15,17 @@ namespace traktor
 	namespace sound
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.StreamSoundResource", 0, StreamSoundResource, ISoundResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.StreamSoundResource", 1, StreamSoundResource, ISoundResource)
 
-StreamSoundResource::StreamSoundResource(const TypeInfo* decoderType)
+StreamSoundResource::StreamSoundResource()
+:	m_decoderType(0)
+,	m_preload(true)
+{
+}
+
+StreamSoundResource::StreamSoundResource(const TypeInfo* decoderType, bool preload)
 :	m_decoderType(decoderType)
+,	m_preload(preload)
 {
 }
 
@@ -33,7 +40,23 @@ Ref< Sound > StreamSoundResource::createSound(resource::IResourceManager* resour
 		log::error << L"Unable to create sound, no decoder type" << Endl;
 		return 0;
 	}
+	
+	if (m_preload)
+	{
+		int32_t size = stream->available();
+		
+		uint8_t* buffer = new uint8_t [size];
+		for (int32_t i = 0; i < size; )
+		{
+			int res = stream->read(&buffer[i], size - i);
+			if (res <= 0)
+				return 0;
+			i += res;
+		}
 
+		stream = new MemoryStream(buffer, size, true, false, true);
+	}
+	
 	Ref< IStreamDecoder > streamDecoder = checked_type_cast< IStreamDecoder* >(m_decoderType->createInstance());
 	if (!streamDecoder->create(stream))
 	{
@@ -53,7 +76,10 @@ Ref< Sound > StreamSoundResource::createSound(resource::IResourceManager* resour
 
 bool StreamSoundResource::serialize(ISerializer& s)
 {
-	return s >> MemberType(L"decoderType", m_decoderType);
+	s >> MemberType(L"decoderType", m_decoderType);
+	if (s.getVersion() >= 1)
+		s >> Member< bool >(L"preload", m_preload);
+	return true;
 }
 
 	}

@@ -31,6 +31,7 @@ private:
 	friend class SoundPipeline;
 
 	bool m_stream;
+	bool m_preload;
 };
 
 	}
