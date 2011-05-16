@@ -49,6 +49,11 @@ void NotificationIcon::destroy()
 	}
 }
 
+void NotificationIcon::setImage(Bitmap* image)
+{
+	m_ni->setImage(image->getIBitmap());
+}
+
 void NotificationIcon::addButtonDownEventHandler(EventHandler* eventHandler)
 {
 	addEventHandler(EiButtonDown, eventHandler);

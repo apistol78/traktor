@@ -40,6 +40,8 @@ public:
 
 	void destroy();
 
+	void setImage(Bitmap* image);
+
 	/*! \brief Mouse button down event.
 	*
 	* Issued when mouse button has been pressed inside the widget.

@@ -60,6 +60,13 @@ void NotificationIconWin32::destroy()
 	delete this;
 }
 
+void NotificationIconWin32::setImage(IBitmap* image)
+{
+	T_ASSERT (image);
+	m_nid.hIcon = reinterpret_cast< BitmapWin32* >(image)->createIcon();
+	Shell_NotifyIcon(NIM_MODIFY, &m_nid);
+}
+
 LRESULT NotificationIconWin32::eventNotification(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass)
 {
 	POINT pnt;

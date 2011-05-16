@@ -5,6 +5,8 @@
 #include <Core/Io/Writer.h>
 #include <Core/Log/Log.h>
 #include <Core/Misc/Adler32.h>
+#include <Core/Misc/CommandLine.h>
+#include <Core/Misc/SafeDestroy.h>
 #include <Core/System/IProcess.h>
 #include <Core/System/OS.h>
 #include <Core/Thread/Thread.h>
@@ -13,6 +15,24 @@
 #include <Net/SocketAddressIPv4.h>
 #include <Net/SocketStream.h>
 #include <Net/TcpSocket.h>
+#include <Ui/Application.h>
+#include <Ui/Bitmap.h>
+#include <Ui/Clipboard.h>
+#include <Ui/Command.h>
+#include <Ui/FunctionHandler.h>
+#include <Ui/MenuItem.h>
+#include <Ui/MessageBox.h>
+#include <Ui/NotificationIcon.h>
+#include <Ui/PopupMenu.h>
+#include <Ui/Events/MouseEvent.h>
+#if defined(_WIN32)
+#	include <Ui/Win32/EventLoopWin32.h>
+#	include <Ui/Win32/WidgetFactoryWin32.h>
+#	undef MessageBox
+#endif
+
+#include "Resources/NotificationBusy.h"
+#include "Resources/NotificationIdle.h"
 
 using namespace traktor;
 
@@ -26,6 +46,31 @@ const uint8_t c_errNone = 0;
 const uint8_t c_errIoFailed = 1;
 const uint8_t c_errLaunchFailed = 2;
 const uint8_t c_errUnknown = 255;
+
+std::wstring g_scratchPath;
+Ref< ui::PopupMenu > g_popupMenu;
+Ref< ui::NotificationIcon > g_notificationIcon;
+
+void eventNotificationButtonDown(ui::Event* event)
+{
+	ui::MouseEvent* mouseEvent = checked_type_cast< ui::MouseEvent* >(event);
+
+	Ref< ui::MenuItem > item = g_popupMenu->show(mouseEvent->getPosition());
+	if (!item)
+		return;
+
+	if (item->getCommand() == L"RemoteServer.CopyScratch")
+	{
+		ui::Clipboard* clipboard = ui::Application::getInstance()->getClipboard();
+		if (clipboard)
+			clipboard->setText(g_scratchPath);
+	}
+	else if (item->getCommand() == L"RemoteServer.Exit")
+	{
+		if (ui::MessageBox::show(L"Sure you want to exit RemoteServer?", L"Exit", ui::MbIconQuestion | ui::MbYesNo) == ui::DrYes)
+			ui::Application::getInstance()->exit(0);
+	}
+}
 
 uint8_t handleDeploy(net::Socket* clientSocket)
 {
@@ -42,9 +87,10 @@ uint8_t handleDeploy(net::Socket* clientSocket)
 
 	traktor::log::info << L"Receiving file \"" << pathName << L"\", " << size << L" byte(s)" << Endl;
 
+	Path path(g_scratchPath + L"/" + pathName);
 	bool outOfSync = true;
 
-	Ref< traktor::IStream > fileStream = FileSystem::getInstance().open(pathName, File::FmRead);
+	Ref< traktor::IStream > fileStream = FileSystem::getInstance().open(path, File::FmRead);
 	if (fileStream)
 	{
 		Adler32 adler;
@@ -69,9 +115,9 @@ uint8_t handleDeploy(net::Socket* clientSocket)
 
 	if (outOfSync)
 	{
-		FileSystem::getInstance().makeAllDirectories(Path(pathName).getPathOnly());
+		FileSystem::getInstance().makeAllDirectories(path.getPathOnly());
 
-		Ref< traktor::IStream > fileStream = FileSystem::getInstance().open(pathName, File::FmWrite);
+		Ref< traktor::IStream > fileStream = FileSystem::getInstance().open(path, File::FmWrite);
 		if (!fileStream)
 		{
 			traktor::log::error << L"Unable to create file \"" << pathName << L"\"" << Endl;
@@ -113,7 +159,8 @@ uint8_t handleLaunchProcess(net::Socket* clientSocket)
 	traktor::log::info << L"Launching \"" << pathName << L"\"" << Endl;
 	traktor::log::info << L"\targuments \"" << arguments << L"\"" << Endl;
 
-	Ref< IProcess > process = OS::getInstance().execute(pathName, arguments, L".", 0, false, false, false);
+	Path path(g_scratchPath + L"/" + pathName);
+	Ref< IProcess > process = OS::getInstance().execute(path, arguments, L".", 0, false, false, false);
 	if (!process)
 	{
 		traktor::log::error << L"Unable to launch process \"" << pathName << L"\"" << Endl;
@@ -182,8 +229,47 @@ void threadProcessClient(Ref< net::TcpSocket > clientSocket)
 
 }
 
-int main()
+#if !defined(_WIN32) || defined(_CONSOLE)
+int main(int argc, const char** argv)
 {
+	CommandLine cmdLine(argc, argv);
+#else
+int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
+{
+	std::vector< std::wstring > argv;
+
+	TCHAR szFilename[MAX_PATH] = _T("");
+	GetModuleFileName(NULL, szFilename, sizeof(szFilename));
+	argv.push_back(tstows(szFilename));
+
+	Split< std::wstring >::any(mbstows(szCmdLine), L" \t", argv);
+	CommandLine cmdLine(argv);
+#endif
+
+#if defined(_WIN32)
+	ui::Application::getInstance()->initialize(
+		new ui::EventLoopWin32(),
+		new ui::WidgetFactoryWin32()
+	);
+#endif
+
+	if (cmdLine.getCount() <= 0)
+	{
+		traktor::log::error << L"Usage: RemoteServer (Scratch directory)" << Endl;
+		return 1;
+	}
+
+	g_scratchPath = cmdLine.getString(0);
+
+	g_popupMenu = new ui::PopupMenu();
+	g_popupMenu->create();
+	g_popupMenu->add(new ui::MenuItem(ui::Command(L"RemoteServer.CopyScratch"), L"Copy Scratch Directory"));
+	g_popupMenu->add(new ui::MenuItem(ui::Command(L"RemoteServer.Exit"), L"Exit"));
+
+	g_notificationIcon = new ui::NotificationIcon();
+	g_notificationIcon->create(L"Traktor RemoteServer (" + g_scratchPath + L")", ui::Bitmap::load(c_ResourceNotificationIdle, sizeof(c_ResourceNotificationIdle), L"png"));
+	g_notificationIcon->addButtonDownEventHandler(ui::createFunctionHandler(&eventNotificationButtonDown));
+
 	net::Network::initialize();
 
 	Ref< net::TcpSocket > serverSocket = new net::TcpSocket();
@@ -202,8 +288,25 @@ int main()
 	traktor::log::info << L"Waiting for client(s)..." << Endl;
 
 	std::list< Thread* > clientThreads;
-	for (;;)
+	int32_t iconState = 0;
+
+	while (ui::Application::getInstance()->process())
 	{
+		// Update notification icon if necessary.
+		if (clientThreads.empty() && iconState != 0)
+		{
+			// Set idle icon.
+			g_notificationIcon->setImage(ui::Bitmap::load(c_ResourceNotificationIdle, sizeof(c_ResourceNotificationIdle), L"png"));
+			iconState = 0;
+		}
+		else if (!clientThreads.empty() && iconState == 0)
+		{
+			// Set busy icon.
+			g_notificationIcon->setImage(ui::Bitmap::load(c_ResourceNotificationBusy, sizeof(c_ResourceNotificationBusy), L"png"));
+			iconState = 1;
+		}
+
+		// Check for events on server socket; if none we cleanup disconnected clients.
 		if (serverSocket->select(true, false, false, 100) <= 0)
 		{
 			for (std::list< Thread* >::iterator i = clientThreads.begin(); i != clientThreads.end(); )
@@ -240,6 +343,11 @@ int main()
 		clientThreads.push_back(clientThread);
 	}
 
+	safeDestroy(g_notificationIcon);
+	safeDestroy(g_popupMenu);
+
 	net::Network::finalize();
+	ui::Application::getInstance()->finalize();
+
 	return 0;
 }

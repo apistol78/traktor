@@ -131,7 +131,7 @@
 			<configurations>
 				<item type="Configuration" version="1">
 					<name>DebugShared</name>
-					<targetFormat>TfExecutableConsole</targetFormat>
+					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
@@ -148,7 +148,7 @@
 				</item>
 				<item type="Configuration" version="1">
 					<name>ReleaseStatic</name>
-					<targetFormat>TfExecutableConsole</targetFormat>
+					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
@@ -170,6 +170,19 @@
 					<fileName>*.*</fileName>
 					<items/>
 				</item>
+				<item type="Filter">
+					<name>res</name>
+					<items>
+						<item type="File">
+							<fileName>../../res/NotificationBusy.png</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../../res/NotificationIdle.png</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ExternalDependency" version="1">
@@ -181,6 +194,16 @@
 					<linkWithProduct>true</linkWithProduct>
 					<solutionFileName>$(TRAKTOR_HOME)/TraktorWin32.xms</solutionFileName>
 					<projectName>Traktor.Net</projectName>
+				</item>
+				<item type="ExternalDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<solutionFileName>$(TRAKTOR_HOME)/TraktorWin32.xms</solutionFileName>
+					<projectName>Traktor.Ui</projectName>
+				</item>
+				<item type="ExternalDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<solutionFileName>$(TRAKTOR_HOME)/TraktorWin32.xms</solutionFileName>
+					<projectName>Traktor.Ui.Win32</projectName>
 				</item>
 			</dependencies>
 		</item>
