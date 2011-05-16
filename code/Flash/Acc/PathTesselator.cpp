@@ -44,46 +44,47 @@ void PathTesselator::tesselate(const Path& path, AlignedVector< Segment >& outSe
 			switch (j->type)
 			{
 			case SpgtLinear:
-				tesselateLinearSegment(*i, *j, outSegments);
+				tesselateLinearSegment(path, *i, *j, outSegments);
 				break;
 
 			case SpgtQuadratic:
-				tesselateQuadraticSegment(*i, *j, outSegments);
+				tesselateQuadraticSegment(path, *i, *j, outSegments);
 				break;
 			}
 		}
 	}
 }
 
-void PathTesselator::tesselateLinearSegment(const SubPath& subPath, const SubPathSegment& segment, AlignedVector< Segment >& outSegments) const
+void PathTesselator::tesselateLinearSegment(const Path& path, const SubPath& subPath, const SubPathSegment& segment, AlignedVector< Segment >& outSegments) const
 {
-	T_ASSERT (segment.points.size() == 2);
+	T_ASSERT (segment.pointsCount == 2);
 
 	Segment s;
-	s.v[0] = segment.points[0];
-	s.v[1] = segment.points[1];
+	s.v[0] = path.getPoints().at(segment.pointsOffset);
+	s.v[1] = path.getPoints().at(segment.pointsOffset + 1);
 	s.fillStyle0 = subPath.fillStyle0;
 	s.fillStyle1 = subPath.fillStyle1;
 	s.lineStyle = subPath.lineStyle;
 	outSegments.push_back(s);
 }
 
-void PathTesselator::tesselateQuadraticSegment(const SubPath& subPath, const SubPathSegment& segment, AlignedVector< Segment >& outSegments) const
+void PathTesselator::tesselateQuadraticSegment(const Path& path, const SubPath& subPath, const SubPathSegment& segment, AlignedVector< Segment >& outSegments) const
 {
-	T_ASSERT (segment.points.size() == 3);
+	T_ASSERT (segment.pointsCount == 3);
 
-	const Vector2& cp0 = segment.points[0];
-	const Vector2& cp1 = segment.points[1];
-	const Vector2& cp2 = segment.points[2];
+	const Vector2& cp0 = path.getPoints().at(segment.pointsOffset);
+	const Vector2& cp1 = path.getPoints().at(segment.pointsOffset + 1);
+	const Vector2& cp2 = path.getPoints().at(segment.pointsOffset + 2);
 
 	Vector2 mn(std::numeric_limits< float >::max(), std::numeric_limits< float >::max());
 	Vector2 mx(-std::numeric_limits< float >::max(), -std::numeric_limits< float >::max());
-	for (std::vector< Vector2 >::const_iterator i = segment.points.begin(); i != segment.points.end(); ++i)
+	for (int32_t i = 0; i < segment.pointsCount; ++i)
 	{
-		mn.x = min(mn.x, i->x);
-		mn.y = min(mn.y, i->y);
-		mx.x = max(mx.x, i->x);
-		mx.y = max(mx.y, i->y);
+		const Vector2& cp = path.getPoints().at(segment.pointsOffset + i);
+		mn.x = min(mn.x, cp.x);
+		mn.y = min(mn.y, cp.y);
+		mx.x = max(mx.x, cp.x);
+		mx.y = max(mx.y, cp.y);
 	}
 
 	Vector2 ps = cp0;

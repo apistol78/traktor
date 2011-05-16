@@ -35,10 +35,13 @@ enum SubPathSegmentType
 struct SubPathSegment
 {
 	SubPathSegmentType type;
-	std::vector< Vector2 > points;
+	uint32_t pointsOffset;
+	uint32_t pointsCount;
 
 	SubPathSegment(SubPathSegmentType type_ = SpgtUndefined)
 	:	type(type_)
+	,	pointsOffset(0)
+	,	pointsCount(0)
 	{}
 };
 
@@ -117,6 +120,12 @@ public:
 	 */
 	Vector2 getCursor() const;
 
+	/*! \brief Get points.
+	 *
+	 * \return List of points.
+	 */
+	const std::vector< Vector2 >& getPoints() const;
+
 	/*! \brief Get sub paths.
 	 *
 	 * \return List of sub-paths.
@@ -125,6 +134,7 @@ public:
 
 private:
 	Vector2 m_cursor;
+	std::vector< Vector2 > m_points;
 	std::list< SubPath > m_subPaths;
 	SubPath m_current;
 

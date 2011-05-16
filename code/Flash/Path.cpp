@@ -8,12 +8,12 @@ namespace traktor
 Path::Path()
 :	m_cursor(0.0f, 0.0f)
 {
+	m_points.reserve(256);
 }
 
 void Path::reset()
 {
-	//m_cursor.x =
-	//m_cursor.y = 0;
+	m_points.resize(0);
 	m_subPaths.resize(0);
 	m_current.segments.resize(0);
 }
@@ -29,9 +29,13 @@ void Path::lineTo(float x, float y, CoordinateMode mode)
 {
 	transform(mode, CmAbsolute, x, y);
 
+	uint32_t offset = uint32_t(m_points.size());
+	m_points.push_back(m_cursor);
+	m_points.push_back(Vector2(x, y));
+
 	m_current.segments.push_back(SubPathSegment(SpgtLinear));
-	m_current.segments.back().points.push_back(m_cursor);
-	m_current.segments.back().points.push_back(Vector2(x, y));
+	m_current.segments.back().pointsOffset = offset;
+	m_current.segments.back().pointsCount = 2;
 
 	m_cursor = Vector2(x, y);
 }
@@ -41,10 +45,14 @@ void Path::quadraticTo(float x1, float y1, float x, float y, CoordinateMode mode
 	transform(mode, CmAbsolute, x1, y1);
 	transform(mode, CmAbsolute, x, y);
 
+	uint32_t offset = uint32_t(m_points.size());
+	m_points.push_back(m_cursor);
+	m_points.push_back(Vector2(x1, y1));
+	m_points.push_back(Vector2(x, y));
+
 	m_current.segments.push_back(SubPathSegment(SpgtQuadratic));
-	m_current.segments.back().points.push_back(m_cursor);
-	m_current.segments.back().points.push_back(Vector2(x1, y1));
-	m_current.segments.back().points.push_back(Vector2(x, y));
+	m_current.segments.back().pointsOffset = offset;
+	m_current.segments.back().pointsCount = 3;
 
 	m_cursor = Vector2(x, y);
 }
@@ -65,6 +73,11 @@ void Path::end(uint16_t fillStyle0, uint16_t fillStyle1, uint16_t lineStyle)
 Vector2 Path::getCursor() const
 {
 	return m_cursor;
+}
+
+const std::vector< Vector2 >& Path::getPoints() const
+{
+	return m_points;
 }
 
 const std::list< SubPath >& Path::getSubPaths() const

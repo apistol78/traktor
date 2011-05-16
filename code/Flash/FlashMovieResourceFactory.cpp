@@ -1,11 +1,12 @@
-#include "Flash/FlashMovieResourceFactory.h"
-#include "Flash/FlashMovieResource.h"
-#include "Flash/FlashMovie.h"
-#include "Flash/FlashMovieFactory.h"
-#include "Flash/SwfReader.h"
+#include "Core/Containers/AlignedVector.h"
+#include "Core/Io/MemoryStream.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
-#include "Core/Io/MemoryStream.h"
+#include "Flash/FlashMovie.h"
+#include "Flash/FlashMovieFactory.h"
+#include "Flash/FlashMovieResource.h"
+#include "Flash/FlashMovieResourceFactory.h"
+#include "Flash/SwfReader.h"
 
 namespace traktor
 {
@@ -46,7 +47,7 @@ Ref< Object > FlashMovieResourceFactory::create(resource::IResourceManager* reso
 		return 0;
 
 	uint32_t assetSize = stream->available();
-	std::vector< uint8_t > assetBlob(assetSize);
+	AlignedVector< uint8_t > assetBlob(assetSize);
 
 	uint32_t offset = 0;
 	while (offset < assetSize)
