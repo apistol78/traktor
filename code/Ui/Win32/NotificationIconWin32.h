@@ -20,6 +20,8 @@ public:
 
 	virtual void destroy();
 
+	virtual void setImage(IBitmap* image);
+
 private:
 	EventSubject* m_owner;
 	Window m_hWnd;

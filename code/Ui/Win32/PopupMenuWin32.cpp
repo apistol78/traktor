@@ -25,12 +25,7 @@ void PopupMenuWin32::add(MenuItem* item)
 
 MenuItem* PopupMenuWin32::show(IWidget* parent, const Point& at)
 {
-	if (!parent)
-		return 0;
-
-	HWND hWnd = (HWND)parent->getInternalHandle();
-	if (!hWnd)
-		return 0;
+	HWND hWnd = parent ? (HWND)parent->getInternalHandle() : NULL;
 
 	HMENU hMenu = CreatePopupMenu();
 	if (!hMenu)
@@ -68,9 +63,27 @@ MenuItem* PopupMenuWin32::show(IWidget* parent, const Point& at)
 	}
 
 	POINT pnt = { at.x, at.y };
-	ClientToScreen(hWnd, &pnt);
+	if (hWnd != NULL)
+		ClientToScreen(hWnd, &pnt);
 
-	UINT id = TrackPopupMenuEx(hMenu, TPM_RETURNCMD, pnt.x, pnt.y, hWnd, NULL);
+	Window containerWindow;
+	containerWindow.create(
+		hWnd,
+		_T("TraktorWin32Class"),
+		_T(""),
+		WS_POPUP | (hWnd ? WS_CHILD : 0),
+		0,
+		0, 0, 0, 0
+	);
+
+	UINT id = TrackPopupMenuEx(
+		hMenu,
+		TPM_RETURNCMD,
+		pnt.x,
+		pnt.y,
+		containerWindow,
+		NULL
+	);
 
 	DestroyMenu(hMenu);
 

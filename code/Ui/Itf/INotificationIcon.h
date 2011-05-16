@@ -20,6 +20,8 @@ public:
 	virtual bool create(const std::wstring& text, IBitmap* image) = 0;
 
 	virtual void destroy() = 0;
+
+	virtual void setImage(IBitmap* image) = 0;
 };
 
 	}

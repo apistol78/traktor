@@ -39,6 +39,8 @@ public:
 
 	void add(MenuItem* item);
 
+	Ref< MenuItem > show(const Point& at);
+
 	Ref< MenuItem > show(Widget* parent, const Point& at);
 
 private:
