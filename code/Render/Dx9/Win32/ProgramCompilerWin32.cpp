@@ -71,7 +71,7 @@ bool compileShader(
 
 bool collectScalarParameters(
 	ID3DXConstantTable* d3dConstantTable,
-	std::vector< ProgramScalar >& outScalars,
+	AlignedVector< ProgramScalar >& outScalars,
 	std::map< std::wstring, uint32_t >& outScalarParameterMap,
 	uint32_t& outOffset
 )
@@ -128,7 +128,7 @@ bool collectScalarParameters(
 bool collectSamplerParameters(
 	ID3DXConstantTable* d3dConstantTable,
 	const std::map< std::wstring, int32_t >& samplerTextures,
-	std::vector< ProgramSampler >& outSamplers,
+	AlignedVector< ProgramSampler >& outSamplers,
 	std::map< std::wstring, uint32_t >& outTextureParameterMap,
 	uint32_t& outOffset
 )

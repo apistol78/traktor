@@ -72,15 +72,16 @@ private:
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceOpenGL", 2, ProgramResourceOpenGL, ProgramResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceOpenGL", 3, ProgramResourceOpenGL, ProgramResource)
 
 ProgramResourceOpenGL::ProgramResourceOpenGL()
+:	m_hash(0)
 {
 }
 
 ProgramResourceOpenGL::ProgramResourceOpenGL(
-	const std::wstring& vertexShader,
-	const std::wstring& fragmentShader,
+	const std::string& vertexShader,
+	const std::string& fragmentShader,
 	const std::map< std::wstring, int32_t >& samplerTextures,
 	const RenderState& renderState
 )
@@ -88,17 +89,19 @@ ProgramResourceOpenGL::ProgramResourceOpenGL(
 ,	m_fragmentShader(fragmentShader)
 ,	m_samplerTextures(samplerTextures)
 ,	m_renderState(renderState)
+,	m_hash(0)
 {
 }
 
 bool ProgramResourceOpenGL::serialize(ISerializer& s)
 {
-	T_ASSERT (s.getVersion() >= 2);
+	T_ASSERT (s.getVersion() >= 3);
 
-	s >> Member< std::wstring >(L"vertexShader", m_vertexShader);
-	s >> Member< std::wstring >(L"fragmentShader", m_fragmentShader);
+	s >> Member< std::string >(L"vertexShader", m_vertexShader);
+	s >> Member< std::string >(L"fragmentShader", m_fragmentShader);
 	s >> MemberStlMap< std::wstring, int32_t >(L"samplerTextures", m_samplerTextures);
 	s >> MemberRenderState(L"renderState", m_renderState);
+	s >> Member< uint32_t >(L"hash", m_hash);
 
 	return true;
 }

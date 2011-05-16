@@ -1,6 +1,7 @@
 #ifndef traktor_AlignedVector_H
 #define traktor_AlignedVector_H
 
+#include <algorithm>
 #include <iterator>
 #include "Core/Config.h"
 #include "Core/Memory/IAllocator.h"
@@ -393,6 +394,14 @@ public:
 		T_ASSERT (m_size > 0);
 		Constructor::destroy(m_data[m_size - 1]);
 		shrink(1);
+	}
+
+	/*! \brief Swap vector content. */
+	void swap(AlignedVector< ItemType >& rh)
+	{
+		std::swap(m_data, rh.m_data);
+		std::swap(m_size, rh.m_size);
+		std::swap(m_capacity, rh.m_capacity);
 	}
 
 	/*! \brief Return reference to value first in vector.

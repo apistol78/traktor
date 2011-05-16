@@ -65,6 +65,8 @@ bool ProgramWin32::create(
 	T_ASSERT (d3dDevice);
 	HRESULT hr;
 
+	m_resource = resource;
+
 	m_d3dVertexShader = shaderCache->getVertexShader(resource->m_vertexShaderHash);
 	if (!m_d3dVertexShader)
 	{
@@ -95,10 +97,8 @@ bool ProgramWin32::create(
 		shaderCache->putPixelShader(resource->m_pixelShaderHash, m_d3dPixelShader);
 	}
 
-	m_vertexScalars = resource->m_vertexScalars;
-	m_pixelScalars = resource->m_pixelScalars;
-	m_vertexSamplers = resource->m_vertexSamplers;
-	m_pixelSamplers = resource->m_pixelSamplers;
+	m_scalarParameterMap.reserve(resource->m_scalarParameterMap.size());
+	m_textureParameterMap.reserve(resource->m_textureParameterMap.size());
 
 	for (std::map< std::wstring, uint32_t >::const_iterator i = resource->m_scalarParameterMap.begin(); i != resource->m_scalarParameterMap.end(); ++i)
 	{
@@ -145,7 +145,7 @@ bool ProgramWin32::activate()
 	m_parameterCache->setPixelShader(m_d3dPixelShader);
 	m_state.apply(m_parameterCache);
 
-	for (std::vector< ProgramScalar >::iterator i = m_vertexScalars.begin(); i != m_vertexScalars.end(); ++i)
+	for (AlignedVector< ProgramScalar >::const_iterator i = m_resource->m_vertexScalars.begin(); i != m_resource->m_vertexScalars.end(); ++i)
 	{
 #if defined(_DEBUG)
 		validateParameter(*i);
@@ -153,7 +153,7 @@ bool ProgramWin32::activate()
 		m_parameterCache->setVertexShaderConstant(i->registerIndex, i->registerCount, &m_scalarParameterData[i->offset]);
 	}
 
-	for (std::vector< ProgramScalar >::iterator i = m_pixelScalars.begin(); i != m_pixelScalars.end(); ++i)
+	for (AlignedVector< ProgramScalar >::const_iterator i = m_resource->m_pixelScalars.begin(); i != m_resource->m_pixelScalars.end(); ++i)
 	{
 #if defined(_DEBUG)
 		validateParameter(*i);
@@ -161,10 +161,10 @@ bool ProgramWin32::activate()
 		m_parameterCache->setPixelShaderConstant(i->registerIndex, i->registerCount, &m_scalarParameterData[i->offset]);
 	}
 
-	for (std::vector< ProgramSampler >::iterator i = m_vertexSamplers.begin(); i != m_vertexSamplers.end(); ++i)
+	for (AlignedVector< ProgramSampler >::const_iterator i = m_resource->m_vertexSamplers.begin(); i != m_resource->m_vertexSamplers.end(); ++i)
 		m_parameterCache->setVertexTexture(i->stage, getD3DTexture(m_textureParameterData[i->texture]));
 
-	for (std::vector< ProgramSampler >::iterator i = m_pixelSamplers.begin(); i != m_pixelSamplers.end(); ++i)
+	for (AlignedVector< ProgramSampler >::const_iterator i = m_resource->m_pixelSamplers.begin(); i != m_resource->m_pixelSamplers.end(); ++i)
 		m_parameterCache->setPixelTexture(i->stage, getD3DTexture(m_textureParameterData[i->texture]));
 
 	m_dirty = false;
@@ -179,9 +179,12 @@ void ProgramWin32::forceDirty()
 
 void ProgramWin32::destroy()
 {
+	m_resource = 0;
+
 	m_d3dDevice.release();
 	m_d3dVertexShader.release();
 	m_d3dPixelShader.release();
+
 	m_resourceManager->remove(this);
 }
 

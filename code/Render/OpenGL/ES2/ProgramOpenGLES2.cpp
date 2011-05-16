@@ -101,14 +101,17 @@ ProgramOpenGLES2::~ProgramOpenGLES2()
 
 Ref< ProgramResource > ProgramOpenGLES2::compile(const GlslProgram& glslProgram, int optimize, bool validate)
 {
-	Ref< ProgramResource > resource;
+	Ref< ProgramResourceOpenGL > resource;
 
 	resource = new ProgramResourceOpenGL(
-		glslProgram.getVertexShader(),
-		glslProgram.getFragmentShader(),
+		wstombs(glslProgram.getVertexShader()),
+		wstombs(glslProgram.getFragmentShader()),
 		glslProgram.getSamplerTextures(),
 		glslProgram.getRenderState()
 	);
+
+	uint32_t hash = DeepHash(resource).get();
+	resource->setHash(hash);
 
 	return resource;
 }
@@ -122,14 +125,14 @@ Ref< ProgramOpenGLES2 > ProgramOpenGLES2::create(ContextOpenGLES2* resourceConte
 	GLsizei errorBufLen;
 	GLint status;
 	
-	uint32_t hash = DeepHash(resource).get();
+	uint32_t hash = resourceOpenGL->getHash();
 
 	std::map< uint32_t, ProgramOpenGLES2* >::iterator i = s_programCache.find(hash);
 	if (i != s_programCache.end())
 		return i->second;
 	
-	std::string vertexShader = wstombs(resourceOpenGL->getVertexShader());
-	std::string fragmentShader = wstombs(resourceOpenGL->getFragmentShader());
+	const std::string& vertexShader = resourceOpenGL->getVertexShader();
+	const std::string& fragmentShader = resourceOpenGL->getFragmentShader();
 
 	GLuint vertexObject = resourceContext->createShaderObject(vertexShader.c_str(), GL_VERTEX_SHADER);
 	if (!vertexObject)

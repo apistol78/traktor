@@ -98,14 +98,11 @@ private:
 	static ProgramWin32* ms_activeProgram;
 	Ref< ResourceManagerDx9 > m_resourceManager;
 	Ref< ParameterCache > m_parameterCache;
+	Ref< const ProgramResourceDx9 > m_resource;
 	ComRef< IDirect3DDevice9 > m_d3dDevice;
 	ComRef< IDirect3DVertexShader9 > m_d3dVertexShader;
 	ComRef< IDirect3DPixelShader9 > m_d3dPixelShader;
 	StateBlockDx9 m_state;
-	std::vector< ProgramScalar > m_vertexScalars;
-	std::vector< ProgramScalar > m_pixelScalars;
-	std::vector< ProgramSampler > m_vertexSamplers;
-	std::vector< ProgramSampler > m_pixelSamplers;
 	SmallMap< handle_t, uint32_t > m_scalarParameterMap;
 	SmallMap< handle_t, uint32_t > m_textureParameterMap;
 	AlignedVector< float > m_scalarParameterData;

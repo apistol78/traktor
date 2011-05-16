@@ -1,4 +1,5 @@
 #include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Render/Dx9/ProgramResourceDx9.h"
@@ -118,10 +119,10 @@ bool ProgramResourceDx9::serialize(ISerializer& s)
 	s >> MemberID3DXBuffer(L"pixelShader", m_pixelShader);
 	s >> Member< uint32_t >(L"vertexShaderHash", m_vertexShaderHash);
 	s >> Member< uint32_t >(L"pixelShaderHash", m_pixelShaderHash);
-	s >> MemberStlVector< ProgramScalar, MemberProgramScalar >(L"vertexScalars", m_vertexScalars);
-	s >> MemberStlVector< ProgramScalar, MemberProgramScalar >(L"pixelScalars", m_pixelScalars);
-	s >> MemberStlVector< ProgramSampler, MemberProgramSampler >(L"vertexSamplers", m_vertexSamplers);
-	s >> MemberStlVector< ProgramSampler, MemberProgramSampler >(L"pixelSamplers", m_pixelSamplers);
+	s >> MemberAlignedVector< ProgramScalar, MemberProgramScalar >(L"vertexScalars", m_vertexScalars);
+	s >> MemberAlignedVector< ProgramScalar, MemberProgramScalar >(L"pixelScalars", m_pixelScalars);
+	s >> MemberAlignedVector< ProgramSampler, MemberProgramSampler >(L"vertexSamplers", m_vertexSamplers);
+	s >> MemberAlignedVector< ProgramSampler, MemberProgramSampler >(L"pixelSamplers", m_pixelSamplers);
 	s >> MemberStlMap< std::wstring, uint32_t >(L"scalarParameterMap", m_scalarParameterMap);
 	s >> MemberStlMap< std::wstring, uint32_t >(L"textureParameterMap", m_textureParameterMap);
 	s >> Member< uint32_t >(L"scalarParameterDataSize", m_scalarParameterDataSize);
