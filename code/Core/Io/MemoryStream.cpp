@@ -7,12 +7,13 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.MemoryStream", MemoryStream, IStream);
 
-MemoryStream::MemoryStream(void* buffer, uint32_t bufferSize, bool readAllowed, bool writeAllowed)
+MemoryStream::MemoryStream(void* buffer, uint32_t bufferSize, bool readAllowed, bool writeAllowed, bool own)
 :	m_buffer(static_cast< uint8_t* >(buffer))
 ,	m_bufferPtr(static_cast< uint8_t* >(buffer))
 ,	m_bufferSize(bufferSize)
 ,	m_readAllowed(readAllowed)
 ,	m_writeAllowed(writeAllowed)
+,	m_own(own)
 {
 }
 
@@ -22,11 +23,22 @@ MemoryStream::MemoryStream(const void* buffer, uint32_t bufferSize)
 ,	m_bufferSize(bufferSize)
 ,	m_readAllowed(true)
 ,	m_writeAllowed(false)
+,	m_own(false)
 {
+}
+
+MemoryStream::~MemoryStream()
+{
+	close();
 }
 
 void MemoryStream::close()
 {
+	if (m_own && m_buffer)
+	{
+		delete[] m_buffer;
+		m_buffer = 0;
+	}
 }
 
 bool MemoryStream::canRead() const
