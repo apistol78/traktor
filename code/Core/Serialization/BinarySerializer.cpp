@@ -184,6 +184,8 @@ bool read_string(const Ref< IStream >& stream, uint32_t u8len, std::wstring& out
 		if (!read_block(stream, u8str.ptr(), u8len, sizeof(uint8_t)))
 			return false;
 
+		outString.reserve(u8len);
+
 		Utf8Encoding utf8enc;
 		for (uint32_t i = 0; i < u8len; )
 		{
