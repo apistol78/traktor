@@ -11,6 +11,16 @@ namespace traktor
 		namespace
 		{
 
+struct Edge
+{
+	SubPathSegmentType type;
+	std::vector< Vector2 > points;
+
+	Edge(SubPathSegmentType type_ = SpgtUndefined)
+	:	type(type_)
+	{}
+};
+
 uint32_t castColor(const SwfColor& color)
 {
 	return 
@@ -134,6 +144,8 @@ void SwDisplayRenderer::renderShape(const FlashMovie& movie, const Matrix33& tra
 	const std::list< Path >& paths = shape.getPaths();
 	for (std::list< Path >::const_iterator i = paths.begin(); i != paths.end(); ++i)
 	{
+		const std::vector< Vector2 >& points = i->getPoints();
+
 		// Create spans for each path.
 		const std::list< SubPath >& subPaths = i->getSubPaths();
 		for (std::list< SubPath >::const_iterator j = subPaths.begin(); j != subPaths.end(); ++j)
@@ -141,17 +153,17 @@ void SwDisplayRenderer::renderShape(const FlashMovie& movie, const Matrix33& tra
 			const std::vector< SubPathSegment >& segments = j->segments;
 
 			// Transform segments into linear edges.
-			static std::vector< SubPathSegment > edges;
+			static std::vector< Edge > edges;
 			edges.resize(0);
 
 			for (std::vector< SubPathSegment >::const_iterator k = segments.begin(); k != segments.end(); ++k)
 			{
 				if (k->type == SpgtLinear)
 				{
-					SubPathSegment edge;
+					Edge edge;
 					edge.type = SpgtLinear;
-					edge.points.push_back(rasterTransform * k->points[0]);
-					edge.points.push_back(rasterTransform * k->points[1]);
+					edge.points.push_back(rasterTransform * points[k->pointsOffset]);
+					edge.points.push_back(rasterTransform * points[k->pointsOffset + 1]);
 					//if (!culled(&edge.points[0], 2, frameWidth, frameHeight))
 						edges.push_back(edge);
 				}
@@ -159,9 +171,9 @@ void SwDisplayRenderer::renderShape(const FlashMovie& movie, const Matrix33& tra
 				{
 					Vector2 cp[] =
 					{
-						rasterTransform * k->points[0],
-						rasterTransform * k->points[1],
-						rasterTransform * k->points[2]
+						rasterTransform * points[k->pointsOffset],
+						rasterTransform * points[k->pointsOffset + 1],
+						rasterTransform * points[k->pointsOffset + 2]
 					};
 
 					//if (!culled(cp, 3, frameWidth, frameHeight))
@@ -178,7 +190,7 @@ void SwDisplayRenderer::renderShape(const FlashMovie& movie, const Matrix33& tra
 						{
 							Vector2 p2 = evalQuadratic(float(t) / steps, cp[0], cp[1], cp[2]);
 
-							SubPathSegment edge;
+							Edge edge;
 							edge.type = SpgtLinear;
 							edge.points.push_back(p1);
 							edge.points.push_back(p2);
@@ -191,7 +203,7 @@ void SwDisplayRenderer::renderShape(const FlashMovie& movie, const Matrix33& tra
 			}
 
 			// Generate spans from edges.
-			for (std::vector< SubPathSegment >::const_iterator k = edges.begin(); k != edges.end(); ++k)
+			for (std::vector< Edge >::const_iterator k = edges.begin(); k != edges.end(); ++k)
 			{
 				const Vector2& p1 = k->points[0];
 				const Vector2& p2 = k->points[1];
@@ -340,6 +352,8 @@ void SwDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tra
 	const std::list< Path >& paths = glyphShape.getPaths();
 	for (std::list< Path >::const_iterator i = paths.begin(); i != paths.end(); ++i)
 	{
+		const std::vector< Vector2 >& points = i->getPoints();
+
 		// Create spans for each path.
 		const std::list< SubPath >& subPaths = i->getSubPaths();
 		for (std::list< SubPath >::const_iterator j = subPaths.begin(); j != subPaths.end(); ++j)
@@ -347,26 +361,26 @@ void SwDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tra
 			const std::vector< SubPathSegment >& segments = j->segments;
 
 			// Transform segments into linear edges.
-			static std::vector< SubPathSegment > edges;
+			static std::vector< Edge > edges;
 			edges.resize(0);
 
 			for (std::vector< SubPathSegment >::const_iterator k = segments.begin(); k != segments.end(); ++k)
 			{
 				if (k->type == SpgtLinear)
 				{
-					SubPathSegment edge;
+					Edge edge;
 					edge.type = SpgtLinear;
-					edge.points.push_back(rasterTransform * k->points[0]);
-					edge.points.push_back(rasterTransform * k->points[1]);
+					edge.points.push_back(rasterTransform * points[k->pointsOffset]);
+					edge.points.push_back(rasterTransform * points[k->pointsOffset + 1]);
 					edges.push_back(edge);
 				}
 				else
 				{
 					Vector2 cp[] =
 					{
-						rasterTransform * k->points[0],
-						rasterTransform * k->points[1],
-						rasterTransform * k->points[2]
+						rasterTransform * points[k->pointsOffset],
+						rasterTransform * points[k->pointsOffset + 1],
+						rasterTransform * points[k->pointsOffset + 2]
 					};
 
 					{
@@ -382,7 +396,7 @@ void SwDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tra
 						{
 							Vector2 p2 = evalQuadratic(float(t) / steps, cp[0], cp[1], cp[2]);
 
-							SubPathSegment edge;
+							Edge edge;
 							edge.type = SpgtLinear;
 							edge.points.push_back(p1);
 							edge.points.push_back(p2);
@@ -395,7 +409,7 @@ void SwDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tra
 			}
 
 			// Generate spans from edges.
-			for (std::vector< SubPathSegment >::const_iterator k = edges.begin(); k != edges.end(); ++k)
+			for (std::vector< Edge >::const_iterator k = edges.begin(); k != edges.end(); ++k)
 			{
 				const Vector2& p1 = k->points[0];
 				const Vector2& p2 = k->points[1];

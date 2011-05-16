@@ -33,9 +33,9 @@ public:
 	void tesselate(const Path& path, AlignedVector< Segment >& outSegments) const;
 
 private:
-	void tesselateLinearSegment(const SubPath& subPath, const SubPathSegment& segment, AlignedVector< Segment >& outSegments) const;
+	void tesselateLinearSegment(const Path& path, const SubPath& subPath, const SubPathSegment& segment, AlignedVector< Segment >& outSegments) const;
 
-	void tesselateQuadraticSegment(const SubPath& subPath, const SubPathSegment& segment, AlignedVector< Segment >& outSegments) const;
+	void tesselateQuadraticSegment(const Path& path, const SubPath& subPath, const SubPathSegment& segment, AlignedVector< Segment >& outSegments) const;
 };
 
 	}

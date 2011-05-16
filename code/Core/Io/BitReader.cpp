@@ -28,11 +28,20 @@ bool BitReader::readBit()
 
 uint32_t BitReader::readUnsigned(int nbits)
 {
-	uint32_t o = 0;
+	uint32_t o = 0, b = 1 << (nbits - 1);
 	for (int i = 0; i < nbits; ++i)
 	{
-		if (readBit())
-			o |= 1 << (nbits - i - 1);
+		if (m_cnt <= 0)
+		{
+			m_stream->read((void*)&m_data, 1);
+			m_cnt = 8;
+		}
+
+		uint8_t bit = 1 << --m_cnt;
+		if ((m_data & bit) != 0)
+			o |= b;
+
+		b >>= 1;
 	}
 	return o;
 }

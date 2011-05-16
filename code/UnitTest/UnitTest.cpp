@@ -2,6 +2,7 @@
 #	include <windows.h>
 #endif
 #include "UnitTest/CaseAtomic.h"
+#include "UnitTest/CaseBitReader.h"
 #include "UnitTest/CaseCycleDebugger.h"
 #include "UnitTest/CaseMeta.h"
 #include "UnitTest/CaseProcess.h"
@@ -40,6 +41,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	//log::info << L"Case atomic" << Endl;
 	//traktor::CaseAtomic().run();
 
+	log::info << L"Case bitreader" << Endl;
+	traktor::CaseBitReader().run();
+
 	//log::info << L"Case meta" << Endl;
 	//traktor::CaseMeta().run();
 
@@ -67,8 +71,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	//log::info << L"Case quaternion" << Endl;
 	//traktor::CaseQuaternion().run();
 
-	log::info << L"Case small map" << Endl;
-	traktor::CaseSmallMap().run();
+	//log::info << L"Case small map" << Endl;
+	//traktor::CaseSmallMap().run();
 
 	//log::info << L"Case transform" << Endl;
 	//traktor::CaseTransform().run();
