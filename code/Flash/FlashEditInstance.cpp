@@ -64,8 +64,8 @@ bool FlashEditInstance::parseHtml(const std::wstring& html)
 
 	m_text.clear();
 
-	Ref< const html::Element > element = document.getDocumentElement();
-	for (element = element->getFirstElementChild().ptr(); element; element = element->getNextElementSibling().ptr())
+	const html::Element* element = document.getDocumentElement();
+	for (element = element->getFirstElementChild().ptr(); element; element = element->getNextElementSibling())
 	{
 		StringOutputStream ss;
 		concateHtmlText(element, ss);

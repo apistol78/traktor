@@ -4,7 +4,6 @@
 #include <list>
 #include <map>
 #include "Core/Object.h"
-#include "Core/Thread/Semaphore.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

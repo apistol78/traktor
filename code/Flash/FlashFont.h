@@ -2,6 +2,7 @@
 #define traktor_flash_FlashFont_H
 
 #include "Core/RefArray.h"
+#include "Core/Containers/SmallMap.h"
 #include "Flash/SwfTypes.h"
 #include "Flash/Action/ActionObject.h"
 
@@ -80,8 +81,9 @@ private:
 	int16_t m_leading;
 	AlignedVector< int16_t > m_advanceTable;
 	AlignedVector< SwfRect > m_boundsTable;
-	std::map< uint32_t, int16_t > m_kerningLookup;
-	AlignedVector< uint16_t > m_codeTable;
+	SmallMap< uint32_t, int16_t > m_kerningLookup;
+	//AlignedVector< uint16_t > m_codeTable;
+	SmallMap< uint16_t, uint16_t > m_indexLookup;
 	CoordinateType m_coordinateType;
 };
 
