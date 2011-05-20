@@ -1,4 +1,3 @@
-#include <algorithm>
 #include "Flash/FlashFont.h"
 #include "Flash/FlashShape.h"
 
@@ -51,13 +50,20 @@ bool FlashFont::create(
 	m_leading = leading;
 	m_advanceTable = advanceTable;
 	m_boundsTable = boundsTable;
-	m_codeTable = codeTable;
 	m_coordinateType = coordinateType;
 	
 	for (AlignedVector< SwfKerningRecord >::const_iterator i = kerningRecords.begin(); i != kerningRecords.end(); ++i)
 	{
 		uint32_t codePair = (uint32_t(i->code1) << 16) | i->code2;
 		m_kerningLookup[codePair] = i->adjustment;
+	}
+
+	for (uint32_t i = 0; i < codeTable.size(); ++i)
+	{
+		if (i >= 65535 || i >= shapeTable.size())
+			break;
+
+		m_indexLookup[codeTable[i]] = i;
 	}
 
 	return true;
@@ -96,20 +102,14 @@ const SwfRect* FlashFont::getBounds(uint16_t index) const
 int16_t FlashFont::lookupKerning(uint16_t leftCode, uint16_t rightCode) const
 {
 	uint32_t codePair = (uint32_t(leftCode) << 16) | rightCode;
-	std::map< uint32_t, int16_t >::const_iterator i = m_kerningLookup.find(codePair);
+	SmallMap< uint32_t, int16_t >::const_iterator i = m_kerningLookup.find(codePair);
 	return i != m_kerningLookup.end() ? i->second : 0;
 }
 
 uint16_t FlashFont::lookupIndex(uint16_t code) const
 {
-	AlignedVector< uint16_t >::const_iterator i = std::find(m_codeTable.begin(), m_codeTable.end(), code);
-	if (i == m_codeTable.end())
-		return 0;
-
-	size_t distance = std::distance(m_codeTable.begin(), i);
-	T_ASSERT (distance < m_shapes.size());
-
-	return uint16_t(distance);
+	SmallMap< uint16_t, uint16_t >::const_iterator i = m_indexLookup.find(code);
+	return i != m_indexLookup.end() ? i->second : 0;
 }
 
 FlashFont::CoordinateType FlashFont::getCoordinateType() const
