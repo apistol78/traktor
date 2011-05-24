@@ -566,8 +566,20 @@ bool RenderSystemWin32::beginRender()
 
 	if (m_deviceLost)
 	{
-		m_renderLock.release();
-		return false;
+		HRESULT hr;
+
+		hr = m_d3dDevice->TestCooperativeLevel();
+		if (hr == D3DERR_DEVICENOTRESET)
+			hr = resetDevice();
+
+		if (FAILED(hr))
+		{
+			Sleep(100);
+			m_renderLock.release();
+			return false;
+		}
+
+		m_deviceLost = 0;
 	}
 
 	m_inRender = true;
