@@ -116,7 +116,8 @@ private:
 	Ref< render::RenderContext > m_globalContext;
 	Ref< render::RenderTargetSet > m_renderTargetGlyphs;
 	Ref< AccShapeResources > m_shapeResources;
-	Ref< AccShapeVertexPool > m_vertexPool;
+	RefArray< AccShapeVertexPool > m_vertexPools;
+	AccShapeVertexPool* m_vertexPool;
 	Ref< AccTextureCache > m_textureCache;
 	Ref< AccGlyph > m_glyph;
 	Ref< AccQuad > m_quad;

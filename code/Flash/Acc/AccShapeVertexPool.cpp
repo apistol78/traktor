@@ -13,7 +13,7 @@ namespace traktor
 		namespace
 		{
 
-const uint32_t c_vertexPoolSize = 262144;
+const uint32_t c_vertexPoolSize = 65536;
 
 #pragma pack(1)
 struct Vertex

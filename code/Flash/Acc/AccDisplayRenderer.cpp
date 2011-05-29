@@ -74,7 +74,8 @@ bool insideFrameBounds(const FlashMovie& movie, const Matrix33& transform, const
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AccDisplayRenderer", AccDisplayRenderer, IDisplayRenderer)
 
 AccDisplayRenderer::AccDisplayRenderer()
-:	m_nextIndex(0)
+:	m_vertexPool(0)
+,	m_nextIndex(0)
 ,	m_frameSize(0.0f, 0.0f, 0.0f, 0.0f)
 ,	m_viewSize(0.0f, 0.0f, 0.0f, 0.0f)
 ,	m_viewOffset(0.0f, 0.0f, 1.0f, 1.0f)
@@ -120,9 +121,25 @@ bool AccDisplayRenderer::create(
 	if (!m_shapeResources->create(resourceManager))
 		return false;
 
-	m_vertexPool = new AccShapeVertexPool(renderSystem);
-	if (!m_vertexPool->create())
-		return false;
+	// Create pool of vertices; one for each frame as we need to cycle through
+	// them in order to prevent locking "in-use" vertex buffers.
+	if (frameCount > 0)
+	{
+		m_vertexPools.resize(frameCount);
+		for (uint32_t i = 0; i < frameCount; ++i)
+		{
+			m_vertexPools[i] = new AccShapeVertexPool(renderSystem);
+			if (!m_vertexPools[i]->create())
+				return false;
+		}
+	}
+	else
+	{
+		m_vertexPools.resize(1);
+		m_vertexPools[0] = new AccShapeVertexPool(renderSystem);
+		if (!m_vertexPools[0]->create())
+			return false;
+	}
 
 	m_glyph = new AccGlyph();
 	if (!m_glyph->create(resourceManager, renderSystem))
@@ -170,7 +187,9 @@ void AccDisplayRenderer::destroy()
 	m_shapeCache.clear();
 
 	safeDestroy(m_shapeResources);
-	safeDestroy(m_vertexPool);
+
+	for (RefArray< AccShapeVertexPool >::iterator i = m_vertexPools.begin(); i != m_vertexPools.end(); ++i)
+		safeDestroy(*i);
 
 	m_renderContexts.clear();
 	m_renderContext = 0;
@@ -183,12 +202,14 @@ void AccDisplayRenderer::build(uint32_t frame)
 	m_shapeResources->validate();
 	m_renderContext = m_renderContexts[frame];
 	m_renderContext->flush();
+	m_vertexPool = m_vertexPools[frame];
 	m_viewOffset.set(0.0f, 0.0f, 1.0f, 1.0f);
 }
 
 void AccDisplayRenderer::build(render::RenderContext* renderContext)
 {
 	m_renderContext = renderContext;
+	m_vertexPool = m_vertexPools[0];
 }
 
 void AccDisplayRenderer::render(render::IRenderView* renderView, uint32_t frame, render::EyeType eye)
@@ -349,6 +370,7 @@ void AccDisplayRenderer::renderShape(const FlashMovie& movie, const Matrix33& tr
 		accShape = new AccShape(m_shapeResources, m_vertexPool);
 		if (!accShape->createTesselation(shape))
 			return;
+
 		if (!accShape->createRenderable(
 			*m_textureCache,
 			movie,
@@ -410,6 +432,7 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 		accShape = new AccShape(m_shapeResources, m_vertexPool);
 		if (!accShape->createTesselation(shape))
 			return;
+
 		if (!accShape->createRenderable(
 			*m_textureCache,
 			movie,

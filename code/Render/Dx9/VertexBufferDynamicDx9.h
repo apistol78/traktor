@@ -64,7 +64,7 @@ private:
 	DWORD m_d3dVertexStride;
 	ComRef< IDirect3DVertexBuffer9 > m_d3dVertexBuffer;
 	AlignedVector< uint8_t > m_buffer;
-	bool m_dirty;
+	uint32_t m_dirtyRegion[2];
 	bool m_locked;
 };
 	
