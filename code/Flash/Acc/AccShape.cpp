@@ -80,6 +80,7 @@ bool AccShape::createTesselation(const FlashShape& shape)
 
 	m_tesselationTriangleCount = 0;
 
+	// Create triangles and lines through tesselation.
 	for (std::list< Path >::const_iterator i = paths.begin(); i != paths.end(); ++i)
 	{
 		segments.resize(0);
@@ -102,7 +103,35 @@ bool AccShape::createTesselation(const FlashShape& shape)
 			m_tesselationBatches.back().lines.push_back(line);
 		}
 		m_tesselationTriangleCount += uint32_t(m_tesselationBatches.back().lines.size() * 2);
-	}	
+	}
+
+	// Calculate bounding box.
+	m_bounds.min.x = m_bounds.min.y =  std::numeric_limits< float >::max();
+	m_bounds.max.x = m_bounds.max.y = -std::numeric_limits< float >::max();
+
+	for (AlignedVector< TesselationBatch >::const_iterator i = m_tesselationBatches.begin(); i != m_tesselationBatches.end(); ++i)
+	{
+		for (AlignedVector< Triangle >::const_iterator j = i->triangles.begin(); j != i->triangles.end(); ++j)
+		{
+			for (int k = 0; k < 3; ++k)
+			{
+				m_bounds.min.x = min(m_bounds.min.x, j->v[k].x);
+				m_bounds.min.y = min(m_bounds.min.y, j->v[k].y);
+				m_bounds.max.x = max(m_bounds.max.x, j->v[k].x);
+				m_bounds.max.y = max(m_bounds.max.y, j->v[k].y);
+			}
+		}
+		for (AlignedVector< Line >::const_iterator j = i->lines.begin(); j != i->lines.end(); ++j)
+		{
+			for (int k = 0; k < 2; ++k)
+			{
+				m_bounds.min.x = min(m_bounds.min.x, j->v[k].x);
+				m_bounds.min.y = min(m_bounds.min.y, j->v[k].y);
+				m_bounds.max.x = max(m_bounds.max.x, j->v[k].x);
+				m_bounds.max.y = max(m_bounds.max.y, j->v[k].y);
+			}
+		}
+	}
 
 	return true;
 }
@@ -116,16 +145,10 @@ bool AccShape::createRenderable(
 	//T_ANONYMOUS_VAR(ScopeTime)(L"AccShape::createRenderable");
 
 	if (!m_tesselationTriangleCount)
-		return true;
-
-	m_bounds.min.x = m_bounds.min.y =  std::numeric_limits< float >::max();
-	m_bounds.max.x = m_bounds.max.y = -std::numeric_limits< float >::max();
-
-	if (!m_vertexPool->acquireRange(m_tesselationTriangleCount * 3, m_vertexRange))
 		return false;
 
-	Vertex* vertex = static_cast< Vertex* >(m_vertexRange.vertexBuffer->lock(m_vertexRange.offset, m_tesselationTriangleCount * 3));
-	if (!vertex)
+	// Allocate new vertex range.
+	if (!m_vertexPool->acquireRange(m_tesselationTriangleCount * 3, m_vertexRange))
 		return false;
 
 	const static Matrix33 textureTS = translate(0.5f, 0.5f) * scale(1.0f / 32768.0f, 1.0f / 32768.0f);
@@ -138,6 +161,10 @@ bool AccShape::createRenderable(
 
 	m_renderBatches.reserve(m_tesselationBatches.size());
 	m_batchFlags = 0;
+
+	Vertex* vertex = static_cast< Vertex* >(m_vertexRange.vertexBuffer->lock(m_vertexRange.offset, m_tesselationTriangleCount * 3));
+	if (!vertex)
+		return false;
 
 	for (AlignedVector< TesselationBatch >::const_iterator i = m_tesselationBatches.begin(); i != m_tesselationBatches.end(); ++i)
 	{
@@ -193,18 +220,12 @@ bool AccShape::createRenderable(
 
 			for (int k = 0; k < 3; ++k)
 			{
-				m_bounds.min.x = min(m_bounds.min.x, j->v[k].x);
-				m_bounds.min.y = min(m_bounds.min.y, j->v[k].y);
-				m_bounds.max.x = max(m_bounds.max.x, j->v[k].x);
-				m_bounds.max.y = max(m_bounds.max.y, j->v[k].y);
-
 				vertex->pos[0] = j->v[k].x;
 				vertex->pos[1] = j->v[k].y;
 				vertex->color[0] = color.r;
 				vertex->color[1] = color.g;
 				vertex->color[2] = color.b;
 				vertex->color[3] = color.a;
-
 				vertex++;
 			}
 
@@ -256,11 +277,6 @@ bool AccShape::createRenderable(
 			{
 				const Vector2& vr = v[c_indices[k]];
 
-				m_bounds.min.x = min(m_bounds.min.x, vr.x);
-				m_bounds.min.y = min(m_bounds.min.y, vr.y);
-				m_bounds.max.x = max(m_bounds.max.x, vr.x);
-				m_bounds.max.y = max(m_bounds.max.y, vr.y);
-
 				vertex->pos[0] = vr.x;
 				vertex->pos[1] = vr.y;
 				vertex->color[2] = color.r;
@@ -277,12 +293,13 @@ bool AccShape::createRenderable(
 		}
 	}
 
+	m_vertexRange.vertexBuffer->unlock();
+
 	// Some shapes doesn't expose styles, such as glyphs, but are
 	// assumed to be solids.
 	if (!m_batchFlags)
 		m_batchFlags |= BfHaveSolid;
 
-	m_vertexRange.vertexBuffer->unlock();
 	return true;
 }
 

@@ -16,9 +16,10 @@ VertexBufferDynamicDx9::VertexBufferDynamicDx9(ResourceManagerDx9* resourceManag
 ,	m_resourceManager(resourceManager)
 ,	m_vertexDeclCache(vertexDeclCache)
 ,	m_d3dVertexStride(0)
-,	m_dirty(false)
 ,	m_locked(false)
 {
+	m_dirtyRegion[0] =
+	m_dirtyRegion[1] = 0;
 	m_resourceManager->add(this);
 }
 
@@ -42,8 +43,6 @@ bool VertexBufferDynamicDx9::create(IDirect3DDevice9* d3dDevice, const std::vect
 #else
 	usage = D3DUSAGE_WRITEONLY | D3DUSAGE_DYNAMIC;
 #endif
-
-	d3dDevice->EvictManagedResources();
 
 	hr = d3dDevice->CreateVertexBuffer(
 		getBufferSize(),
@@ -71,22 +70,30 @@ bool VertexBufferDynamicDx9::activate(IDirect3DDevice9* d3dDevice)
 	T_ASSERT (!m_locked);
 
 	// Upload vertex buffer data if it's been modified.
-	if (m_dirty)
+	if (m_dirtyRegion[0] != m_dirtyRegion[1])
 	{
 		VOID* ptr;
-		DWORD flags;
-#if defined(_XBOX) || defined(T_USE_XDK)
-		flags = D3DLOCK_NOOVERWRITE;
-#else
-		flags = D3DLOCK_DISCARD | D3DLOCK_NOOVERWRITE;
+		DWORD flags = D3DLOCK_NOOVERWRITE;
+
+#if !(defined(_XBOX) || defined(T_USE_XDK))
+		flags |= D3DLOCK_NOSYSLOCK;
+		if (m_dirtyRegion[0] == 0 && m_dirtyRegion[1] == getBufferSize())
+			flags |= D3DLOCK_DISCARD;
 #endif
-		if (FAILED(m_d3dVertexBuffer->Lock(0, getBufferSize(), &ptr, flags)))
+
+		uint32_t offset = m_dirtyRegion[0];
+		uint32_t size = m_dirtyRegion[1] - m_dirtyRegion[0];
+		T_ASSERT (size > 0);
+
+		if (FAILED(m_d3dVertexBuffer->Lock(offset, size, &ptr, flags)))
 			return 0;
 
-		std::memcpy(ptr, &m_buffer[0], getBufferSize());
+		std::memcpy(ptr, &m_buffer[offset], size);
 
 		m_d3dVertexBuffer->Unlock();
-		m_dirty = false;
+
+		m_dirtyRegion[0] =
+		m_dirtyRegion[1] = 0;
 	}
 
 	m_vertexDeclCache->setDeclaration(m_d3dVertexDeclaration);
@@ -115,6 +122,10 @@ void* VertexBufferDynamicDx9::lock()
 		return 0;
 
 	m_locked = true;
+
+	m_dirtyRegion[0] = 0;
+	m_dirtyRegion[1] = getBufferSize();
+
 	return &m_buffer[0];
 }
 
@@ -124,16 +135,24 @@ void* VertexBufferDynamicDx9::lock(uint32_t vertexOffset, uint32_t vertexCount)
 		return 0;
 
 	m_locked = true;
+
+	if (m_dirtyRegion[0] != m_dirtyRegion[1])
+	{
+		m_dirtyRegion[0] = min(m_dirtyRegion[0], vertexOffset * m_d3dVertexStride);
+		m_dirtyRegion[1] = max(m_dirtyRegion[1], (vertexOffset + vertexCount) * m_d3dVertexStride);
+	}
+	else
+	{
+		m_dirtyRegion[0] = vertexOffset * m_d3dVertexStride;
+		m_dirtyRegion[1] = (vertexOffset + vertexCount) * m_d3dVertexStride;
+	}
+
 	return &m_buffer[vertexOffset * m_d3dVertexStride];
 }
 
 void VertexBufferDynamicDx9::unlock()
 {
-	if (m_locked)
-	{
-		m_dirty = true;
-		m_locked = false;
-	}
+	m_locked = false;
 	setContentValid(true);
 }
 
