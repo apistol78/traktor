@@ -189,7 +189,8 @@ void AccDisplayRenderer::destroy()
 	safeDestroy(m_shapeResources);
 
 	for (RefArray< AccShapeVertexPool >::iterator i = m_vertexPools.begin(); i != m_vertexPools.end(); ++i)
-		safeDestroy(*i);
+		(*i)->destroy();
+	m_vertexPools.clear();
 
 	m_renderContexts.clear();
 	m_renderContext = 0;
