@@ -84,29 +84,26 @@ Ref< PostProcessStepBokeh::Instance > PostProcessStepBokeh::create(
 	{
 		for (uint32_t x = 0; x < quadWidth; ++x)
 		{
-			float rx = 0.0f; //(r.nextFloat() * 2.0f - 1.0f) / c_density;
-			float ry = 0.0f; //(r.nextFloat() * 2.0f - 1.0f) / c_density;
-
-			vertex->x = rx + float(2.0f * x) / quadWidth - 1.0f;
-			vertex->y = ry + float(2.0f * y) / quadHeight - 1.0f;
+			vertex->x = ox + float(2.0f * x) / quadWidth - 1.0f;
+			vertex->y = oy + float(2.0f * y) / quadHeight - 1.0f;
 			vertex->dx = -1.0f;
 			vertex->dy = -1.0f;
 			vertex++;
 
-			vertex->x = rx + float(2.0f * x) / quadWidth - 1.0f;
-			vertex->y = ry + float(2.0f * y) / quadHeight - 1.0f;
+			vertex->x = ox + float(2.0f * x) / quadWidth - 1.0f;
+			vertex->y = oy + float(2.0f * y) / quadHeight - 1.0f;
 			vertex->dx =  1.0f;
 			vertex->dy = -1.0f;
 			vertex++;
 
-			vertex->x = rx + float(2.0f * x) / quadWidth - 1.0f;
-			vertex->y = ry + float(2.0f * y) / quadHeight - 1.0f;
+			vertex->x = ox + float(2.0f * x) / quadWidth - 1.0f;
+			vertex->y = oy + float(2.0f * y) / quadHeight - 1.0f;
 			vertex->dx =  1.0f;
 			vertex->dy =  1.0f;
 			vertex++;
 
-			vertex->x = rx + float(2.0f * x) / quadWidth - 1.0f;
-			vertex->y = ry + float(2.0f * y) / quadHeight - 1.0f;
+			vertex->x = ox + float(2.0f * x) / quadWidth - 1.0f;
+			vertex->y = oy + float(2.0f * y) / quadHeight - 1.0f;
 			vertex->dx = -1.0f;
 			vertex->dy =  1.0f;
 			vertex++;
