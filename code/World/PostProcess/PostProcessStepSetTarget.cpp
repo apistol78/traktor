@@ -9,7 +9,12 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.PostProcessStepSetTarget", 0, PostProcessStepSetTarget, PostProcessStep)
 
-Ref< PostProcessStep::Instance > PostProcessStepSetTarget::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
+Ref< PostProcessStep::Instance > PostProcessStepSetTarget::create(
+	resource::IResourceManager* resourceManager,
+	render::IRenderSystem* renderSystem,
+	uint32_t width,
+	uint32_t height
+) const
 {
 	return new InstanceSetTarget(render::getParameterHandle(m_target));
 }

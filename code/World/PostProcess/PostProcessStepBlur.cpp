@@ -1,16 +1,16 @@
-#include "World/PostProcess/PostProcessStepBlur.h"
-#include "World/PostProcess/PostProcess.h"
-#include "World/WorldRenderView.h"
-#include "Render/ScreenRenderer.h"
-#include "Render/Shader.h"
-#include "Render/Shader/ShaderGraph.h"
-#include "Render/RenderTargetSet.h"
 #include "Core/Math/Const.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Core/Serialization/MemberComposite.h"
+#include "Render/RenderTargetSet.h"
+#include "Render/ScreenRenderer.h"
+#include "Render/Shader.h"
+#include "Render/Shader/ShaderGraph.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
+#include "World/WorldRenderView.h"
+#include "World/PostProcess/PostProcess.h"
+#include "World/PostProcess/PostProcessStepBlur.h"
 
 namespace traktor
 {
@@ -24,7 +24,12 @@ PostProcessStepBlur::PostProcessStepBlur()
 {
 }
 
-Ref< PostProcessStepBlur::Instance > PostProcessStepBlur::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
+Ref< PostProcessStepBlur::Instance > PostProcessStepBlur::create(
+	resource::IResourceManager* resourceManager,
+	render::IRenderSystem* renderSystem,
+	uint32_t width,
+	uint32_t height
+) const
 {
 	resource::Proxy< render::Shader > shader = m_shader;
 	if (!resourceManager->bind(shader))

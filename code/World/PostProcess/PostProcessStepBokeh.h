@@ -62,7 +62,8 @@ public:
 			const resource::Proxy< render::Shader >& shader,
 			render::VertexBuffer* vertexBuffer,
 			render::IndexBuffer* indexBuffer,
-			const std::vector< Source >& sources
+			const std::vector< Source >& sources,
+			uint32_t quadCount
 		);
 
 		virtual void destroy();
@@ -79,15 +80,22 @@ public:
 		Ref< render::VertexBuffer > m_vertexBuffer;
 		Ref< render::IndexBuffer > m_indexBuffer;
 		std::vector< Source > m_sources;
+		uint32_t m_quadCount;
 		float m_time;
 		render::handle_t m_handleTime;
 		render::handle_t m_handleDeltaTime;
 		render::handle_t m_handleDepthRange;
+		render::handle_t m_handleRatio;
 	};
 
 	PostProcessStepBokeh();
 
-	virtual Ref< Instance > create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const;
+	virtual Ref< Instance > create(
+		resource::IResourceManager* resourceManager,
+		render::IRenderSystem* renderSystem,
+		uint32_t width,
+		uint32_t height
+	) const;
 
 	virtual bool serialize(ISerializer& s);
 

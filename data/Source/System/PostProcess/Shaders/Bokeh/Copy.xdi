@@ -461,7 +461,7 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[17]"/>
+				<node ref="/object/nodes/item[8]"/>
 				<name>Output</name>
 			</source>
 			<destination>

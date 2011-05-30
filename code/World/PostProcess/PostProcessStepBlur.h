@@ -85,7 +85,12 @@ public:
 
 	PostProcessStepBlur();
 
-	virtual Ref< Instance > create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const;
+	virtual Ref< Instance > create(
+		resource::IResourceManager* resourceManager,
+		render::IRenderSystem* renderSystem,
+		uint32_t width,
+		uint32_t height
+	) const;
 
 	virtual bool serialize(ISerializer& s);
 

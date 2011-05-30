@@ -70,7 +70,12 @@ Ref< render::ISimpleTexture > createRandomRotationTexture(render::IRenderSystem*
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.PostProcessStepSmProj", 0, PostProcessStepSmProj, PostProcessStep)
 
-Ref< PostProcessStep::Instance > PostProcessStepSmProj::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
+Ref< PostProcessStep::Instance > PostProcessStepSmProj::create(
+	resource::IResourceManager* resourceManager,
+	render::IRenderSystem* renderSystem,
+	uint32_t width,
+	uint32_t height
+) const
 {
 	if (!resourceManager->bind(m_shader))
 		return 0;
