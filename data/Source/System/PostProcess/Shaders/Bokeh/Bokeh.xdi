@@ -70,7 +70,7 @@
 				<first>1073</first>
 				<second>779</second>
 			</position>
-			<value>5</value>
+			<value>1</value>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
@@ -305,10 +305,10 @@
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>1025</first>
-				<second>-271</second>
+				<first>1072</first>
+				<second>-56</second>
 			</position>
-			<value>0.0015</value>
+			<value>0.00075</value>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
@@ -345,10 +345,18 @@
 		<item type="traktor.render.Color">
 			<comment/>
 			<position>
-				<first>1596</first>
-				<second>680</second>
+				<first>1460</first>
+				<second>653</second>
 			</position>
-			<color>255, 0, 0, 255</color>
+			<color>0, 0, 0, 0</color>
+		</item>
+		<item type="traktor.render.Vector">
+			<comment/>
+			<position>
+				<first>933</first>
+				<second>181</second>
+			</position>
+			<value>1, -1, 0, 0</value>
 		</item>
 	</nodes>
 	<edges>
@@ -654,16 +662,6 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[29]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[28]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[20]"/>
 				<name>Output</name>
 			</source>
@@ -724,11 +722,11 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[12]"/>
+				<node ref="/object/nodes/item[38]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[27]"/>
+				<node ref="/object/nodes/item[28]"/>
 				<name>Input2</name>
 			</destination>
 		</item>
@@ -740,6 +738,16 @@
 			<destination>
 				<node ref="/object/nodes/item"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[12]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[27]"/>
+				<name>Input2</name>
 			</destination>
 		</item>
 	</edges>

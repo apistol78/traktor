@@ -151,6 +151,11 @@
 					<source>InputDepth</source>
 					<index>0</index>
 				</item>
+				<item>
+					<param>Blur_0</param>
+					<source>Blur_0</source>
+					<index>0</index>
+				</item>
 			</sources>
 		</item>
 		
@@ -179,6 +184,11 @@
 				<item>
 					<param>Blur_1</param>
 					<source>Blur_1</source>
+					<index>0</index>
+				</item>
+				<item>
+					<param>OffsetMap</param>
+					<source>OffsetMap</source>
 					<index>0</index>
 				</item>
 			</sources>
