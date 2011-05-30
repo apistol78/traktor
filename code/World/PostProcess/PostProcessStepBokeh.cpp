@@ -34,7 +34,7 @@ struct Vertex
 };
 #pragma pack()
 
-const int32_t c_density = 64;
+const int32_t c_density = 5;
 
 		}
 
@@ -44,7 +44,12 @@ PostProcessStepBokeh::PostProcessStepBokeh()
 {
 }
 
-Ref< PostProcessStepBokeh::Instance > PostProcessStepBokeh::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
+Ref< PostProcessStepBokeh::Instance > PostProcessStepBokeh::create(
+	resource::IResourceManager* resourceManager,
+	render::IRenderSystem* renderSystem,
+	uint32_t width,
+	uint32_t height
+) const
 {
 	resource::Proxy< render::Shader > shader = m_shader;
 	if (!resourceManager->bind(shader))
@@ -64,41 +69,44 @@ Ref< PostProcessStepBokeh::Instance > PostProcessStepBokeh::create(resource::IRe
 	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat2, offsetof(Vertex, x)));
 	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat2, offsetof(Vertex, dx)));
 
-	const uint32_t c_quadCount = c_density * c_density;
-	const float c_halfDensity = float(c_density) / 2.0f;
+	uint32_t quadWidth = width / c_density;
+	uint32_t quadHeight = height / c_density;
+	uint32_t quadCount = quadWidth * quadHeight;
 
-	Ref< render::VertexBuffer > vertexBuffer = renderSystem->createVertexBuffer(vertexElements, c_quadCount * 4 * sizeof(Vertex), false);
+	Ref< render::VertexBuffer > vertexBuffer = renderSystem->createVertexBuffer(vertexElements, quadCount * 4 * sizeof(Vertex), false);
 	
+	float ox = float(c_density) / width;
+	float oy = float(c_density) / height;
 	Random r;
 
 	Vertex* vertex = static_cast< Vertex* >(vertexBuffer->lock());
-	for (int32_t y = 0; y < c_density; ++y)
+	for (uint32_t y = 0; y < quadHeight; ++y)
 	{
-		for (int32_t x = 0; x < c_density; ++x)
+		for (uint32_t x = 0; x < quadWidth; ++x)
 		{
-			float rx = (r.nextFloat() * 2.0f - 1.0f) / c_density;
-			float ry = (r.nextFloat() * 2.0f - 1.0f) / c_density;
+			float rx = 0.0f; //(r.nextFloat() * 2.0f - 1.0f) / c_density;
+			float ry = 0.0f; //(r.nextFloat() * 2.0f - 1.0f) / c_density;
 
-			vertex->x = rx + float(x) / c_halfDensity - 1.0f;
-			vertex->y = ry + float(y) / c_halfDensity - 1.0f;
+			vertex->x = rx + float(2.0f * x) / quadWidth - 1.0f;
+			vertex->y = ry + float(2.0f * y) / quadHeight - 1.0f;
 			vertex->dx = -1.0f;
 			vertex->dy = -1.0f;
 			vertex++;
 
-			vertex->x = rx + float(x) / c_halfDensity - 1.0f;
-			vertex->y = ry + float(y) / c_halfDensity - 1.0f;
+			vertex->x = rx + float(2.0f * x) / quadWidth - 1.0f;
+			vertex->y = ry + float(2.0f * y) / quadHeight - 1.0f;
 			vertex->dx =  1.0f;
 			vertex->dy = -1.0f;
 			vertex++;
 
-			vertex->x = rx + float(x) / c_halfDensity - 1.0f;
-			vertex->y = ry + float(y) / c_halfDensity - 1.0f;
+			vertex->x = rx + float(2.0f * x) / quadWidth - 1.0f;
+			vertex->y = ry + float(2.0f * y) / quadHeight - 1.0f;
 			vertex->dx =  1.0f;
 			vertex->dy =  1.0f;
 			vertex++;
 
-			vertex->x = rx + float(x) / c_halfDensity - 1.0f;
-			vertex->y = ry + float(y) / c_halfDensity - 1.0f;
+			vertex->x = rx + float(2.0f * x) / quadWidth - 1.0f;
+			vertex->y = ry + float(2.0f * y) / quadHeight - 1.0f;
 			vertex->dx = -1.0f;
 			vertex->dy =  1.0f;
 			vertex++;
@@ -107,14 +115,14 @@ Ref< PostProcessStepBokeh::Instance > PostProcessStepBokeh::create(resource::IRe
 	vertexBuffer->unlock();
 
 	// Create index buffer.
-	Ref< render::IndexBuffer > indexBuffer = renderSystem->createIndexBuffer(render::ItUInt32, c_quadCount * 2 * 3 * sizeof(uint32_t), false);
+	Ref< render::IndexBuffer > indexBuffer = renderSystem->createIndexBuffer(render::ItUInt32, quadCount * 2 * 3 * sizeof(uint32_t), false);
 
 	uint32_t* index = static_cast< uint32_t* >(indexBuffer->lock());
-	for (int i = 0; i < c_density; ++i)
+	for (uint32_t i = 0; i < quadHeight; ++i)
 	{
-		for (int j = 0; j < c_density; ++j)
+		for (uint32_t j = 0; j < quadWidth; ++j)
 		{
-			uint32_t base = (i * c_density + j) * 4;
+			uint32_t base = (i * quadWidth + j) * 4;
 
 			*index++ = base + 0;
 			*index++ = base + 1;
@@ -131,7 +139,8 @@ Ref< PostProcessStepBokeh::Instance > PostProcessStepBokeh::create(resource::IRe
 		shader,
 		vertexBuffer,
 		indexBuffer,
-		sources
+		sources,
+		quadCount
 	);
 }
 
@@ -161,17 +170,20 @@ PostProcessStepBokeh::InstanceBokeh::InstanceBokeh(
 	const resource::Proxy< render::Shader >& shader,
 	render::VertexBuffer* vertexBuffer,
 	render::IndexBuffer* indexBuffer,
-	const std::vector< Source >& sources
+	const std::vector< Source >& sources,
+	uint32_t quadCount
 )
 :	m_shader(shader)
 ,	m_vertexBuffer(vertexBuffer)
 ,	m_indexBuffer(indexBuffer)
 ,	m_sources(sources)
+,	m_quadCount(quadCount)
 ,	m_time(0.0f)
 {
 	m_handleTime = render::getParameterHandle(L"Time");
 	m_handleDeltaTime = render::getParameterHandle(L"DeltaTime");
 	m_handleDepthRange = render::getParameterHandle(L"DepthRange");
+	m_handleRatio = render::getParameterHandle(L"Ratio");
 }
 
 void PostProcessStepBokeh::InstanceBokeh::destroy()
@@ -188,15 +200,12 @@ void PostProcessStepBokeh::InstanceBokeh::render(
 	if (!m_shader.validate())
 		return;
 
-	Ref< render::RenderTargetSet > source = postProcess->getTargetRef(render::getParameterHandle(L"InputColor"));
-	if (!source)
-		return;
-
 	postProcess->prepareShader(m_shader);
 
 	m_shader->setFloatParameter(m_handleTime, m_time);
 	m_shader->setFloatParameter(m_handleDeltaTime, params.deltaTime);
 	m_shader->setFloatParameter(m_handleDepthRange, params.depthRange);
+	m_shader->setFloatParameter(m_handleRatio, float(renderView->getWidth()) / renderView->getHeight());
 
 	for (std::vector< Source >::const_iterator i = m_sources.begin(); i != m_sources.end(); ++i)
 	{
@@ -219,9 +228,9 @@ void PostProcessStepBokeh::InstanceBokeh::render(
 	m_shader->draw(renderView, render::Primitives(
 		render::PtTriangles,
 		0,
-		(c_density * c_density) * 2,
+		m_quadCount * 2,
 		0,
-		(c_density * c_density) * 4 - 1
+		m_quadCount * 4 - 1
 	));
 
 	m_time += params.deltaTime;

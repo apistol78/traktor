@@ -9,12 +9,17 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.PostProcessStepChain", 0, PostProcessStepChain, PostProcessStep)
 
-Ref< PostProcessStep::Instance > PostProcessStepChain::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
+Ref< PostProcessStep::Instance > PostProcessStepChain::create(
+	resource::IResourceManager* resourceManager,
+	render::IRenderSystem* renderSystem,
+	uint32_t width,
+	uint32_t height
+) const
 {
 	RefArray< Instance > instances;
 	for (RefArray< PostProcessStep >::const_iterator i = m_steps.begin(); i != m_steps.end(); ++i)
 	{
-		Ref< PostProcessStep::Instance > instance = (*i)->create(resourceManager, renderSystem);
+		Ref< PostProcessStep::Instance > instance = (*i)->create(resourceManager, renderSystem, width, height);
 		if (instance)
 			instances.push_back(instance);
 		else

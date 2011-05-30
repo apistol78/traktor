@@ -43,30 +43,10 @@
 			<multiSample>0</multiSample>
 		</item>
 		<item type="traktor.world.PostProcessDefineTarget" version="1">
-			<id>OffsetMap_1</id>
+			<id>OffsetMap</id>
 			<width>0</width>
 			<height>0</height>
-			<screenDenom>2</screenDenom>
-			<format>TfR16G16B16A16F</format>
-			<depthStencil>false</depthStencil>
-			<preferTiled>false</preferTiled>
-			<multiSample>0</multiSample>
-		</item>
-		<item type="traktor.world.PostProcessDefineTarget" version="1">
-			<id>OffsetMap_2</id>
-			<width>0</width>
-			<height>0</height>
-			<screenDenom>4</screenDenom>
-			<format>TfR16G16B16A16F</format>
-			<depthStencil>false</depthStencil>
-			<preferTiled>false</preferTiled>
-			<multiSample>0</multiSample>
-		</item>
-		<item type="traktor.world.PostProcessDefineTarget" version="1">
-			<id>OffsetMap_3</id>
-			<width>0</width>
-			<height>0</height>
-			<screenDenom>4</screenDenom>
+			<screenDenom>5</screenDenom>
 			<format>TfR16G16B16A16F</format>
 			<depthStencil>false</depthStencil>
 			<preferTiled>false</preferTiled>
@@ -156,7 +136,7 @@
 		
 		<!-- Generate offset map -->
 		<item type="traktor.world.PostProcessStepSetTarget">
-			<target>OffsetMap_1</target>
+			<target>OffsetMap</target>
 		</item>
 		<item type="traktor.world.PostProcessStepSimple">
 			<shader>{5DB6C85E-85AE-8E4B-A696-DBDF712AB26F}</shader>
@@ -173,34 +153,8 @@
 				</item>
 			</sources>
 		</item>
-		<item type="traktor.world.PostProcessStepSetTarget">
-			<target>OffsetMap_2</target>
-		</item>
-		<item type="traktor.world.PostProcessStepSimple">
-			<shader>{55188CE4-1BDC-A646-8B80-BC56C4A43FE8}</shader>
-			<sources>
-				<item>
-					<param>Source</param>
-					<source>OffsetMap_1</source>
-					<index>0</index>
-				</item>
-			</sources>
-		</item>
-		<item type="traktor.world.PostProcessStepSetTarget">
-			<target>OffsetMap_3</target>
-		</item>
-		<item type="traktor.world.PostProcessStepSimple">
-			<shader>{55188CE4-1BDC-A646-8B80-BC56C4A43FE8}</shader>
-			<sources>
-				<item>
-					<param>Source</param>
-					<source>OffsetMap_2</source>
-					<index>0</index>
-				</item>
-			</sources>
-		</item>
 		
-		<!-- Copy frame then blend bokeh -->
+		<!-- DOF then blend bokeh -->
 		<item type="traktor.world.PostProcessStepSetTarget">
 			<target>Output</target>
 		</item>
@@ -234,7 +188,7 @@
 			<sources>
 				<item>
 					<param>Source</param>
-					<source>InputColor</source>
+					<source>Blur_0</source>
 					<index>0</index>
 				</item>
 				<item>
@@ -244,7 +198,7 @@
 				</item>
 				<item>
 					<param>OffsetMap</param>
-					<source>OffsetMap_3</source>
+					<source>OffsetMap</source>
 					<index>0</index>
 				</item>
 			</sources>

@@ -45,7 +45,7 @@ void PostProcessView::layoutCells(const ui::Rect& rc)
 
 		ui::Rect cellRect = rowRect;
 		cellRect.left += 16 + depth * 16;
-		cellRect.right = cellRect.left + 128;
+		cellRect.right = cellRect.left + 220;
 
 		placeCell(*i, cellRect);
 

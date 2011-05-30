@@ -6,6 +6,7 @@
 #include "World/PostProcess/PostProcessDefineTarget.h"
 #include "World/PostProcess/PostProcessSettings.h"
 #include "World/PostProcess/PostProcessStepBlur.h"
+#include "World/PostProcess/PostProcessStepBokeh.h"
 #include "World/PostProcess/PostProcessStepChain.h"
 #include "World/PostProcess/PostProcessStepLuminance.h"
 #include "World/PostProcess/PostProcessStepRepeat.h"
@@ -19,6 +20,7 @@
 #include "World/Editor/PostProcess/PostProcessDefineView.h"
 #include "World/Editor/PostProcess/PostProcessEditor.h"
 #include "World/Editor/PostProcess/PostProcessStepBlurFacade.h"
+#include "World/Editor/PostProcess/PostProcessStepBokehFacade.h"
 #include "World/Editor/PostProcess/PostProcessStepChainFacade.h"
 #include "World/Editor/PostProcess/PostProcessStepLuminanceFacade.h"
 #include "World/Editor/PostProcess/PostProcessStepRepeatFacade.h"
@@ -54,10 +56,10 @@ bool PostProcessEditor::create(ui::Widget* parent, db::Instance* instance, ISeri
 		return false;
 
 	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
-	splitter->create(parent, true, 140, false);
+	splitter->create(parent, true, 240, false);
 
 	Ref< ui::custom::Splitter > splitterView = new ui::custom::Splitter();
-	splitterView->create(splitter, false, 70, true);
+	splitterView->create(splitter, false, 60, true);
 
 	m_postProcessView = new PostProcessView();
 	m_postProcessView->create(splitterView);
@@ -79,6 +81,7 @@ bool PostProcessEditor::create(ui::Widget* parent, db::Instance* instance, ISeri
 
 	// Create step facades.
 	m_postProcessStepFacades[&type_of< PostProcessStepBlur >()] = new PostProcessStepBlurFacade();
+	m_postProcessStepFacades[&type_of< PostProcessStepBokeh >()] = new PostProcessStepBokehFacade();
 	m_postProcessStepFacades[&type_of< PostProcessStepChain >()] = new PostProcessStepChainFacade();
 	m_postProcessStepFacades[&type_of< PostProcessStepLuminance >()] = new PostProcessStepLuminanceFacade();
 	m_postProcessStepFacades[&type_of< PostProcessStepRepeat >()] = new PostProcessStepRepeatFacade();

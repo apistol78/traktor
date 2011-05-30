@@ -60,7 +60,7 @@ bool PostProcess::create(
 	const RefArray< PostProcessStep >& steps = settings->getSteps();
 	for (RefArray< PostProcessStep >::const_iterator i = steps.begin(); i != steps.end(); ++i)
 	{
-		Ref< PostProcessStep::Instance > instance = (*i)->create(resourceManager, renderSystem);
+		Ref< PostProcessStep::Instance > instance = (*i)->create(resourceManager, renderSystem, width, height);
 		if (instance)
 			m_instances.push_back(instance);
 		else
