@@ -163,24 +163,24 @@ void EmitterInstance::update(EmitterUpdateContext& context, const Transform& tra
 	//
 	// Update particles on CPU
 	//
+	size = m_points.size();
 #	if defined(T_USE_UPDATE_JOBS)
 	// Execute modifiers.
 	if (size >= 16)
 	{
 		JobManager& jobManager = JobManager::getInstance();
-		m_job = jobManager.add(makeFunctor< EmitterInstance, float, const Transform*, size_t, size_t >(
+		m_job = jobManager.add(makeFunctor< EmitterInstance, float, const Transform&, size_t >(
 			this,
 			&EmitterInstance::updateTask,
 			context.deltaTime,
-			&transform,
-			0,
+			transform,
 			size
 		));
 	}
 	else
-		updateTask(context.deltaTime, &transform, 0, size);
+		updateTask(context.deltaTime, transform, size);
 #	else
-	updateTask(context.deltaTime, &transform, 0, size);
+	updateTask(context.deltaTime, transform, size);
 #	endif
 #endif
 }
@@ -229,14 +229,14 @@ void EmitterInstance::synchronize() const
 }
 
 #if !defined(T_MODIFIER_USE_PS3_SPURS)
-void EmitterInstance::updateTask(float deltaTime, const Transform* transform, size_t first, size_t last)
+void EmitterInstance::updateTask(float deltaTime, const Transform& transform, size_t last)
 {
 	Scalar deltaTimeScalar(deltaTime);
 	const RefArray< Modifier >& modifiers = m_emitter->getModifiers();
 	for (RefArray< Modifier >::const_iterator i = modifiers.begin(); i != modifiers.end(); ++i)
 	{
 		if (*i)
-			(*i)->update(deltaTimeScalar, *transform, m_points, first, last);
+			(*i)->update(deltaTimeScalar, transform, m_points, 0, last);
 	}
 }
 #endif
