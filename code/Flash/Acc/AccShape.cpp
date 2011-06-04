@@ -303,10 +303,24 @@ bool AccShape::createRenderable(
 	return true;
 }
 
+AccShape::~AccShape()
+{
+	destroy();
+}
+
 void AccShape::destroy()
 {
-	m_vertexPool->releaseRange(m_vertexRange);
-	m_vertexRange = AccShapeVertexPool::Range();
+	m_shapeResources = 0;
+
+	if (m_vertexPool)
+	{
+		m_vertexPool->releaseRange(m_vertexRange);
+		m_vertexPool = 0;
+		m_vertexRange = AccShapeVertexPool::Range();
+	}
+
+	m_tesselationBatches.clear();
+	m_renderBatches.clear();
 }
 
 void AccShape::render(

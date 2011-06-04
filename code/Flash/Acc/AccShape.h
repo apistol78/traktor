@@ -39,6 +39,8 @@ class AccShape : public Object
 public:
 	AccShape(AccShapeResources* shapeResources, AccShapeVertexPool* vertexPool);
 
+	virtual ~AccShape();
+
 	bool createTesselation(const FlashShape& shape);
 
 	bool createRenderable(
@@ -79,8 +81,8 @@ private:
 		render::Primitives primitives;
 	};
 
-	Ref< AccShapeResources > m_shapeResources;
-	Ref< AccShapeVertexPool > m_vertexPool;
+	AccShapeResources* m_shapeResources;
+	AccShapeVertexPool* m_vertexPool;
 	AlignedVector< TesselationBatch > m_tesselationBatches;
 	uint32_t m_tesselationTriangleCount;
 	AccShapeVertexPool::Range m_vertexRange;
