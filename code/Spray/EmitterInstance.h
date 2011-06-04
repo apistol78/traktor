@@ -77,9 +77,9 @@ private:
 	uint32_t m_count;
 
 #if !defined(T_MODIFIER_USE_PS3_SPURS)
-	mutable Ref< Job > m_jobs[4];
+	mutable Ref< Job > m_job;
 
-	void updateTask(float deltaTime, const Transform& transform, size_t first, size_t last);
+	void updateTask(float deltaTime, const Transform* transform, size_t first, size_t last);
 #endif
 };
 

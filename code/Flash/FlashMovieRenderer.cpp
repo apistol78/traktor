@@ -256,13 +256,15 @@ void FlashMovieRenderer::renderCharacter(
 		int16_t spaceWidth = font->getAdvance(spaceGlyphIndex);
 
 		// Render text lines.
+		std::vector< std::wstring > words;
+		std::vector< float > widths;
 		for (FlashEditInstance::text_t::const_iterator i = text.begin(); i != text.end(); ++i)
 		{
-			std::vector< std::wstring > words;
+			words.resize(0);
 			Split< std::wstring >::any(*i, L" \t", words);
 
 			// Calculate width of each word.
-			std::vector< float > widths(words.size());
+			widths.resize(words.size());
 			for (uint32_t j = 0; j < words.size(); ++j)
 			{
 				const std::wstring& word = words[j];

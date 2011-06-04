@@ -1,8 +1,8 @@
 #ifndef traktor_flash_FlashMovie_H
 #define traktor_flash_FlashMovie_H
 
-#include <map>
 #include "Core/Object.h"
+#include "Core/Containers/SmallMap.h"
 #include "Flash/SwfTypes.h"
 
 // import/export mechanism.
@@ -63,21 +63,21 @@ public:
 
 	Ref< FlashSpriteInstance > createExternalMovieClipInstance(FlashSpriteInstance* containerInstance) const;
 
-	const std::map< uint16_t, Ref< FlashFont > >& getFonts() const { return m_fonts; }
+	const SmallMap< uint16_t, Ref< FlashFont > >& getFonts() const { return m_fonts; }
 
-	const std::map< uint16_t, Ref< FlashBitmap > >& getBitmaps() const { return m_bitmaps; }
+	const SmallMap< uint16_t, Ref< FlashBitmap > >& getBitmaps() const { return m_bitmaps; }
 
-	const std::map< uint16_t, Ref< FlashCharacter > >& getCharacters() const { return m_characters; }
+	const SmallMap< uint16_t, Ref< FlashCharacter > >& getCharacters() const { return m_characters; }
 
-	const std::map< std::string, uint16_t >& getExports() const { return m_exports; }
+	const SmallMap< std::string, uint16_t >& getExports() const { return m_exports; }
 
 private:
 	SwfRect m_frameBounds;
 	Ref< FlashSprite > m_movieClip;
-	std::map< uint16_t, Ref< FlashFont > > m_fonts;
-	std::map< uint16_t, Ref< FlashBitmap > > m_bitmaps;
-	std::map< uint16_t, Ref< FlashCharacter > > m_characters;
-	std::map< std::string, uint16_t > m_exports;
+	SmallMap< uint16_t, Ref< FlashFont > > m_fonts;
+	SmallMap< uint16_t, Ref< FlashBitmap > > m_bitmaps;
+	SmallMap< uint16_t, Ref< FlashCharacter > > m_characters;
+	SmallMap< std::string, uint16_t > m_exports;
 };
 
 	}

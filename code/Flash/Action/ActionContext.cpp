@@ -45,6 +45,9 @@ void ActionContext::removeFrameListener(ActionObject* frameListener)
 
 void ActionContext::notifyFrameListeners(avm_number_t time)
 {
+	if (m_frameListeners.empty())
+		return;
+
 	ActionValueArray argv(m_pool, 1);
 	argv[0] = ActionValue(time);
 

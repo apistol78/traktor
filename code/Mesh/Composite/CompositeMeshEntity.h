@@ -41,7 +41,7 @@ public:
 
 	void addMeshEntity(const std::wstring& name, MeshEntity* meshEntity);
 
-	Ref< MeshEntity > getMeshEntity(const std::wstring& name) const;
+	MeshEntity* getMeshEntity(const std::wstring& name) const;
 
 	inline const std::map< std::wstring, Ref< MeshEntity > >& getMeshEntities() const { return m_meshEntities; }
 

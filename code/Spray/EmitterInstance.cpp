@@ -24,7 +24,7 @@ namespace traktor
 		namespace
 		{
 
-const float c_warmUpDeltaTime = 1.0f / 10.0f;
+const float c_warmUpDeltaTime = 1.0f / 5.0f;
 #if TARGET_OS_IPHONE
 const uint32_t c_maxEmitPerUpdate = 4;
 const uint32_t c_maxEmitSingleShot = 10;
@@ -165,25 +165,22 @@ void EmitterInstance::update(EmitterUpdateContext& context, const Transform& tra
 	//
 #	if defined(T_USE_UPDATE_JOBS)
 	// Execute modifiers.
-	if (size >= 4)
+	if (size >= 16)
 	{
-		size_t pivots[] =
-		{
-			0,
-			size / 4,
-			(size * 2) / 4,
-			(size * 3) / 4,
-			size
-		};
-
 		JobManager& jobManager = JobManager::getInstance();
-		m_jobs[0] = jobManager.add(makeFunctor< EmitterInstance, float, const Transform&, size_t, size_t >(this, &EmitterInstance::updateTask, context.deltaTime, transform, pivots[0], pivots[1]));
-		m_jobs[1] = jobManager.add(makeFunctor< EmitterInstance, float, const Transform&, size_t, size_t >(this, &EmitterInstance::updateTask, context.deltaTime, transform, pivots[1], pivots[2]));
-		m_jobs[2] = jobManager.add(makeFunctor< EmitterInstance, float, const Transform&, size_t, size_t >(this, &EmitterInstance::updateTask, context.deltaTime, transform, pivots[2], pivots[3]));
-		m_jobs[3] = jobManager.add(makeFunctor< EmitterInstance, float, const Transform&, size_t, size_t >(this, &EmitterInstance::updateTask, context.deltaTime, transform, pivots[3], pivots[4]));
+		m_job = jobManager.add(makeFunctor< EmitterInstance, float, const Transform*, size_t, size_t >(
+			this,
+			&EmitterInstance::updateTask,
+			context.deltaTime,
+			&transform,
+			0,
+			size
+		));
 	}
+	else
+		updateTask(context.deltaTime, &transform, 0, size);
 #	else
-	updateTask(context.deltaTime, transform, 0, m_points.size());
+	updateTask(context.deltaTime, &transform, 0, size);
 #	endif
 #endif
 }
@@ -221,13 +218,10 @@ void EmitterInstance::synchronize() const
 #else
 
 #	if defined(T_USE_UPDATE_JOBS)
-	for (int i = 0; i < 4; ++i)
+	if (m_job)
 	{
-		if (m_jobs[i])
-		{
-			m_jobs[i]->wait();
-			m_jobs[i] = 0;
-		}
+		m_job->wait();
+		m_job = 0;
 	}
 #	endif
 
@@ -235,14 +229,14 @@ void EmitterInstance::synchronize() const
 }
 
 #if !defined(T_MODIFIER_USE_PS3_SPURS)
-void EmitterInstance::updateTask(float deltaTime, const Transform& transform, size_t first, size_t last)
+void EmitterInstance::updateTask(float deltaTime, const Transform* transform, size_t first, size_t last)
 {
 	Scalar deltaTimeScalar(deltaTime);
 	const RefArray< Modifier >& modifiers = m_emitter->getModifiers();
 	for (RefArray< Modifier >::const_iterator i = modifiers.begin(); i != modifiers.end(); ++i)
 	{
 		if (*i)
-			(*i)->update(deltaTimeScalar, transform, m_points, first, last);
+			(*i)->update(deltaTimeScalar, *transform, m_points, first, last);
 	}
 }
 #endif

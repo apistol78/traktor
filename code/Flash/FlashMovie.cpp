@@ -37,7 +37,7 @@ void FlashMovie::defineCharacter(uint16_t characterId, FlashCharacter* character
 
 void FlashMovie::removeCharacter(FlashCharacter* character)
 {
-	for (std::map< uint16_t, Ref< FlashCharacter > >::iterator i = m_characters.begin(); i != m_characters.end(); ++i)
+	for (SmallMap< uint16_t, Ref< FlashCharacter > >::iterator i = m_characters.begin(); i != m_characters.end(); ++i)
 	{
 		if (i->second == character)
 		{
@@ -49,19 +49,19 @@ void FlashMovie::removeCharacter(FlashCharacter* character)
 
 const FlashFont* FlashMovie::getFont(uint16_t fontId) const
 {
-	std::map< uint16_t, Ref< FlashFont > >::const_iterator i = m_fonts.find(fontId);
+	SmallMap< uint16_t, Ref< FlashFont > >::const_iterator i = m_fonts.find(fontId);
 	return i != m_fonts.end() ? i->second.ptr() : 0;
 }
 
 const FlashBitmap* FlashMovie::getBitmap(uint16_t bitmapId) const
 {
-	std::map< uint16_t, Ref< FlashBitmap > >::const_iterator i = m_bitmaps.find(bitmapId);
+	SmallMap< uint16_t, Ref< FlashBitmap > >::const_iterator i = m_bitmaps.find(bitmapId);
 	return i != m_bitmaps.end() ? i->second.ptr() : 0;
 }
 
 const FlashCharacter* FlashMovie::getCharacter(uint16_t characterId) const
 {
-	std::map< uint16_t, Ref< FlashCharacter > >::const_iterator i = m_characters.find(characterId);
+	SmallMap< uint16_t, Ref< FlashCharacter > >::const_iterator i = m_characters.find(characterId);
 	return i != m_characters.end() ? i->second.ptr() : 0;
 }
 
@@ -72,7 +72,7 @@ void FlashMovie::setExport(const std::string& name, uint16_t exportId)
 
 bool FlashMovie::getExportId(const std::string& name, uint16_t& outExportId) const
 {
-	std::map< std::string, uint16_t >::const_iterator i = m_exports.find(name);
+	SmallMap< std::string, uint16_t >::const_iterator i = m_exports.find(name);
 	if (i != m_exports.end())
 	{
 		outExportId = i->second;
@@ -83,7 +83,7 @@ bool FlashMovie::getExportId(const std::string& name, uint16_t& outExportId) con
 
 bool FlashMovie::getExportName(uint16_t exportId, std::string& outName) const
 {
-	for (std::map< std::string, uint16_t >::const_iterator i = m_exports.begin(); i != m_exports.end(); ++i)
+	for (SmallMap< std::string, uint16_t >::const_iterator i = m_exports.begin(); i != m_exports.end(); ++i)
 	{
 		if (i->second == exportId)
 		{
