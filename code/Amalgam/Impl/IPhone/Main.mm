@@ -26,12 +26,12 @@ int32_t amalgamMain(
 	g_stateFactory = stateFactory;
 	
 	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-	
-	// Ensures that the app delegate will be linked correctly.
-	[EAGLView description];
+
+	// Ensure class is properly linked; ie not removed as unused by the linker.
 	[LaunchAppDelegate description];
+	[EAGLView description];
 	
-	int rv = UIApplicationMain(0, nil, nil, nil);
+	int rv = UIApplicationMain(0, nil, nil, @"LaunchAppDelegate");
 	[pool release];
 	
 	return rv;

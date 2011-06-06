@@ -158,16 +158,23 @@ void* VertexBufferOpenGLES2::lock()
 	if (m_buffer.ptr())
 		return 0;
 
-	int32_t bufferSize = getBufferSize();
-	m_buffer.reset((uint8_t*)Alloc::acquireAlign(bufferSize, 16, "VB"));
+	m_lockOffset = 0;
+	m_lockSize = getBufferSize();
+	m_buffer.reset((uint8_t*)Alloc::acquireAlign(m_lockSize, 16, "VB"));
 
 	return m_buffer.ptr();
 }
 
 void* VertexBufferOpenGLES2::lock(uint32_t vertexOffset, uint32_t vertexCount)
 {
-	T_FATAL_ERROR;
-	return 0;
+	if (m_buffer.ptr())
+		return 0;
+
+	m_lockOffset = vertexOffset * m_vertexStride;
+	m_lockSize = vertexCount * m_vertexStride;
+	m_buffer.reset((uint8_t*)Alloc::acquireAlign(m_lockSize, 16, "VB"));
+
+	return m_buffer.ptr();
 }
 
 void VertexBufferOpenGLES2::unlock()
@@ -179,7 +186,26 @@ void VertexBufferOpenGLES2::unlock()
 
 	int32_t bufferSize = getBufferSize();
 	T_OGL_SAFE(glBindBuffer(GL_ARRAY_BUFFER, m_name));
-	T_OGL_SAFE(glBufferData(GL_ARRAY_BUFFER, bufferSize, m_buffer.ptr(), m_dynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW));
+
+	if (m_lockOffset <= 0 && m_lockSize >= bufferSize)
+	{
+		T_OGL_SAFE(glBufferData(
+			GL_ARRAY_BUFFER,
+			m_lockSize,
+			m_buffer.ptr(),
+			m_dynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW
+		));
+	}
+	else
+	{
+		T_OGL_SAFE(glBufferSubData(
+			GL_ARRAY_BUFFER,
+			m_lockOffset,
+			m_lockSize,
+			m_buffer.ptr()
+		));		
+	}
+
 	m_buffer.release();
 
 	setContentValid(true);

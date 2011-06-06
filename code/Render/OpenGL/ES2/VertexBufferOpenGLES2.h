@@ -57,6 +57,8 @@ private:
 	GLuint m_vertexStride;
 	AttributeDesc m_attributeDesc[T_OGL_MAX_USAGE_INDEX];
 	AutoPtr< uint8_t, AllocFreeAlign > m_buffer;
+	GLintptr m_lockOffset;
+	GLsizeiptr m_lockSize;
 };
 
 	}

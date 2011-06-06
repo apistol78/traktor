@@ -7,12 +7,12 @@
 
 @interface LaunchAppDelegate : NSObject <UIApplicationDelegate>
 {
-	UIWindow *window;
-	EAGLView *glView;
+    UIWindow* window;
+	EAGLView* glView;
 }
 
-@property (nonatomic, retain) IBOutlet UIWindow *window;
-@property (nonatomic, retain) IBOutlet EAGLView *glView;
+@property (nonatomic, retain) UIWindow* window;
+@property (nonatomic, retain) EAGLView* glView;
 
 @end
 
