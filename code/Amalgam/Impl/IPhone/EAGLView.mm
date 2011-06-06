@@ -51,6 +51,9 @@ void updateApplicationThread(amalgam::Application* app)
 
 }
 
+@interface EAGLView ()
+@end
+
 @implementation EAGLView
 
 + (Class) layerClass
@@ -58,9 +61,9 @@ void updateApplicationThread(amalgam::Application* app)
     return [CAEAGLLayer class];
 }
 
-- (id) initWithCoder:(NSCoder*)coder
+- (id) initWithFrame: (CGRect)frame
 {    
-    if ((self = [super initWithCoder:coder]))
+    if ((self = [super initWithFrame:frame]))
 	{
 		m_thread = 0;
 
