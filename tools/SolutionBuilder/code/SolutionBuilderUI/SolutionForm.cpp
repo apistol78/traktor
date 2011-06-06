@@ -41,7 +41,7 @@
 
 using namespace traktor;
 
-#define TITLE L"SolutionBuilder v2.3"
+#define TITLE L"SolutionBuilder v2.4"
 
 T_IMPLEMENT_RTTI_CLASS(L"SolutionForm", SolutionForm, ui::Form)
 
@@ -76,11 +76,11 @@ bool SolutionForm::create(const traktor::CommandLine& cmdLine)
 
 	m_shortcutTable = new ui::ShortcutTable();
 	m_shortcutTable->create();
-	m_shortcutTable->addCommand(ui::KsControl, ui::VkN, ui::Command(L"File.New"));
-	m_shortcutTable->addCommand(ui::KsControl, ui::VkO, ui::Command(L"File.Open"));
-	m_shortcutTable->addCommand(ui::KsControl, ui::VkS, ui::Command(L"File.Save"));
-	m_shortcutTable->addCommand(ui::KsControl | ui::KsShift, ui::VkS, ui::Command(L"File.SaveAs"));
-	m_shortcutTable->addCommand(ui::KsControl, ui::VkX, ui::Command(L"File.Exit"));
+	m_shortcutTable->addCommand(ui::KsCommand, ui::VkN, ui::Command(L"File.New"));
+	m_shortcutTable->addCommand(ui::KsCommand, ui::VkO, ui::Command(L"File.Open"));
+	m_shortcutTable->addCommand(ui::KsCommand, ui::VkS, ui::Command(L"File.Save"));
+	m_shortcutTable->addCommand(ui::KsCommand | ui::KsShift, ui::VkS, ui::Command(L"File.SaveAs"));
+	m_shortcutTable->addCommand(ui::KsCommand, ui::VkX, ui::Command(L"File.Exit"));
 	m_shortcutTable->addShortcutEventHandler(ui::createMethodHandler(this, &SolutionForm::eventShortcut));
 
 	m_menuBar = new ui::MenuBar();
