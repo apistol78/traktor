@@ -17,7 +17,7 @@ namespace traktor
 		{
 
 const Guid c_guidPrimitiveShader(L"{5B786C6B-8818-A24A-BD1C-EE113B79BCE2}");
-const int c_bufferCount = 32000;
+const int c_bufferCount = 1 * 1024 * 1024;
 
 enum ShaderId
 {

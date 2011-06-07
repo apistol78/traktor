@@ -243,14 +243,17 @@ Ref< OctreeNodeData > createOctreeParts(
 	const model::Model& model,
 	const OctreeNodeTemplate* nodeTemplate,
 	const std::map< std::wstring, std::list< MeshMaterialTechnique > >& materialTechniqueMap,
-	const uint16_t* indexFirst,
-	uint16_t*& index,
+	bool useLargeIndices,
+	const uint8_t* indexFirst,
+	uint8_t*& index,
 	std::vector< render::Mesh::Part >& renderParts,
 	AlignedVector< PartitionMeshResource::Part >& partitionParts,
 	std::vector< std::wstring >& worldTechniques
 )
 {
 	std::map< std::wstring, std::vector< IndexRange > > techniqueRanges;
+
+	uint32_t indexSize = useLargeIndices ? sizeof(uint32_t) : sizeof(uint16_t);
 
 	Ref< OctreeNodeData > node = new OctreeNodeData();
 	node->m_boundingBox = nodeTemplate->boundingBox;
@@ -259,7 +262,7 @@ Ref< OctreeNodeData > createOctreeParts(
 	{
 		IndexRange range;
 
-		range.offsetFirst = int32_t(index - indexFirst);
+		range.offsetFirst = int32_t(index - indexFirst) / indexSize;
 		range.offsetLast = 0;
 		range.minIndex = std::numeric_limits< int32_t >::max();
 		range.maxIndex = -std::numeric_limits< int32_t >::max();
@@ -273,13 +276,19 @@ Ref< OctreeNodeData > createOctreeParts(
 
 			for (int k = 0; k < 3; ++k)
 			{
-				*index++ = uint16_t(polygon.getVertex(k));
+				if (useLargeIndices)
+					*(uint32_t*)index = polygon.getVertex(k);
+				else
+					*(uint16_t*)index = polygon.getVertex(k);
+
 				range.minIndex = std::min< int32_t >(range.minIndex, polygon.getVertex(k));
 				range.maxIndex = std::max< int32_t >(range.maxIndex, polygon.getVertex(k));
+
+				index += indexSize;
 			}
 		}
 
-		range.offsetLast = int32_t(index - indexFirst);
+		range.offsetLast = int32_t(index - indexFirst) / indexSize;
 		if (range.offsetLast <= range.offsetFirst)
 			continue;
 
@@ -353,6 +362,7 @@ Ref< OctreeNodeData > createOctreeParts(
 				model,
 				nodeTemplate->children[i],
 				materialTechniqueMap,
+				useLargeIndices,
 				indexFirst,
 				index,
 				renderParts,
@@ -412,14 +422,20 @@ bool PartitionMeshConverter::convert(
 	uint32_t vertexSize = render::getVertexSize(vertexElements);
 	T_ASSERT (vertexSize > 0);
 
+	bool useLargeIndices = bool(model.getVertexCount() >= 65536);
+	uint32_t indexSize = useLargeIndices ? sizeof(uint32_t) : sizeof(uint16_t);
+
+	if (useLargeIndices)
+		log::warning << L"Using 32-bit indices; might not work on all renderers" << Endl;
+
 	// Create render mesh.
 	uint32_t vertexBufferSize = uint32_t(model.getVertices().size() * vertexSize);
-	uint32_t indexBufferSize = uint32_t(model.getPolygons().size() * 3 * sizeof(uint16_t));
+	uint32_t indexBufferSize = uint32_t(model.getPolygons().size() * 3 * indexSize);
 
 	Ref< render::Mesh > mesh = render::SystemMeshFactory().createMesh(
 		vertexElements,
 		vertexBufferSize,
-		render::ItUInt16,
+		useLargeIndices ? render::ItUInt32 : render::ItUInt16,
 		indexBufferSize
 	);
 
@@ -450,8 +466,8 @@ bool PartitionMeshConverter::convert(
 	mesh->getVertexBuffer()->unlock();
 
 	// Create index buffer.
-	uint16_t* index = static_cast< uint16_t* >(mesh->getIndexBuffer()->lock());
-	uint16_t* indexFirst = index;
+	uint8_t* index = static_cast< uint8_t* >(mesh->getIndexBuffer()->lock());
+	uint8_t* indexFirst = index;
 
 	std::vector< render::Mesh::Part > renderParts;
 	AlignedVector< PartitionMeshResource::Part > partitionParts;
@@ -461,6 +477,7 @@ bool PartitionMeshConverter::convert(
 		model,
 		nodeTemplate,
 		materialTechniqueMap,
+		useLargeIndices,
 		indexFirst,
 		index,
 		renderParts,

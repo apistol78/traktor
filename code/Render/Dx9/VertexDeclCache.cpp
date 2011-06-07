@@ -51,6 +51,7 @@ struct VertexElementPred
 
 VertexDeclCache::VertexDeclCache(IDirect3DDevice9* d3dDevice)
 :	m_d3dDevice(d3dDevice)
+,	m_currentVertexDeclaration(0)
 {
 }
 
@@ -126,11 +127,16 @@ bool VertexDeclCache::createDeclaration(const std::vector< VertexElement >& vert
 
 void VertexDeclCache::setDeclaration(IDirect3DVertexDeclaration9* d3dVertexDeclaration)
 {
-	m_d3dDevice->SetVertexDeclaration(d3dVertexDeclaration);
+	if (d3dVertexDeclaration != m_currentVertexDeclaration)
+	{
+		m_d3dDevice->SetVertexDeclaration(d3dVertexDeclaration);
+		m_currentVertexDeclaration = d3dVertexDeclaration;
+	}
 }
 
 HRESULT VertexDeclCache::lostDevice()
 {
+	m_currentVertexDeclaration = 0;
 	m_d3dDevice.release();
 	return S_OK;
 }
