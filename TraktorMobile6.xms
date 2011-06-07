@@ -6366,8 +6366,8 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Extern.sqlite-3.6.21</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/sqlite-3.6.21</sourcePath>
+			<name>Extern.sqlite-3.7.6.3</name>
+			<sourcePath>$(TRAKTOR_HOME)/3rdp/sqlite-3.7.6.3</sourcePath>
 			<configurations>
 				<item type="Configuration" version="1">
 					<name>DebugShared</name>
@@ -6375,7 +6375,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/sqlite-3.6.21</item>
+						<item>$(TRAKTOR_HOME)/3rdp/sqlite-3.7.6.3</item>
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
@@ -6392,7 +6392,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/sqlite-3.6.21</item>
+						<item>$(TRAKTOR_HOME)/3rdp/sqlite-3.7.6.3</item>
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
@@ -6409,7 +6409,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/sqlite-3.6.21</item>
+						<item>$(TRAKTOR_HOME)/3rdp/sqlite-3.7.6.3</item>
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
@@ -6426,7 +6426,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/sqlite-3.6.21</item>
+						<item>$(TRAKTOR_HOME)/3rdp/sqlite-3.7.6.3</item>
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
@@ -6440,7 +6440,15 @@
 			</configurations>
 			<items>
 				<item type="File">
-					<fileName>*.*</fileName>
+					<fileName>sqlite3.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>sqlite3.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>sqlite3ext.h</fileName>
 					<items/>
 				</item>
 			</items>
@@ -6545,7 +6553,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/sqlite-3.6.21</item>
+						<item>$(TRAKTOR_HOME)/3rdp/sqlite-3.7.6.3</item>
 					</includePaths>
 					<definitions>
 						<item>T_SQL_SQLITE3_EXPORT</item>
@@ -6563,7 +6571,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/sqlite-3.6.21</item>
+						<item>$(TRAKTOR_HOME)/3rdp/sqlite-3.7.6.3</item>
 					</includePaths>
 					<definitions>
 						<item>T_SQL_SQLITE3_EXPORT</item>
@@ -6581,7 +6589,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/sqlite-3.6.21</item>
+						<item>$(TRAKTOR_HOME)/3rdp/sqlite-3.7.6.3</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -6599,7 +6607,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/sqlite-3.6.21</item>
+						<item>$(TRAKTOR_HOME)/3rdp/sqlite-3.7.6.3</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
