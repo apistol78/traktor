@@ -202,7 +202,7 @@ Ref< ProgramResource > ProgramCompilerWin32::compile(
 		program.getPixelShader(),
 		"main",
 		"ps_3_0",
-		flags,
+		flags | D3DXSHADER_PARTIALPRECISION,
 		resource->m_pixelShader,
 		resource->m_pixelShaderHash
 	))

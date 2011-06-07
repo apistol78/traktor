@@ -37,6 +37,7 @@ private:
 	Semaphore m_lock;
 	ComRef< IDirect3DDevice9 > m_d3dDevice;
 	std::vector< Declaration > m_cache;
+	IDirect3DVertexDeclaration9* m_currentVertexDeclaration;
 };
 
 	}
