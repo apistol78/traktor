@@ -91,7 +91,6 @@ Ref< IMesh > InstanceMeshResource::createMesh(
 	// Fill instancing index buffer.
 	std::vector< render::Mesh::Part > renderParts(singleInstanceParts.size());
 	const uint16_t* sourceIndex = static_cast< const uint16_t* >(singleInstanceMesh->getIndexBuffer()->lock());
-	uint32_t sourceIndexCount = singleInstanceMesh->getIndexBuffer()->getBufferSize() / sizeof(uint16_t);
 	uint32_t destinationIndexSize = (indexType == render::ItUInt16 ? 2 : 4);
 	uint8_t* destinationIndex = static_cast< uint8_t* >(renderMesh->getIndexBuffer()->lock());
 	uint8_t* destinationIndexTop = destinationIndex;

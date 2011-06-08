@@ -17,8 +17,7 @@ public:
 	,	m_position(m_startPosition)
 	{
 		std::memset(&m_zstream, 0, sizeof(m_zstream));
-		int rc = inflateInit(&m_zstream);
-		T_ASSERT (rc == Z_OK);
+		inflateInit(&m_zstream);
 	}
 
 	void close()

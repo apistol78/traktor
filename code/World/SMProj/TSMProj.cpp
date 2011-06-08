@@ -91,12 +91,6 @@ void calculateTSMProj(
 		}
 	}
 
-	Line2 tz[2] =
-	{
-		Line2(Vector2(-nw, 0.0f), Vector2(nw, 0.0f)),
-		Line2(Vector2(-fw, ey * 2.0f), Vector2(fw, ey * 2.0f))
-	};
-
 	Matrix44 Mn(
 		1.0f / nw, 0.0f, 0.0f, 0.0f,
 		0.0f, 1.0f, 0.0f, 0.0f,
@@ -129,7 +123,6 @@ void calculateTSMProj(
 	Vector4 center = viewFrustumBox.getCenter();
 	Vector4 extent = viewFrustumBox.getExtent() * Scalar(2.0f);
 
-	float fz = viewFrustum.getFarZ();
 	float nz = viewFrustum.getNearZ();
 
 	// Calculate light view and projection matrices.

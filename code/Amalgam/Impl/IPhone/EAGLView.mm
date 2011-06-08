@@ -18,6 +18,7 @@ namespace traktor
 	{
 	
 extern const CommandLine* g_cmdLine;
+extern std::wstring g_settingsFileName;
 extern traktor::online::ISessionManagerProvider* g_sessionManagerProvider;
 extern traktor::amalgam::IStateFactory* g_stateFactory;
 
@@ -68,7 +69,7 @@ void updateApplicationThread(amalgam::Application* app)
 		m_thread = 0;
 
 		// Load settings.
-		Path settingsPath = L"$(BUNDLE_PATH)/Application.config";
+		Path settingsPath = traktor::amalgam::g_settingsFileName;
 		Ref< Settings > defaultSettings = loadSettings(settingsPath);
 		if (!defaultSettings)
 		{

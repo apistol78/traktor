@@ -108,7 +108,6 @@ bool TerrainEntity::create(resource::IResourceManager* resourceManager, render::
 		uint32_t lodTriangleCount = ((patchDim - 1) / lodSkip) * ((patchDim - 1) / lodSkip) * 2;
 		patchTriangleCount += lodTriangleCount;
 	}
-	uint32_t patchIndexCount = patchTriangleCount * 3;
 
 #if defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
 	std::vector< render::VertexElement > vertexElements;
@@ -395,7 +394,6 @@ void TerrainEntity::render(
 		for (uint32_t px = 0; px < m_patchCount; ++px)
 		{
 			uint32_t patchId = px + pz * m_patchCount;
-			const Patch& patch = m_patches[patchId];
 
 			Vector4 patchCenterWorld = (patchOrigin + patchExtent * Scalar(0.5f)).xyz1();
 			Vector4 patchCenterView = worldRenderView.getView() * patchCenterWorld;

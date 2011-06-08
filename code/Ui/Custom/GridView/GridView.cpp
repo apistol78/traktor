@@ -216,7 +216,7 @@ void GridView::eventButtonUp(Event* event)
 	const Point& position = mouseEvent->getPosition();
 
 	AutoWidgetCell* cell = hitTest(position);
-	if (GridRow* row = dynamic_type_cast< GridRow* >(cell))
+	if (cell != 0 && is_a< GridRow >(cell))
 	{
 		// If still same column index then user clicked on column.
 		if (m_clickColumn != -1 && m_clickColumn == getColumnIndex(position.x))

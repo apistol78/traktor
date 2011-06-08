@@ -34,7 +34,8 @@ bool TargetManagerConnection::connect(const std::wstring& host, uint16_t port, c
 
 	m_socketStream = new net::SocketStream(m_socket, false, true);
 
-	if (!BinarySerializer(m_socketStream).writeObject(&TargetID(id)))
+    TargetID targetId(id);
+	if (!BinarySerializer(m_socketStream).writeObject(&targetId))
 	{
 		log::error << L"Failed to create target manager connection; unable to send ID" << Endl;
 		return false;

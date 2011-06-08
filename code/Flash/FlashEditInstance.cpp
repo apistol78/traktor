@@ -139,7 +139,6 @@ bool FlashEditInstance::getTextExtents(float& outWidth, float& outHeight) const
 		uint32_t wordOffsetEnd = 0;
 		const FlashEdit* edit = getEdit();
 		const SwfRect& bounds = edit->getTextBounds();
-		const SwfColor& color = edit->getTextColor();
 		bool wordWrap = edit->wordWrap();
 
 		while (wordOffsetStart < words.size())

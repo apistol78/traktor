@@ -119,12 +119,10 @@ void As_flash_geom_Rectangle::Rectangle_inflatePoint(CallArgs& ca)
 
 void As_flash_geom_Rectangle::Rectangle_intersection(CallArgs& ca)
 {
-	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
 }
 
 void As_flash_geom_Rectangle::Rectangle_intersects(CallArgs& ca)
 {
-	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
 }
 
 void As_flash_geom_Rectangle::Rectangle_isEmpty(CallArgs& ca)
@@ -166,7 +164,6 @@ void As_flash_geom_Rectangle::Rectangle_toString(CallArgs& ca)
 
 void As_flash_geom_Rectangle::Rectangle_union(CallArgs& ca)
 {
-	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
 }
 
 void As_flash_geom_Rectangle::Rectangle_get_bottom(CallArgs& ca)
