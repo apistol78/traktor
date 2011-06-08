@@ -187,6 +187,8 @@ namespace
 		
 		std::wstring getBuildPhaseCopyFilesUid() const { return calculateUid(m_project, -9); }
 
+		std::wstring getBuildPhaseShellScriptUid() const { return calculateUid(m_project, -13); }
+
 		std::wstring getBuildFileUid(const Path& file) const { return calculateUid(m_project, file, -1); }
 		
 		std::wstring getBuildFileUid(const Project* dependencyProject) const { return calculateUid(m_project, dependencyProject, -1); }
@@ -469,7 +471,7 @@ bool SolutionBuilderXcode::generate(Solution* solution)
 	s << Endl;
 
 	generatePBXBuildFileSection(s, solution, projects);
-	generatePBXBuildRuleSection(s, solution);
+	//generatePBXBuildRuleSection(s, solution);
 	generatePBXContainerItemProxySection(s, solution, projects);
 	generatePBXCopyFilesBuildPhaseSection(s, solution, projects);
 	generatePBXFileReferenceSection(s, solution, projects, files);
@@ -480,6 +482,7 @@ bool SolutionBuilderXcode::generate(Solution* solution)
 	generatePBXProjectSection(s, solution, projects);
 	generatePBXReferenceProxySection(s, solution, projects);
 	generatePBXHeadersBuildPhaseSection(s, projects);
+	generatePBXShellScriptBuildPhaseSection(s, solution, projects);
 	generatePBXResourcesBuildPhaseSection(s, projects);
 	generatePBXSourcesBuildPhaseSection(s, projects);
 	generatePBXTargetDependencySection(s, projects);
@@ -1049,12 +1052,28 @@ void SolutionBuilderXcode::generatePBXNativeTargetSection(OutputStream& s, const
 		if (isAggregate(*i))
 			continue;
 
+		std::set< Path > projectFiles;
+		collectProjectFiles(*i, projectFiles);
+
+		bool needScriptPhase = false;
+		for (std::set< Path >::const_iterator j = projectFiles.begin(); j != projectFiles.end(); ++j)
+		{
+			std::wstring extension = toLower(j->getExtension());
+			if (extension == L"png" || extension == L"xdi")
+			{
+				needScriptPhase = true;
+				break;
+			}
+		}
+
 		Configuration::TargetFormat targetFormat = getTargetFormat(*i);
 
 		s << L"\t\t" << ProjectUids(*i).getTargetUid() << L" /* " << (*i)->getName() << L" */ = {" << Endl;
 		s << L"\t\t\tisa = PBXNativeTarget;" << Endl;
 		s << L"\t\t\tbuildConfigurationList = " << ProjectUids(*i).getBuildConfigurationListUid() << L" /* Build configuration list for PBXNativeTarget \"" << (*i)->getName() << L"\" */;" << Endl;
 		s << L"\t\t\tbuildPhases = (" << Endl;
+		if (needScriptPhase)
+			s << L"\t\t\t\t" << ProjectUids(*i).getBuildPhaseShellScriptUid() << L" /* ShellScript */," << Endl;
 		s << L"\t\t\t\t" << ProjectUids(*i).getBuildPhaseHeadersUid() << L" /* Headers */," << Endl;
 		s << L"\t\t\t\t" << ProjectUids(*i).getBuildPhaseSourcesUid() << L" /* Sources */," << Endl;
 		s << L"\t\t\t\t" << ProjectUids(*i).getBuildPhaseResourcesUid() << L" /* Resources */," << Endl;
@@ -1068,8 +1087,8 @@ void SolutionBuilderXcode::generatePBXNativeTargetSection(OutputStream& s, const
 			
 		s << L"\t\t\t);" << Endl;
 		s << L"\t\t\tbuildRules = (" << Endl;
-		s << L"\t\t\t\t" << SolutionUids(solution).getCustomBuildRuleUid(0) << L" /* PBXBuildRule */," << Endl;
-		s << L"\t\t\t\t" << SolutionUids(solution).getCustomBuildRuleUid(1) << L" /* PBXBuildRule */," << Endl;
+		//s << L"\t\t\t\t" << SolutionUids(solution).getCustomBuildRuleUid(0) << L" /* PBXBuildRule */," << Endl;
+		//s << L"\t\t\t\t" << SolutionUids(solution).getCustomBuildRuleUid(1) << L" /* PBXBuildRule */," << Endl;
 		s << L"\t\t\t);" << Endl;
 		s << L"\t\t\tdependencies = (" << Endl;
 
@@ -1234,6 +1253,71 @@ void SolutionBuilderXcode::generatePBXResourcesBuildPhaseSection(traktor::Output
 		s << L"\t\t};" << Endl;
 	}
 	s << L"/* End PBXResourcesBuildPhase section */" << Endl;
+	s << Endl;
+}
+
+void SolutionBuilderXcode::generatePBXShellScriptBuildPhaseSection(OutputStream& s, const Solution* solution, const traktor::RefArray< Project >& projects) const
+{
+	Path projectPath = FileSystem::getInstance().getAbsolutePath(solution->getRootPath());
+
+	s << L"/* Begin PBXShellScriptBuildPhase section */" << Endl;
+	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+	{
+		if (isAggregate(*i))
+			continue;
+
+		std::set< Path > projectFiles;
+		collectProjectFiles(*i, projectFiles);
+
+		std::set< Path > resourceFiles;
+		for (std::set< Path >::const_iterator j = projectFiles.begin(); j != projectFiles.end(); ++j)
+		{
+			std::wstring extension = toLower(j->getExtension());
+			if (extension == L"png" || extension == L"xdi")
+			{
+				Path filePath = FileSystem::getInstance().getAbsolutePath(*j);
+
+				Path relativeFilePath;
+				if (FileSystem::getInstance().getRelativePath(filePath, projectPath, relativeFilePath))
+					resourceFiles.insert(relativeFilePath);
+				else
+					log::warning << L"Unable to determine relative path of \"" << filePath.getPathName() << L"\"; not added to project" << Endl;
+			}
+		}
+
+		if (resourceFiles.empty())
+			continue;
+
+		s << L"\t" << ProjectUids(*i).getBuildPhaseShellScriptUid() << L" /* ShellScript */ = {" << Endl;
+		s << L"\t\tisa = PBXShellScriptBuildPhase;" << Endl;
+		s << L"\t\tbuildActionMask = 2147483647;" << Endl;
+		s << L"\t\tfiles = (" << Endl;
+		s << L"\t\t);" << Endl;
+		s << L"\t\tinputPaths = (" << Endl;
+
+		for (std::set< Path >::const_iterator j = resourceFiles.begin(); j != resourceFiles.end(); ++j)
+			s << L"\t\t\t\"" << j->getPathName() << L"\"," << Endl;
+
+		s << L"\t\t);" << Endl;
+		s << L"\t\toutputPaths = (" << Endl;
+
+		for (std::set< Path >::const_iterator j = resourceFiles.begin(); j != resourceFiles.end(); ++j)
+			s << L"\t\t\t\"$(DERIVED_FILE_DIR)/Resources/" << j->getFileNameNoExtension() << L".h\"," << Endl;
+		
+		s << L"\t\t);" << Endl;
+		s << L"\t\trunOnlyForDeploymentPostprocessing = 0;" << Endl;
+		s << L"\t\tshellPath = /bin/sh;" << Endl;
+
+		s << L"\t\tshellScript = \"";
+		s << L"# DO NOT EDIT!\\n";
+
+		for (std::set< Path >::const_iterator j = resourceFiles.begin(); j != resourceFiles.end(); ++j)
+			s << L"BinaryInclude \\\"" << j->getPathName() << L"\\\" \\\"${DERIVED_FILE_DIR}/Resources/" << j->getFileNameNoExtension() << L".h\\\" c_Resource" << j->getFileNameNoExtension() << L"\\n";
+
+		s << L"\";" << Endl;
+		s << L"\t};" << Endl;
+	}
+	s << L"/* End PBXShellScriptBuildPhase section */" << Endl;
 	s << Endl;
 }
 
@@ -1505,7 +1589,7 @@ void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, 
 
 				s << relativeIncludePath.getPathName() << L" ";
 			}
-			s << L"${DERIVED_FILES_DIR)\";" << Endl;
+			s << L"'${DERIVED_FILES_DIR}'\";" << Endl;
 			
 			s << L"\t\t\t\tPRODUCT_NAME = \"" << (*i)->getName() << L"\";" << Endl;
 			if (!plistFile.empty())
