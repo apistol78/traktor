@@ -175,6 +175,9 @@ bool WorldRendererPreLit::create(
 			desc.width /= 2;
 			desc.height /= 2;
 			break;
+                
+		default:
+			break;
 		}
 
 		m_shadowTargetSet = renderSystem->createRenderTargetSet(desc);
@@ -396,7 +399,6 @@ void WorldRendererPreLit::createRenderView(const WorldViewPerspective& worldView
 {
 	float viewNearZ = m_settings.viewNearZ;
 	float viewFarZ = m_settings.viewFarZ;
-	float depthRange = m_settings.depthRange;
 
 	Frustum viewFrustum;
 	viewFrustum.buildPerspective(worldView.fov, worldView.aspect, viewNearZ, viewFarZ);
@@ -410,7 +412,6 @@ void WorldRendererPreLit::createRenderView(const WorldViewPerspective& worldView
 void WorldRendererPreLit::createRenderView(const WorldViewOrtho& worldView, WorldRenderView& outRenderView) const
 {
 	float viewFarZ = m_settings.viewFarZ;
-	float depthRange = m_settings.depthRange;
 
 	Frustum viewFrustum;
 	viewFrustum.buildOrtho(worldView.width, worldView.height, -viewFarZ, viewFarZ);

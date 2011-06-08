@@ -11,6 +11,7 @@ namespace traktor
 	{
 
 const CommandLine* g_cmdLine = 0;
+std::wstring g_settingsFileName;
 online::ISessionManagerProvider* g_sessionManagerProvider = 0;
 IStateFactory* g_stateFactory = 0;
 
@@ -22,6 +23,7 @@ int32_t amalgamMain(
 )
 {
 	g_cmdLine = &cmdLine;
+	g_settingsFileName = settingsFileName;
 	g_sessionManagerProvider = sessionManagerProvider;
 	g_stateFactory = stateFactory;
 	

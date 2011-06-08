@@ -16,9 +16,7 @@ public:
 	,	m_position(stream->tell())
 	{
 		std::memset(&m_zstream, 0, sizeof(m_zstream));
-
-		int rc = deflateInit(&m_zstream, Z_DEFAULT_COMPRESSION);
-		T_ASSERT (rc == Z_OK);
+		deflateInit(&m_zstream, Z_DEFAULT_COMPRESSION);
 
 		m_zstream.next_out = (Bytef*)&m_buf[0];
 		m_zstream.avail_out = (uInt)m_buf.size();
@@ -78,6 +76,7 @@ public:
 				T_ASSERT (nwrite <= int(m_buf.size()));
 				int nwritten = m_stream->write(&m_buf[0], nwrite);
 				T_ASSERT (nwritten == nwrite);
+				nwritten = nwrite;
 			}
 
 			if (m_zstream.avail_out > 0)

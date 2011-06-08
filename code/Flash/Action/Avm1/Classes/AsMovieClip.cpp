@@ -239,9 +239,6 @@ void AsMovieClip::MovieClip_createEmptyMovieClip(CallArgs& ca)
 	std::string emptyClipName = ca.args[0].getStringSafe();
 	int32_t depth = uint16_t(ca.args[1].getNumberSafe());
 
-	// Get root movie.
-	const FlashMovie* movie = ca.context->getMovie();
-
 	// Create fake character ID.
 	uint16_t emptyClipId = depth + 40000;
 
@@ -428,7 +425,6 @@ void AsMovieClip::MovieClip_hitTest(CallArgs& ca)
 	{
 		avm_number_t x = ca.args[0].getNumberSafe() * 20.0f;
 		avm_number_t y = ca.args[1].getNumberSafe() * 20.0f;
-		bool shape = ca.args[2].getBooleanSafe();
 
 		SwfRect bounds = movieClipInstance->getBounds();
 		ca.ret = ActionValue(x >= bounds.min.x && y >= bounds.min.y && x <= bounds.max.x && y <= bounds.max.y);

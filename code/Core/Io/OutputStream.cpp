@@ -66,7 +66,7 @@ template <> struct ftoa_int_type < float > { typedef int32_t int_t; };
 template <> struct ftoa_int_type < double > { typedef int64_t int_t; };
 
 template < typename T, int size >
-wchar_t* ftoa__(T value, int fractions, wchar_t* buf)
+const wchar_t* ftoa__(T value, int fractions, wchar_t* buf)
 {
 	typedef typename ftoa_int_type< T >::int_t int_t;
 
@@ -386,6 +386,10 @@ bool OutputStream::isEol(wchar_t ch) const
 
 	case LeMac:
 		eol = bool(ch == L'\r');
+		break;
+	
+	case LeAuto:
+	default:
 		break;
 	}
 	return eol;
