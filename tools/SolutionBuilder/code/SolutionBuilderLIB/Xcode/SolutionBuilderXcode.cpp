@@ -1412,7 +1412,7 @@ void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, 
 
 				s << relativeIncludePath.getPathName() << L" ";
 			}
-			s << L"${DERIVED_FILES_DIR)\";" << Endl;
+			s << L"'${DERIVED_FILES_DIR}'\";" << Endl;
 
 			s << L"\t\t\t\tPRODUCT_NAME = \"" << (*i)->getName() << L"\";" << Endl;
 			if (!plistFile.empty())
