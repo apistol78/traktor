@@ -17,6 +17,7 @@ namespace traktor
 	namespace render
 	{
 
+class BlitHelper;
 class ContextOpenGLES2;
 
 /*! \brief OpenGL ES 2.0 render system.
@@ -69,6 +70,8 @@ public:
 
 private:
 	Ref< ContextOpenGLES2 > m_globalContext;
+	Ref< BlitHelper > m_blitHelper;
+
 #if defined(_WIN32)
 	HWND m_hWnd;
 

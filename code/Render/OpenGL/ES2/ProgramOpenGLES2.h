@@ -56,7 +56,7 @@ public:
 
 	virtual void setStencilReference(uint32_t stencilReference);
 
-	bool activate(bool landscape, bool flipY, float targetSize[2]);
+	bool activate(float targetSize[2]);
 
 	const GLint* getAttributeLocs() const;
 
@@ -89,7 +89,6 @@ private:
 	GLuint m_program;
 	RenderState m_renderState;
 	GLint m_locationTargetSize;
-	GLint m_locationPostOrientationCoeffs;
 	GLint m_attributeLocs[T_OGL_MAX_USAGE_INDEX];			//!< Vertex attribute locations.
 	std::map< handle_t, uint32_t > m_parameterMap;			//!< Parameter to data map.
 	std::vector< Uniform > m_uniforms;						//!< Scalar uniforms.

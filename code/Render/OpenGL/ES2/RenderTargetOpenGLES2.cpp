@@ -52,6 +52,7 @@ RenderTargetOpenGLES2::RenderTargetOpenGLES2(IContext* context)
 :	m_context(context)
 ,	m_width(0)
 ,	m_height(0)
+,	m_usingPrimaryDepthBuffer(false)
 ,	m_textureTarget(0)
 ,	m_frameBufferObject(0)
 ,	m_colorTexture(0)
@@ -73,6 +74,7 @@ bool RenderTargetOpenGLES2::create(const RenderTargetSetCreateDesc& setDesc, con
 
 	m_width = setDesc.width;
 	m_height = setDesc.height;
+	m_usingPrimaryDepthBuffer = setDesc.usingPrimaryDepthStencil;
 
 	switch (desc.format)
 	{
@@ -87,19 +89,6 @@ bool RenderTargetOpenGLES2::create(const RenderTargetSetCreateDesc& setDesc, con
 	default:
 		log::error << L"Unable to create render target, unsupported format" << Endl;
 		return false;
-	}
-
-	T_OGL_SAFE(glGenFramebuffers(1, &m_frameBufferObject));
-	T_OGL_SAFE(glBindFramebuffer(GL_FRAMEBUFFER, m_frameBufferObject));
-
-	if (depthBuffer)
-	{
-		T_OGL_SAFE(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthBuffer));
-		if (stencilBuffer != 0)
-		{
-			T_OGL_SAFE(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, stencilBuffer));
-		}
-		m_haveDepth = true;
 	}
 
 	int targetWidth = m_width;
@@ -117,7 +106,21 @@ bool RenderTargetOpenGLES2::create(const RenderTargetSetCreateDesc& setDesc, con
 
 	T_OGL_SAFE(glTexImage2D(m_textureTarget, 0, internalFormat, targetWidth, targetHeight, 0, format, type, NULL));
 
+	T_OGL_SAFE(glGenFramebuffers(1, &m_frameBufferObject));
+	T_OGL_SAFE(glBindFramebuffer(GL_FRAMEBUFFER, m_frameBufferObject));
+
 	T_OGL_SAFE(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_textureTarget, m_colorTexture, 0));
+
+	if (depthBuffer)
+	{
+		T_OGL_SAFE(glBindRenderbuffer(GL_RENDERBUFFER, depthBuffer));
+		T_OGL_SAFE(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthBuffer));
+//		if (stencilBuffer != 0)
+//		{
+//			T_OGL_SAFE(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, stencilBuffer));
+//		}
+		m_haveDepth = true;
+	}
 
 	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 	T_OGL_SAFE(glBindFramebuffer(GL_FRAMEBUFFER, 0));
@@ -194,9 +197,29 @@ void RenderTargetOpenGLES2::bind(GLuint unit, const SamplerState& samplerState, 
 	T_OGL_SAFE(glUniform1i(locationTexture, unit));
 }
 
-void RenderTargetOpenGLES2::bind()
+void RenderTargetOpenGLES2::bind(GLuint primaryDepthTarget)
 {
 	T_OGL_SAFE(glBindFramebuffer(GL_FRAMEBUFFER, m_frameBufferObject));
+	
+	if (m_usingPrimaryDepthBuffer)
+	{
+		T_OGL_SAFE(glFramebufferRenderbuffer(
+			GL_FRAMEBUFFER,
+			GL_DEPTH_ATTACHMENT,
+			GL_RENDERBUFFER,
+			primaryDepthTarget
+		));
+		/*
+		T_OGL_SAFE(glFramebufferRenderbuffer(
+			GL_FRAMEBUFFER,
+			GL_STENCIL_ATTACHMENT,
+			GL_RENDERBUFFER_EXT,
+			depthBuffer
+		));
+		*/
+	}
+	
+	glCheckFramebufferStatus(GL_FRAMEBUFFER);
 }
 
 void RenderTargetOpenGLES2::enter()

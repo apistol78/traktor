@@ -282,14 +282,14 @@ void ProgramOpenGLES2::setStencilReference(uint32_t stencilReference)
 	m_renderState.stencilRef = stencilReference;
 }
 
-bool ProgramOpenGLES2::activate(bool landscape, bool flipY, float targetSize[2])
+bool ProgramOpenGLES2::activate(float targetSize[2])
 {
 #if !defined(T_OFFLINE_ONLY)
 
 	// Bind program and set state display list.
-	if (ms_activeProgram != this)
+	//if (ms_activeProgram != this)
 	{
-		m_resourceContext->setRenderState(m_renderState, flipY);
+		m_resourceContext->setRenderState(m_renderState);
 		T_OGL_SAFE(glUseProgram(m_program));
 	}
 	
@@ -320,17 +320,6 @@ bool ProgramOpenGLES2::activate(bool landscape, bool flipY, float targetSize[2])
 		
 		i->dirty = false;
 	}
-
-	// Update post orientation coefficients.
-	if (!landscape)
-	{
-		if (!flipY)
-			glUniform4f(m_locationPostOrientationCoeffs, 1.0f, 0.0f, 0.0f, 1.0f);
-		else
-			glUniform4f(m_locationPostOrientationCoeffs, 1.0f, 0.0f, 0.0f, -1.0f);
-	}
-	else
-		glUniform4f(m_locationPostOrientationCoeffs, 0.0f, -1.0f, 1.0f, 0.0f);
 
 	// Update target size uniform if necessary.
 	if (m_locationTargetSize != -1)
@@ -383,7 +372,6 @@ ProgramOpenGLES2::ProgramOpenGLES2(ContextOpenGLES2* resourceContext, GLuint pro
 :	m_resourceContext(resourceContext)
 ,	m_program(program)
 ,	m_locationTargetSize(0)
-,	m_locationPostOrientationCoeffs(0)
 ,	m_textureDirty(true)
 {
 	const ProgramResourceOpenGL* resourceOpenGL = checked_type_cast< const ProgramResourceOpenGL* >(resource);
@@ -393,7 +381,6 @@ ProgramOpenGLES2::ProgramOpenGLES2(ContextOpenGLES2* resourceContext, GLuint pro
 	
 	// Get target size parameter.
 	m_locationTargetSize = glGetUniformLocation(m_program, "_gl_targetSize");
-	m_locationPostOrientationCoeffs = glGetUniformLocation(m_program, "t_internal_postOrientationCoeffs");
 
 	// Map texture parameters.
 	const std::map< std::wstring, int32_t >& samplerTextures = resourceOpenGL->getSamplerTextures();

@@ -14,8 +14,6 @@ EAGLContextWrapper::EAGLContextWrapper()
 ,	m_context(0)
 ,	m_frameBuffer(0)
 ,	m_renderBuffer(0)
-,	m_depthRenderBuffer(0)
-,	m_wantDepthBuffer(false)
 ,	m_width(0)
 ,	m_height(0)
 ,	m_landscape(false)
@@ -29,7 +27,7 @@ bool EAGLContextWrapper::create()
 	return true;
 }
 
-bool EAGLContextWrapper::create(EAGLContextWrapper* shareContext, void* nativeHandle, bool wantDepthBuffer)
+bool EAGLContextWrapper::create(EAGLContextWrapper* shareContext, void* nativeHandle)
 {
 	// Native handle are pointer to UIView object;
 	// these UIViews must have CAEAGLLayer as layerClass.
@@ -51,12 +49,11 @@ bool EAGLContextWrapper::create(EAGLContextWrapper* shareContext, void* nativeHa
 	
 	m_layer = layer;
 	m_context = (void*)context;
-	m_wantDepthBuffer = wantDepthBuffer;
 	
 	CGRect bounds = [layer bounds];
 	m_width = bounds.size.width;
 	m_height = bounds.size.height;
-	m_landscape = true;	// @fixme Get from view and reset view transforms.
+	m_landscape = true;
 
 	setCurrent(this);
 	createFrameBuffer();
@@ -103,6 +100,7 @@ void EAGLContextWrapper::createFrameBuffer()
 {
 	EAGLContext* context = (EAGLContext*)m_context;
 
+	// Create primary buffer.
 	glGenFramebuffers(1, &m_frameBuffer);
 	glGenRenderbuffers(1, &m_renderBuffer);
 	
@@ -115,16 +113,6 @@ void EAGLContextWrapper::createFrameBuffer()
 	glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH, &m_width);
 	glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, &m_height);
 	
-	log::info << L"Framebuffer " << m_width << L"*" << m_height << Endl;
-	
-	if (m_wantDepthBuffer)
-	{
-		glGenRenderbuffers(1, &m_depthRenderBuffer);
-		glBindRenderbuffer(GL_RENDERBUFFER, m_depthRenderBuffer);
-		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, m_width, m_height);
-		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthRenderBuffer);
-	}
-	
 	if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		NSLog(@"failed to make complete framebuffer object %x", glCheckFramebufferStatus(GL_FRAMEBUFFER));
 }
@@ -136,12 +124,6 @@ void EAGLContextWrapper::destroyFrameBuffer()
 	
 	glDeleteRenderbuffers(1, &m_renderBuffer);
 	m_renderBuffer = 0;
-	
-	if (m_depthRenderBuffer)
-	{
-		glDeleteRenderbuffers(1, &m_depthRenderBuffer);
-		m_depthRenderBuffer = 0;
-	}
 }
 
 	}

@@ -10,7 +10,7 @@
 {
 	// Create window.
 	window = [[UIWindow alloc] initWithFrame: [[UIScreen mainScreen] bounds]];
-	[window setBackgroundColor: [UIColor yellowColor]];
+	[window setBackgroundColor: [UIColor blackColor]];
 
 	// Create view.
 	glView = [[EAGLView alloc] initWithFrame: window.bounds];
