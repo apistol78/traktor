@@ -25,6 +25,8 @@ public:
 	__m128 m_data;
 #elif defined(T_MATH_USE_ALTIVEC) || defined(T_MATH_USE_ALTIVEC_SPU)
 	vec_float4 m_data;
+#elif defined(T_MATH_USE_NEON)
+	float32x4_t m_data;
 #else
 	float m_data;
 #endif
@@ -39,6 +41,8 @@ public:
 	explicit T_MATH_INLINE Scalar(__m128 value);
 #elif defined(T_MATH_USE_ALTIVEC) || defined(T_MATH_USE_ALTIVEC_SPU)
 	explicit T_MATH_INLINE Scalar(vec_float4 value);
+#elif defined(T_MATH_USE_NEON)
+	explicit T_MATH_INLINE Scalar(float32x4_t value);
 #endif
 
 	T_MATH_INLINE Scalar operator - () const;
@@ -91,6 +95,8 @@ T_MATH_INLINE T_DLLCLASS Scalar lerp(const Scalar& a, const Scalar& b, const Sca
 #		include "Core/Math/AltiVec/Scalar.inl"
 #	elif defined(T_MATH_USE_ALTIVEC_SPU)
 #		include "Core/Math/AltiVec/Ps3/Spu/Scalar.inl"
+#	elif defined(T_MATH_USE_NEON)
+#		include "Core/Math/Neon/Scalar.inl"
 #	else
 #		include "Core/Math/Std/Scalar.inl"
 #	endif

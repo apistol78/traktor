@@ -33,13 +33,17 @@
 #		define T_MATH_USE_INLINE
 #		define T_MATH_INLINE inline
 #		if defined(__APPLE__)
-#			if !TARGET_OS_IPHONE
+#			if TARGET_OS_IPHONE && !TARGET_IPHONE_SIMULATOR
+#				define T_MATH_USE_NEON
+#			elif !TARGET_OS_IPHONE
 #				define T_MATH_USE_SSE2
 #			endif
 #		endif
 #	else	// _DEBUG
 #		if defined(__APPLE__)
-#			if !TARGET_OS_IPHONE
+#			if TARGET_OS_IPHONE && !TARGET_IPHONE_SIMULATOR
+#				define T_MATH_USE_NEON
+#			elif !TARGET_OS_IPHONE
 #				define T_MATH_USE_SSE2
 #			endif
 #		endif
@@ -83,6 +87,10 @@
 #	else
 #		include <altivec.h>
 #	endif
+#endif
+
+#if defined(T_MATH_USE_NEON)
+#	include <arm_neon.h>
 #endif
 
 #if !defined(T_MATH_ALIGN16)

@@ -7,6 +7,8 @@
 #		include "Core/Math/AltiVec/Vector4.inl"
 #	elif defined(T_MATH_USE_ALTIVEC_SPU)
 #		include "Core/Math/AltiVec/Ps3/Spu/Vector4.inl"
+#	elif defined(T_MATH_USE_NEON)
+#		include "Core/Math/Neon/Vector4.inl"
 #	else
 #		include "Core/Math/Std/Vector4.inl"
 #	endif
