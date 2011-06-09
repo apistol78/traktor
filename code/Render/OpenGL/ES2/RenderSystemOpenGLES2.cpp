@@ -1,9 +1,11 @@
 #include <algorithm>
 #include <locale>
 #include "Core/Log/Log.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Render/VertexElement.h"
 #include "Render/OpenGL/Platform.h"
+#include "Render/OpenGL/ES2/BlitHelper.h"
 #include "Render/OpenGL/ES2/RenderSystemOpenGLES2.h"
 #include "Render/OpenGL/ES2/RenderViewOpenGLES2.h"
 #include "Render/OpenGL/ES2/ProgramCompilerOpenGLES2.h"
@@ -62,11 +64,19 @@ bool RenderSystemOpenGLES2::create(const RenderSystemCreateDesc& desc)
 
 #endif
 
+	{
+		T_ANONYMOUS_VAR(IContext::Scope)(m_globalContext);
+		m_blitHelper = new BlitHelper();
+		m_blitHelper->create(m_globalContext);
+	}
+
 	return true;
 }
 
 void RenderSystemOpenGLES2::destroy()
 {
+	safeDestroy(m_blitHelper);
+
 //#if defined(T_OPENGL_ES2_HAVE_EGL)
 //	if (m_display == EGL_NO_DISPLAY)
 //		return;
@@ -203,11 +213,9 @@ Ref< IRenderView > RenderSystemOpenGLES2::createRenderView(const RenderViewEmbed
 #if !defined(T_OFFLINE_ONLY)
 	Ref< ContextOpenGLES2 > context = ContextOpenGLES2::createContext(
 		m_globalContext,
-		desc.nativeWindowHandle,
-		desc.depthBits,
-		desc.stencilBits
+		desc.nativeWindowHandle
 	);
-	return new RenderViewOpenGLES2(m_globalContext, context);
+	return new RenderViewOpenGLES2(m_globalContext, context, m_blitHelper);
 #else
 	return 0;
 #endif

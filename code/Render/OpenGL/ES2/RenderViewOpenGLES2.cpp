@@ -1,3 +1,5 @@
+#include "Core/Misc/SafeDestroy.h"
+#include "Render/OpenGL/ES2/BlitHelper.h"
 #include "Render/OpenGL/ES2/ContextOpenGLES2.h"
 #include "Render/OpenGL/ES2/RenderViewOpenGLES2.h"
 
@@ -20,12 +22,15 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewOpenGLES2", RenderViewOpenGLES
 
 RenderViewOpenGLES2::RenderViewOpenGLES2(
 	ContextOpenGLES2* globalContext,
-	ContextOpenGLES2* context
+	ContextOpenGLES2* context,
+	BlitHelper* blitHelper
 )
 :	m_globalContext(globalContext)
 ,	m_context(context)
+,	m_blitHelper(blitHelper)
 ,	m_currentDirty(true)
 {
+	updatePrimaryTarget();
 }
 
 RenderViewOpenGLES2::~RenderViewOpenGLES2()
@@ -36,6 +41,7 @@ void RenderViewOpenGLES2::close()
 {
 	m_context = 0;
 	m_globalContext = 0;
+	m_blitHelper = 0;
 }
 
 bool RenderViewOpenGLES2::reset(const RenderViewDefaultDesc& desc)
@@ -45,17 +51,22 @@ bool RenderViewOpenGLES2::reset(const RenderViewDefaultDesc& desc)
 
 void RenderViewOpenGLES2::resize(int32_t width, int32_t height)
 {
-	m_context->resize(width, height);
+	if (!m_context->getLandscape())
+		m_context->resize(width, height);
+	else
+		m_context->resize(height, width);
+
+	updatePrimaryTarget();
 }
 
 int RenderViewOpenGLES2::getWidth() const
 {
-	return m_context->getWidth();
+	return m_primaryTargetSet->getWidth();
 }
 
 int RenderViewOpenGLES2::getHeight() const
 {
-	return m_context->getHeight();
+	return m_primaryTargetSet->getHeight();
 }
 
 bool RenderViewOpenGLES2::isActive() const
@@ -81,24 +92,12 @@ void RenderViewOpenGLES2::setViewport(const Viewport& viewport)
 {
 	T_ANONYMOUS_VAR(IContext::Scope)(m_context);
 
-	if (m_context->getLandscape())
-	{
-		T_OGL_SAFE(glViewport(
-			viewport.top,
-			viewport.left,
-			viewport.height,
-			viewport.width
-		));
-	}
-	else
-	{
-		T_OGL_SAFE(glViewport(
-			viewport.left,
-			viewport.top,
-			viewport.width,
-			viewport.height
-		));
-	}
+	T_OGL_SAFE(glViewport(
+		viewport.left,
+		viewport.top,
+		viewport.width,
+		viewport.height
+	));
 
 	T_OGL_SAFE(glDepthRangef(
 		viewport.nearZ,
@@ -115,12 +114,6 @@ Viewport RenderViewOpenGLES2::getViewport()
 
 	GLfloat range[2];
 	T_OGL_SAFE(glGetFloatv(GL_DEPTH_RANGE, range));
-
-	if (m_context->getLandscape())
-	{
-		std::swap(ext[0], ext[1]);
-		std::swap(ext[2], ext[3]);
-	}
 
 	Viewport viewport;
 	viewport.left = ext[0];
@@ -143,32 +136,7 @@ bool RenderViewOpenGLES2::begin(EyeType eye)
 	if (!m_context->enter())
 		return false;
 		
-	m_context->bindPrimary();
-	
-	if (m_context->getLandscape())
-	{
-		T_OGL_SAFE(glViewport(
-			0,
-			0,
-			m_context->getHeight(),
-			m_context->getWidth()
-		));
-	}
-	else
-	{
-		T_OGL_SAFE(glViewport(
-			0,
-			0,
-			m_context->getWidth(),
-			m_context->getHeight()
-		));
-	}
-
-	T_OGL_SAFE(glEnable(GL_DEPTH_TEST));
-	T_OGL_SAFE(glDepthFunc(GL_LEQUAL));
-
-	m_currentDirty = true;
-	return true;
+	return begin(m_primaryTargetSet, 0);
 }
 
 bool RenderViewOpenGLES2::begin(RenderTargetSet* renderTargetSet, int renderTarget)
@@ -176,7 +144,7 @@ bool RenderViewOpenGLES2::begin(RenderTargetSet* renderTargetSet, int renderTarg
 	RenderTargetSetOpenGLES2* rts = checked_type_cast< RenderTargetSetOpenGLES2* >(renderTargetSet);
 	RenderTargetOpenGLES2* rt = checked_type_cast< RenderTargetOpenGLES2* >(rts->getColorTexture(renderTarget));
 	
-	rt->bind();
+	rt->bind(m_primaryTargetSet->getDepthBuffer());
 	rt->enter();
 
 	RenderTargetScope scope;
@@ -261,27 +229,13 @@ void RenderViewOpenGLES2::draw(const Primitives& primitives)
 		if (!m_currentProgram || !m_currentVertexBuffer)
 			return;
 
-		float targetSize[2];
-		bool landscape;
-		bool flipY;
-		
-		if (!m_renderTargetStack.empty())
-		{	
-			const RenderTargetOpenGLES2* rt = m_renderTargetStack.top().renderTarget;
-			targetSize[0] = float(rt->getWidth());
-			targetSize[1] = float(rt->getHeight());
-			landscape = false;
-			flipY = true;
-		}
-		else
-		{	
-			targetSize[0] = float(getWidth());
-			targetSize[1] = float(getHeight());
-			landscape = m_context->getLandscape();
-			flipY = false;
-		}
+		const RenderTargetOpenGLES2* rt = m_renderTargetStack.top().renderTarget;
 
-		if (!m_currentProgram->activate(landscape, flipY, targetSize))
+		float targetSize[2];
+		targetSize[0] = float(rt->getWidth());
+		targetSize[1] = float(rt->getHeight());
+
+		if (!m_currentProgram->activate(targetSize))
 			return;
 
 		m_currentVertexBuffer->activate(
@@ -367,13 +321,16 @@ void RenderViewOpenGLES2::draw(const Primitives& primitives)
 
 void RenderViewOpenGLES2::end()
 {
+	T_ASSERT (!m_renderTargetStack.empty());
+	
+	m_renderTargetStack.pop();
+	
 	if (!m_renderTargetStack.empty())
 	{
-		m_renderTargetStack.pop();
-		if (!m_renderTargetStack.empty())
-			m_renderTargetStack.top().renderTarget->bind();
-		else
-			m_context->bindPrimary();
+		m_renderTargetStack.top().renderTarget->bind(
+			m_primaryTargetSet->getDepthBuffer()
+		);
+		m_renderTargetStack.top().renderTarget->enter();
 	}
 
 	//T_OGL_SAFE(glPopAttrib());
@@ -381,6 +338,21 @@ void RenderViewOpenGLES2::end()
 
 void RenderViewOpenGLES2::present()
 {
+	RenderTargetOpenGLES2* rt = checked_type_cast< RenderTargetOpenGLES2* >(m_primaryTargetSet->getColorTexture(0));
+
+	// Blit primary buffer to frame.
+	m_context->bindPrimary();
+	
+	T_OGL_SAFE(glViewport(
+		0,
+		0,
+		m_context->getWidth(),
+		m_context->getHeight()
+	));
+
+	m_blitHelper->blit(rt->getColorTexture());
+		
+	// Swap frames.
 	m_context->swapBuffers();
 	m_context->leave();
 
@@ -400,6 +372,44 @@ void RenderViewOpenGLES2::popMarker()
 
 void RenderViewOpenGLES2::getStatistics(RenderViewStatistics& outStatistics) const
 {
+}
+
+bool RenderViewOpenGLES2::updatePrimaryTarget()
+{
+	T_ANONYMOUS_VAR(IContext::Scope)(m_globalContext);
+	
+	RenderTargetSetCreateDesc desc;
+	
+	desc.count = 1;
+	desc.multiSample = 0;
+	desc.createDepthStencil = true;
+	
+	if (!m_context->getLandscape())
+	{
+		desc.width = m_context->getWidth();
+		desc.height = m_context->getHeight();
+	}
+	else
+	{
+		desc.width = m_context->getHeight();
+		desc.height = m_context->getWidth();
+	}
+	
+	// Create primary target less than full resolution
+	// in order to reduce bandwidth.
+	const int32_t c_resolutionDenom = 2;
+	
+	desc.width /= c_resolutionDenom;
+	desc.height /= c_resolutionDenom;
+	
+	desc.targets[0].format = TfR8G8B8A8;
+	
+	safeDestroy(m_primaryTargetSet);
+	
+	m_primaryTargetSet = new RenderTargetSetOpenGLES2(m_context);
+	m_primaryTargetSet->create(desc);
+
+	return true;
 }
 
 	}

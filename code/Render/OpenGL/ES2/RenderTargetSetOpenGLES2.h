@@ -50,6 +50,8 @@ public:
 
 	virtual bool read(int index, void* buffer) const;
 	
+	GLuint getDepthBuffer() const { return m_depthBuffer; }
+	
 	GLuint getClearMask() const { return m_clearMask; }
 
 private:

@@ -20,6 +20,7 @@ namespace traktor
 
 #if !defined(T_OFFLINE_ONLY)
 
+class BlitHelper;
 class ContextOpenGLES2;
 class VertexBufferOpenGLES2;
 class IndexBufferOpenGLES2;
@@ -37,7 +38,8 @@ class T_DLLCLASS RenderViewOpenGLES2 : public IRenderView
 public:
 	RenderViewOpenGLES2(
 		ContextOpenGLES2* globalContext,
-		ContextOpenGLES2* context
+		ContextOpenGLES2* context,
+		BlitHelper* blitHelper
 	);
 
 	virtual ~RenderViewOpenGLES2();
@@ -95,11 +97,15 @@ private:
 	
 	Ref< ContextOpenGLES2 > m_globalContext;
 	Ref< ContextOpenGLES2 > m_context;
+	Ref< BlitHelper > m_blitHelper;
+	Ref< RenderTargetSetOpenGLES2 > m_primaryTargetSet;
 	std::stack< RenderTargetScope > m_renderTargetStack;
 	Ref< VertexBufferOpenGLES2 > m_currentVertexBuffer;
 	Ref< IndexBufferOpenGLES2 > m_currentIndexBuffer;
 	Ref< ProgramOpenGLES2 > m_currentProgram;
 	bool m_currentDirty;
+	
+	bool updatePrimaryTarget();
 };
 
 #endif

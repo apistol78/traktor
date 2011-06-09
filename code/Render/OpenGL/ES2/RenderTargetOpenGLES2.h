@@ -49,14 +49,17 @@ public:
 
 	virtual void bind(GLuint unit, const SamplerState& samplerState, GLint locationTexture);
 
-	void bind();
+	void bind(GLuint primaryDepthTarget);
 
 	void enter();
+	
+	GLuint getColorTexture() { return m_colorTexture; }
 
 private:
 	Ref< IContext > m_context;
 	int m_width;
 	int m_height;
+	bool m_usingPrimaryDepthBuffer;
 	GLenum m_textureTarget;
 	GLuint m_frameBufferObject;
 	GLuint m_colorTexture;

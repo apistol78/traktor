@@ -30,9 +30,7 @@ public:
 
 	static Ref< ContextOpenGLES2 > createContext(
 		ContextOpenGLES2* resourceContext,
-		void* nativeWindowHandle,
-		uint32_t depthBits,
-		uint32_t stencilBits
+		void* nativeWindowHandle
 	);
 
 	virtual bool enter();
@@ -57,7 +55,7 @@ public:
 
 	Semaphore& lock();
 
-	void setRenderState(const RenderState& renderState, bool invertCull);
+	void setRenderState(const RenderState& renderState);
 	
 	void bindPrimary();
 

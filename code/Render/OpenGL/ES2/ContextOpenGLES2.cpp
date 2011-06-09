@@ -161,9 +161,7 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createResourceContext()
 
 Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(
 	ContextOpenGLES2* resourceContext,
-	void* nativeWindowHandle,
-	uint32_t depthBits,
-	uint32_t stencilBits
+	void* nativeWindowHandle
 )
 {
 #if TARGET_OS_IPHONE
@@ -171,8 +169,7 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(
 	EAGLContextWrapper* wrapper = new EAGLContextWrapper();
 	if (!wrapper->create(
 		resourceContext ? resourceContext->m_context : 0,
-		nativeWindowHandle,
-		depthBits != 0
+		nativeWindowHandle
 	))
 		return 0;
 
@@ -210,8 +207,6 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(
 		EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
 		EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
 		EGL_NATIVE_RENDERABLE, EGL_FALSE,
-		EGL_DEPTH_SIZE, depthBits,
-		EGL_STENCIL_SIZE, stencilBits,
 		EGL_NONE
 	};
 
@@ -404,10 +399,7 @@ bool ContextOpenGLES2::resize(int32_t width, int32_t height)
 int32_t ContextOpenGLES2::getWidth() const
 {
 #if TARGET_OS_IPHONE
-	if (!m_context->landscape())
-		return m_context->getWidth();
-	else
-		return m_context->getHeight();
+	return m_context->getWidth();
 #elif defined(T_OPENGL_ES2_HAVE_EGL)
 	EGLint width;
 	eglQuerySurface(m_display, m_surface, EGL_WIDTH, &width);
@@ -420,10 +412,7 @@ int32_t ContextOpenGLES2::getWidth() const
 int32_t ContextOpenGLES2::getHeight() const
 {
 #if TARGET_OS_IPHONE
-	if (!m_context->landscape())
-		return m_context->getHeight();
-	else
-		return m_context->getWidth();
+	return m_context->getHeight();
 #elif defined(T_OPENGL_ES2_HAVE_EGL)
 	EGLint height;
 	eglQuerySurface(m_display, m_surface, EGL_HEIGHT, &height);
@@ -436,7 +425,7 @@ int32_t ContextOpenGLES2::getHeight() const
 bool ContextOpenGLES2::getLandscape() const
 {
 #if TARGET_OS_IPHONE
-	return m_context->landscape();
+	return m_context->getLandscape();
 #else
 	return false;
 #endif
@@ -456,7 +445,7 @@ Semaphore& ContextOpenGLES2::lock()
 	return m_lock;
 }
 
-void ContextOpenGLES2::setRenderState(const RenderState& renderState, bool invertCull)
+void ContextOpenGLES2::setRenderState(const RenderState& renderState)
 {
 	if (renderState.cullFaceEnable)
 	{
@@ -468,7 +457,7 @@ void ContextOpenGLES2::setRenderState(const RenderState& renderState, bool inver
 		if (renderState.cullFace != m_renderState.cullFace)
 		{
 			GLuint cullFace = renderState.cullFace;
-			if (invertCull)
+			if (true)
 			{
 				if (cullFace == GL_FRONT)
 					cullFace = GL_BACK;
