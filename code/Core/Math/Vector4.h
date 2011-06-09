@@ -27,6 +27,8 @@ public:
 	__m128 m_data;
 #elif defined(T_MATH_USE_ALTIVEC) || defined(T_MATH_USE_ALTIVEC_SPU)
 	vec_float4 m_data;
+#elif defined(T_MATH_USE_NEON)
+	float32x4_t m_data;
 #else
 	union
 	{
@@ -43,6 +45,8 @@ public:
 	explicit T_MATH_INLINE Vector4(__m128 v);
 #elif defined(T_MATH_USE_ALTIVEC) || defined(T_MATH_USE_ALTIVEC_SPU)
 	explicit T_MATH_INLINE Vector4(vec_float4 v);
+#elif defined(T_MATH_USE_NEON)
+	explicit T_MATH_INLINE Vector4(float32x4_t v);
 #endif
 
 	explicit T_MATH_INLINE Vector4(const Scalar& s);
@@ -85,6 +89,9 @@ public:
 #	elif defined(T_MATH_USE_ALTIVEC_SPU)
 		float T_MATH_ALIGN16 _e[4];
 		*(vec_float4*)_e = m_data;
+#	elif defined(T_MATH_USE_NEON)
+		float T_MATH_ALIGN16 _e[4];
+		*(float32x4_t*)_e = m_data;
 #	endif
 		return Vector4(_e[iX], _e[iY], _e[iZ], _e[iW]);
 #endif
@@ -196,6 +203,8 @@ T_MATH_INLINE T_DLLCLASS bool compareAllLessEqual(const Vector4& l, const Vector
 #		include "Core/Math/AltiVec/Vector4.inl"
 #	elif defined(T_MATH_USE_ALTIVEC_SPU)
 #		include "Core/Math/AltiVec/Ps3/Spu/Vector4.inl"
+#	elif defined(T_MATH_USE_NEON)
+#		include "Core/Math/Neon/Vector4.inl"
 #	else
 #		include "Core/Math/Std/Vector4.inl"
 #	endif

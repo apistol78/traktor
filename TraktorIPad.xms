@@ -3125,6 +3125,15 @@
 										<fileName>Math/*.*</fileName>
 										<items/>
 									</item>
+									<item type="Filter">
+										<name>Neon</name>
+										<items>
+											<item type="File">
+												<fileName>Math/Neon/*.*</fileName>
+												<items/>
+											</item>
+										</items>
+									</item>
 								</items>
 							</item>
 							<item type="Filter">

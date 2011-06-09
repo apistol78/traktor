@@ -7,6 +7,8 @@
 #		include "Core/Math/AltiVec/Scalar.inl"
 #	elif defined(T_MATH_USE_ALTIVEC_SPU)
 #		include "Core/Math/AltiVec/Ps3/Spu/Scalar.inl"
+#	elif defined(T_MATH_USE_NEON)
+#		include "Core/Math/Neon/Scalar.inl"
 #	else
 #		include "Core/Math/Std/Scalar.inl"
 #	endif
