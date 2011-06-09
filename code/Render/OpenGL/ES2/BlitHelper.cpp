@@ -24,7 +24,7 @@ const Vertex c_vertices[] =
 	{ { -1.0f, -1.0f }, { 0.0f, 1.0f } }
 };
 		
-const GLchar c_vertexShader[] =
+const char c_vertexShader[] =
 {
 	"attribute vec2 in_Position;\n"
 	"attribute vec2 in_TexCoord;\n"
@@ -38,7 +38,7 @@ const GLchar c_vertexShader[] =
 	"}\n"
 };
 
-const GLchar c_fragmentShader[] =
+const char c_fragmentShader[] =
 {
 	"precision mediump float;\n"
 
