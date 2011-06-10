@@ -1,6 +1,6 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
-#include "Render/Editor/TextureAsset.h"
+#include "Render/Editor/Texture/TextureAsset.h"
 #include "Render/Resource/TextureResource.h"
 
 namespace traktor

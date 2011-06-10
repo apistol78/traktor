@@ -33,8 +33,9 @@
 #include "Editor/IPipelineReport.h"
 #include "Editor/IPipelineSettings.h"
 #include "Render/Types.h"
-#include "Render/Editor/TextureAsset.h"
-#include "Render/Editor/TexturePipeline.h"
+#include "Render/Editor/Texture/SphereMapFilter.h"
+#include "Render/Editor/Texture/TextureAsset.h"
+#include "Render/Editor/Texture/TexturePipeline.h"
 #include "Render/Resource/TextureResource.h"
 
 namespace traktor
@@ -294,65 +295,8 @@ bool TexturePipeline::buildOutput(
 	if (textureAsset->m_isCubeMap && textureAsset->m_generateSphereMap)
 	{
 		log::info << L"Generating sphere map..." << Endl;
-
-		Ref< drawing::Image > sphereImage = new drawing::Image(pixelFormat, height, height);
-
-		for (int y = 0; y < height; ++y)
-		{
-			for (int x = 0; x < height; ++x)
-			{
-				float t = 2.0f * (float(y) / float(height - 1.0f) - 0.5f);
-				float s = 2.0f * (float(x) / float(height - 1.0f) - 0.5f);
-
-				if (s * s + t * t > 1.0f)
-					continue;
-
-				int offset = 0;
-				int slicex = 0;
-				int slicey = 0;
-				float vsign = 0;
-
-				Vector4 direction(s, t, sqrtf(1.0f - s * s - t * t), 0.0f);
-				Vector4 reflection(
-					direction.x() * direction.z() * 2.0f,
-					direction.y() * direction.z() * 2.0f,
-					direction.z() * direction.z() * 2.0f - 1.0f
-				);
-
-				switch (majorAxis3(reflection))
-				{
-				case 0:
-					vsign = -sign(float(reflection.x()));
-					offset = reflection.x() < 0.0f ? 0 : height;
-					reflection = reflection * (Scalar(1.0f) / -reflection.x());
-					slicex = int((reflection.z() * -0.5f + 0.5f) * (height - 1));
-					slicey = int((reflection.y() * 0.5f * vsign + 0.5f) * (height - 1));
-					break;
-
-				case 1:
-					vsign = sign(float(reflection.y()));
-					offset = reflection.y() < 0.0f ? height * 2 : height * 3;
-					reflection = reflection * (Scalar(1.0f) / -reflection.y());
-					slicex = int((reflection.x() * 0.5f * vsign + 0.5f) * (height - 1));
-					slicey = int((reflection.z() * 0.5f + 0.5f) * (height - 1));
-					break;
-
-				case 2:
-					vsign = -sign(float(reflection.z()));
-					offset = reflection.z() > 0.0f ? height * 4 : height * 5;
-					reflection = reflection * (Scalar(1.0f) / -reflection.z());
-					slicex = int((reflection.x() * 0.5f + 0.5f) * (height - 1));
-					slicey = int((reflection.y() * 0.5f * vsign + 0.5f) * (height - 1));
-					break;
-				}
-
-				Color4f color;
-				if (image->getPixel(slicex + offset, slicey, color))
-					sphereImage->setPixel(x, y, color);
-			}
-		}
-
-		image = sphereImage;
+		SphereMapFilter sphereMapFilter;
+		image = image->applyFilter(&sphereMapFilter);
 	}
 
 	// Convert into linear gamma, do it before we're converting image
@@ -360,6 +304,7 @@ bool TexturePipeline::buildOutput(
 	// resulting in greater accuracy.
 	if (!textureAsset->m_linearGamma)
 	{
+		log::info << L"Converting into linear gamma..." << Endl;
 		drawing::GammaFilter gammaFilter(1.0f / 2.2f);
 		image = image->applyFilter(&gammaFilter);
 	}
@@ -370,6 +315,7 @@ bool TexturePipeline::buildOutput(
 	// Generate normal map from image.
 	if (textureAsset->m_generateNormalMap)
 	{
+		log::info << L"Generating normal map..." << Endl;
 		drawing::NormalMapFilter filter(textureAsset->m_scaleDepth);
 		image = image->applyFilter(&filter);
 	}
@@ -377,6 +323,7 @@ bool TexturePipeline::buildOutput(
 	// Inverse normal map Y; assume it's a normal map to begin with.
 	if (textureAsset->m_inverseNormalMapY)
 	{
+		log::info << L"Converting normal map..." << Endl;
 		drawing::TransformFilter transformFilter(Color4f(1.0f, -1.0f, 1.0f, 1.0f), Color4f(0.0f, 1.0f, 0.0f, 0.0f));
 		image = image->applyFilter(&transformFilter);
 	}
@@ -384,6 +331,8 @@ bool TexturePipeline::buildOutput(
 	// Swizzle channels to prepare for DXT5nm compression.
 	if (m_allowCompression && textureAsset->m_enableNormalMapCompression)
 	{
+		log::info << L"Preparing for DXT5nm compression..." << Endl;
+
 		// Inverse X axis; do it here instead of in shader.
 		drawing::TransformFilter transformFilter(Color4f(-1.0f, 1.0f, 1.0f, 1.0f), Color4f(1.0f, 0.0f, 0.0f, 0.0f));
 		image = image->applyFilter(&transformFilter);
@@ -393,7 +342,7 @@ bool TexturePipeline::buildOutput(
 		image = image->applyFilter(&swizzleFilter);
 
 		if (!textureAsset->m_ignoreAlpha)
-			log::info << L"Kept source alpha in red channel; compressed normals might have artifacts" << Endl;
+			log::warning << L"Kept source alpha in red channel; compressed normals might have artifacts" << Endl;
 	}
 
 	// Rescale image.

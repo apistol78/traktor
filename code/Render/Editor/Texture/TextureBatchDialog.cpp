@@ -1,6 +1,10 @@
-#include "Render/Editor/TextureBatchDialog.h"
-#include "Render/Editor/TextureAsset.h"
+#include "Core/Io/FileSystem.h"
+#include "Core/Settings/PropertyString.h"
+#include "Core/Settings/Settings.h"
 #include "Editor/IEditor.h"
+#include "I18N/Text.h"
+#include "Render/Editor/Texture/TextureAsset.h"
+#include "Render/Editor/Texture/TextureBatchDialog.h"
 #include "Ui/Bitmap.h"
 #include "Ui/FileDialog.h"
 #include "Ui/FloodLayout.h"
@@ -12,10 +16,6 @@
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
 #include "Ui/Custom/PropertyList/AutoPropertyList.h"
-#include "I18N/Text.h"
-#include "Core/Io/FileSystem.h"
-#include "Core/Settings/PropertyString.h"
-#include "Core/Settings/Settings.h"
 
 // Resources
 #include "Resources/PlusMinus.h"
