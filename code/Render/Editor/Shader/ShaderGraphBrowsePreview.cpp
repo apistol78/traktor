@@ -4,7 +4,7 @@
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
 #include "Drawing/Raster.h"
-#include "Render/Editor/ShaderGraphBrowsePreview.h"
+#include "Render/Editor/Shader/ShaderGraphBrowsePreview.h"
 #include "Render/Shader/Edge.h"
 #include "Render/Shader/InputPin.h"
 #include "Render/Shader/Node.h"

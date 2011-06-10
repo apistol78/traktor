@@ -4,8 +4,8 @@
 #include "Database/Instance.h"
 #include "Editor/IEditor.h"
 #include "Editor/IThumbnailGenerator.h"
-#include "Render/Editor/TextureAsset.h"
-#include "Render/Editor/TextureBrowsePreview.h"
+#include "Render/Editor/Texture/TextureAsset.h"
+#include "Render/Editor/Texture/TextureBrowsePreview.h"
 #include "Ui/Bitmap.h"
 
 namespace traktor

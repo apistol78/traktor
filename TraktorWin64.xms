@@ -10976,6 +10976,15 @@
 									</item>
 								</items>
 							</item>
+							<item type="Filter">
+								<name>Texture</name>
+								<items>
+									<item type="File">
+										<fileName>Texture/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
 						</items>
 						<dependencies>
 							<item type="ProjectDependency" version="1">

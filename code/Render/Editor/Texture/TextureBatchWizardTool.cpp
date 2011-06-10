@@ -1,13 +1,13 @@
-#include "Render/Editor/TextureBatchWizardTool.h"
-#include "Render/Editor/TextureBatchDialog.h"
-#include "Render/Editor/TextureAsset.h"
-#include "Editor/IEditor.h"
+#include "Core/Log/Log.h"
 #include "Database/Database.h"
 #include "Database/Group.h"
 #include "Database/Instance.h"
-#include "Ui/FileDialog.h"
+#include "Editor/IEditor.h"
 #include "I18N/Text.h"
-#include "Core/Log/Log.h"
+#include "Render/Editor/Texture/TextureAsset.h"
+#include "Render/Editor/Texture/TextureBatchDialog.h"
+#include "Render/Editor/Texture/TextureBatchWizardTool.h"
+#include "Ui/FileDialog.h"
 
 namespace traktor
 {

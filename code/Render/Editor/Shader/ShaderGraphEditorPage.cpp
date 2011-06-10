@@ -10,7 +10,7 @@
 #include "Editor/UndoStack.h"
 #include "Editor/IBrowseFilter.h"
 #include "I18N/Text.h"
-#include "Render/Editor/TextureAsset.h"
+#include "Render/Editor/Texture/TextureAsset.h"
 #include "Render/Shader/ShaderGraph.h"
 #include "Render/Shader/Edge.h"
 #include "Render/Editor/Shader/NodeCategories.h"
