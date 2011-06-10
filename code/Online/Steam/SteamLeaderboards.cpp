@@ -86,8 +86,13 @@ bool SteamLeaderboards::set(const uint64_t handle, int32_t score)
 	m_uploadedScore = false;
 	m_callbackLeaderboardUploaded.Set(call, this, &SteamLeaderboards::OnLeaderboardUploaded);
 
+	Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
 	while (!m_uploadedScore)
+	{
 		m_sessionManager->update();
+		if (!m_uploadedScore && currentThread)
+			currentThread->wait(100);
+	}
 
 	return m_uploadedScoreSucceeded;
 }
