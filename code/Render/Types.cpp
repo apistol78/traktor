@@ -121,21 +121,25 @@ std::wstring getTextureFormatName(TextureFormat format)
 		L"TfDXT2",
 		L"TfDXT3",
 		L"TfDXT4",
-		L"TfDXT5"
+		L"TfDXT5",
+		L"TfPVRTC1",
+		L"TfPVRTC2",
+		L"TfPVRTC3",
+		L"TfPVRTC4"
 	};
 	return int(format) < sizeof_array(c_names) ? c_names[int(format)] : c_names[0];
 }
 
 uint32_t getTextureBlockSize(TextureFormat format)
 {
-	const uint32_t c_blockSizes[] = { 0, 1, 4, 8, 16, 4, 8, 2, 4, 8, 16, 16, 16, 16 };
+	const uint32_t c_blockSizes[] = { 0, 1, 4, 8, 16, 4, 8, 2, 4, 8, 16, 16, 16, 16, 0, 0, 0, 0 };
 	T_ASSERT (int(format) < sizeof_array(c_blockSizes));
 	return c_blockSizes[int(format)];
 }
 
 uint32_t getTextureBlockDenom(TextureFormat format)
 {
-	const uint32_t c_blockDenoms[] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, 4, 4, 4, 4 };
+	const uint32_t c_blockDenoms[] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, 4, 4, 4, 4, 0, 0, 0, 0 };
 	T_ASSERT (int(format) < sizeof_array(c_blockDenoms));
 	return c_blockDenoms[int(format)];
 }

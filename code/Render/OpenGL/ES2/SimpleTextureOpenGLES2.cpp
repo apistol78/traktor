@@ -133,10 +133,12 @@ bool SimpleTextureOpenGLES2::create(const SimpleTextureCreateDesc& desc)
 			uint32_t width = std::max(m_width >> i, 1);
 			uint32_t height = std::max(m_height >> i, 1);
 
-			if (desc.format >= TfDXT1 && desc.format <= TfDXT5)
+			if (
+				(desc.format >= TfDXT1 && desc.format <= TfDXT5) ||
+				(desc.format >= TfPVRTC1 && desc.format <= TfPVRTC4)
+			)
 			{
 				uint32_t mipSize = getTextureMipPitch(desc.format, width, height);
-
 				T_OGL_SAFE(glCompressedTexImage2D(
 					GL_TEXTURE_2D,
 					i,
