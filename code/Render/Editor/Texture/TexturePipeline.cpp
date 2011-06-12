@@ -1,15 +1,4 @@
-
-#define SQUISH_COMPRESSOR	1
-#define STB_DXT_COMPRESSOR	2
-#define USE_DXT_COMPRESSOR	SQUISH_COMPRESSOR //STB_DXT_COMPRESSOR
-
 #include <cstring>
-#if USE_DXT_COMPRESSOR == SQUISH_COMPRESSOR
-#	include <squish.h>
-#elif USE_DXT_COMPRESSOR == STB_DXT_COMPRESSOR
-#	define STB_DXT_IMPLEMENTATION
-#	include <stb_dxt.h>
-#endif
 #include "Compress/Zip/DeflateStream.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/Writer.h"
@@ -33,9 +22,11 @@
 #include "Editor/IPipelineReport.h"
 #include "Editor/IPipelineSettings.h"
 #include "Render/Types.h"
+#include "Render/Editor/Texture/DxtnCompressor.h"
 #include "Render/Editor/Texture/SphereMapFilter.h"
 #include "Render/Editor/Texture/TextureAsset.h"
 #include "Render/Editor/Texture/TexturePipeline.h"
+#include "Render/Editor/Texture/UnCompressor.h"
 #include "Render/Resource/TextureResource.h"
 
 namespace traktor
@@ -74,121 +65,6 @@ struct ScaleTextureTask : public Object
 	{
 		output = image->applyFilter(filter);
 		T_ASSERT (output);
-	}
-};
-
-struct CompressTextureTask : public Object
-{
-	const drawing::Image* image;
-	int32_t top;
-	int32_t bottom;
-	TextureFormat textureFormat;
-	bool needAlpha;
-	int32_t compressionQuality;
-	std::vector< uint8_t > output;
-
-	void execute()
-	{
-		int32_t width = image->getWidth();
-		int32_t height = image->getHeight();
-
-		uint32_t outputSize = getTextureMipPitch(
-			textureFormat,
-			width,
-			bottom - top
-		);
-
-		output.clear();
-		output.resize(outputSize, 0);
-
-		if (textureFormat == TfDXT1 || textureFormat == TfDXT3 || textureFormat == TfDXT5)
-		{
-			const uint8_t* data = static_cast< const uint8_t* >(image->getData());
-			uint8_t* block = &output[0];
-
-			for (int32_t y = top; y < bottom; y += 4)
-			{
-				for (int32_t x = 0; x < width; x += 4)
-				{
-					uint8_t rgba[4][4][4];
-					int32_t mask = 0;
-
-					for (int iy = 0; iy < 4; ++iy)
-					{
-						for (int ix = 0; ix < 4; ++ix)
-						{
-							int32_t sx = x + ix;
-							int32_t sy = y + iy;
-
-							if (sx >= width || sy >= height)
-								continue;
-
-							uint32_t offset = (sx + sy * image->getWidth()) * 4;
-							rgba[iy][ix][0] = data[offset + 0];
-							rgba[iy][ix][1] = data[offset + 1];
-							rgba[iy][ix][2] = data[offset + 2];
-							rgba[iy][ix][3] = needAlpha ? data[offset + 3] : 0xff;
-
-							mask |= 1 << (ix + iy * 4);
-						}
-					}
-
-#if USE_DXT_COMPRESSOR == SQUISH_COMPRESSOR
-					const int32_t c_compressionFlags[] = { squish::kColourRangeFit, squish::kColourClusterFit, squish::kColourIterativeClusterFit };
-
-					int32_t flags = c_compressionFlags[compressionQuality];
-					if (textureFormat == TfDXT1)
-						flags |= squish::kDxt1;
-					else if (textureFormat == TfDXT3)
-						flags |= squish::kDxt3;
-					else if (textureFormat == TfDXT5)
-						flags |= squish::kDxt5;
-
-					squish::CompressMasked(
-						(const squish::u8*)rgba,
-						mask,
-						block,
-						flags
-					);
-#elif USE_DXT_COMPRESSOR == STB_DXT_COMPRESSOR
-					if (textureFormat == TfDXT1 || textureFormat == TfDXT5)
-					{
-						stb_compress_dxt_block(
-							block,
-							(const unsigned char*)rgba,
-							needAlpha,
-							compressionQuality > 0 ? STB_DXT_HIGHQUAL : STB_DXT_NORMAL
-						);
-					}
-					else if (textureFormat == TfDXT3)
-					{
-						// Manually compress alpha as stb_dxt doesn't support DXT3.
-						block[0] = (rgba[0][1][3] & 0xf0) | (rgba[0][0][3] >> 4);
-						block[1] = (rgba[0][3][3] & 0xf0) | (rgba[0][2][3] >> 4);
-						block[2] = (rgba[1][1][3] & 0xf0) | (rgba[1][0][3] >> 4);
-						block[3] = (rgba[1][3][3] & 0xf0) | (rgba[1][2][3] >> 4);
-						block[4] = (rgba[2][1][3] & 0xf0) | (rgba[2][0][3] >> 4);
-						block[5] = (rgba[2][3][3] & 0xf0) | (rgba[2][2][3] >> 4);
-						block[6] = (rgba[3][1][3] & 0xf0) | (rgba[3][0][3] >> 4);
-						block[7] = (rgba[3][3][3] & 0xf0) | (rgba[3][2][3] >> 4);
-						
-						stb_compress_dxt_block(
-							&block[8],
-							(const unsigned char*)rgba,
-							0,
-							compressionQuality > 0 ? STB_DXT_HIGHQUAL : STB_DXT_NORMAL
-						);
-					}
-#endif
-					block += getTextureBlockSize(textureFormat);
-				}
-			}
-		}
-		else
-		{
-			const uint8_t* data = static_cast< const uint8_t* >(image->getData()) + top * image->getWidth() * 4;
-			std::memcpy(&output[0], data, outputSize);
-		}
 	}
 };
 
@@ -262,7 +138,6 @@ bool TexturePipeline::buildOutput(
 	int32_t width = image->getWidth();
 	int32_t height = image->getHeight();
 	int32_t mipCount = 1;
-	int32_t dataSize = 0;
 
 	bool needAlpha = 
 		(image->getPixelFormat().getAlphaBits() > 0 && !textureAsset->m_ignoreAlpha) ||
@@ -393,6 +268,7 @@ bool TexturePipeline::buildOutput(
 
 	outputInstance->setObject(outputResource);
 
+	// Create output data stream.
 	Ref< IStream > stream = outputInstance->writeData(L"Data");
 	if (!stream)
 	{
@@ -400,6 +276,8 @@ bool TexturePipeline::buildOutput(
 		outputInstance->revert();
 		return false;
 	}
+
+	int32_t dataOffsetBegin = 0, dataOffsetEnd = 0;
 
 	if (!textureAsset->m_isCubeMap || textureAsset->m_generateSphereMap)
 	{
@@ -422,10 +300,8 @@ bool TexturePipeline::buildOutput(
 			else
 			{
 				bool binaryAlpha = false;
-#if USE_DXT_COMPRESSOR == SQUISH_COMPRESSOR
 				if (textureAsset->m_hasAlpha && !textureAsset->m_ignoreAlpha)
 					binaryAlpha = isBinaryAlpha(image);
-#endif
 				if (needAlpha && !binaryAlpha)
 				{
 					log::info << L"Using DXT3 compression" << Endl;
@@ -450,6 +326,8 @@ bool TexturePipeline::buildOutput(
 		writer << int32_t(textureFormat);
 		writer << bool(false);
 		writer << bool(true);
+
+		dataOffsetBegin = stream->tell();
 
 		Ref< IStream > streamData = new compress::DeflateStream(stream);
 		Writer writerData(streamData);
@@ -503,54 +381,17 @@ bool TexturePipeline::buildOutput(
 			log::info << L"All task(s) collected" << Endl;
 		}
 
-		// Create multiple jobs for compressing mips; split big mips into several jobs.
-		{
-			RefArray< CompressTextureTask > tasks;
-			RefArray< Job > jobs;
+		Ref< ICompressor > compressor;
+		if (textureFormat == TfDXT1 || textureFormat == TfDXT3 || textureFormat == TfDXT5)
+			compressor = new DxtnCompressor();
+		else
+			compressor = new UnCompressor();
 
-			for (int32_t i = 0; i < mipCount; ++i)
-			{
-				int32_t height = mipImages[i]->getHeight();
-
-				int32_t split = height / 32;
-				if (split < 1)
-					split = 1;
-
-				log::info << L"Executing mip compression " << i << L" in " << split << L" task(s)..." << Endl;
-
-				for (int32_t j = 0; j < split; ++j)
-				{
-					Ref< CompressTextureTask > task = new CompressTextureTask();
-					task->image = mipImages[i];
-					task->top = (height * j) / split;
-					task->bottom = (height * (j + 1)) / split;
-					task->textureFormat = textureFormat;
-					task->needAlpha = needAlpha;
-					task->compressionQuality = m_compressionQuality;
-
-					Ref< Job > job = JobManager::getInstance().add(makeFunctor(task.ptr(), &CompressTextureTask::execute));
-
-					tasks.push_back(task);
-					jobs.push_back(job);
-				}
-			}
-
-			log::info << L"Collecting task(s)..." << Endl;
-
-			for (size_t i = 0; i < jobs.size(); ++i)
-			{
-				jobs[i]->wait();
-				jobs[i] = 0;
-
-				dataSize += writerData.write(&tasks[i]->output[0], uint32_t(tasks[i]->output.size()), 1);
-
-				tasks[i] = 0;
-			}
-
-			log::info << L"All task(s) collected" << Endl;
-		}
+		compressor->compress(writerData, mipImages, textureFormat, needAlpha, m_compressionQuality);
 
 		streamData->close();
+
+		dataOffsetEnd = stream->tell();
 	}
 	else
 	{
@@ -573,6 +414,8 @@ bool TexturePipeline::buildOutput(
 		writer << int32_t(textureFormat);
 		writer << bool(true);
 		writer << bool(true);
+
+		dataOffsetBegin = stream->tell();
 
 		// Create data writer, use deflate compression if enabled.
 		Ref< IStream > streamData = new compress::DeflateStream(stream);
@@ -597,15 +440,17 @@ bool TexturePipeline::buildOutput(
 				Ref< drawing::Image > mipImage = sideImage->applyFilter(&mipScaleFilter);
 				T_ASSERT (mipImage);
 
-				dataSize += writerData.write(
+				 writerData.write(
 					mipImage->getData(),
 					mipSize * mipSize,
-					sizeof(unsigned int)
+					sizeof(uint32_t)
 				);
 			}
 		}
 
 		streamData->close();
+
+		dataOffsetEnd = stream->tell();
 	}
 
 	stream->close();
@@ -625,7 +470,7 @@ bool TexturePipeline::buildOutput(
 		report->set(L"height", height);
 		report->set(L"mipCount", mipCount);
 		report->set(L"format", int32_t(textureFormat));
-		report->set(L"dataSize", dataSize);
+		report->set(L"dataSize", dataOffsetEnd - dataOffsetBegin);
 	}
 
 	return true;

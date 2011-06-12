@@ -108,7 +108,11 @@ enum TextureFormat
 	TfDXT2,
 	TfDXT3,
 	TfDXT4,
-	TfDXT5
+	TfDXT5,
+	TfPVRTC1,	// 4bpp, no alpha
+	TfPVRTC2,	// 2bpp, no alpha
+	TfPVRTC3,	// 4bpp, alpha
+	TfPVRTC4	// 2bpp, alpha
 
 	//@}
 };

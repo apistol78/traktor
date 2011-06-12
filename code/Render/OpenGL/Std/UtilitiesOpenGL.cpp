@@ -77,6 +77,36 @@ bool convertTextureFormat(TextureFormat textureFormat, int& outPixelSize, GLint&
 		outType = GL_UNSIGNED_BYTE;
 		break;
 
+#if defined(GL_IMG_texture_compression_pvrtc)
+	case TfPVRTC1:
+		outPixelSize = 0;
+		outComponents = GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG;
+		outFormat = GL_RGB;
+		outType = GL_UNSIGNED_BYTE;
+		break;
+
+	case TfPVRTC2:
+		outPixelSize = 0;
+		outComponents = GL_COMPRESSED_RGB_PVRTC_2BPPV1_IMG;
+		outFormat = GL_RGB;
+		outType = GL_UNSIGNED_BYTE;
+		break;
+
+	case TfPVRTC3:
+		outPixelSize = 0;
+		outComponents = GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG;
+		outFormat = GL_RGBA;
+		outType = GL_UNSIGNED_BYTE;
+		break;
+
+	case TfPVRTC4:
+		outPixelSize = 0;
+		outComponents = GL_COMPRESSED_RGBA_PVRTC_2BPPV1_IMG;
+		outFormat = GL_RGBA;
+		outType = GL_UNSIGNED_BYTE;
+		break;
+#endif
+
 	default:
 		return false;
 	}
