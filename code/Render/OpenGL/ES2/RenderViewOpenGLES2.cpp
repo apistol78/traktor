@@ -397,7 +397,7 @@ bool RenderViewOpenGLES2::updatePrimaryTarget()
 	
 	// Create primary target less than full resolution
 	// in order to reduce bandwidth.
-	const int32_t c_resolutionDenom = 2;
+	const int32_t c_resolutionDenom = 1;
 	
 	desc.width /= c_resolutionDenom;
 	desc.height /= c_resolutionDenom;
