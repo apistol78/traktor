@@ -377,16 +377,16 @@ T_MATH_INLINE Vector4 select(const Vector4& condition, const Vector4& negative, 
 
 T_MATH_INLINE T_DLLCLASS bool compareAllGreaterEqual(const Vector4& l, const Vector4& r)
 {
-	T_BREAKPOINT;
-	uint32x4_t c = vcgeq_f32(l.m_data, r.m_data);
-	return false;
+	const float* p1 = (const float*)&l.m_data;
+	const float* p2 = (const float*)&r.m_data;
+	return p1[0] >= p2[0] && p1[1] >= p2[1] && p1[2] >= p2[2] && p1[3] >= p2[3];
 }
 
 T_MATH_INLINE T_DLLCLASS bool compareAllLessEqual(const Vector4& l, const Vector4& r)
 {
-	T_BREAKPOINT;
-	uint32x4_t c = vcleq_f32(l.m_data, r.m_data);
-	return false;
+	const float* p1 = (const float*)&l.m_data;
+	const float* p2 = (const float*)&r.m_data;
+	return p1[0] <= p2[0] && p1[1] <= p2[1] && p1[2] <= p2[2] && p1[3] <= p2[3];
 }
 
 }

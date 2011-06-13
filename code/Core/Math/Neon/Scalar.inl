@@ -170,7 +170,7 @@ T_MATH_INLINE Scalar reciprocalSquareRoot(const Scalar& s)
 	halfEstimate = vmulq_f32(estimate, half);
 	
 	float32x4_t t0 = vmulq_f32(s.m_data, estimateSquared);
-	float32x4_t t1 = vaddq_f32(t0, one);
+	float32x4_t t1 = vsubq_f32(t0, one);
 	float32x4_t t2 = vnegq_f32(t1);
 	
 	estimate = vmlaq_f32(estimate, t2, halfEstimate);

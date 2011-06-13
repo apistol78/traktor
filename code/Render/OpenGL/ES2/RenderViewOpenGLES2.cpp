@@ -135,7 +135,7 @@ bool RenderViewOpenGLES2::begin(EyeType eye)
 
 	if (!m_context->enter())
 		return false;
-		
+
 	return begin(m_primaryTargetSet, 0);
 }
 
@@ -184,18 +184,18 @@ void RenderViewOpenGLES2::clear(uint32_t clearMask, const float color[4], float 
 
 	if (cm & GL_COLOR_BUFFER_BIT)
 	{
+		m_context->setColorMask(RenderState::CmAll);
 		float r = color[0];
 		float g = color[1];
 		float b = color[2];
 		float a = color[3];
 		T_OGL_SAFE(glClearColor(r, g, b, a));
-		T_OGL_SAFE(glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE));
 	}
 
 	if (cm & GL_DEPTH_BUFFER_BIT)
 	{
+		m_context->setDepthMask(GL_TRUE);
 		T_OGL_SAFE(glClearDepthf(depth));
-		T_OGL_SAFE(glDepthMask(GL_TRUE));
 	}
 
 	if (cm & GL_STENCIL_BUFFER_BIT)
@@ -332,8 +332,6 @@ void RenderViewOpenGLES2::end()
 		);
 		m_renderTargetStack.top().renderTarget->enter();
 	}
-
-	//T_OGL_SAFE(glPopAttrib());
 }
 
 void RenderViewOpenGLES2::present()
@@ -349,6 +347,9 @@ void RenderViewOpenGLES2::present()
 		m_context->getWidth(),
 		m_context->getHeight()
 	));
+	
+	m_context->setColorMask(RenderState::CmAll);
+	T_OGL_SAFE(glClearColor(0.0f, 0.0f, 0.0f, 0.0f));
 
 	m_blitHelper->blit(rt->getColorTexture());
 		

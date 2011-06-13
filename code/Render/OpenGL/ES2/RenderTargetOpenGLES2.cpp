@@ -79,6 +79,12 @@ bool RenderTargetOpenGLES2::create(const RenderTargetSetCreateDesc& setDesc, con
 	switch (desc.format)
 	{
 	case TfR8:
+		internalFormat = GL_RGBA;
+		format = GL_RGBA;
+		type = GL_UNSIGNED_SHORT_4_4_4_4;
+		m_textureTarget = GL_TEXTURE_2D;
+		break;
+
 	case TfR8G8B8A8:
 		internalFormat = GL_RGBA;
 		format = GL_RGBA;
@@ -91,9 +97,6 @@ bool RenderTargetOpenGLES2::create(const RenderTargetSetCreateDesc& setDesc, con
 		return false;
 	}
 
-	int targetWidth = m_width;
-	int targetHeight = m_height;
-
 	T_OGL_SAFE(glGenTextures(1, &m_colorTexture));
 
 	T_OGL_SAFE(glActiveTexture(GL_TEXTURE0));
@@ -104,7 +107,7 @@ bool RenderTargetOpenGLES2::create(const RenderTargetSetCreateDesc& setDesc, con
 	T_OGL_SAFE(glTexParameterf(m_textureTarget, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
 	T_OGL_SAFE(glTexParameterf(m_textureTarget, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
 
-	T_OGL_SAFE(glTexImage2D(m_textureTarget, 0, internalFormat, targetWidth, targetHeight, 0, format, type, NULL));
+	T_OGL_SAFE(glTexImage2D(m_textureTarget, 0, internalFormat, m_width, m_height, 0, format, type, NULL));
 
 	T_OGL_SAFE(glGenFramebuffers(1, &m_frameBufferObject));
 	T_OGL_SAFE(glBindFramebuffer(GL_FRAMEBUFFER, m_frameBufferObject));
@@ -115,10 +118,6 @@ bool RenderTargetOpenGLES2::create(const RenderTargetSetCreateDesc& setDesc, con
 	{
 		T_OGL_SAFE(glBindRenderbuffer(GL_RENDERBUFFER, depthBuffer));
 		T_OGL_SAFE(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthBuffer));
-//		if (stencilBuffer != 0)
-//		{
-//			T_OGL_SAFE(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, stencilBuffer));
-//		}
 		m_haveDepth = true;
 	}
 

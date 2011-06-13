@@ -7500,13 +7500,13 @@
 		<item ref="/object/projects/item[12]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
 		<item ref="/object/projects/item[12]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project"/>
 		<item type="Project" version="1">
-			<enable>false</enable>
+			<enable>true</enable>
 			<name>UnitTest</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/UnitTest</sourcePath>
 			<configurations>
 				<item type="Configuration" version="1">
 					<name>DebugShared</name>
-					<targetFormat>TfExecutableConsole</targetFormat>
+					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
@@ -7523,7 +7523,7 @@
 				</item>
 				<item type="Configuration" version="1">
 					<name>ReleaseShared</name>
-					<targetFormat>TfExecutableConsole</targetFormat>
+					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
@@ -7540,7 +7540,7 @@
 				</item>
 				<item type="Configuration" version="1">
 					<name>DebugStatic</name>
-					<targetFormat>TfExecutableConsole</targetFormat>
+					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
@@ -7558,7 +7558,7 @@
 				</item>
 				<item type="Configuration" version="1">
 					<name>ReleaseStatic</name>
-					<targetFormat>TfExecutableConsole</targetFormat>
+					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
@@ -7578,6 +7578,10 @@
 			<items>
 				<item type="File">
 					<fileName>*.*</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>../../res/Info.plist</fileName>
 					<items/>
 				</item>
 			</items>
