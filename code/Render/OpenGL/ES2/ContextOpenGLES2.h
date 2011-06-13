@@ -57,6 +57,10 @@ public:
 
 	void setRenderState(const RenderState& renderState);
 	
+	void setColorMask(uint32_t colorMask);
+	
+	void setDepthMask(GLboolean depthMask);
+	
 	void bindPrimary();
 
 private:

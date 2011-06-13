@@ -287,7 +287,7 @@ bool ProgramOpenGLES2::activate(float targetSize[2])
 #if !defined(T_OFFLINE_ONLY)
 
 	// Bind program and set state display list.
-	//if (ms_activeProgram != this)
+	if (ms_activeProgram != this)
 	{
 		m_resourceContext->setRenderState(m_renderState);
 		T_OGL_SAFE(glUseProgram(m_program));

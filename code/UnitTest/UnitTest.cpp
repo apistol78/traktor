@@ -41,8 +41,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	//log::info << L"Case atomic" << Endl;
 	//traktor::CaseAtomic().run();
 
-	log::info << L"Case bitreader" << Endl;
-	traktor::CaseBitReader().run();
+	//log::info << L"Case bitreader" << Endl;
+	//traktor::CaseBitReader().run();
 
 	//log::info << L"Case meta" << Endl;
 	//traktor::CaseMeta().run();
@@ -59,23 +59,23 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	//log::info << L"Case heap" << Endl;
 	//traktor::CaseHeap().run();
 
-	//log::info << L"Case math" << Endl;
-	//traktor::CaseMath().run();
+	log::info << L"Case math" << Endl;
+	traktor::CaseMath().run();
 
-	//log::info << L"Case matrix 3x3" << Endl;
-	//traktor::CaseMatrix33().run();
+	log::info << L"Case matrix 3x3" << Endl;
+	traktor::CaseMatrix33().run();
 
-	//log::info << L"Case matrix 4x4" << Endl;
-	//traktor::CaseMatrix44().run();
+	log::info << L"Case matrix 4x4" << Endl;
+	traktor::CaseMatrix44().run();
 
-	//log::info << L"Case quaternion" << Endl;
-	//traktor::CaseQuaternion().run();
+	log::info << L"Case quaternion" << Endl;
+	traktor::CaseQuaternion().run();
 
 	//log::info << L"Case small map" << Endl;
 	//traktor::CaseSmallMap().run();
 
-	//log::info << L"Case transform" << Endl;
-	//traktor::CaseTransform().run();
+	log::info << L"Case transform" << Endl;
+	traktor::CaseTransform().run();
 
 	//log::info << L"Case winding" << Endl;
 	//traktor::CaseWinding().run();

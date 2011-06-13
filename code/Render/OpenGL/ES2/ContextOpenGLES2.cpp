@@ -454,16 +454,16 @@ void ContextOpenGLES2::setRenderState(const RenderState& renderState)
 			T_OGL_SAFE(glEnable(GL_CULL_FACE));
 			m_renderState.cullFaceEnable = true;
 		}
-		if (renderState.cullFace != m_renderState.cullFace)
+		GLuint cullFace = renderState.cullFace;
+		if (true)
 		{
-			GLuint cullFace = renderState.cullFace;
-			if (true)
-			{
-				if (cullFace == GL_FRONT)
-					cullFace = GL_BACK;
-				else
-					cullFace = GL_FRONT;
-			}
+			if (cullFace == GL_FRONT)
+				cullFace = GL_BACK;
+			else
+				cullFace = GL_FRONT;
+		}
+		if (cullFace != m_renderState.cullFace)
+		{
 			T_OGL_SAFE(glCullFace(cullFace));
 			m_renderState.cullFace = cullFace;
 		}
@@ -543,42 +543,29 @@ void ContextOpenGLES2::setRenderState(const RenderState& renderState)
 		T_OGL_SAFE(glDepthMask(renderState.depthMask));
 		m_renderState.depthMask = renderState.depthMask;
 	}
+}
 
-	/*
-	if (renderState.stencilTestEnable)
+void ContextOpenGLES2::setColorMask(uint32_t colorMask)
+{
+	if (colorMask != m_renderState.colorMask)
 	{
-		if (!m_renderState.stencilTestEnable)
-		{
-			T_OGL_SAFE(glEnable(GL_STENCIL_TEST));
-			m_renderState.stencilTestEnable = true;
-		}
-		if (renderState.stencilFunc != m_renderState.stencilFunc || renderState.stencilRef != m_renderState.stencilRef)
-		{
-			T_OGL_SAFE(glStencilFunc(renderState.stencilFunc, renderState.stencilRef, ~0UL));
-			m_renderState.stencilFunc = renderState.stencilFunc;
-			m_renderState.stencilRef = renderState.stencilRef;
-		}
-		if (renderState.stencilOpFail != m_renderState.stencilOpFail || renderState.stencilOpZFail != m_renderState.stencilOpZFail || renderState.stencilOpZPass != m_renderState.stencilOpZPass)
-		{
-			T_OGL_SAFE(glStencilOp(
-				renderState.stencilOpFail,
-				renderState.stencilOpZFail,
-				renderState.stencilOpZPass
-			));
-			m_renderState.stencilOpFail = renderState.stencilOpFail;
-			m_renderState.stencilOpZFail = renderState.stencilOpZFail;
-			m_renderState.stencilOpZPass = renderState.stencilOpZPass;
-		}
+		T_OGL_SAFE(glColorMask(
+			(colorMask & RenderState::CmRed) ? GL_TRUE : GL_FALSE,
+			(colorMask & RenderState::CmGreen) ? GL_TRUE : GL_FALSE,
+			(colorMask & RenderState::CmBlue) ? GL_TRUE : GL_FALSE,
+			(colorMask & RenderState::CmAlpha) ? GL_TRUE : GL_FALSE
+		));
+		m_renderState.colorMask = colorMask;
 	}
-	else
+}
+
+void ContextOpenGLES2::setDepthMask(GLboolean depthMask)
+{
+	if (depthMask != m_renderState.depthMask)
 	{
-		if (m_renderState.stencilTestEnable)
-		{
-			T_OGL_SAFE(glDisable(GL_STENCIL_TEST));
-			m_renderState.stencilTestEnable = false;
-		}
+		T_OGL_SAFE(glDepthMask(depthMask));
+		m_renderState.depthMask = depthMask;
 	}
-	*/
 }
 
 void ContextOpenGLES2::bindPrimary()

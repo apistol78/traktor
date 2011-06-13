@@ -50,6 +50,9 @@ private:
 		GLboolean normalized;
 		GLuint offset;
 	};
+	
+	static VertexBufferOpenGLES2* ms_currentBuffer;
+	static const GLint* ms_currentAttributeLocs;
 
 	Ref< IContext > m_context;
 	bool m_dynamic;
