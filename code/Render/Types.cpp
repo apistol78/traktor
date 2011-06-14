@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <map>
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Singleton/ISingleton.h"
@@ -63,10 +64,10 @@ c_textureFormatInfo[] =
 	{ L"TfDXT3", 16, 4 },
 	{ L"TfDXT4", 16, 4 },
 	{ L"TfDXT5", 16, 4 },
-	{ L"TfPVRTC1", 1, 2 },
-	{ L"TfPVRTC2", 1, 4 },
-	{ L"TfPVRTC3", 1, 2 },
-	{ L"TfPVRTC4", 1, 4 }
+	{ L"TfPVRTC1", 2, 2 },
+	{ L"TfPVRTC2", 2, 4 },
+	{ L"TfPVRTC3", 2, 2 },
+	{ L"TfPVRTC4", 2, 4 }
 };
 
 		}
@@ -173,10 +174,22 @@ uint32_t getTextureRowPitch(TextureFormat format, uint32_t textureWidth, uint32_
 
 uint32_t getTextureMipPitch(TextureFormat format, uint32_t textureWidth, uint32_t textureHeight)
 {
+	if (format == TfPVRTC1 || format == TfPVRTC3)
+	{
+		textureWidth = std::max< uint32_t >(textureWidth, 8);
+		textureHeight = std::max< uint32_t >(textureHeight, 8);
+	}
+	else if (format == TfPVRTC2 || format == TfPVRTC4)
+	{
+		textureWidth = std::max< uint32_t >(textureWidth, 16);
+		textureHeight = std::max< uint32_t >(textureHeight, 8);
+	}
+	
 	uint32_t blockDenom = getTextureBlockDenom(format);
 	uint32_t blockWidth = (textureWidth + blockDenom - 1) / blockDenom;
 	uint32_t blockHeight = (textureHeight + blockDenom - 1) / blockDenom;
 	uint32_t blockCount = blockWidth * blockHeight;
+	
 	return getTextureBlockSize(format) * blockCount;
 }
 
