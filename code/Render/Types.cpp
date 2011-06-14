@@ -111,6 +111,9 @@ std::wstring getTextureFormatName(TextureFormat format)
 		L"TfInvalid",
 		L"TfR8",
 		L"TfR8G8B8A8",
+		L"TfR5G6B5",
+		L"TfR5G5B5A1",
+		L"TfR4G4B4A4",
 		L"TfR16G16B16A16F",
 		L"TfR32G32B32A32F",
 		L"TfR16G16F",
@@ -132,14 +135,14 @@ std::wstring getTextureFormatName(TextureFormat format)
 
 uint32_t getTextureBlockSize(TextureFormat format)
 {
-	const uint32_t c_blockSizes[] = { 0, 1, 4, 8, 16, 4, 8, 2, 4, 8, 16, 16, 16, 16, 0, 0, 0, 0 };
+	const uint32_t c_blockSizes[] = { 0, 1, 4, 2, 2, 2, 8, 16, 4, 8, 2, 4, 8, 16, 16, 16, 16, 1, 1, 1, 1 };
 	T_ASSERT (int(format) < sizeof_array(c_blockSizes));
 	return c_blockSizes[int(format)];
 }
 
 uint32_t getTextureBlockDenom(TextureFormat format)
 {
-	const uint32_t c_blockDenoms[] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, 4, 4, 4, 4, 0, 0, 0, 0 };
+	const uint32_t c_blockDenoms[] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, 4, 4, 4, 4, 2, 4, 2, 4 };
 	T_ASSERT (int(format) < sizeof_array(c_blockDenoms));
 	return c_blockDenoms[int(format)];
 }

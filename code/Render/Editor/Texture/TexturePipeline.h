@@ -47,10 +47,17 @@ public:
 	) const;
 
 private:
+	enum CompressionMethod
+	{
+		CmNone,
+		CmDXTn,
+		CmPVRTC
+	};
+
 	std::wstring m_assetPath;
 	int32_t m_skipMips;
 	int32_t m_clampSize;
-	bool m_allowCompression;
+	CompressionMethod m_compressionMethod;
 	int32_t m_compressionQuality;
 };
 

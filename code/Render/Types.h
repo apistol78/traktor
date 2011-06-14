@@ -88,6 +88,9 @@ enum TextureFormat
 
 	TfR8,
 	TfR8G8B8A8,
+	TfR5G6B5,
+	TfR5G5B5A1,
+	TfR4G4B4A4,
 
 	/*! \name Floating point formats. */
 	//@{
