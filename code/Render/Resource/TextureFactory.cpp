@@ -112,9 +112,6 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 		uint32_t textureDataSize = mipChainSize(desc.format, desc.width, desc.height, desc.mipCount);
 		AutoArrayPtr< uint8_t > buffer(new uint8_t [textureDataSize]);
 
-		uint32_t blockSize = getTextureBlockSize(desc.format);
-		uint32_t blockDenom = getTextureBlockDenom(desc.format);
-
 		Ref< IStream > readerStream = stream;
 		if (isCompressed)
 			readerStream = new compress::InflateStream(stream);
@@ -126,27 +123,25 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 		{
 			int32_t mipWidth = std::max(imageWidth >> i, 1);
 			int32_t mipHeight = std::max(imageHeight >> i, 1);
-
-			uint32_t blockWidth = (mipWidth + blockDenom - 1) / blockDenom;
-			uint32_t blockHeight = (mipHeight + blockDenom - 1) / blockDenom;
-			uint32_t blockCount = blockWidth * blockHeight;
+						
+			uint32_t mipPitch = getTextureMipPitch((TextureFormat)texelFormat, mipWidth, mipHeight);
 
 			if (i >= skipMips)
 			{
 				desc.initialData[i - skipMips].data = data;
 				desc.initialData[i - skipMips].pitch = getTextureRowPitch(desc.format, mipWidth);
 
-				int32_t nread = readerData.read(data, blockCount * blockSize);
-				T_ASSERT (nread == blockCount * blockSize);
+				int32_t nread = readerData.read(data, mipPitch);
+				T_ASSERT (nread == mipPitch);
 
-				data += blockCount * blockSize;
+				data += mipPitch;
 				T_ASSERT (size_t(data - buffer.ptr()) <= textureDataSize);
 			}
 			else
 			{
 				readerStream->seek(
 					IStream::SeekCurrent,
-					blockCount * blockSize
+					mipPitch
 				);
 			}
 		}
