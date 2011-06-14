@@ -5,6 +5,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Log2.h"
 #include "Core/Math/Vector4.h"
+#include "Core/Misc/String.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
@@ -23,6 +24,7 @@
 #include "Editor/IPipelineSettings.h"
 #include "Render/Types.h"
 #include "Render/Editor/Texture/DxtnCompressor.h"
+#include "Render/Editor/Texture/PvrtcCompressor.h"
 #include "Render/Editor/Texture/SphereMapFilter.h"
 #include "Render/Editor/Texture/TextureAsset.h"
 #include "Render/Editor/Texture/TexturePipeline.h"
@@ -70,12 +72,12 @@ struct ScaleTextureTask : public Object
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TexturePipeline", 12, TexturePipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TexturePipeline", 13, TexturePipeline, editor::IPipeline)
 
 TexturePipeline::TexturePipeline()
 :	m_skipMips(0)
 ,	m_clampSize(0)
-,	m_allowCompression(true)
+,	m_compressionMethod(CmDXTn)
 ,	m_compressionQuality(1)
 {
 }
@@ -85,8 +87,21 @@ bool TexturePipeline::create(const editor::IPipelineSettings* settings)
 	m_assetPath = settings->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
 	m_skipMips = settings->getProperty< PropertyInteger >(L"TexturePipeline.SkipMips", 0);
 	m_clampSize = settings->getProperty< PropertyInteger >(L"TexturePipeline.ClampSize", 0);
-	m_allowCompression = settings->getProperty< PropertyBoolean >(L"TexturePipeline.AllowCompression", true);
 	m_compressionQuality = settings->getProperty< PropertyInteger >(L"TexturePipeline.CompressionQuality", 1);
+
+	std::wstring compressionMethod = settings->getProperty< PropertyString >(L"TexturePipeline.CompressionMethod", L"DXTn");
+	if (compareIgnoreCase< std::wstring >(compressionMethod, L"None") == 0)
+		m_compressionMethod = CmNone;
+	else if (compareIgnoreCase< std::wstring >(compressionMethod, L"DXTn") == 0)
+		m_compressionMethod = CmDXTn;
+	else if (compareIgnoreCase< std::wstring >(compressionMethod, L"PVRTC") == 0)
+		m_compressionMethod = CmPVRTC;
+	else
+	{
+		log::error << L"Unknown compression method \"" << compressionMethod << L"\"" << Endl;
+		return false;
+	}
+
 	return true;
 }
 
@@ -204,7 +219,7 @@ bool TexturePipeline::buildOutput(
 	}
 
 	// Swizzle channels to prepare for DXT5nm compression.
-	if (m_allowCompression && textureAsset->m_enableNormalMapCompression)
+	if (m_compressionMethod == CmDXTn && textureAsset->m_enableNormalMapCompression)
 	{
 		log::info << L"Preparing for DXT5nm compression..." << Endl;
 
@@ -217,7 +232,7 @@ bool TexturePipeline::buildOutput(
 		image = image->applyFilter(&swizzleFilter);
 
 		if (!textureAsset->m_ignoreAlpha)
-			log::warning << L"Kept source alpha in red channel; compressed normals might have artifacts" << Endl;
+			log::warning << L"Kept source alpha in red channel; compressed normals might have severe artifacts" << Endl;
 	}
 
 	// Rescale image.
@@ -285,41 +300,63 @@ bool TexturePipeline::buildOutput(
 		T_ASSERT (mipCount >= 1);
 
 		// Determine texture compression format.
-		if (
-			m_allowCompression &&
-			(textureAsset->m_enableCompression || textureAsset->m_enableNormalMapCompression) &&
-			isLog2(width) &&
-			isLog2(height)
-		)
+		if (m_compressionMethod == CmDXTn)
 		{
-			if (textureAsset->m_enableNormalMapCompression)
+			if (textureAsset->m_enableCompression || textureAsset->m_enableNormalMapCompression)
 			{
-				log::info << L"Using DXT5nm compression" << Endl;
-				textureFormat = TfDXT5;
-			}
-			else
-			{
-				bool binaryAlpha = false;
-				if (textureAsset->m_hasAlpha && !textureAsset->m_ignoreAlpha)
-					binaryAlpha = isBinaryAlpha(image);
-				if (needAlpha && !binaryAlpha)
+				if (textureAsset->m_enableNormalMapCompression)
 				{
-					log::info << L"Using DXT3 compression" << Endl;
-					textureFormat = TfDXT3;
+					log::info << L"Using DXT5nm compression" << Endl;
+					textureFormat = TfDXT5;
 				}
 				else
 				{
-					log::info << L"Using DXT1 compression" << Endl;
-					textureFormat = TfDXT1;
+					bool binaryAlpha = false;
+					if (textureAsset->m_hasAlpha && !textureAsset->m_ignoreAlpha)
+						binaryAlpha = isBinaryAlpha(image);
+					if (needAlpha && !binaryAlpha)
+					{
+						log::info << L"Using DXT3 compression" << Endl;
+						textureFormat = TfDXT3;
+					}
+					else
+					{
+						log::info << L"Using DXT1 compression" << Endl;
+						textureFormat = TfDXT1;
+					}
 				}
 			}
+			else
+				log::info << L"Using no compression" << Endl;
+		}
+		else if (m_compressionMethod == CmPVRTC)
+		{
+			if (
+				textureAsset->m_enableCompression &&
+				width == height &&
+				width >= 8 && width <= 2048
+			)
+			{
+				if (needAlpha)
+				{
+					log::info << L"Using PVRTC3 compression" << Endl;
+					textureFormat = TfPVRTC3;
+				}
+				else
+				{
+					log::info << L"Using PVRTC1 compression" << Endl;
+					textureFormat = TfPVRTC1;
+				}
+			}
+			else
+				log::info << L"Using no compression" << Endl;
 		}
 		else
 			log::info << L"Using no compression" << Endl;
 
 		Writer writer(stream);
 
-		writer << uint32_t(5);
+		writer << uint32_t(6);
 		writer << int32_t(width);
 		writer << int32_t(height);
 		writer << int32_t(mipCount);
@@ -382,8 +419,10 @@ bool TexturePipeline::buildOutput(
 		}
 
 		Ref< ICompressor > compressor;
-		if (textureFormat == TfDXT1 || textureFormat == TfDXT3 || textureFormat == TfDXT5)
+		if (textureFormat >= TfDXT1 && textureFormat <= TfDXT5)
 			compressor = new DxtnCompressor();
+		else if (textureFormat >= TfPVRTC1 && textureFormat <= TfPVRTC4)
+			compressor = new PvrtcCompressor();
 		else
 			compressor = new UnCompressor();
 
@@ -407,7 +446,7 @@ bool TexturePipeline::buildOutput(
 
 		Writer writer(stream);
 
-		writer << uint32_t(5);
+		writer << uint32_t(6);
 		writer << int32_t(sideSize);
 		writer << int32_t(sideSize);
 		writer << int32_t(mipCount);

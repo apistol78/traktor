@@ -10661,13 +10661,19 @@
 									<item>$(TRAKTOR_HOME)/code</item>
 									<item>$(TRAKTOR_HOME)/3rdp/squish-1.10</item>
 									<item>$(TRAKTOR_HOME)/3rdp/stb_dxt</item>
+									<item>$(TRAKTOR_HOME)/3rdp/POWERVR SDK/OGLES2_WINDOWS_PCEMULATION_2.07.27.0484/Utilities/Pvrtc/dll</item>
 								</includePaths>
 								<definitions>
 									<item>T_RENDER_EDITOR_EXPORT</item>
 									<item>_DEBUG</item>
+									<item>T_HAVE_PVRTC</item>
 								</definitions>
-								<libraryPaths/>
-								<libraries/>
+								<libraryPaths>
+									<item>$(TRAKTOR_HOME)/3rdp/POWERVR SDK/OGLES2_WINDOWS_PCEMULATION_2.07.27.0484/Utilities/Pvrtc/dll</item>
+								</libraryPaths>
+								<libraries>
+									<item>pvrtc.lib</item>
+								</libraries>
 								<additionalCompilerOptions/>
 								<additionalLinkerOptions/>
 							</item>
@@ -10680,13 +10686,19 @@
 									<item>$(TRAKTOR_HOME)/code</item>
 									<item>$(TRAKTOR_HOME)/3rdp/squish-1.10</item>
 									<item>$(TRAKTOR_HOME)/3rdp/stb_dxt</item>
+									<item>$(TRAKTOR_HOME)/3rdp/POWERVR SDK/OGLES2_WINDOWS_PCEMULATION_2.07.27.0484/Utilities/Pvrtc/dll</item>
 								</includePaths>
 								<definitions>
 									<item>T_RENDER_EDITOR_EXPORT</item>
 									<item>NDEBUG</item>
+									<item>T_HAVE_PVRTC</item>
 								</definitions>
-								<libraryPaths/>
-								<libraries/>
+								<libraryPaths>
+									<item>$(TRAKTOR_HOME)/3rdp/POWERVR SDK/OGLES2_WINDOWS_PCEMULATION_2.07.27.0484/Utilities/Pvrtc/dll</item>
+								</libraryPaths>
+								<libraries>
+									<item>pvrtc.lib</item>
+								</libraries>
 								<additionalCompilerOptions/>
 								<additionalLinkerOptions/>
 							</item>
@@ -10699,13 +10711,19 @@
 									<item>$(TRAKTOR_HOME)/code</item>
 									<item>$(TRAKTOR_HOME)/3rdp/squish-1.10</item>
 									<item>$(TRAKTOR_HOME)/3rdp/stb_dxt</item>
+									<item>$(TRAKTOR_HOME)/3rdp/POWERVR SDK/OGLES2_WINDOWS_PCEMULATION_2.07.27.0484/Utilities/Pvrtc/dll</item>
 								</includePaths>
 								<definitions>
 									<item>T_STATIC</item>
 									<item>_DEBUG</item>
+									<item>T_HAVE_PVRTC</item>
 								</definitions>
-								<libraryPaths/>
-								<libraries/>
+								<libraryPaths>
+									<item>$(TRAKTOR_HOME)/3rdp/POWERVR SDK/OGLES2_WINDOWS_PCEMULATION_2.07.27.0484/Utilities/Pvrtc/dll</item>
+								</libraryPaths>
+								<libraries>
+									<item>pvrtc.lib</item>
+								</libraries>
 								<additionalCompilerOptions/>
 								<additionalLinkerOptions/>
 							</item>
@@ -10718,13 +10736,19 @@
 									<item>$(TRAKTOR_HOME)/code</item>
 									<item>$(TRAKTOR_HOME)/3rdp/squish-1.10</item>
 									<item>$(TRAKTOR_HOME)/3rdp/stb_dxt</item>
+									<item>$(TRAKTOR_HOME)/3rdp/POWERVR SDK/OGLES2_WINDOWS_PCEMULATION_2.07.27.0484/Utilities/Pvrtc/dll</item>
 								</includePaths>
 								<definitions>
 									<item>T_STATIC</item>
 									<item>NDEBUG</item>
+									<item>T_HAVE_PVRTC</item>
 								</definitions>
-								<libraryPaths/>
-								<libraries/>
+								<libraryPaths>
+									<item>$(TRAKTOR_HOME)/3rdp/POWERVR SDK/OGLES2_WINDOWS_PCEMULATION_2.07.27.0484/Utilities/Pvrtc/dll</item>
+								</libraryPaths>
+								<libraries>
+									<item>pvrtc.lib</item>
+								</libraries>
 								<additionalCompilerOptions/>
 								<additionalLinkerOptions/>
 							</item>
