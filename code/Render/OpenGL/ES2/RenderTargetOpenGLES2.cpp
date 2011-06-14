@@ -124,6 +124,11 @@ bool RenderTargetOpenGLES2::create(const RenderTargetSetCreateDesc& setDesc, con
 	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 	T_OGL_SAFE(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 
+	m_shadowState.wrapS = GL_CLAMP_TO_EDGE;
+	m_shadowState.wrapT = GL_CLAMP_TO_EDGE;
+	m_shadowState.magFilter = GL_NEAREST;
+	m_shadowState.minFilter = GL_NEAREST;
+
 	return bool(status == GL_FRAMEBUFFER_COMPLETE);
 }
 

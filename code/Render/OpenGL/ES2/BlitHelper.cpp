@@ -26,6 +26,8 @@ const Vertex c_vertices[] =
 		
 const char c_vertexShader[] =
 {
+	"precision lowp float;\n"
+
 	"attribute vec2 in_Position;\n"
 	"attribute vec2 in_TexCoord;\n"
 	
@@ -40,7 +42,7 @@ const char c_vertexShader[] =
 
 const char c_fragmentShader[] =
 {
-	"precision mediump float;\n"
+	"precision lowp float;\n"
 
 	"uniform lowp sampler2D sampler0;\n"
 	

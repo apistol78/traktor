@@ -206,20 +206,32 @@ void RenderViewOpenGLES2::clear(uint32_t clearMask, const float color[4], float 
 
 void RenderViewOpenGLES2::setVertexBuffer(VertexBuffer* vertexBuffer)
 {
-	m_currentVertexBuffer = checked_type_cast< VertexBufferOpenGLES2* >(vertexBuffer);
-	m_currentDirty = true;
+	VertexBufferOpenGLES2* vb = checked_type_cast< VertexBufferOpenGLES2* >(vertexBuffer);
+	//if (vb != m_currentVertexBuffer)
+	{
+		m_currentVertexBuffer = vb;
+		m_currentDirty = true;
+	}
 }
 
 void RenderViewOpenGLES2::setIndexBuffer(IndexBuffer* indexBuffer)
 {
-	m_currentIndexBuffer = checked_type_cast< IndexBufferOpenGLES2* >(indexBuffer);
-	m_currentDirty = true;
+	IndexBufferOpenGLES2* ib = checked_type_cast< IndexBufferOpenGLES2* >(indexBuffer);
+	//if (ib != m_currentIndexBuffer)
+	{
+		m_currentIndexBuffer = ib;
+		m_currentDirty = true;
+	}
 }
 
 void RenderViewOpenGLES2::setProgram(IProgram* program)
 {
-	m_currentProgram = checked_type_cast< ProgramOpenGLES2 * >(program);
-	m_currentDirty = true;
+	ProgramOpenGLES2* p = checked_type_cast< ProgramOpenGLES2 * >(program);
+	//if (p != m_currentProgram)
+	{
+		m_currentProgram = p;
+		m_currentDirty = true;
+	}
 }
 
 void RenderViewOpenGLES2::draw(const Primitives& primitives)
