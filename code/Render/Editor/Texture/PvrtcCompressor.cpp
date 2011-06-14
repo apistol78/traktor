@@ -2,6 +2,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/AutoPtr.h"
 #include "Drawing/Image.h"
+#include "Drawing/PixelFormat.h"
 #include "Render/Editor/Texture/PvrtcCompressor.h"
 
 #if defined(T_HAVE_PVRTC)
@@ -30,11 +31,14 @@ bool PvrtcCompressor::compress(Writer& writer, const RefArray< drawing::Image >&
 		int32_t byteSize = pvrtc_size(mipImages[i]->getWidth(), mipImages[i]->getHeight(), 0, use2Bit);
 		T_ASSERT (byteSize <= maxByteSize);
 
+		Ref< drawing::Image > mipImage = mipImages[i];
+		mipImage->convert(drawing::PixelFormat::getA8R8G8B8());
+
 		pvrtc_compress(
-			mipImages[i]->getData(),
+			mipImage->getData(),
 			compressedData.ptr(),
-			mipImages[i]->getWidth(),
-			mipImages[i]->getHeight(),
+			mipImage->getWidth(),
+			mipImage->getHeight(),
 			0,
 			needAlpha ? 1 : 0,
 			1,
