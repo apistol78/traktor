@@ -38,6 +38,37 @@ private:
 
 HandleRegistry s_handleRegistry;
 
+struct TextureFormatInfo
+{
+	const wchar_t* name;
+	uint32_t blockSize;
+	uint32_t blockDenom;
+}
+c_textureFormatInfo[] =
+{
+	{ L"TfInvalid", 0, 0 },
+	{ L"TfR8", 1, 1 },
+	{ L"TfR8G8B8A8", 4, 1 },
+	{ L"TfR5G6B5", 2, 1 },
+	{ L"TfR5G5B5A1", 2, 1 },
+	{ L"TfR4G4B4A4", 2, 1 },
+	{ L"TfR16G16B16A16F", 8, 1 },
+	{ L"TfR32G32B32A32F", 16, 1 },
+	{ L"TfR16G16F", 4, 1 },
+	{ L"TfR32G32F", 8, 1 },
+	{ L"TfR16F", 2, 1 },
+	{ L"TfR32F", 4, 1 },
+	{ L"TfDXT1", 8, 4 },
+	{ L"TfDXT2", 16, 4 },
+	{ L"TfDXT3", 16, 4 },
+	{ L"TfDXT4", 16, 4 },
+	{ L"TfDXT5", 16, 4 },
+	{ L"TfPVRTC1", 1, 2 },
+	{ L"TfPVRTC2", 1, 4 },
+	{ L"TfPVRTC3", 1, 2 },
+	{ L"TfPVRTC4", 1, 4 }
+};
+
 		}
 
 handle_t getParameterHandle(const std::wstring& name)
@@ -106,45 +137,20 @@ uint32_t getDataElementCount(DataType dataType)
 
 std::wstring getTextureFormatName(TextureFormat format)
 {
-	const wchar_t* c_names[] =
-	{
-		L"TfInvalid",
-		L"TfR8",
-		L"TfR8G8B8A8",
-		L"TfR5G6B5",
-		L"TfR5G5B5A1",
-		L"TfR4G4B4A4",
-		L"TfR16G16B16A16F",
-		L"TfR32G32B32A32F",
-		L"TfR16G16F",
-		L"TfR32G32F",
-		L"TfR16F",
-		L"TfR32F",
-		L"TfDXT1",
-		L"TfDXT2",
-		L"TfDXT3",
-		L"TfDXT4",
-		L"TfDXT5",
-		L"TfPVRTC1",
-		L"TfPVRTC2",
-		L"TfPVRTC3",
-		L"TfPVRTC4"
-	};
-	return int(format) < sizeof_array(c_names) ? c_names[int(format)] : c_names[0];
+	T_ASSERT (int(format) < sizeof_array(c_textureFormatInfo));
+	return c_textureFormatInfo[int(format)].name;
 }
 
 uint32_t getTextureBlockSize(TextureFormat format)
 {
-	const uint32_t c_blockSizes[] = { 0, 1, 4, 2, 2, 2, 8, 16, 4, 8, 2, 4, 8, 16, 16, 16, 16, 1, 1, 1, 1 };
-	T_ASSERT (int(format) < sizeof_array(c_blockSizes));
-	return c_blockSizes[int(format)];
+	T_ASSERT (int(format) < sizeof_array(c_textureFormatInfo));
+	return c_textureFormatInfo[int(format)].blockSize;
 }
 
 uint32_t getTextureBlockDenom(TextureFormat format)
 {
-	const uint32_t c_blockDenoms[] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, 4, 4, 4, 4, 2, 4, 2, 4 };
-	T_ASSERT (int(format) < sizeof_array(c_blockDenoms));
-	return c_blockDenoms[int(format)];
+	T_ASSERT (int(format) < sizeof_array(c_textureFormatInfo));
+	return c_textureFormatInfo[int(format)].blockDenom;
 }
 
 uint32_t getTextureMipSize(uint32_t textureSize, uint32_t mipLevel)
