@@ -84,38 +84,38 @@ enum IndexType
 /*! \brief Texture data format. */
 enum TextureFormat
 {
-	TfInvalid,
+	TfInvalid = 0,
 
-	TfR8,
-	TfR8G8B8A8,
-	TfR5G6B5,
-	TfR5G5B5A1,
-	TfR4G4B4A4,
+	TfR8 = 1,
+	TfR8G8B8A8 = 2,
+	TfR5G6B5 = 3,
+	TfR5G5B5A1 = 4,
+	TfR4G4B4A4 = 5,
 
 	/*! \name Floating point formats. */
 	//@{
 
-	TfR16G16B16A16F,
-	TfR32G32B32A32F,
-	TfR16G16F,
-	TfR32G32F,
-	TfR16F,
-	TfR32F,
+	TfR16G16B16A16F = 6,
+	TfR32G32B32A32F = 7,
+	TfR16G16F = 8,
+	TfR32G32F = 9,
+	TfR16F = 10,
+	TfR32F = 11,
 
 	//@}
 
 	/*! \name Compressed texture formats. */
 	//@{
 
-	TfDXT1,
-	TfDXT2,
-	TfDXT3,
-	TfDXT4,
-	TfDXT5,
-	TfPVRTC1,	// 4bpp, no alpha
-	TfPVRTC2,	// 2bpp, no alpha
-	TfPVRTC3,	// 4bpp, alpha
-	TfPVRTC4	// 2bpp, alpha
+	TfDXT1 = 12,
+	TfDXT2 = 13,
+	TfDXT3 = 14,
+	TfDXT4 = 15,
+	TfDXT5 = 16,
+	TfPVRTC1 = 17,	// 4bpp, no alpha
+	TfPVRTC2 = 18,	// 2bpp, no alpha
+	TfPVRTC3 = 19,	// 4bpp, alpha
+	TfPVRTC4 = 20	// 2bpp, alpha
 
 	//@}
 };
