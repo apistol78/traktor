@@ -120,6 +120,12 @@ bool SimpleTextureOpenGLES2::create(const SimpleTextureCreateDesc& desc)
 		T_OGL_SAFE(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
 		T_OGL_SAFE(glBindTexture(GL_TEXTURE_2D, m_textureName));
 
+		// Set default parameters as its might help driver.
+		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
+		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
+	
 		for (int i = 0; i < desc.mipCount; ++i)
 		{
 			uint32_t width = std::max(m_width >> i, 1);

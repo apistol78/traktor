@@ -26,10 +26,10 @@ struct SamplerState
 	GLenum wrapT;
 
 	SamplerState()
-	:	minFilter(GL_NEAREST)
-	,	magFilter(GL_NEAREST)
-	,	wrapS(GL_CLAMP_TO_EDGE)
-	,	wrapT(GL_CLAMP_TO_EDGE)
+	:	minFilter(GL_LINEAR)
+	,	magFilter(GL_LINEAR)
+	,	wrapS(GL_REPEAT)
+	,	wrapT(GL_REPEAT)
 	{
 	}
 };

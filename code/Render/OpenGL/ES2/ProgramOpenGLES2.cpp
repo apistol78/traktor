@@ -82,8 +82,15 @@ bool storeIfNotEqual(const Vector4* source, int length, float* dest)
 bool storeIfNotEqual(const Matrix44* source, int length, float* dest)
 {
 	for (int i = 0; i < length; ++i)
-		source[i].storeAligned(&dest[i * 4 * 4]);
-	return true;
+	{
+		if (Matrix44::loadAligned(&dest[i * 4 * 4]) != source[i])
+		{
+			for (; i < length; ++i)
+				source[i].storeAligned(&dest[i * 4 * 4]);
+			return true;
+		}
+	}
+	return false;
 }
 
 std::map< uint32_t, ProgramOpenGLES2* > s_programCache;
