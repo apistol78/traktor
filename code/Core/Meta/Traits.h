@@ -27,6 +27,46 @@ struct IsPointer < Type* >
 	enum { value = true };
 };
 
+/*! \brief Is type a pointer, const pointer specialization. */
+template < typename Type >
+struct IsPointer < const Type* >
+{
+	typedef const Type* type_t;
+	typedef const Type base_t;
+
+	enum { value = true };
+};
+
+/*! \brief Is type a reference. */
+template < typename Type >
+struct IsReference
+{
+	typedef Type type_t;
+	typedef Type base_t;
+
+	enum { value = false };
+};
+
+/*! \brief Is type a reference, reference specialization. */
+template < typename Type >
+struct IsReference < Type& >
+{
+	typedef Type& type_t;
+	typedef Type base_t;
+
+	enum { value = true };
+};
+
+/*! \brief Is type a reference, const reference specialization. */
+template < typename Type >
+struct IsReference < const Type& >
+{
+	typedef const Type& type_t;
+	typedef const Type base_t;
+
+	enum { value = true };
+};
+
 /*! \brief Is type const. */
 template < typename Type >
 struct IsConst

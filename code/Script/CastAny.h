@@ -25,6 +25,28 @@ struct CastAny
 };
 
 template < >
+struct CastAny < Any, false >
+{
+	static Any set(const Any& value) {
+		return value;
+	}
+	static const Any& get(const Any& value) {
+		return value;
+	}
+};
+
+template < >
+struct CastAny < const Any&, false >
+{
+	static Any set(const Any& value) {
+		return value;
+	}
+	static const Any& get(const Any& value) {
+		return value;
+	}
+};
+
+template < >
 struct CastAny < bool, false >
 {
 	static Any set(bool value) {
@@ -120,6 +142,31 @@ struct CastAny < const wchar_t, true >
 	}
 	static const wchar_t* get(const Any& value) {
 		return value.getString().c_str();
+	}
+};
+
+template < typename Type >
+struct CastAny < Ref< Type >, false >
+{
+	static Any set(const Ref< Type >& value) {
+		return Any(value);
+	}
+	static Ref< Type > get(const Any& value) {
+		return checked_type_cast< Type*, false >(value.getObject());
+	}
+};
+
+template < typename Type >
+struct CastAny < Type, false >
+{
+	typedef typename IsReference< Type >::base_t type_t;
+
+	static Any set(Type value) {
+		return Any(new type_t(value));
+	}
+
+	static Type get(const Any& value) {
+		return Type(*checked_type_cast< type_t*, false >(value.getObject()));
 	}
 };
 
@@ -226,10 +273,10 @@ template < typename InnerType >
 struct CastAny < RefArray< InnerType >, false >
 {
 	static Any set(const RefArray< InnerType >& value) {
-		return Any(new BoxedArray(value));
+		return Any(new BoxedRefArray(value));
 	}
 	static RefArray< InnerType > get(const Any& value) {
-		return checked_type_cast< BoxedArray*, false >(value.getObject())->unbox();
+		return checked_type_cast< BoxedRefArray*, false >(value.getObject())->unbox();
 	}
 };
 
@@ -237,12 +284,35 @@ template < typename InnerType >
 struct CastAny < const RefArray< InnerType >&, false >
 {
 	static Any set(const RefArray< InnerType >& value) {
-		return Any(new BoxedArray(value));
+		return Any(new BoxedRefArray(value));
 	}
 	static RefArray< InnerType > get(const Any& value) {
-		return checked_type_cast< BoxedArray*, false >(value.getObject())->unbox();
+		return checked_type_cast< BoxedRefArray*, false >(value.getObject())->unbox();
 	}
 };
+
+template < typename InnerType >
+struct CastAny < std::vector< InnerType >, false >
+{
+	static Any set(const std::vector< InnerType >& value) {
+		return Any(new BoxedStdVector(value));
+	}
+	static std::vector< InnerType > get(const Any& value) {
+		return checked_type_cast< BoxedStdVector*, false >(value.getObject())->unbox< InnerType >();
+	}
+};
+
+template < typename InnerType >
+struct CastAny < const std::vector< InnerType >&, false >
+{
+	static Any set(const std::vector< InnerType >& value) {
+		return Any(new BoxedStdVector(value));
+	}
+	static std::vector< InnerType > get(const Any& value) {
+		return checked_type_cast< BoxedStdVector*, false >(value.getObject())->unbox< InnerType >();
+	}
+};
+
 
 /*! \} */
 

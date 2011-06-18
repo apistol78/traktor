@@ -6,6 +6,7 @@
 #include "Core/Math/Vector4.h"
 #include "Core/Math/Quaternion.h"
 #include "Core/Math/Transform.h"
+#include "Script/Any.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -145,15 +146,15 @@ private:
 	Transform m_value;
 };
 
-class T_DLLCLASS BoxedArray : public Object
+class T_DLLCLASS BoxedRefArray : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	BoxedArray();
+	BoxedRefArray();
 
 	template < typename ObjectType >
-	BoxedArray(const RefArray< ObjectType >& arr)
+	BoxedRefArray(const RefArray< ObjectType >& arr)
 	{
 		m_arr.resize(arr.size());
 		for (uint32_t i = 0; i < arr.size(); ++i)
@@ -170,6 +171,40 @@ public:
 
 private:
 	RefArray< Object > m_arr;
+};
+
+class T_DLLCLASS BoxedStdVector : public Object
+{
+	T_RTTI_CLASS;
+
+public:
+	BoxedStdVector();
+
+	template < typename ItemType >
+	BoxedStdVector(const std::vector< ItemType >& arr)
+	{
+		m_arr.resize(arr.size());
+		for (uint32_t i = 0; i < arr.size(); ++i)
+			m_arr[i] = Any(arr[i]);
+	}
+
+	int32_t length() const;
+
+	void set(int32_t index, const Any& value);
+
+	Any get(int32_t index);
+
+	template < typename ItemType >
+	std::vector< ItemType > unbox() const
+	{
+		std::vector< ItemType > arr(m_arr.size());
+		for (uint32_t i = 0; i < m_arr.size(); ++i)
+			arr[i] = CastAny< ItemType >::get(m_arr[i]);
+		return arr;
+	}
+
+private:
+	std::vector< Any > m_arr;
 };
 
 void T_DLLCLASS registerBoxClasses(class IScriptManager* scriptManager);
