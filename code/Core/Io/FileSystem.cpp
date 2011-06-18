@@ -29,6 +29,8 @@
 namespace traktor
 {
 
+T_IMPLEMENT_RTTI_CLASS(L"traktor.FileSystem", FileSystem, Object)
+
 FileSystem::FileSystem()
 {
 #if defined(HAS_NATIVE_VOLUME)
@@ -38,7 +40,7 @@ FileSystem::FileSystem()
 
 FileSystem& FileSystem::getInstance()
 {
-	static FileSystem* s_instance = 0;
+	static Ref< FileSystem > s_instance;
 	if (!s_instance)
 	{
 		s_instance = new FileSystem();
@@ -283,7 +285,6 @@ bool FileSystem::getRelativePath(const Path& absolutePath, const Path& relativeT
 
 void FileSystem::destroy()
 {
-	delete this;
 }
 
 Ref< IVolume > FileSystem::getVolume(const Path& path) const

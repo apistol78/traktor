@@ -60,6 +60,7 @@ void ScriptContextLua::setGlobal(const std::wstring& globalName, const Any& glob
 	lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_environmentRef);
 	m_scriptManager->pushAny(globalValue);
 	lua_setfield(m_luaState, -2, wstombs(globalName).c_str());
+	lua_pop(m_luaState, 1);
 
 	m_scriptManager->unlock();
 }

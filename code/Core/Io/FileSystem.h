@@ -29,8 +29,12 @@ class IStream;
  * Initially all physical drives are mounted
  * in the file system.
  */
-class T_DLLCLASS FileSystem : public ISingleton
+class T_DLLCLASS FileSystem
+:	public Object
+,	public ISingleton
 {
+	T_RTTI_CLASS;
+
 public:
 	FileSystem();
 

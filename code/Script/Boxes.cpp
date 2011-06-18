@@ -247,18 +247,24 @@ const Transform& BoxedTransform::unbox() const
 	return m_value;
 }
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.Array", BoxedArray, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.Array", BoxedRefArray, Object)
 
-BoxedArray::BoxedArray()
+BoxedRefArray::BoxedRefArray()
 {
 }
 
-int32_t BoxedArray::length() const
+int32_t BoxedRefArray::length() const
 {
 	return int32_t(m_arr.size());
 }
 
-Object* BoxedArray::get(int32_t index)
+void BoxedRefArray::set(int32_t index, Object* object)
+{
+	if (index >= 0 && index < int32_t(m_arr.size()))
+		m_arr[index] = object;
+}
+
+Object* BoxedRefArray::get(int32_t index)
 {
 	if (index >= 0 && index < int32_t(m_arr.size()))
 		return m_arr[index];
@@ -266,15 +272,34 @@ Object* BoxedArray::get(int32_t index)
 		return 0;
 }
 
-const RefArray< Object >& BoxedArray::unbox() const
+const RefArray< Object >& BoxedRefArray::unbox() const
 {
 	return m_arr;
 }
 
-void BoxedArray::set(int32_t index, Object* object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.StdVector", BoxedStdVector, Object)
+
+BoxedStdVector::BoxedStdVector()
+{
+}
+
+int32_t BoxedStdVector::length() const
+{
+	return int32_t(m_arr.size());
+}
+
+void BoxedStdVector::set(int32_t index, const Any& value)
 {
 	if (index >= 0 && index < int32_t(m_arr.size()))
-		m_arr[index] = object;
+		m_arr[index] = value;
+}
+
+Any BoxedStdVector::get(int32_t index)
+{
+	if (index >= 0 && index < int32_t(m_arr.size()))
+		return m_arr[index];
+	else
+		return Any();
 }
 
 void registerBoxClasses(IScriptManager* scriptManager)
@@ -330,13 +355,20 @@ void registerBoxClasses(IScriptManager* scriptManager)
 	classBoxedTransform->addMethod(L"transform", &BoxedTransform::transform);
 	scriptManager->registerClass(classBoxedTransform);
 
-	Ref< AutoScriptClass< BoxedArray > > classBoxedArray = new AutoScriptClass< BoxedArray >();
-	classBoxedArray->addConstructor();
-	classBoxedArray->addConstructor< const RefArray< Object >& >();
-	classBoxedArray->addMethod(L"length", &BoxedArray::length);
-	classBoxedArray->addMethod(L"set", &BoxedArray::set);
-	classBoxedArray->addMethod(L"get", &BoxedArray::get);
-	scriptManager->registerClass(classBoxedArray);
+	Ref< AutoScriptClass< BoxedRefArray > > classBoxedRefArray = new AutoScriptClass< BoxedRefArray >();
+	classBoxedRefArray->addConstructor();
+	classBoxedRefArray->addConstructor< const RefArray< Object >& >();
+	classBoxedRefArray->addMethod(L"length", &BoxedRefArray::length);
+	classBoxedRefArray->addMethod(L"set", &BoxedRefArray::set);
+	classBoxedRefArray->addMethod(L"get", &BoxedRefArray::get);
+	scriptManager->registerClass(classBoxedRefArray);
+
+	Ref< AutoScriptClass< BoxedStdVector > > classBoxedStdVector = new AutoScriptClass< BoxedStdVector >();
+	classBoxedStdVector->addConstructor();
+	classBoxedStdVector->addMethod(L"length", &BoxedStdVector::length);
+	classBoxedStdVector->addMethod(L"set", &BoxedStdVector::set);
+	classBoxedStdVector->addMethod(L"get", &BoxedStdVector::get);
+	scriptManager->registerClass(classBoxedStdVector);
 }
 	
 	}
