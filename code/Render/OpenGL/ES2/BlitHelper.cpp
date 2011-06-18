@@ -1,6 +1,8 @@
 #include "Render/OpenGL/ES2/BlitHelper.h"
 #include "Render/OpenGL/ES2/ContextOpenGLES2.h"
 
+#if !defined(T_OFFLINE_ONLY)
+
 namespace traktor
 {
 	namespace render
@@ -137,3 +139,5 @@ void BlitHelper::blit(GLint sourceTextureHandle)
 	
 	}
 }
+
+#endif
