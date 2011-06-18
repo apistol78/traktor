@@ -62,20 +62,22 @@ bool RenderSystemOpenGLES2::create(const RenderSystemCreateDesc& desc)
 	if (!m_globalContext)
 		return false;
 
-#endif
-
 	{
 		T_ANONYMOUS_VAR(IContext::Scope)(m_globalContext);
 		m_blitHelper = new BlitHelper();
 		m_blitHelper->create(m_globalContext);
 	}
 
+#endif
+
 	return true;
 }
 
 void RenderSystemOpenGLES2::destroy()
 {
+#if !defined(T_OFFLINE_ONLY)
 	safeDestroy(m_blitHelper);
+#endif
 
 //#if defined(T_OPENGL_ES2_HAVE_EGL)
 //	if (m_display == EGL_NO_DISPLAY)

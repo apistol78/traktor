@@ -18,6 +18,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.PvrtcCompressor", PvrtcCompressor, IComp
 
 bool PvrtcCompressor::compress(Writer& writer, const RefArray< drawing::Image >& mipImages, TextureFormat textureFormat, bool needAlpha, int32_t compressionQuality) const
 {
+#if defined(T_HAVE_PVRTC)
 	log::info << L"Compressing and writing mip(s)..." << Endl;
 
 	int32_t mipCount = int32_t(mipImages.size());
@@ -51,6 +52,9 @@ bool PvrtcCompressor::compress(Writer& writer, const RefArray< drawing::Image >&
 
 	log::info << L"All mip(s) written" << Endl;
 	return true;
+#else
+    return false;
+#endif
 }
 
 	}

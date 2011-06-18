@@ -1,4 +1,5 @@
 #include "Script/AutoScriptClass.h"
+#include "Script/CastAny.h"
 #include "Script/Boxes.h"
 #include "Script/IScriptManager.h"
 

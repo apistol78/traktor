@@ -5,7 +5,6 @@
 #include "Core/Meta/Traits.h"
 #include "Core/Misc/TString.h"
 #include "Script/Any.h"
-#include "Script/Boxes.h"
 
 namespace traktor
 {
@@ -202,117 +201,6 @@ struct CastAny < const TypeInfo, true >
 		return value.getType();
 	}
 };
-
-template < >
-struct CastAny < Vector4, false >
-{
-	static Any set(const Vector4& value) {
-		return Any(new BoxedVector4(value));
-	}	
-	static Vector4 get(const Any& value) {
-		return checked_type_cast< BoxedVector4*, false >(value.getObject())->unbox();
-	}
-};
-
-template < >
-struct CastAny < const Vector4&, false >
-{
-	static Any set(const Vector4& value) {
-		return Any(new BoxedVector4(value));
-	}	
-	static Vector4 get(const Any& value) {
-		return checked_type_cast< BoxedVector4*, false >(value.getObject())->unbox();
-	}
-};
-
-template < >
-struct CastAny < Quaternion, false >
-{
-	static Any set(const Quaternion& value) {
-		return Any(new BoxedQuaternion(value));
-	}
-	static Quaternion get(const Any& value) {
-		return checked_type_cast< BoxedQuaternion*, false >(value.getObject())->unbox();
-	}
-};
-
-template < >
-struct CastAny < const Quaternion&, false >
-{
-	static Any set(const Quaternion& value) {
-		return Any(new BoxedQuaternion(value));
-	}
-	static Quaternion get(const Any& value) {
-		return checked_type_cast< BoxedQuaternion*, false >(value.getObject())->unbox();
-	}
-};
-
-template < >
-struct CastAny < Transform, false >
-{
-	static Any set(const Transform& value) {
-		return Any(new BoxedTransform(value));
-	}
-	static Transform get(const Any& value) {
-		return checked_type_cast< BoxedTransform*, false >(value.getObject())->unbox();
-	}
-};
-
-template < >
-struct CastAny < const Transform&, false >
-{
-	static Any set(const Transform& value) {
-		return Any(new BoxedTransform(value));
-	}
-	static Transform get(const Any& value) {
-		return checked_type_cast< BoxedTransform*, false >(value.getObject())->unbox();
-	}
-};
-
-template < typename InnerType >
-struct CastAny < RefArray< InnerType >, false >
-{
-	static Any set(const RefArray< InnerType >& value) {
-		return Any(new BoxedRefArray(value));
-	}
-	static RefArray< InnerType > get(const Any& value) {
-		return checked_type_cast< BoxedRefArray*, false >(value.getObject())->unbox();
-	}
-};
-
-template < typename InnerType >
-struct CastAny < const RefArray< InnerType >&, false >
-{
-	static Any set(const RefArray< InnerType >& value) {
-		return Any(new BoxedRefArray(value));
-	}
-	static RefArray< InnerType > get(const Any& value) {
-		return checked_type_cast< BoxedRefArray*, false >(value.getObject())->unbox();
-	}
-};
-
-template < typename InnerType >
-struct CastAny < std::vector< InnerType >, false >
-{
-	static Any set(const std::vector< InnerType >& value) {
-		return Any(new BoxedStdVector(value));
-	}
-	static std::vector< InnerType > get(const Any& value) {
-		return checked_type_cast< BoxedStdVector*, false >(value.getObject())->unbox< InnerType >();
-	}
-};
-
-template < typename InnerType >
-struct CastAny < const std::vector< InnerType >&, false >
-{
-	static Any set(const std::vector< InnerType >& value) {
-		return Any(new BoxedStdVector(value));
-	}
-	static std::vector< InnerType > get(const Any& value) {
-		return checked_type_cast< BoxedStdVector*, false >(value.getObject())->unbox< InnerType >();
-	}
-};
-
 
 /*! \} */
 
