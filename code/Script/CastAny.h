@@ -156,11 +156,22 @@ struct CastAny < Ref< Type >, false >
 };
 
 template < typename Type >
+struct CastAny < const Ref< Type >&, false >
+{
+	static Any set(const Ref< Type >& value) {
+		return Any(value);
+	}
+	static Ref< Type > get(const Any& value) {
+		return checked_type_cast< Type*, false >(value.getObject());
+	}
+};
+
+template < typename Type >
 struct CastAny < Type, false >
 {
 	typedef typename IsReference< Type >::base_t type_t;
 
-	static Any set(Type value) {
+	static Any set(const type_t& value) {
 		return Any(new type_t(value));
 	}
 
