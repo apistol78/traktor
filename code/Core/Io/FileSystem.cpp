@@ -40,10 +40,11 @@ FileSystem::FileSystem()
 
 FileSystem& FileSystem::getInstance()
 {
-	static Ref< FileSystem > s_instance;
+	static FileSystem* s_instance = 0;
 	if (!s_instance)
 	{
 		s_instance = new FileSystem();
+		s_instance->addRef(0);
 		SingletonManager::getInstance().add(s_instance);
 	}
 	return *s_instance;
@@ -285,6 +286,7 @@ bool FileSystem::getRelativePath(const Path& absolutePath, const Path& relativeT
 
 void FileSystem::destroy()
 {
+	T_SAFE_RELEASE(this);
 }
 
 Ref< IVolume > FileSystem::getVolume(const Path& path) const
