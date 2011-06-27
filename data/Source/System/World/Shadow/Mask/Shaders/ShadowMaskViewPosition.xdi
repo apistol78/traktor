@@ -189,7 +189,7 @@ be in mask.
 			</position>
 			<parameterName>SliceNearZ</parameterName>
 			<type>PtScalar</type>
-			<frequency>UfDraw</frequency>
+			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
@@ -199,7 +199,7 @@ be in mask.
 			</position>
 			<parameterName>SliceFarZ</parameterName>
 			<type>PtScalar</type>
-			<frequency>UfDraw</frequency>
+			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
