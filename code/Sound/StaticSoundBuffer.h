@@ -39,10 +39,10 @@ public:
 	virtual bool getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const;
 
 private:
-	uint32_t m_sampleRate;
-	uint32_t m_samplesCount;
-	uint32_t m_channelsCount;
-	AutoArrayPtr< int16_t > m_samples[SbcMaxChannelCount];
+	int32_t m_sampleRate;
+	int32_t m_samplesCount;
+	int32_t m_channelsCount;
+	AutoArrayPtr< int16_t, AllocFreeAlign > m_samples[SbcMaxChannelCount];
 };
 
 	}
