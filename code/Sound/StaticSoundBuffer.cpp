@@ -1,3 +1,4 @@
+#include "Core/Math/MathConfig.h"
 #include "Core/Memory/BlockAllocator.h"
 #include "Core/Misc/Align.h"
 #include "Core/Thread/Acquire.h"
@@ -108,9 +109,9 @@ bool StaticSoundBuffer::create(uint32_t sampleRate, uint32_t samplesCount, uint3
 	m_samplesCount = samplesCount;
 	m_channelsCount = channelsCount;
 
-	for (uint32_t i = 0; i < m_channelsCount; ++i)
+	for (int32_t i = 0; i < m_channelsCount; ++i)
 	{
-		m_samples[i].reset(new int16_t [m_samplesCount]);
+		m_samples[i].reset((int16_t*)Alloc::acquireAlign(m_samplesCount * sizeof(int16_t), 16, T_FILE_LINE));
 		if (!m_samples[i].ptr())
 			return false;
 	}
@@ -120,7 +121,7 @@ bool StaticSoundBuffer::create(uint32_t sampleRate, uint32_t samplesCount, uint3
 
 void StaticSoundBuffer::destroy()
 {
-	for (uint32_t i = 0; i < m_channelsCount; ++i)
+	for (int32_t i = 0; i < m_channelsCount; ++i)
 		m_samples[i].release();
 }
 
@@ -142,19 +143,41 @@ bool StaticSoundBuffer::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBloc
 {
 	StaticSoundBufferCursor* ssbc = static_cast< StaticSoundBufferCursor* >(cursor);
 
-	uint32_t position = ssbc->m_position;
+	int32_t position = ssbc->m_position;
 	if (position >= m_samplesCount)
 		return false;
 
-	uint32_t samplesCount = m_samplesCount - position;
-	samplesCount = std::min< uint32_t >(samplesCount, outBlock.samplesCount);
+	int32_t samplesCount = m_samplesCount - position;
+	samplesCount = std::min< int32_t >(samplesCount, outBlock.samplesCount);
 	samplesCount = alignUp(samplesCount, 4);
-	samplesCount = std::min< uint32_t >(samplesCount, 4096);
+	samplesCount = std::min< int32_t >(samplesCount, 4096);
 
-	for (uint32_t i = 0; i < m_channelsCount; ++i)
+	for (int32_t i = 0; i < m_channelsCount; ++i)
 	{
 		outBlock.samples[i] = ssbc->m_samples[i];
-		for (uint32_t j = 0; j < samplesCount; ++j)
+
+		int32_t j = 0;
+
+#if defined(T_MATH_USE_SSE2)
+		for (; j < samplesCount - 7; j += 8)
+		{
+			const float __declspec(align(16)) c_scale[] = { 1.0f / 32767.0f, 1.0f / 32767.0f, 1.0f / 32767.0f, 1.0f / 32767.0f };
+			__m128i is = _mm_load_si128((const __m128i*)&m_samples[i][position + j]);
+			__m128i tl0 = _mm_unpacklo_epi16(is, is);
+			__m128i isl = _mm_srai_epi32(tl0, 16);
+			__m128i th0 = _mm_unpackhi_epi16(is, is);
+			__m128i ish = _mm_srai_epi32(th0, 16);
+			__m128 fl = _mm_cvtepi32_ps(isl);
+			__m128 fh = _mm_cvtepi32_ps(ish);
+			__m128 scale = _mm_load_ps(c_scale);
+			fl = _mm_mul_ps(fl, scale);
+			fh = _mm_mul_ps(fh, scale);
+			_mm_store_ps(&ssbc->m_samples[i][j], fl);
+			_mm_store_ps(&ssbc->m_samples[i][j + 4], fh);
+		}
+#endif
+
+		for (; j < samplesCount; ++j)
 			ssbc->m_samples[i][j] = float(m_samples[i][position + j] / 32767.0f);
 	}
 
