@@ -36,25 +36,25 @@ const Guid c_shadowMaskFilterMedium(L"{57FD53AF-547A-9F46-8C94-B4D24EFB63BC}");
 const Guid c_shadowMaskFilterHigh(L"{FABC4017-4D65-604D-B9AB-9FC03FE3CE43}");
 const Guid c_shadowMaskFilterHighest(L"{5AFC153E-6FCE-3142-9E1B-DD3722DA447F}");
 
+render::handle_t s_techniqueDefault = 0;
+render::handle_t s_techniqueDepth = 0;
+render::handle_t s_techniqueShadow = 0;
+render::handle_t s_handleProjection = 0;
+
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRendererForward", 0, WorldRendererForward, IWorldRenderer)
-
-render::handle_t WorldRendererForward::ms_techniqueDefault = 0;
-render::handle_t WorldRendererForward::ms_techniqueDepth = 0;
-render::handle_t WorldRendererForward::ms_techniqueShadow = 0;
-render::handle_t WorldRendererForward::ms_handleProjection = 0;
 
 WorldRendererForward::WorldRendererForward()
 :	m_count(0)
 {
 	// Techniques
-	ms_techniqueDefault = render::getParameterHandle(L"World_ForwardColor");
-	ms_techniqueDepth = render::getParameterHandle(L"World_DepthWrite");
-	ms_techniqueShadow = render::getParameterHandle(L"World_ShadowWrite");
+	s_techniqueDefault = render::getParameterHandle(L"World_ForwardColor");
+	s_techniqueDepth = render::getParameterHandle(L"World_DepthWrite");
+	s_techniqueShadow = render::getParameterHandle(L"World_ShadowWrite");
 
 	// Global parameters.
-	ms_handleProjection = render::getParameterHandle(L"Projection");
+	s_handleProjection = render::getParameterHandle(L"Projection");
 }
 
 bool WorldRendererForward::create(
@@ -356,7 +356,7 @@ void WorldRendererForward::build(WorldRenderView& worldRenderView, Entity* entit
 		depthRenderView.resetLights();
 
 		WorldRenderPassForward pass(
-			ms_techniqueDepth,
+			s_techniqueDepth,
 			false,
 			depthRenderView,
 			m_settings.depthRange,
@@ -410,7 +410,7 @@ void WorldRendererForward::render(uint32_t flags, int frame, render::EyeType eye
 	// Prepare global program parameters.
 	render::ProgramParameters programParams;
 	programParams.beginParameters(m_globalContext);
-	programParams.setMatrixParameter(ms_handleProjection, projection);
+	programParams.setMatrixParameter(s_handleProjection, projection);
 	programParams.endParameters(m_globalContext);
 
 	// Render depth map; use as z-prepass if able to share depth buffer with primary.
@@ -668,7 +668,7 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, Entity
 		);
 
 		WorldRenderPassForward shadowPass(
-			ms_techniqueShadow,
+			s_techniqueShadow,
 			false,
 			shadowRenderView,
 			m_settings.depthRange,
@@ -687,7 +687,7 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, Entity
 	worldRenderView.setEyePosition(eyePosition);
 
 	WorldRenderPassForward defaultPass(
-		ms_techniqueDefault,
+		s_techniqueDefault,
 		true,
 		worldRenderView,
 		m_settings.depthRange,
@@ -713,7 +713,7 @@ void WorldRendererForward::buildNoShadows(WorldRenderView& worldRenderView, Enti
 	worldRenderView.setEyePosition(eyePosition);
 
 	WorldRenderPassForward defaultPass(
-		ms_techniqueDefault,
+		s_techniqueDefault,
 		true,
 		worldRenderView,
 		m_settings.depthRange,

@@ -70,7 +70,9 @@ RenderViewPs3::RenderViewPs3(
 ,	m_localMemoryHeap(localMemoryHeap)
 ,	m_mainMemoryHeap(mainMemoryHeap)
 ,	m_tileArea(tileArea)
+#if defined(T_RENDER_PS3_USE_ZCULL)
 ,	m_zcullArea(zcullArea)
+#endif
 ,	m_width(0)
 ,	m_height(0)
 ,	m_gamma(1.0f)
@@ -405,6 +407,7 @@ bool RenderViewPs3::reset(const RenderViewDefaultDesc& desc)
 					log::error << L"Unable to bind tile (" << lookupGcmError(err) << L")" << Endl;
 			}
 
+#if defined(T_RENDER_PS3_USE_ZCULL)
 			// Setup Z-cull binding.
 			if (m_zcullArea.alloc(m_depthTexture.width * m_depthTexture.height, 4096, m_zcullTile))
 			{
@@ -425,6 +428,7 @@ bool RenderViewPs3::reset(const RenderViewDefaultDesc& desc)
 				if (err != CELL_OK)
 					log::error << L"Unable to bind ZCull (" << lookupGcmError(err) << L")" << Endl;
 			}
+#endif
 		}
 	}
 	else	// Setup stereoscopic frame buffers.
@@ -521,6 +525,7 @@ bool RenderViewPs3::reset(const RenderViewDefaultDesc& desc)
 					log::error << L"Unable to bind tile (" << lookupGcmError(err) << L")" << Endl;
 			}
 
+#if defined(T_RENDER_PS3_USE_ZCULL)
 			// Setup Z-cull binding.
 			if (m_zcullArea.alloc(m_depthTexture.width * m_depthTexture.height, 4096, m_zcullTile))
 			{
@@ -541,9 +546,11 @@ bool RenderViewPs3::reset(const RenderViewDefaultDesc& desc)
 				if (err != CELL_OK)
 					log::error << L"Unable to bind ZCull (" << lookupGcmError(err) << L")" << Endl;
 			}
+#endif
 		}
 	}
 
+#if defined(T_RENDER_PS3_USE_ZCULL)
 	if (m_zcullTile.index != ~0UL)
 	{
 		T_GCM_CALL(cellGcmSetZcullStatsEnable)(
@@ -551,6 +558,7 @@ bool RenderViewPs3::reset(const RenderViewDefaultDesc& desc)
 			CELL_GCM_TRUE
 		);
 	}
+#endif
 
 	setViewport(Viewport(0, 0, m_width, m_height, 0.0f, 1.0f));
 	return true;
@@ -622,6 +630,9 @@ bool RenderViewPs3::begin(EyeType eye)
 #if USE_TIME_MEASURE
 		T_GCM_CALL(cellGcmSetTimeStamp)(gCellGcmCurrentContext, c_reportTimeStamp0);
 #endif
+
+		// We need to compensate for 1-Z depth buffer arrangement by ensuring correct state is set.
+		T_GCM_CALL(cellGcmSetDepthFunc)(gCellGcmCurrentContext, CELL_GCM_GREATER);
 	}
 
 	uint32_t frameIndex = m_frameCounter % sizeof_array(m_colorOffset);
@@ -685,6 +696,7 @@ bool RenderViewPs3::begin(EyeType eye)
 
 	m_renderTargetDirty = true;
 
+#if defined(T_RENDER_PS3_USE_ZCULL)
 	// Update Z-cull limits.
 	int32_t	maxSlope = cellGcmGetReport(CELL_GCM_ZCULL_STATS, c_reportZCullStats0);
 	int32_t	sumSlope = cellGcmGetReport(CELL_GCM_ZCULL_STATS1, c_reportZCullStats1);
@@ -707,6 +719,7 @@ bool RenderViewPs3::begin(EyeType eye)
 		pushBack
 	);
 	T_GCM_CALL(cellGcmSetClearReport)(gCellGcmCurrentContext, CELL_GCM_ZCULL_STATS);
+#endif
 
 	return true;
 }
@@ -746,7 +759,11 @@ bool RenderViewPs3::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 		rs.depthFormat = CELL_GCM_SURFACE_Z24S8;
 		rs.depthOffset = m_depthTexture.offset;
 		rs.depthPitch = m_depthTexture.pitch;
+#if defined(T_RENDER_PS3_USE_ZCULL)
 		rs.zcull = true;
+#else
+		rs.zcull = false;
+#endif
 	}
 
 	m_renderTargetStack.push_back(rs);
@@ -891,11 +908,13 @@ void RenderViewPs3::end()
 		rt->finishRender(m_stateCache, m_resolve2x);
 		m_renderTargetDirty = true;
 	}
+#if defined(T_RENDER_PS3_USE_ZCULL)
 	else
 	{
 		T_GCM_CALL(cellGcmSetReport)(gCellGcmCurrentContext, CELL_GCM_ZCULL_STATS, c_reportZCullStats0);
 		T_GCM_CALL(cellGcmSetReport)(gCellGcmCurrentContext, CELL_GCM_ZCULL_STATS1, c_reportZCullStats1);
 	}
+#endif
 }
 
 void RenderViewPs3::present()
@@ -974,7 +993,7 @@ void RenderViewPs3::present()
 
 void RenderViewPs3::pushMarker(const char* const marker)
 {
-	cellGcmSetPerfMonPushMarker(gCellGcmCurrentContext, marker);
+	cellGcmSetPerfMonPushMarker(gCellGcmCurrentContext, marker ? marker : "<Unnamed>");
 }
 
 void RenderViewPs3::popMarker()
@@ -1047,6 +1066,7 @@ void RenderViewPs3::setCurrentRenderState()
 		);
 	}
 
+#if defined(T_RENDER_PS3_USE_ZCULL)
 	if (rs.zcull && rs.depthOffset)
 	{
 		T_GCM_CALL(cellGcmSetZcullEnable)(
@@ -1056,6 +1076,7 @@ void RenderViewPs3::setCurrentRenderState()
 		);
 	}
 	else
+#endif
 	{
 		T_GCM_CALL(cellGcmSetZcullEnable)(
 			gCellGcmCurrentContext,
@@ -1118,8 +1139,10 @@ void RenderViewPs3::clearImmediate()
 				(uint32_t(clearDepth * 0xffffff) << 8) | (rs.clearStencil & 0xff)
 			);
 		}
+#if defined(T_RENDER_PS3_USE_ZCULL)
 		//if (rs.zcull)
 		//	T_GCM_CALL(cellGcmSetInvalidateZcull)(gCellGcmCurrentContext);
+#endif
 	}
 
 	if (gcmClearMask)

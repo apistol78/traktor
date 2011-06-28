@@ -19,7 +19,9 @@ RenderTargetSetPs3::RenderTargetSetPs3(
 )
 :	RenderTargetSet()
 ,	m_tileArea(tileArea)
+#if defined(T_RENDER_PS3_USE_ZCULL)
 ,	m_zcullArea(zcullArea)
+#endif
 ,	m_width(0)
 ,	m_height(0)
 ,	m_depthFormat(CELL_GCM_SURFACE_Z16)
@@ -121,6 +123,7 @@ bool RenderTargetSetPs3::create(
 				if (err != CELL_OK)
 					log::error << L"Unable to bind tile (" << lookupGcmError(err) << L")" << Endl;
 
+#if defined(T_RENDER_PS3_USE_ZCULL)
 				if (m_zcullArea.alloc(m_depthTexture.width * m_depthTexture.height, 4096, m_zcullInfo))
 				{
 					uint32_t zcullFormat = desc.ignoreStencil ? CELL_GCM_ZCULL_Z16 : CELL_GCM_ZCULL_Z24S8;
@@ -141,6 +144,7 @@ bool RenderTargetSetPs3::create(
 					if (err != CELL_OK)
 						log::error << L"Unable to bind ZCull (" << lookupGcmError(err) << L")" << Endl;
 				}
+#endif
 			}
 		}
 	}
@@ -159,12 +163,14 @@ bool RenderTargetSetPs3::create(
 
 void RenderTargetSetPs3::destroy()
 {
+#if defined(T_RENDER_PS3_USE_ZCULL)
 	if (m_zcullInfo.index != ~0UL)
 	{
 		cellGcmUnbindZcull(m_zcullInfo.index);
 		m_zcullArea.free(m_zcullInfo.index);
 		m_zcullInfo.index = ~0UL;
 	}
+#endif
 
 	if (m_tileInfo.index != ~0UL)
 	{

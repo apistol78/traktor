@@ -1,5 +1,5 @@
 #include <algorithm>
-#include <map>
+#include "Core/Containers/SmallMap.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Singleton/ISingleton.h"
 #include "Core/Singleton/SingletonManager.h"
@@ -22,9 +22,12 @@ public:
 
 	handle_t getHandle(const std::wstring& name)
 	{
-		std::map< std::wstring, handle_t >::const_iterator i = m_handles.find(name);
+		SmallMap< std::wstring, handle_t >::const_iterator i = m_handles.find(name);
 		if (i != m_handles.end())
+		{
+			T_ASSERT (i->second > 0);
 			return i->second;
+		}
 
 		handle_t handle = m_nextUnusedHandle++;
 		m_handles.insert(std::make_pair(name, handle));
@@ -33,7 +36,7 @@ public:
 	}
 
 private:
-	std::map< std::wstring, handle_t > m_handles;
+	SmallMap< std::wstring, handle_t > m_handles;
 	handle_t m_nextUnusedHandle;
 };
 

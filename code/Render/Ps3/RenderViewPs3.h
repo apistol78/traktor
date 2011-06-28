@@ -127,10 +127,12 @@ private:
 
 	// Tiled region.
 	TileArea& m_tileArea;
-	TileArea& m_zcullArea;
 	TileArea::TileInfo m_colorTile[FrameBufferCount];
 	TileArea::TileInfo m_depthTile;
+#if defined(T_RENDER_PS3_USE_ZCULL)
+	TileArea& m_zcullArea;
 	TileArea::TileInfo m_zcullTile;
+#endif
 
 	// Current bound resources.
 	Ref< VertexBufferPs3 > m_currentVertexBuffer;

@@ -58,7 +58,11 @@ public:
 
 	uint32_t getGcmDepthSurfaceFormat() const { return m_depthFormat; }
 
+#if defined(T_RENDER_PS3_USE_ZCULL)
 	bool getGcmZCull() const { return m_zcullInfo.index != ~0UL; }
+#else
+	bool getGcmZCull() const { return false; }
+#endif
 
 	RenderTargetPs3* getRenderTarget(int index) { return m_renderTargets[index]; }
 
@@ -66,7 +70,9 @@ public:
 
 private:
 	TileArea& m_tileArea;
+#if defined(T_RENDER_PS3_USE_ZCULL)
 	TileArea& m_zcullArea;
+#endif
 	int32_t m_width;
 	int32_t m_height;
 	RefArray< RenderTargetPs3 > m_renderTargets;
@@ -74,7 +80,9 @@ private:
 	CellGcmTexture m_depthTexture;
 	MemoryHeapObject* m_depthData;
 	TileArea::TileInfo m_tileInfo;
+#if defined(T_RENDER_PS3_USE_ZCULL)
 	TileArea::TileInfo m_zcullInfo;
+#endif
 	bool m_usingPrimaryDepthStencil;
 	int32_t& m_counter;
 };

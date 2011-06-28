@@ -24,6 +24,8 @@
 
 #endif
 
+#include "Render/Ps3/ConfigPs3.h"
+
 //#define T_GCM_CALL(fnc) fnc
 //#define T_GCM_CALL(fnc) fnc##Inline
 #define T_GCM_CALL(fnc) fnc##UnsafeInline
