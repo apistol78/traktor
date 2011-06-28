@@ -114,52 +114,52 @@ be in mask.
 			]]>
 			</comment>
 			<position>
-				<first>624</first>
-				<second>-51</second>
+				<first>607</first>
+				<second>-185</second>
 			</position>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>1631</first>
-				<second>191</second>
+				<first>1992</first>
+				<second>202</second>
 			</position>
 			<name>Output</name>
 		</item>
 		<item type="traktor.render.Add">
 			<comment/>
 			<position>
-				<first>1485</first>
-				<second>162</second>
+				<first>1846</first>
+				<second>173</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>1384</first>
-				<second>223</second>
+				<first>1745</first>
+				<second>234</second>
 			</position>
 			<swizzle>xy00</swizzle>
 		</item>
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>1243</first>
-				<second>215</second>
+				<first>1604</first>
+				<second>226</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>1101</first>
-				<second>215</second>
+				<first>1462</first>
+				<second>226</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>923</first>
-				<second>264</second>
+				<first>1284</first>
+				<second>275</second>
 			</position>
 			<parameterName>MagicCoeffs</parameterName>
 			<type>PtVector</type>
@@ -168,24 +168,24 @@ be in mask.
 		<item type="traktor.render.Discard">
 			<comment/>
 			<position>
-				<first>925</first>
-				<second>100</second>
+				<first>914</first>
+				<second>35</second>
 			</position>
 			<operator>CoGreater</operator>
 		</item>
 		<item type="traktor.render.Discard">
 			<comment/>
 			<position>
-				<first>752</first>
-				<second>100</second>
+				<first>741</first>
+				<second>35</second>
 			</position>
 			<operator>CoLess</operator>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>584</first>
-				<second>90</second>
+				<first>573</first>
+				<second>25</second>
 			</position>
 			<parameterName>SliceNearZ</parameterName>
 			<type>PtScalar</type>
@@ -194,8 +194,8 @@ be in mask.
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>594</first>
-				<second>54</second>
+				<first>583</first>
+				<second>-11</second>
 			</position>
 			<parameterName>SliceFarZ</parameterName>
 			<type>PtScalar</type>
@@ -204,10 +204,17 @@ be in mask.
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>1384</first>
-				<second>163</second>
+				<first>1745</first>
+				<second>174</second>
 			</position>
 			<swizzle>00x1</swizzle>
+		</item>
+		<item type="traktor.render.Platform">
+			<comment/>
+			<position>
+				<first>1186</first>
+				<second>44</second>
+			</position>
 		</item>
 	</nodes>
 	<edges>
@@ -333,16 +340,6 @@ be in mask.
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[14]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[12]"/>
-				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[13]"/>
 				<name>Output</name>
 			</source>
@@ -417,8 +414,38 @@ be in mask.
 				<name>Output</name>
 			</source>
 			<destination>
+				<node ref="/object/nodes/item[19]"/>
+				<name>Other</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[19]"/>
+				<name>Output</name>
+			</source>
+			<destination>
 				<node ref="/object/nodes/item[18]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[19]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[12]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[19]"/>
+				<name>GCM</name>
 			</destination>
 		</item>
 	</edges>

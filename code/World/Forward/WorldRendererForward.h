@@ -116,12 +116,6 @@ private:
 		}
 	};
 
-	static render::handle_t ms_techniqueDefault;
-	static render::handle_t ms_techniqueDepth;
-	static render::handle_t ms_techniqueShadow;
-	static render::handle_t ms_handleTime;
-	static render::handle_t ms_handleProjection;
-
 	WorldRenderSettings m_settings;
 	Ref< render::IRenderView > m_renderView;
 	Ref< render::RenderTargetSet > m_depthTargetSet;
