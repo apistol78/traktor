@@ -23,6 +23,7 @@ class ContextOpenGLES2;
 class GlslProgram;
 class ITextureBinding;
 class ProgramResource;
+class StateCache;
 
 /*!
  * \ingroup OGL
@@ -56,9 +57,7 @@ public:
 
 	virtual void setStencilReference(uint32_t stencilReference);
 
-	bool activate(float targetSize[2]);
-
-	const GLint* getAttributeLocs() const;
+	bool activate(StateCache* stateCache, float targetSize[2]);
 
 private:
 	struct Uniform
@@ -89,7 +88,6 @@ private:
 	GLuint m_program;
 	RenderState m_renderState;
 	GLint m_locationTargetSize;
-	GLint m_attributeLocs[T_OGL_MAX_USAGE_INDEX];			//!< Vertex attribute locations.
 	std::map< handle_t, uint32_t > m_parameterMap;			//!< Parameter to data map.
 	std::vector< Uniform > m_uniforms;						//!< Scalar uniforms.
 	std::vector< Sampler > m_samplers;						//!< Samplers.
@@ -97,7 +95,6 @@ private:
 	AlignedVector< ITextureBinding* > m_textureBindings;	//!< Texture bindings.
 	float m_targetSize[2];
 	bool m_textureDirty;
-	static ProgramOpenGLES2* ms_activeProgram;
 	
 	ProgramOpenGLES2(ContextOpenGLES2* resourceContext, GLuint program, const ProgramResource* resource);
 };

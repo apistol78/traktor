@@ -54,12 +54,6 @@ public:
 	void swapBuffers();
 
 	Semaphore& lock();
-
-	void setRenderState(const RenderState& renderState);
-	
-	void setColorMask(uint32_t colorMask);
-	
-	void setDepthMask(GLboolean depthMask);
 	
 	void bindPrimary();
 
@@ -75,7 +69,6 @@ private:
 	Semaphore m_lock;
 	std::vector< IDeleteCallback* > m_deleteResources;
 	std::map< uint32_t, GLuint > m_shaderObjects;
-	RenderState m_renderState;
 
 #if defined(TARGET_OS_IPHONE)
 	ContextOpenGLES2(EAGLContextWrapper* context);

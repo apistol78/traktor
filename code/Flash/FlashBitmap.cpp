@@ -66,32 +66,6 @@ bool FlashBitmap::create(drawing::Image* image)
 		}
 #endif
 	}
-	
-#if TARGET_OS_IPHONE
-	// Ensure bitmap is a power-of-2.
-	uint32_t log2Width = previousLog2(clone->getWidth());
-	uint32_t log2Height = previousLog2(clone->getHeight());
-	
-	// Clamp size; we cannot afford too big bitmaps.
-	if (log2Width > 64)
-		log2Width = 64;
-	if (log2Height > 64)
-		log2Height = 64;
-
-	if (log2Width != clone->getWidth() || log2Height != clone->getHeight())
-	{
-		log::warning << L"Flash bitmap resized to power-of-2 " << log2Width << L"*" << log2Height << Endl;
-		
-		drawing::ScaleFilter scaleFilter(
-			log2Width,
-			log2Height,
-			drawing::ScaleFilter::MnAverage,
-			drawing::ScaleFilter::MgLinear
-		);
-		
-		clone = clone->applyFilter(&scaleFilter);
-	}
-#endif
 
 	m_originalWidth = image->getWidth();
 	m_originalHeight = image->getHeight();
@@ -118,13 +92,8 @@ bool FlashBitmap::create(uint16_t width, uint16_t height)
 {
 	m_originalWidth = width;
 	m_originalHeight = height;
-#if TARGET_OS_IPHONE
-	m_bitsWidth = previousLog2(width);
-	m_bitsHeight = previousLog2(height);
-#else
 	m_bitsWidth = width;
 	m_bitsHeight = height;
-#endif
 	m_bits.reset(new SwfColor [m_bitsWidth * m_bitsHeight]);
 	return true;
 }

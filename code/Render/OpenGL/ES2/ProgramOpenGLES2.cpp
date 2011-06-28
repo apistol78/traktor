@@ -11,6 +11,7 @@
 #include "Render/OpenGL/ES2/ProgramOpenGLES2.h"
 #include "Render/OpenGL/ES2/SimpleTextureOpenGLES2.h"
 #include "Render/OpenGL/ES2/RenderTargetOpenGLES2.h"
+#include "Render/OpenGL/ES2/StateCache.h"
 #include "Render/OpenGL/ES2/ContextOpenGLES2.h"
 
 namespace traktor
@@ -99,8 +100,6 @@ std::map< uint32_t, ProgramOpenGLES2* > s_programCache;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProgramOpenGLES2", ProgramOpenGLES2, IProgram)
 
-ProgramOpenGLES2* ProgramOpenGLES2::ms_activeProgram = 0;
-
 ProgramOpenGLES2::~ProgramOpenGLES2()
 {
 	destroy();
@@ -121,6 +120,21 @@ Ref< ProgramResource > ProgramOpenGLES2::compile(const GlslProgram& glslProgram,
 	resource->setHash(hash);
 
 	return resource;
+}
+
+void bindAttribute(GLuint programObject, DataUsage usage, int32_t index)
+{
+	std::string attributeName = wstombs(glsl_vertex_attr_name(usage, index));	
+
+	int32_t attributeLocation = glsl_vertex_attr_location(usage, index);
+	if (attributeLocation < 0)
+		return;
+	
+	T_OGL_SAFE(glBindAttribLocation(
+		programObject,
+		attributeLocation,
+		attributeName.c_str()
+	));
 }
 
 Ref< ProgramOpenGLES2 > ProgramOpenGLES2::create(ContextOpenGLES2* resourceContext, const ProgramResource* resource)
@@ -160,6 +174,17 @@ Ref< ProgramOpenGLES2 > ProgramOpenGLES2::create(ContextOpenGLES2* resourceConte
 
 	T_OGL_SAFE(glAttachShader(programObject, vertexObject));
 	T_OGL_SAFE(glAttachShader(programObject, fragmentObject));
+	
+	for (int j = 0; j < T_OGL_MAX_INDEX; ++j)
+	{
+		bindAttribute(programObject, DuPosition, j);
+		bindAttribute(programObject, DuNormal, j);
+		bindAttribute(programObject, DuTangent, j);
+		bindAttribute(programObject, DuBinormal, j);
+		bindAttribute(programObject, DuColor, j);
+		bindAttribute(programObject, DuCustom, j);
+	}
+	
 	T_OGL_SAFE(glLinkProgram(programObject));
 
 	T_OGL_SAFE(glGetProgramiv(programObject, GL_LINK_STATUS, &status));
@@ -188,9 +213,6 @@ void ProgramOpenGLES2::destroy()
 {
 #if !defined(T_OFFLINE_ONLY)
 
-	if (ms_activeProgram == this)
-		ms_activeProgram = 0;
-		
 	for (std::map< uint32_t, ProgramOpenGLES2* >::iterator i = s_programCache.begin(); i != s_programCache.end(); ++i)
 	{
 		if (i->second == this)
@@ -289,16 +311,13 @@ void ProgramOpenGLES2::setStencilReference(uint32_t stencilReference)
 	m_renderState.stencilRef = stencilReference;
 }
 
-bool ProgramOpenGLES2::activate(float targetSize[2])
+bool ProgramOpenGLES2::activate(StateCache* stateCache, float targetSize[2])
 {
 #if !defined(T_OFFLINE_ONLY)
 
 	// Bind program and set state display list.
-	if (ms_activeProgram != this)
-	{
-		m_resourceContext->setRenderState(m_renderState);
-		T_OGL_SAFE(glUseProgram(m_program));
-	}
+	stateCache->setRenderState(m_renderState);
+	stateCache->setProgram(m_program);
 	
 	// Update dirty uniforms.
 	for (std::vector< Uniform >::iterator i = m_uniforms.begin(); i != m_uniforms.end(); ++i)
@@ -340,7 +359,7 @@ bool ProgramOpenGLES2::activate(float targetSize[2])
 	}
 
 	// Bind textures.
-	if (m_textureDirty || ms_activeProgram != this)
+	if (m_textureDirty)
 	{
 		T_ASSERT (m_samplers.size() <= 8);
 		uint32_t nsamplers = m_samplers.size();
@@ -363,16 +382,9 @@ bool ProgramOpenGLES2::activate(float targetSize[2])
 		}
 		m_textureDirty = false;
 	}
-
-	ms_activeProgram = this;
 	
 #endif
 	return true;
-}
-
-const GLint* ProgramOpenGLES2::getAttributeLocs() const
-{
-	return m_attributeLocs;
 }
 
 ProgramOpenGLES2::ProgramOpenGLES2(ContextOpenGLES2* resourceContext, GLuint program, const ProgramResource* resource)
@@ -475,6 +487,7 @@ ProgramOpenGLES2::ProgramOpenGLES2(ContextOpenGLES2* resourceContext, GLuint pro
 		}
 	}
 
+	/*
 	for (int j = 0; j < sizeof_array(m_attributeLocs); ++j)
 		m_attributeLocs[j] = -1;
 
@@ -487,6 +500,7 @@ ProgramOpenGLES2::ProgramOpenGLES2(ContextOpenGLES2* resourceContext, GLuint pro
 		m_attributeLocs[T_OGL_USAGE_INDEX(DuColor, j)] = glGetAttribLocation(m_program, wstombs(glsl_vertex_attr_name(DuColor, j)).c_str());
 		m_attributeLocs[T_OGL_USAGE_INDEX(DuCustom, j)] = glGetAttribLocation(m_program, wstombs(glsl_vertex_attr_name(DuCustom, j)).c_str());
 	}
+	*/
 
 	// Create a display list from the render states.
 	m_renderState = resourceOpenGL->getRenderState();

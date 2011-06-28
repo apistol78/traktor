@@ -13,6 +13,7 @@ namespace traktor
 #if !defined(T_OFFLINE_ONLY)
 
 class ContextOpenGLES2;
+class StateCache;
 
 class BlitHelper : public Object
 {
@@ -23,10 +24,9 @@ public:
 	
 	void destroy();
 
-	void blit(GLint sourceTextureHandle);
+	void blit(StateCache* stateCache, GLint sourceTextureHandle);
 	
 private:
-	Ref< ContextOpenGLES2 > m_resourceContext;
 	GLuint m_programObject;
 	GLint m_attribPosition;
 	GLint m_attribTexCoord;

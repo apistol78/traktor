@@ -11,6 +11,7 @@
 #	include "Render/OpenGL/ES2/ProgramOpenGLES2.h"
 #	include "Render/OpenGL/ES2/RenderTargetSetOpenGLES2.h"
 #	include "Render/OpenGL/ES2/RenderTargetOpenGLES2.h"
+#	include "Render/OpenGL/ES2/StateCache.h"
 #	include "Core/Log/Log.h"
 
 namespace traktor
@@ -27,6 +28,7 @@ RenderViewOpenGLES2::RenderViewOpenGLES2(
 )
 :	m_globalContext(globalContext)
 ,	m_context(context)
+,	m_stateCache(new StateCache())
 ,	m_blitHelper(blitHelper)
 ,	m_currentDirty(true)
 {
@@ -184,7 +186,7 @@ void RenderViewOpenGLES2::clear(uint32_t clearMask, const float color[4], float 
 
 	if (cm & GL_COLOR_BUFFER_BIT)
 	{
-		m_context->setColorMask(RenderState::CmAll);
+		m_stateCache->setColorMask(RenderState::CmAll);
 		float r = color[0];
 		float g = color[1];
 		float b = color[2];
@@ -194,7 +196,7 @@ void RenderViewOpenGLES2::clear(uint32_t clearMask, const float color[4], float 
 
 	if (cm & GL_DEPTH_BUFFER_BIT)
 	{
-		m_context->setDepthMask(GL_TRUE);
+		m_stateCache->setDepthMask(GL_TRUE);
 		T_OGL_SAFE(glClearDepthf(depth));
 	}
 
@@ -207,7 +209,7 @@ void RenderViewOpenGLES2::clear(uint32_t clearMask, const float color[4], float 
 void RenderViewOpenGLES2::setVertexBuffer(VertexBuffer* vertexBuffer)
 {
 	VertexBufferOpenGLES2* vb = checked_type_cast< VertexBufferOpenGLES2* >(vertexBuffer);
-	//if (vb != m_currentVertexBuffer)
+	if (vb != m_currentVertexBuffer)
 	{
 		m_currentVertexBuffer = vb;
 		m_currentDirty = true;
@@ -217,45 +219,30 @@ void RenderViewOpenGLES2::setVertexBuffer(VertexBuffer* vertexBuffer)
 void RenderViewOpenGLES2::setIndexBuffer(IndexBuffer* indexBuffer)
 {
 	IndexBufferOpenGLES2* ib = checked_type_cast< IndexBufferOpenGLES2* >(indexBuffer);
-	//if (ib != m_currentIndexBuffer)
-	{
-		m_currentIndexBuffer = ib;
-		m_currentDirty = true;
-	}
+	m_currentIndexBuffer = ib;
 }
 
 void RenderViewOpenGLES2::setProgram(IProgram* program)
 {
 	ProgramOpenGLES2* p = checked_type_cast< ProgramOpenGLES2 * >(program);
-	//if (p != m_currentProgram)
-	{
-		m_currentProgram = p;
-		m_currentDirty = true;
-	}
+	m_currentProgram = p;
 }
 
 void RenderViewOpenGLES2::draw(const Primitives& primitives)
 {
-	if (m_currentDirty)
-	{
-		if (!m_currentProgram || !m_currentVertexBuffer)
-			return;
+	if (!m_currentProgram || !m_currentVertexBuffer)
+		return;
 
-		const RenderTargetOpenGLES2* rt = m_renderTargetStack.top().renderTarget;
+	m_currentVertexBuffer->activate(m_stateCache);
 
-		float targetSize[2];
-		targetSize[0] = float(rt->getWidth());
-		targetSize[1] = float(rt->getHeight());
+	const RenderTargetOpenGLES2* rt = m_renderTargetStack.top().renderTarget;
 
-		if (!m_currentProgram->activate(targetSize))
-			return;
+	float targetSize[2];
+	targetSize[0] = float(rt->getWidth());
+	targetSize[1] = float(rt->getHeight());
 
-		m_currentVertexBuffer->activate(
-			m_currentProgram->getAttributeLocs()
-		);
-
-		m_currentDirty = false;
-	}
+	if (!m_currentProgram->activate(m_stateCache, targetSize))
+		return;
 
 	GLenum primitiveType;
 	GLuint vertexCount;
@@ -310,15 +297,13 @@ void RenderViewOpenGLES2::draw(const Primitives& primitives)
 			break;
 		}
 
-		m_currentIndexBuffer->bind();
-
-		const GLubyte* indices = static_cast< const GLubyte* >(m_currentIndexBuffer->getIndexData()) + primitives.offset * offsetMultiplier;
+		m_currentIndexBuffer->activate(m_stateCache);
 
 		T_OGL_SAFE(glDrawElements(
 			primitiveType,
 			vertexCount,
 			indexType,
-			indices
+			(const GLubyte*)(primitives.offset * offsetMultiplier)
 		));
 	}
 	else
@@ -360,10 +345,10 @@ void RenderViewOpenGLES2::present()
 		m_context->getHeight()
 	));
 	
-	m_context->setColorMask(RenderState::CmAll);
+	m_stateCache->setColorMask(RenderState::CmAll);
 	T_OGL_SAFE(glClearColor(0.0f, 0.0f, 0.0f, 0.0f));
 
-	m_blitHelper->blit(rt->getColorTexture());
+	m_blitHelper->blit(m_stateCache, rt->getColorTexture());
 		
 	// Swap frames.
 	m_context->swapBuffers();

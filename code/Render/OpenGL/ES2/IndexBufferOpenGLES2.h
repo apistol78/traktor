@@ -18,6 +18,7 @@ namespace traktor
 	{
 
 class IContext;
+class StateCache;
 
 /*!
  * \ingroup OGL
@@ -37,9 +38,7 @@ public:
 	
 	virtual void unlock();
 
-	virtual void bind();
-
-	virtual const GLvoid* getIndexData() const;
+	void activate(StateCache* stateCache);
 
 private:
 	Ref< IContext > m_context;

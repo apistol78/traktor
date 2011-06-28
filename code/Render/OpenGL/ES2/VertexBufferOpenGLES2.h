@@ -1,6 +1,7 @@
 #ifndef traktor_render_VertexBufferOpenGLES2_H
 #define traktor_render_VertexBufferOpenGLES2_H
 
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Misc/AutoPtr.h"
 #include "Render/OpenGL/VertexBufferOpenGL.h"
 
@@ -18,6 +19,7 @@ namespace traktor
 	{
 
 class IContext;
+class StateCache;
 class VertexElement;
 
 /*!
@@ -40,25 +42,24 @@ public:
 
 	virtual void unlock();
 
-	void activate(const GLint* attributeLocs);
+	void activate(StateCache* stateCache);
 
 private:
 	struct AttributeDesc
 	{
+		GLint location;
 		GLint size;
 		GLenum type;
 		GLboolean normalized;
 		GLuint offset;
 	};
-	
-	static VertexBufferOpenGLES2* ms_currentBuffer;
-	static const GLint* ms_currentAttributeLocs;
 
 	Ref< IContext > m_context;
+	AlignedVector< AttributeDesc > m_attributes;
 	bool m_dynamic;
-	GLuint m_name;
+	GLuint m_arrayObject;
+	GLuint m_bufferObject;
 	GLuint m_vertexStride;
-	AttributeDesc m_attributeDesc[T_OGL_MAX_USAGE_INDEX];
 	AutoPtr< uint8_t, AllocFreeAlign > m_buffer;
 	GLintptr m_lockOffset;
 	GLsizeiptr m_lockSize;

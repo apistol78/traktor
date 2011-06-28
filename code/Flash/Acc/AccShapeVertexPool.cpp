@@ -47,6 +47,13 @@ bool AccShapeVertexPool::create()
 	if (!vertexBuffer)
 		return false;
 
+	void* ptr = vertexBuffer->lock();
+	if (!ptr)
+		return false;
+		
+	std::memset(ptr, 0, c_vertexPoolSize * sizeof(Vertex));
+	vertexBuffer->unlock();
+
 	VertexPool pool;
 	pool.vertexBuffer = vertexBuffer;
 	pool.blockList = new BlockList(c_vertexPoolSize);
@@ -97,6 +104,13 @@ bool AccShapeVertexPool::acquireRange(int32_t vertexCount, Range& outRange)
 	);
 	if (!vertexBuffer)
 		return false;
+
+	void* ptr = vertexBuffer->lock();
+	if (!ptr)
+		return false;
+		
+	std::memset(ptr, 0, c_vertexPoolSize * sizeof(Vertex));
+	vertexBuffer->unlock();
 
 	VertexPool pool;
 	pool.vertexBuffer = vertexBuffer;
