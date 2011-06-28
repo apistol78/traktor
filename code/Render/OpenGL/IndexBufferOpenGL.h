@@ -27,9 +27,11 @@ class T_DLLCLASS IndexBufferOpenGL : public IndexBuffer
 public:
 	IndexBufferOpenGL(IndexType indexType, uint32_t bufferSize);
 
+#if defined(T_OPENGL_STD)
 	virtual void bind() = 0;
 
 	virtual const GLvoid* getIndexData() const = 0;
+#endif
 };
 	
 	}

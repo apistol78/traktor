@@ -28,7 +28,9 @@ class T_DLLCLASS VertexBufferOpenGL : public VertexBuffer
 public:
 	VertexBufferOpenGL(uint32_t bufferSize);
 
+#if defined(T_OPENGL_STD)
 	virtual void activate(const GLint* attributeLocs) = 0;
+#endif
 };
 	
 	}

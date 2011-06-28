@@ -163,6 +163,8 @@ bool SimpleTextureOpenGLES2::create(const SimpleTextureCreateDesc& desc)
 				));
 			}
 		}
+		
+		T_OGL_SAFE(glFlush());
 	}
 	else
 		m_data.resize(texturePitch);
@@ -222,6 +224,7 @@ void SimpleTextureOpenGLES2::unlock(int level)
 		m_type,
 		&m_data[0]
 	));
+	T_OGL_SAFE(glFlush());
 }
 
 void SimpleTextureOpenGLES2::bind(GLuint unit, const SamplerState& samplerState, GLint locationTexture)

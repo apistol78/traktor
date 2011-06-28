@@ -1,5 +1,6 @@
 #include "Render/OpenGL/ES2/BlitHelper.h"
 #include "Render/OpenGL/ES2/ContextOpenGLES2.h"
+#include "Render/OpenGL/ES2/StateCache.h"
 
 #if !defined(T_OFFLINE_ONLY)
 
@@ -80,6 +81,7 @@ bool BlitHelper::create(ContextOpenGLES2* resourceContext)
 	T_OGL_SAFE(glGenBuffers(1, &m_vertexBuffer));
 	T_OGL_SAFE(glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer));
 	T_OGL_SAFE(glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(Vertex), c_vertices, GL_STATIC_DRAW));
+	T_OGL_SAFE(glFlush());
 
 	m_renderState.cullFaceEnable = GL_FALSE;
 	m_renderState.blendEnable = GL_FALSE;
@@ -89,7 +91,6 @@ bool BlitHelper::create(ContextOpenGLES2* resourceContext)
 	m_renderState.alphaTestEnable = GL_FALSE;
 	m_renderState.stencilTestEnable = GL_FALSE;
 
-	m_resourceContext = resourceContext;
 	return true;
 }
 
@@ -98,15 +99,18 @@ void BlitHelper::destroy()
 	T_OGL_SAFE(glDeleteProgram(m_programObject));
 }
 
-void BlitHelper::blit(GLint sourceTextureHandle)
+void BlitHelper::blit(StateCache* stateCache, GLint sourceTextureHandle)
 {
-	T_OGL_SAFE(glUseProgram(m_programObject));
-			
-	m_resourceContext->setRenderState(m_renderState);
+	const GLint attribLocs[] = { m_attribPosition, m_attribTexCoord };
 	
-	T_OGL_SAFE(glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer));
+	stateCache->setProgram(m_programObject);
+	stateCache->setRenderState(m_renderState);
+	stateCache->setVertexArrayObject(0);
+	stateCache->setArrayBuffer(m_vertexBuffer);
 
 	T_OGL_SAFE(glEnableVertexAttribArray(m_attribPosition));
+	T_OGL_SAFE(glEnableVertexAttribArray(m_attribTexCoord));
+
 	T_OGL_SAFE(glVertexAttribPointer(
 		m_attribPosition,
 		2,
@@ -116,7 +120,6 @@ void BlitHelper::blit(GLint sourceTextureHandle)
 		(GLvoid*)offsetof(Vertex, pos)
 	));
 
-	T_OGL_SAFE(glEnableVertexAttribArray(m_attribTexCoord));
 	T_OGL_SAFE(glVertexAttribPointer(
 		m_attribTexCoord,
 		2,

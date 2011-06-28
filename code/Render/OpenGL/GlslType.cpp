@@ -23,6 +23,22 @@ std::wstring glsl_vertex_attr_name(DataUsage usage, int index)
 	return ss.str();
 }
 
+int32_t glsl_vertex_attr_location(DataUsage usage, int index)
+{
+	int32_t base[] =
+	{
+		0,
+		1,
+		2,
+		3,
+		4,
+		5,
+		16
+	};
+	int32_t location = base[int(usage)] + index;
+	return (location < base[int(usage) + 1]) ? location : -1;
+}
+
 std::wstring glsl_type_name(GlslType type)
 {
 	const wchar_t* c[] =

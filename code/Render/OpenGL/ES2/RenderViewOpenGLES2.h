@@ -27,6 +27,7 @@ class IndexBufferOpenGLES2;
 class ProgramOpenGLES2;
 class RenderTargetSetOpenGLES2;
 class RenderTargetOpenGLES2;
+class StateCache;
 
 /*!
  * \ingroup OGL
@@ -97,6 +98,7 @@ private:
 	
 	Ref< ContextOpenGLES2 > m_globalContext;
 	Ref< ContextOpenGLES2 > m_context;
+	Ref< StateCache > m_stateCache;
 	Ref< BlitHelper > m_blitHelper;
 	Ref< RenderTargetSetOpenGLES2 > m_primaryTargetSet;
 	std::stack< RenderTargetScope > m_renderTargetStack;

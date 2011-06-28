@@ -1,6 +1,7 @@
 #include "Render/OpenGL/Platform.h"
 #include "Render/OpenGL/IContext.h"
 #include "Render/OpenGL/ES2/IndexBufferOpenGLES2.h"
+#include "Render/OpenGL/ES2/StateCache.h"
 
 namespace traktor
 {
@@ -78,14 +79,9 @@ void IndexBufferOpenGLES2::unlock()
 	m_buffer.release();
 }
 
-void IndexBufferOpenGLES2::bind()
+void IndexBufferOpenGLES2::activate(StateCache* stateCache)
 {
-	T_OGL_SAFE(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_name));
-}
-
-const GLvoid* IndexBufferOpenGLES2::getIndexData() const
-{
-	return 0;
+	stateCache->setElementArrayBuffer(m_name);
 }
 
 	}
