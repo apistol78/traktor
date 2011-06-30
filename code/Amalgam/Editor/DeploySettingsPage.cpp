@@ -31,7 +31,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.amalgam.DeploySettingsPage", 0, DeployS
 bool DeploySettingsPage::create(ui::Container* parent, Settings* settings, const std::list< ui::Command >& shortcutCommands)
 {
 	Ref< ui::Container > container = new ui::Container();
-	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,*,100%", 0, 4)))
+	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,*,*,100%", 0, 4)))
 		return false;
 
 	Ref< ui::Container > containerInner = new ui::Container();
@@ -53,6 +53,9 @@ bool DeploySettingsPage::create(ui::Container* parent, Settings* settings, const
 	m_checkPublishActiveGuid = new ui::CheckBox();
 	m_checkPublishActiveGuid->create(container, L"Publish active editor");
 
+	m_checkInheritCache = new ui::CheckBox();
+	m_checkInheritCache->create(container, L"Inherit editor cache(s)");
+
 	int32_t remoteDatabasePort = settings->getProperty< PropertyInteger >(L"Amalgam.RemoteDatabasePort", c_remoteDatabasePort);
 	m_editRemoteDatabasePort->setText(toString(remoteDatabasePort));
 
@@ -61,6 +64,9 @@ bool DeploySettingsPage::create(ui::Container* parent, Settings* settings, const
 
 	bool publish = settings->getProperty< PropertyBoolean >(L"Amalgam.PublishActiveGuid", true);
 	m_checkPublishActiveGuid->setChecked(publish);
+
+	bool inheritCache = settings->getProperty< PropertyBoolean >(L"Amalgam.InheritCache", true);
+	m_checkInheritCache->setChecked(inheritCache);
 
 	Ref< ui::Container > containerEnvironment = new ui::Container();
 	containerEnvironment->create(container, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 4));
@@ -108,6 +114,9 @@ bool DeploySettingsPage::apply(Settings* settings)
 
 	bool publish = m_checkPublishActiveGuid->isChecked();
 	settings->setProperty< PropertyBoolean >(L"Amalgam.PublishActiveGuid", publish);
+
+	bool inheritCache = m_checkInheritCache->isChecked();
+	settings->setProperty< PropertyBoolean >(L"Amalgam.InheritCache", inheritCache);
 
 	return true;
 }
