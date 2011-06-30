@@ -18,6 +18,8 @@ KeyboardDeviceDi8::KeyboardDeviceDi8(IDirectInputDevice8* device, const DIDEVICE
 	m_device->SetDataFormat(&c_dfDIKeyboard);
 	m_name = tstows(deviceInstance->tszInstanceName);
 
+	resetState();
+
 	HRESULT hr = device->Acquire();
 	m_connected = SUCCEEDED(hr);
 }
@@ -151,12 +153,14 @@ void KeyboardDeviceDi8::readState()
 	}
 
 	hr = m_device->Poll();
-	if (FAILED(hr))  
+	while (FAILED(hr))  
 	{
 		hr = m_device->Acquire();
 		m_connected = SUCCEEDED(hr);
 		if (!m_connected)
 			return;
+
+		hr = m_device->Poll();
 	}
 
 	hr = m_device->GetDeviceState(256, m_state);
