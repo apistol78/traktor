@@ -491,7 +491,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_threadAssetMonitor = ThreadManager::getInstance().create(makeFunctor(this, &EditorForm::threadAssetMonitor), L"Asset monitor");
 	m_threadAssetMonitor->start();
 
-	startTimer(1000);
+	startTimer(100);
 
 	return true;
 }

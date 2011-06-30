@@ -245,8 +245,12 @@ bool LocalBus::getEvent(ProviderEvent& outEvent, Guid& outEventId, bool& outRemo
 	if (!eventLog)
 		return false;
 
-	// Move into local pending events.
+	// Get events pending for our instance.
 	std::list< EventLog::Entry >& events = eventLog->getEvents(m_localGuid);
+	if (events.empty())
+		return false;
+
+	// Move into local pending events.
 	for (std::list< EventLog::Entry >::iterator i = events.begin(); i != events.end(); ++i)
 	{
 		Event event = { i->event, i->eventId, i->sender != m_localGuid };
