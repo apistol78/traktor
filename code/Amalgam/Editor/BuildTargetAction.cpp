@@ -9,6 +9,8 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/Split.h"
 #include "Core/Misc/String.h"
+#include "Core/Settings/PropertyBoolean.h"
+#include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
 #include "Core/Settings/Settings.h"
 #include "Core/System/IProcess.h"
@@ -69,8 +71,44 @@ bool BuildTargetAction::execute()
 		pipelineConfiguration->merge(targetPipelineConfiguration, true);
 	}
 
+	const Settings* editorSettings = m_editor->getSettings();
+	T_ASSERT (editorSettings != 0);
+
+	// Merge pipeline cache configuration from editor's configuration.
+	bool inheritCache = editorSettings->getProperty< PropertyBoolean >(L"Amalgam.InheritCache", true);
+	if (inheritCache)
+	{
+		bool fileCacheEnable = editorSettings->getProperty< PropertyBoolean >(L"Pipeline.FileCache", false);
+		if (fileCacheEnable)
+		{
+			std::wstring fileCachePath = editorSettings->getProperty< PropertyString >(L"Pipeline.FileCache.Path", L"");
+			bool fileCacheRead = editorSettings->getProperty< PropertyBoolean >(L"Pipeline.FileCache.Read", false);
+			bool fileCacheWrite = editorSettings->getProperty< PropertyBoolean >(L"Pipeline.FileCache.Write", false);
+
+			pipelineConfiguration->setProperty< PropertyBoolean >(L"Pipeline.FileCache", true);
+			pipelineConfiguration->setProperty< PropertyString >(L"Pipeline.FileCache.Path", fileCachePath);
+			pipelineConfiguration->setProperty< PropertyBoolean >(L"Pipeline.FileCache.Read", fileCacheRead);
+			pipelineConfiguration->setProperty< PropertyBoolean >(L"Pipeline.FileCache.Write", fileCacheWrite);
+		}
+
+		bool memCachedEnable = editorSettings->getProperty< PropertyBoolean >(L"Pipeline.MemCached", false);
+		if (memCachedEnable)
+		{
+			std::wstring memCachedHost = editorSettings->getProperty< PropertyString >(L"Pipeline.MemCached.Host", L"");
+			int32_t memCachedPort = editorSettings->getProperty< PropertyInteger >(L"Pipeline.MemCached.Port", 0);
+			bool memCachedRead = editorSettings->getProperty< PropertyBoolean >(L"Pipeline.MemCached.Read", false);
+			bool memCachedWrite = editorSettings->getProperty< PropertyBoolean >(L"Pipeline.MemCached.Write", false);
+
+			pipelineConfiguration->setProperty< PropertyBoolean >(L"Pipeline.MemCached", true);
+			pipelineConfiguration->setProperty< PropertyString >(L"Pipeline.MemCached.Host", memCachedHost);
+			pipelineConfiguration->setProperty< PropertyInteger >(L"Pipeline.MemCached.Port", memCachedPort);
+			pipelineConfiguration->setProperty< PropertyBoolean >(L"Pipeline.MemCached.Read", memCachedRead);
+			pipelineConfiguration->setProperty< PropertyBoolean >(L"Pipeline.MemCached.Write", memCachedWrite);
+		}
+	}
+
 	// Set database connection strings.
-	db::ConnectionString sourceDatabaseCs = m_editor->getSettings()->getProperty< PropertyString >(L"Editor.SourceDatabase");
+	db::ConnectionString sourceDatabaseCs = editorSettings->getProperty< PropertyString >(L"Editor.SourceDatabase");
 	db::ConnectionString outputDatabaseCs(L"provider=traktor.db.LocalDatabase;groupPath=db;binary=true");
 
 	if (sourceDatabaseCs.have(L"groupPath"))
@@ -83,7 +121,7 @@ bool BuildTargetAction::execute()
 	pipelineConfiguration->setProperty< PropertyString >(L"Editor.OutputDatabase", outputDatabaseCs.format());
 
 	// Set asset path.
-	Path assetPath = m_editor->getSettings()->getProperty< PropertyString >(L"Pipeline.AssetPath");
+	Path assetPath = editorSettings->getProperty< PropertyString >(L"Pipeline.AssetPath");
 	assetPath = FileSystem::getInstance().getAbsolutePath(assetPath);
 	pipelineConfiguration->setProperty< PropertyString >(L"Pipeline.AssetPath", assetPath.getPathName());
 

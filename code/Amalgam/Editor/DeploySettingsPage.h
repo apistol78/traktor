@@ -33,6 +33,7 @@ private:
 	Ref< ui::Edit > m_editRemoteDatabasePort;
 	Ref< ui::Edit > m_editTargetManagerPort;
 	Ref< ui::CheckBox > m_checkPublishActiveGuid;
+	Ref< ui::CheckBox > m_checkInheritCache;
 };
 
 	}
