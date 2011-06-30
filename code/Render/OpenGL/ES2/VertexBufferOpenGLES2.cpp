@@ -29,6 +29,7 @@ struct DeleteBufferCallback : public IContext::IDeleteCallback
 	}
 };
 
+#if defined(GL_OES_vertex_array_object)
 struct DeleteVertexArrayCallback : public IContext::IDeleteCallback
 {
 	GLuint m_arrayName;
@@ -44,6 +45,7 @@ struct DeleteVertexArrayCallback : public IContext::IDeleteCallback
 		delete this;
 	}
 };
+#endif
 
 		}
 
@@ -176,12 +178,14 @@ void VertexBufferOpenGLES2::destroy()
 			m_context->deleteResource(new DeleteBufferCallback(m_bufferObject));
 		m_bufferObject = 0;
 	}
+#if defined(GL_OES_vertex_array_object)
 	if (m_arrayObject)
 	{
 		if (m_context)
 			m_context->deleteResource(new DeleteVertexArrayCallback(m_arrayObject));
 		m_arrayObject = 0;
 	}
+#endif
 }
 
 void* VertexBufferOpenGLES2::lock()
@@ -243,12 +247,14 @@ void VertexBufferOpenGLES2::unlock()
 
 	m_buffer.release();
 	
+#if defined(GL_OES_vertex_array_object)
 	if (m_arrayObject)
 	{
 		if (m_context)
 			m_context->deleteResource(new DeleteVertexArrayCallback(m_arrayObject));
 		m_arrayObject = 0;
 	}
+#endif
 
 	setContentValid(true);
 }
@@ -257,6 +263,7 @@ void VertexBufferOpenGLES2::activate(StateCache* stateCache)
 {
 	stateCache->setArrayBuffer(m_bufferObject);
 
+#if defined(GL_OES_vertex_array_object)
 	if (!m_dynamic)
 	{
 		if (m_arrayObject == 0)
@@ -283,6 +290,7 @@ void VertexBufferOpenGLES2::activate(StateCache* stateCache)
 		}
 	}
 	else
+#endif
 	{
 		stateCache->setVertexArrayObject(0);
 		
