@@ -234,6 +234,8 @@ void emitDiscard(GlslContext& cx, Discard* node)
 
 	// Emit input and reference branches.
 	GlslVariable* in = cx.emitInput(node, L"Input");
+
+#if !defined(T_OPENGL_ES2)
 	GlslVariable* ref = cx.emitInput(node, L"Reference");
 
 	// Create condition statement.
@@ -262,6 +264,9 @@ void emitDiscard(GlslContext& cx, Discard* node)
 	}
 
 	f << L"\tdiscard;" << Endl;
+#else
+	log::warning << L"\"Discard\" node disabled; causing severe performance penalty in OpenGL ES 2.0 renderer" << Endl;
+#endif
 
 	GlslVariable* pass = cx.emitInput(node, L"Pass");
 	GlslVariable* out = cx.emitOutput(node, L"Output", pass->getType());
