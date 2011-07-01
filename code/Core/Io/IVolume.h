@@ -86,6 +86,14 @@ public:
 	 */
 	virtual bool remove(const Path& fileName) = 0;
 
+	/*! \brief Rename file.
+	 *
+	 * \param fileName Name of file to rename.
+	 * \param newName New name of file.
+	 * \return True if file renamed successfully.
+	 */
+	virtual bool rename(const Path& fileName, const std::wstring& newName) = 0;
+
 	/*! \brief Make new directory.
 	 *
 	 * \param directory Path to new directory.

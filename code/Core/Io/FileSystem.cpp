@@ -131,13 +131,26 @@ bool FileSystem::remove(const Path& fileName)
 
 bool FileSystem::move(const Path& destination, const Path& source, bool overwrite)
 {
-	if (copy(destination, source, overwrite) == false)
-		return false;
+	Path destinationPath = getAbsolutePath(destination).normalized();
+	Path sourcePath = getAbsolutePath(source).normalized();
 
-	if (remove(source) == false)
+	if (compareIgnoreCase< std::wstring >(destinationPath.getPathOnly(), sourcePath.getPathOnly()) == 0)
 	{
-		remove(destination);
-		return false;
+		// Actually performing a rename operation; thus call rename on volume directly
+		// which is much faster than transfering the file's content.
+		Ref< IVolume > volume = getVolume(destinationPath);
+		return volume ? volume->rename(sourcePath, destinationPath.getFileName()) : false;
+	}
+	else
+	{
+		if (copy(destination, source, overwrite) == false)
+			return false;
+
+		if (remove(source) == false)
+		{
+			remove(destination);
+			return false;
+		}
 	}
 
 	return true;

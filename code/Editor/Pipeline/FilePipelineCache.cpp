@@ -1,3 +1,4 @@
+#include "Core/Io/BufferedStream.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Settings/PropertyBoolean.h"
@@ -43,7 +44,11 @@ Ref< IStream > FilePipelineCache::get(const Guid& guid, uint32_t hash, int32_t v
 	StringOutputStream ss;
 	ss << m_path << L"/" << guid.format() << L"_" << hash << L"_" << version << L".cache";
 	
-	return FileSystem::getInstance().open(ss.str(), File::FmRead);
+	Ref< IStream > fileStream = FileSystem::getInstance().open(ss.str(), File::FmRead);
+	if (!fileStream)
+		return 0;
+
+	return new BufferedStream(fileStream);
 }
 
 Ref< IStream > FilePipelineCache::put(const Guid& guid, uint32_t hash, int32_t version)
@@ -54,11 +59,14 @@ Ref< IStream > FilePipelineCache::put(const Guid& guid, uint32_t hash, int32_t v
 	StringOutputStream ss;
 	ss << m_path << L"/" << guid.format() << L"_" << hash << L"_" << version << L".cache";
 	
-	Ref< IStream > file = FileSystem::getInstance().open(ss.str() + L"~", File::FmWrite);
-	if (!file)
+	Ref< IStream > fileStream = FileSystem::getInstance().open(ss.str() + L"~", File::FmWrite);
+	if (!fileStream)
 		return 0;
-		
-	return new FilePipelinePutStream(file, ss.str());
+
+	return new FilePipelinePutStream(
+		new BufferedStream(fileStream),
+		ss.str()
+	);
 }
 
 	}
