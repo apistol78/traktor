@@ -481,10 +481,6 @@ LRESULT RenderSystemDx11::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
 		SetWindowLongPtr(hWnd, 0, reinterpret_cast< LONG_PTR >(renderSystem));
 		break;
 
-	case WM_KEYDOWN:
-		if (wParam != VK_ESCAPE)
-			break;
-
 	case WM_CLOSE:
 		DestroyWindow(hWnd);
 		break;
