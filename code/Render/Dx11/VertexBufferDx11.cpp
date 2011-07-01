@@ -61,7 +61,7 @@ void* VertexBufferDx11::lock(uint32_t vertexOffset, uint32_t vertexCount)
 	D3D11_MAPPED_SUBRESOURCE dm;
 	HRESULT hr;
 
-	hr = m_context->getD3DDeviceContext()->Map(m_d3dBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dm);
+	hr = m_context->getD3DDeviceContext()->Map(m_d3dBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &dm);
 	if (FAILED(hr))
 		return 0;
 
