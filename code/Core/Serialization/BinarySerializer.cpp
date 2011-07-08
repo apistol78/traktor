@@ -34,6 +34,18 @@ bool write_primitive(const Ref< IStream >& stream, T v)
 	return stream->write(&v, sizeof(T)) == sizeof(T);
 }
 
+template < typename T >
+bool read_primitives(const Ref< IStream >& stream, T* value, int count)
+{
+	return stream->read(value, sizeof(T) * count) == sizeof(T) * count;
+}
+
+template < typename T >
+bool write_primitives(const Ref< IStream >& stream, const T* value, int count)
+{
+	return stream->write(value, sizeof(T) * count) == sizeof(T) * count;
+}
+
 inline bool read_block(const Ref< IStream >& stream, void* block, int count, int size)
 {
 	return stream->read(block, count * size) == count * size;
@@ -489,24 +501,20 @@ bool BinarySerializer::operator >> (const Member< Vector2 >& m)
 
 bool BinarySerializer::operator >> (const Member< Vector4 >& m)
 {
-	bool result = true;
+	float T_MATH_ALIGN16 e[4];
+	bool result;
+
 	if (m_direction == SdRead)
 	{
-		float x, y, z, w;
-		result &= read_primitive< float >(m_stream, x);
-		result &= read_primitive< float >(m_stream, y);
-		result &= read_primitive< float >(m_stream, z);
-		result &= read_primitive< float >(m_stream, w);
-		if (result)
-			m->set(x, y, z, w);
+		result = read_primitives< float >(m_stream, e, 4);
+		(*m) = Vector4::loadAligned(e);
 	}
 	else
 	{
-		result &= write_primitive< float >(m_stream, m->x());
-		result &= write_primitive< float >(m_stream, m->y());
-		result &= write_primitive< float >(m_stream, m->z());
-		result &= write_primitive< float >(m_stream, m->w());
+		(*m).storeAligned(e);
+		result = write_primitives< float >(m_stream, e, 4);
 	}
+
 	return result;
 }
 
@@ -533,40 +541,35 @@ bool BinarySerializer::operator >> (const Member< Matrix44 >& m)
 
 	if (m_direction == SdRead)
 	{
-		for (int i = 0; i < 16; ++i)
-			result &= read_primitive< float >(m_stream, values[i]);
+		result = read_primitives< float >(m_stream, values, 16);
 		(*m) = Matrix44::loadAligned(values);
 	}
 	else
 	{
 		(*m).storeAligned(values);
-		for (int i = 0; i < 16; ++i)
-			result &= write_primitive< float >(m_stream, values[i]);
+		result = write_primitives< float >(m_stream, values, 16);
 	}
+
 	return result;
 }
 
 bool BinarySerializer::operator >> (const Member< Quaternion >& m)
 {
-	bool result = true;
+	float T_MATH_ALIGN16 e[4];
+	bool result;
+
 	if (m_direction == SdRead)
 	{
-		float x, y, z, w;
-		result &= read_primitive< float >(m_stream, x);
-		result &= read_primitive< float >(m_stream, y);
-		result &= read_primitive< float >(m_stream, z);
-		result &= read_primitive< float >(m_stream, w);
-		if (result)
-			m->e.set(x, y, z, w);
+		result = read_primitives< float >(m_stream, e, 4);
+		m->e = Vector4::loadAligned(e);
 	}
 	else
 	{
-		result &= write_primitive< float >(m_stream, m->e.x());
-		result &= write_primitive< float >(m_stream, m->e.y());
-		result &= write_primitive< float >(m_stream, m->e.z());
-		result &= write_primitive< float >(m_stream, m->e.w());
+		m->e.storeAligned(e);
+		result = write_primitives< float >(m_stream, e, 4);
 	}
-	return result;
+
+	return result;	
 }
 
 bool BinarySerializer::operator >> (const Member< ISerializable >& m)
