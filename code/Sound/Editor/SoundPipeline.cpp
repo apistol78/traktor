@@ -60,13 +60,13 @@ void analyzeDeltaRange(const int16_t* samples, uint32_t nsamples, int32_t& outNe
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundPipeline", 17, SoundPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundPipeline", 18, SoundPipeline, editor::IPipeline)
 
 SoundPipeline::SoundPipeline()
 :	m_sampleRate(44100)
 ,	m_enableZLibCompression(false)
 ,	m_enableLzfCompression(true)
-,	m_enableLzoCompression(true)
+,	m_enableLzoCompression(false)
 ,	m_bigEndian(false)
 {
 }
@@ -77,7 +77,7 @@ bool SoundPipeline::create(const editor::IPipelineSettings* settings)
 	m_sampleRate = settings->getProperty< PropertyInteger >(L"SoundPipeline.SampleRate", m_sampleRate);
 	m_enableZLibCompression = settings->getProperty< PropertyBoolean >(L"SoundPipeline.EnableZLibCompression", false);
 	m_enableLzfCompression = settings->getProperty< PropertyBoolean >(L"SoundPipeline.EnableLzfCompression", true);
-	m_enableLzoCompression = settings->getProperty< PropertyBoolean >(L"SoundPipeline.EnableLzoCompression", true);
+	m_enableLzoCompression = settings->getProperty< PropertyBoolean >(L"SoundPipeline.EnableLzoCompression", false);
 	m_bigEndian = settings->getProperty< PropertyBoolean >(L"SoundPipeline.BigEndian", false);
 	return true;
 }

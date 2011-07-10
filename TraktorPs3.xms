@@ -4359,8 +4359,8 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Traktor.Compress.Zip</name>
-			<sourcePath>$(TRAKTOR_HOME)/code/Compress/Zip</sourcePath>
+			<name>Traktor.Compress</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Compress</sourcePath>
 			<configurations>
 				<item type="Configuration" version="1">
 					<name>DebugStatic</name>
@@ -4370,6 +4370,9 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)\3rdp\zlib-1.2.3</item>
+						<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/minilzo</item>
+						<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/include/lzo</item>
+						<item>$(TRAKTOR_HOME)/3rdp/liblzf-3.6</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -4388,6 +4391,9 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)\3rdp\zlib-1.2.3</item>
+						<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/minilzo</item>
+						<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/include/lzo</item>
+						<item>$(TRAKTOR_HOME)/3rdp/liblzf-3.6</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -4404,6 +4410,33 @@
 					<fileName>*.*</fileName>
 					<items/>
 				</item>
+				<item type="Filter">
+					<name>Zip</name>
+					<items>
+						<item type="File">
+							<fileName>Zip/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>Lzo</name>
+					<items>
+						<item type="File">
+							<fileName>Lzo/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>Lzf</name>
+					<items>
+						<item type="File">
+							<fileName>Lzf/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="1">
@@ -4413,6 +4446,134 @@
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
 					<project ref="/object/projects/item[10]"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project type="Project" version="1">
+						<enable>true</enable>
+						<name>Extern.minilzo-2.05</name>
+						<sourcePath>$(TRAKTOR_HOME)/3rdp/lzo-2.05/minilzo</sourcePath>
+						<configurations>
+							<item type="Configuration" version="1">
+								<name>DebugStatic</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpDebug</targetProfile>
+								<precompiledHeader/>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/code</item>
+									<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/minilzo</item>
+									<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/include/lzo</item>
+								</includePaths>
+								<definitions>
+									<item>_DEBUG</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
+							</item>
+							<item type="Configuration" version="1">
+								<name>ReleaseStatic</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpRelease</targetProfile>
+								<precompiledHeader/>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/code</item>
+									<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/minilzo</item>
+									<item>$(TRAKTOR_HOME)/3rdp/lzo-2.05/include/lzo</item>
+								</includePaths>
+								<definitions>
+									<item>NDEBUG</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
+							</item>
+						</configurations>
+						<items>
+							<item type="File">
+								<fileName>minilzo.c</fileName>
+								<items/>
+							</item>
+							<item type="File">
+								<fileName>minilzo.h</fileName>
+								<items/>
+							</item>
+						</items>
+						<dependencies/>
+					</project>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project type="Project" version="1">
+						<enable>true</enable>
+						<name>Extern.liblzf-3.6</name>
+						<sourcePath>$(TRAKTOR_HOME)/3rdp/liblzf-3.6</sourcePath>
+						<configurations>
+							<item type="Configuration" version="1">
+								<name>DebugStatic</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpDebug</targetProfile>
+								<precompiledHeader/>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/code</item>
+									<item>$(TRAKTOR_HOME)/3rdp/liblzf-3.6</item>
+								</includePaths>
+								<definitions>
+									<item>_DEBUG</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
+							</item>
+							<item type="Configuration" version="1">
+								<name>ReleaseStatic</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpRelease</targetProfile>
+								<precompiledHeader/>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/code</item>
+									<item>$(TRAKTOR_HOME)/3rdp/liblzf-3.6</item>
+								</includePaths>
+								<definitions>
+									<item>NDEBUG</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
+							</item>
+						</configurations>
+						<items>
+							<item type="File">
+								<fileName>lzf_c.c</fileName>
+								<items/>
+							</item>
+							<item type="File">
+								<fileName>lzf_d.c</fileName>
+								<items/>
+							</item>
+							<item type="File">
+								<fileName>config.h</fileName>
+								<items/>
+							</item>
+							<item type="File">
+								<fileName>crc32.h</fileName>
+								<items/>
+							</item>
+							<item type="File">
+								<fileName>lzf.h</fileName>
+								<items/>
+							</item>
+							<item type="File">
+								<fileName>lzfP.h</fileName>
+								<items/>
+							</item>
+						</items>
+						<dependencies/>
+					</project>
 				</item>
 			</dependencies>
 		</item>
@@ -5055,5 +5216,7 @@
 			</dependencies>
 		</item>
 		<item ref="/object/projects/item[35]/dependencies/item[5]/project"/>
+		<item ref="/object/projects/item[42]/dependencies/item[2]/project"/>
+		<item ref="/object/projects/item[42]/dependencies/item[3]/project"/>
 	</projects>
 </object>

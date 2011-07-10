@@ -122,6 +122,28 @@ bool write_primitive(const Ref< IStream >& stream, T v)
 	return false;
 }
 
+template < typename T >
+bool read_primitives(const Ref< IStream >& stream, T* value, int count)
+{
+	for (int i = 0; i < count; ++i)
+	{
+		if (!read_primitive< T >(stream, value[i]))
+			return false;
+	}
+	return true;
+}
+
+template < typename T >
+bool write_primitives(const Ref< IStream >& stream, const T* value, int count)
+{
+	for (int i = 0; i < count; ++i)
+	{
+		if (!write_primitive< T >(stream, value[i]))
+			return false;
+	}
+	return true;
+}
+
 bool read_block(const Ref< IStream >& stream, void* block, int count, int size)
 {
 	int result = stream->read(block, count * size);

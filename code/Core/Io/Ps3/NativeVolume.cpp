@@ -110,6 +110,11 @@ bool NativeVolume::remove(const Path& filename)
 	return cellFsUnlink(wstombs(getSystemPath(filename)).c_str()) == CELL_FS_SUCCEEDED;
 }
 
+bool NativeVolume::rename(const Path& fileName, const std::wstring& newName)
+{
+	return false;
+}
+
 bool NativeVolume::makeDirectory(const Path& directory)
 {
 	CellFsErrno err = cellFsMkdir(
