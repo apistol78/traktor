@@ -202,8 +202,8 @@ bool AccShape::createRenderable(
 					texture = textureCache.getBitmapTexture(*bitmap);
 					textureMatrix =
 						scale(
-							1.0f / bitmap->getOriginalWidth(),
-							1.0f / bitmap->getOriginalHeight()
+							1.0f / bitmap->getWidth(),
+							1.0f / bitmap->getHeight()
 						) *
 						style.getFillBitmapMatrix().inverse();
 					m_batchFlags |= BfHaveTextured;

@@ -15,7 +15,9 @@ namespace traktor
 enum StaticResourceFlags
 {
 	SrfZLib = 1,
-	SrfDelta = 2
+	SrfLzo = 2,
+	SrfLzf = 4,
+	SrfDelta = 8
 };
 
 /*! \brief Sound channel mapping. */

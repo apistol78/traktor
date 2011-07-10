@@ -1,16 +1,17 @@
 #include <cstring>
 #include <zlib.h>
-#include "Compress/Zip/DeflateStream.h"
+#include "Compress/Zip/DeflateStreamZip.h"
+#include "Core/Containers/AlignedVector.h"
 
 namespace traktor
 {
 	namespace compress
 	{
 
-class DeflateImpl : public RefCountImpl< IRefCount >
+class DeflateZipImpl : public RefCountImpl< IRefCount >
 {
 public:
-	DeflateImpl(IStream* stream, uint32_t internalBufferSize)
+	DeflateZipImpl(IStream* stream, uint32_t internalBufferSize)
 	:	m_stream(stream)
 	,	m_buf(internalBufferSize)
 	,	m_position(stream->tell())
@@ -95,23 +96,23 @@ public:
 private:
 	Ref< IStream > m_stream;
 	z_stream m_zstream;
-	std::vector< uint8_t > m_buf;
+	AlignedVector< uint8_t > m_buf;
 	int m_position;
 };
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.compress.DeflateStream", DeflateStream, IStream)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.compress.DeflateStreamZip", DeflateStreamZip, IStream)
 
-DeflateStream::DeflateStream(IStream* stream, uint32_t internalBufferSize)
-:	m_impl(new DeflateImpl(stream, internalBufferSize))
+DeflateStreamZip::DeflateStreamZip(IStream* stream, uint32_t internalBufferSize)
+:	m_impl(new DeflateZipImpl(stream, internalBufferSize))
 {
 }
 
-DeflateStream::~DeflateStream()
+DeflateStreamZip::~DeflateStreamZip()
 {
 	close();
 }
 
-void DeflateStream::close()
+void DeflateStreamZip::close()
 {
 	if (m_impl)
 	{
@@ -120,52 +121,52 @@ void DeflateStream::close()
 	}
 }
 
-bool DeflateStream::canRead() const
+bool DeflateStreamZip::canRead() const
 {
 	return false;
 }
 
-bool DeflateStream::canWrite() const
+bool DeflateStreamZip::canWrite() const
 {
 	return true;
 }
 
-bool DeflateStream::canSeek() const
+bool DeflateStreamZip::canSeek() const
 {
 	return false;
 }
 
-int DeflateStream::tell() const
+int DeflateStreamZip::tell() const
 {
 	T_ASSERT (m_impl);
 	return m_impl->getLogicalPosition();
 }
 
-int DeflateStream::available() const
+int DeflateStreamZip::available() const
 {
 	T_ASSERT (0);
 	return 0;
 }
 
-int DeflateStream::seek(SeekOriginType origin, int offset)
+int DeflateStreamZip::seek(SeekOriginType origin, int offset)
 {
 	T_ASSERT (0);
 	return 0;
 }
 
-int DeflateStream::read(void* block, int nbytes)
+int DeflateStreamZip::read(void* block, int nbytes)
 {
 	T_ASSERT (0);
 	return 0;
 }
 
-int DeflateStream::write(const void* block, int nbytes)
+int DeflateStreamZip::write(const void* block, int nbytes)
 {
 	T_ASSERT (m_impl);
 	return m_impl->write(block, nbytes);
 }
 
-void DeflateStream::flush()
+void DeflateStreamZip::flush()
 {
 	T_ASSERT (m_impl);
 	m_impl->flush();

@@ -1,5 +1,7 @@
 #include <cstring>
-#include "Compress/Zip/DeflateStream.h"
+#include "Compress/Lzf/DeflateStreamLzf.h"
+#include "Compress/Lzo/DeflateStreamLzo.h"
+#include "Compress/Zip/DeflateStreamZip.h"
 #include "Core/Io/BitReader.h"
 #include "Core/Io/BitWriter.h"
 #include "Core/Io/BufferedStream.h"
@@ -58,11 +60,13 @@ void analyzeDeltaRange(const int16_t* samples, uint32_t nsamples, int32_t& outNe
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundPipeline", 14, SoundPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundPipeline", 17, SoundPipeline, editor::IPipeline)
 
 SoundPipeline::SoundPipeline()
 :	m_sampleRate(44100)
-,	m_enableZLibCompression(true)
+,	m_enableZLibCompression(false)
+,	m_enableLzfCompression(true)
+,	m_enableLzoCompression(true)
 ,	m_bigEndian(false)
 {
 }
@@ -71,7 +75,9 @@ bool SoundPipeline::create(const editor::IPipelineSettings* settings)
 {
 	m_assetPath = settings->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
 	m_sampleRate = settings->getProperty< PropertyInteger >(L"SoundPipeline.SampleRate", m_sampleRate);
-	m_enableZLibCompression = settings->getProperty< PropertyBoolean >(L"SoundPipeline.EnableZLibCompression", true);
+	m_enableZLibCompression = settings->getProperty< PropertyBoolean >(L"SoundPipeline.EnableZLibCompression", false);
+	m_enableLzfCompression = settings->getProperty< PropertyBoolean >(L"SoundPipeline.EnableLzfCompression", true);
+	m_enableLzoCompression = settings->getProperty< PropertyBoolean >(L"SoundPipeline.EnableLzoCompression", true);
 	m_bigEndian = settings->getProperty< PropertyBoolean >(L"SoundPipeline.BigEndian", false);
 	return true;
 }
@@ -220,6 +226,7 @@ bool SoundPipeline::buildOutput(
 
 			for (uint32_t i = 0; i < soundBlock.maxChannel; ++i)
 			{
+				samples[i].reserve(samples[i].capacity() + outputSamplesCount);
 				for (uint32_t j = 0; j < outputSamplesCount; ++j)
 				{
 					int16_t sample = 0;
@@ -261,7 +268,7 @@ bool SoundPipeline::buildOutput(
 			Ref< DynamicMemoryStream > streamZLib = new DynamicMemoryStream(false, true);
 			if (m_enableZLibCompression)
 			{
-				Ref< compress::DeflateStream > deflateZLib = new compress::DeflateStream(streamZLib);
+				Ref< compress::DeflateStreamZip > deflateZLib = new compress::DeflateStreamZip(streamZLib);
 				for (uint32_t i = 0; i < maxChannel; ++i)
 				{
 					if (deflateZLib->write(&samples[i][0], samples[i].size() * sizeof(int16_t)) != samples[i].size() * sizeof(int16_t))
@@ -273,14 +280,81 @@ bool SoundPipeline::buildOutput(
 				deflateZLib->close();
 			}
 
-			const std::vector< uint8_t >& zlibBuffer = streamZLib->getBuffer();
-			if (m_enableZLibCompression && zlibBuffer.size() < originalSize)
+			// Compress Lzf
+			Ref< DynamicMemoryStream > streamLzf = new DynamicMemoryStream(false, true);
+			if (m_enableLzfCompression)
 			{
-				log::info << L"Using ZLib, " << uint32_t(zlibBuffer.size()) << L" / " << originalSize << L" byte(s)" << Endl;
+				Ref< compress::DeflateStreamLzf > deflateLzf = new compress::DeflateStreamLzf(streamLzf);
+				for (uint32_t i = 0; i < maxChannel; ++i)
+				{
+					if (deflateLzf->write(&samples[i][0], samples[i].size() * sizeof(int16_t)) != samples[i].size() * sizeof(int16_t))
+					{
+						log::error << L"Failed to build sound asset, unable to write samples" << Endl;
+						return false;
+					}
+				}
+				deflateLzf->close();
+			}
+
+			// Compress Lzo
+			Ref< DynamicMemoryStream > streamLzo = new DynamicMemoryStream(false, true);
+			if (m_enableLzoCompression)
+			{
+				Ref< compress::DeflateStreamLzo > deflateLzo = new compress::DeflateStreamLzo(streamLzo);
+				for (uint32_t i = 0; i < maxChannel; ++i)
+				{
+					if (deflateLzo->write(&samples[i][0], samples[i].size() * sizeof(int16_t)) != samples[i].size() * sizeof(int16_t))
+					{
+						log::error << L"Failed to build sound asset, unable to write samples" << Endl;
+						return false;
+					}
+				}
+				deflateLzo->close();
+			}
+
+			uint32_t zlibSize = m_enableZLibCompression ? streamZLib->getBuffer().size() : std::numeric_limits< uint32_t >::max();
+			uint32_t lzfSize = m_enableLzfCompression ? streamLzf->getBuffer().size() : std::numeric_limits< uint32_t >::max();
+			uint32_t lzoSize = m_enableLzoCompression ? streamLzo->getBuffer().size() : std::numeric_limits< uint32_t >::max();
+
+			uint32_t mode = 0;
+			if (zlibSize < originalSize && zlibSize < lzfSize && zlibSize < lzoSize)
+				mode = 1;
+			else if (lzfSize < originalSize && lzfSize < zlibSize && lzfSize < lzoSize)
+				mode = 2;
+			else if (lzoSize < originalSize && lzoSize < zlibSize && lzoSize < lzfSize)
+				mode = 3;
+
+			if (mode == 1)
+			{
+				const std::vector< uint8_t >& zlibBuffer = streamZLib->getBuffer();
+				log::info << L"Using ZLib compression, " << uint32_t(zlibBuffer.size()) << L" / " << originalSize << L" byte(s)" << Endl;
 
 				resource->m_flags |= SrfZLib;
-				
 				if (stream->write(&zlibBuffer[0], zlibBuffer.size()) != zlibBuffer.size())
+				{
+					log::error << L"Failed to build sound asset, unable to write samples" << Endl;
+					return false;
+				}
+			}
+			else if (mode == 2)
+			{
+				const std::vector< uint8_t >& lzfBuffer = streamLzf->getBuffer();
+				log::info << L"Using LZF compression, " << uint32_t(lzfBuffer.size()) << L" / " << originalSize << L" byte(s)" << Endl;
+
+				resource->m_flags |= SrfLzf;
+				if (stream->write(&lzfBuffer[0], lzfBuffer.size()) != lzfBuffer.size())
+				{
+					log::error << L"Failed to build sound asset, unable to write samples" << Endl;
+					return false;
+				}
+			}
+			else if (mode == 3)
+			{
+				const std::vector< uint8_t >& lzoBuffer = streamLzo->getBuffer();
+				log::info << L"Using LZO compression, " << uint32_t(lzoBuffer.size()) << L" / " << originalSize << L" byte(s)" << Endl;
+
+				resource->m_flags |= SrfLzo;
+				if (stream->write(&lzoBuffer[0], lzoBuffer.size()) != lzoBuffer.size())
 				{
 					log::error << L"Failed to build sound asset, unable to write samples" << Endl;
 					return false;
