@@ -1,4 +1,6 @@
 #include "Core/RefArray.h"
+#include "Core/Thread/Acquire.h"
+#include "Core/Thread/Semaphore.h"
 #include "Render/Shader/Node.h"
 #include "Render/Editor/Shader/INodeTraits.h"
 
@@ -12,6 +14,10 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.INodeTraits", INodeTraits, Object)
 const INodeTraits* findNodeTraits(const Node* node)
 {
 	static RefArray< INodeTraits > s_traits;
+	static Semaphore s_lock;
+
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(s_lock);
+
 	if (s_traits.empty())
 	{
 		std::vector< const TypeInfo* > traitsTypes;
