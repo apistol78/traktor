@@ -254,7 +254,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getSwizzledPermutation() const
 	{
 		for (RefArray< Node >::iterator i = parents.begin(); i != parents.end(); ++i)
 		{
-			const INodeTraits* nodeTraits = findNodeTraits(*i);
+			const INodeTraits* nodeTraits = INodeTraits::find(*i);
 			T_ASSERT (nodeTraits);
 
 			uint32_t inputPinCount = (*i)->getInputPinCount();
@@ -303,7 +303,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getSwizzledPermutation() const
 	// fixed output types and we need to respect that.
 	for (RefArray< Node >::const_iterator i = shaderGraph->getNodes().begin(); i != shaderGraph->getNodes().end(); ++i)
 	{
-		const INodeTraits* nodeTraits = findNodeTraits(*i);
+		const INodeTraits* nodeTraits = INodeTraits::find(*i);
 		T_ASSERT (nodeTraits);
 
 		uint32_t inputPinCount = (*i)->getInputPinCount();
@@ -406,7 +406,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getConstantFolded() const
 			if (constantInputCount == inputPinCount)
 			{
 				// Full constant input; should be able to calculate output.
-				const INodeTraits* nodeTraits = findNodeTraits(*i);
+				const INodeTraits* nodeTraits = INodeTraits::find(*i);
 				if (nodeTraits)
 				{
 					int32_t outputPinCount = (*i)->getOutputPinCount();
@@ -519,7 +519,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getConstantFolded() const
 					continue;
 				}
 
-				const INodeTraits* nodeTraits = findNodeTraits(*i);
+				const INodeTraits* nodeTraits = INodeTraits::find(*i);
 				if (!nodeTraits)
 				{
 					++i;

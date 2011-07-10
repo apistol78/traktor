@@ -68,12 +68,12 @@ public:
 		const Constant* inputConstants,
 		Constant& outputConstant
 	) const = 0;
-};
 
-/*! \brief Get node traits.
- * \ingroup Render
- */
-const INodeTraits* findNodeTraits(const Node* node);
+	/*! \brief Get node traits.
+	 * \ingroup Render
+	 */
+	static const INodeTraits* find(const Node* node);
+};
 
 	}
 }

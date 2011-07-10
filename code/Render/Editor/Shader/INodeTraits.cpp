@@ -8,14 +8,18 @@ namespace traktor
 {
 	namespace render
 	{
+		namespace
+		{
+
+RefArray< INodeTraits > s_traits;
+Semaphore s_lock;
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.INodeTraits", INodeTraits, Object)
 
-const INodeTraits* findNodeTraits(const Node* node)
+const INodeTraits* INodeTraits::find(const Node* node)
 {
-	static RefArray< INodeTraits > s_traits;
-	static Semaphore s_lock;
-
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(s_lock);
 
 	if (s_traits.empty())
