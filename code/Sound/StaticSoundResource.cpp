@@ -74,6 +74,9 @@ bool StaticSoundResource::serialize(ISerializer& s)
 	const MemberBitMask::Bit c_Flags_bits[] =
 	{
 		{ L"SrfZLib", SrfZLib },
+		{ L"SrfLzo", SrfLzo },
+		{ L"SrfLzf", SrfLzf },
+		{ L"SrfDelta", SrfDelta },
 		{ 0 }
 	};
 
