@@ -1,4 +1,4 @@
-#include "Compress/Zip/InflateStream.h"
+#include "Compress/Lzf/InflateStreamLzf.h"
 #include "Core/Io/Reader.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/AutoPtr.h"
@@ -80,7 +80,7 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 
 	uint32_t version;
 	reader >> version;
-	if (version != 6)
+	if (version != 8)
 	{
 		log::error << L"Unable to read texture, unknown version " << version << Endl;
 		return 0;
@@ -114,7 +114,7 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 
 		Ref< IStream > readerStream = stream;
 		if (isCompressed)
-			readerStream = new compress::InflateStream(stream);
+			readerStream = new compress::InflateStreamLzf(stream);
 
 		Reader readerData(readerStream);
 
@@ -171,7 +171,7 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 
 		Ref< IStream > readerStream = stream;
 		if (isCompressed)
-			readerStream = new compress::InflateStream(stream);
+			readerStream = new compress::InflateStreamLzf(stream);
 
 		Reader readerData(readerStream);
 		

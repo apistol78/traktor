@@ -1,5 +1,6 @@
 #include <cstring>
-#include "Compress/Zip/DeflateStream.h"
+#include "Compress/Lzf/DeflateStreamLzf.h"
+#include "Core/Io/BufferedStream.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
@@ -72,7 +73,7 @@ struct ScaleTextureTask : public Object
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TexturePipeline", 13, TexturePipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TexturePipeline", 17, TexturePipeline, editor::IPipeline)
 
 TexturePipeline::TexturePipeline()
 :	m_skipMips(0)
@@ -356,7 +357,7 @@ bool TexturePipeline::buildOutput(
 
 		Writer writer(stream);
 
-		writer << uint32_t(6);
+		writer << uint32_t(8);
 		writer << int32_t(width);
 		writer << int32_t(height);
 		writer << int32_t(mipCount);
@@ -366,7 +367,7 @@ bool TexturePipeline::buildOutput(
 
 		dataOffsetBegin = stream->tell();
 
-		Ref< IStream > streamData = new compress::DeflateStream(stream);
+		Ref< IStream > streamData = new BufferedStream(new compress::DeflateStreamLzf(stream), 64 * 1024);
 		Writer writerData(streamData);
 
 		RefArray< drawing::Image > mipImages(mipCount);
@@ -446,7 +447,7 @@ bool TexturePipeline::buildOutput(
 
 		Writer writer(stream);
 
-		writer << uint32_t(6);
+		writer << uint32_t(8);
 		writer << int32_t(sideSize);
 		writer << int32_t(sideSize);
 		writer << int32_t(mipCount);
@@ -457,7 +458,7 @@ bool TexturePipeline::buildOutput(
 		dataOffsetBegin = stream->tell();
 
 		// Create data writer, use deflate compression if enabled.
-		Ref< IStream > streamData = new compress::DeflateStream(stream);
+		Ref< IStream > streamData = new compress::DeflateStreamLzf(stream);
 		Writer writerData(streamData);
 
 		for (int side = 0; side < 6; ++side)

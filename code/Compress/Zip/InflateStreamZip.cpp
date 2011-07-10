@@ -1,16 +1,17 @@
 #include <cstring>
 #include <zlib.h>
-#include "Compress/Zip/InflateStream.h"
+#include "Compress/Zip/InflateStreamZip.h"
+#include "Core/Containers/AlignedVector.h"
 
 namespace traktor
 {
 	namespace compress
 	{
 
-class InflateImpl : public RefCountImpl< IRefCount >
+class InflateZipImpl : public RefCountImpl< IRefCount >
 {
 public:
-	InflateImpl(IStream* stream, uint32_t internalBufferSize)
+	InflateZipImpl(IStream* stream, uint32_t internalBufferSize)
 	:	m_stream(stream)
 	,	m_buf(internalBufferSize)
 	,	m_startPosition(stream->tell())
@@ -88,24 +89,24 @@ public:
 private:
 	Ref< IStream > m_stream;
 	z_stream m_zstream;
-	std::vector< uint8_t > m_buf;
+	AlignedVector< uint8_t > m_buf;
 	int m_startPosition;
 	int m_position;
 };
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.compress.InflateStream", InflateStream, IStream)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.compress.InflateStreamZip", InflateStreamZip, IStream)
 
-InflateStream::InflateStream(IStream* stream, uint32_t internalBufferSize)
-:	m_impl(new InflateImpl(stream, internalBufferSize))
+InflateStreamZip::InflateStreamZip(IStream* stream, uint32_t internalBufferSize)
+:	m_impl(new InflateZipImpl(stream, internalBufferSize))
 {
 }
 
-InflateStream::~InflateStream()
+InflateStreamZip::~InflateStreamZip()
 {
 	close();
 }
 
-void InflateStream::close()
+void InflateStreamZip::close()
 {
 	if (m_impl)
 	{
@@ -114,52 +115,52 @@ void InflateStream::close()
 	}
 }
 
-bool InflateStream::canRead() const
+bool InflateStreamZip::canRead() const
 {
 	return true;
 }
 
-bool InflateStream::canWrite() const
+bool InflateStreamZip::canWrite() const
 {
 	return false;
 }
 
-bool InflateStream::canSeek() const
+bool InflateStreamZip::canSeek() const
 {
 	return true;
 }
 
-int InflateStream::tell() const
+int InflateStreamZip::tell() const
 {
 	return m_impl->getLogicalPosition();
 }
 
-int InflateStream::available() const
+int InflateStreamZip::available() const
 {
 	T_ASSERT (0);
 	return 0;
 }
 
-int InflateStream::seek(SeekOriginType origin, int offset)
+int InflateStreamZip::seek(SeekOriginType origin, int offset)
 {
-	T_ASSERT_M (origin != SeekEnd, L"Only SeekEnd is allowed on InflateStream");
+	T_ASSERT_M (origin != SeekEnd, L"Only SeekEnd is allowed on InflateStreamZip");
 	if (origin == SeekCurrent)
 		offset += m_impl->getLogicalPosition();
 	return m_impl->setLogicalPosition(offset);
 }
 
-int InflateStream::read(void* block, int nbytes)
+int InflateStreamZip::read(void* block, int nbytes)
 {
 	return m_impl->read(block, nbytes);
 }
 
-int InflateStream::write(const void* block, int nbytes)
+int InflateStreamZip::write(const void* block, int nbytes)
 {
 	T_ASSERT (0);
 	return 0;
 }
 
-void InflateStream::flush()
+void InflateStreamZip::flush()
 {
 }
 

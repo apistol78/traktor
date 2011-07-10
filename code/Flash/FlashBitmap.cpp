@@ -15,10 +15,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashBitmap", FlashBitmap, ActionObject)
 
 FlashBitmap::FlashBitmap()
 :	ActionObject("Object")
-,	m_originalWidth(0)
-,	m_originalHeight(0)
-,	m_bitsWidth(0)
-,	m_bitsHeight(0)
+,	m_width(0)
+,	m_height(0)
 ,	m_bits(0)
 {
 }
@@ -67,11 +65,9 @@ bool FlashBitmap::create(drawing::Image* image)
 #endif
 	}
 
-	m_originalWidth = image->getWidth();
-	m_originalHeight = image->getHeight();
-	m_bitsWidth = clone->getWidth();
-	m_bitsHeight = clone->getHeight();
-	m_bits.reset(new SwfColor [m_bitsWidth * m_bitsHeight]);
+	m_width = image->getWidth();
+	m_height = image->getHeight();
+	m_bits.reset(new SwfColor [m_width * m_height]);
 
 	std::memcpy(
 		m_bits.ptr(),
@@ -90,46 +86,10 @@ bool FlashBitmap::create(drawing::Image* image)
 
 bool FlashBitmap::create(uint16_t width, uint16_t height)
 {
-	m_originalWidth = width;
-	m_originalHeight = height;
-	m_bitsWidth = width;
-	m_bitsHeight = height;
-	m_bits.reset(new SwfColor [m_bitsWidth * m_bitsHeight]);
+	m_width = width;
+	m_height = height;
+	m_bits.reset(new SwfColor [m_width * m_height]);
 	return true;
-}
-
-uint16_t FlashBitmap::getOriginalWidth() const
-{
-	return m_originalWidth;
-}
-
-uint16_t FlashBitmap::getOriginalHeight() const
-{
-	return m_originalHeight;
-}
-
-uint16_t FlashBitmap::getBitsWidth() const
-{
-	return m_bitsWidth;
-}
-
-uint16_t FlashBitmap::getBitsHeight() const
-{
-	return m_bitsHeight;
-}
-
-const SwfColor* FlashBitmap::getBits() const
-{
-	return m_bits.c_ptr();
-}
-
-void FlashBitmap::setPixel(uint16_t x, uint16_t y, const SwfColor& color)
-{
-	uint32_t xx = uint32_t(x * m_bitsWidth) / m_originalWidth;
-	uint32_t yy = uint32_t(y * m_bitsHeight) / m_originalHeight;
-	
-	if (xx < m_bitsWidth && yy < m_bitsHeight)
-		m_bits[xx + yy * m_bitsWidth] = color;
 }
 
 	}

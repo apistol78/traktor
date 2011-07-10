@@ -1,4 +1,6 @@
-#include "Compress/Zip/InflateStream.h"
+#include "Compress/Lzf/InflateStreamLzf.h"
+#include "Compress/Lzo/InflateStreamLzo.h"
+#include "Compress/Zip/InflateStreamZip.h"
 #include "Core/Log/Log.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
@@ -41,7 +43,11 @@ Ref< Sound > StaticSoundResource::createSound(resource::IResourceManager* resour
 
 	Ref< IStream > streamData;
 	if (m_flags & SrfZLib)
-		streamData = new compress::InflateStream(stream);
+		streamData = new compress::InflateStreamZip(stream);
+	else if (m_flags & SrfLzo)
+		streamData = new compress::InflateStreamLzo(stream);
+	else if (m_flags & SrfLzf)
+		streamData = new compress::InflateStreamLzf(stream);
 	else
 		streamData = stream;
 
