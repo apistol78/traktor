@@ -1,4 +1,5 @@
 #include "Core/Io/StringOutputStream.h"
+#include "Core/Log/Log.h"
 #include "Editor/Pipeline/PipelineDb.h"
 #include "Editor/Pipeline/PipelineDbReport.h"
 #include "Sql/IResultSet.h"
@@ -99,28 +100,15 @@ void PipelineDb::setDependency(const Guid& guid, const DependencyHash& hash)
 	Ref< sql::IResultSet > rs;
 	StringOutputStream ss;
 
-	// Remove existing records.
-	ss << L"select id from PipelineHash where guid='" << guid.format() << L"'";
-	rs = m_connection->executeQuery(ss.str());
-	if (rs && rs->next())
-	{
-		int32_t hashId = rs->getInt32(0);
-
-		ss.reset();
-		ss << L"delete from PipelineHash where id='" << hashId << L"'";
-		m_connection->executeUpdate(ss.str());
-	}
-
-	// Insert hash.
-	ss.reset();
 	ss <<
-		L"insert into PipelineHash (guid, pipelineVersion, hash) "
+		L"insert or replace into PipelineHash (guid, pipelineVersion, hash) "
 		L"values (" <<
 		L"'" << guid.format() << L"'," <<
 		hash.pipelineVersion << L"," <<
 		hash.hash <<
 		L")";
-	m_connection->executeUpdate(ss.str());
+	if (m_connection->executeUpdate(ss.str()) != 1)
+		log::warning << L"Unable to update pipeline hash in database" << Endl;
 }
 
 bool PipelineDb::getDependency(const Guid& guid, DependencyHash& outHash) const
@@ -147,21 +135,16 @@ void PipelineDb::setFile(const Path& path, const FileHash& file)
 	Ref< sql::IResultSet > rs;
 	StringOutputStream ss;
 
-	// Delete existing records.
-	ss << L"delete from PipelineFile where path='" << toLower(path.getPathName()) << L"'";
-	m_connection->executeUpdate(ss.str());
-
-	// Insert new record.
-	ss.reset();
 	ss <<
-		L"insert into PipelineFile (path, size, lastWriteTime, hash) "
+		L"insert or replace into PipelineFile (path, size, lastWriteTime, hash) "
 		L"values (" <<
 		L"'" << toLower(path.getPathName()) << L"'," <<
 		file.size << L"," <<
 		file.lastWriteTime.getSecondsSinceEpoch() << L"," <<
 		file.hash <<
 		L")";
-	m_connection->executeUpdate(ss.str());
+	if (m_connection->executeUpdate(ss.str()) != 1)
+		log::error << L"Unable to update pipeline file hash in database" << Endl;
 }
 
 bool PipelineDb::getFile(const Path& path, FileHash& outFile)
