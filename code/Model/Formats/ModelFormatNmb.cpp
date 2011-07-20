@@ -165,7 +165,7 @@ uint8_t* parseA2V(Model& model, uint8_t* ptr, ModelBase& base)
 		return 0;
 	}
 
-	if (_stricmp(name, "a2v.objCoord") == 0 || _stricmp(name, "a2v.worldCoord") == 0)
+	if (stricmp(name, "a2v.objCoord") == 0 || _stricmp(name, "a2v.worldCoord") == 0)
 	{
 		for (int32_t i = 0; i < count; ++i)
 			vertices[base.vertexBase + i].setPosition(model.addPosition(unpackv4(ptr, 1.0f) / Vector4(100.0f, 100.0f, 100.0f, 1.0f)));

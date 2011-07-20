@@ -38,6 +38,8 @@ public:
 	
 	virtual bool remove(const Path& filename);
 	
+	virtual bool rename(const Path& fileName, const std::wstring& newName);
+	
 	virtual bool makeDirectory(const Path& directory);
 
 	virtual bool removeDirectory(const Path& directory);

@@ -161,7 +161,7 @@ bool StaticSoundBuffer::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBloc
 #if defined(T_MATH_USE_SSE2)
 		for (; j < samplesCount - 7; j += 8)
 		{
-			const float __declspec(align(16)) c_scale[] = { 1.0f / 32767.0f, 1.0f / 32767.0f, 1.0f / 32767.0f, 1.0f / 32767.0f };
+			const float T_ALIGN16 c_scale[] = { 1.0f / 32767.0f, 1.0f / 32767.0f, 1.0f / 32767.0f, 1.0f / 32767.0f };
 			__m128i is = _mm_load_si128((const __m128i*)&m_samples[i][position + j]);
 			__m128i tl0 = _mm_unpacklo_epi16(is, is);
 			__m128i isl = _mm_srai_epi32(tl0, 16);
