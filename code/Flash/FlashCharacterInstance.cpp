@@ -1,7 +1,6 @@
 #include "Flash/FlashCharacterInstance.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFrame.h"
-#include "Flash/Action/ActionScript.h"
 #include "Flash/Action/IActionVM.h"
 
 namespace traktor
@@ -77,17 +76,17 @@ const Matrix33& FlashCharacterInstance::getTransform() const
 	return m_transform;
 }
 
-void FlashCharacterInstance::setEvent(uint32_t eventMask, ActionScript* eventScript)
+void FlashCharacterInstance::setEvent(uint32_t eventMask, const IActionVMImage* eventScript)
 {
 	m_eventScripts[eventMask] = eventScript;
 }
 
-void FlashCharacterInstance::setEvents(const SmallMap< uint32_t, Ref< ActionScript > >& eventScripts)
+void FlashCharacterInstance::setEvents(const SmallMap< uint32_t, Ref< const IActionVMImage > >& eventScripts)
 {
 	m_eventScripts = eventScripts;
 }
 
-const SmallMap< uint32_t, Ref< ActionScript > >& FlashCharacterInstance::getEvents() const
+const SmallMap< uint32_t, Ref< const IActionVMImage > >& FlashCharacterInstance::getEvents() const
 {
 	return m_eventScripts;
 }
@@ -102,14 +101,13 @@ void FlashCharacterInstance::postDispatchEvents()
 
 void FlashCharacterInstance::eventInit()
 {
-	SmallMap< uint32_t, Ref< ActionScript > >::iterator i = m_eventScripts.find(EvtInitialize);
+	SmallMap< uint32_t, Ref< const IActionVMImage > >::iterator i = m_eventScripts.find(EvtInitialize);
 	if (i != m_eventScripts.end())
 	{
 		ActionFrame callFrame(
 			m_context,
 			this,
-			i->second->getCode(),
-			i->second->getCodeSize(),
+			i->second,
 			4,
 			0,
 			0
@@ -120,14 +118,13 @@ void FlashCharacterInstance::eventInit()
 
 void FlashCharacterInstance::eventLoad()
 {
-	SmallMap< uint32_t, Ref< ActionScript > >::iterator i = m_eventScripts.find(EvtLoad);
+	SmallMap< uint32_t, Ref< const IActionVMImage > >::iterator i = m_eventScripts.find(EvtLoad);
 	if (i != m_eventScripts.end())
 	{
 		ActionFrame callFrame(
 			m_context,
 			this,
-			i->second->getCode(),
-			i->second->getCodeSize(),
+			i->second,
 			4,
 			0,
 			0
@@ -138,14 +135,13 @@ void FlashCharacterInstance::eventLoad()
 
 void FlashCharacterInstance::eventFrame()
 {
-	SmallMap< uint32_t, Ref< ActionScript > >::iterator i = m_eventScripts.find(EvtEnterFrame);
+	SmallMap< uint32_t, Ref< const IActionVMImage > >::iterator i = m_eventScripts.find(EvtEnterFrame);
 	if (i != m_eventScripts.end())
 	{
 		ActionFrame callFrame(
 			m_context,
 			this,
-			i->second->getCode(),
-			i->second->getCodeSize(),
+			i->second,
 			4,
 			0,
 			0

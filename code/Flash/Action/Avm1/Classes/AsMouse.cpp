@@ -41,7 +41,7 @@ void AsMouse::eventMouseDown(ActionContext* context, int x, int y, int button)
 		Ref< ActionFunction > eventFunction = member.getObject< ActionFunction >();
 		if (eventFunction)
 		{
-			ActionFrame callerFrame(context, 0, 0, 0, 4, 0, 0);
+			ActionFrame callerFrame(context, 0, 0, 4, 0, 0);
 			eventFunction->call(&callerFrame, (*i));
 		}
 	}
@@ -62,7 +62,7 @@ void AsMouse::eventMouseUp(ActionContext* context, int x, int y, int button)
 		Ref< ActionFunction > eventFunction = member.getObject< ActionFunction >();
 		if (eventFunction)
 		{
-			ActionFrame callerFrame(context, 0, 0, 0, 4, 0, 0);
+			ActionFrame callerFrame(context, 0, 0, 4, 0, 0);
 			eventFunction->call(&callerFrame, (*i));
 		}
 	}
@@ -83,7 +83,7 @@ void AsMouse::eventMouseMove(ActionContext* context, int x, int y, int button)
 		Ref< ActionFunction > eventFunction = member.getObject< ActionFunction >();
 		if (eventFunction)
 		{
-			ActionFrame callerFrame(context, 0, 0, 0, 4, 0, 0);
+			ActionFrame callerFrame(context, 0, 0, 4, 0, 0);
 			eventFunction->call(&callerFrame, (*i));
 		}
 	}

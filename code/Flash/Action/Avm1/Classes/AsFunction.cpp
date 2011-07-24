@@ -47,7 +47,6 @@ void AsFunction::Function_apply(CallArgs& ca)
 		0,
 		0,
 		0,
-		0,
 		function
 	);
 
@@ -85,7 +84,6 @@ void AsFunction::Function_call(CallArgs& ca)
 	ActionFrame frame(
 		ca.context,
 		ca.self,
-		0,
 		0,
 		0,
 		0,

@@ -14,8 +14,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashMovie", FlashMovie, Object)
 
-FlashMovie::FlashMovie(const SwfRect& frameBounds, FlashSprite* movieClip)
-:	m_frameBounds(frameBounds)
+FlashMovie::FlashMovie(const IActionVM* vm, const SwfRect& frameBounds, FlashSprite* movieClip)
+:	m_vm(vm)
+,	m_frameBounds(frameBounds)
 ,	m_movieClip(movieClip)
 {
 }
@@ -94,20 +95,10 @@ bool FlashMovie::getExportName(uint16_t exportId, std::string& outName) const
 	return false;
 }
 
-const SwfRect& FlashMovie::getFrameBounds() const
-{
-	return m_frameBounds;
-}
-
-const FlashSprite* FlashMovie::getMovieClip() const
-{
-	return m_movieClip;
-}
-
-Ref< FlashSpriteInstance > FlashMovie::createMovieClipInstance(const IActionVM* vm) const
+Ref< FlashSpriteInstance > FlashMovie::createMovieClipInstance() const
 {
 	Ref< ActionGlobal > global = new ActionGlobal();
-	Ref< ActionContext > context = new ActionContext(vm, this, global);
+	Ref< ActionContext > context = new ActionContext(m_vm, this, global);
 	
 	Ref< FlashSpriteInstance > spriteInstance = checked_type_cast< FlashSpriteInstance*, false >(
 		m_movieClip->createInstance(context, 0, "")

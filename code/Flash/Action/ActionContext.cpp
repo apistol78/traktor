@@ -56,6 +56,21 @@ void ActionContext::notifyFrameListeners(avm_number_t time)
 		i->listenerFunction->call(this, i->listenerTarget, argv);
 }
 
+void ActionContext::pushMovieClip(FlashSpriteInstance* spriteInstance)
+{
+	m_movieClipStack.push_back(spriteInstance);
+}
+
+void ActionContext::popMovieClip()
+{
+	m_movieClipStack.pop_back();
+}
+
+FlashSpriteInstance* ActionContext::getMovieClip()
+{
+	return !m_movieClipStack.empty() ? m_movieClipStack.back() : 0;
+}
+
 ActionObject* ActionContext::lookupClass(const std::string& className)
 {
 	Ref< ActionObject > clazz = m_global;

@@ -58,9 +58,14 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.ActionVM2", ActionVM2, IActionVM)
 
+Ref< const IActionVMImage > ActionVM2::load(BitReader& br) const
+{
+	return 0;
+}
+
 void ActionVM2::execute(ActionFrame* frame) const
 {
-	const uint8_t T_UNALIGNED * abcFile = frame->getCode();
+	const uint8_t T_UNALIGNED * abcFile = 0; //frame->getCode();
 
 	uint16_t minorVersion = *(const uint16_t*)abcFile;
 	uint16_t majorVersion = *(const uint16_t*)(abcFile + 2);

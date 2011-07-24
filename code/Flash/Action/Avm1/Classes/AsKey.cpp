@@ -69,7 +69,7 @@ void AsKey::eventKeyDown(ActionContext* context, int keyCode)
 		Ref< ActionFunction > eventFunction = checked_type_cast< ActionFunction* >(member.getObject());
 		if (eventFunction)
 		{
-			ActionFrame callerFrame(context, 0, 0, 0, 4, 0, 0);
+			ActionFrame callerFrame(context, 0, 0, 4, 0, 0);
 			eventFunction->call(&callerFrame, (*i));
 		}
 	}
@@ -92,7 +92,7 @@ void AsKey::eventKeyUp(ActionContext* context, int keyCode)
 		Ref< ActionFunction > eventFunction = checked_type_cast< ActionFunction* >(member.getObject());
 		if (eventFunction)
 		{
-			ActionFrame callerFrame(context, 0, 0, 0, 4, 0, 0);
+			ActionFrame callerFrame(context, 0, 0, 4, 0, 0);
 			eventFunction->call(&callerFrame, (*i));
 		}
 	}

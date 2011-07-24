@@ -11,21 +11,21 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.ActionFrame", ActionFrame, Object)
 ActionFrame::ActionFrame(
 	ActionContext* context,
 	ActionObject* self,
-	const uint8_t* code,
-	uint16_t codeSize,
+	const IActionVMImage* image,
 	uint16_t localRegisters,
 	ActionDictionary* dictionary,
 	ActionFunction* callee
 )
 :	m_context(context)
 ,	m_self(self)
-,	m_code(code)
-,	m_codeSize(codeSize)
+,	m_image(image)
 ,	m_localRegisters(context->getPool(), localRegisters)
 ,	m_dictionary(dictionary)
 ,	m_callee(callee)
 ,	m_stack(context->getPool())
 {
+	setVariable("this", ActionValue(m_self));
+	setVariable("_global", ActionValue(m_context->getGlobal()));
 }
 
 void ActionFrame::setRegister(uint16_t index, const ActionValue& value)
@@ -41,8 +41,8 @@ ActionValue ActionFrame::getRegister(uint16_t index) const
 
 bool ActionFrame::hasVariable(const std::string& variableName) const
 {
-	if (variableName == "this")
-		return true;
+	//if (variableName == "this")
+	//	return true;
 
 	std::map< std::string, ActionValue >::const_iterator i = m_localVariables.find(variableName);
 	return i != m_localVariables.end();
@@ -50,17 +50,17 @@ bool ActionFrame::hasVariable(const std::string& variableName) const
 
 void ActionFrame::setVariable(const std::string& variableName, const ActionValue& variableValue)
 {
-	T_ASSERT (variableName != "this");
+	//T_ASSERT (variableName != "this");
 	m_localVariables[variableName] = variableValue;
 }
 
 bool ActionFrame::getVariable(const std::string& variableName, ActionValue& outVariableValue) const
 {
-	if (variableName == "this")
-	{
-		outVariableValue = ActionValue(m_self);
-		return true;
-	}
+	//if (variableName == "this")
+	//{
+	//	outVariableValue = ActionValue(m_self);
+	//	return true;
+	//}
 
 	std::map< std::string, ActionValue >::const_iterator i = m_localVariables.find(variableName);
 	if (i == m_localVariables.end())
@@ -68,6 +68,12 @@ bool ActionFrame::getVariable(const std::string& variableName, ActionValue& outV
 
 	outVariableValue = i->second;
 	return true;
+}
+
+ActionValue* ActionFrame::getVariableValue(const std::string& variableName)
+{
+	std::map< std::string, ActionValue >::iterator i = m_localVariables.find(variableName);
+	return (i != m_localVariables.end()) ? &i->second : 0;
 }
 
 void ActionFrame::setDictionary(ActionDictionary* dictionary)

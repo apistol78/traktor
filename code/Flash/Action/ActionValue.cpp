@@ -137,21 +137,6 @@ ActionValue::~ActionValue()
 	T_EXCEPTION_GUARD_END
 }
 
-ActionValue ActionValue::toBoolean() const
-{
-	return ActionValue(getBooleanSafe());
-}
-
-ActionValue ActionValue::toNumber() const
-{
-	return ActionValue(getNumberSafe());
-}
-
-ActionValue ActionValue::toString() const
-{
-	return ActionValue(getStringSafe());
-}
-
 bool ActionValue::getBooleanSafe() const
 {
 	switch (m_type)

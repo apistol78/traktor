@@ -60,14 +60,15 @@ public:
 	virtual ~ActionValue();
 
 	/*! \brief Cast to boolean. */
-	ActionValue toBoolean() const;
+	ActionValue toBoolean() const { return ActionValue(getBooleanSafe()); }
 
 	/*! \brief Cast to number. */
-	ActionValue toNumber() const;
+	ActionValue toNumber() const { return ActionValue(getNumberSafe()); }
 
 	/*! \brief Cast to string. */
-	ActionValue toString() const;
+	ActionValue toString() const { return ActionValue(getStringSafe()); }
 
+	/*! \brief Get type of value. */
 	Type getType() const { return m_type; }
 
 	/*! \brief Check if undefined. */

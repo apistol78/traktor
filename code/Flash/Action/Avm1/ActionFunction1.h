@@ -28,8 +28,7 @@ class T_DLLCLASS ActionFunction1 : public ActionFunction
 public:
 	ActionFunction1(
 		const std::string& name,
-		const uint8_t* code,
-		uint16_t codeSize,
+		const IActionVMImage* image,
 		uint16_t argumentCount,
 		ActionDictionary* dictionary
 	);
@@ -39,8 +38,7 @@ public:
 	virtual ActionValue call(ActionFrame* callerFrame, ActionObject* self);
 
 private:
-	const uint8_t* m_code;
-	uint16_t m_codeSize;
+	Ref< const IActionVMImage > m_image;
 	uint16_t m_argumentCount;
 	Ref< ActionDictionary > m_dictionary;
 };

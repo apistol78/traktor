@@ -55,7 +55,7 @@ void FlashFrame::removeObject(const RemoveObject& removeObject)
 	m_removeObjects[removeObject.depth] = removeObject;
 }
 
-void FlashFrame::addActionScript(ActionScript* actionScript)
+void FlashFrame::addActionScript(const IActionVMImage* actionScript)
 {
 	m_actionScripts.push_back(actionScript);
 }
@@ -70,7 +70,7 @@ const std::map< uint16_t, FlashFrame::RemoveObject >& FlashFrame::getRemoveObjec
 	return m_removeObjects;
 }
 
-const RefArray< ActionScript >& FlashFrame::getActionScripts() const
+const RefArray< const IActionVMImage >& FlashFrame::getActionScripts() const
 {
 	return m_actionScripts;
 }

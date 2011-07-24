@@ -13,10 +13,14 @@
 
 namespace traktor
 {
+
+class BitReader;
+
 	namespace flash
 	{
 
 class ActionFrame;
+class IActionVMImage;
 
 /*! \brief ActionScript virtual machine interface.
  * \ingroup Flash
@@ -26,6 +30,10 @@ class T_DLLCLASS IActionVM : public Object
 	T_RTTI_CLASS;
 
 public:
+	/*! \brief Load executable image from binary representation of bytecode. */
+	virtual Ref< const IActionVMImage > load(BitReader& br) const = 0;
+
+	/*! \brief Execute image. */
 	virtual void execute(ActionFrame* frame) const = 0;
 };
 

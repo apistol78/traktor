@@ -20,7 +20,7 @@ namespace traktor
 	namespace flash
 	{
 
-class ActionScript;
+class IActionVMImage;
 
 /*! \brief SWF frame actions.
  * \ingroup Flash
@@ -36,7 +36,7 @@ public:
 	struct PlaceAction
 	{
 		uint32_t eventMask;
-		Ref< ActionScript > script;
+		Ref< const IActionVMImage > script;
 	};
 
 	struct PlaceObject
@@ -139,7 +139,7 @@ public:
 	 *
 	 * \param actionScript Frame action script.
 	 */
-	void addActionScript(ActionScript* actionScript);
+	void addActionScript(const IActionVMImage* actionScript);
 
 	/*! \brief Get place object descriptions by this frame.
 	 *
@@ -157,7 +157,7 @@ public:
 	 *
 	 * \return Action scripts.
 	 */
-	const RefArray< ActionScript >& getActionScripts() const;
+	const RefArray< const IActionVMImage >& getActionScripts() const;
 
 private:
 	std::string m_label;
@@ -165,7 +165,7 @@ private:
 	SwfColor m_backgroundColor;
 	std::map< uint16_t, PlaceObject > m_placeObjects;
 	std::map< uint16_t, RemoveObject > m_removeObjects;
-	RefArray< ActionScript > m_actionScripts;
+	RefArray< const IActionVMImage > m_actionScripts;
 };
 
 	}

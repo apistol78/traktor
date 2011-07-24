@@ -23,6 +23,7 @@ class ActionContext;
 class ActionObject;
 class ActionDictionary;
 class ActionFunction;
+class IActionVMImage;
 
 /*! \brief ActionScript execution stack frame.
  * \ingroup Flash
@@ -35,8 +36,7 @@ public:
 	ActionFrame(
 		ActionContext* context,
 		ActionObject* self,
-		const uint8_t* code,
-		uint16_t codeSize,
+		const IActionVMImage* image,
 		uint16_t localRegisters,
 		ActionDictionary* dictionary,
 		ActionFunction* callee
@@ -52,15 +52,15 @@ public:
 
 	bool getVariable(const std::string& variableName, ActionValue& outVariableValue) const;
 
+	ActionValue* getVariableValue(const std::string& variableName);
+
 	void setDictionary(ActionDictionary* dictionary);
 
 	inline ActionContext* getContext() const { return m_context; }
 
 	inline ActionObject* getSelf() const { return m_self; }
 
-	inline const uint8_t* getCode() const { return m_code; }
-
-	inline uint16_t getCodeSize() const { return m_codeSize; }
+	inline const IActionVMImage* getImage() const { return m_image; }
 
 	inline const std::map< std::string, ActionValue >& getVariables() const { return m_localVariables; }
 
@@ -73,8 +73,7 @@ public:
 private:
 	ActionContext* m_context;
 	ActionObject* m_self;
-	const uint8_t* m_code;
-	uint16_t m_codeSize;
+	Ref< const IActionVMImage > m_image;
 	ActionValueArray m_localRegisters;
 	std::map< std::string, ActionValue > m_localVariables;
 	Ref< ActionDictionary > m_dictionary;

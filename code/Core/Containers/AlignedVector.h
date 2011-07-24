@@ -404,6 +404,24 @@ public:
 		std::swap(m_capacity, rh.m_capacity);
 	}
 
+	/*! \brief Get pointer to first element in vector.
+	 *
+	 * \return Pointer to first element.
+	 */
+	ItemType* ptr()
+	{
+		return m_data;
+	}
+
+	/*! \brief Get constant pointer to first element in vector.
+	 *
+	 * \return Pointer to first element.
+	 */
+	const ItemType* c_ptr() const
+	{
+		return m_data;
+	}
+
 	/*! \brief Return reference to value first in vector.
 	 *
 	 * \return Value reference.

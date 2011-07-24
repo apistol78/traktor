@@ -12,14 +12,8 @@
 #include "Flash/Action/ActionFrame.h"
 #include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/ActionObjectCyclic.h"
-
-// ActionScript VM 1
-#include "Flash/Action/Avm1/ActionVM1.h"
 #include "Flash/Action/Avm1/Classes/AsKey.h"
 #include "Flash/Action/Avm1/Classes/AsMouse.h"
-
-// ActionScript VM 2
-#include "Flash/Action/Avm2/ActionVM2.h"
 
 namespace traktor
 {
@@ -58,14 +52,8 @@ bool FlashMoviePlayer::create(FlashMovie* movie)
 {
 	ActionValue memberValue;
 
-	// Create ActionScript virtual machine.
-	if (1)
-		m_actionVM = new ActionVM1();
-	else
-		m_actionVM = new ActionVM2();
-
 	m_movie = movie;
-	m_movieInstance = m_movie->createMovieClipInstance(m_actionVM);
+	m_movieInstance = m_movie->createMovieClipInstance();
 
 	// Override some global methods.
 	setGlobal("getUrl", ActionValue(createNativeFunction(this, &FlashMoviePlayer::Global_getUrl)));
@@ -169,6 +157,8 @@ void FlashMoviePlayer::executeFrame()
 	Ref< ActionContext > context = m_movieInstance->getContext();
 	ActionValue memberValue;
 
+	context->pushMovieClip(m_movieInstance);
+
 	// Issue interval functions.
 	for (std::map< uint32_t, Interval >::iterator i = m_interval.begin(); i != m_interval.end(); ++i)
 		i->second.function->call(context, i->second.target, ActionValueArray());
@@ -225,6 +215,7 @@ void FlashMoviePlayer::executeFrame()
 	context->notifyFrameListeners(avm_number_t(m_timeCurrent));
 
 	m_movieInstance->postDispatchEvents();
+	context->popMovieClip();
 
 	// Flush pool memory; release all lingering object references etc.
 	context->getPool().flush();

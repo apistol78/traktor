@@ -41,8 +41,7 @@ public:
 
 	ActionFunction2(
 		const std::string& name,
-		const uint8_t* code,
-		uint16_t codeSize,
+		const IActionVMImage* image,
 		uint8_t registerCount,
 		uint16_t flags,
 		const std::vector< std::pair< std::string, uint8_t > >& argumentsIntoRegisters,
@@ -60,8 +59,7 @@ protected:
 	virtual void dereference();
 
 private:
-	const uint8_t* m_code;
-	uint16_t m_codeSize;
+	Ref< const IActionVMImage > m_image;
 	uint8_t m_registerCount;
 	uint16_t m_flags;
 	std::vector< std::pair< std::string, uint8_t > > m_argumentsIntoRegisters;

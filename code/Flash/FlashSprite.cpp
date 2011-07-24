@@ -49,12 +49,12 @@ int FlashSprite::findFrame(const std::string& frameLabel) const
 	return -1;
 }
 
-void FlashSprite::addInitActionScript(ActionScript* initActionScript)
+void FlashSprite::addInitActionScript(const IActionVMImage* initActionScript)
 {
 	m_initActionScripts.push_back(initActionScript);
 }
 
-const RefArray< ActionScript >& FlashSprite::getInitActionScripts() const
+const RefArray< const IActionVMImage >& FlashSprite::getInitActionScripts() const
 {
 	return m_initActionScripts;
 }
