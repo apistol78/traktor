@@ -179,10 +179,8 @@ class T_DLLCLASS ActionVM2 : public IActionVM
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief Execute frame.
-	 *
-	 * \param frame Execution frame.
-	 */
+	virtual Ref< const IActionVMImage > load(BitReader& br) const;
+
 	virtual void execute(ActionFrame* frame) const;
 };
 

@@ -1,0 +1,44 @@
+#ifndef traktor_flash_ActionOperations_H
+#define traktor_flash_ActionOperations_H
+
+#include "Core/Config.h"
+#include "Flash/Action/Avm1/ActionOpcodes.h"
+
+namespace traktor
+{
+	namespace flash
+	{
+
+class ActionFrame;
+
+struct PreparationState
+{
+	uint8_t* pc;
+	uint8_t* npc;
+	uint8_t* data;
+	uint16_t length;
+};
+
+struct ExecutionState
+{
+	ActionFrame* frame;
+	const uint8_t* pc;
+	const uint8_t* npc;
+	const uint8_t* data;
+	uint16_t length;
+};
+
+struct OperationInfo
+{
+	ActionOpcode op;
+	const char* name;
+	void (*prepare)(PreparationState& state);
+	void (*execute)(ExecutionState& state);
+};
+
+extern const OperationInfo c_operationInfos[];
+
+	}
+}
+
+#endif	// traktor_flash_ActionOperations_H

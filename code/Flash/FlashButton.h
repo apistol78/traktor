@@ -18,7 +18,7 @@ namespace traktor
 	namespace flash
 	{
 
-class ActionScript;
+class IActionVMImage;
 
 /*! \brief Flash button character.
  * \ingroup Flash
@@ -74,7 +74,7 @@ public:
 	{
 		uint8_t key;
 		uint16_t mask;
-		Ref< ActionScript > script;
+		Ref< const IActionVMImage > script;
 
 		ButtonCondition()
 		:	key(0)

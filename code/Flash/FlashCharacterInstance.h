@@ -20,7 +20,7 @@ namespace traktor
 	{
 
 class ActionContext;
-class ActionScript;
+class IActionVMImage;
 
 /*! \brief Character instance.
  * \ingroup Flash
@@ -88,19 +88,19 @@ public:
 	 * \param eventMask Event mask.
 	 * \param eventScript Event script.
 	 */
-	void setEvent(uint32_t eventMask, ActionScript* eventScript);
+	void setEvent(uint32_t eventMask, const IActionVMImage* eventScript);
 
 	/*! \brief Set event scripts.
 	 *
 	 * \param eventScripts Event scripts.
 	 */
-	void setEvents(const SmallMap< uint32_t, Ref< ActionScript > >& eventScripts);
+	void setEvents(const SmallMap< uint32_t, Ref< const IActionVMImage > >& eventScripts);
 
 	/*! \brief Get event scripts.
 	 *
 	 * \return Event scripts.
 	 */
-	const SmallMap< uint32_t, Ref< ActionScript > >& getEvents() const;
+	const SmallMap< uint32_t, Ref< const IActionVMImage > >& getEvents() const;
 
 	/*! \name Events */
 	//@{
@@ -144,7 +144,7 @@ private:
 	std::string m_name;
 	SwfCxTransform m_cxform;
 	Matrix33 m_transform;
-	SmallMap< uint32_t, Ref< ActionScript > > m_eventScripts;
+	SmallMap< uint32_t, Ref< const IActionVMImage > > m_eventScripts;
 };
 
 	}

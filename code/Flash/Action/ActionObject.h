@@ -130,6 +130,7 @@ private:
 	bool m_readOnly;
 	mutable member_map_t m_members;
 	property_map_t m_properties;
+	Ref< ActionObject > m__proto__;		//!< Cached "__proto__" member value.
 	mutable int32_t m_traceColor;
 	mutable bool m_traceBuffered;
 	mutable int32_t m_traceRefCount;

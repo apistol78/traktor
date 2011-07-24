@@ -19,10 +19,10 @@ namespace traktor
 	namespace flash
 	{
 
+class ActionContext;
 class FlashFrame;
 class IActionVM;
-class ActionContext;
-class ActionScript;
+class IActionVMImage;
 
 /*! \brief Flash sprite.
  * \ingroup Flash
@@ -44,9 +44,9 @@ public:
 
 	int findFrame(const std::string& frameLabel) const;
 
-	void addInitActionScript(ActionScript* initActionScript);
+	void addInitActionScript(const IActionVMImage* initActionScript);
 
-	const RefArray< ActionScript >& getInitActionScripts() const;
+	const RefArray< const IActionVMImage >& getInitActionScripts() const;
 
 	virtual Ref< FlashCharacterInstance > createInstance(ActionContext* context, FlashCharacterInstance* parent, const std::string& name) const;
 
@@ -58,7 +58,7 @@ protected:
 private:
 	uint16_t m_frameRate;
 	RefArray< FlashFrame > m_frames;
-	RefArray< ActionScript > m_initActionScripts;
+	RefArray< const IActionVMImage > m_initActionScripts;
 };
 
 	}

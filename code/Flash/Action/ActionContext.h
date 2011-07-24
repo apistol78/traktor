@@ -20,6 +20,7 @@ namespace traktor
 	{
 
 class FlashMovie;
+class FlashSpriteInstance;
 class IActionVM;
 
 /*! \brief ActionScript execution context.
@@ -40,6 +41,12 @@ public:
 
 	ActionObject* lookupClass(const std::string& className);
 
+	void pushMovieClip(FlashSpriteInstance* spriteInstance);
+
+	void popMovieClip();
+
+	FlashSpriteInstance* getMovieClip();
+
 	const IActionVM* getVM() const { return m_vm; }
 
 	const FlashMovie* getMovie() const { return m_movie; }
@@ -57,6 +64,7 @@ private:
 
 	const IActionVM* m_vm;
 	const FlashMovie* m_movie;
+	RefArray< FlashSpriteInstance > m_movieClipStack;
 	Ref< ActionObject > m_global;
 	ActionValuePool m_pool;
 	std::vector< FrameListener > m_frameListeners;

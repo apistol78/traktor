@@ -5,7 +5,6 @@
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFrame.h"
 #include "Flash/Action/ActionFunction.h"
-#include "Flash/Action/ActionScript.h"
 #include "Flash/Action/IActionVM.h"
 
 namespace traktor
@@ -172,7 +171,7 @@ void FlashButtonInstance::executeCondition(uint32_t conditionMask)
 			continue;
 
 		ActionContext* context = getContext();
-		ActionFrame callFrame(context, this, i->script->getCode(), i->script->getCodeSize(), 4, 0, 0);
+		ActionFrame callFrame(context, this, i->script, 4, 0, 0);
 		context->getVM()->execute(&callFrame);
 	}
 }
@@ -187,7 +186,7 @@ void FlashButtonInstance::executeScriptEvent(const std::string& eventName)
 	if (!eventFunction)
 		return;
 
-	ActionFrame callFrame(getContext(), this, 0, 0, 4, 0, 0);
+	ActionFrame callFrame(getContext(), this, 0, 4, 0, 0);
 	eventFunction->call(&callFrame, this);
 }
 

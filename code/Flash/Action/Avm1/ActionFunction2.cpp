@@ -17,8 +17,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.ActionFunction2", ActionFunction2, Action
 
 ActionFunction2::ActionFunction2(
 	const std::string& name,
-	const uint8_t* code,
-	uint16_t codeSize,
+	const IActionVMImage* image,
 	uint8_t registerCount,
 	uint16_t flags,
 	const std::vector< std::pair< std::string, uint8_t > >& argumentsIntoRegisters,
@@ -26,8 +25,7 @@ ActionFunction2::ActionFunction2(
 	ActionDictionary* dictionary
 )
 :	ActionFunction(name)
-,	m_code(code)
-,	m_codeSize(codeSize)
+,	m_image(image)
 ,	m_registerCount(registerCount)
 ,	m_flags(flags)
 ,	m_argumentsIntoRegisters(argumentsIntoRegisters)
@@ -44,8 +42,7 @@ ActionValue ActionFunction2::call(ActionContext* context, ActionObject* self, co
 	ActionFrame callFrame(
 		context,
 		self,
-		m_code,
-		m_codeSize,
+		m_image,
 		m_registerCount,
 		m_dictionary,
 		this
@@ -134,8 +131,7 @@ ActionValue ActionFunction2::call(ActionFrame* callerFrame, ActionObject* self)
 	ActionFrame callFrame(
 		context,
 		self,
-		m_code,
-		m_codeSize,
+		m_image,
 		m_registerCount,
 		m_dictionary,
 		this

@@ -1,11 +1,13 @@
+#include "Core/Io/IStream.h"
+#include "Core/Log/Log.h"
 #include "Flash/FlashMovieFactory.h"
 #include "Flash/FlashMovieFactoryTags.h"
 #include "Flash/FlashMovie.h"
 #include "Flash/FlashSprite.h"
 #include "Flash/FlashFrame.h"
 #include "Flash/SwfReader.h"
-#include "Core/Io/IStream.h"
-#include "Core/Log/Log.h"
+#include "Flash/Action/Avm1/ActionVM1.h"
+#include "Flash/Action/Avm2/ActionVM2.h"
 
 #define T_SHOW_STATISTICS 0
 
@@ -81,9 +83,16 @@ Ref< FlashMovie > FlashMovieFactory::createMovie(SwfReader* swf)
 
 	log::debug << L"SWF movie version " << int32_t(header->version) << Endl;
 
+	// Create ActionScript virtual machine.
+	Ref< IActionVM > vm;
+	if (1)
+		vm = new ActionVM1();
+	else
+		vm = new ActionVM2();
+
 	// Create new movie.
 	Ref< FlashSprite > movieClip = new FlashSprite(0, header->frameRate >> 8);
-	Ref< FlashMovie > movie = new FlashMovie(header->frameRect, movieClip);
+	Ref< FlashMovie > movie = new FlashMovie(vm, header->frameRect, movieClip);
 
 	// Decode tags.
 	FlashTag::ReadContext context;

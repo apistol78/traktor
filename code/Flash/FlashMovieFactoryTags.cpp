@@ -1,4 +1,5 @@
 #include <cstring>
+#include "Compress/Zip/InflateStreamZip.h"
 #include "Core/Io/MemoryStream.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Io/Utf8Encoding.h"
@@ -22,46 +23,12 @@
 #include "Flash/FlashButton.h"
 #include "Flash/FlashBitmap.h"
 #include "Flash/SwfReader.h"
-#include "Flash/Action/ActionScript.h"
-#include "Compress/Zip/InflateStreamZip.h"
+#include "Flash/Action/IActionVM.h"
 
 namespace traktor
 {
 	namespace flash
 	{
-		namespace
-		{
-
-Ref< ActionScript > readActionScript(BitReader& bs)
-{
-	std::vector< uint8_t > buf;
-	buf.reserve(32767);
-	for (;;)
-	{
-		uint8_t opcode = bs.readUInt8();
-		buf.push_back(opcode);
-
-		if (opcode & 0x80)
-		{
-			uint16_t length = bs.readUInt16();
-			buf.push_back(reinterpret_cast< uint8_t* >(&length)[0]);
-			buf.push_back(reinterpret_cast< uint8_t* >(&length)[1]);
-			for (uint16_t i = 0; i < length; ++i)
-			{
-				uint8_t data = bs.readUInt8();
-				buf.push_back(data);
-			}
-		}
-
-		if (opcode == /*AopEnd*/0)
-			break;
-	}
-	Ref< ActionScript > script = new ActionScript(uint32_t(buf.size()));
-	std::memcpy(script->getCode(), &buf[0], buf.size());
-	return script;
-}
-
-		}
 
 // ============================================================================
 // Set background color
@@ -511,7 +478,7 @@ bool FlashTagDefineButton::read(SwfReader* swf, ReadContext& context)
 
 			condition.mask |= bs.readBit() ? FlashButton::CmOverDownToIdle : 0;
 
-			condition.script = readActionScript(bs);
+			condition.script = context.movie->getVM()->load(bs);
 			bs.alignByte();
 
 			button->addButtonCondition(condition);
@@ -1000,7 +967,7 @@ bool FlashTagPlaceObject::read(SwfReader* swf, ReadContext& context)
 					log::debug << L"PlaceObject, unused keycode in EvtKeyPress" << Endl;
 				}
 
-				placeAction.script = readActionScript(bs);
+				placeAction.script = context.movie->getVM()->load(bs);
 				bs.alignByte();
 
 				placeObject.actions.push_back(placeAction);
@@ -1057,9 +1024,9 @@ bool FlashTagDoAction::read(SwfReader* swf, ReadContext& context)
 {
 	BitReader& bs = swf->getBitReader();
 
-	Ref< ActionScript > script = readActionScript(bs);
-	if (script)
-		context.frame->addActionScript(script);
+	Ref< const IActionVMImage > image = context.movie->getVM()->load(bs);
+	if (image)
+		context.frame->addActionScript(image);
 
 	return true;
 }
@@ -1123,10 +1090,10 @@ bool FlashTagInitAction::read(SwfReader* swf, ReadContext& context)
 
 	uint16_t spriteId = bs.readUInt16();
 
-	Ref< ActionScript > script = readActionScript(bs);
+	Ref< const IActionVMImage > image = context.movie->getVM()->load(bs);
 	bs.alignByte();
 
-	context.sprite->addInitActionScript(script);
+	context.sprite->addInitActionScript(image);
 	return true;
 }
 
@@ -1162,22 +1129,12 @@ bool FlashTagFrameLabel::read(SwfReader* swf, ReadContext& context)
 bool FlashTagDoABC::read(SwfReader* swf, ReadContext& context)
 {
 	BitReader& bs = swf->getBitReader();
-	IStream* st = bs.getStream();
 
-	uint32_t flags = bs.readUInt32();
-	std::string name = swf->readString();
+	Ref< const IActionVMImage > image = context.movie->getVM()->load(bs);
+	if (!image)
+		return false;
 
-	uint32_t abcDataSize = context.tagEndPosition - st->tell();
-
-	Ref< ActionScript > script = new ActionScript(abcDataSize);
-	if (abcDataSize > 0)
-	{
-		uint8_t* abcData = script->getCode();
-		if (st->read(abcData, abcDataSize) != abcDataSize)
-			return false;
-	}
-	
-	context.frame->addActionScript(script);
+	context.frame->addActionScript(image);
 	return true;
 }
 

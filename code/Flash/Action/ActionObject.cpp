@@ -40,6 +40,7 @@ ActionObject::ActionObject(ActionObject* prototype)
 :	m_prev(0)
 ,	m_next(0)
 ,	m_readOnly(false)
+,	m__proto__(prototype)
 ,	m_traceColor(TcBlack)
 ,	m_traceBuffered(false)
 ,	m_traceRefCount(0)
@@ -86,39 +87,48 @@ void ActionObject::addInterface(ActionObject* intrface)
 
 ActionObject* ActionObject::getPrototype(ActionContext* context)
 {
-	Ref< ActionObject > classObject;
-	ActionValue protoValue;
-
-	if (getLocalMember("__proto__", protoValue))
+	if (!m__proto__)
 	{
-		if (protoValue.isObject())
-			return protoValue.getObject();
-		else if (protoValue.isString())
+		ActionValue protoValue;
+
+		if (getLocalMember("__proto__", protoValue))
 		{
-			classObject = context->lookupClass(protoValue.getString());
-			if (classObject)
+			if (protoValue.isObject())
+				m__proto__ = protoValue.getObject();
+			else if (protoValue.isString())
+			{
+				m__proto__ = context->lookupClass(protoValue.getString());
+				if (m__proto__)
+				{
+					// Replace string identifier with pointer to actual class.
+					m_members["__proto__"] = ActionValue(m__proto__);
+				}
+			}
+		}
+
+		// No prototype defined; assume plain object.
+		if (!m__proto__)
+		{
+			m__proto__ = context->lookupClass("Object");
+			if (m__proto__)
 			{
 				// Replace string identifier with pointer to actual class.
-				m_members["__proto__"] = ActionValue(classObject);
-				return classObject;
+				m_members["__proto__"] = ActionValue(m__proto__);
 			}
 		}
 	}
 
-	// No prototype defined; assume plain object.
-	classObject = context->lookupClass("Object");
-	if (classObject)
-	{
-		// Replace string identifier with pointer to actual class.
-		m_members["__proto__"] = ActionValue(classObject);
-	}
-
-	return classObject;
+	return m__proto__;
 }
 
 void ActionObject::setMember(const std::string& memberName, const ActionValue& memberValue)
 {
 	T_ASSERT (!m_readOnly);
+	
+	// Reset cached pointer if __proto__ member is modified.
+	if (memberName == "__proto__")
+		m__proto__ = 0;
+
 	m_members[memberName] = memberValue;
 }
 
