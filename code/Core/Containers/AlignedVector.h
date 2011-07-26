@@ -41,7 +41,9 @@ class AlignedVector
 {
 	enum
 	{
-		ExpandSize = 64,
+		MaxDoubleCapacity = 65536,
+		MinCapacity = 64,
+		ResizeCapacityAlignment = 64,
 		Alignment = 16
 	};
 
@@ -337,9 +339,11 @@ public:
 		{
 			if (size > m_capacity)
 			{
-				size_t capacity = (size & ~(ExpandSize - 1)) + ExpandSize;
+				size_t capacity = (size & ~(ResizeCapacityAlignment - 1)) + ResizeCapacityAlignment;
 				reserve(capacity);
 			}
+
+			T_ASSERT (size <= m_capacity);
 
 			for (size_t i = m_size; i < size; ++i)
 				Constructor::construct(m_data[i], pad);
@@ -633,10 +637,14 @@ private:
 		size_t newSize = m_size + count;
 		if (newSize > m_capacity)
 		{
-			size_t capacity = (newSize & ~(ExpandSize - 1)) + ExpandSize;
-			reserve(capacity);
+			size_t increment = std::min< size_t >(
+				std::max< size_t >(m_capacity, MinCapacity),
+				MaxDoubleCapacity
+			);
+			reserve(m_capacity + increment);
 		}
 		m_size = newSize;
+		T_ASSERT (m_size <= m_capacity);
 	}
 
 	void shrink(size_t count)
