@@ -1,8 +1,8 @@
 #ifndef traktor_flash_FlashFrame_H
 #define traktor_flash_FlashFrame_H
 
-#include <map>
 #include "Core/RefArray.h"
+#include "Core/Containers/SmallMap.h"
 #include "Core/Math/Matrix33.h"
 #include "Flash/SwfTypes.h"
 #include "Flash/Action/ActionObject.h"
@@ -145,13 +145,13 @@ public:
 	 *
 	 * \return Place object descriptions.
 	 */
-	const std::map< uint16_t, PlaceObject >& getPlaceObjects() const;
+	const SmallMap< uint16_t, PlaceObject >& getPlaceObjects() const;
 
 	/*! \brief Get remove object descriptions by this frame.
 	 *
 	 * \return Remove object descriptions.
 	 */
-	const std::map< uint16_t, RemoveObject >& getRemoveObjects() const;
+	const SmallMap< uint16_t, RemoveObject >& getRemoveObjects() const;
 
 	/*! \brief Get action scripts associated with this frame.
 	 *
@@ -163,8 +163,8 @@ private:
 	std::string m_label;
 	bool m_backgroundColorChange;
 	SwfColor m_backgroundColor;
-	std::map< uint16_t, PlaceObject > m_placeObjects;
-	std::map< uint16_t, RemoveObject > m_removeObjects;
+	SmallMap< uint16_t, PlaceObject > m_placeObjects;
+	SmallMap< uint16_t, RemoveObject > m_removeObjects;
 	RefArray< const IActionVMImage > m_actionScripts;
 };
 

@@ -25,6 +25,7 @@ ActionVMImage1::ActionVMImage1(const uint8_t* byteCode, uint32_t length)
 void ActionVMImage1::execute(ActionFrame* frame) const
 {
 	ExecutionState state;
+	state.image = this;
 	state.frame = frame;
 	state.pc = m_byteCode.c_ptr();
 	state.npc = state.pc + 1;
@@ -66,6 +67,7 @@ void ActionVMImage1::execute(ActionFrame* frame) const
 void ActionVMImage1::prepare()
 {
 	PreparationState state;
+	state.image = this;
 	state.pc = m_byteCode.ptr();
 	state.npc = state.pc + 1;
 	state.data = 0;
@@ -101,6 +103,12 @@ void ActionVMImage1::prepare()
 		// Update program counter.
 		state.pc = state.npc;
 	}
+}
+
+uint16_t ActionVMImage1::addConstData(const ActionValue& cd)
+{
+	m_constData.push_back(cd);
+	return uint16_t(m_constData.size() - 1);
 }
 
 	}

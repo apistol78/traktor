@@ -1,3 +1,4 @@
+#include <cctype>
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
@@ -139,21 +140,35 @@ uint32_t Array::length() const
 
 void Array::setMember(const std::string& memberName, const ActionValue& memberValue)
 {
-	int32_t index = parseString< int32_t >(memberName, -1);
-	if (index >= 0 && index < int32_t(m_values.size()))
-		m_values[index] = memberValue;
-	else
-		ActionObject::setMember(memberName, memberValue);
+	// Ensure name ain't empty and atleast first character is a digit before trying to parse it as number.
+	if (!memberName.empty() && std::isdigit(memberName[0]))
+	{
+		int32_t index = parseString< int32_t >(memberName, -1);
+		if (index >= 0 && index < int32_t(m_values.size()))
+		{
+			m_values[index] = memberValue;
+			return;
+		}
+	}
+
+	// Neither numeric or out-of-range.
+	ActionObject::setMember(memberName, memberValue);
 }
 
 bool Array::getMember(ActionContext* context, const std::string& memberName, ActionValue& outMemberValue)
 {
-	int32_t index = parseString< int32_t >(memberName, -1);
-	if (index >= 0 && index < int32_t(m_values.size()))
+	// Ensure name ain't empty and atleast first character is a digit before trying to parse it as number.
+	if (!memberName.empty() && std::isdigit(memberName[0]))
 	{
-		outMemberValue = m_values[index];
-		return true;
+		int32_t index = parseString< int32_t >(memberName, -1);
+		if (index >= 0 && index < int32_t(m_values.size()))
+		{
+			outMemberValue = m_values[index];
+			return true;
+		}
 	}
+
+	// Neither numeric or out-of-range.
 	return ActionObject::getMember(context, memberName, outMemberValue);
 }
 

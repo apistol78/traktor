@@ -60,12 +60,12 @@ void FlashFrame::addActionScript(const IActionVMImage* actionScript)
 	m_actionScripts.push_back(actionScript);
 }
 
-const std::map< uint16_t, FlashFrame::PlaceObject >& FlashFrame::getPlaceObjects() const
+const SmallMap< uint16_t, FlashFrame::PlaceObject >& FlashFrame::getPlaceObjects() const
 {
 	return m_placeObjects;
 }
 
-const std::map< uint16_t, FlashFrame::RemoveObject >& FlashFrame::getRemoveObjects() const
+const SmallMap< uint16_t, FlashFrame::RemoveObject >& FlashFrame::getRemoveObjects() const
 {
 	return m_removeObjects;
 }

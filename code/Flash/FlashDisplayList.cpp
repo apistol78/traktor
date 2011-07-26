@@ -81,8 +81,8 @@ void FlashDisplayList::updateFrame(FlashCharacterInstance* ownerInstance, const 
 		m_backgroundColor = frame->getBackgroundColor();
 
 	// Remove instances from active list.
-	const std::map< uint16_t, FlashFrame::RemoveObject >& removeObjects = frame->getRemoveObjects();
-	for (std::map< uint16_t, FlashFrame::RemoveObject >::const_iterator i = removeObjects.begin(); i != removeObjects.end(); ++i)
+	const SmallMap< uint16_t, FlashFrame::RemoveObject >& removeObjects = frame->getRemoveObjects();
+	for (SmallMap< uint16_t, FlashFrame::RemoveObject >::const_iterator i = removeObjects.begin(); i != removeObjects.end(); ++i)
 	{
 		const FlashFrame::RemoveObject& removeObject = i->second;
 		
@@ -100,8 +100,8 @@ void FlashDisplayList::updateFrame(FlashCharacterInstance* ownerInstance, const 
 	}
 
 	// Place instances onto active list.
-	const std::map< uint16_t, FlashFrame::PlaceObject >& placeObjects = frame->getPlaceObjects();
-	for (std::map< uint16_t, FlashFrame::PlaceObject >::const_iterator i = placeObjects.begin(); i != placeObjects.end(); ++i)
+	const SmallMap< uint16_t, FlashFrame::PlaceObject >& placeObjects = frame->getPlaceObjects();
+	for (SmallMap< uint16_t, FlashFrame::PlaceObject >::const_iterator i = placeObjects.begin(); i != placeObjects.end(); ++i)
 	{
 		const FlashFrame::PlaceObject& placeObject = i->second;
 		if (placeObject.hasMove || placeObject.hasCharacterId)
