@@ -105,13 +105,16 @@ ActionValue ActionFunction2::call(ActionContext* context, ActionObject* self, co
 		else
 			callFrame.setVariable(i->first, args[argumentPassed++]);
 	}
+
+	ActionValueStack& callStack = callFrame.getStack();
+
+	// Push rest of arguments onto stack.
 	while (argumentPassed < args.size())
-		callFrame.getStack().push(args[argumentPassed++]);
+		callStack.push(args[argumentPassed++]);
 
 	context->getVM()->execute(&callFrame);
 
-	ActionValueStack& callStack = callFrame.getStack();
-	return !callStack.empty() ? callStack.top() : ActionValue();
+	return callStack.top();
 }
 
 ActionValue ActionFunction2::call(ActionFrame* callerFrame, ActionObject* self)
@@ -201,13 +204,14 @@ ActionValue ActionFunction2::call(ActionFrame* callerFrame, ActionObject* self)
 		}
 	}
 
+	ActionValueStack& callStack = callFrame.getStack();
+
 	while (argumentPassed < argCount)
-		callFrame.getStack().push(args[argumentPassed++]);
+		callStack.push(args[argumentPassed++]);
 
 	context->getVM()->execute(&callFrame);
 
-	ActionValueStack& callStack = callFrame.getStack();
-	return !callStack.empty() ? callStack.top() : ActionValue();
+	return callStack.top();
 }
 
 void ActionFunction2::trace(const IVisitor& visitor) const

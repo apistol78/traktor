@@ -25,6 +25,10 @@ public:
 
 	void prepare();
 
+	uint16_t addConstData(const ActionValue& cd);
+
+	const ActionValue& getConstData(uint16_t index) const { return m_constData[index]; }
+
 private:
 	friend class ActionVM1;
 

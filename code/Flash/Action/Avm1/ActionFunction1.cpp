@@ -39,15 +39,16 @@ ActionValue ActionFunction1::call(ActionContext* context, ActionObject* self, co
 		this
 	);
 
+	ActionValueStack& callStack = callFrame.getStack();
+
 	for (size_t i = 0; i < args.size(); ++i)
-		callFrame.getStack().push(args[i]);
+		callStack.push(args[i]);
 	for (size_t i = args.size(); i < m_argumentCount; ++i)
-		callFrame.getStack().push(ActionValue());
+		callStack.push(ActionValue());
 
 	context->getVM()->execute(&callFrame);
 
-	ActionValueStack& callStack = callFrame.getStack();
-	return !callStack.empty() ? callStack.top() : ActionValue();
+	return callStack.top();
 }
 
 ActionValue ActionFunction1::call(ActionFrame* callerFrame, ActionObject* self)
@@ -76,15 +77,16 @@ ActionValue ActionFunction1::call(ActionFrame* callerFrame, ActionObject* self)
 	//for (std::vector< std::wstring >::const_iterator i = m_arguments.begin(); i != m_arguments.end(); ++i)
 	//	callFrame.setVariable(*i, callerStack.pop());
 
+	ActionValueStack& callStack = callFrame.getStack();
+
 	for (int32_t i = 0; i < argCount; ++i)
-		callFrame.getStack().push(args[i]);
+		callStack.push(args[i]);
 	for (size_t i = argCount; i < m_argumentCount; ++i)
-		callFrame.getStack().push(ActionValue());
+		callStack.push(ActionValue());
 
 	context->getVM()->execute(&callFrame);
 
-	ActionValueStack& callStack = callFrame.getStack();
-	return !callStack.empty() ? callStack.top() : ActionValue();
+	return callStack.top();
 }
 
 	}

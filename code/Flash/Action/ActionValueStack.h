@@ -37,9 +37,9 @@ public:
 	 *
 	 * \return Value.
 	 */
-	ActionValue pop()
+	const ActionValue& pop()
 	{
-		return m_index > 0 ? m_stack[--m_index] : ActionValue();
+		return m_index > 0 ? m_stack[--m_index] : ms_undefined;
 	}
 
 	/*! \brief Peek at value on top of stack.
@@ -49,9 +49,8 @@ public:
 	 */
 	ActionValue& top(int32_t offset = 0)
 	{
-		static ActionValue s_undefined;
-		int index = m_index + offset - 1;
-		return (index >= 0 && index < MaxStackDepth) ? m_stack[index] : s_undefined;
+		int32_t index = m_index + offset - 1;
+		return (index >= 0 && index < MaxStackDepth) ? m_stack[index] : ms_undefined;
 	}
 
 	/*! \brief Stack empty.
@@ -71,7 +70,7 @@ public:
 	{
 		T_ASSERT (ensureCount < MaxStackDepth);
 		while (m_index < ensureCount)
-			m_stack[m_index++] = ActionValue();
+			m_stack[m_index++] = ms_undefined;
 	}
 
 	/*! \brief Drop values from stack.
@@ -95,6 +94,8 @@ public:
 
 private:
 	enum { MaxStackDepth = 64 };
+
+	static ActionValue ms_undefined;
 	ActionValue* m_stack;
 	int32_t m_index;
 };

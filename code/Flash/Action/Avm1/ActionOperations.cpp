@@ -474,7 +474,25 @@ void opx_throw(ExecutionState& state)
 
 void opx_castOp(ExecutionState& state)
 {
-	VM_NOT_IMPLEMENTED;
+	ActionContext* context = state.frame->getContext();
+	ActionValueStack& stack = state.frame->getStack();
+
+	ActionValue objectValue = stack.pop();
+	ActionValue constructorValue = stack.pop();
+
+	if (objectValue.isObject() && constructorValue.isObject())
+	{
+		ActionObject* object = objectValue.getObject();
+		ActionObject* constructor = constructorValue.getObject();
+
+		if (object->getPrototype(context) == constructor)
+		{
+			stack.push(objectValue);
+			return;
+		}
+	}
+
+	stack.push(ActionValue((avm_number_t)0));
 }
 
 void opx_implementsOp(ExecutionState& state)
@@ -1073,7 +1091,25 @@ void opx_newMethod(ExecutionState& state)
 
 void opx_instanceOf(ExecutionState& state)
 {
-	VM_NOT_IMPLEMENTED;
+	ActionContext* context = state.frame->getContext();
+	ActionValueStack& stack = state.frame->getStack();
+
+	ActionValue objectValue = stack.pop();
+	ActionValue constructorValue = stack.pop();
+
+	if (objectValue.isObject() && constructorValue.isObject())
+	{
+		ActionObject* object = objectValue.getObject();
+		ActionObject* constructor = constructorValue.getObject();
+
+		if (object->getPrototype(context) == constructor)
+		{
+			stack.push(ActionValue(true));
+			return;
+		}
+	}
+
+	stack.push(ActionValue(false));
 }
 
 void opx_enum2(ExecutionState& state)
@@ -1348,19 +1384,22 @@ void opx_waitForFrameExpression(ExecutionState& state)
 
 void opp_defineFunction2(PreparationState& state)
 {
-#if defined(T_BIG_ENDIAN)
 	uint8_t* data = state.data;
 
 	const char* functionName = reinterpret_cast< const char* >(data);
 	data += strlen(functionName) + 1;
 
+#if defined(T_BIG_ENDIAN)
 	swap8in32(*(uint16_t*)data);
+#endif
 	uint16_t argumentCount = *reinterpret_cast< const uint16_t* >(data);
 	data += sizeof(uint16_t);
 
 	data += sizeof(uint8_t);
 
+#if defined(T_BIG_ENDIAN)
 	swap8in32(*(uint16_t*)data);
+#endif
 	data += sizeof(uint16_t);
 
 	for (int i = 0; i  < argumentCount; ++i)
@@ -1371,12 +1410,13 @@ void opp_defineFunction2(PreparationState& state)
 		data += strlen(variableName) + 1;
 	}
 
+#if defined(T_BIG_ENDIAN)
 	swap8in32(*(uint16_t*)data);
+#endif
 	uint16_t codeSize = *reinterpret_cast< const uint16_t* >(data);
 	data += sizeof(uint16_t);
 
 	state.npc += codeSize;
-#endif
 }
 
 void opx_defineFunction2(ExecutionState& state)
@@ -1457,49 +1497,155 @@ void opx_with(ExecutionState& state)
 void opp_pushData(PreparationState& state)
 {
 #if defined(T_BIG_ENDIAN)
-	// \todo
-	//
-	// Replace AopPushData with custom opcodes which reference
-	// a table of ActionValues.
-	//
-	// AopPushData => XopPushData, XopPushRegister, XopPushDictionary
-	//
-
-	uint8_t* data = state.data;
-	uint8_t* end = data + state.length;
-	while (data < end)
 	{
-		uint8_t type = *data++;
-		if (type == 0)		// String
+		uint8_t* data = state.data;
+		uint8_t* end = data + state.length;
+		while (data < end)
 		{
-			uint32_t length = uint32_t(strlen(reinterpret_cast< const char* >(data)));
-			data += length + 1;
-		}
-		else if (type == 1)	// Number
-		{
-			swap8in32(*(float*)data);
-			data += sizeof(float);
-		}
-		else if (type == 4)	// Register
-			data += sizeof(uint8_t);
-		else if (type == 5)	// Boolean
-			data += sizeof(uint8_t);
-		else if (type == 6)	// Double
-			data += sizeof(double);
-		else if (type == 7)	// Integer (32bit)
-		{
-			swap8in32(*(int32_t*)data);
-			data += sizeof(int32_t);
-		}
-		else if (type == 8)	// Dictionary (8bit index)
-			data += sizeof(uint8_t);
-		else if (type == 9)	// Dictionary (16bit index)
-		{
-			swap8in32(*(uint16_t*)data);
-			data += sizeof(uint16_t);
+			uint8_t type = *data++;
+			if (type == 0)		// String
+			{
+				uint32_t length = uint32_t(strlen(reinterpret_cast< const char* >(data)));
+				data += length + 1;
+			}
+			else if (type == 1)	// Number
+			{
+				swap8in32(*(float*)data);
+				data += sizeof(float);
+			}
+			else if (type == 4)	// Register
+				data += sizeof(uint8_t);
+			else if (type == 5)	// Boolean
+				data += sizeof(uint8_t);
+			else if (type == 6)	// Double
+				data += sizeof(double);
+			else if (type == 7)	// Integer (32bit)
+			{
+				swap8in32(*(int32_t*)data);
+				data += sizeof(int32_t);
+			}
+			else if (type == 8)	// Dictionary (8bit index)
+				data += sizeof(uint8_t);
+			else if (type == 9)	// Dictionary (16bit index)
+			{
+				swap8in32(*(uint16_t*)data);
+				data += sizeof(uint16_t);
+			}
 		}
 	}
 #endif
+
+	// Try to convert values and replace with custom type.
+	{
+		uint8_t nd[65536];
+		uint8_t* ndp = nd;
+
+		uint8_t* data = state.data;
+		uint8_t* end = data + state.length;
+		while (data < end)
+		{
+			uint8_t type = *data++;
+
+			if (type == 0)		// String
+			{
+				uint32_t length = uint32_t(strlen((const char*)data));
+				uint16_t index = state.image->addConstData(ActionValue((const char*)data));
+				
+				*ndp++ = 100;
+				*(uint16_t*)ndp = index;
+				ndp += sizeof(uint16_t);
+
+				data += length + 1;
+			}
+			else if (type == 1)	// Number
+			{
+				uint16_t index = state.image->addConstData(ActionValue(*(const float*)data));
+
+				*ndp++ = 100;
+				*(uint16_t*)ndp = index;
+				ndp += sizeof(uint16_t);
+
+				data += sizeof(float);
+			}
+			else if (type == 2)	// Null
+			{
+				*ndp++ = 2;
+			}
+			else if (type == 3)	// Undefined
+			{
+				*ndp++ = 3;
+			}
+			else if (type == 4)	// Register
+			{
+				*ndp++ = 4;
+				*ndp++ = *data++;
+			}
+			else if (type == 5)	// Boolean
+			{
+				*ndp++ = 5;
+				*ndp++ = *data++;
+			}
+			else if (type == 6)	// Double
+			{
+				union { double d; uint8_t b[8]; uint32_t dw[2]; } w;
+
+#if defined(T_LITTLE_ENDIAN)
+				w.dw[0] = *(const uint32_t*)&data[4];
+				w.dw[1] = *(const uint32_t*)&data[0];
+#elif defined(T_BIG_ENDIAN)
+				w.b[0] = data[3];
+				w.b[1] = data[2];
+				w.b[2] = data[1];
+				w.b[3] = data[0];
+				w.b[4] = data[7];
+				w.b[5] = data[6];
+				w.b[6] = data[5];
+				w.b[7] = data[4];
+#endif
+				
+				uint16_t index = state.image->addConstData(ActionValue(avm_number_t(w.d)));
+
+				*ndp++ = 100;
+				*(uint16_t*)ndp = index;
+				ndp += sizeof(uint16_t);
+
+				data += sizeof(double);
+			}
+			else if (type == 7)	// Integer (32bit)
+			{
+				uint16_t index = state.image->addConstData(ActionValue(avm_number_t(*(const int32_t*)data)));
+
+				*ndp++ = 100;
+				*(uint16_t*)ndp = index;
+				ndp += sizeof(uint16_t);
+
+				data += sizeof(int32_t);
+			}
+			else if (type == 8)	// Dictionary (8bit index)
+			{
+				*ndp++ = 8;
+				*ndp++ = *data++;
+			}
+			else if (type == 9)	// Dictionary (16bit index)
+			{
+				*ndp++ = 9;
+				*(uint16_t*)ndp = *(const uint16_t*)data;
+				ndp += sizeof(uint16_t);
+
+				data += sizeof(uint16_t);
+			}
+			else
+				break;
+		}
+
+		if (int(ndp - nd) <= state.length)
+		{
+			while (int(ndp - nd) < state.length)
+				*ndp++ = 200;
+
+			std::memcpy(state.data, nd, state.length);
+		}
+	}
 }
 
 void opx_pushData(ExecutionState& state)
@@ -1515,47 +1661,39 @@ void opx_pushData(ExecutionState& state)
 
 		if (type == 0)		// String
 		{
-			uint32_t length = uint32_t(strlen(reinterpret_cast< const char* >(data)));
-			value = ActionValue(reinterpret_cast< const char* >(data));
+			uint32_t length = uint32_t(strlen((const char*)data));
+			value = ActionValue((const char*)data);
 			data += length + 1;
-			VM_LOG(L"Push data, string " << value.getWideStringSafe());
 		}
 		else if (type == 1)	// Number
 		{
-			value = ActionValue(avm_number_t(*reinterpret_cast< const float* >(data)));
+			value = ActionValue(avm_number_t(*(const float*)data));
 			data += sizeof(float);
-			VM_LOG(L"Push data, number " << value.getWideStringSafe());
 		}
 		else if (type == 2)	// Null
 		{
 			value = ActionValue((ActionObject*)0);
-			VM_LOG(L"Push data, null");
 		}
 		else if (type == 3)	// Undefined
 		{
 			// Do nothing, value is already undefined.
-			VM_LOG(L"Push data, undefined");
 		}
 		else if (type == 4)	// Register
 		{
-			uint8_t index = *data;
+			uint8_t index = *data++;
 			value = state.frame->getRegister(index);
-			data += sizeof(uint8_t);
-			VM_LOG(L"Push data, register " << int32_t(index) << L" (" << value.getWideStringSafe() << L")");
 		}
 		else if (type == 5)	// Boolean
 		{
-			value = ActionValue(bool(*data ? true : false));
-			data += sizeof(uint8_t);
-			VM_LOG(L"Push data, boolean " << value.getWideStringSafe());
+			value = ActionValue(bool(*data++ ? true : false));
 		}
 		else if (type == 6)	// Double
 		{
 			union { double d; uint8_t b[8]; uint32_t dw[2]; } w;
 
 #if defined(T_LITTLE_ENDIAN)
-			w.dw[0] = *reinterpret_cast< const uint32_t* >(&data[4]);
-			w.dw[1] = *reinterpret_cast< const uint32_t* >(&data[0]);
+			w.dw[0] = *(const uint32_t*)&data[4];
+			w.dw[1] = *(const uint32_t*)&data[0];
 #elif defined(T_BIG_ENDIAN)
 			w.b[0] = data[3];
 			w.b[1] = data[2];
@@ -1569,32 +1707,33 @@ void opx_pushData(ExecutionState& state)
 			
 			value = ActionValue(avm_number_t(w.d));
 			data += sizeof(double);
-			VM_LOG(L"Push data, double " << value.getWideStringSafe());
 		}
 		else if (type == 7)	// Integer (32bit)
 		{
 			value = ActionValue(avm_number_t(*reinterpret_cast< const int32_t* >(data)));
 			data += sizeof(int32_t);
-			VM_LOG(L"Push data, integer " << value.getWideStringSafe());
 		}
 		else if (type == 8)	// Dictionary (8bit index)
 		{
-			uint8_t index = *data;
+			uint8_t index = *data++;
 			value = ActionValue(state.frame->getDictionary()->get(index));
-			data += sizeof(uint8_t);
-			VM_LOG(L"Push data, dictionary " << int32_t(index) << L" (" << value.getWideStringSafe() << L")");
 		}
 		else if (type == 9)	// Dictionary (16bit index)
 		{
 			uint16_t index = *reinterpret_cast< const uint16_t* >(data);
 			value = ActionValue(state.frame->getDictionary()->get(index));
 			data += sizeof(uint16_t);
-			VM_LOG(L"Push data, dictionary " << int32_t(index) << L" (" << value.getWideStringSafe() << L")");
 		}
-		else
+		else if (type == 100)	// Preconverted constant value.
 		{
-			log::warning << L"Unknown data type " << type << L", out of sync" << Endl;
+			uint16_t index = *reinterpret_cast< const uint16_t* >(data);
+			value = state.image->getConstData(index);
+			data += sizeof(uint16_t);
 		}
+		else if (type == 200)	// End
+			break;
+		else
+			break;
 
 		stack.push(value);
 	}
@@ -1641,13 +1780,14 @@ void opx_getUrl2(ExecutionState& state)
 
 void opp_defineFunction(PreparationState& state)
 {
-#if defined(T_BIG_ENDIAN)
 	uint8_t* data = state.data;
 
 	const char* functionName = reinterpret_cast< const char* >(data);
 	data += strlen(functionName) + 1;
 
+#if defined(T_BIG_ENDIAN)
 	swap8in32(*(uint16_t*)data);
+#endif
 	uint16_t argumentCount = *reinterpret_cast< const uint16_t* >(data);
 	data += sizeof(uint16_t);
 
@@ -1657,12 +1797,13 @@ void opp_defineFunction(PreparationState& state)
 		data += strlen(argumentName) + 1;
 	}
 
+#if defined(T_BIG_ENDIAN)
 	swap8in32(*(uint16_t*)data);
+#endif
 	uint16_t codeSize = *reinterpret_cast< const uint16_t* >(data);
 	data += sizeof(uint16_t);
 
 	state.npc += codeSize;
-#endif
 }
 
 void opx_defineFunction(ExecutionState& state)
@@ -1678,12 +1819,10 @@ void opx_defineFunction(ExecutionState& state)
 	uint16_t argumentCount = *reinterpret_cast< const uint16_t* >(data);
 	data += sizeof(uint16_t);
 
-	//std::vector< std::wstring > arguments(argumentCount);
 	for (int i = 0; i  < argumentCount; ++i)
 	{
 		const char* argumentName = reinterpret_cast< const char* >(data);
 		data += strlen(argumentName) + 1;
-		//arguments[i] = mbstows(argumentName);
 	}
 
 	uint16_t codeSize = *reinterpret_cast< const uint16_t* >(data);

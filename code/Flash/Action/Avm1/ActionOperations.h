@@ -10,9 +10,11 @@ namespace traktor
 	{
 
 class ActionFrame;
+class ActionVMImage1;
 
 struct PreparationState
 {
+	ActionVMImage1* image;
 	uint8_t* pc;
 	uint8_t* npc;
 	uint8_t* data;
@@ -21,6 +23,7 @@ struct PreparationState
 
 struct ExecutionState
 {
+	const ActionVMImage1* image;
 	ActionFrame* frame;
 	const uint8_t* pc;
 	const uint8_t* npc;
