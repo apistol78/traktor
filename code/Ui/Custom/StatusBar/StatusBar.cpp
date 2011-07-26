@@ -76,6 +76,7 @@ void StatusBar::eventPaint(Event* event)
 	canvas.fillRect(rc);
 
 	std::wstring text = getText();
+	canvas.setForeground(getSystemColor(ScMenuText));
 	canvas.drawText(rc.inflate(-8, 0), text, AnLeft, AnCenter);
 
 	// Draw scale grip if parent is a form and isn't maximized.
