@@ -6,6 +6,7 @@
 #include "Core/Config.h"
 #include "Core/Memory/IAllocator.h"
 #include "Core/Memory/MemoryConfig.h"
+#include "Core/Misc/Align.h"
 
 namespace traktor
 {
@@ -41,7 +42,7 @@ class AlignedVector
 {
 	enum
 	{
-		MaxDoubleCapacity = 65536,
+		MaxCapacityAlignment = 65536,
 		MinCapacity = 64,
 		ResizeCapacityAlignment = 64,
 		Alignment = 16
@@ -637,11 +638,12 @@ private:
 		size_t newSize = m_size + count;
 		if (newSize > m_capacity)
 		{
-			size_t increment = std::min< size_t >(
+			size_t capacityAlignment = std::min< size_t >(
 				std::max< size_t >(m_capacity, MinCapacity),
-				MaxDoubleCapacity
+				MaxCapacityAlignment
 			);
-			reserve(m_capacity + increment);
+			size_t newCapacity = alignUp(newSize, capacityAlignment);
+			reserve(newCapacity);
 		}
 		m_size = newSize;
 		T_ASSERT (m_size <= m_capacity);
