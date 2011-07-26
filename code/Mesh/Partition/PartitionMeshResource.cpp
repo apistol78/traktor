@@ -40,6 +40,7 @@ Ref< IMesh > PartitionMeshResource::createMesh(
 	Ref< PartitionMesh > partitionMesh = new PartitionMesh();
 	partitionMesh->m_shader = m_shader;
 	partitionMesh->m_mesh = mesh;
+	partitionMesh->m_parts.reserve(m_parts.size());
 
 	for (AlignedVector< Part >::const_iterator i = m_parts.begin(); i != m_parts.end(); ++i)
 	{
