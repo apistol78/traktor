@@ -30,6 +30,8 @@ class T_DLLCLASS CompactDatabase : public IProviderDatabase
 	T_RTTI_CLASS;
 
 public:
+	CompactDatabase();
+
 	virtual bool create(const ConnectionString& connectionString);
 
 	virtual bool open(const ConnectionString& connectionString);

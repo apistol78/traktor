@@ -168,7 +168,7 @@ int Reader::read(void* block, int count, int size)
 	
 #if defined(T_BIG_ENDIAN)
 
-	if (result > 0)
+	if (result > 0 && size > 1)
 	{
 		char* p = static_cast< char* >(block);
 		for (int i = 0; i < result; i += size)

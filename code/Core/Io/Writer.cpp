@@ -19,8 +19,8 @@ template <typename T> bool write_primitive(IStream* stream, T v)
 
 template <typename T> bool write_primitive(IStream* stream, T v)
 {
-	std::vector< char > tmp(sizeof(T));
-	memcpy(&tmp.front(), &v, sizeof(T));
+	std::vector< uint8_t > tmp(sizeof(T));
+	std::memcpy(&tmp.front(), &v, sizeof(T));
 	std::reverse(tmp.begin(), tmp.end());
 	if (stream->write(&tmp.front(), sizeof(T)) == sizeof(T))
 		return true;
@@ -133,24 +133,25 @@ int Writer::write(const void* block, int count, int size)
 {
 #if defined(T_BIG_ENDIAN)
 
-	const char* p = static_cast< const char* >(block);
-	std::vector< char > tmp(size);
-	
-	for (int i = 0; i < count; ++i, p += size)
+	if (size > 1)
 	{
-		memcpy(&tmp.front(), p, size);
-		std::reverse(tmp.begin(), tmp.end());
-		if (m_stream->write(&tmp.front(), size) != size)
-			return -1;
+		const uint8_t* p = static_cast< const uint8_t* >(block);
+		std::vector< uint8_t > tmp(size);
+		
+		for (int i = 0; i < count; ++i, p += size)
+		{
+			std::memcpy(&tmp.front(), p, size);
+			std::reverse(tmp.begin(), tmp.end());
+			if (m_stream->write(&tmp.front(), size) != size)
+				return -1;
+		}
+		
+		return count * size;
 	}
-	
-	return count * size;
-	
-#else	// T_LITTLE_ENDIAN
+
+#endif
 
 	return m_stream->write(block, count * size);
-	
-#endif
 }
 
 }

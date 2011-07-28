@@ -17,6 +17,12 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.CompactDatabase", 0, CompactDatabase, IProviderDatabase)
 
+CompactDatabase::CompactDatabase()
+:	m_readOnly(false)
+,	m_registryHash(0)
+{
+}
+
 bool CompactDatabase::create(const ConnectionString& connectionString)
 {
 	if (!connectionString.have(L"fileName"))
@@ -79,8 +85,8 @@ bool CompactDatabase::open(const ConnectionString& connectionString)
 		return false;
 	}
 
-	m_readOnly = readOnly;
-	m_registryHash = DeepHash(registry).get();
+	if ((m_readOnly = readOnly) == false)
+		m_registryHash = DeepHash(registry).get();
 
 	m_context = new CompactContext(blockFile, registry);
 
