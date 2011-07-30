@@ -47,24 +47,37 @@ Ref< Entity > EntityBuilder::create(const EntityData* entityData)
 	if (!entityData)
 		return 0;
 
-	uint32_t minClassDifference = std::numeric_limits< uint32_t >::max();
+	const TypeInfo& entityDataType = type_of(entityData);
 	IEntityFactory* entityFactory = 0;
 
-	for (RefArray< IEntityFactory >::iterator i = m_entityFactories.begin(); i != m_entityFactories.end() && minClassDifference > 0; ++i)
+	std::map< const TypeInfo*, IEntityFactory* >::const_iterator i = m_resolvedFactoryCache.find(&entityDataType);
+	if (i != m_resolvedFactoryCache.end())
 	{
-		const TypeInfoSet& typeSet = (*i)->getEntityTypes();
-		for (TypeInfoSet::const_iterator j = typeSet.begin(); j != typeSet.end() && minClassDifference > 0; ++j)
+		// This type of entity has already been created; reuse same factory.
+		entityFactory = i->second;
+	}
+	else
+	{
+		// Need to find factory best suited to create entity from it's data.
+		uint32_t minClassDifference = std::numeric_limits< uint32_t >::max();
+		for (RefArray< IEntityFactory >::iterator i = m_entityFactories.begin(); i != m_entityFactories.end() && minClassDifference > 0; ++i)
 		{
-			if (is_type_of(**j, type_of(entityData)))
+			const TypeInfoSet& typeSet = (*i)->getEntityTypes();
+			for (TypeInfoSet::const_iterator j = typeSet.begin(); j != typeSet.end() && minClassDifference > 0; ++j)
 			{
-				uint32_t classDifference = type_difference(**j, type_of(entityData));
-				if (classDifference < minClassDifference)
+				if (is_type_of(**j, entityDataType))
 				{
-					minClassDifference = classDifference;
-					entityFactory = *i;
+					uint32_t classDifference = type_difference(**j, entityDataType);
+					if (classDifference < minClassDifference)
+					{
+						minClassDifference = classDifference;
+						entityFactory = *i;
+					}
 				}
 			}
 		}
+
+		m_resolvedFactoryCache.insert(std::make_pair(&entityDataType, entityFactory));
 	}
 
 	if (!entityFactory)

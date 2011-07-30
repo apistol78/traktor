@@ -49,6 +49,7 @@ private:
 	RefArray< IEntityFactory > m_entityFactories;
 	std::stack< scope_t > m_entityScope;
 	std::map< const EntityData*, Ref< Entity > > m_entities;
+	std::map< const TypeInfo*, IEntityFactory* > m_resolvedFactoryCache;
 	bool m_inbuild;
 };
 
