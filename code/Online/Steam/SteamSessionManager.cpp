@@ -23,11 +23,51 @@ const struct { const wchar_t* steam; const wchar_t* code; } c_languageCodes[] =
 	{ L"french", L"fr" },
 	{ L"german", L"de" },
 	{ L"italian", L"it" },
+	{ L"japanese", L"jp" },
+	{ L"koreana", L"kr" },
 	{ L"spanish", L"es" },
 	{ L"russian", L"ru" },
 	{ L"polish", L"pl" },
 	{ L"portuguese", L"pt" },
+	{ L"schinese", L"ch" },
 	{ L"swedish", L"sv" }
+
+/*
+From steamworks mailinglist. 
+
+Chris Boyd @ valve:
+GetCurrentGameLanguage() can return the following:
+
+english
+german
+french
+italian
+koreana
+spanish
+schinese
+tchinese
+russian
+thai
+japanese
+portuguese
+polish
+danish
+dutch
+finnish
+norwegian
+swedish
+hungarian
+czech
+romanian
+turkish
+brazilian
+Bulgarian
+
+Maybe we should map to IETF to avoid conflicts? http://en.wikipedia.org/wiki/IETF_language_tag
+
+*/
+
+
 };
 
 		}
@@ -129,6 +169,8 @@ bool SteamSessionManager::update()
 
 std::wstring SteamSessionManager::getLanguageCode() const
 {
+	const char* allLanguages = SteamApps()->GetAvailableGameLanguages();
+	log::info << L"Steam; Available languages: " << mbstows(allLanguages) << Endl;
 	const char* language = SteamApps()->GetCurrentGameLanguage();
 	if (!language)
 		return L"";
