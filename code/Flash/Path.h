@@ -118,19 +118,19 @@ public:
 	 *
 	 * \return Cursor position.
 	 */
-	Vector2 getCursor() const;
+	const Vector2& getCursor() const { return m_cursor; }
 
 	/*! \brief Get points.
 	 *
 	 * \return List of points.
 	 */
-	const std::vector< Vector2 >& getPoints() const;
+	const std::vector< Vector2 >& getPoints() const { return m_points; }
 
 	/*! \brief Get sub paths.
 	 *
 	 * \return List of sub-paths.
 	 */
-	const std::list< SubPath >& getSubPaths() const;
+	const std::list< SubPath >& getSubPaths() const { return m_subPaths; }
 
 private:
 	Vector2 m_cursor;

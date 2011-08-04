@@ -70,21 +70,6 @@ void Path::end(uint16_t fillStyle0, uint16_t fillStyle1, uint16_t lineStyle)
 	}
 }
 
-Vector2 Path::getCursor() const
-{
-	return m_cursor;
-}
-
-const std::vector< Vector2 >& Path::getPoints() const
-{
-	return m_points;
-}
-
-const std::list< SubPath >& Path::getSubPaths() const
-{
-	return m_subPaths;
-}
-
 void Path::transform(CoordinateMode from, CoordinateMode to, float& x, float& y) const
 {
 	if (from == to)

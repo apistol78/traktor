@@ -40,6 +40,8 @@ public:
 
 	text_t getText() const;
 
+	std::wstring getConcatedText() const;
+
 	bool getTextExtents(float& outWidth, float& outHeight) const;
 
 	virtual SwfRect getBounds() const;

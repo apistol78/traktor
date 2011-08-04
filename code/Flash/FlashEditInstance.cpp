@@ -82,6 +82,15 @@ FlashEditInstance::text_t FlashEditInstance::getText() const
 	return m_text;
 }
 
+std::wstring FlashEditInstance::getConcatedText() const
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	StringOutputStream ss;
+	for (std::list< std::wstring >::const_iterator i = m_text.begin(); i != m_text.end(); ++i)
+		ss << *i << Endl;
+	return ss.str();
+}
+
 bool FlashEditInstance::getTextExtents(float& outWidth, float& outHeight) const
 {
 	const FlashMovie* movie = getContext()->getMovie();

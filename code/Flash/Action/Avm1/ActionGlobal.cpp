@@ -25,6 +25,7 @@
 #include "Flash/Action/Avm1/Classes/AsString.h"
 #include "Flash/Action/Avm1/Classes/AsSystem.h"
 #include "Flash/Action/Avm1/Classes/AsTextField.h"
+#include "Flash/Action/Avm1/Classes/AsTextFormat.h"
 #include "Flash/Action/Avm1/Classes/AsXML.h"
 #include "Flash/Action/Avm1/Classes/AsXMLNode.h"
 
@@ -82,6 +83,7 @@ ActionGlobal::ActionGlobal()
 	setMember("String", ActionValue(new AsString()));
 	setMember("System", ActionValue(new AsSystem()));
 	setMember("TextField", ActionValue(new AsTextField()));
+	setMember("TextFormat", ActionValue(new AsTextFormat()));
 	setMember("XM", ActionValue(new AsXML()));
 	setMember("XMLNode", ActionValue(new AsXMLNode()));
 

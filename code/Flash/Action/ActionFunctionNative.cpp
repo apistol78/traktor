@@ -49,5 +49,22 @@ ActionValue ActionFunctionNative::call(ActionFrame* callerFrame, ActionObject* s
 	return fnc.ret;
 }
 
+Ref< ActionFunctionNative > createPolymorphicFunction(
+	ActionFunctionNative* fnptr_0,
+	ActionFunctionNative* fnptr_1,
+	ActionFunctionNative* fnptr_2,
+	ActionFunctionNative* fnptr_3,
+	ActionFunctionNative* fnptr_4
+)
+{
+	return new ActionFunctionNative(new PolymorphicNativeFunction(
+		fnptr_0,
+		fnptr_1,
+		fnptr_2,
+		fnptr_3,
+		fnptr_4
+	));
+}
+
 	}
 }
