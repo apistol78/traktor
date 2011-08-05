@@ -95,6 +95,8 @@ std::vector< uint8_t > Base64::decode(const std::wstring& b64) const
 	}
 
 	std::vector< uint8_t > data;
+	data.reserve((str.length() * 3) / 4);
+
 	for (size_t i = 0; i < str.length(); i += 4)
 	{
 		wchar_t c1 = L'A', c2 = L'A', c3 = L'A', c4 = L'A';
