@@ -124,16 +124,18 @@ Ref< Settings > loadSettings(const Path& settingsFile)
 	return settings;
 }
 
-void saveSettings(const Settings* settings, const Path& settingsFile)
+bool saveSettings(const Settings* settings, const Path& settingsFile)
 {
 	T_ASSERT (settings);
 
 	Ref< IStream > file = FileSystem::getInstance().open(settingsFile, File::FmWrite);
-	if (file)
-	{
-		settings->write< xml::XmlSerializer >(file);
-		file->close();
-	}
+	if (!file)
+		return false;
+
+	bool result = settings->write< xml::XmlSerializer >(file);
+	file->close();
+	
+	return result;
 }
 
 void showErrorDialog(const std::list< std::wstring >& tail)
@@ -253,10 +255,24 @@ int32_t amalgamMain(
 	T_FATAL_ASSERT (settings);
 
 	// Merge user settings into application settings.
-	Path userSettingsPath = settingsPath.getPathNameNoExtension() + L"." + OS::getInstance().getCurrentUser() + L"." + settingsPath.getExtension();
 	if (!cmdLine.hasOption('s'))
 	{
-		Ref< Settings > userSettings = loadSettings(userSettingsPath);
+		Path userSettingsPath;
+		Ref< Settings > userSettings;
+
+		// First try to load user settings from current working directory; ie. same directory as
+		// the main executable.
+		userSettingsPath = settingsPath.getPathNameNoExtension() + L"." + OS::getInstance().getCurrentUser() + L"." + settingsPath.getExtension();
+		userSettings = loadSettings(userSettingsPath);
+	
+		// Try to load user settings from user's application data path; sometimes it's not possible
+		// to store user settings alongside executable due to restrictive priviledges.
+		if (!userSettings)
+		{
+			userSettingsPath = OS::getInstance().getWritableFolderPath() + L"/Doctor Entertainment AB/" + settingsPath.getFileNameNoExtension() + L"." + OS::getInstance().getCurrentUser() + L"." + settingsPath.getExtension();
+			userSettings = loadSettings(userSettingsPath);
+		}
+
 		if (userSettings)
 			settings->merge(userSettings, false);
 	}
@@ -306,8 +322,19 @@ int32_t amalgamMain(
 
 		safeDestroy(application);
 
+		// Save user settings.
 		if (!cmdLine.hasOption('s'))
-			saveSettings(settings, userSettingsPath);
+		{
+			Path userSettingsPath;
+
+			userSettingsPath = settingsPath.getPathNameNoExtension() + L"." + OS::getInstance().getCurrentUser() + L"." + settingsPath.getExtension();
+			if (!saveSettings(settings, userSettingsPath))
+			{
+				userSettingsPath = OS::getInstance().getWritableFolderPath() + L"/Doctor Entertainment AB/" + settingsPath.getFileNameNoExtension() + L"." + OS::getInstance().getCurrentUser() + L"." + settingsPath.getExtension();
+				if (!saveSettings(settings, userSettingsPath))
+					log::error << L"Unable to save user settings; user changes not saved" << Endl;
+			}
+		}
 	}
 	else
 	{
