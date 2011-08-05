@@ -17,6 +17,39 @@ namespace traktor
 		namespace
 		{
 
+/*!
+ * \brief Language code translation table.
+ * 
+ * GetCurrentGameLanguage() can return the following:
+ * 
+ * english
+ * german
+ * french
+ * italian
+ * koreana
+ * spanish
+ * schinese
+ * tchinese
+ * russian
+ * thai
+ * japanese
+ * portuguese
+ * polish
+ * danish
+ * dutch
+ * finnish
+ * norwegian
+ * swedish
+ * hungarian
+ * czech
+ * romanian
+ * turkish
+ * brazilian
+ * bulgarian
+ * 
+ * \todo
+ * Maybe we should map to IETF to avoid conflicts? http://en.wikipedia.org/wiki/IETF_language_tag
+ */
 const struct { const wchar_t* steam; const wchar_t* code; } c_languageCodes[] =
 {
 	{ L"english", L"en" },
@@ -31,43 +64,6 @@ const struct { const wchar_t* steam; const wchar_t* code; } c_languageCodes[] =
 	{ L"portuguese", L"pt" },
 	{ L"schinese", L"ch" },
 	{ L"swedish", L"sv" }
-
-/*
-From steamworks mailinglist. 
-
-Chris Boyd @ valve:
-GetCurrentGameLanguage() can return the following:
-
-english
-german
-french
-italian
-koreana
-spanish
-schinese
-tchinese
-russian
-thai
-japanese
-portuguese
-polish
-danish
-dutch
-finnish
-norwegian
-swedish
-hungarian
-czech
-romanian
-turkish
-brazilian
-Bulgarian
-
-Maybe we should map to IETF to avoid conflicts? http://en.wikipedia.org/wiki/IETF_language_tag
-
-*/
-
-
 };
 
 		}
@@ -110,6 +106,10 @@ bool SteamSessionManager::create(const SteamCreateDesc& desc)
 
 	if (!SteamUser()->BLoggedOn())
 		log::warning << L"Steam running in offline mode; Some features will be disabled or postponed until connected" << Endl;
+
+	const char* allLanguages = SteamApps()->GetAvailableGameLanguages();
+	if (allLanguages)
+		log::info << L"Steam; Available languages: " << mbstows(allLanguages) << Endl;
 
 	m_maxRequestAttempts = desc.requestAttempts;
 
@@ -169,8 +169,6 @@ bool SteamSessionManager::update()
 
 std::wstring SteamSessionManager::getLanguageCode() const
 {
-	const char* allLanguages = SteamApps()->GetAvailableGameLanguages();
-	log::info << L"Steam; Available languages: " << mbstows(allLanguages) << Endl;
 	const char* language = SteamApps()->GetCurrentGameLanguage();
 	if (!language)
 		return L"";
