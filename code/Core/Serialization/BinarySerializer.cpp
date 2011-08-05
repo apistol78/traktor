@@ -1,13 +1,10 @@
-#include <sstream>
-#if defined(T_BIG_ENDIAN)
-#	include <algorithm>
-#endif
-#include <limits>
 #include <algorithm>
+#include <limits>
+#include <sstream>
 #include "Core/Io/IStream.h"
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
-#include "Core/Misc/AutoPtr.h"
+//#include "Core/Misc/AutoPtr.h"
 #include "Core/Misc/Endian.h"
 #include "Core/Misc/TString.h"
 #include "Core/Serialization/BinarySerializer.h"
@@ -213,9 +210,11 @@ bool read_string(const Ref< IStream >& stream, uint32_t u8len, std::wstring& out
 
 	if (u8len > 0)
 	{
-		AutoArrayPtr< uint8_t, AllocatorFree > u8str((uint8_t*)getAllocator()->alloc(u8len, 4, T_FILE_LINE));
+		uint8_t* u8str = (uint8_t*)alloca(u8len * sizeof(uint8_t));
+		if (!u8str)
+			return false;
 
-		if (!read_block(stream, u8str.ptr(), u8len, sizeof(uint8_t)))
+		if (!read_block(stream, u8str, u8len, sizeof(uint8_t)))
 			return false;
 
 		outString.reserve(u8len);
@@ -223,7 +222,7 @@ bool read_string(const Ref< IStream >& stream, uint32_t u8len, std::wstring& out
 		Utf8Encoding utf8enc;
 		for (uint32_t i = 0; i < u8len; )
 		{
-			int n = utf8enc.translate(u8str.ptr() + i, u8len - i, wc);
+			int n = utf8enc.translate(u8str + i, u8len - i, wc);
 			if (n > 0)
 			{
 				outString.push_back(wc);
@@ -254,16 +253,16 @@ bool write_string(const Ref< IStream >& stream, const std::wstring& str)
 	uint32_t length = uint32_t(str.length());
 	if (length > 0)
 	{
-		AutoArrayPtr< uint8_t, AllocatorFree > u8str((uint8_t*)getAllocator()->alloc(length * 4, 4, T_FILE_LINE));
+		uint8_t* u8str = (uint8_t*)alloca(length * 4);
 		uint32_t u8len;
 		
 		Utf8Encoding utf8enc;
-		u8len = utf8enc.translate(str.c_str(), length, u8str.ptr());
+		u8len = utf8enc.translate(str.c_str(), length, u8str);
 
 		if (!write_primitive< uint32_t >(stream, u8len))
 			return false;
 
-		return write_block(stream, u8str.ptr(), u8len, sizeof(uint8_t));
+		return write_block(stream, u8str, u8len, sizeof(uint8_t));
 	}
 	else
 	{
