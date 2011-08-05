@@ -20,15 +20,20 @@ bool MemberEnumBase::serialize(ISerializer& s) const
 	if (s.getDirection() == ISerializer::SdRead)
 	{
 		std::wstring id;
-		s >> Member< std::wstring >(getName(), id);
+		if (!(s >> Member< std::wstring >(getName(), id)))
+			return false;
+
 		return set(id);
 	}
 	else	/* ISerializer::SdWrite */
 	{
-		if (!get())
+		const wchar_t* id = get();
+		if (!id)
 			return false;
-		std::wstring id = get();
-		s >> Member< std::wstring >(getName(), id);
+
+		std::wstring ws(id);
+		if (!(s >> Member< std::wstring >(getName(), ws)))
+			return false;
 	}
 	return true;
 }
