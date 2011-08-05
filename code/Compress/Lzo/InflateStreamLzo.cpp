@@ -16,6 +16,8 @@ public:
 	,	m_compressedBlock((blockSize + blockSize / 16 + 64 + 3))
 	,	m_decompressedBuffer(blockSize)
 	,	m_decompressedBufferSize(0)
+	,	m_startPosition(stream->tell())
+	,	m_position(m_startPosition)
 	{
 	}
 
@@ -45,7 +47,10 @@ public:
 		}
 
 		if (nbytes <= 0)
+		{
+			m_position += int32_t(ptr - top);
 			return int32_t(ptr - top);
+		}
 
 		T_ASSERT (m_decompressedBufferSize == 0);
 
@@ -115,7 +120,34 @@ public:
 			nbytes -= ncopy;
 		}
 
+		m_position += int32_t(ptr - top);
 		return int32_t(ptr - top);
+	}
+
+	int setLogicalPosition(int position)
+	{
+		// Seeking backwards, restart from beginning.
+		if (position < m_position)
+		{
+			m_stream->seek(IStream::SeekSet, m_startPosition);
+			m_decompressedBufferSize = 0;
+		}
+
+		// Read dummy blocks until we're at the desired position.
+		uint8_t dummy[1024];
+		while (m_position < position)
+		{
+			int nread = read(dummy, std::min< int >(sizeof_array(dummy), position - m_position));
+			if (nread <=  0)
+				return -1;
+		}
+
+		return m_position;
+	}
+
+	int getLogicalPosition() const
+	{
+		return m_position;
 	}
 
 private:
@@ -123,6 +155,8 @@ private:
 	AlignedVector< uint8_t > m_compressedBlock;
 	AlignedVector< uint8_t > m_decompressedBuffer;
 	int32_t m_decompressedBufferSize;
+	int32_t m_startPosition;
+	int32_t m_position;
 };
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.compress.InflateStreamLzo", InflateStreamLzo, IStream)
@@ -158,13 +192,12 @@ bool InflateStreamLzo::canWrite() const
 
 bool InflateStreamLzo::canSeek() const
 {
-	return false;
+	return true;
 }
 
 int InflateStreamLzo::tell() const
 {
-	T_FATAL_ERROR;
-	return 0;
+	return m_impl->getLogicalPosition();
 }
 
 int InflateStreamLzo::available() const
@@ -175,8 +208,10 @@ int InflateStreamLzo::available() const
 
 int InflateStreamLzo::seek(SeekOriginType origin, int offset)
 {
-	T_FATAL_ERROR;
-	return 0;
+	T_ASSERT_M (origin != SeekEnd, L"SeekEnd is not allowed");
+	if (origin == SeekCurrent)
+		offset += m_impl->getLogicalPosition();
+	return m_impl->setLogicalPosition(offset);
 }
 
 int InflateStreamLzo::read(void* block, int nbytes)
