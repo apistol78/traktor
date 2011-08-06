@@ -17,6 +17,7 @@
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPage.h"
 #include "Editor/IWizardTool.h"
+#include "Editor/App/BrowseTypeDialog.h"
 #include "Editor/App/DatabaseView.h"
 #include "Editor/App/InstanceClipboardData.h"
 #include "Editor/App/NewInstanceDialog.h"
@@ -253,6 +254,7 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_menuInstance = new ui::PopupMenu();
 	if (!m_menuInstance->create())
 		return false;
+	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Database.ReplaceInstance"), i18n::Text(L"DATABASE_REPLACE_INSTANCE")));
 	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Database.Rename"), i18n::Text(L"DATABASE_RENAME")));
 	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"DATABASE_DELETE")));
 	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Database.Clone"), i18n::Text(L"DATABASE_CLONE")));
@@ -348,6 +350,38 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 			Ref< Asset > exploreAsset = instance->getObject< Asset >();
 			if (exploreAsset)
 				OS::getInstance().exploreFile(exploreAsset->getFileName());
+		}
+		else if (command == L"Editor.Database.ReplaceInstance")	// Replace instance
+		{
+			BrowseTypeDialog browseTypeDlg(m_editor->getSettings());
+			browseTypeDlg.create(this, &type_of< ISerializable >(), true);
+
+			if (browseTypeDlg.showModal() == ui::DrOk)
+			{
+				const TypeInfo* type = browseTypeDlg.getSelectedType();
+				T_ASSERT (type);
+
+				Ref< ISerializable > data = dynamic_type_cast< ISerializable* >(type->createInstance());
+				T_ASSERT (data);
+
+				if (instance->checkout())
+				{
+					instance->setObject(data);
+					if (instance->commit())
+					{
+						// Type might have changed; ensure icon is updated.
+						int32_t iconIndex = getIconIndex(type);
+						treeItem->setImage(iconIndex);
+						m_treeDatabase->update();
+					}
+					else
+						log::error << L"Unable to commit instance" << Endl;
+				}
+				else
+					log::error << L"Unable to checkout instance" << Endl;
+			}
+
+			browseTypeDlg.destroy();
 		}
 		else if (command == L"Editor.Database.Rename")	// Rename
 		{
