@@ -48,7 +48,7 @@ BrowseTypeDialog::BrowseTypeDialog(Settings* settings)
 {
 }
 
-bool BrowseTypeDialog::create(ui::Widget* parent, const TypeInfo* base)
+bool BrowseTypeDialog::create(ui::Widget* parent, const TypeInfo* base, bool onlyEditable)
 {
 	std::vector< const TypeInfo* > types;
 	if (base)
@@ -106,6 +106,9 @@ bool BrowseTypeDialog::create(ui::Widget* parent, const TypeInfo* base)
 	for (std::vector< const TypeInfo* >::iterator i = types.begin(); i != types.end(); ++i)
 	{
 		const TypeInfo* type = *i;
+
+		if (onlyEditable && !type->isEditable())
+			continue;
 
 		std::vector< std::wstring > parts;
 		if (!Split< std::wstring >::any(type->getName(), L".", parts))

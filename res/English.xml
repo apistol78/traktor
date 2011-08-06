@@ -222,6 +222,10 @@
 			<second>Rename</second>
 		</item>
     <item>
+      <first>DATABASE_REPLACE_INSTANCE</first>
+      <second>Replace instance</second>
+    </item>
+    <item>
       <first>DATABASE_SHOW_EDITABLE</first>
       <second>Show editable</second>
     </item>

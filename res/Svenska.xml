@@ -230,6 +230,10 @@
 			<second>Byt namn</second>
 		</item>
     <item>
+      <first>DATABASE_REPLACE_INSTANCE</first>
+      <second>Ersätt instans</second>
+    </item>
+    <item>
       <first>DATABASE_SHOW_EDITABLE</first>
       <second>Visa enbart redigeringsbara</second>
     </item>
