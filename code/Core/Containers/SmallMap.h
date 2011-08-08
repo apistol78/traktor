@@ -110,14 +110,14 @@ public:
 		insert(std::make_pair(key, item));
 	}
 	
-	void erase(const iterator& it)
+	iterator erase(const iterator& it)
 	{
-		m_data.erase(it);
+		return m_data.erase(it);
 	}
 
-	void erase(const iterator& first, const iterator& last)
+	iterator erase(const iterator& first, const iterator& last)
 	{
-		m_data.erase(first, last);
+		return m_data.erase(first, last);
 	}
 
 	void clear()
