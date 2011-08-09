@@ -381,16 +381,21 @@ void RichEdit::scrollToCaret()
 
 int32_t RichEdit::getCharacterStops(const std::wstring& text, std::vector< int32_t >& outStops) const
 {
-	wchar_t chb[2] = { 0, 0 };
 	int32_t x = 0;
 
 	outStops.resize(0);
+	outStops.reserve(text.length());
+
 	for (std::wstring::const_iterator i = text.begin(); i != text.end(); ++i)
 	{
 		outStops.push_back(x);
-		
-		chb[0] = *i;
-		x += getTextExtent(chb).cx;
+		if (*i != '\t')
+		{
+			wchar_t chb[] = { *i, 0 };
+			x += getTextExtent(chb).cx;
+		}
+		else
+			x = alignUp(x + 4 * 8, 4 * 8);
 	}
 
 	return x;
