@@ -740,10 +740,6 @@ void SolutionBuilderXcode::generatePBXCopyFilesBuildPhaseSection(traktor::Output
 
 		for (std::set< ResolvedDependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
 		{
-			// Only copy external dependencies.
-			if (!j->external)
-				continue;
-
 			Configuration::TargetFormat targetFormat = getTargetFormat(j->project);
 			if (
 				targetFormat != Configuration::TfSharedLibrary &&
@@ -1760,6 +1756,7 @@ void SolutionBuilderXcode::collectDependencies(
 	const RefArray< Dependency >& dependencies = project->getDependencies();
 	for (RefArray< Dependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
 	{
+		// Copy all files regardless if we link with product or not; ie. application dynamically load some dependencies.
 		if (!copyFilesDependencies && !(*i)->shouldLinkWithProduct())
 			continue;
 
