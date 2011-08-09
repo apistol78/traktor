@@ -9,6 +9,9 @@
 
 using namespace traktor;
 
+namespace
+{
+
 void recursiveConvertInstances(db::Group* targetGroup, db::Group* sourceGroup)
 {
 	T_ANONYMOUS_VAR(ScopeIndent)(log::info);
@@ -95,9 +98,14 @@ void recursiveConvertInstances(db::Group* targetGroup, db::Group* sourceGroup)
 	}
 }
 
+}
+
 int main(int argc, const char** argv)
 {
 	CommandLine cmdLine(argc, argv);
+
+	log::info << L"Database Migration Tool; Built '" << mbstows(__TIME__) << L" - " << mbstows(__DATE__) << L"'" << Endl;
+
 	if (cmdLine.getCount() < 2)
 	{
 		log::info << L"Usage: Traktor.Database.Migrate.App [source database] [destination database] (module)*" << Endl;
