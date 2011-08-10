@@ -126,6 +126,35 @@ public:
 		}
 		return *this;
 	}
+	
+	/*! \brief Scale bounding box along extent vector. */
+	T_MATH_INLINE Aabb3 scale(const Scalar& factor) const
+	{
+		Vector4 center = getCenter();
+		Vector4 extent = getExtent() * factor;
+		Vector4 mn = center - extent;
+		Vector4 mx = center + extent;
+		return Aabb3(mn, mx);
+	}
+	
+	/*! \brief Expand bounding box. */
+	T_MATH_INLINE Aabb3 expand(const Scalar& margin) const
+	{
+		Vector4 center = getCenter();
+		Vector4 extent = getExtent() + Vector4(margin, margin, margin, 0);
+		Vector4 mn = center - extent;
+		Vector4 mx = center + extent;
+		return Aabb3(mn, mx);
+	}
+	
+	/*! \brief Query intersection with sphere. */
+	T_MATH_INLINE bool queryIntersectionSphere(const Vector4& center, const Scalar& radius) const
+	{
+		Vector4 minDistance = max(mn - center, Vector4::zero());
+		Vector4 maxDistance = min(center - mx, Vector4::zero());
+		Scalar distance = dot3(minDistance, minDistance) + dot3(maxDistance, maxDistance);
+		return distance <= radius * radius;
+	}
 
 	/*! \brief Get center of bounding box. */
 	T_MATH_INLINE Vector4 getCenter() const
