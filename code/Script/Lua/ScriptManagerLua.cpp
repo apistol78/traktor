@@ -44,16 +44,35 @@ ScriptManagerLua::ScriptManagerLua()
 	registerBoxClasses(this);
 	registerDelegateClasses(this);
 
+	// Create table containing weak references to C++ object wrappers.
+	{
+		CHECK_LUA_STACK(m_luaState, 0);
+
+		lua_newtable(m_luaState);
+		m_objectTableRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
+		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_objectTableRef);
+
+		lua_newtable(m_luaState);
+		lua_pushstring(m_luaState, "kv");
+		lua_setfield(m_luaState, -2, "__mode");
+		lua_setmetatable(m_luaState, -2);
+
+		lua_pop(m_luaState, 1);
+	}
+
 	// Create meta table for C++ objects.
-	lua_newtable(m_luaState);
-	m_gcMetaRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
-	lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_gcMetaRef);
+	{
+		CHECK_LUA_STACK(m_luaState, 0);
 
-	lua_pushcfunction(m_luaState, classGcMethod);
-	lua_setfield(m_luaState, -2, "__gc");
+		lua_newtable(m_luaState);
+		m_gcMetaRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
+		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_gcMetaRef);
 
-	lua_pop(m_luaState, 1);
+		lua_pushcfunction(m_luaState, classGcMethod);
+		lua_setfield(m_luaState, -2, "__gc");
 
+		lua_pop(m_luaState, 1);
+	}
 }
 
 ScriptManagerLua::~ScriptManagerLua()
@@ -193,6 +212,18 @@ void ScriptManagerLua::pushObject(Object* object)
 		return;
 	}
 
+	// Have we already pushed this object before and it's still alive in script-land then reuse it.
+	lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_objectTableRef);
+	lua_rawgeti(m_luaState, -1, int32_t(object));
+	if (lua_istable(m_luaState, -1))
+	{
+		lua_remove(m_luaState, -2);
+		return;
+	}
+
+	// No reference; drop nil value from stack.
+	lua_pop(m_luaState, 1);
+	
 	const TypeInfo* objectType = &type_of(object);
 
 	// Find registered script class entry.
@@ -211,24 +242,28 @@ void ScriptManagerLua::pushObject(Object* object)
 
 	const RegisteredClass& rc = m_classRegistry[i->second];
 
-	//// Bind class meta table to instance.
-	//lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, rc.metaTableRef);	// +1
-	//lua_setfield(m_luaState, -2, "__class");						// -1
-
 	// Create user data entry with C++ instance and GC callback.
-	lua_newtable(m_luaState);						// +1
+	lua_newtable(m_luaState);
 
-	lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, rc.metaTableRef);	// +1
-	lua_setmetatable(m_luaState, -2);								// -1
+	lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, rc.metaTableRef);
+	lua_setmetatable(m_luaState, -2);
 
-	Object** objectRef = reinterpret_cast< Object** >(lua_newuserdata(m_luaState, sizeof(Object*)));	// +1
+	// Create wrapper for native object and add to object table.
+	Object** objectRef = reinterpret_cast< Object** >(lua_newuserdata(m_luaState, sizeof(Object*)));
 	*objectRef = object;
 	T_SAFE_ADDREF(*objectRef);
 
 	lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_gcMetaRef);
 	lua_setmetatable(m_luaState, -2);
 
-	lua_rawseti(m_luaState, -2, c_tableKey_this);	// -1
+	lua_rawseti(m_luaState, -2, c_tableKey_this);
+
+	// Store object in weak table.
+	lua_rawseti(m_luaState, -2, int32_t(object));
+	lua_rawgeti(m_luaState, -1, int32_t(object));
+
+	// Remove weak table from stack.
+	lua_remove(m_luaState, -2);
 }
 
 void ScriptManagerLua::pushAny(const Any& any)
