@@ -56,6 +56,7 @@ private:
 	};
 
 	lua_State* m_luaState;
+	int32_t m_objectTableRef;
 	int32_t m_gcMetaRef;
 	Semaphore m_lock;
 	ScriptContextLua* m_currentContext;
