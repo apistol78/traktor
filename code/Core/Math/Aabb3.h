@@ -151,7 +151,7 @@ public:
 	T_MATH_INLINE bool queryIntersectionSphere(const Vector4& center, const Scalar& radius) const
 	{
 		Vector4 minDistance = max(mn - center, Vector4::zero());
-		Vector4 maxDistance = min(center - mx, Vector4::zero());
+		Vector4 maxDistance = max(center - mx, Vector4::zero());
 		Scalar distance = dot3(minDistance, minDistance) + dot3(maxDistance, maxDistance);
 		return distance <= radius * radius;
 	}
