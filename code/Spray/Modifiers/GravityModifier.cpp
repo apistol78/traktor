@@ -59,9 +59,9 @@ void GravityModifier::update(SpursJobQueue* jobQueue, const Scalar& deltaTime, c
 #else
 void GravityModifier::update(const Scalar& deltaTime, const Transform& transform, PointVector& points, size_t first, size_t last) const
 {
-	Vector4 gravity = m_world ? m_gravity : transform * m_gravity;
+	Vector4 gravity = (m_world ? m_gravity : transform * m_gravity) * deltaTime;
 	for (size_t i = first; i < last; ++i)
-		points[i].velocity += gravity * Scalar(points[i].inverseMass) * deltaTime;
+		points[i].velocity += gravity * Scalar(points[i].inverseMass);
 }
 #endif
 
