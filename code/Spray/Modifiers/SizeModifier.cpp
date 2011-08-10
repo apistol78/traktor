@@ -57,8 +57,9 @@ void SizeModifier::update(SpursJobQueue* jobQueue, const Scalar& deltaTime, cons
 #else
 void SizeModifier::update(const Scalar& deltaTime, const Transform& transform, PointVector& points, size_t first, size_t last) const
 {
+	float dT = deltaTime;
 	for (size_t i = first; i < last; ++i)
-		points[i].size += m_adjustRate * deltaTime;
+		points[i].size += m_adjustRate * dT;
 }
 #endif
 
