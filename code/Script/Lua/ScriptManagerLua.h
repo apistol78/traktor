@@ -57,11 +57,12 @@ private:
 
 	lua_State* m_luaState;
 	int32_t m_objectTableRef;
-	int32_t m_gcMetaRef;
 	Semaphore m_lock;
 	ScriptContextLua* m_currentContext;
 	std::vector< RegisteredClass > m_classRegistry;
 	SmallMap< const TypeInfo*, uint32_t > m_classRegistryLookup;
+	uint32_t m_objectPushAlloc;
+	uint32_t m_objectPushExisting;
 
 	void lock(ScriptContextLua* context);
 
