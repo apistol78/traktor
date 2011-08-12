@@ -1291,7 +1291,7 @@ void opx_extends(ExecutionState& state)
 void opp_gotoFrame(PreparationState& state)
 {
 #if defined(T_BIG_ENDIAN)
-	swap8in32(*reinterpret_cast< const uint16_t* >(state.data));
+	swap8in32(*reinterpret_cast< uint16_t* >(state.data));
 #endif
 }
 
@@ -1340,7 +1340,7 @@ void opx_setRegister(ExecutionState& state)
 void opp_constantPool(PreparationState& state)
 {
 #if defined(T_BIG_ENDIAN)
-	swap8in32(*reinterpret_cast< const uint16_t* >(state.data));
+	swap8in32(*reinterpret_cast< uint16_t* >(state.data));
 #endif
 }
 
@@ -1742,7 +1742,7 @@ void opx_pushData(ExecutionState& state)
 void opp_branchAlways(PreparationState& state)
 {
 #if defined(T_BIG_ENDIAN)
-	swap8in32(*reinterpret_cast< const int16_t* >(state.data));
+	swap8in32(*reinterpret_cast< int16_t* >(state.data));
 #endif
 }
 
@@ -1858,7 +1858,7 @@ void opx_defineFunction(ExecutionState& state)
 void opp_branchIfTrue(PreparationState& state)
 {
 #if defined(T_BIG_ENDIAN)
-	swap8in32(*reinterpret_cast< const int16_t* >(state.data));
+	swap8in32(*reinterpret_cast< int16_t* >(state.data));
 #endif
 }
 
