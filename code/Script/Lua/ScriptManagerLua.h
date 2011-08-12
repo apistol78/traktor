@@ -4,6 +4,7 @@
 #include "Core/RefArray.h"
 #include "Core/Containers/SmallMap.h"
 #include "Core/Thread/Semaphore.h"
+#include "Core/Timer/Timer.h"
 #include "Script/IScriptManager.h"
 
 // import/export mechanism.
@@ -46,6 +47,8 @@ public:
 
 	virtual Ref< IScriptDebugger > createDebugger();
 
+	virtual void collectGarbage();
+
 private:
 	friend class ScriptContextLua;
 
@@ -61,8 +64,10 @@ private:
 	ScriptContextLua* m_currentContext;
 	std::vector< RegisteredClass > m_classRegistry;
 	SmallMap< const TypeInfo*, uint32_t > m_classRegistryLookup;
-	uint32_t m_objectPushAlloc;
-	uint32_t m_objectPushExisting;
+	Timer m_timer;
+	double m_collectStepFrequency;
+	int32_t m_collectSteps;
+	size_t m_lastMemoryUse;
 
 	void lock(ScriptContextLua* context);
 

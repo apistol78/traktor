@@ -3,6 +3,7 @@
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Core/Serialization/ISerializable.h"
+#include "Core/Thread/Acquire.h"
 #include "Script/Boxes.h"
 #include "Script/Delegate.h"
 #include "Script/IScriptClass.h"
@@ -27,8 +28,9 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptManagerLua", 0, ScriptMana
 
 ScriptManagerLua::ScriptManagerLua()
 :	m_currentContext(0)
-,	m_objectPushAlloc(0)
-,	m_objectPushExisting(0)
+,	m_collectStepFrequency(10.0)
+,	m_collectSteps(-1)
+,	m_lastMemoryUse(0)
 {
 	m_luaState = lua_newstate(&luaAlloc, 0);
 
@@ -59,6 +61,8 @@ ScriptManagerLua::ScriptManagerLua()
 
 		lua_pop(m_luaState, 1);
 	}
+
+	m_timer.start();
 }
 
 ScriptManagerLua::~ScriptManagerLua()
@@ -70,6 +74,11 @@ void ScriptManagerLua::destroy()
 {
 	if (m_luaState)
 	{
+		luaL_unref(m_luaState, LUA_REGISTRYINDEX, m_objectTableRef);
+		m_objectTableRef = LUA_NOREF;
+
+		lua_gc(m_luaState, LUA_GCCOLLECT, 0);
+
 		lua_close(m_luaState);
 		m_luaState = 0;
 	}
@@ -197,6 +206,34 @@ Ref< IScriptDebugger > ScriptManagerLua::createDebugger()
 	return new ScriptDebuggerLua(this, m_luaState);
 }
 
+void ScriptManagerLua::collectGarbage()
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
+	double collectTime = m_timer.getElapsedTime();
+
+	int32_t targetSteps = int32_t(collectTime * m_collectStepFrequency);
+	if (m_collectSteps < 0)
+	{
+		lua_gc(m_luaState, LUA_GCSTOP, 0);
+		m_collectSteps = targetSteps;
+	}
+
+	while (m_collectSteps < targetSteps)
+	{
+		lua_gc(m_luaState, LUA_GCSTEP, 0);
+		++m_collectSteps;
+	}
+
+	size_t memoryUse = luaAllocTotal();
+	if (m_lastMemoryUse > 0)
+	{
+		size_t garbageProduced = memoryUse - m_lastMemoryUse;
+		m_collectStepFrequency = clamp((30.0f * garbageProduced) / (16*1024), 1.0f, 120.0f);
+	}
+	m_lastMemoryUse = memoryUse;
+}
+
 void ScriptManagerLua::lock(ScriptContextLua* context)
 {
 	m_lock.wait();
@@ -207,10 +244,6 @@ void ScriptManagerLua::unlock()
 {
 	m_currentContext = 0;
 	m_lock.release();
-
-#if defined(_DEBUG)
-	log::debug << L"Push object; " << m_objectPushExisting << L" existing, " << m_objectPushAlloc << L" allocated" << Endl;
-#endif
 }
 
 void ScriptManagerLua::pushObject(Object* object)
@@ -229,9 +262,6 @@ void ScriptManagerLua::pushObject(Object* object)
 	if (lua_isuserdata(m_luaState, -1))
 	{
 		lua_remove(m_luaState, -2);
-#if defined(_DEBUG)
-		++m_objectPushExisting;
-#endif
 		return;
 	}
 
@@ -263,10 +293,6 @@ void ScriptManagerLua::pushObject(Object* object)
 
 	// Remove weak table from stack.
 	lua_remove(m_luaState, -2);
-
-#if defined(_DEBUG)
-	++m_objectPushAlloc;
-#endif
 }
 
 void ScriptManagerLua::pushAny(const Any& any)

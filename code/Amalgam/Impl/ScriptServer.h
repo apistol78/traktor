@@ -26,6 +26,8 @@ public:
 
 	int32_t reconfigure(const Settings* settings);
 
+	void update();
+
 	virtual script::IScriptManager* getScriptManager();
 
 private:

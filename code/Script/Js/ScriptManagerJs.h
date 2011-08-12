@@ -37,6 +37,8 @@ public:
 
 	virtual Ref< IScriptDebugger > createDebugger();
 
+	virtual void collectGarbage();
+
 private:
 	RefArray< IScriptClass > m_registeredClasses;
 };

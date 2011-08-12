@@ -38,6 +38,8 @@ void stackDump(lua_State* luaState)
 	}
 }
 
+size_t g_allocTotal = 0;
+
 void* luaAlloc(void* ud, void* ptr, size_t osize, size_t nsize)
 {
 	if (nsize > 0)
@@ -55,6 +57,7 @@ void* luaAlloc(void* ud, void* ptr, size_t osize, size_t nsize)
 			getAllocator()->free(ptr);
 		}
 
+		g_allocTotal += nsize - osize;
 		return nptr;
 	}
 	else
@@ -62,6 +65,11 @@ void* luaAlloc(void* ud, void* ptr, size_t osize, size_t nsize)
 		getAllocator()->free(ptr);
 		return 0;
 	}
+}
+
+size_t luaAllocTotal()
+{
+	return g_allocTotal;
 }
 
 int luaPrint(lua_State *L)

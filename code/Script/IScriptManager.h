@@ -76,6 +76,20 @@ public:
 	 * \return Debugger instance.
 	 */
 	virtual Ref< IScriptDebugger > createDebugger() = 0;
+
+	/*! \brief Collect garbage.
+	 *
+	 * This is exposed in order to make some scripting languages which
+	 * rely on garbage collection behave more sane in real-time applications
+	 * such as games where we cannot afford both the memory required nor the
+	 * time spent in normal garbage collection cycles.
+	 * Thus we must be able to single step garbage collection at a
+	 * high frequency in order to keep the heap as small as possible.
+	 *
+	 * If this isn't called the normal garbage collection frequency
+	 * should be used as dictated by the scripting language.
+	 */
+	virtual void collectGarbage() = 0;
 };
 
 	}
