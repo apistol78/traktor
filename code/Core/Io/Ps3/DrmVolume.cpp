@@ -114,6 +114,11 @@ bool DrmVolume::remove(const Path& filename)
 	return cellFsUnlink(wstombs(getSystemPath(filename)).c_str()) == CELL_FS_SUCCEEDED;
 }
 
+bool DrmVolume::rename(const Path& fileName, const std::wstring& newName)
+{
+	return false;
+}
+
 bool DrmVolume::makeDirectory(const Path& directory)
 {
 	CellFsErrno err = cellFsMkdir(

@@ -1,10 +1,12 @@
 #include <algorithm>
+#if defined(_PS3)
+#	include <calloca>
+#endif
 #include <limits>
 #include <sstream>
 #include "Core/Io/IStream.h"
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
-//#include "Core/Misc/AutoPtr.h"
 #include "Core/Misc/Endian.h"
 #include "Core/Misc/TString.h"
 #include "Core/Serialization/BinarySerializer.h"
