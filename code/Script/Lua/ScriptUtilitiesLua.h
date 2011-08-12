@@ -51,8 +51,6 @@ void stackDump(lua_State* luaState);
 
 void* luaAlloc(void* ud, void* ptr, size_t osize, size_t nsize);
 
-size_t luaAllocTotal();
-
 int luaPrint(lua_State *L);
 
 	}

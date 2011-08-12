@@ -15,7 +15,7 @@ ScriptContextLua::ScriptContextLua(ScriptManagerLua* scriptManager, lua_State* l
 :	m_scriptManager(scriptManager)
 ,	m_luaState(luaState)
 {
-	CHECK_LUA_STACK(m_luaState, 0)
+	CHECK_LUA_STACK(m_luaState, 0);
 
 	// Create local environment.
 	lua_newtable(m_luaState);
