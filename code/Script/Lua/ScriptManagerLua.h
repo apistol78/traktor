@@ -60,13 +60,14 @@ private:
 
 	lua_State* m_luaState;
 	int32_t m_objectTableRef;
-	Semaphore m_lock;
+	mutable Semaphore m_lock;
 	ScriptContextLua* m_currentContext;
 	std::vector< RegisteredClass > m_classRegistry;
 	SmallMap< const TypeInfo*, uint32_t > m_classRegistryLookup;
 	Timer m_timer;
 	double m_collectStepFrequency;
 	int32_t m_collectSteps;
+	size_t m_totalMemoryUse;
 	size_t m_lastMemoryUse;
 
 	void lock(ScriptContextLua* context);

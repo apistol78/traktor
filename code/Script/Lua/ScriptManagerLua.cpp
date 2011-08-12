@@ -30,9 +30,10 @@ ScriptManagerLua::ScriptManagerLua()
 :	m_currentContext(0)
 ,	m_collectStepFrequency(10.0)
 ,	m_collectSteps(-1)
+,	m_totalMemoryUse(0)
 ,	m_lastMemoryUse(0)
 {
-	m_luaState = lua_newstate(&luaAlloc, 0);
+	m_luaState = lua_newstate(&luaAlloc, &m_totalMemoryUse);
 
 	lua_atpanic(m_luaState, luaPanic);
 
@@ -193,16 +194,19 @@ void ScriptManagerLua::registerClass(IScriptClass* scriptClass)
 
 Ref< IScriptResource > ScriptManagerLua::compile(const std::wstring& script, bool strip, IErrorCallback* errorCallback) const
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	return new ScriptResourceLua(wstombs(script));
 }
 
 Ref< IScriptContext > ScriptManagerLua::createContext()
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	return new ScriptContextLua(this, m_luaState);
 }
 
 Ref< IScriptDebugger > ScriptManagerLua::createDebugger()
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	return new ScriptDebuggerLua(this, m_luaState);
 }
 
@@ -225,13 +229,12 @@ void ScriptManagerLua::collectGarbage()
 		++m_collectSteps;
 	}
 
-	size_t memoryUse = luaAllocTotal();
 	if (m_lastMemoryUse > 0)
 	{
-		size_t garbageProduced = memoryUse - m_lastMemoryUse;
+		size_t garbageProduced = m_totalMemoryUse - m_lastMemoryUse;
 		m_collectStepFrequency = clamp((30.0f * garbageProduced) / (16*1024), 1.0f, 120.0f);
 	}
-	m_lastMemoryUse = memoryUse;
+	m_lastMemoryUse = m_totalMemoryUse;
 }
 
 void ScriptManagerLua::lock(ScriptContextLua* context)
