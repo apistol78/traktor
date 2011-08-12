@@ -27,6 +27,30 @@ struct BlockPred
 	}
 };
 
+class BlockReadStream : public StreamStream
+{
+	T_RTTI_CLASS;
+
+public:
+	BlockReadStream(BlockFile* blockFile, IStream* stream, int endOffset)
+	:	StreamStream(stream, endOffset)
+	,	m_blockFile(blockFile)
+	{
+	}
+
+	virtual void close()
+	{
+		T_ASSERT (m_stream);
+		m_blockFile->returnReadStream(m_stream);
+		m_stream = 0;
+	}
+
+private:
+	Ref< BlockFile > m_blockFile;
+};
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.db.BlockReadStream", BlockReadStream, StreamStream)
+
 class BlockWriteStream : public IStream
 {
 	T_RTTI_CLASS;
@@ -187,7 +211,12 @@ void BlockFile::close()
 		if (m_needFlushTOC)
 			flushTOC();
 
+		for (RefArray< IStream >::iterator i = m_unusedReadStreams.begin(); i != m_unusedReadStreams.end(); ++i)
+			(*i)->close();
+
 		m_stream->close();
+
+		m_unusedReadStreams.clear();
 		m_stream = 0;
 	}
 }
@@ -225,14 +254,30 @@ Ref< IStream > BlockFile::readBlock(uint32_t blockId)
 	if (it == m_blocks.end())
 		return 0;
 
-	Ref< IStream > stream = FileSystem::getInstance().open(m_fileName, File::FmRead);
+	Ref< IStream > stream;
+
+	// Pop unused read streams from cache.
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+		if (!m_unusedReadStreams.empty())
+		{
+			stream = m_unusedReadStreams.back();
+			m_unusedReadStreams.pop_back();
+		}
+	}
+
+	// No unused stream available; create new read stream.
 	if (!stream)
-		return 0;
+	{
+		stream = FileSystem::getInstance().open(m_fileName, File::FmRead);
+		if (!stream)
+			return 0;
+	}
 
 	if (stream->seek(IStream::SeekSet, it->offset) < 0)
 		return 0;
 
-	return new StreamStream(stream, it->offset + it->size);
+	return new BlockReadStream(this, stream, it->offset + it->size);
 }
 
 Ref< IStream > BlockFile::writeBlock(uint32_t blockId)
@@ -282,6 +327,12 @@ void BlockFile::flushTOC()
 	}
 
 	m_needFlushTOC = false;
+}
+
+void BlockFile::returnReadStream(IStream* readStream)
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	m_unusedReadStreams.push_back(readStream);
 }
 
 	}

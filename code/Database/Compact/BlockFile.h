@@ -2,6 +2,7 @@
 #define traktor_db_BlockFile_H
 
 #include "Core/Object.h"
+#include "Core/RefArray.h"
 #include "Core/Io/Path.h"
 #include "Core/Thread/Semaphore.h"
 
@@ -50,10 +51,13 @@ public:
 
 	void flushTOC();
 
+	void returnReadStream(IStream* readStream);
+
 private:
 	Path m_fileName;
 	Semaphore m_lock;
 	Ref< IStream > m_stream;
+	RefArray< IStream > m_unusedReadStreams;
 	std::vector< Block > m_blocks;
 	bool m_flushAlways;
 	bool m_needFlushTOC;
