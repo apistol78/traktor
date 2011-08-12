@@ -44,7 +44,7 @@ public:
 
 	virtual void flush();
 
-private:
+protected:
 	Ref< IStream > m_stream;
 	int m_startOffset;
 	int m_endOffset;
