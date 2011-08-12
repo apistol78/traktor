@@ -44,6 +44,12 @@ int32_t ScriptServer::reconfigure(const Settings* settings)
 	return CrUnaffected;
 }
 
+void ScriptServer::update()
+{
+	if (m_scriptManager)
+		m_scriptManager->collectGarbage();
+}
+
 script::IScriptManager* ScriptServer::getScriptManager()
 {
 	return m_scriptManager;

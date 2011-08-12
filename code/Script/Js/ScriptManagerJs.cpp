@@ -48,5 +48,9 @@ Ref< IScriptDebugger > ScriptManagerJs::createDebugger()
 	return 0;
 }
 
+void ScriptManagerJs::collectGarbage()
+{
+}
+
 	}
 }

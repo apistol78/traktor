@@ -529,6 +529,9 @@ bool Application::update()
 #endif
 	}
 
+	// Update scripting language runtime.
+	m_scriptServer->update();
+
 	if ((currentState = m_stateManager->getCurrent()) != 0)
 	{
 		// Check render active state; notify application when changes.
