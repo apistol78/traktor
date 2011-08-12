@@ -48,6 +48,7 @@ const uint8_t c_errLaunchFailed = 2;
 const uint8_t c_errUnknown = 255;
 
 std::wstring g_scratchPath;
+std::map< std::wstring, uint32_t > g_fileHashes;
 Ref< ui::PopupMenu > g_popupMenu;
 Ref< ui::NotificationIcon > g_notificationIcon;
 
@@ -90,26 +91,44 @@ uint8_t handleDeploy(net::Socket* clientSocket)
 	Path path(g_scratchPath + L"/" + pathName);
 	bool outOfSync = true;
 
-	Ref< traktor::IStream > fileStream = FileSystem::getInstance().open(path, File::FmRead);
-	if (fileStream)
+	std::map< std::wstring, uint32_t >::const_iterator i = g_fileHashes.find(path.getPathName());
+	if (i != g_fileHashes.end())
 	{
-		Adler32 adler;
-		adler.begin();
-
-		uint8_t buffer[4096];
-		int32_t nread;
-		while ((nread = fileStream->read(buffer, sizeof(buffer))) > 0)
-			adler.feed(buffer, nread);
-
-		adler.end();
-
-		fileStream->close();
-		fileStream = 0;
-
-		if (adler.get() == hash)
+		// File has already been hashed once; check only against previous hash.
+		if (i->second == hash)
 		{
-			traktor::log::info << L"File up-to-date; skipping" << Endl;
-			outOfSync = false;
+			// Hashes match; finally ensure file still exist, could have been manually removed.
+			if (FileSystem::getInstance().exist(path))
+			{
+				traktor::log::info << L"File up-to-date; skipping" << Endl;
+				outOfSync = false;
+			}
+		}
+	}
+	else
+	{
+		// File hasn't been hashed; calculate hash from file.
+		Ref< traktor::IStream > fileStream = FileSystem::getInstance().open(path, File::FmRead);
+		if (fileStream)
+		{
+			Adler32 adler;
+			adler.begin();
+
+			uint8_t buffer[4096];
+			int32_t nread;
+			while ((nread = fileStream->read(buffer, sizeof(buffer))) > 0)
+				adler.feed(buffer, nread);
+
+			adler.end();
+
+			fileStream->close();
+			fileStream = 0;
+
+			if (adler.get() == hash)
+			{
+				traktor::log::info << L"File up-to-date; skipping" << Endl;
+				outOfSync = false;
+			}
 		}
 	}
 
@@ -136,6 +155,8 @@ uint8_t handleDeploy(net::Socket* clientSocket)
 
 		fileStream->close();
 		fileStream = 0;
+
+		g_fileHashes[path.getPathName()] = hash;
 	}
 	else
 		writer << uint8_t(0);
