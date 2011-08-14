@@ -95,6 +95,8 @@ public:
 
 	virtual bool openEditor(db::Instance* instance);
 
+	virtual bool openDefaultEditor(db::Instance* instance);
+
 	virtual Ref< IEditorPage > getActiveEditorPage();
 
 	virtual void setActiveEditorPage(IEditorPage* editorPage);

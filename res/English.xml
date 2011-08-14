@@ -125,14 +125,18 @@
       <first>DATABASE_BUILD</first>
       <second>Build</second>
     </item>
-    <item>
-			<first>DATABASE_CLONE</first>
-			<second>Clone</second>
-		</item>
-		<item>
-			<first>DATABASE_DELETE</first>
-			<second>Delete</second>
-		</item>
+	<item>
+		<first>DATABASE_DEFAULT_EDIT_INSTANCE</first>
+		<second>Edit instance with default editor...</second>
+    </item>
+	<item>
+		<first>DATABASE_CLONE</first>
+		<second>Clone</second>
+	</item>
+	<item>
+		<first>DATABASE_DELETE</first>
+		<second>Delete</second>
+	</item>
     <item>
       <first>DATABASE_COPY</first>
       <second>Copy</second>

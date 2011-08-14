@@ -258,6 +258,7 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Database.Rename"), i18n::Text(L"DATABASE_RENAME")));
 	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"DATABASE_DELETE")));
 	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Database.Clone"), i18n::Text(L"DATABASE_CLONE")));
+	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Database.DefaultEditInstance"), i18n::Text(L"DATABASE_DEFAULT_EDIT_INSTANCE")));
 	m_menuInstance->add(new ui::MenuItem(L"-"));
 	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Copy"), i18n::Text(L"DATABASE_COPY")));
 	m_menuInstance->add(new ui::MenuItem(L"-"));
@@ -274,9 +275,11 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Database.Edit"), i18n::Text(L"DATABASE_EDIT")));
 	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Database.Explore"), i18n::Text(L"DATABASE_EXPLORE")));
 	m_menuInstanceAsset->add(new ui::MenuItem(L"-"));
+	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Database.ReplaceInstance"), i18n::Text(L"DATABASE_REPLACE_INSTANCE")));
 	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Database.Rename"), i18n::Text(L"DATABASE_RENAME")));
 	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"DATABASE_DELETE")));
 	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Database.Clone"), i18n::Text(L"DATABASE_CLONE")));
+	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Database.DefaultEditInstance"), i18n::Text(L"DATABASE_DEFAULT_EDIT_INSTANCE")));
 	m_menuInstanceAsset->add(new ui::MenuItem(L"-"));
 	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Copy"), i18n::Text(L"DATABASE_COPY")));
 	m_menuInstanceAsset->add(new ui::MenuItem(L"-"));
@@ -440,6 +443,10 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 			treeCloneItem->setData(L"INSTANCE", instanceClone);
 
 			m_treeDatabase->update();
+		}
+		else if (command == L"Editor.Database.DefaultEditInstance")	// Default edit instance
+		{
+			m_editor->openDefaultEditor(instance);
 		}
 		else if (command == L"Editor.Copy")		// Copy instance
 		{

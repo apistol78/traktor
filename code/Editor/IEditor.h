@@ -61,6 +61,9 @@ public:
 	/*! \brief Open instance in appropriate editor. */
 	virtual bool openEditor(db::Instance* instance) = 0;
 
+	/*! \brief Open instance using default editor. */
+	virtual bool openDefaultEditor(db::Instance* instance) = 0;
+
 	/*! \brief Get active editor. */
 	virtual Ref< IEditorPage > getActiveEditorPage() = 0;
 

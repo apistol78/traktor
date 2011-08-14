@@ -221,6 +221,10 @@
       <first>DATABASE_BUILD</first>
       <second>Bygg</second>
     </item>
+	<item>
+		<first>DATABASE_DEFAULT_EDIT_INSTANCE</first>
+		<second>Redigera instans med standard editor...</second>
+    </item>
     <item>
       <first>DATABASE_REBUILD</first>
       <second>Tvinga bygg</second>
@@ -231,7 +235,7 @@
 		</item>
     <item>
       <first>DATABASE_REPLACE_INSTANCE</first>
-      <second>Ersätt instans</second>
+      <second>Ersätt instans...</second>
     </item>
     <item>
       <first>DATABASE_SHOW_EDITABLE</first>
