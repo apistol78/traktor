@@ -8,9 +8,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_NET_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -18,6 +18,9 @@ namespace traktor
 	namespace net
 	{
 
+/*! \brief Unified resource locator.
+ * \ingroup Net
+ */
 class T_DLLCLASS Url : public Object
 {
 	T_RTTI_CLASS;
