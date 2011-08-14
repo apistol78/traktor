@@ -39,6 +39,7 @@
 #include "Editor/App/BrowseInstanceDialog.h"
 #include "Editor/App/BrowseTypeDialog.h"
 #include "Editor/App/DatabaseView.h"
+#include "Editor/App/DefaultObjectEditor.h"
 #include "Editor/App/EditorForm.h"
 #include "Editor/App/EditorPageSite.h"
 #include "Editor/App/EditorPluginSite.h"
@@ -741,6 +742,46 @@ bool EditorForm::openEditor(db::Instance* instance)
 		instance->revert();
 	}
 
+	return true;
+}
+
+bool EditorForm::openDefaultEditor(db::Instance* instance)
+{
+	T_ASSERT (instance);
+
+	T_ANONYMOUS_VAR(EnterLeave)(
+		makeFunctor(this, &EditorForm::setCursor, ui::CrWait),
+		makeFunctor(this, &EditorForm::resetCursor)
+	);
+
+	// Checkout instance for exclusive editing.
+	if (!instance->checkout())
+	{
+		log::error << L"Unable to checkout instance \"" << instance->getName() << L"\"" << Endl;
+		return false;
+	}
+
+	Ref< ISerializable > object = instance->getObject();
+	if (!object)
+	{
+		log::error << L"Unable to get object \"" << instance->getName() << L"\"" << Endl;
+		instance->revert();
+		return false;
+	}
+
+	Ref< IObjectEditor > objectEditor = new DefaultObjectEditor(this);
+	T_ASSERT (objectEditor);
+
+	// Open editor dialog.
+	Ref< ObjectEditorDialog > objectEditorDialog = new ObjectEditorDialog(m_settings, objectEditor);
+	if (!objectEditorDialog->create(this, instance, object))
+	{
+		log::error << L"Failed to create editor" << Endl;
+		instance->revert();
+		return false;
+	}
+
+	objectEditorDialog->show();
 	return true;
 }
 
