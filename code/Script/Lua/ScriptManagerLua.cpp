@@ -387,9 +387,6 @@ int ScriptManagerLua::classCallConstructor(lua_State* luaState)
 	if (top < 1)
 		return 0;
 
-	if (!lua_istable(luaState, 1))
-		return 0;
-
 	for (int32_t i = 2; i <= top; ++i)
 		argv[i - 2] = manager->toAny(i);
 
@@ -417,9 +414,6 @@ int ScriptManagerLua::classCallMethod(lua_State* luaState)
 
 	int32_t top = lua_gettop(luaState);
 	if (top < 1)
-		return 0;
-
-	if (!lua_isuserdata(luaState, 1))
 		return 0;
 
 	Object* object = *reinterpret_cast< Object** >(lua_touserdata(luaState, 1));
@@ -454,9 +448,6 @@ int ScriptManagerLua::classCallUnknownMethod(lua_State* luaState)
 
 	int32_t top = lua_gettop(luaState);
 	if (top < 1)
-		return 0;
-
-	if (!lua_isuserdata(luaState, 1))
 		return 0;
 
 	Object* object = *reinterpret_cast< Object** >(lua_touserdata(luaState, 1));
