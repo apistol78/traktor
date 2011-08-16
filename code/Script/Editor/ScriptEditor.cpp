@@ -8,7 +8,7 @@
 #include "Editor/IEditor.h"
 #include "Editor/TypeBrowseFilter.h"
 #include "I18N/Text.h"
-#include "Script/Script.h"
+#include "Script/Editor/Script.h"
 #include "Script/Editor/ScriptEditor.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Container.h"

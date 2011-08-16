@@ -6,7 +6,7 @@
 #include "Editor/IPipelineSettings.h"
 #include "Script/IScriptManager.h"
 #include "Script/IScriptResource.h"
-#include "Script/Script.h"
+#include "Script/Editor/Script.h"
 #include "Script/Editor/ScriptPipeline.h"
 
 namespace traktor

@@ -1,9 +1,9 @@
-#include "Script/Script.h"
 #include "Core/Serialization/AttributeMultiLine.h"
 #include "Core/Serialization/AttributeType.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberStl.h"
+#include "Script/Editor/Script.h"
 
 namespace traktor
 {
