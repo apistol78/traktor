@@ -1,6 +1,5 @@
 #include <algorithm>
 #include "Core/Containers/SmallMap.h"
-#include "Core/Io/StringOutputStream.h"
 #include "Core/Singleton/ISingleton.h"
 #include "Core/Singleton/SingletonManager.h"
 #include "Render/Types.h"
@@ -83,17 +82,15 @@ handle_t getParameterHandle(const std::wstring& name)
 std::wstring getParameterNameFromGuid(const Guid& guid)
 {
 	const wchar_t hex[] = { L"0123456789ABCDEF" };
-
-	StringOutputStream ss;
-	ss << L"pmg_";
+	wchar_t name[] = { L"pmg_00000000000000000000000000000000" };
 
 	for (int i = 0; i < 16; ++i)
 	{
-		ss.put(hex[guid[i] >> 4]);
-		ss.put(hex[guid[i] & 0x0f]);
+		name[4 + i * 2] = hex[guid[i] >> 4];
+		name[5 + i * 2] = hex[guid[i] & 0x0f];
 	}
 
-	return ss.str();
+	return name;
 }
 
 std::wstring getDataUsageName(DataUsage usage)
