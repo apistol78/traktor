@@ -13,7 +13,7 @@ discontinuitites.
 				<second>-148</second>
 			</position>
 		</item>
-		<item type="traktor.render.PixelOutput" version="2">
+		<item type="traktor.render.PixelOutput" version="3">
 			<comment/>
 			<position>
 				<first>2485</first>
@@ -45,6 +45,7 @@ discontinuitites.
 			<stencilFunction>CfAlways</stencilFunction>
 			<stencilReference>0</stencilReference>
 			<stencilMask>4294967295</stencilMask>
+			<registerCount>0</registerCount>
 		</item>
 		<item type="traktor.render.Sum">
 			<comment/>
@@ -70,7 +71,7 @@ discontinuitites.
 			</position>
 			<swizzle>y</swizzle>
 		</item>
-		<item type="traktor.render.IndexedUniform">
+		<item type="traktor.render.IndexedUniform" version="1">
 			<comment/>
 			<position>
 				<first>1088</first>
@@ -78,6 +79,7 @@ discontinuitites.
 			</position>
 			<parameterName>GaussianOffsetWeights</parameterName>
 			<type>PtVector</type>
+			<frequency>UfFrame</frequency>
 			<length>15</length>
 		</item>
 		<item type="traktor.render.Lerp">
@@ -109,7 +111,7 @@ discontinuitites.
 				<first>920</first>
 				<second>-47</second>
 			</position>
-			<value>4</value>
+			<value>0.2</value>
 		</item>
 		<item type="traktor.render.Abs">
 			<comment/>
@@ -164,7 +166,7 @@ discontinuitites.
 				<second>364</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>-215</first>
@@ -172,6 +174,7 @@ discontinuitites.
 			</position>
 			<parameterName>Source_Size</parameterName>
 			<type>PtVector</type>
+			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Scalar">
 			<comment/>
@@ -181,7 +184,7 @@ discontinuitites.
 			</position>
 			<value>0.5</value>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>-41</first>
@@ -189,6 +192,7 @@ discontinuitites.
 			</position>
 			<parameterName>Direction</parameterName>
 			<type>PtVector</type>
+			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
@@ -198,7 +202,7 @@ discontinuitites.
 			</position>
 			<swizzle>x</swizzle>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>344</first>
@@ -206,6 +210,7 @@ discontinuitites.
 			</position>
 			<parameterName>Depth</parameterName>
 			<type>PtTexture</type>
+			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Sampler">
 			<comment>
@@ -239,7 +244,7 @@ Shadow; adjusted for msaa.
 				<second>238</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>1060</first>
@@ -247,6 +252,7 @@ Shadow; adjusted for msaa.
 			</position>
 			<parameterName>Source_Size</parameterName>
 			<type>PtVector</type>
+			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.MixIn">
 			<comment/>
@@ -279,7 +285,7 @@ Shadow; adjusted for msaa.
 			</position>
 			<axis>DaX</axis>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>1409</first>
@@ -287,6 +293,7 @@ Shadow; adjusted for msaa.
 			</position>
 			<parameterName>Source</parameterName>
 			<type>PtTexture</type>
+			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Sampler">
 			<comment>
@@ -306,7 +313,7 @@ Sample shadow
 			<addressV>AdClamp</addressV>
 			<addressW>AdClamp</addressW>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>757</first>
@@ -314,8 +321,9 @@ Sample shadow
 			</position>
 			<parameterName>Source</parameterName>
 			<type>PtTexture</type>
+			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>397</first>
@@ -323,6 +331,7 @@ Sample shadow
 			</position>
 			<parameterName>Source</parameterName>
 			<type>PtTexture</type>
+			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Sampler">
 			<comment>
