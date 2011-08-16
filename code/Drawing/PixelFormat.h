@@ -52,10 +52,10 @@ public:
 
 	void convert(
 		const Palette* srcPalette,
-		const void* srcPixels,
+		const void* T_RESTRICT srcPixels,
 		const PixelFormat& dstFormat,
 		const Palette* dstPalette,
-		void* dstPixels,
+		void* T_RESTRICT dstPixels,
 		int pixelCount
 	) const;
 
@@ -197,8 +197,8 @@ private:
 	int m_blueShift;
 	int m_alphaBits;
 	int m_alphaShift;
-	uint32_t (*m_unpack)(const void*);
-	void (*m_pack)(void*, uint32_t);
+	uint32_t (*m_unpack)(const void* T_RESTRICT);
+	void (*m_pack)(void* T_RESTRICT, uint32_t);
 
 	static const PixelFormat ms_pfP4;
 	static const PixelFormat ms_pfP8;

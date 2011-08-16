@@ -16,54 +16,54 @@ inline float clamp(float v)
 
 #if defined(T_LITTLE_ENDIAN)
 
-uint32_t unpack_1(const void* p)
+uint32_t unpack_1(const void* T_RESTRICT p)
 {
-	const uint8_t* c = static_cast< const uint8_t* >(p);
+	const uint8_t* T_RESTRICT c = static_cast< const uint8_t* T_RESTRICT >(p);
 	return c[0];
 }
 
-uint32_t unpack_2(const void* p)
+uint32_t unpack_2(const void* T_RESTRICT p)
 {
-	const uint8_t* c = static_cast< const uint8_t* >(p);
+	const uint8_t* T_RESTRICT c = static_cast< const uint8_t* T_RESTRICT >(p);
 	return (c[1] << 8) | c[0];
 }
 
-uint32_t unpack_3(const void* p)
+uint32_t unpack_3(const void* T_RESTRICT p)
 {
-	const uint8_t* c = static_cast< const uint8_t* >(p);
+	const uint8_t* T_RESTRICT c = static_cast< const uint8_t* T_RESTRICT >(p);
 	return (c[2] << 16) | (c[1] << 8) | c[0];
 }
 
-uint32_t unpack_4(const void* p)
+uint32_t unpack_4(const void* T_RESTRICT p)
 {
-	const uint8_t* c = static_cast< const uint8_t* >(p);
+	const uint8_t* T_RESTRICT c = static_cast< const uint8_t* T_RESTRICT >(p);
 	return (c[3] << 24) | (c[2] << 16) | (c[1] << 8) | c[0];
 }
 
-void pack_1(void* p, uint32_t v)
+void pack_1(void* T_RESTRICT p, uint32_t v)
 {
-	uint8_t* d = static_cast< uint8_t* >(p);
+	uint8_t* T_RESTRICT d = static_cast< uint8_t* T_RESTRICT >(p);
 	d[0] = v & 255;
 }
 
-void pack_2(void* p, uint32_t v)
+void pack_2(void* T_RESTRICT p, uint32_t v)
 {
-	uint8_t* d = static_cast< uint8_t* >(p);
+	uint8_t* T_RESTRICT d = static_cast< uint8_t* T_RESTRICT >(p);
 	d[0] = v & 255;
 	d[1] = (v >> 8) & 255;
 }
 
-void pack_3(void* p, uint32_t v)
+void pack_3(void* T_RESTRICT p, uint32_t v)
 {
-	uint8_t* d = static_cast< uint8_t* >(p);
+	uint8_t* T_RESTRICT d = static_cast< uint8_t* T_RESTRICT >(p);
 	d[0] = v & 255;
 	d[1] = (v >> 8) & 255;
 	d[2] = (v >> 16) & 255;
 }
 
-void pack_4(void* p, uint32_t v)
+void pack_4(void* T_RESTRICT p, uint32_t v)
 {
-	uint8_t* d = static_cast< uint8_t* >(p);
+	uint8_t* T_RESTRICT d = static_cast< uint8_t* T_RESTRICT >(p);
 	d[0] = v & 255;
 	d[1] = (v >> 8) & 255;
 	d[2] = (v >> 16) & 255;
@@ -72,54 +72,54 @@ void pack_4(void* p, uint32_t v)
 
 #elif defined(T_BIG_ENDIAN)
 
-uint32_t unpack_1(const void* p)
+uint32_t unpack_1(const void* T_RESTRICT p)
 {
-	const uint8_t* c = static_cast< const uint8_t* >(p);
+	const uint8_t* T_RESTRICT c = static_cast< const uint8_t* T_RESTRICT >(p);
 	return c[0];
 }
 
-uint32_t unpack_2(const void* p)
+uint32_t unpack_2(const void* T_RESTRICT p)
 {
-	const uint8_t* c = static_cast< const uint8_t* >(p);
+	const uint8_t* T_RESTRICT c = static_cast< const uint8_t* T_RESTRICT >(p);
 	return (c[0] << 8) | c[1];
 }
 
-uint32_t unpack_3(const void* p)
+uint32_t unpack_3(const void* T_RESTRICT p)
 {
-	const uint8_t* c = static_cast< const uint8_t* >(p);
+	const uint8_t* T_RESTRICT c = static_cast< const uint8_t* T_RESTRICT >(p);
 	return (c[0] << 16) | (c[1] << 8) | c[2];
 }
 
-uint32_t unpack_4(const void* p)
+uint32_t unpack_4(const void* T_RESTRICT p)
 {
-	const uint8_t* c = static_cast< const uint8_t* >(p);
+	const uint8_t* T_RESTRICT c = static_cast< const uint8_t* T_RESTRICT >(p);
 	return (c[0] << 24) | (c[1] << 16) | (c[2] << 8) | c[3];
 }
 
-void pack_1(void* p, uint32_t v)
+void pack_1(void* T_RESTRICT p, uint32_t v)
 {
-	uint8_t* d = static_cast< uint8_t* >(p);
+	uint8_t* T_RESTRICT d = static_cast< uint8_t* T_RESTRICT >(p);
 	d[0] = v & 255;
 }
 
-void pack_2(void* p, uint32_t v)
+void pack_2(void* T_RESTRICT p, uint32_t v)
 {
-	uint8_t* d = static_cast< uint8_t* >(p);
+	uint8_t* T_RESTRICT d = static_cast< uint8_t* T_RESTRICT >(p);
 	d[0] = (v >> 8) & 255;
 	d[1] = v & 255;
 }
 
-void pack_3(void* p, uint32_t v)
+void pack_3(void* T_RESTRICT p, uint32_t v)
 {
-	uint8_t* d = static_cast< uint8_t* >(p);
+	uint8_t* T_RESTRICT d = static_cast< uint8_t* T_RESTRICT >(p);
 	d[0] = (v >> 16) & 255;
 	d[1] = (v >> 8) & 255;
 	d[2] = v & 255;
 }
 
-void pack_4(void* p, uint32_t v)
+void pack_4(void* T_RESTRICT p, uint32_t v)
 {
-	uint8_t* d = static_cast< uint8_t* >(p);
+	uint8_t* T_RESTRICT d = static_cast< uint8_t* T_RESTRICT >(p);
 	d[0] = (v >> 24) & 255;
 	d[1] = (v >> 16) & 255;
 	d[2] = (v >> 8) & 255;
@@ -331,15 +331,15 @@ PixelFormat::PixelFormat(
 
 void PixelFormat::convert(
 	const Palette* srcPalette,
-	const void* srcPixels,
+	const void* T_RESTRICT srcPixels,
 	const PixelFormat& dstFormat,
 	const Palette* dstPalette,
-	void* dstPixels,
+	void* T_RESTRICT dstPixels,
 	int pixelCount
 ) const
 {
-	const uint8_t* src = static_cast< const uint8_t* >(srcPixels);
-	uint8_t* dst = static_cast< uint8_t* >(dstPixels);
+	const uint8_t* T_RESTRICT src = static_cast< const uint8_t* T_RESTRICT >(srcPixels);
+	uint8_t* T_RESTRICT dst = static_cast< uint8_t* T_RESTRICT >(dstPixels);
 	uint32_t tmp;
 	uint32_t i;
 	float clr[4];
@@ -350,6 +350,16 @@ void PixelFormat::convert(
 		!dstFormat.isPalettized() && !dstFormat.isFloatPoint() && dstFormat.getColorBits() <= 32
 	)
 	{
+		uint32_t srb = 8 - getRedBits();
+		uint32_t sgb = 8 - getGreenBits();
+		uint32_t sbb = 8 - getBlueBits();
+		uint32_t sab = 8 - getAlphaBits();
+
+		uint32_t drb = 8 - dstFormat.getRedBits();
+		uint32_t dgb = 8 - dstFormat.getGreenBits();
+		uint32_t dbb = 8 - dstFormat.getBlueBits();
+		uint32_t dab = 8 - dstFormat.getAlphaBits();
+
 		for (int ii = 0; ii < pixelCount; ++ii)
 		{
 			uint32_t s = (*m_unpack)(src);
@@ -359,15 +369,15 @@ void PixelFormat::convert(
 			uint32_t b = s >> getBlueShift();
 			uint32_t a = s >> getAlphaShift();
 
-			r = (r << (8 - getRedBits())) & 255;
-			g = (g << (8 - getGreenBits())) & 255;
-			b = (b << (8 - getBlueBits())) & 255;
-			a = (a << (8 - getAlphaBits())) & 255;
+			r = (r << srb) & 255;
+			g = (g << sgb) & 255;
+			b = (b << sbb) & 255;
+			a = (a << sab) & 255;
 
-			r = r >> (8 - dstFormat.getRedBits());
-			g = g >> (8 - dstFormat.getGreenBits());
-			b = b >> (8 - dstFormat.getBlueBits());
-			a = a >> (8 - dstFormat.getAlphaBits());
+			r = r >> drb;
+			g = g >> dgb;
+			b = b >> dbb;
+			a = a >> dab;
 
 			(*dstFormat.m_pack)(
 				dst,
