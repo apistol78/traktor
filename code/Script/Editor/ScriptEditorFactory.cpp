@@ -1,6 +1,6 @@
-#include "Script/Editor/ScriptEditorFactory.h"
+#include "Script/Editor/Script.h"
 #include "Script/Editor/ScriptEditor.h"
-#include "Script/Script.h"
+#include "Script/Editor/ScriptEditorFactory.h"
 
 namespace traktor
 {
