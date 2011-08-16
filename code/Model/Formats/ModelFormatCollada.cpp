@@ -1,14 +1,13 @@
 #include <algorithm>
 #include <limits>
-#include "Model/Formats/ModelFormatCollada.h"
-#include "Model/Model.h"
-#include "Core/Serialization/ISerializable.h"
-#include "Core/Misc/String.h"
-#include "Core/Misc/Split.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/Split.h"
+#include "Core/Misc/String.h"
+#include "Model/Model.h"
+#include "Model/Formats/ModelFormatCollada.h"
+#include "Xml/Attribute.h"
 #include "Xml/Document.h"
 #include "Xml/Element.h"
-#include "Xml/Attribute.h"
 
 namespace traktor
 {
@@ -20,6 +19,7 @@ namespace traktor
 template < typename ValueType >
 inline void parseStringToArray(const std::wstring& text, std::vector< ValueType >& outValueArray)
 {
+	outValueArray.reserve(64);
 	Split< std::wstring, ValueType >::any(text, L" \n", outValueArray);
 }
 
@@ -639,11 +639,12 @@ private:
 	std::wstring m_skinSource;
 };
 
-class ColladaMeshdata : public Object
+class ColladaMeshData : public Object
 {
 	T_RTTI_CLASS
+
 public:
-	bool read(xml::Element* mesh, ColladaMeshdata* morphBaseMesh)
+	bool read(xml::Element* mesh, ColladaMeshData* morphBaseMesh)
 	{
 		{
 			RefArray< xml::Element > sources;
@@ -701,6 +702,7 @@ public:
 			m_polygonData[i].setSourceData(m_vertexAttributeData, m_vertexSourceTranslation);
 		return true;
 	}
+
 	void addPositions(const Matrix44& transform, Model* outModel)
 	{
 		for (uint32_t j = 0; j < m_polygonData.size(); ++j)
@@ -715,10 +717,12 @@ public:
 		}
 	}
 
-	void addToModel(const Matrix44& transform,
-			const std::map< std::wstring, uint32_t>& materialLookUp,
-			SkinData* skinData,
-			Model* outModel)
+	void addToModel(
+		const Matrix44& transform,
+		const std::map< std::wstring, uint32_t>& materialLookUp,
+		SkinData* skinData,
+		Model* outModel
+	)
 	{
 		for (uint32_t j = 0; j < m_polygonData.size(); ++j)
 		{
@@ -743,9 +747,7 @@ public:
 					{
 						vertex.setPosition(m_positionIndicies[pindex]);
 						if (skinData)
-						{
 							skinData->setJointInfluence(vertex, pindex);
-						}
 					}
 					Vector4 normal;
 					if (m_polygonData[j].getNormal(normal, vIndex))
@@ -764,23 +766,24 @@ public:
 						vertex.setColor(outModel->addUniqueColor(vcolor));
 					polygon.addVertex(outModel->addUniqueVertex(vertex));
 				}
-				//			polygon.flipWinding();
 				outModel->addPolygon(polygon);
 				indexOffset += m_polygonData[j].getVertexCount(k);
 			}
 		}
 	}
-	void addMorphMeshToModel(const Matrix44& transform,
-		const ColladaMeshdata* morphMesh,
-		uint32_t blendTargetIndex,
-		Model* outModel)
-	{
 
-		uint32_t ix=0;
+	void addMorphMeshToModel(
+		const Matrix44& transform,
+		const ColladaMeshData* morphMesh,
+		uint32_t blendTargetIndex,
+		Model* outModel
+	)
+	{
+		uint32_t ix = 0;
 		for (uint32_t j = 0; j < m_polygonData.size(); ++j)
 		{
 			uint32_t count = m_polygonData[j].getPositionAttrCount();
-			for (uint32_t k= 0; k < count; k++)
+			for (uint32_t k = 0; k < count; k++)
 			{
 				Vector4 pos = transform * morphMesh->m_polygonData[j].getPositionAttr(k);
 				outModel->setBlendTargetPosition(blendTargetIndex, m_positionIndicies[ix++], pos);
@@ -794,7 +797,8 @@ private:
 	std::pair< std::wstring, std::wstring > m_vertexSourceTranslation;
 	std::vector< uint32_t > m_positionIndicies; 
 };
-T_IMPLEMENT_RTTI_CLASS(L"traktor.model", ColladaMeshdata, Object)
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.model.ColladaMeshData", ColladaMeshData, Object)
 
 void createMesh(
 	xml::Element* libraryGeometries,
@@ -808,6 +812,7 @@ void createMesh(
 	for (size_t i = 0; i < instanceControllerNodes.size(); ++i)
 	{
 		Ref< xml::Element > instanceController = instanceControllerNodes[i]->getSingle(L"instance_controller");
+
 		Matrix44 transform;
 		if (Ref< xml::Element > scaleE = instanceControllerNodes[i]->getSingle(L"scale"))
 		{
@@ -829,7 +834,7 @@ void createMesh(
 			Ref< xml::Element > geometry = libraryGeometries->getSingle(L"geometry[@id=" + dereference(skinData.getSkinSource()) + L"]/mesh");
 			if (!geometry)
 				continue;
-			ColladaMeshdata meshData;
+			ColladaMeshData meshData;
 			if (meshData.read(geometry, 0))
 			{
 				Matrix44 bindShapeMatrix = skinData.getBindShapeMatrix();
@@ -844,7 +849,7 @@ void createMesh(
 		if (morph)
 		{
 			morphData.read(morph);
-			ColladaMeshdata baseMeshData;
+			ColladaMeshData baseMeshData;
 			Ref< xml::Element > baseGeometry = libraryGeometries->getSingle(L"geometry[@id=" + dereference(morphData.getMorphSource()) + L"]/mesh");
 			if (!baseGeometry)
 				continue;
@@ -854,7 +859,7 @@ void createMesh(
 			{
 				std::wstring morphTargetGeometry = morphData.getMorphTarget(j);
 				Ref< xml::Element > morphGeometry = libraryGeometries->getSingle(L"geometry[@id=" + dereference(morphTargetGeometry) + L"]/mesh");
-				ColladaMeshdata meshData;
+				ColladaMeshData meshData;
 				if (meshData.read(morphGeometry, &baseMeshData))
 				{
 					uint32_t morphTargetIndex = outModel->addBlendTarget(morphTargetGeometry);
@@ -896,7 +901,8 @@ void createMesh(
 		}
 		else
 			transform = Matrix44::identity();
-		ColladaMeshdata meshData;
+
+		ColladaMeshData meshData;
 		if (meshData.read(geometry, 0))
 		{
 			meshData.addPositions(transform, outModel);
@@ -917,82 +923,8 @@ void ModelFormatCollada::getExtensions(std::wstring& outDescription, std::vector
 
 bool ModelFormatCollada::supportFormat(const Path& filePath) const
 {
-	return 
-		compareIgnoreCase< std::wstring >(filePath.getExtension(), L"dae") == 0;
+	return compareIgnoreCase< std::wstring >(filePath.getExtension(), L"dae") == 0;
 }
-/*
-#include "Core/Math/Const.h"
-#include "Animation/Skeleton.h"
-#include "Animation/Bone.h"
-namespace {
-Transform parseTranslation(xml::Element* node)
-{
-	if (node)
-	{
-		std::vector< float > t;
-		parseStringToArray(node->getValue(), t);
-		return Transform(Vector4(t[0], t[1], t[2], 0));
-	}
-	else 
-		return Transform::identity();
-}
-
-Transform parseRotation(xml::Element* node)
-{
-	if (node)
-	{
-		std::vector< float > t;
-		parseStringToArray(node->getValue(), t);
-		float angle = deg2rad( t[3]);
-		return Transform(Quaternion(Vector4(t[0] * angle, t[1] * angle, t[2] * angle, 0)));
-	}
-	else 
-		return Transform::identity();
-}
-
-void parseJoint(xml::Element* node, animation::Skeleton& skeleton, int level)
-{
-	int parent = int(skeleton.getBoneCount()) - 1;
-	if (node->getAttribute(L"type")->getValue() == L"JOINT")
-	{
-		Transform t;
-		Ref<xml::Element> matrix = node->getSingle(L"matrix");
-		if (matrix)
-		{
-			Matrix44 m;
-			std::vector< float> ma;
-			parseStringToArray(matrix->getValue(),ma);
-			m = Matrix44(ma[0], ma[1], ma[2], ma[3], 
-						 ma[4], ma[5], ma[6], ma[7], 
-						 ma[8], ma[9], ma[10], ma[11], 
-						 ma[12], ma[13], ma[14], ma[15]);
-			t = Transform(m);
-		}
-		else
-		{
-			Transform transform = parseTranslation(node->getSingle(L"translate"));
-			RefArray< xml::Element > rotations;
-			node->get(L"rotate", rotations);
-			for (uint32_t i=0; i < rotations.size(); i++)
-			{
-				Transform rotation = parseRotation(rotations[i]);
-				t = t * rotation;
-			}
-		}
-		animation::Bone b;
-		if (level > 0)
-			b.setParent(level - 1);
-		b.setName(node->getAttribute(L"name")->getValue());
-		b.setOrientation(t.rotation());
-		level++;
-	}
-	else
-	{
-		return;
-	}
-}
-}
-*/
 
 Ref< Model > ModelFormatCollada::read(const Path& filePath, uint32_t importFlags) const
 {
@@ -1055,13 +987,6 @@ Ref< Model > ModelFormatCollada::read(const Path& filePath, uint32_t importFlags
 				if (!symbol.empty() && !target.empty())
 					materialRefs.push_back(material_ref_t(symbol, target));
 			}
-		}
-		if (node->getAttribute(L"type") && node->getAttribute(L"type")->getValue() == L"JOINT")
-		{
-/*
-			animation::Skeleton skeleton;
-			parseJoint(node, skeleton, 0);
-*/
 		}
 
 		node->get(L"node", nodes);
