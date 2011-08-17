@@ -20,6 +20,18 @@ namespace traktor
 {
 	namespace mesh
 	{
+		namespace
+		{
+
+struct OpaquePartPred
+{
+	bool operator () (const StaticMeshResource::Part& lh, const StaticMeshResource::Part& rh) const
+	{
+		return lh.opaque && !rh.opaque;
+	}
+};
+
+		}
 
 Ref< IMeshResource > StaticMeshConverter::createResource() const
 {
@@ -197,6 +209,10 @@ bool StaticMeshConverter::convert(
 			parts[worldTechnique].push_back(part);
 		}
 	}
+
+	// Sort resource parts; opaque parts first then blended parts as this determine render order per mesh.
+	for (std::map< std::wstring, StaticMeshResource::parts_t >::iterator i = parts.begin(); i != parts.end(); ++i)
+		i->second.sort(OpaquePartPred());
 
 	mesh->setParts(meshParts);
 	mesh->setBoundingBox(model::calculateModelBoundingBox(model));
