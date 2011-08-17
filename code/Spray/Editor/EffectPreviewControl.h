@@ -10,9 +10,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_SPRAY_EDITOR_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -64,6 +64,8 @@ public:
 
 	void showVelocity(bool velocityVisible);
 
+	void setMoveEmitter(bool moveEmitter);
+
 	void randomizeSeed();
 
 	void syncEffect();
@@ -88,6 +90,7 @@ private:
 	float m_lastDeltaTime;
 	bool m_guideVisible;
 	bool m_velocityVisible;
+	bool m_moveEmitter;
 
 	void eventButtonDown(ui::Event* event);
 

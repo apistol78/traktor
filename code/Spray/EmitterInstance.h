@@ -69,9 +69,11 @@ public:
 
 private:
 	Ref< Emitter > m_emitter;
-	float m_totalTime;
+	Vector4 m_position;
 	PointVector m_points;
 	uint32_t m_emitted;
+	float m_totalTime;
+	float m_emitFraction;
 	bool m_warm;
 	Aabb3 m_boundingBox;
 	uint32_t m_count;

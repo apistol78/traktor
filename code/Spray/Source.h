@@ -49,10 +49,13 @@ public:
 
 	virtual bool serialize(ISerializer& s);
 
-	inline float getRate() const { return m_rate; }
+	inline float getConstantRate() const { return m_constantRate; }
+
+	inline float getVelocityRate() const { return m_velocityRate; }
 
 private:
-	float m_rate;
+	float m_constantRate;
+	float m_velocityRate;
 };
 
 	}
