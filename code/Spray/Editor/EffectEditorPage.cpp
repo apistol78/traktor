@@ -43,6 +43,7 @@ EffectEditorPage::EffectEditorPage(editor::IEditor* editor)
 :	m_editor(editor)
 ,	m_velocityVisible(false)
 ,	m_guideVisible(true)
+,	m_moveEmitter(false)
 {
 }
 
@@ -74,12 +75,16 @@ bool EffectEditorPage::create(ui::Container* parent, editor::IEditorPageSite* si
 	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
 
 	m_toolToggleGuide = new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_TOGGLE_GUIDE"), ui::Command(L"Effect.Editor.ToggleGuide"), 11, ui::custom::ToolBarButton::BsDefaultToggle);
+	m_toolToggleMove = new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_TOGGLE_MOVE"), ui::Command(L"Effect.Editor.ToggleMove"), 11, ui::custom::ToolBarButton::BsDefaultToggle);
 
 	Ref< Settings > settings = m_editor->getSettings();
 	T_ASSERT (settings);
 
 	m_guideVisible = settings->getProperty< PropertyBoolean >(L"EffectEditor.ToggleGuide", m_guideVisible);
 	m_toolToggleGuide->setToggled(m_guideVisible);
+
+	m_moveEmitter = settings->getProperty< PropertyBoolean >(L"EffectEditor.ToggleMove", m_moveEmitter);
+	m_toolToggleMove->setToggled(m_moveEmitter);
 
 	m_toolBar = new ui::custom::ToolBar();
 	m_toolBar->create(container);
@@ -91,6 +96,7 @@ bool EffectEditorPage::create(ui::Container* parent, editor::IEditorPageSite* si
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_STOP"), ui::Command(L"Effect.Editor.Stop"), 2));
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
 	m_toolBar->addItem(m_toolToggleGuide);
+	m_toolBar->addItem(m_toolToggleMove);
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_RANDOMIZE_SEED"), ui::Command(L"Effect.Editor.RandomizeSeed"), 18));
 
 	m_toolBar->addClickEventHandler(ui::createMethodHandler(this, &EffectEditorPage::eventToolClick));
@@ -101,6 +107,7 @@ bool EffectEditorPage::create(ui::Container* parent, editor::IEditorPageSite* si
 	m_previewControl = new EffectPreviewControl();
 	m_previewControl->create(splitter, ui::WsClientBorder, m_resourceManager, renderSystem);
 	m_previewControl->showGuide(m_guideVisible);
+	m_previewControl->setMoveEmitter(m_moveEmitter);
 
 	m_sequencer = new ui::custom::SequencerControl();
 	m_sequencer->create(splitter, ui::WsDoubleBuffer | ui::WsClientBorder);
@@ -117,6 +124,7 @@ void EffectEditorPage::destroy()
 	T_ASSERT (settings);
 
 	settings->setProperty< PropertyBoolean >(L"EffectEditor.ToggleGuide", m_guideVisible);
+	settings->setProperty< PropertyBoolean >(L"EffectEditor.ToggleMove", m_moveEmitter);
 
 	m_previewControl->destroy();
 }
@@ -191,6 +199,12 @@ bool EffectEditorPage::handleCommand(const ui::Command& command)
 		m_guideVisible = !m_guideVisible;
 		m_previewControl->showGuide(m_guideVisible);
 		m_toolToggleGuide->setToggled(m_guideVisible);
+	}
+	else if (command == L"Effect.Editor.ToggleMove")
+	{
+		m_moveEmitter = !m_moveEmitter;
+		m_previewControl->setMoveEmitter(m_moveEmitter);
+		m_toolToggleMove->setToggled(m_moveEmitter);
 	}
 	else if (command == L"Effect.Editor.ToggleVelocity")
 	{

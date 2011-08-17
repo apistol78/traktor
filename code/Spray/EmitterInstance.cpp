@@ -42,8 +42,9 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EmitterInstance", EmitterInstance, Object
 
 EmitterInstance::EmitterInstance(Emitter* emitter)
 :	m_emitter(emitter)
-,	m_totalTime(0.0f)
 ,	m_emitted(0)
+,	m_totalTime(0.0f)
+,	m_emitFraction(0.0f)
 ,	m_warm(false)
 ,	m_count(std::rand() & 15)
 {
@@ -62,6 +63,8 @@ void EmitterInstance::update(EmitterUpdateContext& context, const Transform& tra
 	if (!m_warm)
 	{
 		m_warm = true;
+		m_position = transform.translation();
+
 		if (m_emitter->getWarmUp() >= FUZZY_EPSILON)
 		{
 			EmitterUpdateContext warmContext(c_warmUpDeltaTime);
@@ -96,14 +99,19 @@ void EmitterInstance::update(EmitterUpdateContext& context, const Transform& tra
 		Source* source = m_emitter->getSource();
 		if (source)
 		{
-			m_totalTime += context.deltaTime;
 			if (!singleShot)
 			{
+				Vector4 dm = transform.translation() - m_position;
+				float velocity = dm.length() / context.deltaTime;
+				float emitVelocity = source->getVelocityRate() * velocity;
+				float emitConstant = source->getConstantRate() * context.deltaTime;
+				float emit = emitVelocity + emitConstant + m_emitFraction;
+				uint32_t emitCountFrame = uint32_t(emit);
+
 				// Emit in multiple frames; estimate number of particles to emit.
-				uint32_t goal = uint32_t(m_totalTime * source->getRate());
-				uint32_t emitCount = std::min< uint32_t >(goal - m_emitted, c_maxEmitPerUpdate);
-				if (emitCount > 0)
+				if (emitCountFrame > 0)
 				{
+					uint32_t emitCount = std::min< uint32_t >(emitCountFrame, c_maxEmitPerUpdate);
 					m_points.reserve(size + emitCount);
 					source->emit(
 						context,
@@ -112,11 +120,14 @@ void EmitterInstance::update(EmitterUpdateContext& context, const Transform& tra
 						*this
 					);
 				}
+
+				// Preserve fraction of non-emitted particles.
+				m_emitFraction = emit - emitCountFrame;
 			}
 			else
 			{
 				// Single shot emit; emit all particles in one frame and then no more.
-				uint32_t emitCount = std::min< uint32_t >(uint32_t(source->getRate()), c_maxEmitSingleShot);
+				uint32_t emitCount = std::min< uint32_t >(uint32_t(source->getConstantRate()), c_maxEmitSingleShot);
 				m_points.reserve(size + emitCount);
 				source->emit(
 					context,
@@ -127,6 +138,10 @@ void EmitterInstance::update(EmitterUpdateContext& context, const Transform& tra
 			}
 		}
 	}
+
+	// Save current position as we need it to calculate velocity next update.
+	m_position = transform.translation();
+	m_totalTime += context.deltaTime;
 
 	// Calculate bounding box; do this before modifiers as modifiers are executed
 	// asynchronously.

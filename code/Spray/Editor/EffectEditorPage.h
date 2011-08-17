@@ -82,11 +82,13 @@ private:
 	Ref< Effect > m_effect;
 	Ref< ui::custom::ToolBar > m_toolBar;
 	Ref< ui::custom::ToolBarButton > m_toolToggleGuide;
+	Ref< ui::custom::ToolBarButton > m_toolToggleMove;
 	Ref< EffectPreviewControl > m_previewControl;
 	Ref< ui::custom::SequencerControl > m_sequencer;
 	Ref< resource::IResourceManager > m_resourceManager;
 	bool m_velocityVisible;
 	bool m_guideVisible;
+	bool m_moveEmitter;
 
 	void updateSequencer();
 

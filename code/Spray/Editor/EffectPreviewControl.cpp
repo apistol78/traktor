@@ -66,6 +66,7 @@ EffectPreviewControl::EffectPreviewControl()
 ,	m_lastDeltaTime(1.0f / c_updateInterval)
 ,	m_guideVisible(true)
 ,	m_velocityVisible(false)
+,	m_moveEmitter(false)
 {
 	m_sourceRenderers[&type_of< BoxSource >()] = new BoxSourceRenderer();
 	m_sourceRenderers[&type_of< ConeSource >()] = new ConeSourceRenderer();
@@ -163,6 +164,11 @@ void EffectPreviewControl::showGuide(bool guideVisible)
 void EffectPreviewControl::showVelocity(bool velocityVisible)
 {
 	m_velocityVisible = velocityVisible;
+}
+
+void EffectPreviewControl::setMoveEmitter(bool moveEmitter)
+{
+	m_moveEmitter = moveEmitter;
 }
 
 void EffectPreviewControl::randomizeSeed()
@@ -335,7 +341,19 @@ void EffectPreviewControl::eventPaint(ui::Event* event)
 
 		m_context.deltaTime = deltaTime * m_timeScale;
 
-		m_effectInstance->update(m_context, Transform::identity(), true);
+		Transform effectTransform = Transform::identity();
+		if (m_moveEmitter)
+		{
+			Vector4 effectPosition(
+				std::sin(time) * 8.0f,
+				0.0f,
+				std::cos(time) * 8.0f,
+				1.0f
+			);
+			effectTransform = Transform(effectPosition);
+		}
+
+		m_effectInstance->update(m_context, effectTransform, true);
 		m_effectInstance->synchronize();
 		m_effectInstance->render(m_pointRenderer, cameraPlane);
 
