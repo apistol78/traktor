@@ -1,3 +1,4 @@
+#include <iomanip>
 #include "Amalgam/Editor/ButtonCell.h"
 #include "Amalgam/Editor/GraphCell.h"
 #include "Amalgam/Editor/ProgressCell.h"
@@ -12,6 +13,17 @@ namespace traktor
 {
 	namespace amalgam
 	{
+		namespace
+		{
+
+std::wstring formatPerformanceTime(float time)
+{
+	std::wstringstream ss;
+	ss << std::setprecision(1) << std::fixed << (time * 1000.0f) << L" ms";
+	return ss.str();
+}
+
+		}
 
 TargetCell::TargetCell(ui::Bitmap* bitmap, TargetInstance* instance)
 :	m_instance(instance)
@@ -107,20 +119,20 @@ void TargetCell::paint(ui::custom::AutoWidget* widget, ui::Canvas& canvas, const
 		topRect.left += 6;
 		canvas.drawText(topRect, toString(int32_t(performance.fps)), ui::AnLeft, ui::AnCenter);
 
-		topRect.left += 30;
-		canvas.drawText(topRect, L"U: " + toString(int32_t(performance.update * 1000.0f)) + L" ms", ui::AnLeft, ui::AnCenter);
+		topRect.left += 25;
+		canvas.drawText(topRect, L"U: " + formatPerformanceTime(performance.update), ui::AnLeft, ui::AnCenter);
+
+		topRect.left += 55;
+		canvas.drawText(topRect, L"B: " + formatPerformanceTime(performance.build), ui::AnLeft, ui::AnCenter);
+
+		topRect.left += 55;
+		canvas.drawText(topRect, L"R: " + formatPerformanceTime(performance.render), ui::AnLeft, ui::AnCenter);
 
 		topRect.left += 50;
-		canvas.drawText(topRect, L"B: " + toString(int32_t(performance.build * 1000.0f)) + L" ms", ui::AnLeft, ui::AnCenter);
+		canvas.drawText(topRect, L"p: " + formatPerformanceTime(performance.physics), ui::AnLeft, ui::AnCenter);
 
 		topRect.left += 50;
-		canvas.drawText(topRect, L"R: " + toString(int32_t(performance.render * 1000.0f)) + L" ms", ui::AnLeft, ui::AnCenter);
-
-		topRect.left += 50;
-		canvas.drawText(topRect, L"p: " + toString(int32_t(performance.physics * 1000.0f)) + L" ms", ui::AnLeft, ui::AnCenter);
-
-		topRect.left += 50;
-		canvas.drawText(topRect, L"i: " + toString(int32_t(performance.input * 1000.0f)) + L" ms", ui::AnLeft, ui::AnCenter);
+		canvas.drawText(topRect, L"i: " + formatPerformanceTime(performance.input), ui::AnLeft, ui::AnCenter);
 
 		ui::Rect bottomRect = performanceRect;
 		bottomRect.top = bottomRect.top + bottomRect.getHeight() / 2;

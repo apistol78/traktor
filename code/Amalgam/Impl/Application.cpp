@@ -157,6 +157,7 @@ Application::Application()
 ,	m_threadRender(0)
 ,	m_renderViewActive(true)
 ,	m_renderViewFullScreen(false)
+,	m_waitRenderFinishInterval(0)
 ,	m_frameBuild(0)
 ,	m_frameRender(0)
 ,	m_stateRender(0)
@@ -569,12 +570,11 @@ bool Application::update()
 		m_inputServer->updateRumble(m_updateInfo.m_frameDeltaTime, m_updateControl.m_pause);
 
 		// Update active state; fixed time step if physics manager is available.
-#if T_MEASURE_PERFORMANCE
 		double updateDuration = 0.0;
 		double physicsDuration = 0.0;
 		double inputDuration = 0.0;
 		uint32_t updateCount = 0;
-#endif
+
 		physics::PhysicsManager* physicsManager = m_physicsServer->getPhysicsManager();
 		if (physicsManager && !m_updateControl.m_pause)
 		{
@@ -582,39 +582,52 @@ bool Application::update()
 			m_updateInfo.m_simulationFrequency = c_simulationFrequency;
 
 			UpdateInfo updateInfo = m_updateInfo;
-			float simulationEndTime = m_updateInfo.m_stateTime; // + m_updateInfo.m_frameDeltaTime;
+			float simulationEndTime = m_updateInfo.m_stateTime;
+
+			int32_t stepCount = int32_t((simulationEndTime - m_updateInfo.m_simulationTime) / c_simulationDeltaTime);
+			if (stepCount > c_maxSimulationUpdates)
+				stepCount = c_maxSimulationUpdates;
 
 			// Execute fixed update(s).
-			for (int32_t i = 0; i < c_maxSimulationUpdates && m_updateInfo.m_simulationTime < simulationEndTime; ++i, m_updateInfo.m_simulationTime += c_simulationDeltaTime)
+			for (int32_t i = 0; i < stepCount; ++i, m_updateInfo.m_simulationTime += c_simulationDeltaTime)
 			{
-#if T_MEASURE_PERFORMANCE
+				// If we're doing multiple updates per frame then we're rendering bound; so in order
+				// to keep input updating periodically we need to make sure we wait a bit, as long
+				// as we don't collide with end-of-rendering.
+				if (
+					m_threadRender &&
+					m_waitRenderFinishInterval > 0 &&
+					i > 0
+				)
+				{
+					if (m_signalRenderFinish.wait(m_waitRenderFinishInterval))
+					{
+						// Rendering of last frame has already finished; we need to decrease interval time
+						// as we don't want rendering to be finished before the updates has.
+						--m_waitRenderFinishInterval;
+						break;
+					}
+				}
+
 				double physicsTimeStart = m_timer.getElapsedTime();
-#endif
 				m_physicsServer->update();
-#if T_MEASURE_PERFORMANCE
 				double physicsTimeEnd = m_timer.getElapsedTime();
 				physicsDuration += physicsTimeEnd - physicsTimeStart;
-#endif
+
 				// Update input.
-#if T_MEASURE_PERFORMANCE
 				double inputTimeStart = m_timer.getElapsedTime();
-#endif
 				m_inputServer->update(m_updateInfo.m_simulationDeltaTime, inputEnabled);
-#if T_MEASURE_PERFORMANCE
 				double inputTimeEnd = m_timer.getElapsedTime();
 				inputDuration += inputTimeEnd - inputTimeStart;
-#endif
+
 				// Update current state for each simulation tick.
-#if T_MEASURE_PERFORMANCE
 				double updateTimeStart = m_timer.getElapsedTime();
-#endif
 				bool substep = ((m_updateInfo.m_simulationTime + c_simulationDeltaTime) < simulationEndTime);
 				IState::UpdateResult result = currentState->update(m_stateManager, m_updateControl, m_updateInfo, substep);
-#if T_MEASURE_PERFORMANCE
 				double updateTimeEnd = m_timer.getElapsedTime();
 				updateDuration += updateTimeEnd - updateTimeStart;
 				updateCount++;
-#endif
+
 				if (result == IState::UrExit || result == IState::UrFailed)
 				{
 					// Ensure render thread is finished before we leave.
@@ -638,15 +651,12 @@ bool Application::update()
 			m_updateInfo.m_simulationDeltaTime = m_updateInfo.m_frameDeltaTime;
 			m_updateInfo.m_simulationFrequency = uint32_t(1.0f / m_updateInfo.m_frameDeltaTime);
 
-#if T_MEASURE_PERFORMANCE
 			double updateTimeStart = m_timer.getElapsedTime();
-#endif
 			IState::UpdateResult updateResult = currentState->update(m_stateManager, m_updateControl, m_updateInfo, false);
-#if T_MEASURE_PERFORMANCE
 			double updateTimeEnd = m_timer.getElapsedTime();
 			updateDuration += updateTimeEnd - updateTimeStart;
 			updateCount++;
-#endif
+
 			if (updateResult == IState::UrExit || updateResult == IState::UrFailed)
 			{
 				// Ensure render thread is finished before we leave.
@@ -662,20 +672,29 @@ bool Application::update()
 			return true;
 
 		// Build frame.
-#if T_MEASURE_PERFORMANCE
 		double buildTimeStart = m_timer.getElapsedTime();
-#endif
 		IState::BuildResult buildResult = currentState->build(m_frameBuild, m_updateInfo);
-#if T_MEASURE_PERFORMANCE
 		double buildTimeEnd = m_timer.getElapsedTime();
-#endif
+
 		if (buildResult == IState::BrOk || buildResult == IState::BrNothing)
 		{
 			if (m_threadRender)
 			{
 				// Synchronize with render thread and issue another rendering.
-				if (m_signalRenderFinish.wait(1000))
+				double waitBegin = m_timer.getElapsedTime();
+				bool renderFinished = m_signalRenderFinish.wait(1000);
+				double waitEnd = m_timer.getElapsedTime();
+
+				if (renderFinished)
 				{
+					// If we waited for rendering longer than a update cycle then
+					// we increase interval time.
+					if (updateCount > 1)
+					{
+						if ((waitEnd - waitBegin) > (physicsDuration + inputDuration + updateDuration) / updateCount)
+							++m_waitRenderFinishInterval;
+					}
+
 					m_signalRenderFinish.reset();
 
 					{
@@ -783,11 +802,14 @@ bool Application::update()
 			TargetPerformance performance;
 			performance.time = m_updateInfo.m_totalTime;
 			performance.fps = m_fps;
-			performance.update = updateDuration;
-			performance.build = buildTimeEnd - buildTimeStart;
-			performance.render = statistics.duration;
-			performance.physics = physicsDuration;
-			performance.input = inputDuration;
+			if (updateCount > 0)
+			{
+				performance.update = float(updateDuration / updateCount);
+				performance.physics = float(physicsDuration / updateCount);
+				performance.input = float(inputDuration / updateCount);
+			}
+			performance.build = float(buildTimeEnd - buildTimeStart);
+			performance.render = float(statistics.duration);
 			performance.memInUse = Alloc::allocated();
 			performance.heapObjects = Object::getHeapObjectCount();
 			m_targetManagerConnection->setPerformance(performance);

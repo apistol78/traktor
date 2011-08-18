@@ -98,6 +98,7 @@ private:
 	bool m_renderViewActive;
 	bool m_renderViewFullScreen;
 	float m_backgroundColor[4];
+	int32_t m_waitRenderFinishInterval;
 	Semaphore m_lockRender;
 	Signal m_signalRenderBegin;
 	Signal m_signalRenderFinish;
