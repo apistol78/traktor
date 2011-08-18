@@ -188,7 +188,7 @@ private:
 
 	struct Interval
 	{
-		uint32_t last;
+		uint32_t count;
 		uint32_t interval;
 		Ref< ActionObject > target;
 		Ref< ActionFunction > function;
