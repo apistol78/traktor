@@ -160,8 +160,15 @@ void FlashMoviePlayer::executeFrame()
 	context->pushMovieClip(m_movieInstance);
 
 	// Issue interval functions.
+	ActionValueArray argv;
 	for (std::map< uint32_t, Interval >::iterator i = m_interval.begin(); i != m_interval.end(); ++i)
-		i->second.function->call(context, i->second.target, ActionValueArray());
+	{
+		if (i->second.count++ >= i->second.interval)
+		{
+			i->second.function->call(context, i->second.target, argv);
+			i->second.count = 0;
+		}
+	}
 
 	// Issue all events in sequence as each event possibly update
 	// the play head and other aspects of the movie.
@@ -385,8 +392,8 @@ void FlashMoviePlayer::Global_setInterval(CallArgs& ca)
 	uint32_t id = m_intervalNextId++;
 
 	Interval& iv = m_interval[id];
-	iv.last = 0;
-	iv.interval = interval;
+	iv.count = 0;
+	iv.interval = interval / m_movie->getMovieClip()->getFrameRate();
 	iv.target = target;
 	iv.function = function;
 
