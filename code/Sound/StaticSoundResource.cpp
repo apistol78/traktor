@@ -54,6 +54,7 @@ Ref< Sound > StaticSoundResource::createSound(resource::IResourceManager* resour
 
 	uint32_t offset = 0;
 
+	// Decode samples into sound buffer.
 	while (streamDecoder->getBlock(soundBlock))
 	{
 		uint32_t samplesCount = std::min(soundBlock.samplesCount, m_samplesCount - offset);
@@ -78,6 +79,16 @@ Ref< Sound > StaticSoundResource::createSound(resource::IResourceManager* resour
 		}
 
 		offset += samplesCount;
+	}
+
+	// Make sure samples are zero;ed out if not fully decoded.
+	for (; offset < m_samplesCount; ++offset)
+	{
+		for (uint32_t i = 0; i < m_channelsCount; ++i)
+		{
+			int16_t* samples = soundBuffer->getSamplesData(i);
+			samples[offset] = 0;
+		}
 	}
 
 	stream->close();
