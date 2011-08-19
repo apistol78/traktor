@@ -206,6 +206,7 @@ bool MeshPipeline::buildOutput(
 	const std::map< std::wstring, Guid >& materialShaders = asset->getMaterialShaders();
 	std::map< std::wstring, model::Material > materials;
 	RefArray< model::Model > models;
+	uint32_t polygonCount = 0;
 
 	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, asset->getFileName());
 	
@@ -254,6 +255,8 @@ bool MeshPipeline::buildOutput(
 			materials[j->getName()] = *j;
 
 		models.push_back(model);
+
+		polygonCount += model->getPolygonCount();
 	}
 
 	if (models.empty())
@@ -538,6 +541,7 @@ bool MeshPipeline::buildOutput(
 	{
 		report->set(L"path", outputPath);
 		report->set(L"type", int32_t(asset->getMeshType()));
+		report->set(L"polygonCount", polygonCount);
 		report->set(L"size", dataSize);
 	}
 

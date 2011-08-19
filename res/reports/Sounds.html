@@ -1,6 +1,6 @@
 <html>
 	<head>
-		<title>Meshes report</title>
+		<title>Sounds report</title>
 		<style type="text/css">
 			body {
 				background-color: #e0e0d0;
@@ -37,55 +37,42 @@
 	</head>
 	<body>
 	
-<h1>Meshes report</h1>
+<h1>Sounds report</h1>
 <?tap
-	var types = [
-		"Invalid",
-		"Blend",
-		"Indoor",
-		"Instance",
-		"Partition",
-		"Skinned",
-		"Static",
-		"Stream"
-	];
-
 	var db = Global.connect("fileName=$(REPORT_DB)");
 ?>	
 		<table>
-			<tr>
-				<th>Path</th>
-				<th>Type</th>
-				<th>Polygon(s)</th>
-				<th>Size (KiB)</th>
-			</tr>
+			<tr><th>Path</th><th>Type</th><th>Size (KiB)</th></tr>
 <?tap
-	var index = 0, totalSize = 0, totalPols = 0;
+	var index = 0, totalSize = 0;
 	
-	var rs = db.executeQuery("select * from Report_Mesh order by size desc");
+	var rs = db.executeQuery("select * from Report_Sound order by size desc");
 	while (rs.next())
 	{
 		if (index % 2 == 1)
 			Global.print("<tr class=\"alt\">");
 		else
 			Global.print("<tr>");
+			
+		var type = rs.getInt32ByName("type");
+		if (type == 0)
+			type = "Stream";
+		else
+			type = "Static";
 	
 		Global.print("<td>" + rs.getStringByName("path") + "</td>");
-		Global.print("<td>" + types[rs.getInt32ByName("type")] + "</td>");
-		Global.print("<td>" + rs.getInt32ByName("polygonCount") + "</td>");
+		Global.print("<td>" + type + "</td>");
 		Global.print("<td>" + Math.round(rs.getInt32ByName("size") / 1024) + "</td>");
 		
 		Global.printLn("</tr>");
 		
 		++index;
 		totalSize += rs.getInt32ByName("size");
-		totalPols += rs.getInt32ByName("polygonCount");
 	}
 	
 	Global.print("<tr class=\"total\">");
-	Global.print("<td>Total, " + index + " mesh(es)</td>");
+	Global.print("<td>Total, " + index + " sounds(s)</td>");
 	Global.print("<td/>");
-	Global.print("<td>" + totalPols + "</td>");
 	Global.print("<td>" + Math.round(totalSize / 1024) + "</td>");
 	Global.printLn("</tr>");	
 ?>
