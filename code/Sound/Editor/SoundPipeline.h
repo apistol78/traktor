@@ -48,11 +48,7 @@ public:
 
 private:
 	std::wstring m_assetPath;
-	int32_t m_sampleRate;
-	bool m_enableZLibCompression;
-	bool m_enableLzfCompression;
-	bool m_enableLzoCompression;
-	bool m_bigEndian;
+	//int32_t m_sampleRate;
 };
 
 	}

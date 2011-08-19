@@ -30,21 +30,13 @@ public:
 
 	virtual bool serialize(ISerializer& s);
 	
-	uint32_t getSampleRate() const { return m_sampleRate; }
-	
-	uint32_t getSamplesCount() const { return m_samplesCount; }
-	
-	uint32_t getChannelsCount() const { return m_channelsCount; }
-	
-	uint32_t getFlags() const { return m_flags; }
-	
 private:
 	friend class SoundPipeline;
 
 	uint32_t m_sampleRate;
 	uint32_t m_samplesCount;
 	uint32_t m_channelsCount;
-	uint32_t m_flags;
+	const TypeInfo* m_decoderType;
 };
 
 	}
