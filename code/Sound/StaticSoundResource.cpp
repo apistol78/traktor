@@ -1,14 +1,14 @@
-#include "Compress/Lzf/InflateStreamLzf.h"
-#include "Compress/Lzo/InflateStreamLzo.h"
-#include "Compress/Zip/InflateStreamZip.h"
+#include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
-#include "Core/Serialization/MemberBitMask.h"
+#include "Core/Serialization/MemberType.h"
 #include "Database/Instance.h"
 #include "Sound/Sound.h"
 #include "Sound/StaticSoundBuffer.h"
 #include "Sound/StaticSoundResource.h"
+#include "Sound/IStreamDecoder.h"
 
 namespace traktor
 {
@@ -21,7 +21,7 @@ StaticSoundResource::StaticSoundResource()
 :	m_sampleRate(0)
 ,	m_samplesCount(0)
 ,	m_channelsCount(0)
-,	m_flags(0)
+,	m_decoderType(0)
 {
 }
 
@@ -34,6 +34,13 @@ Ref< Sound > StaticSoundResource::createSound(resource::IResourceManager* resour
 		return 0;
 	}
 
+	Ref< IStreamDecoder > streamDecoder = checked_type_cast< IStreamDecoder* >(m_decoderType->createInstance());
+	if (!streamDecoder->create(stream))
+	{
+		log::error << L"Unable to create sound, unable to create stream decoder" << Endl;
+		return 0;
+	}
+
 	Ref< StaticSoundBuffer > soundBuffer = new StaticSoundBuffer();
 	if (!soundBuffer->create(m_sampleRate, m_samplesCount, m_channelsCount))
 	{
@@ -41,50 +48,50 @@ Ref< Sound > StaticSoundResource::createSound(resource::IResourceManager* resour
 		return 0;
 	}
 
-	Ref< IStream > streamData;
-	if (m_flags & SrfZLib)
-		streamData = new compress::InflateStreamZip(stream);
-	else if (m_flags & SrfLzo)
-		streamData = new compress::InflateStreamLzo(stream);
-	else if (m_flags & SrfLzf)
-		streamData = new compress::InflateStreamLzf(stream);
-	else
-		streamData = stream;
+	SoundBlock soundBlock;
+	std::memset(&soundBlock, 0, sizeof(soundBlock));
+	soundBlock.samplesCount = 4096;
 
-	for (uint32_t i = 0; i < m_channelsCount; ++i)
+	uint32_t offset = 0;
+
+	while (streamDecoder->getBlock(soundBlock))
 	{
-		int16_t* samples = soundBuffer->getSamplesData(i);
-		T_ASSERT (samples);
+		uint32_t samplesCount = std::min(soundBlock.samplesCount, m_samplesCount - offset);
 
-		if (streamData->read(samples, m_samplesCount * sizeof(int16_t)) != m_samplesCount * sizeof(int16_t))
+		for (uint32_t i = 0; i < m_channelsCount; ++i)
 		{
-			log::error << L"Failed to create sound; unable to read samples" << Endl;
-			return 0;
+			int16_t* samples = soundBuffer->getSamplesData(i);
+			T_ASSERT (samples);
+
+			samples += offset;
+
+			if (soundBlock.samples[i])
+			{
+				for (uint32_t j = 0; j < samplesCount; ++j)
+					samples[j] = int16_t(soundBlock.samples[i][j] * 32767.0f);
+			}
+			else
+			{
+				for (uint32_t j = 0; j < samplesCount; ++j)
+					samples[j] = 0;
+			}
 		}
+
+		offset += samplesCount;
 	}
 
-	streamData->close();
 	stream->close();
+	safeDestroy(streamDecoder);
 
 	return new Sound(soundBuffer);
 }
 
 bool StaticSoundResource::serialize(ISerializer& s)
 {
-	const MemberBitMask::Bit c_Flags_bits[] =
-	{
-		{ L"SrfZLib", SrfZLib },
-		{ L"SrfLzo", SrfLzo },
-		{ L"SrfLzf", SrfLzf },
-		{ L"SrfDelta", SrfDelta },
-		{ 0 }
-	};
-
 	s >> Member< uint32_t >(L"sampleRate", m_sampleRate);
 	s >> Member< uint32_t >(L"samplesCount", m_samplesCount);
 	s >> Member< uint32_t >(L"channelsCount", m_channelsCount);
-	s >> MemberBitMask(L"flags", m_flags, c_Flags_bits);
-	
+	s >> MemberType(L"decoderType", m_decoderType);
 	return true;
 }
 
