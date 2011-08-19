@@ -20,6 +20,7 @@
 #include "Database/Instance.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
+#include "Editor/IPipelineReport.h"
 #include "Editor/IPipelineSettings.h"
 #include "Sound/StaticSoundResource.h"
 #include "Sound/StreamSoundResource.h"
@@ -60,7 +61,7 @@ void analyzeDeltaRange(const int16_t* samples, uint32_t nsamples, int32_t& outNe
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundPipeline", 18, SoundPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundPipeline", 19, SoundPipeline, editor::IPipeline)
 
 SoundPipeline::SoundPipeline()
 :	m_sampleRate(44100)
@@ -165,7 +166,11 @@ bool SoundPipeline::buildOutput(
 			return false;
 		}
 
+		int32_t dataOffsetBegin = stream->tell();
+
 		bool result = StreamCopy(stream, sourceStream).execute();
+
+		int32_t dataOffsetEnd = stream->tell();
 
 		stream->close();
 		sourceStream->close();
@@ -179,6 +184,15 @@ bool SoundPipeline::buildOutput(
 		{
 			log::error << L"Failed to build sound asset, unable to copy source data" << Endl;
 			return false;
+		}
+
+		// Create report.
+		Ref< editor::IPipelineReport > report = pipelineBuilder->createReport(L"Sound", outputGuid);
+		if (report)
+		{
+			report->set(L"path", outputPath);
+			report->set(L"type", 0);
+			report->set(L"size", dataOffsetEnd - dataOffsetBegin);
 		}
 	}
 	else
@@ -202,6 +216,8 @@ bool SoundPipeline::buildOutput(
 			instance->revert();
 			return false;
 		}
+
+		int32_t dataOffsetBegin = stream->tell();
 
 		// Prepare decoder with source stream.
 		if (!decoder->create(sourceStream))
@@ -375,6 +391,7 @@ bool SoundPipeline::buildOutput(
 			}
 		}
 
+		int32_t dataOffsetEnd = stream->tell();
 		stream->close();
 
 		instance->setObject(resource);
@@ -383,6 +400,15 @@ bool SoundPipeline::buildOutput(
 		{
 			log::error << L"Failed to build sound asset, unable to commit instance" << Endl;
 			return false;
+		}
+
+		// Create report.
+		Ref< editor::IPipelineReport > report = pipelineBuilder->createReport(L"Sound", outputGuid);
+		if (report)
+		{
+			report->set(L"path", outputPath);
+			report->set(L"type", 1);
+			report->set(L"size", dataOffsetEnd - dataOffsetBegin);
 		}
 	}
 
