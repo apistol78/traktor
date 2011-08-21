@@ -120,7 +120,13 @@ public:
 		{
 			int32_t nread = m_stream->read(m_readBuffer, sizeof(m_readBuffer));
 			if (nread <= 0)
+			{
+				// No more bytes from source stream; if we have encoded some samples lets output them
+				// and return success.
+				if (m_decodedCount > 0)
+					break;
 				return false;
+			}
 
 			int32_t ret = mpg123_feed(m_handle, m_readBuffer, nread);
 			if (ret == MPG123_NEED_MORE)
@@ -170,7 +176,7 @@ public:
 
 		m_consumedCount = outSoundBlock.samplesCount;
 
-		if (!outSoundBlock.sampleRate)
+		if (!outSoundBlock.samplesCount || !outSoundBlock.sampleRate)
 			return false;
 
 		return true;
