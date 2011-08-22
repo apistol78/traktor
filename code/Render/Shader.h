@@ -144,17 +144,15 @@ private:
 	struct Technique
 	{
 		uint32_t parameterMask;
-		std::vector< Combination > combinations;
+		AlignedVector< Combination > combinations;
 	};
 
 	SmallMap< handle_t, Technique > m_techniques;
 	SmallMap< handle_t, uint32_t > m_parameterBits;
+	SmallMap< handle_t, resource::Proxy< ITexture > > m_textureProxies;
 	uint32_t m_parameterValue;
 	Technique* m_currentTechnique;
 	IProgram* m_currentProgram;
-
-	SmallMap< handle_t, int32_t > m_textureMap;
-	std::vector< resource::Proxy< ITexture > > m_textureProxies;
 
 	void updateCurrentProgram();
 };
