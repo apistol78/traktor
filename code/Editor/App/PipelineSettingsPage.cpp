@@ -26,6 +26,12 @@ bool PipelineSettingsPage::create(ui::Container* parent, Settings* settings, con
 	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*", 0, 4)))
 		return false;
 
+	bool buildThreads = settings->getProperty< PropertyBoolean >(L"Pipeline.BuildThreads", true);
+
+	m_checkBuildThreads = new ui::CheckBox();
+	m_checkBuildThreads->create(container, i18n::Text(L"EDITOR_SETTINGS_PIPELINE_BUILD_THREADS"));
+	m_checkBuildThreads->setChecked(buildThreads);
+
 	// Memcached
 	bool memCachedEnable = settings->getProperty< PropertyBoolean >(L"Pipeline.MemCached", false);
 
@@ -84,6 +90,8 @@ void PipelineSettingsPage::destroy()
 
 bool PipelineSettingsPage::apply(Settings* settings)
 {
+	settings->setProperty< PropertyBoolean >(L"Pipeline.BuildThreads", m_checkBuildThreads->isChecked());
+
 	settings->setProperty< PropertyBoolean >(L"Pipeline.MemCached", m_checkUseMemCached->isChecked());
 	settings->setProperty< PropertyString >(L"Pipeline.MemCached.Host", m_editMemCachedHost->getText());
 	settings->setProperty< PropertyInteger >(L"Pipeline.MemCached.Port", parseString< int32_t >(m_editMemCachedPort->getText()));

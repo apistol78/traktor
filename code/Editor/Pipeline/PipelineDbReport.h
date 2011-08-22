@@ -7,6 +7,9 @@
 
 namespace traktor
 {
+
+class Semaphore;
+
 	namespace sql
 	{
 
@@ -25,7 +28,7 @@ class PipelineDbReport : public IPipelineReport
 	T_RTTI_CLASS;
 
 public:
-	PipelineDbReport(sql::IConnection* connection, const std::wstring& table, const Guid& guid);
+	PipelineDbReport(Semaphore& lock, sql::IConnection* connection, const std::wstring& table, const Guid& guid);
 
 	virtual ~PipelineDbReport();
 
@@ -34,6 +37,7 @@ public:
 	virtual void set(const std::wstring& name, const std::wstring& value);
 
 private:
+	Semaphore& m_lock;
 	Ref< sql::IConnection > m_connection;
 	std::wstring m_table;
 	Guid m_guid;

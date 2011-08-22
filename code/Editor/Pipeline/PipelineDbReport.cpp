@@ -1,4 +1,6 @@
 #include "Core/Io/StringOutputStream.h"
+#include "Core/Thread/Acquire.h"
+#include "Core/Thread/Semaphore.h"
 #include "Editor/Pipeline/PipelineDbReport.h"
 #include "Sql/IConnection.h"
 #include "Sql/IResultSet.h"
@@ -10,8 +12,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PipelineDbReport", PipelineDbReport, IPipelineReport)
 
-PipelineDbReport::PipelineDbReport(sql::IConnection* connection, const std::wstring& table, const Guid& guid)
-:	m_connection(connection)
+PipelineDbReport::PipelineDbReport(Semaphore& lock, sql::IConnection* connection, const std::wstring& table, const Guid& guid)
+:	m_lock(lock)
+,	m_connection(connection)
 ,	m_table(table)
 ,	m_guid(guid)
 {
@@ -20,6 +23,7 @@ PipelineDbReport::PipelineDbReport(sql::IConnection* connection, const std::wstr
 PipelineDbReport::~PipelineDbReport()
 {
 	T_EXCEPTION_GUARD_BEGIN;
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	Ref< sql::IResultSet > rs;
 	StringOutputStream ss;

@@ -1,5 +1,6 @@
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Thread/Acquire.h"
 #include "Editor/Pipeline/PipelineDb.h"
 #include "Editor/Pipeline/PipelineDbReport.h"
 #include "Sql/IResultSet.h"
@@ -97,6 +98,8 @@ void PipelineDb::close()
 
 void PipelineDb::setDependency(const Guid& guid, const DependencyHash& hash)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	Ref< sql::IResultSet > rs;
 	StringOutputStream ss;
 
@@ -113,6 +116,8 @@ void PipelineDb::setDependency(const Guid& guid, const DependencyHash& hash)
 
 bool PipelineDb::getDependency(const Guid& guid, DependencyHash& outHash) const
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	Ref< sql::IResultSet > rs;
 	StringOutputStream ss;
 
@@ -132,6 +137,8 @@ bool PipelineDb::getDependency(const Guid& guid, DependencyHash& outHash) const
 
 void PipelineDb::setFile(const Path& path, const FileHash& file)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	Ref< sql::IResultSet > rs;
 	StringOutputStream ss;
 
@@ -149,6 +156,8 @@ void PipelineDb::setFile(const Path& path, const FileHash& file)
 
 bool PipelineDb::getFile(const Path& path, FileHash& outFile)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	Ref< sql::IResultSet > rs;
 	StringOutputStream ss;
 
@@ -167,7 +176,7 @@ bool PipelineDb::getFile(const Path& path, FileHash& outFile)
 
 Ref< IPipelineReport > PipelineDb::createReport(const std::wstring& name, const Guid& guid)
 {
-	return new PipelineDbReport(m_connection, L"Report_" + name, guid);
+	return new PipelineDbReport(m_lock, m_connection, L"Report_" + name, guid);
 }
 
 	}

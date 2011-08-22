@@ -2,9 +2,11 @@
 #define traktor_editor_PipelineBuilder_H
 
 #include <map>
-#include "Editor/IPipelineBuilder.h"
-#include "Core/Thread/Event.h"
 #include "Core/Io/Path.h"
+#include "Core/Thread/Event.h"
+#include "Core/Thread/Semaphore.h"
+#include "Core/Thread/ThreadLocal.h"
+#include "Editor/IPipelineBuilder.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -48,12 +50,10 @@ public:
 
 		/*! \brief Called when an asset is about to be built.
 		 *
-		 * \param assetName Human readable name of asset.
 		 * \param index Index of asset.
 		 * \param count Number of assets to build.
 		 */
 		virtual void begunBuildingAsset(
-			const std::wstring& assetName,
 			uint32_t index,
 			uint32_t count
 		) const = 0;
@@ -65,7 +65,8 @@ public:
 		db::Database* outputDatabase,
 		IPipelineCache* cache,
 		IPipelineDb* db,
-		IListener* listener = 0
+		IListener* listener,
+		bool threadedBuildEnable
 	);
 
 	virtual bool build(const RefArray< PipelineDependency >& dependencies, bool rebuild);
@@ -83,14 +84,20 @@ public:
 	virtual Ref< IPipelineReport > createReport(const std::wstring& name, const Guid& guid);
 
 private:
+	Semaphore m_lock;
 	Ref< PipelineFactory > m_pipelineFactory;
 	Ref< db::Database > m_sourceDatabase;
 	Ref< db::Database > m_outputDatabase;
 	Ref< IPipelineCache > m_cache;
 	Ref< IPipelineDb > m_db;
 	IListener* m_listener;
+	bool m_threadedBuildEnable;
 	std::map< Guid, Ref< ISerializable > > m_readCache;
-	RefArray< db::Instance > m_builtInstances;
+	ThreadLocal m_buildInstances;
+	uint32_t m_progress;
+	uint32_t m_progressEnd;
+	uint32_t m_succeeded;
+	uint32_t m_failed;
 
 	/*! \brief Update dependency local hashes. */
 	void updateLocalHashes(PipelineDependency* dependency);
@@ -115,6 +122,12 @@ private:
 
 	/*! \brief Calculate external file hash. */
 	uint32_t externalFileHash(const Path& path);
+
+	/*! \brief Build thread method. */
+	void buildThread(RefArray< PipelineDependency >::const_iterator begin, RefArray< PipelineDependency >::const_iterator end);
+
+	/*! \brief Increment progress and notify listener. */
+	void incrementProgress();
 };
 
 	}
