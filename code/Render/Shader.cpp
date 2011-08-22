@@ -1,6 +1,7 @@
 #include "Render/Shader.h"
 #include "Render/IProgram.h"
 #include "Render/IRenderView.h"
+#include "Render/ITexture.h"
 #include "Render/Context/ProgramParameters.h"
 
 namespace traktor
@@ -29,7 +30,7 @@ void Shader::destroy()
 
 	for (SmallMap< handle_t, Technique >::iterator i = m_techniques.begin(); i != m_techniques.end(); ++i)
 	{
-		for (std::vector< Combination >::iterator j = i->second.combinations.begin(); j != i->second.combinations.end(); ++j)
+		for (AlignedVector< Combination >::iterator j = i->second.combinations.begin(); j != i->second.combinations.end(); ++j)
 		{
 			if (j->program)
 			{
@@ -103,15 +104,7 @@ void Shader::setMatrixArrayParameter(handle_t handle, const Matrix44* param, int
 
 void Shader::setTextureParameter(handle_t handle, const resource::Proxy< ITexture >& texture)
 {
-	SmallMap< handle_t, int32_t >::iterator i = m_textureMap.find(handle);
-	if (i != m_textureMap.end())
-		m_textureProxies[i->second] = texture;
-	else
-	{
-		int32_t textureProxyId = int32_t(m_textureProxies.size());
-		m_textureProxies.push_back(texture);
-		m_textureMap.insert(handle, textureProxyId);
-	}
+	m_textureProxies[handle] = texture;
 }
 
 void Shader::setStencilReference(uint32_t stencilReference)
@@ -125,13 +118,15 @@ void Shader::draw(IRenderView* renderView, const Primitives& primitives)
 	if (!m_currentProgram)
 		return;
 
-	for (SmallMap< handle_t, int32_t >::iterator i = m_textureMap.begin(); i != m_textureMap.end(); ++i)
+	for (SmallMap< handle_t, resource::Proxy< ITexture > >::iterator i = m_textureProxies.begin(); i != m_textureProxies.end(); ++i)
 	{
-		resource::Proxy< ITexture >& textureProxy = m_textureProxies[i->second];
-		if (textureProxy.validate())
-			m_currentProgram->setTextureParameter(i->first, textureProxy);
-		else
-			m_currentProgram->setTextureParameter(i->first, 0);
+		if (i->second.validate())
+		{
+			m_currentProgram->setTextureParameter(
+				i->first,
+				i->second
+			);
+		}
 	}
 
 	renderView->setProgram(m_currentProgram);
@@ -145,13 +140,15 @@ IProgram* Shader::getCurrentProgram() const
 
 void Shader::setProgramParameters(ProgramParameters* programParameters)
 {
-	for (SmallMap< handle_t, int32_t >::iterator i = m_textureMap.begin(); i != m_textureMap.end(); ++i)
+	for (SmallMap< handle_t, resource::Proxy< ITexture > >::iterator i = m_textureProxies.begin(); i != m_textureProxies.end(); ++i)
 	{
-		resource::Proxy< ITexture >& textureProxy = m_textureProxies[i->second];
-		if (textureProxy.validate())
-			programParameters->setTextureParameter(i->first, textureProxy);
-		else
-			programParameters->setTextureParameter(i->first, 0);
+		if (i->second.validate())
+		{
+			programParameters->setTextureParameter(
+				i->first,
+				i->second
+			);
+		}
 	}
 }
 
@@ -163,7 +160,7 @@ void Shader::updateCurrentProgram()
 		return;
 
 	uint32_t value = m_parameterValue & m_currentTechnique->parameterMask;
-	for (std::vector< Combination >::iterator i = m_currentTechnique->combinations.begin(); i != m_currentTechnique->combinations.end(); ++i)
+	for (AlignedVector< Combination >::iterator i = m_currentTechnique->combinations.begin(); i != m_currentTechnique->combinations.end(); ++i)
 	{
 		if (i->parameterValue == value)
 		{
