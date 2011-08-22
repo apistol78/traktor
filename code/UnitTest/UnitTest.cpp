@@ -23,6 +23,7 @@
 #include "UnitTest/CaseSpatialHashArray.h"
 #include "UnitTest/CaseRenderSw.h"
 #include "UnitTest/CaseSound.h"
+#include "UnitTest/CaseStreamCopy.h"
 #include "Core/Log/Log.h"
 
 using namespace traktor;
@@ -59,23 +60,23 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	//log::info << L"Case heap" << Endl;
 	//traktor::CaseHeap().run();
 
-	log::info << L"Case math" << Endl;
-	traktor::CaseMath().run();
+	//log::info << L"Case math" << Endl;
+	//traktor::CaseMath().run();
 
-	log::info << L"Case matrix 3x3" << Endl;
-	traktor::CaseMatrix33().run();
+	//log::info << L"Case matrix 3x3" << Endl;
+	//traktor::CaseMatrix33().run();
 
-	log::info << L"Case matrix 4x4" << Endl;
-	traktor::CaseMatrix44().run();
+	//log::info << L"Case matrix 4x4" << Endl;
+	//traktor::CaseMatrix44().run();
 
-	log::info << L"Case quaternion" << Endl;
-	traktor::CaseQuaternion().run();
+	//log::info << L"Case quaternion" << Endl;
+	//traktor::CaseQuaternion().run();
 
 	//log::info << L"Case small map" << Endl;
 	//traktor::CaseSmallMap().run();
 
-	log::info << L"Case transform" << Endl;
-	traktor::CaseTransform().run();
+	//log::info << L"Case transform" << Endl;
+	//traktor::CaseTransform().run();
 
 	//log::info << L"Case winding" << Endl;
 	//traktor::CaseWinding().run();
@@ -100,6 +101,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 	//log::info << L"Case sound" << Endl;
 	//traktor::CaseSound().run();
+
+	log::info << L"Case stream copy" << Endl;
+	traktor::CaseStreamCopy().run();
 
 	log::info << L"Finished" << Endl;
 }
