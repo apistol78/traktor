@@ -8,13 +8,15 @@ extern "C"
 	#include "lwo2.h"
 }
 
-#include "Model/Formats/ModelFormatLwo.h"
-#include "Model/Model.h"
-#include "Core/Serialization/ISerializable.h"
 #include "Core/Io/Path.h"
-#include "Core/Misc/TString.h"
-#include "Core/Misc/String.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/String.h"
+#include "Core/Misc/TString.h"
+#include "Core/Serialization/ISerializable.h"
+#include "Core/Thread/Acquire.h"
+#include "Core/Thread/Semaphore.h"
+#include "Model/Model.h"
+#include "Model/Formats/ModelFormatLwo.h"
 
 namespace traktor
 {
@@ -28,6 +30,8 @@ namespace traktor
 #define ID_MORF	LWID_('M','O','R','F')	// Relative
 #define ID_RGBA LWID_('R','G','B','A')	// Vertex color map.
 #define ID_RGB  LWID_('R','G','B',' ')	// Vertex color map (no alpha).
+
+Semaphore s_lock;	//< LWO parser isn't thread-safe; it's having global variables for tracking IO bytes.
 
 const lwClip* findLwClip(const lwObject* lwo, int clipIndex)
 {
@@ -378,6 +382,8 @@ bool ModelFormatLwo::supportFormat(const Path& filePath) const
 
 Ref< Model > ModelFormatLwo::read(const Path& filePath, uint32_t importFlags) const
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(s_lock);
+
 #if defined(_WIN32)
 	std::string fileNameTmp = wstombs(filePath.getPathName());
 #else
