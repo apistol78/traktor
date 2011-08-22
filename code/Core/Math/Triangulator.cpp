@@ -9,14 +9,14 @@ namespace traktor
 	namespace
 	{
 
-void getAdjacent(const AlignedVector< Vector2 >& points, int index, int& prev, int& next)
+void getAdjacent(const AlignedVector< Vector2 >& points, int32_t index, int32_t& prev, int32_t& next)
 {
 	prev = index - 1;
 	if (prev < 0)
-		prev = int(points.size() - 1);
+		prev = int32_t(points.size() - 1);
 
 	next = index + 1;
-	if (next >= int(points.size()))
+	if (next >= int32_t(points.size()))
 		next = 0;
 }
 
@@ -45,9 +45,9 @@ bool pointInTriangle(
 	return (a1 > 0 && a2 > 0 && a3 > 0) || (a1 < 0 && a2 < 0 && a3 < 0);
 }
 
-bool isConvex(const AlignedVector< Vector2 >& points, int index)
+bool isConvex(const AlignedVector< Vector2 >& points, int32_t index)
 {
-	int prev, next;
+	int32_t prev, next;
 	getAdjacent(points, index, prev, next);
 
 	const Vector2& p = points[prev];
@@ -64,9 +64,9 @@ struct SortInternalAngle
 	{
 	}
 
-	bool operator () (int a, int b)
+	bool operator () (int32_t a, int32_t b)
 	{
-		int pa, na, pb, nb;
+		int32_t pa, na, pb, nb;
 		
 		getAdjacent(m_points, a, pa, na);
 		getAdjacent(m_points, b, pb, nb);
@@ -130,27 +130,27 @@ void Triangulator::freeze(
 		cw = polygonClockwise(points);
 	
 	AlignedVector< Vector2 > uncut = points;
-	std::vector< int > indices(uncut.size());
-	for (int i = 0; i < int(uncut.size()); ++i)
+	std::vector< int32_t > indices(uncut.size());
+	for (int32_t i = 0; i < int(uncut.size()); ++i)
 		indices[i] = i;
 
+	std::vector< int32_t > ears;
 	while (uncut.size() >= 3)
 	{
-		static std::vector< int > ears;
 		ears.resize(0);
 
 		// Collect polygon ears.
-		for (int i = 0; i < int(uncut.size()); ++i)
+		for (int32_t i = 0; i < int32_t(uncut.size()); ++i)
 		{
 			bool convex = isConvex(uncut, i) ^ !cw;
 			if (!convex)
 				continue;
 
-			int prev, next;
+			int32_t prev, next;
 			getAdjacent(uncut, i, prev, next);
 
 			bool ear = true;
-			for (int j = 0; j < int(uncut.size()) && ear; ++j)
+			for (int j = 0; j < int32_t(uncut.size()) && ear; ++j)
 			{
 				if (j == prev || j == i || j == next)
 					continue;
@@ -176,10 +176,10 @@ void Triangulator::freeze(
 		// Sort ears by minimize internal angle differences.
 		if (flags & TfSorted)
 			std::sort(ears.begin(), ears.end(), SortInternalAngle(uncut));
-		int cut = ears.front();
+		int32_t cut = ears.front();
 
 		// Cut the ear.
-		int prev, next;
+		int32_t prev, next;
 		getAdjacent(uncut, cut, prev, next);
 
 		Triangle t;
