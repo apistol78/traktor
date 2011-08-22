@@ -60,7 +60,7 @@ void BufferedStream::close()
 {
 	if (m_stream)
 	{
-		flush();
+		flushWriteBuffer();
 		m_stream->close();
 		m_stream = 0;
 	}
@@ -146,7 +146,7 @@ int BufferedStream::seek(SeekOriginType origin, int offset)
 		return -1;
 	}
 	else if (m_stream->canWrite())
-		flush();
+		flushWriteBuffer();
 
 	return m_stream->seek(origin, offset);
 }
@@ -230,12 +230,12 @@ int BufferedStream::write(const void* block, int nbytes)
 			ptr += nwrite;
 
 			if (m_writeBufCnt >= int(m_internalBufferSize))
-				flush();
+				flushWriteBuffer();
 		}
 	}
 	else
 	{
-		flush();
+		flushWriteBuffer();
 		nwritten = m_stream->write(block, nbytes);
 	}
 
@@ -245,12 +245,17 @@ int BufferedStream::write(const void* block, int nbytes)
 void BufferedStream::flush()
 {
 	T_ASSERT (m_stream);
+	flushWriteBuffer();
+	m_stream->flush();
+}
+
+void BufferedStream::flushWriteBuffer()
+{
 	if (m_writeBufCnt > 0)
 	{
 		m_stream->write(m_writeBuf, m_writeBufCnt);
 		m_writeBufCnt = 0;
 	}
-	m_stream->flush();
 }
 
 }

@@ -62,6 +62,8 @@ private:
 	int32_t m_readBufCnt[2];
 	uint8_t* m_writeBuf;
 	int32_t m_writeBufCnt;
+
+	void flushWriteBuffer();
 };
 
 }
