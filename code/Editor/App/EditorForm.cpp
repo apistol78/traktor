@@ -126,7 +126,6 @@ struct StatusListener : public PipelineBuilder::IListener
 	}
 
 	virtual void begunBuildingAsset(
-		const std::wstring& assetName,
 		uint32_t index,
 		uint32_t count
 	) const
@@ -1004,7 +1003,8 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 		m_outputDatabase,
 		pipelineCache,
 		pipelineDb,
-		&listener
+		&listener,
+		m_settings->getProperty< PropertyBoolean >(L"Pipeline.BuildThreads", true)
 	);
 
 	if (rebuild)

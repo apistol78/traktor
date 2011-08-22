@@ -5,6 +5,8 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/Adler32.h"
 #include "Core/Serialization/DeepHash.h"
+#include "Core/System/OS.h"
+#include "Core/Thread/Acquire.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Core/Timer/Timer.h"
@@ -32,7 +34,8 @@ PipelineBuilder::PipelineBuilder(
 	db::Database* outputDatabase,
 	IPipelineCache* cache,
 	IPipelineDb* db,
-	IListener* listener
+	IListener* listener,
+	bool threadedBuildEnable
 )
 :	m_pipelineFactory(pipelineFactory)
 ,	m_sourceDatabase(sourceDatabase)
@@ -40,14 +43,22 @@ PipelineBuilder::PipelineBuilder(
 ,	m_cache(cache)
 ,	m_db(db)
 ,	m_listener(listener)
+,	m_threadedBuildEnable(threadedBuildEnable)
+,	m_progress(0)
+,	m_progressEnd(0)
+,	m_succeeded(0)
+,	m_failed(0)
 {
 }
 
 bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, bool rebuild)
 {
-	int32_t succeeded = 0, failed = 0;
-	Timer timer;
+	T_ANONYMOUS_VAR(ScopeIndent)(log::info);
+	T_ANONYMOUS_VAR(ScopeIndent)(log::warning);
+	T_ANONYMOUS_VAR(ScopeIndent)(log::error);
+	T_ANONYMOUS_VAR(ScopeIndent)(log::debug);
 
+	Timer timer;
 	timer.start();
 
 	// Update dependency hashes.
@@ -60,36 +71,58 @@ bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, 
 
 	log::debug << L"Pipeline build; analyze " << int32_t(timer.getElapsedTime() * 1000) << L" ms" << Endl;
 
-	// Build assets which are dirty or have dirty dependency assets.
-	for (RefArray< PipelineDependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
+	m_progress = 0;
+	m_progressEnd = dependencies.size();
+	m_succeeded = 0;
+	m_failed = 0;
+
+	// Split workload on threads; use as many threads as there are CPU cores.
+	// If build set is less than twice number of cores we don't build asynchronously.
+	uint32_t cpuCores = OS::getInstance().getCPUCoreCount();
+	if (m_threadedBuildEnable && dependencies.size() >= cpuCores * 2)
 	{
-		// Abort if current thread has been stopped; thread are stopped by worker dialog.
-		if (ThreadManager::getInstance().getCurrentThread()->stopped())
-			break;
+		std::vector< Thread* > threads(cpuCores, 0);
 
-		// Notify listener about we're beginning to build the asset.
-		if (m_listener)
-			m_listener->begunBuildingAsset(
-			(*i)->name,
-			uint32_t(std::distance(dependencies.begin(), i)),
-			uint32_t(dependencies.size())
-		);
+		// Spawn thread for each slice of the work load.
+		for (uint32_t i = 0; i < cpuCores; ++i)
+		{
+			uint32_t offsetStart = (dependencies.size() * i) / cpuCores;
+			uint32_t offsetEnd = (dependencies.size() * (i + 1)) / cpuCores;
+			if (offsetStart < offsetEnd)
+			{
+				threads[i] = ThreadManager::getInstance().create(
+					makeFunctor(this, &PipelineBuilder::buildThread, dependencies.begin() + offsetStart, dependencies.begin() + offsetEnd),
+					L"Build thread"
+				);
+				threads[i]->start();
+			}
+		}
 
-		if (performBuild(*i))
-			++succeeded;
-		else
-			++failed;
+		// Wait until all threads have finished.
+		for (uint32_t i = 0; i < cpuCores; ++i)
+		{
+			if (threads[i])
+			{
+				threads[i]->wait();
+				ThreadManager::getInstance().destroy(threads[i]);
+			}
+		}
+	}
+	else
+	{
+		// Invoke thread method directly to build all dependencies.
+		buildThread(dependencies.begin(), dependencies.end());
 	}
 
 	log::debug << L"Pipeline build; total " << int32_t(timer.getElapsedTime() * 1000) << L" ms" << Endl;
 
 	// Log results.
 	if (!ThreadManager::getInstance().getCurrentThread()->stopped())
-		log::info << L"Build finished; " << succeeded << L" succeeded, " << failed << L" failed" << Endl;
+		log::info << L"Build finished; " << m_succeeded << L" succeeded, " << m_failed << L" failed" << Endl;
 	else
 		log::info << L"Build finished; aborted" << Endl;
 
-	return failed == 0;
+	return m_failed == 0;
 }
 
 bool PipelineBuilder::buildOutput(const ISerializable* sourceAsset, const Object* buildParams, const std::wstring& name, const std::wstring& outputPath, const Guid& outputGuid)
@@ -115,6 +148,7 @@ Ref< db::Database > PipelineBuilder::getOutputDatabase() const
 
 Ref< db::Instance > PipelineBuilder::createOutputInstance(const std::wstring& instancePath, const Guid& instanceGuid)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	Ref< db::Instance > instance;
 
 	instance = m_outputDatabase->getInstance(instanceGuid);
@@ -140,7 +174,9 @@ Ref< db::Instance > PipelineBuilder::createOutputInstance(const std::wstring& in
 	);
 	if (instance)
 	{
-		m_builtInstances.push_back(instance);
+		RefArray< db::Instance >* builtInstances = reinterpret_cast< RefArray< db::Instance >* >(m_buildInstances.get());
+		if (builtInstances)
+			builtInstances->push_back(instance);
 		return instance;
 	}
 	else
@@ -149,6 +185,7 @@ Ref< db::Instance > PipelineBuilder::createOutputInstance(const std::wstring& in
 
 Ref< const ISerializable > PipelineBuilder::getObjectReadOnly(const Guid& instanceGuid)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	Ref< ISerializable > object;
 
 	std::map< Guid, Ref< ISerializable > >::iterator i = m_readCache.find(instanceGuid);
@@ -285,7 +322,8 @@ bool PipelineBuilder::performBuild(PipelineDependency* dependency)
 		{
 			// Build output instances; keep an array of written instances as we
 			// need them to update the cache.
-			m_builtInstances.resize(0);
+			RefArray< db::Instance > builtInstances;
+			m_buildInstances.set(&builtInstances);
 
 			result = dependency->pipeline->buildOutput(
 				this,
@@ -299,12 +337,12 @@ bool PipelineBuilder::performBuild(PipelineDependency* dependency)
 
 			if (result)
 			{
-				if (!m_builtInstances.empty())
+				if (!builtInstances.empty())
 				{
 					log::info << L"Instance(s) built:" << Endl;
 					log::info << IncreaseIndent;
 
-					for (RefArray< db::Instance >::const_iterator j = m_builtInstances.begin(); j != m_builtInstances.end(); ++j)
+					for (RefArray< db::Instance >::const_iterator j = builtInstances.begin(); j != builtInstances.end(); ++j)
 						log::info << L"\"" << (*j)->getPath() << L"\"" << Endl;
 
 					if (m_cache)
@@ -312,7 +350,7 @@ bool PipelineBuilder::performBuild(PipelineDependency* dependency)
 							dependency->outputGuid,
 							currentDependencyHash.hash,
 							currentDependencyHash.pipelineVersion,
-							m_builtInstances
+							builtInstances
 						);
 
 					log::info << DecreaseIndent;
@@ -448,6 +486,34 @@ uint32_t PipelineBuilder::externalFileHash(const Path& path)
 	uint32_t hash = adler.get();
 
 	return hash;
+}
+
+void PipelineBuilder::buildThread(RefArray< PipelineDependency >::const_iterator begin, RefArray< PipelineDependency >::const_iterator end)
+{
+	for (RefArray< PipelineDependency >::const_iterator i = begin; i != end; ++i)
+	{
+		// Abort if current thread has been stopped; thread are stopped by worker dialog.
+		if (ThreadManager::getInstance().getCurrentThread()->stopped())
+			break;
+
+		incrementProgress();
+
+		if (performBuild(*i))
+			++m_succeeded;
+		else
+			++m_failed;
+	}
+}
+
+void PipelineBuilder::incrementProgress()
+{
+	if (m_listener)
+		m_listener->begunBuildingAsset(
+			m_progress,
+			m_progressEnd
+		);
+
+	++m_progress;
 }
 
 	}

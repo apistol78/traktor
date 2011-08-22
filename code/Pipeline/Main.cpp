@@ -78,7 +78,6 @@ private:
 struct StatusListener : public editor::PipelineBuilder::IListener
 {
 	virtual void begunBuildingAsset(
-		const std::wstring& assetName,
 		uint32_t index,
 		uint32_t count
 	) const
@@ -312,7 +311,8 @@ int main(int argc, const char** argv)
 		outputDatabase,
 		pipelineCache,
 		pipelineDb,
-		statusListener.ptr()
+		statusListener.ptr(),
+		settings->getProperty< PropertyBoolean >(L"Pipeline.BuildThreads", true)
 	);
 
 	bool rebuild = cmdLine.hasOption('f');
@@ -329,7 +329,7 @@ int main(int argc, const char** argv)
 	);
 
 	// Execute build thread; keep watching if we've
-	// recevied a break signal thus terminate thread early.
+	// received a break signal thus terminate thread early.
 	bt->start();
 	while (!bt->wait(100))
 	{

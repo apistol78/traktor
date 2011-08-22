@@ -32,12 +32,12 @@ public:
 	virtual bool apply(Settings* settings);
 
 private:
+	Ref< ui::CheckBox > m_checkBuildThreads;
 	Ref< ui::CheckBox > m_checkUseMemCached;
 	Ref< ui::Edit > m_editMemCachedHost;
 	Ref< ui::Edit > m_editMemCachedPort;
 	Ref< ui::CheckBox > m_checkMemCachedRead;
 	Ref< ui::CheckBox > m_checkMemCachedWrite;
-
 	Ref< ui::CheckBox > m_checkUseFileCache;
 	Ref< ui::Edit > m_editFileCachePath;
 	Ref< ui::CheckBox > m_checkFileCacheRead;

@@ -1,6 +1,7 @@
 #ifndef traktor_editor_PipelineDb_H
 #define traktor_editor_PipelineDb_H
 
+#include "Core/Thread/Semaphore.h"
 #include "Editor/IPipelineDb.h"
 
 // import/export mechanism.
@@ -43,6 +44,7 @@ public:
 	virtual Ref< IPipelineReport > createReport(const std::wstring& name, const Guid& guid);
 
 private:
+	mutable Semaphore m_lock;
 	Ref< sql::IConnection > m_connection;
 };
 

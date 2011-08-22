@@ -365,6 +365,10 @@
       <first>EDITOR_SETTINGS_PIPELINE</first>
       <second>Pipeline</second>
     </item>
+	<item>
+		<first>EDITOR_SETTINGS_PIPELINE_BUILD_THREADS</first>
+		<second>Use multiple build threads</second>
+	</item>
     <item>
       <first>EDITOR_SETTINGS_PIPELINE_ENABLE_MEMCACHED</first>
       <second>Use memcached</second>
