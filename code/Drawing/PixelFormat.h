@@ -13,6 +13,9 @@
 
 namespace traktor
 {
+
+class Color4f;
+
 	namespace drawing
 	{
 	
@@ -54,6 +57,24 @@ public:
 		const Palette* srcPalette,
 		const void* T_RESTRICT srcPixels,
 		const PixelFormat& dstFormat,
+		const Palette* dstPalette,
+		void* T_RESTRICT dstPixels,
+		int pixelCount
+	) const;
+
+	/*! \brief Convert pixels to FP32 format.
+	 */
+	void convertTo4f(
+		const Palette* srcPalette,
+		const void* T_RESTRICT srcPixels,
+		Color4f* T_RESTRICT dstPixels,
+		int pixelCount
+	) const;
+
+	/*! \brief Convert pixels from FP32 format.
+	 */
+	void convertFrom4f(
+		const Color4f* T_RESTRICT srcPixels,
 		const Palette* dstPalette,
 		void* T_RESTRICT dstPixels,
 		int pixelCount
