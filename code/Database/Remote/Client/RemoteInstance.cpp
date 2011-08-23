@@ -10,6 +10,7 @@
 #include "Database/Remote/Messages/DbmSetInstanceName.h"
 #include "Database/Remote/Messages/DbmGetInstanceGuid.h"
 #include "Database/Remote/Messages/DbmSetInstanceGuid.h"
+#include "Database/Remote/Messages/DbmRemoveAllData.h"
 #include "Database/Remote/Messages/DbmRemoveInstance.h"
 #include "Database/Remote/Messages/DbmReadObject.h"
 #include "Database/Remote/Messages/DbmWriteObject.h"
@@ -130,6 +131,12 @@ uint32_t RemoteInstance::getDataNames(std::vector< std::wstring >& outDataNames)
 
 	outDataNames = result->get();
 	return uint32_t(outDataNames.size());
+}
+
+bool RemoteInstance::removeAllData()
+{
+	Ref< MsgStatus > result = m_connection->sendMessage< MsgStatus >(DbmRemoveAllData(m_handle));
+	return result ? result->getStatus() == StSuccess : false;
 }
 
 Ref< IStream > RemoteInstance::readData(const std::wstring& dataName)

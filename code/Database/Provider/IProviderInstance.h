@@ -53,6 +53,8 @@ public:
 
 	virtual uint32_t getDataNames(std::vector< std::wstring >& outDataNames) const = 0;
 
+	virtual bool removeAllData() = 0;
+
 	virtual Ref< IStream > readData(const std::wstring& dataName) = 0;
 
 	virtual Ref< IStream > writeData(const std::wstring& dataName) = 0;

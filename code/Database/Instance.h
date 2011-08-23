@@ -57,6 +57,8 @@ public:
 
 	virtual Guid getGuid() const;
 
+	virtual bool setGuid(const Guid& guid);
+
 	virtual std::wstring getPrimaryTypeName() const;
 
 	virtual const TypeInfo* getPrimaryType() const;
@@ -76,6 +78,8 @@ public:
 	virtual bool setObject(const ISerializable* object);
 
 	virtual uint32_t getDataNames(std::vector< std::wstring >& dataNames) const;
+
+	virtual bool removeAllData();
 
 	virtual Ref< IStream > readData(const std::wstring& dataName);
 

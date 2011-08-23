@@ -56,8 +56,11 @@ int ProgressBar::getMaxRange() const
 
 void ProgressBar::setProgress(int progress)
 {
-	m_progress = progress;
-	update();
+	if (m_progress != progress)
+	{
+		m_progress = progress;
+		update();
+	}
 }
 
 int ProgressBar::getProgress() const
