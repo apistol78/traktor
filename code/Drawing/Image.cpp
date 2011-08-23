@@ -213,28 +213,18 @@ bool Image::setPixel(int32_t x, int32_t y, const Color4f& color)
 
 void Image::getPixelUnsafe(int32_t x, int32_t y, Color4f& outColor) const
 {
-	float T_MATH_ALIGN16 tmp[4];
-	
-	m_pixelFormat.convert(
+	m_pixelFormat.convertTo4f(
 		m_palette,
 		&m_data[x * m_pixelFormat.getByteSize() + y * m_pitch],
-		PixelFormat::getRGBAF32(),
-		0,
-		tmp,
+		&outColor,
 		1
 	);
-	
-	outColor = Color4f::loadAligned(tmp);
 }
 
 void Image::setPixelUnsafe(int32_t x, int32_t y, const Color4f& color)
 {
-	float T_MATH_ALIGN16 tmp[4];
-	color.storeAligned(tmp);
-	PixelFormat::getRGBAF32().convert(
-		0,
-		tmp,
-		m_pixelFormat,
+	m_pixelFormat.convertFrom4f(
+		&color,
 		m_palette,
 		&m_data[x * m_pixelFormat.getByteSize() + y * m_pitch],
 		1
@@ -243,90 +233,24 @@ void Image::setPixelUnsafe(int32_t x, int32_t y, const Color4f& color)
 
 void Image::getSpanUnsafe(int32_t y, Color4f* outSpan) const
 {
-	float T_MATH_ALIGN16 tmp[64 * 4];
 	int32_t offset = y * m_pitch;
-	int32_t x = 0;
-	for (; x <= m_width - 64; x += 64)
-	{
-		m_pixelFormat.convert(
-			m_palette,
-			&m_data[x * m_pixelFormat.getByteSize() + offset],
-			PixelFormat::getRGBAF32(),
-			0,
-			tmp,
-			64
-		);
-		for (int32_t i = 0; i < 64; i += 4)
-		{
-			int32_t ii = i << 2;
-			Color4f c0 = Color4f::loadAligned(&tmp[ii + 0]);
-			Color4f c1 = Color4f::loadAligned(&tmp[ii + 4]);
-			Color4f c2 = Color4f::loadAligned(&tmp[ii + 8]);
-			Color4f c3 = Color4f::loadAligned(&tmp[ii + 12]);
-			outSpan[x + i + 0] = c0;
-			outSpan[x + i + 1] = c1;
-			outSpan[x + i + 2] = c2;
-			outSpan[x + i + 3] = c3;
-		}
-	}
-	if (x < m_width)
-	{
-		int32_t n = m_width - x;
-		T_ASSERT (n < 64);
-
-		m_pixelFormat.convert(
-			m_palette,
-			&m_data[x * m_pixelFormat.getByteSize() + offset],
-			PixelFormat::getRGBAF32(),
-			0,
-			tmp,
-			n
-		);
-		for (int32_t i = 0; i < n; ++i)
-			outSpan[x + i] = Color4f::loadAligned(&tmp[i << 2]);
-	}
+	m_pixelFormat.convertTo4f(
+		m_palette,
+		&m_data[offset],
+		outSpan,
+		m_width
+	);
 }
 
 void Image::setSpanUnsafe(int32_t y, const Color4f* span)
 {
-	float T_MATH_ALIGN16 tmp[64 * 4];
 	int32_t offset = y * m_pitch;
-	int32_t x = 0;
-	for (; x <= m_width - 64; x += 64)
-	{
-		for (int32_t i = 0; i < 64; i += 4)
-		{
-			int32_t ii = i << 2;
-			span[x + i + 0].storeAligned(&tmp[ii + 0]);
-			span[x + i + 1].storeAligned(&tmp[ii + 4]);
-			span[x + i + 2].storeAligned(&tmp[ii + 8]);
-			span[x + i + 3].storeAligned(&tmp[ii + 12]);
-		}
-		PixelFormat::getRGBAF32().convert(
-			0,
-			tmp,
-			m_pixelFormat,
-			m_palette,
-			&m_data[x * m_pixelFormat.getByteSize() + offset],
-			64
-		);
-	}
-	if (x < m_width)
-	{
-		int32_t n = m_width - x;
-		T_ASSERT (n < 64);
-
-		for (int32_t i = 0; i < n; ++i)
-			span[x + i].storeAligned(&tmp[i << 2]);
-		PixelFormat::getRGBAF32().convert(
-			0,
-			tmp,
-			m_pixelFormat,
-			m_palette,
-			&m_data[x * m_pixelFormat.getByteSize() + offset],
-			n
-		);
-	}
+	m_pixelFormat.convertFrom4f(
+		span,
+		m_palette,
+		&m_data[offset],
+		1
+	);
 }
 
 Ref< Image > Image::applyFilter(IImageFilter* imageFilter) const

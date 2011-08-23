@@ -344,11 +344,11 @@ void PixelFormat::convert(
 	uint32_t i;
 	float clr[4];
 
-	// Quick path; if source and destination are <=32 bit formats.
-	if (
-		!isPalettized() && !isFloatPoint() && getColorBits() <= 32 &&
-		!dstFormat.isPalettized() && !dstFormat.isFloatPoint() && dstFormat.getColorBits() <= 32
-	)
+	bool isSourcePacked32 = !isPalettized() && !isFloatPoint() && getColorBits() <= 32;
+	bool isDestinationPacked32 = !dstFormat.isPalettized() && !dstFormat.isFloatPoint() && dstFormat.getColorBits() <= 32;
+
+	// Quick path 1; if source and destination are <=32 bit formats.
+	if (isSourcePacked32 && isDestinationPacked32)
 	{
 		uint32_t srb = 8 - getRedBits();
 		uint32_t sgb = 8 - getGreenBits();
@@ -391,6 +391,73 @@ void PixelFormat::convert(
 			dst += dstFormat.getByteSize();
 		}
 	}
+
+	// Quick-path 2; if source format <=32 and destination format is FP
+	else if (isSourcePacked32 && dstFormat.isFloatPoint())
+	{
+		uint32_t rmx = ((1 << getRedBits()  ) - 1);
+		uint32_t gmx = ((1 << getGreenBits()) - 1);
+		uint32_t bmx = ((1 << getBlueBits() ) - 1);
+		uint32_t amx = ((1 << getAlphaBits()) - 1);
+
+		float ir = rmx ? (1.0f / rmx) : 0.0f;
+		float ig = rmx ? (1.0f / gmx) : 0.0f;
+		float ib = rmx ? (1.0f / bmx) : 0.0f;
+		float ia = rmx ? (1.0f / amx) : 0.0f;
+
+		for (int ii = 0; ii < pixelCount; ++ii)
+		{
+			uint32_t s = (*m_unpack)(src);
+
+			uint32_t r = (s >> getRedShift()) & rmx;
+			uint32_t g = (s >> getGreenShift()) & gmx;
+			uint32_t b = (s >> getBlueShift()) & bmx;
+			uint32_t a = (s >> getAlphaShift()) & amx;
+
+			*(float* T_RESTRICT)&dst[dstFormat.getRedShift()   >> 3] = r * ir;
+			*(float* T_RESTRICT)&dst[dstFormat.getGreenShift() >> 3] = g * ig;
+			*(float* T_RESTRICT)&dst[dstFormat.getBlueShift()  >> 3] = b * ib;
+			*(float* T_RESTRICT)&dst[dstFormat.getAlphaShift() >> 3] = a * ia;
+
+			src += getByteSize();
+			dst += dstFormat.getByteSize();
+		}
+	}
+
+	// Quick-path 3; if source format is FP and destination format is <=32
+	else if (isFloatPoint() && isDestinationPacked32)
+	{
+		uint32_t rmx = ((1 << dstFormat.getRedBits()  ) - 1);
+		uint32_t gmx = ((1 << dstFormat.getGreenBits()) - 1);
+		uint32_t bmx = ((1 << dstFormat.getBlueBits() ) - 1);
+		uint32_t amx = ((1 << dstFormat.getAlphaBits()) - 1);
+
+		for (int ii = 0; ii < pixelCount; ++ii)
+		{
+			float rf = *(const float* T_RESTRICT)&src[getRedShift()   >> 3];
+			float gf = *(const float* T_RESTRICT)&src[getGreenShift() >> 3];
+			float bf = *(const float* T_RESTRICT)&src[getBlueShift()  >> 3];
+			float af = *(const float* T_RESTRICT)&src[getAlphaShift() >> 3];
+
+			uint32_t r = uint32_t(clamp(rf) * rmx);
+			uint32_t g = uint32_t(clamp(gf) * gmx);
+			uint32_t b = uint32_t(clamp(bf) * bmx);
+			uint32_t a = uint32_t(clamp(af) * amx);
+
+			(*dstFormat.m_pack)(
+				dst,
+				(r << dstFormat.getRedShift()) |
+				(g << dstFormat.getGreenShift()) |
+				(b << dstFormat.getBlueShift()) |
+				(a << dstFormat.getAlphaShift())
+			);
+
+			src += getByteSize();
+			dst += dstFormat.getByteSize();
+		}
+	}
+
+	// Universal path.
 	else
 	{
 		// Convert pixels.
@@ -548,6 +615,282 @@ void PixelFormat::convert(
 			// Next pixel
 			src += getByteSize();
 			dst += dstFormat.getByteSize();
+		}
+	}
+}
+
+void PixelFormat::convertTo4f(
+	const Palette* srcPalette,
+	const void* T_RESTRICT srcPixels,
+	Color4f* T_RESTRICT dstPixels,
+	int pixelCount
+) const
+{
+	const uint8_t* T_RESTRICT src = static_cast< const uint8_t* T_RESTRICT >(srcPixels);
+	Color4f* T_RESTRICT dst = dstPixels;
+
+	if (!isPalettized() && !isFloatPoint() && getColorBits() <= 32)
+	{
+		uint32_t rmx = ((1 << getRedBits()  ) - 1);
+		uint32_t gmx = ((1 << getGreenBits()) - 1);
+		uint32_t bmx = ((1 << getBlueBits() ) - 1);
+		uint32_t amx = ((1 << getAlphaBits()) - 1);
+
+		float ir = rmx ? (1.0f / rmx) : 0.0f;
+		float ig = gmx ? (1.0f / gmx) : 0.0f;
+		float ib = bmx ? (1.0f / bmx) : 0.0f;
+		float ia = amx ? (1.0f / amx) : 0.0f;
+
+		Color4f inv(ir, ig, ib, ia);
+
+#if defined(T_MATH_USE_SSE2)
+		__m128i mx = _mm_set_epi32(amx, bmx, gmx, rmx);
+#endif
+
+		for (int ii = 0; ii < pixelCount; ++ii)
+		{
+			uint32_t s = (*m_unpack)(src);
+
+#if defined(T_MATH_USE_SSE2)
+
+			__m128i t0 = _mm_set_epi32(s >> getAlphaShift(), s >> getBlueShift(), s >> getGreenShift(), s >> getRedShift());
+			__m128i t1 = _mm_and_si128(t0, mx);
+			__m128 fp = _mm_cvtepi32_ps(t1);
+
+			*dst = Color4f(Vector4(fp)) * inv;
+
+#else
+			uint32_t r = (s >> getRedShift()) & rmx;
+			uint32_t g = (s >> getGreenShift()) & gmx;
+			uint32_t b = (s >> getBlueShift()) & bmx;
+			uint32_t a = (s >> getAlphaShift()) & amx;
+
+			*dst = Color4f(
+				float(r),
+				float(g),
+				float(b),
+				float(a)
+			) * inv;
+#endif
+			src += getByteSize();
+			dst++;
+		}
+	}
+	else
+	{
+		float T_MATH_ALIGN16 clr[4];
+		uint32_t tmp;
+		uint32_t i;
+
+		for (int ii = 0; ii < pixelCount; ++ii)
+		{
+			// src => rgba
+			if (isPalettized())
+			{
+				uint32_t s = (*m_unpack)(src);
+				srcPalette->get(s).storeUnaligned(clr);
+			}
+			else if (isFloatPoint())
+			{
+				clr[0] = *(const float *)&src[getRedShift()   >> 3];
+				clr[1] = *(const float *)&src[getGreenShift() >> 3];
+				clr[2] = *(const float *)&src[getBlueShift()  >> 3];
+				clr[3] = *(const float *)&src[getAlphaShift() >> 3];
+			}
+			else if (getColorBits() <= 32)
+			{
+				uint32_t s = (*m_unpack)(src);
+
+				uint32_t rmx = ((1 << getRedBits()  ) - 1);
+				uint32_t gmx = ((1 << getGreenBits()) - 1);
+				uint32_t bmx = ((1 << getBlueBits() ) - 1);
+				uint32_t amx = ((1 << getAlphaBits()) - 1);
+
+				uint32_t r = (s >> getRedShift()) & rmx;
+				uint32_t g = (s >> getGreenShift()) & gmx;
+				uint32_t b = (s >> getBlueShift()) & bmx;
+				uint32_t a = (s >> getAlphaShift()) & amx;
+
+				clr[0] = rmx ? (float(r) / rmx) : 0.0f;
+				clr[1] = gmx ? (float(g) / gmx) : 0.0f;
+				clr[2] = bmx ? (float(b) / bmx) : 0.0f;
+				clr[3] = amx ? (float(a) / amx) : 0.0f;
+			}
+			else	// getColorBits() > 32
+			{
+				for (tmp = i = 0; i < uint32_t(getRedBits()); ++i)
+				{
+					uint32_t o = i + getRedShift();
+					if ((src[o >> 3] & (1 << (o & 7))) != 0)
+						tmp |= 1 << (i + 8 - getRedBits());
+				}
+				clr[0] = tmp / 255.0f;
+
+				for (tmp = i = 0; i < uint32_t(getGreenBits()); ++i)
+				{
+					uint32_t o = i + getGreenShift();
+					if ((src[o >> 3] & (1 << (o & 7))) != 0)
+						tmp |= 1 << (i + 8 - getGreenBits());
+				}
+				clr[1] = tmp / 255.0f;
+
+				for (tmp = i = 0; i < uint32_t(getBlueBits()); ++i)
+				{
+					uint32_t o = i + getBlueShift();
+					if ((src[o >> 3] & (1 << (o & 7))) != 0)
+						tmp |= 1 << (i + 8 - getBlueBits());
+				}
+				clr[2] = tmp / 255.0f;
+
+				for (tmp = i = 0; i < uint32_t(getAlphaBits()); ++i)
+				{
+					uint32_t o = i + getAlphaShift();
+					if ((src[o >> 3] & (1 << (o & 7))) != 0)
+						tmp |= 1 << (i + 8 - getAlphaBits());
+				}
+				clr[3] = tmp / 255.0f;
+			}
+
+			*dst = Color4f::loadAligned(clr);
+
+			src += getByteSize();
+			dst++;
+		}
+	}
+}
+
+void PixelFormat::convertFrom4f(
+	const Color4f* T_RESTRICT srcPixels,
+	const Palette* dstPalette,
+	void* T_RESTRICT dstPixels,
+	int pixelCount
+) const
+{
+	const Color4f* T_RESTRICT src = srcPixels;
+	uint8_t* T_RESTRICT dst = static_cast< uint8_t* T_RESTRICT >(dstPixels);
+	float T_MATH_ALIGN16 clr[4];
+
+	if (!isPalettized() && !isFloatPoint() && getColorBits() <= 32)
+	{
+		uint32_t rmx = ((1 << getRedBits()  ) - 1);
+		uint32_t gmx = ((1 << getGreenBits()) - 1);
+		uint32_t bmx = ((1 << getBlueBits() ) - 1);
+		uint32_t amx = ((1 << getAlphaBits()) - 1);
+
+		for (int ii = 0; ii < pixelCount; ++ii)
+		{
+			src->storeAligned(clr);
+
+			uint32_t r = uint32_t(clamp(clr[0]) * rmx);
+			uint32_t g = uint32_t(clamp(clr[1]) * gmx);
+			uint32_t b = uint32_t(clamp(clr[2]) * bmx);
+			uint32_t a = uint32_t(clamp(clr[3]) * amx);
+
+			(*m_pack)(
+				dst,
+				(r << getRedShift()) |
+				(g << getGreenShift()) |
+				(b << getBlueShift()) |
+				(a << getAlphaShift())
+			);
+
+			src++;
+			dst += getByteSize();
+		}
+	}
+	else
+	{
+		for (int ii = 0; ii < pixelCount; ++ii)
+		{
+			src->storeAligned(clr);
+
+			// rgba => dst
+			if (isPalettized())
+			{
+				(*m_pack)(
+					dst,
+					dstPalette->find(*src)
+				);
+			}
+			else if (isFloatPoint())
+			{
+				*(float* T_RESTRICT)&dst[getRedShift()   >> 3] = clr[0];
+				*(float* T_RESTRICT)&dst[getGreenShift() >> 3] = clr[1];
+				*(float* T_RESTRICT)&dst[getBlueShift()  >> 3] = clr[2];
+				*(float* T_RESTRICT)&dst[getAlphaShift() >> 3] = clr[3];
+			}
+			else if (getColorBits() <= 32)
+			{
+				uint32_t rmx = ((1 << getRedBits()  ) - 1);
+				uint32_t gmx = ((1 << getGreenBits()) - 1);
+				uint32_t bmx = ((1 << getBlueBits() ) - 1);
+				uint32_t amx = ((1 << getAlphaBits()) - 1);
+
+				uint32_t r = uint32_t(clamp(clr[0]) * rmx);
+				uint32_t g = uint32_t(clamp(clr[1]) * gmx);
+				uint32_t b = uint32_t(clamp(clr[2]) * bmx);
+				uint32_t a = uint32_t(clamp(clr[3]) * amx);
+
+				(*m_pack)(
+					dst,
+					(r << getRedShift()) |
+					(g << getGreenShift()) |
+					(b << getBlueShift()) |
+					(a << getAlphaShift())
+				);
+			}
+			else	// getColorBits() > 32
+			{
+				uint32_t tmp;
+				uint32_t i;
+
+				tmp = static_cast< uint8_t >(clamp(clr[0]) * 255);
+				tmp >>= (8 - getRedBits());
+				for (i = 0; i < uint32_t(getRedBits()); ++i)
+				{
+					uint32_t o = i + getRedShift();
+					if ((tmp & (1 << i)) != 0)
+						dst[o >> 3] |= 1 << (o & 7);
+					else
+						dst[o >> 3] &= ~(1 << (o & 7));
+				}
+
+				tmp = static_cast< uint8_t >(clamp(clr[1]) * 255);
+				tmp >>= (8 - getGreenBits());
+				for (i = 0; i < uint32_t(getGreenBits()); ++i)
+				{
+					uint32_t o = i + getGreenShift();
+					if ((tmp & (1 << i)) != 0)
+						dst[o >> 3] |= 1 << (o & 7);
+					else
+						dst[o >> 3] &= ~(1 << (o & 7));
+				}
+
+				tmp = static_cast< uint8_t >(clamp(clr[2]) * 255);
+				tmp >>= (8 - getBlueBits());
+				for (i = 0; i < uint32_t(getBlueBits()); ++i)
+				{
+					uint32_t o = i + getBlueShift();
+					if ((tmp & (1 << i)) != 0)
+						dst[o >> 3] |= 1 << (o & 7);
+					else
+						dst[o >> 3] &= ~(1 << (o & 7));
+				}
+
+				tmp = static_cast< uint8_t >(clamp(clr[3]) * 255);
+				tmp >>= (8 - getAlphaBits());
+				for (i = 0; i < uint32_t(getAlphaBits()); ++i)
+				{
+					uint32_t o = i + getAlphaShift();
+					if ((tmp & (1 << i)) != 0)
+						dst[o >> 3] |= 1 << (o & 7);
+					else
+						dst[o >> 3] &= ~(1 << (o & 7));
+				}
+			}
+
+			src++;
+			dst += getByteSize();
 		}
 	}
 }
