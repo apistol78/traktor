@@ -161,6 +161,13 @@ uint32_t CompactInstance::getDataNames(std::vector< std::wstring >& outDataNames
 	return uint32_t(outDataNames.size());
 }
 
+bool CompactInstance::removeAllData()
+{
+	std::map< std::wstring, Ref< CompactBlockEntry > >& dataBlocks = m_instanceEntry->getDataBlocks();
+	dataBlocks.clear();
+	return true;
+}
+
 Ref< IStream > CompactInstance::readData(const std::wstring& dataName)
 {
 	T_ASSERT (m_instanceEntry);

@@ -150,9 +150,12 @@ void TargetCell::paint(ui::custom::AutoWidget* widget, ui::Canvas& canvas, const
 
 	m_playCell->setEnable(m_instance->getState() == TsIdle);
 
-	// Re-issue update; we need to refresh continiously.
-	widget->requestLayout();
-	widget->requestUpdate();
+	// Re-issue update; we need to refresh continiously if we're either running or building.
+	if (m_instance->getState() != TsIdle)
+	{
+		widget->requestLayout();
+		widget->requestUpdate();
+	}
 }
 
 	}

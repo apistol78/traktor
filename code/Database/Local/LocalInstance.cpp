@@ -7,6 +7,7 @@
 #include "Database/Local/ActionSetGuid.h"
 #include "Database/Local/ActionSetName.h"
 #include "Database/Local/ActionRemove.h"
+#include "Database/Local/ActionRemoveAllData.h"
 #include "Database/Local/ActionWriteObject.h"
 #include "Database/Local/ActionWriteData.h"
 #include "Database/Local/PhysicalAccess.h"
@@ -213,6 +214,17 @@ uint32_t LocalInstance::getDataNames(std::vector< std::wstring >& outDataNames) 
 
 	outDataNames = instanceMeta->getBlobs();
 	return uint32_t(outDataNames.size());
+}
+
+bool LocalInstance::removeAllData()
+{
+	if (!m_transaction)
+		return false;
+
+	Ref< ActionRemoveAllData > action = new ActionRemoveAllData(m_instancePath);
+	m_transaction->add(action);
+
+	return true;
 }
 
 Ref< IStream > LocalInstance::readData(const std::wstring& dataName)

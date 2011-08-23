@@ -1,5 +1,5 @@
-#include "Database/Remote/Server/InstanceMessageListener.h"
-#include "Database/Remote/Server/Connection.h"
+#include "Core/Io/IStream.h"
+#include "Database/Provider/IProviderInstance.h"
 #include "Database/Remote/Messages/DbmGetInstancePrimaryType.h"
 #include "Database/Remote/Messages/DbmOpenTransaction.h"
 #include "Database/Remote/Messages/DbmCommitTransaction.h"
@@ -8,6 +8,7 @@
 #include "Database/Remote/Messages/DbmSetInstanceName.h"
 #include "Database/Remote/Messages/DbmGetInstanceGuid.h"
 #include "Database/Remote/Messages/DbmSetInstanceGuid.h"
+#include "Database/Remote/Messages/DbmRemoveAllData.h"
 #include "Database/Remote/Messages/DbmRemoveInstance.h"
 #include "Database/Remote/Messages/DbmReadObject.h"
 #include "Database/Remote/Messages/DbmWriteObject.h"
@@ -21,8 +22,8 @@
 #include "Database/Remote/Messages/MsgHandleResult.h"
 #include "Database/Remote/Messages/DbmReadObjectResult.h"
 #include "Database/Remote/Messages/DbmWriteObjectResult.h"
-#include "Database/Provider/IProviderInstance.h"
-#include "Core/Io/IStream.h"
+#include "Database/Remote/Server/Connection.h"
+#include "Database/Remote/Server/InstanceMessageListener.h"
 
 namespace traktor
 {
@@ -46,6 +47,7 @@ InstanceMessageListener::InstanceMessageListener(Connection* connection)
 	registerMessage< DbmReadObject >(&InstanceMessageListener::messageReadObject);
 	registerMessage< DbmWriteObject >(&InstanceMessageListener::messageWriteObject);
 	registerMessage< DbmGetDataNames >(&InstanceMessageListener::messageGetDataNames);
+	registerMessage< DbmRemoveAllData >(&InstanceMessageListener::messageRemoveAllData);
 	registerMessage< DbmReadData >(&InstanceMessageListener::messageReadData);
 	registerMessage< DbmWriteData >(&InstanceMessageListener::messageWriteData);
 }
@@ -243,6 +245,21 @@ bool InstanceMessageListener::messageGetDataNames(const DbmGetDataNames* message
 	instance->getDataNames(dataNames);
 
 	m_connection->sendReply(MsgStringArrayResult(dataNames));
+	return true;
+}
+
+bool InstanceMessageListener::messageRemoveAllData(const DbmRemoveAllData* message)
+{
+	uint32_t instanceHandle = message->getHandle();
+	Ref< IProviderInstance > instance = m_connection->getObject< IProviderInstance >(instanceHandle);
+	if (!instance)
+	{
+		m_connection->sendReply(MsgStatus(StFailure));
+		return true;
+	}
+
+	bool result = instance->removeAllData();
+	m_connection->sendReply(MsgStatus(result ? StSuccess : StFailure));
 	return true;
 }
 

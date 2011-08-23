@@ -105,6 +105,18 @@ Guid Instance::getGuid() const
 #endif
 }
 
+bool Instance::setGuid(const Guid& guid)
+{
+	T_ASSERT (m_providerInstance);
+	if (!m_providerInstance->setGuid(guid))
+		return false;
+
+#if T_INSTANCE_CACHE_GUID
+	m_cache &= ~IchGuid;
+#endif
+	return true;
+}
+
 std::wstring Instance::getPrimaryTypeName() const
 {
 	T_ASSERT (m_providerInstance);
@@ -313,6 +325,12 @@ uint32_t Instance::getDataNames(std::vector< std::wstring >& dataNames) const
 {
 	T_ASSERT (m_providerInstance);
 	return m_providerInstance->getDataNames(dataNames);
+}
+
+bool Instance::removeAllData()
+{
+	T_ASSERT (m_providerInstance);
+	return m_providerInstance->removeAllData();
 }
 
 Ref< IStream > Instance::readData(const std::wstring& dataName)

@@ -47,6 +47,8 @@ private:
 
 	bool messageGetDataNames(const class DbmGetDataNames* message);
 
+	bool messageRemoveAllData(const class DbmRemoveAllData* message);
+
 	bool messageReadData(const class DbmReadData* message);
 
 	bool messageWriteData(const class DbmWriteData* message);

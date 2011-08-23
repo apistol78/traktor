@@ -193,17 +193,19 @@ Ref< Instance > Group::createInstance(const std::wstring& instanceName, uint32_t
 		instance = getInstance(instanceName);
 		if (instance)
 		{
-			if (flags & CifKeepExistingGuid)
-				instanceGuid = instance->getGuid();
-
 			if (!instance->checkout())
 				return 0;
 
-			if (!instance->remove())
+			if (!(flags & CifKeepExistingGuid))
+			{
+				if (!instance->setGuid(instanceGuid))
+					return 0;
+			}
+
+			if (!instance->removeAllData())
 				return 0;
 
-			if (!instance->commit())
-				return 0;
+			return instance;
 		}
 	}
 
