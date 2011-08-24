@@ -84,7 +84,6 @@ public:
 	virtual Ref< IPipelineReport > createReport(const std::wstring& name, const Guid& guid);
 
 private:
-	Semaphore m_lock;
 	Ref< PipelineFactory > m_pipelineFactory;
 	Ref< db::Database > m_sourceDatabase;
 	Ref< db::Database > m_outputDatabase;
@@ -92,6 +91,8 @@ private:
 	Ref< IPipelineDb > m_db;
 	IListener* m_listener;
 	bool m_threadedBuildEnable;
+	Semaphore m_createOutputLock;
+	Semaphore m_readCacheLock;
 	std::map< Guid, Ref< ISerializable > > m_readCache;
 	ThreadLocal m_buildInstances;
 	uint32_t m_progress;
@@ -121,7 +122,7 @@ private:
 	bool getInstancesFromCache(const Guid& guid, uint32_t hash, int32_t version);
 
 	/*! \brief Build thread method. */
-	void buildThread(RefArray< PipelineDependency >::const_iterator begin, RefArray< PipelineDependency >::const_iterator end);
+	void buildThread(Thread* controlThread, RefArray< PipelineDependency >::const_iterator begin, RefArray< PipelineDependency >::const_iterator end);
 
 	/*! \brief Increment progress and notify listener. */
 	void incrementProgress();
