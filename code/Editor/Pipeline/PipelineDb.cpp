@@ -13,7 +13,7 @@ namespace traktor
 		namespace
 		{
 
-const int32_t c_version = 2;
+const int32_t c_version = 3;
 
 		}
 
@@ -57,7 +57,6 @@ bool PipelineDb::open(const std::wstring& connectionString)
 	{
 		if (connection->executeUpdate(
 			L"create table PipelineHash ("
-			L"id integer primary key,"
 			L"guid char(37) unique,"
 			L"pipelineVersion integer,"
 			L"hash integer"
@@ -67,8 +66,7 @@ bool PipelineDb::open(const std::wstring& connectionString)
 
 		if (connection->executeUpdate(
 			L"create table PipelineFile ("
-			L"id integer primary key,"
-			L"path varchar(1024),"
+			L"path varchar(1024) unique,"
 			L"size integer,"
 			L"lastWriteTime integer,"
 			L"hash integer"
@@ -94,6 +92,18 @@ void PipelineDb::close()
 		m_connection->disconnect();
 		m_connection = 0;
 	}
+}
+
+void PipelineDb::beginTransaction()
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	m_connection->executeUpdate(L"begin transaction");
+}
+
+void PipelineDb::endTransaction()
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	m_connection->executeUpdate(L"commit transaction");
 }
 
 void PipelineDb::setDependency(const Guid& guid, const DependencyHash& hash)
@@ -127,8 +137,6 @@ bool PipelineDb::getDependency(const Guid& guid, DependencyHash& outHash) const
 	if (!rs || !rs->next())
 		return false;
 
-	int32_t id = rs->getInt32(L"id");
-
 	outHash.pipelineVersion = rs->getInt32(L"pipelineVersion");
 	outHash.hash = rs->getInt32(L"hash");
 
@@ -145,7 +153,7 @@ void PipelineDb::setFile(const Path& path, const FileHash& file)
 	ss <<
 		L"insert or replace into PipelineFile (path, size, lastWriteTime, hash) "
 		L"values (" <<
-		L"'" << toLower(path.getPathName()) << L"'," <<
+		L"'" << toLower(path.normalized().getPathName()) << L"'," <<
 		file.size << L"," <<
 		file.lastWriteTime.getSecondsSinceEpoch() << L"," <<
 		file.hash <<
@@ -162,7 +170,7 @@ bool PipelineDb::getFile(const Path& path, FileHash& outFile)
 	StringOutputStream ss;
 
 	// Get file record.
-	ss << L"select * from PipelineFile where path='" << toLower(path.getPathName()) << L"'";
+	ss << L"select * from PipelineFile where path='" << toLower(path.normalized().getPathName()) << L"'";
 	rs = m_connection->executeQuery(ss.str());
 	if (!rs || !rs->next())
 		return false;

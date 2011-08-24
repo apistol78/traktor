@@ -33,6 +33,10 @@ public:
 
 	void close();
 
+	virtual void beginTransaction();
+
+	virtual void endTransaction();
+
 	virtual void setDependency(const Guid& guid, const DependencyHash& hash);
 
 	virtual bool getDependency(const Guid& guid, DependencyHash& outHash) const;

@@ -221,6 +221,96 @@ inline Ref< Functor4< T, P1, P2, P3, P4 > > makeFunctor(T* self, typename Functo
 	return new Functor4< T, P1, P2, P3, P4 >(self, method, p1, p2, p3, p4);
 }
 
+/*! \brief Class method functor.
+ * \ingroup Core
+ */
+template < typename T, typename P1, typename P2, typename P3, typename P4, typename P5 >
+class Functor5 : public Functor
+{
+public:
+	typedef void (T::*method_t)(P1 p1, P2 p2, P3 p3, P4 p4, P5 p5);
+
+	Functor5(T* self, method_t method, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5)
+	:	m_self(self)
+	,	m_method(method)
+	,	m_p1(p1)
+	,	m_p2(p2)
+	,	m_p3(p3)
+	,	m_p4(p4)
+	,	m_p5(p5)
+	{
+	}
+
+	virtual void operator () ()
+	{
+		(m_self->*m_method)(m_p1, m_p2, m_p3, m_p4, m_p5);
+	}
+
+private:
+	T* m_self;
+	method_t m_method;
+	P1 m_p1;
+	P2 m_p2;
+	P3 m_p3;
+	P4 m_p4;
+	P5 m_p5;
+};
+
+/*! \brief Create functor object.
+ * \ingroup Core
+ */
+template < typename T, typename P1, typename P2, typename P3, typename P4, typename P5 >
+inline Ref< Functor5< T, P1, P2, P3, P4, P5 > > makeFunctor(T* self, typename Functor5< T, P1, P2, P3, P4, P5 >::method_t method, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5)
+{
+	return new Functor5< T, P1, P2, P3, P4, P5 >(self, method, p1, p2, p3, p4, p5);
+}
+
+/*! \brief Class method functor.
+ * \ingroup Core
+ */
+template < typename T, typename P1, typename P2, typename P3, typename P4, typename P5, typename P6 >
+class Functor6 : public Functor
+{
+public:
+	typedef void (T::*method_t)(P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6);
+
+	Functor6(T* self, method_t method, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6)
+	:	m_self(self)
+	,	m_method(method)
+	,	m_p1(p1)
+	,	m_p2(p2)
+	,	m_p3(p3)
+	,	m_p4(p4)
+	,	m_p5(p5)
+	,	m_p6(p6)
+	{
+	}
+
+	virtual void operator () ()
+	{
+		(m_self->*m_method)(m_p1, m_p2, m_p3, m_p4, m_p5, m_p6);
+	}
+
+private:
+	T* m_self;
+	method_t m_method;
+	P1 m_p1;
+	P2 m_p2;
+	P3 m_p3;
+	P4 m_p4;
+	P5 m_p5;
+	P6 m_p6;
+};
+
+/*! \brief Create functor object.
+ * \ingroup Core
+ */
+template < typename T, typename P1, typename P2, typename P3, typename P4, typename P5, typename P6 >
+inline Ref< Functor6< T, P1, P2, P3, P4, P5, P6 > > makeFunctor(T* self, typename Functor6< T, P1, P2, P3, P4, P5, P6 >::method_t method, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6)
+{
+	return new Functor6< T, P1, P2, P3, P4, P5, P6 >(self, method, p1, p2, p3, p4, p5, p6);
+}
+
 /*! \brief Static function functor.
  * \ingroup Core
  */

@@ -1,36 +1,40 @@
-#ifndef traktor_editor_PipelineDependsIncremental_H
-#define traktor_editor_PipelineDependsIncremental_H
+#ifndef traktor_editor_PipelineDependsParallel_H
+#define traktor_editor_PipelineDependsParallel_H
 
 #include <map>
+#include "Core/Thread/Semaphore.h"
+#include "Core/Thread/ThreadLocal.h"
 #include "Editor/IPipelineDepends.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_EDITOR_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+	#define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
 {
+
+class JobQueue;
+
 	namespace editor
 	{
 
 class PipelineFactory;
 
-/*! \brief Incremental pipeline dependency walker.
+/*! \brief Parallel pipeline dependency walker.
  * \ingroup Editor
  */
-class T_DLLCLASS PipelineDependsIncremental : public IPipelineDepends
+class T_DLLCLASS PipelineDependsParallel : public IPipelineDepends
 {
 	T_RTTI_CLASS;
 
 public:
-	PipelineDependsIncremental(
+	PipelineDependsParallel(
 		PipelineFactory* pipelineFactory,
-		db::Database* sourceDatabase,
-		uint32_t recursionDepth = ~0UL
+		db::Database* sourceDatabase
 	);
 
 	virtual void addDependency(
@@ -68,43 +72,44 @@ public:
 	virtual Ref< const ISerializable > getObjectReadOnly(const Guid& instanceGuid);
 
 private:
+	Ref< JobQueue > m_jobQueue;
 	Ref< PipelineFactory > m_pipelineFactory;
 	Ref< db::Database > m_sourceDatabase;
-	uint32_t m_maxRecursionDepth;
-	uint32_t m_currentRecursionDepth;
 	RefArray< PipelineDependency > m_dependencies;
-	Ref< PipelineDependency > m_currentDependency;
+	ThreadLocal m_currentDependency;
+	Semaphore m_readCacheLock;
+	Semaphore m_dependencyMapLock;
+	Semaphore m_dependenciesLock;
 	std::map< Guid, Ref< ISerializable > > m_readCache;
 	std::map< Guid, PipelineDependency* > m_dependencyMap;
 
-	/*! \brief Find already added dependency.
-	 *
-	 * \param guid Output guid.
-	 * \return Pointer to added dependency, null if dependency not added.
-	 */
-	Ref< PipelineDependency > findDependency(const Guid& guid) const;
+	Ref< PipelineDependency > findOrCreateDependency(
+		const Guid& guid,
+		PipelineDependency* parentDependency,
+		uint32_t flags,
+		bool& outExists
+	);
 
-	/*! \brief Add dependency.
-	 * Add dependency without checking if it's already added.
-	 *
-	 * \param sourceInstance Source asset database instance; null if not originate from database.
-	 * \param sourceAsset Pointer to source asset object.
-	 * \param name Name of source asset.
-	 * \param outputPath Output path of target instance.
-	 * \param outputGuid Guid of output instance.
-	 * \param build If asset needs to be built.
-	 */
 	void addUniqueDependency(
+		PipelineDependency* parentDependency,
+		PipelineDependency* currentDependency,
 		const db::Instance* sourceInstance,
 		const ISerializable* sourceAsset,
 		const std::wstring& name,
 		const std::wstring& outputPath,
-		const Guid& outputGuid,
-		uint32_t flags
+		const Guid& outputGuid
 	);
+
+	void jobAddDependency(Ref< PipelineDependency > parentDependency, const ISerializable* sourceAsset);
+
+	void jobAddDependency(Ref< PipelineDependency > parentDependency, const ISerializable* sourceAsset, std::wstring name, std::wstring outputPath, Guid outputGuid, uint32_t flags);
+
+	void jobAddDependency(Ref< PipelineDependency > parentDependency, db::Instance* sourceAssetInstance, uint32_t flags);
+
+	void jobAddDependency(Ref< PipelineDependency > parentDependency, Guid sourceAssetGuid, uint32_t flags);
 };
 
 	}
 }
 
-#endif	// traktor_editor_PipelineDependsIncremental_H
+#endif	// traktor_editor_PipelineDependsParallel_H

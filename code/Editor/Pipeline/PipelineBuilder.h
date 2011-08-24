@@ -120,9 +120,6 @@ private:
 	/*! \brief Get isolated instance from cache. */
 	bool getInstancesFromCache(const Guid& guid, uint32_t hash, int32_t version);
 
-	/*! \brief Calculate external file hash. */
-	uint32_t externalFileHash(const Path& path);
-
 	/*! \brief Build thread method. */
 	void buildThread(RefArray< PipelineDependency >::const_iterator begin, RefArray< PipelineDependency >::const_iterator end);
 

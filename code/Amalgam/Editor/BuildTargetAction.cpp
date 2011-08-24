@@ -43,6 +43,7 @@ bool BuildTargetAction::execute()
 	T_ASSERT (target);
 
 	m_targetInstance->setState(TsBuilding);
+	m_targetInstance->setBuildProgress(2);
 
 	// Read platform default pipeline configuration.
 	Ref< Settings > pipelineConfiguration = Settings::read< xml::XmlDeserializer >(FileSystem::getInstance().open(
@@ -199,7 +200,7 @@ bool BuildTargetAction::execute()
 					int32_t index = parseString< int32_t >(out[0]);
 					int32_t count = parseString< int32_t >(out[1]);
 					if (count > 0)
-						m_targetInstance->setBuildProgress((100 * index) / count);
+						m_targetInstance->setBuildProgress(2 + (98 * index) / count);
 				}
 			}
 		}
