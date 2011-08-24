@@ -98,7 +98,13 @@ bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, 
 			if (offsetStart < offsetEnd)
 			{
 				threads[i] = ThreadManager::getInstance().create(
-					makeFunctor(this, &PipelineBuilder::buildThread, dependencies.begin() + offsetStart, dependencies.begin() + offsetEnd),
+					makeFunctor(
+						this,
+						&PipelineBuilder::buildThread,
+						ThreadManager::getInstance().getCurrentThread(),
+						dependencies.begin() + offsetStart,
+						dependencies.begin() + offsetEnd
+					),
 					L"Build thread"
 				);
 				threads[i]->start();
@@ -118,7 +124,7 @@ bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, 
 	else
 	{
 		// Invoke thread method directly to build all dependencies.
-		buildThread(dependencies.begin(), dependencies.end());
+		buildThread(ThreadManager::getInstance().getCurrentThread(), dependencies.begin(), dependencies.end());
 	}
 
 	m_db->endTransaction();
@@ -157,7 +163,7 @@ Ref< db::Database > PipelineBuilder::getOutputDatabase() const
 
 Ref< db::Instance > PipelineBuilder::createOutputInstance(const std::wstring& instancePath, const Guid& instanceGuid)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_createOutputLock);
 	Ref< db::Instance > instance;
 
 	instance = m_outputDatabase->getInstance(instanceGuid);
@@ -193,7 +199,7 @@ Ref< db::Instance > PipelineBuilder::createOutputInstance(const std::wstring& in
 
 Ref< const ISerializable > PipelineBuilder::getObjectReadOnly(const Guid& instanceGuid)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_readCacheLock);
 	Ref< ISerializable > object;
 
 	std::map< Guid, Ref< ISerializable > >::iterator i = m_readCache.find(instanceGuid);
@@ -478,12 +484,12 @@ bool PipelineBuilder::getInstancesFromCache(const Guid& guid, uint32_t hash, int
 	return result;
 }
 
-void PipelineBuilder::buildThread(RefArray< PipelineDependency >::const_iterator begin, RefArray< PipelineDependency >::const_iterator end)
+void PipelineBuilder::buildThread(Thread* controlThread, RefArray< PipelineDependency >::const_iterator begin, RefArray< PipelineDependency >::const_iterator end)
 {
 	for (RefArray< PipelineDependency >::const_iterator i = begin; i != end; ++i)
 	{
-		// Abort if current thread has been stopped; thread are stopped by worker dialog.
-		if (ThreadManager::getInstance().getCurrentThread()->stopped())
+		// Abort if control thread has been stopped; thread are stopped by worker dialog.
+		if (controlThread->stopped())
 			break;
 
 		incrementProgress();
