@@ -356,6 +356,9 @@ void EditorPlugin::threadTargetActions()
 				log::error << L"Deploy action \"" << type_name(*i) << L"\" failed; unable to continue." << Endl;
 				break;
 			}
+
+			m_targetList->requestLayout();
+			m_targetList->requestUpdate();
 		}
 
 		if (success && chain.postSuccess)

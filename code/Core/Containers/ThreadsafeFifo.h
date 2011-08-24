@@ -40,8 +40,14 @@ public:
 		m_items.clear();
 	}
 
+	bool empty() const
+	{
+		T_ANONYMOUS_VAR(Acquire< LockType >)(m_lock);
+		return m_items.empty();
+	}
+
 private:
-	LockType m_lock; 
+	mutable LockType m_lock; 
 	AlignedVector< ItemType > m_items;
 };
 

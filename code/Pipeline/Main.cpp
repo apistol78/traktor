@@ -33,6 +33,7 @@
 #include "Editor/Pipeline/PipelineBuilder.h"
 #include "Editor/Pipeline/PipelineDb.h"
 #include "Editor/Pipeline/PipelineDependsIncremental.h"
+#include "Editor/Pipeline/PipelineDependsParallel.h"
 #include "Editor/Pipeline/PipelineFactory.h"
 #include "Xml/XmlDeserializer.h"
 
@@ -260,10 +261,21 @@ int main(int argc, const char** argv)
 	editor::PipelineFactory pipelineFactory(settings);
 
 	// Collect dependencies.
-	editor::PipelineDependsIncremental pipelineDepends(
-		&pipelineFactory,
-		sourceDatabase
-	);
+	Ref< editor::IPipelineDepends > pipelineDepends;
+	if (settings->getProperty< PropertyBoolean >(L"Pipeline.BuildThreads", true))
+	{
+		pipelineDepends = new editor::PipelineDependsParallel(
+			&pipelineFactory,
+			sourceDatabase
+		);
+	}
+	else
+	{
+		pipelineDepends = new editor::PipelineDependsIncremental(
+			&pipelineFactory,
+			sourceDatabase
+		);
+	}
 
 	traktor::log::info << L"Collecting dependencies..." << Endl;
 	traktor::log::info << IncreaseIndent;
@@ -280,7 +292,7 @@ int main(int argc, const char** argv)
 			}
 
 			traktor::log::info << L"Traversing root \"" << assetGuid.format() << L"\"..." << Endl;
-			pipelineDepends.addDependency(assetGuid, editor::PdfBuild);
+			pipelineDepends->addDependency(assetGuid, editor::PdfBuild);
 		}
 	}
 	else
@@ -291,14 +303,16 @@ int main(int argc, const char** argv)
 		for (RefArray< db::Instance >::iterator i = assetInstances.begin(); i != assetInstances.end(); ++i)
 		{
 			traktor::log::info << L"Traversing root \"" << (*i)->getGuid().format() << L"\"..." << Endl;
-			pipelineDepends.addDependency(*i, editor::PdfBuild);
+			pipelineDepends->addDependency(*i, editor::PdfBuild);
 		}
 	}
+
+	pipelineDepends->waitUntilFinished();
 
 	traktor::log::info << DecreaseIndent;
 
 	RefArray< editor::PipelineDependency > dependencies;
-	pipelineDepends.getDependencies(dependencies);
+	pipelineDepends->getDependencies(dependencies);
 
 	AutoPtr< StatusListener > statusListener;
 	if (cmdLine.hasOption('p'))

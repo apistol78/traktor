@@ -36,7 +36,7 @@ public:
 	void stop() { m_stopped = true; }
 
 private:
-	friend class JobManager;
+	friend class JobQueue;
 
 	Ref< Functor > m_functor;
 	Event& m_jobFinishedEvent;
@@ -44,6 +44,63 @@ private:
 	volatile bool m_stopped;
 
 	Job(Functor* functor, Event& jobFinishedEvent);
+};
+
+/*! \brief Job queue.
+ */
+class T_DLLCLASS JobQueue : public Object
+{
+	T_RTTI_CLASS;
+
+public:
+	JobQueue();
+
+	virtual ~JobQueue();
+
+	/*! \brief Create queue.
+	 *
+	 * \param workerThreads Number of worker threads.
+	 * \return True if successfully created.
+	 */
+	bool create(uint32_t workerThreads);
+
+	/*! \brief Destroy queue. */
+	void destroy();
+
+	/*! \brief Enqueue job.
+	 *
+	 * Add job to internal worker queue, as soon as
+	 * a worker thread is idle the scheduler assigns
+	 * a new job to that thread from this queue.
+	 */
+	Ref< Job > add(Functor* functor);
+
+	/*! \brief Enqueue jobs and wait for all to finish.
+	 *
+	 * Add jobs to internal worker queue, one job
+	 * is always run on the caller thread to reduce
+	 * work for kernel scheduler.
+	 */
+	void fork(const RefArray< Functor >& functors);
+
+	/*! \brief Wait until all jobs are finished.
+	 *
+	 * \param timeout Timeout in milliseconds; -1 if infinite timeout.
+	 * \return True if jobs have finished, false if timeout.
+	 */
+	bool wait(int32_t timeout = -1);
+
+	/*! \brief Stop all worker threads. */
+	void stop();
+
+private:
+	std::vector< Thread* > m_workerThreads;
+	ThreadsafeFifo< Ref< Job > > m_jobQueue;
+	Event m_jobQueuedEvent;
+	Event m_jobFinishedEvent;
+	int32_t m_running;
+
+	void threadWorker(int id);
 };
 
 /*! \brief Job manager.
@@ -65,7 +122,7 @@ public:
 	 * a worker thread is idle the scheduler assigns
 	 * a new job to that thread from this queue.
 	 */
-	Ref< Job > add(Functor* functor);
+	Ref< Job > add(Functor* functor) { return m_queue->add(functor); }
 
 	/*! \brief Enqueue jobs and wait for all to finish.
 	 *
@@ -73,27 +130,23 @@ public:
 	 * is always run on the caller thread to reduce
 	 * work for kernel scheduler.
 	 */
-	void fork(const RefArray< Functor >& functors);
+	void fork(const RefArray< Functor >& functors) { return m_queue->fork(functors); }
+
+	/*! \brief Wait until all jobs are finished.
+	 *
+	 * \param timeout Timeout in milliseconds; -1 if infinite timeout.
+	 * \return True if jobs have finished, false if timeout.
+	 */
+	bool wait(int32_t timeout = -1) { return m_queue->wait(timeout); }
 
 	/*! \brief Stop all worker threads. */
-	void stop();
+	void stop() { m_queue->stop(); }
 
 protected:
 	virtual void destroy();
 
 private:
-	std::vector< Thread* > m_workerThreads;
-	ThreadsafeFifo< Ref< Job > > m_jobQueue;
-	Event m_jobQueuedEvent;
-	Event m_jobFinishedEvent;
-
-	void threadWorker(int id);
-
-	void create();
-
-	JobManager();
-
-	virtual ~JobManager();
+	Ref< JobQueue > m_queue;
 };
 
 }

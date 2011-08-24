@@ -42,19 +42,58 @@ Job::Job(Functor* functor, Event& jobFinishedEvent)
 {
 }
 
-JobManager& JobManager::getInstance()
+T_IMPLEMENT_RTTI_CLASS(L"traktor.JobQueue", JobQueue, Object)
+
+JobQueue::JobQueue()
+:	m_running(0)
 {
-	static JobManager* s_instance = 0;
-	if (!s_instance)
-	{
-		s_instance = new JobManager();
-		SingletonManager::getInstance().addBefore(s_instance, &ThreadManager::getInstance());
-		s_instance->create();
-	}
-	return *s_instance;
 }
 
-Ref< Job > JobManager::add(Functor* functor)
+JobQueue::~JobQueue()
+{
+	destroy();
+}
+
+bool JobQueue::create(uint32_t workerThreads)
+{
+	uint32_t cores = OS::getInstance().getCPUCoreCount();
+	T_ASSERT (cores > 0);
+
+	m_workerThreads.resize(workerThreads);
+	for (uint32_t i = 0; i < uint32_t(m_workerThreads.size()); ++i)
+	{
+		m_workerThreads[i] = ThreadManager::getInstance().create(
+			makeFunctor< JobQueue >(
+				this,
+				&JobQueue::threadWorker,
+				int(i)
+			).ptr(),
+			L"Job queue, worker thread " + toString(i),
+			i + 1
+		);
+		m_workerThreads[i]->start(Thread::Normal);
+	}
+
+	return true;
+}
+
+void JobQueue::destroy()
+{
+	// Signal all worker threads we're stopping.
+	for (uint32_t i = 0; i < uint32_t(m_workerThreads.size()); ++i)
+		m_workerThreads[i]->stop(0);
+
+	// Destroy worker threads.
+	for (uint32_t i = 0; i < uint32_t(m_workerThreads.size()); ++i)
+	{
+		m_workerThreads[i]->wait();
+		ThreadManager::getInstance().destroy(m_workerThreads[i]);
+	}
+
+	m_workerThreads.clear();
+}
+
+Ref< Job > JobQueue::add(Functor* functor)
 {
 	Ref< Job > job = new Job(functor, m_jobFinishedEvent);
 	m_jobQueue.put(job);
@@ -62,7 +101,7 @@ Ref< Job > JobManager::add(Functor* functor)
 	return job;
 }
 
-void JobManager::fork(const RefArray< Functor >& functors)
+void JobQueue::fork(const RefArray< Functor >& functors)
 {
 	RefArray< Job > jobs;
 	if (functors.size() > 1)
@@ -82,13 +121,25 @@ void JobManager::fork(const RefArray< Functor >& functors)
 		jobs[i]->wait();
 }
 
-void JobManager::stop()
+bool JobQueue::wait(int32_t timeout)
+{
+	for (;;)
+	{
+		if (m_jobQueue.empty() && m_running == 0)
+			break;
+		if (m_running != 0 && !m_jobFinishedEvent.wait(timeout))
+			return false;
+	}
+	return true;
+}
+
+void JobQueue::stop()
 {
 	for (uint32_t i = 0; i < uint32_t(m_workerThreads.size()); ++i)
 		m_workerThreads[i]->stop(0);
 }
 
-void JobManager::threadWorker(int id)
+void JobQueue::threadWorker(int id)
 {
 	Thread* thread = m_workerThreads[id];
 	Ref< Job > job;
@@ -98,7 +149,9 @@ void JobManager::threadWorker(int id)
 		while (m_jobQueue.get(job) && !thread->stopped())
 		{
 			T_ASSERT (!job->m_finished);
+			Atomic::increment(m_running);
 			(*job->m_functor)();
+			Atomic::decrement(m_running);
 			job->m_finished = true;
 			job->m_stopped = true;
 			m_jobFinishedEvent.broadcast();
@@ -112,43 +165,18 @@ void JobManager::threadWorker(int id)
 	}
 }
 
-void JobManager::create()
+JobManager& JobManager::getInstance()
 {
-	uint32_t cores = OS::getInstance().getCPUCoreCount();
-	T_ASSERT (cores > 0);
-
-	m_workerThreads.resize(cores);
-	for (uint32_t i = 0; i < uint32_t(m_workerThreads.size()); ++i)
+	static JobManager* s_instance = 0;
+	if (!s_instance)
 	{
-		m_workerThreads[i] = ThreadManager::getInstance().create(
-			makeFunctor< JobManager >(
-				this,
-				&JobManager::threadWorker,
-				int(i)
-			).ptr(),
-			L"Job worker thread " + toString(i),
-			i + 1
-		);
-		m_workerThreads[i]->start(Thread::Normal);
+		s_instance = new JobManager();
+		SingletonManager::getInstance().addBefore(s_instance, &ThreadManager::getInstance());
+
+		s_instance->m_queue = new JobQueue();
+		s_instance->m_queue->create(OS::getInstance().getCPUCoreCount());
 	}
-}
-
-JobManager::JobManager()
-{
-}
-
-JobManager::~JobManager()
-{
-	// Signal all worker threads we're stopping.
-	for (uint32_t i = 0; i < uint32_t(m_workerThreads.size()); ++i)
-		m_workerThreads[i]->stop(0);
-
-	// Destroy worker threads.
-	for (uint32_t i = 0; i < uint32_t(m_workerThreads.size()); ++i)
-	{
-		m_workerThreads[i]->wait();
-		ThreadManager::getInstance().destroy(m_workerThreads[i]);
-	}
+	return *s_instance;
 }
 
 void JobManager::destroy()

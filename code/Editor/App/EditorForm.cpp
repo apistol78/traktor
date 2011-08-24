@@ -56,6 +56,7 @@
 #include "Editor/Pipeline/PipelineDb.h"
 #include "Editor/Pipeline/PipelineDependency.h"
 #include "Editor/Pipeline/PipelineDependsIncremental.h"
+#include "Editor/Pipeline/PipelineDependsParallel.h"
 #include "Editor/Pipeline/PipelineFactory.h"
 #include "I18N/I18N.h"
 #include "I18N/Dictionary.h"
@@ -974,10 +975,21 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 	PipelineFactory pipelineFactory(m_settings);
 
 	// Build dependencies.
-	PipelineDependsIncremental pipelineDepends(
-		&pipelineFactory,
-		m_sourceDatabase
-	);
+	Ref< IPipelineDepends > pipelineDepends;
+	if (m_settings->getProperty< PropertyBoolean >(L"Pipeline.BuildThreads", true))
+	{
+		pipelineDepends = new PipelineDependsParallel(
+			&pipelineFactory,
+			m_sourceDatabase
+		);
+	}
+	else
+	{
+		pipelineDepends = new PipelineDependsIncremental(
+			&pipelineFactory,
+			m_sourceDatabase
+		);
+	}
 
 	log::info << L"Collecting dependencies..." << Endl;
 	log::info << IncreaseIndent;
@@ -985,12 +997,14 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 	m_buildProgress->setProgress(c_offsetCollectingDependencies);
 
 	for (std::vector< Guid >::const_iterator i = assetGuids.begin(); i != assetGuids.end(); ++i)
-		pipelineDepends.addDependency(*i, editor::PdfBuild);
+		pipelineDepends->addDependency(*i, editor::PdfBuild);
 
 	log::info << DecreaseIndent;
 
+	pipelineDepends->waitUntilFinished();
+
 	RefArray< PipelineDependency > dependencies;
-	pipelineDepends.getDependencies(dependencies);
+	pipelineDepends->getDependencies(dependencies);
 
 	double elapsedDependencies = timerBuild.getElapsedTime();
 	log::debug << L"Scanned dependencies in " << elapsedDependencies << L" second(s)" << Endl;
@@ -1113,6 +1127,7 @@ bool EditorForm::buildAssetDependencies(const ISerializable* asset, uint32_t rec
 	);
 
 	pipelineDepends.addDependency(asset);
+	pipelineDepends.waitUntilFinished();
 	pipelineDepends.getDependencies(outDependencies);
 
 	return true;

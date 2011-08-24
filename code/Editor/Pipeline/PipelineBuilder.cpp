@@ -3,7 +3,6 @@
 #include "Core/Io/Reader.h"
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
-#include "Core/Misc/Adler32.h"
 #include "Core/Serialization/DeepHash.h"
 #include "Core/System/OS.h"
 #include "Core/Thread/Acquire.h"
@@ -58,6 +57,8 @@ bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, 
 	T_ANONYMOUS_VAR(ScopeIndent)(log::error);
 	T_ANONYMOUS_VAR(ScopeIndent)(log::debug);
 
+	m_db->beginTransaction();
+
 	Timer timer;
 	timer.start();
 
@@ -65,16 +66,22 @@ bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, 
 	for (RefArray< PipelineDependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
 		updateLocalHashes(*i);
 
+	log::debug << L"Pipeline build; analyzed local hashes in " << int32_t(timer.getDeltaTime() * 1000) << L" ms" << Endl;
+
 	// Check which dependencies are dirty; ie. need to be rebuilt.
 	for (RefArray< PipelineDependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
 		updateBuildReason(*i, rebuild);
 
-	log::debug << L"Pipeline build; analyze " << int32_t(timer.getElapsedTime() * 1000) << L" ms" << Endl;
+	log::debug << L"Pipeline build; analyzed build reasons in " << int32_t(timer.getDeltaTime() * 1000) << L" ms" << Endl;
+
+	m_db->endTransaction();
 
 	m_progress = 0;
 	m_progressEnd = dependencies.size();
 	m_succeeded = 0;
 	m_failed = 0;
+
+	m_db->beginTransaction();
 
 	// Split workload on threads; use as many threads as there are CPU cores.
 	// If build set is less than twice number of cores we don't build asynchronously.
@@ -113,6 +120,8 @@ bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, 
 		// Invoke thread method directly to build all dependencies.
 		buildThread(dependencies.begin(), dependencies.end());
 	}
+
+	m_db->endTransaction();
 
 	log::debug << L"Pipeline build; total " << int32_t(timer.getElapsedTime() * 1000) << L" ms" << Endl;
 
@@ -233,11 +242,16 @@ void PipelineBuilder::updateLocalHashes(PipelineDependency* dependency)
 				continue;
 			}
 		}
+		else
+		{
+			// File doesn't exist in cache; ensure cycle is reset.
+			previousFileHash.hash = 0;
+		}
 
 		// File has either been modified or is new; calculate hash and update cache.
 		previousFileHash.size = file->getSize();
 		previousFileHash.lastWriteTime = file->getLastWriteTime();
-		previousFileHash.hash = externalFileHash(*j);
+		previousFileHash.hash++;
 
 		m_db->setFile(*j, previousFileHash);
 
@@ -462,29 +476,6 @@ bool PipelineBuilder::getInstancesFromCache(const Guid& guid, uint32_t hash, int
 	}
 
 	return result;
-}
-
-uint32_t PipelineBuilder::externalFileHash(const Path& path)
-{
-	Adler32 adler;
-	adler.begin();
-
-	Ref< IStream > stream = FileSystem::getInstance().open(path, File::FmRead);
-	if (stream)
-	{
-		uint8_t buffer[4096];
-		int32_t nread;
-		while ((nread = stream->read(buffer, sizeof(buffer))) > 0)
-			adler.feed(buffer, nread);
-		stream->close();
-	}
-	else
-		log::warning << L"Unable to open file \"" << path.getPathName() << L"\"; inconsistent hash" << Endl;
-
-	adler.end();
-	uint32_t hash = adler.get();
-
-	return hash;
 }
 
 void PipelineBuilder::buildThread(RefArray< PipelineDependency >::const_iterator begin, RefArray< PipelineDependency >::const_iterator end)

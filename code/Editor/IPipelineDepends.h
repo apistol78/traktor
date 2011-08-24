@@ -68,6 +68,8 @@ public:
 		const Path& fileName
 	) = 0;
 
+	virtual bool waitUntilFinished() = 0;
+
 	virtual void getDependencies(RefArray< PipelineDependency >& outDependencies) const = 0;
 
 	virtual Ref< db::Database > getSourceDatabase() const = 0;

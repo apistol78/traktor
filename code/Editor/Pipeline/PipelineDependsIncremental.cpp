@@ -173,6 +173,11 @@ void PipelineDependsIncremental::addDependency(
 		m_currentDependency->files.insert(fileName);
 }
 
+bool PipelineDependsIncremental::waitUntilFinished()
+{
+	return true;
+}
+
 void PipelineDependsIncremental::getDependencies(RefArray< PipelineDependency >& outDependencies) const
 {
 	outDependencies = m_dependencies;
