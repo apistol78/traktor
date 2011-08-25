@@ -110,13 +110,15 @@ bool BuildTargetAction::execute()
 
 	// Set database connection strings.
 	db::ConnectionString sourceDatabaseCs = editorSettings->getProperty< PropertyString >(L"Editor.SourceDatabase");
-	db::ConnectionString outputDatabaseCs(L"provider=traktor.db.LocalDatabase;groupPath=db;binary=true");
+	db::ConnectionString outputDatabaseCs(L"provider=traktor.db.LocalDatabase;groupPath=db;binary=true;eventFile=false");
 
 	if (sourceDatabaseCs.have(L"groupPath"))
 	{
 		Path groupPath = FileSystem::getInstance().getAbsolutePath(sourceDatabaseCs.get(L"groupPath"));
 		sourceDatabaseCs.set(L"groupPath", groupPath.getPathName());
 	}
+
+	sourceDatabaseCs.set(L"eventFile", L"false");
 
 	pipelineConfiguration->setProperty< PropertyString >(L"Editor.SourceDatabase", sourceDatabaseCs.format());
 	pipelineConfiguration->setProperty< PropertyString >(L"Editor.OutputDatabase", outputDatabaseCs.format());
