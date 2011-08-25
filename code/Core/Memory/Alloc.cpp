@@ -26,12 +26,6 @@ int32_t s_allocated = 0;
 
 void* Alloc::acquire(size_t size, const char* tag)
 {
-	if (size >= 1 * 1024 * 1024)
-	{
-		for (int i = 0; i < 10; ++i)
-			;
-	}
-
 	void* ptr = std::malloc(size + sizeof(Block));
 	if (!ptr)
 	{
