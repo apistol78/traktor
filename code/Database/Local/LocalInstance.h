@@ -21,11 +21,9 @@ class LocalInstance : public IProviderInstance
 	T_RTTI_CLASS;
 
 public:
-	LocalInstance(Context* context);
+	LocalInstance(Context* context, const Path& instancePath);
 
-	bool internalCreate(const Path& instancePath);
-
-	bool internalCreateNew(const Path& instancePath, const Guid& instanceGuid);
+	bool internalCreateNew(const Guid& instanceGuid);
 
 	virtual std::wstring getPrimaryTypeName() const;
 

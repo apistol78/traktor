@@ -55,8 +55,8 @@ Ref< IProviderInstance > LocalGroup::createInstance(const std::wstring& instance
 {
 	Path instancePath = m_groupPath.getPathName() + L"/" + instanceName;
 
-	Ref< LocalInstance > instance = new LocalInstance(m_context);
-	if (!instance->internalCreateNew(instancePath, instanceGuid))
+	Ref< LocalInstance > instance = new LocalInstance(m_context, instancePath);
+	if (!instance->internalCreateNew(instanceGuid))
 		return 0;
 
 	return instance;
@@ -70,6 +70,7 @@ bool LocalGroup::getChildGroups(RefArray< IProviderGroup >& outChildGroups)
 	if (!FileSystem::getInstance().find(m_groupPath.getPathName() + L"/*.*", groupFiles))
 		return false;
 
+	outChildGroups.reserve(groupFiles.size());
 	for (RefArray< File >::iterator i = groupFiles.begin(); i != groupFiles.end(); ++i)
 	{
 		const Path& path = (*i)->getPath();
@@ -104,23 +105,26 @@ bool LocalGroup::getChildInstances(RefArray< IProviderInstance >& outChildInstan
 	if (!FileSystem::getInstance().find(m_groupPath.getPathName() + L"/*.*", groupFiles))
 		return false;
 
+	outChildInstances.reserve(groupFiles.size());
 	for (RefArray< File >::iterator i = groupFiles.begin(); i != groupFiles.end(); ++i)
 	{
 		const Path& path = (*i)->getPath();
 		if (compareIgnoreCase< std::wstring >(path.getExtension(), L"xdm") == 0)
 		{
-			Ref< LocalInstance > instance = new LocalInstance(m_context);
-			if (instance->internalCreate(path.getPathNameNoExtension()))
-				outChildInstances.push_back(instance);
+			outChildInstances.push_back(new LocalInstance(
+				m_context,
+				path.getPathNameNoExtension()
+			));
 		}
 		else if (compareIgnoreCase< std::wstring >(path.getExtension(), L"xil") == 0)
 		{
 			Ref< LocalFileLink > link = readPhysicalObject< LocalFileLink >(path);
 			if (link)
 			{
-				Ref< LocalInstance > instance = new LocalInstance(m_context);
-				if (instance->internalCreate(Path(link->getPath()).getPathNameNoExtension()))
-					outChildInstances.push_back(instance);
+				outChildInstances.push_back(new LocalInstance(
+					m_context,
+					Path(link->getPath()).getPathNameNoExtension()
+				));
 			}
 		}
 	}

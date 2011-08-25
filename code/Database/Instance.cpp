@@ -108,6 +108,10 @@ Guid Instance::getGuid() const
 bool Instance::setGuid(const Guid& guid)
 {
 	T_ASSERT (m_providerInstance);
+
+	if (m_database)
+		m_database->flushInstance(getGuid());
+
 	if (!m_providerInstance->setGuid(guid))
 		return false;
 
