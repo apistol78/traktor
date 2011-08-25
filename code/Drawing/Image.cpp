@@ -249,7 +249,7 @@ void Image::setSpanUnsafe(int32_t y, const Color4f* span)
 		span,
 		m_palette,
 		&m_data[offset],
-		1
+		m_width
 	);
 }
 
