@@ -81,7 +81,7 @@ private:
 	uint8_t m_buf[4096];
 	bool m_done;
 	std::vector< wchar_t > m_cdata;
-	XmlPullParser::Event m_eventQueue[1024];
+	XmlPullParser::Event m_eventQueue[2048];
 	volatile uint32_t m_eventQueueHead;
 	volatile uint32_t m_eventQueueTail;
 
@@ -231,7 +231,7 @@ XmlPullParser::Event& XmlPullParserImpl::allocEvent()
 	// Check if event queue full; wait until event has been consumed.
 	int32_t tail = (m_eventQueueTail + 1) % sizeof_array(m_eventQueue);
 	while (tail == m_eventQueueHead)
-		m_threadJob->sleep(0);
+		m_threadJob->sleep(100);
 #endif
 
 	XmlPullParser::Event& evt = m_eventQueue[m_eventQueueTail];
