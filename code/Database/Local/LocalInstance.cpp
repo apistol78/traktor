@@ -25,22 +25,14 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.db.LocalInstance", LocalInstance, IProviderInstance)
 
-LocalInstance::LocalInstance(Context* context)
+LocalInstance::LocalInstance(Context* context, const Path& instancePath)
 :	m_context(context)
+,	m_instancePath(instancePath)
 {
 }
 
-bool LocalInstance::internalCreate(const Path& instancePath)
+bool LocalInstance::internalCreateNew(const Guid& instanceGuid)
 {
-	m_instancePath = instancePath;
-	return true;
-}
-
-bool LocalInstance::internalCreateNew(const Path& instancePath, const Guid& instanceGuid)
-{
-	if (!internalCreate(instancePath))
-		return false;
-
 	m_transaction = new Transaction();
 	if (!m_transaction->create(instanceGuid))
 		return false;
