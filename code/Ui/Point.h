@@ -29,6 +29,10 @@ public:
 
 	inline Point operator - (const Size& s) const;
 
+	inline const Point& operator += (const Size& s);
+
+	inline const Point& operator -= (const Size& s);
+
 	inline Size operator - (const Point& p) const;
 
 	inline bool operator == (const Point& p) const;

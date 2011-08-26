@@ -15,9 +15,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_UI_CUSTOM_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -166,9 +166,12 @@ private:
 	RefArray< Node > m_nodes;
 	RefArray< Edge > m_edges;
 	Size m_offset;
-	Point m_origin;
 	Point m_cursor;
+	Point m_moveOrigin;
+	Point m_edgeOrigin;
 	int m_mode;
+	bool m_moveAll;
+	bool m_moveSelected;
 	bool m_edgeSelectable;
 	Ref< Pin > m_selectedPin;
 	Ref< Node > m_selectedNode;
