@@ -48,9 +48,8 @@ struct SortNodePred
 enum Modes
 {
 	MdNothing,
-	MdMoveAllNodes,
-	MdMoveSelectedNodes,
 	MdDrawEdge,
+	MdConnectEdge,
 	MdDrawSelectionRectangle
 };
 
@@ -62,6 +61,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.GraphControl", GraphControl, Widget)
 
 GraphControl::GraphControl()
 :	m_mode(MdNothing)
+,	m_moveAll(false)
+,	m_moveSelected(false)
 ,	m_edgeSelectable(false)
 {
 }
@@ -91,8 +92,10 @@ bool GraphControl::create(Widget* parent, int style)
 
 	m_offset.cx =
 	m_offset.cy = 0;
-	m_origin.x =
-	m_origin.y = 0;
+	m_moveOrigin.x =
+	m_moveOrigin.y = 0;
+	m_edgeOrigin.x =
+	m_edgeOrigin.y = 0;
 	m_cursor.x =
 	m_cursor.y = 0;
 	m_mode = MdNothing;
@@ -477,24 +480,25 @@ void GraphControl::eventMouseDown(Event* e)
 
 	setFocus();
 
-	m_mode = MdNothing;
-	m_selectedPin = 0;
+	m_moveAll = false;
+	m_moveSelected = false;
+
 	m_selectedEdge = 0;
 	m_selectedNode = 0;
+
+	// Save origin of drag and where the cursor is currently at.
+	m_cursor =
+	m_moveOrigin = m->getPosition();
 
 	// Save positions of all nodes so we can issue node moved events later..
 	m_nodePositions.resize(m_nodes.size());
 	for (uint32_t i = 0; i < m_nodes.size(); ++i)
 		m_nodePositions[i] = m_nodes[i]->getPosition();
 
-	// Save origin of drag and where the cursor is currently at.
-	m_cursor =
-	m_origin = m->getPosition();
-
-	// If user holds down CTRL key and pressed left mouse button we should move entire graph.
-	if (e->getKeyState() & KsControl)
+	// If user holds down CTRL we should move entire graph.
+	if ((e->getKeyState() & KsControl) == KsControl)
 	{
-		m_mode = MdMoveAllNodes;
+		m_moveAll = true;
 		setCapture();
 		e->consume();
 		return;
@@ -552,27 +556,53 @@ void GraphControl::eventMouseDown(Event* e)
 					m_selectedPin = pin;
 				else
 				{
-					// See if we can find an existing edge connected to this input.
-					for (RefArray< Edge >::iterator i = m_edges.begin(); i != m_edges.end(); ++i)
+					if (m_mode != MdConnectEdge)
 					{
-						Ref< Edge > edge = *i;
-						if (edge->getDestinationPin() != pin)
-							continue;
+						// See if we can find an existing edge connected to this input.
+						for (RefArray< Edge >::iterator i = m_edges.begin(); i != m_edges.end(); ++i)
+						{
+							Ref< Edge > edge = *i;
+							if (edge->getDestinationPin() != pin)
+								continue;
 
-						m_selectedPin = edge->getSourcePin();
-						m_edges.erase(i);
+							m_selectedPin = edge->getSourcePin();
+							m_edges.erase(i);
+
+							Event event(this, edge);
+							raiseEvent(EiEdgeDisconnect, &event);
+							break;
+						}
+					}
+					else if (pin != m_selectedPin)
+					{
+						// Connect edge.
+						Ref< Edge > edge = new Edge(
+							m_selectedPin,
+							pin
+						);
 
 						Event event(this, edge);
-						raiseEvent(EiEdgeDisconnect, &event);
-						break;
+						raiseEvent(EiEdgeConnect, &event);
+
+						// Keep connecting edges if shift is being held.
+						if ((e->getKeyState() & KsShift) == 0)
+						{
+							m_mode = MdNothing;
+							m_selectedPin = 0;
+							releaseCapture();
+						}
+
+						e->consume();
+						return;
 					}
 				}
 
 				if (m_selectedPin)
 				{
 					// Adjust to the center of the pin.
-					m_cursor = m_origin = m_selectedPin->getPosition() + m_offset;
+					m_cursor = m_edgeOrigin = m_selectedPin->getPosition() + m_offset;
 					m_mode = MdDrawEdge;
+
 					setCapture();
 					e->consume();
 					return;
@@ -580,7 +610,7 @@ void GraphControl::eventMouseDown(Event* e)
 			}
 
 			// No pin selected, move the selected node(s).
-			m_mode = MdMoveSelectedNodes;
+			m_moveSelected = true;
 			setCapture();
 			e->consume();
 		}
@@ -612,6 +642,7 @@ void GraphControl::eventMouseDown(Event* e)
 		if (endSelectModification())
 			update();
 
+		m_mode = MdNothing;
 		e->consume();
 	}
 	else
@@ -633,6 +664,7 @@ void GraphControl::eventMouseDown(Event* e)
 		}
 
 		m_mode = MdDrawSelectionRectangle;
+
 		setCapture();
 		e->consume();
 	}
@@ -644,62 +676,7 @@ void GraphControl::eventMouseUp(Event* e)
 	
 	m_cursor = m->getPosition();
 
-	// Connect edge if we were drawing an edge.
-	if (m_mode == MdDrawEdge)
-	{
-		Ref< Node > targetNode = getNodeAt(m_cursor - m_offset);
-		if (targetNode)
-		{
-			Ref< Pin > targetPin = targetNode->getPinAt(m_cursor - m_offset);
-			if (targetPin && targetPin->getDirection() == Pin::DrInput)
-			{
-				Ref< Edge > edge = new Edge(
-					m_selectedPin,
-					targetPin
-				);
-				
-				Event event(this, edge);
-				raiseEvent(EiEdgeConnect, &event);
-			}
-		}
-	}
-
-	// Select nodes which are within selection rectangle.
-	if (m_mode == MdDrawSelectionRectangle)
-	{
-		Point tl = m_origin;
-		Point br = m_cursor;
-
-		if (tl.x > br.x)
-			std::swap(tl.x, br.x);
-		if (tl.y > br.y)
-			std::swap(tl.y, br.y);
-
-		beginSelectModification();
-
-		Rect selection = Rect(tl, br);
-		for(RefArray< Node >::iterator i = m_nodes.begin(); i != m_nodes.end(); ++i)
-		{
-			Rect rect = (*i)->calculateRect().offset(m_offset);
-			if (selection.intersect(rect))
-				(*i)->setSelected(true);
-		}
-
-		// Update edge selection states.
-		for (RefArray< Edge >::iterator i = m_edges.begin(); i != m_edges.end(); ++i)
-		{
-			bool selected =
-				(*i)->getSourcePin()->getNode()->isSelected() ||
-				(*i)->getDestinationPin()->getNode()->isSelected();
-
-			(*i)->setSelected(selected);
-		}
-
-		endSelectModification();
-	}
-
-	// Issue moved event on all moved nodes.
-	if (m_mode == MdMoveAllNodes || m_mode == MdMoveSelectedNodes)
+	if (m_moveAll || m_moveSelected)
 	{
 		T_ASSERT (m_nodes.size() == m_nodePositions.size());
 		for (uint32_t i = 0; i < m_nodes.size(); ++i)
@@ -711,9 +688,82 @@ void GraphControl::eventMouseUp(Event* e)
 			}
 		}
 	}
+	else
+	{
+		// Connect edge if we were drawing an edge.
+		if (m_mode == MdDrawEdge)
+		{
+			Ref< Node > targetNode = getNodeAt(m_cursor - m_offset);
+			if (targetNode)
+			{
+				Ref< Pin > targetPin = targetNode->getPinAt(m_cursor - m_offset);
+				if (targetPin)
+				{
+					if (targetPin->getDirection() == Pin::DrInput)
+					{
+						Ref< Edge > edge = new Edge(
+							m_selectedPin,
+							targetPin
+						);
 
-	m_mode = MdNothing;
-	releaseCapture();
+						Event event(this, edge);
+						raiseEvent(EiEdgeConnect, &event);
+					}
+					else if (targetPin == m_selectedPin)
+					{
+						// Click on output pin; enter connect mode.
+						m_cursor = m_edgeOrigin = m_selectedPin->getPosition() + m_offset;
+						m_mode = MdConnectEdge;
+					}
+				}
+			}
+		}
+
+		// Select nodes which are within selection rectangle.
+		if (m_mode == MdDrawSelectionRectangle)
+		{
+			Point tl = m_moveOrigin;
+			Point br = m_cursor;
+
+			if (tl.x > br.x)
+				std::swap(tl.x, br.x);
+			if (tl.y > br.y)
+				std::swap(tl.y, br.y);
+
+			beginSelectModification();
+
+			Rect selection = Rect(tl, br);
+			for(RefArray< Node >::iterator i = m_nodes.begin(); i != m_nodes.end(); ++i)
+			{
+				Rect rect = (*i)->calculateRect().offset(m_offset);
+				if (selection.intersect(rect))
+					(*i)->setSelected(true);
+			}
+
+			// Update edge selection states.
+			for (RefArray< Edge >::iterator i = m_edges.begin(); i != m_edges.end(); ++i)
+			{
+				bool selected =
+					(*i)->getSourcePin()->getNode()->isSelected() ||
+					(*i)->getDestinationPin()->getNode()->isSelected();
+
+				(*i)->setSelected(selected);
+			}
+
+			endSelectModification();
+		}
+
+		// Keep capture is we're connecting an edge.
+		if (m_mode != MdConnectEdge)
+		{
+			m_mode = MdNothing;
+			releaseCapture();
+		}
+	}
+
+	m_moveAll = false;
+	m_moveSelected = false;
+
 	update();
 
 	e->consume();
@@ -723,36 +773,39 @@ void GraphControl::eventMouseMove(Event* e)
 {
 	MouseEvent* m = static_cast< MouseEvent* >(e);
 
-	if (m_mode == MdMoveAllNodes)
+	if (m_moveAll)
 	{
-		m_offset += m->getPosition() - m_origin;
-		m_origin = m->getPosition();
+		Size delta = m->getPosition() - m_moveOrigin;
+		m_offset += delta;
+		m_cursor += delta;
+		m_edgeOrigin += delta;
+		m_moveOrigin = m->getPosition();
 		update();
 	}
-	else if (m_mode == MdMoveSelectedNodes)
+	else if (m_moveSelected)
 	{
-		Size offset = m->getPosition() - m_origin;
+		Size offset = m->getPosition() - m_moveOrigin;
 		for (RefArray< Node >::iterator i = m_nodes.begin(); i != m_nodes.end(); ++i)
 		{
-			if (m_mode == MdMoveSelectedNodes && !(*i)->isSelected())
+			if (!(*i)->isSelected())
 				continue;
 
 			Point position = (*i)->getPosition();
 			(*i)->setPosition(position + offset);
 		}
 
-		m_origin = m->getPosition();
+		m_moveOrigin = m->getPosition();
 		update();
 	}
-	else if (m_mode == MdDrawEdge || m_mode == MdDrawSelectionRectangle)
+	else if (m_mode == MdConnectEdge || m_mode == MdDrawEdge || m_mode == MdDrawSelectionRectangle)
 	{
 		Rect updateRect(
-			m_origin,
+			m_edgeOrigin,
 			m_cursor
 		);
 
 		m_cursor = m->getPosition();
-		updateRect = updateRect.getUnified().contain(m_cursor).inflate(2, 2);
+		updateRect = updateRect.getUnified().contain(m_cursor).inflate(4, 4);
 
 		update(&updateRect);
 	}
@@ -874,11 +927,11 @@ void GraphControl::eventPaint(Event* e)
 	}
 
 	// Edge cursor.
-	if (m_mode == MdDrawEdge)
+	if (m_mode == MdConnectEdge || m_mode == MdDrawEdge)
 	{
 		canvas.setBackground(m_paintSettings->getGridBackground());
 		canvas.setForeground(m_paintSettings->getEdgeCursor());
-		canvas.drawLine(m_origin, m_cursor);
+		canvas.drawLine(m_edgeOrigin, m_cursor);
 	}
 
 	// Selection rectangle.
@@ -886,8 +939,8 @@ void GraphControl::eventPaint(Event* e)
 	{
 		canvas.setForeground(Color4ub(220, 220, 255, 200));
 		canvas.setBackground(Color4ub(90, 90, 120, 80));
-		canvas.fillRect(Rect(m_origin, m_cursor));
-		canvas.drawRect(Rect(m_origin, m_cursor));
+		canvas.fillRect(Rect(m_moveOrigin, m_cursor));
+		canvas.drawRect(Rect(m_moveOrigin, m_cursor));
 	}
 
 	e->consume();
