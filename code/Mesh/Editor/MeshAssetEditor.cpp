@@ -141,6 +141,7 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 
 	m_materialList->addColumn(i18n::Text(L"MESHASSET_EDITOR_MATERIAL"), 180);
 	m_materialList->addColumn(i18n::Text(L"MESHASSET_EDITOR_SHADER"), 300);
+	m_materialList->addDoubleClickEventHandler(ui::createMethodHandler(this, &MeshAssetEditor::eventMaterialListDoubleClick));
 
 	updateModel();
 	updateFile();
@@ -365,6 +366,19 @@ void MeshAssetEditor::eventMaterialToolClick(ui::Event* event)
 		browseMaterialShader();
 	else if (command == L"MeshAssetEditor.RemoveShader")
 		removeMaterialShader();
+}
+
+void MeshAssetEditor::eventMaterialListDoubleClick(ui::Event* event)
+{
+	Ref< ui::ListViewItem > selectedItem = m_materialList->getSelectedItem();
+	if (!selectedItem)
+		return;
+
+	Ref< db::Instance > materialShaderInstance = selectedItem->getData< db::Instance >(L"INSTANCE");
+	if (!materialShaderInstance)
+		return;
+
+	m_editor->openEditor(materialShaderInstance);
 }
 
 	}

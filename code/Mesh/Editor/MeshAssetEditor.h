@@ -84,6 +84,8 @@ private:
 	void eventBrowseClick(ui::Event* event);
 
 	void eventMaterialToolClick(ui::Event* event);
+
+	void eventMaterialListDoubleClick(ui::Event* event);
 };
 
 	}
