@@ -18,7 +18,6 @@ Ref< EffectEntity > EffectEntityData::createEntity(resource::IResourceManager* r
 		return 0;
 
 	return new EffectEntity(
-		resourceManager,
 		getTransform(),
 		m_effect
 	);

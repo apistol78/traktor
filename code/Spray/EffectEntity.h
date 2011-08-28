@@ -1,10 +1,12 @@
 #ifndef traktor_spray_EffectEntity_H
 #define traktor_spray_EffectEntity_H
 
+#include <set>
 #include "Core/Math/Plane.h"
-#include "World/Entity/SpatialEntity.h"
+#include "Render/Types.h"
 #include "Resource/Proxy.h"
 #include "Spray/EmitterUpdateContext.h"
+#include "World/Entity/SpatialEntity.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -38,7 +40,7 @@ class T_DLLCLASS EffectEntity : public world::SpatialEntity
 	T_RTTI_CLASS;
 
 public:
-	EffectEntity(resource::IResourceManager* resourceManager, const Transform& transform, const resource::Proxy< Effect >& effect);
+	EffectEntity(const Transform& transform, const resource::Proxy< Effect >& effect);
 
 	void render(const Plane& cameraPlane, PointRenderer* pointRenderer);
 
@@ -58,11 +60,13 @@ public:
 
 	inline bool isEnable() const { return m_enable; }
 
+	inline bool haveTechnique(render::handle_t technique) const { return m_techniques.find(technique) != m_techniques.end(); }
+
 private:
-	resource::IResourceManager* m_resourceManager;
 	Transform m_transform;
 	resource::Proxy< Effect > m_effect;
 	Ref< EffectInstance > m_effectInstance;
+	std::set< render::handle_t > m_techniques;
 	EmitterUpdateContext m_context;
 	uint32_t m_counter;
 	bool m_enable;

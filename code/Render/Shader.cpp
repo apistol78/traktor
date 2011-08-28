@@ -56,6 +56,12 @@ void Shader::setTechnique(handle_t handle)
 	updateCurrentProgram();
 }
 
+void Shader::getTechniques(std::set< render::handle_t >& outHandles) const
+{
+	for (SmallMap< handle_t, Technique >::const_iterator i = m_techniques.begin(); i != m_techniques.end(); ++i)
+		outHandles.insert(i->first);
+}
+
 void Shader::setCombination(handle_t handle, bool param)
 {
 	uint32_t bit = m_parameterBits[handle];

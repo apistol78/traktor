@@ -1,8 +1,10 @@
 #include <ctime>
+#include "Render/Shader.h"
 #include "Spray/EffectEntity.h"
 #include "Spray/Effect.h"
 #include "Spray/EffectInstance.h"
-#include "Resource/IResourceManager.h"
+#include "Spray/EffectLayer.h"
+#include "Spray/Emitter.h"
 #include "World/Entity/EntityUpdate.h"
 
 namespace traktor
@@ -19,9 +21,8 @@ const uint32_t c_updateDenom = 1;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectEntity", EffectEntity, world::SpatialEntity)
 
-EffectEntity::EffectEntity(resource::IResourceManager* resourceManager, const Transform& transform, const resource::Proxy< Effect >& effect)
-:	m_resourceManager(resourceManager)
-,	m_transform(transform)
+EffectEntity::EffectEntity(const Transform& transform, const resource::Proxy< Effect >& effect)
+:	m_transform(transform)
 ,	m_effect(effect)
 #if !defined(WINCE)
 ,	m_context(0.0f, uint32_t(clock()))
@@ -72,16 +73,29 @@ void EffectEntity::update(const world::EntityUpdate* update)
 
 	if (!m_effect.valid() || !m_effectInstance)
 	{
-		if (!m_effect.valid())
-		{
-			if (!m_resourceManager->bind(m_effect))
-				return;
-
-			if (!m_effect.validate())
-				return;
-		}
+		if (!m_effect.validate())
+			return;
 
 		m_effectInstance = m_effect->createInstance();
+		if (m_effectInstance)
+		{
+			// Collect set of techniques used by this effect; we store
+			// these in a local set as we want to check against rendering
+			// as fast as possible without going through every layer each time.
+			m_techniques.clear();
+
+			const RefArray< EffectLayer >& layers = m_effect->getLayers();
+			for (RefArray< EffectLayer >::const_iterator i = layers.begin(); i != layers.end(); ++i)
+			{
+				const Emitter* emitter = (*i)->getEmitter();
+				if (!emitter)
+					continue;
+
+				const resource::Proxy< render::Shader >& shader = emitter->getShader();
+				if (shader.valid())
+					shader->getTechniques(m_techniques);
+			}
+		}
 	}
 
 	if (m_effectInstance)
