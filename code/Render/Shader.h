@@ -56,6 +56,12 @@ public:
 	 */
 	void setTechnique(handle_t handle);
 
+	/*! \brief Get set of shader techniques.
+	 *
+	 * \param outHandles Set of technique handles.
+	 */
+	void getTechniques(std::set< render::handle_t >& outHandles) const;
+
 	/*! \brief Set shader combination.
 	 *
 	 * Select proper permutation from shader

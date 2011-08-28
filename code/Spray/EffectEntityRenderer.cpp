@@ -32,11 +32,12 @@ void EffectEntityRenderer::render(
 	world::Entity* entity
 )
 {
-	if (!worldRenderPass.isFinal())
+	EffectEntity* effectEntity = checked_type_cast< EffectEntity* >(entity);
+
+	// Do we need to render anything with this technique?
+	if (!effectEntity->haveTechnique(worldRenderPass.getTechnique()))
 		return;
 
-	EffectEntity* effectEntity = checked_type_cast< EffectEntity* >(entity);
-	
 	Aabb3 boundingBox = effectEntity->getWorldBoundingBox();
 	if (boundingBox.empty())
 		return;
@@ -69,9 +70,6 @@ void EffectEntityRenderer::flush(
 	world::IWorldRenderPass& worldRenderPass
 )
 {
-	if (!worldRenderPass.isFinal())
-		return;
-
 	m_pointRenderer->flush(
 		worldContext.getRenderContext(),
 		worldRenderPass
