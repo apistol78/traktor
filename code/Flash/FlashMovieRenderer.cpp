@@ -196,14 +196,6 @@ void FlashMovieRenderer::renderCharacter(
 			if (!shape)
 				continue;
 
-			float glyphReferenceX = 0.0f, glyphReferenceY = 0.0f;
-			const SwfRect* glyphBounds = font->getBounds(i->glyphIndex);
-			if (glyphBounds)
-			{
-				glyphReferenceX = glyphBounds->min.x;
-				glyphReferenceY = glyphBounds->min.y;
-			}
-
 			float scaleHeight = 
 				font->getCoordinateType() == FlashFont::CtTwips ? 
 				1.0f / 1000.0f :
@@ -213,7 +205,7 @@ void FlashMovieRenderer::renderCharacter(
 
 			m_displayRenderer->renderGlyph(
 				*movie,
-				textTransform * translate(i->offsetX - glyphReferenceX, i->offsetY - glyphReferenceY) * scale(scaleOffset, scaleOffset),
+				textTransform * translate(i->offsetX, i->offsetY) * scale(scaleOffset, scaleOffset),
 				*shape,
 				i->color,
 				concateCxTransform(cxTransform, characterInstance->getColorTransform())

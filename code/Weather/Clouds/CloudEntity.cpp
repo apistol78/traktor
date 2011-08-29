@@ -306,7 +306,10 @@ void CloudEntity::renderCluster(
 	const CloudParticleCluster& cluster
 )
 {
-	if (!worldRenderPass.isFinal())
+	if (
+		worldRenderPass.getTechnique() != render::getParameterHandle(L"World_ForwardColor") && 
+		worldRenderPass.getTechnique() != render::getParameterHandle(L"World_PreLitColor")
+	)
 		return;
 
 	const Frustum& viewFrustum = worldRenderView.getViewFrustum();

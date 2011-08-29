@@ -35,7 +35,6 @@ class T_DLLCLASS WorldRenderPassPreLit : public IWorldRenderPass
 public:
 	WorldRenderPassPreLit(
 		render::handle_t technique,
-		bool finalPass,
 		const WorldRenderView& worldRenderView,
 		float depthRange,
 		render::ITexture* depthMap,
@@ -44,8 +43,6 @@ public:
 	);
 
 	virtual render::handle_t getTechnique() const;
-
-	virtual bool isFinal() const;
 
 	virtual void setShaderTechnique(render::Shader* shader) const;
 
@@ -59,7 +56,6 @@ public:
 
 private:
 	render::handle_t m_technique;
-	bool m_finalPass;
 	const WorldRenderView& m_worldRenderView;
 	float m_depthRange;
 	render::ITexture* m_depthMap;
