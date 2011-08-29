@@ -451,7 +451,6 @@ void WorldRendererPreLit::build(WorldRenderView& worldRenderView, Entity* entity
 
 		WorldRenderPassPreLit depthPass(
 			ms_techniqueDepth,
-			false,
 			depthRenderView,
 			m_settings.depthRange,
 			0,
@@ -471,7 +470,6 @@ void WorldRendererPreLit::build(WorldRenderView& worldRenderView, Entity* entity
 
 		WorldRenderPassPreLit normalPass(
 			ms_techniqueNormal,
-			false,
 			normalRenderView,
 			m_settings.depthRange,
 			0,
@@ -831,7 +829,6 @@ void WorldRendererPreLit::buildLightWithShadows(WorldRenderView& worldRenderView
 
 				WorldRenderPassPreLit shadowPass(
 					ms_techniqueShadow,
-					false,
 					shadowRenderView,
 					m_settings.depthRange,
 					0,
@@ -878,7 +875,6 @@ void WorldRendererPreLit::buildVisual(WorldRenderView& worldRenderView, Entity* 
 
 	WorldRenderPassPreLit defaultPreLitPass(
 		ms_techniquePreLitColor,
-		true,
 		worldRenderView,
 		m_settings.depthRange,
 		f.haveDepth ? m_depthTargetSet->getColorTexture(0) : 0,

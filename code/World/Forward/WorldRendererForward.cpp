@@ -357,7 +357,6 @@ void WorldRendererForward::build(WorldRenderView& worldRenderView, Entity* entit
 
 		WorldRenderPassForward pass(
 			s_techniqueDepth,
-			false,
 			depthRenderView,
 			m_settings.depthRange,
 			0,
@@ -669,7 +668,6 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, Entity
 
 		WorldRenderPassForward shadowPass(
 			s_techniqueShadow,
-			false,
 			shadowRenderView,
 			m_settings.depthRange,
 			0,
@@ -688,7 +686,6 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, Entity
 
 	WorldRenderPassForward defaultPass(
 		s_techniqueDefault,
-		true,
 		worldRenderView,
 		m_settings.depthRange,
 		f.haveDepth ? m_depthTargetSet->getColorTexture(0) : 0,
@@ -714,7 +711,6 @@ void WorldRendererForward::buildNoShadows(WorldRenderView& worldRenderView, Enti
 
 	WorldRenderPassForward defaultPass(
 		s_techniqueDefault,
-		true,
 		worldRenderView,
 		m_settings.depthRange,
 		f.haveDepth ? m_depthTargetSet->getColorTexture(0) : 0,

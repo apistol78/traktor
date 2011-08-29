@@ -37,8 +37,6 @@ class T_DLLCLASS IWorldRenderPass : public Object
 public:
 	virtual render::handle_t getTechnique() const = 0;
 
-	virtual bool isFinal() const = 0;
-
 	virtual void setShaderTechnique(render::Shader* shader) const = 0;
 
 	virtual void setShaderCombination(render::Shader* shader) const = 0;
