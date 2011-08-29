@@ -7,15 +7,14 @@
 #include "Scene/ISceneController.h"
 #include "Scene/ISceneControllerData.h"
 #include "Scene/Scene.h"
-#include "Scene/Editor/SceneEditorContext.h"
+#include "Scene/Editor/Camera.h"
 #include "Scene/Editor/ISceneEditorProfile.h"
 #include "Scene/Editor/IModifier.h"
-#include "Scene/Editor/IEntityEditorFactory.h"
 #include "Scene/Editor/IEntityEditor.h"
-#include "Scene/Editor/EntityAdapterBuilder.h"
 #include "Scene/Editor/EntityAdapter.h"
-#include "Scene/Editor/Camera.h"
+#include "Scene/Editor/EntityAdapterBuilder.h"
 #include "Scene/Editor/SceneAsset.h"
+#include "Scene/Editor/SceneEditorContext.h"
 #include "Ui/Event.h"
 #include "World/Entity/Entity.h"
 #include "World/Entity/EntityData.h"
@@ -28,67 +27,6 @@ namespace traktor
 	{
 		namespace
 		{
-
-// Find best matching entity editor.
-Ref< IEntityEditor > createEntityEditor(
-	SceneEditorContext* context,
-	const RefArray< IEntityEditorFactory >& entityEditorFactories,
-	const TypeInfo& entityDataType
-)
-{
-	uint32_t minClassDifference = std::numeric_limits< uint32_t >::max();
-	Ref< IEntityEditorFactory > entityEditorFactory;
-
-	for (RefArray< IEntityEditorFactory >::const_iterator i = entityEditorFactories.begin(); i != entityEditorFactories.end(); ++i)
-	{
-		TypeInfoSet entityDataTypes = (*i)->getEntityDataTypes();
-		for (TypeInfoSet::const_iterator j = entityDataTypes.begin(); j != entityDataTypes.end(); ++j)
-		{
-			if (is_type_of(**j, entityDataType))
-			{
-				uint32_t classDifference = type_difference(**j, entityDataType);
-				if (classDifference < minClassDifference)
-				{
-					entityEditorFactory = *i;
-					minClassDifference = classDifference;
-				}
-			}
-		}
-	}
-
-	if (entityEditorFactory)
-	{
-		Ref< IEntityEditor > entityEditor = entityEditorFactory->createEntityEditor(context, entityDataType);
-		T_ASSERT_M (entityEditor, L"Entity editor factory returned null");
-		return entityEditor;
-	}
-	else
-		return 0;
-}
-
-// Create entity editor for each adapter.
-void createEntityEditors(
-	SceneEditorContext* context,
-	const RefArray< IEntityEditorFactory >& entityEditorFactories,
-	EntityAdapter* entityAdapter
-)
-{
-	const RefArray< EntityAdapter >& children = entityAdapter->getChildren();
-
-	if (!entityAdapter->getEntityEditor() && entityAdapter->getEntityData())
-	{
-		Ref< IEntityEditor > entityEditor = createEntityEditor(
-			context,
-			entityEditorFactories,
-			type_of(entityAdapter->getEntityData())
-		);
-		if (entityEditor)
-			entityAdapter->setEntityEditor(entityEditor);
-	}
-
-	for (RefArray< EntityAdapter >::const_iterator i = children.begin(); i != children.end(); ++i)
-		createEntityEditors(context, entityEditorFactories, *i);
-}
 
 // Find adapter by traverse entity adapter hierarchy.
 template < typename Predicate >
@@ -308,7 +246,12 @@ void SceneEditorContext::buildEntities()
 {
 	if (m_sceneAsset)
 	{
-		Ref< EntityAdapterBuilder > entityBuilder = new EntityAdapterBuilder(this);
+		// Create entity editor factories.
+		RefArray< IEntityEditorFactory > entityEditorFactories;
+		for (RefArray< ISceneEditorProfile >::iterator i = m_editorProfiles.begin(); i != m_editorProfiles.end(); ++i)
+			(*i)->createEntityEditorFactories(this, entityEditorFactories);
+		
+		Ref< EntityAdapterBuilder > entityBuilder = new EntityAdapterBuilder(this, entityEditorFactories);
 
 		// Create entity factories.
 		for (RefArray< ISceneEditorProfile >::iterator i = m_editorProfiles.begin(); i != m_editorProfiles.end(); ++i)
@@ -335,15 +278,6 @@ void SceneEditorContext::buildEntities()
 
 		// Save new root entity adapter.
 		m_rootEntityAdapter = entityBuilder->getRootAdapter();
-
-		// Create entity editors.
-		if (m_rootEntityAdapter)
-		{
-			RefArray< IEntityEditorFactory > entityEditorFactories;
-			for (RefArray< ISceneEditorProfile >::iterator i = m_editorProfiles.begin(); i != m_editorProfiles.end(); ++i)
-				(*i)->createEntityEditorFactories(this, entityEditorFactories);
-			createEntityEditors(this, entityEditorFactories, m_rootEntityAdapter);
-		}
 
 		// Bind post process settings.
 		resource::Proxy< world::PostProcessSettings > postProcessSettings = m_sceneAsset->getPostProcessSettings();

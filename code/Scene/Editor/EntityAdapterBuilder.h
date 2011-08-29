@@ -12,6 +12,7 @@ namespace traktor
 	{
 
 class EntityAdapter;
+class IEntityEditorFactory;
 class SceneEditorContext;
 
 class EntityAdapterBuilder : public world::IEntityBuilder
@@ -19,7 +20,7 @@ class EntityAdapterBuilder : public world::IEntityBuilder
 	T_RTTI_CLASS;
 
 public:
-	EntityAdapterBuilder(SceneEditorContext* context);
+	EntityAdapterBuilder(SceneEditorContext* context, const RefArray< IEntityEditorFactory >& entityEditorFactories);
 
 	virtual void addFactory(world::IEntityFactory* entityFactory);
 
@@ -37,6 +38,7 @@ public:
 
 private:
 	Ref< SceneEditorContext > m_context;
+	RefArray< IEntityEditorFactory > m_entityEditorFactories;
 	Ref< world::IEntitySchema > m_entitySchema;
 	RefArray< world::IEntityFactory > m_entityFactories;
 	std::map< const world::EntityData*, Ref< world::Entity > > m_entities;

@@ -3,14 +3,16 @@
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/Settings.h"
 #include "Editor/IEditor.h"
+#include "Render/PrimitiveRenderer.h"
 #include "Scene/Editor/DefaultEntityEditor.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/IModifier.h"
 #include "Scene/Editor/SceneEditorContext.h"
-#include "World/Entity/SpatialEntityData.h"
-#include "World/Entity/DirectionalLightEntity.h"
-#include "Render/PrimitiveRenderer.h"
 #include "Ui/Command.h"
+#include "World/Entity/DirectionalLightEntity.h"
+#include "World/Entity/GroupEntityData.h"
+#include "World/Entity/SpatialEntityData.h"
+#include "World/Entity/SpatialGroupEntityData.h"
 
 namespace traktor
 {
@@ -25,12 +27,62 @@ DefaultEntityEditor::DefaultEntityEditor(SceneEditorContext* context)
 	updateSettings(context);
 }
 
-bool DefaultEntityEditor::isPickable(
-	EntityAdapter* entityAdapter
-) const
+bool DefaultEntityEditor::isGroup(const EntityAdapter* entityAdapter) const
 {
-	T_ASSERT (entityAdapter->isSpatial());
-	return true;
+	const world::EntityData* entityData = entityAdapter->getEntityData();
+	return is_a< world::GroupEntityData >(entityData) || is_a< world::SpatialGroupEntityData >(entityData);
+}
+
+bool DefaultEntityEditor::addChildEntity(EntityAdapter* entityAdapter, EntityAdapter* childEntityAdapter) const
+{
+	world::EntityData* entityData = entityAdapter->getEntityData();
+	world::EntityData* childEntityData = childEntityAdapter->getEntityData();
+
+	if (world::GroupEntityData* groupEntityData = dynamic_type_cast< world::GroupEntityData* >(entityData))
+	{
+		groupEntityData->addEntityData(childEntityData);
+		return true;
+	}
+	
+	if (world::SpatialGroupEntityData* spatialGroupEntityData = dynamic_type_cast< world::SpatialGroupEntityData* >(entityData))
+	{
+		if (world::SpatialEntityData* spatialChildEntityData = dynamic_type_cast< world::SpatialEntityData* >(childEntityData))
+		{
+			spatialGroupEntityData->addEntityData(spatialChildEntityData);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool DefaultEntityEditor::removeChildEntity(EntityAdapter* entityAdapter, EntityAdapter* childEntityAdapter) const
+{
+	world::EntityData* entityData = entityAdapter->getEntityData();
+	world::EntityData* childEntityData = childEntityAdapter->getEntityData();
+
+	if (world::GroupEntityData* groupEntityData = dynamic_type_cast< world::GroupEntityData* >(entityData))
+	{
+		groupEntityData->removeEntityData(childEntityData);
+		return true;
+	}
+
+	if (world::SpatialGroupEntityData* spatialGroupEntityData = dynamic_type_cast< world::SpatialGroupEntityData* >(entityData))
+	{
+		if (world::SpatialEntityData* spatialChildEntityData = dynamic_type_cast< world::SpatialEntityData* >(childEntityData))
+		{
+			spatialGroupEntityData->removeEntityData(spatialChildEntityData);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool DefaultEntityEditor::isPickable(const EntityAdapter* entityAdapter) const
+{
+	world::EntityData* entityData = entityAdapter->getEntityData();
+	return is_a< world::SpatialEntityData >(entityData);
 }
 
 void DefaultEntityEditor::entitySelected(
@@ -39,7 +91,6 @@ void DefaultEntityEditor::entitySelected(
 	bool selected
 )
 {
-	T_ASSERT (entityAdapter->isSpatial());
 }
 
 void DefaultEntityEditor::beginModifier(

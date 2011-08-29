@@ -8,8 +8,6 @@
 #include "World/Entity/SpatialEntity.h"
 #include "World/Entity/ExternalEntityData.h"
 #include "World/Entity/ExternalSpatialEntityData.h"
-#include "World/Entity/GroupEntityData.h"
-#include "World/Entity/SpatialGroupEntityData.h"
 
 namespace traktor
 {
@@ -123,12 +121,8 @@ bool EntityAdapter::getExternalGuid(Guid& outGuid) const
 
 bool EntityAdapter::isGroup() const
 {
-	if (is_a< world::GroupEntityData >(getEntityData()))
-		return true;
-	if (is_a< world::SpatialGroupEntityData >(getEntityData()))
-		return true;
-	else
-		return false;
+	T_ASSERT (m_entityEditor);
+	return m_entityEditor->isGroup(this);
 }
 
 EntityAdapter* EntityAdapter::getParent() const
@@ -160,32 +154,14 @@ EntityAdapter* EntityAdapter::getParentContainerGroup()
 
 void EntityAdapter::addChild(EntityAdapter* child)
 {
-	if (world::GroupEntityData* groupEntityData = dynamic_type_cast< world::GroupEntityData* >(getEntityData()))
-		groupEntityData->addEntityData(child->getEntityData());
-	else if (world::SpatialGroupEntityData* spatialGroupEntityData = dynamic_type_cast< world::SpatialGroupEntityData* >(getEntityData()))
-	{
-		if (world::SpatialEntityData* spatialChildEntityData = dynamic_type_cast< world::SpatialEntityData* >(child->getEntityData()))
-			spatialGroupEntityData->addEntityData(spatialChildEntityData);
-	}
-	else
-		T_FATAL_ERROR;
-
-	link(child);
+	if (m_entityEditor->addChildEntity(this, child))
+		link(child);
 }
 
 void EntityAdapter::removeChild(EntityAdapter* child)
 {
-	if (world::GroupEntityData* groupEntityData = dynamic_type_cast< world::GroupEntityData* >(getEntityData()))
-		groupEntityData->removeEntityData(child->getEntityData());
-	else if (world::SpatialGroupEntityData* spatialGroupEntityData = dynamic_type_cast< world::SpatialGroupEntityData* >(getEntityData()))
-	{
-		if (world::SpatialEntityData* spatialChildEntityData = dynamic_type_cast< world::SpatialEntityData* >(child->getEntityData()))
-			spatialGroupEntityData->removeEntityData(spatialChildEntityData);
-	}
-	else
-		T_FATAL_ERROR;
-
-	unlink(child);
+	if (m_entityEditor->removeChildEntity(this, child))
+		unlink(child);
 }
 
 const RefArray< EntityAdapter >& EntityAdapter::getChildren() const

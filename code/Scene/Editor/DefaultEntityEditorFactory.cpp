@@ -1,6 +1,6 @@
-#include "Scene/Editor/DefaultEntityEditorFactory.h"
 #include "Scene/Editor/DefaultEntityEditor.h"
-#include "World/Entity/SpatialEntityData.h"
+#include "Scene/Editor/DefaultEntityEditorFactory.h"
+#include "World/Entity/EntityData.h"
 
 namespace traktor
 {
@@ -12,7 +12,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.DefaultEntityEditorFactory", DefaultEntit
 const TypeInfoSet DefaultEntityEditorFactory::getEntityDataTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< world::SpatialEntityData >());
+	typeSet.insert(&type_of< world::EntityData >());
 	return typeSet;
 }
 
@@ -21,12 +21,7 @@ Ref< IEntityEditor > DefaultEntityEditorFactory::createEntityEditor(
 	const TypeInfo& entityDataType
 ) const
 {
-	T_ASSERT (is_type_of< world::SpatialEntityData >(entityDataType));
-
-	Ref< IEntityEditor > entityEditor = new DefaultEntityEditor(context);
-	T_ASSERT (entityEditor);
-
-	return entityEditor;
+	return new DefaultEntityEditor(context);
 }
 
 	}
