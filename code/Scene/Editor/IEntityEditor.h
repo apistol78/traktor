@@ -7,9 +7,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_SCENE_EDITOR_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -45,6 +45,29 @@ class T_DLLCLASS IEntityEditor : public Object
 	T_RTTI_CLASS;
 
 public:
+	/*! \brief Is entity a group?
+	 *
+	 * \param entityAdapter Entity adapter.
+	 * \return True if pick-able.
+	 */
+	virtual bool isGroup(const EntityAdapter* entityAdapter) const = 0;
+
+	/*! \brief Add child entity.
+	 *
+	 * \param entityAdapter Container entity.
+	 * \param childEntityAdapter Child entity.
+	 * \return True if successfully added child.
+	 */
+	virtual bool addChildEntity(EntityAdapter* entityAdapter, EntityAdapter* childEntityAdapter) const = 0;
+
+	/*! \brief Remove child entity.
+	 *
+	 * \param entityAdapter Container entity.
+	 * \param childEntityAdapter Child entity.
+	 * \return True if successfully removed child.
+	 */
+	virtual bool removeChildEntity(EntityAdapter* entityAdapter, EntityAdapter* childEntityAdapter) const = 0;
+
 	/*! \brief Is entity pick-able?
 	 *
 	 * Return true if entity can be selected
@@ -53,9 +76,7 @@ public:
 	 * \param entityAdapter Entity adapter.
 	 * \return True if pick-able.
 	 */
-	virtual bool isPickable(
-		EntityAdapter* entityAdapter
-	) const = 0;
+	virtual bool isPickable(const EntityAdapter* entityAdapter) const = 0;
 
 	/*! \brief Entity selected.
 	 *
@@ -63,21 +84,14 @@ public:
 	 * \param entityAdapter Selected entity adapter.
 	 * \param selected True if entity was selected, false if it was deselected.
 	 */
-	virtual void entitySelected(
-		SceneEditorContext* context,
-		EntityAdapter* entityAdapter,
-		bool selected
-	) = 0;
+	virtual void entitySelected(SceneEditorContext* context, EntityAdapter* entityAdapter, bool selected) = 0;
 
 	/*! \brief Begin modifier on entity.
 	 *
 	 * \param context Scene editor context.
 	 * \param entityAdapter Selected entity adapter.
 	 */
-	virtual void beginModifier(
-		SceneEditorContext* context,
-		EntityAdapter* entityAdapter
-	) = 0;
+	virtual void beginModifier(SceneEditorContext* context, EntityAdapter* entityAdapter) = 0;
 
 	/*! \brief Apply modifier on entity.
 	 *
@@ -104,10 +118,7 @@ public:
 	 * \param context Scene editor context.
 	 * \param entityAdapter Selected entity adapter.
 	 */
-	virtual void endModifier(
-		SceneEditorContext* context,
-		EntityAdapter* entityAdapter
-	) = 0;
+	virtual void endModifier(SceneEditorContext* context, EntityAdapter* entityAdapter) = 0;
 
 	/*! \brief Handle shortcut.
 	 *

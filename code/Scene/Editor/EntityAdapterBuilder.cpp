@@ -4,21 +4,63 @@
 #include "Core/Serialization/DeepHash.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/EntityAdapterBuilder.h"
+#include "Scene/Editor/IEntityEditorFactory.h"
+#include "Scene/Editor/SceneEditorContext.h"
 #include "World/Entity/Entity.h"
 #include "World/Entity/EntityData.h"
 #include "World/Entity/IEntityFactory.h"
 #include "World/Entity/IEntitySchema.h"
-#include "Scene/Editor/SceneEditorContext.h"
 
 namespace traktor
 {
 	namespace scene
 	{
+		namespace
+		{
+
+Ref< IEntityEditor > createEntityEditor(
+	SceneEditorContext* context,
+	const RefArray< IEntityEditorFactory >& entityEditorFactories,
+	const TypeInfo& entityDataType
+)
+{
+	uint32_t minClassDifference = std::numeric_limits< uint32_t >::max();
+	Ref< IEntityEditorFactory > entityEditorFactory;
+
+	for (RefArray< IEntityEditorFactory >::const_iterator i = entityEditorFactories.begin(); i != entityEditorFactories.end(); ++i)
+	{
+		TypeInfoSet entityDataTypes = (*i)->getEntityDataTypes();
+		for (TypeInfoSet::const_iterator j = entityDataTypes.begin(); j != entityDataTypes.end(); ++j)
+		{
+			if (is_type_of(**j, entityDataType))
+			{
+				uint32_t classDifference = type_difference(**j, entityDataType);
+				if (classDifference < minClassDifference)
+				{
+					entityEditorFactory = *i;
+					minClassDifference = classDifference;
+				}
+			}
+		}
+	}
+
+	if (entityEditorFactory)
+	{
+		Ref< IEntityEditor > entityEditor = entityEditorFactory->createEntityEditor(context, entityDataType);
+		T_ASSERT_M (entityEditor, L"Entity editor factory returned null");
+		return entityEditor;
+	}
+	else
+		return 0;
+}
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.EntityAdapterBuilder", EntityAdapterBuilder, world::IEntityBuilder)
 
-EntityAdapterBuilder::EntityAdapterBuilder(SceneEditorContext* context)
+EntityAdapterBuilder::EntityAdapterBuilder(SceneEditorContext* context, const RefArray< IEntityEditorFactory >& entityEditorFactories)
 :	m_context(context)
+,	m_entityEditorFactories(entityEditorFactories)
 {
 }
 
@@ -56,6 +98,9 @@ void EntityAdapterBuilder::begin(world::IEntitySchema* entitySchema)
 		if (parent)
 			parent->unlink(entityAdapter);
 
+		// Release entity editor.
+		entityAdapter->setEntityEditor(0);
+
 		// Insert into map from instance guid to adapters.
 		m_cachedAdapters[entityAdapter->getEntityData()].push_back(entityAdapter);
 	}
@@ -65,19 +110,29 @@ void EntityAdapterBuilder::begin(world::IEntitySchema* entitySchema)
 
 Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entityData)
 {
+	Ref< EntityAdapter > entityAdapter;
+
 	if (!entityData)
 		return 0;
 
-	Ref< EntityAdapter > entityAdapter;
+	// Get adapter; reuse adapters containing same type of entity.
 	RefArray< EntityAdapter >& cachedAdapters = m_cachedAdapters[entityData];
 	if (!cachedAdapters.empty())
 	{
-		entityAdapter = cachedAdapters.front(); cachedAdapters.pop_front();
+		entityAdapter = cachedAdapters.front();
+		cachedAdapters.pop_front();
 	}
 	else
 	{
 		entityAdapter = new EntityAdapter(const_cast< world::EntityData* >(entityData));
 	}
+
+	// Create entity editor based on type of entity.
+	Ref< IEntityEditor > entityEditor = createEntityEditor(m_context, m_entityEditorFactories, type_of(entityData));
+	if (!entityEditor)
+		return 0;
+
+	entityAdapter->setEntityEditor(entityEditor);
 
 	if (m_currentAdapter)
 		m_currentAdapter->link(entityAdapter);
