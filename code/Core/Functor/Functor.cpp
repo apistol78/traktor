@@ -62,8 +62,12 @@ private:
 #else
 	enum { MaxFunctorCount = 1024 };
 #endif
+#if defined(_WIN64)
+	enum { MaxFunctorSize = 128 };
+#else
 	enum { MaxFunctorSize = 64 };
-	
+#endif
+
 	void* m_block;
 	BlockAllocator m_blockAllocator;
 	Semaphore m_allocatorLock;

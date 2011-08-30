@@ -79,7 +79,7 @@ void* VertexBufferStaticDx9::lock()
 		return 0;
 
 	VOID* ptr;
-	if (FAILED(m_d3dVertexBuffer->Lock(0, 0, &ptr, D3DLOCK_DISCARD | D3DLOCK_NOOVERWRITE)))
+	if (FAILED(m_d3dVertexBuffer->Lock(0, 0, &ptr, 0)))
 		return 0;
 
 	m_locked = true;
