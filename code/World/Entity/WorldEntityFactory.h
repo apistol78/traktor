@@ -13,17 +13,15 @@
 
 namespace traktor
 {
-	namespace db
+	namespace resource
 	{
 
-class Database;
+class IResourceManager;
 
 	}
 
 	namespace world
 	{
-
-class ExternalEntityDataCache;
 
 /*! \brief World entity factory.
  * \ingroup World
@@ -33,15 +31,14 @@ class T_DLLCLASS WorldEntityFactory : public IEntityFactory
 	T_RTTI_CLASS;
 	
 public:
-	WorldEntityFactory(db::Database* database, ExternalEntityDataCache* externalCache);
+	WorldEntityFactory(resource::IResourceManager* resourceManager);
 
 	virtual const TypeInfoSet getEntityTypes() const;
 
 	virtual Ref< Entity > createEntity(IEntityBuilder* builder, const EntityData& entityData) const;
 
 private:
-	Ref< db::Database > m_database;
-	mutable Ref< ExternalEntityDataCache > m_externalCache;
+	mutable Ref< resource::IResourceManager > m_resourceManager;
 };
 	
 	}

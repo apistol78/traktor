@@ -8,12 +8,12 @@
 #include "Render/Resource/ShaderFactory.h"
 #include "Render/Resource/TextureFactory.h"
 #include "Weather/Clouds/CloudMaskFactory.h"
+#include "World/Entity/EntityResourceFactory.h"
 #include "World/PostProcess/PostProcessFactory.h"
 
 // Entity factories
 #include "Mesh/MeshEntityFactory.h"
 #include "Weather/WeatherEntityFactory.h"
-#include "World/Entity/ExternalEntityDataCache.h"
 #include "World/Entity/WorldEntityFactory.h"
 
 // Entity renderers
@@ -34,7 +34,6 @@ namespace traktor
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.DefaultEditorProfile", 0, DefaultEditorProfile, ISceneEditorProfile)
 
 DefaultEditorProfile::DefaultEditorProfile()
-:	m_externalCache(new world::ExternalEntityDataCache())
 {
 }
 
@@ -60,6 +59,7 @@ void DefaultEditorProfile::createResourceFactories(
 	outResourceFactories.push_back(new render::ShaderFactory(context->getResourceDatabase(), context->getRenderSystem()));
 	outResourceFactories.push_back(new render::TextureFactory(context->getResourceDatabase(), context->getRenderSystem(), 0));
 	outResourceFactories.push_back(new weather::CloudMaskFactory(context->getResourceDatabase()));
+	outResourceFactories.push_back(new world::EntityResourceFactory(context->getResourceDatabase()));
 	outResourceFactories.push_back(new world::PostProcessFactory(context->getResourceDatabase()));
 }
 
@@ -68,7 +68,7 @@ void DefaultEditorProfile::createEntityFactories(
 	RefArray< world::IEntityFactory >& outEntityFactories
 ) const
 {
-	outEntityFactories.push_back(new world::WorldEntityFactory(context->getSourceDatabase(), m_externalCache));
+	outEntityFactories.push_back(new world::WorldEntityFactory(context->getResourceManager()));
 	outEntityFactories.push_back(new mesh::MeshEntityFactory(context->getResourceManager()));
 	outEntityFactories.push_back(new weather::WeatherEntityFactory(context->getResourceManager(), context->getRenderSystem()));
 }
