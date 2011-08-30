@@ -3,6 +3,7 @@
 #include "World/Entity/DirectionalLightEntity.h"
 #include "World/Entity/LightEntityRenderer.h"
 #include "World/Entity/PointLightEntity.h"
+#include "World/Entity/SpotLightEntity.h"
 
 namespace traktor
 {
@@ -16,6 +17,7 @@ const TypeInfoSet LightEntityRenderer::getEntityTypes() const
 	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< DirectionalLightEntity >());
 	typeSet.insert(&type_of< PointLightEntity >());
+	typeSet.insert(&type_of< SpotLightEntity >());
 	return typeSet;
 }
 
@@ -29,7 +31,7 @@ void LightEntityRenderer::render(
 	Light light;
 
 	// Note: Even though we modify the light here the shadow map isn't affected until next frame.
-	if (DirectionalLightEntity* directionalLightEntity = dynamic_type_cast< DirectionalLightEntity* >(entity))
+	if (const DirectionalLightEntity* directionalLightEntity = dynamic_type_cast< const DirectionalLightEntity* >(entity))
 	{
 		Transform transform;
 		directionalLightEntity->getTransform(transform);
@@ -41,11 +43,12 @@ void LightEntityRenderer::render(
 		light.baseColor = directionalLightEntity->getBaseColor();
 		light.shadowColor = directionalLightEntity->getShadowColor();
 		light.range = Scalar(0.0f);
+		light.radius = Scalar(0.0f);
 		light.castShadow = directionalLightEntity->getCastShadow();
 
 		worldRenderView.addLight(light);
 	}
-	else if (PointLightEntity* pointLightEntity = dynamic_type_cast< PointLightEntity* >(entity))
+	else if (const PointLightEntity* pointLightEntity = dynamic_type_cast< const PointLightEntity* >(entity))
 	{
 		Transform transform;
 		pointLightEntity->getTransform(transform);
@@ -61,6 +64,7 @@ void LightEntityRenderer::render(
 		light.baseColor = pointLightEntity->getBaseColor();
 		light.shadowColor = pointLightEntity->getShadowColor();
 		light.range = Scalar(pointLightEntity->getRange());
+		light.radius = Scalar(0.0f);
 		light.castShadow = false;
 
 		if (pointLightEntity->getRandomFlicker() <= 1.0f - FUZZY_EPSILON)
@@ -70,6 +74,27 @@ void LightEntityRenderer::render(
 			light.baseColor *= randomFlicker;
 			light.shadowColor *= randomFlicker;
 		}
+
+		worldRenderView.addLight(light);
+	}
+	else if (const SpotLightEntity* spotLightEntity = dynamic_type_cast< const SpotLightEntity* >(entity))
+	{
+		Transform transform;
+		spotLightEntity->getTransform(transform);
+
+		Vector4 center = worldRenderView.getView() * transform.translation().xyz1();
+		//if (worldRenderView.getCullFrustum().inside(center, Scalar(spotLightEntity->getRange())) == Frustum::IrOutside)
+		//	return;
+
+		light.type = LtSpot;
+		light.position = transform.translation();
+		light.direction = transform.rotation() * Vector4(0.0f, 1.0f, 0.0f);
+		light.sunColor = spotLightEntity->getSunColor();
+		light.baseColor = spotLightEntity->getBaseColor();
+		light.shadowColor = spotLightEntity->getShadowColor();
+		light.range = Scalar(spotLightEntity->getRange());
+		light.radius = Scalar(spotLightEntity->getRadius());
+		light.castShadow = false;
 
 		worldRenderView.addLight(light);
 	}

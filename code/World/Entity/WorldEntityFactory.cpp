@@ -13,6 +13,8 @@
 #include "World/Entity/PointLightEntityData.h"
 #include "World/Entity/SpatialGroupEntity.h"
 #include "World/Entity/SpatialGroupEntityData.h"
+#include "World/Entity/SpotLightEntity.h"
+#include "World/Entity/SpotLightEntityData.h"
 #include "World/Entity/WorldEntityFactory.h"
 
 namespace traktor
@@ -40,6 +42,7 @@ const TypeInfoSet WorldEntityFactory::getEntityTypes() const
 
 	typeSet.insert(&type_of< DirectionalLightEntityData >());
 	typeSet.insert(&type_of< PointLightEntityData >());
+	typeSet.insert(&type_of< SpotLightEntityData >());
 
 	typeSet.insert(&type_of< NullEntityData >());
 	return typeSet;
@@ -143,6 +146,18 @@ Ref< Entity > WorldEntityFactory::createEntity(IEntityBuilder* builder, const En
 			pointLightData->getRange(),
 			pointLightData->getRandomFlickerAmount(),
 			pointLightData->getRandomFlickerFilter()
+		);
+	}
+
+	if (const SpotLightEntityData* spotLightData = dynamic_type_cast< const SpotLightEntityData* >(&entityData))
+	{
+		return new SpotLightEntity(
+			spotLightData->getTransform(),
+			spotLightData->getSunColor(),
+			spotLightData->getBaseColor(),
+			spotLightData->getShadowColor(),
+			spotLightData->getRange(),
+			spotLightData->getRadius()
 		);
 	}
 
