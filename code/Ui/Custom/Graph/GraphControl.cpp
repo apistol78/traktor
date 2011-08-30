@@ -687,6 +687,7 @@ void GraphControl::eventMouseUp(Event* e)
 				raiseEvent(GraphControl::EiNodeMoved, &event);
 			}
 		}
+		releaseCapture();
 	}
 	else
 	{
