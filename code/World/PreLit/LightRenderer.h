@@ -65,6 +65,7 @@ public:
 private:
 	resource::Proxy< render::Shader > m_lightDirectionalShader;
 	resource::Proxy< render::Shader > m_lightPointShader;
+	resource::Proxy< render::Shader > m_lightSpotShader;
 	Ref< render::VertexBuffer > m_vertexBufferQuad;
 	render::Primitives m_primitivesQuad;
 };

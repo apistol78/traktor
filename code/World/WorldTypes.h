@@ -18,7 +18,8 @@ enum LightType
 {
 	LtDisabled = 0,
 	LtDirectional = 1,
-	LtPoint = 2
+	LtPoint = 2,
+	LtSpot = 3
 };
 
 struct Light
@@ -30,6 +31,7 @@ struct Light
 	Vector4 baseColor;
 	Vector4 shadowColor;
 	Scalar range;
+	Scalar radius;
 	bool castShadow;
 };
 
