@@ -5,13 +5,6 @@
 
 namespace traktor
 {
-	namespace world
-	{
-
-class ExternalEntityDataCache;
-
-	}
-
 	namespace scene
 	{
 
@@ -58,9 +51,6 @@ public:
 		SceneEditorContext* context,
 		RefArray< IEntityEditorFactory >& outEntityEditorFactories
 	) const;
-
-private:
-	Ref< world::ExternalEntityDataCache > m_externalCache;
 };
 
 	}

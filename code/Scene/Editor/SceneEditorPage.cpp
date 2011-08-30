@@ -504,8 +504,34 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 
 void SceneEditorPage::handleDatabaseEvent(const Guid& eventId)
 {
-	if (m_context)
-		m_context->getResourceManager()->update(eventId, true);
+	if (!m_context)
+		return;
+
+	m_context->getResourceManager()->update(eventId, true);
+
+	RefArray< EntityAdapter > entityAdapters;
+	m_context->getEntities(entityAdapters);
+
+	bool externalModified = false;
+	for (RefArray< EntityAdapter >::const_iterator i = entityAdapters.begin(); i != entityAdapters.end(); ++i)
+	{
+		Guid externalGuid;
+		if ((*i)->getExternalGuid(externalGuid))
+		{
+			if (externalGuid == eventId)
+			{
+				// Modified external entity detected; need to recreate the scene.
+				externalModified = true;
+				break;
+			}
+		}
+	}
+
+	if (externalModified)
+	{
+		updateScene();
+		updateInstanceGrid();
+	}
 }
 
 void SceneEditorPage::createControllerEditor()
