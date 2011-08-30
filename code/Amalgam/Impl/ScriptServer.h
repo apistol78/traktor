@@ -8,6 +8,13 @@ namespace traktor
 
 class Settings;
 
+	namespace script
+	{
+
+class IScriptDebugger;
+
+	}
+
 	namespace amalgam
 	{
 
@@ -18,7 +25,7 @@ class ScriptServer : public IScriptServer
 	T_RTTI_CLASS;
 
 public:
-	bool create(const Settings* settings);
+	bool create(const Settings* settings, bool debugger);
 
 	void destroy();
 
@@ -32,6 +39,7 @@ public:
 
 private:
 	Ref< script::IScriptManager > m_scriptManager;
+	Ref< script::IScriptDebugger > m_scriptDebugger;
 };
 
 	}

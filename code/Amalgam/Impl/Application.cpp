@@ -333,7 +333,7 @@ bool Application::create(
 
 	log::debug << L"Creating script server..." << Endl;
 	m_scriptServer = new ScriptServer();
-	if (!m_scriptServer->create(settings))
+	if (!m_scriptServer->create(settings, m_targetManagerConnection != 0))
 		return false;
 
 	log::debug << L"Creating world server..." << Endl;
