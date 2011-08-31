@@ -7,7 +7,7 @@ if "%1"=="build" (
 ) else if "%1"=="deploy" (
 
 	pushd %DEPLOY_PROJECTROOT:/=\%\bin\latest\win32\releaseshared
-	%TRAKTOR_HOME%\bin\RemoteDeploy %DEPLOY_TARGET_HOST_WIN32% *.dll *.exe > %DEPLOY_PROJECTROOT%\deploy.log
+	%TRAKTOR_HOME%\bin\RemoteDeploy %DEPLOY_TARGET_HOST_WIN32% *.dll *.exe *.txt > %DEPLOY_PROJECTROOT%\deploy.log
 	popd
 	
 ) else if "%1"=="launch" (

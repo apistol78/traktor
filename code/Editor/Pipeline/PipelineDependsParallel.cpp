@@ -40,7 +40,7 @@ void PipelineDependsParallel::addDependency(const ISerializable* sourceAsset)
 
 	Ref< PipelineDependency > parentDependency = reinterpret_cast< PipelineDependency* >(m_currentDependency.get());
 
-	m_jobQueue->add(makeFunctor(this, &PipelineDependsParallel::jobAddDependency, parentDependency, sourceAsset));
+	m_jobQueue->add(makeFunctor(this, &PipelineDependsParallel::jobAddDependency, parentDependency, Ref< const ISerializable >(sourceAsset)));
 }
 
 void PipelineDependsParallel::addDependency(const ISerializable* sourceAsset, const std::wstring& name, const std::wstring& outputPath, const Guid& outputGuid, uint32_t flags)
@@ -53,7 +53,7 @@ void PipelineDependsParallel::addDependency(const ISerializable* sourceAsset, co
 
 	Ref< PipelineDependency > parentDependency = reinterpret_cast< PipelineDependency* >(m_currentDependency.get());
 
-	m_jobQueue->add(makeFunctor(this, &PipelineDependsParallel::jobAddDependency, parentDependency, sourceAsset, name, outputPath, outputGuid, flags));
+	m_jobQueue->add(makeFunctor(this, &PipelineDependsParallel::jobAddDependency, parentDependency, Ref< const ISerializable >(sourceAsset), name, outputPath, outputGuid, flags));
 }
 
 void PipelineDependsParallel::addDependency(db::Instance* sourceAssetInstance, uint32_t flags)
@@ -66,7 +66,7 @@ void PipelineDependsParallel::addDependency(db::Instance* sourceAssetInstance, u
 
 	Ref< PipelineDependency > parentDependency = reinterpret_cast< PipelineDependency* >(m_currentDependency.get());
 
-	m_jobQueue->add(makeFunctor(this, &PipelineDependsParallel::jobAddDependency, parentDependency, sourceAssetInstance, flags));
+	m_jobQueue->add(makeFunctor(this, &PipelineDependsParallel::jobAddDependency, parentDependency, Ref< db::Instance >(sourceAssetInstance), flags));
 }
 
 void PipelineDependsParallel::addDependency(const Guid& sourceAssetGuid, uint32_t flags)
@@ -82,9 +82,7 @@ void PipelineDependsParallel::addDependency(const Guid& sourceAssetGuid, uint32_
 	m_jobQueue->add(makeFunctor(this, &PipelineDependsParallel::jobAddDependency, parentDependency, sourceAssetGuid, flags));
 }
 
-void PipelineDependsParallel::addDependency(
-	const Path& fileName
-)
+void PipelineDependsParallel::addDependency(const Path& fileName)
 {
 	Ref< PipelineDependency > parentDependency = reinterpret_cast< PipelineDependency* >(m_currentDependency.get());
 	if (parentDependency)
@@ -217,7 +215,7 @@ void PipelineDependsParallel::addUniqueDependency(
 	}
 }
 
-void PipelineDependsParallel::jobAddDependency(Ref< PipelineDependency > parentDependency, const ISerializable* sourceAsset)
+void PipelineDependsParallel::jobAddDependency(Ref< PipelineDependency > parentDependency, Ref< const ISerializable > sourceAsset)
 {
 	Ref< IPipeline > pipeline;
 	uint32_t pipelineHash;
@@ -232,7 +230,7 @@ void PipelineDependsParallel::jobAddDependency(Ref< PipelineDependency > parentD
 		log::error << L"Unable to add dependency to source asset (" << type_name(sourceAsset) << L"); no pipeline found" << Endl;
 }
 
-void PipelineDependsParallel::jobAddDependency(Ref< PipelineDependency > parentDependency, const ISerializable* sourceAsset, std::wstring name, std::wstring outputPath, Guid outputGuid, uint32_t flags)
+void PipelineDependsParallel::jobAddDependency(Ref< PipelineDependency > parentDependency, Ref< const ISerializable > sourceAsset, std::wstring name, std::wstring outputPath, Guid outputGuid, uint32_t flags)
 {
 	Ref< PipelineDependency > currentDependency;
 	bool exists;
@@ -253,7 +251,7 @@ void PipelineDependsParallel::jobAddDependency(Ref< PipelineDependency > parentD
 	);
 }
 
-void PipelineDependsParallel::jobAddDependency(Ref< PipelineDependency > parentDependency, db::Instance* sourceAssetInstance, uint32_t flags)
+void PipelineDependsParallel::jobAddDependency(Ref< PipelineDependency > parentDependency, Ref< db::Instance > sourceAssetInstance, uint32_t flags)
 {
 	Ref< PipelineDependency > currentDependency;
 	bool exists;
