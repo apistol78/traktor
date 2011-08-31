@@ -71,14 +71,16 @@ public:
 	/*! \brief Goto frame and continue playing.
 	 *
 	 * \param frameLabel Frame label.
+	 * \return False if label not found.
 	 */
-	void gotoAndPlay(const std::string& frameLabel);
+	bool gotoAndPlay(const std::string& frameLabel);
 
 	/*! \brief Goto frame and stop playing.
 	 *
 	 * \param frameLabel Frame label.
+	 * \return False if label not found.
 	 */
-	void gotoAndStop(const std::string& frameLabel);
+	bool gotoAndStop(const std::string& frameLabel);
 
 	/*! \brief Get number of frames in root movie.
 	 *
