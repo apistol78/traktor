@@ -2,6 +2,7 @@
 #include "Amalgam/Editor/DeployTargetAction.h"
 #include "Amalgam/Editor/EditorPlugin.h"
 #include "Amalgam/Editor/LaunchTargetAction.h"
+#include "Amalgam/Editor/MigrateTargetAction.h"
 #include "Amalgam/Editor/Platform.h"
 #include "Amalgam/Editor/PlatformInstance.h"
 #include "Amalgam/Editor/PostTargetAction.h"
@@ -294,10 +295,14 @@ void EditorPlugin::eventTargetPlay(ui::Event* event)
 		ActionChain chain;
 		chain.actions.push_back(new BuildTargetAction(m_editor, platformInstance, targetInstance));
 
-		if ((event->getKeyState() & ui::KsShift) == 0)
+		if (event->getKeyState() == 0)
 		{
 			chain.actions.push_back(new DeployTargetAction(m_editor, platformInstance, targetInstance, activeGuid));
 			chain.actions.push_back(new LaunchTargetAction(m_editor, platformInstance, targetInstance));
+		}
+		else if (event->getKeyState() & (ui::KsControl | ui::KsCommand) != 0)
+		{
+			chain.actions.push_back(new MigrateTargetAction(m_editor, platformInstance, targetInstance));
 		}
 
 		chain.postSuccess =

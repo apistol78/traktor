@@ -14,5 +14,9 @@ if "%1"=="build" (
 
 	%TRAKTOR_HOME%\bin\RemoteDeploy %DEPLOY_TARGET_HOST_WIN32% Application.config
 	%TRAKTOR_HOME%\bin\RemoteLaunch %DEPLOY_TARGET_HOST_WIN32% "%DEPLOY_EXECUTABLE%" "\-s Application.config"
+
+) else if "%1"=="migrate" (
+
+	%DEPLOY_PROJECTROOT%\bin\latest\win32\releaseshared\Traktor.Database.Migrate.App %DEPLOY_SOURCE_CS% %DEPLOY_TARGET_CS% %DEPLOY_MODULES% > %DEPLOY_PROJECTROOT%\migrate.log
 	
 )
