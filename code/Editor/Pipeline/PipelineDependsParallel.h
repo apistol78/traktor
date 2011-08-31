@@ -100,11 +100,11 @@ private:
 		const Guid& outputGuid
 	);
 
-	void jobAddDependency(Ref< PipelineDependency > parentDependency, const ISerializable* sourceAsset);
+	void jobAddDependency(Ref< PipelineDependency > parentDependency, Ref< const ISerializable > sourceAsset);
 
-	void jobAddDependency(Ref< PipelineDependency > parentDependency, const ISerializable* sourceAsset, std::wstring name, std::wstring outputPath, Guid outputGuid, uint32_t flags);
+	void jobAddDependency(Ref< PipelineDependency > parentDependency, Ref< const ISerializable > sourceAsset, std::wstring name, std::wstring outputPath, Guid outputGuid, uint32_t flags);
 
-	void jobAddDependency(Ref< PipelineDependency > parentDependency, db::Instance* sourceAssetInstance, uint32_t flags);
+	void jobAddDependency(Ref< PipelineDependency > parentDependency, Ref< db::Instance > sourceAssetInstance, uint32_t flags);
 
 	void jobAddDependency(Ref< PipelineDependency > parentDependency, Guid sourceAssetGuid, uint32_t flags);
 };

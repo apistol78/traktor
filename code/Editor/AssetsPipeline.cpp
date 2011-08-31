@@ -1,6 +1,10 @@
-#include "Editor/AssetsPipeline.h"
+#include "Database/Database.h"
+#include "Database/Group.h"
+#include "Database/Instance.h"
 #include "Editor/Assets.h"
+#include "Editor/AssetsPipeline.h"
 #include "Editor/IPipelineDepends.h"
+#include "Editor/VirtualAsset.h"
 
 namespace traktor
 {
@@ -22,6 +26,7 @@ TypeInfoSet AssetsPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< Assets >());
+	typeSet.insert(&type_of< VirtualAsset >());
 	return typeSet;
 }
 
@@ -32,9 +37,31 @@ bool AssetsPipeline::buildDependencies(
 	Ref< const Object >& outBuildParams
 ) const
 {
-	const Assets* assets = checked_type_cast< const Assets* >(sourceAsset);
-	for (std::vector< Guid >::const_iterator i = assets->m_dependencies.begin(); i != assets->m_dependencies.end(); ++i)
-		pipelineDepends->addDependency(*i, editor::PdfBuild);
+	if (const Assets* assets = dynamic_type_cast< const Assets* >(sourceAsset))
+	{
+		for (std::vector< Guid >::const_iterator i = assets->m_dependencies.begin(); i != assets->m_dependencies.end(); ++i)
+			pipelineDepends->addDependency(*i, editor::PdfBuild);
+	}
+	else if (const VirtualAsset* virtualAsset = dynamic_type_cast< const VirtualAsset* >(sourceAsset))
+	{
+		Ref< db::Instance > virtualSourceInstance = pipelineDepends->getSourceDatabase()->getInstance(virtualAsset->getSourceInstance());
+		Ref< db::Instance > virtualPlaceholderInstance = pipelineDepends->getSourceDatabase()->getInstance(virtualAsset->getPlaceholderInstance());
+
+		if (!virtualSourceInstance || !virtualPlaceholderInstance)
+			return false;
+
+		Ref< ISerializable > object = virtualSourceInstance->getObject< ISerializable >();
+		if (!object)
+			return false;
+
+		pipelineDepends->addDependency(
+			object,
+			virtualPlaceholderInstance->getName(),
+			virtualPlaceholderInstance->getPath(),
+			virtualPlaceholderInstance->getGuid(),
+			editor::PdfBuild
+		);
+	}
 	return true;
 }
 
