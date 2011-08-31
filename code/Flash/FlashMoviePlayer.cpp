@@ -122,24 +122,28 @@ void FlashMoviePlayer::gotoAndStop(uint32_t frame)
 	m_movieInstance->gotoFrame(frame);
 }
 
-void FlashMoviePlayer::gotoAndPlay(const std::string& frameLabel)
+bool FlashMoviePlayer::gotoAndPlay(const std::string& frameLabel)
 {
 	int frame = m_movie->getMovieClip()->findFrame(frameLabel);
-	if (frame >= 0)
-	{
-		m_movieInstance->setPlaying(true);
-		m_movieInstance->gotoFrame(frame);
-	}
+	if (frame < 0)
+		return false;
+
+	m_movieInstance->setPlaying(true);
+	m_movieInstance->gotoFrame(frame);
+	
+	return true;
 }
 
-void FlashMoviePlayer::gotoAndStop(const std::string& frameLabel)
+bool FlashMoviePlayer::gotoAndStop(const std::string& frameLabel)
 {
 	int frame = m_movie->getMovieClip()->findFrame(frameLabel);
-	if (frame >= 0)
-	{
-		m_movieInstance->setPlaying(false);
-		m_movieInstance->gotoFrame(frame);
-	}
+	if (frame < 0)
+		return false;
+
+	m_movieInstance->setPlaying(false);
+	m_movieInstance->gotoFrame(frame);
+
+	return true;
 }
 
 uint32_t FlashMoviePlayer::getFrameCount() const
