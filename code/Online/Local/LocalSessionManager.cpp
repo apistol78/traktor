@@ -4,6 +4,7 @@
 #include "Online/Local/LocalSaveData.h"
 #include "Online/Local/LocalStatistics.h"
 #include "Online/Local/LocalSessionManager.h"
+#include "Sql/IResultSet.h"
 #include "Sql/Sqlite3/ConnectionSqlite3.h"
 
 namespace traktor
@@ -39,6 +40,18 @@ bool LocalSessionManager::create(const LocalCreateDesc& desc)
 				return false;
 		}
 	}
+	else
+	{
+		for (const wchar_t** achievementId = desc.achievementIds; *achievementId; ++achievementId)
+		{
+			Ref< sql::IResultSet > rs = m_db->executeQuery(L"select count(*) from Achievements where id='" + std::wstring(*achievementId) + L"'");
+			if (!rs || !rs->next() || rs->getInt32(0) <= 0)
+			{
+				if (m_db->executeUpdate(L"insert into Achievements (id, reward) values ('" + std::wstring(*achievementId) + L"', 0)") < 0)
+					return false;
+			}
+		}
+	}
 
 	if (!m_db->tableExists(L"Leaderboards"))
 	{
@@ -49,6 +62,18 @@ bool LocalSessionManager::create(const LocalCreateDesc& desc)
 		{
 			if (m_db->executeUpdate(L"insert into Leaderboards (name, score) values ('" + std::wstring(*leaderboardId) + L"', 0)") < 0)
 				return false;
+		}
+	}
+	else
+	{
+		for (const wchar_t** leaderboardId = desc.leaderboardIds; *leaderboardId; ++leaderboardId)
+		{
+			Ref< sql::IResultSet > rs = m_db->executeQuery(L"select count(*) from Leaderboards where name='" + std::wstring(*leaderboardId) + L"'");
+			if (!rs || !rs->next() || rs->getInt32(0) <= 0)
+			{
+				if (m_db->executeUpdate(L"insert into Leaderboards (name, score) values ('" + std::wstring(*leaderboardId) + L"', 0)") < 0)
+					return false;
+			}
 		}
 	}
 
@@ -67,6 +92,18 @@ bool LocalSessionManager::create(const LocalCreateDesc& desc)
 		{
 			if (m_db->executeUpdate(L"insert into Statistics (id, value) values ('" + std::wstring(*statId) + L"', 0)") < 0)
 				return false;
+		}
+	}
+	else
+	{
+		for (const wchar_t** statId = desc.statIds; *statId; ++statId)
+		{
+			Ref< sql::IResultSet > rs = m_db->executeQuery(L"select count(*) from Statistics where id='" + std::wstring(*statId) + L"'");
+			if (!rs || !rs->next() || rs->getInt32(0) <= 0)
+			{
+				if (m_db->executeUpdate(L"insert into Statistics (id, value) values ('" + std::wstring(*statId) + L"', 0)") < 0)
+					return false;
+			}
 		}
 	}
 
