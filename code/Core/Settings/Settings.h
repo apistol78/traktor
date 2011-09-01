@@ -12,6 +12,9 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
+// Disable behavior change warning.
+#pragma warning( disable : 4344 )
+
 namespace traktor
 {
 
