@@ -14,4 +14,9 @@ if "%1"=="build" (
 
 	%TRAKTOR_HOME%bin\CeLaunch "\Program Files\%DEPLOY_PROJECTNAME%\%DEPLOY_EXECUTABLE%" Application.config
 	
+) else if "%1"=="migrate" (
+
+	%DEPLOY_PROJECTROOT%\bin\latest\win32\releaseshared\Traktor.Database.Migrate.App %DEPLOY_SOURCE_CS% %DEPLOY_TARGET_CS% %DEPLOY_MODULES% > %DEPLOY_PROJECTROOT%\migrate.log
+	
 )
+
