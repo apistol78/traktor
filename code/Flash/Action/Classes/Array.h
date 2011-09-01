@@ -56,9 +56,9 @@ public:
 		std::sort(m_values.begin(), m_values.end(), predicate);
 	}
 
-	virtual void setMember(const std::string& memberName, const ActionValue& memberValue);
+	virtual void setMember(const ActionValue& memberName, const ActionValue& memberValue);
 
-	virtual bool getMember(ActionContext* context, const std::string& memberName, ActionValue& outMemberValue);
+	virtual bool getMember(ActionContext* context, const ActionValue& memberName, ActionValue& outMemberValue);
 
 	virtual ActionValue toString() const;
 

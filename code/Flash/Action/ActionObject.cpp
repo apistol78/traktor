@@ -121,6 +121,11 @@ ActionObject* ActionObject::getPrototype(ActionContext* context)
 	return m__proto__;
 }
 
+void ActionObject::setMember(const ActionValue& memberName, const ActionValue& memberValue)
+{
+	setMember(memberName.getStringSafe(), memberValue);
+}
+
 void ActionObject::setMember(const std::string& memberName, const ActionValue& memberValue)
 {
 	T_ASSERT (!m_readOnly);
@@ -130,6 +135,11 @@ void ActionObject::setMember(const std::string& memberName, const ActionValue& m
 		m__proto__ = 0;
 
 	m_members[memberName] = memberValue;
+}
+
+bool ActionObject::getMember(ActionContext* context, const ActionValue& memberName, ActionValue& outMemberValue)
+{
+	return getMember(context, memberName.getStringSafe(), outMemberValue);
 }
 
 bool ActionObject::getMember(ActionContext* context, const std::string& memberName, ActionValue& outMemberValue)

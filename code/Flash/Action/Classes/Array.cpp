@@ -138,37 +138,31 @@ uint32_t Array::length() const
 	return uint32_t(m_values.size());
 }
 
-void Array::setMember(const std::string& memberName, const ActionValue& memberValue)
+void Array::setMember(const ActionValue& memberName, const ActionValue& memberValue)
 {
-	// Ensure name ain't empty and atleast first character is a digit before trying to parse it as number.
-	if (!memberName.empty() && std::isdigit(memberName[0]))
+	if (memberName.isNumeric())
 	{
-		int32_t index = parseString< int32_t >(memberName, -1);
+		int32_t index = int32_t(memberName.getNumber());
 		if (index >= 0 && index < int32_t(m_values.size()))
 		{
 			m_values[index] = memberValue;
 			return;
 		}
 	}
-
-	// Neither numeric or out-of-range.
 	ActionObject::setMember(memberName, memberValue);
 }
 
-bool Array::getMember(ActionContext* context, const std::string& memberName, ActionValue& outMemberValue)
+bool Array::getMember(ActionContext* context, const ActionValue& memberName, ActionValue& outMemberValue)
 {
-	// Ensure name ain't empty and atleast first character is a digit before trying to parse it as number.
-	if (!memberName.empty() && std::isdigit(memberName[0]))
+	if (memberName.isNumeric())
 	{
-		int32_t index = parseString< int32_t >(memberName, -1);
+		int32_t index = int32_t(memberName.getNumber());
 		if (index >= 0 && index < int32_t(m_values.size()))
 		{
 			outMemberValue = m_values[index];
 			return true;
 		}
 	}
-
-	// Neither numeric or out-of-range.
 	return ActionObject::getMember(context, memberName, outMemberValue);
 }
 
