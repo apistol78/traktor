@@ -50,11 +50,11 @@ class T_DLLCLASS Result : public Object
 private:
 	struct IDeferred : public Object
 	{
-		virtual void dispatch(const Result& result) = 0;
+		virtual void dispatch(const Result& result) const = 0;
 	};
 
 	template < typename ClassType >
-	class DeferredMethod
+	class DeferredMethod : public IDeferred
 	{
 	public:
 		typedef void (ClassType::*method_t)(const Result& result);
