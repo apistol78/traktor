@@ -56,7 +56,11 @@ public:
 
 	virtual ActionObject* getPrototype(ActionContext* context);
 
+	virtual void setMember(const ActionValue& memberName, const ActionValue& memberValue);
+
 	virtual void setMember(const std::string& memberName, const ActionValue& memberValue);
+
+	virtual bool getMember(ActionContext* context, const ActionValue& memberName, ActionValue& outMemberValue);
 
 	virtual bool getMember(ActionContext* context, const std::string& memberName, ActionValue& outMemberValue);
 

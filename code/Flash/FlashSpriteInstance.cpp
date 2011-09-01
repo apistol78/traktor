@@ -220,7 +220,11 @@ FlashSpriteInstance* FlashSpriteInstance::getMask()
 
 bool FlashSpriteInstance::getMember(ActionContext* context, const std::string& memberName, ActionValue& outMemberValue)
 {
-	// Get names instance from display list.
+	// First try get ordinary member.
+	if (FlashCharacterInstance::getMember(context, memberName, outMemberValue))
+		return true;
+
+	// No such member; try get named instance from display list.
 	FlashDisplayList::layer_map_t::const_iterator i = m_displayList.findLayer(memberName);
 	if (i != m_displayList.getLayers().end())
 	{
@@ -228,7 +232,7 @@ bool FlashSpriteInstance::getMember(ActionContext* context, const std::string& m
 		return true;
 	}
 
-	return FlashCharacterInstance::getMember(context, memberName, outMemberValue);
+	return false;
 }
 
 void FlashSpriteInstance::preDispatchEvents()

@@ -916,7 +916,7 @@ void opx_getMember(ExecutionState& state)
 {
 	ActionValueStack& stack = state.frame->getStack();
 
-	std::string memberName = stack.pop().getStringSafe();
+	ActionValue memberName = stack.pop();
 	ActionValue& targetValue = stack.top();
 
 	if (targetValue.isObject())
@@ -926,17 +926,15 @@ void opx_getMember(ExecutionState& state)
 		{
 			ActionContext* context = state.frame->getContext();
 
+			if (target->getMember(context, memberName, targetValue))
+				return;
+
 			Ref< ActionFunction > propertyGet;
-			if (target->getPropertyGet(context, memberName, propertyGet))
+			if (memberName.isString() && target->getPropertyGet(context, memberName.getString(), propertyGet))
 			{
 				stack.push(ActionValue(avm_number_t(0)));
 				targetValue = propertyGet->call(state.frame, target);
 				return;
-			}
-			else
-			{
-				if (target->getMember(context, memberName, targetValue))
-					return;
 			}
 		}
 	}
@@ -951,7 +949,7 @@ void opx_setMember(ExecutionState& state)
 	ActionValueStack& stack = state.frame->getStack();
 
 	ActionValue memberValue = stack.pop();
-	std::string memberName = stack.pop().getStringSafe();
+	ActionValue memberName = stack.pop();
 
 	ActionValue targetValue = stack.pop();
 	if (targetValue.isObject())
@@ -960,7 +958,7 @@ void opx_setMember(ExecutionState& state)
 		if (target)
 		{
 			Ref< ActionFunction > propertySet;
-			if (target->getPropertySet(context, memberName, propertySet))
+			if (memberName.isString() && target->getPropertySet(context, memberName.getString(), propertySet))
 			{
 				stack.push(memberValue);
 				stack.push(ActionValue(avm_number_t(1)));
@@ -976,7 +974,7 @@ void opx_setMember(ExecutionState& state)
 	{
 		Ref< ActionFunction > memberFunction = memberValue.getObject< ActionFunction >();
 		if (memberFunction)
-			memberFunction->setName(memberName);
+			memberFunction->setName(memberName.getStringSafe());
 	}
 #endif
 }

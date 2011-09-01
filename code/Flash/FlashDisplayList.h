@@ -2,15 +2,15 @@
 #define traktor_flash_FlashDisplayList_H
 
 #include "Core/Object.h"
-#include "Core/Containers/SmallMap.h"
+#include "Core/Containers/StringMap.h"
 #include "Flash/SwfTypes.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_FLASH_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -132,6 +132,7 @@ private:
 	ActionContext* m_context;
 	SwfColor m_backgroundColor;
 	layer_map_t m_layers;
+	StringMap< int32_t > m_layerMap;
 };
 
 	}
