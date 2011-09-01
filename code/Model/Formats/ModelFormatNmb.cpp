@@ -14,6 +14,14 @@ namespace traktor
 		namespace
 		{
 
+#if defined(_MSC_VER)
+#	define COMPARE_IGNORE_CASE(a, b) \
+	_stricmp(a, b)
+#else
+#	define COMPARE_IGNORE_CASE(a, b) \
+	strcasecmp(a, b)
+#endif
+
 #pragma pack(1)
 
 struct NmbChunkHeader
@@ -165,27 +173,27 @@ uint8_t* parseA2V(Model& model, uint8_t* ptr, ModelBase& base)
 		return 0;
 	}
 
-	if (stricmp(name, "a2v.objCoord") == 0 || _stricmp(name, "a2v.worldCoord") == 0)
+	if (COMPARE_IGNORE_CASE(name, "a2v.objCoord") == 0 || COMPARE_IGNORE_CASE(name, "a2v.worldCoord") == 0)
 	{
 		for (int32_t i = 0; i < count; ++i)
 			vertices[base.vertexBase + i].setPosition(model.addPosition(unpackv4(ptr, 1.0f) / Vector4(100.0f, 100.0f, 100.0f, 1.0f)));
 	}
-	else if (_stricmp(name, "a2v.objNormal") == 0 || _stricmp(name, "a2v.worldNormal") == 0)
+	else if (COMPARE_IGNORE_CASE(name, "a2v.objNormal") == 0 || COMPARE_IGNORE_CASE(name, "a2v.worldNormal") == 0)
 	{
 		for (int32_t i = 0; i < count; ++i)
 			vertices[base.vertexBase + i].setNormal(model.addNormal(unpackv4(ptr, 0.0f)));
 	}
-	else if (_stricmp(name, "a2v.objTangent") == 0 || _stricmp(name, "a2v.worldTangent") == 0)
+	else if (COMPARE_IGNORE_CASE(name, "a2v.objTangent") == 0 || COMPARE_IGNORE_CASE(name, "a2v.worldTangent") == 0)
 	{
 		for (int32_t i = 0; i < count; ++i)
 			vertices[base.vertexBase + i].setTangent(model.addNormal(unpackv4(ptr, 0.0f)));
 	}
-	else if (_stricmp(name, "a2v.objBinormal") == 0 || _stricmp(name, "a2v.worldBinormal") == 0)
+	else if (COMPARE_IGNORE_CASE(name, "a2v.objBinormal") == 0 || COMPARE_IGNORE_CASE(name, "a2v.worldBinormal") == 0)
 	{
 		for (int32_t i = 0; i < count; ++i)
 			vertices[base.vertexBase + i].setBinormal(model.addNormal(unpackv4(ptr, 0.0f)));
 	}
-	else if (_stricmp(name, "a2v.c_texCoord") == 0 || _stricmp(name, "a2v.tex") == 0)
+	else if (COMPARE_IGNORE_CASE(name, "a2v.c_texCoord") == 0 || COMPARE_IGNORE_CASE(name, "a2v.tex") == 0)
 	{
 		for (int32_t i = 0; i < count; ++i)
 			vertices[base.vertexBase + i].setTexCoord(0, model.addTexCoord(unpackv2(ptr) * Vector2(1.0f, -1.0f) + Vector2(0.0f, 1.0f)));
