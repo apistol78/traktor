@@ -1,15 +1,15 @@
 #ifndef traktor_render_RenderTargetDx10_H
 #define traktor_render_RenderTargetDx10_H
 
-#include "Render/ITexture.h"
+#include "Render/ISimpleTexture.h"
 #include "Core/Misc/ComRef.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RENDER_DX10_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -24,7 +24,7 @@ struct RenderTargetCreateDesc;
 /*!
  * \ingroup DX10
  */
-class T_DLLCLASS RenderTargetDx10 : public ITexture
+class T_DLLCLASS RenderTargetDx10 : public ISimpleTexture
 {
 	T_RTTI_CLASS;
 
@@ -37,11 +37,15 @@ public:
 
 	virtual void destroy();
 
+	virtual ITexture* resolve();
+
 	virtual int getWidth() const;
 	
 	virtual int getHeight() const;
-	
-	virtual int getDepth() const;
+
+	virtual bool lock(int level, Lock& lock);
+
+	virtual void unlock(int level);
 
 	inline ID3D10RenderTargetView* getD3D10RenderTargetView() const {
 		return m_d3dRenderTargetView;

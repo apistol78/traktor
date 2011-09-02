@@ -2,7 +2,7 @@
 #define traktor_render_RenderTargetDx11_H
 
 #include "Core/Misc/ComRef.h"
-#include "Render/ITexture.h"
+#include "Render/ISimpleTexture.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -24,7 +24,7 @@ struct RenderTargetCreateDesc;
 /*!
  * \ingroup DX11
  */
-class T_DLLCLASS RenderTargetDx11 : public ITexture
+class T_DLLCLASS RenderTargetDx11 : public ISimpleTexture
 {
 	T_RTTI_CLASS;
 
@@ -37,11 +37,15 @@ public:
 
 	virtual void destroy();
 
+	virtual ITexture* resolve();
+
 	virtual int getWidth() const;
 	
 	virtual int getHeight() const;
-	
-	virtual int getDepth() const;
+
+	virtual bool lock(int level, Lock& lock);
+
+	virtual void unlock(int level);
 
 	inline ID3D11RenderTargetView* getD3D11RenderTargetView() const {
 		return m_d3dRenderTargetView;

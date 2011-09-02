@@ -37,10 +37,17 @@ public:
 
 	bool create(IDirect3DDevice9* d3dDevice, const VolumeTextureCreateDesc& desc);
 
-	// \name ICubeTexture
+	// \name ITexture
 	// \{
 
 	virtual void destroy();
+
+	virtual ITexture* resolve();
+
+	// \}
+
+	// \name ICubeTexture
+	// \{
 
 	virtual int getWidth() const;
 	

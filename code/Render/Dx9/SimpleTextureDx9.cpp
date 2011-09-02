@@ -122,6 +122,11 @@ void SimpleTextureDx9::destroy()
 	m_resourceManager->remove(this);
 }
 
+ITexture* SimpleTextureDx9::resolve()
+{
+	return this;
+}
+
 int SimpleTextureDx9::getWidth() const
 {
 	return m_width;
@@ -130,11 +135,6 @@ int SimpleTextureDx9::getWidth() const
 int SimpleTextureDx9::getHeight() const
 {
 	return m_height;
-}
-
-int SimpleTextureDx9::getDepth() const
-{
-	return 1;
 }
 
 bool SimpleTextureDx9::lock(int level, Lock& lock)

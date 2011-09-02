@@ -1,17 +1,17 @@
+#include "Core/Log/Log.h"
+#include "Render/Types.h"
 #include "Render/Dx10/Platform.h"
 #include "Render/Dx10/RenderTargetDx10.h"
 #include "Render/Dx10/ContextDx10.h"
 #include "Render/Dx10/TypesDx10.h"
 #include "Render/Dx10/Utilities.h"
-#include "Render/Types.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetDx10", RenderTargetDx10, ITexture)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetDx10", RenderTargetDx10, ISimpleTexture)
 
 RenderTargetDx10::RenderTargetDx10(ContextDx10* context)
 :	m_context(context)
@@ -82,6 +82,11 @@ bool RenderTargetDx10::create(ID3D10Device* d3dDevice, const RenderTargetSetCrea
 	return true;
 }
 
+ITexture* RenderTargetDx10::resolve()
+{
+	return this;
+}
+
 void RenderTargetDx10::destroy()
 {
 	if (!m_context)
@@ -101,9 +106,13 @@ int RenderTargetDx10::getHeight() const
 	return m_height;
 }
 
-int RenderTargetDx10::getDepth() const
+bool RenderTargetDx10::lock(int level, Lock& lock)
 {
-	return 1;
+	return false;
+}
+
+void RenderTargetDx10::unlock(int level)
+{
 }
 
 	}

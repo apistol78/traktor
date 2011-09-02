@@ -1,4 +1,4 @@
-#include "Render/ITexture.h"
+#include "Render/ISimpleTexture.h"
 #include "Render/Shader.h"
 #include "Render/Types.h"
 #include "Render/Context/ProgramParameters.h"
@@ -35,9 +35,9 @@ WorldRenderPassPreLit::WorldRenderPassPreLit(
 	render::handle_t technique,
 	const WorldRenderView& worldRenderView,
 	float depthRange,
-	render::ITexture* depthMap,
-	render::ITexture* shadowMask,
-	render::ITexture* lightMap
+	render::ISimpleTexture* depthMap,
+	render::ISimpleTexture* shadowMask,
+	render::ISimpleTexture* lightMap
 )
 :	m_technique(technique)
 ,	m_worldRenderView(worldRenderView)

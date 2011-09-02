@@ -21,21 +21,10 @@ const std::vector< ShaderResource::Technique >& ShaderResource::getTechniques() 
 	return m_techniques;
 }
 
-void ShaderResource::addTexture(const Guid& guid)
-{
-	m_textures.push_back(guid);
-}
-
-const std::vector< Guid >& ShaderResource::getTextures() const
-{
-	return m_textures;
-}
-
 bool ShaderResource::serialize(ISerializer& s)
 {
 	s >> MemberStlMap< std::wstring, uint32_t >(L"parameterBits", m_parameterBits);
 	s >> MemberStlVector< Technique, MemberComposite< Technique > >(L"techniques", m_techniques);
-	s >> MemberStlVector< Guid >(L"textures", m_textures);
 	return true;
 }
 
@@ -43,6 +32,7 @@ bool ShaderResource::Combination::serialize(ISerializer& s)
 {
 	s >> Member< uint32_t >(L"parameterValue", parameterValue);
 	s >> MemberRef< ISerializable >(L"program", program);
+	s >> MemberStlVector< Guid >(L"textures", textures);
 	return true;
 }
 

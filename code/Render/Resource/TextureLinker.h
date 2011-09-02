@@ -1,9 +1,7 @@
 #ifndef traktor_render_TextureLinker_H
 #define traktor_render_TextureLinker_H
 
-#include "Core/Object.h"
-#include "Core/Guid.h"
-#include "Resource/Proxy.h"
+#include "Render/Resource/ShaderResource.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -18,8 +16,6 @@ namespace traktor
 	namespace render
 	{
 
-class Shader;
-class ShaderResource;
 class ITexture;
 
 /*! \brief Bind textures to shaders.
@@ -32,12 +28,12 @@ class T_DLLCLASS TextureLinker : public Object
 public:
 	struct TextureReader
 	{
-		virtual resource::Proxy< ITexture > read(const Guid& textureGuid) = 0;
+		virtual Ref< ITexture > read(const Guid& textureGuid) = 0;
 	};
 
 	TextureLinker(TextureReader& textureReader);
 
-	bool link(const ShaderResource* shaderResource, Shader* shader);
+	bool link(const ShaderResource::Combination& shaderCombination, IProgram* program);
 
 private:
 	TextureReader& m_textureReader;

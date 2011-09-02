@@ -125,7 +125,7 @@ int RenderTargetSetOpenGL::getHeight() const
 	return m_targetHeight;
 }
 
-Ref< ITexture > RenderTargetSetOpenGL::getColorTexture(int index) const
+Ref< ISimpleTexture > RenderTargetSetOpenGL::getColorTexture(int index) const
 {
 	return index < m_colorTextures.size() ? m_colorTextures[index] : 0;
 }

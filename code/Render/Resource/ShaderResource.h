@@ -34,6 +34,7 @@ public:
 	{
 		uint32_t parameterValue;
 		Ref< ISerializable > program;
+		std::vector< Guid > textures;
 
 		bool serialize(ISerializer& s);
 	};
@@ -51,10 +52,6 @@ public:
 
 	const std::vector< Technique >& getTechniques() const;
 
-	void addTexture(const Guid& guid);
-
-	const std::vector< Guid >& getTextures() const;
-
 	virtual bool serialize(ISerializer& s);
 
 private:
@@ -62,7 +59,6 @@ private:
 
 	std::map< std::wstring, uint32_t > m_parameterBits;
 	std::vector< Technique > m_techniques;
-	std::vector< Guid > m_textures;
 };
 
 	}

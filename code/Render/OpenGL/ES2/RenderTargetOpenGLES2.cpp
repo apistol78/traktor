@@ -1,7 +1,7 @@
+#include "Core/Log/Log.h"
 #include "Render/OpenGL/Platform.h"
 #include "Render/OpenGL/IContext.h"
 #include "Render/OpenGL/ES2/RenderTargetOpenGLES2.h"
-#include "Core/Log/Log.h"
 
 #if !defined(T_OFFLINE_ONLY)
 
@@ -46,7 +46,7 @@ struct DeleteFramebufferCallback : public IContext::IDeleteCallback
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetOpenGLES2", RenderTargetOpenGLES2, ITexture)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetOpenGLES2", RenderTargetOpenGLES2, ISimpleTexture)
 
 RenderTargetOpenGLES2::RenderTargetOpenGLES2(IContext* context)
 :	m_context(context)
@@ -148,6 +148,11 @@ void RenderTargetOpenGLES2::destroy()
 	}
 }
 
+ITexture* RenderTargetOpenGLES2::resolve()
+{
+	return this;
+}
+
 int RenderTargetOpenGLES2::getWidth() const
 {
 	return m_width;
@@ -158,9 +163,13 @@ int RenderTargetOpenGLES2::getHeight() const
 	return m_height;
 }
 
-int RenderTargetOpenGLES2::getDepth() const
+bool RenderTargetOpenGLES2::lock(int level, Lock& lock)
 {
-	return 0;
+	return false;
+}
+
+void RenderTargetOpenGLES2::unlock(int level)
+{
 }
 
 void RenderTargetOpenGLES2::bind(GLuint unit, const SamplerState& samplerState, GLint locationTexture)

@@ -72,22 +72,22 @@ const Heightfield::height_t* Heightfield::getHeights() const
 	return m_heights;
 }
 
-void Heightfield::setHeightTexture(render::ITexture* heightTexture)
+void Heightfield::setHeightTexture(render::ISimpleTexture* heightTexture)
 {
 	m_heightTexture = heightTexture;
 }
 
-void Heightfield::setNormalTexture(render::ITexture* normalTexture)
+void Heightfield::setNormalTexture(render::ISimpleTexture* normalTexture)
 {
 	m_normalTexture = normalTexture;
 }
 
-Ref< render::ITexture > Heightfield::getHeightTexture() const
+render::ISimpleTexture* Heightfield::getHeightTexture() const
 {
 	return m_heightTexture;
 }
 
-Ref< render::ITexture > Heightfield::getNormalTexture() const
+render::ISimpleTexture* Heightfield::getNormalTexture() const
 {
 	return m_normalTexture;
 }

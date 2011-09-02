@@ -6,7 +6,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetSw", RenderTargetSw, ITexture)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetSw", RenderTargetSw, ISimpleTexture)
 
 RenderTargetSw::RenderTargetSw()
 :	m_width(0)
@@ -35,6 +35,11 @@ void RenderTargetSw::destroy()
 	m_color.release();
 }
 
+ITexture* RenderTargetSw::resolve()
+{
+	return this;
+}
+
 int RenderTargetSw::getWidth() const
 {
 	return m_width;
@@ -45,9 +50,13 @@ int RenderTargetSw::getHeight() const
 	return m_height;
 }
 
-int RenderTargetSw::getDepth() const
+bool RenderTargetSw::lock(int level, Lock& lock)
 {
-	return 1;
+	return false;
+}
+
+void RenderTargetSw::unlock(int level)
+{
 }
 
 uint16_t* RenderTargetSw::getColorSurface()

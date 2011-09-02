@@ -183,6 +183,11 @@ void SimpleTextureOpenGLES2::destroy()
 	}
 }
 
+ITexture* SimpleTextureOpenGLES2::resolve()
+{
+	return this;
+}
+
 int SimpleTextureOpenGLES2::getWidth() const
 {
 	return m_width;
@@ -191,11 +196,6 @@ int SimpleTextureOpenGLES2::getWidth() const
 int SimpleTextureOpenGLES2::getHeight() const
 {
 	return m_height;
-}
-
-int SimpleTextureOpenGLES2::getDepth() const
-{
-	return 1;
 }
 
 bool SimpleTextureOpenGLES2::lock(int level, Lock& lock)

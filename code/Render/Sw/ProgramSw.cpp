@@ -154,10 +154,17 @@ void ProgramSw::setTextureParameter(handle_t handle, ITexture* texture)
 	std::map< handle_t, int >::const_iterator i = m_samplerMap.find(handle);
 	if (i != m_samplerMap.end())
 	{
-		if (is_a< SimpleTextureSw >(texture))
-			m_samplers[i->second] = new SimpleTextureSampler< AddressWrap, AddressWrap >(static_cast< SimpleTextureSw* >(texture));
-		else if (is_a< RenderTargetSw >(texture))
-			m_samplers[i->second] = new RenderTargetSampler< AddressWrap, AddressWrap >(static_cast< RenderTargetSw* >(texture));
+		if (!texture)
+			return;
+
+		Ref< ITexture > resolved = texture->resolve();
+		if (!resolved)
+			return;
+
+		if (is_a< SimpleTextureSw >(resolved))
+			m_samplers[i->second] = new SimpleTextureSampler< AddressWrap, AddressWrap >(static_cast< SimpleTextureSw* >(resolved.ptr()));
+		else if (is_a< RenderTargetSw >(resolved))
+			m_samplers[i->second] = new RenderTargetSampler< AddressWrap, AddressWrap >(static_cast< RenderTargetSw* >(resolved.ptr()));
 	}
 }
 

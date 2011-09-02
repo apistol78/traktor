@@ -126,7 +126,6 @@ void IndoorMesh::render(
 			renderBlock->primitives = &meshParts[j->meshPart].primitives;
 
 			renderBlock->programParams->beginParameters(renderContext);
-			m_shader->setProgramParameters(renderBlock->programParams);
 			worldRenderPass.setProgramParameters(
 				renderBlock->programParams,
 				worldTransform.toMatrix44(),

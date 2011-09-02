@@ -1,6 +1,7 @@
 #include "Render/IndexBuffer.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
+#include "Render/ISimpleTexture.h"
 #include "Render/ScreenRenderer.h"
 #include "Render/Shader.h"
 #include "Render/VertexBuffer.h"
@@ -146,7 +147,6 @@ void OceanEntity::render(
 
 	renderBlock->programParams->beginParameters(renderContext);
 	
-	m_shader->setProgramParameters(renderBlock->programParams);
 	worldRenderPass.setProgramParameters(
 		renderBlock->programParams,
 		oceanWorld,

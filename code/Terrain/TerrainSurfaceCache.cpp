@@ -141,7 +141,7 @@ void TerrainSurfaceCache::get(
 	world::IWorldRenderPass& worldRenderPass,
 	render::RenderContext* renderContext,
 	TerrainSurface* surface,
-	render::ITexture* heightfieldTexture,
+	render::ISimpleTexture* heightfieldTexture,
 	const Vector4& worldOrigin,
 	const Vector4& worldExtent,
 	const Vector4& patchOrigin,
@@ -150,7 +150,7 @@ void TerrainSurfaceCache::get(
 	uint32_t patchId,
 	// Out
 	render::RenderBlock*& outRenderBlock,
-	Ref< render::ITexture >& outTexture
+	Ref< render::ISimpleTexture >& outTexture
 )
 {
 	// If the cache is already valid we just reuse it.
@@ -214,10 +214,7 @@ void TerrainSurfaceCache::get(
 	renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 
 	renderBlock->programParams->beginParameters(renderContext);
-
-	shader->setProgramParameters(renderBlock->programParams);
 	worldRenderPass.setProgramParameters(renderBlock->programParams);
-
 	renderBlock->programParams->setTextureParameter(m_handleHeightfield, heightfieldTexture);
 	renderBlock->programParams->setFloatParameter(m_handleHeightfieldSize, float(heightfieldTexture->getWidth()));
 	renderBlock->programParams->setVectorParameter(m_handleWorldOrigin, worldOrigin);
@@ -225,7 +222,6 @@ void TerrainSurfaceCache::get(
 	renderBlock->programParams->setVectorParameter(m_handlePatchOrigin, patchOrigin);
 	renderBlock->programParams->setVectorParameter(m_handlePatchExtent, patchExtent);
 	renderBlock->programParams->setVectorParameter(m_handlePatchLodColor, c_cacheSurfaceColor[surfaceLod]);
-
 	renderBlock->programParams->endParameters(renderContext);
 
 	// Update cache entry.

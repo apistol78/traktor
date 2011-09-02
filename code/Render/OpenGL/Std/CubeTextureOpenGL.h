@@ -38,6 +38,8 @@ public:
 
 	virtual void destroy();
 
+	virtual ITexture* resolve();
+
 	virtual int getWidth() const;
 	
 	virtual int getHeight() const;

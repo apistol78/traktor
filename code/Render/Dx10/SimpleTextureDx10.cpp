@@ -1,9 +1,9 @@
+#include "Core/Log/Log.h"
+#include "Render/Types.h"
 #include "Render/Dx10/Platform.h"
 #include "Render/Dx10/SimpleTextureDx10.h"
 #include "Render/Dx10/ContextDx10.h"
 #include "Render/Dx10/TypesDx10.h"
-#include "Render/Types.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -77,6 +77,11 @@ void SimpleTextureDx10::destroy()
 	m_context->releaseComRef(m_d3dTextureResourceView);
 }
 
+ITexture* SimpleTextureDx10::resolve()
+{
+	return this;
+}
+
 int SimpleTextureDx10::getWidth() const
 {
 	return m_width;
@@ -85,11 +90,6 @@ int SimpleTextureDx10::getWidth() const
 int SimpleTextureDx10::getHeight() const
 {
 	return m_height;
-}
-
-int SimpleTextureDx10::getDepth() const
-{
-	return 1;
 }
 
 bool SimpleTextureDx10::lock(int level, Lock& lock)

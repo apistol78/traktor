@@ -16,7 +16,7 @@ namespace traktor
 	namespace render
 	{
 
-class ITexture;
+class ISimpleTexture;
 
 	}
 
@@ -37,9 +37,9 @@ public:
 		render::handle_t technique,
 		const WorldRenderView& worldRenderView,
 		float depthRange,
-		render::ITexture* depthMap,
-		render::ITexture* shadowMask,
-		render::ITexture* lightMap
+		render::ISimpleTexture* depthMap,
+		render::ISimpleTexture* shadowMask,
+		render::ISimpleTexture* lightMap
 	);
 
 	virtual render::handle_t getTechnique() const;
@@ -58,9 +58,9 @@ private:
 	render::handle_t m_technique;
 	const WorldRenderView& m_worldRenderView;
 	float m_depthRange;
-	render::ITexture* m_depthMap;
-	render::ITexture* m_shadowMask;
-	render::ITexture* m_lightMap;
+	render::ISimpleTexture* m_depthMap;
+	render::ISimpleTexture* m_shadowMask;
+	render::ISimpleTexture* m_lightMap;
 
 	void setWorldProgramParameters(render::ProgramParameters* programParams, const Matrix44& world) const;
 

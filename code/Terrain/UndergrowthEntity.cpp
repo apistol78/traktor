@@ -109,12 +109,8 @@ void UndergrowthEntity::render(
 	renderBlock->primitives = &m_primitives;
 
 	renderBlock->programParams->beginParameters(renderContext);
-
-	m_shader->setProgramParameters(renderBlock->programParams);
 	worldRenderPass.setProgramParameters(renderBlock->programParams);
-
 	renderBlock->programParams->setFloatParameter(L"MaxRadius", m_settings.spreadDistance + m_settings.cellRadius);
-
 	renderBlock->programParams->endParameters(renderContext);
 
 	renderContext->draw(

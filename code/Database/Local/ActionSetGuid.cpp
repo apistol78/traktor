@@ -1,9 +1,10 @@
+#include "Core/Io/FileSystem.h"
+#include "Core/Log/Log.h"
 #include "Database/Local/ActionSetGuid.h"
 #include "Database/Local/Context.h"
 #include "Database/Local/IFileStore.h"
 #include "Database/Local/LocalInstanceMeta.h"
 #include "Database/Local/PhysicalAccess.h"
-#include "Core/Io/FileSystem.h"
 
 namespace traktor
 {
@@ -30,11 +31,17 @@ bool ActionSetGuid::execute(Context* context)
 	{
 		instanceMeta = readPhysicalObject< LocalInstanceMeta >(instanceMetaPath);
 		if (!instanceMeta)
+		{
+			log::error << L"Unable to read instance meta data" << Endl;
 			return false;
+		}
 
 		m_editMeta = fileStore->edit(instanceMetaPath);
 		if (!m_editMeta)
+		{
+			log::error << L"Unable to edit instance meta" << Endl;
 			return false;
+		}
 	}
 	else
 		instanceMeta = new LocalInstanceMeta();
@@ -42,7 +49,10 @@ bool ActionSetGuid::execute(Context* context)
 	instanceMeta->setGuid(m_newGuid);
 
 	if (!writePhysicalObject(instanceMetaPath, instanceMeta, context->preferBinary()))
+	{
+		log::error << L"Unable to write instance meta data" << Endl;
 		return false;
+	}
 
 	if (m_create)
 		fileStore->add(instanceMetaPath);

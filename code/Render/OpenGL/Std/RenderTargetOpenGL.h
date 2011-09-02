@@ -2,7 +2,7 @@
 #define traktor_render_RenderTargetOpenGL_H
 
 #include "Core/Math/Vector4.h"
-#include "Render/ITexture.h"
+#include "Render/ISimpleTexture.h"
 #include "Render/Types.h"
 #include "Render/OpenGL/ITextureBinding.h"
 
@@ -26,7 +26,7 @@ class IContext;
  * \ingroup OGL
  */
 class T_DLLCLASS RenderTargetOpenGL
-:	public ITexture
+:	public ISimpleTexture
 ,	public ITextureBinding
 {
 	T_RTTI_CLASS;
@@ -40,19 +40,23 @@ public:
 
 	virtual void destroy();
 
+	virtual ITexture* resolve();
+
 	virtual int getWidth() const;
 	
 	virtual int getHeight() const;
 	
-	virtual int getDepth() const;
-	
+	virtual bool lock(int level, Lock& lock);
+
+	virtual void unlock(int level);
+
 	virtual void bind(GLuint unit, const SamplerState& samplerState, GLint locationTexture);
 
 	bool bind(GLuint depthBuffer);
 
 	void enter(GLuint depthBuffer);
 	
-	void resolve();
+	void resolveTarget();
 
 	void blit();
 	

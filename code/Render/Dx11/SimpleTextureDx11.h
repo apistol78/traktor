@@ -36,12 +36,12 @@ public:
 
 	virtual void destroy();
 
+	virtual ITexture* resolve();
+
 	virtual int getWidth() const;
 	
 	virtual int getHeight() const;
 	
-	virtual int getDepth() const;
-
 	virtual bool lock(int level, Lock& lock);
 
 	virtual void unlock(int level);

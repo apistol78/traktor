@@ -4,6 +4,7 @@
 #include "Core/Math/Half.h"
 #include "Render/IndexBuffer.h"
 #include "Render/IRenderSystem.h"
+#include "Render/ISimpleTexture.h"
 #include "Render/VertexBuffer.h"
 #include "Render/VertexElement.h"
 #include "Render/Context/RenderContext.h"
@@ -356,7 +357,7 @@ void TerrainEntity::render(
 	world::IWorldRenderPass& worldRenderPass
 )
 {
-	Ref< render::ITexture > surface;
+	Ref< render::ISimpleTexture > surface;
 
 	if (!m_heightfield.validate() || !m_shader.validate() || !m_surface)
 		return;
@@ -479,10 +480,7 @@ void TerrainEntity::render(
 		renderBlock->primitives = &m_primitives[patchLod];
 
 		renderBlock->programParams->beginParameters(renderContext);
-
-		m_shader->setProgramParameters(renderBlock->programParams);
 		worldRenderPass.setProgramParameters(renderBlock->programParams);
-
 		renderBlock->programParams->setTextureParameter(m_handleSurface, surface);
 		renderBlock->programParams->setTextureParameter(m_handleHeightfield, m_heightfield->getHeightTexture());
 		renderBlock->programParams->setFloatParameter(m_handleHeightfieldSize, float(m_heightfield->getHeightTexture()->getWidth()));
@@ -492,7 +490,6 @@ void TerrainEntity::render(
 		renderBlock->programParams->setVectorParameter(m_handleWorldExtent, worldExtent);
 		renderBlock->programParams->setVectorParameter(m_handlePatchOrigin, patchOrigin);
 		renderBlock->programParams->setVectorParameter(m_handlePatchExtent, patchExtent);
-
 		renderBlock->programParams->endParameters(renderContext);
 
 		renderContext->draw(render::RfOpaque, renderBlock);

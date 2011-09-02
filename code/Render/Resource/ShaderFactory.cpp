@@ -10,6 +10,7 @@
 #include "Render/Resource/ShaderFactory.h"
 #include "Render/Resource/ShaderResource.h"
 #include "Render/Resource/TextureLinker.h"
+#include "Render/Resource/TextureProxy.h"
 #include "Resource/IResourceManager.h"
 
 namespace traktor
@@ -27,11 +28,11 @@ public:
 	{
 	}
 
-	virtual resource::Proxy< ITexture > read(const Guid& textureGuid)
+	virtual Ref< ITexture > read(const Guid& textureGuid)
 	{
 		resource::Proxy< ITexture > texture(textureGuid);
 		if (m_resourceManager->bind(texture))
-			return texture;
+			return new TextureProxy(texture);
 		else
 			return (ITexture*)0;
 	}
@@ -111,13 +112,13 @@ Ref< Object > ShaderFactory::create(resource::IResourceManager* resourceManager,
 			if (!combination.program)
 				return 0;
 
+			TextureReaderAdapter textureReader(resourceManager);
+			if (!TextureLinker(textureReader).link(*j, combination.program))
+				return 0;
+
 			technique.combinations.push_back(combination);
 		}
 	}
-
-	TextureReaderAdapter textureReader(resourceManager);
-	if (!TextureLinker(textureReader).link(shaderResource, shader))
-		return 0;
 
 	shader->setTechnique(L"Default");
 	return shader;

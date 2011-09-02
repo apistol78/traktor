@@ -265,12 +265,19 @@ void ProgramDx11::setTextureParameter(handle_t handle, ITexture* texture)
 	{
 		ID3D11ShaderResourceView* d3dTextureResourceView = 0;
 
-		if (is_a< SimpleTextureDx11 >(texture))
-			d3dTextureResourceView = static_cast< SimpleTextureDx11* >(texture)->getD3D11TextureResourceView();
-		else if (is_a< CubeTextureDx11 >(texture))
-			d3dTextureResourceView = static_cast< CubeTextureDx11* >(texture)->getD3D11TextureResourceView();
-		else if (is_a< RenderTargetDx11 >(texture))
-			d3dTextureResourceView = static_cast< RenderTargetDx11* >(texture)->getD3D11TextureResourceView();
+		if (!texture)
+			return;
+
+		Ref< ITexture > resolved = texture->resolve();
+		if (!resolved)
+			return;
+
+		if (is_a< SimpleTextureDx11 >(resolved))
+			d3dTextureResourceView = static_cast< SimpleTextureDx11* >(resolved.ptr())->getD3D11TextureResourceView();
+		else if (is_a< CubeTextureDx11 >(resolved))
+			d3dTextureResourceView = static_cast< CubeTextureDx11* >(resolved.ptr())->getD3D11TextureResourceView();
+		else if (is_a< RenderTargetDx11 >(resolved))
+			d3dTextureResourceView = static_cast< RenderTargetDx11* >(resolved.ptr())->getD3D11TextureResourceView();
 		else
 			return;
 

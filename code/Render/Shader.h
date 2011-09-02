@@ -6,7 +6,6 @@
 #include "Core/Math/Vector4.h"
 #include "Core/Math/Matrix44.h"
 #include "Render/Types.h"
-#include "Resource/Proxy.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -24,7 +23,6 @@ namespace traktor
 class ITexture;
 class IProgram;
 class IRenderView;
-class ProgramParameters;
 
 /*! \brief Shader
  * \ingroup Render
@@ -88,7 +86,7 @@ public:
 
 	void setMatrixArrayParameter(handle_t handle, const Matrix44* param, int length);
 
-	void setTextureParameter(handle_t handle, const resource::Proxy< ITexture >& texture);
+	void setTextureParameter(handle_t handle, ITexture* texture);
 
 	void setStencilReference(uint32_t stencilReference);
 
@@ -104,8 +102,6 @@ public:
 	//@{
 
 	IProgram* getCurrentProgram() const;
-
-	void setProgramParameters(ProgramParameters* programParameters);
 
 	//@}
 
@@ -134,7 +130,7 @@ public:
 
 	inline void setMatrixArrayParameter(const std::wstring& name, const Matrix44* param, int length) { setMatrixArrayParameter(getParameterHandle(name), param, length); }
 
-	inline void setTextureParameter(const std::wstring& name, const resource::Proxy< ITexture >& texture) { setTextureParameter(getParameterHandle(name), texture); }
+	inline void setTextureParameter(const std::wstring& name, ITexture* texture) { setTextureParameter(getParameterHandle(name), texture); }
 
 	//@}
 
@@ -155,7 +151,6 @@ private:
 
 	SmallMap< handle_t, Technique > m_techniques;
 	SmallMap< handle_t, uint32_t > m_parameterBits;
-	SmallMap< handle_t, resource::Proxy< ITexture > > m_textureProxies;
 	uint32_t m_parameterValue;
 	Technique* m_currentTechnique;
 	IProgram* m_currentProgram;

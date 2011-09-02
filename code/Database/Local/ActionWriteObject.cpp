@@ -1,5 +1,6 @@
 #include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Io/FileSystem.h"
+#include "Core/Log/Log.h"
 #include "Database/Local/ActionWriteObject.h"
 #include "Database/Local/Context.h"
 #include "Database/Local/IFileStore.h"
@@ -30,19 +31,29 @@ bool ActionWriteObject::execute(Context* context)
 
 	m_editObject = fileStore->edit(instanceObjectPath);
 	if (!m_editObject)
+	{
+		log::error << L"Unable to edit instance object" << Endl;
 		return false;
+	}
 
 	Ref< LocalInstanceMeta > instanceMeta = readPhysicalObject< LocalInstanceMeta >(instanceMetaPath);
 	if (!instanceMeta)
+	{
+		log::error << L"Unable to read instance meta data" << Endl;
 		return false;
+	}
 
 	Ref< IStream > instanceStream = FileSystem::getInstance().open(instanceObjectPath, File::FmWrite);
 	if (!instanceStream)
+	{
+		log::error << L"Unable to open instance object stream; \"" << instanceObjectPath.getPathName() << L"\"" << Endl;
 		return false;
+	}
 
 	const std::vector< uint8_t >& objectBuffer = m_objectStream->getBuffer();
 	if (instanceStream->write(&objectBuffer[0], objectBuffer.size()) != objectBuffer.size())
 	{
+		log::error << L"Failed to write instance object" << Endl;
 		instanceStream->close();
 		return false;
 	}
@@ -53,12 +64,18 @@ bool ActionWriteObject::execute(Context* context)
 	{
 		m_editMeta = fileStore->edit(instanceMetaPath);
 		if (!m_editMeta)
+		{
+			log::error << L"Unable to edit instance meta" << Endl;
 			return false;
+		}
 
 		instanceMeta->setPrimaryType(m_primaryTypeName);
 
 		if (!writePhysicalObject(instanceMetaPath, instanceMeta, context->preferBinary()))
+		{
+			log::error << L"Unable to write instance meta data" << Endl;
 			return false;
+		}
 	}
 
 	return true;

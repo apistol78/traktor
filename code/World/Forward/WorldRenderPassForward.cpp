@@ -1,4 +1,4 @@
-#include "Render/ITexture.h"
+#include "Render/ISimpleTexture.h"
 #include "Render/Shader.h"
 #include "Render/Types.h"
 #include "Render/Context/ProgramParameters.h"
@@ -43,8 +43,8 @@ WorldRenderPassForward::WorldRenderPassForward(
 	render::handle_t technique,
 	const WorldRenderView& worldRenderView,
 	float depthRange,
-	render::ITexture* depthMap,
-	render::ITexture* shadowMask
+	render::ISimpleTexture* depthMap,
+	render::ISimpleTexture* shadowMask
 )
 :	m_technique(technique)
 ,	m_worldRenderView(worldRenderView)

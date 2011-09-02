@@ -1,9 +1,9 @@
+#include "Core/Log/Log.h"
 #include "Render/Dx9/Platform.h"
-#include "Render/Dx9/TypesDx9.h"
 #include "Render/Dx9/ResourceManagerDx9.h"
+#include "Render/Dx9/TypesDx9.h"
 #include "Render/Dx9/Win32/RenderTargetSetWin32.h"
 #include "Render/Dx9/Win32/RenderTargetWin32.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -104,7 +104,7 @@ int RenderTargetSetWin32::getHeight() const
 	return m_desc.height;
 }
 
-Ref< ITexture > RenderTargetSetWin32::getColorTexture(int index) const
+Ref< ISimpleTexture > RenderTargetSetWin32::getColorTexture(int index) const
 {
 	return index < int(m_colorTextures.size()) ? m_colorTextures[index] : 0;
 }
