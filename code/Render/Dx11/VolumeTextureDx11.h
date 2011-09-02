@@ -26,6 +26,8 @@ class T_DLLCLASS VolumeTextureDx11 : public IVolumeTexture
 public:
 	virtual void destroy();
 
+	virtual ITexture* resolve();
+
 	virtual int getWidth() const;
 	
 	virtual int getHeight() const;

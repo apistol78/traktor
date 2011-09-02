@@ -2,7 +2,7 @@
 #define traktor_render_RenderTargetSw_H
 
 #include "Core/Misc/AutoPtr.h"
-#include "Render/ITexture.h"
+#include "Render/ISimpleTexture.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -23,7 +23,7 @@ struct RenderTargetCreateDesc;
 /*!
  * \ingroup SW
  */
-class T_DLLCLASS RenderTargetSw : public ITexture
+class T_DLLCLASS RenderTargetSw : public ISimpleTexture
 {
 	T_RTTI_CLASS;
 
@@ -34,11 +34,15 @@ public:
 
 	virtual void destroy();
 
+	virtual ITexture* resolve();
+
 	virtual int getWidth() const;
 	
 	virtual int getHeight() const;
-	
-	virtual int getDepth() const;
+
+	virtual bool lock(int level, Lock& lock);
+
+	virtual void unlock(int level);
 
 	uint16_t* getColorSurface();
 

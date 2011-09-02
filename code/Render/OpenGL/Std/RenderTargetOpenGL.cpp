@@ -46,7 +46,7 @@ struct DeleteFramebufferCallback : public IContext::IDeleteCallback
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetOpenGL", RenderTargetOpenGL, ITexture)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetOpenGL", RenderTargetOpenGL, ISimpleTexture)
 
 RenderTargetOpenGL::RenderTargetOpenGL(IContext* resourceContext, BlitHelper* blitHelper)
 :	m_resourceContext(resourceContext)
@@ -360,6 +360,11 @@ void RenderTargetOpenGL::destroy()
 	}
 }
 
+ITexture* RenderTargetOpenGL::resolve()
+{
+	return this;
+}
+
 int RenderTargetOpenGL::getWidth() const
 {
 	return m_targetWidth;
@@ -370,9 +375,13 @@ int RenderTargetOpenGL::getHeight() const
 	return m_targetHeight;
 }
 
-int RenderTargetOpenGL::getDepth() const
+bool RenderTargetOpenGL::lock(int level, Lock& lock)
 {
-	return 0;
+	return false;
+}
+
+void RenderTargetOpenGL::unlock(int level)
+{
 }
 
 void RenderTargetOpenGL::bind(GLuint unit, const SamplerState& samplerState, GLint locationTexture)
@@ -457,7 +466,7 @@ void RenderTargetOpenGL::enter(GLuint depthBuffer)
 	}
 }
 
-void RenderTargetOpenGL::resolve()
+void RenderTargetOpenGL::resolveTarget()
 {
 	if (m_resolveFBO)
 	{

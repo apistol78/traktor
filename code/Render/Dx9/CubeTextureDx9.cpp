@@ -77,6 +77,11 @@ void CubeTextureDx9::destroy()
 	m_resourceManager->remove(this);
 }
 
+ITexture* CubeTextureDx9::resolve()
+{
+	return this;
+}
+
 int CubeTextureDx9::getWidth() const
 {
 	return m_side;

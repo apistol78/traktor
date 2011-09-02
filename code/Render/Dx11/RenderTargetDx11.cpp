@@ -1,17 +1,17 @@
+#include "Core/Log/Log.h"
+#include "Render/Types.h"
 #include "Render/Dx11/Platform.h"
 #include "Render/Dx11/RenderTargetDx11.h"
 #include "Render/Dx11/ContextDx11.h"
 #include "Render/Dx11/TypesDx11.h"
 #include "Render/Dx11/Utilities.h"
-#include "Render/Types.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetDx11", RenderTargetDx11, ITexture)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetDx11", RenderTargetDx11, ISimpleTexture)
 
 RenderTargetDx11::RenderTargetDx11(ContextDx11* context)
 :	m_context(context)
@@ -91,6 +91,11 @@ void RenderTargetDx11::destroy()
 	m_context->releaseComRef(m_d3dTextureResourceView);
 }
 
+ITexture* RenderTargetDx11::resolve()
+{
+	return this;
+}
+
 int RenderTargetDx11::getWidth() const
 {
 	return m_width;
@@ -101,9 +106,13 @@ int RenderTargetDx11::getHeight() const
 	return m_height;
 }
 
-int RenderTargetDx11::getDepth() const
+bool RenderTargetDx11::lock(int level, Lock& lock)
 {
-	return 1;
+	return false;
+}
+
+void RenderTargetDx11::unlock(int level)
+{
 }
 
 	}

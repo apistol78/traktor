@@ -19,19 +19,23 @@ namespace traktor
 		namespace
 		{
 
-IDirect3DBaseTexture9* getD3DTexture(ITexture* texture)
+IDirect3DBaseTexture9* resolveD3DTexture(ITexture* texture)
 {
 	if (!texture)
 		return 0;
 
-	if (is_a< SimpleTextureDx9 >(texture))
-		return static_cast< SimpleTextureDx9* >(texture)->getD3DBaseTexture();
-	if (is_a< CubeTextureDx9 >(texture))
-		return static_cast< CubeTextureDx9* >(texture)->getD3DBaseTexture();
-	if (is_a< VolumeTextureDx9 >(texture))
-		return static_cast< VolumeTextureDx9* >(texture)->getD3DBaseTexture();
-	if (is_a< RenderTargetWin32 >(texture))
-		return static_cast< RenderTargetWin32* >(texture)->getD3DBaseTexture();
+	Ref< ITexture > resolved = texture->resolve();
+	if (!resolved)
+		return 0;
+
+	if (is_a< SimpleTextureDx9 >(resolved))
+		return static_cast< SimpleTextureDx9* >(resolved.ptr())->getD3DBaseTexture();
+	if (is_a< CubeTextureDx9 >(resolved))
+		return static_cast< CubeTextureDx9* >(resolved.ptr())->getD3DBaseTexture();
+	if (is_a< VolumeTextureDx9 >(resolved))
+		return static_cast< VolumeTextureDx9* >(resolved.ptr())->getD3DBaseTexture();
+	if (is_a< RenderTargetWin32 >(resolved))
+		return static_cast< RenderTargetWin32* >(resolved.ptr())->getD3DBaseTexture();
 
 	return 0;
 }
@@ -162,10 +166,10 @@ bool ProgramWin32::activate()
 	}
 
 	for (AlignedVector< ProgramSampler >::const_iterator i = m_resource->m_vertexSamplers.begin(); i != m_resource->m_vertexSamplers.end(); ++i)
-		m_parameterCache->setVertexTexture(i->stage, getD3DTexture(m_textureParameterData[i->texture]));
+		m_parameterCache->setVertexTexture(i->stage, resolveD3DTexture(m_textureParameterData[i->texture]));
 
 	for (AlignedVector< ProgramSampler >::const_iterator i = m_resource->m_pixelSamplers.begin(); i != m_resource->m_pixelSamplers.end(); ++i)
-		m_parameterCache->setPixelTexture(i->stage, getD3DTexture(m_textureParameterData[i->texture]));
+		m_parameterCache->setPixelTexture(i->stage, resolveD3DTexture(m_textureParameterData[i->texture]));
 
 	m_dirty = false;
 	ms_activeProgram = this;

@@ -1,9 +1,9 @@
+#include "Core/Log/Log.h"
+#include "Render/Types.h"
 #include "Render/Dx10/Platform.h"
 #include "Render/Dx10/CubeTextureDx10.h"
 #include "Render/Dx10/ContextDx10.h"
 #include "Render/Dx10/TypesDx10.h"
-#include "Render/Types.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -75,6 +75,11 @@ void CubeTextureDx10::destroy()
 		return;
 	m_context->releaseComRef(m_d3dTexture);
 	m_context->releaseComRef(m_d3dTextureResourceView);
+}
+
+ITexture* CubeTextureDx10::resolve()
+{
+	return this;
 }
 
 int CubeTextureDx10::getWidth() const

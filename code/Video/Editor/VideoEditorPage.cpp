@@ -193,7 +193,7 @@ void VideoEditorPage::eventPaint(ui::Event* event)
 		);
 		if (m_video)
 		{
-			render::ITexture* texture = m_video->getTexture();
+			render::ISimpleTexture* texture = m_video->getTexture();
 			if (texture)
 			{
 				m_shader->setTextureParameter(L"Texture", texture);

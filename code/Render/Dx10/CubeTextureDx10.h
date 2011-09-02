@@ -1,15 +1,15 @@
 #ifndef traktor_render_CubeTextureDx10_H
 #define traktor_render_CubeTextureDx10_H
 
-#include "Render/ICubeTexture.h"
 #include "Core/Misc/ComRef.h"
+#include "Render/ICubeTexture.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RENDER_DX10_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -35,6 +35,8 @@ public:
 	bool create(ID3D10Device* d3dDevice, const CubeTextureCreateDesc& desc);
 
 	virtual void destroy();
+
+	virtual ITexture* resolve();
 
 	virtual int getWidth() const;
 	

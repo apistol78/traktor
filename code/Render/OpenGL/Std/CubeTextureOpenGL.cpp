@@ -129,6 +129,11 @@ void CubeTextureOpenGL::destroy()
 	}
 }
 
+ITexture* CubeTextureOpenGL::resolve()
+{
+	return this;
+}
+
 int CubeTextureOpenGL::getWidth() const
 {
 	return m_side;

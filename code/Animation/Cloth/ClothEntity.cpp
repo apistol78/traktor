@@ -242,7 +242,6 @@ void ClothEntity::render(
 	renderBlock->maxIndex = uint32_t(m_nodes.size() * 2 - 1);
 
 	renderBlock->programParams->beginParameters(renderContext);
-	m_shader->setProgramParameters(renderBlock->programParams);
 	worldRenderPass.setProgramParameters(
 		renderBlock->programParams,
 		m_transform.toMatrix44(),

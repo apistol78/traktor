@@ -91,6 +91,11 @@ void SimpleTextureDx11::destroy()
 	m_context = 0;
 }
 
+ITexture* SimpleTextureDx11::resolve()
+{
+	return this;
+}
+
 int SimpleTextureDx11::getWidth() const
 {
 	return m_width;
@@ -99,11 +104,6 @@ int SimpleTextureDx11::getWidth() const
 int SimpleTextureDx11::getHeight() const
 {
 	return m_height;
-}
-
-int SimpleTextureDx11::getDepth() const
-{
-	return 1;
 }
 
 bool SimpleTextureDx11::lock(int level, Lock& lock)

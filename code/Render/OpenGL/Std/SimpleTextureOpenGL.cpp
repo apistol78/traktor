@@ -150,6 +150,11 @@ void SimpleTextureOpenGL::destroy()
 	}
 }
 
+ITexture* SimpleTextureOpenGL::resolve()
+{
+	return this;
+}
+
 int SimpleTextureOpenGL::getWidth() const
 {
 	return m_width;
@@ -158,11 +163,6 @@ int SimpleTextureOpenGL::getWidth() const
 int SimpleTextureOpenGL::getHeight() const
 {
 	return m_height;
-}
-
-int SimpleTextureOpenGL::getDepth() const
-{
-	return 1;
 }
 
 bool SimpleTextureOpenGL::lock(int level, Lock& lock)

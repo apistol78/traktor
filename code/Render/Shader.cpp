@@ -2,7 +2,6 @@
 #include "Render/IProgram.h"
 #include "Render/IRenderView.h"
 #include "Render/ITexture.h"
-#include "Render/Context/ProgramParameters.h"
 
 namespace traktor
 {
@@ -108,9 +107,10 @@ void Shader::setMatrixArrayParameter(handle_t handle, const Matrix44* param, int
 		m_currentProgram->setMatrixArrayParameter(handle, param, length);
 }
 
-void Shader::setTextureParameter(handle_t handle, const resource::Proxy< ITexture >& texture)
+void Shader::setTextureParameter(handle_t handle, ITexture* texture)
 {
-	m_textureProxies[handle] = texture;
+	if (m_currentProgram)
+		m_currentProgram->setTextureParameter(handle, texture);
 }
 
 void Shader::setStencilReference(uint32_t stencilReference)
@@ -124,17 +124,6 @@ void Shader::draw(IRenderView* renderView, const Primitives& primitives)
 	if (!m_currentProgram)
 		return;
 
-	for (SmallMap< handle_t, resource::Proxy< ITexture > >::iterator i = m_textureProxies.begin(); i != m_textureProxies.end(); ++i)
-	{
-		if (i->second.validate())
-		{
-			m_currentProgram->setTextureParameter(
-				i->first,
-				i->second
-			);
-		}
-	}
-
 	renderView->setProgram(m_currentProgram);
 	renderView->draw(primitives);
 }
@@ -142,20 +131,6 @@ void Shader::draw(IRenderView* renderView, const Primitives& primitives)
 IProgram* Shader::getCurrentProgram() const
 {
 	return m_currentProgram;
-}
-
-void Shader::setProgramParameters(ProgramParameters* programParameters)
-{
-	for (SmallMap< handle_t, resource::Proxy< ITexture > >::iterator i = m_textureProxies.begin(); i != m_textureProxies.end(); ++i)
-	{
-		if (i->second.validate())
-		{
-			programParameters->setTextureParameter(
-				i->first,
-				i->second
-			);
-		}
-	}
 }
 
 void Shader::updateCurrentProgram()

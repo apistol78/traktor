@@ -12,6 +12,11 @@ void VolumeTextureDx11::destroy()
 {
 }
 
+ITexture* VolumeTextureDx11::resolve()
+{
+	return this;
+}
+
 int VolumeTextureDx11::getWidth() const
 {
 	return 0;

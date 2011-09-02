@@ -176,12 +176,17 @@ void LogList::eventPaint(Event* event)
 		while (s < i->second.length())
 		{
 			size_t e1 = i->second.find_first_not_of('\t', s);
+			if (e1 == i->second.npos)
+				break;
 
 			textRect.left += int(e1 - s) * 8 * 4;
 
 			size_t e2 = i->second.find_first_of('\t', e1);
 			if (e2 == i->second.npos)
 				e2 = i->second.length();
+
+			if (e2 <= e1)
+				break;
 
 			std::wstring text = i->second.substr(e1, e2 - e1);
 

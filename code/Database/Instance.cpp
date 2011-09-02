@@ -72,6 +72,8 @@ void Instance::internalReset()
 std::wstring Instance::getName() const
 {
 	T_ASSERT (m_providerInstance);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 #if T_INSTANCE_CACHE_NAME
 	if (!(m_cache & IchName))
 	{
@@ -87,12 +89,16 @@ std::wstring Instance::getName() const
 std::wstring Instance::getPath() const
 {
 	T_ASSERT (m_providerInstance);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	return m_parent->getPath() + L"/" + getName();
 }
 
 Guid Instance::getGuid() const
 {
 	T_ASSERT (m_providerInstance);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 #if T_INSTANCE_CACHE_GUID
 	if (!(m_cache & IchGuid))
 	{
@@ -108,6 +114,7 @@ Guid Instance::getGuid() const
 bool Instance::setGuid(const Guid& guid)
 {
 	T_ASSERT (m_providerInstance);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	if (m_database)
 		m_database->flushInstance(getGuid());
@@ -124,6 +131,8 @@ bool Instance::setGuid(const Guid& guid)
 std::wstring Instance::getPrimaryTypeName() const
 {
 	T_ASSERT (m_providerInstance);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 #if T_INSTANCE_CACHE_PRIMARY_TYPE
 	if (!(m_cache & IchPrimaryType))
 	{
@@ -139,13 +148,14 @@ std::wstring Instance::getPrimaryTypeName() const
 const TypeInfo* Instance::getPrimaryType() const
 {
 	T_ASSERT (m_providerInstance);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	return TypeInfo::find(getPrimaryTypeName());
 }
 
 bool Instance::checkout()
 {
 	T_ASSERT (m_providerInstance);
-
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	if (!m_providerInstance->openTransaction())
@@ -160,7 +170,6 @@ bool Instance::checkout()
 bool Instance::commit(uint32_t flags)
 {
 	T_ASSERT (m_providerInstance);
-
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	if ((flags & CfKeepCheckedOut) != 0 && m_removed)
@@ -224,7 +233,6 @@ bool Instance::commit(uint32_t flags)
 bool Instance::revert()
 {
 	T_ASSERT (m_providerInstance);
-
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	if (!m_providerInstance->closeTransaction())
@@ -239,6 +247,7 @@ bool Instance::revert()
 bool Instance::setName(const std::wstring& name)
 {
 	T_ASSERT (m_providerInstance);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	if (!m_providerInstance->setName(name))
 		return false;
@@ -250,6 +259,7 @@ bool Instance::setName(const std::wstring& name)
 bool Instance::remove()
 {
 	T_ASSERT (m_providerInstance);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	if (!m_providerInstance->remove())
 		return false;
@@ -261,8 +271,8 @@ bool Instance::remove()
 Ref< ISerializable > Instance::getObject()
 {
 	T_ASSERT (m_providerInstance);
-
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	Ref< ISerializable > object;
 	const TypeInfo* serializerType = 0;
 
@@ -294,11 +304,11 @@ Ref< ISerializable > Instance::getObject()
 bool Instance::setObject(const ISerializable* object)
 {
 	T_ASSERT (m_providerInstance);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	if (!object)
 		return false;
 
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	const TypeInfo* serializerType = 0;
 
 	Ref< IStream > stream = m_providerInstance->writeObject(type_name(object), serializerType);
@@ -328,18 +338,23 @@ bool Instance::setObject(const ISerializable* object)
 uint32_t Instance::getDataNames(std::vector< std::wstring >& dataNames) const
 {
 	T_ASSERT (m_providerInstance);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	return m_providerInstance->getDataNames(dataNames);
 }
 
 bool Instance::removeAllData()
 {
 	T_ASSERT (m_providerInstance);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	return m_providerInstance->removeAllData();
 }
 
 Ref< IStream > Instance::readData(const std::wstring& dataName)
 {
 	T_ASSERT (m_providerInstance);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	Ref< IStream > stream = m_providerInstance->readData(dataName);
 	if (!stream)
@@ -351,6 +366,8 @@ Ref< IStream > Instance::readData(const std::wstring& dataName)
 Ref< IStream > Instance::writeData(const std::wstring& dataName)
 {
 	T_ASSERT (m_providerInstance);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	return m_providerInstance->writeData(dataName);
 }
 

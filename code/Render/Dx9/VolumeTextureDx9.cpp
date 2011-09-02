@@ -83,6 +83,11 @@ void VolumeTextureDx9::destroy()
 	m_resourceManager->remove(this);
 }
 
+ITexture* VolumeTextureDx9::resolve()
+{
+	return this;
+}
+
 int VolumeTextureDx9::getWidth() const
 {
 	return m_width;

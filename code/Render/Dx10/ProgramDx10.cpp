@@ -257,12 +257,16 @@ void ProgramDx10::setTextureParameter(handle_t handle, ITexture* texture)
 	{
 		ID3D10ShaderResourceView* d3dTextureResourceView = 0;
 
-		if (is_a< SimpleTextureDx10 >(texture))
-			d3dTextureResourceView = static_cast< SimpleTextureDx10* >(texture)->getD3D10TextureResourceView();
-		else if (is_a< CubeTextureDx10 >(texture))
-			d3dTextureResourceView = static_cast< CubeTextureDx10* >(texture)->getD3D10TextureResourceView();
-		else if (is_a< RenderTargetDx10 >(texture))
-			d3dTextureResourceView = static_cast< RenderTargetDx10* >(texture)->getD3D10TextureResourceView();
+		if (!texture)
+			return;
+
+		Ref< ITexture > resolved = texture->resolve();
+		if (is_a< SimpleTextureDx10 >(resolved))
+			d3dTextureResourceView = static_cast< SimpleTextureDx10* >(resolved.ptr())->getD3D10TextureResourceView();
+		else if (is_a< CubeTextureDx10 >(resolved))
+			d3dTextureResourceView = static_cast< CubeTextureDx10* >(resolved.ptr())->getD3D10TextureResourceView();
+		else if (is_a< RenderTargetDx10 >(resolved))
+			d3dTextureResourceView = static_cast< RenderTargetDx10* >(resolved.ptr())->getD3D10TextureResourceView();
 		else
 			return;
 

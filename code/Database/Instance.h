@@ -98,7 +98,7 @@ private:
 	IProviderBus* m_providerBus;
 	Ref< IProviderInstance > m_providerInstance;
 	Group* m_parent;
-	Semaphore m_lock;
+	mutable Semaphore m_lock;
 	bool m_renamed;
 	bool m_removed;
 #if T_INSTANCE_CACHE_NAME || T_INSTANCE_CACHE_GUID || T_INSTANCE_CACHE_PRIMARY_TYPE

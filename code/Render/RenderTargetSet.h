@@ -1,22 +1,20 @@
 #ifndef traktor_render_RenderTargetSet_H
 #define traktor_render_RenderTargetSet_H
 
-#include "Core/Object.h"
+#include "Render/ISimpleTexture.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RENDER_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
 {
 	namespace render
 	{
-
-class ITexture;
 	
 /*! \brief Render target set.
  * \ingroup Render
@@ -42,7 +40,7 @@ public:
 	virtual int getHeight() const = 0;
 
 	/*! \brief Get color target texture. */
-	virtual Ref< ITexture > getColorTexture(int index) const = 0;
+	virtual Ref< ISimpleTexture > getColorTexture(int index) const = 0;
 
 	/*! \brief Swap color targets. */
 	virtual void swap(int index1, int index2) = 0;

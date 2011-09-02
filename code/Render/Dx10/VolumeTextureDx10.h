@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RENDER_DX10_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -25,6 +25,8 @@ class T_DLLCLASS VolumeTextureDx10 : public IVolumeTexture
 	
 public:
 	virtual void destroy();
+
+	virtual ITexture* resolve();
 
 	virtual int getWidth() const;
 	

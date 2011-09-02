@@ -2,7 +2,7 @@
 #define traktor_render_RenderTargetWin32_H
 
 #include "Core/Misc/ComRef.h"
-#include "Render/ITexture.h"
+#include "Render/ISimpleTexture.h"
 #include "Render/Dx9/Platform.h"
 
 // import/export mechanism.
@@ -22,8 +22,7 @@ class ParameterCache;
 struct RenderTargetSetCreateDesc;
 struct RenderTargetCreateDesc;
 
-class T_DLLCLASS RenderTargetWin32
-:	public ITexture
+class T_DLLCLASS RenderTargetWin32 : public ISimpleTexture
 {
 	T_RTTI_CLASS;
 
@@ -55,11 +54,20 @@ public:
 
 	virtual void destroy();
 
+	virtual ITexture* resolve();
+
+	// \}
+
+	// \name ISimpleTexture
+	// \{
+
 	virtual int getWidth() const;
 	
 	virtual int getHeight() const;
-	
-	virtual int getDepth() const;
+
+	virtual bool lock(int level, Lock& lock);
+
+	virtual void unlock(int level);
 
 	// \}
 

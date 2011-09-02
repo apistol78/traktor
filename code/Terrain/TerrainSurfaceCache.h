@@ -34,9 +34,9 @@ class IResourceManager;
 	{
 
 class IRenderSystem;
+class ISimpleTexture;
 class RenderTargetSet;
 class ScreenRenderer;
-class ITexture;
 class RenderContext;
 class RenderBlock;
 
@@ -69,7 +69,7 @@ public:
 		world::IWorldRenderPass& worldRenderPass,
 		render::RenderContext* renderContext,
 		TerrainSurface* surface,
-		render::ITexture* heightfieldTexture,
+		render::ISimpleTexture* heightfieldTexture,
 		const Vector4& worldOrigin,
 		const Vector4& worldExtent,
 		const Vector4& patchOrigin,
@@ -78,7 +78,7 @@ public:
 		uint32_t patchId,
 		// Out
 		render::RenderBlock*& outRenderBlock,
-		Ref< render::ITexture >& outTexture
+		Ref< render::ISimpleTexture >& outTexture
 	);
 
 private:

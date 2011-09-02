@@ -450,7 +450,7 @@ void RenderViewOpenGL::end()
 	}
 	else
 	{
-		rt->resolve();
+		rt->resolveTarget();
 
 		// Rebind parent target.
 		RenderTargetOpenGL* rt = m_renderTargetStack.back();

@@ -294,9 +294,16 @@ void ProgramOpenGLES2::setTextureParameter(handle_t handle, ITexture* texture)
 	if (i == m_parameterMap.end())
 		return;
 
-	if (SimpleTextureOpenGLES2* st = dynamic_type_cast< SimpleTextureOpenGLES2* >(texture))
+	if (!texture)
+		return;
+
+	Ref< ITexture > resolved = texture->resolve();
+	if (!resolved)
+		return;
+
+	if (SimpleTextureOpenGLES2* st = dynamic_type_cast< SimpleTextureOpenGLES2* >(resolved))
 		m_textureBindings[i->second] = static_cast< ITextureBinding* >(st);
-	else if (RenderTargetOpenGLES2* rt = dynamic_type_cast< RenderTargetOpenGLES2* >(texture))
+	else if (RenderTargetOpenGLES2* rt = dynamic_type_cast< RenderTargetOpenGLES2* >(resolved))
 		m_textureBindings[i->second] = static_cast< ITextureBinding* >(rt);
 	else
 		m_textureBindings[i->second] = 0;

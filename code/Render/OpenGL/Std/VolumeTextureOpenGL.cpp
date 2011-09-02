@@ -52,6 +52,11 @@ void VolumeTextureOpenGL::destroy()
 	}
 }
 
+ITexture* VolumeTextureOpenGL::resolve()
+{
+	return this;
+}
+
 int VolumeTextureOpenGL::getWidth() const
 {
 	return m_width;

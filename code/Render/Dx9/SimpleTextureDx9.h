@@ -37,16 +37,21 @@ public:
 
 	bool create(IDirect3DDevice9* d3dDevice, const SimpleTextureCreateDesc& desc);
 
-	// \name ISimpleTexture
+	// \name ITexture
 	// \{
 
 	virtual void destroy();
 
+	virtual ITexture* resolve();
+
+	// \}
+
+	// \name ISimpleTexture
+	// \{
+
 	virtual int getWidth() const;
 	
 	virtual int getHeight() const;
-	
-	virtual int getDepth() const;
 
 	virtual bool lock(int level, Lock& lock);
 

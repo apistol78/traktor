@@ -1,11 +1,11 @@
+#include "Core/Log/Log.h"
+#include "Render/Types.h"
 #include "Render/Dx11/Platform.h"
 #include "Render/Dx11/RenderTargetSetDx11.h"
 #include "Render/Dx11/RenderTargetDx11.h"
 #include "Render/Dx11/ContextDx11.h"
 #include "Render/Dx11/TypesDx11.h"
 #include "Render/Dx11/Utilities.h"
-#include "Render/Types.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -117,7 +117,7 @@ int RenderTargetSetDx11::getHeight() const
 	return m_height;
 }
 
-Ref< ITexture > RenderTargetSetDx11::getColorTexture(int index) const
+Ref< ISimpleTexture > RenderTargetSetDx11::getColorTexture(int index) const
 {
 	return index < int(m_colorTextures.size()) ? m_colorTextures[index] : 0;
 }

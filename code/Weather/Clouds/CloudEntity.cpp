@@ -464,7 +464,6 @@ void CloudEntity::renderCluster(
 
 					particleRenderBlock->programParams->beginParameters(renderContext);
 
-					m_particleShader->setProgramParameters(particleRenderBlock->programParams);
 					worldRenderPass.setProgramParameters(particleRenderBlock->programParams, m_transform.toMatrix44(), clusterBoundingBox);
 
 					particleRenderBlock->programParams->setFloatParameter(L"ParticleDensity", m_particleData.getDensity());
@@ -524,10 +523,7 @@ void CloudEntity::renderCluster(
 			scale((maxXY[0] - minXY[0]) / 2.0f, (maxXY[1] - minXY[1]) / 2.0f, 1.0f);
 
 		renderBlock->programParams->beginParameters(renderContext);
-
-		m_impostorShader->setProgramParameters(renderBlock->programParams);
 		worldRenderPass.setProgramParameters(renderBlock->programParams, m_transform.toMatrix44(), clusterBoundingBox);
-
 		renderBlock->programParams->setMatrixParameter(L"View", billboardView);
 		renderBlock->programParams->setFloatParameter(L"SliceDistance", sliceDistance);
 		renderBlock->programParams->setTextureParameter(m_handleImpostorTarget, m_impostorTargets[slice]->getColorTexture(0));

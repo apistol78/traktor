@@ -77,7 +77,6 @@ void SkinnedMesh::render(
 		renderBlock->primitives = &meshParts[i->meshPart].primitives;
 
 		renderBlock->programParams->beginParameters(renderContext);
-		m_shader->setProgramParameters(renderBlock->programParams);
 		worldRenderPass.setProgramParameters(
 			renderBlock->programParams,
 			worldTransform.toMatrix44(),

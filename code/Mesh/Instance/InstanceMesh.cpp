@@ -140,7 +140,6 @@ void InstanceMesh::render(
 			renderBlock->maxIndex = meshParts[i->meshPart].primitives.maxIndex;
 
 			renderBlock->programParams->beginParameters(renderContext);
-			m_shader->setProgramParameters(renderBlock->programParams);
 			worldRenderPass.setProgramParameters(
 				renderBlock->programParams,
 				boundingBoxCenter,
@@ -202,7 +201,6 @@ void InstanceMesh::render(
 				renderBlock->maxIndex = meshParts[i->meshPart].primitives.maxIndex;
 
 				renderBlock->programParams->beginParameters(renderContext);
-				m_shader->setProgramParameters(renderBlock->programParams);
 				worldRenderPass.setProgramParameters(renderBlock->programParams);
 				renderBlock->programParams->setVectorArrayParameter(
 					s_handleInstanceWorld,

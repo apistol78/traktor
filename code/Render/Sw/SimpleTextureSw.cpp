@@ -86,6 +86,11 @@ void SimpleTextureSw::destroy()
 	m_data = 0;
 }
 
+ITexture* SimpleTextureSw::resolve()
+{
+	return this;
+}
+
 int SimpleTextureSw::getWidth() const
 {
 	return m_width;
@@ -94,11 +99,6 @@ int SimpleTextureSw::getWidth() const
 int SimpleTextureSw::getHeight() const
 {
 	return m_height;
-}
-
-int SimpleTextureSw::getDepth() const
-{
-	return 1;
 }
 
 bool SimpleTextureSw::lock(int level, Lock& lock)

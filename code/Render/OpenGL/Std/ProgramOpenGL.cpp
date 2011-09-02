@@ -288,13 +288,20 @@ void ProgramOpenGL::setTextureParameter(handle_t handle, ITexture* texture)
 	if (i == m_parameterMap.end())
 		return;
 
-	if (SimpleTextureOpenGL* st = dynamic_type_cast< SimpleTextureOpenGL* >(texture))
+	if (!texture)
+		return;
+
+	Ref< ITexture > resolved = texture->resolve();
+	if (!resolved)
+		return;
+
+	if (SimpleTextureOpenGL* st = dynamic_type_cast< SimpleTextureOpenGL* >(resolved))
 		m_textureBindings[i->second] = static_cast< ITextureBinding* >(st);
-	else if (CubeTextureOpenGL* ct = dynamic_type_cast< CubeTextureOpenGL* >(texture))
+	else if (CubeTextureOpenGL* ct = dynamic_type_cast< CubeTextureOpenGL* >(resolved))
 		m_textureBindings[i->second] = static_cast< ITextureBinding* >(ct);
-	else if (VolumeTextureOpenGL* vt = dynamic_type_cast< VolumeTextureOpenGL* >(texture))
+	else if (VolumeTextureOpenGL* vt = dynamic_type_cast< VolumeTextureOpenGL* >(resolved))
 		m_textureBindings[i->second] = static_cast< ITextureBinding* >(vt);
-	else if (RenderTargetOpenGL* rt = dynamic_type_cast< RenderTargetOpenGL* >(texture))
+	else if (RenderTargetOpenGL* rt = dynamic_type_cast< RenderTargetOpenGL* >(resolved))
 		m_textureBindings[i->second] = static_cast< ITextureBinding* >(rt);
 	else
 		m_textureBindings[i->second] = 0;

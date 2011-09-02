@@ -51,7 +51,7 @@ const char c_clearEffect[] =
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetWin32", RenderTargetWin32, ITexture)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetWin32", RenderTargetWin32, ISimpleTexture)
 
 RenderTargetWin32::RenderTargetWin32()
 :	m_width(0)
@@ -299,6 +299,11 @@ void RenderTargetWin32::destroy()
 	T_FATAL_ERROR;
 }
 
+ITexture* RenderTargetWin32::resolve()
+{
+	return this;
+}
+
 int RenderTargetWin32::getWidth() const
 {
 	return m_width;
@@ -309,9 +314,13 @@ int RenderTargetWin32::getHeight() const
 	return m_height;
 }
 
-int RenderTargetWin32::getDepth() const
+bool RenderTargetWin32::lock(int level, Lock& lock)
 {
-	return 1;
+	return false;
+}
+
+void RenderTargetWin32::unlock(int level)
+{
 }
 
 	}

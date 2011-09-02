@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_TERRAIN_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -16,7 +16,7 @@ namespace traktor
 	namespace render
 	{
 
-class ITexture;
+class ISimpleTexture;
 
 	}
 
@@ -40,21 +40,21 @@ public:
 
 	const height_t* getHeights() const;
 
-	void setHeightTexture(render::ITexture* heightTexture);
+	void setHeightTexture(render::ISimpleTexture* heightTexture);
 
-	void setNormalTexture(render::ITexture* normalTexture);
+	void setNormalTexture(render::ISimpleTexture* normalTexture);
 
-	Ref< render::ITexture > getHeightTexture() const;
+	render::ISimpleTexture* getHeightTexture() const;
 
-	Ref< render::ITexture > getNormalTexture() const;
+	render::ISimpleTexture* getNormalTexture() const;
 
 	inline const HeightfieldResource& getResource() const { return m_resource; }
 
 private:
 	HeightfieldResource m_resource;
 	height_t* m_heights;
-	Ref< render::ITexture > m_heightTexture;
-	Ref< render::ITexture > m_normalTexture;
+	Ref< render::ISimpleTexture > m_heightTexture;
+	Ref< render::ISimpleTexture > m_normalTexture;
 };
 
 	}

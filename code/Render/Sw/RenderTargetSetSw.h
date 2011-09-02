@@ -40,7 +40,7 @@ public:
 	
 	virtual int getHeight() const;
 
-	virtual Ref< ITexture > getColorTexture(int index) const;
+	virtual Ref< ISimpleTexture > getColorTexture(int index) const;
 
 	virtual void swap(int index1, int index2);
 

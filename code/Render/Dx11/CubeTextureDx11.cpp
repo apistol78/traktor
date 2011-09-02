@@ -1,9 +1,9 @@
+#include "Core/Log/Log.h"
+#include "Render/Types.h"
 #include "Render/Dx11/Platform.h"
 #include "Render/Dx11/CubeTextureDx11.h"
 #include "Render/Dx11/ContextDx11.h"
 #include "Render/Dx11/TypesDx11.h"
-#include "Render/Types.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -77,6 +77,11 @@ void CubeTextureDx11::destroy()
 	m_context->releaseComRef(m_d3dTexture);
 	m_context->releaseComRef(m_d3dTextureResourceView);
 	m_context = 0;
+}
+
+ITexture* CubeTextureDx11::resolve()
+{
+	return this;
 }
 
 int CubeTextureDx11::getWidth() const
