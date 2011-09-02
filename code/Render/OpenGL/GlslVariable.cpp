@@ -1,5 +1,5 @@
-#include "Render/OpenGL/GlslVariable.h"
 #include "Core/Misc/String.h"
+#include "Render/OpenGL/GlslVariable.h"
 
 namespace traktor
 {
@@ -33,9 +33,7 @@ std::wstring GlslVariable::cast(GlslType to) const
 	};
 	
 	const wchar_t* f = c[m_type][to];
-	T_ASSERT_M (f, L"Unable to cast variable to desired type");
-
-	return replaceAll< std::wstring >(f, L"%", m_name);
+	return f ? replaceAll< std::wstring >(f, L"%", m_name) : m_name;
 }
 
 	}

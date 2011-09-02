@@ -1,5 +1,5 @@
-#include "Render/Dx10/HlslVariable.h"
 #include "Core/Misc/String.h"
+#include "Render/Dx10/HlslVariable.h"
 
 namespace traktor
 {
@@ -31,9 +31,7 @@ std::wstring HlslVariable::cast(HlslType to) const
 	};
 	
 	const wchar_t* f = c[m_type][to];
-	T_ASSERT (f);
-
-	return replaceAll< std::wstring >(f, L"%", m_name);
+	return f ? replaceAll< std::wstring >(f, L"%", m_name) : m_name;
 }
 
 	}
