@@ -10,7 +10,7 @@
 
 #if T_XML_PARSER_THREAD
 #	include "Core/Thread/JobManager.h"
-#	include "Core/Thread/Signal.h"
+#	include "Core/Thread/Event.h"
 #	include "Core/Thread/ThreadManager.h"
 #endif
 
@@ -88,7 +88,8 @@ private:
 #if T_XML_PARSER_THREAD
 	Ref< Job > m_parseJob;
 	Thread* m_threadJob;
-	Signal m_eventQueueSignal;
+	Event m_eventQueuePush;
+	Event m_eventQueuePop;
 #endif
 
 	bool parse();
@@ -97,7 +98,7 @@ private:
 	void parseJob();
 #endif
 
-	XmlPullParser::Event& allocEvent();
+	XmlPullParser::Event* allocEvent();
 
 	void pushEvent();
 
@@ -155,17 +156,19 @@ bool XmlPullParserImpl::get(XmlPullParser::Event& outEvent)
 {
 #if T_XML_PARSER_THREAD
 
-	// If queue empty; wait until event been queued.
-	m_eventQueueSignal.reset();
+	// Wait until any event has been pushed.
 	while (m_eventQueueHead == m_eventQueueTail)
 	{
-		if (!m_eventQueueSignal.wait(10000))
+		if (!m_eventQueuePush.wait(10000))
+		{
+			log::error << L"Unexpected timeout when waiting for XML event" << Endl;
 			return false;
-		m_eventQueueSignal.reset();
+		}
 	}
 
 	outEvent = m_eventQueue[m_eventQueueHead];
 	m_eventQueueHead = (m_eventQueueHead + 1) % sizeof_array(m_eventQueue);
+	m_eventQueuePop.broadcast();
 
 #else
 	while (m_eventQueueHead == m_eventQueueTail)
@@ -184,15 +187,22 @@ bool XmlPullParserImpl::parse()
 	if (!m_done)
 	{
 		int nread = m_stream->read(m_buf, sizeof(m_buf));
-		T_ASSERT_M (nread >= 0, L"Unexpected out-of-data");
+		if (nread < 0)
+		{
+			log::error << L"Unexpected out-of-data in XML parser" << Endl;
+			return false;
+		}
 
 		m_done = nread < sizeof(m_buf);
 		if (XML_Parse(m_parser, (const char*)m_buf, nread, m_done) == XML_STATUS_ERROR)
 		{
 			log::error << L"XML parse error" << Endl;
 
-			XmlPullParser::Event& evt = allocEvent();
-			evt.type = XmlPullParser::EtInvalid;
+			XmlPullParser::Event* evt = allocEvent();
+			if (!evt)
+				return false;
+
+			evt->type = XmlPullParser::EtInvalid;
 			pushEvent();
 			
 			return true;
@@ -203,8 +213,11 @@ bool XmlPullParserImpl::parse()
 		if (!m_parser)
 			return false;
 
-		XmlPullParser::Event& evt = allocEvent();
-		evt.type = XmlPullParser::EtEndDocument;
+		XmlPullParser::Event* evt = allocEvent();
+		if (!evt)
+			return false;
+
+		evt->type = XmlPullParser::EtEndDocument;
 		pushEvent();
 
 		XML_ParserFree(m_parser);
@@ -225,29 +238,33 @@ void XmlPullParserImpl::parseJob()
 }
 #endif
 
-XmlPullParser::Event& XmlPullParserImpl::allocEvent()
+XmlPullParser::Event* XmlPullParserImpl::allocEvent()
 {
 #if T_XML_PARSER_THREAD
-	// Check if event queue full; wait until event has been consumed.
+	// Wait until there is enough room for another event.
 	int32_t tail = (m_eventQueueTail + 1) % sizeof_array(m_eventQueue);
 	while (tail == m_eventQueueHead)
-		m_threadJob->sleep(100);
+	{
+		if (!m_eventQueuePop.wait(10000))
+		{
+			log::error << L"Unexpected timeout when waiting for XML consumer" << Endl;
+			return 0;
+		}
+	}
 #endif
 
 	XmlPullParser::Event& evt = m_eventQueue[m_eventQueueTail];
 	evt.type = XmlPullParser::EtInvalid;
 	evt.value.clear();
 	evt.attr.clear();
-	return evt;
+	return &evt;
 }
 
 void XmlPullParserImpl::pushEvent()
 {
+	m_eventQueueTail = (m_eventQueueTail + 1) % sizeof_array(m_eventQueue);
 #if T_XML_PARSER_THREAD
-	m_eventQueueTail = (m_eventQueueTail + 1) % sizeof_array(m_eventQueue);
-	m_eventQueueSignal.set();
-#else
-	m_eventQueueTail = (m_eventQueueTail + 1) % sizeof_array(m_eventQueue);
+	m_eventQueuePush.broadcast();
 #endif
 }
 
@@ -268,10 +285,13 @@ void XmlPullParserImpl::pushCharacterData()
 
 	if (ss <= es)
 	{
-		XmlPullParser::Event& evt = allocEvent();
-		evt.type = XmlPullParser::EtText;
-		evt.value = std::wstring(ss, es + 1);
-		pushEvent();
+		XmlPullParser::Event* evt = allocEvent();
+		if (evt)
+		{
+			evt->type = XmlPullParser::EtText;
+			evt->value = std::wstring(ss, es + 1);
+			pushEvent();
+		}
 	}
 
 	m_cdata.resize(0);
@@ -284,14 +304,17 @@ void XMLCALL XmlPullParserImpl::startElement(void* userData, const XML_Char* nam
 
 	pp->pushCharacterData();
 
-	XmlPullParser::Event& evt = pp->allocEvent();
-	evt.type = XmlPullParser::EtStartElement;
-	evt.value = xmltows(name);
+	XmlPullParser::Event* evt = pp->allocEvent();
+	if (evt)
+	{
+		evt->type = XmlPullParser::EtStartElement;
+		evt->value = xmltows(name);
 
-	for (int i = 0; atts[i]; i += 2)
-		evt.attr.push_back(std::make_pair(xmltows(atts[i]), xmltows(atts[i + 1])));
+		for (int i = 0; atts[i]; i += 2)
+			evt->attr.push_back(std::make_pair(xmltows(atts[i]), xmltows(atts[i + 1])));
 
-	pp->pushEvent();
+		pp->pushEvent();
+	}
 }
 
 void XMLCALL XmlPullParserImpl::endElement(void* userData, const XML_Char* name)
@@ -301,11 +324,13 @@ void XMLCALL XmlPullParserImpl::endElement(void* userData, const XML_Char* name)
 
 	pp->pushCharacterData();
 
-	XmlPullParser::Event& evt = pp->allocEvent();
-	evt.type = XmlPullParser::EtEndElement;
-	evt.value = xmltows(name);
-
-	pp->pushEvent();
+	XmlPullParser::Event* evt = pp->allocEvent();
+	if (evt)
+	{
+		evt->type = XmlPullParser::EtEndElement;
+		evt->value = xmltows(name);
+		pp->pushEvent();
+	}
 }
 
 void XMLCALL XmlPullParserImpl::characterData(void* userData, const XML_Char* s, int len)
