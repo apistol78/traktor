@@ -109,7 +109,7 @@ bool SoundChannel::isExclusive() const
 bool SoundChannel::isPlaying() const
 {
 	// \note Reading from active state; ie other thread's state.
-	return bool(m_activeState.sound != 0);
+	return bool(m_currentState.sound != 0 || m_activeState.sound != 0);
 }
 
 void SoundChannel::stop()
@@ -206,16 +206,22 @@ bool SoundChannel::getBlock(const ISoundMixer* mixer, double time, SoundBlock& o
 				m_activeState.cursor->reset();
 				if (!soundBuffer->getBlock(m_activeState.cursor, soundBlock))
 				{
+					T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 					m_activeState.sound = 0;
 					m_activeState.cursor = 0;
+					m_currentState.sound = 0;
+					m_currentState.cursor = 0;
 					m_eventFinish.broadcast();
 					return false;
 				}
 			}
 			else
 			{
+				T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 				m_activeState.sound = 0;
 				m_activeState.cursor = 0;
+				m_currentState.sound = 0;
+				m_currentState.cursor = 0;
 				m_eventFinish.broadcast();
 				return false;
 			}
