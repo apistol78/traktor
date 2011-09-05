@@ -43,7 +43,7 @@ public:
 
 	bool createTesselation(const FlashShape& shape);
 
-	bool createRenderable(
+	bool updateRenderable(
 		AccTextureCache& textureCache,
 		const FlashMovie& movie,
 		const FlashShape& shape
@@ -64,6 +64,8 @@ public:
 		bool maskIncrement,
 		uint8_t maskReference
 	);
+
+	void preBuild();
 
 	const SwfRect& getBounds() const { return m_bounds; }
 
@@ -89,6 +91,7 @@ private:
 	AlignedVector< RenderBatch > m_renderBatches;
 	SwfRect m_bounds;
 	uint8_t m_batchFlags;
+	bool m_needUpdate;
 };
 
 	}
