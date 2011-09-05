@@ -62,6 +62,7 @@ AccShape::AccShape(AccShapeResources* shapeResources, AccShapeVertexPool* vertex
 ,	m_vertexPool(vertexPool)
 ,	m_tesselationTriangleCount(0)
 ,	m_batchFlags(0)
+,	m_needUpdate(true)
 {
 }
 
@@ -133,23 +134,29 @@ bool AccShape::createTesselation(const FlashShape& shape)
 		}
 	}
 
+	m_needUpdate = true;
 	return true;
 }
 
-bool AccShape::createRenderable(
+bool AccShape::updateRenderable(
 	AccTextureCache& textureCache,
 	const FlashMovie& movie,
 	const FlashShape& shape
 )
 {
-	//T_ANONYMOUS_VAR(ScopeTime)(L"AccShape::createRenderable");
-
 	if (!m_tesselationTriangleCount)
 		return false;
 
-	// Allocate new vertex range.
-	if (!m_vertexPool->acquireRange(m_tesselationTriangleCount * 3, m_vertexRange))
-		return false;
+	// Do we need to update?
+	if (!m_needUpdate)
+		return true;
+
+	// Allocate new vertex range if none has been previously allocated.
+	if (!m_vertexRange.vertexBuffer)
+	{
+		if (!m_vertexPool->acquireRange(m_tesselationTriangleCount * 3, m_vertexRange))
+			return false;
+	}
 
 	const static Matrix33 textureTS = translate(0.5f, 0.5f) * scale(1.0f / 32768.0f, 1.0f / 32768.0f);
 
@@ -300,6 +307,7 @@ bool AccShape::createRenderable(
 	if (!m_batchFlags)
 		m_batchFlags |= BfHaveSolid;
 
+	m_needUpdate = false;
 	return true;
 }
 
@@ -455,6 +463,14 @@ void AccShape::render(
 			}
 		}
 	}
+}
+
+void AccShape::preBuild()
+{
+	if (m_vertexRange.vertexBuffer)
+		m_needUpdate = !m_vertexRange.vertexBuffer->isContentValid();
+	else
+		m_needUpdate = false;
 }
 
 	}

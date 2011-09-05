@@ -205,12 +205,18 @@ void AccDisplayRenderer::build(uint32_t frame)
 	m_renderContext->flush();
 	m_vertexPool = m_vertexPools[frame];
 	m_viewOffset.set(0.0f, 0.0f, 1.0f, 1.0f);
+
+	for (std::map< uint64_t, CacheEntry >::const_iterator i = m_shapeCache.begin(); i != m_shapeCache.end(); ++i)
+		i->second.shape->preBuild();
 }
 
 void AccDisplayRenderer::build(render::RenderContext* renderContext)
 {
 	m_renderContext = renderContext;
 	m_vertexPool = m_vertexPools[0];
+
+	for (std::map< uint64_t, CacheEntry >::const_iterator i = m_shapeCache.begin(); i != m_shapeCache.end(); ++i)
+		i->second.shape->preBuild();
 }
 
 void AccDisplayRenderer::render(render::IRenderView* renderView, uint32_t frame, render::EyeType eye)
@@ -372,13 +378,6 @@ void AccDisplayRenderer::renderShape(const FlashMovie& movie, const Matrix33& tr
 		if (!accShape->createTesselation(shape))
 			return;
 
-		if (!accShape->createRenderable(
-			*m_textureCache,
-			movie,
-			shape
-		))
-			return;
-
 		m_shapeCache[hash].unusedCount = 0;
 		m_shapeCache[hash].shape = accShape;
 	}
@@ -387,6 +386,13 @@ void AccDisplayRenderer::renderShape(const FlashMovie& movie, const Matrix33& tr
 		it->second.unusedCount = 0;
 		accShape = it->second.shape;
 	}
+
+	if (!accShape->updateRenderable(
+		*m_textureCache,
+		movie,
+		shape
+	))
+		return;
 
 	if (!insideFrameBounds(movie, transform, accShape->getBounds()))
 		return;
@@ -434,13 +440,6 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 		if (!accShape->createTesselation(shape))
 			return;
 
-		if (!accShape->createRenderable(
-			*m_textureCache,
-			movie,
-			shape
-		))
-			return;
-
 		m_shapeCache[hash].unusedCount = 0;
 		m_shapeCache[hash].shape = accShape;
 	}
@@ -449,6 +448,13 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 		it1->second.unusedCount = 0;
 		accShape = it1->second.shape;
 	}
+
+	if (!accShape->updateRenderable(
+		*m_textureCache,
+		movie,
+		shape
+	))
+		return;
 
 	SwfRect bounds = accShape->getBounds();
 	if (!insideFrameBounds(movie, transform, bounds))
