@@ -195,10 +195,10 @@ bool SolutionBuilderMsvc::generate(Solution* solution)
 
 	os << L"Global" << Endl;
 	os << IncreaseIndent;
-	os << L"GlobalSection(SolutionConfigurationPlatforms) = preSolution" << Endl;
 
 	std::wstring platform = m_settings->getProject()->getPlatform();
 
+	std::set< std::wstring > availableConfigurations;
 	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
 		Ref< Project > project = *i;
@@ -211,15 +211,38 @@ bool SolutionBuilderMsvc::generate(Solution* solution)
 		for (RefArray< Configuration >::const_iterator j = configurations.begin(); j != configurations.end(); ++j)
 		{
 			Ref< const Configuration > configuration = *j;
-
-			os << IncreaseIndent;
-			os << projectGuids[project] << L"." << configuration->getName() << L"|" << platform << L".ActiveCfg = " << configuration->getName() << L"|" << platform << L"" << Endl;
-			os << projectGuids[project] << L"." << configuration->getName() << L"|" << platform << L".Build.0 = " << configuration->getName() << L"|" << platform << L"" << Endl;
-			os << DecreaseIndent;
+			availableConfigurations.insert(configuration->getName());
 		}
 	}
 
+	os << L"GlobalSection(SolutionConfigurationPlatforms) = preSolution" << Endl;
+	os << IncreaseIndent;
+	for (std::set< std::wstring >::const_iterator i = availableConfigurations.begin(); i != availableConfigurations.end(); ++i)
+		os << *i << L"|" << platform << L" = " << *i << L"|" << platform << L"" << Endl;
+	os << DecreaseIndent;
 	os << L"EndGlobalSection" << Endl;
+
+	os << L"GlobalSection(ProjectConfigurationPlatforms) = postSolution" << Endl;
+	os << IncreaseIndent;
+	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+	{
+		Ref< Project > project = *i;
+
+		// Skip disabled projects.
+		if (!project->getEnable())
+			continue;
+
+		const RefArray< Configuration >& configurations = project->getConfigurations();
+		for (RefArray< Configuration >::const_iterator j = configurations.begin(); j != configurations.end(); ++j)
+		{
+			Ref< const Configuration > configuration = *j;
+			os << projectGuids[project] << L"." << configuration->getName() << L"|" << platform << L".ActiveCfg = " << configuration->getName() << L"|" << platform << L"" << Endl;
+			os << projectGuids[project] << L"." << configuration->getName() << L"|" << platform << L".Build.0 = " << configuration->getName() << L"|" << platform << L"" << Endl;
+		}
+	}
+	os << DecreaseIndent;
+	os << L"EndGlobalSection" << Endl;
+
 	os << DecreaseIndent;
 
 	os << IncreaseIndent;
