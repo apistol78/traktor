@@ -1,9 +1,8 @@
 #ifndef traktor_db_DbmPutEvent_H
 #define traktor_db_DbmPutEvent_H
 
-#include "Database/Remote/IMessage.h"
-#include "Database/Types.h"
 #include "Core/Guid.h"
+#include "Database/Remote/IMessage.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -18,6 +17,8 @@ namespace traktor
 	namespace db
 	{
 
+class IEvent;
+
 /*! \brief Put bus event.
  * \ingroup Database
  */
@@ -26,20 +27,17 @@ class T_DLLCLASS DbmPutEvent : public IMessage
 	T_RTTI_CLASS;
 
 public:
-	DbmPutEvent(uint32_t handle = 0, ProviderEvent event = PeInvalid, const Guid& eventId = Guid());
+	DbmPutEvent(uint32_t handle = 0, const IEvent* event = 0);
 
 	uint32_t getHandle() const { return m_handle; }
 
-	ProviderEvent getEvent() const { return ProviderEvent(m_event); }
-
-	const Guid& getEventId() const { return m_eventId; }
+	const IEvent* getEvent() const { return m_event; }
 
 	virtual bool serialize(ISerializer& s);
 
 private:
 	uint32_t m_handle;
-	int32_t m_event;
-	Guid m_eventId;
+	Ref< const IEvent > m_event;
 };
 
 	}

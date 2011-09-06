@@ -14,6 +14,7 @@
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Database/Database.h"
+#include "Database/Events/EvtInstanceCommitted.h"
 #include "Online/ISessionManager.h"
 #include "Physics/PhysicsManager.h"
 #include "Render/IRenderSystem.h"
@@ -833,8 +834,7 @@ Ref< IStateManager > Application::getStateManager()
 void Application::threadDatabase()
 {
 	std::vector< Guid > eventIds;
-	db::ProviderEvent event;
-	Guid eventId;
+	Ref< const db::IEvent > event;
 	bool remote;
 
 	while (!m_threadDatabase->stopped())
@@ -852,10 +852,10 @@ void Application::threadDatabase()
 			continue;
 
 		eventIds.resize(0);
-		while (m_database->getEvent(event, eventId, remote))
+		while (m_database->getEvent(event, remote))
 		{
-			if (event == db::PeCommited)
-				eventIds.push_back(eventId);
+			if (const db::EvtInstanceCommitted* committed = dynamic_type_cast< const db::EvtInstanceCommitted* >(event))
+				eventIds.push_back(committed->getInstanceGuid());
 		}
 
 		if (!eventIds.empty())

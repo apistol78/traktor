@@ -6,6 +6,7 @@
 #include "Core/Guid.h"
 #include "Core/Thread/Semaphore.h"
 #include "Database/ConnectionString.h"
+#include "Database/IInstanceEventListener.h"
 #include "Database/Types.h"
 
 // import/export mechanism.
@@ -24,8 +25,9 @@ class ISerializable;
 	namespace db
 	{
 
-class IProviderDatabase;
+class IEvent;
 class IProviderBus;
+class IProviderDatabase;
 class Group;
 class Instance;
 
@@ -35,7 +37,9 @@ class Instance;
  * The Database class manages a local view of
  * a database provider.
  */
-class T_DLLCLASS Database : public Object
+class T_DLLCLASS Database
+:	public Object
+,	public IInstanceEventListener
 {
 	T_RTTI_CLASS;
 
@@ -112,24 +116,33 @@ public:
 	 * This method may flush database tree and should not be called
 	 * from another thread if any instance or group is temporarily accessed.
 	 *
-	 * \param outEvent Event type.
-	 * \param outEventId Event id, currently guid of affected instance.
+	 * \param outEvent Event object.
 	 * \param outRemote True if event originates from another connection; ie. another process.
 	 * \return True if event was read from bus, false if no events are available.
 	 */
-	virtual bool getEvent(ProviderEvent& outEvent, Guid& outEventId, bool& outRemote);
+	virtual bool getEvent(Ref< const IEvent >& outEvent, bool& outRemote);
 
 private:
-	friend class Instance;
-
 	Ref< IProviderDatabase > m_providerDatabase;
 	Ref< IProviderBus > m_providerBus;
 	Ref< Group > m_rootGroup;
 	Semaphore m_lock;
 	std::map< Guid, Ref< Instance > > m_instanceMap;
 
-	/*! \brief Flush instance from cache. */
-	void flushInstance(const Guid& instanceGuid);
+	// \name IInstanceEventListener
+	// \{
+
+	virtual void instanceEventCreated(Instance* instance);
+
+	virtual void instanceEventRemoved(Instance* instance);
+
+	virtual void instanceEventGuidChanged(Instance* instance, const Guid& previousGuid);
+
+	virtual void instanceEventRenamed(Instance* instance, const std::wstring& previousName);
+
+	virtual void instanceEventCommitted(Instance* instance);
+
+	// \}
 };
 
 	}

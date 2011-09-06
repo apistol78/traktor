@@ -3833,6 +3833,15 @@
 												</item>
 											</items>
 										</item>
+										<item type="Filter">
+											<name>Events</name>
+											<items>
+												<item type="File">
+													<fileName>Events/*.*</fileName>
+													<items/>
+												</item>
+											</items>
+										</item>
 									</items>
 									<dependencies>
 										<item type="ProjectDependency" version="1">
@@ -4521,6 +4530,10 @@
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
 					<project ref="/object/projects/item[12]/dependencies/item/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[12]/dependencies/item[1]/project/dependencies/item[3]/project"/>
 				</item>
 			</dependencies>
 		</item>

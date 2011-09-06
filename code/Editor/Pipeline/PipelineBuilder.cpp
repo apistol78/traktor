@@ -166,6 +166,12 @@ Ref< db::Instance > PipelineBuilder::createOutputInstance(const std::wstring& in
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_createOutputLock);
 	Ref< db::Instance > instance;
 
+	if (instanceGuid.isNull() || !instanceGuid.isValid())
+	{
+		log::error << L"Invalid guid for output instance" << Endl;
+		return 0;
+	}
+
 	instance = m_outputDatabase->getInstance(instanceGuid);
 	if (instance && instancePath != instance->getPath())
 	{
@@ -178,7 +184,10 @@ Ref< db::Instance > PipelineBuilder::createOutputInstance(const std::wstring& in
 			result &= instance->commit();
 		}
 		if (!result)
+		{
+			log::error << L"Unable to remove existing instance \"" << instance->getPath() << L"\"" << Endl;
 			return 0;
+		}
 	}
 
 	instance = m_outputDatabase->createInstance(
@@ -362,7 +371,7 @@ bool PipelineBuilder::performBuild(PipelineDependency* dependency)
 					log::info << IncreaseIndent;
 
 					for (RefArray< db::Instance >::const_iterator j = builtInstances.begin(); j != builtInstances.end(); ++j)
-						log::info << L"\"" << (*j)->getPath() << L"\"" << Endl;
+						log::info << L"\"" << (*j)->getPath() << L"\" " << (*j)->getGuid().format() << Endl;
 
 					if (m_cache)
 						putInstancesInCache(

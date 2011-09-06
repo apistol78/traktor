@@ -654,12 +654,18 @@ Ref< ui::TreeViewItem > DatabaseView::buildTreeItem(ui::TreeView* treeView, ui::
 	Ref< ui::TreeViewItem > groupItem = treeView->createItem(parentItem, group->getName(), 0, 1);
 	groupItem->setData(L"GROUP", group);
 
-	for (RefArray< db::Group >::iterator i = group->getBeginChildGroup(); i != group->getEndChildGroup(); ++i)
+	RefArray< db::Group > childGroups;
+	group->getChildGroups(childGroups);
+
+	for (RefArray< db::Group >::iterator i = childGroups.begin(); i != childGroups.end(); ++i)
 		buildTreeItem(treeView, groupItem, *i);
 
 	bool showFiltered = m_toolFilterShow->isToggled();
 
-	for (RefArray< db::Instance >::iterator i = group->getBeginChildInstance(); i != group->getEndChildInstance(); ++i)
+	RefArray< db::Instance > childInstances;
+	group->getChildInstances(childInstances);
+
+	for (RefArray< db::Instance >::iterator i = childInstances.begin(); i != childInstances.end(); ++i)
 	{
 		const TypeInfo* primaryType = (*i)->getPrimaryType();
 		if (!primaryType)

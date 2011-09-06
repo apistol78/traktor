@@ -3,10 +3,9 @@
 #include "Core/Serialization/BinarySerializer.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Core/Thread/Acquire.h"
-#include "Database/Database.h"
 #include "Database/Group.h"
+#include "Database/IInstanceEventListener.h"
 #include "Database/Instance.h"
-#include "Database/Provider/IProviderBus.h"
 #include "Database/Provider/IProviderInstance.h"
 #include "Xml/XmlDeserializer.h"
 #include "Xml/XmlSerializer.h"
@@ -18,161 +17,153 @@ namespace traktor
 		namespace
 		{
 
-enum
+enum CacheFlags
 {
 	IchName = 1,
 	IchGuid = 2,
 	IchPrimaryType = 4
 };
 
+enum TransactionFlags
+{
+	TfCreated = 1,
+	TfRemoved = 2,
+	TfNameChanged = 4,
+	TfGuidChanged = 8,
+	TfObjectChanged = 16,
+	TfDataChanged = 32
+};
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.db.Instance", Instance, Object)
 
-Instance::Instance(Database* database)
-:	m_database(database)
-,	m_providerBus(0)
-,	m_parent(0)
-,	m_renamed(false)
-,	m_removed(false)
-#if T_INSTANCE_CACHE_NAME || T_INSTANCE_CACHE_GUID || T_INSTANCE_CACHE_PRIMARY_TYPE
-,	m_cache(0)
-#endif
+Group* Instance::getParent() const
 {
-}
-
-bool Instance::internalCreate(IProviderBus* providerBus, IProviderInstance* providerInstance, Group* parent)
-{
-	T_FATAL_ASSERT_M(providerInstance, L"No provider instance");
-	m_providerBus = providerBus;
-	m_providerInstance = providerInstance;
-	m_parent = parent;
-	return true;
-}
-
-void Instance::internalDestroy()
-{
-	m_providerBus = 0;
-	m_providerInstance = 0;
-	m_parent = 0;
-	m_renamed = false;
-	m_removed = false;
-#if T_INSTANCE_CACHE_NAME || T_INSTANCE_CACHE_GUID || T_INSTANCE_CACHE_PRIMARY_TYPE
-	m_cache = 0;
-#endif
-}
-
-void Instance::internalReset()
-{
-#if T_INSTANCE_CACHE_NAME || T_INSTANCE_CACHE_GUID || T_INSTANCE_CACHE_PRIMARY_TYPE
-	m_cache = 0;
-#endif
+	return m_parent;
 }
 
 std::wstring Instance::getName() const
 {
-	T_ASSERT (m_providerInstance);
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	T_ASSERT (m_providerInstance);
 
-#if T_INSTANCE_CACHE_NAME
-	if (!(m_cache & IchName))
+	if (!(m_cachedFlags & IchName))
 	{
 		m_name = m_providerInstance->getName();
-		m_cache |= IchName;
+		m_cachedFlags |= IchName;
 	}
+
 	return m_name;
-#else
-	return m_providerInstance->getName();
-#endif
 }
 
 std::wstring Instance::getPath() const
 {
-	T_ASSERT (m_providerInstance);
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-
+	T_ASSERT (m_parent);
 	return m_parent->getPath() + L"/" + getName();
 }
 
 Guid Instance::getGuid() const
 {
-	T_ASSERT (m_providerInstance);
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	T_ASSERT (m_providerInstance);
 
-#if T_INSTANCE_CACHE_GUID
-	if (!(m_cache & IchGuid))
+	if (!(m_cachedFlags & IchGuid))
 	{
 		m_guid = m_providerInstance->getGuid();
-		m_cache |= IchGuid;
+		m_cachedFlags |= IchGuid;
 	}
+
 	return m_guid;
-#else
-	return m_providerInstance->getGuid();
-#endif
-}
-
-bool Instance::setGuid(const Guid& guid)
-{
-	T_ASSERT (m_providerInstance);
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-
-	if (m_database)
-		m_database->flushInstance(getGuid());
-
-	if (!m_providerInstance->setGuid(guid))
-		return false;
-
-#if T_INSTANCE_CACHE_GUID
-	m_cache &= ~IchGuid;
-#endif
-	return true;
 }
 
 std::wstring Instance::getPrimaryTypeName() const
 {
-	T_ASSERT (m_providerInstance);
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	T_ASSERT (m_providerInstance);
 
-#if T_INSTANCE_CACHE_PRIMARY_TYPE
-	if (!(m_cache & IchPrimaryType))
+	if (!(m_cachedFlags & IchPrimaryType))
 	{
-		m_primaryType = m_providerInstance->getPrimaryTypeName();
-		m_cache |= IchPrimaryType;
+		m_type = m_providerInstance->getPrimaryTypeName();
+		m_cachedFlags |= IchPrimaryType;
 	}
-	return m_primaryType;
-#else
-	return m_providerInstance->getPrimaryTypeName();
-#endif
+
+	return m_type;
 }
 
 const TypeInfo* Instance::getPrimaryType() const
 {
-	T_ASSERT (m_providerInstance);
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-
 	return TypeInfo::find(getPrimaryTypeName());
+}
+
+Ref< ISerializable > Instance::getObject()
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	T_ASSERT (m_providerInstance);
+
+	Ref< ISerializable > object;
+	const TypeInfo* serializerType = 0;
+
+	Ref< IStream > stream = m_providerInstance->readObject(serializerType);
+	if (!stream || !serializerType)
+		return 0;
+
+	BufferedStream bs(stream);
+	Ref< Serializer > serializer;
+	if (serializerType == &type_of< BinarySerializer >())
+		serializer = new BinarySerializer(&bs);
+	else if (serializerType == &type_of< xml::XmlDeserializer >())
+		serializer = new xml::XmlDeserializer(&bs);
+	else
+	{
+		stream->close();
+		return 0;
+	}
+
+	object = serializer->readObject();
+
+	stream->close();
+	return object;
+}
+
+uint32_t Instance::getDataNames(std::vector< std::wstring >& dataNames) const
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	T_ASSERT (m_providerInstance);
+	return m_providerInstance->getDataNames(dataNames);
+}
+
+Ref< IStream > Instance::readData(const std::wstring& dataName)
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	T_ASSERT (m_providerInstance);
+
+	Ref< IStream > stream = m_providerInstance->readData(dataName);
+	return stream ? new BufferedStream(stream) : 0;
 }
 
 bool Instance::checkout()
 {
-	T_ASSERT (m_providerInstance);
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	T_ASSERT (m_providerInstance);
 
 	if (!m_providerInstance->openTransaction())
 		return false;
 
-	m_renamed = false;
-	m_removed = false;
+	m_transactionGuid = getGuid();
+	m_transactionName = getName();
+	m_transactionFlags = 0;
 
 	return true;
 }
 
 bool Instance::commit(uint32_t flags)
 {
-	T_ASSERT (m_providerInstance);
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	T_ASSERT (m_providerInstance);
 
-	if ((flags & CfKeepCheckedOut) != 0 && m_removed)
+	if ((flags & CfKeepCheckedOut) != 0 && (m_transactionFlags & TfRemoved) != 0)
 	{
 		log::error << L"Instance commit failed; cannot keep checked out as instance was removed" << Endl;
 		return false;
@@ -193,118 +184,96 @@ bool Instance::commit(uint32_t flags)
 		}
 	}
 
-	Guid guid = getGuid();
-
-	if (m_providerBus)
+	if ((m_transactionFlags & TfCreated) != 0)
 	{
-		if (!m_removed && !m_renamed)
-			m_providerBus->putEvent(PeCommited, guid);
-		else
-		{
-			if (m_removed)
-				m_providerBus->putEvent(PeRemoved, guid);
-			if (m_renamed)
-				m_providerBus->putEvent(PeRenamed, guid);
-		}
+		if (m_eventListener)
+			m_eventListener->instanceEventCreated(this);
 	}
 
-#if T_INSTANCE_CACHE_NAME
-	if (m_renamed)
+	if ((m_transactionFlags & TfGuidChanged) != 0)
+	{
+		m_guid = m_providerInstance->getGuid();
+		m_cachedFlags |= IchGuid;
+
+		if (m_eventListener)
+			m_eventListener->instanceEventGuidChanged(this, m_transactionGuid);
+	}
+
+	if ((m_transactionFlags & TfNameChanged) != 0)
 	{
 		m_name = m_providerInstance->getName();
-		m_cache |= IchName;
-	}
-#endif
+		m_cachedFlags |= IchName;
 
-	if (m_removed)
+		if (m_eventListener)
+			m_eventListener->instanceEventRenamed(this, m_transactionName);
+	}
+
+	if ((m_transactionFlags & TfRemoved) != 0)
 	{
-		if (m_parent)
-			m_parent->removeChildInstance(this);
-		
-		if (m_database)
-			m_database->flushInstance(guid);
+		if (m_eventListener)
+			m_eventListener->instanceEventRemoved(this);
 
 		internalDestroy();
 	}
+
+	if (m_eventListener)
+		m_eventListener->instanceEventCommitted(this);
 
 	return true;
 }
 
 bool Instance::revert()
 {
-	T_ASSERT (m_providerInstance);
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	T_ASSERT (m_providerInstance);
 
 	if (!m_providerInstance->closeTransaction())
 		return false;
 
-	if (m_providerBus)
-		m_providerBus->putEvent(PeReverted, getGuid());
-
-	return true;
-}
-
-bool Instance::setName(const std::wstring& name)
-{
-	T_ASSERT (m_providerInstance);
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-
-	if (!m_providerInstance->setName(name))
-		return false;
-
-	m_renamed = true;
+	m_transactionFlags = 0;
 	return true;
 }
 
 bool Instance::remove()
 {
-	T_ASSERT (m_providerInstance);
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	T_ASSERT (m_providerInstance);
 
 	if (!m_providerInstance->remove())
 		return false;
 
-	m_removed = true;
+	m_transactionFlags |= TfRemoved;
 	return true;
 }
 
-Ref< ISerializable > Instance::getObject()
+bool Instance::setName(const std::wstring& name)
 {
-	T_ASSERT (m_providerInstance);
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	T_ASSERT (m_providerInstance);
 
-	Ref< ISerializable > object;
-	const TypeInfo* serializerType = 0;
+	if (!m_providerInstance->setName(name))
+		return false;
 
-	Ref< IStream > stream = m_providerInstance->readObject(serializerType);
-	if (!stream)
-		return 0;
+	m_transactionFlags |= TfNameChanged;
+	return true;
+}
 
-	T_ASSERT (serializerType);
+bool Instance::setGuid(const Guid& guid)
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	T_ASSERT (m_providerInstance);
 
-	BufferedStream bs(stream);
-	Ref< Serializer > serializer;
-	if (serializerType == &type_of< BinarySerializer >())
-		serializer = new BinarySerializer(&bs);
-	else if (serializerType == &type_of< xml::XmlDeserializer >())
-		serializer = new xml::XmlDeserializer(&bs);
-	else
-	{
-		stream->close();
-		return 0;
-	}
+	if (!m_providerInstance->setGuid(guid))
+		return false;
 
-	T_FATAL_ASSERT(serializer);
-	object = serializer->readObject();
-
-	stream->close();
-	return object;
+	m_transactionFlags |= TfGuidChanged;
+	return true;
 }
 
 bool Instance::setObject(const ISerializable* object)
 {
-	T_ASSERT (m_providerInstance);
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	T_ASSERT (m_providerInstance);
 
 	if (!object)
 		return false;
@@ -312,10 +281,8 @@ bool Instance::setObject(const ISerializable* object)
 	const TypeInfo* serializerType = 0;
 
 	Ref< IStream > stream = m_providerInstance->writeObject(type_name(object), serializerType);
-	if (!stream)
+	if (!stream || !serializerType)
 		return false;
-
-	T_ASSERT (serializerType);
 
 	Ref< Serializer > serializer;
 	if (serializerType == &type_of< BinarySerializer >())
@@ -332,48 +299,74 @@ bool Instance::setObject(const ISerializable* object)
 
 	stream->flush();
 	stream->close();
+
+	if (result)
+		m_transactionFlags |= TfObjectChanged;
+
 	return result;
-}
-
-uint32_t Instance::getDataNames(std::vector< std::wstring >& dataNames) const
-{
-	T_ASSERT (m_providerInstance);
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-
-	return m_providerInstance->getDataNames(dataNames);
 }
 
 bool Instance::removeAllData()
 {
-	T_ASSERT (m_providerInstance);
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-
-	return m_providerInstance->removeAllData();
-}
-
-Ref< IStream > Instance::readData(const std::wstring& dataName)
-{
 	T_ASSERT (m_providerInstance);
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	
+	if (!m_providerInstance->removeAllData())
+		return false;
 
-	Ref< IStream > stream = m_providerInstance->readData(dataName);
-	if (!stream)
-		return 0;
-
-	return new BufferedStream(stream);
+	m_transactionFlags |= TfDataChanged;
+	return true;
 }
 
 Ref< IStream > Instance::writeData(const std::wstring& dataName)
 {
-	T_ASSERT (m_providerInstance);
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	T_ASSERT (m_providerInstance);
 
-	return m_providerInstance->writeData(dataName);
+	Ref< IStream > stream = m_providerInstance->writeData(dataName);
+	if (stream)
+		m_transactionFlags |= TfDataChanged;
+
+	return stream;
 }
 
-Ref< Group > Instance::getParent() const
+Instance::Instance(IInstanceEventListener* eventListener)
+:	m_eventListener(eventListener)
+,	m_parent(0)
+,	m_cachedFlags(0)
+,	m_transactionFlags(0)
 {
-	return m_parent;
+}
+
+bool Instance::internalCreateExisting(IProviderInstance* providerInstance, Group* parent)
+{
+	m_providerInstance = providerInstance;
+	m_parent = parent;
+	m_cachedFlags = 0;
+	m_transactionFlags = 0;
+	return true;
+}
+
+bool Instance::internalCreateNew(IProviderInstance* providerInstance, Group* parent)
+{
+	m_providerInstance = providerInstance;
+	m_parent = parent;
+	m_cachedFlags = 0;
+	m_transactionFlags = TfCreated;
+	return true;
+}
+
+void Instance::internalDestroy()
+{
+	m_providerInstance = 0;
+	m_parent = 0;
+	m_cachedFlags = 0;
+	m_transactionFlags = 0;
+}
+
+void Instance::internalFlush()
+{
+	m_cachedFlags = 0;
 }
 
 	}

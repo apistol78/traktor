@@ -1,5 +1,4 @@
 #include <algorithm>
-#include "Database/Local/LocalBus.h"
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
@@ -7,12 +6,15 @@
 #include "Core/Serialization/ISerializable.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberRef.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Core/Serialization/MemberEnum.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/System/OS.h"
 #include "Core/System/ISharedMemory.h"
 #include "Core/Thread/Acquire.h"
+#include "Database/IEvent.h"
+#include "Database/Local/LocalBus.h"
 
 namespace traktor
 {
@@ -23,28 +25,6 @@ namespace traktor
 
 const Guid c_guidGlobalLock(L"{6DC29473-147F-4b3f-8DF5-BBC7EDF79111}");
 
-class MemberProviderEvent : public MemberEnum< ProviderEvent >
-{
-public:
-	MemberProviderEvent(const std::wstring& name, ProviderEvent& en)
-	:	MemberEnum< ProviderEvent >(name, en, ms_keys)
-	{
-	}
-
-private:
-	const static Key ms_keys[];
-};
-
-const MemberProviderEvent::Key MemberProviderEvent::ms_keys[] =
-{
-	{ L"PeInvalid", PeInvalid },
-	{ L"PeCommited", PeCommited },
-	{ L"PeReverted", PeReverted },
-	{ L"PeRenamed", PeRenamed },
-	{ L"PeRemoved", PeRemoved },
-	0
-};
-
 class EventLog : public ISerializable
 {
 	T_RTTI_CLASS;
@@ -53,14 +33,12 @@ public:
 	struct Entry
 	{
 		Guid sender;
-		ProviderEvent event;
-		Guid eventId;
+		Ref< const IEvent > event;
 
 		bool serialize(ISerializer& s)
 		{
 			s >> Member< Guid >(L"sender", sender);
-			s >> MemberProviderEvent(L"event", event);
-			s >> Member< Guid >(L"eventId", eventId);
+			s >> MemberRef< const IEvent >(L"event", event);
 			return true;
 		}
 	};
@@ -77,9 +55,9 @@ public:
 			m_pending.erase(i);
 	}
 
-	void addEvent(const Guid& senderGuid, ProviderEvent event, const Guid& eventId)
+	void addEvent(const Guid& senderGuid, const IEvent* event)
 	{
-		Entry entry = { senderGuid, event, eventId };
+		Entry entry = { senderGuid, event };
 		for (std::map< Guid, std::list< Entry > >::iterator i = m_pending.begin(); i != m_pending.end(); ++i)
 			i->second.push_back(entry);
 	}
@@ -191,9 +169,10 @@ void LocalBus::close()
 	}
 }
 
-bool LocalBus::putEvent(ProviderEvent event, const Guid& eventId)
+bool LocalBus::putEvent(const IEvent* event)
 {
 	T_ANONYMOUS_VAR(Acquire< Mutex >)(m_globalLock);
+	T_ASSERT (event);
 
 	// Read change log.
 	Ref< EventLog > eventLog;
@@ -207,7 +186,7 @@ bool LocalBus::putEvent(ProviderEvent event, const Guid& eventId)
 		eventLog = new EventLog();
 
 	// Add change to log.
-	eventLog->addEvent(m_localGuid, event, eventId);
+	eventLog->addEvent(m_localGuid, event);
 
 	// Write change log.
 	eventFile = m_shm->write();
@@ -220,13 +199,12 @@ bool LocalBus::putEvent(ProviderEvent event, const Guid& eventId)
 	return true;
 }
 
-bool LocalBus::getEvent(ProviderEvent& outEvent, Guid& outEventId, bool& outRemote)
+bool LocalBus::getEvent(Ref< const IEvent >& outEvent, bool& outRemote)
 {
 	// Pop from local pending events first.
 	if (!m_pendingEvents.empty())
 	{
 		outEvent = m_pendingEvents.front().event;
-		outEventId = m_pendingEvents.front().eventId;
 		outRemote = m_pendingEvents.front().remote;
 		m_pendingEvents.pop_front();
 		return true;
@@ -253,7 +231,7 @@ bool LocalBus::getEvent(ProviderEvent& outEvent, Guid& outEventId, bool& outRemo
 	// Move into local pending events.
 	for (std::list< EventLog::Entry >::iterator i = events.begin(); i != events.end(); ++i)
 	{
-		Event event = { i->event, i->eventId, i->sender != m_localGuid };
+		Event event = { i->event, i->sender != m_localGuid };
 		m_pendingEvents.push_back(event);
 	}
 	events.resize(0);
@@ -270,7 +248,6 @@ bool LocalBus::getEvent(ProviderEvent& outEvent, Guid& outEventId, bool& outRemo
 	if (!m_pendingEvents.empty())
 	{
 		outEvent = m_pendingEvents.front().event;
-		outEventId = m_pendingEvents.front().eventId;
 		outRemote = m_pendingEvents.front().remote;
 		m_pendingEvents.pop_front();
 		return true;

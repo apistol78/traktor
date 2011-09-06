@@ -24,6 +24,7 @@
 #include "Database/Group.h"
 #include "Database/Instance.h"
 #include "Database/Traverse.h"
+#include "Database/Events/EvtInstanceCommitted.h"
 #include "Editor/Asset.h"
 #include "Editor/Assets.h"
 #include "Editor/IEditorPage.h"
@@ -1856,8 +1857,7 @@ void EditorForm::eventClose(ui::Event* event)
 
 void EditorForm::eventTimer(ui::Event* /*event*/)
 {
-	db::ProviderEvent event;
-	Guid eventId;
+	Ref< const db::IEvent > event;
 	bool remote;
 	bool updateView;
 
@@ -1865,28 +1865,29 @@ void EditorForm::eventTimer(ui::Event* /*event*/)
 
 	// Check if there is any commited instances into
 	// source database.
-	bool commited = false;
-	while (m_sourceDatabase->getEvent(event, eventId, remote))
+	bool committed = false;
+	while (m_sourceDatabase->getEvent(event, remote))
 	{
-		if (remote == false && event == db::PeCommited)
-			commited = true;
+		if (remote == false && is_a< db::EvtInstanceCommitted >(event))
+			committed = true;
 
 		if (remote)
 			updateView = true;
 	}
-	if (commited && m_settings->getProperty< PropertyBoolean >(L"Editor.BuildWhenSourceModified"))
+	if (committed && m_settings->getProperty< PropertyBoolean >(L"Editor.BuildWhenSourceModified"))
 		buildAssets(false);
 
 	// Gather events from output database; used to notify
 	// editors what to reload.
-	while (m_outputDatabase->getEvent(event, eventId, remote))
+	while (m_outputDatabase->getEvent(event, remote))
 	{
-		if (event != db::PeCommited)
+		const db::EvtInstanceCommitted* committed = dynamic_type_cast< const db::EvtInstanceCommitted* >(event);
+		if (!committed)
 			continue;
 
-		log::debug << (remote ? L"Remotely" : L"Locally") << L" modified instance " << eventId.format() << L" detected; propagate to editor pages..." << Endl;
+		log::debug << (remote ? L"Remotely" : L"Locally") << L" modified instance " << committed->getInstanceGuid().format() << L" detected; propagate to editor pages..." << Endl;
 
-		m_eventIds.push_back(eventId);
+		m_eventIds.push_back(committed->getInstanceGuid());
 
 		if (remote)
 			updateView = true;
