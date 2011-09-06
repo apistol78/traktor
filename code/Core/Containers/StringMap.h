@@ -21,7 +21,7 @@ public:
 	{
 		uint32_t hash = shash(str) & (BucketCount - 1);
 		SmallMap< string_t, value_t >& buckets = m_buckets[hash & (BucketCount - 1)];
-		SmallMap< string_t, value_t >::iterator i = buckets.find(str);
+		typename SmallMap< string_t, value_t >::iterator i = buckets.find(str);
 		return i != buckets.end() ? &i->second : 0;
 	}
 
@@ -29,7 +29,7 @@ public:
 	{
 		uint32_t hash = shash(str) & (BucketCount - 1);
 		const SmallMap< string_t, value_t >& buckets = m_buckets[hash & (BucketCount - 1)];
-		SmallMap< string_t, value_t >::const_iterator i = buckets.find(str);
+		typename SmallMap< string_t, value_t >::const_iterator i = buckets.find(str);
 		return i != buckets.end() ? &i->second : 0;
 	}
 
@@ -43,7 +43,7 @@ public:
 	{
 		uint32_t hash = shash(str) & (BucketCount - 1);
 		SmallMap< string_t, value_t >& buckets = m_buckets[hash & (BucketCount - 1)];
-		SmallMap< string_t, value_t >::iterator i = buckets.find(str);
+		typename SmallMap< string_t, value_t >::iterator i = buckets.find(str);
 		if (i == buckets.end())
 			return false;
 		buckets.erase(i);
