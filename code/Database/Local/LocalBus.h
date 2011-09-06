@@ -31,15 +31,14 @@ public:
 
 	void close();
 
-	virtual bool putEvent(ProviderEvent event, const Guid& eventId);
+	virtual bool putEvent(const IEvent* event);
 
-	virtual bool getEvent(ProviderEvent& outEvent, Guid& outEventId, bool& outRemote);
+	virtual bool getEvent(Ref< const IEvent >& outEvent, bool& outRemote);
 
 private:
 	struct Event
 	{
-		ProviderEvent event;
-		Guid eventId;
+		Ref< const IEvent > event;
 		bool remote;
 	};
 

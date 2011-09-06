@@ -3,6 +3,8 @@
 
 #include "Core/Object.h"
 #include "Core/RefArray.h"
+#include "Core/Thread/Semaphore.h"
+#include "Database/IInstanceEventListener.h"
 #include "Database/Types.h"
 
 // import/export mechanism.
@@ -21,10 +23,8 @@ class Guid;
 	namespace db
 	{
 
-class IProviderBus;
+class IInstanceEventListener;
 class IProviderGroup;
-
-class Database;
 class Instance;
 
 /*! \brief Database group.
@@ -33,19 +33,13 @@ class Instance;
  * A group is just a tool to split
  * the database into logical portions.
  */
-class T_DLLCLASS Group : public Object
+class T_DLLCLASS Group
+:	public Object
+,	public IInstanceEventListener
 {
 	T_RTTI_CLASS;
 
 public:
-	Group(Database* database, IProviderBus* providerBus);
-
-	bool internalCreate(IProviderGroup* providerGroup, Group* parent);
-
-	void internalDestroy();
-
-	bool internalReset();
-
 	virtual std::wstring getName() const;
 
 	virtual std::wstring getPath() const;
@@ -64,26 +58,41 @@ public:
 
 	virtual Ref< Group > getParent();
 
-	virtual RefArray< Group >::iterator getBeginChildGroup();
+	virtual bool getChildGroups(RefArray< Group >& outChildGroups);
 
-	virtual RefArray< Group >::iterator getEndChildGroup();
-
-	virtual RefArray< Instance >::iterator getBeginChildInstance();
-
-	virtual RefArray< Instance >::iterator getEndChildInstance();
-
-	void removeChildInstance(Instance* childInstance);
-
-	void removeChildGroup(Group* childGroup);
+	virtual bool getChildInstances(RefArray< Instance >& outChildInstances);
 
 private:
-	Database* m_database;
-	IProviderBus* m_providerBus;
+	friend class Database;
+
+	mutable Semaphore m_lock;
+	IInstanceEventListener* m_eventListener;
 	Ref< IProviderGroup > m_providerGroup;
 	Group* m_parent;
 	std::wstring m_name;
 	RefArray< Group > m_childGroups;
 	RefArray< Instance > m_childInstances;
+
+	Group(IInstanceEventListener* eventListener);
+
+	bool internalCreate(IProviderGroup* providerGroup, Group* parent);
+
+	void internalDestroy();
+
+	// \name IInstanceEventListener
+	// \{
+
+	virtual void instanceEventCreated(Instance* instance);
+
+	virtual void instanceEventRemoved(Instance* instance);
+
+	virtual void instanceEventGuidChanged(Instance* instance, const Guid& previousGuid);
+
+	virtual void instanceEventRenamed(Instance* instance, const std::wstring& previousName);
+
+	virtual void instanceEventCommitted(Instance* instance);
+
+	// \}
 };
 
 	}

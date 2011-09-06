@@ -12,29 +12,40 @@ namespace traktor
 template < typename GroupPredicate >
 Ref< Group > findChildGroup(Group* group, const GroupPredicate& pred)
 {
-	for (RefArray< Group >::iterator i = group->getBeginChildGroup(); i != group->getEndChildGroup(); ++i)
+	RefArray< Group > childGroups;
+	group->getChildGroups(childGroups);
+
+	for (RefArray< Group >::iterator i = childGroups.begin(); i != childGroups.end(); ++i)
 	{
 		if (pred(*i))
 			return *i;
 	}
+
 	return 0;
 }
 
 template < typename InstancePredicate >
 Ref< Instance > findChildInstance(Group* group, const InstancePredicate& pred)
 {
-	for (RefArray< Instance >::iterator i = group->getBeginChildInstance(); i != group->getEndChildInstance(); ++i)
+	RefArray< Instance > childInstances;
+	group->getChildInstances(childInstances);
+
+	for (RefArray< Instance >::iterator i = childInstances.begin(); i != childInstances.end(); ++i)
 	{
 		if (pred(*i))
 			return *i;
 	}
+
 	return 0;
 }
 
 template < typename InstancePredicate >
 void findChildInstances(Group* group, const InstancePredicate& pred, RefArray< Instance >& outInstances)
 {
-	for (RefArray< Instance >::iterator i = group->getBeginChildInstance(); i != group->getEndChildInstance(); ++i)
+	RefArray< Instance > childInstances;
+	group->getChildInstances(childInstances);
+
+	for (RefArray< Instance >::iterator i = childInstances.begin(); i != childInstances.end(); ++i)
 	{
 		if (pred(*i))
 			outInstances.push_back(*i);
@@ -44,11 +55,16 @@ void findChildInstances(Group* group, const InstancePredicate& pred, RefArray< I
 template < typename GroupPredicate >
 Ref< Group > recursiveFindChildGroup(Group* group, const GroupPredicate& pred)
 {
-	Ref< Group > childGroup = findChildGroup(group, pred);
-	if (childGroup)
-		return childGroup;
+	RefArray< Group > childGroups;
+	group->getChildGroups(childGroups);
 
-	for (RefArray< Group >::iterator i = group->getBeginChildGroup(); i != group->getEndChildGroup(); ++i)
+	for (RefArray< Group >::iterator i = childGroups.begin(); i != childGroups.end(); ++i)
+	{
+		if (pred(*i))
+			return *i;
+	}
+
+	for (RefArray< Group >::iterator i = childGroups.begin(); i != childGroups.end(); ++i)
 	{
 		Ref< Group > childGroup = recursiveFindChildGroup(*i, pred);
 		if (childGroup)
@@ -61,11 +77,19 @@ Ref< Group > recursiveFindChildGroup(Group* group, const GroupPredicate& pred)
 template < typename InstancePredicate >
 Ref< Instance > recursiveFindChildInstance(Group* group, const InstancePredicate& pred)
 {
-	Ref< Instance > childInstance = findChildInstance(group, pred);
-	if (childInstance)
-		return childInstance;
+	RefArray< Instance > childInstances;
+	group->getChildInstances(childInstances);
 
-	for (RefArray< Group >::iterator i = group->getBeginChildGroup(); i != group->getEndChildGroup(); ++i)
+	for (RefArray< Instance >::iterator i = childInstances.begin(); i != childInstances.end(); ++i)
+	{
+		if (pred(*i))
+			return *i;
+	}
+
+	RefArray< Group > childGroups;
+	group->getChildGroups(childGroups);
+
+	for (RefArray< Group >::iterator i = childGroups.begin(); i != childGroups.end(); ++i)
 	{
 		Ref< Instance > instance = recursiveFindChildInstance(*i, pred);
 		if (instance)
@@ -78,8 +102,19 @@ Ref< Instance > recursiveFindChildInstance(Group* group, const InstancePredicate
 template < typename InstancePredicate >
 void recursiveFindChildInstances(Group* group, const InstancePredicate& pred, RefArray< Instance >& outInstances)
 {
-	findChildInstances(group, pred, outInstances);
-	for (RefArray< Group >::iterator i = group->getBeginChildGroup(); i != group->getEndChildGroup(); ++i)
+	RefArray< Instance > childInstances;
+	group->getChildInstances(childInstances);
+
+	for (RefArray< Instance >::iterator i = childInstances.begin(); i != childInstances.end(); ++i)
+	{
+		if (pred(*i))
+			outInstances.push_back(*i);
+	}
+
+	RefArray< Group > childGroups;
+	group->getChildGroups(childGroups);
+
+	for (RefArray< Group >::iterator i = childGroups.begin(); i != childGroups.end(); ++i)
 		recursiveFindChildInstances(*i, pred, outInstances);
 }
 

@@ -138,15 +138,21 @@ namespace
 
 	bool recursiveIncludeGroup(db::Group* group, const IBrowseFilter* filter)
 	{
+		RefArray< db::Instance > childInstances;
+		group->getChildInstances(childInstances);
+
 		// Does this group contain a valid instance?
-		for (RefArray< db::Instance >::iterator i = group->getBeginChildInstance(); i != group->getEndChildInstance(); ++i)
+		for (RefArray< db::Instance >::iterator i = childInstances.begin(); i != childInstances.end(); ++i)
 		{
 			if (filter->acceptable(*i))
 				return true;
 		}
 
+		RefArray< db::Group > childGroups;
+		group->getChildGroups(childGroups);
+
 		// No instances at this level, check if any child group contains valid instances.
-		for (RefArray< db::Group >::iterator i = group->getBeginChildGroup(); i != group->getEndChildGroup(); ++i)
+		for (RefArray< db::Group >::iterator i = childGroups.begin(); i != childGroups.end(); ++i)
 		{
 			if (recursiveIncludeGroup(*i, filter))
 				return true;
@@ -163,12 +169,18 @@ void BrowseInstanceDialog::buildGroupItems(ui::TreeView* treeView, ui::TreeViewI
 	if (filter && !recursiveIncludeGroup(group, filter))
 		return;
 
+	RefArray< db::Group > childGroups;
+	group->getChildGroups(childGroups);
+
 	Ref< ui::TreeViewItem > groupItem = treeView->createItem(parent, group->getName(), 2, 3);
-	for (RefArray< db::Group >::iterator i = group->getBeginChildGroup(); i != group->getEndChildGroup(); ++i)
+	for (RefArray< db::Group >::iterator i = childGroups.begin(); i != childGroups.end(); ++i)
 		buildGroupItems(treeView, groupItem, *i, filter);
 
+	RefArray< db::Instance > childInstances;
+	group->getChildInstances(childInstances);
+
 	Ref< ui::custom::PreviewItems > instanceItems = new ui::custom::PreviewItems();
-	for (RefArray< db::Instance >::iterator i = group->getBeginChildInstance(); i != group->getEndChildInstance(); ++i)
+	for (RefArray< db::Instance >::iterator i = childInstances.begin(); i != childInstances.end(); ++i)
 	{
 		if (!filter || filter->acceptable(*i))
 		{

@@ -8,15 +8,17 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_DATABASE_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
 {
 	namespace db
 	{
+
+class IEvent;
 
 /*! \brief Provider event bus interface.
  * \ingroup Database
@@ -32,16 +34,15 @@ class T_DLLCLASS IProviderBus : public Object
 	T_RTTI_CLASS;
 
 public:
-	virtual bool putEvent(ProviderEvent event, const Guid& eventId) = 0;
+	virtual bool putEvent(const IEvent* event) = 0;
 
 	/*! \brief Get event from bus.
 	 *
-	 * \param outEvent Event type.
-	 * \param outEventId Event id, currently guid of affected instance.
+	 * \param outEvent Event instance.
 	 * \param outRemote True if event originates from another connection; ie. another process.
 	 * \return True if event was read from bus, false if no events are available.
 	 */
-	virtual bool getEvent(ProviderEvent& outEvent, Guid& outEventId, bool& outRemote) = 0;
+	virtual bool getEvent(Ref< const IEvent >& outEvent, bool& outRemote) = 0;
 };
 
 	}

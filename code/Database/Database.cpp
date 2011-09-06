@@ -5,6 +5,11 @@
 #include "Database/Group.h"
 #include "Database/Instance.h"
 #include "Database/Traverse.h"
+#include "Database/Events/EvtInstanceCommitted.h"
+#include "Database/Events/EvtInstanceCreated.h"
+#include "Database/Events/EvtInstanceGuidChanged.h"
+#include "Database/Events/EvtInstanceRemoved.h"
+#include "Database/Events/EvtInstanceRenamed.h"
 #include "Database/Provider/IProviderDatabase.h"
 #include "Database/Provider/IProviderBus.h"
 
@@ -17,7 +22,10 @@ namespace traktor
 
 void buildInstanceMap(Group* group, std::map< Guid, Ref< Instance > >& outInstanceMap)
 {
-	for (RefArray< Instance >::iterator i = group->getBeginChildInstance(); i != group->getEndChildInstance(); ++i)
+	RefArray< Instance > childInstances;
+	group->getChildInstances(childInstances);
+
+	for (RefArray< Instance >::iterator i = childInstances.begin(); i != childInstances.end(); ++i)
 	{
 		Instance* instance = *i;
 		outInstanceMap.insert(std::make_pair(
@@ -25,7 +33,11 @@ void buildInstanceMap(Group* group, std::map< Guid, Ref< Instance > >& outInstan
 			instance
 		));
 	}
-	for (RefArray< Group >::iterator i = group->getBeginChildGroup(); i != group->getEndChildGroup(); ++i)
+
+	RefArray< Group > childGroups;
+	group->getChildGroups(childGroups);
+
+	for (RefArray< Group >::iterator i = childGroups.begin(); i != childGroups.end(); ++i)
 		buildInstanceMap(*i, outInstanceMap);
 }
 
@@ -41,14 +53,11 @@ bool Database::open(IProviderDatabase* providerDatabase)
 	m_providerDatabase = providerDatabase;
 	m_providerBus = m_providerDatabase->getBus();
 
-	m_rootGroup = new Group(this, m_providerBus);
+	m_rootGroup = new Group(this);
 	if (!m_rootGroup->internalCreate(m_providerDatabase->getRootGroup(), 0))
 		return false;
 
-	log::debug << L"Begin building instance cache..." << Endl;
 	buildInstanceMap(m_rootGroup, m_instanceMap);
-	log::debug << L"Building instance cache finished" << Endl;
-
 	return true;
 }
 
@@ -118,8 +127,8 @@ Ref< Group > Database::getRootGroup()
 
 Ref< Group > Database::getGroup(const std::wstring& groupPath)
 {
-	T_ASSERT (m_providerDatabase);
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	T_ASSERT (m_providerDatabase);
 
 	Ref< Group > group = m_rootGroup;
 	StringSplit< std::wstring > pathElements(groupPath, L"/");
@@ -134,8 +143,8 @@ Ref< Group > Database::getGroup(const std::wstring& groupPath)
 
 Ref< Group > Database::createGroup(const std::wstring& groupPath)
 {
-	T_ASSERT (m_providerDatabase);
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	T_ASSERT (m_providerDatabase);
 
 	Ref< Group > group = m_rootGroup;
 
@@ -157,33 +166,20 @@ Ref< Group > Database::createGroup(const std::wstring& groupPath)
 
 Ref< Instance > Database::getInstance(const Guid& instanceGuid)
 {
-	T_ASSERT (m_providerDatabase);
-
 	if (instanceGuid.isNull() || !instanceGuid.isValid())
 		return 0;
 
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	T_ASSERT (m_providerDatabase);
+
 	std::map< Guid, Ref< Instance > >::iterator i = m_instanceMap.find(instanceGuid);
-	
-	// In case no instance was found or reference has been invalidated we need to rebuild instance map.
-	if (i == m_instanceMap.end() || !i->second)
-	{
-		log::debug << L"Re-building instance cache" << Endl;
-
-		m_instanceMap.clear();
-		buildInstanceMap(m_rootGroup, m_instanceMap);
-
-		if ((i = m_instanceMap.find(instanceGuid)) == m_instanceMap.end())
-			return 0;
-	}
-
-	return i->second;
+	return i != m_instanceMap.end() ? i->second : 0;
 }
 
 Ref< Instance > Database::getInstance(const std::wstring& instancePath, const TypeInfo* primaryType)
 {
-	T_ASSERT (m_providerDatabase);
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	T_ASSERT (m_providerDatabase);
 
 	std::wstring instanceName = instancePath;
 	Ref< Group > group = m_rootGroup;
@@ -203,8 +199,8 @@ Ref< Instance > Database::getInstance(const std::wstring& instancePath, const Ty
 
 Ref< Instance > Database::createInstance(const std::wstring& instancePath, uint32_t flags, const Guid* guid)
 {
-	T_ASSERT (m_providerDatabase);
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	T_ASSERT (m_providerDatabase);
 
 	std::wstring instanceName;
 	Ref< Group > group;
@@ -234,59 +230,113 @@ Ref< Instance > Database::createInstance(const std::wstring& instancePath, uint3
 
 Ref< ISerializable > Database::getObjectReadOnly(const Guid& guid)
 {
-	T_ASSERT (m_providerDatabase);
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	T_ASSERT (m_providerDatabase);
 
 	Ref< Instance > instance = getInstance(guid);
 	return instance ? instance->getObject() : 0;
 }
 
-bool Database::getEvent(ProviderEvent& outEvent, Guid& outEventId, bool& outRemote)
+bool Database::getEvent(Ref< const IEvent >& outEvent, bool& outRemote)
 {
 	T_ASSERT (m_providerDatabase);
 
-	if (!m_providerBus)
+	if (!m_providerBus || !m_providerBus->getEvent(outEvent, outRemote))
 		return false;
 
-	if (!m_providerBus->getEvent(outEvent, outEventId, outRemote))
-		return false;
-
-	// Need to reset states as database has been remotely modified.
-	if (outRemote && (outEvent == PeCommited || outEvent == PeRenamed || outEvent == PeRemoved))
+	if (outRemote)
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
-		// Remove from instance map if removed.
-		if (outEvent == PeRemoved)
+		if (const EvtInstanceCreated* created = dynamic_type_cast< const EvtInstanceCreated* >(outEvent))
 		{
-			std::map< Guid, Ref< Instance > >::iterator i = m_instanceMap.find(outEventId);
+			m_instanceMap.clear();
+			buildInstanceMap(m_rootGroup, m_instanceMap);
+		}
+
+		if (const EvtInstanceRemoved* removed = dynamic_type_cast< const EvtInstanceRemoved* >(outEvent))
+		{
+			std::map< Guid, Ref< Instance > >::iterator i = m_instanceMap.find(removed->getInstanceGuid());
 			if (i != m_instanceMap.end())
 				m_instanceMap.erase(i);
 		}
 
-		// Reset instance cached state; need to retrieve new state from provider.
-		Ref< Instance > modifiedInstance = getInstance(outEventId);
-		if (modifiedInstance)
+		if (const EvtInstanceGuidChanged* guidChanged = dynamic_type_cast< const EvtInstanceGuidChanged* >(outEvent))
 		{
-			Ref< Group > parentGroup = modifiedInstance->getParent();
-			T_ASSERT (parentGroup);
+			std::map< Guid, Ref< Instance > >::iterator i = m_instanceMap.find(guidChanged->getInstancePreviousGuid());
+			if (i != m_instanceMap.end())
+				i->second->internalFlush();
 
-			if (outEvent == PeRenamed || outEvent == PeRemoved)
-				parentGroup->internalReset();
+			m_instanceMap.clear();
+			buildInstanceMap(m_rootGroup, m_instanceMap);
+		}
 
-			modifiedInstance->internalReset();
+		if (const EvtInstanceRenamed* renamed = dynamic_type_cast< const EvtInstanceRenamed* >(outEvent))
+		{
+			std::map< Guid, Ref< Instance > >::iterator i = m_instanceMap.find(renamed->getInstanceGuid());
+			if (i != m_instanceMap.end())
+				i->second->internalFlush();
 		}
 	}
 
 	return true;
 }
 
-void Database::flushInstance(const Guid& instanceGuid)
+void Database::instanceEventCreated(Instance* instance)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	std::map< Guid, Ref< Instance > >::iterator i = m_instanceMap.find(instanceGuid);
+
+	// Insert new cache entry.
+	m_instanceMap[instance->getGuid()] = instance;
+
+	// Notify others about new instance.
+	if (m_providerBus)
+		m_providerBus->putEvent(new EvtInstanceCreated(instance->getGuid()));
+}
+
+void Database::instanceEventRemoved(Instance* instance)
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
+	// Remove previous cached entry.
+	std::map< Guid, Ref< Instance > >::iterator i = m_instanceMap.find(instance->getGuid());
 	if (i != m_instanceMap.end())
 		m_instanceMap.erase(i);
+
+	// Notify others about removed instance.
+	if (m_providerBus)
+		m_providerBus->putEvent(new EvtInstanceRemoved(instance->getGuid()));
+}
+
+void Database::instanceEventGuidChanged(Instance* instance, const Guid& previousGuid)
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
+	// Remove previous cached entry.
+	std::map< Guid, Ref< Instance > >::iterator i = m_instanceMap.find(previousGuid);
+	if (i != m_instanceMap.end())
+		m_instanceMap.erase(i);
+
+	// Insert new cache entry.
+	m_instanceMap[instance->getGuid()] = instance;
+
+	// Notify others about instance change.
+	if (m_providerBus)
+		m_providerBus->putEvent(new EvtInstanceGuidChanged(instance->getGuid(), previousGuid));
+}
+
+void Database::instanceEventRenamed(Instance* instance, const std::wstring& previousName)
+{
+	// Notify others about instance change.
+	if (m_providerBus)
+		m_providerBus->putEvent(new EvtInstanceRenamed(instance->getGuid(), previousName));
+}
+
+void Database::instanceEventCommitted(Instance* instance)
+{
+	// Notify others about instance committed.
+	if (m_providerBus)
+		m_providerBus->putEvent(new EvtInstanceCommitted(instance->getGuid()));
 }
 
 	}

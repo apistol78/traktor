@@ -22,15 +22,6 @@ enum CommitInstanceFlags
 	CfKeepCheckedOut = 1
 };
 
-enum ProviderEvent
-{
-	PeInvalid = 0,
-	PeCommited = 2,
-	PeReverted = 3,
-	PeRenamed = 4,
-	PeRemoved = 5
-};
-
 //@}
 
 	}

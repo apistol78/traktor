@@ -25,23 +25,22 @@ RemoteBus::~RemoteBus()
 		m_connection->sendMessage< MsgStatus >(CnmReleaseObject(m_handle));
 }
 
-bool RemoteBus::putEvent(ProviderEvent event, const Guid& eventId)
+bool RemoteBus::putEvent(const IEvent* event)
 {
-	Ref< MsgStatus > result = m_connection->sendMessage< MsgStatus >(DbmPutEvent(m_handle, event, eventId));
+	Ref< MsgStatus > result = m_connection->sendMessage< MsgStatus >(DbmPutEvent(m_handle, event));
 	return result ? result->getStatus() == StSuccess : false;
 }
 
-bool RemoteBus::getEvent(ProviderEvent& outEvent, Guid& outEventId, bool& outRemote)
+bool RemoteBus::getEvent(Ref< const IEvent >& outEvent, bool& outRemote)
 {
 	Ref< DbmGetEventResult > result = m_connection->sendMessage< DbmGetEventResult >(DbmGetEvent(m_handle));
 	if (!result)
 		return false;
 
-	if (!result->haveEvent())
+	if (!result->getEvent())
 		return false;
 
 	outEvent = result->getEvent();
-	outEventId = result->getEventId();
 	outRemote = result->getRemote();
 
 	return true;

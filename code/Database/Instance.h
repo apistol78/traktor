@@ -4,7 +4,6 @@
 #include "Core/Guid.h"
 #include "Core/Object.h"
 #include "Core/Thread/Semaphore.h"
-#include "Database/Config.h"
 #include "Database/Types.h"
 
 // import/export mechanism.
@@ -24,10 +23,9 @@ class IStream;
 	namespace db
 	{
 
-class IProviderBus;
+class IInstanceEventListener;
 class IProviderInstance;
 
-class Database;
 class Group;
 
 /*! \brief Database instance.
@@ -43,13 +41,14 @@ class T_DLLCLASS Instance : public Object
 	T_RTTI_CLASS;
 
 public:
-	Instance(Database* database);
+	// \name Read-only queries.
+	// \brief
+	// Read-only queries can be performed without a transaction
+	// and should return result as from latest successfully committed
+	// transaction.
+	// \{
 
-	bool internalCreate(IProviderBus* providerBus, IProviderInstance* providerInstance, Group* parent);
-
-	void internalDestroy();
-
-	void internalReset();
+	virtual Group* getParent() const;
 
 	virtual std::wstring getName() const;
 
@@ -57,35 +56,15 @@ public:
 
 	virtual Guid getGuid() const;
 
-	virtual bool setGuid(const Guid& guid);
-
 	virtual std::wstring getPrimaryTypeName() const;
 
 	virtual const TypeInfo* getPrimaryType() const;
 
-	virtual bool checkout();
-
-	virtual bool commit(uint32_t flags = CfDefault);
-
-	virtual bool revert();
-
-	virtual bool setName(const std::wstring& name);
-
-	virtual bool remove();
-
 	virtual Ref< ISerializable > getObject();
-
-	virtual bool setObject(const ISerializable* object);
 
 	virtual uint32_t getDataNames(std::vector< std::wstring >& dataNames) const;
 
-	virtual bool removeAllData();
-
 	virtual Ref< IStream > readData(const std::wstring& dataName);
-
-	virtual Ref< IStream > writeData(const std::wstring& dataName);
-
-	virtual Ref< Group > getParent() const;
 
 	template < typename T >
 	Ref< T > getObject()
@@ -93,26 +72,58 @@ public:
 		return dynamic_type_cast< T* >(getObject());
 	}
 
+	// \}
+
+	// \name Write queries; must be performed in a transaction using checkout/commit.
+	// \{
+
+	virtual bool checkout();
+
+	virtual bool commit(uint32_t flags = CfDefault);
+
+	virtual bool revert();
+
+	virtual bool remove();
+
+	virtual bool setName(const std::wstring& name);
+
+	virtual bool setGuid(const Guid& guid);
+
+	virtual bool setObject(const ISerializable* object);
+
+	virtual bool removeAllData();
+
+	virtual Ref< IStream > writeData(const std::wstring& dataName);
+
+	// \}
+
 private:
-	Database* m_database;
-	IProviderBus* m_providerBus;
+	friend class Database;
+	friend class Group;
+
+	IInstanceEventListener* m_eventListener;
 	Ref< IProviderInstance > m_providerInstance;
 	Group* m_parent;
+
 	mutable Semaphore m_lock;
-	bool m_renamed;
-	bool m_removed;
-#if T_INSTANCE_CACHE_NAME || T_INSTANCE_CACHE_GUID || T_INSTANCE_CACHE_PRIMARY_TYPE
-	mutable uint32_t m_cache;
-#	if T_INSTANCE_CACHE_NAME
+	mutable uint32_t m_cachedFlags;
 	mutable std::wstring m_name;
-#	endif
-#	if T_INSTANCE_CACHE_GUID
 	mutable Guid m_guid;
-#	endif
-#	if T_INSTANCE_CACHE_PRIMARY_TYPE
-	mutable std::wstring m_primaryType;
-#	endif
-#endif
+	mutable std::wstring m_type;
+
+	Guid m_transactionGuid;
+	std::wstring m_transactionName;
+	uint32_t m_transactionFlags;
+
+	Instance(IInstanceEventListener* eventListener);
+
+	bool internalCreateExisting(IProviderInstance* providerInstance, Group* parent);
+
+	bool internalCreateNew(IProviderInstance* providerInstance, Group* parent);
+
+	void internalDestroy();
+
+	void internalFlush();
 };
 
 	}

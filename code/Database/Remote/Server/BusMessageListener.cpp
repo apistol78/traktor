@@ -30,7 +30,7 @@ bool BusMessageListener::messagePutEvent(const DbmPutEvent* message)
 		return true;
 	}
 
-	bool result = bus->putEvent(message->getEvent(), message->getEventId());
+	bool result = bus->putEvent(message->getEvent());
 	m_connection->sendReply(MsgStatus(result ? StSuccess : StFailure));
 	return true;
 }
@@ -45,11 +45,10 @@ bool BusMessageListener::messageGetEvent(const DbmGetEvent* message)
 		return true;
 	}
 
-	ProviderEvent event;
-	Guid eventId;
+	Ref< const IEvent > event;
 	bool remote;
 
-	bool result = bus->getEvent(event, eventId, remote);
+	bool result = bus->getEvent(event, remote);
 	if (!result)
 	{
 		m_connection->sendReply(DbmGetEventResult());
@@ -58,7 +57,6 @@ bool BusMessageListener::messageGetEvent(const DbmGetEvent* message)
 
 	m_connection->sendReply(DbmGetEventResult(
 		event,
-		eventId,
 		remote
 	));
 	return true;
