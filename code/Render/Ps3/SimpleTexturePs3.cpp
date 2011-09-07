@@ -162,6 +162,11 @@ void SimpleTexturePs3::destroy()
 	}
 }
 
+ITexture* SimpleTexturePs3::resolve()
+{
+	return this;
+}
+
 int SimpleTexturePs3::getWidth() const
 {
 	return m_texture.width;
@@ -170,11 +175,6 @@ int SimpleTexturePs3::getWidth() const
 int SimpleTexturePs3::getHeight() const
 {
 	return m_texture.height;
-}
-
-int SimpleTexturePs3::getDepth() const
-{
-	return m_texture.depth;
 }
 
 bool SimpleTexturePs3::lock(int level, Lock& lock)

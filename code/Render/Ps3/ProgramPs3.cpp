@@ -432,7 +432,7 @@ void ProgramPs3::setTextureParameter(handle_t handle, ITexture* texture)
 	if (i == m_textureParameterMap.end() || m_textureParameterData[i->second] == texture)
 		return;
 
-	m_textureParameterData[i->second] = texture;
+	m_textureParameterData[i->second] = texture ? texture->resolve() : 0;
 	m_dirty |= DfTexture;
 }
 

@@ -1,7 +1,7 @@
 #ifndef traktor_render_RenderTargetPs3_H
 #define traktor_render_RenderTargetPs3_H
 
-#include "Render/ITexture.h"
+#include "Render/ISimpleTexture.h"
 #include "Render/Ps3/TileArea.h"
 #include "Render/Ps3/TypesPs3.h"
 
@@ -23,7 +23,7 @@ class MemoryHeapObject;
 class Resolve2xMSAA;
 class StateCachePs3;
 
-class T_DLLCLASS RenderTargetPs3 : public ITexture
+class T_DLLCLASS RenderTargetPs3 : public ISimpleTexture
 {
 	T_RTTI_CLASS;
 
@@ -34,11 +34,15 @@ public:
 
 	virtual void destroy();
 
+	virtual ITexture* resolve();
+
 	virtual int getWidth() const;
 	
 	virtual int getHeight() const;
-	
-	virtual int getDepth() const;
+
+	virtual bool lock(int level, Lock& lock);
+
+	virtual void unlock(int level);
 
 	void bind(StateCachePs3& stateCache, int stage, const SamplerState& samplerState);
 

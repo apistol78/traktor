@@ -200,6 +200,11 @@ void RenderTargetPs3::destroy()
 	}
 }
 
+ITexture* RenderTargetPs3::resolve()
+{
+	return this;
+}
+
 int RenderTargetPs3::getWidth() const
 {
 	return m_width;
@@ -210,9 +215,13 @@ int RenderTargetPs3::getHeight() const
 	return m_height;
 }
 
-int RenderTargetPs3::getDepth() const
+bool RenderTargetPs3::lock(int level, Lock& lock)
 {
-	return 1;
+	return false;
+}
+
+void RenderTargetPs3::unlock(int level)
+{
 }
 
 void RenderTargetPs3::bind(StateCachePs3& stateCache, int stage, const SamplerState& samplerState)
