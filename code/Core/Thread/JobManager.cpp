@@ -18,7 +18,7 @@ bool Job::wait(int32_t timeout)
 		if (!m_jobFinishedEvent.wait(timeout >= 0 ? timeout : 100))
 		{
 			if (timeout >= 0)
-				return false;
+				return m_finished;
 		}
 		// A job has been finished; check if it this
 		// and in such case return true.

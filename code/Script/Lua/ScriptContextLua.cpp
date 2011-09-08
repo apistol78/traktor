@@ -45,9 +45,11 @@ void ScriptContextLua::destroy()
 		luaL_unref(m_luaState, LUA_REGISTRYINDEX, m_environmentRef);
 		m_environmentRef = LUA_NOREF;
 
+		/*
 		// Perform a full garbage collect; don't want
 		// lingering objects.
 		lua_gc(m_luaState, LUA_GCCOLLECT, 0);
+		*/
 	}
 }
 
