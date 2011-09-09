@@ -1,2 +1,3 @@
 #!/bin/sh
-$TRAKTOR_HOME/bin/MacOSX/SolutionBuilder -f=xcode TraktorMacOSX.xms -d=DebugShared -r=ReleaseShared
+export TRAKTOR_HOME=$PWD
+wine $TRAKTOR_HOME/bin/SolutionBuilder -f=xcode TraktorMacOSX.xms -d=DebugShared -r=ReleaseShared
