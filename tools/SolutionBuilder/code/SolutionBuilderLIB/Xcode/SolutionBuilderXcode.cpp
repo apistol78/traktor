@@ -333,27 +333,27 @@ SolutionBuilderXcode::SolutionBuilderXcode()
 
 bool SolutionBuilderXcode::create(const CommandLine& cmdLine)
 {
-	if (cmdLine.hasOption('d'))
-		m_debugConfig = cmdLine.getOption('d').getString();
+	if (cmdLine.hasOption('d', L"xcode-debug-config"))
+		m_debugConfig = cmdLine.getOption('d', L"xcode-debug-config").getString();
 	else
 		m_debugConfig = L"Debug";
 
-	if (cmdLine.hasOption('r'))
-		m_releaseConfig = cmdLine.getOption('r').getString();
+	if (cmdLine.hasOption('r', L"xcode-release-config"))
+		m_releaseConfig = cmdLine.getOption('r', L"xcode-release-config").getString();
 	else
 		m_releaseConfig = L"Release";
 
-	if (cmdLine.hasOption('c'))
+	if (cmdLine.hasOption('c', L"xcode-copy-products"))
 		m_copyProductFiles = true;
 
-	if (cmdLine.hasOption('a'))
+	if (cmdLine.hasOption('a', L"xcode-generate-aggregate"))
 		m_generateAllAggregate = true;
 
-	if (cmdLine.hasOption('i'))
+	if (cmdLine.hasOption('i', L"xcode-configuration"))
 	{
 		m_iphone = true;
 
-		std::wstring ip = cmdLine.getOption('i').getString();
+		std::wstring ip = cmdLine.getOption('i', L"xcode-configuration").getString();
 		if (!ip.empty())
 		{
 			m_projectConfigurationFileDebug = L"$(TRAKTOR_HOME)/bin/xcode-project-debug-" + ip + L".inc";
@@ -501,10 +501,11 @@ bool SolutionBuilderXcode::generate(Solution* solution)
 
 void SolutionBuilderXcode::showOptions() const
 {
-	log::info << L"\t-d = Debug configuration" << Endl;
-	log::info << L"\t-r = Release configuration" << Endl;
-	log::info << L"\t-c = Copy products into bundles" << Endl;
-	log::info << L"\t-i = iPhone OS (iphone, ipad)" << Endl;
+	log::info << L"\t-d,-xcode-debug-config = Debug configuration" << Endl;
+	log::info << L"\t-r,-xcode-release-config = Release configuration" << Endl;
+	log::info << L"\t-c,-xcode-copy-products = Copy products into bundles" << Endl;
+	log::info << L"\t-a,-xcode-generate-aggregate = Generate all aggregate" << Endl;
+	log::info << L"\t-i,-xcode-configuration = iPhone OS (iphone, ipad)" << Endl;
 }
 
 void SolutionBuilderXcode::generatePBXBuildFileSection(OutputStream& s, const Solution* solution, const RefArray< Project >& projects) const

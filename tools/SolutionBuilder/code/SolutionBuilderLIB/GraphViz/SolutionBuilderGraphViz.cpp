@@ -39,7 +39,7 @@ SolutionBuilderGraphViz::SolutionBuilderGraphViz()
 
 bool SolutionBuilderGraphViz::create(const CommandLine& cmdLine)
 {
-	m_skipLeafs = cmdLine.hasOption('s');
+	m_skipLeafs = cmdLine.hasOption(L's', L"graphviz-skipleafs");
 	return true;
 }
 
@@ -105,5 +105,5 @@ bool SolutionBuilderGraphViz::generate(Solution* solution)
 
 void SolutionBuilderGraphViz::showOptions() const
 {
-	traktor::log::info << L"\t-s=Skip leaf project(s)" << Endl;
+	traktor::log::info << L"\t-s,-graphviz-skipleafs=Skip leaf project(s)" << Endl;
 }

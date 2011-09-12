@@ -255,7 +255,7 @@ int32_t amalgamMain(
 	T_FATAL_ASSERT (settings);
 
 	// Merge user settings into application settings.
-	if (!cmdLine.hasOption('s'))
+	if (!cmdLine.hasOption('s', L"no-settings"))
 	{
 		Path userSettingsPath;
 		Ref< Settings > userSettings;
@@ -288,7 +288,7 @@ int32_t amalgamMain(
 	// Check if update is available.
 	if (
 		defaultSettings->getProperty< PropertyBoolean >(L"Amalgam.AutoUpdateEnable", true) &&
-		!cmdLine.hasOption(L'u')
+		!cmdLine.hasOption(L'u', L"no-update")
 	)
 	{
 		net::Url url = defaultSettings->getProperty< PropertyString >(L"Amalgam.AutoUpdateUrl");
@@ -323,7 +323,7 @@ int32_t amalgamMain(
 		safeDestroy(application);
 
 		// Save user settings.
-		if (!cmdLine.hasOption('s'))
+		if (!cmdLine.hasOption('s', L"no-settings"))
 		{
 			Path userSettingsPath;
 
