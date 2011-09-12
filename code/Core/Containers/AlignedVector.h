@@ -323,7 +323,8 @@ public:
 	 */
 	void resize(size_t size)
 	{
-		resize(size, ItemType());
+		ItemType T_ALIGN16 zero;
+		resize(size, zero);
 	}
 
 	/*! \brief Resize vector, pad with given value.

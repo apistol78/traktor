@@ -253,7 +253,6 @@ bool opengl_initialize_extensions()
 
 bool opengl_have_extension(Extensions extension)
 {
-	T_ASSERT (extension);
 	return s_extensions[int32_t(extension)].have && s_extensions[int32_t(extension)].use;
 }
 
