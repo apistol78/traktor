@@ -377,6 +377,9 @@ bool SolutionBuilderXcode::create(const CommandLine& cmdLine)
 		m_targetConfigurationFileDebug = L"$(TRAKTOR_HOME)/bin/xcode-target-debug-osx.inc";
 		m_targetConfigurationFileRelease = L"$(TRAKTOR_HOME)/bin/xcode-target-release-osx.inc";
 	}
+
+	if (cmdLine.hasOption(L"xcode-root-suffix"))
+		m_rootSuffix = cmdLine.getOption(L"xcode-root-suffix").getString();
 		
 	return true;
 }
@@ -447,7 +450,7 @@ bool SolutionBuilderXcode::generate(Solution* solution)
 	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 		collectProjectFiles(*i, files);
 
-	std::wstring xcodeProjectPath = solution->getRootPath() + L"/" + solution->getName() + L".xcodeproj";
+	std::wstring xcodeProjectPath = solution->getRootPath() + m_rootSuffix + L"/" + solution->getName() + L".xcodeproj";
 
 	if (!FileSystem::getInstance().makeAllDirectories(xcodeProjectPath))
 		return false;
@@ -506,6 +509,7 @@ void SolutionBuilderXcode::showOptions() const
 	log::info << L"\t-c,-xcode-copy-products = Copy products into bundles" << Endl;
 	log::info << L"\t-a,-xcode-generate-aggregate = Generate all aggregate" << Endl;
 	log::info << L"\t-i,-xcode-configuration = iPhone OS (iphone, ipad)" << Endl;
+	log::info << L"\t-xcode-root-suffix = Root path suffix" << Endl;
 }
 
 void SolutionBuilderXcode::generatePBXBuildFileSection(OutputStream& s, const Solution* solution, const RefArray< Project >& projects) const
@@ -689,7 +693,7 @@ void SolutionBuilderXcode::generatePBXContainerItemProxySection(OutputStream& s,
 			if (!j->external || externalProjects.find(j->project) != externalProjects.end())
 				continue;
 				
-			Path externalXcodeProjectPath = j->solution->getRootPath() + L"/" + j->solution->getName() + L".xcodeproj";
+			Path externalXcodeProjectPath = j->solution->getRootPath() + m_rootSuffix + L"/" + j->solution->getName() + L".xcodeproj";
 
 			Configuration::TargetFormat targetFormat = getTargetFormat(j->project);
 			std::wstring externalProductName = getProductName(j->project, targetFormat);
@@ -772,7 +776,7 @@ void SolutionBuilderXcode::generatePBXFileReferenceSection(OutputStream& s, cons
 	{
 		std::wstring fileUid = FileUids(*i).getFileUid();
 
-		Path projectPath = FileSystem::getInstance().getAbsolutePath(solution->getRootPath());
+		Path projectPath = FileSystem::getInstance().getAbsolutePath(solution->getRootPath() + m_rootSuffix);
 		Path filePath = FileSystem::getInstance().getAbsolutePath(*i);
 
 		Path relativeFilePath;
@@ -809,8 +813,8 @@ void SolutionBuilderXcode::generatePBXFileReferenceSection(OutputStream& s, cons
 				Ref< const Solution > externalSolution = externalDependency->getSolution();
 				T_ASSERT (externalSolution);
 
-				Path externalXcodeProjectPath = FileSystem::getInstance().getAbsolutePath(externalSolution->getRootPath() + L"/" + externalSolution->getName() + L".xcodeproj");
-				Path projectPath = FileSystem::getInstance().getAbsolutePath(solution->getRootPath());
+				Path externalXcodeProjectPath = FileSystem::getInstance().getAbsolutePath(externalSolution->getRootPath() + m_rootSuffix + L"/" + externalSolution->getName() + L".xcodeproj");
+				Path projectPath = FileSystem::getInstance().getAbsolutePath(solution->getRootPath() + m_rootSuffix);
 
 				Path relativeFilePath;
 				if (!FileSystem::getInstance().getRelativePath(externalXcodeProjectPath, projectPath, relativeFilePath))
@@ -934,8 +938,8 @@ void SolutionBuilderXcode::generatePBXGroupSection(OutputStream& s, const Soluti
 			if (externalSolutions.find(j->solution) != externalSolutions.end())
 				continue;
 
-			Path externalXcodeProjectPath = FileSystem::getInstance().getAbsolutePath(j->solution->getRootPath() + L"/" + j->solution->getName() + L".xcodeproj");
-			Path projectPath = FileSystem::getInstance().getAbsolutePath(solution->getRootPath());
+			Path externalXcodeProjectPath = FileSystem::getInstance().getAbsolutePath(j->solution->getRootPath() + m_rootSuffix + L"/" + j->solution->getName() + L".xcodeproj");
+			Path projectPath = FileSystem::getInstance().getAbsolutePath(solution->getRootPath() + m_rootSuffix);
 
 			Path relativeFilePath;
 			if (!FileSystem::getInstance().getRelativePath(externalXcodeProjectPath, projectPath, relativeFilePath))
@@ -1134,7 +1138,7 @@ void SolutionBuilderXcode::generatePBXProjectSection(OutputStream& s, const Solu
 				Ref< const Solution > externalSolution = externalDependency->getSolution();
 				T_ASSERT (externalSolution);
 
-				Path externalXcodeProjectPath = externalSolution->getRootPath() + L"/" + externalSolution->getName() + L".xcodeproj";
+				Path externalXcodeProjectPath = externalSolution->getRootPath() + m_rootSuffix + L"/" + externalSolution->getName() + L".xcodeproj";
 
 				s << L"\t\t\t\t{" << Endl;
 				s << L"\t\t\t\t\tProductGroup = " << SolutionUids(externalDependency->getSolution()).getProductsGroupUid() << L" /* Products */;" << Endl;
@@ -1255,7 +1259,7 @@ void SolutionBuilderXcode::generatePBXResourcesBuildPhaseSection(traktor::Output
 
 void SolutionBuilderXcode::generatePBXShellScriptBuildPhaseSection(OutputStream& s, const Solution* solution, const traktor::RefArray< Project >& projects) const
 {
-	Path projectPath = FileSystem::getInstance().getAbsolutePath(solution->getRootPath());
+	Path projectPath = FileSystem::getInstance().getAbsolutePath(solution->getRootPath() + m_rootSuffix);
 
 	s << L"/* Begin PBXShellScriptBuildPhase section */" << Endl;
 	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
@@ -1445,7 +1449,7 @@ void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, 
 			std::wstring extension = toLower(j->getExtension());
 			if (extension == L"plist")
 			{
-				Path projectPath = FileSystem::getInstance().getAbsolutePath(solution->getRootPath());
+				Path projectPath = FileSystem::getInstance().getAbsolutePath(solution->getRootPath() + m_rootSuffix);
 				Path plistPath = FileSystem::getInstance().getAbsolutePath(*j);
 
 				Path relativePlistPath;
@@ -1484,7 +1488,7 @@ void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, 
 			const std::vector< std::wstring >& includePaths = configurations[0]->getIncludePaths();
 			for (std::vector< std::wstring >::const_iterator j = includePaths.begin(); j != includePaths.end(); ++j)
 			{
-				Path projectPath = FileSystem::getInstance().getAbsolutePath(solution->getRootPath());
+				Path projectPath = FileSystem::getInstance().getAbsolutePath(solution->getRootPath() + m_rootSuffix);
 				Path includePath = FileSystem::getInstance().getAbsolutePath(*j);
 
 				Path relativeIncludePath;
@@ -1514,7 +1518,7 @@ void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, 
 					s << L"\t\t\t\tLIBRARY_SEARCH_PATHS = \"";
 					for (std::vector< std::wstring >::const_iterator j = libraryPaths.begin(); j != libraryPaths.end(); ++j)
 					{
-						Path projectPath = FileSystem::getInstance().getAbsolutePath(solution->getRootPath());
+						Path projectPath = FileSystem::getInstance().getAbsolutePath(solution->getRootPath() + m_rootSuffix);
 						Path libraryPath = FileSystem::getInstance().getAbsolutePath(*j);
 
 						Path relativeLibraryPath;
@@ -1577,7 +1581,7 @@ void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, 
 			const std::vector< std::wstring >& includePaths = configurations[1]->getIncludePaths();
 			for (std::vector< std::wstring >::const_iterator j = includePaths.begin(); j != includePaths.end(); ++j)
 			{
-				Path projectPath = FileSystem::getInstance().getAbsolutePath(solution->getRootPath());
+				Path projectPath = FileSystem::getInstance().getAbsolutePath(solution->getRootPath() + m_rootSuffix);
 				Path includePath = FileSystem::getInstance().getAbsolutePath(*j);
 
 				Path relativeIncludePath;
@@ -1607,7 +1611,7 @@ void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, 
 					s << L"\t\t\t\tLIBRARY_SEARCH_PATHS = \"";
 					for (std::vector< std::wstring >::const_iterator j = libraryPaths.begin(); j != libraryPaths.end(); ++j)
 					{
-						Path projectPath = FileSystem::getInstance().getAbsolutePath(solution->getRootPath());
+						Path projectPath = FileSystem::getInstance().getAbsolutePath(solution->getRootPath() + m_rootSuffix);
 						Path libraryPath = FileSystem::getInstance().getAbsolutePath(*j);
 
 						Path relativeLibraryPath;

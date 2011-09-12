@@ -51,6 +51,7 @@ private:
 	std::wstring m_projectConfigurationFileRelease;
 	std::wstring m_targetConfigurationFileDebug;
 	std::wstring m_targetConfigurationFileRelease;
+	std::wstring m_rootSuffix;
 
 	void generatePBXBuildFileSection(traktor::OutputStream& s, const Solution* solution, const traktor::RefArray< Project >& projects) const;
 
