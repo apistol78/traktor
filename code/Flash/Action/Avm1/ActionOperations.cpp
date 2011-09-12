@@ -917,7 +917,8 @@ void opx_getMember(ExecutionState& state)
 	ActionValueStack& stack = state.frame->getStack();
 
 	ActionValue memberName = stack.pop();
-	ActionValue& targetValue = stack.top();
+	ActionValue targetValue = stack.pop();
+	ActionValue memberValue;
 
 	if (targetValue.isObject())
 	{
@@ -926,21 +927,25 @@ void opx_getMember(ExecutionState& state)
 		{
 			ActionContext* context = state.frame->getContext();
 
-			if (target->getMember(context, memberName, targetValue))
+			if (target->getMember(context, memberName, memberValue))
+			{
+				stack.push(memberValue);
 				return;
+			}
 
 			Ref< ActionFunction > propertyGet;
 			if (memberName.isString() && target->getPropertyGet(context, memberName.getString(), propertyGet))
 			{
 				stack.push(ActionValue(avm_number_t(0)));
-				targetValue = propertyGet->call(state.frame, target);
+				memberValue = propertyGet->call(state.frame, target);
+				stack.push(memberValue);
 				return;
 			}
 		}
 	}
 
 	// Unable to get member value; ensure top of stack is undefined.
-	targetValue = ActionValue();
+	stack.push(ActionValue());
 }
 
 void opx_setMember(ExecutionState& state)
