@@ -14,6 +14,13 @@ namespace traktor
 		namespace
 		{
 
+#if defined(_DEBUG)
+#	define T_VALIDATE(av) \
+	T_ASSERT ((av).getType() >= ActionValue::AvtUndefined && (av).getType() <= ActionValue::AvtObject);
+#else
+#	define T_VALIDATE(av)
+#endif
+
 static int32_t s_stringCount = 0;
 
 char* refStringCreate(const char* s)
@@ -68,6 +75,7 @@ ActionValue::ActionValue()
 ActionValue::ActionValue(const ActionValue& v)
 :	m_type(v.m_type)
 {
+	T_VALIDATE(v);
 	m_value.o = 0;
 	if (m_type == AvtString)
 		m_value.s = refStringInc(v.m_value.s);
@@ -129,6 +137,7 @@ ActionValue::~ActionValue()
 {
 	T_EXCEPTION_GUARD_BEGIN
 
+	T_VALIDATE(*this);
 	if (m_type == AvtString && m_value.s)
 		refStringDec(m_value.s);
 	else if (m_type == AvtObject && m_value.o)
@@ -139,6 +148,7 @@ ActionValue::~ActionValue()
 
 bool ActionValue::getBooleanSafe() const
 {
+	T_VALIDATE(*this);
 	switch (m_type)
 	{
 	case AvtBoolean:
@@ -155,6 +165,7 @@ bool ActionValue::getBooleanSafe() const
 
 avm_number_t ActionValue::getNumberSafe() const
 {
+	T_VALIDATE(*this);
 	switch (m_type)
 	{
 	case AvtBoolean:
@@ -167,6 +178,7 @@ avm_number_t ActionValue::getNumberSafe() const
 
 std::string ActionValue::getStringSafe() const
 {
+	T_VALIDATE(*this);
 	switch (m_type)
 	{
 	case AvtBoolean:
@@ -188,6 +200,7 @@ std::wstring ActionValue::getWideStringSafe() const
 
 Ref< ActionObject > ActionValue::getObjectSafe() const
 {
+	T_VALIDATE(*this);
 	switch (m_type)
 	{
 	case AvtBoolean:
@@ -204,6 +217,9 @@ Ref< ActionObject > ActionValue::getObjectSafe() const
 
 ActionValue& ActionValue::operator = (const ActionValue& v)
 {
+	T_VALIDATE(*this);
+	T_VALIDATE(v);
+
 	if (v.m_type == AvtString)
 		refStringInc(v.m_value.s);
 	else if (v.m_type == AvtObject)
