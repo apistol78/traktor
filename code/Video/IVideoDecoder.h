@@ -32,7 +32,7 @@ struct VideoDecoderInfo
 /*! \brief
  * \ingroup Video
  */
-class IVideoDecoder : public Object
+class T_DLLCLASS IVideoDecoder : public Object
 {
 	T_RTTI_CLASS;
 
