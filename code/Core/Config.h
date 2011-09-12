@@ -19,8 +19,8 @@
 #	endif
 #elif defined(__GNUC__)
 #	if !defined(T_STATIC)
-#		define T_DLLIMPORT
-#		define T_DLLEXPORT
+#		define T_DLLIMPORT __attribute__((visibility("default")))
+#		define T_DLLEXPORT __attribute__((visibility("default")))
 #		define T_DLLLOCAL __attribute__((visibility("hidden")))
 #	endif
 #	define T_FORCE_INLINE inline
