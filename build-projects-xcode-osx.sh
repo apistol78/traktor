@@ -1,8 +1,18 @@
 #!/bin/sh
+
 export TRAKTOR_HOME=$PWD
 
-if [ $1 -eq "static" ]; then
-	wine $TRAKTOR_HOME/bin/SolutionBuilder -f=xcode -rootPath=$(TRAKTOR_HOME)/build/macosx-static TraktorMacOSX.xms -d=DebugStatic -r=ReleaseStatic
-else
-	wine $TRAKTOR_HOME/bin/SolutionBuilder -f=xcode -rootPath=$(TRAKTOR_HOME)/build/macosx-shared TraktorMacOSX.xms -d=DebugShared -r=ReleaseShared
+CONFIG=$1
+if [ -z $CONFIG ] ; then
+	CONFIG="both"
 fi
+
+if [ $CONFIG == "static" ] ; then
+	wine $TRAKTOR_HOME/bin/SolutionBuilder -f=xcode -xcode-root-suffix=-static TraktorMacOSX.xms -d=DebugStatic -r=ReleaseStatic
+elif [ $CONFIG == "shared" ] ; then
+	wine $TRAKTOR_HOME/bin/SolutionBuilder -f=xcode -xcode-root-suffix=-shared TraktorMacOSX.xms -d=DebugShared -r=ReleaseShared
+else
+	wine $TRAKTOR_HOME/bin/SolutionBuilder -f=xcode -xcode-root-suffix=-static TraktorMacOSX.xms -d=DebugStatic -r=ReleaseStatic
+	wine $TRAKTOR_HOME/bin/SolutionBuilder -f=xcode -xcode-root-suffix=-shared TraktorMacOSX.xms -d=DebugShared -r=ReleaseShared
+fi
+
