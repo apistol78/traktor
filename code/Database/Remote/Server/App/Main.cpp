@@ -44,16 +44,16 @@ int WinMain(HINSTANCE, HINSTANCE, LPTSTR cmdLine, int showCmd)
 	CommandLine cmdLine(1, argv);
 #endif
 
-	traktor::log::info << L"Traktor Remote Database Server v1.0.1" << Endl;
-	if (cmdLine.hasOption('h'))
+	traktor::log::info << L"Traktor Remote Database Server v1.0.2" << Endl;
+	if (cmdLine.hasOption('h', L"help"))
 	{
-		traktor::log::info << L"Usage: Traktor.Database.Remote.Server.App -c=[configuration] -h" << Endl;
+		traktor::log::info << L"Usage: Traktor.Database.Remote.Server.App -c|-config=[configuration] -h|-help" << Endl;
 		return 1;
 	}
 	
 	std::wstring configurationFile = L"Traktor.Database.Remote.Server.config";
-	if (cmdLine.hasOption('c'))
-		configurationFile = cmdLine.getOption('c').getString();
+	if (cmdLine.hasOption('c', L"config"))
+		configurationFile = cmdLine.getOption('c', L"config").getString();
 
 	Ref< traktor::IStream > file = FileSystem::getInstance().open(configurationFile, File::FmRead);
 	if (!file)

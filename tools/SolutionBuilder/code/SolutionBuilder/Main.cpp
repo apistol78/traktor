@@ -17,7 +17,7 @@
 
 using namespace traktor;
 
-#define TITLE L"SolutionBuilder v2.6.1"
+#define TITLE L"SolutionBuilder v2.6.2"
 
 #define ERROR_UNKNOWN_FORMAT 1
 #define ERROR_UNABLE_TO_READ_SOLUTION 2
@@ -35,9 +35,9 @@ int main(int argc, const char** argv)
 
 	traktor::log::info << TITLE << Endl;
 
-	if (cmdLine.hasOption('f'))
+	if (cmdLine.hasOption('f', L"format"))
 	{
-		std::wstring ide = cmdLine.getOption('f').getString();
+		std::wstring ide = cmdLine.getOption('f', L"format").getString();
 		if (ide == L"cblocks")
 			builder = new SolutionBuilderCBlocks();
 		else if (ide == L"eclipse")
@@ -59,10 +59,11 @@ int main(int argc, const char** argv)
 	else
 		builder = new SolutionBuilderMsvc();
 
-	if (cmdLine.hasOption('?') || cmdLine.hasOption('h') || cmdLine.getCount() <= 0)
+	if (cmdLine.hasOption('?') || cmdLine.hasOption('h', L"help") || cmdLine.getCount() <= 0)
 	{
 		traktor::log::info << L"Usage : " << Path(cmdLine.getFile()).getFileName() << L" -[options] [solution]" << Endl;
-		traktor::log::info << L"\t-f=[format]	[\"cblocks\", \"eclipse\", \"graphviz\", \"msvc\"*, \"make\", \"xcode\"]" << Endl;
+		traktor::log::info << L"\t-f,-format=[format]	[\"cblocks\", \"eclipse\", \"graphviz\", \"msvc\"*, \"make\", \"xcode\"]" << Endl;
+		traktor::log::info << L"\t-rootPath=Path		Override solution root path" << Endl;
 		if (builder)
 			builder->showOptions();
 		return 0;
@@ -82,6 +83,13 @@ int main(int argc, const char** argv)
 		return ERROR_UNABLE_TO_READ_SOLUTION;
 	}
 
+	if (cmdLine.hasOption(L"rootPath"))
+	{
+		Path rootPath(cmdLine.getOption(L"rootPath").getString());
+		solution->setRootPath(rootPath.normalized().getPathName());
+	}
+
+	traktor::log::info << L"Using root path \"" << solution->getRootPath() << L"\"" << Endl;
 	traktor::log::info << L"Resolving dependencies..." << Endl;
 
 	const RefArray< Project >& projects = solution->getProjects();

@@ -48,15 +48,15 @@ SolutionBuilderMake::SolutionBuilderMake()
 
 bool SolutionBuilderMake::create(const CommandLine& cmdLine)
 {
-	if (cmdLine.hasOption('d'))
+	if (cmdLine.hasOption('d', L"make-dialect"))
 	{
-		if (cmdLine.getOption('d').getString() == L"nmake")
+		if (cmdLine.getOption('d', L"make-dialect").getString() == L"nmake")
 			m_dialect = MdNMake;
 	}
 
-	if (cmdLine.hasOption('p'))
+	if (cmdLine.hasOption('p', L"make-platform"))
 	{
-		std::wstring platform = cmdLine.getOption('p').getString();
+		std::wstring platform = cmdLine.getOption('p', L"make-platform").getString();
 		if (platform == L"win32")
 			m_platform = MpWin32;
 		else if (platform == L"osx")
@@ -67,8 +67,8 @@ bool SolutionBuilderMake::create(const CommandLine& cmdLine)
 			return false;
 	}
 
-	if (cmdLine.hasOption('c'))
-		m_config = cmdLine.getOption('c').getString();
+	if (cmdLine.hasOption('c', L"make-configuration"))
+		m_config = cmdLine.getOption('c', L"make-configuration").getString();
 	else
 	{
 		m_config = L"$(TRAKTOR_HOME)/bin/make-config-";
@@ -222,9 +222,9 @@ bool SolutionBuilderMake::generate(Solution* solution)
 
 void SolutionBuilderMake::showOptions() const
 {
-	traktor::log::info << L"\t-c=[configuration file]	[$(TRAKTOR_HOME)/bin/make-config-(platform).inc]" << Endl;
-	traktor::log::info << L"\t-d=[dialect]			[\"gnu\" *, \"nmake\"]" << Endl;
-	traktor::log::info << L"\t-p=[platform]			[\"macosx\" *, \"win32\", \"linux\"]" << Endl;
+	traktor::log::info << L"\t-c,-make-configuration=[configuration file]	[$(TRAKTOR_HOME)/bin/make-config-(platform).inc]" << Endl;
+	traktor::log::info << L"\t-d,-make-dialect=[dialect]					[\"gnu\" *, \"nmake\"]" << Endl;
+	traktor::log::info << L"\t-p,-make-platform=[platform]					[\"macosx\" *, \"win32\", \"linux\"]" << Endl;
 }
 
 bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)

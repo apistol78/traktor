@@ -147,15 +147,15 @@ int main(int argc, const char** argv)
 	CommandLine cmdLine(argc, argv);
 	Ref< traktor::IStream > logFile;
 
-	if (cmdLine.hasOption('h'))
+	if (cmdLine.hasOption('h', L"help"))
 	{
 		traktor::log::info << L"Usage: Traktor.Pipeline.App (-options) \"{Asset guid}\"" << Endl;
-		traktor::log::info << L"       -f           Force rebuild" << Endl;
-		traktor::log::info << L"       -s           Settings (default \"Traktor.Editor\")" << Endl;
-		traktor::log::info << L"       -l=logfile   Save log file" << Endl;
-		traktor::log::info << L"       -n           Disable cache" << Endl;
-		traktor::log::info << L"       -p           Write progress to stdout" << Endl;
-		traktor::log::info << L"       -h           Show this help" << Endl;
+		traktor::log::info << L"       -f|-force       Force rebuild" << Endl;
+		traktor::log::info << L"       -s|-settings    Settings (default \"Traktor.Editor\")" << Endl;
+		traktor::log::info << L"       -l|-log=logfile Save log file" << Endl;
+		traktor::log::info << L"       -n|-no-cache    Disable cache" << Endl;
+		traktor::log::info << L"       -p|-progress    Write progress to stdout" << Endl;
+		traktor::log::info << L"       -h|-help        Show this help" << Endl;
 		return 0;
 	}
 
@@ -163,9 +163,9 @@ int main(int argc, const char** argv)
 	SetConsoleCtrlHandler((PHANDLER_ROUTINE)consoleCtrlHandler, TRUE);
 #endif
 
-	if (cmdLine.hasOption('l'))
+	if (cmdLine.hasOption('l', L"log"))
 	{
-		std::wstring logPath = cmdLine.getOption('l').getString();
+		std::wstring logPath = cmdLine.getOption('l', L"log").getString();
 		if ((logFile = FileSystem::getInstance().open(logPath, File::FmWrite)) != 0)
 		{
 			Ref< FileOutputStream > logStream = new FileOutputStream(logFile, new Utf8Encoding());
@@ -182,8 +182,8 @@ int main(int argc, const char** argv)
 	}
 
 	std::wstring settingsFile = L"Traktor.Editor";
-	if (cmdLine.hasOption('s'))
-		settingsFile = cmdLine.getOption('s').getString();
+	if (cmdLine.hasOption('s', L"settings"))
+		settingsFile = cmdLine.getOption('s', L"settings").getString();
 
 	Ref< Settings > settings = loadSettings(settingsFile);
 	if (!settings)
@@ -192,7 +192,7 @@ int main(int argc, const char** argv)
 		return 0;
 	}
 
-	if (cmdLine.hasOption('n'))
+	if (cmdLine.hasOption('n', L"no-cache"))
 	{
 		settings->setProperty< PropertyBoolean >(L"Pipeline.MemCached", false);
 		settings->setProperty< PropertyBoolean >(L"Pipeline.FileCache", false);
@@ -315,7 +315,7 @@ int main(int argc, const char** argv)
 	pipelineDepends->getDependencies(dependencies);
 
 	AutoPtr< StatusListener > statusListener;
-	if (cmdLine.hasOption('p'))
+	if (cmdLine.hasOption('p', L"progress"))
 		statusListener.reset(new StatusListener());
 
 	// Build output.
@@ -329,7 +329,7 @@ int main(int argc, const char** argv)
 		settings->getProperty< PropertyBoolean >(L"Pipeline.BuildThreads", true)
 	);
 
-	bool rebuild = cmdLine.hasOption('f');
+	bool rebuild = cmdLine.hasOption('f', L"force");
 	if (rebuild)
 		traktor::log::info << L"Rebuilding " << uint32_t(dependencies.size()) << L" asset(s)..." << Endl;
 	else

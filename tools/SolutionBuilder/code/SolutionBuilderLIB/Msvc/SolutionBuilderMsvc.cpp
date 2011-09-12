@@ -43,9 +43,9 @@ T_IMPLEMENT_RTTI_CLASS(L"SolutionBuilderMsvc", SolutionBuilderMsvc, SolutionBuil
 bool SolutionBuilderMsvc::create(const CommandLine& cmdLine)
 {
 	Ref< SolutionBuilderMsvcSettings > settings = new SolutionBuilderMsvcSettings();
-	if (cmdLine.hasOption('p'))
+	if (cmdLine.hasOption('p', L"msvc-platform"))
 	{
-		std::wstring platform = cmdLine.getOption('p').getString();
+		std::wstring platform = cmdLine.getOption('p', L"msvc-platform").getString();
 
 		traktor::log::info << L"Loading settings \"" << platform << L"\"..." << Endl;
 
@@ -261,5 +261,5 @@ bool SolutionBuilderMsvc::generate(Solution* solution)
 
 void SolutionBuilderMsvc::showOptions() const
 {
-	traktor::log::info << L"\t-p=[platform]	(Platform description file)" << Endl;
+	traktor::log::info << L"\t-p=[platform],-msvc-platform=[platform]	(Platform description file)" << Endl;
 }

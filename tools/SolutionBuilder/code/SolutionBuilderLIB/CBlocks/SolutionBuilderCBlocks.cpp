@@ -24,8 +24,8 @@ SolutionBuilderCBlocks::SolutionBuilderCBlocks()
 
 bool SolutionBuilderCBlocks::create(const traktor::CommandLine& cmdLine)
 {
-	if (cmdLine.hasOption('c'))
-		m_compiler = cmdLine.getOption('c').getString();
+	if (cmdLine.hasOption('c', L"cblocks-compiler"))
+		m_compiler = cmdLine.getOption(L"c").getString();
 	return true;
 }
 
@@ -526,7 +526,7 @@ bool SolutionBuilderCBlocks::generate(Solution* solution)
 
 void SolutionBuilderCBlocks::showOptions() const
 {
-	traktor::log::info << L"\t-c=[compiler]	(\"msvc8\", \"gcc\")" << Endl;
+	traktor::log::info << L"\t-c,-cblocks-compiler=[compiler]	(\"msvc8\", \"gcc\")" << Endl;
 }
 
 void SolutionBuilderCBlocks::collectEmbedItems(const Solution* solution, const Project* project, const ProjectItem* item, std::set< Path >& outEmbedItems) const
