@@ -144,10 +144,10 @@ int main(int argc, const char** argv)
 
 	log::info << L"Database Migration Tool; Built '" << mbstows(__TIME__) << L" - " << mbstows(__DATE__) << L"'" << Endl;
 
-	if (cmdLine.getCount() <= 0)
+	if (!cmdLine.hasOption('s', L"settings") && cmdLine.getCount() < 2)
 	{
-		log::info << L"Usage 1: Traktor.Database.Migrate.App [source database] [destination database] (module)*" << Endl;
-		log::info << L"Usage 2: Traktor.Database.Migrate.App -s|-settings=[settings]" << Endl;
+		log::info << L"Usage: Traktor.Database.Migrate.App [source database] [destination database] (module)*" << Endl;
+		log::info << L"       Traktor.Database.Migrate.App -s|-settings=[settings]" << Endl;
 		return 0;
 	}
 
