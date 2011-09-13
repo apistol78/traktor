@@ -18,7 +18,7 @@ using namespace traktor;
 namespace
 {
 
-void recursiveConvertInstances(db::Group* targetGroup, db::Group* sourceGroup)
+bool recursiveConvertInstances(db::Group* targetGroup, db::Group* sourceGroup)
 {
 	T_ANONYMOUS_VAR(ScopeIndent)(log::info);
 	log::info << IncreaseIndent;
@@ -37,7 +37,7 @@ void recursiveConvertInstances(db::Group* targetGroup, db::Group* sourceGroup)
 		if (!sourceObject)
 		{
 			log::error << L"Failed, unable to get source object" << Endl;
-			continue;
+			return false;
 		}
 
 		Guid sourceGuid = sourceInstance->getGuid();
@@ -45,7 +45,7 @@ void recursiveConvertInstances(db::Group* targetGroup, db::Group* sourceGroup)
 		if (!targetInstance)
 		{
 			log::error << L"Failed, unable to create target instance" << Endl;
-			continue;
+			return false;
 		}
 
 		targetInstance->setObject(sourceObject);
@@ -61,18 +61,21 @@ void recursiveConvertInstances(db::Group* targetGroup, db::Group* sourceGroup)
 			if (!sourceStream)
 			{
 				log::error << L"Failed, unable to open source stream" << Endl;
-				continue;
+				return false;
 			}
 
 			Ref< IStream > targetStream = targetInstance->writeData(*j);
 			if (!targetStream)
 			{
 				log::error << L"Failed, unable to open target stream" << Endl;
-				continue;
+				return false;
 			}
 
 			if (!StreamCopy(targetStream, sourceStream).execute())
+			{
 				log::error << L"Failed, unable to copy data" << Endl;
+				return false;
+			}
 
 			targetStream->close();
 			sourceStream->close();
@@ -81,7 +84,7 @@ void recursiveConvertInstances(db::Group* targetGroup, db::Group* sourceGroup)
 		if (!targetInstance->commit())
 		{
 			log::error << L"Failed, unable to commit target instance" << Endl;
-			continue;
+			return false;
 		}
 	}
 
@@ -102,12 +105,15 @@ void recursiveConvertInstances(db::Group* targetGroup, db::Group* sourceGroup)
 			if (!targetChildGroup)
 			{
 				log::error << L"Failed, unable to create target group" << Endl;
-				continue;
+				return false;
 			}
 		}
 
-		recursiveConvertInstances(targetChildGroup, sourceChildGroup);
+		if (!recursiveConvertInstances(targetChildGroup, sourceChildGroup))
+			return false;
 	}
+
+	return true;
 }
 
 Ref< Settings > loadSettings(const std::wstring& settingsFile)
@@ -125,7 +131,10 @@ Ref< Settings > loadSettings(const std::wstring& settingsFile)
 	}
 
 	if (settings)
+	{
+		log::info << L"Using configuration \"" << userConfig << L"\"" << Endl;
 		return settings;
+	}
 
 	if ((file = FileSystem::getInstance().open(globalConfig, File::FmRead)) != 0)
 	{
@@ -133,7 +142,13 @@ Ref< Settings > loadSettings(const std::wstring& settingsFile)
 		file->close();
 	}
 
-	return settings;
+	if (settings)
+	{
+		log::info << L"Using configuration \"" << globalConfig << L"\"" << Endl;
+		return settings;
+	}
+
+	return 0;
 }
 
 }
@@ -162,7 +177,7 @@ int main(int argc, const char** argv)
 		if (!settings)
 		{
 			traktor::log::error << L"Unable to load migrate settings \"" << settingsFile << L"\"" << Endl;
-			return 0;
+			return 1;
 		}
 
 		std::vector< std::wstring > modules = settings->getProperty< PropertyStringArray >(L"Migrate.Modules");
@@ -172,7 +187,7 @@ int main(int argc, const char** argv)
 			if (!library.open(*i))
 			{
 				log::error << L"Unable to load module \"" << *i << L"\"" << Endl;
-				return 0;
+				return 2;
 			}
 			library.detach();
 		}
@@ -182,13 +197,13 @@ int main(int argc, const char** argv)
 	}
 	else
 	{
-		for (int32_t i = 2; i < cmdLine.getCount(); ++i)
+		for (size_t i = 2; i < cmdLine.getCount(); ++i)
 		{
 			Library library;
 			if (!library.open(cmdLine.getString(i)))
 			{
 				log::error << L"Unable to load module \"" << cmdLine.getString(i) << L"\"" << Endl;
-				return 0;
+				return 2;
 			}
 			library.detach();
 		}
@@ -201,14 +216,14 @@ int main(int argc, const char** argv)
 	if (!sourceDb->open(sourceCs))
 	{
 		log::error << L"Unable to open source database \"" << sourceCs << L"\"" << Endl;
-		return false;
+		return 3;
 	}
 
 	Ref< db::Database > destinationDb = new db::Database();
 	if (!destinationDb->create(destinationCs))
 	{
 		log::error << L"Unable to create destination database \"" << destinationCs << L"\"" << Endl;
-		return false;
+		return 4;
 	}
 
 	log::info << L"Migration begin" << Endl;
@@ -216,7 +231,10 @@ int main(int argc, const char** argv)
 	Ref< db::Group > sourceGroup = sourceDb->getRootGroup();
 	Ref< db::Group > targetGroup = destinationDb->getRootGroup();
 	if (sourceGroup && targetGroup)
-		recursiveConvertInstances(targetGroup, sourceGroup);
+	{
+		if (!recursiveConvertInstances(targetGroup, sourceGroup))
+			return 5;
+	}
 
 	log::info << L"Migration complete" << Endl;
 
