@@ -35,7 +35,7 @@ void LogTargetDebug::log(const std::wstring& str)
 	StringOutputStream ss;
 	ss << L"(" << uint32_t(GetCurrentThreadId()) << L") " << str << Endl;
 	OutputDebugString(wstots(ss.str()).c_str());
-#else
+#elif defined(_DEBUG)
 	std::wcout << L"(DEBUG) " << str << std::endl;
 #endif
 }
