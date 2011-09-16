@@ -14,12 +14,9 @@
 #	include "Core/Thread/ThreadManager.h"
 #endif
 
-// On Linux and Apple we externally depend on Expat being part of the system.
-#if !defined(linux) && !defined(__APPLE__)
-#	define XML_STATIC
-#	define XML_UNICODE
-#	define XML_UNICODE_WCHAR_T
-#endif
+#define XML_STATIC
+#define XML_UNICODE
+#define XML_UNICODE_WCHAR_T
 
 #include "expat.h"
 
