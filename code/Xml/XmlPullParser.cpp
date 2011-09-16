@@ -15,9 +15,14 @@
 #endif
 
 #define XML_STATIC
-#define XML_UNICODE
-#define XML_UNICODE_WCHAR_T
 
+#if defined(_WIN32)
+#	include "winconfig.h"
+#elif defined(__APPLE__)
+#	include "macconfig.h"
+#elif defined(_PS3)
+#	include "ps3config.h"
+#endif
 #include "expat.h"
 
 namespace traktor
