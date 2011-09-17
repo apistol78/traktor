@@ -14,6 +14,12 @@
 namespace traktor
 {
 
+#if !defined(_DEBUG)
+#	define T_ATOMIC_INLINE T_FORCE_INLINE
+#else
+#	define T_ATOMIC_INLINE
+#endif
+
 /*! \brief Thread atomic operations.
  * \ingroup Core
  *
@@ -25,25 +31,25 @@ struct T_DLLCLASS Atomic
 	 *
 	 * \return Result value of variable.
 	 */
-	static T_FORCE_INLINE int32_t increment(int32_t& value);
+	static T_ATOMIC_INLINE int32_t increment(int32_t& value);
 
 	/*! \brief Decrement variable.
 	 *
 	 * \return Result value of variable.
 	 */
-	static T_FORCE_INLINE int32_t decrement(int32_t& value);
+	static T_ATOMIC_INLINE int32_t decrement(int32_t& value);
 
 	/*! \brief Add variable.
 	 *
 	 * \return Result value of variable.
 	 */
-	static T_FORCE_INLINE int32_t add(int32_t& value, int32_t delta);
+	static T_ATOMIC_INLINE int32_t add(int32_t& value, int32_t delta);
 
 	/*! \brief Set value of variable. */
-	static T_FORCE_INLINE uint32_t exchange(uint32_t& s, uint32_t v);
+	static T_ATOMIC_INLINE uint32_t exchange(uint32_t& s, uint32_t v);
 
 	/*! \brief Set value of variable. */
-	static T_FORCE_INLINE uint64_t exchange(uint64_t& s, uint64_t v);
+	static T_ATOMIC_INLINE uint64_t exchange(uint64_t& s, uint64_t v);
 
 	/*! \brief Set value of variable. */
 	template < typename T >
@@ -58,14 +64,16 @@ struct T_DLLCLASS Atomic
 
 }
 
-#if defined(_WIN32)
-#	include "Core/Thread/Win32/Atomic.inl"
-#elif defined(__APPLE__)
-#	include "Core/Thread/OsX/Atomic.inl"
-#elif defined(_PS3)
-#	include "Core/Thread/Ps3/Atomic.inl"
-#else
-#	include "Core/Thread/Linux/Atomic.inl"
+#if !defined(_DEBUG)
+#	if defined(_WIN32)
+#		include "Core/Thread/Win32/Atomic.inl"
+#	elif defined(__APPLE__)
+#		include "Core/Thread/OsX/Atomic.inl"
+#	elif defined(_PS3)
+#		include "Core/Thread/Ps3/Atomic.inl"
+#	else
+#		include "Core/Thread/Linux/Atomic.inl"
+#	endif
 #endif
 
 #endif	// traktor_Atomic_H
