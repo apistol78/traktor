@@ -13,12 +13,29 @@ namespace traktor
 class Case
 {
 public:
-	virtual void run() = 0;
+	struct Context
+	{
+		uint32_t succeeded;
+		uint32_t failed;
+
+		Context()
+		:	succeeded(0)
+		,	failed(0)
+		{
+		}
+	};
+
+	void execute(Context& context);
 
 protected:
+	virtual void run() = 0;
+
 	void succeeded(const std::wstring& message);
 
 	void failed(const std::wstring& message);
+
+private:
+	Context* m_context;
 };
 
 #define CASE_ASSERT(condition) \

@@ -58,10 +58,10 @@ void CaseMath::run()
 		Line2 ln(Vector2(0.0f, 0.0f), Vector2(10.0f, 0.0f));
 
 		float r, k;
-		ln.intersect(Ray2(Vector2(1.0f, -1.0f), Vector2(0.0f, 1.0f)), r, k);
+		ln.intersect(Ray2(Vector2(2.0f, -1.0f), Vector2(0.0f, 1.0f)), r, k);
 
-		CASE_ASSERT_COMPARE(r, 0.1f, compareFuzzyEqual);
-		CASE_ASSERT_COMPARE(k, 1.0f, compareFuzzyEqual);
+		CASE_ASSERT_COMPARE(r, 1.0f, compareFuzzyEqual);
+		CASE_ASSERT_COMPARE(k, 2.0f, compareFuzzyEqual);
 	}
 
 	Vector2 v1(1.5f, 2.5f);
@@ -117,17 +117,13 @@ void CaseMath::run()
 	CASE_ASSERT_EQUAL(Vector4(1.0f, 2.0f, 3.0f, 4.0f) + Scalar(5.0f), Vector4(6.0f, 7.0f, 8.0f, 9.0f));
 	CASE_ASSERT_EQUAL(Vector4(1.0f, 2.0f, 3.0f, 4.0f) + Vector4(5.0f, 6.0f, 7.0f, 8.0f), Vector4(6.0f, 8.0f, 10.0f, 12.0f));
 
-	CASE_ASSERT_EQUAL(rotateX(PI), Quaternion(0.0f, 0.0f, PI).toMatrix44());
+	CASE_ASSERT_EQUAL(rotateX(PI), Quaternion(0.0f, PI, 0.0f).toMatrix44());
 	CASE_ASSERT_EQUAL(rotateY(PI), Quaternion(PI, 0.0f, 0.0f).toMatrix44());
-	CASE_ASSERT_EQUAL(rotateZ(PI), Quaternion(0.0f, PI, 0.0f).toMatrix44());
+	CASE_ASSERT_EQUAL(rotateZ(PI), Quaternion(0.0f, 0.0f, PI).toMatrix44());
 
 	CASE_ASSERT_EQUAL(rotateX(PI), Quaternion(rotateX(PI)).toMatrix44());
 	CASE_ASSERT_EQUAL(rotateY(PI), Quaternion(rotateY(PI)).toMatrix44());
 	CASE_ASSERT_EQUAL(rotateZ(PI), Quaternion(rotateZ(PI)).toMatrix44());
-
-	CASE_ASSERT_EQUAL(Quaternion(Vector4(1.0f, 0.0f, 0.0f), Vector4(0.0f, 1.0f, 0.0f)).toMatrix44(), rotateZ(PI / 2.0f));
-	CASE_ASSERT_EQUAL(Quaternion(Vector4(1.0f, 0.0f, 0.0f), Vector4(0.0f, 0.0f, 1.0f)).toMatrix44(), rotateY(PI / 2.0f));
-	CASE_ASSERT_EQUAL(Quaternion(Vector4(0.0f, 1.0f, 0.0f), Vector4(0.0f, 0.0f, 1.0f)).toMatrix44(), rotateX(PI / 2.0f));
 
 	{
 		Quaternion Q(Vector4(1.0f, 0.0f, 0.0f), Vector4(0.0f, 1.0f, 0.0f));
@@ -142,25 +138,25 @@ void CaseMath::run()
 	CASE_ASSERT_COMPARE(Quaternion(Vector4(0.0f, 1.0f, 0.0f), Vector4(0.0f, 0.0f, 1.0f)) * Vector4(0.0f, 1.0f, 0.0f), Vector4(0.0f, 0.0f, 1.0f), compareEqual);
 
 	CASE_ASSERT_COMPARE(rotateZ(PI / 2.0f) * Vector4(1.0f, 0.0f, 0.0f), Vector4(0.0f, 1.0f, 0.0f), compareEqual);
-	CASE_ASSERT_COMPARE(rotateY(PI / 2.0f) * Vector4(1.0f, 0.0f, 0.0f), Vector4(0.0f, 0.0f, 1.0f), compareEqual);
+	CASE_ASSERT_COMPARE(rotateY(-PI / 2.0f) * Vector4(1.0f, 0.0f, 0.0f), Vector4(0.0f, 0.0f, 1.0f), compareEqual);
 	CASE_ASSERT_COMPARE(rotateX(PI / 2.0f) * Vector4(0.0f, 1.0f, 0.0f), Vector4(0.0f, 0.0f, 1.0f), compareEqual);
 
 	// Rotate translation by 180 deg around Z axis.
-	CASE_ASSERT_COMPARE((translate(1.0f, 0.0f, 0.0f) * rotateZ(PI)).translation(), Vector4(-1.0f, 0.0f, 0.0f, 1.0f), compareEqual);
+	CASE_ASSERT_COMPARE((rotateZ(PI) * translate(1.0f, 0.0f, 0.0f)).translation(), Vector4(-1.0f, 0.0f, 0.0f, 1.0f), compareEqual);
 
 	// Rotate translation by 180 deg around Z axis, incorrect order.
-	CASE_ASSERT_COMPARE((rotateZ(PI) * translate(1.0f, 0.0f, 0.0f)).translation(), Vector4(-1.0f, 0.0f, 0.0f, 1.0f), compareNotEqual);
+	CASE_ASSERT_COMPARE((translate(1.0f, 0.0f, 0.0f) * rotateZ(PI)).translation(), Vector4(-1.0f, 0.0f, 0.0f, 1.0f), compareNotEqual);
 
 	// First translate point, then rotate 90 deg around Z axis.
 	Matrix44 A = translate(1.0f, 0.0f, 0.0f);
 	Matrix44 B = rotateZ(PI / 2.0f);
-	Matrix44 AB = A * B;
+	Matrix44 AB = B * A;
 
 	Vector4 p(2.0f, 0.0f, 0.0f, 1.0f);
 	Vector4 pp1 = B * (A * p);
 	Vector4 pp2 = AB * p;
-	Vector4 pp3 = A * B * p;
-	Vector4 pp4 = B * A * p;	// Incorrect order of matrices.
+	Vector4 pp3 = B * A * p;
+	Vector4 pp4 = A * B * p;	// Incorrect order of matrices.
 
 	// Expected result.
 	Vector4 r(0.0f, 3.0f, 0.0f, 1.0f);

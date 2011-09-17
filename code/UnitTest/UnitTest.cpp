@@ -8,7 +8,6 @@
 #include "UnitTest/CaseProcess.h"
 #include "UnitTest/CaseThread.h"
 #include "UnitTest/CaseJob.h"
-#include "UnitTest/CaseHeap.h"
 #include "UnitTest/CaseMath.h"
 #include "UnitTest/CaseMatrix33.h"
 #include "UnitTest/CaseMatrix44.h"
@@ -36,74 +35,79 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPWSTR, int)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 #endif
 {
-	//log::info << L"Case cycle debugger" << Endl;
-	//traktor::CaseCycleDebugger().run();
+	Case::Context context;
 
-	//log::info << L"Case atomic" << Endl;
-	//traktor::CaseAtomic().run();
+	log::info << L"Case cycle debugger" << Endl;
+	traktor::CaseCycleDebugger().execute(context);
 
-	//log::info << L"Case bitreader" << Endl;
-	//traktor::CaseBitReader().run();
+	log::info << L"Case atomic" << Endl;
+	traktor::CaseAtomic().execute(context);
 
-	//log::info << L"Case meta" << Endl;
-	//traktor::CaseMeta().run();
+	log::info << L"Case bitreader" << Endl;
+	traktor::CaseBitReader().execute(context);
+
+	log::info << L"Case meta" << Endl;
+	traktor::CaseMeta().execute(context);
 
 	//log::info << L"Case process" << Endl;
-	//traktor::CaseProcess().run();
+	//traktor::CaseProcess().execute(context);
 
-	//log::info << L"Case thread" << Endl;
-	//traktor::CaseThread().run();
+	log::info << L"Case thread" << Endl;
+	traktor::CaseThread().execute(context);
 
-	//log::info << L"Case job" << Endl;
-	//traktor::CaseJob().run();
+	log::info << L"Case job" << Endl;
+	traktor::CaseJob().execute(context);
 
-	//log::info << L"Case heap" << Endl;
-	//traktor::CaseHeap().run();
+	log::info << L"Case math" << Endl;
+	traktor::CaseMath().execute(context);
 
-	//log::info << L"Case math" << Endl;
-	//traktor::CaseMath().run();
+	log::info << L"Case matrix 3x3" << Endl;
+	traktor::CaseMatrix33().execute(context);
 
-	//log::info << L"Case matrix 3x3" << Endl;
-	//traktor::CaseMatrix33().run();
+	log::info << L"Case matrix 4x4" << Endl;
+	traktor::CaseMatrix44().execute(context);
 
-	//log::info << L"Case matrix 4x4" << Endl;
-	//traktor::CaseMatrix44().run();
-
-	//log::info << L"Case quaternion" << Endl;
-	//traktor::CaseQuaternion().run();
+	log::info << L"Case quaternion" << Endl;
+	traktor::CaseQuaternion().execute(context);
 
 	//log::info << L"Case small map" << Endl;
-	//traktor::CaseSmallMap().run();
+	//traktor::CaseSmallMap().execute(context);
 
-	//log::info << L"Case transform" << Endl;
-	//traktor::CaseTransform().run();
+	log::info << L"Case transform" << Endl;
+	traktor::CaseTransform().execute(context);
 
-	//log::info << L"Case winding" << Endl;
-	//traktor::CaseWinding().run();
+	log::info << L"Case winding" << Endl;
+	traktor::CaseWinding().execute(context);
 
-	//log::info << L"Case path" << Endl;
-	//traktor::CasePath().run();
+	log::info << L"Case path" << Endl;
+	traktor::CasePath().execute(context);
 
-	//log::info << L"Case xml pull parser" << Endl;
-	//traktor::CaseXmlPullParser().run();
+	log::info << L"Case xml pull parser" << Endl;
+	traktor::CaseXmlPullParser().execute(context);
 
 	//log::info << L"Case xml document" << Endl;
-	//traktor::CaseXmlDocument().run();
+	//traktor::CaseXmlDocument().execute(context);
 
-	//log::info << L"Case zip" << Endl;
-	//traktor::CaseZip().run();
+	log::info << L"Case zip" << Endl;
+	traktor::CaseZip().execute(context);
 
-	//log::info << L"Case spatial hash array" << Endl;
-	//traktor::CaseSpatialHashArray().run();
+	log::info << L"Case spatial hash array" << Endl;
+	traktor::CaseSpatialHashArray().execute(context);
 
-	//log::info << L"Case software renderer" << Endl;
-	//traktor::CaseRenderSw().run();
+	log::info << L"Case software renderer" << Endl;
+	traktor::CaseRenderSw().execute(context);
 
 	//log::info << L"Case sound" << Endl;
-	//traktor::CaseSound().run();
+	//traktor::CaseSound().execute(context);
 
-	log::info << L"Case stream copy" << Endl;
-	traktor::CaseStreamCopy().run();
+	//log::info << L"Case stream copy" << Endl;
+	//traktor::CaseStreamCopy().execute(context);
 
 	log::info << L"Finished" << Endl;
+	log::info << IncreaseIndent;
+	log::info << context.succeeded << L" succeeded" << Endl;
+	log::info << context.failed << L" failed" << Endl;
+	log::info << DecreaseIndent;
+
+	return context.failed == 0 ? 0 : 1;
 }

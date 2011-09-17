@@ -65,7 +65,7 @@ void CaseXmlPullParser::run()
 	CASE_ASSERT_EQUAL(parser.next(), xml::XmlPullParser::EtEndElement);
 	CASE_ASSERT_EQUAL(parser.getEvent().value, L"root");
 
-	CASE_ASSERT_EQUAL(parser.next(), xml::XmlPullParser::EtInvalid);
+	CASE_ASSERT_EQUAL(parser.next(), xml::XmlPullParser::EtEndDocument);
 }
 
 }
