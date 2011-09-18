@@ -1,6 +1,9 @@
+#if defined(_MSC_VER) || defined(__APPLE__)
+#	include <emmintrin.h>
+#endif
+#include "Core/Math/MathUtils.h"
 #include "Drawing/PixelFormat.h"
 #include "Drawing/Palette.h"
-#include "Core/Math/MathUtils.h"
 
 namespace traktor
 {

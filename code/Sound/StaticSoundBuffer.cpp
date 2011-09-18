@@ -1,3 +1,6 @@
+#if defined(_MSC_VER) || defined(__APPLE__)
+#	include <emmintrin.h>
+#endif
 #include "Core/Math/MathConfig.h"
 #include "Core/Memory/BlockAllocator.h"
 #include "Core/Misc/Align.h"
