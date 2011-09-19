@@ -20,7 +20,7 @@ void ErrorState::leave()
 {
 }
 
-IState::UpdateResult ErrorState::update(IStateManager* stateManager, IUpdateControl& control, const IUpdateInfo& info, bool substep)
+IState::UpdateResult ErrorState::update(IStateManager* stateManager, IUpdateControl& control, const IUpdateInfo& info)
 {
 	return UrExit;
 }
