@@ -19,6 +19,8 @@ TargetPerformance::TargetPerformance()
 ,	render(0.0f)
 ,	physics(0.0f)
 ,	input(0.0f)
+,	steps(0)
+,	interval(0)
 ,	memInUse(0)
 ,	heapObjects(0)
 {
@@ -33,6 +35,8 @@ bool TargetPerformance::serialize(ISerializer& s)
 	s >> Member< float >(L"render", render);
 	s >> Member< float >(L"physics", physics);
 	s >> Member< float >(L"input", input);
+	s >> Member< int32_t >(L"steps", steps);
+	s >> Member< int32_t >(L"interval", interval);
 	s >> Member< uint32_t >(L"memAvail", memInUse);
 	s >> Member< uint32_t >(L"heapObjects", heapObjects);
 	return true;

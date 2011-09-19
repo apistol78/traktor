@@ -63,10 +63,9 @@ public:
 	 * \param stateManager State manager.
 	 * \param control Update control.
 	 * \param info Update information.
-	 * \param substep Is sub-step update.
 	 * \return Update result.
 	 */
-	virtual UpdateResult update(IStateManager* stateManager, IUpdateControl& control, const IUpdateInfo& info, bool substep) = 0;
+	virtual UpdateResult update(IStateManager* stateManager, IUpdateControl& control, const IUpdateInfo& info) = 0;
 
 	/*! \brief Build frame.
 	 *

@@ -574,7 +574,7 @@ bool Application::update()
 		double updateDuration = 0.0;
 		double physicsDuration = 0.0;
 		double inputDuration = 0.0;
-		uint32_t updateCount = 0;
+		int32_t updateCount = 0;
 
 		physics::PhysicsManager* physicsManager = m_physicsServer->getPhysicsManager();
 		if (physicsManager && !m_updateControl.m_pause)
@@ -585,12 +585,9 @@ bool Application::update()
 			UpdateInfo updateInfo = m_updateInfo;
 			float simulationEndTime = m_updateInfo.m_stateTime;
 
-			int32_t stepCount = int32_t((simulationEndTime - m_updateInfo.m_simulationTime) / c_simulationDeltaTime);
-			if (stepCount > c_maxSimulationUpdates)
-				stepCount = c_maxSimulationUpdates;
-
 			// Execute fixed update(s).
-			for (int32_t i = 0; i < stepCount; ++i, m_updateInfo.m_simulationTime += c_simulationDeltaTime)
+			bool renderAlreadyFinished = false;
+			for (int32_t i = 0; i < c_maxSimulationUpdates && m_updateInfo.m_simulationTime < simulationEndTime; ++i, m_updateInfo.m_simulationTime += c_simulationDeltaTime)
 			{
 				// If we're doing multiple updates per frame then we're rendering bound; so in order
 				// to keep input updating periodically we need to make sure we wait a bit, as long
@@ -598,15 +595,15 @@ bool Application::update()
 				if (
 					m_threadRender &&
 					m_waitRenderFinishInterval > 0 &&
+					!renderAlreadyFinished &&
 					i > 0
 				)
 				{
 					if (m_signalRenderFinish.wait(m_waitRenderFinishInterval))
 					{
-						// Rendering of last frame has already finished; we need to decrease interval time
-						// as we don't want rendering to be finished before the updates has.
-						--m_waitRenderFinishInterval;
-						break;
+						// Rendering of last frame has already finished; do not wait further intervals during this
+						// update phase, just continue as fast as possible.
+						renderAlreadyFinished = true;
 					}
 				}
 
@@ -623,8 +620,7 @@ bool Application::update()
 
 				// Update current state for each simulation tick.
 				double updateTimeStart = m_timer.getElapsedTime();
-				bool substep = ((m_updateInfo.m_simulationTime + c_simulationDeltaTime) < simulationEndTime);
-				IState::UpdateResult result = currentState->update(m_stateManager, m_updateControl, m_updateInfo, substep);
+				IState::UpdateResult result = currentState->update(m_stateManager, m_updateControl, m_updateInfo);
 				double updateTimeEnd = m_timer.getElapsedTime();
 				updateDuration += updateTimeEnd - updateTimeStart;
 				updateCount++;
@@ -641,6 +637,10 @@ bool Application::update()
 				if (m_stateManager->getNext())
 					break;
 			}
+
+			// Rendering of last frame became finished during update; we need to decrease interval time.
+			if (renderAlreadyFinished)
+				--m_waitRenderFinishInterval;
 		}
 		else
 		{
@@ -653,7 +653,7 @@ bool Application::update()
 			m_updateInfo.m_simulationFrequency = uint32_t(1.0f / m_updateInfo.m_frameDeltaTime);
 
 			double updateTimeStart = m_timer.getElapsedTime();
-			IState::UpdateResult updateResult = currentState->update(m_stateManager, m_updateControl, m_updateInfo, false);
+			IState::UpdateResult updateResult = currentState->update(m_stateManager, m_updateControl, m_updateInfo);
 			double updateTimeEnd = m_timer.getElapsedTime();
 			updateDuration += updateTimeEnd - updateTimeStart;
 			updateCount++;
@@ -688,11 +688,11 @@ bool Application::update()
 
 				if (renderFinished)
 				{
-					// If we waited for rendering longer than a update cycle then
+					// If we waited for rendering longer than a update cycle (with 10% margin) then
 					// we increase interval time.
 					if (updateCount > 1)
 					{
-						if ((waitEnd - waitBegin) > (physicsDuration + inputDuration + updateDuration) / updateCount)
+						if ((waitEnd - waitBegin) > ((physicsDuration + inputDuration + updateDuration) * 1.1f) / updateCount)
 							++m_waitRenderFinishInterval;
 					}
 
@@ -808,6 +808,8 @@ bool Application::update()
 				performance.update = float(updateDuration / updateCount);
 				performance.physics = float(physicsDuration / updateCount);
 				performance.input = float(inputDuration / updateCount);
+				performance.steps = updateCount;
+				performance.interval = updateCount > 1 ? m_waitRenderFinishInterval : 0;
 			}
 			performance.build = float(buildTimeEnd - buildTimeStart);
 			performance.render = float(statistics.duration);

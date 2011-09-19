@@ -21,7 +21,7 @@ public:
 
 	virtual void leave();
 
-	virtual UpdateResult update(IStateManager* stateManager, IUpdateControl& control, const IUpdateInfo& info, bool substep);
+	virtual UpdateResult update(IStateManager* stateManager, IUpdateControl& control, const IUpdateInfo& info);
 
 	virtual BuildResult build(uint32_t frame, const IUpdateInfo& info);
 

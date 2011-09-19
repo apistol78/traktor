@@ -16,6 +16,8 @@ namespace traktor
 		namespace
 		{
 
+const int32_t c_performanceHeight = 36;
+
 std::wstring formatPerformanceTime(float time)
 {
 	std::wstringstream ss;
@@ -35,7 +37,7 @@ TargetCell::TargetCell(ui::Bitmap* bitmap, TargetInstance* instance)
 int32_t TargetCell::getHeight() const
 {
 	const RefArray< TargetConnection >& connections = m_instance->getConnections();
-	return 28 + connections.size() * 24;
+	return 28 + connections.size() * c_performanceHeight;
 }
 
 void TargetCell::placeCells(ui::custom::AutoWidget* widget, const ui::Rect& rect)
@@ -75,7 +77,7 @@ void TargetCell::paint(ui::custom::AutoWidget* widget, ui::Canvas& canvas, const
 
 	ui::Rect performanceRect = rect;
 	performanceRect.top = rect.top + 28;
-	performanceRect.bottom = performanceRect.top + 24;
+	performanceRect.bottom = performanceRect.top + c_performanceHeight;
 	for (uint32_t i = 0; i < connections.size(); ++i)
 	{
 		canvas.setForeground(Color4ub(180, 180, 180));
@@ -108,13 +110,13 @@ void TargetCell::paint(ui::custom::AutoWidget* widget, ui::Canvas& canvas, const
 
 	performanceRect = rect;
 	performanceRect.top = rect.top + 28;
-	performanceRect.bottom = performanceRect.top + 24;
+	performanceRect.bottom = performanceRect.top + c_performanceHeight;
 	for (uint32_t i = 0; i < connections.size(); ++i)
 	{
 		const TargetPerformance& performance = connections[i]->getPerformance();
 
 		ui::Rect topRect = performanceRect;
-		topRect.bottom = topRect.top + topRect.getHeight() / 2;
+		topRect.bottom = topRect.top + 12;
 
 		topRect.left += 6;
 		canvas.drawText(topRect, toString(int32_t(performance.fps)), ui::AnLeft, ui::AnCenter);
@@ -134,8 +136,18 @@ void TargetCell::paint(ui::custom::AutoWidget* widget, ui::Canvas& canvas, const
 		topRect.left += 50;
 		canvas.drawText(topRect, L"i: " + formatPerformanceTime(performance.input), ui::AnLeft, ui::AnCenter);
 
+		ui::Rect middleRect = performanceRect;
+		middleRect.top = performanceRect.top + 12;
+		middleRect.bottom = performanceRect.top + 24;
+
+		middleRect.left += 6;
+		canvas.drawText(middleRect, L"S: " + toString(performance.steps), ui::AnLeft, ui::AnCenter);
+
+		middleRect.left += 80;
+		canvas.drawText(middleRect, L"I: " + toString(performance.interval), ui::AnLeft, ui::AnCenter);
+
 		ui::Rect bottomRect = performanceRect;
-		bottomRect.top = bottomRect.top + bottomRect.getHeight() / 2;
+		bottomRect.top = performanceRect.top + 24;
 
 		bottomRect.left += 6;
 		canvas.drawText(bottomRect, L"M: " + toString(uint32_t(performance.memInUse / 1024)) + L" KiB", ui::AnLeft, ui::AnCenter);
