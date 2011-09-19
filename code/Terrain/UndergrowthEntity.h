@@ -3,12 +3,13 @@
 
 #include "Resource/Proxy.h"
 #include "World/Entity/Entity.h"
+#include "Core/RefArray.h"
 #include "Core/Math/Vector4.h"
 #include "Core/Math/Matrix44.h"
 #include "Core/Math/Frustum.h"
 #include "Core/Math/Random.h"
 #include "Core/Math/Half.h"
-#include "Core/Thread/JobManager.h"
+#include "Core/Thread/Job.h"
 #include "Render/Types.h"
 
 // import/export mechanism.

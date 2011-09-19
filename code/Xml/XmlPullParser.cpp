@@ -9,6 +9,7 @@
 #include "Xml/XmlPullParser.h"
 
 #if T_XML_PARSER_THREAD
+#	include "Core/Thread/Job.h"
 #	include "Core/Thread/JobManager.h"
 #	include "Core/Thread/Event.h"
 #	include "Core/Thread/ThreadManager.h"

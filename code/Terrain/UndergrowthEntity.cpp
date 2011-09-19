@@ -1,6 +1,8 @@
 #include <limits>
+#include "Core/Functor/Functor.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
+#include "Core/Thread/JobManager.h"
 #include "Render/Shader.h"
 #include "Render/VertexBuffer.h"
 #include "Render/Context/RenderContext.h"

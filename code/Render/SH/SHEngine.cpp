@@ -1,6 +1,7 @@
 #include "Render/SH/SHEngine.h"
 #include "Render/SH/SHFunction.h"
 #include "Render/SH/SHMatrix.h"
+#include "Core/Functor/Functor.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/MathUtils.h"
 #include "Core/Math/RandomGeometry.h"

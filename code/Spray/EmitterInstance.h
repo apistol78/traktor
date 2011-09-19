@@ -5,7 +5,7 @@
 #include "Core/Math/Transform.h"
 #include "Core/Math/Plane.h"
 #include "Core/Math/Aabb3.h"
-#include "Core/Thread/JobManager.h"
+#include "Core/Thread/Job.h"
 #include "Spray/EmitterUpdateContext.h"
 #include "Spray/Modifier.h"
 #include "Spray/Point.h"

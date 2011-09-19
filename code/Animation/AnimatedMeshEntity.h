@@ -3,7 +3,7 @@
 
 #include "Animation/Pose.h"
 #include "Core/Containers/AlignedVector.h"
-#include "Core/Thread/JobManager.h"
+#include "Core/Thread/Job.h"
 #include "Resource/Proxy.h"
 #include "Mesh/MeshEntity.h"
 

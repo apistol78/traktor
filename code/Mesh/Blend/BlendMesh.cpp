@@ -1,4 +1,5 @@
 #include <cstring>
+#include "Core/Functor/Functor.h"
 #include "Core/Math/Const.h"
 #include "Core/Thread/JobManager.h"
 #include "Mesh/IMeshParameterCallback.h"
