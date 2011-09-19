@@ -1,4 +1,6 @@
+#include "Core/Functor/Functor.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Thread/JobManager.h"
 #include "Render/Shader.h"
 #include "Spray/Emitter.h"
 #include "Spray/EmitterInstance.h"

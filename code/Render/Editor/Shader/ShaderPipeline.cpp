@@ -1,3 +1,4 @@
+#include "Core/Functor/Functor.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
@@ -5,6 +6,7 @@
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
+#include "Core/Thread/Job.h"
 #include "Core/Thread/JobManager.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"

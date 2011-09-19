@@ -1,4 +1,5 @@
 #include <limits>
+#include "Core/Functor/Functor.h"
 #include "Core/Io/IStream.h"
 #include "Core/Io/Reader.h"
 #include "Core/Log/Log.h"

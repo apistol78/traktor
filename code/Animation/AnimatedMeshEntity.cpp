@@ -5,6 +5,7 @@
 #include "Animation/Bone.h"
 #include "Animation/IPoseController.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Thread/JobManager.h"
 #include "Mesh/Skinned/SkinnedMesh.h"
 #include "World/WorldContext.h"
 #include "World/WorldRenderView.h"

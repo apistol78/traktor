@@ -9,8 +9,10 @@
 #	include <stb_dxt.h>
 #endif
 
+#include "Core/Functor/Functor.h"
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
+#include "Core/Thread/Job.h"
 #include "Core/Thread/JobManager.h"
 #include "Drawing/Image.h"
 #include "Render/Editor/Texture/DxtnCompressor.h"
