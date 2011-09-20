@@ -229,11 +229,12 @@ void ScriptManagerLua::collectGarbage()
 		++m_collectSteps;
 	}
 
-	if (m_lastMemoryUse > 0)
+	if (m_lastMemoryUse > 0 && m_totalMemoryUse > m_lastMemoryUse)
 	{
 		size_t garbageProduced = m_totalMemoryUse - m_lastMemoryUse;
 		m_collectStepFrequency = clamp((30.0f * garbageProduced) / (16*1024), 1.0f, 120.0f);
 	}
+
 	m_lastMemoryUse = m_totalMemoryUse;
 }
 

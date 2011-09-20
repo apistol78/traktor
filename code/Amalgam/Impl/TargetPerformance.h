@@ -28,8 +28,9 @@ public:
 	float render;
 	float physics;
 	float input;
-	int32_t steps;
-	int32_t interval;
+	float steps;
+	float interval;
+	uint32_t collisions;
 	uint32_t memInUse;
 	uint32_t heapObjects;
 

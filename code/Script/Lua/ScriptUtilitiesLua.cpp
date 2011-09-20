@@ -50,13 +50,17 @@ void* luaAlloc(void* ud, void* ptr, size_t osize, size_t nsize)
 		if (!nptr)
 			return 0;
 
+		allocTotal += nsize;
+
 		if (ptr && osize > 0)
 		{
 			std::memcpy(nptr, ptr, std::min(osize, nsize));
 			getAllocator()->free(ptr);
+
+			T_ASSERT (osize <= allocTotal);
+			allocTotal -= osize;
 		}
 
-		allocTotal += nsize - osize;
 		return nptr;
 	}
 	else

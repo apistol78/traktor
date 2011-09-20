@@ -21,7 +21,14 @@ const int32_t c_performanceHeight = 36;
 std::wstring formatPerformanceTime(float time)
 {
 	std::wstringstream ss;
-	ss << std::setprecision(1) << std::fixed << (time * 1000.0f) << L" ms";
+	ss << std::setprecision(1) << std::fixed << (time * 1000.0f);
+	return ss.str();
+}
+
+std::wstring formatPerformanceValue(float value)
+{
+	std::wstringstream ss;
+	ss << std::setprecision(1) << std::fixed << value;
 	return ss.str();
 }
 
@@ -114,6 +121,7 @@ void TargetCell::paint(ui::custom::AutoWidget* widget, ui::Canvas& canvas, const
 	for (uint32_t i = 0; i < connections.size(); ++i)
 	{
 		const TargetPerformance& performance = connections[i]->getPerformance();
+		const TargetPerformance& deltaPerformance = connections[i]->getDeltaPerformance();
 
 		ui::Rect topRect = performanceRect;
 		topRect.bottom = topRect.top + 12;
@@ -121,35 +129,32 @@ void TargetCell::paint(ui::custom::AutoWidget* widget, ui::Canvas& canvas, const
 		topRect.left += 6;
 		canvas.drawText(topRect, toString(int32_t(performance.fps)), ui::AnLeft, ui::AnCenter);
 
-		topRect.left += 25;
-		canvas.drawText(topRect, L"U: " + formatPerformanceTime(performance.update), ui::AnLeft, ui::AnCenter);
+		topRect.left += 20;
+		canvas.drawText(topRect, L"U: " + formatPerformanceTime(performance.update) + L" (" + formatPerformanceTime(deltaPerformance.update) + L")", ui::AnLeft, ui::AnCenter);
 
-		topRect.left += 55;
-		canvas.drawText(topRect, L"B: " + formatPerformanceTime(performance.build), ui::AnLeft, ui::AnCenter);
+		topRect.left += 80;
+		canvas.drawText(topRect, L"B: " + formatPerformanceTime(performance.build) + L" (" + formatPerformanceTime(deltaPerformance.build) + L")", ui::AnLeft, ui::AnCenter);
 
-		topRect.left += 55;
-		canvas.drawText(topRect, L"R: " + formatPerformanceTime(performance.render), ui::AnLeft, ui::AnCenter);
-
-		topRect.left += 50;
-		canvas.drawText(topRect, L"p: " + formatPerformanceTime(performance.physics), ui::AnLeft, ui::AnCenter);
-
-		topRect.left += 50;
-		canvas.drawText(topRect, L"i: " + formatPerformanceTime(performance.input), ui::AnLeft, ui::AnCenter);
+		topRect.left += 80;
+		canvas.drawText(topRect, L"R: " + formatPerformanceTime(performance.render) + L" (" + formatPerformanceTime(deltaPerformance.render) + L")", ui::AnLeft, ui::AnCenter);
 
 		ui::Rect middleRect = performanceRect;
 		middleRect.top = performanceRect.top + 12;
 		middleRect.bottom = performanceRect.top + 24;
 
-		middleRect.left += 6;
-		canvas.drawText(middleRect, L"S: " + toString(performance.steps), ui::AnLeft, ui::AnCenter);
+		middleRect.left += 26;
+		canvas.drawText(middleRect, L"P: " + formatPerformanceTime(performance.physics) + L" (" + formatPerformanceTime(deltaPerformance.physics) + L")", ui::AnLeft, ui::AnCenter);
 
 		middleRect.left += 80;
-		canvas.drawText(middleRect, L"I: " + toString(performance.interval), ui::AnLeft, ui::AnCenter);
+		canvas.drawText(middleRect, L"I: " + formatPerformanceTime(performance.input) + L" (" + formatPerformanceTime(deltaPerformance.input) + L")", ui::AnLeft, ui::AnCenter);
+
+		middleRect.left += 80;
+		canvas.drawText(middleRect, L"S: " + toString(int32_t(performance.steps)) + L", " + formatPerformanceTime(performance.interval) + L", " + toString(performance.collisions), ui::AnLeft, ui::AnCenter);
 
 		ui::Rect bottomRect = performanceRect;
 		bottomRect.top = performanceRect.top + 24;
 
-		bottomRect.left += 6;
+		bottomRect.left += 26;
 		canvas.drawText(bottomRect, L"M: " + toString(uint32_t(performance.memInUse / 1024)) + L" KiB", ui::AnLeft, ui::AnCenter);
 
 		bottomRect.left += 80;
