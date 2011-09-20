@@ -36,7 +36,13 @@ bool TargetConnection::update()
 	if (!performance)
 		return false;
 
+	Ref< TargetPerformance > deltaPerformance = BinarySerializer(&net::SocketStream(m_socket, true, false)).readObject< TargetPerformance >();
+	if (!deltaPerformance)
+		return false;
+
 	m_performance = *performance;
+	m_deltaPerformance = *deltaPerformance;
+
 	return true;
 }
 

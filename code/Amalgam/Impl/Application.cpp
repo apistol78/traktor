@@ -1,5 +1,6 @@
 #include "Core/Library/Library.h"
 #include "Core/Log/Log.h"
+#include "Core/Math/Float.h"
 #include "Core/Math/MathUtils.h"
 #include "Core/Memory/Alloc.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -158,7 +159,10 @@ Application::Application()
 ,	m_threadRender(0)
 ,	m_renderViewActive(true)
 ,	m_renderViewFullScreen(false)
-,	m_waitRenderFinishInterval(0)
+,	m_updateDuration(0.0f)
+,	m_buildDuration(0.0f)
+,	m_renderDuration(0.0f)
+,	m_renderCollisions(0)
 ,	m_frameBuild(0)
 ,	m_frameRender(0)
 ,	m_stateRender(0)
@@ -574,6 +578,7 @@ bool Application::update()
 		double updateDuration = 0.0;
 		double physicsDuration = 0.0;
 		double inputDuration = 0.0;
+		float updateInterval = 0.0f;
 		int32_t updateCount = 0;
 
 		physics::PhysicsManager* physicsManager = m_physicsServer->getPhysicsManager();
@@ -582,31 +587,33 @@ bool Application::update()
 			m_updateInfo.m_simulationDeltaTime = c_simulationDeltaTime;
 			m_updateInfo.m_simulationFrequency = c_simulationFrequency;
 
-			UpdateInfo updateInfo = m_updateInfo;
 			float simulationEndTime = m_updateInfo.m_stateTime;
+			updateCount = std::min(int32_t(std::ceil((simulationEndTime - m_updateInfo.m_simulationTime) / c_simulationDeltaTime)), c_maxSimulationUpdates);
 
 			// Execute fixed update(s).
-			bool renderAlreadyFinished = false;
-			for (int32_t i = 0; i < c_maxSimulationUpdates && m_updateInfo.m_simulationTime < simulationEndTime; ++i, m_updateInfo.m_simulationTime += c_simulationDeltaTime)
+			bool renderCollision = false;
+			for (int32_t i = 0; i < updateCount; ++i, m_updateInfo.m_simulationTime += c_simulationDeltaTime)
 			{
 				// If we're doing multiple updates per frame then we're rendering bound; so in order
 				// to keep input updating periodically we need to make sure we wait a bit, as long
 				// as we don't collide with end-of-rendering.
-				if (
-					m_threadRender &&
-					m_waitRenderFinishInterval > 0 &&
-					!renderAlreadyFinished &&
-					i > 0
-				)
+				if (m_threadRender && i > 0 && !renderCollision)
 				{
-					if (m_signalRenderFinish.wait(m_waitRenderFinishInterval))
+					// Recalculate interval for each sub-step as some updates might spike.
+					float excessTime = std::max(m_renderDuration - m_buildDuration - m_updateDuration * updateCount, 0.0f);
+					updateInterval = std::min(excessTime / updateCount, 0.03f);
+
+					// Need some wait margin as events, especially on Windows, have very low accuracy.
+					if (m_signalRenderFinish.wait(int32_t(updateInterval * 1000.0f)))
 					{
 						// Rendering of last frame has already finished; do not wait further intervals during this
 						// update phase, just continue as fast as possible.
-						renderAlreadyFinished = true;
+						renderCollision = true;
+						++m_renderCollisions;
 					}
 				}
 
+				// Update physics.
 				double physicsTimeStart = m_timer.getElapsedTime();
 				m_physicsServer->update();
 				double physicsTimeEnd = m_timer.getElapsedTime();
@@ -623,7 +630,8 @@ bool Application::update()
 				IState::UpdateResult result = currentState->update(m_stateManager, m_updateControl, m_updateInfo);
 				double updateTimeEnd = m_timer.getElapsedTime();
 				updateDuration += updateTimeEnd - updateTimeStart;
-				updateCount++;
+
+				m_updateDuration = float(physicsTimeEnd - physicsTimeStart + inputTimeEnd - inputTimeStart + updateTimeEnd - updateTimeStart);
 
 				if (result == IState::UrExit || result == IState::UrFailed)
 				{
@@ -637,10 +645,6 @@ bool Application::update()
 				if (m_stateManager->getNext())
 					break;
 			}
-
-			// Rendering of last frame became finished during update; we need to decrease interval time.
-			if (renderAlreadyFinished)
-				--m_waitRenderFinishInterval;
 		}
 		else
 		{
@@ -677,25 +681,16 @@ bool Application::update()
 		IState::BuildResult buildResult = currentState->build(m_frameBuild, m_updateInfo);
 		double buildTimeEnd = m_timer.getElapsedTime();
 
+		m_buildDuration = float(buildTimeEnd - buildTimeStart);
+
 		if (buildResult == IState::BrOk || buildResult == IState::BrNothing)
 		{
 			if (m_threadRender)
 			{
 				// Synchronize with render thread and issue another rendering.
-				double waitBegin = m_timer.getElapsedTime();
 				bool renderFinished = m_signalRenderFinish.wait(1000);
-				double waitEnd = m_timer.getElapsedTime();
-
 				if (renderFinished)
 				{
-					// If we waited for rendering longer than a update cycle (with 10% margin) then
-					// we increase interval time.
-					if (updateCount > 1)
-					{
-						if ((waitEnd - waitBegin) > ((physicsDuration + inputDuration + updateDuration) * 1.1f) / updateCount)
-							++m_waitRenderFinishInterval;
-					}
-
 					m_signalRenderFinish.reset();
 
 					{
@@ -797,8 +792,10 @@ bool Application::update()
 		// Publish performance to target manager.
 		if (m_targetManagerConnection)
 		{
+#	if defined(_PS3)
 			render::RenderViewStatistics statistics;
 			m_renderServer->getRenderView()->getStatistics(statistics);
+#	endif
 
 			TargetPerformance performance;
 			performance.time = m_updateInfo.m_totalTime;
@@ -808,11 +805,16 @@ bool Application::update()
 				performance.update = float(updateDuration / updateCount);
 				performance.physics = float(physicsDuration / updateCount);
 				performance.input = float(inputDuration / updateCount);
-				performance.steps = updateCount;
-				performance.interval = updateCount > 1 ? m_waitRenderFinishInterval : 0;
 			}
+			performance.steps = float(updateCount);
+			performance.interval = updateInterval;
+			performance.collisions = m_renderCollisions;
 			performance.build = float(buildTimeEnd - buildTimeStart);
+#	if !defined(_PS3)
+			performance.render = m_renderDuration;
+#	else
 			performance.render = float(statistics.duration);
+#	endif
 			performance.memInUse = Alloc::allocated();
 			performance.heapObjects = Object::getHeapObjectCount();
 			m_targetManagerConnection->setPerformance(performance);
@@ -892,6 +894,8 @@ void Application::threadRender()
 		{
 			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockRender);
 
+			double renderBegin = m_timer.getElapsedTime();
+
 			render::IRenderView* renderView = m_renderServer->getRenderView();
 			if (renderView)
 			{
@@ -957,6 +961,9 @@ void Application::threadRender()
 				// Yield render thread.
 				m_threadRender->sleep(100);
 			}
+
+			double renderEnd = m_timer.getElapsedTime();
+			m_renderDuration = float(renderEnd - renderBegin);
 
 			m_stateRender = 0;
 		}
