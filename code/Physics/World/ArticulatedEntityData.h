@@ -26,7 +26,6 @@ class IEntityBuilder;
 class ArticulatedEntity;
 class JointDesc;
 class PhysicsManager;
-class RigidEntityData;
 
 /*! \brief Articulated entity data.
  * \ingroup Physics
@@ -56,12 +55,12 @@ public:
 	
 	virtual bool serialize(ISerializer& s);
 
-	const RefArray< RigidEntityData >& getEntityData() const { return m_entityData; }
+	const RefArray< world::SpatialEntityData >& getEntityData() const { return m_entityData; }
 
 	const std::vector< Constraint >& getConstraints() const { return m_constraints; }
 
 private:
-	RefArray< RigidEntityData > m_entityData;
+	RefArray< world::SpatialEntityData > m_entityData;
 	std::vector< Constraint > m_constraints;
 };
 

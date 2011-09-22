@@ -70,6 +70,10 @@
               <resolvePaths>false</resolvePaths>
               <staticOptions>
                 <item>
+                  <first>AdditionalOptions</first>
+                  <second>/MP8</second>
+                </item>
+                <item>
                   <first>AdditionalIncludeDirectories</first>
                   <second>.</second>
                 </item>
@@ -133,6 +137,10 @@
             <item type="SolutionBuilderMsvcCompilerTool">
               <resolvePaths>false</resolvePaths>
               <staticOptions>
+                <item>
+                  <first>AdditionalOptions</first>
+                  <second>/MP8</second>
+                </item>
                 <item>
                   <first>AdditionalIncludeDirectories</first>
                   <second>.</second>
@@ -257,6 +265,10 @@
               <resolvePaths>false</resolvePaths>
               <staticOptions>
                 <item>
+                  <first>AdditionalOptions</first>
+                  <second>/MP8</second>
+                </item>
+                <item>
                   <first>AdditionalIncludeDirectories</first>
                   <second>.</second>
                 </item>
@@ -355,6 +367,10 @@
             <item type="SolutionBuilderMsvcCompilerTool">
               <resolvePaths>false</resolvePaths>
               <staticOptions>
+                <item>
+                  <first>AdditionalOptions</first>
+                  <second>/MP8</second>
+                </item>
                 <item>
                   <first>AdditionalIncludeDirectories</first>
                   <second>.</second>
@@ -526,6 +542,10 @@
               <resolvePaths>false</resolvePaths>
               <staticOptions>
                 <item>
+                  <first>AdditionalOptions</first>
+                  <second>/MP8</second>
+                </item>
+                <item>
                   <first>AdditionalIncludeDirectories</first>
                   <second>.</second>
                 </item>
@@ -620,6 +640,10 @@
             <item type="SolutionBuilderMsvcCompilerTool">
               <resolvePaths>false</resolvePaths>
               <staticOptions>
+                <item>
+                  <first>AdditionalOptions</first>
+                  <second>/MP8</second>
+                </item>
                 <item>
                   <first>AdditionalIncludeDirectories</first>
                   <second>.</second>
@@ -787,6 +811,10 @@
               <resolvePaths>false</resolvePaths>
               <staticOptions>
                 <item>
+                  <first>AdditionalOptions</first>
+                  <second>/MP8</second>
+                </item>
+                <item>
                   <first>AdditionalIncludeDirectories</first>
                   <second>.</second>
                 </item>
@@ -881,6 +909,10 @@
             <item type="SolutionBuilderMsvcCompilerTool">
               <resolvePaths>false</resolvePaths>
               <staticOptions>
+                <item>
+                  <first>AdditionalOptions</first>
+                  <second>/MP8</second>
+                </item>
                 <item>
                   <first>AdditionalIncludeDirectories</first>
                   <second>.</second>

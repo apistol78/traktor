@@ -212,12 +212,13 @@ bool Instance::commit(uint32_t flags)
 	{
 		if (m_eventListener)
 			m_eventListener->instanceEventRemoved(this);
-
-		internalDestroy();
 	}
 
 	if (m_eventListener)
 		m_eventListener->instanceEventCommitted(this);
+
+	if ((m_transactionFlags & TfRemoved) != 0)
+		internalDestroy();
 
 	return true;
 }
