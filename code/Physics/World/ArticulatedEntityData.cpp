@@ -79,11 +79,11 @@ Ref< ArticulatedEntity > ArticulatedEntityData::createEntity(
 
 void ArticulatedEntityData::setTransform(const Transform& transform)
 {
-	Transform deltaTransform = getTransform().inverse() * transform;
-	for (RefArray< RigidEntityData >::iterator i = m_entityData.begin(); i != m_entityData.end(); ++i)
+	Transform deltaTransform = transform * getTransform().inverse();
+	for (RefArray< world::SpatialEntityData >::iterator i = m_entityData.begin(); i != m_entityData.end(); ++i)
 	{
 		Transform currentTransform = (*i)->getTransform();
-		(*i)->setTransform(currentTransform * deltaTransform);
+		(*i)->setTransform(deltaTransform * currentTransform);
 	}
 	SpatialEntityData::setTransform(transform);
 }
@@ -93,7 +93,7 @@ bool ArticulatedEntityData::serialize(ISerializer& s)
 	if (!world::SpatialEntityData::serialize(s))
 		return false;
 
-	s >> MemberRefArray< RigidEntityData >(L"entityData", m_entityData);
+	s >> MemberRefArray< world::SpatialEntityData >(L"entityData", m_entityData);
 	s >> MemberStlVector< Constraint, MemberComposite< Constraint > >(L"constraints", m_constraints);
 
 	return true;
