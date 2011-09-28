@@ -3,6 +3,8 @@
 #include "Core/Math/Float.h"
 #include "Core/Math/TcbSpline.h"
 #include "Core/Math/TransformPath.h"
+#include "Core/Serialization/AttributeDirection.h"
+#include "Core/Serialization/AttributePoint.h"
 #include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
@@ -394,8 +396,8 @@ Transform TransformPath::Frame::transform() const
 
 bool TransformPath::Frame::serialize(ISerializer& s)
 {
-	s >> Member< Vector4 >(L"position", position);
-	s >> Member< Vector4 >(L"orientation", orientation);
+	s >> Member< Vector4 >(L"position", position, AttributePoint());
+	s >> Member< Vector4 >(L"orientation", orientation, AttributeDirection());
 	return true;
 }
 

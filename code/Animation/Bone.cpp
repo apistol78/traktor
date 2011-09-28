@@ -1,4 +1,5 @@
 #include "Animation/Bone.h"
+#include "Core/Serialization/AttributePoint.h"
 #include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
@@ -27,7 +28,7 @@ bool Bone::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"name", m_name);
 	s >> Member< int32_t >(L"parent", m_parent);
-	s >> Member< Vector4 >(L"position", m_position);
+	s >> Member< Vector4 >(L"position", m_position, AttributePoint());
 	s >> Member< Quaternion >(L"orientation", m_orientation);
 	s >> Member< Scalar >(L"length", m_length, AttributeRange(0.0f));
 	s >> Member< Scalar >(L"radius", m_radius, AttributeRange(0.0f));

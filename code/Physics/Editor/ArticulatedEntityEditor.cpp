@@ -1,17 +1,17 @@
-#include "Physics/Editor/ArticulatedEntityEditor.h"
-#include "Physics/World/ArticulatedEntityData.h"
-#include "Physics/World/ArticulatedEntity.h"
+#include "Core/Math/Const.h"
 #include "Physics/BallJointDesc.h"
 #include "Physics/ConeTwistJointDesc.h"
 #include "Physics/HingeJointDesc.h"
 #include "Physics/Hinge2JointDesc.h"
+#include "Physics/Editor/ArticulatedEntityEditor.h"
+#include "Physics/World/ArticulatedEntity.h"
+#include "Physics/World/ArticulatedEntityData.h"
+#include "Render/PrimitiveRenderer.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/SceneEditorContext.h"
-#include "World/Entity/SpatialEntityData.h"
-#include "World/Entity/SpatialEntity.h"
-#include "Render/PrimitiveRenderer.h"
 #include "Ui/Command.h"
-#include "Core/Math/Const.h"
+#include "World/Entity/SpatialEntity.h"
+#include "World/Entity/SpatialEntityData.h"
 
 namespace traktor
 {
@@ -226,10 +226,7 @@ void ArticulatedEntityEditor::drawGuide(
 	// Draw default guides of contained entity.
 	const RefArray< scene::EntityAdapter >& children = entityAdapter->getChildren();
 	for (RefArray< scene::EntityAdapter >::const_iterator i = children.begin(); i != children.end(); ++i)
-	{
-		if (*i)
-			context->drawGuide(primitiveRenderer, *i);
-	}
+		context->drawGuide(primitiveRenderer, *i);
 }
 
 	}

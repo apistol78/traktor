@@ -1,7 +1,8 @@
-#include "Terrain/Editor/HeightfieldAsset.h"
-#include "Terrain/HeightfieldResource.h"
+#include "Core/Serialization/AttributeDirection.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
+#include "Terrain/HeightfieldResource.h"
+#include "Terrain/Editor/HeightfieldAsset.h"
 
 namespace traktor
 {
@@ -26,7 +27,7 @@ bool HeightfieldAsset::serialize(ISerializer& s)
 	if (!editor::Asset::serialize(s))
 		return false;
 
-	s >> Member< Vector4 >(L"worldExtent", m_worldExtent);
+	s >> Member< Vector4 >(L"worldExtent", m_worldExtent, AttributeDirection());
 	s >> Member< uint32_t >(L"patchDim", m_patchDim);
 	s >> Member< uint32_t >(L"detailSkip", m_detailSkip);
 

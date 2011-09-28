@@ -1,13 +1,14 @@
-#include "Spray/Sources/PointSetSource.h"
-#include "Spray/EmitterUpdateContext.h"
-#include "Spray/EmitterInstance.h"
-#include "Spray/PointSet.h"
-#include "Spray/PointSetResource.h"
-#include "Resource/IResourceManager.h"
-#include "Resource/Member.h"
+#include "Core/Serialization/AttributeDirection.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberComposite.h"
+#include "Resource/IResourceManager.h"
+#include "Resource/Member.h"
+#include "Spray/EmitterInstance.h"
+#include "Spray/EmitterUpdateContext.h"
+#include "Spray/PointSet.h"
+#include "Spray/PointSetResource.h"
+#include "Spray/Sources/PointSetSource.h"
 
 namespace traktor
 {
@@ -80,7 +81,7 @@ bool PointSetSource::serialize(ISerializer& s)
 	s >> MemberComposite< Range< float > >(L"age", m_age);
 	s >> MemberComposite< Range< float > >(L"mass", m_mass);
 	s >> MemberComposite< Range< float > >(L"size", m_size);
-	s >> Member< Vector4 >(L"offset", m_offset);
+	s >> Member< Vector4 >(L"offset", m_offset, AttributeDirection());
 
 	return true;
 }

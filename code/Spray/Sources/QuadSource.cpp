@@ -1,9 +1,11 @@
-#include "Spray/Sources/QuadSource.h"
-#include "Spray/EmitterUpdateContext.h"
-#include "Spray/EmitterInstance.h"
+#include "Core/Serialization/AttributeDirection.h"
+#include "Core/Serialization/AttributePoint.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberComposite.h"
+#include "Spray/EmitterInstance.h"
+#include "Spray/EmitterUpdateContext.h"
+#include "Spray/Sources/QuadSource.h"
 
 namespace traktor
 {
@@ -70,10 +72,10 @@ bool QuadSource::serialize(ISerializer& s)
 	if (!Source::serialize(s))
 		return false;
 
-	s >> Member< Vector4 >(L"center", m_center);
-	s >> Member< Vector4 >(L"axis1", m_axis1);
-	s >> Member< Vector4 >(L"axis2", m_axis2);
-	s >> Member< Vector4 >(L"normal", m_normal);
+	s >> Member< Vector4 >(L"center", m_center, AttributePoint());
+	s >> Member< Vector4 >(L"axis1", m_axis1, AttributeDirection());
+	s >> Member< Vector4 >(L"axis2", m_axis2, AttributeDirection());
+	s >> Member< Vector4 >(L"normal", m_normal, AttributeDirection());
 	s >> MemberComposite< Range< float > >(L"velocity", m_velocity);
 	s >> MemberComposite< Range< float > >(L"orientation", m_orientation);
 	s >> MemberComposite< Range< float > >(L"angularVelocity", m_angularVelocity);

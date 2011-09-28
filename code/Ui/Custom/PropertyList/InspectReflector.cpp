@@ -2,8 +2,10 @@
 #include <sstream>
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Misc/Split.h"
+#include "Core/Serialization/AttributeDirection.h"
 #include "Core/Serialization/AttributeHex.h"
 #include "Core/Serialization/AttributeMultiLine.h"
+#include "Core/Serialization/AttributePoint.h"
 #include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/AttributeType.h"
 #include "Core/Serialization/MemberArray.h"
@@ -408,6 +410,23 @@ bool InspectReflector::operator >> (const Member< Vector2 >& m)
 bool InspectReflector::operator >> (const Member< Vector4 >& m)
 {
 	VectorPropertyItem::vector_t value = { m->x(), m->y(), m->z(), m->w() };
+
+	const AttributeDirection* direction = findAttribute< AttributeDirection >(m);
+	if (direction)
+	{
+		value[3] = 0.0f;
+		addPropertyItem(new VectorPropertyItem(stylizeMemberName(m.getName()), value, 3));
+		return true;
+	}
+
+	const AttributePoint* point = findAttribute< AttributePoint >(m);
+	if (point)
+	{
+		value[3] = 1.0f;
+		addPropertyItem(new VectorPropertyItem(stylizeMemberName(m.getName()), value, 3));
+		return true;
+	}
+
 	addPropertyItem(new VectorPropertyItem(stylizeMemberName(m.getName()), value, 4));
 	return true;
 }

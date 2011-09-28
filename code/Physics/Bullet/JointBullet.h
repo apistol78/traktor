@@ -3,6 +3,7 @@
 
 #include <btBulletDynamicsCommon.h>
 #include "Core/Ref.h"
+#include "Core/Misc/InvokeOnce.h"
 #include "Physics/Bullet/Types.h"
 
 namespace traktor
@@ -45,12 +46,7 @@ public:
 
 	virtual void destroy()
 	{
-		if (m_callback)
-		{
-			m_callback->destroyConstraint(this, m_constraint);
-			m_callback = 0;
-		}
-
+		invokeOnce< IWorldCallback, Joint*, btTypedConstraint* >(m_callback, &IWorldCallback::destroyConstraint, this, m_constraint);
 		m_constraint = 0;
 		m_body1 = 0;
 		m_body2 = 0;

@@ -207,19 +207,28 @@ bool WorldRendererPreLit::create(
 		desc.preferTiled = true;
 		m_shadowMaskProjectTargetSet = renderSystem->createRenderTargetSet(desc);
 
-		// Create filtered shadow mask target.
-		desc.count = 1;
-		desc.multiSample = 0;
-		desc.createDepthStencil = false;
-		desc.usingPrimaryDepthStencil = false;
-		desc.targets[0].format = render::TfR8;
-		desc.preferTiled = true;
-		m_shadowMaskFilterTargetSet = renderSystem->createRenderTargetSet(desc);
+		// Create filtered shadow mask targets.
+		m_shadowMaskFilterTargetSet.resize(MaxLightCount);
+		for (int i = 0; i < MaxLightCount; ++i)
+		{
+			desc.count = 1;
+			desc.multiSample = 0;
+			desc.createDepthStencil = false;
+			desc.usingPrimaryDepthStencil = false;
+			desc.targets[0].format = render::TfR8;
+			desc.preferTiled = true;
+			m_shadowMaskFilterTargetSet[i] = renderSystem->createRenderTargetSet(desc);
+			if (!m_shadowMaskFilterTargetSet[i])
+			{
+				safeDestroy(m_shadowMaskProjectTargetSet);
+				m_shadowMaskFilterTargetSet.clear();
+				break;
+			}
+		}
 
 		if (
 			m_shadowTargetSet &&
-			m_shadowMaskProjectTargetSet &&
-			m_shadowMaskFilterTargetSet
+			m_shadowMaskProjectTargetSet
 		)
 		{
 			resource::Proxy< PostProcessSettings > shadowMaskProject;
@@ -286,7 +295,7 @@ bool WorldRendererPreLit::create(
 		{
 			safeDestroy(m_shadowTargetSet);
 			safeDestroy(m_shadowMaskProjectTargetSet);
-			safeDestroy(m_shadowMaskFilterTargetSet);
+			m_shadowMaskFilterTargetSet.clear();
 		}
 	}
 
@@ -385,7 +394,7 @@ void WorldRendererPreLit::destroy()
 
 	safeDestroy(m_shadowMaskFilter);
 	safeDestroy(m_shadowMaskProject);
-	safeDestroy(m_shadowMaskFilterTargetSet);
+	m_shadowMaskFilterTargetSet.clear();
 	safeDestroy(m_shadowMaskProjectTargetSet);
 	safeDestroy(m_shadowTargetSet);
 	safeDestroy(m_lightMapTargetSet);
@@ -619,8 +628,11 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 				}
 
 				T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow mask filter");
-				if (m_renderView->begin(m_shadowMaskFilterTargetSet, 0))
+				if (m_renderView->begin(m_shadowMaskFilterTargetSet[i], 0))
 				{
+					const float maskClear[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+					m_renderView->clear(render::CfColor, maskClear, 0.0f, 0);
+
 					PostProcessStep::Instance::RenderParams params;
 					params.viewFrustum = f.viewFrustum;
 					params.projection = projection;
@@ -659,8 +671,8 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 					m_settings.depthRange,
 					m_depthTargetSet->getColorTexture(0),
 					m_normalTargetSet->getColorTexture(0),
-					f.haveShadows[i] ? m_shadowMaskFilterTargetSet->getWidth() : 0,
-					f.haveShadows[i] ? m_shadowMaskFilterTargetSet->getColorTexture(0) : 0
+					f.haveShadows[i] ? m_shadowMaskFilterTargetSet[i]->getWidth() : 0,
+					f.haveShadows[i] ? m_shadowMaskFilterTargetSet[i]->getColorTexture(0) : 0
 				);
 				m_renderView->end();
 			}
@@ -705,7 +717,7 @@ render::RenderTargetSet* WorldRendererPreLit::getDepthTargetSet()
 
 render::RenderTargetSet* WorldRendererPreLit::getShadowMaskTargetSet()
 {
-	return m_shadowMaskFilterTargetSet;
+	return !m_shadowMaskFilterTargetSet.empty() ? m_shadowMaskFilterTargetSet[0].ptr() : 0;
 }
 
 void WorldRendererPreLit::getTargets(RefArray< render::ITexture >& outTargets) const
@@ -714,7 +726,7 @@ void WorldRendererPreLit::getTargets(RefArray< render::ITexture >& outTargets) c
 	outTargets[0] = m_depthTargetSet ? m_depthTargetSet->getColorTexture(0) : 0;
 	outTargets[1] = m_normalTargetSet ? m_normalTargetSet->getColorTexture(0) : 0;
 	outTargets[2] = m_lightMapTargetSet ? m_lightMapTargetSet->getColorTexture(0) : 0;
-	outTargets[3] = m_shadowMaskFilterTargetSet ? m_shadowMaskFilterTargetSet->getColorTexture(0) : 0;
+	outTargets[3] = !m_shadowMaskFilterTargetSet.empty() ? m_shadowMaskFilterTargetSet[0]->getColorTexture(0) : 0;
 }
 
 void WorldRendererPreLit::buildLightWithShadows(WorldRenderView& worldRenderView, Entity* entity, int frame)
@@ -734,7 +746,9 @@ void WorldRendererPreLit::buildLightWithShadows(WorldRenderView& worldRenderView
 
 		f.lights[i] = light;
 
-		if (light.type == LtDirectional && light.castShadow)
+		if (
+			(light.type == LtDirectional || light.type == LtSpot) && light.castShadow
+		)
 		{
 			for (int32_t slice = 0; slice < m_settings.shadowCascadingSlices; ++slice)
 			{

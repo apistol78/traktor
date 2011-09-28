@@ -33,14 +33,6 @@
 #	include "Core/Thread/Ps3/Spurs/SpursManager.h"
 #endif
 
-#include "Physics/Bullet/PhysicsManagerBullet.h"
-#include "Physics/Bullet/DynamicBodyBullet.h"
-#include "Physics/Bullet/StaticBodyBullet.h"
-#include "Physics/Bullet/BallJointBullet.h"
-#include "Physics/Bullet/ConeTwistJointBullet.h"
-#include "Physics/Bullet/HingeJointBullet.h"
-#include "Physics/Bullet/HeightfieldShapeBullet.h"
-#include "Physics/Bullet/Conversion.h"
 #include "Physics/CollisionListener.h"
 #include "Physics/BoxShapeDesc.h"
 #include "Physics/CapsuleShapeDesc.h"
@@ -56,6 +48,15 @@
 #include "Physics/Hinge2JointDesc.h"
 #include "Physics/Mesh.h"
 #include "Physics/Heightfield.h"
+#include "Physics/Bullet/PhysicsManagerBullet.h"
+#include "Physics/Bullet/DynamicBodyBullet.h"
+#include "Physics/Bullet/StaticBodyBullet.h"
+#include "Physics/Bullet/BallJointBullet.h"
+#include "Physics/Bullet/ConeTwistJointBullet.h"
+#include "Physics/Bullet/HingeJointBullet.h"
+#include "Physics/Bullet/HeightfieldShapeBullet.h"
+#include "Physics/Bullet/Conversion.h"
+#include "Resource/IResourceManager.h"
 
 namespace traktor
 {
@@ -248,6 +249,9 @@ bool PhysicsManagerBullet::create(float simulationDeltaTime)
 void PhysicsManagerBullet::destroy()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	T_ANONYMOUS_VAR(RefArray< Joint >)(m_joints);
+	T_ANONYMOUS_VAR(RefArray< StaticBodyBullet >)(m_staticBodies);
+	T_ANONYMOUS_VAR(RefArray< DynamicBodyBullet >)(m_dynamicBodies);
 
 	while (!m_joints.empty())
 		m_joints.front()->destroy();
@@ -255,6 +259,10 @@ void PhysicsManagerBullet::destroy()
 		m_dynamicBodies.front()->destroy();
 	while (!m_staticBodies.empty())
 		m_staticBodies.front()->destroy();
+
+	m_joints.clear();
+	m_dynamicBodies.clear();
+	m_staticBodies.clear();
 
 	delete m_dynamicsWorld; m_dynamicsWorld = 0;
 	delete m_solver; m_solver = 0;
@@ -275,7 +283,7 @@ Vector4 PhysicsManagerBullet::getGravity() const
 	return fromBtVector3(m_dynamicsWorld->getGravity(), 0.0f);
 }
 
-Ref< Body > PhysicsManagerBullet::createBody(const BodyDesc* desc)
+Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourceManager, const BodyDesc* desc)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
@@ -312,7 +320,7 @@ Ref< Body > PhysicsManagerBullet::createBody(const BodyDesc* desc)
 	else if (const MeshShapeDesc* meshShape = dynamic_type_cast< const MeshShapeDesc* >(shapeDesc))
 	{
 		resource::Proxy< Mesh > mesh = meshShape->getMesh();
-		if (!mesh.validate())
+		if (!resourceManager->bind(mesh) || !mesh.validate())
 		{
 			log::error << L"Unable to load mesh resource" << Endl;
 			return 0;
@@ -324,6 +332,12 @@ Ref< Body > PhysicsManagerBullet::createBody(const BodyDesc* desc)
 
 		if (is_a< DynamicBodyDesc >(desc))
 		{
+			if (hullTriangles.empty())
+			{
+				log::error << L"Unable to create body, mesh hull empty" << Endl;
+				return 0;
+			}
+
 			// Extract hull points.
 			std::set< uint32_t > hullIndices;
 			for (std::vector< Mesh::Triangle >::const_iterator i = hullTriangles.begin(); i != hullTriangles.end(); ++i)
@@ -366,7 +380,7 @@ Ref< Body > PhysicsManagerBullet::createBody(const BodyDesc* desc)
 	else if (const HeightfieldShapeDesc* heightfieldShape = dynamic_type_cast< const HeightfieldShapeDesc* >(shapeDesc))
 	{
 		resource::Proxy< Heightfield > heightfield = heightfieldShape->getHeightfield();
-		if (!heightfield.validate())
+		if (!resourceManager->bind(heightfield) || !heightfield.validate())
 		{
 			log::error << L"Unable to load heightfield resource" << Endl;
 			return 0;
@@ -979,14 +993,14 @@ void PhysicsManagerBullet::destroyBody(Body* body, btRigidBody* rigidBody, btCol
 	if (StaticBodyBullet* staticBody = dynamic_type_cast< StaticBodyBullet* >(body))
 	{
 		RefArray< StaticBodyBullet >::iterator i = std::find(m_staticBodies.begin(), m_staticBodies.end(), staticBody);
-		if (i != m_staticBodies.end())
-			m_staticBodies.erase(i);
+		T_ASSERT (i != m_staticBodies.end());
+		m_staticBodies.erase(i);
 	}
 	else if (DynamicBodyBullet* dynamicBody = dynamic_type_cast< DynamicBodyBullet* >(body))
 	{
 		RefArray< DynamicBodyBullet >::iterator i = std::find(m_dynamicBodies.begin(), m_dynamicBodies.end(), dynamicBody);
-		if (i != m_dynamicBodies.end())
-			m_dynamicBodies.erase(i);
+		T_ASSERT(i != m_dynamicBodies.end());
+		m_dynamicBodies.erase(i);
 	}
 
 	delete rigidBody;
@@ -1000,8 +1014,8 @@ void PhysicsManagerBullet::destroyConstraint(Joint* joint, btTypedConstraint* co
 	m_dynamicsWorld->removeConstraint(constraint);
 
 	RefArray< Joint >::iterator i = std::find(m_joints.begin(), m_joints.end(), joint);
-	if (i != m_joints.end())
-		m_joints.erase(i);
+	T_ASSERT(i != m_joints.end());
+	m_joints.erase(i);
 
 	delete constraint;
 }

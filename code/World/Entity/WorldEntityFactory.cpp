@@ -141,7 +141,8 @@ Ref< Entity > WorldEntityFactory::createEntity(IEntityBuilder* builder, const En
 			spotLightData->getBaseColor(),
 			spotLightData->getShadowColor(),
 			spotLightData->getRange(),
-			spotLightData->getRadius()
+			spotLightData->getRadius(),
+			spotLightData->getCastShadow()
 		);
 	}
 

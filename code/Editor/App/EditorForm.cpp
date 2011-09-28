@@ -1959,6 +1959,8 @@ void EditorForm::threadAssetMonitor()
 			if (!assetInstances.empty())
 			{
 				std::vector< Guid > modifiedAssets;
+				RefArray< const File > modifiedFiles;
+
 				std::wstring assetPath = m_settings->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
 
 				for (RefArray< db::Instance >::const_iterator i = assetInstances.begin(); i != assetInstances.end(); ++i)
@@ -1978,16 +1980,17 @@ void EditorForm::threadAssetMonitor()
 						uint32_t flags = file->getFlags();
 						if ((flags & File::FfArchive) == File::FfArchive)
 						{
-							flags &= ~File::FfArchive;
-							if (FileSystem::getInstance().modify(file->getPath(), flags))
-							{
-								log::info << L"Source asset \"" << file->getPath().getPathName() << L"\" modified" << Endl;
-								modifiedAssets.push_back((*i)->getGuid());
-							}
-							else
-								log::error << L"Unable to restore archive flag; source asset \"" << file->getPath().getPathName() << L"\" skipped" << Endl;
+							log::info << L"Source asset \"" << file->getPath().getPathName() << L"\" modified" << Endl;
+							modifiedFiles.push_back(file);
+							modifiedAssets.push_back((*i)->getGuid());
 						}
 					}
+				}
+
+				for (RefArray< const File >::const_iterator i = modifiedFiles.begin(); i != modifiedFiles.end(); ++i)
+				{
+					const File* file = *i;
+					FileSystem::getInstance().modify(file->getPath(), file->getFlags() & ~File::FfArchive);
 				}
 
 				m_lockBuild.release();

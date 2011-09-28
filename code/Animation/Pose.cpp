@@ -1,4 +1,5 @@
 #include "Animation/Pose.h"
+#include "Core/Serialization/AttributeDirection.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberComposite.h"
@@ -86,7 +87,7 @@ bool Pose::serialize(ISerializer& s)
 bool Pose::Bone::serialize(ISerializer& s)
 {
 	s >> Member< uint32_t >(L"index", index);
-	s >> Member< Vector4 >(L"offset", offset);
+	s >> Member< Vector4 >(L"offset", offset, AttributeDirection());
 	s >> Member< Quaternion >(L"orientation", orientation);
 	return true;
 }

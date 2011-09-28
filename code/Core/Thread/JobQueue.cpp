@@ -110,15 +110,18 @@ void JobQueue::threadWorker(int id)
 
 	for (;;)
 	{
-		while (m_jobQueue.get(job) && !thread->stopped())
+		while (!m_jobQueue.empty() && !thread->stopped())
 		{
-			T_ASSERT (!job->m_finished);
 			Atomic::increment(m_running);
-			(*job->m_functor)();
+			if (m_jobQueue.get(job))
+			{
+				T_ASSERT (!job->m_finished);
+				(*job->m_functor)();
+				job->m_finished = true;
+				job->m_stopped = true;
+				m_jobFinishedEvent.broadcast();
+			}
 			Atomic::decrement(m_running);
-			job->m_finished = true;
-			job->m_stopped = true;
-			m_jobFinishedEvent.broadcast();
 		}
 
 		if (thread->stopped())

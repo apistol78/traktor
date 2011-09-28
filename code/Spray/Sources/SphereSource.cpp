@@ -1,9 +1,10 @@
-#include "Spray/Sources/SphereSource.h"
-#include "Spray/EmitterUpdateContext.h"
-#include "Spray/EmitterInstance.h"
+#include "Core/Serialization/AttributePoint.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberComposite.h"
+#include "Spray/EmitterInstance.h"
+#include "Spray/EmitterUpdateContext.h"
+#include "Spray/Sources/SphereSource.h"
 
 namespace traktor
 {
@@ -64,7 +65,7 @@ bool SphereSource::serialize(ISerializer& s)
 	if (!Source::serialize(s))
 		return false;
 
-	s >> Member< Vector4 >(L"position", m_position);
+	s >> Member< Vector4 >(L"position", m_position, AttributePoint());
 	s >> MemberComposite< Range< float > >(L"radius", m_radius);
 	s >> MemberComposite< Range< float > >(L"velocity", m_velocity);
 	s >> MemberComposite< Range< float > >(L"orientation", m_orientation);

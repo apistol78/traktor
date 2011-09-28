@@ -1,3 +1,4 @@
+#include "Core/Serialization/AttributeDirection.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Spray/Modifiers/VortexModifier.h"
@@ -93,7 +94,7 @@ void VortexModifier::update(const Scalar& deltaTime, const Transform& transform,
 
 bool VortexModifier::serialize(ISerializer& s)
 {
-	s >> Member< Vector4 >(L"axis", m_axis);
+	s >> Member< Vector4 >(L"axis", m_axis, AttributeDirection());
 	s >> Member< Scalar >(L"tangentForce", m_tangentForce);
 	s >> Member< Scalar >(L"normalConstantForce", m_normalConstantForce);
 	s >> Member< Scalar >(L"normalDistance", m_normalDistance);

@@ -3,6 +3,7 @@
 #include "Core/Math/Const.h"
 #include "Core/Memory/Alloc.h"
 #include "Core/Misc/Align.h"
+#include "Core/Serialization/AttributePoint.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Sound/ISoundMixer.h"
@@ -237,7 +238,7 @@ void SurroundFilter::applyFull(IFilterInstance* instance, SoundBlock& outBlock) 
 
 bool SurroundFilter::serialize(ISerializer& s)
 {
-	return s >> Member< Vector4 >(L"speakerPosition", m_speakerPosition);
+	return s >> Member< Vector4 >(L"speakerPosition", m_speakerPosition, AttributePoint());
 }
 
 	}

@@ -54,10 +54,6 @@ public:
 		render::PrimitiveRenderer* primitiveRenderer,
 		scene::EntityAdapter* entityAdapter
 	) const;
-
-private:
-	bool m_followGround;
-	float m_followHeight;
 };
 
 	}

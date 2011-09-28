@@ -194,7 +194,7 @@ void RigidEntityEditor::drawGuide(
 			else if (const HeightfieldShapeDesc* heightfieldShapeDesc = dynamic_type_cast< const HeightfieldShapeDesc* >(shapeDesc))
 			{
 				resource::Proxy< Heightfield > heightfield = heightfieldShapeDesc->getHeightfield();
-				if (context->getResourceManager()->bind(heightfield))
+				if (context->getResourceManager()->bind(heightfield) && heightfield.validate())
 				{
 					const Vector4& extent = heightfield->getWorldExtent();
 					Aabb3 boundingBox(-extent / Scalar(2.0f), extent / Scalar(2.0f));
@@ -214,14 +214,6 @@ void RigidEntityEditor::drawGuide(
 	}
 
 	primitiveRenderer->popWorld();
-
-	// Draw default guides of contained entity.
-	const RefArray< scene::EntityAdapter >& children = entityAdapter->getChildren();
-	for (RefArray< scene::EntityAdapter >::const_iterator i = children.begin(); i != children.end(); ++i)
-	{
-		if (*i)
-			context->drawGuide(primitiveRenderer, *i);
-	}
 }
 
 	}

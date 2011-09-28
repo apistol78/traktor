@@ -305,6 +305,10 @@ void LightRenderer::render(
 		// Render quad primitive.
 		renderView->setVertexBuffer(m_vertexBufferQuad);
 
+		m_lightSpotShader->setCombination(s_handleShadowEnable, shadowMask != 0);
+		m_lightSpotShader->setFloatParameter(s_handleShadowMaskSize, 0.5f / shadowMaskSize);
+		m_lightSpotShader->setTextureParameter(s_handleShadowMask, shadowMask);
+
 		m_lightSpotShader->setVectorParameter(s_handleExtent, Vector4(mn.x(), mn.y(), mx.x(), mx.y()));
 
 		m_lightSpotShader->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));

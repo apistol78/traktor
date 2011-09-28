@@ -2,7 +2,6 @@
 #include "Physics/MeshShapeDesc.h"
 #include "Physics/Mesh.h"
 #include "Physics/MeshResource.h"
-#include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
 
 namespace traktor
@@ -20,11 +19,6 @@ void MeshShapeDesc::setMesh(const resource::Proxy< Mesh >& mesh)
 const resource::Proxy< Mesh >& MeshShapeDesc::getMesh() const
 {
 	return m_mesh;
-}
-
-bool MeshShapeDesc::bind(resource::IResourceManager* resourceManager)
-{
-	return resourceManager->bind(m_mesh);
 }
 
 bool MeshShapeDesc::serialize(ISerializer& s)

@@ -1,4 +1,5 @@
 #include "Physics/BallJointDesc.h"
+#include "Core/Serialization/AttributePoint.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 
@@ -26,7 +27,7 @@ const Vector4& BallJointDesc::getAnchor() const
 
 bool BallJointDesc::serialize(ISerializer& s)
 {
-	return s >> Member< Vector4 >(L"anchor", m_anchor);
+	return s >> Member< Vector4 >(L"anchor", m_anchor, AttributePoint());
 }
 
 	}

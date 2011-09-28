@@ -1,12 +1,13 @@
-#include "Spray/Sources/SplineSource.h"
-#include "Spray/EmitterUpdateContext.h"
-#include "Spray/EmitterInstance.h"
 #include "Core/Math/Hermite.h"
+#include "Core/Serialization/AttributePoint.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberEnum.h"
 #include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberComposite.h"
+#include "Spray/EmitterInstance.h"
+#include "Spray/EmitterUpdateContext.h"
+#include "Spray/Sources/SplineSource.h"
 
 namespace traktor
 {
@@ -94,7 +95,7 @@ bool SplineSource::serialize(ISerializer& s)
 bool SplineSource::Key::serialize(ISerializer& s)
 {
 	s >> Member< float >(L"T", T);
-	s >> Member< Vector4 >(L"value", value);
+	s >> Member< Vector4 >(L"value", value, AttributePoint());
 	return true;
 }
 

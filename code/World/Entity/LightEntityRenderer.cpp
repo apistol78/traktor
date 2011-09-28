@@ -94,7 +94,7 @@ void LightEntityRenderer::render(
 		light.shadowColor = spotLightEntity->getShadowColor();
 		light.range = Scalar(spotLightEntity->getRange());
 		light.radius = Scalar(spotLightEntity->getRadius());
-		light.castShadow = false;
+		light.castShadow = spotLightEntity->getCastShadow();
 
 		worldRenderView.addLight(light);
 	}

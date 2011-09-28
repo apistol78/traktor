@@ -1,12 +1,12 @@
-#include "Physics/World/RigidEntityData.h"
-#include "Physics/World/RigidEntity.h"
-#include "Physics/PhysicsManager.h"
-#include "Physics/BodyDesc.h"
-#include "Physics/Body.h"
-#include "World/Entity/SpatialEntityData.h"
-#include "World/Entity/IEntityBuilder.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRef.h"
+#include "Physics/Body.h"
+#include "Physics/BodyDesc.h"
+#include "Physics/PhysicsManager.h"
+#include "Physics/World/RigidEntity.h"
+#include "Physics/World/RigidEntityData.h"
+#include "World/Entity/IEntityBuilder.h"
+#include "World/Entity/SpatialEntityData.h"
 
 namespace traktor
 {
@@ -21,10 +21,7 @@ Ref< RigidEntity > RigidEntityData::createEntity(
 	PhysicsManager* physicsManager
 ) const
 {
-	if (!m_bodyDesc || !m_bodyDesc->bind(resourceManager))
-		return 0;
-
-	Ref< Body > body = physicsManager->createBody(m_bodyDesc);
+	Ref< Body > body = physicsManager->createBody(resourceManager, m_bodyDesc);
 	if (!body)
 		return 0;
 

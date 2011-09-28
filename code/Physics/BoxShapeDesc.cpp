@@ -1,4 +1,5 @@
 #include "Physics/BoxShapeDesc.h"
+#include "Core/Serialization/AttributeDirection.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 
@@ -29,7 +30,7 @@ bool BoxShapeDesc::serialize(ISerializer& s)
 	if (!ShapeDesc::serialize(s))
 		return false;
 
-	return s >> Member< Vector4 >(L"extent", m_extent);
+	return s >> Member< Vector4 >(L"extent", m_extent, AttributeDirection());
 }
 
 	}

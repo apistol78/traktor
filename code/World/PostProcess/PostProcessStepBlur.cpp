@@ -1,4 +1,5 @@
 #include "Core/Math/Const.h"
+#include "Core/Serialization/AttributeDirection.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Core/Serialization/MemberComposite.h"
@@ -82,7 +83,7 @@ bool PostProcessStepBlur::serialize(ISerializer& s)
 {
 	s >> resource::Member< render::Shader, render::ShaderGraph >(L"shader", m_shader);
 	s >> MemberStlVector< Source, MemberComposite< Source > >(L"sources", m_sources);
-	s >> Member< Vector4 >(L"direction", m_direction);
+	s >> Member< Vector4 >(L"direction", m_direction, AttributeDirection());
 	if (s.getVersion() >= 1)
 		s >> Member< int32_t >(L"taps", m_taps);
 	return true;

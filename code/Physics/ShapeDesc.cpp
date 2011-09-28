@@ -47,11 +47,6 @@ uint32_t ShapeDesc::getCollisionMask() const
 	return m_collisionMask;
 }
 
-bool ShapeDesc::bind(resource::IResourceManager* resourceManager)
-{
-	return true;
-}
-
 bool ShapeDesc::serialize(ISerializer& s)
 {
 	s >> MemberComposite< Transform >(L"localTransform", m_localTransform);

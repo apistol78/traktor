@@ -1,4 +1,6 @@
 #include "Core/Math/Const.h"
+#include "Core/Serialization/AttributeDirection.h"
+#include "Core/Serialization/AttributePoint.h"
 #include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
@@ -94,9 +96,9 @@ float Hinge2JointDesc::getSuspensionCfm() const
 
 bool Hinge2JointDesc::serialize(ISerializer& s)
 {
-	s >> Member< Vector4 >(L"anchor", m_anchor);
-	s >> Member< Vector4 >(L"axis1", m_axis1);
-	s >> Member< Vector4 >(L"axis2", m_axis2);
+	s >> Member< Vector4 >(L"anchor", m_anchor, AttributePoint());
+	s >> Member< Vector4 >(L"axis1", m_axis1, AttributeDirection());
+	s >> Member< Vector4 >(L"axis2", m_axis2, AttributeDirection());
 	s >> Member< float >(L"lowStop", m_lowStop, AttributeRange(-PI, PI));
 	s >> Member< float >(L"highStop", m_highStop, AttributeRange(-PI, PI));
 	s >> Member< float >(L"suspensionErp", m_suspensionErp, AttributeRange(0.0f, 1.0f));
