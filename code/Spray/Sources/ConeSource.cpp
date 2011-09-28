@@ -1,9 +1,11 @@
-#include "Spray/Sources/ConeSource.h"
-#include "Spray/EmitterUpdateContext.h"
-#include "Spray/EmitterInstance.h"
+#include "Core/Serialization/AttributeDirection.h"
+#include "Core/Serialization/AttributePoint.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberComposite.h"
+#include "Spray/EmitterInstance.h"
+#include "Spray/EmitterUpdateContext.h"
+#include "Spray/Sources/ConeSource.h"
 
 namespace traktor
 {
@@ -71,8 +73,8 @@ bool ConeSource::serialize(ISerializer& s)
 	if (!Source::serialize(s))
 		return false;
 
-	s >> Member< Vector4 >(L"position", m_position);
-	s >> Member< Vector4 >(L"normal", m_normal);
+	s >> Member< Vector4 >(L"position", m_position, AttributePoint());
+	s >> Member< Vector4 >(L"normal", m_normal, AttributeDirection());
 	s >> Member< float >(L"angle1", m_angle1);
 	s >> Member< float >(L"angle2", m_angle2);
 	s >> MemberComposite< Range< float > >(L"velocity", m_velocity);

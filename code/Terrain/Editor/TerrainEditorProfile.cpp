@@ -19,8 +19,6 @@ void TerrainEditorProfile::getCommands(
 	std::list< ui::Command >& outCommands
 ) const
 {
-	outCommands.push_back(ui::Command(L"Terrain.ToggleFollowGround"));
-	outCommands.push_back(ui::Command(L"Terrain.FlushSurfaceCache"));
 	outCommands.push_back(ui::Command(L"Ocean.RandomizeWaves"));
 }
 

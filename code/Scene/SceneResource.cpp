@@ -48,7 +48,10 @@ Ref< Scene > SceneResource::createScene(
 	{
 		controller = m_controllerData->createController(entityBuilder, entitySchema);
 		if (!controller)
+		{
+			log::error << L"Failed to create scene; unable to instantiate scene controller" << Endl;
 			return 0;
+		}
 	}
 
 	entityBuilder->end();

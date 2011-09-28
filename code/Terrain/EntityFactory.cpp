@@ -34,8 +34,8 @@ Ref< world::Entity > EntityFactory::createEntity(world::IEntityBuilder* builder,
 
 	if (is_a< TerrainEntityData >(&entityData))
 	{
-		Ref< TerrainEntity > terrainEntity = new TerrainEntity();
-		if (terrainEntity->create(m_resourceManager, m_renderSystem, static_cast< const TerrainEntityData& >(entityData)))
+		Ref< TerrainEntity > terrainEntity = new TerrainEntity(m_renderSystem);
+		if (terrainEntity->create(m_resourceManager, static_cast< const TerrainEntityData& >(entityData)))
 			return terrainEntity;
 	}
 	else if (is_a< OceanEntityData >(&entityData))

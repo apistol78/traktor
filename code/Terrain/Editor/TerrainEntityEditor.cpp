@@ -1,11 +1,13 @@
-#include "Terrain/Editor/TerrainEntityEditor.h"
-#include "Terrain/TerrainEntityData.h"
-#include "Terrain/TerrainEntity.h"
-#include "Terrain/TerrainSurfaceCache.h"
-#include "Terrain/Heightfield.h"
-#include "Scene/Editor/SceneEditorContext.h"
-#include "Scene/Editor/EntityAdapter.h"
+#include "Core/Math/Const.h"
+#include "Render/PrimitiveRenderer.h"
 #include "Scene/Editor/Camera.h"
+#include "Scene/Editor/EntityAdapter.h"
+#include "Scene/Editor/SceneEditorContext.h"
+#include "Terrain/Heightfield.h"
+#include "Terrain/TerrainEntity.h"
+#include "Terrain/TerrainEntityData.h"
+#include "Terrain/TerrainSurfaceCache.h"
+#include "Terrain/Editor/TerrainEntityEditor.h"
 #include "Ui/Command.h"
 
 namespace traktor
@@ -17,8 +19,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.TerrainEntityEditor", TerrainEntityEdit
 
 TerrainEntityEditor::TerrainEntityEditor(scene::SceneEditorContext* context)
 :	scene::DefaultEntityEditor(context)
-,	m_followGround(false)
-,	m_followHeight(20.0f)
 {
 }
 
@@ -35,11 +35,6 @@ void TerrainEntityEditor::entitySelected(
 	bool selected
 )
 {
-	if (selected)
-	{
-		m_followGround = false;
-		m_followHeight = 20.0f;			// 1/10th of a meter.
-	}
 }
 
 void TerrainEntityEditor::applyModifier(
@@ -60,19 +55,7 @@ bool TerrainEntityEditor::handleCommand(
 	const ui::Command& command
 )
 {
-	if (command == L"Terrain.ToggleFollowGround")
-	{
-		m_followGround = !m_followGround;
-	}
-	else if (command == L"Terrain.FlushSurfaceCache")
-	{
-		Ref< TerrainEntity > terrainEntity = checked_type_cast< TerrainEntity* >(entityAdapter->getEntity());
-		terrainEntity->getSurfaceCache()->flush();
-	}
-	else
-		return false;
-
-	return true;
+	return false;
 }
 
 void TerrainEntityEditor::drawGuide(
@@ -83,19 +66,35 @@ void TerrainEntityEditor::drawGuide(
 {
 	Ref< TerrainEntity > terrainEntity = checked_type_cast< TerrainEntity* >(entityAdapter->getEntity());
 
-	//if (m_followGround)
-	//{
-	//	Ref< scene::Camera > camera = context->getCamera();
-	//	T_ASSERT (camera);
+	resource::Proxy< Heightfield > heightfield = terrainEntity->getHeightfield();
+	if (!heightfield.validate())
+		return;
 
-	//	Vector4 cameraPosition = camera->getTargetPosition();
+	const int32_t c_segments = 30;
+	const float c_radius = 4.0;
+	const float c_offset = 0.5f;
 
-	//	cameraPosition =
-	//		cameraPosition * Vector4(1.0f, 0.0f, 1.0f, 1.0f) +
-	//		Scalar(terrainEntity->getHeightfield()->getWorldHeight(cameraPosition.x(), cameraPosition.z()) + m_followHeight) * Vector4(0.0f, 1.0f, 0.0f, 0.0f);
+	for (int i = 0; i < c_segments; ++i)
+	{
+		float a1 = TWO_PI * float(i) / c_segments;
+		float a2 = TWO_PI * float(i + 1) / c_segments;
 
-	//	camera->setTargetPosition(cameraPosition);
-	//}
+		float x1 = std::cos(a1) * c_radius;
+		float z1 = std::sin(a1) * c_radius;
+
+		float x2 = std::cos(a2) * c_radius;
+		float z2 = std::sin(a2) * c_radius;
+
+		float y1 = heightfield->getWorldHeight(x1, z1);
+		float y2 = heightfield->getWorldHeight(x2, z2);
+
+		primitiveRenderer->drawLine(
+			Vector4(x1, y1 + c_offset, z1, 1.0f),
+			Vector4(x2, y2 + c_offset, z2, 1.0f),
+			8.0f,
+			Color4ub(255, 255, 0, 255)
+		);
+	}
 }
 
 	}

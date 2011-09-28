@@ -376,31 +376,42 @@ void calculateConvexHull(Model& model)
 {
 	AlignedVector< Vector4 > vertices = model.getPositions();
 
-	uint32_t t = ~0U;
-	for (int i = 0; i < 2; ++i)
+	// Find three valid vertices to build a plane.
+	uint32_t k = ~0U;
+	Plane pll((vertices[1] - vertices[0]).normalized(), vertices[0]);
+	for (uint32_t i = 2; i < uint32_t(vertices.size()); ++i)
 	{
-		Plane pl(vertices[0], vertices[1], vertices[2]);
-		for (uint32_t i = 3; i < uint32_t(vertices.size()); ++i)
+		Vector4 p = (pll.project(vertices[i]) - vertices[0]).xyz0();
+		if (p.length() > FUZZY_EPSILON)
 		{
-			if (pl.distance(vertices[i]) < -FUZZY_EPSILON)
-			{
-				t = i;
-				break;
-			}
-		}
-		if (t == ~0U)
-			std::swap(vertices[0], vertices[1]);
-		else
+			k = i;
 			break;
+		}
 	}
-	T_ASSERT (t != ~0U);
+	if (k == ~0UL)
+		return;
+
+	// Build initial tetrahedron.
+	uint32_t t = ~0U;
+	Plane plt(vertices[0], vertices[1], vertices[k]);
+	for (uint32_t i = 2; i < uint32_t(vertices.size()); ++i)
+	{
+		Scalar d = abs(plt.distance(vertices[i]));
+		if (i != k && d > FUZZY_EPSILON)
+		{
+			t = i;
+			break;
+		}
+	}
+	if (t == ~0U)
+		return;
 
 	std::vector< HullFace > faces;
 	faces.reserve(32);
-	faces.push_back(HullFace(0, 1, 2));
+	faces.push_back(HullFace(0, 1, k));
 	faces.push_back(HullFace(1, 0, t));
-	faces.push_back(HullFace(2, 1, t));
-	faces.push_back(HullFace(0, 2, t));
+	faces.push_back(HullFace(k, 1, t));
+	faces.push_back(HullFace(0, k, t));
 
 	std::vector< HullFaceAdjacency > adjacency;
 	calculateAdjacency(faces, adjacency);

@@ -13,7 +13,8 @@ SpotLightEntity::SpotLightEntity(
 	const Vector4& baseColor,
 	const Vector4& shadowColor,
 	float range,
-	float radius
+	float radius,
+	bool castShadow
 )
 :	m_transform(transform)
 ,	m_sunColor(sunColor)
@@ -21,6 +22,7 @@ SpotLightEntity::SpotLightEntity(
 ,	m_shadowColor(shadowColor)
 ,	m_range(range)
 ,	m_radius(radius)
+,	m_castShadow(castShadow)
 {
 }
 

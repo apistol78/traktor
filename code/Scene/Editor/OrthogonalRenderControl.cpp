@@ -517,7 +517,7 @@ void OrthogonalRenderControl::eventPaint(ui::Event* event)
 
 	// Get entities.
 	RefArray< EntityAdapter > entityAdapters;
-	m_context->getEntities(entityAdapters);
+	m_context->getEntities(entityAdapters, SceneEditorContext::GfDefault | SceneEditorContext::GfExternals);
 
 	// Get root entity.
 	Ref< EntityAdapter > rootEntityAdapter = m_context->getRootEntityAdapter();

@@ -57,6 +57,8 @@ struct TerrainSurfaceRenderBlock : public render::RenderBlock
 		screenRenderer->draw(renderView, program);
 
 		renderView->end();
+
+		T_SAFE_RELEASE(renderTargetSet);
 	}
 };
 
@@ -223,6 +225,8 @@ void TerrainSurfaceCache::get(
 	renderBlock->programParams->setVectorParameter(m_handlePatchExtent, patchExtent);
 	renderBlock->programParams->setVectorParameter(m_handlePatchLodColor, c_cacheSurfaceColor[surfaceLod]);
 	renderBlock->programParams->endParameters(renderContext);
+
+	T_SAFE_ADDREF(renderBlock->renderTargetSet);
 
 	// Update cache entry.
 	m_entries[patchId].lod = surfaceLod;

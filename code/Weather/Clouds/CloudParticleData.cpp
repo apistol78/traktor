@@ -1,3 +1,4 @@
+#include "Core/Serialization/AttributeDirection.h"
 #include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
@@ -36,7 +37,7 @@ bool CloudParticleData::serialize(ISerializer& s)
 	s >> Member< Color4ub >(L"skyColor", m_skyColor);
 	s >> Member< Color4ub >(L"groundColor", m_groundColor);
 	s >> Member< float >(L"sunInfluence", m_sunInfluence, AttributeRange(0.0f, 1.0f));
-	s >> Member< Vector4 >(L"size", m_size);
+	s >> Member< Vector4 >(L"size", m_size, AttributeDirection());
 	s >> Member< int32_t >(L"octaves", m_octaves);
 	s >> Member< float >(L"persistence", m_persistence);
 	s >> Member< float >(L"noiseScale", m_noiseScale);

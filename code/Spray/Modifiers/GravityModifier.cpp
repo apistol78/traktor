@@ -1,3 +1,4 @@
+#include "Core/Serialization/AttributeDirection.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Spray/Modifiers/GravityModifier.h"
@@ -67,7 +68,7 @@ void GravityModifier::update(const Scalar& deltaTime, const Transform& transform
 
 bool GravityModifier::serialize(ISerializer& s)
 {
-	s >> Member< Vector4 >(L"gravity", m_gravity);
+	s >> Member< Vector4 >(L"gravity", m_gravity, AttributeDirection());
 	if (s.getVersion() >= 1)
 		s >> Member< bool >(L"world", m_world);
 	return true;

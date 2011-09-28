@@ -16,6 +16,13 @@
 
 namespace traktor
 {
+	namespace resource
+	{
+
+class IResourceManager;
+
+	}
+
 	namespace physics
 	{
 
@@ -121,10 +128,11 @@ public:
 	 * \note Created body are initially disabled; need to call setEnable(true)
 	 * in order to add to simulation.
 	 *
+	 * \param resourceManager Resource manager.
 	 * \param desc Rigid body description.
 	 * \return Rigid body instance.
 	 */
-	virtual Ref< Body > createBody(const BodyDesc* desc) = 0;
+	virtual Ref< Body > createBody(resource::IResourceManager* resourceManager, const BodyDesc* desc) = 0;
 
 	/*! \brief Create joint between bodies.
 	 *

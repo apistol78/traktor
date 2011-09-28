@@ -26,13 +26,9 @@
 #include <Physics/Collide/Query/Collector/RayCollector/hkpClosestRayHitCollector.h>
 #include <Physics/Collide/Query/Collector/PointCollector/hkpSimpleClosestContactCollector.h>
 /*lint -restore*/
-#include "Physics/Havok/PhysicsManagerHavok.h"
-#include "Physics/Havok/StaticBodyHavok.h"
-#include "Physics/Havok/DynamicBodyHavok.h"
-#include "Physics/Havok/BallJointHavok.h"
-#include "Physics/Havok/ConeTwistJointHavok.h"
-#include "Physics/Havok/HingeJointHavok.h"
-#include "Physics/Havok/Conversion.h"
+#include "Core/Log/Log.h"
+#include "Core/Math/Plane.h"
+#include "Core/Misc/TString.h"
 #include "Physics/BoxShapeDesc.h"
 #include "Physics/CapsuleShapeDesc.h"
 #include "Physics/CylinderShapeDesc.h"
@@ -47,9 +43,14 @@
 #include "Physics/Hinge2JointDesc.h"
 #include "Physics/Mesh.h"
 #include "Physics/Heightfield.h"
-#include "Core/Math/Plane.h"
-#include "Core/Misc/TString.h"
-#include "Core/Log/Log.h"
+#include "Physics/Havok/PhysicsManagerHavok.h"
+#include "Physics/Havok/StaticBodyHavok.h"
+#include "Physics/Havok/DynamicBodyHavok.h"
+#include "Physics/Havok/BallJointHavok.h"
+#include "Physics/Havok/ConeTwistJointHavok.h"
+#include "Physics/Havok/HingeJointHavok.h"
+#include "Physics/Havok/Conversion.h"
+#include "Resource/IResourceManager.h"
 
 namespace traktor
 {
@@ -228,7 +229,7 @@ Vector4 PhysicsManagerHavok::getGravity() const
 	return fromHkVector4(m_world->getGravity());
 }
 
-Ref< Body > PhysicsManagerHavok::createBody(const BodyDesc* desc)
+Ref< Body > PhysicsManagerHavok::createBody(resource::IResourceManager* resourceManager, const BodyDesc* desc)
 {
 	if (!desc)
 		return 0;
@@ -285,7 +286,7 @@ Ref< Body > PhysicsManagerHavok::createBody(const BodyDesc* desc)
 	else if (const MeshShapeDesc* meshShape = dynamic_type_cast< const MeshShapeDesc* >(shapeDesc))
 	{
 		resource::Proxy< Mesh > mesh = meshShape->getMesh();
-		if (!mesh.validate())
+		if (!resourceManager->bind(mesh) || !mesh.validate())
 		{
 			log::error << L"Unable to load mesh resource" << Endl;
 			return 0;

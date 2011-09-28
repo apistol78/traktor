@@ -9,7 +9,7 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.SpotLightEntityData", 0, SpotLightEntityData, SpatialEntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.SpotLightEntityData", 1, SpotLightEntityData, SpatialEntityData)
 
 SpotLightEntityData::SpotLightEntityData()
 :	m_sunColor(1.0f, 1.0f, 1.0f, 0.0f)
@@ -17,6 +17,7 @@ SpotLightEntityData::SpotLightEntityData()
 ,	m_shadowColor(0.0f, 0.0f, 0.0f, 0.0f)
 ,	m_range(0.0f)
 ,	m_radius(deg2rad(45.0f))
+,	m_castShadow(false)
 {
 }
 
@@ -30,6 +31,9 @@ bool SpotLightEntityData::serialize(ISerializer& s)
 	s >> Member< Vector4 >(L"shadowColor", m_shadowColor);
 	s >> Member< float >(L"range", m_range);
 	s >> Member< float >(L"radius", m_radius, AttributeRange(0.0f, PI));
+
+	if (s.getVersion() >= 1)
+		s >> Member< bool >(L"castShadow", m_castShadow);
 
 	return true;
 }

@@ -38,12 +38,15 @@ public:
 
 	float getRadius() const { return m_radius; }
 
+	bool getCastShadow() const { return m_castShadow; }
+
 private:
 	Vector4 m_sunColor;
 	Vector4 m_baseColor;
 	Vector4 m_shadowColor;
 	float m_range;
 	float m_radius;
+	bool m_castShadow;
 };
 
 	}

@@ -28,7 +28,7 @@ class T_DLLCLASS Heightfield : public Object
 	T_RTTI_CLASS;
 
 public:
-	typedef unsigned short height_t;
+	typedef uint16_t height_t;
 
 	Heightfield(const HeightfieldResource& resource);
 

@@ -30,7 +30,8 @@ public:
 		const Vector4& baseColor,
 		const Vector4& shadowColor,
 		float range,
-		float radius
+		float radius,
+		bool castShadow
 	);
 
 	virtual void update(const EntityUpdate* update);
@@ -51,6 +52,10 @@ public:
 
 	float getRadius() const { return m_radius; }
 
+	void setCastShadow(bool castShadow) { m_castShadow = castShadow; }
+
+	bool getCastShadow() const { return m_castShadow; }
+
 private:
 	Transform m_transform;
 	Vector4 m_sunColor;
@@ -58,6 +63,7 @@ private:
 	Vector4 m_shadowColor;
 	float m_range;
 	float m_radius;
+	bool m_castShadow;
 };
 
 	}

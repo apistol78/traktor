@@ -45,7 +45,7 @@ public:
 
 	virtual Vector4 getGravity() const;
 
-	virtual Ref< Body > createBody(const BodyDesc* desc);
+	virtual Ref< Body > createBody(resource::IResourceManager* resourceManager, const BodyDesc* desc);
 
 	virtual Ref< Joint > createJoint(const JointDesc* desc, const Transform& transform, Body* body1, Body* body2);
 

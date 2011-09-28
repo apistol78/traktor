@@ -371,7 +371,7 @@ void RenderViewWin32::present()
 
 void RenderViewWin32::pushMarker(const char* const marker)
 {
-	std::wstring wm = mbstows(marker); 
+	std::wstring wm = marker ? mbstows(marker) : L"Unnamed"; 
 	D3DPERF_BeginEvent(D3DCOLOR_RGBA(255, 255, 255, 255), wm.c_str());
 }
 

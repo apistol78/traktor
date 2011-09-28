@@ -232,9 +232,12 @@ float SceneEditorContext::getTime() const
 
 void SceneEditorContext::drawGuide(render::PrimitiveRenderer* primitiveRenderer, EntityAdapter* entityAdapter)
 {
-	Ref< IEntityEditor > entityEditor = entityAdapter->getEntityEditor();
-	if (entityEditor)
-		entityEditor->drawGuide(this, primitiveRenderer, entityAdapter);
+	if (entityAdapter)
+	{
+		IEntityEditor* entityEditor = entityAdapter->getEntityEditor();
+		if (entityEditor)
+			entityEditor->drawGuide(this, primitiveRenderer, entityAdapter);
+	}
 }
 
 void SceneEditorContext::setSceneAsset(SceneAsset* sceneAsset)

@@ -2,7 +2,7 @@
 #define traktor_physics_BodyBullet_H
 
 #include <btBulletDynamicsCommon.h>
-#include "Core/Thread/Atomic.h"
+#include "Core/Misc/InvokeOnce.h"
 #include "Physics/Bullet/Types.h"
 
 namespace traktor
@@ -42,12 +42,8 @@ public:
 
 	virtual void destroy()
 	{
-		if (m_callback)
-		{
-			m_callback->destroyBody(this, m_body, m_shape);
-			m_callback = 0;
-		}
-		
+		invokeOnce< IWorldCallback, Body*, btRigidBody*, btCollisionShape* >(m_callback, &IWorldCallback::destroyBody, this, m_body, m_shape);
+
 		m_dynamicsWorld = 0;
 		m_body = 0;
 		m_shape = 0;

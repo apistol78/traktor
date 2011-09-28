@@ -2,6 +2,8 @@
 #include <NxPhysics.h>
 #include <NxCooking.h>
 #include <NxStream.h>
+#include "Core/Io/DynamicMemoryStream.h"
+#include "Core/Log/Log.h"
 #include "Physics/PhysX/PhysicsManagerPhysX.h"
 #include "Physics/PhysX/StaticBodyPhysX.h"
 #include "Physics/PhysX/DynamicBodyPhysX.h"
@@ -23,8 +25,7 @@
 #include "Physics/Hinge2JointDesc.h"
 #include "Physics/Mesh.h"
 #include "Physics/Heightfield.h"
-#include "Core/Io/DynamicMemoryStream.h"
-#include "Core/Log/Log.h"
+#include "Resource/IResourceManager.h"
 
 namespace traktor
 {
@@ -122,7 +123,7 @@ Vector4 PhysicsManagerPhysX::getGravity() const
 	return fromNxVec3(gravity, 0.0f);
 }
 
-Ref< Body > PhysicsManagerPhysX::createBody(const BodyDesc* desc)
+Ref< Body > PhysicsManagerPhysX::createBody(resource::IResourceManager* resourceManager, const BodyDesc* desc)
 {
 	if (!desc)
 		return 0;
@@ -169,7 +170,7 @@ Ref< Body > PhysicsManagerPhysX::createBody(const BodyDesc* desc)
 	else if (const MeshShapeDesc* meshShape = dynamic_type_cast< const MeshShapeDesc* >(shapeDesc))
 	{
 		resource::Proxy< Mesh > mesh = meshShape->getMesh();
-		if (!mesh.validate())
+		if (!resourceManager->bind(mesh) || !mesh.validate())
 		{
 			log::error << L"Unable to load mesh resource" << Endl;
 			return 0;

@@ -95,7 +95,7 @@ bool RagDollPoseController::create(
 			bodyDesc.setLinearThreshold(linearThreshold);
 			bodyDesc.setAngularThreshold(angularThreshold);
 
-			Ref< physics::DynamicBody > limb = checked_type_cast< physics::DynamicBody* >(physicsManager->createBody(&bodyDesc));
+			Ref< physics::DynamicBody > limb = checked_type_cast< physics::DynamicBody* >(physicsManager->createBody(0, &bodyDesc));
 			if (!limb)
 				return false;
 

@@ -31,8 +31,6 @@ public:
 
 	const resource::Proxy< Heightfield >& getHeightfield() const;
 
-	virtual bool bind(resource::IResourceManager* resourceManager);
-
 	virtual bool serialize(ISerializer& s);
 
 private:

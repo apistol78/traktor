@@ -65,9 +65,9 @@ public:
 #endif
 	};
 
-	TerrainEntity();
+	TerrainEntity(render::IRenderSystem* renderSystem);
 
-	bool create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, const TerrainEntityData& data);
+	bool create(resource::IResourceManager* resourceManager, const TerrainEntityData& data);
 
 	void render(
 		render::RenderContext* renderContext,
@@ -82,6 +82,7 @@ public:
 	virtual void update(const world::EntityUpdate* update);
 
 private:
+	Ref< render::IRenderSystem > m_renderSystem;
 	resource::Proxy< Heightfield > m_heightfield;
 	resource::Proxy< render::Shader > m_shader;
 	Ref< TerrainSurfaceCache > m_surfaceCache;
@@ -104,6 +105,8 @@ private:
 	render::handle_t m_handleWorldExtent;
 	render::handle_t m_handlePatchOrigin;
 	render::handle_t m_handlePatchExtent;
+
+	bool createRenderPatches();
 };
 
 	}

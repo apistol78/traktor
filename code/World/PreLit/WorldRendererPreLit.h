@@ -145,7 +145,7 @@ private:
 	Ref< render::RenderTargetSet > m_normalTargetSet;
 	Ref< render::RenderTargetSet > m_shadowTargetSet;
 	Ref< render::RenderTargetSet > m_shadowMaskProjectTargetSet;
-	Ref< render::RenderTargetSet > m_shadowMaskFilterTargetSet;
+	RefArray< render::RenderTargetSet > m_shadowMaskFilterTargetSet;
 	Ref< render::RenderTargetSet > m_lightMapTargetSet;
 	Ref< render::RenderContext > m_globalContext;
 	Ref< PostProcess > m_shadowMaskProject;

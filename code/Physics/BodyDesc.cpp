@@ -20,14 +20,6 @@ Ref< const ShapeDesc > BodyDesc::getShape() const
 	return m_shape;
 }
 
-bool BodyDesc::bind(resource::IResourceManager* resourceManager)
-{
-	if (m_shape)
-		return m_shape->bind(resourceManager);
-	else
-		return true;
-}
-
 bool BodyDesc::serialize(ISerializer& s)
 {
 	return s >> MemberRef< ShapeDesc >(L"shape", m_shape);

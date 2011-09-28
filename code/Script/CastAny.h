@@ -57,6 +57,50 @@ struct CastAny < bool, false >
 };
 
 template < >
+struct CastAny < int8_t, false >
+{
+	static Any set(int8_t value) {
+		return Any(value);
+	}
+	static int8_t get(const Any& value) {
+		return value.getInteger();
+	}
+};
+
+template < >
+struct CastAny < uint8_t, false >
+{
+	static Any set(uint8_t value) {
+		return Any(uint8_t(value));
+	}
+	static uint8_t get(const Any& value) {
+		return (uint8_t)value.getInteger();
+	}
+};
+
+template < >
+struct CastAny < int16_t, false >
+{
+	static Any set(int16_t value) {
+		return Any(value);
+	}
+	static int16_t get(const Any& value) {
+		return value.getInteger();
+	}
+};
+
+template < >
+struct CastAny < uint16_t, false >
+{
+	static Any set(uint16_t value) {
+		return Any(uint16_t(value));
+	}
+	static uint16_t get(const Any& value) {
+		return (uint16_t)value.getInteger();
+	}
+};
+
+template < >
 struct CastAny < int32_t, false >
 {
 	static Any set(int32_t value) {

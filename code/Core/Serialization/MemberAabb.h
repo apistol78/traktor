@@ -2,6 +2,7 @@
 #define traktor_MemberAabb_H
 
 #include "Core/Math/Aabb3.h"
+#include "Core/Serialization/AttributePoint.h"
 #include "Core/Serialization/MemberComplex.h"
 
 namespace traktor
@@ -18,9 +19,9 @@ public:
 
 	virtual bool serialize(ISerializer& s) const
 	{
-		if (!(s >> Member< Vector4 >(L"mn", m_ref.mn)))
+		if (!(s >> Member< Vector4 >(L"mn", m_ref.mn, AttributePoint())))
 			return false;
-		if (!(s >> Member< Vector4 >(L"mx", m_ref.mx)))
+		if (!(s >> Member< Vector4 >(L"mx", m_ref.mx, AttributePoint())))
 			return false;
 		return true;
 	}
