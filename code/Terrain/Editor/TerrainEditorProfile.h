@@ -8,7 +8,7 @@
 #if defined(T_TERRAIN_EDITOR_EXPORT)
 #	define T_DLLCLASS T_DLLEXPORT
 #else
-#d	efine T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
