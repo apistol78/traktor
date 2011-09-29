@@ -15,11 +15,21 @@
 
 namespace traktor
 {
-	namespace world
+	namespace hf
 	{
 
-class IWorldRenderPass;
-class WorldRenderView;
+class Heightfield;
+
+	}
+
+	namespace render
+	{
+
+class IRenderSystem;
+class ISimpleTexture;
+class RenderContext;
+class VertexBuffer;
+class IndexBuffer;
 
 	}
 
@@ -30,21 +40,17 @@ class IResourceManager;
 
 	}
 
-	namespace render
+	namespace world
 	{
 
-class IRenderSystem;
-class RenderContext;
-class VertexBuffer;
-class IndexBuffer;
-class ITexture;
+class IWorldRenderPass;
+class WorldRenderView;
 
 	}
 
 	namespace terrain
 	{
 
-class Heightfield;
 class TerrainEntityData;
 class TerrainSurfaceCache;
 class TerrainSurface;
@@ -75,7 +81,7 @@ public:
 		world::IWorldRenderPass& worldRenderPass
 	);
 
-	inline const resource::Proxy< Heightfield >& getHeightfield() const { return m_heightfield; }
+	inline const resource::Proxy< hf::Heightfield >& getHeightfield() const { return m_heightfield; }
 
 	inline Ref< TerrainSurfaceCache > getSurfaceCache() const { return m_surfaceCache; }
 
@@ -85,12 +91,14 @@ private:
 	friend class TerrainEntityEditor;
 
 	Ref< render::IRenderSystem > m_renderSystem;
-	resource::Proxy< Heightfield > m_heightfield;
+	resource::Proxy< hf::Heightfield > m_heightfield;
 	resource::Proxy< render::Shader > m_shader;
 	Ref< TerrainSurfaceCache > m_surfaceCache;
 	Ref< TerrainSurface > m_surface;
 	std::vector< Patch > m_patches;
 	uint32_t m_patchCount;
+	Ref< render::ISimpleTexture > m_normalTexture;
+	Ref< render::ISimpleTexture > m_heightTexture;
 	Ref< render::IndexBuffer > m_indexBuffer;
 #if defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
 	Ref< render::VertexBuffer > m_vertexBuffer;

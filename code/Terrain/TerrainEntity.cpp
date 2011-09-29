@@ -1,8 +1,14 @@
 #include <algorithm>
 #include <limits>
 #include "Core/Containers/AlignedVector.h"
+#include "Core/Log/Log.h"
+#include "Core/Functor/Functor.h"
 #include "Core/Math/Half.h"
+#include "Core/Math/Log2.h"
+#include "Core/Misc/AutoPtr.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Thread/JobManager.h"
+#include "Heightfield/Heightfield.h"
 #include "Render/IndexBuffer.h"
 #include "Render/IRenderSystem.h"
 #include "Render/ISimpleTexture.h"
@@ -10,7 +16,6 @@
 #include "Render/VertexElement.h"
 #include "Render/Context/RenderContext.h"
 #include "Resource/IResourceManager.h"
-#include "Terrain/Heightfield.h"
 #include "Terrain/TerrainEntity.h"
 #include "Terrain/TerrainEntityData.h"
 #include "Terrain/TerrainSurface.h"
@@ -59,6 +64,142 @@ struct TerrainRenderBlock : public render::SimpleRenderBlock
 		render::SimpleRenderBlock::render(renderView, globalParameters);
 	}
 };
+
+const uint32_t c_skipHeightTexture = 4;
+const uint32_t c_skipNormalTexture = 2;
+
+void createHeightTextureJob(
+	const hf::Heightfield* hf,
+	uint32_t size,
+	uint32_t dim,
+	half_t* data,
+	uint32_t from,
+	uint32_t to
+)
+{
+	for (uint32_t y = from; y < to; ++y)
+	{
+		float hy = float(y * size) / dim;
+
+		for (uint32_t x = 0; x < dim; ++x)
+		{
+			float hx = float(x * size) / dim;
+
+			float h = hf->getGridHeight(hx, hy);
+			data[x + y * dim] = floatToHalf(h);
+
+#if defined(_XBOX)
+			swap8in16(data[x + y * dim]);
+#endif
+		}
+	}
+}
+
+Ref< render::ISimpleTexture > createHeightTexture(render::IRenderSystem* renderSystem, const hf::Heightfield* hf)
+{
+	uint32_t size = hf->getResource().getSize();
+	T_ASSERT (size > 0);
+
+	uint32_t dim = nearestLog2(size);
+	dim /= c_skipHeightTexture;
+	T_ASSERT (dim > 0);
+
+	log::info << L"Terrain height texture " << dim << L"*" << dim << Endl;
+
+	AutoArrayPtr< half_t > data(new half_t [dim * dim]);
+	T_ASSERT (data.ptr());
+
+	RefArray< Functor > jobs(4);
+	jobs[0] = makeStaticFunctor< const hf::Heightfield*, uint32_t, uint32_t, half_t*, uint32_t, uint32_t >(createHeightTextureJob, hf, size, dim, data.ptr(), (dim * 0) / 4, (dim * 1) / 4);
+	jobs[1] = makeStaticFunctor< const hf::Heightfield*, uint32_t, uint32_t, half_t*, uint32_t, uint32_t >(createHeightTextureJob, hf, size, dim, data.ptr(), (dim * 1) / 4, (dim * 2) / 4);
+	jobs[2] = makeStaticFunctor< const hf::Heightfield*, uint32_t, uint32_t, half_t*, uint32_t, uint32_t >(createHeightTextureJob, hf, size, dim, data.ptr(), (dim * 2) / 4, (dim * 3) / 4);
+	jobs[3] = makeStaticFunctor< const hf::Heightfield*, uint32_t, uint32_t, half_t*, uint32_t, uint32_t >(createHeightTextureJob, hf, size, dim, data.ptr(), (dim * 3) / 4, (dim * 4) / 4);
+	JobManager::getInstance().fork(jobs);
+
+	render::SimpleTextureCreateDesc desc;
+	desc.width = dim;
+	desc.height = dim;
+	desc.mipCount = 1;
+	desc.format = render::TfR16F;
+	desc.immutable = true;
+	desc.initialData[0].pitch = dim * sizeof(half_t);
+	desc.initialData[0].data = data.ptr();
+
+	return renderSystem->createSimpleTexture(desc);
+}
+
+void createNormalTextureJob(
+	const hf::Heightfield* hf,
+	uint32_t size,
+	uint32_t dim,
+	uint8_t* data,
+	uint32_t from,
+	uint32_t to
+)
+{
+	const float c_scaleHeight = 300.0f;
+	float s = 1.0f / size;
+
+	for (uint32_t y = from; y < to; ++y)
+	{
+		float hy = float(y * size) / dim;
+
+		for (uint32_t x = 0; x < dim; ++x)
+		{
+			float hx = float(x * size) / dim;
+
+			float h = hf->getGridHeight(hx, hy);
+			float h1 = hf->getGridHeight(hx + s, hy);
+			float h2 = hf->getGridHeight(hx, hy + s);
+
+			Vector4 normal = cross(
+				Vector4(0.0f, (h - h1) * c_scaleHeight, s),
+				Vector4(s, (h - h2) * c_scaleHeight, 0.0f)
+			).normalized();
+
+			normal *= Vector4(-1.0f, 1.0f, -1.0f, 0.0f);
+
+			uint8_t* p = &data[(x + y * dim) * 4];
+			p[0] = uint8_t((normal.z() * 0.5f + 0.5f) * 255);
+			p[1] = uint8_t((normal.y() * 0.5f + 0.5f) * 255);
+			p[2] = uint8_t((normal.x() * 0.5f + 0.5f) * 255);
+			p[3] = 0;
+		}
+	}
+}
+
+Ref< render::ISimpleTexture > createNormalTexture(render::IRenderSystem* renderSystem, const hf::Heightfield* hf)
+{
+	uint32_t size = hf->getResource().getSize();
+	T_ASSERT (size > 0);
+
+	uint32_t dim = nearestLog2(size);
+	dim /= c_skipNormalTexture;
+	T_ASSERT (dim > 0);
+
+	log::info << L"Terrain normal texture " << dim << L"*" << dim << Endl;
+
+	AutoArrayPtr< uint8_t > data(new uint8_t [dim * dim * 4]);
+	T_ASSERT (data.ptr());
+
+	RefArray< Functor > jobs(4);
+	jobs[0] = makeStaticFunctor< const hf::Heightfield*, uint32_t, uint32_t, uint8_t*, uint32_t, uint32_t >(createNormalTextureJob, hf, size, dim, data.ptr(), (dim * 0) / 4, (dim * 1) / 4);
+	jobs[1] = makeStaticFunctor< const hf::Heightfield*, uint32_t, uint32_t, uint8_t*, uint32_t, uint32_t >(createNormalTextureJob, hf, size, dim, data.ptr(), (dim * 1) / 4, (dim * 2) / 4);
+	jobs[2] = makeStaticFunctor< const hf::Heightfield*, uint32_t, uint32_t, uint8_t*, uint32_t, uint32_t >(createNormalTextureJob, hf, size, dim, data.ptr(), (dim * 2) / 4, (dim * 3) / 4);
+	jobs[3] = makeStaticFunctor< const hf::Heightfield*, uint32_t, uint32_t, uint8_t*, uint32_t, uint32_t >(createNormalTextureJob, hf, size, dim, data.ptr(), (dim * 3) / 4, (dim * 4) / 4);
+	JobManager::getInstance().fork(jobs);
+
+	render::SimpleTextureCreateDesc desc;
+	desc.width = dim;
+	desc.height = dim;
+	desc.mipCount = 1;
+	desc.format = render::TfR8G8B8A8;
+	desc.immutable = true;
+	desc.initialData[0].pitch = dim * 4 * sizeof(uint8_t);
+	desc.initialData[0].data = data.ptr();
+
+	return renderSystem->createSimpleTexture(desc);
+}
 
 		}
 
@@ -228,7 +369,7 @@ void TerrainEntity::render(
 				worldRenderPass,
 				renderContext,
 				m_surface,
-				m_heightfield->getHeightTexture(),
+				m_heightTexture,
 				-worldExtent * Scalar(0.5f),
 				worldExtent,
 				patchOrigin,
@@ -255,10 +396,10 @@ void TerrainEntity::render(
 		renderBlock->programParams->beginParameters(renderContext);
 		worldRenderPass.setProgramParameters(renderBlock->programParams);
 		renderBlock->programParams->setTextureParameter(m_handleSurface, surface);
-		renderBlock->programParams->setTextureParameter(m_handleHeightfield, m_heightfield->getHeightTexture());
-		renderBlock->programParams->setFloatParameter(m_handleHeightfieldSize, float(m_heightfield->getHeightTexture()->getWidth()));
-		renderBlock->programParams->setTextureParameter(m_handleNormals, m_heightfield->getNormalTexture());
-		renderBlock->programParams->setFloatParameter(m_handleNormalsSize, float(m_heightfield->getNormalTexture()->getWidth()));
+		renderBlock->programParams->setTextureParameter(m_handleHeightfield, m_heightTexture);
+		renderBlock->programParams->setFloatParameter(m_handleHeightfieldSize, float(m_heightTexture->getWidth()));
+		renderBlock->programParams->setTextureParameter(m_handleNormals, m_normalTexture);
+		renderBlock->programParams->setFloatParameter(m_handleNormalsSize, float(m_normalTexture->getWidth()));
 		renderBlock->programParams->setVectorParameter(m_handleWorldOrigin, -worldExtent * Scalar(0.5f));
 		renderBlock->programParams->setVectorParameter(m_handleWorldExtent, worldExtent);
 		renderBlock->programParams->setVectorParameter(m_handlePatchOrigin, patchOrigin);
@@ -277,6 +418,8 @@ bool TerrainEntity::createRenderPatches()
 {
 	m_patches.clear();
 	m_patchCount = 0;
+	safeDestroy(m_normalTexture);
+	safeDestroy(m_heightTexture);
 	safeDestroy(m_indexBuffer);
 #if defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
 	safeDestroy(m_vertexBuffer);
@@ -285,7 +428,7 @@ bool TerrainEntity::createRenderPatches()
 	uint32_t heightfieldSize = m_heightfield->getResource().getSize();
 	T_ASSERT (heightfieldSize > 0);
 
-	const height_t* heights = m_heightfield->getHeights();
+	const hf::height_t* heights = m_heightfield->getHeights();
 	T_ASSERT (heights);
 
 	uint32_t patchDim = m_heightfield->getResource().getPatchDim();
@@ -521,6 +664,9 @@ bool TerrainEntity::createRenderPatches()
 		index[i] = indices[i];
 
 	m_indexBuffer->unlock();
+
+	m_normalTexture = createNormalTexture(m_renderSystem, m_heightfield);
+	m_heightTexture = createHeightTexture(m_renderSystem, m_heightfield);
 
 	m_patchCount = patchCount;
 	return true;

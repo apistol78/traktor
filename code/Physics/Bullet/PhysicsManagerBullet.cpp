@@ -33,6 +33,7 @@
 #	include "Core/Thread/Ps3/Spurs/SpursManager.h"
 #endif
 
+#include "Heightfield/Heightfield.h"
 #include "Physics/CollisionListener.h"
 #include "Physics/BoxShapeDesc.h"
 #include "Physics/CapsuleShapeDesc.h"
@@ -47,7 +48,6 @@
 #include "Physics/HingeJointDesc.h"
 #include "Physics/Hinge2JointDesc.h"
 #include "Physics/Mesh.h"
-#include "Physics/Heightfield.h"
 #include "Physics/Bullet/PhysicsManagerBullet.h"
 #include "Physics/Bullet/DynamicBodyBullet.h"
 #include "Physics/Bullet/StaticBodyBullet.h"
@@ -379,7 +379,7 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 	}
 	else if (const HeightfieldShapeDesc* heightfieldShape = dynamic_type_cast< const HeightfieldShapeDesc* >(shapeDesc))
 	{
-		resource::Proxy< Heightfield > heightfield = heightfieldShape->getHeightfield();
+		resource::Proxy< hf::Heightfield > heightfield = heightfieldShape->getHeightfield();
 		if (!resourceManager->bind(heightfield) || !heightfield.validate())
 		{
 			log::error << L"Unable to load heightfield resource" << Endl;

@@ -1,4 +1,6 @@
+#include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/Adler32.h"
 #include "Core/Misc/Save.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Core/Thread/Acquire.h"
@@ -188,6 +190,32 @@ void PipelineDependsParallel::addUniqueDependency(
 
 	bool result = true;
 
+	// Calculate hash of instance data.
+	if (sourceInstance)
+	{
+		std::vector< std::wstring > dataNames;
+		sourceInstance->getDataNames(dataNames);
+
+		for (std::vector< std::wstring >::const_iterator i = dataNames.begin(); i != dataNames.end(); ++i)
+		{
+			Ref< IStream > dataStream = sourceInstance->readData(*i);
+			if (dataStream)
+			{
+				uint8_t buffer[4096];
+				Adler32 a32;
+				int32_t r;
+
+				a32.begin();
+				while ((r = dataStream->read(buffer, sizeof(buffer))) > 0)
+					a32.feed(buffer, r);
+				a32.end();
+
+				currentDependency->sourceDataHash += a32.get();
+			}
+		}
+	}
+
+	// Scan child dependencies.
 	{
 		m_currentDependency.set(currentDependency);
 		result = pipeline->buildDependencies(
@@ -261,11 +289,11 @@ void PipelineDependsParallel::jobAddDependency(Ref< PipelineDependency > parentD
 	if (exists)
 		return;
 
-	// Checkout source asset instance.
+	// Read source asset instance.
 	Ref< ISerializable > sourceAsset = sourceAssetInstance->getObject();
 	if (!sourceAsset)
 	{
-		log::error << L"Unable to add dependency to \"" << sourceAssetInstance->getName() << L"\"; failed to checkout instance" << Endl;
+		log::error << L"Unable to add dependency to \"" << sourceAssetInstance->getName() << L"\"; failed to read instance object" << Endl;
 		return;
 	}
 

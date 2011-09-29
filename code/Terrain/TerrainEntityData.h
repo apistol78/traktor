@@ -15,6 +15,13 @@
 
 namespace traktor
 {
+	namespace hf
+	{
+
+class Heightfield;
+
+	}
+
 	namespace render
 	{
 
@@ -25,7 +32,6 @@ class Shader;
 	namespace terrain
 	{
 
-class Heightfield;
 class TerrainSurface;
 
 class T_DLLCLASS TerrainEntityData : public world::EntityData
@@ -37,16 +43,16 @@ public:
 
 	virtual bool serialize(ISerializer& s);
 
-	inline const resource::Proxy< Heightfield >& getHeightfield() const { return m_heightfield; }
+	const resource::Proxy< hf::Heightfield >& getHeightfield() const { return m_heightfield; }
 
-	inline const resource::Proxy< render::Shader >& getShader() const { return m_shader; }
+	const resource::Proxy< render::Shader >& getShader() const { return m_shader; }
 
-	inline Ref< TerrainSurface > getSurface() const { return m_surface; }
+	Ref< TerrainSurface > getSurface() const { return m_surface; }
 
 private:
 	friend class TerrainEntity;
 
-	resource::Proxy< Heightfield > m_heightfield;
+	resource::Proxy< hf::Heightfield > m_heightfield;
 	resource::Proxy< render::Shader > m_shader;
 	Ref< TerrainSurface > m_surface;
 	float m_patchLodDistance;

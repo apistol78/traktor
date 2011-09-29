@@ -16,18 +16,10 @@
 
 namespace traktor
 {
-	namespace world
+	namespace hf
 	{
 
-class IWorldRenderPass;
-class WorldRenderView;
-
-	}
-
-	namespace resource
-	{
-
-class IResourceManager;
+class Heightfield;
 
 	}
 
@@ -43,11 +35,25 @@ class ScreenRenderer;
 
 	}
 
+	namespace resource
+	{
+
+class IResourceManager;
+
+	}
+
+	namespace world
+	{
+
+class IWorldRenderPass;
+class WorldRenderView;
+
+	}
+
 	namespace terrain
 	{
 
 class OceanEntityData;
-class Heightfield;
 
 class T_DLLCLASS OceanEntity : public world::Entity
 {
@@ -69,7 +75,7 @@ public:
 	virtual void update(const world::EntityUpdate* update);
 
 private:
-	resource::Proxy< Heightfield > m_heightfield;
+	resource::Proxy< hf::Heightfield > m_heightfield;
 	Ref< render::VertexBuffer > m_vertexBuffer;
 	Ref< render::IndexBuffer > m_indexBuffer;
 	Ref< render::ScreenRenderer > m_screenRenderer;

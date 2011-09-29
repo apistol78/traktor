@@ -13,10 +13,15 @@
 
 namespace traktor
 {
-	namespace terrain
+	namespace hf
 	{
 
 class HeightfieldCompositor;
+
+	}
+
+	namespace terrain
+	{
 
 class T_DLLCLASS TerrainEntityEditor : public scene::DefaultEntityEditor
 {
@@ -37,12 +42,12 @@ public:
 
 private:
 	mutable Vector4 m_lastQueryIntersection;
-	HeightfieldCompositor* m_compositor;
+	hf::HeightfieldCompositor* m_compositor;
 
 	TerrainEntityEditor(
 		scene::SceneEditorContext* context,
 		scene::EntityAdapter* entityAdapter,
-		HeightfieldCompositor* compositor
+		hf::HeightfieldCompositor* compositor
 	);
 
 	bool applyHeightfieldModifier(float scale);

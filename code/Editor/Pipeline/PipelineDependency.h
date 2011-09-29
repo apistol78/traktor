@@ -43,6 +43,7 @@ public:
 	Ref< IPipeline > pipeline;					/*!< Associated pipeline, must be used to build output. */
 	uint32_t pipelineHash;						/*!< Hash of pipeline settings. */
 	Ref< const ISerializable > sourceAsset;		/*!< Source asset. */
+	uint32_t sourceDataHash;					/*!< Hash of source instance data. */
 	uint32_t sourceAssetHash;					/*!< Hash of source asset. */
 	uint32_t dependencyHash;					/*!< Dependency hash, a complete hash of this dep and the children. */
 	std::wstring outputPath;					/*!< Database output path. */

@@ -1,6 +1,10 @@
 #ifndef traktor_physics_Conversion_H
 #define traktor_physics_Conversion_H
 
+#include <LinearMath/btMatrix3x3.h>
+#include <LinearMath/btTransform.h>
+#include <LinearMath/btVector3.h>
+#include <LinearMath/btQuaternion.h>
 #include "Core/Math/Float.h"
 #include "Core/Math/Matrix33.h"
 #include "Core/Math/Transform.h"
