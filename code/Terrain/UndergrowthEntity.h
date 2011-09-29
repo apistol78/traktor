@@ -22,18 +22,11 @@
 
 namespace traktor
 {
-	namespace world
+	namespace hf
 	{
 
-class IWorldRenderPass;
-class WorldRenderView;
-
-	}
-
-	namespace resource
-	{
-
-class IResourceManager;
+class Heightfield;
+class MaterialMask;
 
 	}
 
@@ -47,11 +40,23 @@ class Shader;
 
 	}
 
-	namespace terrain
+	namespace resource
 	{
 
-class Heightfield;
-class MaterialMask;
+class IResourceManager;
+
+	}
+
+	namespace world
+	{
+
+class IWorldRenderPass;
+class WorldRenderView;
+
+	}
+
+	namespace terrain
+	{
 
 class T_DLLCLASS UndergrowthEntity : public world::Entity
 {
@@ -87,8 +92,8 @@ public:
 
 	UndergrowthEntity(
 		resource::IResourceManager* resourceManager,
-		const resource::Proxy< Heightfield >& heightfield,
-		const resource::Proxy< MaterialMask >& materialMask,
+		const resource::Proxy< hf::Heightfield >& heightfield,
+		const resource::Proxy< hf::MaterialMask >& materialMask,
 		const Settings& settings,
 		render::VertexBuffer* vertexBuffer,
 		render::IndexBuffer* indexBuffer,
@@ -114,8 +119,8 @@ private:
 		int count;
 	};
 
-	resource::Proxy< Heightfield > m_heightfield;
-	resource::Proxy< MaterialMask > m_materialMask;
+	resource::Proxy< hf::Heightfield > m_heightfield;
+	resource::Proxy< hf::MaterialMask > m_materialMask;
 	Settings m_settings;
 	Ref< render::VertexBuffer > m_vertexBuffer;
 	Ref< render::IndexBuffer > m_indexBuffer;

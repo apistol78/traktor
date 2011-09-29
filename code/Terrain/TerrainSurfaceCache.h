@@ -46,7 +46,6 @@ class RenderBlock;
 	{
 
 class TerrainSurface;
-class Heightfield;
 
 class T_DLLCLASS TerrainSurfaceCache : public Object
 {

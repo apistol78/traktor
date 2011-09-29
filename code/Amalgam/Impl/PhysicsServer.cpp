@@ -1,16 +1,15 @@
+#include "Amalgam/IEnvironment.h"
+#include "Amalgam/Impl/LibraryHelper.h"
+#include "Amalgam/Impl/PhysicsServer.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyString.h"
 #include "Core/Settings/Settings.h"
-#include "Physics/HeightfieldFactory.h"
 #include "Physics/MeshFactory.h"
 #include "Physics/PhysicsManager.h"
 #include "Physics/World/EntityFactory.h"
 #include "Resource/IResourceManager.h"
 #include "World/Entity/IEntityBuilder.h"
-#include "Amalgam/IEnvironment.h"
-#include "Amalgam/Impl/LibraryHelper.h"
-#include "Amalgam/Impl/PhysicsServer.h"
 
 namespace traktor
 {
@@ -47,7 +46,6 @@ void PhysicsServer::createResourceFactories(IEnvironment* environment)
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
 	db::Database* database = environment->getDatabase();
 
-	resourceManager->addFactory(new physics::HeightfieldFactory(database));
 	resourceManager->addFactory(new physics::MeshFactory(database));
 }
 

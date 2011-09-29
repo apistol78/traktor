@@ -6,10 +6,15 @@
 
 namespace traktor
 {
-	namespace physics
+	namespace hf
 	{
 
 class Heightfield;
+
+	}
+
+	namespace physics
+	{
 
 /*!
  * \ingroup Bullet
@@ -17,7 +22,7 @@ class Heightfield;
 class HeightfieldShapeBullet : public btConcaveShape
 {
 public:
-	HeightfieldShapeBullet(const resource::Proxy< Heightfield >& heightfield);
+	HeightfieldShapeBullet(const resource::Proxy< hf::Heightfield >& heightfield);
 
 	virtual ~HeightfieldShapeBullet();
 
@@ -34,7 +39,7 @@ public:
 	virtual const char*	getName() const;
 
 private:
-	mutable resource::Proxy< Heightfield > m_heightfield;
+	mutable resource::Proxy< hf::Heightfield > m_heightfield;
 	btVector3 m_localScaling;
 };
 

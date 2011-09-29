@@ -1,10 +1,10 @@
 #include "Core/Math/Const.h"
+#include "Heightfield/Heightfield.h"
 #include "Physics/BodyDesc.h"
 #include "Physics/BoxShapeDesc.h"
 #include "Physics/CapsuleShapeDesc.h"
 #include "Physics/CylinderShapeDesc.h"
 #include "Physics/DynamicBody.h"
-#include "Physics/Heightfield.h"
 #include "Physics/HeightfieldShapeDesc.h"
 #include "Physics/Mesh.h"
 #include "Physics/MeshShapeDesc.h"
@@ -178,10 +178,10 @@ void RigidEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer) 
 			}
 			else if (const HeightfieldShapeDesc* heightfieldShapeDesc = dynamic_type_cast< const HeightfieldShapeDesc* >(shapeDesc))
 			{
-				resource::Proxy< Heightfield > heightfield = heightfieldShapeDesc->getHeightfield();
+				resource::Proxy< hf::Heightfield > heightfield = heightfieldShapeDesc->getHeightfield();
 				if (getContext()->getResourceManager()->bind(heightfield) && heightfield.validate())
 				{
-					const Vector4& extent = heightfield->getWorldExtent();
+					const Vector4& extent = heightfield->getResource().getWorldExtent();
 					Aabb3 boundingBox(-extent / Scalar(2.0f), extent / Scalar(2.0f));
 
 					if (getEntityAdapter()->isSelected())

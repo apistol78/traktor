@@ -29,6 +29,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Plane.h"
 #include "Core/Misc/TString.h"
+#include "Heightfield/Heightfield.h"
 #include "Physics/BoxShapeDesc.h"
 #include "Physics/CapsuleShapeDesc.h"
 #include "Physics/CylinderShapeDesc.h"
@@ -42,7 +43,6 @@
 #include "Physics/HingeJointDesc.h"
 #include "Physics/Hinge2JointDesc.h"
 #include "Physics/Mesh.h"
-#include "Physics/Heightfield.h"
 #include "Physics/Havok/PhysicsManagerHavok.h"
 #include "Physics/Havok/StaticBodyHavok.h"
 #include "Physics/Havok/DynamicBodyHavok.h"
@@ -103,7 +103,7 @@ private:
 class HeightfieldShape : public hkpSampledHeightFieldShape
 {
 public:
-	HeightfieldShape(const hkpSampledHeightFieldBaseCinfo& ci, Heightfield* heightfield)
+	HeightfieldShape(const hkpSampledHeightFieldBaseCinfo& ci, hf::Heightfield* heightfield)
 	:	hkpSampledHeightFieldShape(ci)
 	,	m_heightfield(heightfield)
 	{
@@ -111,14 +111,14 @@ public:
 
 	HK_FORCE_INLINE hkReal getHeightAtImpl(int x, int z) const
 	{
-		const float* heights = m_heightfield->getHeights();
+		const hf::height_t* heights = m_heightfield->getHeights();
 
-		x = max< int >(min< int >(x, m_heightfield->getSize()), 0);
-		z = max< int >(min< int >(z, m_heightfield->getSize()), 0);
+		x = max< int >(min< int >(x, m_heightfield->getResource().getSize()), 0);
+		z = max< int >(min< int >(z, m_heightfield->getResource().getSize()), 0);
 
-		int offset = x + z * m_heightfield->getSize();
+		int offset = x + z * m_heightfield->getResource().getSize();
 
-		return heights[offset] * m_heightfield->getWorldExtent().y() * 0.5f;
+		return ((float)heights[offset] / 32767.0f - 1.0f) * m_heightfield->getResource().getWorldExtent().y() * 0.5f;
 	}
 
 	HK_FORCE_INLINE hkBool getTriangleFlipImpl() const
@@ -132,7 +132,7 @@ public:
 	}
 
 private:
-	Ref< Heightfield > m_heightfield;
+	Ref< hf::Heightfield > m_heightfield;
 };
 
 		}
@@ -359,7 +359,7 @@ Ref< Body > PhysicsManagerHavok::createBody(resource::IResourceManager* resource
 	}
 	else if (const HeightfieldShapeDesc* heightfieldShape = dynamic_type_cast< const HeightfieldShapeDesc* >(shapeDesc))
 	{
-		resource::Proxy< Heightfield > heightfield = heightfieldShape->getHeightfield();
+		resource::Proxy< hf::Heightfield > heightfield = heightfieldShape->getHeightfield();
 		if (!heightfield.validate())
 		{
 			log::error << L"Unable to load heightfield resource" << Endl;
@@ -367,8 +367,8 @@ Ref< Body > PhysicsManagerHavok::createBody(resource::IResourceManager* resource
 		}
 
 		hkpSampledHeightFieldBaseCinfo heightfieldInfo;
-		heightfieldInfo.m_xRes = heightfield->getSize();
-		heightfieldInfo.m_zRes = heightfield->getSize();
+		heightfieldInfo.m_xRes = heightfield->getResource().getSize();
+		heightfieldInfo.m_zRes = heightfield->getResource().getSize();
 
 		shape = new HeightfieldShape(heightfieldInfo, heightfield);
 
@@ -376,9 +376,9 @@ Ref< Body > PhysicsManagerHavok::createBody(resource::IResourceManager* resource
 		hkTransform transform;
 		transform.setIdentity();
 		transform.getTranslation().set(
-			-0.5f * heightfield->getWorldExtent().x(),
+			-0.5f * heightfield->getResource().getWorldExtent().x(),
 			0.0f,
-			-0.5f * heightfield->getWorldExtent().z()
+			-0.5f * heightfield->getResource().getWorldExtent().z()
 		);
 		shape = new hkpTransformShape(
 			shape,

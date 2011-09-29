@@ -3,10 +3,10 @@
 #include "Animation/Animation/AnimationFactory.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Flash/FlashMovieResourceFactory.h"
+#include "Heightfield/HeightfieldFactory.h"
+#include "Heightfield/MaterialMaskFactory.h"
 #include "Mesh/MeshFactory.h"
 #include "Spray/EffectFactory.h"
-#include "Terrain/HeightfieldFactory.h"
-#include "Terrain/MaterialMaskFactory.h"
 #include "Video/VideoFactory.h"
 #include "Weather/Clouds/CloudMaskFactory.h"
 #include "Resource/ResourceManager.h"
@@ -38,8 +38,8 @@ void ResourceServer::createResourceFactories(IEnvironment* environment)
 	m_resourceManager->addFactory(new mesh::MeshFactory(database, renderSystem));
 	m_resourceManager->addFactory(new spray::EffectFactory(database));
 	m_resourceManager->addFactory(new flash::FlashMovieResourceFactory(database));
-	m_resourceManager->addFactory(new terrain::HeightfieldFactory(database, renderSystem));
-	m_resourceManager->addFactory(new terrain::MaterialMaskFactory(database));
+	m_resourceManager->addFactory(new hf::HeightfieldFactory(database));
+	m_resourceManager->addFactory(new hf::MaterialMaskFactory(database));
 	m_resourceManager->addFactory(new video::VideoFactory(database, renderSystem));
 	m_resourceManager->addFactory(new weather::CloudMaskFactory(database));
 }

@@ -3,12 +3,12 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Thread/JobManager.h"
+#include "Heightfield/Heightfield.h"
+#include "Heightfield/MaterialMask.h"
 #include "Render/Shader.h"
 #include "Render/VertexBuffer.h"
 #include "Render/Context/RenderContext.h"
 #include "Resource/IResourceManager.h"
-#include "Terrain/Heightfield.h"
-#include "Terrain/MaterialMask.h"
 #include "Terrain/UndergrowthEntity.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldRenderView.h"
@@ -33,8 +33,8 @@ void UndergrowthEntity::Vertex::set(const Vector4& position_, const Vector4& nor
 
 UndergrowthEntity::UndergrowthEntity(
 	resource::IResourceManager* resourceManager,
-	const resource::Proxy< Heightfield >& heightfield,
-	const resource::Proxy< MaterialMask >& materialMask,
+	const resource::Proxy< hf::Heightfield >& heightfield,
+	const resource::Proxy< hf::MaterialMask >& materialMask,
 	const Settings& settings,
 	render::VertexBuffer* vertexBuffer,
 	render::IndexBuffer* indexBuffer,

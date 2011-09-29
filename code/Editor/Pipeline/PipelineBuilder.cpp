@@ -274,6 +274,7 @@ void PipelineBuilder::updateLocalHashes(PipelineDependency* dependency)
 	}
 
 	dependency->dependencyHash += dependency->pipelineHash;
+	dependency->dependencyHash += dependency->sourceDataHash;
 	dependency->dependencyHash += dependency->sourceAssetHash;
 }
 

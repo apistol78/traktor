@@ -1,12 +1,11 @@
+#include "Core/Serialization/ISerializable.h"
+#include "Physics/MeshFactory.h"
 #include "Physics/Editor/PhysicsEditorProfile.h"
 #include "Physics/Editor/PhysicsEntityEditorFactory.h"
 #include "Physics/World/EntityFactory.h"
 #include "Physics/World/EntityRenderer.h"
-#include "Physics/MeshFactory.h"
-#include "Physics/HeightfieldFactory.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Ui/Command.h"
-#include "Core/Serialization/ISerializable.h"
 
 namespace traktor
 {
@@ -35,7 +34,6 @@ void PhysicsEditorProfile::createResourceFactories(
 ) const
 {
 	outResourceFactories.push_back(new MeshFactory(context->getResourceDatabase()));
-	outResourceFactories.push_back(new HeightfieldFactory(context->getResourceDatabase()));
 }
 
 void PhysicsEditorProfile::createEntityFactories(

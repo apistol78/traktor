@@ -1,3 +1,4 @@
+#include "Heightfield/Heightfield.h"
 #include "Render/IndexBuffer.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
@@ -10,7 +11,6 @@
 #include "Resource/IResourceManager.h"
 #include "Terrain/OceanEntity.h"
 #include "Terrain/OceanEntityData.h"
-#include "Terrain/Heightfield.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldRenderView.h"
 
@@ -165,7 +165,7 @@ void OceanEntity::render(
 	{
 		renderBlock->programParams->setVectorParameter(L"WorldOrigin", -(m_heightfield->getResource().getWorldExtent() * Scalar(0.5f)).xyz1());
 		renderBlock->programParams->setVectorParameter(L"WorldExtent", m_heightfield->getResource().getWorldExtent().xyz0());
-		renderBlock->programParams->setTextureParameter(L"Heightfield", m_heightfield->getHeightTexture());
+		//renderBlock->programParams->setTextureParameter(L"Heightfield", m_heightfield->getHeightTexture());
 	}
 
 	renderBlock->programParams->endParameters(renderContext);

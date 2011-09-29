@@ -1,4 +1,6 @@
+#include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/Adler32.h"
 #include "Core/Misc/Save.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Core/Thread/Thread.h"
@@ -249,6 +251,32 @@ void PipelineDependsIncremental::addUniqueDependency(
 
 	bool result = true;
 
+	// Calculate hash of instance data.
+	if (sourceInstance)
+	{
+		std::vector< std::wstring > dataNames;
+		sourceInstance->getDataNames(dataNames);
+
+		for (std::vector< std::wstring >::const_iterator i = dataNames.begin(); i != dataNames.end(); ++i)
+		{
+			Ref< IStream > dataStream = sourceInstance->readData(*i);
+			if (dataStream)
+			{
+				uint8_t buffer[4096];
+				Adler32 a32;
+				int32_t r;
+
+				a32.begin();
+				while ((r = dataStream->read(buffer, sizeof(buffer))) > 0)
+					a32.feed(buffer, r);
+				a32.end();
+
+				dependency->sourceDataHash += a32.get();
+			}
+		}
+	}
+
+	// Recurse scan child dependencies.
 	if (m_currentRecursionDepth < m_maxRecursionDepth)
 	{
 		T_ANONYMOUS_VAR(Save< uint32_t >)(m_currentRecursionDepth, m_currentRecursionDepth + 1);

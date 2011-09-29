@@ -1,6 +1,6 @@
-#include "Physics/Bullet/HeightfieldShapeBullet.h"
+#include "Heightfield/Heightfield.h"
 #include "Physics/Bullet/Conversion.h"
-#include "Physics/Heightfield.h"
+#include "Physics/Bullet/HeightfieldShapeBullet.h"
 
 namespace traktor
 {
@@ -21,7 +21,7 @@ inline float quantizeMax(float v)
 
 		}
 
-HeightfieldShapeBullet::HeightfieldShapeBullet(const resource::Proxy< Heightfield >& heightfield)
+HeightfieldShapeBullet::HeightfieldShapeBullet(const resource::Proxy< hf::Heightfield >& heightfield)
 :	m_heightfield(heightfield)
 ,	m_localScaling(1.0f, 1.0f, 1.0f)
 {
@@ -47,7 +47,7 @@ void HeightfieldShapeBullet::getAabb(const btTransform& t, btVector3& aabbMin, b
 	if (!m_heightfield.validate())
 		return;
 
-	const Vector4& worldExtent = m_heightfield->getWorldExtent();
+	const Vector4& worldExtent = m_heightfield->getResource().getWorldExtent();
 
 	btVector3 localAabbMin = toBtVector3(-worldExtent * Scalar(0.5f));
 	btVector3 localAabbMax = toBtVector3(worldExtent * Scalar(0.5f));
@@ -89,10 +89,10 @@ void HeightfieldShapeBullet::processAllTriangles(btTriangleCallback* callback, c
 
 			float h[] =
 			{
-				m_heightfield->getSampleBilinear(mnx2, mnz2),
-				m_heightfield->getSampleBilinear(mxx2, mnz2),
-				m_heightfield->getSampleBilinear(mxx2, mxz2),
-				m_heightfield->getSampleBilinear(mnx2, mxz2)
+				m_heightfield->getWorldHeight(mnx2, mnz2),
+				m_heightfield->getWorldHeight(mxx2, mnz2),
+				m_heightfield->getWorldHeight(mxx2, mxz2),
+				m_heightfield->getWorldHeight(mnx2, mxz2)
 			};
 
 			btVector3 triangles[][3] =

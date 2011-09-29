@@ -3,16 +3,16 @@
 #include "Core/Math/Float.h"
 #include "Core/Math/Winding3.h"
 #include "Editor/IEditor.h"
+#include "Heightfield/Heightfield.h"
+#include "Heightfield/Editor/HeightfieldCompositor.h"
+#include "Heightfield/Editor/HeightfieldEditorPlugin.h"
+#include "Heightfield/Editor/HeightfieldLayer.h"
 #include "Render/PrimitiveRenderer.h"
 #include "Scene/Editor/Camera.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/SceneEditorContext.h"
-#include "Terrain/Heightfield.h"
 #include "Terrain/TerrainEntity.h"
 #include "Terrain/TerrainEntityData.h"
-#include "Terrain/Editor/HeightfieldCompositor.h"
-#include "Terrain/Editor/HeightfieldLayer.h"
-#include "Terrain/Editor/TerrainEditorPlugin.h"
 #include "Terrain/Editor/TerrainEntityEditor.h"
 #include "Ui/Command.h"
 
@@ -27,11 +27,11 @@ Ref< TerrainEntityEditor > TerrainEntityEditor::create(scene::SceneEditorContext
 {
 	Ref< TerrainEntity > terrainEntity = checked_type_cast< TerrainEntity* >(entityAdapter->getEntity());
 
-	TerrainEditorPlugin* terrainPlugin = context->getEditorPluginOf< TerrainEditorPlugin >();
-	if (!terrainPlugin)
+	hf::HeightfieldEditorPlugin* heightfieldPlugin = context->getEditorPluginOf< hf::HeightfieldEditorPlugin >();
+	if (!heightfieldPlugin)
 		return 0;
 
-	HeightfieldCompositor* compositor = terrainPlugin->getCompositor(terrainEntity->getHeightfield().getGuid());
+	hf::HeightfieldCompositor* compositor = heightfieldPlugin->getCompositor(terrainEntity->getHeightfield().getGuid());
 	if (!compositor)
 		return 0;
 
@@ -46,11 +46,11 @@ bool TerrainEntityEditor::queryRay(
 {
 	Ref< TerrainEntity > terrainEntity = checked_type_cast< TerrainEntity* >(getEntityAdapter()->getEntity());
 
-	resource::Proxy< Heightfield > heightfield = terrainEntity->getHeightfield();
+	resource::Proxy< hf::Heightfield > heightfield = terrainEntity->getHeightfield();
 	if (!heightfield.validate())
 		return false;
 
-	const HeightfieldResource& resource = heightfield->getResource();
+	const hf::HeightfieldResource& resource = heightfield->getResource();
 	if (resource.getSize() <= 1)
 		return false;
 
@@ -144,9 +144,9 @@ bool TerrainEntityEditor::queryRay(
 
 bool TerrainEntityEditor::handleCommand(const ui::Command& command)
 {
-	if (command == L"Terrain.Raise")
+	if (command == L"Heightfield.Raise")
 		return applyHeightfieldModifier(64.0f);
-	else if (command == L"Terrain.Lower")
+	else if (command == L"Heightfield.Lower")
 		return applyHeightfieldModifier(-64.0f);
 	else
 		return false;
@@ -158,7 +158,7 @@ void TerrainEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer
 {
 	Ref< TerrainEntity > terrainEntity = checked_type_cast< TerrainEntity* >(getEntityAdapter()->getEntity());
 
-	resource::Proxy< Heightfield > heightfield = terrainEntity->getHeightfield();
+	resource::Proxy< hf::Heightfield > heightfield = terrainEntity->getHeightfield();
 	if (!heightfield.validate())
 		return;
 
@@ -195,7 +195,7 @@ void TerrainEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer
 TerrainEntityEditor::TerrainEntityEditor(
 	scene::SceneEditorContext* context,
 	scene::EntityAdapter* entityAdapter,
-	HeightfieldCompositor* compositor
+	hf::HeightfieldCompositor* compositor
 )
 :	scene::DefaultEntityEditor(context, entityAdapter)
 ,	m_compositor(compositor)
@@ -207,7 +207,7 @@ bool TerrainEntityEditor::applyHeightfieldModifier(float scale)
 {
 	Ref< TerrainEntity > terrainEntity = checked_type_cast< TerrainEntity* >(getEntityAdapter()->getEntity());
 
-	resource::Proxy< Heightfield > heightfield = terrainEntity->getHeightfield();
+	resource::Proxy< hf::Heightfield > heightfield = terrainEntity->getHeightfield();
 	if (!heightfield.validate())
 		return false;
 
@@ -224,7 +224,7 @@ bool TerrainEntityEditor::applyHeightfieldModifier(float scale)
 	heightfield->worldToGrid(cx - c_radius, cz - c_radius, minX, minZ);
 	heightfield->worldToGrid(cx + c_radius, cz + c_radius, maxX, maxZ);
 
-	height_t* heights = m_compositor->getOffsetLayer()->getHeights();
+	hf::height_t* heights = m_compositor->getOffsetLayer()->getHeights();
 	for (int32_t iz = int32_t(floor(minZ)); iz <= int32_t(ceil(maxZ)); ++iz)
 	{
 		if (iz < 0 || iz > int32_t(heightfield->getResource().getSize()) - 1)
@@ -245,14 +245,14 @@ bool TerrainEntityEditor::applyHeightfieldModifier(float scale)
 		}
 	}
 
-	Ref< HeightfieldLayer > mergedLayer = m_compositor->mergeLayers();
+	Ref< hf::HeightfieldLayer > mergedLayer = m_compositor->mergeLayers();
 	if (!mergedLayer)
 		return false;
 
-	height_t* resourceHeights = const_cast< height_t* >(heightfield->getHeights());
-	const height_t* mergedHeights = mergedLayer->getHeights();
+	hf::height_t* resourceHeights = const_cast< hf::height_t* >(heightfield->getHeights());
+	const hf::height_t* mergedHeights = mergedLayer->getHeights();
 
-	std::memcpy(resourceHeights, mergedHeights, size * size * sizeof(height_t));
+	std::memcpy(resourceHeights, mergedHeights, size * size * sizeof(hf::height_t));
 
 	terrainEntity->createRenderPatches();
 

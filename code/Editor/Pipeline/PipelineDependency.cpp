@@ -9,6 +9,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PipelineDependency", PipelineDependency,
 
 PipelineDependency::PipelineDependency()
 :	pipelineHash(0)
+,	sourceDataHash(0)
 ,	sourceAssetHash(0)
 ,	dependencyHash(0)
 ,	flags(0)
