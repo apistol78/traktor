@@ -5,6 +5,7 @@
 #include "Animation/Editor/Cloth/ClothEntityEditor.h"
 #include "Animation/Editor/PathEntity/PathEntityEditor.h"
 #include "Animation/PathEntity/PathEntityData.h"
+#include "Scene/Editor/EntityAdapter.h"
 
 namespace traktor
 {
@@ -22,17 +23,17 @@ const TypeInfoSet AnimationEntityEditorFactory::getEntityDataTypes() const
 	return typeSet;
 }
 
-Ref< scene::IEntityEditor > AnimationEntityEditorFactory::createEntityEditor(
-	scene::SceneEditorContext* context,
-	const TypeInfo& entityDataType
-) const
+Ref< scene::IEntityEditor > AnimationEntityEditorFactory::createEntityEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter) const
 {
+	const TypeInfo& entityDataType = type_of(entityAdapter->getEntityData());
+
 	if (is_type_of< AnimatedMeshEntityData >(entityDataType))
-		return new AnimatedMeshEntityEditor(context);
-	if (is_type_of< ClothEntityData >(entityDataType))
-		return new ClothEntityEditor(context);
-	if (is_type_of< PathEntityData >(entityDataType))
-		return new PathEntityEditor(context);
+		return new AnimatedMeshEntityEditor(context, entityAdapter);
+	else if (is_type_of< ClothEntityData >(entityDataType))
+		return new ClothEntityEditor(context, entityAdapter);
+	else if (is_type_of< PathEntityData >(entityDataType))
+		return new PathEntityEditor(context, entityAdapter);
+
 	return 0;
 }
 

@@ -1,12 +1,13 @@
-#include "Terrain/Editor/TerrainEditorProfile.h"
-#include "Terrain/Editor/TerrainEntityEditorFactory.h"
-#include "Terrain/HeightfieldFactory.h"
-#include "Terrain/MaterialMaskFactory.h"
+#include "Core/Serialization/ISerializable.h"
+#include "Scene/Editor/SceneEditorContext.h"
 #include "Terrain/EntityFactory.h"
 #include "Terrain/EntityRenderer.h"
-#include "Scene/Editor/SceneEditorContext.h"
+#include "Terrain/HeightfieldFactory.h"
+#include "Terrain/MaterialMaskFactory.h"
+#include "Terrain/Editor/TerrainEditorPlugin.h"
+#include "Terrain/Editor/TerrainEditorProfile.h"
+#include "Terrain/Editor/TerrainEntityEditorFactory.h"
 #include "Ui/Command.h"
-#include "Core/Serialization/ISerializable.h"
 
 namespace traktor
 {
@@ -19,6 +20,9 @@ void TerrainEditorProfile::getCommands(
 	std::list< ui::Command >& outCommands
 ) const
 {
+	outCommands.push_back(ui::Command(L"Terrain.Raise"));
+	outCommands.push_back(ui::Command(L"Terrain.Lower"));
+	outCommands.push_back(ui::Command(L"Terrain.Save"));
 	outCommands.push_back(ui::Command(L"Ocean.RandomizeWaves"));
 }
 
@@ -27,6 +31,7 @@ void TerrainEditorProfile::createEditorPlugins(
 	RefArray< scene::ISceneEditorPlugin >& outEditorPlugins
 ) const
 {
+	outEditorPlugins.push_back(new TerrainEditorPlugin(context));
 }
 
 void TerrainEditorProfile::createResourceFactories(

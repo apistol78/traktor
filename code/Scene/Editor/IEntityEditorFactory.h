@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_SCENE_EDITOR_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -16,6 +16,7 @@ namespace traktor
 	namespace scene
 	{
 
+class EntityAdapter;
 class IEntityEditor;
 class SceneEditorContext;
 
@@ -39,7 +40,7 @@ public:
 	 * \param entityDataType Entity data type.
 	 * \return Entity editor instance.
 	 */
-	virtual Ref< IEntityEditor > createEntityEditor(SceneEditorContext* context, const TypeInfo& entityDataType) const = 0;
+	virtual Ref< IEntityEditor > createEntityEditor(SceneEditorContext* context, EntityAdapter* entityAdapter) const = 0;
 };
 
 	}

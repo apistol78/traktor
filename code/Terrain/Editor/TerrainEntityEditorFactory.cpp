@@ -1,3 +1,4 @@
+#include "Scene/Editor/EntityAdapter.h"
 #include "Terrain/Editor/TerrainEntityEditorFactory.h"
 #include "Terrain/Editor/TerrainEntityEditor.h"
 #include "Terrain/Editor/OceanEntityEditor.h"
@@ -19,15 +20,15 @@ const TypeInfoSet TerrainEntityEditorFactory::getEntityDataTypes() const
 	return typeSet;
 }
 
-Ref< scene::IEntityEditor > TerrainEntityEditorFactory::createEntityEditor(
-	scene::SceneEditorContext* context,
-	const TypeInfo& entityDataType
-) const
+Ref< scene::IEntityEditor > TerrainEntityEditorFactory::createEntityEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter) const
 {
+	const TypeInfo& entityDataType = type_of(entityAdapter->getEntityData());
+
 	if (is_type_of< TerrainEntityData >(entityDataType))
-		return new TerrainEntityEditor(context);
-	if (is_type_of< OceanEntityEditor >(entityDataType))
-		return new OceanEntityEditor(context);
+		return TerrainEntityEditor::create(context, entityAdapter);
+	else if (is_type_of< OceanEntityEditor >(entityDataType))
+		return new OceanEntityEditor(context, entityAdapter);
+
 	return 0;
 }
 

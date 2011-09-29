@@ -16,12 +16,9 @@ const TypeInfoSet DefaultEntityEditorFactory::getEntityDataTypes() const
 	return typeSet;
 }
 
-Ref< IEntityEditor > DefaultEntityEditorFactory::createEntityEditor(
-	SceneEditorContext* context,
-	const TypeInfo& entityDataType
-) const
+Ref< IEntityEditor > DefaultEntityEditorFactory::createEntityEditor(SceneEditorContext* context, EntityAdapter* entityAdapter) const
 {
-	return new DefaultEntityEditor(context);
+	return new DefaultEntityEditor(context, entityAdapter);
 }
 
 	}

@@ -1,6 +1,7 @@
 #ifndef traktor_terrain_Heightfield_H
 #define traktor_terrain_Heightfield_H
 
+#include "Terrain/HeightfieldTypes.h"
 #include "Terrain/HeightfieldResource.h"
 
 // import/export mechanism.
@@ -28,8 +29,6 @@ class T_DLLCLASS Heightfield : public Object
 	T_RTTI_CLASS;
 
 public:
-	typedef uint16_t height_t;
-
 	Heightfield(const HeightfieldResource& resource);
 
 	virtual ~Heightfield();
@@ -37,6 +36,10 @@ public:
 	float getGridHeight(float gridX, float gridZ) const;
 
 	float getWorldHeight(float worldX, float worldZ) const;
+
+	void gridToWorld(float gridX, float gridZ, float& outWorldX, float& outWorldZ) const;
+
+	void worldToGrid(float worldX, float worldZ, float& outGridX, float& outGridZ) const;
 
 	const height_t* getHeights() const;
 

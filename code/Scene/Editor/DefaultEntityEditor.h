@@ -23,30 +23,21 @@ class T_DLLCLASS DefaultEntityEditor : public IEntityEditor
 	T_RTTI_CLASS;
 
 public:
-	DefaultEntityEditor(SceneEditorContext* context);
+	DefaultEntityEditor(SceneEditorContext* context, EntityAdapter* entityAdapter);
 
-	virtual bool isGroup(const EntityAdapter* entityAdapter) const;
+	virtual bool isGroup() const;
 
-	virtual bool addChildEntity(EntityAdapter* entityAdapter, EntityAdapter* childEntityAdapter) const;
+	virtual bool addChildEntity(EntityAdapter* childEntityAdapter) const;
 
-	virtual bool removeChildEntity(EntityAdapter* entityAdapter, EntityAdapter* childEntityAdapter) const;
+	virtual bool removeChildEntity(EntityAdapter* childEntityAdapter) const;
 
-	virtual bool isPickable(const EntityAdapter* entityAdapter) const;
+	virtual bool queryRay(const Vector4& worldRayOrigin, const Vector4& worldRayDirection, Scalar& outDistance) const;
 
-	virtual void entitySelected(
-		SceneEditorContext* context,
-		EntityAdapter* entityAdapter,
-		bool selected
-	);
+	virtual void entitySelected(bool selected);
 
-	virtual void beginModifier(
-		SceneEditorContext* context,
-		EntityAdapter* entityAdapter
-	);
+	virtual void beginModifier();
 
 	virtual void applyModifier(
-		SceneEditorContext* context,
-		EntityAdapter* entityAdapter,
 		const Matrix44& viewTransform,
 		const Vector4& screenDelta,
 		const Vector4& viewDelta,
@@ -54,30 +45,26 @@ public:
 		int mouseButton
 	);
 
-	virtual void endModifier(
-		SceneEditorContext* context,
-		EntityAdapter* entityAdapter
-	);
+	virtual void endModifier();
 
-	virtual bool handleCommand(
-		SceneEditorContext* context,
-		EntityAdapter* entityAdapter,
-		const ui::Command& command
-	);
+	virtual bool handleCommand(const ui::Command& command);
 
-	virtual void drawGuide(
-		SceneEditorContext* context,
-		render::PrimitiveRenderer* primitiveRenderer,
-		EntityAdapter* entityAdapter
-	) const;
+	virtual void drawGuide(render::PrimitiveRenderer* primitiveRenderer) const;
 
-	virtual bool getStatusText(
-		SceneEditorContext* context,
-		EntityAdapter* entityAdapter,
-		std::wstring& outStatusText
-	) const;
+	virtual bool getStatusText(std::wstring& outStatusText) const;
+
+protected:
+	SceneEditorContext* getContext() { return m_context; }
+
+	EntityAdapter* getEntityAdapter() { return m_entityAdapter; }
+
+	const SceneEditorContext* getContext() const { return m_context; }
+
+	const EntityAdapter* getEntityAdapter() const { return m_entityAdapter; }
 
 private:
+	SceneEditorContext* m_context;
+	EntityAdapter* m_entityAdapter;
 	bool m_inModify;
 	Transform m_modifyTransform;
 	Color4ub m_colorBoundingBox;
@@ -85,7 +72,7 @@ private:
 	Color4ub m_colorBoundingBoxFaceSel;
 	Color4ub m_colorSnap;
 
-	void updateSettings(SceneEditorContext* context);
+	void updateSettings();
 };
 
 	}

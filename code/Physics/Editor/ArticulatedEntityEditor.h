@@ -21,15 +21,9 @@ class T_DLLCLASS ArticulatedEntityEditor : public scene::DefaultEntityEditor
 	T_RTTI_CLASS;
 
 public:
-	ArticulatedEntityEditor(
-		scene::SceneEditorContext* context
-	);
+	ArticulatedEntityEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter);
 
-	virtual void drawGuide(
-		scene::SceneEditorContext* context,
-		render::PrimitiveRenderer* primitiveRenderer,
-		scene::EntityAdapter* entityAdapter
-	) const;
+	virtual void drawGuide(render::PrimitiveRenderer* primitiveRenderer) const;
 };
 
 	}

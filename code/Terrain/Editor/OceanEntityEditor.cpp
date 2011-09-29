@@ -1,11 +1,11 @@
-#include "Terrain/Editor/OceanEntityEditor.h"
-#include "Terrain/OceanEntityData.h"
-#include "Terrain/OceanEntity.h"
-#include "Scene/Editor/SceneEditorContext.h"
-#include "Scene/Editor/EntityAdapter.h"
-#include "Ui/Command.h"
-#include "Core/Math/Random.h"
 #include "Core/Math/Const.h"
+#include "Core/Math/Random.h"
+#include "Terrain/OceanEntity.h"
+#include "Terrain/OceanEntityData.h"
+#include "Terrain/Editor/OceanEntityEditor.h"
+#include "Scene/Editor/EntityAdapter.h"
+#include "Scene/Editor/SceneEditorContext.h"
+#include "Ui/Command.h"
 
 namespace traktor
 {
@@ -14,39 +14,15 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.OceanEntityEditor", OceanEntityEditor, scene::DefaultEntityEditor)
 
-OceanEntityEditor::OceanEntityEditor(
-	scene::SceneEditorContext* context
-)
-:	scene::DefaultEntityEditor(context)
+OceanEntityEditor::OceanEntityEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter)
+:	scene::DefaultEntityEditor(context, entityAdapter)
 {
 }
 
-bool OceanEntityEditor::isPickable(
-	scene::EntityAdapter* entityAdapter
-) const
-{
-	return false;
-}
 
-void OceanEntityEditor::applyModifier(
-	scene::SceneEditorContext* context,
-	scene::EntityAdapter* entityAdapter,
-	const Matrix44& viewTransform,
-	const Vector4& screenDelta,
-	const Vector4& viewDelta,
-	const Vector4& worldDelta,
-	int mouseButton
-)
+bool OceanEntityEditor::handleCommand(const ui::Command& command)
 {
-}
-
-bool OceanEntityEditor::handleCommand(
-	scene::SceneEditorContext* context,
-	scene::EntityAdapter* entityAdapter,
-	const ui::Command& command
-)
-{
-	Ref< OceanEntityData > oceanEntityData = checked_type_cast< OceanEntityData* >(entityAdapter->getEntityData());
+	Ref< OceanEntityData > oceanEntityData = checked_type_cast< OceanEntityData* >(getEntityAdapter()->getEntityData());
 
 	if (command == L"Ocean.RandomizeWaves")
 	{
@@ -74,7 +50,7 @@ bool OceanEntityEditor::handleCommand(
 			oceanEntityData->setWave(i, wave);
 		}
 
-		context->buildEntities();
+		getContext()->buildEntities();
 	}
 	else
 		return false;
@@ -82,11 +58,7 @@ bool OceanEntityEditor::handleCommand(
 	return true;
 }
 
-void OceanEntityEditor::drawGuide(
-	scene::SceneEditorContext* context,
-	render::PrimitiveRenderer* primitiveRenderer,
-	scene::EntityAdapter* entityAdapter
-) const
+void OceanEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer) const
 {
 }
 

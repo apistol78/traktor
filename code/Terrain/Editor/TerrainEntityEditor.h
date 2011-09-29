@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_TERRAIN_EDITOR_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -16,44 +16,36 @@ namespace traktor
 	namespace terrain
 	{
 
+class HeightfieldCompositor;
+
 class T_DLLCLASS TerrainEntityEditor : public scene::DefaultEntityEditor
 {
 	T_RTTI_CLASS;
 
 public:
-	TerrainEntityEditor(scene::SceneEditorContext* context);
+	static Ref< TerrainEntityEditor > create(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter);
 
-	virtual bool isPickable(
-		scene::EntityAdapter* entityAdapter
+	virtual bool queryRay(
+		const Vector4& worldRayOrigin,
+		const Vector4& worldRayDirection,
+		Scalar& outDistance
 	) const;
 
-	virtual void entitySelected(
+	virtual bool handleCommand(const ui::Command& command);
+
+	virtual void drawGuide(render::PrimitiveRenderer* primitiveRenderer) const;
+
+private:
+	mutable Vector4 m_lastQueryIntersection;
+	HeightfieldCompositor* m_compositor;
+
+	TerrainEntityEditor(
 		scene::SceneEditorContext* context,
 		scene::EntityAdapter* entityAdapter,
-		bool selected
+		HeightfieldCompositor* compositor
 	);
 
-	virtual void applyModifier(
-		scene::SceneEditorContext* context,
-		scene::EntityAdapter* entityAdapter,
-		const Matrix44& viewTransform,
-		const Vector4& screenDelta,
-		const Vector4& viewDelta,
-		const Vector4& worldDelta,
-		int mouseButton
-	);
-
-	virtual bool handleCommand(
-		scene::SceneEditorContext* context,
-		scene::EntityAdapter* entityAdapter,
-		const ui::Command& command
-	);
-
-	virtual void drawGuide(
-		scene::SceneEditorContext* context,
-		render::PrimitiveRenderer* primitiveRenderer,
-		scene::EntityAdapter* entityAdapter
-	) const;
+	bool applyHeightfieldModifier(float scale);
 };
 
 	}

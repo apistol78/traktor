@@ -285,7 +285,7 @@ bool TerrainEntity::createRenderPatches()
 	uint32_t heightfieldSize = m_heightfield->getResource().getSize();
 	T_ASSERT (heightfieldSize > 0);
 
-	const Heightfield::height_t* heights = m_heightfield->getHeights();
+	const height_t* heights = m_heightfield->getHeights();
 	T_ASSERT (heights);
 
 	uint32_t patchDim = m_heightfield->getResource().getPatchDim();

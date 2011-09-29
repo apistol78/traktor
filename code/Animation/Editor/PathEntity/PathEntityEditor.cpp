@@ -1,12 +1,12 @@
 #include "Animation/Editor/PathEntity/PathEntityEditor.h"
 #include "Animation/PathEntity/PathEntityData.h"
 #include "Animation/PathEntity/PathEntity.h"
-#include "Scene/Editor/EntityAdapter.h"
-#include "Scene/Editor/SceneEditorContext.h"
-#include "Scene/Editor/IModifier.h"
-#include "World/Entity/SpatialEntity.h"
 #include "Render/PrimitiveRenderer.h"
+#include "Scene/Editor/EntityAdapter.h"
+#include "Scene/Editor/IModifier.h"
+#include "Scene/Editor/SceneEditorContext.h"
 #include "Ui/Command.h"
+#include "World/Entity/SpatialEntity.h"
 
 namespace traktor
 {
@@ -15,20 +15,16 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.PathEntityEditor", PathEntityEditor, scene::DefaultEntityEditor)
 
-PathEntityEditor::PathEntityEditor(scene::SceneEditorContext* context)
-:	scene::DefaultEntityEditor(context)
+PathEntityEditor::PathEntityEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter)
+:	scene::DefaultEntityEditor(context, entityAdapter)
 ,	m_time(0.0f)
 {
 }
 
-void PathEntityEditor::entitySelected(
-	scene::SceneEditorContext* context,
-	scene::EntityAdapter* entityAdapter,
-	bool selected
-)
+void PathEntityEditor::entitySelected(bool selected)
 {
-	Ref< PathEntityData > entityData = checked_type_cast< PathEntityData* >(entityAdapter->getEntityData());
-	Ref< PathEntity > entity = checked_type_cast< PathEntity* >(entityAdapter->getEntity());
+	Ref< PathEntityData > entityData = checked_type_cast< PathEntityData* >(getEntityAdapter()->getEntityData());
+	Ref< PathEntity > entity = checked_type_cast< PathEntity* >(getEntityAdapter()->getEntity());
 
 	if (selected)
 	{
@@ -42,8 +38,6 @@ void PathEntityEditor::entitySelected(
 }
 
 void PathEntityEditor::applyModifier(
-	scene::SceneEditorContext* context,
-	scene::EntityAdapter* entityAdapter,
 	const Matrix44& viewTransform,
 	const Vector4& screenDelta,
 	const Vector4& viewDelta,
@@ -51,10 +45,10 @@ void PathEntityEditor::applyModifier(
 	int mouseButton
 )
 {
-	Ref< PathEntityData > entityData = checked_type_cast< PathEntityData* >(entityAdapter->getEntityData());
-	Ref< PathEntity > entity = checked_type_cast< PathEntity* >(entityAdapter->getEntity());
+	Ref< PathEntityData > entityData = checked_type_cast< PathEntityData* >(getEntityAdapter()->getEntityData());
+	Ref< PathEntity > entity = checked_type_cast< PathEntity* >(getEntityAdapter()->getEntity());
 
-	Ref< scene::IModifier > modifier = context->getModifier();
+	Ref< scene::IModifier > modifier = getContext()->getModifier();
 	if (modifier)
 	{
 		TransformPath& path = entityData->getPath();
@@ -64,7 +58,7 @@ void PathEntityEditor::applyModifier(
 			// Use modifier to adjust closest key frame.
 			Transform transform = frame->transform();
 			modifier->adjust(
-				context,
+				getContext(),
 				viewTransform,
 				screenDelta,
 				viewDelta,
@@ -83,14 +77,10 @@ void PathEntityEditor::applyModifier(
 	}
 }
 
-bool PathEntityEditor::handleCommand(
-	scene::SceneEditorContext* context,
-	scene::EntityAdapter* entityAdapter,
-	const ui::Command& command
-)
+bool PathEntityEditor::handleCommand(const ui::Command& command)
 {
-	Ref< PathEntityData > entityData = checked_type_cast< PathEntityData* >(entityAdapter->getEntityData());
-	Ref< PathEntity > entity = checked_type_cast< PathEntity* >(entityAdapter->getEntity());
+	Ref< PathEntityData > entityData = checked_type_cast< PathEntityData* >(getEntityAdapter()->getEntityData());
+	Ref< PathEntity > entity = checked_type_cast< PathEntity* >(getEntityAdapter()->getEntity());
 
 	if (command == L"Animation.Editor.StepForward")
 	{
@@ -113,7 +103,7 @@ bool PathEntityEditor::handleCommand(
 		TransformPath& path = entityData->getPath();
 		TransformPath::Frame frame = path.evaluate(m_time, false);
 		path.insert(m_time, frame);
-		context->buildEntities();
+		getContext()->buildEntities();
 	}
 	else
 		return false;
@@ -121,13 +111,9 @@ bool PathEntityEditor::handleCommand(
 	return true;
 }
 
-void PathEntityEditor::drawGuide(
-	scene::SceneEditorContext* context,
-	render::PrimitiveRenderer* primitiveRenderer,
-	scene::EntityAdapter* entityAdapter
-) const
+void PathEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer) const
 {
-	Ref< PathEntity > pathEntity = checked_type_cast< PathEntity* >(entityAdapter->getEntity());
+	Ref< PathEntity > pathEntity = checked_type_cast< PathEntity* >(getEntityAdapter()->getEntity());
 
 	// Draw entity's path.
 	const TransformPath& path = pathEntity->getPath();

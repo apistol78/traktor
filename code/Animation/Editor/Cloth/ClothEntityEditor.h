@@ -21,19 +21,11 @@ class T_DLLEXPORT ClothEntityEditor : public scene::DefaultEntityEditor
 	T_RTTI_CLASS;
 
 public:
-	ClothEntityEditor(scene::SceneEditorContext* context);
+	ClothEntityEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter);
 
-	virtual bool handleCommand(
-		scene::SceneEditorContext* context,
-		scene::EntityAdapter* entityAdapter,
-		const ui::Command& command
-	);
+	virtual bool handleCommand(const ui::Command& command);
 
-	virtual void drawGuide(
-		scene::SceneEditorContext* context,
-		render::PrimitiveRenderer* primitiveRenderer,
-		scene::EntityAdapter* entityAdapter
-	) const;
+	virtual void drawGuide(render::PrimitiveRenderer* primitiveRenderer) const;
 };
 
 	}

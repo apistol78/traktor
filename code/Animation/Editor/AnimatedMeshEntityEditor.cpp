@@ -20,38 +20,26 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.AnimatedMeshEntityEditor", AnimatedMeshEntityEditor, scene::DefaultEntityEditor)
 
-AnimatedMeshEntityEditor::AnimatedMeshEntityEditor(scene::SceneEditorContext* context)
-:	scene::DefaultEntityEditor(context)
+AnimatedMeshEntityEditor::AnimatedMeshEntityEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter)
+:	scene::DefaultEntityEditor(context, entityAdapter)
 {
-	updateSettings(context);
+	updateSettings();
 }
 
-bool AnimatedMeshEntityEditor::handleCommand(
-	scene::SceneEditorContext* context,
-	scene::EntityAdapter* entityAdapter,
-	const ui::Command& command
-)
+bool AnimatedMeshEntityEditor::handleCommand(const ui::Command& command)
 {
 	if (command == L"Editor.SettingsChanged")
-		updateSettings(context);
+		updateSettings();
 
-	return scene::DefaultEntityEditor::handleCommand(
-		context,
-		entityAdapter,
-		command
-	);
+	return scene::DefaultEntityEditor::handleCommand(command);
 }
 
-void AnimatedMeshEntityEditor::drawGuide(
-	scene::SceneEditorContext* context,
-	render::PrimitiveRenderer* primitiveRenderer,
-	scene::EntityAdapter* entityAdapter
-) const
+void AnimatedMeshEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer) const
 {
-	const AnimatedMeshEntityData* animatedEntityData = checked_type_cast< const AnimatedMeshEntityData* >(entityAdapter->getEntityData());
-	const AnimatedMeshEntity* animatedEntity = checked_type_cast< const AnimatedMeshEntity* >(entityAdapter->getEntity());
+	const AnimatedMeshEntityData* animatedEntityData = checked_type_cast< const AnimatedMeshEntityData* >(getEntityAdapter()->getEntityData());
+	const AnimatedMeshEntity* animatedEntity = checked_type_cast< const AnimatedMeshEntity* >(getEntityAdapter()->getEntity());
 
-	primitiveRenderer->pushWorld(entityAdapter->getTransform().toMatrix44());
+	primitiveRenderer->pushWorld(getEntityAdapter()->getTransform().toMatrix44());
 	primitiveRenderer->pushDepthEnable(false);
 
 	resource::Proxy< Skeleton > skeleton = animatedEntityData->getSkeleton();
@@ -104,12 +92,12 @@ void AnimatedMeshEntityEditor::drawGuide(
 	primitiveRenderer->popDepthEnable();
 	primitiveRenderer->popWorld();
 
-	scene::DefaultEntityEditor::drawGuide(context, primitiveRenderer, entityAdapter);
+	scene::DefaultEntityEditor::drawGuide(primitiveRenderer);
 }
 
-void AnimatedMeshEntityEditor::updateSettings(scene::SceneEditorContext* context)
+void AnimatedMeshEntityEditor::updateSettings()
 {
-	m_colorBone = context->getEditor()->getSettings()->getProperty< PropertyColor >(L"Editor.Colors/BoneWire");
+	m_colorBone = getContext()->getEditor()->getSettings()->getProperty< PropertyColor >(L"Editor.Colors/BoneWire");
 }
 
 	}

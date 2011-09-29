@@ -211,9 +211,9 @@ Ref< Object > HeightfieldFactory::create(resource::IResourceManager* resourceMan
 	Ref< Heightfield > heightfield = new Heightfield(*resource);
 
 	// Read heights.
-	Heightfield::height_t* heights = const_cast< Heightfield::height_t* >(heightfield->getHeights());
+	height_t* heights = const_cast< height_t* >(heightfield->getHeights());
 	T_ASSERT_M (heights, L"No heights in heightfield");
-	Reader(stream).read(heights, size * size, sizeof(Heightfield::height_t));
+	Reader(stream).read(heights, size * size, sizeof(height_t));
 	stream->close();
 
 	// Create heightfield texture.

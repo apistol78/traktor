@@ -417,10 +417,7 @@ void PerspectiveRenderControl::eventButtonUp(ui::Event* event)
 			for (RefArray< EntityAdapter >::iterator i = m_modifyEntities.begin(); i != m_modifyEntities.end(); ++i)
 			{
 				if ((*i)->getEntityEditor())
-					(*i)->getEntityEditor()->endModifier(
-						m_context,
-						*i
-					);
+					(*i)->getEntityEditor()->endModifier();
 			}
 		}
 	}
@@ -483,10 +480,7 @@ void PerspectiveRenderControl::eventMouseMove(ui::Event* event)
 			for (RefArray< EntityAdapter >::iterator i = m_modifyEntities.begin(); i != m_modifyEntities.end(); ++i)
 			{
 				if ((*i)->getEntityEditor())
-					(*i)->getEntityEditor()->beginModifier(
-						m_context,
-						*i
-					);
+					(*i)->getEntityEditor()->beginModifier();
 			}
 
 			// Issue begin modification event.
@@ -517,8 +511,6 @@ void PerspectiveRenderControl::eventMouseMove(ui::Event* event)
 
 				// Apply modifier through entity editor.
 				entityEditor->applyModifier(
-					m_context,
-					*i,
 					view,
 					screenDelta,
 					viewDelta,

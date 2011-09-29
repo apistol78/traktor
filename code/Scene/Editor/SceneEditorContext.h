@@ -225,6 +225,19 @@ public:
 
 	//@}
 
+	/*! \name Plugin access. */
+	//@{
+
+	ISceneEditorPlugin* getEditorPluginOf(const TypeInfo& pluginType) const;
+
+	template < typename PluginType >
+	PluginType* getEditorPluginOf() const
+	{
+		return dynamic_type_cast< PluginType* >(getEditorPluginOf(type_of< PluginType >()));
+	}
+
+	//@}
+
 	/*! \name Accessors. */
 	//@{
 
@@ -236,11 +249,11 @@ public:
 
 	db::Instance* getInstance() { return m_instance; }
 
-	resource::IResourceManager* getResourceManager() { return m_resourceManager; }
+	resource::IResourceManager* getResourceManager() const { return m_resourceManager; }
 
-	render::IRenderSystem* getRenderSystem() { return m_renderSystem; }
+	render::IRenderSystem* getRenderSystem() const { return m_renderSystem; }
 
-	physics::PhysicsManager* getPhysicsManager() { return m_physicsManager; }
+	physics::PhysicsManager* getPhysicsManager() const { return m_physicsManager; }
 
 	RefArray< ISceneEditorProfile >& getEditorProfiles() { return m_editorProfiles; }
 

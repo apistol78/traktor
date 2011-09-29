@@ -122,7 +122,7 @@ bool EntityAdapter::getExternalGuid(Guid& outGuid) const
 bool EntityAdapter::isGroup() const
 {
 	T_ASSERT (m_entityEditor);
-	return m_entityEditor->isGroup(this);
+	return m_entityEditor->isGroup();
 }
 
 EntityAdapter* EntityAdapter::getParent() const
@@ -154,13 +154,13 @@ EntityAdapter* EntityAdapter::getParentContainerGroup()
 
 void EntityAdapter::addChild(EntityAdapter* child)
 {
-	if (m_entityEditor->addChildEntity(this, child))
+	if (m_entityEditor->addChildEntity(child))
 		link(child);
 }
 
 void EntityAdapter::removeChild(EntityAdapter* child)
 {
-	if (m_entityEditor->removeChildEntity(this, child))
+	if (m_entityEditor->removeChildEntity(child))
 		unlink(child);
 }
 

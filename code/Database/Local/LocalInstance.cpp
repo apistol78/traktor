@@ -150,7 +150,7 @@ bool LocalInstance::remove()
 	return true;
 }
 
-Ref< IStream > LocalInstance::readObject(const TypeInfo*& outSerializerType)
+Ref< IStream > LocalInstance::readObject(const TypeInfo*& outSerializerType) const
 {
 	Path instanceObjectPath = getInstanceObjectPath(m_instancePath);
 
@@ -219,7 +219,7 @@ bool LocalInstance::removeAllData()
 	return true;
 }
 
-Ref< IStream > LocalInstance::readData(const std::wstring& dataName)
+Ref< IStream > LocalInstance::readData(const std::wstring& dataName) const
 {
 	Path instanceDataPath = getInstanceDataPath(m_instancePath, dataName);
 	return FileSystem::getInstance().open(instanceDataPath, File::FmRead);
