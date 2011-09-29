@@ -87,11 +87,11 @@ T_MATH_INLINE bool Plane::rayIntersection(
 	Vector4* outPoint
 ) const
 {
-	Scalar denom = dot3(m_normal, direction);
+	Scalar denom = -dot3(m_normal, direction);
 	if (denom == 0.0f)
 		return false;
 
-	Scalar divend = -dot3(m_normal, origin) + m_distance;
+	Scalar divend = distance(origin);
 
 	outK = divend / denom;
 	if (outPoint != 0)

@@ -97,7 +97,7 @@ const TypeInfo* Instance::getPrimaryType() const
 	return TypeInfo::find(getPrimaryTypeName());
 }
 
-Ref< ISerializable > Instance::getObject()
+Ref< ISerializable > Instance::getObject() const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	T_ASSERT (m_providerInstance);
@@ -134,7 +134,7 @@ uint32_t Instance::getDataNames(std::vector< std::wstring >& dataNames) const
 	return m_providerInstance->getDataNames(dataNames);
 }
 
-Ref< IStream > Instance::readData(const std::wstring& dataName)
+Ref< IStream > Instance::readData(const std::wstring& dataName) const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	T_ASSERT (m_providerInstance);

@@ -67,7 +67,25 @@ float Heightfield::getWorldHeight(float worldX, float worldZ) const
 	return -worldExtent.y() * 0.5f + gridY * worldExtent.y();
 }
 
-const Heightfield::height_t* Heightfield::getHeights() const
+void Heightfield::gridToWorld(float gridX, float gridZ, float& outWorldX, float& outWorldZ) const
+{
+	const Vector4& worldExtent = m_resource.getWorldExtent();
+	uint32_t size = m_resource.getSize();
+
+	outWorldX = worldExtent.x() * (gridX / size - 0.5f);
+	outWorldZ = worldExtent.z() * (gridZ / size - 0.5f);
+}
+
+void Heightfield::worldToGrid(float worldX, float worldZ, float& outGridX, float& outGridZ) const
+{
+	const Vector4& worldExtent = m_resource.getWorldExtent();
+	uint32_t size = m_resource.getSize();
+
+	outGridX = size * (worldX + worldExtent.x() * 0.5f) / worldExtent.x() - 0.5f;
+	outGridZ = size * (worldZ + worldExtent.z() * 0.5f) / worldExtent.z() - 0.5f;
+}
+
+const height_t* Heightfield::getHeights() const
 {
 	return m_heights;
 }

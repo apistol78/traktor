@@ -1,10 +1,10 @@
+#include "Animation/Cloth/ClothEntity.h"
+#include "Animation/Editor/Cloth/ClothEntityEditor.h"
 #include "Core/Math/Const.h"
 #include "Render/PrimitiveRenderer.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Ui/Command.h"
-#include "Animation/Cloth/ClothEntity.h"
-#include "Animation/Editor/Cloth/ClothEntityEditor.h"
 
 namespace traktor
 {
@@ -13,33 +13,25 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.ClothEntityEditor", ClothEntityEditor, scene::DefaultEntityEditor)
 
-ClothEntityEditor::ClothEntityEditor(scene::SceneEditorContext* context)
-:	scene::DefaultEntityEditor(context)
+ClothEntityEditor::ClothEntityEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter)
+:	scene::DefaultEntityEditor(context, entityAdapter)
 {
 }
 
-bool ClothEntityEditor::handleCommand(
-	scene::SceneEditorContext* context,
-	scene::EntityAdapter* entityAdapter,
-	const ui::Command& command
-)
+bool ClothEntityEditor::handleCommand(const ui::Command& command)
 {
 	if (command == L"Animation.Editor.Reset")
 	{
-		Ref< ClothEntity > clothEntity = checked_type_cast< ClothEntity* >(entityAdapter->getEntity());
+		Ref< ClothEntity > clothEntity = checked_type_cast< ClothEntity* >(getEntityAdapter()->getEntity());
 		clothEntity->reset();
 		return true;
 	}
-	return scene::DefaultEntityEditor::handleCommand(context, entityAdapter, command);
+	return scene::DefaultEntityEditor::handleCommand(command);
 }
 
-void ClothEntityEditor::drawGuide(
-	scene::SceneEditorContext* context,
-	render::PrimitiveRenderer* primitiveRenderer,
-	scene::EntityAdapter* entityAdapter
-) const
+void ClothEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer) const
 {
-	Ref< ClothEntity > clothEntity = checked_type_cast< ClothEntity* >(entityAdapter->getEntity());
+	Ref< ClothEntity > clothEntity = checked_type_cast< ClothEntity* >(getEntityAdapter()->getEntity());
 
 	Aabb3 boundingBox = clothEntity->getBoundingBox();
 	Transform transform;
@@ -48,7 +40,7 @@ void ClothEntityEditor::drawGuide(
 	primitiveRenderer->pushWorld(transform.toMatrix44());
 	primitiveRenderer->drawWireAabb(boundingBox, Color4ub(255, 255, 0, 200));
 
-	if (entityAdapter->isSelected())
+	if (getEntityAdapter()->isSelected())
 	{
 		const AlignedVector< ClothEntity::Node >& nodes = clothEntity->getNodes();
 		const AlignedVector< ClothEntity::Edge >& edges = clothEntity->getEdges();

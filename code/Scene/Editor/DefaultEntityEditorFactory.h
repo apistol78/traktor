@@ -17,7 +17,7 @@ class DefaultEntityEditorFactory : public IEntityEditorFactory
 public:
 	virtual const TypeInfoSet getEntityDataTypes() const;
 
-	virtual Ref< IEntityEditor > createEntityEditor(SceneEditorContext* context, const TypeInfo& entityDataType) const;
+	virtual Ref< IEntityEditor > createEntityEditor(SceneEditorContext* context, EntityAdapter* entityAdapter) const;
 };
 
 	}

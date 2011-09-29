@@ -41,7 +41,7 @@ public:
 
 	virtual bool remove();
 
-	virtual Ref< IStream > readObject(const TypeInfo*& outSerializerType);
+	virtual Ref< IStream > readObject(const TypeInfo*& outSerializerType) const;
 
 	virtual Ref< IStream > writeObject(const std::wstring& primaryTypeName, const TypeInfo*& outSerializerType);
 
@@ -49,7 +49,7 @@ public:
 
 	virtual bool removeAllData();
 
-	virtual Ref< IStream > readData(const std::wstring& dataName);
+	virtual Ref< IStream > readData(const std::wstring& dataName) const;
 
 	virtual Ref< IStream > writeData(const std::wstring& dataName);
 

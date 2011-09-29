@@ -97,7 +97,7 @@ bool RemoteInstance::remove()
 	return result ? result->getStatus() == StSuccess : false;
 }
 
-Ref< IStream > RemoteInstance::readObject(const TypeInfo*& outSerializerType)
+Ref< IStream > RemoteInstance::readObject(const TypeInfo*& outSerializerType) const
 {
 	Ref< DbmReadObjectResult > result = m_connection->sendMessage< DbmReadObjectResult >(DbmReadObject(m_handle));
 	if (!result)
@@ -139,7 +139,7 @@ bool RemoteInstance::removeAllData()
 	return result ? result->getStatus() == StSuccess : false;
 }
 
-Ref< IStream > RemoteInstance::readData(const std::wstring& dataName)
+Ref< IStream > RemoteInstance::readData(const std::wstring& dataName) const
 {
 	Ref< MsgHandleResult > result = m_connection->sendMessage< MsgHandleResult >(DbmReadData(m_handle, dataName));
 	if (!result)

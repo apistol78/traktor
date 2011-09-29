@@ -161,7 +161,8 @@ bool Winding3::rayIntersection(
 	}
 
 	// Project all points onto 2d plane.
-	AlignedVector< Vector2 > projected(points.size());
+	Vector2 projected[32];
+	T_ASSERT (points.size() <= sizeof_array(projected));
 	for (size_t i = 0; i < points.size(); ++i)
 	{
 		projected[i].x = dot3(u, points[i]);
@@ -182,10 +183,13 @@ bool Winding3::rayIntersection(
 		
 		if (abs(dy) <= FUZZY_EPSILON)
 			continue;
+
+		float mny = min(projected[i].y, projected[j].y);
+		float mxy = max(projected[i].y, projected[j].y);
 		
 		float x = projected[i].x + dx * (pnt.y - projected[i].y) / dy;
 		if (
-			((projected[i].y > pnt.y) != (projected[j].y > pnt.y)) &&
+			(pnt.y >= mny && pnt.y <= mxy) &&
 			(pnt.x < x)
 		)
 			pass = !pass;

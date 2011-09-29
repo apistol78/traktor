@@ -274,7 +274,7 @@ bool ScenePreviewControl::handleCommand(const ui::Command& command)
 			{
 				Ref< IEntityEditor > entityEditor = (*i)->getEntityEditor();
 				if (entityEditor)
-					entityEditor->handleCommand(m_context, *i, command);
+					entityEditor->handleCommand(command);
 			}
 		}
 		// Propagate command to selected entity editors if render control has focus.
@@ -288,7 +288,7 @@ bool ScenePreviewControl::handleCommand(const ui::Command& command)
 				Ref< IEntityEditor > entityEditor = (*i)->getEntityEditor();
 				if (entityEditor)
 				{
-					result = entityEditor->handleCommand(m_context, *i, command);
+					result = entityEditor->handleCommand(command);
 					if (result)
 						break;
 				}

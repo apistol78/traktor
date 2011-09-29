@@ -1,4 +1,5 @@
 #include <limits>
+#include "Core/Math/Const.h"
 #include "Core/Settings/PropertyColor.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/Settings.h"
@@ -21,21 +22,23 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.DefaultEntityEditor", DefaultEntityEditor, IEntityEditor)
 
-DefaultEntityEditor::DefaultEntityEditor(SceneEditorContext* context)
-:	m_inModify(false)
+DefaultEntityEditor::DefaultEntityEditor(SceneEditorContext* context, EntityAdapter* entityAdapter)
+:	m_context(context)
+,	m_entityAdapter(entityAdapter)
+,	m_inModify(false)
 {
-	updateSettings(context);
+	updateSettings();
 }
 
-bool DefaultEntityEditor::isGroup(const EntityAdapter* entityAdapter) const
+bool DefaultEntityEditor::isGroup() const
 {
-	const world::EntityData* entityData = entityAdapter->getEntityData();
+	const world::EntityData* entityData = m_entityAdapter->getEntityData();
 	return is_a< world::GroupEntityData >(entityData) || is_a< world::SpatialGroupEntityData >(entityData);
 }
 
-bool DefaultEntityEditor::addChildEntity(EntityAdapter* entityAdapter, EntityAdapter* childEntityAdapter) const
+bool DefaultEntityEditor::addChildEntity(EntityAdapter* childEntityAdapter) const
 {
-	world::EntityData* entityData = entityAdapter->getEntityData();
+	world::EntityData* entityData = m_entityAdapter->getEntityData();
 	world::EntityData* childEntityData = childEntityAdapter->getEntityData();
 
 	if (world::GroupEntityData* groupEntityData = dynamic_type_cast< world::GroupEntityData* >(entityData))
@@ -56,9 +59,9 @@ bool DefaultEntityEditor::addChildEntity(EntityAdapter* entityAdapter, EntityAda
 	return false;
 }
 
-bool DefaultEntityEditor::removeChildEntity(EntityAdapter* entityAdapter, EntityAdapter* childEntityAdapter) const
+bool DefaultEntityEditor::removeChildEntity(EntityAdapter* childEntityAdapter) const
 {
-	world::EntityData* entityData = entityAdapter->getEntityData();
+	world::EntityData* entityData = m_entityAdapter->getEntityData();
 	world::EntityData* childEntityData = childEntityAdapter->getEntityData();
 
 	if (world::GroupEntityData* groupEntityData = dynamic_type_cast< world::GroupEntityData* >(entityData))
@@ -79,33 +82,42 @@ bool DefaultEntityEditor::removeChildEntity(EntityAdapter* entityAdapter, Entity
 	return false;
 }
 
-bool DefaultEntityEditor::isPickable(const EntityAdapter* entityAdapter) const
+bool DefaultEntityEditor::queryRay(const Vector4& worldRayOrigin, const Vector4& worldRayDirection, Scalar& outDistance) const
 {
-	world::EntityData* entityData = entityAdapter->getEntityData();
-	return is_a< world::SpatialEntityData >(entityData);
+	if (!m_entityAdapter->isSpatial())
+		return false;
+
+	// Transform ray into object space.
+	Transform worldInv = m_entityAdapter->getTransform().inverse();
+	Vector4 objectRayOrigin = worldInv * worldRayOrigin;
+	Vector4 objectRayDirection = worldInv * worldRayDirection;
+
+	// Get entity bounding box; do not pick if origin of ray is within box.
+	Aabb3 boundingBox = m_entityAdapter->getBoundingBox();
+	if (boundingBox.empty() || boundingBox.inside(objectRayOrigin))
+		return false;
+
+	// Trace bounding box to see if ray intersect.
+	Scalar distance;
+	if (!boundingBox.intersectSegment(objectRayOrigin, objectRayOrigin + objectRayDirection * (outDistance - Scalar(FUZZY_EPSILON)), distance))
+		return false;
+
+	T_ASSERT (distance <= outDistance);
+	return true;
 }
 
-void DefaultEntityEditor::entitySelected(
-	SceneEditorContext* context,
-	EntityAdapter* entityAdapter,
-	bool selected
-)
+void DefaultEntityEditor::entitySelected(bool selected)
 {
 }
 
-void DefaultEntityEditor::beginModifier(
-	SceneEditorContext* context,
-	EntityAdapter* entityAdapter
-)
+void DefaultEntityEditor::beginModifier()
 {
 	T_ASSERT (!m_inModify);
 	m_inModify = true;
-	m_modifyTransform = entityAdapter->getTransform();
+	m_modifyTransform = m_entityAdapter->getTransform();
 }
 
 void DefaultEntityEditor::applyModifier(
-	SceneEditorContext* context,
-	EntityAdapter* entityAdapter,
 	const Matrix44& viewTransform,
 	const Vector4& screenDelta,
 	const Vector4& viewDelta,
@@ -114,16 +126,18 @@ void DefaultEntityEditor::applyModifier(
 )
 {
 	T_ASSERT (m_inModify);
-	T_ASSERT (entityAdapter->isSpatial());
 
-	Ref< IModifier > modifier = context->getModifier();
+	if (!m_entityAdapter->isSpatial())
+		return;
+
+	Ref< IModifier > modifier = m_context->getModifier();
 	if (!modifier)
 		return;
 
 	Transform transform = m_modifyTransform;
 	
 	modifier->adjust(
-		context,
+		m_context,
 		viewTransform,
 		screenDelta,
 		viewDelta,
@@ -136,9 +150,9 @@ void DefaultEntityEditor::applyModifier(
 	m_modifyTransform = transform;
 
 	// Snap to grid.
-	if (context->getSnapMode() == SceneEditorContext::SmGrid)
+	if (m_context->getSnapMode() == SceneEditorContext::SmGrid)
 	{
-		float spacing = context->getSnapSpacing();
+		float spacing = m_context->getSnapSpacing();
 		if (spacing > 0.0f)
 		{
 			Vector4 t = transform.translation();
@@ -152,15 +166,15 @@ void DefaultEntityEditor::applyModifier(
 		}
 	}
 	// Snap to neighbour entity.
-	else if (context->getSnapMode() == SceneEditorContext::SmNeighbour)
+	else if (m_context->getSnapMode() == SceneEditorContext::SmNeighbour)
 	{
-		AlignedVector< EntityAdapter::SnapPoint > snapPoints = entityAdapter->getSnapPoints();
+		AlignedVector< EntityAdapter::SnapPoint > snapPoints = m_entityAdapter->getSnapPoints();
 
 		float minDistance = std::numeric_limits< float >::max();
 		Vector4 minTranslate;
 
 		RefArray< EntityAdapter > otherEntities;
-		context->getEntities(otherEntities);
+		m_context->getEntities(otherEntities);
 
 		for (RefArray< EntityAdapter >::const_iterator i = otherEntities.begin(); i != otherEntities.end(); ++i)
 		{
@@ -172,7 +186,7 @@ void DefaultEntityEditor::applyModifier(
 			bool sameEntity = false;
 			for (EntityAdapter* check = *i; check; check = check->getParent())
 			{
-				if (check == entityAdapter)
+				if (check == m_entityAdapter)
 				{
 					sameEntity = true;
 					break;
@@ -208,44 +222,33 @@ void DefaultEntityEditor::applyModifier(
 			transform = transform * Transform(minTranslate);
 	}
 
-	entityAdapter->setTransform(transform);
+	m_entityAdapter->setTransform(transform);
 }
 
-void DefaultEntityEditor::endModifier(
-	SceneEditorContext* context,
-	EntityAdapter* entityAdapter
-)
+void DefaultEntityEditor::endModifier()
 {
 	T_ASSERT (m_inModify);
 	m_inModify = false;
 }
 
-bool DefaultEntityEditor::handleCommand(
-	SceneEditorContext* context,
-	EntityAdapter* entityAdapter,
-	const ui::Command& command
-)
+bool DefaultEntityEditor::handleCommand(const ui::Command& command)
 {
 	if (command == L"Editor.SettingsChanged")
-		updateSettings(context);
+		updateSettings();
 	return false;
 }
 
-void DefaultEntityEditor::drawGuide(
-	SceneEditorContext* context,
-	render::PrimitiveRenderer* primitiveRenderer,
-	EntityAdapter* entityAdapter
-) const
+void DefaultEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer) const
 {
 	const Vector4 c_expandBoundingBox(0.001f, 0.001f, 0.001f, 0.0f);
 
-	Transform transform = entityAdapter->getTransform();
+	Transform transform = m_entityAdapter->getTransform();
 	
-	Aabb3 boundingBox = entityAdapter->getBoundingBox();
+	Aabb3 boundingBox = m_entityAdapter->getBoundingBox();
 	boundingBox.mn -= c_expandBoundingBox;
 	boundingBox.mx += c_expandBoundingBox;
 
-	if (is_a< world::DirectionalLightEntity >(entityAdapter->getEntity()))
+	if (is_a< world::DirectionalLightEntity >(m_entityAdapter->getEntity()))
 	{
 		Vector4 lightPosition = transform.translation();
 		Vector4 lightDirection = -transform.axisY();
@@ -272,7 +275,7 @@ void DefaultEntityEditor::drawGuide(
 	else
 	{
 		primitiveRenderer->pushWorld(transform.toMatrix44());
-		if (entityAdapter->isSelected())
+		if (m_entityAdapter->isSelected())
 		{
 			primitiveRenderer->drawSolidAabb(boundingBox, m_colorBoundingBoxFaceSel);
 			primitiveRenderer->drawWireAabb(boundingBox, m_colorBoundingBoxSel);
@@ -281,9 +284,9 @@ void DefaultEntityEditor::drawGuide(
 			primitiveRenderer->drawWireAabb(boundingBox, m_colorBoundingBox);
 		primitiveRenderer->popWorld();
 
-		if (entityAdapter->isSelected() && context->getSnapMode() == SceneEditorContext::SmNeighbour)
+		if (m_entityAdapter->isSelected() && m_context->getSnapMode() == SceneEditorContext::SmNeighbour)
 		{
-			AlignedVector< EntityAdapter::SnapPoint > snapPoints = entityAdapter->getSnapPoints();
+			AlignedVector< EntityAdapter::SnapPoint > snapPoints = m_entityAdapter->getSnapPoints();
 			for (AlignedVector< EntityAdapter::SnapPoint >::const_iterator i = snapPoints.begin(); i != snapPoints.end(); ++i)
 			{
 				primitiveRenderer->drawSolidPoint(
@@ -296,18 +299,14 @@ void DefaultEntityEditor::drawGuide(
 	}
 }
 
-bool DefaultEntityEditor::getStatusText(
-	SceneEditorContext* context,
-	EntityAdapter* entityAdapter,
-	std::wstring& outStatusText
-) const
+bool DefaultEntityEditor::getStatusText(std::wstring& outStatusText) const
 {
 	return false;
 }
 
-void DefaultEntityEditor::updateSettings(SceneEditorContext* context)
+void DefaultEntityEditor::updateSettings()
 {
-	Ref< PropertyGroup > colors = context->getEditor()->getSettings()->getProperty< PropertyGroup >(L"Editor.Colors");
+	Ref< PropertyGroup > colors = m_context->getEditor()->getSettings()->getProperty< PropertyGroup >(L"Editor.Colors");
 	m_colorBoundingBox = colors->getProperty< PropertyColor >(L"BoundingBoxWire");
 	m_colorBoundingBoxSel = colors->getProperty< PropertyColor >(L"BoundingBoxWireSelected");
 	m_colorBoundingBoxFaceSel = colors->getProperty< PropertyColor >(L"BoundingBoxFaceSelected");

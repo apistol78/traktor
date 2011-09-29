@@ -8,6 +8,7 @@
 #include "Scene/ISceneControllerData.h"
 #include "Scene/Scene.h"
 #include "Scene/Editor/Camera.h"
+#include "Scene/Editor/ISceneEditorPlugin.h"
 #include "Scene/Editor/ISceneEditorProfile.h"
 #include "Scene/Editor/IModifier.h"
 #include "Scene/Editor/IEntityEditor.h"
@@ -236,7 +237,7 @@ void SceneEditorContext::drawGuide(render::PrimitiveRenderer* primitiveRenderer,
 	{
 		IEntityEditor* entityEditor = entityAdapter->getEntityEditor();
 		if (entityEditor)
-			entityEditor->drawGuide(this, primitiveRenderer, entityAdapter);
+			entityEditor->drawGuide(primitiveRenderer);
 	}
 }
 
@@ -310,7 +311,7 @@ void SceneEditorContext::selectEntity(EntityAdapter* entityAdapter, bool select)
 	{
 		entityAdapter->m_selected = select;
 		if (entityAdapter->m_entityEditor)
-			entityAdapter->m_entityEditor->entitySelected(this, entityAdapter, select);
+			entityAdapter->m_entityEditor->entitySelected(select);
 	}
 }
 
@@ -385,33 +386,23 @@ EntityAdapter* SceneEditorContext::queryRay(const Vector4& worldRayOrigin, const
 
 	for (RefArray< EntityAdapter >::iterator i = entityAdapters.begin(); i != entityAdapters.end(); ++i)
 	{
-		// Must be unlocked, visible, spatial and exclusively pick-able.
-		if (
-			(*i)->isLocked() ||
-			!(*i)->isVisible() ||
-			!(*i)->isSpatial() ||
-			!(*i)->getEntityEditor() ||
-			!(*i)->getEntityEditor()->isPickable(*i)
-		)
+		// Must be unlocked and visible.
+		if ((*i)->isLocked() || !(*i)->isVisible())
 			continue;
 
-		// Transform ray into object space.
-		Transform worldInv = (*i)->getTransform().inverse();
-		Vector4 objectRayOrigin = worldInv * worldRayOrigin;
-		Vector4 objectRayDirection = worldInv * worldRayDirection;
-
-		// Get entity bounding box; do not pick if origin of ray is within box.
-		Aabb3 boundingBox = (*i)->getBoundingBox();
-		if (boundingBox.empty() || boundingBox.inside(objectRayOrigin))
+		IEntityEditor* entityEditor = (*i)->getEntityEditor();
+		if (!entityEditor)
 			continue;
 
 		// Trace bounding box to see if ray intersect.
-		Scalar distance;
-		if (boundingBox.intersectSegment(objectRayOrigin, objectRayOrigin + objectRayDirection * (minDistance - Scalar(FUZZY_EPSILON)), distance))
+		Scalar distance = minDistance;
+		if (entityEditor->queryRay(worldRayOrigin, worldRayDirection, distance))
 		{
-			T_ASSERT (distance <= minDistance);
-			minEntityAdapter = *i;
-			minDistance = distance;
+			if (distance < minDistance)
+			{
+				minEntityAdapter = *i;
+				minDistance = distance;
+			}
 		}
 	}
 
@@ -485,6 +476,16 @@ void SceneEditorContext::setDebugTexture(uint32_t index, render::ITexture* debug
 render::ITexture* SceneEditorContext::getDebugTexture(uint32_t index)
 {
 	return m_debugTexture[index];
+}
+
+ISceneEditorPlugin* SceneEditorContext::getEditorPluginOf(const TypeInfo& pluginType) const
+{
+	for (RefArray< ISceneEditorPlugin >::const_iterator i = m_editorPlugins.begin(); i != m_editorPlugins.end(); ++i)
+	{
+		if (&type_of(*i) == &pluginType)
+			return *i;
+	}
+	return 0;
 }
 
 void SceneEditorContext::raisePreModify()

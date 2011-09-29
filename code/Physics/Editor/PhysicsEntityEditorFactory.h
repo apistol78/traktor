@@ -17,7 +17,7 @@ class PhysicsEntityEditorFactory : public scene::IEntityEditorFactory
 public:
 	virtual const TypeInfoSet getEntityDataTypes() const;
 
-	virtual Ref< scene::IEntityEditor > createEntityEditor(scene::SceneEditorContext* context, const TypeInfo& entityDataType) const;
+	virtual Ref< scene::IEntityEditor > createEntityEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter) const;
 };
 
 	}

@@ -1,23 +1,23 @@
-#include "Physics/Editor/RigidEntityEditor.h"
-#include "Physics/World/RigidEntityData.h"
-#include "Physics/World/RigidEntity.h"
-#include "Physics/DynamicBody.h"
+#include "Core/Math/Const.h"
 #include "Physics/BodyDesc.h"
 #include "Physics/BoxShapeDesc.h"
 #include "Physics/CapsuleShapeDesc.h"
 #include "Physics/CylinderShapeDesc.h"
-#include "Physics/MeshShapeDesc.h"
-#include "Physics/SphereShapeDesc.h"
+#include "Physics/DynamicBody.h"
+#include "Physics/Heightfield.h"
 #include "Physics/HeightfieldShapeDesc.h"
 #include "Physics/Mesh.h"
-#include "Physics/Heightfield.h"
-#include "Scene/Editor/EntityAdapter.h"
-#include "Scene/Editor/SceneEditorContext.h"
-#include "World/Entity/SpatialEntity.h"
+#include "Physics/MeshShapeDesc.h"
+#include "Physics/SphereShapeDesc.h"
+#include "Physics/Editor/RigidEntityEditor.h"
+#include "Physics/World/RigidEntity.h"
+#include "Physics/World/RigidEntityData.h"
 #include "Render/PrimitiveRenderer.h"
 #include "Resource/IResourceManager.h"
+#include "Scene/Editor/EntityAdapter.h"
+#include "Scene/Editor/SceneEditorContext.h"
 #include "Ui/Command.h"
-#include "Core/Math/Const.h"
+#include "World/Entity/SpatialEntity.h"
 
 namespace traktor
 {
@@ -26,25 +26,19 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.RigidEntityEditor", RigidEntityEditor, scene::DefaultEntityEditor)
 
-RigidEntityEditor::RigidEntityEditor(scene::SceneEditorContext* context)
-:	scene::DefaultEntityEditor(context)
+RigidEntityEditor::RigidEntityEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter)
+:	scene::DefaultEntityEditor(context, entityAdapter)
 ,	m_showHull(false)
 {
 }
 
-void RigidEntityEditor::entitySelected(
-	scene::SceneEditorContext* context,
-	scene::EntityAdapter* entityAdapter,
-	bool selected
-)
+void RigidEntityEditor::entitySelected(bool selected)
 {
 	if (selected)
 		m_showHull = false;
 }
 
 void RigidEntityEditor::applyModifier(
-	scene::SceneEditorContext* context,
-	scene::EntityAdapter* entityAdapter,
 	const Matrix44& viewTransform,
 	const Vector4& screenDelta,
 	const Vector4& viewDelta,
@@ -54,8 +48,6 @@ void RigidEntityEditor::applyModifier(
 {
 	// Apply default modifier.
 	scene::DefaultEntityEditor::applyModifier(
-		context,
-		entityAdapter,
 		viewTransform,
 		screenDelta,
 		viewDelta,
@@ -64,35 +56,28 @@ void RigidEntityEditor::applyModifier(
 	);
 
 	// Ensure body is enabled as it might have gone to sleep.
-	Ref< RigidEntity > rigidEntity = checked_type_cast< RigidEntity* >(entityAdapter->getEntity());
+	Ref< RigidEntity > rigidEntity = checked_type_cast< RigidEntity* >(getEntityAdapter()->getEntity());
 	if (rigidEntity->getBody())
 		rigidEntity->getBody()->setActive(true);
 }
 
-bool RigidEntityEditor::handleCommand(
-	scene::SceneEditorContext* context,
-	scene::EntityAdapter* entityAdapter,
-	const ui::Command& command
-)
+bool RigidEntityEditor::handleCommand(const ui::Command& command)
 {
 	if (command == L"Physics.ToggleMeshTriangles")
+	{
 		m_showHull = !m_showHull;
+		return true;
+	}
 	else
 		return false;
-
-	return true;
 }
 
-void RigidEntityEditor::drawGuide(
-	scene::SceneEditorContext* context,
-	render::PrimitiveRenderer* primitiveRenderer,
-	scene::EntityAdapter* entityAdapter
-) const
+void RigidEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer) const
 {
-	Ref< RigidEntityData > rigidEntityData = checked_type_cast< RigidEntityData* >(entityAdapter->getEntityData());
-	Ref< RigidEntity > rigidEntity = checked_type_cast< RigidEntity* >(entityAdapter->getEntity());
+	Ref< RigidEntityData > rigidEntityData = checked_type_cast< RigidEntityData* >(getEntityAdapter()->getEntityData());
+	Ref< RigidEntity > rigidEntity = checked_type_cast< RigidEntity* >(getEntityAdapter()->getEntity());
 
-	primitiveRenderer->pushWorld(entityAdapter->getTransform().toMatrix44());
+	primitiveRenderer->pushWorld(getEntityAdapter()->getTransform().toMatrix44());
 
 	// Draw collision shape geometry.
 	Ref< const BodyDesc > bodyDesc = rigidEntityData->getBodyDesc();
@@ -107,7 +92,7 @@ void RigidEntityEditor::drawGuide(
 			{
 				Aabb3 boundingBox(-boxShapeDesc->getExtent(), boxShapeDesc->getExtent());
 
-				if (entityAdapter->isSelected())
+				if (getEntityAdapter()->isSelected())
 				{
 					primitiveRenderer->drawSolidAabb(boundingBox, Color4ub(128, 255, 255, 128));
 					primitiveRenderer->drawWireAabb(boundingBox, Color4ub(0, 255, 255));
@@ -120,7 +105,7 @@ void RigidEntityEditor::drawGuide(
 				Vector4 extent(capsuleShapeDesc->getRadius(), capsuleShapeDesc->getRadius(), capsuleShapeDesc->getLength() * 0.5f);
 				Aabb3 boundingBox(-extent, extent);
 
-				if (entityAdapter->isSelected())
+				if (getEntityAdapter()->isSelected())
 				{
 					primitiveRenderer->drawSolidAabb(boundingBox, Color4ub(128, 255, 255, 128));
 					primitiveRenderer->drawWireAabb(boundingBox, Color4ub(0, 255, 255));
@@ -133,7 +118,7 @@ void RigidEntityEditor::drawGuide(
 				Vector4 extent(cylinderShapeDesc->getRadius(), cylinderShapeDesc->getRadius(), cylinderShapeDesc->getLength() * 0.5f);
 				Aabb3 boundingBox(-extent, extent);
 
-				if (entityAdapter->isSelected())
+				if (getEntityAdapter()->isSelected())
 				{
 					primitiveRenderer->drawSolidAabb(boundingBox, Color4ub(128, 255, 255, 128));
 					primitiveRenderer->drawWireCylinder(
@@ -154,7 +139,7 @@ void RigidEntityEditor::drawGuide(
 			else if (const MeshShapeDesc* meshShapeDesc = dynamic_type_cast< const MeshShapeDesc* >(shapeDesc))
 			{
 				resource::Proxy< Mesh > mesh = meshShapeDesc->getMesh();
-				if (context->getResourceManager()->bind(mesh) && mesh.validate())
+				if (getContext()->getResourceManager()->bind(mesh) && mesh.validate())
 				{
 					const AlignedVector< Vector4 >& vertices = mesh->getVertices();
 					const std::vector< Mesh::Triangle >& triangles = 
@@ -168,7 +153,7 @@ void RigidEntityEditor::drawGuide(
 						const Vector4& V1 = vertices[i->indices[1]];
 						const Vector4& V2 = vertices[i->indices[2]];
 
-						if (entityAdapter->isSelected())
+						if (getEntityAdapter()->isSelected())
 						{
 							primitiveRenderer->drawSolidTriangle(V0, V1, V2, Color4ub(128, 255, 255, 128));
 							primitiveRenderer->drawWireTriangle(V0, V1, V2, Color4ub(0, 255, 255));
@@ -183,7 +168,7 @@ void RigidEntityEditor::drawGuide(
 				float radius = sphereShapeDesc->getRadius();
 				Aabb3 boundingBox(-Vector4(radius, radius, radius, 0.0f), Vector4(radius, radius, radius, 0.0f));
 
-				if (entityAdapter->isSelected())
+				if (getEntityAdapter()->isSelected())
 				{
 					primitiveRenderer->drawSolidAabb(boundingBox, Color4ub(128, 255, 255, 128));
 					primitiveRenderer->drawWireAabb(boundingBox, Color4ub(0, 255, 255));
@@ -194,12 +179,12 @@ void RigidEntityEditor::drawGuide(
 			else if (const HeightfieldShapeDesc* heightfieldShapeDesc = dynamic_type_cast< const HeightfieldShapeDesc* >(shapeDesc))
 			{
 				resource::Proxy< Heightfield > heightfield = heightfieldShapeDesc->getHeightfield();
-				if (context->getResourceManager()->bind(heightfield) && heightfield.validate())
+				if (getContext()->getResourceManager()->bind(heightfield) && heightfield.validate())
 				{
 					const Vector4& extent = heightfield->getWorldExtent();
 					Aabb3 boundingBox(-extent / Scalar(2.0f), extent / Scalar(2.0f));
 
-					if (entityAdapter->isSelected())
+					if (getEntityAdapter()->isSelected())
 					{
 						primitiveRenderer->drawSolidAabb(boundingBox, Color4ub(128, 255, 255, 128));
 						primitiveRenderer->drawWireAabb(boundingBox, Color4ub(0, 255, 255));

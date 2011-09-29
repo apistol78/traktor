@@ -39,6 +39,10 @@ class IModifier;
  *
  * The scene editor uses specializations of this
  * class to apply changes to selected entities.
+ *
+ * Each created entity adapter gets a unique instance of
+ * an entity editor thus it's safe to store
+ * editing specific data as members of this class.
  */
 class T_DLLCLASS IEntityEditor : public Object
 {
@@ -48,55 +52,47 @@ public:
 	/*! \brief Is entity a group?
 	 *
 	 * \param entityAdapter Entity adapter.
-	 * \return True if pick-able.
+	 * \return True if group.
 	 */
-	virtual bool isGroup(const EntityAdapter* entityAdapter) const = 0;
+	virtual bool isGroup() const = 0;
 
 	/*! \brief Add child entity.
 	 *
-	 * \param entityAdapter Container entity.
 	 * \param childEntityAdapter Child entity.
 	 * \return True if successfully added child.
 	 */
-	virtual bool addChildEntity(EntityAdapter* entityAdapter, EntityAdapter* childEntityAdapter) const = 0;
+	virtual bool addChildEntity(EntityAdapter* childEntityAdapter) const = 0;
 
 	/*! \brief Remove child entity.
 	 *
-	 * \param entityAdapter Container entity.
 	 * \param childEntityAdapter Child entity.
 	 * \return True if successfully removed child.
 	 */
-	virtual bool removeChildEntity(EntityAdapter* entityAdapter, EntityAdapter* childEntityAdapter) const = 0;
+	virtual bool removeChildEntity(EntityAdapter* childEntityAdapter) const = 0;
 
-	/*! \brief Is entity pick-able?
+	/*! \brief Local ray query.
 	 *
-	 * Return true if entity can be selected
-	 * through the 3D preview.
+	 * Query closest intersection of ray and entity.
 	 *
-	 * \param entityAdapter Entity adapter.
-	 * \return True if pick-able.
+	 * \param worldRayOrigin Ray origin in world space.
+	 * \param worldRayDirection Ray direction in world space.
+	 * \param outDistance Distance to closest intersection from ray origin.
+	 * \return True if intersection found.
 	 */
-	virtual bool isPickable(const EntityAdapter* entityAdapter) const = 0;
+	virtual bool queryRay(const Vector4& worldRayOrigin, const Vector4& worldRayDirection, Scalar& outDistance) const = 0;
 
 	/*! \brief Entity selected.
 	 *
-	 * \param context Scene editor context.
-	 * \param entityAdapter Selected entity adapter.
 	 * \param selected True if entity was selected, false if it was deselected.
 	 */
-	virtual void entitySelected(SceneEditorContext* context, EntityAdapter* entityAdapter, bool selected) = 0;
+	virtual void entitySelected(bool selected) = 0;
 
 	/*! \brief Begin modifier on entity.
-	 *
-	 * \param context Scene editor context.
-	 * \param entityAdapter Selected entity adapter.
 	 */
-	virtual void beginModifier(SceneEditorContext* context, EntityAdapter* entityAdapter) = 0;
+	virtual void beginModifier() = 0;
 
 	/*! \brief Apply modifier on entity.
 	 *
-	 * \param context Scene editor context.
-	 * \param entityAdapter Selected entity adapter.
 	 * \param viewTransform User view transform.
 	 * \param screenDelta Delta in screen space.
 	 * \param viewDelta Delta in view space.
@@ -104,8 +100,6 @@ public:
 	 * \param mouseButton Pressed mouse button.
 	 */
 	virtual void applyModifier(
-		SceneEditorContext* context,
-		EntityAdapter* entityAdapter,
 		const Matrix44& viewTransform,
 		const Vector4& screenDelta,
 		const Vector4& viewDelta,
@@ -114,54 +108,33 @@ public:
 	) = 0;
 
 	/*! \brief Begin modifier on entity.
-	 *
-	 * \param context Scene editor context.
-	 * \param entityAdapter Selected entity adapter.
 	 */
-	virtual void endModifier(SceneEditorContext* context, EntityAdapter* entityAdapter) = 0;
+	virtual void endModifier() = 0;
 
 	/*! \brief Handle shortcut.
 	 *
-	 * \param context Scene editor context.
-	 * \param entityAdapter Selected entity adapter.
 	 * \param command Shortcut command.
 	 */
-	virtual bool handleCommand(
-		SceneEditorContext* context,
-		EntityAdapter* entityAdapter,
-		const ui::Command& command
-	) = 0;
+	virtual bool handleCommand(const ui::Command& command) = 0;
 
 	/*! \brief Draw guide for entity.
 	 *
 	 * A guide is the wire overlay
 	 * in the 3d editor view.
 	 *
-	 * \param context Scene editor context.
 	 * \param primitiveRenderer Primitive wire renderer.
-	 * \param entityAdapter Entity adapter, not necessarily selected.
 	 */
-	virtual void drawGuide(
-		SceneEditorContext* context,
-		render::PrimitiveRenderer* primitiveRenderer,
-		EntityAdapter* entityAdapter
-	) const = 0;
+	virtual void drawGuide(render::PrimitiveRenderer* primitiveRenderer) const = 0;
 
 	/*! \brief Get status text.
 	 *
 	 * Status text is shown beneath the
 	 * 3d editor view.
 	 *
-	 * \param context Scene editor context.
-	 * \param entityAdapter Selected entity adapter.
 	 * \param outStatusText Status text.
 	 * \return If status text available.
 	 */
-	virtual bool getStatusText(
-		SceneEditorContext* context,
-		EntityAdapter* entityAdapter,
-		std::wstring& outStatusText
-	) const = 0;
+	virtual bool getStatusText(std::wstring& outStatusText) const = 0;
 };
 
 	}

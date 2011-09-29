@@ -60,14 +60,14 @@ public:
 
 	virtual const TypeInfo* getPrimaryType() const;
 
-	virtual Ref< ISerializable > getObject();
+	virtual Ref< ISerializable > getObject() const;
 
 	virtual uint32_t getDataNames(std::vector< std::wstring >& dataNames) const;
 
-	virtual Ref< IStream > readData(const std::wstring& dataName);
+	virtual Ref< IStream > readData(const std::wstring& dataName) const;
 
 	template < typename T >
-	Ref< T > getObject()
+	Ref< T > getObject() const
 	{
 		return dynamic_type_cast< T* >(getObject());
 	}

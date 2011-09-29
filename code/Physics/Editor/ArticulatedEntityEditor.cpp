@@ -20,25 +20,19 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.ArticulatedEntityEditor", ArticulatedEntityEditor, scene::DefaultEntityEditor)
 
-ArticulatedEntityEditor::ArticulatedEntityEditor(
-	scene::SceneEditorContext* context
-)
-:	scene::DefaultEntityEditor(context)
+ArticulatedEntityEditor::ArticulatedEntityEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter)
+:	scene::DefaultEntityEditor(context, entityAdapter)
 {
 }
 
-void ArticulatedEntityEditor::drawGuide(
-	scene::SceneEditorContext* context,
-	render::PrimitiveRenderer* primitiveRenderer,
-	scene::EntityAdapter* entityAdapter
-) const
+void ArticulatedEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer) const
 {
-	ArticulatedEntityData* articulatedEntityData = checked_type_cast< ArticulatedEntityData* >(entityAdapter->getEntityData());
+	ArticulatedEntityData* articulatedEntityData = checked_type_cast< ArticulatedEntityData* >(getEntityAdapter()->getEntityData());
 
 	const std::vector< ArticulatedEntityData::Constraint >& constraints = articulatedEntityData->getConstraints();
 	Transform transform = articulatedEntityData->getTransform();
 
-	const RefArray< scene::EntityAdapter >& constraintChildren = entityAdapter->getChildren();
+	const RefArray< scene::EntityAdapter >& constraintChildren = getEntityAdapter()->getChildren();
 
 	for (uint32_t i = 0; i < uint32_t(constraints.size()); ++i)
 	{
@@ -222,11 +216,6 @@ void ArticulatedEntityEditor::drawGuide(
 			);
 		}
 	}
-
-	// Draw default guides of contained entity.
-	const RefArray< scene::EntityAdapter >& children = entityAdapter->getChildren();
-	for (RefArray< scene::EntityAdapter >::const_iterator i = children.begin(); i != children.end(); ++i)
-		context->drawGuide(primitiveRenderer, *i);
 }
 
 	}

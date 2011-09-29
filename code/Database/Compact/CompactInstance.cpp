@@ -103,7 +103,7 @@ bool CompactInstance::remove()
 	return true;
 }
 
-Ref< IStream > CompactInstance::readObject(const TypeInfo*& outSerializerType)
+Ref< IStream > CompactInstance::readObject(const TypeInfo*& outSerializerType) const
 {
 	T_ASSERT (m_instanceEntry);
 
@@ -168,7 +168,7 @@ bool CompactInstance::removeAllData()
 	return true;
 }
 
-Ref< IStream > CompactInstance::readData(const std::wstring& dataName)
+Ref< IStream > CompactInstance::readData(const std::wstring& dataName) const
 {
 	T_ASSERT (m_instanceEntry);
 

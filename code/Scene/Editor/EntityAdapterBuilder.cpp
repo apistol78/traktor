@@ -21,11 +21,13 @@ namespace traktor
 Ref< IEntityEditor > createEntityEditor(
 	SceneEditorContext* context,
 	const RefArray< IEntityEditorFactory >& entityEditorFactories,
-	const TypeInfo& entityDataType
+	EntityAdapter* entityAdapter
 )
 {
 	uint32_t minClassDifference = std::numeric_limits< uint32_t >::max();
 	Ref< IEntityEditorFactory > entityEditorFactory;
+
+	const TypeInfo& entityDataType = type_of(entityAdapter->getEntityData());
 
 	for (RefArray< IEntityEditorFactory >::const_iterator i = entityEditorFactories.begin(); i != entityEditorFactories.end(); ++i)
 	{
@@ -46,7 +48,7 @@ Ref< IEntityEditor > createEntityEditor(
 
 	if (entityEditorFactory)
 	{
-		Ref< IEntityEditor > entityEditor = entityEditorFactory->createEntityEditor(context, entityDataType);
+		Ref< IEntityEditor > entityEditor = entityEditorFactory->createEntityEditor(context, entityAdapter);
 		T_ASSERT_M (entityEditor, L"Entity editor factory returned null");
 		return entityEditor;
 	}
@@ -98,9 +100,6 @@ void EntityAdapterBuilder::begin(world::IEntitySchema* entitySchema)
 		if (parent)
 			parent->unlink(entityAdapter);
 
-		// Release entity editor.
-		entityAdapter->setEntityEditor(0);
-
 		// Insert into map from instance guid to adapters.
 		m_cachedAdapters[entityAdapter->getEntityData()].push_back(entityAdapter);
 	}
@@ -126,13 +125,6 @@ Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entit
 	{
 		entityAdapter = new EntityAdapter(const_cast< world::EntityData* >(entityData));
 	}
-
-	// Create entity editor based on type of entity.
-	Ref< IEntityEditor > entityEditor = createEntityEditor(m_context, m_entityEditorFactories, type_of(entityData));
-	if (!entityEditor)
-		return 0;
-
-	entityAdapter->setEntityEditor(entityEditor);
 
 	if (m_currentAdapter)
 		m_currentAdapter->link(entityAdapter);
@@ -180,6 +172,18 @@ Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entit
 	}
 
 	entityAdapter->setEntity(entity);
+
+	if (!entityAdapter->getEntityEditor())
+	{
+		Ref< IEntityEditor > entityEditor = createEntityEditor(m_context, m_entityEditorFactories, entityAdapter);
+		if (!entityEditor)
+		{
+			log::error << L"Unable to create entity editor from \"" << type_name(entityData) << L"\"" << Endl;
+			return 0;
+		}
+
+		entityAdapter->setEntityEditor(entityEditor);
+	}
 
 	m_entities[entityData] = entity;
 	

@@ -1,8 +1,9 @@
+#include "Physics/Editor/ArticulatedEntityEditor.h"
 #include "Physics/Editor/PhysicsEntityEditorFactory.h"
 #include "Physics/Editor/RigidEntityEditor.h"
-#include "Physics/Editor/ArticulatedEntityEditor.h"
-#include "Physics/World/RigidEntityData.h"
 #include "Physics/World/ArticulatedEntityData.h"
+#include "Physics/World/RigidEntityData.h"
+#include "Scene/Editor/EntityAdapter.h"
 
 namespace traktor
 {
@@ -14,20 +15,20 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.PhysicsEntityEditorFactory", PhysicsEnt
 const TypeInfoSet PhysicsEntityEditorFactory::getEntityDataTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< RigidEntityData >());
 	typeSet.insert(&type_of< ArticulatedEntityData >());
+	typeSet.insert(&type_of< RigidEntityData >());
 	return typeSet;
 }
 
-Ref< scene::IEntityEditor > PhysicsEntityEditorFactory::createEntityEditor(
-	scene::SceneEditorContext* context,
-	const TypeInfo& entityDataType
-) const
+Ref< scene::IEntityEditor > PhysicsEntityEditorFactory::createEntityEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter) const
 {
-	if (is_type_of< RigidEntityData >(entityDataType))
-		return new RigidEntityEditor(context);
+	const TypeInfo& entityDataType = type_of(entityAdapter->getEntityData());
+
 	if (is_type_of< ArticulatedEntityData >(entityDataType))
-		return new ArticulatedEntityEditor(context);
+		return new ArticulatedEntityEditor(context, entityAdapter);
+	else if (is_type_of< RigidEntityData >(entityDataType))
+		return new RigidEntityEditor(context, entityAdapter);
+
 	return 0;
 }
 

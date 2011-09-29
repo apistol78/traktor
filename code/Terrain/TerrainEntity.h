@@ -82,6 +82,8 @@ public:
 	virtual void update(const world::EntityUpdate* update);
 
 private:
+	friend class TerrainEntityEditor;
+
 	Ref< render::IRenderSystem > m_renderSystem;
 	resource::Proxy< Heightfield > m_heightfield;
 	resource::Proxy< render::Shader > m_shader;
