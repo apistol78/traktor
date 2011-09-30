@@ -6,9 +6,13 @@
 #include "Heightfield/Editor/HeightfieldCompositor.h"
 #include "Heightfield/Editor/HeightfieldEditorPlugin.h"
 #include "Scene/Editor/SceneEditorContext.h"
+#include "Ui/Bitmap.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
 #include "Ui/Custom/ToolBar/ToolBarSeparator.h"
+
+// Resources
+#include "Resources/Heightfield.h"
 
 namespace traktor
 {
@@ -24,10 +28,11 @@ HeightfieldEditorPlugin::HeightfieldEditorPlugin(scene::SceneEditorContext* cont
 
 bool HeightfieldEditorPlugin::create(ui::Widget* parent, ui::custom::ToolBar* toolBar)
 {
+	uint32_t base = toolBar->addImage(ui::Bitmap::load(c_ResourceHeightfield, sizeof(c_ResourceHeightfield), L"png"), 6);
 	toolBar->addItem(new ui::custom::ToolBarSeparator());
-	toolBar->addItem(new ui::custom::ToolBarButton(L"Heightfield raise", ui::Command(L"Heightfield.Raise"), 0, ui::custom::ToolBarButton::BsText));
-	toolBar->addItem(new ui::custom::ToolBarButton(L"Heightfield lower", ui::Command(L"Heightfield.Lower"), 0, ui::custom::ToolBarButton::BsText));
-	toolBar->addItem(new ui::custom::ToolBarButton(L"Heightfield save", ui::Command(L"Heightfield.Save"), 0, ui::custom::ToolBarButton::BsText));
+	toolBar->addItem(new ui::custom::ToolBarButton(L"Heightfield raise", ui::Command(L"Heightfield.Raise"), base));
+	toolBar->addItem(new ui::custom::ToolBarButton(L"Heightfield lower", ui::Command(L"Heightfield.Lower"), base + 1));
+	toolBar->addItem(new ui::custom::ToolBarButton(L"Heightfield save", ui::Command(L"Heightfield.Save"), base + 2));
 	return true;
 }
 

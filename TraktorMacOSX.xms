@@ -12226,10 +12226,6 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[15]/dependencies/item[6]/project"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
 					<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
@@ -12332,6 +12328,15 @@
 							<item type="File">
 								<fileName>*.*</fileName>
 								<items/>
+							</item>
+							<item type="Filter">
+								<name>Resources</name>
+								<items>
+									<item type="File">
+										<fileName>../../../res/toolbar/Heightfield.png</fileName>
+										<items/>
+									</item>
+								</items>
 							</item>
 						</items>
 						<dependencies>
@@ -14602,7 +14607,7 @@
 		<item ref="/object/projects/item[51]/dependencies/item[6]/project"/>
 		<item ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project/dependencies/item[2]/project"/>
 		<item ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project/dependencies/item[3]/project"/>
-		<item ref="/object/projects/item[57]/dependencies/item[11]/project"/>
+		<item ref="/object/projects/item[57]/dependencies/item[10]/project"/>
 		<item ref="/object/projects/item[14]/dependencies/item[5]/project/dependencies/item[4]/project"/>
 	</projects>
 </object>

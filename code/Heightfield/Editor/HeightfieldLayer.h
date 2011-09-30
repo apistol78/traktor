@@ -30,21 +30,16 @@ class T_DLLCLASS HeightfieldLayer : public Object
 	T_RTTI_CLASS;
 
 public:
-	static Ref< HeightfieldLayer > createFromImage(drawing::Image* image);
+	drawing::Image* getImage() { return m_image; }
 
-	static Ref< HeightfieldLayer > createEmpty(uint32_t size, height_t height);
-
-	uint32_t getSize() const { return m_size; }
-
-	height_t* getHeights() { return m_heights.ptr(); }
-
-	const height_t* getHeights() const { return m_heights.c_ptr(); }
+	const drawing::Image* getImage() const { return m_image; }
 
 private:
-	uint32_t m_size;
-	AutoArrayPtr< height_t > m_heights;
+	friend class HeightfieldCompositor;
 
-	HeightfieldLayer();
+	Ref< drawing::Image > m_image;
+
+	HeightfieldLayer(drawing::Image* image);
 };
 
 	}

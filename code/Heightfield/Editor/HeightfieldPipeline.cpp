@@ -5,6 +5,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Settings/PropertyString.h"
 #include "Database/Instance.h"
+#include "Drawing/Image.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
@@ -77,7 +78,7 @@ bool HeightfieldPipeline::buildOutput(
 	if (!compositor)
 		return false;
 
-	Ref< HeightfieldLayer > mergedLayer = compositor->mergeLayers();
+	const HeightfieldLayer* mergedLayer = compositor->getMergedLayer();
 	if (!mergedLayer)
 		return false;
 
@@ -103,8 +104,8 @@ bool HeightfieldPipeline::buildOutput(
 		return false;
 	}
 
-	const height_t* heights = mergedLayer->getHeights();
-	uint32_t size = mergedLayer->getSize();
+	uint32_t size = compositor->getSize();
+	const height_t* heights = static_cast< const height_t* >(mergedLayer->getImage()->getData());
 
 	Writer(stream).write(
 		heights,

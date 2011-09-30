@@ -147,6 +147,10 @@ public:
 		return ms_pfA8;
 	}
 
+	static const PixelFormat& getR16() {
+		return ms_pfR16;
+	}
+
 	static const PixelFormat& getR5G5B5() {
 		return ms_pfR5G5B5;
 	}
@@ -224,6 +228,7 @@ private:
 	static const PixelFormat ms_pfP4;
 	static const PixelFormat ms_pfP8;
 	static const PixelFormat ms_pfA8;
+	static const PixelFormat ms_pfR16;
 	static const PixelFormat ms_pfR5G5B5;
 	static const PixelFormat ms_pfR5G6B5;
 	static const PixelFormat ms_pfR8G8B8;

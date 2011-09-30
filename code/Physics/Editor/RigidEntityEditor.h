@@ -25,13 +25,7 @@ public:
 
 	virtual void entitySelected(bool selected);
 
-	virtual void applyModifier(
-		const Matrix44& viewTransform,
-		const Vector4& screenDelta,
-		const Vector4& viewDelta,
-		const Vector4& worldDelta,
-		int mouseButton
-	);
+	virtual void applyModifier(const ApplyParams& params);
 
 	virtual bool handleCommand(const ui::Command& command);
 

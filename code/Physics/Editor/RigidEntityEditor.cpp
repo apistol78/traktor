@@ -38,22 +38,10 @@ void RigidEntityEditor::entitySelected(bool selected)
 		m_showHull = false;
 }
 
-void RigidEntityEditor::applyModifier(
-	const Matrix44& viewTransform,
-	const Vector4& screenDelta,
-	const Vector4& viewDelta,
-	const Vector4& worldDelta,
-	int mouseButton
-)
+void RigidEntityEditor::applyModifier(const ApplyParams& params)
 {
 	// Apply default modifier.
-	scene::DefaultEntityEditor::applyModifier(
-		viewTransform,
-		screenDelta,
-		viewDelta,
-		worldDelta,
-		mouseButton
-	);
+	scene::DefaultEntityEditor::applyModifier(params);
 
 	// Ensure body is enabled as it might have gone to sleep.
 	Ref< RigidEntity > rigidEntity = checked_type_cast< RigidEntity* >(getEntityAdapter()->getEntity());
