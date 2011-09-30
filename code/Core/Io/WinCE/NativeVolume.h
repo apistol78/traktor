@@ -36,6 +36,8 @@ public:
 	virtual bool exist(const Path& fileName);
 	
 	virtual bool remove(const Path& fileName);
+
+	virtual bool rename(const Path& fileName, const std::wstring& newName);
 	
 	virtual bool makeDirectory(const Path& directory);
 

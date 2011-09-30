@@ -1,4 +1,4 @@
-#if defined(_MSC_VER) || defined(__APPLE__)
+#if (defined(_MSC_VER) && !defined(WINCE)) || defined(__APPLE__)
 #	include <emmintrin.h>
 #endif
 #include "Core/Math/MathUtils.h"
