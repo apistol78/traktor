@@ -395,11 +395,8 @@ void PerspectiveRenderControl::eventButtonDown(ui::Event* event)
 			if ((event->getKeyState() & ui::KsShift) == 0)
 				m_context->selectAllEntities(false);
 
-			if (!entityAdapter->isSelected())
-			{
-				m_context->selectEntity(entityAdapter);
-				m_context->raiseSelect(this);
-			}
+			m_context->selectEntity(entityAdapter);
+			m_context->raiseSelect(this);
 		}
 
 		m_context->setPlaying(false);
