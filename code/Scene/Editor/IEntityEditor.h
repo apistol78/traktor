@@ -49,6 +49,17 @@ class T_DLLCLASS IEntityEditor : public Object
 	T_RTTI_CLASS;
 
 public:
+	struct ApplyParams
+	{
+		Matrix44 viewTransform;
+		Vector4 screenDelta;
+		Vector4 viewDelta;
+		Vector4 worldDelta;
+		Vector4 worldRayOrigin;
+		Vector4 worldRayDirection;
+		int mouseButton;
+	};
+
 	/*! \brief Is entity a group?
 	 *
 	 * \param entityAdapter Entity adapter.
@@ -93,19 +104,9 @@ public:
 
 	/*! \brief Apply modifier on entity.
 	 *
-	 * \param viewTransform User view transform.
-	 * \param screenDelta Delta in screen space.
-	 * \param viewDelta Delta in view space.
-	 * \param worldDelta Delta in world space.
-	 * \param mouseButton Pressed mouse button.
+	 * \param params User parameters.
 	 */
-	virtual void applyModifier(
-		const Matrix44& viewTransform,
-		const Vector4& screenDelta,
-		const Vector4& viewDelta,
-		const Vector4& worldDelta,
-		int mouseButton
-	) = 0;
+	virtual void applyModifier(const ApplyParams& params) = 0;
 
 	/*! \brief Begin modifier on entity.
 	 */

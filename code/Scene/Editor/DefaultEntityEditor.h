@@ -37,13 +37,7 @@ public:
 
 	virtual void beginModifier();
 
-	virtual void applyModifier(
-		const Matrix44& viewTransform,
-		const Vector4& screenDelta,
-		const Vector4& viewDelta,
-		const Vector4& worldDelta,
-		int mouseButton
-	);
+	virtual void applyModifier(const ApplyParams& params);
 
 	virtual void endModifier();
 

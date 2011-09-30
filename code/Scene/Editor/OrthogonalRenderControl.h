@@ -101,6 +101,8 @@ private:
 
 	Matrix44 getViewTransform() const;
 
+	void calculateRay(const ui::Point& position, Vector4& outWorldRayOrigin, Vector4& outWorldRayDirection) const;
+
 	Ref< EntityAdapter > pickEntity(const ui::Point& position) const;
 
 	void eventButtonDown(ui::Event* event);

@@ -329,7 +329,7 @@ void PerspectiveRenderControl::updateWorldRenderView()
 	m_worldRenderer->createRenderView(worldView, m_worldRenderView);
 }
 
-Ref< EntityAdapter > PerspectiveRenderControl::pickEntity(const ui::Point& position) const
+void PerspectiveRenderControl::calculateRay(const ui::Point& position, Vector4& outWorldRayOrigin, Vector4& outWorldRayDirection) const
 {
 	Frustum viewFrustum = m_worldRenderView.getViewFrustum();
 	ui::Rect innerRect = m_renderWidget->getInnerRect();
@@ -349,9 +349,14 @@ Ref< EntityAdapter > PerspectiveRenderControl::pickEntity(const ui::Point& posit
 
 	// Transform ray into world space.
 	Matrix44 viewInv = m_worldRenderView.getView().inverseOrtho();
-	Vector4 worldRayOrigin = viewInv.translation().xyz1();
-	Vector4 worldRayDirection = viewInv * viewRayDirection;
+	outWorldRayOrigin = viewInv.translation().xyz1();
+	outWorldRayDirection = viewInv * viewRayDirection;
+}
 
+Ref< EntityAdapter > PerspectiveRenderControl::pickEntity(const ui::Point& position) const
+{
+	Vector4 worldRayOrigin, worldRayDirection;
+	calculateRay(position, worldRayOrigin, worldRayDirection);
 	return m_context->queryRay(worldRayOrigin, worldRayDirection);
 }
 
@@ -390,8 +395,11 @@ void PerspectiveRenderControl::eventButtonDown(ui::Event* event)
 			if ((event->getKeyState() & ui::KsShift) == 0)
 				m_context->selectAllEntities(false);
 
-			m_context->selectEntity(entityAdapter);
-			m_context->raiseSelect(this);
+			if (!entityAdapter->isSelected())
+			{
+				m_context->selectEntity(entityAdapter);
+				m_context->raiseSelect(this);
+			}
 		}
 
 		m_context->setPlaying(false);
@@ -499,6 +507,13 @@ void PerspectiveRenderControl::eventMouseMove(ui::Event* event)
 		ui::Rect innerRect = m_renderWidget->getInnerRect();
 		Vector4 clipDelta = projectionInverse * (screenDelta * Vector4(-2.0f / innerRect.getWidth(), 2.0f / innerRect.getHeight(), 0.0f, 0.0f));
 
+		IEntityEditor::ApplyParams params;
+		params.viewTransform = view;
+		params.screenDelta = screenDelta;
+		params.mouseButton = mouseButton;
+
+		calculateRay(mousePosition, params.worldRayOrigin, params.worldRayDirection);
+
 		for (RefArray< EntityAdapter >::iterator i = m_modifyEntities.begin(); i != m_modifyEntities.end(); ++i)
 		{
 			Ref< IEntityEditor > entityEditor = (*i)->getEntityEditor();
@@ -506,17 +521,11 @@ void PerspectiveRenderControl::eventMouseMove(ui::Event* event)
 			{
 				// Transform screen delta into world delta at entity's position.
 				Vector4 viewPosition = view * (*i)->getTransform().translation().xyz1();
-				Vector4 viewDelta = clipDelta * viewPosition.z();
-				Vector4 worldDelta = viewInverse * viewDelta;
+				params.viewDelta = clipDelta * viewPosition.z();
+				params.worldDelta = viewInverse * params.viewDelta;
 
 				// Apply modifier through entity editor.
-				entityEditor->applyModifier(
-					view,
-					screenDelta,
-					viewDelta,
-					worldDelta,
-					mouseButton
-				);
+				entityEditor->applyModifier(params);
 			}
 		}
 	}

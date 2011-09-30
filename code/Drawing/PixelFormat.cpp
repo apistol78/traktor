@@ -935,16 +935,17 @@ bool PixelFormat::operator != (const PixelFormat& pf) const
 
 const PixelFormat PixelFormat::ms_pfP4(4, 0, 0, 0, 0, true, false);
 const PixelFormat PixelFormat::ms_pfP8(8, 0, 0, 0, 0, true, false);
-const PixelFormat PixelFormat::ms_pfA8(8, 0, 0, 0, 0xff, false, false);
-const PixelFormat PixelFormat::ms_pfR5G5B5(15, 0x7c00, 0x03e0, 0x001f, 0, false, false);
-const PixelFormat PixelFormat::ms_pfR5G6B5(16, 0xf800, 0x07e0, 0x001f, 0, false, false);
-const PixelFormat PixelFormat::ms_pfR8G8B8(24, 0xff0000, 0x00ff00, 0x0000ff, 0, false, false);
-const PixelFormat PixelFormat::ms_pfB8G8R8(24, 0x0000ff, 0x00ff00, 0xff0000, 0, false, false);
+const PixelFormat PixelFormat::ms_pfA8(8, 0x00, 0x00, 0x00, 0xff, false, false);
+const PixelFormat PixelFormat::ms_pfR16(16, 0xffff, 0x0000, 0x0000, 0x0000, false, false);
+const PixelFormat PixelFormat::ms_pfR5G5B5(15, 0x7c00, 0x03e0, 0x001f, 0x0000, false, false);
+const PixelFormat PixelFormat::ms_pfR5G6B5(16, 0xf800, 0x07e0, 0x001f, 0x0000, false, false);
+const PixelFormat PixelFormat::ms_pfR8G8B8(24, 0xff0000, 0x00ff00, 0x0000ff, 0x000000, false, false);
+const PixelFormat PixelFormat::ms_pfB8G8R8(24, 0x0000ff, 0x00ff00, 0xff0000, 0x000000, false, false);
 const PixelFormat PixelFormat::ms_pfA1R5G5B5(16, 0x7c00, 0x03e0, 0x001f, 0x8000, false, false);
-const PixelFormat PixelFormat::ms_pfX8R8G8B8(32, 0x00ff0000, 0x0000ff00, 0x000000ff, 0, false, false);
-const PixelFormat PixelFormat::ms_pfX8B8G8R8(32, 0x000000ff, 0x0000ff00, 0x00ff0000, 0, false, false);
-const PixelFormat PixelFormat::ms_pfR8G8B8X8(32, 0xff000000, 0x00ff0000, 0x0000ff00, 0, false, false);
-const PixelFormat PixelFormat::ms_pfB8G8R8X8(32, 0x0000ff00, 0x00ff0000, 0xff000000, 0, false, false);
+const PixelFormat PixelFormat::ms_pfX8R8G8B8(32, 0x00ff0000, 0x0000ff00, 0x000000ff, 0x00000000, false, false);
+const PixelFormat PixelFormat::ms_pfX8B8G8R8(32, 0x000000ff, 0x0000ff00, 0x00ff0000, 0x00000000, false, false);
+const PixelFormat PixelFormat::ms_pfR8G8B8X8(32, 0xff000000, 0x00ff0000, 0x0000ff00, 0x00000000, false, false);
+const PixelFormat PixelFormat::ms_pfB8G8R8X8(32, 0x0000ff00, 0x00ff0000, 0xff000000, 0x00000000, false, false);
 const PixelFormat PixelFormat::ms_pfA8R8G8B8(32, 0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000, false, false);
 const PixelFormat PixelFormat::ms_pfA8B8G8R8(32, 0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000, false, false);
 const PixelFormat PixelFormat::ms_pfR8G8B8A8(32, 0xff000000, 0x00ff0000, 0x0000ff00, 0x000000ff, false, false);

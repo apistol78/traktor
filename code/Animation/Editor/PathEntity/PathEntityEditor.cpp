@@ -37,13 +37,7 @@ void PathEntityEditor::entitySelected(bool selected)
 	}
 }
 
-void PathEntityEditor::applyModifier(
-	const Matrix44& viewTransform,
-	const Vector4& screenDelta,
-	const Vector4& viewDelta,
-	const Vector4& worldDelta,
-	int mouseButton
-)
+void PathEntityEditor::applyModifier(const ApplyParams& params)
 {
 	Ref< PathEntityData > entityData = checked_type_cast< PathEntityData* >(getEntityAdapter()->getEntityData());
 	Ref< PathEntity > entity = checked_type_cast< PathEntity* >(getEntityAdapter()->getEntity());
@@ -59,11 +53,11 @@ void PathEntityEditor::applyModifier(
 			Transform transform = frame->transform();
 			modifier->adjust(
 				getContext(),
-				viewTransform,
-				screenDelta,
-				viewDelta,
-				worldDelta,
-				mouseButton,
+				params.viewTransform,
+				params.screenDelta,
+				params.viewDelta,
+				params.worldDelta,
+				params.mouseButton,
 				transform
 			);
 			frame->position = transform.translation();

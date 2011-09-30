@@ -36,12 +36,20 @@ public:
 		Scalar& outDistance
 	) const;
 
+	virtual void beginModifier();
+
+	virtual void applyModifier(const ApplyParams& params);
+
+	virtual void endModifier();
+
 	virtual bool handleCommand(const ui::Command& command);
 
 	virtual void drawGuide(render::PrimitiveRenderer* primitiveRenderer) const;
 
 private:
 	mutable Vector4 m_lastQueryIntersection;
+	Vector4 m_strokeBegin;
+	Vector4 m_strokeEnd;
 	hf::HeightfieldCompositor* m_compositor;
 
 	TerrainEntityEditor(
@@ -50,7 +58,7 @@ private:
 		hf::HeightfieldCompositor* compositor
 	);
 
-	bool applyHeightfieldModifier(float scale);
+	bool applyHeightfieldModifier(float pressure);
 };
 
 	}

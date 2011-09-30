@@ -117,13 +117,7 @@ void DefaultEntityEditor::beginModifier()
 	m_modifyTransform = m_entityAdapter->getTransform();
 }
 
-void DefaultEntityEditor::applyModifier(
-	const Matrix44& viewTransform,
-	const Vector4& screenDelta,
-	const Vector4& viewDelta,
-	const Vector4& worldDelta,
-	int mouseButton
-)
+void DefaultEntityEditor::applyModifier(const ApplyParams& params)
 {
 	T_ASSERT (m_inModify);
 
@@ -138,11 +132,11 @@ void DefaultEntityEditor::applyModifier(
 	
 	modifier->adjust(
 		m_context,
-		viewTransform,
-		screenDelta,
-		viewDelta,
-		worldDelta,
-		mouseButton,
+		params.viewTransform,
+		params.screenDelta,
+		params.viewDelta,
+		params.worldDelta,
+		params.mouseButton,
 		transform
 	);
 

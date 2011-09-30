@@ -267,7 +267,7 @@ Matrix44 OrthogonalRenderControl::getViewTransform() const
 	return Matrix44::identity();
 }
 
-Ref< EntityAdapter > OrthogonalRenderControl::pickEntity(const ui::Point& position) const
+void OrthogonalRenderControl::calculateRay(const ui::Point& position, Vector4& outWorldRayOrigin, Vector4& outWorldRayDirection) const
 {
 	const float c_viewFarOffset = 1.0f;
 	const ui::Rect innerRect = m_renderWidget->getInnerRect();
@@ -283,9 +283,14 @@ Ref< EntityAdapter > OrthogonalRenderControl::pickEntity(const ui::Point& positi
 
 	Vector4 clipPosition(fx, fy, 0.0f, 1.0f);
 	Vector4 viewPosition = projectionInverse * clipPosition + Vector4(0.0f, 0.0f, -(m_viewFarZ - c_viewFarOffset));
-	Vector4 worldRayOrigin = viewInverse * viewPosition;
-	Vector4 worldRayDirection = viewInverse.axisZ();
+	outWorldRayOrigin = viewInverse * viewPosition;
+	outWorldRayDirection = viewInverse.axisZ();
+}
 
+Ref< EntityAdapter > OrthogonalRenderControl::pickEntity(const ui::Point& position) const
+{
+	Vector4 worldRayOrigin, worldRayDirection;
+	calculateRay(position, worldRayOrigin, worldRayDirection);
 	return m_context->queryRay(worldRayOrigin, worldRayDirection);
 }
 
@@ -426,23 +431,24 @@ void OrthogonalRenderControl::eventMouseMove(ui::Event* event)
 		ui::Rect innerRect = m_renderWidget->getInnerRect();
 		Vector4 clipDelta = projectionInverse * (screenDelta * Vector4(-2.0f / innerRect.getWidth(), 2.0f / innerRect.getHeight(), 0.0f, 0.0f));
 
+		IEntityEditor::ApplyParams params;
+		params.viewTransform = view;
+		params.screenDelta = screenDelta;
+		params.mouseButton = mouseButton;
+
+		calculateRay(mousePosition, params.worldRayOrigin, params.worldRayDirection);
+
 		for (RefArray< EntityAdapter >::iterator i = m_modifyEntities.begin(); i != m_modifyEntities.end(); ++i)
 		{
 			Ref< IEntityEditor > entityEditor = (*i)->getEntityEditor();
 			if (entityEditor)
 			{
 				// Transform screen delta into world delta at entity's position.
-				Vector4 viewDelta = clipDelta;
-				Vector4 worldDelta = viewInverse * viewDelta;
+				params.viewDelta = clipDelta;
+				params.worldDelta = viewInverse * params.viewDelta;
 
 				// Apply modifier through entity editor.
-				entityEditor->applyModifier(
-					view,
-					screenDelta,
-					viewDelta,
-					worldDelta,
-					mouseButton
-				);
+				entityEditor->applyModifier(params);
 			}
 		}
 	}
