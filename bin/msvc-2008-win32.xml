@@ -90,10 +90,6 @@
                   <second>0</second>
                 </item>
                 <item>
-                  <first>MinimalRebuild</first>
-                  <second>true</second>
-                </item>
-                <item>
                   <first>BasicRuntimeChecks</first>
                   <second>0</second>
                 </item>
@@ -283,10 +279,6 @@
                 <item>
                   <first>Optimization</first>
                   <second>0</second>
-                </item>
-                <item>
-                  <first>MinimalRebuild</first>
-                  <second>true</second>
                 </item>
                 <item>
                   <first>BasicRuntimeChecks</first>
@@ -562,10 +554,6 @@
                   <second>0</second>
                 </item>
                 <item>
-                  <first>MinimalRebuild</first>
-                  <second>true</second>
-                </item>
-                <item>
                   <first>BasicRuntimeChecks</first>
                   <second>0</second>
                 </item>
@@ -829,10 +817,6 @@
                 <item>
                   <first>Optimization</first>
                   <second>0</second>
-                </item>
-                <item>
-                  <first>MinimalRebuild</first>
-                  <second>true</second>
                 </item>
                 <item>
                   <first>BasicRuntimeChecks</first>
