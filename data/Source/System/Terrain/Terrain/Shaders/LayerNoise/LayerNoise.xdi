@@ -25,7 +25,7 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.PixelOutput" version="2">
+		<item type="traktor.render.PixelOutput" version="3">
 			<comment/>
 			<position>
 				<first>577</first>
@@ -57,6 +57,7 @@
 			<stencilFunction>CfAlways</stencilFunction>
 			<stencilReference>0</stencilReference>
 			<stencilMask>4294967295</stencilMask>
+			<registerCount>0</registerCount>
 		</item>
 		<item type="traktor.render.Sampler">
 			<comment/>
@@ -159,6 +160,14 @@ Persistence
 				<second>-61</second>
 			</position>
 			<value>0.4</value>
+		</item>
+		<item type="traktor.render.Texture">
+			<comment/>
+			<position>
+				<first>86</first>
+				<second>350</second>
+			</position>
+			<external>{77BCAD81-66F8-A441-89DD-A789E264416C}</external>
 		</item>
 	</nodes>
 	<edges>
@@ -300,6 +309,16 @@ Persistence
 			<destination>
 				<node ref="/object/nodes/item[11]"/>
 				<name>Input3</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[13]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Texture</name>
 			</destination>
 		</item>
 	</edges>
