@@ -104,8 +104,6 @@ Ref< render::ISimpleTexture > createHeightTexture(render::IRenderSystem* renderS
 	dim /= c_skipHeightTexture;
 	T_ASSERT (dim > 0);
 
-	log::info << L"Terrain height texture " << dim << L"*" << dim << Endl;
-
 	AutoArrayPtr< half_t > data(new half_t [dim * dim]);
 	T_ASSERT (data.ptr());
 
@@ -176,8 +174,6 @@ Ref< render::ISimpleTexture > createNormalTexture(render::IRenderSystem* renderS
 	uint32_t dim = nearestLog2(size);
 	dim /= c_skipNormalTexture;
 	T_ASSERT (dim > 0);
-
-	log::info << L"Terrain normal texture " << dim << L"*" << dim << Endl;
 
 	AutoArrayPtr< uint8_t > data(new uint8_t [dim * dim * 4]);
 	T_ASSERT (data.ptr());
@@ -366,7 +362,6 @@ void TerrainEntity::render(
 		if (updateCache)
 		{
 			m_surfaceCache->get(
-				worldRenderPass,
 				renderContext,
 				m_surface,
 				m_heightTexture,
@@ -640,12 +635,20 @@ bool TerrainEntity::createRenderPatches()
 			}
 		}
 
+		uint32_t indexEndOffset = uint32_t(indices.size());
+
+		uint32_t minIndex = *std::min_element(indices.begin() + indexOffset, indices.begin() + indexEndOffset);
+		uint32_t maxIndex = *std::max_element(indices.begin() + indexOffset, indices.begin() + indexEndOffset);
+
+		T_ASSERT (minIndex < patchVertexCount * patchCount * patchCount);
+		T_ASSERT (maxIndex < patchVertexCount * patchCount * patchCount);
+
 		m_primitives[lod].setIndexed(
 			render::PtTriangles,
 			indexOffset,
-			uint32_t(indices.size() - indexOffset) / 3,
-			0,
-			patchVertexCount - 1
+			(indexEndOffset - indexOffset) / 3,
+			minIndex,
+			maxIndex
 		);
 	}
 

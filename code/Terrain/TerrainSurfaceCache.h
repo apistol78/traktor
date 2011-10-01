@@ -16,13 +16,6 @@
 
 namespace traktor
 {
-	namespace world
-	{
-
-class IWorldRenderPass;
-
-	}
-
 	namespace resource
 	{
 
@@ -65,7 +58,6 @@ public:
 	void flush();
 
 	void get(
-		world::IWorldRenderPass& worldRenderPass,
 		render::RenderContext* renderContext,
 		TerrainSurface* surface,
 		render::ISimpleTexture* heightfieldTexture,

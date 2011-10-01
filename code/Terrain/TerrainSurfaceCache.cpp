@@ -140,7 +140,6 @@ void TerrainSurfaceCache::flush()
 }
 
 void TerrainSurfaceCache::get(
-	world::IWorldRenderPass& worldRenderPass,
 	render::RenderContext* renderContext,
 	TerrainSurface* surface,
 	render::ISimpleTexture* heightfieldTexture,
@@ -199,12 +198,6 @@ void TerrainSurfaceCache::get(
 	if (!shader.validate())
 		return;
 
-	worldRenderPass.setShaderTechnique(shader);
-	worldRenderPass.setShaderCombination(shader);
-
-	if (!shader->getCurrentProgram())
-		return;
-
 	// Create render block.
 	TerrainSurfaceRenderBlock* renderBlock = renderContext->alloc< TerrainSurfaceRenderBlock >();
 
@@ -216,7 +209,6 @@ void TerrainSurfaceCache::get(
 	renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 
 	renderBlock->programParams->beginParameters(renderContext);
-	worldRenderPass.setProgramParameters(renderBlock->programParams);
 	renderBlock->programParams->setTextureParameter(m_handleHeightfield, heightfieldTexture);
 	renderBlock->programParams->setFloatParameter(m_handleHeightfieldSize, float(heightfieldTexture->getWidth()));
 	renderBlock->programParams->setVectorParameter(m_handleWorldOrigin, worldOrigin);
@@ -247,8 +239,6 @@ Ref< render::RenderTargetSet > TerrainSurfaceCache::allocateTarget(uint32_t lod)
 	desc.createDepthStencil = false;
 	desc.usingPrimaryDepthStencil = false;
 	desc.targets[0].format = render::TfR8G8B8A8;
-
-	log::info << L"Creating terrain surface cache target " << desc.width << L"*" << desc.height << L"..." << Endl;
 
 	return m_renderSystem->createRenderTargetSet(desc);
 }
