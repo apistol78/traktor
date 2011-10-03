@@ -390,6 +390,15 @@ bool cglwUpdateWindow(void* windowHandle)
 				else
 					cglwSetFullscreen(windowHandle, true);
 			}
+			
+			// Close application with Cmd+Q combination.
+			if (
+				(modifierFlags & kCGEventFlagMaskCommand) != 0 &&
+				(keyCode == 0x0c)
+			)
+			{
+				[windowData->window close];
+			}
 		}
 		else if (eventType != NSKeyUp)
 		{
