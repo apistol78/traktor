@@ -191,7 +191,7 @@ void TerrainEntityEditor::updateHeightfield(bool patches, bool normals, bool hei
 	m_compositor->copyHeights(resourceHeights);
 
 	if (patches)
-		terrainEntity->updatePatches();
+		terrainEntity->updatePatches(dirtyRegion.minX, dirtyRegion.minZ, dirtyRegion.maxX, dirtyRegion.maxZ);
 
 	if (normals || heights)
 		terrainEntity->updateTextures(normals, heights);

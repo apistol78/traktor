@@ -286,7 +286,7 @@ void TerrainEntity::update(const world::EntityUpdate* update)
 {
 }
 
-bool TerrainEntity::updatePatches()
+bool TerrainEntity::updatePatches(int32_t minX, int32_t minZ, int32_t maxX, int32_t maxZ)
 {
 	const Vector4& worldExtent = m_heightfield->getResource().getWorldExtent();
 
@@ -304,6 +304,14 @@ bool TerrainEntity::updatePatches()
 	{
 		for (uint32_t px = 0; px < m_patchCount; ++px)
 		{
+			int32_t pminX = px * patchDim * detailSkip;
+			int32_t pminZ = pz * patchDim * detailSkip;
+			int32_t pmaxX = (px + 1) * patchDim * detailSkip;
+			int32_t pmaxZ = (pz + 1) * patchDim * detailSkip;
+
+			if (pmaxX < minX || pmaxZ < minZ || pminX > maxX || pminZ > maxZ)
+				continue;
+
 			Patch& patch = m_patches[px + pz * m_patchCount];
 
 #if !defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
@@ -321,8 +329,8 @@ bool TerrainEntity::updatePatches()
 					float fx = float(x) / (patchDim - 1);
 					float fz = float(z) / (patchDim - 1);
 
-					uint32_t ix = uint32_t(fx * patchDim * detailSkip) + px * patchDim * detailSkip;
-					uint32_t iz = uint32_t(fz * patchDim * detailSkip) + pz * patchDim * detailSkip;
+					uint32_t ix = uint32_t(fx * patchDim * detailSkip) + pminX;
+					uint32_t iz = uint32_t(fz * patchDim * detailSkip) + pminZ;
 
 					ix = std::min(ix, heightfieldSize - 1);
 					iz = std::min(iz, heightfieldSize - 1);
@@ -432,7 +440,7 @@ bool TerrainEntity::createPatches()
 		}
 	}
 
-	updatePatches();
+	updatePatches(0, 0, heightfieldSize, heightfieldSize);
 
 	std::vector< uint16_t > indices;
 	for (uint32_t lod = 0; lod < 4; ++lod)
