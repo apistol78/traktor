@@ -2,6 +2,7 @@
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Terrain/EntityFactory.h"
 #include "Terrain/EntityRenderer.h"
+#include "Terrain/Editor/TerrainEditorPlugin.h"
 #include "Terrain/Editor/TerrainEditorProfile.h"
 #include "Terrain/Editor/TerrainEntityEditorFactory.h"
 #include "Ui/Command.h"
@@ -18,6 +19,8 @@ void TerrainEditorProfile::getCommands(
 ) const
 {
 	outCommands.push_back(ui::Command(L"Ocean.RandomizeWaves"));
+	outCommands.push_back(ui::Command(L"Terrain.RaiseLowerTool"));
+	outCommands.push_back(ui::Command(L"Terrain.FlattenTool"));
 }
 
 void TerrainEditorProfile::createEditorPlugins(
@@ -25,6 +28,7 @@ void TerrainEditorProfile::createEditorPlugins(
 	RefArray< scene::ISceneEditorPlugin >& outEditorPlugins
 ) const
 {
+	outEditorPlugins.push_back(new TerrainEditorPlugin());
 }
 
 void TerrainEditorProfile::createResourceFactories(

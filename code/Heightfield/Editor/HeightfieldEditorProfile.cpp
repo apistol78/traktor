@@ -17,8 +17,6 @@ void HeightfieldEditorProfile::getCommands(
 	std::list< ui::Command >& outCommands
 ) const
 {
-	outCommands.push_back(ui::Command(L"Heightfield.Raise"));
-	outCommands.push_back(ui::Command(L"Heightfield.Lower"));
 	outCommands.push_back(ui::Command(L"Heightfield.Save"));
 }
 

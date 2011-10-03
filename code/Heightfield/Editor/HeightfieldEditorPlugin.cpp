@@ -30,9 +30,7 @@ bool HeightfieldEditorPlugin::create(ui::Widget* parent, ui::custom::ToolBar* to
 {
 	uint32_t base = toolBar->addImage(ui::Bitmap::load(c_ResourceHeightfield, sizeof(c_ResourceHeightfield), L"png"), 6);
 	toolBar->addItem(new ui::custom::ToolBarSeparator());
-	toolBar->addItem(new ui::custom::ToolBarButton(L"Heightfield raise", ui::Command(L"Heightfield.Raise"), base));
-	toolBar->addItem(new ui::custom::ToolBarButton(L"Heightfield lower", ui::Command(L"Heightfield.Lower"), base + 1));
-	toolBar->addItem(new ui::custom::ToolBarButton(L"Heightfield save", ui::Command(L"Heightfield.Save"), base + 2));
+	toolBar->addItem(new ui::custom::ToolBarButton(L"Heightfield save", ui::Command(L"Heightfield.Save"), base));
 	return true;
 }
 
