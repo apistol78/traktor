@@ -110,7 +110,11 @@ void DefaultEntityEditor::entitySelected(bool selected)
 {
 }
 
-void DefaultEntityEditor::beginModifier()
+void DefaultEntityEditor::cursorMoved(const ApplyParams& params)
+{
+}
+
+void DefaultEntityEditor::beginModifier(const ApplyParams& params)
 {
 	T_ASSERT (!m_inModify);
 	m_inModify = true;
@@ -219,7 +223,7 @@ void DefaultEntityEditor::applyModifier(const ApplyParams& params)
 	m_entityAdapter->setTransform(transform);
 }
 
-void DefaultEntityEditor::endModifier()
+void DefaultEntityEditor::endModifier(const ApplyParams& params)
 {
 	T_ASSERT (m_inModify);
 	m_inModify = false;

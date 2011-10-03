@@ -11,6 +11,7 @@
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
 #include "Drawing/Filters/ScaleFilter.h"
+#include "Heightfield/Editor/Convert.h"
 #include "Heightfield/Editor/HeightfieldAsset.h"
 #include "Heightfield/Editor/HeightfieldCompositor.h"
 #include "Heightfield/Editor/HeightfieldLayer.h"
@@ -116,15 +117,15 @@ Ref< HeightfieldCompositor > HeightfieldCompositor::createFromInstance(const db:
 	if (!offsetImage)
 	{
 		offsetImage = new drawing::Image(drawing::PixelFormat::getR16(), size, size);
-		for (uint32_t y = 0; y < size; ++y)
-		{
-			const Color4f c_halfGray(0.5f, 0.5f, 0.5f, 0.5f);
-			for (uint32_t x = 0; x < size; ++x)
-				offsetImage->setPixel(x, y, c_halfGray);
-		}
+		offsetImage->clear(Color4f(0.5f, 0.5f, 0.5f, 0.5f));
 	}
 
 	compositor->m_offsetLayer = new HeightfieldLayer(offsetImage);
+
+	// Create empty accumulation layer.
+	Ref< drawing::Image > accumImage = new drawing::Image(drawing::PixelFormat::getR16(), size, size);
+	accumImage->clear(Color4f(0.5f, 0.5f, 0.5f, 0.5f));
+	compositor->m_accumLayer = new HeightfieldLayer(accumImage);
 
 	// Create merged layer.
 	Ref< drawing::Image > mergedImage = new drawing::Image(drawing::PixelFormat::getR16(), size, size);
@@ -226,7 +227,7 @@ float HeightfieldCompositor::getBilinearHeight(float x, float z) const
 bool HeightfieldCompositor::queryRay(const Vector4& localRayOrigin, const Vector4& localRayDirection, Scalar& outDistance, Vector4* outPosition) const
 {
 	const uint32_t c_cellSize = 64;
-	const uint32_t c_skip = 2;
+	const uint32_t c_skip = 4;
 
 	Scalar k;
 	Scalar kIn, kOut;
@@ -335,21 +336,118 @@ bool HeightfieldCompositor::queryRay(const Vector4& localRayOrigin, const Vector
 	return foundIntersection;
 }
 
-void HeightfieldCompositor::strokeBrush(const Vector4& fromPosition, const Vector4& toPosition, const IBrush* brush)
+void HeightfieldCompositor::begin()
+{
+	m_dirtyDraw = Region();
+}
+
+void HeightfieldCompositor::strokeBrush(const Vector4& fromPosition, const Vector4& toPosition, const IBrush* brush, Region* outDirtyRegion)
 {
 	T_ASSERT (brush);
 
-	float dx = worldToGridX(toPosition.x()) - worldToGridX(fromPosition.x());
-	float dz = worldToGridZ(toPosition.z()) - worldToGridX(fromPosition.z());
+	int32_t x0 = worldToGridX(fromPosition.x());
+	int32_t z0 = worldToGridZ(fromPosition.z());
 
-	int32_t s = int32_t(std::ceil(std::sqrt(dx * dx + dz * dz)));
-	float is = 1.0f / s;
+	int32_t x1 = worldToGridX(toPosition.x());
+	int32_t z1 = worldToGridZ(toPosition.z());
 
-	for (int32_t i = 0; i < s; ++i)
+	float dx = x1 - x1;
+	float dz = z1 - z1;
+
+	Region dirtyStroke;
+
+	float wx0 = gridToWorldX(x0);
+	float wz0 = gridToWorldZ(z0);
+
+	brush->apply(this, Vector4(wx0, 0.0f, wz0, 0.0f), dirtyStroke);
+
+	if (std::abs(dx) > std::abs(dz) && dx != 0)
 	{
-		Vector4 position = lerp(fromPosition, toPosition, Scalar(i * is));
-		brush->apply(this, position, is);
+		if (dx < 0.0f)
+		{
+			std::swap(x0, x1);
+			std::swap(z0, z1);
+		}
+
+		float k = dz / dx;
+		float z = z0 + k;
+
+		for (int32_t x = x0 + 1; x < x1; ++x)
+		{
+			float wx = gridToWorldX(x);
+			float wz = gridToWorldZ(z);
+
+			Region dirtyBrush;
+			brush->apply(this, Vector4(wx, 0.0f, wz, 0.0f), dirtyBrush);
+			dirtyStroke.contain(dirtyBrush);
+
+			z += k;
+		}
 	}
+	else if (dz != 0.0f)
+	{
+		if (dz < 0.0f)
+		{
+			std::swap(x0, x1);
+			std::swap(z0, z1);
+		}
+
+		float k = dx / dz;
+		float x = x0 + k;
+
+		for (int32_t z = z0 + 1; z < z1; ++z)
+		{
+			float wx = gridToWorldX(x);
+			float wz = gridToWorldZ(z);
+
+			Region dirtyBrush;
+			brush->apply(this, Vector4(wx, 0.0f, wz, 0.0f), dirtyBrush);
+			dirtyStroke.contain(dirtyBrush);
+
+			x += k;
+		}
+	}
+
+	if (!dirtyStroke.empty())
+	{
+		updateMergedLayer(dirtyStroke);
+		m_dirtyDraw.contain(dirtyStroke);
+	}
+
+	if (outDirtyRegion)
+		*outDirtyRegion = dirtyStroke;
+}
+
+void HeightfieldCompositor::end(Region* outDirtyRegion)
+{
+	if (!m_dirtyDraw.empty())
+	{
+		drawing::Image* offsetImage = m_offsetLayer->getImage();
+		drawing::Image* accumImage = m_accumLayer->getImage();
+
+		height_t* offsetHeights = static_cast< height_t* >(offsetImage->getData());
+		height_t* accumHeights = static_cast< height_t* >(accumImage->getData());
+
+		for (int32_t iz = m_dirtyDraw.minZ; iz < m_dirtyDraw.maxZ; ++iz)
+		{
+			for (int32_t ix = m_dirtyDraw.minX; ix < m_dirtyDraw.maxX; ++ix)
+			{
+				uint32_t o = ix + iz * m_size;
+
+				height_t& offset = offsetHeights[o];
+				height_t accum = accumHeights[o];
+
+				offset += unpackSignedHeight(accum);
+			}
+		}
+
+		accumImage->clear(Color4f(0.5f, 0.5f, 0.5f, 0.5f));
+
+		updateMergedLayer(m_dirtyDraw);
+	}
+
+	if (outDirtyRegion)
+		*outDirtyRegion = m_dirtyDraw;
 }
 
 void HeightfieldCompositor::copyHeights(height_t* h) const
@@ -368,22 +466,49 @@ float HeightfieldCompositor::worldToGridZ(float z) const
 	return m_size * (z + m_worldExtent.z() * 0.5f) / m_worldExtent.z() - 0.5f;
 }
 
-void HeightfieldCompositor::updateMergedLayer(int32_t iminX, int32_t imaxX, int32_t iminZ, int32_t imaxZ)
+float HeightfieldCompositor::gridToWorldX(float x) const
 {
-	drawing::Image* baseImage = m_baseLayer->getImage();
-	drawing::Image* offsetImage = m_offsetLayer->getImage();
+	return (x + 0.5f) * m_worldExtent.x() / m_size - m_worldExtent.x() * 0.5f;
+}
+
+float HeightfieldCompositor::gridToWorldZ(float z) const
+{
+	return (z + 0.5f) * m_worldExtent.z() / m_size - m_worldExtent.z() * 0.5f;
+}
+
+void HeightfieldCompositor::updateMergedLayer(const Region& r)
+{
+	const drawing::Image* baseImage = m_baseLayer->getImage();
+	const drawing::Image* offsetImage = m_offsetLayer->getImage();
+	const drawing::Image* accumImage = m_accumLayer->getImage();
 	drawing::Image* mergedImage = m_mergedLayer->getImage();
 
-	Color4f offset, merged;
+	Region cr = r;
+	
+	cr.intersect(Region(0, 0, m_size, m_size));
+	if (cr.empty())
+		return;
 
-	for (int32_t iz = iminZ; iz <= imaxZ; ++iz)
+	const height_t* baseHeights = static_cast< const height_t* >(baseImage->getData());
+	const height_t* offsetHeights = static_cast< const height_t* >(offsetImage->getData());
+	const height_t* accumHeights = static_cast< const height_t* >(accumImage->getData());
+	height_t* mergedHeights = static_cast< height_t* >(mergedImage->getData());
+
+	for (int32_t iz = cr.minZ; iz < cr.maxZ; ++iz)
 	{
-		for (int32_t ix = iminX; ix <= imaxX; ++ix)
+		for (int32_t ix = cr.minX; ix <= cr.maxX; ++ix)
 		{
-			offsetImage->getPixel(ix, iz, offset);
-			baseImage->getPixel(ix, iz, merged);
-			merged += offset * Color4f(2.0f, 2.0f, 2.0f, 2.0f) - Color4f(1.0f, 1.0f, 1.0f, 1.0f);
-			mergedImage->setPixel(ix, iz, merged);
+			uint32_t o = ix + iz * m_size;
+
+			height_t offset = offsetHeights[o];
+			height_t accum = accumHeights[o];
+
+			offset += unpackSignedHeight(accum);
+
+			height_t merged = baseHeights[o];
+			merged += unpackSignedHeight(offset);
+
+			mergedHeights[o] = merged;
 		}
 	}
 }

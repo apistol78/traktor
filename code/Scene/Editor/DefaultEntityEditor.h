@@ -35,11 +35,13 @@ public:
 
 	virtual void entitySelected(bool selected);
 
-	virtual void beginModifier();
+	virtual void cursorMoved(const ApplyParams& params);
+
+	virtual void beginModifier(const ApplyParams& params);
 
 	virtual void applyModifier(const ApplyParams& params);
 
-	virtual void endModifier();
+	virtual void endModifier(const ApplyParams& params);
 
 	virtual bool handleCommand(const ui::Command& command);
 
@@ -55,6 +57,8 @@ protected:
 	const SceneEditorContext* getContext() const { return m_context; }
 
 	const EntityAdapter* getEntityAdapter() const { return m_entityAdapter; }
+
+	bool inModify() const { return m_inModify; }
 
 private:
 	SceneEditorContext* m_context;

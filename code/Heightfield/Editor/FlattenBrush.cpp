@@ -6,22 +6,23 @@
 #include "Heightfield/Editor/Convert.h"
 #include "Heightfield/Editor/HeightfieldCompositor.h"
 #include "Heightfield/Editor/HeightfieldLayer.h"
-#include "Heightfield/Editor/RoundBrush.h"
+#include "Heightfield/Editor/FlattenBrush.h"
 
 namespace traktor
 {
 	namespace hf
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.hf.RoundBrush", RoundBrush, IBrush)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.hf.FlattenBrush", FlattenBrush, IBrush)
 
-RoundBrush::RoundBrush(float radius, float height)
+FlattenBrush::FlattenBrush(float radius)
 :	m_radius(radius)
-,	m_height(height)
+,	m_height(0)
+,	m_first(true)
 {
 }
 
-void RoundBrush::apply(HeightfieldCompositor* compositor, const Vector4& at, Region& outDirty) const
+void FlattenBrush::apply(HeightfieldCompositor* compositor, const Vector4& at, Region& outDirty) const
 {
 	const Vector4& worldExtent = compositor->getWorldExtent();
 
@@ -46,13 +47,23 @@ void RoundBrush::apply(HeightfieldCompositor* compositor, const Vector4& at, Reg
 	if (r.empty())
 		return;
 
-	float y = m_height / worldExtent.y();
-
 	float cX = (maxX + minX) / 2.0f;
 	float cZ = (maxZ + minZ) / 2.0f;
 
+	const drawing::Image* baseImage = compositor->getBaseLayer()->getImage();
+	const drawing::Image* offsetImage = compositor->getOffsetLayer()->getImage();
 	drawing::Image* accumImage = compositor->getAccumLayer()->getImage();
+
+	const height_t* baseHeights = static_cast< const height_t* >(baseImage->getData());
+	const height_t* offsetHeights = static_cast< const height_t* >(offsetImage->getData());
 	height_t* accumHeights = static_cast< height_t* >(accumImage->getData());
+
+	if (m_first)
+	{
+		int32_t o = int32_t(cX) + int32_t(cZ) * size;
+		m_height = baseHeights[o] + unpackSignedHeight(offsetHeights[o]);
+		m_first = false;
+	}
 
 	for (int32_t iz = r.minZ; iz < r.maxZ; ++iz)
 	{
@@ -61,16 +72,18 @@ void RoundBrush::apply(HeightfieldCompositor* compositor, const Vector4& at, Reg
 			float rx = (ix - cX) * 2.0f / (maxX - minX);
 			float rz = (iz - cZ) * 2.0f / (maxZ - minZ);
 
-			float r = 1.0f - clamp(sqrt(rx * rx + rz * rz), 0.0f, 1.0f);
-			float c = sin(r * HALF_PI);
+			float d = clamp(1.0f - std::sqrt(rx * rx + rz * rz), 0.0f, 1.0f);
+			if (d < FUZZY_EPSILON)
+				continue;
 
-			height_t v = packSignedHeight(int32_t(y * c * 65535));
-			height_t& accum = accumHeights[ix + iz * size];
-			if (
-				(y > 0.0f && accum < v) ||
-				(y < 0.0f && accum > v)
-			)
-				accum = v;
+			uint32_t o = ix + iz * size;
+
+			int32_t ch = baseHeights[o] + unpackSignedHeight(offsetHeights[o]);
+			int32_t th = m_height;
+			int32_t dh = (th - ch) / 2;
+			int32_t ah = unpackSignedHeight(accumHeights[o]);
+
+			accumHeights[o] = packSignedHeight(int32_t(ah * (1.0f - d) + dh * d));
 		}
 	}
 

@@ -44,6 +44,20 @@ const int32_t c_defaultMultiSample = 4;
 const float c_cameraTranslateDeltaScale = 0.025f;
 const float c_minMagnification = 0.01f;
 
+int32_t translateMouseButton(int32_t uimb)
+{
+	if (uimb == ui::MouseEvent::BtLeft)
+		return 0;
+	else if (uimb == ui::MouseEvent::BtRight)
+		return 1;
+	else if (uimb == ui::MouseEvent::BtMiddle)
+		return 2;
+	else if (uimb == (ui::MouseEvent::BtLeft | ui::MouseEvent::BtRight))
+		return 2;
+	else
+		return 0;
+}
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.OrthogonalRenderControl", OrthogonalRenderControl, ISceneRenderControl)
@@ -335,6 +349,10 @@ void OrthogonalRenderControl::eventButtonDown(ui::Event* event)
 
 void OrthogonalRenderControl::eventButtonUp(ui::Event* event)
 {
+	int32_t mouseButton = translateMouseButton(static_cast< ui::MouseEvent* >(event)->getButton());
+	ui::Point mousePosition = checked_type_cast< ui::MouseEvent* >(event)->getPosition();
+	Matrix44 view = getViewTransform();
+
 	// Issue finished modification event.
 	if (!m_modifyCamera)
 	{
@@ -343,10 +361,15 @@ void OrthogonalRenderControl::eventButtonUp(ui::Event* event)
 			m_context->raisePostModify();
 
 			// Leave modify mode in entity editors.
+			IEntityEditor::ApplyParams params;
+			params.viewTransform = view;
+			calculateRay(mousePosition, params.worldRayOrigin, params.worldRayDirection);
+			params.mouseButton = mouseButton;
+
 			for (RefArray< EntityAdapter >::iterator i = m_modifyEntities.begin(); i != m_modifyEntities.end(); ++i)
 			{
 				if ((*i)->getEntityEditor())
-					(*i)->getEntityEditor()->endModifier();
+					(*i)->getEntityEditor()->endModifier(params);
 			}
 		}
 	}
@@ -381,7 +404,7 @@ void OrthogonalRenderControl::eventMouseMove(ui::Event* event)
 	if (!m_renderWidget->hasCapture())
 		return;
 
-	int mouseButton = (static_cast< ui::MouseEvent* >(event)->getButton() == ui::MouseEvent::BtLeft) ? 0 : 1;
+	int mouseButton = translateMouseButton(static_cast< ui::MouseEvent* >(event)->getButton());
 	ui::Point mousePosition = checked_type_cast< ui::MouseEvent* >(event)->getPosition();
 
 	Vector4 screenDelta(
@@ -406,10 +429,18 @@ void OrthogonalRenderControl::eventMouseMove(ui::Event* event)
 			);
 
 			// Enter modify mode in entity editors.
+			IEntityEditor::ApplyParams params;
+			params.viewTransform = getViewTransform();
+			params.screenDelta = Vector4(0.0f, 0.0f, 0.0f, 0.0f);
+			params.viewDelta = Vector4(0.0f, 0.0f, 0.0f, 0.0f);
+			params.worldDelta = Vector4(0.0f, 0.0f, 0.0f, 0.0f);
+			calculateRay(m_mousePosition, params.worldRayOrigin, params.worldRayDirection);
+			params.mouseButton = mouseButton;
+
 			for (RefArray< EntityAdapter >::iterator i = m_modifyEntities.begin(); i != m_modifyEntities.end(); ++i)
 			{
 				if ((*i)->getEntityEditor())
-					(*i)->getEntityEditor()->beginModifier();
+					(*i)->getEntityEditor()->beginModifier(params);
 			}
 
 			// Issue begin modification event.

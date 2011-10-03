@@ -41,7 +41,8 @@ void TerrainEditorProfile::createEntityFactories(
 {
 	outEntityFactories.push_back(new EntityFactory(
 		context->getResourceManager(),
-		context->getRenderSystem()
+		context->getRenderSystem(),
+		true
 	));
 }
 

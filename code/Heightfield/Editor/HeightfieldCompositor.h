@@ -4,6 +4,7 @@
 #include "Core/Object.h"
 #include "Core/Math/Vector4.h"
 #include "Heightfield/HeightfieldTypes.h"
+#include "Heightfield/Editor/Region.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -27,6 +28,7 @@ class Instance;
 
 class HeightfieldLayer;
 class IBrush;
+class Region;
 
 class T_DLLCLASS HeightfieldCompositor : public Object
 {
@@ -43,7 +45,11 @@ public:
 
 	bool queryRay(const Vector4& localRayOrigin, const Vector4& localRayDirection, Scalar& outDistance, Vector4* outPosition = 0) const;
 
-	void strokeBrush(const Vector4& fromPosition, const Vector4& toPosition, const IBrush* brush);
+	void begin();
+
+	void strokeBrush(const Vector4& fromPosition, const Vector4& toPosition, const IBrush* brush, Region* outDirtyRegion = 0);
+
+	void end(Region* outDirtyRegion = 0);
 
 	void copyHeights(height_t* h) const;
 
@@ -51,7 +57,9 @@ public:
 
 	float worldToGridZ(float z) const;
 
-	void updateMergedLayer(int32_t iminX, int32_t imaxX, int32_t iminZ, int32_t imaxZ);
+	float gridToWorldX(float x) const;
+
+	float gridToWorldZ(float z) const;
 
 	uint32_t getSize() const { return m_size; }
 
@@ -63,6 +71,8 @@ public:
 
 	HeightfieldLayer* getOffsetLayer() { return m_offsetLayer; }
 
+	HeightfieldLayer* getAccumLayer() { return m_accumLayer; }
+
 	const HeightfieldLayer* getMergedLayer() const { return m_mergedLayer; }
 
 private:
@@ -70,7 +80,11 @@ private:
 	Vector4 m_worldExtent;
 	Ref< HeightfieldLayer > m_baseLayer;
 	Ref< HeightfieldLayer > m_offsetLayer;
+	Ref< HeightfieldLayer > m_accumLayer;
 	Ref< HeightfieldLayer > m_mergedLayer;
+	Region m_dirtyDraw;
+
+	void updateMergedLayer(const Region& r);
 };
 
 	}

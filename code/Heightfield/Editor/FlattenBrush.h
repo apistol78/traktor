@@ -1,5 +1,5 @@
-#ifndef traktor_hf_RoundBrush_H
-#define traktor_hf_RoundBrush_H
+#ifndef traktor_hf_FlattenBrush_H
+#define traktor_hf_FlattenBrush_H
 
 #include "Heightfield/Editor/IBrush.h"
 
@@ -16,22 +16,23 @@ namespace traktor
 	namespace hf
 	{
 
-class T_DLLCLASS RoundBrush : public IBrush
+class T_DLLCLASS FlattenBrush : public IBrush
 {
 	T_RTTI_CLASS;
 
 public:
-	RoundBrush(float radius, float height);
+	FlattenBrush(float radius);
 
 protected:
 	virtual void apply(HeightfieldCompositor* compositor, const Vector4& at, Region& outDirty) const;
 
 private:
 	float m_radius;
-	float m_height;
+	mutable height_t m_height;
+	mutable bool m_first;
 };
 
 	}
 }
 
-#endif	// traktor_hf_RoundBrush_H
+#endif	// traktor_hf_FlattenBrush_H

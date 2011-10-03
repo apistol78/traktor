@@ -18,6 +18,7 @@ namespace traktor
 	{
 
 class HeightfieldCompositor;
+class Region;
 
 class T_DLLCLASS IBrush : public Object
 {
@@ -26,7 +27,7 @@ class T_DLLCLASS IBrush : public Object
 protected:
 	friend class HeightfieldCompositor;
 
-	virtual void apply(HeightfieldCompositor* compositor, const Vector4& at, float is) const = 0;
+	virtual void apply(HeightfieldCompositor* compositor, const Vector4& at, Region& outDirty) const = 0;
 };
 
 	}

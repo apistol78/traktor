@@ -98,9 +98,13 @@ public:
 	 */
 	virtual void entitySelected(bool selected) = 0;
 
+	/*! \brief Cursor moved, not in modification state..
+	 */
+	virtual void cursorMoved(const ApplyParams& params) = 0;
+
 	/*! \brief Begin modifier on entity.
 	 */
-	virtual void beginModifier() = 0;
+	virtual void beginModifier(const ApplyParams& params) = 0;
 
 	/*! \brief Apply modifier on entity.
 	 *
@@ -110,7 +114,7 @@ public:
 
 	/*! \brief Begin modifier on entity.
 	 */
-	virtual void endModifier() = 0;
+	virtual void endModifier(const ApplyParams& params) = 0;
 
 	/*! \brief Handle shortcut.
 	 *

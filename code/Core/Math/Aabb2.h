@@ -86,7 +86,7 @@ public:
 	/*! \brief Check if bounding box is empty. */
 	T_MATH_INLINE bool empty() const
 	{
-		return mx.x < mn.x;
+		return mx.x < mn.x || mx.y < mn.y;
 	}
 };
 

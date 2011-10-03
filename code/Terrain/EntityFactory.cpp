@@ -13,9 +13,10 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.EntityFactory", EntityFactory, world::IEntityFactory)
 
-EntityFactory::EntityFactory(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem)
+EntityFactory::EntityFactory(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, bool editorMode)
 :	m_resourceManager(resourceManager)
 ,	m_renderSystem(renderSystem)
+,	m_editorMode(editorMode)
 {
 }
 
@@ -34,7 +35,7 @@ Ref< world::Entity > EntityFactory::createEntity(world::IEntityBuilder* builder,
 
 	if (is_a< TerrainEntityData >(&entityData))
 	{
-		Ref< TerrainEntity > terrainEntity = new TerrainEntity(m_renderSystem);
+		Ref< TerrainEntity > terrainEntity = new TerrainEntity(m_renderSystem, m_editorMode);
 		if (terrainEntity->create(m_resourceManager, static_cast< const TerrainEntityData& >(entityData)))
 			return terrainEntity;
 	}
