@@ -62,6 +62,20 @@ const float c_cameraRotateDeltaScale = 0.01f;
 const float c_deltaAdjust = 0.05f;
 const float c_deltaAdjustSmall = 0.01f;
 
+int32_t translateMouseButton(int32_t uimb)
+{
+	if (uimb == ui::MouseEvent::BtLeft)
+		return 0;
+	else if (uimb == ui::MouseEvent::BtRight)
+		return 1;
+	else if (uimb == ui::MouseEvent::BtMiddle)
+		return 2;
+	else if (uimb == (ui::MouseEvent::BtLeft | ui::MouseEvent::BtRight))
+		return 2;
+	else
+		return 0;
+}
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.PerspectiveRenderControl", PerspectiveRenderControl, ISceneRenderControl)
@@ -411,6 +425,10 @@ void PerspectiveRenderControl::eventButtonDown(ui::Event* event)
 
 void PerspectiveRenderControl::eventButtonUp(ui::Event* event)
 {
+	int32_t mouseButton = translateMouseButton(static_cast< ui::MouseEvent* >(event)->getButton());
+	ui::Point mousePosition = checked_type_cast< ui::MouseEvent* >(event)->getPosition();
+	Matrix44 view = getView();
+
 	// Issue finished modification event.
 	if (!m_modifyCamera)
 	{
@@ -419,10 +437,15 @@ void PerspectiveRenderControl::eventButtonUp(ui::Event* event)
 			m_context->raisePostModify();
 
 			// Leave modify mode in entity editors.
+			IEntityEditor::ApplyParams params;
+			params.viewTransform = view;
+			calculateRay(mousePosition, params.worldRayOrigin, params.worldRayDirection);
+			params.mouseButton = mouseButton;
+
 			for (RefArray< EntityAdapter >::iterator i = m_modifyEntities.begin(); i != m_modifyEntities.end(); ++i)
 			{
 				if ((*i)->getEntityEditor())
-					(*i)->getEntityEditor()->endModifier();
+					(*i)->getEntityEditor()->endModifier(params);
 			}
 		}
 	}
@@ -454,10 +477,8 @@ void PerspectiveRenderControl::eventDoubleClick(ui::Event* event)
 
 void PerspectiveRenderControl::eventMouseMove(ui::Event* event)
 {
-	if (!m_renderWidget->hasCapture())
-		return;
-
-	int32_t mouseButton = (static_cast< ui::MouseEvent* >(event)->getButton() == ui::MouseEvent::BtLeft) ? 0 : 1;
+	bool hasCapture = m_renderWidget->hasCapture();
+	int32_t mouseButton = translateMouseButton(static_cast< ui::MouseEvent* >(event)->getButton());
 	ui::Point mousePosition = checked_type_cast< ui::MouseEvent* >(event)->getPosition();
 
 	Vector4 screenDelta(
@@ -467,51 +488,113 @@ void PerspectiveRenderControl::eventMouseMove(ui::Event* event)
 		0.0f
 	);
 
-	if (!m_modifyCamera)
+	Matrix44 projection = m_worldRenderView.getProjection();
+	Matrix44 projectionInverse = projection.inverse();
+
+	Matrix44 view = getView();
+	Matrix44 viewInverse = view.inverse();
+
+	ui::Rect innerRect = m_renderWidget->getInnerRect();
+	Vector4 clipDelta = projectionInverse * (screenDelta * Vector4(-2.0f / innerRect.getWidth(), 2.0f / innerRect.getHeight(), 0.0f, 0.0f));
+
+	if (hasCapture)
 	{
-		if (!m_modifyBegun)
+		if (!m_modifyCamera)
 		{
-			// Clone selection set.
-			if (m_modifyAlternative)
-				m_context->cloneSelected();
-
-			// Get selected entities.
-			m_context->getEntities(
-				m_modifyEntities,
-				SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants
-			);
-
-			// Enter modify mode in entity editors.
-			for (RefArray< EntityAdapter >::iterator i = m_modifyEntities.begin(); i != m_modifyEntities.end(); ++i)
+			if (!m_modifyBegun)
 			{
-				if ((*i)->getEntityEditor())
-					(*i)->getEntityEditor()->beginModifier();
+				// Clone selection set.
+				if (m_modifyAlternative)
+					m_context->cloneSelected();
+
+				// Get selected entities.
+				m_context->getEntities(
+					m_modifyEntities,
+					SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants
+				);
+
+				// Enter modify mode in entity editors.
+				IEntityEditor::ApplyParams params;
+				params.viewTransform = view;
+				params.screenDelta = screenDelta;
+				calculateRay(m_mousePosition, params.worldRayOrigin, params.worldRayDirection);
+				params.mouseButton = mouseButton;
+
+				for (RefArray< EntityAdapter >::iterator i = m_modifyEntities.begin(); i != m_modifyEntities.end(); ++i)
+				{
+					Ref< IEntityEditor > entityEditor = (*i)->getEntityEditor();
+					if (entityEditor)
+					{
+						// Transform screen delta into world delta at entity's position.
+						Vector4 viewPosition = view * (*i)->getTransform().translation().xyz1();
+						params.viewDelta = clipDelta * viewPosition.z();
+						params.worldDelta = viewInverse * params.viewDelta;
+
+						entityEditor->beginModifier(params);
+					}
+				}
+
+				// Issue begin modification event.
+				m_context->raisePreModify();
+
+				m_modifyBegun = true;
 			}
 
-			// Issue begin modification event.
-			m_context->raisePreModify();
+			// Apply modifier on selected entities.
+			IEntityEditor::ApplyParams params;
+			params.viewTransform = view;
+			params.screenDelta = screenDelta;
+			calculateRay(mousePosition, params.worldRayOrigin, params.worldRayDirection);
+			params.mouseButton = mouseButton;
 
-			m_modifyBegun = true;
+			for (RefArray< EntityAdapter >::iterator i = m_modifyEntities.begin(); i != m_modifyEntities.end(); ++i)
+			{
+				Ref< IEntityEditor > entityEditor = (*i)->getEntityEditor();
+				if (entityEditor)
+				{
+					// Transform screen delta into world delta at entity's position.
+					Vector4 viewPosition = view * (*i)->getTransform().translation().xyz1();
+					params.viewDelta = clipDelta * viewPosition.z();
+					params.worldDelta = viewInverse * params.viewDelta;
+
+					entityEditor->applyModifier(params);
+				}
+			}
 		}
+		else
+		{
+			if (mouseButton == 0)
+			{
+				screenDelta *= Scalar(c_cameraTranslateDeltaScale);
+				if (m_modifyAlternative)
+					m_camera->move(screenDelta.shuffle< 0, 1, 2, 3 >());
+				else
+					m_camera->move(screenDelta.shuffle< 0, 2, 1, 3 >());
+			}
+			else
+			{
+				screenDelta *= Scalar(c_cameraRotateDeltaScale);
+				m_camera->rotate(screenDelta.y(), screenDelta.x());
+			}
+		}
+	}
+	else	// No capture, ie. not modifying anything.
+	{
+		// Get selected entities.
+		RefArray< EntityAdapter > selectedEntities;
+		m_context->getEntities(
+			selectedEntities,
+			SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants
+		);
 
-		// Apply modifier on selected entities.
-		Matrix44 projection = m_worldRenderView.getProjection();
-		Matrix44 projectionInverse = projection.inverse();
-
-		Matrix44 view = getView();
-		Matrix44 viewInverse = view.inverse();
-
-		ui::Rect innerRect = m_renderWidget->getInnerRect();
-		Vector4 clipDelta = projectionInverse * (screenDelta * Vector4(-2.0f / innerRect.getWidth(), 2.0f / innerRect.getHeight(), 0.0f, 0.0f));
-
+		// Notify entity editors about cursor moved.
 		IEntityEditor::ApplyParams params;
 		params.viewTransform = view;
 		params.screenDelta = screenDelta;
+		calculateRay(mousePosition, params.worldRayOrigin, params.worldRayDirection);
 		params.mouseButton = mouseButton;
 
-		calculateRay(mousePosition, params.worldRayOrigin, params.worldRayDirection);
-
-		for (RefArray< EntityAdapter >::iterator i = m_modifyEntities.begin(); i != m_modifyEntities.end(); ++i)
+		for (RefArray< EntityAdapter >::iterator i = selectedEntities.begin(); i != selectedEntities.end(); ++i)
 		{
 			Ref< IEntityEditor > entityEditor = (*i)->getEntityEditor();
 			if (entityEditor)
@@ -521,25 +604,8 @@ void PerspectiveRenderControl::eventMouseMove(ui::Event* event)
 				params.viewDelta = clipDelta * viewPosition.z();
 				params.worldDelta = viewInverse * params.viewDelta;
 
-				// Apply modifier through entity editor.
-				entityEditor->applyModifier(params);
+				entityEditor->cursorMoved(params);
 			}
-		}
-	}
-	else
-	{
-		if (mouseButton == 0)
-		{
-			screenDelta *= Scalar(c_cameraTranslateDeltaScale);
-			if (m_modifyAlternative)
-				m_camera->move(screenDelta.shuffle< 0, 1, 2, 3 >());
-			else
-				m_camera->move(screenDelta.shuffle< 0, 2, 1, 3 >());
-		}
-		else
-		{
-			screenDelta *= Scalar(c_cameraRotateDeltaScale);
-			m_camera->rotate(screenDelta.y(), screenDelta.x());
 		}
 	}
 

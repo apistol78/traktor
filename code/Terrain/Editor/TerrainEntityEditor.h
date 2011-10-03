@@ -16,7 +16,9 @@ namespace traktor
 	namespace hf
 	{
 
+class IBrush;
 class HeightfieldCompositor;
+class Region;
 
 	}
 
@@ -36,21 +38,24 @@ public:
 		Scalar& outDistance
 	) const;
 
-	virtual void beginModifier();
+	virtual void cursorMoved(const ApplyParams& params);
+
+	virtual void beginModifier(const ApplyParams& params);
 
 	virtual void applyModifier(const ApplyParams& params);
 
-	virtual void endModifier();
+	virtual void endModifier(const ApplyParams& params);
 
 	virtual bool handleCommand(const ui::Command& command);
 
 	virtual void drawGuide(render::PrimitiveRenderer* primitiveRenderer) const;
 
 private:
-	mutable Vector4 m_lastQueryIntersection;
-	Vector4 m_strokeBegin;
-	Vector4 m_strokeEnd;
+	Vector4 m_strokeLast;
 	hf::HeightfieldCompositor* m_compositor;
+	Ref< hf::IBrush > m_brush;
+	int32_t m_brushType;
+	float m_brushRadius;
 
 	TerrainEntityEditor(
 		scene::SceneEditorContext* context,
@@ -58,7 +63,7 @@ private:
 		hf::HeightfieldCompositor* compositor
 	);
 
-	bool applyHeightfieldModifier(float pressure);
+	void updateHeightfield(bool patches, bool normals, bool heights, const hf::Region& dirtyRegion);
 };
 
 	}

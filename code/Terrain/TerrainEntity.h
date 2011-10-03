@@ -71,7 +71,7 @@ public:
 #endif
 	};
 
-	TerrainEntity(render::IRenderSystem* renderSystem);
+	TerrainEntity(render::IRenderSystem* renderSystem, bool editorMode);
 
 	bool create(resource::IResourceManager* resourceManager, const TerrainEntityData& data);
 
@@ -91,6 +91,7 @@ private:
 	friend class TerrainEntityEditor;
 
 	Ref< render::IRenderSystem > m_renderSystem;
+	bool m_editorMode;
 	resource::Proxy< hf::Heightfield > m_heightfield;
 	resource::Proxy< render::Shader > m_shader;
 	Ref< TerrainSurfaceCache > m_surfaceCache;
@@ -116,7 +117,13 @@ private:
 	render::handle_t m_handlePatchOrigin;
 	render::handle_t m_handlePatchExtent;
 
-	bool createRenderPatches();
+	bool updatePatches();
+
+	bool createPatches();
+
+	bool updateTextures(bool normals, bool heights);
+
+	bool createTextures();
 };
 
 	}
