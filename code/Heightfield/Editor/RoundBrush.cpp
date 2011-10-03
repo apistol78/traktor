@@ -2,6 +2,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Color4f.h"
 #include "Core/Math/Const.h"
+#include "Core/Math/Float.h"
 #include "Drawing/Image.h"
 #include "Heightfield/Editor/Convert.h"
 #include "Heightfield/Editor/HeightfieldCompositor.h"
@@ -61,7 +62,7 @@ void RoundBrush::apply(HeightfieldCompositor* compositor, const Vector4& at, Reg
 			float rx = (ix - cX) * 2.0f / (maxX - minX);
 			float rz = (iz - cZ) * 2.0f / (maxZ - minZ);
 
-			float r = 1.0f - clamp(sqrt(rx * rx + rz * rz), 0.0f, 1.0f);
+			float r = 1.0f - clamp(float(std::sqrt(rx * rx + rz * rz)), 0.0f, 1.0f);
 			float c = sin(r * HALF_PI);
 
 			height_t v = packSignedHeight(int32_t(y * c * 65535));
