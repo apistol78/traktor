@@ -189,8 +189,9 @@ bool RenderServerDefault::create(Settings* settings)
 
 #else
 
-	m_renderViewDesc.displayMode.width = settings->getProperty< PropertyInteger >(L"Render.DisplayMode/Width", 1280);
-	m_renderViewDesc.displayMode.height = settings->getProperty< PropertyInteger >(L"Render.DisplayMode/Height", 720);
+	// Get display mode from settings; use default settings if none is provided.
+	m_renderViewDesc.displayMode.width = settings->getProperty< PropertyInteger >(L"Render.DisplayMode/Width", m_originalDisplayMode.width);
+	m_renderViewDesc.displayMode.height = settings->getProperty< PropertyInteger >(L"Render.DisplayMode/Height", m_originalDisplayMode.height);
 	m_renderViewDesc.displayMode.stereoscopic = settings->getProperty< PropertyBoolean >(L"Render.Stereoscopic", false);
 	m_renderViewDesc.displayMode.colorBits = 24;
 
