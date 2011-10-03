@@ -90,7 +90,7 @@ void WorldServer::createEntityFactories(IEnvironment* environment)
 	m_entityBuilder->addFactory(new animation::ClothEntityFactory(resourceManager, renderSystem, physicsManager));
 	m_entityBuilder->addFactory(new animation::PathEntityFactory());
 	m_entityBuilder->addFactory(new spray::EffectEntityFactory(resourceManager));
-	m_entityBuilder->addFactory(new terrain::EntityFactory(resourceManager, renderSystem));
+	m_entityBuilder->addFactory(new terrain::EntityFactory(resourceManager, renderSystem, false));
 	m_entityBuilder->addFactory(new weather::WeatherEntityFactory(resourceManager, renderSystem));
 }
 
