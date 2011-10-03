@@ -7,12 +7,14 @@
 #include "Heightfield/Editor/HeightfieldCompositor.h"
 #include "Heightfield/Editor/HeightfieldEditorPlugin.h"
 #include "Heightfield/Editor/RoundBrush.h"
+#include "Heightfield/Editor/SmoothBrush.h"
 #include "Render/PrimitiveRenderer.h"
 #include "Scene/Editor/Camera.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Terrain/TerrainEntity.h"
 #include "Terrain/TerrainEntityData.h"
+#include "Terrain/Editor/TerrainEditorPlugin.h"
 #include "Terrain/Editor/TerrainEntityEditor.h"
 #include "Ui/Command.h"
 
@@ -58,10 +60,17 @@ void TerrainEntityEditor::beginModifier(const ApplyParams& params)
 	Scalar distance;
 	if (m_compositor->queryRay(params.worldRayOrigin, params.worldRayDirection, distance, &m_strokeLast))
 	{
-		if (m_brushType == 0)
+		TerrainEditorPlugin* terrainPlugin = getContext()->getEditorPluginOf< TerrainEditorPlugin >();
+		T_ASSERT (terrainPlugin);
+
+		if (terrainPlugin->getSelectedTool() == 0)
 			m_brush = new hf::RoundBrush(m_brushRadius, params.mouseButton == 0 ? 1.0f : -1.0f);
-		if (m_brushType == 1)
+		else if (terrainPlugin->getSelectedTool() == 1)
 			m_brush = new hf::FlattenBrush(m_brushRadius);
+		else if (terrainPlugin->getSelectedTool() == 2)
+			m_brush = new hf::SmoothBrush(m_brushRadius);
+		else
+			return;
 
 		DefaultEntityEditor::beginModifier(params);
 	}
