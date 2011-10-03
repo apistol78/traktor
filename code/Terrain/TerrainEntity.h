@@ -117,7 +117,7 @@ private:
 	render::handle_t m_handlePatchOrigin;
 	render::handle_t m_handlePatchExtent;
 
-	bool updatePatches();
+	bool updatePatches(int32_t minX, int32_t minZ, int32_t maxX, int32_t maxZ);
 
 	bool createPatches();
 
