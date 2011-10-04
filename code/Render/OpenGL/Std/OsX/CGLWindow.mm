@@ -1,5 +1,6 @@
 #import <Cocoa/Cocoa.h>
 
+#include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
 #include "Render/OpenGL/Std/OsX/CGLCustomWindow.h"
@@ -15,11 +16,18 @@ namespace traktor
 struct WindowData
 {
 	CGLCustomWindow* window;
+	NSMenu* menu;
 	DisplayMode displayMode;
 	bool fullscreen;
 	CFDictionaryRef originalMode;
 	NSString* title;
 };
+
+NSString* makeNSString(const std::wstring& str)
+{
+	std::string mbs = wstombs(Utf8Encoding(), str);
+	return [[[NSString alloc] initWithCString: mbs.c_str() encoding: NSUTF8StringEncoding] autorelease];
+}
 
 int32_t getDictionaryLong(CFDictionaryRef dict, const void* key)
 {
@@ -184,19 +192,22 @@ bool cglwGetCurrentDisplayMode(DisplayMode& outDisplayMode)
 void* cglwCreateWindow(const std::wstring& title, const DisplayMode& displayMode, bool fullscreen)
 {
 	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+	
+	// Change policy so menus are properly displayed.
+	[NSApp setActivationPolicy: NSApplicationActivationPolicyRegular];
 
 	[NSApplication sharedApplication];
 	[NSApp finishLaunching];
 
-	std::string mbs = wstombs(title);
-
 	WindowData* windowData = new WindowData();
 	windowData->window = 0;
+	windowData->menu = 0;
 	windowData->displayMode = displayMode;
 	windowData->fullscreen = fullscreen;
 	windowData->originalMode = CGDisplayCurrentMode(kCGDirectMainDisplay);
-	windowData->title = [[NSString alloc] initWithCString: mbs.c_str() encoding: NSUTF8StringEncoding];
+	windowData->title = makeNSString(title);
 	
+	// Create window.
 	NSRect frame = NSMakeRect(0, 0, displayMode.width, displayMode.height);
 	
 	if (fullscreen)
@@ -238,7 +249,27 @@ void* cglwCreateWindow(const std::wstring& title, const DisplayMode& displayMode
 	
 	if (!fullscreen)
 		[windowData->window center];
-	
+		
+	// Create main menu with Cmd+Q shortcut.
+	windowData->menu = [[NSMenu alloc] initWithTitle: makeNSString(title)];
+
+	id appMenuItem = [NSMenuItem new];
+	[windowData->menu addItem: appMenuItem];
+	[NSApp setMainMenu: windowData->menu];
+
+	id appMenu = [[NSMenu alloc] initWithTitle: makeNSString(title)];
+	id quitTitle = makeNSString(L"Quit " + title);
+	id quitMenuItem = [[NSMenuItem alloc]
+		initWithTitle: quitTitle
+		action: nil
+		keyEquivalent: @"q"
+	];
+	[quitMenuItem setTarget: windowData->window];
+	[quitMenuItem setAction: @selector(close)];
+	[appMenu addItem: quitMenuItem];
+	[appMenuItem setSubmenu: appMenu];
+
+	// Present window.
 	[windowData->window makeKeyAndOrderFront: nil];
 	[windowData->window makeMainWindow];
 	
