@@ -1,4 +1,3 @@
-#include "Core/Date/DateTime.h"
 #include "Core/Io/FileOutputStreamBuffer.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
@@ -90,26 +89,7 @@ private:
 	Ref< ILogTarget > m_target1;
 	Ref< ILogTarget > m_target2;
 };
-/*
-class LogStampTarget : public ILogTarget
-{
-public:
-	LogStampTarget(ILogTarget* target)
-	:	m_target(target)
-	{
-	}
-	
-	virtual void log(const std::wstring& str)
-	{
-		StringOutputStream ss;
-		ss << DateTime::now().format(L"%Y-%m-%d %H:%M:%S") << L" - " << str;
-		m_target->log(ss.str());
-	}
-	
-private:
-	Ref< ILogTarget > m_target;
-};
-*/
+
 Ref< Settings > loadSettings(const Path& settingsFile)
 {
 	Ref< Settings > settings;
@@ -181,17 +161,19 @@ int32_t amalgamMain(
 	if (!checkPreconditions())
 		return 1;
 
+	std::wstring writablePath = OS::getInstance().getWritableFolderPath() + L"/Doctor Entertainment AB";
+	FileSystem::getInstance().makeAllDirectories(writablePath);
+
 #if !defined(_DEBUG)
 #	if defined(__APPLE__)
-	Ref< IStream > logFile = FileSystem::getInstance().open(L"$(BUNDLE_PATH)/Contents/Resources/Application.log", File::FmWrite);
+	Ref< IStream > logFile = FileSystem::getInstance().open(writablePath + L"/Application.log", File::FmWrite);
 #	else
 	Ref< IStream > logFile = FileSystem::getInstance().open(L"Application.log", File::FmWrite);
 #	endif
 	if (logFile)
 	{
 		Ref< FileOutputStream > logStream = new FileOutputStream(logFile, new Utf8Encoding());
-		Ref< LogStreamTarget > /*logStreamTarget*/logTarget = new LogStreamTarget(logStream);
-		//Ref< LogStampTarget > logTarget = new LogStampTarget(logStreamTarget);
+		Ref< LogStreamTarget > logTarget = new LogStreamTarget(logStream);
 
 		log::info   .setTarget(logTarget);
 		log::warning.setTarget(logTarget);
@@ -260,16 +242,18 @@ int32_t amalgamMain(
 		Path userSettingsPath;
 		Ref< Settings > userSettings;
 
+#if !defined(__APPLE__)
 		// First try to load user settings from current working directory; ie. same directory as
 		// the main executable.
 		userSettingsPath = settingsPath.getPathNameNoExtension() + L"." + OS::getInstance().getCurrentUser() + L"." + settingsPath.getExtension();
 		userSettings = loadSettings(userSettingsPath);
+#endif
 	
 		// Try to load user settings from user's application data path; sometimes it's not possible
 		// to store user settings alongside executable due to restrictive priviledges.
 		if (!userSettings)
 		{
-			userSettingsPath = OS::getInstance().getWritableFolderPath() + L"/Doctor Entertainment AB/" + settingsPath.getFileNameNoExtension() + L"." + OS::getInstance().getCurrentUser() + L"." + settingsPath.getExtension();
+			userSettingsPath = writablePath + L"/" + settingsPath.getFileNameNoExtension() + L"." + OS::getInstance().getCurrentUser() + L"." + settingsPath.getExtension();
 			userSettings = loadSettings(userSettingsPath);
 		}
 
@@ -327,10 +311,12 @@ int32_t amalgamMain(
 		{
 			Path userSettingsPath;
 
+#if !defined(__APPLE__)
 			userSettingsPath = settingsPath.getPathNameNoExtension() + L"." + OS::getInstance().getCurrentUser() + L"." + settingsPath.getExtension();
 			if (!saveSettings(settings, userSettingsPath))
+#endif
 			{
-				userSettingsPath = OS::getInstance().getWritableFolderPath() + L"/Doctor Entertainment AB/" + settingsPath.getFileNameNoExtension() + L"." + OS::getInstance().getCurrentUser() + L"." + settingsPath.getExtension();
+				userSettingsPath = writablePath + L"/" + settingsPath.getFileNameNoExtension() + L"." + OS::getInstance().getCurrentUser() + L"." + settingsPath.getExtension();
 				if (!saveSettings(settings, userSettingsPath))
 					log::error << L"Unable to save user settings; user changes not saved" << Endl;
 			}
@@ -341,11 +327,11 @@ int32_t amalgamMain(
 		safeDestroy(application);
 		showErrorDialog(logTail->m_tail);
 	}
+	
 	settings = 0;
 	defaultSettings = 0;
 
 	net::Network::finalize();
-
 	ui::Application::getInstance()->finalize();
 
 #if !defined(_DEBUG)
