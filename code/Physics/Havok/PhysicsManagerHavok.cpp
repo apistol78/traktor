@@ -360,7 +360,7 @@ Ref< Body > PhysicsManagerHavok::createBody(resource::IResourceManager* resource
 	else if (const HeightfieldShapeDesc* heightfieldShape = dynamic_type_cast< const HeightfieldShapeDesc* >(shapeDesc))
 	{
 		resource::Proxy< hf::Heightfield > heightfield = heightfieldShape->getHeightfield();
-		if (!heightfield.validate())
+		if (!resourceManager->bind(heightfield) || !heightfield.validate())
 		{
 			log::error << L"Unable to load heightfield resource" << Endl;
 			return 0;

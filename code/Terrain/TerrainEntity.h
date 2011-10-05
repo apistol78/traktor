@@ -19,6 +19,7 @@ namespace traktor
 	{
 
 class Heightfield;
+class MaterialMask;
 
 	}
 
@@ -81,9 +82,11 @@ public:
 		world::IWorldRenderPass& worldRenderPass
 	);
 
-	inline const resource::Proxy< hf::Heightfield >& getHeightfield() const { return m_heightfield; }
+	const resource::Proxy< hf::Heightfield >& getHeightfield() const { return m_heightfield; }
 
-	inline Ref< TerrainSurfaceCache > getSurfaceCache() const { return m_surfaceCache; }
+	const resource::Proxy< hf::MaterialMask >& getMaterialMask() const { return m_materialMask; }
+
+	TerrainSurfaceCache* getSurfaceCache() const { return m_surfaceCache; }
 
 	virtual void update(const world::EntityUpdate* update);
 
@@ -93,6 +96,7 @@ private:
 	Ref< render::IRenderSystem > m_renderSystem;
 	bool m_editorMode;
 	resource::Proxy< hf::Heightfield > m_heightfield;
+	resource::Proxy< hf::MaterialMask > m_materialMask;
 	resource::Proxy< render::Shader > m_shader;
 	Ref< TerrainSurfaceCache > m_surfaceCache;
 	Ref< TerrainSurface > m_surface;
@@ -100,6 +104,7 @@ private:
 	uint32_t m_patchCount;
 	Ref< render::ISimpleTexture > m_normalTexture;
 	Ref< render::ISimpleTexture > m_heightTexture;
+	Ref< render::ISimpleTexture > m_materialMaskTexture;
 	Ref< render::IndexBuffer > m_indexBuffer;
 #if defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
 	Ref< render::VertexBuffer > m_vertexBuffer;
@@ -121,7 +126,7 @@ private:
 
 	bool createPatches();
 
-	bool updateTextures(bool normals, bool heights);
+	bool updateTextures(bool normals, bool heights, bool materials);
 
 	bool createTextures();
 };

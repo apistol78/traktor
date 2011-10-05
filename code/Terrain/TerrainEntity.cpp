@@ -7,6 +7,7 @@
 #include "Core/Misc/AutoPtr.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Heightfield/Heightfield.h"
+#include "Heightfield/MaterialMask.h"
 #include "Render/IndexBuffer.h"
 #include "Render/IRenderSystem.h"
 #include "Render/ISimpleTexture.h"
@@ -27,6 +28,16 @@ namespace traktor
 	{
 		namespace
 		{
+
+const Guid c_guidTerrainShaderVFetch(L"{480B7C64-5494-A74A-8485-F2CA15A900E6}");
+const Guid c_guidTerrainShaderStatic(L"{557537A0-F1E3-AF4C-ACB9-FD862FC3265C}");
+
+const uint32_t c_skipHeightTexture = 4;
+const uint32_t c_skipNormalTexture = 2;
+const uint32_t c_skipMaterialMaskTexture = 1;
+const uint32_t c_skipHeightTextureEditor = 4;
+const uint32_t c_skipNormalTextureEditor = 2;
+const uint32_t c_skipMaterialMaskTextureEditor = 1;
 
 struct CullPatch
 {
@@ -63,11 +74,6 @@ struct TerrainRenderBlock : public render::SimpleRenderBlock
 	}
 };
 
-const uint32_t c_skipHeightTexture = 4;
-const uint32_t c_skipNormalTexture = 2;
-const uint32_t c_skipHeightTextureEditor = 8;
-const uint32_t c_skipNormalTextureEditor = 4;
-
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.TerrainEntity", TerrainEntity, world::Entity)
@@ -96,7 +102,18 @@ bool TerrainEntity::create(resource::IResourceManager* resourceManager, const Te
 	if (!m_heightfield.validate())
 		return false;
 
-	m_shader = data.m_shader;
+	m_materialMask = data.m_materialMask;
+	if (!resourceManager->bind(m_materialMask))
+		return false;
+
+	if (!m_materialMask.validate())
+		return false;
+
+#if defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
+	m_shader = c_guidTerrainShaderVFetch;
+#else
+	m_shader = c_guidTerrainShaderStatic;
+#endif
 	if (!resourceManager->bind(m_shader))
 		return false;
 
@@ -135,9 +152,9 @@ void TerrainEntity::render(
 {
 	Ref< render::ISimpleTexture > surface;
 
-	if (!m_heightfield.valid())
+	if (!m_heightfield.valid() || !m_materialMask.valid())
 	{
-		if (!m_heightfield.validate())
+		if (!m_heightfield.validate() || !m_materialMask.validate())
 			return;
 
 		if (!createPatches())
@@ -242,6 +259,7 @@ void TerrainEntity::render(
 				renderContext,
 				m_surface,
 				m_heightTexture,
+				m_materialMaskTexture,
 				-worldExtent * Scalar(0.5f),
 				worldExtent,
 				patchOrigin,
@@ -576,16 +594,9 @@ bool TerrainEntity::createPatches()
 	return true;
 }
 
-bool TerrainEntity::updateTextures(bool normals, bool heights)
+bool TerrainEntity::updateTextures(bool normals, bool heights, bool materials)
 {
 	const float c_scaleHeight = 300.0f;
-
-	int32_t size = m_heightfield->getResource().getSize();
-
-	int32_t minX = 0;
-	int32_t minZ = 0;
-	int32_t maxX = size;
-	int32_t maxZ = size;
 
 	if (normals)
 	{
@@ -595,18 +606,13 @@ bool TerrainEntity::updateTextures(bool normals, bool heights)
 
 		uint8_t* np = static_cast< uint8_t* >(lock.bits);
 
+		int32_t size = m_heightfield->getResource().getSize();
 		int32_t dim = m_normalTexture->getWidth();
 
-		int32_t minU = (minX * dim) / size;
-		int32_t minV = (minZ * dim) / size;
-		int32_t maxU = (maxX * dim) / size;
-		int32_t maxV = (maxZ * dim) / size;
-
-		for (int32_t v = minV; v < maxV; ++v)
+		for (int32_t v = 0; v < dim; ++v)
 		{
 			float gz = float(v * size) / dim;
-
-			for (int32_t u = minU; u < maxU; ++u)
+			for (int32_t u = 0; u < dim; ++u)
 			{
 				float gx = float(u * size) / dim;
 
@@ -640,17 +646,13 @@ bool TerrainEntity::updateTextures(bool normals, bool heights)
 
 		half_t* hp = static_cast< half_t* >(lock.bits);
 
+		int32_t size = m_heightfield->getResource().getSize();
 		int32_t dim = m_heightTexture->getWidth();
 
-		int32_t minU = (minX * dim) / size;
-		int32_t minV = (minZ * dim) / size;
-		int32_t maxU = (maxX * dim) / size;
-		int32_t maxV = (maxZ * dim) / size;
-
-		for (int32_t v = minV; v < maxV; ++v)
+		for (int32_t v = 0; v < dim; ++v)
 		{
 			float gz = float(v * size) / dim;
-			for (int32_t u = minU; u < maxU; ++u)
+			for (int32_t u = 0; u < dim; ++u)
 			{
 				float gx = float(u * size) / dim;
 				float h = m_heightfield->getGridHeight(gx, gz);
@@ -661,6 +663,30 @@ bool TerrainEntity::updateTextures(bool normals, bool heights)
 		m_heightTexture->unlock(0);
 	}
 
+	if (materials)
+	{
+		render::ITexture::Lock lock;
+		if (!m_materialMaskTexture->lock(0, lock))
+			return false;
+
+		uint8_t* mp = static_cast< uint8_t* >(lock.bits);
+
+		int32_t size = m_materialMask->getSize();
+		int32_t dim = m_materialMaskTexture->getWidth();
+
+		for (int32_t v = 0; v < dim; ++v)
+		{
+			int32_t gz = (v * size) / dim;
+			for (int32_t u = 0; u < dim; ++u)
+			{
+				int32_t gx = (u * size) / dim;
+				mp[u + v * dim] = m_materialMask->getMaterial(gx, gz);
+			}
+		}
+
+		m_materialMaskTexture->unlock(0);
+	}
+
 	return true;
 }
 
@@ -668,11 +694,12 @@ bool TerrainEntity::createTextures()
 {
 	safeDestroy(m_normalTexture);
 	safeDestroy(m_heightTexture);
-
-	uint32_t size = m_heightfield->getResource().getSize();
-	T_ASSERT (size > 0);
+	safeDestroy(m_materialMaskTexture);
 
 	{
+		uint32_t size = m_heightfield->getResource().getSize();
+		T_ASSERT (size > 0);
+
 		uint32_t dim = nearestLog2(size);
 		dim /= m_editorMode ? c_skipNormalTextureEditor : c_skipNormalTexture;
 		T_ASSERT (dim > 0);
@@ -689,6 +716,9 @@ bool TerrainEntity::createTextures()
 	}
 
 	{
+		uint32_t size = m_heightfield->getResource().getSize();
+		T_ASSERT (size > 0);
+
 		uint32_t dim = nearestLog2(size);
 		dim /= m_editorMode ? c_skipHeightTextureEditor : c_skipHeightTexture;
 		T_ASSERT (dim > 0);
@@ -704,7 +734,26 @@ bool TerrainEntity::createTextures()
 			return false;
 	}
 
-	updateTextures(true, true);
+	{
+		uint32_t size = m_materialMask->getSize();
+		T_ASSERT (size > 0);
+
+		uint32_t dim = nearestLog2(size);
+		dim /= m_editorMode ? c_skipMaterialMaskTextureEditor : c_skipMaterialMaskTexture;
+		T_ASSERT (dim > 0);
+
+		render::SimpleTextureCreateDesc desc;
+		desc.width = dim;
+		desc.height = dim;
+		desc.mipCount = 1;
+		desc.format = render::TfR8;
+		desc.immutable = false;
+
+		if (!(m_materialMaskTexture = m_renderSystem->createSimpleTexture(desc)))
+			return false;
+	}
+
+	updateTextures(true, true, true);
 
 	return true;
 }

@@ -19,13 +19,7 @@ namespace traktor
 	{
 
 class Heightfield;
-
-	}
-
-	namespace render
-	{
-
-class Shader;
+class MaterialMask;
 
 	}
 
@@ -45,7 +39,7 @@ public:
 
 	const resource::Proxy< hf::Heightfield >& getHeightfield() const { return m_heightfield; }
 
-	const resource::Proxy< render::Shader >& getShader() const { return m_shader; }
+	const resource::Proxy< hf::MaterialMask >& getMaterialMask() const { return m_materialMask; }
 
 	Ref< TerrainSurface > getSurface() const { return m_surface; }
 
@@ -53,7 +47,7 @@ private:
 	friend class TerrainEntity;
 
 	resource::Proxy< hf::Heightfield > m_heightfield;
-	resource::Proxy< render::Shader > m_shader;
+	resource::Proxy< hf::MaterialMask > m_materialMask;
 	Ref< TerrainSurface > m_surface;
 	float m_patchLodDistance;
 	float m_surfaceLodDistance;

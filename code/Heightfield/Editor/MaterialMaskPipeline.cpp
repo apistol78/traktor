@@ -16,8 +16,31 @@ namespace traktor
 {
 	namespace hf
 	{
+		namespace
+		{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.hf.MaterialMaskPipeline", 1, MaterialMaskPipeline, editor::IPipeline)
+uint8_t findBestMatch(const Color4f& color, const Color4f* colorSet, uint8_t count)
+{
+	float minD = std::numeric_limits< float >::max();
+	uint8_t minI = 0;
+
+	for (uint8_t i = 0; i < count; ++i)
+	{
+		Color4f dc = colorSet[i] - color;
+		float d = std::abs(dc.getRed()) + std::abs(dc.getGreen()) + std::abs(dc.getBlue());
+		if (d < minD)
+		{
+			minI = i;
+			minD = d;
+		}
+	}
+
+	return minI;
+}
+
+		}
+
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.hf.MaterialMaskPipeline", 2, MaterialMaskPipeline, editor::IPipeline)
 
 bool MaterialMaskPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -75,8 +98,6 @@ bool MaterialMaskPipeline::buildOutput(
 		return false;
 	}
 
-	// @fixme Quantize image into a unique color per mask channel.
-
 	uint32_t size = image->getWidth();
 
 	// Create mask resource.
@@ -103,6 +124,16 @@ bool MaterialMaskPipeline::buildOutput(
 		return false;
 	}
 
+	const Color4f c_materialColors[] =
+	{
+		Color4f(0.0f, 0.0f, 0.0f, 0.0f),
+		Color4f(1.0f, 0.0f, 0.0f, 0.0f),
+		Color4f(0.0f, 1.0f, 0.0f, 0.0f),
+		Color4f(0.0f, 0.0f, 1.0f, 0.0f),
+		Color4f(1.0f, 1.0f, 0.0f, 0.0f),
+		Color4f(0.0f, 1.0f, 1.0f, 0.0f)
+	};
+
 	// Convert image pixels into mask values.
 	Writer writer(stream);
 	for (uint32_t y = 0; y < size; ++y)
@@ -110,12 +141,8 @@ bool MaterialMaskPipeline::buildOutput(
 		for (uint32_t x = 0; x < size; ++x)
 		{
 			Color4f imagePixel;
-			image->getPixel(x, y, imagePixel);
-
-			uint8_t mask = 0;
-			if (imagePixel.getRed() >= 0.5f)
-				mask = 1;
-
+			image->getPixelUnsafe(x, y, imagePixel);
+			uint8_t mask = findBestMatch(imagePixel, c_materialColors, sizeof_array(c_materialColors));
 			writer << mask;
 		}
 	}

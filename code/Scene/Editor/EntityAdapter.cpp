@@ -98,10 +98,7 @@ bool EntityAdapter::isExternal() const
 
 bool EntityAdapter::isChildOfExternal() const
 {
-	if (!m_parent)
-		return false;
-
-	return m_parent->isExternal();
+	return m_parent ? m_parent->isExternal() : false;
 }
 
 bool EntityAdapter::getExternalGuid(Guid& outGuid) const
@@ -121,8 +118,7 @@ bool EntityAdapter::getExternalGuid(Guid& outGuid) const
 
 bool EntityAdapter::isGroup() const
 {
-	T_ASSERT (m_entityEditor);
-	return m_entityEditor->isGroup();
+	return m_entityEditor ? m_entityEditor->isGroup() : false;
 }
 
 EntityAdapter* EntityAdapter::getParent() const

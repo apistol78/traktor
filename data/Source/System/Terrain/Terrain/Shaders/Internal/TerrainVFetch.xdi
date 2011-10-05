@@ -412,7 +412,7 @@ Generated texture from surface cache.
 				<second>129</second>
 			</position>
 			<parameterName>Heightfield</parameterName>
-			<type>PtVector</type>
+			<type>PtTexture</type>
 			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.External" version="1">
