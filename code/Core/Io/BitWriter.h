@@ -32,8 +32,11 @@ public:
 	/*! \brief Write single bit to stream. */
 	void writeBit(bool bit);
 
-	/*! \brief Read variable bit-length unsigned number from stream. */
+	/*! \brief Write variable bit-length unsigned number to stream. */
 	void writeUnsigned(int32_t nbits, uint32_t value);
+
+	/*! \brief Write variable bit-length signed number to stream. */
+	void writeSigned(int32_t nbits, int32_t value);
 
 	/*! \brief Flush bits. */
 	void flush();

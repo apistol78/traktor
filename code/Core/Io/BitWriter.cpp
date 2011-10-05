@@ -38,6 +38,11 @@ void BitWriter::writeUnsigned(int32_t nbits, uint32_t value)
 	}
 }
 
+void BitWriter::writeSigned(int32_t nbits, int32_t value)
+{
+	writeUnsigned(nbits, *(uint32_t*)&value);
+}
+
 void BitWriter::flush()
 {
 	if (m_cnt <= 0)

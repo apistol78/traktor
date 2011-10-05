@@ -45,19 +45,19 @@
 			<comment/>
 			<position>
 				<first>563</first>
-				<second>318</second>
+				<second>328</second>
 			</position>
 			<name>Height</name>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>465</first>
-				<second>331</second>
+				<first>464</first>
+				<second>328</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>-430</first>
@@ -65,8 +65,9 @@
 			</position>
 			<parameterName>PatchOrigin</parameterName>
 			<type>PtVector</type>
+			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>-435</first>
@@ -74,6 +75,7 @@
 			</position>
 			<parameterName>PatchExtent</parameterName>
 			<type>PtVector</type>
+			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
@@ -90,7 +92,7 @@
 				<second>324</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>-390</first>
@@ -98,8 +100,9 @@
 			</position>
 			<parameterName>WorldOrigin</parameterName>
 			<type>PtVector</type>
+			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>-393</first>
@@ -107,6 +110,7 @@
 			</position>
 			<parameterName>WorldExtent</parameterName>
 			<type>PtVector</type>
+			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Div">
 			<comment/>
@@ -148,16 +152,16 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>268</first>
-				<second>60</second>
+				<first>308</first>
+				<second>92</second>
 			</position>
 			<name>PatchTexCoord</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>268</first>
-				<second>97</second>
+				<first>308</first>
+				<second>129</second>
 			</position>
 			<name>WorldTexCoord</name>
 		</item>
@@ -181,14 +185,15 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>109</first>
-				<second>301</second>
+				<first>51</first>
+				<second>257</second>
 			</position>
 			<parameterName>Heightfield</parameterName>
 			<type>PtTexture</type>
+			<frequency>UfFrame</frequency>
 		</item>
 	</nodes>
 	<edges>

@@ -9,6 +9,13 @@ namespace traktor
 {
 	namespace terrain
 	{
+		namespace
+		{
+
+const Guid c_guidTerrainShaderVFetch(L"{480B7C64-5494-A74A-8485-F2CA15A900E6}");
+const Guid c_guidTerrainShaderStatic(L"{557537A0-F1E3-AF4C-ACB9-FD862FC3265C}");
+
+		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.TerrainEntityPipeline", 0, TerrainEntityPipeline, world::EntityPipeline)
 
@@ -30,8 +37,11 @@ bool TerrainEntityPipeline::buildDependencies(
 {
 	if (const TerrainEntityData* terrainEntityData = dynamic_type_cast< const TerrainEntityData* >(sourceAsset))
 	{
+		pipelineDepends->addDependency(c_guidTerrainShaderVFetch, editor::PdfBuild);
+		pipelineDepends->addDependency(c_guidTerrainShaderStatic, editor::PdfBuild);
+
 		pipelineDepends->addDependency(terrainEntityData->getHeightfield().getGuid(), editor::PdfBuild);
-		pipelineDepends->addDependency(terrainEntityData->getShader().getGuid(), editor::PdfBuild);
+		pipelineDepends->addDependency(terrainEntityData->getMaterialMask().getGuid(), editor::PdfBuild);
 
 		const Ref< TerrainSurface >& surface = terrainEntityData->getSurface();
 		if (surface)

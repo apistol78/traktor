@@ -35,10 +35,14 @@ struct TerrainSurfaceRenderBlock : public render::RenderBlock
 {
 	render::ScreenRenderer* screenRenderer;
 	render::RenderTargetSet* renderTargetSet;
+	TerrainSurfaceRenderBlock* next;
+	bool top;
 
 	TerrainSurfaceRenderBlock()
 	:	screenRenderer(0)
 	,	renderTargetSet(0)
+	,	next(0)
+	,	top(false)
 	{
 	}
 
@@ -49,14 +53,21 @@ struct TerrainSurfaceRenderBlock : public render::RenderBlock
 		if (globalParameters)
 			globalParameters->fixup(program);
 
-		renderView->begin(renderTargetSet, 0);
+		if (top)
+		{
+			renderView->begin(renderTargetSet, 0);
 
-		const float clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
-		renderView->clear(render::CfColor, clearColor, 0.0f, 0);
+			const float clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+			renderView->clear(render::CfColor, clearColor, 0.0f, 0);
+		}
 
 		screenRenderer->draw(renderView, program);
 
-		renderView->end();
+		if (next)
+			next->render(renderView, globalParameters);
+
+		if (top)
+			renderView->end();
 
 		T_SAFE_RELEASE(renderTargetSet);
 	}
@@ -69,6 +80,9 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.TerrainSurfaceCache", TerrainSurfaceCac
 TerrainSurfaceCache::TerrainSurfaceCache()
 :	m_handleHeightfield(render::getParameterHandle(L"Heightfield"))
 ,	m_handleHeightfieldSize(render::getParameterHandle(L"HeightfieldSize"))
+,	m_handleMaterialMask(render::getParameterHandle(L"MaterialMask"))
+,	m_handleMaterialMaskSize(render::getParameterHandle(L"MaterialMaskSize"))
+,	m_handleMaterial(render::getParameterHandle(L"Material"))
 ,	m_handleWorldOrigin(render::getParameterHandle(L"WorldOrigin"))
 ,	m_handleWorldExtent(render::getParameterHandle(L"WorldExtent"))
 ,	m_handlePatchOrigin(render::getParameterHandle(L"PatchOrigin"))
@@ -143,6 +157,7 @@ void TerrainSurfaceCache::get(
 	render::RenderContext* renderContext,
 	TerrainSurface* surface,
 	render::ISimpleTexture* heightfieldTexture,
+	render::ISimpleTexture* materialMaskTexture,
 	const Vector4& worldOrigin,
 	const Vector4& worldExtent,
 	const Vector4& patchOrigin,
@@ -194,37 +209,58 @@ void TerrainSurfaceCache::get(
 		}
 	}
 
-	resource::Proxy< render::Shader >& shader = surface->getLayers().front();
-	if (!shader.validate())
-		return;
+	// Composite surface.
+	TerrainSurfaceRenderBlock* renderBlockChain = 0;
 
-	// Create render block.
-	TerrainSurfaceRenderBlock* renderBlock = renderContext->alloc< TerrainSurfaceRenderBlock >();
+	std::vector< resource::Proxy< render::Shader > >& layers = surface->getLayers();
+	for (size_t i = 0; i < layers.size(); ++i)
+	{
+		resource::Proxy< render::Shader >& shader = layers[i];
+		if (!shader.validate())
+			return;
 
-	renderBlock->screenRenderer = m_screenRenderer;
-	renderBlock->renderTargetSet = renderTargetSet;
+		TerrainSurfaceRenderBlock* renderBlock = renderContext->alloc< TerrainSurfaceRenderBlock >();
 
-	renderBlock->distance = 0.0f;
-	renderBlock->program = shader->getCurrentProgram();
-	renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
+		renderBlock->screenRenderer = m_screenRenderer;
+		renderBlock->renderTargetSet = renderTargetSet;
 
-	renderBlock->programParams->beginParameters(renderContext);
-	renderBlock->programParams->setTextureParameter(m_handleHeightfield, heightfieldTexture);
-	renderBlock->programParams->setFloatParameter(m_handleHeightfieldSize, float(heightfieldTexture->getWidth()));
-	renderBlock->programParams->setVectorParameter(m_handleWorldOrigin, worldOrigin);
-	renderBlock->programParams->setVectorParameter(m_handleWorldExtent, worldExtent);
-	renderBlock->programParams->setVectorParameter(m_handlePatchOrigin, patchOrigin);
-	renderBlock->programParams->setVectorParameter(m_handlePatchExtent, patchExtent);
-	renderBlock->programParams->setVectorParameter(m_handlePatchLodColor, c_cacheSurfaceColor[surfaceLod]);
-	renderBlock->programParams->endParameters(renderContext);
+		renderBlock->distance = 0.0f;
+		renderBlock->program = shader->getCurrentProgram();
+		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 
-	T_SAFE_ADDREF(renderBlock->renderTargetSet);
+		renderBlock->programParams->beginParameters(renderContext);
+		renderBlock->programParams->setTextureParameter(m_handleHeightfield, heightfieldTexture);
+		renderBlock->programParams->setFloatParameter(m_handleHeightfieldSize, float(heightfieldTexture->getWidth()));
+		renderBlock->programParams->setTextureParameter(m_handleMaterialMask, materialMaskTexture);
+		renderBlock->programParams->setFloatParameter(m_handleMaterialMaskSize, float(materialMaskTexture->getWidth()));
+		renderBlock->programParams->setFloatParameter(m_handleMaterial, float(i));
+		renderBlock->programParams->setVectorParameter(m_handleWorldOrigin, worldOrigin);
+		renderBlock->programParams->setVectorParameter(m_handleWorldExtent, worldExtent);
+		renderBlock->programParams->setVectorParameter(m_handlePatchOrigin, patchOrigin);
+		renderBlock->programParams->setVectorParameter(m_handlePatchExtent, patchExtent);
+		renderBlock->programParams->setVectorParameter(m_handlePatchLodColor, c_cacheSurfaceColor[surfaceLod]);
+		renderBlock->programParams->endParameters(renderContext);
+
+		T_SAFE_ADDREF(renderBlock->renderTargetSet);
+
+		if (!renderBlockChain)
+		{
+			renderBlock->top = true;
+			renderBlockChain = renderBlock;
+			outRenderBlock = renderBlock;
+		}
+		else
+		{
+			renderBlock->top = false;
+			renderBlockChain->next = renderBlock;
+			renderBlockChain = renderBlock;
+		}
+	}
 
 	// Update cache entry.
 	m_entries[patchId].lod = surfaceLod;
 	m_entries[patchId].renderTargetSet = renderTargetSet;
 
-	outRenderBlock = renderBlock;
 	outTexture = renderTargetSet->getColorTexture(0);
 }
 
