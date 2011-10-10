@@ -112,8 +112,11 @@ void FlashMovieRenderer::renderSprite(
 
 			m_displayRenderer->endMask();
 
-			for (++i; i != layers.end() && i->first <= layer.clipDepth; ++i)
+			for (++i; i != layers.end(); ++i)
 			{
+				if (layer.clipDepth > 0 && i->first > layer.clipDepth)
+					break;
+
 				const FlashDisplayList::Layer& clippedLayer = i->second;
 				if (!clippedLayer.instance)
 					continue;

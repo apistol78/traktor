@@ -1,93 +1,110 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
 			<position>
 				<first>-178</first>
 				<second>88</second>
 			</position>
 			<name>Phi</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
 			<position>
 				<first>-183</first>
 				<second>202</second>
 			</position>
 			<name>Theta</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Sin">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>13</first>
 				<second>52</second>
 			</position>
 		</item>
 		<item type="traktor.render.Sin">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>12</first>
 				<second>176</second>
 			</position>
 		</item>
 		<item type="traktor.render.Cos">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>13</first>
 				<second>236</second>
 			</position>
 		</item>
 		<item type="traktor.render.Cos">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>13</first>
 				<second>107</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>207</first>
 				<second>65</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>205</first>
 				<second>198</second>
 			</position>
 		</item>
 		<item type="traktor.render.MixIn">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>369</first>
 				<second>115</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>514</first>
 				<second>132</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
 			<position>
 				<first>346</first>
 				<second>241</second>
 			</position>
 			<name>Radius</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
-				<first>670</first>
-				<second>153</second>
+				<first>750</first>
+				<second>152</second>
 			</position>
 			<name>Cartesian</name>
+		</item>
+		<item type="traktor.render.Swizzle">
+			<comment/>
+			<position>
+				<first>648</first>
+				<second>152</second>
+			</position>
+			<swizzle>xyz</swizzle>
 		</item>
 	</nodes>
 	<edges>
@@ -224,6 +241,16 @@
 		<item type="traktor.render.Edge">
 			<source>
 				<node ref="/object/nodes/item[9]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[12]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[12]"/>
 				<name>Output</name>
 			</source>
 			<destination>
