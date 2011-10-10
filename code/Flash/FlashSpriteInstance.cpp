@@ -33,7 +33,6 @@ FlashSpriteInstance::FlashSpriteInstance(ActionContext* context, FlashCharacterI
 ,	m_maskCount(0)
 {
 	T_ASSERT (m_sprite->getFrameCount() > 0);
-	updateDisplayList();
 }
 
 void FlashSpriteInstance::destroy()
@@ -244,7 +243,6 @@ void FlashSpriteInstance::preDispatchEvents()
 	// Initialize sprite instance.
 	if (!m_initialized)
 	{
-		eventInit();
 		eventLoad();
 		m_initialized = true;
 	}
@@ -308,14 +306,6 @@ void FlashSpriteInstance::eventLoad()
 {
 	ActionContext* context = getContext();
 	context->pushMovieClip(this);
-
-	// Issue events on "visible" characters.
-	const FlashDisplayList::layer_map_t& layers = m_displayList.getLayers();
-	for (FlashDisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
-	{
-		if (i->second.instance)
-			i->second.instance->eventLoad();
-	}
 
 	// Issue script assigned event.
 	executeScriptEvent("onLoad");
@@ -531,7 +521,7 @@ void FlashSpriteInstance::dereference()
 void FlashSpriteInstance::executeScriptEvent(const std::string& eventName)
 {
 	ActionValue memberValue;
-	if (!getLocalMember(eventName, memberValue))
+	if (!getMember(getContext(), eventName, memberValue))
 		return;
 
 	Ref< ActionFunction > eventFunction = memberValue.getObject< ActionFunction >();

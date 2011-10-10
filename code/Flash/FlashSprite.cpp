@@ -5,6 +5,8 @@
 #include "Flash/FlashSprite.h"
 #include "Flash/FlashSpriteInstance.h"
 #include "Flash/Action/ActionContext.h"
+#include "Flash/Action/ActionFunction.h"
+#include "Flash/Action/ActionValueArray.h"
 
 namespace traktor
 {
@@ -63,19 +65,33 @@ Ref< FlashCharacterInstance > FlashSprite::createInstance(ActionContext* context
 {
 	Ref< FlashSpriteInstance > spriteInstance = new FlashSpriteInstance(context, parent, this);
 
-	// See if MovieClip has another class registered.
-	if (!name.empty())
+	spriteInstance->eventInit();
+
+	std::string spriteClassName;
+	if (context->getMovie()->getExportName(getId(), spriteClassName))
 	{
-		ActionValue movieClipClass;
-		if (context->getGlobal()->getLocalMember(name, movieClipClass))
+		ActionValue spriteClassValue;
+		if (context->getGlobal()->getLocalMember(spriteClassName, spriteClassValue))
 		{
 			ActionValue prototype;
-			movieClipClass.getObject()->getLocalMember("prototype", prototype);
+			spriteClassValue.getObject()->getLocalMember("prototype", prototype);
 			spriteInstance->setMember("prototype", prototype);
 			spriteInstance->setMember("__proto__", prototype);
+
+			Ref< ActionFunction > classConstructor = spriteClassValue.getObjectSafe< ActionFunction >();
+			if (classConstructor)
+			{
+				ActionValueArray args;
+				classConstructor->call(context, spriteInstance, args);
+			}
 		}
-		spriteInstance->setName(name);
+		spriteInstance->setName(spriteClassName);
 	}
+
+	spriteInstance->updateDisplayList();
+
+	if (!name.empty())
+		spriteInstance->setName(name);
 
 	return spriteInstance;
 }

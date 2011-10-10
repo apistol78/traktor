@@ -44,6 +44,16 @@ public:
 	{
 		return min + r.nextFloat() * (max - min);
 	}
+
+	T_MATH_INLINE Type clamp(Type v) const
+	{
+		if (v < min)
+			return min;
+		else if (v > max)
+			return max;
+		else
+			return v;
+	}
 };
 
 }

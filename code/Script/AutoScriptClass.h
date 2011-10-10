@@ -667,7 +667,7 @@ struct MethodTrunk_1 : public IMethod
 	method_t m_method;
 
 	MethodTrunk_1(method_t method)
-	:	m_method(method)
+		:	m_method(method)
 	{
 	}
 
@@ -676,8 +676,33 @@ struct MethodTrunk_1 : public IMethod
 		ReturnType returnValue = (*m_method)(
 			checked_type_cast< ClassType*, false >(object),
 			CastAny< Argument1Type >::get(argv[0])
-		);
+			);
 		return CastAny< ReturnType >::set(returnValue);
+	}
+};
+
+template <
+	typename ClassType,
+	typename Argument1Type
+>
+struct MethodTrunk_1 < ClassType, void, Argument1Type > : public IMethod
+{
+	typedef void (*method_t)(ClassType*, Argument1Type);
+
+	method_t m_method;
+
+	MethodTrunk_1(method_t method)
+	:	m_method(method)
+	{
+	}
+
+	virtual Any invoke(Object* object, const Any* argv) const
+	{
+		(*m_method)(
+			checked_type_cast< ClassType*, false >(object),
+			CastAny< Argument1Type >::get(argv[0])
+		);
+		return Any();
 	}
 };
 
@@ -706,6 +731,33 @@ struct MethodTrunk_2 : public IMethod
 			CastAny< Argument2Type >::get(argv[1])
 		);
 		return CastAny< ReturnType >::set(returnValue);
+	}
+};
+
+template <
+	typename ClassType,
+	typename Argument1Type,
+	typename Argument2Type
+>
+struct MethodTrunk_2 < ClassType, void, Argument1Type, Argument2Type > : public IMethod
+{
+	typedef void (*method_t)(ClassType*, Argument1Type, Argument2Type);
+
+	method_t m_method;
+
+	MethodTrunk_2(method_t method)
+	:	m_method(method)
+	{
+	}
+
+	virtual Any invoke(Object* object, const Any* argv) const
+	{
+		(*m_method)(
+			checked_type_cast< ClassType*, false >(object),
+			CastAny< Argument1Type >::get(argv[0]),
+			CastAny< Argument2Type >::get(argv[1])
+		);
+		return Any();
 	}
 };
 
@@ -741,6 +793,35 @@ struct MethodTrunk_3 : public IMethod
 
 template <
 	typename ClassType,
+	typename Argument1Type,
+	typename Argument2Type,
+	typename Argument3Type
+>
+struct MethodTrunk_3 < ClassType, void, Argument1Type, Argument2Type, Argument3Type > : public IMethod
+{
+	typedef void (*method_t)(ClassType*, Argument1Type, Argument2Type, Argument3Type);
+
+	method_t m_method;
+
+	MethodTrunk_3(method_t method)
+	:	m_method(method)
+	{
+	}
+
+	virtual Any invoke(Object* object, const Any* argv) const
+	{
+		(*m_method)(
+			checked_type_cast< ClassType*, false >(object),
+			CastAny< Argument1Type >::get(argv[0]),
+			CastAny< Argument2Type >::get(argv[1]),
+			CastAny< Argument3Type >::get(argv[2])
+		);
+		return Any();
+	}
+};
+
+template <
+	typename ClassType,
 	typename ReturnType,
 	typename Argument1Type,
 	typename Argument2Type,
@@ -768,6 +849,37 @@ struct MethodTrunk_4 : public IMethod
 			CastAny< Argument4Type >::get(argv[3])
 		);
 		return CastAny< ReturnType >::set(returnValue);
+	}
+};
+
+template <
+	typename ClassType,
+	typename Argument1Type,
+	typename Argument2Type,
+	typename Argument3Type,
+	typename Argument4Type
+>
+struct MethodTrunk_4 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type > : public IMethod
+{
+	typedef void (*method_t)(ClassType*, Argument1Type, Argument2Type, Argument3Type, Argument4Type);
+
+	method_t m_method;
+
+	MethodTrunk_4(method_t method)
+	:	m_method(method)
+	{
+	}
+
+	virtual Any invoke(Object* object, const Any* argv) const
+	{
+		(*m_method)(
+			checked_type_cast< ClassType*, false >(object),
+			CastAny< Argument1Type >::get(argv[0]),
+			CastAny< Argument2Type >::get(argv[1]),
+			CastAny< Argument3Type >::get(argv[2]),
+			CastAny< Argument4Type >::get(argv[3])
+		);
+		return Any();
 	}
 };
 

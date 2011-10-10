@@ -122,6 +122,7 @@ void FlashDisplayList::updateFrame(FlashCharacterInstance* ownerInstance, const 
 					// Use previous instance transform if we're replacing an instance.
 					Matrix33 transform = layer.instance ? layer.instance->getTransform() : Matrix33::identity();
 
+					// Create new instance.
 					layer.id = placeObject.characterId;
 					layer.instance = character->createInstance(m_context, ownerInstance, "");
 					layer.instance->setTransform(transform);

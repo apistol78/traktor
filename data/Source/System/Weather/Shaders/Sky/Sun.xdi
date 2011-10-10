@@ -28,7 +28,7 @@
 				<first>967</first>
 				<second>252</second>
 			</position>
-			<value>2</value>
+			<value>1.8</value>
 		</item>
 		<item type="traktor.render.Clamp">
 			<comment/>
@@ -42,8 +42,8 @@
 		<item type="traktor.render.Normalize">
 			<comment/>
 			<position>
-				<first>436</first>
-				<second>334</second>
+				<first>341</first>
+				<second>389</second>
 			</position>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
@@ -60,8 +60,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>224</first>
-				<second>377</second>
+				<first>129</first>
+				<second>432</second>
 			</position>
 			<name>SunDirection</name>
 			<connectable>true</connectable>
@@ -111,8 +111,8 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>1054</first>
-				<second>469</second>
+				<first>1342</first>
+				<second>473</second>
 			</position>
 			<name>SunBlend</name>
 		</item>
@@ -142,8 +142,8 @@
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>602</first>
-				<second>552</second>
+				<first>498</first>
+				<second>668</second>
 			</position>
 			<swizzle>y</swizzle>
 		</item>
@@ -160,6 +160,21 @@
 			<position>
 				<first>885</first>
 				<second>557</second>
+			</position>
+		</item>
+		<item type="traktor.render.Scalar">
+			<comment/>
+			<position>
+				<first>947</first>
+				<second>403</second>
+			</position>
+			<value>2</value>
+		</item>
+		<item type="traktor.render.Pow">
+			<comment/>
+			<position>
+				<first>1165</first>
+				<second>434</second>
 			</position>
 		</item>
 	</nodes>
@@ -286,16 +301,6 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[12]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[13]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[14]"/>
 				<name>Output</name>
 			</source>
@@ -361,6 +366,36 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[18]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[20]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[21]"/>
+				<name>Exponent</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[12]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[21]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[21]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[13]"/>
 				<name>Input</name>
 			</destination>
 		</item>
