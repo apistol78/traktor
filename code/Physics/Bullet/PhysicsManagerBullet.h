@@ -1,6 +1,10 @@
 #ifndef traktor_physics_PhysicsManagerBullet_H
 #define traktor_physics_PhysicsManagerBullet_H
 
+#if defined(_PS3)
+#	define T_BULLET_USE_SPURS
+#endif
+
 #include "Core/Thread/Semaphore.h"
 #include "Physics/PhysicsManager.h"
 #include "Physics/Bullet/Types.h"
@@ -18,7 +22,7 @@ class btCollisionConfiguration;
 class btCollisionDispatcher;
 class btBroadphaseInterface;
 class btConstraintSolver;
-class btDynamicsWorld;
+class btDiscreteDynamicsWorld;
 struct btBroadphasePair;
 struct btDispatcherInfo;
 
@@ -112,7 +116,7 @@ private:
 	btCollisionDispatcher* m_dispatcher;
 	btBroadphaseInterface* m_broadphase;
 	btConstraintSolver* m_solver;
-	btDynamicsWorld* m_dynamicsWorld;
+	btDiscreteDynamicsWorld* m_dynamicsWorld;
 	Semaphore m_lock;
 	RefArray< StaticBodyBullet > m_staticBodies;
 	RefArray< DynamicBodyBullet > m_dynamicBodies;
@@ -122,7 +126,7 @@ private:
 
 	static void nearCallback(btBroadphasePair& collisionPair, btCollisionDispatcher& dispatcher, const btDispatcherInfo& dispatchInfo);
 
-	virtual void insertBody(btRigidBody* rigidBody);
+	virtual void insertBody(btRigidBody* rigidBody, uint16_t collisionGroup, uint16_t collisionFilter);
 
 	virtual void removeBody(btRigidBody* rigidBody);
 

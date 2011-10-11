@@ -18,7 +18,7 @@ class Joint;
  */
 struct IWorldCallback
 {
-	virtual void insertBody(btRigidBody* rigidBody) = 0;
+	virtual void insertBody(btRigidBody* rigidBody, uint16_t collisionGroup, uint16_t collisionFilter) = 0;
 
 	virtual void removeBody(btRigidBody* rigidBody) = 0;
 
