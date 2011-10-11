@@ -1,38 +1,10 @@
 #include <algorithm>
-
-#if defined(_PS3)
-#	define T_BULLET_USE_SPURS
-#endif
-
 #include <btBulletDynamicsCommon.h>
 #include <BulletCollision/CollisionDispatch/btConvexConvexAlgorithm.h>
-
-#if defined(T_BULLET_USE_SPURS)
-
-// Collision detection.
-#	include <SpuDispatch/BulletCollisionSpursSupport.h>
-#	include <BulletMultiThreaded/SpuGatheringCollisionDispatcher.h>
-
-// Constraint solver.
-#	include <SpuDispatch/BulletPE2ConstraintSolverSpursSupport.h>
-#	include <BulletMultiThreaded/btParallelConstraintSolver.h>
-#	include <BulletCollision/CollisionDispatch/btSimulationIslandManager.h>
-
-// Integration.
-#	include <SpuDispatch/btParallelDynamicsWorld.h>
-#	include <SpuDispatch/BulletPEGatherScatterSpursSupport.h>
-
-#endif
-
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Misc/Save.h"
 #include "Core/Thread/Acquire.h"
-
-#if defined(T_BULLET_USE_SPURS)
-#	include "Core/Thread/Ps3/Spurs/SpursManager.h"
-#endif
-
 #include "Heightfield/Heightfield.h"
 #include "Physics/CollisionListener.h"
 #include "Physics/BoxShapeDesc.h"
@@ -57,6 +29,25 @@
 #include "Physics/Bullet/HeightfieldShapeBullet.h"
 #include "Physics/Bullet/Conversion.h"
 #include "Resource/IResourceManager.h"
+
+#if defined(T_BULLET_USE_SPURS)
+
+#	include "Core/Thread/Ps3/Spurs/SpursManager.h"
+
+// Collision detection.
+#	include <SpuDispatch/BulletCollisionSpursSupport.h>
+#	include <BulletMultiThreaded/SpuGatheringCollisionDispatcher.h>
+
+// Constraint solver.
+#	include <SpuDispatch/BulletPE2ConstraintSolverSpursSupport.h>
+#	include <BulletMultiThreaded/btParallelConstraintSolver.h>
+#	include <BulletCollision/CollisionDispatch/btSimulationIslandManager.h>
+
+// Integration.
+#	include <SpuDispatch/btParallelDynamicsWorld.h>
+#	include <SpuDispatch/BulletPEGatherScatterSpursSupport.h>
+
+#endif
 
 namespace traktor
 {
@@ -960,10 +951,11 @@ void PhysicsManagerBullet::getBodyCount(uint32_t& outCount, uint32_t& outActiveC
 	}
 }
 
-void PhysicsManagerBullet::insertBody(btRigidBody* rigidBody)
+void PhysicsManagerBullet::insertBody(btRigidBody* rigidBody, uint16_t collisionGroup, uint16_t collisionFilter)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	m_dynamicsWorld->addRigidBody(rigidBody);
+	//m_dynamicsWorld->addRigidBody(rigidBody);
+	m_dynamicsWorld->addRigidBody(rigidBody, collisionGroup, collisionFilter);
 }
 
 void PhysicsManagerBullet::removeBody(btRigidBody* rigidBody)

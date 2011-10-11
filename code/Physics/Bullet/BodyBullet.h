@@ -57,7 +57,7 @@ public:
 			return;
 
 		if (enable)
-			m_callback->insertBody(m_body);
+			m_callback->insertBody(m_body, (uint16_t)m_collisionGroup, (uint16_t)m_collisionMask);
 		else
 			m_callback->removeBody(m_body);
 
