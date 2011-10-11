@@ -9,6 +9,7 @@
 #include <Drawing/PixelFormat.h>
 #include <Script/AutoScriptClass.h>
 #include <Script/IScriptContext.h>
+#include <Script/IScriptResource.h>
 #include <Script/Js/ScriptManagerJs.h>
 
 using namespace traktor;
@@ -107,11 +108,17 @@ int main(int argc, const char** argv)
 	colorClass->addProperty(L"a", &Color::a);
 	scriptManager->registerClass(colorClass);
 
-
-	Ref< script::IScriptContext > context = scriptManager->createContext();
-	if (!context->executeScript(ss.str(), false, 0))
+	Ref< script::IScriptResource > scriptResource = scriptManager->compile(ss.str(), false, 0);
+	if (!scriptResource)
 	{
 		log::error << L"Error when compiling script; unable to transform document" << Endl;
+		return false;
+	}
+
+	Ref< script::IScriptContext > context = scriptManager->createContext();
+	if (!context->executeScript(scriptResource, Guid()))
+	{
+		log::error << L"Error when executing script; unable to transform document" << Endl;
 		return false;
 	}
 
@@ -138,7 +145,7 @@ int main(int argc, const char** argv)
 			const Color* color = dynamic_type_cast< const Color* >(ret.getObject());
 			if (color)
 			{
-				image->setPixel(x, y, drawing::Color(
+				image->setPixel(x, y, Color4f(
 					color->r,
 					color->g,
 					color->b,

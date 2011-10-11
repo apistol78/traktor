@@ -14,7 +14,10 @@ uint32_t s_issues = 0;
 
 void recursiveCheckIntegrity(db::Group* sourceGroup)
 {
-	for (RefArray< db::Instance >::iterator i = sourceGroup->getBeginChildInstance(); i != sourceGroup->getEndChildInstance(); ++i)
+	RefArray< db::Instance > childInstances;
+	sourceGroup->getChildInstances(childInstances);
+
+	for (RefArray< db::Instance >::iterator i = childInstances.begin(); i != childInstances.end(); ++i)
 	{
 		Ref< db::Instance > sourceInstance = *i;
 		T_ASSERT (sourceInstance);
@@ -37,7 +40,10 @@ void recursiveCheckIntegrity(db::Group* sourceGroup)
 			));
 	}
 
-	for (RefArray< db::Group >::iterator i = sourceGroup->getBeginChildGroup(); i != sourceGroup->getEndChildGroup(); ++i)
+	RefArray< db::Group > childGroups;
+	sourceGroup->getChildGroups(childGroups);
+
+	for (RefArray< db::Group >::iterator i = childGroups.begin(); i != childGroups.end(); ++i)
 	{
 		Ref< db::Group > sourceChildGroup = *i;
 		T_ASSERT (sourceChildGroup);
