@@ -2,7 +2,7 @@
 #include <rapi.h>
 
 #include <Core/Io/FileSystem.h>
-#include <Core/Io/Stream.h>
+#include <Core/Io/IStream.h>
 #include <Core/Misc/CommandLine.h>
 #include <Core/Log/Log.h>
 
@@ -12,7 +12,7 @@ void deployFile(const Path& sourceFile, const std::wstring& targetPath)
 {
 	log::info << L"Deploying file \"" << sourceFile.getFileName() << L"\"..." << Endl;
 
-	Ref< Stream > file = FileSystem::getInstance().open(sourceFile, File::FmRead);
+	Ref< traktor::IStream > file = FileSystem::getInstance().open(sourceFile, File::FmRead);
 	if (!file)
 	{
 		log::error << L"Unable to open source file \"" << sourceFile.getPathName() << L"\"" << Endl;
@@ -121,7 +121,7 @@ int main(int argc, const char** argv)
 		NULL
 	);
 
-	for (int i = 1; i < cmdLine.getCount(); ++i)
+	for (size_t i = 1; i < cmdLine.getCount(); ++i)
 	{
 		Path sourcePath = cmdLine.getString(i);
 		deployFiles(sourcePath, targetPath, recursive);
