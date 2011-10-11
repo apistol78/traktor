@@ -61,36 +61,38 @@ bool ActiveHtmlFilter::create()
 	m_scriptManager = new script::ScriptManagerJs();
 
 	Ref< script::AutoScriptClass< Global > > globalClass = new script::AutoScriptClass< Global >();
-	globalClass->addMethod< TypeList< Ref< sql::IConnection >, const std::wstring& > >(L"connect", &Global::connect);
-	globalClass->addMethod< TypeList< void, const std::wstring& > >(L"print", &Global::print);
-	globalClass->addMethod< TypeList< void, const std::wstring& > >(L"printLn", &Global::printLn);
+	globalClass->addMethod(L"connect", &Global::connect);
+	globalClass->addMethod(L"print", &Global::print);
+	globalClass->addMethod(L"printLn", &Global::printLn);
 	m_scriptManager->registerClass(globalClass);
 
 	Ref< script::AutoScriptClass< sql::IResultSet > > sqlIResultSetClass = new script::AutoScriptClass< sql::IResultSet >();
-	sqlIResultSetClass->addMethod< TypeList< bool > >(L"next", &sql::IResultSet::next);
-	sqlIResultSetClass->addConstMethod< TypeList< int32_t > >(L"getColumnCount", &sql::IResultSet::getColumnCount);
-	sqlIResultSetClass->addConstMethod< TypeList< std::wstring, int32_t > >(L"getColumnNamei", &sql::IResultSet::getColumnName);
-	//sqlIResultSetClass->addConstMethod< TypeList< int32_t, int32_t > >(L"getColumnType", &sql::IResultSet::getColumnType);
-	sqlIResultSetClass->addConstMethod< TypeList< int32_t, int32_t > >(L"getInt32", &sql::IResultSet::getInt32);
-	//sqlIResultSetClass->addConstMethod< TypeList< int64_t, int32_t > >(L"getInt64", &sql::IResultSet::getInt64);
-	sqlIResultSetClass->addConstMethod< TypeList< float, int32_t > >(L"getFloat", &sql::IResultSet::getFloat);
-	//sqlIResultSetClass->addConstMethod< TypeList< double, int32_t > >(L"getDouble", &sql::IResultSet::getDouble);
-	sqlIResultSetClass->addConstMethod< TypeList< std::wstring, int32_t > >(L"getString", &sql::IResultSet::getString);
-	sqlIResultSetClass->addConstMethod< TypeList< int32_t, const std::wstring& > >(L"findColumn", &sql::IResultSet::findColumn);
-	sqlIResultSetClass->addConstMethod< TypeList< int32_t, const std::wstring& > >(L"getInt32ByName", &sql::IResultSet::getInt32);
-	//sqlIResultSetClass->addConstMethod< TypeList< int64_t, const std::wstring& > >(L"getInt64ByName", &sql::IResultSet::getInt64);
-	sqlIResultSetClass->addConstMethod< TypeList< float, const std::wstring& > >(L"getFloatByName", &sql::IResultSet::getFloat);
-	//sqlIResultSetClass->addConstMethod< TypeList< double, const std::wstring& > >(L"getDoubleByName", &sql::IResultSet::getDouble);
-	sqlIResultSetClass->addConstMethod< TypeList< std::wstring, const std::wstring& > >(L"getStringByName", &sql::IResultSet::getString);
+	sqlIResultSetClass->addMethod(L"next", &sql::IResultSet::next);
+	sqlIResultSetClass->addMethod(L"getColumnCount", &sql::IResultSet::getColumnCount);
+	sqlIResultSetClass->addMethod(L"getColumnNamei", &sql::IResultSet::getColumnName);
+
+	////sqlIResultSetClass->addMethod(L"getColumnType", &sql::IResultSet::getColumnType);
+	sqlIResultSetClass->addMethod< int32_t, int32_t >(L"getInt32", &sql::IResultSet::getInt32);
+	sqlIResultSetClass->addMethod< int64_t, int32_t >(L"getInt64", &sql::IResultSet::getInt64);
+	sqlIResultSetClass->addMethod< float, int32_t >(L"getFloat", &sql::IResultSet::getFloat);
+	sqlIResultSetClass->addMethod< double, int32_t >(L"getDouble", &sql::IResultSet::getDouble);
+	sqlIResultSetClass->addMethod< std::wstring, int32_t >(L"getString", &sql::IResultSet::getString);
+	sqlIResultSetClass->addMethod< int32_t, const std::wstring& >(L"findColumn", &sql::IResultSet::findColumn);
+	sqlIResultSetClass->addMethod< int32_t, const std::wstring& >(L"getInt32ByName", &sql::IResultSet::getInt32);
+	sqlIResultSetClass->addMethod< int64_t, const std::wstring& >(L"getInt64ByName", &sql::IResultSet::getInt64);
+	sqlIResultSetClass->addMethod< float, const std::wstring& >(L"getFloatByName", &sql::IResultSet::getFloat);
+	sqlIResultSetClass->addMethod< double, const std::wstring& >(L"getDoubleByName", &sql::IResultSet::getDouble);
+	sqlIResultSetClass->addMethod< std::wstring, const std::wstring& >(L"getStringByName", &sql::IResultSet::getString);
+
 	m_scriptManager->registerClass(sqlIResultSetClass);
 
 	Ref< script::AutoScriptClass< sql::IConnection > > sqlIConnectionClass = new script::AutoScriptClass< sql::IConnection >();
-	sqlIConnectionClass->addMethod< TypeList< bool, const std::wstring& > >(L"connect", &sql::IConnection::connect);
-	sqlIConnectionClass->addMethod< TypeList< void > >(L"disconnect", &sql::IConnection::disconnect);
-	sqlIConnectionClass->addMethod< TypeList< Ref< sql::IResultSet >, const std::wstring& > >(L"executeQuery", &sql::IConnection::executeQuery);
-	sqlIConnectionClass->addMethod< TypeList< int32_t, const std::wstring& > >(L"executeUpdate", &sql::IConnection::executeUpdate);
-	sqlIConnectionClass->addMethod< TypeList< int32_t > >(L"lastInsertId", &sql::IConnection::lastInsertId);
-	sqlIConnectionClass->addMethod< TypeList< bool, const std::wstring& > >(L"tableExists", &sql::IConnection::tableExists);
+	sqlIConnectionClass->addMethod(L"connect", &sql::IConnection::connect);
+	sqlIConnectionClass->addMethod(L"disconnect", &sql::IConnection::disconnect);
+	sqlIConnectionClass->addMethod(L"executeQuery", &sql::IConnection::executeQuery);
+	sqlIConnectionClass->addMethod(L"executeUpdate", &sql::IConnection::executeUpdate);
+	sqlIConnectionClass->addMethod(L"lastInsertId", &sql::IConnection::lastInsertId);
+	sqlIConnectionClass->addMethod(L"tableExists", &sql::IConnection::tableExists);
 	m_scriptManager->registerClass(sqlIConnectionClass);
 
 	return true;
@@ -127,7 +129,11 @@ std::wstring ActiveHtmlFilter::generate(const std::wstring& source) const
 
 		std::wstring sc = source.substr(s + 5, e - s - 5);
 
-		if (!scriptContext->executeScript(sc, false, 0))
+		Ref< script::IScriptResource > scriptResource = m_scriptManager->compile(sc, false, 0);
+		if (!scriptResource)
+			return c_scriptExecuteErrorPage;
+
+		if (!scriptContext->executeScript(scriptResource, Guid()))
 			return c_scriptExecuteErrorPage;
 
 		offset = e + 2;

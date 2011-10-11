@@ -130,9 +130,16 @@ int32_t Transformer::transform(xml::Document* document)
 {
 	Ref< script::IScriptContext > context = m_scriptManager->createContext();
 
-	if (!context->executeScript(m_script, false, 0))
+	Ref< script::IScriptResource > resource = m_scriptManager->compile(m_script, false, 0);
+	if (!resource)
 	{
 		log::error << L"Error when compiling script; unable to transform document" << Endl;
+		return false;
+	}
+
+	if (!context->executeScript(resource, Guid()))
+	{
+		log::error << L"Error when executing script; unable to transform document" << Endl;
 		return false;
 	}
 
