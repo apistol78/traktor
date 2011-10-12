@@ -40,7 +40,7 @@ Ref< const IActionVMImage > ActionVM1::load(BitReader& br) const
 		}
 
 #if defined(_DEBUG)
-		log::debug << pc << L": " << mbstows(c_operationInfos[opcode].name) << Endl;
+		log::debug << uint32_t(pc) << L": " << mbstows(c_operationInfos[opcode].name) << Endl;
 #endif
 
 		if (opcode == AopEnd)
