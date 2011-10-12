@@ -65,13 +65,6 @@ int32_t PhysicsServer::reconfigure(const Settings* settings)
 void PhysicsServer::update()
 {
 	m_physicsManager->update();
-/*
-#if defined(_DEBUG)
-	uint32_t totalCount = 0, activeCount = 0;
-	m_physicsManager->getBodyCount(totalCount, activeCount);
-	log::debug << L"Physics: " << activeCount << L" / " << totalCount << Endl;
-#endif
-*/
 }
 
 physics::PhysicsManager* PhysicsServer::getPhysicsManager()

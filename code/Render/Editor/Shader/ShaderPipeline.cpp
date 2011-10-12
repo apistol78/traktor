@@ -3,6 +3,8 @@
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
+#include "Core/Serialization/MemberComposite.h"
+#include "Core/Serialization/MemberStl.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
@@ -15,6 +17,7 @@
 #include "Editor/IPipelineReport.h"
 #include "Editor/IPipelineSettings.h"
 #include "Render/IProgramCompiler.h"
+#include "Render/IProgramHints.h"
 #include "Render/Resource/FragmentLinker.h"
 #include "Render/Resource/ProgramResource.h"
 #include "Render/Resource/ShaderResource.h"
@@ -27,6 +30,7 @@
 #include "Render/Editor/Shader/ShaderGraphStatic.h"
 #include "Render/Editor/Shader/ShaderGraphTechniques.h"
 #include "Render/Editor/Shader/ShaderGraphValidator.h"
+#include "Xml/XmlDeserializer.h"
 #include "Xml/XmlSerializer.h"
 
 namespace traktor
@@ -61,6 +65,7 @@ struct BuildCombinationTask : public Object
 	ShaderResource::Technique* shaderResourceTechnique;
 	ShaderResource::Combination* shaderResourceCombination;
 	render::IProgramCompiler* programCompiler;
+	render::IProgramHints* programHints;
 	render::IProgramCompiler::Stats stats;
 	bool frequentUniformsAsLinear;
 	int optimize;
@@ -125,6 +130,7 @@ struct BuildCombinationTask : public Object
 			programGraph,
 			optimize,
 			validate,
+			programHints,
 			&stats
 		);
 		if (!programResource)
@@ -149,9 +155,122 @@ struct BuildCombinationTask : public Object
 	}
 };
 
+class CachedProgramHints : public IProgramHints
+{
+	T_RTTI_CLASS;
+
+public:
+	CachedProgramHints(const std::wstring& parametersFile)
+	:	m_parametersFile(parametersFile)
+	,	m_next(0)
+	{
+		Ref< IStream > file = FileSystem::getInstance().open(m_parametersFile, File::FmRead);
+		if (file)
+		{
+			xml::XmlDeserializer s(file);
+			s >> MemberStlMap<
+				std::wstring,
+				ParameterPosition,
+				MemberStlPair<
+					std::wstring,
+					ParameterPosition,
+					Member< std::wstring >,
+					MemberComposite< ParameterPosition >
+				>
+			>(L"parameters", m_parameters);
+			file->close();
+		}
+	}
+
+	virtual ~CachedProgramHints()
+	{
+		Ref< IStream > file = FileSystem::getInstance().open(m_parametersFile, File::FmWrite);
+		if (file)
+		{
+			xml::XmlSerializer s(file);
+			s >> MemberStlMap<
+				std::wstring,
+				ParameterPosition,
+				MemberStlPair<
+					std::wstring,
+					ParameterPosition,
+					Member< std::wstring >,
+					MemberComposite< ParameterPosition >
+				>
+			>(L"parameters", m_parameters);
+			file->close();
+		}
+	}
+
+	virtual uint32_t getParameterPosition(const std::wstring& name, uint32_t size, uint32_t maxPosition)
+	{
+		std::map< std::wstring, ParameterPosition >::iterator i = m_parameters.find(name);
+		if (i != m_parameters.end())
+		{
+			i->second.hit++;
+			return i->second.position;
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 35, ShaderPipeline, editor::IPipeline)
+		ParameterPosition& pp = m_parameters[name];
+		pp.position = 0;
+		pp.size = size;
+		pp.hit = 1;
+
+		if (m_next + size <= maxPosition + 1)
+		{
+			// Still enough room for parameter.
+			pp.position = m_next;
+			m_next += size;
+			return pp.position;
+		}
+		else
+		{
+			// Not enough room for parameter; find parameter which are used less and reuse it's position.
+			uint32_t minHit = std::numeric_limits< uint32_t >::max();
+			uint32_t minPosition = maxPosition;
+
+			for (std::map< std::wstring, ParameterPosition >::const_iterator i = m_parameters.begin(); i != m_parameters.end(); ++i)
+			{
+				if (size <= i->second.size && i->second.hit < minHit)
+				{
+					minHit = i->second.hit;
+					minPosition = i->second.position;
+				}
+			}
+
+			pp.position = minPosition;
+			pp.hit = minHit + 1;
+		}
+
+		return pp.position;
+	}
+
+private:
+	struct ParameterPosition
+	{
+		uint32_t position;
+		uint32_t size;
+		uint32_t hit;
+
+		bool serialize(ISerializer& s)
+		{
+			s >> Member< uint32_t >(L"position", position);
+			s >> Member< uint32_t >(L"size", size);
+			s >> Member< uint32_t >(L"hit", hit);
+			return true;
+		}
+	};
+
+	std::wstring m_parametersFile;
+	std::map< std::wstring, ParameterPosition > m_parameters;
+	uint32_t m_next;
+};
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.CachedProgramHints", CachedProgramHints, IProgramHints)
+
+		}
+
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 38, ShaderPipeline, editor::IPipeline)
 
 ShaderPipeline::ShaderPipeline()
 :	m_frequentUniformsAsLinear(false)
@@ -185,12 +304,16 @@ bool ShaderPipeline::create(const editor::IPipelineSettings* settings)
 	m_debugCompleteGraphs = settings->getProperty< PropertyBoolean >(L"ShaderPipeline.DebugCompleteGraphs", false);
 	m_debugPath = settings->getProperty< PropertyString >(L"ShaderPipeline.DebugPath", L"");
 
+	std::wstring parametersFile = settings->getProperty< PropertyString >(L"ShaderPipeline.ParametersFile", L"data/temp/Parameters.txt");
+	m_programHints = new CachedProgramHints(parametersFile);
+
 	log::debug << L"Using optimization level " << m_optimize << (m_validate ? L" with validation" : L" without validation") << Endl;
 	return true;
 }
 
 void ShaderPipeline::destroy()
 {
+	m_programHints = 0;
 	m_programCompiler = 0;
 }
 
@@ -331,6 +454,7 @@ bool ShaderPipeline::buildOutput(
 			task->shaderResourceCombination = new ShaderResource::Combination;
 			task->shaderResourceCombination->parameterValue = 0;
 			task->programCompiler = m_programCompiler;
+			task->programHints = m_programHints;
 			task->frequentUniformsAsLinear = m_frequentUniformsAsLinear;
 			task->optimize = m_optimize;
 			task->validate = m_validate;

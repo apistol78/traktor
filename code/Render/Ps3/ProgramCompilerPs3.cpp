@@ -286,6 +286,7 @@ Ref< ProgramResource > ProgramCompilerPs3::compile(
 	const ShaderGraph* shaderGraph,
 	int32_t optimize,
 	bool validate,
+	IProgramHints* hints,
 	Stats* outStats
 ) const
 {

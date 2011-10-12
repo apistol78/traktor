@@ -8,8 +8,9 @@ namespace traktor
 	namespace render
 	{
 
-class ShaderGraph;
 class HlslProgram;
+class IProgramHints;
+class ShaderGraph;
 
 /*!
  * \ingroup DX9 Xbox360
@@ -19,6 +20,7 @@ class Hlsl
 public:
 	bool generate(
 		const ShaderGraph* shaderGraph,
+		IProgramHints* programHints,
 		HlslProgram& outProgram
 	);
 };

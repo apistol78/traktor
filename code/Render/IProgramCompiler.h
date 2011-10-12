@@ -16,6 +16,7 @@ namespace traktor
 	namespace render
 	{
 
+class IProgramHints;
 class ProgramResource;
 class ShaderGraph;
 
@@ -51,6 +52,7 @@ public:
 	 * \param shaderGraph Program shader graph.
 	 * \param optimize Optimization level (0-4; 0 = No optimization; 4 = Maximum optimization).
 	 * \param validate Validate compiled program.
+	 * \param hints Optional compiler hints.
 	 * \param outStats Optional stats.
 	 * \return Compiled program resource.
 	 */
@@ -58,7 +60,8 @@ public:
 		const ShaderGraph* shaderGraph,
 		int32_t optimize,
 		bool validate,
-		Stats* outStats = 0
+		IProgramHints* hints,
+		Stats* outStats
 	) const = 0;
 };
 

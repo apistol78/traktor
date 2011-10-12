@@ -250,7 +250,7 @@ void TerrainEntity::render(
 		int patchLod = int(lodDistance1 * c_patchLodSteps);
 		int surfaceLod = int(lodDistance2 * c_surfaceLodSteps);
 
-		TerrainRenderBlock* renderBlock = renderContext->alloc< TerrainRenderBlock >();
+		TerrainRenderBlock* renderBlock = renderContext->alloc< TerrainRenderBlock >("Terrain patch");
 
 		// Update surface cache.
 		if (updateCache)

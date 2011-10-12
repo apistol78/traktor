@@ -219,7 +219,7 @@ void TerrainSurfaceCache::get(
 		if (!shader.validate())
 			return;
 
-		TerrainSurfaceRenderBlock* renderBlock = renderContext->alloc< TerrainSurfaceRenderBlock >();
+		TerrainSurfaceRenderBlock* renderBlock = renderContext->alloc< TerrainSurfaceRenderBlock >("Terrain surface");
 
 		renderBlock->screenRenderer = m_screenRenderer;
 		renderBlock->renderTargetSet = renderTargetSet;
