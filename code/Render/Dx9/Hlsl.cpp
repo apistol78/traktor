@@ -1,10 +1,10 @@
-#include "Render/Dx9/Hlsl.h"
-#include "Render/Dx9/HlslProgram.h"
-#include "Render/Dx9/HlslContext.h"
-#include "Render/Shader/ShaderGraph.h"
-#include "Render/Shader/Nodes.h"
-#include "Core/Misc/String.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/String.h"
+#include "Render/Shader/Nodes.h"
+#include "Render/Shader/ShaderGraph.h"
+#include "Render/Dx9/Hlsl.h"
+#include "Render/Dx9/HlslContext.h"
+#include "Render/Dx9/HlslProgram.h"
 
 namespace traktor
 {
@@ -13,6 +13,7 @@ namespace traktor
 
 bool Hlsl::generate(
 	const ShaderGraph* shaderGraph,
+	IProgramHints* programHints,
 	HlslProgram& outProgram
 )
 {
@@ -28,7 +29,7 @@ bool Hlsl::generate(
 		return false;
 	}
 
-	HlslContext cx(shaderGraph);
+	HlslContext cx(shaderGraph, programHints);
 
 	if (!cx.getEmitter().emit(cx, pixelOutputs[0]))
 	{

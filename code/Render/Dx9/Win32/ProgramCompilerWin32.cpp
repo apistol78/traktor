@@ -164,6 +164,7 @@ Ref< ProgramResource > ProgramCompilerWin32::compile(
 	const ShaderGraph* shaderGraph,
 	int32_t optimize,
 	bool validate,
+	IProgramHints* hints,
 	Stats* outStats
 ) const
 {
@@ -172,7 +173,7 @@ Ref< ProgramResource > ProgramCompilerWin32::compile(
 
 	// Generate HLSL shaders.
 	HlslProgram program;
-	if (!Hlsl().generate(shaderGraph, program))
+	if (!Hlsl().generate(shaderGraph, hints, program))
 	{
 		log::error << L"ProgramCompilerWin32 failed; unable to generate HLSL" << Endl;
 		return 0;

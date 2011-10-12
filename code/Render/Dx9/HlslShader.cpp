@@ -1,6 +1,7 @@
-#include "Render/Dx9/HlslShader.h"
-#include "Core/Misc/Adler32.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/Adler32.h"
+#include "Render/IProgramHints.h"
+#include "Render/Dx9/HlslShader.h"
 
 namespace traktor
 {
@@ -13,8 +14,9 @@ const uint32_t c_registerInternalTargetSize = 0;
 
 		}
 
-HlslShader::HlslShader(ShaderType shaderType)
+HlslShader::HlslShader(ShaderType shaderType, IProgramHints* programHints)
 :	m_shaderType(shaderType)
+,	m_programHints(programHints)
 ,	m_uniformAllocated(256, false)
 ,	m_nextTemporaryVariable(0)
 ,	m_nextStage(0)
@@ -134,31 +136,24 @@ uint32_t HlslShader::addUniform(const std::wstring& uniform, HlslType type, uint
 	// Allocate register with float uniforms.
 	if (elementCount > 0)
 	{
-		int32_t fromIndex, toIndex;
+		// Ensure index are within limits.
+		int32_t fromIndex = 0;
+		int32_t toIndex = (m_shaderType == StVertex ? 256 : 224) - elementCount;
 
-		if (count <= 1)	// Non-indexed uniform are placed at the lower half.
+		if (m_programHints)
+			index = (int32_t)m_programHints->getParameterPosition(uniform, elementCount, toIndex);
+		else
 		{
-			fromIndex = 0;
-			toIndex = 128 - elementCount;
-		}
-		else	// Upper half.
-		{
-			fromIndex = 128;
-			toIndex = (m_shaderType == StVertex ? 256 : 224) - elementCount;
-			if (toIndex < fromIndex)
-			{
-				log::error << L"Indexed array out-of-range; too many elements " << elementCount << Endl;
-				T_FATAL_ERROR;
-			}
+			// No hints provided; use hash of parameter name to get at least some locality.
+			Adler32 cs;
+			cs.begin();
+			cs.feed(uniform.c_str(), uniform.length() * sizeof(wchar_t));
+			cs.end();
+			index = (int32_t)cs.get();
+			index = fromIndex + index % (toIndex - fromIndex + 1);
 		}
 
-		Adler32 cs;
-		cs.begin();
-		cs.feed(uniform.c_str(), uniform.length() * sizeof(wchar_t));
-		cs.end();
-
-		index = fromIndex + cs.get() % (toIndex - fromIndex + 1);
-
+		// Ensure index isn't colliding.
 		for (;;)
 		{
 			bool occupied = false;

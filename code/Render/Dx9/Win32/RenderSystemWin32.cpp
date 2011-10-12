@@ -215,6 +215,10 @@ bool RenderSystemWin32::create(const RenderSystemCreateDesc& desc)
 	m_vertexDeclCache = new VertexDeclCache(m_d3dDevice);
 	m_maxAnisotropy = desc.maxAnisotropy;
 
+#if defined(T_USE_RENDER_MARKERS)
+	log::warning << L"Render markers enabled; should be disabled for RTM builds" << Endl;
+#endif
+
 	return true;
 }
 

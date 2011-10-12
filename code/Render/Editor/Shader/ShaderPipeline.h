@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RENDER_EDITOR_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -17,6 +17,7 @@ namespace traktor
 	{
 
 class IProgramCompiler;
+class IProgramHints;
 
 class T_DLLCLASS ShaderPipeline : public editor::IPipeline
 {
@@ -50,6 +51,7 @@ public:
 
 private:
 	Ref< IProgramCompiler > m_programCompiler;
+	Ref< IProgramHints > m_programHints;
 	bool m_frequentUniformsAsLinear;
 	int32_t m_optimize;
 	bool m_validate;

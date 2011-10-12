@@ -10,10 +10,11 @@ namespace traktor
 	namespace render
 	{
 
-class ShaderGraph;
-class InputPin;
-class OutputPin;
 class HlslVariable;
+class InputPin;
+class IProgramHints;
+class OutputPin;
+class ShaderGraph;
 
 /*!
  * \ingroup DX9 Xbox360
@@ -21,7 +22,7 @@ class HlslVariable;
 class HlslContext
 {
 public:
-	HlslContext(const ShaderGraph* shaderGraph);
+	HlslContext(const ShaderGraph* shaderGraph, IProgramHints* programHints);
 
 	HlslVariable* emitInput(const InputPin* inputPin);
 
