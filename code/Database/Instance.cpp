@@ -160,62 +160,60 @@ bool Instance::checkout()
 
 bool Instance::commit(uint32_t flags)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	T_ASSERT (m_providerInstance);
-
-	if ((flags & CfKeepCheckedOut) != 0 && (m_transactionFlags & TfRemoved) != 0)
 	{
-		log::error << L"Instance commit failed; cannot keep checked out as instance was removed" << Endl;
-		return false;
-	}
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+		T_ASSERT (m_providerInstance);
 
-	if (!m_providerInstance->commitTransaction())
-	{
-		log::error << L"Instance commit failed; commitTransaction failed" << Endl;
-		return false;
-	}
-
-	if ((flags & CfKeepCheckedOut) == 0)
-	{
-		if (!m_providerInstance->closeTransaction())
+		if ((flags & CfKeepCheckedOut) != 0 && (m_transactionFlags & TfRemoved) != 0)
 		{
-			log::error << L"Instance commit failed; closeTransaction failed" << Endl;
+			log::error << L"Instance commit failed; cannot keep checked out as instance was removed" << Endl;
 			return false;
+		}
+
+		if (!m_providerInstance->commitTransaction())
+		{
+			log::error << L"Instance commit failed; commitTransaction failed" << Endl;
+			return false;
+		}
+
+		if ((flags & CfKeepCheckedOut) == 0)
+		{
+			if (!m_providerInstance->closeTransaction())
+			{
+				log::error << L"Instance commit failed; closeTransaction failed" << Endl;
+				return false;
+			}
+		}
+
+		if ((m_transactionFlags & TfGuidChanged) != 0)
+		{
+			m_guid = m_providerInstance->getGuid();
+			m_cachedFlags |= IchGuid;
+		}
+
+		if ((m_transactionFlags & TfNameChanged) != 0)
+		{
+			m_name = m_providerInstance->getName();
+			m_cachedFlags |= IchName;
 		}
 	}
 
-	if ((m_transactionFlags & TfCreated) != 0)
-	{
-		if (m_eventListener)
-			m_eventListener->instanceEventCreated(this);
-	}
-
-	if ((m_transactionFlags & TfGuidChanged) != 0)
-	{
-		m_guid = m_providerInstance->getGuid();
-		m_cachedFlags |= IchGuid;
-
-		if (m_eventListener)
-			m_eventListener->instanceEventGuidChanged(this, m_transactionGuid);
-	}
-
-	if ((m_transactionFlags & TfNameChanged) != 0)
-	{
-		m_name = m_providerInstance->getName();
-		m_cachedFlags |= IchName;
-
-		if (m_eventListener)
-			m_eventListener->instanceEventRenamed(this, m_transactionName);
-	}
-
-	if ((m_transactionFlags & TfRemoved) != 0)
-	{
-		if (m_eventListener)
-			m_eventListener->instanceEventRemoved(this);
-	}
-
 	if (m_eventListener)
+	{
+		if ((m_transactionFlags & TfCreated) != 0)
+			m_eventListener->instanceEventCreated(this);
+
+		if ((m_transactionFlags & TfGuidChanged) != 0)
+			m_eventListener->instanceEventGuidChanged(this, m_transactionGuid);
+
+		if ((m_transactionFlags & TfNameChanged) != 0)
+			m_eventListener->instanceEventRenamed(this, m_transactionName);
+
+		if ((m_transactionFlags & TfRemoved) != 0)
+			m_eventListener->instanceEventRemoved(this);
+
 		m_eventListener->instanceEventCommitted(this);
+	}
 
 	if ((m_transactionFlags & TfRemoved) != 0)
 		internalDestroy();
