@@ -1,6 +1,7 @@
 #include <cmath>
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Math/Const.h"
+#include "Flash/Action/ActionValue.h"
 #include "Flash/Action/Classes/Rectangle.h"
 
 namespace traktor
@@ -8,10 +9,10 @@ namespace traktor
 	namespace flash
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.Rectangle", Rectangle, ActionObject)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.Rectangle", Rectangle, ActionObjectRelay)
 
 Rectangle::Rectangle()
-:	ActionObject("flash.geom.Rectangle")
+:	ActionObjectRelay("flash.geom.Rectangle")
 ,	left(0.0)
 ,	top(0.0)
 ,	width(0.0)
@@ -20,7 +21,7 @@ Rectangle::Rectangle()
 }
 
 Rectangle::Rectangle(avm_number_t left_, avm_number_t top_, avm_number_t width_, avm_number_t height_)
-:	ActionObject("flash.geom.Rectangle")
+:	ActionObjectRelay("flash.geom.Rectangle")
 ,	left(left_)
 ,	top(top_)
 ,	width(width_)

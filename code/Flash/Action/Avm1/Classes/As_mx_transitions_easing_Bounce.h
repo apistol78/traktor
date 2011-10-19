@@ -13,11 +13,11 @@ class As_mx_transitions_easing_Bounce : public ActionClass
 	T_RTTI_CLASS;
 
 public:
-	As_mx_transitions_easing_Bounce();
+	As_mx_transitions_easing_Bounce(ActionContext* context);
 
-	virtual Ref< ActionObject > alloc(ActionContext* context);
+	virtual void init(ActionObject* self, const ActionValueArray& args) const;
 
-	virtual void init(ActionContext* context, ActionObject* self, const ActionValueArray& args);
+	virtual void coerce(ActionObject* self) const;
 
 private:
 	void Bounce_easeIn(CallArgs& ca);

@@ -9,13 +9,13 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsBoolean", AsBoolean, ActionClass)
 
-AsBoolean::AsBoolean()
-:	ActionClass("Boolean")
+AsBoolean::AsBoolean(ActionContext* context)
+:	ActionClass(context, "Boolean")
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember("toString", ActionValue(createNativeFunction(this, &AsBoolean::Boolean_toString)));
-	prototype->setMember("valueOf", ActionValue(createNativeFunction(this, &AsBoolean::Boolean_valueOf)));
+	prototype->setMember("toString", ActionValue(createNativeFunction(context, this, &AsBoolean::Boolean_toString)));
+	prototype->setMember("valueOf", ActionValue(createNativeFunction(context, this, &AsBoolean::Boolean_valueOf)));
 
 	prototype->setMember("constructor", ActionValue(this));
 	prototype->setReadOnly();
@@ -23,15 +23,19 @@ AsBoolean::AsBoolean()
 	setMember("prototype", ActionValue(prototype));
 }
 
-Ref< ActionObject > AsBoolean::alloc(ActionContext* context)
+void AsBoolean::init(ActionObject* self, const ActionValueArray& args) const
 {
-	return new Boolean(false);
+	Ref< Boolean > b;
+	if (args.size() > 0)
+		b = new Boolean(args[0].getBoolean());
+	else
+		b = new Boolean(false);
+	self->setRelay(b);
 }
 
-void AsBoolean::init(ActionContext* context, ActionObject* self, const ActionValueArray& args)
+void AsBoolean::coerce(ActionObject* self) const
 {
-	if (args.size() > 0)
-		checked_type_cast< Boolean* >(self)->set(args[0].getBoolean());
+	T_FATAL_ERROR;
 }
 
 std::string AsBoolean::Boolean_toString(Boolean* self) const

@@ -27,13 +27,14 @@ class T_DLLCLASS ActionFunction1 : public ActionFunction
 
 public:
 	ActionFunction1(
+		ActionContext* context,
 		const std::string& name,
 		const IActionVMImage* image,
 		uint16_t argumentCount,
 		ActionDictionary* dictionary
 	);
 
-	virtual ActionValue call(ActionContext* context, ActionObject* self, const ActionValueArray& args);
+	virtual ActionValue call(ActionObject* self, const ActionValueArray& args);
 
 	virtual ActionValue call(ActionFrame* callerFrame, ActionObject* self);
 

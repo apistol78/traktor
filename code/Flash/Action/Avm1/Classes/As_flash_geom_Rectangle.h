@@ -19,11 +19,11 @@ class As_flash_geom_Rectangle : public ActionClass
 	T_RTTI_CLASS;
 
 public:
-	As_flash_geom_Rectangle();
+	As_flash_geom_Rectangle(ActionContext* context);
 
-	virtual Ref< ActionObject > alloc(ActionContext* context);
+	virtual void init(ActionObject* self, const ActionValueArray& args) const;
 
-	virtual void init(ActionContext* context, ActionObject* self, const ActionValueArray& args);
+	virtual void coerce(ActionObject* self) const;
 
 private:
 	Ref< Rectangle > Rectangle_clone(const Rectangle* self) const;

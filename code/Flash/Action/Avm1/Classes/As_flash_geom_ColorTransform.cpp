@@ -10,60 +10,73 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.As_flash_geom_ColorTransform", As_flash_geom_ColorTransform, ActionClass)
 
-As_flash_geom_ColorTransform::As_flash_geom_ColorTransform()
-:	ActionClass("flash.geom.Transform")
+As_flash_geom_ColorTransform::As_flash_geom_ColorTransform(ActionContext* context)
+:	ActionClass(context, "flash.geom.Transform")
 {
-	Ref< ActionObject > prototype = new ActionObject("Object");
+	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->addProperty("alphaMultiplier", createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_get_alphaMultiplier), createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_set_alphaMultiplier));
-	prototype->addProperty("alphaOffset", createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_get_alphaOffset), createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_set_alphaOffset));
-	prototype->addProperty("blueMultiplier", createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_get_blueMultiplier), createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_set_blueMultiplier));
-	prototype->addProperty("blueOffset", createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_get_blueOffset), createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_set_blueOffset));
-	prototype->addProperty("greenMultiplier", createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_get_greenMultiplier), createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_set_greenMultiplier));
-	prototype->addProperty("greenOffset", createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_get_greenOffset), createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_set_greenOffset));
-	prototype->addProperty("redMultiplier", createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_get_redMultiplier), createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_set_redMultiplier));
-	prototype->addProperty("redOffset", createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_get_redOffset), createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_set_redOffset));
-	prototype->addProperty("rgb", createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_get_rgb), createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_set_rgb));
+	prototype->addProperty("alphaMultiplier", createNativeFunction(context, this, &As_flash_geom_ColorTransform::ColorTransform_get_alphaMultiplier), createNativeFunction(context, this, &As_flash_geom_ColorTransform::ColorTransform_set_alphaMultiplier));
+	prototype->addProperty("alphaOffset", createNativeFunction(context, this, &As_flash_geom_ColorTransform::ColorTransform_get_alphaOffset), createNativeFunction(context, this, &As_flash_geom_ColorTransform::ColorTransform_set_alphaOffset));
+	prototype->addProperty("blueMultiplier", createNativeFunction(context, this, &As_flash_geom_ColorTransform::ColorTransform_get_blueMultiplier), createNativeFunction(context, this, &As_flash_geom_ColorTransform::ColorTransform_set_blueMultiplier));
+	prototype->addProperty("blueOffset", createNativeFunction(context, this, &As_flash_geom_ColorTransform::ColorTransform_get_blueOffset), createNativeFunction(context, this, &As_flash_geom_ColorTransform::ColorTransform_set_blueOffset));
+	prototype->addProperty("greenMultiplier", createNativeFunction(context, this, &As_flash_geom_ColorTransform::ColorTransform_get_greenMultiplier), createNativeFunction(context, this, &As_flash_geom_ColorTransform::ColorTransform_set_greenMultiplier));
+	prototype->addProperty("greenOffset", createNativeFunction(context, this, &As_flash_geom_ColorTransform::ColorTransform_get_greenOffset), createNativeFunction(context, this, &As_flash_geom_ColorTransform::ColorTransform_set_greenOffset));
+	prototype->addProperty("redMultiplier", createNativeFunction(context, this, &As_flash_geom_ColorTransform::ColorTransform_get_redMultiplier), createNativeFunction(context, this, &As_flash_geom_ColorTransform::ColorTransform_set_redMultiplier));
+	prototype->addProperty("redOffset", createNativeFunction(context, this, &As_flash_geom_ColorTransform::ColorTransform_get_redOffset), createNativeFunction(context, this, &As_flash_geom_ColorTransform::ColorTransform_set_redOffset));
+	prototype->addProperty("rgb", createNativeFunction(context, this, &As_flash_geom_ColorTransform::ColorTransform_get_rgb), createNativeFunction(context, this, &As_flash_geom_ColorTransform::ColorTransform_set_rgb));
 
 	prototype->setMember("constructor", ActionValue(this));
+	prototype->setMember("__coerce__", ActionValue(this));
+
 	prototype->setReadOnly();
 
 	setMember("prototype", ActionValue(prototype));
 }
 
-Ref< ActionObject > As_flash_geom_ColorTransform::alloc(ActionContext* context)
+void As_flash_geom_ColorTransform::init(ActionObject* self, const ActionValueArray& args) const
 {
 	SwfCxTransform transform;
-
-	transform.red[0] = 1.0f;
-	transform.green[0] = 1.0f;
-	transform.blue[0] = 1.0f;
-	transform.alpha[0] = 1.0f;
-	transform.red[1] = 0.0f;
-	transform.green[1] = 0.0f;
-	transform.blue[1] = 0.0f;
-	transform.alpha[1] = 0.0f;
-
-	return new ColorTransform(transform);
+	if (args.size() >= 8)
+	{
+		transform.red[0] = float(args[0].getNumber());
+		transform.green[0] = float(args[1].getNumber());
+		transform.blue[0] = float(args[2].getNumber());
+		transform.alpha[0] = float(args[3].getNumber());
+		transform.red[1] = float(args[4].getNumber());
+		transform.green[1] = float(args[5].getNumber());
+		transform.blue[1] = float(args[6].getNumber());
+		transform.alpha[1] = float(args[7].getNumber());
+	}
+	self->setRelay(new ColorTransform(transform));
 }
 
-void As_flash_geom_ColorTransform::init(ActionContext* context, ActionObject* self, const ActionValueArray& args)
+void As_flash_geom_ColorTransform::coerce(ActionObject* self) const
 {
-	if (args.size() < 8)
-		return;
+	ActionValue am, ao;
+	ActionValue rm, ro;
+	ActionValue gm, go;
+	ActionValue bm, bo;
+
+	self->getMember(getContext(), "alphaMultiplier", am);
+	self->getMember(getContext(), "alphaOffset", ao);
+	self->getMember(getContext(), "redMultiplier", rm);
+	self->getMember(getContext(), "redOffset", ro);
+	self->getMember(getContext(), "greenMultiplier", gm);
+	self->getMember(getContext(), "greenOffset", go);
+	self->getMember(getContext(), "blueMultiplier", bm);
+	self->getMember(getContext(), "blueOffset", bo);
 
 	SwfCxTransform transform;
+	transform.red[0] = float(rm.getNumber());
+	transform.red[1] = float(ro.getNumber());
+	transform.green[0] = float(gm.getNumber());
+	transform.green[1] = float(go.getNumber());
+	transform.blue[0] = float(bm.getNumber());
+	transform.blue[1] = float(bo.getNumber());
+	transform.alpha[0] = float(am.getNumber());
+	transform.alpha[1] = float(ao.getNumber());
 
-	transform.red[0] = float(args[0].getNumber());
-	transform.green[0] = float(args[1].getNumber());
-	transform.blue[0] = float(args[2].getNumber());
-	transform.alpha[0] = float(args[3].getNumber());
-	transform.red[1] = float(args[4].getNumber());
-	transform.green[1] = float(args[5].getNumber());
-	transform.blue[1] = float(args[6].getNumber());
-	transform.alpha[1] = float(args[7].getNumber());
-
-	checked_type_cast< ColorTransform* >(self)->setTransform(transform);
+	self->setRelay(new ColorTransform(transform));
 }
 
 avm_number_t As_flash_geom_ColorTransform::ColorTransform_get_alphaMultiplier(ColorTransform* self) const

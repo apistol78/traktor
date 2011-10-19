@@ -18,11 +18,11 @@ class AsSecurity : public ActionClass
 	T_RTTI_CLASS;
 
 public:
-	AsSecurity();
+	AsSecurity(ActionContext* context);
 
-	virtual Ref< ActionObject > alloc(ActionContext* context);
+	virtual void init(ActionObject* self, const ActionValueArray& args) const;
 
-	virtual void init(ActionContext* context, ActionObject* self, const ActionValueArray& args);
+	virtual void coerce(ActionObject* self) const;
 
 private:
 	void Security_allowDomain(CallArgs& ca);

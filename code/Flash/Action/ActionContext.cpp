@@ -1,4 +1,5 @@
 #include "Core/Misc/StringSplit.h"
+#include "Flash/FlashSpriteInstance.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFunction.h"
 #include "Flash/Action/ActionValueArray.h"
@@ -8,13 +9,17 @@ namespace traktor
 	namespace flash
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.ActionContext", ActionContext, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.ActionContext", ActionContext, Collectable)
 
-ActionContext::ActionContext(const IActionVM* vm, const FlashMovie* movie, ActionObject* global)
+ActionContext::ActionContext(const IActionVM* vm, const FlashMovie* movie)
 :	m_vm(vm)
 ,	m_movie(movie)
-,	m_global(global)
 {
+}
+
+void ActionContext::setGlobal(ActionObject* global)
+{
+	m_global = global;
 }
 
 void ActionContext::addFrameListener(ActionObject* frameListener)
@@ -53,7 +58,7 @@ void ActionContext::notifyFrameListeners(avm_number_t time)
 
 	std::vector< FrameListener > frameListeners = m_frameListeners;
 	for (std::vector< FrameListener >::iterator i = frameListeners.begin(); i != frameListeners.end(); ++i)
-		i->listenerFunction->call(this, i->listenerTarget, argv);
+		i->listenerFunction->call(i->listenerTarget, argv);
 }
 
 void ActionContext::pushMovieClip(FlashSpriteInstance* spriteInstance)
@@ -93,6 +98,27 @@ ActionObject* ActionContext::lookupClass(const std::string& className)
 		return 0;
 
 	return prototypeMember.getObject();
+}
+
+void ActionContext::trace(const IVisitor& visitor) const
+{
+	for (RefArray< FlashSpriteInstance >::const_iterator i = m_movieClipStack.begin(); i != m_movieClipStack.end(); ++i)
+		visitor(*i);
+
+	visitor(m_global);
+
+	for (std::vector< FrameListener >::const_iterator i = m_frameListeners.begin(); i != m_frameListeners.end(); ++i)
+	{
+		visitor(i->listenerTarget);
+		visitor(i->listenerFunction);
+	}
+}
+
+void ActionContext::dereference()
+{
+	m_movieClipStack.clear();
+	m_global = 0;
+	m_frameListeners.clear();
 }
 
 	}

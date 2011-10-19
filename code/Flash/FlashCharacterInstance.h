@@ -4,7 +4,7 @@
 #include "Core/Containers/SmallMap.h"
 #include "Core/Math/Matrix33.h"
 #include "Flash/SwfTypes.h"
-#include "Flash/Action/ActionObject.h"
+#include "Flash/Action/ActionObjectRelay.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -25,12 +25,12 @@ class IActionVMImage;
 /*! \brief Character instance.
  * \ingroup Flash
  */
-class T_DLLCLASS FlashCharacterInstance : public ActionObject
+class T_DLLCLASS FlashCharacterInstance : public ActionObjectRelay
 {
 	T_RTTI_CLASS;
 
 public:
-	FlashCharacterInstance(ActionContext* context, const std::string& prototypeName, FlashCharacterInstance* parent);
+	FlashCharacterInstance(ActionContext* context, const std::string& prototype, FlashCharacterInstance* parent);
 	
 	/*! \brief Destroy instance. */
 	virtual void destroy();
@@ -138,8 +138,14 @@ public:
 
 	//@}
 
+protected:
+	virtual void trace(const IVisitor& visitor) const;
+
+	virtual void dereference();
+
 private:
 	Ref< ActionContext > m_context;
+	std::string m_prototype;
 	FlashCharacterInstance* m_parent;
 	std::string m_name;
 	SwfCxTransform m_cxform;

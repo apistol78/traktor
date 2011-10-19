@@ -26,7 +26,7 @@ class T_DLLCLASS ActionGlobal : public ActionObject
 	T_RTTI_CLASS;
 
 public:
-	ActionGlobal();
+	ActionGlobal(ActionContext* context);
 
 private:
 	void Global_ASSetPropFlags(CallArgs& ca);

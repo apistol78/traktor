@@ -10,16 +10,16 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.ActionFunctionNative", ActionFunctionNative, ActionFunction)
 
-ActionFunctionNative::ActionFunctionNative(INativeFunction* nativeFunction)
-:	ActionFunction("<native>")
+ActionFunctionNative::ActionFunctionNative(ActionContext* context, INativeFunction* nativeFunction)
+:	ActionFunction(context, "<native>")
 ,	m_nativeFunction(nativeFunction)
 {
 }
 
-ActionValue ActionFunctionNative::call(ActionContext* context, ActionObject* self, const ActionValueArray& args)
+ActionValue ActionFunctionNative::call(ActionObject* self, const ActionValueArray& args)
 {
 	CallArgs fnc;
-	fnc.context = context;
+	fnc.context = getContext();
 	fnc.self = self;
 	fnc.args = args;
 
@@ -35,9 +35,9 @@ ActionValue ActionFunctionNative::call(ActionFrame* callerFrame, ActionObject* s
 	int argCount = !callerStack.empty() ? int(callerStack.pop().getNumber()) : 0;
 
 	CallArgs fnc;
-	fnc.context = callerFrame->getContext();
+	fnc.context = getContext();
 	fnc.self = self;
-	fnc.args = ActionValueArray(callerFrame->getContext()->getPool(), argCount);
+	fnc.args = ActionValueArray(getContext()->getPool(), argCount);
 
 	for (int i = 0; i < argCount; ++i)
 		fnc.args[i] = callerStack.pop();
@@ -49,6 +49,7 @@ ActionValue ActionFunctionNative::call(ActionFrame* callerFrame, ActionObject* s
 }
 
 Ref< ActionFunctionNative > createPolymorphicFunction(
+	ActionContext* context,
 	ActionFunctionNative* fnptr_0,
 	ActionFunctionNative* fnptr_1,
 	ActionFunctionNative* fnptr_2,
@@ -56,13 +57,16 @@ Ref< ActionFunctionNative > createPolymorphicFunction(
 	ActionFunctionNative* fnptr_4
 )
 {
-	return new ActionFunctionNative(new PolymorphicNativeFunction(
-		fnptr_0,
-		fnptr_1,
-		fnptr_2,
-		fnptr_3,
-		fnptr_4
-	));
+	return new ActionFunctionNative(
+		context,
+		new PolymorphicNativeFunction(
+			fnptr_0,
+			fnptr_1,
+			fnptr_2,
+			fnptr_3,
+			fnptr_4
+		)
+	);
 }
 
 	}

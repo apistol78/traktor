@@ -1,3 +1,4 @@
+#include "Flash/Action/ActionValue.h"
 #include "Flash/Action/Classes/Boolean.h"
 
 namespace traktor
@@ -5,12 +6,17 @@ namespace traktor
 	namespace flash
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.Boolean", Boolean, ActionObject)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.Boolean", Boolean, ActionObjectRelay)
 
 Boolean::Boolean(bool value)
-:	ActionObject("Boolean")
+:	ActionObjectRelay("Boolean")
 ,	m_value(value)
 {
+}
+
+ActionValue Boolean::toString() const
+{
+	return ActionValue(m_value ? "true" : "false");
 }
 
 	}

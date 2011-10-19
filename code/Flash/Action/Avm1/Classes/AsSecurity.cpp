@@ -10,14 +10,14 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsSecurity", AsSecurity, ActionClass)
 
-AsSecurity::AsSecurity()
-:	ActionClass("Security")
+AsSecurity::AsSecurity(ActionContext* context)
+:	ActionClass(context, "Security")
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember("allowDomain", ActionValue(createNativeFunction(this, &AsSecurity::Security_allowDomain)));
-	prototype->setMember("allowInsecureDomain", ActionValue(createNativeFunction(this, &AsSecurity::Security_allowInsecureDomain)));
-	prototype->setMember("loadPolicyFile", ActionValue(createNativeFunction(this, &AsSecurity::Security_loadPolicyFile)));
+	prototype->setMember("allowDomain", ActionValue(createNativeFunction(context, this, &AsSecurity::Security_allowDomain)));
+	prototype->setMember("allowInsecureDomain", ActionValue(createNativeFunction(context, this, &AsSecurity::Security_allowInsecureDomain)));
+	prototype->setMember("loadPolicyFile", ActionValue(createNativeFunction(context, this, &AsSecurity::Security_loadPolicyFile)));
 
 	prototype->setMember("constructor", ActionValue(this));
 	prototype->setReadOnly();
@@ -25,13 +25,13 @@ AsSecurity::AsSecurity()
 	setMember("prototype", ActionValue(prototype));
 }
 
-Ref< ActionObject > AsSecurity::alloc(ActionContext* context)
+void AsSecurity::init(ActionObject* self, const ActionValueArray& args) const
 {
-	return new ActionObject("Security");
 }
 
-void AsSecurity::init(ActionContext* context, ActionObject* self, const ActionValueArray& args)
+void AsSecurity::coerce(ActionObject* self) const
 {
+	T_FATAL_ERROR;
 }
 
 void AsSecurity::Security_allowDomain(CallArgs& ca)

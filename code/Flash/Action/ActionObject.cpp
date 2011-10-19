@@ -1,9 +1,11 @@
 #include "Core/RefArray.h"
 #include "Core/Log/Log.h"
 #include "Core/Thread/Acquire.h"
+#include "Flash/Action/Avm1/ActionClass.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFunction.h"
 #include "Flash/Action/ActionObject.h"
+#include "Flash/Action/IActionObjectRelay.h"
 
 namespace traktor
 {
@@ -12,22 +14,25 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.ActionObject", ActionObject, Collectable)
 
-ActionObject::ActionObject()
+ActionObject::ActionObject(IActionObjectRelay* relay)
 :	m_readOnly(false)
 {
 	setMember("__proto__", ActionValue("Object"));
+	setRelay(relay);
 }
 
-ActionObject::ActionObject(const std::string& prototypeName)
+ActionObject::ActionObject(const std::string& prototypeName, IActionObjectRelay* relay)
 :	m_readOnly(false)
 {
 	setMember("__proto__", ActionValue(prototypeName));
+	setRelay(relay);
 }
 
-ActionObject::ActionObject(ActionObject* prototype)
+ActionObject::ActionObject(ActionObject* prototype, IActionObjectRelay* relay)
 :	m_readOnly(false)
 {
 	setMember("__proto__", ActionValue(prototype));
+	setRelay(relay);
 }
 
 void ActionObject::addInterface(ActionObject* intrface)
@@ -66,14 +71,21 @@ ActionObject* ActionObject::getPrototype(ActionContext* context)
 				m_members["__proto__"] = ActionValue(m__proto__);
 			}
 		}
+
+		// Create relayed object if builtin type which can be coerced.
+		if (!m_relay)
+		{
+			ActionValue coerceValue;
+			if (m__proto__->getLocalMember("__coerce__", coerceValue))
+			{
+				ActionClass* builtinClass = coerceValue.getObject< ActionClass >();
+				if (builtinClass)
+					builtinClass->coerce(this);
+			}
+		}
 	}
 
 	return m__proto__;
-}
-
-void ActionObject::setMember(const ActionValue& memberName, const ActionValue& memberValue)
-{
-	setMember(memberName.getString(), memberValue);
 }
 
 void ActionObject::setMember(const std::string& memberName, const ActionValue& memberValue)
@@ -82,14 +94,19 @@ void ActionObject::setMember(const std::string& memberName, const ActionValue& m
 	
 	// Reset cached pointer if __proto__ member is modified.
 	if (memberName == "__proto__")
+	{
 		m__proto__ = 0;
+		m_relay = 0;
+	}
+
+	// Try setting through relay first.
+	else if (m_relay)
+	{
+		if (m_relay->setMember(memberName, memberValue))
+			return;
+	}
 
 	m_members[memberName] = memberValue;
-}
-
-bool ActionObject::getMember(ActionContext* context, const ActionValue& memberName, ActionValue& outMemberValue)
-{
-	return getMember(context, memberName.getString(), outMemberValue);
 }
 
 bool ActionObject::getMember(ActionContext* context, const std::string& memberName, ActionValue& outMemberValue)
@@ -253,7 +270,10 @@ avm_number_t ActionObject::valueOf() const
 
 ActionValue ActionObject::toString() const
 {
-	return ActionValue("[object Object]");
+	if (m_relay)
+		return m_relay->toString();
+	else
+		return ActionValue("[object Object]");
 }
 
 void ActionObject::setReadOnly()
@@ -265,7 +285,14 @@ bool ActionObject::getLocalMember(const std::string& memberName, ActionValue& ou
 {
 	member_map_t::const_iterator i = m_members.find(memberName);
 	if (i == m_members.end())
+	{
+		if (m_relay)
+		{
+			if (m_relay->getMember(memberName, outMemberValue))
+				return true;
+		}
 		return false;
+	}
 
 	outMemberValue = i->second;
 	return true;
@@ -297,6 +324,14 @@ bool ActionObject::getLocalPropertySet(const std::string& propertyName, Ref< Act
 	return true;
 }
 
+void ActionObject::setRelay(IActionObjectRelay* relay)
+{
+	if (m_relay)
+		m_relay->setAsObject(0);
+	if ((m_relay = relay) != 0)
+		m_relay->setAsObject(this);
+}
+
 void ActionObject::trace(const IVisitor& visitor) const
 {
 	for (member_map_t::const_iterator i = m_members.begin(); i != m_members.end(); ++i)
@@ -314,6 +349,7 @@ void ActionObject::trace(const IVisitor& visitor) const
 	}
 
 	visitor(m__proto__);
+	visitor(m_relay);
 }
 
 void ActionObject::dereference()
@@ -321,6 +357,7 @@ void ActionObject::dereference()
 	m_members.clear();
 	m_properties.clear();
 	m__proto__ = 0;
+	m_relay = 0;
 }
 
 	}

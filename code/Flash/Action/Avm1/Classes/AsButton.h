@@ -18,11 +18,11 @@ class AsButton : public ActionClass
 	T_RTTI_CLASS;
 
 public:
-	AsButton();
+	AsButton(ActionContext* context);
 
-	virtual Ref< ActionObject > alloc(ActionContext* context);
+	virtual void init(ActionObject* self, const ActionValueArray& args) const;
 
-	virtual void init(ActionContext* context, ActionObject* self, const ActionValueArray& args);
+	virtual void coerce(ActionObject* self) const;
 
 private:
 	void Button_get_alpha(const FlashButtonInstance* self) const;

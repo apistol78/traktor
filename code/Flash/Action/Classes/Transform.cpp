@@ -7,22 +7,12 @@ namespace traktor
 	namespace flash
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.Transform", Transform, ActionObject)
-
-Transform::Transform()
-:	ActionObject("flash.geom.Transform")
-{
-}
+T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.Transform", Transform, ActionObjectRelay)
 
 Transform::Transform(FlashCharacterInstance* instance)
-:	ActionObject("flash.geom.Transform")
+:	ActionObjectRelay("flash.geom.Transform")
 ,	m_instance(instance)
 {
-}
-
-void Transform::setInstance(FlashCharacterInstance* instance)
-{
-	m_instance = instance;
 }
 
 Ref< ColorTransform > Transform::getColorTransform() const
@@ -38,13 +28,13 @@ void Transform::setColorTransform(const ColorTransform* colorTransform)
 void Transform::trace(const IVisitor& visitor) const
 {
 	visitor(m_instance);
-	ActionObject::trace(visitor);
+	ActionObjectRelay::trace(visitor);
 }
 
 void Transform::dereference()
 {
 	m_instance = 0;
-	ActionObject::dereference();
+	ActionObjectRelay::dereference();
 }
 
 	}

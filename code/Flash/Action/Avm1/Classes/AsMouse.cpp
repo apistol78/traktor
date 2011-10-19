@@ -11,15 +11,15 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsMouse", AsMouse, ActionClass)
 
-AsMouse::AsMouse()
-:	ActionClass("Mouse")
+AsMouse::AsMouse(ActionContext* context)
+:	ActionClass(context, "Mouse")
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember("addListener", ActionValue(createNativeFunction(this, &AsMouse::Mouse_addListener)));
-	prototype->setMember("removeListener", ActionValue(createNativeFunction(this, &AsMouse::Mouse_removeListener)));
-	prototype->setMember("show", ActionValue(createNativeFunction(this, &AsMouse::Mouse_show)));
-	prototype->setMember("hide", ActionValue(createNativeFunction(this, &AsMouse::Mouse_hide)));
+	prototype->setMember("addListener", ActionValue(createNativeFunction(context, this, &AsMouse::Mouse_addListener)));
+	prototype->setMember("removeListener", ActionValue(createNativeFunction(context, this, &AsMouse::Mouse_removeListener)));
+	prototype->setMember("show", ActionValue(createNativeFunction(context, this, &AsMouse::Mouse_show)));
+	prototype->setMember("hide", ActionValue(createNativeFunction(context, this, &AsMouse::Mouse_hide)));
 
 	prototype->setMember("constructor", ActionValue(this));
 	prototype->setReadOnly();
@@ -27,16 +27,16 @@ AsMouse::AsMouse()
 	setMember("prototype", ActionValue(prototype));
 }
 
-Ref< ActionObject > AsMouse::alloc(ActionContext* context)
-{
-	return new ActionObject("Mouse");
-}
-
-void AsMouse::init(ActionContext* context, ActionObject* self, const ActionValueArray& args)
+void AsMouse::init(ActionObject* self, const ActionValueArray& args) const
 {
 }
 
-void AsMouse::eventMouseDown(ActionContext* context, int x, int y, int button)
+void AsMouse::coerce(ActionObject* self) const
+{
+	T_FATAL_ERROR;
+}
+
+void AsMouse::eventMouseDown(int x, int y, int button)
 {
 	// Create a snapshot of active listeners the moment this event is raised,
 	// this because listeners can be either added or removed by listeners.
@@ -44,20 +44,20 @@ void AsMouse::eventMouseDown(ActionContext* context, int x, int y, int button)
 	for (RefArray< ActionObject >::iterator i = listeners.begin(); i != listeners.end(); ++i)
 	{
 		ActionValue member;
-		(*i)->getMember(context, "onButtonDown", member);
+		(*i)->getMember(getContext(), "onButtonDown", member);
 		if (member.isUndefined())
 			continue;
 
 		Ref< ActionFunction > eventFunction = member.getObject< ActionFunction >();
 		if (eventFunction)
 		{
-			ActionFrame callerFrame(context, 0, 0, 4, 0, 0);
+			ActionFrame callerFrame(getContext(), 0, 0, 4, 0, 0);
 			eventFunction->call(&callerFrame, (*i));
 		}
 	}
 }
 
-void AsMouse::eventMouseUp(ActionContext* context, int x, int y, int button)
+void AsMouse::eventMouseUp(int x, int y, int button)
 {
 	// Create a snapshot of active listeners the moment this event is raised,
 	// this because listeners can be either added or removed by listeners.
@@ -65,20 +65,20 @@ void AsMouse::eventMouseUp(ActionContext* context, int x, int y, int button)
 	for (RefArray< ActionObject >::iterator i = listeners.begin(); i != listeners.end(); ++i)
 	{
 		ActionValue member;
-		(*i)->getMember(context, "onButtonUp", member);
+		(*i)->getMember(getContext(), "onButtonUp", member);
 		if (member.isUndefined())
 			continue;
 
 		Ref< ActionFunction > eventFunction = member.getObject< ActionFunction >();
 		if (eventFunction)
 		{
-			ActionFrame callerFrame(context, 0, 0, 4, 0, 0);
+			ActionFrame callerFrame(getContext(), 0, 0, 4, 0, 0);
 			eventFunction->call(&callerFrame, (*i));
 		}
 	}
 }
 
-void AsMouse::eventMouseMove(ActionContext* context, int x, int y, int button)
+void AsMouse::eventMouseMove(int x, int y, int button)
 {
 	// Create a snapshot of active listeners the moment this event is raised,
 	// this because listeners can be either added or removed by listeners.
@@ -86,14 +86,14 @@ void AsMouse::eventMouseMove(ActionContext* context, int x, int y, int button)
 	for (RefArray< ActionObject >::iterator i = listeners.begin(); i != listeners.end(); ++i)
 	{
 		ActionValue member;
-		(*i)->getMember(context, "onMove", member);
+		(*i)->getMember(getContext(), "onMove", member);
 		if (member.isUndefined())
 			continue;
 
 		Ref< ActionFunction > eventFunction = member.getObject< ActionFunction >();
 		if (eventFunction)
 		{
-			ActionFrame callerFrame(context, 0, 0, 4, 0, 0);
+			ActionFrame callerFrame(getContext(), 0, 0, 4, 0, 0);
 			eventFunction->call(&callerFrame, (*i));
 		}
 	}

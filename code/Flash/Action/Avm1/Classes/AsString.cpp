@@ -14,25 +14,25 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsString", AsString, ActionClass)
 
-AsString::AsString()
-:	ActionClass("String")
+AsString::AsString(ActionContext* context)
+:	ActionClass(context, "String")
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember("charAt", ActionValue(createNativeFunction(this, &AsString::String_charAt)));
-	prototype->setMember("charCodeAt", ActionValue(createNativeFunction(this, &AsString::String_charCodeAt)));
-	prototype->setMember("concat", ActionValue(createNativeFunction(this, &AsString::String_concat)));
-	prototype->setMember("fromCharCode", ActionValue(createNativeFunction(this, &AsString::String_fromCharCode)));
-	prototype->setMember("indexOf", ActionValue(createNativeFunction(this, &AsString::String_indexOf)));
-	prototype->setMember("lastIndexOf", ActionValue(createNativeFunction(this, &AsString::String_lastIndexOf)));
-	prototype->setMember("slice", ActionValue(createNativeFunction(this, &AsString::String_slice)));
-	prototype->setMember("split", ActionValue(createNativeFunction(this, &AsString::String_split)));
-	prototype->setMember("substr", ActionValue(createNativeFunction(this, &AsString::String_substr)));
-	prototype->setMember("substring", ActionValue(createNativeFunction(this, &AsString::String_substring)));
-	prototype->setMember("toLowerCase", ActionValue(createNativeFunction(this, &AsString::String_toLowerCase)));
-	prototype->setMember("toString", ActionValue(createNativeFunction(this, &AsString::String_toString)));
-	prototype->setMember("toUpperCase", ActionValue(createNativeFunction(this, &AsString::String_toUpperCase)));
-	prototype->setMember("valueOf", ActionValue(createNativeFunction(this, &AsString::String_valueOf)));
+	prototype->setMember("charAt", ActionValue(createNativeFunction(context, this, &AsString::String_charAt)));
+	prototype->setMember("charCodeAt", ActionValue(createNativeFunction(context, this, &AsString::String_charCodeAt)));
+	prototype->setMember("concat", ActionValue(createNativeFunction(context, this, &AsString::String_concat)));
+	prototype->setMember("fromCharCode", ActionValue(createNativeFunction(context, this, &AsString::String_fromCharCode)));
+	prototype->setMember("indexOf", ActionValue(createNativeFunction(context, this, &AsString::String_indexOf)));
+	prototype->setMember("lastIndexOf", ActionValue(createNativeFunction(context, this, &AsString::String_lastIndexOf)));
+	prototype->setMember("slice", ActionValue(createNativeFunction(context, this, &AsString::String_slice)));
+	prototype->setMember("split", ActionValue(createNativeFunction(context, this, &AsString::String_split)));
+	prototype->setMember("substr", ActionValue(createNativeFunction(context, this, &AsString::String_substr)));
+	prototype->setMember("substring", ActionValue(createNativeFunction(context, this, &AsString::String_substring)));
+	prototype->setMember("toLowerCase", ActionValue(createNativeFunction(context, this, &AsString::String_toLowerCase)));
+	//prototype->setMember("toString", ActionValue(createNativeFunction(context, this, &AsString::String_toString)));
+	prototype->setMember("toUpperCase", ActionValue(createNativeFunction(context, this, &AsString::String_toUpperCase)));
+	prototype->setMember("valueOf", ActionValue(createNativeFunction(context, this, &AsString::String_valueOf)));
 
 	prototype->setMember("constructor", ActionValue(this));
 	prototype->setReadOnly();
@@ -40,15 +40,19 @@ AsString::AsString()
 	setMember("prototype", ActionValue(prototype));
 }
 
-Ref< ActionObject > AsString::alloc(ActionContext* context)
+void AsString::init(ActionObject* self, const ActionValueArray& args) const
 {
-	return new String();
+	Ref< String > s;
+	if (args.size() > 0)
+		s = new String(args[0].getString());
+	else
+		s = new String();
+	self->setRelay(s);
 }
 
-void AsString::init(ActionContext* context, ActionObject* self, const ActionValueArray& args)
+void AsString::coerce(ActionObject* self) const
 {
-	if (args.size() > 0)
-		checked_type_cast< String* >(self)->set(args[0].getString());
+	T_FATAL_ERROR;
 }
 
 Ref< String > AsString::String_charAt(const String* self, uint32_t index) const
@@ -71,7 +75,7 @@ uint32_t AsString::String_charCodeAt(const String* self, uint32_t index) const
 
 void AsString::String_concat(CallArgs& ca)
 {
-	Ref< String > self = dynamic_type_cast< String* >(ca.self);
+	Ref< String > self = ca.self->getRelay< String >();
 	if (self)
 	{
 		std::stringstream ss;
@@ -87,7 +91,7 @@ void AsString::String_concat(CallArgs& ca)
 void AsString::String_fromCharCode(CallArgs& ca)
 {
 	char charCode = char(ca.args[0].getNumber());
-	ca.ret = ActionValue(new String(charCode));
+	ca.ret = ActionValue((new String(charCode))->getAsObject());
 }
 
 void AsString::String_indexOf(CallArgs& ca)
@@ -100,7 +104,7 @@ void AsString::String_lastIndexOf(CallArgs& ca)
 
 void AsString::String_slice(CallArgs& ca)
 {
-	Ref< String > self = checked_type_cast< String* >(ca.self);
+	Ref< String > self = ca.self->getRelay< String >();
 	const std::string& st = self->get();
 
 	if (ca.args.size() >= 2)
@@ -124,7 +128,7 @@ void AsString::String_slice(CallArgs& ca)
 
 void AsString::String_split(CallArgs& ca)
 {
-	Ref< String > self = checked_type_cast< String* >(ca.self);
+	Ref< String > self = ca.self->getRelay< String >();
 	const std::string& st = self->get();
 
 	std::vector< std::string > words;
@@ -144,12 +148,12 @@ void AsString::String_split(CallArgs& ca)
 	for (std::vector< std::string >::const_iterator i = words.begin(); i != words.end(); ++i)
 		arr->push(ActionValue(*i));
 
-	ca.ret = ActionValue(arr);
+	ca.ret = ActionValue(arr->getAsObject());
 }
 
 void AsString::String_substr(CallArgs& ca)
 {
-	Ref< String > self = checked_type_cast< String* >(ca.self);
+	Ref< String > self = ca.self->getRelay< String >();
 	const std::string& st = self->get();
 
 	uint32_t index = uint32_t(ca.args[0].getNumber());
@@ -163,7 +167,7 @@ void AsString::String_substr(CallArgs& ca)
 
 void AsString::String_substring(CallArgs& ca)
 {
-	Ref< String > self = checked_type_cast< String* >(ca.self);
+	Ref< String > self = ca.self->getRelay< String >();
 	const std::string& st = self->get();
 
 	uint32_t start = uint32_t(ca.args[0].getNumber());
@@ -177,26 +181,26 @@ void AsString::String_substring(CallArgs& ca)
 
 void AsString::String_toLowerCase(CallArgs& ca)
 {
-	Ref< String > self = checked_type_cast< String* >(ca.self);
+	Ref< String > self = ca.self->getRelay< String >();
 	const std::string& st = self->get();
-	ca.ret = ActionValue(new String(toLower(st)));
+	ca.ret = ActionValue((new String(toLower(st)))->getAsObject());
 }
 
-void AsString::String_toString(CallArgs& ca)
-{
-	ca.ret = ActionValue(ca.self);
-}
+//void AsString::String_toString(CallArgs& ca)
+//{
+//	ca.ret = ActionValue(ca.self);
+//}
 
 void AsString::String_toUpperCase(CallArgs& ca)
 {
-	Ref< String > self = checked_type_cast< String* >(ca.self);
+	Ref< String > self = ca.self->getRelay< String >();
 	const std::string& st = self->get();
-	ca.ret = ActionValue(new String(toUpper(st)));
+	ca.ret = ActionValue((new String(toUpper(st)))->getAsObject());
 }
 
 void AsString::String_valueOf(CallArgs& ca)
 {
-	Ref< String > self = checked_type_cast< String* >(ca.self);
+	Ref< String > self = ca.self->getRelay< String >();
 	ca.ret = ActionValue(self->get());
 }
 

@@ -23,11 +23,11 @@ class AsI18N : public ActionClass
 	T_RTTI_CLASS;
 
 public:
-	AsI18N();
+	AsI18N(ActionContext* context);
 
-	virtual Ref< ActionObject > alloc(ActionContext* context);
+	virtual void init(ActionObject* self, const ActionValueArray& args) const;
 
-	virtual void init(ActionContext* context, ActionObject* self, const ActionValueArray& args);
+	virtual void coerce(ActionObject* self) const;
 
 private:
 	void I18N_format(CallArgs& ca);

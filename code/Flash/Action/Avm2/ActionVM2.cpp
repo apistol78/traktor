@@ -73,7 +73,6 @@ void ActionVM2::execute(ActionFrame* frame) const
 	const uint8_t T_UNALIGNED * pc = abcFile;
 	T_ASSERT (pc);
 
-	ActionContext* context = frame->getContext();
 	ActionValueStack& stack = frame->getStack();
 
 	for (;;)

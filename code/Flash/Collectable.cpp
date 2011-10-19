@@ -55,14 +55,6 @@ void Collectable::release(void* owner) const
 	Object::release(owner);
 }
 
-void Collectable::trace(const IVisitor& visitor) const
-{
-}
-
-void Collectable::dereference()
-{
-}
-
 void Collectable::traceMarkGray()
 {
 	if (m_traceColor != TcGray)

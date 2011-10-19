@@ -1,4 +1,4 @@
-#include "Flash/Action/ActionFrame.h"
+#include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFunction.h"
 
 namespace traktor
@@ -8,8 +8,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.ActionFunction", ActionFunction, ActionObject)
 
-ActionFunction::ActionFunction(const std::string& name)
+ActionFunction::ActionFunction(ActionContext* context, const std::string& name)
 :	ActionObject("Function")
+,	m_context(context)
 ,	m_name(name)
 {
 }

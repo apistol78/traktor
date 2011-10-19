@@ -5,10 +5,10 @@ namespace traktor
 	namespace flash
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.ColorTransform", ColorTransform, ActionObject)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.ColorTransform", ColorTransform, ActionObjectRelay)
 
 ColorTransform::ColorTransform(const SwfCxTransform& transform)
-:	ActionObject("flash.geom.Transform")
+:	ActionObjectRelay("flash.geom.Transform")
 ,	m_transform(transform)
 {
 }

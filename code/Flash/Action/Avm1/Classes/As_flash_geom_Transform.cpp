@@ -11,39 +11,40 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.As_flash_geom_Transform", As_flash_geom_Transform, ActionClass)
 
-As_flash_geom_Transform::As_flash_geom_Transform()
-:	ActionClass("flash.geom.Transform")
+As_flash_geom_Transform::As_flash_geom_Transform(ActionContext* context)
+:	ActionClass(context, "flash.geom.Transform")
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->addProperty("colorTransform", createNativeFunction(this, &As_flash_geom_Transform::Transform_get_colorTransform), createNativeFunction(this, &As_flash_geom_Transform::Transform_set_colorTransform));
-	//prototype->addProperty("concatenatedColorTransform", createNativeFunction(this, &Transform_get_concatenatedColorTransform), 0);
-	//prototype->addProperty("concatenatedMatrix", createNativeFunction(this, &Transform_get_concatenatedMatrix), 0);
-	//prototype->addProperty("matrix", createNativeFunction(this, &Transform_get_matrix), createNativeFunction(this, &Transform_set_matrix));
-	//prototype->addProperty("pixelBounds", createNativeFunction(this, &Transform_get_pixelBounds), createNativeFunction(this, &Transform_set_pixelBounds));
+	prototype->addProperty("colorTransform", createNativeFunction(context, this, &As_flash_geom_Transform::Transform_get_colorTransform), createNativeFunction(context, this, &As_flash_geom_Transform::Transform_set_colorTransform));
+	//prototype->addProperty("concatenatedColorTransform", createNativeFunction(context, this, &Transform_get_concatenatedColorTransform), 0);
+	//prototype->addProperty("concatenatedMatrix", createNativeFunction(context, this, &Transform_get_concatenatedMatrix), 0);
+	//prototype->addProperty("matrix", createNativeFunction(context, this, &Transform_get_matrix), createNativeFunction(context, this, &Transform_set_matrix));
+	//prototype->addProperty("pixelBounds", createNativeFunction(context, this, &Transform_get_pixelBounds), createNativeFunction(context, this, &Transform_set_pixelBounds));
 
 	prototype->setMember("constructor", ActionValue(this));
+	prototype->setMember("__coerce__", ActionValue(this));
+
 	prototype->setReadOnly();
 
 	setMember("prototype", ActionValue(prototype));
 }
 
-Ref< ActionObject > As_flash_geom_Transform::alloc(ActionContext* context)
+void As_flash_geom_Transform::init(ActionObject* self, const ActionValueArray& args) const
 {
-	return new Transform();
+	Ref< Transform > tf;
+	if (args.size() >= 1)
+	{
+		Ref< FlashCharacterInstance > instance = args[0].getObject< FlashCharacterInstance >();
+		if (instance)
+			tf = new Transform(instance);
+	}
+	self->setRelay(tf);
 }
 
-void As_flash_geom_Transform::init(ActionContext* context, ActionObject* self, const ActionValueArray& args)
+void As_flash_geom_Transform::coerce(ActionObject* self) const
 {
-	if (args.size() < 1)
-		return;
-
-	Ref< FlashCharacterInstance > instance = args[0].getObject< FlashCharacterInstance >();
-	if (instance)
-	{
-		Transform* t = checked_type_cast< Transform* >(self);
-		t->setInstance(instance);
-	}
+	T_FATAL_ERROR;
 }
 
 Ref< ColorTransform > As_flash_geom_Transform::Transform_get_colorTransform(Transform* self) const

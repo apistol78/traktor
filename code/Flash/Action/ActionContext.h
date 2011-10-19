@@ -1,8 +1,8 @@
 #ifndef traktor_flash_ActionContext_H
 #define traktor_flash_ActionContext_H
 
-#include "Core/Object.h"
 #include "Core/RefArray.h"
+#include "Flash/Collectable.h"
 #include "Flash/Action/ActionValue.h"
 #include "Flash/Action/ActionValuePool.h"
 
@@ -26,12 +26,14 @@ class IActionVM;
 /*! \brief ActionScript execution context.
  * \ingroup Flash
  */
-class T_DLLCLASS ActionContext : public Object
+class T_DLLCLASS ActionContext : public Collectable
 {
 	T_RTTI_CLASS;
 
 public:
-	ActionContext(const IActionVM* vm, const FlashMovie* movie, ActionObject* global);
+	ActionContext(const IActionVM* vm, const FlashMovie* movie);
+
+	void setGlobal(ActionObject* global);
 
 	void addFrameListener(ActionObject* frameListener);
 
@@ -54,6 +56,11 @@ public:
 	const Ref< ActionObject >& getGlobal() const { return m_global; }
 
 	ActionValuePool& getPool() { return m_pool; }
+
+protected:
+	virtual void trace(const IVisitor& visitor) const;
+
+	virtual void dereference();
 
 private:
 	struct FrameListener

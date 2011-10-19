@@ -13,7 +13,6 @@ namespace traktor
 
 struct ArrayPredicateSort
 {
-	ActionContext* context;
 	ActionFunction* predicateFunction;
 	ActionValueArray* predicateFunctionArgs;
 
@@ -22,7 +21,7 @@ struct ArrayPredicateSort
 		(*predicateFunctionArgs)[0] = avl;
 		(*predicateFunctionArgs)[1] = avr;
 
-		ActionValue resv = predicateFunction->call(context, 0, (*predicateFunctionArgs));
+		ActionValue resv = predicateFunction->call(0, (*predicateFunctionArgs));
 		int32_t res = int32_t(resv.getNumber());
 
 		return res < 0;
@@ -42,8 +41,8 @@ struct ArrayDefaultSort
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsArray", AsArray, ActionClass)
 
-AsArray::AsArray()
-:	ActionClass("Array")
+AsArray::AsArray(ActionContext* context)
+:	ActionClass(context, "Array")
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
@@ -52,20 +51,20 @@ AsArray::AsArray()
 	prototype->setMember("NUMERIC", ActionValue(avm_number_t(2)));
 	prototype->setMember("RETURNINDEXEDARRAY", ActionValue(avm_number_t(3)));
 	prototype->setMember("UNIQUESORT", ActionValue(avm_number_t(4)));
-	prototype->setMember("concat", ActionValue(createNativeFunction(this, &AsArray::Array_concat)));
-	prototype->setMember("join", ActionValue(createNativeFunction(this, &AsArray::Array_join)));
-	prototype->setMember("pop", ActionValue(createNativeFunction(&Array::pop)));
-	prototype->setMember("push", ActionValue(createNativeFunction(&Array::push)));
-	prototype->setMember("reverse", ActionValue(createNativeFunction(&Array::reverse)));
-	prototype->setMember("shift", ActionValue(createNativeFunction(&Array::shift)));
-	prototype->setMember("slice", ActionValue(createNativeFunction(this, &AsArray::Array_slice)));
-	prototype->setMember("sort", ActionValue(createNativeFunction(this, &AsArray::Array_sort)));
-	prototype->setMember("sortOn", ActionValue(createNativeFunction(this, &AsArray::Array_sortOn)));
-	prototype->setMember("splice", ActionValue(createNativeFunction(this, &AsArray::Array_splice)));
-	prototype->setMember("toString", ActionValue(createNativeFunction(this, &AsArray::Array_toString)));
-	prototype->setMember("unshift", ActionValue(createNativeFunction(this, &AsArray::Array_unshift)));
+	prototype->setMember("concat", ActionValue(createNativeFunction(context, this, &AsArray::Array_concat)));
+	prototype->setMember("join", ActionValue(createNativeFunction(context, this, &AsArray::Array_join)));
+	prototype->setMember("pop", ActionValue(createNativeFunction(context, &Array::pop)));
+	prototype->setMember("push", ActionValue(createNativeFunction(context, &Array::push)));
+	prototype->setMember("reverse", ActionValue(createNativeFunction(context, &Array::reverse)));
+	prototype->setMember("shift", ActionValue(createNativeFunction(context, &Array::shift)));
+	prototype->setMember("slice", ActionValue(createNativeFunction(context, this, &AsArray::Array_slice)));
+	prototype->setMember("sort", ActionValue(createNativeFunction(context, this, &AsArray::Array_sort)));
+	prototype->setMember("sortOn", ActionValue(createNativeFunction(context, this, &AsArray::Array_sortOn)));
+	prototype->setMember("splice", ActionValue(createNativeFunction(context, this, &AsArray::Array_splice)));
+	prototype->setMember("toString", ActionValue(createNativeFunction(context, this, &AsArray::Array_toString)));
+	prototype->setMember("unshift", ActionValue(createNativeFunction(context, this, &AsArray::Array_unshift)));
 
-	prototype->addProperty("length", createNativeFunction(this, &AsArray::Array_get_length), 0);
+	prototype->addProperty("length", createNativeFunction(context, this, &AsArray::Array_get_length), 0);
 
 	prototype->setMember("constructor", ActionValue(this));
 	prototype->setReadOnly();
@@ -73,33 +72,31 @@ AsArray::AsArray()
 	setMember("prototype", ActionValue(prototype));
 }
 
-Ref< ActionObject > AsArray::alloc(ActionContext* context)
+void AsArray::init(ActionObject* self, const ActionValueArray& args) const
 {
-	return new Array();
+	self->setRelay(new Array(args));
 }
 
-void AsArray::init(ActionContext* context, ActionObject* self, const ActionValueArray& args)
+void AsArray::coerce(ActionObject* self) const
 {
-	Array* arr = checked_type_cast< Array* >(self);
-	for (uint32_t i = 0; i < args.size(); ++i)
-		arr->push(args[i]);
+	T_FATAL_ERROR;
 }
 
 void AsArray::Array_concat(CallArgs& ca)
 {
-	Array* arr = dynamic_type_cast< Array* >(ca.self);
+	Array* arr = ca.self->getRelay< Array >();
 	if (arr)
 	{
 		if (!ca.args.empty())
-			ca.ret = ActionValue(arr->concat(ca.args));
+			ca.ret = ActionValue(arr->concat(ca.args)->getAsObject());
 		else
-			ca.ret = ActionValue(arr->concat());
+			ca.ret = ActionValue(arr->concat()->getAsObject());
 	}
 }
 
 void AsArray::Array_join(CallArgs& ca)
 {
-	Array* arr = dynamic_type_cast< Array* >(ca.self);
+	Array* arr = ca.self->getRelay< Array >();
 	if (arr)
 	{
 		if (ca.args.empty())
@@ -111,7 +108,7 @@ void AsArray::Array_join(CallArgs& ca)
 
 void AsArray::Array_slice(CallArgs& ca)
 {
-	Array* arr = dynamic_type_cast< Array* >(ca.self);
+	Array* arr = ca.self->getRelay< Array >();
 	if (arr)
 	{
 		int32_t startIndex = 0;
@@ -122,13 +119,13 @@ void AsArray::Array_slice(CallArgs& ca)
 		if (ca.args.size() >= 2)
 			endIndex = int32_t(ca.args[1].getNumber());
 
-		ca.ret = ActionValue(arr->slice(startIndex, endIndex));
+		ca.ret = ActionValue(arr->slice(startIndex, endIndex)->getAsObject());
 	}
 }
 
 void AsArray::Array_sort(CallArgs& ca)
 {
-	Array* arr = dynamic_type_cast< Array* >(ca.self);
+	Array* arr = ca.self->getRelay< Array >();
 	if (arr)
 	{
 		if (ca.args.size() >= 1)
@@ -142,7 +139,6 @@ void AsArray::Array_sort(CallArgs& ca)
 			ActionValueArray predicateFunctionArgs(ca.context->getPool(), 2);
 
 			ArrayPredicateSort aps;
-			aps.context = ca.context;
 			aps.predicateFunction = predicateFunction;
 			aps.predicateFunctionArgs = &predicateFunctionArgs;
 
@@ -160,14 +156,14 @@ void AsArray::Array_sortOn(CallArgs& ca)
 
 void AsArray::Array_splice(CallArgs& ca)
 {
-	Array* arr = dynamic_type_cast< Array* >(ca.self);
+	Array* arr = ca.self->getRelay< Array >();
 	if (arr)
 	{
 		int32_t startIndex = int32_t(ca.args[0].getNumber());
 		uint32_t deleteCount = uint32_t(ca.args[1].getNumber());
 
 		Ref< Array > removed = arr->splice(startIndex, deleteCount, ca.args, 2);
-		ca.ret = ActionValue(removed);
+		ca.ret = ActionValue(removed->getAsObject());
 	}
 }
 
@@ -178,7 +174,7 @@ ActionValue AsArray::Array_toString(const Array* self) const
 
 void AsArray::Array_unshift(CallArgs& ca)
 {
-	Ref< Array > arr = checked_type_cast< Array* >(ca.self);
+	Ref< Array > arr = ca.self->getRelay< Array >();
 	ca.ret = ActionValue(avm_number_t(arr->unshift(ca.args)));
 }
 

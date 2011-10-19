@@ -9,12 +9,12 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsI18N", AsI18N, ActionClass)
 
-AsI18N::AsI18N()
-:	ActionClass("I18N")
+AsI18N::AsI18N(ActionContext* context)
+:	ActionClass(context, "I18N")
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember("format", ActionValue(createNativeFunction(this, &AsI18N::I18N_format)));
+	prototype->setMember("format", ActionValue(createNativeFunction(context, this, &AsI18N::I18N_format)));
 
 	prototype->setMember("constructor", ActionValue(this));
 	prototype->setReadOnly();
@@ -22,13 +22,13 @@ AsI18N::AsI18N()
 	setMember("prototype", ActionValue(prototype));
 }
 
-Ref< ActionObject > AsI18N::alloc(ActionContext* context)
+void AsI18N::init(ActionObject* self, const ActionValueArray& args) const
 {
-	return 0;
 }
 
-void AsI18N::init(ActionContext* context, ActionObject* self, const ActionValueArray& args)
+void AsI18N::coerce(ActionObject* self) const
 {
+	T_FATAL_ERROR;
 }
 
 void AsI18N::I18N_format(CallArgs& ca)

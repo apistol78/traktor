@@ -53,39 +53,39 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.ActionGlobal", ActionGlobal, ActionObject)
 
-ActionGlobal::ActionGlobal()
+ActionGlobal::ActionGlobal(ActionContext* context)
 {
-	setMember("ASSetPropFlags", ActionValue(createNativeFunction(this, &ActionGlobal::Global_ASSetPropFlags)));
-	setMember("escape", ActionValue(createNativeFunction(this, &ActionGlobal::Global_escape)));
-	setMember("isNaN", ActionValue(createNativeFunction(this, &ActionGlobal::Global_isNaN)));
+	setMember("ASSetPropFlags", ActionValue(createNativeFunction(context, this, &ActionGlobal::Global_ASSetPropFlags)));
+	setMember("escape", ActionValue(createNativeFunction(context, this, &ActionGlobal::Global_escape)));
+	setMember("isNaN", ActionValue(createNativeFunction(context, this, &ActionGlobal::Global_isNaN)));
 
 	// Create prototypes.
-	setMember("Object", ActionValue(new AsObject()));
-	setMember("Accessibility", ActionValue(new AsAccessibility()));
-	setMember("Array", ActionValue(new AsArray()));
-	setMember("Boolean", ActionValue(new AsBoolean()));
-	setMember("Button", ActionValue(new AsButton()));
-	setMember("Date", ActionValue(new AsDate()));
-	setMember("Error", ActionValue(new AsError()));
-	setMember("Function", ActionValue(new AsFunction()));
-	setMember("I18N", ActionValue(new AsI18N()));
-	setMember("Key", ActionValue(new AsKey()));
-	setMember("LoadVars", ActionValue(new AsLoadVars()));
-	setMember("LocalConnection", ActionValue(new AsLocalConnection()));
-	setMember("Math", ActionValue(new AsMath()));
-	setMember("Mouse", ActionValue(new AsMouse()));
-	setMember("MovieClip", ActionValue(new AsMovieClip()));
-	setMember("MovieClipLoader", ActionValue(new AsMovieClipLoader()));
-	setMember("Number", ActionValue(new AsNumber()));
-	setMember("Security", ActionValue(new AsSecurity()));
-	setMember("Sound", ActionValue(new AsSound()));
-	setMember("Stage", ActionValue(new AsStage()));
-	setMember("String", ActionValue(new AsString()));
-	setMember("System", ActionValue(new AsSystem()));
-	setMember("TextField", ActionValue(new AsTextField()));
-	setMember("TextFormat", ActionValue(new AsTextFormat()));
-	setMember("XM", ActionValue(new AsXML()));
-	setMember("XMLNode", ActionValue(new AsXMLNode()));
+	setMember("Object", ActionValue(new AsObject(context)));
+	setMember("Accessibility", ActionValue(new AsAccessibility(context)));
+	setMember("Array", ActionValue(new AsArray(context)));
+	setMember("Boolean", ActionValue(new AsBoolean(context)));
+	setMember("Button", ActionValue(new AsButton(context)));
+	setMember("Date", ActionValue(new AsDate(context)));
+	setMember("Error", ActionValue(new AsError(context)));
+	setMember("Function", ActionValue(new AsFunction(context)));
+	setMember("I18N", ActionValue(new AsI18N(context)));
+	setMember("Key", ActionValue(new AsKey(context)));
+	setMember("LoadVars", ActionValue(new AsLoadVars(context)));
+	setMember("LocalConnection", ActionValue(new AsLocalConnection(context)));
+	setMember("Math", ActionValue(new AsMath(context)));
+	setMember("Mouse", ActionValue(new AsMouse(context)));
+	setMember("MovieClip", ActionValue(new AsMovieClip(context)));
+	setMember("MovieClipLoader", ActionValue(new AsMovieClipLoader(context)));
+	setMember("Number", ActionValue(new AsNumber(context)));
+	setMember("Security", ActionValue(new AsSecurity(context)));
+	setMember("Sound", ActionValue(new AsSound(context)));
+	setMember("Stage", ActionValue(new AsStage(context)));
+	setMember("String", ActionValue(new AsString(context)));
+	setMember("System", ActionValue(new AsSystem(context)));
+	setMember("TextField", ActionValue(new AsTextField(context)));
+	setMember("TextFormat", ActionValue(new AsTextFormat(context)));
+	setMember("XM", ActionValue(new AsXML(context)));
+	setMember("XMLNode", ActionValue(new AsXMLNode(context)));
 
 	// flash.
 	Ref< ActionObject > flash = new ActionObject();
@@ -93,10 +93,10 @@ ActionGlobal::ActionGlobal()
 		// flash.geom.
 		Ref< ActionObject > geom = new ActionObject();
 		{
-			geom->setMember("ColorTransform", ActionValue(new As_flash_geom_ColorTransform()));
-			geom->setMember("Point", ActionValue(new As_flash_geom_Point()));
-			geom->setMember("Rectangle", ActionValue(new As_flash_geom_Rectangle()));
-			geom->setMember("Transform", ActionValue(new As_flash_geom_Transform()));
+			geom->setMember("ColorTransform", ActionValue(new As_flash_geom_ColorTransform(context)));
+			geom->setMember("Point", ActionValue(new As_flash_geom_Point(context)));
+			geom->setMember("Rectangle", ActionValue(new As_flash_geom_Rectangle(context)));
+			geom->setMember("Transform", ActionValue(new As_flash_geom_Transform(context)));
 		}
 		flash->setMember("geom", ActionValue(geom));
 	}
@@ -109,18 +109,18 @@ ActionGlobal::ActionGlobal()
 		Ref< ActionObject > transitions = new ActionObject();
 		if (transitions)
 		{
-			transitions->setMember("Tween", ActionValue(new As_mx_transitions_Tween()));
+			transitions->setMember("Tween", ActionValue(new As_mx_transitions_Tween(context)));
 
 			// mx.transitions.easing
 			Ref< ActionObject > easing = new ActionObject();
 			if (easing)
 			{
-				easing->setMember("Back", ActionValue(new As_mx_transitions_easing_Back()));
-				easing->setMember("Bounce", ActionValue(new As_mx_transitions_easing_Bounce()));
-				easing->setMember("Elastic", ActionValue(new As_mx_transitions_easing_Elastic()));
-				easing->setMember("None", ActionValue(new As_mx_transitions_easing_None()));
-				easing->setMember("Regular", ActionValue(new As_mx_transitions_easing_Regular()));
-				easing->setMember("String", ActionValue(new As_mx_transitions_easing_Strong()));
+				easing->setMember("Back", ActionValue(new As_mx_transitions_easing_Back(context)));
+				easing->setMember("Bounce", ActionValue(new As_mx_transitions_easing_Bounce(context)));
+				easing->setMember("Elastic", ActionValue(new As_mx_transitions_easing_Elastic(context)));
+				easing->setMember("None", ActionValue(new As_mx_transitions_easing_None(context)));
+				easing->setMember("Regular", ActionValue(new As_mx_transitions_easing_Regular(context)));
+				easing->setMember("String", ActionValue(new As_mx_transitions_easing_Strong(context)));
 
 				transitions->setMember("easing", ActionValue(easing));
 			}

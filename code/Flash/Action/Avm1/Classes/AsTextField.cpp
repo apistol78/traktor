@@ -17,91 +17,93 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsTextField", AsTextField, ActionClass)
 
-AsTextField::AsTextField()
-:	ActionClass("TextField")
+AsTextField::AsTextField(ActionContext* context)
+:	ActionClass(context, "TextField")
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember("StyleSheet", ActionValue(new AsTextField_StyleSheet()));
-	prototype->setMember("addListener", ActionValue(createNativeFunction(this, &AsTextField::TextField_addListener)));
-	prototype->setMember("getDepth", ActionValue(createNativeFunction(this, &AsTextField::TextField_getDepth)));
-	prototype->setMember("getFontList", ActionValue(createNativeFunction(this, &AsTextField::TextField_getFontList)));
-	prototype->setMember("getNewTextFormat", ActionValue(createNativeFunction(this, &AsTextField::TextField_getNewTextFormat)));
+	prototype->setMember("StyleSheet", ActionValue(new AsTextField_StyleSheet(context)));
+	prototype->setMember("addListener", ActionValue(createNativeFunction(context, this, &AsTextField::TextField_addListener)));
+	prototype->setMember("getDepth", ActionValue(createNativeFunction(context, this, &AsTextField::TextField_getDepth)));
+	prototype->setMember("getFontList", ActionValue(createNativeFunction(context, this, &AsTextField::TextField_getFontList)));
+	prototype->setMember("getNewTextFormat", ActionValue(createNativeFunction(context, this, &AsTextField::TextField_getNewTextFormat)));
 	prototype->setMember("getTextFormat", ActionValue(
 		createPolymorphicFunction(
-			createNativeFunction(this, &AsTextField::TextField_getTextFormat_0),
+			context,
+			createNativeFunction(context, this, &AsTextField::TextField_getTextFormat_0),
 			0,
-			createNativeFunction(this, &AsTextField::TextField_getTextFormat_2)
+			createNativeFunction(context, this, &AsTextField::TextField_getTextFormat_2)
 		)
 	));
-	prototype->setMember("removeListener", ActionValue(createNativeFunction(this, &AsTextField::TextField_removeListener)));
-	prototype->setMember("removeTextField", ActionValue(createNativeFunction(this, &AsTextField::TextField_removeTextField)));
-	prototype->setMember("replaceSel", ActionValue(createNativeFunction(this, &AsTextField::TextField_replaceSel)));
-	prototype->setMember("replaceText", ActionValue(createNativeFunction(this, &AsTextField::TextField_replaceText)));
-	prototype->setMember("setNewTextFormat", ActionValue(createNativeFunction(this, &AsTextField::TextField_setNewTextFormat)));
+	prototype->setMember("removeListener", ActionValue(createNativeFunction(context, this, &AsTextField::TextField_removeListener)));
+	prototype->setMember("removeTextField", ActionValue(createNativeFunction(context, this, &AsTextField::TextField_removeTextField)));
+	prototype->setMember("replaceSel", ActionValue(createNativeFunction(context, this, &AsTextField::TextField_replaceSel)));
+	prototype->setMember("replaceText", ActionValue(createNativeFunction(context, this, &AsTextField::TextField_replaceText)));
+	prototype->setMember("setNewTextFormat", ActionValue(createNativeFunction(context, this, &AsTextField::TextField_setNewTextFormat)));
 	prototype->setMember("setTextFormat", ActionValue(
 		createPolymorphicFunction(
-			createNativeFunction(this, &AsTextField::TextField_setTextFormat_0),
+			context,
+			createNativeFunction(context, this, &AsTextField::TextField_setTextFormat_0),
 			0,
-			createNativeFunction(this, &AsTextField::TextField_setTextFormat_2)
+			createNativeFunction(context, this, &AsTextField::TextField_setTextFormat_2)
 		)
 	));
 
-	prototype->addProperty("_alpha", createNativeFunction(this, &AsTextField::TextField_get_alpha), createNativeFunction(this, &AsTextField::TextField_set_alpha));
-	prototype->addProperty("antiAliasType", createNativeFunction(this, &AsTextField::TextField_get_antiAliasType), createNativeFunction(this, &AsTextField::TextField_set_antiAliasType));
-	prototype->addProperty("autoSize", createNativeFunction(this, &AsTextField::TextField_get_autoSize), createNativeFunction(this, &AsTextField::TextField_set_autoSize));
-	prototype->addProperty("background", createNativeFunction(this, &AsTextField::TextField_get_background), createNativeFunction(this, &AsTextField::TextField_set_background));
-	prototype->addProperty("backgroundColor", createNativeFunction(this, &AsTextField::TextField_get_backgroundColor), createNativeFunction(this, &AsTextField::TextField_set_backgroundColor));
-	prototype->addProperty("border", createNativeFunction(this, &AsTextField::TextField_get_border), createNativeFunction(this, &AsTextField::TextField_set_border));
-	prototype->addProperty("borderColor", createNativeFunction(this, &AsTextField::TextField_get_borderColor), createNativeFunction(this, &AsTextField::TextField_set_borderColor));
-	prototype->addProperty("bottomScroll", createNativeFunction(this, &AsTextField::TextField_get_bottomScroll), 0);
-	prototype->addProperty("condenseWhite", createNativeFunction(this, &AsTextField::TextField_get_condenseWhite), createNativeFunction(this, &AsTextField::TextField_set_condenseWhite));
-	prototype->addProperty("embedFonts", createNativeFunction(this, &AsTextField::TextField_get_embedFonts), createNativeFunction(this, &AsTextField::TextField_set_embedFonts));
-	prototype->addProperty("filters", createNativeFunction(this, &AsTextField::TextField_get_filters), createNativeFunction(this, &AsTextField::TextField_set_filters));
-	prototype->addProperty("gridFitType", createNativeFunction(this, &AsTextField::TextField_get_gridFitType), createNativeFunction(this, &AsTextField::TextField_set_gridFitType));
-	prototype->addProperty("_height", createNativeFunction(this, &AsTextField::TextField_get_height), createNativeFunction(this, &AsTextField::TextField_set_height));
-	prototype->addProperty("_highquality", createNativeFunction(this, &AsTextField::TextField_get_highquality), createNativeFunction(this, &AsTextField::TextField_set_highquality));
-	prototype->addProperty("hscroll", createNativeFunction(this, &AsTextField::TextField_get_hscroll), createNativeFunction(this, &AsTextField::TextField_set_hscroll));
-	prototype->addProperty("html", createNativeFunction(this, &AsTextField::TextField_get_html), createNativeFunction(this, &AsTextField::TextField_set_html));
-	prototype->addProperty("htmlText", createNativeFunction(this, &AsTextField::TextField_get_htmlText), createNativeFunction(this, &AsTextField::TextField_set_htmlText));
-	prototype->addProperty("length", createNativeFunction(this, &AsTextField::TextField_get_length), 0);
-	prototype->addProperty("maxChars", createNativeFunction(this, &AsTextField::TextField_get_maxChars), createNativeFunction(this, &AsTextField::TextField_set_maxChars));
-	prototype->addProperty("maxhscroll", createNativeFunction(this, &AsTextField::TextField_get_maxhscroll), 0);
-	prototype->addProperty("maxscroll", createNativeFunction(this, &AsTextField::TextField_get_maxscroll), 0);
-	//prototype->addProperty("menu", createNativeFunction(this, &AsTextField::TextField_get_menu), createNativeFunction(this, &AsTextField::TextField_set_menu));
-	prototype->addProperty("mouseWheelEnabled", createNativeFunction(this, &AsTextField::TextField_get_mouseWheelEnabled), createNativeFunction(this, &AsTextField::TextField_set_mouseWheelEnabled));
-	prototype->addProperty("multiline", createNativeFunction(this, &AsTextField::TextField_get_multiline), createNativeFunction(this, &AsTextField::TextField_set_multiline));
-	prototype->addProperty("_name", createNativeFunction(this, &AsTextField::TextField_get_name), createNativeFunction(this, &AsTextField::TextField_set_name));
-	prototype->addProperty("_parent", createNativeFunction(this, &AsTextField::TextField_get_parent), createNativeFunction(this, &AsTextField::TextField_set_parent));
-	prototype->addProperty("password", createNativeFunction(this, &AsTextField::TextField_get_password), createNativeFunction(this, &AsTextField::TextField_set_password));
-	prototype->addProperty("_quality", createNativeFunction(this, &AsTextField::TextField_get_quality), createNativeFunction(this, &AsTextField::TextField_set_quality));
-	prototype->addProperty("restrict", createNativeFunction(this, &AsTextField::TextField_get_restrict), createNativeFunction(this, &AsTextField::TextField_set_restrict));
-	prototype->addProperty("_rotation", createNativeFunction(this, &AsTextField::TextField_get_rotation), createNativeFunction(this, &AsTextField::TextField_set_rotation));
-	prototype->addProperty("scroll", createNativeFunction(this, &AsTextField::TextField_get_scroll), createNativeFunction(this, &AsTextField::TextField_set_scroll));
-	prototype->addProperty("selectable", createNativeFunction(this, &AsTextField::TextField_get_selectable), createNativeFunction(this, &AsTextField::TextField_set_selectable));
-	prototype->addProperty("sharpness", createNativeFunction(this, &AsTextField::TextField_get_sharpness), createNativeFunction(this, &AsTextField::TextField_set_sharpness));
-	prototype->addProperty("_soundbuftime", createNativeFunction(this, &AsTextField::TextField_get_soundbuftime), createNativeFunction(this, &AsTextField::TextField_set_soundbuftime));
-	//prototype->addProperty("styleSheet", createNativeFunction(this, &AsTextField::TextField_get_styleSheet), createNativeFunction(this, &AsTextField::TextField_set_styleSheet));
-	prototype->addProperty("tabEnabled", createNativeFunction(this, &AsTextField::TextField_get_tabEnabled), createNativeFunction(this, &AsTextField::TextField_set_tabEnabled));
-	prototype->addProperty("tabIndex", createNativeFunction(this, &AsTextField::TextField_get_tabIndex), createNativeFunction(this, &AsTextField::TextField_set_tabIndex));
-	prototype->addProperty("_target", createNativeFunction(this, &AsTextField::TextField_get_target), 0);
-	prototype->addProperty("text", createNativeFunction(this, &AsTextField::TextField_get_text), createNativeFunction(this, &AsTextField::TextField_set_text));
-	prototype->addProperty("textColor", createNativeFunction(this, &AsTextField::TextField_get_textColor), createNativeFunction(this, &AsTextField::TextField_set_textColor));
-	prototype->addProperty("textWidth", createNativeFunction(this, &AsTextField::TextField_get_textWidth), 0);
-	prototype->addProperty("textHeight", createNativeFunction(this, &AsTextField::TextField_get_textHeight), 0);
-	prototype->addProperty("thickness", createNativeFunction(this, &AsTextField::TextField_get_thickness), createNativeFunction(this, &AsTextField::TextField_set_thickness));
-	prototype->addProperty("type", createNativeFunction(this, &AsTextField::TextField_get_type), createNativeFunction(this, &AsTextField::TextField_set_type));
-	prototype->addProperty("_url", createNativeFunction(this, &AsTextField::TextField_get_url), 0);
-	prototype->addProperty("variable", createNativeFunction(this, &AsTextField::TextField_get_variable), createNativeFunction(this, &AsTextField::TextField_set_variable));
-	prototype->addProperty("_visible", createNativeFunction(this, &AsTextField::TextField_get_visible), createNativeFunction(this, &AsTextField::TextField_set_visible));
-	prototype->addProperty("_width", createNativeFunction(this, &AsTextField::TextField_get_width), createNativeFunction(this, &AsTextField::TextField_set_width));
-	prototype->addProperty("wordWrap", createNativeFunction(this, &AsTextField::TextField_get_wordWrap), createNativeFunction(this, &AsTextField::TextField_set_wordWrap));
-	prototype->addProperty("_x", createNativeFunction(this, &AsTextField::TextField_get_x), createNativeFunction(this, &AsTextField::TextField_set_x));
-	prototype->addProperty("_xmouse", createNativeFunction(this, &AsTextField::TextField_get_xmouse), 0);
-	prototype->addProperty("_xscale", createNativeFunction(this, &AsTextField::TextField_get_xscale), createNativeFunction(this, &AsTextField::TextField_set_xscale));
-	prototype->addProperty("_y", createNativeFunction(this, &AsTextField::TextField_get_y), createNativeFunction(this, &AsTextField::TextField_set_y));
-	prototype->addProperty("_ymouse", createNativeFunction(this, &AsTextField::TextField_get_ymouse), 0);
-	prototype->addProperty("_yscale", createNativeFunction(this, &AsTextField::TextField_get_yscale), createNativeFunction(this, &AsTextField::TextField_set_yscale));
+	prototype->addProperty("_alpha", createNativeFunction(context, this, &AsTextField::TextField_get_alpha), createNativeFunction(context, this, &AsTextField::TextField_set_alpha));
+	prototype->addProperty("antiAliasType", createNativeFunction(context, this, &AsTextField::TextField_get_antiAliasType), createNativeFunction(context, this, &AsTextField::TextField_set_antiAliasType));
+	prototype->addProperty("autoSize", createNativeFunction(context, this, &AsTextField::TextField_get_autoSize), createNativeFunction(context, this, &AsTextField::TextField_set_autoSize));
+	prototype->addProperty("background", createNativeFunction(context, this, &AsTextField::TextField_get_background), createNativeFunction(context, this, &AsTextField::TextField_set_background));
+	prototype->addProperty("backgroundColor", createNativeFunction(context, this, &AsTextField::TextField_get_backgroundColor), createNativeFunction(context, this, &AsTextField::TextField_set_backgroundColor));
+	prototype->addProperty("border", createNativeFunction(context, this, &AsTextField::TextField_get_border), createNativeFunction(context, this, &AsTextField::TextField_set_border));
+	prototype->addProperty("borderColor", createNativeFunction(context, this, &AsTextField::TextField_get_borderColor), createNativeFunction(context, this, &AsTextField::TextField_set_borderColor));
+	prototype->addProperty("bottomScroll", createNativeFunction(context, this, &AsTextField::TextField_get_bottomScroll), 0);
+	prototype->addProperty("condenseWhite", createNativeFunction(context, this, &AsTextField::TextField_get_condenseWhite), createNativeFunction(context, this, &AsTextField::TextField_set_condenseWhite));
+	prototype->addProperty("embedFonts", createNativeFunction(context, this, &AsTextField::TextField_get_embedFonts), createNativeFunction(context, this, &AsTextField::TextField_set_embedFonts));
+	prototype->addProperty("filters", createNativeFunction(context, this, &AsTextField::TextField_get_filters), createNativeFunction(context, this, &AsTextField::TextField_set_filters));
+	prototype->addProperty("gridFitType", createNativeFunction(context, this, &AsTextField::TextField_get_gridFitType), createNativeFunction(context, this, &AsTextField::TextField_set_gridFitType));
+	prototype->addProperty("_height", createNativeFunction(context, this, &AsTextField::TextField_get_height), createNativeFunction(context, this, &AsTextField::TextField_set_height));
+	prototype->addProperty("_highquality", createNativeFunction(context, this, &AsTextField::TextField_get_highquality), createNativeFunction(context, this, &AsTextField::TextField_set_highquality));
+	prototype->addProperty("hscroll", createNativeFunction(context, this, &AsTextField::TextField_get_hscroll), createNativeFunction(context, this, &AsTextField::TextField_set_hscroll));
+	prototype->addProperty("html", createNativeFunction(context, this, &AsTextField::TextField_get_html), createNativeFunction(context, this, &AsTextField::TextField_set_html));
+	prototype->addProperty("htmlText", createNativeFunction(context, this, &AsTextField::TextField_get_htmlText), createNativeFunction(context, this, &AsTextField::TextField_set_htmlText));
+	prototype->addProperty("length", createNativeFunction(context, this, &AsTextField::TextField_get_length), 0);
+	prototype->addProperty("maxChars", createNativeFunction(context, this, &AsTextField::TextField_get_maxChars), createNativeFunction(context, this, &AsTextField::TextField_set_maxChars));
+	prototype->addProperty("maxhscroll", createNativeFunction(context, this, &AsTextField::TextField_get_maxhscroll), 0);
+	prototype->addProperty("maxscroll", createNativeFunction(context, this, &AsTextField::TextField_get_maxscroll), 0);
+	//prototype->addProperty("menu", createNativeFunction(context, this, &AsTextField::TextField_get_menu), createNativeFunction(context, this, &AsTextField::TextField_set_menu));
+	prototype->addProperty("mouseWheelEnabled", createNativeFunction(context, this, &AsTextField::TextField_get_mouseWheelEnabled), createNativeFunction(context, this, &AsTextField::TextField_set_mouseWheelEnabled));
+	prototype->addProperty("multiline", createNativeFunction(context, this, &AsTextField::TextField_get_multiline), createNativeFunction(context, this, &AsTextField::TextField_set_multiline));
+	prototype->addProperty("_name", createNativeFunction(context, this, &AsTextField::TextField_get_name), createNativeFunction(context, this, &AsTextField::TextField_set_name));
+	prototype->addProperty("_parent", createNativeFunction(context, this, &AsTextField::TextField_get_parent), createNativeFunction(context, this, &AsTextField::TextField_set_parent));
+	prototype->addProperty("password", createNativeFunction(context, this, &AsTextField::TextField_get_password), createNativeFunction(context, this, &AsTextField::TextField_set_password));
+	prototype->addProperty("_quality", createNativeFunction(context, this, &AsTextField::TextField_get_quality), createNativeFunction(context, this, &AsTextField::TextField_set_quality));
+	prototype->addProperty("restrict", createNativeFunction(context, this, &AsTextField::TextField_get_restrict), createNativeFunction(context, this, &AsTextField::TextField_set_restrict));
+	prototype->addProperty("_rotation", createNativeFunction(context, this, &AsTextField::TextField_get_rotation), createNativeFunction(context, this, &AsTextField::TextField_set_rotation));
+	prototype->addProperty("scroll", createNativeFunction(context, this, &AsTextField::TextField_get_scroll), createNativeFunction(context, this, &AsTextField::TextField_set_scroll));
+	prototype->addProperty("selectable", createNativeFunction(context, this, &AsTextField::TextField_get_selectable), createNativeFunction(context, this, &AsTextField::TextField_set_selectable));
+	prototype->addProperty("sharpness", createNativeFunction(context, this, &AsTextField::TextField_get_sharpness), createNativeFunction(context, this, &AsTextField::TextField_set_sharpness));
+	prototype->addProperty("_soundbuftime", createNativeFunction(context, this, &AsTextField::TextField_get_soundbuftime), createNativeFunction(context, this, &AsTextField::TextField_set_soundbuftime));
+	//prototype->addProperty("styleSheet", createNativeFunction(context, this, &AsTextField::TextField_get_styleSheet), createNativeFunction(context, this, &AsTextField::TextField_set_styleSheet));
+	prototype->addProperty("tabEnabled", createNativeFunction(context, this, &AsTextField::TextField_get_tabEnabled), createNativeFunction(context, this, &AsTextField::TextField_set_tabEnabled));
+	prototype->addProperty("tabIndex", createNativeFunction(context, this, &AsTextField::TextField_get_tabIndex), createNativeFunction(context, this, &AsTextField::TextField_set_tabIndex));
+	prototype->addProperty("_target", createNativeFunction(context, this, &AsTextField::TextField_get_target), 0);
+	prototype->addProperty("text", createNativeFunction(context, this, &AsTextField::TextField_get_text), createNativeFunction(context, this, &AsTextField::TextField_set_text));
+	prototype->addProperty("textColor", createNativeFunction(context, this, &AsTextField::TextField_get_textColor), createNativeFunction(context, this, &AsTextField::TextField_set_textColor));
+	prototype->addProperty("textWidth", createNativeFunction(context, this, &AsTextField::TextField_get_textWidth), 0);
+	prototype->addProperty("textHeight", createNativeFunction(context, this, &AsTextField::TextField_get_textHeight), 0);
+	prototype->addProperty("thickness", createNativeFunction(context, this, &AsTextField::TextField_get_thickness), createNativeFunction(context, this, &AsTextField::TextField_set_thickness));
+	prototype->addProperty("type", createNativeFunction(context, this, &AsTextField::TextField_get_type), createNativeFunction(context, this, &AsTextField::TextField_set_type));
+	prototype->addProperty("_url", createNativeFunction(context, this, &AsTextField::TextField_get_url), 0);
+	prototype->addProperty("variable", createNativeFunction(context, this, &AsTextField::TextField_get_variable), createNativeFunction(context, this, &AsTextField::TextField_set_variable));
+	prototype->addProperty("_visible", createNativeFunction(context, this, &AsTextField::TextField_get_visible), createNativeFunction(context, this, &AsTextField::TextField_set_visible));
+	prototype->addProperty("_width", createNativeFunction(context, this, &AsTextField::TextField_get_width), createNativeFunction(context, this, &AsTextField::TextField_set_width));
+	prototype->addProperty("wordWrap", createNativeFunction(context, this, &AsTextField::TextField_get_wordWrap), createNativeFunction(context, this, &AsTextField::TextField_set_wordWrap));
+	prototype->addProperty("_x", createNativeFunction(context, this, &AsTextField::TextField_get_x), createNativeFunction(context, this, &AsTextField::TextField_set_x));
+	prototype->addProperty("_xmouse", createNativeFunction(context, this, &AsTextField::TextField_get_xmouse), 0);
+	prototype->addProperty("_xscale", createNativeFunction(context, this, &AsTextField::TextField_get_xscale), createNativeFunction(context, this, &AsTextField::TextField_set_xscale));
+	prototype->addProperty("_y", createNativeFunction(context, this, &AsTextField::TextField_get_y), createNativeFunction(context, this, &AsTextField::TextField_set_y));
+	prototype->addProperty("_ymouse", createNativeFunction(context, this, &AsTextField::TextField_get_ymouse), 0);
+	prototype->addProperty("_yscale", createNativeFunction(context, this, &AsTextField::TextField_get_yscale), createNativeFunction(context, this, &AsTextField::TextField_set_yscale));
 
 	prototype->setMember("constructor", ActionValue(this));
 	prototype->setReadOnly();
@@ -109,13 +111,13 @@ AsTextField::AsTextField()
 	setMember("prototype", ActionValue(prototype));
 }
 
-Ref< ActionObject > AsTextField::alloc(ActionContext* context)
+void AsTextField::init(ActionObject* self, const ActionValueArray& args) const
 {
-	return 0;
 }
 
-void AsTextField::init(ActionContext* context, ActionObject* self, const ActionValueArray& args)
+void AsTextField::coerce(ActionObject* self) const
 {
+	T_FATAL_ERROR;
 }
 
 void AsTextField::TextField_addListener(FlashEditInstance* editInstance, ActionObject* listener) const

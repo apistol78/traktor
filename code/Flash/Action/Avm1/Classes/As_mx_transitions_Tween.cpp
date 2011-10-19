@@ -9,20 +9,20 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.As_mx_transitions_Tween", As_mx_transitions_Tween, ActionClass)
 
-As_mx_transitions_Tween::As_mx_transitions_Tween()
-:	ActionClass("mx.transitions.Tween")
+As_mx_transitions_Tween::As_mx_transitions_Tween(ActionContext* context)
+:	ActionClass(context, "mx.transitions.Tween")
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember("continueTo", ActionValue(createNativeFunction(&Tween::continueTo)));
-	prototype->setMember("fforward", ActionValue(createNativeFunction(&Tween::fforward)));
-	prototype->setMember("nextFrame", ActionValue(createNativeFunction(&Tween::nextFrame)));
-	prototype->setMember("prevFrame", ActionValue(createNativeFunction(&Tween::prevFrame)));
-	prototype->setMember("resume", ActionValue(createNativeFunction(&Tween::resume)));
-	prototype->setMember("rewind", ActionValue(createNativeFunction(&Tween::rewind)));
-	prototype->setMember("start", ActionValue(createNativeFunction(&Tween::start)));
-	prototype->setMember("stop", ActionValue(createNativeFunction(&Tween::stop)));
-	prototype->setMember("yoyo", ActionValue(createNativeFunction(&Tween::yoyo)));
+	prototype->setMember("continueTo", ActionValue(createNativeFunction(context, &Tween::continueTo)));
+	prototype->setMember("fforward", ActionValue(createNativeFunction(context, &Tween::fforward)));
+	prototype->setMember("nextFrame", ActionValue(createNativeFunction(context, &Tween::nextFrame)));
+	prototype->setMember("prevFrame", ActionValue(createNativeFunction(context, &Tween::prevFrame)));
+	prototype->setMember("resume", ActionValue(createNativeFunction(context, &Tween::resume)));
+	prototype->setMember("rewind", ActionValue(createNativeFunction(context, &Tween::rewind)));
+	prototype->setMember("start", ActionValue(createNativeFunction(context, &Tween::start)));
+	prototype->setMember("stop", ActionValue(createNativeFunction(context, &Tween::stop)));
+	prototype->setMember("yoyo", ActionValue(createNativeFunction(context, &Tween::yoyo)));
 
 	prototype->setMember("constructor", ActionValue(this));
 	prototype->setReadOnly();
@@ -30,26 +30,29 @@ As_mx_transitions_Tween::As_mx_transitions_Tween()
 	setMember("prototype", ActionValue(prototype));
 }
 
-Ref< ActionObject > As_mx_transitions_Tween::alloc(ActionContext* context)
+void As_mx_transitions_Tween::init(ActionObject* self, const ActionValueArray& args) const
 {
-	return new Tween();
+	Ref< Tween > tw = new Tween();
+	self->setRelay(tw);
+
+	if (args.size() >= 7)
+	{
+		tw->init(
+			getContext(),
+			args[0].getObject(),
+			args[1].getString(),
+			args[2].getObject< ActionFunction >(),
+			args[3].getNumber(),
+			args[4].getNumber(),
+			args[5].getNumber(),
+			args[6].getBoolean()
+		);
+	}
 }
 
-void As_mx_transitions_Tween::init(ActionContext* context, ActionObject* self, const ActionValueArray& args)
+void As_mx_transitions_Tween::coerce(ActionObject* self) const
 {
-	if (args.size() < 7)
-		return;
-
-	checked_type_cast< Tween* >(self)->init(
-		context,
-		args[0].getObject(),
-		args[1].getString(),
-		args[2].getObject< ActionFunction >(),
-		args[3].getNumber(),
-		args[4].getNumber(),
-		args[5].getNumber(),
-		args[6].getBoolean()
-	);
+	T_FATAL_ERROR;
 }
 
 	}

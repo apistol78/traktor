@@ -1,7 +1,8 @@
 #ifndef traktor_flash_Point_H
 #define traktor_flash_Point_H
 
-#include "Flash/Action/ActionObject.h"
+#include "Flash/Action/ActionObjectRelay.h"
+#include "Flash/Action/ActionTypes.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,7 +20,7 @@ namespace traktor
 /*! \brief ActionScript point.
  * \ingroup Flash
  */
-class T_DLLCLASS Point : public ActionObject
+class T_DLLCLASS Point : public ActionObjectRelay
 {
 	T_RTTI_CLASS;
 
@@ -31,7 +32,12 @@ public:
 
 	Point(avm_number_t x_, avm_number_t y_);
 
+	// \name Override relay
+	//@{
+
 	virtual ActionValue toString() const;
+
+	//@}
 };
 
 	}

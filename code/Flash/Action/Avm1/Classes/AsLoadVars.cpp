@@ -9,22 +9,22 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsLoadVars", AsLoadVars, ActionClass)
 
-AsLoadVars::AsLoadVars()
-:	ActionClass("LoadVars")
+AsLoadVars::AsLoadVars(ActionContext* context)
+:	ActionClass(context, "LoadVars")
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember("addRequestHeader", ActionValue(createNativeFunction(this, &AsLoadVars::LoadVars_addRequestHeader)));
-	prototype->setMember("decode", ActionValue(createNativeFunction(this, &AsLoadVars::LoadVars_decode)));
-	prototype->setMember("getBytesLoaded", ActionValue(createNativeFunction(this, &AsLoadVars::LoadVars_getBytesLoaded)));
-	prototype->setMember("getBytesTotal", ActionValue(createNativeFunction(this, &AsLoadVars::LoadVars_getBytesTotal)));
-	prototype->setMember("load", ActionValue(createNativeFunction(this, &AsLoadVars::LoadVars_load)));
-	prototype->setMember("send", ActionValue(createNativeFunction(this, &AsLoadVars::LoadVars_send)));
-	prototype->setMember("sendAndLoad", ActionValue(createNativeFunction(this, &AsLoadVars::LoadVars_sendAndLoad)));
-	prototype->setMember("toString", ActionValue(createNativeFunction(this, &AsLoadVars::LoadVars_toString)));
+	prototype->setMember("addRequestHeader", ActionValue(createNativeFunction(context, this, &AsLoadVars::LoadVars_addRequestHeader)));
+	prototype->setMember("decode", ActionValue(createNativeFunction(context, this, &AsLoadVars::LoadVars_decode)));
+	prototype->setMember("getBytesLoaded", ActionValue(createNativeFunction(context, this, &AsLoadVars::LoadVars_getBytesLoaded)));
+	prototype->setMember("getBytesTotal", ActionValue(createNativeFunction(context, this, &AsLoadVars::LoadVars_getBytesTotal)));
+	prototype->setMember("load", ActionValue(createNativeFunction(context, this, &AsLoadVars::LoadVars_load)));
+	prototype->setMember("send", ActionValue(createNativeFunction(context, this, &AsLoadVars::LoadVars_send)));
+	prototype->setMember("sendAndLoad", ActionValue(createNativeFunction(context, this, &AsLoadVars::LoadVars_sendAndLoad)));
+	prototype->setMember("toString", ActionValue(createNativeFunction(context, this, &AsLoadVars::LoadVars_toString)));
 
-	prototype->addProperty("contentType", createNativeFunction(this, &AsLoadVars::LoadVars_get_contentType), createNativeFunction(this, &AsLoadVars::LoadVars_set_contentType));
-	prototype->addProperty("loaded", createNativeFunction(this, &AsLoadVars::LoadVars_get_loaded), createNativeFunction(this, &AsLoadVars::LoadVars_set_loaded));
+	prototype->addProperty("contentType", createNativeFunction(context, this, &AsLoadVars::LoadVars_get_contentType), createNativeFunction(context, this, &AsLoadVars::LoadVars_set_contentType));
+	prototype->addProperty("loaded", createNativeFunction(context, this, &AsLoadVars::LoadVars_get_loaded), createNativeFunction(context, this, &AsLoadVars::LoadVars_set_loaded));
 
 	prototype->setMember("constructor", ActionValue(this));
 	prototype->setReadOnly();
@@ -32,13 +32,13 @@ AsLoadVars::AsLoadVars()
 	setMember("prototype", ActionValue(prototype));
 }
 
-Ref< ActionObject > AsLoadVars::alloc(ActionContext* context)
+void AsLoadVars::init(ActionObject* self, const ActionValueArray& args) const
 {
-	return new ActionObject("LoadVars");
 }
 
-void AsLoadVars::init(ActionContext* context, ActionObject* self, const ActionValueArray& args)
+void AsLoadVars::coerce(ActionObject* self) const
 {
+	T_FATAL_ERROR;
 }
 
 void AsLoadVars::LoadVars_addRequestHeader(CallArgs& ca)

@@ -18,11 +18,11 @@ class AsLoadVars : public ActionClass
 	T_RTTI_CLASS;
 
 public:
-	AsLoadVars();
+	AsLoadVars(ActionContext* context);
 
-	virtual Ref< ActionObject > alloc(ActionContext* context);
+	virtual void init(ActionObject* self, const ActionValueArray& args) const;
 
-	virtual void init(ActionContext* context, ActionObject* self, const ActionValueArray& args);
+	virtual void coerce(ActionObject* self) const;
 
 private:
 	void LoadVars_addRequestHeader(CallArgs& ca);

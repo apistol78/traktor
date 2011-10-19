@@ -10,60 +10,76 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.As_flash_geom_Rectangle", As_flash_geom_Rectangle, ActionClass)
 
-As_flash_geom_Rectangle::As_flash_geom_Rectangle()
-:	ActionClass("flash.geom.Rectangle")
+As_flash_geom_Rectangle::As_flash_geom_Rectangle(ActionContext* context)
+:	ActionClass(context, "flash.geom.Rectangle")
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember("clone", ActionValue(createNativeFunction(this, &As_flash_geom_Rectangle::Rectangle_clone)));
-	prototype->setMember("contains", ActionValue(createNativeFunction(this, &As_flash_geom_Rectangle::Rectangle_contains)));
-	prototype->setMember("containsPoint", ActionValue(createNativeFunction(this, &As_flash_geom_Rectangle::Rectangle_containsPoint)));
-	prototype->setMember("containsRectangle", ActionValue(createNativeFunction(this, &As_flash_geom_Rectangle::Rectangle_containsRectangle)));
-	prototype->setMember("equals", ActionValue(createNativeFunction(this, &As_flash_geom_Rectangle::Rectangle_equals)));
-	prototype->setMember("inflate", ActionValue(createNativeFunction(this, &As_flash_geom_Rectangle::Rectangle_inflate)));
-	prototype->setMember("inflatePoint", ActionValue(createNativeFunction(this, &As_flash_geom_Rectangle::Rectangle_inflatePoint)));
-	prototype->setMember("intersection", ActionValue(createNativeFunction(this, &As_flash_geom_Rectangle::Rectangle_intersection)));
-	prototype->setMember("intersects", ActionValue(createNativeFunction(this, &As_flash_geom_Rectangle::Rectangle_intersects)));
-	prototype->setMember("isEmpty", ActionValue(createNativeFunction(this, &As_flash_geom_Rectangle::Rectangle_isEmpty)));
-	prototype->setMember("offset", ActionValue(createNativeFunction(this, &As_flash_geom_Rectangle::Rectangle_offset)));
-	prototype->setMember("offsetPoint", ActionValue(createNativeFunction(this, &As_flash_geom_Rectangle::Rectangle_offsetPoint)));
-	prototype->setMember("setEmpty", ActionValue(createNativeFunction(this, &As_flash_geom_Rectangle::Rectangle_setEmpty)));
-	prototype->setMember("toString", ActionValue(createNativeFunction(this, &As_flash_geom_Rectangle::Rectangle_toString)));
-	prototype->setMember("union", ActionValue(createNativeFunction(this, &As_flash_geom_Rectangle::Rectangle_union)));
+	prototype->setMember("clone", ActionValue(createNativeFunction(context, this, &As_flash_geom_Rectangle::Rectangle_clone)));
+	prototype->setMember("contains", ActionValue(createNativeFunction(context, this, &As_flash_geom_Rectangle::Rectangle_contains)));
+	prototype->setMember("containsPoint", ActionValue(createNativeFunction(context, this, &As_flash_geom_Rectangle::Rectangle_containsPoint)));
+	prototype->setMember("containsRectangle", ActionValue(createNativeFunction(context, this, &As_flash_geom_Rectangle::Rectangle_containsRectangle)));
+	prototype->setMember("equals", ActionValue(createNativeFunction(context, this, &As_flash_geom_Rectangle::Rectangle_equals)));
+	prototype->setMember("inflate", ActionValue(createNativeFunction(context, this, &As_flash_geom_Rectangle::Rectangle_inflate)));
+	prototype->setMember("inflatePoint", ActionValue(createNativeFunction(context, this, &As_flash_geom_Rectangle::Rectangle_inflatePoint)));
+	prototype->setMember("intersection", ActionValue(createNativeFunction(context, this, &As_flash_geom_Rectangle::Rectangle_intersection)));
+	prototype->setMember("intersects", ActionValue(createNativeFunction(context, this, &As_flash_geom_Rectangle::Rectangle_intersects)));
+	prototype->setMember("isEmpty", ActionValue(createNativeFunction(context, this, &As_flash_geom_Rectangle::Rectangle_isEmpty)));
+	prototype->setMember("offset", ActionValue(createNativeFunction(context, this, &As_flash_geom_Rectangle::Rectangle_offset)));
+	prototype->setMember("offsetPoint", ActionValue(createNativeFunction(context, this, &As_flash_geom_Rectangle::Rectangle_offsetPoint)));
+	prototype->setMember("setEmpty", ActionValue(createNativeFunction(context, this, &As_flash_geom_Rectangle::Rectangle_setEmpty)));
+	prototype->setMember("toString", ActionValue(createNativeFunction(context, this, &As_flash_geom_Rectangle::Rectangle_toString)));
+	prototype->setMember("union", ActionValue(createNativeFunction(context, this, &As_flash_geom_Rectangle::Rectangle_union)));
 
-	prototype->addProperty("bottom", createNativeFunction(this, &As_flash_geom_Rectangle::Rectangle_get_bottom), createNativeFunction(this, &As_flash_geom_Rectangle::Rectangle_set_bottom));
-	prototype->addProperty("bottomRight", createNativeFunction(this, &As_flash_geom_Rectangle::Rectangle_get_bottomRight), createNativeFunction(this, &As_flash_geom_Rectangle::Rectangle_set_bottomRight));
-	prototype->addProperty("height", createNativeFunction(this, &As_flash_geom_Rectangle::Rectangle_get_height), createNativeFunction(this, &As_flash_geom_Rectangle::Rectangle_set_height));
-	prototype->addProperty("left", createNativeFunction(this, &As_flash_geom_Rectangle::Rectangle_get_left), createNativeFunction(this, &As_flash_geom_Rectangle::Rectangle_set_left));
-	prototype->addProperty("right", createNativeFunction(this, &As_flash_geom_Rectangle::Rectangle_get_right), createNativeFunction(this, &As_flash_geom_Rectangle::Rectangle_set_right));
-	prototype->addProperty("size", createNativeFunction(this, &As_flash_geom_Rectangle::Rectangle_get_size), createNativeFunction(this, &As_flash_geom_Rectangle::Rectangle_set_size));
-	prototype->addProperty("top", createNativeFunction(this, &As_flash_geom_Rectangle::Rectangle_get_top), createNativeFunction(this, &As_flash_geom_Rectangle::Rectangle_set_top));
-	prototype->addProperty("topLeft", createNativeFunction(this, &As_flash_geom_Rectangle::Rectangle_get_topLeft), createNativeFunction(this, &As_flash_geom_Rectangle::Rectangle_set_topLeft));
-	prototype->addProperty("width", createNativeFunction(this, &As_flash_geom_Rectangle::Rectangle_get_width), createNativeFunction(this, &As_flash_geom_Rectangle::Rectangle_set_width));
-	prototype->addProperty("x", createNativeFunction(this, &As_flash_geom_Rectangle::Rectangle_get_x), createNativeFunction(this, &As_flash_geom_Rectangle::Rectangle_set_x));
-	prototype->addProperty("y", createNativeFunction(this, &As_flash_geom_Rectangle::Rectangle_get_y), createNativeFunction(this, &As_flash_geom_Rectangle::Rectangle_set_y));
+	prototype->addProperty("bottom", createNativeFunction(context, this, &As_flash_geom_Rectangle::Rectangle_get_bottom), createNativeFunction(context, this, &As_flash_geom_Rectangle::Rectangle_set_bottom));
+	prototype->addProperty("bottomRight", createNativeFunction(context, this, &As_flash_geom_Rectangle::Rectangle_get_bottomRight), createNativeFunction(context, this, &As_flash_geom_Rectangle::Rectangle_set_bottomRight));
+	prototype->addProperty("height", createNativeFunction(context, this, &As_flash_geom_Rectangle::Rectangle_get_height), createNativeFunction(context, this, &As_flash_geom_Rectangle::Rectangle_set_height));
+	prototype->addProperty("left", createNativeFunction(context, this, &As_flash_geom_Rectangle::Rectangle_get_left), createNativeFunction(context, this, &As_flash_geom_Rectangle::Rectangle_set_left));
+	prototype->addProperty("right", createNativeFunction(context, this, &As_flash_geom_Rectangle::Rectangle_get_right), createNativeFunction(context, this, &As_flash_geom_Rectangle::Rectangle_set_right));
+	prototype->addProperty("size", createNativeFunction(context, this, &As_flash_geom_Rectangle::Rectangle_get_size), createNativeFunction(context, this, &As_flash_geom_Rectangle::Rectangle_set_size));
+	prototype->addProperty("top", createNativeFunction(context, this, &As_flash_geom_Rectangle::Rectangle_get_top), createNativeFunction(context, this, &As_flash_geom_Rectangle::Rectangle_set_top));
+	prototype->addProperty("topLeft", createNativeFunction(context, this, &As_flash_geom_Rectangle::Rectangle_get_topLeft), createNativeFunction(context, this, &As_flash_geom_Rectangle::Rectangle_set_topLeft));
+	prototype->addProperty("width", createNativeFunction(context, this, &As_flash_geom_Rectangle::Rectangle_get_width), createNativeFunction(context, this, &As_flash_geom_Rectangle::Rectangle_set_width));
+	prototype->addProperty("x", createNativeFunction(context, this, &As_flash_geom_Rectangle::Rectangle_get_x), createNativeFunction(context, this, &As_flash_geom_Rectangle::Rectangle_set_x));
+	prototype->addProperty("y", createNativeFunction(context, this, &As_flash_geom_Rectangle::Rectangle_get_y), createNativeFunction(context, this, &As_flash_geom_Rectangle::Rectangle_set_y));
 
 	prototype->setMember("constructor", ActionValue(this));
+	prototype->setMember("__coerce__", ActionValue(this));
+
 	prototype->setReadOnly();
 
 	setMember("prototype", ActionValue(prototype));
 }
 
-Ref< ActionObject > As_flash_geom_Rectangle::alloc(ActionContext* context)
+void As_flash_geom_Rectangle::init(ActionObject* self, const ActionValueArray& args) const
 {
-	return new Rectangle();
+	Ref< Rectangle > rc = new Rectangle();
+	if (args.size() >= 4)
+	{
+		rc->left = args[0].getNumber();
+		rc->top = args[1].getNumber();
+		rc->width = args[2].getNumber();
+		rc->height = args[3].getNumber();
+	}
+	self->setRelay(rc);
 }
 
-void As_flash_geom_Rectangle::init(ActionContext* context, ActionObject* self, const ActionValueArray& args)
+void As_flash_geom_Rectangle::coerce(ActionObject* self) const
 {
-	if (args.size() < 4)
-		return;
+	ActionValue left, top;
+	ActionValue right, bottom;
 
-	Rectangle* rc = checked_type_cast< Rectangle* >(self);
-	rc->left = args[0].getNumber();
-	rc->top = args[1].getNumber();
-	rc->width = args[2].getNumber();
-	rc->height = args[3].getNumber();
+	self->getMember(getContext(), "left", left);
+	self->getMember(getContext(), "top", top);
+	self->getMember(getContext(), "right", right);
+	self->getMember(getContext(), "bottom", bottom);
+
+	self->setRelay(new Rectangle(
+		float(left.getNumber()),
+		float(top.getNumber()),
+		float(right.getNumber()),
+		float(bottom.getNumber())
+	));
 }
 
 Ref< Rectangle > As_flash_geom_Rectangle::Rectangle_clone(const Rectangle* self) const

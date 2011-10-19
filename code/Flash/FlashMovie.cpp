@@ -97,15 +97,17 @@ bool FlashMovie::getExportName(uint16_t exportId, std::string& outName) const
 
 Ref< FlashSpriteInstance > FlashMovie::createMovieClipInstance() const
 {
-	Ref< ActionGlobal > global = new ActionGlobal();
-	Ref< ActionContext > context = new ActionContext(m_vm, this, global);
-	
+	Ref< ActionContext > context = new ActionContext(m_vm, this);
+
+	Ref< ActionGlobal > global = new ActionGlobal(context);
+	context->setGlobal(global);
+
 	Ref< FlashSpriteInstance > spriteInstance = checked_type_cast< FlashSpriteInstance*, false >(
 		m_movieClip->createInstance(context, 0, "")
 	);
 
-	global->setMember("_root", ActionValue(spriteInstance.ptr()));
-	global->setMember("_level0", ActionValue(spriteInstance.ptr()));
+	global->setMember("_root", ActionValue(spriteInstance->getAsObject()));
+	global->setMember("_level0", ActionValue(spriteInstance->getAsObject()));
 
 	return spriteInstance;
 }
@@ -114,11 +116,9 @@ Ref< FlashSpriteInstance > FlashMovie::createExternalMovieClipInstance(FlashSpri
 {
 	// Create context; share VM and global.
 	Ref< ActionContext > outerContext = containerInstance->getContext();
-	Ref< ActionContext > context = new ActionContext(
-		outerContext->getVM(),
-		this,
-		outerContext->getGlobal()
-	);
+
+	Ref< ActionContext > context = new ActionContext(outerContext->getVM(), this);
+	context->setGlobal(outerContext->getGlobal());
 
 	// Create instance of external movie.
 	Ref< FlashSpriteInstance > spriteInstance = checked_type_cast< FlashSpriteInstance*, false >(

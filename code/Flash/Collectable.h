@@ -36,9 +36,9 @@ public:
 	virtual void release(void* owner) const;
 
 protected:
-	virtual void trace(const IVisitor& visitor) const;
+	virtual void trace(const IVisitor& visitor) const = 0;
 
-	virtual void dereference();
+	virtual void dereference() = 0;
 
 private:
 	friend struct DefaultLink< Collectable >;

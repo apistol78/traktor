@@ -18,11 +18,11 @@ class As_flash_geom_Point : public ActionClass
 	T_RTTI_CLASS;
 
 public:
-	As_flash_geom_Point();
+	As_flash_geom_Point(ActionContext* context);
 
-	virtual Ref< ActionObject > alloc(ActionContext* context);
+	virtual void init(ActionObject* self, const ActionValueArray& args) const;
 
-	virtual void init(ActionContext* context, ActionObject* self, const ActionValueArray& args);
+	virtual void coerce(ActionObject* self) const;
 
 private:
 	void Point_add(Point* self, const Point* arg) const;

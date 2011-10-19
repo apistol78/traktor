@@ -10,28 +10,28 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsSound", AsSound, ActionClass)
 
-AsSound::AsSound()
-:	ActionClass("Sound")
+AsSound::AsSound(ActionContext* context)
+:	ActionClass(context, "Sound")
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember("attachSound", ActionValue(createNativeFunction(this, &AsSound::Sound_attachSound)));
-	prototype->setMember("getBytesLoaded", ActionValue(createNativeFunction(this, &AsSound::Sound_getBytesLoaded)));
-	prototype->setMember("getBytesTotal", ActionValue(createNativeFunction(this, &AsSound::Sound_getBytesTotal)));
-	prototype->setMember("getPan", ActionValue(createNativeFunction(this, &AsSound::Sound_getPan)));
-	prototype->setMember("getTransform", ActionValue(createNativeFunction(this, &AsSound::Sound_getTransform)));
-	prototype->setMember("getVolume", ActionValue(createNativeFunction(this, &AsSound::Sound_getVolume)));
-	prototype->setMember("loadSound", ActionValue(createNativeFunction(this, &AsSound::Sound_loadSound)));
-	prototype->setMember("setPan", ActionValue(createNativeFunction(this, &AsSound::Sound_setPan)));
-	prototype->setMember("setTransform", ActionValue(createNativeFunction(this, &AsSound::Sound_setTransform)));
-	prototype->setMember("setVolume", ActionValue(createNativeFunction(this, &AsSound::Sound_setVolume)));
-	prototype->setMember("start", ActionValue(createNativeFunction(this, &AsSound::Sound_start)));
-	prototype->setMember("stop", ActionValue(createNativeFunction(this, &AsSound::Sound_stop)));
+	prototype->setMember("attachSound", ActionValue(createNativeFunction(context, this, &AsSound::Sound_attachSound)));
+	prototype->setMember("getBytesLoaded", ActionValue(createNativeFunction(context, this, &AsSound::Sound_getBytesLoaded)));
+	prototype->setMember("getBytesTotal", ActionValue(createNativeFunction(context, this, &AsSound::Sound_getBytesTotal)));
+	prototype->setMember("getPan", ActionValue(createNativeFunction(context, this, &AsSound::Sound_getPan)));
+	prototype->setMember("getTransform", ActionValue(createNativeFunction(context, this, &AsSound::Sound_getTransform)));
+	prototype->setMember("getVolume", ActionValue(createNativeFunction(context, this, &AsSound::Sound_getVolume)));
+	prototype->setMember("loadSound", ActionValue(createNativeFunction(context, this, &AsSound::Sound_loadSound)));
+	prototype->setMember("setPan", ActionValue(createNativeFunction(context, this, &AsSound::Sound_setPan)));
+	prototype->setMember("setTransform", ActionValue(createNativeFunction(context, this, &AsSound::Sound_setTransform)));
+	prototype->setMember("setVolume", ActionValue(createNativeFunction(context, this, &AsSound::Sound_setVolume)));
+	prototype->setMember("start", ActionValue(createNativeFunction(context, this, &AsSound::Sound_start)));
+	prototype->setMember("stop", ActionValue(createNativeFunction(context, this, &AsSound::Sound_stop)));
 
-	prototype->addProperty("checkPolicyFile", createNativeFunction(this, &AsSound::Sound_get_checkPolicyFile), createNativeFunction(this, &AsSound::Sound_set_checkPolicyFile));
-	prototype->addProperty("duration", createNativeFunction(this, &AsSound::Sound_get_duration), 0);
-	prototype->addProperty("id3", createNativeFunction(this, &AsSound::Sound_get_id3), 0);
-	prototype->addProperty("position", createNativeFunction(this, &AsSound::Sound_get_position), 0);
+	prototype->addProperty("checkPolicyFile", createNativeFunction(context, this, &AsSound::Sound_get_checkPolicyFile), createNativeFunction(context, this, &AsSound::Sound_set_checkPolicyFile));
+	prototype->addProperty("duration", createNativeFunction(context, this, &AsSound::Sound_get_duration), 0);
+	prototype->addProperty("id3", createNativeFunction(context, this, &AsSound::Sound_get_id3), 0);
+	prototype->addProperty("position", createNativeFunction(context, this, &AsSound::Sound_get_position), 0);
 
 	prototype->setMember("constructor", ActionValue(this));
 	prototype->setReadOnly();
@@ -39,13 +39,13 @@ AsSound::AsSound()
 	setMember("prototype", ActionValue(prototype));
 }
 
-Ref< ActionObject > AsSound::alloc(ActionContext* context)
+void AsSound::init(ActionObject* self, const ActionValueArray& args) const
 {
-	return new ActionObject("Sound");
 }
 
-void AsSound::init(ActionContext* context, ActionObject* self, const ActionValueArray& args)
+void AsSound::coerce(ActionObject* self) const
 {
+	T_FATAL_ERROR;
 }
 
 void AsSound::Sound_attachSound(CallArgs& ca)

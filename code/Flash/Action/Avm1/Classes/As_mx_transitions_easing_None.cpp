@@ -8,15 +8,15 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.As_mx_transitions_easing_None", As_mx_transitions_easing_None, ActionClass)
 
-As_mx_transitions_easing_None::As_mx_transitions_easing_None()
-:	ActionClass("mx.transitions.easing.None")
+As_mx_transitions_easing_None::As_mx_transitions_easing_None(ActionContext* context)
+:	ActionClass(context, "mx.transitions.easing.None")
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember("easeIn", ActionValue(createNativeFunction(this, &As_mx_transitions_easing_None::None_easeIn)));
-	prototype->setMember("easeInOut", ActionValue(createNativeFunction(this, &As_mx_transitions_easing_None::None_easeInOut)));
-	prototype->setMember("easeOut", ActionValue(createNativeFunction(this, &As_mx_transitions_easing_None::None_easeOut)));
-	prototype->setMember("easeNone", ActionValue(createNativeFunction(this, &As_mx_transitions_easing_None::None_easeNone)));
+	prototype->setMember("easeIn", ActionValue(createNativeFunction(context, this, &As_mx_transitions_easing_None::None_easeIn)));
+	prototype->setMember("easeInOut", ActionValue(createNativeFunction(context, this, &As_mx_transitions_easing_None::None_easeInOut)));
+	prototype->setMember("easeOut", ActionValue(createNativeFunction(context, this, &As_mx_transitions_easing_None::None_easeOut)));
+	prototype->setMember("easeNone", ActionValue(createNativeFunction(context, this, &As_mx_transitions_easing_None::None_easeNone)));
 
 	prototype->setMember("constructor", ActionValue(this));
 	prototype->setReadOnly();
@@ -24,13 +24,13 @@ As_mx_transitions_easing_None::As_mx_transitions_easing_None()
 	setMember("prototype", ActionValue(prototype));
 }
 
-Ref< ActionObject > As_mx_transitions_easing_None::alloc(ActionContext* context)
+void As_mx_transitions_easing_None::init(ActionObject* self, const ActionValueArray& args) const
 {
-	return new ActionObject("mx.transitions.easing.None");
 }
 
-void As_mx_transitions_easing_None::init(ActionContext* context, ActionObject* self, const ActionValueArray& args)
+void As_mx_transitions_easing_None::coerce(ActionObject* self) const
 {
+	T_FATAL_ERROR;
 }
 
 void As_mx_transitions_easing_None::None_easeIn(CallArgs& ca)

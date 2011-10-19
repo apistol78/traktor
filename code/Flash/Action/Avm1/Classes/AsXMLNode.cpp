@@ -8,19 +8,19 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsXMLNode", AsXMLNode, ActionClass)
 
-AsXMLNode::AsXMLNode()
-:	ActionClass("XMLNode")
+AsXMLNode::AsXMLNode(ActionContext* context)
+:	ActionClass(context, "XMLNode")
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember("appendChild", ActionValue(createNativeFunction(this, &AsXMLNode::XMLNode_appendChild)));
-	prototype->setMember("cloneNode", ActionValue(createNativeFunction(this, &AsXMLNode::XMLNode_cloneNode)));
-	prototype->setMember("getNamespaceForPrefix", ActionValue(createNativeFunction(this, &AsXMLNode::XMLNode_getNamespaceForPrefix)));
-	prototype->setMember("getPrefixForNamespace", ActionValue(createNativeFunction(this, &AsXMLNode::XMLNode_getPrefixForNamespace)));
-	prototype->setMember("hasChildNodes", ActionValue(createNativeFunction(this, &AsXMLNode::XMLNode_hasChildNodes)));
-	prototype->setMember("insertBefore", ActionValue(createNativeFunction(this, &AsXMLNode::XMLNode_insertBefore)));
-	prototype->setMember("removeNode", ActionValue(createNativeFunction(this, &AsXMLNode::XMLNode_removeNode)));
-	prototype->setMember("toString", ActionValue(createNativeFunction(this, &AsXMLNode::XMLNode_toString)));
+	prototype->setMember("appendChild", ActionValue(createNativeFunction(context, this, &AsXMLNode::XMLNode_appendChild)));
+	prototype->setMember("cloneNode", ActionValue(createNativeFunction(context, this, &AsXMLNode::XMLNode_cloneNode)));
+	prototype->setMember("getNamespaceForPrefix", ActionValue(createNativeFunction(context, this, &AsXMLNode::XMLNode_getNamespaceForPrefix)));
+	prototype->setMember("getPrefixForNamespace", ActionValue(createNativeFunction(context, this, &AsXMLNode::XMLNode_getPrefixForNamespace)));
+	prototype->setMember("hasChildNodes", ActionValue(createNativeFunction(context, this, &AsXMLNode::XMLNode_hasChildNodes)));
+	prototype->setMember("insertBefore", ActionValue(createNativeFunction(context, this, &AsXMLNode::XMLNode_insertBefore)));
+	prototype->setMember("removeNode", ActionValue(createNativeFunction(context, this, &AsXMLNode::XMLNode_removeNode)));
+	prototype->setMember("toString", ActionValue(createNativeFunction(context, this, &AsXMLNode::XMLNode_toString)));
 
 	prototype->setMember("constructor", ActionValue(this));
 	prototype->setReadOnly();
@@ -28,13 +28,13 @@ AsXMLNode::AsXMLNode()
 	setMember("prototype", ActionValue(prototype));
 }
 
-Ref< ActionObject > AsXMLNode::alloc(ActionContext* context)
+void AsXMLNode::init(ActionObject* self, const ActionValueArray& args) const
 {
-	return new ActionObject("XMLNode");
 }
 
-void AsXMLNode::init(ActionContext* context, ActionObject* self, const ActionValueArray& args)
+void AsXMLNode::coerce(ActionObject* self) const
 {
+	T_FATAL_ERROR;
 }
 
 void AsXMLNode::XMLNode_appendChild(CallArgs& ca)

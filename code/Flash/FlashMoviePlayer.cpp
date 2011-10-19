@@ -55,15 +55,15 @@ bool FlashMoviePlayer::create(FlashMovie* movie)
 	m_movie = movie;
 	m_movieInstance = m_movie->createMovieClipInstance();
 
-	// Override some global methods.
-	setGlobal("getUrl", ActionValue(createNativeFunction(this, &FlashMoviePlayer::Global_getUrl)));
-	setGlobal("setInterval", ActionValue(createNativeFunction(this, &FlashMoviePlayer::Global_setInterval)));
-	setGlobal("clearInterval", ActionValue(createNativeFunction(this, &FlashMoviePlayer::Global_clearInterval)));
-
-	// Get references to key and mouse singletons.
 	Ref< ActionContext > context = m_movieInstance->getContext();
 	Ref< ActionObject > global = context->getGlobal();
 
+	// Override some global methods.
+	setGlobal("getUrl", ActionValue(createNativeFunction(context, this, &FlashMoviePlayer::Global_getUrl)));
+	setGlobal("setInterval", ActionValue(createNativeFunction(context, this, &FlashMoviePlayer::Global_setInterval)));
+	setGlobal("clearInterval", ActionValue(createNativeFunction(context, this, &FlashMoviePlayer::Global_clearInterval)));
+
+	// Get references to key and mouse singletons.
 	Ref< AsKey > key;
 	if (global->getLocalMember("Key", memberValue))
 		m_key = memberValue.getObject< AsKey >();
@@ -169,7 +169,7 @@ void FlashMoviePlayer::executeFrame()
 	{
 		if (i->second.count++ >= i->second.interval)
 		{
-			i->second.function->call(context, i->second.target, argv);
+			i->second.function->call(i->second.target, argv);
 			i->second.count = 0;
 		}
 	}
@@ -189,31 +189,31 @@ void FlashMoviePlayer::executeFrame()
 		case EvtKeyDown:
 			m_movieInstance->eventKeyDown(evt.keyCode);
 			if (m_key)
-				m_key->eventKeyDown(context, evt.keyCode);
+				m_key->eventKeyDown(evt.keyCode);
 			break;
 
 		case EvtKeyUp:
 			m_movieInstance->eventKeyUp(evt.keyCode);
 			if (m_key)
-				m_key->eventKeyUp(context, evt.keyCode);
+				m_key->eventKeyUp(evt.keyCode);
 			break;
 
 		case EvtMouseDown:
 			m_movieInstance->eventMouseDown(evt.mouse.x, evt.mouse.y, evt.mouse.button);
 			if (m_mouse)
-				m_mouse->eventMouseDown(context, evt.mouse.x, evt.mouse.y, evt.mouse.button);
+				m_mouse->eventMouseDown(evt.mouse.x, evt.mouse.y, evt.mouse.button);
 			break;
 
 		case EvtMouseUp:
 			m_movieInstance->eventMouseUp(evt.mouse.x, evt.mouse.y, evt.mouse.button);
 			if (m_mouse)
-				m_mouse->eventMouseUp(context, evt.mouse.x, evt.mouse.y, evt.mouse.button);
+				m_mouse->eventMouseUp(evt.mouse.x, evt.mouse.y, evt.mouse.button);
 			break;
 
 		case EvtMouseMove:
 			m_movieInstance->eventMouseMove(evt.mouse.x, evt.mouse.y, evt.mouse.button);
 			if (m_mouse)
-				m_mouse->eventMouseMove(context, evt.mouse.x, evt.mouse.y, evt.mouse.button);
+				m_mouse->eventMouseMove(evt.mouse.x, evt.mouse.y, evt.mouse.button);
 			break;
 		}
 		m_events.pop_front();
