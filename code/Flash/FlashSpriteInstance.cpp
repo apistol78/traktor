@@ -217,20 +217,15 @@ FlashSpriteInstance* FlashSpriteInstance::getMask()
 	return m_mask;
 }
 
-bool FlashSpriteInstance::getMember(ActionContext* context, const std::string& memberName, ActionValue& outMemberValue)
+bool FlashSpriteInstance::getMember(const std::string& memberName, ActionValue& outMemberValue)
 {
-	// First try get ordinary member.
-	if (FlashCharacterInstance::getMember(context, memberName, outMemberValue))
-		return true;
-
-	// No such member; try get named instance from display list.
 	FlashDisplayList::layer_map_t::const_iterator i = m_displayList.findLayer(memberName);
 	if (i != m_displayList.getLayers().end())
 	{
-		outMemberValue = ActionValue(i->second.instance);
+		T_ASSERT (i->second.instance);
+		outMemberValue = ActionValue(i->second.instance->getAsObject());
 		return true;
 	}
-
 	return false;
 }
 
@@ -293,7 +288,7 @@ void FlashSpriteInstance::eventInit()
 	const RefArray< const IActionVMImage >& initActionScripts = m_sprite->getInitActionScripts();
 	for (RefArray< const IActionVMImage >::const_iterator i = initActionScripts.begin(); i != initActionScripts.end(); ++i)
 	{
-		ActionFrame frame(context, this, *i, 4, 0, 0);
+		ActionFrame frame(context, getAsObject(), *i, 4, 0, 0);
 		context->getVM()->execute(&frame);
 	}
 
@@ -335,7 +330,7 @@ void FlashSpriteInstance::eventFrame()
 		const RefArray< const IActionVMImage >& scripts = frame->getActionScripts();
 		for (RefArray< const IActionVMImage >::const_iterator i = scripts.begin(); i != scripts.end(); ++i)
 		{
-			ActionFrame callFrame(context, this, *i, 4, 0, 0);
+			ActionFrame callFrame(context, getAsObject(), *i, 4, 0, 0);
 			context->getVM()->execute(&callFrame);
 		}
 
@@ -520,16 +515,19 @@ void FlashSpriteInstance::dereference()
 
 void FlashSpriteInstance::executeScriptEvent(const std::string& eventName)
 {
+	ActionObject* self = getAsObject();
+	T_ASSERT (self);
+
 	ActionValue memberValue;
-	if (!getMember(getContext(), eventName, memberValue))
+	if (!self->getMember(getContext(), eventName, memberValue))
 		return;
 
 	Ref< ActionFunction > eventFunction = memberValue.getObject< ActionFunction >();
 	if (!eventFunction)
 		return;
 
-	ActionFrame callFrame(getContext(), this, 0, 4, 0, 0);
-	eventFunction->call(&callFrame, this);
+	ActionFrame callFrame(getContext(), self, 0, 4, 0, 0);
+	eventFunction->call(&callFrame, self);
 }
 
 	}

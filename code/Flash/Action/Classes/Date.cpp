@@ -5,10 +5,10 @@ namespace traktor
 	namespace flash
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.Date", Date, ActionObject)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.Date", Date, ActionObjectRelay)
 
 Date::Date()
-:	ActionObject("Date")
+:	ActionObjectRelay("Date")
 {
 }
 

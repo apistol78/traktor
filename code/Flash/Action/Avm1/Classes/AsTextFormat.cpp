@@ -9,8 +9,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsTextFormat", AsTextFormat, ActionClass)
 
-AsTextFormat::AsTextFormat()
-:	ActionClass("TextFormat")
+AsTextFormat::AsTextFormat(ActionContext* context)
+:	ActionClass(context, "TextFormat")
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
@@ -20,13 +20,14 @@ AsTextFormat::AsTextFormat()
 	setMember("prototype", ActionValue(prototype));
 }
 
-Ref< ActionObject > AsTextFormat::alloc(ActionContext* context)
+void AsTextFormat::init(ActionObject* self, const ActionValueArray& args) const
 {
-	return new FlashTextFormat();
+	self->setRelay(new FlashTextFormat());
 }
 
-void AsTextFormat::init(ActionContext* context, ActionObject* self, const ActionValueArray& args)
+void AsTextFormat::coerce(ActionObject* self) const
 {
+	T_FATAL_ERROR;
 }
 
 	}

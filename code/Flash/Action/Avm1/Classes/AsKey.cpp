@@ -12,8 +12,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsKey", AsKey, ActionClass)
 
-AsKey::AsKey()
-:	ActionClass("Key")
+AsKey::AsKey(ActionContext* context)
+:	ActionClass(context, "Key")
 ,	m_lastKeyCode(0)
 {
 	std::memset(m_keyState, 0, sizeof(m_keyState));
@@ -38,13 +38,13 @@ AsKey::AsKey()
 	prototype->setMember("SPACE", ActionValue(avm_number_t(AkSpace)));
 	prototype->setMember("TAB", ActionValue(avm_number_t(AkTab)));
 	prototype->setMember("UP", ActionValue(avm_number_t(AkUp)));
-	prototype->setMember("addListener", ActionValue(createNativeFunction(this, &AsKey::Key_addListener)));
-	prototype->setMember("getAscii", ActionValue(createNativeFunction(this, &AsKey::Key_getAscii)));
-	prototype->setMember("getCode", ActionValue(createNativeFunction(this, &AsKey::Key_getCode)));
-	prototype->setMember("isAccessible", ActionValue(createNativeFunction(this, &AsKey::Key_isAccessible)));
-	prototype->setMember("isDown", ActionValue(createNativeFunction(this, &AsKey::Key_isDown)));
-	prototype->setMember("isToggled", ActionValue(createNativeFunction(this, &AsKey::Key_isToggled)));
-	prototype->setMember("removeListener", ActionValue(createNativeFunction(this, &AsKey::Key_removeListener)));
+	prototype->setMember("addListener", ActionValue(createNativeFunction(context, this, &AsKey::Key_addListener)));
+	prototype->setMember("getAscii", ActionValue(createNativeFunction(context, this, &AsKey::Key_getAscii)));
+	prototype->setMember("getCode", ActionValue(createNativeFunction(context, this, &AsKey::Key_getCode)));
+	prototype->setMember("isAccessible", ActionValue(createNativeFunction(context, this, &AsKey::Key_isAccessible)));
+	prototype->setMember("isDown", ActionValue(createNativeFunction(context, this, &AsKey::Key_isDown)));
+	prototype->setMember("isToggled", ActionValue(createNativeFunction(context, this, &AsKey::Key_isToggled)));
+	prototype->setMember("removeListener", ActionValue(createNativeFunction(context, this, &AsKey::Key_removeListener)));
 
 	prototype->setMember("constructor", ActionValue(this));
 	prototype->setReadOnly();
@@ -52,16 +52,16 @@ AsKey::AsKey()
 	setMember("prototype", ActionValue(prototype));
 }
 
-Ref< ActionObject > AsKey::alloc(ActionContext* context)
-{
-	return new ActionObject("Key");
-}
-
-void AsKey::init(ActionContext* context, ActionObject* self, const ActionValueArray& args)
+void AsKey::init(ActionObject* self, const ActionValueArray& args) const
 {
 }
 
-void AsKey::eventKeyDown(ActionContext* context, int keyCode)
+void AsKey::coerce(ActionObject* self) const
+{
+	T_FATAL_ERROR;
+}
+
+void AsKey::eventKeyDown(int keyCode)
 {
 	m_keyState[keyCode] = true;
 	m_lastKeyCode = keyCode;
@@ -72,20 +72,20 @@ void AsKey::eventKeyDown(ActionContext* context, int keyCode)
 	for (RefArray< ActionObject >::iterator i = listeners.begin(); i != listeners.end(); ++i)
 	{
 		ActionValue member;
-		(*i)->getMember(context, "onKeyDown", member);
+		(*i)->getMember(getContext(), "onKeyDown", member);
 		if (member.isUndefined())
 			continue;
 
 		Ref< ActionFunction > eventFunction = checked_type_cast< ActionFunction* >(member.getObject());
 		if (eventFunction)
 		{
-			ActionFrame callerFrame(context, 0, 0, 4, 0, 0);
+			ActionFrame callerFrame(getContext(), 0, 0, 4, 0, 0);
 			eventFunction->call(&callerFrame, (*i));
 		}
 	}
 }
 
-void AsKey::eventKeyUp(ActionContext* context, int keyCode)
+void AsKey::eventKeyUp(int keyCode)
 {
 	m_keyState[keyCode] = false;
 
@@ -95,14 +95,14 @@ void AsKey::eventKeyUp(ActionContext* context, int keyCode)
 	for (RefArray< ActionObject >::iterator i = listeners.begin(); i != listeners.end(); ++i)
 	{
 		ActionValue member;
-		(*i)->getMember(context, "onKeyUp", member);
+		(*i)->getMember(getContext(), "onKeyUp", member);
 		if (member.isUndefined())
 			continue;
 
 		Ref< ActionFunction > eventFunction = checked_type_cast< ActionFunction* >(member.getObject());
 		if (eventFunction)
 		{
-			ActionFrame callerFrame(context, 0, 0, 4, 0, 0);
+			ActionFrame callerFrame(getContext(), 0, 0, 4, 0, 0);
 			eventFunction->call(&callerFrame, (*i));
 		}
 	}

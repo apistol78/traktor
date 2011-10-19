@@ -8,18 +8,18 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsTextField_StyleSheet", AsTextField_StyleSheet, ActionClass)
 
-AsTextField_StyleSheet::AsTextField_StyleSheet()
-:	ActionClass("TextField.StyleSheet")
+AsTextField_StyleSheet::AsTextField_StyleSheet(ActionContext* context)
+:	ActionClass(context, "TextField.StyleSheet")
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember("clear", ActionValue(createNativeFunction(this, &AsTextField_StyleSheet::TextField_StyleSheet_clear)));
-	prototype->setMember("getStyle", ActionValue(createNativeFunction(this, &AsTextField_StyleSheet::TextField_StyleSheet_getStyle)));
-	prototype->setMember("getStyleNames", ActionValue(createNativeFunction(this, &AsTextField_StyleSheet::TextField_StyleSheet_getStyleNames)));
-	prototype->setMember("load", ActionValue(createNativeFunction(this, &AsTextField_StyleSheet::TextField_StyleSheet_load)));
-	prototype->setMember("parseCSS", ActionValue(createNativeFunction(this, &AsTextField_StyleSheet::TextField_StyleSheet_parseCSS)));
-	prototype->setMember("setStyle", ActionValue(createNativeFunction(this, &AsTextField_StyleSheet::TextField_StyleSheet_setStyle)));
-	prototype->setMember("transform", ActionValue(createNativeFunction(this, &AsTextField_StyleSheet::TextField_StyleSheet_transform)));
+	prototype->setMember("clear", ActionValue(createNativeFunction(context, this, &AsTextField_StyleSheet::TextField_StyleSheet_clear)));
+	prototype->setMember("getStyle", ActionValue(createNativeFunction(context, this, &AsTextField_StyleSheet::TextField_StyleSheet_getStyle)));
+	prototype->setMember("getStyleNames", ActionValue(createNativeFunction(context, this, &AsTextField_StyleSheet::TextField_StyleSheet_getStyleNames)));
+	prototype->setMember("load", ActionValue(createNativeFunction(context, this, &AsTextField_StyleSheet::TextField_StyleSheet_load)));
+	prototype->setMember("parseCSS", ActionValue(createNativeFunction(context, this, &AsTextField_StyleSheet::TextField_StyleSheet_parseCSS)));
+	prototype->setMember("setStyle", ActionValue(createNativeFunction(context, this, &AsTextField_StyleSheet::TextField_StyleSheet_setStyle)));
+	prototype->setMember("transform", ActionValue(createNativeFunction(context, this, &AsTextField_StyleSheet::TextField_StyleSheet_transform)));
 
 	prototype->setMember("constructor", ActionValue(this));
 	prototype->setReadOnly();
@@ -27,13 +27,13 @@ AsTextField_StyleSheet::AsTextField_StyleSheet()
 	setMember("prototype", ActionValue(prototype));
 }
 
-Ref< ActionObject > AsTextField_StyleSheet::alloc(ActionContext* context)
+void AsTextField_StyleSheet::init(ActionObject* self, const ActionValueArray& args) const
 {
-	return 0;
 }
 
-void AsTextField_StyleSheet::init(ActionContext* context, ActionObject* self, const ActionValueArray& args)
+void AsTextField_StyleSheet::coerce(ActionObject* self) const
 {
+	T_FATAL_ERROR;
 }
 
 void AsTextField_StyleSheet::TextField_StyleSheet_clear(CallArgs& ca)

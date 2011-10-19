@@ -1,7 +1,7 @@
 #ifndef traktor_flash_FlashTextFormat_H
 #define traktor_flash_FlashTextFormat_H
 
-#include "Flash/Action/ActionObject.h"
+#include "Flash/Action/ActionObjectRelay.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -16,7 +16,7 @@ namespace traktor
 	namespace flash
 	{
 
-class T_DLLCLASS FlashTextFormat : public ActionObject
+class T_DLLCLASS FlashTextFormat : public ActionObjectRelay
 {
 	T_RTTI_CLASS;
 

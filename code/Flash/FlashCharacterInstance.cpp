@@ -1,6 +1,7 @@
 #include "Flash/FlashCharacterInstance.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFrame.h"
+#include "Flash/Action/ActionObject.h"
 #include "Flash/Action/IActionVM.h"
 
 namespace traktor
@@ -8,11 +9,12 @@ namespace traktor
 	namespace flash
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashCharacterInstance", FlashCharacterInstance, ActionObject)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashCharacterInstance", FlashCharacterInstance, ActionObjectRelay)
 
-FlashCharacterInstance::FlashCharacterInstance(ActionContext* context, const std::string& prototypeName, FlashCharacterInstance* parent)
-:	ActionObject(prototypeName)
+FlashCharacterInstance::FlashCharacterInstance(ActionContext* context, const std::string& prototype, FlashCharacterInstance* parent)
+:	ActionObjectRelay(prototype)
 ,	m_context(context)
+,	m_prototype(prototype)
 ,	m_parent(parent)
 {
 	m_cxform.red[0] =
@@ -31,9 +33,6 @@ void FlashCharacterInstance::destroy()
 	m_context = 0;
 	m_parent = 0;
 	m_eventScripts.clear();
-
-	deleteAllMembers();
-	deleteAllProperties();
 }
 
 ActionContext* FlashCharacterInstance::getContext() const
@@ -106,7 +105,7 @@ void FlashCharacterInstance::eventInit()
 	{
 		ActionFrame callFrame(
 			m_context,
-			this,
+			getAsObject(),
 			i->second,
 			4,
 			0,
@@ -123,7 +122,7 @@ void FlashCharacterInstance::eventLoad()
 	{
 		ActionFrame callFrame(
 			m_context,
-			this,
+			getAsObject(),
 			i->second,
 			4,
 			0,
@@ -140,7 +139,7 @@ void FlashCharacterInstance::eventFrame()
 	{
 		ActionFrame callFrame(
 			m_context,
-			this,
+			getAsObject(),
 			i->second,
 			4,
 			0,
@@ -168,6 +167,18 @@ void FlashCharacterInstance::eventMouseUp(int x, int y, int button)
 
 void FlashCharacterInstance::eventMouseMove(int x, int y, int button)
 {
+}
+
+void FlashCharacterInstance::trace(const IVisitor& visitor) const
+{
+	visitor(m_context);
+	ActionObjectRelay::trace(visitor);
+}
+
+void FlashCharacterInstance::dereference()
+{
+	m_context = 0;
+	ActionObjectRelay::dereference();
 }
 
 	}

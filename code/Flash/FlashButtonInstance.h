@@ -1,6 +1,7 @@
 #ifndef traktor_flash_FlashButtonInstance_H
 #define traktor_flash_FlashButtonInstance_H
 
+#include <map>
 #include "Flash/FlashCharacterInstance.h"
 
 // import/export mechanism.

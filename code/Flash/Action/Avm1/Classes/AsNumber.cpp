@@ -11,8 +11,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsNumber", AsNumber, ActionClass)
 
-AsNumber::AsNumber()
-:	ActionClass("Number")
+AsNumber::AsNumber(ActionContext* context)
+:	ActionClass(context, "Number")
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
@@ -21,8 +21,8 @@ AsNumber::AsNumber()
 	prototype->setMember("NaN", ActionValue(std::numeric_limits< avm_number_t >::signaling_NaN()));
 	prototype->setMember("NEGATIVE_INFINITY", ActionValue(-std::numeric_limits< avm_number_t >::infinity()));
 	prototype->setMember("POSITIVE_INFINITY", ActionValue(std::numeric_limits< avm_number_t >::infinity()));
-	prototype->setMember("toString", ActionValue(createNativeFunction(this, &AsNumber::Number_toString)));
-	prototype->setMember("valueOf", ActionValue(createNativeFunction(this, &AsNumber::Number_valueOf)));
+	prototype->setMember("toString", ActionValue(createNativeFunction(context, this, &AsNumber::Number_toString)));
+	prototype->setMember("valueOf", ActionValue(createNativeFunction(context, this, &AsNumber::Number_valueOf)));
 
 	prototype->setMember("constructor", ActionValue(this));
 	prototype->setReadOnly();
@@ -30,15 +30,19 @@ AsNumber::AsNumber()
 	setMember("prototype", ActionValue(prototype));
 }
 
-Ref< ActionObject > AsNumber::alloc(ActionContext* context)
+void AsNumber::init(ActionObject* self, const ActionValueArray& args) const
 {
-	return new Number(avm_number_t(0));
+	Ref< Number > n;
+	if (args.size() > 0)
+		n = new Number(args[0].getNumber());
+	else
+		n = new Number(avm_number_t(0));
+	self->setRelay(n);
 }
 
-void AsNumber::init(ActionContext* context, ActionObject* self, const ActionValueArray& args)
+void AsNumber::coerce(ActionObject* self) const
 {
-	if (args.size() > 0)
-		checked_type_cast< Number* >(self)->set(args[0].getNumber());
+	T_FATAL_ERROR;
 }
 
 std::wstring AsNumber::Number_toString(const Number* self) const

@@ -8,8 +8,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsError", AsError, ActionClass)
 
-AsError::AsError()
-:	ActionClass("Error")
+AsError::AsError(ActionContext* context)
+:	ActionClass(context, "Error")
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
@@ -22,15 +22,15 @@ AsError::AsError()
 	setMember("prototype", ActionValue(prototype));
 }
 
-Ref< ActionObject > AsError::alloc(ActionContext* context)
-{
-	return new ActionObject("Error");
-}
-
-void AsError::init(ActionContext* context, ActionObject* self, const ActionValueArray& args)
+void AsError::init(ActionObject* self, const ActionValueArray& args) const
 {
 	if (args.size() > 0)
 		self->setMember("message", args[0]);
+}
+
+void AsError::coerce(ActionObject* self) const
+{
+	T_FATAL_ERROR;
 }
 
 	}

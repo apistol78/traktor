@@ -1,7 +1,7 @@
 #ifndef traktor_flash_Transform_H
 #define traktor_flash_Transform_H
 
-#include "Flash/Action/ActionObject.h"
+#include "Flash/Action/ActionObjectRelay.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -22,16 +22,12 @@ class FlashCharacterInstance;
 /*! \brief Geometry transform wrapper.
  * \ingroup Flash
  */
-class T_DLLCLASS Transform : public ActionObject
+class T_DLLCLASS Transform : public ActionObjectRelay
 {
 	T_RTTI_CLASS;
 
 public:
-	Transform();
-
 	Transform(FlashCharacterInstance* instance);
-
-	void setInstance(FlashCharacterInstance* instance);
 
 	Ref< ColorTransform > getColorTransform() const;
 

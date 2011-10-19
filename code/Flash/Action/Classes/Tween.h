@@ -1,14 +1,14 @@
 #ifndef traktor_flash_Tween_H
 #define traktor_flash_Tween_H
 
-#include "Flash/Action/ActionObject.h"
+#include "Flash/Action/ActionObjectRelay.h"
 
 namespace traktor
 {
 	namespace flash
 	{
 
-class Tween : public ActionObject
+class Tween : public ActionObjectRelay
 {
 	T_RTTI_CLASS;
 

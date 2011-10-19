@@ -8,14 +8,14 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.As_mx_transitions_easing_Bounce", As_mx_transitions_easing_Bounce, ActionClass)
 
-As_mx_transitions_easing_Bounce::As_mx_transitions_easing_Bounce()
-:	ActionClass("mx.transitions.easing.Bounce")
+As_mx_transitions_easing_Bounce::As_mx_transitions_easing_Bounce(ActionContext* context)
+:	ActionClass(context, "mx.transitions.easing.Bounce")
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember("easeIn", ActionValue(createNativeFunction(this, &As_mx_transitions_easing_Bounce::Bounce_easeIn)));
-	prototype->setMember("easeInOut", ActionValue(createNativeFunction(this, &As_mx_transitions_easing_Bounce::Bounce_easeInOut)));
-	prototype->setMember("easeOut", ActionValue(createNativeFunction(this, &As_mx_transitions_easing_Bounce::Bounce_easeOut)));
+	prototype->setMember("easeIn", ActionValue(createNativeFunction(context, this, &As_mx_transitions_easing_Bounce::Bounce_easeIn)));
+	prototype->setMember("easeInOut", ActionValue(createNativeFunction(context, this, &As_mx_transitions_easing_Bounce::Bounce_easeInOut)));
+	prototype->setMember("easeOut", ActionValue(createNativeFunction(context, this, &As_mx_transitions_easing_Bounce::Bounce_easeOut)));
 
 	prototype->setMember("constructor", ActionValue(this));
 	prototype->setReadOnly();
@@ -23,13 +23,13 @@ As_mx_transitions_easing_Bounce::As_mx_transitions_easing_Bounce()
 	setMember("prototype", ActionValue(prototype));
 }
 
-Ref< ActionObject > As_mx_transitions_easing_Bounce::alloc(ActionContext* context)
+void As_mx_transitions_easing_Bounce::init(ActionObject* self, const ActionValueArray& args) const
 {
-	return new ActionObject("mx.transitions.easing.Bounce");
 }
 
-void As_mx_transitions_easing_Bounce::init(ActionContext* context, ActionObject* self, const ActionValueArray& args)
+void As_mx_transitions_easing_Bounce::coerce(ActionObject* self) const
 {
+	T_FATAL_ERROR;
 }
 
 void As_mx_transitions_easing_Bounce::Bounce_easeIn(CallArgs& ca)

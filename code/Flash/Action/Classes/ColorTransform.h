@@ -2,7 +2,7 @@
 #define traktor_flash_ColorTransform_H
 
 #include "Flash/SwfTypes.h"
-#include "Flash/Action/ActionObject.h"
+#include "Flash/Action/ActionObjectRelay.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -20,7 +20,7 @@ namespace traktor
 /*! \brief Color transform wrapper.
  * \ingroup Flash
  */
-class T_DLLCLASS ColorTransform : public ActionObject
+class T_DLLCLASS ColorTransform : public ActionObjectRelay
 {
 	T_RTTI_CLASS;
 

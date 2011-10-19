@@ -11,45 +11,65 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.As_flash_geom_Point", As_flash_geom_Point, ActionClass)
 
-As_flash_geom_Point::As_flash_geom_Point()
-:	ActionClass("flash.geom.Point")
+As_flash_geom_Point::As_flash_geom_Point(ActionContext* context)
+:	ActionClass(context, "flash.geom.Point")
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember("add", ActionValue(createNativeFunction(this, &As_flash_geom_Point::Point_add)));
-	prototype->setMember("clone", ActionValue(createNativeFunction(this, &As_flash_geom_Point::Point_clone)));
-	prototype->setMember("distance", ActionValue(createNativeFunction(this, &As_flash_geom_Point::Point_distance)));
-	prototype->setMember("equals", ActionValue(createNativeFunction(this, &As_flash_geom_Point::Point_equals)));
-	prototype->setMember("interpolate", ActionValue(createNativeFunction(this, &As_flash_geom_Point::Point_interpolate)));
-	prototype->setMember("normalize", ActionValue(createNativeFunction(this, &As_flash_geom_Point::Point_normalize)));
-	prototype->setMember("offset", ActionValue(createNativeFunction(this, &As_flash_geom_Point::Point_offset)));
-	prototype->setMember("polar", ActionValue(createNativeFunction(this, &As_flash_geom_Point::Point_polar)));
-	prototype->setMember("subtract", ActionValue(createNativeFunction(this, &As_flash_geom_Point::Point_subtract)));
-	prototype->setMember("toString", ActionValue(createNativeFunction(this, &As_flash_geom_Point::Point_toString)));
+	prototype->setMember("add", ActionValue(createNativeFunction(context, this, &As_flash_geom_Point::Point_add)));
+	prototype->setMember("clone", ActionValue(createNativeFunction(context, this, &As_flash_geom_Point::Point_clone)));
+	prototype->setMember("distance", ActionValue(createNativeFunction(context, this, &As_flash_geom_Point::Point_distance)));
+	prototype->setMember("equals", ActionValue(createNativeFunction(context, this, &As_flash_geom_Point::Point_equals)));
+	prototype->setMember("interpolate", ActionValue(createNativeFunction(context, this, &As_flash_geom_Point::Point_interpolate)));
+	prototype->setMember("normalize", ActionValue(createNativeFunction(context, this, &As_flash_geom_Point::Point_normalize)));
+	prototype->setMember("offset", ActionValue(createNativeFunction(context, this, &As_flash_geom_Point::Point_offset)));
+	prototype->setMember("polar", ActionValue(createNativeFunction(context, this, &As_flash_geom_Point::Point_polar)));
+	prototype->setMember("subtract", ActionValue(createNativeFunction(context, this, &As_flash_geom_Point::Point_subtract)));
+	prototype->setMember("toString", ActionValue(createNativeFunction(context, this, &As_flash_geom_Point::Point_toString)));
 
-	prototype->addProperty("length", createNativeFunction(this, &As_flash_geom_Point::Point_get_length), createNativeFunction(this, &As_flash_geom_Point::Point_set_length));
-	prototype->addProperty("x", createNativeFunction(this, &As_flash_geom_Point::Point_get_x), createNativeFunction(this, &As_flash_geom_Point::Point_set_x));
-	prototype->addProperty("y", createNativeFunction(this, &As_flash_geom_Point::Point_get_y), createNativeFunction(this, &As_flash_geom_Point::Point_set_y));
+	prototype->addProperty("length", createNativeFunction(context, this, &As_flash_geom_Point::Point_get_length), createNativeFunction(context, this, &As_flash_geom_Point::Point_set_length));
+	prototype->addProperty("x", createNativeFunction(context, this, &As_flash_geom_Point::Point_get_x), createNativeFunction(context, this, &As_flash_geom_Point::Point_set_x));
+	prototype->addProperty("y", createNativeFunction(context, this, &As_flash_geom_Point::Point_get_y), createNativeFunction(context, this, &As_flash_geom_Point::Point_set_y));
 
 	prototype->setMember("constructor", ActionValue(this));
+	prototype->setMember("__coerce__", ActionValue(this));
+
 	prototype->setReadOnly();
 
 	setMember("prototype", ActionValue(prototype));
 }
 
-Ref< ActionObject > As_flash_geom_Point::alloc(ActionContext* context)
+void As_flash_geom_Point::init(ActionObject* self, const ActionValueArray& args) const
 {
-	return new Point();
+	Ref< Point > pt;
+	if (args.size() >= 2)
+	{
+		pt = new Point(
+			args[0].getNumber(),
+			args[1].getNumber()
+		);
+	}
+	else
+	{
+		pt = new Point(
+			avm_number_t(0),
+			avm_number_t(0)
+		);
+	}
+	self->setRelay(pt);
 }
 
-void As_flash_geom_Point::init(ActionContext* context, ActionObject* self, const ActionValueArray& args)
+void As_flash_geom_Point::coerce(ActionObject* self) const
 {
-	if (args.size() < 2)
-		return;
+	ActionValue x, y;
 
-	Point* pt = checked_type_cast< Point* >(self);
-	pt->x = args[0].getNumber();
-	pt->y = args[1].getNumber();
+	self->getMember(getContext(), "x", x);
+	self->getMember(getContext(), "y", y);
+
+	self->setRelay(new Point(
+		x.getNumber(),
+		y.getNumber()
+	));
 }
 
 void As_flash_geom_Point::Point_add(Point* self, const Point* arg) const

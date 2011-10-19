@@ -40,6 +40,7 @@ public:
 	};
 
 	ActionFunction2(
+		ActionContext* context,
 		const std::string& name,
 		const IActionVMImage* image,
 		uint8_t registerCount,
@@ -49,7 +50,7 @@ public:
 		ActionDictionary* dictionary
 	);
 
-	virtual ActionValue call(ActionContext* context, ActionObject* self, const ActionValueArray& args);
+	virtual ActionValue call(ActionObject* self, const ActionValueArray& args);
 
 	virtual ActionValue call(ActionFrame* callerFrame, ActionObject* self);
 

@@ -1,3 +1,4 @@
+#include "Flash/Action/ActionValue.h"
 #include "Flash/Action/Classes/String.h"
 
 namespace traktor
@@ -5,21 +6,21 @@ namespace traktor
 	namespace flash
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.String", String, ActionObject)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.String", String, ActionObjectRelay)
 
 String::String()
-:	ActionObject("String")
+:	ActionObjectRelay("String")
 {
 }
 
 String::String(char ch)
-:	ActionObject("String")
+:	ActionObjectRelay("String")
 {
 	m_str.resize(1, ch);
 }
 
 String::String(const std::string& str)
-:	ActionObject("String")
+:	ActionObjectRelay("String")
 ,	m_str(str)
 {
 }

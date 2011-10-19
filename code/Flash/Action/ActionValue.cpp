@@ -204,11 +204,11 @@ Ref< ActionObject > ActionValue::getObject() const
 	switch (m_type)
 	{
 	case AvtBoolean:
-		return new Boolean(m_value.b);
+		return (new Boolean(m_value.b))->getAsObject();
 	case AvtNumber:
-		return new Number(m_value.n);
+		return (new Number(m_value.n))->getAsObject();
 	case AvtString:
-		return new String(m_value.s);
+		return (new String(m_value.s))->getAsObject();
 	case AvtObject:
 		return m_value.o;
 	}

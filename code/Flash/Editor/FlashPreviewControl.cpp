@@ -1,3 +1,6 @@
+#include "Core/Log/Log.h"
+#include "Core/Math/Const.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Flash/Editor/FlashPreviewControl.h"
 #include "Flash/FlashMoviePlayer.h"
 #include "Flash/FlashMovie.h"
@@ -26,8 +29,6 @@
 #	endif
 #	include "Graphics/Surface.h"
 #endif
-#include "Core/Math/Const.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -158,12 +159,10 @@ void FlashPreviewControl::destroy()
 		m_idleHandler = 0;
 	}
 
+	safeDestroy(m_moviePlayer);
+
 #if T_USE_ACCELERATED_RENDERER
-	if (m_displayRenderer)
-	{
-		m_displayRenderer->destroy();
-		m_displayRenderer = 0;
-	}
+	safeDestroy(m_displayRenderer);
 
 	if (m_renderView)
 	{
@@ -171,11 +170,7 @@ void FlashPreviewControl::destroy()
 		m_renderView = 0;
 	}
 #else
-	if (m_graphicsSystem)
-	{
-		m_graphicsSystem->destroy();
-		m_graphicsSystem = 0;
-	}
+	safeDestroy(m_graphicsSystem);
 #endif
 
 	Widget::destroy();

@@ -19,11 +19,11 @@ class AsString : public ActionClass
 	T_RTTI_CLASS;
 
 public:
-	AsString();
+	AsString(ActionContext* context);
 
-	virtual Ref< ActionObject > alloc(ActionContext* context);
+	virtual void init(ActionObject* self, const ActionValueArray& args) const;
 
-	virtual void init(ActionContext* context, ActionObject* self, const ActionValueArray& args);
+	virtual void coerce(ActionObject* self) const;
 
 private:
 	Ref< String > String_charAt(const String* self, uint32_t index) const;
@@ -48,7 +48,7 @@ private:
 
 	void String_toLowerCase(CallArgs& ca);
 
-	void String_toString(CallArgs& ca);
+	//void String_toString(CallArgs& ca);
 
 	void String_toUpperCase(CallArgs& ca);
 

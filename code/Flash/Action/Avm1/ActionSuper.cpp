@@ -9,7 +9,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.ActionSuper", ActionSuper, ActionFunction)
 
 ActionSuper::ActionSuper(ActionContext* context, ActionObject* object)
-:	ActionFunction("super")
+:	ActionFunction(context, "super")
 ,	m_object(object)
 {
 	ActionValue memberValue;
@@ -31,7 +31,7 @@ ActionSuper::ActionSuper(ActionContext* context, ActionObject* object)
 	setReadOnly();
 }
 
-ActionValue ActionSuper::call(ActionContext* context, ActionObject* self, const ActionValueArray& args)
+ActionValue ActionSuper::call(ActionObject* self, const ActionValueArray& args)
 {
 	return ActionValue();
 }

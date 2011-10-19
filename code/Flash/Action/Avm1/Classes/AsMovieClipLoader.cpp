@@ -9,16 +9,16 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsMovieClipLoader", AsMovieClipLoader, ActionClass)
 
-AsMovieClipLoader::AsMovieClipLoader()
-:	ActionClass("MovieClipLoader")
+AsMovieClipLoader::AsMovieClipLoader(ActionContext* context)
+:	ActionClass(context, "MovieClipLoader")
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember("addListener", ActionValue(createNativeFunction(this, &AsMovieClipLoader::MovieClipLoader_addListener)));
-	prototype->setMember("getProgress", ActionValue(createNativeFunction(this, &AsMovieClipLoader::MovieClipLoader_getProgress)));
-	prototype->setMember("loadClip", ActionValue(createNativeFunction(this, &AsMovieClipLoader::MovieClipLoader_loadClip)));
-	prototype->setMember("removeListener", ActionValue(createNativeFunction(this, &AsMovieClipLoader::MovieClipLoader_removeListener)));
-	prototype->setMember("unloadClip", ActionValue(createNativeFunction(this, &AsMovieClipLoader::MovieClipLoader_unloadClip)));
+	prototype->setMember("addListener", ActionValue(createNativeFunction(context, this, &AsMovieClipLoader::MovieClipLoader_addListener)));
+	prototype->setMember("getProgress", ActionValue(createNativeFunction(context, this, &AsMovieClipLoader::MovieClipLoader_getProgress)));
+	prototype->setMember("loadClip", ActionValue(createNativeFunction(context, this, &AsMovieClipLoader::MovieClipLoader_loadClip)));
+	prototype->setMember("removeListener", ActionValue(createNativeFunction(context, this, &AsMovieClipLoader::MovieClipLoader_removeListener)));
+	prototype->setMember("unloadClip", ActionValue(createNativeFunction(context, this, &AsMovieClipLoader::MovieClipLoader_unloadClip)));
 
 	prototype->setMember("constructor", ActionValue(this));
 	prototype->setReadOnly();
@@ -26,13 +26,13 @@ AsMovieClipLoader::AsMovieClipLoader()
 	setMember("prototype", ActionValue(prototype));
 }
 
-Ref< ActionObject > AsMovieClipLoader::alloc(ActionContext* context)
+void AsMovieClipLoader::init(ActionObject* self, const ActionValueArray& args) const
 {
-	return new ActionObject("MovieClipLoader");
 }
 
-void AsMovieClipLoader::init(ActionContext* context, ActionObject* self, const ActionValueArray& args)
+void AsMovieClipLoader::coerce(ActionObject* self) const
 {
+	T_FATAL_ERROR;
 }
 
 void AsMovieClipLoader::MovieClipLoader_addListener(CallArgs& ca)

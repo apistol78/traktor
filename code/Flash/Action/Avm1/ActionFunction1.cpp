@@ -13,25 +13,26 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.ActionFunction1", ActionFunction1, ActionFunction)
 
 ActionFunction1::ActionFunction1(
+	ActionContext* context,
 	const std::string& name,
 	const IActionVMImage* image,
 	uint16_t argumentCount,
 	ActionDictionary* dictionary
 )
-:	ActionFunction(name)
+:	ActionFunction(context, name)
 ,	m_image(image)
 ,	m_argumentCount(argumentCount)
 ,	m_dictionary(dictionary)
 {
 }
 
-ActionValue ActionFunction1::call(ActionContext* context, ActionObject* self, const ActionValueArray& args)
+ActionValue ActionFunction1::call(ActionObject* self, const ActionValueArray& args)
 {
-	ActionValuePool& pool = context->getPool();
+	ActionValuePool& pool = getContext()->getPool();
 	T_ANONYMOUS_VAR(ActionValuePool::Scope)(pool);
 
 	ActionFrame callFrame(
-		context,
+		getContext(),
 		self,
 		m_image,
 		4,
@@ -46,27 +47,25 @@ ActionValue ActionFunction1::call(ActionContext* context, ActionObject* self, co
 	for (size_t i = args.size(); i < m_argumentCount; ++i)
 		callStack.push(ActionValue());
 
-	context->getVM()->execute(&callFrame);
+	getContext()->getVM()->execute(&callFrame);
 
 	return callStack.top();
 }
 
 ActionValue ActionFunction1::call(ActionFrame* callerFrame, ActionObject* self)
 {
-	ActionContext* context = callerFrame->getContext();
-
-	ActionValuePool& pool = context->getPool();
+	ActionValuePool& pool = getContext()->getPool();
 	T_ANONYMOUS_VAR(ActionValuePool::Scope)(pool);
 
 	ActionValueStack& callerStack = callerFrame->getStack();
 	int32_t argCount = !callerStack.empty() ? int32_t(callerStack.pop().getNumber()) : 0;
 
-	ActionValueArray args(context->getPool(), argCount);
+	ActionValueArray args(getContext()->getPool(), argCount);
 	for (int32_t i = 0; i < argCount; ++i)
 		args[i] = callerStack.pop();
 
 	ActionFrame callFrame(
-		context,
+		getContext(),
 		self,
 		m_image,
 		4,
@@ -84,7 +83,7 @@ ActionValue ActionFunction1::call(ActionFrame* callerFrame, ActionObject* self)
 	for (size_t i = argCount; i < m_argumentCount; ++i)
 		callStack.push(ActionValue());
 
-	context->getVM()->execute(&callFrame);
+	getContext()->getVM()->execute(&callFrame);
 
 	return callStack.top();
 }

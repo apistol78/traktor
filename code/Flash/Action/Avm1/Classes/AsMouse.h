@@ -19,17 +19,17 @@ class AsMouse : public ActionClass
 	T_RTTI_CLASS;
 
 public:
-	AsMouse();
+	AsMouse(ActionContext* context);
 
-	virtual Ref< ActionObject > alloc(ActionContext* context);
+	virtual void init(ActionObject* self, const ActionValueArray& args) const;
 
-	virtual void init(ActionContext* context, ActionObject* self, const ActionValueArray& args);
+	virtual void coerce(ActionObject* self) const;
 
-	void eventMouseDown(ActionContext* context, int x, int y, int button);
+	void eventMouseDown(int x, int y, int button);
 
-	void eventMouseUp(ActionContext* context, int x, int y, int button);
+	void eventMouseUp(int x, int y, int button);
 
-	void eventMouseMove(ActionContext* context, int x, int y, int button);
+	void eventMouseMove(int x, int y, int button);
 
 	void removeAllListeners();
 

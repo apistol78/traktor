@@ -12,28 +12,28 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsStage", AsStage, ActionClass)
 
-AsStage::AsStage()
-:	ActionClass("Stage")
+AsStage::AsStage(ActionContext* context)
+:	ActionClass(context, "Stage")
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->addProperty("width", createNativeFunction(this, &AsStage::Stage_get_width), 0);
-	prototype->addProperty("height", createNativeFunction(this, &AsStage::Stage_get_height), 0);
+	prototype->addProperty("width", createNativeFunction(context, this, &AsStage::Stage_get_width), 0);
+	prototype->addProperty("height", createNativeFunction(context, this, &AsStage::Stage_get_height), 0);
 
-	prototype->setMember("addListener", ActionValue(createNativeFunction(this, &AsStage::Stage_addListener)));
+	prototype->setMember("addListener", ActionValue(createNativeFunction(context, this, &AsStage::Stage_addListener)));
 
 	prototype->setReadOnly();
 
 	setMember("prototype", ActionValue(prototype));
 }
 
-Ref< ActionObject > AsStage::alloc(ActionContext* context)
+void AsStage::init(ActionObject* self, const ActionValueArray& args) const
 {
-	return new ActionObject("Stage");
 }
 
-void AsStage::init(ActionContext* context, ActionObject* self, const ActionValueArray& args)
+void AsStage::coerce(ActionObject* self) const
 {
+	T_FATAL_ERROR;
 }
 
 void AsStage::Stage_get_width(CallArgs& ca)

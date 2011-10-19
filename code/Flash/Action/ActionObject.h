@@ -23,6 +23,7 @@ namespace traktor
 class ActionContext;
 class ActionFunction;
 class ActionValue;
+class IActionObjectRelay;
 
 /*! \brief ActionScript object.
  * \ingroup Flash
@@ -35,21 +36,17 @@ public:
 	typedef std::map< std::string, ActionValue > member_map_t;
 	typedef std::map< std::string, std::pair< Ref< ActionFunction >, Ref< ActionFunction > > > property_map_t;
 
-	ActionObject();
+	ActionObject(IActionObjectRelay* relay = 0);
 
-	explicit ActionObject(const std::string& prototypeName);
+	explicit ActionObject(const std::string& prototypeName, IActionObjectRelay* relay = 0);
 
-	explicit ActionObject(ActionObject* prototype);
+	explicit ActionObject(ActionObject* prototype, IActionObjectRelay* relay = 0);
 
 	virtual void addInterface(ActionObject* intrface);
 
 	virtual ActionObject* getPrototype(ActionContext* context);
 
-	virtual void setMember(const ActionValue& memberName, const ActionValue& memberValue);
-
 	virtual void setMember(const std::string& memberName, const ActionValue& memberValue);
-
-	virtual bool getMember(ActionContext* context, const ActionValue& memberName, ActionValue& outMemberValue);
 
 	virtual bool getMember(ActionContext* context, const std::string& memberName, ActionValue& outMemberValue);
 
@@ -81,6 +78,13 @@ public:
 
 	bool getLocalPropertySet(const std::string& propertyName, Ref< ActionFunction >& outPropertySet) const;
 
+	void setRelay(IActionObjectRelay* relay);
+
+	IActionObjectRelay* getRelay() const { return m_relay; }
+
+	template < typename RelayedType >
+	RelayedType* getRelay() const { return dynamic_type_cast< RelayedType* >(getRelay()); }
+
 protected:
 	virtual void trace(const IVisitor& visitor) const;
 
@@ -91,6 +95,7 @@ private:
 	mutable member_map_t m_members;
 	property_map_t m_properties;
 	Ref< ActionObject > m__proto__;		//!< Cached "__proto__" member value.
+	Ref< IActionObjectRelay > m_relay;
 
 	ActionObject(const ActionObject&) {}	// Not permitted
 

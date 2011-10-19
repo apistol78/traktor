@@ -26,15 +26,15 @@ class T_DLLCLASS ActionClass : public ActionFunction
 	T_RTTI_CLASS;
 
 public:
-	ActionClass(const std::string& className);
+	ActionClass(ActionContext* context, const std::string& className);
 
-	virtual ActionValue call(ActionContext* context, ActionObject* self, const ActionValueArray& args);
+	virtual ActionValue call(ActionObject* self, const ActionValueArray& args);
 
 	virtual ActionValue call(ActionFrame* callerFrame, ActionObject* self);
 
-	virtual Ref< ActionObject > alloc(ActionContext* context) = 0;
+	virtual void init(ActionObject* self, const ActionValueArray& args) const = 0;
 
-	virtual void init(ActionContext* context, ActionObject* self, const ActionValueArray& args) = 0;
+	virtual void coerce(ActionObject* self) const = 0;
 };
 
 	}

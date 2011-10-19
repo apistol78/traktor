@@ -2,7 +2,7 @@
 #define traktor_flash_Array_H
 
 #include <algorithm>
-#include "Flash/Action/ActionObject.h"
+#include "Flash/Action/ActionObjectRelay.h"
 #include "Flash/Action/ActionValueArray.h"
 
 // import/export mechanism.
@@ -21,12 +21,14 @@ namespace traktor
 /*! \brief Array of ActionValue objects.
  * \ingroup Flash
  */
-class T_DLLCLASS Array : public ActionObject
+class T_DLLCLASS Array : public ActionObjectRelay
 {
 	T_RTTI_CLASS;
 
 public:
 	Array();
+
+	Array(const ActionValueArray& values);
 
 	Ref< Array > concat() const;
 
@@ -56,13 +58,18 @@ public:
 		std::sort(m_values.begin(), m_values.end(), predicate);
 	}
 
-	virtual void setMember(const ActionValue& memberName, const ActionValue& memberValue);
+	const std::vector< ActionValue >& getValues() const { return m_values; }
 
-	virtual bool getMember(ActionContext* context, const ActionValue& memberName, ActionValue& outMemberValue);
+	// \name Override relay
+	//@{
+
+	virtual bool setMember(const std::string& memberName, const ActionValue& memberValue);
+
+	virtual bool getMember(const std::string& memberName, ActionValue& outMemberValue);
 
 	virtual ActionValue toString() const;
 
-	const std::vector< ActionValue >& getValues() const { return m_values; }
+	//@}
 
 protected:
 	virtual void trace(const IVisitor& visitor) const;

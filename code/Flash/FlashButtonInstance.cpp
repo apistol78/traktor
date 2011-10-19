@@ -149,7 +149,6 @@ SwfRect FlashButtonInstance::getBounds() const
 
 void FlashButtonInstance::trace(const IVisitor& visitor) const
 {
-	//visitor(m_button);
 	for (std::map< uint16_t, Ref< FlashCharacterInstance > >::const_iterator i = m_characterInstances.begin(); i != m_characterInstances.end(); ++i)
 		visitor(i->second);
 	FlashCharacterInstance::trace(visitor);
@@ -157,37 +156,47 @@ void FlashButtonInstance::trace(const IVisitor& visitor) const
 
 void FlashButtonInstance::dereference()
 {
-	//m_button = 0;
 	m_characterInstances.clear();
 	FlashCharacterInstance::dereference();
 }
 
 void FlashButtonInstance::executeCondition(uint32_t conditionMask)
 {
+	ActionContext* context = getContext();
+	T_ASSERT (context);
+
+	ActionObject* self = getAsObject();
+	T_ASSERT (self);
+
 	const FlashButton::button_conditions_t& conditions = m_button->getButtonConditions();
 	for (FlashButton::button_conditions_t::const_iterator i = conditions.begin(); i != conditions.end(); ++i)
 	{
 		if ((i->mask & conditionMask) == 0)
 			continue;
 
-		ActionContext* context = getContext();
-		ActionFrame callFrame(context, this, i->script, 4, 0, 0);
+		ActionFrame callFrame(context, self, i->script, 4, 0, 0);
 		context->getVM()->execute(&callFrame);
 	}
 }
 
 void FlashButtonInstance::executeScriptEvent(const std::string& eventName)
 {
+	ActionContext* context = getContext();
+	T_ASSERT (context);
+
+	ActionObject* self = getAsObject();
+	T_ASSERT (self);
+
 	ActionValue memberValue;
-	if (!getLocalMember(eventName, memberValue))
+	if (!self->getMember(context, eventName, memberValue))
 		return;
 
 	Ref< ActionFunction > eventFunction = memberValue.getObject< ActionFunction >();
 	if (!eventFunction)
 		return;
 
-	ActionFrame callFrame(getContext(), this, 0, 4, 0, 0);
-	eventFunction->call(&callFrame, this);
+	ActionFrame callFrame(context, self, 0, 4, 0, 0);
+	eventFunction->call(&callFrame, self);
 }
 
 	}

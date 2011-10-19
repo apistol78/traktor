@@ -1,7 +1,8 @@
 #ifndef traktor_flash_Rectangle_H
 #define traktor_flash_Rectangle_H
 
-#include "Flash/Action/ActionObject.h"
+#include "Flash/Action/ActionObjectRelay.h"
+#include "Flash/Action/ActionTypes.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,7 +20,7 @@ namespace traktor
 /*! \brief ActionScript rectangle.
  * \ingroup Flash
  */
-class T_DLLCLASS Rectangle : public ActionObject
+class T_DLLCLASS Rectangle : public ActionObjectRelay
 {
 	T_RTTI_CLASS;
 
@@ -41,7 +42,12 @@ public:
 
 	void offset(avm_number_t dx, avm_number_t dy);
 
+	// \name Override relay
+	//@{
+
 	virtual ActionValue toString() const;
+
+	//@}
 };
 
 	}

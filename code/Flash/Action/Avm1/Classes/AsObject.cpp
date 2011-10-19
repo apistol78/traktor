@@ -11,20 +11,20 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsObject", AsObject, ActionClass)
 
-AsObject::AsObject()
-:	ActionClass("Object")
+AsObject::AsObject(ActionContext* context)
+:	ActionClass(context, "Object")
 {
-	Ref< ActionObject > prototype = new ActionObject("Object");
+	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember("addProperty", ActionValue(createNativeFunction(this, &AsObject::Object_addProperty)));
-	prototype->setMember("hasOwnProperty", ActionValue(createNativeFunction(this, &AsObject::Object_hasOwnProperty)));
-	prototype->setMember("isPropertyEnumerable", ActionValue(createNativeFunction(this, &AsObject::Object_isPropertyEnumerable)));
-	prototype->setMember("isPrototypeOf", ActionValue(createNativeFunction(this, &AsObject::Object_isPrototypeOf)));
-	prototype->setMember("registerClass", ActionValue(createNativeFunction(this, &AsObject::Object_registerClass)));
-	prototype->setMember("toString", ActionValue(createNativeFunction(this, &AsObject::Object_toString)));
-	prototype->setMember("unwatch", ActionValue(createNativeFunction(this, &AsObject::Object_unwatch)));
-	prototype->setMember("valueOf", ActionValue(createNativeFunction(this, &AsObject::Object_valueOf)));
-	prototype->setMember("watch", ActionValue(createNativeFunction(this, &AsObject::Object_watch)));
+	prototype->setMember("addProperty", ActionValue(createNativeFunction(context, this, &AsObject::Object_addProperty)));
+	prototype->setMember("hasOwnProperty", ActionValue(createNativeFunction(context, this, &AsObject::Object_hasOwnProperty)));
+	prototype->setMember("isPropertyEnumerable", ActionValue(createNativeFunction(context, this, &AsObject::Object_isPropertyEnumerable)));
+	prototype->setMember("isPrototypeOf", ActionValue(createNativeFunction(context, this, &AsObject::Object_isPrototypeOf)));
+	prototype->setMember("registerClass", ActionValue(createNativeFunction(context, this, &AsObject::Object_registerClass)));
+	prototype->setMember("toString", ActionValue(createNativeFunction(context, this, &AsObject::Object_toString)));
+	prototype->setMember("unwatch", ActionValue(createNativeFunction(context, this, &AsObject::Object_unwatch)));
+	prototype->setMember("valueOf", ActionValue(createNativeFunction(context, this, &AsObject::Object_valueOf)));
+	prototype->setMember("watch", ActionValue(createNativeFunction(context, this, &AsObject::Object_watch)));
 
 	prototype->setMember("constructor", ActionValue(this));
 	prototype->setReadOnly();
@@ -32,13 +32,13 @@ AsObject::AsObject()
 	setMember("prototype", ActionValue(prototype));
 }
 
-Ref< ActionObject > AsObject::alloc(ActionContext* context)
+void AsObject::init(ActionObject* self, const ActionValueArray& args) const
 {
-	return new ActionObject("Object");
 }
 
-void AsObject::init(ActionContext* context, ActionObject* self, const ActionValueArray& args)
+void AsObject::coerce(ActionObject* self) const
 {
+	T_FATAL_ERROR;
 }
 
 void AsObject::Object_addProperty(ActionObject* self, const std::string& propertyName, ActionFunction* propertyGet, ActionFunction* propertySet) const

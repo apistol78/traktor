@@ -9,11 +9,19 @@ namespace traktor
 	namespace flash
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.Array", Array, ActionObject)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.Array", Array, ActionObjectRelay)
 
 Array::Array()
-:	ActionObject("Array")
+:	ActionObjectRelay("Array")
 {
+}
+
+Array::Array(const ActionValueArray& values)
+:	ActionObjectRelay("Array")
+{
+	m_values.resize(values.size());
+	for (uint32_t i = 0; i < values.size(); ++i)
+		m_values[i] = values[i];
 }
 
 Ref< Array > Array::concat() const
@@ -138,32 +146,26 @@ uint32_t Array::length() const
 	return uint32_t(m_values.size());
 }
 
-void Array::setMember(const ActionValue& memberName, const ActionValue& memberValue)
+bool Array::setMember(const std::string& memberName, const ActionValue& memberValue)
 {
-	if (memberName.isNumeric())
+	int32_t index = parseString< int32_t >(memberName, -1);
+	if (index >= 0 && index < int32_t(m_values.size()))
 	{
-		int32_t index = int32_t(memberName.getNumber());
-		if (index >= 0 && index < int32_t(m_values.size()))
-		{
-			m_values[index] = memberValue;
-			return;
-		}
+		m_values[index] = memberValue;
+		return true;
 	}
-	ActionObject::setMember(memberName, memberValue);
+	return false;
 }
 
-bool Array::getMember(ActionContext* context, const ActionValue& memberName, ActionValue& outMemberValue)
+bool Array::getMember(const std::string& memberName, ActionValue& outMemberValue)
 {
-	if (memberName.isNumeric())
+	int32_t index = parseString< int32_t >(memberName, -1);
+	if (index >= 0 && index < int32_t(m_values.size()))
 	{
-		int32_t index = int32_t(memberName.getNumber());
-		if (index >= 0 && index < int32_t(m_values.size()))
-		{
-			outMemberValue = m_values[index];
-			return true;
-		}
+		outMemberValue = m_values[index];
+		return true;
 	}
-	return ActionObject::getMember(context, memberName, outMemberValue);
+	return false;
 }
 
 ActionValue Array::toString() const
@@ -185,13 +187,13 @@ void Array::trace(const IVisitor& visitor) const
 		if (i->isObject())
 			visitor(i->getObjectUnsafe());
 	}
-	ActionObject::trace(visitor);
+	ActionObjectRelay::trace(visitor);
 }
 
 void Array::dereference()
 {
 	m_values.clear();
-	ActionObject::dereference();
+	ActionObjectRelay::dereference();
 }
 
 	}

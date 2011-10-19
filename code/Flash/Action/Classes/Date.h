@@ -1,7 +1,7 @@
 #ifndef traktor_flash_Date_H
 #define traktor_flash_Date_H
 
-#include "Flash/Action/ActionObject.h"
+#include "Flash/Action/ActionObjectRelay.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,7 +19,7 @@ namespace traktor
 /*! \brief ActionScript date.
  * \ingroup Flash
  */
-class T_DLLCLASS Date : public ActionObject
+class T_DLLCLASS Date : public ActionObjectRelay
 {
 	T_RTTI_CLASS;
 

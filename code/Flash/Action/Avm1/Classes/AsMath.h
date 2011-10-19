@@ -19,11 +19,11 @@ class AsMath : public ActionClass
 	T_RTTI_CLASS;
 
 public:
-	AsMath();
+	AsMath(ActionContext* context);
 
-	virtual Ref< ActionObject > alloc(ActionContext* context);
+	virtual void init(ActionObject* self, const ActionValueArray& args) const;
 
-	virtual void init(ActionContext* context, ActionObject* self, const ActionValueArray& args);
+	virtual void coerce(ActionObject* self) const;
 
 private:
 	Random m_random;

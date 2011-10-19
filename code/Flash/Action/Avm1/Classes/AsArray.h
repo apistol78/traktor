@@ -19,11 +19,11 @@ class AsArray : public ActionClass
 	T_RTTI_CLASS;
 
 public:
-	AsArray();
+	AsArray(ActionContext* context);
 
-	virtual Ref< ActionObject > alloc(ActionContext* context);
+	virtual void init(ActionObject* self, const ActionValueArray& args) const;
 
-	virtual void init(ActionContext* context, ActionObject* self, const ActionValueArray& args);
+	virtual void coerce(ActionObject* self) const;
 
 private:
 	void Array_concat(CallArgs& ca);

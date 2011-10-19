@@ -1,7 +1,7 @@
 #ifndef traktor_flash_Number_H
 #define traktor_flash_Number_H
 
-#include "Flash/Action/ActionObject.h"
+#include "Flash/Action/ActionObjectRelay.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,7 +19,7 @@ namespace traktor
 /*! \brief ActionScript number wrapper.
  * \ingroup Flash
  */
-class T_DLLCLASS Number : public ActionObject
+class T_DLLCLASS Number : public ActionObjectRelay
 {
 	T_RTTI_CLASS;
 
@@ -29,6 +29,13 @@ public:
 	void set(avm_number_t value) { m_value = value; }
 
 	avm_number_t get() const { return m_value; }
+
+	// \name Override relay
+	//@{
+
+	virtual ActionValue toString() const;
+
+	//@}
 
 private:
 	avm_number_t m_value;

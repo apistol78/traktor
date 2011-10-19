@@ -10,14 +10,14 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.As_mx_transitions_easing_Elastic", As_mx_transitions_easing_Elastic, ActionClass)
 
-As_mx_transitions_easing_Elastic::As_mx_transitions_easing_Elastic()
-:	ActionClass("mx.transitions.easing.Elastic")
+As_mx_transitions_easing_Elastic::As_mx_transitions_easing_Elastic(ActionContext* context)
+:	ActionClass(context, "mx.transitions.easing.Elastic")
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember("easeIn", ActionValue(createNativeFunction(this, &As_mx_transitions_easing_Elastic::Elastic_easeIn)));
-	prototype->setMember("easeInOut", ActionValue(createNativeFunction(this, &As_mx_transitions_easing_Elastic::Elastic_easeInOut)));
-	prototype->setMember("easeOut", ActionValue(createNativeFunction(this, &As_mx_transitions_easing_Elastic::Elastic_easeOut)));
+	prototype->setMember("easeIn", ActionValue(createNativeFunction(context, this, &As_mx_transitions_easing_Elastic::Elastic_easeIn)));
+	prototype->setMember("easeInOut", ActionValue(createNativeFunction(context, this, &As_mx_transitions_easing_Elastic::Elastic_easeInOut)));
+	prototype->setMember("easeOut", ActionValue(createNativeFunction(context, this, &As_mx_transitions_easing_Elastic::Elastic_easeOut)));
 
 	prototype->setMember("constructor", ActionValue(this));
 	prototype->setReadOnly();
@@ -25,13 +25,13 @@ As_mx_transitions_easing_Elastic::As_mx_transitions_easing_Elastic()
 	setMember("prototype", ActionValue(prototype));
 }
 
-Ref< ActionObject > As_mx_transitions_easing_Elastic::alloc(ActionContext* context)
+void As_mx_transitions_easing_Elastic::init(ActionObject* self, const ActionValueArray& args) const
 {
-	return new ActionObject("mx.transitions.easing.Elastic");
 }
 
-void As_mx_transitions_easing_Elastic::init(ActionContext* context, ActionObject* self, const ActionValueArray& args)
+void As_mx_transitions_easing_Elastic::coerce(ActionObject* self) const
 {
+	T_FATAL_ERROR;
 }
 
 void As_mx_transitions_easing_Elastic::Elastic_easeIn(CallArgs& ca)

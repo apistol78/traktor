@@ -10,8 +10,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsMath", AsMath, ActionClass)
 
-AsMath::AsMath()
-:	ActionClass("Math")
+AsMath::AsMath(ActionContext* context)
+:	ActionClass(context, "Math")
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
@@ -23,24 +23,24 @@ AsMath::AsMath()
 	prototype->setMember("pi", ActionValue(avm_number_t(3.14159265358979323846)));
 	prototype->setMember("sqrt1_2", ActionValue(avm_number_t(0.7071067811865475244)));
 	prototype->setMember("sqrt2", ActionValue(avm_number_t(1.4142135623730950488)));
-	prototype->setMember("abs", ActionValue(createNativeFunction(this, &AsMath::Math_abs)));
-	prototype->setMember("acos", ActionValue(createNativeFunction(this, &AsMath::Math_acos)));
-	prototype->setMember("asin", ActionValue(createNativeFunction(this, &AsMath::Math_asin)));
-	prototype->setMember("atan", ActionValue(createNativeFunction(this, &AsMath::Math_atan)));
-	prototype->setMember("atan2", ActionValue(createNativeFunction(this, &AsMath::Math_atan2)));
-	prototype->setMember("ceil", ActionValue(createNativeFunction(this, &AsMath::Math_ceil)));
-	prototype->setMember("cos", ActionValue(createNativeFunction(this, &AsMath::Math_cos)));
-	prototype->setMember("exp", ActionValue(createNativeFunction(this, &AsMath::Math_exp)));
-	prototype->setMember("floor", ActionValue(createNativeFunction(this, &AsMath::Math_floor)));
-	prototype->setMember("log", ActionValue(createNativeFunction(this, &AsMath::Math_log)));
-	prototype->setMember("max", ActionValue(createNativeFunction(this, &AsMath::Math_max)));
-	prototype->setMember("min", ActionValue(createNativeFunction(this, &AsMath::Math_min)));
-	prototype->setMember("pow", ActionValue(createNativeFunction(this, &AsMath::Math_pow)));
-	prototype->setMember("random", ActionValue(createNativeFunction(this, &AsMath::Math_random)));
-	prototype->setMember("round", ActionValue(createNativeFunction(this, &AsMath::Math_round)));
-	prototype->setMember("sin", ActionValue(createNativeFunction(this, &AsMath::Math_sin)));
-	prototype->setMember("sqrt", ActionValue(createNativeFunction(this, &AsMath::Math_sqrt)));
-	prototype->setMember("tan", ActionValue(createNativeFunction(this, &AsMath::Math_tan)));
+	prototype->setMember("abs", ActionValue(createNativeFunction(context, this, &AsMath::Math_abs)));
+	prototype->setMember("acos", ActionValue(createNativeFunction(context, this, &AsMath::Math_acos)));
+	prototype->setMember("asin", ActionValue(createNativeFunction(context, this, &AsMath::Math_asin)));
+	prototype->setMember("atan", ActionValue(createNativeFunction(context, this, &AsMath::Math_atan)));
+	prototype->setMember("atan2", ActionValue(createNativeFunction(context, this, &AsMath::Math_atan2)));
+	prototype->setMember("ceil", ActionValue(createNativeFunction(context, this, &AsMath::Math_ceil)));
+	prototype->setMember("cos", ActionValue(createNativeFunction(context, this, &AsMath::Math_cos)));
+	prototype->setMember("exp", ActionValue(createNativeFunction(context, this, &AsMath::Math_exp)));
+	prototype->setMember("floor", ActionValue(createNativeFunction(context, this, &AsMath::Math_floor)));
+	prototype->setMember("log", ActionValue(createNativeFunction(context, this, &AsMath::Math_log)));
+	prototype->setMember("max", ActionValue(createNativeFunction(context, this, &AsMath::Math_max)));
+	prototype->setMember("min", ActionValue(createNativeFunction(context, this, &AsMath::Math_min)));
+	prototype->setMember("pow", ActionValue(createNativeFunction(context, this, &AsMath::Math_pow)));
+	prototype->setMember("random", ActionValue(createNativeFunction(context, this, &AsMath::Math_random)));
+	prototype->setMember("round", ActionValue(createNativeFunction(context, this, &AsMath::Math_round)));
+	prototype->setMember("sin", ActionValue(createNativeFunction(context, this, &AsMath::Math_sin)));
+	prototype->setMember("sqrt", ActionValue(createNativeFunction(context, this, &AsMath::Math_sqrt)));
+	prototype->setMember("tan", ActionValue(createNativeFunction(context, this, &AsMath::Math_tan)));
 
 	prototype->setMember("constructor", ActionValue(this));
 	prototype->setReadOnly();
@@ -48,13 +48,13 @@ AsMath::AsMath()
 	setMember("prototype", ActionValue(prototype));
 }
 
-Ref< ActionObject > AsMath::alloc(ActionContext* context)
+void AsMath::init(ActionObject* self, const ActionValueArray& args) const
 {
-	return new ActionObject("Math");
 }
 
-void AsMath::init(ActionContext* context, ActionObject* self, const ActionValueArray& args)
+void AsMath::coerce(ActionObject* self) const
 {
+	T_FATAL_ERROR;
 }
 
 void AsMath::Math_abs(CallArgs& ca)
