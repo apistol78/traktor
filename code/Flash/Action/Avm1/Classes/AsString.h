@@ -9,6 +9,7 @@ namespace traktor
 	{
 
 struct CallArgs;
+class String;
 
 /*! \brief String class.
  * \ingroup Flash
@@ -20,12 +21,14 @@ class AsString : public ActionClass
 public:
 	AsString();
 
+	virtual Ref< ActionObject > alloc(ActionContext* context);
+
+	virtual void init(ActionContext* context, ActionObject* self, const ActionValueArray& args);
+
 private:
-	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
+	Ref< String > String_charAt(const String* self, uint32_t index) const;
 
-	void String_charAt(CallArgs& ca);
-
-	void String_charCodeAt(CallArgs& ca);
+	uint32_t String_charCodeAt(const String* self, uint32_t index) const;
 
 	void String_concat(CallArgs& ca);
 

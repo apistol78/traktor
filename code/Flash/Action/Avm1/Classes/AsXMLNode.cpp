@@ -22,14 +22,19 @@ AsXMLNode::AsXMLNode()
 	prototype->setMember("removeNode", ActionValue(createNativeFunction(this, &AsXMLNode::XMLNode_removeNode)));
 	prototype->setMember("toString", ActionValue(createNativeFunction(this, &AsXMLNode::XMLNode_toString)));
 
+	prototype->setMember("constructor", ActionValue(this));
 	prototype->setReadOnly();
 
 	setMember("prototype", ActionValue(prototype));
 }
 
-ActionValue AsXMLNode::construct(ActionContext* context, const ActionValueArray& args)
+Ref< ActionObject > AsXMLNode::alloc(ActionContext* context)
 {
-	return ActionValue(new ActionObject("XMLNode"));
+	return new ActionObject("XMLNode");
+}
+
+void AsXMLNode::init(ActionContext* context, ActionObject* self, const ActionValueArray& args)
+{
 }
 
 void AsXMLNode::XMLNode_appendChild(CallArgs& ca)

@@ -60,13 +60,13 @@ public:
 	virtual ~ActionValue();
 
 	/*! \brief Cast to boolean. */
-	ActionValue toBoolean() const { return ActionValue(getBooleanSafe()); }
+	ActionValue toBoolean() const { return ActionValue(getBoolean()); }
 
 	/*! \brief Cast to number. */
-	ActionValue toNumber() const { return ActionValue(getNumberSafe()); }
+	ActionValue toNumber() const { return ActionValue(getNumber()); }
 
 	/*! \brief Cast to string. */
-	ActionValue toString() const { return ActionValue(getStringSafe()); }
+	ActionValue toString() const { return ActionValue(getString()); }
 
 	/*! \brief Get type of value. */
 	Type getType() const { return m_type; }
@@ -87,48 +87,29 @@ public:
 	bool isObject() const { return m_type == AvtObject; }
 
 	/*! \brief Get boolean value. */
-	bool getBoolean() const { T_ASSERT_M (m_type == AvtBoolean, L"Incorrect type"); return m_value.b; }
+	bool getBoolean() const;
 
 	/*! \brief Get number value. */
-	avm_number_t getNumber() const { T_ASSERT_M (m_type == AvtNumber, L"Incorrect type"); return m_value.n; }
+	avm_number_t getNumber() const;
 
 	/*! \brief Get string value. */
-	std::string getString() const { T_ASSERT_M (m_type == AvtString, L"Incorrect type"); return m_value.s; }
+	std::string getString() const;
 
 	/*! \brief Get wide string value. */
-	std::wstring getWideString() const { T_ASSERT_M (m_type == AvtString, L"Incorrect type"); return mbstows(Utf8Encoding(), m_value.s); }
+	std::wstring getWideString() const;
 
-	/*! \brief Get object value. */
-	ActionObject* getObject() const { T_ASSERT_M (m_type == AvtObject, L"Incorrect type"); return m_value.o; }
+	/*! \brief Get object. */
+	Ref< ActionObject > getObject() const;
 
-	/*! \brief Get boolean value safe. */
-	bool getBooleanSafe() const;
+	/*! \brief Get typed object. */
+	template < typename ObjectType >
+	Ref< ObjectType > getObject() const { return dynamic_type_cast< ObjectType* >(getObject()); }
 
-	/*! \brief Get number value safe. */
-	avm_number_t getNumberSafe() const;
+	/*! \brief Get object direct, unsafe but doesn't touch reference count. */
+	ActionObject* getObjectUnsafe() const { T_ASSERT (m_type == AvtObject); return m_value.o; }
 
-	/*! \brief Get string value safe. */
-	std::string getStringSafe() const;
-
-	/*! \brief Get wide string value safe. */
-	std::wstring getWideStringSafe() const;
-
-	/*! \brief Get object safe. */
-	Ref< ActionObject > getObjectSafe() const;
-
+	/*! \brief Copy value. */
 	ActionValue& operator = (const ActionValue& v);
-
-	template < typename ObjectType >
-	ObjectType* getObject() const
-	{
-		return dynamic_type_cast< ObjectType* >(getObject());
-	}
-
-	template < typename ObjectType >
-	Ref< ObjectType > getObjectSafe() const
-	{
-		return dynamic_type_cast< ObjectType* >(getObjectSafe());
-	}
 
 private:
 	union Value

@@ -21,6 +21,10 @@ class AsMouse : public ActionClass
 public:
 	AsMouse();
 
+	virtual Ref< ActionObject > alloc(ActionContext* context);
+
+	virtual void init(ActionContext* context, ActionObject* self, const ActionValueArray& args);
+
 	void eventMouseDown(ActionContext* context, int x, int y, int button);
 
 	void eventMouseUp(ActionContext* context, int x, int y, int button);
@@ -36,8 +40,6 @@ protected:
 
 private:
 	RefArray< ActionObject > m_listeners;
-
-	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
 
 	void Mouse_addListener(CallArgs& ca);
 

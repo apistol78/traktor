@@ -43,6 +43,10 @@ public:
 
 	AsKey();
 
+	virtual Ref< ActionObject > alloc(ActionContext* context);
+
+	virtual void init(ActionContext* context, ActionObject* self, const ActionValueArray& args);
+
 	void eventKeyDown(ActionContext* context, int keyCode);
 
 	void eventKeyUp(ActionContext* context, int keyCode);
@@ -58,8 +62,6 @@ private:
 	RefArray< ActionObject > m_listeners;
 	bool m_keyState[256];
 	int m_lastKeyCode;
-
-	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
 
 	void Key_addListener(CallArgs& ca);
 

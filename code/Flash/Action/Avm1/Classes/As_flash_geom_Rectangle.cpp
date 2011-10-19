@@ -43,265 +43,224 @@ As_flash_geom_Rectangle::As_flash_geom_Rectangle()
 	prototype->addProperty("x", createNativeFunction(this, &As_flash_geom_Rectangle::Rectangle_get_x), createNativeFunction(this, &As_flash_geom_Rectangle::Rectangle_set_x));
 	prototype->addProperty("y", createNativeFunction(this, &As_flash_geom_Rectangle::Rectangle_get_y), createNativeFunction(this, &As_flash_geom_Rectangle::Rectangle_set_y));
 
+	prototype->setMember("constructor", ActionValue(this));
 	prototype->setReadOnly();
 
 	setMember("prototype", ActionValue(prototype));
 }
 
-ActionValue As_flash_geom_Rectangle::construct(ActionContext* context, const ActionValueArray& args)
+Ref< ActionObject > As_flash_geom_Rectangle::alloc(ActionContext* context)
 {
-	Ref< Rectangle > rc = new Rectangle();
-	
-	if (args.size() >= 4)
-	{
-		rc->left = args[0].getNumberSafe();
-		rc->top = args[1].getNumberSafe();
-		rc->width = args[2].getNumberSafe();
-		rc->height = args[3].getNumberSafe();
-	}
-
-	return ActionValue(rc);
+	return new Rectangle();
 }
 
-void As_flash_geom_Rectangle::Rectangle_clone(CallArgs& ca)
+void As_flash_geom_Rectangle::init(ActionContext* context, ActionObject* self, const ActionValueArray& args)
 {
-	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
-	ca.ret = ActionValue(new Rectangle(
-		rc->left,
-		rc->top,
-		rc->width,
-		rc->height
-	));
+	if (args.size() < 4)
+		return;
+
+	Rectangle* rc = checked_type_cast< Rectangle* >(self);
+	rc->left = args[0].getNumber();
+	rc->top = args[1].getNumber();
+	rc->width = args[2].getNumber();
+	rc->height = args[3].getNumber();
 }
 
-void As_flash_geom_Rectangle::Rectangle_contains(CallArgs& ca)
+Ref< Rectangle > As_flash_geom_Rectangle::Rectangle_clone(const Rectangle* self) const
 {
-	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
-	ca.ret = ActionValue(rc->contains(
-		ca.args[0].getNumberSafe(),
-		ca.args[1].getNumberSafe()
-	));
-}
-
-void As_flash_geom_Rectangle::Rectangle_containsPoint(CallArgs& ca)
-{
-	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
-	Ref< Point > pt = ca.args[0].getObject< Point >();
-	ca.ret = ActionValue(rc->contains(
-		pt->x,
-		pt->y
-	));
-}
-
-void As_flash_geom_Rectangle::Rectangle_containsRectangle(CallArgs& ca)
-{
-}
-
-void As_flash_geom_Rectangle::Rectangle_equals(CallArgs& ca)
-{
-}
-
-void As_flash_geom_Rectangle::Rectangle_inflate(CallArgs& ca)
-{
-	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
-	rc->inflate(
-		ca.args[0].getNumberSafe(),
-		ca.args[1].getNumberSafe()
+	return new Rectangle(
+		self->left,
+		self->top,
+		self->width,
+		self->height
 	);
 }
 
-void As_flash_geom_Rectangle::Rectangle_inflatePoint(CallArgs& ca)
+bool As_flash_geom_Rectangle::Rectangle_contains(const Rectangle* self, avm_number_t x, avm_number_t y) const
 {
-	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
-	Ref< Point > pt = ca.args[0].getObject< Point >();
-	rc->inflate(pt->x, pt->y);
+	return self->contains(x, y);
 }
 
-void As_flash_geom_Rectangle::Rectangle_intersection(CallArgs& ca)
+bool As_flash_geom_Rectangle::Rectangle_containsPoint(const Rectangle* self, const Point* pt) const
 {
+	return self->contains(pt->x, pt->y);
 }
 
-void As_flash_geom_Rectangle::Rectangle_intersects(CallArgs& ca)
+bool As_flash_geom_Rectangle::Rectangle_containsRectangle(const Rectangle* self, const Rectangle* rc) const
 {
+	return self->contains(rc->left, rc->top) && self->contains(rc->left + rc->width, rc->top + rc->height);
 }
 
-void As_flash_geom_Rectangle::Rectangle_isEmpty(CallArgs& ca)
+bool As_flash_geom_Rectangle::Rectangle_equals(const Rectangle* self, const Rectangle* rc) const
 {
-	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
-	ca.ret = ActionValue(rc->isEmpty());
+	return 
+		self->left == rc->left &&
+		self->top == rc->top &&
+		self->width == rc->width &&
+		self->height == rc->height;
 }
 
-void As_flash_geom_Rectangle::Rectangle_offset(CallArgs& ca)
+void As_flash_geom_Rectangle::Rectangle_inflate(Rectangle* self, avm_number_t dx, avm_number_t dy) const
 {
-	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
-	rc->offset(
-		ca.args[0].getNumberSafe(),
-		ca.args[1].getNumberSafe()
-	);
+	self->inflate(dx, dy);
 }
 
-void As_flash_geom_Rectangle::Rectangle_offsetPoint(CallArgs& ca)
+void As_flash_geom_Rectangle::Rectangle_inflatePoint(Rectangle* self, const Point* pt) const
 {
-	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
-	Ref< Point > pt = ca.args[0].getObject< Point >();
-	rc->offset(pt->x, pt->y);
+	self->inflate(pt->x, pt->y);
 }
 
-void As_flash_geom_Rectangle::Rectangle_setEmpty(CallArgs& ca)
-{
-	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
-	rc->left =
-	rc->top =
-	rc->width =
-	rc->height = 0.0;
-}
-
-void As_flash_geom_Rectangle::Rectangle_toString(CallArgs& ca)
-{
-	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
-	ca.ret = rc->toString();
-}
-
-void As_flash_geom_Rectangle::Rectangle_union(CallArgs& ca)
+void As_flash_geom_Rectangle::Rectangle_intersection(const Rectangle* self) const
 {
 }
 
-void As_flash_geom_Rectangle::Rectangle_get_bottom(CallArgs& ca)
+void As_flash_geom_Rectangle::Rectangle_intersects(const Rectangle* self) const
 {
-	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
-	ca.ret = ActionValue(rc->top + rc->height);
 }
 
-void As_flash_geom_Rectangle::Rectangle_set_bottom(CallArgs& ca)
+bool As_flash_geom_Rectangle::Rectangle_isEmpty(const Rectangle* self) const
 {
-	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
-	rc->height = ca.args[0].getNumberSafe() - rc->top;
+	return self->isEmpty();
 }
 
-void As_flash_geom_Rectangle::Rectangle_get_bottomRight(CallArgs& ca)
+void As_flash_geom_Rectangle::Rectangle_offset(Rectangle* self, avm_number_t dx, avm_number_t dy) const
 {
-	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
-	ca.ret = ActionValue(new Point(rc->left + rc->width, rc->top + rc->height));
+	self->offset(dx, dy);
 }
 
-void As_flash_geom_Rectangle::Rectangle_set_bottomRight(CallArgs& ca)
+void As_flash_geom_Rectangle::Rectangle_offsetPoint(Rectangle* self, const Point* pt) const
 {
-	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
-	Ref< Point > pt = ca.args[0].getObject< Point >();
-	rc->width = pt->x - rc->left;
-	rc->height = pt->y - rc->top;
+	self->offset(pt->x, pt->y);
 }
 
-void As_flash_geom_Rectangle::Rectangle_get_height(CallArgs& ca)
+void As_flash_geom_Rectangle::Rectangle_setEmpty(Rectangle* self) const
 {
-	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
-	ca.ret = ActionValue(rc->height);
+	self->left =
+	self->top =
+	self->width =
+	self->height = avm_number_t(0);
 }
 
-void As_flash_geom_Rectangle::Rectangle_set_height(CallArgs& ca)
+ActionValue As_flash_geom_Rectangle::Rectangle_toString(const Rectangle* self) const
 {
-	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
-	rc->height = ca.args[0].getNumberSafe();
+	return self->toString();
 }
 
-void As_flash_geom_Rectangle::Rectangle_get_left(CallArgs& ca)
+void As_flash_geom_Rectangle::Rectangle_union(const Rectangle* self) const
 {
-	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
-	ca.ret = ActionValue(rc->left);
 }
 
-void As_flash_geom_Rectangle::Rectangle_set_left(CallArgs& ca)
+avm_number_t As_flash_geom_Rectangle::Rectangle_get_bottom(const Rectangle* self) const
 {
-	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
-	rc->left = ca.args[0].getNumberSafe();
+	return self->top + self->height;
 }
 
-void As_flash_geom_Rectangle::Rectangle_get_right(CallArgs& ca)
+void As_flash_geom_Rectangle::Rectangle_set_bottom(Rectangle* self, avm_number_t bottom) const
 {
-	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
-	ca.ret = ActionValue(rc->left + rc->width);
+	self->height = bottom - self->top;
 }
 
-void As_flash_geom_Rectangle::Rectangle_set_right(CallArgs& ca)
+Ref< Point > As_flash_geom_Rectangle::Rectangle_get_bottomRight(const Rectangle* self) const
 {
-	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
-	rc->width = rc->left + ca.args[0].getNumberSafe();
+	return new Point(self->left + self->width, self->top + self->height);
 }
 
-void As_flash_geom_Rectangle::Rectangle_get_size(CallArgs& ca)
+void As_flash_geom_Rectangle::Rectangle_set_bottomRight(Rectangle* self, const Point* pt) const
 {
-	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
-	ca.ret = ActionValue(new Point(rc->width, rc->height));
+	self->width = pt->x - self->left;
+	self->height = pt->y - self->top;
 }
 
-void As_flash_geom_Rectangle::Rectangle_set_size(CallArgs& ca)
+avm_number_t As_flash_geom_Rectangle::Rectangle_get_height(const Rectangle* self) const
 {
-	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
-	Ref< Point > pt = ca.args[0].getObject< Point >();
-	rc->width = pt->x;
-	rc->height = pt->y;
+	return self->height;
 }
 
-void As_flash_geom_Rectangle::Rectangle_get_top(CallArgs& ca)
+void As_flash_geom_Rectangle::Rectangle_set_height(Rectangle* self, avm_number_t height) const
 {
-	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
-	ca.ret = ActionValue(rc->top);
+	self->height = height;
 }
 
-void As_flash_geom_Rectangle::Rectangle_set_top(CallArgs& ca)
+avm_number_t As_flash_geom_Rectangle::Rectangle_get_left(const Rectangle* self) const
 {
-	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
-	rc->top = ca.args[0].getNumberSafe();
+	return self->left;
 }
 
-void As_flash_geom_Rectangle::Rectangle_get_topLeft(CallArgs& ca)
+void As_flash_geom_Rectangle::Rectangle_set_left(Rectangle* self, avm_number_t left) const
 {
-	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
-	ca.ret = ActionValue(new Point(rc->left, rc->top));
+	self->left = left;
 }
 
-void As_flash_geom_Rectangle::Rectangle_set_topLeft(CallArgs& ca)
+avm_number_t As_flash_geom_Rectangle::Rectangle_get_right(const Rectangle* self) const
 {
-	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
-	Ref< Point > pt = ca.args[0].getObject< Point >();
-	rc->left = pt->x;
-	rc->top = pt->y;
+	return self->left + self->width;
 }
 
-void As_flash_geom_Rectangle::Rectangle_get_width(CallArgs& ca)
+void As_flash_geom_Rectangle::Rectangle_set_right(Rectangle* self, avm_number_t right) const
 {
-	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
-	ca.ret = ActionValue(rc->width);
+	self->width = right - self->left;
 }
 
-void As_flash_geom_Rectangle::Rectangle_set_width(CallArgs& ca)
+Ref< Point > As_flash_geom_Rectangle::Rectangle_get_size(const Rectangle* self) const
 {
-	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
-	rc->width = ca.args[0].getNumberSafe();
+	return new Point(self->width, self->height);
 }
 
-void As_flash_geom_Rectangle::Rectangle_get_x(CallArgs& ca)
+void As_flash_geom_Rectangle::Rectangle_set_size(Rectangle* self, const Point* pt) const
 {
-	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
-	ca.ret = ActionValue(rc->left);
+	self->width = pt->x;
+	self->height = pt->y;
 }
 
-void As_flash_geom_Rectangle::Rectangle_set_x(CallArgs& ca)
+avm_number_t As_flash_geom_Rectangle::Rectangle_get_top(const Rectangle* self) const
 {
-	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
-	rc->left = ca.args[0].getNumberSafe();
+	return self->top;
 }
 
-void As_flash_geom_Rectangle::Rectangle_get_y(CallArgs& ca)
+void As_flash_geom_Rectangle::Rectangle_set_top(Rectangle* self, avm_number_t top) const
 {
-	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
-	ca.ret = ActionValue(rc->top);
+	self->top = top;
 }
 
-void As_flash_geom_Rectangle::Rectangle_set_y(CallArgs& ca)
+Ref< Point > As_flash_geom_Rectangle::Rectangle_get_topLeft(const Rectangle* self) const
 {
-	Rectangle* rc = checked_type_cast< Rectangle*, false >(ca.self);
-	rc->top = ca.args[0].getNumberSafe();
+	return new Point(self->left, self->top);
+}
+
+void As_flash_geom_Rectangle::Rectangle_set_topLeft(Rectangle* self, const Point* pt) const
+{
+	self->left = pt->x;
+	self->top = pt->y;
+}
+
+avm_number_t As_flash_geom_Rectangle::Rectangle_get_width(const Rectangle* self) const
+{
+	return self->width;
+}
+
+void As_flash_geom_Rectangle::Rectangle_set_width(Rectangle* self, avm_number_t width) const
+{
+	self->width = width;
+}
+
+avm_number_t As_flash_geom_Rectangle::Rectangle_get_x(const Rectangle* self) const
+{
+	return self->left;
+}
+
+void As_flash_geom_Rectangle::Rectangle_set_x(Rectangle* self, avm_number_t x) const
+{
+	self->left = x;
+}
+
+avm_number_t As_flash_geom_Rectangle::Rectangle_get_y(const Rectangle* self) const
+{
+	return self->top;
+}
+
+void As_flash_geom_Rectangle::Rectangle_set_y(Rectangle* self, avm_number_t y) const
+{
+	self->top = y;
 }
 
 	}

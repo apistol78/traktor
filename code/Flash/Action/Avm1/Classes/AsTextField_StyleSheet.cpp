@@ -21,14 +21,19 @@ AsTextField_StyleSheet::AsTextField_StyleSheet()
 	prototype->setMember("setStyle", ActionValue(createNativeFunction(this, &AsTextField_StyleSheet::TextField_StyleSheet_setStyle)));
 	prototype->setMember("transform", ActionValue(createNativeFunction(this, &AsTextField_StyleSheet::TextField_StyleSheet_transform)));
 
+	prototype->setMember("constructor", ActionValue(this));
 	prototype->setReadOnly();
 
 	setMember("prototype", ActionValue(prototype));
 }
 
-ActionValue AsTextField_StyleSheet::construct(ActionContext* context, const ActionValueArray& args)
+Ref< ActionObject > AsTextField_StyleSheet::alloc(ActionContext* context)
 {
-	return ActionValue(new ActionObject("TextField.StyleSheet"));
+	return 0;
+}
+
+void AsTextField_StyleSheet::init(ActionContext* context, ActionObject* self, const ActionValueArray& args)
+{
 }
 
 void AsTextField_StyleSheet::TextField_StyleSheet_clear(CallArgs& ca)

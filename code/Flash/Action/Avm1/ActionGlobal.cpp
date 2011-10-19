@@ -76,7 +76,7 @@ ActionGlobal::ActionGlobal()
 	setMember("Mouse", ActionValue(new AsMouse()));
 	setMember("MovieClip", ActionValue(new AsMovieClip()));
 	setMember("MovieClipLoader", ActionValue(new AsMovieClipLoader()));
-	setMember("Number", ActionValue(new AsMath()));
+	setMember("Number", ActionValue(new AsNumber()));
 	setMember("Security", ActionValue(new AsSecurity()));
 	setMember("Sound", ActionValue(new AsSound()));
 	setMember("Stage", ActionValue(new AsStage()));
@@ -133,7 +133,7 @@ ActionGlobal::ActionGlobal()
 void ActionGlobal::Global_ASSetPropFlags(CallArgs& ca)
 {
 	Ref< ActionObject > object = ca.args[0].getObject();
-	uint32_t flags = uint32_t(ca.args[2].getNumberSafe());
+	uint32_t flags = uint32_t(ca.args[2].getNumber());
 
 	// Read-only; protect classes from being modified.
 	if (flags & 4)
@@ -142,7 +142,7 @@ void ActionGlobal::Global_ASSetPropFlags(CallArgs& ca)
 
 void ActionGlobal::Global_escape(CallArgs& ca)
 {
-	std::wstring text = ca.args[0].getWideStringSafe();
+	std::wstring text = ca.args[0].getWideString();
 	StringOutputStream ss;
 
 	for (size_t i = 0; i < text.length(); ++i)

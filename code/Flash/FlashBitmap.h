@@ -1,9 +1,9 @@
 #ifndef traktor_flash_FlashBitmap_H
 #define traktor_flash_FlashBitmap_H
 
+#include "Core/Object.h"
 #include "Core/Misc/AutoPtr.h"
 #include "Flash/SwfTypes.h"
-#include "Flash/Action/ActionObject.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -28,7 +28,7 @@ class Image;
 /*! \brief Flash bitmap container.
  * \ingroup Flash
  */
-class T_DLLCLASS FlashBitmap : public ActionObject
+class T_DLLCLASS FlashBitmap : public Object
 {
 	T_RTTI_CLASS;
 

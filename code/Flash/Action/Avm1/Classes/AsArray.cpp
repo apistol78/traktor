@@ -23,7 +23,7 @@ struct ArrayPredicateSort
 		(*predicateFunctionArgs)[1] = avr;
 
 		ActionValue resv = predicateFunction->call(context, 0, (*predicateFunctionArgs));
-		int32_t res = int32_t(resv.getNumberSafe());
+		int32_t res = int32_t(resv.getNumber());
 
 		return res < 0;
 	}
@@ -54,10 +54,10 @@ AsArray::AsArray()
 	prototype->setMember("UNIQUESORT", ActionValue(avm_number_t(4)));
 	prototype->setMember("concat", ActionValue(createNativeFunction(this, &AsArray::Array_concat)));
 	prototype->setMember("join", ActionValue(createNativeFunction(this, &AsArray::Array_join)));
-	prototype->setMember("pop", ActionValue(createNativeFunction(this, &AsArray::Array_pop)));
-	prototype->setMember("push", ActionValue(createNativeFunction(this, &AsArray::Array_push)));
-	prototype->setMember("reverse", ActionValue(createNativeFunction(this, &AsArray::Array_reverse)));
-	prototype->setMember("shift", ActionValue(createNativeFunction(this, &AsArray::Array_shift)));
+	prototype->setMember("pop", ActionValue(createNativeFunction(&Array::pop)));
+	prototype->setMember("push", ActionValue(createNativeFunction(&Array::push)));
+	prototype->setMember("reverse", ActionValue(createNativeFunction(&Array::reverse)));
+	prototype->setMember("shift", ActionValue(createNativeFunction(&Array::shift)));
 	prototype->setMember("slice", ActionValue(createNativeFunction(this, &AsArray::Array_slice)));
 	prototype->setMember("sort", ActionValue(createNativeFunction(this, &AsArray::Array_sort)));
 	prototype->setMember("sortOn", ActionValue(createNativeFunction(this, &AsArray::Array_sortOn)));
@@ -67,100 +67,90 @@ AsArray::AsArray()
 
 	prototype->addProperty("length", createNativeFunction(this, &AsArray::Array_get_length), 0);
 
+	prototype->setMember("constructor", ActionValue(this));
 	prototype->setReadOnly();
 
 	setMember("prototype", ActionValue(prototype));
 }
 
-ActionValue AsArray::construct(ActionContext* context, const ActionValueArray& args)
+Ref< ActionObject > AsArray::alloc(ActionContext* context)
 {
-	Ref< Array > object = new Array();
+	return new Array();
+}
+
+void AsArray::init(ActionContext* context, ActionObject* self, const ActionValueArray& args)
+{
+	Array* arr = checked_type_cast< Array* >(self);
 	for (uint32_t i = 0; i < args.size(); ++i)
-		object->push(args[i]);
-	return ActionValue(object);
+		arr->push(args[i]);
 }
 
 void AsArray::Array_concat(CallArgs& ca)
 {
-	Array* arr = checked_type_cast< Array*, false >(ca.self);
-	if (!ca.args.empty())
-		ca.ret = ActionValue(arr->concat(ca.args));
-	else
-		ca.ret = ActionValue(arr->concat());
+	Array* arr = dynamic_type_cast< Array* >(ca.self);
+	if (arr)
+	{
+		if (!ca.args.empty())
+			ca.ret = ActionValue(arr->concat(ca.args));
+		else
+			ca.ret = ActionValue(arr->concat());
+	}
 }
 
 void AsArray::Array_join(CallArgs& ca)
 {
-	Array* arr = checked_type_cast< Array*, false >(ca.self);
-	if (ca.args.empty())
-		ca.ret = ActionValue(arr->join(","));
-	else
-		ca.ret = ActionValue(arr->join(ca.args[0].getStringSafe()));
-}
-
-void AsArray::Array_pop(CallArgs& ca)
-{
-	Array* arr = checked_type_cast< Array*, false >(ca.self);
-	ca.ret = arr->pop();
-}
-
-void AsArray::Array_push(CallArgs& ca)
-{
-	Array* arr = checked_type_cast< Array*, false >(ca.self);
-	arr->push(ca.args[0]);
-}
-
-void AsArray::Array_reverse(CallArgs& ca)
-{
-	Array* arr = checked_type_cast< Array*, false >(ca.self);
-	arr->reverse();
-	ca.ret = ActionValue(arr);
-}
-
-void AsArray::Array_shift(CallArgs& ca)
-{
-	Array* arr = checked_type_cast< Array*, false >(ca.self);
-	ca.ret = arr->shift();
+	Array* arr = dynamic_type_cast< Array* >(ca.self);
+	if (arr)
+	{
+		if (ca.args.empty())
+			ca.ret = ActionValue(arr->join(","));
+		else
+			ca.ret = ActionValue(arr->join(ca.args[0].getString()));
+	}
 }
 
 void AsArray::Array_slice(CallArgs& ca)
 {
-	Array* arr = checked_type_cast< Array*, false >(ca.self);
-	
-	int32_t startIndex = 0;
-	int32_t endIndex = 16777215;
-	
-	if (ca.args.size() >= 1)
-		startIndex = int32_t(ca.args[0].getNumberSafe());
-	if (ca.args.size() >= 2)
-		endIndex = int32_t(ca.args[1].getNumberSafe());
+	Array* arr = dynamic_type_cast< Array* >(ca.self);
+	if (arr)
+	{
+		int32_t startIndex = 0;
+		int32_t endIndex = 16777215;
+		
+		if (ca.args.size() >= 1)
+			startIndex = int32_t(ca.args[0].getNumber());
+		if (ca.args.size() >= 2)
+			endIndex = int32_t(ca.args[1].getNumber());
 
-	ca.ret = ActionValue(arr->slice(startIndex, endIndex));
+		ca.ret = ActionValue(arr->slice(startIndex, endIndex));
+	}
 }
 
 void AsArray::Array_sort(CallArgs& ca)
 {
-	Array* arr = checked_type_cast< Array*, false >(ca.self);
-
-	if (ca.args.size() >= 1)
+	Array* arr = dynamic_type_cast< Array* >(ca.self);
+	if (arr)
 	{
-		ActionFunction* predicateFunction = ca.args[0].getObjectSafe< ActionFunction >();
-		if (!predicateFunction)
-			return;
+		if (ca.args.size() >= 1)
+		{
+			ActionFunction* predicateFunction = ca.args[0].getObject< ActionFunction >();
+			if (!predicateFunction)
+				return;
 
-		// Allocate argument array here as we don't want to flood the pool
-		// with new array for each comparison.
-		ActionValueArray predicateFunctionArgs(ca.context->getPool(), 2);
+			// Allocate argument array here as we don't want to flood the pool
+			// with new array for each comparison.
+			ActionValueArray predicateFunctionArgs(ca.context->getPool(), 2);
 
-		ArrayPredicateSort aps;
-		aps.context = ca.context;
-		aps.predicateFunction = predicateFunction;
-		aps.predicateFunctionArgs = &predicateFunctionArgs;
+			ArrayPredicateSort aps;
+			aps.context = ca.context;
+			aps.predicateFunction = predicateFunction;
+			aps.predicateFunctionArgs = &predicateFunctionArgs;
 
-		arr->sort(aps);
+			arr->sort(aps);
+		}
+		else
+			arr->sort(ArrayDefaultSort());
 	}
-	else
-		arr->sort(ArrayDefaultSort());
 }
 
 void AsArray::Array_sortOn(CallArgs& ca)
@@ -170,20 +160,20 @@ void AsArray::Array_sortOn(CallArgs& ca)
 
 void AsArray::Array_splice(CallArgs& ca)
 {
-	Array* arr = checked_type_cast< Array*, false >(ca.self);
+	Array* arr = dynamic_type_cast< Array* >(ca.self);
+	if (arr)
+	{
+		int32_t startIndex = int32_t(ca.args[0].getNumber());
+		uint32_t deleteCount = uint32_t(ca.args[1].getNumber());
 
-	int32_t startIndex = int32_t(ca.args[0].getNumberSafe());
-	uint32_t deleteCount = uint32_t(ca.args[1].getNumberSafe());
-
-	Ref< Array > removed = arr->splice(startIndex, deleteCount, ca.args, 2);
-
-	ca.ret = ActionValue(removed);
+		Ref< Array > removed = arr->splice(startIndex, deleteCount, ca.args, 2);
+		ca.ret = ActionValue(removed);
+	}
 }
 
-void AsArray::Array_toString(CallArgs& ca)
+ActionValue AsArray::Array_toString(const Array* self) const
 {
-	Ref< Array > arr = checked_type_cast< Array* >(ca.self);
-	ca.ret = ActionValue(arr->join(","));
+	return self->toString();
 }
 
 void AsArray::Array_unshift(CallArgs& ca)
@@ -192,10 +182,9 @@ void AsArray::Array_unshift(CallArgs& ca)
 	ca.ret = ActionValue(avm_number_t(arr->unshift(ca.args)));
 }
 
-void AsArray::Array_get_length(CallArgs& ca)
+uint32_t AsArray::Array_get_length(const Array* self) const
 {
-	Ref< Array > arr = checked_type_cast< Array* >(ca.self);
-	ca.ret = ActionValue(avm_number_t(arr->length()));
+	return self->length();
 }
 
 	}

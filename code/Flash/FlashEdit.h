@@ -27,10 +27,10 @@ class T_DLLCLASS FlashEdit : public FlashCharacter
 public:
 	enum Align
 	{
-		AnLeft		= 0x00,
-		AnRight		= 0x01,
-		AnCenter	= 0x02,
-		AnJustify	= 0x03
+		AnLeft = 0x00,
+		AnRight = 0x01,
+		AnCenter = 0x02,
+		AnJustify = 0x03
 	};
 
 	FlashEdit(

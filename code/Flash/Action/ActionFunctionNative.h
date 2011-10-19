@@ -43,73 +43,94 @@ template < typename Type, bool IsTypePtr = IsPointer< Type >::value >
 struct ActionValueCast { };
 
 template < >
+struct ActionValueCast< ActionValue, false >
+{
+	static ActionValue set(const ActionValue& v) { return v; }
+	static ActionValue get(const ActionValue& v) { return v; }
+};
+
+template < >
+struct ActionValueCast< const ActionValue&, false >
+{
+	static ActionValue set(const ActionValue& v) { return v; }
+	static ActionValue get(const ActionValue& v) { return v; }
+};
+
+template < >
 struct ActionValueCast< bool, false >
 {
 	static ActionValue set(bool v) { return ActionValue(v); }
-	static bool get(const ActionValue& av) { return av.getBooleanSafe(); }
+	static bool get(const ActionValue& av) { return av.getBoolean(); }
 };
 
 template < >
 struct ActionValueCast< int32_t, false >
 {
 	static ActionValue set(int32_t v) { return ActionValue(avm_number_t(v)); }
-	static int32_t get(const ActionValue& av) { return int32_t(av.getNumberSafe()); }
+	static int32_t get(const ActionValue& av) { return int32_t(av.getNumber()); }
+};
+
+template < >
+struct ActionValueCast< uint32_t, false >
+{
+	static ActionValue set(uint32_t v) { return ActionValue(avm_number_t(v)); }
+	static uint32_t get(const ActionValue& av) { return uint32_t(av.getNumber()); }
 };
 
 template < >
 struct ActionValueCast< float, false >
 {
 	static ActionValue set(float v) { return ActionValue(avm_number_t(v)); }
-	static float get(const ActionValue& av) { return float(av.getNumberSafe()); }
+	static float get(const ActionValue& av) { return float(av.getNumber()); }
 };
 
 template < >
 struct ActionValueCast< double, false >
 {
 	static ActionValue set(double v) { return ActionValue(avm_number_t(v)); }
-	static double get(const ActionValue& av) { return double(av.getNumberSafe()); }
+	static double get(const ActionValue& av) { return double(av.getNumber()); }
 };
 
 template < >
 struct ActionValueCast< std::string, false >
 {
 	static ActionValue set(const std::string& v) { return ActionValue(v); }
-	static std::string get(const ActionValue& av) { return av.getStringSafe(); }
+	static std::string get(const ActionValue& av) { return av.getString(); }
 };
 
 template < >
 struct ActionValueCast< const std::string&, false >
 {
 	static ActionValue set(const std::string& v) { return ActionValue(v); }
-	static std::string get(const ActionValue& av) { return av.getStringSafe(); }
+	static std::string get(const ActionValue& av) { return av.getString(); }
 };
 
 template < >
 struct ActionValueCast< std::wstring, false >
 {
 	static ActionValue set(const std::wstring& v) { return ActionValue(v); }
-	static std::wstring get(const ActionValue& av) { return av.getWideStringSafe(); }
+	static std::wstring get(const ActionValue& av) { return av.getWideString(); }
 };
 
 template < >
 struct ActionValueCast< const std::wstring&, false >
 {
 	static ActionValue set(const std::wstring& v) { return ActionValue(v); }
-	static std::wstring get(const ActionValue& av) { return av.getWideStringSafe(); }
+	static std::wstring get(const ActionValue& av) { return av.getWideString(); }
 };
 
 template < typename Type >
 struct ActionValueCast< Ref< Type >, false >
 {
 	static ActionValue set(const Ref< Type >& v) { return ActionValue(v); }
-	static Ref< Type > get(const ActionValue& value) { return value.getObjectSafe< Type >(); }
+	static Ref< Type > get(const ActionValue& value) { return value.getObject< Type >(); }
 };
 
 template < typename Type >
 struct ActionValueCast< Type, true >
 {
 	static ActionValue set(Type v) { return ActionValue(v); }
-	static Type get(const ActionValue& value) { return value.getObjectSafe< typename IsPointer< Type >::base_t >(); }
+	static Type get(const ActionValue& value) { return value.getObject< typename IsPointer< Type >::base_t >(); }
 };
 
 template <
@@ -138,9 +159,11 @@ struct MethodNativeFunction_0 : public INativeFunction
 
 	virtual void call(CallArgs& ca)
 	{
-		ca.ret = ActionValueCast< ReturnType >::set((m_object->*m_method)(
-			checked_type_cast< SelfClassType* >(ca.self)
-		));
+		SelfClassType* self = dynamic_type_cast< SelfClassType* >(ca.self);
+		if (self)
+			ca.ret = ActionValueCast< ReturnType >::set((m_object->*m_method)(
+				self
+			));
 	}
 };
 
@@ -155,9 +178,9 @@ struct MethodNativeFunction_0 < CallClassType, SelfClassType, void > : public IN
 
 	virtual void call(CallArgs& ca)
 	{
-		(m_object->*m_method)(
-			checked_type_cast< SelfClassType* >(ca.self)
-		);
+		SelfClassType* self = dynamic_type_cast< SelfClassType* >(ca.self);
+		if (self)
+			(m_object->*m_method)(self);
 	}
 };
 
@@ -175,10 +198,12 @@ struct MethodNativeFunction_1 : public INativeFunction
 	virtual void call(CallArgs& ca)
 	{
 		T_ASSERT (ca.args.size() == 1);
-		ca.ret = ActionValueCast< ReturnType >::set((m_object->*m_method)(
-			checked_type_cast< SelfClassType* >(ca.self),
-			ActionValueCast< Argument1Type >::get(ca.args[0])
-		));
+		SelfClassType* self = dynamic_type_cast< SelfClassType* >(ca.self);
+		if (self)
+			ca.ret = ActionValueCast< ReturnType >::set((m_object->*m_method)(
+				self,
+				ActionValueCast< Argument1Type >::get(ca.args[0])
+			));
 	}
 };
 
@@ -195,10 +220,12 @@ struct MethodNativeFunction_1 < CallClassType, SelfClassType, void, Argument1Typ
 	virtual void call(CallArgs& ca)
 	{
 		T_ASSERT (ca.args.size() == 1);
-		(m_object->*m_method)(
-			checked_type_cast< SelfClassType* >(ca.self),
-			ActionValueCast< Argument1Type >::get(ca.args[0])
-		);
+		SelfClassType* self = dynamic_type_cast< SelfClassType* >(ca.self);
+		if (self)
+			(m_object->*m_method)(
+				self,
+				ActionValueCast< Argument1Type >::get(ca.args[0])
+			);
 	}
 };
 
@@ -217,11 +244,13 @@ struct MethodNativeFunction_2 : public INativeFunction
 	virtual void call(CallArgs& ca)
 	{
 		T_ASSERT (ca.args.size() == 2);
-		ca.ret = ActionValueCast< ReturnType >::set((m_object->*m_method)(
-			checked_type_cast< SelfClassType* >(ca.self),
-			ActionValueCast< Argument1Type >::get(ca.args[0]),
-			ActionValueCast< Argument2Type >::get(ca.args[1])
-		));
+		SelfClassType* self = dynamic_type_cast< SelfClassType* >(ca.self);
+		if (self)
+			ca.ret = ActionValueCast< ReturnType >::set((m_object->*m_method)(
+				self,
+				ActionValueCast< Argument1Type >::get(ca.args[0]),
+				ActionValueCast< Argument2Type >::get(ca.args[1])
+			));
 	}
 };
 
@@ -239,11 +268,13 @@ struct MethodNativeFunction_2 < CallClassType, SelfClassType, void, Argument1Typ
 	virtual void call(CallArgs& ca)
 	{
 		T_ASSERT (ca.args.size() == 2);
-		(m_object->*m_method)(
-			checked_type_cast< SelfClassType* >(ca.self),
-			ActionValueCast< Argument1Type >::get(ca.args[0]),
-			ActionValueCast< Argument2Type >::get(ca.args[1])
-		);
+		SelfClassType* self = dynamic_type_cast< SelfClassType* >(ca.self);
+		if (self)
+			(m_object->*m_method)(
+				self,
+				ActionValueCast< Argument1Type >::get(ca.args[0]),
+				ActionValueCast< Argument2Type >::get(ca.args[1])
+			);
 	}
 };
 
@@ -263,12 +294,14 @@ struct MethodNativeFunction_3 : public INativeFunction
 	virtual void call(CallArgs& ca)
 	{
 		T_ASSERT (ca.args.size() == 3);
-		ca.ret = ActionValueCast< ReturnType >::set((m_object->*m_method)(
-			checked_type_cast< SelfClassType* >(ca.self),
-			ActionValueCast< Argument1Type >::get(ca.args[0]),
-			ActionValueCast< Argument2Type >::get(ca.args[1]),
-			ActionValueCast< Argument3Type >::get(ca.args[2])
-		));
+		SelfClassType* self = dynamic_type_cast< SelfClassType* >(ca.self);
+		if (self)
+			ca.ret = ActionValueCast< ReturnType >::set((m_object->*m_method)(
+				self,
+				ActionValueCast< Argument1Type >::get(ca.args[0]),
+				ActionValueCast< Argument2Type >::get(ca.args[1]),
+				ActionValueCast< Argument3Type >::get(ca.args[2])
+			));
 	}
 };
 
@@ -287,14 +320,85 @@ struct MethodNativeFunction_3 < CallClassType, SelfClassType, void, Argument1Typ
 	virtual void call(CallArgs& ca)
 	{
 		T_ASSERT (ca.args.size() == 3);
-		(m_object->*m_method)(
-			checked_type_cast< SelfClassType* >(ca.self),
-			ActionValueCast< Argument1Type >::get(ca.args[0]),
-			ActionValueCast< Argument2Type >::get(ca.args[1]),
-			ActionValueCast< Argument3Type >::get(ca.args[2])
-		);
+		SelfClassType* self = dynamic_type_cast< SelfClassType* >(ca.self);
+		if (self)
+			(m_object->*m_method)(
+				self,
+				ActionValueCast< Argument1Type >::get(ca.args[0]),
+				ActionValueCast< Argument2Type >::get(ca.args[1]),
+				ActionValueCast< Argument3Type >::get(ca.args[2])
+			);
 	}
 };
+
+//--
+
+template <
+	typename CallClassType,
+	typename SelfClassType,
+	typename ReturnType,
+	typename Argument1Type,
+	typename Argument2Type,
+	typename Argument3Type,
+	typename Argument4Type,
+	typename Argument5Type,
+	typename Argument6Type
+>
+struct MethodNativeFunction_6 : public INativeFunction
+{
+	CallClassType* m_object;
+	ReturnType (CallClassType::*m_method)(SelfClassType*, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type) const;
+
+	virtual void call(CallArgs& ca)
+	{
+		T_ASSERT (ca.args.size() == 6);
+		SelfClassType* self = dynamic_type_cast< SelfClassType* >(ca.self);
+		if (self)
+			ca.ret = ActionValueCast< ReturnType >::set((m_object->*m_method)(
+				self,
+				ActionValueCast< Argument1Type >::get(ca.args[0]),
+				ActionValueCast< Argument2Type >::get(ca.args[1]),
+				ActionValueCast< Argument3Type >::get(ca.args[2]),
+				ActionValueCast< Argument4Type >::get(ca.args[3]),
+				ActionValueCast< Argument5Type >::get(ca.args[4]),
+				ActionValueCast< Argument6Type >::get(ca.args[5])
+			));
+	}
+};
+
+template <
+	typename CallClassType,
+	typename SelfClassType,
+	typename Argument1Type,
+	typename Argument2Type,
+	typename Argument3Type,
+	typename Argument4Type,
+	typename Argument5Type,
+	typename Argument6Type
+>
+struct MethodNativeFunction_6 < CallClassType, SelfClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type > : public INativeFunction
+{
+	CallClassType* m_object;
+	void (CallClassType::*m_method)(SelfClassType*, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type) const;
+
+	virtual void call(CallArgs& ca)
+	{
+		T_ASSERT (ca.args.size() == 6);
+		SelfClassType* self = dynamic_type_cast< SelfClassType* >(ca.self);
+		if (self)
+			(m_object->*m_method)(
+				self,
+				ActionValueCast< Argument1Type >::get(ca.args[0]),
+				ActionValueCast< Argument2Type >::get(ca.args[1]),
+				ActionValueCast< Argument3Type >::get(ca.args[2]),
+				ActionValueCast< Argument4Type >::get(ca.args[3]),
+				ActionValueCast< Argument5Type >::get(ca.args[4]),
+				ActionValueCast< Argument6Type >::get(ca.args[5])
+			);
+	}
+};
+
+//--
 
 template <
 	typename ClassType,
@@ -306,9 +410,11 @@ struct MethodNativeFunction_self_0 : public INativeFunction
 
 	virtual void call(CallArgs& ca)
 	{
-		ca.ret = ActionValueCast< ReturnType >::set(
-			(checked_type_cast< ClassType*, false >(ca.self)->*m_method)()
-		);
+		ClassType* self = dynamic_type_cast< ClassType* >(ca.self);
+		if (self)
+			ca.ret = ActionValueCast< ReturnType >::set(
+				(self->*m_method)()
+			);
 	}
 };
 
@@ -321,7 +427,9 @@ struct MethodNativeFunction_self_0 < ClassType, void > : public INativeFunction
 
 	virtual void call(CallArgs& ca)
 	{
-		(checked_type_cast< ClassType*, false >(ca.self)->*m_method)();
+		ClassType* self = dynamic_type_cast< ClassType* >(ca.self);
+		if (self)
+			(self->*m_method)();
 	}
 };
 
@@ -337,11 +445,13 @@ struct MethodNativeFunction_self_1 : public INativeFunction
 	virtual void call(CallArgs& ca)
 	{
 		T_ASSERT (ca.args.size() == 1);
-		ca.ret = ActionValueCast< ReturnType >::set(
-			(checked_type_cast< ClassType*, false >(ca.self)->*m_method)(
-				ActionValueCast< Argument1Type >::get(ca.args[0])
-			)
-		);
+		ClassType* self = dynamic_type_cast< ClassType* >(ca.self);
+		if (self)
+			ca.ret = ActionValueCast< ReturnType >::set(
+				(self->*m_method)(
+					ActionValueCast< Argument1Type >::get(ca.args[0])
+				)
+			);
 	}
 };
 
@@ -356,9 +466,11 @@ struct MethodNativeFunction_self_1 < ClassType, void, Argument1Type > : public I
 	virtual void call(CallArgs& ca)
 	{
 		T_ASSERT (ca.args.size() == 1);
-		(checked_type_cast< ClassType*, false >(ca.self)->*m_method)(
-			ActionValueCast< Argument1Type >::get(ca.args[0])
-		);
+		ClassType* self = dynamic_type_cast< ClassType* >(ca.self);
+		if (self)
+			(self->*m_method)(
+				ActionValueCast< Argument1Type >::get(ca.args[0])
+			);
 	}
 };
 
@@ -375,12 +487,14 @@ struct MethodNativeFunction_self_2 : public INativeFunction
 	virtual void call(CallArgs& ca)
 	{
 		T_ASSERT (ca.args.size() == 2);
-		ca.ret = ActionValueCast< ReturnType >::set(
-			(checked_type_cast< ClassType*, false >(ca.self)->*m_method)(
-				ActionValueCast< Argument1Type >::get(ca.args[0]),
-				ActionValueCast< Argument2Type >::get(ca.args[1])
-			)
-		);
+		ClassType* self = dynamic_type_cast< ClassType* >(ca.self);
+		if (self)
+			ca.ret = ActionValueCast< ReturnType >::set(
+				(self->*m_method)(
+					ActionValueCast< Argument1Type >::get(ca.args[0]),
+					ActionValueCast< Argument2Type >::get(ca.args[1])
+				)
+			);
 	}
 };
 
@@ -396,10 +510,12 @@ struct MethodNativeFunction_self_2 < ClassType, void, Argument1Type, Argument2Ty
 	virtual void call(CallArgs& ca)
 	{
 		T_ASSERT (ca.args.size() == 2);
-		(checked_type_cast< ClassType*, false >(ca.self)->*m_method)(
-			ActionValueCast< Argument1Type >::get(ca.args[0]),
-			ActionValueCast< Argument2Type >::get(ca.args[1])
-		);
+		ClassType* self = dynamic_type_cast< ClassType* >(ca.self);
+		if (self)
+			(self->*m_method)(
+				ActionValueCast< Argument1Type >::get(ca.args[0]),
+				ActionValueCast< Argument2Type >::get(ca.args[1])
+			);
 	}
 };
 
@@ -417,13 +533,15 @@ struct MethodNativeFunction_self_3 : public INativeFunction
 	virtual void call(CallArgs& ca)
 	{
 		T_ASSERT (ca.args.size() == 3);
-		ca.ret = ActionValueCast< ReturnType >::set(
-			(checked_type_cast< ClassType*, false >(ca.self)->*m_method)(
-				ActionValueCast< Argument1Type >::get(ca.args[0]),
-				ActionValueCast< Argument2Type >::get(ca.args[1]),
-				ActionValueCast< Argument3Type >::get(ca.args[2])
-			)
-		);
+		ClassType* self = dynamic_type_cast< ClassType* >(ca.self);
+		if (self)
+			ca.ret = ActionValueCast< ReturnType >::set(
+				(self->*m_method)(
+					ActionValueCast< Argument1Type >::get(ca.args[0]),
+					ActionValueCast< Argument2Type >::get(ca.args[1]),
+					ActionValueCast< Argument3Type >::get(ca.args[2])
+				)
+			);
 	}
 };
 
@@ -440,11 +558,74 @@ struct MethodNativeFunction_self_3 < ClassType, void, Argument1Type, Argument2Ty
 	virtual void call(CallArgs& ca)
 	{
 		T_ASSERT (ca.args.size() == 3);
-		(checked_type_cast< ClassType*, false >(ca.self)->*m_method)(
-			ActionValueCast< Argument1Type >::get(ca.args[0]),
-			ActionValueCast< Argument2Type >::get(ca.args[1]),
-			ActionValueCast< Argument3Type >::get(ca.args[2])
-		);
+		ClassType* self = dynamic_type_cast< ClassType* >(ca.self);
+		if (self)
+			(self->*m_method)(
+				ActionValueCast< Argument1Type >::get(ca.args[0]),
+				ActionValueCast< Argument2Type >::get(ca.args[1]),
+				ActionValueCast< Argument3Type >::get(ca.args[2])
+			);
+	}
+};
+
+template <
+	typename ClassType,
+	typename ReturnType,
+	typename Argument1Type,
+	typename Argument2Type,
+	typename Argument3Type,
+	typename Argument4Type,
+	typename Argument5Type,
+	typename Argument6Type
+>
+struct MethodNativeFunction_self_6 : public INativeFunction
+{
+	ReturnType (ClassType::*m_method)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type);
+
+	virtual void call(CallArgs& ca)
+	{
+		T_ASSERT (ca.args.size() == 6);
+		ClassType* self = dynamic_type_cast< ClassType* >(ca.self);
+		if (self)
+			ca.ret = ActionValueCast< ReturnType >::set(
+				(self->*m_method)(
+					ActionValueCast< Argument1Type >::get(ca.args[0]),
+					ActionValueCast< Argument2Type >::get(ca.args[1]),
+					ActionValueCast< Argument3Type >::get(ca.args[2]),
+					ActionValueCast< Argument4Type >::get(ca.args[3]),
+					ActionValueCast< Argument5Type >::get(ca.args[4]),
+					ActionValueCast< Argument6Type >::get(ca.args[5])
+				)
+			);
+	}
+};
+
+template <
+	typename ClassType,
+	typename Argument1Type,
+	typename Argument2Type,
+	typename Argument3Type,
+	typename Argument4Type,
+	typename Argument5Type,
+	typename Argument6Type
+>
+struct MethodNativeFunction_self_6 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type > : public INativeFunction
+{
+	void (ClassType::*m_method)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type);
+
+	virtual void call(CallArgs& ca)
+	{
+		T_ASSERT (ca.args.size() == 6);
+		ClassType* self = dynamic_type_cast< ClassType* >(ca.self);
+		if (self)
+			(self->*m_method)(
+				ActionValueCast< Argument1Type >::get(ca.args[0]),
+				ActionValueCast< Argument2Type >::get(ca.args[1]),
+				ActionValueCast< Argument3Type >::get(ca.args[2]),
+				ActionValueCast< Argument4Type >::get(ca.args[3]),
+				ActionValueCast< Argument5Type >::get(ca.args[4]),
+				ActionValueCast< Argument6Type >::get(ca.args[5])
+			);
 	}
 };
 
@@ -538,6 +719,28 @@ Ref< ActionFunctionNative > createNativeFunction(CallClassType* object, ReturnTy
 	return new ActionFunctionNative(nf);
 }
 
+template <
+	typename CallClassType,
+	typename SelfClassType,
+	typename ReturnType,
+	typename Argument1Type,
+	typename Argument2Type,
+	typename Argument3Type,
+	typename Argument4Type,
+	typename Argument5Type,
+	typename Argument6Type
+>
+Ref< ActionFunctionNative > createNativeFunction(CallClassType* object, ReturnType (CallClassType::*method)(SelfClassType*, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type) const)
+{
+	Ref< MethodNativeFunction_6< CallClassType, SelfClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type > > nf = new MethodNativeFunction_6< CallClassType, SelfClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type >();
+	nf->m_object = object;
+	nf->m_method = method;
+	return new ActionFunctionNative(nf);
+}
+
+
+// \}
+
 // \}
 
 // \group Self methods
@@ -592,6 +795,24 @@ Ref< ActionFunctionNative > createNativeFunction(ReturnType (ClassType::*method)
 	nf->m_method = method;
 	return new ActionFunctionNative(nf);
 }
+
+template <
+	typename ClassType,
+	typename ReturnType,
+	typename Argument1Type,
+	typename Argument2Type,
+	typename Argument3Type,
+	typename Argument4Type,
+	typename Argument5Type,
+	typename Argument6Type
+>
+Ref< ActionFunctionNative > createNativeFunction(ReturnType (ClassType::*method)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type))
+{
+	Ref< MethodNativeFunction_self_6< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type > > nf = new MethodNativeFunction_self_6< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type >();
+	nf->m_method = method;
+	return new ActionFunctionNative(nf);
+}
+
 
 // \}
 

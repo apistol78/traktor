@@ -37,9 +37,9 @@ std::string Array::join(const std::string& delimiter) const
 	std::stringstream ss;
 	if (m_values.size() >= 1)
 	{
-		ss << m_values[0].getStringSafe();
+		ss << m_values[0].getString();
 		for (uint32_t i = 1; i < uint32_t(m_values.size()); ++i)
-			ss << delimiter << m_values[i].getStringSafe();
+			ss << delimiter << m_values[i].getString();
 	}
 	return ss.str();
 }
@@ -173,7 +173,7 @@ ActionValue Array::toString() const
 	{
 		if (i != m_values.begin())
 			ss << L", ";
-		ss << i->getWideStringSafe();
+		ss << i->getWideString();
 	}
 	return ActionValue(ss.str());
 }
@@ -182,8 +182,8 @@ void Array::trace(const IVisitor& visitor) const
 {
 	for (std::vector< ActionValue >::const_iterator i = m_values.begin(); i != m_values.end(); ++i)
 	{
-		if (i->isObject() && i->getObject())
-			visitor(i->getObject());
+		if (i->isObject())
+			visitor(i->getObjectUnsafe());
 	}
 	ActionObject::trace(visitor);
 }

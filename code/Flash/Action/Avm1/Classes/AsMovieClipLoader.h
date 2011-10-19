@@ -20,9 +20,11 @@ class AsMovieClipLoader : public ActionClass
 public:
 	AsMovieClipLoader();
 
-private:
-	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
+	virtual Ref< ActionObject > alloc(ActionContext* context);
 
+	virtual void init(ActionContext* context, ActionObject* self, const ActionValueArray& args);
+
+private:
 	void MovieClipLoader_addListener(CallArgs& ca);
 
 	void MovieClipLoader_getProgress(CallArgs& ca);

@@ -17,14 +17,19 @@ AsSystem::AsSystem()
 
 	prototype->setMember("security", ActionValue(new AsSecurity()));
 
+	prototype->setMember("constructor", ActionValue(this));
 	prototype->setReadOnly();
 
 	setMember("prototype", ActionValue(prototype));
 }
 
-ActionValue AsSystem::construct(ActionContext* context, const ActionValueArray& args)
+Ref< ActionObject > AsSystem::alloc(ActionContext* context)
 {
-	return ActionValue();
+	return new ActionObject("System");
+}
+
+void AsSystem::init(ActionContext* context, ActionObject* self, const ActionValueArray& args)
+{
 }
 
 	}

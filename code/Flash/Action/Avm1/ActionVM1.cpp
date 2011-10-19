@@ -1,7 +1,6 @@
 #include <cstring>
 #include <cmath>
 #include "Core/Io/BitReader.h"
-#include "Core/Log/Log.h"
 #include "Flash/Action/ActionFrame.h"
 #include "Flash/Action/Avm1/ActionVM1.h"
 #include "Flash/Action/Avm1/ActionVMImage1.h"
@@ -22,8 +21,6 @@ Ref< const IActionVMImage > ActionVM1::load(BitReader& br) const
 	image->m_byteCode.reserve(4096);
 	for (;;)
 	{
-		size_t pc = image->m_byteCode.size();
-
 		uint8_t opcode = br.readUInt8();
 		image->m_byteCode.push_back(opcode);
 
@@ -38,10 +35,6 @@ Ref< const IActionVMImage > ActionVM1::load(BitReader& br) const
 				image->m_byteCode.push_back(data);
 			}
 		}
-
-#if defined(_DEBUG)
-		log::debug << uint32_t(pc) << L": " << mbstows(c_operationInfos[opcode].name) << Endl;
-#endif
 
 		if (opcode == AopEnd)
 			break;

@@ -16,19 +16,21 @@ AsError::AsError()
 	prototype->setMember("message", ActionValue(L""));
 	prototype->setMember("name", ActionValue(L""));
 
+	prototype->setMember("constructor", ActionValue(this));
 	prototype->setReadOnly();
 
 	setMember("prototype", ActionValue(prototype));
 }
 
-ActionValue AsError::construct(ActionContext* context, const ActionValueArray& args)
+Ref< ActionObject > AsError::alloc(ActionContext* context)
 {
-	Ref< ActionObject > errorObject = new ActionObject(this);
+	return new ActionObject("Error");
+}
 
+void AsError::init(ActionContext* context, ActionObject* self, const ActionValueArray& args)
+{
 	if (args.size() > 0)
-		errorObject->setMember("message", args[0]);
-
-	return ActionValue(errorObject);
+		self->setMember("message", args[0]);
 }
 
 	}

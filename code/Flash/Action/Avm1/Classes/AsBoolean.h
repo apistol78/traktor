@@ -22,10 +22,12 @@ class AsBoolean : public ActionClass
 public:
 	AsBoolean();
 
-private:
-	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
+	virtual Ref< ActionObject > alloc(ActionContext* context);
 
-	std::wstring Boolean_toString(Boolean* self) const;
+	virtual void init(ActionContext* context, ActionObject* self, const ActionValueArray& args);
+
+private:
+	std::string Boolean_toString(Boolean* self) const;
 
 	bool Boolean_valueOf(Boolean* self) const;
 };

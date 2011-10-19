@@ -15,9 +15,11 @@ class As_mx_transitions_easing_None : public ActionClass
 public:
 	As_mx_transitions_easing_None();
 
-private:
-	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
+	virtual Ref< ActionObject > alloc(ActionContext* context);
 
+	virtual void init(ActionContext* context, ActionObject* self, const ActionValueArray& args);
+
+private:
 	void None_easeIn(CallArgs& ca);
 
 	void None_easeInOut(CallArgs& ca);

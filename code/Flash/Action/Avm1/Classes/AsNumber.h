@@ -8,7 +8,7 @@ namespace traktor
 	namespace flash
 	{
 
-struct CallArgs;
+class Number;
 
 /*! \brief Number class.
  * \ingroup Flash
@@ -20,12 +20,14 @@ class AsNumber : public ActionClass
 public:
 	AsNumber();
 
+	virtual Ref< ActionObject > alloc(ActionContext* context);
+
+	virtual void init(ActionContext* context, ActionObject* self, const ActionValueArray& args);
+
 private:
-	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
+	std::wstring Number_toString(const Number* self) const;
 
-	void Number_toString(CallArgs& ca);
-
-	void Number_valueOf(CallArgs& ca);
+	avm_number_t Number_valueOf(const Number* self) const;
 };
 
 	}

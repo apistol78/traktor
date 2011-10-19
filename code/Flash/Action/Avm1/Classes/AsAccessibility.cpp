@@ -16,14 +16,19 @@ AsAccessibility::AsAccessibility()
 	prototype->setMember("isActive", ActionValue(createNativeFunction(this, &AsAccessibility::Accessibility_isActive)));
 	prototype->setMember("updateProperties", ActionValue(createNativeFunction(this, &AsAccessibility::Accessibility_updateProperties)));
 
+	prototype->setMember("constructor", ActionValue(this));
 	prototype->setReadOnly();
 
 	setMember("prototype", ActionValue(prototype));
 }
 
-ActionValue AsAccessibility::construct(ActionContext* context, const ActionValueArray& args)
+Ref< ActionObject > AsAccessibility::alloc(ActionContext* context)
 {
-	return ActionValue();
+	return new ActionObject("Accessibility");
+}
+
+void AsAccessibility::init(ActionContext* context, ActionObject* self, const ActionValueArray& args)
+{
 }
 
 void AsAccessibility::Accessibility_isActive(CallArgs& ca)

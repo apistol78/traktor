@@ -87,7 +87,14 @@ AsMovieClip::AsMovieClip()
 	prototype->setMember("globalToLocal", ActionValue(createNativeFunction(this, &AsMovieClip::MovieClip_globalToLocal)));
 	prototype->setMember("gotoAndPlay", ActionValue(createNativeFunction(this, &AsMovieClip::MovieClip_gotoAndPlay)));
 	prototype->setMember("gotoAndStop", ActionValue(createNativeFunction(this, &AsMovieClip::MovieClip_gotoAndStop)));
-	prototype->setMember("hitTest", ActionValue(createNativeFunction(this, &AsMovieClip::MovieClip_hitTest)));
+	prototype->setMember("hitTest", ActionValue(
+		createPolymorphicFunction(
+			0,
+			createNativeFunction(this, &AsMovieClip::MovieClip_hitTest_1),
+			0,
+			createNativeFunction(this, &AsMovieClip::MovieClip_hitTest_3)
+		)
+	));
 	prototype->setMember("lineGradientStyle", ActionValue(createNativeFunction(this, &AsMovieClip::MovieClip_lineGradientStyle)));
 	prototype->setMember("lineStyle", ActionValue(createNativeFunction(this, &AsMovieClip::MovieClip_lineStyle)));
 	prototype->setMember("lineTo", ActionValue(createNativeFunction(this, &AsMovieClip::MovieClip_lineTo)));
@@ -148,49 +155,46 @@ AsMovieClip::AsMovieClip()
 	prototype->addProperty("_ymouse", createNativeFunction(this, &AsMovieClip::MovieClip_get_ymouse), createNativeFunction(this, &AsMovieClip::MovieClip_set_ymouse));
 	prototype->addProperty("_yscale", createNativeFunction(this, &AsMovieClip::MovieClip_get_yscale), createNativeFunction(this, &AsMovieClip::MovieClip_set_yscale));
 
+	prototype->setMember("constructor", ActionValue(this));
 	prototype->setReadOnly();
 
 	setMember("prototype", ActionValue(prototype));
 }
 
-ActionValue AsMovieClip::construct(ActionContext* context, const ActionValueArray& args)
+Ref< ActionObject > AsMovieClip::alloc(ActionContext* context)
 {
-	// Create a fake sprite character for this instance.
 	Ref< FlashSprite > sprite = new FlashSprite(0, 0);
 	sprite->addFrame(new FlashFrame());
-	return ActionValue(sprite->createInstance(context, 0, ""));
+	return sprite->createInstance(context, 0, "");
 }
 
-void AsMovieClip::MovieClip_attachAudio(CallArgs& ca)
+void AsMovieClip::init(ActionContext* context, ActionObject* self, const ActionValueArray& args)
 {
 }
 
-void AsMovieClip::MovieClip_attachBitmap(CallArgs& ca)
+void AsMovieClip::MovieClip_attachAudio(FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_attachMovie(CallArgs& ca)
+void AsMovieClip::MovieClip_attachBitmap(FlashSpriteInstance* self) const
 {
-	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
-	if (ca.args.size() < 3)
-	{
-		log::error << L"MovieClip.attachMovie, incorrect number of arguments" << Endl;
-		return;
-	}
+}
 
-	std::string attachClipName = ca.args[0].getStringSafe();
-	std::string attachClipNewName = ca.args[1].getStringSafe();
-	int32_t depth = int32_t(ca.args[2].getNumberSafe());
+Ref< FlashSpriteInstance > AsMovieClip::MovieClip_attachMovie(FlashSpriteInstance* self, const std::string& attachClipName, const std::string& attachClipNewName, int32_t depth) const
+{
+	ActionContext* context = self->getContext();
+	T_ASSERT (context);
 
 	// Get root movie.
-	const FlashMovie* movie = ca.context->getMovie();
+	const FlashMovie* movie = context->getMovie();
+	T_ASSERT (movie);
 
 	// Get movie clip ID from name.
 	uint16_t attachClipId;
 	if (!movie->getExportId(attachClipName, attachClipId))
 	{
 		log::error << L"MovieClip.attachMovie, no such movie clip exported (" << mbstows(attachClipName) << L")" << Endl;
-		return;
+		return 0;
 	}
 
 	// Get movie clip character.
@@ -198,46 +202,39 @@ void AsMovieClip::MovieClip_attachMovie(CallArgs& ca)
 	if (!attachClip)
 	{
 		log::error << L"MovieClip.attachMovie, no movie clip with id " << attachClipId << L" defined" << Endl;
-		return;
+		return 0;
 	}
 
 	// Create new instance of movie clip.
-	Ref< FlashSpriteInstance > attachClipInstance = checked_type_cast< FlashSpriteInstance* >(attachClip->createInstance(ca.context, movieClipInstance, attachClipName));
+	Ref< FlashSpriteInstance > attachClipInstance = checked_type_cast< FlashSpriteInstance* >(attachClip->createInstance(context, self, attachClipName));
 	
 	// Add new instance to display list.
-	FlashDisplayList& displayList = movieClipInstance->getDisplayList();
+	FlashDisplayList& displayList = self->getDisplayList();
 	displayList.showObject(depth, attachClipId, attachClipInstance, true);
 
-	ca.ret = ActionValue(attachClipInstance.ptr());
+	return attachClipInstance;
 }
 
-void AsMovieClip::MovieClip_beginBitmapFill(CallArgs& ca)
+void AsMovieClip::MovieClip_beginBitmapFill(FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_beginFill(CallArgs& ca)
+void AsMovieClip::MovieClip_beginFill(FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_beginGradientFill(CallArgs& ca)
+void AsMovieClip::MovieClip_beginGradientFill(FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_clear(CallArgs& ca)
+void AsMovieClip::MovieClip_clear(FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_createEmptyMovieClip(CallArgs& ca)
+Ref< FlashSpriteInstance > AsMovieClip::MovieClip_createEmptyMovieClip(FlashSpriteInstance* self, const std::string& emptyClipName, int32_t depth) const
 {
-	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
-	if (ca.args.size() < 2)
-	{
-		log::error << L"MovieClip.createEmptyMovieClip, incorrect number of arguments" << Endl;
-		return;
-	}
-
-	std::string emptyClipName = ca.args[0].getStringSafe();
-	int32_t depth = uint16_t(ca.args[1].getNumberSafe());
+	ActionContext* context = self->getContext();
+	T_ASSERT (context);
 
 	// Create fake character ID.
 	uint16_t emptyClipId = depth + 40000;
@@ -247,24 +244,33 @@ void AsMovieClip::MovieClip_createEmptyMovieClip(CallArgs& ca)
 	emptyClip->addFrame(new FlashFrame());
 
 	// Create new instance of movie clip.
-	Ref< FlashSpriteInstance > emptyClipInstance = checked_type_cast< FlashSpriteInstance* >(emptyClip->createInstance(ca.context, movieClipInstance, ""));
+	Ref< FlashSpriteInstance > emptyClipInstance = checked_type_cast< FlashSpriteInstance* >(emptyClip->createInstance(context, self, ""));
 	emptyClipInstance->setName(emptyClipName);
 
 	// Add new instance to display list.
-	FlashDisplayList& displayList = movieClipInstance->getDisplayList();
+	FlashDisplayList& displayList = self->getDisplayList();
 	displayList.showObject(depth, emptyClipId, emptyClipInstance, true);
 
-	ca.ret = ActionValue(emptyClipInstance.ptr());
+	return emptyClipInstance;
 }
 
-void AsMovieClip::MovieClip_createTextField(CallArgs& ca)
+Ref< FlashEditInstance > AsMovieClip::MovieClip_createTextField(
+	FlashSpriteInstance* self,
+	const std::string& name,
+	int32_t depth,
+	avm_number_t x,
+	avm_number_t y,
+	avm_number_t width,
+	avm_number_t height
+) const
 {
-	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
+	ActionContext* context = self->getContext();
+	T_ASSERT (context);
 
 	SwfRect bounds =
 	{
 		Vector2(0.0f, 0.0f),
-		Vector2(ca.args[4].getNumberSafe(), ca.args[5].getNumberSafe())
+		Vector2(width, height)
 	};
 	SwfColor color = { 0, 0, 0, 0 };
 
@@ -284,755 +290,656 @@ void AsMovieClip::MovieClip_createTextField(CallArgs& ca)
 	);
 
 	// Create edit character instance.
-	Ref< FlashEditInstance > editInstance = checked_type_cast< FlashEditInstance*, false >(edit->createInstance(
-		ca.context,
-		movieClipInstance,
-		ca.args[0].getStringSafe()
-	));
+	Ref< FlashEditInstance > editInstance = checked_type_cast< FlashEditInstance*, false >(edit->createInstance(context, self, name));
 	
 	// Place character at given location.
-	editInstance->setTransform(translate(
-		ca.args[2].getNumberSafe(),
-		ca.args[3].getNumberSafe()
-	));
+	editInstance->setTransform(translate(x, y));
 	
 	// Show edit character instance.
-	movieClipInstance->getDisplayList().showObject(
-		int32_t(ca.args[1].getNumberSafe()),
+	self->getDisplayList().showObject(
+		depth,
 		edit->getId(),
 		editInstance,
 		true
 	);
+
+	return editInstance;
 }
 
-void AsMovieClip::MovieClip_curveTo(CallArgs& ca)
+void AsMovieClip::MovieClip_curveTo(FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_duplicateMovieClip(CallArgs& ca)
+Ref< FlashSpriteInstance > AsMovieClip::MovieClip_duplicateMovieClip(FlashSpriteInstance* self, const std::string& name, int32_t depth) const
 {
-	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
-	Ref< FlashSpriteInstance > parentClipInstance = checked_type_cast< FlashSpriteInstance* >(movieClipInstance->getParent());
+	Ref< FlashSpriteInstance > parentClipInstance = checked_type_cast< FlashSpriteInstance* >(self->getParent());
 
-	Ref< FlashSpriteInstance > cloneClipInstance = movieClipInstance->clone();
-	cloneClipInstance->setName(ca.args[0].getStringSafe());
+	Ref< FlashSpriteInstance > cloneClipInstance = self->clone();
+	cloneClipInstance->setName(name);
 
 	parentClipInstance->getDisplayList().showObject(
-		int32_t(ca.args[1].getNumberSafe()),
+		depth,
 		cloneClipInstance->getSprite()->getId(),
 		cloneClipInstance,
 		true
 	);
+
+	return cloneClipInstance;
 }
 
-void AsMovieClip::MovieClip_endFill(CallArgs& ca)
+void AsMovieClip::MovieClip_endFill(FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_getBounds(CallArgs& ca)
+void AsMovieClip::MovieClip_getBounds(FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_getBytesLoaded(CallArgs& ca)
+int32_t AsMovieClip::MovieClip_getBytesLoaded(FlashSpriteInstance* self) const
 {
-	ca.ret = ActionValue(avm_number_t(1));
+	return 1;
 }
 
-void AsMovieClip::MovieClip_getBytesTotal(CallArgs& ca)
+int32_t AsMovieClip::MovieClip_getBytesTotal(FlashSpriteInstance* self) const
 {
-	ca.ret = ActionValue(avm_number_t(1));
+	return 1;
 }
 
-void AsMovieClip::MovieClip_getDepth(CallArgs& ca)
+int32_t AsMovieClip::MovieClip_getDepth(FlashSpriteInstance* self) const
 {
-	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
-	Ref< FlashSpriteInstance > parentClipInstance = checked_type_cast< FlashSpriteInstance* >(movieClipInstance->getParent());
+	Ref< FlashSpriteInstance > parentClipInstance = checked_type_cast< FlashSpriteInstance* >(self->getParent());
 	if (parentClipInstance)
-		ca.ret = ActionValue(avm_number_t(parentClipInstance->getDisplayList().getObjectDepth(movieClipInstance)));
+		return parentClipInstance->getDisplayList().getObjectDepth(self);
+	else
+		return 0;
 }
 
-void AsMovieClip::MovieClip_getInstanceAtDepth(CallArgs& ca)
+Ref< FlashCharacterInstance > AsMovieClip::MovieClip_getInstanceAtDepth(FlashSpriteInstance* self, int32_t depth) const
+{
+	return 0;
+}
+
+int32_t AsMovieClip::MovieClip_getNextHighestDepth(FlashSpriteInstance* self) const
+{
+	return self->getDisplayList().getNextHighestDepth();
+}
+
+void AsMovieClip::MovieClip_getRect(FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_getNextHighestDepth(CallArgs& ca)
+int32_t AsMovieClip::MovieClip_getSWFVersion(FlashSpriteInstance* self) const
 {
-	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
-	ca.ret = ActionValue(avm_number_t(movieClipInstance->getDisplayList().getNextHighestDepth()));
+	return 8;
 }
 
-void AsMovieClip::MovieClip_getRect(CallArgs& ca)
-{
-}
-
-void AsMovieClip::MovieClip_getSWFVersion(CallArgs& ca)
+void AsMovieClip::MovieClip_getTextSnapshot(FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_getTextSnapshot(CallArgs& ca)
+void AsMovieClip::MovieClip_getURL(FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_getURL(CallArgs& ca)
+void AsMovieClip::MovieClip_globalToLocal(FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_globalToLocal(CallArgs& ca)
+void AsMovieClip::MovieClip_gotoAndPlay(FlashSpriteInstance* self, const ActionValue& arg0) const
 {
-	T_FATAL_ERROR;
-}
-
-void AsMovieClip::MovieClip_gotoAndPlay(CallArgs& ca)
-{
-	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
-	if (ca.args[0].isNumeric())
-		movieClipInstance->gotoFrame(uint32_t(ca.args[0].getNumber() - 1));
-	else if (ca.args[0].isString())
+	if (arg0.isNumeric())
+		self->gotoFrame(uint32_t(arg0.getNumber() - 1));
+	else if (arg0.isString())
 	{
-		int frame = movieClipInstance->getSprite()->findFrame(ca.args[0].getString());
+		int32_t frame = self->getSprite()->findFrame(arg0.getString());
 		if (frame >= 0)
-			movieClipInstance->gotoFrame(frame);
+			self->gotoFrame(frame);
 		else
-			log::warning << L"No such frame, \"" << ca.args[0].getWideString() << L"\"" << Endl;
+			log::warning << L"No such frame, \"" << arg0.getWideString() << L"\"" << Endl;
 	}
-	movieClipInstance->setPlaying(true);
+	self->setPlaying(true);
 }
 
-void AsMovieClip::MovieClip_gotoAndStop(CallArgs& ca)
+void AsMovieClip::MovieClip_gotoAndStop(FlashSpriteInstance* self, const ActionValue& arg0) const
 {
-	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
-	if (ca.args[0].isNumeric())
+	if (arg0.isNumeric())
 	{
-		int32_t frame = int32_t(ca.args[0].getNumber());
-		movieClipInstance->gotoFrame(max< int32_t >(frame - 1, 0));
+		int32_t frame = int32_t(arg0.getNumber());
+		self->gotoFrame(max< int32_t >(frame - 1, 0));
 	}
-	else if (ca.args[0].isString())
+	else if (arg0.isString())
 	{
-		int frame = movieClipInstance->getSprite()->findFrame(ca.args[0].getString());
+		int32_t frame = self->getSprite()->findFrame(arg0.getString());
 		if (frame >= 0)
-			movieClipInstance->gotoFrame(frame);
+			self->gotoFrame(frame);
 		else
-			log::warning << L"No such frame, \"" << ca.args[0].getWideString() << L"\"" << Endl;
+			log::warning << L"No such frame, \"" << arg0.getWideString() << L"\"" << Endl;
 	}
-	movieClipInstance->setPlaying(false);
+	self->setPlaying(false);
 }
 
-void AsMovieClip::MovieClip_hitTest(CallArgs& ca)
+bool AsMovieClip::MovieClip_hitTest_1(const FlashSpriteInstance* self, const FlashCharacterInstance* shape) const
 {
-	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
+	if (!shape)
+		return false;
 
-	if (ca.args.size() == 3)
-	{
-		avm_number_t x = ca.args[0].getNumberSafe() * 20.0f;
-		avm_number_t y = ca.args[1].getNumberSafe() * 20.0f;
+	SwfRect bounds = self->getBounds();
+	SwfRect shapeBounds = shape->getBounds();
 
-		SwfRect bounds = movieClipInstance->getBounds();
-		ca.ret = ActionValue(x >= bounds.min.x && y >= bounds.min.y && x <= bounds.max.x && y <= bounds.max.y);
-	}
-	else if (ca.args.size() == 1)
-	{
-		if (!ca.args[0].isObject())
-		{
-			ca.ret = ActionValue(false);
-			return;
-		}
-
-		Ref< FlashSpriteInstance > shapeClipInstance = ca.args[0].getObject< FlashSpriteInstance >();
-		if (!shapeClipInstance)
-		{
-			ca.ret = ActionValue(false);
-			return;
-		}
-
-		SwfRect bounds = movieClipInstance->getBounds();
-		SwfRect shapeBounds = shapeClipInstance->getBounds();
-
-		ca.ret = ActionValue((bounds.min.x < shapeBounds.max.x) && (bounds.min.y < shapeBounds.max.y) && (bounds.max.x > shapeBounds.min.x) && (bounds.max.y > shapeBounds.min.y));
-	}
+	return
+		(bounds.min.x < shapeBounds.max.x) &&
+		(bounds.min.y < shapeBounds.max.y) &&
+		(bounds.max.x > shapeBounds.min.x) &&
+		(bounds.max.y > shapeBounds.min.y);
 }
 
-void AsMovieClip::MovieClip_lineGradientStyle(CallArgs& ca)
+bool AsMovieClip::MovieClip_hitTest_3(const FlashSpriteInstance* self, avm_number_t x, avm_number_t y) const
+{
+	SwfRect bounds = self->getBounds();
+	return (x >= bounds.min.x && y >= bounds.min.y && x <= bounds.max.x && y <= bounds.max.y);
+}
+
+void AsMovieClip::MovieClip_lineGradientStyle(FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_lineStyle(CallArgs& ca)
+void AsMovieClip::MovieClip_lineStyle(FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_lineTo(CallArgs& ca)
+void AsMovieClip::MovieClip_lineTo(FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_loadMovie(CallArgs& ca)
+Ref< FlashSpriteInstance > AsMovieClip::MovieClip_loadMovie(FlashSpriteInstance* self, const std::wstring& fileName) const
 {
-	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
-
-	std::wstring fileName = ca.args[0].getWideStringSafe();
-
 	Ref< IStream > file = FileSystem::getInstance().open(fileName, File::FmRead);
 	if (!file)
-		return;
+		return 0;
 
 	Ref< SwfReader > swf = new SwfReader(file);
 	Ref< FlashMovie > movie = flash::FlashMovieFactory().createMovie(swf);
 	if (!movie)
-		return;
+		return 0;
 
-	Ref< FlashSpriteInstance > externalMovieClipInstance = movie->createExternalMovieClipInstance(
-		movieClipInstance
-	);
+	return movie->createExternalMovieClipInstance(self);
 }
 
-void AsMovieClip::MovieClip_loadVariables(CallArgs& ca)
+void AsMovieClip::MovieClip_loadVariables(FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_localToGlobal(CallArgs& ca)
-{
-	T_FATAL_ERROR;
-}
-
-void AsMovieClip::MovieClip_moveTo(CallArgs& ca)
+void AsMovieClip::MovieClip_localToGlobal(const FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_nextFrame(CallArgs& ca)
+void AsMovieClip::MovieClip_moveTo(FlashSpriteInstance* self) const
 {
-	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
-	movieClipInstance->gotoNext();
 }
 
-void AsMovieClip::MovieClip_play(CallArgs& ca)
+void AsMovieClip::MovieClip_nextFrame(FlashSpriteInstance* self) const
 {
-	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
-	movieClipInstance->setPlaying(true);
+	self->gotoNext();
 }
 
-void AsMovieClip::MovieClip_prevFrame(CallArgs& ca)
+void AsMovieClip::MovieClip_play(FlashSpriteInstance* self) const
 {
-	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
-	movieClipInstance->gotoPrevious();
+	self->setPlaying(true);
 }
 
-void AsMovieClip::MovieClip_removeMovieClip(CallArgs& ca)
+void AsMovieClip::MovieClip_prevFrame(FlashSpriteInstance* self) const
 {
-	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
-	FlashSpriteInstance* parentClipInstance = checked_type_cast< FlashSpriteInstance*, false >(movieClipInstance->getParent());
+	self->gotoPrevious();
+}
+
+void AsMovieClip::MovieClip_removeMovieClip(FlashSpriteInstance* self) const
+{
+	FlashSpriteInstance* parentClipInstance = checked_type_cast< FlashSpriteInstance*, false >(self->getParent());
 	FlashDisplayList& displayList = parentClipInstance->getDisplayList();
-	displayList.removeObject(movieClipInstance);
+	displayList.removeObject(self);
 }
 
-void AsMovieClip::MovieClip_setMask(CallArgs& ca)
+void AsMovieClip::MovieClip_setMask(FlashSpriteInstance* self, FlashSpriteInstance* mask) const
 {
-	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
-	Ref< FlashSpriteInstance > maskInstance = ca.args[0].getObjectSafe< FlashSpriteInstance >();
-	movieClipInstance->setMask(maskInstance);
+	self->setMask(mask);
 }
 
-void AsMovieClip::MovieClip_startDrag(CallArgs& ca)
+void AsMovieClip::MovieClip_startDrag(FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_stop(CallArgs& ca)
+void AsMovieClip::MovieClip_stop(FlashSpriteInstance* self) const
 {
-	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
-	movieClipInstance->setPlaying(false);
+	self->setPlaying(false);
 }
 
-void AsMovieClip::MovieClip_stopDrag(CallArgs& ca)
+void AsMovieClip::MovieClip_stopDrag(FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_swapDepths(CallArgs& ca)
+void AsMovieClip::MovieClip_swapDepths(FlashSpriteInstance* self, const ActionValue& arg0) const
 {
-	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
-	FlashSpriteInstance* parentClipInstance = checked_type_cast< FlashSpriteInstance*, false >(movieClipInstance->getParent());
+	FlashSpriteInstance* parentClipInstance = checked_type_cast< FlashSpriteInstance*, false >(self->getParent());
 
 	// Get my own current depth.
-	int32_t depth = parentClipInstance->getDisplayList().getObjectDepth(movieClipInstance);
+	int32_t depth = parentClipInstance->getDisplayList().getObjectDepth(self);
 
 	// Get target clip depth.
 	int32_t targetDepth = depth;
 
-	if (ca.args[0].isNumeric())
-		targetDepth = int32_t(ca.args[0].getNumber());
-	else if (ca.args[0].isObject())
+	if (arg0.isNumeric())
+		targetDepth = int32_t(arg0.getNumber());
+	else if (arg0.isObject())
 	{
-		Ref< FlashSpriteInstance > targetClipInstance = ca.args[0].getObject< FlashSpriteInstance >();
+		Ref< FlashSpriteInstance > targetClipInstance = arg0.getObject< FlashSpriteInstance >();
 		targetDepth = parentClipInstance->getDisplayList().getObjectDepth(targetClipInstance);
 	}
 
 	parentClipInstance->getDisplayList().swap(depth, targetDepth);
 }
 
-void AsMovieClip::MovieClip_unloadMovie(CallArgs& ca)
+void AsMovieClip::MovieClip_unloadMovie(FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_get_alpha(CallArgs& ca)
+avm_number_t AsMovieClip::MovieClip_get_alpha(const FlashSpriteInstance* self) const
 {
-	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
-	const SwfCxTransform& colorTransform = movieClipInstance->getColorTransform();
-	ca.ret = ActionValue(colorTransform.alpha[0] * 100.0f);
+	const SwfCxTransform& colorTransform = self->getColorTransform();
+	return colorTransform.alpha[0] * 100.0f;
 }
 
-void AsMovieClip::MovieClip_set_alpha(CallArgs& ca)
+void AsMovieClip::MovieClip_set_alpha(FlashSpriteInstance* self, avm_number_t alpha) const
 {
-	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
-	SwfCxTransform colorTransform = movieClipInstance->getColorTransform();
-	colorTransform.alpha[0] = ca.args[0].getNumberSafe() / 100.0f;
-	movieClipInstance->setColorTransform(colorTransform);
+	SwfCxTransform colorTransform = self->getColorTransform();
+	colorTransform.alpha[0] = alpha / 100.0f;
+	self->setColorTransform(colorTransform);
 }
 
-void AsMovieClip::MovieClip_get_blendMode(CallArgs& ca)
-{
-}
-
-void AsMovieClip::MovieClip_set_blendMode(CallArgs& ca)
+void AsMovieClip::MovieClip_get_blendMode(const FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_get_cacheAsBitmap(CallArgs& ca)
+void AsMovieClip::MovieClip_set_blendMode(FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_set_cacheAsBitmap(CallArgs& ca)
+void AsMovieClip::MovieClip_get_cacheAsBitmap(const FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_get_currentframe(CallArgs& ca)
+void AsMovieClip::MovieClip_set_cacheAsBitmap(FlashSpriteInstance* self) const
 {
-	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
-	ca.ret = ActionValue(avm_number_t(movieClipInstance->getCurrentFrame() + 1));
 }
 
-void AsMovieClip::MovieClip_set_currentframe(CallArgs& ca)
+int32_t AsMovieClip::MovieClip_get_currentframe(const FlashSpriteInstance* self) const
 {
-	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
-	uint32_t frame = uint32_t(ca.args[0].getNumberSafe());
+	return self->getCurrentFrame() + 1;
+}
+
+void AsMovieClip::MovieClip_set_currentframe(FlashSpriteInstance* self, int32_t frame) const
+{
 	if (frame > 0)
-		movieClipInstance->gotoFrame(frame - 1);
+		self->gotoFrame(frame - 1);
 }
 
-void AsMovieClip::MovieClip_get_droptarget(CallArgs& ca)
+void AsMovieClip::MovieClip_get_droptarget(const FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_set_droptarget(CallArgs& ca)
+void AsMovieClip::MovieClip_set_droptarget(FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_get_enabled(CallArgs& ca)
+void AsMovieClip::MovieClip_get_enabled(const FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_set_enabled(CallArgs& ca)
+void AsMovieClip::MovieClip_set_enabled(FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_get_filters(CallArgs& ca)
+void AsMovieClip::MovieClip_get_filters(const FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_set_filters(CallArgs& ca)
+void AsMovieClip::MovieClip_set_filters(FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_get_focusEnabled(CallArgs& ca)
+void AsMovieClip::MovieClip_get_focusEnabled(const FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_set_focusEnabled(CallArgs& ca)
+void AsMovieClip::MovieClip_set_focusEnabled(FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_get_focusrect(CallArgs& ca)
+void AsMovieClip::MovieClip_get_focusrect(const FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_set_focusrect(CallArgs& ca)
+void AsMovieClip::MovieClip_set_focusrect(FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_get_forceSmoothing(CallArgs& ca)
+void AsMovieClip::MovieClip_get_forceSmoothing(const FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_set_forceSmoothing(CallArgs& ca)
+void AsMovieClip::MovieClip_set_forceSmoothing(FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_get_framesloaded(CallArgs& ca)
+int32_t AsMovieClip::MovieClip_get_framesloaded(const FlashSpriteInstance* self) const
 {
-	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
-	Ref< const FlashSprite > movieClip = movieClipInstance->getSprite();
-	ca.ret = ActionValue(avm_number_t(movieClip->getFrameCount()));
+	const FlashSprite* movieClip = self->getSprite();
+	return movieClip->getFrameCount();
 }
 
-void AsMovieClip::MovieClip_set_framesloaded(CallArgs& ca)
+void AsMovieClip::MovieClip_set_framesloaded(FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_get_height(CallArgs& ca)
+float AsMovieClip::MovieClip_get_height(const FlashSpriteInstance* self) const
 {
-	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
-	
-	SwfRect bounds = movieClipInstance->getBounds();
-	float extent = (bounds.max.y - bounds.min.y) / 20.0f;
-
-	ca.ret = ActionValue(extent);
+	SwfRect bounds = self->getBounds();
+	return (bounds.max.y - bounds.min.y) / 20.0f;
 }
 
-void AsMovieClip::MovieClip_set_height(CallArgs& ca)
+void AsMovieClip::MovieClip_set_height(FlashSpriteInstance* self, float height) const
 {
-	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
-	
-	SwfRect bounds = movieClipInstance->getLocalBounds();
+	SwfRect bounds = self->getLocalBounds();
 	float extent = (bounds.max.y - bounds.min.y) / 20.0f;
 	if (abs(extent) <= FUZZY_EPSILON)
 		return;
 
 	Vector2 T, S; float R;
-	decomposeTransform(movieClipInstance->getTransform(), T, S, R);
-
-	S.y = float(ca.args[0].getNumberSafe()) / extent;
-
-	movieClipInstance->setTransform(composeTransform(T, S, R));
+	decomposeTransform(self->getTransform(), T, S, R);
+	S.y = height / extent;
+	self->setTransform(composeTransform(T, S, R));
 }
 
-void AsMovieClip::MovieClip_get_highquality(CallArgs& ca)
+void AsMovieClip::MovieClip_get_highquality(const FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_set_highquality(CallArgs& ca)
+void AsMovieClip::MovieClip_set_highquality(FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_get_hitArea(CallArgs& ca)
+void AsMovieClip::MovieClip_get_hitArea(const FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_set_hitArea(CallArgs& ca)
+void AsMovieClip::MovieClip_set_hitArea(FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_get_lockroot(CallArgs& ca)
+void AsMovieClip::MovieClip_get_lockroot(const FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_set_lockroot(CallArgs& ca)
+void AsMovieClip::MovieClip_set_lockroot(FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_get_menu(CallArgs& ca)
+void AsMovieClip::MovieClip_get_menu(const FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_set_menu(CallArgs& ca)
+void AsMovieClip::MovieClip_set_menu(FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_get_name(CallArgs& ca)
+std::string AsMovieClip::MovieClip_get_name(const FlashSpriteInstance* self) const
 {
-	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
-	ca.ret = ActionValue(movieClipInstance->getName());
+	return self->getName();
 }
 
-void AsMovieClip::MovieClip_set_name(CallArgs& ca)
+void AsMovieClip::MovieClip_set_name(FlashSpriteInstance* self, const std::string& name) const
 {
-	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
-	movieClipInstance->setName(ca.args[0].getStringSafe());
+	self->setName(name);
 }
 
-void AsMovieClip::MovieClip_get_opaqueBackground(CallArgs& ca)
-{
-}
-
-void AsMovieClip::MovieClip_set_opaqueBackground(CallArgs& ca)
+void AsMovieClip::MovieClip_get_opaqueBackground(const FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_get_parent(CallArgs& ca)
-{
-	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
-	ca.ret = ActionValue(movieClipInstance->getParent());
-}
-
-void AsMovieClip::MovieClip_set_parent(CallArgs& ca)
+void AsMovieClip::MovieClip_set_opaqueBackground(FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_get_quality(CallArgs& ca)
+FlashCharacterInstance* AsMovieClip::MovieClip_get_parent(FlashSpriteInstance* self) const
 {
-	ca.ret = ActionValue(L"BEST");
+	return self->getParent();
 }
 
-void AsMovieClip::MovieClip_set_quality(CallArgs& ca)
+void AsMovieClip::MovieClip_set_parent(FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_get_rotation(CallArgs& ca)
+std::string AsMovieClip::MovieClip_get_quality(const FlashSpriteInstance* self) const
 {
-	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
+	return "BEST";
+}
 
+void AsMovieClip::MovieClip_set_quality(FlashSpriteInstance* self, const std::string& quality) const
+{
+}
+
+float AsMovieClip::MovieClip_get_rotation(const FlashSpriteInstance* self) const
+{
 	Vector2 T, S; float R;
-	decomposeTransform(movieClipInstance->getTransform(), T, S, R);
-
-	ca.ret = ActionValue(rad2deg(R));
+	decomposeTransform(self->getTransform(), T, S, R);
+	return rad2deg(R);
 }
 
-void AsMovieClip::MovieClip_set_rotation(CallArgs& ca)
+void AsMovieClip::MovieClip_set_rotation(FlashSpriteInstance* self, float rotation) const
 {
-	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
-	float deg = float(ca.args[0].getNumberSafe());
-
 	Vector2 T, S; float R;
-	decomposeTransform(movieClipInstance->getTransform(), T, S, R);
-
-	R = deg2rad(deg);
-
-	movieClipInstance->setTransform(composeTransform(T, S, R));
+	decomposeTransform(self->getTransform(), T, S, R);
+	R = deg2rad(rotation);
+	self->setTransform(composeTransform(T, S, R));
 }
 
-void AsMovieClip::MovieClip_get_scale9Grid(CallArgs& ca)
+void AsMovieClip::MovieClip_get_scale9Grid(const FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_set_scale9Grid(CallArgs& ca)
+void AsMovieClip::MovieClip_set_scale9Grid(FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_get_scrollRect(CallArgs& ca)
+void AsMovieClip::MovieClip_get_scrollRect(const FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_set_scrollRect(CallArgs& ca)
+void AsMovieClip::MovieClip_set_scrollRect(FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_get_soundbuftime(CallArgs& ca)
+void AsMovieClip::MovieClip_get_soundbuftime(const FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_set_soundbuftime(CallArgs& ca)
+void AsMovieClip::MovieClip_set_soundbuftime(FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_get_tabChildren(CallArgs& ca)
+void AsMovieClip::MovieClip_get_tabChildren(const FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_set_tabChildren(CallArgs& ca)
+void AsMovieClip::MovieClip_set_tabChildren(FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_get_tabEnabled(CallArgs& ca)
+void AsMovieClip::MovieClip_get_tabEnabled(const FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_set_tabEnabled(CallArgs& ca)
+void AsMovieClip::MovieClip_set_tabEnabled(FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_get_tabIndex(CallArgs& ca)
+void AsMovieClip::MovieClip_get_tabIndex(const FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_set_tabIndex(CallArgs& ca)
+void AsMovieClip::MovieClip_set_tabIndex(FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_get_target(CallArgs& ca)
+void AsMovieClip::MovieClip_get_target(const FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_set_target(CallArgs& ca)
+void AsMovieClip::MovieClip_set_target(FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_get_totalframes(CallArgs& ca)
+void AsMovieClip::MovieClip_get_totalframes(const FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_set_totalframes(CallArgs& ca)
+void AsMovieClip::MovieClip_set_totalframes(FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_get_trackAsMenu(CallArgs& ca)
+void AsMovieClip::MovieClip_get_trackAsMenu(const FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_set_trackAsMenu(CallArgs& ca)
+void AsMovieClip::MovieClip_set_trackAsMenu(FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_get_transform(CallArgs& ca)
+Ref< Transform > AsMovieClip::MovieClip_get_transform(FlashSpriteInstance* self) const
 {
-	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
-	ca.ret = ActionValue(new Transform(movieClipInstance));
+	return new Transform(self);
 }
 
-void AsMovieClip::MovieClip_get_url(CallArgs& ca)
-{
-}
-
-void AsMovieClip::MovieClip_set_url(CallArgs& ca)
+void AsMovieClip::MovieClip_get_url(const FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_get_useHandCursor(CallArgs& ca)
+void AsMovieClip::MovieClip_set_url(FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_set_useHandCursor(CallArgs& ca)
+void AsMovieClip::MovieClip_get_useHandCursor(const FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_get_visible(CallArgs& ca)
+void AsMovieClip::MovieClip_set_useHandCursor(FlashSpriteInstance* self) const
 {
-	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
-	ca.ret = ActionValue(movieClipInstance->isVisible());
 }
 
-void AsMovieClip::MovieClip_set_visible(CallArgs& ca)
+bool AsMovieClip::MovieClip_get_visible(const FlashSpriteInstance* self) const
 {
-	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
-	movieClipInstance->setVisible(ca.args[0].toBoolean().getBoolean());
+	return self->isVisible();
 }
 
-void AsMovieClip::MovieClip_get_width(CallArgs& ca)
+void AsMovieClip::MovieClip_set_visible(FlashSpriteInstance* self, bool visible) const
 {
-	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
-
-	SwfRect bounds = movieClipInstance->getBounds();
-	float extent = (bounds.max.x - bounds.min.x) / 20.0f;
-
-	ca.ret = ActionValue(extent);
+	self->setVisible(visible);
 }
 
-void AsMovieClip::MovieClip_set_width(CallArgs& ca)
+float AsMovieClip::MovieClip_get_width(const FlashSpriteInstance* self) const
 {
-	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
+	SwfRect bounds = self->getBounds();
+	return (bounds.max.x - bounds.min.x) / 20.0f;
+}
 
-	SwfRect bounds = movieClipInstance->getLocalBounds();
+void AsMovieClip::MovieClip_set_width(FlashSpriteInstance* self, float width) const
+{
+	SwfRect bounds = self->getLocalBounds();
 	float extent = (bounds.max.x - bounds.min.x) / 20.0f;
 	if (abs(extent) <= FUZZY_EPSILON)
 		return;
 
 	Vector2 T, S; float R;
-	decomposeTransform(movieClipInstance->getTransform(), T, S, R);
-
-	S.x = float(ca.args[0].getNumberSafe()) / extent;
-
-	movieClipInstance->setTransform(composeTransform(T, S, R));
+	decomposeTransform(self->getTransform(), T, S, R);
+	S.x = width / extent;
+	self->setTransform(composeTransform(T, S, R));
 }
 
-void AsMovieClip::MovieClip_get_x(CallArgs& ca)
+float AsMovieClip::MovieClip_get_x(const FlashSpriteInstance* self) const
 {
-	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
-
 	Vector2 T, S; float R;
-	decomposeTransform(movieClipInstance->getTransform(), T, S, R);
-
-	ca.ret = ActionValue(avm_number_t(T.x / 20.0));
+	decomposeTransform(self->getTransform(), T, S, R);
+	return T.x / 20.0f;
 }
 
-void AsMovieClip::MovieClip_set_x(CallArgs& ca)
+void AsMovieClip::MovieClip_set_x(FlashSpriteInstance* self, float x) const
 {
-	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
-
 	Vector2 T, S; float R;
-	decomposeTransform(movieClipInstance->getTransform(), T, S, R);
-
-	T.x = float(ca.args[0].getNumberSafe() * 20.0);
-
-	movieClipInstance->setTransform(composeTransform(T, S, R));
+	decomposeTransform(self->getTransform(), T, S, R);
+	T.x = x * 20.0f;
+	self->setTransform(composeTransform(T, S, R));
 }
 
-void AsMovieClip::MovieClip_get_xmouse(CallArgs& ca)
+int32_t AsMovieClip::MovieClip_get_xmouse(const FlashSpriteInstance* self) const
 {
-	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
-	ca.ret = ActionValue(avm_number_t(movieClipInstance->getMouseX()));
+	return self->getMouseX();
 }
 
-void AsMovieClip::MovieClip_set_xmouse(CallArgs& ca)
+void AsMovieClip::MovieClip_set_xmouse(FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_get_xscale(CallArgs& ca)
+float AsMovieClip::MovieClip_get_xscale(const FlashSpriteInstance* self) const
 {
-	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
-	
 	Vector2 T, S; float R;
-	decomposeTransform(movieClipInstance->getTransform(), T, S, R);
-	
-	ca.ret = ActionValue(avm_number_t(S.x * 100.0));
+	decomposeTransform(self->getTransform(), T, S, R);
+	return S.x * 100.0f;
 }
 
-void AsMovieClip::MovieClip_set_xscale(CallArgs& ca)
+void AsMovieClip::MovieClip_set_xscale(FlashSpriteInstance* self, float x) const
 {
-	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
-
 	Vector2 T, S; float R;
-	decomposeTransform(movieClipInstance->getTransform(), T, S, R);
-
-	S.x = float(ca.args[0].getNumberSafe() / 100.0);
-
-	movieClipInstance->setTransform(composeTransform(T, S, R));
+	decomposeTransform(self->getTransform(), T, S, R);
+	S.x = x / 100.0f;
+	self->setTransform(composeTransform(T, S, R));
 }
 
-void AsMovieClip::MovieClip_get_y(CallArgs& ca)
+float AsMovieClip::MovieClip_get_y(const FlashSpriteInstance* self) const
 {
-	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
-
 	Vector2 T, S; float R;
-	decomposeTransform(movieClipInstance->getTransform(), T, S, R);
-
-	ca.ret = ActionValue(avm_number_t(T.y / 20.0));
+	decomposeTransform(self->getTransform(), T, S, R);
+	return T.y / 20.0f;
 }
 
-void AsMovieClip::MovieClip_set_y(CallArgs& ca)
+void AsMovieClip::MovieClip_set_y(FlashSpriteInstance* self, float y) const
 {
-	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
-
 	Vector2 T, S; float R;
-	decomposeTransform(movieClipInstance->getTransform(), T, S, R);
-
-	T.y = float(ca.args[0].getNumberSafe() * 20.0);
-
-	movieClipInstance->setTransform(composeTransform(T, S, R));
+	decomposeTransform(self->getTransform(), T, S, R);
+	T.y = y * 20.0f;
+	self->setTransform(composeTransform(T, S, R));
 }
 
-void AsMovieClip::MovieClip_get_ymouse(CallArgs& ca)
+int32_t AsMovieClip::MovieClip_get_ymouse(const FlashSpriteInstance* self) const
 {
-	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
-	ca.ret = ActionValue(avm_number_t(movieClipInstance->getMouseY()));
+	return self->getMouseY();
 }
 
-void AsMovieClip::MovieClip_set_ymouse(CallArgs& ca)
+void AsMovieClip::MovieClip_set_ymouse(FlashSpriteInstance* self) const
 {
 }
 
-void AsMovieClip::MovieClip_get_yscale(CallArgs& ca)
+float AsMovieClip::MovieClip_get_yscale(const FlashSpriteInstance* self) const
 {
-	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
-
 	Vector2 T, S; float R;
-	decomposeTransform(movieClipInstance->getTransform(), T, S, R);
-
-	ca.ret = ActionValue(avm_number_t(S.y * 100.0));
+	decomposeTransform(self->getTransform(), T, S, R);
+	return S.y * 100.0f;
 }
 
-void AsMovieClip::MovieClip_set_yscale(CallArgs& ca)
+void AsMovieClip::MovieClip_set_yscale(FlashSpriteInstance* self, float y) const
 {
-	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
-
 	Vector2 T, S; float R;
-	decomposeTransform(movieClipInstance->getTransform(), T, S, R);
-
-	S.y = float(ca.args[0].getNumberSafe() / 100.0);
-
-	movieClipInstance->setTransform(composeTransform(T, S, R));
+	decomposeTransform(self->getTransform(), T, S, R);
+	S.y = y / 100.0f;
+	self->setTransform(composeTransform(T, S, R));
 }
 
 	}

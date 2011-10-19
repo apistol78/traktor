@@ -20,9 +20,11 @@ class AsTextField_StyleSheet : public ActionClass
 public:
 	AsTextField_StyleSheet();
 
-private:
-	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
+	virtual Ref< ActionObject > alloc(ActionContext* context);
 
+	virtual void init(ActionContext* context, ActionObject* self, const ActionValueArray& args);
+
+private:
 	void TextField_StyleSheet_clear(CallArgs& ca);
 
 	void TextField_StyleSheet_getStyle(CallArgs& ca);

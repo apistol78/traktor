@@ -46,9 +46,19 @@ AsKey::AsKey()
 	prototype->setMember("isToggled", ActionValue(createNativeFunction(this, &AsKey::Key_isToggled)));
 	prototype->setMember("removeListener", ActionValue(createNativeFunction(this, &AsKey::Key_removeListener)));
 
+	prototype->setMember("constructor", ActionValue(this));
 	prototype->setReadOnly();
 
 	setMember("prototype", ActionValue(prototype));
+}
+
+Ref< ActionObject > AsKey::alloc(ActionContext* context)
+{
+	return new ActionObject("Key");
+}
+
+void AsKey::init(ActionContext* context, ActionObject* self, const ActionValueArray& args)
+{
 }
 
 void AsKey::eventKeyDown(ActionContext* context, int keyCode)
@@ -116,14 +126,9 @@ void AsKey::dereference()
 	ActionClass::dereference();
 }
 
-ActionValue AsKey::construct(ActionContext* context, const ActionValueArray& args)
-{
-	return ActionValue();
-}
-
 void AsKey::Key_addListener(CallArgs& ca)
 {
-	m_listeners.push_back(ca.args[0].getObjectSafe());
+	m_listeners.push_back(ca.args[0].getObject());
 }
 
 void AsKey::Key_getAscii(CallArgs& ca)
@@ -154,7 +159,7 @@ void AsKey::Key_isToggled(CallArgs& ca)
 
 void AsKey::Key_removeListener(CallArgs& ca)
 {
-	RefArray< ActionObject >::iterator i = std::find(m_listeners.begin(), m_listeners.end(), ca.args[0].getObjectSafe());
+	RefArray< ActionObject >::iterator i = std::find(m_listeners.begin(), m_listeners.end(), ca.args[0].getObject());
 	if (i != m_listeners.end())
 		m_listeners.erase(i);
 }

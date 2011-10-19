@@ -5,11 +5,10 @@ namespace traktor
 	namespace flash
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashFrame", FlashFrame, ActionObject)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashFrame", FlashFrame, Object)
 
 FlashFrame::FlashFrame()
-:	ActionObject("Object")
-,	m_backgroundColorChange(false)
+:	m_backgroundColorChange(false)
 {
 	m_backgroundColor.red =
 	m_backgroundColor.green =

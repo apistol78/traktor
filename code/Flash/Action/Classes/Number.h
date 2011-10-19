@@ -26,6 +26,8 @@ class T_DLLCLASS Number : public ActionObject
 public:
 	Number(avm_number_t value);
 
+	void set(avm_number_t value) { m_value = value; }
+
 	avm_number_t get() const { return m_value; }
 
 private:

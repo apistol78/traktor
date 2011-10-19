@@ -1,8 +1,8 @@
 #ifndef traktor_flash_FlashCharacter_H
 #define traktor_flash_FlashCharacter_H
 
+#include "Core/Object.h"
 #include "Flash/SwfTypes.h"
-#include "Flash/Action/ActionObject.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -23,7 +23,7 @@ class FlashCharacterInstance;
 /*! \brief Character definition.
  * \ingroup Flash
  */
-class T_DLLCLASS FlashCharacter : public ActionObject
+class T_DLLCLASS FlashCharacter : public Object
 {
 	T_RTTI_CLASS;
 

@@ -7,11 +7,11 @@
 #include "Flash/FlashMovie.h"
 #include "Flash/FlashSprite.h"
 #include "Flash/FlashSpriteInstance.h"
+#include "Flash/GC.h"
 #include "Flash/IDisplayRenderer.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFrame.h"
 #include "Flash/Action/ActionFunctionNative.h"
-#include "Flash/Action/ActionObjectCyclic.h"
 #include "Flash/Action/Avm1/Classes/AsKey.h"
 #include "Flash/Action/Avm1/Classes/AsMouse.h"
 
@@ -107,7 +107,7 @@ void FlashMoviePlayer::destroy()
 	m_fsCommands.clear();
 	m_interval.clear();
 
-	ActionObjectCyclic::getInstance().collectCycles(true);
+	GC::getInstance().collectCycles(true);
 }
 
 void FlashMoviePlayer::gotoAndPlay(uint32_t frame)
@@ -234,7 +234,7 @@ void FlashMoviePlayer::executeFrame()
 	// Collect reference cycles.
 	if (--m_framesUntilCollection <= 0)
 	{
-		ActionObjectCyclic::getInstance().collectCycles(false);
+		GC::getInstance().collectCycles(false);
 		m_framesUntilCollection = c_framesBetweenCollections;
 	}
 }
@@ -358,7 +358,7 @@ void FlashMoviePlayer::Global_getUrl(CallArgs& ca)
 	{
 		m_fsCommands.push_back(std::make_pair(
 			mbstows(url.substr(10)),
-			ca.args[1].getWideStringSafe()
+			ca.args[1].getWideString()
 		));
 	}
 }
@@ -376,18 +376,18 @@ void FlashMoviePlayer::Global_setInterval(CallArgs& ca)
 	if (ca.args[1].isString())
 	{
 		// (objectReference:Object, methodName:String, interval:Number, [param1:Object, param2, ..., paramN])
-		target = ca.args[0].getObjectSafe();
+		target = ca.args[0].getObject();
 		if (!target->getMember(actionContext, ca.args[1].getString(), functionValue))
 			return;
 		function = functionValue.getObject< ActionFunction >();
-		interval = uint32_t(ca.args[2].getNumberSafe());
+		interval = uint32_t(ca.args[2].getNumber());
 	}
 	else
 	{
 		// (functionReference:Function, interval:Number, [param1:Object, param2, ..., paramN])
 		target = ca.self;
-		function = ca.args[0].getObjectSafe< ActionFunction >();
-		interval = uint32_t(ca.args[1].getNumberSafe());
+		function = ca.args[0].getObject< ActionFunction >();
+		interval = uint32_t(ca.args[1].getNumber());
 	}
 
 	if (!function)
@@ -406,7 +406,7 @@ void FlashMoviePlayer::Global_setInterval(CallArgs& ca)
 
 void FlashMoviePlayer::Global_clearInterval(CallArgs& ca)
 {
-	uint32_t id = uint32_t(ca.args[0].getNumberSafe());
+	uint32_t id = uint32_t(ca.args[0].getNumber());
 	std::map< uint32_t, Interval >::iterator i = m_interval.find(id);
 	if (i != m_interval.end())
 		m_interval.erase(i);

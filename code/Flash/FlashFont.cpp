@@ -6,11 +6,10 @@ namespace traktor
 	namespace flash
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashFont", FlashFont, ActionObject)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashFont", FlashFont, Object)
 
 FlashFont::FlashFont()
-:	ActionObject("Object")
-,	m_ascent(0)
+:	m_ascent(0)
 ,	m_descent(0)
 ,	m_leading(0)
 ,	m_coordinateType(CtTwips)
@@ -115,19 +114,6 @@ uint16_t FlashFont::lookupIndex(uint16_t code) const
 FlashFont::CoordinateType FlashFont::getCoordinateType() const
 {
 	return m_coordinateType;
-}
-
-void FlashFont::trace(const IVisitor& visitor) const
-{
-	for (RefArray< FlashShape >::const_iterator i = m_shapes.begin(); i != m_shapes.end(); ++i)
-		visitor(*i);
-	ActionObject::trace(visitor);
-}
-
-void FlashFont::dereference()
-{
-	m_shapes.clear();
-	ActionObject::dereference();
 }
 
 	}

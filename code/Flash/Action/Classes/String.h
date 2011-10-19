@@ -30,6 +30,8 @@ public:
 
 	explicit String(const std::string& str);
 
+	void set(const std::string& str) { m_str = str; }
+
 	const std::string& get() const { return m_str; }
 
 	virtual ActionValue toString() const;

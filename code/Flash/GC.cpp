@@ -3,8 +3,8 @@
 #include "Core/Log/Log.h"
 #include "Core/Singleton/SingletonManager.h"
 #include "Core/Thread/Acquire.h"
-#include "Flash/Action/ActionObject.h"
-#include "Flash/Action/ActionObjectCyclic.h"
+#include "Flash/Collectable.h"
+#include "Flash/GC.h"
 
 namespace traktor
 {
@@ -13,35 +13,35 @@ namespace traktor
 		namespace
 		{
 
-static ActionObjectCyclic* s_instance = 0;
+static GC* s_instance = 0;
 
 		}
 
-ActionObjectCyclic& ActionObjectCyclic::getInstance()
+GC& GC::getInstance()
 {
 	if (!s_instance)
 	{
-		s_instance = new ActionObjectCyclic();
+		s_instance = new GC();
 		SingletonManager::getInstance().add(s_instance);
 	}
 	return *s_instance;
 }
 
-void ActionObjectCyclic::addCandidate(ActionObject* object)
+void GC::addCandidate(Collectable* object)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	T_ASSERT (std::find(m_candidates.begin(), m_candidates.end(), object) == m_candidates.end());
 	m_candidates.push_back(object);
 }
 
-void ActionObjectCyclic::removeCandidate(ActionObject* object)
+void GC::removeCandidate(Collectable* object)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	T_ASSERT (std::find(m_candidates.begin(), m_candidates.end(), object) != m_candidates.end());
 	m_candidates.remove(object);
 }
 
-void ActionObjectCyclic::collectCycles(bool full)
+void GC::collectCycles(bool full)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
@@ -51,10 +51,10 @@ void ActionObjectCyclic::collectCycles(bool full)
 	do
 	{
 		// Mark roots.
-		for (IntrusiveList< ActionObject >::iterator i = m_candidates.begin(); i != m_candidates.end(); )
+		for (IntrusiveList< Collectable >::iterator i = m_candidates.begin(); i != m_candidates.end(); )
 		{
-			ActionObject* candidate = *i;
-			if (candidate->m_traceColor == ActionObject::TcPurple)
+			Collectable* candidate = *i;
+			if (candidate->m_traceColor == Collectable::TcPurple)
 			{
 				candidate->traceMarkGray();
 				++i;
@@ -67,20 +67,20 @@ void ActionObjectCyclic::collectCycles(bool full)
 		}
 
 		// Scan roots.
-		for (IntrusiveList< ActionObject >::iterator i = m_candidates.begin(); i != m_candidates.end(); ++i)
+		for (IntrusiveList< Collectable >::iterator i = m_candidates.begin(); i != m_candidates.end(); ++i)
 		{
-			ActionObject* candidate = *i;
+			Collectable* candidate = *i;
 			candidate->traceScan();
 		}
 
 		// Collect roots.
 		while (!m_candidates.empty())
 		{
-			ActionObject* candidate = m_candidates.front();
+			Collectable* candidate = m_candidates.front();
 
 			// If we've found a purple object then it's been added during
 			// collection of roots thus we need to make another trace round.
-			if (candidate->m_traceColor == ActionObject::TcPurple)
+			if (candidate->m_traceColor == Collectable::TcPurple)
 				break;
 			
 			m_candidates.pop_front();
@@ -92,13 +92,13 @@ void ActionObjectCyclic::collectCycles(bool full)
 	while (full && !m_candidates.empty());
 }
 
-void ActionObjectCyclic::destroy()
+void GC::destroy()
 {
 	T_ASSERT (s_instance == this);
 	delete s_instance, s_instance = 0;
 }
 
-ActionObjectCyclic::~ActionObjectCyclic()
+GC::~GC()
 {
 	collectCycles(true);
 }

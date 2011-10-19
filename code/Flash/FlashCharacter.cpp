@@ -5,11 +5,10 @@ namespace traktor
 	namespace flash
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashCharacter", FlashCharacter, ActionObject)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashCharacter", FlashCharacter, Object)
 
 FlashCharacter::FlashCharacter(uint16_t id)
-:	ActionObject("Object")
-,	m_id(id)
+:	m_id(id)
 {
 }
 

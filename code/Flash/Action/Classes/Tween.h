@@ -8,14 +8,14 @@ namespace traktor
 	namespace flash
 	{
 
-class ActionContext;
-
 class Tween : public ActionObject
 {
 	T_RTTI_CLASS;
 
 public:
-	Tween(
+	Tween();
+
+	void init(
 		ActionContext* context,
 		ActionObject* target,
 		const std::string& propertyName,

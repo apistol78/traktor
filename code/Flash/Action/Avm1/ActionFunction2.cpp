@@ -219,7 +219,7 @@ void ActionFunction2::trace(const IVisitor& visitor) const
 	for (std::map< std::string, ActionValue >::const_iterator i = m_variables.begin(); i != m_variables.end(); ++i)
 	{
 		if (i->second.isObject())
-			visitor(i->second.getObject());
+			visitor(i->second.getObjectUnsafe());
 	}
 	ActionFunction::trace(visitor);
 }

@@ -20,9 +20,11 @@ class AsSecurity : public ActionClass
 public:
 	AsSecurity();
 
-private:
-	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
+	virtual Ref< ActionObject > alloc(ActionContext* context);
 
+	virtual void init(ActionContext* context, ActionObject* self, const ActionValueArray& args);
+
+private:
 	void Security_allowDomain(CallArgs& ca);
 
 	void Security_allowInsecureDomain(CallArgs& ca);

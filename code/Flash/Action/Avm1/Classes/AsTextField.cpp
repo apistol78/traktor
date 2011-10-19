@@ -103,14 +103,19 @@ AsTextField::AsTextField()
 	prototype->addProperty("_ymouse", createNativeFunction(this, &AsTextField::TextField_get_ymouse), 0);
 	prototype->addProperty("_yscale", createNativeFunction(this, &AsTextField::TextField_get_yscale), createNativeFunction(this, &AsTextField::TextField_set_yscale));
 
+	prototype->setMember("constructor", ActionValue(this));
 	prototype->setReadOnly();
 
 	setMember("prototype", ActionValue(prototype));
 }
 
-ActionValue AsTextField::construct(ActionContext* context, const ActionValueArray& args)
+Ref< ActionObject > AsTextField::alloc(ActionContext* context)
 {
-	return ActionValue();
+	return 0;
+}
+
+void AsTextField::init(ActionContext* context, ActionObject* self, const ActionValueArray& args)
+{
 }
 
 void AsTextField::TextField_addListener(FlashEditInstance* editInstance, ActionObject* listener) const

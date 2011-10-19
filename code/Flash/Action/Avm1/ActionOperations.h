@@ -9,8 +9,11 @@ namespace traktor
 	namespace flash
 	{
 
+class ActionContext;
 class ActionFrame;
+class ActionObject;
 class ActionVMImage1;
+class FlashSpriteInstance;
 
 struct PreparationState
 {
@@ -29,6 +32,12 @@ struct ExecutionState
 	const uint8_t* npc;
 	const uint8_t* data;
 	uint16_t length;
+
+	// Cached instances.
+	ActionContext* context;
+	ActionObject* self;
+	ActionObject* global;
+	FlashSpriteInstance* movieClip;
 };
 
 struct OperationInfo

@@ -13,7 +13,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.As_flash_geom_ColorTransform", As_flash_g
 As_flash_geom_ColorTransform::As_flash_geom_ColorTransform()
 :	ActionClass("flash.geom.Transform")
 {
-	Ref< ActionObject > prototype = new ActionObject();
+	Ref< ActionObject > prototype = new ActionObject("Object");
 
 	prototype->addProperty("alphaMultiplier", createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_get_alphaMultiplier), createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_set_alphaMultiplier));
 	prototype->addProperty("alphaOffset", createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_get_alphaOffset), createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_set_alphaOffset));
@@ -25,28 +25,45 @@ As_flash_geom_ColorTransform::As_flash_geom_ColorTransform()
 	prototype->addProperty("redOffset", createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_get_redOffset), createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_set_redOffset));
 	prototype->addProperty("rgb", createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_get_rgb), createNativeFunction(this, &As_flash_geom_ColorTransform::ColorTransform_set_rgb));
 
+	prototype->setMember("constructor", ActionValue(this));
 	prototype->setReadOnly();
 
 	setMember("prototype", ActionValue(prototype));
 }
 
-ActionValue As_flash_geom_ColorTransform::construct(ActionContext* context, const ActionValueArray& args)
+Ref< ActionObject > As_flash_geom_ColorTransform::alloc(ActionContext* context)
+{
+	SwfCxTransform transform;
+
+	transform.red[0] = 1.0f;
+	transform.green[0] = 1.0f;
+	transform.blue[0] = 1.0f;
+	transform.alpha[0] = 1.0f;
+	transform.red[1] = 0.0f;
+	transform.green[1] = 0.0f;
+	transform.blue[1] = 0.0f;
+	transform.alpha[1] = 0.0f;
+
+	return new ColorTransform(transform);
+}
+
+void As_flash_geom_ColorTransform::init(ActionContext* context, ActionObject* self, const ActionValueArray& args)
 {
 	if (args.size() < 8)
-		return ActionValue();
+		return;
 
 	SwfCxTransform transform;
 
-	transform.red[0] = float(args[0].getNumberSafe());
-	transform.green[0] = float(args[1].getNumberSafe());
-	transform.blue[0] = float(args[2].getNumberSafe());
-	transform.alpha[0] = float(args[3].getNumberSafe());
-	transform.red[1] = float(args[4].getNumberSafe());
-	transform.green[1] = float(args[5].getNumberSafe());
-	transform.blue[1] = float(args[6].getNumberSafe());
-	transform.alpha[1] = float(args[7].getNumberSafe());
+	transform.red[0] = float(args[0].getNumber());
+	transform.green[0] = float(args[1].getNumber());
+	transform.blue[0] = float(args[2].getNumber());
+	transform.alpha[0] = float(args[3].getNumber());
+	transform.red[1] = float(args[4].getNumber());
+	transform.green[1] = float(args[5].getNumber());
+	transform.blue[1] = float(args[6].getNumber());
+	transform.alpha[1] = float(args[7].getNumber());
 
-	return ActionValue(new ColorTransform(transform));
+	checked_type_cast< ColorTransform* >(self)->setTransform(transform);
 }
 
 avm_number_t As_flash_geom_ColorTransform::ColorTransform_get_alphaMultiplier(ColorTransform* self) const

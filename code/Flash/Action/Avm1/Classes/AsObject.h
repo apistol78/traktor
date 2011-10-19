@@ -28,26 +28,28 @@ class T_DLLCLASS AsObject : public ActionClass
 public:
 	AsObject();
 
+	virtual Ref< ActionObject > alloc(ActionContext* context);
+
+	virtual void init(ActionContext* context, ActionObject* self, const ActionValueArray& args);
+
 private:
-	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
+	void Object_addProperty(ActionObject* self, const std::string& propertyName, ActionFunction* propertyGet, ActionFunction* propertySet) const;
 
-	void Object_addProperty(CallArgs& ca);
+	bool Object_hasOwnProperty(const ActionObject* self, const std::string& propertyName) const;
 
-	void Object_hasOwnProperty(CallArgs& ca);
+	bool Object_isPropertyEnumerable(const ActionObject* self) const;
 
-	void Object_isPropertyEnumerable(CallArgs& ca);
-
-	void Object_isPrototypeOf(CallArgs& ca);
+	bool Object_isPrototypeOf(const ActionObject* self) const;
 
 	void Object_registerClass(CallArgs& ca);
 
 	void Object_toString(CallArgs& ca);
 
-	void Object_unwatch(CallArgs& ca);
+	void Object_unwatch(ActionObject* self) const;
 
 	void Object_valueOf(CallArgs& ca);
 
-	void Object_watch(CallArgs& ca);
+	void Object_watch(ActionObject* self) const;
 };
 
 	}

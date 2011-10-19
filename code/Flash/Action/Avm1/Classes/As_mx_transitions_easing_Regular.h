@@ -15,9 +15,11 @@ class As_mx_transitions_easing_Regular : public ActionClass
 public:
 	As_mx_transitions_easing_Regular();
 
-private:
-	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
+	virtual Ref< ActionObject > alloc(ActionContext* context);
 
+	virtual void init(ActionContext* context, ActionObject* self, const ActionValueArray& args);
+
+private:
 	void Regular_easeIn(CallArgs& ca);
 
 	void Regular_easeInOut(CallArgs& ca);

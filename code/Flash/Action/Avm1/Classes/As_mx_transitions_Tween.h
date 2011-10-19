@@ -8,8 +8,6 @@ namespace traktor
 	namespace flash
 	{
 
-struct CallArgs;
-
 /*! \brief mx.transitions.Tween class.
  * \ingroup Flash
  */
@@ -20,26 +18,9 @@ class As_mx_transitions_Tween : public ActionClass
 public:
 	As_mx_transitions_Tween();
 
-private:
-	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
+	virtual Ref< ActionObject > alloc(ActionContext* context);
 
-	void Tween_continueTo(CallArgs& ca);
-
-	void Tween_fforward(CallArgs& ca);
-
-	void Tween_nextFrame(CallArgs& ca);
-
-	void Tween_prevFrame(CallArgs& ca);
-
-	void Tween_resume(CallArgs& ca);
-
-	void Tween_rewind(CallArgs& ca);
-
-	void Tween_start(CallArgs& ca);
-
-	void Tween_stop(CallArgs& ca);
-
-	void Tween_yoyo(CallArgs& ca);
+	virtual void init(ActionContext* context, ActionObject* self, const ActionValueArray& args);
 };
 
 	}

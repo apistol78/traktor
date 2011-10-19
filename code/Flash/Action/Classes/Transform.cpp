@@ -9,10 +9,20 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.Transform", Transform, ActionObject)
 
+Transform::Transform()
+:	ActionObject("flash.geom.Transform")
+{
+}
+
 Transform::Transform(FlashCharacterInstance* instance)
 :	ActionObject("flash.geom.Transform")
 ,	m_instance(instance)
 {
+}
+
+void Transform::setInstance(FlashCharacterInstance* instance)
+{
+	m_instance = instance;
 }
 
 Ref< ColorTransform > Transform::getColorTransform() const

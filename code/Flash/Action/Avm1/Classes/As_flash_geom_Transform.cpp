@@ -22,20 +22,28 @@ As_flash_geom_Transform::As_flash_geom_Transform()
 	//prototype->addProperty("matrix", createNativeFunction(this, &Transform_get_matrix), createNativeFunction(this, &Transform_set_matrix));
 	//prototype->addProperty("pixelBounds", createNativeFunction(this, &Transform_get_pixelBounds), createNativeFunction(this, &Transform_set_pixelBounds));
 
+	prototype->setMember("constructor", ActionValue(this));
 	prototype->setReadOnly();
 
 	setMember("prototype", ActionValue(prototype));
 }
 
-ActionValue As_flash_geom_Transform::construct(ActionContext* context, const ActionValueArray& args)
+Ref< ActionObject > As_flash_geom_Transform::alloc(ActionContext* context)
 {
-	if (args.size() >= 1)
+	return new Transform();
+}
+
+void As_flash_geom_Transform::init(ActionContext* context, ActionObject* self, const ActionValueArray& args)
+{
+	if (args.size() < 1)
+		return;
+
+	Ref< FlashCharacterInstance > instance = args[0].getObject< FlashCharacterInstance >();
+	if (instance)
 	{
-		Ref< FlashCharacterInstance > instance = args[0].getObjectSafe< FlashCharacterInstance >();
-		if (instance)
-			return ActionValue(new Transform(instance));
+		Transform* t = checked_type_cast< Transform* >(self);
+		t->setInstance(instance);
 	}
-	return ActionValue();
 }
 
 Ref< ColorTransform > As_flash_geom_Transform::Transform_get_colorTransform(Transform* self) const

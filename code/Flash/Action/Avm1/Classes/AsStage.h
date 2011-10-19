@@ -20,16 +20,14 @@ class AsStage : public ActionClass
 public:
 	AsStage();
 
-private:
-	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
+	virtual Ref< ActionObject > alloc(ActionContext* context);
 
+	virtual void init(ActionContext* context, ActionObject* self, const ActionValueArray& args);
+
+private:
 	void Stage_get_width(CallArgs& ca);
 
-	void Stage_set_width(CallArgs& ca);
-
 	void Stage_get_height(CallArgs& ca);
-
-	void Stage_set_height(CallArgs& ca);
 
 	void Stage_addListener(CallArgs& ca);
 };

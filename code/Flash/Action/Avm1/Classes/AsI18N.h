@@ -25,9 +25,11 @@ class AsI18N : public ActionClass
 public:
 	AsI18N();
 
-private:
-	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
+	virtual Ref< ActionObject > alloc(ActionContext* context);
 
+	virtual void init(ActionContext* context, ActionObject* self, const ActionValueArray& args);
+
+private:
 	void I18N_format(CallArgs& ca);
 };
 

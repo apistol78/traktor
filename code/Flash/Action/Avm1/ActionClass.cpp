@@ -10,14 +10,15 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.ActionClass", ActionClass, ActionFunction)
 
-ActionClass::ActionClass(const std::string& name)
-:	ActionFunction(name)
+ActionClass::ActionClass(const std::string& className)
+:	ActionFunction(className)
 {
 }
 
 ActionValue ActionClass::call(ActionContext* context, ActionObject* self, const ActionValueArray& args)
 {
-	return construct(context, args);
+	init(context, self, args);
+	return ActionValue();
 }
 
 ActionValue ActionClass::call(ActionFrame* callerFrame, ActionObject* self)
@@ -29,7 +30,8 @@ ActionValue ActionClass::call(ActionFrame* callerFrame, ActionObject* self)
 	for (int32_t i = 0; i < argCount; ++i)
 		args[i] = callerStack.pop();
 
-	return construct(callerFrame->getContext(), args);
+	init(callerFrame->getContext(), self, args);
+	return ActionValue();
 }
 
 	}

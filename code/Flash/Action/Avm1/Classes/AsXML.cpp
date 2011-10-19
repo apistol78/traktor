@@ -32,14 +32,19 @@ AsXML::AsXML()
 	prototype->addProperty("status", createNativeFunction(this, &AsXML::XML_get_status), createNativeFunction(this, &AsXML::XML_set_status));
 	prototype->addProperty("xmlDecl", createNativeFunction(this, &AsXML::XML_get_xmlDecl), createNativeFunction(this, &AsXML::XML_set_xmlDecl));
 
+	prototype->setMember("constructor", ActionValue(this));
 	prototype->setReadOnly();
 
 	setMember("prototype", ActionValue(prototype));
 }
 
-ActionValue AsXML::construct(ActionContext* context, const ActionValueArray& args)
+Ref< ActionObject > AsXML::alloc(ActionContext* context)
 {
-	return ActionValue(new ActionObject("XML"));
+	return new ActionObject("XML");
+}
+
+void AsXML::init(ActionContext* context, ActionObject* self, const ActionValueArray& args)
+{
 }
 
 void AsXML::XML_addRequestHeader(CallArgs& ca)

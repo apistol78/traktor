@@ -17,22 +17,27 @@ As_mx_transitions_easing_Regular::As_mx_transitions_easing_Regular()
 	prototype->setMember("easeInOut", ActionValue(createNativeFunction(this, &As_mx_transitions_easing_Regular::Regular_easeInOut)));
 	prototype->setMember("easeOut", ActionValue(createNativeFunction(this, &As_mx_transitions_easing_Regular::Regular_easeOut)));
 
+	prototype->setMember("constructor", ActionValue(this));
 	prototype->setReadOnly();
 
 	setMember("prototype", ActionValue(prototype));
 }
 
-ActionValue As_mx_transitions_easing_Regular::construct(ActionContext* context, const ActionValueArray& args)
+Ref< ActionObject > As_mx_transitions_easing_Regular::alloc(ActionContext* context)
 {
-	return ActionValue();
+	return new ActionObject("mx.transitions.easing.Regular");
+}
+
+void As_mx_transitions_easing_Regular::init(ActionContext* context, ActionObject* self, const ActionValueArray& args)
+{
 }
 
 void As_mx_transitions_easing_Regular::Regular_easeIn(CallArgs& ca)
 {
-	avm_number_t T = ca.args[0].getNumberSafe();
-	avm_number_t B = ca.args[1].getNumberSafe();
-	avm_number_t C = ca.args[2].getNumberSafe();
-	avm_number_t D = ca.args[3].getNumberSafe();
+	avm_number_t T = ca.args[0].getNumber();
+	avm_number_t B = ca.args[1].getNumber();
+	avm_number_t C = ca.args[2].getNumber();
+	avm_number_t D = ca.args[3].getNumber();
 
 	T /= D;
 	ca.ret = ActionValue(C * T * T * T + B);
@@ -40,10 +45,10 @@ void As_mx_transitions_easing_Regular::Regular_easeIn(CallArgs& ca)
 
 void As_mx_transitions_easing_Regular::Regular_easeInOut(CallArgs& ca)
 {
-	avm_number_t T = ca.args[0].getNumberSafe();
-	avm_number_t B = ca.args[1].getNumberSafe();
-	avm_number_t C = ca.args[2].getNumberSafe();
-	avm_number_t D = ca.args[3].getNumberSafe();
+	avm_number_t T = ca.args[0].getNumber();
+	avm_number_t B = ca.args[1].getNumber();
+	avm_number_t C = ca.args[2].getNumber();
+	avm_number_t D = ca.args[3].getNumber();
 
 	T /= D * 0.5f;
 	if (T < 1.0f)
@@ -57,10 +62,10 @@ void As_mx_transitions_easing_Regular::Regular_easeInOut(CallArgs& ca)
 
 void As_mx_transitions_easing_Regular::Regular_easeOut(CallArgs& ca)
 {
-	avm_number_t T = ca.args[0].getNumberSafe();
-	avm_number_t B = ca.args[1].getNumberSafe();
-	avm_number_t C = ca.args[2].getNumberSafe();
-	avm_number_t D = ca.args[3].getNumberSafe();
+	avm_number_t T = ca.args[0].getNumber();
+	avm_number_t B = ca.args[1].getNumber();
+	avm_number_t C = ca.args[2].getNumber();
+	avm_number_t D = ca.args[3].getNumber();
 
 	T = (T / D) - 1.0f;
 	ca.ret = ActionValue(C * (T * T * T + 1.0f) + B);

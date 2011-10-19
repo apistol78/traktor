@@ -19,14 +19,19 @@ AsSecurity::AsSecurity()
 	prototype->setMember("allowInsecureDomain", ActionValue(createNativeFunction(this, &AsSecurity::Security_allowInsecureDomain)));
 	prototype->setMember("loadPolicyFile", ActionValue(createNativeFunction(this, &AsSecurity::Security_loadPolicyFile)));
 
+	prototype->setMember("constructor", ActionValue(this));
 	prototype->setReadOnly();
 
 	setMember("prototype", ActionValue(prototype));
 }
 
-ActionValue AsSecurity::construct(ActionContext* context, const ActionValueArray& args)
+Ref< ActionObject > AsSecurity::alloc(ActionContext* context)
 {
-	return ActionValue();
+	return new ActionObject("Security");
+}
+
+void AsSecurity::init(ActionContext* context, ActionObject* self, const ActionValueArray& args)
+{
 }
 
 void AsSecurity::Security_allowDomain(CallArgs& ca)

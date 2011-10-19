@@ -21,9 +21,19 @@ AsMouse::AsMouse()
 	prototype->setMember("show", ActionValue(createNativeFunction(this, &AsMouse::Mouse_show)));
 	prototype->setMember("hide", ActionValue(createNativeFunction(this, &AsMouse::Mouse_hide)));
 
+	prototype->setMember("constructor", ActionValue(this));
 	prototype->setReadOnly();
 
 	setMember("prototype", ActionValue(prototype));
+}
+
+Ref< ActionObject > AsMouse::alloc(ActionContext* context)
+{
+	return new ActionObject("Mouse");
+}
+
+void AsMouse::init(ActionContext* context, ActionObject* self, const ActionValueArray& args)
+{
 }
 
 void AsMouse::eventMouseDown(ActionContext* context, int x, int y, int button)
@@ -107,19 +117,14 @@ void AsMouse::dereference()
 	ActionClass::dereference();
 }
 
-ActionValue AsMouse::construct(ActionContext* context, const ActionValueArray& args)
-{
-	return ActionValue();
-}
-
 void AsMouse::Mouse_addListener(CallArgs& ca)
 {
-	m_listeners.push_back(ca.args[0].getObjectSafe());
+	m_listeners.push_back(ca.args[0].getObject());
 }
 
 void AsMouse::Mouse_removeListener(CallArgs& ca)
 {
-	RefArray< ActionObject >::iterator i = std::find(m_listeners.begin(), m_listeners.end(), ca.args[0].getObjectSafe());
+	RefArray< ActionObject >::iterator i = std::find(m_listeners.begin(), m_listeners.end(), ca.args[0].getObject());
 	if (i != m_listeners.end())
 		m_listeners.erase(i);
 }

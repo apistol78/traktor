@@ -11,7 +11,20 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.Tween", Tween, ActionObject)
 
-Tween::Tween(
+Tween::Tween()
+:	ActionObject("mx.transitions.Tween")
+,	m_context(0)
+,	m_begin(0)
+,	m_finish(0)
+,	m_duration(0)
+,	m_useSeconds(false)
+,	m_timeStart(0)
+,	m_current(0)
+,	m_playing(false)
+{
+}
+
+void Tween::init(
 	ActionContext* context,
 	ActionObject* target,
 	const std::string& propertyName,
@@ -21,22 +34,22 @@ Tween::Tween(
 	avm_number_t duration,
 	bool useSeconds
 )
-:	ActionObject("mx.transitions.Tween")
-,	m_context(context)
-,	m_begin(begin)
-,	m_finish(finish)
-,	m_duration(duration)
-,	m_useSeconds(useSeconds)
-,	m_timeStart(avm_number_t(-1))
-,	m_current(begin)
-,	m_playing(false)
 {
+	m_context = context;
+	m_begin = begin;
+	m_finish = finish;
+	m_duration = duration;
+	m_useSeconds = useSeconds;
+	m_timeStart = avm_number_t(-1);
+	m_current = begin;
+	m_playing = false;
+
 	if (target)
 	{
 		setMember("_target", ActionValue(target));
 
 		Ref< ActionFunction > propertySet;
-		if (target->getPropertySet(context, propertyName, propertySet))
+		if (target->getPropertySet(m_context, propertyName, propertySet))
 			setMember("_targetProperty", ActionValue(propertySet));
 	}
 	
@@ -113,7 +126,7 @@ void Tween::start()
 			else
 				value = ActionValue(m_begin);
 
-			m_current = value.getNumberSafe();
+			m_current = value.getNumber();
 
 			// Set property value.
 			if (!value.isUndefined())
@@ -122,7 +135,7 @@ void Tween::start()
 				argv1[0] = value;
 				propertySet.getObject< ActionFunction >()->call(
 					m_context,
-					target.getObjectSafe(),
+					target.getObject(),
 					argv1
 				);
 			}
@@ -163,7 +176,7 @@ void Tween::onFrame(CallArgs& ca)
 
 	ActionValue value;
 
-	avm_number_t time = ca.args[0].getNumberSafe();
+	avm_number_t time = ca.args[0].getNumber();
 	if (m_timeStart < 0)
 		m_timeStart = time;
 
@@ -174,26 +187,26 @@ void Tween::onFrame(CallArgs& ca)
 	// Calculate eased value.
 	if (m_duration > 0.0f)
 	{
-		ActionValueArray argv0(ca.context->getPool(), 4);
+		ActionValueArray argv0(m_context->getPool(), 4);
 		argv0[0] = ActionValue(T);
 		argv0[1] = ActionValue(m_begin);
 		argv0[2] = ActionValue(m_finish - m_begin);
 		argv0[3] = ActionValue(m_duration);
-		value = function.getObject< ActionFunction >()->call(ca.context, this, argv0);
+		value = function.getObject< ActionFunction >()->call(m_context, this, argv0);
 	}
 	else
 		value = ActionValue(m_begin);
 
-	m_current = value.getNumberSafe();
+	m_current = value.getNumber();
 
 	// Set property value.
 	if (!value.isUndefined())
 	{
-		ActionValueArray argv1(ca.context->getPool(), 1);
+		ActionValueArray argv1(m_context->getPool(), 1);
 		argv1[0] = value;
 		propertySet.getObject< ActionFunction >()->call(
-			ca.context,
-			target.getObjectSafe(),
+			m_context,
+			target.getObject(),
 			argv1
 		);
 	}
@@ -207,9 +220,9 @@ void Tween::onFrame(CallArgs& ca)
 		ActionValue memberValue;
 		if (getLocalMember("onMotionFinished", memberValue))
 		{
-			Ref< ActionFunction > motionFinished = memberValue.getObjectSafe< ActionFunction >();
+			Ref< ActionFunction > motionFinished = memberValue.getObject< ActionFunction >();
 			if (motionFinished)
-				motionFinished->call(ca.context, this, ActionValueArray());
+				motionFinished->call(m_context, this, ActionValueArray());
 		}
 	}
 }

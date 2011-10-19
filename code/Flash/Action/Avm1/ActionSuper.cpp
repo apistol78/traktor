@@ -20,8 +20,8 @@ ActionSuper::ActionSuper(ActionContext* context, ActionObject* object)
 	// __proto__.__proto__
 	m_superPrototype = prototype->getPrototype(context);
 
-	// __proto__.__constructor__
-	if (prototype->getLocalMember("__constructor__", memberValue))
+	// __proto__.__ctor__
+	if (prototype->getLocalMember("__ctor__", memberValue))
 		m_superClass = memberValue.getObject();
 	else
 		m_superClass = dynamic_type_cast< ActionFunction* >(m_superPrototype);

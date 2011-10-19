@@ -20,9 +20,11 @@ class AsAccessibility : public ActionClass
 public:
 	AsAccessibility();
 
-private:
-	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
+	virtual Ref< ActionObject > alloc(ActionContext* context);
 
+	virtual void init(ActionContext* context, ActionObject* self, const ActionValueArray& args);
+
+private:
 	void Accessibility_isActive(CallArgs& ca);
 
 	void Accessibility_updateProperties(CallArgs& ca);

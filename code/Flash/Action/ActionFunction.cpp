@@ -1,4 +1,3 @@
-#include "Core/Io/StringOutputStream.h"
 #include "Flash/Action/ActionFrame.h"
 #include "Flash/Action/ActionFunction.h"
 
@@ -17,9 +16,7 @@ ActionFunction::ActionFunction(const std::string& name)
 
 ActionValue ActionFunction::toString() const
 {
-	StringOutputStream ss;
-	ss << L"function (" << mbstows(m_name) << L")";
-	return ActionValue(ss.str());
+	return ActionValue("[type Function]");
 }
 
 	}

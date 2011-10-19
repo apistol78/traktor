@@ -89,7 +89,7 @@ void ActionVM2::execute(ActionFrame* frame) const
 		VM_BEGIN(Avm2OpAdd_i)
 			ActionValue value2 = stack.pop();
 			ActionValue value1 = stack.pop();
-			avm_number_t result = value1.getNumberSafe() + value2.getNumberSafe();
+			avm_number_t result = value1.getNumber() + value2.getNumber();
 			stack.push(ActionValue(result));
 		VM_END()
 

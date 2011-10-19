@@ -24,29 +24,31 @@ AsNumber::AsNumber()
 	prototype->setMember("toString", ActionValue(createNativeFunction(this, &AsNumber::Number_toString)));
 	prototype->setMember("valueOf", ActionValue(createNativeFunction(this, &AsNumber::Number_valueOf)));
 
+	prototype->setMember("constructor", ActionValue(this));
 	prototype->setReadOnly();
 
 	setMember("prototype", ActionValue(prototype));
 }
 
-ActionValue AsNumber::construct(ActionContext* context, const ActionValueArray& args)
+Ref< ActionObject > AsNumber::alloc(ActionContext* context)
 {
-	if (args.empty())
-		return ActionValue(new Number(0.0));
-	else
-		return ActionValue(new Number(args[0].getNumberSafe()));
+	return new Number(avm_number_t(0));
 }
 
-void AsNumber::Number_toString(CallArgs& ca)
+void AsNumber::init(ActionContext* context, ActionObject* self, const ActionValueArray& args)
 {
-	const Number* obj = checked_type_cast< const Number* >(ca.self);
-	ca.ret = ActionValue(traktor::toString(obj->get()));
+	if (args.size() > 0)
+		checked_type_cast< Number* >(self)->set(args[0].getNumber());
 }
 
-void AsNumber::Number_valueOf(CallArgs& ca)
+std::wstring AsNumber::Number_toString(const Number* self) const
 {
-	const Number* obj = checked_type_cast< const Number* >(ca.self);
-	ca.ret = ActionValue(obj->get());
+	return traktor::toString(self->get());
+}
+
+avm_number_t AsNumber::Number_valueOf(const Number* self) const
+{
+	return self->get();
 }
 
 	}

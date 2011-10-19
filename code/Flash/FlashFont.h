@@ -1,10 +1,10 @@
 #ifndef traktor_flash_FlashFont_H
 #define traktor_flash_FlashFont_H
 
+#include "Core/Object.h"
 #include "Core/RefArray.h"
 #include "Core/Containers/SmallMap.h"
 #include "Flash/SwfTypes.h"
-#include "Flash/Action/ActionObject.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -24,7 +24,7 @@ class FlashShape;
 /*! \brief Font
  * \ingroup Flash
  */
-class T_DLLCLASS FlashFont : public ActionObject
+class T_DLLCLASS FlashFont : public Object
 {
 	T_RTTI_CLASS;
 
@@ -68,11 +68,6 @@ public:
 	uint16_t lookupIndex(uint16_t code) const;
 
 	CoordinateType getCoordinateType() const;
-
-protected:
-	virtual void trace(const IVisitor& visitor) const;
-
-	virtual void dereference();
 
 private:
 	RefArray< FlashShape > m_shapes;
