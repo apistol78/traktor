@@ -2,7 +2,6 @@
 #include "Flash/Action/ActionFrame.h"
 #include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Avm1/Classes/AsFunction.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {

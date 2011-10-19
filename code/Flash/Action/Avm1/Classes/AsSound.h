@@ -20,9 +20,11 @@ class AsSound : public ActionClass
 public:
 	AsSound();
 
-private:
-	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
+	virtual Ref< ActionObject > alloc(ActionContext* context);
 
+	virtual void init(ActionContext* context, ActionObject* self, const ActionValueArray& args);
+
+private:
 	void Sound_attachSound(CallArgs& ca);
 
 	void Sound_getBytesLoaded(CallArgs& ca);

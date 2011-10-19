@@ -20,8 +20,9 @@ class AsError : public ActionClass
 public:
 	AsError();
 
-private:
-	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
+	virtual Ref< ActionObject > alloc(ActionContext* context);
+
+	virtual void init(ActionContext* context, ActionObject* self, const ActionValueArray& args);
 };
 
 	}

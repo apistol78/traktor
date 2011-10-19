@@ -1,3 +1,6 @@
+#include "Core/Log/Log.h"
+#include "Flash/Action/ActionContext.h"
+#include "Flash/Action/ActionFrame.h"
 #include "Flash/Action/Avm1/ActionOpcodes.h"
 #include "Flash/Action/Avm1/ActionOperations.h"
 #include "Flash/Action/Avm1/ActionVMImage1.h"
@@ -31,6 +34,12 @@ void ActionVMImage1::execute(ActionFrame* frame) const
 	state.npc = state.pc + 1;
 	state.data = 0;
 	state.length = 0;
+
+	// Cache frequently used instances.
+	state.context = frame->getContext();
+	state.self = frame->getSelf();
+	state.global = frame->getContext()->getGlobal();
+	state.movieClip = frame->getContext()->getMovieClip();
 
 	const uint8_t* end = state.pc + m_byteCode.size();
 	while (state.pc < end)
@@ -73,6 +82,10 @@ void ActionVMImage1::prepare()
 	state.data = 0;
 	state.length = 0;
 
+#if defined(_DEBUG)
+	log::debug << IncreaseIndent;
+#endif
+
 	const uint8_t* end = state.pc + m_byteCode.size();
 	while (state.pc < end)
 	{
@@ -100,9 +113,17 @@ void ActionVMImage1::prepare()
 		if (info.prepare)
 			info.prepare(state);
 
+#if defined(_DEBUG)
+		log::debug << uint32_t(state.pc - m_byteCode.ptr()) << L": " << mbstows(info.name) << Endl;
+#endif
+
 		// Update program counter.
 		state.pc = state.npc;
 	}
+
+#if defined(_DEBUG)
+	log::debug << DecreaseIndent;
+#endif
 }
 
 uint16_t ActionVMImage1::addConstData(const ActionValue& cd)

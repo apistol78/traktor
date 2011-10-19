@@ -14,7 +14,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsObject", AsObject, ActionClass)
 AsObject::AsObject()
 :	ActionClass("Object")
 {
-	Ref< ActionObject > prototype = new ActionObject();
+	Ref< ActionObject > prototype = new ActionObject("Object");
 
 	prototype->setMember("addProperty", ActionValue(createNativeFunction(this, &AsObject::Object_addProperty)));
 	prototype->setMember("hasOwnProperty", ActionValue(createNativeFunction(this, &AsObject::Object_hasOwnProperty)));
@@ -26,51 +26,45 @@ AsObject::AsObject()
 	prototype->setMember("valueOf", ActionValue(createNativeFunction(this, &AsObject::Object_valueOf)));
 	prototype->setMember("watch", ActionValue(createNativeFunction(this, &AsObject::Object_watch)));
 
+	prototype->setMember("constructor", ActionValue(this));
 	prototype->setReadOnly();
 
 	setMember("prototype", ActionValue(prototype));
 }
 
-ActionValue AsObject::construct(ActionContext* context, const ActionValueArray& args)
+Ref< ActionObject > AsObject::alloc(ActionContext* context)
 {
-	return ActionValue(new ActionObject("Object"));
+	return new ActionObject("Object");
 }
 
-void AsObject::Object_addProperty(CallArgs& ca)
+void AsObject::init(ActionContext* context, ActionObject* self, const ActionValueArray& args)
 {
-	T_ASSERT (ca.self);
-	T_ASSERT (ca.args.size() >= 3);
-
-	std::string propertyName = ca.args[0].getStringSafe();
-	Ref< ActionFunction > propertyGet = checked_type_cast< ActionFunction* >(ca.args[1].getObject());
-	Ref< ActionFunction > propertySet = checked_type_cast< ActionFunction* >(ca.args[2].getObject());
-
-	ca.self->addProperty(propertyName, propertyGet, propertySet);
 }
 
-void AsObject::Object_hasOwnProperty(CallArgs& ca)
+void AsObject::Object_addProperty(ActionObject* self, const std::string& propertyName, ActionFunction* propertyGet, ActionFunction* propertySet) const
 {
-	T_ASSERT (ca.self);
-	T_ASSERT (ca.args.size() >= 1);
-
-	std::string propertyName = ca.args[0].getStringSafe();
-	ca.ret = ActionValue(ca.self->hasOwnProperty(propertyName));
+	self->addProperty(propertyName, propertyGet, propertySet);
 }
 
-void AsObject::Object_isPropertyEnumerable(CallArgs& ca)
+bool AsObject::Object_hasOwnProperty(const ActionObject* self, const std::string& propertyName) const
 {
-	ca.ret = ActionValue(true);
+	return self->hasOwnProperty(propertyName);
 }
 
-void AsObject::Object_isPrototypeOf(CallArgs& ca)
+bool AsObject::Object_isPropertyEnumerable(const ActionObject* self) const
 {
-	ca.ret = ActionValue(false);
+	return true;
+}
+
+bool AsObject::Object_isPrototypeOf(const ActionObject* self) const
+{
+	return false;
 }
 
 void AsObject::Object_registerClass(CallArgs& ca)
 {
 	Ref< ActionObject > global = ca.context->getGlobal();
-	std::string movieClipName = ca.args[0].getStringSafe();
+	std::string movieClipName = ca.args[0].getString();
 	
 	if (ca.args.size() >= 2)
 	{
@@ -89,21 +83,19 @@ void AsObject::Object_registerClass(CallArgs& ca)
 
 void AsObject::Object_toString(CallArgs& ca)
 {
-	T_ASSERT (ca.self);
-	ca.ret = ca.self->toString();
+	ca.ret = ActionValue(ca.self->toString());
 }
 
-void AsObject::Object_unwatch(CallArgs& ca)
+void AsObject::Object_unwatch(ActionObject* self) const
 {
 }
 
 void AsObject::Object_valueOf(CallArgs& ca)
 {
-	T_ASSERT (ca.self);
 	ca.ret = ActionValue(ca.self->valueOf());
 }
 
-void AsObject::Object_watch(CallArgs& ca)
+void AsObject::Object_watch(ActionObject* self) const
 {
 }
 

@@ -8,6 +8,7 @@ namespace traktor
 	namespace flash
 	{
 
+class Array;
 struct CallArgs;
 
 /*! \brief Array class.
@@ -20,16 +21,14 @@ class AsArray : public ActionClass
 public:
 	AsArray();
 
-private:
-	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
+	virtual Ref< ActionObject > alloc(ActionContext* context);
 
+	virtual void init(ActionContext* context, ActionObject* self, const ActionValueArray& args);
+
+private:
 	void Array_concat(CallArgs& ca);
 
 	void Array_join(CallArgs& ca);
-
-	void Array_pop(CallArgs& ca);
-
-	void Array_push(CallArgs& ca);
 
 	void Array_reverse(CallArgs& ca);
 
@@ -43,11 +42,11 @@ private:
 
 	void Array_splice(CallArgs& ca);
 
-	void Array_toString(CallArgs& ca);
+	ActionValue Array_toString(const Array* self) const;
 
 	void Array_unshift(CallArgs& ca);
 
-	void Array_get_length(CallArgs& ca);
+	uint32_t Array_get_length(const Array* self) const;
 };
 
 	}

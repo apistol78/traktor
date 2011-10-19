@@ -27,7 +27,11 @@ class T_DLLCLASS Transform : public ActionObject
 	T_RTTI_CLASS;
 
 public:
+	Transform();
+
 	Transform(FlashCharacterInstance* instance);
+
+	void setInstance(FlashCharacterInstance* instance);
 
 	Ref< ColorTransform > getColorTransform() const;
 

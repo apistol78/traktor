@@ -26,6 +26,8 @@ class T_DLLCLASS Boolean : public ActionObject
 public:
 	Boolean(bool value);
 
+	void set(bool value) { m_value = value; }
+
 	bool get() const { return m_value; }
 
 private:

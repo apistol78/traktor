@@ -20,9 +20,11 @@ class AsLocalConnection : public ActionClass
 public:
 	AsLocalConnection();
 
-private:
-	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
+	virtual Ref< ActionObject > alloc(ActionContext* context);
 
+	virtual void init(ActionContext* context, ActionObject* self, const ActionValueArray& args);
+
+private:
 	void LocalConnection_close(CallArgs& ca);
 
 	void LocalConnection_connect(CallArgs& ca);

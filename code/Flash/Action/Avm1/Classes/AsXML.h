@@ -20,9 +20,11 @@ class AsXML : public ActionClass
 public:
 	AsXML();
 
-private:
-	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
+	virtual Ref< ActionObject > alloc(ActionContext* context);
 
+	virtual void init(ActionContext* context, ActionObject* self, const ActionValueArray& args);
+
+private:
 	void XML_addRequestHeader(CallArgs& ca);
 
 	void XML_createElement(CallArgs& ca);

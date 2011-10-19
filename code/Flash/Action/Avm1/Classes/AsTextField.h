@@ -25,9 +25,11 @@ class AsTextField : public ActionClass
 public:
 	AsTextField();
 
-private:
-	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
+	virtual Ref< ActionObject > alloc(ActionContext* context);
 
+	virtual void init(ActionContext* context, ActionObject* self, const ActionValueArray& args);
+
+private:
 	void TextField_addListener(FlashEditInstance* editInstance, ActionObject* listener) const;
 
 	avm_number_t TextField_getDepth(FlashEditInstance* editInstance) const;

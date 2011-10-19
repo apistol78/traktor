@@ -1,11 +1,11 @@
 #ifndef traktor_flash_FlashFrame_H
 #define traktor_flash_FlashFrame_H
 
+#include "Core/Object.h"
 #include "Core/RefArray.h"
 #include "Core/Containers/SmallMap.h"
 #include "Core/Math/Matrix33.h"
 #include "Flash/SwfTypes.h"
-#include "Flash/Action/ActionObject.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -28,7 +28,7 @@ class IActionVMImage;
  * Keep display list actions for a single
  * frame.
  */
-class T_DLLCLASS FlashFrame : public ActionObject
+class T_DLLCLASS FlashFrame : public Object
 {
 	T_RTTI_CLASS;
 

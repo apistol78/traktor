@@ -54,26 +54,22 @@ namespace traktor
 
 void opx_nextFrame(ExecutionState& state)
 {
-	FlashSpriteInstance* movieClip = state.frame->getContext()->getMovieClip();
-	movieClip->gotoNext();
+	state.movieClip->gotoNext();
 }
 
 void opx_prevFrame(ExecutionState& state)
 {
-	FlashSpriteInstance* movieClip = state.frame->getContext()->getMovieClip();
-	movieClip->gotoPrevious();
+	state.movieClip->gotoPrevious();
 }
 
 void opx_play(ExecutionState& state)
 {
-	FlashSpriteInstance* movieClip = state.frame->getContext()->getMovieClip();
-	movieClip->setPlaying(true);
+	state.movieClip->setPlaying(true);
 }
 
 void opx_stop(ExecutionState& state)
 {
-	FlashSpriteInstance* movieClip = state.frame->getContext()->getMovieClip();
-	movieClip->setPlaying(false);
+	state.movieClip->setPlaying(false);
 }
 
 void opx_toggleQuality(ExecutionState& state)
@@ -204,14 +200,14 @@ void opx_stringEqual(ExecutionState& state)
 	ActionValueStack& stack = state.frame->getStack();
 	ActionValue str2 = stack.pop();
 	ActionValue str1 = stack.pop();
-	stack.push(ActionValue(bool(str1.getStringSafe().compare(str2.getStringSafe()) == 0)));
+	stack.push(ActionValue(bool(str1.getString().compare(str2.getString()) == 0)));
 }
 
 void opx_stringLength(ExecutionState& state)
 {
 	ActionValueStack& stack = state.frame->getStack();
 	ActionValue str = stack.pop();
-	stack.push(ActionValue(avm_number_t(str.getStringSafe().length())));
+	stack.push(ActionValue(avm_number_t(str.getString().length())));
 }
 
 void opx_stringExtract(ExecutionState& state)
@@ -222,7 +218,7 @@ void opx_stringExtract(ExecutionState& state)
 	ActionValue strng = stack.pop();
 	if (count.isNumeric() && index.isNumeric())
 	{
-		std::string str = strng.getStringSafe();
+		std::string str = strng.getString();
 		int32_t offset = int32_t(index.getNumber());
 		if (offset >= 0 && offset < int32_t(str.length()))
 		{
@@ -238,8 +234,7 @@ void opx_stringExtract(ExecutionState& state)
 
 void opx_pop(ExecutionState& state)
 {
-	ActionValueStack& stack = state.frame->getStack();
-	stack.pop();
+	state.frame->getStack().pop();
 }
 
 void opx_int(ExecutionState& state)
@@ -254,21 +249,17 @@ void opx_int(ExecutionState& state)
 
 void opx_getVariable(ExecutionState& state)
 {
-	ActionContext* context = state.frame->getContext();
 	ActionValueStack& stack = state.frame->getStack();
-	FlashSpriteInstance* movieClip = state.frame->getContext()->getMovieClip();
-	ActionObject* self = state.frame->getSelf();
-
-	std::string variableName = stack.pop().getStringSafe();
+	std::string variableName = stack.pop().getString();
 	ActionValue value;
 
 	if (state.frame->getVariable(variableName, value))
 		stack.push(value);
-	else if (self->getMember(context, variableName, value))
+	else if (state.self->getMember(state.context, variableName, value))
 		stack.push(value);
-	else if (movieClip != 0 && self != movieClip && movieClip->getMember(context, variableName, value))
+	else if (state.movieClip != 0 && state.self != state.movieClip && state.movieClip->getMember(state.context, variableName, value))
 		stack.push(value);
-	else if (context->getGlobal()->getLocalMember(variableName, value))
+	else if (state.global->getLocalMember(variableName, value))
 		stack.push(value);
 	else
 		stack.push(value);
@@ -277,16 +268,14 @@ void opx_getVariable(ExecutionState& state)
 void opx_setVariable(ExecutionState& state)
 {
 	ActionValueStack& stack = state.frame->getStack();
-	FlashSpriteInstance* movieClip = state.frame->getContext()->getMovieClip();
-
 	ActionValue value = stack.pop();
-	std::string variableName = stack.pop().getStringSafe();
+	std::string variableName = stack.pop().getString();
 
 	ActionValue* variableValue = state.frame->getVariableValue(variableName);
 	if (variableValue)
 		*variableValue = value;
 	else
-		movieClip->setMember(variableName, value);
+		state.movieClip->setMember(variableName, value);
 }
 
 void opx_setTargetExpr(ExecutionState& state)
@@ -299,37 +288,35 @@ void opx_stringConcat(ExecutionState& state)
 	ActionValueStack& stack = state.frame->getStack();
 	ActionValue str2 = stack.pop();
 	ActionValue str1 = stack.pop();
-	stack.push(ActionValue(str1.getStringSafe() + str2.getStringSafe()));
+	stack.push(ActionValue(str1.getString() + str2.getString()));
 }
 
 void opx_getProperty(ExecutionState& state)
 {
 	ActionValueStack& stack = state.frame->getStack();
-	FlashSpriteInstance* movieClip = state.frame->getContext()->getMovieClip();
-
 	ActionValue index = stack.pop();
 	ActionValue target = stack.pop();
-	T_ASSERT (target.getStringSafe() == "");
+	T_ASSERT (target.getString() == "");
 
-	switch (int(index.getNumberSafe()))
+	switch (int(index.getNumber()))
 	{
 	case 0:
-		stack.push(ActionValue(movieClip->getTransform().e31 / 20.0f));
+		stack.push(ActionValue(state.movieClip->getTransform().e31 / 20.0f));
 		break;
 	case 1:
-		stack.push(ActionValue(movieClip->getTransform().e32 / 20.0f));
+		stack.push(ActionValue(state.movieClip->getTransform().e32 / 20.0f));
 		break;
 	case 2:
-		stack.push(ActionValue(movieClip->getTransform().e11 * 100.0f));
+		stack.push(ActionValue(state.movieClip->getTransform().e11 * 100.0f));
 		break;
 	case 3:
-		stack.push(ActionValue(movieClip->getTransform().e22 * 100.0f));
+		stack.push(ActionValue(state.movieClip->getTransform().e22 * 100.0f));
 		break;
 	case 4:
-		stack.push(ActionValue(avm_number_t(movieClip->getCurrentFrame())));
+		stack.push(ActionValue(avm_number_t(state.movieClip->getCurrentFrame())));
 		break;
 	case 5:
-		stack.push(ActionValue(avm_number_t(movieClip->getSprite()->getFrameCount())));
+		stack.push(ActionValue(avm_number_t(state.movieClip->getSprite()->getFrameCount())));
 		break;
 	case 6:
 		stack.push(ActionValue(1.0f));
@@ -339,13 +326,13 @@ void opx_getProperty(ExecutionState& state)
 		break;
 	case 8:
 		{
-			SwfRect bounds = movieClip->getBounds();
+			SwfRect bounds = state.movieClip->getBounds();
 			stack.push(ActionValue((bounds.max.x - bounds.min.x) / 20.0f));
 		}
 		break;
 	case 9:
 		{
-			SwfRect bounds = movieClip->getBounds();
+			SwfRect bounds = state.movieClip->getBounds();
 			stack.push(ActionValue((bounds.max.y - bounds.min.y) / 20.0f));
 		}
 		break;
@@ -358,41 +345,39 @@ void opx_getProperty(ExecutionState& state)
 void opx_setProperty(ExecutionState& state)
 {
 	ActionValueStack& stack = state.frame->getStack();
-	FlashSpriteInstance* movieClip = state.frame->getContext()->getMovieClip();
-
 	ActionValue value = stack.pop();
 	ActionValue index = stack.pop();
 	ActionValue target = stack.pop();
-	T_ASSERT (target.getStringSafe() == "");
+	T_ASSERT (target.getString() == "");
 
-	switch (int(index.getNumberSafe()))
+	switch (int(index.getNumber()))
 	{
 	case 0:
 		{
-			Matrix33 transform = movieClip->getTransform();
-			transform.e13 = float(value.getNumberSafe() * 20.0f);
-			movieClip->setTransform(transform);
+			Matrix33 transform = state.movieClip->getTransform();
+			transform.e13 = float(value.getNumber() * 20.0f);
+			state.movieClip->setTransform(transform);
 		}
 		break;
 	case 1:
 		{
-			Matrix33 transform = movieClip->getTransform();
-			transform.e23 = float(value.getNumberSafe() * 20.0f);
-			movieClip->setTransform(transform);
+			Matrix33 transform = state.movieClip->getTransform();
+			transform.e23 = float(value.getNumber() * 20.0f);
+			state.movieClip->setTransform(transform);
 		}
 		break;
 	case 2:
 		{
-			Matrix33 transform = movieClip->getTransform();
-			transform.e11 = float(value.getNumberSafe() * 100.0f);
-			movieClip->setTransform(transform);
+			Matrix33 transform = state.movieClip->getTransform();
+			transform.e11 = float(value.getNumber() * 100.0f);
+			state.movieClip->setTransform(transform);
 		}
 		break;
 	case 3:
 		{
-			Matrix33 transform = movieClip->getTransform();
-			transform.e22 = float(value.getNumberSafe() * 100.0f);
-			movieClip->setTransform(transform);
+			Matrix33 transform = state.movieClip->getTransform();
+			transform.e22 = float(value.getNumber() * 100.0f);
+			state.movieClip->setTransform(transform);
 		}
 		break;
 
@@ -403,9 +388,7 @@ void opx_setProperty(ExecutionState& state)
 
 void opx_cloneSprite(ExecutionState& state)
 {
-	FlashSpriteInstance* movieClip = state.frame->getContext()->getMovieClip();
 	ActionValueStack& stack = state.frame->getStack();
-
 	ActionValue depth = stack.pop();
 	ActionValue target = stack.pop();
 	ActionValue source = stack.pop();
@@ -413,9 +396,9 @@ void opx_cloneSprite(ExecutionState& state)
 	Ref< FlashSpriteInstance > sourceClip = source.getObject< FlashSpriteInstance >();
 	Ref< FlashSpriteInstance > cloneClip = sourceClip->clone();
 
-	cloneClip->setName(target.getStringSafe());
+	cloneClip->setName(target.getString());
 
-	movieClip->getDisplayList().showObject(
+	state.movieClip->getDisplayList().showObject(
 		int32_t(depth.getNumber()),
 		cloneClip->getSprite()->getId(),
 		cloneClip,
@@ -431,7 +414,7 @@ void opx_removeSprite(ExecutionState& state)
 void opx_trace(ExecutionState& state)
 {
 	ActionValueStack& stack = state.frame->getStack();
-	std::wstring trace = stack.pop().getWideStringSafe();
+	std::wstring trace = stack.pop().getWideString();
 	if (trace != L"** BREAK **")
 		log::debug << L"TRACE \"" << trace << L"\"" << Endl;
 	else
@@ -442,8 +425,8 @@ void opx_startDragMovie(ExecutionState& state)
 {
 	ActionValueStack& stack = state.frame->getStack();
 	ActionValue target = stack.pop();
-	uint32_t lockCenter = uint32_t(stack.pop().getNumberSafe());
-	uint32_t constraint = uint32_t(stack.pop().getNumberSafe());
+	uint32_t lockCenter = uint32_t(stack.pop().getNumber());
+	uint32_t constraint = uint32_t(stack.pop().getNumber());
 	if (constraint)
 	{
 		ActionValue y2 = stack.pop();
@@ -464,7 +447,7 @@ void opx_stringCompare(ExecutionState& state)
 	ActionValueStack& stack = state.frame->getStack();
 	ActionValue str2 = stack.pop();
 	ActionValue str1 = stack.pop();
-	stack.push(ActionValue(avm_number_t(str1.getStringSafe().compare(str2.getStringSafe()))));
+	stack.push(ActionValue(avm_number_t(str1.getString().compare(str2.getString()))));
 }
 
 void opx_throw(ExecutionState& state)
@@ -474,9 +457,7 @@ void opx_throw(ExecutionState& state)
 
 void opx_castOp(ExecutionState& state)
 {
-	ActionContext* context = state.frame->getContext();
 	ActionValueStack& stack = state.frame->getStack();
-
 	ActionValue objectValue = stack.pop();
 	ActionValue constructorValue = stack.pop();
 
@@ -485,7 +466,7 @@ void opx_castOp(ExecutionState& state)
 		ActionObject* object = objectValue.getObject();
 		ActionObject* constructor = constructorValue.getObject();
 
-		if (object->getPrototype(context) == constructor)
+		if (object->getPrototype(state.context) == constructor)
 		{
 			stack.push(objectValue);
 			return;
@@ -499,7 +480,7 @@ void opx_implementsOp(ExecutionState& state)
 {
 	ActionValueStack& stack = state.frame->getStack();
 	ActionValue implementationClass = stack.pop();
-	uint32_t interfaceCount = uint32_t(stack.pop().getNumberSafe());
+	uint32_t interfaceCount = uint32_t(stack.pop().getNumber());
 	for (uint32_t i = 0; i < interfaceCount; ++i)
 	{
 		ActionValue interfaceClass = stack.pop();
@@ -561,7 +542,7 @@ void opx_mbChr(ExecutionState& state)
 void opx_delete(ExecutionState& state)
 {
 	ActionValueStack& stack = state.frame->getStack();
-	std::string memberName = stack.pop().getStringSafe();
+	std::string memberName = stack.pop().getString();
 	ActionValue objectValue = stack.pop();
 	if (objectValue.isObject())
 	{
@@ -574,10 +555,10 @@ void opx_delete(ExecutionState& state)
 
 void opx_delete2(ExecutionState& state)
 {
-	FlashSpriteInstance* movieClip = state.frame->getContext()->getMovieClip();
+	FlashSpriteInstance* movieClip = state.movieClip;
 	ActionValueStack& stack = state.frame->getStack();
 
-	std::string variableName = stack.pop().getStringSafe();
+	std::string variableName = stack.pop().getString();
 	bool deleted = movieClip->deleteMember(variableName);
 	stack.push(ActionValue(deleted));
 }
@@ -585,10 +566,10 @@ void opx_delete2(ExecutionState& state)
 void opx_defineLocal(ExecutionState& state)
 {
 	ActionValueStack& stack = state.frame->getStack();
-	FlashSpriteInstance* movieClip = state.frame->getContext()->getMovieClip();
+	FlashSpriteInstance* movieClip = state.movieClip;
 
 	ActionValue variableValue = stack.pop();
-	std::string variableName = stack.pop().getStringSafe();
+	std::string variableName = stack.pop().getString();
 	if (state.frame->getCallee())
 		state.frame->setVariable(variableName, variableValue);
 	else
@@ -597,20 +578,17 @@ void opx_defineLocal(ExecutionState& state)
 
 void opx_callFunction(ExecutionState& state)
 {
-	ActionContext* context = state.frame->getContext();
 	ActionValueStack& stack = state.frame->getStack();
-	FlashSpriteInstance* movieClip = state.frame->getContext()->getMovieClip();
-
-	std::string functionName = stack.pop().getStringSafe();
+	std::string functionName = stack.pop().getString();
 	ActionValue functionObject;
 
 	if (!state.frame->getVariable(functionName, functionObject))
 	{
-		if (!state.frame->getSelf()->getMember(context, functionName, functionObject))
+		if (!state.self->getMember(state.context, functionName, functionObject))
 		{
-			if (!movieClip->getMember(context, functionName, functionObject))
+			if (!state.movieClip->getMember(state.context, functionName, functionObject))
 			{
-				context->getGlobal()->getLocalMember(functionName, functionObject);
+				state.global->getLocalMember(functionName, functionObject);
 			}
 		}
 	}
@@ -618,7 +596,7 @@ void opx_callFunction(ExecutionState& state)
 	if (functionObject.isObject())
 	{
 		ActionFunction* function = checked_type_cast< ActionFunction* >(functionObject.getObject());
-		stack.push(function->call(state.frame, state.frame->getSelf()));
+		stack.push(function->call(state.frame, state.self));
 	}
 	else
 	{
@@ -646,49 +624,72 @@ void opx_modulo(ExecutionState& state)
 
 void opx_new(ExecutionState& state)
 {
-	ActionContext* context = state.frame->getContext();
 	ActionValueStack& stack = state.frame->getStack();
+	ActionValue classFunctionValue = stack.pop();
 
-	ActionValue classFunction = stack.pop();
-	Ref< ActionFunction > classConstructor;
+	// Get class function.
+	Ref< ActionFunction > classFunction;
 	
-	if (classFunction.isObject())
-		classConstructor = classFunction.getObject< ActionFunction >();
+	if (classFunctionValue.isObject())
+		classFunction = classFunctionValue.getObject< ActionFunction >();
 	else
 	{
-		std::string classConstructorName = classFunction.getStringSafe();
-		context->getGlobal()->getLocalMember(classConstructorName, classFunction);
-		classConstructor = classFunction.getObjectSafe< ActionFunction >();
+		std::string classFunctionName = classFunctionValue.getString();
+		state.global->getLocalMember(classFunctionName, classFunctionValue);
+		classFunction = classFunctionValue.getObject< ActionFunction >();
 	}
 
-	if (classConstructor)
+	if (!classFunction)
 	{
-		ActionValue prototype;
-		classConstructor->getLocalMember("prototype", prototype);
-
-		// Create instance of class.
-		Ref< ActionObject > self = new ActionObject(prototype.getObjectSafe());
-
-		// Call constructor.
-		ActionValue object = classConstructor->call(state.frame, self);
-		if (object.isObject())
-			stack.push(object);
-		else
-			stack.push(ActionValue(self.ptr()));
-	}
-	else
-	{
-		VM_LOG(L"Not a class object");
 		stack.push(ActionValue());
+		return;
 	}
+
+	// Get class prototype.
+	ActionValue prototypeValue;
+	classFunction->getLocalMember("prototype", prototypeValue);
+
+	if (!prototypeValue.isObject())
+	{
+		stack.push(ActionValue());
+		return;
+	}
+
+	Ref< ActionObject > prototype = prototypeValue.getObject();
+
+	// Create instance; first try to create through builtin classes.
+	Ref< ActionObject > self;
+
+	ActionValue constructorValue;
+	if (prototype->getMember(state.context, "constructor", constructorValue))
+	{
+		Ref< ActionClass > builtinClass = constructorValue.getObject< ActionClass >();
+		if (builtinClass)
+		{
+			self = builtinClass->alloc(state.context);
+			T_ASSERT (self);
+
+			self->setMember("__proto__", prototypeValue);
+		}
+	}
+
+	if (!self)
+		self = new ActionObject(prototype);
+
+	// Call constructor.
+	ActionValue object = classFunction->call(state.frame, self);
+	if (object.isObject())
+		stack.push(object);
+	else
+		stack.push(ActionValue(self.ptr()));
 }
 
 void opx_defineLocal2(ExecutionState& state)
 {
 	ActionValueStack& stack = state.frame->getStack();
-	FlashSpriteInstance* movieClip = state.frame->getContext()->getMovieClip();
+	FlashSpriteInstance* movieClip = state.movieClip;
 
-	std::string variableName = stack.pop().getStringSafe();
+	std::string variableName = stack.pop().getString();
 	if (state.frame->getCallee())
 		state.frame->setVariable(variableName, ActionValue());
 	else
@@ -697,14 +698,23 @@ void opx_defineLocal2(ExecutionState& state)
 
 void opx_initArray(ExecutionState& state)
 {
-	ActionContext* context = state.frame->getContext();
 	ActionValueStack& stack = state.frame->getStack();
 
 	ActionValue arrayClassMember;
-	if (context->getGlobal()->getLocalMember("Array", arrayClassMember) && arrayClassMember.isObject())
+	if (state.global->getLocalMember("Array", arrayClassMember) && arrayClassMember.isObject())
 	{
-		ActionValue arrayObject = arrayClassMember.getObject< ActionFunction >()->call(state.frame, 0);
-		stack.push(arrayObject);
+		ActionClass* arrayClass = arrayClassMember.getObject< ActionClass >();
+		T_ASSERT (arrayClass);
+
+		// Allocate array instance.
+		Ref< ActionObject > self = arrayClass->alloc(state.context);
+		T_ASSERT (self);
+
+		// Initialize array through constructor.
+		arrayClass->call(state.frame, self);
+
+		// Push array instance.
+		stack.push(ActionValue(self));
 	}
 	else
 		stack.push(ActionValue());
@@ -714,15 +724,15 @@ void opx_initObject(ExecutionState& state)
 {
 	ActionValueStack& stack = state.frame->getStack();
 
-	int32_t initialPropertyCount = int32_t(stack.pop().getNumberSafe());
+	int32_t initialPropertyCount = int32_t(stack.pop().getNumber());
 
 	Ref< ActionObject > scriptObject = new ActionObject();
 	for (int32_t i = 0; i < initialPropertyCount; ++i)
 	{
 		ActionValue value = stack.pop();
 		ActionValue name = stack.pop();
-		scriptObject->setMember(name.getStringSafe(), value);
-		VM_LOG(L"Initial property " << i << L" \"" << name.getWideStringSafe() << L"\" = " << value.getWideStringSafe());
+		scriptObject->setMember(name.getString(), value);
+		VM_LOG(L"Initial property " << i << L" \"" << name.getWideString() << L"\" = " << value.getWideString());
 	}
 
 	stack.push(ActionValue(scriptObject));
@@ -846,26 +856,26 @@ void opx_newEquals(ExecutionState& state)
 		ActionValue::Type predicateType = max(value2.getType(), value1.getType());
 		if (predicateType == ActionValue::AvtBoolean)
 		{
-			bool v2 = value2.getBooleanSafe();
-			bool v1 = value1.getBooleanSafe();
+			bool v2 = value2.getBoolean();
+			bool v1 = value1.getBoolean();
 			stack.push(ActionValue(v1 == v2));
 		}
 		else if (predicateType == ActionValue::AvtNumber)
 		{
-			avm_number_t v2 = value2.getNumberSafe();
-			avm_number_t v1 = value1.getNumberSafe();
+			avm_number_t v2 = value2.getNumber();
+			avm_number_t v1 = value1.getNumber();
 			stack.push(ActionValue(v1 == v2));
 		}
 		else if (predicateType == ActionValue::AvtString)
 		{
-			std::string v2 = value2.getStringSafe();
-			std::string v1 = value1.getStringSafe();
+			std::string v2 = value2.getString();
+			std::string v1 = value1.getString();
 			stack.push(ActionValue(v1 == v2));
 		}
 		else	// AvtObject
 		{
-			Ref< ActionObject > object2 = value2.getObjectSafe();
-			Ref< ActionObject > object1 = value1.getObjectSafe();
+			Ref< ActionObject > object2 = value2.getObject();
+			Ref< ActionObject > object1 = value1.getObject();
 			stack.push(ActionValue(object1 == object2));
 		}
 	}
@@ -915,7 +925,6 @@ void opx_swap(ExecutionState& state)
 void opx_getMember(ExecutionState& state)
 {
 	ActionValueStack& stack = state.frame->getStack();
-
 	ActionValue memberName = stack.pop();
 	ActionValue targetValue = stack.pop();
 	ActionValue memberValue;
@@ -925,16 +934,14 @@ void opx_getMember(ExecutionState& state)
 		ActionObject* target = targetValue.getObject();
 		if (target)
 		{
-			ActionContext* context = state.frame->getContext();
-
-			if (target->getMember(context, memberName, memberValue))
+			if (target->getMember(state.context, memberName, memberValue))
 			{
 				stack.push(memberValue);
 				return;
 			}
 
 			Ref< ActionFunction > propertyGet;
-			if (memberName.isString() && target->getPropertyGet(context, memberName.getString(), propertyGet))
+			if (memberName.isString() && target->getPropertyGet(state.context, memberName.getString(), propertyGet))
 			{
 				stack.push(ActionValue(avm_number_t(0)));
 				memberValue = propertyGet->call(state.frame, target);
@@ -950,20 +957,18 @@ void opx_getMember(ExecutionState& state)
 
 void opx_setMember(ExecutionState& state)
 {
-	ActionContext* context = state.frame->getContext();
 	ActionValueStack& stack = state.frame->getStack();
-
 	ActionValue memberValue = stack.pop();
 	ActionValue memberName = stack.pop();
-
 	ActionValue targetValue = stack.pop();
+
 	if (targetValue.isObject())
 	{
 		Ref< ActionObject > target = targetValue.getObject();
 		if (target)
 		{
 			Ref< ActionFunction > propertySet;
-			if (memberName.isString() && target->getPropertySet(context, memberName.getString(), propertySet))
+			if (memberName.isString() && target->getPropertySet(state.context, memberName.getString(), propertySet))
 			{
 				stack.push(memberValue);
 				stack.push(ActionValue(avm_number_t(1)));
@@ -979,7 +984,7 @@ void opx_setMember(ExecutionState& state)
 	{
 		Ref< ActionFunction > memberFunction = memberValue.getObject< ActionFunction >();
 		if (memberFunction)
-			memberFunction->setName(memberName.getStringSafe());
+			memberFunction->setName(memberName.getString());
 	}
 #endif
 }
@@ -1006,27 +1011,24 @@ void opx_decrement(ExecutionState& state)
 
 void opx_callMethod(ExecutionState& state)
 {
-	ActionContext* context = state.frame->getContext();
 	ActionValueStack& stack = state.frame->getStack();
-	FlashSpriteInstance* movieClip = context->getMovieClip();
-
 	ActionValue classConstructorName = stack.pop();
 	ActionValue targetValue = stack.pop();
 	ActionValue returnValue;
 
-	Ref< ActionObject > target = targetValue.getObjectSafe();
+	Ref< ActionObject > target = targetValue.getObject();
 	Ref< ActionFunction > method;
 
 	if (!target)
-		target = movieClip;
+		target = state.movieClip;
 
 	if (target)
 	{
 		if (classConstructorName.isString())
 		{
 			ActionValue memberValue;
-			if (target->getMember(context, classConstructorName.getString(), memberValue))
-				method = dynamic_type_cast< ActionFunction* >(memberValue.getObjectSafe());
+			if (target->getMember(state.context, classConstructorName.getString(), memberValue))
+				method = dynamic_type_cast< ActionFunction* >(memberValue.getObject());
 		}
 		else
 			method = dynamic_type_cast< ActionFunction* >(target);
@@ -1036,7 +1038,7 @@ void opx_callMethod(ExecutionState& state)
 		returnValue = method->call(state.frame, target);
 	else
 	{
-		log::warning << L"Undefined method \"" << classConstructorName.getWideStringSafe() << L"\"" << Endl;
+		log::warning << L"Undefined method \"" << classConstructorName.getWideString() << L"\"" << Endl;
 		int argCount = int(stack.pop().getNumber());
 		stack.drop(argCount);
 	}
@@ -1046,34 +1048,58 @@ void opx_callMethod(ExecutionState& state)
 
 void opx_newMethod(ExecutionState& state)
 {
-	ActionContext* context = state.frame->getContext();
 	ActionValueStack& stack = state.frame->getStack();
+	std::string classFunctionName = stack.pop().getString();
+	Ref< ActionObject > classFunctionObject = stack.pop().getObject();
 
-	std::string classConstructorName = stack.pop().getStringSafe();
-	Ref< ActionObject > classConstructorObject = stack.pop().getObjectSafe();
-	if (classConstructorObject)
+	if (classFunctionObject)
 	{
-		Ref< ActionFunction > classConstructor;
+		Ref< ActionFunction > classFunction;
 
-		if (classConstructorName.empty())
-			classConstructor = dynamic_type_cast< ActionFunction* >(classConstructorObject);
+		if (classFunctionName.empty())
+			classFunction = dynamic_type_cast< ActionFunction* >(classFunctionObject);
 		else
 		{
 			ActionValue methodValue;
-			classConstructorObject->getMember(context, classConstructorName, methodValue);
-			classConstructor = methodValue.getObjectSafe< ActionFunction >();
+			classFunctionObject->getMember(state.context, classFunctionName, methodValue);
+			classFunction = methodValue.getObject< ActionFunction >();
 		}
 
-		if (classConstructor)
+		if (classFunction)
 		{
-			ActionValue prototype;
-			classConstructor->getLocalMember("prototype", prototype);
+			// Get class prototype.
+			ActionValue prototypeValue;
+			classFunction->getLocalMember("prototype", prototypeValue);
 
-			// Create instance of class.
-			Ref< ActionObject > self = new ActionObject(prototype.getObjectSafe());
+			if (!prototypeValue.isObject())
+			{
+				stack.push(ActionValue());
+				return;
+			}
+
+			Ref< ActionObject > prototype = prototypeValue.getObject();
+
+			// Create instance; first try to create through builtin classes.
+			Ref< ActionObject > self;
+
+			ActionValue constructorValue;
+			if (prototype->getMember(state.context, "constructor", constructorValue))
+			{
+				Ref< ActionClass > builtinClass = constructorValue.getObject< ActionClass >();
+				if (builtinClass)
+				{
+					self = builtinClass->alloc(state.context);
+					T_ASSERT (self);
+
+					self->setMember("__proto__", prototypeValue);
+				}
+			}
+
+			if (!self)
+				self = new ActionObject(prototype);
 
 			// Call constructor.
-			ActionValue object = classConstructor->call(state.frame, self);
+			ActionValue object = classFunction->call(state.frame, self);
 			if (object.isObject())
 				stack.push(object);
 			else
@@ -1094,9 +1120,7 @@ void opx_newMethod(ExecutionState& state)
 
 void opx_instanceOf(ExecutionState& state)
 {
-	ActionContext* context = state.frame->getContext();
 	ActionValueStack& stack = state.frame->getStack();
-
 	ActionValue objectValue = stack.pop();
 	ActionValue constructorValue = stack.pop();
 
@@ -1105,7 +1129,7 @@ void opx_instanceOf(ExecutionState& state)
 		ActionObject* object = objectValue.getObject();
 		ActionObject* constructor = constructorValue.getObject();
 
-		if (object->getPrototype(context) == constructor)
+		if (object->getPrototype(state.context) == constructor)
 		{
 			stack.push(ActionValue(true));
 			return;
@@ -1268,25 +1292,21 @@ void opx_stringGreater(ExecutionState& state)
 	ActionValueStack& stack = state.frame->getStack();
 	ActionValue str2 = stack.pop();
 	ActionValue str1 = stack.pop();
-	stack.push(ActionValue(bool(str1.getStringSafe().compare(str2.getStringSafe()) > 0)));
+	stack.push(ActionValue(bool(str1.getString().compare(str2.getString()) > 0)));
 }
 
 void opx_extends(ExecutionState& state)
 {
-	ActionContext* context = state.frame->getContext();
 	ActionValueStack& stack = state.frame->getStack();
-
 	ActionValue superClass = stack.pop();
 	ActionValue subClass = stack.pop();
 
-	VM_LOG(subClass.getObject< ActionFunction >()->getName() << L" extends " << superClass.getObject< ActionFunction >()->getName());
-
 	ActionValue superPrototype;
-	superClass.getObject()->getMember(context, "prototype", superPrototype);
+	superClass.getObject()->getMember(state.context, "prototype", superPrototype);
 
 	Ref< ActionObject > prototype = new ActionObject();
 	prototype->setMember("__proto__", superPrototype);
-	prototype->setMember("__constructor__", ActionValue(superClass.getObject()));
+	prototype->setMember("__ctor__", superClass);
 
 	subClass.getObject()->setMember("prototype", ActionValue(prototype));
 }
@@ -1300,7 +1320,7 @@ void opp_gotoFrame(PreparationState& state)
 
 void opx_gotoFrame(ExecutionState& state)
 {
-	FlashSpriteInstance* movieClip = state.frame->getContext()->getMovieClip();
+	FlashSpriteInstance* movieClip = state.movieClip;
 
 	uint16_t frame = *reinterpret_cast< const uint16_t* >(state.data);
 	movieClip->gotoFrame(frame);
@@ -1308,7 +1328,7 @@ void opx_gotoFrame(ExecutionState& state)
 
 void opx_getUrl(ExecutionState& state)
 {
-	ActionContext* context = state.frame->getContext();
+	ActionContext* context = state.context;
 	ActionValueStack& stack = state.frame->getStack();
 
 	const char* url = reinterpret_cast< const char* >(state.data);
@@ -1337,7 +1357,7 @@ void opx_setRegister(ExecutionState& state)
 	uint8_t registerIndex = *state.data;
 	state.frame->setRegister(registerIndex, !stack.empty() ? stack.top() : ActionValue());
 
-	VM_LOG(L"Set register " << int32_t(registerIndex) << L" = " << (!stack.empty() ? stack.top().getWideStringSafe() : L"< Stack empty >"));
+	VM_LOG(L"Set register " << int32_t(registerIndex) << L" = " << (!stack.empty() ? stack.top().getWideString() : L"< Stack empty >"));
 }
 
 void opp_constantPool(PreparationState& state)
@@ -1369,7 +1389,7 @@ void opx_setTarget(ExecutionState& state)
 
 void opx_gotoLabel(ExecutionState& state)
 {
-	FlashSpriteInstance* movieClip = state.frame->getContext()->getMovieClip();
+	FlashSpriteInstance* movieClip = state.movieClip;
 
 	const char* label = reinterpret_cast< const char* >(state.data);
 	int frame = movieClip->getSprite()->findFrame(label);
@@ -1425,8 +1445,6 @@ void opp_defineFunction2(PreparationState& state)
 void opx_defineFunction2(ExecutionState& state)
 {
 	ActionValueStack& stack = state.frame->getStack();
-	FlashSpriteInstance* movieClip = state.frame->getContext()->getMovieClip();
-
 	const uint8_t* data = state.data;
 
 	const char T_UNALIGNED * functionName = reinterpret_cast< const char* >(data);
@@ -1469,14 +1487,15 @@ void opx_defineFunction2(ExecutionState& state)
 		state.frame->getDictionary()
 	);
 
-	// Create our own prototype member as it will probably be filled with additional members.
-	// Default extends the Object class.
-	function->setMember("prototype", ActionValue(new ActionObject()));
+	// Create prototype.
+	Ref< ActionObject > prototype = new ActionObject();
+	prototype->setMember("constructor", ActionValue(function));
+	function->setMember("prototype", ActionValue(prototype));
 
 	if (*functionName != 0)
 	{
 		// Assign function object into variable with the same name as the function.
-		movieClip->setMember(functionName, ActionValue(function));
+		state.movieClip->setMember(functionName, ActionValue(function));
 	}
 	else
 	{
@@ -1757,7 +1776,7 @@ void opx_branchAlways(ExecutionState& state)
 
 void opx_getUrl2(ExecutionState& state)
 {
-	ActionContext* context = state.frame->getContext();
+	ActionContext* context = state.context;
 	ActionValueStack& stack = state.frame->getStack();
 
 	ActionValue getUrl;
@@ -1812,7 +1831,7 @@ void opp_defineFunction(PreparationState& state)
 void opx_defineFunction(ExecutionState& state)
 {
 	ActionValueStack& stack = state.frame->getStack();
-	FlashSpriteInstance* movieClip = state.frame->getContext()->getMovieClip();
+	FlashSpriteInstance* movieClip = state.movieClip;
 
 	const uint8_t* data = state.data;
 
@@ -1841,8 +1860,10 @@ void opx_defineFunction(ExecutionState& state)
 		state.frame->getDictionary()
 	);
 
-	// Create our own prototype member as it will probably be filled with additional members.
-	function->setMember("prototype", ActionValue(new ActionObject()));
+	// Create prototype.
+	Ref< ActionObject > prototype = new ActionObject();
+	prototype->setMember("constructor", ActionValue(function));
+	function->setMember("prototype", ActionValue(prototype));
 
 	if (*functionName != 0)
 	{
@@ -1869,7 +1890,7 @@ void opx_branchIfTrue(ExecutionState& state)
 {
 	ActionValueStack& stack = state.frame->getStack();
 
-	bool condition = stack.pop().getBooleanSafe();
+	bool condition = stack.pop().getBoolean();
 	if (condition)
 	{
 		int16_t offset = *reinterpret_cast< const int16_t* >(state.data);
@@ -1885,7 +1906,7 @@ void opx_callFrame(ExecutionState& state)
 void opx_gotoFrame2(ExecutionState& state)
 {
 	ActionValueStack& stack = state.frame->getStack();
-	FlashSpriteInstance* movieClip = state.frame->getContext()->getMovieClip();
+	FlashSpriteInstance* movieClip = state.movieClip;
 
 	ActionValue frame = stack.pop();
 	int frameIndex = -1;

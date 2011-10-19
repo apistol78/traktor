@@ -17,22 +17,26 @@ AsBoolean::AsBoolean()
 	prototype->setMember("toString", ActionValue(createNativeFunction(this, &AsBoolean::Boolean_toString)));
 	prototype->setMember("valueOf", ActionValue(createNativeFunction(this, &AsBoolean::Boolean_valueOf)));
 
+	prototype->setMember("constructor", ActionValue(this));
 	prototype->setReadOnly();
 
 	setMember("prototype", ActionValue(prototype));
 }
 
-ActionValue AsBoolean::construct(ActionContext* context, const ActionValueArray& args)
+Ref< ActionObject > AsBoolean::alloc(ActionContext* context)
 {
-	if (args.empty())
-		return ActionValue(new Boolean(false));
-	else
-		return ActionValue(new Boolean(args[0].getBooleanSafe()));
+	return new Boolean(false);
 }
 
-std::wstring AsBoolean::Boolean_toString(Boolean* self) const
+void AsBoolean::init(ActionContext* context, ActionObject* self, const ActionValueArray& args)
 {
-	return self->get() ? L"true" : L"false";
+	if (args.size() > 0)
+		checked_type_cast< Boolean* >(self)->set(args[0].getBoolean());
+}
+
+std::string AsBoolean::Boolean_toString(Boolean* self) const
+{
+	return self->get() ? "true" : "false";
 }
 
 bool AsBoolean::Boolean_valueOf(Boolean* self) const

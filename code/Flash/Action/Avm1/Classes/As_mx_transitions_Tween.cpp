@@ -14,94 +14,42 @@ As_mx_transitions_Tween::As_mx_transitions_Tween()
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember("continueTo", ActionValue(createNativeFunction(this, &As_mx_transitions_Tween::Tween_continueTo)));
-	prototype->setMember("fforward", ActionValue(createNativeFunction(this, &As_mx_transitions_Tween::Tween_fforward)));
-	prototype->setMember("nextFrame", ActionValue(createNativeFunction(this, &As_mx_transitions_Tween::Tween_nextFrame)));
-	prototype->setMember("prevFrame", ActionValue(createNativeFunction(this, &As_mx_transitions_Tween::Tween_prevFrame)));
-	prototype->setMember("resume", ActionValue(createNativeFunction(this, &As_mx_transitions_Tween::Tween_resume)));
-	prototype->setMember("rewind", ActionValue(createNativeFunction(this, &As_mx_transitions_Tween::Tween_rewind)));
-	prototype->setMember("start", ActionValue(createNativeFunction(this, &As_mx_transitions_Tween::Tween_start)));
-	prototype->setMember("stop", ActionValue(createNativeFunction(this, &As_mx_transitions_Tween::Tween_stop)));
-	prototype->setMember("yoyo", ActionValue(createNativeFunction(this, &As_mx_transitions_Tween::Tween_yoyo)));
+	prototype->setMember("continueTo", ActionValue(createNativeFunction(&Tween::continueTo)));
+	prototype->setMember("fforward", ActionValue(createNativeFunction(&Tween::fforward)));
+	prototype->setMember("nextFrame", ActionValue(createNativeFunction(&Tween::nextFrame)));
+	prototype->setMember("prevFrame", ActionValue(createNativeFunction(&Tween::prevFrame)));
+	prototype->setMember("resume", ActionValue(createNativeFunction(&Tween::resume)));
+	prototype->setMember("rewind", ActionValue(createNativeFunction(&Tween::rewind)));
+	prototype->setMember("start", ActionValue(createNativeFunction(&Tween::start)));
+	prototype->setMember("stop", ActionValue(createNativeFunction(&Tween::stop)));
+	prototype->setMember("yoyo", ActionValue(createNativeFunction(&Tween::yoyo)));
+
+	prototype->setMember("constructor", ActionValue(this));
 	prototype->setReadOnly();
 
 	setMember("prototype", ActionValue(prototype));
 }
 
-ActionValue As_mx_transitions_Tween::construct(ActionContext* context, const ActionValueArray& args)
+Ref< ActionObject > As_mx_transitions_Tween::alloc(ActionContext* context)
+{
+	return new Tween();
+}
+
+void As_mx_transitions_Tween::init(ActionContext* context, ActionObject* self, const ActionValueArray& args)
 {
 	if (args.size() < 7)
-		return ActionValue();
+		return;
 
-	Ref< Tween > tween = new Tween(
+	checked_type_cast< Tween* >(self)->init(
 		context,
-		args[0].getObjectSafe(),
-		args[1].getStringSafe(),
-		args[2].getObjectSafe< ActionFunction >(),
-		args[3].getNumberSafe(),
-		args[4].getNumberSafe(),
-		args[5].getNumberSafe(),
-		args[6].getBooleanSafe()
+		args[0].getObject(),
+		args[1].getString(),
+		args[2].getObject< ActionFunction >(),
+		args[3].getNumber(),
+		args[4].getNumber(),
+		args[5].getNumber(),
+		args[6].getBoolean()
 	);
-
-	return ActionValue(tween);
-}
-
-void As_mx_transitions_Tween::Tween_continueTo(CallArgs& ca)
-{
-	Tween* tween = checked_type_cast< Tween*, false >(ca.self);
-	tween->continueTo(
-		ca.args[0].getNumberSafe(),
-		ca.args[1].getNumberSafe()
-	);
-}
-
-void As_mx_transitions_Tween::Tween_fforward(CallArgs& ca)
-{
-	Tween* tween = checked_type_cast< Tween*, false >(ca.self);
-	tween->fforward();
-}
-
-void As_mx_transitions_Tween::Tween_nextFrame(CallArgs& ca)
-{
-	Tween* tween = checked_type_cast< Tween*, false >(ca.self);
-	tween->nextFrame();
-}
-
-void As_mx_transitions_Tween::Tween_prevFrame(CallArgs& ca)
-{
-	Tween* tween = checked_type_cast< Tween*, false >(ca.self);
-	tween->prevFrame();
-}
-
-void As_mx_transitions_Tween::Tween_resume(CallArgs& ca)
-{
-	Tween* tween = checked_type_cast< Tween*, false >(ca.self);
-	tween->resume();
-}
-
-void As_mx_transitions_Tween::Tween_rewind(CallArgs& ca)
-{
-	Tween* tween = checked_type_cast< Tween*, false >(ca.self);
-	tween->rewind(ca.args[0].getNumberSafe());
-}
-
-void As_mx_transitions_Tween::Tween_start(CallArgs& ca)
-{
-	Tween* tween = checked_type_cast< Tween*, false >(ca.self);
-	tween->start();
-}
-
-void As_mx_transitions_Tween::Tween_stop(CallArgs& ca)
-{
-	Tween* tween = checked_type_cast< Tween*, false >(ca.self);
-	tween->stop();
-}
-
-void As_mx_transitions_Tween::Tween_yoyo(CallArgs& ca)
-{
-	Tween* tween = checked_type_cast< Tween*, false >(ca.self);
-	tween->yoyo();
 }
 
 	}

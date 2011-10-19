@@ -20,9 +20,11 @@ class AsLoadVars : public ActionClass
 public:
 	AsLoadVars();
 
-private:
-	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
+	virtual Ref< ActionObject > alloc(ActionContext* context);
 
+	virtual void init(ActionContext* context, ActionObject* self, const ActionValueArray& args);
+
+private:
 	void LoadVars_addRequestHeader(CallArgs& ca);
 
 	void LoadVars_decode(CallArgs& ca);

@@ -20,9 +20,11 @@ class AsFunction : public ActionClass
 public:
 	AsFunction();
 
-private:
-	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
+	virtual Ref< ActionObject > alloc(ActionContext* context);
 
+	virtual void init(ActionContext* context, ActionObject* self, const ActionValueArray& args);
+
+private:
 	void Function_apply(CallArgs& ca);
 
 	void Function_call(CallArgs& ca);

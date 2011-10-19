@@ -54,169 +54,175 @@ AsDate::AsDate()
 	prototype->setMember("UTC", ActionValue(createNativeFunction(this, &AsDate::Date_UTC)));
 	prototype->setMember("valueOf", ActionValue(createNativeFunction(this, &AsDate::Date_valueOf)));
 
+	prototype->setMember("constructor", ActionValue(this));
 	prototype->setReadOnly();
 
 	setMember("prototype", ActionValue(prototype));
 }
 
-ActionValue AsDate::construct(ActionContext* context, const ActionValueArray& args)
+Ref< ActionObject > AsDate::alloc(ActionContext* context)
 {
-	return ActionValue(new Date());
+	return new Date();
 }
 
-void AsDate::Date_getDate(CallArgs& ca)
-{
-}
-
-void AsDate::Date_getDay(CallArgs& ca)
+void AsDate::init(ActionContext* context, ActionObject* self, const ActionValueArray& args)
 {
 }
 
-void AsDate::Date_getFullYear(CallArgs& ca)
+void AsDate::Date_getDate(const Date* self) const
 {
 }
 
-void AsDate::Date_getHours(CallArgs& ca)
+void AsDate::Date_getDay(const Date* self) const
 {
 }
 
-void AsDate::Date_getMilliseconds(CallArgs& ca)
+void AsDate::Date_getFullYear(const Date* self) const
 {
 }
 
-void AsDate::Date_getMinutes(CallArgs& ca)
+void AsDate::Date_getHours(const Date* self) const
 {
 }
 
-void AsDate::Date_getMonth(CallArgs& ca)
+void AsDate::Date_getMilliseconds(const Date* self) const
 {
 }
 
-void AsDate::Date_getSeconds(CallArgs& ca)
+void AsDate::Date_getMinutes(const Date* self) const
 {
 }
 
-void AsDate::Date_getTime(CallArgs& ca)
+void AsDate::Date_getMonth(const Date* self) const
 {
 }
 
-void AsDate::Date_getTimezoneOffset(CallArgs& ca)
+void AsDate::Date_getSeconds(const Date* self) const
 {
 }
 
-void AsDate::Date_getUTCDate(CallArgs& ca)
+void AsDate::Date_getTime(const Date* self) const
 {
 }
 
-void AsDate::Date_getUTCDay(CallArgs& ca)
+void AsDate::Date_getTimezoneOffset(const Date* self) const
 {
 }
 
-void AsDate::Date_getUTCFullYear(CallArgs& ca)
+void AsDate::Date_getUTCDate(const Date* self) const
 {
 }
 
-void AsDate::Date_getUTCHours(CallArgs& ca)
+void AsDate::Date_getUTCDay(const Date* self) const
 {
 }
 
-void AsDate::Date_getUTCMilliseconds(CallArgs& ca)
+void AsDate::Date_getUTCFullYear(const Date* self) const
 {
 }
 
-void AsDate::Date_getUTCMinutes(CallArgs& ca)
+void AsDate::Date_getUTCHours(const Date* self) const
 {
 }
 
-void AsDate::Date_getUTCMonth(CallArgs& ca)
+void AsDate::Date_getUTCMilliseconds(const Date* self) const
 {
 }
 
-void AsDate::Date_getUTCSeconds(CallArgs& ca)
+void AsDate::Date_getUTCMinutes(const Date* self) const
 {
 }
 
-void AsDate::Date_getUTCYear(CallArgs& ca)
+void AsDate::Date_getUTCMonth(const Date* self) const
 {
 }
 
-void AsDate::Date_getYear(CallArgs& ca)
+void AsDate::Date_getUTCSeconds(const Date* self) const
 {
 }
 
-void AsDate::Date_setDate(CallArgs& ca)
+void AsDate::Date_getUTCYear(const Date* self) const
 {
 }
 
-void AsDate::Date_setFullYear(CallArgs& ca)
+void AsDate::Date_getYear(const Date* self) const
 {
 }
 
-void AsDate::Date_setHours(CallArgs& ca)
+void AsDate::Date_setDate(Date* self) const
 {
 }
 
-void AsDate::Date_setMilliseconds(CallArgs& ca)
+void AsDate::Date_setFullYear(Date* self) const
 {
 }
 
-void AsDate::Date_setMinutes(CallArgs& ca)
+void AsDate::Date_setHours(Date* self) const
 {
 }
 
-void AsDate::Date_setMonth(CallArgs& ca)
+void AsDate::Date_setMilliseconds(Date* self) const
 {
 }
 
-void AsDate::Date_setSeconds(CallArgs& ca)
+void AsDate::Date_setMinutes(Date* self) const
 {
 }
 
-void AsDate::Date_setTime(CallArgs& ca)
+void AsDate::Date_setMonth(Date* self) const
 {
 }
 
-void AsDate::Date_setUTCDate(CallArgs& ca)
+void AsDate::Date_setSeconds(Date* self) const
 {
 }
 
-void AsDate::Date_setUTCFullYear(CallArgs& ca)
+void AsDate::Date_setTime(Date* self) const
 {
 }
 
-void AsDate::Date_setUTCHours(CallArgs& ca)
+void AsDate::Date_setUTCDate(Date* self) const
 {
 }
 
-void AsDate::Date_setUTCMilliseconds(CallArgs& ca)
+void AsDate::Date_setUTCFullYear(Date* self) const
 {
 }
 
-void AsDate::Date_setUTCMinutes(CallArgs& ca)
+void AsDate::Date_setUTCHours(Date* self) const
 {
 }
 
-void AsDate::Date_setUTCMonth(CallArgs& ca)
+void AsDate::Date_setUTCMilliseconds(Date* self) const
 {
 }
 
-void AsDate::Date_setUTCSeconds(CallArgs& ca)
+void AsDate::Date_setUTCMinutes(Date* self) const
 {
 }
 
-void AsDate::Date_setYear(CallArgs& ca)
+void AsDate::Date_setUTCMonth(Date* self) const
 {
 }
 
-void AsDate::Date_toString(CallArgs& ca)
+void AsDate::Date_setUTCSeconds(Date* self) const
 {
 }
 
-void AsDate::Date_UTC(CallArgs& ca)
+void AsDate::Date_setYear(Date* self) const
 {
 }
 
-void AsDate::Date_valueOf(CallArgs& ca)
+std::string AsDate::Date_toString(Date* self) const
+{
+	return "[Date::toString not implemented]";
+}
+
+void AsDate::Date_UTC(Date* self) const
+{
+}
+
+void AsDate::Date_valueOf(Date* self) const
 {
 }
 

@@ -78,7 +78,7 @@ Ref< FlashCharacterInstance > FlashSprite::createInstance(ActionContext* context
 			spriteInstance->setMember("prototype", prototype);
 			spriteInstance->setMember("__proto__", prototype);
 
-			Ref< ActionFunction > classConstructor = spriteClassValue.getObjectSafe< ActionFunction >();
+			Ref< ActionFunction > classConstructor = spriteClassValue.getObject< ActionFunction >();
 			if (classConstructor)
 			{
 				ActionValueArray args;
@@ -94,19 +94,6 @@ Ref< FlashCharacterInstance > FlashSprite::createInstance(ActionContext* context
 		spriteInstance->setName(name);
 
 	return spriteInstance;
-}
-
-void FlashSprite::trace(const IVisitor& visitor) const
-{
-	for (RefArray< FlashFrame >::const_iterator i = m_frames.begin(); i != m_frames.end(); ++i)
-		visitor(*i);
-	FlashCharacter::trace(visitor);
-}
-
-void FlashSprite::dereference()
-{
-	m_frames.clear();
-	FlashCharacter::dereference();
 }
 
 	}

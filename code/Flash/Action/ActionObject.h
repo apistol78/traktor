@@ -3,8 +3,7 @@
 
 #include <map>
 #include <string>
-#include "Core/Object.h"
-#include "Core/Containers/IntrusiveList.h"
+#include "Flash/Collectable.h"
 #include "Flash/Action/ActionTypes.h"
 #include "Flash/Action/ActionValue.h"
 
@@ -28,7 +27,7 @@ class ActionValue;
 /*! \brief ActionScript object.
  * \ingroup Flash
  */
-class T_DLLCLASS ActionObject : public Object
+class T_DLLCLASS ActionObject : public Collectable
 {
 	T_RTTI_CLASS;
 
@@ -41,16 +40,6 @@ public:
 	explicit ActionObject(const std::string& prototypeName);
 
 	explicit ActionObject(ActionObject* prototype);
-
-	virtual ~ActionObject();
-
-	virtual void addRef(void* owner) const
-	{
-		m_traceColor = TcBlack;
-		Object::addRef(owner);
-	}
-	
-	virtual void release(void* owner) const;
 
 	virtual void addInterface(ActionObject* intrface);
 
@@ -93,59 +82,15 @@ public:
 	bool getLocalPropertySet(const std::string& propertyName, Ref< ActionFunction >& outPropertySet) const;
 
 protected:
-	struct IVisitor
-	{
-		virtual void operator () (ActionObject* memberObject) const = 0;
-	};
-
 	virtual void trace(const IVisitor& visitor) const;
 
 	virtual void dereference();
 
 private:
-	friend struct DefaultLink< ActionObject >;
-	friend class ActionObjectCyclic;
-
-	enum TraceColor
-	{
-		TcBlack,
-		TcPurple,
-		TcGray,
-		TcWhite
-	};
-
-	struct MarkGrayVisitor : public IVisitor
-	{
-		virtual void operator () (ActionObject* memberObject) const;
-	};
-
-	struct ScanVisitor : public IVisitor
-	{
-		virtual void operator () (ActionObject* memberObject) const;
-	};
-
-	struct ScanBlackVisitor : public IVisitor
-	{
-		virtual void operator () (ActionObject* memberObject) const;
-	};
-
-	ActionObject* m_prev;	//!< Intrusive list chain members.
-	ActionObject* m_next;
 	bool m_readOnly;
 	mutable member_map_t m_members;
 	property_map_t m_properties;
 	Ref< ActionObject > m__proto__;		//!< Cached "__proto__" member value.
-	mutable int32_t m_traceColor;
-	mutable bool m_traceBuffered;
-	mutable int32_t m_traceRefCount;
-
-	void traceMarkGray();
-
-	void traceScan();
-
-	void traceScanBlack();
-
-	void traceCollectWhite();
 
 	ActionObject(const ActionObject&) {}	// Not permitted
 

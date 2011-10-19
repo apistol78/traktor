@@ -1,83 +1,33 @@
 #include "Core/RefArray.h"
-#include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Thread/Acquire.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFunction.h"
 #include "Flash/Action/ActionObject.h"
-#include "Flash/Action/ActionObjectCyclic.h"
 
 namespace traktor
 {
 	namespace flash
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.ActionObject", ActionObject, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.ActionObject", ActionObject, Collectable)
 
 ActionObject::ActionObject()
-:	m_prev(0)
-,	m_next(0)
-,	m_readOnly(false)
-,	m_traceColor(TcBlack)
-,	m_traceBuffered(false)
-,	m_traceRefCount(0)
+:	m_readOnly(false)
 {
 	setMember("__proto__", ActionValue("Object"));
 }
 
 ActionObject::ActionObject(const std::string& prototypeName)
-:	m_prev(0)
-,	m_next(0)
-,	m_readOnly(false)
-,	m_traceColor(TcBlack)
-,	m_traceBuffered(false)
-,	m_traceRefCount(0)
+:	m_readOnly(false)
 {
 	setMember("__proto__", ActionValue(prototypeName));
 }
 
 ActionObject::ActionObject(ActionObject* prototype)
-:	m_prev(0)
-,	m_next(0)
-,	m_readOnly(false)
-,	m__proto__(prototype)
-,	m_traceColor(TcBlack)
-,	m_traceBuffered(false)
-,	m_traceRefCount(0)
+:	m_readOnly(false)
 {
 	setMember("__proto__", ActionValue(prototype));
-}
-
-ActionObject::~ActionObject()
-{
-	T_ASSERT (m_next == 0);
-	T_ASSERT (m_prev == 0);
-}
-
-void ActionObject::release(void* owner) const
-{
-	if (getReferenceCount() <= 1)
-	{
-		m_traceColor = TcBlack;
-		if (m_traceBuffered)
-		{
-			m_traceBuffered = false;
-			ActionObjectCyclic::getInstance().removeCandidate(const_cast< ActionObject* >(this));
-		}
-	}
-	else
-	{
-		if (m_traceColor != TcPurple)
-		{
-			m_traceColor = TcPurple;
-			if (!m_traceBuffered)
-			{
-				m_traceBuffered = true;
-				ActionObjectCyclic::getInstance().addCandidate(const_cast< ActionObject* >(this));
-			}
-		}
-	}
-	Object::release(owner);
 }
 
 void ActionObject::addInterface(ActionObject* intrface)
@@ -123,7 +73,7 @@ ActionObject* ActionObject::getPrototype(ActionContext* context)
 
 void ActionObject::setMember(const ActionValue& memberName, const ActionValue& memberValue)
 {
-	setMember(memberName.getStringSafe(), memberValue);
+	setMember(memberName.getString(), memberValue);
 }
 
 void ActionObject::setMember(const std::string& memberName, const ActionValue& memberValue)
@@ -139,7 +89,7 @@ void ActionObject::setMember(const std::string& memberName, const ActionValue& m
 
 bool ActionObject::getMember(ActionContext* context, const ActionValue& memberName, ActionValue& outMemberValue)
 {
-	return getMember(context, memberName.getStringSafe(), outMemberValue);
+	return getMember(context, memberName.getString(), outMemberValue);
 }
 
 bool ActionObject::getMember(ActionContext* context, const std::string& memberName, ActionValue& outMemberValue)
@@ -170,7 +120,7 @@ bool ActionObject::getMember(ActionContext* context, const std::string& memberNa
 		ActionValue prototypeValue;
 		if (getLocalMember("prototype", prototypeValue))
 		{
-			Ref< ActionObject > prototype = prototypeValue.getObjectSafe();
+			Ref< ActionObject > prototype = prototypeValue.getObject();
 			T_ASSERT (prototype != this);
 			T_ASSERT (prototype);
 
@@ -233,7 +183,7 @@ bool ActionObject::getPropertyGet(ActionContext* context, const std::string& pro
 		ActionValue prototypeValue;
 		if (getLocalMember("prototype", prototypeValue))
 		{
-			Ref< ActionObject > prototype = prototypeValue.getObjectSafe();
+			Ref< ActionObject > prototype = prototypeValue.getObject();
 			T_ASSERT (prototype != this);
 			T_ASSERT (prototype);
 
@@ -274,7 +224,7 @@ bool ActionObject::getPropertySet(ActionContext* context, const std::string& pro
 		ActionValue prototypeValue;
 		if (getLocalMember("prototype", prototypeValue))
 		{
-			Ref< ActionObject > prototype = prototypeValue.getObjectSafe();
+			Ref< ActionObject > prototype = prototypeValue.getObject();
 			T_ASSERT (prototype != this);
 			T_ASSERT (prototype);
 
@@ -303,9 +253,7 @@ avm_number_t ActionObject::valueOf() const
 
 ActionValue ActionObject::toString() const
 {
-	StringOutputStream ss;
-	ss << L"object (" << type_name(this) << L")";
-	return ActionValue(ss.str());
+	return ActionValue("[object Object]");
 }
 
 void ActionObject::setReadOnly()
@@ -354,8 +302,9 @@ void ActionObject::trace(const IVisitor& visitor) const
 	for (member_map_t::const_iterator i = m_members.begin(); i != m_members.end(); ++i)
 	{
 		if (i->second.isObject())
-			visitor(i->second.getObject());
+			visitor(i->second.getObjectUnsafe());
 	}
+
 	for (property_map_t::const_iterator i = m_properties.begin(); i != m_properties.end(); ++i)
 	{
 		if (i->second.first)
@@ -363,82 +312,15 @@ void ActionObject::trace(const IVisitor& visitor) const
 		if (i->second.second)
 			visitor(i->second.second);
 	}
+
+	visitor(m__proto__);
 }
 
 void ActionObject::dereference()
 {
 	m_members.clear();
 	m_properties.clear();
-}
-
-void ActionObject::traceMarkGray()
-{
-	if (m_traceColor != TcGray)
-	{
-		m_traceColor = TcGray;
-		m_traceRefCount = getReferenceCount();
-		trace(MarkGrayVisitor());
-	}
-}
-
-void ActionObject::traceScan()
-{
-	if (m_traceColor == TcGray)
-	{
-		if (m_traceRefCount > 0)
-			traceScanBlack();
-		else
-		{
-			m_traceColor = TcWhite;
-			trace(ScanVisitor());
-		}
-	}
-}
-
-void ActionObject::traceScanBlack()
-{
-	m_traceColor = TcBlack;
-	trace(ScanBlackVisitor());
-}
-
-void ActionObject::traceCollectWhite()
-{
-	if (m_traceColor == TcWhite)
-	{
-		T_ASSERT (m_traceRefCount == 0);
-		T_EXCEPTION_GUARD_BEGIN;
-
-		ActionObject::addRef(0);
-		dereference();
-		ActionObject::release(0);
-
-		T_EXCEPTION_GUARD_END;
-	}
-}
-
-void ActionObject::MarkGrayVisitor::operator () (ActionObject* memberObject) const
-{
-	if (memberObject)
-	{
-		memberObject->traceMarkGray();
-		memberObject->m_traceRefCount--;
-	}
-}
-
-void ActionObject::ScanVisitor::operator () (ActionObject* memberObject) const
-{
-	if (memberObject)
-		memberObject->traceScan();
-}
-
-void ActionObject::ScanBlackVisitor::operator () (ActionObject* memberObject) const
-{
-	if (memberObject)
-	{
-		memberObject->m_traceRefCount++;
-		if (memberObject->m_traceColor != TcBlack)
-			memberObject->traceScanBlack();
-	}
+	m__proto__ = 0;
 }
 
 	}

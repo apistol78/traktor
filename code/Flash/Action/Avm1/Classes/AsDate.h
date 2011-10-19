@@ -8,7 +8,7 @@ namespace traktor
 	namespace flash
 	{
 
-struct CallArgs;
+class Date;
 
 /*! \brief Date class.
  * \ingroup Flash
@@ -20,86 +20,88 @@ class AsDate : public ActionClass
 public:
 	AsDate();
 
+	virtual Ref< ActionObject > alloc(ActionContext* context);
+
+	virtual void init(ActionContext* context, ActionObject* self, const ActionValueArray& args);
+
 private:
-	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
+	void Date_getDate(const Date* self) const;
 
-	void Date_getDate(CallArgs& ca);
+	void Date_getDay(const Date* self) const;
 
-	void Date_getDay(CallArgs& ca);
+	void Date_getFullYear(const Date* self) const;
 
-	void Date_getFullYear(CallArgs& ca);
+	void Date_getHours(const Date* self) const;
 
-	void Date_getHours(CallArgs& ca);
+	void Date_getMilliseconds(const Date* self) const;
 
-	void Date_getMilliseconds(CallArgs& ca);
+	void Date_getMinutes(const Date* self) const;
 
-	void Date_getMinutes(CallArgs& ca);
+	void Date_getMonth(const Date* self) const;
 
-	void Date_getMonth(CallArgs& ca);
+	void Date_getSeconds(const Date* self) const;
 
-	void Date_getSeconds(CallArgs& ca);
+	void Date_getTime(const Date* self) const;
 
-	void Date_getTime(CallArgs& ca);
+	void Date_getTimezoneOffset(const Date* self) const;
 
-	void Date_getTimezoneOffset(CallArgs& ca);
+	void Date_getUTCDate(const Date* self) const;
 
-	void Date_getUTCDate(CallArgs& ca);
+	void Date_getUTCDay(const Date* self) const;
 
-	void Date_getUTCDay(CallArgs& ca);
+	void Date_getUTCFullYear(const Date* self) const;
 
-	void Date_getUTCFullYear(CallArgs& ca);
+	void Date_getUTCHours(const Date* self) const;
 
-	void Date_getUTCHours(CallArgs& ca);
+	void Date_getUTCMilliseconds(const Date* self) const;
 
-	void Date_getUTCMilliseconds(CallArgs& ca);
+	void Date_getUTCMinutes(const Date* self) const;
 
-	void Date_getUTCMinutes(CallArgs& ca);
+	void Date_getUTCMonth(const Date* self) const;
 
-	void Date_getUTCMonth(CallArgs& ca);
+	void Date_getUTCSeconds(const Date* self) const;
 
-	void Date_getUTCSeconds(CallArgs& ca);
+	void Date_getUTCYear(const Date* self) const;
 
-	void Date_getUTCYear(CallArgs& ca);
+	void Date_getYear(const Date* self) const;
 
-	void Date_getYear(CallArgs& ca);
+	void Date_setDate(Date* self) const;
 
-	void Date_setDate(CallArgs& ca);
+	void Date_setFullYear(Date* self) const;
 
-	void Date_setFullYear(CallArgs& ca);
+	void Date_setHours(Date* self) const;
 
-	void Date_setHours(CallArgs& ca);
+	void Date_setMilliseconds(Date* self) const;
 
-	void Date_setMilliseconds(CallArgs& ca);
+	void Date_setMinutes(Date* self) const;
 
-	void Date_setMinutes(CallArgs& ca);
+	void Date_setMonth(Date* self) const;
 
-	void Date_setMonth(CallArgs& ca);
+	void Date_setSeconds(Date* self) const;
 
-	void Date_setSeconds(CallArgs& ca);
+	void Date_setTime(Date* self) const;
 
-	void Date_setTime(CallArgs& ca);
+	void Date_setUTCDate(Date* self) const;
 
-	void Date_setUTCDate(CallArgs& ca);
+	void Date_setUTCFullYear(Date* self) const;
 
-	void Date_setUTCFullYear(CallArgs& ca);
+	void Date_setUTCHours(Date* self) const;
 
-	void Date_setUTCHours(CallArgs& ca);
+	void Date_setUTCMilliseconds(Date* self) const;
 
-	void Date_setUTCMilliseconds(CallArgs& ca);
+	void Date_setUTCMinutes(Date* self) const;
 
-	void Date_setUTCMinutes(CallArgs& ca);
+	void Date_setUTCMonth(Date* self) const;
 
-	void Date_setUTCMonth(CallArgs& ca);
+	void Date_setUTCSeconds(Date* self) const;
 
-	void Date_setUTCSeconds(CallArgs& ca);
+	void Date_setYear(Date* self) const;
 
-	void Date_setYear(CallArgs& ca);
+	std::string Date_toString(Date* self) const;
 
-	void Date_toString(CallArgs& ca);
+	void Date_UTC(Date* self) const;
 
-	void Date_UTC(CallArgs& ca);
-
-	void Date_valueOf(CallArgs& ca);
+	void Date_valueOf(Date* self) const;
 };
 
 	}

@@ -33,14 +33,19 @@ AsSound::AsSound()
 	prototype->addProperty("id3", createNativeFunction(this, &AsSound::Sound_get_id3), 0);
 	prototype->addProperty("position", createNativeFunction(this, &AsSound::Sound_get_position), 0);
 
+	prototype->setMember("constructor", ActionValue(this));
 	prototype->setReadOnly();
 
 	setMember("prototype", ActionValue(prototype));
 }
 
-ActionValue AsSound::construct(ActionContext* context, const ActionValueArray& args)
+Ref< ActionObject > AsSound::alloc(ActionContext* context)
 {
-	return ActionValue();
+	return new ActionObject("Sound");
+}
+
+void AsSound::init(ActionContext* context, ActionObject* self, const ActionValueArray& args)
+{
 }
 
 void AsSound::Sound_attachSound(CallArgs& ca)

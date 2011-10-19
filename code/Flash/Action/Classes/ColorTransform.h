@@ -27,6 +27,8 @@ class T_DLLCLASS ColorTransform : public ActionObject
 public:
 	ColorTransform(const SwfCxTransform& transform);
 
+	void setTransform(const SwfCxTransform& transform);
+
 	SwfCxTransform& getTransform();
 
 	const SwfCxTransform& getTransform() const;

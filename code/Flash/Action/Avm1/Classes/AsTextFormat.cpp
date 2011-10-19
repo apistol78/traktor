@@ -14,14 +14,19 @@ AsTextFormat::AsTextFormat()
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
+	prototype->setMember("constructor", ActionValue(this));
 	prototype->setReadOnly();
 
 	setMember("prototype", ActionValue(prototype));
 }
 
-ActionValue AsTextFormat::construct(ActionContext* context, const ActionValueArray& args)
+Ref< ActionObject > AsTextFormat::alloc(ActionContext* context)
 {
-	return ActionValue(new FlashTextFormat());
+	return new FlashTextFormat();
+}
+
+void AsTextFormat::init(ActionContext* context, ActionObject* self, const ActionValueArray& args)
+{
 }
 
 	}

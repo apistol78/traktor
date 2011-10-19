@@ -31,137 +31,120 @@ As_flash_geom_Point::As_flash_geom_Point()
 	prototype->addProperty("x", createNativeFunction(this, &As_flash_geom_Point::Point_get_x), createNativeFunction(this, &As_flash_geom_Point::Point_set_x));
 	prototype->addProperty("y", createNativeFunction(this, &As_flash_geom_Point::Point_get_y), createNativeFunction(this, &As_flash_geom_Point::Point_set_y));
 
+	prototype->setMember("constructor", ActionValue(this));
 	prototype->setReadOnly();
 
 	setMember("prototype", ActionValue(prototype));
 }
 
-ActionValue As_flash_geom_Point::construct(ActionContext* context, const ActionValueArray& args)
+Ref< ActionObject > As_flash_geom_Point::alloc(ActionContext* context)
 {
-	Ref< Point > pt = new Point();
-
-	if (args.size() >= 2)
-	{
-		pt->x = args[0].getNumberSafe();
-		pt->y = args[1].getNumberSafe();
-	}
-
-	return ActionValue(pt);
+	return new Point();
 }
 
-void As_flash_geom_Point::Point_add(CallArgs& ca)
+void As_flash_geom_Point::init(ActionContext* context, ActionObject* self, const ActionValueArray& args)
 {
-	Point* pt = checked_type_cast< Point*, false >(ca.self);
-	Ref< Point > pr = ca.args[0].getObject< Point >();
-	pt->x += pr->x;
-	pt->y += pr->y;
+	if (args.size() < 2)
+		return;
+
+	Point* pt = checked_type_cast< Point* >(self);
+	pt->x = args[0].getNumber();
+	pt->y = args[1].getNumber();
 }
 
-void As_flash_geom_Point::Point_clone(CallArgs& ca)
+void As_flash_geom_Point::Point_add(Point* self, const Point* arg) const
 {
-	Point* pt = checked_type_cast< Point*, false >(ca.self);
-	ca.ret = ActionValue(new Point(pt->x, pt->y));
+	self->x += arg->x;
+	self->y += arg->y;
 }
 
-void As_flash_geom_Point::Point_distance(CallArgs& ca)
+Ref< Point > As_flash_geom_Point::Point_clone(const Point* self) const
 {
-	Ref< Point > pt1 = ca.args[0].getObject< Point >();
-	Ref< Point > pt2 = ca.args[1].getObject< Point >();
+	return new Point(self->x, self->y);
+}
+
+avm_number_t As_flash_geom_Point::Point_distance(const Point* pt1, const Point* pt2) const
+{
 	avm_number_t dx = pt2->x - pt1->x;
 	avm_number_t dy = pt2->y - pt1->y;
-	ca.ret = ActionValue(sqrtf(dx * dx + dy * dy));
+	return avm_number_t(sqrtf(dx * dx + dy * dy));
 }
 
-void As_flash_geom_Point::Point_equals(CallArgs& ca)
+bool As_flash_geom_Point::Point_equals(const Point* self, const Point* pt) const
 {
-	Point* pt = checked_type_cast< Point*, false >(ca.self);
-	Ref< Point > pr = ca.args[0].getObject< Point >();
-	ca.ret = ActionValue(bool(pt->x == pr->x && pt->y == pr->y));
+	return self->x == pt->x && self->y == pt->y;
 }
 
-void As_flash_geom_Point::Point_interpolate(CallArgs& ca)
+Ref< Point > As_flash_geom_Point::Point_interpolate(Point* self, const Point* pt1, const Point* pt2, avm_number_t f) const
 {
-	Ref< Point > pt1 = ca.args[0].getObject< Point >();
-	Ref< Point > pt2 = ca.args[1].getObject< Point >();
-	avm_number_t f = ca.args[2].getNumberSafe();
-	ca.ret = ActionValue(new Point(
+	return new Point(
 		pt1->x * (1.0f - f) + pt2->x * f,
 		pt1->y * (1.0f - f) + pt2->y * f
-	));
+	);
 }
 
-void As_flash_geom_Point::Point_normalize(CallArgs& ca)
+void As_flash_geom_Point::Point_normalize(Point* self, avm_number_t scale) const
 {
-	Point* pt = checked_type_cast< Point*, false >(ca.self);
-	avm_number_t scale = ca.args[0].getNumberSafe();
-	avm_number_t ln = sqrtf(pt->x * pt->x + pt->y * pt->y);
-	pt->x *= scale / ln;
-	pt->y *= scale / ln;
+	avm_number_t ln = sqrtf(self->x * self->x + self->y * self->y);
+	self->x *= scale / ln;
+	self->y *= scale / ln;
 }
 
-void As_flash_geom_Point::Point_offset(CallArgs& ca)
+void As_flash_geom_Point::Point_offset(Point* self, avm_number_t dx, avm_number_t dy) const
 {
-	Point* pt = checked_type_cast< Point*, false >(ca.self);
-	pt->x += ca.args[0].getNumberSafe();
-	pt->y += ca.args[1].getNumberSafe();
+	self->x += dx;
+	self->y += dy;
 }
 
-void As_flash_geom_Point::Point_polar(CallArgs& ca)
+Ref< Point > As_flash_geom_Point::Point_polar(Point* self, avm_number_t length, avm_number_t angle) const
 {
-	avm_number_t length = ca.args[0].getNumberSafe();
-	avm_number_t angle = ca.args[1].getNumberSafe();
-	ca.ret = ActionValue(new Point(
+	return new Point(
 		cosf(angle) * length,
 		sinf(angle) * length
-	));
+	);
 }
 
-void As_flash_geom_Point::Point_subtract(CallArgs& ca)
+void As_flash_geom_Point::Point_subtract(Point* self, const Point* pr) const
 {
-	Point* pt = checked_type_cast< Point*, false >(ca.self);
-	Ref< Point > pr = ca.args[0].getObject< Point >();
-	pt->x -= pr->x;
-	pt->y -= pr->y;
+	self->x -= pr->x;
+	self->y -= pr->y;
 }
 
-void As_flash_geom_Point::Point_toString(CallArgs& ca)
+ActionValue As_flash_geom_Point::Point_toString(const Point* self) const
 {
-	Point* pt = checked_type_cast< Point*, false >(ca.self);
-	ca.ret = pt->toString();
+	return self->toString();
 }
 
-void As_flash_geom_Point::Point_get_length(CallArgs& ca)
+avm_number_t As_flash_geom_Point::Point_get_length(const Point* self) const
 {
-	Point* pt = checked_type_cast< Point*, false >(ca.self);
-	ca.ret = ActionValue(sqrtf(pt->x * pt->x + pt->y * pt->y));
+	return avm_number_t(sqrtf(self->x * self->x + self->y * self->y));
 }
 
-void As_flash_geom_Point::Point_set_length(CallArgs& ca)
+void As_flash_geom_Point::Point_set_length(Point* self, avm_number_t length) const
 {
+	avm_number_t d = length / avm_number_t(sqrtf(self->x * self->x + self->y * self->y));
+	self->x *= d;
+	self->y *= d;
 }
 
-void As_flash_geom_Point::Point_get_x(CallArgs& ca)
+avm_number_t As_flash_geom_Point::Point_get_x(const Point* self) const
 {
-	Point* pt = checked_type_cast< Point*, false >(ca.self);
-	ca.ret = ActionValue(pt->x);
+	return self->x;
 }
 
-void As_flash_geom_Point::Point_set_x(CallArgs& ca)
+void As_flash_geom_Point::Point_set_x(Point* self, avm_number_t x) const
 {
-	Point* pt = checked_type_cast< Point*, false >(ca.self);
-	pt->x = ca.args[0].getNumberSafe();
+	self->x = x;
 }
 
-void As_flash_geom_Point::Point_get_y(CallArgs& ca)
+avm_number_t As_flash_geom_Point::Point_get_y(const Point* self) const
 {
-	Point* pt = checked_type_cast< Point*, false >(ca.self);
-	ca.ret = ActionValue(pt->y);
+	return self->y;
 }
 
-void As_flash_geom_Point::Point_set_y(CallArgs& ca)
+void As_flash_geom_Point::Point_set_y(Point* self, avm_number_t y) const
 {
-	Point* pt = checked_type_cast< Point*, false >(ca.self);
-	pt->y = ca.args[0].getNumberSafe();
+	self->y = y;
 }
 
 	}

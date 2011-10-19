@@ -19,14 +19,19 @@ AsFunction::AsFunction()
 	prototype->setMember("apply", ActionValue(createNativeFunction(this, &AsFunction::Function_apply)));
 	prototype->setMember("call", ActionValue(createNativeFunction(this, &AsFunction::Function_call)));
 
+	prototype->setMember("constructor", ActionValue(this));
 	prototype->setReadOnly();
 
 	setMember("prototype", ActionValue(prototype));
 }
 
-ActionValue AsFunction::construct(ActionContext* context, const ActionValueArray& args)
+Ref< ActionObject > AsFunction::alloc(ActionContext* context)
 {
-	return ActionValue();
+	return new ActionObject("Function");
+}
+
+void AsFunction::init(ActionContext* context, ActionObject* self, const ActionValueArray& args)
+{
 }
 
 void AsFunction::Function_apply(CallArgs& ca)
@@ -37,9 +42,15 @@ void AsFunction::Function_apply(CallArgs& ca)
 		return;
 	}
 
-	ActionFunction* function = checked_type_cast< ActionFunction*, false >(ca.self);
-	Ref< ActionObject > self = ca.args[0].getObjectSafe();
-	Ref< Array > args = ca.args[1].getObjectSafe< Array >();
+	ActionFunction* function = dynamic_type_cast< ActionFunction* >(ca.self);
+	if (!function)
+	{
+		log::error << L"Function.apply, invalid object" << Endl;
+		return;
+	}
+
+	Ref< ActionObject > self = ca.args[0].getObject();
+	Ref< Array > args = ca.args[1].getObject< Array >();
 
 	ActionFrame frame(
 		ca.context,
@@ -78,8 +89,14 @@ void AsFunction::Function_call(CallArgs& ca)
 		return;
 	}
 
-	ActionFunction* function = checked_type_cast< ActionFunction*, false >(ca.self);
-	ActionObject* self = ca.args[0].getObjectSafe();
+	ActionFunction* function = dynamic_type_cast< ActionFunction* >(ca.self);
+	if (!function)
+	{
+		log::error << L"Function.apply, invalid object" << Endl;
+		return;
+	}
+
+	ActionObject* self = ca.args[0].getObject();
 
 	ActionFrame frame(
 		ca.context,

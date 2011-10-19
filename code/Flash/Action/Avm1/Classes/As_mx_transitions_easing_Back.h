@@ -15,9 +15,11 @@ class As_mx_transitions_easing_Back : public ActionClass
 public:
 	As_mx_transitions_easing_Back();
 
-private:
-	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
+	virtual Ref< ActionObject > alloc(ActionContext* context);
 
+	virtual void init(ActionContext* context, ActionObject* self, const ActionValueArray& args);
+
+private:
 	void Back_easeIn(CallArgs& ca);
 
 	void Back_easeInOut(CallArgs& ca);

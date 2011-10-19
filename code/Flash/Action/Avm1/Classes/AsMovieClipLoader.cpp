@@ -20,14 +20,19 @@ AsMovieClipLoader::AsMovieClipLoader()
 	prototype->setMember("removeListener", ActionValue(createNativeFunction(this, &AsMovieClipLoader::MovieClipLoader_removeListener)));
 	prototype->setMember("unloadClip", ActionValue(createNativeFunction(this, &AsMovieClipLoader::MovieClipLoader_unloadClip)));
 
+	prototype->setMember("constructor", ActionValue(this));
 	prototype->setReadOnly();
 
 	setMember("prototype", ActionValue(prototype));
 }
 
-ActionValue AsMovieClipLoader::construct(ActionContext* context, const ActionValueArray& args)
+Ref< ActionObject > AsMovieClipLoader::alloc(ActionContext* context)
 {
-	return ActionValue(new ActionObject("MovieClipLoader"));
+	return new ActionObject("MovieClipLoader");
+}
+
+void AsMovieClipLoader::init(ActionContext* context, ActionObject* self, const ActionValueArray& args)
+{
 }
 
 void AsMovieClipLoader::MovieClipLoader_addListener(CallArgs& ca)

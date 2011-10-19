@@ -18,9 +18,11 @@ class As_flash_geom_Transform : public ActionClass
 public:
 	As_flash_geom_Transform();
 
-private:
-	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
+	virtual Ref< ActionObject > alloc(ActionContext* context);
 
+	virtual void init(ActionContext* context, ActionObject* self, const ActionValueArray& args);
+
+private:
 	Ref< ColorTransform > Transform_get_colorTransform(Transform* self) const;
 
 	void Transform_set_colorTransform(Transform* self, const ColorTransform* colorTransform) const;

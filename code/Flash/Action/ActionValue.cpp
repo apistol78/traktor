@@ -146,7 +146,7 @@ ActionValue::~ActionValue()
 	T_EXCEPTION_GUARD_END
 }
 
-bool ActionValue::getBooleanSafe() const
+bool ActionValue::getBoolean() const
 {
 	T_VALIDATE(*this);
 	switch (m_type)
@@ -163,7 +163,7 @@ bool ActionValue::getBooleanSafe() const
 	return false;
 }
 
-avm_number_t ActionValue::getNumberSafe() const
+avm_number_t ActionValue::getNumber() const
 {
 	T_VALIDATE(*this);
 	switch (m_type)
@@ -176,7 +176,7 @@ avm_number_t ActionValue::getNumberSafe() const
 	return avm_number_t(0);
 }
 
-std::string ActionValue::getStringSafe() const
+std::string ActionValue::getString() const
 {
 	T_VALIDATE(*this);
 	switch (m_type)
@@ -188,17 +188,17 @@ std::string ActionValue::getStringSafe() const
 	case AvtString:
 		return m_value.s;
 	case AvtObject:
-		return m_value.o ? m_value.o->toString().getStringSafe() : "null";
+		return m_value.o ? m_value.o->toString().getString() : "null";
 	}
 	return "undefined";
 }
 
-std::wstring ActionValue::getWideStringSafe() const
+std::wstring ActionValue::getWideString() const
 {
-	return mbstows(Utf8Encoding(), getStringSafe());
+	return mbstows(Utf8Encoding(), getString());
 }
 
-Ref< ActionObject > ActionValue::getObjectSafe() const
+Ref< ActionObject > ActionValue::getObject() const
 {
 	T_VALIDATE(*this);
 	switch (m_type)

@@ -21,10 +21,12 @@ class AsMath : public ActionClass
 public:
 	AsMath();
 
+	virtual Ref< ActionObject > alloc(ActionContext* context);
+
+	virtual void init(ActionContext* context, ActionObject* self, const ActionValueArray& args);
+
 private:
 	Random m_random;
-
-	virtual ActionValue construct(ActionContext* context, const ActionValueArray& args);
 
 	void Math_abs(CallArgs& ca);
 

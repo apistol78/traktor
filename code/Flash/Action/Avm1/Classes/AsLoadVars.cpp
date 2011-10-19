@@ -26,14 +26,19 @@ AsLoadVars::AsLoadVars()
 	prototype->addProperty("contentType", createNativeFunction(this, &AsLoadVars::LoadVars_get_contentType), createNativeFunction(this, &AsLoadVars::LoadVars_set_contentType));
 	prototype->addProperty("loaded", createNativeFunction(this, &AsLoadVars::LoadVars_get_loaded), createNativeFunction(this, &AsLoadVars::LoadVars_set_loaded));
 
+	prototype->setMember("constructor", ActionValue(this));
 	prototype->setReadOnly();
 
 	setMember("prototype", ActionValue(prototype));
 }
 
-ActionValue AsLoadVars::construct(ActionContext* context, const ActionValueArray& args)
+Ref< ActionObject > AsLoadVars::alloc(ActionContext* context)
 {
-	return ActionValue(new ActionObject("LoadVars"));
+	return new ActionObject("LoadVars");
+}
+
+void AsLoadVars::init(ActionContext* context, ActionObject* self, const ActionValueArray& args)
+{
 }
 
 void AsLoadVars::LoadVars_addRequestHeader(CallArgs& ca)

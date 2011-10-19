@@ -11,11 +11,10 @@ namespace traktor
 	namespace flash
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashBitmap", FlashBitmap, ActionObject)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashBitmap", FlashBitmap, Object)
 
 FlashBitmap::FlashBitmap()
-:	ActionObject("Object")
-,	m_width(0)
+:	m_width(0)
 ,	m_height(0)
 ,	m_bits(0)
 {

@@ -15,14 +15,20 @@ AsI18N::AsI18N()
 	Ref< ActionObject > prototype = new ActionObject();
 
 	prototype->setMember("format", ActionValue(createNativeFunction(this, &AsI18N::I18N_format)));
+
+	prototype->setMember("constructor", ActionValue(this));
 	prototype->setReadOnly();
 
 	setMember("prototype", ActionValue(prototype));
 }
 
-ActionValue AsI18N::construct(ActionContext* context, const ActionValueArray& args)
+Ref< ActionObject > AsI18N::alloc(ActionContext* context)
 {
-	return ActionValue();
+	return 0;
+}
+
+void AsI18N::init(ActionContext* context, ActionObject* self, const ActionValueArray& args)
+{
 }
 
 void AsI18N::I18N_format(CallArgs& ca)
@@ -33,41 +39,41 @@ void AsI18N::I18N_format(CallArgs& ca)
 	{
 	case 1:
 		text = i18n::Format(
-			ca.args[0].getWideStringSafe()
+			ca.args[0].getWideString()
 		);
 		break;
 
 	case 2:
 		text = i18n::Format(
-			ca.args[0].getWideStringSafe(),
-			ca.args[1].getWideStringSafe()
+			ca.args[0].getWideString(),
+			ca.args[1].getWideString()
 		);
 		break;
 
 	case 3:
 		text = i18n::Format(
-			ca.args[0].getWideStringSafe(),
-			ca.args[1].getWideStringSafe(),
-			ca.args[2].getWideStringSafe()
+			ca.args[0].getWideString(),
+			ca.args[1].getWideString(),
+			ca.args[2].getWideString()
 		);
 		break;
 
 	case 4:
 		text = i18n::Format(
-			ca.args[0].getWideStringSafe(),
-			ca.args[1].getWideStringSafe(),
-			ca.args[2].getWideStringSafe(),
-			ca.args[3].getWideStringSafe()
+			ca.args[0].getWideString(),
+			ca.args[1].getWideString(),
+			ca.args[2].getWideString(),
+			ca.args[3].getWideString()
 		);
 		break;
 
 	case 5:
 		text = i18n::Format(
-			ca.args[0].getWideStringSafe(),
-			ca.args[1].getWideStringSafe(),
-			ca.args[2].getWideStringSafe(),
-			ca.args[3].getWideStringSafe(),
-			ca.args[4].getWideStringSafe()
+			ca.args[0].getWideString(),
+			ca.args[1].getWideString(),
+			ca.args[2].getWideString(),
+			ca.args[3].getWideString(),
+			ca.args[4].getWideString()
 		);
 		break;
 	}

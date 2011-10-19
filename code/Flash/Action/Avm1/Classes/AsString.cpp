@@ -34,61 +34,59 @@ AsString::AsString()
 	prototype->setMember("toUpperCase", ActionValue(createNativeFunction(this, &AsString::String_toUpperCase)));
 	prototype->setMember("valueOf", ActionValue(createNativeFunction(this, &AsString::String_valueOf)));
 
+	prototype->setMember("constructor", ActionValue(this));
 	prototype->setReadOnly();
 
 	setMember("prototype", ActionValue(prototype));
 }
 
-ActionValue AsString::construct(ActionContext* context, const ActionValueArray& args)
+Ref< ActionObject > AsString::alloc(ActionContext* context)
+{
+	return new String();
+}
+
+void AsString::init(ActionContext* context, ActionObject* self, const ActionValueArray& args)
 {
 	if (args.size() > 0)
-		return ActionValue(new String(args[0].getString()));
-	else
-		return ActionValue(new String());
+		checked_type_cast< String* >(self)->set(args[0].getString());
 }
 
-void AsString::String_charAt(CallArgs& ca)
+Ref< String > AsString::String_charAt(const String* self, uint32_t index) const
 {
-	Ref< String > self = checked_type_cast< String* >(ca.self);
 	const std::string& st = self->get();
-
-	uint32_t index = uint32_t(ca.args[0].getNumberSafe());
-
 	if (index < st.length())
-		ca.ret = ActionValue(new String(st[index]));
+		return new String(st[index]);
 	else
-		ca.ret = ActionValue(new String());
+		return new String();
 }
 
-void AsString::String_charCodeAt(CallArgs& ca)
+uint32_t AsString::String_charCodeAt(const String* self, uint32_t index) const
 {
-	Ref< String > self = checked_type_cast< String* >(ca.self);
 	const std::string& st = self->get();
-
-	uint32_t index = uint32_t(ca.args[0].getNumberSafe());
-
 	if (index < st.length())
-		ca.ret = ActionValue(avm_number_t(st[index]));
+		return st[index];
 	else
-		ca.ret = ActionValue(std::numeric_limits< avm_number_t >::signaling_NaN());
+		return 0;
 }
 
 void AsString::String_concat(CallArgs& ca)
 {
-	Ref< String > self = checked_type_cast< String* >(ca.self);
+	Ref< String > self = dynamic_type_cast< String* >(ca.self);
+	if (self)
+	{
+		std::stringstream ss;
+		ss << self->get();
 
-	std::stringstream ss;
-	ss << self->get();
+		for (uint32_t i = 0; i < ca.args.size(); ++i)
+			ss << ca.args[i].getString();
 
-	for (uint32_t i = 0; i < ca.args.size(); ++i)
-		ss << ca.args[i].getStringSafe();
-
-	ca.ret = ActionValue(ss.str());
+		ca.ret = ActionValue(ss.str());
+	}
 }
 
 void AsString::String_fromCharCode(CallArgs& ca)
 {
-	char charCode = char(ca.args[0].getNumberSafe());
+	char charCode = char(ca.args[0].getNumber());
 	ca.ret = ActionValue(new String(charCode));
 }
 
@@ -107,8 +105,8 @@ void AsString::String_slice(CallArgs& ca)
 
 	if (ca.args.size() >= 2)
 	{
-		uint32_t start = uint32_t(ca.args[0].getNumberSafe());
-		uint32_t end = uint32_t(ca.args[1].getNumberSafe());
+		uint32_t start = uint32_t(ca.args[0].getNumber());
+		uint32_t end = uint32_t(ca.args[1].getNumber());
 		if (start < st.length())
 			ca.ret = ActionValue(st.substr(start, end - start));
 		else
@@ -116,7 +114,7 @@ void AsString::String_slice(CallArgs& ca)
 	}
 	else if (ca.args.size() >= 1)
 	{
-		uint32_t start = uint32_t(ca.args[0].getNumberSafe());
+		uint32_t start = uint32_t(ca.args[0].getNumber());
 		if (start < st.length())
 			ca.ret = ActionValue(st.substr(start));
 		else
@@ -132,13 +130,13 @@ void AsString::String_split(CallArgs& ca)
 	std::vector< std::string > words;
 	if (ca.args.size() >= 2)
 	{
-		std::string delim = ca.args[0].getStringSafe();
-		uint32_t limit = uint32_t(ca.args[1].getNumberSafe());
+		std::string delim = ca.args[0].getString();
+		uint32_t limit = uint32_t(ca.args[1].getNumber());
 		Split< std::string >::word(st, delim, words, limit);
 	}
 	else if (ca.args.size() >= 1)
 	{
-		std::string delim = ca.args[0].getStringSafe();
+		std::string delim = ca.args[0].getString();
 		Split< std::string >::word(st, delim, words);
 	}
 
@@ -154,8 +152,8 @@ void AsString::String_substr(CallArgs& ca)
 	Ref< String > self = checked_type_cast< String* >(ca.self);
 	const std::string& st = self->get();
 
-	uint32_t index = uint32_t(ca.args[0].getNumberSafe());
-	uint32_t count = uint32_t(ca.args[1].getNumberSafe());
+	uint32_t index = uint32_t(ca.args[0].getNumber());
+	uint32_t count = uint32_t(ca.args[1].getNumber());
 
 	if (index < st.length())
 		ca.ret = ActionValue(st.substr(index, count));
@@ -168,8 +166,8 @@ void AsString::String_substring(CallArgs& ca)
 	Ref< String > self = checked_type_cast< String* >(ca.self);
 	const std::string& st = self->get();
 
-	uint32_t start = uint32_t(ca.args[0].getNumberSafe());
-	uint32_t end = uint32_t(ca.args[1].getNumberSafe());
+	uint32_t start = uint32_t(ca.args[0].getNumber());
+	uint32_t end = uint32_t(ca.args[1].getNumber());
 
 	if (start < st.length())
 		ca.ret = ActionValue(st.substr(start, end - start));

@@ -19,14 +19,19 @@ AsLocalConnection::AsLocalConnection()
 	prototype->setMember("domain", ActionValue(createNativeFunction(this, &AsLocalConnection::LocalConnection_domain)));
 	prototype->setMember("send", ActionValue(createNativeFunction(this, &AsLocalConnection::LocalConnection_send)));
 
+	prototype->setMember("constructor", ActionValue(this));
 	prototype->setReadOnly();
 
 	setMember("prototype", ActionValue(prototype));
 }
 
-ActionValue AsLocalConnection::construct(ActionContext* context, const ActionValueArray& args)
+Ref< ActionObject > AsLocalConnection::alloc(ActionContext* context)
 {
-	return ActionValue(new ActionObject("LocalConnection"));
+	return new ActionObject("LocalConnection");
+}
+
+void AsLocalConnection::init(ActionContext* context, ActionObject* self, const ActionValueArray& args)
+{
 }
 
 void AsLocalConnection::LocalConnection_close(CallArgs& ca)

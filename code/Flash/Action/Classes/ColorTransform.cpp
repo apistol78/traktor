@@ -13,6 +13,11 @@ ColorTransform::ColorTransform(const SwfCxTransform& transform)
 {
 }
 
+void ColorTransform::setTransform(const SwfCxTransform& transform)
+{
+	m_transform = transform;
+}
+
 SwfCxTransform& ColorTransform::getTransform()
 {
 	return m_transform;

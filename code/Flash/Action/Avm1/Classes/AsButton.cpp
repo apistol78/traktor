@@ -45,255 +45,258 @@ AsButton::AsButton()
 	prototype->addProperty("_ymouse", createNativeFunction(this, &AsButton::Button_get_ymouse), 0);
 	prototype->addProperty("_yscale", createNativeFunction(this, &AsButton::Button_get_yscale), createNativeFunction(this, &AsButton::Button_set_yscale));
 
+	prototype->setMember("constructor", ActionValue(this));
 	prototype->setReadOnly();
 
 	setMember("prototype", ActionValue(prototype));
 }
 
-ActionValue AsButton::construct(ActionContext* context, const ActionValueArray& args)
+Ref< ActionObject > AsButton::alloc(ActionContext* context)
 {
-	return ActionValue();
+	return 0;
 }
 
-void AsButton::Button_get_alpha(CallArgs& ca)
+void AsButton::init(ActionContext* context, ActionObject* self, const ActionValueArray& args)
 {
-	T_FATAL_ERROR;
 }
 
-void AsButton::Button_set_alpha(CallArgs& ca)
-{
-	T_FATAL_ERROR;
-}
-
-void AsButton::Button_get_blendMode(CallArgs& ca)
+void AsButton::Button_get_alpha(const FlashButtonInstance* self) const
 {
 	T_FATAL_ERROR;
 }
 
-void AsButton::Button_set_blendMode(CallArgs& ca)
+void AsButton::Button_set_alpha(FlashButtonInstance* self) const
 {
 	T_FATAL_ERROR;
 }
 
-void AsButton::Button_get_cacheAsBitmap(CallArgs& ca)
+void AsButton::Button_get_blendMode(const FlashButtonInstance* self) const
 {
 	T_FATAL_ERROR;
 }
 
-void AsButton::Button_set_cacheAsBitmap(CallArgs& ca)
+void AsButton::Button_set_blendMode(FlashButtonInstance* self) const
 {
 	T_FATAL_ERROR;
 }
 
-void AsButton::Button_get_enabled(CallArgs& ca)
+void AsButton::Button_get_cacheAsBitmap(const FlashButtonInstance* self) const
 {
 	T_FATAL_ERROR;
 }
 
-void AsButton::Button_set_enabled(CallArgs& ca)
+void AsButton::Button_set_cacheAsBitmap(FlashButtonInstance* self) const
 {
 	T_FATAL_ERROR;
 }
 
-void AsButton::Button_get_filters(CallArgs& ca)
+void AsButton::Button_get_enabled(const FlashButtonInstance* self) const
 {
 	T_FATAL_ERROR;
 }
 
-void AsButton::Button_set_filters(CallArgs& ca)
+void AsButton::Button_set_enabled(FlashButtonInstance* self) const
 {
 	T_FATAL_ERROR;
 }
 
-void AsButton::Button_get_focusrect(CallArgs& ca)
+void AsButton::Button_get_filters(const FlashButtonInstance* self) const
 {
 	T_FATAL_ERROR;
 }
 
-void AsButton::Button_set_focusrect(CallArgs& ca)
+void AsButton::Button_set_filters(FlashButtonInstance* self) const
 {
 	T_FATAL_ERROR;
 }
 
-void AsButton::Button_get_height(CallArgs& ca)
+void AsButton::Button_get_focusrect(const FlashButtonInstance* self) const
 {
 	T_FATAL_ERROR;
 }
 
-void AsButton::Button_set_height(CallArgs& ca)
+void AsButton::Button_set_focusrect(FlashButtonInstance* self) const
 {
 	T_FATAL_ERROR;
 }
 
-void AsButton::Button_get_highquality(CallArgs& ca)
+void AsButton::Button_get_height(const FlashButtonInstance* self) const
 {
 	T_FATAL_ERROR;
 }
 
-void AsButton::Button_set_highquality(CallArgs& ca)
+void AsButton::Button_set_height(FlashButtonInstance* self) const
 {
 	T_FATAL_ERROR;
 }
 
-void AsButton::Button_get_menu(CallArgs& ca)
+void AsButton::Button_get_highquality(const FlashButtonInstance* self) const
 {
 	T_FATAL_ERROR;
 }
 
-void AsButton::Button_set_menu(CallArgs& ca)
+void AsButton::Button_set_highquality(FlashButtonInstance* self) const
 {
 	T_FATAL_ERROR;
 }
 
-void AsButton::Button_get_name(CallArgs& ca)
+void AsButton::Button_get_menu(const FlashButtonInstance* self) const
 {
-	FlashButtonInstance* buttonInstance = checked_type_cast< FlashButtonInstance* >(ca.self);
-	ca.ret = ActionValue(buttonInstance->getName());
+	T_FATAL_ERROR;
 }
 
-void AsButton::Button_set_name(CallArgs& ca)
+void AsButton::Button_set_menu(FlashButtonInstance* self) const
 {
-	FlashButtonInstance* buttonInstance = checked_type_cast< FlashButtonInstance* >(ca.self);
-	buttonInstance->setName(ca.args[0].getStringSafe());
+	T_FATAL_ERROR;
 }
 
-void AsButton::Button_get_parent(CallArgs& ca)
+std::string AsButton::Button_get_name(const FlashButtonInstance* self) const
 {
+	return self->getName();
 }
 
-void AsButton::Button_set_parent(CallArgs& ca)
+void AsButton::Button_set_name(FlashButtonInstance* self, const std::string& name) const
 {
+	self->setName(name);
 }
 
-void AsButton::Button_get_quality(CallArgs& ca)
-{
-}
-
-void AsButton::Button_set_quality(CallArgs& ca)
+void AsButton::Button_get_parent(const FlashButtonInstance* self) const
 {
 }
 
-void AsButton::Button_get_rotation(CallArgs& ca)
+void AsButton::Button_set_parent(FlashButtonInstance* self) const
 {
 }
 
-void AsButton::Button_set_rotation(CallArgs& ca)
+void AsButton::Button_get_quality(const FlashButtonInstance* self) const
 {
 }
 
-void AsButton::Button_get_scale9Grid(CallArgs& ca)
+void AsButton::Button_set_quality(FlashButtonInstance* self) const
 {
 }
 
-void AsButton::Button_set_scale9Grid(CallArgs& ca)
+void AsButton::Button_get_rotation(const FlashButtonInstance* self) const
 {
 }
 
-void AsButton::Button_get_soundbuftime(CallArgs& ca)
+void AsButton::Button_set_rotation(FlashButtonInstance* self) const
 {
 }
 
-void AsButton::Button_set_soundbuftime(CallArgs& ca)
+void AsButton::Button_get_scale9Grid(const FlashButtonInstance* self) const
 {
 }
 
-void AsButton::Button_get_tabEnabled(CallArgs& ca)
+void AsButton::Button_set_scale9Grid(FlashButtonInstance* self) const
 {
 }
 
-void AsButton::Button_set_tabEnabled(CallArgs& ca)
+void AsButton::Button_get_soundbuftime(const FlashButtonInstance* self) const
 {
 }
 
-void AsButton::Button_get_tabIndex(CallArgs& ca)
+void AsButton::Button_set_soundbuftime(FlashButtonInstance* self) const
 {
 }
 
-void AsButton::Button_set_tabIndex(CallArgs& ca)
+void AsButton::Button_get_tabEnabled(const FlashButtonInstance* self) const
 {
 }
 
-void AsButton::Button_get_target(CallArgs& ca)
+void AsButton::Button_set_tabEnabled(FlashButtonInstance* self) const
 {
 }
 
-void AsButton::Button_get_trackAsMenu(CallArgs& ca)
+void AsButton::Button_get_tabIndex(const FlashButtonInstance* self) const
 {
 }
 
-void AsButton::Button_set_trackAsMenu(CallArgs& ca)
+void AsButton::Button_set_tabIndex(FlashButtonInstance* self) const
 {
 }
 
-void AsButton::Button_get_url(CallArgs& ca)
+void AsButton::Button_get_target(const FlashButtonInstance* self) const
 {
 }
 
-void AsButton::Button_set_url(CallArgs& ca)
+void AsButton::Button_get_trackAsMenu(const FlashButtonInstance* self) const
 {
 }
 
-void AsButton::Button_get_useHandCursor(CallArgs& ca)
+void AsButton::Button_set_trackAsMenu(FlashButtonInstance* self) const
 {
 }
 
-void AsButton::Button_set_useHandCursor(CallArgs& ca)
+void AsButton::Button_get_url(const FlashButtonInstance* self) const
 {
 }
 
-void AsButton::Button_get_visible(CallArgs& ca)
+void AsButton::Button_set_url(FlashButtonInstance* self) const
 {
 }
 
-void AsButton::Button_set_visible(CallArgs& ca)
+void AsButton::Button_get_useHandCursor(const FlashButtonInstance* self) const
 {
 }
 
-void AsButton::Button_get_width(CallArgs& ca)
+void AsButton::Button_set_useHandCursor(FlashButtonInstance* self) const
 {
 }
 
-void AsButton::Button_set_width(CallArgs& ca)
+void AsButton::Button_get_visible(const FlashButtonInstance* self) const
 {
 }
 
-void AsButton::Button_get_x(CallArgs& ca)
+void AsButton::Button_set_visible(FlashButtonInstance* self) const
 {
 }
 
-void AsButton::Button_set_x(CallArgs& ca)
+void AsButton::Button_get_width(const FlashButtonInstance* self) const
 {
 }
 
-void AsButton::Button_get_xmouse(CallArgs& ca)
+void AsButton::Button_set_width(FlashButtonInstance* self) const
 {
 }
 
-void AsButton::Button_get_xscale(CallArgs& ca)
+void AsButton::Button_get_x(const FlashButtonInstance* self) const
 {
 }
 
-void AsButton::Button_set_xscale(CallArgs& ca)
+void AsButton::Button_set_x(FlashButtonInstance* self) const
 {
 }
 
-void AsButton::Button_get_y(CallArgs& ca)
+void AsButton::Button_get_xmouse(const FlashButtonInstance* self) const
 {
 }
 
-void AsButton::Button_set_y(CallArgs& ca)
+void AsButton::Button_get_xscale(const FlashButtonInstance* self) const
 {
 }
 
-void AsButton::Button_get_ymouse(CallArgs& ca)
+void AsButton::Button_set_xscale(FlashButtonInstance* self) const
 {
 }
 
-void AsButton::Button_get_yscale(CallArgs& ca)
+void AsButton::Button_get_y(const FlashButtonInstance* self) const
 {
 }
 
-void AsButton::Button_set_yscale(CallArgs& ca)
+void AsButton::Button_set_y(FlashButtonInstance* self) const
+{
+}
+
+void AsButton::Button_get_ymouse(const FlashButtonInstance* self) const
+{
+}
+
+void AsButton::Button_get_yscale(const FlashButtonInstance* self) const
+{
+}
+
+void AsButton::Button_set_yscale(FlashButtonInstance* self) const
 {
 }
 
