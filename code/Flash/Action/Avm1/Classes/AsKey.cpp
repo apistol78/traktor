@@ -76,7 +76,7 @@ void AsKey::eventKeyDown(int keyCode)
 		if (member.isUndefined())
 			continue;
 
-		Ref< ActionFunction > eventFunction = checked_type_cast< ActionFunction* >(member.getObject());
+		Ref< ActionFunction > eventFunction = member.getObject< ActionFunction >();
 		if (eventFunction)
 		{
 			ActionFrame callerFrame(getContext(), 0, 0, 4, 0, 0);
@@ -99,7 +99,7 @@ void AsKey::eventKeyUp(int keyCode)
 		if (member.isUndefined())
 			continue;
 
-		Ref< ActionFunction > eventFunction = checked_type_cast< ActionFunction* >(member.getObject());
+		Ref< ActionFunction > eventFunction = member.getObject< ActionFunction >();
 		if (eventFunction)
 		{
 			ActionFrame callerFrame(getContext(), 0, 0, 4, 0, 0);
