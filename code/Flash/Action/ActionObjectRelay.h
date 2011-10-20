@@ -23,13 +23,11 @@ class T_DLLCLASS ActionObjectRelay : public IActionObjectRelay
 public:
 	virtual void setAsObject(ActionObject* asObject);
 
-	virtual ActionObject* getAsObject();
+	virtual ActionObject* getAsObject(ActionContext* context);
 
-	virtual bool setMember(const std::string& memberName, const ActionValue& memberValue);
+	virtual bool setMember(ActionContext* context, const std::string& memberName, const ActionValue& memberValue);
 
-	virtual bool getMember(const std::string& memberName, ActionValue& outMemberValue);
-
-	virtual ActionValue toString() const;
+	virtual bool getMember(ActionContext* context, const std::string& memberName, ActionValue& outMemberValue);
 
 protected:
 	ActionObjectRelay(const char* const prototype);

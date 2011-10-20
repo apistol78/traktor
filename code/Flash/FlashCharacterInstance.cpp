@@ -104,7 +104,7 @@ void FlashCharacterInstance::eventInit()
 	{
 		ActionFrame callFrame(
 			m_context,
-			getAsObject(),
+			getAsObject(m_context),
 			i->second,
 			4,
 			0,
@@ -121,7 +121,7 @@ void FlashCharacterInstance::eventLoad()
 	{
 		ActionFrame callFrame(
 			m_context,
-			getAsObject(),
+			getAsObject(m_context),
 			i->second,
 			4,
 			0,
@@ -138,7 +138,7 @@ void FlashCharacterInstance::eventFrame()
 	{
 		ActionFrame callFrame(
 			m_context,
-			getAsObject(),
+			getAsObject(m_context),
 			i->second,
 			4,
 			0,

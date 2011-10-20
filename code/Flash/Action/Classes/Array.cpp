@@ -1,5 +1,4 @@
 #include <cctype>
-#include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Flash/Action/Classes/Array.h"
@@ -146,7 +145,7 @@ uint32_t Array::length() const
 	return uint32_t(m_values.size());
 }
 
-bool Array::setMember(const std::string& memberName, const ActionValue& memberValue)
+bool Array::setMember(ActionContext* context, const std::string& memberName, const ActionValue& memberValue)
 {
 	int32_t index = parseString< int32_t >(memberName, -1);
 	if (index >= 0 && index < int32_t(m_values.size()))
@@ -157,7 +156,7 @@ bool Array::setMember(const std::string& memberName, const ActionValue& memberVa
 	return false;
 }
 
-bool Array::getMember(const std::string& memberName, ActionValue& outMemberValue)
+bool Array::getMember(ActionContext* context, const std::string& memberName, ActionValue& outMemberValue)
 {
 	int32_t index = parseString< int32_t >(memberName, -1);
 	if (index >= 0 && index < int32_t(m_values.size()))
@@ -168,24 +167,12 @@ bool Array::getMember(const std::string& memberName, ActionValue& outMemberValue
 	return false;
 }
 
-ActionValue Array::toString() const
-{
-	StringOutputStream ss;
-	for (std::vector< ActionValue >::const_iterator i = m_values.begin(); i != m_values.end(); ++i)
-	{
-		if (i != m_values.begin())
-			ss << L", ";
-		ss << i->getWideString();
-	}
-	return ActionValue(ss.str());
-}
-
 void Array::trace(const IVisitor& visitor) const
 {
 	for (std::vector< ActionValue >::const_iterator i = m_values.begin(); i != m_values.end(); ++i)
 	{
 		if (i->isObject())
-			visitor(i->getObjectUnsafe());
+			visitor(i->getObject());
 	}
 	ActionObjectRelay::trace(visitor);
 }

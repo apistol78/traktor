@@ -11,7 +11,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.As_mx_transitions_easing_Regular", As_mx_
 As_mx_transitions_easing_Regular::As_mx_transitions_easing_Regular(ActionContext* context)
 :	ActionClass(context, "mx.transitions.easing.Regular")
 {
-	Ref< ActionObject > prototype = new ActionObject();
+	Ref< ActionObject > prototype = new ActionObject(context);
 
 	prototype->setMember("easeIn", ActionValue(createNativeFunction(context, this, &As_mx_transitions_easing_Regular::Regular_easeIn)));
 	prototype->setMember("easeInOut", ActionValue(createNativeFunction(context, this, &As_mx_transitions_easing_Regular::Regular_easeInOut)));
@@ -23,7 +23,7 @@ As_mx_transitions_easing_Regular::As_mx_transitions_easing_Regular(ActionContext
 	setMember("prototype", ActionValue(prototype));
 }
 
-void As_mx_transitions_easing_Regular::init(ActionObject* self, const ActionValueArray& args) const
+void As_mx_transitions_easing_Regular::init(ActionObject* self, const ActionValueArray& args)
 {
 }
 

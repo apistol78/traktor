@@ -13,7 +13,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsSecurity", AsSecurity, ActionClass)
 AsSecurity::AsSecurity(ActionContext* context)
 :	ActionClass(context, "Security")
 {
-	Ref< ActionObject > prototype = new ActionObject();
+	Ref< ActionObject > prototype = new ActionObject(context);
 
 	prototype->setMember("allowDomain", ActionValue(createNativeFunction(context, this, &AsSecurity::Security_allowDomain)));
 	prototype->setMember("allowInsecureDomain", ActionValue(createNativeFunction(context, this, &AsSecurity::Security_allowInsecureDomain)));
@@ -25,7 +25,7 @@ AsSecurity::AsSecurity(ActionContext* context)
 	setMember("prototype", ActionValue(prototype));
 }
 
-void AsSecurity::init(ActionObject* self, const ActionValueArray& args) const
+void AsSecurity::init(ActionObject* self, const ActionValueArray& args)
 {
 }
 

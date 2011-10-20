@@ -12,7 +12,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsTextFormat", AsTextFormat, ActionClass)
 AsTextFormat::AsTextFormat(ActionContext* context)
 :	ActionClass(context, "TextFormat")
 {
-	Ref< ActionObject > prototype = new ActionObject();
+	Ref< ActionObject > prototype = new ActionObject(context);
 
 	prototype->setMember("constructor", ActionValue(this));
 	prototype->setReadOnly();
@@ -20,7 +20,7 @@ AsTextFormat::AsTextFormat(ActionContext* context)
 	setMember("prototype", ActionValue(prototype));
 }
 
-void AsTextFormat::init(ActionObject* self, const ActionValueArray& args) const
+void AsTextFormat::init(ActionObject* self, const ActionValueArray& args)
 {
 	self->setRelay(new FlashTextFormat());
 }

@@ -12,7 +12,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsMovieClipLoader", AsMovieClipLoader, Ac
 AsMovieClipLoader::AsMovieClipLoader(ActionContext* context)
 :	ActionClass(context, "MovieClipLoader")
 {
-	Ref< ActionObject > prototype = new ActionObject();
+	Ref< ActionObject > prototype = new ActionObject(context);
 
 	prototype->setMember("addListener", ActionValue(createNativeFunction(context, this, &AsMovieClipLoader::MovieClipLoader_addListener)));
 	prototype->setMember("getProgress", ActionValue(createNativeFunction(context, this, &AsMovieClipLoader::MovieClipLoader_getProgress)));
@@ -26,7 +26,7 @@ AsMovieClipLoader::AsMovieClipLoader(ActionContext* context)
 	setMember("prototype", ActionValue(prototype));
 }
 
-void AsMovieClipLoader::init(ActionObject* self, const ActionValueArray& args) const
+void AsMovieClipLoader::init(ActionObject* self, const ActionValueArray& args)
 {
 }
 

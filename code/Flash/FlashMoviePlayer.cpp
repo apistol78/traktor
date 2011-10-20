@@ -158,10 +158,10 @@ void FlashMoviePlayer::renderFrame()
 
 void FlashMoviePlayer::executeFrame()
 {
-	Ref< ActionContext > context = m_movieInstance->getContext();
-	ActionValue memberValue;
+	ActionContext* context = m_movieInstance->getContext();
 
-	context->pushMovieClip(m_movieInstance);
+	Ref< FlashSpriteInstance > current = context->getMovieClip();
+	context->setMovieClip(m_movieInstance);
 
 	// Issue interval functions.
 	ActionValueArray argv;
@@ -226,7 +226,7 @@ void FlashMoviePlayer::executeFrame()
 	context->notifyFrameListeners(avm_number_t(m_timeCurrent));
 
 	m_movieInstance->postDispatchEvents();
-	context->popMovieClip();
+	context->setMovieClip(current);
 
 	// Flush pool memory; release all lingering object references etc.
 	context->getPool().flush();
@@ -365,9 +365,6 @@ void FlashMoviePlayer::Global_getUrl(CallArgs& ca)
 
 void FlashMoviePlayer::Global_setInterval(CallArgs& ca)
 {
-	ActionContext* actionContext = m_movieInstance->getContext();
-	T_ASSERT (actionContext);
-
 	Ref< ActionObject > target;
 	Ref< ActionFunction > function;
 	ActionValue functionValue;
@@ -376,8 +373,8 @@ void FlashMoviePlayer::Global_setInterval(CallArgs& ca)
 	if (ca.args[1].isString())
 	{
 		// (objectReference:Object, methodName:String, interval:Number, [param1:Object, param2, ..., paramN])
-		target = ca.args[0].getObject();
-		if (!target->getMember(actionContext, ca.args[1].getString(), functionValue))
+		target = ca.args[0].getObjectAlways(ca.context);
+		if (!target->getMember(ca.args[1].getString(), functionValue))
 			return;
 		function = functionValue.getObject< ActionFunction >();
 		interval = uint32_t(ca.args[2].getNumber());

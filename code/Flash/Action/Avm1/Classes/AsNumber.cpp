@@ -14,7 +14,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsNumber", AsNumber, ActionClass)
 AsNumber::AsNumber(ActionContext* context)
 :	ActionClass(context, "Number")
 {
-	Ref< ActionObject > prototype = new ActionObject();
+	Ref< ActionObject > prototype = new ActionObject(context);
 
 	prototype->setMember("MAX_VALUE", ActionValue(std::numeric_limits< avm_number_t >::max()));
 	prototype->setMember("MIN_VALUE", ActionValue(std::numeric_limits< avm_number_t >::min()));
@@ -30,7 +30,7 @@ AsNumber::AsNumber(ActionContext* context)
 	setMember("prototype", ActionValue(prototype));
 }
 
-void AsNumber::init(ActionObject* self, const ActionValueArray& args) const
+void AsNumber::init(ActionObject* self, const ActionValueArray& args)
 {
 	Ref< Number > n;
 	if (args.size() > 0)

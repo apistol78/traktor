@@ -11,7 +11,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsXMLNode", AsXMLNode, ActionClass)
 AsXMLNode::AsXMLNode(ActionContext* context)
 :	ActionClass(context, "XMLNode")
 {
-	Ref< ActionObject > prototype = new ActionObject();
+	Ref< ActionObject > prototype = new ActionObject(context);
 
 	prototype->setMember("appendChild", ActionValue(createNativeFunction(context, this, &AsXMLNode::XMLNode_appendChild)));
 	prototype->setMember("cloneNode", ActionValue(createNativeFunction(context, this, &AsXMLNode::XMLNode_cloneNode)));
@@ -28,7 +28,7 @@ AsXMLNode::AsXMLNode(ActionContext* context)
 	setMember("prototype", ActionValue(prototype));
 }
 
-void AsXMLNode::init(ActionObject* self, const ActionValueArray& args) const
+void AsXMLNode::init(ActionObject* self, const ActionValueArray& args)
 {
 }
 

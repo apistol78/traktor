@@ -22,6 +22,11 @@ void ActionContext::setGlobal(ActionObject* global)
 	m_global = global;
 }
 
+void ActionContext::setMovieClip(FlashSpriteInstance* movieClip)
+{
+	m_movieClip = movieClip;
+}
+
 void ActionContext::addFrameListener(ActionObject* frameListener)
 {
 	ActionValue memberValue;
@@ -61,21 +66,6 @@ void ActionContext::notifyFrameListeners(avm_number_t time)
 		i->listenerFunction->call(i->listenerTarget, argv);
 }
 
-void ActionContext::pushMovieClip(FlashSpriteInstance* spriteInstance)
-{
-	m_movieClipStack.push_back(spriteInstance);
-}
-
-void ActionContext::popMovieClip()
-{
-	m_movieClipStack.pop_back();
-}
-
-FlashSpriteInstance* ActionContext::getMovieClip()
-{
-	return !m_movieClipStack.empty() ? m_movieClipStack.back() : 0;
-}
-
 ActionObject* ActionContext::lookupClass(const std::string& className)
 {
 	Ref< ActionObject > clazz = m_global;
@@ -102,10 +92,8 @@ ActionObject* ActionContext::lookupClass(const std::string& className)
 
 void ActionContext::trace(const IVisitor& visitor) const
 {
-	for (RefArray< FlashSpriteInstance >::const_iterator i = m_movieClipStack.begin(); i != m_movieClipStack.end(); ++i)
-		visitor(*i);
-
 	visitor(m_global);
+	visitor(m_movieClip);
 
 	for (std::vector< FrameListener >::const_iterator i = m_frameListeners.begin(); i != m_frameListeners.end(); ++i)
 	{
@@ -116,8 +104,8 @@ void ActionContext::trace(const IVisitor& visitor) const
 
 void ActionContext::dereference()
 {
-	m_movieClipStack.clear();
 	m_global = 0;
+	m_movieClip = 0;
 	m_frameListeners.clear();
 }
 

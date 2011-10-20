@@ -21,7 +21,7 @@ class AsString : public ActionClass
 public:
 	AsString(ActionContext* context);
 
-	virtual void init(ActionObject* self, const ActionValueArray& args) const;
+	virtual void init(ActionObject* self, const ActionValueArray& args);
 
 	virtual void coerce(ActionObject* self) const;
 
@@ -48,7 +48,7 @@ private:
 
 	void String_toLowerCase(CallArgs& ca);
 
-	//void String_toString(CallArgs& ca);
+	void String_toString(CallArgs& ca);
 
 	void String_toUpperCase(CallArgs& ca);
 

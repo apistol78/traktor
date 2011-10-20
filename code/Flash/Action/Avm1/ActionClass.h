@@ -32,7 +32,7 @@ public:
 
 	virtual ActionValue call(ActionFrame* callerFrame, ActionObject* self);
 
-	virtual void init(ActionObject* self, const ActionValueArray& args) const = 0;
+	virtual void init(ActionObject* self, const ActionValueArray& args) = 0;
 
 	virtual void coerce(ActionObject* self) const = 0;
 };

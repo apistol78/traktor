@@ -12,7 +12,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsLoadVars", AsLoadVars, ActionClass)
 AsLoadVars::AsLoadVars(ActionContext* context)
 :	ActionClass(context, "LoadVars")
 {
-	Ref< ActionObject > prototype = new ActionObject();
+	Ref< ActionObject > prototype = new ActionObject(context);
 
 	prototype->setMember("addRequestHeader", ActionValue(createNativeFunction(context, this, &AsLoadVars::LoadVars_addRequestHeader)));
 	prototype->setMember("decode", ActionValue(createNativeFunction(context, this, &AsLoadVars::LoadVars_decode)));
@@ -32,7 +32,7 @@ AsLoadVars::AsLoadVars(ActionContext* context)
 	setMember("prototype", ActionValue(prototype));
 }
 
-void AsLoadVars::init(ActionObject* self, const ActionValueArray& args) const
+void AsLoadVars::init(ActionObject* self, const ActionValueArray& args)
 {
 }
 

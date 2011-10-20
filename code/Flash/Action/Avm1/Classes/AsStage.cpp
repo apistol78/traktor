@@ -15,7 +15,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsStage", AsStage, ActionClass)
 AsStage::AsStage(ActionContext* context)
 :	ActionClass(context, "Stage")
 {
-	Ref< ActionObject > prototype = new ActionObject();
+	Ref< ActionObject > prototype = new ActionObject(context);
 
 	prototype->addProperty("width", createNativeFunction(context, this, &AsStage::Stage_get_width), 0);
 	prototype->addProperty("height", createNativeFunction(context, this, &AsStage::Stage_get_height), 0);
@@ -27,7 +27,7 @@ AsStage::AsStage(ActionContext* context)
 	setMember("prototype", ActionValue(prototype));
 }
 
-void AsStage::init(ActionObject* self, const ActionValueArray& args) const
+void AsStage::init(ActionObject* self, const ActionValueArray& args)
 {
 }
 

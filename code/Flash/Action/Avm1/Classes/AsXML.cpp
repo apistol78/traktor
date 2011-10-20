@@ -12,7 +12,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsXML", AsXML, ActionClass)
 AsXML::AsXML(ActionContext* context)
 :	ActionClass(context, "XML")
 {
-	Ref< ActionObject > prototype = new ActionObject();
+	Ref< ActionObject > prototype = new ActionObject(context);
 
 	prototype->setMember("addRequestHeader", ActionValue(createNativeFunction(context, this, &AsXML::XML_addRequestHeader)));
 	prototype->setMember("createElement", ActionValue(createNativeFunction(context, this, &AsXML::XML_createElement)));
@@ -38,7 +38,7 @@ AsXML::AsXML(ActionContext* context)
 	setMember("prototype", ActionValue(prototype));
 }
 
-void AsXML::init(ActionObject* self, const ActionValueArray& args) const
+void AsXML::init(ActionObject* self, const ActionValueArray& args)
 {
 }
 

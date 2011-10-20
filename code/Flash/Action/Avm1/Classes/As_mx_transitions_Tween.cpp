@@ -12,7 +12,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.As_mx_transitions_Tween", As_mx_transitio
 As_mx_transitions_Tween::As_mx_transitions_Tween(ActionContext* context)
 :	ActionClass(context, "mx.transitions.Tween")
 {
-	Ref< ActionObject > prototype = new ActionObject();
+	Ref< ActionObject > prototype = new ActionObject(context);
 
 	prototype->setMember("continueTo", ActionValue(createNativeFunction(context, &Tween::continueTo)));
 	prototype->setMember("fforward", ActionValue(createNativeFunction(context, &Tween::fforward)));
@@ -30,7 +30,7 @@ As_mx_transitions_Tween::As_mx_transitions_Tween(ActionContext* context)
 	setMember("prototype", ActionValue(prototype));
 }
 
-void As_mx_transitions_Tween::init(ActionObject* self, const ActionValueArray& args) const
+void As_mx_transitions_Tween::init(ActionObject* self, const ActionValueArray& args)
 {
 	Ref< Tween > tw = new Tween();
 	self->setRelay(tw);
@@ -39,7 +39,7 @@ void As_mx_transitions_Tween::init(ActionObject* self, const ActionValueArray& a
 	{
 		tw->init(
 			getContext(),
-			args[0].getObject(),
+			args[0].getObjectAlways(getContext()),
 			args[1].getString(),
 			args[2].getObject< ActionFunction >(),
 			args[3].getNumber(),

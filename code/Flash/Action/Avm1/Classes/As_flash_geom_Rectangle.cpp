@@ -1,3 +1,4 @@
+#include "Core/Io/StringOutputStream.h"
 #include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Avm1/Classes/As_flash_geom_Rectangle.h"
 #include "Flash/Action/Classes/Point.h"
@@ -13,7 +14,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.As_flash_geom_Rectangle", As_flash_geom_R
 As_flash_geom_Rectangle::As_flash_geom_Rectangle(ActionContext* context)
 :	ActionClass(context, "flash.geom.Rectangle")
 {
-	Ref< ActionObject > prototype = new ActionObject();
+	Ref< ActionObject > prototype = new ActionObject(context);
 
 	prototype->setMember("clone", ActionValue(createNativeFunction(context, this, &As_flash_geom_Rectangle::Rectangle_clone)));
 	prototype->setMember("contains", ActionValue(createNativeFunction(context, this, &As_flash_geom_Rectangle::Rectangle_contains)));
@@ -51,7 +52,7 @@ As_flash_geom_Rectangle::As_flash_geom_Rectangle(ActionContext* context)
 	setMember("prototype", ActionValue(prototype));
 }
 
-void As_flash_geom_Rectangle::init(ActionObject* self, const ActionValueArray& args) const
+void As_flash_geom_Rectangle::init(ActionObject* self, const ActionValueArray& args)
 {
 	Ref< Rectangle > rc = new Rectangle();
 	if (args.size() >= 4)
@@ -69,10 +70,10 @@ void As_flash_geom_Rectangle::coerce(ActionObject* self) const
 	ActionValue left, top;
 	ActionValue right, bottom;
 
-	self->getMember(getContext(), "left", left);
-	self->getMember(getContext(), "top", top);
-	self->getMember(getContext(), "right", right);
-	self->getMember(getContext(), "bottom", bottom);
+	self->getMember("left", left);
+	self->getMember("top", top);
+	self->getMember("right", right);
+	self->getMember("bottom", bottom);
 
 	self->setRelay(new Rectangle(
 		float(left.getNumber()),
@@ -159,7 +160,9 @@ void As_flash_geom_Rectangle::Rectangle_setEmpty(Rectangle* self) const
 
 ActionValue As_flash_geom_Rectangle::Rectangle_toString(const Rectangle* self) const
 {
-	return self->toString();
+	StringOutputStream ss;
+	ss << L"(x=" << self->left << L", y=" << self->top << L", w=" << self->width << L", h=" << self->height << L")";
+	return ActionValue(ss.str());
 }
 
 void As_flash_geom_Rectangle::Rectangle_union(const Rectangle* self) const

@@ -19,6 +19,7 @@ namespace traktor
 	namespace flash
 	{
 
+class ActionContext;
 class ActionObject;
 
 /*! \brief Action value.
@@ -86,6 +87,10 @@ public:
 	/*! \brief Check if object. */
 	bool isObject() const { return m_type == AvtObject; }
 
+	/*! \brief Check if object. */
+	template < typename ObjectType >
+	bool isObject() const { return (m_type == AvtObject) && is_a< ObjectType >(m_value.o); }
+
 	/*! \brief Get boolean value. */
 	bool getBoolean() const;
 
@@ -99,14 +104,18 @@ public:
 	std::wstring getWideString() const;
 
 	/*! \brief Get object. */
-	Ref< ActionObject > getObject() const;
+	ActionObject* getObject() const { return (m_type == AvtObject) ? m_value.o : 0; }
 
-	/*! \brief Get typed object. */
+	/*! \brief Get object. */
 	template < typename ObjectType >
-	Ref< ObjectType > getObject() const { return dynamic_type_cast< ObjectType* >(getObject()); }
+	ObjectType* getObject() const { return dynamic_type_cast< ObjectType* >(getObject()); }
 
-	/*! \brief Get object direct, unsafe but doesn't touch reference count. */
-	ActionObject* getObjectUnsafe() const { T_ASSERT (m_type == AvtObject); return m_value.o; }
+	/*! \brief Get object always, ie. create boxes if not a object. */
+	Ref< ActionObject > getObjectAlways(ActionContext* context) const;
+
+	/*! \brief Get object always, ie. create boxes if not a object. */
+	template < typename ObjectType >
+	Ref< ObjectType > getObjectAlways(ActionContext* context) const { return dynamic_type_cast< ObjectType* >(getObjectAlways(context)); }
 
 	/*! \brief Copy value. */
 	ActionValue& operator = (const ActionValue& v);

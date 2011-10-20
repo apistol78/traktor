@@ -18,7 +18,7 @@ AsKey::AsKey(ActionContext* context)
 {
 	std::memset(m_keyState, 0, sizeof(m_keyState));
 
-	Ref< ActionObject > prototype = new ActionObject();
+	Ref< ActionObject > prototype = new ActionObject(context);
 
 	prototype->setMember("BACKSPACE", ActionValue(avm_number_t(AkBackspace)));
 	prototype->setMember("CAPSLOCK", ActionValue(avm_number_t(AkCapsLock)));
@@ -52,7 +52,7 @@ AsKey::AsKey(ActionContext* context)
 	setMember("prototype", ActionValue(prototype));
 }
 
-void AsKey::init(ActionObject* self, const ActionValueArray& args) const
+void AsKey::init(ActionObject* self, const ActionValueArray& args)
 {
 }
 
@@ -72,9 +72,7 @@ void AsKey::eventKeyDown(int keyCode)
 	for (RefArray< ActionObject >::iterator i = listeners.begin(); i != listeners.end(); ++i)
 	{
 		ActionValue member;
-		(*i)->getMember(getContext(), "onKeyDown", member);
-		if (member.isUndefined())
-			continue;
+		(*i)->getMember("onKeyDown", member);
 
 		Ref< ActionFunction > eventFunction = member.getObject< ActionFunction >();
 		if (eventFunction)
@@ -95,9 +93,7 @@ void AsKey::eventKeyUp(int keyCode)
 	for (RefArray< ActionObject >::iterator i = listeners.begin(); i != listeners.end(); ++i)
 	{
 		ActionValue member;
-		(*i)->getMember(getContext(), "onKeyUp", member);
-		if (member.isUndefined())
-			continue;
+		(*i)->getMember("onKeyUp", member);
 
 		Ref< ActionFunction > eventFunction = member.getObject< ActionFunction >();
 		if (eventFunction)
@@ -128,7 +124,9 @@ void AsKey::dereference()
 
 void AsKey::Key_addListener(CallArgs& ca)
 {
-	m_listeners.push_back(ca.args[0].getObject());
+	ActionObject* listener = ca.args[0].getObject();
+	if (listener)
+		m_listeners.push_back(listener);
 }
 
 void AsKey::Key_getAscii(CallArgs& ca)
@@ -159,9 +157,13 @@ void AsKey::Key_isToggled(CallArgs& ca)
 
 void AsKey::Key_removeListener(CallArgs& ca)
 {
-	RefArray< ActionObject >::iterator i = std::find(m_listeners.begin(), m_listeners.end(), ca.args[0].getObject());
-	if (i != m_listeners.end())
-		m_listeners.erase(i);
+	ActionObject* listener = ca.args[0].getObject();
+	if (listener)
+	{
+		RefArray< ActionObject >::iterator i = std::find(m_listeners.begin(), m_listeners.end(), listener);
+		if (i != m_listeners.end())
+			m_listeners.erase(i);
+	}
 }
 
 	}

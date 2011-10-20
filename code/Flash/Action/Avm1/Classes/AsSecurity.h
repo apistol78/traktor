@@ -20,7 +20,7 @@ class AsSecurity : public ActionClass
 public:
 	AsSecurity(ActionContext* context);
 
-	virtual void init(ActionObject* self, const ActionValueArray& args) const;
+	virtual void init(ActionObject* self, const ActionValueArray& args);
 
 	virtual void coerce(ActionObject* self) const;
 

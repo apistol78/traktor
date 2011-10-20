@@ -13,7 +13,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsMath", AsMath, ActionClass)
 AsMath::AsMath(ActionContext* context)
 :	ActionClass(context, "Math")
 {
-	Ref< ActionObject > prototype = new ActionObject();
+	Ref< ActionObject > prototype = new ActionObject(context);
 
 	prototype->setMember("e", ActionValue(avm_number_t(2.7182818284590452354)));
 	prototype->setMember("ln2", ActionValue(avm_number_t(0.69314718055994530942)));
@@ -48,7 +48,7 @@ AsMath::AsMath(ActionContext* context)
 	setMember("prototype", ActionValue(prototype));
 }
 
-void AsMath::init(ActionObject* self, const ActionValueArray& args) const
+void AsMath::init(ActionObject* self, const ActionValueArray& args)
 {
 }
 

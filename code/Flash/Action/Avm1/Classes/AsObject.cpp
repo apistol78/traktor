@@ -14,7 +14,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsObject", AsObject, ActionClass)
 AsObject::AsObject(ActionContext* context)
 :	ActionClass(context, "Object")
 {
-	Ref< ActionObject > prototype = new ActionObject();
+	Ref< ActionObject > prototype = new ActionObject(context);
 
 	prototype->setMember("addProperty", ActionValue(createNativeFunction(context, this, &AsObject::Object_addProperty)));
 	prototype->setMember("hasOwnProperty", ActionValue(createNativeFunction(context, this, &AsObject::Object_hasOwnProperty)));
@@ -32,7 +32,7 @@ AsObject::AsObject(ActionContext* context)
 	setMember("prototype", ActionValue(prototype));
 }
 
-void AsObject::init(ActionObject* self, const ActionValueArray& args) const
+void AsObject::init(ActionObject* self, const ActionValueArray& args)
 {
 }
 
@@ -89,7 +89,7 @@ void AsObject::Object_registerClass(CallArgs& ca)
 
 void AsObject::Object_toString(CallArgs& ca)
 {
-	ca.ret = ActionValue(ca.self->toString());
+	ca.ret = ActionValue("[object Object]");
 }
 
 void AsObject::Object_unwatch(ActionObject* self) const
@@ -101,7 +101,7 @@ void AsObject::Object_unwatch(ActionObject* self) const
 
 void AsObject::Object_valueOf(CallArgs& ca)
 {
-	ca.ret = ActionValue(ca.self->valueOf());
+	ca.ret = ActionValue(avm_number_t(0));
 }
 
 void AsObject::Object_watch(ActionObject* self) const

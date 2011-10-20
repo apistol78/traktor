@@ -12,7 +12,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsLocalConnection", AsLocalConnection, Ac
 AsLocalConnection::AsLocalConnection(ActionContext* context)
 :	ActionClass(context, "LocalConnection")
 {
-	Ref< ActionObject > prototype = new ActionObject();
+	Ref< ActionObject > prototype = new ActionObject(context);
 
 	prototype->setMember("close", ActionValue(createNativeFunction(context, this, &AsLocalConnection::LocalConnection_close)));
 	prototype->setMember("connect", ActionValue(createNativeFunction(context, this, &AsLocalConnection::LocalConnection_connect)));
@@ -25,7 +25,7 @@ AsLocalConnection::AsLocalConnection(ActionContext* context)
 	setMember("prototype", ActionValue(prototype));
 }
 
-void AsLocalConnection::init(ActionObject* self, const ActionValueArray& args) const
+void AsLocalConnection::init(ActionObject* self, const ActionValueArray& args)
 {
 }
 

@@ -14,10 +14,5 @@ Boolean::Boolean(bool value)
 {
 }
 
-ActionValue Boolean::toString() const
-{
-	return ActionValue(m_value ? "true" : "false");
-}
-
 	}
 }

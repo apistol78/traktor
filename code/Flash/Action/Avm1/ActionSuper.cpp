@@ -15,14 +15,14 @@ ActionSuper::ActionSuper(ActionContext* context, ActionObject* object)
 	ActionValue memberValue;
 
 	// __proto__
-	Ref< ActionObject > prototype = m_object->getPrototype(context);
+	Ref< ActionObject > prototype = m_object->getPrototype();
 
 	// __proto__.__proto__
-	m_superPrototype = prototype->getPrototype(context);
+	m_superPrototype = prototype->getPrototype();
 
 	// __proto__.__ctor__
 	if (prototype->getLocalMember("__ctor__", memberValue))
-		m_superClass = memberValue.getObject();
+		m_superClass = memberValue.getObject< ActionFunction >();
 	else
 		m_superClass = dynamic_type_cast< ActionFunction* >(m_superPrototype);
 

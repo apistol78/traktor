@@ -36,19 +36,19 @@ public:
 	typedef std::map< std::string, ActionValue > member_map_t;
 	typedef std::map< std::string, std::pair< Ref< ActionFunction >, Ref< ActionFunction > > > property_map_t;
 
-	ActionObject(IActionObjectRelay* relay = 0);
+	ActionObject(ActionContext* context, IActionObjectRelay* relay = 0);
 
-	explicit ActionObject(const std::string& prototypeName, IActionObjectRelay* relay = 0);
+	explicit ActionObject(ActionContext* context, const std::string& prototypeName, IActionObjectRelay* relay = 0);
 
-	explicit ActionObject(ActionObject* prototype, IActionObjectRelay* relay = 0);
+	explicit ActionObject(ActionContext* context, ActionObject* prototype, IActionObjectRelay* relay = 0);
 
 	virtual void addInterface(ActionObject* intrface);
 
-	virtual ActionObject* getPrototype(ActionContext* context);
+	virtual ActionObject* getPrototype();
 
 	virtual void setMember(const std::string& memberName, const ActionValue& memberValue);
 
-	virtual bool getMember(ActionContext* context, const std::string& memberName, ActionValue& outMemberValue);
+	virtual bool getMember(const std::string& memberName, ActionValue& outMemberValue);
 
 	virtual bool deleteMember(const std::string& memberName);
 
@@ -56,17 +56,17 @@ public:
 
 	virtual void addProperty(const std::string& propertyName, ActionFunction* propertyGet, ActionFunction* propertySet);
 
-	virtual bool getPropertyGet(ActionContext* context, const std::string& propertyName, Ref< ActionFunction >& outPropertyGet);
+	virtual bool getPropertyGet(const std::string& propertyName, Ref< ActionFunction >& outPropertyGet);
 
-	virtual bool getPropertySet(ActionContext* context, const std::string& propertyName, Ref< ActionFunction >& outPropertySet);
+	virtual bool getPropertySet(const std::string& propertyName, Ref< ActionFunction >& outPropertySet);
 
 	virtual const property_map_t& getProperties() const;
 
 	virtual void deleteAllProperties();
 
-	virtual avm_number_t valueOf() const;
+	virtual ActionValue valueOf();
 
-	virtual ActionValue toString() const;
+	virtual ActionValue toString();
 
 	void setReadOnly();
 
@@ -85,12 +85,15 @@ public:
 	template < typename RelayedType >
 	RelayedType* getRelay() const { return dynamic_type_cast< RelayedType* >(getRelay()); }
 
+	ActionContext* getContext() const { return m_context; }
+
 protected:
 	virtual void trace(const IVisitor& visitor) const;
 
 	virtual void dereference();
 
 private:
+	ActionContext* m_context;
 	bool m_readOnly;
 	mutable member_map_t m_members;
 	property_map_t m_properties;

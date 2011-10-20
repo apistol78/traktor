@@ -34,13 +34,6 @@ public:
 
 	const std::string& get() const { return m_str; }
 
-	// \name Override relay
-	//@{
-
-	virtual ActionValue toString() const;
-
-	//@}
-
 private:
 	std::string m_str;
 };

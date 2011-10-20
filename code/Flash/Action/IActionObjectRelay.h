@@ -16,6 +16,7 @@ namespace traktor
 	namespace flash
 	{
 
+class ActionContext;
 class ActionObject;
 class ActionValue;
 
@@ -26,13 +27,11 @@ class T_DLLCLASS IActionObjectRelay : public Collectable
 public:
 	virtual void setAsObject(ActionObject* asObject) = 0;
 
-	virtual ActionObject* getAsObject() = 0;
+	virtual ActionObject* getAsObject(ActionContext* context) = 0;
 
-	virtual bool setMember(const std::string& memberName, const ActionValue& memberValue) = 0;
+	virtual bool setMember(ActionContext* context, const std::string& memberName, const ActionValue& memberValue) = 0;
 
-	virtual bool getMember(const std::string& memberName, ActionValue& outMemberValue) = 0;
-
-	virtual ActionValue toString() const = 0;
+	virtual bool getMember(ActionContext* context, const std::string& memberName, ActionValue& outMemberValue) = 0;
 };
 
 	}

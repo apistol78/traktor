@@ -31,13 +31,6 @@ public:
 	Point();
 
 	Point(avm_number_t x_, avm_number_t y_);
-
-	// \name Override relay
-	//@{
-
-	virtual ActionValue toString() const;
-
-	//@}
 };
 
 	}

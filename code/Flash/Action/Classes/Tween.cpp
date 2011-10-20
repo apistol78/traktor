@@ -35,7 +35,7 @@ void Tween::init(
 	bool useSeconds
 )
 {
-	ActionObject* self = getAsObject();
+	ActionObject* self = getAsObject(context);
 	T_ASSERT (self);
 
 	m_context = context;
@@ -52,7 +52,7 @@ void Tween::init(
 		self->setMember("_target", ActionValue(target));
 
 		Ref< ActionFunction > propertySet;
-		if (target->getPropertySet(m_context, propertyName, propertySet))
+		if (target->getPropertySet(propertyName, propertySet))
 			self->setMember("_targetProperty", ActionValue(propertySet));
 	}
 	
@@ -86,7 +86,7 @@ void Tween::prevFrame()
 
 void Tween::resume()
 {
-	ActionObject* self = getAsObject();
+	ActionObject* self = getAsObject(m_context);
 	T_ASSERT (self);
 
 	if (!m_playing)
@@ -102,7 +102,7 @@ void Tween::rewind(avm_number_t t)
 
 void Tween::start()
 {
-	ActionObject* self = getAsObject();
+	ActionObject* self = getAsObject(m_context);
 	T_ASSERT (self);
 
 	m_timeStart = avm_number_t(-1);
@@ -118,7 +118,7 @@ void Tween::start()
 		self->getLocalMember("_function", function);
 
 		// Ensure property is set to initial value.
-		if (propertySet.isObject() && function.isObject())
+		if (propertySet.isObject< ActionFunction >() && function.isObject< ActionFunction >())
 		{
 			ActionValue value;
 
@@ -142,7 +142,10 @@ void Tween::start()
 			{
 				ActionValueArray argv1(m_context->getPool(), 1);
 				argv1[0] = value;
-				propertySet.getObject< ActionFunction >()->call(target.getObject(), argv1);
+				propertySet.getObject< ActionFunction >()->call(
+					target.getObjectAlways(m_context),
+					argv1
+				);
 			}
 		}
 
@@ -154,7 +157,7 @@ void Tween::start()
 
 void Tween::stop()
 {
-	ActionObject* self = getAsObject();
+	ActionObject* self = getAsObject(m_context);
 	T_ASSERT (self);
 
 	if (m_playing)
@@ -171,7 +174,7 @@ void Tween::yoyo()
 
 void Tween::onFrame(CallArgs& ca)
 {
-	ActionObject* self = getAsObject();
+	ActionObject* self = getAsObject(m_context);
 	T_ASSERT (self);
 
 	ActionValue target;
@@ -182,7 +185,12 @@ void Tween::onFrame(CallArgs& ca)
 	self->getLocalMember("_targetProperty", propertySet);
 	self->getLocalMember("_function", function);
 
-	if (!function.isObject() || !propertySet.isObject() || !m_playing || m_duration <= 0.0f)
+	if (
+		!function.isObject< ActionFunction >() ||
+		!propertySet.isObject< ActionFunction >() ||
+		!m_playing ||
+		m_duration <= 0.0f
+	)
 		return;
 
 	ActionValue value;
@@ -215,7 +223,10 @@ void Tween::onFrame(CallArgs& ca)
 	{
 		ActionValueArray argv1(m_context->getPool(), 1);
 		argv1[0] = value;
-		propertySet.getObject< ActionFunction >()->call(target.getObject(), argv1);
+		propertySet.getObject< ActionFunction >()->call(
+			target.getObjectAlways(m_context),
+			argv1
+		);
 	}
 
 	// Stop after duration expired.

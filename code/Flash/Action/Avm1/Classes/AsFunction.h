@@ -20,7 +20,7 @@ class AsFunction : public ActionClass
 public:
 	AsFunction(ActionContext* context);
 
-	virtual void init(ActionObject* self, const ActionValueArray& args) const;
+	virtual void init(ActionObject* self, const ActionValueArray& args);
 
 	virtual void coerce(ActionObject* self) const;
 
@@ -28,6 +28,8 @@ private:
 	void Function_apply(CallArgs& ca);
 
 	void Function_call(CallArgs& ca);
+
+	void Function_toString(CallArgs& ca);
 };
 
 	}

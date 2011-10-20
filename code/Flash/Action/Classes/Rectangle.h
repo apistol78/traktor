@@ -41,13 +41,6 @@ public:
 	bool isEmpty() const;
 
 	void offset(avm_number_t dx, avm_number_t dy);
-
-	// \name Override relay
-	//@{
-
-	virtual ActionValue toString() const;
-
-	//@}
 };
 
 	}

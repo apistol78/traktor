@@ -59,7 +59,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsMovieClip", AsMovieClip, ActionClass)
 AsMovieClip::AsMovieClip(ActionContext* context)
 :	ActionClass(context, "MovieClip")
 {
-	Ref< ActionObject > prototype = new ActionObject();
+	Ref< ActionObject > prototype = new ActionObject(context);
 
 	prototype->setMember("attachAudio", ActionValue(createNativeFunction(context, this, &AsMovieClip::MovieClip_attachAudio)));
 	prototype->setMember("attachBitmap", ActionValue(createNativeFunction(context, this, &AsMovieClip::MovieClip_attachBitmap)));
@@ -162,7 +162,7 @@ AsMovieClip::AsMovieClip(ActionContext* context)
 	setMember("prototype", ActionValue(prototype));
 }
 
-void AsMovieClip::init(ActionObject* self, const ActionValueArray& args) const
+void AsMovieClip::init(ActionObject* self, const ActionValueArray& args)
 {
 	Ref< FlashSprite > sprite = new FlashSprite(0, 0);
 	sprite->addFrame(new FlashFrame());
@@ -611,7 +611,7 @@ void AsMovieClip::MovieClip_swapDepths(FlashSpriteInstance* self, const ActionVa
 
 	if (arg0.isNumeric())
 		targetDepth = int32_t(arg0.getNumber());
-	else if (arg0.isObject())
+	else if (arg0.isObject< FlashSpriteInstance >())
 	{
 		Ref< FlashSpriteInstance > targetClipInstance = arg0.getObject< FlashSpriteInstance >();
 		targetDepth = parentClipInstance->getDisplayList().getObjectDepth(targetClipInstance);

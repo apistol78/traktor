@@ -15,7 +15,7 @@ class As_mx_transitions_easing_None : public ActionClass
 public:
 	As_mx_transitions_easing_None(ActionContext* context);
 
-	virtual void init(ActionObject* self, const ActionValueArray& args) const;
+	virtual void init(ActionObject* self, const ActionValueArray& args);
 
 	virtual void coerce(ActionObject* self) const;
 

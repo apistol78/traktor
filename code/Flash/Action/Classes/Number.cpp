@@ -1,4 +1,3 @@
-#include "Core/Misc/String.h"
 #include "Flash/Action/ActionValue.h"
 #include "Flash/Action/Classes/Number.h"
 
@@ -13,11 +12,6 @@ Number::Number(avm_number_t value)
 :	ActionObjectRelay("Number")
 ,	m_value(value)
 {
-}
-
-ActionValue Number::toString() const
-{
-	return ActionValue(traktor::toString(m_value));
 }
 
 	}

@@ -13,7 +13,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.As_flash_geom_ColorTransform", As_flash_g
 As_flash_geom_ColorTransform::As_flash_geom_ColorTransform(ActionContext* context)
 :	ActionClass(context, "flash.geom.Transform")
 {
-	Ref< ActionObject > prototype = new ActionObject();
+	Ref< ActionObject > prototype = new ActionObject(context);
 
 	prototype->addProperty("alphaMultiplier", createNativeFunction(context, this, &As_flash_geom_ColorTransform::ColorTransform_get_alphaMultiplier), createNativeFunction(context, this, &As_flash_geom_ColorTransform::ColorTransform_set_alphaMultiplier));
 	prototype->addProperty("alphaOffset", createNativeFunction(context, this, &As_flash_geom_ColorTransform::ColorTransform_get_alphaOffset), createNativeFunction(context, this, &As_flash_geom_ColorTransform::ColorTransform_set_alphaOffset));
@@ -33,7 +33,7 @@ As_flash_geom_ColorTransform::As_flash_geom_ColorTransform(ActionContext* contex
 	setMember("prototype", ActionValue(prototype));
 }
 
-void As_flash_geom_ColorTransform::init(ActionObject* self, const ActionValueArray& args) const
+void As_flash_geom_ColorTransform::init(ActionObject* self, const ActionValueArray& args)
 {
 	SwfCxTransform transform;
 	if (args.size() >= 8)
@@ -57,14 +57,14 @@ void As_flash_geom_ColorTransform::coerce(ActionObject* self) const
 	ActionValue gm, go;
 	ActionValue bm, bo;
 
-	self->getMember(getContext(), "alphaMultiplier", am);
-	self->getMember(getContext(), "alphaOffset", ao);
-	self->getMember(getContext(), "redMultiplier", rm);
-	self->getMember(getContext(), "redOffset", ro);
-	self->getMember(getContext(), "greenMultiplier", gm);
-	self->getMember(getContext(), "greenOffset", go);
-	self->getMember(getContext(), "blueMultiplier", bm);
-	self->getMember(getContext(), "blueOffset", bo);
+	self->getMember("alphaMultiplier", am);
+	self->getMember("alphaOffset", ao);
+	self->getMember("redMultiplier", rm);
+	self->getMember("redOffset", ro);
+	self->getMember("greenMultiplier", gm);
+	self->getMember("greenOffset", go);
+	self->getMember("blueMultiplier", bm);
+	self->getMember("blueOffset", bo);
 
 	SwfCxTransform transform;
 	transform.red[0] = float(rm.getNumber());
