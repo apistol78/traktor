@@ -53,11 +53,17 @@ bool AsObject::Object_hasOwnProperty(const ActionObject* self, const std::string
 
 bool AsObject::Object_isPropertyEnumerable(const ActionObject* self) const
 {
+	T_IF_VERBOSE(
+		log::warning << L"Object::isPropertyEnumerable not implemented" << Endl;
+	)
 	return true;
 }
 
 bool AsObject::Object_isPrototypeOf(const ActionObject* self) const
 {
+	T_IF_VERBOSE(
+		log::warning << L"Object::isPrototypeOf not implemented" << Endl;
+	)
 	return false;
 }
 
@@ -88,6 +94,9 @@ void AsObject::Object_toString(CallArgs& ca)
 
 void AsObject::Object_unwatch(ActionObject* self) const
 {
+	T_IF_VERBOSE(
+		log::warning << L"Object::unwatch not implemented" << Endl;
+	)
 }
 
 void AsObject::Object_valueOf(CallArgs& ca)
@@ -97,6 +106,9 @@ void AsObject::Object_valueOf(CallArgs& ca)
 
 void AsObject::Object_watch(ActionObject* self) const
 {
+	T_IF_VERBOSE(
+		log::warning << L"Object::watch not implemented" << Endl;
+	)
 }
 
 	}

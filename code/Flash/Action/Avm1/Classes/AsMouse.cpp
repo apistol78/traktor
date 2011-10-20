@@ -131,10 +131,16 @@ void AsMouse::Mouse_removeListener(CallArgs& ca)
 
 void AsMouse::Mouse_show(CallArgs& ca)
 {
+	T_IF_VERBOSE(
+		log::warning << L"Mouse::show not implemented" << Endl;
+	)
 }
 
 void AsMouse::Mouse_hide(CallArgs& ca)
 {
+	T_IF_VERBOSE(
+		log::warning << L"Mouse::hide not implemented" << Endl;
+	)
 }
 
 	}

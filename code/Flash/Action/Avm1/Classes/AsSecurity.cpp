@@ -36,17 +36,23 @@ void AsSecurity::coerce(ActionObject* self) const
 
 void AsSecurity::Security_allowDomain(CallArgs& ca)
 {
-	log::warning << L"Security.allowDomain not implemented" << Endl;
+	T_IF_VERBOSE(
+		log::warning << L"Security::allowDomain not implemented" << Endl;
+	)
 }
 
 void AsSecurity::Security_allowInsecureDomain(CallArgs& ca)
 {
-	log::warning << L"Security.allowDomain not implemented" << Endl;
+	T_IF_VERBOSE(
+		log::warning << L"Security::allowInsecureDomain not implemented" << Endl;
+	)
 }
 
 void AsSecurity::Security_loadPolicyFile(CallArgs& ca)
 {
-	log::warning << L"Security.allowDomain not implemented" << Endl;
+	T_IF_VERBOSE(
+		log::warning << L"Security::loadPolicyFile not implemented" << Endl;
+	)
 }
 
 	}

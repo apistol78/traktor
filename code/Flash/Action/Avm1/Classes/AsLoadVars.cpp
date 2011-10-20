@@ -43,62 +43,86 @@ void AsLoadVars::coerce(ActionObject* self) const
 
 void AsLoadVars::LoadVars_addRequestHeader(CallArgs& ca)
 {
-	log::warning << L"LoadVars.addRequestHeader not implemented" << Endl;
+	T_IF_VERBOSE(
+		log::warning << L"LoadVars::addRequestHeader not implemented" << Endl;
+	)
 }
 
 void AsLoadVars::LoadVars_decode(CallArgs& ca)
 {
-	log::warning << L"LoadVars.decode not implemented" << Endl;
+	T_IF_VERBOSE(
+		log::warning << L"LoadVars::decode not implemented" << Endl;
+	)
 }
 
 void AsLoadVars::LoadVars_getBytesLoaded(CallArgs& ca)
 {
-	log::warning << L"LoadVars.getBytesLoaded not implemented" << Endl;
+	T_IF_VERBOSE(
+		log::warning << L"LoadVars::getBytesLoaded not implemented" << Endl;
+	)
 }
 
 void AsLoadVars::LoadVars_getBytesTotal(CallArgs& ca)
 {
-	log::warning << L"LoadVars.getBytesTotal not implemented" << Endl;
+	T_IF_VERBOSE(
+		log::warning << L"LoadVars::getBytesTotal not implemented" << Endl;
+	)
 }
 
 void AsLoadVars::LoadVars_load(CallArgs& ca)
 {
-	log::warning << L"LoadVars.load not implemented" << Endl;
+	T_IF_VERBOSE(
+		log::warning << L"LoadVars::load not implemented" << Endl;
+	)
 }
 
 void AsLoadVars::LoadVars_send(CallArgs& ca)
 {
-	log::warning << L"LoadVars.send not implemented" << Endl;
+	T_IF_VERBOSE(
+		log::warning << L"LoadVars::send not implemented" << Endl;
+	)
 }
 
 void AsLoadVars::LoadVars_sendAndLoad(CallArgs& ca)
 {
-	log::warning << L"LoadVars.sendAndLoad not implemented" << Endl;
+	T_IF_VERBOSE(
+		log::warning << L"LoadVars::sendAndLoad not implemented" << Endl;
+	)
 }
 
 void AsLoadVars::LoadVars_toString(CallArgs& ca)
 {
-	log::warning << L"LoadVars.toString not implemented" << Endl;
+	T_IF_VERBOSE(
+		log::warning << L"LoadVars::toString not implemented" << Endl;
+	)
 }
 
 void AsLoadVars::LoadVars_get_contentType(CallArgs& ca)
 {
-	log::warning << L"LoadVars.contentType (get) not implemented" << Endl;
+	T_IF_VERBOSE(
+		log::warning << L"LoadVars::get_contentType not implemented" << Endl;
+	)
 }
 
 void AsLoadVars::LoadVars_set_contentType(CallArgs& ca)
 {
-	log::warning << L"LoadVars.contentType (set) not implemented" << Endl;
+	T_IF_VERBOSE(
+		log::warning << L"LoadVars::set_contentType not implemented" << Endl;
+	)
 }
 
 void AsLoadVars::LoadVars_get_loaded(CallArgs& ca)
 {
-	log::warning << L"LoadVars.loaded (get) not implemented" << Endl;
+	T_IF_VERBOSE(
+		log::warning << L"LoadVars::get_loaded not implemented" << Endl;
+	)
 }
 
 void AsLoadVars::LoadVars_set_loaded(CallArgs& ca)
 {
-	log::warning << L"LoadVars.loaded (set) not implemented" << Endl;
+	T_IF_VERBOSE(
+		log::warning << L"LoadVars::set_loaded not implemented" << Endl;
+	)
 }
 
 	}

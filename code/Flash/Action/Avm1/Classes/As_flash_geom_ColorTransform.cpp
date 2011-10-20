@@ -161,11 +161,17 @@ void As_flash_geom_ColorTransform::ColorTransform_set_redOffset(ColorTransform* 
 
 avm_number_t As_flash_geom_ColorTransform::ColorTransform_get_rgb(ColorTransform* self) const
 {
+	T_IF_VERBOSE(
+		log::warning << L"ColorTransform::get_rgb not implemented" << Endl;
+	)
 	return 0.0f;
 }
 
 void As_flash_geom_ColorTransform::ColorTransform_set_rgb(ColorTransform* self, avm_number_t value) const
 {
+	T_IF_VERBOSE(
+		log::warning << L"ColorTransform::set_rgb not implemented" << Endl;
+	)
 }
 
 	}

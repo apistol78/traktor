@@ -272,7 +272,7 @@ struct MethodNativeFunction_1 : public INativeFunction
 
 	virtual void call(CallArgs& ca)
 	{
-		T_ASSERT (ca.args.size() == 1);
+		T_ASSERT (ca.args.size() >= 1);
 		SelfClassType* self = Ensure< SelfClassType >::get(ca.self);
 		if (self)
 			ca.ret = ActionValueCast< ReturnType >::set((m_object->*m_method)(
@@ -294,7 +294,7 @@ struct MethodNativeFunction_1 < CallClassType, SelfClassType, void, Argument1Typ
 
 	virtual void call(CallArgs& ca)
 	{
-		T_ASSERT (ca.args.size() == 1);
+		T_ASSERT (ca.args.size() >= 1);
 		SelfClassType* self = Ensure< SelfClassType >::get(ca.self);
 		if (self)
 			(m_object->*m_method)(
@@ -318,7 +318,7 @@ struct MethodNativeFunction_2 : public INativeFunction
 
 	virtual void call(CallArgs& ca)
 	{
-		T_ASSERT (ca.args.size() == 2);
+		T_ASSERT (ca.args.size() >= 2);
 		SelfClassType* self = Ensure< SelfClassType >::get(ca.self);
 		if (self)
 			ca.ret = ActionValueCast< ReturnType >::set((m_object->*m_method)(
@@ -342,7 +342,7 @@ struct MethodNativeFunction_2 < CallClassType, SelfClassType, void, Argument1Typ
 
 	virtual void call(CallArgs& ca)
 	{
-		T_ASSERT (ca.args.size() == 2);
+		T_ASSERT (ca.args.size() >= 2);
 		SelfClassType* self = Ensure< SelfClassType >::get(ca.self);
 		if (self)
 			(m_object->*m_method)(
@@ -368,7 +368,7 @@ struct MethodNativeFunction_3 : public INativeFunction
 
 	virtual void call(CallArgs& ca)
 	{
-		T_ASSERT (ca.args.size() == 3);
+		T_ASSERT (ca.args.size() >= 3);
 		SelfClassType* self = Ensure< SelfClassType >::get(ca.self);
 		if (self)
 			ca.ret = ActionValueCast< ReturnType >::set((m_object->*m_method)(
@@ -394,7 +394,7 @@ struct MethodNativeFunction_3 < CallClassType, SelfClassType, void, Argument1Typ
 
 	virtual void call(CallArgs& ca)
 	{
-		T_ASSERT (ca.args.size() == 3);
+		T_ASSERT (ca.args.size() >= 3);
 		SelfClassType* self = Ensure< SelfClassType >::get(ca.self);
 		if (self)
 			(m_object->*m_method)(
@@ -426,7 +426,7 @@ struct MethodNativeFunction_6 : public INativeFunction
 
 	virtual void call(CallArgs& ca)
 	{
-		T_ASSERT (ca.args.size() == 6);
+		T_ASSERT (ca.args.size() >= 6);
 		SelfClassType* self = Ensure< SelfClassType >::get(ca.self);
 		if (self)
 			ca.ret = ActionValueCast< ReturnType >::set((m_object->*m_method)(
@@ -458,7 +458,7 @@ struct MethodNativeFunction_6 < CallClassType, SelfClassType, void, Argument1Typ
 
 	virtual void call(CallArgs& ca)
 	{
-		T_ASSERT (ca.args.size() == 6);
+		T_ASSERT (ca.args.size() >= 6);
 		SelfClassType* self = Ensure< SelfClassType >::get(ca.self);
 		if (self)
 			(m_object->*m_method)(
@@ -519,7 +519,7 @@ struct MethodNativeFunction_self_1 : public INativeFunction
 
 	virtual void call(CallArgs& ca)
 	{
-		T_ASSERT (ca.args.size() == 1);
+		T_ASSERT (ca.args.size() >= 1);
 		ClassType* self = Ensure< ClassType >::get(ca.self);
 		if (self)
 			ca.ret = ActionValueCast< ReturnType >::set(
@@ -540,7 +540,7 @@ struct MethodNativeFunction_self_1 < ClassType, void, Argument1Type > : public I
 
 	virtual void call(CallArgs& ca)
 	{
-		T_ASSERT (ca.args.size() == 1);
+		T_ASSERT (ca.args.size() >= 1);
 		ClassType* self = Ensure< ClassType >::get(ca.self);
 		if (self)
 			(self->*m_method)(
@@ -561,7 +561,7 @@ struct MethodNativeFunction_self_2 : public INativeFunction
 
 	virtual void call(CallArgs& ca)
 	{
-		T_ASSERT (ca.args.size() == 2);
+		T_ASSERT (ca.args.size() >= 2);
 		ClassType* self = Ensure< ClassType >::get(ca.self);
 		if (self)
 			ca.ret = ActionValueCast< ReturnType >::set(
@@ -584,7 +584,7 @@ struct MethodNativeFunction_self_2 < ClassType, void, Argument1Type, Argument2Ty
 
 	virtual void call(CallArgs& ca)
 	{
-		T_ASSERT (ca.args.size() == 2);
+		T_ASSERT (ca.args.size() >= 2);
 		ClassType* self = Ensure< ClassType >::get(ca.self);
 		if (self)
 			(self->*m_method)(
@@ -607,7 +607,7 @@ struct MethodNativeFunction_self_3 : public INativeFunction
 
 	virtual void call(CallArgs& ca)
 	{
-		T_ASSERT (ca.args.size() == 3);
+		T_ASSERT (ca.args.size() >= 3);
 		ClassType* self = Ensure< ClassType >::get(ca.self);
 		if (self)
 			ca.ret = ActionValueCast< ReturnType >::set(
@@ -632,7 +632,7 @@ struct MethodNativeFunction_self_3 < ClassType, void, Argument1Type, Argument2Ty
 
 	virtual void call(CallArgs& ca)
 	{
-		T_ASSERT (ca.args.size() == 3);
+		T_ASSERT (ca.args.size() >= 3);
 		ClassType* self = Ensure< ClassType >::get(ca.self);
 		if (self)
 			(self->*m_method)(
@@ -659,7 +659,7 @@ struct MethodNativeFunction_self_6 : public INativeFunction
 
 	virtual void call(CallArgs& ca)
 	{
-		T_ASSERT (ca.args.size() == 6);
+		T_ASSERT (ca.args.size() >= 6);
 		ClassType* self = Ensure< ClassType >::get(ca.self);
 		if (self)
 			ca.ret = ActionValueCast< ReturnType >::set(
@@ -690,7 +690,7 @@ struct MethodNativeFunction_self_6 < ClassType, void, Argument1Type, Argument2Ty
 
 	virtual void call(CallArgs& ca)
 	{
-		T_ASSERT (ca.args.size() == 6);
+		T_ASSERT (ca.args.size() >= 6);
 		ClassType* self = Ensure< ClassType >::get(ca.self);
 		if (self)
 			(self->*m_method)(

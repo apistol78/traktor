@@ -148,7 +148,7 @@ private:
 
 	void TextField_set_name(FlashEditInstance* editInstance, const std::string& name) const;
 
-	Ref< FlashSpriteInstance > TextField_get_parent(FlashEditInstance* editInstance) const;
+	Ref< FlashCharacterInstance > TextField_get_parent(FlashEditInstance* editInstance) const;
 
 	void TextField_set_parent(FlashEditInstance* editInstance, FlashSpriteInstance* movieClip) const;
 

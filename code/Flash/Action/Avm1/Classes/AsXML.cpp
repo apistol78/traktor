@@ -49,98 +49,163 @@ void AsXML::coerce(ActionObject* self) const
 
 void AsXML::XML_addRequestHeader(CallArgs& ca)
 {
+	T_IF_VERBOSE(
+		log::warning << L"XML::addRequestHeader not implemented" << Endl;
+	)
 }
 
 void AsXML::XML_createElement(CallArgs& ca)
 {
+	T_IF_VERBOSE(
+		log::warning << L"XML::createElement not implemented" << Endl;
+	)
 }
 
 void AsXML::XML_createTextNode(CallArgs& ca)
 {
+	T_IF_VERBOSE(
+		log::warning << L"XML::createTextNode not implemented" << Endl;
+	)
 }
 
 void AsXML::XML_getBytesLoaded(CallArgs& ca)
 {
-	ca.ret = ActionValue(avm_number_t(0.0));
+	T_IF_VERBOSE(
+		log::warning << L"XML::getBytesLoaded not implemented" << Endl;
+	)
 }
 
 void AsXML::XML_getBytesTotal(CallArgs& ca)
 {
-	ca.ret = ActionValue(avm_number_t(0.0));
+	T_IF_VERBOSE(
+		log::warning << L"XML::getBytesTotal not implemented" << Endl;
+	)
 }
 
 void AsXML::XML_load(CallArgs& ca)
 {
-	ca.ret = ActionValue(false);
+	T_IF_VERBOSE(
+		log::warning << L"XML::load not implemented" << Endl;
+	)
 }
 
 void AsXML::XML_parseXML(CallArgs& ca)
 {
+	T_IF_VERBOSE(
+		log::warning << L"XML::parseXML not implemented" << Endl;
+	)
 }
 
 void AsXML::XML_send(CallArgs& ca)
 {
-	ca.ret = ActionValue(false);
+	T_IF_VERBOSE(
+		log::warning << L"XML::send not implemented" << Endl;
+	)
 }
 
 void AsXML::XML_sendAndLoad(CallArgs& ca)
 {
+	T_IF_VERBOSE(
+		log::warning << L"XML::sendAndLoad not implemented" << Endl;
+	)
 }
 
 void AsXML::XML_get_contentType(CallArgs& ca)
 {
+	T_IF_VERBOSE(
+		log::warning << L"XML::get_contentType not implemented" << Endl;
+	)
 }
 
 void AsXML::XML_set_contentType(CallArgs& ca)
 {
+	T_IF_VERBOSE(
+		log::warning << L"XML::set_contentType not implemented" << Endl;
+	)
 }
 
 void AsXML::XML_get_docTypeDecl(CallArgs& ca)
 {
+	T_IF_VERBOSE(
+		log::warning << L"XML::get_docTypeDecl not implemented" << Endl;
+	)
 }
 
 void AsXML::XML_set_docTypeDecl(CallArgs& ca)
 {
+	T_IF_VERBOSE(
+		log::warning << L"XML::set_docTypeDecl not implemented" << Endl;
+	)
 }
 
 void AsXML::XML_get_idMap(CallArgs& ca)
 {
+	T_IF_VERBOSE(
+		log::warning << L"XML::get_idMap not implemented" << Endl;
+	)
 }
 
 void AsXML::XML_set_idMap(CallArgs& ca)
 {
+	T_IF_VERBOSE(
+		log::warning << L"XML::set_idMap not implemented" << Endl;
+	)
 }
 
 void AsXML::XML_get_ignoreWhite(CallArgs& ca)
 {
+	T_IF_VERBOSE(
+		log::warning << L"XML::get_ignoreWhite not implemented" << Endl;
+	)
 }
 
 void AsXML::XML_set_ignoreWhite(CallArgs& ca)
 {
+	T_IF_VERBOSE(
+		log::warning << L"XML::set_ignoreWhite not implemented" << Endl;
+	)
 }
 
 void AsXML::XML_get_loaded(CallArgs& ca)
 {
+	T_IF_VERBOSE(
+		log::warning << L"XML::get_loaded not implemented" << Endl;
+	)
 }
 
 void AsXML::XML_set_loaded(CallArgs& ca)
 {
+	T_IF_VERBOSE(
+		log::warning << L"XML::set_loaded not implemented" << Endl;
+	)
 }
 
 void AsXML::XML_get_status(CallArgs& ca)
 {
+	T_IF_VERBOSE(
+		log::warning << L"XML::get_status not implemented" << Endl;
+	)
 }
 
 void AsXML::XML_set_status(CallArgs& ca)
 {
+	T_IF_VERBOSE(
+		log::warning << L"XML::set_status not implemented" << Endl;
+	)
 }
 
 void AsXML::XML_get_xmlDecl(CallArgs& ca)
 {
+	T_IF_VERBOSE(
+		log::warning << L"XML::get_xmlDecl not implemented" << Endl;
+	)
 }
 
 void AsXML::XML_set_xmlDecl(CallArgs& ca)
 {
+	T_IF_VERBOSE(
+		log::warning << L"XML::set_xmlDecl not implemented" << Endl;
+	)
 }
 
 	}

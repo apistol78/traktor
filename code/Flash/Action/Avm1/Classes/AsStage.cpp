@@ -50,7 +50,9 @@ void AsStage::Stage_get_height(CallArgs& ca)
 
 void AsStage::Stage_addListener(CallArgs& ca)
 {
-	log::error << L"Stage.addListener not implemented" << Endl;
+	T_IF_VERBOSE(
+		log::warning << L"Stage::addListener not implemented" << Endl;
+	)
 }
 
 	}

@@ -36,24 +36,30 @@ void AsLocalConnection::coerce(ActionObject* self) const
 
 void AsLocalConnection::LocalConnection_close(CallArgs& ca)
 {
-	log::warning << L"LocalConnection.close not implemented" << Endl;
+	T_IF_VERBOSE(
+		log::warning << L"LocalConnection::close not implemented" << Endl;
+	)
 }
 
 void AsLocalConnection::LocalConnection_connect(CallArgs& ca)
 {
-	log::warning << L"LocalConnection.connect not implemented" << Endl;
-	ca.ret = ActionValue(false);
+	T_IF_VERBOSE(
+		log::warning << L"LocalConnection::connect not implemented" << Endl;
+	)
 }
 
 void AsLocalConnection::LocalConnection_domain(CallArgs& ca)
 {
-	log::warning << L"LocalConnection.domain not implemented" << Endl;
+	T_IF_VERBOSE(
+		log::warning << L"LocalConnection::domain not implemented" << Endl;
+	)
 }
 
 void AsLocalConnection::LocalConnection_send(CallArgs& ca)
 {
-	log::warning << L"LocalConnection.send not implemented" << Endl;
-	ca.ret = ActionValue(false);
+	T_IF_VERBOSE(
+		log::warning << L"LocalConnection::send not implemented" << Endl;
+	)
 }
 
 	}

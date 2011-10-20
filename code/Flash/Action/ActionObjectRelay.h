@@ -32,14 +32,14 @@ public:
 	virtual ActionValue toString() const;
 
 protected:
-	ActionObjectRelay(const std::string& prototype);
+	ActionObjectRelay(const char* const prototype);
 
 	virtual void trace(const IVisitor& visitor) const;
 
 	virtual void dereference();
 
 private:
-	std::string m_prototype;
+	const char* const m_prototype;
 	Ref< ActionObject > m_asObject;
 };
 

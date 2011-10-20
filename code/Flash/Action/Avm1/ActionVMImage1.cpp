@@ -5,6 +5,14 @@
 #include "Flash/Action/Avm1/ActionOperations.h"
 #include "Flash/Action/Avm1/ActionVMImage1.h"
 
+#if defined(_DEBUG)
+#	define T_TRACE_EXECUTE 0
+#	define T_TRACE_PREPARE 0
+#else
+#	define T_TRACE_EXECUTE 0
+#	define T_TRACE_PREPARE 0
+#endif
+
 namespace traktor
 {
 	namespace flash
@@ -41,6 +49,10 @@ void ActionVMImage1::execute(ActionFrame* frame) const
 	state.global = frame->getContext()->getGlobal();
 	state.movieClip = frame->getContext()->getMovieClip();
 
+#if T_TRACE_EXECUTE
+	log::debug << IncreaseIndent;
+#endif
+
 	const uint8_t* end = state.pc + m_byteCode.size();
 	while (state.pc < end)
 	{
@@ -66,11 +78,18 @@ void ActionVMImage1::execute(ActionFrame* frame) const
 		T_ASSERT (info.op == op);
 		T_ASSERT (info.execute != 0);
 
+#if T_TRACE_EXECUTE
+		log::debug << uint32_t(state.pc - m_byteCode.c_ptr()) << L": " << mbstows(info.name) << Endl;
+#endif
 		info.execute(state);
 
 		// Update program counter.
 		state.pc = state.npc;
 	}
+
+#if T_TRACE_EXECUTE
+	log::debug << DecreaseIndent;
+#endif
 }
 
 void ActionVMImage1::prepare()
@@ -81,10 +100,6 @@ void ActionVMImage1::prepare()
 	state.npc = state.pc + 1;
 	state.data = 0;
 	state.length = 0;
-
-#if defined(_DEBUG)
-	log::debug << IncreaseIndent;
-#endif
 
 	const uint8_t* end = state.pc + m_byteCode.size();
 	while (state.pc < end)
@@ -110,20 +125,16 @@ void ActionVMImage1::prepare()
 		const OperationInfo& info = c_operationInfos[op];
 		T_ASSERT (info.op == op);
 
-		if (info.prepare)
-			info.prepare(state);
-
-#if defined(_DEBUG)
+#if T_TRACE_PREPARE
 		log::debug << uint32_t(state.pc - m_byteCode.ptr()) << L": " << mbstows(info.name) << Endl;
 #endif
+
+		if (info.prepare)
+			info.prepare(state);
 
 		// Update program counter.
 		state.pc = state.npc;
 	}
-
-#if defined(_DEBUG)
-	log::debug << DecreaseIndent;
-#endif
 }
 
 uint16_t ActionVMImage1::addConstData(const ActionValue& cd)
