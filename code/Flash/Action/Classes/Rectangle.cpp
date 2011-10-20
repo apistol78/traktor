@@ -1,5 +1,4 @@
 #include <cmath>
-#include "Core/Io/StringOutputStream.h"
 #include "Core/Math/Const.h"
 #include "Flash/Action/ActionValue.h"
 #include "Flash/Action/Classes/Rectangle.h"
@@ -51,13 +50,6 @@ void Rectangle::offset(avm_number_t dx, avm_number_t dy)
 {
 	left += dx;
 	top += dy;
-}
-
-ActionValue Rectangle::toString() const
-{
-	StringOutputStream ss;
-	ss << L"(x=" << left << L", y=" << top << L", w=" << width << L", h=" << height << L")";
-	return ActionValue(ss.str());
 }
 
 	}

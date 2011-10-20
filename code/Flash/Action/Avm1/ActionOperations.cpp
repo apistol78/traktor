@@ -259,7 +259,7 @@ void opx_getVariable(ExecutionState& state)
 		return;
 	}
 
-	if (state.self->getMember(state.context, variableName, value))
+	if (state.self->getMember(variableName, value))
 	{
 		stack.push(value);
 		return;
@@ -267,10 +267,10 @@ void opx_getVariable(ExecutionState& state)
 
 	if (state.movieClip)
 	{
-		ActionObject* movieClipAS = state.movieClip->getAsObject();
+		ActionObject* movieClipAS = state.movieClip->getAsObject(state.context);
 		T_ASSERT (movieClipAS);
 
-		if (movieClipAS != state.self && movieClipAS->getMember(state.context, variableName, value))
+		if (movieClipAS != state.self && movieClipAS->getMember(variableName, value))
 		{
 			stack.push(value);
 			return;
@@ -301,7 +301,7 @@ void opx_setVariable(ExecutionState& state)
 
 	if (state.movieClip)
 	{
-		ActionObject* movieClipAS = state.movieClip->getAsObject();
+		ActionObject* movieClipAS = state.movieClip->getAsObject(state.context);
 		T_ASSERT (movieClipAS);
 
 		movieClipAS->setMember(variableName, value);
@@ -424,7 +424,7 @@ void opx_cloneSprite(ExecutionState& state)
 	ActionValue target = stack.pop();
 	ActionValue source = stack.pop();
 
-	Ref< FlashSpriteInstance > sourceClip = source.getObject()->getRelay< FlashSpriteInstance >();
+	Ref< FlashSpriteInstance > sourceClip = source.getObjectAlways(state.context)->getRelay< FlashSpriteInstance >();
 	Ref< FlashSpriteInstance > cloneClip = sourceClip->clone();
 
 	cloneClip->setName(target.getString());
@@ -497,7 +497,7 @@ void opx_castOp(ExecutionState& state)
 		Ref< ActionObject > object = objectValue.getObject();
 		Ref< ActionObject > constructor = constructorValue.getObject();
 
-		if (object->getPrototype(state.context) == constructor)
+		if (object->getPrototype() == constructor)
 		{
 			stack.push(objectValue);
 			return;
@@ -512,10 +512,12 @@ void opx_implementsOp(ExecutionState& state)
 	ActionValueStack& stack = state.frame->getStack();
 	ActionValue implementationClass = stack.pop();
 	uint32_t interfaceCount = uint32_t(stack.pop().getNumber());
+
 	for (uint32_t i = 0; i < interfaceCount; ++i)
 	{
 		ActionValue interfaceClass = stack.pop();
-		implementationClass.getObject()->addInterface(interfaceClass.getObject());
+		if (interfaceClass.isObject())
+			implementationClass.getObject()->addInterface(interfaceClass.getObject());
 	}
 }
 
@@ -589,7 +591,7 @@ void opx_delete2(ExecutionState& state)
 	ActionValueStack& stack = state.frame->getStack();
 	std::string variableName = stack.pop().getString();
 
-	ActionObject* movieClipAS = state.movieClip->getAsObject();
+	ActionObject* movieClipAS = state.movieClip->getAsObject(state.context);
 	T_ASSERT (movieClipAS);
 
 	bool deleted = movieClipAS->deleteMember(variableName);
@@ -610,7 +612,7 @@ void opx_defineLocal(ExecutionState& state)
 
 	if (state.movieClip)
 	{
-		ActionObject* movieClipAS = state.movieClip->getAsObject();
+		ActionObject* movieClipAS = state.movieClip->getAsObject(state.context);
 		T_ASSERT (movieClipAS);
 
 		movieClipAS->setMember(variableName, variableValue);
@@ -627,15 +629,15 @@ void opx_callFunction(ExecutionState& state)
 	if (state.frame->getVariable(functionName, functionObject))
 		goto _found;
 
-	if (state.self->getMember(state.context, functionName, functionObject))
+	if (state.self->getMember(functionName, functionObject))
 		goto _found;
 	
 	if (state.movieClip)
 	{
-		ActionObject* movieClipAS = state.movieClip->getAsObject();
+		ActionObject* movieClipAS = state.movieClip->getAsObject(state.context);
 		T_ASSERT (movieClipAS);
 
-		if (movieClipAS->getMember(state.context, functionName, functionObject))
+		if (movieClipAS->getMember(functionName, functionObject))
 			goto _found;
 	}
 
@@ -644,14 +646,13 @@ void opx_callFunction(ExecutionState& state)
 
 _found:
 
-	if (functionObject.isObject())
+	if (functionObject.isObject< ActionFunction >())
 	{
-		Ref< ActionFunction > fn = functionObject.getObject< ActionFunction >();
-		if (fn)
-		{
-			stack.push(fn->call(state.frame, state.self));
-			return;
-		}
+		ActionFunction* fn = functionObject.getObject< ActionFunction >();
+		T_ASSERT (fn);
+
+		stack.push(fn->call(state.frame, state.self));
+		return;
 	}
 
 	log::warning << L"Undefined function \"" << mbstows(functionName) << L"\"" << Endl;
@@ -681,11 +682,8 @@ void opx_new(ExecutionState& state)
 	ActionValue classFunctionValue = stack.pop();
 
 	// Get class function.
-	Ref< ActionFunction > classFunction;
-	
-	if (classFunctionValue.isObject())
-		classFunction = classFunctionValue.getObject< ActionFunction >();
-	else
+	Ref< ActionFunction > classFunction = classFunctionValue.getObject< ActionFunction >();
+	if (!classFunction)
 	{
 		std::string classFunctionName = classFunctionValue.getString();
 		state.global->getLocalMember(classFunctionName, classFunctionValue);
@@ -711,7 +709,7 @@ void opx_new(ExecutionState& state)
 	Ref< ActionObject > prototype = prototypeValue.getObject();
 
 	// Create instance; first try to create through builtin classes.
-	Ref< ActionObject > self = new ActionObject(prototype);
+	Ref< ActionObject > self = new ActionObject(state.context, prototype);
 	ActionValue object = classFunction->call(state.frame, self);
 	stack.push(ActionValue(self));
 }
@@ -729,7 +727,7 @@ void opx_defineLocal2(ExecutionState& state)
 
 	if (state.movieClip)
 	{
-		ActionObject* movieClipAS = state.movieClip->getAsObject();
+		ActionObject* movieClipAS = state.movieClip->getAsObject(state.context);
 		T_ASSERT (movieClipAS);
 
 		movieClipAS->setMember(variableName, ActionValue());
@@ -741,13 +739,16 @@ void opx_initArray(ExecutionState& state)
 	ActionValueStack& stack = state.frame->getStack();
 
 	ActionValue arrayClassMember;
-	if (state.global->getLocalMember("Array", arrayClassMember) && arrayClassMember.isObject())
+	if (
+		state.global->getLocalMember("Array", arrayClassMember) &&
+		arrayClassMember.isObject< ActionClass >()
+	)
 	{
 		ActionClass* arrayClass = arrayClassMember.getObject< ActionClass >();
 		T_ASSERT (arrayClass);
 
 		// Allocate array instance.
-		Ref< ActionObject > self = /*arrayClass->alloc();*/ new ActionObject("Array");
+		Ref< ActionObject > self = /*arrayClass->alloc();*/ new ActionObject(state.context, "Array");
 		T_ASSERT (self);
 
 		// Initialize array through constructor.
@@ -766,7 +767,7 @@ void opx_initObject(ExecutionState& state)
 
 	int32_t initialPropertyCount = int32_t(stack.pop().getNumber());
 
-	Ref< ActionObject > scriptObject = new ActionObject();
+	Ref< ActionObject > scriptObject = new ActionObject(state.context);
 	for (int32_t i = 0; i < initialPropertyCount; ++i)
 	{
 		ActionValue value = stack.pop();
@@ -969,30 +970,21 @@ void opx_getMember(ExecutionState& state)
 	ActionValue targetValue = stack.pop();
 	ActionValue memberValue;
 
-	if (targetValue.isObject())
+	Ref< ActionObject > target = targetValue.getObjectAlways(state.context);
+	if (target->getMember(memberName, memberValue))
 	{
-		Ref< ActionObject > target = targetValue.getObject();
-		if (target)
-		{
-			if (target->getMember(state.context, memberName, memberValue))
-			{
-				stack.push(memberValue);
-				return;
-			}
-
-			Ref< ActionFunction > propertyGet;
-			if (target->getPropertyGet(state.context, memberName, propertyGet))
-			{
-				stack.push(ActionValue(avm_number_t(0)));
-				memberValue = propertyGet->call(state.frame, target);
-				stack.push(memberValue);
-				return;
-			}
-		}
+		stack.push(memberValue);
+		return;
 	}
 
-	// Unable to get member value; ensure top of stack is undefined.
-	stack.push(ActionValue());
+	Ref< ActionFunction > propertyGet;
+	if (target->getPropertyGet(memberName, propertyGet))
+	{
+		stack.push(ActionValue(avm_number_t(0)));
+		memberValue = propertyGet->call(state.frame, target);
+		stack.push(memberValue);
+		return;
+	}
 }
 
 void opx_setMember(ExecutionState& state)
@@ -1002,30 +994,22 @@ void opx_setMember(ExecutionState& state)
 	std::string memberName = stack.pop().getString();
 	ActionValue targetValue = stack.pop();
 
-	if (targetValue.isObject())
+	Ref< ActionObject > target = targetValue.getObjectAlways(state.context);
+
+	Ref< ActionFunction > propertySet;
+	if (target->getPropertySet(memberName, propertySet))
 	{
-		Ref< ActionObject > target = targetValue.getObject();
-		if (target)
-		{
-			Ref< ActionFunction > propertySet;
-			if (target->getPropertySet(state.context, memberName, propertySet))
-			{
-				stack.push(memberValue);
-				stack.push(ActionValue(avm_number_t(1)));
-				propertySet->call(state.frame, target);
-			}
-			else
-				target->setMember(memberName, memberValue);
-		}
+		stack.push(memberValue);
+		stack.push(ActionValue(avm_number_t(1)));
+		propertySet->call(state.frame, target);
 	}
+	else
+		target->setMember(memberName, memberValue);
 
 #if defined(_DEBUG)
-	if (memberValue.isObject())
-	{
-		Ref< ActionFunction > memberFunction = memberValue.getObject< ActionFunction >();
-		if (memberFunction)
-			memberFunction->setName(memberName);
-	}
+	ActionFunction* memberFunction = memberValue.getObject< ActionFunction >();
+	if (memberFunction)
+		memberFunction->setName(memberName);
 #endif
 }
 
@@ -1056,23 +1040,20 @@ void opx_callMethod(ExecutionState& state)
 	ActionValue targetValue = stack.pop();
 	ActionValue returnValue;
 
-	Ref< ActionObject > target = targetValue.getObject();
+	Ref< ActionObject > target = targetValue.getObjectAlways(state.context);
 	Ref< ActionFunction > method;
 
 	if (!target && state.movieClip)
-		target = state.movieClip->getAsObject();
+		target = state.movieClip->getAsObject(state.context);
 
-	if (target)
+	if (classConstructorName.isString())
 	{
-		if (classConstructorName.isString())
-		{
-			ActionValue memberValue;
-			if (target->getMember(state.context, classConstructorName.getString(), memberValue))
-				method = memberValue.getObject< ActionFunction >();
-		}
-		else
-			method = dynamic_type_cast< ActionFunction* >(target);
+		ActionValue memberValue;
+		if (target->getMember(classConstructorName.getString(), memberValue))
+			method = memberValue.getObject< ActionFunction >();
 	}
+	else
+		method = dynamic_type_cast< ActionFunction* >(target);
 
 	if (method)
 		returnValue = method->call(state.frame, target);
@@ -1090,47 +1071,38 @@ void opx_newMethod(ExecutionState& state)
 {
 	ActionValueStack& stack = state.frame->getStack();
 	std::string classFunctionName = stack.pop().getString();
-	Ref< ActionObject > classFunctionObject = stack.pop().getObject();
+	Ref< ActionObject > classFunctionObject = stack.pop().getObjectAlways(state.context);
 
-	if (classFunctionObject)
+	Ref< ActionFunction > classFunction;
+	if (classFunctionName.empty())
+		classFunction = dynamic_type_cast< ActionFunction* >(classFunctionObject);
+	else
 	{
-		Ref< ActionFunction > classFunction;
+		ActionValue methodValue;
+		classFunctionObject->getMember(classFunctionName, methodValue);
+		classFunction = methodValue.getObject< ActionFunction >();
+	}
 
-		if (classFunctionName.empty())
-			classFunction = dynamic_type_cast< ActionFunction* >(classFunctionObject);
-		else
+	if (classFunction)
+	{
+		// Get class prototype.
+		ActionValue prototypeValue;
+		classFunction->getLocalMember("prototype", prototypeValue);
+
+		if (!prototypeValue.isObject())
 		{
-			ActionValue methodValue;
-			classFunctionObject->getMember(state.context, classFunctionName, methodValue);
-			classFunction = methodValue.getObject< ActionFunction >();
-		}
-
-		if (classFunction)
-		{
-			// Get class prototype.
-			ActionValue prototypeValue;
-			classFunction->getLocalMember("prototype", prototypeValue);
-
-			if (!prototypeValue.isObject())
-			{
-				stack.push(ActionValue());
-				return;
-			}
-
-			Ref< ActionObject > prototype = prototypeValue.getObject();
-			Ref< ActionObject > self = new ActionObject(prototype);
-			classFunction->call(state.frame, self);
-			stack.push(ActionValue(self));
-		}
-		else
-		{
-			VM_LOG(L"Not a class object");
 			stack.push(ActionValue());
+			return;
 		}
+
+		Ref< ActionObject > prototype = prototypeValue.getObject();
+		Ref< ActionObject > self = new ActionObject(state.context, prototype);
+		classFunction->call(state.frame, self);
+		stack.push(ActionValue(self));
 	}
 	else
 	{
-		VM_LOG(L"No such class");
+		VM_LOG(L"Not a class object");
 		stack.push(ActionValue());
 	}
 }
@@ -1146,7 +1118,7 @@ void opx_instanceOf(ExecutionState& state)
 		Ref< ActionObject > object = objectValue.getObject();
 		Ref< ActionObject > constructor = constructorValue.getObject();
 
-		if (object->getPrototype(state.context) == constructor)
+		if (object->getPrototype() == constructor)
 		{
 			stack.push(ActionValue(true));
 			return;
@@ -1318,10 +1290,13 @@ void opx_extends(ExecutionState& state)
 	ActionValue superClass = stack.pop();
 	ActionValue subClass = stack.pop();
 
-	ActionValue superPrototype;
-	superClass.getObject()->getMember(state.context, "prototype", superPrototype);
+	T_ASSERT (superClass.isObject());
+	T_ASSERT (subClass.isObject());
 
-	Ref< ActionObject > prototype = new ActionObject();
+	ActionValue superPrototype;
+	superClass.getObject()->getMember("prototype", superPrototype);
+
+	Ref< ActionObject > prototype = new ActionObject(state.context);
 	prototype->setMember("__proto__", superPrototype);
 	prototype->setMember("__ctor__", superClass);
 
@@ -1353,7 +1328,7 @@ void opx_getUrl(ExecutionState& state)
 
 	ActionValue getUrl;
 	context->getGlobal()->getLocalMember("getUrl", getUrl);
-	if (getUrl.isObject())
+	if (getUrl.isObject< ActionFunction >())
 	{
 		Ref< ActionFunction > fn = getUrl.getObject< ActionFunction >();
 		if (fn)
@@ -1507,7 +1482,7 @@ void opx_defineFunction2(ExecutionState& state)
 	);
 
 	// Create prototype.
-	Ref< ActionObject > prototype = new ActionObject();
+	Ref< ActionObject > prototype = new ActionObject(state.context);
 	prototype->setMember("constructor", ActionValue(function));
 	function->setMember("prototype", ActionValue(prototype));
 
@@ -1516,7 +1491,7 @@ void opx_defineFunction2(ExecutionState& state)
 		// Assign function object into variable with the same name as the function.
 		T_ASSERT (state.movieClip);
 
-		ActionObject* movieClipAS = state.movieClip->getAsObject();
+		ActionObject* movieClipAS = state.movieClip->getAsObject(state.context);
 		T_ASSERT (movieClipAS);
 
 		movieClipAS->setMember(functionName, ActionValue(function));
@@ -1805,7 +1780,7 @@ void opx_getUrl2(ExecutionState& state)
 
 	ActionValue getUrl;
 	context->getGlobal()->getLocalMember("getUrl", getUrl);
-	if (getUrl.isObject())
+	if (getUrl.isObject< ActionFunction >())
 	{
 		Ref< ActionFunction > fn = getUrl.getObject< ActionFunction >();
 		if (fn)
@@ -1885,7 +1860,7 @@ void opx_defineFunction(ExecutionState& state)
 	);
 
 	// Create prototype.
-	Ref< ActionObject > prototype = new ActionObject();
+	Ref< ActionObject > prototype = new ActionObject(state.context);
 	prototype->setMember("constructor", ActionValue(function));
 	function->setMember("prototype", ActionValue(prototype));
 
@@ -1894,7 +1869,7 @@ void opx_defineFunction(ExecutionState& state)
 		// Assign function object into variable with the same name as the function.
 		T_ASSERT (state.movieClip);
 
-		ActionObject* movieClipAS = state.movieClip->getAsObject();
+		ActionObject* movieClipAS = state.movieClip->getAsObject(state.context);
 		T_ASSERT (movieClipAS);
 
 		movieClipAS->setMember(functionName, ActionValue(function));

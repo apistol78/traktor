@@ -11,7 +11,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsTextField_StyleSheet", AsTextField_Styl
 AsTextField_StyleSheet::AsTextField_StyleSheet(ActionContext* context)
 :	ActionClass(context, "TextField.StyleSheet")
 {
-	Ref< ActionObject > prototype = new ActionObject();
+	Ref< ActionObject > prototype = new ActionObject(context);
 
 	prototype->setMember("clear", ActionValue(createNativeFunction(context, this, &AsTextField_StyleSheet::TextField_StyleSheet_clear)));
 	prototype->setMember("getStyle", ActionValue(createNativeFunction(context, this, &AsTextField_StyleSheet::TextField_StyleSheet_getStyle)));
@@ -27,7 +27,7 @@ AsTextField_StyleSheet::AsTextField_StyleSheet(ActionContext* context)
 	setMember("prototype", ActionValue(prototype));
 }
 
-void AsTextField_StyleSheet::init(ActionObject* self, const ActionValueArray& args) const
+void AsTextField_StyleSheet::init(ActionObject* self, const ActionValueArray& args)
 {
 }
 

@@ -12,7 +12,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsI18N", AsI18N, ActionClass)
 AsI18N::AsI18N(ActionContext* context)
 :	ActionClass(context, "I18N")
 {
-	Ref< ActionObject > prototype = new ActionObject();
+	Ref< ActionObject > prototype = new ActionObject(context);
 
 	prototype->setMember("format", ActionValue(createNativeFunction(context, this, &AsI18N::I18N_format)));
 
@@ -22,7 +22,7 @@ AsI18N::AsI18N(ActionContext* context)
 	setMember("prototype", ActionValue(prototype));
 }
 
-void AsI18N::init(ActionObject* self, const ActionValueArray& args) const
+void AsI18N::init(ActionObject* self, const ActionValueArray& args)
 {
 }
 

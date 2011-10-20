@@ -14,29 +14,24 @@ void ActionObjectRelay::setAsObject(ActionObject* asObject)
 	m_asObject = asObject;
 }
 
-ActionObject* ActionObjectRelay::getAsObject()
+ActionObject* ActionObjectRelay::getAsObject(ActionContext* context)
 {
 	if (!m_asObject)
 	{
-		m_asObject = new ActionObject(m_prototype, this);
+		m_asObject = new ActionObject(context, m_prototype, this);
 		T_FATAL_ASSERT_M (m_asObject, L"Unable to create AS object");
 	}
 	return m_asObject;
 }
 
-bool ActionObjectRelay::setMember(const std::string& memberName, const ActionValue& memberValue)
+bool ActionObjectRelay::setMember(ActionContext* context, const std::string& memberName, const ActionValue& memberValue)
 {
 	return false;
 }
 
-bool ActionObjectRelay::getMember(const std::string& memberName, ActionValue& outMemberValue)
+bool ActionObjectRelay::getMember(ActionContext* context, const std::string& memberName, ActionValue& outMemberValue)
 {
 	return false;
-}
-
-ActionValue ActionObjectRelay::toString() const
-{
-	return ActionValue("[object Object]");
 }
 
 void ActionObjectRelay::trace(const IVisitor& visitor) const

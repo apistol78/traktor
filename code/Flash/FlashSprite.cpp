@@ -73,11 +73,11 @@ Ref< FlashCharacterInstance > FlashSprite::createInstance(ActionContext* context
 		ActionValue spriteClassValue;
 		if (context->getGlobal()->getLocalMember(spriteClassName, spriteClassValue))
 		{
-			ActionObject* spriteInstanceAO = spriteInstance->getAsObject();
+			ActionObject* spriteInstanceAO = spriteInstance->getAsObject(context);
 			T_ASSERT (spriteInstanceAO);
 
 			ActionValue prototype;
-			spriteClassValue.getObject()->getLocalMember("prototype", prototype);
+			spriteClassValue.getObjectAlways(context)->getLocalMember("prototype", prototype);
 			spriteInstanceAO->setMember("prototype", prototype);
 			spriteInstanceAO->setMember("__proto__", prototype);
 

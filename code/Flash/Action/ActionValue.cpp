@@ -172,6 +172,8 @@ avm_number_t ActionValue::getNumber() const
 		return m_value.b ? avm_number_t(1) : avm_number_t(0);
 	case AvtNumber:
 		return m_value.n;
+	case AvtObject:
+		return m_value.o ? m_value.o->valueOf().getNumber() : avm_number_t(0);
 	}
 	return avm_number_t(0);
 }
@@ -198,21 +200,21 @@ std::wstring ActionValue::getWideString() const
 	return mbstows(Utf8Encoding(), getString());
 }
 
-Ref< ActionObject > ActionValue::getObject() const
+Ref< ActionObject > ActionValue::getObjectAlways(ActionContext* context) const
 {
 	T_VALIDATE(*this);
 	switch (m_type)
 	{
 	case AvtBoolean:
-		return (new Boolean(m_value.b))->getAsObject();
+		return (new Boolean(m_value.b))->getAsObject(context);
 	case AvtNumber:
-		return (new Number(m_value.n))->getAsObject();
+		return (new Number(m_value.n))->getAsObject(context);
 	case AvtString:
-		return (new String(m_value.s))->getAsObject();
+		return (new String(m_value.s))->getAsObject(context);
 	case AvtObject:
-		return m_value.o;
+		return m_value.o ? m_value.o : new ActionObject(context);
 	}
-	return 0;
+	return new ActionObject(context);
 }
 
 ActionValue& ActionValue::operator = (const ActionValue& v)

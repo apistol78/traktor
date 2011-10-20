@@ -11,7 +11,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.As_mx_transitions_easing_Back", As_mx_tra
 As_mx_transitions_easing_Back::As_mx_transitions_easing_Back(ActionContext* context)
 :	ActionClass(context, "mx.transitions.easing.Back")
 {
-	Ref< ActionObject > prototype = new ActionObject();
+	Ref< ActionObject > prototype = new ActionObject(context);
 
 	prototype->setMember("easeIn", ActionValue(createNativeFunction(context, this, &As_mx_transitions_easing_Back::Back_easeIn)));
 	prototype->setMember("easeInOut", ActionValue(createNativeFunction(context, this, &As_mx_transitions_easing_Back::Back_easeInOut)));
@@ -23,7 +23,7 @@ As_mx_transitions_easing_Back::As_mx_transitions_easing_Back(ActionContext* cont
 	setMember("prototype", ActionValue(prototype));
 }
 
-void As_mx_transitions_easing_Back::init(ActionObject* self, const ActionValueArray& args) const
+void As_mx_transitions_easing_Back::init(ActionObject* self, const ActionValueArray& args)
 {
 }
 

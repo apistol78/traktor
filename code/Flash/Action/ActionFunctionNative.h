@@ -47,106 +47,106 @@ struct ActionValueCast { };
 template < >
 struct ActionValueCast< ActionValue, false >
 {
-	static ActionValue set(const ActionValue& v) { return v; }
-	static ActionValue get(const ActionValue& v) { return v; }
+	static ActionValue set(ActionContext* cx, const ActionValue& v) { return v; }
+	static ActionValue get(ActionContext* cx, const ActionValue& v) { return v; }
 };
 
 template < >
 struct ActionValueCast< const ActionValue&, false >
 {
-	static ActionValue set(const ActionValue& v) { return v; }
-	static ActionValue get(const ActionValue& v) { return v; }
+	static ActionValue set(ActionContext* cx, const ActionValue& v) { return v; }
+	static ActionValue get(ActionContext* cx, const ActionValue& v) { return v; }
 };
 
 template < >
 struct ActionValueCast< bool, false >
 {
-	static ActionValue set(bool v) { return ActionValue(v); }
-	static bool get(const ActionValue& av) { return av.getBoolean(); }
+	static ActionValue set(ActionContext* cx, bool v) { return ActionValue(v); }
+	static bool get(ActionContext* cx, const ActionValue& av) { return av.getBoolean(); }
 };
 
 template < >
 struct ActionValueCast< int32_t, false >
 {
-	static ActionValue set(int32_t v) { return ActionValue(avm_number_t(v)); }
-	static int32_t get(const ActionValue& av) { return int32_t(av.getNumber()); }
+	static ActionValue set(ActionContext* cx, int32_t v) { return ActionValue(avm_number_t(v)); }
+	static int32_t get(ActionContext* cx, const ActionValue& av) { return int32_t(av.getNumber()); }
 };
 
 template < >
 struct ActionValueCast< uint32_t, false >
 {
-	static ActionValue set(uint32_t v) { return ActionValue(avm_number_t(v)); }
-	static uint32_t get(const ActionValue& av) { return uint32_t(av.getNumber()); }
+	static ActionValue set(ActionContext* cx, uint32_t v) { return ActionValue(avm_number_t(v)); }
+	static uint32_t get(ActionContext* cx, const ActionValue& av) { return uint32_t(av.getNumber()); }
 };
 
 template < >
 struct ActionValueCast< float, false >
 {
-	static ActionValue set(float v) { return ActionValue(avm_number_t(v)); }
-	static float get(const ActionValue& av) { return float(av.getNumber()); }
+	static ActionValue set(ActionContext* cx, float v) { return ActionValue(avm_number_t(v)); }
+	static float get(ActionContext* cx, const ActionValue& av) { return float(av.getNumber()); }
 };
 
 template < >
 struct ActionValueCast< double, false >
 {
-	static ActionValue set(double v) { return ActionValue(avm_number_t(v)); }
-	static double get(const ActionValue& av) { return double(av.getNumber()); }
+	static ActionValue set(ActionContext* cx, double v) { return ActionValue(avm_number_t(v)); }
+	static double get(ActionContext* cx, const ActionValue& av) { return double(av.getNumber()); }
 };
 
 template < >
 struct ActionValueCast< std::string, false >
 {
-	static ActionValue set(const std::string& v) { return ActionValue(v); }
-	static std::string get(const ActionValue& av) { return av.getString(); }
+	static ActionValue set(ActionContext* cx, const std::string& v) { return ActionValue(v); }
+	static std::string get(ActionContext* cx, const ActionValue& av) { return av.getString(); }
 };
 
 template < >
 struct ActionValueCast< const std::string&, false >
 {
-	static ActionValue set(const std::string& v) { return ActionValue(v); }
-	static std::string get(const ActionValue& av) { return av.getString(); }
+	static ActionValue set(ActionContext* cx, const std::string& v) { return ActionValue(v); }
+	static std::string get(ActionContext* cx, const ActionValue& av) { return av.getString(); }
 };
 
 template < >
 struct ActionValueCast< std::wstring, false >
 {
-	static ActionValue set(const std::wstring& v) { return ActionValue(v); }
-	static std::wstring get(const ActionValue& av) { return av.getWideString(); }
+	static ActionValue set(ActionContext* cx, const std::wstring& v) { return ActionValue(v); }
+	static std::wstring get(ActionContext* cx, const ActionValue& av) { return av.getWideString(); }
 };
 
 template < >
 struct ActionValueCast< const std::wstring&, false >
 {
-	static ActionValue set(const std::wstring& v) { return ActionValue(v); }
-	static std::wstring get(const ActionValue& av) { return av.getWideString(); }
+	static ActionValue set(ActionContext* cx, const std::wstring& v) { return ActionValue(v); }
+	static std::wstring get(ActionContext* cx, const ActionValue& av) { return av.getWideString(); }
 };
 
 template < >
 struct ActionValueCast< Ref< ActionObject >, false >
 {
-	static ActionValue set(const Ref< ActionObject >& v) { return ActionValue(v); }
-	static Ref< ActionObject > get(const ActionValue& value) { return value.getObject(); }
+	static ActionValue set(ActionContext* cx, const Ref< ActionObject >& v) { return ActionValue(v); }
+	static Ref< ActionObject > get(ActionContext* cx, const ActionValue& value) { return value.getObjectAlways(cx); }
 };
 
 template < >
 struct ActionValueCast< ActionObject*, true >
 {
-	static ActionValue set(ActionObject* v) { return ActionValue(v); }
-	static ActionObject* get(const ActionValue& value) { return value.getObject(); }
+	static ActionValue set(ActionContext* cx, ActionObject* v) { return ActionValue(v); }
+	static ActionObject* get(ActionContext* cx, const ActionValue& value) { return value.getObjectAlways(cx); }
 };
 
 template < >
 struct ActionValueCast< Ref< ActionFunction >, false >
 {
-	static ActionValue set(const Ref< ActionFunction >& v) { return ActionValue(v); }
-	static Ref< ActionFunction > get(const ActionValue& value) { return value.getObject< ActionFunction >(); }
+	static ActionValue set(ActionContext* cx, const Ref< ActionFunction >& v) { return ActionValue(v); }
+	static Ref< ActionFunction > get(ActionContext* cx, const ActionValue& value) { return value.getObject< ActionFunction >(); }
 };
 
 template < >
 struct ActionValueCast< ActionFunction*, true >
 {
-	static ActionValue set(ActionFunction* v) { return ActionValue(v); }
-	static ActionFunction* get(const ActionValue& value) { return value.getObject< ActionFunction >(); }
+	static ActionValue set(ActionContext* cx, ActionFunction* v) { return ActionValue(v); }
+	static ActionFunction* get(ActionContext* cx, const ActionValue& value) { return value.getObject< ActionFunction >(); }
 };
 
 template < typename Type >
@@ -154,8 +154,8 @@ struct ActionValueCast< Ref< Type >, false >
 {
 	typedef Type base_t;
 
-	static ActionValue set(const Ref< base_t >& v) { return ActionValue(v ? v->getAsObject() : 0); }
-	static Ref< base_t > get(const ActionValue& value) { return value.getObject()->getRelay< base_t >(); }
+	static ActionValue set(ActionContext* cx, const Ref< base_t >& v) { return ActionValue(v ? v->getAsObject(cx) : 0); }
+	static Ref< base_t > get(ActionContext* cx, const ActionValue& value) { return value.getObject()->getRelay< base_t >(); }
 };
 
 template < typename Type >
@@ -163,8 +163,8 @@ struct ActionValueCast< Type, true >
 {
 	typedef typename IsPointer< Type >::base_t base_t;
 
-	static ActionValue set(base_t* v) { return ActionValue(v ? v->getAsObject() : 0); }
-	static base_t* get(const ActionValue& value) { return value.getObject()->getRelay< base_t >(); }
+	static ActionValue set(ActionContext* cx, base_t* v) { return ActionValue(v ? v->getAsObject(cx) : 0); }
+	static base_t* get(ActionContext* cx, const ActionValue& value) { return value.getObject()->getRelay< base_t >(); }
 };
 
 
@@ -236,9 +236,10 @@ struct MethodNativeFunction_0 : public INativeFunction
 	{
 		SelfClassType* self = Ensure< SelfClassType >::get(ca.self);
 		if (self)
-			ca.ret = ActionValueCast< ReturnType >::set((m_object->*m_method)(
-				self
-			));
+			ca.ret = ActionValueCast< ReturnType >::set(
+				ca.context,
+				(m_object->*m_method)(self)
+			);
 	}
 };
 
@@ -275,10 +276,13 @@ struct MethodNativeFunction_1 : public INativeFunction
 		T_ASSERT (ca.args.size() >= 1);
 		SelfClassType* self = Ensure< SelfClassType >::get(ca.self);
 		if (self)
-			ca.ret = ActionValueCast< ReturnType >::set((m_object->*m_method)(
-				self,
-				ActionValueCast< Argument1Type >::get(ca.args[0])
-			));
+			ca.ret = ActionValueCast< ReturnType >::set(
+				ca.context,
+				(m_object->*m_method)(
+					self,
+					ActionValueCast< Argument1Type >::get(ca.context, ca.args[0])
+				)
+			);
 	}
 };
 
@@ -299,7 +303,7 @@ struct MethodNativeFunction_1 < CallClassType, SelfClassType, void, Argument1Typ
 		if (self)
 			(m_object->*m_method)(
 				self,
-				ActionValueCast< Argument1Type >::get(ca.args[0])
+				ActionValueCast< Argument1Type >::get(ca.context, ca.args[0])
 			);
 	}
 };
@@ -321,11 +325,14 @@ struct MethodNativeFunction_2 : public INativeFunction
 		T_ASSERT (ca.args.size() >= 2);
 		SelfClassType* self = Ensure< SelfClassType >::get(ca.self);
 		if (self)
-			ca.ret = ActionValueCast< ReturnType >::set((m_object->*m_method)(
-				self,
-				ActionValueCast< Argument1Type >::get(ca.args[0]),
-				ActionValueCast< Argument2Type >::get(ca.args[1])
-			));
+			ca.ret = ActionValueCast< ReturnType >::set(
+				ca.context,
+				(m_object->*m_method)(
+					self,
+					ActionValueCast< Argument1Type >::get(ca.context, ca.args[0]),
+					ActionValueCast< Argument2Type >::get(ca.context, ca.args[1])
+				)
+			);
 	}
 };
 
@@ -347,8 +354,8 @@ struct MethodNativeFunction_2 < CallClassType, SelfClassType, void, Argument1Typ
 		if (self)
 			(m_object->*m_method)(
 				self,
-				ActionValueCast< Argument1Type >::get(ca.args[0]),
-				ActionValueCast< Argument2Type >::get(ca.args[1])
+				ActionValueCast< Argument1Type >::get(ca.context, ca.args[0]),
+				ActionValueCast< Argument2Type >::get(ca.context, ca.args[1])
 			);
 	}
 };
@@ -371,12 +378,15 @@ struct MethodNativeFunction_3 : public INativeFunction
 		T_ASSERT (ca.args.size() >= 3);
 		SelfClassType* self = Ensure< SelfClassType >::get(ca.self);
 		if (self)
-			ca.ret = ActionValueCast< ReturnType >::set((m_object->*m_method)(
-				self,
-				ActionValueCast< Argument1Type >::get(ca.args[0]),
-				ActionValueCast< Argument2Type >::get(ca.args[1]),
-				ActionValueCast< Argument3Type >::get(ca.args[2])
-			));
+			ca.ret = ActionValueCast< ReturnType >::set(
+				ca.context,
+				(m_object->*m_method)(
+					self,
+					ActionValueCast< Argument1Type >::get(ca.context, ca.args[0]),
+					ActionValueCast< Argument2Type >::get(ca.context, ca.args[1]),
+					ActionValueCast< Argument3Type >::get(ca.context, ca.args[2])
+				)
+			);
 	}
 };
 
@@ -399,9 +409,9 @@ struct MethodNativeFunction_3 < CallClassType, SelfClassType, void, Argument1Typ
 		if (self)
 			(m_object->*m_method)(
 				self,
-				ActionValueCast< Argument1Type >::get(ca.args[0]),
-				ActionValueCast< Argument2Type >::get(ca.args[1]),
-				ActionValueCast< Argument3Type >::get(ca.args[2])
+				ActionValueCast< Argument1Type >::get(ca.context, ca.args[0]),
+				ActionValueCast< Argument2Type >::get(ca.context, ca.args[1]),
+				ActionValueCast< Argument3Type >::get(ca.context, ca.args[2])
 			);
 	}
 };
@@ -429,15 +439,18 @@ struct MethodNativeFunction_6 : public INativeFunction
 		T_ASSERT (ca.args.size() >= 6);
 		SelfClassType* self = Ensure< SelfClassType >::get(ca.self);
 		if (self)
-			ca.ret = ActionValueCast< ReturnType >::set((m_object->*m_method)(
-				self,
-				ActionValueCast< Argument1Type >::get(ca.args[0]),
-				ActionValueCast< Argument2Type >::get(ca.args[1]),
-				ActionValueCast< Argument3Type >::get(ca.args[2]),
-				ActionValueCast< Argument4Type >::get(ca.args[3]),
-				ActionValueCast< Argument5Type >::get(ca.args[4]),
-				ActionValueCast< Argument6Type >::get(ca.args[5])
-			));
+			ca.ret = ActionValueCast< ReturnType >::set(
+				ca.context,
+				(m_object->*m_method)(
+					self,
+					ActionValueCast< Argument1Type >::get(ca.context, ca.args[0]),
+					ActionValueCast< Argument2Type >::get(ca.context, ca.args[1]),
+					ActionValueCast< Argument3Type >::get(ca.context, ca.args[2]),
+					ActionValueCast< Argument4Type >::get(ca.context, ca.args[3]),
+					ActionValueCast< Argument5Type >::get(ca.context, ca.args[4]),
+					ActionValueCast< Argument6Type >::get(ca.context, ca.args[5])
+				)
+			);
 	}
 };
 
@@ -463,12 +476,12 @@ struct MethodNativeFunction_6 < CallClassType, SelfClassType, void, Argument1Typ
 		if (self)
 			(m_object->*m_method)(
 				self,
-				ActionValueCast< Argument1Type >::get(ca.args[0]),
-				ActionValueCast< Argument2Type >::get(ca.args[1]),
-				ActionValueCast< Argument3Type >::get(ca.args[2]),
-				ActionValueCast< Argument4Type >::get(ca.args[3]),
-				ActionValueCast< Argument5Type >::get(ca.args[4]),
-				ActionValueCast< Argument6Type >::get(ca.args[5])
+				ActionValueCast< Argument1Type >::get(ca.context, ca.args[0]),
+				ActionValueCast< Argument2Type >::get(ca.context, ca.args[1]),
+				ActionValueCast< Argument3Type >::get(ca.context, ca.args[2]),
+				ActionValueCast< Argument4Type >::get(ca.context, ca.args[3]),
+				ActionValueCast< Argument5Type >::get(ca.context, ca.args[4]),
+				ActionValueCast< Argument6Type >::get(ca.context, ca.args[5])
 			);
 	}
 };
@@ -488,6 +501,7 @@ struct MethodNativeFunction_self_0 : public INativeFunction
 		ClassType* self = Ensure< ClassType >::get(ca.self);
 		if (self)
 			ca.ret = ActionValueCast< ReturnType >::set(
+				ca.context,
 				(self->*m_method)()
 			);
 	}
@@ -523,8 +537,9 @@ struct MethodNativeFunction_self_1 : public INativeFunction
 		ClassType* self = Ensure< ClassType >::get(ca.self);
 		if (self)
 			ca.ret = ActionValueCast< ReturnType >::set(
+				ca.context,
 				(self->*m_method)(
-					ActionValueCast< Argument1Type >::get(ca.args[0])
+					ActionValueCast< Argument1Type >::get(ca.context, ca.args[0])
 				)
 			);
 	}
@@ -544,7 +559,7 @@ struct MethodNativeFunction_self_1 < ClassType, void, Argument1Type > : public I
 		ClassType* self = Ensure< ClassType >::get(ca.self);
 		if (self)
 			(self->*m_method)(
-				ActionValueCast< Argument1Type >::get(ca.args[0])
+				ActionValueCast< Argument1Type >::get(ca.context, ca.args[0])
 			);
 	}
 };
@@ -565,9 +580,10 @@ struct MethodNativeFunction_self_2 : public INativeFunction
 		ClassType* self = Ensure< ClassType >::get(ca.self);
 		if (self)
 			ca.ret = ActionValueCast< ReturnType >::set(
+				ca.context,
 				(self->*m_method)(
-					ActionValueCast< Argument1Type >::get(ca.args[0]),
-					ActionValueCast< Argument2Type >::get(ca.args[1])
+					ActionValueCast< Argument1Type >::get(ca.context, ca.args[0]),
+					ActionValueCast< Argument2Type >::get(ca.context, ca.args[1])
 				)
 			);
 	}
@@ -588,8 +604,8 @@ struct MethodNativeFunction_self_2 < ClassType, void, Argument1Type, Argument2Ty
 		ClassType* self = Ensure< ClassType >::get(ca.self);
 		if (self)
 			(self->*m_method)(
-				ActionValueCast< Argument1Type >::get(ca.args[0]),
-				ActionValueCast< Argument2Type >::get(ca.args[1])
+				ActionValueCast< Argument1Type >::get(ca.context, ca.args[0]),
+				ActionValueCast< Argument2Type >::get(ca.context, ca.args[1])
 			);
 	}
 };
@@ -611,10 +627,11 @@ struct MethodNativeFunction_self_3 : public INativeFunction
 		ClassType* self = Ensure< ClassType >::get(ca.self);
 		if (self)
 			ca.ret = ActionValueCast< ReturnType >::set(
+				ca.context,
 				(self->*m_method)(
-					ActionValueCast< Argument1Type >::get(ca.args[0]),
-					ActionValueCast< Argument2Type >::get(ca.args[1]),
-					ActionValueCast< Argument3Type >::get(ca.args[2])
+					ActionValueCast< Argument1Type >::get(ca.context, ca.args[0]),
+					ActionValueCast< Argument2Type >::get(ca.context, ca.args[1]),
+					ActionValueCast< Argument3Type >::get(ca.context, ca.args[2])
 				)
 			);
 	}
@@ -636,9 +653,9 @@ struct MethodNativeFunction_self_3 < ClassType, void, Argument1Type, Argument2Ty
 		ClassType* self = Ensure< ClassType >::get(ca.self);
 		if (self)
 			(self->*m_method)(
-				ActionValueCast< Argument1Type >::get(ca.args[0]),
-				ActionValueCast< Argument2Type >::get(ca.args[1]),
-				ActionValueCast< Argument3Type >::get(ca.args[2])
+				ActionValueCast< Argument1Type >::get(ca.context, ca.args[0]),
+				ActionValueCast< Argument2Type >::get(ca.context, ca.args[1]),
+				ActionValueCast< Argument3Type >::get(ca.context, ca.args[2])
 			);
 	}
 };
@@ -663,13 +680,14 @@ struct MethodNativeFunction_self_6 : public INativeFunction
 		ClassType* self = Ensure< ClassType >::get(ca.self);
 		if (self)
 			ca.ret = ActionValueCast< ReturnType >::set(
+				ca.context,
 				(self->*m_method)(
-					ActionValueCast< Argument1Type >::get(ca.args[0]),
-					ActionValueCast< Argument2Type >::get(ca.args[1]),
-					ActionValueCast< Argument3Type >::get(ca.args[2]),
-					ActionValueCast< Argument4Type >::get(ca.args[3]),
-					ActionValueCast< Argument5Type >::get(ca.args[4]),
-					ActionValueCast< Argument6Type >::get(ca.args[5])
+					ActionValueCast< Argument1Type >::get(ca.context, ca.args[0]),
+					ActionValueCast< Argument2Type >::get(ca.context, ca.args[1]),
+					ActionValueCast< Argument3Type >::get(ca.context, ca.args[2]),
+					ActionValueCast< Argument4Type >::get(ca.context, ca.args[3]),
+					ActionValueCast< Argument5Type >::get(ca.context, ca.args[4]),
+					ActionValueCast< Argument6Type >::get(ca.context, ca.args[5])
 				)
 			);
 	}
@@ -694,12 +712,12 @@ struct MethodNativeFunction_self_6 < ClassType, void, Argument1Type, Argument2Ty
 		ClassType* self = Ensure< ClassType >::get(ca.self);
 		if (self)
 			(self->*m_method)(
-				ActionValueCast< Argument1Type >::get(ca.args[0]),
-				ActionValueCast< Argument2Type >::get(ca.args[1]),
-				ActionValueCast< Argument3Type >::get(ca.args[2]),
-				ActionValueCast< Argument4Type >::get(ca.args[3]),
-				ActionValueCast< Argument5Type >::get(ca.args[4]),
-				ActionValueCast< Argument6Type >::get(ca.args[5])
+				ActionValueCast< Argument1Type >::get(ca.context, ca.args[0]),
+				ActionValueCast< Argument2Type >::get(ca.context, ca.args[1]),
+				ActionValueCast< Argument3Type >::get(ca.context, ca.args[2]),
+				ActionValueCast< Argument4Type >::get(ca.context, ca.args[3]),
+				ActionValueCast< Argument5Type >::get(ca.context, ca.args[4]),
+				ActionValueCast< Argument6Type >::get(ca.context, ca.args[5])
 			);
 	}
 };

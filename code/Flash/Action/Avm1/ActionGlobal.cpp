@@ -54,6 +54,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.ActionGlobal", ActionGlobal, ActionObject)
 
 ActionGlobal::ActionGlobal(ActionContext* context)
+:	ActionObject(context)
 {
 	setMember("ASSetPropFlags", ActionValue(createNativeFunction(context, this, &ActionGlobal::Global_ASSetPropFlags)));
 	setMember("escape", ActionValue(createNativeFunction(context, this, &ActionGlobal::Global_escape)));
@@ -88,10 +89,10 @@ ActionGlobal::ActionGlobal(ActionContext* context)
 	setMember("XMLNode", ActionValue(new AsXMLNode(context)));
 
 	// flash.
-	Ref< ActionObject > flash = new ActionObject();
+	Ref< ActionObject > flash = new ActionObject(context);
 	{
 		// flash.geom.
-		Ref< ActionObject > geom = new ActionObject();
+		Ref< ActionObject > geom = new ActionObject(context);
 		{
 			geom->setMember("ColorTransform", ActionValue(new As_flash_geom_ColorTransform(context)));
 			geom->setMember("Point", ActionValue(new As_flash_geom_Point(context)));
@@ -103,16 +104,16 @@ ActionGlobal::ActionGlobal(ActionContext* context)
 	setMember("flash", ActionValue(flash));
 
 	// mx.
-	Ref< ActionObject > mx = new ActionObject();
+	Ref< ActionObject > mx = new ActionObject(context);
 	{
 		// mx.transitions.
-		Ref< ActionObject > transitions = new ActionObject();
+		Ref< ActionObject > transitions = new ActionObject(context);
 		if (transitions)
 		{
 			transitions->setMember("Tween", ActionValue(new As_mx_transitions_Tween(context)));
 
 			// mx.transitions.easing
-			Ref< ActionObject > easing = new ActionObject();
+			Ref< ActionObject > easing = new ActionObject(context);
 			if (easing)
 			{
 				easing->setMember("Back", ActionValue(new As_mx_transitions_easing_Back(context)));
@@ -136,7 +137,7 @@ void ActionGlobal::Global_ASSetPropFlags(CallArgs& ca)
 	uint32_t flags = uint32_t(ca.args[2].getNumber());
 
 	// Read-only; protect classes from being modified.
-	if (flags & 4)
+	if (object != 0 && flags & 4)
 		object->setReadOnly();
 }
 

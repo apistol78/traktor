@@ -36,16 +36,11 @@ public:
 
 	virtual ActionValue call(ActionFrame* callerFrame, ActionObject* self) = 0;
 
-	virtual ActionValue toString() const;
-
-	ActionContext* getContext() const { return m_context; }
-
 	void setName(const std::string& name) { m_name = name; }
 
 	const std::string& getName() const { return m_name; }
 
 private:
-	ActionContext* m_context;
 	std::string m_name;
 };
 

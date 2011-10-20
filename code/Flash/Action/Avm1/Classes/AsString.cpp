@@ -17,7 +17,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsString", AsString, ActionClass)
 AsString::AsString(ActionContext* context)
 :	ActionClass(context, "String")
 {
-	Ref< ActionObject > prototype = new ActionObject();
+	Ref< ActionObject > prototype = new ActionObject(context);
 
 	prototype->setMember("charAt", ActionValue(createNativeFunction(context, this, &AsString::String_charAt)));
 	prototype->setMember("charCodeAt", ActionValue(createNativeFunction(context, this, &AsString::String_charCodeAt)));
@@ -30,7 +30,7 @@ AsString::AsString(ActionContext* context)
 	prototype->setMember("substr", ActionValue(createNativeFunction(context, this, &AsString::String_substr)));
 	prototype->setMember("substring", ActionValue(createNativeFunction(context, this, &AsString::String_substring)));
 	prototype->setMember("toLowerCase", ActionValue(createNativeFunction(context, this, &AsString::String_toLowerCase)));
-	//prototype->setMember("toString", ActionValue(createNativeFunction(context, this, &AsString::String_toString)));
+	prototype->setMember("toString", ActionValue(createNativeFunction(context, this, &AsString::String_toString)));
 	prototype->setMember("toUpperCase", ActionValue(createNativeFunction(context, this, &AsString::String_toUpperCase)));
 	prototype->setMember("valueOf", ActionValue(createNativeFunction(context, this, &AsString::String_valueOf)));
 
@@ -40,7 +40,7 @@ AsString::AsString(ActionContext* context)
 	setMember("prototype", ActionValue(prototype));
 }
 
-void AsString::init(ActionObject* self, const ActionValueArray& args) const
+void AsString::init(ActionObject* self, const ActionValueArray& args)
 {
 	Ref< String > s;
 	if (args.size() > 0)
@@ -91,7 +91,7 @@ void AsString::String_concat(CallArgs& ca)
 void AsString::String_fromCharCode(CallArgs& ca)
 {
 	char charCode = char(ca.args[0].getNumber());
-	ca.ret = ActionValue((new String(charCode))->getAsObject());
+	ca.ret = ActionValue((new String(charCode))->getAsObject(ca.context));
 }
 
 void AsString::String_indexOf(CallArgs& ca)
@@ -148,7 +148,7 @@ void AsString::String_split(CallArgs& ca)
 	for (std::vector< std::string >::const_iterator i = words.begin(); i != words.end(); ++i)
 		arr->push(ActionValue(*i));
 
-	ca.ret = ActionValue(arr->getAsObject());
+	ca.ret = ActionValue(arr->getAsObject(ca.context));
 }
 
 void AsString::String_substr(CallArgs& ca)
@@ -183,19 +183,20 @@ void AsString::String_toLowerCase(CallArgs& ca)
 {
 	Ref< String > self = ca.self->getRelay< String >();
 	const std::string& st = self->get();
-	ca.ret = ActionValue((new String(toLower(st)))->getAsObject());
+	ca.ret = ActionValue((new String(toLower(st)))->getAsObject(ca.context));
 }
 
-//void AsString::String_toString(CallArgs& ca)
-//{
-//	ca.ret = ActionValue(ca.self);
-//}
+void AsString::String_toString(CallArgs& ca)
+{
+	Ref< String > self = ca.self->getRelay< String >();
+	ca.ret = ActionValue(self->get());
+}
 
 void AsString::String_toUpperCase(CallArgs& ca)
 {
 	Ref< String > self = ca.self->getRelay< String >();
 	const std::string& st = self->get();
-	ca.ret = ActionValue((new String(toUpper(st)))->getAsObject());
+	ca.ret = ActionValue((new String(toUpper(st)))->getAsObject(ca.context));
 }
 
 void AsString::String_valueOf(CallArgs& ca)

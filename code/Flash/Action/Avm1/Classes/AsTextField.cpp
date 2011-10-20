@@ -20,7 +20,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsTextField", AsTextField, ActionClass)
 AsTextField::AsTextField(ActionContext* context)
 :	ActionClass(context, "TextField")
 {
-	Ref< ActionObject > prototype = new ActionObject();
+	Ref< ActionObject > prototype = new ActionObject(context);
 
 	prototype->setMember("StyleSheet", ActionValue(new AsTextField_StyleSheet(context)));
 	prototype->setMember("addListener", ActionValue(createNativeFunction(context, this, &AsTextField::TextField_addListener)));
@@ -111,7 +111,7 @@ AsTextField::AsTextField(ActionContext* context)
 	setMember("prototype", ActionValue(prototype));
 }
 
-void AsTextField::init(ActionObject* self, const ActionValueArray& args) const
+void AsTextField::init(ActionObject* self, const ActionValueArray& args)
 {
 }
 

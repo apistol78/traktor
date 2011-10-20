@@ -18,7 +18,7 @@ class As_flash_geom_Transform : public ActionClass
 public:
 	As_flash_geom_Transform(ActionContext* context);
 
-	virtual void init(ActionObject* self, const ActionValueArray& args) const;
+	virtual void init(ActionObject* self, const ActionValueArray& args);
 
 	virtual void coerce(ActionObject* self) const;
 

@@ -28,7 +28,7 @@ class T_DLLCLASS AsObject : public ActionClass
 public:
 	AsObject(ActionContext* context);
 
-	virtual void init(ActionObject* self, const ActionValueArray& args) const;
+	virtual void init(ActionObject* self, const ActionValueArray& args);
 
 	virtual void coerce(ActionObject* self) const;
 

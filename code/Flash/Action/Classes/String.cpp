@@ -25,10 +25,5 @@ String::String(const std::string& str)
 {
 }
 
-ActionValue String::toString() const
-{
-	return ActionValue(m_str);
-}
-
 	}
 }

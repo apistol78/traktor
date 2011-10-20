@@ -14,10 +14,11 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsFunction", AsFunction, ActionClass)
 AsFunction::AsFunction(ActionContext* context)
 :	ActionClass(context, "Function")
 {
-	Ref< ActionObject > prototype = new ActionObject();
+	Ref< ActionObject > prototype = new ActionObject(context);
 
 	prototype->setMember("apply", ActionValue(createNativeFunction(context, this, &AsFunction::Function_apply)));
 	prototype->setMember("call", ActionValue(createNativeFunction(context, this, &AsFunction::Function_call)));
+	prototype->setMember("toString", ActionValue(createNativeFunction(context, this, &AsFunction::Function_toString)));
 
 	prototype->setMember("constructor", ActionValue(this));
 	prototype->setReadOnly();
@@ -25,7 +26,7 @@ AsFunction::AsFunction(ActionContext* context)
 	setMember("prototype", ActionValue(prototype));
 }
 
-void AsFunction::init(ActionObject* self, const ActionValueArray& args) const
+void AsFunction::init(ActionObject* self, const ActionValueArray& args)
 {
 }
 
@@ -49,8 +50,8 @@ void AsFunction::Function_apply(CallArgs& ca)
 		return;
 	}
 
-	Ref< ActionObject > self = ca.args[0].getObject();
-	Ref< Array > args = ca.args[1].getObject< Array >();
+	Ref< ActionObject > self = ca.args[0].getObjectAlways(ca.context);
+	Ref< Array > args = ca.args[1].getObjectAlways(ca.context)->getRelay< Array >();
 
 	ActionFrame frame(
 		ca.context,
@@ -96,7 +97,7 @@ void AsFunction::Function_call(CallArgs& ca)
 		return;
 	}
 
-	ActionObject* self = ca.args[0].getObject();
+	Ref< ActionObject > self = ca.args[0].getObjectAlways(ca.context);
 
 	ActionFrame frame(
 		ca.context,
@@ -120,6 +121,11 @@ void AsFunction::Function_call(CallArgs& ca)
 
 	if (stack.depth() > 0)
 		ca.ret = stack.pop();
+}
+
+void AsFunction::Function_toString(CallArgs& ca)
+{
+	ca.ret = ActionValue("[type Function]");
 }
 
 	}

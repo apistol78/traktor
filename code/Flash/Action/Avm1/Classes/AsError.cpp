@@ -11,7 +11,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsError", AsError, ActionClass)
 AsError::AsError(ActionContext* context)
 :	ActionClass(context, "Error")
 {
-	Ref< ActionObject > prototype = new ActionObject();
+	Ref< ActionObject > prototype = new ActionObject(context);
 
 	prototype->setMember("message", ActionValue(L""));
 	prototype->setMember("name", ActionValue(L""));
@@ -22,7 +22,7 @@ AsError::AsError(ActionContext* context)
 	setMember("prototype", ActionValue(prototype));
 }
 
-void AsError::init(ActionObject* self, const ActionValueArray& args) const
+void AsError::init(ActionObject* self, const ActionValueArray& args)
 {
 	if (args.size() > 0)
 		self->setMember("message", args[0]);

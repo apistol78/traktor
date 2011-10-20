@@ -217,13 +217,13 @@ FlashSpriteInstance* FlashSpriteInstance::getMask()
 	return m_mask;
 }
 
-bool FlashSpriteInstance::getMember(const std::string& memberName, ActionValue& outMemberValue)
+bool FlashSpriteInstance::getMember(ActionContext* context, const std::string& memberName, ActionValue& outMemberValue)
 {
 	FlashDisplayList::layer_map_t::const_iterator i = m_displayList.findLayer(memberName);
 	if (i != m_displayList.getLayers().end())
 	{
 		T_ASSERT (i->second.instance);
-		outMemberValue = ActionValue(i->second.instance->getAsObject());
+		outMemberValue = ActionValue(i->second.instance->getAsObject(context));
 		return true;
 	}
 	return false;
@@ -283,37 +283,50 @@ void FlashSpriteInstance::postDispatchEvents()
 void FlashSpriteInstance::eventInit()
 {
 	ActionContext* context = getContext();
-	context->pushMovieClip(this);
+
+	Ref< FlashSpriteInstance > current = context->getMovieClip();
+	context->setMovieClip(this);
 
 	const RefArray< const IActionVMImage >& initActionScripts = m_sprite->getInitActionScripts();
 	for (RefArray< const IActionVMImage >::const_iterator i = initActionScripts.begin(); i != initActionScripts.end(); ++i)
 	{
-		ActionFrame frame(context, getAsObject(), *i, 4, 0, 0);
+		ActionFrame frame(
+			context,
+			getAsObject(context),
+			*i,
+			4,
+			0,
+			0
+		);
 		context->getVM()->execute(&frame);
 	}
 
 	FlashCharacterInstance::eventInit();
 
-	context->popMovieClip();
+	context->setMovieClip(current);
 }
 
 void FlashSpriteInstance::eventLoad()
 {
 	ActionContext* context = getContext();
-	context->pushMovieClip(this);
+
+	Ref< FlashSpriteInstance > current = context->getMovieClip();
+	context->setMovieClip(this);
 
 	// Issue script assigned event.
 	executeScriptEvent("onLoad");
 
 	FlashCharacterInstance::eventLoad();
 
-	context->popMovieClip();
+	context->setMovieClip(current);
 }
 
 void FlashSpriteInstance::eventFrame()
 {
 	ActionContext* context = getContext();
-	context->pushMovieClip(this);
+
+	Ref< FlashSpriteInstance > current = context->getMovieClip();
+	context->setMovieClip(this);
 
 	FlashFrame* frame = m_sprite->getFrame(m_currentFrame);
 	T_ASSERT (frame);
@@ -330,7 +343,14 @@ void FlashSpriteInstance::eventFrame()
 		const RefArray< const IActionVMImage >& scripts = frame->getActionScripts();
 		for (RefArray< const IActionVMImage >::const_iterator i = scripts.begin(); i != scripts.end(); ++i)
 		{
-			ActionFrame callFrame(context, getAsObject(), *i, 4, 0, 0);
+			ActionFrame callFrame(
+				context,
+				getAsObject(context),
+				*i,
+				4,
+				0,
+				0
+			);
 			context->getVM()->execute(&callFrame);
 		}
 
@@ -347,13 +367,15 @@ void FlashSpriteInstance::eventFrame()
 
 	FlashCharacterInstance::eventFrame();
 
-	context->popMovieClip();
+	context->setMovieClip(current);
 }
 
 void FlashSpriteInstance::eventKeyDown(int32_t keyCode)
 {
 	ActionContext* context = getContext();
-	context->pushMovieClip(this);
+
+	Ref< FlashSpriteInstance > current = context->getMovieClip();
+	context->setMovieClip(this);
 
 	// Issue script assigned event.
 	executeScriptEvent("onKeyDown");
@@ -368,13 +390,15 @@ void FlashSpriteInstance::eventKeyDown(int32_t keyCode)
 
 	FlashCharacterInstance::eventKeyDown(keyCode);
 
-	context->popMovieClip();
+	context->setMovieClip(current);
 }
 
 void FlashSpriteInstance::eventKeyUp(int32_t keyCode)
 {
 	ActionContext* context = getContext();
-	context->pushMovieClip(this);
+
+	Ref< FlashSpriteInstance > current = context->getMovieClip();
+	context->setMovieClip(this);
 
 	// Issue script assigned event.
 	executeScriptEvent("onKeyUp");
@@ -389,13 +413,15 @@ void FlashSpriteInstance::eventKeyUp(int32_t keyCode)
 
 	FlashCharacterInstance::eventKeyUp(keyCode);
 
-	context->popMovieClip();
+	context->setMovieClip(current);
 }
 
 void FlashSpriteInstance::eventMouseDown(int32_t x, int32_t y, int32_t button)
 {
 	ActionContext* context = getContext();
-	context->pushMovieClip(this);
+
+	Ref< FlashSpriteInstance > current = context->getMovieClip();
+	context->setMovieClip(this);
 
 	m_mouseX = x;
 	m_mouseY = y;
@@ -420,13 +446,15 @@ void FlashSpriteInstance::eventMouseDown(int32_t x, int32_t y, int32_t button)
 
 	FlashCharacterInstance::eventMouseDown(x, y, button);
 
-	context->popMovieClip();
+	context->setMovieClip(current);
 }
 
 void FlashSpriteInstance::eventMouseUp(int32_t x, int32_t y, int32_t button)
 {
 	ActionContext* context = getContext();
-	context->pushMovieClip(this);
+
+	Ref< FlashSpriteInstance > current = context->getMovieClip();
+	context->setMovieClip(this);
 
 	m_mouseX = x;
 	m_mouseY = y;
@@ -451,13 +479,15 @@ void FlashSpriteInstance::eventMouseUp(int32_t x, int32_t y, int32_t button)
 
 	FlashCharacterInstance::eventMouseUp(x, y, button);
 
-	context->popMovieClip();
+	context->setMovieClip(current);
 }
 
 void FlashSpriteInstance::eventMouseMove(int32_t x, int32_t y, int32_t button)
 {
 	ActionContext* context = getContext();
-	context->pushMovieClip(this);
+
+	Ref< FlashSpriteInstance > current = context->getMovieClip();
+	context->setMovieClip(this);
 
 	m_mouseX = x;
 	m_mouseY = y;
@@ -482,7 +512,7 @@ void FlashSpriteInstance::eventMouseMove(int32_t x, int32_t y, int32_t button)
 
 	FlashCharacterInstance::eventMouseMove(x, y, button);
 
-	context->popMovieClip();
+	context->setMovieClip(current);
 }
 
 SwfRect FlashSpriteInstance::getBounds() const
@@ -515,18 +545,21 @@ void FlashSpriteInstance::dereference()
 
 void FlashSpriteInstance::executeScriptEvent(const std::string& eventName)
 {
-	ActionObject* self = getAsObject();
+	ActionContext* cx = getContext();
+	T_ASSERT (cx);
+
+	ActionObject* self = getAsObject(cx);
 	T_ASSERT (self);
 
 	ActionValue memberValue;
-	if (!self->getMember(getContext(), eventName, memberValue))
+	if (!self->getMember(eventName, memberValue))
 		return;
 
 	Ref< ActionFunction > eventFunction = memberValue.getObject< ActionFunction >();
 	if (!eventFunction)
 		return;
 
-	ActionFrame callFrame(getContext(), self, 0, 4, 0, 0);
+	ActionFrame callFrame(cx, self, 0, 4, 0, 0);
 	eventFunction->call(&callFrame, self);
 }
 

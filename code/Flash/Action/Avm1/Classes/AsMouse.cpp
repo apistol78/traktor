@@ -14,7 +14,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsMouse", AsMouse, ActionClass)
 AsMouse::AsMouse(ActionContext* context)
 :	ActionClass(context, "Mouse")
 {
-	Ref< ActionObject > prototype = new ActionObject();
+	Ref< ActionObject > prototype = new ActionObject(context);
 
 	prototype->setMember("addListener", ActionValue(createNativeFunction(context, this, &AsMouse::Mouse_addListener)));
 	prototype->setMember("removeListener", ActionValue(createNativeFunction(context, this, &AsMouse::Mouse_removeListener)));
@@ -27,7 +27,7 @@ AsMouse::AsMouse(ActionContext* context)
 	setMember("prototype", ActionValue(prototype));
 }
 
-void AsMouse::init(ActionObject* self, const ActionValueArray& args) const
+void AsMouse::init(ActionObject* self, const ActionValueArray& args)
 {
 }
 
@@ -44,9 +44,7 @@ void AsMouse::eventMouseDown(int x, int y, int button)
 	for (RefArray< ActionObject >::iterator i = listeners.begin(); i != listeners.end(); ++i)
 	{
 		ActionValue member;
-		(*i)->getMember(getContext(), "onButtonDown", member);
-		if (member.isUndefined())
-			continue;
+		(*i)->getMember("onButtonDown", member);
 
 		Ref< ActionFunction > eventFunction = member.getObject< ActionFunction >();
 		if (eventFunction)
@@ -65,9 +63,7 @@ void AsMouse::eventMouseUp(int x, int y, int button)
 	for (RefArray< ActionObject >::iterator i = listeners.begin(); i != listeners.end(); ++i)
 	{
 		ActionValue member;
-		(*i)->getMember(getContext(), "onButtonUp", member);
-		if (member.isUndefined())
-			continue;
+		(*i)->getMember("onButtonUp", member);
 
 		Ref< ActionFunction > eventFunction = member.getObject< ActionFunction >();
 		if (eventFunction)
@@ -86,9 +82,7 @@ void AsMouse::eventMouseMove(int x, int y, int button)
 	for (RefArray< ActionObject >::iterator i = listeners.begin(); i != listeners.end(); ++i)
 	{
 		ActionValue member;
-		(*i)->getMember(getContext(), "onMove", member);
-		if (member.isUndefined())
-			continue;
+		(*i)->getMember("onMove", member);
 
 		Ref< ActionFunction > eventFunction = member.getObject< ActionFunction >();
 		if (eventFunction)
@@ -119,14 +113,20 @@ void AsMouse::dereference()
 
 void AsMouse::Mouse_addListener(CallArgs& ca)
 {
-	m_listeners.push_back(ca.args[0].getObject());
+	ActionObject* listener = ca.args[0].getObject();
+	if (listener)
+		m_listeners.push_back(listener);
 }
 
 void AsMouse::Mouse_removeListener(CallArgs& ca)
 {
-	RefArray< ActionObject >::iterator i = std::find(m_listeners.begin(), m_listeners.end(), ca.args[0].getObject());
-	if (i != m_listeners.end())
-		m_listeners.erase(i);
+	ActionObject* listener = ca.args[0].getObject();
+	if (listener)
+	{
+		RefArray< ActionObject >::iterator i = std::find(m_listeners.begin(), m_listeners.end(), listener);
+		if (i != m_listeners.end())
+			m_listeners.erase(i);
+	}
 }
 
 void AsMouse::Mouse_show(CallArgs& ca)

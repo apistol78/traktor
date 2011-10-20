@@ -12,7 +12,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsButton", AsButton, ActionClass)
 AsButton::AsButton(ActionContext* context)
 :	ActionClass(context, "Button")
 {
-	Ref< ActionObject > prototype = new ActionObject();
+	Ref< ActionObject > prototype = new ActionObject(context);
 
 	prototype->addProperty("_alpha", createNativeFunction(context, this, &AsButton::Button_get_alpha), createNativeFunction(context, this, &AsButton::Button_set_alpha));
 	prototype->addProperty("blendMode", createNativeFunction(context, this, &AsButton::Button_get_blendMode), createNativeFunction(context, this, &AsButton::Button_set_blendMode));
@@ -50,7 +50,7 @@ AsButton::AsButton(ActionContext* context)
 	setMember("prototype", ActionValue(prototype));
 }
 
-void AsButton::init(ActionObject* self, const ActionValueArray& args) const
+void AsButton::init(ActionObject* self, const ActionValueArray& args)
 {
 }
 

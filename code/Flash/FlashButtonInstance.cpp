@@ -165,7 +165,7 @@ void FlashButtonInstance::executeCondition(uint32_t conditionMask)
 	ActionContext* context = getContext();
 	T_ASSERT (context);
 
-	ActionObject* self = getAsObject();
+	ActionObject* self = getAsObject(context);
 	T_ASSERT (self);
 
 	const FlashButton::button_conditions_t& conditions = m_button->getButtonConditions();
@@ -184,11 +184,11 @@ void FlashButtonInstance::executeScriptEvent(const std::string& eventName)
 	ActionContext* context = getContext();
 	T_ASSERT (context);
 
-	ActionObject* self = getAsObject();
+	ActionObject* self = getAsObject(context);
 	T_ASSERT (self);
 
 	ActionValue memberValue;
-	if (!self->getMember(context, eventName, memberValue))
+	if (!self->getMember(eventName, memberValue))
 		return;
 
 	Ref< ActionFunction > eventFunction = memberValue.getObject< ActionFunction >();

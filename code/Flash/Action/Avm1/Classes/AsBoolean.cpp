@@ -12,7 +12,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsBoolean", AsBoolean, ActionClass)
 AsBoolean::AsBoolean(ActionContext* context)
 :	ActionClass(context, "Boolean")
 {
-	Ref< ActionObject > prototype = new ActionObject();
+	Ref< ActionObject > prototype = new ActionObject(context);
 
 	prototype->setMember("toString", ActionValue(createNativeFunction(context, this, &AsBoolean::Boolean_toString)));
 	prototype->setMember("valueOf", ActionValue(createNativeFunction(context, this, &AsBoolean::Boolean_valueOf)));
@@ -23,7 +23,7 @@ AsBoolean::AsBoolean(ActionContext* context)
 	setMember("prototype", ActionValue(prototype));
 }
 
-void AsBoolean::init(ActionObject* self, const ActionValueArray& args) const
+void AsBoolean::init(ActionObject* self, const ActionValueArray& args)
 {
 	Ref< Boolean > b;
 	if (args.size() > 0)

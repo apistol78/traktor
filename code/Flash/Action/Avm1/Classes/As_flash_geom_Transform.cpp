@@ -14,7 +14,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.As_flash_geom_Transform", As_flash_geom_T
 As_flash_geom_Transform::As_flash_geom_Transform(ActionContext* context)
 :	ActionClass(context, "flash.geom.Transform")
 {
-	Ref< ActionObject > prototype = new ActionObject();
+	Ref< ActionObject > prototype = new ActionObject(context);
 
 	prototype->addProperty("colorTransform", createNativeFunction(context, this, &As_flash_geom_Transform::Transform_get_colorTransform), createNativeFunction(context, this, &As_flash_geom_Transform::Transform_set_colorTransform));
 	//prototype->addProperty("concatenatedColorTransform", createNativeFunction(context, this, &Transform_get_concatenatedColorTransform), 0);
@@ -30,7 +30,7 @@ As_flash_geom_Transform::As_flash_geom_Transform(ActionContext* context)
 	setMember("prototype", ActionValue(prototype));
 }
 
-void As_flash_geom_Transform::init(ActionObject* self, const ActionValueArray& args) const
+void As_flash_geom_Transform::init(ActionObject* self, const ActionValueArray& args)
 {
 	Ref< Transform > tf;
 	if (args.size() >= 1)

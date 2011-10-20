@@ -12,7 +12,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsDate", AsDate, ActionClass)
 AsDate::AsDate(ActionContext* context)
 :	ActionClass(context, "Date")
 {
-	Ref< ActionObject > prototype = new ActionObject();
+	Ref< ActionObject > prototype = new ActionObject(context);
 
 	prototype->setMember("getDate", ActionValue(createNativeFunction(context, this, &AsDate::Date_getDate)));
 	prototype->setMember("getDay", ActionValue(createNativeFunction(context, this, &AsDate::Date_getDay)));
@@ -60,7 +60,7 @@ AsDate::AsDate(ActionContext* context)
 	setMember("prototype", ActionValue(prototype));
 }
 
-void AsDate::init(ActionObject* self, const ActionValueArray& args) const
+void AsDate::init(ActionObject* self, const ActionValueArray& args)
 {
 	self->setRelay(new Date());
 }

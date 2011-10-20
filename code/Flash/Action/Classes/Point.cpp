@@ -1,4 +1,3 @@
-#include "Core/Io/StringOutputStream.h"
 #include "Flash/Action/ActionValue.h"
 #include "Flash/Action/Classes/Point.h"
 
@@ -21,13 +20,6 @@ Point::Point(avm_number_t x_, avm_number_t y_)
 ,	x(x_)
 ,	y(y_)
 {
-}
-
-ActionValue Point::toString() const
-{
-	StringOutputStream ss;
-	ss << L"(x=" << x << L", y=" << y << L")";
-	return ActionValue(ss.str());
 }
 
 	}

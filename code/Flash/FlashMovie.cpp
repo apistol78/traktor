@@ -106,8 +106,8 @@ Ref< FlashSpriteInstance > FlashMovie::createMovieClipInstance() const
 		m_movieClip->createInstance(context, 0, "")
 	);
 
-	global->setMember("_root", ActionValue(spriteInstance->getAsObject()));
-	global->setMember("_level0", ActionValue(spriteInstance->getAsObject()));
+	global->setMember("_root", ActionValue(spriteInstance->getAsObject(context)));
+	global->setMember("_level0", ActionValue(spriteInstance->getAsObject(context)));
 
 	return spriteInstance;
 }

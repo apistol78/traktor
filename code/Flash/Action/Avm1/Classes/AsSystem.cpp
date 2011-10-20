@@ -13,7 +13,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsSystem", AsSystem, ActionClass)
 AsSystem::AsSystem(ActionContext* context)
 :	ActionClass(context, "System")
 {
-	Ref< ActionObject > prototype = new ActionObject();
+	Ref< ActionObject > prototype = new ActionObject(context);
 
 	prototype->setMember("security", ActionValue(new AsSecurity(context)));
 
@@ -23,7 +23,7 @@ AsSystem::AsSystem(ActionContext* context)
 	setMember("prototype", ActionValue(prototype));
 }
 
-void AsSystem::init(ActionObject* self, const ActionValueArray& args) const
+void AsSystem::init(ActionObject* self, const ActionValueArray& args)
 {
 }
 

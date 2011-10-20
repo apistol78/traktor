@@ -30,13 +30,6 @@ public:
 
 	avm_number_t get() const { return m_value; }
 
-	// \name Override relay
-	//@{
-
-	virtual ActionValue toString() const;
-
-	//@}
-
 private:
 	avm_number_t m_value;
 };

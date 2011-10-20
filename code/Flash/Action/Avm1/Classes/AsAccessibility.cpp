@@ -11,7 +11,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsAccessibility", AsAccessibility, Action
 AsAccessibility::AsAccessibility(ActionContext* context)
 :	ActionClass(context, "Accessibility")
 {
-	Ref< ActionObject > prototype = new ActionObject();
+	Ref< ActionObject > prototype = new ActionObject(context);
 
 	prototype->setMember("isActive", ActionValue(createNativeFunction(context, this, &AsAccessibility::Accessibility_isActive)));
 	prototype->setMember("updateProperties", ActionValue(createNativeFunction(context, this, &AsAccessibility::Accessibility_updateProperties)));
@@ -22,7 +22,7 @@ AsAccessibility::AsAccessibility(ActionContext* context)
 	setMember("prototype", ActionValue(prototype));
 }
 
-void AsAccessibility::init(ActionObject* self, const ActionValueArray& args) const
+void AsAccessibility::init(ActionObject* self, const ActionValueArray& args)
 {
 }
 

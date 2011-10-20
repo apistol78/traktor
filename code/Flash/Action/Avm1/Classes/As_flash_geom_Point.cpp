@@ -1,4 +1,5 @@
 #include <cmath>
+#include "Core/Io/StringOutputStream.h"
 #include "Core/Math/MathUtils.h"
 #include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Avm1/Classes/As_flash_geom_Point.h"
@@ -14,7 +15,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.As_flash_geom_Point", As_flash_geom_Point
 As_flash_geom_Point::As_flash_geom_Point(ActionContext* context)
 :	ActionClass(context, "flash.geom.Point")
 {
-	Ref< ActionObject > prototype = new ActionObject();
+	Ref< ActionObject > prototype = new ActionObject(context);
 
 	prototype->setMember("add", ActionValue(createNativeFunction(context, this, &As_flash_geom_Point::Point_add)));
 	prototype->setMember("clone", ActionValue(createNativeFunction(context, this, &As_flash_geom_Point::Point_clone)));
@@ -39,7 +40,7 @@ As_flash_geom_Point::As_flash_geom_Point(ActionContext* context)
 	setMember("prototype", ActionValue(prototype));
 }
 
-void As_flash_geom_Point::init(ActionObject* self, const ActionValueArray& args) const
+void As_flash_geom_Point::init(ActionObject* self, const ActionValueArray& args)
 {
 	Ref< Point > pt;
 	if (args.size() >= 2)
@@ -63,8 +64,8 @@ void As_flash_geom_Point::coerce(ActionObject* self) const
 {
 	ActionValue x, y;
 
-	self->getMember(getContext(), "x", x);
-	self->getMember(getContext(), "y", y);
+	self->getMember("x", x);
+	self->getMember("y", y);
 
 	self->setRelay(new Point(
 		x.getNumber(),
@@ -132,7 +133,9 @@ void As_flash_geom_Point::Point_subtract(Point* self, const Point* pr) const
 
 ActionValue As_flash_geom_Point::Point_toString(const Point* self) const
 {
-	return self->toString();
+	StringOutputStream ss;
+	ss << L"(x=" << self->x << L", y=" << self->y << L")";
+	return ActionValue(ss.str());
 }
 
 avm_number_t As_flash_geom_Point::Point_get_length(const Point* self) const

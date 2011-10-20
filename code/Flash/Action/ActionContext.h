@@ -1,7 +1,6 @@
 #ifndef traktor_flash_ActionContext_H
 #define traktor_flash_ActionContext_H
 
-#include "Core/RefArray.h"
 #include "Flash/Collectable.h"
 #include "Flash/Action/ActionValue.h"
 #include "Flash/Action/ActionValuePool.h"
@@ -35,6 +34,8 @@ public:
 
 	void setGlobal(ActionObject* global);
 
+	void setMovieClip(FlashSpriteInstance* movieClip);
+
 	void addFrameListener(ActionObject* frameListener);
 
 	void removeFrameListener(ActionObject* frameListener);
@@ -43,17 +44,13 @@ public:
 
 	ActionObject* lookupClass(const std::string& className);
 
-	void pushMovieClip(FlashSpriteInstance* spriteInstance);
-
-	void popMovieClip();
-
-	FlashSpriteInstance* getMovieClip();
-
 	const IActionVM* getVM() const { return m_vm; }
 
 	const FlashMovie* getMovie() const { return m_movie; }
 
 	const Ref< ActionObject >& getGlobal() const { return m_global; }
+
+	FlashSpriteInstance* getMovieClip() const { return m_movieClip; }
 
 	ActionValuePool& getPool() { return m_pool; }
 
@@ -71,8 +68,8 @@ private:
 
 	const IActionVM* m_vm;
 	const FlashMovie* m_movie;
-	RefArray< FlashSpriteInstance > m_movieClipStack;
 	Ref< ActionObject > m_global;
+	Ref< FlashSpriteInstance > m_movieClip;
 	ActionValuePool m_pool;
 	std::vector< FrameListener > m_frameListeners;
 };

@@ -13,7 +13,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsSound", AsSound, ActionClass)
 AsSound::AsSound(ActionContext* context)
 :	ActionClass(context, "Sound")
 {
-	Ref< ActionObject > prototype = new ActionObject();
+	Ref< ActionObject > prototype = new ActionObject(context);
 
 	prototype->setMember("attachSound", ActionValue(createNativeFunction(context, this, &AsSound::Sound_attachSound)));
 	prototype->setMember("getBytesLoaded", ActionValue(createNativeFunction(context, this, &AsSound::Sound_getBytesLoaded)));
@@ -39,7 +39,7 @@ AsSound::AsSound(ActionContext* context)
 	setMember("prototype", ActionValue(prototype));
 }
 
-void AsSound::init(ActionObject* self, const ActionValueArray& args) const
+void AsSound::init(ActionObject* self, const ActionValueArray& args)
 {
 }
 

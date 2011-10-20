@@ -1,3 +1,4 @@
+#include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFunctionNative.h"
@@ -44,7 +45,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsArray", AsArray, ActionClass)
 AsArray::AsArray(ActionContext* context)
 :	ActionClass(context, "Array")
 {
-	Ref< ActionObject > prototype = new ActionObject();
+	Ref< ActionObject > prototype = new ActionObject(context);
 
 	prototype->setMember("CASEINSENSITIVE", ActionValue(avm_number_t(0)));
 	prototype->setMember("DESCENDING", ActionValue(avm_number_t(1)));
@@ -72,7 +73,7 @@ AsArray::AsArray(ActionContext* context)
 	setMember("prototype", ActionValue(prototype));
 }
 
-void AsArray::init(ActionObject* self, const ActionValueArray& args) const
+void AsArray::init(ActionObject* self, const ActionValueArray& args)
 {
 	self->setRelay(new Array(args));
 }
@@ -88,9 +89,9 @@ void AsArray::Array_concat(CallArgs& ca)
 	if (arr)
 	{
 		if (!ca.args.empty())
-			ca.ret = ActionValue(arr->concat(ca.args)->getAsObject());
+			ca.ret = ActionValue(arr->concat(ca.args)->getAsObject(ca.context));
 		else
-			ca.ret = ActionValue(arr->concat()->getAsObject());
+			ca.ret = ActionValue(arr->concat()->getAsObject(ca.context));
 	}
 }
 
@@ -119,7 +120,7 @@ void AsArray::Array_slice(CallArgs& ca)
 		if (ca.args.size() >= 2)
 			endIndex = int32_t(ca.args[1].getNumber());
 
-		ca.ret = ActionValue(arr->slice(startIndex, endIndex)->getAsObject());
+		ca.ret = ActionValue(arr->slice(startIndex, endIndex)->getAsObject(ca.context));
 	}
 }
 
@@ -165,13 +166,23 @@ void AsArray::Array_splice(CallArgs& ca)
 		uint32_t deleteCount = uint32_t(ca.args[1].getNumber());
 
 		Ref< Array > removed = arr->splice(startIndex, deleteCount, ca.args, 2);
-		ca.ret = ActionValue(removed->getAsObject());
+		ca.ret = ActionValue(removed->getAsObject(ca.context));
 	}
 }
 
 ActionValue AsArray::Array_toString(const Array* self) const
 {
-	return self->toString();
+	StringOutputStream ss;
+
+	const std::vector< ActionValue >& values = self->getValues();
+	for (std::vector< ActionValue >::const_iterator i = values.begin(); i != values.end(); ++i)
+	{
+		if (i != values.begin())
+			ss << L", ";
+		ss << i->getWideString();
+	}
+
+	return ActionValue(ss.str());
 }
 
 void AsArray::Array_unshift(CallArgs& ca)

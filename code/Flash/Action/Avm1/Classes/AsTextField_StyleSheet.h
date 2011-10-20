@@ -20,7 +20,7 @@ class AsTextField_StyleSheet : public ActionClass
 public:
 	AsTextField_StyleSheet(ActionContext* context);
 
-	virtual void init(ActionObject* self, const ActionValueArray& args) const;
+	virtual void init(ActionObject* self, const ActionValueArray& args);
 
 	virtual void coerce(ActionObject* self) const;
 

@@ -41,27 +41,17 @@ ActionValue ActionFrame::getRegister(uint16_t index) const
 
 bool ActionFrame::hasVariable(const std::string& variableName) const
 {
-	//if (variableName == "this")
-	//	return true;
-
 	std::map< std::string, ActionValue >::const_iterator i = m_localVariables.find(variableName);
 	return i != m_localVariables.end();
 }
 
 void ActionFrame::setVariable(const std::string& variableName, const ActionValue& variableValue)
 {
-	//T_ASSERT (variableName != "this");
 	m_localVariables[variableName] = variableValue;
 }
 
 bool ActionFrame::getVariable(const std::string& variableName, ActionValue& outVariableValue) const
 {
-	//if (variableName == "this")
-	//{
-	//	outVariableValue = ActionValue(m_self);
-	//	return true;
-	//}
-
 	std::map< std::string, ActionValue >::const_iterator i = m_localVariables.find(variableName);
 	if (i == m_localVariables.end())
 		return false;

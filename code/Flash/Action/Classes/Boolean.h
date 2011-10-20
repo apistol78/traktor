@@ -30,13 +30,6 @@ public:
 
 	bool get() const { return m_value; }
 
-	// \name Override relay
-	//@{
-
-	virtual ActionValue toString() const;
-
-	//@}
-
 private:
 	bool m_value;
 };

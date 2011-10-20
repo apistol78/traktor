@@ -13,7 +13,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.As_mx_transitions_easing_Elastic", As_mx_
 As_mx_transitions_easing_Elastic::As_mx_transitions_easing_Elastic(ActionContext* context)
 :	ActionClass(context, "mx.transitions.easing.Elastic")
 {
-	Ref< ActionObject > prototype = new ActionObject();
+	Ref< ActionObject > prototype = new ActionObject(context);
 
 	prototype->setMember("easeIn", ActionValue(createNativeFunction(context, this, &As_mx_transitions_easing_Elastic::Elastic_easeIn)));
 	prototype->setMember("easeInOut", ActionValue(createNativeFunction(context, this, &As_mx_transitions_easing_Elastic::Elastic_easeInOut)));
@@ -25,7 +25,7 @@ As_mx_transitions_easing_Elastic::As_mx_transitions_easing_Elastic(ActionContext
 	setMember("prototype", ActionValue(prototype));
 }
 
-void As_mx_transitions_easing_Elastic::init(ActionObject* self, const ActionValueArray& args) const
+void As_mx_transitions_easing_Elastic::init(ActionObject* self, const ActionValueArray& args)
 {
 }
 
