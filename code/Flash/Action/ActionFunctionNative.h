@@ -152,7 +152,7 @@ struct ActionValueCast< ActionFunction*, true >
 template < typename Type >
 struct ActionValueCast< Ref< Type >, false >
 {
-	typedef typename Type base_t;
+	typedef Type base_t;
 
 	static ActionValue set(const Ref< base_t >& v) { return ActionValue(v ? v->getAsObject() : 0); }
 	static Ref< base_t > get(const ActionValue& value) { return value.getObject()->getRelay< base_t >(); }
