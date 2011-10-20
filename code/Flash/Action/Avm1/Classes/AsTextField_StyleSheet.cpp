@@ -38,30 +38,51 @@ void AsTextField_StyleSheet::coerce(ActionObject* self) const
 
 void AsTextField_StyleSheet::TextField_StyleSheet_clear(CallArgs& ca)
 {
+	T_IF_VERBOSE(
+		log::warning << L"TextField::StyleSheet::clear not implemented" << Endl;
+	)
 }
 
 void AsTextField_StyleSheet::TextField_StyleSheet_getStyle(CallArgs& ca)
 {
+	T_IF_VERBOSE(
+		log::warning << L"TextField::StyleSheet::getStyle not implemented" << Endl;
+	)
 }
 
 void AsTextField_StyleSheet::TextField_StyleSheet_getStyleNames(CallArgs& ca)
 {
+	T_IF_VERBOSE(
+		log::warning << L"TextField::StyleSheet::getStyleNames not implemented" << Endl;
+	)
 }
 
 void AsTextField_StyleSheet::TextField_StyleSheet_load(CallArgs& ca)
 {
+	T_IF_VERBOSE(
+		log::warning << L"TextField::StyleSheet::load not implemented" << Endl;
+	)
 }
 
 void AsTextField_StyleSheet::TextField_StyleSheet_parseCSS(CallArgs& ca)
 {
+	T_IF_VERBOSE(
+		log::warning << L"TextField::StyleSheet::parseCSS not implemented" << Endl;
+	)
 }
 
 void AsTextField_StyleSheet::TextField_StyleSheet_setStyle(CallArgs& ca)
 {
+	T_IF_VERBOSE(
+		log::warning << L"TextField::StyleSheet::setStyle not implemented" << Endl;
+	)
 }
 
 void AsTextField_StyleSheet::TextField_StyleSheet_transform(CallArgs& ca)
 {
+	T_IF_VERBOSE(
+		log::warning << L"TextField::StyleSheet::transform not implemented" << Endl;
+	)
 }
 
 	}

@@ -30,7 +30,7 @@ class T_DLLCLASS FlashCharacterInstance : public ActionObjectRelay
 	T_RTTI_CLASS;
 
 public:
-	FlashCharacterInstance(ActionContext* context, const std::string& prototype, FlashCharacterInstance* parent);
+	FlashCharacterInstance(ActionContext* context, const char* const prototype, FlashCharacterInstance* parent);
 	
 	/*! \brief Destroy instance. */
 	virtual void destroy();
@@ -145,7 +145,6 @@ protected:
 
 private:
 	Ref< ActionContext > m_context;
-	std::string m_prototype;
 	FlashCharacterInstance* m_parent;
 	std::string m_name;
 	SwfCxTransform m_cxform;

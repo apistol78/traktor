@@ -39,34 +39,58 @@ void AsXMLNode::coerce(ActionObject* self) const
 
 void AsXMLNode::XMLNode_appendChild(CallArgs& ca)
 {
+	T_IF_VERBOSE(
+		log::warning << L"XMLNode::appendChild not implemented" << Endl;
+	)
 }
 
 void AsXMLNode::XMLNode_cloneNode(CallArgs& ca)
 {
+	T_IF_VERBOSE(
+		log::warning << L"XMLNode::cloneNode not implemented" << Endl;
+	)
 }
 
 void AsXMLNode::XMLNode_getNamespaceForPrefix(CallArgs& ca)
 {
+	T_IF_VERBOSE(
+		log::warning << L"XMLNode::getNamespaceForPrefix not implemented" << Endl;
+	)
 }
 
 void AsXMLNode::XMLNode_getPrefixForNamespace(CallArgs& ca)
 {
+	T_IF_VERBOSE(
+		log::warning << L"XMLNode::getPrefixForNamespace not implemented" << Endl;
+	)
 }
 
 void AsXMLNode::XMLNode_hasChildNodes(CallArgs& ca)
 {
+	T_IF_VERBOSE(
+		log::warning << L"XMLNode::hasChildNodes not implemented" << Endl;
+	)
 }
 
 void AsXMLNode::XMLNode_insertBefore(CallArgs& ca)
 {
+	T_IF_VERBOSE(
+		log::warning << L"XMLNode::insertBefore not implemented" << Endl;
+	)
 }
 
 void AsXMLNode::XMLNode_removeNode(CallArgs& ca)
 {
+	T_IF_VERBOSE(
+		log::warning << L"XMLNode::removeNode not implemented" << Endl;
+	)
 }
 
 void AsXMLNode::XMLNode_toString(CallArgs& ca)
 {
+	T_IF_VERBOSE(
+		log::warning << L"XMLNode::toString not implemented" << Endl;
+	)
 }
 
 	}

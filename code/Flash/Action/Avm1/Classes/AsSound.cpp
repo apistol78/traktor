@@ -50,90 +50,121 @@ void AsSound::coerce(ActionObject* self) const
 
 void AsSound::Sound_attachSound(CallArgs& ca)
 {
-	log::warning << L"Sound.attachSound not implemented" << Endl;
+	T_IF_VERBOSE(
+		log::warning << L"Sound::attachSound not implemented" << Endl;
+	)
 }
 
 void AsSound::Sound_getBytesLoaded(CallArgs& ca)
 {
-	log::warning << L"Sound.getBytesLoaded not implemented" << Endl;
-	ca.ret = ActionValue(avm_number_t(0));
+	T_IF_VERBOSE(
+		log::warning << L"Sound::getBytesLoaded not implemented" << Endl;
+	)
 }
 
 void AsSound::Sound_getBytesTotal(CallArgs& ca)
 {
-	log::warning << L"Sound.getBytesTotal not implemented" << Endl;
-	ca.ret = ActionValue(avm_number_t(0));
+	T_IF_VERBOSE(
+		log::warning << L"Sound::getBytesTotal not implemented" << Endl;
+	)
 }
 
 void AsSound::Sound_getPan(CallArgs& ca)
 {
-	log::warning << L"Sound.getPan not implemented" << Endl;
-	ca.ret = ActionValue(avm_number_t(0));
+	T_IF_VERBOSE(
+		log::warning << L"Sound::getPan not implemented" << Endl;
+	)
 }
 
 void AsSound::Sound_getTransform(CallArgs& ca)
 {
-	log::warning << L"Sound.getTransform not implemented" << Endl;
+	T_IF_VERBOSE(
+		log::warning << L"Sound::getTransform not implemented" << Endl;
+	)
 }
 
 void AsSound::Sound_getVolume(CallArgs& ca)
 {
-	log::warning << L"Sound.getVolume not implemented" << Endl;
-	ca.ret = ActionValue(avm_number_t(100));
+	T_IF_VERBOSE(
+		log::warning << L"Sound::getVolume not implemented" << Endl;
+	)
 }
 
 void AsSound::Sound_loadSound(CallArgs& ca)
 {
-	log::warning << L"Sound.loadSound not implemented" << Endl;
+	T_IF_VERBOSE(
+		log::warning << L"Sound::loadSound not implemented" << Endl;
+	)
 }
 
 void AsSound::Sound_setPan(CallArgs& ca)
 {
-	log::warning << L"Sound.setPan not implemented" << Endl;
+	T_IF_VERBOSE(
+		log::warning << L"Sound::setPan not implemented" << Endl;
+	)
 }
 
 void AsSound::Sound_setTransform(CallArgs& ca)
 {
-	log::warning << L"Sound.setTransform not implemented" << Endl;
+	T_IF_VERBOSE(
+		log::warning << L"Sound::setTransform not implemented" << Endl;
+	)
 }
 
 void AsSound::Sound_setVolume(CallArgs& ca)
 {
-	log::warning << L"Sound.setVolume not implemented" << Endl;
+	T_IF_VERBOSE(
+		log::warning << L"Sound::setVolume not implemented" << Endl;
+	)
 }
 
 void AsSound::Sound_start(CallArgs& ca)
 {
-	log::warning << L"Sound.start not implemented" << Endl;
+	T_IF_VERBOSE(
+		log::warning << L"Sound::start not implemented" << Endl;
+	)
 }
 
 void AsSound::Sound_stop(CallArgs& ca)
 {
-	log::warning << L"Sound.stop not implemented" << Endl;
+	T_IF_VERBOSE(
+		log::warning << L"Sound::stop not implemented" << Endl;
+	)
 }
 
 void AsSound::Sound_get_checkPolicyFile(CallArgs& ca)
 {
-	ca.ret = ActionValue(false);
+	T_IF_VERBOSE(
+		log::warning << L"Sound::get_checkPolicyFile not implemented" << Endl;
+	)
 }
 
 void AsSound::Sound_set_checkPolicyFile(CallArgs& ca)
 {
+	T_IF_VERBOSE(
+		log::warning << L"Sound::set_checkPolicyFile not implemented" << Endl;
+	)
 }
 
 void AsSound::Sound_get_duration(CallArgs& ca)
 {
-	ca.ret = ActionValue(avm_number_t(0));
+	T_IF_VERBOSE(
+		log::warning << L"Sound::get_duration not implemented" << Endl;
+	)
 }
 
 void AsSound::Sound_get_id3(CallArgs& ca)
 {
-	ca.ret = ActionValue("Not implemented");
+	T_IF_VERBOSE(
+		log::warning << L"Sound::get_id3 not implemented" << Endl;
+	)
 }
 
 void AsSound::Sound_get_position(CallArgs& ca)
 {
-	ca.ret = ActionValue(avm_number_t(0));
+	T_IF_VERBOSE(
+		log::warning << L"Sound::get_position not implemented" << Endl;
+	)
 }
 
 	}

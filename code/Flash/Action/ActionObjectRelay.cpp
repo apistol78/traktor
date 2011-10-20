@@ -49,7 +49,7 @@ void ActionObjectRelay::dereference()
 	m_asObject = 0;
 }
 
-ActionObjectRelay::ActionObjectRelay(const std::string& prototype)
+ActionObjectRelay::ActionObjectRelay(const char* const prototype)
 :	m_prototype(prototype)
 {
 }

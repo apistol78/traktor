@@ -151,7 +151,9 @@ void AsArray::Array_sort(CallArgs& ca)
 
 void AsArray::Array_sortOn(CallArgs& ca)
 {
-	T_FATAL_ERROR;
+	T_IF_VERBOSE(
+		log::warning << L"Array::sortOn not implemented" << Endl;
+	)
 }
 
 void AsArray::Array_splice(CallArgs& ca)

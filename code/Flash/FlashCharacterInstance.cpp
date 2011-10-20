@@ -11,10 +11,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashCharacterInstance", FlashCharacterInstance, ActionObjectRelay)
 
-FlashCharacterInstance::FlashCharacterInstance(ActionContext* context, const std::string& prototype, FlashCharacterInstance* parent)
+FlashCharacterInstance::FlashCharacterInstance(ActionContext* context, const char* const prototype, FlashCharacterInstance* parent)
 :	ActionObjectRelay(prototype)
 ,	m_context(context)
-,	m_prototype(prototype)
 ,	m_parent(parent)
 {
 	m_cxform.red[0] =

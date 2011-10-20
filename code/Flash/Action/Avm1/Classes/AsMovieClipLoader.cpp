@@ -37,32 +37,37 @@ void AsMovieClipLoader::coerce(ActionObject* self) const
 
 void AsMovieClipLoader::MovieClipLoader_addListener(CallArgs& ca)
 {
-	log::warning << L"MovieClipLoader.addListener not implemented" << Endl;
-	ca.ret = ActionValue(false);
+	T_IF_VERBOSE(
+		log::warning << L"MovieClipLoader::addListener not implemented" << Endl;
+	)
 }
 
 void AsMovieClipLoader::MovieClipLoader_getProgress(CallArgs& ca)
 {
-	log::warning << L"MovieClipLoader.getProgress not implemented" << Endl;
-	ca.ret = ActionValue(avm_number_t(0));
+	T_IF_VERBOSE(
+		log::warning << L"MovieClipLoader::getProgress not implemented" << Endl;
+	)
 }
 
 void AsMovieClipLoader::MovieClipLoader_loadClip(CallArgs& ca)
 {
-	log::warning << L"MovieClipLoader.loadClip not implemented" << Endl;
-	ca.ret = ActionValue(false);
+	T_IF_VERBOSE(
+		log::warning << L"MovieClipLoader::loadClip not implemented" << Endl;
+	)
 }
 
 void AsMovieClipLoader::MovieClipLoader_removeListener(CallArgs& ca)
 {
-	log::warning << L"MovieClipLoader.removeListener not implemented" << Endl;
-	ca.ret = ActionValue(false);
+	T_IF_VERBOSE(
+		log::warning << L"MovieClipLoader::removeListener not implemented" << Endl;
+	)
 }
 
 void AsMovieClipLoader::MovieClipLoader_unloadClip(CallArgs& ca)
 {
-	log::warning << L"MovieClipLoader.unloadClip not implemented" << Endl;
-	ca.ret = ActionValue(false);
+	T_IF_VERBOSE(
+		log::warning << L"MovieClipLoader::unloadClip not implemented" << Endl;
+	)
 }
 
 	}
