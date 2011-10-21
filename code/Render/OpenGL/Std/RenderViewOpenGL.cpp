@@ -34,7 +34,6 @@ RenderViewOpenGL::RenderViewOpenGL(
 :	m_context(context)
 ,	m_resourceContext(resourceContext)
 ,	m_blitHelper(blitHelper)
-,	m_currentDirty(true)
 
 #elif defined(__APPLE__)
 
@@ -49,7 +48,6 @@ RenderViewOpenGL::RenderViewOpenGL(
 ,	m_resourceContext(resourceContext)
 ,	m_blitHelper(blitHelper)
 ,	m_windowHandle(windowHandle)
-,	m_currentDirty(true)
 
 #else
 
@@ -62,7 +60,6 @@ RenderViewOpenGL::RenderViewOpenGL(
 :	m_context(context)
 ,	m_resourceContext(resourceContext)
 ,	m_blitHelper(blitHelper)
-,	m_currentDirty(true)
 
 #endif
 {
@@ -267,7 +264,6 @@ bool RenderViewOpenGL::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 	m_renderTargetStack.push_back(rt);
 
 	rts->setContentValid(true);
-	m_currentDirty = true;
 
 	return true;
 }
@@ -314,40 +310,32 @@ void RenderViewOpenGL::clear(uint32_t clearMask, const float color[4], float dep
 void RenderViewOpenGL::setVertexBuffer(VertexBuffer* vertexBuffer)
 {
 	m_currentVertexBuffer = checked_type_cast< VertexBufferOpenGL* >(vertexBuffer);
-	m_currentDirty = true;
 }
 
 void RenderViewOpenGL::setIndexBuffer(IndexBuffer* indexBuffer)
 {
 	m_currentIndexBuffer = checked_type_cast< IndexBufferOpenGL* >(indexBuffer);
-	m_currentDirty = true;
 }
 
 void RenderViewOpenGL::setProgram(IProgram* program)
 {
 	m_currentProgram = checked_type_cast< ProgramOpenGL * >(program);
-	m_currentDirty = true;
 }
 
 void RenderViewOpenGL::draw(const Primitives& primitives)
 {
-	if (m_currentDirty)
-	{
-		if (!m_currentProgram || !m_currentVertexBuffer)
-			return;
+	if (!m_currentProgram || !m_currentVertexBuffer)
+		return;
 
-		const RenderTargetOpenGL* rt = m_renderTargetStack.back();
-		float targetSize[] = { float(rt->getWidth()), float(rt->getHeight()) };
+	const RenderTargetOpenGL* rt = m_renderTargetStack.back();
+	float targetSize[] = { float(rt->getWidth()), float(rt->getHeight()) };
 		
-		if (!m_currentProgram->activate(targetSize))
-			return;
+	if (!m_currentProgram->activate(targetSize))
+		return;
 
-		m_currentVertexBuffer->activate(
-			m_currentProgram->getAttributeLocs()
-		);
-
-		m_currentDirty = false;
-	}
+	m_currentVertexBuffer->activate(
+		m_currentProgram->getAttributeLocs()
+	);
 
 	GLenum primitiveType;
 	GLuint vertexCount;

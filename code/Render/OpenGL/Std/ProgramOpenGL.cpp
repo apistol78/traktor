@@ -316,6 +316,9 @@ void ProgramOpenGL::setStencilReference(uint32_t stencilReference)
 
 bool ProgramOpenGL::activate(float targetSize[2])
 {
+	if (!m_program)
+		return false;
+
 	// Bind program and set state display list.
 	if (ms_activeProgram != this)
 	{

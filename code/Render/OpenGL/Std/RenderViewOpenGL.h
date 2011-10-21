@@ -132,7 +132,6 @@ private:
 	Ref< VertexBufferOpenGL > m_currentVertexBuffer;
 	Ref< IndexBufferOpenGL > m_currentIndexBuffer;
 	Ref< ProgramOpenGL > m_currentProgram;
-	bool m_currentDirty;
 };
 
 	}
