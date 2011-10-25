@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.db.LocalInstanceMeta">
+	<guid>{171EA51B-6C0D-E94F-9016-93DE322F6B61}</guid>
+	<primaryType>traktor.flash.FlashMovieAsset</primaryType>
+	<blobs/>
+</object>
