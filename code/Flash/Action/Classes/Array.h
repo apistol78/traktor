@@ -52,6 +52,12 @@ public:
 
 	uint32_t length() const;
 
+	int32_t indexOf(const ActionValue& value) const;
+
+	void removeAt(int32_t index);
+
+	void removeAll();
+
 	template < typename PredicateType >
 	void sort(const PredicateType& predicate)
 	{

@@ -63,7 +63,16 @@ AsMovieClip::AsMovieClip(ActionContext* context)
 
 	prototype->setMember("attachAudio", ActionValue(createNativeFunction(context, this, &AsMovieClip::MovieClip_attachAudio)));
 	prototype->setMember("attachBitmap", ActionValue(createNativeFunction(context, this, &AsMovieClip::MovieClip_attachBitmap)));
-	prototype->setMember("attachMovie", ActionValue(createNativeFunction(context, this, &AsMovieClip::MovieClip_attachMovie)));
+	prototype->setMember("attachMovie", ActionValue(
+		createPolymorphicFunction(
+			context,
+			0,
+			0,
+			0,
+			createNativeFunction(context, this, &AsMovieClip::MovieClip_attachMovie_3),
+			createNativeFunction(context, this, &AsMovieClip::MovieClip_attachMovie_4)
+		)
+	));
 	prototype->setMember("beginBitmapFill", ActionValue(createNativeFunction(context, this, &AsMovieClip::MovieClip_beginBitmapFill)));
 	prototype->setMember("beginFill", ActionValue(createNativeFunction(context, this, &AsMovieClip::MovieClip_beginFill)));
 	prototype->setMember("beginGradientFill", ActionValue(createNativeFunction(context, this, &AsMovieClip::MovieClip_beginGradientFill)));
@@ -88,6 +97,7 @@ AsMovieClip::AsMovieClip(ActionContext* context)
 	prototype->setMember("gotoAndStop", ActionValue(createNativeFunction(context, this, &AsMovieClip::MovieClip_gotoAndStop)));
 	prototype->setMember("hitTest", ActionValue(
 		createPolymorphicFunction(
+			context,
 			0,
 			createNativeFunction(context, this, &AsMovieClip::MovieClip_hitTest_1),
 			0,
@@ -198,7 +208,12 @@ void AsMovieClip::MovieClip_attachBitmap(FlashSpriteInstance* self) const
 	)
 }
 
-Ref< FlashSpriteInstance > AsMovieClip::MovieClip_attachMovie(FlashSpriteInstance* self, const std::string& attachClipName, const std::string& attachClipNewName, int32_t depth) const
+Ref< FlashSpriteInstance > AsMovieClip::MovieClip_attachMovie_3(FlashSpriteInstance* self, const std::string& attachClipName, const std::string& attachClipNewName, int32_t depth) const
+{
+	return MovieClip_attachMovie_4(self, attachClipName, attachClipNewName, depth, 0);
+}
+
+Ref< FlashSpriteInstance > AsMovieClip::MovieClip_attachMovie_4(FlashSpriteInstance* self, const std::string& attachClipName, const std::string& attachClipNewName, int32_t depth, ActionObject* initObject) const
 {
 	ActionContext* context = self->getContext();
 	T_ASSERT (context);
@@ -230,10 +245,19 @@ Ref< FlashSpriteInstance > AsMovieClip::MovieClip_attachMovie(FlashSpriteInstanc
 	// Create new instance of movie clip.
 	Ref< FlashSpriteInstance > attachClipInstance = checked_type_cast< FlashSpriteInstance* >(attachClip->createInstance(context, self, attachClipName));
 	
+	// Set initial properties.
+	if (initObject)
+	{
+		const ActionObject::member_map_t& members = initObject->getLocalMembers();
+		for (ActionObject::member_map_t::const_iterator i = members.begin(); i != members.end(); ++i)
+		{
+			log::debug << L"Set member \"" << mbstows(i->first) << L"\", value \"" << i->second.getWideString() << L"\"" << Endl;
+		}
+	}
+
 	// Add new instance to display list.
 	FlashDisplayList& displayList = self->getDisplayList();
 	displayList.showObject(depth, attachClipId, attachClipInstance, true);
-
 	return attachClipInstance;
 }
 
@@ -693,18 +717,14 @@ void AsMovieClip::MovieClip_set_droptarget(FlashSpriteInstance* self) const
 	)
 }
 
-void AsMovieClip::MovieClip_get_enabled(const FlashSpriteInstance* self) const
+bool AsMovieClip::MovieClip_get_enabled(const FlashSpriteInstance* self) const
 {
-	T_IF_VERBOSE(
-		log::warning << L"MovieClip::get_enabled not implemented" << Endl;
-	)
+	return self->isEnabled();
 }
 
-void AsMovieClip::MovieClip_set_enabled(FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_set_enabled(FlashSpriteInstance* self, bool enabled) const
 {
-	T_IF_VERBOSE(
-		log::warning << L"MovieClip::set_enabled not implemented" << Endl;
-	)
+	self->setEnabled(enabled);
 }
 
 void AsMovieClip::MovieClip_get_filters(const FlashSpriteInstance* self) const
@@ -851,9 +871,10 @@ void AsMovieClip::MovieClip_set_menu(FlashSpriteInstance* self) const
 	)
 }
 
-std::string AsMovieClip::MovieClip_get_name(const FlashSpriteInstance* self) const
+ActionValue AsMovieClip::MovieClip_get_name(const FlashSpriteInstance* self) const
 {
-	return self->getName();
+	std::string name = self->getName();
+	return !name.empty() ? ActionValue(name) : ActionValue();
 }
 
 void AsMovieClip::MovieClip_set_name(FlashSpriteInstance* self, const std::string& name) const

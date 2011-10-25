@@ -5,6 +5,7 @@
 #include "Flash/Action/Avm1/Classes/AsObject.h"
 #include "Flash/Action/Avm1/Classes/AsAccessibility.h"
 #include "Flash/Action/Avm1/Classes/AsArray.h"
+#include "Flash/Action/Avm1/Classes/AsAsBroadcaster.h"
 #include "Flash/Action/Avm1/Classes/AsBoolean.h"
 #include "Flash/Action/Avm1/Classes/AsButton.h"
 #include "Flash/Action/Avm1/Classes/AsDate.h"
@@ -20,6 +21,7 @@
 #include "Flash/Action/Avm1/Classes/AsMouse.h"
 #include "Flash/Action/Avm1/Classes/AsNumber.h"
 #include "Flash/Action/Avm1/Classes/AsSecurity.h"
+#include "Flash/Action/Avm1/Classes/AsSelection.h"
 #include "Flash/Action/Avm1/Classes/AsSound.h"
 #include "Flash/Action/Avm1/Classes/AsStage.h"
 #include "Flash/Action/Avm1/Classes/AsString.h"
@@ -35,17 +37,6 @@
 #include "Flash/Action/Avm1/Classes/As_flash_geom_Rectangle.h"
 #include "Flash/Action/Avm1/Classes/As_flash_geom_Transform.h"
 
-// mx.transitions
-#include "Flash/Action/Avm1/Classes/As_mx_transitions_Tween.h"
-
-// mx.transitions.easing
-#include "Flash/Action/Avm1/Classes/As_mx_transitions_easing_Back.h"
-#include "Flash/Action/Avm1/Classes/As_mx_transitions_easing_Bounce.h"
-#include "Flash/Action/Avm1/Classes/As_mx_transitions_easing_Elastic.h"
-#include "Flash/Action/Avm1/Classes/As_mx_transitions_easing_None.h"
-#include "Flash/Action/Avm1/Classes/As_mx_transitions_easing_Regular.h"
-#include "Flash/Action/Avm1/Classes/As_mx_transitions_easing_Strong.h"
-
 namespace traktor
 {
 	namespace flash
@@ -59,6 +50,7 @@ ActionGlobal::ActionGlobal(ActionContext* context)
 	setMember("ASSetPropFlags", ActionValue(createNativeFunction(context, this, &ActionGlobal::Global_ASSetPropFlags)));
 	setMember("escape", ActionValue(createNativeFunction(context, this, &ActionGlobal::Global_escape)));
 	setMember("isNaN", ActionValue(createNativeFunction(context, this, &ActionGlobal::Global_isNaN)));
+	setMember("Infinity", ActionValue(std::numeric_limits< avm_number_t >::infinity()));
 
 	// Create prototypes.
 	setMember("Object", ActionValue(new AsObject(context)));
@@ -70,11 +62,9 @@ ActionGlobal::ActionGlobal(ActionContext* context)
 	setMember("Error", ActionValue(new AsError(context)));
 	setMember("Function", ActionValue(new AsFunction(context)));
 	setMember("I18N", ActionValue(new AsI18N(context)));
-	setMember("Key", ActionValue(new AsKey(context)));
 	setMember("LoadVars", ActionValue(new AsLoadVars(context)));
 	setMember("LocalConnection", ActionValue(new AsLocalConnection(context)));
 	setMember("Math", ActionValue(new AsMath(context)));
-	setMember("Mouse", ActionValue(new AsMouse(context)));
 	setMember("MovieClip", ActionValue(new AsMovieClip(context)));
 	setMember("MovieClipLoader", ActionValue(new AsMovieClipLoader(context)));
 	setMember("Number", ActionValue(new AsNumber(context)));
@@ -85,7 +75,7 @@ ActionGlobal::ActionGlobal(ActionContext* context)
 	setMember("System", ActionValue(new AsSystem(context)));
 	setMember("TextField", ActionValue(new AsTextField(context)));
 	setMember("TextFormat", ActionValue(new AsTextFormat(context)));
-	setMember("XM", ActionValue(new AsXML(context)));
+	setMember("XML", ActionValue(new AsXML(context)));
 	setMember("XMLNode", ActionValue(new AsXMLNode(context)));
 
 	// flash.
@@ -103,32 +93,20 @@ ActionGlobal::ActionGlobal(ActionContext* context)
 	}
 	setMember("flash", ActionValue(flash));
 
-	// mx.
-	Ref< ActionObject > mx = new ActionObject(context);
-	{
-		// mx.transitions.
-		Ref< ActionObject > transitions = new ActionObject(context);
-		if (transitions)
-		{
-			transitions->setMember("Tween", ActionValue(new As_mx_transitions_Tween(context)));
+	// Initialize broadcaster and subject instances.
+	Ref< AsAsBroadcaster > broadcaster = new AsAsBroadcaster(context);
 
-			// mx.transitions.easing
-			Ref< ActionObject > easing = new ActionObject(context);
-			if (easing)
-			{
-				easing->setMember("Back", ActionValue(new As_mx_transitions_easing_Back(context)));
-				easing->setMember("Bounce", ActionValue(new As_mx_transitions_easing_Bounce(context)));
-				easing->setMember("Elastic", ActionValue(new As_mx_transitions_easing_Elastic(context)));
-				easing->setMember("None", ActionValue(new As_mx_transitions_easing_None(context)));
-				easing->setMember("Regular", ActionValue(new As_mx_transitions_easing_Regular(context)));
-				easing->setMember("String", ActionValue(new As_mx_transitions_easing_Strong(context)));
+	Ref< AsKey > key = new AsKey(context);
+	broadcaster->initialize(key);
+	Ref< AsMouse > mouse = new AsMouse(context);
+	broadcaster->initialize(mouse);
+	Ref< AsSelection > selection = new AsSelection(context);
+	broadcaster->initialize(selection);
 
-				transitions->setMember("easing", ActionValue(easing));
-			}
-		}
-		mx->setMember("transitions", ActionValue(transitions));
-	}
-	setMember("mx", ActionValue(mx));
+	setMember("AsBroadcaster", ActionValue(broadcaster));
+	setMember("Key", ActionValue(key));
+	setMember("Mouse", ActionValue(mouse));
+	setMember("Selection", ActionValue(selection));
 }
 
 void ActionGlobal::Global_ASSetPropFlags(CallArgs& ca)
@@ -174,10 +152,7 @@ void ActionGlobal::Global_isNaN(CallArgs& ca)
 	if (!ca.args.empty() && ca.args[0].isNumeric())
 	{
 		avm_number_t n = ca.args[0].getNumber();
-		if (
-			std::numeric_limits< avm_number_t >::quiet_NaN() == n ||
-			std::numeric_limits< avm_number_t >::signaling_NaN() == n
-		)
+		if (n != n)
 			nan = true;
 		else
 			nan = false;

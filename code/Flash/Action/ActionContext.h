@@ -36,12 +36,6 @@ public:
 
 	void setMovieClip(FlashSpriteInstance* movieClip);
 
-	void addFrameListener(ActionObject* frameListener);
-
-	void removeFrameListener(ActionObject* frameListener);
-
-	void notifyFrameListeners(avm_number_t time);
-
 	ActionObject* lookupClass(const std::string& className);
 
 	const IActionVM* getVM() const { return m_vm; }
@@ -71,7 +65,6 @@ private:
 	Ref< ActionObject > m_global;
 	Ref< FlashSpriteInstance > m_movieClip;
 	ActionValuePool m_pool;
-	std::vector< FrameListener > m_frameListeners;
 };
 
 	}

@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cstring>
 #include "Core/Memory/IAllocator.h"
 #include "Core/Memory/MemoryConfig.h"
@@ -153,10 +154,13 @@ bool ActionValue::getBoolean() const
 	{
 	case AvtBoolean:
 		return m_value.b;
+
 	case AvtNumber:
 		return bool(m_value.n != 0.0);
+
 	case AvtString:
-		return bool(strcmp(m_value.s, "true") == 0);
+		return std::strlen(m_value.s) > 0;
+
 	case AvtObject:
 		return bool(m_value.o != 0);
 	}
@@ -236,6 +240,103 @@ ActionValue& ActionValue::operator = (const ActionValue& v)
 	m_value = v.m_value;
 
 	return *this;
+}
+
+ActionValue ActionValue::operator + (const ActionValue& r) const
+{
+	if (r.isString() || isString())
+	{
+		ActionValue string2 = r.toString();
+		ActionValue string1 = toString();
+		if (string2.isString() && string1.isString())
+		{
+			std::string str2 = string2.getString();
+			std::string str1 = string1.getString();
+			return ActionValue(str1 + str2);
+		}
+		else
+			return ActionValue();
+	}
+	else
+	{
+		ActionValue number2 = r.toNumber();
+		ActionValue number1 = toNumber();
+		if (number2.isNumeric() && number1.isNumeric())
+		{
+			avm_number_t n2 = number2.getNumber();
+			avm_number_t n1 = number1.getNumber();
+			return ActionValue(n1 + n2);
+		}
+		else
+			return ActionValue();
+	}
+}
+
+ActionValue ActionValue::operator - (const ActionValue& r) const
+{
+	if (isNumeric() && r.isNumeric())
+		return ActionValue(getNumber() - r.getNumber());
+	else
+		return ActionValue();
+}
+
+ActionValue ActionValue::operator * (const ActionValue& r) const
+{
+	if (isNumeric() && r.isNumeric())
+		return ActionValue(getNumber() * r.getNumber());
+	else
+		return ActionValue();
+}
+
+bool ActionValue::operator == (const ActionValue& r) const
+{
+	if (!r.isUndefined() && !isUndefined())
+	{
+		ActionValue::Type predicateType = std::max(r.getType(), getType());
+		if (predicateType == ActionValue::AvtBoolean)
+		{
+			bool v2 = r.getBoolean();
+			bool v1 = getBoolean();
+			return v1 == v2;
+		}
+		else if (predicateType == ActionValue::AvtNumber)
+		{
+			avm_number_t v2 = r.getNumber();
+			avm_number_t v1 = getNumber();
+			return v1 == v2;
+		}
+		else if (predicateType == ActionValue::AvtString)
+		{
+			std::string v2 = r.getString();
+			std::string v1 = getString();
+			return v1 == v2;
+		}
+		else	// AvtObject
+		{
+			if (r.isObject() && isObject())
+			{
+				Ref< ActionObject > object2 = r.getObject();
+				Ref< ActionObject > object1 = getObject();
+				return object1 == object2;
+			}
+			else
+				return false;
+		}
+	}
+	else if (isObject() && r.isUndefined())
+	{
+		ActionObject* object1 = getObject();
+		return object1 == 0;
+	}
+	else if (isUndefined() && r.isObject())
+	{
+		ActionObject* object2 = r.getObject();
+		return object2 == 0;
+	}
+	else if (isUndefined() && r.isUndefined())
+		return true;
+	else
+		return false;
 }
 
 	}

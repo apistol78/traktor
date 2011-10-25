@@ -33,7 +33,9 @@ private:
 
 	void MovieClip_attachBitmap(FlashSpriteInstance* self) const;
 
-	Ref< FlashSpriteInstance > MovieClip_attachMovie(FlashSpriteInstance* self, const std::string& attachClipName, const std::string& attachClipNewName, int32_t depth) const;
+	Ref< FlashSpriteInstance > MovieClip_attachMovie_3(FlashSpriteInstance* self, const std::string& attachClipName, const std::string& attachClipNewName, int32_t depth) const;
+
+	Ref< FlashSpriteInstance > MovieClip_attachMovie_4(FlashSpriteInstance* self, const std::string& attachClipName, const std::string& attachClipNewName, int32_t depth, ActionObject* initObject) const;
 
 	void MovieClip_beginBitmapFill(FlashSpriteInstance* self) const;
 
@@ -145,9 +147,9 @@ private:
 
 	void MovieClip_set_droptarget(FlashSpriteInstance* self) const;
 
-	void MovieClip_get_enabled(const FlashSpriteInstance* self) const;
+	bool MovieClip_get_enabled(const FlashSpriteInstance* self) const;
 
-	void MovieClip_set_enabled(FlashSpriteInstance* self) const;
+	void MovieClip_set_enabled(FlashSpriteInstance* self, bool enabled) const;
 
 	void MovieClip_get_filters(const FlashSpriteInstance* self) const;
 
@@ -189,7 +191,7 @@ private:
 
 	void MovieClip_set_menu(FlashSpriteInstance* self) const;
 
-	std::string MovieClip_get_name(const FlashSpriteInstance* self) const;
+	ActionValue MovieClip_get_name(const FlashSpriteInstance* self) const;
 
 	void MovieClip_set_name(FlashSpriteInstance* self, const std::string& name) const;
 

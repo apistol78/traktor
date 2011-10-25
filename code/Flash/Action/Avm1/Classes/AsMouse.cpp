@@ -9,123 +9,54 @@ namespace traktor
 	namespace flash
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsMouse", AsMouse, ActionClass)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsMouse", AsMouse, ActionObject)
 
 AsMouse::AsMouse(ActionContext* context)
-:	ActionClass(context, "Mouse")
+:	ActionObject(context)
 {
-	Ref< ActionObject > prototype = new ActionObject(context);
-
-	prototype->setMember("addListener", ActionValue(createNativeFunction(context, this, &AsMouse::Mouse_addListener)));
-	prototype->setMember("removeListener", ActionValue(createNativeFunction(context, this, &AsMouse::Mouse_removeListener)));
-	prototype->setMember("show", ActionValue(createNativeFunction(context, this, &AsMouse::Mouse_show)));
-	prototype->setMember("hide", ActionValue(createNativeFunction(context, this, &AsMouse::Mouse_hide)));
-
-	prototype->setMember("constructor", ActionValue(this));
-	prototype->setReadOnly();
-
-	setMember("prototype", ActionValue(prototype));
-}
-
-void AsMouse::init(ActionObject* self, const ActionValueArray& args)
-{
-}
-
-void AsMouse::coerce(ActionObject* self) const
-{
-	T_FATAL_ERROR;
+	setMember("show", ActionValue(createNativeFunction(context, this, &AsMouse::Mouse_show)));
+	setMember("hide", ActionValue(createNativeFunction(context, this, &AsMouse::Mouse_hide)));
 }
 
 void AsMouse::eventMouseDown(int x, int y, int button)
 {
-	// Create a snapshot of active listeners the moment this event is raised,
-	// this because listeners can be either added or removed by listeners.
-	RefArray< ActionObject > listeners = m_listeners;
-	for (RefArray< ActionObject >::iterator i = listeners.begin(); i != listeners.end(); ++i)
-	{
-		ActionValue member;
-		(*i)->getMember("onButtonDown", member);
+	ActionValue broadcastMessageValue;
+	getMember("broadcastMessage", broadcastMessageValue);
 
-		Ref< ActionFunction > eventFunction = member.getObject< ActionFunction >();
-		if (eventFunction)
-		{
-			ActionFrame callerFrame(getContext(), 0, 0, 4, 0, 0);
-			eventFunction->call(&callerFrame, (*i));
-		}
+	Ref< ActionFunction > broadcastMessageFn = broadcastMessageValue.getObject< ActionFunction >();
+	if (broadcastMessageFn)
+	{
+		ActionValueArray args(getContext()->getPool(), 1);
+		args[0] = ActionValue("onButtonDown");
+		broadcastMessageFn->call(this, args);
 	}
 }
 
 void AsMouse::eventMouseUp(int x, int y, int button)
 {
-	// Create a snapshot of active listeners the moment this event is raised,
-	// this because listeners can be either added or removed by listeners.
-	RefArray< ActionObject > listeners = m_listeners;
-	for (RefArray< ActionObject >::iterator i = listeners.begin(); i != listeners.end(); ++i)
-	{
-		ActionValue member;
-		(*i)->getMember("onButtonUp", member);
+	ActionValue broadcastMessageValue;
+	getMember("broadcastMessage", broadcastMessageValue);
 
-		Ref< ActionFunction > eventFunction = member.getObject< ActionFunction >();
-		if (eventFunction)
-		{
-			ActionFrame callerFrame(getContext(), 0, 0, 4, 0, 0);
-			eventFunction->call(&callerFrame, (*i));
-		}
+	Ref< ActionFunction > broadcastMessageFn = broadcastMessageValue.getObject< ActionFunction >();
+	if (broadcastMessageFn)
+	{
+		ActionValueArray args(getContext()->getPool(), 1);
+		args[0] = ActionValue("onButtonUp");
+		broadcastMessageFn->call(this, args);
 	}
 }
 
 void AsMouse::eventMouseMove(int x, int y, int button)
 {
-	// Create a snapshot of active listeners the moment this event is raised,
-	// this because listeners can be either added or removed by listeners.
-	RefArray< ActionObject > listeners = m_listeners;
-	for (RefArray< ActionObject >::iterator i = listeners.begin(); i != listeners.end(); ++i)
+	ActionValue broadcastMessageValue;
+	getMember("broadcastMessage", broadcastMessageValue);
+
+	Ref< ActionFunction > broadcastMessageFn = broadcastMessageValue.getObject< ActionFunction >();
+	if (broadcastMessageFn)
 	{
-		ActionValue member;
-		(*i)->getMember("onMove", member);
-
-		Ref< ActionFunction > eventFunction = member.getObject< ActionFunction >();
-		if (eventFunction)
-		{
-			ActionFrame callerFrame(getContext(), 0, 0, 4, 0, 0);
-			eventFunction->call(&callerFrame, (*i));
-		}
-	}
-}
-
-void AsMouse::removeAllListeners()
-{
-	m_listeners.clear();
-}
-
-void AsMouse::trace(const IVisitor& visitor) const
-{
-	for (RefArray< ActionObject >::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
-		visitor(*i);
-	ActionClass::trace(visitor);
-}
-
-void AsMouse::dereference()
-{
-	m_listeners.clear();
-	ActionClass::dereference();
-}
-
-void AsMouse::Mouse_addListener(CallArgs& ca)
-{
-	ActionObject* listener = ca.args[0].getObject();
-	if (listener)
-		m_listeners.push_back(listener);
-}
-
-void AsMouse::Mouse_removeListener(CallArgs& ca)
-{
-	ActionObject* listener = ca.args[0].getObject();
-	if (listener)
-	{
-		RefArray< ActionObject >::iterator i = std::find(m_listeners.begin(), m_listeners.end(), listener);
-		if (i != m_listeners.end())
-			m_listeners.erase(i);
+		ActionValueArray args(getContext()->getPool(), 1);
+		args[0] = ActionValue("onMove");
+		broadcastMessageFn->call(this, args);
 	}
 }
 

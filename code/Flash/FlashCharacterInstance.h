@@ -83,6 +83,18 @@ public:
 	 */
 	const Matrix33& getTransform() const;
 
+	/*! \brief Set focus.
+	 *
+	 * \return Set or remove focus.
+	 */
+	void setFocus(bool focus);
+
+	/*! \brief Get focus character.
+	 *
+	 * \return Character with focus.
+	 */
+	static FlashCharacterInstance* getFocus();
+
 	/*! \brief Set event script.
 	 *
 	 * \param eventMask Event mask.
@@ -138,12 +150,15 @@ public:
 
 	//@}
 
+	virtual bool getMember(ActionContext* context, const std::string& memberName, ActionValue& outMemberValue);
+
 protected:
 	virtual void trace(const IVisitor& visitor) const;
 
 	virtual void dereference();
 
 private:
+	static FlashCharacterInstance* ms_focusInstance;
 	Ref< ActionContext > m_context;
 	FlashCharacterInstance* m_parent;
 	std::string m_name;

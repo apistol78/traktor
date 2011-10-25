@@ -1044,8 +1044,6 @@ bool FlashTagExportAssets::read(SwfReader* swf, ReadContext& context)
 		uint16_t id = bs.readUInt16();
 		std::string symbol = swf->readString();
 		context.movie->setExport(symbol, id);
-
-		log::debug << L"Symbol \"" << mbstows(symbol) << L"\" exported as ID " << id << Endl;
 	}
 
 	return true;

@@ -8,7 +8,7 @@ namespace traktor
 	namespace flash
 	{
 
-class Point;
+struct CallArgs;
 
 /*! \brief Point class.
  * \ingroup Flash
@@ -25,37 +25,29 @@ public:
 	virtual void coerce(ActionObject* self) const;
 
 private:
-	void Point_add(Point* self, const Point* arg) const;
+	void Point_distance(CallArgs& ca);
 
-	Ref< Point > Point_clone(const Point* self) const;
+	void Point_interpolate(CallArgs& ca);
 
-	avm_number_t Point_distance(const Point* pt1, const Point* pt2) const;
+	void Point_polar(CallArgs& ca);
 
-	bool Point_equals(const Point* self, const Point* pt) const;
+	void Point_add(CallArgs& ca);
 
-	Ref< Point > Point_interpolate(Point* self, const Point* pt1, const Point* pt2, avm_number_t f) const;
+	void Point_clone(CallArgs& ca);
 
-	void Point_normalize(Point* self, avm_number_t scale) const;
+	void Point_equals(CallArgs& ca);
 
-	void Point_offset(Point* self, avm_number_t dx, avm_number_t dy) const;
+	void Point_normalize(CallArgs& ca);
 
-	Ref< Point > Point_polar(Point* self, avm_number_t length, avm_number_t angle) const;
+	void Point_offset(CallArgs& ca);
 
-	void Point_subtract(Point* self, const Point* pr) const;
+	void Point_subtract(CallArgs& ca);
 
-	ActionValue Point_toString(const Point* self) const;
+	void Point_toString(CallArgs& ca);
 
-	avm_number_t Point_get_length(const Point* self) const;
+	void Point_get_length(CallArgs& ca);
 
-	void Point_set_length(Point* self, avm_number_t length) const;
-
-	avm_number_t Point_get_x(const Point* self) const;
-
-	void Point_set_x(Point* self, avm_number_t x) const;
-
-	avm_number_t Point_get_y(const Point* self) const;
-
-	void Point_set_y(Point* self, avm_number_t y) const;
+	void Point_set_length(CallArgs& ca);
 };
 
 	}

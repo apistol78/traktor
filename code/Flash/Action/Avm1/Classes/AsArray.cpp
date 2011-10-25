@@ -65,7 +65,7 @@ AsArray::AsArray(ActionContext* context)
 	prototype->setMember("toString", ActionValue(createNativeFunction(context, this, &AsArray::Array_toString)));
 	prototype->setMember("unshift", ActionValue(createNativeFunction(context, this, &AsArray::Array_unshift)));
 
-	prototype->addProperty("length", createNativeFunction(context, this, &AsArray::Array_get_length), 0);
+	prototype->addProperty("length", createNativeFunction(context, this, &AsArray::Array_get_length), createNativeFunction(context, this, &AsArray::Array_set_length));
 
 	prototype->setMember("constructor", ActionValue(this));
 	prototype->setReadOnly();
@@ -178,7 +178,7 @@ ActionValue AsArray::Array_toString(const Array* self) const
 	for (std::vector< ActionValue >::const_iterator i = values.begin(); i != values.end(); ++i)
 	{
 		if (i != values.begin())
-			ss << L", ";
+			ss << L",";
 		ss << i->getWideString();
 	}
 
@@ -194,6 +194,19 @@ void AsArray::Array_unshift(CallArgs& ca)
 uint32_t AsArray::Array_get_length(const Array* self) const
 {
 	return self->length();
+}
+
+void AsArray::Array_set_length(Array* self, uint32_t length) const
+{
+	if (length == 0)
+		self->removeAll();
+	else
+	{
+		while (self->length() > length)
+			self->pop();
+		while (self->length() < length)
+			self->push(ActionValue());
+	}
 }
 
 	}

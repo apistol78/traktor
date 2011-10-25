@@ -17,6 +17,8 @@ namespace traktor
 	namespace flash
 	{
 
+class ActionVMTrace1;
+
 /*! \brief ActionScript virtual machine.
  * \ingroup Flash
  *
@@ -28,9 +30,15 @@ class T_DLLCLASS ActionVM1 : public IActionVM
 	T_RTTI_CLASS;
 
 public:
+	ActionVM1();
+
 	virtual Ref< const IActionVMImage > load(BitReader& br) const;
 
 	virtual void execute(ActionFrame* frame) const;
+
+private:
+	Timer m_timer;
+	Ref< ActionVMTrace1 > m_trace;
 };
 
 	}

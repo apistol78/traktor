@@ -31,6 +31,7 @@ public:
 		const std::string& name,
 		const IActionVMImage* image,
 		uint16_t argumentCount,
+		const std::vector< std::string >& argumentsIntoVariables,
 		ActionDictionary* dictionary
 	);
 
@@ -41,6 +42,7 @@ public:
 private:
 	Ref< const IActionVMImage > m_image;
 	uint16_t m_argumentCount;
+	std::vector< std::string > m_argumentsIntoVariables;
 	Ref< ActionDictionary > m_dictionary;
 };
 

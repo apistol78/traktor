@@ -1,16 +1,14 @@
-#include "Core/Log/Log.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFrame.h"
 #include "Flash/Action/Avm1/ActionOpcodes.h"
 #include "Flash/Action/Avm1/ActionOperations.h"
 #include "Flash/Action/Avm1/ActionVMImage1.h"
+#include "Flash/Action/Avm1/ActionVMTrace1.h"
 
 #if defined(_DEBUG)
 #	define T_TRACE_EXECUTE 0
-#	define T_TRACE_PREPARE 0
 #else
 #	define T_TRACE_EXECUTE 0
-#	define T_TRACE_PREPARE 0
 #endif
 
 namespace traktor
@@ -33,7 +31,7 @@ ActionVMImage1::ActionVMImage1(const uint8_t* byteCode, uint32_t length)
 	}
 }
 
-void ActionVMImage1::execute(ActionFrame* frame) const
+void ActionVMImage1::execute(ActionFrame* frame, const Timer& timer, ActionVMTrace1* trace) const
 {
 	ExecutionState state;
 	state.image = this;
@@ -42,15 +40,21 @@ void ActionVMImage1::execute(ActionFrame* frame) const
 	state.npc = state.pc + 1;
 	state.data = 0;
 	state.length = 0;
+	state.timer = &timer;
 
 	// Cache frequently used instances.
 	state.context = frame->getContext();
 	state.self = frame->getSelf();
 	state.global = frame->getContext()->getGlobal();
 	state.movieClip = frame->getContext()->getMovieClip();
+	state.trace = 0;
 
 #if T_TRACE_EXECUTE
-	log::debug << IncreaseIndent;
+	if (trace)
+	{
+		trace->beginDispatcher();
+		state.trace = &trace->getTraceStream();
+	}
 #endif
 
 	const uint8_t* end = state.pc + m_byteCode.size();
@@ -79,16 +83,22 @@ void ActionVMImage1::execute(ActionFrame* frame) const
 		T_ASSERT (info.execute != 0);
 
 #if T_TRACE_EXECUTE
-		log::debug << uint32_t(state.pc - m_byteCode.c_ptr()) << L": " << mbstows(info.name) << Endl;
+		if (trace)
+			trace->preDispatch(state, info);
 #endif
 		info.execute(state);
+#if T_TRACE_EXECUTE
+		if (trace)
+			trace->postDispatch(state, info);
+#endif
 
 		// Update program counter.
 		state.pc = state.npc;
 	}
 
 #if T_TRACE_EXECUTE
-	log::debug << DecreaseIndent;
+	if (trace)
+		trace->endDispatcher();
 #endif
 }
 
@@ -124,10 +134,6 @@ void ActionVMImage1::prepare()
 		// Get instruction preparation handler and dispatch.
 		const OperationInfo& info = c_operationInfos[op];
 		T_ASSERT (info.op == op);
-
-#if T_TRACE_PREPARE
-		log::debug << uint32_t(state.pc - m_byteCode.ptr()) << L": " << mbstows(info.name) << Endl;
-#endif
 
 		if (info.prepare)
 			info.prepare(state);

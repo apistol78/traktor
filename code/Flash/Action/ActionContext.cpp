@@ -1,8 +1,6 @@
 #include "Core/Misc/StringSplit.h"
 #include "Flash/FlashSpriteInstance.h"
 #include "Flash/Action/ActionContext.h"
-#include "Flash/Action/ActionFunction.h"
-#include "Flash/Action/ActionValueArray.h"
 
 namespace traktor
 {
@@ -25,45 +23,6 @@ void ActionContext::setGlobal(ActionObject* global)
 void ActionContext::setMovieClip(FlashSpriteInstance* movieClip)
 {
 	m_movieClip = movieClip;
-}
-
-void ActionContext::addFrameListener(ActionObject* frameListener)
-{
-	ActionValue memberValue;
-	if (frameListener->getLocalMember("onFrame", memberValue))
-	{
-		Ref< ActionFunction > listenerFunction = memberValue.getObject< ActionFunction >();
-		if (listenerFunction)
-		{
-			FrameListener fl = { frameListener, listenerFunction };
-			m_frameListeners.push_back(fl);
-		}
-	}
-}
-
-void ActionContext::removeFrameListener(ActionObject* frameListener)
-{
-	for (std::vector< FrameListener >::iterator i = m_frameListeners.begin(); i != m_frameListeners.end(); ++i)
-	{
-		if (i->listenerTarget == frameListener)
-		{
-			m_frameListeners.erase(i);
-			break;
-		}
-	}
-}
-
-void ActionContext::notifyFrameListeners(avm_number_t time)
-{
-	if (m_frameListeners.empty())
-		return;
-
-	ActionValueArray argv(m_pool, 1);
-	argv[0] = ActionValue(time);
-
-	std::vector< FrameListener > frameListeners = m_frameListeners;
-	for (std::vector< FrameListener >::iterator i = frameListeners.begin(); i != frameListeners.end(); ++i)
-		i->listenerFunction->call(i->listenerTarget, argv);
 }
 
 ActionObject* ActionContext::lookupClass(const std::string& className)
@@ -94,19 +53,12 @@ void ActionContext::trace(const IVisitor& visitor) const
 {
 	visitor(m_global);
 	visitor(m_movieClip);
-
-	for (std::vector< FrameListener >::const_iterator i = m_frameListeners.begin(); i != m_frameListeners.end(); ++i)
-	{
-		visitor(i->listenerTarget);
-		visitor(i->listenerFunction);
-	}
 }
 
 void ActionContext::dereference()
 {
 	m_global = 0;
 	m_movieClip = 0;
-	m_frameListeners.clear();
 }
 
 	}

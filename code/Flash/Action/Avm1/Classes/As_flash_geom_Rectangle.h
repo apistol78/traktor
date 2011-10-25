@@ -8,8 +8,7 @@ namespace traktor
 	namespace flash
 	{
 
-class Point;
-class Rectangle;
+struct CallArgs;
 
 /*! \brief Rectangle class.
  * \ingroup Flash
@@ -26,79 +25,63 @@ public:
 	virtual void coerce(ActionObject* self) const;
 
 private:
-	Ref< Rectangle > Rectangle_clone(const Rectangle* self) const;
+	void Rectangle_clone(CallArgs& ca);
 
-	bool Rectangle_contains(const Rectangle* self, avm_number_t x, avm_number_t y) const;
+	void Rectangle_contains(CallArgs& ca);
 
-	bool Rectangle_containsPoint(const Rectangle* self, const Point* pt) const;
+	void Rectangle_containsPoint(CallArgs& ca);
 
-	bool Rectangle_containsRectangle(const Rectangle* self, const Rectangle* rc) const;
+	void Rectangle_containsRectangle(CallArgs& ca);
 
-	bool Rectangle_equals(const Rectangle* self, const Rectangle* rc) const;
+	void Rectangle_equals(CallArgs& ca);
 
-	void Rectangle_inflate(Rectangle* self, avm_number_t dx, avm_number_t dy) const;
+	void Rectangle_inflate(CallArgs& ca);
 
-	void Rectangle_inflatePoint(Rectangle* self, const Point* pt) const;
+	void Rectangle_inflatePoint(CallArgs& ca);
 
-	void Rectangle_intersection(const Rectangle* self) const;
+	void Rectangle_intersection(CallArgs& ca);
 
-	void Rectangle_intersects(const Rectangle* self) const;
+	void Rectangle_intersects(CallArgs& ca);
 
-	bool Rectangle_isEmpty(const Rectangle* self) const;
+	void Rectangle_isEmpty(CallArgs& ca);
 
-	void Rectangle_offset(Rectangle* self, avm_number_t dx, avm_number_t dy) const;
+	void Rectangle_offset(CallArgs& ca);
 
-	void Rectangle_offsetPoint(Rectangle* self, const Point* pt) const;
+	void Rectangle_offsetPoint(CallArgs& ca);
 
-	void Rectangle_setEmpty(Rectangle* self) const;
+	void Rectangle_setEmpty(CallArgs& ca);
 
-	ActionValue Rectangle_toString(const Rectangle* self) const;
+	void Rectangle_toString(CallArgs& ca);
 
-	void Rectangle_union(const Rectangle* self) const;
+	void Rectangle_union(CallArgs& ca);
 
-	avm_number_t Rectangle_get_bottom(const Rectangle* self) const;
+	void Rectangle_get_bottom(CallArgs& ca);
 
-	void Rectangle_set_bottom(Rectangle* self, avm_number_t bottom) const;
+	void Rectangle_set_bottom(CallArgs& ca);
 
-	Ref< Point > Rectangle_get_bottomRight(const Rectangle* self) const;
+	void Rectangle_get_bottomRight(CallArgs& ca);
 
-	void Rectangle_set_bottomRight(Rectangle* self, const Point* pt) const;
+	void Rectangle_set_bottomRight(CallArgs& ca);
 
-	avm_number_t Rectangle_get_height(const Rectangle* self) const;
+	void Rectangle_get_left(CallArgs& ca);
 
-	void Rectangle_set_height(Rectangle* self, avm_number_t height) const;
+	void Rectangle_set_left(CallArgs& ca);
 
-	avm_number_t Rectangle_get_left(const Rectangle* self) const;
+	void Rectangle_get_right(CallArgs& ca);
 
-	void Rectangle_set_left(Rectangle* self, avm_number_t left) const;
+	void Rectangle_set_right(CallArgs& ca);
 
-	avm_number_t Rectangle_get_right(const Rectangle* self) const;
+	void Rectangle_get_size(CallArgs& ca);
 
-	void Rectangle_set_right(Rectangle* self, avm_number_t right) const;
+	void Rectangle_set_size(CallArgs& ca);
 
-	Ref< Point > Rectangle_get_size(const Rectangle* self) const;
+	void Rectangle_get_top(CallArgs& ca);
 
-	void Rectangle_set_size(Rectangle* self, const Point* pt) const;
+	void Rectangle_set_top(CallArgs& ca);
 
-	avm_number_t Rectangle_get_top(const Rectangle* self) const;
+	void Rectangle_get_topLeft(CallArgs& ca);
 
-	void Rectangle_set_top(Rectangle* self, avm_number_t top) const;
-
-	Ref< Point > Rectangle_get_topLeft(const Rectangle* self) const;
-
-	void Rectangle_set_topLeft(Rectangle* self, const Point* pt) const;
-
-	avm_number_t Rectangle_get_width(const Rectangle* self) const;
-
-	void Rectangle_set_width(Rectangle* self, avm_number_t width) const;
-
-	avm_number_t Rectangle_get_x(const Rectangle* self) const;
-
-	void Rectangle_set_x(Rectangle* self, avm_number_t x) const;
-
-	avm_number_t Rectangle_get_y(const Rectangle* self) const;
-
-	void Rectangle_set_y(Rectangle* self, avm_number_t y) const;
+	void Rectangle_set_topLeft(CallArgs& ca);
 };
 
 	}

@@ -56,19 +56,21 @@ public:
 
 	void setDictionary(ActionDictionary* dictionary);
 
-	inline ActionContext* getContext() const { return m_context; }
+	ActionContext* getContext() const { return m_context; }
 
-	inline ActionObject* getSelf() const { return m_self; }
+	ActionObject* getSelf() const { return m_self; }
 
-	inline const IActionVMImage* getImage() const { return m_image; }
+	const IActionVMImage* getImage() const { return m_image; }
 
-	inline const std::map< std::string, ActionValue >& getVariables() const { return m_localVariables; }
+	const ActionValueArray& getRegisters() const { return m_localRegisters; }
 
-	inline ActionDictionary* getDictionary() const { return m_dictionary; }
+	const std::map< std::string, ActionValue >& getVariables() const { return m_localVariables; }
 
-	inline ActionFunction* getCallee() const { return m_callee; }
+	ActionDictionary* getDictionary() const { return m_dictionary; }
 
-	inline ActionValueStack& getStack() { return m_stack; }
+	ActionFunction* getCallee() const { return m_callee; }
+
+	ActionValueStack& getStack() { return m_stack; }
 
 private:
 	ActionContext* m_context;

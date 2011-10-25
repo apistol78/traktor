@@ -10,55 +10,37 @@ namespace traktor
 	namespace flash
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsKey", AsKey, ActionClass)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsKey", AsKey, ActionObject)
 
 AsKey::AsKey(ActionContext* context)
-:	ActionClass(context, "Key")
+:	ActionObject(context)
 ,	m_lastKeyCode(0)
 {
 	std::memset(m_keyState, 0, sizeof(m_keyState));
 
-	Ref< ActionObject > prototype = new ActionObject(context);
-
-	prototype->setMember("BACKSPACE", ActionValue(avm_number_t(AkBackspace)));
-	prototype->setMember("CAPSLOCK", ActionValue(avm_number_t(AkCapsLock)));
-	prototype->setMember("CONTROL", ActionValue(avm_number_t(AkControl)));
-	prototype->setMember("DELETEKEY", ActionValue(avm_number_t(AkDeleteKey)));
-	prototype->setMember("DOWN", ActionValue(avm_number_t(AkDown)));
-	prototype->setMember("END", ActionValue(avm_number_t(AkEnd)));
-	prototype->setMember("ENTER", ActionValue(avm_number_t(AkEnter)));
-	prototype->setMember("ESCAPE", ActionValue(avm_number_t(AkEscape)));
-	prototype->setMember("HOME", ActionValue(avm_number_t(AkHome)));
-	prototype->setMember("INSERT", ActionValue(avm_number_t(AkInsert)));
-	prototype->setMember("LEFT", ActionValue(avm_number_t(AkLeft)));
-	prototype->setMember("PGDN", ActionValue(avm_number_t(AkPgDn)));
-	prototype->setMember("PGUP", ActionValue(avm_number_t(AkPgUp)));
-	prototype->setMember("RIGHT", ActionValue(avm_number_t(AkRight)));
-	prototype->setMember("SHIFT", ActionValue(avm_number_t(AkShift)));
-	prototype->setMember("SPACE", ActionValue(avm_number_t(AkSpace)));
-	prototype->setMember("TAB", ActionValue(avm_number_t(AkTab)));
-	prototype->setMember("UP", ActionValue(avm_number_t(AkUp)));
-	prototype->setMember("addListener", ActionValue(createNativeFunction(context, this, &AsKey::Key_addListener)));
-	prototype->setMember("getAscii", ActionValue(createNativeFunction(context, this, &AsKey::Key_getAscii)));
-	prototype->setMember("getCode", ActionValue(createNativeFunction(context, this, &AsKey::Key_getCode)));
-	prototype->setMember("isAccessible", ActionValue(createNativeFunction(context, this, &AsKey::Key_isAccessible)));
-	prototype->setMember("isDown", ActionValue(createNativeFunction(context, this, &AsKey::Key_isDown)));
-	prototype->setMember("isToggled", ActionValue(createNativeFunction(context, this, &AsKey::Key_isToggled)));
-	prototype->setMember("removeListener", ActionValue(createNativeFunction(context, this, &AsKey::Key_removeListener)));
-
-	prototype->setMember("constructor", ActionValue(this));
-	prototype->setReadOnly();
-
-	setMember("prototype", ActionValue(prototype));
-}
-
-void AsKey::init(ActionObject* self, const ActionValueArray& args)
-{
-}
-
-void AsKey::coerce(ActionObject* self) const
-{
-	T_FATAL_ERROR;
+	setMember("BACKSPACE", ActionValue(avm_number_t(AkBackspace)));
+	setMember("CAPSLOCK", ActionValue(avm_number_t(AkCapsLock)));
+	setMember("CONTROL", ActionValue(avm_number_t(AkControl)));
+	setMember("DELETEKEY", ActionValue(avm_number_t(AkDeleteKey)));
+	setMember("DOWN", ActionValue(avm_number_t(AkDown)));
+	setMember("END", ActionValue(avm_number_t(AkEnd)));
+	setMember("ENTER", ActionValue(avm_number_t(AkEnter)));
+	setMember("ESCAPE", ActionValue(avm_number_t(AkEscape)));
+	setMember("HOME", ActionValue(avm_number_t(AkHome)));
+	setMember("INSERT", ActionValue(avm_number_t(AkInsert)));
+	setMember("LEFT", ActionValue(avm_number_t(AkLeft)));
+	setMember("PGDN", ActionValue(avm_number_t(AkPgDn)));
+	setMember("PGUP", ActionValue(avm_number_t(AkPgUp)));
+	setMember("RIGHT", ActionValue(avm_number_t(AkRight)));
+	setMember("SHIFT", ActionValue(avm_number_t(AkShift)));
+	setMember("SPACE", ActionValue(avm_number_t(AkSpace)));
+	setMember("TAB", ActionValue(avm_number_t(AkTab)));
+	setMember("UP", ActionValue(avm_number_t(AkUp)));
+	setMember("getAscii", ActionValue(createNativeFunction(context, this, &AsKey::Key_getAscii)));
+	setMember("getCode", ActionValue(createNativeFunction(context, this, &AsKey::Key_getCode)));
+	setMember("isAccessible", ActionValue(createNativeFunction(context, this, &AsKey::Key_isAccessible)));
+	setMember("isDown", ActionValue(createNativeFunction(context, this, &AsKey::Key_isDown)));
+	setMember("isToggled", ActionValue(createNativeFunction(context, this, &AsKey::Key_isToggled)));
 }
 
 void AsKey::eventKeyDown(int keyCode)
@@ -66,20 +48,15 @@ void AsKey::eventKeyDown(int keyCode)
 	m_keyState[keyCode] = true;
 	m_lastKeyCode = keyCode;
 
-	// Create a snapshot of active listeners the moment this event is raised,
-	// this because listeners can be either added or removed by listeners.
-	RefArray< ActionObject > listeners = m_listeners;
-	for (RefArray< ActionObject >::iterator i = listeners.begin(); i != listeners.end(); ++i)
-	{
-		ActionValue member;
-		(*i)->getMember("onKeyDown", member);
+	ActionValue broadcastMessageValue;
+	getMember("broadcastMessage", broadcastMessageValue);
 
-		Ref< ActionFunction > eventFunction = member.getObject< ActionFunction >();
-		if (eventFunction)
-		{
-			ActionFrame callerFrame(getContext(), 0, 0, 4, 0, 0);
-			eventFunction->call(&callerFrame, (*i));
-		}
+	Ref< ActionFunction > broadcastMessageFn = broadcastMessageValue.getObject< ActionFunction >();
+	if (broadcastMessageFn)
+	{
+		ActionValueArray args(getContext()->getPool(), 1);
+		args[0] = ActionValue("onKeyDown");
+		broadcastMessageFn->call(this, args);
 	}
 }
 
@@ -87,46 +64,16 @@ void AsKey::eventKeyUp(int keyCode)
 {
 	m_keyState[keyCode] = false;
 
-	// Create a snapshot of active listeners the moment this event is raised,
-	// this because listeners can be either added or removed by listeners.
-	RefArray< ActionObject > listeners = m_listeners;
-	for (RefArray< ActionObject >::iterator i = listeners.begin(); i != listeners.end(); ++i)
+	ActionValue broadcastMessageValue;
+	getMember("broadcastMessage", broadcastMessageValue);
+
+	Ref< ActionFunction > broadcastMessageFn = broadcastMessageValue.getObject< ActionFunction >();
+	if (broadcastMessageFn)
 	{
-		ActionValue member;
-		(*i)->getMember("onKeyUp", member);
-
-		Ref< ActionFunction > eventFunction = member.getObject< ActionFunction >();
-		if (eventFunction)
-		{
-			ActionFrame callerFrame(getContext(), 0, 0, 4, 0, 0);
-			eventFunction->call(&callerFrame, (*i));
-		}
+		ActionValueArray args(getContext()->getPool(), 1);
+		args[0] = ActionValue("onKeyUp");
+		broadcastMessageFn->call(this, args);
 	}
-}
-
-void AsKey::removeAllListeners()
-{
-	m_listeners.clear();
-}
-
-void AsKey::trace(const IVisitor& visitor) const
-{
-	for (RefArray< ActionObject >::const_iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
-		visitor(*i);
-	ActionClass::trace(visitor);
-}
-
-void AsKey::dereference()
-{
-	m_listeners.clear();
-	ActionClass::dereference();
-}
-
-void AsKey::Key_addListener(CallArgs& ca)
-{
-	ActionObject* listener = ca.args[0].getObject();
-	if (listener)
-		m_listeners.push_back(listener);
 }
 
 void AsKey::Key_getAscii(CallArgs& ca)
@@ -153,17 +100,6 @@ void AsKey::Key_isDown(CallArgs& ca)
 void AsKey::Key_isToggled(CallArgs& ca)
 {
 	ca.ret = ActionValue(false);
-}
-
-void AsKey::Key_removeListener(CallArgs& ca)
-{
-	ActionObject* listener = ca.args[0].getObject();
-	if (listener)
-	{
-		RefArray< ActionObject >::iterator i = std::find(m_listeners.begin(), m_listeners.end(), listener);
-		if (i != m_listeners.end())
-			m_listeners.erase(i);
-	}
 }
 
 	}

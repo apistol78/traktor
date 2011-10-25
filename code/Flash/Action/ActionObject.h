@@ -44,7 +44,9 @@ public:
 
 	virtual void addInterface(ActionObject* intrface);
 
-	virtual ActionObject* getPrototype();
+	void set__proto__(ActionObject* prototype);
+
+	virtual ActionObject* get__proto__();
 
 	virtual void setMember(const std::string& memberName, const ActionValue& memberValue);
 
@@ -70,6 +72,8 @@ public:
 
 	void setReadOnly();
 
+	bool hasOwnMember(const std::string& memberName) const;
+
 	bool getLocalMember(const std::string& memberName, ActionValue& outMemberValue) const;
 
 	bool hasOwnProperty(const std::string& propertyName) const;
@@ -87,10 +91,14 @@ public:
 
 	ActionContext* getContext() const { return m_context; }
 
+	const member_map_t& getLocalMembers() const { return m_members; }
+
 protected:
 	virtual void trace(const IVisitor& visitor) const;
 
 	virtual void dereference();
+
+	void setOverrideRelay(IActionObjectRelay* relay);
 
 private:
 	ActionContext* m_context;
@@ -98,6 +106,7 @@ private:
 	mutable member_map_t m_members;
 	property_map_t m_properties;
 	Ref< ActionObject > m__proto__;		//!< Cached "__proto__" member value.
+	Ref< ActionObject > m_prototype;	//!< Cached "prototype" member value.
 	Ref< IActionObjectRelay > m_relay;
 
 	ActionObject(const ActionObject&) {}	// Not permitted

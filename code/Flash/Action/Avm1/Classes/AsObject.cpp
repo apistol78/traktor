@@ -48,7 +48,7 @@ void AsObject::Object_addProperty(ActionObject* self, const std::string& propert
 
 bool AsObject::Object_hasOwnProperty(const ActionObject* self, const std::string& propertyName) const
 {
-	return self->hasOwnProperty(propertyName);
+	return self->hasOwnMember(propertyName) || self->hasOwnProperty(propertyName);
 }
 
 bool AsObject::Object_isPropertyEnumerable(const ActionObject* self) const
