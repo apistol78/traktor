@@ -26,17 +26,17 @@ public:
 	virtual void coerce(ActionObject* self) const;
 
 private:
-	Ref< String > String_charAt(const String* self, uint32_t index) const;
+	void String_fromCharCode(CallArgs& ca);
+
+	std::string String_charAt(const String* self, uint32_t index) const;
 
 	uint32_t String_charCodeAt(const String* self, uint32_t index) const;
 
 	void String_concat(CallArgs& ca);
 
-	void String_fromCharCode(CallArgs& ca);
+	int32_t String_indexOf(const String* self, const std::string& needle) const;
 
-	void String_indexOf(CallArgs& ca);
-
-	void String_lastIndexOf(CallArgs& ca);
+	int32_t String_lastIndexOf(const String* self, const std::string& needle) const;
 
 	void String_slice(CallArgs& ca);
 
@@ -53,6 +53,8 @@ private:
 	void String_toUpperCase(CallArgs& ca);
 
 	void String_valueOf(CallArgs& ca);
+
+	int32_t String_get_length(const String* self) const;
 };
 
 	}

@@ -53,6 +53,17 @@ public:
 		return (index >= 0 && index < MaxStackDepth) ? m_stack[index] : ms_undefined;
 	}
 
+	/*! \brief Peek at value on top of stack.
+	 *
+	 * \param offset Offset from top of stack.
+	 * \return Value.
+	 */
+	const ActionValue& top(int32_t offset = 0) const
+	{
+		int32_t index = m_index + offset - 1;
+		return (index >= 0 && index < MaxStackDepth) ? m_stack[index] : ms_undefined;
+	}
+
 	/*! \brief Stack empty.
 	 *
 	 * \return True if stack is empty.

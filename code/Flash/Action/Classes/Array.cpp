@@ -26,7 +26,7 @@ Array::Array(const ActionValueArray& values)
 Ref< Array > Array::concat() const
 {
 	Ref< Array > out = new Array();
-	out->m_values.insert(out->m_values.end(), m_values.begin(), m_values.end());
+	out->m_values.reserve(m_values.size());
 	out->m_values.insert(out->m_values.end(), m_values.begin(), m_values.end());
 	return out;
 }
@@ -34,6 +34,7 @@ Ref< Array > Array::concat() const
 Ref< Array > Array::concat(const ActionValueArray& values) const
 {
 	Ref< Array > out = new Array();
+	out->m_values.reserve(m_values.size() + values.size());
 	out->m_values.insert(out->m_values.end(), m_values.begin(), m_values.end());
 	out->m_values.insert(out->m_values.end(), &values[0], &values[values.size() - 1]);
 	return out;
@@ -143,6 +144,26 @@ Ref< Array > Array::splice(int32_t startIndex, uint32_t deleteCount, const Actio
 uint32_t Array::length() const
 {
 	return uint32_t(m_values.size());
+}
+
+int32_t Array::indexOf(const ActionValue& value) const
+{
+	for (int32_t i = 0; i < int32_t(m_values.size()); ++i)
+	{
+		if (m_values[i] == value)
+			return i;
+	}
+	return -1;
+}
+
+void Array::removeAt(int32_t index)
+{
+	m_values.erase(m_values.begin() + index);
+}
+
+void Array::removeAll()
+{
+	m_values.clear();
 }
 
 bool Array::setMember(ActionContext* context, const std::string& memberName, const ActionValue& memberValue)

@@ -2,7 +2,7 @@
 #define traktor_flash_AsKey_H
 
 #include "Core/RefArray.h"
-#include "Flash/Action/Avm1/ActionClass.h"
+#include "Flash/Action/ActionObject.h"
 
 namespace traktor
 {
@@ -14,7 +14,7 @@ struct CallArgs;
 /*! \brief Key class.
  * \ingroup Flash
  */
-class AsKey : public ActionClass
+class AsKey : public ActionObject
 {
 	T_RTTI_CLASS;
 
@@ -43,27 +43,13 @@ public:
 
 	AsKey(ActionContext* context);
 
-	virtual void init(ActionObject* self, const ActionValueArray& args);
-
-	virtual void coerce(ActionObject* self) const;
-
 	void eventKeyDown(int keyCode);
 
 	void eventKeyUp(int keyCode);
 
-	void removeAllListeners();
-
-protected:
-	virtual void trace(const IVisitor& visitor) const;
-
-	virtual void dereference();
-
 private:
-	RefArray< ActionObject > m_listeners;
 	bool m_keyState[256];
 	int m_lastKeyCode;
-
-	void Key_addListener(CallArgs& ca);
 
 	void Key_getAscii(CallArgs& ca);
 
@@ -74,8 +60,6 @@ private:
 	void Key_isDown(CallArgs& ca);
 
 	void Key_isToggled(CallArgs& ca);
-
-	void Key_removeListener(CallArgs& ca);
 };
 
 	}

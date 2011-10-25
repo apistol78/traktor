@@ -120,6 +120,18 @@ public:
 	/*! \brief Copy value. */
 	ActionValue& operator = (const ActionValue& v);
 
+	/*! \brief Add */
+	ActionValue operator + (const ActionValue& r) const;
+
+	/*! \brief Subtract */
+	ActionValue operator - (const ActionValue& r) const;
+
+	/*! \brief Multiply */
+	ActionValue operator * (const ActionValue& r) const;
+
+	/*! \brief Compare equal. */
+	bool operator == (const ActionValue& r) const;
+
 private:
 	union Value
 	{

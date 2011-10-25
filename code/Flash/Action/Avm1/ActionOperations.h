@@ -6,6 +6,10 @@
 
 namespace traktor
 {
+
+class OutputStream;
+class Timer;
+
 	namespace flash
 	{
 
@@ -32,12 +36,19 @@ struct ExecutionState
 	const uint8_t* npc;
 	const uint8_t* data;
 	uint16_t length;
+	const Timer* timer;
+
+	// Scope instance.
+	Ref< ActionObject > with;
 
 	// Cached instances.
 	ActionContext* context;
 	ActionObject* self;
 	ActionObject* global;
 	FlashSpriteInstance* movieClip;
+
+	// Trace instances.
+	OutputStream* trace;
 };
 
 struct OperationInfo

@@ -47,6 +47,8 @@ private:
 	void Array_unshift(CallArgs& ca);
 
 	uint32_t Array_get_length(const Array* self) const;
+
+	void Array_set_length(Array* self, uint32_t length) const;
 };
 
 	}

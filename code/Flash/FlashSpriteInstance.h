@@ -55,6 +55,10 @@ public:
 
 	bool isVisible() const;
 
+	void setEnabled(bool enabled);
+
+	bool isEnabled() const;
+
 	Ref< FlashSpriteInstance > clone() const;
 
 	SwfRect getLocalBounds() const;
@@ -108,6 +112,7 @@ private:
 	bool m_initialized;
 	bool m_playing;
 	bool m_visible;
+	bool m_enabled;
 	bool m_inDispatch;
 	bool m_gotoIssued;
 	int32_t m_mouseX;

@@ -1,5 +1,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/Endian.h"
+#include "Core/Misc/StringSplit.h"
+#include "Core/Timer/Timer.h"
 #include "Flash/FlashMovie.h"
 #include "Flash/FlashSprite.h"
 #include "Flash/FlashSpriteInstance.h"
@@ -16,41 +18,54 @@
 #include "Flash/Action/Avm1/Classes/AsFunction.h"
 #include "Flash/Action/Avm1/Classes/AsMovieClip.h"
 
-#define VM_TRACE_ENABLE 0
-
-#if VM_TRACE_ENABLE
-#	define T_WIDEN_X(x) L ## x
-#	define T_WIDEN(x) T_WIDEN_X(x)
-#	define VM_BEGIN(op) \
-	case op : \
-		{ \
-			log::debug << T_WIDEN( #op ) << L" (stack " << stack.depth() << L")" << Endl << IncreaseIndent;
-#	define VM_END() \
-			log::debug << DecreaseIndent; \
-		} \
-		break;
-#	define VM_NOT_IMPLEMENTED \
-		log::error << L"Opcode not implemented" << Endl; \
-		T_BREAKPOINT;
-#	define VM_LOG(x) \
-		log::debug << x << Endl;
-#else
-#	define VM_BEGIN(op) \
-	case op : \
-		{
-#	define VM_END() \
-		} \
-		break;
-#	define VM_NOT_IMPLEMENTED
-#	define VM_LOG(x)
-#endif
-
 namespace traktor
 {
 	namespace flash
 	{
 		namespace
 		{
+
+#define T_IF_TRACE(x) \
+	{ if (state.trace) { x } }
+
+ActionValue getVariable(ExecutionState& state, const std::string& variableName)
+{
+	ActionValue value;
+
+	if (state.with)
+	{
+		if (state.with->getMember(variableName, value))
+			return value;
+	}
+
+	if (state.frame->getVariable(variableName, value))
+		return value;
+
+	if (state.self->getMember(variableName, value))
+		return value;
+
+	if (state.movieClip)
+	{
+		ActionObject* movieClipAS = state.movieClip->getAsObject(state.context);
+		T_ASSERT (movieClipAS);
+
+		if (movieClipAS != state.self && movieClipAS->getMember(variableName, value))
+			return value;
+	}
+
+	Ref< ActionObject > object = state.global;
+	StringSplit< std::string > variableNameSplit(variableName, ".");
+	for (StringSplit< std::string >::const_iterator i = variableNameSplit.begin(); i != variableNameSplit.end(); ++i)
+	{
+		if (!object->getLocalMember(*i, value))
+			break;
+
+		if ((object = value.getObject()) == 0)
+			break;
+	}
+
+	return value;
+}
 
 void opx_nextFrame(ExecutionState& state)
 {
@@ -74,12 +89,16 @@ void opx_stop(ExecutionState& state)
 
 void opx_toggleQuality(ExecutionState& state)
 {
-	VM_NOT_IMPLEMENTED;
+	T_IF_TRACE(
+		*state.trace << L"AopToggleQuality: Not implemented"  << Endl;
+	)
 }
 
 void opx_stopSounds(ExecutionState& state)
 {
-	VM_NOT_IMPLEMENTED;
+	T_IF_TRACE(
+		*state.trace << L"AopStopSounds: Not implemented"  << Endl;
+	)
 }
 
 void opx_add(ExecutionState& state)
@@ -100,30 +119,18 @@ void opx_add(ExecutionState& state)
 void opx_subtract(ExecutionState& state)
 {
 	ActionValueStack& stack = state.frame->getStack();
-
 	ActionValue& number2 = stack.top(0);
 	ActionValue& number1 = stack.top(-1);
-
-	if (number1.isNumeric() && number2.isNumeric())
-		number1 = ActionValue(number1.getNumber() - number2.getNumber());
-	else
-		number1 = ActionValue();
-
+	number1 = number1 - number2;
 	stack.drop(1);
 }
 
 void opx_multiply(ExecutionState& state)
 {
 	ActionValueStack& stack = state.frame->getStack();
-
 	ActionValue& number2 = stack.top(0);
 	ActionValue& number1 = stack.top(-1);
-
-	if (number1.isNumeric() && number2.isNumeric())
-		number1 = ActionValue(number1.getNumber() * number2.getNumber());
-	else
-		number1 = ActionValue();
-
+	number1 = number1 * number2;
 	stack.drop(1);
 }
 
@@ -251,39 +258,14 @@ void opx_getVariable(ExecutionState& state)
 {
 	ActionValueStack& stack = state.frame->getStack();
 	std::string variableName = stack.pop().getString();
-	ActionValue value;
 
-	if (state.frame->getVariable(variableName, value))
-	{
-		stack.push(value);
-		return;
-	}
+	ActionValue variableValue = getVariable(state, variableName);
 
-	if (state.self->getMember(variableName, value))
-	{
-		stack.push(value);
-		return;
-	}
+	T_IF_TRACE(
+		*state.trace << L"AopGetVariable: \"" << mbstows(variableName) << L"\" => \"" << variableValue.getWideString() << L"\"" << Endl;
+	)
 
-	if (state.movieClip)
-	{
-		ActionObject* movieClipAS = state.movieClip->getAsObject(state.context);
-		T_ASSERT (movieClipAS);
-
-		if (movieClipAS != state.self && movieClipAS->getMember(variableName, value))
-		{
-			stack.push(value);
-			return;
-		}
-	}
-
-	if (state.global->getLocalMember(variableName, value))
-	{
-		stack.push(value);
-		return;
-	}
-
-	stack.push(value);
+	stack.push(variableValue);
 }
 
 void opx_setVariable(ExecutionState& state)
@@ -311,7 +293,9 @@ void opx_setVariable(ExecutionState& state)
 
 void opx_setTargetExpr(ExecutionState& state)
 {
-	VM_NOT_IMPLEMENTED;
+	T_IF_TRACE(
+		*state.trace << L"AopSetTargetExpr: Not implemented"  << Endl;
+	)
 }
 
 void opx_stringConcat(ExecutionState& state)
@@ -369,7 +353,11 @@ void opx_getProperty(ExecutionState& state)
 		break;
 
 	default:
-		VM_LOG(L"GetProperty, invalid index");
+		{
+			T_IF_TRACE(
+				*state.trace << L"AopGetProperty: Invalid index"  << Endl;
+			)
+		}
 	}
 }
 
@@ -413,7 +401,12 @@ void opx_setProperty(ExecutionState& state)
 		break;
 
 	default:
-		VM_LOG(L"SetProperty, invalid index");
+		{
+			T_IF_TRACE(
+				*state.trace << L"AopSetProperty: Invalid index"  << Endl;
+			)
+		}
+		break;
 	}
 }
 
@@ -439,7 +432,9 @@ void opx_cloneSprite(ExecutionState& state)
 
 void opx_removeSprite(ExecutionState& state)
 {
-	VM_NOT_IMPLEMENTED;
+	T_IF_TRACE(
+		*state.trace << L"AopRemoveSprite: Not implemented"  << Endl;
+	)
 }
 
 void opx_trace(ExecutionState& state)
@@ -447,7 +442,7 @@ void opx_trace(ExecutionState& state)
 	ActionValueStack& stack = state.frame->getStack();
 	std::wstring trace = stack.pop().getWideString();
 	if (trace != L"** BREAK **")
-		log::debug << L"TRACE \"" << trace << L"\"" << Endl;
+		log::info << L"TRACE \"" << trace << L"\"" << Endl;
 	else
 		T_BREAKPOINT;
 }
@@ -470,7 +465,9 @@ void opx_startDragMovie(ExecutionState& state)
 
 void opx_stopDragMovie(ExecutionState& state)
 {
-	VM_NOT_IMPLEMENTED;
+	T_IF_TRACE(
+		*state.trace << L"AopStopDragMovie: Not implemented"  << Endl;
+	)
 }
 
 void opx_stringCompare(ExecutionState& state)
@@ -483,7 +480,9 @@ void opx_stringCompare(ExecutionState& state)
 
 void opx_throw(ExecutionState& state)
 {
-	VM_NOT_IMPLEMENTED;
+	T_IF_TRACE(
+		*state.trace << L"AopThrow: Not implemented"  << Endl;
+	)
 }
 
 void opx_castOp(ExecutionState& state)
@@ -497,7 +496,7 @@ void opx_castOp(ExecutionState& state)
 		Ref< ActionObject > object = objectValue.getObject();
 		Ref< ActionObject > constructor = constructorValue.getObject();
 
-		if (object->getPrototype() == constructor)
+		if (object->get__proto__() == constructor)
 		{
 			stack.push(objectValue);
 			return;
@@ -536,40 +535,51 @@ void opx_random(ExecutionState& state)
 
 void opx_mbLength(ExecutionState& state)
 {
-	VM_NOT_IMPLEMENTED;
+	T_IF_TRACE(
+		*state.trace << L"AopMbLength: Not implemented"  << Endl;
+	)
 }
 
 void opx_ord(ExecutionState& state)
 {
-	VM_NOT_IMPLEMENTED;
+	T_IF_TRACE(
+		*state.trace << L"AopOrd: Not implemented"  << Endl;
+	)
 }
 
 void opx_chr(ExecutionState& state)
 {
-	VM_NOT_IMPLEMENTED;
+	T_IF_TRACE(
+		*state.trace << L"AopChr: Not implemented"  << Endl;
+	)
 }
 
 void opx_getTime(ExecutionState& state)
 {
-	//ActionValueStack& stack = state.frame->getStack();
-	//avm_number_t sinceStartup = avm_number_t(m_timer.getElapsedTime() * 1000.0);
-	//stack.push(ActionValue(sinceStartup));
-	VM_NOT_IMPLEMENTED;
+	ActionValueStack& stack = state.frame->getStack();
+	avm_number_t time = avm_number_t(int32_t(state.timer->getElapsedTime() * 1000.0f));
+	stack.push(ActionValue(time));
 }
 
 void opx_mbSubString(ExecutionState& state)
 {
-	VM_NOT_IMPLEMENTED;
+	T_IF_TRACE(
+		*state.trace << L"AopMbSubString: Not implemented"  << Endl;
+	)
 }
 
 void opx_mbOrd(ExecutionState& state)
 {
-	VM_NOT_IMPLEMENTED;
+	T_IF_TRACE(
+		*state.trace << L"AopMbOrd: Not implemented"  << Endl;
+	)
 }
 
 void opx_mbChr(ExecutionState& state)
 {
-	VM_NOT_IMPLEMENTED;
+	T_IF_TRACE(
+		*state.trace << L"AopMbChr: Not implemented"  << Endl;
+	)
 }
 
 void opx_delete(ExecutionState& state)
@@ -591,11 +601,37 @@ void opx_delete2(ExecutionState& state)
 	ActionValueStack& stack = state.frame->getStack();
 	std::string variableName = stack.pop().getString();
 
-	ActionObject* movieClipAS = state.movieClip->getAsObject(state.context);
-	T_ASSERT (movieClipAS);
+	if (state.with)
+	{
+		if (state.with->deleteMember(variableName))
+		{
+			stack.push(ActionValue(true));
+			return;
+		}
+	}
 
-	bool deleted = movieClipAS->deleteMember(variableName);
-	stack.push(ActionValue(deleted));
+	if (state.self)
+	{
+		if (state.self->deleteMember(variableName))
+		{
+			stack.push(ActionValue(true));
+			return;
+		}
+	}
+
+	if (state.movieClip)
+	{
+		ActionObject* movieClipAS = state.movieClip->getAsObject(state.context);
+		T_ASSERT (movieClipAS);
+
+		if (movieClipAS->deleteMember(variableName))
+		{
+			stack.push(ActionValue(true));
+			return;
+		}
+	}
+
+	stack.push(ActionValue(false));
 }
 
 void opx_defineLocal(ExecutionState& state)
@@ -603,6 +639,12 @@ void opx_defineLocal(ExecutionState& state)
 	ActionValueStack& stack = state.frame->getStack();
 	ActionValue variableValue = stack.pop();
 	std::string variableName = stack.pop().getString();
+
+#if defined(_DEBUG)
+	ActionFunction* variableFunction = variableValue.getObject< ActionFunction >();
+	if (variableFunction)
+		variableFunction->setName(variableName);
+#endif
 
 	if (state.frame->getCallee())
 	{
@@ -624,38 +666,21 @@ void opx_callFunction(ExecutionState& state)
 {
 	ActionValueStack& stack = state.frame->getStack();
 	std::string functionName = stack.pop().getString();
-	ActionValue functionObject;
 
-	if (state.frame->getVariable(functionName, functionObject))
-		goto _found;
-
-	if (state.self->getMember(functionName, functionObject))
-		goto _found;
-	
-	if (state.movieClip)
-	{
-		ActionObject* movieClipAS = state.movieClip->getAsObject(state.context);
-		T_ASSERT (movieClipAS);
-
-		if (movieClipAS->getMember(functionName, functionObject))
-			goto _found;
-	}
-
-	if (state.global->getLocalMember(functionName, functionObject))
-		goto _found;
-
-_found:
-
+	ActionValue functionObject = getVariable(state, functionName);
 	if (functionObject.isObject< ActionFunction >())
 	{
 		ActionFunction* fn = functionObject.getObject< ActionFunction >();
 		T_ASSERT (fn);
 
-		stack.push(fn->call(state.frame, state.self));
+		stack.push(fn->call(state.frame, /*state.self*/0));
 		return;
 	}
 
-	log::warning << L"Undefined function \"" << mbstows(functionName) << L"\"" << Endl;
+	T_IF_TRACE(
+		*state.trace << L"AopCallFunction: Undefined function \"" << mbstows(functionName) << L"\"" << Endl;
+	)
+
 	int argCount = int(stack.pop().getNumber());
 	stack.drop(argCount);
 	stack.push(ActionValue());
@@ -685,13 +710,14 @@ void opx_new(ExecutionState& state)
 	Ref< ActionFunction > classFunction = classFunctionValue.getObject< ActionFunction >();
 	if (!classFunction)
 	{
-		std::string classFunctionName = classFunctionValue.getString();
-		state.global->getLocalMember(classFunctionName, classFunctionValue);
+		classFunctionValue = getVariable(state, classFunctionValue.getString());
 		classFunction = classFunctionValue.getObject< ActionFunction >();
 	}
 
 	if (!classFunction)
 	{
+		int32_t argCount = int32_t(stack.pop().getNumber());
+		stack.drop(argCount);
 		stack.push(ActionValue());
 		return;
 	}
@@ -702,15 +728,19 @@ void opx_new(ExecutionState& state)
 
 	if (!prototypeValue.isObject())
 	{
+		int32_t argCount = int32_t(stack.pop().getNumber());
+		stack.drop(argCount);
 		stack.push(ActionValue());
 		return;
 	}
 
 	Ref< ActionObject > prototype = prototypeValue.getObject();
 
-	// Create instance; first try to create through builtin classes.
+	// Create instance.
 	Ref< ActionObject > self = new ActionObject(state.context, prototype);
-	ActionValue object = classFunction->call(state.frame, self);
+	self->setMember("__ctor__", classFunctionValue);
+
+	classFunction->call(state.frame, self);
 	stack.push(ActionValue(self));
 }
 
@@ -748,8 +778,8 @@ void opx_initArray(ExecutionState& state)
 		T_ASSERT (arrayClass);
 
 		// Allocate array instance.
-		Ref< ActionObject > self = /*arrayClass->alloc();*/ new ActionObject(state.context, "Array");
-		T_ASSERT (self);
+		Ref< ActionObject > self = new ActionObject(state.context, "Array");
+		self->setMember("__ctor__", arrayClassMember);
 
 		// Initialize array through constructor.
 		arrayClass->call(state.frame, self);
@@ -773,7 +803,9 @@ void opx_initObject(ExecutionState& state)
 		ActionValue value = stack.pop();
 		ActionValue name = stack.pop();
 		scriptObject->setMember(name.getString(), value);
-		VM_LOG(L"Initial property " << i << L" \"" << name.getWideString() << L"\" = " << value.getWideString());
+		T_IF_TRACE(
+			*state.trace << L"AopInitObject: " << i << L" \"" << name.getWideString() << L"\" = " << value.getWideString() << Endl;
+		)
 	}
 
 	stack.push(ActionValue(scriptObject));
@@ -799,7 +831,9 @@ void opx_typeOf(ExecutionState& state)
 	else if (value.isObject())
 	{
 		Ref< ActionObject > object = value.getObject();
-		if (is_a< FlashSpriteInstance >(object->getRelay()))
+		if (!object)
+			stack.push(ActionValue("null"));
+		else if (is_a< FlashSpriteInstance >(object->getRelay()))
 			stack.push(ActionValue("movieclip"));
 		else if (is_a< ActionFunction >(object))
 			stack.push(ActionValue("function"));
@@ -812,12 +846,16 @@ void opx_typeOf(ExecutionState& state)
 
 void opx_targetPath(ExecutionState& state)
 {
-	VM_NOT_IMPLEMENTED;
+	T_IF_TRACE(
+		*state.trace << L"AopTargetPath: Not implemented"  << Endl;
+	)
 }
 
 void opx_enumerate(ExecutionState& state)
 {
-	VM_NOT_IMPLEMENTED;
+	T_IF_TRACE(
+		*state.trace << L"AopEnumerate: Not implemented"  << Endl;
+	)
 }
 
 void opx_newAdd(ExecutionState& state)
@@ -825,32 +863,7 @@ void opx_newAdd(ExecutionState& state)
 	ActionValueStack& stack = state.frame->getStack();
 	ActionValue value2 = stack.pop();
 	ActionValue value1 = stack.pop();
-	if (value2.isString() || value1.isString())
-	{
-		ActionValue string2 = value2.toString();
-		ActionValue string1 = value1.toString();
-		if (string2.isString() && string1.isString())
-		{
-			std::string str2 = string2.getString();
-			std::string str1 = string1.getString();
-			stack.push(ActionValue(str1 + str2));
-		}
-		else
-			stack.push(ActionValue());
-	}
-	else
-	{
-		ActionValue number2 = value2.toNumber();
-		ActionValue number1 = value1.toNumber();
-		if (number2.isNumeric() && number1.isNumeric())
-		{
-			avm_number_t n2 = number2.getNumber();
-			avm_number_t n1 = number1.getNumber();
-			stack.push(ActionValue(n1 + n2));
-		}
-		else
-			stack.push(ActionValue());
-	}
+	stack.push(value1 + value2);
 }
 
 void opx_newLessThan(ExecutionState& state)
@@ -891,49 +904,7 @@ void opx_newEquals(ExecutionState& state)
 	ActionValueStack& stack = state.frame->getStack();
 	ActionValue value2 = stack.pop();
 	ActionValue value1 = stack.pop();
-
-	if (!value2.isUndefined() && !value1.isUndefined())
-	{
-		ActionValue::Type predicateType = max(value2.getType(), value1.getType());
-		if (predicateType == ActionValue::AvtBoolean)
-		{
-			bool v2 = value2.getBoolean();
-			bool v1 = value1.getBoolean();
-			stack.push(ActionValue(v1 == v2));
-		}
-		else if (predicateType == ActionValue::AvtNumber)
-		{
-			avm_number_t v2 = value2.getNumber();
-			avm_number_t v1 = value1.getNumber();
-			stack.push(ActionValue(v1 == v2));
-		}
-		else if (predicateType == ActionValue::AvtString)
-		{
-			std::string v2 = value2.getString();
-			std::string v1 = value1.getString();
-			stack.push(ActionValue(v1 == v2));
-		}
-		else	// AvtObject
-		{
-			Ref< ActionObject > object2 = value2.getObject();
-			Ref< ActionObject > object1 = value1.getObject();
-			stack.push(ActionValue(object1 == object2));
-		}
-	}
-	else if (value1.isObject() && value2.isUndefined())
-	{
-		ActionObject* object1 = value1.getObject();
-		stack.push(ActionValue(object1 == 0));
-	}
-	else if (value1.isUndefined() && value2.isObject())
-	{
-		ActionObject* object2 = value2.getObject();
-		stack.push(ActionValue(object2 == 0));
-	}
-	else if (value1.isUndefined() && value2.isUndefined())
-		stack.push(ActionValue(true));
-	else
-		stack.push(ActionValue(false));
+	stack.push(ActionValue(value1 == value2));
 }
 
 void opx_toNumber(ExecutionState& state)
@@ -973,6 +944,9 @@ void opx_getMember(ExecutionState& state)
 	Ref< ActionObject > target = targetValue.getObjectAlways(state.context);
 	if (target->getMember(memberName, memberValue))
 	{
+		T_IF_TRACE(
+			*state.trace << L"AopGetMember: \"" << mbstows(memberName) << L"\" => \"" << memberValue.getWideString() << L"\"" << Endl;
+		)
 		stack.push(memberValue);
 		return;
 	}
@@ -982,9 +956,18 @@ void opx_getMember(ExecutionState& state)
 	{
 		stack.push(ActionValue(avm_number_t(0)));
 		memberValue = propertyGet->call(state.frame, target);
+
+		T_IF_TRACE(
+			*state.trace << L"AopGetMember: \"" << mbstows(memberName) << L"\" => \"" << memberValue.getWideString() << L"\"" << Endl;
+		)
 		stack.push(memberValue);
 		return;
 	}
+
+	T_IF_TRACE(
+		*state.trace << L"AopGetMember: \"" << mbstows(memberName) << L"\", no such member" << Endl;
+	)
+	stack.push(ActionValue());
 }
 
 void opx_setMember(ExecutionState& state)
@@ -993,6 +976,12 @@ void opx_setMember(ExecutionState& state)
 	ActionValue memberValue = stack.pop();
 	std::string memberName = stack.pop().getString();
 	ActionValue targetValue = stack.pop();
+
+	T_IF_TRACE(
+		*state.trace << L"Target: \"" << targetValue.getWideString() << L"\"" << Endl;
+		*state.trace << L"Member: \"" << mbstows(memberName) << L"\"" << Endl;
+		*state.trace << L"Value: \"" << memberValue.getWideString() << L"\"" << Endl;
+	)
 
 	Ref< ActionObject > target = targetValue.getObjectAlways(state.context);
 
@@ -1056,10 +1045,17 @@ void opx_callMethod(ExecutionState& state)
 		method = dynamic_type_cast< ActionFunction* >(target);
 
 	if (method)
+	{
+		T_IF_TRACE(
+			*state.trace << L"AopCallMethod: \"" << mbstows(method->getName()) << L"\"" << Endl;
+		)
 		returnValue = method->call(state.frame, target);
+	}
 	else
 	{
-		log::warning << L"Undefined method \"" << classConstructorName.getWideString() << L"\"" << Endl;
+		T_IF_TRACE(
+			*state.trace << L"AopCallMethod: Undefined method \"" << classConstructorName.getWideString() << L"\"" << Endl;
+		)
 		int argCount = int(stack.pop().getNumber());
 		stack.drop(argCount);
 	}
@@ -1097,12 +1093,15 @@ void opx_newMethod(ExecutionState& state)
 
 		Ref< ActionObject > prototype = prototypeValue.getObject();
 		Ref< ActionObject > self = new ActionObject(state.context, prototype);
+		self->setMember("__ctor__", ActionValue(classFunction));
 		classFunction->call(state.frame, self);
 		stack.push(ActionValue(self));
 	}
 	else
 	{
-		VM_LOG(L"Not a class object");
+		T_IF_TRACE(
+			*state.trace << L"AopNewMethod: Not a class object" << Endl;
+		)
 		stack.push(ActionValue());
 	}
 }
@@ -1110,18 +1109,30 @@ void opx_newMethod(ExecutionState& state)
 void opx_instanceOf(ExecutionState& state)
 {
 	ActionValueStack& stack = state.frame->getStack();
-	ActionValue objectValue = stack.pop();
 	ActionValue constructorValue = stack.pop();
+	ActionValue objectValue = stack.pop();
 
 	if (objectValue.isObject() && constructorValue.isObject())
 	{
 		Ref< ActionObject > object = objectValue.getObject();
 		Ref< ActionObject > constructor = constructorValue.getObject();
 
-		if (object->getPrototype() == constructor)
+		ActionValue constructorProtoValue;
+		constructor->getMember("prototype", constructorProtoValue);
+
+		Ref< ActionObject > objectProto = object->get__proto__();
+		while (objectProto)
 		{
-			stack.push(ActionValue(true));
-			return;
+			if (objectProto == constructorProtoValue.getObject())
+			{
+				stack.push(ActionValue(true));
+				return;
+			}
+
+			if (objectProto->get__proto__() == objectProto)
+				break;
+
+			objectProto = objectProto->get__proto__();
 		}
 	}
 
@@ -1192,17 +1203,23 @@ void opx_bitwiseXor(ExecutionState& state)
 
 void opx_shiftLeft(ExecutionState& state)
 {
-	VM_NOT_IMPLEMENTED;
+	T_IF_TRACE(
+		*state.trace << L"AopShiftLeft: Not implemented"  << Endl;
+	)
 }
 
 void opx_shiftRight(ExecutionState& state)
 {
-	VM_NOT_IMPLEMENTED;
+	T_IF_TRACE(
+		*state.trace << L"AopShiftRight: Not implemented"  << Endl;
+	)
 }
 
 void opx_shiftRight2(ExecutionState& state)
 {
-	VM_NOT_IMPLEMENTED;
+	T_IF_TRACE(
+		*state.trace << L"AopShiftRight2: Not implemented"  << Endl;
+	)
 }
 
 void opx_strictEq(ExecutionState& state)
@@ -1339,18 +1356,25 @@ void opx_getUrl(ExecutionState& state)
 			fn->call(state.frame, 0);
 		}
 		else
-			log::warning << L"_global.getUrl must be a function object" << Endl;
+		{
+			T_IF_TRACE(
+				*state.trace << L"AopGetUrl: _global.getUrl must be a function object" << Endl;
+			)
+		}
 	}
 }
 
 void opx_setRegister(ExecutionState& state)
 {
 	ActionValueStack& stack = state.frame->getStack();
+	ActionValue value = !stack.empty() ? stack.top() : ActionValue();
 
 	uint8_t registerIndex = *state.data;
-	state.frame->setRegister(registerIndex, !stack.empty() ? stack.top() : ActionValue());
+	state.frame->setRegister(registerIndex, value);
 
-	VM_LOG(L"Set register " << int32_t(registerIndex) << L" = " << (!stack.empty() ? stack.top().getWideString() : L"< Stack empty >"));
+	T_IF_TRACE(
+		*state.trace << L"AopSetRegister: " << int32_t(registerIndex) << L" = " << value.getWideString() << Endl;
+	)
 }
 
 void opp_constantPool(PreparationState& state)
@@ -1377,7 +1401,9 @@ void opx_waitForFrame(ExecutionState& state)
 
 void opx_setTarget(ExecutionState& state)
 {
-	VM_NOT_IMPLEMENTED;
+	T_IF_TRACE(
+		*state.trace << L"AopSetTarget: Not implemented"  << Endl;
+	)
 }
 
 void opx_gotoLabel(ExecutionState& state)
@@ -1395,7 +1421,9 @@ void opx_gotoLabel(ExecutionState& state)
 
 void opx_waitForFrameExpression(ExecutionState& state)
 {
-	VM_NOT_IMPLEMENTED;
+	T_IF_TRACE(
+		*state.trace << L"AopWaitForFrameExpression: Not implemented"  << Endl;
+	)
 }
 
 void opp_defineFunction2(PreparationState& state)
@@ -1502,17 +1530,24 @@ void opx_defineFunction2(ExecutionState& state)
 		stack.push(ActionValue(function));
 	}
 
+	T_IF_TRACE(
+		*state.trace << L"AopDefineFunction2: \"" << mbstows(functionName) << L"\"" << Endl;
+	)
+
 	state.npc += codeSize;
 }
 
 void opx_try(ExecutionState& state)
 {
-	VM_NOT_IMPLEMENTED;
+	T_IF_TRACE(
+		*state.trace << L"AopTry: Not implemented"  << Endl;
+	)
 }
 
 void opx_with(ExecutionState& state)
 {
-	VM_NOT_IMPLEMENTED;
+	ActionValueStack& stack = state.frame->getStack();
+	state.with = stack.pop().getObject();
 }
 
 void opp_pushData(PreparationState& state)
@@ -1795,7 +1830,11 @@ void opx_getUrl2(ExecutionState& state)
 			fn->call(state.frame, 0);
 		}
 		else
-			log::error << L"_global.getUrl must be a function object" << Endl;
+		{
+			T_IF_TRACE(
+				*state.trace << L"AopGetUrl2: _global.getUrl must be a function object" << Endl;
+			)
+		}
 	}
 }
 
@@ -1839,10 +1878,13 @@ void opx_defineFunction(ExecutionState& state)
 	uint16_t argumentCount = *reinterpret_cast< const uint16_t* >(data);
 	data += sizeof(uint16_t);
 
+	std::vector< std::string > argumentsIntoVariables(argumentCount);
 	for (int i = 0; i  < argumentCount; ++i)
 	{
 		const char* argumentName = reinterpret_cast< const char* >(data);
 		data += strlen(argumentName) + 1;
+
+		argumentsIntoVariables[i] = argumentName;
 	}
 
 	uint16_t codeSize = *reinterpret_cast< const uint16_t* >(data);
@@ -1856,6 +1898,7 @@ void opx_defineFunction(ExecutionState& state)
 		functionName,
 		image,
 		argumentCount,
+		argumentsIntoVariables,
 		state.frame->getDictionary()
 	);
 
@@ -1879,6 +1922,10 @@ void opx_defineFunction(ExecutionState& state)
 		// Push function object onto stack.
 		stack.push(ActionValue(function));
 	}
+
+	T_IF_TRACE(
+		*state.trace << L"AopDefineFunction: \"" << mbstows(functionName) << L"\"" << Endl;
+	)
 
 	state.npc += codeSize;
 }
@@ -1904,7 +1951,9 @@ void opx_branchIfTrue(ExecutionState& state)
 
 void opx_callFrame(ExecutionState& state)
 {
-	VM_NOT_IMPLEMENTED;
+	T_IF_TRACE(
+		*state.trace << L"AopCallFrame: Not implemented"  << Endl;
+	)
 }
 
 void opx_gotoFrame2(ExecutionState& state)
@@ -1925,13 +1974,17 @@ void opx_gotoFrame2(ExecutionState& state)
 	}
 	else
 	{
-		log::error << L"Invalid frame in GotoFrame2" << Endl;
+		T_IF_TRACE(
+			*state.trace << L"AopGotoFrame2: Invalid frame" << Endl;
+		)
 		return;
 	}
 
 	if (frameIndex < 0)
 	{
-		log::warning << L"No such frame" << Endl;
+		T_IF_TRACE(
+			*state.trace << L"AopGotoFrame2: No such frame" << Endl;
+		)
 		return;
 	}
 

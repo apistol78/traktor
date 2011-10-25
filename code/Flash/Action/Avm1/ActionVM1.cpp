@@ -2,10 +2,11 @@
 #include <cmath>
 #include "Core/Io/BitReader.h"
 #include "Flash/Action/ActionFrame.h"
-#include "Flash/Action/Avm1/ActionVM1.h"
-#include "Flash/Action/Avm1/ActionVMImage1.h"
 #include "Flash/Action/Avm1/ActionOpcodes.h"
 #include "Flash/Action/Avm1/ActionOperations.h"
+#include "Flash/Action/Avm1/ActionVM1.h"
+#include "Flash/Action/Avm1/ActionVMImage1.h"
+#include "Flash/Action/Avm1/ActionVMTrace1.h"
 
 namespace traktor
 {
@@ -13,6 +14,15 @@ namespace traktor
 	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.ActionVM1", ActionVM1, IActionVM)
+
+ActionVM1::ActionVM1()
+{
+	m_timer.start();
+
+#if defined(_DEBUG)
+	m_trace = new ActionVMTrace1();
+#endif
+}
 
 Ref< const IActionVMImage > ActionVM1::load(BitReader& br) const
 {
@@ -50,7 +60,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 	const ActionVMImage1* image = static_cast< const ActionVMImage1* >(frame->getImage());
 	T_ASSERT (image);
 
-	image->execute(frame);
+	image->execute(frame, m_timer, m_trace);
 }
 
 	}

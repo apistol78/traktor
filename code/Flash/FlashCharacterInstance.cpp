@@ -11,6 +11,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashCharacterInstance", FlashCharacterInstance, ActionObjectRelay)
 
+FlashCharacterInstance* FlashCharacterInstance::ms_focusInstance = 0;
+
 FlashCharacterInstance::FlashCharacterInstance(ActionContext* context, const char* const prototype, FlashCharacterInstance* parent)
 :	ActionObjectRelay(prototype)
 ,	m_context(context)
@@ -29,6 +31,7 @@ FlashCharacterInstance::FlashCharacterInstance(ActionContext* context, const cha
 
 void FlashCharacterInstance::destroy()
 {
+	setFocus(false);
 	m_context = 0;
 	m_parent = 0;
 	m_eventScripts.clear();
@@ -72,6 +75,19 @@ void FlashCharacterInstance::setTransform(const Matrix33& transform)
 const Matrix33& FlashCharacterInstance::getTransform() const
 {
 	return m_transform;
+}
+
+void FlashCharacterInstance::setFocus(bool focus)
+{
+	if (!focus && ms_focusInstance == this)
+		ms_focusInstance = 0;
+	else if (focus && ms_focusInstance != this)
+		ms_focusInstance = this;
+}
+
+FlashCharacterInstance* FlashCharacterInstance::getFocus()
+{
+	return ms_focusInstance;
 }
 
 void FlashCharacterInstance::setEvent(uint32_t eventMask, const IActionVMImage* eventScript)
@@ -166,6 +182,17 @@ void FlashCharacterInstance::eventMouseUp(int x, int y, int button)
 
 void FlashCharacterInstance::eventMouseMove(int x, int y, int button)
 {
+}
+
+bool FlashCharacterInstance::getMember(ActionContext* context, const std::string& memberName, ActionValue& outMemberValue)
+{
+	if (getParent() && memberName == "_parent")
+	{
+		outMemberValue = ActionValue(getParent()->getAsObject(context));
+		return true;
+	}
+	else
+		return false;
 }
 
 void FlashCharacterInstance::trace(const IVisitor& visitor) const

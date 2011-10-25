@@ -23,14 +23,17 @@ ActionValue ActionClass::call(ActionObject* self, const ActionValueArray& args)
 
 ActionValue ActionClass::call(ActionFrame* callerFrame, ActionObject* self)
 {
-	ActionValueStack& callerStack = callerFrame->getStack();
-	int32_t argCount = !callerStack.empty() ? int32_t(callerStack.pop().getNumber()) : 0;
+	if (self)
+	{
+		ActionValueStack& callerStack = callerFrame->getStack();
+		int32_t argCount = !callerStack.empty() ? int32_t(callerStack.pop().getNumber()) : 0;
 
-	ActionValueArray args(getContext()->getPool(), argCount);
-	for (int32_t i = 0; i < argCount; ++i)
-		args[i] = callerStack.pop();
+		ActionValueArray args(getContext()->getPool(), argCount);
+		for (int32_t i = 0; i < argCount; ++i)
+			args[i] = callerStack.pop();
 
-	init(self, args);
+		init(self, args);
+	}
 	return ActionValue();
 }
 

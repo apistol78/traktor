@@ -44,7 +44,14 @@ void ActionObject::addInterface(ActionObject* intrface)
 	T_ASSERT (!m_readOnly);
 }
 
-ActionObject* ActionObject::getPrototype()
+void ActionObject::set__proto__(ActionObject* prototype)
+{
+	T_ASSERT (prototype != this);
+	m__proto__ = prototype;
+	m_members["__proto__"] = ActionValue(prototype);
+}
+
+ActionObject* ActionObject::get__proto__()
 {
 	if (!m__proto__)
 	{
@@ -103,6 +110,10 @@ void ActionObject::setMember(const std::string& memberName, const ActionValue& m
 		m__proto__ = 0;
 		m_relay = 0;
 	}
+	else if (memberName == "prototype")
+	{
+		m_prototype = memberValue.getObject();
+	}
 
 	// Try setting through relay first.
 	else if (m_relay)
@@ -121,32 +132,27 @@ bool ActionObject::getMember(const std::string& memberName, ActionValue& outMemb
 
 	// Not a local member; try to get from our __proto__ reference.
 	{
-		Ref< ActionObject > prototype = getPrototype();
-		if (prototype)
+		Ref< ActionObject > __proto__ = get__proto__();
+		if (__proto__)
 		{
-			T_ASSERT (prototype != this);
+			T_ASSERT (__proto__ != this);
 
-			while (prototype)
+			while (__proto__)
 			{
-				if (prototype->getLocalMember(memberName, outMemberValue))
+				if (__proto__->getLocalMember(memberName, outMemberValue))
 					return true;
 
-				Ref< ActionObject > parentPrototype = prototype->getPrototype();
-				prototype = (parentPrototype != prototype) ? parentPrototype : 0;
+				Ref< ActionObject > parentPrototype = __proto__->get__proto__();
+				__proto__ = (parentPrototype != __proto__) ? parentPrototype : 0;
 			}
 		}
 	}
 
-	// Not available through __proto__ chain; assume class object and try from "prototype".
+	// Not available through "__proto__" chain; assume class object and try from "prototype".
 	{
-		ActionValue prototypeValue;
-		if (getLocalMember("prototype", prototypeValue))
+		if (m_prototype)
 		{
-			Ref< ActionObject > prototype = prototypeValue.getObjectAlways(m_context);
-			T_ASSERT (prototype != this);
-			T_ASSERT (prototype);
-
-			if (prototype->getLocalMember(memberName, outMemberValue))
+			if (m_prototype->getLocalMember(memberName, outMemberValue))
 				return true;
 		}
 	}
@@ -184,34 +190,27 @@ bool ActionObject::getPropertyGet(const std::string& propertyName, Ref< ActionFu
 
 	// Not a local property; try to get from our __proto__ reference.
 	{
-		Ref< ActionObject > prototype = getPrototype();
-		if (prototype)
+		Ref< ActionObject > __proto__ = get__proto__();
+		if (__proto__)
 		{
-			T_ASSERT (prototype != this);
+			T_ASSERT (__proto__ != this);
 
-			while (prototype)
+			while (__proto__)
 			{
-				if (prototype->getLocalPropertyGet(propertyName, outPropertyGet))
+				if (__proto__->getLocalPropertyGet(propertyName, outPropertyGet))
 					return true;
 
-				Ref< ActionObject > parentPrototype = prototype->getPrototype();
-				prototype = (parentPrototype != prototype) ? parentPrototype : 0;
+				Ref< ActionObject > parentPrototype = __proto__->get__proto__();
+				__proto__ = (parentPrototype != __proto__) ? parentPrototype : 0;
 			}
 		}
 	}
 
-	// Not available through __proto__ chain; assume class object and try from "prototype".
+	// Not available through "__proto__" chain; assume class object and try from "prototype".
+	if (m_prototype)
 	{
-		ActionValue prototypeValue;
-		if (getLocalMember("prototype", prototypeValue))
-		{
-			Ref< ActionObject > prototype = prototypeValue.getObjectAlways(m_context);
-			T_ASSERT (prototype != this);
-			T_ASSERT (prototype);
-
-			if (prototype->getLocalPropertyGet(propertyName, outPropertyGet))
-				return true;
-		}
+		if (m_prototype->getLocalPropertyGet(propertyName, outPropertyGet))
+			return true;
 	}
 
 	return false;
@@ -226,33 +225,26 @@ bool ActionObject::getPropertySet(const std::string& propertyName, Ref< ActionFu
 
 	// Not a local property; try to get from our __proto__ reference.
 	{
-		Ref< ActionObject > prototype = getPrototype();
-		if (prototype)
+		Ref< ActionObject > __proto__ = get__proto__();
+		if (__proto__)
 		{
-			T_ASSERT (prototype != this);
-			while (prototype)
+			T_ASSERT (__proto__ != this);
+			while (__proto__)
 			{
-				if (prototype->getLocalPropertySet(propertyName, outPropertySet))
+				if (__proto__->getLocalPropertySet(propertyName, outPropertySet))
 					return true;
 
-				Ref< ActionObject > parentPrototype = prototype->getPrototype();
-				prototype = (parentPrototype != prototype) ? parentPrototype : 0;
+				Ref< ActionObject > parentPrototype = __proto__->get__proto__();
+				__proto__ = (parentPrototype != __proto__) ? parentPrototype : 0;
 			}
 		}
 	}
 
-	// Not available through __proto__ chain; assume class object and try from "prototype".
+	// Not available through "__proto__" chain; assume class object and try from "prototype".
+	if (m_prototype)
 	{
-		ActionValue prototypeValue;
-		if (getLocalMember("prototype", prototypeValue))
-		{
-			Ref< ActionObject > prototype = prototypeValue.getObjectAlways(m_context);
-			T_ASSERT (prototype != this);
-			T_ASSERT (prototype);
-
-			if (prototype->getLocalPropertySet(propertyName, outPropertySet))
-				return true;
-		}
+		if (m_prototype->getLocalPropertySet(propertyName, outPropertySet))
+			return true;
 	}
 
 	return false;
@@ -301,6 +293,12 @@ ActionValue ActionObject::toString()
 void ActionObject::setReadOnly()
 {
 	m_readOnly = true;
+}
+
+bool ActionObject::hasOwnMember(const std::string& memberName) const
+{
+	member_map_t::const_iterator i = m_members.find(memberName);
+	return i != m_members.end();
 }
 
 bool ActionObject::getLocalMember(const std::string& memberName, ActionValue& outMemberValue) const
@@ -371,6 +369,7 @@ void ActionObject::trace(const IVisitor& visitor) const
 	}
 
 	visitor(m__proto__);
+	visitor(m_prototype);
 	visitor(m_relay);
 }
 
@@ -380,7 +379,13 @@ void ActionObject::dereference()
 	m_members.clear();
 	m_properties.clear();
 	m__proto__ = 0;
+	m_prototype = 0;
 	m_relay = 0;
+}
+
+void ActionObject::setOverrideRelay(IActionObjectRelay* relay)
+{
+	m_relay = relay;
 }
 
 	}

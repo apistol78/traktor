@@ -7,10 +7,14 @@
 
 namespace traktor
 {
+
+class Timer;
+
 	namespace flash
 	{
 
 class ActionFrame;
+class ActionVMTrace1;
 
 class ActionVMImage1 : public IActionVMImage
 {
@@ -21,7 +25,7 @@ public:
 
 	ActionVMImage1(const uint8_t* byteCode, uint32_t length);
 
-	void execute(ActionFrame* frame) const;
+	void execute(ActionFrame* frame, const Timer& timer, ActionVMTrace1* trace) const;
 
 	void prepare();
 

@@ -82,19 +82,8 @@ void FlashMoviePlayer::destroy()
 	m_displayRenderer = 0;
 	m_movieRenderer = 0;
 	m_actionVM = 0;
-
-	if (m_key)
-	{
-		m_key->removeAllListeners();
-		m_key = 0;
-	}
-
-	if (m_mouse)
-	{
-		m_mouse->removeAllListeners();
-		m_mouse = 0;
-	}
-
+	m_key = 0;
+	m_mouse = 0;
 	m_movie = 0;
 	
 	if (m_movieInstance)
@@ -221,9 +210,6 @@ void FlashMoviePlayer::executeFrame()
 
 	// Finally issue the frame event.
 	m_movieInstance->eventFrame();
-
-	// Notify frame listeners.
-	context->notifyFrameListeners(avm_number_t(m_timeCurrent));
 
 	m_movieInstance->postDispatchEvents();
 	context->setMovieClip(current);

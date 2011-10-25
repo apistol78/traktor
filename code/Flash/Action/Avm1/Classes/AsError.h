@@ -23,6 +23,9 @@ public:
 	virtual void init(ActionObject* self, const ActionValueArray& args);
 
 	virtual void coerce(ActionObject* self) const;
+
+private:
+	void Error_toString(CallArgs& ca);
 };
 
 	}

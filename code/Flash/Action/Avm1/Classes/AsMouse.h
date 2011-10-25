@@ -2,7 +2,7 @@
 #define traktor_flash_AsMouse_H
 
 #include "Core/RefArray.h"
-#include "Flash/Action/Avm1/ActionClass.h"
+#include "Flash/Action/ActionObject.h"
 
 namespace traktor
 {
@@ -14,16 +14,12 @@ struct CallArgs;
 /*! \brief Mouse class.
  * \ingroup Flash
  */
-class AsMouse : public ActionClass
+class AsMouse : public ActionObject
 {
 	T_RTTI_CLASS;
 
 public:
 	AsMouse(ActionContext* context);
-
-	virtual void init(ActionObject* self, const ActionValueArray& args);
-
-	virtual void coerce(ActionObject* self) const;
 
 	void eventMouseDown(int x, int y, int button);
 
@@ -31,20 +27,7 @@ public:
 
 	void eventMouseMove(int x, int y, int button);
 
-	void removeAllListeners();
-
-protected:
-	virtual void trace(const IVisitor& visitor) const;
-
-	virtual void dereference();
-
 private:
-	RefArray< ActionObject > m_listeners;
-
-	void Mouse_addListener(CallArgs& ca);
-
-	void Mouse_removeListener(CallArgs& ca);
-
 	void Mouse_show(CallArgs& ca);
 
 	void Mouse_hide(CallArgs& ca);

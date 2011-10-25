@@ -26,6 +26,7 @@ FlashSpriteInstance::FlashSpriteInstance(ActionContext* context, FlashCharacterI
 ,	m_initialized(false)
 ,	m_playing(true)
 ,	m_visible(true)
+,	m_enabled(true)
 ,	m_inDispatch(false)
 ,	m_gotoIssued(false)
 ,	m_mouseX(0)
@@ -176,6 +177,16 @@ bool FlashSpriteInstance::isVisible() const
 	return m_visible && m_maskCount == 0;
 }
 
+void FlashSpriteInstance::setEnabled(bool enabled)
+{
+	m_enabled = enabled;
+}
+
+bool FlashSpriteInstance::isEnabled() const
+{
+	return m_enabled;
+}
+
 Ref< FlashSpriteInstance > FlashSpriteInstance::clone() const
 {
 	Ref< FlashSpriteInstance > cloneInstance = checked_type_cast< FlashSpriteInstance* >(m_sprite->createInstance(getContext(), getParent(), ""));
@@ -219,6 +230,7 @@ FlashSpriteInstance* FlashSpriteInstance::getMask()
 
 bool FlashSpriteInstance::getMember(ActionContext* context, const std::string& memberName, ActionValue& outMemberValue)
 {
+	// Find visible named character in display list.
 	FlashDisplayList::layer_map_t::const_iterator i = m_displayList.findLayer(memberName);
 	if (i != m_displayList.getLayers().end())
 	{
@@ -226,7 +238,9 @@ bool FlashSpriteInstance::getMember(ActionContext* context, const std::string& m
 		outMemberValue = ActionValue(i->second.instance->getAsObject(context));
 		return true;
 	}
-	return false;
+
+	// No character, propagate to base class.
+	return FlashCharacterInstance::getMember(context, memberName, outMemberValue);
 }
 
 void FlashSpriteInstance::preDispatchEvents()
@@ -444,6 +458,13 @@ void FlashSpriteInstance::eventMouseDown(int32_t x, int32_t y, int32_t button)
 		}
 	}
 
+	// Check if we're inside then issue press events.
+	SwfRect bounds = getBounds();
+	bool inside = (x >= bounds.min.x && y >= bounds.min.y && x <= bounds.max.x && y <= bounds.max.y);
+	if (inside)
+		executeScriptEvent("onPress");
+
+	// Call base class event function.
 	FlashCharacterInstance::eventMouseDown(x, y, button);
 
 	context->setMovieClip(current);
@@ -476,6 +497,12 @@ void FlashSpriteInstance::eventMouseUp(int32_t x, int32_t y, int32_t button)
 				i->second.instance->eventMouseUp(xy.x, xy.y, button);
 		}
 	}
+
+	// Check if we're inside then issue press events.
+	SwfRect bounds = getBounds();
+	bool inside = (x >= bounds.min.x && y >= bounds.min.y && x <= bounds.max.x && y <= bounds.max.y);
+	if (inside)
+		executeScriptEvent("onRelease");
 
 	FlashCharacterInstance::eventMouseUp(x, y, button);
 

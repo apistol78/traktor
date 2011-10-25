@@ -31,6 +31,16 @@ class T_DLLCLASS ActionSuper : public ActionFunction
 public:
 	ActionSuper(ActionContext* context, ActionObject* object);
 
+	virtual ActionObject* get__proto__();
+
+	virtual void setMember(const std::string& memberName, const ActionValue& memberValue);
+
+	virtual bool getMember(const std::string& memberName, ActionValue& outMemberValue);
+
+	virtual bool getPropertyGet(const std::string& propertyName, Ref< ActionFunction >& outPropertyGet);
+
+	virtual bool getPropertySet(const std::string& propertyName, Ref< ActionFunction >& outPropertySet);
+
 	virtual ActionValue call(ActionObject* self, const ActionValueArray& args);
 
 	virtual ActionValue call(ActionFrame* callerFrame, ActionObject* self);
@@ -41,7 +51,7 @@ protected:
 	virtual void dereference();
 
 private:
-	Ref< ActionObject > m_superClass;
+	Ref< ActionFunction > m_superClass;
 	Ref< ActionObject > m_superPrototype;
 	Ref< ActionObject > m_object;
 };

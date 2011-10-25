@@ -13,8 +13,9 @@ AsError::AsError(ActionContext* context)
 {
 	Ref< ActionObject > prototype = new ActionObject(context);
 
-	prototype->setMember("message", ActionValue(L""));
-	prototype->setMember("name", ActionValue(L""));
+	prototype->setMember("message", ActionValue(L"Error"));
+	prototype->setMember("name", ActionValue(L"Error"));
+	prototype->setMember("toString", ActionValue(createNativeFunction(context, this, &AsError::Error_toString)));
 
 	prototype->setMember("constructor", ActionValue(this));
 	prototype->setReadOnly();
@@ -31,6 +32,15 @@ void AsError::init(ActionObject* self, const ActionValueArray& args)
 void AsError::coerce(ActionObject* self) const
 {
 	T_FATAL_ERROR;
+}
+
+void AsError::Error_toString(CallArgs& ca)
+{
+	ActionValue messageValue;
+	if (ca.self && ca.self->getMember("message", messageValue))
+		ca.ret = messageValue;
+	else
+		ca.ret = ActionValue("Error");
 }
 
 	}

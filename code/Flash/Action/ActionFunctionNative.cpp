@@ -1,3 +1,4 @@
+#include "Core/Log/Log.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFrame.h"
 #include "Flash/Action/ActionFunctionNative.h"
@@ -67,6 +68,11 @@ Ref< ActionFunctionNative > createPolymorphicFunction(
 			fnptr_4
 		)
 	);
+}
+
+void trapInvalidCast()
+{
+	log::debug << L"Trying to call object with incorrect type" << Endl;
 }
 
 	}

@@ -17,12 +17,13 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsString", AsString, ActionClass)
 AsString::AsString(ActionContext* context)
 :	ActionClass(context, "String")
 {
+	setMember("fromCharCode", ActionValue(createNativeFunction(context, this, &AsString::String_fromCharCode)));
+
 	Ref< ActionObject > prototype = new ActionObject(context);
 
 	prototype->setMember("charAt", ActionValue(createNativeFunction(context, this, &AsString::String_charAt)));
 	prototype->setMember("charCodeAt", ActionValue(createNativeFunction(context, this, &AsString::String_charCodeAt)));
 	prototype->setMember("concat", ActionValue(createNativeFunction(context, this, &AsString::String_concat)));
-	prototype->setMember("fromCharCode", ActionValue(createNativeFunction(context, this, &AsString::String_fromCharCode)));
 	prototype->setMember("indexOf", ActionValue(createNativeFunction(context, this, &AsString::String_indexOf)));
 	prototype->setMember("lastIndexOf", ActionValue(createNativeFunction(context, this, &AsString::String_lastIndexOf)));
 	prototype->setMember("slice", ActionValue(createNativeFunction(context, this, &AsString::String_slice)));
@@ -35,7 +36,6 @@ AsString::AsString(ActionContext* context)
 	prototype->setMember("valueOf", ActionValue(createNativeFunction(context, this, &AsString::String_valueOf)));
 
 	prototype->setMember("constructor", ActionValue(this));
-	prototype->setReadOnly();
 
 	setMember("prototype", ActionValue(prototype));
 }
@@ -43,10 +43,13 @@ AsString::AsString(ActionContext* context)
 void AsString::init(ActionObject* self, const ActionValueArray& args)
 {
 	Ref< String > s;
+
 	if (args.size() > 0)
 		s = new String(args[0].getString());
 	else
 		s = new String();
+
+	self->addProperty("length", createNativeFunction(getContext(), this, &AsString::String_get_length), 0);
 	self->setRelay(s);
 }
 
@@ -55,13 +58,19 @@ void AsString::coerce(ActionObject* self) const
 	T_FATAL_ERROR;
 }
 
-Ref< String > AsString::String_charAt(const String* self, uint32_t index) const
+void AsString::String_fromCharCode(CallArgs& ca)
 {
+	char charCode = char(ca.args[0].getNumber());
+	ca.ret = ActionValue((new String(charCode))->getAsObject(ca.context));
+}
+
+std::string AsString::String_charAt(const String* self, uint32_t index) const
+{
+	char tmp[2] = { 0, 0 };
 	const std::string& st = self->get();
 	if (index < st.length())
-		return new String(st[index]);
-	else
-		return new String();
+		tmp[0] = st[index];
+	return tmp;
 }
 
 uint32_t AsString::String_charCodeAt(const String* self, uint32_t index) const
@@ -88,18 +97,18 @@ void AsString::String_concat(CallArgs& ca)
 	}
 }
 
-void AsString::String_fromCharCode(CallArgs& ca)
+int32_t AsString::String_indexOf(const String* self, const std::string& needle) const
 {
-	char charCode = char(ca.args[0].getNumber());
-	ca.ret = ActionValue((new String(charCode))->getAsObject(ca.context));
+	const std::string& st = self->get();
+	size_t pos = st.find(needle);
+	return pos != st.npos ? int32_t(pos) : -1;
 }
 
-void AsString::String_indexOf(CallArgs& ca)
+int32_t AsString::String_lastIndexOf(const String* self, const std::string& needle) const
 {
-}
-
-void AsString::String_lastIndexOf(CallArgs& ca)
-{
+	const std::string& st = self->get();
+	size_t pos = st.rfind(needle);
+	return pos != st.npos ? int32_t(pos) : -1;
 }
 
 void AsString::String_slice(CallArgs& ca)
@@ -135,13 +144,19 @@ void AsString::String_split(CallArgs& ca)
 	if (ca.args.size() >= 2)
 	{
 		std::string delim = ca.args[0].getString();
-		uint32_t limit = uint32_t(ca.args[1].getNumber());
-		Split< std::string >::word(st, delim, words, limit);
+		if (!delim.empty())
+		{
+			uint32_t limit = uint32_t(ca.args[1].getNumber());
+			words.reserve(limit);
+
+			Split< std::string >::word(st, delim, words, limit);
+		}
 	}
 	else if (ca.args.size() >= 1)
 	{
 		std::string delim = ca.args[0].getString();
-		Split< std::string >::word(st, delim, words);
+		if (!delim.empty())
+			Split< std::string >::word(st, delim, words);
 	}
 
 	Ref< Array > arr = new Array();
@@ -189,7 +204,10 @@ void AsString::String_toLowerCase(CallArgs& ca)
 void AsString::String_toString(CallArgs& ca)
 {
 	Ref< String > self = ca.self->getRelay< String >();
-	ca.ret = ActionValue(self->get());
+	if (self)
+		ca.ret = ActionValue(self->get());
+	else
+		ca.ret = ActionValue("[object Object]");
 }
 
 void AsString::String_toUpperCase(CallArgs& ca)
@@ -203,6 +221,11 @@ void AsString::String_valueOf(CallArgs& ca)
 {
 	Ref< String > self = ca.self->getRelay< String >();
 	ca.ret = ActionValue(self->get());
+}
+
+int32_t AsString::String_get_length(const String* self) const
+{
+	return int32_t(self->get().length());
 }
 
 	}
