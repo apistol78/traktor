@@ -66,8 +66,12 @@ ActionValue ActionFunction1::call(ActionObject* self, ActionObject* super, const
 		callFrame.setVariable(m_argumentsIntoVariables[i], args[i]);
 	}
 
-	callFrame.setVariable("this", ActionValue(self));
-	callFrame.setVariable("super", ActionValue(super));
+	if (self)
+	{
+		callFrame.setVariable("this", ActionValue(self));
+		callFrame.setVariable("super", ActionValue(super ? super : self->getSuper()));
+	}
+
 	callFrame.setVariable("arguments", ActionValue(argumentArray->getAsObject(getContext())));
 	callFrame.setVariable("_global", ActionValue(getContext()->getGlobal()));
 
