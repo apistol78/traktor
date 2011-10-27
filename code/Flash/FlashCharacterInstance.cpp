@@ -57,6 +57,11 @@ const std::string& FlashCharacterInstance::getName() const
 	return m_name;
 }
 
+std::string FlashCharacterInstance::getTarget() const
+{
+	return m_parent ? (m_parent->getTarget() + "/" + getName()) : "";
+}
+
 void FlashCharacterInstance::setColorTransform(const SwfCxTransform& cxform)
 {
 	m_cxform = cxform;
@@ -118,14 +123,22 @@ void FlashCharacterInstance::eventInit()
 	SmallMap< uint32_t, Ref< const IActionVMImage > >::iterator i = m_eventScripts.find(EvtInitialize);
 	if (i != m_eventScripts.end())
 	{
+		ActionObject* self = getAsObject(m_context);
+		Ref< ActionObject > super = self->getSuper();
+
 		ActionFrame callFrame(
 			m_context,
-			getAsObject(m_context),
+			self,
 			i->second,
 			4,
 			0,
 			0
 		);
+
+		callFrame.setVariable("this", ActionValue(self));
+		callFrame.setVariable("super", ActionValue(super));
+		callFrame.setVariable("_global", ActionValue(m_context->getGlobal()));
+
 		m_context->getVM()->execute(&callFrame);
 	}
 }
@@ -135,14 +148,22 @@ void FlashCharacterInstance::eventLoad()
 	SmallMap< uint32_t, Ref< const IActionVMImage > >::iterator i = m_eventScripts.find(EvtLoad);
 	if (i != m_eventScripts.end())
 	{
+		ActionObject* self = getAsObject(m_context);
+		Ref< ActionObject > super = self->getSuper();
+
 		ActionFrame callFrame(
 			m_context,
-			getAsObject(m_context),
+			self,
 			i->second,
 			4,
 			0,
 			0
 		);
+
+		callFrame.setVariable("this", ActionValue(self));
+		callFrame.setVariable("super", ActionValue(super));
+		callFrame.setVariable("_global", ActionValue(m_context->getGlobal()));
+
 		m_context->getVM()->execute(&callFrame);
 	}
 }
@@ -152,14 +173,22 @@ void FlashCharacterInstance::eventFrame()
 	SmallMap< uint32_t, Ref< const IActionVMImage > >::iterator i = m_eventScripts.find(EvtEnterFrame);
 	if (i != m_eventScripts.end())
 	{
+		ActionObject* self = getAsObject(m_context);
+		Ref< ActionObject > super = self->getSuper();
+
 		ActionFrame callFrame(
 			m_context,
-			getAsObject(m_context),
+			self,
 			i->second,
 			4,
 			0,
 			0
 		);
+
+		callFrame.setVariable("this", ActionValue(self));
+		callFrame.setVariable("super", ActionValue(super));
+		callFrame.setVariable("_global", ActionValue(m_context->getGlobal()));
+
 		m_context->getVM()->execute(&callFrame);
 	}
 }

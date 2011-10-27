@@ -29,7 +29,7 @@ class T_DLLCLASS ActionSuper : public ActionFunction
 	T_RTTI_CLASS;
 
 public:
-	ActionSuper(ActionContext* context, ActionObject* object);
+	ActionSuper(ActionContext* context, ActionObject* object, ActionObject* superPrototype, ActionFunction* superClass);
 
 	virtual ActionObject* get__proto__();
 
@@ -41,9 +41,15 @@ public:
 
 	virtual bool getPropertySet(const std::string& propertyName, Ref< ActionFunction >& outPropertySet);
 
-	virtual ActionValue call(ActionObject* self, const ActionValueArray& args);
+	virtual ActionValue valueOf();
 
-	virtual ActionValue call(ActionFrame* callerFrame, ActionObject* self);
+	virtual ActionValue toString();
+
+	virtual Ref< ActionObject > getSuper();
+
+	virtual ActionValue call(ActionObject* self, ActionObject* super, const ActionValueArray& args);
+
+	ActionObject* getObject() { return m_object; }
 
 protected:
 	virtual void trace(const IVisitor& visitor) const;
@@ -51,9 +57,9 @@ protected:
 	virtual void dereference();
 
 private:
+	Ref< ActionObject > m_object;
 	Ref< ActionFunction > m_superClass;
 	Ref< ActionObject > m_superPrototype;
-	Ref< ActionObject > m_object;
 };
 
 	}

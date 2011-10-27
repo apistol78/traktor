@@ -168,13 +168,27 @@ void FlashButtonInstance::executeCondition(uint32_t conditionMask)
 	ActionObject* self = getAsObject(context);
 	T_ASSERT (self);
 
+	Ref< ActionObject > super = self->getSuper();
+
 	const FlashButton::button_conditions_t& conditions = m_button->getButtonConditions();
 	for (FlashButton::button_conditions_t::const_iterator i = conditions.begin(); i != conditions.end(); ++i)
 	{
 		if ((i->mask & conditionMask) == 0)
 			continue;
 
-		ActionFrame callFrame(context, self, i->script, 4, 0, 0);
+		ActionFrame callFrame(
+			context,
+			self,
+			i->script,
+			4,
+			0,
+			0
+		);
+
+		callFrame.setVariable("this", ActionValue(self));
+		callFrame.setVariable("super", ActionValue(super));
+		callFrame.setVariable("_global", ActionValue(context->getGlobal()));
+
 		context->getVM()->execute(&callFrame);
 	}
 }
@@ -195,8 +209,7 @@ void FlashButtonInstance::executeScriptEvent(const std::string& eventName)
 	if (!eventFunction)
 		return;
 
-	ActionFrame callFrame(context, self, 0, 4, 0, 0);
-	eventFunction->call(&callFrame, self);
+	eventFunction->call(self);
 }
 
 	}

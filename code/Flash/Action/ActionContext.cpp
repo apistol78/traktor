@@ -30,7 +30,7 @@ ActionObject* ActionContext::lookupClass(const std::string& className)
 	Ref< ActionObject > clazz = m_global;
 
 	StringSplit< std::string > classNameSplit(className, ".");
-	for (StringSplit< std::string >::const_iterator i = classNameSplit.begin(); i != classNameSplit.end(); ++i)
+	for (StringSplit< std::string >::const_iterator i = classNameSplit.begin(); clazz != 0 && i != classNameSplit.end(); ++i)
 	{
 		ActionValue clazzMember;
 		if (!clazz->getLocalMember(*i, clazzMember) || !clazzMember.isObject())

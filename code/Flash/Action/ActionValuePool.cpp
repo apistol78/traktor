@@ -37,6 +37,8 @@ uint32_t ActionValuePool::offset() const
 void ActionValuePool::rewind(uint32_t offset)
 {
 	T_ASSERT (offset <= m_next);
+	for (uint32_t i = offset; i < m_next; ++i)
+		m_top[i] = ActionValue();
 	m_next = offset;
 }
 

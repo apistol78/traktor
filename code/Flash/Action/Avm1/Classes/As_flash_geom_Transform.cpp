@@ -23,14 +23,17 @@ As_flash_geom_Transform::As_flash_geom_Transform(ActionContext* context)
 	//prototype->addProperty("pixelBounds", createNativeFunction(context, this, &Transform_get_pixelBounds), createNativeFunction(context, this, &Transform_set_pixelBounds));
 
 	prototype->setMember("constructor", ActionValue(this));
-	prototype->setMember("__coerce__", ActionValue(this));
 
 	prototype->setReadOnly();
 
 	setMember("prototype", ActionValue(prototype));
 }
 
-void As_flash_geom_Transform::init(ActionObject* self, const ActionValueArray& args)
+void As_flash_geom_Transform::initialize(ActionObject* self)
+{
+}
+
+void As_flash_geom_Transform::construct(ActionObject* self, const ActionValueArray& args)
 {
 	Ref< Transform > tf;
 	if (args.size() >= 1)
@@ -42,9 +45,9 @@ void As_flash_geom_Transform::init(ActionObject* self, const ActionValueArray& a
 	self->setRelay(tf);
 }
 
-void As_flash_geom_Transform::coerce(ActionObject* self) const
+ActionValue As_flash_geom_Transform::xplicit(const ActionValueArray& args)
 {
-	T_FATAL_ERROR;
+	return ActionValue();
 }
 
 Ref< ColorTransform > As_flash_geom_Transform::Transform_get_colorTransform(Transform* self) const

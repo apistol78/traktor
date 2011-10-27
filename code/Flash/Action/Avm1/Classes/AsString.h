@@ -21,9 +21,11 @@ class AsString : public ActionClass
 public:
 	AsString(ActionContext* context);
 
-	virtual void init(ActionObject* self, const ActionValueArray& args);
+	virtual void initialize(ActionObject* self);
 
-	virtual void coerce(ActionObject* self) const;
+	virtual void construct(ActionObject* self, const ActionValueArray& args);
+
+	virtual ActionValue xplicit(const ActionValueArray& args);
 
 private:
 	void String_fromCharCode(CallArgs& ca);

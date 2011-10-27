@@ -20,14 +20,18 @@ AsTextFormat::AsTextFormat(ActionContext* context)
 	setMember("prototype", ActionValue(prototype));
 }
 
-void AsTextFormat::init(ActionObject* self, const ActionValueArray& args)
+void AsTextFormat::initialize(ActionObject* self)
+{
+}
+
+void AsTextFormat::construct(ActionObject* self, const ActionValueArray& args)
 {
 	self->setRelay(new FlashTextFormat());
 }
 
-void AsTextFormat::coerce(ActionObject* self) const
+ActionValue AsTextFormat::xplicit(const ActionValueArray& args)
 {
-	T_FATAL_ERROR;
+	return ActionValue();
 }
 
 	}

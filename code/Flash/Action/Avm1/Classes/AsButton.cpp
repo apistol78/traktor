@@ -50,13 +50,17 @@ AsButton::AsButton(ActionContext* context)
 	setMember("prototype", ActionValue(prototype));
 }
 
-void AsButton::init(ActionObject* self, const ActionValueArray& args)
+void AsButton::initialize(ActionObject* self)
 {
 }
 
-void AsButton::coerce(ActionObject* self) const
+void AsButton::construct(ActionObject* self, const ActionValueArray& args)
 {
-	T_FATAL_ERROR;
+}
+
+ActionValue AsButton::xplicit(const ActionValueArray& args)
+{
+	return ActionValue();
 }
 
 void AsButton::Button_get_alpha(const FlashButtonInstance* self) const

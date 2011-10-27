@@ -124,7 +124,8 @@ void FlashDisplayList::updateFrame(FlashCharacterInstance* ownerInstance, const 
 
 					// Create new instance.
 					layer.id = placeObject.characterId;
-					layer.instance = character->createInstance(m_context, ownerInstance, "");
+					layer.instance = character->createInstance(m_context, ownerInstance, placeObject.hasName ? placeObject.name : "");
+					T_ASSERT (layer.instance);
 					layer.instance->setTransform(transform);
 				}
 				else
@@ -176,6 +177,7 @@ void FlashDisplayList::updateFrame(FlashCharacterInstance* ownerInstance, const 
 
 void FlashDisplayList::showObject(int32_t depth, uint16_t characterId, FlashCharacterInstance* characterInstance, bool immutable)
 {
+	T_ASSERT (characterInstance);
 	m_layers[depth].id = characterId;
 	m_layers[depth].instance = characterInstance;
 	m_layers[depth].immutable = immutable;
@@ -184,6 +186,7 @@ void FlashDisplayList::showObject(int32_t depth, uint16_t characterId, FlashChar
 
 void FlashDisplayList::removeObject(FlashCharacterInstance* characterInstance)
 {
+	T_ASSERT (characterInstance);
 	layer_map_t::iterator i = std::remove_if(m_layers.begin(), m_layers.end(), FindCharacter(characterInstance));
 	if (i != m_layers.end())
 	{
@@ -195,6 +198,7 @@ void FlashDisplayList::removeObject(FlashCharacterInstance* characterInstance)
 
 int32_t FlashDisplayList::getObjectDepth(const FlashCharacterInstance* characterInstance) const
 {
+	T_ASSERT (characterInstance);
 	for (layer_map_t::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
 	{
 		if (i->second.instance == characterInstance)

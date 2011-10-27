@@ -108,14 +108,17 @@ As_flash_geom_Rectangle::As_flash_geom_Rectangle(ActionContext* context)
 	prototype->addProperty("topLeft", createNativeFunction(context, this, &As_flash_geom_Rectangle::Rectangle_get_topLeft), createNativeFunction(context, this, &As_flash_geom_Rectangle::Rectangle_set_topLeft));
 
 	prototype->setMember("constructor", ActionValue(this));
-	prototype->setMember("__coerce__", ActionValue(this));
 
 	prototype->setReadOnly();
 
 	setMember("prototype", ActionValue(prototype));
 }
 
-void As_flash_geom_Rectangle::init(ActionObject* self, const ActionValueArray& args)
+void As_flash_geom_Rectangle::initialize(ActionObject* self)
+{
+}
+
+void As_flash_geom_Rectangle::construct(ActionObject* self, const ActionValueArray& args)
 {
 	if (args.size() > 0)
 	{
@@ -145,8 +148,9 @@ void As_flash_geom_Rectangle::init(ActionObject* self, const ActionValueArray& a
 	}
 }
 
-void As_flash_geom_Rectangle::coerce(ActionObject* self) const
+ActionValue As_flash_geom_Rectangle::xplicit(const ActionValueArray& args)
 {
+	return ActionValue();
 }
 
 void As_flash_geom_Rectangle::Rectangle_clone(CallArgs& ca)

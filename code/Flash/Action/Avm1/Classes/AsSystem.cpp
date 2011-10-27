@@ -8,28 +8,12 @@ namespace traktor
 	namespace flash
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsSystem", AsSystem, ActionClass)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsSystem", AsSystem, ActionObject)
 
 AsSystem::AsSystem(ActionContext* context)
-:	ActionClass(context, "System")
+:	ActionObject(context)
 {
-	Ref< ActionObject > prototype = new ActionObject(context);
-
-	prototype->setMember("security", ActionValue(new AsSecurity(context)));
-
-	prototype->setMember("constructor", ActionValue(this));
-	prototype->setReadOnly();
-
-	setMember("prototype", ActionValue(prototype));
-}
-
-void AsSystem::init(ActionObject* self, const ActionValueArray& args)
-{
-}
-
-void AsSystem::coerce(ActionObject* self) const
-{
-	T_FATAL_ERROR;
+	setMember("security", ActionValue(new AsSecurity(context)));
 }
 
 	}

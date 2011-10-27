@@ -6,29 +6,13 @@ namespace traktor
 	namespace flash
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsAccessibility", AsAccessibility, ActionClass)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsAccessibility", AsAccessibility, ActionObject)
 
 AsAccessibility::AsAccessibility(ActionContext* context)
-:	ActionClass(context, "Accessibility")
+:	ActionObject(context)
 {
-	Ref< ActionObject > prototype = new ActionObject(context);
-
-	prototype->setMember("isActive", ActionValue(createNativeFunction(context, this, &AsAccessibility::Accessibility_isActive)));
-	prototype->setMember("updateProperties", ActionValue(createNativeFunction(context, this, &AsAccessibility::Accessibility_updateProperties)));
-
-	prototype->setMember("constructor", ActionValue(this));
-	prototype->setReadOnly();
-
-	setMember("prototype", ActionValue(prototype));
-}
-
-void AsAccessibility::init(ActionObject* self, const ActionValueArray& args)
-{
-}
-
-void AsAccessibility::coerce(ActionObject* self) const
-{
-	T_FATAL_ERROR;
+	setMember("isActive", ActionValue(createNativeFunction(context, this, &AsAccessibility::Accessibility_isActive)));
+	setMember("updateProperties", ActionValue(createNativeFunction(context, this, &AsAccessibility::Accessibility_updateProperties)));
 }
 
 void AsAccessibility::Accessibility_isActive(CallArgs& ca)

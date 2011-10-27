@@ -27,13 +27,17 @@ AsTextField_StyleSheet::AsTextField_StyleSheet(ActionContext* context)
 	setMember("prototype", ActionValue(prototype));
 }
 
-void AsTextField_StyleSheet::init(ActionObject* self, const ActionValueArray& args)
+void AsTextField_StyleSheet::initialize(ActionObject* self)
 {
 }
 
-void AsTextField_StyleSheet::coerce(ActionObject* self) const
+void AsTextField_StyleSheet::construct(ActionObject* self, const ActionValueArray& args)
 {
-	T_FATAL_ERROR;
+}
+
+ActionValue AsTextField_StyleSheet::xplicit(const ActionValueArray& args)
+{
+	return ActionValue();
 }
 
 void AsTextField_StyleSheet::TextField_StyleSheet_clear(CallArgs& ca)

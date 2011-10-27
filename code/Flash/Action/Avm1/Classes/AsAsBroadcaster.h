@@ -20,11 +20,13 @@ class AsAsBroadcaster : public ActionClass
 public:
 	AsAsBroadcaster(ActionContext* context);
 
-	virtual void init(ActionObject* self, const ActionValueArray& args);
+	virtual void initialize(ActionObject* self);
 
-	virtual void coerce(ActionObject* self) const;
+	virtual void construct(ActionObject* self, const ActionValueArray& args);
 
-	void initialize(ActionObject* subject);
+	virtual ActionValue xplicit(const ActionValueArray& args);
+
+	void initializeSubject(ActionObject* subject);
 
 private:
 	void AsBroadcaster_initialize(CallArgs& ca);

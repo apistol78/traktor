@@ -1,12 +1,13 @@
 #include "Core/RefArray.h"
 #include "Core/Log/Log.h"
 #include "Core/Thread/Acquire.h"
-#include "Flash/Action/Avm1/ActionClass.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFunction.h"
 #include "Flash/Action/ActionObject.h"
 #include "Flash/Action/ActionValueArray.h"
 #include "Flash/Action/IActionObjectRelay.h"
+#include "Flash/Action/Avm1/ActionClass.h"	// \fixme Move headers.
+#include "Flash/Action/Avm1/ActionSuper.h"
 
 namespace traktor
 {
@@ -83,16 +84,15 @@ ActionObject* ActionObject::get__proto__()
 			}
 		}
 
-		// Create relayed object if builtin type which can be coerced.
-		if (!m_relay)
+		// Prepare object through special __init__ method if provided through prototype.
+		if (m__proto__)
 		{
-			ActionValue coerceValue;
-			if (m__proto__->getLocalMember("__coerce__", coerceValue))
+			ActionValue initValue;
+			if (m__proto__->getMember("constructor", initValue))
 			{
-				T_ASSERT (coerceValue.isObject< ActionClass >());
-				ActionClass* builtinClass = coerceValue.getObject< ActionClass >();
+				ActionClass* builtinClass = initValue.getObject< ActionClass >();
 				if (builtinClass)
-					builtinClass->coerce(this);
+					builtinClass->initialize(this);
 			}
 		}
 	}
@@ -102,18 +102,9 @@ ActionObject* ActionObject::get__proto__()
 
 void ActionObject::setMember(const std::string& memberName, const ActionValue& memberValue)
 {
-	T_ASSERT (!m_readOnly);
-	
 	// Reset cached pointer if __proto__ member is modified.
 	if (memberName == "__proto__")
-	{
 		m__proto__ = 0;
-		m_relay = 0;
-	}
-	else if (memberName == "prototype")
-	{
-		m_prototype = memberValue.getObject();
-	}
 
 	// Try setting through relay first.
 	else if (m_relay)
@@ -127,33 +118,21 @@ void ActionObject::setMember(const std::string& memberName, const ActionValue& m
 
 bool ActionObject::getMember(const std::string& memberName, ActionValue& outMemberValue)
 {
+	Ref< ActionObject > __proto__ = get__proto__();
+
 	if (getLocalMember(memberName, outMemberValue))
 		return true;
 
 	// Not a local member; try to get from our __proto__ reference.
+	if (__proto__)
 	{
-		Ref< ActionObject > __proto__ = get__proto__();
-		if (__proto__)
+		while (__proto__)
 		{
-			T_ASSERT (__proto__ != this);
-
-			while (__proto__)
-			{
-				if (__proto__->getLocalMember(memberName, outMemberValue))
-					return true;
-
-				Ref< ActionObject > parentPrototype = __proto__->get__proto__();
-				__proto__ = (parentPrototype != __proto__) ? parentPrototype : 0;
-			}
-		}
-	}
-
-	// Not available through "__proto__" chain; assume class object and try from "prototype".
-	{
-		if (m_prototype)
-		{
-			if (m_prototype->getLocalMember(memberName, outMemberValue))
+			if (__proto__->getLocalMember(memberName, outMemberValue))
 				return true;
+
+			Ref< ActionObject > parentPrototype = __proto__->get__proto__();
+			__proto__ = (parentPrototype != __proto__) ? parentPrototype : 0;
 		}
 	}
 
@@ -162,8 +141,6 @@ bool ActionObject::getMember(const std::string& memberName, ActionValue& outMemb
 
 bool ActionObject::deleteMember(const std::string& memberName)
 {
-	T_ASSERT (!m_readOnly);
-
 	member_map_t::iterator i = m_members.find(memberName);
 	if (i == m_members.end())
 		return false;
@@ -179,38 +156,27 @@ void ActionObject::deleteAllMembers()
 
 void ActionObject::addProperty(const std::string& propertyName, ActionFunction* propertyGet, ActionFunction* propertySet)
 {
-	T_ASSERT (!m_readOnly);
 	m_properties[propertyName] = std::make_pair(propertyGet, propertySet);
 }
 
 bool ActionObject::getPropertyGet(const std::string& propertyName, Ref< ActionFunction >& outPropertyGet)
 {
+	Ref< ActionObject > __proto__ = get__proto__();
+
 	if (getLocalPropertyGet(propertyName, outPropertyGet))
 		return true;
 
 	// Not a local property; try to get from our __proto__ reference.
+	if (__proto__)
 	{
-		Ref< ActionObject > __proto__ = get__proto__();
-		if (__proto__)
+		while (__proto__)
 		{
-			T_ASSERT (__proto__ != this);
+			if (__proto__->getLocalPropertyGet(propertyName, outPropertyGet))
+				return true;
 
-			while (__proto__)
-			{
-				if (__proto__->getLocalPropertyGet(propertyName, outPropertyGet))
-					return true;
-
-				Ref< ActionObject > parentPrototype = __proto__->get__proto__();
-				__proto__ = (parentPrototype != __proto__) ? parentPrototype : 0;
-			}
+			Ref< ActionObject > parentPrototype = __proto__->get__proto__();
+			__proto__ = (parentPrototype != __proto__) ? parentPrototype : 0;
 		}
-	}
-
-	// Not available through "__proto__" chain; assume class object and try from "prototype".
-	if (m_prototype)
-	{
-		if (m_prototype->getLocalPropertyGet(propertyName, outPropertyGet))
-			return true;
 	}
 
 	return false;
@@ -218,33 +184,22 @@ bool ActionObject::getPropertyGet(const std::string& propertyName, Ref< ActionFu
 
 bool ActionObject::getPropertySet(const std::string& propertyName, Ref< ActionFunction >& outPropertySet)
 {
-	T_ASSERT (!m_readOnly);
+	Ref< ActionObject > __proto__ = get__proto__();
 
 	if (getLocalPropertySet(propertyName, outPropertySet))
 		return true;
 
 	// Not a local property; try to get from our __proto__ reference.
+	if (__proto__)
 	{
-		Ref< ActionObject > __proto__ = get__proto__();
-		if (__proto__)
+		while (__proto__)
 		{
-			T_ASSERT (__proto__ != this);
-			while (__proto__)
-			{
-				if (__proto__->getLocalPropertySet(propertyName, outPropertySet))
-					return true;
+			if (__proto__->getLocalPropertySet(propertyName, outPropertySet))
+				return true;
 
-				Ref< ActionObject > parentPrototype = __proto__->get__proto__();
-				__proto__ = (parentPrototype != __proto__) ? parentPrototype : 0;
-			}
+			Ref< ActionObject > parentPrototype = __proto__->get__proto__();
+			__proto__ = (parentPrototype != __proto__) ? parentPrototype : 0;
 		}
-	}
-
-	// Not available through "__proto__" chain; assume class object and try from "prototype".
-	if (m_prototype)
-	{
-		if (m_prototype->getLocalPropertySet(propertyName, outPropertySet))
-			return true;
 	}
 
 	return false;
@@ -288,6 +243,30 @@ ActionValue ActionObject::toString()
 		}
 	}
 	return ActionValue("[object Object]");
+}
+
+Ref< ActionObject > ActionObject::getSuper()
+{
+	Ref< ActionFunction > superClass;
+	ActionValue memberValue;
+
+	// __proto__
+	Ref< ActionObject > prototype = get__proto__();
+
+	// __proto__.__proto__
+	Ref< ActionObject > superPrototype = prototype->get__proto__();
+	if (superPrototype != prototype)
+	{
+		// __proto__.__ctor__
+		if (prototype->getLocalMember("__ctor__", memberValue))
+			superClass = memberValue.getObject< ActionFunction >();
+		else
+			superClass = dynamic_type_cast< ActionFunction* >(superPrototype);
+	}
+	else
+		superPrototype = 0;
+
+	return new ActionSuper(getContext(), this, superPrototype, superClass);
 }
 
 void ActionObject::setReadOnly()
@@ -369,7 +348,6 @@ void ActionObject::trace(const IVisitor& visitor) const
 	}
 
 	visitor(m__proto__);
-	visitor(m_prototype);
 	visitor(m_relay);
 }
 
@@ -379,7 +357,6 @@ void ActionObject::dereference()
 	m_members.clear();
 	m_properties.clear();
 	m__proto__ = 0;
-	m_prototype = 0;
 	m_relay = 0;
 }
 

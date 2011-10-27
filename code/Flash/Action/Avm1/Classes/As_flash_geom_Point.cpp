@@ -32,14 +32,17 @@ As_flash_geom_Point::As_flash_geom_Point(ActionContext* context)
 	prototype->addProperty("length", createNativeFunction(context, this, &As_flash_geom_Point::Point_get_length), createNativeFunction(context, this, &As_flash_geom_Point::Point_set_length));
 
 	prototype->setMember("constructor", ActionValue(this));
-	prototype->setMember("__coerce__", ActionValue(this));
 
 	prototype->setReadOnly();
 
 	setMember("prototype", ActionValue(prototype));
 }
 
-void As_flash_geom_Point::init(ActionObject* self, const ActionValueArray& args)
+void As_flash_geom_Point::initialize(ActionObject* self)
+{
+}
+
+void As_flash_geom_Point::construct(ActionObject* self, const ActionValueArray& args)
 {
 	if (args.size() >= 2)
 	{
@@ -53,8 +56,9 @@ void As_flash_geom_Point::init(ActionObject* self, const ActionValueArray& args)
 	}
 }
 
-void As_flash_geom_Point::coerce(ActionObject* self) const
+ActionValue As_flash_geom_Point::xplicit(const ActionValueArray& args)
 {
+	return ActionValue();
 }
 
 void As_flash_geom_Point::Point_distance(CallArgs& ca)

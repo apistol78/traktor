@@ -27,7 +27,8 @@ struct CallArgs
 {
 	ActionContext* context;
 	ActionObject* self;
-	ActionValueArray args;
+	ActionObject* super;
+	ActionValueArray args;	// \fixme Reference to instaed of copy
 	ActionValue ret;
 };
 
@@ -794,9 +795,7 @@ class T_DLLCLASS ActionFunctionNative : public ActionFunction
 public:
 	ActionFunctionNative(ActionContext* context, INativeFunction* nativeFunction);
 
-	virtual ActionValue call(ActionObject* self, const ActionValueArray& args);
-
-	virtual ActionValue call(ActionFrame* callerFrame, ActionObject* self);
+	virtual ActionValue call(ActionObject* self, ActionObject* super, const ActionValueArray& args);
 
 private:
 	Ref< INativeFunction > m_nativeFunction;
@@ -1014,7 +1013,7 @@ struct PolymorphicNativeFunction : public INativeFunction
 	{
 		ActionFunctionNative* fn = m_fnptr[ca.args.size()];
 		if (fn)
-			ca.ret = fn->call(ca.self, ca.args);
+			ca.ret = fn->call(ca.self, ca.super, ca.args);
 	}
 };
 

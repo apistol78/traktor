@@ -8,30 +8,16 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.ActionSuper", ActionSuper, ActionFunction)
 
-ActionSuper::ActionSuper(ActionContext* context, ActionObject* object)
+ActionSuper::ActionSuper(ActionContext* context, ActionObject* object, ActionObject* superPrototype, ActionFunction* superClass)
 :	ActionFunction(context, "super")
 ,	m_object(object)
+,	m_superPrototype(superPrototype)
+,	m_superClass(superClass)
 {
-	ActionValue memberValue;
+	T_ASSERT (!is_a< ActionSuper >(m_object));
 
-	// __proto__
-	Ref< ActionObject > prototype = m_object->get__proto__();
-
-	// __proto__.__proto__
-	m_superPrototype = prototype->get__proto__();
-	if (m_superPrototype != prototype)
-	{
-		// __proto__.__ctor__
-		if (prototype->getLocalMember("__ctor__", memberValue))
-			m_superClass = memberValue.getObject< ActionFunction >();
-		else
-			m_superClass = dynamic_type_cast< ActionFunction* >(m_superPrototype);
-
-		// Ensure relay instance is accessible through super object.
-		setOverrideRelay(m_object->getRelay());
-	}
-	else
-		m_superPrototype = 0;
+	// Ensure relay instance is accessible through super object.
+	setOverrideRelay(m_object->getRelay());
 }
 
 ActionObject* ActionSuper::get__proto__()
@@ -41,7 +27,7 @@ ActionObject* ActionSuper::get__proto__()
 
 void ActionSuper::setMember(const std::string& memberName, const ActionValue& memberValue)
 {
-	m_object->setMember(memberName, memberValue);
+	T_FATAL_ERROR;
 }
 
 bool ActionSuper::getMember(const std::string& memberName, ActionValue& outMemberValue)
@@ -80,22 +66,45 @@ bool ActionSuper::getPropertySet(const std::string& propertyName, Ref< ActionFun
 	return result;
 }
 
-ActionValue ActionSuper::call(ActionObject* self, const ActionValueArray& args)
+ActionValue ActionSuper::valueOf()
 {
-	return ActionValue();
+	return m_object->valueOf();
 }
 
-ActionValue ActionSuper::call(ActionFrame* callerFrame, ActionObject* self)
+ActionValue ActionSuper::toString()
 {
+	return m_object->toString();
+}
+
+Ref< ActionObject > ActionSuper::getSuper()
+{
+	Ref< ActionFunction > superClass;
+	ActionValue memberValue;
+
+	// __proto__.__proto__
+	Ref< ActionObject > superPrototype = m_superPrototype->get__proto__();
+	if (superPrototype != m_superPrototype)
+	{
+		// __proto__.__ctor__
+		if (m_superPrototype->getLocalMember("__ctor__", memberValue))
+			superClass = memberValue.getObject< ActionFunction >();
+		else
+			superClass = dynamic_type_cast< ActionFunction* >(superPrototype);
+	}
+	else
+		superPrototype = 0;
+
+	return new ActionSuper(getContext(), m_object, superPrototype, superClass);
+}
+
+ActionValue ActionSuper::call(ActionObject* self, ActionObject* super, const ActionValueArray& args)
+{
+	T_ASSERT (self == m_object);
+
 	if (!m_superPrototype || !m_superClass)
 		return ActionValue();
 
-	Ref< ActionObject > prototype = m_object->get__proto__();
-	m_object->set__proto__(m_superPrototype);
-	ActionValue ret = m_superClass->call(callerFrame, m_object);
-	m_object->set__proto__(prototype);
-
-	return ret;
+	return m_superClass->call(self, super, args);
 }
 
 void ActionSuper::trace(const IVisitor& visitor) const

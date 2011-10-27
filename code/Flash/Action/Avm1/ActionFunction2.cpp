@@ -35,8 +35,10 @@ ActionFunction2::ActionFunction2(
 {
 }
 
-ActionValue ActionFunction2::call(ActionObject* self, const ActionValueArray& args)
+ActionValue ActionFunction2::call(ActionObject* self, ActionObject* super, const ActionValueArray& args)
 {
+	T_ASSERT (!is_a< ActionSuper >(self));
+
 	ActionContext* cx = getContext();
 	ActionValuePool& pool = cx->getPool();
 	T_ANONYMOUS_VAR(ActionValuePool::Scope)(pool);
@@ -55,14 +57,21 @@ ActionValue ActionFunction2::call(ActionObject* self, const ActionValueArray& ar
 	for (std::map< std::string, ActionValue >::const_iterator i = m_variables.begin(); i != m_variables.end(); ++i)
 		callFrame.setVariable(i->first, i->second);
 
+	if (!(m_flags & AffSuppressThis))
+		callFrame.setVariable("this", ActionValue(self));
+	if (!(m_flags & AffSuppressSuper))
+		callFrame.setVariable("super", ActionValue(super));
+
+	callFrame.setVariable("_global", ActionValue(cx->getGlobal()));
+
+	// Preload registers.
 	uint8_t preloadRegister = 1;
 	if (m_flags & AffPreloadThis)
 		callFrame.setRegister(preloadRegister++, ActionValue(self));
-	//if (!(m_flags & AffSuppressThis))
 
 	if (m_flags & AffPreloadArguments || !(m_flags & AffSuppressArguments))
 	{
-		Ref< Array > argumentArray = new Array();
+		Ref< Array > argumentArray = new Array(args.size());
 		for (uint32_t i = 0; i < args.size(); ++i)
 			argumentArray->push(args[i]);
 		if (m_flags & AffPreloadArguments)
@@ -71,14 +80,8 @@ ActionValue ActionFunction2::call(ActionObject* self, const ActionValueArray& ar
 			callFrame.setVariable("arguments", ActionValue(argumentArray->getAsObject(cx)));
 	}
 
-	if ((m_flags & AffPreloadSuper) || (!(m_flags & AffSuppressSuper)))
-	{
-		Ref< ActionSuper > super = new ActionSuper(cx, self);
-		if (m_flags & AffPreloadSuper)
-			callFrame.setRegister(preloadRegister++, ActionValue(super));
-		if (!(m_flags & AffSuppressSuper))
-			callFrame.setVariable("super", ActionValue(super));
-	}
+	if (m_flags & AffPreloadSuper)
+		callFrame.setRegister(preloadRegister++, ActionValue(super));
 
 	if (m_flags & AffPreloadRoot)
 	{
@@ -112,102 +115,6 @@ ActionValue ActionFunction2::call(ActionObject* self, const ActionValueArray& ar
 
 	// Push rest of arguments onto stack.
 	while (argumentPassed < args.size())
-		callStack.push(args[argumentPassed++]);
-
-	cx->getVM()->execute(&callFrame);
-
-	return callStack.top();
-}
-
-ActionValue ActionFunction2::call(ActionFrame* callerFrame, ActionObject* self)
-{
-	ActionContext* cx = getContext();
-	ActionValuePool& pool = cx->getPool();
-	T_ANONYMOUS_VAR(ActionValuePool::Scope)(pool);
-
-	ActionValueStack& callerStack = callerFrame->getStack();
-	int32_t argCount = !callerStack.empty() ? int32_t(callerStack.pop().getNumber()) : 0;
-	
-	ActionValueArray args(cx->getPool(), argCount);
-	for (int32_t i = 0; i < argCount; ++i)
-		args[i] = callerStack.pop();
-
-	ActionFrame callFrame(
-		cx,
-		self,
-		m_image,
-		m_registerCount,
-		m_dictionary,
-		this
-	);
-	
-	uint8_t preloadRegister = 1;
-	if (m_flags & AffPreloadThis)
-		callFrame.setRegister(preloadRegister++, ActionValue(self));
-	//if (!(m_flags & AffSuppressThis))
-
-	if (m_flags & AffPreloadArguments || !(m_flags & AffSuppressArguments))
-	{
-		Ref< Array > argumentArray = new Array();
-		for (uint32_t i = 0; i < args.size(); ++i)
-			argumentArray->push(args[i]);
-		if (m_flags & AffPreloadArguments)
-			callFrame.setRegister(preloadRegister++, ActionValue(argumentArray->getAsObject(cx)));
-		if (!(m_flags & AffSuppressArguments))
-			callFrame.setVariable("arguments", ActionValue(argumentArray->getAsObject(cx)));
-	}
-
-	if ((m_flags & AffPreloadSuper) || (!(m_flags & AffSuppressSuper)))
-	{
-		Ref< ActionSuper > super = new ActionSuper(cx, self);
-		if (m_flags & AffPreloadSuper)
-			callFrame.setRegister(preloadRegister++, ActionValue(super));
-		if (!(m_flags & AffSuppressSuper))
-			callFrame.setVariable("super", ActionValue(super));
-	}
-
-	if (m_flags & AffPreloadRoot)
-	{
-		ActionValue root; 
-		cx->getGlobal()->getLocalMember("_root", root);
-		callFrame.setRegister(preloadRegister++, root);
-	}
-	if (m_flags & AffPreloadParent)
-	{
-		FlashCharacterInstance* characterInstance = self->getRelay< FlashCharacterInstance >();
-		callFrame.setRegister(preloadRegister++, ActionValue(characterInstance->getParent()->getAsObject(cx)));
-	}
-	if (m_flags & AffPreloadGlobal)
-		callFrame.setRegister(preloadRegister++, ActionValue(cx->getGlobal()));
-
-	int32_t argumentPassed = 0;
-	for (
-		std::vector< std::pair< std::string, uint8_t > >::const_iterator i = m_argumentsIntoRegisters.begin();
-		i != m_argumentsIntoRegisters.end();
-		++i
-	)
-	{
-		if (argumentPassed < argCount)
-		{
-			if (i->second)
-				callFrame.setRegister(i->second, args[argumentPassed++]);
-			else
-				callFrame.setVariable(i->first, args[argumentPassed++]);
-		}
-		else
-		{
-			if (i->second)
-				callFrame.setRegister(i->second, ActionValue());
-			else
-				callFrame.setVariable(i->first, ActionValue());
-
-			++argumentPassed;
-		}
-	}
-
-	ActionValueStack& callStack = callFrame.getStack();
-
-	while (argumentPassed < argCount)
 		callStack.push(args[argumentPassed++]);
 
 	cx->getVM()->execute(&callFrame);

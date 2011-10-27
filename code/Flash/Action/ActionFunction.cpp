@@ -1,5 +1,7 @@
 #include "Flash/Action/ActionContext.h"
+#include "Flash/Action/ActionFrame.h"
 #include "Flash/Action/ActionFunction.h"
+#include "Flash/Action/ActionValueStack.h"
 
 namespace traktor
 {
@@ -12,6 +14,48 @@ ActionFunction::ActionFunction(ActionContext* context, const std::string& name)
 :	ActionObject(context, "Function")
 ,	m_name(name)
 {
+}
+
+ActionValue ActionFunction::call(ActionFrame* callerFrame, ActionObject* self, ActionObject* super)
+{
+	T_ASSERT (callerFrame);
+
+	ActionValueStack& callerStack = callerFrame->getStack();
+	int32_t argCount = !callerStack.empty() ? int32_t(callerStack.pop().getNumber()) : 0;
+
+	ActionValueArray args(getContext()->getPool(), argCount);
+	for (int32_t i = 0; i < argCount; ++i)
+		args[i] = callerStack.pop();
+
+	return call(self, super, args);
+}
+
+ActionValue ActionFunction::call(ActionFrame* callerFrame, ActionObject* self)
+{
+	T_ASSERT (callerFrame);
+
+	ActionValueStack& callerStack = callerFrame->getStack();
+	int32_t argCount = !callerStack.empty() ? int32_t(callerStack.pop().getNumber()) : 0;
+
+	ActionValueArray args(getContext()->getPool(), argCount);
+	for (int32_t i = 0; i < argCount; ++i)
+		args[i] = callerStack.pop();
+
+	return call(self, args);
+}
+
+ActionValue ActionFunction::call(ActionFrame* callerFrame)
+{
+	T_ASSERT (callerFrame);
+
+	ActionValueStack& callerStack = callerFrame->getStack();
+	int32_t argCount = !callerStack.empty() ? int32_t(callerStack.pop().getNumber()) : 0;
+
+	ActionValueArray args(getContext()->getPool(), argCount);
+	for (int32_t i = 0; i < argCount; ++i)
+		args[i] = callerStack.pop();
+
+	return call(args);
 }
 
 	}

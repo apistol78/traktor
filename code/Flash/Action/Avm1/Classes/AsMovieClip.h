@@ -24,9 +24,11 @@ class AsMovieClip : public ActionClass
 public:
 	AsMovieClip(ActionContext* context);
 
-	virtual void init(ActionObject* self, const ActionValueArray& args);
+	virtual void initialize(ActionObject* self);
 
-	virtual void coerce(ActionObject* self) const;
+	virtual void construct(ActionObject* self, const ActionValueArray& args);
+
+	virtual ActionValue xplicit(const ActionValueArray& args);
 
 private:
 	void MovieClip_attachAudio(FlashSpriteInstance* self) const;
@@ -141,11 +143,7 @@ private:
 
 	int32_t MovieClip_get_currentframe(const FlashSpriteInstance* self) const;
 
-	void MovieClip_set_currentframe(FlashSpriteInstance* self, int32_t frame) const;
-
 	void MovieClip_get_droptarget(const FlashSpriteInstance* self) const;
-
-	void MovieClip_set_droptarget(FlashSpriteInstance* self) const;
 
 	bool MovieClip_get_enabled(const FlashSpriteInstance* self) const;
 
@@ -168,8 +166,6 @@ private:
 	void MovieClip_set_forceSmoothing(FlashSpriteInstance* self) const;
 
 	int32_t MovieClip_get_framesloaded(const FlashSpriteInstance* self) const;
-
-	void MovieClip_set_framesloaded(FlashSpriteInstance* self) const;
 
 	float MovieClip_get_height(const FlashSpriteInstance* self) const;
 
@@ -235,13 +231,9 @@ private:
 
 	void MovieClip_set_tabIndex(FlashSpriteInstance* self) const;
 
-	void MovieClip_get_target(const FlashSpriteInstance* self) const;
+	std::string MovieClip_get_target(const FlashSpriteInstance* self) const;
 
-	void MovieClip_set_target(FlashSpriteInstance* self) const;
-
-	void MovieClip_get_totalframes(const FlashSpriteInstance* self) const;
-
-	void MovieClip_set_totalframes(FlashSpriteInstance* self) const;
+	uint32_t MovieClip_get_totalframes(const FlashSpriteInstance* self) const;
 
 	void MovieClip_get_trackAsMenu(const FlashSpriteInstance* self) const;
 
@@ -249,9 +241,7 @@ private:
 
 	Ref< Transform > MovieClip_get_transform(FlashSpriteInstance* self) const;
 
-	void MovieClip_get_url(const FlashSpriteInstance* self) const;
-
-	void MovieClip_set_url(FlashSpriteInstance* self) const;
+	std::string MovieClip_get_url(const FlashSpriteInstance* self) const;
 
 	void MovieClip_get_useHandCursor(const FlashSpriteInstance* self) const;
 
@@ -271,8 +261,6 @@ private:
 
 	int32_t MovieClip_get_xmouse(const FlashSpriteInstance* self) const;
 
-	void MovieClip_set_xmouse(FlashSpriteInstance* self) const;
-
 	float MovieClip_get_xscale(const FlashSpriteInstance* self) const;
 
 	void MovieClip_set_xscale(FlashSpriteInstance* self, float x) const;
@@ -282,8 +270,6 @@ private:
 	void MovieClip_set_y(FlashSpriteInstance* self, float y) const;
 
 	int32_t MovieClip_get_ymouse(const FlashSpriteInstance* self) const;
-
-	void MovieClip_set_ymouse(FlashSpriteInstance* self) const;
 
 	float MovieClip_get_yscale(const FlashSpriteInstance* self) const;
 

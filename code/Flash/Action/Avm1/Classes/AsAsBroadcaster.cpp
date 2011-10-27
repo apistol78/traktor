@@ -27,18 +27,22 @@ AsAsBroadcaster::AsAsBroadcaster(ActionContext* context)
 	setMember("prototype", ActionValue(prototype));
 }
 
-void AsAsBroadcaster::init(ActionObject* self, const ActionValueArray& args)
+void AsAsBroadcaster::initialize(ActionObject* self)
 {
 }
 
-void AsAsBroadcaster::coerce(ActionObject* self) const
+void AsAsBroadcaster::construct(ActionObject* self, const ActionValueArray& args)
 {
-	T_FATAL_ERROR;
 }
 
-void AsAsBroadcaster::initialize(ActionObject* subjectObject)
+ActionValue AsAsBroadcaster::xplicit(const ActionValueArray& args)
 {
-	Ref< Array > listenerArray = new Array();
+	return ActionValue();
+}
+
+void AsAsBroadcaster::initializeSubject(ActionObject* subjectObject)
+{
+	Ref< Array > listenerArray = new Array(0);
 	subjectObject->setMember("_listeners", ActionValue(listenerArray->getAsObject(getContext())));
 
 	ActionValue functionValue;
@@ -57,7 +61,7 @@ void AsAsBroadcaster::AsBroadcaster_initialize(CallArgs& ca)
 	if (!subjectObject)
 		return;
 
-	initialize(subjectObject);
+	initializeSubject(subjectObject);
 }
 
 void AsAsBroadcaster::AsBroadcaster_addListener(CallArgs& ca)

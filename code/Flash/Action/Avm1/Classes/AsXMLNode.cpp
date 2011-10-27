@@ -28,13 +28,17 @@ AsXMLNode::AsXMLNode(ActionContext* context)
 	setMember("prototype", ActionValue(prototype));
 }
 
-void AsXMLNode::init(ActionObject* self, const ActionValueArray& args)
+void AsXMLNode::initialize(ActionObject* self)
 {
 }
 
-void AsXMLNode::coerce(ActionObject* self) const
+void AsXMLNode::construct(ActionObject* self, const ActionValueArray& args)
 {
-	T_FATAL_ERROR;
+}
+
+ActionValue AsXMLNode::xplicit(const ActionValueArray& args)
+{
+	return ActionValue();
 }
 
 void AsXMLNode::XMLNode_appendChild(CallArgs& ca)

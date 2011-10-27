@@ -65,6 +65,9 @@ Ref< FlashCharacterInstance > FlashSprite::createInstance(ActionContext* context
 {
 	Ref< FlashSpriteInstance > spriteInstance = new FlashSpriteInstance(context, parent, this);
 
+	if (!name.empty())
+		spriteInstance->setName(name);
+
 	spriteInstance->eventInit();
 
 	std::string spriteClassName;
@@ -78,23 +81,16 @@ Ref< FlashCharacterInstance > FlashSprite::createInstance(ActionContext* context
 
 			ActionValue prototype;
 			spriteClassValue.getObjectAlways(context)->getLocalMember("prototype", prototype);
-			spriteInstanceAO->setMember("prototype", prototype);
 			spriteInstanceAO->setMember("__proto__", prototype);
+			spriteInstanceAO->setMember("__ctor__", spriteClassValue);
 
 			Ref< ActionFunction > classConstructor = spriteClassValue.getObject< ActionFunction >();
 			if (classConstructor)
-			{
-				ActionValueArray args;
-				classConstructor->call(spriteInstanceAO, args);
-			}
+				classConstructor->call(spriteInstanceAO);
 		}
-		spriteInstance->setName(spriteClassName);
 	}
 
 	spriteInstance->updateDisplayList();
-
-	if (!name.empty())
-		spriteInstance->setName(name);
 
 	return spriteInstance;
 }

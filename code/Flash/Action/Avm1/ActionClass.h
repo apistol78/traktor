@@ -28,13 +28,28 @@ class T_DLLCLASS ActionClass : public ActionFunction
 public:
 	ActionClass(ActionContext* context, const std::string& className);
 
-	virtual ActionValue call(ActionObject* self, const ActionValueArray& args);
+	virtual ActionValue call(ActionObject* self, ActionObject* super, const ActionValueArray& args);
 
-	virtual ActionValue call(ActionFrame* callerFrame, ActionObject* self);
+	/*! \brief Initialize instance of class.
+	 *
+	 * Called before constructor in order to
+	 * prepare instance members, properties etc.
+	 */
+	virtual void initialize(ActionObject* self) = 0;
 
-	virtual void init(ActionObject* self, const ActionValueArray& args) = 0;
+	/*! \brief Construct instance.
+	 *
+	 * Called after instance has been initialized and
+	 * constructor has been invoked through "new" operator.
+	 */
+	virtual void construct(ActionObject* self, const ActionValueArray& args) = 0;
 
-	virtual void coerce(ActionObject* self) const = 0;
+	/*! \brief Constructor called.
+	 *
+	 * Constructor explicitly called as a
+	 * function.
+	 */
+	virtual ActionValue xplicit(const ActionValueArray& args) = 0;
 };
 
 	}

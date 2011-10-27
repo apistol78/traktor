@@ -62,6 +62,7 @@ AsMovieClip::AsMovieClip(ActionContext* context)
 	Ref< ActionObject > prototype = new ActionObject(context);
 
 	prototype->setMember("attachAudio", ActionValue(createNativeFunction(context, this, &AsMovieClip::MovieClip_attachAudio)));
+	// \fixme attachVideo
 	prototype->setMember("attachBitmap", ActionValue(createNativeFunction(context, this, &AsMovieClip::MovieClip_attachBitmap)));
 	prototype->setMember("attachMovie", ActionValue(
 		createPolymorphicFunction(
@@ -122,58 +123,67 @@ AsMovieClip::AsMovieClip(ActionContext* context)
 	prototype->setMember("swapDepths", ActionValue(createNativeFunction(context, this, &AsMovieClip::MovieClip_swapDepths)));
 	prototype->setMember("unloadMovie", ActionValue(createNativeFunction(context, this, &AsMovieClip::MovieClip_unloadMovie)));
 
-	prototype->addProperty("_alpha", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_alpha), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_alpha));
 	prototype->addProperty("blendMode", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_blendMode), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_blendMode));
 	prototype->addProperty("cacheAsBitmap", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_cacheAsBitmap), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_cacheAsBitmap));
-	prototype->addProperty("_currentframe", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_currentframe), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_currentframe));
-	prototype->addProperty("_droptarget", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_droptarget), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_droptarget));
 	prototype->addProperty("enabled", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_enabled), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_enabled));
 	prototype->addProperty("filters", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_filters), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_filters));
-	prototype->addProperty("focusEnabled", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_focusEnabled), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_focusEnabled));
-	prototype->addProperty("_focusrect", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_focusrect), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_focusrect));
 	prototype->addProperty("forceSmoothing", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_forceSmoothing), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_forceSmoothing));
-	prototype->addProperty("_framesloaded", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_framesloaded), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_framesloaded));
-	prototype->addProperty("_height", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_height), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_height));
-	prototype->addProperty("_highquality", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_highquality), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_highquality));
-	prototype->addProperty("hitArea", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_hitArea), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_hitArea));
+	prototype->addProperty("_framesloaded", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_framesloaded), 0);
 	prototype->addProperty("_lockroot", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_lockroot), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_lockroot));
-	prototype->addProperty("menu", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_menu), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_menu));
-	prototype->addProperty("_name", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_name), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_name));
 	prototype->addProperty("opaqueBackground", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_opaqueBackground), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_opaqueBackground));
-	prototype->addProperty("_parent", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_parent), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_parent));
-	prototype->addProperty("_quality", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_quality), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_quality));
-	prototype->addProperty("_rotation", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_rotation), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_rotation));
 	prototype->addProperty("scale9Grid", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_scale9Grid), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_scale9Grid));
 	prototype->addProperty("scrollRect", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_scrollRect), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_scrollRect));
-	prototype->addProperty("_soundbuftime", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_soundbuftime), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_soundbuftime));
-	prototype->addProperty("tabChildren", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_tabChildren), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_tabChildren));
-	prototype->addProperty("tabEnabled", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_tabEnabled), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_tabEnabled));
 	prototype->addProperty("tabIndex", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_tabIndex), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_tabIndex));
-	prototype->addProperty("_target", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_target), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_target));
-	prototype->addProperty("_totalframes", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_totalframes), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_totalframes));
-	prototype->addProperty("trackAsMenu", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_trackAsMenu), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_trackAsMenu));
 	prototype->addProperty("transform", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_transform), 0);
-	prototype->addProperty("_url", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_url), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_url));
 	prototype->addProperty("useHandCursor", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_useHandCursor), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_useHandCursor));
-	prototype->addProperty("_visible", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_visible), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_visible));
-	prototype->addProperty("_width", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_width), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_width));
-	prototype->addProperty("_x", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_x), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_x));
-	prototype->addProperty("_xmouse", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_xmouse), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_xmouse));
-	prototype->addProperty("_xscale", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_xscale), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_xscale));
-	prototype->addProperty("_y", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_y), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_y));
-	prototype->addProperty("_ymouse", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_ymouse), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_ymouse));
-	prototype->addProperty("_yscale", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_yscale), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_yscale));
 
 	prototype->setMember("constructor", ActionValue(this));
-	prototype->setMember("__coerce__", ActionValue(this));
-
 	prototype->setReadOnly();
 
 	setMember("prototype", ActionValue(prototype));
 }
 
-void AsMovieClip::init(ActionObject* self, const ActionValueArray& args)
+void AsMovieClip::initialize(ActionObject* self)
 {
+	ActionContext* context = getContext();
+
+	self->addProperty("focusEnabled", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_focusEnabled), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_focusEnabled));
+	self->addProperty("hitArea", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_hitArea), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_hitArea));
+	self->addProperty("menu", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_menu), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_menu));
+	self->addProperty("tabChildren", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_tabChildren), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_tabChildren));
+	self->addProperty("tabEnabled", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_tabEnabled), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_tabEnabled));
+	self->addProperty("trackAsMenu", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_trackAsMenu), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_trackAsMenu));
+	self->addProperty("_alpha", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_alpha), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_alpha));
+	self->addProperty("_currentframe", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_currentframe), 0);
+	self->addProperty("_droptarget", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_droptarget), 0);
+	self->addProperty("_focusrect", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_focusrect), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_focusrect));
+	self->addProperty("_height", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_height), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_height));
+	self->addProperty("_highquality", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_highquality), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_highquality));
+	self->addProperty("_name", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_name), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_name));
+	self->addProperty("_parent", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_parent), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_parent));
+	self->addProperty("_quality", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_quality), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_quality));
+	self->addProperty("_rotation", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_rotation), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_rotation));
+	self->addProperty("_soundbuftime", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_soundbuftime), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_soundbuftime));
+	self->addProperty("_target", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_target), 0);
+	self->addProperty("_totalframes", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_totalframes), 0);
+	self->addProperty("_url", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_url), 0);
+	self->addProperty("_visible", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_visible), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_visible));
+	self->addProperty("_width", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_width), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_width));
+	self->addProperty("_x", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_x), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_x));
+	self->addProperty("_xmouse", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_xmouse), 0);
+	self->addProperty("_xscale", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_xscale), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_xscale));
+	self->addProperty("_y", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_y), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_y));
+	self->addProperty("_ymouse", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_ymouse), 0);
+	self->addProperty("_yscale", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_yscale), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_yscale));
+}
+
+void AsMovieClip::construct(ActionObject* self, const ActionValueArray& args)
+{
+	// Check if we already have a relay; it will if it's created through FlashSprite::createInstance
+	// when created for the display list.
+	if (self->getRelay< FlashSpriteInstance >())
+		return;
+
 	Ref< FlashSprite > sprite = new FlashSprite(0, 0);
 	sprite->addFrame(new FlashFrame());
 
@@ -183,15 +193,9 @@ void AsMovieClip::init(ActionObject* self, const ActionValueArray& args)
 	self->setRelay(spriteInstance);
 }
 
-void AsMovieClip::coerce(ActionObject* self) const
+ActionValue AsMovieClip::xplicit(const ActionValueArray& args)
 {
-	Ref< FlashSprite > sprite = new FlashSprite(0, 0);
-	sprite->addFrame(new FlashFrame());
-
-	Ref< FlashCharacterInstance > spriteInstance = sprite->createInstance(getContext(), 0, "");
-	T_ASSERT (spriteInstance);
-
-	self->setRelay(spriteInstance);
+	return ActionValue();
 }
 
 void AsMovieClip::MovieClip_attachAudio(FlashSpriteInstance* self) const
@@ -697,23 +701,10 @@ int32_t AsMovieClip::MovieClip_get_currentframe(const FlashSpriteInstance* self)
 	return self->getCurrentFrame() + 1;
 }
 
-void AsMovieClip::MovieClip_set_currentframe(FlashSpriteInstance* self, int32_t frame) const
-{
-	if (frame > 0)
-		self->gotoFrame(frame - 1);
-}
-
 void AsMovieClip::MovieClip_get_droptarget(const FlashSpriteInstance* self) const
 {
 	T_IF_VERBOSE(
 		log::warning << L"MovieClip::get_droptarget not implemented" << Endl;
-	)
-}
-
-void AsMovieClip::MovieClip_set_droptarget(FlashSpriteInstance* self) const
-{
-	T_IF_VERBOSE(
-		log::warning << L"MovieClip::set_droptarget not implemented" << Endl;
 	)
 }
 
@@ -785,15 +776,7 @@ void AsMovieClip::MovieClip_set_forceSmoothing(FlashSpriteInstance* self) const
 
 int32_t AsMovieClip::MovieClip_get_framesloaded(const FlashSpriteInstance* self) const
 {
-	const FlashSprite* movieClip = self->getSprite();
-	return movieClip->getFrameCount();
-}
-
-void AsMovieClip::MovieClip_set_framesloaded(FlashSpriteInstance* self) const
-{
-	T_IF_VERBOSE(
-		log::warning << L"MovieClip::set_framesloaded not implemented" << Endl;
-	)
+	return self->getSprite()->getFrameCount();
 }
 
 float AsMovieClip::MovieClip_get_height(const FlashSpriteInstance* self) const
@@ -1022,32 +1005,14 @@ void AsMovieClip::MovieClip_set_tabIndex(FlashSpriteInstance* self) const
 	)
 }
 
-void AsMovieClip::MovieClip_get_target(const FlashSpriteInstance* self) const
+std::string AsMovieClip::MovieClip_get_target(const FlashSpriteInstance* self) const
 {
-	T_IF_VERBOSE(
-		log::warning << L"MovieClip::get_target not implemented" << Endl;
-	)
+	return self->getTarget();
 }
 
-void AsMovieClip::MovieClip_set_target(FlashSpriteInstance* self) const
+uint32_t AsMovieClip::MovieClip_get_totalframes(const FlashSpriteInstance* self) const
 {
-	T_IF_VERBOSE(
-		log::warning << L"MovieClip::set_target not implemented" << Endl;
-	)
-}
-
-void AsMovieClip::MovieClip_get_totalframes(const FlashSpriteInstance* self) const
-{
-	T_IF_VERBOSE(
-		log::warning << L"MovieClip::get_totalframes not implemented" << Endl;
-	)
-}
-
-void AsMovieClip::MovieClip_set_totalframes(FlashSpriteInstance* self) const
-{
-	T_IF_VERBOSE(
-		log::warning << L"MovieClip::set_totalframes not implemented" << Endl;
-	)
+	return self->getSprite()->getFrameCount();
 }
 
 void AsMovieClip::MovieClip_get_trackAsMenu(const FlashSpriteInstance* self) const
@@ -1069,18 +1034,9 @@ Ref< Transform > AsMovieClip::MovieClip_get_transform(FlashSpriteInstance* self)
 	return new Transform(self);
 }
 
-void AsMovieClip::MovieClip_get_url(const FlashSpriteInstance* self) const
+std::string AsMovieClip::MovieClip_get_url(const FlashSpriteInstance* self) const
 {
-	T_IF_VERBOSE(
-		log::warning << L"MovieClip::get_url not implemented" << Endl;
-	)
-}
-
-void AsMovieClip::MovieClip_set_url(FlashSpriteInstance* self) const
-{
-	T_IF_VERBOSE(
-		log::warning << L"MovieClip::set_url not implemented" << Endl;
-	)
+	return "file:///Internal.swf";
 }
 
 void AsMovieClip::MovieClip_get_useHandCursor(const FlashSpriteInstance* self) const
@@ -1146,13 +1102,6 @@ int32_t AsMovieClip::MovieClip_get_xmouse(const FlashSpriteInstance* self) const
 	return self->getMouseX();
 }
 
-void AsMovieClip::MovieClip_set_xmouse(FlashSpriteInstance* self) const
-{
-	T_IF_VERBOSE(
-		log::warning << L"MovieClip::set_xmouse not implemented" << Endl;
-	)
-}
-
 float AsMovieClip::MovieClip_get_xscale(const FlashSpriteInstance* self) const
 {
 	Vector2 T, S; float R;
@@ -1186,13 +1135,6 @@ void AsMovieClip::MovieClip_set_y(FlashSpriteInstance* self, float y) const
 int32_t AsMovieClip::MovieClip_get_ymouse(const FlashSpriteInstance* self) const
 {
 	return self->getMouseY();
-}
-
-void AsMovieClip::MovieClip_set_ymouse(FlashSpriteInstance* self) const
-{
-	T_IF_VERBOSE(
-		log::warning << L"MovieClip::set_ymouse not implemented" << Endl;
-	)
 }
 
 float AsMovieClip::MovieClip_get_yscale(const FlashSpriteInstance* self) const

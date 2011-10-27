@@ -36,11 +36,17 @@ AsString::AsString(ActionContext* context)
 	prototype->setMember("valueOf", ActionValue(createNativeFunction(context, this, &AsString::String_valueOf)));
 
 	prototype->setMember("constructor", ActionValue(this));
-
 	setMember("prototype", ActionValue(prototype));
 }
 
-void AsString::init(ActionObject* self, const ActionValueArray& args)
+void AsString::initialize(ActionObject* self)
+{
+	ActionContext* context = getContext();
+
+	self->addProperty("length", createNativeFunction(getContext(), this, &AsString::String_get_length), 0);
+}
+
+void AsString::construct(ActionObject* self, const ActionValueArray& args)
 {
 	Ref< String > s;
 
@@ -49,19 +55,21 @@ void AsString::init(ActionObject* self, const ActionValueArray& args)
 	else
 		s = new String();
 
-	self->addProperty("length", createNativeFunction(getContext(), this, &AsString::String_get_length), 0);
 	self->setRelay(s);
 }
 
-void AsString::coerce(ActionObject* self) const
+ActionValue AsString::xplicit(const ActionValueArray& args)
 {
-	T_FATAL_ERROR;
+	if (args.size() > 0)
+		return args[0].toString();
+	else
+		return ActionValue("");
 }
 
 void AsString::String_fromCharCode(CallArgs& ca)
 {
-	char charCode = char(ca.args[0].getNumber());
-	ca.ret = ActionValue((new String(charCode))->getAsObject(ca.context));
+	char charCode[] = { char(ca.args[0].getNumber()), 0 };
+	ca.ret = ActionValue(charCode);
 }
 
 std::string AsString::String_charAt(const String* self, uint32_t index) const
@@ -149,17 +157,21 @@ void AsString::String_split(CallArgs& ca)
 			uint32_t limit = uint32_t(ca.args[1].getNumber());
 			words.reserve(limit);
 
-			Split< std::string >::word(st, delim, words, limit);
+			Split< std::string >::any(st, delim, words, true, limit);
 		}
 	}
 	else if (ca.args.size() >= 1)
 	{
 		std::string delim = ca.args[0].getString();
 		if (!delim.empty())
-			Split< std::string >::word(st, delim, words);
+			Split< std::string >::any(st, delim, words, true);
+	}
+	else
+	{
+		words.push_back(st);
 	}
 
-	Ref< Array > arr = new Array();
+	Ref< Array > arr = new Array(words.size());
 	for (std::vector< std::string >::const_iterator i = words.begin(); i != words.end(); ++i)
 		arr->push(ActionValue(*i));
 
@@ -172,12 +184,21 @@ void AsString::String_substr(CallArgs& ca)
 	const std::string& st = self->get();
 
 	uint32_t index = uint32_t(ca.args[0].getNumber());
-	uint32_t count = uint32_t(ca.args[1].getNumber());
-
-	if (index < st.length())
-		ca.ret = ActionValue(st.substr(index, count));
+	if (ca.args.size() >= 2)
+	{
+		uint32_t count = uint32_t(ca.args[1].getNumber());
+		if (index < st.length())
+			ca.ret = ActionValue(st.substr(index, count));
+		else
+			ca.ret = ActionValue("");
+	}
 	else
-		ca.ret = ActionValue("");
+	{
+		if (index < st.length())
+			ca.ret = ActionValue(st.substr(index));
+		else
+			ca.ret = ActionValue("");
+	}
 }
 
 void AsString::String_substring(CallArgs& ca)
@@ -186,19 +207,28 @@ void AsString::String_substring(CallArgs& ca)
 	const std::string& st = self->get();
 
 	uint32_t start = uint32_t(ca.args[0].getNumber());
-	uint32_t end = uint32_t(ca.args[1].getNumber());
-
-	if (start < st.length())
-		ca.ret = ActionValue(st.substr(start, end - start));
+	if (ca.args.size() >= 2)
+	{
+		uint32_t end = uint32_t(ca.args[1].getNumber());
+		if (start < st.length())
+			ca.ret = ActionValue(st.substr(start, end - start));
+		else
+			ca.ret = ActionValue("");
+	}
 	else
-		ca.ret = ActionValue("");
+	{
+		if (start < st.length())
+			ca.ret = ActionValue(st.substr(start));
+		else
+			ca.ret = ActionValue("");
+	}
 }
 
 void AsString::String_toLowerCase(CallArgs& ca)
 {
 	Ref< String > self = ca.self->getRelay< String >();
 	const std::string& st = self->get();
-	ca.ret = ActionValue((new String(toLower(st)))->getAsObject(ca.context));
+	ca.ret = ActionValue(toLower(st));
 }
 
 void AsString::String_toString(CallArgs& ca)
@@ -214,7 +244,7 @@ void AsString::String_toUpperCase(CallArgs& ca)
 {
 	Ref< String > self = ca.self->getRelay< String >();
 	const std::string& st = self->get();
-	ca.ret = ActionValue((new String(toUpper(st)))->getAsObject(ca.context));
+	ca.ret = ActionValue(toUpper(st));
 }
 
 void AsString::String_valueOf(CallArgs& ca)

@@ -38,13 +38,17 @@ AsXML::AsXML(ActionContext* context)
 	setMember("prototype", ActionValue(prototype));
 }
 
-void AsXML::init(ActionObject* self, const ActionValueArray& args)
+void AsXML::initialize(ActionObject* self)
 {
 }
 
-void AsXML::coerce(ActionObject* self) const
+void AsXML::construct(ActionObject* self, const ActionValueArray& args)
 {
-	T_FATAL_ERROR;
+}
+
+ActionValue AsXML::xplicit(const ActionValueArray& args)
+{
+	return ActionValue();
 }
 
 void AsXML::XML_addRequestHeader(CallArgs& ca)

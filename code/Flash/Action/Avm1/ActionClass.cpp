@@ -1,7 +1,5 @@
 #include "Flash/Action/ActionContext.h"
-#include "Flash/Action/ActionFrame.h"
 #include "Flash/Action/Avm1/ActionClass.h"
-#include "Flash/Action/Avm1/Classes/AsFunction.h"
 
 namespace traktor
 {
@@ -15,26 +13,15 @@ ActionClass::ActionClass(ActionContext* context, const std::string& className)
 {
 }
 
-ActionValue ActionClass::call(ActionObject* self, const ActionValueArray& args)
-{
-	init(self, args);
-	return ActionValue();
-}
-
-ActionValue ActionClass::call(ActionFrame* callerFrame, ActionObject* self)
+ActionValue ActionClass::call(ActionObject* self, ActionObject* super, const ActionValueArray& args)
 {
 	if (self)
 	{
-		ActionValueStack& callerStack = callerFrame->getStack();
-		int32_t argCount = !callerStack.empty() ? int32_t(callerStack.pop().getNumber()) : 0;
-
-		ActionValueArray args(getContext()->getPool(), argCount);
-		for (int32_t i = 0; i < argCount; ++i)
-			args[i] = callerStack.pop();
-
-		init(self, args);
+		construct(self, args);
+		return ActionValue();
 	}
-	return ActionValue();
+	else
+		return xplicit(args);
 }
 
 	}
