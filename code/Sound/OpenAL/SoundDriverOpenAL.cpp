@@ -143,6 +143,9 @@ bool SoundDriverOpenAL::create(const SoundDriverCreateDesc& desc, Ref< ISoundMix
 		new uint8_t [desc.frameSamples * desc.hwChannels * desc.bitsPerSample / 8]
 	);
 	
+	// Disable distance model.
+	alDistanceModel(AL_NONE);
+		
 	// Generate buffers.
 	alGenBuffers(sizeof_array(m_buffers), m_buffers);
 	alGenSources(1, &m_source);
@@ -153,7 +156,8 @@ bool SoundDriverOpenAL::create(const SoundDriverCreateDesc& desc, Ref< ISoundMix
 	alSourcef(m_source, AL_ROLLOFF_FACTOR, 0.0f);
 	alSourcei(m_source, AL_SOURCE_RELATIVE, AL_FALSE);
 	alSourcei(m_source, AL_LOOPING, AL_FALSE);
-
+	alSourcei(m_source, AL_SOURCE_TYPE, AL_STREAMING);
+	
 	alSourcePlay(m_source);
 	return true;
 }
@@ -188,7 +192,7 @@ void SoundDriverOpenAL::wait()
 		// Flush pending errors.
 		alGetError();
 			
-		currentThread->sleep(10);
+		currentThread->sleep(100);
 	}
 }
 
