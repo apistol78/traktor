@@ -68,8 +68,12 @@ ActionValue ActionFunction1::call(ActionObject* self, ActionObject* super, const
 
 	if (self)
 	{
+		Ref< ActionObject > super2 = super;
+		if (!super2)
+			super2 = self->getSuper();
+	
 		callFrame.setVariable("this", ActionValue(self));
-		callFrame.setVariable("super", ActionValue(super ? super : self->getSuper()));
+		callFrame.setVariable("super", ActionValue(super2));
 	}
 
 	callFrame.setVariable("arguments", ActionValue(argumentArray->getAsObject(getContext())));
