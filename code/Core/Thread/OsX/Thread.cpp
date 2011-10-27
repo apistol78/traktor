@@ -121,7 +121,9 @@ bool Thread::wait(int timeout)
 		gettimeofday(&now, 0);
 		ts.tv_sec = now.tv_sec + timeout / 1000;
 		ts.tv_nsec = (now.tv_usec + (timeout % 1000) * 1000) * 1000;					
-		
+		ts.tv_sec += ts.tv_nsec / 1000000000;
+		ts.tv_nsec = ts.tv_nsec % 1000000000;
+
 		for (rc = 0; rc == 0 && !in->finished; )
 		{
 			rc = pthread_cond_timedwait(
