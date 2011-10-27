@@ -43,6 +43,8 @@ ActionValue ActionFunction2::call(ActionObject* self, ActionObject* super, const
 	ActionValuePool& pool = cx->getPool();
 	T_ANONYMOUS_VAR(ActionValuePool::Scope)(pool);
 
+	Ref< ActionObject > super2 = super;
+
 	ActionFrame callFrame(
 		cx,
 		self,
@@ -57,10 +59,17 @@ ActionValue ActionFunction2::call(ActionObject* self, ActionObject* super, const
 	for (std::map< std::string, ActionValue >::const_iterator i = m_variables.begin(); i != m_variables.end(); ++i)
 		callFrame.setVariable(i->first, i->second);
 
-	if (!(m_flags & AffSuppressThis))
-		callFrame.setVariable("this", ActionValue(self));
-	if (!(m_flags & AffSuppressSuper))
-		callFrame.setVariable("super", ActionValue(super));
+	if (self)
+	{
+		if (!(m_flags & AffSuppressThis))
+			callFrame.setVariable("this", ActionValue(self));
+		if (!(m_flags & AffSuppressSuper))
+		{
+			if (!super2)
+				super2 = self->getSuper();
+			callFrame.setVariable("super", ActionValue(super2));
+		}
+	}
 
 	callFrame.setVariable("_global", ActionValue(cx->getGlobal()));
 
@@ -81,7 +90,11 @@ ActionValue ActionFunction2::call(ActionObject* self, ActionObject* super, const
 	}
 
 	if (m_flags & AffPreloadSuper)
-		callFrame.setRegister(preloadRegister++, ActionValue(super));
+	{
+		if (!super2)
+			super2 = self->getSuper();
+		callFrame.setRegister(preloadRegister++, ActionValue(super2));
+	}
 
 	if (m_flags & AffPreloadRoot)
 	{

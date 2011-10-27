@@ -33,9 +33,9 @@ public:
 
 	virtual ActionValue call(ActionObject* self, ActionObject* super, const ActionValueArray& args) = 0;
 
-	ActionValue call(ActionObject* self) { return call(self, self ? self->getSuper() : 0, ActionValueArray()); }
+	ActionValue call(ActionObject* self) { return call(self, 0, ActionValueArray()); }
 
-	ActionValue call(ActionObject* self, const ActionValueArray& args) { return call(self, self ? self->getSuper() : 0, args); }
+	ActionValue call(ActionObject* self, const ActionValueArray& args) { return call(self, 0, args); }
 
 	ActionValue call(ActionObject* self, ActionObject* super) { return call(self, super, ActionValueArray()); }
 
