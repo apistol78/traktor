@@ -111,13 +111,17 @@ AsTextField::AsTextField(ActionContext* context)
 	setMember("prototype", ActionValue(prototype));
 }
 
-void AsTextField::init(ActionObject* self, const ActionValueArray& args)
+void AsTextField::initialize(ActionObject* self)
 {
 }
 
-void AsTextField::coerce(ActionObject* self) const
+void AsTextField::construct(ActionObject* self, const ActionValueArray& args)
 {
-	T_FATAL_ERROR;
+}
+
+ActionValue AsTextField::xplicit(const ActionValueArray& args)
+{
+	return ActionValue();
 }
 
 void AsTextField::TextField_addListener(FlashEditInstance* editInstance, ActionObject* listener) const

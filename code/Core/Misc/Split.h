@@ -118,6 +118,9 @@ struct Split
 			}
 		}
 
+		if (n == 0 && keepEmpty)
+			out.push_back(_CP::convert(str));
+
 		return out.size();
 	}
 

@@ -12,6 +12,7 @@
 #include "Flash/Action/Avm1/ActionFunction1.h"
 #include "Flash/Action/Avm1/ActionFunction2.h"
 #include "Flash/Action/Avm1/ActionOperations.h"
+#include "Flash/Action/Avm1/ActionSuper.h"
 #include "Flash/Action/Avm1/ActionVMImage1.h"
 #include "Flash/Action/Avm1/Classes/AsObject.h"
 #include "Flash/Action/Avm1/Classes/AsArray.h"
@@ -25,8 +26,10 @@ namespace traktor
 		namespace
 		{
 
-#define T_IF_TRACE(x) \
-	{ if (state.trace) { x } }
+//#define T_IF_TRACE(x) \
+//	{ if (state.trace) { x } }
+
+#define T_IF_TRACE(x)
 
 ActionValue getVariable(ExecutionState& state, const std::string& variableName)
 {
@@ -642,7 +645,7 @@ void opx_defineLocal(ExecutionState& state)
 
 #if defined(_DEBUG)
 	ActionFunction* variableFunction = variableValue.getObject< ActionFunction >();
-	if (variableFunction)
+	if (variableFunction && variableFunction->getName().empty())
 		variableFunction->setName(variableName);
 #endif
 
@@ -673,7 +676,7 @@ void opx_callFunction(ExecutionState& state)
 		ActionFunction* fn = functionObject.getObject< ActionFunction >();
 		T_ASSERT (fn);
 
-		stack.push(fn->call(state.frame, /*state.self*/0));
+		stack.push(fn->call(state.frame, 0));
 		return;
 	}
 
@@ -774,7 +777,7 @@ void opx_initArray(ExecutionState& state)
 		arrayClassMember.isObject< ActionClass >()
 	)
 	{
-		ActionClass* arrayClass = arrayClassMember.getObject< ActionClass >();
+		ActionFunction* arrayClass = arrayClassMember.getObject< ActionFunction >();
 		T_ASSERT (arrayClass);
 
 		// Allocate array instance.
@@ -997,7 +1000,7 @@ void opx_setMember(ExecutionState& state)
 
 #if defined(_DEBUG)
 	ActionFunction* memberFunction = memberValue.getObject< ActionFunction >();
-	if (memberFunction)
+	if (memberFunction && memberFunction->getName().empty())
 		memberFunction->setName(memberName);
 #endif
 }
@@ -1025,7 +1028,7 @@ void opx_decrement(ExecutionState& state)
 void opx_callMethod(ExecutionState& state)
 {
 	ActionValueStack& stack = state.frame->getStack();
-	ActionValue classConstructorName = stack.pop();
+	ActionValue methodName = stack.pop();
 	ActionValue targetValue = stack.pop();
 	ActionValue returnValue;
 
@@ -1035,26 +1038,39 @@ void opx_callMethod(ExecutionState& state)
 	if (!target && state.movieClip)
 		target = state.movieClip->getAsObject(state.context);
 
-	if (classConstructorName.isString())
+	if (methodName.isString())
 	{
 		ActionValue memberValue;
-		if (target->getMember(classConstructorName.getString(), memberValue))
-			method = memberValue.getObject< ActionFunction >();
+		target->getMember(methodName.getString(), memberValue);
+		method = memberValue.getObject< ActionFunction >();
 	}
 	else
+	{
 		method = dynamic_type_cast< ActionFunction* >(target);
+	}
 
 	if (method)
 	{
 		T_IF_TRACE(
 			*state.trace << L"AopCallMethod: \"" << mbstows(method->getName()) << L"\"" << Endl;
 		)
-		returnValue = method->call(state.frame, target);
+
+		if (is_a< ActionSuper >(target))
+		{
+			// We're calling through super object.
+			ActionSuper* superTarget = checked_type_cast< ActionSuper* >(target);
+			returnValue = method->call(state.frame, superTarget->getObject(), superTarget->getSuper());
+		}
+		else
+		{
+			// Calling ordinary object.
+			returnValue = method->call(state.frame, target);
+		}
 	}
 	else
 	{
 		T_IF_TRACE(
-			*state.trace << L"AopCallMethod: Undefined method \"" << classConstructorName.getWideString() << L"\"" << Endl;
+			*state.trace << L"AopCallMethod: Undefined method \"" << methodName.getWideString() << L"\"" << Endl;
 		)
 		int argCount = int(stack.pop().getNumber());
 		stack.drop(argCount);
@@ -1142,16 +1158,27 @@ void opx_instanceOf(ExecutionState& state)
 void opx_enum2(ExecutionState& state)
 {
 	ActionValueStack& stack = state.frame->getStack();
-
 	ActionValue enumObject = stack.pop();
+
+	// Push null object as terminator; only value which cannot be created from AS.
+	stack.push(ActionValue((ActionObject*)0));
+
 	if (enumObject.isObject())
 	{
 		Ref< ActionObject > object = enumObject.getObject();
-		const ActionObject::property_map_t& properties = object->getProperties();
-		for (ActionObject::property_map_t::const_iterator i = properties.begin(); i != properties.end(); ++i)
-			stack.push(ActionValue(i->first));
+
+		const ActionObject::member_map_t& members = object->getLocalMembers();
+		for (ActionObject::member_map_t::const_iterator i = members.begin(); i != members.end(); ++i)
+		{
+			// \fixme Should only enumerate user added members.
+			if (i->first != "__proto__" && i->first != "prototype")
+				stack.push(ActionValue(i->first));
+		}
+
+		//const ActionObject::property_map_t& properties = object->getProperties();
+		//for (ActionObject::property_map_t::const_iterator i = properties.begin(); i != properties.end(); ++i)
+		//	stack.push(ActionValue(i->first));
 	}
-	stack.push(ActionValue(avm_number_t(0)));
 }
 
 void opx_bitwiseAnd(ExecutionState& state)
@@ -1353,7 +1380,7 @@ void opx_getUrl(ExecutionState& state)
 			stack.push(ActionValue(query));
 			stack.push(ActionValue(url));
 			stack.push(ActionValue(avm_number_t(2)));
-			fn->call(state.frame, 0);
+			fn->call(state.frame);
 		}
 		else
 		{
@@ -1827,7 +1854,7 @@ void opx_getUrl2(ExecutionState& state)
 			stack.push(url);
 			stack.push(ActionValue(avm_number_t(2)));
 
-			fn->call(state.frame, 0);
+			fn->call(state.frame);
 		}
 		else
 		{

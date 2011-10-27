@@ -11,7 +11,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsSelection", AsSelection, ActionObject)
 
 AsSelection::AsSelection(ActionContext* context)
-:	ActionObject(context, "Selection")
+:	ActionObject(context)
 {
 	setMember("getBeginIndex", ActionValue(createNativeFunction(context, this, &AsSelection::Selection_getBeginIndex)));
 	setMember("getCaretIndex", ActionValue(createNativeFunction(context, this, &AsSelection::Selection_getCaretIndex)));

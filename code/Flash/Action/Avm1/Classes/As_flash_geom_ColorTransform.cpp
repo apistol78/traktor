@@ -26,14 +26,16 @@ As_flash_geom_ColorTransform::As_flash_geom_ColorTransform(ActionContext* contex
 	prototype->addProperty("rgb", createNativeFunction(context, this, &As_flash_geom_ColorTransform::ColorTransform_get_rgb), createNativeFunction(context, this, &As_flash_geom_ColorTransform::ColorTransform_set_rgb));
 
 	prototype->setMember("constructor", ActionValue(this));
-	prototype->setMember("__coerce__", ActionValue(this));
-
 	prototype->setReadOnly();
 
 	setMember("prototype", ActionValue(prototype));
 }
 
-void As_flash_geom_ColorTransform::init(ActionObject* self, const ActionValueArray& args)
+void As_flash_geom_ColorTransform::initialize(ActionObject* self)
+{
+}
+
+void As_flash_geom_ColorTransform::construct(ActionObject* self, const ActionValueArray& args)
 {
 	SwfCxTransform transform;
 	if (args.size() >= 8)
@@ -50,33 +52,9 @@ void As_flash_geom_ColorTransform::init(ActionObject* self, const ActionValueArr
 	self->setRelay(new ColorTransform(transform));
 }
 
-void As_flash_geom_ColorTransform::coerce(ActionObject* self) const
+ActionValue As_flash_geom_ColorTransform::xplicit(const ActionValueArray& args)
 {
-	ActionValue am, ao;
-	ActionValue rm, ro;
-	ActionValue gm, go;
-	ActionValue bm, bo;
-
-	self->getMember("alphaMultiplier", am);
-	self->getMember("alphaOffset", ao);
-	self->getMember("redMultiplier", rm);
-	self->getMember("redOffset", ro);
-	self->getMember("greenMultiplier", gm);
-	self->getMember("greenOffset", go);
-	self->getMember("blueMultiplier", bm);
-	self->getMember("blueOffset", bo);
-
-	SwfCxTransform transform;
-	transform.red[0] = float(rm.getNumber());
-	transform.red[1] = float(ro.getNumber());
-	transform.green[0] = float(gm.getNumber());
-	transform.green[1] = float(go.getNumber());
-	transform.blue[0] = float(bm.getNumber());
-	transform.blue[1] = float(bo.getNumber());
-	transform.alpha[0] = float(am.getNumber());
-	transform.alpha[1] = float(ao.getNumber());
-
-	self->setRelay(new ColorTransform(transform));
+	return ActionValue();
 }
 
 avm_number_t As_flash_geom_ColorTransform::ColorTransform_get_alphaMultiplier(ColorTransform* self) const

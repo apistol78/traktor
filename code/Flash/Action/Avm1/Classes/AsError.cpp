@@ -23,15 +23,19 @@ AsError::AsError(ActionContext* context)
 	setMember("prototype", ActionValue(prototype));
 }
 
-void AsError::init(ActionObject* self, const ActionValueArray& args)
+void AsError::initialize(ActionObject* self)
+{
+}
+
+void AsError::construct(ActionObject* self, const ActionValueArray& args)
 {
 	if (args.size() > 0)
 		self->setMember("message", args[0]);
 }
 
-void AsError::coerce(ActionObject* self) const
+ActionValue AsError::xplicit(const ActionValueArray& args)
 {
-	T_FATAL_ERROR;
+	return ActionValue();
 }
 
 void AsError::Error_toString(CallArgs& ca)

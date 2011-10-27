@@ -10,9 +10,10 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.Array", Array, ActionObjectRelay)
 
-Array::Array()
+Array::Array(uint32_t capacity)
 :	ActionObjectRelay("Array")
 {
+	m_values.reserve(capacity);
 }
 
 Array::Array(const ActionValueArray& values)
@@ -25,16 +26,14 @@ Array::Array(const ActionValueArray& values)
 
 Ref< Array > Array::concat() const
 {
-	Ref< Array > out = new Array();
-	out->m_values.reserve(m_values.size());
+	Ref< Array > out = new Array(m_values.size());
 	out->m_values.insert(out->m_values.end(), m_values.begin(), m_values.end());
 	return out;
 }
 
 Ref< Array > Array::concat(const ActionValueArray& values) const
 {
-	Ref< Array > out = new Array();
-	out->m_values.reserve(m_values.size() + values.size());
+	Ref< Array > out = new Array(m_values.size() + values.size());
 	out->m_values.insert(out->m_values.end(), m_values.begin(), m_values.end());
 	out->m_values.insert(out->m_values.end(), &values[0], &values[values.size() - 1]);
 	return out;
@@ -102,14 +101,18 @@ Ref< Array > Array::slice(int32_t startIndex, int32_t endIndex) const
 	if (endIndex < 0)
 		endIndex = int32_t(m_values.size() + endIndex);
 
-	Ref< Array > copy = new Array();
-	for (int32_t i = startIndex; i < endIndex; ++i)
+	if (startIndex <= endIndex)
 	{
-		if (i >= 0 && i < int32_t(m_values.size()))
-			copy->m_values.push_back(m_values[i]);
+		Ref< Array > copy = new Array(endIndex - startIndex);
+		for (int32_t i = startIndex; i < endIndex; ++i)
+		{
+			if (i >= 0 && i < int32_t(m_values.size()))
+				copy->m_values.push_back(m_values[i]);
+		}
+		return copy;
 	}
-
-	return copy;
+	else
+		return 0;
 }
 
 Ref< Array > Array::splice(int32_t startIndex, uint32_t deleteCount, const ActionValueArray& values, int32_t offset)
@@ -117,7 +120,7 @@ Ref< Array > Array::splice(int32_t startIndex, uint32_t deleteCount, const Actio
 	if (startIndex < 0)
 		startIndex = int32_t(m_values.size() + startIndex);
 
-	Ref< Array > removed = new Array();
+	Ref< Array > removed = new Array(deleteCount);
 	while (deleteCount > 0)
 	{
 		if (startIndex >= int32_t(m_values.size()))

@@ -42,7 +42,7 @@ const int c_updateInterval = 30;
 const struct
 {
 	ui::VirtualKey vk;
-	AsKey::AsKeyEnum ak;
+	int32_t ak;
 }
 c_askeys[] =
 {
@@ -63,7 +63,10 @@ c_askeys[] =
 	{ ui::VkShift, AsKey::AkShift },
 	{ ui::VkSpace, AsKey::AkSpace },
 	{ ui::VkTab, AsKey::AkTab },
-	{ ui::VkUp, AsKey::AkUp }
+	{ ui::VkUp, AsKey::AkUp },
+
+	{ ui::VkK, 75 },
+	{ ui::VkL, 76 }
 };
 
 int32_t translateVirtualKey(ui::VirtualKey vk)

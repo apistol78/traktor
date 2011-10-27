@@ -1,6 +1,5 @@
 #include "Core/Io/FileOutputStream.h"
 #include "Core/Io/FileSystem.h"
-#include "Core/Io/StringOutputStream.h"
 #include "Core/Misc/String.h"
 #include "Flash/Action/ActionFrame.h"
 #include "Flash/Action/ActionFunction.h"
@@ -15,6 +14,21 @@ namespace traktor
 	{
 		namespace
 		{
+
+std::map< uint32_t, uint32_t > g_objectIds;
+uint32_t g_nextObjectId = 1;
+
+uint32_t getObjectId(void* object)
+{
+	std::map< uint32_t, uint32_t >::const_iterator i = g_objectIds.find(uint32_t(object));
+	if (i != g_objectIds.end())
+		return i->second;
+
+	uint32_t id = g_nextObjectId++;
+	g_objectIds.insert(std::make_pair(uint32_t(object), id));
+
+	return id;
+}
 
 std::wstring describeValue(const ActionValue& v)
 {
@@ -37,16 +51,16 @@ std::wstring describeValue(const ActionValue& v)
 			if (fn)
 			{
 				if (is_a< ActionSuper >(fn))
-					ss << L"[type Super] (function @" << uint32_t(fn) << L" \"" << mbstows(fn->getName()) << L"\"";
+					ss << L"[type Super] (function @" << getObjectId(fn) << L" \"" << mbstows(fn->getName()) << L"\"";
 				else
-					ss << L"[type Function] (function @" << uint32_t(fn) << L" \"" << mbstows(fn->getName()) << L"\"";
+					ss << L"[type Function] (function @" << getObjectId(fn) << L" \"" << mbstows(fn->getName()) << L"\"";
 			}
 			else
-				ss << L"[object Object] (object @" << uint32_t(object);
+				ss << L"[object Object] (object @" << getObjectId(object);
 
 			IActionObjectRelay* relay = object->getRelay();
 			if (relay)
-				ss << L", relay @" << uint32_t(relay) << L" " << type_name(relay);
+				ss << L", relay @" << getObjectId(relay) << L" " << type_name(relay);
 			
 			ss << L")";
 		}
@@ -67,8 +81,6 @@ ActionVMTrace1::ActionVMTrace1()
 {
 	Ref< IStream > traceFile = FileSystem::getInstance().open(L"ActionVM1.trace", File::FmWrite);
 	m_stream = new FileOutputStream(traceFile, new Utf8Encoding());
-
-	m_traceStream = new StringOutputStream();
 }
 
 void ActionVMTrace1::beginDispatcher()
@@ -83,57 +95,37 @@ void ActionVMTrace1::endDispatcher()
 
 void ActionVMTrace1::preDispatch(const ExecutionState& state, const OperationInfo& info)
 {
-	const ActionValueStack& stack = state.frame->getStack();
-	const ActionValueArray& registers = state.frame->getRegisters();
-
-	m_preStack.resize(stack.depth());
-	for (int32_t i = 0; i < stack.depth(); ++i)
-		m_preStack[i] = stack.top(-i);
-
-	m_preRegisters.resize(registers.size());
-	for (uint32_t i = 0; i < registers.size(); ++i)
-		m_preRegisters[i] = registers[i];
-
-	m_traceStream->reset();
-
-	(*m_stream) << IncreaseIndent;
-}
-
-void ActionVMTrace1::postDispatch(const ExecutionState& state, const OperationInfo& info)
-{
-	(*m_stream) << DecreaseIndent;
-
 	(*m_stream) << mbstows(info.name) << Endl;
 	(*m_stream) << Endl;
 
 	(*m_stream) << L"Stack (pre):" << Endl;
 	(*m_stream) << IncreaseIndent;
 
-	for (size_t i = 0; i < m_preStack.size(); ++i)
-		(*m_stream) << uint32_t(i) << L". " << describeValue(m_preStack[i]) << Endl;
+	const ActionValueStack& stack = state.frame->getStack();
+	for (int32_t i = 0; i < stack.depth(); ++i)
+		(*m_stream) << i << L". " << describeValue(stack.top(-i)) << Endl;
 
 	(*m_stream) << DecreaseIndent;
 
 	(*m_stream) << L"Registers (pre):" << Endl;
 	(*m_stream) << IncreaseIndent;
 
-	for (size_t i = 0; i < m_preRegisters.size(); ++i)
+	const ActionValueArray& registers = state.frame->getRegisters();
+	for (uint32_t i = 0; i < registers.size(); ++i)
 	{
-		if (!m_preRegisters[i].isUndefined())
-			(*m_stream) << uint32_t(i) << L". " << describeValue(m_preRegisters[i]) << Endl;
+		if (!registers[i].isUndefined())
+			(*m_stream) << uint32_t(i) << L". " << describeValue(registers[i]) << Endl;
 	}
 
 	(*m_stream) << DecreaseIndent;
 
 	(*m_stream) << Endl;
-
-	(*m_stream) << L"Log:" << Endl;
 	(*m_stream) << IncreaseIndent;
+}
 
-	(*m_stream) << m_traceStream->str();
-
+void ActionVMTrace1::postDispatch(const ExecutionState& state, const OperationInfo& info)
+{
 	(*m_stream) << DecreaseIndent;
-
 	(*m_stream) << Endl;
 
 	(*m_stream) << L"Stack (post):" << Endl;
@@ -162,7 +154,7 @@ void ActionVMTrace1::postDispatch(const ExecutionState& state, const OperationIn
 
 OutputStream& ActionVMTrace1::getTraceStream()
 {
-	return *m_traceStream;
+	return (*m_stream);
 }
 
 	}

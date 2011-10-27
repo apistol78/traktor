@@ -23,7 +23,11 @@ AsBoolean::AsBoolean(ActionContext* context)
 	setMember("prototype", ActionValue(prototype));
 }
 
-void AsBoolean::init(ActionObject* self, const ActionValueArray& args)
+void AsBoolean::initialize(ActionObject* self)
+{
+}
+
+void AsBoolean::construct(ActionObject* self, const ActionValueArray& args)
 {
 	Ref< Boolean > b;
 	if (args.size() > 0)
@@ -33,9 +37,12 @@ void AsBoolean::init(ActionObject* self, const ActionValueArray& args)
 	self->setRelay(b);
 }
 
-void AsBoolean::coerce(ActionObject* self) const
+ActionValue AsBoolean::xplicit(const ActionValueArray& args)
 {
-	T_FATAL_ERROR;
+	if (args.size() > 0)
+		return ActionValue(args[0].getBoolean());
+	else
+		return ActionValue();
 }
 
 std::string AsBoolean::Boolean_toString(Boolean* self) const

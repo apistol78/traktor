@@ -59,6 +59,12 @@ public:
 	 */
 	const std::string& getName() const;
 
+	/*! \brief Get instance target path.
+	 *
+	 * \return Path of instance.
+	 */
+	std::string getTarget() const;
+
 	/*! \brief Set color transform.
 	 *
 	 * \param cxform Color transform.

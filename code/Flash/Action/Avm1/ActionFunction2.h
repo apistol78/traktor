@@ -50,9 +50,7 @@ public:
 		ActionDictionary* dictionary
 	);
 
-	virtual ActionValue call(ActionObject* self, const ActionValueArray& args);
-
-	virtual ActionValue call(ActionFrame* callerFrame, ActionObject* self);
+	virtual ActionValue call(ActionObject* self, ActionObject* super, const ActionValueArray& args);
 
 protected:
 	virtual void trace(const IVisitor& visitor) const;

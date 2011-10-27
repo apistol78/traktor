@@ -74,7 +74,7 @@ public:
 
 private:
 	ActionContext* m_context;
-	ActionObject* m_self;
+	Ref< ActionObject > m_self;
 	Ref< const IActionVMImage > m_image;
 	ActionValueArray m_localRegisters;
 	std::map< std::string, ActionValue > m_localVariables;

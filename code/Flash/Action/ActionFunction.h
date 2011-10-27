@@ -2,6 +2,7 @@
 #define traktor_flash_ActionFunction_H
 
 #include "Flash/Action/ActionObject.h"
+#include "Flash/Action/ActionValueArray.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -17,10 +18,8 @@ namespace traktor
 	{
 
 class ActionContext;
-class ActionObject;
 class ActionFrame;
 class ActionValue;
-class ActionValueArray;
 
 /*! \brief ActionScript callable function base.
  * \ingroup Flash
@@ -32,9 +31,23 @@ class T_DLLCLASS ActionFunction : public ActionObject
 public:
 	ActionFunction(ActionContext* context, const std::string& name);
 
-	virtual ActionValue call(ActionObject* self, const ActionValueArray& args) = 0;
+	virtual ActionValue call(ActionObject* self, ActionObject* super, const ActionValueArray& args) = 0;
 
-	virtual ActionValue call(ActionFrame* callerFrame, ActionObject* self) = 0;
+	ActionValue call(ActionObject* self) { return call(self, self ? self->getSuper() : 0, ActionValueArray()); }
+
+	ActionValue call(ActionObject* self, const ActionValueArray& args) { return call(self, self ? self->getSuper() : 0, args); }
+
+	ActionValue call(ActionObject* self, ActionObject* super) { return call(self, super, ActionValueArray()); }
+
+	ActionValue call(const ActionValueArray& args) { return call(0, 0, args); }
+
+	ActionValue call() { return call(0, 0, ActionValueArray()); }
+
+	ActionValue call(ActionFrame* callerFrame, ActionObject* self, ActionObject* super);
+
+	ActionValue call(ActionFrame* callerFrame, ActionObject* self);
+
+	ActionValue call(ActionFrame* callerFrame);
 
 	void setName(const std::string& name) { m_name = name; }
 

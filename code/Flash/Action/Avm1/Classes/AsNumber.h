@@ -20,9 +20,11 @@ class AsNumber : public ActionClass
 public:
 	AsNumber(ActionContext* context);
 
-	virtual void init(ActionObject* self, const ActionValueArray& args);
+	virtual void initialize(ActionObject* self);
 
-	virtual void coerce(ActionObject* self) const;
+	virtual void construct(ActionObject* self, const ActionValueArray& args);
+
+	virtual ActionValue xplicit(const ActionValueArray& args);
 
 private:
 	std::wstring Number_toString(const Number* self) const;

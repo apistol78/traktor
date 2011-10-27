@@ -32,13 +32,17 @@ AsObject::AsObject(ActionContext* context)
 	setMember("prototype", ActionValue(prototype));
 }
 
-void AsObject::init(ActionObject* self, const ActionValueArray& args)
+void AsObject::initialize(ActionObject* self)
 {
 }
 
-void AsObject::coerce(ActionObject* self) const
+void AsObject::construct(ActionObject* self, const ActionValueArray& args)
 {
-	T_FATAL_ERROR;
+}
+
+ActionValue AsObject::xplicit(const ActionValueArray& args)
+{
+	return ActionValue();
 }
 
 void AsObject::Object_addProperty(ActionObject* self, const std::string& propertyName, ActionFunction* propertyGet, ActionFunction* propertySet) const

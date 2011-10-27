@@ -2,6 +2,7 @@
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFrame.h"
 #include "Flash/Action/ActionFunctionNative.h"
+#include "Flash/Action/Avm1/ActionSuper.h"
 #include "Flash/Action/Avm1/Classes/AsFunction.h"
 
 namespace traktor
@@ -17,31 +18,15 @@ ActionFunctionNative::ActionFunctionNative(ActionContext* context, INativeFuncti
 {
 }
 
-ActionValue ActionFunctionNative::call(ActionObject* self, const ActionValueArray& args)
+ActionValue ActionFunctionNative::call(ActionObject* self, ActionObject* super, const ActionValueArray& args)
 {
+	T_ASSERT (!is_a< ActionSuper >(self));
+
 	CallArgs fnc;
 	fnc.context = getContext();
 	fnc.self = self;
+	fnc.super = super;
 	fnc.args = args;
-
-	if (m_nativeFunction)
-		m_nativeFunction->call(fnc);
-
-	return fnc.ret;
-}
-
-ActionValue ActionFunctionNative::call(ActionFrame* callerFrame, ActionObject* self)
-{
-	ActionValueStack& callerStack = callerFrame->getStack();
-	int argCount = !callerStack.empty() ? int(callerStack.pop().getNumber()) : 0;
-
-	CallArgs fnc;
-	fnc.context = getContext();
-	fnc.self = self;
-	fnc.args = ActionValueArray(getContext()->getPool(), argCount);
-
-	for (int i = 0; i < argCount; ++i)
-		fnc.args[i] = callerStack.pop();
 
 	if (m_nativeFunction)
 		m_nativeFunction->call(fnc);

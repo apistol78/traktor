@@ -39,13 +39,17 @@ AsSound::AsSound(ActionContext* context)
 	setMember("prototype", ActionValue(prototype));
 }
 
-void AsSound::init(ActionObject* self, const ActionValueArray& args)
+void AsSound::initialize(ActionObject* self)
 {
 }
 
-void AsSound::coerce(ActionObject* self) const
+void AsSound::construct(ActionObject* self, const ActionValueArray& args)
 {
-	T_FATAL_ERROR;
+}
+
+ActionValue AsSound::xplicit(const ActionValueArray& args)
+{
+	return ActionValue();
 }
 
 void AsSound::Sound_attachSound(CallArgs& ca)

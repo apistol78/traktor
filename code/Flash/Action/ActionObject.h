@@ -36,7 +36,7 @@ public:
 	typedef std::map< std::string, ActionValue > member_map_t;
 	typedef std::map< std::string, std::pair< Ref< ActionFunction >, Ref< ActionFunction > > > property_map_t;
 
-	ActionObject(ActionContext* context, IActionObjectRelay* relay = 0);
+	explicit ActionObject(ActionContext* context, IActionObjectRelay* relay = 0);
 
 	explicit ActionObject(ActionContext* context, const std::string& prototypeName, IActionObjectRelay* relay = 0);
 
@@ -69,6 +69,8 @@ public:
 	virtual ActionValue valueOf();
 
 	virtual ActionValue toString();
+
+	virtual Ref< ActionObject > getSuper();
 
 	void setReadOnly();
 
@@ -106,7 +108,6 @@ private:
 	mutable member_map_t m_members;
 	property_map_t m_properties;
 	Ref< ActionObject > m__proto__;		//!< Cached "__proto__" member value.
-	Ref< ActionObject > m_prototype;	//!< Cached "prototype" member value.
 	Ref< IActionObjectRelay > m_relay;
 
 	ActionObject(const ActionObject&) {}	// Not permitted

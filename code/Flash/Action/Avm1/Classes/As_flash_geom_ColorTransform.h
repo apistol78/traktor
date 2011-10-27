@@ -17,9 +17,11 @@ class As_flash_geom_ColorTransform : public ActionClass
 public:
 	As_flash_geom_ColorTransform(ActionContext* context);
 
-	virtual void init(ActionObject* self, const ActionValueArray& args);
+	virtual void initialize(ActionObject* self);
 
-	virtual void coerce(ActionObject* self) const;
+	virtual void construct(ActionObject* self, const ActionValueArray& args);
+
+	virtual ActionValue xplicit(const ActionValueArray& args);
 
 private:
 	avm_number_t ColorTransform_get_alphaMultiplier(ColorTransform* self) const;

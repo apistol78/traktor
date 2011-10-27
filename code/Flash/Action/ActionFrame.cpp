@@ -24,8 +24,6 @@ ActionFrame::ActionFrame(
 ,	m_callee(callee)
 ,	m_stack(context->getPool())
 {
-	setVariable("this", ActionValue(m_self));
-	setVariable("_global", ActionValue(m_context->getGlobal()));
 }
 
 void ActionFrame::setRegister(uint16_t index, const ActionValue& value)

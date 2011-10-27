@@ -205,6 +205,8 @@ SwfRect FlashSpriteInstance::getLocalBounds() const
 	const FlashDisplayList::layer_map_t& layers = m_displayList.getLayers();
 	for (FlashDisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
 	{
+		T_ASSERT (i->second.instance);
+
 		SwfRect layerBounds = i->second.instance->getBounds();
 		bounds.min.x = std::min(bounds.min.x, layerBounds.min.x);
 		bounds.min.y = std::min(bounds.min.y, layerBounds.min.y);
@@ -301,18 +303,28 @@ void FlashSpriteInstance::eventInit()
 	Ref< FlashSpriteInstance > current = context->getMovieClip();
 	context->setMovieClip(this);
 
+	ActionObject* self = getAsObject(context);
+	T_ASSERT (self);
+
+	Ref< ActionObject > super = self->getSuper();
+
 	const RefArray< const IActionVMImage >& initActionScripts = m_sprite->getInitActionScripts();
 	for (RefArray< const IActionVMImage >::const_iterator i = initActionScripts.begin(); i != initActionScripts.end(); ++i)
 	{
-		ActionFrame frame(
+		ActionFrame callFrame(
 			context,
-			getAsObject(context),
+			self,
 			*i,
 			4,
 			0,
 			0
 		);
-		context->getVM()->execute(&frame);
+
+		callFrame.setVariable("this", ActionValue(self));
+		callFrame.setVariable("super", ActionValue(super));
+		callFrame.setVariable("_global", ActionValue(context->getGlobal()));
+
+		context->getVM()->execute(&callFrame);
 	}
 
 	FlashCharacterInstance::eventInit();
@@ -354,17 +366,27 @@ void FlashSpriteInstance::eventFrame()
 	// Execute frame scripts.
 	if (m_lastExecutedFrame != m_currentFrame)
 	{
+		ActionObject* self = getAsObject(context);
+		T_ASSERT (self);
+
+		Ref< ActionObject > super = self->getSuper();
+
 		const RefArray< const IActionVMImage >& scripts = frame->getActionScripts();
 		for (RefArray< const IActionVMImage >::const_iterator i = scripts.begin(); i != scripts.end(); ++i)
 		{
 			ActionFrame callFrame(
 				context,
-				getAsObject(context),
+				self,
 				*i,
 				4,
 				0,
 				0
 			);
+
+			callFrame.setVariable("this", ActionValue(self));
+			callFrame.setVariable("super", ActionValue(super));
+			callFrame.setVariable("_global", ActionValue(context->getGlobal()));
+
 			context->getVM()->execute(&callFrame);
 		}
 
@@ -372,7 +394,7 @@ void FlashSpriteInstance::eventFrame()
 	}
 
 	// Issue events on "visible" characters.
-	const FlashDisplayList::layer_map_t& layers = m_displayList.getLayers();
+	FlashDisplayList::layer_map_t layers = m_displayList.getLayers();
 	for (FlashDisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
 	{
 		if (i->second.instance)
@@ -395,7 +417,7 @@ void FlashSpriteInstance::eventKeyDown(int32_t keyCode)
 	executeScriptEvent("onKeyDown");
 
 	// Issue events on "visible" characters.
-	const FlashDisplayList::layer_map_t& layers = m_displayList.getLayers();
+	FlashDisplayList::layer_map_t layers = m_displayList.getLayers();
 	for (FlashDisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
 	{
 		if (i->second.instance)
@@ -418,7 +440,7 @@ void FlashSpriteInstance::eventKeyUp(int32_t keyCode)
 	executeScriptEvent("onKeyUp");
 
 	// Issue events on "visible" characters.
-	const FlashDisplayList::layer_map_t& layers = m_displayList.getLayers();
+	FlashDisplayList::layer_map_t layers = m_displayList.getLayers();
 	for (FlashDisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
 	{
 		if (i->second.instance)
@@ -444,7 +466,7 @@ void FlashSpriteInstance::eventMouseDown(int32_t x, int32_t y, int32_t button)
 	executeScriptEvent("onMouseDown");
 
 	// Issue events on "visible" characters.
-	const FlashDisplayList::layer_map_t& layers = m_displayList.getLayers();
+	FlashDisplayList::layer_map_t layers = m_displayList.getLayers();
 	if (!layers.empty())
 	{
 		// Transform coordinates into local.
@@ -484,7 +506,7 @@ void FlashSpriteInstance::eventMouseUp(int32_t x, int32_t y, int32_t button)
 	executeScriptEvent("onMouseUp");
 
 	// Issue events on "visible" characters.
-	const FlashDisplayList::layer_map_t& layers = m_displayList.getLayers();
+	FlashDisplayList::layer_map_t layers = m_displayList.getLayers();
 	if (!layers.empty())
 	{
 		// Transform coordinates into local.
@@ -523,7 +545,7 @@ void FlashSpriteInstance::eventMouseMove(int32_t x, int32_t y, int32_t button)
 	executeScriptEvent("onMouseMove");
 
 	// Issue events on "visible" characters.
-	const FlashDisplayList::layer_map_t& layers = m_displayList.getLayers();
+	FlashDisplayList::layer_map_t layers = m_displayList.getLayers();
 	if (!layers.empty())
 	{
 		// Transform coordinates into local.
@@ -586,8 +608,7 @@ void FlashSpriteInstance::executeScriptEvent(const std::string& eventName)
 	if (!eventFunction)
 		return;
 
-	ActionFrame callFrame(cx, self, 0, 4, 0, 0);
-	eventFunction->call(&callFrame, self);
+	eventFunction->call(self);
 }
 
 	}

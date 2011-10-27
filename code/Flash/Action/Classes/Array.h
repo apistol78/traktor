@@ -26,7 +26,7 @@ class T_DLLCLASS Array : public ActionObjectRelay
 	T_RTTI_CLASS;
 
 public:
-	Array();
+	Array(uint32_t capacity);
 
 	Array(const ActionValueArray& values);
 

@@ -30,7 +30,11 @@ AsNumber::AsNumber(ActionContext* context)
 	setMember("prototype", ActionValue(prototype));
 }
 
-void AsNumber::init(ActionObject* self, const ActionValueArray& args)
+void AsNumber::initialize(ActionObject* self)
+{
+}
+
+void AsNumber::construct(ActionObject* self, const ActionValueArray& args)
 {
 	Ref< Number > n;
 	if (args.size() > 0)
@@ -40,9 +44,12 @@ void AsNumber::init(ActionObject* self, const ActionValueArray& args)
 	self->setRelay(n);
 }
 
-void AsNumber::coerce(ActionObject* self) const
+ActionValue AsNumber::xplicit(const ActionValueArray& args)
 {
-	T_FATAL_ERROR;
+	if (args.size() > 0)
+		return ActionValue(args[0].getNumber());
+	else
+		return ActionValue();
 }
 
 std::wstring AsNumber::Number_toString(const Number* self) const

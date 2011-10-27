@@ -25,13 +25,17 @@ AsSecurity::AsSecurity(ActionContext* context)
 	setMember("prototype", ActionValue(prototype));
 }
 
-void AsSecurity::init(ActionObject* self, const ActionValueArray& args)
+void AsSecurity::initialize(ActionObject* self)
 {
 }
 
-void AsSecurity::coerce(ActionObject* self) const
+void AsSecurity::construct(ActionObject* self, const ActionValueArray& args)
 {
-	T_FATAL_ERROR;
+}
+
+ActionValue AsSecurity::xplicit(const ActionValueArray& args)
+{
+	return ActionValue();
 }
 
 void AsSecurity::Security_allowDomain(CallArgs& ca)

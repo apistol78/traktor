@@ -8,7 +8,6 @@ namespace traktor
 {
 
 class OutputStream;
-class StringOutputStream;
 
 	namespace flash
 	{
@@ -36,9 +35,6 @@ public:
 	
 private:
 	Ref< OutputStream > m_stream;
-	std::vector< ActionValue > m_preStack;
-	std::vector< ActionValue > m_preRegisters;
-	Ref< StringOutputStream > m_traceStream;
 };
 
 	}

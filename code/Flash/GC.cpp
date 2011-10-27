@@ -30,14 +30,12 @@ GC& GC::getInstance()
 void GC::addCandidate(Collectable* object)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	T_ASSERT (std::find(m_candidates.begin(), m_candidates.end(), object) == m_candidates.end());
 	m_candidates.push_back(object);
 }
 
 void GC::removeCandidate(Collectable* object)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	T_ASSERT (std::find(m_candidates.begin(), m_candidates.end(), object) != m_candidates.end());
 	m_candidates.remove(object);
 }
 

@@ -25,13 +25,17 @@ AsLocalConnection::AsLocalConnection(ActionContext* context)
 	setMember("prototype", ActionValue(prototype));
 }
 
-void AsLocalConnection::init(ActionObject* self, const ActionValueArray& args)
+void AsLocalConnection::initialize(ActionObject* self)
 {
 }
 
-void AsLocalConnection::coerce(ActionObject* self) const
+void AsLocalConnection::construct(ActionObject* self, const ActionValueArray& args)
 {
-	T_FATAL_ERROR;
+}
+
+ActionValue AsLocalConnection::xplicit(const ActionValueArray& args)
+{
+	return ActionValue();
 }
 
 void AsLocalConnection::LocalConnection_close(CallArgs& ca)

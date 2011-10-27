@@ -26,13 +26,17 @@ AsMovieClipLoader::AsMovieClipLoader(ActionContext* context)
 	setMember("prototype", ActionValue(prototype));
 }
 
-void AsMovieClipLoader::init(ActionObject* self, const ActionValueArray& args)
+void AsMovieClipLoader::initialize(ActionObject* self)
 {
 }
 
-void AsMovieClipLoader::coerce(ActionObject* self) const
+void AsMovieClipLoader::construct(ActionObject* self, const ActionValueArray& args)
 {
-	T_FATAL_ERROR;
+}
+
+ActionValue AsMovieClipLoader::xplicit(const ActionValueArray& args)
+{
+	return ActionValue();
 }
 
 void AsMovieClipLoader::MovieClipLoader_addListener(CallArgs& ca)

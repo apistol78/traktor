@@ -1,5 +1,5 @@
 #include "Core/Log/Log.h"
-#include "Flash/Action/ActionFrame.h"
+#include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Classes/Array.h"
 #include "Flash/Action/Avm1/Classes/AsFunction.h"
@@ -26,13 +26,17 @@ AsFunction::AsFunction(ActionContext* context)
 	setMember("prototype", ActionValue(prototype));
 }
 
-void AsFunction::init(ActionObject* self, const ActionValueArray& args)
+void AsFunction::initialize(ActionObject* self)
 {
 }
 
-void AsFunction::coerce(ActionObject* self) const
+void AsFunction::construct(ActionObject* self, const ActionValueArray& args)
 {
-	T_FATAL_ERROR;
+}
+
+ActionValue AsFunction::xplicit(const ActionValueArray& args)
+{
+	return ActionValue();
 }
 
 void AsFunction::Function_apply(CallArgs& ca)
@@ -53,33 +57,16 @@ void AsFunction::Function_apply(CallArgs& ca)
 	Ref< ActionObject > self = ca.args[0].getObjectAlways(ca.context);
 	Ref< Array > args = ca.args[1].getObjectAlways(ca.context)->getRelay< Array >();
 
-	ActionFrame frame(
-		ca.context,
-		ca.self,
-		0,
-		0,
-		0,
-		function
-	);
-
-	ActionValueStack& stack = frame.getStack();
 	if (args)
 	{
 		const std::vector< ActionValue >& argValues = args->getValues();
+		ActionValueArray argv(getContext()->getPool(), argValues.size());
 		for (size_t i = 0; i < argValues.size(); ++i)
-			stack.push(argValues[i]);
-		stack.push(ActionValue(avm_number_t(argValues.size())));
+			argv[i] = argValues[i];
+		ca.ret = function->call(self, argv);
 	}
 	else
-		stack.push(ActionValue(avm_number_t(0)));
-
-	function->call(
-		&frame,
-		self
-	);
-
-	if (stack.depth() > 0)
-		ca.ret = stack.pop();
+		ca.ret = function->call(self);
 }
 
 void AsFunction::Function_call(CallArgs& ca)
@@ -99,28 +86,11 @@ void AsFunction::Function_call(CallArgs& ca)
 
 	Ref< ActionObject > self = ca.args[0].getObjectAlways(ca.context);
 
-	ActionFrame frame(
-		ca.context,
-		ca.self,
-		0,
-		0,
-		0,
-		function
-	);
+	ActionValueArray args(ca.context->getPool(), ca.args.size() - 1);
+	for (uint32_t i = 0; i < ca.args.size() - 1; ++i)
+		args[i] = ca.args[i + 1];
 
-	ActionValueStack& stack = frame.getStack();
-	for (size_t i = 1; i < ca.args.size(); ++i)
-		stack.push(ca.args[i]);
-
-	stack.push(ActionValue(avm_number_t(ca.args.size() - 1)));
-
-	function->call(
-		&frame,
-		self
-	);
-
-	if (stack.depth() > 0)
-		ca.ret = stack.pop();
+	ca.ret = function->call(self, args);
 }
 
 void AsFunction::Function_toString(CallArgs& ca)

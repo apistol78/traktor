@@ -42,7 +42,7 @@ public:
 
 	const FlashMovie* getMovie() const { return m_movie; }
 
-	const Ref< ActionObject >& getGlobal() const { return m_global; }
+	ActionObject* getGlobal() const { return m_global; }
 
 	FlashSpriteInstance* getMovieClip() const { return m_movieClip; }
 
@@ -54,12 +54,6 @@ protected:
 	virtual void dereference();
 
 private:
-	struct FrameListener
-	{
-		Ref< ActionObject > listenerTarget;
-		Ref< ActionFunction > listenerFunction;
-	};
-
 	const IActionVM* m_vm;
 	const FlashMovie* m_movie;
 	Ref< ActionObject > m_global;

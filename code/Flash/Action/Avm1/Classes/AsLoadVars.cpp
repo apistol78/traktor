@@ -32,13 +32,17 @@ AsLoadVars::AsLoadVars(ActionContext* context)
 	setMember("prototype", ActionValue(prototype));
 }
 
-void AsLoadVars::init(ActionObject* self, const ActionValueArray& args)
+void AsLoadVars::initialize(ActionObject* self)
 {
 }
 
-void AsLoadVars::coerce(ActionObject* self) const
+void AsLoadVars::construct(ActionObject* self, const ActionValueArray& args)
 {
-	T_FATAL_ERROR;
+}
+
+ActionValue AsLoadVars::xplicit(const ActionValueArray& args)
+{
+	return ActionValue();
 }
 
 void AsLoadVars::LoadVars_addRequestHeader(CallArgs& ca)

@@ -60,14 +60,18 @@ AsDate::AsDate(ActionContext* context)
 	setMember("prototype", ActionValue(prototype));
 }
 
-void AsDate::init(ActionObject* self, const ActionValueArray& args)
+void AsDate::initialize(ActionObject* self)
+{
+}
+
+void AsDate::construct(ActionObject* self, const ActionValueArray& args)
 {
 	self->setRelay(new Date());
 }
 
-void AsDate::coerce(ActionObject* self) const
+ActionValue AsDate::xplicit(const ActionValueArray& args)
 {
-	T_FATAL_ERROR;
+	return ActionValue();
 }
 
 void AsDate::Date_getDate(const Date* self) const

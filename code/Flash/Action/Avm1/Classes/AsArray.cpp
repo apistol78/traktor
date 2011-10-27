@@ -22,7 +22,7 @@ struct ArrayPredicateSort
 		(*predicateFunctionArgs)[0] = avl;
 		(*predicateFunctionArgs)[1] = avr;
 
-		ActionValue resv = predicateFunction->call(0, (*predicateFunctionArgs));
+		ActionValue resv = predicateFunction->call(0, 0, (*predicateFunctionArgs));
 		int32_t res = int32_t(resv.getNumber());
 
 		return res < 0;
@@ -65,22 +65,27 @@ AsArray::AsArray(ActionContext* context)
 	prototype->setMember("toString", ActionValue(createNativeFunction(context, this, &AsArray::Array_toString)));
 	prototype->setMember("unshift", ActionValue(createNativeFunction(context, this, &AsArray::Array_unshift)));
 
-	prototype->addProperty("length", createNativeFunction(context, this, &AsArray::Array_get_length), createNativeFunction(context, this, &AsArray::Array_set_length));
-
 	prototype->setMember("constructor", ActionValue(this));
 	prototype->setReadOnly();
 
 	setMember("prototype", ActionValue(prototype));
 }
 
-void AsArray::init(ActionObject* self, const ActionValueArray& args)
+void AsArray::initialize(ActionObject* self)
+{
+	ActionContext* context = getContext();
+
+	self->addProperty("length", createNativeFunction(context, this, &AsArray::Array_get_length), createNativeFunction(context, this, &AsArray::Array_set_length));
+}
+
+void AsArray::construct(ActionObject* self, const ActionValueArray& args)
 {
 	self->setRelay(new Array(args));
 }
 
-void AsArray::coerce(ActionObject* self) const
+ActionValue AsArray::xplicit(const ActionValueArray& args)
 {
-	T_FATAL_ERROR;
+	return ActionValue();
 }
 
 void AsArray::Array_concat(CallArgs& ca)
