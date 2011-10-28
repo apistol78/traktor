@@ -2,6 +2,7 @@
 #define traktor_flash_Array_H
 
 #include <algorithm>
+#include "Core/Containers/AlignedVector.h"
 #include "Flash/Action/ActionObjectRelay.h"
 #include "Flash/Action/ActionValueArray.h"
 
@@ -64,7 +65,7 @@ public:
 		std::sort(m_values.begin(), m_values.end(), predicate);
 	}
 
-	const std::vector< ActionValue >& getValues() const { return m_values; }
+	const AlignedVector< ActionValue >& getValues() const { return m_values; }
 
 	// \name Override relay
 	//@{
@@ -81,7 +82,7 @@ protected:
 	virtual void dereference();
 
 private:
-	std::vector< ActionValue > m_values;
+	AlignedVector< ActionValue > m_values;
 };
 
 	}

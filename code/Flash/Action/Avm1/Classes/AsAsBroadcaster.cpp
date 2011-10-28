@@ -113,8 +113,8 @@ void AsAsBroadcaster::AsBroadcaster_broadcastMessage(CallArgs& ca)
 		Array* listenersArray = listenersArrayValue.getObject()->getRelay< Array >();
 		if (listenersArray)
 		{
-			const std::vector< ActionValue >& listeners = listenersArray->getValues();
-			for (std::vector< ActionValue >::const_iterator i = listeners.begin(); i != listeners.end(); ++i)
+			const AlignedVector< ActionValue >& listeners = listenersArray->getValues();
+			for (AlignedVector< ActionValue >::const_iterator i = listeners.begin(); i != listeners.end(); ++i)
 			{
 				if (!(*i).isObject())
 					continue;

@@ -179,8 +179,8 @@ ActionValue AsArray::Array_toString(const Array* self) const
 {
 	StringOutputStream ss;
 
-	const std::vector< ActionValue >& values = self->getValues();
-	for (std::vector< ActionValue >::const_iterator i = values.begin(); i != values.end(); ++i)
+	const AlignedVector< ActionValue >& values = self->getValues();
+	for (AlignedVector< ActionValue >::const_iterator i = values.begin(); i != values.end(); ++i)
 	{
 		if (i != values.begin())
 			ss << L",";
