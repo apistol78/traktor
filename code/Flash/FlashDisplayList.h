@@ -2,6 +2,7 @@
 #define traktor_flash_FlashDisplayList_H
 
 #include "Core/Object.h"
+#include "Core/RefArray.h"
 #include "Core/Containers/StringMap.h"
 #include "Flash/SwfTypes.h"
 
@@ -108,6 +109,12 @@ public:
 	 * \param depth2 Second depth.
 	 */
 	void swap(int32_t depth1, int32_t depth2);
+
+	/*! \brief Get visible character instances.
+	 *
+	 * \param outCharacterInstances Output array of visible character instances.
+	 */
+	void getVisibleObjects(RefArray< FlashCharacterInstance >& outCharacterInstances) const;
 
 	/*! \brief Get background clear color.
 	 *

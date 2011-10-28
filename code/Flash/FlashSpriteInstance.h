@@ -104,6 +104,7 @@ private:
 	Ref< const FlashSprite > m_sprite;
 	FlashDisplayList m_displayList;
 	Ref< FlashSpriteInstance > m_mask;
+	RefArray< FlashCharacterInstance > m_visibleCharacters;
 	uint32_t m_currentFrame;
 	uint32_t m_nextFrame;
 	uint32_t m_lastUpdateFrame;
