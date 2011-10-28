@@ -392,18 +392,28 @@ bool cglwIsFullscreen(void* windowHandle)
 bool cglwIsActive(void* windowHandle)
 {
 	WindowData* windowData = static_cast< WindowData* >(windowHandle);
-	return [windowData->window isKeyWindow] == YES;
+
+	if ([windowData->window isKeyWindow] != YES)
+		return false;
+	if ([windowData->window isVisible] != YES)
+		return false;
+
+	return true;
 }
 
 bool cglwUpdateWindow(void* windowHandle)
 {
 	WindowData* windowData = static_cast< WindowData* >(windowHandle);
 	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-	
+
 	// Handle system events.
-	NSEvent* event = [NSApp nextEventMatchingMask: NSAnyEventMask untilDate: nil inMode: NSDefaultRunLoopMode dequeue: YES];
-	if (event != nil)
+	for (;;)
 	{
+		// Pop event from queue.
+		NSEvent* event = [NSApp nextEventMatchingMask: NSAnyEventMask untilDate: nil inMode: NSDefaultRunLoopMode dequeue: YES];
+		if (event == nil)
+			break;
+
 		NSEventType eventType = [event type];		
 		if (eventType == NSKeyDown)
 		{
@@ -420,6 +430,7 @@ bool cglwUpdateWindow(void* windowHandle)
 					cglwSetFullscreen(windowHandle, false);
 				else
 					cglwSetFullscreen(windowHandle, true);
+				continue;
 			}
 			
 			// Close application with Cmd+Q combination.
@@ -429,13 +440,12 @@ bool cglwUpdateWindow(void* windowHandle)
 			)
 			{
 				[windowData->window close];
+				continue;
 			}
 		}
-		else if (eventType != NSKeyUp)
-		{
-			[NSApp sendEvent: event];
-			[NSApp updateWindows];
-		}
+
+		// Process event. 
+		[NSApp sendEvent: event];
 	}
 	
 	[pool release];

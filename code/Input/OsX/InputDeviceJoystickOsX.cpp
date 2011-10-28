@@ -267,16 +267,24 @@ void InputDeviceJoystickOsX::callbackValue(void* context, IOReturn result, void*
 		this_->m_button[12] = bool(v != 0);
 	else if (usage == 15)
 		this_->m_button[13] = bool(v != 0);
+	else if (usage >= 48 && usage <= 53)
+	{
+		int32_t min = IOHIDElementGetLogicalMin(element);
+		int32_t max = IOHIDElementGetLogicalMax(element);
 		
-	else if (usage == 48)
-		this_->m_axis[0][0] = adjustDeadZone((v - 127.5f) / 127.5f);	// Left Thumb X
-	else if (usage == 49)
-		this_->m_axis[0][1] = adjustDeadZone(-(v - 127.5f) / 127.5f);	// Left Thumb Y
-	else if (usage == 50)
-		this_->m_axis[1][0] = adjustDeadZone((v - 127.5f) / 127.5f);	// Right Thumb X
-	else if (usage == 53)
-		this_->m_axis[1][1] = adjustDeadZone(-(v - 127.5f) / 127.5f);	// Right Thumb Y
-		
+		if (max > min)
+		{
+			float fv = float(v - min) / (max - min);
+			if (usage == 48)
+				this_->m_axis[0][0] = adjustDeadZone(fv);	// Left Thumb X
+			else if (usage == 49)
+				this_->m_axis[0][1] = adjustDeadZone(-fv);	// Left Thumb Y
+			else if (usage == 50)
+				this_->m_axis[1][0] = adjustDeadZone(fv);	// Right Thumb X
+			else if (usage == 53)
+				this_->m_axis[1][1] = adjustDeadZone(-fv);	// Right Thumb Y
+		}
+	}
 	else if (usage == 57)
 		this_->m_dpad = v;
 }
