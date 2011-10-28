@@ -66,7 +66,7 @@ bool InputServer::create(const Settings* defaultSettings, const Settings* settin
 #	else
 
 	Ref< input::InputDriverOsX > inputDriverOsX = new input::InputDriverOsX();
-	if (inputDriverOsX->create())
+	if (inputDriverOsX->create(input::CtKeyboard | input::CtMouse | input::CtJoystick))
 		m_inputSystem->addDriver(inputDriverOsX);
 
 #	endif

@@ -27,7 +27,7 @@ class T_DLLCLASS InputDriverOsX : public IInputDriver
 public:
 	InputDriverOsX();
 	
-	bool create();
+	bool create(uint32_t categories);
 	
 	void destroy();
 

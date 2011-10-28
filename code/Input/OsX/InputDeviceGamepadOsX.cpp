@@ -282,18 +282,28 @@ void InputDeviceGamepadOsX::callbackValue(void* context, IOReturn result, void* 
 		this_->m_button[12] = bool(v != 0);	// Dpad left
 	else if (usage == 15)
 		this_->m_button[13] = bool(v != 0);	// Dpad right
-	else if (usage == 48)
-		this_->m_axis[0][0] = adjustDeadZone(v / 32767.0f);	// Left Thumb X
-	else if (usage == 49)
-		this_->m_axis[0][1] = adjustDeadZone(-v / 32767.0f);	// Left Thumb Y
-	else if (usage == 51)
-		this_->m_axis[1][0] = adjustDeadZone(v / 32767.0f);	// Right Thumb X
-	else if (usage == 52)
-		this_->m_axis[1][1] = adjustDeadZone(-v / 32767.0f);	// Right Thumb Y
-	else if (usage == 50)				// Left trigger
-		this_->m_axis[2][0] = v / 255.0f;
-	else if (usage == 53)				// Right trigger
-		this_->m_axis[2][1] = v / 255.0f;
+	else if (usage >= 48 && usage <= 53)
+	{
+		int32_t min = IOHIDElementGetLogicalMin(element);
+		int32_t max = IOHIDElementGetLogicalMax(element);
+		
+		if (max > min)
+		{
+			float fv = float(v - min) / (max - min);		
+			if (usage == 48)
+				this_->m_axis[0][0] = adjustDeadZone(fv);	// Left Thumb X
+			else if (usage == 49)
+				this_->m_axis[0][1] = adjustDeadZone(-fv);	// Left Thumb Y
+			else if (usage == 51)
+				this_->m_axis[1][0] = adjustDeadZone(fv);	// Right Thumb X
+			else if (usage == 52)
+				this_->m_axis[1][1] = adjustDeadZone(-fv);	// Right Thumb Y
+			else if (usage == 50)				// Left trigger
+				this_->m_axis[2][0] = fv;
+			else if (usage == 53)				// Right trigger
+				this_->m_axis[2][1] = fv;
+		}
+	}
 }
 
 	}
