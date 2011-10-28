@@ -211,6 +211,9 @@ void FlashMoviePlayer::executeFrame()
 	// Finally issue the frame event.
 	m_movieInstance->eventFrame();
 
+	// Notify frame listeners.
+	context->notifyFrameListeners(avm_number_t(m_timeCurrent));
+
 	m_movieInstance->postDispatchEvents();
 	context->setMovieClip(current);
 

@@ -192,7 +192,7 @@ void SoundDriverOpenAL::wait()
 		// Flush pending errors.
 		alGetError();
 			
-		currentThread->sleep(100);
+		currentThread->sleep(10);
 	}
 }
 

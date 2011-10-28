@@ -154,12 +154,13 @@ void FlashSpriteInstance::updateDisplayList()
 	m_lastUpdateFrame = m_currentFrame;
 
 	// Recursive update of child sprite instances as well.
-	const FlashDisplayList::layer_map_t& layers = m_displayList.getLayers();
-	for (FlashDisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
+	m_displayList.getVisibleObjects(m_visibleCharacters);
+	for (RefArray< FlashCharacterInstance >::const_iterator i = m_visibleCharacters.begin(); i != m_visibleCharacters.end(); ++i)
 	{
-		if (is_a< FlashSpriteInstance >(i->second.instance))
-			static_cast< FlashSpriteInstance* >(i->second.instance.ptr())->updateDisplayList();
+		if (&type_of(*i) == &type_of< FlashSpriteInstance >())
+			static_cast< FlashSpriteInstance* >(*i)->updateDisplayList();
 	}
+	m_visibleCharacters.resize(0);
 }
 
 FlashDisplayList& FlashSpriteInstance::getDisplayList()
@@ -264,13 +265,10 @@ void FlashSpriteInstance::preDispatchEvents()
 	else
 		m_nextFrame = m_currentFrame;
 
-	// Issue dispatch event on child instances.
-	const FlashDisplayList::layer_map_t& layers = m_displayList.getLayers();
-	for (FlashDisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
-	{
-		if (i->second.instance)
-			i->second.instance->preDispatchEvents();
-	}
+	// Issue dispatch event on visible child instances.
+	m_displayList.getVisibleObjects(m_visibleCharacters);
+	for (RefArray< FlashCharacterInstance >::const_iterator i = m_visibleCharacters.begin(); i != m_visibleCharacters.end(); ++i)
+		(*i)->preDispatchEvents();
 }
 
 void FlashSpriteInstance::postDispatchEvents()
@@ -286,12 +284,9 @@ void FlashSpriteInstance::postDispatchEvents()
 	}
 
 	// Issue post dispatch event on child sprite instances.
-	const FlashDisplayList::layer_map_t& layers = m_displayList.getLayers();
-	for (FlashDisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
-	{
-		if (i->second.instance)
-			i->second.instance->postDispatchEvents();
-	}
+	for (RefArray< FlashCharacterInstance >::const_iterator i = m_visibleCharacters.begin(); i != m_visibleCharacters.end(); ++i)
+		(*i)->postDispatchEvents();
+	m_visibleCharacters.resize(0);
 
 	m_inDispatch = false;
 }
@@ -394,12 +389,8 @@ void FlashSpriteInstance::eventFrame()
 	}
 
 	// Issue events on "visible" characters.
-	FlashDisplayList::layer_map_t layers = m_displayList.getLayers();
-	for (FlashDisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
-	{
-		if (i->second.instance)
-			i->second.instance->eventFrame();
-	}
+	for (RefArray< FlashCharacterInstance >::const_iterator i = m_visibleCharacters.begin(); i != m_visibleCharacters.end(); ++i)
+		(*i)->eventFrame();
 
 	FlashCharacterInstance::eventFrame();
 
@@ -417,12 +408,8 @@ void FlashSpriteInstance::eventKeyDown(int32_t keyCode)
 	executeScriptEvent("onKeyDown");
 
 	// Issue events on "visible" characters.
-	FlashDisplayList::layer_map_t layers = m_displayList.getLayers();
-	for (FlashDisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
-	{
-		if (i->second.instance)
-			i->second.instance->eventKeyDown(keyCode);
-	}
+	for (RefArray< FlashCharacterInstance >::const_iterator i = m_visibleCharacters.begin(); i != m_visibleCharacters.end(); ++i)
+		(*i)->eventKeyDown(keyCode);
 
 	FlashCharacterInstance::eventKeyDown(keyCode);
 
@@ -440,12 +427,8 @@ void FlashSpriteInstance::eventKeyUp(int32_t keyCode)
 	executeScriptEvent("onKeyUp");
 
 	// Issue events on "visible" characters.
-	FlashDisplayList::layer_map_t layers = m_displayList.getLayers();
-	for (FlashDisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
-	{
-		if (i->second.instance)
-			i->second.instance->eventKeyUp(keyCode);
-	}
+	for (RefArray< FlashCharacterInstance >::const_iterator i = m_visibleCharacters.begin(); i != m_visibleCharacters.end(); ++i)
+		(*i)->eventKeyUp(keyCode);
 
 	FlashCharacterInstance::eventKeyUp(keyCode);
 
@@ -466,18 +449,14 @@ void FlashSpriteInstance::eventMouseDown(int32_t x, int32_t y, int32_t button)
 	executeScriptEvent("onMouseDown");
 
 	// Issue events on "visible" characters.
-	FlashDisplayList::layer_map_t layers = m_displayList.getLayers();
-	if (!layers.empty())
+	if (!m_visibleCharacters.empty())
 	{
 		// Transform coordinates into local.
 		Vector2 xy = getTransform().inverse() * Vector2(x, y);
 
 		// Propagate event to children.
-		for (FlashDisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
-		{
-			if (i->second.instance)
-				i->second.instance->eventMouseDown(xy.x, xy.y, button);
-		}
+		for (RefArray< FlashCharacterInstance >::const_iterator i = m_visibleCharacters.begin(); i != m_visibleCharacters.end(); ++i)
+			(*i)->eventMouseDown(xy.x, xy.y, button);
 	}
 
 	// Check if we're inside then issue press events.
@@ -506,18 +485,14 @@ void FlashSpriteInstance::eventMouseUp(int32_t x, int32_t y, int32_t button)
 	executeScriptEvent("onMouseUp");
 
 	// Issue events on "visible" characters.
-	FlashDisplayList::layer_map_t layers = m_displayList.getLayers();
-	if (!layers.empty())
+	if (!m_visibleCharacters.empty())
 	{
 		// Transform coordinates into local.
 		Vector2 xy = getTransform().inverse() * Vector2(x, y);
 
 		// Propagate event to children.
-		for (FlashDisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
-		{
-			if (i->second.instance)
-				i->second.instance->eventMouseUp(xy.x, xy.y, button);
-		}
+		for (RefArray< FlashCharacterInstance >::const_iterator i = m_visibleCharacters.begin(); i != m_visibleCharacters.end(); ++i)
+			(*i)->eventMouseUp(xy.x, xy.y, button);
 	}
 
 	// Check if we're inside then issue press events.
@@ -545,18 +520,14 @@ void FlashSpriteInstance::eventMouseMove(int32_t x, int32_t y, int32_t button)
 	executeScriptEvent("onMouseMove");
 
 	// Issue events on "visible" characters.
-	FlashDisplayList::layer_map_t layers = m_displayList.getLayers();
-	if (!layers.empty())
+	if (!m_visibleCharacters.empty())
 	{
 		// Transform coordinates into local.
 		Vector2 xy = getTransform().inverse() * Vector2(x, y);
 
 		// Propagate event to children.
-		for (FlashDisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
-		{
-			if (i->second.instance)
-				i->second.instance->eventMouseMove(xy.x, xy.y, button);
-		}
+		for (RefArray< FlashCharacterInstance >::const_iterator i = m_visibleCharacters.begin(); i != m_visibleCharacters.end(); ++i)
+			(*i)->eventMouseMove(xy.x, xy.y, button);
 	}
 
 	FlashCharacterInstance::eventMouseMove(x, y, button);

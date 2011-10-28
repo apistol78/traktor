@@ -222,6 +222,15 @@ void FlashDisplayList::swap(int32_t depth1, int32_t depth2)
 	std::swap(layer1, layer2);
 }
 
+void FlashDisplayList::getVisibleObjects(RefArray< FlashCharacterInstance >& outCharacterInstances) const
+{
+	for (FlashDisplayList::layer_map_t::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
+	{
+		T_ASSERT (i->second.instance);
+		outCharacterInstances.push_back(i->second.instance);
+	}
+}
+
 const FlashDisplayList::layer_map_t::const_iterator FlashDisplayList::findLayer(const std::string& name) const
 {
 	const int32_t* depth = m_layerMap.find(name);

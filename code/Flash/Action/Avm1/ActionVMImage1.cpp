@@ -6,7 +6,7 @@
 #include "Flash/Action/Avm1/ActionVMTrace1.h"
 
 #if defined(_DEBUG)
-#	define T_TRACE_EXECUTE 0
+#	define T_TRACE_EXECUTE 1
 #else
 #	define T_TRACE_EXECUTE 0
 #endif

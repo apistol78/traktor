@@ -1,3 +1,6 @@
+#define T_USE_NATIVE_TWEEN 1
+#define T_USE_NATIVE_TWEEN_EASE	1
+
 #include <limits>
 #include "Core/Io/StringOutputStream.h"
 #include "Flash/Action/ActionFunctionNative.h"
@@ -36,6 +39,21 @@
 #include "Flash/Action/Avm1/Classes/As_flash_geom_Point.h"
 #include "Flash/Action/Avm1/Classes/As_flash_geom_Rectangle.h"
 #include "Flash/Action/Avm1/Classes/As_flash_geom_Transform.h"
+
+#if T_USE_NATIVE_TWEEN
+// mx.transitions
+#	include "Flash/Action/Avm1/Classes/As_mx_transitions_Tween.h"
+#endif
+
+#if T_USE_NATIVE_TWEEN_EASE
+// mx.transitions.easing
+#	include "Flash/Action/Avm1/Classes/As_mx_transitions_easing_Back.h"
+#	include "Flash/Action/Avm1/Classes/As_mx_transitions_easing_Bounce.h"
+#	include "Flash/Action/Avm1/Classes/As_mx_transitions_easing_Elastic.h"
+#	include "Flash/Action/Avm1/Classes/As_mx_transitions_easing_None.h"
+#	include "Flash/Action/Avm1/Classes/As_mx_transitions_easing_Regular.h"
+#	include "Flash/Action/Avm1/Classes/As_mx_transitions_easing_Strong.h"
+#endif
 
 namespace traktor
 {
@@ -92,6 +110,39 @@ ActionGlobal::ActionGlobal(ActionContext* context)
 		flash->setMember("geom", ActionValue(geom));
 	}
 	setMember("flash", ActionValue(flash));
+
+#if T_USE_NATIVE_TWEEN || T_USE_NATIVE_TWEEN_EASE
+	// mx.
+	Ref< ActionObject > mx = new ActionObject(context);
+	{
+		// mx.transitions.
+		Ref< ActionObject > transitions = new ActionObject(context);
+		if (transitions)
+		{
+#	if T_USE_NATIVE_TWEEN
+			transitions->setMember("Tween", ActionValue(new As_mx_transitions_Tween(context)));
+#	endif
+
+#	if T_USE_NATIVE_TWEEN_EASE
+			// mx.transitions.easing
+			Ref< ActionObject > easing = new ActionObject(context);
+			if (easing)
+			{
+				easing->setMember("Back", ActionValue(new As_mx_transitions_easing_Back(context)));
+				easing->setMember("Bounce", ActionValue(new As_mx_transitions_easing_Bounce(context)));
+				easing->setMember("Elastic", ActionValue(new As_mx_transitions_easing_Elastic(context)));
+				easing->setMember("None", ActionValue(new As_mx_transitions_easing_None(context)));
+				easing->setMember("Regular", ActionValue(new As_mx_transitions_easing_Regular(context)));
+				easing->setMember("String", ActionValue(new As_mx_transitions_easing_Strong(context)));
+
+				transitions->setMember("easing", ActionValue(easing));
+			}
+#	endif
+		}
+		mx->setMember("transitions", ActionValue(transitions));
+	}
+	setMember("mx", ActionValue(mx));
+#endif
 
 	// Initialize broadcaster and subject instances.
 	Ref< AsAsBroadcaster > broadcaster = new AsAsBroadcaster(context);
