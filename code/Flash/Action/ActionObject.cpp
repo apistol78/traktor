@@ -118,7 +118,7 @@ void ActionObject::setMember(const std::string& memberName, const ActionValue& m
 
 bool ActionObject::getMember(const std::string& memberName, ActionValue& outMemberValue)
 {
-	Ref< ActionObject > __proto__ = get__proto__();
+	ActionObject* __proto__ = get__proto__();
 
 	if (getLocalMember(memberName, outMemberValue))
 		return true;
@@ -131,7 +131,7 @@ bool ActionObject::getMember(const std::string& memberName, ActionValue& outMemb
 			if (__proto__->getLocalMember(memberName, outMemberValue))
 				return true;
 
-			Ref< ActionObject > parentPrototype = __proto__->get__proto__();
+			ActionObject* parentPrototype = __proto__->get__proto__();
 			__proto__ = (parentPrototype != __proto__) ? parentPrototype : 0;
 		}
 	}
@@ -161,7 +161,7 @@ void ActionObject::addProperty(const std::string& propertyName, ActionFunction* 
 
 bool ActionObject::getPropertyGet(const std::string& propertyName, Ref< ActionFunction >& outPropertyGet)
 {
-	Ref< ActionObject > __proto__ = get__proto__();
+	ActionObject* __proto__ = get__proto__();
 
 	if (getLocalPropertyGet(propertyName, outPropertyGet))
 		return true;
@@ -174,7 +174,7 @@ bool ActionObject::getPropertyGet(const std::string& propertyName, Ref< ActionFu
 			if (__proto__->getLocalPropertyGet(propertyName, outPropertyGet))
 				return true;
 
-			Ref< ActionObject > parentPrototype = __proto__->get__proto__();
+			ActionObject* parentPrototype = __proto__->get__proto__();
 			__proto__ = (parentPrototype != __proto__) ? parentPrototype : 0;
 		}
 	}
@@ -184,7 +184,7 @@ bool ActionObject::getPropertyGet(const std::string& propertyName, Ref< ActionFu
 
 bool ActionObject::getPropertySet(const std::string& propertyName, Ref< ActionFunction >& outPropertySet)
 {
-	Ref< ActionObject > __proto__ = get__proto__();
+	ActionObject* __proto__ = get__proto__();
 
 	if (getLocalPropertySet(propertyName, outPropertySet))
 		return true;
@@ -197,7 +197,7 @@ bool ActionObject::getPropertySet(const std::string& propertyName, Ref< ActionFu
 			if (__proto__->getLocalPropertySet(propertyName, outPropertySet))
 				return true;
 
-			Ref< ActionObject > parentPrototype = __proto__->get__proto__();
+			ActionObject* parentPrototype = __proto__->get__proto__();
 			__proto__ = (parentPrototype != __proto__) ? parentPrototype : 0;
 		}
 	}
@@ -247,14 +247,14 @@ ActionValue ActionObject::toString()
 
 Ref< ActionObject > ActionObject::getSuper()
 {
-	Ref< ActionFunction > superClass;
+	ActionFunction* superClass;
 	ActionValue memberValue;
 
 	// __proto__
-	Ref< ActionObject > prototype = get__proto__();
+	ActionObject* prototype = get__proto__();
 
 	// __proto__.__proto__
-	Ref< ActionObject > superPrototype = prototype->get__proto__();
+	ActionObject* superPrototype = prototype->get__proto__();
 	if (superPrototype != prototype)
 	{
 		// __proto__.__ctor__

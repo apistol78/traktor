@@ -59,7 +59,7 @@ void AsFunction::Function_apply(CallArgs& ca)
 
 	if (args)
 	{
-		const std::vector< ActionValue >& argValues = args->getValues();
+		const AlignedVector< ActionValue >& argValues = args->getValues();
 		ActionValueArray argv(getContext()->getPool(), argValues.size());
 		for (size_t i = 0; i < argValues.size(); ++i)
 			argv[i] = argValues[i];

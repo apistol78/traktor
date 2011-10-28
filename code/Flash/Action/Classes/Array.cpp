@@ -35,7 +35,8 @@ Ref< Array > Array::concat(const ActionValueArray& values) const
 {
 	Ref< Array > out = new Array(m_values.size() + values.size());
 	out->m_values.insert(out->m_values.end(), m_values.begin(), m_values.end());
-	out->m_values.insert(out->m_values.end(), &values[0], &values[values.size() - 1]);
+	for (uint32_t i = 0; i < values.size(); ++i)
+		out->m_values.push_back(values[i]);
 	return out;
 }
 
@@ -87,7 +88,7 @@ ActionValue Array::shift()
 
 uint32_t Array::unshift(const ActionValueArray& values)
 {
-	std::vector< ActionValue > head(values.size());
+	AlignedVector< ActionValue > head(values.size());
 	for (uint32_t i = 0; i < values.size(); ++i)
 		head[i] = values[i];
 	m_values.insert(m_values.begin(), head.begin(), head.end());
@@ -193,7 +194,7 @@ bool Array::getMember(ActionContext* context, const std::string& memberName, Act
 
 void Array::trace(const IVisitor& visitor) const
 {
-	for (std::vector< ActionValue >::const_iterator i = m_values.begin(); i != m_values.end(); ++i)
+	for (AlignedVector< ActionValue >::const_iterator i = m_values.begin(); i != m_values.end(); ++i)
 	{
 		if (i->isObject())
 			visitor(i->getObject());

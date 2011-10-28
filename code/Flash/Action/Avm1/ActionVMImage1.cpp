@@ -3,12 +3,15 @@
 #include "Flash/Action/Avm1/ActionOpcodes.h"
 #include "Flash/Action/Avm1/ActionOperations.h"
 #include "Flash/Action/Avm1/ActionVMImage1.h"
-#include "Flash/Action/Avm1/ActionVMTrace1.h"
 
 #if defined(_DEBUG)
-#	define T_TRACE_EXECUTE 1
+#	define T_TRACE_EXECUTE 0
 #else
 #	define T_TRACE_EXECUTE 0
+#endif
+
+#if T_TRACE_EXECUTE
+#	include "Flash/Action/Avm1/ActionVMTrace1.h"
 #endif
 
 namespace traktor
