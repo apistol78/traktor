@@ -8,6 +8,24 @@ namespace traktor
 	{
 		namespace
 		{
+		
+struct MouseControlMap
+{
+	InputDefaultControlType control;
+	int32_t index;
+	bool analogue;
+	const wchar_t* name;
+}
+c_mouseControlMap[] =
+{
+	{ DtAxisX, -1, true, L"Axis X" },
+	{ DtAxisY, -2, true, L"Axis Y" },
+	{ DtAxisZ, -3, true, L"Wheel" },
+	{ DtButton1, 0, false, L"Button 1" },
+	{ DtButton2, 1, false, L"Button 2" },
+	{ DtButton3, 2, false, L"Button 3" },
+	{ DtButton4, 3, false, L"Button 4" }
+};
 
 int32_t getElementValue(IOHIDDeviceRef deviceRef, IOHIDElementRef elementRef)
 {
@@ -69,90 +87,46 @@ bool InputDeviceMouseOsX::isConnected() const
 
 int32_t InputDeviceMouseOsX::getControlCount()
 {
-	return 0;
+	return sizeof_array(c_mouseControlMap);
 }
 
 std::wstring InputDeviceMouseOsX::getControlName(int32_t control)
 {
-	switch (control)
-	{
-	case -1:
-		return L"Axis X";
-	case -2:
-		return L"Axis Y";
-	case -3:
-		return L"Wheel";
-	}
-	return L"Button " + toString(1 + control);
+	return c_mouseControlMap[control].name;
 }
 
 bool InputDeviceMouseOsX::isControlAnalogue(int32_t control) const
 {
-	return control < 0;
+	return c_mouseControlMap[control].analogue;
 }
 
 float InputDeviceMouseOsX::getControlValue(int32_t control)
 {
-	if (control == -1)
+	int32_t index = c_mouseControlMap[control].index;
+	if (index == -1)
 		return m_axis[0];
-	else if (control == -2)
+	else if (index == -2)
 		return m_axis[1];
-	else if (control == -3)
+	else if (index == -3)
 		return m_axis[2];
-	else if (control >= 0 && control < sizeof_array(m_button))
-		return m_button[control] ? 1.0f : 0.0f;
+	else if (index >= 0 && index < sizeof_array(m_button))
+		return m_button[index] ? 1.0f : 0.0f;
 	else
 		return 0.0f;
 }
 
 bool InputDeviceMouseOsX::getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const
 {
-	if (analogue)
+	for (int32_t i = 0; i < sizeof_array(c_mouseControlMap); ++i)
 	{
-		switch (controlType)
+		const MouseControlMap& mc = c_mouseControlMap[i];
+		if (mc.control == controlType && mc.analogue == analogue)
 		{
-		case DtAxisX:
-			control = -1;
-			break;
-		
-		case DtAxisY:
-			control = -2;
-			break;
-			
-		case DtAxisZ:
-			control = -3;
-			break;
-
-		default:
-			return false;
+			control = i;
+			return true;
 		}
 	}
-	else
-	{
-		switch (controlType)
-		{
-		case DtButton1:
-			control = 0;
-			break;
-		
-		case DtButton2:
-			control = 1;
-			break;
-		
-		case DtButton3:
-			control = 2;
-			break;
-		
-		case DtButton4:
-			control = 3;
-			break;
-		
-		default:
-			return false;
-		}
-	}
-
-	return true;
+	return false;
 }
 
 void InputDeviceMouseOsX::resetState()
