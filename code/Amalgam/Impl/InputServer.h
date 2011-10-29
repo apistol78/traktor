@@ -67,6 +67,9 @@ private:
 	int32_t m_inputFabricatorAbortControl;
 	bool m_inputFabricatorAbortUnbind;
 	bool m_inputFabricatorAborted;
+	bool m_inputActive;
+	bool m_inputReady;
+	float m_inputReadyTimeout;
 	Ref< input::RumbleEffectPlayer > m_rumbleEffectPlayer;
 };
 

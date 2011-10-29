@@ -36,6 +36,32 @@ namespace traktor
 {
 	namespace amalgam
 	{
+		namespace
+		{
+
+bool anyControlPressed(input::InputSystem* inputSystem, input::InputCategory deviceCategory)
+{
+	int32_t deviceCount = inputSystem->getDeviceCount(deviceCategory, true);
+	for (int32_t i = 0; i < deviceCount; ++i)
+	{
+		input::IInputDevice* device = inputSystem->getDevice(deviceCategory, i, true);
+		if (!device)
+			continue;
+		
+		int32_t controlCount = device->getControlCount();
+		for (int32_t j = 0; j < controlCount; ++j)
+		{
+			if (device->isControlAnalogue(j))
+				continue;
+				
+			if (device->getControlValue(j) > 0.5f)
+				return true;
+		}
+	}
+	return false;
+}		
+		
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.InputServer", InputServer, IInputServer)
 
@@ -83,6 +109,10 @@ bool InputServer::create(const Settings* defaultSettings, const Settings* settin
 		m_rumbleEffectPlayer = new input::RumbleEffectPlayer();
 
 	m_inputFabricatorAborted = false;
+	m_inputActive = false;
+	m_inputReady = false;
+	m_inputReadyTimeout = 5.0f;
+	
 	return true;
 }
 
@@ -140,59 +170,99 @@ int32_t InputServer::reconfigure(const Settings* settings)
 
 void InputServer::update(float deltaTime, bool renderViewActive)
 {
-	// Don't update input if render view is inactive.
-	if (!renderViewActive)
+	if (!m_inputSystem)
 		return;
-
-	if (m_inputSystem)
+	
+	// Wait until all inputs have been idle; remove
+	// stuck devices if timeout.
+	if (!m_inputReady)
 	{
+		// Poll all devices.
 		m_inputSystem->update(deltaTime);
 
-		if (!m_inputSourceFabricator)
+		// Collect all devices which has a digital input active.
+		int32_t deviceCount = m_inputSystem->getDeviceCount();
+		if (!deviceCount)
+			return;
+
+		RefArray< input::IInputDevice > stuckDevices;
+		for (int32_t i = 0; i < deviceCount; ++i)
 		{
-			// Normal condition; update mapping and proceed.
-			if (m_inputMapping)
-				m_inputMapping->update(deltaTime);
-		}
-		else if (m_inputFabricatorAbortDevice)
-		{
-			// Abort has been triggered; wait until abort key has been released.
-			if (m_inputFabricatorAbortDevice->getControlValue(m_inputFabricatorAbortControl) < 0.5f)
+			input::IInputDevice* device = m_inputSystem->getDevice(i);
+			if (!device || !device->isConnected())
+				continue;
+			
+			int32_t controlCount = device->getControlCount();
+			for (int32_t j = 0; j < controlCount; ++j)
 			{
-				m_inputSourceFabricator = 0;
+				if (device->isControlAnalogue(j))
+					continue;
 
-				if (m_inputFabricatorAbortUnbind)
+				if (device->getControlValue(j) > 0.5f)
 				{
-					if (m_inputMappingSourceData)
-						m_inputMappingSourceData->setSourceData(m_inputSourceFabricatorId, 0);
-
-					// Update mapping with new, fabricated, source.
-					if (m_inputMappingSourceData && m_inputMappingStateData)
-					{
-						m_inputMapping = new input::InputMapping();
-						m_inputMapping->create(m_inputSystem, m_inputMappingSourceData, m_inputMappingStateData);
-						m_inputMapping->update(deltaTime);
-					}
-					else
-						m_inputMapping = 0;
+					stuckDevices.push_back(device);
+					break;
 				}
-				else
-					m_inputFabricatorAborted = true;
-
-				m_inputFabricatorAbortDevice = 0;
-				m_inputFabricatorAbortControl = 0;
-				m_inputFabricatorAbortUnbind = false;
 			}
 		}
-		else
+		
+		// If no control active then we can transition into ready state.
+		if (stuckDevices.empty())
+			m_inputReady = true;
+		else if ((m_inputReadyTimeout -= deltaTime) <= 0.0f)
 		{
-			Ref< input::IInputSourceData > sourceData = m_inputSourceFabricator->update();
-			if (sourceData)
+			log::warning << L"Some input device(s) seem stuck; device(s) disabled" << Endl;
+			for (RefArray< input::IInputDevice >::iterator i = stuckDevices.begin(); i != stuckDevices.end(); ++i)
+				m_inputSystem->removeDevice(*i);
+			m_inputReady = true;
+		}
+		
+		return;
+	}
+
+	// Don't update input if render view is inactive.
+	if (!renderViewActive)
+	{
+		if (m_inputMapping)
+			m_inputMapping->reset();
+
+		m_inputActive = false;
+		return;
+	}
+	
+	if (!m_inputActive)
+	{
+		// Poll all devices.
+		m_inputSystem->update(deltaTime);
+
+		// Cannot become active as long as any mouse button is pressed
+		// in case application became active with mouse.
+		if (anyControlPressed(m_inputSystem, input::CtMouse))
+			return;
+		
+		m_inputActive = true;
+		return;
+	}
+	
+	// Poll all devices.
+	m_inputSystem->update(deltaTime);
+
+	if (!m_inputSourceFabricator)
+	{
+		// Normal condition; update mapping and proceed.
+		if (m_inputMapping)
+			m_inputMapping->update(deltaTime);
+	}
+	else if (m_inputFabricatorAbortDevice)
+	{
+		// Abort has been triggered; wait until abort key has been released.
+		if (m_inputFabricatorAbortDevice->getControlValue(m_inputFabricatorAbortControl) < 0.5f)
+		{
+			m_inputSourceFabricator = 0;
+			if (m_inputFabricatorAbortUnbind)
 			{
-				m_inputSourceFabricator = 0;
-				
 				if (m_inputMappingSourceData)
-					m_inputMappingSourceData->setSourceData(m_inputSourceFabricatorId, sourceData);
+					m_inputMappingSourceData->setSourceData(m_inputSourceFabricatorId, 0);
 
 				// Update mapping with new, fabricated, source.
 				if (m_inputMappingSourceData && m_inputMappingStateData)
@@ -203,46 +273,71 @@ void InputServer::update(float deltaTime, bool renderViewActive)
 				}
 				else
 					m_inputMapping = 0;
-
-				m_inputFabricatorAborted = false;
 			}
 			else
+				m_inputFabricatorAborted = true;
+
+			m_inputFabricatorAbortDevice = 0;
+			m_inputFabricatorAbortControl = 0;
+			m_inputFabricatorAbortUnbind = false;
+		}
+	}
+	else
+	{
+		Ref< input::IInputSourceData > sourceData = m_inputSourceFabricator->update();
+		if (sourceData)
+		{
+			m_inputSourceFabricator = 0;
+			
+			if (m_inputMappingSourceData)
+				m_inputMappingSourceData->setSourceData(m_inputSourceFabricatorId, sourceData);
+
+			// Update mapping with new, fabricated, source.
+			if (m_inputMappingSourceData && m_inputMappingStateData)
 			{
-				// Abort fabrication if escape or backspace on any keyboard has been pressed.
-				int32_t keyboardCount = m_inputSystem->getDeviceCount(input::CtKeyboard, true);
-				for (int32_t i = 0; i < keyboardCount; ++i)
+				m_inputMapping = new input::InputMapping();
+				m_inputMapping->create(m_inputSystem, m_inputMappingSourceData, m_inputMappingStateData);
+				m_inputMapping->update(deltaTime);
+			}
+			else
+				m_inputMapping = 0;
+
+			m_inputFabricatorAborted = false;
+		}
+		else
+		{
+			// Abort fabrication if escape or backspace on any keyboard has been pressed.
+			int32_t keyboardCount = m_inputSystem->getDeviceCount(input::CtKeyboard, true);
+			for (int32_t i = 0; i < keyboardCount; ++i)
+			{
+				Ref< input::IInputDevice > keyboardDevice = m_inputSystem->getDevice(input::CtKeyboard, i, true);
+				if (!keyboardDevice)
+					continue;
+
+				int32_t control;
+				
+				if (
+					keyboardDevice->getDefaultControl(input::DtKeyEscape, false, control) &&
+					keyboardDevice->getControlValue(control) >= 0.5f
+				)
 				{
-					Ref< input::IInputDevice > keyboardDevice = m_inputSystem->getDevice(input::CtKeyboard, i, true);
-					if (!keyboardDevice)
-						continue;
+					// Found pressed escape key; initiate abort sequence as we need to wait until escape is released.
+					m_inputFabricatorAbortDevice = keyboardDevice;
+					m_inputFabricatorAbortControl = control;
+					m_inputFabricatorAbortUnbind = false;
+					break;
+				}
 
-					int32_t control;
-					
-					if (
-						keyboardDevice->getDefaultControl(input::DtKeyEscape, false, control) &&
-						keyboardDevice->getControlValue(control) >= 0.5f
-					)
-					{
-						// Found pressed escape key; initiate abort sequence as we need to wait until escape is released.
-						log::info << L"Abort input mapping" << Endl;
-						m_inputFabricatorAbortDevice = keyboardDevice;
-						m_inputFabricatorAbortControl = control;
-						m_inputFabricatorAbortUnbind = false;
-						break;
-					}
-
-					if (
-						keyboardDevice->getDefaultControl(input::DtKeyBack, false, control) &&
-						keyboardDevice->getControlValue(control) >= 0.5f
-					)
-					{
-						// Found pressed backspace key; initiate abort sequence as we need to wait until backspace is released.
-						log::info << L"Unbind input mapping" << Endl;
-						m_inputFabricatorAbortDevice = keyboardDevice;
-						m_inputFabricatorAbortControl = control;
-						m_inputFabricatorAbortUnbind = true;
-						break;
-					}
+				if (
+					keyboardDevice->getDefaultControl(input::DtKeyBack, false, control) &&
+					keyboardDevice->getControlValue(control) >= 0.5f
+				)
+				{
+					// Found pressed backspace key; initiate abort sequence as we need to wait until backspace is released.
+					m_inputFabricatorAbortDevice = keyboardDevice;
+					m_inputFabricatorAbortControl = control;
+					m_inputFabricatorAbortUnbind = true;
+					break;
 				}
 			}
 		}
