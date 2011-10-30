@@ -252,11 +252,12 @@ Ref< FlashSpriteInstance > AsMovieClip::MovieClip_attachMovie_4(FlashSpriteInsta
 	// Set initial properties.
 	if (initObject)
 	{
-		const ActionObject::member_map_t& members = initObject->getLocalMembers();
-		for (ActionObject::member_map_t::const_iterator i = members.begin(); i != members.end(); ++i)
-		{
-			log::debug << L"Set member \"" << mbstows(i->first) << L"\", value \"" << i->second.getWideString() << L"\"" << Endl;
-		}
+		// \fixme
+		//const ActionObject::member_map_t& members = initObject->getLocalMembers();
+		//for (ActionObject::member_map_t::const_iterator i = members.begin(); i != members.end(); ++i)
+		//{
+		//	log::debug << L"Set member \"" << mbstows(i->first) << L"\", value \"" << i->second.getWideString() << L"\"" << Endl;
+		//}
 	}
 
 	// Add new instance to display list.

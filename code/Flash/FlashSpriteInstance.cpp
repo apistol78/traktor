@@ -231,15 +231,18 @@ FlashSpriteInstance* FlashSpriteInstance::getMask()
 	return m_mask;
 }
 
-bool FlashSpriteInstance::getMember(ActionContext* context, const std::string& memberName, ActionValue& outMemberValue)
+bool FlashSpriteInstance::getMember(ActionContext* context, uint32_t memberName, ActionValue& outMemberValue)
 {
 	// Find visible named character in display list.
-	FlashDisplayList::layer_map_t::const_iterator i = m_displayList.findLayer(memberName);
-	if (i != m_displayList.getLayers().end())
+	// \fixme Use string id in characters.
+	const FlashDisplayList::layer_map_t& layers = m_displayList.getLayers();
+	for (FlashDisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
 	{
-		T_ASSERT (i->second.instance);
-		outMemberValue = ActionValue(i->second.instance->getAsObject(context));
-		return true;
+		if (context->getStrings()[i->second.instance->getName()] == memberName)
+		{
+			outMemberValue = ActionValue(i->second.instance->getAsObject(context));
+			return true;
+		}
 	}
 
 	// No character, propagate to base class.

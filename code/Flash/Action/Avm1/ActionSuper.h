@@ -33,13 +33,13 @@ public:
 
 	virtual ActionObject* get__proto__();
 
-	virtual void setMember(const std::string& memberName, const ActionValue& memberValue);
+	virtual void setMember(uint32_t memberName, const ActionValue& memberValue);
 
-	virtual bool getMember(const std::string& memberName, ActionValue& outMemberValue);
+	virtual bool getMember(uint32_t memberName, ActionValue& outMemberValue);
 
-	virtual bool getPropertyGet(const std::string& propertyName, Ref< ActionFunction >& outPropertyGet);
+	virtual bool getPropertyGet(uint32_t propertyName, Ref< ActionFunction >& outPropertyGet);
 
-	virtual bool getPropertySet(const std::string& propertyName, Ref< ActionFunction >& outPropertySet);
+	virtual bool getPropertySet(uint32_t propertyName, Ref< ActionFunction >& outPropertySet);
 
 	virtual ActionValue valueOf();
 

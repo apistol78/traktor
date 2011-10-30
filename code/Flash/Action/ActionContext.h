@@ -2,6 +2,7 @@
 #define traktor_flash_ActionContext_H
 
 #include "Flash/Collectable.h"
+#include "Flash/Action/ActionStrings.h"
 #include "Flash/Action/ActionValue.h"
 #include "Flash/Action/ActionValuePool.h"
 
@@ -52,6 +53,8 @@ public:
 
 	FlashSpriteInstance* getMovieClip() const { return m_movieClip; }
 
+	ActionStrings& getStrings() { return m_strings; }
+
 	ActionValuePool& getPool() { return m_pool; }
 
 protected:
@@ -70,8 +73,11 @@ private:
 	const FlashMovie* m_movie;
 	Ref< ActionObject > m_global;
 	Ref< FlashSpriteInstance > m_movieClip;
+	ActionStrings m_strings;
 	ActionValuePool m_pool;
 	std::vector< FrameListener > m_frameListeners;
+	uint32_t m_idOnFrame;
+	uint32_t m_idPrototype;
 };
 
 	}

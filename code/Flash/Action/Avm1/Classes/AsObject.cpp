@@ -45,12 +45,12 @@ ActionValue AsObject::xplicit(const ActionValueArray& args)
 	return ActionValue();
 }
 
-void AsObject::Object_addProperty(ActionObject* self, const std::string& propertyName, ActionFunction* propertyGet, ActionFunction* propertySet) const
+void AsObject::Object_addProperty(ActionObject* self, uint32_t propertyName, ActionFunction* propertyGet, ActionFunction* propertySet) const
 {
 	self->addProperty(propertyName, propertyGet, propertySet);
 }
 
-bool AsObject::Object_hasOwnProperty(const ActionObject* self, const std::string& propertyName) const
+bool AsObject::Object_hasOwnProperty(const ActionObject* self, uint32_t propertyName) const
 {
 	return self->hasOwnMember(propertyName) || self->hasOwnProperty(propertyName);
 }
@@ -75,20 +75,22 @@ void AsObject::Object_registerClass(CallArgs& ca)
 {
 	Ref< ActionObject > global = ca.context->getGlobal();
 	std::string movieClipName = ca.args[0].getString();
+
+	uint32_t movieClipNameId = ca.context->getStrings()[movieClipName];
 	
 	if (ca.args.size() >= 2)
 	{
 		ActionValue theClass = ca.args[1];
 		if (theClass.isObject())
 		{
-			global->setMember(movieClipName, theClass);
+			global->setMember(movieClipNameId, theClass);
 			ca.ret = ActionValue(true);
 		}
 		else
 			ca.ret = ActionValue(false);
 	}
 	else
-		ca.ret = ActionValue(global->deleteMember(movieClipName));
+		ca.ret = ActionValue(global->deleteMember(movieClipNameId));
 }
 
 void AsObject::Object_toString(CallArgs& ca)

@@ -25,9 +25,9 @@ public:
 
 	virtual ActionObject* getAsObject(ActionContext* context);
 
-	virtual bool setMember(ActionContext* context, const std::string& memberName, const ActionValue& memberValue);
+	virtual bool setMember(ActionContext* context, uint32_t memberName, const ActionValue& memberValue);
 
-	virtual bool getMember(ActionContext* context, const std::string& memberName, ActionValue& outMemberValue);
+	virtual bool getMember(ActionContext* context, uint32_t memberName, ActionValue& outMemberValue);
 
 protected:
 	ActionObjectRelay(const char* const prototype);

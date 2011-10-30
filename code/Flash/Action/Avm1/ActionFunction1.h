@@ -40,8 +40,12 @@ public:
 private:
 	Ref< const IActionVMImage > m_image;
 	uint16_t m_argumentCount;
-	std::vector< std::string > m_argumentsIntoVariables;
+	std::vector< uint32_t > m_argumentsIntoVariables;
 	Ref< ActionDictionary > m_dictionary;
+	uint32_t m_idThis;
+	uint32_t m_idSuper;
+	uint32_t m_idGlobal;
+	uint32_t m_idArguments;
 };
 
 	}

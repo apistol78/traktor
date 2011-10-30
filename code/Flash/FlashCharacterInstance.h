@@ -156,7 +156,7 @@ public:
 
 	//@}
 
-	virtual bool getMember(ActionContext* context, const std::string& memberName, ActionValue& outMemberValue);
+	virtual bool getMember(ActionContext* context, uint32_t memberName, ActionValue& outMemberValue);
 
 protected:
 	virtual void trace(const IVisitor& visitor) const;
@@ -171,6 +171,7 @@ private:
 	SwfCxTransform m_cxform;
 	Matrix33 m_transform;
 	SmallMap< uint32_t, Ref< const IActionVMImage > > m_eventScripts;
+	uint32_t m_idParent;
 };
 
 	}

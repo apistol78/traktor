@@ -46,7 +46,7 @@ public:
 		uint8_t registerCount,
 		uint16_t flags,
 		const std::vector< std::pair< std::string, uint8_t > >& argumentsIntoRegisters,
-		const std::map< std::string, ActionValue >& variables,
+		const std::map< uint32_t, ActionValue >& variables,
 		ActionDictionary* dictionary
 	);
 
@@ -61,9 +61,14 @@ private:
 	Ref< const IActionVMImage > m_image;
 	uint8_t m_registerCount;
 	uint16_t m_flags;
-	std::vector< std::pair< std::string, uint8_t > > m_argumentsIntoRegisters;
-	std::map< std::string, ActionValue > m_variables;
+	std::vector< std::pair< uint32_t, uint8_t > > m_argumentsIntoRegisters;
+	std::vector< std::pair< uint32_t, ActionValue > > m_variables;
 	Ref< ActionDictionary > m_dictionary;
+	uint32_t m_idThis;
+	uint32_t m_idSuper;
+	uint32_t m_idGlobal;
+	uint32_t m_idArguments;
+	uint32_t m_idRoot;
 };
 
 	}

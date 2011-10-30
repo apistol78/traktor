@@ -65,11 +65,11 @@ bool FlashMoviePlayer::create(FlashMovie* movie)
 
 	// Get references to key and mouse singletons.
 	Ref< AsKey > key;
-	if (global->getLocalMember("Key", memberValue))
+	if (global->getMember("Key", memberValue))
 		m_key = memberValue.getObject< AsKey >();
 
 	Ref< AsMouse > mouse;
-	if (global->getLocalMember("Mouse", memberValue))
+	if (global->getMember("Mouse", memberValue))
 		m_mouse = memberValue.getObject< AsMouse >();
 		
 	// Preload resources into display renderer.
@@ -335,7 +335,7 @@ ActionValue FlashMoviePlayer::getGlobal(const std::string& name) const
 	T_ASSERT (global);
 
 	ActionValue value;
-	global->getLocalMember(name, value);
+	global->getMember(name, value);
 
 	return value;
 }

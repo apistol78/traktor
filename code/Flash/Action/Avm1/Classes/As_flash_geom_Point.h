@@ -27,6 +27,9 @@ public:
 	virtual ActionValue xplicit(const ActionValueArray& args);
 
 private:
+	uint32_t m_idX;
+	uint32_t m_idY;
+
 	void Point_distance(CallArgs& ca);
 
 	void Point_interpolate(CallArgs& ca);

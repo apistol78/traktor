@@ -1,5 +1,6 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/Endian.h"
+#include "Core/Misc/String.h"
 #include "Core/Misc/StringSplit.h"
 #include "Core/Timer/Timer.h"
 #include "Flash/FlashMovie.h"
@@ -14,6 +15,7 @@
 #include "Flash/Action/Avm1/ActionOperations.h"
 #include "Flash/Action/Avm1/ActionSuper.h"
 #include "Flash/Action/Avm1/ActionVMImage1.h"
+#include "Flash/Action/Classes/Array.h"
 #include "Flash/Action/Avm1/Classes/AsObject.h"
 #include "Flash/Action/Avm1/Classes/AsArray.h"
 #include "Flash/Action/Avm1/Classes/AsFunction.h"
@@ -35,16 +37,18 @@ ActionValue getVariable(ExecutionState& state, const std::string& variableName)
 {
 	ActionValue value;
 
+	uint32_t variableId = state.context->getStrings()[variableName];
+
 	if (state.with)
 	{
-		if (state.with->getMember(variableName, value))
+		if (state.with->getMember(variableId, value))
 			return value;
 	}
 
-	if (state.frame->getVariable(variableName, value))
+	if (state.frame->getVariable(variableId, value))
 		return value;
 
-	if (state.self->getMember(variableName, value))
+	if (state.self->getMember(variableId, value))
 		return value;
 
 	if (state.movieClip)
@@ -52,7 +56,7 @@ ActionValue getVariable(ExecutionState& state, const std::string& variableName)
 		ActionObject* movieClipAS = state.movieClip->getAsObject(state.context);
 		T_ASSERT (movieClipAS);
 
-		if (movieClipAS != state.self && movieClipAS->getMember(variableName, value))
+		if (movieClipAS != state.self && movieClipAS->getMember(variableId, value))
 			return value;
 	}
 
@@ -277,7 +281,9 @@ void opx_setVariable(ExecutionState& state)
 	ActionValue value = stack.pop();
 	std::string variableName = stack.pop().getString();
 
-	ActionValue* variableValue = state.frame->getVariableValue(variableName);
+	uint32_t variableNameId = state.context->getStrings()[variableName];
+
+	ActionValue* variableValue = state.frame->getVariableValue(variableNameId);
 	if (variableValue)
 	{
 		*variableValue = value;
@@ -289,7 +295,7 @@ void opx_setVariable(ExecutionState& state)
 		ActionObject* movieClipAS = state.movieClip->getAsObject(state.context);
 		T_ASSERT (movieClipAS);
 
-		movieClipAS->setMember(variableName, value);
+		movieClipAS->setMember(variableNameId, value);
 		return;
 	}
 }
@@ -592,7 +598,8 @@ void opx_delete(ExecutionState& state)
 	ActionValue objectValue = stack.pop();
 	if (objectValue.isObject())
 	{
-		bool deleted = objectValue.getObject()->deleteMember(memberName);
+		uint32_t memberNameId = state.context->getStrings()[memberName];
+		bool deleted = objectValue.getObject()->deleteMember(memberNameId);
 		stack.push(ActionValue(deleted));
 	}
 	else
@@ -604,9 +611,11 @@ void opx_delete2(ExecutionState& state)
 	ActionValueStack& stack = state.frame->getStack();
 	std::string variableName = stack.pop().getString();
 
+	uint32_t variableNameId = state.context->getStrings()[variableName];
+
 	if (state.with)
 	{
-		if (state.with->deleteMember(variableName))
+		if (state.with->deleteMember(variableNameId))
 		{
 			stack.push(ActionValue(true));
 			return;
@@ -615,7 +624,7 @@ void opx_delete2(ExecutionState& state)
 
 	if (state.self)
 	{
-		if (state.self->deleteMember(variableName))
+		if (state.self->deleteMember(variableNameId))
 		{
 			stack.push(ActionValue(true));
 			return;
@@ -627,7 +636,7 @@ void opx_delete2(ExecutionState& state)
 		ActionObject* movieClipAS = state.movieClip->getAsObject(state.context);
 		T_ASSERT (movieClipAS);
 
-		if (movieClipAS->deleteMember(variableName))
+		if (movieClipAS->deleteMember(variableNameId))
 		{
 			stack.push(ActionValue(true));
 			return;
@@ -649,9 +658,11 @@ void opx_defineLocal(ExecutionState& state)
 		variableFunction->setName(variableName);
 #endif
 
+	uint32_t variableNameId = state.context->getStrings()[variableName];
+
 	if (state.frame->getCallee())
 	{
-		state.frame->setVariable(variableName, variableValue);
+		state.frame->setVariable(variableNameId, variableValue);
 		return;
 	}
 
@@ -660,7 +671,7 @@ void opx_defineLocal(ExecutionState& state)
 		ActionObject* movieClipAS = state.movieClip->getAsObject(state.context);
 		T_ASSERT (movieClipAS);
 
-		movieClipAS->setMember(variableName, variableValue);
+		movieClipAS->setMember(variableNameId, variableValue);
 		return;
 	}
 }
@@ -752,9 +763,11 @@ void opx_defineLocal2(ExecutionState& state)
 	ActionValueStack& stack = state.frame->getStack();
 	std::string variableName = stack.pop().getString();
 
+	uint32_t variableNameId = state.context->getStrings()[variableName];
+
 	if (state.frame->getCallee())
 	{
-		state.frame->setVariable(variableName, ActionValue());
+		state.frame->setVariable(variableNameId, ActionValue());
 		return;
 	}
 
@@ -763,7 +776,7 @@ void opx_defineLocal2(ExecutionState& state)
 		ActionObject* movieClipAS = state.movieClip->getAsObject(state.context);
 		T_ASSERT (movieClipAS);
 
-		movieClipAS->setMember(variableName, ActionValue());
+		movieClipAS->setMember(variableNameId, ActionValue());
 	}
 }
 
@@ -940,12 +953,35 @@ void opx_swap(ExecutionState& state)
 void opx_getMember(ExecutionState& state)
 {
 	ActionValueStack& stack = state.frame->getStack();
-	std::string memberName = stack.pop().getString();
+	ActionValue memberNameValue = stack.pop();
 	ActionValue targetValue = stack.pop();
 	ActionValue memberValue;
 
 	Ref< ActionObject > target = targetValue.getObjectAlways(state.context);
-	if (target->getMember(memberName, memberValue))
+
+	// Special case for arrays; we cannot use string table for all entries thus need to explicitly access elements.
+	const IActionObjectRelay* relay = target->getRelay();
+	if (relay != 0 && &type_of(relay) == &type_of< Array >())
+	{
+		const Array* arr = checked_type_cast< const Array* >(relay);
+		int32_t index;
+
+		if (memberNameValue.isNumeric())
+			index = int32_t(memberNameValue.getNumber());
+		else
+			index = parseString< int32_t >(memberNameValue.getString(), -1);
+
+		if (index >= 0 && index < arr->length())
+		{
+			stack.push((*arr)[index]);
+			return;
+		}
+	}
+
+	std::string memberName = memberNameValue.getString();
+	uint32_t memberId = state.context->getStrings()[memberName];
+
+	if (target->getMember(memberId, memberValue))
 	{
 		T_IF_TRACE(
 			*state.trace << L"AopGetMember: \"" << mbstows(memberName) << L"\" => \"" << memberValue.getWideString() << L"\"" << Endl;
@@ -955,7 +991,7 @@ void opx_getMember(ExecutionState& state)
 	}
 
 	Ref< ActionFunction > propertyGet;
-	if (target->getPropertyGet(memberName, propertyGet))
+	if (target->getPropertyGet(memberId, propertyGet))
 	{
 		stack.push(ActionValue(avm_number_t(0)));
 		memberValue = propertyGet->call(state.frame, target);
@@ -977,26 +1013,48 @@ void opx_setMember(ExecutionState& state)
 {
 	ActionValueStack& stack = state.frame->getStack();
 	ActionValue memberValue = stack.pop();
-	std::string memberName = stack.pop().getString();
+	ActionValue memberNameValue = stack.pop();
 	ActionValue targetValue = stack.pop();
 
 	T_IF_TRACE(
 		*state.trace << L"Target: \"" << targetValue.getWideString() << L"\"" << Endl;
-		*state.trace << L"Member: \"" << mbstows(memberName) << L"\"" << Endl;
+		*state.trace << L"Member: \"" << memberNameValue.getWideString() << L"\"" << Endl;
 		*state.trace << L"Value: \"" << memberValue.getWideString() << L"\"" << Endl;
 	)
 
 	Ref< ActionObject > target = targetValue.getObjectAlways(state.context);
 
+	// Special case for arrays; we cannot use string table for all entries thus need to explicitly access elements.
+	IActionObjectRelay* relay = target->getRelay();
+	if (relay != 0 && &type_of(relay) == &type_of< Array >())
+	{
+		Array* arr = checked_type_cast< Array* >(relay);
+		int32_t index;
+
+		if (memberNameValue.isNumeric())
+			index = int32_t(memberNameValue.getNumber());
+		else
+			index = parseString< int32_t >(memberNameValue.getString(), -1);
+
+		if (index >= 0 && index < arr->length())
+		{
+			(*arr)[index] = memberValue;
+			return;
+		}
+	}
+
+	std::string memberName = memberNameValue.getString();
+	uint32_t memberId = state.context->getStrings()[memberName];
+
 	Ref< ActionFunction > propertySet;
-	if (target->getPropertySet(memberName, propertySet))
+	if (target->getPropertySet(memberId, propertySet))
 	{
 		stack.push(memberValue);
 		stack.push(ActionValue(avm_number_t(1)));
 		propertySet->call(state.frame, target);
 	}
 	else
-		target->setMember(memberName, memberValue);
+		target->setMember(memberId, memberValue);
 
 #if defined(_DEBUG)
 	ActionFunction* memberFunction = memberValue.getObject< ActionFunction >();
@@ -1167,13 +1225,17 @@ void opx_enum2(ExecutionState& state)
 	{
 		Ref< ActionObject > object = enumObject.getObject();
 
-		const ActionObject::member_map_t& members = object->getLocalMembers();
-		for (ActionObject::member_map_t::const_iterator i = members.begin(); i != members.end(); ++i)
-		{
-			// \fixme Should only enumerate user added members.
-			if (i->first != "__proto__" && i->first != "prototype")
-				stack.push(ActionValue(i->first));
-		}
+		uint32_t idProto = state.context->getStrings()["__proto__"];
+		uint32_t idPrototype = state.context->getStrings()["prototype"];
+
+		//const ActionObject::member_map_t& members = object->getLocalMembers();
+		//for (ActionObject::member_map_t::const_iterator i = members.begin(); i != members.end(); ++i)
+		//{
+		//	// \fixme Should only enumerate user added members.
+		//	// \fixme Reverse lookup of string.
+		//	if (i->first != idProto && i->first != idPrototype)
+		//		stack.push(ActionValue(i->first));
+		//}
 
 		//const ActionObject::property_map_t& properties = object->getProperties();
 		//for (ActionObject::property_map_t::const_iterator i = properties.begin(); i != properties.end(); ++i)

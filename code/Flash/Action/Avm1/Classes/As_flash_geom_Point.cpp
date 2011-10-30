@@ -2,6 +2,7 @@
 #include <limits>
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Math/MathUtils.h"
+#include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Avm1/Classes/As_flash_geom_Point.h"
 
@@ -36,6 +37,9 @@ As_flash_geom_Point::As_flash_geom_Point(ActionContext* context)
 	prototype->setReadOnly();
 
 	setMember("prototype", ActionValue(prototype));
+
+	m_idX = context->getStrings()["x"];
+	m_idY = context->getStrings()["y"];
 }
 
 void As_flash_geom_Point::initialize(ActionObject* self)
@@ -46,13 +50,13 @@ void As_flash_geom_Point::construct(ActionObject* self, const ActionValueArray& 
 {
 	if (args.size() >= 2)
 	{
-		self->setMember("x", args[0]);
-		self->setMember("y", args[1]);
+		self->setMember(m_idX, args[0]);
+		self->setMember(m_idY, args[1]);
 	}
 	else
 	{
-		self->setMember("x", ActionValue(avm_number_t(0)));
-		self->setMember("y", ActionValue(avm_number_t(0)));
+		self->setMember(m_idX, ActionValue(avm_number_t(0)));
+		self->setMember(m_idY, ActionValue(avm_number_t(0)));
 	}
 }
 
@@ -69,12 +73,12 @@ void As_flash_geom_Point::Point_distance(CallArgs& ca)
 		ActionObject* pt2 = ca.args[1].getObject();
 
 		ActionValue x1, y1;
-		pt1->getMember("x", x1);
-		pt1->getMember("y", y1);
+		pt1->getMember(m_idX, x1);
+		pt1->getMember(m_idY, y1);
 
 		ActionValue x2, y2;
-		pt2->getMember("x", x2);
-		pt2->getMember("y", y2);
+		pt2->getMember(m_idX, x2);
+		pt2->getMember(m_idY, y2);
 
 		ActionValue dx = x2 - x1;
 		ActionValue dy = y2 - y1;
@@ -99,16 +103,16 @@ void As_flash_geom_Point::Point_interpolate(CallArgs& ca)
 		if (pt1 && pt2)
 		{
 			ActionValue x1, y1;
-			pt1->getMember("x", x1);
-			pt1->getMember("y", y1);
+			pt1->getMember(m_idX, x1);
+			pt1->getMember(m_idY, y1);
 
 			ActionValue x2, y2;
-			pt2->getMember("x", x2);
-			pt2->getMember("y", y2);
+			pt2->getMember(m_idX, x2);
+			pt2->getMember(m_idY, y2);
 
 			Ref< ActionObject > pt = new ActionObject(getContext(), "flash.geom.Point");
-			pt->setMember("x", x1 * ActionValue(1.0f - f) + x2 * ActionValue(f));
-			pt->setMember("y", y1 * ActionValue(1.0f - f) + y2 * ActionValue(f));
+			pt->setMember(m_idX, x1 * ActionValue(1.0f - f) + x2 * ActionValue(f));
+			pt->setMember(m_idY, y1 * ActionValue(1.0f - f) + y2 * ActionValue(f));
 
 			ca.ret = ActionValue(pt);
 		}
@@ -123,8 +127,8 @@ void As_flash_geom_Point::Point_polar(CallArgs& ca)
 		avm_number_t angle = ca.args[1].getNumber();
 
 		Ref< ActionObject > pt = new ActionObject(getContext(), "flash.geom.Point");
-		pt->setMember("x", ActionValue(cosf(angle) * length));
-		pt->setMember("y", ActionValue(sinf(angle) * length));
+		pt->setMember(m_idX, ActionValue(cosf(angle) * length));
+		pt->setMember(m_idY, ActionValue(sinf(angle) * length));
 
 		ca.ret = ActionValue(pt);
 	}
@@ -135,8 +139,8 @@ void As_flash_geom_Point::Point_add(CallArgs& ca)
 	Ref< ActionObject > pt = new ActionObject(getContext(), "flash.geom.Point");
 
 	ActionValue x1, y1;
-	ca.self->getMember("x", x1);
-	ca.self->getMember("y", y1);
+	ca.self->getMember(m_idX, x1);
+	ca.self->getMember(m_idY, y1);
 
 	ActionValue x2, y2;
 	if (ca.args.size() >= 1)
@@ -144,8 +148,8 @@ void As_flash_geom_Point::Point_add(CallArgs& ca)
 		ActionObject* pt2 = ca.args[0].getObject();
 		if (pt2)
 		{
-			pt2->getMember("x", x2);
-			pt2->getMember("y", y2);
+			pt2->getMember(m_idX, x2);
+			pt2->getMember(m_idY, y2);
 		}
 		else if (ca.args.size() >= 2)
 		{
@@ -154,8 +158,8 @@ void As_flash_geom_Point::Point_add(CallArgs& ca)
 		}
 	}
 
-	pt->setMember("x", x1 + x2);
-	pt->setMember("y", y1 + y2);
+	pt->setMember(m_idX, x1 + x2);
+	pt->setMember(m_idY, y1 + y2);
 
 	ca.ret = ActionValue(pt);
 }
@@ -165,11 +169,11 @@ void As_flash_geom_Point::Point_clone(CallArgs& ca)
 	Ref< ActionObject > pt = new ActionObject(getContext(), "flash.geom.Point");
 	
 	ActionValue x, y;
-	ca.self->getMember("x", x);
-	ca.self->getMember("y", y);
+	ca.self->getMember(m_idX, x);
+	ca.self->getMember(m_idY, y);
 
-	pt->setMember("x", x);
-	pt->setMember("y", y);
+	pt->setMember(m_idX, x);
+	pt->setMember(m_idY, y);
 
 	ca.ret = ActionValue(pt);
 }
@@ -183,12 +187,12 @@ void As_flash_geom_Point::Point_equals(CallArgs& ca)
 		if (pt)
 		{
 			ActionValue x1, y1;
-			ca.self->getMember("x", x1);
-			ca.self->getMember("y", y1);
+			ca.self->getMember(m_idX, x1);
+			ca.self->getMember(m_idY, y1);
 
 			ActionValue x2, y2;
-			pt->getMember("x", x2);
-			pt->getMember("y", y2);
+			pt->getMember(m_idX, x2);
+			pt->getMember(m_idY, y2);
 
 			equal = (x1 == x2) && (y1 == y2);
 		}
@@ -204,8 +208,8 @@ void As_flash_geom_Point::Point_normalize(CallArgs& ca)
 		scale = ca.args[0].getNumber();
 
 	ActionValue x, y;
-	ca.self->getMember("x", x);
-	ca.self->getMember("y", y);
+	ca.self->getMember(m_idX, x);
+	ca.self->getMember(m_idY, y);
 
 	if (x.isNumeric() && y.isNumeric())
 	{
@@ -215,8 +219,8 @@ void As_flash_geom_Point::Point_normalize(CallArgs& ca)
 		avm_number_t ln = avm_number_t(sqrtf(nx * nx + ny * ny));
 		if (ln > avm_number_t(0))
 		{
-			ca.self->setMember("x", x * ActionValue(scale / ln));
-			ca.self->setMember("y", y * ActionValue(scale / ln));
+			ca.self->setMember(m_idX, x * ActionValue(scale / ln));
+			ca.self->setMember(m_idY, y * ActionValue(scale / ln));
 		}
 	}
 }
@@ -229,11 +233,11 @@ void As_flash_geom_Point::Point_offset(CallArgs& ca)
 		const ActionValue& dy = ca.args[1];
 
 		ActionValue x, y;
-		ca.self->getMember("x", x);
-		ca.self->getMember("y", y);
+		ca.self->getMember(m_idX, x);
+		ca.self->getMember(m_idY, y);
 
-		ca.self->setMember("x", x + dx);
-		ca.self->setMember("y", y + dy);
+		ca.self->setMember(m_idX, x + dx);
+		ca.self->setMember(m_idY, y + dy);
 	}
 }
 
@@ -246,23 +250,23 @@ void As_flash_geom_Point::Point_subtract(CallArgs& ca)
 			return;
 
 		ActionValue rx, ry;
-		pr->getMember("x", rx);
-		pr->getMember("y", ry);
+		pr->getMember(m_idX, rx);
+		pr->getMember(m_idY, ry);
 
 		ActionValue x, y;
-		ca.self->getMember("x", x);
-		ca.self->getMember("y", y);
+		ca.self->getMember(m_idX, x);
+		ca.self->getMember(m_idY, y);
 
-		ca.self->setMember("x", x - rx);
-		ca.self->setMember("y", y - ry);
+		ca.self->setMember(m_idX, x - rx);
+		ca.self->setMember(m_idY, y - ry);
 	}
 }
 
 void As_flash_geom_Point::Point_toString(CallArgs& ca)
 {
 	ActionValue x, y;
-	ca.self->getMember("x", x);
-	ca.self->getMember("y", y);
+	ca.self->getMember(m_idX, x);
+	ca.self->getMember(m_idY, y);
 
 	StringOutputStream ss;
 	ss << L"(x=" << x.getWideString() << L", y=" << y.getWideString() << L")";
@@ -273,8 +277,8 @@ void As_flash_geom_Point::Point_toString(CallArgs& ca)
 void As_flash_geom_Point::Point_get_length(CallArgs& ca)
 {
 	ActionValue x, y;
-	ca.self->getMember("x", x);
-	ca.self->getMember("y", y);
+	ca.self->getMember(m_idX, x);
+	ca.self->getMember(m_idY, y);
 
 	if (x.isNumeric() && y.isNumeric())
 	{

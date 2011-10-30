@@ -24,12 +24,12 @@ ActionObject* ActionObjectRelay::getAsObject(ActionContext* context)
 	return m_asObject;
 }
 
-bool ActionObjectRelay::setMember(ActionContext* context, const std::string& memberName, const ActionValue& memberValue)
+bool ActionObjectRelay::setMember(ActionContext* context, uint32_t memberName, const ActionValue& memberValue)
 {
 	return false;
 }
 
-bool ActionObjectRelay::getMember(ActionContext* context, const std::string& memberName, ActionValue& outMemberValue)
+bool ActionObjectRelay::getMember(ActionContext* context, uint32_t memberName, ActionValue& outMemberValue)
 {
 	return false;
 }

@@ -170,28 +170,6 @@ void Array::removeAll()
 	m_values.clear();
 }
 
-bool Array::setMember(ActionContext* context, const std::string& memberName, const ActionValue& memberValue)
-{
-	int32_t index = parseString< int32_t >(memberName, -1);
-	if (index >= 0 && index < int32_t(m_values.size()))
-	{
-		m_values[index] = memberValue;
-		return true;
-	}
-	return false;
-}
-
-bool Array::getMember(ActionContext* context, const std::string& memberName, ActionValue& outMemberValue)
-{
-	int32_t index = parseString< int32_t >(memberName, -1);
-	if (index >= 0 && index < int32_t(m_values.size()))
-	{
-		outMemberValue = m_values[index];
-		return true;
-	}
-	return false;
-}
-
 void Array::trace(const IVisitor& visitor) const
 {
 	for (AlignedVector< ActionValue >::const_iterator i = m_values.begin(); i != m_values.end(); ++i)
