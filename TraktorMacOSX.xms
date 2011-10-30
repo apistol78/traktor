@@ -11209,7 +11209,7 @@
 								<definitions>
 									<item>T_MPG123_EXPORT</item>
 									<item>_DEBUG</item>
-									<item>OPT_GENERIC</item>
+									<item>OPT_I386</item>
 									<item>_CRT_SECURE_NO_WARNINGS</item>
 								</definitions>
 								<libraryPaths/>
@@ -11230,7 +11230,7 @@
 								<definitions>
 									<item>T_MPG123_EXPORT</item>
 									<item>NDEBUG</item>
-									<item>OPT_GENERIC</item>
+									<item>OPT_I386</item>
 									<item>_CRT_SECURE_NO_WARNINGS</item>
 								</definitions>
 								<libraryPaths/>
@@ -11251,7 +11251,7 @@
 								<definitions>
 									<item>T_STATIC</item>
 									<item>_DEBUG</item>
-									<item>OPT_GENERIC</item>
+									<item>OPT_I386</item>
 									<item>_CRT_SECURE_NO_WARNINGS</item>
 								</definitions>
 								<libraryPaths/>
@@ -11272,7 +11272,7 @@
 								<definitions>
 									<item>T_STATIC</item>
 									<item>NDEBUG</item>
-									<item>OPT_GENERIC</item>
+									<item>OPT_I386</item>
 									<item>_CRT_SECURE_NO_WARNINGS</item>
 								</definitions>
 								<libraryPaths/>
@@ -11483,6 +11483,10 @@
 									</item>
 									<item type="File">
 										<fileName>src/libmpg123/synth_s32.c</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>src/libmpg123/dct64_i386.c</fileName>
 										<items/>
 									</item>
 								</items>
