@@ -22,17 +22,32 @@ ActionFunction2::ActionFunction2(
 	uint8_t registerCount,
 	uint16_t flags,
 	const std::vector< std::pair< std::string, uint8_t > >& argumentsIntoRegisters,
-	const std::map< std::string, ActionValue >& variables,
+	const std::map< uint32_t, ActionValue >& variables,
 	ActionDictionary* dictionary
 )
 :	ActionFunction(context, name)
 ,	m_image(image)
 ,	m_registerCount(registerCount)
 ,	m_flags(flags)
-,	m_argumentsIntoRegisters(argumentsIntoRegisters)
-,	m_variables(variables)
 ,	m_dictionary(dictionary)
 {
+	m_idThis = getContext()->getStrings()["this"];
+	m_idSuper = getContext()->getStrings()["super"];
+	m_idGlobal = getContext()->getStrings()["_global"];
+	m_idArguments = getContext()->getStrings()["arguments"];
+	m_idRoot = getContext()->getStrings()["_root"];
+
+	for (std::vector< std::pair< std::string, uint8_t > >::const_iterator i = argumentsIntoRegisters.begin(); i != argumentsIntoRegisters.end(); ++i)
+		m_argumentsIntoRegisters.push_back(std::make_pair(
+			getContext()->getStrings()[i->first],
+			i->second
+		));
+
+	for (std::map< uint32_t, ActionValue >::const_iterator i = variables.begin(); i != variables.end(); ++i)
+		m_variables.push_back(std::make_pair(
+			i->first,
+			i->second
+		));
 }
 
 ActionValue ActionFunction2::call(ActionObject* self, ActionObject* super, const ActionValueArray& args)
@@ -56,22 +71,22 @@ ActionValue ActionFunction2::call(ActionObject* self, ActionObject* super, const
 
 	// Prepare activation scope variables; do this first
 	// as some variables will get overridden below such as "this", "arguments" etc.
-	for (std::map< std::string, ActionValue >::const_iterator i = m_variables.begin(); i != m_variables.end(); ++i)
+	for (std::vector< std::pair< uint32_t, ActionValue > >::const_iterator i = m_variables.begin(); i != m_variables.end(); ++i)
 		callFrame.setVariable(i->first, i->second);
 
 	if (self)
 	{
 		if (!(m_flags & AffSuppressThis))
-			callFrame.setVariable("this", ActionValue(self));
+			callFrame.setVariable(m_idThis, ActionValue(self));
 		if (!(m_flags & AffSuppressSuper))
 		{
 			if (!super2)
 				super2 = self->getSuper();
-			callFrame.setVariable("super", ActionValue(super2));
+			callFrame.setVariable(m_idSuper, ActionValue(super2));
 		}
 	}
 
-	callFrame.setVariable("_global", ActionValue(cx->getGlobal()));
+	callFrame.setVariable(m_idGlobal, ActionValue(cx->getGlobal()));
 
 	// Preload registers.
 	uint8_t preloadRegister = 1;
@@ -86,7 +101,7 @@ ActionValue ActionFunction2::call(ActionObject* self, ActionObject* super, const
 		if (m_flags & AffPreloadArguments)
 			callFrame.setRegister(preloadRegister++, ActionValue(argumentArray->getAsObject(cx)));
 		if (!(m_flags & AffSuppressArguments))
-			callFrame.setVariable("arguments", ActionValue(argumentArray->getAsObject(cx)));
+			callFrame.setVariable(m_idArguments, ActionValue(argumentArray->getAsObject(cx)));
 	}
 
 	if (m_flags & AffPreloadSuper)
@@ -99,7 +114,7 @@ ActionValue ActionFunction2::call(ActionObject* self, ActionObject* super, const
 	if (m_flags & AffPreloadRoot)
 	{
 		ActionValue root; 
-		cx->getGlobal()->getLocalMember("_root", root);
+		cx->getGlobal()->getLocalMember(m_idRoot, root);
 		callFrame.setRegister(preloadRegister++, root);
 	}
 	if (m_flags & AffPreloadParent)
@@ -113,7 +128,7 @@ ActionValue ActionFunction2::call(ActionObject* self, ActionObject* super, const
 	// Pass arguments into registers.
 	size_t argumentPassed = 0;
 	for (
-		std::vector< std::pair< std::string, uint8_t > >::const_iterator i = m_argumentsIntoRegisters.begin();
+		std::vector< std::pair< uint32_t, uint8_t > >::const_iterator i = m_argumentsIntoRegisters.begin();
 		argumentPassed < args.size() && i != m_argumentsIntoRegisters.end();
 		++i
 	)
@@ -137,7 +152,7 @@ ActionValue ActionFunction2::call(ActionObject* self, ActionObject* super, const
 
 void ActionFunction2::trace(const IVisitor& visitor) const
 {
-	for (std::map< std::string, ActionValue >::const_iterator i = m_variables.begin(); i != m_variables.end(); ++i)
+	for (std::vector< std::pair< uint32_t, ActionValue > >::const_iterator i = m_variables.begin(); i != m_variables.end(); ++i)
 	{
 		if (i->second.isObject())
 			visitor(i->second.getObject());

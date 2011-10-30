@@ -67,14 +67,9 @@ public:
 
 	const AlignedVector< ActionValue >& getValues() const { return m_values; }
 
-	// \name Override relay
-	//@{
+	ActionValue& operator [] (int32_t index) { return m_values[index]; }
 
-	virtual bool setMember(ActionContext* context, const std::string& memberName, const ActionValue& memberValue);
-
-	virtual bool getMember(ActionContext* context, const std::string& memberName, ActionValue& outMemberValue);
-
-	//@}
+	const ActionValue& operator [] (int32_t index) const { return m_values[index]; }
 
 protected:
 	virtual void trace(const IVisitor& visitor) const;

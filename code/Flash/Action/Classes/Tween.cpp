@@ -47,6 +47,10 @@ void Tween::init(
 	m_current = begin;
 	m_playing = false;
 
+	m_idTarget = m_context->getStrings()["_target"];
+	m_idTargetProperty = m_context->getStrings()["_targetProperty"];
+	m_idFunction = m_context->getStrings()["_function"];
+
 	if (target)
 	{
 		self->setMember("_target", ActionValue(target));
@@ -113,9 +117,9 @@ void Tween::start()
 		ActionValue propertySet;
 		ActionValue function;
 
-		self->getLocalMember("_target", target);
-		self->getLocalMember("_targetProperty", propertySet);
-		self->getLocalMember("_function", function);
+		self->getLocalMember(m_idTarget, target);
+		self->getLocalMember(m_idTargetProperty, propertySet);
+		self->getLocalMember(m_idFunction, function);
 
 		// Ensure property is set to initial value.
 		if (propertySet.isObject< ActionFunction >() && function.isObject< ActionFunction >())
@@ -181,9 +185,9 @@ void Tween::onFrame(CallArgs& ca)
 	ActionValue propertySet;
 	ActionValue function;
 
-	self->getLocalMember("_target", target);
-	self->getLocalMember("_targetProperty", propertySet);
-	self->getLocalMember("_function", function);
+	self->getLocalMember(m_idTarget, target);
+	self->getLocalMember(m_idTargetProperty, propertySet);
+	self->getLocalMember(m_idFunction, function);
 
 	if (
 		!function.isObject< ActionFunction >() ||

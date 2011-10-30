@@ -27,6 +27,7 @@ FlashCharacterInstance::FlashCharacterInstance(ActionContext* context, const cha
 	m_cxform.blue[1] =
 	m_cxform.alpha[1] = 0.0f;
 	m_transform = Matrix33::identity();
+	m_idParent = m_context->getStrings()["_parent"];
 }
 
 void FlashCharacterInstance::destroy()
@@ -213,9 +214,9 @@ void FlashCharacterInstance::eventMouseMove(int x, int y, int button)
 {
 }
 
-bool FlashCharacterInstance::getMember(ActionContext* context, const std::string& memberName, ActionValue& outMemberValue)
+bool FlashCharacterInstance::getMember(ActionContext* context, uint32_t memberName, ActionValue& outMemberValue)
 {
-	if (getParent() && memberName == "_parent")
+	if (getParent() && memberName == m_idParent)
 	{
 		outMemberValue = ActionValue(getParent()->getAsObject(context));
 		return true;

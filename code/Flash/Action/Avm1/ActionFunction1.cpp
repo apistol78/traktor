@@ -25,9 +25,17 @@ ActionFunction1::ActionFunction1(
 :	ActionFunction(context, name)
 ,	m_image(image)
 ,	m_argumentCount(argumentCount)
-,	m_argumentsIntoVariables(argumentsIntoVariables)
 ,	m_dictionary(dictionary)
 {
+	m_idThis = getContext()->getStrings()["this"];
+	m_idSuper = getContext()->getStrings()["super"];
+	m_idGlobal = getContext()->getStrings()["_global"];
+	m_idArguments = getContext()->getStrings()["arguments"];
+
+	for (std::vector< std::string >::const_iterator i = argumentsIntoVariables.begin(); i != argumentsIntoVariables.end(); ++i)
+		m_argumentsIntoVariables.push_back(
+			getContext()->getStrings()[*i]
+		);
 }
 
 ActionValue ActionFunction1::call(ActionObject* self, ActionObject* super, const ActionValueArray& args)
@@ -72,12 +80,12 @@ ActionValue ActionFunction1::call(ActionObject* self, ActionObject* super, const
 		if (!super2)
 			super2 = self->getSuper();
 	
-		callFrame.setVariable("this", ActionValue(self));
-		callFrame.setVariable("super", ActionValue(super2));
+		callFrame.setVariable(m_idThis, ActionValue(self));
+		callFrame.setVariable(m_idSuper, ActionValue(super2));
 	}
 
-	callFrame.setVariable("arguments", ActionValue(argumentArray->getAsObject(getContext())));
-	callFrame.setVariable("_global", ActionValue(getContext()->getGlobal()));
+	callFrame.setVariable(m_idGlobal, ActionValue(getContext()->getGlobal()));
+	callFrame.setVariable(m_idArguments, ActionValue(argumentArray->getAsObject(getContext())));
 
 	getContext()->getVM()->execute(&callFrame);
 

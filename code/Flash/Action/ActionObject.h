@@ -33,8 +33,8 @@ class T_DLLCLASS ActionObject : public Collectable
 	T_RTTI_CLASS;
 
 public:
-	typedef std::map< std::string, ActionValue > member_map_t;
-	typedef std::map< std::string, std::pair< Ref< ActionFunction >, Ref< ActionFunction > > > property_map_t;
+	typedef std::map< uint32_t, ActionValue > member_map_t;
+	typedef std::map< uint32_t, std::pair< Ref< ActionFunction >, Ref< ActionFunction > > > property_map_t;
 
 	explicit ActionObject(ActionContext* context, IActionObjectRelay* relay = 0);
 
@@ -48,19 +48,19 @@ public:
 
 	virtual ActionObject* get__proto__();
 
-	virtual void setMember(const std::string& memberName, const ActionValue& memberValue);
+	virtual void setMember(uint32_t memberName, const ActionValue& memberValue);
 
-	virtual bool getMember(const std::string& memberName, ActionValue& outMemberValue);
+	virtual bool getMember(uint32_t memberName, ActionValue& outMemberValue);
 
-	virtual bool deleteMember(const std::string& memberName);
+	virtual bool deleteMember(uint32_t memberName);
 
 	virtual void deleteAllMembers();
 
-	virtual void addProperty(const std::string& propertyName, ActionFunction* propertyGet, ActionFunction* propertySet);
+	virtual void addProperty(uint32_t propertyName, ActionFunction* propertyGet, ActionFunction* propertySet);
 
-	virtual bool getPropertyGet(const std::string& propertyName, Ref< ActionFunction >& outPropertyGet);
+	virtual bool getPropertyGet(uint32_t propertyName, Ref< ActionFunction >& outPropertyGet);
 
-	virtual bool getPropertySet(const std::string& propertyName, Ref< ActionFunction >& outPropertySet);
+	virtual bool getPropertySet(uint32_t propertyName, Ref< ActionFunction >& outPropertySet);
 
 	virtual const property_map_t& getProperties() const;
 
@@ -74,15 +74,15 @@ public:
 
 	void setReadOnly();
 
-	bool hasOwnMember(const std::string& memberName) const;
+	bool hasOwnMember(uint32_t memberName) const;
 
-	bool getLocalMember(const std::string& memberName, ActionValue& outMemberValue) const;
+	bool getLocalMember(uint32_t memberName, ActionValue& outMemberValue) const;
 
-	bool hasOwnProperty(const std::string& propertyName) const;
+	bool hasOwnProperty(uint32_t propertyName) const;
 
-	bool getLocalPropertyGet(const std::string& propertyName, Ref< ActionFunction >& outPropertyGet) const;
+	bool getLocalPropertyGet(uint32_t propertyName, Ref< ActionFunction >& outPropertyGet) const;
 
-	bool getLocalPropertySet(const std::string& propertyName, Ref< ActionFunction >& outPropertySet) const;
+	bool getLocalPropertySet(uint32_t propertyName, Ref< ActionFunction >& outPropertySet) const;
 
 	void setRelay(IActionObjectRelay* relay);
 
@@ -94,6 +94,25 @@ public:
 	ActionContext* getContext() const { return m_context; }
 
 	const member_map_t& getLocalMembers() const { return m_members; }
+
+	/*! \name Helpers
+	 * \note Do not use in time critical paths.
+	 */
+	// \{
+
+	void setMember(const std::string& memberName, const ActionValue& memberValue);
+
+	bool getMember(const std::string& memberName, ActionValue& outMemberValue);
+
+	bool getLocalMember(const std::string& memberName, ActionValue& outMemberValue) const;
+
+	void addProperty(const std::string& propertyName, ActionFunction* propertyGet, ActionFunction* propertySet);
+
+	bool getPropertyGet(const std::string& propertyName, Ref< ActionFunction >& outPropertyGet);
+
+	bool getPropertySet(const std::string& propertyName, Ref< ActionFunction >& outPropertySet);
+
+	// \}
 
 protected:
 	virtual void trace(const IVisitor& visitor) const;
@@ -109,6 +128,7 @@ private:
 	property_map_t m_properties;
 	Ref< ActionObject > m__proto__;		//!< Cached "__proto__" member value.
 	Ref< IActionObjectRelay > m_relay;
+	uint32_t m_idProto;
 
 	ActionObject(const ActionObject&) {}	// Not permitted
 

@@ -25,12 +25,12 @@ ActionObject* ActionSuper::get__proto__()
 	return m_superPrototype;
 }
 
-void ActionSuper::setMember(const std::string& memberName, const ActionValue& memberValue)
+void ActionSuper::setMember(uint32_t memberName, const ActionValue& memberValue)
 {
 	T_FATAL_ERROR;
 }
 
-bool ActionSuper::getMember(const std::string& memberName, ActionValue& outMemberValue)
+bool ActionSuper::getMember(uint32_t memberName, ActionValue& outMemberValue)
 {
 	if (!m_superPrototype)
 		return false;
@@ -42,7 +42,7 @@ bool ActionSuper::getMember(const std::string& memberName, ActionValue& outMembe
 	return result;
 }
 
-bool ActionSuper::getPropertyGet(const std::string& propertyName, Ref< ActionFunction >& outPropertyGet)
+bool ActionSuper::getPropertyGet(uint32_t propertyName, Ref< ActionFunction >& outPropertyGet)
 {
 	if (!m_superPrototype)
 		return false;
@@ -54,7 +54,7 @@ bool ActionSuper::getPropertyGet(const std::string& propertyName, Ref< ActionFun
 	return result;
 }
 
-bool ActionSuper::getPropertySet(const std::string& propertyName, Ref< ActionFunction >& outPropertySet)
+bool ActionSuper::getPropertySet(uint32_t propertyName, Ref< ActionFunction >& outPropertySet)
 {
 	if (!m_superPrototype)
 		return false;

@@ -37,20 +37,20 @@ ActionValue ActionFrame::getRegister(uint16_t index) const
 	return m_localRegisters[index];
 }
 
-bool ActionFrame::hasVariable(const std::string& variableName) const
+bool ActionFrame::hasVariable(uint32_t variableName) const
 {
-	std::map< std::string, ActionValue >::const_iterator i = m_localVariables.find(variableName);
+	std::map< uint32_t, ActionValue >::const_iterator i = m_localVariables.find(variableName);
 	return i != m_localVariables.end();
 }
 
-void ActionFrame::setVariable(const std::string& variableName, const ActionValue& variableValue)
+void ActionFrame::setVariable(uint32_t variableName, const ActionValue& variableValue)
 {
 	m_localVariables[variableName] = variableValue;
 }
 
-bool ActionFrame::getVariable(const std::string& variableName, ActionValue& outVariableValue) const
+bool ActionFrame::getVariable(uint32_t variableName, ActionValue& outVariableValue) const
 {
-	std::map< std::string, ActionValue >::const_iterator i = m_localVariables.find(variableName);
+	std::map< uint32_t, ActionValue >::const_iterator i = m_localVariables.find(variableName);
 	if (i == m_localVariables.end())
 		return false;
 
@@ -58,9 +58,19 @@ bool ActionFrame::getVariable(const std::string& variableName, ActionValue& outV
 	return true;
 }
 
-ActionValue* ActionFrame::getVariableValue(const std::string& variableName)
+void ActionFrame::setVariable(const std::string& variableName, const ActionValue& variableValue)
 {
-	std::map< std::string, ActionValue >::iterator i = m_localVariables.find(variableName);
+	setVariable(m_context->getStrings()[variableName], variableValue);
+}
+
+bool ActionFrame::getVariable(const std::string& variableName, ActionValue& outVariableValue) const
+{
+	return getVariable(m_context->getStrings()[variableName], outVariableValue);
+}
+
+ActionValue* ActionFrame::getVariableValue(uint32_t variableName)
+{
+	std::map< uint32_t, ActionValue >::iterator i = m_localVariables.find(variableName);
 	return (i != m_localVariables.end()) ? &i->second : 0;
 }
 
