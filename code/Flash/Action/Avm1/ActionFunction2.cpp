@@ -22,7 +22,7 @@ ActionFunction2::ActionFunction2(
 	uint8_t registerCount,
 	uint16_t flags,
 	const std::vector< std::pair< std::string, uint8_t > >& argumentsIntoRegisters,
-	const std::map< uint32_t, ActionValue >& variables,
+	const SmallMap< uint32_t, ActionValue >& variables,
 	ActionDictionary* dictionary
 )
 :	ActionFunction(context, name)
@@ -31,19 +31,13 @@ ActionFunction2::ActionFunction2(
 ,	m_flags(flags)
 ,	m_dictionary(dictionary)
 {
-	m_idThis = getContext()->getStrings()["this"];
-	m_idSuper = getContext()->getStrings()["super"];
-	m_idGlobal = getContext()->getStrings()["_global"];
-	m_idArguments = getContext()->getStrings()["arguments"];
-	m_idRoot = getContext()->getStrings()["_root"];
-
 	for (std::vector< std::pair< std::string, uint8_t > >::const_iterator i = argumentsIntoRegisters.begin(); i != argumentsIntoRegisters.end(); ++i)
 		m_argumentsIntoRegisters.push_back(std::make_pair(
-			getContext()->getStrings()[i->first],
+			getContext()->getString(i->first),
 			i->second
 		));
 
-	for (std::map< uint32_t, ActionValue >::const_iterator i = variables.begin(); i != variables.end(); ++i)
+	for (SmallMap< uint32_t, ActionValue >::const_iterator i = variables.begin(); i != variables.end(); ++i)
 		m_variables.push_back(std::make_pair(
 			i->first,
 			i->second
@@ -77,16 +71,16 @@ ActionValue ActionFunction2::call(ActionObject* self, ActionObject* super, const
 	if (self)
 	{
 		if (!(m_flags & AffSuppressThis))
-			callFrame.setVariable(m_idThis, ActionValue(self));
+			callFrame.setVariable(ActionContext::IdThis, ActionValue(self));
 		if (!(m_flags & AffSuppressSuper))
 		{
 			if (!super2)
 				super2 = self->getSuper();
-			callFrame.setVariable(m_idSuper, ActionValue(super2));
+			callFrame.setVariable(ActionContext::IdSuper, ActionValue(super2));
 		}
 	}
 
-	callFrame.setVariable(m_idGlobal, ActionValue(cx->getGlobal()));
+	callFrame.setVariable(ActionContext::IdGlobal, ActionValue(cx->getGlobal()));
 
 	// Preload registers.
 	uint8_t preloadRegister = 1;
@@ -101,7 +95,7 @@ ActionValue ActionFunction2::call(ActionObject* self, ActionObject* super, const
 		if (m_flags & AffPreloadArguments)
 			callFrame.setRegister(preloadRegister++, ActionValue(argumentArray->getAsObject(cx)));
 		if (!(m_flags & AffSuppressArguments))
-			callFrame.setVariable(m_idArguments, ActionValue(argumentArray->getAsObject(cx)));
+			callFrame.setVariable(ActionContext::IdArguments, ActionValue(argumentArray->getAsObject(cx)));
 	}
 
 	if (m_flags & AffPreloadSuper)
@@ -114,7 +108,7 @@ ActionValue ActionFunction2::call(ActionObject* self, ActionObject* super, const
 	if (m_flags & AffPreloadRoot)
 	{
 		ActionValue root; 
-		cx->getGlobal()->getLocalMember(m_idRoot, root);
+		cx->getGlobal()->getLocalMember(ActionContext::IdRoot, root);
 		callFrame.setRegister(preloadRegister++, root);
 	}
 	if (m_flags & AffPreloadParent)

@@ -76,7 +76,7 @@ void AsObject::Object_registerClass(CallArgs& ca)
 	Ref< ActionObject > global = ca.context->getGlobal();
 	std::string movieClipName = ca.args[0].getString();
 
-	uint32_t movieClipNameId = ca.context->getStrings()[movieClipName];
+	uint32_t movieClipNameId = ca.context->getString(movieClipName);
 	
 	if (ca.args.size() >= 2)
 	{

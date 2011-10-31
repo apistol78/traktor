@@ -35,6 +35,7 @@ public:
 	struct Layer
 	{
 		uint16_t id;
+		uint32_t name;
 		Ref< FlashCharacterInstance > instance;
 		int32_t clipDepth;
 		bool immutable;

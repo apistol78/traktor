@@ -38,8 +38,8 @@ As_flash_geom_Point::As_flash_geom_Point(ActionContext* context)
 
 	setMember("prototype", ActionValue(prototype));
 
-	m_idX = context->getStrings()["x"];
-	m_idY = context->getStrings()["y"];
+	m_idX = context->getString("x");
+	m_idY = context->getString("y");
 }
 
 void As_flash_geom_Point::initialize(ActionObject* self)

@@ -31,6 +31,22 @@ class T_DLLCLASS ActionContext : public Collectable
 	T_RTTI_CLASS;
 
 public:
+	// Predefined strings.
+	enum StringIds
+	{
+		IdEmpty = 0,
+		Id__proto__ = 1,
+		IdPrototype = 2,
+		Id__ctor__ = 3,
+		IdConstructor = 4,
+		IdThis = 5,
+		IdSuper = 6,
+		IdGlobal = 7,
+		IdArguments = 8,
+		IdRoot = 9,
+		IdParent = 10
+	};
+
 	ActionContext(const IActionVM* vm, const FlashMovie* movie);
 
 	void setGlobal(ActionObject* global);
@@ -45,6 +61,8 @@ public:
 
 	ActionObject* lookupClass(const std::string& className);
 
+	uint32_t getString(const std::string& str);
+
 	const IActionVM* getVM() const { return m_vm; }
 
 	const FlashMovie* getMovie() const { return m_movie; }
@@ -52,8 +70,6 @@ public:
 	ActionObject* getGlobal() const { return m_global; }
 
 	FlashSpriteInstance* getMovieClip() const { return m_movieClip; }
-
-	ActionStrings& getStrings() { return m_strings; }
 
 	ActionValuePool& getPool() { return m_pool; }
 

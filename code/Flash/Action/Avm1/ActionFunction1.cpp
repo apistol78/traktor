@@ -27,14 +27,9 @@ ActionFunction1::ActionFunction1(
 ,	m_argumentCount(argumentCount)
 ,	m_dictionary(dictionary)
 {
-	m_idThis = getContext()->getStrings()["this"];
-	m_idSuper = getContext()->getStrings()["super"];
-	m_idGlobal = getContext()->getStrings()["_global"];
-	m_idArguments = getContext()->getStrings()["arguments"];
-
 	for (std::vector< std::string >::const_iterator i = argumentsIntoVariables.begin(); i != argumentsIntoVariables.end(); ++i)
 		m_argumentsIntoVariables.push_back(
-			getContext()->getStrings()[*i]
+			getContext()->getString(*i)
 		);
 }
 
@@ -80,12 +75,12 @@ ActionValue ActionFunction1::call(ActionObject* self, ActionObject* super, const
 		if (!super2)
 			super2 = self->getSuper();
 	
-		callFrame.setVariable(m_idThis, ActionValue(self));
-		callFrame.setVariable(m_idSuper, ActionValue(super2));
+		callFrame.setVariable(ActionContext::IdThis, ActionValue(self));
+		callFrame.setVariable(ActionContext::IdSuper, ActionValue(super2));
 	}
 
-	callFrame.setVariable(m_idGlobal, ActionValue(getContext()->getGlobal()));
-	callFrame.setVariable(m_idArguments, ActionValue(argumentArray->getAsObject(getContext())));
+	callFrame.setVariable(ActionContext::IdGlobal, ActionValue(getContext()->getGlobal()));
+	callFrame.setVariable(ActionContext::IdArguments, ActionValue(argumentArray->getAsObject(getContext())));
 
 	getContext()->getVM()->execute(&callFrame);
 

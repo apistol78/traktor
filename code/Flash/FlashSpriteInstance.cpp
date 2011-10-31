@@ -34,6 +34,16 @@ FlashSpriteInstance::FlashSpriteInstance(ActionContext* context, FlashCharacterI
 ,	m_maskCount(0)
 {
 	T_ASSERT (m_sprite->getFrameCount() > 0);
+
+	m_idOnLoad = context->getString("onLoad");
+	m_idOnEnterFrame = context->getString("onEnterFrame");
+	m_idOnKeyDown = context->getString("onKeyDown");
+	m_idOnKeyUp = context->getString("onKeyUp");
+	m_idOnMouseDown = context->getString("onMouseDown");
+	m_idOnPress = context->getString("onPress");
+	m_idOnMouseUp = context->getString("onMouseUp");
+	m_idOnRelease = context->getString("onRelease");
+	m_idOnMouseMove = context->getString("onMouseMove");
 }
 
 void FlashSpriteInstance::destroy()
@@ -234,11 +244,10 @@ FlashSpriteInstance* FlashSpriteInstance::getMask()
 bool FlashSpriteInstance::getMember(ActionContext* context, uint32_t memberName, ActionValue& outMemberValue)
 {
 	// Find visible named character in display list.
-	// \fixme Use string id in characters.
 	const FlashDisplayList::layer_map_t& layers = m_displayList.getLayers();
 	for (FlashDisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
 	{
-		if (context->getStrings()[i->second.instance->getName()] == memberName)
+		if (i->second.name == memberName)
 		{
 			outMemberValue = ActionValue(i->second.instance->getAsObject(context));
 			return true;
@@ -318,9 +327,9 @@ void FlashSpriteInstance::eventInit()
 			0
 		);
 
-		callFrame.setVariable("this", ActionValue(self));
-		callFrame.setVariable("super", ActionValue(super));
-		callFrame.setVariable("_global", ActionValue(context->getGlobal()));
+		callFrame.setVariable(ActionContext::IdThis, ActionValue(self));
+		callFrame.setVariable(ActionContext::IdSuper, ActionValue(super));
+		callFrame.setVariable(ActionContext::IdGlobal, ActionValue(context->getGlobal()));
 
 		context->getVM()->execute(&callFrame);
 	}
@@ -338,7 +347,7 @@ void FlashSpriteInstance::eventLoad()
 	context->setMovieClip(this);
 
 	// Issue script assigned event.
-	executeScriptEvent("onLoad");
+	executeScriptEvent(m_idOnLoad);
 
 	FlashCharacterInstance::eventLoad();
 
@@ -357,7 +366,7 @@ void FlashSpriteInstance::eventFrame()
 
 	// Issue script assigned event; hack to skip events when using goto methods.
 	if (!m_skipEnterFrame)
-		executeScriptEvent("onEnterFrame");
+		executeScriptEvent(m_idOnEnterFrame);
 	else
 		--m_skipEnterFrame;
 
@@ -381,9 +390,9 @@ void FlashSpriteInstance::eventFrame()
 				0
 			);
 
-			callFrame.setVariable("this", ActionValue(self));
-			callFrame.setVariable("super", ActionValue(super));
-			callFrame.setVariable("_global", ActionValue(context->getGlobal()));
+			callFrame.setVariable(ActionContext::IdThis, ActionValue(self));
+			callFrame.setVariable(ActionContext::IdSuper, ActionValue(super));
+			callFrame.setVariable(ActionContext::IdGlobal, ActionValue(context->getGlobal()));
 
 			context->getVM()->execute(&callFrame);
 		}
@@ -408,7 +417,7 @@ void FlashSpriteInstance::eventKeyDown(int32_t keyCode)
 	context->setMovieClip(this);
 
 	// Issue script assigned event.
-	executeScriptEvent("onKeyDown");
+	executeScriptEvent(m_idOnKeyDown);
 
 	// Issue events on "visible" characters.
 	for (RefArray< FlashCharacterInstance >::const_iterator i = m_visibleCharacters.begin(); i != m_visibleCharacters.end(); ++i)
@@ -427,7 +436,7 @@ void FlashSpriteInstance::eventKeyUp(int32_t keyCode)
 	context->setMovieClip(this);
 
 	// Issue script assigned event.
-	executeScriptEvent("onKeyUp");
+	executeScriptEvent(m_idOnKeyUp);
 
 	// Issue events on "visible" characters.
 	for (RefArray< FlashCharacterInstance >::const_iterator i = m_visibleCharacters.begin(); i != m_visibleCharacters.end(); ++i)
@@ -449,7 +458,7 @@ void FlashSpriteInstance::eventMouseDown(int32_t x, int32_t y, int32_t button)
 	m_mouseY = y;
 
 	// Issue script assigned event.
-	executeScriptEvent("onMouseDown");
+	executeScriptEvent(m_idOnMouseDown);
 
 	// Issue events on "visible" characters.
 	if (!m_visibleCharacters.empty())
@@ -466,7 +475,7 @@ void FlashSpriteInstance::eventMouseDown(int32_t x, int32_t y, int32_t button)
 	SwfRect bounds = getBounds();
 	bool inside = (x >= bounds.min.x && y >= bounds.min.y && x <= bounds.max.x && y <= bounds.max.y);
 	if (inside)
-		executeScriptEvent("onPress");
+		executeScriptEvent(m_idOnPress);
 
 	// Call base class event function.
 	FlashCharacterInstance::eventMouseDown(x, y, button);
@@ -485,7 +494,7 @@ void FlashSpriteInstance::eventMouseUp(int32_t x, int32_t y, int32_t button)
 	m_mouseY = y;
 
 	// Issue script assigned event.
-	executeScriptEvent("onMouseUp");
+	executeScriptEvent(m_idOnMouseUp);
 
 	// Issue events on "visible" characters.
 	if (!m_visibleCharacters.empty())
@@ -502,7 +511,7 @@ void FlashSpriteInstance::eventMouseUp(int32_t x, int32_t y, int32_t button)
 	SwfRect bounds = getBounds();
 	bool inside = (x >= bounds.min.x && y >= bounds.min.y && x <= bounds.max.x && y <= bounds.max.y);
 	if (inside)
-		executeScriptEvent("onRelease");
+		executeScriptEvent(m_idOnRelease);
 
 	FlashCharacterInstance::eventMouseUp(x, y, button);
 
@@ -520,7 +529,7 @@ void FlashSpriteInstance::eventMouseMove(int32_t x, int32_t y, int32_t button)
 	m_mouseY = y;
 
 	// Issue script assigned event.
-	executeScriptEvent("onMouseMove");
+	executeScriptEvent(m_idOnMouseMove);
 
 	// Issue events on "visible" characters.
 	if (!m_visibleCharacters.empty())
@@ -566,7 +575,7 @@ void FlashSpriteInstance::dereference()
 	FlashCharacterInstance::dereference();
 }
 
-void FlashSpriteInstance::executeScriptEvent(const std::string& eventName)
+void FlashSpriteInstance::executeScriptEvent(uint32_t eventName)
 {
 	ActionContext* cx = getContext();
 	T_ASSERT (cx);

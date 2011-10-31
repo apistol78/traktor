@@ -185,9 +185,9 @@ void FlashButtonInstance::executeCondition(uint32_t conditionMask)
 			0
 		);
 
-		callFrame.setVariable("this", ActionValue(self));
-		callFrame.setVariable("super", ActionValue(super));
-		callFrame.setVariable("_global", ActionValue(context->getGlobal()));
+		callFrame.setVariable(ActionContext::IdThis, ActionValue(self));
+		callFrame.setVariable(ActionContext::IdSuper, ActionValue(super));
+		callFrame.setVariable(ActionContext::IdGlobal, ActionValue(context->getGlobal()));
 
 		context->getVM()->execute(&callFrame);
 	}

@@ -14,6 +14,18 @@ ActionContext::ActionContext(const IActionVM* vm, const FlashMovie* movie)
 :	m_vm(vm)
 ,	m_movie(movie)
 {
+	m_strings[""];	// 0
+	m_strings["__proto__"];
+	m_strings["prototype"];
+	m_strings["__ctor__"];
+	m_strings["constructor"];
+	m_strings["this"];
+	m_strings["super"];
+	m_strings["_global"];
+	m_strings["arguments"];
+	m_strings["_root"];
+	m_strings["_parent"];
+
 	m_idOnFrame = m_strings["onFrame"];
 	m_idPrototype = m_strings["prototype"];
 }
@@ -31,7 +43,7 @@ void ActionContext::setMovieClip(FlashSpriteInstance* movieClip)
 void ActionContext::addFrameListener(ActionObject* frameListener)
 {
 	ActionValue memberValue;
-	if (frameListener->getLocalMember(/*"onFrame"*/m_idOnFrame, memberValue))
+	if (frameListener->getLocalMember(m_idOnFrame, memberValue))
 	{
 		Ref< ActionFunction > listenerFunction = memberValue.getObject< ActionFunction >();
 		if (listenerFunction)
@@ -85,10 +97,15 @@ ActionObject* ActionContext::lookupClass(const std::string& className)
 		return 0;
 
 	ActionValue prototypeMember;
-	if (!clazz->getLocalMember(/*"prototype"*/m_idPrototype, prototypeMember) || !prototypeMember.isObject())
+	if (!clazz->getLocalMember(m_idPrototype, prototypeMember) || !prototypeMember.isObject())
 		return 0;
 
 	return prototypeMember.getObject();
+}
+
+uint32_t ActionContext::getString(const std::string& str)
+{
+	return m_strings[str];
 }
 
 void ActionContext::trace(const IVisitor& visitor) const

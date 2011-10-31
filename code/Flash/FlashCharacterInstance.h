@@ -171,7 +171,6 @@ private:
 	SwfCxTransform m_cxform;
 	Matrix33 m_transform;
 	SmallMap< uint32_t, Ref< const IActionVMImage > > m_eventScripts;
-	uint32_t m_idParent;
 };
 
 	}

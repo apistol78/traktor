@@ -153,6 +153,7 @@ void FlashDisplayList::updateFrame(FlashCharacterInstance* ownerInstance, const 
 			if (placeObject.hasClipDepth)
 				layer.clipDepth = placeObject.clipDepth + c_depthOffset;
 
+			layer.name = m_context->getString(layer.instance->getName());
 			layer.immutable = false;
 			layer.collect = false;
 
