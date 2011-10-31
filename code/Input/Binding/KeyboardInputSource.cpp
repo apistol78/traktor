@@ -141,7 +141,7 @@ float KeyboardInputSource::read(float T, float dT)
 		if ((*i)->m_keys.size() <= m_keys.size())
 			continue;
 			
-		bool otherActive = (*i)->read(T, dT);
+		bool otherActive = asBoolean((*i)->read(T, dT));
 		if (!otherActive)
 			continue;
 		

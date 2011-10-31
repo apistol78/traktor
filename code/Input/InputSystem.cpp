@@ -10,10 +10,12 @@ namespace traktor
 	{
 		namespace
 		{
-		
+
+const float c_deviceStuckTimeout = 5.0f;
+
 bool isDeviceReady(IInputDevice* device)
 {
-	if (!device || !device->isConnected())
+	if (!device)
 		return false;
 			
 	int32_t controlCount = device->getControlCount();
@@ -113,6 +115,14 @@ bool InputSystem::update(float deltaTime)
 	for (std::list< PendingDevice >::iterator i = m_pendingDevices.begin(); i != m_pendingDevices.end(); )
 	{
 		i->device->readState();
+
+		if (!i->device->isConnected())
+		{
+			i->timeout = c_deviceStuckTimeout;
+			++i;
+			continue;
+		}
+
 		if (isDeviceReady(i->device))
 		{
 			m_devices.push_back(i->device);
@@ -130,7 +140,7 @@ bool InputSystem::update(float deltaTime)
 		}
 	}
 
-	// Read state of all devices.
+	// Read state of all ready devices.
 	for (RefArray< IInputDevice >::iterator i = m_devices.begin(); i != m_devices.end(); ++i)
 		(*i)->readState();
 
@@ -154,7 +164,7 @@ void InputSystem::updateDevices()
 
 			PendingDevice pd;
 			pd.device = inputDevice;
-			pd.timeout = 5.0f;
+			pd.timeout = c_deviceStuckTimeout;
 			m_pendingDevices.push_back(pd);
 		}
 	}
