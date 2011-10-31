@@ -63,6 +63,8 @@ public:
 
 	uint32_t getString(const std::string& str);
 
+	std::string getString(uint32_t id);
+
 	const IActionVM* getVM() const { return m_vm; }
 
 	const FlashMovie* getMovie() const { return m_movie; }

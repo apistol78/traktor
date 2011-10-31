@@ -103,7 +103,7 @@ Ref< FlashSpriteInstance > FlashMovie::createMovieClipInstance() const
 	context->setGlobal(global);
 
 	Ref< FlashSpriteInstance > spriteInstance = checked_type_cast< FlashSpriteInstance*, false >(
-		m_movieClip->createInstance(context, 0, "")
+		m_movieClip->createInstance(context, 0, "", 0)
 	);
 
 	global->setMember("_root", ActionValue(spriteInstance->getAsObject(context)));
@@ -122,7 +122,7 @@ Ref< FlashSpriteInstance > FlashMovie::createExternalMovieClipInstance(FlashSpri
 
 	// Create instance of external movie.
 	Ref< FlashSpriteInstance > spriteInstance = checked_type_cast< FlashSpriteInstance*, false >(
-		m_movieClip->createInstance(context, containerInstance, "")
+		m_movieClip->createInstance(context, containerInstance, "", 0)
 	);
 
 	// Add instance to container's display list.

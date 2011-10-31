@@ -61,7 +61,7 @@ const RefArray< const IActionVMImage >& FlashSprite::getInitActionScripts() cons
 	return m_initActionScripts;
 }
 
-Ref< FlashCharacterInstance > FlashSprite::createInstance(ActionContext* context, FlashCharacterInstance* parent, const std::string& name) const
+Ref< FlashCharacterInstance > FlashSprite::createInstance(ActionContext* context, FlashCharacterInstance* parent, const std::string& name, const ActionObject* initObject) const
 {
 	Ref< FlashSpriteInstance > spriteInstance = new FlashSpriteInstance(context, parent, this);
 
@@ -69,6 +69,21 @@ Ref< FlashCharacterInstance > FlashSprite::createInstance(ActionContext* context
 		spriteInstance->setName(name);
 
 	spriteInstance->eventInit();
+	spriteInstance->updateDisplayList();
+
+	if (initObject)
+	{
+		ActionObject* spriteInstanceAO = spriteInstance->getAsObject(context);
+		T_ASSERT (spriteInstanceAO);
+
+		const ActionObject::member_map_t& members = initObject->getLocalMembers();
+		for (ActionObject::member_map_t::const_iterator i = members.begin(); i != members.end(); ++i)
+		{
+			// \fixme Same as enum2; need a visible member enumerator.
+			if (i->first != ActionContext::Id__proto__ && i->first != ActionContext::IdPrototype)
+				spriteInstanceAO->setMember(i->first, i->second);
+		}
+	}
 
 	std::string spriteClassName;
 	if (context->getMovie()->getExportName(getId(), spriteClassName))
@@ -80,17 +95,15 @@ Ref< FlashCharacterInstance > FlashSprite::createInstance(ActionContext* context
 			T_ASSERT (spriteInstanceAO);
 
 			ActionValue prototype;
-			spriteClassValue.getObjectAlways(context)->getMember("prototype", prototype);
-			spriteInstanceAO->setMember("__proto__", prototype);
-			spriteInstanceAO->setMember("__ctor__", spriteClassValue);
+			spriteClassValue.getObjectAlways(context)->getMember(ActionContext::IdPrototype, prototype);
+			spriteInstanceAO->setMember(ActionContext::Id__proto__, prototype);
+			spriteInstanceAO->setMember(ActionContext::Id__ctor__, spriteClassValue);
 
-			Ref< ActionFunction > classConstructor = spriteClassValue.getObject< ActionFunction >();
+			ActionFunction* classConstructor = spriteClassValue.getObject< ActionFunction >();
 			if (classConstructor)
 				classConstructor->call(spriteInstanceAO);
 		}
 	}
-
-	spriteInstance->updateDisplayList();
 
 	return spriteInstance;
 }

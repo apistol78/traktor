@@ -24,5 +24,15 @@ uint32_t ActionStrings::operator [] (const std::string& str)
 	return id;
 }
 
+std::string ActionStrings::operator [] (uint32_t id) const
+{
+	for (std::map< std::string, uint32_t >::const_iterator i = m_strings.begin(); i != m_strings.end(); ++i)
+	{
+		if (id == i->second)
+			return i->first;
+	}
+	return "";
+}
+
 	}
 }

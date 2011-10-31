@@ -124,7 +124,7 @@ void FlashDisplayList::updateFrame(FlashCharacterInstance* ownerInstance, const 
 
 					// Create new instance.
 					layer.id = placeObject.characterId;
-					layer.instance = character->createInstance(m_context, ownerInstance, placeObject.hasName ? placeObject.name : "");
+					layer.instance = character->createInstance(m_context, ownerInstance, placeObject.hasName ? placeObject.name : "", 0);
 					T_ASSERT (layer.instance);
 					layer.instance->setTransform(transform);
 				}
