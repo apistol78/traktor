@@ -125,21 +125,21 @@ template < >
 struct ActionValueCast< Ref< ActionObject >, false >
 {
 	static ActionValue set(ActionContext* cx, const Ref< ActionObject >& v) { return ActionValue(v); }
-	static Ref< ActionObject > get(ActionContext* cx, const ActionValue& value) { return value.getObjectAlways(cx); }
+	static ActionObject* get(ActionContext* cx, const ActionValue& value) { return value.getObject(); }
 };
 
 template < >
 struct ActionValueCast< ActionObject*, true >
 {
 	static ActionValue set(ActionContext* cx, ActionObject* v) { return ActionValue(v); }
-	static ActionObject* get(ActionContext* cx, const ActionValue& value) { return value.getObjectAlways(cx); }
+	static ActionObject* get(ActionContext* cx, const ActionValue& value) { return value.getObject(); }
 };
 
 template < >
 struct ActionValueCast< Ref< ActionFunction >, false >
 {
 	static ActionValue set(ActionContext* cx, const Ref< ActionFunction >& v) { return ActionValue(v); }
-	static Ref< ActionFunction > get(ActionContext* cx, const ActionValue& value) { return value.getObject< ActionFunction >(); }
+	static ActionFunction* get(ActionContext* cx, const ActionValue& value) { return value.getObject< ActionFunction >(); }
 };
 
 template < >

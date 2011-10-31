@@ -112,7 +112,7 @@ public:
 	 */
 	const button_conditions_t& getButtonConditions() const;
 
-	virtual Ref< FlashCharacterInstance > createInstance(ActionContext* context, FlashCharacterInstance* parent, const std::string& name) const;
+	virtual Ref< FlashCharacterInstance > createInstance(ActionContext* context, FlashCharacterInstance* parent, const std::string& name, const ActionObject* initObject) const;
 
 private:
 	button_layers_t m_layers;

@@ -187,7 +187,7 @@ void AsMovieClip::construct(ActionObject* self, const ActionValueArray& args)
 	Ref< FlashSprite > sprite = new FlashSprite(0, 0);
 	sprite->addFrame(new FlashFrame());
 
-	Ref< FlashCharacterInstance > spriteInstance = sprite->createInstance(getContext(), 0, "");
+	Ref< FlashCharacterInstance > spriteInstance = sprite->createInstance(getContext(), 0, "", 0);
 	T_ASSERT (spriteInstance);
 
 	self->setRelay(spriteInstance);
@@ -247,19 +247,8 @@ Ref< FlashSpriteInstance > AsMovieClip::MovieClip_attachMovie_4(FlashSpriteInsta
 	}
 
 	// Create new instance of movie clip.
-	Ref< FlashSpriteInstance > attachClipInstance = checked_type_cast< FlashSpriteInstance* >(attachClip->createInstance(context, self, attachClipName));
+	Ref< FlashSpriteInstance > attachClipInstance = checked_type_cast< FlashSpriteInstance* >(attachClip->createInstance(context, self, attachClipName, initObject));
 	
-	// Set initial properties.
-	if (initObject)
-	{
-		// \fixme
-		//const ActionObject::member_map_t& members = initObject->getLocalMembers();
-		//for (ActionObject::member_map_t::const_iterator i = members.begin(); i != members.end(); ++i)
-		//{
-		//	log::debug << L"Set member \"" << mbstows(i->first) << L"\", value \"" << i->second.getWideString() << L"\"" << Endl;
-		//}
-	}
-
 	// Add new instance to display list.
 	FlashDisplayList& displayList = self->getDisplayList();
 	displayList.showObject(depth, attachClipId, attachClipInstance, true);
@@ -307,7 +296,7 @@ Ref< FlashSpriteInstance > AsMovieClip::MovieClip_createEmptyMovieClip(FlashSpri
 	emptyClip->addFrame(new FlashFrame());
 
 	// Create new instance of movie clip.
-	Ref< FlashSpriteInstance > emptyClipInstance = checked_type_cast< FlashSpriteInstance* >(emptyClip->createInstance(context, self, ""));
+	Ref< FlashSpriteInstance > emptyClipInstance = checked_type_cast< FlashSpriteInstance* >(emptyClip->createInstance(context, self, "", 0));
 	emptyClipInstance->setName(emptyClipName);
 
 	// Add new instance to display list.
@@ -353,7 +342,7 @@ Ref< FlashEditInstance > AsMovieClip::MovieClip_createTextField(
 	);
 
 	// Create edit character instance.
-	Ref< FlashEditInstance > editInstance = checked_type_cast< FlashEditInstance*, false >(edit->createInstance(context, self, name));
+	Ref< FlashEditInstance > editInstance = checked_type_cast< FlashEditInstance*, false >(edit->createInstance(context, self, name, 0));
 	
 	// Place character at given location.
 	editInstance->setTransform(translate(x, y));

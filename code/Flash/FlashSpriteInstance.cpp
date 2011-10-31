@@ -200,7 +200,7 @@ bool FlashSpriteInstance::isEnabled() const
 
 Ref< FlashSpriteInstance > FlashSpriteInstance::clone() const
 {
-	Ref< FlashSpriteInstance > cloneInstance = checked_type_cast< FlashSpriteInstance* >(m_sprite->createInstance(getContext(), getParent(), ""));
+	Ref< FlashSpriteInstance > cloneInstance = checked_type_cast< FlashSpriteInstance* >(m_sprite->createInstance(getContext(), getParent(), "", 0));
 	cloneInstance->setEvents(getEvents());
 	return cloneInstance;
 }

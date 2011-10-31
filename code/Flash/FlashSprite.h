@@ -48,7 +48,7 @@ public:
 
 	const RefArray< const IActionVMImage >& getInitActionScripts() const;
 
-	virtual Ref< FlashCharacterInstance > createInstance(ActionContext* context, FlashCharacterInstance* parent, const std::string& name) const;
+	virtual Ref< FlashCharacterInstance > createInstance(ActionContext* context, FlashCharacterInstance* parent, const std::string& name, const ActionObject* initObject) const;
 
 private:
 	uint16_t m_frameRate;

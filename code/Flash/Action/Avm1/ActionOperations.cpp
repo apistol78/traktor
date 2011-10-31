@@ -1225,14 +1225,15 @@ void opx_enum2(ExecutionState& state)
 	{
 		Ref< ActionObject > object = enumObject.getObject();
 
-		//const ActionObject::member_map_t& members = object->getLocalMembers();
-		//for (ActionObject::member_map_t::const_iterator i = members.begin(); i != members.end(); ++i)
-		//{
-		//	// \fixme Should only enumerate user added members.
-		//	// \fixme Reverse lookup of string.
-		//	if (i->first != ActionContext::Id__proto__ && i->first != ActionContext::IdPrototype)
-		//		stack.push(ActionValue(i->first));
-		//}
+		const ActionObject::member_map_t& members = object->getLocalMembers();
+		for (ActionObject::member_map_t::const_iterator i = members.begin(); i != members.end(); ++i)
+		{
+			// \fixme Should only enumerate user added members.
+			if (i->first != ActionContext::Id__proto__ && i->first != ActionContext::IdPrototype)
+				stack.push(ActionValue(
+					state.context->getString(i->first)
+				));
+		}
 
 		//const ActionObject::property_map_t& properties = object->getProperties();
 		//for (ActionObject::property_map_t::const_iterator i = properties.begin(); i != properties.end(); ++i)

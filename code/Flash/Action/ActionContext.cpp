@@ -108,6 +108,11 @@ uint32_t ActionContext::getString(const std::string& str)
 	return m_strings[str];
 }
 
+std::string ActionContext::getString(uint32_t id)
+{
+	return m_strings[id];
+}
+
 void ActionContext::trace(const IVisitor& visitor) const
 {
 	visitor(m_global);
