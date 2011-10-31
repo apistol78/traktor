@@ -12,6 +12,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.input.KeyboardDeviceWin32", KeyboardDeviceWin32
 KeyboardDeviceWin32::KeyboardDeviceWin32()
 :	m_connected(false)
 {
+	resetState();
 }
 
 std::wstring KeyboardDeviceWin32::getName() const

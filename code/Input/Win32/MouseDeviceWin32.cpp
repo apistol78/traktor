@@ -18,6 +18,7 @@ MouseDeviceWin32::MouseDeviceWin32()
 ,	m_button2(0.0f)
 ,	m_button3(0.0f)
 {
+	resetState();
 }
 
 std::wstring MouseDeviceWin32::getName() const
