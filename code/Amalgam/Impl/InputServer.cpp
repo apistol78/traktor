@@ -110,8 +110,6 @@ bool InputServer::create(const Settings* defaultSettings, const Settings* settin
 
 	m_inputFabricatorAborted = false;
 	m_inputActive = false;
-	m_inputReady = false;
-	m_inputReadyTimeout = 5.0f;
 	
 	return true;
 }
@@ -172,53 +170,6 @@ void InputServer::update(float deltaTime, bool renderViewActive)
 {
 	if (!m_inputSystem)
 		return;
-	
-	// Wait until all inputs have been idle; remove
-	// stuck devices if timeout.
-	if (!m_inputReady)
-	{
-		// Poll all devices.
-		m_inputSystem->update(deltaTime);
-
-		// Collect all devices which has a digital input active.
-		int32_t deviceCount = m_inputSystem->getDeviceCount();
-		if (!deviceCount)
-			return;
-
-		RefArray< input::IInputDevice > stuckDevices;
-		for (int32_t i = 0; i < deviceCount; ++i)
-		{
-			input::IInputDevice* device = m_inputSystem->getDevice(i);
-			if (!device || !device->isConnected())
-				continue;
-			
-			int32_t controlCount = device->getControlCount();
-			for (int32_t j = 0; j < controlCount; ++j)
-			{
-				if (device->isControlAnalogue(j))
-					continue;
-
-				if (device->getControlValue(j) > 0.5f)
-				{
-					stuckDevices.push_back(device);
-					break;
-				}
-			}
-		}
-		
-		// If no control active then we can transition into ready state.
-		if (stuckDevices.empty())
-			m_inputReady = true;
-		else if ((m_inputReadyTimeout -= deltaTime) <= 0.0f)
-		{
-			log::warning << L"Some input device(s) seem stuck; device(s) disabled" << Endl;
-			for (RefArray< input::IInputDevice >::iterator i = stuckDevices.begin(); i != stuckDevices.end(); ++i)
-				m_inputSystem->removeDevice(*i);
-			m_inputReady = true;
-		}
-		
-		return;
-	}
 
 	// Don't update input if render view is inactive.
 	if (!renderViewActive)

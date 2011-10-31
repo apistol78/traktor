@@ -8,6 +8,35 @@ namespace traktor
 	{
 		namespace
 		{
+
+struct JoystickControlMap
+{
+	InputDefaultControlType control;
+	int32_t index;
+	bool analogue;
+	const wchar_t* name;
+}
+c_joystickControlMap[] =
+{
+	{ DtThumbLeftX, -1, true, L"Left thumb X" },
+	{ DtThumbLeftY, -2, true, L"Left thumb Y" },
+	{ DtThumbRightX, -3, true, L"Right thumb X" },
+	{ DtThumbRightY, -4, true, L"Right thumb Y" },
+	{ DtButton1, 0, false, L"Button 1" },
+	{ DtButton2, 1, false, L"Button 2" },
+	{ DtButton3, 2, false, L"Button 3" },
+	{ DtButton4, 3, false, L"Button 4" },
+	{ DtShoulderLeft, 4, false, L"Left shoulder" },
+	{ DtShoulderRight, 5, false, L"Right shoulder" },
+	{ DtTriggerLeft, 6, false, L"Left trigger" },
+	{ DtTriggerRight, 7, false, L"Right trigger" },
+	{ DtCancel, 8, false, L"Cancel" },
+	{ DtSelect, 9, false, L"Select" },
+	{ DtUp, -5, false, L"Up" },
+	{ DtDown, -7, false, L"Down" },
+	{ DtLeft, -8, false, L"Left" },
+	{ DtRight, -6, false, L"Right" }
+};
 		
 float adjustDeadZone(float value)
 {
@@ -49,154 +78,58 @@ bool InputDeviceJoystickOsX::isConnected() const
 
 int32_t InputDeviceJoystickOsX::getControlCount()
 {
-	return 0;
+	return sizeof_array(c_joystickControlMap);
 }
 
 std::wstring InputDeviceJoystickOsX::getControlName(int32_t control)
 {
-	switch (control)
-	{
-	case -1:
-		return L"Left thumb X";
-	case -2:
-		return L"Left thumb Y";
-	case -3:
-		return L"Right thumb X";
-	case -4:
-		return L"Right thumb Y";
-	case -5:
-		return L"Up";
-	case -6:
-		return L"Right";
-	case -7:
-		return L"Down";
-	case -8:
-		return L"Left";
-	}
-	return L"Button " + toString(control + 1);
+	return c_joystickControlMap[control].name;
 }
 
 bool InputDeviceJoystickOsX::isControlAnalogue(int32_t control) const
 {
-	return control < 0;
+	return c_joystickControlMap[control].analogue;
 }
 
 float InputDeviceJoystickOsX::getControlValue(int32_t control)
 {
-	if (control == -1)
+	const JoystickControlMap& jm = c_joystickControlMap[control];
+	int32_t index = jm.index;
+
+	if (index == -1)
 		return m_axis[0][0];
-	else if (control == -2)
+	else if (index == -2)
 		return m_axis[0][1];
-	else if (control == -3)
+	else if (index == -3)
 		return m_axis[1][0];
-	else if (control == -4)
+	else if (index == -4)
 		return m_axis[1][1];
-	else if (control == -5)
+	else if (index == -5)
 		return (m_dpad == 7 || m_dpad == 0 || m_dpad == 1) ? 1.0f : 0.0f;
-	else if (control == -6)
+	else if (index == -6)
 		return (m_dpad == 1 || m_dpad == 2 || m_dpad == 3) ? 1.0f : 0.0f;
-	else if (control == -7)
+	else if (index == -7)
 		return (m_dpad == 3 || m_dpad == 4 || m_dpad == 5) ? 1.0f : 0.0f;
-	else if (control == -8)
+	else if (index == -8)
 		return (m_dpad == 5 || m_dpad == 6 || m_dpad == 7) ? 1.0f : 0.0f;
-	else if (control >= 0 && control < sizeof_array(m_button))
-		return m_button[control] ? 1.0f : 0.0f;
+	else if (index >= 0 && index < sizeof_array(m_button))
+		return m_button[index] ? 1.0f : 0.0f;
 	else
 		return 0.0f;
 }
 
 bool InputDeviceJoystickOsX::getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const
 {
-	if (analogue)
+	for (int32_t i = 0; i < sizeof_array(c_joystickControlMap); ++i)
 	{
-		switch (controlType)
+		const JoystickControlMap& jc = c_joystickControlMap[i];
+		if (jc.control == controlType && jc.analogue == analogue)
 		{
-		case DtThumbLeftX:
-			control = -1;
-			break;
-		
-		case DtThumbLeftY:
-			control = -2;
-			break;
-		
-		case DtThumbRightX:
-			control = -3;
-			break;
-		
-		case DtThumbRightY:
-			control = -4;
-			break;
-		
-		default:
-			return false;
+			control = i;
+			return true;
 		}
 	}
-	else
-	{
-		switch (controlType)
-		{
-		case DtButton1:
-			control = 0;
-			break;
-		
-		case DtButton2:
-			control = 1;
-			break;
-		
-		case DtButton3:
-			control = 2;
-			break;
-		
-		case DtButton4:
-			control = 3;
-			break;
-		
-		case DtShoulderLeft:
-			control = 4;
-			break;
-		
-		case DtShoulderRight:
-			control = 5;
-			break;
-				
-		case DtSelect:
-			control = 9;
-			break;
-		
-		case DtCancel:
-			control = 8;
-			break;
-		
-		case DtUp:
-			control = -5;
-			break;
-		
-		case DtDown:
-			control = -7;
-			break;
-		
-		case DtLeft:
-			control = -8;
-			break;
-		
-		case DtRight:
-			control = -6;
-			break;
-		
-		case DtTriggerLeft:
-			control = 6;
-			break;
-		
-		case DtTriggerRight:
-			control = 7;
-			break;
-		
-		default:
-			return false;
-		}
-	}
-
-	return true;
+	return false;
 }
 
 void InputDeviceJoystickOsX::resetState()
@@ -274,7 +207,7 @@ void InputDeviceJoystickOsX::callbackValue(void* context, IOReturn result, void*
 		
 		if (max > min)
 		{
-			float fv = float(v - min) / (max - min);
+			float fv = 2.0f * float(v - min) / (max - min) - 1.0f;
 			if (usage == 48)
 				this_->m_axis[0][0] = adjustDeadZone(fv);	// Left Thumb X
 			else if (usage == 49)

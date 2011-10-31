@@ -442,7 +442,11 @@ bool cglwUpdateWindow(void* windowHandle)
 				[windowData->window close];
 				continue;
 			}
+			
+			continue;
 		}
+		else if (eventType == NSKeyUp)
+			continue;
 
 		// Process event. 
 		[NSApp sendEvent: event];

@@ -1,6 +1,7 @@
 #ifndef traktor_input_InputSystem_H
 #define traktor_input_InputSystem_H
 
+#include <list>
 #include "Core/Object.h"
 #include "Core/RefArray.h"
 #include "Input/InputTypes.h"
@@ -48,8 +49,15 @@ public:
 	bool update(float deltaTime);
 
 private:
+	struct PendingDevice
+	{
+		Ref< IInputDevice > device;
+		float timeout;
+	};
+	
 	RefArray< IInputDriver > m_drivers;
 	RefArray< IInputDevice > m_devices;
+	std::list< PendingDevice > m_pendingDevices;
 
 	void updateDevices();
 };

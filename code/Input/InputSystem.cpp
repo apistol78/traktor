@@ -1,4 +1,5 @@
 #include <algorithm>
+#include "Core/Log/Log.h"
 #include "Input/InputSystem.h"
 #include "Input/IInputDriver.h"
 #include "Input/IInputDevice.h"
@@ -7,6 +8,26 @@ namespace traktor
 {
 	namespace input
 	{
+		namespace
+		{
+		
+bool isDeviceReady(IInputDevice* device)
+{
+	if (!device || !device->isConnected())
+		return false;
+			
+	int32_t controlCount = device->getControlCount();
+	for (int32_t i = 0; i < controlCount; ++i)
+	{
+		float v = device->getControlValue(i);
+		if (v < -0.5f || v > 0.5f)
+			return false;
+	}
+
+	return true;
+}
+		
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.InputSystem", InputSystem, Object)
 
@@ -75,18 +96,41 @@ Ref< IInputDevice > InputSystem::getDevice(InputCategory category, int32_t index
 
 bool InputSystem::update(float deltaTime)
 {
+	deltaTime = std::min(deltaTime, 1.0f / 30.0f);
+
+	// Update drivers.
 	bool shouldUpdateDevices = false;
-	
 	for (RefArray< IInputDriver >::iterator i = m_drivers.begin(); i != m_drivers.end(); ++i)
 	{
 		IInputDriver::UpdateResult result = (*i)->update();
 		if (result == IInputDriver::UrDevicesChanged)
 			shouldUpdateDevices |= true;
 	}
-	
 	if (shouldUpdateDevices)
 		updateDevices();
+		
+	// Check if pending devices are ready.
+	for (std::list< PendingDevice >::iterator i = m_pendingDevices.begin(); i != m_pendingDevices.end(); )
+	{
+		i->device->readState();
+		if (isDeviceReady(i->device))
+		{
+			m_devices.push_back(i->device);
+			i = m_pendingDevices.erase(i);
+		}
+		else
+		{
+			if ((i->timeout -= deltaTime) <= 0.0f)
+			{
+				log::warning << L"Input device \"" << i->device->getName() << L"\" seems stuck; ignoring input from device" << Endl;
+				i = m_pendingDevices.erase(i);
+			}
+			else
+				++i;
+		}
+	}
 
+	// Read state of all devices.
 	for (RefArray< IInputDevice >::iterator i = m_devices.begin(); i != m_devices.end(); ++i)
 		(*i)->readState();
 
@@ -96,6 +140,8 @@ bool InputSystem::update(float deltaTime)
 void InputSystem::updateDevices()
 {
 	m_devices.resize(0);
+	m_pendingDevices.resize(0);
+	
 	for (RefArray< IInputDriver >::iterator i = m_drivers.begin(); i != m_drivers.end(); ++i)
 	{
 		IInputDriver* inputDriver = *i;
@@ -106,7 +152,10 @@ void InputSystem::updateDevices()
 			Ref< IInputDevice > inputDevice = inputDriver->getDevice(j);
 			T_ASSERT (inputDevice);
 
-			m_devices.push_back(inputDevice);
+			PendingDevice pd;
+			pd.device = inputDevice;
+			pd.timeout = 5.0f;
+			m_pendingDevices.push_back(pd);
 		}
 	}
 }
