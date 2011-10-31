@@ -8,7 +8,7 @@ namespace traktor
 		namespace
 		{
 
-const uint32_t c_poolValueCount = 16384;
+const uint32_t c_poolValueCount = 32768;
 
 		}
 
@@ -22,10 +22,13 @@ ActionValuePool::ActionValuePool()
 
 ActionValue* ActionValuePool::alloc(uint32_t count)
 {
-	T_FATAL_ASSERT_M (m_next + count < c_poolValueCount, L"Out of memory (AS)");
+	if (m_next + count >= c_poolValueCount)
+		return 0;
+
 	ActionValue* value = &m_top[m_next];
 	m_next += count;
 	m_peek = std::max(m_peek, m_next);
+
 	return value;
 }
 
