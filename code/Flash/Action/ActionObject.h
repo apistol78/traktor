@@ -1,8 +1,9 @@
 #ifndef traktor_flash_ActionObject_H
 #define traktor_flash_ActionObject_H
 
-#include <map>
+//#include <map>
 #include <string>
+#include "Core/Containers/SmallMap.h"
 #include "Flash/Collectable.h"
 #include "Flash/Action/ActionTypes.h"
 #include "Flash/Action/ActionValue.h"
@@ -33,8 +34,8 @@ class T_DLLCLASS ActionObject : public Collectable
 	T_RTTI_CLASS;
 
 public:
-	typedef std::map< uint32_t, ActionValue > member_map_t;
-	typedef std::map< uint32_t, std::pair< Ref< ActionFunction >, Ref< ActionFunction > > > property_map_t;
+	typedef SmallMap< uint32_t, ActionValue > member_map_t;
+	typedef SmallMap< uint32_t, std::pair< Ref< ActionFunction >, Ref< ActionFunction > > > property_map_t;
 
 	explicit ActionObject(ActionContext* context, IActionObjectRelay* relay = 0);
 
@@ -128,7 +129,6 @@ private:
 	property_map_t m_properties;
 	Ref< ActionObject > m__proto__;		//!< Cached "__proto__" member value.
 	Ref< IActionObjectRelay > m_relay;
-	uint32_t m_idProto;
 
 	ActionObject(const ActionObject&) {}	// Not permitted
 

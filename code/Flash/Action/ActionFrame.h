@@ -2,6 +2,7 @@
 #define traktor_flash_ActionFrame_H
 
 #include "Core/Object.h"
+#include "Core/Containers/SmallMap.h"
 #include "Flash/Action/ActionValue.h"
 #include "Flash/Action/ActionValueArray.h"
 #include "Flash/Action/ActionValueStack.h"
@@ -68,7 +69,7 @@ public:
 
 	const ActionValueArray& getRegisters() const { return m_localRegisters; }
 
-	const std::map< uint32_t, ActionValue >& getVariables() const { return m_localVariables; }
+	const SmallMap< uint32_t, ActionValue >& getVariables() const { return m_localVariables; }
 
 	ActionDictionary* getDictionary() const { return m_dictionary; }
 
@@ -81,7 +82,7 @@ private:
 	Ref< ActionObject > m_self;
 	Ref< const IActionVMImage > m_image;
 	ActionValueArray m_localRegisters;
-	std::map< uint32_t, ActionValue > m_localVariables;
+	SmallMap< uint32_t, ActionValue > m_localVariables;
 	Ref< ActionDictionary > m_dictionary;
 	ActionFunction* m_callee;
 	ActionValueStack m_stack;

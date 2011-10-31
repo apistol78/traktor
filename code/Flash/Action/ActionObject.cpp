@@ -20,9 +20,7 @@ ActionObject::ActionObject(ActionContext* context, IActionObjectRelay* relay)
 :	m_context(context)
 ,	m_readOnly(false)
 {
-	m_idProto = context->getStrings()["__proto__"];
-
-	setMember(m_idProto, ActionValue("Object"));
+	setMember(ActionContext::Id__proto__, ActionValue("Object"));
 	setRelay(relay);
 }
 
@@ -30,9 +28,7 @@ ActionObject::ActionObject(ActionContext* context, const std::string& prototypeN
 :	m_context(context)
 ,	m_readOnly(false)
 {
-	m_idProto = context->getStrings()["__proto__"];
-
-	setMember(m_idProto, ActionValue(prototypeName));
+	setMember(ActionContext::Id__proto__, ActionValue(prototypeName));
 	setRelay(relay);
 }
 
@@ -40,9 +36,7 @@ ActionObject::ActionObject(ActionContext* context, ActionObject* prototype, IAct
 :	m_context(context)
 ,	m_readOnly(false)
 {
-	m_idProto = context->getStrings()["__proto__"];
-
-	setMember(m_idProto, ActionValue(prototype));
+	setMember(ActionContext::Id__proto__, ActionValue(prototype));
 	setRelay(relay);
 }
 
@@ -55,7 +49,7 @@ void ActionObject::set__proto__(ActionObject* prototype)
 {
 	T_ASSERT (prototype != this);
 	m__proto__ = prototype;
-	m_members[m_idProto] = ActionValue(prototype);
+	m_members[ActionContext::Id__proto__] = ActionValue(prototype);
 }
 
 ActionObject* ActionObject::get__proto__()
@@ -63,7 +57,7 @@ ActionObject* ActionObject::get__proto__()
 	if (!m__proto__)
 	{
 		ActionValue protoValue;
-		if (getLocalMember(m_idProto, protoValue))
+		if (getLocalMember(ActionContext::Id__proto__, protoValue))
 		{
 			if (protoValue.isObject())
 				m__proto__ = protoValue.getObject();
@@ -73,7 +67,7 @@ ActionObject* ActionObject::get__proto__()
 				if (m__proto__)
 				{
 					// Replace string identifier with pointer to actual class.
-					m_members[m_idProto] = ActionValue(m__proto__);
+					m_members[ActionContext::Id__proto__] = ActionValue(m__proto__);
 				}
 			}
 		}
@@ -85,7 +79,7 @@ ActionObject* ActionObject::get__proto__()
 			if (m__proto__)
 			{
 				// Replace string identifier with pointer to actual class.
-				m_members[m_idProto] = ActionValue(m__proto__);
+				m_members[ActionContext::Id__proto__] = ActionValue(m__proto__);
 			}
 		}
 
@@ -93,7 +87,7 @@ ActionObject* ActionObject::get__proto__()
 		if (m__proto__)
 		{
 			ActionValue initValue;
-			if (m__proto__->getMember("constructor", initValue))
+			if (m__proto__->getMember(ActionContext::IdConstructor, initValue))
 			{
 				ActionClass* builtinClass = initValue.getObject< ActionClass >();
 				if (builtinClass)
@@ -108,7 +102,7 @@ ActionObject* ActionObject::get__proto__()
 void ActionObject::setMember(uint32_t memberName, const ActionValue& memberValue)
 {
 	// Reset cached pointer if __proto__ member is modified.
-	if (memberName == m_idProto)
+	if (memberName == ActionContext::Id__proto__)
 		m__proto__ = 0;
 
 	// Try setting through relay first.
@@ -262,10 +256,8 @@ Ref< ActionObject > ActionObject::getSuper()
 	ActionObject* superPrototype = prototype->get__proto__();
 	if (superPrototype != prototype)
 	{
-		uint32_t idCtor = m_context->getStrings()["__ctor__"];
-
 		// __proto__.__ctor__
-		if (prototype->getLocalMember(idCtor, memberValue))
+		if (prototype->getLocalMember(ActionContext::Id__ctor__, memberValue))
 			superClass = memberValue.getObject< ActionFunction >();
 		else
 			superClass = dynamic_type_cast< ActionFunction* >(superPrototype);
@@ -340,32 +332,32 @@ void ActionObject::setRelay(IActionObjectRelay* relay)
 
 void ActionObject::setMember(const std::string& memberName, const ActionValue& memberValue)
 {
-	setMember(m_context->getStrings()[memberName], memberValue);
+	setMember(m_context->getString(memberName), memberValue);
 }
 
 bool ActionObject::getMember(const std::string& memberName, ActionValue& outMemberValue)
 {
-	return getMember(m_context->getStrings()[memberName], outMemberValue);
+	return getMember(m_context->getString(memberName), outMemberValue);
 }
 
 bool ActionObject::getLocalMember(const std::string& memberName, ActionValue& outMemberValue) const
 {
-	return getLocalMember(m_context->getStrings()[memberName], outMemberValue);
+	return getLocalMember(m_context->getString(memberName), outMemberValue);
 }
 
 void ActionObject::addProperty(const std::string& propertyName, ActionFunction* propertyGet, ActionFunction* propertySet)
 {
-	addProperty(m_context->getStrings()[propertyName], propertyGet, propertySet);
+	addProperty(m_context->getString(propertyName), propertyGet, propertySet);
 }
 
 bool ActionObject::getPropertyGet(const std::string& propertyName, Ref< ActionFunction >& outPropertyGet)
 {
-	return getPropertyGet(m_context->getStrings()[propertyName], outPropertyGet);
+	return getPropertyGet(m_context->getString(propertyName), outPropertyGet);
 }
 
 bool ActionObject::getPropertySet(const std::string& propertyName, Ref< ActionFunction >& outPropertySet)
 {
-	return getPropertySet(m_context->getStrings()[propertyName], outPropertySet);
+	return getPropertySet(m_context->getString(propertyName), outPropertySet);
 }
 
 void ActionObject::trace(const IVisitor& visitor) const

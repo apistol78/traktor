@@ -37,7 +37,7 @@ ActionValue getVariable(ExecutionState& state, const std::string& variableName)
 {
 	ActionValue value;
 
-	uint32_t variableId = state.context->getStrings()[variableName];
+	uint32_t variableId = state.context->getString(variableName);
 
 	if (state.with)
 	{
@@ -281,7 +281,7 @@ void opx_setVariable(ExecutionState& state)
 	ActionValue value = stack.pop();
 	std::string variableName = stack.pop().getString();
 
-	uint32_t variableNameId = state.context->getStrings()[variableName];
+	uint32_t variableNameId = state.context->getString(variableName);
 
 	ActionValue* variableValue = state.frame->getVariableValue(variableNameId);
 	if (variableValue)
@@ -598,7 +598,7 @@ void opx_delete(ExecutionState& state)
 	ActionValue objectValue = stack.pop();
 	if (objectValue.isObject())
 	{
-		uint32_t memberNameId = state.context->getStrings()[memberName];
+		uint32_t memberNameId = state.context->getString(memberName);
 		bool deleted = objectValue.getObject()->deleteMember(memberNameId);
 		stack.push(ActionValue(deleted));
 	}
@@ -611,7 +611,7 @@ void opx_delete2(ExecutionState& state)
 	ActionValueStack& stack = state.frame->getStack();
 	std::string variableName = stack.pop().getString();
 
-	uint32_t variableNameId = state.context->getStrings()[variableName];
+	uint32_t variableNameId = state.context->getString(variableName);
 
 	if (state.with)
 	{
@@ -658,7 +658,7 @@ void opx_defineLocal(ExecutionState& state)
 		variableFunction->setName(variableName);
 #endif
 
-	uint32_t variableNameId = state.context->getStrings()[variableName];
+	uint32_t variableNameId = state.context->getString(variableName);
 
 	if (state.frame->getCallee())
 	{
@@ -752,7 +752,7 @@ void opx_new(ExecutionState& state)
 
 	// Create instance.
 	Ref< ActionObject > self = new ActionObject(state.context, prototype);
-	self->setMember("__ctor__", classFunctionValue);
+	self->setMember(ActionContext::Id__ctor__, classFunctionValue);
 
 	classFunction->call(state.frame, self);
 	stack.push(ActionValue(self));
@@ -763,7 +763,7 @@ void opx_defineLocal2(ExecutionState& state)
 	ActionValueStack& stack = state.frame->getStack();
 	std::string variableName = stack.pop().getString();
 
-	uint32_t variableNameId = state.context->getStrings()[variableName];
+	uint32_t variableNameId = state.context->getString(variableName);
 
 	if (state.frame->getCallee())
 	{
@@ -795,7 +795,7 @@ void opx_initArray(ExecutionState& state)
 
 		// Allocate array instance.
 		Ref< ActionObject > self = new ActionObject(state.context, "Array");
-		self->setMember("__ctor__", arrayClassMember);
+		self->setMember(ActionContext::Id__ctor__, arrayClassMember);
 
 		// Initialize array through constructor.
 		arrayClass->call(state.frame, self);
@@ -971,7 +971,7 @@ void opx_getMember(ExecutionState& state)
 		else
 			index = parseString< int32_t >(memberNameValue.getString(), -1);
 
-		if (index >= 0 && index < arr->length())
+		if (index >= 0 && index < int32_t(arr->length()))
 		{
 			stack.push((*arr)[index]);
 			return;
@@ -979,7 +979,7 @@ void opx_getMember(ExecutionState& state)
 	}
 
 	std::string memberName = memberNameValue.getString();
-	uint32_t memberId = state.context->getStrings()[memberName];
+	uint32_t memberId = state.context->getString(memberName);
 
 	if (target->getMember(memberId, memberValue))
 	{
@@ -1036,7 +1036,7 @@ void opx_setMember(ExecutionState& state)
 		else
 			index = parseString< int32_t >(memberNameValue.getString(), -1);
 
-		if (index >= 0 && index < arr->length())
+		if (index >= 0 && index < int32_t(arr->length()))
 		{
 			(*arr)[index] = memberValue;
 			return;
@@ -1044,7 +1044,7 @@ void opx_setMember(ExecutionState& state)
 	}
 
 	std::string memberName = memberNameValue.getString();
-	uint32_t memberId = state.context->getStrings()[memberName];
+	uint32_t memberId = state.context->getString(memberName);
 
 	Ref< ActionFunction > propertySet;
 	if (target->getPropertySet(memberId, propertySet))
@@ -1167,7 +1167,7 @@ void opx_newMethod(ExecutionState& state)
 
 		Ref< ActionObject > prototype = prototypeValue.getObject();
 		Ref< ActionObject > self = new ActionObject(state.context, prototype);
-		self->setMember("__ctor__", ActionValue(classFunction));
+		self->setMember(ActionContext::Id__ctor__, ActionValue(classFunction));
 		classFunction->call(state.frame, self);
 		stack.push(ActionValue(self));
 	}
@@ -1192,7 +1192,7 @@ void opx_instanceOf(ExecutionState& state)
 		Ref< ActionObject > constructor = constructorValue.getObject();
 
 		ActionValue constructorProtoValue;
-		constructor->getMember("prototype", constructorProtoValue);
+		constructor->getMember(ActionContext::IdPrototype, constructorProtoValue);
 
 		Ref< ActionObject > objectProto = object->get__proto__();
 		while (objectProto)
@@ -1225,15 +1225,12 @@ void opx_enum2(ExecutionState& state)
 	{
 		Ref< ActionObject > object = enumObject.getObject();
 
-		uint32_t idProto = state.context->getStrings()["__proto__"];
-		uint32_t idPrototype = state.context->getStrings()["prototype"];
-
 		//const ActionObject::member_map_t& members = object->getLocalMembers();
 		//for (ActionObject::member_map_t::const_iterator i = members.begin(); i != members.end(); ++i)
 		//{
 		//	// \fixme Should only enumerate user added members.
 		//	// \fixme Reverse lookup of string.
-		//	if (i->first != idProto && i->first != idPrototype)
+		//	if (i->first != ActionContext::Id__proto__ && i->first != ActionContext::IdPrototype)
 		//		stack.push(ActionValue(i->first));
 		//}
 
@@ -1400,13 +1397,13 @@ void opx_extends(ExecutionState& state)
 	T_ASSERT (subClass.isObject());
 
 	ActionValue superPrototype;
-	superClass.getObject()->getMember("prototype", superPrototype);
+	superClass.getObject()->getMember(ActionContext::IdPrototype, superPrototype);
 
 	Ref< ActionObject > prototype = new ActionObject(state.context);
-	prototype->setMember("__proto__", superPrototype);
-	prototype->setMember("__ctor__", superClass);
+	prototype->setMember(ActionContext::Id__proto__, superPrototype);
+	prototype->setMember(ActionContext::Id__ctor__, superClass);
 
-	subClass.getObject()->setMember("prototype", ActionValue(prototype));
+	subClass.getObject()->setMember(ActionContext::IdPrototype, ActionValue(prototype));
 }
 
 void opp_gotoFrame(PreparationState& state)
@@ -1600,8 +1597,8 @@ void opx_defineFunction2(ExecutionState& state)
 
 	// Create prototype.
 	Ref< ActionObject > prototype = new ActionObject(state.context);
-	prototype->setMember("constructor", ActionValue(function));
-	function->setMember("prototype", ActionValue(prototype));
+	prototype->setMember(ActionContext::IdConstructor, ActionValue(function));
+	function->setMember(ActionContext::IdPrototype, ActionValue(prototype));
 
 	if (*functionName != 0)
 	{
@@ -1993,8 +1990,8 @@ void opx_defineFunction(ExecutionState& state)
 
 	// Create prototype.
 	Ref< ActionObject > prototype = new ActionObject(state.context);
-	prototype->setMember("constructor", ActionValue(function));
-	function->setMember("prototype", ActionValue(prototype));
+	prototype->setMember(ActionContext::IdConstructor, ActionValue(function));
+	function->setMember(ActionContext::IdPrototype, ActionValue(prototype));
 
 	if (*functionName != 0)
 	{

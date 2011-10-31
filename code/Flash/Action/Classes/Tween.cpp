@@ -47,9 +47,9 @@ void Tween::init(
 	m_current = begin;
 	m_playing = false;
 
-	m_idTarget = m_context->getStrings()["_target"];
-	m_idTargetProperty = m_context->getStrings()["_targetProperty"];
-	m_idFunction = m_context->getStrings()["_function"];
+	m_idTarget = m_context->getString("_target");
+	m_idTargetProperty = m_context->getString("_targetProperty");
+	m_idFunction = m_context->getString("_function");
 
 	if (target)
 	{

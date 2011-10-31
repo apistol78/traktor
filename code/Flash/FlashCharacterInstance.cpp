@@ -27,7 +27,6 @@ FlashCharacterInstance::FlashCharacterInstance(ActionContext* context, const cha
 	m_cxform.blue[1] =
 	m_cxform.alpha[1] = 0.0f;
 	m_transform = Matrix33::identity();
-	m_idParent = m_context->getStrings()["_parent"];
 }
 
 void FlashCharacterInstance::destroy()
@@ -136,9 +135,9 @@ void FlashCharacterInstance::eventInit()
 			0
 		);
 
-		callFrame.setVariable("this", ActionValue(self));
-		callFrame.setVariable("super", ActionValue(super));
-		callFrame.setVariable("_global", ActionValue(m_context->getGlobal()));
+		callFrame.setVariable(ActionContext::IdThis, ActionValue(self));
+		callFrame.setVariable(ActionContext::IdSuper, ActionValue(super));
+		callFrame.setVariable(ActionContext::IdGlobal, ActionValue(m_context->getGlobal()));
 
 		m_context->getVM()->execute(&callFrame);
 	}
@@ -161,9 +160,9 @@ void FlashCharacterInstance::eventLoad()
 			0
 		);
 
-		callFrame.setVariable("this", ActionValue(self));
-		callFrame.setVariable("super", ActionValue(super));
-		callFrame.setVariable("_global", ActionValue(m_context->getGlobal()));
+		callFrame.setVariable(ActionContext::IdThis, ActionValue(self));
+		callFrame.setVariable(ActionContext::IdSuper, ActionValue(super));
+		callFrame.setVariable(ActionContext::IdGlobal, ActionValue(m_context->getGlobal()));
 
 		m_context->getVM()->execute(&callFrame);
 	}
@@ -186,9 +185,9 @@ void FlashCharacterInstance::eventFrame()
 			0
 		);
 
-		callFrame.setVariable("this", ActionValue(self));
-		callFrame.setVariable("super", ActionValue(super));
-		callFrame.setVariable("_global", ActionValue(m_context->getGlobal()));
+		callFrame.setVariable(ActionContext::IdThis, ActionValue(self));
+		callFrame.setVariable(ActionContext::IdSuper, ActionValue(super));
+		callFrame.setVariable(ActionContext::IdGlobal, ActionValue(m_context->getGlobal()));
 
 		m_context->getVM()->execute(&callFrame);
 	}
@@ -216,7 +215,7 @@ void FlashCharacterInstance::eventMouseMove(int x, int y, int button)
 
 bool FlashCharacterInstance::getMember(ActionContext* context, uint32_t memberName, ActionValue& outMemberValue)
 {
-	if (getParent() && memberName == m_idParent)
+	if (getParent() && memberName == ActionContext::IdParent)
 	{
 		outMemberValue = ActionValue(getParent()->getAsObject(context));
 		return true;

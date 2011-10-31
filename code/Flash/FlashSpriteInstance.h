@@ -119,8 +119,17 @@ private:
 	int32_t m_mouseX;
 	int32_t m_mouseY;
 	int32_t m_maskCount;
+	uint32_t m_idOnLoad;
+	uint32_t m_idOnEnterFrame;
+	uint32_t m_idOnKeyDown;
+	uint32_t m_idOnKeyUp;
+	uint32_t m_idOnMouseDown;
+	uint32_t m_idOnPress;
+	uint32_t m_idOnMouseUp;
+	uint32_t m_idOnRelease;
+	uint32_t m_idOnMouseMove;
 
-	void executeScriptEvent(const std::string& eventName);
+	void executeScriptEvent(uint32_t eventName);
 };
 
 	}

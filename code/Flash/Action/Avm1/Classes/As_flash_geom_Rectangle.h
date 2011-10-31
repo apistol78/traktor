@@ -27,6 +27,11 @@ public:
 	virtual ActionValue xplicit(const ActionValueArray& args);
 
 private:
+	uint32_t m_idX;
+	uint32_t m_idY;
+	uint32_t m_idWidth;
+	uint32_t m_idHeight;
+
 	void Rectangle_clone(CallArgs& ca);
 
 	void Rectangle_contains(CallArgs& ca);
@@ -84,6 +89,16 @@ private:
 	void Rectangle_get_topLeft(CallArgs& ca);
 
 	void Rectangle_set_topLeft(CallArgs& ca);
+
+	void getRectangleValues(ActionObject* self, ActionValue rc[4]);
+
+	void setRectangleValues(ActionObject* self, ActionValue rc[4]);
+
+	bool getSize(ActionObject* self, avm_number_t sz[2]);
+
+	bool getRectangle(ActionObject* self, avm_number_t rc[4]);
+
+	void setRectangle(ActionObject* self, avm_number_t rc[4]);
 };
 
 	}

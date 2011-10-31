@@ -1,6 +1,7 @@
 #ifndef traktor_flash_ActionFunction2_H
 #define traktor_flash_ActionFunction2_H
 
+#include "Core/Containers/SmallMap.h"
 #include "Flash/Action/ActionFunction.h"
 
 // import/export mechanism.
@@ -46,7 +47,7 @@ public:
 		uint8_t registerCount,
 		uint16_t flags,
 		const std::vector< std::pair< std::string, uint8_t > >& argumentsIntoRegisters,
-		const std::map< uint32_t, ActionValue >& variables,
+		const SmallMap< uint32_t, ActionValue >& variables,
 		ActionDictionary* dictionary
 	);
 
@@ -64,11 +65,6 @@ private:
 	std::vector< std::pair< uint32_t, uint8_t > > m_argumentsIntoRegisters;
 	std::vector< std::pair< uint32_t, ActionValue > > m_variables;
 	Ref< ActionDictionary > m_dictionary;
-	uint32_t m_idThis;
-	uint32_t m_idSuper;
-	uint32_t m_idGlobal;
-	uint32_t m_idArguments;
-	uint32_t m_idRoot;
 };
 
 	}
