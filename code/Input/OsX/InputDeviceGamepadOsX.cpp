@@ -9,6 +9,41 @@ namespace traktor
 		namespace
 		{
 		
+struct GamepadControlMap
+{
+	InputDefaultControlType control;
+	int32_t index;
+	bool analogue;
+	const wchar_t* name;
+}
+c_gamepadControlMap[] =
+{
+	{ DtThumbLeftX, -1, true, L"Left thumb X" },
+	{ DtThumbLeftY, -2, true, L"Left thumb Y" },
+	{ DtThumbRightX, -3, true, L"Right thumb X" },
+	{ DtThumbRightY, -4, true, L"Right thumb Y" },
+	{ DtTriggerLeft, -5, true, L"Left trigger" },
+	{ DtTriggerRight, -6, true, L"Right trigger" },
+	{ DtShoulderLeft, -7, true, L"Left shoulder" },
+	{ DtShoulderRight, -8, true, L"Right shoulder" },
+	{ DtButton1, 0, false, L"Button 1" },
+	{ DtButton2, 1, false, L"Button 2" },
+	{ DtButton3, 2, false, L"Button 3" },
+	{ DtButton4, 3, false, L"Button 4" },
+	{ DtShoulderLeft, 4, false, L"Left shoulder" },
+	{ DtShoulderRight, 5, false, L"Right shoulder" },
+	{ DtThumbLeftPush, 6, false, L"Left thumb push" },
+	{ DtThumbRightPush, 7, false, L"Right thumb push" },
+	{ DtSelect, 8, false, L"Select" },
+	{ DtCancel, 9, false, L"Cancel" },
+	{ DtUp, 10, false, L"Up" },
+	{ DtDown, 11, false, L"Down" },
+	{ DtLeft, 12, false, L"Left" },
+	{ DtRight, 13, false, L"Right" },
+	{ DtTriggerLeft, -5, false, L"Left trigger" },
+	{ DtTriggerRight, -6, false, L"Right trigger" }
+};
+		
 float adjustDeadZone(float value)
 {
 	if (value >= -0.2f && value <= 0.2f)
@@ -49,170 +84,70 @@ bool InputDeviceGamepadOsX::isConnected() const
 
 int32_t InputDeviceGamepadOsX::getControlCount()
 {
-	return 0;
+	return sizeof_array(c_gamepadControlMap);
 }
 
 std::wstring InputDeviceGamepadOsX::getControlName(int32_t control)
 {
-	switch (control)
-	{
-	case -1:
-		return L"Left thumb X";
-	case -2:
-		return L"Left thumb Y";
-	case -3:
-		return L"Right thumb X";
-	case -4:
-		return L"Right thumb Y";
-	case -5:
-		return L"Left trigger";
-	case -6:
-		return L"Right trigger";
-	case -7:
-		return L"Left trigger";
-	case -8:
-		return L"Right trigger";
-	}
-	return L"Button " + toString(control);
+	return c_gamepadControlMap[control].name;
 }
 
 bool InputDeviceGamepadOsX::isControlAnalogue(int32_t control) const
 {
-	return control < 0;
+	return c_gamepadControlMap[control].analogue;
 }
 
 float InputDeviceGamepadOsX::getControlValue(int32_t control)
 {
-	if (control == -1)
-		return m_axis[0][0];
-	else if (control == -2)
-		return m_axis[0][1];
-	else if (control == -3)
-		return m_axis[1][0];
-	else if (control == -4)
-		return m_axis[1][1];
-	else if (control == -5)
-		return m_axis[2][0];
-	else if (control == -6)
-		return m_axis[2][1];
-	else if (control == -7)
-		return m_axis[2][0] > 0.5f ? 1.0f : 0.0f;
-	else if (control == -8)
-		return m_axis[2][1] > 0.5f ? 1.0f : 0.0f;
-	else if (control >= 0 && control < sizeof_array(m_button))
-		return m_button[control] ? 1.0f : 0.0f;
+	int32_t index = c_gamepadControlMap[control].index;
+	bool analogue = c_gamepadControlMap[control].analogue;
+	
+	if (analogue)
+	{
+		if (index == -1)
+			return m_axis[0][0];
+		else if (index == -2)
+			return m_axis[0][1];
+		else if (index == -3)
+			return m_axis[1][0];
+		else if (index == -4)
+			return m_axis[1][1];
+		else if (index == -5)
+			return m_axis[2][0];
+		else if (index == -6)
+			return m_axis[2][1];
+		else if (index == -7)
+			return m_button[4] ? 1.0f : 0.0f;
+		else if (index == -8)
+			return m_button[5] ? 1.0f : 0.0f;
+	}
 	else
-		return 0.0f;
+	{
+		float v = 0.0f;
+		
+		if (index == -5)
+			v = m_axis[2][0];
+		else if (index == -6)
+			v = m_axis[2][1];
+		else if (index >= 0 && index < sizeof_array(m_button))
+			v = m_button[index] ? 1.0f : 0.0f;
+	
+		return v > 0.5f ? 1.0f : 0.0f;
+	}
 }
 
 bool InputDeviceGamepadOsX::getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const
 {
-	if (analogue)
+	for (int32_t i = 0; i < sizeof_array(c_gamepadControlMap); ++i)
 	{
-		switch (controlType)
+		const GamepadControlMap& gc = c_gamepadControlMap[i];
+		if (gc.control == controlType && gc.analogue == analogue)
 		{
-		case DtThumbLeftX:
-			control = -1;
-			break;
-		
-		case DtThumbLeftY:
-			control = -2;
-			break;
-		
-		case DtThumbRightX:
-			control = -3;
-			break;
-		
-		case DtThumbRightY:
-			control = -4;
-			break;
-		
-		case DtTriggerLeft:
-			control = -5;
-			break;
-		
-		case DtTriggerRight:
-			control = -6;
-			break;
-		
-		default:
-			return false;
+			control = i;
+			return true;
 		}
 	}
-	else
-	{
-		switch (controlType)
-		{
-		case DtButton1:
-			control = 0;
-			break;
-		
-		case DtButton2:
-			control = 1;
-			break;
-		
-		case DtButton3:
-			control = 2;
-			break;
-		
-		case DtButton4:
-			control = 3;
-			break;
-		
-		case DtShoulderLeft:
-			control = 4;
-			break;
-		
-		case DtShoulderRight:
-			control = 5;
-			break;
-		
-		case DtThumbLeftPush:
-			control = 6;
-			break;
-		
-		case DtThumbRightPush:
-			control = 7;
-			break;
-		
-		case DtSelect:
-			control = 8;
-			break;
-		
-		case DtCancel:
-			control = 9;
-			break;
-		
-		case DtUp:
-			control = 10;
-			break;
-		
-		case DtDown:
-			control = 11;
-			break;
-		
-		case DtLeft:
-			control = 12;
-			break;
-		
-		case DtRight:
-			control = 13;
-			break;
-		
-		case DtTriggerLeft:
-			control = -7;
-			break;
-		
-		case DtTriggerRight:
-			control = -8;
-			break;
-		
-		default:
-			return false;
-		}
-	}
-
-	return true;
+	return false;
 }
 
 void InputDeviceGamepadOsX::resetState()
@@ -289,19 +224,26 @@ void InputDeviceGamepadOsX::callbackValue(void* context, IOReturn result, void* 
 		
 		if (max > min)
 		{
-			float fv = float(v - min) / (max - min);		
-			if (usage == 48)
-				this_->m_axis[0][0] = adjustDeadZone(fv);	// Left Thumb X
-			else if (usage == 49)
-				this_->m_axis[0][1] = adjustDeadZone(-fv);	// Left Thumb Y
-			else if (usage == 51)
-				this_->m_axis[1][0] = adjustDeadZone(fv);	// Right Thumb X
-			else if (usage == 52)
-				this_->m_axis[1][1] = adjustDeadZone(-fv);	// Right Thumb Y
-			else if (usage == 50)				// Left trigger
-				this_->m_axis[2][0] = fv;
-			else if (usage == 53)				// Right trigger
-				this_->m_axis[2][1] = fv;
+			if (usage == 50 || usage == 53)
+			{
+				float fv = float(v - min) / (max - min);
+				if (usage == 50)				// Left trigger
+					this_->m_axis[2][0] = fv;
+				else if (usage == 53)			// Right trigger
+					this_->m_axis[2][1] = fv;
+			}
+			else
+			{
+				float fv = 2.0f * float(v - min) / (max - min) - 1.0f;
+				if (usage == 48)
+					this_->m_axis[0][0] = adjustDeadZone(fv);	// Left Thumb X
+				else if (usage == 49)
+					this_->m_axis[0][1] = adjustDeadZone(-fv);	// Left Thumb Y
+				else if (usage == 51)
+					this_->m_axis[1][0] = adjustDeadZone(fv);	// Right Thumb X
+				else if (usage == 52)
+					this_->m_axis[1][1] = adjustDeadZone(-fv);	// Right Thumb Y
+			}
 		}
 	}
 }
