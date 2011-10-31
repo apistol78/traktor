@@ -136,6 +136,8 @@ bool Any::getBoolean() const
 		return m_data.m_object != 0;
 	case AtType:
 		return m_data.m_type != 0;
+	default:
+		break;
 	}
 	return false;
 }
@@ -152,6 +154,8 @@ int32_t Any::getInteger() const
 		return int32_t(m_data.m_float);
 	case AtString:
 		return parseString< int32_t >(m_data.m_string);
+	default:
+		break;
 	}
 	return 0;
 }
@@ -168,6 +172,8 @@ float Any::getFloat() const
 		return m_data.m_float;
 	case AtString:
 		return parseString< float >(m_data.m_string);
+	default:
+		break;
 	}
 	return 0.0f;
 }
@@ -186,6 +192,8 @@ std::wstring Any::getString() const
 		return m_data.m_string;
 	case AtType:
 		return m_data.m_type->getName();
+	default:
+		break;
 	}
 	return L"";
 }

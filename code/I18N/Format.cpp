@@ -77,6 +77,8 @@ std::wstring Format::Argument::format() const
 		{
 			return m_value.s ? m_value.s : L"";
 		}
+	default:
+		break;
 	}
 	return L"";
 }

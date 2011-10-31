@@ -50,6 +50,9 @@ void PathTesselator::tesselate(const Path& path, AlignedVector< Segment >& outSe
 			case SpgtQuadratic:
 				tesselateQuadraticSegment(path, *i, *j, outSegments);
 				break;
+				
+			default:
+				break;
 			}
 		}
 	}

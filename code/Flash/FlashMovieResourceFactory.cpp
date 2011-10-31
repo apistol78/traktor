@@ -54,7 +54,7 @@ Ref< Object > FlashMovieResourceFactory::create(resource::IResourceManager* reso
 	{
 		int nread = stream->read(&assetBlob[offset], assetSize - offset);
 		if (nread < 0)
-			return false;
+			return 0;
 		offset += nread;
 	}
 
