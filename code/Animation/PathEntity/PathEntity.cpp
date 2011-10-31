@@ -86,6 +86,9 @@ void PathEntity::update(const world::EntityUpdate* update)
 				m_timeDeltaSign = 1.0f;
 			}
 			break;
+
+		default:
+			break;
 		}
 	}
 

@@ -163,6 +163,9 @@ bool ActionValue::getBoolean() const
 
 	case AvtObject:
 		return bool(m_value.o != 0);
+
+	default:
+		break;
 	}
 	return false;
 }
@@ -174,10 +177,14 @@ avm_number_t ActionValue::getNumber() const
 	{
 	case AvtBoolean:
 		return m_value.b ? avm_number_t(1) : avm_number_t(0);
+
 	case AvtNumber:
 		return m_value.n;
+
 	case AvtObject:
 		return m_value.o ? m_value.o->valueOf().getNumber() : avm_number_t(0);
+	default:
+		break;
 	}
 	return avm_number_t(0);
 }
@@ -189,12 +196,18 @@ std::string ActionValue::getString() const
 	{
 	case AvtBoolean:
 		return m_value.b ? "true" : "false";
+
 	case AvtNumber:
 		return wstombs(traktor::toString(m_value.n));
+
 	case AvtString:
 		return m_value.s;
+
 	case AvtObject:
 		return m_value.o ? m_value.o->toString().getString() : "null";
+
+	default:
+		break;
 	}
 	return "undefined";
 }
@@ -211,12 +224,18 @@ Ref< ActionObject > ActionValue::getObjectAlways(ActionContext* context) const
 	{
 	case AvtBoolean:
 		return (new Boolean(m_value.b))->getAsObject(context);
+
 	case AvtNumber:
 		return (new Number(m_value.n))->getAsObject(context);
+
 	case AvtString:
 		return (new String(m_value.s))->getAsObject(context);
+
 	case AvtObject:
 		return m_value.o ? m_value.o : new ActionObject(context);
+
+	default:
+		break;
 	}
 	return new ActionObject(context);
 }

@@ -73,8 +73,9 @@ void SoundMixer::mute(float* sb, uint32_t count) const
 	T_ASSERT (alignUp(sb, 16) == sb);
 	T_ASSERT (alignUp(count, 4) == count);
 
+	const Vector4 zero = Vector4::zero();
 	for (uint32_t s = 0; s < count; s += 4)
-		Vector4::zero().storeAligned(&sb[s]);
+		zero.storeAligned(&sb[s]);
 }
 
 void SoundMixer::synchronize() const
