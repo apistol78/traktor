@@ -98,6 +98,8 @@ public:
 
 	virtual void renderGlyph(const FlashMovie& movie, const Matrix33& transform, const FlashShape& shape, const SwfColor& color, const SwfCxTransform& cxform);
 
+	virtual void renderCanvas(const FlashMovie& movie, const Matrix33& transform, const FlashCanvas& canvas, const SwfCxTransform& cxform);
+
 	virtual void end();
 
 	// \}
@@ -106,6 +108,7 @@ private:
 	struct CacheEntry
 	{
 		uint32_t unusedCount;
+		uint32_t tag;
 		Ref< AccShape > shape;
 	};
 

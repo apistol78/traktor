@@ -530,6 +530,10 @@ void SwDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tra
 	}
 }
 
+void SwDisplayRenderer::renderCanvas(const FlashMovie& movie, const Matrix33& transform, const FlashCanvas& canvas, const SwfCxTransform& cxform)
+{
+}
+
 void SwDisplayRenderer::end()
 {
 }

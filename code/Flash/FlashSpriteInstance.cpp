@@ -1,6 +1,7 @@
 #include <limits>
-#include "Flash/FlashSpriteInstance.h"
+#include "Flash/FlashCanvas.h"
 #include "Flash/FlashSprite.h"
+#include "Flash/FlashSpriteInstance.h"
 #include "Flash/FlashFrame.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFrame.h"
@@ -213,6 +214,9 @@ SwfRect FlashSpriteInstance::getLocalBounds() const
 		Vector2(-std::numeric_limits< float >::max(), -std::numeric_limits< float >::max())
 	};
 
+	if (m_canvas)
+		bounds = m_canvas->getBounds();
+
 	const FlashDisplayList::layer_map_t& layers = m_displayList.getLayers();
 	for (FlashDisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
 	{
@@ -239,6 +243,13 @@ void FlashSpriteInstance::setMask(FlashSpriteInstance* mask)
 FlashSpriteInstance* FlashSpriteInstance::getMask()
 {
 	return m_mask;
+}
+
+FlashCanvas* FlashSpriteInstance::createCanvas()
+{
+	if (!m_canvas)
+		m_canvas = new FlashCanvas();
+	return m_canvas;
 }
 
 bool FlashSpriteInstance::getMember(ActionContext* context, uint32_t memberName, ActionValue& outMemberValue)
@@ -454,8 +465,10 @@ void FlashSpriteInstance::eventMouseDown(int32_t x, int32_t y, int32_t button)
 	Ref< FlashSpriteInstance > current = context->getMovieClip();
 	context->setMovieClip(this);
 
-	m_mouseX = x;
-	m_mouseY = y;
+	// Transform coordinates into local.
+	Vector2 xy = getTransform().inverse() * Vector2(x, y);
+	m_mouseX = int32_t(xy.x / 20.0f);
+	m_mouseY = int32_t(xy.y / 20.0f);
 
 	// Issue script assigned event.
 	executeScriptEvent(m_idOnMouseDown);
@@ -463,12 +476,8 @@ void FlashSpriteInstance::eventMouseDown(int32_t x, int32_t y, int32_t button)
 	// Issue events on "visible" characters.
 	if (!m_visibleCharacters.empty())
 	{
-		// Transform coordinates into local.
-		Vector2 xy = getTransform().inverse() * Vector2(x, y);
-
-		// Propagate event to children.
 		for (RefArray< FlashCharacterInstance >::const_iterator i = m_visibleCharacters.begin(); i != m_visibleCharacters.end(); ++i)
-			(*i)->eventMouseDown(xy.x, xy.y, button);
+			(*i)->eventMouseDown(x, y, button);
 	}
 
 	// Check if we're inside then issue press events.
@@ -490,8 +499,10 @@ void FlashSpriteInstance::eventMouseUp(int32_t x, int32_t y, int32_t button)
 	Ref< FlashSpriteInstance > current = context->getMovieClip();
 	context->setMovieClip(this);
 
-	m_mouseX = x;
-	m_mouseY = y;
+	// Transform coordinates into local.
+	Vector2 xy = getTransform().inverse() * Vector2(x, y);
+	m_mouseX = int32_t(xy.x / 20.0f);
+	m_mouseY = int32_t(xy.y / 20.0f);
 
 	// Issue script assigned event.
 	executeScriptEvent(m_idOnMouseUp);
@@ -499,12 +510,8 @@ void FlashSpriteInstance::eventMouseUp(int32_t x, int32_t y, int32_t button)
 	// Issue events on "visible" characters.
 	if (!m_visibleCharacters.empty())
 	{
-		// Transform coordinates into local.
-		Vector2 xy = getTransform().inverse() * Vector2(x, y);
-
-		// Propagate event to children.
 		for (RefArray< FlashCharacterInstance >::const_iterator i = m_visibleCharacters.begin(); i != m_visibleCharacters.end(); ++i)
-			(*i)->eventMouseUp(xy.x, xy.y, button);
+			(*i)->eventMouseUp(x, y, button);
 	}
 
 	// Check if we're inside then issue press events.
@@ -525,8 +532,10 @@ void FlashSpriteInstance::eventMouseMove(int32_t x, int32_t y, int32_t button)
 	Ref< FlashSpriteInstance > current = context->getMovieClip();
 	context->setMovieClip(this);
 
-	m_mouseX = x;
-	m_mouseY = y;
+	// Transform coordinates into local.
+	Vector2 xy = getTransform().inverse() * Vector2(x, y);
+	m_mouseX = int32_t(xy.x / 20.0f);
+	m_mouseY = int32_t(xy.y / 20.0f);
 
 	// Issue script assigned event.
 	executeScriptEvent(m_idOnMouseMove);
@@ -534,12 +543,8 @@ void FlashSpriteInstance::eventMouseMove(int32_t x, int32_t y, int32_t button)
 	// Issue events on "visible" characters.
 	if (!m_visibleCharacters.empty())
 	{
-		// Transform coordinates into local.
-		Vector2 xy = getTransform().inverse() * Vector2(x, y);
-
-		// Propagate event to children.
 		for (RefArray< FlashCharacterInstance >::const_iterator i = m_visibleCharacters.begin(); i != m_visibleCharacters.end(); ++i)
-			(*i)->eventMouseMove(xy.x, xy.y, button);
+			(*i)->eventMouseMove(x, y, button);
 	}
 
 	FlashCharacterInstance::eventMouseMove(x, y, button);

@@ -3,7 +3,7 @@
 
 #include "Core/Object.h"
 #include "Core/RefArray.h"
-#include "Core/Containers/StringMap.h"
+#include "Core/Containers/SmallMap.h"
 #include "Flash/SwfTypes.h"
 
 // import/export mechanism.
@@ -129,18 +129,10 @@ public:
 	 */
 	const layer_map_t& getLayers() const { return m_layers; }
 
-	/*! \brief Find layer from label.
-	 *
-	 * \param name Name of layer.
-	 * \return Iterator to named layer.
-	 */
-	const layer_map_t::const_iterator findLayer(const std::string& name) const;
-
 private:
 	ActionContext* m_context;
 	SwfColor m_backgroundColor;
 	layer_map_t m_layers;
-	StringMap< int32_t > m_layerMap;
 };
 
 	}

@@ -141,6 +141,15 @@ void FlashMovieRenderer::renderSprite(
 			m_displayRenderer->endMask();
 		}
 	}
+
+	FlashCanvas* canvas = spriteInstance->getCanvas();
+	if (canvas)
+		m_displayRenderer->renderCanvas(
+			*movie,
+			transform,
+			*canvas,
+			cxTransform
+		);
 }
 
 void FlashMovieRenderer::renderCharacter(

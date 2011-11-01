@@ -63,5 +63,26 @@ bool FlashFillStyle::create(const SwfFillStyle* fillStyle)
 	return true;
 }
 
+bool FlashFillStyle::create(const SwfColor& solidColor)
+{
+	m_colorRecords.push_back(ColorRecord(0.0f, solidColor));
+	return true;
+}
+
+bool FlashFillStyle::create(GradientType gradientType, const AlignedVector< ColorRecord >& colorRecords, const Matrix33& gradientMatrix)
+{
+	m_gradientType = gradientType;
+	m_colorRecords = colorRecords;
+	m_gradientMatrix = gradientMatrix;
+	return true;
+}
+
+bool FlashFillStyle::create(uint16_t fillBitmap, const Matrix33& fillBitmapMatrix)
+{
+	m_fillBitmap = fillBitmap;
+	m_fillBitmapMatrix = fillBitmapMatrix;
+	return true;
+}
+
 	}
 }

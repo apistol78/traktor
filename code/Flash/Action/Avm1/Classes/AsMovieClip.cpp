@@ -1,5 +1,7 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Math/Const.h"
+#include "Core/Misc/String.h"
+#include "Flash/FlashCanvas.h"
 #include "Flash/FlashEdit.h"
 #include "Flash/FlashEditInstance.h"
 #include "Flash/FlashFrame.h"
@@ -10,6 +12,7 @@
 #include "Flash/SwfReader.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFunctionNative.h"
+#include "Flash/Action/Classes/Array.h"
 #include "Flash/Action/Classes/Transform.h"
 #include "Flash/Action/Avm1/Classes/AsMovieClip.h"
 
@@ -75,7 +78,14 @@ AsMovieClip::AsMovieClip(ActionContext* context)
 		)
 	));
 	prototype->setMember("beginBitmapFill", ActionValue(createNativeFunction(context, this, &AsMovieClip::MovieClip_beginBitmapFill)));
-	prototype->setMember("beginFill", ActionValue(createNativeFunction(context, this, &AsMovieClip::MovieClip_beginFill)));
+	prototype->setMember("beginFill", ActionValue(
+		createPolymorphicFunction(
+			context,
+			0,
+			createNativeFunction(context, this, &AsMovieClip::MovieClip_beginFill_1),
+			createNativeFunction(context, this, &AsMovieClip::MovieClip_beginFill_2)
+		)
+	));
 	prototype->setMember("beginGradientFill", ActionValue(createNativeFunction(context, this, &AsMovieClip::MovieClip_beginGradientFill)));
 	prototype->setMember("clear", ActionValue(createNativeFunction(context, this, &AsMovieClip::MovieClip_clear)));
 	prototype->setMember("createEmptyMovieClip", ActionValue(createNativeFunction(context, this, &AsMovieClip::MovieClip_createEmptyMovieClip)));
@@ -121,6 +131,7 @@ AsMovieClip::AsMovieClip(ActionContext* context)
 	prototype->setMember("stop", ActionValue(createNativeFunction(context, this, &AsMovieClip::MovieClip_stop)));
 	prototype->setMember("stopDrag", ActionValue(createNativeFunction(context, this, &AsMovieClip::MovieClip_stopDrag)));
 	prototype->setMember("swapDepths", ActionValue(createNativeFunction(context, this, &AsMovieClip::MovieClip_swapDepths)));
+	prototype->setMember("toString", ActionValue(createNativeFunction(context, this, &AsMovieClip::MovieClip_toString)));
 	prototype->setMember("unloadMovie", ActionValue(createNativeFunction(context, this, &AsMovieClip::MovieClip_unloadMovie)));
 
 	prototype->addProperty("blendMode", createNativeFunction(context, this, &AsMovieClip::MovieClip_get_blendMode), createNativeFunction(context, this, &AsMovieClip::MovieClip_set_blendMode));
@@ -184,13 +195,13 @@ void AsMovieClip::construct(ActionObject* self, const ActionValueArray& args)
 	if (self->getRelay< FlashSpriteInstance >())
 		return;
 
-	Ref< FlashSprite > sprite = new FlashSprite(0, 0);
-	sprite->addFrame(new FlashFrame());
+	//Ref< FlashSprite > sprite = new FlashSprite(0, 0);
+	//sprite->addFrame(new FlashFrame());
 
-	Ref< FlashCharacterInstance > spriteInstance = sprite->createInstance(getContext(), 0, "", 0);
-	T_ASSERT (spriteInstance);
+	//Ref< FlashCharacterInstance > spriteInstance = sprite->createInstance(getContext(), 0, "", 0);
+	//T_ASSERT (spriteInstance);
 
-	self->setRelay(spriteInstance);
+	//self->setRelay(spriteInstance);
 }
 
 ActionValue AsMovieClip::xplicit(const ActionValueArray& args)
@@ -247,7 +258,7 @@ Ref< FlashSpriteInstance > AsMovieClip::MovieClip_attachMovie_4(FlashSpriteInsta
 	}
 
 	// Create new instance of movie clip.
-	Ref< FlashSpriteInstance > attachClipInstance = checked_type_cast< FlashSpriteInstance* >(attachClip->createInstance(context, self, attachClipName, initObject));
+	Ref< FlashSpriteInstance > attachClipInstance = checked_type_cast< FlashSpriteInstance* >(attachClip->createInstance(context, self, attachClipNewName, initObject));
 	
 	// Add new instance to display list.
 	FlashDisplayList& displayList = self->getDisplayList();
@@ -257,30 +268,106 @@ Ref< FlashSpriteInstance > AsMovieClip::MovieClip_attachMovie_4(FlashSpriteInsta
 
 void AsMovieClip::MovieClip_beginBitmapFill(FlashSpriteInstance* self) const
 {
-	T_IF_VERBOSE(
-		log::warning << L"MovieClip::beginBitmapFill not implemented" << Endl;
-	)
+	FlashFillStyle style;
+	style.create(0, Matrix33::identity());
+
+	FlashCanvas* canvas = self->createCanvas();
+	canvas->beginFill(style);
 }
 
-void AsMovieClip::MovieClip_beginFill(FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_beginFill_1(FlashSpriteInstance* self, uint32_t rgb) const
 {
-	T_IF_VERBOSE(
-		log::warning << L"MovieClip::beginFill not implemented" << Endl;
-	)
+	MovieClip_beginFill_2(self, rgb, 100);
 }
 
-void AsMovieClip::MovieClip_beginGradientFill(FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_beginFill_2(FlashSpriteInstance* self, uint32_t rgb, int32_t alpha) const
 {
-	T_IF_VERBOSE(
-		log::warning << L"MovieClip::beginGradientFill not implemented" << Endl;
-	)
+	SwfColor c;
+
+	c.red = rgb >> 16;
+	c.green = (rgb >> 8) & 255;
+	c.blue = rgb & 255;
+	c.alpha = (255 * clamp(alpha, 0, 100)) / 100;
+
+	FlashFillStyle style;
+	style.create(c);
+
+	FlashCanvas* canvas = self->createCanvas();
+	canvas->beginFill(style);
+}
+
+bool AsMovieClip::MovieClip_beginGradientFill(FlashSpriteInstance* self, const std::string& fillType, const Array* colors, const Array* alphas, const Array* ratios, ActionObject* matrix) const
+{
+	FlashFillStyle::GradientType gradientType = FlashFillStyle::GtInvalid;
+
+	if (compareIgnoreCase< std::string >(fillType, "linear") == 0)
+		gradientType = FlashFillStyle::GtLinear;
+	else if (compareIgnoreCase< std::string >(fillType, "radial") == 0)
+		gradientType = FlashFillStyle::GtRadial;
+	else
+		return false;
+
+	if (!colors || !alphas || !ratios || !matrix)
+		return false;
+
+	if (colors->length() != alphas->length() || colors->length() != ratios->length())
+		return false;
+
+	AlignedVector< FlashFillStyle::ColorRecord > colorRecords(colors->length());
+	for (uint32_t i = 0; i < colors->length(); ++i)
+	{
+		uint32_t rgb = uint32_t((*colors)[i].getNumber());
+		int32_t alpha = int32_t((*alphas)[i].getNumber());
+
+		colorRecords[i].ratio = clamp< float >((*ratios)[i].getNumber() / 100.0f, 0.0f, 1.0f);
+		colorRecords[i].color.red = rgb >> 16;
+		colorRecords[i].color.green = (rgb >> 8) & 255;
+		colorRecords[i].color.blue = rgb & 255;
+		colorRecords[i].color.alpha = (255 * clamp(alpha, 0, 100)) / 100;
+	}
+
+	Matrix33 gradientMatrix = Matrix33::identity();
+
+	ActionValue matrixTypeValue;
+	if (matrix->getMember("matrixType", matrixTypeValue))
+	{
+		if (compareIgnoreCase< std::string >(matrixTypeValue.getString(), "box") != 0)
+			return false;
+
+		ActionValue memberValue;
+		avm_number_t x, y, w, h, r;
+
+		matrix->getMember("x", memberValue);
+		x = memberValue.getNumber();
+
+		matrix->getMember("y", memberValue);
+		y = memberValue.getNumber();
+
+		matrix->getMember("w", memberValue);
+		w = memberValue.getNumber();
+
+		matrix->getMember("h", memberValue);
+		h = memberValue.getNumber();
+
+		matrix->getMember("r", memberValue);
+		r = memberValue.getNumber();
+
+		gradientMatrix = translate(w * 10.0f + x * 20.0f, h * 10.0f + y * 20.0f) * rotate(r) * scale(1.0f / w, 1.0f / h) * scale(20.0f, 20.0f);
+	}
+
+	FlashFillStyle style;
+	style.create(gradientType, colorRecords, gradientMatrix);
+
+	FlashCanvas* canvas = self->createCanvas();
+	canvas->beginFill(style);
+
+	return true;
 }
 
 void AsMovieClip::MovieClip_clear(FlashSpriteInstance* self) const
 {
-	T_IF_VERBOSE(
-		log::warning << L"MovieClip::clear not implemented" << Endl;
-	)
+	FlashCanvas* canvas = self->createCanvas();
+	canvas->clear();
 }
 
 Ref< FlashSpriteInstance > AsMovieClip::MovieClip_createEmptyMovieClip(FlashSpriteInstance* self, const std::string& emptyClipName, int32_t depth) const
@@ -296,7 +383,7 @@ Ref< FlashSpriteInstance > AsMovieClip::MovieClip_createEmptyMovieClip(FlashSpri
 	emptyClip->addFrame(new FlashFrame());
 
 	// Create new instance of movie clip.
-	Ref< FlashSpriteInstance > emptyClipInstance = checked_type_cast< FlashSpriteInstance* >(emptyClip->createInstance(context, self, "", 0));
+	Ref< FlashSpriteInstance > emptyClipInstance = checked_type_cast< FlashSpriteInstance* >(emptyClip->createInstance(context, self, emptyClipName, 0));
 	emptyClipInstance->setName(emptyClipName);
 
 	// Add new instance to display list.
@@ -358,11 +445,10 @@ Ref< FlashEditInstance > AsMovieClip::MovieClip_createTextField(
 	return editInstance;
 }
 
-void AsMovieClip::MovieClip_curveTo(FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_curveTo(FlashSpriteInstance* self, avm_number_t controlX, avm_number_t controlY, avm_number_t anchorX, avm_number_t anchorY) const
 {
-	T_IF_VERBOSE(
-		log::warning << L"MovieClip::curveTo not implemented" << Endl;
-	)
+	FlashCanvas* canvas = self->createCanvas();
+	canvas->curveTo(controlX * 20.0f, controlY * 20.0f, anchorX * 20.0f, anchorY * 20.0f);
 }
 
 Ref< FlashSpriteInstance > AsMovieClip::MovieClip_duplicateMovieClip(FlashSpriteInstance* self, const std::string& name, int32_t depth) const
@@ -384,9 +470,8 @@ Ref< FlashSpriteInstance > AsMovieClip::MovieClip_duplicateMovieClip(FlashSprite
 
 void AsMovieClip::MovieClip_endFill(FlashSpriteInstance* self) const
 {
-	T_IF_VERBOSE(
-		log::warning << L"MovieClip::endFill not implemented" << Endl;
-	)
+	FlashCanvas* canvas = self->createCanvas();
+	canvas->endFill();
 }
 
 void AsMovieClip::MovieClip_getBounds(FlashSpriteInstance* self) const
@@ -529,11 +614,10 @@ void AsMovieClip::MovieClip_lineStyle(FlashSpriteInstance* self) const
 	)
 }
 
-void AsMovieClip::MovieClip_lineTo(FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_lineTo(FlashSpriteInstance* self, avm_number_t x, avm_number_t y) const
 {
-	T_IF_VERBOSE(
-		log::warning << L"MovieClip::lineTo not implemented" << Endl;
-	)
+	FlashCanvas* canvas = self->createCanvas();
+	canvas->lineTo(x * 20.0f, y * 20.0f);
 }
 
 Ref< FlashSpriteInstance > AsMovieClip::MovieClip_loadMovie(FlashSpriteInstance* self, const std::wstring& fileName) const
@@ -564,11 +648,10 @@ void AsMovieClip::MovieClip_localToGlobal(const FlashSpriteInstance* self) const
 	)
 }
 
-void AsMovieClip::MovieClip_moveTo(FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_moveTo(FlashSpriteInstance* self, avm_number_t x, avm_number_t y) const
 {
-	T_IF_VERBOSE(
-		log::warning << L"MovieClip::moveTo not implemented" << Endl;
-	)
+	FlashCanvas* canvas = self->createCanvas();
+	canvas->moveTo(x * 20.0f, y * 20.0f);
 }
 
 void AsMovieClip::MovieClip_nextFrame(FlashSpriteInstance* self) const
@@ -636,6 +719,12 @@ void AsMovieClip::MovieClip_swapDepths(FlashSpriteInstance* self, const ActionVa
 	}
 
 	parentClipInstance->getDisplayList().swap(depth, targetDepth);
+}
+
+std::string AsMovieClip::MovieClip_toString(const FlashSpriteInstance* self) const
+{
+	std::string target = self->getTarget();
+	return "_level0" + replaceAll(target, '/', '.');
 }
 
 void AsMovieClip::MovieClip_unloadMovie(FlashSpriteInstance* self) const

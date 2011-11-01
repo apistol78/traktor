@@ -9,6 +9,7 @@ namespace traktor
 	{
 
 struct CallArgs;
+class Array;
 class FlashCharacterInstance;
 class FlashEditInstance;
 class FlashSpriteInstance;
@@ -41,9 +42,11 @@ private:
 
 	void MovieClip_beginBitmapFill(FlashSpriteInstance* self) const;
 
-	void MovieClip_beginFill(FlashSpriteInstance* self) const;
+	void MovieClip_beginFill_1(FlashSpriteInstance* self, uint32_t rgb) const;
 
-	void MovieClip_beginGradientFill(FlashSpriteInstance* self) const;
+	void MovieClip_beginFill_2(FlashSpriteInstance* self, uint32_t rgb, int32_t alpha) const;
+
+	bool MovieClip_beginGradientFill(FlashSpriteInstance* self, const std::string& fillType, const Array* colors, const Array* alphas, const Array* ratios, ActionObject* matrix) const;
 
 	void MovieClip_clear(FlashSpriteInstance* self) const;
 
@@ -59,7 +62,7 @@ private:
 		avm_number_t height
 	) const;
 
-	void MovieClip_curveTo(FlashSpriteInstance* self) const;
+	void MovieClip_curveTo(FlashSpriteInstance* self, avm_number_t controlX, avm_number_t controlY, avm_number_t anchorX, avm_number_t anchorY) const;
 
 	Ref< FlashSpriteInstance > MovieClip_duplicateMovieClip(FlashSpriteInstance* self, const std::string& name, int32_t depth) const;
 
@@ -99,7 +102,7 @@ private:
 
 	void MovieClip_lineStyle(FlashSpriteInstance* self) const;
 
-	void MovieClip_lineTo(FlashSpriteInstance* self) const;
+	void MovieClip_lineTo(FlashSpriteInstance* self, avm_number_t x, avm_number_t y) const;
 
 	Ref< FlashSpriteInstance > MovieClip_loadMovie(FlashSpriteInstance* self, const std::wstring& fileName) const;
 
@@ -107,7 +110,7 @@ private:
 
 	void MovieClip_localToGlobal(const FlashSpriteInstance* self) const;
 
-	void MovieClip_moveTo(FlashSpriteInstance* self) const;
+	void MovieClip_moveTo(FlashSpriteInstance* self, avm_number_t x, avm_number_t y) const;
 
 	void MovieClip_nextFrame(FlashSpriteInstance* self) const;
 
@@ -126,6 +129,8 @@ private:
 	void MovieClip_stopDrag(FlashSpriteInstance* self) const;
 
 	void MovieClip_swapDepths(FlashSpriteInstance* self, const ActionValue& arg0) const;
+
+	std::string MovieClip_toString(const FlashSpriteInstance* self) const;
 
 	void MovieClip_unloadMovie(FlashSpriteInstance* self) const;
 

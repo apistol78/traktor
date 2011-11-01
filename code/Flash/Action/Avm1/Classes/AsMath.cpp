@@ -143,9 +143,7 @@ void AsMath::Math_round(CallArgs& ca)
 	avm_number_t x = ca.args[0].getNumber();
 	avm_number_t f = (avm_number_t)std::abs(x);
 
-	if (f - int(f) >= 0.5)
-		f += 1.0;
-
+	f = int32_t(f + 0.5f);
 	if (x < 0)
 		f = -f;
 

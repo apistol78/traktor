@@ -35,9 +35,9 @@ public:
 	virtual ActionValue xplicit(const ActionValueArray& args);
 
 private:
-	void Object_addProperty(ActionObject* self, uint32_t propertyName, ActionFunction* propertyGet, ActionFunction* propertySet) const;
+	void Object_addProperty(ActionObject* self, const std::string& propertyName, ActionFunction* propertyGet, ActionFunction* propertySet) const;
 
-	bool Object_hasOwnProperty(const ActionObject* self, uint32_t propertyName) const;
+	bool Object_hasOwnProperty(const ActionObject* self, const std::string& propertyName) const;
 
 	bool Object_isPropertyEnumerable(const ActionObject* self) const;
 

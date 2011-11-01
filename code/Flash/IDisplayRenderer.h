@@ -18,6 +18,7 @@ namespace traktor
 	namespace flash
 	{
 
+class FlashCanvas;
 class FlashMovie;
 class FlashSpriteInstance;
 class FlashShape;
@@ -80,6 +81,15 @@ public:
 	 * \param cxform Color transform.
 	 */
 	virtual void renderGlyph(const FlashMovie& movie, const Matrix33& transform, const FlashShape& glyphShape, const SwfColor& color, const SwfCxTransform& cxform) = 0;
+
+	/*! \brief Render canvas.
+	 *
+	 * \param movie Flash movie.
+	 * \param transform Shape transform.
+	 * \param canvas Canvas
+	 * \param cxform Color transform.
+	 */
+	virtual void renderCanvas(const FlashMovie& movie, const Matrix33& transform, const FlashCanvas& canvas, const SwfCxTransform& cxform) = 0;
 
 	/*! \brief End frame. */
 	virtual void end() = 0;
