@@ -27,6 +27,8 @@ class VertexBuffer;
 
 class AccShapeResources;
 class AccTextureCache;
+class FlashFillStyle;
+class FlashLineStyle;
 class FlashMovie;
 class FlashShape;
 struct SwfCxTransform;
@@ -43,17 +45,19 @@ public:
 
 	bool createTesselation(const FlashShape& shape);
 
+	bool createTesselation(const FlashCanvas& canvas);
+
 	bool updateRenderable(
 		AccTextureCache& textureCache,
 		const FlashMovie& movie,
-		const FlashShape& shape
+		const AlignedVector< FlashFillStyle >& fillStyles,
+		const AlignedVector< FlashLineStyle >& lineStyles
 	);
 
 	void destroy();
 
 	void render(
 		render::RenderContext* renderContext,
-		const FlashShape& shape,
 		const Matrix33& transform,
 		const Vector4& frameSize,
 		const Vector4& viewSize,

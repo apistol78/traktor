@@ -2,6 +2,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Color4ub.h"
 #include "Core/Timer/Timer.h"
+#include "Flash/FlashCanvas.h"
 #include "Flash/FlashMovie.h"
 #include "Flash/FlashShape.h"
 #include "Flash/FlashBitmap.h"
@@ -68,8 +69,6 @@ AccShape::AccShape(AccShapeResources* shapeResources, AccShapeVertexPool* vertex
 
 bool AccShape::createTesselation(const FlashShape& shape)
 {
-	//T_ANONYMOUS_VAR(ScopeTime)(L"AccShape::createTesselation");
-
 	AlignedVector< Segment > segments;
 	PathTesselator tesselator;
 	Triangulator triangulator;
@@ -138,10 +137,81 @@ bool AccShape::createTesselation(const FlashShape& shape)
 	return true;
 }
 
+bool AccShape::createTesselation(const FlashCanvas& canvas)
+{
+	AlignedVector< Segment > segments;
+	PathTesselator tesselator;
+	Triangulator triangulator;
+
+	const std::list< Path >& paths = canvas.getPaths();
+
+	m_tesselationBatches.resize(0);
+	m_tesselationBatches.reserve(paths.size());
+
+	m_tesselationTriangleCount = 0;
+
+	// Create triangles and lines through tesselation.
+	for (std::list< Path >::const_iterator i = paths.begin(); i != paths.end(); ++i)
+	{
+		segments.resize(0);
+		tesselator.tesselate(*i, segments);
+
+		m_tesselationBatches.push_back(TesselationBatch());
+
+		triangulator.triangulate(segments, m_tesselationBatches.back().triangles);
+		m_tesselationTriangleCount += uint32_t(m_tesselationBatches.back().triangles.size());
+
+		for (AlignedVector< Segment >::iterator j = segments.begin(); j != segments.end(); ++j)
+		{
+			if (!j->lineStyle)
+				continue;
+
+			Line line;
+			line.v[0] = j->v[0];
+			line.v[1] = j->v[1];
+			line.lineStyle = j->lineStyle;
+			m_tesselationBatches.back().lines.push_back(line);
+		}
+		m_tesselationTriangleCount += uint32_t(m_tesselationBatches.back().lines.size() * 2);
+	}
+
+	// Calculate bounding box.
+	m_bounds.min.x = m_bounds.min.y =  std::numeric_limits< float >::max();
+	m_bounds.max.x = m_bounds.max.y = -std::numeric_limits< float >::max();
+
+	for (AlignedVector< TesselationBatch >::const_iterator i = m_tesselationBatches.begin(); i != m_tesselationBatches.end(); ++i)
+	{
+		for (AlignedVector< Triangle >::const_iterator j = i->triangles.begin(); j != i->triangles.end(); ++j)
+		{
+			for (int k = 0; k < 3; ++k)
+			{
+				m_bounds.min.x = min(m_bounds.min.x, j->v[k].x);
+				m_bounds.min.y = min(m_bounds.min.y, j->v[k].y);
+				m_bounds.max.x = max(m_bounds.max.x, j->v[k].x);
+				m_bounds.max.y = max(m_bounds.max.y, j->v[k].y);
+			}
+		}
+		for (AlignedVector< Line >::const_iterator j = i->lines.begin(); j != i->lines.end(); ++j)
+		{
+			for (int k = 0; k < 2; ++k)
+			{
+				m_bounds.min.x = min(m_bounds.min.x, j->v[k].x);
+				m_bounds.min.y = min(m_bounds.min.y, j->v[k].y);
+				m_bounds.max.x = max(m_bounds.max.x, j->v[k].x);
+				m_bounds.max.y = max(m_bounds.max.y, j->v[k].y);
+			}
+		}
+	}
+
+	m_needUpdate = true;
+	return true;
+}
+
 bool AccShape::updateRenderable(
 	AccTextureCache& textureCache,
 	const FlashMovie& movie,
-	const FlashShape& shape
+	const AlignedVector< FlashFillStyle >& fillStyles,
+	const AlignedVector< FlashLineStyle >& lineStyles
 )
 {
 	if (!m_tesselationTriangleCount)
@@ -162,9 +232,6 @@ bool AccShape::updateRenderable(
 
 	uint32_t vertexOffset = m_vertexRange.offset;
 	Matrix33 textureMatrix;
-
-	const AlignedVector< FlashFillStyle >& fillStyles = shape.getFillStyles();
-	const AlignedVector< FlashLineStyle >& lineStyles = shape.getLineStyles();
 
 	m_renderBatches.reserve(m_tesselationBatches.size());
 	m_batchFlags = 0;
@@ -333,7 +400,6 @@ void AccShape::destroy()
 
 void AccShape::render(
 	render::RenderContext* renderContext,
-	const FlashShape& shape,
 	const Matrix33& transform,
 	const Vector4& frameSize,
 	const Vector4& viewSize,

@@ -3,6 +3,7 @@
 #include "Core/Math/Const.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Flash/FlashBitmap.h"
+#include "Flash/FlashCanvas.h"
 #include "Flash/FlashMovie.h"
 #include "Flash/FlashSprite.h"
 #include "Flash/FlashSpriteInstance.h"
@@ -390,7 +391,8 @@ void AccDisplayRenderer::renderShape(const FlashMovie& movie, const Matrix33& tr
 	if (!accShape->updateRenderable(
 		*m_textureCache,
 		movie,
-		shape
+		shape.getFillStyles(),
+		shape.getLineStyles()
 	))
 		return;
 
@@ -409,7 +411,6 @@ void AccDisplayRenderer::renderShape(const FlashMovie& movie, const Matrix33& tr
 
 	accShape->render(
 		m_renderContext,
-		shape,
 		transform,
 		m_frameSize,
 		m_viewSize,
@@ -452,7 +453,8 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 	if (!accShape->updateRenderable(
 		*m_textureCache,
 		movie,
-		shape
+		shape.getFillStyles(),
+		shape.getLineStyles()
 	))
 		return;
 
@@ -528,7 +530,6 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 		// Draw new glyph.
 		accShape->render(
 			m_renderContext,
-			shape,
 			Matrix33::identity(),
 			frameSize,
 			viewSize,
@@ -571,6 +572,62 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 			1.0f / c_cacheGlyphCountX - cachePixelDx * 4.0f,
 			1.0f / c_cacheGlyphCountY - cachePixelDy * 4.0f
 		)
+	);
+}
+
+void AccDisplayRenderer::renderCanvas(const FlashMovie& movie, const Matrix33& transform, const FlashCanvas& canvas, const SwfCxTransform& cxform)
+{
+	uint64_t hash = reinterpret_cast< uint64_t >(&canvas);
+	Ref< AccShape > accShape;
+
+	std::map< uint64_t, CacheEntry >::iterator it = m_shapeCache.find(hash);
+	if (it == m_shapeCache.end() || it->second.tag != canvas.getTag())
+	{
+		accShape = new AccShape(m_shapeResources, m_vertexPool);
+		if (!accShape->createTesselation(canvas))
+			return;
+
+		m_shapeCache[hash].unusedCount = 0;
+		m_shapeCache[hash].shape = accShape;
+	}
+	else
+	{
+		it->second.unusedCount = 0;
+		accShape = it->second.shape;
+	}
+
+	if (!accShape->updateRenderable(
+		*m_textureCache,
+		movie,
+		canvas.getFillStyles(),
+		canvas.getLineStyles()
+	))
+		return;
+
+	if (!insideFrameBounds(movie, transform, accShape->getBounds()))
+		return;
+
+	m_glyph->render(
+		m_renderContext,
+		m_frameSize,
+		m_viewSize,
+		m_viewOffset,
+		1.0f,
+		m_renderTargetGlyphs->getColorTexture(0),
+		m_maskReference
+	);
+
+	accShape->render(
+		m_renderContext,
+		transform,
+		m_frameSize,
+		m_viewSize,
+		m_viewOffset,
+		1.0f,
+		cxform,
+		m_maskWrite,
+		m_maskIncrement,
+		m_maskReference
 	);
 }
 

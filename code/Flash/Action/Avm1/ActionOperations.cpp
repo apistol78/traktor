@@ -1229,10 +1229,21 @@ void opx_enum2(ExecutionState& state)
 		for (ActionObject::member_map_t::const_iterator i = members.begin(); i != members.end(); ++i)
 		{
 			// \fixme Should only enumerate user added members.
-			if (i->first != ActionContext::Id__proto__ && i->first != ActionContext::IdPrototype)
+			if (
+				i->first != ActionContext::Id__proto__ &&
+				i->first != ActionContext::IdPrototype &&
+				i->first != ActionContext::Id__ctor__
+			)
 				stack.push(ActionValue(
 					state.context->getString(i->first)
 				));
+		}
+
+		const Array* arr = object->getRelay< Array >();
+		if (arr)
+		{
+			for (uint32_t i = 0; i < arr->length(); ++i)
+				stack.push(ActionValue(avm_number_t(i)));
 		}
 
 		//const ActionObject::property_map_t& properties = object->getProperties();

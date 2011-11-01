@@ -45,14 +45,15 @@ ActionValue AsObject::xplicit(const ActionValueArray& args)
 	return ActionValue();
 }
 
-void AsObject::Object_addProperty(ActionObject* self, uint32_t propertyName, ActionFunction* propertyGet, ActionFunction* propertySet) const
+void AsObject::Object_addProperty(ActionObject* self, const std::string& propertyName, ActionFunction* propertyGet, ActionFunction* propertySet) const
 {
 	self->addProperty(propertyName, propertyGet, propertySet);
 }
 
-bool AsObject::Object_hasOwnProperty(const ActionObject* self, uint32_t propertyName) const
+bool AsObject::Object_hasOwnProperty(const ActionObject* self, const std::string& propertyName) const
 {
-	return self->hasOwnMember(propertyName) || self->hasOwnProperty(propertyName);
+	uint32_t propertyNameId = getContext()->getString(propertyName);
+	return self->hasOwnMember(propertyNameId) || self->hasOwnProperty(propertyNameId);
 }
 
 bool AsObject::Object_isPropertyEnumerable(const ActionObject* self) const

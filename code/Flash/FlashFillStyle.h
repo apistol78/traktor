@@ -52,6 +52,12 @@ public:
 
 	bool create(const SwfFillStyle* fillStyle);
 
+	bool create(const SwfColor& solidColor);
+
+	bool create(GradientType gradientType, const AlignedVector< ColorRecord >& colorRecords, const Matrix33& gradientMatrix);
+
+	bool create(uint16_t fillBitmap, const Matrix33& fillBitmapMatrix);
+
 	const AlignedVector< ColorRecord >& getColorRecords() const { return m_colorRecords; }
 
 	GradientType getGradientType() const { return m_gradientType; }

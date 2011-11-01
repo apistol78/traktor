@@ -51,7 +51,6 @@ void FlashDisplayList::reset()
 
 	// Clear all layers.
 	m_layers.clear();
-	m_layerMap.clear();
 }
 
 void FlashDisplayList::updateBegin(bool reset)
@@ -69,11 +68,7 @@ void FlashDisplayList::updateEnd()
 	for (layer_map_t::iterator i = m_layers.begin(); i != m_layers.end(); )
 	{
 		if (!i->second.immutable && i->second.collect)
-		{
-			if (i->second.instance)
-				m_layerMap.remove(i->second.instance->getName());
 			m_layers.erase(i++);
-		}
 		else
 			i++;
 	}
@@ -156,8 +151,6 @@ void FlashDisplayList::updateFrame(FlashCharacterInstance* ownerInstance, const 
 			layer.name = m_context->getString(layer.instance->getName());
 			layer.immutable = false;
 			layer.collect = false;
-
-			m_layerMap[layer.instance->getName()] = depth;
 		}
 		else
 		{
@@ -167,11 +160,7 @@ void FlashDisplayList::updateFrame(FlashCharacterInstance* ownerInstance, const 
 
 			layer_map_t::iterator j = m_layers.find(placeObject.depth + c_depthOffset);
 			if (j != m_layers.end())
-			{
-				if (j->second.instance)
-					m_layerMap.remove(j->second.instance->getName());
 				m_layers.erase(j);
-			}
 		}
 	}
 }
@@ -180,9 +169,9 @@ void FlashDisplayList::showObject(int32_t depth, uint16_t characterId, FlashChar
 {
 	T_ASSERT (characterInstance);
 	m_layers[depth].id = characterId;
+	m_layers[depth].name = m_context->getString(characterInstance->getName());
 	m_layers[depth].instance = characterInstance;
 	m_layers[depth].immutable = immutable;
-	m_layerMap[characterInstance->getName()] = depth;
 }
 
 void FlashDisplayList::removeObject(FlashCharacterInstance* characterInstance)
@@ -190,11 +179,7 @@ void FlashDisplayList::removeObject(FlashCharacterInstance* characterInstance)
 	T_ASSERT (characterInstance);
 	layer_map_t::iterator i = std::remove_if(m_layers.begin(), m_layers.end(), FindCharacter(characterInstance));
 	if (i != m_layers.end())
-	{
-		if (i->second.instance)
-			m_layerMap.remove(i->second.instance->getName());
 		m_layers.erase(i, m_layers.end());
-	}
 }
 
 int32_t FlashDisplayList::getObjectDepth(const FlashCharacterInstance* characterInstance) const
@@ -230,12 +215,6 @@ void FlashDisplayList::getVisibleObjects(RefArray< FlashCharacterInstance >& out
 		T_ASSERT (i->second.instance);
 		outCharacterInstances.push_back(i->second.instance);
 	}
-}
-
-const FlashDisplayList::layer_map_t::const_iterator FlashDisplayList::findLayer(const std::string& name) const
-{
-	const int32_t* depth = m_layerMap.find(name);
-	return depth ? m_layers.find(*depth) : m_layers.end();
 }
 
 	}

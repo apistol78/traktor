@@ -1,6 +1,7 @@
 #ifndef traktor_flash_ActionFunctionNative_H
 #define traktor_flash_ActionFunctionNative_H
 
+#include "Core/Log/Log.h"
 #include "Core/Meta/Traits.h"
 #include "Flash/Action/ActionFunction.h"
 #include "Flash/Action/ActionValueArray.h"
@@ -479,6 +480,70 @@ struct MethodNativeFunction_4 < CallClassType, SelfClassType, void, Argument1Typ
 	}
 };
 
+template <
+	typename CallClassType,
+	typename SelfClassType,
+	typename ReturnType,
+	typename Argument1Type,
+	typename Argument2Type,
+	typename Argument3Type,
+	typename Argument4Type,
+	typename Argument5Type
+>
+struct MethodNativeFunction_5 : public INativeFunction
+{
+	CallClassType* m_object;
+	ReturnType (CallClassType::*m_method)(SelfClassType*, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type) const;
+
+	virtual void call(CallArgs& ca)
+	{
+		T_ASSERT (ca.args.size() >= 5);
+		SelfClassType* self = Ensure< SelfClassType >::get(ca.self);
+		if (self)
+			ca.ret = ActionValueCast< ReturnType >::set(
+				ca.context,
+				(m_object->*m_method)(
+					self,
+					ActionValueCast< Argument1Type >::get(ca.context, ca.args[0]),
+					ActionValueCast< Argument2Type >::get(ca.context, ca.args[1]),
+					ActionValueCast< Argument3Type >::get(ca.context, ca.args[2]),
+					ActionValueCast< Argument4Type >::get(ca.context, ca.args[3]),
+					ActionValueCast< Argument5Type >::get(ca.context, ca.args[4])
+				)
+			);
+	}
+};
+
+template <
+	typename CallClassType,
+	typename SelfClassType,
+	typename Argument1Type,
+	typename Argument2Type,
+	typename Argument3Type,
+	typename Argument4Type,
+	typename Argument5Type
+>
+struct MethodNativeFunction_5 < CallClassType, SelfClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type > : public INativeFunction
+{
+	CallClassType* m_object;
+	void (CallClassType::*m_method)(SelfClassType*, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type) const;
+
+	virtual void call(CallArgs& ca)
+	{
+		T_ASSERT (ca.args.size() >= 5);
+		SelfClassType* self = Ensure< SelfClassType >::get(ca.self);
+		if (self)
+			(m_object->*m_method)(
+				self,
+				ActionValueCast< Argument1Type >::get(ca.context, ca.args[0]),
+				ActionValueCast< Argument2Type >::get(ca.context, ca.args[1]),
+				ActionValueCast< Argument3Type >::get(ca.context, ca.args[2]),
+				ActionValueCast< Argument4Type >::get(ca.context, ca.args[3]),
+				ActionValueCast< Argument5Type >::get(ca.context, ca.args[4])
+			);
+	}
+};
+
 //--
 
 template <
@@ -730,6 +795,64 @@ template <
 	typename Argument2Type,
 	typename Argument3Type,
 	typename Argument4Type,
+	typename Argument5Type
+>
+struct MethodNativeFunction_self_5 : public INativeFunction
+{
+	ReturnType (ClassType::*m_method)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type);
+
+	virtual void call(CallArgs& ca)
+	{
+		T_ASSERT (ca.args.size() >= 5);
+		ClassType* self = Ensure< ClassType >::get(ca.self);
+		if (self)
+			ca.ret = ActionValueCast< ReturnType >::set(
+				ca.context,
+				(self->*m_method)(
+					ActionValueCast< Argument1Type >::get(ca.context, ca.args[0]),
+					ActionValueCast< Argument2Type >::get(ca.context, ca.args[1]),
+					ActionValueCast< Argument3Type >::get(ca.context, ca.args[2]),
+					ActionValueCast< Argument4Type >::get(ca.context, ca.args[3]),
+					ActionValueCast< Argument5Type >::get(ca.context, ca.args[4])
+				)
+			);
+	}
+};
+
+template <
+	typename ClassType,
+	typename Argument1Type,
+	typename Argument2Type,
+	typename Argument3Type,
+	typename Argument4Type,
+	typename Argument5Type
+>
+struct MethodNativeFunction_self_5 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type > : public INativeFunction
+{
+	void (ClassType::*m_method)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type);
+
+	virtual void call(CallArgs& ca)
+	{
+		T_ASSERT (ca.args.size() >= 5);
+		ClassType* self = Ensure< ClassType >::get(ca.self);
+		if (self)
+			(self->*m_method)(
+				ActionValueCast< Argument1Type >::get(ca.context, ca.args[0]),
+				ActionValueCast< Argument2Type >::get(ca.context, ca.args[1]),
+				ActionValueCast< Argument3Type >::get(ca.context, ca.args[2]),
+				ActionValueCast< Argument4Type >::get(ca.context, ca.args[3]),
+				ActionValueCast< Argument5Type >::get(ca.context, ca.args[4])
+			);
+	}
+};
+
+template <
+	typename ClassType,
+	typename ReturnType,
+	typename Argument1Type,
+	typename Argument2Type,
+	typename Argument3Type,
+	typename Argument4Type,
 	typename Argument5Type,
 	typename Argument6Type
 >
@@ -809,7 +932,8 @@ template <
 >
 Ref< ActionFunctionNative > createNativeFunction(ActionContext* context, CallClassType* object, void (CallClassType::*method)(CallArgs&))
 {
-	Ref< MethodNativeFunction< CallClassType > > nf = new MethodNativeFunction< CallClassType >();
+	typedef MethodNativeFunction< CallClassType > NF;
+	Ref< NF > nf = new NF();
 	nf->m_object = object;
 	nf->m_method = method;
 	return new ActionFunctionNative(context, nf);
@@ -822,7 +946,8 @@ template <
 >
 Ref< ActionFunctionNative > createNativeFunction(ActionContext* context, CallClassType* object, ReturnType (CallClassType::*method)(SelfClassType*) const)
 {
-	Ref< MethodNativeFunction_0< CallClassType, SelfClassType, ReturnType > > nf = new MethodNativeFunction_0< CallClassType, SelfClassType, ReturnType >();
+	typedef MethodNativeFunction_0< CallClassType, SelfClassType, ReturnType > NF;
+	Ref< NF > nf = new NF();
 	nf->m_object = object;
 	nf->m_method = method;
 	return new ActionFunctionNative(context, nf);
@@ -836,7 +961,8 @@ template <
 >
 Ref< ActionFunctionNative > createNativeFunction(ActionContext* context, CallClassType* object, ReturnType (CallClassType::*method)(SelfClassType*, Argument1Type) const)
 {
-	Ref< MethodNativeFunction_1< CallClassType, SelfClassType, ReturnType, Argument1Type > > nf = new MethodNativeFunction_1< CallClassType, SelfClassType, ReturnType, Argument1Type >();
+	typedef MethodNativeFunction_1< CallClassType, SelfClassType, ReturnType, Argument1Type > NF;
+	Ref< NF > nf = new NF();
 	nf->m_object = object;
 	nf->m_method = method;
 	return new ActionFunctionNative(context, nf);
@@ -851,7 +977,8 @@ template <
 >
 Ref< ActionFunctionNative > createNativeFunction(ActionContext* context, CallClassType* object, ReturnType (CallClassType::*method)(SelfClassType*, Argument1Type, Argument2Type) const)
 {
-	Ref< MethodNativeFunction_2< CallClassType, SelfClassType, ReturnType, Argument1Type, Argument2Type > > nf = new MethodNativeFunction_2< CallClassType, SelfClassType, ReturnType, Argument1Type, Argument2Type >();
+	typedef MethodNativeFunction_2< CallClassType, SelfClassType, ReturnType, Argument1Type, Argument2Type > NF;
+	Ref< NF > nf = new NF();
 	nf->m_object = object;
 	nf->m_method = method;
 	return new ActionFunctionNative(context, nf);
@@ -867,7 +994,8 @@ template <
 >
 Ref< ActionFunctionNative > createNativeFunction(ActionContext* context, CallClassType* object, ReturnType (CallClassType::*method)(SelfClassType*, Argument1Type, Argument2Type, Argument3Type) const)
 {
-	Ref< MethodNativeFunction_3< CallClassType, SelfClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type > > nf = new MethodNativeFunction_3< CallClassType, SelfClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type >();
+	typedef MethodNativeFunction_3< CallClassType, SelfClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type > NF;
+	Ref< NF > nf = new NF();
 	nf->m_object = object;
 	nf->m_method = method;
 	return new ActionFunctionNative(context, nf);
@@ -884,7 +1012,27 @@ template <
 >
 Ref< ActionFunctionNative > createNativeFunction(ActionContext* context, CallClassType* object, ReturnType (CallClassType::*method)(SelfClassType*, Argument1Type, Argument2Type, Argument3Type, Argument4Type) const)
 {
-	Ref< MethodNativeFunction_4< CallClassType, SelfClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type > > nf = new MethodNativeFunction_4< CallClassType, SelfClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type >();
+	typedef MethodNativeFunction_4< CallClassType, SelfClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type > NF;
+	Ref< NF > nf = new NF();
+	nf->m_object = object;
+	nf->m_method = method;
+	return new ActionFunctionNative(context, nf);
+}
+
+template <
+	typename CallClassType,
+	typename SelfClassType,
+	typename ReturnType,
+	typename Argument1Type,
+	typename Argument2Type,
+	typename Argument3Type,
+	typename Argument4Type,
+	typename Argument5Type
+>
+Ref< ActionFunctionNative > createNativeFunction(ActionContext* context, CallClassType* object, ReturnType (CallClassType::*method)(SelfClassType*, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type) const)
+{
+	typedef MethodNativeFunction_5< CallClassType, SelfClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type > NF;
+	Ref< NF > nf = new NF();
 	nf->m_object = object;
 	nf->m_method = method;
 	return new ActionFunctionNative(context, nf);
@@ -903,16 +1051,15 @@ template <
 >
 Ref< ActionFunctionNative > createNativeFunction(ActionContext* context, CallClassType* object, ReturnType (CallClassType::*method)(SelfClassType*, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type) const)
 {
-	Ref< MethodNativeFunction_6< CallClassType, SelfClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type > > nf = new MethodNativeFunction_6< CallClassType, SelfClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type >();
+	typedef MethodNativeFunction_6< CallClassType, SelfClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type > NF;
+	Ref< NF > nf = new NF();
 	nf->m_object = object;
 	nf->m_method = method;
 	return new ActionFunctionNative(context, nf);
 }
 
-
 // \}
 
-// \}
 
 // \group Self methods
 // \{
@@ -923,7 +1070,8 @@ template <
 >
 Ref< ActionFunctionNative > createNativeFunction(ActionContext* context, ReturnType (ClassType::*method)())
 {
-	Ref< MethodNativeFunction_self_0< ClassType, ReturnType > > nf = new MethodNativeFunction_self_0< ClassType, ReturnType >();
+	typedef MethodNativeFunction_self_0< ClassType, ReturnType > NF;
+	Ref< NF > nf = new NF();
 	nf->m_method = method;
 	return new ActionFunctionNative(context, nf);
 }
@@ -935,7 +1083,8 @@ template <
 >
 Ref< ActionFunctionNative > createNativeFunction(ActionContext* context, ReturnType (ClassType::*method)(Argument1Type))
 {
-	Ref< MethodNativeFunction_self_1< ClassType, ReturnType, Argument1Type > > nf = new MethodNativeFunction_self_1< ClassType, ReturnType, Argument1Type >();
+	typedef MethodNativeFunction_self_1< ClassType, ReturnType, Argument1Type > NF;
+	Ref< NF > nf = new NF();
 	nf->m_method = method;
 	return new ActionFunctionNative(context, nf);
 }
@@ -948,7 +1097,8 @@ template <
 >
 Ref< ActionFunctionNative > createNativeFunction(ActionContext* context, ReturnType (ClassType::*method)(Argument1Type, Argument2Type))
 {
-	Ref< MethodNativeFunction_self_2< ClassType, ReturnType, Argument1Type, Argument2Type > > nf = new MethodNativeFunction_self_2< ClassType, ReturnType, Argument1Type, Argument2Type >();
+	typedef MethodNativeFunction_self_2< ClassType, ReturnType, Argument1Type, Argument2Type > NF;
+	Ref< NF > nf = new NF();
 	nf->m_method = method;
 	return new ActionFunctionNative(context, nf);
 }
@@ -962,7 +1112,25 @@ template <
 >
 Ref< ActionFunctionNative > createNativeFunction(ActionContext* context, ReturnType (ClassType::*method)(Argument1Type, Argument2Type, Argument3Type))
 {
-	Ref< MethodNativeFunction_self_3< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type > > nf = new MethodNativeFunction_self_3< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type >();
+	typedef MethodNativeFunction_self_3< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type > NF;
+	Ref< NF > nf = new NF();
+	nf->m_method = method;
+	return new ActionFunctionNative(context, nf);
+}
+
+template <
+	typename ClassType,
+	typename ReturnType,
+	typename Argument1Type,
+	typename Argument2Type,
+	typename Argument3Type,
+	typename Argument4Type,
+	typename Argument5Type
+>
+Ref< ActionFunctionNative > createNativeFunction(ActionContext* context, ReturnType (ClassType::*method)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type))
+{
+	typedef MethodNativeFunction_self_5< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type > NF;
+	Ref< NF > nf = new NF();
 	nf->m_method = method;
 	return new ActionFunctionNative(context, nf);
 }
@@ -979,7 +1147,8 @@ template <
 >
 Ref< ActionFunctionNative > createNativeFunction(ActionContext* context, ReturnType (ClassType::*method)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type))
 {
-	Ref< MethodNativeFunction_self_6< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type > > nf = new MethodNativeFunction_self_6< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type >();
+	typedef MethodNativeFunction_self_6< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type > NF;
+	Ref< NF > nf = new NF();
 	nf->m_method = method;
 	return new ActionFunctionNative(context, nf);
 }
@@ -1014,6 +1183,12 @@ struct PolymorphicNativeFunction : public INativeFunction
 		ActionFunctionNative* fn = m_fnptr[ca.args.size()];
 		if (fn)
 			ca.ret = fn->call(ca.self, ca.super, ca.args);
+		else
+		{
+			T_IF_VERBOSE(
+				log::warning << L"Trying to call polymorphic native function with " << ca.args.size() << L" argument(s)" << Endl;
+			)
+		}
 	}
 };
 

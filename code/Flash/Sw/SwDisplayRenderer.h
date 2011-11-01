@@ -44,6 +44,8 @@ public:
 
 	virtual void renderGlyph(const FlashMovie& movie, const Matrix33& transform, const FlashShape& glyphShape, const SwfColor& color, const SwfCxTransform& cxform);
 
+	virtual void renderCanvas(const FlashMovie& movie, const Matrix33& transform, const FlashCanvas& canvas, const SwfCxTransform& cxform);
+
 	virtual void end();
 
 private:

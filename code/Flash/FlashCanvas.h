@@ -1,0 +1,70 @@
+#ifndef traktor_flash_FlashCanvas_H
+#define traktor_flash_FlashCanvas_H
+
+#include <list>
+#include "Core/Object.h"
+#include "Core/Containers/AlignedVector.h"
+#include "Flash/Path.h"
+#include "Flash/SwfTypes.h"
+#include "Flash/FlashLineStyle.h"
+#include "Flash/FlashFillStyle.h"
+#include "Flash/Action/ActionTypes.h"
+
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_FLASH_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
+namespace traktor
+{
+	namespace flash
+	{
+
+/*! \brief Dynamic canvas.
+ * \ingroup Flash
+ */
+class T_DLLCLASS FlashCanvas : public Object
+{
+	T_RTTI_CLASS;
+
+public:
+	FlashCanvas();
+
+	void clear();
+
+	void beginFill(const FlashFillStyle& fillStyle);
+
+	void endFill();
+
+	void moveTo(avm_number_t x, avm_number_t y);
+
+	void lineTo(avm_number_t x, avm_number_t y);
+
+	void curveTo(avm_number_t controlX, avm_number_t controlY, avm_number_t anchorX, avm_number_t anchorY);
+
+	const SwfRect& getBounds() const { return m_bounds; }
+
+	const std::list< Path >& getPaths() const { return m_paths; }
+
+	const AlignedVector< FlashLineStyle >& getLineStyles() const { return m_lineStyles; }
+
+	const AlignedVector< FlashFillStyle >& getFillStyles() const { return m_fillStyles; }
+
+	uint32_t getTag() const { return m_tag; }
+
+private:
+	SwfRect m_bounds;
+	std::list< Path > m_paths;
+	AlignedVector< FlashLineStyle > m_lineStyles;
+	AlignedVector< FlashFillStyle > m_fillStyles;
+	uint32_t m_tag;
+	bool m_drawing;
+};
+
+	}
+}
+
+#endif	// traktor_flash_FlashCanvas_H
