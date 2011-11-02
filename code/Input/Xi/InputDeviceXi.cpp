@@ -94,6 +94,11 @@ bool InputDeviceXi::isControlAnalogue(int32_t control) const
 	return c_controlConfig[control].analogue;
 }
 
+bool InputDeviceXi::isControlRelative(int32_t control) const
+{
+	return false;
+}
+
 float InputDeviceXi::getControlValue(int32_t control)
 {
 	const ControlConfig& config = c_controlConfig[control];

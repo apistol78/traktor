@@ -114,6 +114,11 @@ bool KeyboardDeviceDi8::isControlAnalogue(int32_t control) const
 	return false;
 }
 
+bool KeyboardDeviceDi8::isControlRelative(int32_t control) const
+{
+	return false;
+}
+
 float KeyboardDeviceDi8::getControlValue(int32_t control)
 {
 	if (!m_connected)

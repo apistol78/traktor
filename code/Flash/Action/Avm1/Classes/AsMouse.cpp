@@ -55,7 +55,7 @@ void AsMouse::eventMouseMove(int x, int y, int button)
 	if (broadcastMessageFn)
 	{
 		ActionValueArray args(getContext()->getPool(), 1);
-		args[0] = ActionValue("onMove");
+		args[0] = ActionValue("onMouseMove");
 		broadcastMessageFn->call(this, args);
 	}
 }

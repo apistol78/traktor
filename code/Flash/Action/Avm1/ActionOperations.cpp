@@ -320,53 +320,150 @@ void opx_getProperty(ExecutionState& state)
 	ActionValueStack& stack = state.frame->getStack();
 	ActionValue index = stack.pop();
 	ActionValue target = stack.pop();
-	T_ASSERT (target.getString() == "");
+
+	FlashSpriteInstance* movieClip = state.movieClip;
+	if (target.isObject())
+	{
+		movieClip = target.getObject()->getRelay< FlashSpriteInstance >();
+		if (!movieClip)
+		{
+			stack.push(ActionValue());
+			return;
+		}
+	}
 
 	switch (int(index.getNumber()))
 	{
+	// _x
 	case 0:
-		stack.push(ActionValue(state.movieClip->getTransform().e31 / 20.0f));
+		stack.push(ActionValue(movieClip->getTransform().e31 / 20.0f));
 		break;
+
+	// _y
 	case 1:
-		stack.push(ActionValue(state.movieClip->getTransform().e32 / 20.0f));
+		stack.push(ActionValue(movieClip->getTransform().e32 / 20.0f));
 		break;
+
+	// _xscale
 	case 2:
-		stack.push(ActionValue(state.movieClip->getTransform().e11 * 100.0f));
+		stack.push(ActionValue(movieClip->getTransform().e11 * 100.0f));
 		break;
+
+	// _yscale
 	case 3:
-		stack.push(ActionValue(state.movieClip->getTransform().e22 * 100.0f));
+		stack.push(ActionValue(movieClip->getTransform().e22 * 100.0f));
 		break;
+
+	// _currentframe
 	case 4:
-		stack.push(ActionValue(avm_number_t(state.movieClip->getCurrentFrame())));
+		stack.push(ActionValue(avm_number_t(movieClip->getCurrentFrame())));
 		break;
+
+	// _totalframes
 	case 5:
-		stack.push(ActionValue(avm_number_t(state.movieClip->getSprite()->getFrameCount())));
+		stack.push(ActionValue(avm_number_t(movieClip->getSprite()->getFrameCount())));
 		break;
+
+	// _alpha
 	case 6:
-		stack.push(ActionValue(1.0f));
+		{
+			const SwfCxTransform& colorTransform = movieClip->getColorTransform();
+			stack.push(ActionValue(colorTransform.alpha[0] * 100.0f));
+		}
 		break;
+
+	// _visible
 	case 7:
-		stack.push(ActionValue(true));
+		stack.push(ActionValue(movieClip->isVisible()));
 		break;
+
+	// _width
 	case 8:
 		{
-			SwfRect bounds = state.movieClip->getBounds();
+			SwfRect bounds = movieClip->getBounds();
 			stack.push(ActionValue((bounds.max.x - bounds.min.x) / 20.0f));
 		}
 		break;
+
+	// _height
 	case 9:
 		{
-			SwfRect bounds = state.movieClip->getBounds();
+			SwfRect bounds = movieClip->getBounds();
 			stack.push(ActionValue((bounds.max.y - bounds.min.y) / 20.0f));
+		}
+		break;
+
+	// _rotation
+	//case 10:
+	//	break;
+
+	// _target
+	case 11:
+		{
+			stack.push(ActionValue(movieClip->getTarget()));
+		}
+		break;
+
+	// _framesloaded
+	case 12:
+		{
+			stack.push(ActionValue(avm_number_t(movieClip->getSprite()->getFrameCount())));
+		}
+		break;
+
+	// _name
+	case 13:
+		{
+			stack.push(ActionValue(movieClip->getName()));
+		}
+		break;
+
+	// _droptarget
+	//case 14:
+	//	break;
+
+	// _url
+	//case 15:
+	//	break;
+
+	// _highquality
+	//case 16:
+	//	break;
+
+	// _focusrect
+	//case 17:
+	//	break;
+
+	// _soundbuftime
+	//case 18:
+	//	break;
+
+	// _quality
+	//case 19:
+	//	break;
+
+	// _xmouse
+	case 20:
+		{
+			stack.push(ActionValue(avm_number_t(movieClip->getMouseX())));
+		}
+		break;
+
+	// _ymouse
+	case 21:
+		{
+			stack.push(ActionValue(avm_number_t(movieClip->getMouseY())));
 		}
 		break;
 
 	default:
 		{
 			T_IF_TRACE(
-				*state.trace << L"AopGetProperty: Invalid index"  << Endl;
+				*state.trace << L"AopGetProperty: Unknown index " << index << Endl;
 			)
+			stack.push(ActionValue());
 		}
+		break;
 	}
 }
 
@@ -376,43 +473,83 @@ void opx_setProperty(ExecutionState& state)
 	ActionValue value = stack.pop();
 	ActionValue index = stack.pop();
 	ActionValue target = stack.pop();
-	T_ASSERT (target.getString() == "");
+
+	FlashSpriteInstance* movieClip = state.movieClip;
+	if (target.isObject())
+	{
+		movieClip = target.getObject()->getRelay< FlashSpriteInstance >();
+		if (!movieClip)
+		{
+			stack.push(ActionValue());
+			return;
+		}
+	}
 
 	switch (int(index.getNumber()))
 	{
+	// _x
 	case 0:
 		{
-			Matrix33 transform = state.movieClip->getTransform();
+			Matrix33 transform = movieClip->getTransform();
 			transform.e13 = float(value.getNumber() * 20.0f);
-			state.movieClip->setTransform(transform);
+			movieClip->setTransform(transform);
 		}
 		break;
+
+	// _y
 	case 1:
 		{
-			Matrix33 transform = state.movieClip->getTransform();
+			Matrix33 transform = movieClip->getTransform();
 			transform.e23 = float(value.getNumber() * 20.0f);
-			state.movieClip->setTransform(transform);
+			movieClip->setTransform(transform);
 		}
 		break;
+
+	// _xscale
 	case 2:
 		{
-			Matrix33 transform = state.movieClip->getTransform();
+			Matrix33 transform = movieClip->getTransform();
 			transform.e11 = float(value.getNumber() * 100.0f);
-			state.movieClip->setTransform(transform);
+			movieClip->setTransform(transform);
 		}
 		break;
+
+	// _yscale
 	case 3:
 		{
-			Matrix33 transform = state.movieClip->getTransform();
+			Matrix33 transform = movieClip->getTransform();
 			transform.e22 = float(value.getNumber() * 100.0f);
-			state.movieClip->setTransform(transform);
+			movieClip->setTransform(transform);
+		}
+		break;
+
+	// _alpha
+	case 6:
+		{
+			SwfCxTransform colorTransform = movieClip->getColorTransform();
+			colorTransform.alpha[0] = value.getNumber() / 100.0f;
+			movieClip->setColorTransform(colorTransform);
+		}
+		break;
+
+	// _visible
+	case 7:
+		{
+			movieClip->setVisible(value.getBoolean());
+		}
+		break;
+
+	// _name
+	case 13:
+		{
+			movieClip->setName(value.getString());
 		}
 		break;
 
 	default:
 		{
 			T_IF_TRACE(
-				*state.trace << L"AopSetProperty: Invalid index"  << Endl;
+				*state.trace << L"AopSetProperty: Unknown index " << index << Endl;
 			)
 		}
 		break;

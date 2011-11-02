@@ -2,6 +2,7 @@
 #define traktor_RefSet_H
 
 #include <algorithm>
+#include <set>
 #include "Core/Ref.h"
 
 // import/export mechanism.
@@ -75,7 +76,7 @@ public:
 		return x;
 	}
 
-	const_iterator find(const Class* item) const
+	const_iterator find(Class* item) const
 	{
 		return m_items.find(item);
 	}

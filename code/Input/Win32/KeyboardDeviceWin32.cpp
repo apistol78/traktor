@@ -59,7 +59,12 @@ std::wstring KeyboardDeviceWin32::getControlName(int32_t control)
 #endif
 }
 
-bool KeyboardDeviceWin32::isControlAnalogue(int32_t /*control*/) const
+bool KeyboardDeviceWin32::isControlAnalogue(int32_t control) const
+{
+	return false;
+}
+
+bool KeyboardDeviceWin32::isControlRelative(int32_t control) const
 {
 	return false;
 }
