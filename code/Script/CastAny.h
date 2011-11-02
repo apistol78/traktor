@@ -227,9 +227,12 @@ struct CastAny < Type, false >
 template < typename Type >
 struct CastAny < Type, true >
 {
+	typedef typename IsConst< Type >::type_t no_const_type_t;
+
 	static Any set(Type value) {
-		return Any(value);
+		return Any((Object*)(value));
 	}
+
 	static Type get(const Any& value) {
 		return checked_type_cast< Type >(value.getObject());
 	}

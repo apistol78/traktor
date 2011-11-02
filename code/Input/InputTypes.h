@@ -49,9 +49,12 @@ enum InputDefaultControlType
 	DtAxisY				= 31,
 	DtAxisZ				= 32,
 
-	DtReserved3			= 33,
-	DtReserved4			= 34,
-	DtReserved5			= 35,
+	// Absolute axises, ex mouse position.
+	DtPositionX			= 33,
+	DtPositionY			= 34,
+	DtPositionZ			= 35,
+
+	// Unused
 	DtReserved6			= 36,
 	DtReserved7			= 37,
 	DtReserved8			= 38,

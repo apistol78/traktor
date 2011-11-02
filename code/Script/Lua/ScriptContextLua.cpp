@@ -99,6 +99,7 @@ bool ScriptContextLua::executeScript(const IScriptResource* scriptResource, cons
 
 	if (result != 0)
 	{
+		log::error << L"LUA load error \"" << mbstows(lua_tostring(m_luaState, -1)) << L"\"" << Endl;
 		lua_pop(m_luaState, 1);
 		m_scriptManager->unlock();
 		return false;

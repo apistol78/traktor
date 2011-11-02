@@ -63,7 +63,7 @@ public:
 
 	/*! \brief Get human readable name of control.
 	 *
-	 * \param control Control identifier.
+	 * \param control Control identifier (0 - #controls-1).
 	 * \return Human readable name of control.
 	 */
 	virtual std::wstring getControlName(int32_t control) = 0;
@@ -73,14 +73,24 @@ public:
 	 * Digital controls always return either 0 or 1
 	 * even if the return type of getControlValue is float.
 	 *
-	 * \param control Control identifier.
+	 * \param control Control identifier (0 - #controls-1).
 	 * \return True if control is analogue.
 	 */
 	virtual bool isControlAnalogue(int32_t control) const = 0;
 
+	/*! \brief Check if control is relative.
+	 *
+	 * Relative axises and digital controls return delta changes.
+	 * Relative controls must return 0 when idle.
+	 *
+	 * \param control Control identifier (0 - #controls-1).
+	 * \return True if control is relative.
+	 */
+	virtual bool isControlRelative(int32_t control) const = 0;
+
 	/*! \brief Get current value of a control.
 	 *
-	 * \param control Control identifier.
+	 * \param control Control identifier (0 - #controls-1).
 	 * \return Control value.
 	 */
 	virtual float getControlValue(int32_t control) = 0;

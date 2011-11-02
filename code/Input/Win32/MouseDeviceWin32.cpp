@@ -1,10 +1,33 @@
 #include <windows.h>
+#include "Core/Math/MathUtils.h"
 #include "Input/Win32/MouseDeviceWin32.h"
 
 namespace traktor
 {
 	namespace input
 	{
+		namespace
+		{
+
+const struct MouseControlMap
+{
+	const wchar_t* name;
+	InputDefaultControlType controlType;
+	bool analogue;
+	bool relative;
+}
+c_mouseControlMap[] =
+{
+	{ L"Left mouse button", DtButton1, false, false },
+	{ L"Right mouse button", DtButton2, false, false },
+	{ L"Middle mouse button", DtButton3, false, false },
+	{ L"Mouse X axis", DtAxisX, true, false },
+	{ L"Mouse Y axis", DtAxisY, true, false },
+	{ L"Mouse X axis", DtPositionX, true, true },
+	{ L"Mouse Y axis", DtPositionY, true, true }
+};
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.MouseDeviceWin32", MouseDeviceWin32, IInputDevice)
 
@@ -14,6 +37,8 @@ MouseDeviceWin32::MouseDeviceWin32()
 ,	m_haveCursorPosition(false)
 ,	m_axisX(0.0f)
 ,	m_axisY(0.0f)
+,	m_positionX(0.0f)
+,	m_positionY(0.0f)
 ,	m_button1(0.0f)
 ,	m_button2(0.0f)
 ,	m_button3(0.0f)
@@ -38,32 +63,22 @@ bool MouseDeviceWin32::isConnected() const
 
 int32_t MouseDeviceWin32::getControlCount()
 {
-	return 5;
+	return sizeof_array(c_mouseControlMap);
 }
 
 std::wstring MouseDeviceWin32::getControlName(int32_t control)
 {
-	InputDefaultControlType controlType = InputDefaultControlType(control);
-	switch (controlType)
-	{
-	case DtButton1:
-		return L"Left mouse button";
-	case DtButton2:
-		return L"Right mouse button";
-	case DtButton3:
-		return L"Middle mouse button";
-	case DtAxisX:
-		return L"Mouse X axis";
-	case DtAxisY:
-		return L"Mouse Y axis";
-	}
-	return L"";
+	return c_mouseControlMap[control].name;
 }
 
 bool MouseDeviceWin32::isControlAnalogue(int32_t control) const
 {
-	InputDefaultControlType controlType = InputDefaultControlType(control);
-	return bool(controlType >= DtButton1 && controlType <= DtButton3);
+	return c_mouseControlMap[control].analogue;
+}
+
+bool MouseDeviceWin32::isControlRelative(int32_t control) const
+{
+	return c_mouseControlMap[control].relative;
 }
 
 float MouseDeviceWin32::getControlValue(int32_t control)
@@ -71,16 +86,20 @@ float MouseDeviceWin32::getControlValue(int32_t control)
 	if (!m_connected)
 		return 0.0f;
 
-	InputDefaultControlType controlType = InputDefaultControlType(control);
-	if (controlType == DtAxisX)
+	const MouseControlMap& mc = c_mouseControlMap[control];
+	if (mc.controlType == DtAxisX)
 		return m_axisX;
-	else if(controlType == DtAxisY)
+	else if (mc.controlType == DtAxisY)
 		return m_axisY;
-	else if (controlType == DtButton1)
+	else if (mc.controlType == DtPositionX)
+		return m_positionX;
+	else if (mc.controlType == DtPositionY)
+		return m_positionY;
+	else if (mc.controlType == DtButton1)
 		return m_button1;
-	else if (controlType == DtButton2)
+	else if (mc.controlType == DtButton2)
 		return m_button2;
-	else if (controlType == DtButton3)
+	else if (mc.controlType == DtButton3)
 		return m_button3;
 	else
 		return 0.0f;
@@ -88,30 +107,24 @@ float MouseDeviceWin32::getControlValue(int32_t control)
 
 bool MouseDeviceWin32::getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const
 {
-	control = 0;
-
-	switch (controlType)
+	for (uint32_t i = 0; i < sizeof_array(c_mouseControlMap); ++i)
 	{
-	case DtButton1:
-	case DtButton2:
-	case DtButton3:
-		if (!analogue)
-			control = int(controlType);
-		break;
-	case DtAxisX:
-	case DtAxisY:
-		if (analogue)
-			control = int(controlType);
-		break;
+		const MouseControlMap& mc = c_mouseControlMap[i];
+		if (mc.controlType == controlType && mc.analogue == analogue)
+		{
+			control = i;
+			return true;
+		}
 	}
-
-	return bool(control != 0);
+	return false;
 }
 
 void MouseDeviceWin32::resetState()
 {
 	m_axisX = 0.0f;
 	m_axisY = 0.0f;
+	m_positionX = 0.0f;
+	m_positionY = 0.0f;
 	m_button1 = 0.0f;
 	m_button2 = 0.0f;
 	m_button3 = 0.0f;
@@ -139,6 +152,12 @@ void MouseDeviceWin32::readState()
 			m_axisX = float(m_cursorPosition.x - cursorCenter.x);
 			m_axisY = float(m_cursorPosition.y - cursorCenter.y);
 
+			m_positionX += m_axisX;
+			m_positionY += m_axisY;
+
+			m_positionX = clamp(m_positionX, 0.0f, float(rc.right - rc.left));
+			m_positionY = clamp(m_positionY, 0.0f, float(rc.bottom - rc.top));
+
 			ClientToScreen(m_hWndActive, &cursorCenter);
 			SetCursorPos(cursorCenter.x, cursorCenter.y);
 		}
@@ -152,6 +171,9 @@ void MouseDeviceWin32::readState()
 
 			m_axisX = float(cursorPosition.x - m_cursorPosition.x);
 			m_axisY = float(cursorPosition.y - m_cursorPosition.y);
+
+			m_positionX = float(cursorPosition.x);
+			m_positionY = float(cursorPosition.y);
 
 			m_cursorPosition = cursorPosition;
 			m_haveCursorPosition = true;

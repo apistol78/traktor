@@ -71,6 +71,8 @@ struct IsReference < const Type& >
 template < typename Type >
 struct IsConst
 {
+	typedef Type type_t;
+
 	enum { value = false };
 };
 
@@ -78,6 +80,8 @@ struct IsConst
 template < typename Type >
 struct IsConst < const Type >
 {
+	typedef Type type_t;
+
 	enum { value = true };
 };
 

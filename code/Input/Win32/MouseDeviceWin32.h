@@ -35,6 +35,8 @@ public:
 
 	virtual bool isControlAnalogue(int32_t control) const;
 
+	virtual bool isControlRelative(int32_t control) const;
+
 	virtual float getControlValue(int32_t control);
 
 	virtual bool getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const;
@@ -56,6 +58,8 @@ private:
 	bool m_haveCursorPosition;
 	float m_axisX;
 	float m_axisY;
+	float m_positionX;
+	float m_positionY;
 	float m_button1;
 	float m_button2;
 	float m_button3;
