@@ -96,7 +96,6 @@ private:
 	UpdateControl m_updateControl;
 	UpdateInfo m_updateInfo;
 	bool m_renderViewActive;
-	bool m_renderViewFullScreen;
 	float m_backgroundColor[4];
 	float m_updateDuration;
 	float m_buildDuration;

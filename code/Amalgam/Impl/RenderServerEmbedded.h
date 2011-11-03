@@ -30,7 +30,7 @@ public:
 
 	virtual int32_t reconfigure(const Settings* settings);
 
-	virtual void update(Settings* settings);
+	virtual UpdateResult update(Settings* settings);
 
 	virtual render::IRenderSystem* getRenderSystem();
 

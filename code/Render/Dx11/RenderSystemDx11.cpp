@@ -223,7 +223,7 @@ float RenderSystemDx11::getDisplayAspectRatio() const
 	return 0.0f;
 }
 
-bool RenderSystemDx11::handleMessages()
+IRenderSystem::HandleResult RenderSystemDx11::handleMessages()
 {
 	bool going = true;
 	MSG msg;
@@ -238,7 +238,7 @@ bool RenderSystemDx11::handleMessages()
 		DispatchMessage(&msg);
 	}
 
-	return going;
+	return going ? HrSuccess : HrTerminate;
 }
 
 Ref< IRenderView > RenderSystemDx11::createRenderView(const RenderViewDefaultDesc& desc)

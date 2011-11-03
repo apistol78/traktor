@@ -89,6 +89,7 @@ RenderSystemWin32::RenderSystemWin32()
 ,	m_hWnd(0)
 ,	m_maxAnisotropy(0)
 ,	m_deviceLost(0)
+,	m_toggleFullscreen(false)
 ,	m_inRender(false)
 {
 }
@@ -293,7 +294,7 @@ float RenderSystemWin32::getDisplayAspectRatio() const
 	return float(m_d3dDefaultDisplayMode.Width) / m_d3dDefaultDisplayMode.Height;
 }
 
-bool RenderSystemWin32::handleMessages()
+IRenderSystem::HandleResult RenderSystemWin32::handleMessages()
 {
 	MSG msg;
 	do
@@ -309,7 +310,7 @@ bool RenderSystemWin32::handleMessages()
 			DispatchMessage(&msg);
 		}
 		if (!going)
-			return false;
+			return HrTerminate;
 
 		// Try to reset lost device.
 		if (m_deviceLost != 0)
@@ -328,7 +329,14 @@ bool RenderSystemWin32::handleMessages()
 		}
 	}
 	while (m_deviceLost != 0);
-	return true;
+
+	if (m_toggleFullscreen)
+	{
+		m_toggleFullscreen = false;
+		return HrToggleFullscreen;
+	}
+
+	return HrSuccess;
 }
 
 Ref< IRenderView > RenderSystemWin32::createRenderView(const RenderViewDefaultDesc& desc)
@@ -601,24 +609,6 @@ void RenderSystemWin32::endRender(bool lostDevice)
 	m_renderLock.release();
 }
 
-void RenderSystemWin32::toggleMode()
-{
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_renderLock);
-	HRESULT hr;
-
-	m_d3dPresent.Windowed = !m_d3dPresent.Windowed;
-	
-	setWindowStyle(m_hWnd, m_d3dPresent.BackBufferWidth, m_d3dPresent.BackBufferHeight, m_d3dPresent.Windowed ? false : true);
-	ShowWindow(m_hWnd, SW_SHOWNOACTIVATE);
-
-	if (!m_renderViews.empty())
-		m_renderViews.front()->setD3DPresent(m_d3dPresent);
-
-	hr = resetDevice();
-	if (FAILED(hr))
-		m_deviceLost = 1;
-}
-
 bool RenderSystemWin32::resetPrimary(const D3DPRESENT_PARAMETERS& d3dPresent, D3DFORMAT d3dDepthStencilFormat)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_renderLock);
@@ -721,7 +711,7 @@ LRESULT RenderSystemWin32::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 		if (renderSystem && wParam == VK_RETURN)
 		{
 			if ((lParam & (1 << 29)) != 0)
-				renderSystem->toggleMode();
+				renderSystem->m_toggleFullscreen = true;
 		}
 		break;
 
@@ -729,18 +719,9 @@ LRESULT RenderSystemWin32::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 		if (renderSystem && wParam == VK_RETURN)
 		{
 			if ((GetAsyncKeyState(VK_CONTROL) & 0x8000) != 0)
-				renderSystem->toggleMode();
+				renderSystem->m_toggleFullscreen = true;
 		}
 		break;
-
-	//case WM_ACTIVATEAPP:
-	//	if (!wParam)
-	//	{
-	//		// We're about to be deactivated; ensure we're running in windowed mode.
-	//		if (renderSystem && !renderSystem->m_d3dPresent.Windowed)
-	//			renderSystem->toggleMode();
-	//	}
-	//	break;
 
 	case WM_CLOSE:
 		DestroyWindow(hWnd);

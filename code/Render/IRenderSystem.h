@@ -42,6 +42,13 @@ class T_DLLCLASS IRenderSystem : public Object
 	T_RTTI_CLASS;
 
 public:
+	enum HandleResult
+	{
+		HrTerminate = 0,
+		HrSuccess = 1,
+		HrToggleFullscreen = 2
+	};
+
 	/*! \name Render system creation. */
 	//@{
 
@@ -92,9 +99,9 @@ public:
 	 *
 	 * When rendering to a full screen view this must be called frequently
 	 * in order for the render systems to handle OS messages.
-	 * \return false if OS terminated application.
+	 * \return Handle result.
 	 */
-	virtual bool handleMessages() = 0;
+	virtual HandleResult handleMessages() = 0;
 
 	//@}
 	

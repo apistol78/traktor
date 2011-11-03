@@ -121,7 +121,7 @@ float RenderSystemOpenGLES2::getDisplayAspectRatio() const
 #endif
 }
 
-bool RenderSystemOpenGLES2::handleMessages()
+IRenderSystem::HandleResult RenderSystemOpenGLES2::handleMessages()
 {
 #if defined(_WIN32)
 
@@ -138,10 +138,10 @@ bool RenderSystemOpenGLES2::handleMessages()
 		DispatchMessage(&msg);
 	}
 
-	return going;
+	return going ? HrSuccess : HrTerminate;
 
 #endif
-	return true;
+	return HrSuccess;
 }
 
 Ref< IRenderView > RenderSystemOpenGLES2::createRenderView(const RenderViewDefaultDesc& desc)

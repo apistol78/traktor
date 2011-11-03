@@ -148,8 +148,13 @@ int32_t RenderServerEmbedded::reconfigure(const Settings* settings)
 	return result;
 }
 
-void RenderServerEmbedded::update(Settings* settings)
+RenderServer::UpdateResult RenderServerEmbedded::update(Settings* settings)
 {
+	render::IRenderSystem::HandleResult result = m_renderSystem->handleMessages();
+	if (result == render::IRenderSystem::HrTerminate)
+		return UrTerminate;
+
+	return UrSuccess;
 }
 
 render::IRenderSystem* RenderServerEmbedded::getRenderSystem()
