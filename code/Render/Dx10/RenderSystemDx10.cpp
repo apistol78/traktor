@@ -206,7 +206,7 @@ float RenderSystemDx10::getDisplayAspectRatio() const
 	return 0.0f;
 }
 
-bool RenderSystemDx10::handleMessages()
+IRenderSystem::HandleResult RenderSystemDx10::handleMessages()
 {
 	bool going = true;
 	MSG msg;
@@ -221,7 +221,7 @@ bool RenderSystemDx10::handleMessages()
 		DispatchMessage(&msg);
 	}
 
-	return going;
+	return going ? HrSuccess : HrTerminate;
 }
 
 Ref< IRenderView > RenderSystemDx10::createRenderView(const RenderViewDefaultDesc& desc)

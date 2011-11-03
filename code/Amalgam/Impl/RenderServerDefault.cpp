@@ -190,8 +190,17 @@ bool RenderServerDefault::create(Settings* settings)
 #else
 
 	// Get display mode from settings; use default settings if none is provided.
-	m_renderViewDesc.displayMode.width = settings->getProperty< PropertyInteger >(L"Render.DisplayMode/Width", m_originalDisplayMode.width);
-	m_renderViewDesc.displayMode.height = settings->getProperty< PropertyInteger >(L"Render.DisplayMode/Height", m_originalDisplayMode.height);
+	if (m_renderViewDesc.fullscreen)
+	{
+		m_renderViewDesc.displayMode.width = settings->getProperty< PropertyInteger >(L"Render.DisplayMode/Width", m_originalDisplayMode.width);
+		m_renderViewDesc.displayMode.height = settings->getProperty< PropertyInteger >(L"Render.DisplayMode/Height", m_originalDisplayMode.height);
+	}
+	else
+	{
+		m_renderViewDesc.displayMode.width = settings->getProperty< PropertyInteger >(L"Render.DisplayMode.Window/Width", 1280);
+		m_renderViewDesc.displayMode.height = settings->getProperty< PropertyInteger >(L"Render.DisplayMode.Window/Height", 720);
+	}
+
 	m_renderViewDesc.displayMode.stereoscopic = settings->getProperty< PropertyBoolean >(L"Render.Stereoscopic", false);
 	m_renderViewDesc.displayMode.colorBits = 24;
 
@@ -218,8 +227,16 @@ bool RenderServerDefault::create(Settings* settings)
 	
 	// We've successfully created the render view; update settings to reflect found display mode.
 #if !defined(_PS3)
-	settings->setProperty< PropertyInteger >(L"Render.DisplayMode/Width", m_renderViewDesc.displayMode.width);
-	settings->setProperty< PropertyInteger >(L"Render.DisplayMode/Height", m_renderViewDesc.displayMode.height);
+	if (m_renderViewDesc.fullscreen)
+	{
+		settings->setProperty< PropertyInteger >(L"Render.DisplayMode/Width", m_renderViewDesc.displayMode.width);
+		settings->setProperty< PropertyInteger >(L"Render.DisplayMode/Height", m_renderViewDesc.displayMode.height);
+	}
+	else
+	{
+		settings->setProperty< PropertyInteger >(L"Render.DisplayMode.Window/Width", m_renderViewDesc.displayMode.width);
+		settings->setProperty< PropertyInteger >(L"Render.DisplayMode.Window/Height", m_renderViewDesc.displayMode.height);
+	}
 #endif
 
 	settings->setProperty< PropertyBoolean >(L"Render.Stereoscopic", m_renderViewDesc.displayMode.stereoscopic);
@@ -306,8 +323,17 @@ int32_t RenderServerDefault::reconfigure(const Settings* settings)
 
 #else
 
-	rvdd.displayMode.width = settings->getProperty< PropertyInteger >(L"Render.DisplayMode/Width", 1280);
-	rvdd.displayMode.height = settings->getProperty< PropertyInteger >(L"Render.DisplayMode/Height", 720);
+	if (rvdd.fullscreen)
+	{
+		rvdd.displayMode.width = settings->getProperty< PropertyInteger >(L"Render.DisplayMode/Width", m_originalDisplayMode.width);
+		rvdd.displayMode.height = settings->getProperty< PropertyInteger >(L"Render.DisplayMode/Height", m_originalDisplayMode.height);
+	}
+	else
+	{
+		rvdd.displayMode.width = settings->getProperty< PropertyInteger >(L"Render.DisplayMode.Window/Width", 1280);
+		rvdd.displayMode.height = settings->getProperty< PropertyInteger >(L"Render.DisplayMode.Window/Height", 720);
+	}
+
 	rvdd.displayMode.stereoscopic = settings->getProperty< PropertyBoolean >(L"Render.Stereoscopic", false);
 	rvdd.displayMode.colorBits = 24;
 
@@ -351,17 +377,24 @@ int32_t RenderServerDefault::reconfigure(const Settings* settings)
 	return result;
 }
 
-void RenderServerDefault::update(Settings* settings)
+RenderServer::UpdateResult RenderServerDefault::update(Settings* settings)
 {
 #if !defined(_PS3)
 
-	// Reflect changes to fullscreen in description and settings as
-	// fullscreen can be changed through keyboard shortcut.
-	if (m_renderView && m_renderView->isFullScreen() != m_renderViewDesc.fullscreen)
+	render::IRenderSystem::HandleResult result = m_renderSystem->handleMessages();
+	if (result == render::IRenderSystem::HrTerminate)
+		return UrTerminate;
+
+	if (!m_renderView)
+		return UrSuccess;
+
+	if (result == render::IRenderSystem::HrToggleFullscreen)
 	{
-		m_renderViewDesc.fullscreen = m_renderView->isFullScreen();
-		settings->setProperty< PropertyBoolean >(L"Render.FullScreen", m_renderViewDesc.fullscreen);
+		settings->setProperty< PropertyBoolean >(L"Render.FullScreen", !m_renderViewDesc.fullscreen);
+		return UrReconfigure;
 	}
+
+	return UrSuccess;
 
 #else
 
@@ -374,6 +407,8 @@ void RenderServerDefault::update(Settings* settings)
 		// \fixme gamma Inverted and from 0.5 to 1.5 range.
 		m_renderView->setGamma(lerp(1.2f, 0.8f, gamma - 0.5f));
 	}
+
+	return true;
 
 #endif
 }

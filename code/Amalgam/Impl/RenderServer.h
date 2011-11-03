@@ -18,13 +18,20 @@ class RenderServer : public IRenderServer
 	T_RTTI_CLASS;
 
 public:
+	enum UpdateResult
+	{
+		UrTerminate = 0,
+		UrSuccess = 1,
+		UrReconfigure = 2
+	};
+
 	virtual void destroy() = 0;
 
 	virtual void createResourceFactories(IEnvironment* environment) = 0;
 
 	virtual int32_t reconfigure(const Settings* settings) = 0;
 
-	virtual void update(Settings* settings) = 0;
+	virtual UpdateResult update(Settings* settings) = 0;
 };
 
 	}

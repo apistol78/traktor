@@ -104,7 +104,7 @@ float RenderSystemSw::getDisplayAspectRatio() const
 	return 0.0f;
 }
 
-bool RenderSystemSw::handleMessages()
+IRenderSystem::HandleResult RenderSystemSw::handleMessages()
 {
 #if defined(_WIN32)
 
@@ -121,7 +121,7 @@ bool RenderSystemSw::handleMessages()
 		DispatchMessage(&msg);
 	}
 
-	return going;
+	return going ? HrSuccess : HrTerminate;
 
 #else
 	return false;

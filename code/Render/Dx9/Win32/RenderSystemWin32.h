@@ -54,7 +54,7 @@ public:
 
 	virtual float getDisplayAspectRatio() const;
 
-	virtual bool handleMessages();
+	virtual HandleResult handleMessages();
 
 	virtual Ref< IRenderView > createRenderView(const RenderViewDefaultDesc& desc);
 
@@ -102,13 +102,6 @@ public:
 	 */
 	void endRender(bool lostDevice);
 
-	/*! \brief Toggle full-screen/windowed mode.
-	 *
-	 * \note Will only work if renderer was
-	 * created with a non-embedded render view.
-	 */
-	void toggleMode();
-
 	/*! \brief Reset device's primary swap chain.
 	 *
 	 * \note Will only work if renderer was
@@ -132,6 +125,7 @@ private:
 	RefArray< RenderViewWin32 > m_renderViews;
 	Semaphore m_renderLock;
 	uint32_t m_deviceLost;
+	bool m_toggleFullscreen;
 	bool m_inRender;
 
 	/*! \brief Reset device.

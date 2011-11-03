@@ -43,7 +43,7 @@ float RenderSystemCapture::getDisplayAspectRatio() const
 	return m_renderSystem->getDisplayAspectRatio();
 }
 
-bool RenderSystemCapture::handleMessages()
+IRenderSystem::HandleResult RenderSystemCapture::handleMessages()
 {
 	return m_renderSystem->handleMessages();
 }

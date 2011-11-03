@@ -303,7 +303,7 @@ float RenderSystemOpenGL::getDisplayAspectRatio() const
 	return 0.0f;
 }
 
-bool RenderSystemOpenGL::handleMessages()
+IRenderSystem::HandleResult RenderSystemOpenGL::handleMessages()
 {
 #if defined(_WIN32)
 
@@ -320,7 +320,7 @@ bool RenderSystemOpenGL::handleMessages()
 		DispatchMessage(&msg);
 	}
 
-	return going;
+	return going ? HrSuccess : HrTerminate;
 
 #elif defined(__APPLE__)
 

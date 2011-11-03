@@ -22,7 +22,6 @@
 #include "Render/IRenderView.h"
 #include "Resource/IResourceManager.h"
 #include "Amalgam/Actions/ActivationAction.h"
-#include "Amalgam/Actions/FullScreenAction.h"
 #include "Amalgam/Actions/ReconfiguredAction.h"
 #include "Amalgam/Impl/Application.h"
 #include "Amalgam/Impl/AudioServer.h"
@@ -158,7 +157,6 @@ Application::Application()
 :	m_threadDatabase(0)
 ,	m_threadRender(0)
 ,	m_renderViewActive(true)
-,	m_renderViewFullScreen(false)
 ,	m_updateDuration(0.0f)
 ,	m_buildDuration(0.0f)
 ,	m_renderDuration(0.0f)
@@ -405,8 +403,6 @@ bool Application::create(
 	m_timer.start();
 	m_stateManager->enter(state);
 
-	m_renderViewFullScreen = m_renderServer->getRenderView()->isFullScreen();
-
 	log::info << L"Initial state ready; enter main loop..." << Endl;
 
 	if (settings->getProperty< PropertyBoolean >(L"Amalgam.RenderThread", true))
@@ -472,11 +468,11 @@ bool Application::update()
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockUpdate);
 	Ref< IState > currentState;
 
-	if (!m_renderServer->getRenderSystem()->handleMessages())
-		return false;
+	// Update render server.
+	RenderServer::UpdateResult updateResult = m_renderServer->update(m_settings);
 
 	// Perform reconfiguration if required.
-	if (m_environment->shouldReconfigure())
+	if (updateResult == RenderServer::UrReconfigure || m_environment->shouldReconfigure())
 	{
 		// Synchronize rendering thread first as renderer might be reconfigured.
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockRender);
@@ -493,9 +489,6 @@ bool Application::update()
 			currentState->take(&configuredAction);
 		}
 	}
-
-	// Update render server.
-	m_renderServer->update(m_settings);
 
 	// Update online session manager.
 	if (m_onlineServer)
@@ -549,14 +542,6 @@ bool Application::update()
 			m_renderViewActive = renderViewActive;
 		}
 
-		bool renderViewFullScreen = m_renderServer->getRenderView()->isFullScreen();
-		if (renderViewFullScreen != m_renderViewFullScreen)
-		{
-			FullScreenAction fullScreenAction(renderViewFullScreen);
-			currentState->take(&fullScreenAction);
-			m_renderViewFullScreen = renderViewFullScreen;
-		}
-		
 		// Determine if input should be enabled.
 		bool inputEnabled = m_renderViewActive;
 		if (m_onlineServer)
