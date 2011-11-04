@@ -50,6 +50,18 @@ public:
 	/*! \name View management. */
 	//@{
 
+	/*! \brief Get next system event.
+	 *
+	 * When using non-embedded render view this must
+	 * be called frequently in order to handle OS
+	 * events. Significant events are translated into
+	 * platform agnostic events, such as "toggle fullscreen
+	 * requested", "window resized" etc.
+	 *
+	 * \return Render event; idle when no more system event exist.
+	 */
+	virtual RenderEvent nextEvent() = 0;
+
 	virtual void close() = 0;
 
 	virtual bool reset(const RenderViewDefaultDesc& desc) = 0;

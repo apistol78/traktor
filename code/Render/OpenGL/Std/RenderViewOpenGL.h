@@ -69,6 +69,8 @@ public:
 
 	virtual ~RenderViewOpenGL();
 
+	virtual RenderEvent nextEvent();
+
 	virtual void close();
 
 	virtual bool reset(const RenderViewDefaultDesc& desc);

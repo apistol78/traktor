@@ -303,44 +303,6 @@ float RenderSystemOpenGL::getDisplayAspectRatio() const
 	return 0.0f;
 }
 
-IRenderSystem::HandleResult RenderSystemOpenGL::handleMessages()
-{
-#if defined(_WIN32)
-
-	bool going = true;
-	MSG msg;
-
-	while (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE))
-	{
-		int ret = GetMessage(&msg, NULL, 0, 0);
-		if (ret <= 0 || msg.message == WM_QUIT)
-			going = false;
-
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
-	}
-
-	return going ? HrSuccess : HrTerminate;
-
-#elif defined(__APPLE__)
-
-	if (!m_windowHandle)
-		return HrSuccess;
-		
-	UpdateResult result = cglwUpdateWindow(m_windowHandle);
-	
-	if (result == UrTerminate)
-		return HrTerminate;
-	else if (result == UrToggleFullscreen)
-		return HrToggleFullscreen;
-		
-	return HrSuccess;
-
-#else
-	return HrSuccess;
-#endif
-}
-
 Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultDesc& desc)
 {
 #if defined(_WIN32)

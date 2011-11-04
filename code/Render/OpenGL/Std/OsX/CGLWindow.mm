@@ -5,6 +5,7 @@
 #include "Core/Misc/TString.h"
 #include "Render/OpenGL/Std/OsX/CGLCustomWindow.h"
 #include "Render/OpenGL/Std/OsX/CGLWindow.h"
+#include "Render/OpenGL/Std/OsX/CGLWindowDelegate.h"
 
 namespace traktor
 {
@@ -16,6 +17,7 @@ namespace traktor
 struct WindowData
 {
 	CGLCustomWindow* window;
+	CGLWindowDelegate* delegate;
 	NSMenu* menu;
 	DisplayMode displayMode;
 	bool fullscreen;
@@ -52,6 +54,15 @@ void setWindowSize(NSWindow* window, int32_t width, int32_t height)
 	frame.size.height += frame.size.height - content.size.height;
 	
 	[window setFrame: frame display: YES];
+}
+
+void getWindowSize(NSWindow* window, int32_t& outWidth, int32_t& outHeight)
+{
+	NSRect frame = [window frame];
+	NSRect content = [window contentRectForFrameRect: frame];
+
+	outWidth = content.size.width;
+	outHeight = content.size.height;
 }
 
 void setWindowRect(NSWindow* window, int32_t x, int32_t y, int32_t width, int32_t height)
@@ -201,6 +212,7 @@ void* cglwCreateWindow(const std::wstring& title, const DisplayMode& displayMode
 
 	WindowData* windowData = new WindowData();
 	windowData->window = 0;
+	windowData->delegate = 0;
 	windowData->menu = 0;
 	windowData->displayMode = displayMode;
 	windowData->fullscreen = fullscreen;
@@ -235,7 +247,7 @@ void* cglwCreateWindow(const std::wstring& title, const DisplayMode& displayMode
 	{
 		windowData->window = [[CGLCustomWindow alloc]
 			initWithContentRect: frame
-			styleMask: NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask
+			styleMask: NSTitledWindowMask | NSResizableWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask
 			backing: NSBackingStoreBuffered
 			defer: YES
 		];
@@ -249,7 +261,11 @@ void* cglwCreateWindow(const std::wstring& title, const DisplayMode& displayMode
 	
 	if (!fullscreen)
 		[windowData->window center];
-		
+
+	// Create our delegate in order to track if user have resized window.
+	windowData->delegate = [[CGLWindowDelegate alloc] init];
+	[windowData->window setDelegate: windowData->delegate];
+
 	// Create main menu with Cmd+Q shortcut.
 	windowData->menu = [[NSMenu alloc] initWithTitle: makeNSString(title)];
 
@@ -327,6 +343,18 @@ bool cglwModifyWindow(void* windowHandle, const DisplayMode& displayMode)
 	return true;
 }
 
+void cglwSetWindowSize(void* windowHandle, int32_t width, int32_t height)
+{
+	WindowData* windowData = static_cast< WindowData* >(windowHandle);
+	setWindowSize(windowData->window, width, height);
+}
+
+void cglwGetWindowSize(void* windowHandle, int32_t& outWidth, int32_t& outHeight)
+{
+	WindowData* windowData = static_cast< WindowData* >(windowHandle);
+	getWindowSize(windowData->window, outWidth, outHeight);
+}
+
 void cglwSetFullscreen(void* windowHandle, bool fullscreen)
 {
 	WindowData* windowData = static_cast< WindowData* >(windowHandle);
@@ -362,7 +390,7 @@ void cglwSetFullscreen(void* windowHandle, bool fullscreen)
 		CGDisplaySwitchToMode(kCGDirectMainDisplay, windowData->originalMode);
 		CGDisplayRelease(kCGDirectMainDisplay);
 	
-		[windowData->window setStyleMask: NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask];
+		[windowData->window setStyleMask: NSTitledWindowMask | NSResizableWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask];
 		[windowData->window setLevel: NSNormalWindowLevel];
 		[windowData->window setTitle: windowData->title];
 		[windowData->window setOpaque: NO];
@@ -401,12 +429,12 @@ bool cglwIsActive(void* windowHandle)
 	return true;
 }
 
-UpdateResult cglwUpdateWindow(void* windowHandle)
+RenderEvent cglwUpdateWindow(void* windowHandle)
 {
 	WindowData* windowData = static_cast< WindowData* >(windowHandle);
 	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 	
-	UpdateResult result = UrSuccess;
+	RenderEvent result = ReIdle;
 
 	// Handle system events.
 	for (;;)
@@ -428,7 +456,7 @@ UpdateResult cglwUpdateWindow(void* windowHandle)
 				(keyCode == 0x2e || keyCode == 0x24)
 			)
 			{
-				result = UrToggleFullscreen;
+				result = ReToggleFS;
 				continue;
 			}
 			
@@ -454,9 +482,12 @@ UpdateResult cglwUpdateWindow(void* windowHandle)
 	[pool release];
 	
 	if ([windowData->window closed] == YES)
-		return UrTerminate;
-	else
-		return result;
+		return ReClosed;
+		
+	if ([windowData->delegate resizedSinceLast] == YES)
+		return ReResized;
+
+	return result;
 }
 
 void* cglwGetWindowView(void* windowHandle)

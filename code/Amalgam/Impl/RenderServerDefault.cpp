@@ -240,7 +240,7 @@ bool RenderServerDefault::create(Settings* settings)
 	m_renderView = renderView;
 
 	// Handle some render system messages in order to bring up render view window etc.
-	m_renderSystem->handleMessages();
+	m_renderView->nextEvent();
 
 	return true;
 }
@@ -376,18 +376,21 @@ RenderServer::UpdateResult RenderServerDefault::update(Settings* settings)
 {
 #if !defined(_PS3)
 
-	render::IRenderSystem::HandleResult result = m_renderSystem->handleMessages();
-	if (result == render::IRenderSystem::HrTerminate)
-		return UrTerminate;
-
 	if (!m_renderView)
 		return UrSuccess;
 
-	if (result == render::IRenderSystem::HrToggleFullscreen)
+	render::RenderEvent event = m_renderView->nextEvent();
+	if (event == render::ReClosed)
+		return UrTerminate;
+
+	if (event == render::ReToggleFS)
 	{
 		settings->setProperty< PropertyBoolean >(L"Render.FullScreen", !m_renderViewDesc.fullscreen);
 		return UrReconfigure;
 	}
+	
+	if (event == render::ReResized)
+		return UrReconfigure;
 
 	return UrSuccess;
 
