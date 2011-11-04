@@ -39,6 +39,33 @@ RenderViewOpenGLES2::~RenderViewOpenGLES2()
 {
 }
 
+
+RenderEvent RenderViewOpenGLES2::nextEvent()
+{
+#if defined(_WIN32)
+
+	bool going = true;
+	MSG msg;
+
+	while (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE))
+	{
+		int ret = GetMessage(&msg, NULL, 0, 0);
+		if (ret <= 0 || msg.message == WM_QUIT)
+			going = false;
+
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
+	
+	if (!going)
+		return ReClosed;
+		
+	return ReIdle;
+
+#endif
+	return ReIdle;
+}
+
 void RenderViewOpenGLES2::close()
 {
 	m_context = 0;

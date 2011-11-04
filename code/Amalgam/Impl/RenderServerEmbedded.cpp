@@ -105,7 +105,7 @@ bool RenderServerEmbedded::create(Settings* settings, void* nativeWindowHandle)
 	m_renderView = renderView;
 
 	// Handle some render system messages in order to bring up render view window etc.
-	m_renderSystem->handleMessages();
+	m_renderView->nextEvent();
 
 	return true;
 }
@@ -150,9 +150,15 @@ int32_t RenderServerEmbedded::reconfigure(const Settings* settings)
 
 RenderServer::UpdateResult RenderServerEmbedded::update(Settings* settings)
 {
-	render::IRenderSystem::HandleResult result = m_renderSystem->handleMessages();
-	if (result == render::IRenderSystem::HrTerminate)
+	if (!m_renderView)
+		return UrSuccess;
+
+	render::RenderEvent event = m_renderView->nextEvent();
+	if (event == render::ReClosed)
 		return UrTerminate;
+	
+	if (event == render::ReResized)
+		return UrReconfigure;
 
 	return UrSuccess;
 }

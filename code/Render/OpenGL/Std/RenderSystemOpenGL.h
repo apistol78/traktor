@@ -44,8 +44,6 @@ public:
 
 	virtual float getDisplayAspectRatio() const;
 
-	virtual HandleResult handleMessages();
-
 	virtual Ref< IRenderView > createRenderView(const RenderViewDefaultDesc& desc);
 
 	virtual Ref< IRenderView > createRenderView(const RenderViewEmbeddedDesc& desc);

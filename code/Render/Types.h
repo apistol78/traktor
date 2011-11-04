@@ -21,8 +21,17 @@ namespace traktor
 /*! \ingroup Render */
 //@{
 
+/*! \brief Render view events. */
+enum RenderEvent
+{
+	ReIdle = 0,		//!< Idle, no more events.
+	ReClosed = 1,	//!< Renderer manually closed.
+	ReToggleFS = 2,	//!< Requested toggle fullscreen event.
+	ReResized = 3	//!< Render window manually resized.
+};
+
 /*! \brief Clear target flags. */
-enum ClearFlags
+enum ClearFlag
 {
 	CfColor		= 1,	//!< Clear color buffer.
 	CfDepth		= 2,	//!< Clear depth buffer.

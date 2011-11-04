@@ -44,6 +44,8 @@ public:
 	);
 
 	virtual ~RenderViewOpenGLES2();
+	
+	virtual RenderEvent nextEvent();
 
 	virtual void close();
 
