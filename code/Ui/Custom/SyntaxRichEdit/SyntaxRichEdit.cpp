@@ -103,6 +103,9 @@ void SyntaxRichEdit::updateLanguage(int fromLine, int toLine)
 					case SyntaxLanguage::StKeyword:
 						setAttribute(startOffset, endOffset - startOffset, m_attributeKeyword);
 						break;
+						
+					default:
+						break;
 					}
 
 					currentState = state;
@@ -148,6 +151,9 @@ void SyntaxRichEdit::updateLanguage(int fromLine, int toLine)
 
 		case SyntaxLanguage::StKeyword:
 			setAttribute(startOffset, endOffset - startOffset, m_attributeKeyword);
+			break;
+			
+		default:
 			break;
 		}
 	}

@@ -197,8 +197,8 @@ bool RenderServerDefault::create(Settings* settings)
 	}
 	else
 	{
-		m_renderViewDesc.displayMode.width = settings->getProperty< PropertyInteger >(L"Render.DisplayMode.Window/Width", 1280);
-		m_renderViewDesc.displayMode.height = settings->getProperty< PropertyInteger >(L"Render.DisplayMode.Window/Height", 720);
+		m_renderViewDesc.displayMode.width = settings->getProperty< PropertyInteger >(L"Render.DisplayMode.Window/Width", m_originalDisplayMode.width / 2);
+		m_renderViewDesc.displayMode.height = settings->getProperty< PropertyInteger >(L"Render.DisplayMode.Window/Height", m_originalDisplayMode.height / 2);
 	}
 
 	m_renderViewDesc.displayMode.stereoscopic = settings->getProperty< PropertyBoolean >(L"Render.Stereoscopic", false);
@@ -231,11 +231,6 @@ bool RenderServerDefault::create(Settings* settings)
 	{
 		settings->setProperty< PropertyInteger >(L"Render.DisplayMode/Width", m_renderViewDesc.displayMode.width);
 		settings->setProperty< PropertyInteger >(L"Render.DisplayMode/Height", m_renderViewDesc.displayMode.height);
-	}
-	else
-	{
-		settings->setProperty< PropertyInteger >(L"Render.DisplayMode.Window/Width", m_renderViewDesc.displayMode.width);
-		settings->setProperty< PropertyInteger >(L"Render.DisplayMode.Window/Height", m_renderViewDesc.displayMode.height);
 	}
 #endif
 
@@ -330,8 +325,8 @@ int32_t RenderServerDefault::reconfigure(const Settings* settings)
 	}
 	else
 	{
-		rvdd.displayMode.width = settings->getProperty< PropertyInteger >(L"Render.DisplayMode.Window/Width", 1280);
-		rvdd.displayMode.height = settings->getProperty< PropertyInteger >(L"Render.DisplayMode.Window/Height", 720);
+		rvdd.displayMode.width = settings->getProperty< PropertyInteger >(L"Render.DisplayMode.Window/Width", m_originalDisplayMode.width / 2);
+		rvdd.displayMode.height = settings->getProperty< PropertyInteger >(L"Render.DisplayMode.Window/Height", m_originalDisplayMode.height / 2);
 	}
 
 	rvdd.displayMode.stereoscopic = settings->getProperty< PropertyBoolean >(L"Render.Stereoscopic", false);

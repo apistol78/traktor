@@ -61,7 +61,7 @@ bool SyntaxLanguageJs::consume(const std::wstring& text, State& outState, int& o
 		int i = 1;
 
 		// Integer or float.
-		for (; i < ln && (text[i] >= L'0' && text[i] <= L'9') || text[i] == L'.'; ++i)
+		for (; (i < ln && (text[i] >= L'0' && text[i] <= L'9')) || text[i] == L'.'; ++i)
 			++outConsumedChars;
 
 		// Fractional

@@ -183,6 +183,7 @@ avm_number_t ActionValue::getNumber() const
 
 	case AvtObject:
 		return m_value.o ? m_value.o->valueOf().getNumber() : avm_number_t(0);
+
 	default:
 		break;
 	}

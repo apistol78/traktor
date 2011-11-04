@@ -34,14 +34,14 @@ public:
 	virtual int getAsyncKeyState() const;
 	
 private:
-	struct NSAutoreleasePool* m_pool;
+	void* m_pool;
 	bool m_launching;
 	int m_exitCode;
 	bool m_terminated;
 	uint32_t m_modifierFlags;
 	bool m_idleMode;
 	
-	bool handleGlobalEvents(EventSubject* owner, struct NSEvent* event);
+	bool handleGlobalEvents(EventSubject* owner, void* event);
 };
 
 	}

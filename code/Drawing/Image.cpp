@@ -44,11 +44,13 @@ uint8_t* allocData(size_t size)
 	uint8_t* ptr = (uint8_t*)getAllocator()->alloc(size + c_wallSize * 2, 16, T_FILE_LINE);
 	if (!ptr)
 		T_FATAL_ERROR;
+#if defined(DRAWING_CHECK_DATA)
 	for (uint32_t i = 0; i < c_wallSize; ++i)
 	{
 		ptr[i] = 0xcc;
 		ptr[c_wallSize + size + i] = 0x55;
 	}
+#endif
 	return ptr + c_wallSize;
 }
 

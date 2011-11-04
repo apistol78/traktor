@@ -35,6 +35,9 @@ std::wstring expandScalar(float v, GlslType type)
 	
 	case GtFloat4:
 		return L"vec4(" + vs + L", " + vs + L", " + vs + L", " + vs + L")";
+		
+	default:
+		break;
 	}
 	return vs;
 }
@@ -577,6 +580,9 @@ void emitMixOut(GlslContext& cx, MixOut* node)
 			assign(f, w) << in->getName() << L".w;" << Endl;
 		}
 		break;
+		
+	default:
+		break;
 	}
 }
 
@@ -728,14 +734,20 @@ void emitPolynomial(GlslContext& cx, Polynomial* node)
 	case GtFloat:
 		f << coeffs->getName() << L".x * " << x->getName();
 		break;
+
 	case GtFloat2:
 		f << coeffs->getName() << L".x * pow(" << x->getName() << L", 2) + " << coeffs->getName() << L".y * " << x->getName();
 		break;
+
 	case GtFloat3:
 		f << coeffs->getName() << L".x * pow(" << x->getName() << L", 3) + " << coeffs->getName() << L".y * pow(" << x->getName() << L", 2) + " << coeffs->getName() << L".z * " << x->getName();
 		break;
+
 	case GtFloat4:
 		f << coeffs->getName() << L".x * pow(" << x->getName() << L", 4) + " << coeffs->getName() << L".y * pow(" << x->getName() << L", 3) + " << coeffs->getName() << L".z * pow(" << x->getName() << L", 2) + " << coeffs->getName() << L".w * " << x->getName();
+		break;
+		
+	default:
 		break;
 	}
 	f << L";" << Endl;
@@ -1249,6 +1261,9 @@ void emitVertexInput(GlslContext& cx, VertexInput* node)
 			case GtFloat3:
 				assign(f, out) << L"vec4(" << attributeName << L".xyz, 1.0);" << Endl;
 				break;
+				
+			default:
+				break;
 			}
 		}
 		else if (node->getDataUsage() == DuNormal && type != GtFloat4)
@@ -1270,6 +1285,9 @@ void emitVertexInput(GlslContext& cx, VertexInput* node)
 
 			case GtFloat3:
 				assign(f, out) << L"vec4(" << attributeName << L".xyz, 0.0);" << Endl;
+				break;
+				
+			default:
 				break;
 			}
 		}
@@ -1296,6 +1314,9 @@ void emitVertexInput(GlslContext& cx, VertexInput* node)
 
 			case GtFloat4:
 				assign(f, out) << attributeName << L".zyxw;" << Endl;
+				break;
+				
+			default:
 				break;
 			}
 		}
@@ -1342,6 +1363,9 @@ void emitVertexOutput(GlslContext& cx, VertexOutput* node)
 
 	case GtFloat4:
 		fb << L"gl_Position = PV(" << in->getName() << L");" << Endl;
+		break;
+		
+	default:
 		break;
 	}
 }

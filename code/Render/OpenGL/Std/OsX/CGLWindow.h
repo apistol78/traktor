@@ -8,7 +8,14 @@ namespace traktor
 {
 	namespace render
 	{
-	
+
+enum UpdateResult
+{
+	UrSuccess,
+	UrTerminate,
+	UrToggleFullscreen
+};
+
 uint32_t cglwGetDisplayModeCount();
 
 bool cglwGetDisplayMode(uint32_t index, DisplayMode& outDisplayMode);
@@ -27,7 +34,7 @@ bool cglwIsFullscreen(void* windowHandle);
 
 bool cglwIsActive(void* windowHandle);
 
-bool cglwUpdateWindow(void* windowHandle);
+UpdateResult cglwUpdateWindow(void* windowHandle);
 
 void* cglwGetWindowView(void* windowHandle);
 	

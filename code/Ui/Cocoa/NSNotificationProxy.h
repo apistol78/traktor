@@ -38,14 +38,16 @@ private:
 	}
 }
 
+typedef traktor::ui::INotificationProxyCallback proxy_callback_t;
+
 @interface NSNotificationProxy : NSObject
 {
-	traktor::ui::INotificationProxyCallback* m_callback;
+	proxy_callback_t* m_callback;
 }
 
 - (id) init;
 
-- (void) setCallback: (traktor::ui::INotificationProxyCallback*)callback;
+- (void) setCallback: (proxy_callback_t*)callback;
 
 - (void) dispatchNotificationCallback: (NSNotification*)notification;
 

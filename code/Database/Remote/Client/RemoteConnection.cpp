@@ -41,10 +41,10 @@ Ref< IMessage > RemoteConnection::sendMessage(const IMessage& message)
 
 #if !defined(_DEBUG)
 	if (!m_messageTransport->receive(10000, reply))
-		return false;
+		return 0;
 #else
 	if (!m_messageTransport->receive(10000000, reply))
-		return false;
+		return 0;
 #endif
 
 	return reply;

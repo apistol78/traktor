@@ -31,7 +31,7 @@ Ref< PostProcessStep::Instance > PostProcessStepSsao::create(
 ) const
 {
 	if (!resourceManager->bind(m_shader))
-		return false;
+		return 0;
 
 	std::vector< InstanceSsao::Source > sources(m_sources.size());
 	for (uint32_t i = 0; i < m_sources.size(); ++i)

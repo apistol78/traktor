@@ -146,6 +146,11 @@ bool InputDeviceKeyboardOsX::isControlAnalogue(int32_t control) const
 	return false;
 }
 
+bool InputDeviceKeyboardOsX::isControlRelative(int32_t control) const
+{
+	return false;
+}
+
 float InputDeviceKeyboardOsX::getControlValue(int32_t control)
 {
 	const KeyControlMap& controlMap = c_keyControlMap[control];

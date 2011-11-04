@@ -102,6 +102,9 @@ struct BlendMeshTask
 						reinterpret_cast< float* >(destVertexElement)[2] += reinterpret_cast< const float* >(targetVertexElement)[2] * weight;
 						reinterpret_cast< float* >(destVertexElement)[3] += reinterpret_cast< const float* >(targetVertexElement)[3] * weight;
 						break;
+						
+					default:
+						break;
 					}
 				}
 				destVertices += vertexSize;

@@ -59,7 +59,7 @@ Ref< Instance > Isolate::createInstanceFromIsolation(Group* group, IStream* stre
 
 	Guid guid(instanceGuid);
 	if (!guid.isValid())
-		return false;
+		return 0;
 
 	Ref< Instance > instance = group->createInstance(instanceName, CifReplaceExisting, &guid);
 	if (!instance)

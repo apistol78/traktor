@@ -100,6 +100,11 @@ bool InputDeviceMouseOsX::isControlAnalogue(int32_t control) const
 	return c_mouseControlMap[control].analogue;
 }
 
+bool InputDeviceMouseOsX::isControlRelative(int32_t control) const
+{
+	return false;
+}
+
 float InputDeviceMouseOsX::getControlValue(int32_t control)
 {
 	int32_t index = c_mouseControlMap[control].index;

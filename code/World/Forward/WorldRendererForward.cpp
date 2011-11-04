@@ -136,6 +136,9 @@ bool WorldRendererForward::create(
 			desc.width /= 2;
 			desc.height /= 2;
 			break;
+			
+		default:
+			break;
 		}
 
 		m_shadowTargetSet = renderSystem->createRenderTargetSet(desc);
