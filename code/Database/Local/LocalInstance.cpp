@@ -178,7 +178,7 @@ Ref< IStream > LocalInstance::readObject(const TypeInfo*& outSerializerType) con
 Ref< IStream > LocalInstance::writeObject(const std::wstring& primaryTypeName, const TypeInfo*& outSerializerType)
 {
 	if (!m_transaction)
-		return false;
+		return 0;
 
 	Ref< DynamicMemoryStream > stream = new DynamicMemoryStream(false, true);
 

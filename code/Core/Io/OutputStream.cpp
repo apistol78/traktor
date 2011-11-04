@@ -416,6 +416,9 @@ OutputStream& Endl(OutputStream& s)
 	case OutputStream::LeUnix:
 		s.put(L'\n');
 		break;
+		
+	default:
+		break;
 	}
 	return s;
 }

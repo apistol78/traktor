@@ -43,10 +43,10 @@ Ref< IProviderGroup > LocalGroup::createGroup(const std::wstring& groupName)
 	Path newGroupPath = m_groupPath.getPathName() + L"/" + groupName;
 
 	if (FileSystem::getInstance().exist(newGroupPath))
-		return false;
+		return 0;
 
 	if (!FileSystem::getInstance().makeDirectory(newGroupPath))
-		return false;
+		return 0;
 
 	return new LocalGroup(m_context, newGroupPath);
 }

@@ -530,6 +530,9 @@ void RichEdit::eventKeyDown(Event* event)
 	case VkDelete:
 		deleteCharacters(false);
 		break;
+		
+	default:
+		break;
 	}
 
 	// Expand selection based on caret movement.

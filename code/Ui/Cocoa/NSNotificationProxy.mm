@@ -9,7 +9,7 @@
 	return self;
 }
 
-- (void) setCallback: (traktor::ui::INotificationProxyCallback*)callback
+- (void) setCallback: (proxy_callback_t*)callback
 {
 	m_callback = callback;
 }

@@ -325,12 +325,19 @@ IRenderSystem::HandleResult RenderSystemOpenGL::handleMessages()
 #elif defined(__APPLE__)
 
 	if (!m_windowHandle)
-		return false;
+		return HrSuccess;
 		
-	return cglwUpdateWindow(m_windowHandle);
+	UpdateResult result = cglwUpdateWindow(m_windowHandle);
+	
+	if (result == UrTerminate)
+		return HrTerminate;
+	else if (result == UrToggleFullscreen)
+		return HrToggleFullscreen;
+		
+	return HrSuccess;
 
 #else
-	return true;
+	return HrSuccess;
 #endif
 }
 

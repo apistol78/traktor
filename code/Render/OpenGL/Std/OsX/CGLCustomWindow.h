@@ -5,7 +5,7 @@
 	BOOL m_closed;
 }
 
-- (void) init;
+- (id) init;
 
 - (BOOL) canBecomeKeyWindow;
 

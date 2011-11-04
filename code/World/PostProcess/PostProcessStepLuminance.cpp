@@ -23,7 +23,7 @@ Ref< PostProcessStep::Instance > PostProcessStepLuminance::create(
 ) const
 {
 	if (!resourceManager->bind(m_shader))
-		return false;
+		return 0;
 
 	Vector4 sampleOffsets[16];
 	int index = 0;

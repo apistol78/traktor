@@ -72,7 +72,7 @@ Ref< Settings > Settings::read(ISerializer& s)
 
 	Ref< PropertyGroup > rootGroup;
 	if (!(s >> MemberRef< PropertyGroup >(L"object", rootGroup)))
-		return false;
+		return 0;
 
 	return new Settings(rootGroup);
 }

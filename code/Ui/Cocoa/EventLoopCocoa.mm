@@ -27,7 +27,8 @@ EventLoopCocoa::EventLoopCocoa()
 
 EventLoopCocoa::~EventLoopCocoa()
 {
-	[m_pool release];
+	NSAutoreleasePool* pool = (NSAutoreleasePool*)m_pool;
+	[pool release];
 }
 
 bool EventLoopCocoa::process(EventSubject* owner)
@@ -175,18 +176,20 @@ int EventLoopCocoa::getAsyncKeyState() const
 	return keyState;
 }
 
-bool EventLoopCocoa::handleGlobalEvents(EventSubject* owner, NSEvent* event)
+bool EventLoopCocoa::handleGlobalEvents(EventSubject* owner, void* event)
 {
+	NSEvent* evt = (NSEvent*)event;
+	
 	// Record modifier flags.
-	m_modifierFlags = [event modifierFlags];
+	m_modifierFlags = [evt modifierFlags];
 	
 	// Process key events; if they are globally consumed we don't dispatch further.
-	NSEventType eventType = [event type];
+	NSEventType eventType = [evt type];
 	if (eventType == NSKeyDown || eventType == NSKeyUp)
 	{
-		uint32_t systemKey = [event keyCode];
+		uint32_t systemKey = [evt keyCode];
 		VirtualKey virtualKey = translateKeyCode(systemKey);
-		std::wstring chs = fromNSString([event characters]);
+		std::wstring chs = fromNSString([evt characters]);
 		
 		KeyEvent keyEvent(
 			owner,

@@ -10,9 +10,10 @@
 
 @implementation CGLCustomWindow
 
-- (void) init
+- (id) init
 {
 	m_closed = NO;
+	return self;
 }
 
 - (BOOL) canBecomeKeyWindow

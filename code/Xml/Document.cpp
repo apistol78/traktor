@@ -78,6 +78,9 @@ bool Document::loadFromStream(IStream* stream)
 				stack.pop_back();
 			}
 			break;
+			
+		default:
+			break;
 		}
 	}
 

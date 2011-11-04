@@ -11,11 +11,11 @@ namespace traktor
 	namespace ui
 	{
 
-struct NSString* makeNSString(const std::wstring& str);
+NSString* makeNSString(const std::wstring& str);
 
 std::wstring fromNSString(const NSString* str);
 
-struct NSColor* makeNSColor(const Color4ub& color);
+NSColor* makeNSColor(const Color4ub& color);
 
 NSSize makeNSSize(const Size& sz);
 

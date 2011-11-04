@@ -23,7 +23,7 @@ Ref< PostProcessStep::Instance > PostProcessStepChain::create(
 		if (instance)
 			instances.push_back(instance);
 		else
-			return false;
+			return 0;
 	}
 	return new InstanceChain(instances);
 }

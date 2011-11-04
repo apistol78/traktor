@@ -401,10 +401,12 @@ bool cglwIsActive(void* windowHandle)
 	return true;
 }
 
-bool cglwUpdateWindow(void* windowHandle)
+UpdateResult cglwUpdateWindow(void* windowHandle)
 {
 	WindowData* windowData = static_cast< WindowData* >(windowHandle);
 	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+	
+	UpdateResult result = UrSuccess;
 
 	// Handle system events.
 	for (;;)
@@ -426,10 +428,7 @@ bool cglwUpdateWindow(void* windowHandle)
 				(keyCode == 0x2e || keyCode == 0x24)
 			)
 			{
-				if (cglwIsFullscreen(windowHandle))
-					cglwSetFullscreen(windowHandle, false);
-				else
-					cglwSetFullscreen(windowHandle, true);
+				result = UrToggleFullscreen;
 				continue;
 			}
 			
@@ -453,7 +452,11 @@ bool cglwUpdateWindow(void* windowHandle)
 	}
 	
 	[pool release];
-	return [windowData->window closed] == NO;
+	
+	if ([windowData->window closed] == YES)
+		return UrTerminate;
+	else
+		return result;
 }
 
 void* cglwGetWindowView(void* windowHandle)

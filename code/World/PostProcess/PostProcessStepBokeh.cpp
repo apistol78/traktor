@@ -53,7 +53,7 @@ Ref< PostProcessStepBokeh::Instance > PostProcessStepBokeh::create(
 {
 	resource::Proxy< render::Shader > shader = m_shader;
 	if (!resourceManager->bind(shader))
-		return false;
+		return 0;
 
 	std::vector< InstanceBokeh::Source > sources(m_sources.size());
 	for (uint32_t i = 0; i < m_sources.size(); ++i)
