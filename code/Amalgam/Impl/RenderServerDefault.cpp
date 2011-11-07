@@ -418,7 +418,7 @@ RenderServer::UpdateResult RenderServerDefault::update(Settings* settings)
 		m_renderView->setGamma(lerp(1.2f, 0.8f, gamma - 0.5f));
 	}
 
-	return true;
+	return UrSuccess;
 
 #endif
 }
