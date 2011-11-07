@@ -90,6 +90,30 @@ RenderViewDx10::~RenderViewDx10()
 	close();
 }
 
+bool RenderViewDx10::nextEvent(RenderEvent& outEvent)
+{
+	bool going = true;
+	MSG msg;
+
+	while (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE))
+	{
+		int ret = GetMessage(&msg, NULL, 0, 0);
+		if (ret <= 0 || msg.message == WM_QUIT)
+			going = false;
+
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
+
+	if (!going)
+	{
+		outEvent.type = ReClose;
+		return true;
+	}
+
+	return false;
+}
+
 void RenderViewDx10::close()
 {
 	m_d3dRenderTargetView.release();
@@ -106,7 +130,7 @@ bool RenderViewDx10::reset(const RenderViewDefaultDesc& desc)
 	return false;
 }
 
-void RenderViewDx10::resize(int32_t width, int32_t height)
+bool RenderViewDx10::reset(int32_t width, int32_t height)
 {
 	ComRef< ID3D10Texture2D > d3dBackBuffer;
 	D3D10_TEXTURE2D_DESC dtd;
@@ -114,7 +138,7 @@ void RenderViewDx10::resize(int32_t width, int32_t height)
 	HRESULT hr;
 
 	if (width <= 0 || height <= 0)
-		return;
+		return false;
 
 	m_d3dDevice->OMSetRenderTargets(0, NULL, NULL);
 	m_d3dRenderTargetView.release();
@@ -159,6 +183,8 @@ void RenderViewDx10::resize(int32_t width, int32_t height)
 
 	m_targetSize[0] = width;
 	m_targetSize[1] = height;
+
+	return true;
 }
 
 int RenderViewDx10::getWidth() const

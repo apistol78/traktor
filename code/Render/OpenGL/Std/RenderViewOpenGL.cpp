@@ -100,27 +100,22 @@ bool RenderViewOpenGL::createPrimaryTarget()
 	return true;
 }
 
-RenderEvent RenderViewOpenGL::nextEvent()
+bool RenderViewOpenGL::nextEvent(RenderEvent& outEvent)
 {
 #if defined(_WIN32)
 
 	bool going = true;
 	MSG msg;
 
-	while (PeekMessage(&msg, m_hWnd, 0, 0, PM_NOREMOVE))
+	while (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE))
 	{
-		int ret = GetMessage(&msg, m_hWnd, 0, 0);
+		int ret = GetMessage(&msg, NULL, 0, 0);
 		if (ret <= 0 || msg.message == WM_QUIT)
 			going = false;
 
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
-	
-	if (!going)
-		return ReClosed;
-		
-	return ReIdle;
 
 #elif defined(__APPLE__)
 
@@ -141,11 +136,9 @@ RenderEvent RenderViewOpenGL::nextEvent()
 		m_primaryTarget->create(m_primaryTargetDesc, true);
 	}
 	
-	return event;
-	
-#else
-	return ReIdle;
 #endif
+
+	return false;
 }
 
 void RenderViewOpenGL::close()
@@ -190,7 +183,7 @@ bool RenderViewOpenGL::reset(const RenderViewDefaultDesc& desc)
 	return true;
 }
 
-void RenderViewOpenGL::resize(int32_t width, int32_t height)
+bool RenderViewOpenGL::reset(int32_t width, int32_t height)
 {
 	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
 
@@ -208,6 +201,8 @@ void RenderViewOpenGL::resize(int32_t width, int32_t height)
 
 	m_primaryTarget = new RenderTargetSetOpenGL(m_context, m_blitHelper);
 	m_primaryTarget->create(m_primaryTargetDesc, true);
+
+	return true;
 }
 
 int RenderViewOpenGL::getWidth() const

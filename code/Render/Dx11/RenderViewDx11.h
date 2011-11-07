@@ -25,6 +25,7 @@ class VertexBufferDx11;
 class IndexBufferDx11;
 class ProgramDx11;
 class RenderTargetSetDx11;
+class Window;
 
 /*!
  * \ingroup DX11
@@ -36,6 +37,7 @@ class T_DLLCLASS RenderViewDx11 : public IRenderView
 public:
 	RenderViewDx11(
 		ContextDx11* context,
+		Window* window,
 		IDXGISwapChain* d3dSwapChain,
 		const DXGI_SWAP_CHAIN_DESC& scd,
 		bool waitVBlank
@@ -43,11 +45,13 @@ public:
 
 	virtual ~RenderViewDx11();
 
+	virtual bool nextEvent(RenderEvent& outEvent);
+
 	virtual void close();
 
 	virtual bool reset(const RenderViewDefaultDesc& desc);
 
-	virtual void resize(int32_t width, int32_t height);
+	virtual bool reset(int32_t width, int32_t height);
 
 	virtual int getWidth() const;
 

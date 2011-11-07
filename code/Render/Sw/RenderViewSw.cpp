@@ -125,6 +125,30 @@ RenderViewSw::~RenderViewSw()
 	m_depthBuffer.release();
 }
 
+bool RenderViewSw::nextEvent(RenderEvent& outEvent)
+{
+#if defined(_WIN32)
+
+	bool going = true;
+	MSG msg;
+
+	while (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE))
+	{
+		int ret = GetMessage(&msg, NULL, 0, 0);
+		if (ret <= 0 || msg.message == WM_QUIT)
+			going = false;
+
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
+
+	return false;
+
+#else
+	return false;
+#endif
+}
+
 void RenderViewSw::close()
 {
 	if (m_graphicsSystem)
@@ -139,7 +163,7 @@ bool RenderViewSw::reset(const RenderViewDefaultDesc& desc)
 	return false;
 }
 
-void RenderViewSw::resize(int32_t width, int32_t height)
+bool RenderViewSw::reset(int32_t width, int32_t height)
 {
 	bool result = m_graphicsSystem->resize(width / c_targetScale, height / c_targetScale);
 	T_ASSERT (result);
@@ -162,6 +186,8 @@ void RenderViewSw::resize(int32_t width, int32_t height)
 		0.0f,
 		0.0f
 	);
+
+	return true;
 }
 
 int RenderViewSw::getWidth() const

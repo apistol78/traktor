@@ -14,46 +14,12 @@
 #include "Render/Dx11/ProgramDx11.h"
 #include "Render/Dx11/TypesDx11.h"
 #include "Render/Dx11/Utilities.h"
+#include "Render/Dx11/Window.h"
 
 namespace traktor
 {
 	namespace render
 	{
-		namespace
-		{
-
-const TCHAR* c_className = _T("TraktorRenderSystem");
-
-void setWindowStyle(HWND hWnd, int32_t clientWidth, int32_t clientHeight, bool fullScreen)
-{
-	if (fullScreen)
-	{
-		SetWindowLong(hWnd, GWL_STYLE, WS_POPUPWINDOW);
-		SetWindowPos(hWnd, HWND_TOP, 0, 0, clientWidth, clientHeight, SWP_FRAMECHANGED | SWP_NOMOVE);
-	}
-	else
-	{
-		SetWindowLong(hWnd, GWL_STYLE, WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION | WS_MINIMIZEBOX);
-		SetWindowPos(hWnd, HWND_NOTOPMOST, 0, 0, clientWidth, clientHeight, SWP_FRAMECHANGED | SWP_NOMOVE);
-	}
-
-	RECT rcWindow, rcClient;
-	GetWindowRect(hWnd, &rcWindow);
-	GetClientRect(hWnd, &rcClient);
-
-	int32_t windowWidth = rcWindow.right - rcWindow.left;
-	int32_t windowHeight = rcWindow.bottom - rcWindow.top;
-
-	int32_t realClientWidth = rcClient.right - rcClient.left;
-	int32_t realClientHeight = rcClient.bottom - rcClient.top;
-
-	windowWidth = (windowWidth - realClientWidth) + clientWidth;
-	windowHeight = (windowHeight - realClientHeight) + clientHeight;
-
-	SetWindowPos(hWnd, NULL, 0, 0, windowWidth, windowHeight, SWP_NOZORDER | SWP_NOMOVE);
-}
-
-		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderSystemDx11", 0, RenderSystemDx11, IRenderSystem)
 
@@ -69,16 +35,6 @@ bool RenderSystemDx11::create(const RenderSystemCreateDesc& desc)
 	ComRef< IDXGIOutput > dxgiOutput;
 	D3D_FEATURE_LEVEL d3dFeatureLevel;
 	HRESULT hr;
-
-	/*
-	// Create DXGI factory instance.
-	hr = CreateDXGIFactory1(
-		__uuidof(IDXGIFactory1),
-		(void**)(&m_dxgiFactory.getAssign())
-	);
-	if (FAILED(hr))
-		return false;
-	*/
 
 	// Create D3D11 device instance.
 	hr = D3D11CreateDevice(
@@ -111,10 +67,6 @@ bool RenderSystemDx11::create(const RenderSystemCreateDesc& desc)
 	hr = dxgiAdapter->GetParent(__uuidof(IDXGIFactory1), (void **)&m_dxgiFactory.getAssign());
 	if (FAILED(hr))
 		return 0;
-
-	//hr = dxgiDevice->GetAdapter(&dxgiAdapter.getAssign());
-	//if (FAILED(hr))
-	//	return 0;
 
 	hr = dxgiAdapter->EnumOutputs(0, &dxgiOutput.getAssign());
 	if (FAILED(hr))
@@ -149,35 +101,9 @@ bool RenderSystemDx11::create(const RenderSystemCreateDesc& desc)
 		m_displayModes[i].colorBits = 32;
 	}
 
-	// Render window class.
-	WNDCLASS wc;
-	std::memset(&wc, 0, sizeof(wc));
-	wc.style = CS_HREDRAW | CS_VREDRAW;
-	wc.cbClsExtra = 0;
-	wc.cbWndExtra = sizeof(this);
-	wc.lpfnWndProc = (WNDPROC)wndProc;
-	wc.hInstance = static_cast<HINSTANCE>(GetModuleHandle(0));
-	wc.hIcon = NULL;
-	wc.hCursor = static_cast<HCURSOR>(LoadCursor(NULL, IDC_ARROW));
-	wc.lpszClassName = c_className;
-	RegisterClass(&wc);
-
-	// Render window.
-	m_hWnd = CreateWindow(
-		c_className,
-		desc.windowTitle ? desc.windowTitle : _T("Traktor 2.0 DirectX 10.0 Renderer"),
-		WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION | WS_MINIMIZEBOX,
-		CW_USEDEFAULT,
-		CW_USEDEFAULT,
-		64,
-		64,
-		NULL,
-		NULL,
-		static_cast< HMODULE >(GetModuleHandle(NULL)),
-		this
-	);
-	if (!m_hWnd)
-		return false;
+	m_window = new Window();
+	if (!m_window->create())
+		return 0;
 
 	m_context = new ContextDx11(m_d3dDevice, m_d3dDeviceContext);
 	m_mipBias = desc.mipBias;
@@ -191,12 +117,6 @@ void RenderSystemDx11::destroy()
 	{
 		m_context->deleteResources();
 		m_context = 0;
-	}
-
-	if (m_hWnd)
-	{
-		DestroyWindow(m_hWnd);
-		m_hWnd = NULL;
 	}
 
 	m_dxgiFactory.release();
@@ -223,24 +143,6 @@ float RenderSystemDx11::getDisplayAspectRatio() const
 	return 0.0f;
 }
 
-IRenderSystem::HandleResult RenderSystemDx11::handleMessages()
-{
-	bool going = true;
-	MSG msg;
-
-	while (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE))
-	{
-		int ret = GetMessage(&msg, NULL, 0, 0);
-		if (ret <= 0 || msg.message == WM_QUIT)
-			going = false;
-
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
-	}
-
-	return going ? HrSuccess : HrTerminate;
-}
-
 Ref< IRenderView > RenderSystemDx11::createRenderView(const RenderViewDefaultDesc& desc)
 {
 	ComRef< IDXGISwapChain > d3dSwapChain;
@@ -248,8 +150,10 @@ Ref< IRenderView > RenderSystemDx11::createRenderView(const RenderViewDefaultDes
 	DXGI_MODE_DESC* dmd;
 	HRESULT hr;
 
-	setWindowStyle(m_hWnd, desc.displayMode.width, desc.displayMode.height, desc.fullscreen);
-	ShowWindow(m_hWnd, SW_NORMAL);
+	if (desc.fullscreen)
+		m_window->setFullScreenStyle(desc.displayMode.width, desc.displayMode.height);
+	else
+		m_window->setWindowedStyle(desc.displayMode.width, desc.displayMode.height);
 
 	// Find matching display mode.
 	dmd = 0;
@@ -277,7 +181,7 @@ Ref< IRenderView > RenderSystemDx11::createRenderView(const RenderViewDefaultDes
 	scd.BufferCount = 1;
 	std::memcpy(&scd.BufferDesc, dmd, sizeof(DXGI_MODE_DESC));
 	scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	scd.OutputWindow = m_hWnd;
+	scd.OutputWindow = *m_window;
 	scd.Windowed = desc.fullscreen ? FALSE : TRUE;
 
 	if (!setupSampleDesc(m_d3dDevice, desc.multiSample, scd.BufferDesc.Format, DXGI_FORMAT_D16_UNORM, scd.SampleDesc))
@@ -299,6 +203,7 @@ Ref< IRenderView > RenderSystemDx11::createRenderView(const RenderViewDefaultDes
 
 	return new RenderViewDx11(
 		m_context,
+		m_window,
 		d3dSwapChain,
 		scd,
 		desc.waitVBlank
@@ -351,6 +256,7 @@ Ref< IRenderView > RenderSystemDx11::createRenderView(const RenderViewEmbeddedDe
 
 	return new RenderViewDx11(
 		m_context,
+		0,
 		d3dSwapChain,
 		scd,
 		desc.waitVBlank
