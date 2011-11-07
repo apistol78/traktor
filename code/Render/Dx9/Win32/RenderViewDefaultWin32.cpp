@@ -7,6 +7,25 @@ namespace traktor
 {
 	namespace render
 	{
+		namespace
+		{
+
+struct RenderEventTypePred
+{
+	RenderEventType m_type;
+
+	RenderEventTypePred(RenderEventType type)
+	:	m_type(type)
+	{
+	}
+
+	bool operator () (const RenderEvent& evt) const
+	{
+		return evt.type == m_type;
+	}
+};
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewDefaultWin32", RenderViewDefaultWin32, RenderViewWin32)
 
@@ -15,13 +34,15 @@ RenderViewDefaultWin32::RenderViewDefaultWin32(
 	ParameterCache* parameterCache,
 	IDirect3DDevice9* d3dDevice,
 	IDirect3D9* d3d,
+	D3DPRESENT_PARAMETERS& d3dPresent,
 	Window* window
 )
 :	RenderViewWin32(renderSystem, parameterCache, d3dDevice)
 ,	m_d3d(d3d)
+,	m_d3dPresent(d3dPresent)
 ,	m_window(window)
+,	m_d3dDepthStencilFormat(D3DFMT_UNKNOWN)
 {
-	std::memset(&m_d3dPresent, 0, sizeof(m_d3dPresent));
 	m_window->addListener(this);
 }
 
@@ -33,6 +54,8 @@ RenderViewDefaultWin32::~RenderViewDefaultWin32()
 void RenderViewDefaultWin32::close()
 {
 	m_window->removeListener(this);
+	m_window->hide();
+
 	RenderViewWin32::close();
 }
 
@@ -51,7 +74,11 @@ bool RenderViewDefaultWin32::nextEvent(RenderEvent& outEvent)
 		if (m_renderSystem->tryRecoverDevice())
 			break;
 		else
+		{
+			// Device is lost; spin in this method as long as device is lost
+			// since we don't want application to progress "invisibly".
 			Sleep(100);
+		}
 	}
 
 	if (!m_eventQueue.empty())
@@ -66,27 +93,19 @@ bool RenderViewDefaultWin32::nextEvent(RenderEvent& outEvent)
 
 bool RenderViewDefaultWin32::reset(const RenderViewDefaultDesc& desc)
 {
-	D3DFORMAT d3dDepthStencilFormat;
 	D3DMULTISAMPLE_TYPE d3dMultiSample;
 	HRESULT hr;
 
+	log::debug << L"Reset implicit DX9 render view, " << desc.displayMode.width << L"*" << desc.displayMode.height << L", " << (desc.fullscreen ? L"fullscreen" : L"window") << Endl;
+
 	// Determine safe formats.
-	d3dDepthStencilFormat = determineDepthStencilFormat(m_d3d, desc.depthBits, desc.stencilBits, D3DFMT_X8R8G8B8);
-	if (d3dDepthStencilFormat == D3DFMT_UNKNOWN)
+	m_d3dDepthStencilFormat = determineDepthStencilFormat(m_d3d, desc.depthBits, desc.stencilBits, D3DFMT_X8R8G8B8);
+	if (m_d3dDepthStencilFormat == D3DFMT_UNKNOWN)
 		return false;
 
-	d3dMultiSample = determineMultiSampleType(m_d3d, D3DFMT_X8R8G8B8, d3dDepthStencilFormat, desc.multiSample);
+	d3dMultiSample = determineMultiSampleType(m_d3d, D3DFMT_X8R8G8B8, m_d3dDepthStencilFormat, desc.multiSample);
 	if (d3dMultiSample == D3DMULTISAMPLE_FORCE_DWORD)
 		return false;
-
-	// Modify render window.
-	if (m_d3dPresent.Windowed)
-		m_window->setWindowedStyle();
-	else
-		m_window->setFullScreenStyle();
-
-	m_window->setClientSize(m_d3dPresent.BackBufferWidth, m_d3dPresent.BackBufferHeight);
-	m_window->show();
 
 	// Setup presentation parameters.
 	std::memset(&m_d3dPresent, 0, sizeof(m_d3dPresent));
@@ -102,23 +121,40 @@ bool RenderViewDefaultWin32::reset(const RenderViewDefaultDesc& desc)
 	m_d3dPresent.PresentationInterval = desc.waitVBlank ? D3DPRESENT_INTERVAL_DEFAULT : D3DPRESENT_INTERVAL_IMMEDIATE;
 	m_d3dPresent.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
 
-	hr = resetDevice();
+	// Modify render window; temporarily remove ourself as listener as we don't want resize events during
+	// style change.
+	m_window->removeListener(this);
+
+	if (!m_d3dPresent.Windowed)
+		m_window->setFullScreenStyle(desc.displayMode.width, desc.displayMode.height);
+
+	hr = m_renderSystem->resetDevice();
+
+	if (m_d3dPresent.Windowed)
+	{
+		m_window->setTitle(desc.title ? desc.title : L"Traktor - DirectX 9.0c Renderer");
+		m_window->setWindowedStyle(desc.displayMode.width, desc.displayMode.height);
+	}
+
+	m_window->addListener(this);
+
 	return SUCCEEDED(hr);
 }
 
-void RenderViewDefaultWin32::resize(int32_t width, int32_t height)
+bool RenderViewDefaultWin32::reset(int32_t width, int32_t height)
 {
-	T_ASSERT (m_renderStateStack.empty());
+	HRESULT hr;
 
 	if (!width || !height)
-		return;
+		return false;
 	if (m_d3dPresent.BackBufferWidth == width && m_d3dPresent.BackBufferHeight == height)
-		return;
+		return true;
 
 	m_d3dPresent.BackBufferWidth = width;
 	m_d3dPresent.BackBufferHeight = height;
 
-	resetDevice();
+	hr = m_renderSystem->resetDevice();
+	return SUCCEEDED(hr);
 }
 
 int RenderViewDefaultWin32::getWidth() const
@@ -146,7 +182,6 @@ bool RenderViewDefaultWin32::isFullScreen() const
 
 HRESULT RenderViewDefaultWin32::lostDevice()
 {
-	m_d3dDevice.release();
 	m_d3dSwapChain.release();
 	m_d3dBackBuffer.release();
 	m_d3dDepthStencilSurface.release();
@@ -166,13 +201,10 @@ HRESULT RenderViewDefaultWin32::resetDevice()
 {
 	HRESULT hr;
 
-	hr = m_d3dDevice->CreateAdditionalSwapChain(
-		&m_d3dPresent,
-		&m_d3dSwapChain.getAssign()
-	);
+	hr = m_d3dDevice->GetSwapChain(0, &m_d3dSwapChain.getAssign());
 	if (FAILED(hr))
 	{
-		log::error << L"Unable to create additional swap chain; hr = " << hr << Endl;
+		log::error << L"Unable to get implicit swap chain; hr = " << hr << Endl;
 		return hr;
 	}
 
@@ -212,10 +244,17 @@ HRESULT RenderViewDefaultWin32::resetDevice()
 		}
 	}
 
+	m_d3dViewport.X = 0;
+	m_d3dViewport.Y = 0;
+	m_d3dViewport.Width = m_d3dPresent.BackBufferWidth;
+	m_d3dViewport.Height = m_d3dPresent.BackBufferHeight;
+	m_d3dViewport.MinZ = 0.0f;
+	m_d3dViewport.MaxZ = 1.0f;
+
 	return S_OK;
 }
 
-void RenderViewDefaultWin32::windowListenerEvent(Window* window, UINT message, WPARAM wParam, LPARAM lParam)
+bool RenderViewDefaultWin32::windowListenerEvent(Window* window, UINT message, WPARAM wParam, LPARAM lParam, LRESULT& outResult)
 {
 	if (message == WM_CLOSE)
 	{
@@ -225,11 +264,44 @@ void RenderViewDefaultWin32::windowListenerEvent(Window* window, UINT message, W
 	}
 	else if (message == WM_SIZE)
 	{
-		RenderEvent evt;
-		evt.type = ReResize;
-		evt.resize.width = LOWORD(lParam);
-		evt.resize.height = HIWORD(lParam);
-		m_eventQueue.push_back(evt);
+		// Remove all pending resize events.
+		m_eventQueue.remove_if(RenderEventTypePred(ReResize));
+
+		// Push new resize event if not matching current size.
+		int32_t width = LOWORD(lParam);
+		int32_t height = HIWORD(lParam);
+		if (width != m_d3dPresent.BackBufferWidth || height != m_d3dPresent.BackBufferHeight)
+		{
+			RenderEvent evt;
+			evt.type = ReResize;
+			evt.resize.width = width;
+			evt.resize.height = height;
+			m_eventQueue.push_back(evt);
+		}
+	}
+	else if (message == WM_SIZING)
+	{
+		RECT* rcWindowSize = (RECT*)lParam;
+
+		int32_t width = rcWindowSize->right - rcWindowSize->left;
+		int32_t height = rcWindowSize->bottom - rcWindowSize->top;
+
+		if (width < 320)
+			width = 320;
+		if (height < 200)
+			height = 200;
+
+		if (wParam == WMSZ_RIGHT || wParam == WMSZ_TOPRIGHT || wParam == WMSZ_BOTTOMRIGHT)
+			rcWindowSize->right = rcWindowSize->left + width;
+		if (wParam == WMSZ_LEFT || wParam == WMSZ_TOPLEFT || wParam == WMSZ_BOTTOMLEFT)
+			rcWindowSize->left = rcWindowSize->right - width;
+
+		if (wParam == WMSZ_BOTTOM || wParam == WMSZ_BOTTOMLEFT || wParam == WMSZ_BOTTOMRIGHT)
+			rcWindowSize->bottom = rcWindowSize->top + height;
+		if (wParam == WMSZ_TOP || wParam == WMSZ_TOPLEFT || wParam == WMSZ_TOPRIGHT)
+			rcWindowSize->top = rcWindowSize->bottom - height;
+
+		outResult = TRUE;
 	}
 	else if (message == WM_SYSKEYDOWN)
 	{
@@ -249,6 +321,17 @@ void RenderViewDefaultWin32::windowListenerEvent(Window* window, UINT message, W
 			m_eventQueue.push_back(evt);
 		}
 	}
+	else if (message == WM_SETCURSOR)
+	{
+		if (m_d3dPresent.Windowed)
+			SetCursor(LoadCursor(NULL, IDC_ARROW));
+		else
+			SetCursor(NULL);
+	}
+	else
+		return false;
+
+	return true;
 }
 
 	}

@@ -470,6 +470,8 @@ bool Application::update()
 
 	// Update render server.
 	RenderServer::UpdateResult updateResult = m_renderServer->update(m_settings);
+	if (updateResult == RenderServer::UrTerminate)
+		return false;
 
 	// Perform reconfiguration if required.
 	if (updateResult == RenderServer::UrReconfigure || m_environment->shouldReconfigure())

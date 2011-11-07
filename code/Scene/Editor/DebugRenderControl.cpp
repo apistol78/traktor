@@ -104,7 +104,7 @@ void DebugRenderControl::eventSize(ui::Event* event)
 	if (sz.cx == m_dirtySize.cx && sz.cy == m_dirtySize.cy)
 		return;
 
-	m_renderView->resize(sz.cx, sz.cy);
+	m_renderView->reset(sz.cx, sz.cy);
 	m_renderView->setViewport(render::Viewport(0, 0, sz.cx, sz.cy, 0, 1));
 
 	m_dirtySize = sz;

@@ -38,24 +38,22 @@ bool RenderViewEmbeddedWin32::reset(const RenderViewDefaultDesc& desc)
 	return false;
 }
 
-void RenderViewEmbeddedWin32::resize(int32_t width, int32_t height)
+bool RenderViewEmbeddedWin32::reset(int32_t width, int32_t height)
 {
 	T_ASSERT (m_renderStateStack.empty());
 
 	HRESULT hr;
 
 	if (!width || !height)
-		return;
+		return false;
 	if (m_d3dPresent.BackBufferWidth == width && m_d3dPresent.BackBufferHeight == height)
-		return;
+		return true;
 
 	m_d3dPresent.BackBufferWidth = width;
 	m_d3dPresent.BackBufferHeight = height;
 
-	// Re-create backbuffer and swap chain explicity by calling this view's resetDevice method;
-	// not necessary to perform a complete "reset-device" cycle.
 	hr = resetDevice();
-	T_FATAL_ASSERT_M (SUCCEEDED(hr), L"Failed to resize render view");
+	return SUCCEEDED(hr);
 }
 
 int RenderViewEmbeddedWin32::getWidth() const
@@ -83,7 +81,6 @@ bool RenderViewEmbeddedWin32::isFullScreen() const
 
 HRESULT RenderViewEmbeddedWin32::lostDevice()
 {
-	m_d3dDevice.release();
 	m_d3dSwapChain.release();
 	m_d3dBackBuffer.release();
 	m_d3dDepthStencilSurface.release();
@@ -148,6 +145,13 @@ HRESULT RenderViewEmbeddedWin32::resetDevice()
 			m_d3dSyncQueries[i].release();
 		}
 	}
+
+	m_d3dViewport.X = 0;
+	m_d3dViewport.Y = 0;
+	m_d3dViewport.Width = m_d3dPresent.BackBufferWidth;
+	m_d3dViewport.Height = m_d3dPresent.BackBufferHeight;
+	m_d3dViewport.MinZ = 0.0f;
+	m_d3dViewport.MaxZ = 1.0f;
 
 	return S_OK;
 }

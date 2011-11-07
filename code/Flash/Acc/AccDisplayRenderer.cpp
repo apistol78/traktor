@@ -211,10 +211,10 @@ void AccDisplayRenderer::build(uint32_t frame)
 		i->second.shape->preBuild();
 }
 
-void AccDisplayRenderer::build(render::RenderContext* renderContext)
+void AccDisplayRenderer::build(render::RenderContext* renderContext, uint32_t frame)
 {
 	m_renderContext = renderContext;
-	m_vertexPool = m_vertexPools[0];
+	m_vertexPool = m_vertexPools[frame];
 
 	for (std::map< uint64_t, CacheEntry >::const_iterator i = m_shapeCache.begin(); i != m_shapeCache.end(); ++i)
 		i->second.shape->preBuild();

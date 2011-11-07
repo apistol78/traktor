@@ -146,7 +146,6 @@ bool RenderServerDefault::create(Settings* settings)
 	m_renderViewDesc.stencilBits = settings->getProperty< PropertyInteger >(L"Render.StencilBits", 4);
 	m_renderViewDesc.multiSample = settings->getProperty< PropertyInteger >(L"Render.MultiSample", 4);
 	m_renderViewDesc.waitVBlank = settings->getProperty< PropertyBoolean >(L"Render.WaitVBlank", true);
-	
 	m_renderViewDesc.title = L"Puzzle Dimension";
 	m_renderViewDesc.fullscreen = settings->getProperty< PropertyBoolean >(L"Render.FullScreen", false);
 
@@ -211,11 +210,14 @@ bool RenderServerDefault::create(Settings* settings)
 	m_renderViewDesc.multiSample = sanitizeMultiSample(m_renderViewDesc.multiSample);
 
 	// Ensure display mode is still supported; else find closest match.
-	if (!findDisplayMode(renderSystem, m_renderViewDesc.displayMode, m_renderViewDesc.displayMode))
+	if (m_renderViewDesc.fullscreen)
 	{
-		log::error << L"Render server failed; unable to find an acceptable display mode" << Endl;
-		renderSystem->destroy();
-		return false;
+		if (!findDisplayMode(renderSystem, m_renderViewDesc.displayMode, m_renderViewDesc.displayMode))
+		{
+			log::error << L"Render server failed; unable to find an acceptable display mode" << Endl;
+			renderSystem->destroy();
+			return false;
+		}
 	}
 
 	Ref< render::IRenderView > renderView = renderSystem->createRenderView(m_renderViewDesc);
@@ -276,6 +278,7 @@ int32_t RenderServerDefault::reconfigure(const Settings* settings)
 	rvdd.multiSample = settings->getProperty< PropertyInteger >(L"Render.MultiSample", 4);
 	rvdd.waitVBlank = settings->getProperty< PropertyBoolean >(L"Render.WaitVBlank", true);
 	rvdd.fullscreen = settings->getProperty< PropertyBoolean >(L"Render.FullScreen", false);
+	rvdd.title = L"Puzzle Dimension";
 
 #if defined(_PS3)
 
@@ -333,10 +336,13 @@ int32_t RenderServerDefault::reconfigure(const Settings* settings)
 #endif
 
 	// Ensure display mode is still supported; else find closest match.
-	if (!findDisplayMode(m_renderSystem, rvdd.displayMode, rvdd.displayMode))
+	if (rvdd.fullscreen)
 	{
-		log::error << L"Unable to find an acceptable display mode; unable to continue" << Endl;
-		return CrFailed;
+		if (!findDisplayMode(m_renderSystem, rvdd.displayMode, rvdd.displayMode))
+		{
+			log::error << L"Unable to find an acceptable display mode; unable to continue" << Endl;
+			return CrFailed;
+		}
 	}
 
 	// Check if we need to reset render view.
@@ -356,7 +362,7 @@ int32_t RenderServerDefault::reconfigure(const Settings* settings)
 			return CrFailed;
 
 		m_renderViewDesc = rvdd;
-		result = CrAccepted | CrFlushResources;
+		result = CrAccepted;
 	}
 
 	// Update texture quality; manifest through skipping high-detail mips.
@@ -364,7 +370,7 @@ int32_t RenderServerDefault::reconfigure(const Settings* settings)
 	if (skipMips != m_textureFactory->getSkipMips())
 	{
 		m_textureFactory->setSkipMips(skipMips);
-		result |= CrAccepted;
+		result |= CrAccepted | CrFlushResources;
 	}
 
 	return result;
@@ -391,11 +397,8 @@ RenderServer::UpdateResult RenderServerDefault::update(Settings* settings)
 		{
 			if (!m_renderViewDesc.fullscreen)
 			{
-				m_renderViewDesc.displayMode.width = m_renderView->getWidth();
-				m_renderViewDesc.displayMode.height = m_renderView->getHeight();
-
-				settings->setProperty< PropertyInteger >(L"Render.DisplayMode.Window/Width", m_renderViewDesc.displayMode.width);
-				settings->setProperty< PropertyInteger >(L"Render.DisplayMode.Window/Height", m_renderViewDesc.displayMode.height);
+				settings->setProperty< PropertyInteger >(L"Render.DisplayMode.Window/Width", evt.resize.width);
+				settings->setProperty< PropertyInteger >(L"Render.DisplayMode.Window/Height", evt.resize.height);
 			}
 			return UrReconfigure;
 		}
@@ -452,7 +455,10 @@ float RenderServerDefault::getScreenAspectRatio() const
 float RenderServerDefault::getViewAspectRatio() const
 {
 	float aspectRatio = float(m_renderView->getWidth()) / m_renderView->getHeight();
-	return aspectRatio;
+	if (aspectRatio < 3.0f)
+		return aspectRatio;
+	else
+		return 3.0f;
 }
 
 float RenderServerDefault::getAspectRatio() const

@@ -73,7 +73,7 @@ public:
 
 	void build(uint32_t frame);
 
-	void build(render::RenderContext* renderContext);
+	void build(render::RenderContext* renderContext, uint32_t frame);
 
 	void render(render::IRenderView* renderView, uint32_t frame, render::EyeType eye);
 

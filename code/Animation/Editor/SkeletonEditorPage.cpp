@@ -394,7 +394,7 @@ void SkeletonEditorPage::eventSize(ui::Event* event)
 	ui::SizeEvent* s = static_cast< ui::SizeEvent* >(event);
 	ui::Size sz = s->getSize();
 
-	m_renderView->resize(sz.cx, sz.cy);
+	m_renderView->reset(sz.cx, sz.cy);
 	m_renderView->setViewport(render::Viewport(0, 0, sz.cx, sz.cy, 0, 1));
 }
 

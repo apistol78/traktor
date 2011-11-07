@@ -19,6 +19,7 @@ Window::Window()
 :	m_hWnd(0)
 ,	m_fullScreen(false)
 {
+	std::memset(&m_windowPosition, 0, sizeof(m_windowPosition));
 }
 
 Window::~Window()
@@ -30,25 +31,26 @@ Window::~Window()
 	}
 }
 
-bool Window::create(const wchar_t* title)
+bool Window::create()
 {
 	T_ASSERT (!m_hWnd);
 
 	WNDCLASS wc;
 	std::memset(&wc, 0, sizeof(wc));
-	wc.style = CS_HREDRAW | CS_VREDRAW;
+	wc.style = 0;
 	wc.cbClsExtra = 0;
 	wc.cbWndExtra = sizeof(this);
 	wc.lpfnWndProc = (WNDPROC)wndProc;
 	wc.hInstance = static_cast< HINSTANCE >(GetModuleHandle(NULL));
 	wc.hIcon = LoadIcon(wc.hInstance, MAKEINTRESOURCE(c_classIconResource));
 	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wc.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
 	wc.lpszClassName = c_className;
 	RegisterClass(&wc);
 
 	m_hWnd = CreateWindow(
 		c_className,
-		title,
+		L"",
 		WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT,
 		CW_USEDEFAULT,
@@ -65,28 +67,23 @@ bool Window::create(const wchar_t* title)
 	return true;
 }
 
-void Window::setWindowedStyle()
+void Window::setTitle(const wchar_t* title)
+{
+	SetWindowText(m_hWnd, title ? title : L"");
+}
+
+void Window::setWindowedStyle(int32_t width, int32_t height)
 {
 	if (m_fullScreen)
 	{
 		SetWindowLong(m_hWnd, GWL_STYLE, WS_OVERLAPPEDWINDOW);
-		SetWindowPos(m_hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE);
-		m_fullScreen = false;
+		SetWindowPos(m_hWnd, HWND_NOTOPMOST, m_windowPosition.x, m_windowPosition.y, 0, 0, SWP_NOSIZE | SWP_FRAMECHANGED);
+		SetCursor(LoadCursor(NULL, IDC_ARROW));
 	}
-}
 
-void Window::setFullScreenStyle()
-{
-	if (!m_fullScreen)
-	{
-		SetWindowLong(m_hWnd, GWL_STYLE, WS_POPUPWINDOW);
-		SetWindowPos(m_hWnd, HWND_TOP, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE);
-		m_fullScreen = true;
-	}
-}
+	if (m_fullScreen || !IsWindowVisible(m_hWnd))
+		ShowWindow(m_hWnd, SW_SHOWNOACTIVATE);
 
-void Window::setClientSize(int32_t width, int32_t height)
-{
 	RECT rcWindow, rcClient;
 	GetWindowRect(m_hWnd, &rcWindow);
 	GetClientRect(m_hWnd, &rcClient);
@@ -97,15 +94,39 @@ void Window::setClientSize(int32_t width, int32_t height)
 	int32_t realClientWidth = rcClient.right - rcClient.left;
 	int32_t realClientHeight = rcClient.bottom - rcClient.top;
 
-	windowWidth = (windowWidth - realClientWidth) + width;
-	windowHeight = (windowHeight - realClientHeight) + height;
-
-	SetWindowPos(m_hWnd, NULL, 0, 0, windowWidth, windowHeight, SWP_NOZORDER | SWP_NOMOVE);
+	if (realClientWidth != width || realClientHeight != height)
+	{
+		windowWidth = (windowWidth - realClientWidth) + width;
+		windowHeight = (windowHeight - realClientHeight) + height;
+		SetWindowPos(m_hWnd, NULL, 0, 0, windowWidth, windowHeight, SWP_NOMOVE | SWP_NOZORDER);
+	}
+	
+	m_fullScreen = false;
 }
 
-void Window::show()
+void Window::setFullScreenStyle(int32_t width, int32_t height)
 {
-	ShowWindow(m_hWnd, SW_SHOWNORMAL);
+	if (!m_fullScreen)
+	{
+		RECT rcWindow;
+		GetWindowRect(m_hWnd, &rcWindow);
+
+		m_windowPosition.x = rcWindow.left;
+		m_windowPosition.y = rcWindow.top;
+
+		SetWindowLong(m_hWnd, GWL_STYLE, WS_POPUPWINDOW);
+		SetWindowPos(m_hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED);
+	}
+
+	SetWindowPos(m_hWnd, NULL, 0, 0, width, height, SWP_NOZORDER);
+	ShowWindow(m_hWnd, SW_MAXIMIZE);
+
+	m_fullScreen = true;
+}
+
+void Window::hide()
+{
+	ShowWindow(m_hWnd, SW_HIDE);
 }
 
 Window::operator HWND () const
@@ -115,13 +136,12 @@ Window::operator HWND () const
 
 void Window::addListener(IWindowListener* listener)
 {
-	m_listeners.push_back(listener);
+	m_listeners.insert(listener);
 }
 
 void Window::removeListener(IWindowListener* listener)
 {
-	std::vector< IWindowListener* >::iterator i = std::find(m_listeners.begin(), m_listeners.end(), listener);
-	m_listeners.erase(i);
+	m_listeners.erase(listener);
 }
 
 LRESULT CALLBACK Window::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -137,39 +157,16 @@ LRESULT CALLBACK Window::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 	}
 	else
 	{
+		bool handled = false;
+
 		window = reinterpret_cast< Window* >(GetWindowLongPtr(hWnd, 0));
 		if (window)
 		{
-			switch (message)
-			{
-			case WM_CREATE:
-				break;
-
-			case WM_CLOSE:
-			case WM_SIZE:
-				for (std::vector< IWindowListener* >::iterator i = window->m_listeners.begin(); i != window->m_listeners.end(); ++i)
-					(*i)->windowListenerEvent(window, message, wParam, lParam);
-				result = TRUE;
-				break;
-
-			case WM_ERASEBKGND:
-				result = TRUE;
-				break;
-
-			case WM_SETCURSOR:
-				if (window->m_fullScreen)
-					SetCursor(NULL);
-				else
-					SetCursor(LoadCursor(NULL, IDC_ARROW));
-				result = TRUE;
-				break;
-			
-			default:
-				result = DefWindowProc(hWnd, message, wParam, lParam);
-				break;
-			}
+			for (std::set< IWindowListener* >::iterator i = window->m_listeners.begin(); i != window->m_listeners.end(); ++i)
+				handled |= (*i)->windowListenerEvent(window, message, wParam, lParam, result);
 		}
-		else
+
+		if (!handled)
 			result = DefWindowProc(hWnd, message, wParam, lParam);
 	}
 
