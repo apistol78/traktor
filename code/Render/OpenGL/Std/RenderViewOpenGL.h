@@ -69,13 +69,13 @@ public:
 
 	virtual ~RenderViewOpenGL();
 
-	virtual RenderEvent nextEvent();
+	virtual bool nextEvent(RenderEvent& outEvent);
 
 	virtual void close();
 
 	virtual bool reset(const RenderViewDefaultDesc& desc);
 
-	virtual void resize(int32_t width, int32_t height);
+	virtual bool reset(int32_t width, int32_t height);
 
 	virtual int getWidth() const;
 

@@ -104,30 +104,6 @@ float RenderSystemSw::getDisplayAspectRatio() const
 	return 0.0f;
 }
 
-IRenderSystem::HandleResult RenderSystemSw::handleMessages()
-{
-#if defined(_WIN32)
-
-	bool going = true;
-	MSG msg;
-	
-	while (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE))
-	{
-		int ret = GetMessage(&msg, NULL, 0, 0);
-		if (ret <= 0 || msg.message == WM_QUIT)
-			going = false;
-
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
-	}
-
-	return going ? HrSuccess : HrTerminate;
-
-#else
-	return false;
-#endif
-}
-
 Ref< IRenderView > RenderSystemSw::createRenderView(const RenderViewDefaultDesc& desc)
 {
 	Ref< graphics::IGraphicsSystem > graphicsSystem;

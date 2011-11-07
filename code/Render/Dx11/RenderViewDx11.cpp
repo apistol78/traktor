@@ -1,3 +1,4 @@
+#include "Core/Log/Log.h"
 #include "Render/Dx11/RenderViewDx11.h"
 #include "Render/Dx11/ContextDx11.h"
 #include "Render/Dx11/VertexBufferDx11.h"
@@ -5,7 +6,6 @@
 #include "Render/Dx11/ProgramDx11.h"
 #include "Render/Dx11/RenderTargetSetDx11.h"
 #include "Render/Dx11/RenderTargetDx11.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -29,6 +29,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewDx11", RenderViewDx11, IRender
 
 RenderViewDx11::RenderViewDx11(
 	ContextDx11* context,
+	Window* window,
 	IDXGISwapChain* d3dSwapChain,
 	const DXGI_SWAP_CHAIN_DESC& scd,
 	bool waitVBlank
@@ -95,6 +96,30 @@ RenderViewDx11::~RenderViewDx11()
 	close();
 }
 
+bool RenderViewDx11::nextEvent(RenderEvent& outEvent)
+{
+	bool going = true;
+	MSG msg;
+
+	while (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE))
+	{
+		int ret = GetMessage(&msg, NULL, 0, 0);
+		if (ret <= 0 || msg.message == WM_QUIT)
+			going = false;
+
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
+
+	if (!going)
+	{
+		outEvent.type = ReClose;
+		return true;
+	}
+
+	return false;
+}
+
 void RenderViewDx11::close()
 {
 	m_d3dRenderTargetView.release();
@@ -111,7 +136,7 @@ bool RenderViewDx11::reset(const RenderViewDefaultDesc& desc)
 	return false;
 }
 
-void RenderViewDx11::resize(int32_t width, int32_t height)
+bool RenderViewDx11::reset(int32_t width, int32_t height)
 {
 	ComRef< ID3D11Texture2D > d3dBackBuffer;
 	D3D11_TEXTURE2D_DESC dtd;
@@ -119,7 +144,7 @@ void RenderViewDx11::resize(int32_t width, int32_t height)
 	HRESULT hr;
 
 	if (width <= 0 || height <= 0)
-		return;
+		return false;
 
 	m_context->getD3DDeviceContext()->OMSetRenderTargets(0, NULL, NULL);
 
@@ -165,6 +190,8 @@ void RenderViewDx11::resize(int32_t width, int32_t height)
 
 	m_targetSize[0] = width;
 	m_targetSize[1] = height;
+
+	return true;
 }
 
 int RenderViewDx11::getWidth() const

@@ -40,7 +40,7 @@ RenderViewOpenGLES2::~RenderViewOpenGLES2()
 }
 
 
-RenderEvent RenderViewOpenGLES2::nextEvent()
+bool RenderViewOpenGLES2::nextEvent(RenderEvent& outEvent)
 {
 #if defined(_WIN32)
 
@@ -56,14 +56,10 @@ RenderEvent RenderViewOpenGLES2::nextEvent()
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
-	
-	if (!going)
-		return ReClosed;
-		
-	return ReIdle;
 
 #endif
-	return ReIdle;
+
+	return false;
 }
 
 void RenderViewOpenGLES2::close()
@@ -78,7 +74,7 @@ bool RenderViewOpenGLES2::reset(const RenderViewDefaultDesc& desc)
 	return false;
 }
 
-void RenderViewOpenGLES2::resize(int32_t width, int32_t height)
+bool RenderViewOpenGLES2::reset(int32_t width, int32_t height)
 {
 	if (!m_context->getLandscape())
 		m_context->resize(width, height);
@@ -86,6 +82,8 @@ void RenderViewOpenGLES2::resize(int32_t width, int32_t height)
 		m_context->resize(height, width);
 
 	updatePrimaryTarget();
+
+	return true;
 }
 
 int RenderViewOpenGLES2::getWidth() const

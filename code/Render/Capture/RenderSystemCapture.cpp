@@ -43,11 +43,6 @@ float RenderSystemCapture::getDisplayAspectRatio() const
 	return m_renderSystem->getDisplayAspectRatio();
 }
 
-IRenderSystem::HandleResult RenderSystemCapture::handleMessages()
-{
-	return m_renderSystem->handleMessages();
-}
-
 Ref< IRenderView > RenderSystemCapture::createRenderView(const RenderViewDefaultDesc& desc)
 {
 	Ref< IRenderView > renderView = m_renderSystem->createRenderView(desc);

@@ -129,6 +129,11 @@ bool RenderViewPs3::create(const RenderViewDefaultDesc& desc)
 	return true;
 }
 
+bool RenderViewPs3::nextEvent(RenderEvent& outEvent)
+{
+	return false;
+}
+
 void RenderViewPs3::close()
 {
 	//blackOut();
@@ -564,8 +569,9 @@ bool RenderViewPs3::reset(const RenderViewDefaultDesc& desc)
 	return true;
 }
 
-void RenderViewPs3::resize(int width, int height)
+bool RenderViewPs3::reset(int32_t width, int32_t height)
 {
+	return false;
 }
 
 int RenderViewPs3::getWidth() const

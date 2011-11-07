@@ -148,7 +148,7 @@ bool RenderSystemDx10::create(const RenderSystemCreateDesc& desc)
 	// Render window.
 	m_hWnd = CreateWindow(
 		c_className,
-		desc.windowTitle ? desc.windowTitle : _T("Traktor 2.0 DirectX 10.0 Renderer"),
+		_T("Traktor 2.0 DirectX 10.0 Renderer"),
 		WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION | WS_MINIMIZEBOX,
 		CW_USEDEFAULT,
 		CW_USEDEFAULT,
@@ -204,24 +204,6 @@ DisplayMode RenderSystemDx10::getCurrentDisplayMode() const
 float RenderSystemDx10::getDisplayAspectRatio() const
 {
 	return 0.0f;
-}
-
-IRenderSystem::HandleResult RenderSystemDx10::handleMessages()
-{
-	bool going = true;
-	MSG msg;
-
-	while (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE))
-	{
-		int ret = GetMessage(&msg, NULL, 0, 0);
-		if (ret <= 0 || msg.message == WM_QUIT)
-			going = false;
-
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
-	}
-
-	return going ? HrSuccess : HrTerminate;
 }
 
 Ref< IRenderView > RenderSystemDx10::createRenderView(const RenderViewDefaultDesc& desc)

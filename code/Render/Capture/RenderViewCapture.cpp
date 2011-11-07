@@ -27,6 +27,11 @@ RenderViewCapture::RenderViewCapture(IRenderSystem* renderSystem, IRenderView* r
 {
 }
 
+bool RenderViewCapture::nextEvent(RenderEvent& outEvent)
+{
+	return m_renderView->nextEvent(outEvent);
+}
+
 void RenderViewCapture::close()
 {
 	m_renderView->close();
@@ -37,9 +42,9 @@ bool RenderViewCapture::reset(const RenderViewDefaultDesc& desc)
 	return m_renderView->reset(desc);
 }
 
-void RenderViewCapture::resize(int32_t width, int32_t height)
+bool RenderViewCapture::reset(int32_t width, int32_t height)
 {
-	m_renderView->resize(width, height);
+	return m_renderView->reset(width, height);
 }
 
 int RenderViewCapture::getWidth() const

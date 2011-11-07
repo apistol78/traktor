@@ -21,6 +21,7 @@ namespace traktor
 	{
 
 class ContextDx11;
+class Window;
 
 /*! \brief DirectX 10 render system.
  * \ingroup DX11
@@ -46,8 +47,6 @@ public:
 
 	virtual float getDisplayAspectRatio() const;
 
-	virtual HandleResult handleMessages();
-
 	virtual Ref< IRenderView > createRenderView(const RenderViewDefaultDesc& desc);
 
 	virtual Ref< IRenderView > createRenderView(const RenderViewEmbeddedDesc& desc);
@@ -72,12 +71,12 @@ public:
 
 private:
 	Ref< ContextDx11 > m_context;
+	Ref< Window > m_window;
 	ComRef< ID3D11Device > m_d3dDevice;
 	ComRef< ID3D11DeviceContext > m_d3dDeviceContext;
 	ComRef< IDXGIFactory1 > m_dxgiFactory;
 	AutoArrayPtr< DXGI_MODE_DESC > m_dxgiDisplayModes;
 	std::vector< DisplayMode > m_displayModes;
-	HWND m_hWnd;
 	float m_mipBias;
 
 	static LRESULT wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);

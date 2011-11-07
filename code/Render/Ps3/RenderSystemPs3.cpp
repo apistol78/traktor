@@ -230,11 +230,6 @@ float RenderSystemPs3::getDisplayAspectRatio() const
 	return 0.0f;
 }
 
-bool RenderSystemPs3::handleMessages()
-{
-	return true;
-}
-
 Ref< IRenderView > RenderSystemPs3::createRenderView(const RenderViewDefaultDesc& desc)
 {
 	Ref< RenderViewPs3 > renderView = new RenderViewPs3(this, m_memoryHeapLocal, m_memoryHeapMain, m_tileArea, m_zcullArea);
