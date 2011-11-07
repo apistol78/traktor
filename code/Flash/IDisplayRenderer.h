@@ -42,8 +42,17 @@ public:
 	 *
 	 * \param movie Flash movie.
 	 * \param backgroundColor Frame background color.
+	 * \param scaleMode Scale mode.
+	 * \param alignH Horizontal alignment.
+	 * \param alignV Vertical alignment.
 	 */
-	virtual void begin(const FlashMovie& movie, const SwfColor& backgroundColor) = 0;
+	virtual void begin(
+		const FlashMovie& movie,
+		const SwfColor& backgroundColor,
+		SwfScaleModeType scaleMode,
+		SwfAlignType alignH,
+		SwfAlignType alignV
+	) = 0;
 
 	/*! \brief Begin rendering mask.
 	 *

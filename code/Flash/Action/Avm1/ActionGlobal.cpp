@@ -88,7 +88,6 @@ ActionGlobal::ActionGlobal(ActionContext* context)
 	setMember("Number", ActionValue(new AsNumber(context)));
 	setMember("Security", ActionValue(new AsSecurity(context)));
 	setMember("Sound", ActionValue(new AsSound(context)));
-	setMember("Stage", ActionValue(new AsStage(context)));
 	setMember("String", ActionValue(new AsString(context)));
 	setMember("System", ActionValue(new AsSystem(context)));
 	setMember("TextField", ActionValue(new AsTextField(context)));
@@ -153,11 +152,14 @@ ActionGlobal::ActionGlobal(ActionContext* context)
 	broadcaster->initializeSubject(mouse);
 	Ref< AsSelection > selection = new AsSelection(context);
 	broadcaster->initializeSubject(selection);
+	Ref< AsStage > stage = new AsStage(context);
+	broadcaster->initializeSubject(stage);
 
 	setMember("AsBroadcaster", ActionValue(broadcaster));
 	setMember("Key", ActionValue(key));
 	setMember("Mouse", ActionValue(mouse));
 	setMember("Selection", ActionValue(selection));
+	setMember("Stage", ActionValue(stage));
 }
 
 void ActionGlobal::Global_ASSetPropFlags(CallArgs& ca)

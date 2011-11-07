@@ -32,7 +32,13 @@ public:
 	
 	virtual void preload(const FlashMovie& movie);
 
-	virtual void begin(const FlashMovie& movie, const SwfColor& backgroundColor);
+	virtual void begin(
+		const FlashMovie& movie,
+		const SwfColor& backgroundColor,
+		SwfScaleModeType scaleMode,
+		SwfAlignType alignH,
+		SwfAlignType alignV
+	);
 
 	virtual void beginMask(bool increment);
 

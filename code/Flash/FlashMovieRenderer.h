@@ -3,6 +3,7 @@
 
 #include "Core/Object.h"
 #include "Core/Math/Matrix33.h"
+#include "Flash/SwfTypes.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -36,7 +37,13 @@ class T_DLLCLASS FlashMovieRenderer : public Object
 public:
 	FlashMovieRenderer(IDisplayRenderer* displayRenderer);
 
-	void renderFrame(FlashMovie* movie, FlashSpriteInstance* movieInstance);
+	void renderFrame(
+		FlashMovie* movie,
+		FlashSpriteInstance* movieInstance,
+		SwfScaleModeType scaleMode,
+		SwfAlignType alignH,
+		SwfAlignType alignV
+	);
 
 private:
 	Ref< IDisplayRenderer > m_displayRenderer;
