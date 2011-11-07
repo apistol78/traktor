@@ -279,7 +279,13 @@ void AccDisplayRenderer::preload(const FlashMovie& movie)
 	*/
 }
 
-void AccDisplayRenderer::begin(const FlashMovie& movie, const SwfColor& backgroundColor)
+void AccDisplayRenderer::begin(
+	const FlashMovie& movie,
+	const SwfColor& backgroundColor,
+	SwfScaleModeType scaleMode,
+	SwfAlignType alignH,
+	SwfAlignType alignV
+)
 {
 	const SwfRect& bounds = movie.getFrameBounds();
 

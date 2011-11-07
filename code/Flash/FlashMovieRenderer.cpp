@@ -50,10 +50,22 @@ FlashMovieRenderer::FlashMovieRenderer(IDisplayRenderer* displayRenderer)
 {
 }
 
-void FlashMovieRenderer::renderFrame(FlashMovie* movie, FlashSpriteInstance* movieInstance)
+void FlashMovieRenderer::renderFrame(
+	FlashMovie* movie,
+	FlashSpriteInstance* movieInstance,
+	SwfScaleModeType scaleMode,
+	SwfAlignType alignH,
+	SwfAlignType alignV
+)
 {
 	const SwfColor& backgroundColor = movieInstance->getDisplayList().getBackgroundColor();
-	m_displayRenderer->begin(*movie, backgroundColor);
+	m_displayRenderer->begin(
+		*movie,
+		backgroundColor,
+		scaleMode,
+		alignH,
+		alignV
+	);
 
 	renderSprite(
 		movie,

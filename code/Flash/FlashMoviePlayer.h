@@ -23,6 +23,7 @@ class ActionFunction;
 class ActionValue;
 class AsKey;
 class AsMouse;
+class AsStage;
 class FlashMovie;
 class FlashMovieRenderer;
 class FlashSpriteInstance;
@@ -201,6 +202,7 @@ private:
 	Ref< IActionVM > m_actionVM;
 	Ref< AsKey > m_key;
 	Ref< AsMouse > m_mouse;
+	Ref< AsStage > m_stage;
 	Ref< FlashMovie > m_movie;
 	Ref< FlashSpriteInstance > m_movieInstance;
 	std::list< Event > m_events;

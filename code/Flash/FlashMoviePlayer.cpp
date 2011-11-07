@@ -14,6 +14,7 @@
 #include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Avm1/Classes/AsKey.h"
 #include "Flash/Action/Avm1/Classes/AsMouse.h"
+#include "Flash/Action/Avm1/Classes/AsStage.h"
 
 namespace traktor
 {
@@ -64,13 +65,12 @@ bool FlashMoviePlayer::create(FlashMovie* movie)
 	setGlobal("clearInterval", ActionValue(createNativeFunction(context, this, &FlashMoviePlayer::Global_clearInterval)));
 
 	// Get references to key and mouse singletons.
-	Ref< AsKey > key;
 	if (global->getMember("Key", memberValue))
 		m_key = memberValue.getObject< AsKey >();
-
-	Ref< AsMouse > mouse;
 	if (global->getMember("Mouse", memberValue))
 		m_mouse = memberValue.getObject< AsMouse >();
+	if (global->getMember("Stage", memberValue))
+		m_stage = memberValue.getObject< AsStage >();
 		
 	// Preload resources into display renderer.
 	m_displayRenderer->preload(*m_movie);
@@ -142,7 +142,13 @@ uint32_t FlashMoviePlayer::getFrameCount() const
 
 void FlashMoviePlayer::renderFrame()
 {
-	m_movieRenderer->renderFrame(m_movie, m_movieInstance);
+	m_movieRenderer->renderFrame(
+		m_movie,
+		m_movieInstance,
+		m_stage->getScaleMode(),
+		m_stage->getAlignH(),
+		m_stage->getAlignV()
+	);
 }
 
 void FlashMoviePlayer::executeFrame()

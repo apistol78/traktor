@@ -429,6 +429,23 @@ enum SwfEventType
 	EvtLoad				= (1 << 0)
 };
 
+enum SwfAlignType
+{
+	SaTop = 0,
+	SaLeft = 0,
+	SaCenter = 1,
+	SaBottom = 2,
+	SaRight = 2
+};
+
+enum SwfScaleModeType
+{
+	SmShowAll = 0,
+	SmNoBorder = 1,
+	SmExactFit = 2,
+	SmNoScale = 3
+};
+
 //@}
 
 	}
