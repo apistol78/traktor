@@ -41,26 +41,10 @@ public:
 	RenderViewWin32(
 		RenderSystemWin32* renderSystem,
 		ParameterCache* parameterCache,
-		const RenderViewDesc& createDesc,
-		const D3DPRESENT_PARAMETERS& d3dPresent,
-		D3DFORMAT d3dDepthStencilFormat
+		IDirect3DDevice9* d3dDevice
 	);
 
-	virtual ~RenderViewWin32();
-
 	virtual void close();
-
-	virtual bool reset(const RenderViewDefaultDesc& desc);
-
-	virtual void resize(int32_t width, int32_t height);
-
-	virtual int getWidth() const;
-
-	virtual int getHeight() const;
-
-	virtual bool isActive() const;
-
-	virtual bool isFullScreen() const;
 
 	virtual bool setGamma(float gamma);
 
@@ -95,15 +79,13 @@ public:
 	// \name Swap-chain management
 	// \{
 
-	HRESULT lostDevice();
+	virtual HRESULT lostDevice() = 0;
 
-	HRESULT resetDevice(IDirect3DDevice9* d3dDevice);
-
-	void setD3DPresent(const D3DPRESENT_PARAMETERS& d3dPresent);
+	virtual HRESULT resetDevice() = 0;
 
 	// \}
 
-private:
+protected:
 	struct RenderState
 	{
 		D3DVIEWPORT9 d3dViewport;
@@ -115,19 +97,20 @@ private:
 
 	Ref< RenderSystemWin32 > m_renderSystem;
 	ParameterCache* m_parameterCache;
-	RenderViewDesc m_createDesc;
+
 	ComRef< IDirect3DDevice9 > m_d3dDevice;
-	D3DPRESENT_PARAMETERS m_d3dPresent;
-	D3DFORMAT m_d3dDepthStencilFormat;
-	D3DVIEWPORT9 m_d3dViewport;
 	ComRef< IDirect3DSwapChain9 > m_d3dSwapChain;
 	ComRef< IDirect3DSurface9 > m_d3dBackBuffer;
 	ComRef< IDirect3DSurface9 > m_d3dDepthStencilSurface;
 	ComRef< IDirect3DQuery9 > m_d3dSyncQueries[1];
+
+	D3DVIEWPORT9 m_d3dViewport;
+
 	std::list< RenderState > m_renderStateStack;
 	Ref< VertexBufferDx9 > m_currentVertexBuffer;
 	Ref< IndexBufferDx9 > m_currentIndexBuffer;
 	Ref< ProgramWin32 > m_currentProgram;
+
 	uint32_t m_frameCount;
 	bool m_targetDirty;
 

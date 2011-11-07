@@ -21,7 +21,8 @@
 #include "Render/Dx9/Win32/ProgramCompilerWin32.h"
 #include "Render/Dx9/Win32/RenderSystemWin32.h"
 #include "Render/Dx9/Win32/RenderTargetSetWin32.h"
-#include "Render/Dx9/Win32/RenderViewWin32.h"
+#include "Render/Dx9/Win32/RenderViewDefaultWin32.h"
+#include "Render/Dx9/Win32/RenderViewEmbeddedWin32.h"
 
 namespace traktor
 {
@@ -29,9 +30,6 @@ namespace traktor
 	{
 		namespace
 		{
-
-const DWORD c_iconResource = 10000;
-const TCHAR* c_classRenderName = _T("TraktorRenderSystem");
 
 uint16_t colorBitsFromFormat(D3DFORMAT d3dFormat)
 {
@@ -51,45 +49,13 @@ uint16_t colorBitsFromFormat(D3DFORMAT d3dFormat)
 	return 0;
 }
 
-void setWindowStyle(HWND hWnd, int32_t clientWidth, int32_t clientHeight, bool fullScreen)
-{
-	if (fullScreen)
-	{
-		SetWindowLong(hWnd, GWL_STYLE, WS_POPUPWINDOW);
-		SetWindowPos(hWnd, HWND_TOP, 0, 0, clientWidth, clientHeight, SWP_FRAMECHANGED | SWP_NOMOVE);
-	}
-	else
-	{
-		SetWindowLong(hWnd, GWL_STYLE, WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION | WS_MINIMIZEBOX);
-		SetWindowPos(hWnd, HWND_NOTOPMOST, 0, 0, clientWidth, clientHeight, SWP_FRAMECHANGED | SWP_NOMOVE);
-	}
-
-	RECT rcWindow, rcClient;
-	GetWindowRect(hWnd, &rcWindow);
-	GetClientRect(hWnd, &rcClient);
-
-	int32_t windowWidth = rcWindow.right - rcWindow.left;
-	int32_t windowHeight = rcWindow.bottom - rcWindow.top;
-
-	int32_t realClientWidth = rcClient.right - rcClient.left;
-	int32_t realClientHeight = rcClient.bottom - rcClient.top;
-
-	windowWidth = (windowWidth - realClientWidth) + clientWidth;
-	windowHeight = (windowHeight - realClientHeight) + clientHeight;
-
-	SetWindowPos(hWnd, NULL, 0, 0, windowWidth, windowHeight, SWP_NOZORDER | SWP_NOMOVE);
-}
-
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderSystemWin32", 0, RenderSystemWin32, IRenderSystem)
 
 RenderSystemWin32::RenderSystemWin32()
 :	m_vertexDeclCache(0)
-,	m_hWnd(0)
 ,	m_maxAnisotropy(0)
-,	m_deviceLost(0)
-,	m_toggleFullscreen(false)
 ,	m_inRender(false)
 {
 }
@@ -99,7 +65,6 @@ bool RenderSystemWin32::create(const RenderSystemCreateDesc& desc)
 	UINT d3dAdapter = D3DADAPTER_DEFAULT;
 	D3DDEVTYPE d3dDevType = D3DDEVTYPE_HAL;
 	D3DCAPS9 d3dCaps;
-	WNDCLASS wc;
 	HRESULT hr;
 
 	m_d3d.getAssign() = Direct3DCreate9(D3D_SDK_VERSION);
@@ -127,32 +92,7 @@ bool RenderSystemWin32::create(const RenderSystemCreateDesc& desc)
 		log::warning << L"Unable to get device capabilities (" << int32_t(hr) << L"); may cause unexpected behavior" << Endl;
 	
 	// Render window class.
-	std::memset(&wc, 0, sizeof(wc));
-	wc.style = CS_HREDRAW | CS_VREDRAW;
-	wc.cbClsExtra = 0;
-	wc.cbWndExtra = sizeof(this);
-	wc.lpfnWndProc = (WNDPROC)wndProc;
-	wc.hInstance = static_cast< HINSTANCE >(GetModuleHandle(NULL));
-	wc.hIcon = LoadIcon(wc.hInstance, MAKEINTRESOURCE(c_iconResource));
-	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-	wc.lpszClassName = c_classRenderName;
-	RegisterClass(&wc);
-
-	// Render window.
-	m_hWnd = CreateWindow(
-		c_classRenderName,
-		desc.windowTitle ? desc.windowTitle : _T("Traktor 2.0 DirectX 9.0 Renderer"),
-		WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION | WS_MINIMIZEBOX,
-		CW_USEDEFAULT,
-		CW_USEDEFAULT,
-		64,
-		64,
-		NULL,
-		NULL,
-		static_cast< HMODULE >(GetModuleHandle(NULL)),
-		this
-	);
-	if (!m_hWnd)
+	if (!m_window.create(L""))
 		return false;
 
 	DWORD dwBehaviour = D3DCREATE_MULTITHREADED;
@@ -161,11 +101,6 @@ bool RenderSystemWin32::create(const RenderSystemCreateDesc& desc)
 		log::debug << L"Using D3DCREATE_HARDWARE_VERTEXPROCESSING" << Endl;
 		dwBehaviour |= D3DCREATE_HARDWARE_VERTEXPROCESSING;
 	}
-	//if (d3dCaps.DevCaps & D3DDEVCAPS_PUREDEVICE)
-	//{
-	//	log::debug << L"Using D3DCREATE_PUREDEVICE" << Endl;
-	//	dwBehaviour |= D3DCREATE_PUREDEVICE;
-	//}
 
 	std::memset(&m_d3dPresent, 0, sizeof(m_d3dPresent));
 	m_d3dPresent.BackBufferFormat = D3DFMT_UNKNOWN;
@@ -174,7 +109,7 @@ bool RenderSystemWin32::create(const RenderSystemCreateDesc& desc)
 	m_d3dPresent.BackBufferHeight = 1;
 	m_d3dPresent.MultiSampleType = D3DMULTISAMPLE_NONE;
 	m_d3dPresent.SwapEffect = D3DSWAPEFFECT_DISCARD;
-	m_d3dPresent.hDeviceWindow = m_hWnd;
+	m_d3dPresent.hDeviceWindow = m_window;
 	m_d3dPresent.Windowed = TRUE;
 	m_d3dPresent.EnableAutoDepthStencil = FALSE;
 	m_d3dPresent.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
@@ -251,12 +186,6 @@ void RenderSystemWin32::destroy()
 		m_shaderCache = 0;
 	}
 
-	if (m_hWnd)
-	{
-		DestroyWindow(m_hWnd);
-		m_hWnd = NULL;
-	}
-
 	m_d3dDevice.release();
 	m_d3d.release();
 }
@@ -294,108 +223,23 @@ float RenderSystemWin32::getDisplayAspectRatio() const
 	return float(m_d3dDefaultDisplayMode.Width) / m_d3dDefaultDisplayMode.Height;
 }
 
-IRenderSystem::HandleResult RenderSystemWin32::handleMessages()
-{
-	MSG msg;
-	do
-	{
-		// Dispatch pending window messages.
-		bool going = true;
-		while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-		{
-			if (msg.message == WM_QUIT)
-				going = false;
-
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
-		if (!going)
-			return HrTerminate;
-
-		// Try to reset lost device.
-		if (m_deviceLost != 0)
-		{
-			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_renderLock);
-			HRESULT hr;
-
-			hr = m_d3dDevice->TestCooperativeLevel();
-			if (hr == D3DERR_DEVICENOTRESET)
-				hr = resetDevice();
-
-			if (SUCCEEDED(hr))
-				m_deviceLost = 0;
-			else
-				Sleep(100);
-		}
-	}
-	while (m_deviceLost != 0);
-
-	if (m_toggleFullscreen)
-	{
-		m_toggleFullscreen = false;
-		return HrToggleFullscreen;
-	}
-
-	return HrSuccess;
-}
-
 Ref< IRenderView > RenderSystemWin32::createRenderView(const RenderViewDefaultDesc& desc)
 {
-	D3DFORMAT d3dDepthStencilFormat;
-	D3DMULTISAMPLE_TYPE d3dMultiSample;
-	HRESULT hr;
-
-	T_ASSERT (m_hWnd);
 	T_ASSERT (m_renderViews.empty());
 
-	setWindowStyle(m_hWnd, desc.displayMode.width, desc.displayMode.height, desc.fullscreen);
-	ShowWindow(m_hWnd, SW_SHOWNORMAL);
-
-	d3dDepthStencilFormat = determineDepthStencilFormat(m_d3d, desc.depthBits, desc.stencilBits, D3DFMT_X8R8G8B8);
-	if (d3dDepthStencilFormat == D3DFMT_UNKNOWN)
-	{
-		log::error << L"Render view failed; any of the required depth/stencil formats supported" << Endl;
+	Ref< Window > window = new Window();
+	if (!window->create(desc.title ? desc.title : L"Traktor - DirectX 9.0 Renderer"))
 		return 0;
-	}
-	
-	d3dMultiSample = D3DMULTISAMPLE_NONE;
-	hr = m_d3d->CheckDeviceMultiSampleType(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, D3DFMT_X8R8G8B8, FALSE, c_d3dMultiSample[desc.multiSample], NULL);
-	if (SUCCEEDED(hr))
-	{
-		hr = m_d3d->CheckDeviceMultiSampleType(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, d3dDepthStencilFormat, FALSE, c_d3dMultiSample[desc.multiSample], NULL);
-		if (SUCCEEDED(hr))
-			d3dMultiSample = c_d3dMultiSample[desc.multiSample];
-	}
 
-	std::memset(&m_d3dPresent, 0, sizeof(m_d3dPresent));
-	m_d3dPresent.BackBufferFormat = D3DFMT_X8R8G8B8;
-	m_d3dPresent.BackBufferCount = 1;
-	m_d3dPresent.BackBufferWidth = desc.displayMode.width;
-	m_d3dPresent.BackBufferHeight = desc.displayMode.height;
-	m_d3dPresent.MultiSampleType = d3dMultiSample;
-	m_d3dPresent.SwapEffect = D3DSWAPEFFECT_DISCARD;
-	m_d3dPresent.hDeviceWindow = m_hWnd;
-	m_d3dPresent.Windowed = desc.fullscreen ? FALSE : TRUE;
-	m_d3dPresent.EnableAutoDepthStencil = FALSE;
-	m_d3dPresent.PresentationInterval = desc.waitVBlank ? D3DPRESENT_INTERVAL_DEFAULT : D3DPRESENT_INTERVAL_IMMEDIATE;
-	m_d3dPresent.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
-
-	hr = m_d3dDevice->Reset(&m_d3dPresent);
-	if (FAILED(hr))
-	{
-		log::error << L"Render view failed; unable to reset device, hr = " << int32_t(hr) << Endl;
-		return 0;
-	}
-
-	Ref< RenderViewWin32 > renderView = new RenderViewWin32(
+	Ref< RenderViewWin32 > renderView = new RenderViewDefaultWin32(
 		this,
 		m_parameterCache,
-		desc,
-		m_d3dPresent,
-		d3dDepthStencilFormat
+		m_d3dDevice,
+		m_d3d,
+		window
 	);
 
-	hr = renderView->resetDevice(m_d3dDevice);
+	HRESULT hr = renderView->resetDevice();
 	if (FAILED(hr))
 		return 0;
 
@@ -445,15 +289,15 @@ Ref< IRenderView > RenderSystemWin32::createRenderView(const RenderViewEmbeddedD
 	d3dPresent.PresentationInterval = desc.waitVBlank ? D3DPRESENT_INTERVAL_ONE : D3DPRESENT_INTERVAL_IMMEDIATE;
 	d3dPresent.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
 
-	Ref< RenderViewWin32 > renderView = new RenderViewWin32(
+	Ref< RenderViewWin32 > renderView = new RenderViewEmbeddedWin32(
 		this,
 		m_parameterCache,
-		desc,
+		m_d3dDevice,
 		d3dPresent,
 		d3dDepthStencilFormat
 	);
 
-	hr = renderView->resetDevice(m_d3dDevice);
+	hr = renderView->resetDevice();
 	if (FAILED(hr))
 		return 0;
 
@@ -576,70 +420,34 @@ bool RenderSystemWin32::beginRender()
 	if (!m_renderLock.wait(1000))
 		return false;
 
-	if (m_deviceLost)
+	if (!tryRecoverDevice())
 	{
-		HRESULT hr;
-
-		hr = m_d3dDevice->TestCooperativeLevel();
-		if (hr == D3DERR_DEVICENOTRESET)
-			hr = resetDevice();
-
-		if (FAILED(hr))
-		{
-			Sleep(100);
-			m_renderLock.release();
-			return false;
-		}
-
-		m_deviceLost = 0;
+		m_renderLock.release();
+		return false;
 	}
 
 	m_inRender = true;
 	return true;
 }
 
-void RenderSystemWin32::endRender(bool lostDevice)
+void RenderSystemWin32::endRender()
 {
 	T_ASSERT (m_inRender);
-
-	if (lostDevice)
-		m_deviceLost = 1;
 
 	m_inRender = false;
 	m_renderLock.release();
 }
 
-bool RenderSystemWin32::resetPrimary(const D3DPRESENT_PARAMETERS& d3dPresent, D3DFORMAT d3dDepthStencilFormat)
+bool RenderSystemWin32::tryRecoverDevice()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_renderLock);
 	HRESULT hr;
 
-	std::memcpy(&m_d3dPresent, &d3dPresent, sizeof(D3DPRESENT_PARAMETERS));
+	hr = m_d3dDevice->TestCooperativeLevel();
+	if (hr == D3DERR_DEVICENOTRESET)
+		hr = resetDevice();
 
-	setWindowStyle(m_hWnd, m_d3dPresent.BackBufferWidth, m_d3dPresent.BackBufferHeight, m_d3dPresent.Windowed ? false : true);
-	ShowWindow(m_hWnd, SW_SHOWNOACTIVATE);
-
-	// Ensure multi-sample type is supported.
-	hr = m_d3d->CheckDeviceMultiSampleType(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, m_d3dPresent.BackBufferFormat, FALSE, m_d3dPresent.MultiSampleType, NULL);
-	if (SUCCEEDED(hr))
-	{
-		hr = m_d3d->CheckDeviceMultiSampleType(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, d3dDepthStencilFormat, FALSE, m_d3dPresent.MultiSampleType, NULL);
-		if (FAILED(hr))
-			m_d3dPresent.MultiSampleType = D3DMULTISAMPLE_NONE; 
-	}
-	else
-		m_d3dPresent.MultiSampleType = D3DMULTISAMPLE_NONE;
-
-	// Replace presentation parameters.
-	if (!m_renderViews.empty())
-		m_renderViews.front()->setD3DPresent(m_d3dPresent);
-
-	// Reset device; recreate all resources.
-	hr = resetDevice();
-	if (FAILED(hr))
-		m_deviceLost = 1;
-
-	return true;
+	return SUCCEEDED(hr);
 }
 
 HRESULT RenderSystemWin32::resetDevice()
@@ -671,7 +479,7 @@ HRESULT RenderSystemWin32::resetDevice()
 
 	for (RefArray< RenderViewWin32 >::iterator i = m_renderViews.begin(); i != m_renderViews.end(); ++i)
 	{
-		hr = (*i)->resetDevice(m_d3dDevice);
+		hr = (*i)->resetDevice();
 
 		if (FAILED(hr))
 			return hr;
@@ -691,65 +499,6 @@ HRESULT RenderSystemWin32::resetDevice()
 
 	log::debug << L"Device reset successful" << Endl;
 	return hr;
-}
-
-LRESULT RenderSystemWin32::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
-	RenderSystemWin32* renderSystem = reinterpret_cast< RenderSystemWin32* >(GetWindowLongPtr(hWnd, 0));
-	LPCREATESTRUCT createStruct;
-	LRESULT result = 0;
-	
-	switch (uMsg)
-	{
-	case WM_CREATE:
-		createStruct = reinterpret_cast< LPCREATESTRUCT >(lParam);
-		renderSystem = reinterpret_cast< RenderSystemWin32* >(createStruct->lpCreateParams);
-		SetWindowLongPtr(hWnd, 0, reinterpret_cast< LONG_PTR >(renderSystem));
-		break;
-
-	case WM_SYSKEYDOWN:
-		if (renderSystem && wParam == VK_RETURN)
-		{
-			if ((lParam & (1 << 29)) != 0)
-				renderSystem->m_toggleFullscreen = true;
-		}
-		break;
-
-	case WM_KEYDOWN:
-		if (renderSystem && wParam == VK_RETURN)
-		{
-			if ((GetAsyncKeyState(VK_CONTROL) & 0x8000) != 0)
-				renderSystem->m_toggleFullscreen = true;
-		}
-		break;
-
-	case WM_CLOSE:
-		DestroyWindow(hWnd);
-		break;
-		
-	case WM_DESTROY:
-		SetWindowLongPtr(hWnd, 0, 0);
-		PostQuitMessage(0);
-		break;
-		
-	case WM_ERASEBKGND:
-		result = TRUE;
-		break;
-
-	case WM_SETCURSOR:
-		if (renderSystem && !renderSystem->m_d3dPresent.Windowed)
-			SetCursor(NULL);
-		else
-			SetCursor(LoadCursor(NULL, IDC_ARROW));
-		result = TRUE;
-		break;
-	
-	default:
-		result = DefWindowProc(hWnd, uMsg, wParam, lParam);
-		break;
-	}
-	
-	return result;
 }
 
 	}

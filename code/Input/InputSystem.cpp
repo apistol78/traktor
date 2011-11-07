@@ -15,6 +15,8 @@ const float c_deviceStuckTimeout = 5.0f;
 
 bool isDeviceReady(IInputDevice* device)
 {
+	return true;
+
 	if (!device)
 		return false;
 			

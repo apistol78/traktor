@@ -91,6 +91,10 @@ void textureCopy(void* d, const void* s, uint32_t bytes, TextureFormat textureFo
  */
 D3DFORMAT determineDepthStencilFormat(IDirect3D9* d3d, uint16_t depthBits, uint16_t stencilBits, D3DFORMAT d3dBackBufferFormat);
 
+/*! \brief Determine supported multisample type.
+ */
+D3DMULTISAMPLE_TYPE determineMultiSampleType(IDirect3D9* d3d, D3DFORMAT d3dColorFormat, D3DFORMAT d3dDepthStencilFormat, int32_t samplesCount);
+
 	}
 }
 

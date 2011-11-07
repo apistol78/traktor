@@ -119,7 +119,6 @@ bool RenderServerDefault::create(Settings* settings)
 		return false;
 
 	render::RenderSystemCreateDesc rscd;
-	rscd.windowTitle = L"Puzzle Dimension";
 	rscd.mipBias = settings->getProperty< PropertyFloat >(L"Render.MipBias", 0.0f);
 	rscd.maxAnisotropy = settings->getProperty< PropertyInteger >(L"Render.MaxAnisotropy", 2);
 
@@ -147,6 +146,8 @@ bool RenderServerDefault::create(Settings* settings)
 	m_renderViewDesc.stencilBits = settings->getProperty< PropertyInteger >(L"Render.StencilBits", 4);
 	m_renderViewDesc.multiSample = settings->getProperty< PropertyInteger >(L"Render.MultiSample", 4);
 	m_renderViewDesc.waitVBlank = settings->getProperty< PropertyBoolean >(L"Render.WaitVBlank", true);
+	
+	m_renderViewDesc.title = L"Puzzle Dimension";
 	m_renderViewDesc.fullscreen = settings->getProperty< PropertyBoolean >(L"Render.FullScreen", false);
 
 #if defined(_PS3)
@@ -238,9 +239,6 @@ bool RenderServerDefault::create(Settings* settings)
 	
 	m_renderSystem = renderSystem;
 	m_renderView = renderView;
-
-	// Handle some render system messages in order to bring up render view window etc.
-	m_renderView->nextEvent();
 
 	return true;
 }
@@ -379,18 +377,29 @@ RenderServer::UpdateResult RenderServerDefault::update(Settings* settings)
 	if (!m_renderView)
 		return UrSuccess;
 
-	render::RenderEvent event = m_renderView->nextEvent();
-	if (event == render::ReClosed)
-		return UrTerminate;
-
-	if (event == render::ReToggleFS)
+	render::RenderEvent evt;
+	if (m_renderView->nextEvent(evt))
 	{
-		settings->setProperty< PropertyBoolean >(L"Render.FullScreen", !m_renderViewDesc.fullscreen);
-		return UrReconfigure;
+		if (evt.type == render::ReClose)
+			return UrTerminate;
+		else if (evt.type == render::ReToggleFullScreen)
+		{
+			settings->setProperty< PropertyBoolean >(L"Render.FullScreen", !m_renderViewDesc.fullscreen);
+			return UrReconfigure;
+		}
+		else if (evt.type == render::ReResize)
+		{
+			if (!m_renderViewDesc.fullscreen)
+			{
+				m_renderViewDesc.displayMode.width = m_renderView->getWidth();
+				m_renderViewDesc.displayMode.height = m_renderView->getHeight();
+
+				settings->setProperty< PropertyInteger >(L"Render.DisplayMode.Window/Width", m_renderViewDesc.displayMode.width);
+				settings->setProperty< PropertyInteger >(L"Render.DisplayMode.Window/Height", m_renderViewDesc.displayMode.height);
+			}
+			return UrReconfigure;
+		}
 	}
-	
-	if (event == render::ReResized)
-		return UrReconfigure;
 
 	return UrSuccess;
 

@@ -58,9 +58,9 @@ public:
 	 * platform agnostic events, such as "toggle fullscreen
 	 * requested", "window resized" etc.
 	 *
-	 * \return Render event; idle when no more system event exist.
+	 * \return True if event returned; false if no event, ie. idle.
 	 */
-	virtual RenderEvent nextEvent() = 0;
+	virtual bool nextEvent(RenderEvent& outEvent) = 0;
 
 	virtual void close() = 0;
 

@@ -8,6 +8,7 @@
 #include "Core/Thread/Semaphore.h"
 #include "Render/IRenderSystem.h"
 #include "Render/Dx9/Platform.h"
+#include "Render/Dx9/Win32/Window.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -54,8 +55,6 @@ public:
 
 	virtual float getDisplayAspectRatio() const;
 
-	virtual HandleResult handleMessages();
-
 	virtual Ref< IRenderView > createRenderView(const RenderViewDefaultDesc& desc);
 
 	virtual Ref< IRenderView > createRenderView(const RenderViewEmbeddedDesc& desc);
@@ -97,26 +96,21 @@ public:
 	bool beginRender();
 
 	/*! \brief Finish rendering frame.
-	 *
-	 * \param lostDevice If device lost reported from Present.
 	 */
-	void endRender(bool lostDevice);
+	void endRender();
 
-	/*! \brief Reset device's primary swap chain.
+	/*! \brief Try to recover lost device.
 	 *
-	 * \note Will only work if renderer was
-	 * created with a non-embedded render view.
+	 * \param True if device is recovered.
 	 */
-	bool resetPrimary(const D3DPRESENT_PARAMETERS& d3dPresent, D3DFORMAT d3dDepthStencilFormat);
-
-	// \}
+	bool tryRecoverDevice();
 
 private:
 	ComRef< IDirect3D9 > m_d3d;
 	ComRef< IDirect3DDevice9 > m_d3dDevice;
 	D3DPRESENT_PARAMETERS m_d3dPresent;
 	D3DDISPLAYMODE m_d3dDefaultDisplayMode;
-	HWND m_hWnd;
+	Window m_window;
 	Ref< ResourceManagerDx9 > m_resourceManager;
 	Ref< ShaderCache > m_shaderCache;
 	Ref< ParameterCache > m_parameterCache;
@@ -124,8 +118,6 @@ private:
 	int32_t m_maxAnisotropy;
 	RefArray< RenderViewWin32 > m_renderViews;
 	Semaphore m_renderLock;
-	uint32_t m_deviceLost;
-	bool m_toggleFullscreen;
 	bool m_inRender;
 
 	/*! \brief Reset device.
@@ -136,10 +128,6 @@ private:
 	 * \return Reset error code.
 	 */
 	HRESULT resetDevice();
-
-	void synchronizeDevice();
-
-	static LRESULT wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 };
 
 	}
