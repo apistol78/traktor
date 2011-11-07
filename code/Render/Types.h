@@ -21,13 +21,12 @@ namespace traktor
 /*! \ingroup Render */
 //@{
 
-/*! \brief Render view events. */
-enum RenderEvent
+/*! \brief Render view event types. */
+enum RenderEventType
 {
-	ReIdle = 0,		//!< Idle, no more events.
-	ReClosed = 1,	//!< Renderer manually closed.
-	ReToggleFS = 2,	//!< Requested toggle fullscreen event.
-	ReResized = 3	//!< Render window manually resized.
+	ReClose = 1,
+	ReResize = 2,
+	ReToggleFullScreen = 3
 };
 
 /*! \brief Clear target flags. */
@@ -147,6 +146,22 @@ enum EyeType
 	EtRight,
 };
 
+/*! \brief Render view event. */
+struct RenderEvent
+{
+	RenderEventType type;
+	union
+	{
+		// ReResize
+		struct
+		{
+			int32_t width;
+			int32_t height;
+		}
+		resize;
+	};
+};
+
 /*! \brief Render system statistics. */
 struct RenderSystemStatistics
 {
@@ -236,13 +251,11 @@ struct DisplayMode
 /*! \brief Descriptor for render system. */
 struct RenderSystemCreateDesc
 {
-	const wchar_t* windowTitle;
 	float mipBias;
 	int32_t maxAnisotropy;
 
 	RenderSystemCreateDesc()
-	:	windowTitle(0)
-	,	mipBias(0.0f)
+	:	mipBias(0.0f)
 	,	maxAnisotropy(1)
 	{
 	}
@@ -270,10 +283,12 @@ struct RenderViewDefaultDesc : public RenderViewDesc
 {
 	DisplayMode displayMode;
 	bool fullscreen;
+	const wchar_t* title;
 
 	RenderViewDefaultDesc()
 	:	RenderViewDesc()
 	,	fullscreen(true)
+	,	title(0)
 	{
 	}
 };

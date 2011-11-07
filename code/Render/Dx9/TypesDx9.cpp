@@ -135,5 +135,20 @@ D3DFORMAT determineDepthStencilFormat(IDirect3D9* d3d, uint16_t depthBits, uint1
 	return D3DFMT_UNKNOWN;
 }
 
+D3DMULTISAMPLE_TYPE determineMultiSampleType(IDirect3D9* d3d, D3DFORMAT d3dColorFormat, D3DFORMAT d3dDepthStencilFormat, int32_t samplesCount)
+{
+	HRESULT hr;
+
+	hr = d3d->CheckDeviceMultiSampleType(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, d3dColorFormat, FALSE, c_d3dMultiSample[samplesCount], NULL);
+	if (SUCCEEDED(hr))
+	{
+		hr = d3d->CheckDeviceMultiSampleType(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, d3dDepthStencilFormat, FALSE, c_d3dMultiSample[samplesCount], NULL);
+		if (SUCCEEDED(hr))
+			return c_d3dMultiSample[samplesCount];
+	}
+
+	return D3DMULTISAMPLE_NONE;
+}
+
 	}
 }

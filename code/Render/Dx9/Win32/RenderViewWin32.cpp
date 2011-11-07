@@ -44,103 +44,28 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewWin32", RenderViewWin32, IRend
 RenderViewWin32::RenderViewWin32(
 	RenderSystemWin32* renderSystem,
 	ParameterCache* parameterCache,
-	const RenderViewDesc& createDesc,
-	const D3DPRESENT_PARAMETERS& d3dPresent,
-	D3DFORMAT d3dDepthStencilFormat
+	IDirect3DDevice9* d3dDevice
 )
 :	m_renderSystem(renderSystem)
 ,	m_parameterCache(parameterCache)
-,	m_createDesc(createDesc)
-,	m_d3dDevice(0)
-,	m_d3dPresent(d3dPresent)
-,	m_d3dDepthStencilFormat(d3dDepthStencilFormat)
+,	m_d3dDevice(d3dDevice)
 ,	m_frameCount(0)
 ,	m_targetDirty(false)
 {
-	m_d3dViewport.X = 0;
-	m_d3dViewport.Y = 0;
-	m_d3dViewport.Width = m_d3dPresent.BackBufferWidth;
-	m_d3dViewport.Height = m_d3dPresent.BackBufferHeight;
-	m_d3dViewport.MinZ = 0.0f;
-	m_d3dViewport.MaxZ = 1.0f;
+	//m_d3dViewport.X = 0;
+	//m_d3dViewport.Y = 0;
+	//m_d3dViewport.Width = m_width;
+	//m_d3dViewport.Height = m_height;
+	//m_d3dViewport.MinZ = 0.0f;
+	//m_d3dViewport.MaxZ = 1.0f;
 
 	m_renderSystem->addRenderView(this);
 }
 
-RenderViewWin32::~RenderViewWin32()
-{
-	close();
-}
-
 void RenderViewWin32::close()
 {
-	lostDevice();
+	//lostDevice();
 	m_renderSystem->removeRenderView(this);
-}
-
-bool RenderViewWin32::reset(const RenderViewDefaultDesc& desc)
-{
-	D3DPRESENT_PARAMETERS d3dPresent = m_d3dPresent;
-
-	d3dPresent.BackBufferWidth = desc.displayMode.width;
-	d3dPresent.BackBufferHeight = desc.displayMode.height;
-	d3dPresent.MultiSampleType = c_d3dMultiSample[desc.multiSample];
-	d3dPresent.PresentationInterval = desc.waitVBlank ? D3DPRESENT_INTERVAL_DEFAULT : D3DPRESENT_INTERVAL_IMMEDIATE;
-	d3dPresent.Windowed = desc.fullscreen ? FALSE : TRUE;
-
-	if (!m_renderSystem->resetPrimary(d3dPresent, m_d3dDepthStencilFormat))
-		return false;
-
-	return true;
-}
-
-void RenderViewWin32::resize(int32_t width, int32_t height)
-{
-	HRESULT hr;
-
-	T_ASSERT (m_renderStateStack.empty());
-
-	if (!width || !height)
-		return;
-
-	if (m_d3dPresent.BackBufferWidth == width && m_d3dPresent.BackBufferHeight == height)
-		return;
-
-	m_d3dPresent.BackBufferWidth = width;
-	m_d3dPresent.BackBufferHeight = height;
-
-	m_d3dViewport.X = 0;
-	m_d3dViewport.Y = 0;
-	m_d3dViewport.Width = m_d3dPresent.BackBufferWidth;
-	m_d3dViewport.Height = m_d3dPresent.BackBufferHeight;
-	m_d3dViewport.MinZ = 0.0f;
-	m_d3dViewport.MaxZ = 1.0f;
-
-	hr = resetDevice(m_d3dDevice);
-	T_FATAL_ASSERT_M (SUCCEEDED(hr), L"Failed to resize render view");
-}
-
-int RenderViewWin32::getWidth() const
-{
-	return m_d3dPresent.BackBufferWidth;
-}
-
-int RenderViewWin32::getHeight() const
-{
-	return m_d3dPresent.BackBufferHeight;
-}
-
-bool RenderViewWin32::isActive() const
-{
-	if (m_d3dDevice)
-		return GetForegroundWindow() == m_d3dPresent.hDeviceWindow;
-	else
-		return false;
-}
-
-bool RenderViewWin32::isFullScreen() const
-{
-	return !m_d3dPresent.Windowed;
 }
 
 bool RenderViewWin32::setGamma(float gamma)
@@ -199,14 +124,14 @@ bool RenderViewWin32::begin(EyeType eye)
 
 	if (FAILED(m_d3dDevice->BeginScene()))
 	{
-		m_renderSystem->endRender(false);
+		m_renderSystem->endRender();
 		return false;
 	}
 
 	RenderState rs =
 	{
 		m_d3dViewport,
-		{ m_d3dPresent.BackBufferWidth, m_d3dPresent.BackBufferHeight },
+		{ getWidth(), getHeight() },
 		m_d3dBackBuffer,
 		m_d3dDepthStencilSurface
 	};
@@ -363,10 +288,7 @@ void RenderViewWin32::present()
 			;
 	}
 
-	m_renderSystem->endRender(
-		hr == D3DERR_DEVICELOST ||
-		hr == D3DERR_DEVICENOTRESET
-	);
+	m_renderSystem->endRender();
 }
 
 void RenderViewWin32::pushMarker(const char* const marker)
@@ -384,108 +306,106 @@ void RenderViewWin32::getStatistics(RenderViewStatistics& outStatistics) const
 {
 }
 
-HRESULT RenderViewWin32::lostDevice()
-{
-	log::debug << L"RenderViewWin32::lostDevice" << Endl;
+//HRESULT RenderViewWin32::lostDevice()
+//{
+//	m_d3dDevice.release();
+//	m_d3dSwapChain.release();
+//	m_d3dBackBuffer.release();
+//	m_d3dDepthStencilSurface.release();
+//
+//	for (uint32_t i = 0; i < sizeof_array(m_d3dSyncQueries); ++i)
+//		m_d3dSyncQueries[i].release();
+//
+//	m_renderStateStack.clear();
+//	m_currentVertexBuffer = 0;
+//	m_currentIndexBuffer = 0;
+//	m_currentProgram = 0;
+//
+//	return S_OK;
+//}
+//
+//HRESULT RenderViewWin32::resetDevice(IDirect3DDevice9* d3dDevice)
+//{
+//	HRESULT hr;
+//
+//	T_ASSERT (d3dDevice);
+//	m_d3dDevice = d3dDevice;
+//
+//	//if (m_d3dPresent.Windowed)
+//	//{
+//	//	hr = m_d3dDevice->CreateAdditionalSwapChain(
+//	//		&m_d3dPresent,
+//	//		&m_d3dSwapChain.getAssign()
+//	//	);
+//	//	if (FAILED(hr))
+//	//	{
+//	//		log::error << L"Unable to create additional swap chain; hr = " << hr << Endl;
+//	//		return hr;
+//	//	}
+//	//}
+//	//else
+//	//{
+//	//	hr = m_d3dDevice->GetSwapChain(
+//	//		0,
+//	//		&m_d3dSwapChain.getAssign()
+//	//	);
+//	//	if (FAILED(hr))
+//	//	{
+//	//		log::error << L"Reset device failed, unable to get primary swap chain" << Endl;
+//	//		return hr;
+//	//	}
+//	//}
+//
+//	hr = m_d3dSwapChain->GetBackBuffer(0, D3DBACKBUFFER_TYPE_MONO, &m_d3dBackBuffer.getAssign());
+//	if (FAILED(hr))
+//	{
+//		log::error << L"Unable to get back buffer; hr = " << hr << Endl;
+//		return hr;
+//	}
+//
+//	hr = m_d3dDevice->CreateDepthStencilSurface(
+//		m_d3dPresent.BackBufferWidth,
+//		m_d3dPresent.BackBufferHeight,
+//		m_d3dDepthStencilFormat,
+//		m_d3dPresent.MultiSampleType,
+//		0,
+//		TRUE,
+//		&m_d3dDepthStencilSurface.getAssign(),
+//		NULL
+//	);
+//	if (FAILED(hr))
+//	{
+//		log::error << L"Unable to get depth/stencil surface; hr = " << hr << Endl;
+//		return hr;
+//	}
+//
+//	// Create synchronization queries; some devices doesn't support these thus allow failure.
+//	for (uint32_t i = 0; i < sizeof_array(m_d3dSyncQueries); ++i)
+//	{
+//		hr = m_d3dDevice->CreateQuery(
+//			D3DQUERYTYPE_EVENT,
+//			&m_d3dSyncQueries[i].getAssign()
+//		);
+//		if (FAILED(hr))
+//		{
+//			log::warning << L"Unable to create synchronization query; hr = " << hr << Endl;
+//			m_d3dSyncQueries[i].release();
+//		}
+//	}
+//
+//	return S_OK;
+//}
 
-	m_d3dDevice.release();
-	m_d3dSwapChain.release();
-	m_d3dBackBuffer.release();
-	m_d3dDepthStencilSurface.release();
-
-	for (uint32_t i = 0; i < sizeof_array(m_d3dSyncQueries); ++i)
-		m_d3dSyncQueries[i].release();
-
-	m_renderStateStack.clear();
-	m_currentVertexBuffer = 0;
-	m_currentIndexBuffer = 0;
-	m_currentProgram = 0;
-
-	return S_OK;
-}
-
-HRESULT RenderViewWin32::resetDevice(IDirect3DDevice9* d3dDevice)
-{
-	HRESULT hr;
-
-	T_ASSERT (d3dDevice);
-	m_d3dDevice = d3dDevice;
-
-	if (m_d3dPresent.Windowed)
-	{
-		hr = m_d3dDevice->CreateAdditionalSwapChain(
-			&m_d3dPresent,
-			&m_d3dSwapChain.getAssign()
-		);
-		if (FAILED(hr))
-		{
-			log::error << L"Unable to create additional swap chain; hr = " << hr << Endl;
-			return hr;
-		}
-	}
-	else
-	{
-		hr = m_d3dDevice->GetSwapChain(
-			0,
-			&m_d3dSwapChain.getAssign()
-		);
-		if (FAILED(hr))
-		{
-			log::error << L"Reset device failed, unable to get primary swap chain" << Endl;
-			return hr;
-		}
-	}
-
-	hr = m_d3dSwapChain->GetBackBuffer(0, D3DBACKBUFFER_TYPE_MONO, &m_d3dBackBuffer.getAssign());
-	if (FAILED(hr))
-	{
-		log::error << L"Unable to get back buffer; hr = " << hr << Endl;
-		return hr;
-	}
-
-	hr = m_d3dDevice->CreateDepthStencilSurface(
-		m_d3dPresent.BackBufferWidth,
-		m_d3dPresent.BackBufferHeight,
-		m_d3dDepthStencilFormat,
-		m_d3dPresent.MultiSampleType,
-		0,
-		TRUE,
-		&m_d3dDepthStencilSurface.getAssign(),
-		NULL
-	);
-	if (FAILED(hr))
-	{
-		log::error << L"Unable to get depth/stencil surface; hr = " << hr << Endl;
-		return hr;
-	}
-
-	// Create synchronization queries; some devices doesn't support these thus allow failure.
-	for (uint32_t i = 0; i < sizeof_array(m_d3dSyncQueries); ++i)
-	{
-		hr = m_d3dDevice->CreateQuery(
-			D3DQUERYTYPE_EVENT,
-			&m_d3dSyncQueries[i].getAssign()
-		);
-		if (FAILED(hr))
-		{
-			log::warning << L"Unable to create synchronization query; hr = " << hr << Endl;
-			m_d3dSyncQueries[i].release();
-		}
-	}
-
-	return S_OK;
-}
-
-void RenderViewWin32::setD3DPresent(const D3DPRESENT_PARAMETERS& d3dPresent)
-{
-	m_d3dPresent = d3dPresent;
-	m_d3dViewport.X = 0;
-	m_d3dViewport.Y = 0;
-	m_d3dViewport.Width = m_d3dPresent.BackBufferWidth;
-	m_d3dViewport.Height = m_d3dPresent.BackBufferHeight;
-	m_d3dViewport.MinZ = 0.0f;
-	m_d3dViewport.MaxZ = 1.0f;
-}
+//void RenderViewWin32::setD3DPresent(const D3DPRESENT_PARAMETERS& d3dPresent)
+//{
+//	m_d3dPresent = d3dPresent;
+//	m_d3dViewport.X = 0;
+//	m_d3dViewport.Y = 0;
+//	m_d3dViewport.Width = m_d3dPresent.BackBufferWidth;
+//	m_d3dViewport.Height = m_d3dPresent.BackBufferHeight;
+//	m_d3dViewport.MinZ = 0.0f;
+//	m_d3dViewport.MaxZ = 1.0f;
+//}
 
 void RenderViewWin32::bindTargets()
 {

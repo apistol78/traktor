@@ -150,16 +150,6 @@ int32_t RenderServerEmbedded::reconfigure(const Settings* settings)
 
 RenderServer::UpdateResult RenderServerEmbedded::update(Settings* settings)
 {
-	if (!m_renderView)
-		return UrSuccess;
-
-	render::RenderEvent event = m_renderView->nextEvent();
-	if (event == render::ReClosed)
-		return UrTerminate;
-	
-	if (event == render::ReResized)
-		return UrReconfigure;
-
 	return UrSuccess;
 }
 
