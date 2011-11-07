@@ -173,7 +173,7 @@ void VideoEditorPage::eventSize(ui::Event* event)
 	ui::SizeEvent* s = checked_type_cast< ui::SizeEvent*, false >(event);
 	ui::Size sz = s->getSize();
 
-	m_renderView->resize(sz.cx, sz.cy);
+	m_renderView->reset(sz.cx, sz.cy);
 	m_renderView->setViewport(render::Viewport(0, 0, sz.cx, sz.cy, 0, 1));
 }
 

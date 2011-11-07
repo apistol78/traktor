@@ -16,7 +16,7 @@ namespace traktor
 
 struct IWindowListener
 {
-	virtual void windowListenerEvent(class Window* window, UINT message, WPARAM wParam, LPARAM lParam) = 0;
+	virtual bool windowListenerEvent(class Window* window, UINT message, WPARAM wParam, LPARAM lParam, LRESULT& outResult) = 0;
 };
 
 class Window : public Object
@@ -28,15 +28,15 @@ public:
 
 	virtual ~Window();
 
-	bool create(const wchar_t* title);
+	bool create();
 
-	void setWindowedStyle();
+	void setTitle(const wchar_t* title);
 
-	void setFullScreenStyle();
+	void setWindowedStyle(int32_t width, int32_t height);
 
-	void setClientSize(int32_t width, int32_t height);
+	void setFullScreenStyle(int32_t width, int32_t height);
 
-	void show();
+	void hide();
 
 	operator HWND () const;
 
@@ -44,10 +44,15 @@ public:
 
 	void removeListener(IWindowListener* listener);
 
+	bool haveWindowedStyle() const { return !m_fullScreen; }
+
+	bool haveFullScreenStyle() const { return m_fullScreen; }
+
 private:
 	HWND m_hWnd;
 	bool m_fullScreen;
-	std::vector< IWindowListener* > m_listeners;
+	std::set< IWindowListener* > m_listeners;
+	POINT m_windowPosition;
 
 	static LRESULT CALLBACK wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 };

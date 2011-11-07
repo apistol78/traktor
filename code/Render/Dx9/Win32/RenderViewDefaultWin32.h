@@ -17,7 +17,12 @@ namespace traktor
 	namespace render
 	{
 
-/*!
+/*! \brief Default DX9 render view implementation.
+ *
+ * This uses the implicit swap chain owned by the
+ * DX9 device thus only a single default view
+ * can be created at any time.
+ *
  * \ingroup DX9
  */
 class T_DLLCLASS RenderViewDefaultWin32
@@ -32,6 +37,7 @@ public:
 		ParameterCache* parameterCache,
 		IDirect3DDevice9* d3dDevice,
 		IDirect3D9* d3d,
+		D3DPRESENT_PARAMETERS& d3dPresent,
 		Window* window
 	);
 
@@ -43,7 +49,7 @@ public:
 
 	virtual bool reset(const RenderViewDefaultDesc& desc);
 
-	virtual void resize(int32_t width, int32_t height);
+	virtual bool reset(int32_t width, int32_t height);
 
 	virtual int getWidth() const;
 
@@ -64,15 +70,15 @@ public:
 
 private:
 	ComRef< IDirect3D9 > m_d3d;
-	Window* m_window;
-	D3DPRESENT_PARAMETERS m_d3dPresent;
+	D3DPRESENT_PARAMETERS& m_d3dPresent;
+	Ref< Window > m_window;
 	D3DFORMAT m_d3dDepthStencilFormat;
 	std::list< RenderEvent > m_eventQueue;
 
 	// \name IWindowListener implementation.
 	// \{
 
-	virtual void windowListenerEvent(Window* window, UINT message, WPARAM wParam, LPARAM lParam);
+	virtual bool windowListenerEvent(Window* window, UINT message, WPARAM wParam, LPARAM lParam, LRESULT& outResult);
 
 	// \}
 };

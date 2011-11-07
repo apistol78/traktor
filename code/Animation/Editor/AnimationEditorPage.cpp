@@ -862,7 +862,7 @@ void AnimationEditorPage::eventRenderSize(ui::Event* event)
 	ui::SizeEvent* s = static_cast< ui::SizeEvent* >(event);
 	ui::Size sz = s->getSize();
 
-	data->renderView->resize(sz.cx, sz.cy);
+	data->renderView->reset(sz.cx, sz.cy);
 	data->renderView->setViewport(render::Viewport(0, 0, sz.cx, sz.cy, 0, 1));
 }
 

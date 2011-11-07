@@ -92,7 +92,8 @@ bool RenderSystemWin32::create(const RenderSystemCreateDesc& desc)
 		log::warning << L"Unable to get device capabilities (" << int32_t(hr) << L"); may cause unexpected behavior" << Endl;
 	
 	// Render window class.
-	if (!m_window.create(L""))
+	m_window = new Window();
+	if (!m_window->create())
 		return false;
 
 	DWORD dwBehaviour = D3DCREATE_MULTITHREADED;
@@ -109,7 +110,7 @@ bool RenderSystemWin32::create(const RenderSystemCreateDesc& desc)
 	m_d3dPresent.BackBufferHeight = 1;
 	m_d3dPresent.MultiSampleType = D3DMULTISAMPLE_NONE;
 	m_d3dPresent.SwapEffect = D3DSWAPEFFECT_DISCARD;
-	m_d3dPresent.hDeviceWindow = m_window;
+	m_d3dPresent.hDeviceWindow = *m_window;
 	m_d3dPresent.Windowed = TRUE;
 	m_d3dPresent.EnableAutoDepthStencil = FALSE;
 	m_d3dPresent.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
@@ -225,10 +226,7 @@ float RenderSystemWin32::getDisplayAspectRatio() const
 
 Ref< IRenderView > RenderSystemWin32::createRenderView(const RenderViewDefaultDesc& desc)
 {
-	T_ASSERT (m_renderViews.empty());
-
-	Ref< Window > window = new Window();
-	if (!window->create(desc.title ? desc.title : L"Traktor - DirectX 9.0 Renderer"))
+	if (!m_renderViews.empty())
 		return 0;
 
 	Ref< RenderViewWin32 > renderView = new RenderViewDefaultWin32(
@@ -236,11 +234,11 @@ Ref< IRenderView > RenderSystemWin32::createRenderView(const RenderViewDefaultDe
 		m_parameterCache,
 		m_d3dDevice,
 		m_d3d,
-		window
+		m_d3dPresent,
+		m_window
 	);
 
-	HRESULT hr = renderView->resetDevice();
-	if (FAILED(hr))
+	if (!renderView->reset(desc))
 		return 0;
 
 	return renderView;

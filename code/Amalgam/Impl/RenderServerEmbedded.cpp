@@ -57,7 +57,6 @@ bool RenderServerEmbedded::create(Settings* settings, void* nativeWindowHandle)
 		return false;
 
 	render::RenderSystemCreateDesc rscd;
-	rscd.windowTitle = L"Puzzle Dimension";
 	rscd.mipBias = settings->getProperty< PropertyFloat >(L"Render.MipBias", 0.0f);
 	rscd.maxAnisotropy = settings->getProperty< PropertyInteger >(L"Render.MaxAnisotropy", 2);
 
@@ -104,9 +103,6 @@ bool RenderServerEmbedded::create(Settings* settings, void* nativeWindowHandle)
 	m_renderSystem = renderSystem;
 	m_renderView = renderView;
 
-	// Handle some render system messages in order to bring up render view window etc.
-	m_renderView->nextEvent();
-
 	return true;
 }
 
@@ -142,7 +138,7 @@ int32_t RenderServerEmbedded::reconfigure(const Settings* settings)
 	if (skipMips != m_textureFactory->getSkipMips())
 	{
 		m_textureFactory->setSkipMips(skipMips);
-		result |= CrAccepted;
+		result |= CrAccepted | CrFlushResources;
 	}
 
 	return result;

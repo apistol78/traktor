@@ -253,7 +253,7 @@ void FlashPreviewControl::eventSize(ui::Event* event)
 #if T_USE_ACCELERATED_RENDERER
 	if (m_renderView)
 	{
-		m_renderView->resize(sz.cx, sz.cy);
+		m_renderView->reset(sz.cx, sz.cy);
 		m_renderView->setViewport(render::Viewport(0, 0, sz.cx, sz.cy, 0, 1));
 	}
 	if (m_displayRenderer)

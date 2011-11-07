@@ -105,21 +105,6 @@ public:
 	 */
 	bool tryRecoverDevice();
 
-private:
-	ComRef< IDirect3D9 > m_d3d;
-	ComRef< IDirect3DDevice9 > m_d3dDevice;
-	D3DPRESENT_PARAMETERS m_d3dPresent;
-	D3DDISPLAYMODE m_d3dDefaultDisplayMode;
-	Window m_window;
-	Ref< ResourceManagerDx9 > m_resourceManager;
-	Ref< ShaderCache > m_shaderCache;
-	Ref< ParameterCache > m_parameterCache;
-	Ref< VertexDeclCache > m_vertexDeclCache;
-	int32_t m_maxAnisotropy;
-	RefArray< RenderViewWin32 > m_renderViews;
-	Semaphore m_renderLock;
-	bool m_inRender;
-
 	/*! \brief Reset device.
 	 *
 	 * Release all non-managed resources and
@@ -128,6 +113,21 @@ private:
 	 * \return Reset error code.
 	 */
 	HRESULT resetDevice();
+
+private:
+	ComRef< IDirect3D9 > m_d3d;
+	ComRef< IDirect3DDevice9 > m_d3dDevice;
+	D3DPRESENT_PARAMETERS m_d3dPresent;
+	D3DDISPLAYMODE m_d3dDefaultDisplayMode;
+	Ref< Window > m_window;
+	Ref< ResourceManagerDx9 > m_resourceManager;
+	Ref< ShaderCache > m_shaderCache;
+	Ref< ParameterCache > m_parameterCache;
+	Ref< VertexDeclCache > m_vertexDeclCache;
+	int32_t m_maxAnisotropy;
+	RefArray< RenderViewWin32 > m_renderViews;
+	Semaphore m_renderLock;
+	bool m_inRender;
 };
 
 	}
