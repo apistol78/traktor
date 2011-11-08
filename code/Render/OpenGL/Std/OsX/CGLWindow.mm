@@ -259,6 +259,9 @@ void* cglwCreateWindow(const std::wstring& title, const DisplayMode& displayMode
 	[windowData->window setAcceptsMouseMovedEvents: YES];
 	[windowData->window setTitle: windowData->title];
 	
+	NSSize minSize = { 320, 200 };
+	[windowData->window setContentMinSize: minSize];
+	
 	if (!fullscreen)
 		[windowData->window center];
 
