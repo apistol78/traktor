@@ -1,6 +1,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Input/OsX/InputDeviceMouseOsX.h"
+#include "Input/OsX/InputUtilities.h"
 
 namespace traktor
 {
@@ -61,6 +62,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.input.InputDeviceMouseOsX", InputDeviceMouseOsX
 
 InputDeviceMouseOsX::InputDeviceMouseOsX(IOHIDDeviceRef deviceRef)
 :	m_deviceRef(deviceRef)
+,	m_lastMouseValid(false)
 {
 	if (m_deviceRef)
 		IOHIDDeviceRegisterRemovalCallback(m_deviceRef, &callbackRemoval, this);
@@ -143,10 +145,12 @@ void InputDeviceMouseOsX::resetState()
 void InputDeviceMouseOsX::readState()
 {
 	resetState();
-
+	
 	if (!m_deviceRef)
 		return;
 
+	bool mouseValid = isInputAllowed();
+		
 	CFArrayRef elements = IOHIDDeviceCopyMatchingElements(m_deviceRef, NULL, kIOHIDOptionsTypeNone);
 
 	CFIndex elementCount = CFArrayGetCount(elements);
@@ -197,6 +201,21 @@ void InputDeviceMouseOsX::readState()
 	}
 	
 	CFRelease(elements);
+	
+	// As long as user keps mouse button pressed we cannot
+	// leave invalid state.
+	if (mouseValid && !m_lastMouseValid)
+	{
+		if (m_button[0] || m_button[1] || m_button[2])
+			mouseValid = false;
+	}
+	
+	// Discard all inputs if mouse not in a valid
+	// region.
+	if (!mouseValid)
+		resetState();
+	
+	m_lastMouseValid = mouseValid;
 }
 
 bool InputDeviceMouseOsX::supportRumble() const

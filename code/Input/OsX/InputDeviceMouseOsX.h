@@ -47,6 +47,7 @@ private:
 	bool m_button[4];
 	int32_t m_axis[3];
 	uint64_t m_timeStamps[3];
+	bool m_lastMouseValid;
 	
 	static void callbackRemoval(void* context, IOReturn result, void* sender);
 };
