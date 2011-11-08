@@ -144,8 +144,6 @@ bool RenderSystemOpenGL::create(const RenderSystemCreateDesc& desc)
 	if (!opengl_initialize_extensions())
 		return false;
 
-	m_title = desc.windowTitle ? desc.windowTitle : L"Traktor (OpenGL)";
-
 #else	// LINUX
 
 	/*
@@ -454,7 +452,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 #elif defined(__APPLE__)
 
 	m_windowHandle = cglwCreateWindow(
-		m_title,
+		desc.title ? desc.title : L"Traktor (OpenGL)",
 		desc.displayMode,
 		desc.fullscreen
 	);

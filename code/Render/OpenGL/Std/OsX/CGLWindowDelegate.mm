@@ -5,6 +5,18 @@
 - (id) init
 {
 	m_resized = NO;
+	m_resizing = NO;
+	return self;
+}
+
+- (void) windowWillStartLiveResize: (NSNotification *)notification
+{
+	m_resizing = YES;
+}
+
+- (void) windowDidEndLiveResize: (NSNotification *)notification
+{
+	m_resizing = NO;
 }
 
 - (void) windowDidResize: (NSNotification *)notification
@@ -17,6 +29,11 @@
 	BOOL resized = m_resized;
 	m_resized = NO;
 	return resized;
+}
+
+- (BOOL) isInLiveResize
+{
+	return m_resizing;
 }
 
 @end
