@@ -52,19 +52,11 @@ RenderViewWin32::RenderViewWin32(
 ,	m_frameCount(0)
 ,	m_targetDirty(false)
 {
-	//m_d3dViewport.X = 0;
-	//m_d3dViewport.Y = 0;
-	//m_d3dViewport.Width = m_width;
-	//m_d3dViewport.Height = m_height;
-	//m_d3dViewport.MinZ = 0.0f;
-	//m_d3dViewport.MaxZ = 1.0f;
-
 	m_renderSystem->addRenderView(this);
 }
 
 void RenderViewWin32::close()
 {
-	//lostDevice();
 	m_renderSystem->removeRenderView(this);
 }
 
@@ -124,7 +116,7 @@ bool RenderViewWin32::begin(EyeType eye)
 
 	if (FAILED(m_d3dDevice->BeginScene()))
 	{
-		m_renderSystem->endRender();
+		m_renderSystem->endRender(false);
 		return false;
 	}
 
@@ -288,7 +280,10 @@ void RenderViewWin32::present()
 			;
 	}
 
-	m_renderSystem->endRender();
+	m_renderSystem->endRender(
+		hr == D3DERR_DEVICELOST ||
+		hr == D3DERR_DEVICENOTRESET
+	);
 }
 
 void RenderViewWin32::pushMarker(const char* const marker)
@@ -305,107 +300,6 @@ void RenderViewWin32::popMarker()
 void RenderViewWin32::getStatistics(RenderViewStatistics& outStatistics) const
 {
 }
-
-//HRESULT RenderViewWin32::lostDevice()
-//{
-//	m_d3dDevice.release();
-//	m_d3dSwapChain.release();
-//	m_d3dBackBuffer.release();
-//	m_d3dDepthStencilSurface.release();
-//
-//	for (uint32_t i = 0; i < sizeof_array(m_d3dSyncQueries); ++i)
-//		m_d3dSyncQueries[i].release();
-//
-//	m_renderStateStack.clear();
-//	m_currentVertexBuffer = 0;
-//	m_currentIndexBuffer = 0;
-//	m_currentProgram = 0;
-//
-//	return S_OK;
-//}
-//
-//HRESULT RenderViewWin32::resetDevice(IDirect3DDevice9* d3dDevice)
-//{
-//	HRESULT hr;
-//
-//	T_ASSERT (d3dDevice);
-//	m_d3dDevice = d3dDevice;
-//
-//	//if (m_d3dPresent.Windowed)
-//	//{
-//	//	hr = m_d3dDevice->CreateAdditionalSwapChain(
-//	//		&m_d3dPresent,
-//	//		&m_d3dSwapChain.getAssign()
-//	//	);
-//	//	if (FAILED(hr))
-//	//	{
-//	//		log::error << L"Unable to create additional swap chain; hr = " << hr << Endl;
-//	//		return hr;
-//	//	}
-//	//}
-//	//else
-//	//{
-//	//	hr = m_d3dDevice->GetSwapChain(
-//	//		0,
-//	//		&m_d3dSwapChain.getAssign()
-//	//	);
-//	//	if (FAILED(hr))
-//	//	{
-//	//		log::error << L"Reset device failed, unable to get primary swap chain" << Endl;
-//	//		return hr;
-//	//	}
-//	//}
-//
-//	hr = m_d3dSwapChain->GetBackBuffer(0, D3DBACKBUFFER_TYPE_MONO, &m_d3dBackBuffer.getAssign());
-//	if (FAILED(hr))
-//	{
-//		log::error << L"Unable to get back buffer; hr = " << hr << Endl;
-//		return hr;
-//	}
-//
-//	hr = m_d3dDevice->CreateDepthStencilSurface(
-//		m_d3dPresent.BackBufferWidth,
-//		m_d3dPresent.BackBufferHeight,
-//		m_d3dDepthStencilFormat,
-//		m_d3dPresent.MultiSampleType,
-//		0,
-//		TRUE,
-//		&m_d3dDepthStencilSurface.getAssign(),
-//		NULL
-//	);
-//	if (FAILED(hr))
-//	{
-//		log::error << L"Unable to get depth/stencil surface; hr = " << hr << Endl;
-//		return hr;
-//	}
-//
-//	// Create synchronization queries; some devices doesn't support these thus allow failure.
-//	for (uint32_t i = 0; i < sizeof_array(m_d3dSyncQueries); ++i)
-//	{
-//		hr = m_d3dDevice->CreateQuery(
-//			D3DQUERYTYPE_EVENT,
-//			&m_d3dSyncQueries[i].getAssign()
-//		);
-//		if (FAILED(hr))
-//		{
-//			log::warning << L"Unable to create synchronization query; hr = " << hr << Endl;
-//			m_d3dSyncQueries[i].release();
-//		}
-//	}
-//
-//	return S_OK;
-//}
-
-//void RenderViewWin32::setD3DPresent(const D3DPRESENT_PARAMETERS& d3dPresent)
-//{
-//	m_d3dPresent = d3dPresent;
-//	m_d3dViewport.X = 0;
-//	m_d3dViewport.Y = 0;
-//	m_d3dViewport.Width = m_d3dPresent.BackBufferWidth;
-//	m_d3dViewport.Height = m_d3dPresent.BackBufferHeight;
-//	m_d3dViewport.MinZ = 0.0f;
-//	m_d3dViewport.MaxZ = 1.0f;
-//}
 
 void RenderViewWin32::bindTargets()
 {
