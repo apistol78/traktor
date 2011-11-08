@@ -97,7 +97,7 @@ public:
 
 	/*! \brief Finish rendering frame.
 	 */
-	void endRender();
+	void endRender(bool deviceLost);
 
 	/*! \brief Try to recover lost device.
 	 *
@@ -128,6 +128,7 @@ private:
 	RefArray< RenderViewWin32 > m_renderViews;
 	Semaphore m_renderLock;
 	bool m_inRender;
+	bool m_deviceLost;
 };
 
 	}

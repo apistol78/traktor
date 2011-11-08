@@ -41,6 +41,8 @@ render::handle_t s_techniqueDepth = 0;
 render::handle_t s_techniqueShadow = 0;
 render::handle_t s_handleProjection = 0;
 
+const float c_shadowMapBiasCoeff = 0.2f;
+
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRendererForward", 0, WorldRendererForward, IWorldRenderer)
@@ -472,7 +474,7 @@ void WorldRendererForward::render(uint32_t flags, int frame, render::EyeType eye
 					params.depthRange = m_settings.depthRange;
 					params.sliceNearZ = zn;
 					params.sliceFarZ = zf;
-					params.shadowMapBias = m_settings.shadowMapBias;
+					params.shadowMapBias = m_settings.shadowMapBias + i * c_shadowMapBiasCoeff;
 					params.deltaTime = 0.0f;
 
 					m_shadowMaskProject->render(

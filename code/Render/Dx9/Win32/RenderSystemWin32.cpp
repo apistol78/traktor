@@ -57,6 +57,7 @@ RenderSystemWin32::RenderSystemWin32()
 :	m_vertexDeclCache(0)
 ,	m_maxAnisotropy(0)
 ,	m_inRender(false)
+,	m_deviceLost(false)
 {
 }
 
@@ -428,24 +429,37 @@ bool RenderSystemWin32::beginRender()
 	return true;
 }
 
-void RenderSystemWin32::endRender()
+void RenderSystemWin32::endRender(bool deviceLost)
 {
 	T_ASSERT (m_inRender);
 
 	m_inRender = false;
+	m_deviceLost = deviceLost;
 	m_renderLock.release();
 }
 
 bool RenderSystemWin32::tryRecoverDevice()
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_renderLock);
 	HRESULT hr;
 
-	hr = m_d3dDevice->TestCooperativeLevel();
-	if (hr == D3DERR_DEVICENOTRESET)
-		hr = resetDevice();
+	if (!m_deviceLost)
+		return true;
 
-	return SUCCEEDED(hr);
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_renderLock);
+
+		hr = m_d3dDevice->TestCooperativeLevel();
+		if (hr == D3DERR_DEVICENOTRESET)
+			hr = resetDevice();
+
+		if (SUCCEEDED(hr))
+		{
+			m_deviceLost = false;
+			return true;
+		}
+	}
+
+	return false;
 }
 
 HRESULT RenderSystemWin32::resetDevice()
