@@ -77,7 +77,8 @@ void TargetManager::update()
 		if (socket)
 		{
 			// Target must send it's identifier upon connection.
-			Ref< TargetID > targetId = BinarySerializer(&net::SocketStream(socket, true, false)).readObject< TargetID >();
+			net::SocketStream ss(socket, true, false);
+			Ref< TargetID > targetId = BinarySerializer(&ss).readObject< TargetID >();
 			if (targetId)
 			{
 				// Find instance with matching identifier.
