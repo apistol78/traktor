@@ -19,19 +19,13 @@ void* cglwCreateWindow(const std::wstring& title, const DisplayMode& displayMode
 
 void cglwDestroyWindow(void* windowHandle);
 
-bool cglwModifyWindow(void* windowHandle, const DisplayMode& displayMode);
-
-void cglwSetWindowSize(void* windowHandle, int32_t width, int32_t height);
-
-void cglwGetWindowSize(void* windowHandle, int32_t& outWidth, int32_t& outHeight);
-
-void cglwSetFullscreen(void* windowHandle, bool fullscreen);
+bool cglwModifyWindow(void* windowHandle, const DisplayMode& displayMode, bool fullscreen);
 
 bool cglwIsFullscreen(void* windowHandle);
 
 bool cglwIsActive(void* windowHandle);
 
-RenderEvent cglwUpdateWindow(void* windowHandle);
+bool cglwUpdateWindow(void* windowHandle, RenderEvent& outEvent);
 
 void* cglwGetWindowView(void* windowHandle);
 	

@@ -31,9 +31,11 @@
 	m_closed = YES;
 }
 
-- (BOOL) closed
+- (BOOL) closedSinceLast
 {
-	return m_closed;
+	BOOL closed = m_closed;
+	m_closed = NO;
+	return closed;
 }
 
 @end

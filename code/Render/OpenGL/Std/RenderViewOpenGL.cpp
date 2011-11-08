@@ -119,22 +119,7 @@ bool RenderViewOpenGL::nextEvent(RenderEvent& outEvent)
 
 #elif defined(__APPLE__)
 
-	RenderEvent event = cglwUpdateWindow(m_windowHandle);
-	
-	if (event == ReResized)
-	{
-		T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
-
-		safeDestroy(m_primaryTarget);
-
-		m_context->update();
-
-		m_primaryTargetDesc.width = m_context->getWidth();
-		m_primaryTargetDesc.height = m_context->getHeight();
-
-		m_primaryTarget = new RenderTargetSetOpenGL(m_context, m_blitHelper);
-		m_primaryTarget->create(m_primaryTargetDesc, true);
-	}
+	return cglwUpdateWindow(m_windowHandle, outEvent);
 	
 #endif
 
@@ -159,9 +144,7 @@ bool RenderViewOpenGL::reset(const RenderViewDefaultDesc& desc)
 	safeDestroy(m_primaryTarget);
 
 #if defined(__APPLE__)
-	cglwModifyWindow(m_windowHandle, desc.displayMode);
-	if (desc.fullscreen != cglwIsFullscreen(m_windowHandle))
-		cglwSetFullscreen(m_windowHandle, desc.fullscreen);
+	cglwModifyWindow(m_windowHandle, desc.displayMode, desc.fullscreen);
 #endif
 
 	m_context->update();
@@ -190,7 +173,7 @@ bool RenderViewOpenGL::reset(int32_t width, int32_t height)
 	safeDestroy(m_primaryTarget);
 
 #if defined(__APPLE__)
-	cglwSetWindowSize(m_windowHandle, width, height);
+	//cglwSetWindowSize(m_windowHandle, width, height);
 #endif
 
 	m_context->update();

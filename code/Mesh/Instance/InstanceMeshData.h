@@ -19,7 +19,7 @@ namespace traktor
  * shader parameters.
  */
 #pragma pack(1)
-struct InstanceMeshData
+struct T_MATH_ALIGN16 InstanceMeshData
 {
 	float rotation[4];
 	float translation[3];

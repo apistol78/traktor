@@ -13,6 +13,6 @@
 
 - (void) close;
 
-- (BOOL) closed;
+- (BOOL) closedSinceLast;
 
 @end

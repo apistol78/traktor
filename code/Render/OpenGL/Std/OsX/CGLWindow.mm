@@ -289,8 +289,6 @@ void* cglwCreateWindow(const std::wstring& title, const DisplayMode& displayMode
 	[windowData->window makeKeyAndOrderFront: nil];
 	[windowData->window makeMainWindow];
 	
-	cglwUpdateWindow(windowData);
-	
 	if (fullscreen)
 		CGDisplayHideCursor(kCGDirectMainDisplay);
 	
@@ -312,103 +310,90 @@ void cglwDestroyWindow(void* windowHandle)
 	delete windowData;
 }
 
-bool cglwModifyWindow(void* windowHandle, const DisplayMode& displayMode)
+bool cglwModifyWindow(void* windowHandle, const DisplayMode& displayMode, bool fullscreen)
 {
 	WindowData* windowData = static_cast< WindowData* >(windowHandle);
 	
-	if (windowData->fullscreen)
+	if (windowData->fullscreen != fullscreen)
 	{
-		if (!cglwSetDisplayMode(displayMode))
-			return false;
-	}
-	
-	setWindowSize(
-		windowData->window,
-		displayMode.width,
-		displayMode.height
-	);
-	
-	// Center window if display mode is shrinking.
-	if (
-		!windowData->fullscreen &&
-		(displayMode.width < windowData->displayMode.width ||
-		displayMode.height < windowData->displayMode.height)
-	)
-		[windowData->window center];
+		if (fullscreen)
+		{
+			CGDisplayCapture(kCGDirectMainDisplay);
 
-	windowData->displayMode = displayMode;
-	
-	cglwUpdateWindow(windowHandle);
+			if (!cglwSetDisplayMode(displayMode))
+				return false;
 
-	return true;
-}
+			NSInteger windowLevel = CGShieldingWindowLevel();
 
-void cglwSetWindowSize(void* windowHandle, int32_t width, int32_t height)
-{
-	WindowData* windowData = static_cast< WindowData* >(windowHandle);
-	setWindowSize(windowData->window, width, height);
-}
+			[windowData->window setStyleMask: NSBorderlessWindowMask];
+			[windowData->window setLevel: windowLevel];
+			[windowData->window setOpaque: YES];
+			
+			setWindowRect(
+				windowData->window,
+				0,
+				0,
+				displayMode.width,
+				displayMode.height
+			);
+			[windowData->delegate resizedSinceLast];
 
-void cglwGetWindowSize(void* windowHandle, int32_t& outWidth, int32_t& outHeight)
-{
-	WindowData* windowData = static_cast< WindowData* >(windowHandle);
-	getWindowSize(windowData->window, outWidth, outHeight);
-}
-
-void cglwSetFullscreen(void* windowHandle, bool fullscreen)
-{
-	WindowData* windowData = static_cast< WindowData* >(windowHandle);
-	
-	if (windowData->fullscreen == fullscreen)
-		return;
-
-	if (fullscreen)
-	{
-		CGDisplayCapture(kCGDirectMainDisplay);
-
-		if (!cglwSetDisplayMode(windowData->displayMode))
-			return;
-
-		NSInteger windowLevel = CGShieldingWindowLevel();
-
-		[windowData->window setStyleMask: NSBorderlessWindowMask];
-		[windowData->window setLevel: windowLevel];
-		[windowData->window setOpaque: YES];
+			CGDisplayHideCursor(kCGDirectMainDisplay);
+		}
+		else
+		{
+			CGDisplaySwitchToMode(kCGDirectMainDisplay, windowData->originalMode);
+			CGDisplayRelease(kCGDirectMainDisplay);
 		
-		setWindowRect(
-			windowData->window,
-			0,
-			0,
-			windowData->displayMode.width,
-			windowData->displayMode.height
-		);
+			[windowData->window setStyleMask: NSTitledWindowMask | NSResizableWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask];
+			[windowData->window setLevel: NSNormalWindowLevel];
+			[windowData->window setTitle: windowData->title];
+			[windowData->window setOpaque: NO];
+
+			setWindowSize(
+				windowData->window,
+				displayMode.width,
+				displayMode.height
+			);
+			[windowData->delegate resizedSinceLast];
+
+			[windowData->window center];
+			
+			CGDisplayShowCursor(kCGDirectMainDisplay);
+		}
 		
-		CGDisplayHideCursor(kCGDirectMainDisplay);
+		windowData->fullscreen = fullscreen;
 	}
 	else
 	{
-		CGDisplaySwitchToMode(kCGDirectMainDisplay, windowData->originalMode);
-		CGDisplayRelease(kCGDirectMainDisplay);
-	
-		[windowData->window setStyleMask: NSTitledWindowMask | NSResizableWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask];
-		[windowData->window setLevel: NSNormalWindowLevel];
-		[windowData->window setTitle: windowData->title];
-		[windowData->window setOpaque: NO];
+		if (fullscreen)
+		{
+			if (!cglwSetDisplayMode(displayMode))
+				return false;
 
-		setWindowSize(
-			windowData->window,
-			windowData->displayMode.width,
-			windowData->displayMode.height
-		);
-
-		[windowData->window center];
-		
-		CGDisplayShowCursor(kCGDirectMainDisplay);
+			setWindowRect(
+				windowData->window,
+				0,
+				0,
+				displayMode.width,
+				displayMode.height
+			);
+			[windowData->delegate resizedSinceLast];
+		}
+		else
+		{
+			setWindowSize(
+				windowData->window,
+				displayMode.width,
+				displayMode.height
+			);
+			[windowData->delegate resizedSinceLast];
+		}
 	}
-	
-	cglwUpdateWindow(windowHandle);
-	
-	windowData->fullscreen = fullscreen;
+
+	windowData->displayMode = displayMode;
+
+	return true;
 }
 
 bool cglwIsFullscreen(void* windowHandle)
@@ -425,17 +410,18 @@ bool cglwIsActive(void* windowHandle)
 		return false;
 	if ([windowData->window isVisible] != YES)
 		return false;
+		
+	if ([windowData->delegate isInLiveResize] == YES)
+		return false;
 
 	return true;
 }
 
-RenderEvent cglwUpdateWindow(void* windowHandle)
+bool cglwUpdateWindow(void* windowHandle, RenderEvent& outEvent)
 {
 	WindowData* windowData = static_cast< WindowData* >(windowHandle);
 	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 	
-	RenderEvent result = ReIdle;
-
 	// Handle system events.
 	for (;;)
 	{
@@ -456,8 +442,8 @@ RenderEvent cglwUpdateWindow(void* windowHandle)
 				(keyCode == 0x2e || keyCode == 0x24)
 			)
 			{
-				result = ReToggleFS;
-				continue;
+				outEvent.type = ReToggleFullScreen;
+				return true;
 			}
 			
 			// Close application with Cmd+Q combination.
@@ -466,8 +452,8 @@ RenderEvent cglwUpdateWindow(void* windowHandle)
 				(keyCode == 0x0c)
 			)
 			{
-				[windowData->window close];
-				continue;
+				outEvent.type = ReClose;
+				return true;
 			}
 			
 			continue;
@@ -481,13 +467,20 @@ RenderEvent cglwUpdateWindow(void* windowHandle)
 	
 	[pool release];
 	
-	if ([windowData->window closed] == YES)
-		return ReClosed;
+	if ([windowData->window closedSinceLast] == YES)
+	{
+		outEvent.type = ReClose;
+		return true;
+	}
 		
 	if ([windowData->delegate resizedSinceLast] == YES)
-		return ReResized;
+	{
+		outEvent.type = ReResize;
+		getWindowSize(windowData->window, outEvent.resize.width, outEvent.resize.height);
+		return true;
+	}
 
-	return result;
+	return false;
 }
 
 void* cglwGetWindowView(void* windowHandle)
