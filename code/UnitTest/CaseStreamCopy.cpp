@@ -20,7 +20,9 @@ void CaseStreamCopy::run()
 	if (!source || !destination)
 		return;
 
-	bool res = StreamCopy(&BufferedStream(destination), &BufferedStream(source)).execute();
+	BufferedStream ds(destination);
+	BufferedStream ss(source);
+	bool res = StreamCopy(&ds, &ss).execute();
 	CASE_ASSERT(res);
 
 	destination->close();
