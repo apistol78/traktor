@@ -64,16 +64,10 @@ bool FlashEditorPage::create(ui::Container* parent, editor::IEditorPageSite* sit
 	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(L"Play", ui::Command(L"Flash.Editor.Play"), 1));
 	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(L"Stop", ui::Command(L"Flash.Editor.Stop"), 2));
 	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(L"Forward", ui::Command(L"Flash.Editor.Forward"), 3));
-	m_toolBarPlay->addItem(new ui::custom::ToolBarSeparator());
-	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(L"Layout Center", ui::Command(L"Flash.Editor.LayoutCenter"), 6));
-	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(L"Layout Aspect", ui::Command(L"Flash.Editor.LayoutAspect"), 7));
 	m_toolBarPlay->addClickEventHandler(ui::createMethodHandler(this, &FlashEditorPage::eventToolClick));
 
-	m_previewContainer = new ui::Container();
-	m_previewContainer->create(container, ui::WsNone, new ui::custom::CenterLayout());
-
 	m_previewControl = new FlashPreviewControl();
-	m_previewControl->create(m_previewContainer, ui::WsNone, m_resourceManager, renderSystem);
+	m_previewControl->create(container, ui::WsNone, m_resourceManager, renderSystem);
 
 	return true;
 }
@@ -125,7 +119,7 @@ bool FlashEditorPage::setDataObject(db::Instance* instance, Object* data)
 		return false;
 
 	m_previewControl->setMovie(m_movie);
-	m_previewContainer->update();
+	m_previewControl->update();
 
 	return true;
 }
@@ -157,16 +151,6 @@ bool FlashEditorPage::handleCommand(const ui::Command& command)
 		m_previewControl->stop();
 	else if (command == L"Flash.Editor.Forward")
 		m_previewControl->forward();
-	else if (command == L"Flash.Editor.LayoutCenter")
-	{
-		m_previewContainer->setLayout(new ui::custom::CenterLayout());
-		m_previewContainer->update();
-	}
-	else if (command == L"Flash.Editor.LayoutAspect")
-	{
-		m_previewContainer->setLayout(new ui::custom::AspectLayout());
-		m_previewContainer->update();
-	}
 	else
 		result = false;
 

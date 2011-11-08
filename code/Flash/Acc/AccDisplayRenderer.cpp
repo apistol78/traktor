@@ -296,12 +296,137 @@ void AccDisplayRenderer::begin(
 		bounds.max.y
 	);
 
-	// Calculate horizontal scale factor to match aspect ratios.
+	// Calculate horizontal scale factor to match aspect ratios;
+	// default to exact fit which doesn't require and ratios.
+	m_viewOffset.set(0.0f, 0.0f, 1.0f, 1.0f);
 	if (m_aspectRatio > FUZZY_EPSILON)
 	{
-		float frameAspect = (bounds.max.x - bounds.min.x) / (bounds.max.y - bounds.min.y);
-		float scaleX = frameAspect / m_aspectRatio;
-		m_viewOffset.set(-(scaleX - 1.0f) / 2.0f, 0.0f, scaleX, 1.0f);
+		if (scaleMode == SmShowAll)
+		{
+			float frameAspect = (bounds.max.x - bounds.min.x) / (bounds.max.y - bounds.min.y);
+			float scaleX = frameAspect / m_aspectRatio;
+			if (scaleX <= 1.0f)
+			{
+				float leftX;
+				switch (alignH)
+				{
+				case SaLeft:
+					leftX = 0.0f;
+					break;
+				case SaCenter:
+					leftX = -(scaleX - 1.0f) / 2.0f;
+					break;
+				case SaRight:
+					leftX = -(scaleX - 1.0f);
+					break;
+				}
+
+				m_viewOffset.set(leftX, 0.0f, scaleX, 1.0f);
+			}
+			else
+			{
+				float scaleY = 1.0f / scaleX;
+				
+				float topY;
+				switch (alignV)
+				{
+				case SaTop:
+					topY = 0.0f;
+					break;
+				case SaCenter:
+					topY = -(scaleY - 1.0f) / 2.0f;
+					break;
+				case SaBottom:
+					topY = -(scaleY - 1.0f);
+					break;
+				}
+
+				m_viewOffset.set(0.0f, topY, 1.0f, scaleY);
+			}
+		}
+		else if (scaleMode == SmNoBorder)
+		{
+			float frameAspect = (bounds.max.x - bounds.min.x) / (bounds.max.y - bounds.min.y);
+			float scaleX = frameAspect / m_aspectRatio;
+			if (scaleX <= 1.0f)
+			{
+				float scaleY = 1.0f / scaleX;
+
+				float topY;
+				switch (alignV)
+				{
+				case SaTop:
+					topY = 0.0f;
+					break;
+				case SaCenter:
+					topY = -(scaleY - 1.0f) / 2.0f;
+					break;
+				case SaBottom:
+					topY = -(scaleY - 1.0f);
+					break;
+				}
+
+				m_viewOffset.set(0.0f, topY, 1.0f, scaleY);
+			}
+			else
+			{
+				float leftX;
+				switch (alignH)
+				{
+				case SaLeft:
+					leftX = 0.0f;
+					break;
+				case SaCenter:
+					leftX = -(scaleX - 1.0f) / 2.0f;
+					break;
+				case SaRight:
+					leftX = -(scaleX - 1.0f);
+					break;
+				}
+
+				m_viewOffset.set(leftX, 0.0f, scaleX, 1.0f);
+			}
+		}
+		else if (scaleMode == SmNoScale)
+		{
+			float viewWidth = m_viewSize.x() * 20.0f;
+			float viewHeight = m_viewSize.y() * 20.0f;
+
+			float boundsWidth = (bounds.max.x - bounds.min.x);
+			float boundsHeight = (bounds.max.y - bounds.min.y);
+
+			float scaleX = boundsWidth / viewWidth;
+			float scaleY = boundsHeight / viewHeight;
+
+			float leftX, topY;
+			switch (alignH)
+			{
+			case SaLeft:
+				leftX = 0.0f;
+				break;
+			case SaCenter:
+				leftX = (viewWidth - boundsWidth) / 2.0f;
+				break;
+			case SaRight:
+				leftX = viewWidth - boundsWidth;
+				break;
+			}
+
+			switch (alignV)
+			{
+			case SaTop:
+				topY = 0.0f;
+				break;
+			case SaCenter:
+				topY = (viewHeight - boundsHeight) / 2.0f;
+				break;
+			case SaRight:
+				topY = viewHeight - boundsHeight;
+				break;
+			}
+
+			m_viewOffset.set(leftX / viewWidth, topY / viewHeight, scaleX, scaleY);
+		}
 	}
 
 	if (m_clearBackground)

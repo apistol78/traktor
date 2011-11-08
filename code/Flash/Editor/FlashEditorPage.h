@@ -78,7 +78,6 @@ private:
 	editor::IEditor* m_editor;
 	Ref< db::Instance > m_movieInstance;
 	Ref< FlashPreviewControl > m_previewControl;
-	Ref< ui::Container > m_previewContainer;
 	Ref< ui::custom::ToolBar > m_toolBarPlay;
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< FlashMovie > m_movie;

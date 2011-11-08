@@ -21,7 +21,7 @@ class AsStage : public ActionObject
 public:
 	AsStage(ActionContext* context);
 
-	void eventResize();
+	void eventResize(int32_t width, int32_t height);
 
 	SwfAlignType getAlignH() const { return m_alignH; }
 
@@ -30,6 +30,8 @@ public:
 	SwfScaleModeType getScaleMode() const { return m_scaleMode; }
 
 private:
+	int32_t m_width;
+	int32_t m_height;
 	SwfAlignType m_alignH;
 	SwfAlignType m_alignV;
 	SwfScaleModeType m_scaleMode;
