@@ -15,6 +15,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsStage", AsStage, ActionObject)
 
 AsStage::AsStage(ActionContext* context)
 :	ActionObject(context)
+,	m_width(0)
+,	m_height(0)
 ,	m_alignH(SaCenter)
 ,	m_alignV(SaCenter)
 ,	m_scaleMode(SmShowAll)
@@ -24,10 +26,22 @@ AsStage::AsStage(ActionContext* context)
 	addProperty("scaleMode", createNativeFunction(context, this, &AsStage::Stage_get_scaleMode), createNativeFunction(context, this, &AsStage::Stage_set_scaleMode));
 	addProperty("showMenu", createNativeFunction(context, this, &AsStage::Stage_get_showMenu), createNativeFunction(context, this, &AsStage::Stage_set_showMenu));
 	addProperty("width", createNativeFunction(context, this, &AsStage::Stage_get_width), 0);
+
+	const FlashMovie* movie = context->getMovie();
+	T_ASSERT (movie);
+
+	m_width = int32_t((movie->getFrameBounds().max.x - movie->getFrameBounds().min.x) / 20.0f);
+	m_height = int32_t((movie->getFrameBounds().max.y - movie->getFrameBounds().min.y) / 20.0f);
 }
 
-void AsStage::eventResize()
+void AsStage::eventResize(int32_t width, int32_t height)
 {
+	if (m_scaleMode != SmNoScale || (width == m_width && height == m_height))
+		return;
+
+	m_width = width;
+	m_height = height;
+
 	ActionValue broadcastMessageValue;
 	getMember("broadcastMessage", broadcastMessageValue);
 
@@ -53,15 +67,63 @@ void AsStage::Stage_get_align(CallArgs& ca)
 
 void AsStage::Stage_set_align(CallArgs& ca)
 {
-	T_IF_VERBOSE(
-		log::warning << L"Stage::set_align not implemented" << Endl;
-	)
+	std::string align = toUpper(ca.args[0].getString());
+	if (align.size() >= 2)
+	{
+		if (align == "TL")
+		{
+			m_alignV = SaTop;
+			m_alignH = SaLeft;
+		}
+		else if (align == "TR")
+		{
+			m_alignV = SaTop;
+			m_alignH = SaRight;
+		}
+		else if (align == "BL")
+		{
+			m_alignV = SaBottom;
+			m_alignH = SaLeft;
+		}
+		else if (align == "BR")
+		{
+			m_alignV = SaBottom;
+			m_alignH = SaRight;
+		}
+	}
+	else if (align.size() >= 1)
+	{
+		if (align == "T")
+		{
+			m_alignV = SaTop;
+			m_alignH = SaCenter;
+		}
+		else if (align == "L")
+		{
+			m_alignV = SaCenter;
+			m_alignH = SaLeft;
+		}
+		else if (align == "R")
+		{
+			m_alignV = SaCenter;
+			m_alignH = SaRight;
+		}
+		else if (align == "B")
+		{
+			m_alignV = SaBottom;
+			m_alignH = SaCenter;
+		}
+	}
+	else
+	{
+		m_alignV = SaCenter;
+		m_alignH = SaCenter;
+	}
 }
 
 void AsStage::Stage_get_height(CallArgs& ca)
 {
-	const FlashMovie* movie = ca.context->getMovie();
-	ca.ret = ActionValue((movie->getFrameBounds().max.y - movie->getFrameBounds().min.y) / 20.0f);
+	ca.ret = ActionValue(avm_number_t(m_height));
 }
 
 void AsStage::Stage_get_scaleMode(CallArgs& ca)
@@ -105,8 +167,7 @@ void AsStage::Stage_set_showMenu(CallArgs& ca)
 
 void AsStage::Stage_get_width(CallArgs& ca)
 {
-	const FlashMovie* movie = ca.context->getMovie();
-	ca.ret = ActionValue((movie->getFrameBounds().max.x - movie->getFrameBounds().min.x) / 20.0f);
+	ca.ret = ActionValue(avm_number_t(m_width));
 }
 
 

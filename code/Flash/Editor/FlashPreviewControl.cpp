@@ -270,6 +270,9 @@ void FlashPreviewControl::eventSize(ui::Event* event)
 		sz.cy
 	);
 #endif
+
+	if (m_moviePlayer)
+		m_moviePlayer->postStageResize(sz.cx, sz.cy);
 }
 
 void FlashPreviewControl::eventPaint(ui::Event* event)

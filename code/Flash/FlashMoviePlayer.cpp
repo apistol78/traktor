@@ -210,6 +210,11 @@ void FlashMoviePlayer::executeFrame()
 			if (m_mouse)
 				m_mouse->eventMouseMove(evt.mouse.x, evt.mouse.y, evt.mouse.button);
 			break;
+
+		case EvtStageResize:
+			if (m_stage)
+				m_stage->eventResize(evt.stage.width, evt.stage.height);
+			break;
 		}
 		m_events.pop_front();
 	}
@@ -253,7 +258,7 @@ bool FlashMoviePlayer::progressFrame(float deltaTime)
 	return executed;
 }
 
-void FlashMoviePlayer::postKeyDown(int keyCode)
+void FlashMoviePlayer::postKeyDown(int32_t keyCode)
 {
 	Event evt;
 	evt.eventType = EvtKeyDown;
@@ -261,7 +266,7 @@ void FlashMoviePlayer::postKeyDown(int keyCode)
 	m_events.push_back(evt);
 }
 
-void FlashMoviePlayer::postKeyUp(int keyCode)
+void FlashMoviePlayer::postKeyUp(int32_t keyCode)
 {
 	Event evt;
 	evt.eventType = EvtKeyUp;
@@ -269,7 +274,7 @@ void FlashMoviePlayer::postKeyUp(int keyCode)
 	m_events.push_back(evt);
 }
 
-void FlashMoviePlayer::postMouseDown(int x, int y, int button)
+void FlashMoviePlayer::postMouseDown(int32_t x, int32_t y, int32_t button)
 {
 	Event evt;
 	evt.eventType = EvtMouseDown;
@@ -279,7 +284,7 @@ void FlashMoviePlayer::postMouseDown(int x, int y, int button)
 	m_events.push_back(evt);
 }
 
-void FlashMoviePlayer::postMouseUp(int x, int y, int button)
+void FlashMoviePlayer::postMouseUp(int32_t x, int32_t y, int32_t button)
 {
 	Event evt;
 	evt.eventType = EvtMouseUp;
@@ -289,13 +294,22 @@ void FlashMoviePlayer::postMouseUp(int x, int y, int button)
 	m_events.push_back(evt);
 }
 
-void FlashMoviePlayer::postMouseMove(int x, int y, int button)
+void FlashMoviePlayer::postMouseMove(int32_t x, int32_t y, int32_t button)
 {
 	Event evt;
 	evt.eventType = EvtMouseMove;
 	evt.mouse.x = x;
 	evt.mouse.y = y;
 	evt.mouse.button = button;
+	m_events.push_back(evt);
+}
+
+void FlashMoviePlayer::postStageResize(int32_t width, int32_t height)
+{
+	Event evt;
+	evt.eventType = EvtStageResize;
+	evt.stage.width = width;
+	evt.stage.height = height;
 	m_events.push_back(evt);
 }
 

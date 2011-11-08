@@ -106,13 +106,13 @@ public:
 	 *
 	 * \param keyCode Key code.
 	 */
-	void postKeyDown(int keyCode);
+	void postKeyDown(int32_t keyCode);
 
 	/*! \brief Post key up event.
 	 *
 	 * \param keyCode Key code.
 	 */
-	void postKeyUp(int keyCode);
+	void postKeyUp(int32_t keyCode);
 
 	/*! \brief Post mouse button down event.
 	 *
@@ -120,7 +120,7 @@ public:
 	 * \param y Mouse cursor Y coordinate.
 	 * \param button Mouse buttons being held down.
 	 */
-	void postMouseDown(int x, int y, int button);
+	void postMouseDown(int32_t x, int32_t y, int32_t button);
 
 	/*! \brief Post mouse button up event.
 	 *
@@ -128,7 +128,7 @@ public:
 	 * \param y Mouse cursor Y coordinate.
 	 * \param button Mouse buttons being held down.
 	 */
-	void postMouseUp(int x, int y, int button);
+	void postMouseUp(int32_t x, int32_t y, int32_t button);
 
 	/*! \brief Post mouse move event.
 	 *
@@ -136,7 +136,14 @@ public:
 	 * \param y Mouse cursor Y coordinate.
 	 * \param button Mouse buttons being held down.
 	 */
-	void postMouseMove(int x, int y, int button);
+	void postMouseMove(int32_t x, int32_t y, int32_t button);
+
+	/*! \brief Post stage resize event.
+	 *
+	 * \param width New stage width.
+	 * \param height New stage height.
+	 */
+	void postStageResize(int32_t width, int32_t height);
 
 	/*! \brief Pop FS command from queue.
 	 *
@@ -178,14 +185,20 @@ private:
 		uint32_t eventType;
 		union
 		{
-			int keyCode;
+			int32_t keyCode;
 			struct
 			{
-				int x;
-				int y;
-				int button;
+				int32_t x;
+				int32_t y;
+				int32_t button;
 			}
 			mouse;
+			struct 
+			{
+				int32_t width;
+				int32_t height;
+			}
+			stage;
 		};
 	};
 
