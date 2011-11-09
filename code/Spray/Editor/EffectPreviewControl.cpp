@@ -382,7 +382,6 @@ void EffectPreviewControl::eventPaint(ui::Event* event)
 			render::getParameterHandle(L"World_ForwardColor"),
 			worldRenderView,
 			0.0f,
-			0,
 			0
 		);
 

@@ -12,7 +12,7 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 8, WorldRenderSettings, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 9, WorldRenderSettings, ISerializable)
 
 WorldRenderSettings::WorldRenderSettings()
 :	renderType(RtForward)
@@ -30,6 +30,10 @@ WorldRenderSettings::WorldRenderSettings()
 ,	shadowMapBias(0.001f)
 ,	shadowCascadingSlices(1)
 ,	shadowCascadingLambda(0.5f)
+,	fogEnabled(false)
+,	fogDistance(90.0f)
+,	fogRange(10.0f)
+,	fogColor(255, 255, 255, 255)
 {
 }
 
@@ -49,6 +53,10 @@ WorldRenderSettings::WorldRenderSettings(const WorldRenderSettings& settings)
 ,	shadowMapBias(settings.shadowMapBias)
 ,	shadowCascadingSlices(settings.shadowCascadingSlices)
 ,	shadowCascadingLambda(settings.shadowCascadingLambda)
+,	fogEnabled(settings.fogEnabled)
+,	fogDistance(settings.fogDistance)
+,	fogRange(settings.fogRange)
+,	fogColor(settings.fogColor)
 {
 }
 
@@ -121,6 +129,14 @@ bool WorldRenderSettings::serialize(ISerializer& s)
 	{
 		s >> Member< int32_t >(L"shadowCascadingSlices", shadowCascadingSlices, AttributeRange(1, MaxSliceCount));
 		s >> Member< float >(L"shadowCascadingLambda", shadowCascadingLambda, AttributeRange(0.0f, 1.0f));
+	}
+
+	if (s.getVersion() >= 9)
+	{
+		s >> Member< bool >(L"fogEnabled", fogEnabled);
+		s >> Member< float >(L"fogDistance", fogDistance, AttributeRange(0.0f));
+		s >> Member< float >(L"fogRange", fogRange, AttributeRange(0.0f));
+		s >> Member< Color4ub >(L"fogColor", fogColor);
 	}
 
 	return true;

@@ -27,6 +27,9 @@ render::handle_t s_handleLightDirectionAndRange;
 render::handle_t s_handleLightSunColor;
 render::handle_t s_handleLightBaseColor;
 render::handle_t s_handleLightShadowColor;
+render::handle_t s_handleFogEnable;
+render::handle_t s_handleFogDistanceAndRange;
+render::handle_t s_handleFogColor;
 render::handle_t s_handleShadowEnable;
 render::handle_t s_handleShadowMask;
 render::handle_t s_handleShadowMaskSize;
@@ -34,6 +37,38 @@ render::handle_t s_handleDepthEnable;
 render::handle_t s_handleDepthRange;
 render::handle_t s_handleDepthMap;
 render::handle_t s_handleTime;
+
+void initializeHandles()
+{
+	if (s_handlesInitialized)
+		return;
+
+	s_techniqueDefault = render::getParameterHandle(L"World_ForwardColor");
+
+	s_handleProjection = render::getParameterHandle(L"Projection");
+	s_handleSquareProjection = render::getParameterHandle(L"SquareProjection");
+	s_handleView = render::getParameterHandle(L"View");
+	s_handleWorld = render::getParameterHandle(L"World");
+	s_handleEyePosition = render::getParameterHandle(L"EyePosition");
+	s_handleLightEnableComplex = render::getParameterHandle(L"LightEnableComplex");
+	s_handleLightPositionAndType = render::getParameterHandle(L"LightPositionAndType");
+	s_handleLightDirectionAndRange = render::getParameterHandle(L"LightDirectionAndRange");
+	s_handleLightSunColor = render::getParameterHandle(L"LightSunColor");
+	s_handleLightBaseColor = render::getParameterHandle(L"LightBaseColor");
+	s_handleLightShadowColor = render::getParameterHandle(L"LightShadowColor");
+	s_handleFogEnable = render::getParameterHandle(L"FogEnable");
+	s_handleFogDistanceAndRange = render::getParameterHandle(L"FogDistanceAndRange");
+	s_handleFogColor = render::getParameterHandle(L"FogColor");
+	s_handleShadowEnable = render::getParameterHandle(L"ShadowEnable");
+	s_handleShadowMask = render::getParameterHandle(L"ShadowMask");
+	s_handleShadowMaskSize = render::getParameterHandle(L"ShadowMaskSize");
+	s_handleDepthEnable = render::getParameterHandle(L"DepthEnable");
+	s_handleDepthRange = render::getParameterHandle(L"DepthRange");
+	s_handleDepthMap = render::getParameterHandle(L"DepthMap");
+	s_handleTime = render::getParameterHandle(L"Time");
+
+	s_handlesInitialized = true;
+}
 
 		}
 
@@ -43,40 +78,43 @@ WorldRenderPassForward::WorldRenderPassForward(
 	render::handle_t technique,
 	const WorldRenderView& worldRenderView,
 	float depthRange,
+	bool fogEnabled,
+	float fogDistance,
+	float fogRange,
+	const Vector4& fogColor,
 	render::ISimpleTexture* depthMap,
 	render::ISimpleTexture* shadowMask
 )
 :	m_technique(technique)
 ,	m_worldRenderView(worldRenderView)
 ,	m_depthRange(depthRange)
+,	m_fogEnabled(fogEnabled)
+,	m_fogDistance(fogDistance)
+,	m_fogRange(fogRange)
+,	m_fogColor(fogColor)
 ,	m_depthMap(depthMap)
 ,	m_shadowMask(shadowMask)
 {
-	if (!s_handlesInitialized)
-	{
-		s_techniqueDefault = render::getParameterHandle(L"World_ForwardColor");
+	initializeHandles();
+}
 
-		s_handleProjection = render::getParameterHandle(L"Projection");
-		s_handleSquareProjection = render::getParameterHandle(L"SquareProjection");
-		s_handleView = render::getParameterHandle(L"View");
-		s_handleWorld = render::getParameterHandle(L"World");
-		s_handleEyePosition = render::getParameterHandle(L"EyePosition");
-		s_handleLightEnableComplex = render::getParameterHandle(L"LightEnableComplex");
-		s_handleLightPositionAndType = render::getParameterHandle(L"LightPositionAndType");
-		s_handleLightDirectionAndRange = render::getParameterHandle(L"LightDirectionAndRange");
-		s_handleLightSunColor = render::getParameterHandle(L"LightSunColor");
-		s_handleLightBaseColor = render::getParameterHandle(L"LightBaseColor");
-		s_handleLightShadowColor = render::getParameterHandle(L"LightShadowColor");
-		s_handleShadowEnable = render::getParameterHandle(L"ShadowEnable");
-		s_handleShadowMask = render::getParameterHandle(L"ShadowMask");
-		s_handleShadowMaskSize = render::getParameterHandle(L"ShadowMaskSize");
-		s_handleDepthEnable = render::getParameterHandle(L"DepthEnable");
-		s_handleDepthRange = render::getParameterHandle(L"DepthRange");
-		s_handleDepthMap = render::getParameterHandle(L"DepthMap");
-		s_handleTime = render::getParameterHandle(L"Time");
-
-		s_handlesInitialized = true;
-	}
+WorldRenderPassForward::WorldRenderPassForward(
+	render::handle_t technique,
+	const WorldRenderView& worldRenderView,
+	float depthRange,
+	render::ISimpleTexture* depthMap
+)
+:	m_technique(technique)
+,	m_worldRenderView(worldRenderView)
+,	m_depthRange(depthRange)
+,	m_fogEnabled(false)
+,	m_fogDistance(0.0f)
+,	m_fogRange(0.0f)
+,	m_fogColor(0.0f, 0.0f, 0.0f, 0.0f)
+,	m_depthMap(depthMap)
+,	m_shadowMask(0)
+{
+	initializeHandles();
 }
 
 render::handle_t WorldRenderPassForward::getTechnique() const
@@ -104,6 +142,7 @@ void WorldRenderPassForward::setShaderCombination(render::Shader* shader) const
 			shader->setCombination(s_handleLightEnableComplex, true);
 		}
 
+		shader->setCombination(s_handleFogEnable, m_fogEnabled);
 		shader->setCombination(s_handleShadowEnable, m_shadowMask != 0);
 		shader->setCombination(s_handleDepthEnable, m_depthMap != 0);
 	}
@@ -145,6 +184,7 @@ void WorldRenderPassForward::setShaderCombination(render::Shader* shader, const 
 			shader->setCombination(s_handleLightEnableComplex, false);
 		}
 
+		shader->setCombination(s_handleFogEnable, m_fogEnabled);
 		shader->setCombination(s_handleShadowEnable, m_shadowMask != 0);
 		shader->setCombination(s_handleDepthEnable, m_depthMap != 0);
 	}
@@ -158,6 +198,7 @@ void WorldRenderPassForward::setProgramParameters(render::ProgramParameters* pro
 	if (m_technique == s_techniqueDefault)
 	{
 		setLightProgramParameters(programParams);
+		setFogProgramParameters(programParams);
 		setShadowMapProgramParameters(programParams);
 		setDepthMapProgramParameters(programParams);
 	}
@@ -171,6 +212,7 @@ void WorldRenderPassForward::setProgramParameters(render::ProgramParameters* pro
 	if (m_technique == s_techniqueDefault)
 	{
 		setLightProgramParameters(programParams, world, bounds);
+		setFogProgramParameters(programParams);
 		setShadowMapProgramParameters(programParams);
 		setDepthMapProgramParameters(programParams);
 	}
@@ -293,6 +335,15 @@ void WorldRenderPassForward::setLightProgramParameters(render::ProgramParameters
 	programParams->setVectorArrayParameter(s_handleLightSunColor, lightSunColor, MaxForwardLightCount);
 	programParams->setVectorArrayParameter(s_handleLightBaseColor, lightBaseColor, MaxForwardLightCount);
 	programParams->setVectorArrayParameter(s_handleLightShadowColor, lightShadowColor, MaxForwardLightCount);
+}
+
+void WorldRenderPassForward::setFogProgramParameters(render::ProgramParameters* programParams) const
+{
+	if (m_fogEnabled)
+	{
+		programParams->setVectorParameter(s_handleFogDistanceAndRange, Vector4(m_fogDistance, m_fogRange, 1.0f / m_fogDistance, 1.0f / m_fogRange));
+		programParams->setVectorParameter(s_handleFogColor, m_fogColor);
+	}
 }
 
 void WorldRenderPassForward::setShadowMapProgramParameters(render::ProgramParameters* programParams) const
