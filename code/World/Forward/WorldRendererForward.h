@@ -128,6 +128,7 @@ private:
 	AlignedVector< Frame > m_frames;
 	float m_slicePositions[MaxSliceCount + 1];
 	uint32_t m_count;
+	Vector4 m_fogColor;
 
 	void buildShadows(WorldRenderView& worldRenderView, Entity* entity, int frame);
 

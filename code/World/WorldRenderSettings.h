@@ -2,6 +2,7 @@
 #define traktor_world_WorldRenderSettings_H
 
 #include "Core/Serialization/ISerializable.h"
+#include "Core/Math/Color4ub.h"
 #include "Core/Math/Vector4.h"
 #include "Resource/Proxy.h"
 
@@ -69,6 +70,10 @@ public:
 	float shadowMapBias;
 	int32_t shadowCascadingSlices;
 	float shadowCascadingLambda;
+	bool fogEnabled;
+	float fogDistance;
+	float fogRange;
+	Color4ub fogColor;
 
 	WorldRenderSettings();
 

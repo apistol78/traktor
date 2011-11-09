@@ -75,6 +75,10 @@ bool WorldRendererForward::create(
 	m_renderView = renderView;
 	m_frames.resize(frameCount);
 
+	float fogColor[4];
+	settings.fogColor.getRGBA32F(fogColor);
+	m_fogColor = Vector4::loadUnaligned(fogColor);
+
 	int32_t width = renderView->getWidth();
 	int32_t height = renderView->getHeight();
 
@@ -364,7 +368,6 @@ void WorldRendererForward::build(WorldRenderView& worldRenderView, Entity* entit
 			s_techniqueDepth,
 			depthRenderView,
 			m_settings.depthRange,
-			0,
 			0
 		);
 		f.depth->build(depthRenderView, pass, entity);
@@ -675,7 +678,6 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, Entity
 			s_techniqueShadow,
 			shadowRenderView,
 			m_settings.depthRange,
-			0,
 			0
 		);
 		f.slice[slice].shadow->build(shadowRenderView, shadowPass, entity);
@@ -693,6 +695,10 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, Entity
 		s_techniqueDefault,
 		worldRenderView,
 		m_settings.depthRange,
+		m_settings.fogEnabled,
+		m_settings.fogDistance,
+		m_settings.fogRange,
+		m_fogColor,
 		f.haveDepth ? m_depthTargetSet->getColorTexture(0) : 0,
 		m_shadowMaskFilterTargetSet->getColorTexture(0)
 	);
@@ -718,6 +724,10 @@ void WorldRendererForward::buildNoShadows(WorldRenderView& worldRenderView, Enti
 		s_techniqueDefault,
 		worldRenderView,
 		m_settings.depthRange,
+		m_settings.fogEnabled,
+		m_settings.fogDistance,
+		m_settings.fogRange,
+		m_fogColor,
 		f.haveDepth ? m_depthTargetSet->getColorTexture(0) : 0,
 		0
 	);

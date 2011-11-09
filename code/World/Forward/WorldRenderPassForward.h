@@ -37,8 +37,19 @@ public:
 		render::handle_t technique,
 		const WorldRenderView& worldRenderView,
 		float depthRange,
+		bool fogEnabled,
+		float fogDistance,
+		float m_fogRange,
+		const Vector4& fogColor,
 		render::ISimpleTexture* depthMap,
 		render::ISimpleTexture* shadowMask
+	);
+
+	WorldRenderPassForward(
+		render::handle_t technique,
+		const WorldRenderView& worldRenderView,
+		float depthRange,
+		render::ISimpleTexture* depthMap
 	);
 
 	virtual render::handle_t getTechnique() const;
@@ -57,6 +68,10 @@ private:
 	render::handle_t m_technique;
 	const WorldRenderView& m_worldRenderView;
 	float m_depthRange;
+	bool m_fogEnabled;
+	float m_fogDistance;
+	float m_fogRange;
+	Vector4 m_fogColor;
 	render::ISimpleTexture* m_depthMap;
 	render::ISimpleTexture* m_shadowMask;
 
@@ -65,6 +80,8 @@ private:
 	void setLightProgramParameters(render::ProgramParameters* programParams) const;
 
 	void setLightProgramParameters(render::ProgramParameters* programParams, const Matrix44& world, const Aabb3& bounds) const;
+
+	void setFogProgramParameters(render::ProgramParameters* programParams) const;
 
 	void setShadowMapProgramParameters(render::ProgramParameters* programParams) const;
 
