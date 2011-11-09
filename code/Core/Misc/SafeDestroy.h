@@ -14,8 +14,8 @@ void safeDestroy(T& tv)
 {
 	if (tv)
 	{
-		tv->destroy();
-		tv = 0;
+		T ttv = tv; tv = 0;
+		ttv->destroy();
 	}
 }
 

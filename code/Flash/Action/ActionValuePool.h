@@ -57,7 +57,9 @@ public:
 private:
 	AutoArrayPtr< ActionValue > m_top;
 	uint32_t m_next;
-	uint32_t m_peek;
+#if defined(_DEBUG)
+	const class Thread* m_ownerThread;
+#endif
 };
 
 	}

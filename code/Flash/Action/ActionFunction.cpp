@@ -21,7 +21,10 @@ ActionValue ActionFunction::call(ActionFrame* callerFrame, ActionObject* self, A
 	T_ASSERT (callerFrame);
 
 	ActionValueStack& callerStack = callerFrame->getStack();
+
 	int32_t argCount = !callerStack.empty() ? int32_t(callerStack.pop().getNumber()) : 0;
+	if (argCount < 0)
+		argCount = 0;
 
 	ActionValueArray args(getContext()->getPool(), argCount);
 	for (int32_t i = 0; i < argCount; ++i)
@@ -35,7 +38,10 @@ ActionValue ActionFunction::call(ActionFrame* callerFrame, ActionObject* self)
 	T_ASSERT (callerFrame);
 
 	ActionValueStack& callerStack = callerFrame->getStack();
+
 	int32_t argCount = !callerStack.empty() ? int32_t(callerStack.pop().getNumber()) : 0;
+	if (argCount < 0)
+		argCount = 0;
 
 	ActionValueArray args(getContext()->getPool(), argCount);
 	for (int32_t i = 0; i < argCount; ++i)
@@ -49,7 +55,10 @@ ActionValue ActionFunction::call(ActionFrame* callerFrame)
 	T_ASSERT (callerFrame);
 
 	ActionValueStack& callerStack = callerFrame->getStack();
+
 	int32_t argCount = !callerStack.empty() ? int32_t(callerStack.pop().getNumber()) : 0;
+	if (argCount < 0)
+		argCount = 0;
 
 	ActionValueArray args(getContext()->getPool(), argCount);
 	for (int32_t i = 0; i < argCount; ++i)
