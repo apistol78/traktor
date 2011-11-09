@@ -13856,6 +13856,7 @@
 					<libraries>
 						<item>IOKit.framework</item>
 						<item>CoreFoundation.framework</item>
+						<item>AppKit.framework</item>
 					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -13876,6 +13877,7 @@
 					<libraries>
 						<item>IOKit.framework</item>
 						<item>CoreFoundation.framework</item>
+						<item>AppKit.framework</item>
 					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
