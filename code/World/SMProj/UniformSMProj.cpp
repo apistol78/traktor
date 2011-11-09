@@ -18,13 +18,11 @@ void calculateUniformSMProj(
 	Frustum& outShadowFrustum
 )
 {
-	Vector4 viewDirection = viewInverse.axisZ();
-
 	// Calculate light axises.
 	Vector4 lightAxisX, lightAxisY, lightAxisZ;
 
 	lightAxisZ = -lightDirection.normalized();
-	lightAxisX = cross(lightAxisZ, -viewDirection).normalized();
+	lightAxisX = cross(lightAxisZ, Vector4(0.0f, 1.0f, 0.0f, 0.0f)).normalized();
 	lightAxisY = cross(lightAxisX, lightAxisZ).normalized();
 
 	// Calculate bounding box of view frustum in light space.
@@ -45,10 +43,21 @@ void calculateUniformSMProj(
 	Vector4 center = viewFrustumBox.getCenter();
 	Vector4 extent = viewFrustumBox.getExtent() * Vector4(2.0f, 2.0f, 1.0f, 0.0f);
 
+	const float c_extentStep = 8.0f;
+
+	Scalar ex = Scalar(std::ceilf(extent.x() / c_extentStep) * c_extentStep);
+	Scalar ey = Scalar(std::ceilf(extent.y() / c_extentStep) * c_extentStep);
+
+	Scalar smx = ex / Scalar(settings.shadowMapResolution);
+	Scalar smy = ey / Scalar(settings.shadowMapResolution);
+
+	Scalar cx = Scalar(std::floorf(center.x() / smx) * smx);
+	Scalar cy = Scalar(std::floorf(center.y() / smy) * smy);
+
 	// Calculate world center of view frustum's bounding box.
 	Vector4 worldCenter =
-		lightAxisX * center.x() +
-		lightAxisY * center.y() +
+		lightAxisX * cx +
+		lightAxisY * cy +
 		lightAxisZ * center.z() +
 		Vector4::origo();
 
@@ -64,15 +73,15 @@ void calculateUniformSMProj(
 	outLightView = outLightView.inverseOrtho();
 
 	outLightProjection = orthoLh(
-		extent.x(),
-		extent.y(),
+		ex,
+		ey,
 		0.0f,
 		lightDistance + extent.z()
 	);
 
 	outShadowFrustum.buildOrtho(
-		extent.x(),
-		extent.y(),
+		ex,
+		ey,
 		0.0f,
 		lightDistance + extent.z()
 	);
