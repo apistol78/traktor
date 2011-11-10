@@ -628,6 +628,7 @@ void AnimationEditorPage::drawSkeleton(float time, const Color4ub& defaultColor,
 			0.0f,
 			Transform::identity(),
 			m_skeleton,
+			0,
 			boneTransforms,
 			boneTransforms,
 			continueUpdate

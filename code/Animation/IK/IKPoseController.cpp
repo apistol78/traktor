@@ -44,6 +44,7 @@ void IKPoseController::evaluate(
 	float deltaTime,
 	const Transform& worldTransform,
 	const Skeleton* skeleton,
+	const Pose* neutralPose,
 	const AlignedVector< Transform >& boneTransforms,
 	AlignedVector< Transform >& outPoseTransforms,
 	bool& outUpdateController
@@ -58,6 +59,7 @@ void IKPoseController::evaluate(
 			deltaTime,
 			worldTransform,
 			skeleton,
+			neutralPose,
 			boneTransforms,
 			outPoseTransforms,
 			outUpdateController
@@ -67,6 +69,12 @@ void IKPoseController::evaluate(
 		for (size_t i = outPoseTransforms.size(); i < boneTransforms.size(); ++i)
 			outPoseTransforms.push_back(boneTransforms[i]);
 	}
+	else if (neutralPose)
+		calculatePoseTransforms(
+			skeleton,
+			neutralPose,
+			outPoseTransforms
+		);
 	else
 		outPoseTransforms = boneTransforms;
 
@@ -115,27 +123,27 @@ void IKPoseController::evaluate(
 			Vector4& sp = nodes[edges[j].first];
 			Vector4& ep = nodes[edges[j].second];
 
-			// Constraint 1; not inside any collision geometry.
-			if (m_physicsManager)
-			{
-				physics::QueryResult result;
-				
-				Vector4 d = ep - sp;
-				Scalar ln = d.length(); d /= ln;
-				
-				if (m_physicsManager->querySweep(
-					worldTransform * sp,
-					worldTransform * d,
-					ln,
-					bone->getRadius(),
-					~0UL,
-					m_ignoreBody,
-					result
-				))
-				{
-					ep = worldTransform.inverse() * result.position;
-				}
-			}
+			//// Constraint 1; not inside any collision geometry.
+			//if (m_physicsManager)
+			//{
+			//	physics::QueryResult result;
+			//	
+			//	Vector4 d = ep - sp;
+			//	Scalar ln = d.length(); d /= ln;
+			//	
+			//	if (m_physicsManager->querySweep(
+			//		worldTransform * sp,
+			//		worldTransform * d,
+			//		ln,
+			//		bone->getRadius(),
+			//		~0UL,
+			//		m_ignoreBody,
+			//		result
+			//	))
+			//	{
+			//		ep = worldTransform.inverse() * result.position;
+			//	}
+			//}
 
 			// Constraint 2; keep length.
 			{

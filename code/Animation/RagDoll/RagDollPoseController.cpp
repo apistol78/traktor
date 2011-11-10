@@ -65,6 +65,7 @@ bool RagDollPoseController::create(
 			0.0f,
 			worldTransform,
 			skeleton,
+			0,
 			boneTransforms,
 			limbTransforms,
 			updateController
@@ -256,6 +257,7 @@ void RagDollPoseController::evaluate(
 	float deltaTime,
 	const Transform& worldTransform,
 	const Skeleton* skeleton,
+	const Pose* neutralPose,
 	const AlignedVector< Transform >& boneTransforms,
 	AlignedVector< Transform >& outPoseTransforms,
 	bool& outUpdateController
@@ -277,6 +279,7 @@ void RagDollPoseController::evaluate(
 				deltaTime,
 				worldTransform,
 				skeleton,
+				neutralPose,
 				boneTransforms,
 				outPoseTransforms,
 				outUpdateController

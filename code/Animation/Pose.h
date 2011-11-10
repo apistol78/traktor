@@ -1,10 +1,10 @@
 #ifndef traktor_animation_Pose_H
 #define traktor_animation_Pose_H
 
+#include "Animation/BitSet.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Quaternion.h"
-#include "Animation/BitSet.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
