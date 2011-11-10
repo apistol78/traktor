@@ -55,6 +55,7 @@ Ref< IPoseController > StatePoseControllerData::createInstance(resource::IResour
 			c_timeOffsetDeltaTime,
 			worldTransform,
 			skeleton,
+			0,
 			dummyPose,
 			dummyPose,
 			dummyUpdate

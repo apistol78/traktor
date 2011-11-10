@@ -196,6 +196,28 @@ bool AnimatedMeshEntity::getSkinTransform(const std::wstring& boneName, Transfor
 	return true;
 }
 
+bool AnimatedMeshEntity::setNeutralPoseTransform(const std::wstring& boneName, const Transform& transform)
+{
+	uint32_t index;
+
+	if (!m_neutralPose)
+		m_neutralPose = new Pose();
+
+	if (!m_skeleton.validate() || !m_skeleton->findBone(boneName, index))
+		return false;
+
+	if (index >= m_boneTransforms.size())
+		return false;
+
+	//Transform poseTransform = transform * m_boneTransforms[index].inverse();
+	Transform poseTransform = m_boneTransforms[index].inverse() * transform;
+
+	m_neutralPose->setBoneOffset(index, poseTransform.translation());
+	m_neutralPose->setBoneOrientation(index, poseTransform.rotation());
+
+	return true;
+}
+
 void AnimatedMeshEntity::synchronize() const
 {
 #if defined(T_USE_UPDATE_JOBS)
@@ -225,6 +247,7 @@ void AnimatedMeshEntity::updatePoseController(float deltaTime)
 			deltaTime,
 			m_transform,
 			m_skeleton,
+			m_neutralPose,
 			m_boneTransforms,
 			m_poseTransforms,
 			m_updateController
@@ -260,6 +283,47 @@ void AnimatedMeshEntity::updatePoseController(float deltaTime)
 					m_transform.rotation()
 				);
 		}
+
+		// Initialize skin transforms.
+		m_skinTransforms.resize(skinBoneCount * 2);
+		for (size_t i = 0; i < skinBoneCount * 2; i += 2)
+		{
+			m_skinTransforms[i + 0] = Vector4::origo();
+			m_skinTransforms[i + 1] = Vector4::origo();
+		}
+
+		// Calculate skin transforms in delta space.
+		for (size_t i = 0; i < skeletonBoneCount; ++i)
+		{
+			int32_t boneIndex = m_boneRemap[i];
+			if (boneIndex >= 0 && boneIndex < int32_t(skinBoneCount))
+			{
+				Transform skinTransform = m_poseTransforms[i] * m_boneTransforms[i].inverse();
+				m_skinTransforms[boneIndex * 2 + 0] = skinTransform.rotation().e;
+				m_skinTransforms[boneIndex * 2 + 1] = skinTransform.translation().xyz1();
+			}
+		}
+	}
+	else if (m_neutralPose)
+	{
+		m_boneTransforms.resize(0);
+		m_poseTransforms.resize(0);
+
+		// Calculate original bone transforms in object space.
+		calculateBoneTransforms(
+			m_skeleton,
+			m_boneTransforms
+		);
+
+		// Calculate transforms from neutral pose.
+		calculatePoseTransforms(
+			m_skeleton,
+			m_neutralPose,
+			m_poseTransforms
+		);
+
+		size_t skeletonBoneCount = m_boneTransforms.size();
+		size_t skinBoneCount = m_mesh->getBoneCount();
 
 		// Initialize skin transforms.
 		m_skinTransforms.resize(skinBoneCount * 2);

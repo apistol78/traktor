@@ -45,6 +45,7 @@ public:
 		float deltaTime,
 		const Transform& worldTransform,
 		const Skeleton* skeleton,
+		const Pose* neutralPose,
 		const AlignedVector< Transform >& boneTransforms,
 		AlignedVector< Transform >& outPoseTransforms,
 		bool& outUpdateController
