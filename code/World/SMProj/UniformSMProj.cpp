@@ -45,14 +45,14 @@ void calculateUniformSMProj(
 
 	const float c_extentStep = 8.0f;
 
-	Scalar ex = Scalar(std::ceilf(extent.x() / c_extentStep) * c_extentStep);
-	Scalar ey = Scalar(std::ceilf(extent.y() / c_extentStep) * c_extentStep);
+	Scalar ex = Scalar(std::ceil(extent.x() / c_extentStep) * c_extentStep);
+	Scalar ey = Scalar(std::ceil(extent.y() / c_extentStep) * c_extentStep);
 
 	Scalar smx = ex / Scalar(settings.shadowMapResolution);
 	Scalar smy = ey / Scalar(settings.shadowMapResolution);
 
-	Scalar cx = Scalar(std::floorf(center.x() / smx) * smx);
-	Scalar cy = Scalar(std::floorf(center.y() / smy) * smy);
+	Scalar cx = Scalar(std::floor(center.x() / smx) * smx);
+	Scalar cy = Scalar(std::floor(center.y() / smy) * smy);
 
 	// Calculate world center of view frustum's bounding box.
 	Vector4 worldCenter =
