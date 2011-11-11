@@ -23,6 +23,7 @@ public:
 
 private:
 	friend class ProgramDx11;
+	friend class ProgramCompilerDx11;
 
 	ComRef< ID3DBlob > m_vertexShader;
 	ComRef< ID3DBlob > m_pixelShader;

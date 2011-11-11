@@ -22,6 +22,7 @@ namespace traktor
 
 class ContextDx11;
 class ProgramResourceDx11;
+class StateCache;
 class HlslProgram;
 
 /*!
@@ -36,9 +37,7 @@ public:
 
 	virtual ~ProgramDx11();
 
-	static Ref< ProgramResourceDx11 > compile(const HlslProgram& hlslProgram);
-
-	bool create(ID3D11Device* d3dDevice, const ProgramResourceDx11* resource, float mipBias);
+	bool create(ID3D11Device* d3dDevice, StateCache& stateCache, const ProgramResourceDx11* resource, float mipBias);
 
 	virtual void destroy();
 

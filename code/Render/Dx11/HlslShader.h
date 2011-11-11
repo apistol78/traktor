@@ -16,6 +16,7 @@ namespace traktor
 	namespace render
 	{
 
+class IProgramHints;
 class OutputPin;
 
 /*!
@@ -39,7 +40,7 @@ public:
 		BtLast
 	};
 
-	HlslShader(ShaderType shaderType);
+	HlslShader(ShaderType shaderType, IProgramHints* programHints);
 
 	virtual ~HlslShader();
 
@@ -87,6 +88,7 @@ private:
 	typedef std::map< const OutputPin*, Ref< HlslVariable > > scope_t;
 
 	ShaderType m_shaderType;
+	IProgramHints* m_programHints;
 	std::map< std::wstring, HlslVariable* > m_inputVariables;
 	std::list< scope_t > m_variables;
 	int32_t m_interpolatorCount;

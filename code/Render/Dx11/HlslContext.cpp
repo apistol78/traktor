@@ -13,10 +13,10 @@ namespace traktor
 	namespace render
 	{
 
-HlslContext::HlslContext(const ShaderGraph* shaderGraph)
+HlslContext::HlslContext(const ShaderGraph* shaderGraph, IProgramHints* programHints)
 :	m_shaderGraph(shaderGraph)
-,	m_vertexShader(HlslShader::StVertex)
-,	m_pixelShader(HlslShader::StPixel)
+,	m_vertexShader(HlslShader::StVertex, programHints)
+,	m_pixelShader(HlslShader::StPixel, programHints)
 ,	m_currentShader(0)
 ,	m_stencilReference(0)
 {

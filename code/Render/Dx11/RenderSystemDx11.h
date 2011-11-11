@@ -21,6 +21,7 @@ namespace traktor
 	{
 
 class ContextDx11;
+class StateCache;
 class Window;
 
 /*! \brief DirectX 10 render system.
@@ -72,6 +73,7 @@ public:
 private:
 	Ref< ContextDx11 > m_context;
 	Ref< Window > m_window;
+	Ref< StateCache > m_stateCache;
 	float m_displayAspect;
 	float m_mipBias;
 };

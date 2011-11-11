@@ -12,6 +12,7 @@
 #include "Render/Dx11/ProgramCompilerDx11.h"
 #include "Render/Dx11/ProgramResourceDx11.h"
 #include "Render/Dx11/ProgramDx11.h"
+#include "Render/Dx11/StateCache.h"
 #include "Render/Dx11/TypesDx11.h"
 #include "Render/Dx11/Utilities.h"
 #include "Render/Dx11/Window.h"
@@ -84,13 +85,16 @@ bool RenderSystemDx11::create(const RenderSystemCreateDesc& desc)
 		return 0;
 
 	m_context = new ContextDx11(d3dDevice, d3dDeviceContext, dxgiFactory, dxgiOutput);
-	m_mipBias = desc.mipBias;
+	m_stateCache = new StateCache(d3dDevice);
 
+	m_mipBias = desc.mipBias;
 	return true;
 }
 
 void RenderSystemDx11::destroy()
 {
+	m_stateCache = 0;
+
 	if (m_context)
 	{
 		m_context->deleteResources();
@@ -292,7 +296,7 @@ Ref< IProgram > RenderSystemDx11::createProgram(const ProgramResource* programRe
 		return 0;
 
 	Ref< ProgramDx11 > program = new ProgramDx11(m_context);
-	if (!program->create(m_context->getD3DDevice(), resource, m_mipBias))
+	if (!program->create(m_context->getD3DDevice(), *m_stateCache, resource, m_mipBias))
 		return 0;
 
 	return program;
