@@ -4,7 +4,6 @@
 #include <list>
 #include "Core/Object.h"
 #include "Core/Ref.h"
-#include "Flash/Acc/BlockList.h"
 
 namespace traktor
 {
@@ -36,7 +35,7 @@ public:
 		}
 	};
 
-	AccShapeVertexPool(render::IRenderSystem* renderSystem);
+	AccShapeVertexPool(render::IRenderSystem* renderSystem, uint32_t frames);
 
 	bool create();
 
@@ -46,15 +45,22 @@ public:
 
 	void releaseRange(const Range& range);
 
+	void cycleGarbage();
+
 private:
-	struct VertexPool
+	struct VertexRange
 	{
 		Ref< render::VertexBuffer > vertexBuffer;
-		BlockList* blockList;
+		int32_t vertexCount;
 	};
 
+	typedef std::list< VertexRange > vr_list_t;
+
 	Ref< render::IRenderSystem > m_renderSystem;
-	std::list< VertexPool > m_pools;
+	vr_list_t m_usedRanges;
+	vr_list_t m_freeRanges;
+	std::vector< vr_list_t > m_garbageRanges;
+	uint32_t m_frame;
 };
 
 	}
