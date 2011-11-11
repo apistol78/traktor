@@ -122,25 +122,9 @@ bool AccDisplayRenderer::create(
 	if (!m_shapeResources->create(resourceManager))
 		return false;
 
-	// Create pool of vertices; one for each frame as we need to cycle through
-	// them in order to prevent locking "in-use" vertex buffers.
-	if (frameCount > 0)
-	{
-		m_vertexPools.resize(frameCount);
-		for (uint32_t i = 0; i < frameCount; ++i)
-		{
-			m_vertexPools[i] = new AccShapeVertexPool(renderSystem);
-			if (!m_vertexPools[i]->create())
-				return false;
-		}
-	}
-	else
-	{
-		m_vertexPools.resize(1);
-		m_vertexPools[0] = new AccShapeVertexPool(renderSystem);
-		if (!m_vertexPools[0]->create())
-			return false;
-	}
+	m_vertexPool = new AccShapeVertexPool(renderSystem, frameCount > 0 ? frameCount : 1);
+	if (!m_vertexPool->create())
+		return false;
 
 	m_glyph = new AccGlyph();
 	if (!m_glyph->create(resourceManager, renderSystem))
@@ -188,10 +172,7 @@ void AccDisplayRenderer::destroy()
 	m_shapeCache.clear();
 
 	safeDestroy(m_shapeResources);
-
-	for (RefArray< AccShapeVertexPool >::iterator i = m_vertexPools.begin(); i != m_vertexPools.end(); ++i)
-		(*i)->destroy();
-	m_vertexPools.clear();
+	safeDestroy(m_vertexPool);
 
 	m_renderContexts.clear();
 	m_renderContext = 0;
@@ -204,7 +185,6 @@ void AccDisplayRenderer::build(uint32_t frame)
 	m_shapeResources->validate();
 	m_renderContext = m_renderContexts[frame];
 	m_renderContext->flush();
-	m_vertexPool = m_vertexPools[frame];
 	m_viewOffset.set(0.0f, 0.0f, 1.0f, 1.0f);
 
 	for (std::map< uint64_t, CacheEntry >::const_iterator i = m_shapeCache.begin(); i != m_shapeCache.end(); ++i)
@@ -214,8 +194,6 @@ void AccDisplayRenderer::build(uint32_t frame)
 void AccDisplayRenderer::build(render::RenderContext* renderContext, uint32_t frame)
 {
 	m_renderContext = renderContext;
-	m_vertexPool = m_vertexPools[frame];
-
 	for (std::map< uint64_t, CacheEntry >::const_iterator i = m_shapeCache.begin(); i != m_shapeCache.end(); ++i)
 		i->second.shape->preBuild();
 }
@@ -455,6 +433,8 @@ void AccDisplayRenderer::begin(
 	m_maskWrite = false;
 	m_maskIncrement = false;
 	m_maskReference = 0;
+
+	// Allocate new vertex pool
 }
 
 void AccDisplayRenderer::beginMask(bool increment)
@@ -506,7 +486,7 @@ void AccDisplayRenderer::renderShape(const FlashMovie& movie, const Matrix33& tr
 	std::map< uint64_t, CacheEntry >::iterator it = m_shapeCache.find(hash);
 	if (it == m_shapeCache.end())
 	{
-		accShape = new AccShape(m_shapeResources, m_vertexPool);
+		accShape = new AccShape(m_shapeResources);
 		if (!accShape->createTesselation(shape))
 			return;
 
@@ -520,6 +500,7 @@ void AccDisplayRenderer::renderShape(const FlashMovie& movie, const Matrix33& tr
 	}
 
 	if (!accShape->updateRenderable(
+		m_vertexPool,
 		*m_textureCache,
 		movie,
 		shape.getFillStyles(),
@@ -568,7 +549,7 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 	std::map< uint64_t, CacheEntry >::iterator it1 = m_shapeCache.find(hash);
 	if (it1 == m_shapeCache.end())
 	{
-		accShape = new AccShape(m_shapeResources, m_vertexPool);
+		accShape = new AccShape(m_shapeResources);
 		if (!accShape->createTesselation(shape))
 			return;
 
@@ -582,6 +563,7 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 	}
 
 	if (!accShape->updateRenderable(
+		m_vertexPool,
 		*m_textureCache,
 		movie,
 		shape.getFillStyles(),
@@ -714,7 +696,7 @@ void AccDisplayRenderer::renderCanvas(const FlashMovie& movie, const Matrix33& t
 	std::map< uint64_t, CacheEntry >::iterator it = m_shapeCache.find(hash);
 	if (it == m_shapeCache.end() || it->second.tag != canvas.getTag())
 	{
-		accShape = new AccShape(m_shapeResources, m_vertexPool);
+		accShape = new AccShape(m_shapeResources);
 		if (!accShape->createTesselation(canvas))
 			return;
 
@@ -728,6 +710,7 @@ void AccDisplayRenderer::renderCanvas(const FlashMovie& movie, const Matrix33& t
 	}
 
 	if (!accShape->updateRenderable(
+		m_vertexPool,
 		*m_textureCache,
 		movie,
 		canvas.getFillStyles(),
@@ -812,6 +795,8 @@ void AccDisplayRenderer::end()
 			++i;
 	}
 #endif
+
+	m_vertexPool->cycleGarbage();
 
 	m_renderContext = 0;
 }

@@ -39,7 +39,7 @@ struct SwfCxTransform;
 class AccShape : public Object
 {
 public:
-	AccShape(AccShapeResources* shapeResources, AccShapeVertexPool* vertexPool);
+	AccShape(AccShapeResources* shapeResources);
 
 	virtual ~AccShape();
 
@@ -48,6 +48,7 @@ public:
 	bool createTesselation(const FlashCanvas& canvas);
 
 	bool updateRenderable(
+		AccShapeVertexPool* vertexPool,
 		AccTextureCache& textureCache,
 		const FlashMovie& movie,
 		const AlignedVector< FlashFillStyle >& fillStyles,

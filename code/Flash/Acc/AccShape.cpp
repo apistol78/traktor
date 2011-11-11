@@ -58,9 +58,9 @@ struct Vertex
 
 		}
 
-AccShape::AccShape(AccShapeResources* shapeResources, AccShapeVertexPool* vertexPool)
+AccShape::AccShape(AccShapeResources* shapeResources)
 :	m_shapeResources(shapeResources)
-,	m_vertexPool(vertexPool)
+,	m_vertexPool(0)
 ,	m_tesselationTriangleCount(0)
 ,	m_batchFlags(0)
 ,	m_needUpdate(true)
@@ -208,6 +208,7 @@ bool AccShape::createTesselation(const FlashCanvas& canvas)
 }
 
 bool AccShape::updateRenderable(
+	AccShapeVertexPool* vertexPool,
 	AccTextureCache& textureCache,
 	const FlashMovie& movie,
 	const AlignedVector< FlashFillStyle >& fillStyles,
@@ -221,12 +222,20 @@ bool AccShape::updateRenderable(
 	if (!m_needUpdate)
 		return true;
 
-	// Allocate new vertex range if none has been previously allocated.
-	if (!m_vertexRange.vertexBuffer)
+	// Free previous vertex range if any.
+	if (m_vertexRange.vertexBuffer)
 	{
-		if (!m_vertexPool->acquireRange(m_tesselationTriangleCount * 3, m_vertexRange))
-			return false;
+		m_vertexPool->releaseRange(m_vertexRange);
+		m_vertexPool = 0;
+		m_vertexRange.vertexBuffer = 0;
 	}
+
+	// Allocate vertex range.
+	if (!vertexPool->acquireRange(m_tesselationTriangleCount * 3, m_vertexRange))
+		return false;
+
+	T_ASSERT (m_vertexRange.vertexBuffer);
+	m_vertexPool = vertexPool;
 
 	const static Matrix33 textureTS = translate(0.5f, 0.5f) * scale(1.0f / 32768.0f, 1.0f / 32768.0f);
 
