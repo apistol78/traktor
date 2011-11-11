@@ -26,6 +26,7 @@ ProgramDx11::ProgramDx11(ContextDx11* context)
 ,	m_d3dInputElementsHash(0)
 ,	m_parameterArrayDirty(false)
 ,	m_parameterResArrayDirty(false)
+,	m_bufferCycle(0)
 {
 }
 
@@ -109,9 +110,11 @@ void ProgramDx11::destroy()
 	m_context->releaseComRef(m_d3dBlendState);
 	m_context->releaseComRef(m_d3dVertexShader);
 	m_context->releaseComRef(m_d3dPixelShader);
-	m_context->releaseComRef(m_vertexState.d3dConstantBuffer);
+	for (uint32_t i = 0; i < sizeof_array(m_vertexState.d3dConstantBuffer); ++i)
+		m_context->releaseComRef(m_vertexState.d3dConstantBuffer[i]);
 	m_context->releaseComRef(m_vertexState.d3dSamplerStates);
-	m_context->releaseComRef(m_pixelState.d3dConstantBuffer);
+	for (uint32_t i = 0; i < sizeof_array(m_pixelState.d3dConstantBuffer); ++i)
+		m_context->releaseComRef(m_pixelState.d3dConstantBuffer[i]);
 	m_context->releaseComRef(m_pixelState.d3dSamplerStates);
 	m_context->releaseComRef(m_d3dVertexShaderBlob);
 	for (SmallMap< size_t, ComRef< ID3D11InputLayout > >::iterator i = m_d3dInputLayouts.begin(); i != m_d3dInputLayouts.end(); ++i)
@@ -245,6 +248,7 @@ bool ProgramDx11::bind(
 	// Update constant buffers.
 	if (m_parameterArrayDirty || ms_activeProgram != this)
 	{
+		m_bufferCycle = (m_bufferCycle + 1) % sizeof_array(m_vertexState.d3dConstantBuffer);
 		if (!updateStateConstants(d3dDeviceContext, m_vertexState))
 			return false;
 		if (!updateStateConstants(d3dDeviceContext, m_pixelState))
@@ -253,8 +257,8 @@ bool ProgramDx11::bind(
 	}
 
 	// Bind constant buffers.
-	d3dDeviceContext->VSSetConstantBuffers(0, 1, &m_vertexState.d3dConstantBuffer.get());
-	d3dDeviceContext->PSSetConstantBuffers(0, 1, &m_pixelState.d3dConstantBuffer.get());
+	d3dDeviceContext->VSSetConstantBuffers(0, 1, &m_vertexState.d3dConstantBuffer[m_bufferCycle].get());
+	d3dDeviceContext->PSSetConstantBuffers(0, 1, &m_pixelState.d3dConstantBuffer[m_bufferCycle].get());
 
 	// Bind samplers.
 	if (!m_vertexState.d3dSamplerStates.empty())
@@ -374,9 +378,12 @@ bool ProgramDx11::createState(
 		dbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 		dbd.MiscFlags = 0;
 
-		hr = d3dDevice->CreateBuffer(&dbd, NULL, &outState.d3dConstantBuffer.getAssign());
-		if (FAILED(hr))
-			return false;
+		for (uint32_t i = 0; i < sizeof_array(outState.d3dConstantBuffer); ++i)
+		{
+			hr = d3dDevice->CreateBuffer(&dbd, NULL, &outState.d3dConstantBuffer[i].getAssign());
+			if (FAILED(hr))
+				return false;
+		}
 
 		for (UINT i = 0; i < dsbd.Variables; ++i)
 		{
@@ -469,11 +476,11 @@ bool ProgramDx11::createState(
 
 bool ProgramDx11::updateStateConstants(ID3D11DeviceContext* d3dDeviceContext, State& state)
 {
-	if (!state.d3dConstantBuffer)
+	if (!state.d3dConstantBuffer[m_bufferCycle])
 		return true;
 
 	D3D11_MAPPED_SUBRESOURCE dm;
-	HRESULT hr = d3dDeviceContext->Map(state.d3dConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dm);
+	HRESULT hr = d3dDeviceContext->Map(state.d3dConstantBuffer[m_bufferCycle], 0, D3D11_MAP_WRITE_DISCARD, 0, &dm);
 
 	uint8_t* mapped = (uint8_t*)dm.pData;
 	for (std::vector< ParameterOffset >::const_iterator i = state.parameterFloatOffsets.begin(); i != state.parameterFloatOffsets.end(); ++i)
@@ -485,7 +492,7 @@ bool ProgramDx11::updateStateConstants(ID3D11DeviceContext* d3dDeviceContext, St
 		);
 	}
 
-	d3dDeviceContext->Unmap(state.d3dConstantBuffer, 0);
+	d3dDeviceContext->Unmap(state.d3dConstantBuffer[m_bufferCycle], 0);
 	return true;
 }
 
