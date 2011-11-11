@@ -6,6 +6,7 @@
 #include "Core/Misc/ComRef.h"
 #include "Render/IRenderView.h"
 #include "Render/Dx11/Platform.h"
+#include "Render/Dx11/Window.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -25,22 +26,25 @@ class VertexBufferDx11;
 class IndexBufferDx11;
 class ProgramDx11;
 class RenderTargetSetDx11;
-class Window;
 
 /*!
  * \ingroup DX11
  */
-class T_DLLCLASS RenderViewDx11 : public IRenderView
+class T_DLLCLASS RenderViewDx11
+:	public IRenderView
+,	public IWindowListener
 {
 	T_RTTI_CLASS;
 
 public:
 	RenderViewDx11(
 		ContextDx11* context,
-		Window* window,
-		IDXGISwapChain* d3dSwapChain,
-		const DXGI_SWAP_CHAIN_DESC& scd,
-		bool waitVBlank
+		Window* window
+	);
+
+	RenderViewDx11::RenderViewDx11(
+		ContextDx11* context,
+		IDXGISwapChain* dxgiSwapChain
 	);
 
 	virtual ~RenderViewDx11();
@@ -92,20 +96,6 @@ public:
 	virtual void getStatistics(RenderViewStatistics& outStatistics) const;
 
 private:
-	Ref< ContextDx11 > m_context;
-	ComRef< IDXGISwapChain > m_d3dSwapChain;
-	ComRef< ID3D11RenderTargetView > m_d3dRenderTargetView;
-	ComRef< ID3D11Texture2D > m_d3dDepthStencil;
-	ComRef< ID3D11DepthStencilView > m_d3dDepthStencilView;
-	bool m_waitVBlank;
-
-	D3D11_VIEWPORT m_d3dViewport;
-
-	bool m_dirty;
-	Ref< VertexBufferDx11 > m_currentVertexBuffer;
-	Ref< IndexBufferDx11 > m_currentIndexBuffer;
-	Ref< ProgramDx11 > m_currentProgram;
-
 	struct RenderState
 	{
 		D3D11_VIEWPORT d3dViewport;
@@ -114,8 +104,29 @@ private:
 		int32_t targetSize[2];
 	};
 
+	Ref< ContextDx11 > m_context;
+	Ref< Window > m_window;
+	ComRef< IDXGISwapChain > m_dxgiSwapChain;
+	ComRef< ID3D11RenderTargetView > m_d3dRenderTargetView;
+	ComRef< ID3D11Texture2D > m_d3dDepthStencil;
+	ComRef< ID3D11DepthStencilView > m_d3dDepthStencilView;
+	D3D11_VIEWPORT m_d3dViewport;
+	bool m_fullScreen;
+	bool m_waitVBlank;
+	bool m_dirty;
+	Ref< VertexBufferDx11 > m_currentVertexBuffer;
+	Ref< IndexBufferDx11 > m_currentIndexBuffer;
+	Ref< ProgramDx11 > m_currentProgram;
 	std::list< RenderState > m_renderStateStack;
 	int32_t m_targetSize[2];
+	std::list< RenderEvent > m_eventQueue;
+
+	// \name IWindowListener implementation.
+	// \{
+
+	virtual bool windowListenerEvent(Window* window, UINT message, WPARAM wParam, LPARAM lParam, LRESULT& outResult);
+
+	// \}
 };
 
 	}

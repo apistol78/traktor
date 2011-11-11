@@ -72,14 +72,8 @@ public:
 private:
 	Ref< ContextDx11 > m_context;
 	Ref< Window > m_window;
-	ComRef< ID3D11Device > m_d3dDevice;
-	ComRef< ID3D11DeviceContext > m_d3dDeviceContext;
-	ComRef< IDXGIFactory1 > m_dxgiFactory;
-	AutoArrayPtr< DXGI_MODE_DESC > m_dxgiDisplayModes;
-	std::vector< DisplayMode > m_displayModes;
+	float m_displayAspect;
 	float m_mipBias;
-
-	static LRESULT wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 };
 
 	}

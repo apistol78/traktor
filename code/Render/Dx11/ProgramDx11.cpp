@@ -211,8 +211,11 @@ void ProgramDx11::setFloatArrayParameter(handle_t handle, const float* param, in
 	SmallMap< handle_t, uint32_t >::iterator i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
 	{
-		std::memcpy(&m_parameterFloatArray[i->second], param, length * sizeof(float));
-		m_parameterArrayDirty = true;
+		if (std::memcmp(&m_parameterFloatArray[i->second], param, length * sizeof(float)) != 0)
+		{
+			std::memcpy(&m_parameterFloatArray[i->second], param, length * sizeof(float));
+			m_parameterArrayDirty = true;
+		}
 	}
 }
 
@@ -221,8 +224,11 @@ void ProgramDx11::setVectorParameter(handle_t handle, const Vector4& param)
 	SmallMap< handle_t, uint32_t >::iterator i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
 	{
-		param.storeAligned(&m_parameterFloatArray[i->second]);
-		m_parameterArrayDirty = true;
+		if (Vector4::loadAligned(&m_parameterFloatArray[i->second]) != param)
+		{
+			param.storeAligned(&m_parameterFloatArray[i->second]);
+			m_parameterArrayDirty = true;
+		}
 	}
 }
 
@@ -242,8 +248,11 @@ void ProgramDx11::setMatrixParameter(handle_t handle, const Matrix44& param)
 	SmallMap< handle_t, uint32_t >::iterator i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
 	{
-		param.storeAligned(&m_parameterFloatArray[i->second]);
-		m_parameterArrayDirty = true;
+		if (Matrix44::loadAligned(&m_parameterFloatArray[i->second]) != param)
+		{
+			param.storeAligned(&m_parameterFloatArray[i->second]);
+			m_parameterArrayDirty = true;
+		}
 	}
 }
 

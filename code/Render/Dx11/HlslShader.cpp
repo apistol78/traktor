@@ -95,8 +95,6 @@ void HlslShader::pushScope()
 void HlslShader::popScope()
 {
 	T_ASSERT (!m_variables.empty());
-	for (scope_t::iterator i = m_variables.back().begin(); i != m_variables.back().end(); ++i)
-		delete i->second;
 	m_variables.pop_back();
 }
 

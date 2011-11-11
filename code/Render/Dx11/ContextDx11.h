@@ -52,7 +52,12 @@ public:
 		virtual void deleteResource();
 	};
 
-	ContextDx11(ID3D11Device* d3dDevice, ID3D11DeviceContext* d3dDeviceContext);
+	ContextDx11(
+		ID3D11Device* d3dDevice,
+		ID3D11DeviceContext* d3dDeviceContext,
+		IDXGIFactory1* dxgiFactory,
+		IDXGIOutput* dxgiOutput
+	);
 
 	void deleteResource(DeleteCallback* callback);
 
@@ -61,6 +66,10 @@ public:
 	ID3D11Device* getD3DDevice() { return m_d3dDevice; }
 
 	ID3D11DeviceContext* getD3DDeviceContext() { return m_d3dDeviceContext; }
+
+	IDXGIFactory1* getDXGIFactory() { return m_dxgiFactory; }
+
+	IDXGIOutput* getDXGIOutput() { return m_dxgiOutput; }
 
 	template < typename InterfaceType >
 	void releaseComRef(ComRef< InterfaceType >& unk)
@@ -85,6 +94,8 @@ public:
 private:
 	ComRef< ID3D11Device > m_d3dDevice;
 	ComRef< ID3D11DeviceContext > m_d3dDeviceContext;
+	ComRef< IDXGIFactory1 > m_dxgiFactory;
+	ComRef< IDXGIOutput > m_dxgiOutput;
 	Semaphore m_deleteResourcesLock;
 	std::vector< DeleteCallback* > m_deleteResources;
 };

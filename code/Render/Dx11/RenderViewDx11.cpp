@@ -6,6 +6,7 @@
 #include "Render/Dx11/ProgramDx11.h"
 #include "Render/Dx11/RenderTargetSetDx11.h"
 #include "Render/Dx11/RenderTargetDx11.h"
+#include "Render/Dx11/Utilities.h"
 
 namespace traktor
 {
@@ -23,44 +24,194 @@ const D3D11_PRIMITIVE_TOPOLOGY c_d3dTopology[] =
 	D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST
 };
 
+struct RenderEventTypePred
+{
+	RenderEventType m_type;
+
+	RenderEventTypePred(RenderEventType type)
+	:	m_type(type)
+	{
+	}
+
+	bool operator () (const RenderEvent& evt) const
+	{
+		return evt.type == m_type;
+	}
+};
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewDx11", RenderViewDx11, IRenderView)
 
 RenderViewDx11::RenderViewDx11(
 	ContextDx11* context,
-	Window* window,
-	IDXGISwapChain* d3dSwapChain,
-	const DXGI_SWAP_CHAIN_DESC& scd,
-	bool waitVBlank
+	Window* window
 )
 :	m_context(context)
-,	m_d3dSwapChain(d3dSwapChain)
-,	m_waitVBlank(waitVBlank)
+,	m_window(window)
+,	m_fullScreen(false)
+,	m_waitVBlank(true)
 ,	m_dirty(false)
 ,	m_currentVertexBuffer(0)
 ,	m_currentIndexBuffer(0)
 ,	m_currentProgram(0)
 {
+	if (m_window)
+		m_window->addListener(this);
+}
+
+RenderViewDx11::RenderViewDx11(
+	ContextDx11* context,
+	IDXGISwapChain* dxgiSwapChain
+)
+:	m_context(context)
+,	m_dxgiSwapChain(dxgiSwapChain)
+,	m_fullScreen(false)
+,	m_waitVBlank(true)
+,	m_dirty(false)
+,	m_currentVertexBuffer(0)
+,	m_currentIndexBuffer(0)
+,	m_currentProgram(0)
+{
+}
+
+RenderViewDx11::~RenderViewDx11()
+{
+	close();
+}
+
+bool RenderViewDx11::nextEvent(RenderEvent& outEvent)
+{
+	MSG msg;
+	while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+	{
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
+
+	if (!m_eventQueue.empty())
+	{
+		outEvent = m_eventQueue.front();
+		m_eventQueue.pop_front();
+		return true;
+	}
+	else
+		return false;
+}
+
+void RenderViewDx11::close()
+{
+	if (m_window)
+	{
+		m_window->removeListener(this);
+		m_window = 0;
+	}
+
+	m_d3dRenderTargetView.release();
+
+	if (m_dxgiSwapChain)
+	{
+		m_dxgiSwapChain->SetFullscreenState(FALSE, NULL);
+		m_dxgiSwapChain.release();
+	}
+}
+
+bool RenderViewDx11::reset(const RenderViewDefaultDesc& desc)
+{
 	ComRef< ID3D11Texture2D > d3dBackBuffer;
+	DXGI_SWAP_CHAIN_DESC scd;
 	D3D11_TEXTURE2D_DESC dtd;
 	D3D11_DEPTH_STENCIL_VIEW_DESC ddsvd;
 	HRESULT hr;
 
-	hr = m_d3dSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&d3dBackBuffer.getAssign());
-	T_ASSERT (SUCCEEDED(hr));
+	if (!m_window)
+		return false;
+
+	m_window->removeListener(this);
+
+	m_context->getD3DDeviceContext()->OMSetRenderTargets(0, NULL, NULL);
+
+	if (m_dxgiSwapChain)
+	{
+		m_dxgiSwapChain->SetFullscreenState(FALSE, NULL);
+		m_dxgiSwapChain.release();
+	}
+
+	m_d3dRenderTargetView.release();
+	m_d3dDepthStencil.release();
+	m_d3dDepthStencilView.release();
+
+	if (desc.fullscreen)
+	{
+		m_window->setFullScreenStyle(desc.displayMode.width, desc.displayMode.height);
+
+		std::memset(&scd, 0, sizeof(scd));
+		scd.SampleDesc.Count = 1;
+		scd.SampleDesc.Quality = 0;
+		scd.BufferCount = 1;
+		scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+		scd.OutputWindow = *m_window;
+		scd.Windowed = FALSE;
+
+		if (!findDxgiDisplayMode(m_context->getDXGIOutput(), desc.displayMode, scd.BufferDesc))
+		{
+			log::error << L"Unable to create render view; display mode not supported" << Endl;
+			return false;
+		}
+	}
+	else
+	{
+		m_window->setWindowedStyle(desc.displayMode.width, desc.displayMode.height);
+
+		std::memset(&scd, 0, sizeof(scd));
+		scd.SampleDesc.Count = 1;
+		scd.SampleDesc.Quality = 0;
+		scd.BufferCount = 1;
+		scd.BufferDesc.Width = desc.displayMode.width;
+		scd.BufferDesc.Height = desc.displayMode.height;
+		scd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+		scd.OutputWindow = *m_window;
+		scd.Windowed = TRUE;
+	}
+
+	if (!setupSampleDesc(m_context->getD3DDevice(), desc.multiSample, scd.BufferDesc.Format, DXGI_FORMAT_D16_UNORM, scd.SampleDesc))
+	{
+		log::error << L"Unable to create render view; unsupported MSAA" << Endl;
+		return false;
+	}
+
+	hr = m_context->getDXGIFactory()->CreateSwapChain(
+		m_context->getD3DDevice(),
+		&scd,
+		&m_dxgiSwapChain.getAssign()
+	);
+	if (FAILED(hr))
+	{
+		log::error << L"Unable to create render view; CreateSwapChain failed" << Endl;
+		return false;
+	}
+
+	hr = m_dxgiSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&d3dBackBuffer.getAssign());
+	if (FAILED(hr))
+	{
+		log::error << L"Unable to create render view; GetBuffer failed" << Endl;
+		return false;
+	}
 
 	hr = m_context->getD3DDevice()->CreateRenderTargetView(d3dBackBuffer, NULL, &m_d3dRenderTargetView.getAssign());
-	T_ASSERT (SUCCEEDED(hr));
-
-	d3dBackBuffer->GetDesc(&dtd);
+	if (FAILED(hr))
+	{
+		log::error << L"Unable to create render view; CreateRenderTargetView failed" << Endl;
+		return false;
+	}
 
 	std::memset(&dtd, 0, sizeof(dtd));
 	dtd.Width = scd.BufferDesc.Width;
 	dtd.Height = scd.BufferDesc.Height;
 	dtd.MipLevels = 1;
 	dtd.ArraySize = 1;
-	dtd.Format = DXGI_FORMAT_D16_UNORM;
+	dtd.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	dtd.SampleDesc.Count = scd.SampleDesc.Count;
 	dtd.SampleDesc.Quality = scd.SampleDesc.Quality;
 	dtd.Usage = D3D11_USAGE_DEFAULT;
@@ -69,8 +220,12 @@ RenderViewDx11::RenderViewDx11(
 	dtd.MiscFlags = 0;
 
 	hr = m_context->getD3DDevice()->CreateTexture2D(&dtd, NULL, &m_d3dDepthStencil.getAssign());
-	T_ASSERT (SUCCEEDED(hr));
-	
+	if (FAILED(hr))
+	{
+		log::error << L"Unable to create render view; CreateTexture2D failed" << Endl;
+		return false;
+	}
+
 	std::memset(&ddsvd, 0, sizeof(ddsvd));
 	ddsvd.Format = dtd.Format;
 	ddsvd.Flags = 0;
@@ -78,7 +233,11 @@ RenderViewDx11::RenderViewDx11(
 	ddsvd.Texture2D.MipSlice = 0;
 
 	hr = m_context->getD3DDevice()->CreateDepthStencilView(m_d3dDepthStencil, &ddsvd, &m_d3dDepthStencilView.getAssign());
-	T_ASSERT (SUCCEEDED(hr));
+	if (FAILED(hr))
+	{
+		log::error << L"Unable to create render view; CreateDepthStencilView failed" << Endl;
+		return false;
+	}
 
 	m_d3dViewport.TopLeftX = 0;
 	m_d3dViewport.TopLeftY = 0;
@@ -89,61 +248,25 @@ RenderViewDx11::RenderViewDx11(
 
 	m_targetSize[0] = scd.BufferDesc.Width;
 	m_targetSize[1] = scd.BufferDesc.Height;
-}
 
-RenderViewDx11::~RenderViewDx11()
-{
-	close();
-}
+	m_fullScreen = desc.fullscreen;
+	m_waitVBlank = desc.waitVBlank;
 
-bool RenderViewDx11::nextEvent(RenderEvent& outEvent)
-{
-	bool going = true;
-	MSG msg;
+	m_window->setTitle(desc.title ? desc.title : L"Traktor - DirectX 11 Renderer");
+	m_window->addListener(this);
 
-	while (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE))
-	{
-		int ret = GetMessage(&msg, NULL, 0, 0);
-		if (ret <= 0 || msg.message == WM_QUIT)
-			going = false;
-
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
-	}
-
-	if (!going)
-	{
-		outEvent.type = ReClose;
-		return true;
-	}
-
-	return false;
-}
-
-void RenderViewDx11::close()
-{
-	m_d3dRenderTargetView.release();
-
-	if (m_d3dSwapChain)
-	{
-		m_d3dSwapChain->SetFullscreenState(FALSE, NULL);
-		m_d3dSwapChain.release();
-	}
-}
-
-bool RenderViewDx11::reset(const RenderViewDefaultDesc& desc)
-{
-	return false;
+	return true;
 }
 
 bool RenderViewDx11::reset(int32_t width, int32_t height)
 {
 	ComRef< ID3D11Texture2D > d3dBackBuffer;
+	DXGI_SWAP_CHAIN_DESC scd;
 	D3D11_TEXTURE2D_DESC dtd;
 	D3D11_DEPTH_STENCIL_VIEW_DESC ddsvd;
 	HRESULT hr;
 
-	if (width <= 0 || height <= 0)
+	if (m_window || width <= 0 || height <= 0)
 		return false;
 
 	m_context->getD3DDeviceContext()->OMSetRenderTargets(0, NULL, NULL);
@@ -152,34 +275,61 @@ bool RenderViewDx11::reset(int32_t width, int32_t height)
 	m_d3dDepthStencil.release();
 	m_d3dDepthStencilView.release();
 
-	hr = m_d3dSwapChain->ResizeBuffers(1, width, height, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
-	T_ASSERT (SUCCEEDED(hr));
+	hr = m_dxgiSwapChain->ResizeBuffers(1, width, height, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
+	if (FAILED(hr))
+	{
+		log::error << L"Unable to reset render view; ResizeBuffers failed" << Endl;
+		return false;
+	}
 
-	hr = m_d3dSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&d3dBackBuffer.getAssign());
-	T_ASSERT (SUCCEEDED(hr));
+	hr = m_dxgiSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&d3dBackBuffer.getAssign());
+	if (FAILED(hr))
+	{
+		log::error << L"Unable to reset render view; GetBuffer failed" << Endl;
+		return false;
+	}
 
 	hr = m_context->getD3DDevice()->CreateRenderTargetView(d3dBackBuffer, NULL, &m_d3dRenderTargetView.getAssign());
-	T_ASSERT (SUCCEEDED(hr));
+	if (FAILED(hr))
+	{
+		log::error << L"Unable to reset render view; CreateRenderTargetView failed" << Endl;
+		return false;
+	}
 
-	d3dBackBuffer->GetDesc(&dtd);
+	m_dxgiSwapChain->GetDesc(&scd);
 
+	std::memset(&dtd, 0, sizeof(dtd));
+	dtd.Width = scd.BufferDesc.Width;
+	dtd.Height = scd.BufferDesc.Height;
 	dtd.MipLevels = 1;
 	dtd.ArraySize = 1;
-	dtd.Format = DXGI_FORMAT_D16_UNORM;
+	dtd.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	dtd.SampleDesc.Count = scd.SampleDesc.Count;
+	dtd.SampleDesc.Quality = scd.SampleDesc.Quality;
 	dtd.Usage = D3D11_USAGE_DEFAULT;
 	dtd.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 	dtd.CPUAccessFlags = 0;
 	dtd.MiscFlags = 0;
 
 	hr = m_context->getD3DDevice()->CreateTexture2D(&dtd, NULL, &m_d3dDepthStencil.getAssign());
-	T_ASSERT (SUCCEEDED(hr));
+	if (FAILED(hr))
+	{
+		log::error << L"Unable to reset render view; CreateTexture2D failed" << Endl;
+		return false;
+	}
 	
+	std::memset(&ddsvd, 0, sizeof(ddsvd));
 	ddsvd.Format = dtd.Format;
+	ddsvd.Flags = 0;
 	ddsvd.ViewDimension = dtd.SampleDesc.Count > 1 ? D3D11_DSV_DIMENSION_TEXTURE2DMS : D3D11_DSV_DIMENSION_TEXTURE2D;
 	ddsvd.Texture2D.MipSlice = 0;
 
 	hr = m_context->getD3DDevice()->CreateDepthStencilView(m_d3dDepthStencil, &ddsvd, &m_d3dDepthStencilView.getAssign());
-	T_ASSERT (SUCCEEDED(hr));
+	if (FAILED(hr))
+	{
+		log::error << L"Unable to reset render view; CreateDepthStencilView failed" << Endl;
+		return false;
+	}
 
 	m_d3dViewport.TopLeftX = 0;
 	m_d3dViewport.TopLeftY = 0;
@@ -206,12 +356,15 @@ int RenderViewDx11::getHeight() const
 
 bool RenderViewDx11::isActive() const
 {
-	return true;
+	if (m_window)
+		return GetForegroundWindow() == *m_window;
+	else
+		return true;
 }
 
 bool RenderViewDx11::isFullScreen() const
 {
-	return false;
+	return m_fullScreen;
 }
 
 bool RenderViewDx11::setGamma(float gamma)
@@ -450,7 +603,7 @@ void RenderViewDx11::end()
 
 void RenderViewDx11::present()
 {
-	m_d3dSwapChain->Present(m_waitVBlank ? 1 : 0, 0);
+	m_dxgiSwapChain->Present(m_waitVBlank ? 1 : 0, 0);
 	m_context->deleteResources();
 }
 
@@ -464,6 +617,86 @@ void RenderViewDx11::popMarker()
 
 void RenderViewDx11::getStatistics(RenderViewStatistics& outStatistics) const
 {
+}
+
+bool RenderViewDx11::windowListenerEvent(Window* window, UINT message, WPARAM wParam, LPARAM lParam, LRESULT& outResult)
+{
+	if (message == WM_CLOSE)
+	{
+		RenderEvent evt;
+		evt.type = ReClose;
+		m_eventQueue.push_back(evt);
+	}
+	else if (message == WM_SIZE)
+	{
+		// Remove all pending resize events.
+		m_eventQueue.remove_if(RenderEventTypePred(ReResize));
+
+		// Push new resize event if not matching current size.
+		int32_t width = LOWORD(lParam);
+		int32_t height = HIWORD(lParam);
+		if (width != m_targetSize[0] || height != m_targetSize[1])
+		{
+			RenderEvent evt;
+			evt.type = ReResize;
+			evt.resize.width = width;
+			evt.resize.height = height;
+			m_eventQueue.push_back(evt);
+		}
+	}
+	else if (message == WM_SIZING)
+	{
+		RECT* rcWindowSize = (RECT*)lParam;
+
+		int32_t width = rcWindowSize->right - rcWindowSize->left;
+		int32_t height = rcWindowSize->bottom - rcWindowSize->top;
+
+		if (width < 320)
+			width = 320;
+		if (height < 200)
+			height = 200;
+
+		if (wParam == WMSZ_RIGHT || wParam == WMSZ_TOPRIGHT || wParam == WMSZ_BOTTOMRIGHT)
+			rcWindowSize->right = rcWindowSize->left + width;
+		if (wParam == WMSZ_LEFT || wParam == WMSZ_TOPLEFT || wParam == WMSZ_BOTTOMLEFT)
+			rcWindowSize->left = rcWindowSize->right - width;
+
+		if (wParam == WMSZ_BOTTOM || wParam == WMSZ_BOTTOMLEFT || wParam == WMSZ_BOTTOMRIGHT)
+			rcWindowSize->bottom = rcWindowSize->top + height;
+		if (wParam == WMSZ_TOP || wParam == WMSZ_TOPLEFT || wParam == WMSZ_TOPRIGHT)
+			rcWindowSize->top = rcWindowSize->bottom - height;
+
+		outResult = TRUE;
+	}
+	else if (message == WM_SYSKEYDOWN)
+	{
+		if (wParam == VK_RETURN && (lParam & (1 << 29)) != 0)
+		{
+			RenderEvent evt;
+			evt.type = ReToggleFullScreen;
+			m_eventQueue.push_back(evt);
+		}
+	}
+	else if (message == WM_KEYDOWN)
+	{
+		if (wParam == VK_RETURN && (GetAsyncKeyState(VK_CONTROL) & 0x8000) != 0)
+		{
+			RenderEvent evt;
+			evt.type = ReToggleFullScreen;
+			m_eventQueue.push_back(evt);
+		}
+	}
+	else if (message == WM_SETCURSOR)
+	{
+		if (isFullScreen())
+			SetCursor(NULL);
+		else
+			SetCursor(LoadCursor(NULL, IDC_ARROW));
+	}
+	else
+		return false;
+
+	return true;
 }
 
 	}
