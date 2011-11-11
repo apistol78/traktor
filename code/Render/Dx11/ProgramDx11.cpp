@@ -9,6 +9,7 @@
 #include "Render/Dx11/ProgramResourceDx11.h"
 #include "Render/Dx11/RenderTargetDx11.h"
 #include "Render/Dx11/SimpleTextureDx11.h"
+#include "Render/Dx11/StateCache.h"
 
 namespace traktor
 {
@@ -33,76 +34,7 @@ ProgramDx11::~ProgramDx11()
 	destroy();
 }
 
-Ref< ProgramResourceDx11 > ProgramDx11::compile(const HlslProgram& hlslProgram)
-{
-	Ref< ProgramResourceDx11 > resource = new ProgramResourceDx11();
-
-	ComRef< ID3DBlob > d3dVertexShaderBlob;
-	ComRef< ID3DBlob > d3dPixelShaderBlob;
-	ComRef< ID3DBlob > d3dErrorMsgs;
-	HRESULT hr;
-
-	hr = D3DX11CompileFromMemory(
-		wstombs(hlslProgram.getVertexShader()).c_str(),
-		hlslProgram.getVertexShader().length(),
-		"generated.vs",
-		NULL,
-		NULL,
-		"main",
-		"vs_4_0",
-		0,
-		0,
-		NULL,
-		&resource->m_vertexShader.getAssign(),
-		&d3dErrorMsgs.getAssign(),
-		NULL
-	);
-	if (FAILED(hr))
-	{
-		log::error << L"Failed to compile vertex shader, hr = " << int32_t(hr) << Endl;
-		if (d3dErrorMsgs)
-			log::error << mbstows((LPCSTR)d3dErrorMsgs->GetBufferPointer()) << Endl;
-		log::error << Endl;
-		FormatMultipleLines(log::error, hlslProgram.getVertexShader());
-		return 0;
-	}
-
-	hr = D3DX11CompileFromMemory(
-		wstombs(hlslProgram.getPixelShader()).c_str(),
-		hlslProgram.getPixelShader().length(),
-		"generated.ps",
-		NULL,
-		NULL,
-		"main",
-		"ps_4_0",
-		0,
-		0,
-		NULL,
-		&resource->m_pixelShader.getAssign(),
-		&d3dErrorMsgs.getAssign(),
-		NULL
-	);
-	if (FAILED(hr))
-	{
-		log::error << L"Failed to compile pixel shader, hr = " << int32_t(hr) << Endl;
-		if (d3dErrorMsgs)
-			log::error << mbstows((LPCSTR)d3dErrorMsgs->GetBufferPointer()) << Endl;
-		log::error << Endl;
-		FormatMultipleLines(log::error, hlslProgram.getPixelShader());
-		return 0;
-	}
-
-	resource->m_d3dRasterizerDesc = hlslProgram.getD3DRasterizerDesc();
-	resource->m_d3dDepthStencilDesc = hlslProgram.getD3DDepthStencilDesc();
-	resource->m_d3dBlendDesc = hlslProgram.getD3DBlendDesc();
-	resource->m_stencilReference = hlslProgram.getStencilReference();
-	resource->m_d3dVertexSamplers = hlslProgram.getD3DVertexSamplers();
-	resource->m_d3dPixelSamplers = hlslProgram.getD3DPixelSamplers();
-
-	return resource;
-}
-
-bool ProgramDx11::create(ID3D11Device* d3dDevice, const ProgramResourceDx11* resource, float mipBias)
+bool ProgramDx11::create(ID3D11Device* d3dDevice, StateCache& stateCache, const ProgramResourceDx11* resource, float mipBias)
 {
 	ComRef< ID3DBlob > d3dErrorMsgs;
 	HRESULT hr;
@@ -154,19 +86,10 @@ bool ProgramDx11::create(ID3D11Device* d3dDevice, const ProgramResourceDx11* res
 	))
 		return false;
 
-	// Create rasterizer states.
-	d3dDevice->CreateRasterizerState(
-		&resource->m_d3dRasterizerDesc,
-		&m_d3dRasterizerState.getAssign()
-	);
-	d3dDevice->CreateDepthStencilState(
-		&resource->m_d3dDepthStencilDesc,
-		&m_d3dDepthStencilState.getAssign()
-	);
-	d3dDevice->CreateBlendState(
-		&resource->m_d3dBlendDesc,
-		&m_d3dBlendState.getAssign()
-	);
+	// Create state objects.
+	m_d3dRasterizerState = stateCache.getRasterizerState(resource->m_d3dRasterizerDesc);
+	m_d3dDepthStencilState = stateCache.getDepthStencilState(resource->m_d3dDepthStencilDesc);
+	m_d3dBlendState = stateCache.getBlendState(resource->m_d3dBlendDesc);
 
 	m_stencilReference = resource->m_stencilReference;
 
@@ -373,7 +296,8 @@ bool ProgramDx11::bind(
 	// Remap input layout if it has changed since last use of this shader.
 	if (m_d3dInputElementsHash != d3dInputElementsHash || ms_activeProgram != this)
 	{
-		d3dDeviceContext->IASetInputLayout(NULL);
+		if (m_d3dInputLayout != 0)
+			d3dDeviceContext->IASetInputLayout(NULL);
 
 		SmallMap< size_t, ComRef< ID3D11InputLayout > >::iterator i = m_d3dInputLayouts.find(d3dInputElementsHash);
 		if (i != m_d3dInputLayouts.end())

@@ -14,6 +14,7 @@ namespace traktor
 
 bool Hlsl::generate(
 	const ShaderGraph* shaderGraph,
+	IProgramHints* programHints,
 	HlslProgram& outProgram
 )
 {
@@ -29,7 +30,7 @@ bool Hlsl::generate(
 		return false;
 	}
 
-	HlslContext cx(shaderGraph);
+	HlslContext cx(shaderGraph, programHints);
 
 	if (!cx.getEmitter().emit(cx, pixelOutputs[0]))
 	{
