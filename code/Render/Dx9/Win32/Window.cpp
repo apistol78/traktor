@@ -8,12 +8,10 @@ namespace traktor
 		namespace
 		{
 
-const TCHAR* c_className = _T("TraktorRenderSystem");
+const TCHAR* c_className = _T("TraktorRenderSystemDx9");
 const DWORD c_classIconResource = 10000;
 
 		}
-
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.Window", Window, Object)
 
 Window::Window()
 :	m_hWnd(0)

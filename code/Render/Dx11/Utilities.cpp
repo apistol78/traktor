@@ -1,3 +1,4 @@
+#include "Core/Misc/AutoPtr.h"
 #include "Render/Dx11/Platform.h"
 #include "Render/Dx11/Utilities.h"
 
@@ -88,6 +89,106 @@ bool setupSampleDesc(ID3D11Device* d3dDevice, uint32_t sampleCount, DXGI_FORMAT 
 	}
 
 	return true;
+}
+
+uint32_t getDisplayModeCount(IDXGIOutput* dxgiOutput)
+{
+	HRESULT hr;
+	UINT count = 0;
+
+	hr = dxgiOutput->GetDisplayModeList(
+		DXGI_FORMAT_R8G8B8A8_UNORM,
+		0,
+		&count,
+		0
+	);
+	if (FAILED(hr) || !count)
+		return 0;
+
+	return uint32_t(count);
+}
+
+bool getDisplayMode(IDXGIOutput* dxgiOutput, uint32_t index, DisplayMode& outDisplayMode)
+{
+	HRESULT hr;
+	UINT count = 0;
+
+	hr = dxgiOutput->GetDisplayModeList(
+		DXGI_FORMAT_R8G8B8A8_UNORM,
+		0,
+		&count,
+		0
+	);
+	if (FAILED(hr) || !count)
+		return false;
+	
+	if (index >= count)
+		return false;
+
+	AutoArrayPtr< DXGI_MODE_DESC > dxgiDisplayModes(new DXGI_MODE_DESC [count]);
+
+	hr = dxgiOutput->GetDisplayModeList(
+		DXGI_FORMAT_R8G8B8A8_UNORM,
+		0,
+		&count,
+		dxgiDisplayModes.ptr()
+	);
+	if (FAILED(hr) || !count)
+		return false;
+
+	outDisplayMode.width = dxgiDisplayModes[index].Width;
+	outDisplayMode.height = dxgiDisplayModes[index].Height;
+	outDisplayMode.refreshRate = dxgiDisplayModes[index].RefreshRate.Numerator;
+	outDisplayMode.colorBits = 32;
+	outDisplayMode.stereoscopic = false;
+
+	return true;
+}
+
+bool findDxgiDisplayMode(IDXGIOutput* dxgiOutput, const DisplayMode& dm, DXGI_MODE_DESC& outDxgiDisplayMode)
+{
+	HRESULT hr;
+	UINT count = 0;
+
+	hr = dxgiOutput->GetDisplayModeList(
+		DXGI_FORMAT_R8G8B8A8_UNORM,
+		0,
+		&count,
+		0
+	);
+	if (FAILED(hr) || !count)
+		return false;
+	
+	AutoArrayPtr< DXGI_MODE_DESC > dxgiDisplayModes(new DXGI_MODE_DESC [count]);
+
+	hr = dxgiOutput->GetDisplayModeList(
+		DXGI_FORMAT_R8G8B8A8_UNORM,
+		0,
+		&count,
+		dxgiDisplayModes.ptr()
+	);
+	if (FAILED(hr) || !count)
+		return false;
+
+	for (UINT i = 0; i < count; ++i)
+	{
+		if (dm.width != dxgiDisplayModes[i].Width)
+			continue;
+		
+		if (dm.height != dxgiDisplayModes[i].Height)
+			continue;
+		
+		if (dm.refreshRate)
+		{
+			if (dm.refreshRate != dxgiDisplayModes[i].RefreshRate.Numerator)
+				continue;
+		}
+		
+		outDxgiDisplayMode = dxgiDisplayModes[i];
+		return true;
+	}
+	
+	return false;
 }
 
 	}

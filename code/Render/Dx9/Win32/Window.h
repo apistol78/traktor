@@ -21,8 +21,6 @@ struct IWindowListener
 
 class Window : public Object
 {
-	T_RTTI_CLASS;
-
 public:
 	Window();
 

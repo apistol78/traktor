@@ -15,18 +15,16 @@ namespace traktor
  */
 class HlslVariable : public Object
 {
-	T_RTTI_CLASS;
-
 public:
 	HlslVariable();
 
 	HlslVariable(const std::wstring& name, HlslType type);
 
-	inline const std::wstring& getName() const { return m_name; }
+	const std::wstring& getName() const { return m_name; }
 
-	inline void setType(HlslType type) { m_type = type; }
+	void setType(HlslType type) { m_type = type; }
 
-	inline HlslType getType() const { return m_type; }
+	HlslType getType() const { return m_type; }
 
 	std::wstring cast(HlslType to) const;
 

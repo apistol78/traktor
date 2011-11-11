@@ -24,14 +24,18 @@ namespace traktor
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderSystemDx11", 0, RenderSystemDx11, IRenderSystem)
 
 RenderSystemDx11::RenderSystemDx11()
-:	m_mipBias(0.0f)
+:	m_displayAspect(0.0f)
+,	m_mipBias(0.0f)
 {
 }
 
 bool RenderSystemDx11::create(const RenderSystemCreateDesc& desc)
 {
+	ComRef< ID3D11Device > d3dDevice;
+	ComRef< ID3D11DeviceContext > d3dDeviceContext;
 	ComRef< IDXGIDevice1 > dxgiDevice;
 	ComRef< IDXGIAdapter1 > dxgiAdapter;
+	ComRef< IDXGIFactory1 > dxgiFactory;
 	ComRef< IDXGIOutput > dxgiOutput;
 	D3D_FEATURE_LEVEL d3dFeatureLevel;
 	HRESULT hr;
@@ -41,22 +45,22 @@ bool RenderSystemDx11::create(const RenderSystemCreateDesc& desc)
 		NULL,
 		D3D_DRIVER_TYPE_HARDWARE,
 		NULL,
-#if defined(_DEBUG)
-		D3D11_CREATE_DEVICE_DEBUG,
-#else
+//#if defined(_DEBUG)
+//		D3D11_CREATE_DEVICE_DEBUG,
+//#else
 		0,
-#endif
+//#endif
 		0,
 		0,
 		D3D11_SDK_VERSION,
-		&m_d3dDevice.getAssign(),
+		&d3dDevice.getAssign(),
 		&d3dFeatureLevel,
-		&m_d3dDeviceContext.getAssign()
+		&d3dDeviceContext.getAssign()
 	);
 	if (FAILED(hr))
 		return false;
 
-	hr = m_d3dDevice->QueryInterface(__uuidof(IDXGIDevice1), (void **)&dxgiDevice.getAssign());
+	hr = d3dDevice->QueryInterface(__uuidof(IDXGIDevice1), (void **)&dxgiDevice.getAssign());
 	if (FAILED(hr))
 		return 0;
 
@@ -64,7 +68,7 @@ bool RenderSystemDx11::create(const RenderSystemCreateDesc& desc)
 	if (FAILED(hr))
 		return 0;
 
-	hr = dxgiAdapter->GetParent(__uuidof(IDXGIFactory1), (void **)&m_dxgiFactory.getAssign());
+	hr = dxgiAdapter->GetParent(__uuidof(IDXGIFactory1), (void **)&dxgiFactory.getAssign());
 	if (FAILED(hr))
 		return 0;
 
@@ -72,40 +76,14 @@ bool RenderSystemDx11::create(const RenderSystemCreateDesc& desc)
 	if (FAILED(hr))
 		return 0;
 
-	UINT count = 0;
-	hr = dxgiOutput->GetDisplayModeList(
-		DXGI_FORMAT_R8G8B8A8_UNORM,
-		0,
-		&count,
-		0
-	);
-	if (FAILED(hr))
-		return 0;
-
-	m_dxgiDisplayModes.reset(new DXGI_MODE_DESC [count]); 
-	hr = dxgiOutput->GetDisplayModeList(
-		DXGI_FORMAT_R8G8B8A8_UNORM,
-		0,
-		&count,
-		m_dxgiDisplayModes.ptr()
-	);
-	if (FAILED(hr))
-		return 0;
-
-	m_displayModes.resize(count);
-	for (UINT i = 0; i < count; ++i)
-	{
-		m_displayModes[i].width = m_dxgiDisplayModes[i].Width;
-		m_displayModes[i].height = m_dxgiDisplayModes[i].Height;
-		m_displayModes[i].refreshRate = m_dxgiDisplayModes[i].RefreshRate.Numerator;
-		m_displayModes[i].colorBits = 32;
-	}
+	DisplayMode dm = getCurrentDisplayMode();
+	m_displayAspect = float(dm.width) / dm.height;
 
 	m_window = new Window();
 	if (!m_window->create())
 		return 0;
 
-	m_context = new ContextDx11(m_d3dDevice, m_d3dDeviceContext);
+	m_context = new ContextDx11(d3dDevice, d3dDeviceContext, dxgiFactory, dxgiOutput);
 	m_mipBias = desc.mipBias;
 
 	return true;
@@ -118,101 +96,58 @@ void RenderSystemDx11::destroy()
 		m_context->deleteResources();
 		m_context = 0;
 	}
-
-	m_dxgiFactory.release();
-	m_d3dDevice.release();
 }
 
 uint32_t RenderSystemDx11::getDisplayModeCount() const
 {
-	return uint32_t(m_displayModes.size());
+	return traktor::render::getDisplayModeCount(m_context->getDXGIOutput());
 }
 
 DisplayMode RenderSystemDx11::getDisplayMode(uint32_t index) const
 {
-	return m_displayModes[index];
+	DisplayMode dm;
+	traktor::render::getDisplayMode(m_context->getDXGIOutput(), index, dm);
+	return dm;
 }
 
 DisplayMode RenderSystemDx11::getCurrentDisplayMode() const
 {
-	return DisplayMode();
+	DEVMODE dm;
+
+	std::memset(&dm, 0, sizeof(dm));
+	dm.dmSize = sizeof(dm);
+
+	EnumDisplaySettings(NULL, ENUM_CURRENT_SETTINGS, &dm);
+
+	DisplayMode cdm;
+
+	cdm.width = dm.dmPelsWidth;
+	cdm.height = dm.dmPelsHeight;
+	cdm.refreshRate = uint16_t(dm.dmDisplayFrequency);
+	cdm.colorBits = uint16_t(dm.dmBitsPerPel);
+	cdm.stereoscopic = false;
+
+	return cdm;
 }
 
 float RenderSystemDx11::getDisplayAspectRatio() const
 {
-	return 0.0f;
+	return m_displayAspect;
 }
 
 Ref< IRenderView > RenderSystemDx11::createRenderView(const RenderViewDefaultDesc& desc)
 {
-	ComRef< IDXGISwapChain > d3dSwapChain;
-	DXGI_SWAP_CHAIN_DESC scd;
-	DXGI_MODE_DESC* dmd;
-	HRESULT hr;
+	Ref< RenderViewDx11 > renderView = new RenderViewDx11(m_context, m_window);
 
-	if (desc.fullscreen)
-		m_window->setFullScreenStyle(desc.displayMode.width, desc.displayMode.height);
-	else
-		m_window->setWindowedStyle(desc.displayMode.width, desc.displayMode.height);
-
-	// Find matching display mode.
-	dmd = 0;
-	for (uint32_t i = 0; i < m_displayModes.size(); ++i)
-	{
-		const DisplayMode& dm = m_displayModes[i];
-		if (dm.width == desc.displayMode.width && dm.height == desc.displayMode.height)
-		{
-			if (desc.displayMode.refreshRate != 0 && dm.refreshRate != desc.displayMode.refreshRate)
-				continue;
-
-			dmd = &m_dxgiDisplayModes[i];
-			break;
-		}
-	}
-	if (!dmd)
-	{
-		log::error << L"Unable to create render view; display mode not supported" << Endl;
+	if (!renderView->reset(desc))
 		return 0;
-	}
 
-	std::memset(&scd, 0, sizeof(scd));
-	scd.SampleDesc.Count = 1;
-	scd.SampleDesc.Quality = 0;
-	scd.BufferCount = 1;
-	std::memcpy(&scd.BufferDesc, dmd, sizeof(DXGI_MODE_DESC));
-	scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	scd.OutputWindow = *m_window;
-	scd.Windowed = desc.fullscreen ? FALSE : TRUE;
-
-	if (!setupSampleDesc(m_d3dDevice, desc.multiSample, scd.BufferDesc.Format, DXGI_FORMAT_D16_UNORM, scd.SampleDesc))
-	{
-		log::error << L"Unable to create render view; unsupported MSAA" << Endl;
-		return 0;
-	}
-
-	hr = m_dxgiFactory->CreateSwapChain(
-		m_d3dDevice,
-		&scd,
-		&d3dSwapChain.getAssign()
-	);
-	if (FAILED(hr))
-	{
-		log::error << L"Unable to create render view; CreateSwapChain failed" << Endl;
-		return 0;
-	}
-
-	return new RenderViewDx11(
-		m_context,
-		m_window,
-		d3dSwapChain,
-		scd,
-		desc.waitVBlank
-	);
+	return renderView;
 }
 
 Ref< IRenderView > RenderSystemDx11::createRenderView(const RenderViewEmbeddedDesc& desc)
 {
-	ComRef< IDXGISwapChain > d3dSwapChain;
+	ComRef< IDXGISwapChain > dxgiSwapChain;
 	HRESULT hr;
 
 	RECT rc;
@@ -237,16 +172,16 @@ Ref< IRenderView > RenderSystemDx11::createRenderView(const RenderViewEmbeddedDe
 	scd.OutputWindow = (HWND)desc.nativeWindowHandle;
 	scd.Windowed = TRUE;
 
-	if (!setupSampleDesc(m_d3dDevice, desc.multiSample, scd.BufferDesc.Format, DXGI_FORMAT_D16_UNORM, scd.SampleDesc))
+	if (!setupSampleDesc(m_context->getD3DDevice(), desc.multiSample, scd.BufferDesc.Format, DXGI_FORMAT_D16_UNORM, scd.SampleDesc))
 	{
 		log::error << L"Unable to create render view; unsupported MSAA" << Endl;
 		return 0;
 	}
 
-	hr = m_dxgiFactory->CreateSwapChain(
-		m_d3dDevice,
+	hr = m_context->getDXGIFactory()->CreateSwapChain(
+		m_context->getD3DDevice(),
 		&scd,
-		&d3dSwapChain.getAssign()
+		&dxgiSwapChain.getAssign()
 	);
 	if (FAILED(hr))
 	{
@@ -254,13 +189,12 @@ Ref< IRenderView > RenderSystemDx11::createRenderView(const RenderViewEmbeddedDe
 		return 0;
 	}
 
-	return new RenderViewDx11(
-		m_context,
-		0,
-		d3dSwapChain,
-		scd,
-		desc.waitVBlank
-	);
+	Ref< RenderViewDx11 > renderView = new RenderViewDx11(m_context, dxgiSwapChain);
+
+	if (!renderView->reset(scd.BufferDesc.Width, scd.BufferDesc.Height))
+		return 0;
+
+	return renderView;
 }
 
 Ref< VertexBuffer > RenderSystemDx11::createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
@@ -275,7 +209,7 @@ Ref< VertexBuffer > RenderSystemDx11::createVertexBuffer(const std::vector< Vert
 	dbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	dbd.MiscFlags = 0;
 
-	hr = m_d3dDevice->CreateBuffer(&dbd, NULL, &d3dBuffer.getAssign());
+	hr = m_context->getD3DDevice()->CreateBuffer(&dbd, NULL, &d3dBuffer.getAssign());
 	if (FAILED(hr))
 		return 0;
 
@@ -315,7 +249,7 @@ Ref< IndexBuffer > RenderSystemDx11::createIndexBuffer(IndexType indexType, uint
 	dbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	dbd.MiscFlags = 0;
 
-	hr = m_d3dDevice->CreateBuffer(&dbd, NULL, &d3dBuffer.getAssign());
+	hr = m_context->getD3DDevice()->CreateBuffer(&dbd, NULL, &d3dBuffer.getAssign());
 	if (FAILED(hr))
 		return 0;
 
@@ -346,7 +280,7 @@ Ref< IVolumeTexture > RenderSystemDx11::createVolumeTexture(const VolumeTextureC
 Ref< RenderTargetSet > RenderSystemDx11::createRenderTargetSet(const RenderTargetSetCreateDesc& desc)
 {
 	Ref< RenderTargetSetDx11 > renderTargetSet = new RenderTargetSetDx11(m_context);
-	if (!renderTargetSet->create(m_d3dDevice, desc))
+	if (!renderTargetSet->create(m_context->getD3DDevice(), desc))
 		return 0;
 	return renderTargetSet;
 }
@@ -358,7 +292,7 @@ Ref< IProgram > RenderSystemDx11::createProgram(const ProgramResource* programRe
 		return 0;
 
 	Ref< ProgramDx11 > program = new ProgramDx11(m_context);
-	if (!program->create(m_d3dDevice, resource, m_mipBias))
+	if (!program->create(m_context->getD3DDevice(), resource, m_mipBias))
 		return 0;
 
 	return program;
@@ -371,43 +305,6 @@ Ref< IProgramCompiler > RenderSystemDx11::createProgramCompiler() const
 
 void RenderSystemDx11::getStatistics(RenderSystemStatistics& outStatistics) const
 {
-}
-
-LRESULT RenderSystemDx11::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
-	RenderSystemDx11* renderSystem = reinterpret_cast< RenderSystemDx11* >(GetWindowLongPtr(hWnd, 0));
-	LPCREATESTRUCT createStruct;
-	LRESULT result = TRUE;
-
-	switch (uMsg)
-	{
-	case WM_CREATE:
-		createStruct = reinterpret_cast< LPCREATESTRUCT >(lParam);
-		renderSystem = reinterpret_cast< RenderSystemDx11* >(createStruct->lpCreateParams);
-		SetWindowLongPtr(hWnd, 0, reinterpret_cast< LONG_PTR >(renderSystem));
-		break;
-
-	case WM_CLOSE:
-		DestroyWindow(hWnd);
-		break;
-
-	case WM_DESTROY:
-		PostQuitMessage(0);
-		break;
-
-	case WM_ERASEBKGND:
-		break;
-
-	case WM_SETCURSOR:
-		SetCursor(NULL);
-		break;
-
-	default:
-		result = DefWindowProc(hWnd, uMsg, wParam, lParam);
-		break;
-	}
-
-	return result;
 }
 
 	}

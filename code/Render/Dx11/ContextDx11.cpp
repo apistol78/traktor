@@ -8,9 +8,16 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ContextDx11", ContextDx11, Object)
 
-ContextDx11::ContextDx11(ID3D11Device* d3dDevice, ID3D11DeviceContext* d3dDeviceContext)
+ContextDx11::ContextDx11(
+	ID3D11Device* d3dDevice,
+	ID3D11DeviceContext* d3dDeviceContext,
+	IDXGIFactory1* dxgiFactory,
+	IDXGIOutput* dxgiOutput
+)
 :	m_d3dDevice(d3dDevice)
 ,	m_d3dDeviceContext(d3dDeviceContext)
+,	m_dxgiFactory(dxgiFactory)
+,	m_dxgiOutput(dxgiOutput)
 {
 }
 
