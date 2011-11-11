@@ -460,6 +460,8 @@ bool RenderViewDx11::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 	m_context->getD3DDeviceContext()->OMSetRenderTargets(1, &rs.d3dRenderView, rs.d3dDepthStencilView);
 	m_context->getD3DDeviceContext()->RSSetViewports(1, &rs.d3dViewport);
 
+	rts->setContentValid(true);
+
 	return true;
 }
 

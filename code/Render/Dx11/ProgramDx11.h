@@ -89,7 +89,7 @@ private:
 
 	struct State
 	{
-		ComRef< ID3D11Buffer > d3dConstantBuffer;
+		ComRef< ID3D11Buffer > d3dConstantBuffer[4];
 		ComRefArray< ID3D11SamplerState > d3dSamplerStates;
 		std::vector< ParameterOffset > parameterFloatOffsets;
 		std::vector< std::pair< UINT, uint32_t > > resourceIndices;
@@ -114,6 +114,7 @@ private:
 	ComRefArray< ID3D11ShaderResourceView > m_parameterResArray;
 	bool m_parameterArrayDirty;
 	bool m_parameterResArrayDirty;
+	uint32_t m_bufferCycle;
 
 	bool createState(
 		ID3D11Device* d3dDevice,
