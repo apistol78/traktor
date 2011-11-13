@@ -239,13 +239,13 @@ bool AccShape::updateRenderable(
 
 	const static Matrix33 textureTS = translate(0.5f, 0.5f) * scale(1.0f / 32768.0f, 1.0f / 32768.0f);
 
-	uint32_t vertexOffset = m_vertexRange.offset;
+	uint32_t vertexOffset = 0;
 	Matrix33 textureMatrix;
 
 	m_renderBatches.reserve(m_tesselationBatches.size());
 	m_batchFlags = 0;
 
-	Vertex* vertex = static_cast< Vertex* >(m_vertexRange.vertexBuffer->lock(m_vertexRange.offset, m_tesselationTriangleCount * 3));
+	Vertex* vertex = static_cast< Vertex* >(m_vertexRange.vertexBuffer->lock());
 	if (!vertex)
 		return false;
 

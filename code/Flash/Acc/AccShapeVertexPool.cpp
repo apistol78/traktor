@@ -63,7 +63,6 @@ bool AccShapeVertexPool::acquireRange(int32_t vertexCount, Range& outRange)
 		if (i->vertexCount >= vertexCount)
 		{
 			outRange.vertexBuffer = i->vertexBuffer;
-			outRange.offset = 0;
 
 			m_usedRanges.push_back(*i);
 			m_freeRanges.erase(i);
@@ -91,7 +90,6 @@ bool AccShapeVertexPool::acquireRange(int32_t vertexCount, Range& outRange)
 	m_usedRanges.push_back(range);
 
 	outRange.vertexBuffer = vertexBuffer;
-	outRange.offset = 0;
 
 	return true;
 }

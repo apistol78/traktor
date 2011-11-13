@@ -26,11 +26,9 @@ public:
 	struct Range
 	{
 		render::VertexBuffer* vertexBuffer;
-		int32_t offset;
 
 		Range()
 		:	vertexBuffer(0)
-		,	offset(0)
 		{
 		}
 	};

@@ -514,6 +514,8 @@ void RenderViewDx11::draw(const Primitives& primitives)
 	// Handle dirty resources.
 	if (m_dirty)
 	{
+		m_currentVertexBuffer->prepare();
+
 		// Bind vertex buffer.
 		ID3D11Buffer* d3dBuffer = m_currentVertexBuffer->getD3D11Buffer();
 		UINT stride = m_currentVertexBuffer->getD3D11Stride(), offset = 0;
