@@ -1,20 +1,20 @@
 #include "Core/Log/Log.h"
-#include "Render/VertexElement.h"
-#include "Render/Dx11/RenderSystemDx11.h"
-#include "Render/Dx11/RenderViewDx11.h"
 #include "Render/Dx11/ContextDx11.h"
-#include "Render/Dx11/VertexBufferDx11.h"
-#include "Render/Dx11/IndexBufferDx11.h"
-#include "Render/Dx11/SimpleTextureDx11.h"
 #include "Render/Dx11/CubeTextureDx11.h"
-#include "Render/Dx11/VolumeTextureDx11.h"
-#include "Render/Dx11/RenderTargetSetDx11.h"
+#include "Render/Dx11/IndexBufferDx11.h"
+#include "Render/Dx11/ProgramDx11.h"
 #include "Render/Dx11/ProgramCompilerDx11.h"
 #include "Render/Dx11/ProgramResourceDx11.h"
-#include "Render/Dx11/ProgramDx11.h"
+#include "Render/Dx11/RenderSystemDx11.h"
+#include "Render/Dx11/RenderTargetSetDx11.h"
+#include "Render/Dx11/RenderViewDx11.h"
+#include "Render/Dx11/SimpleTextureDx11.h"
 #include "Render/Dx11/StateCache.h"
 #include "Render/Dx11/TypesDx11.h"
 #include "Render/Dx11/Utilities.h"
+#include "Render/Dx11/VertexBufferDynamicDx11.h"
+#include "Render/Dx11/VertexBufferStaticDx11.h"
+#include "Render/Dx11/VolumeTextureDx11.h"
 #include "Render/Dx11/Window.h"
 
 namespace traktor
@@ -203,42 +203,10 @@ Ref< IRenderView > RenderSystemDx11::createRenderView(const RenderViewEmbeddedDe
 
 Ref< VertexBuffer > RenderSystemDx11::createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
 {
-	ComRef< ID3D11Buffer > d3dBuffer;
-	D3D11_BUFFER_DESC dbd;
-	HRESULT hr;
-
-	dbd.ByteWidth = bufferSize;
-	dbd.Usage = D3D11_USAGE_DYNAMIC;
-	dbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	dbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	dbd.MiscFlags = 0;
-
-	hr = m_context->getD3DDevice()->CreateBuffer(&dbd, NULL, &d3dBuffer.getAssign());
-	if (FAILED(hr))
-		return 0;
-
-	std::vector< D3D11_INPUT_ELEMENT_DESC > d3dInputElements(vertexElements.size());
-	for (unsigned int i = 0; i < vertexElements.size(); ++i)
-	{
-		T_ASSERT (vertexElements[i].getDataUsage() < sizeof_array(c_dxgiInputSemantic));
-		T_ASSERT (vertexElements[i].getDataType() < sizeof_array(c_dxgiInputType));
-
-		d3dInputElements[i].SemanticName = c_dxgiInputSemantic[vertexElements[i].getDataUsage()];
-		d3dInputElements[i].SemanticIndex = vertexElements[i].getIndex();
-		d3dInputElements[i].Format = c_dxgiInputType[vertexElements[i].getDataType()];
-		d3dInputElements[i].InputSlot = 0;
-		d3dInputElements[i].AlignedByteOffset = vertexElements[i].getOffset();
-		d3dInputElements[i].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-		d3dInputElements[i].InstanceDataStepRate = 0;
-	}
-
-	return new VertexBufferDx11(
-		m_context,
-		bufferSize,
-		d3dBuffer,
-		getVertexSize(vertexElements),
-		d3dInputElements
-	);
+	if (!dynamic)
+		return VertexBufferStaticDx11::create(m_context, bufferSize, vertexElements);
+	else
+		return VertexBufferDynamicDx11::create(m_context, bufferSize, vertexElements);
 }
 
 Ref< IndexBuffer > RenderSystemDx11::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
