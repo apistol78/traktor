@@ -27,6 +27,10 @@ class T_DLLCLASS AxisJointDesc : public JointDesc
 public:
 	AxisJointDesc();
 
+	void setAnchor(const Vector4& anchor);
+
+	const Vector4& getAnchor() const;
+
 	void setAxis(const Vector4& axis);
 
 	const Vector4& getAxis() const;
@@ -34,6 +38,7 @@ public:
 	virtual bool serialize(ISerializer& s);
 
 private:
+	Vector4 m_anchor;
 	Vector4 m_axis;
 };
 
