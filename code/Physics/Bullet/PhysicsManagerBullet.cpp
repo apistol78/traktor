@@ -6,28 +6,31 @@
 #include "Core/Misc/Save.h"
 #include "Core/Thread/Acquire.h"
 #include "Heightfield/Heightfield.h"
-#include "Physics/CollisionListener.h"
+#include "Physics/AxisJointDesc.h"
+#include "Physics/BallJointDesc.h"
 #include "Physics/BoxShapeDesc.h"
 #include "Physics/CapsuleShapeDesc.h"
-#include "Physics/CylinderShapeDesc.h"
-#include "Physics/MeshShapeDesc.h"
-#include "Physics/SphereShapeDesc.h"
-#include "Physics/HeightfieldShapeDesc.h"
-#include "Physics/StaticBodyDesc.h"
-#include "Physics/DynamicBodyDesc.h"
-#include "Physics/BallJointDesc.h"
+#include "Physics/CollisionListener.h"
 #include "Physics/ConeTwistJointDesc.h"
+#include "Physics/CylinderShapeDesc.h"
+#include "Physics/DynamicBodyDesc.h"
+#include "Physics/HeightfieldShapeDesc.h"
 #include "Physics/HingeJointDesc.h"
 #include "Physics/Hinge2JointDesc.h"
 #include "Physics/Mesh.h"
-#include "Physics/Bullet/PhysicsManagerBullet.h"
-#include "Physics/Bullet/DynamicBodyBullet.h"
-#include "Physics/Bullet/StaticBodyBullet.h"
+#include "Physics/MeshShapeDesc.h"
+#include "Physics/SphereShapeDesc.h"
+#include "Physics/StaticBodyDesc.h"
+#include "Physics/Bullet/Conversion.h"
+#include "Physics/Bullet/AxisJointBullet.h"
 #include "Physics/Bullet/BallJointBullet.h"
 #include "Physics/Bullet/ConeTwistJointBullet.h"
-#include "Physics/Bullet/HingeJointBullet.h"
+#include "Physics/Bullet/DynamicBodyBullet.h"
 #include "Physics/Bullet/HeightfieldShapeBullet.h"
-#include "Physics/Bullet/Conversion.h"
+#include "Physics/Bullet/HingeJointBullet.h"
+#include "Physics/Bullet/Hinge2JointBullet.h"
+#include "Physics/Bullet/PhysicsManagerBullet.h"
+#include "Physics/Bullet/StaticBodyBullet.h"
 #include "Resource/IResourceManager.h"
 
 #if defined(T_BULLET_USE_SPURS)
@@ -512,7 +515,49 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 	
 	Ref< Joint > joint;
 
-	if (const BallJointDesc* ballDesc = dynamic_type_cast< const BallJointDesc* >(desc))
+	if (const AxisJointDesc* axisDesc = dynamic_type_cast< const AxisJointDesc* >(desc))
+	{
+		btHingeConstraint* hingeConstraint = 0;
+
+		if (b1 && b2)
+		{
+			Vector4 anchor = transform * axisDesc->getAnchor().xyz1();
+			Vector4 axis = transform * axisDesc->getAxis().xyz0();
+
+			btVector3 anchorIn1 = toBtVector3(body1->getTransform().inverse() * anchor);
+			btVector3 anchorIn2 = toBtVector3(body2->getTransform().inverse() * anchor);
+			btVector3 axisIn1 = toBtVector3(body1->getTransform().inverse() * axis);
+			btVector3 axisIn2 = toBtVector3(body2->getTransform().inverse() * axis);
+
+			hingeConstraint = new btHingeConstraint(
+				*b1,
+				*b2,
+				anchorIn1,
+				anchorIn2,
+				axisIn1,
+				axisIn2
+			);
+		}
+		else
+		{
+			Vector4 anchor = transform * axisDesc->getAnchor().xyz1();
+			Vector4 axis = transform * axisDesc->getAxis().xyz0();
+
+			btVector3 anchorIn1 = toBtVector3(body1->getTransform().inverse() * anchor);
+			btVector3 axisIn1 = toBtVector3(body1->getTransform().inverse() * axis);
+
+			hingeConstraint = new btHingeConstraint(
+				*b1,
+				anchorIn1,
+				axisIn1
+			);
+		}
+
+		hingeConstraint->setAngularOnly(true);
+
+		joint = new AxisJointBullet(this, hingeConstraint, body1, body2);
+	}
+	else if (const BallJointDesc* ballDesc = dynamic_type_cast< const BallJointDesc* >(desc))
 	{
 		btPoint2PointConstraint* pointConstraint = 0;
 
@@ -622,6 +667,29 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 			hingeConstraint->setLimit(minAngle, maxAngle);
 
 		joint = new HingeJointBullet(this, hingeConstraint, body1, body2);
+	}
+	else if (const Hinge2JointDesc* hinge2Desc = dynamic_type_cast< const Hinge2JointDesc* >(desc))
+	{
+		btHinge2Constraint* hinge2Constraint = 0;
+
+		if (b1 && b2)
+		{
+			Vector4 anchor = transform * hinge2Desc->getAnchor().xyz1();
+			Vector4 axis1 = transform * hinge2Desc->getAxis1().xyz0();
+			Vector4 axis2 = transform * hinge2Desc->getAxis2().xyz0();
+
+			hinge2Constraint = new btHinge2Constraint(
+				*b1,
+				*b2,
+				toBtVector3(anchor),
+				toBtVector3(axis1),
+				toBtVector3(axis2)
+			);
+		}
+		else
+			return 0;
+
+		joint = new Hinge2JointBullet(this, hinge2Constraint, body1, body2);
 	}
 
 	if (!joint)
