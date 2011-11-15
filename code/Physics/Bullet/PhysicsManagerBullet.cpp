@@ -678,12 +678,16 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 			Vector4 axis1 = transform * hinge2Desc->getAxis1().xyz0();
 			Vector4 axis2 = transform * hinge2Desc->getAxis2().xyz0();
 
+			btVector3 _anchor = toBtVector3(anchor);
+			btVector3 _axis1 = toBtVector3(axis1);
+			btVector3 _axis2 = toBtVector3(axis2);
+
 			hinge2Constraint = new btHinge2Constraint(
 				*b1,
 				*b2,
-				toBtVector3(anchor),
-				toBtVector3(axis1),
-				toBtVector3(axis2)
+				_anchor,
+				_axis1,
+				_axis2
 			);
 
 			// Disable spring.
