@@ -17,8 +17,10 @@ void SphereSourceRenderer::render(render::PrimitiveRenderer* primitiveRenderer, 
 	float minRadius = sphereSource->getRadius().min;
 	float maxRadius = sphereSource->getRadius().max;
 
-	primitiveRenderer->drawWireSphere(position, minRadius, Color4ub(255, 255, 0));
-	primitiveRenderer->drawWireSphere(position, maxRadius, Color4ub(255, 255, 0));
+	Matrix44 T = translate(position);
+
+	primitiveRenderer->drawWireSphere(T, minRadius, Color4ub(255, 255, 0));
+	primitiveRenderer->drawWireSphere(T, maxRadius, Color4ub(255, 255, 0));
 }
 
 	}

@@ -67,6 +67,10 @@ public:
 
 	bool isSpatial() const;
 
+	void setTransform0(const Transform& transform);
+
+	Transform getTransform0() const;
+
 	void setTransform(const Transform& transform);
 
 	Transform getTransform() const;

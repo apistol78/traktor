@@ -1,6 +1,7 @@
 #ifndef traktor_physics_ArticulatedEntityEditor_H
 #define traktor_physics_ArticulatedEntityEditor_H
 
+#include "Physics/Editor/PhysicsRenderer.h"
 #include "Scene/Editor/DefaultEntityEditor.h"
 
 // import/export mechanism.
@@ -24,6 +25,9 @@ public:
 	ArticulatedEntityEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter);
 
 	virtual void drawGuide(render::PrimitiveRenderer* primitiveRenderer) const;
+
+private:
+	PhysicsRenderer m_physicsRenderer;
 };
 
 	}

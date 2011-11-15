@@ -152,7 +152,7 @@ public:
 	);
 
 	void drawWireSphere(
-		const Vector4& center,
+		const Matrix44& center,
 		float radius,
 		const Color4ub& color
 	);

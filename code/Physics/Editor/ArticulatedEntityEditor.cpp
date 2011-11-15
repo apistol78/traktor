@@ -1,8 +1,8 @@
 #include "Core/Math/Const.h"
-#include "Physics/BallJointDesc.h"
-#include "Physics/ConeTwistJointDesc.h"
-#include "Physics/HingeJointDesc.h"
-#include "Physics/Hinge2JointDesc.h"
+//#include "Physics/BallJointDesc.h"
+//#include "Physics/ConeTwistJointDesc.h"
+//#include "Physics/HingeJointDesc.h"
+//#include "Physics/Hinge2JointDesc.h"
 #include "Physics/Editor/ArticulatedEntityEditor.h"
 #include "Physics/World/ArticulatedEntity.h"
 #include "Physics/World/ArticulatedEntityData.h"
@@ -37,17 +37,44 @@ void ArticulatedEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRend
 	for (uint32_t i = 0; i < uint32_t(constraints.size()); ++i)
 	{
 		const ArticulatedEntityData::Constraint& constraint = constraints[i];
-
-		// Let invalid constraint pass for now as user might correct this later.
 		if (constraint.entityIndex1 < 0)
 			continue;
 
-		Ref< scene::EntityAdapter > entity1 = constraintChildren[constraint.entityIndex1];
-		Ref< scene::EntityAdapter > entity2 = (constraint.entityIndex2 >= 0) ? constraintChildren[constraint.entityIndex2] : 0;
-
+		scene::EntityAdapter* entity1 = constraintChildren[constraint.entityIndex1];
 		if (!entity1)
 			continue;
 
+		scene::EntityAdapter* entity2 = (constraint.entityIndex2 >= 0) ? constraintChildren[constraint.entityIndex2] : 0;
+		if (entity2)
+		{
+			Transform body1Transform0 = entity1->getTransform0();
+			Transform body1Transform = entity1->getTransform();
+			Transform body2Transform0 = entity2->getTransform0();
+			Transform body2Transform = entity2->getTransform();
+
+			m_physicsRenderer.draw(
+				primitiveRenderer,
+				body1Transform0,
+				body1Transform,
+				body2Transform0,
+				body2Transform,
+				constraint.jointDesc
+			);
+		}
+		else
+		{
+			Transform body1Transform0 = entity1->getTransform0();
+			Transform body1Transform = entity1->getTransform();
+
+			m_physicsRenderer.draw(
+				primitiveRenderer,
+				body1Transform0,
+				body1Transform,
+				constraint.jointDesc
+			);
+		}
+
+		/*
 		Transform body1OriginalTransformInv = entity1->getTransform().inverse();
 		Transform body1Transform = entity1->getTransform();
 		Transform jointTransform = transform * body1OriginalTransformInv * body1Transform;
@@ -215,6 +242,7 @@ void ArticulatedEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRend
 				Color4ub(255, 255, 255)
 			);
 		}
+		*/
 	}
 }
 

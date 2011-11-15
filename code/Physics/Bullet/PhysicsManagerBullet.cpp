@@ -685,6 +685,15 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 				toBtVector3(axis1),
 				toBtVector3(axis2)
 			);
+
+			// Disable spring.
+			hinge2Constraint->enableSpring(2, false);
+			hinge2Constraint->setDamping(2, 0.0f);
+			hinge2Constraint->setStiffness(2, 0.0f);
+
+			// Setup rotation range allowed around axis1.
+			hinge2Constraint->setLowerLimit(hinge2Desc->getLowStop());
+			hinge2Constraint->setUpperLimit(hinge2Desc->getHighStop()); 
 		}
 		else
 			return 0;
