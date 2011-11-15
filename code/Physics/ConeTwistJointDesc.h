@@ -39,31 +39,15 @@ public:
 
 	virtual bool serialize(ISerializer& s);
 
-	inline const Vector4& getAnchor() const
-	{
-		return m_anchor;
-	}
+	const Vector4& getAnchor() const { return m_anchor; }
 
-	inline const Vector4& getConeAxis() const
-	{
-		return m_coneAxis;
-	}
+	const Vector4& getConeAxis() const { return m_coneAxis; }
 
-	inline const Vector4& getTwistAxis() const
-	{
-		return m_twistAxis;
-	}
+	const Vector4& getTwistAxis() const { return m_twistAxis; }
 
-	inline void getConeAngles(float& outConeAngle1, float& outConeAngle2) const
-	{
-		outConeAngle1 = m_coneAngle1;
-		outConeAngle2 = m_coneAngle2;
-	}
+	void getConeAngles(float& outConeAngle1, float& outConeAngle2) const { outConeAngle1 = m_coneAngle1; outConeAngle2 = m_coneAngle2; }
 
-	inline float getTwistAngle() const
-	{
-		return m_twistAngle;
-	}
+	float getTwistAngle() const { return m_twistAngle; }
 
 private:
 	Vector4 m_anchor;
@@ -72,7 +56,6 @@ private:
 	float m_coneAngle1;
 	float m_coneAngle2;
 	float m_twistAngle;
-
 };
 
 	}

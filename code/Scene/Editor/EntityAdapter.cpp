@@ -56,6 +56,20 @@ bool EntityAdapter::isSpatial() const
 	return is_a< world::SpatialEntityData >(getEntityData());
 }
 
+void EntityAdapter::setTransform0(const Transform& transform)
+{
+	if (world::SpatialEntityData* spatialEntityData = dynamic_type_cast< world::SpatialEntityData* >(getEntityData()))
+		spatialEntityData->setTransform(transform);
+}
+
+Transform EntityAdapter::getTransform0() const
+{
+	if (world::SpatialEntityData* spatialEntityData = dynamic_type_cast< world::SpatialEntityData* >(getEntityData()))
+		return spatialEntityData->getTransform();
+	else
+		return Transform::identity();
+}
+
 void EntityAdapter::setTransform(const Transform& transform)
 {
 	if (world::SpatialEntityData* spatialEntityData = dynamic_type_cast< world::SpatialEntityData* >(getEntityData()))

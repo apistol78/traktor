@@ -1,6 +1,7 @@
 #ifndef traktor_physics_RigidEntityEditor_H
 #define traktor_physics_RigidEntityEditor_H
 
+#include "Physics/Editor/PhysicsRenderer.h"
 #include "Scene/Editor/DefaultEntityEditor.h"
 
 // import/export mechanism.
@@ -32,6 +33,7 @@ public:
 	virtual void drawGuide(render::PrimitiveRenderer* primitiveRenderer) const;
 
 private:
+	PhysicsRenderer m_physicsRenderer;
 	bool m_showHull;
 };
 

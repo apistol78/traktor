@@ -517,34 +517,49 @@ void PrimitiveRenderer::drawWireQuad(
 }
 
 void PrimitiveRenderer::drawWireSphere(
-	const Vector4& center,
+	const Matrix44& frame,
 	float radius,
 	const Color4ub& color
 )
 {
-	Scalar sr(radius);
-	for (int i = 0; i < 64; ++i)
-	{
-		float s1 = sinf(2.0f * PI * i / 64.0f);
-		float c1 = cosf(2.0f * PI * i / 64.0f);
-		float s2 = sinf(2.0f * PI * (i + 1) / 64.0f);
-		float c2 = cosf(2.0f * PI * (i + 1) / 64.0f);
+	Vector4 centerV = m_worldView * frame.translation().xyz1();
 
-		drawLine(
-			center + Vector4(c1, 0.0f, s1, 0.0f) * sr,
-			center + Vector4(c2, 0.0f, s2, 0.0f) * sr,
-			color
-		);
-		drawLine(
-			center + Vector4(0.0f, c1, s1, 0.0f) * sr,
-			center + Vector4(0.0f, c2, s2, 0.0f) * sr,
-			color
-		);
-		drawLine(
-			center + Vector4(c1, s1, 0.0f, 0.0f) * sr,
-			center + Vector4(c2, s2, 0.0f, 0.0f) * sr,
-			color
-		);
+	int32_t nlat = int32_t(4.0f * 15.0f / centerV.z() + 1);
+	if (nlat > 16)
+		nlat = 16;
+
+	for (int lat = 0; lat < nlat; ++lat)
+	{
+		float r = radius * sinf(PI * float(lat + 1) / (nlat + 1));
+		float y = radius * cosf(PI * float(lat + 1) / (nlat + 1));
+
+		float x1 = r, z1 = 0.0f;
+		for (int lng = 1; lng <= 32; ++lng)
+		{
+			float x2 = r * cosf(TWO_PI * (lng / 32.0f));
+			float z2 = r * sinf(TWO_PI * (lng / 32.0f));
+
+			drawLine(
+				frame * Vector4(x1, y, z1, 1.0f),
+				frame * Vector4(x2, y, z2, 1.0f),
+				color
+			);
+
+			drawLine(
+				frame * Vector4(x1, z1, y, 1.0f),
+				frame * Vector4(x2, z2, y, 1.0f),
+				color
+			);
+
+			drawLine(
+				frame * Vector4(y, x1, z1, 1.0f),
+				frame * Vector4(y, x2, z2, 1.0f),
+				color
+			);
+
+			x1 = x2;
+			z1 = z2;
+		}
 	}
 }
 
