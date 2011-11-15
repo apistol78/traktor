@@ -86,21 +86,21 @@ void VertexBufferStaticDx11::unlock()
 	setContentValid(true);
 }
 
-void VertexBufferStaticDx11::prepare()
+void VertexBufferStaticDx11::prepare(ID3D11DeviceContext* d3dDeviceContext)
 {
-	if (!m_data.ptr())
-		return;
-
-	m_context->getD3DDeviceContext()->UpdateSubresource(
-		m_d3dBuffer,
-		0,
-		NULL,
-		m_data.c_ptr(),
-		getBufferSize(),
-		1
-	);
-
-	m_data.release();
+	if (m_data.ptr())
+	{
+		d3dDeviceContext->UpdateSubresource(
+			m_d3dBuffer,
+			0,
+			NULL,
+			m_data.c_ptr(),
+			getBufferSize(),
+			1
+		);
+		m_data.release();
+	}
+	VertexBufferDx11::prepare(d3dDeviceContext);
 }
 
 VertexBufferStaticDx11::VertexBufferStaticDx11(uint32_t bufferSize)

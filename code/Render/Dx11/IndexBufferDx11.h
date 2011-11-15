@@ -3,6 +3,7 @@
 
 #include "Core/Misc/ComRef.h"
 #include "Render/IndexBuffer.h"
+#include "Render/Dx11/Platform.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -27,22 +28,15 @@ class T_DLLCLASS IndexBufferDx11 : public IndexBuffer
 	T_RTTI_CLASS;
 
 public:
-	IndexBufferDx11(ContextDx11* context, IndexType indexType, uint32_t bufferSize, ID3D11Buffer* d3dBuffer);
+	virtual void prepare(ID3D11DeviceContext* d3dDeviceContext);
 
-	virtual ~IndexBufferDx11();
+	ID3D11Buffer* getD3D11Buffer() const { return m_d3dBuffer; }
 
-	virtual void destroy();
-
-	virtual void* lock();
-	
-	virtual void unlock();
-
-	ID3D11Buffer* getD3D11Buffer() const;
-
-private:
+protected:
 	Ref< ContextDx11 > m_context;
 	ComRef< ID3D11Buffer > m_d3dBuffer;
-	bool m_locked;
+
+	IndexBufferDx11(IndexType indexType, uint32_t bufferSize);
 };
 	
 	}
