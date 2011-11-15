@@ -110,10 +110,6 @@ void VertexBufferDynamicDx11::unlock()
 	setContentValid(true);
 }
 
-void VertexBufferDynamicDx11::prepare()
-{
-}
-
 VertexBufferDynamicDx11::VertexBufferDynamicDx11(uint32_t bufferSize)
 :	VertexBufferDx11(bufferSize)
 ,	m_locked(false)

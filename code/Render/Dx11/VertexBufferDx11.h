@@ -26,7 +26,7 @@ class T_DLLCLASS VertexBufferDx11 : public VertexBuffer
 	T_RTTI_CLASS;
 
 public:
-	virtual void prepare() = 0;
+	virtual void prepare(ID3D11DeviceContext* d3dDeviceContext);
 
 	ID3D11Buffer* getD3D11Buffer() const { return m_d3dBuffer; }
 

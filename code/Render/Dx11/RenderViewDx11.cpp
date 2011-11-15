@@ -511,41 +511,10 @@ void RenderViewDx11::draw(const Primitives& primitives)
 
 	const RenderState& rs = m_renderStateStack.back();
 
-	// Handle dirty resources.
-	if (m_dirty)
-	{
-		m_currentVertexBuffer->prepare();
-
-		// Bind vertex buffer.
-		ID3D11Buffer* d3dBuffer = m_currentVertexBuffer->getD3D11Buffer();
-		UINT stride = m_currentVertexBuffer->getD3D11Stride(), offset = 0;
-		m_context->getD3DDeviceContext()->IASetVertexBuffers(0, 1, &d3dBuffer, &stride, &offset);
-
-		// Bind index buffer.
-		if (m_currentIndexBuffer)
-		{
-			DXGI_FORMAT indexFormat = DXGI_FORMAT_UNKNOWN;
-
-			switch (m_currentIndexBuffer->getIndexType())
-			{
-			case ItUInt16:
-				indexFormat = DXGI_FORMAT_R16_UINT;
-				break;
-
-			case ItUInt32:
-				indexFormat = DXGI_FORMAT_R32_UINT;
-				break;
-			}
-
-			m_context->getD3DDeviceContext()->IASetIndexBuffer(
-				m_currentIndexBuffer->getD3D11Buffer(),
-				indexFormat,
-				0
-			);
-		}
-
-		m_dirty = false;
-	}
+	// Prepare buffers.
+	m_currentVertexBuffer->prepare(m_context->getD3DDeviceContext());
+	if (m_currentIndexBuffer)
+		m_currentIndexBuffer->prepare(m_context->getD3DDeviceContext());
 
 	// Bind program with device, handle input mapping of vertex elements.
 	if (!m_currentProgram->bind(

@@ -1,7 +1,8 @@
 #include "Core/Log/Log.h"
 #include "Render/Dx11/ContextDx11.h"
 #include "Render/Dx11/CubeTextureDx11.h"
-#include "Render/Dx11/IndexBufferDx11.h"
+#include "Render/Dx11/IndexBufferDynamicDx11.h"
+#include "Render/Dx11/IndexBufferStaticDx11.h"
 #include "Render/Dx11/ProgramDx11.h"
 #include "Render/Dx11/ProgramCompilerDx11.h"
 #include "Render/Dx11/ProgramResourceDx11.h"
@@ -211,21 +212,10 @@ Ref< VertexBuffer > RenderSystemDx11::createVertexBuffer(const std::vector< Vert
 
 Ref< IndexBuffer > RenderSystemDx11::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
 {
-	ComRef< ID3D11Buffer > d3dBuffer;
-	D3D11_BUFFER_DESC dbd;
-	HRESULT hr;
-
-	dbd.ByteWidth = bufferSize;
-	dbd.Usage = D3D11_USAGE_DYNAMIC;
-	dbd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	dbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	dbd.MiscFlags = 0;
-
-	hr = m_context->getD3DDevice()->CreateBuffer(&dbd, NULL, &d3dBuffer.getAssign());
-	if (FAILED(hr))
-		return 0;
-
-	return new IndexBufferDx11(m_context, indexType, bufferSize, d3dBuffer);
+	if (!dynamic)
+		return IndexBufferStaticDx11::create(m_context, indexType, bufferSize);
+	else
+		return IndexBufferDynamicDx11::create(m_context, indexType, bufferSize);
 }
 
 Ref< ISimpleTexture > RenderSystemDx11::createSimpleTexture(const SimpleTextureCreateDesc& desc)

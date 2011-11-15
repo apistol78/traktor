@@ -44,8 +44,6 @@ public:
 	
 	virtual void unlock();
 
-	virtual void prepare();
-
 private:
 	Ref< ContextDx11 > m_context;
 	bool m_locked;
