@@ -84,6 +84,11 @@ bool InputDeviceTouch::isControlAnalogue(int32_t control) const
 	return true;
 }
 
+bool InputDeviceTouch::isControlRelative(int32_t control) const
+{
+	return false;
+}
+
 float InputDeviceTouch::getControlValue(int32_t control)
 {
 	if (control == -1)

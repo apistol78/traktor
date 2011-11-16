@@ -33,6 +33,8 @@ public:
 	virtual std::wstring getControlName(int32_t control);
 
 	virtual bool isControlAnalogue(int32_t control) const;
+	
+	virtual bool isControlRelative(int32_t control) const;
 
 	virtual float getControlValue(int32_t control);
 

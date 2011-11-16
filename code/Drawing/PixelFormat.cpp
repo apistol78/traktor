@@ -1,6 +1,15 @@
-#if (defined(_MSC_VER) && !defined(WINCE)) || defined(__APPLE__)
+
+#if defined(_MSC_VER) && !defined(WINCE)
+#	define USE_XMM_INTRINSICS
 #	include <emmintrin.h>
+#elif defined(__APPLE__)
+#	include <TargetConditionals.h>
+#	if TARGET_CPU_X86 && TARGET_OS_MAC
+#		define USE_XMM_INTRINSICS
+#		include <emmintrin.h>
+#	endif
 #endif
+
 #include "Core/Math/MathUtils.h"
 #include "Drawing/PixelFormat.h"
 #include "Drawing/Palette.h"
@@ -646,7 +655,7 @@ void PixelFormat::convertTo4f(
 
 		Color4f inv(ir, ig, ib, ia);
 
-#if defined(T_MATH_USE_SSE2)
+#if defined(USE_XMM_INTRINSICS)
 		__m128i mx = _mm_set_epi32(amx, bmx, gmx, rmx);
 #endif
 
@@ -654,7 +663,7 @@ void PixelFormat::convertTo4f(
 		{
 			uint32_t s = (*m_unpack)(src);
 
-#if defined(T_MATH_USE_SSE2)
+#if defined(USE_XMM_INTRINSICS)
 
 			__m128i t0 = _mm_set_epi32(s >> getAlphaShift(), s >> getBlueShift(), s >> getGreenShift(), s >> getRedShift());
 			__m128i t1 = _mm_and_si128(t0, mx);
