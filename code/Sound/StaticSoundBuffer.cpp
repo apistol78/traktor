@@ -1,6 +1,15 @@
-#if (defined(_MSC_VER) && !defined(WINCE)) || defined(__APPLE__)
+
+#if defined(_MSC_VER) && !defined(WINCE)
+#	define USE_XMM_INTRINSICS
 #	include <emmintrin.h>
+#elif defined(__APPLE__)
+#	include <TargetConditionals.h>
+#	if TARGET_CPU_X86 && TARGET_OS_MAC
+#		define USE_XMM_INTRINSICS
+#		include <emmintrin.h>
+#	endif
 #endif
+
 #include "Core/Math/MathConfig.h"
 #include "Core/Memory/BlockAllocator.h"
 #include "Core/Misc/Align.h"
@@ -161,7 +170,7 @@ bool StaticSoundBuffer::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBloc
 
 		int32_t j = 0;
 
-#if defined(T_MATH_USE_SSE2)
+#if defined(USE_XMM_INTRINSICS)
 		for (; j < samplesCount - 7; j += 8)
 		{
 			const float T_ALIGN16 c_scale[] = { 1.0f / 32767.0f, 1.0f / 32767.0f, 1.0f / 32767.0f, 1.0f / 32767.0f };
