@@ -15,6 +15,7 @@ const TypeInfo& BoxShapeRenderer::getDescType() const
 }
 
 void BoxShapeRenderer::draw(
+	resource::IResourceManager* resourceManager,
 	render::PrimitiveRenderer* primitiveRenderer,
 	const Transform& body1Transform0,
 	const Transform& body1Transform,

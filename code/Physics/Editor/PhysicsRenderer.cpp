@@ -71,6 +71,7 @@ void PhysicsRenderer::draw(
 }
 
 void PhysicsRenderer::draw(
+	resource::IResourceManager* resourceManager,
 	render::PrimitiveRenderer* primitiveRenderer,
 	const Transform& body1Transform0,
 	const Transform& body1Transform,
@@ -80,6 +81,7 @@ void PhysicsRenderer::draw(
 	std::map< const TypeInfo*, Ref< IPhysicsShapeRenderer > >::const_iterator i = m_shapeRenderers.find(&type_of(shapeDesc));
 	if (i != m_shapeRenderers.end())
 		i->second->draw(
+			resourceManager,
 			primitiveRenderer,
 			body1Transform0,
 			body1Transform,

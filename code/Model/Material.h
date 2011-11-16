@@ -41,11 +41,9 @@ public:
 	
 	const std::wstring& getName() const;
 
-	void setDiffuseMap(const std::wstring& diffuseMap, BlendOperator diffuseBlendOperator);
+	void setDiffuseMap(const std::wstring& diffuseMap);
 
 	const std::wstring& getDiffuseMap() const;
-
-	BlendOperator getDiffuseBlendOperator() const;
 
 	void setSpecularMap(const std::wstring& specularMap);
 
@@ -71,6 +69,10 @@ public:
 
 	float getSpecularRoughness() const;
 
+	void setBlendOperator(BlendOperator blendOperator);
+
+	BlendOperator getBlendOperator() const;
+
 	void setDoubleSided(bool doubleSided);
 
 	bool isDoubleSided() const;
@@ -78,13 +80,13 @@ public:
 private:
 	std::wstring m_name;
 	std::wstring m_diffuseMap;
-	BlendOperator m_diffuseBlendOperator;
 	std::wstring m_specularMap;
 	std::wstring m_normalMap;
 	Color4ub m_color;
 	float m_diffuseTerm;
 	float m_specularTerm;
 	float m_specularRoughness;
+	BlendOperator m_blendOperator;
 	bool m_doubleSided;
 };
 

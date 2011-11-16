@@ -1,6 +1,8 @@
+#include "Heightfield/Heightfield.h"
 #include "Physics/HeightfieldShapeDesc.h"
 #include "Physics/Editor/HeightfieldShapeRenderer.h"
 #include "Render/PrimitiveRenderer.h"
+#include "Resource/IResourceManager.h"
 
 namespace traktor
 {
@@ -15,6 +17,7 @@ const TypeInfo& HeightfieldShapeRenderer::getDescType() const
 }
 
 void HeightfieldShapeRenderer::draw(
+	resource::IResourceManager* resourceManager,
 	render::PrimitiveRenderer* primitiveRenderer,
 	const Transform& body1Transform0,
 	const Transform& body1Transform,
@@ -22,20 +25,14 @@ void HeightfieldShapeRenderer::draw(
 ) const
 {
 	const HeightfieldShapeDesc* heightfieldShapeDesc = checked_type_cast< const HeightfieldShapeDesc*, false >(shapeDesc);
-	//resource::Proxy< hf::Heightfield > heightfield = heightfieldShapeDesc->getHeightfield();
-	//if (getContext()->getResourceManager()->bind(heightfield) && heightfield.validate())
-	//{
-	//	const Vector4& extent = heightfield->getResource().getWorldExtent();
-	//	Aabb3 boundingBox(-extent / Scalar(2.0f), extent / Scalar(2.0f));
 
-	//	if (getEntityAdapter()->isSelected())
-	//	{
-	//		primitiveRenderer->drawSolidAabb(boundingBox, Color4ub(128, 255, 255, 128));
-	//		primitiveRenderer->drawWireAabb(boundingBox, Color4ub(0, 255, 255));
-	//	}
-	//	else
-	//		primitiveRenderer->drawWireAabb(boundingBox, Color4ub(0, 255, 255, 180));
-	//}
+	resource::Proxy< hf::Heightfield > heightfield = heightfieldShapeDesc->getHeightfield();
+	if (resourceManager->bind(heightfield) && heightfield.validate())
+	{
+		const Vector4& extent = heightfield->getResource().getWorldExtent();
+		Aabb3 boundingBox(-extent / Scalar(2.0f), extent / Scalar(2.0f));
+		primitiveRenderer->drawWireAabb(boundingBox, Color4ub(0, 255, 255, 180));
+	}
 }
 
 	}

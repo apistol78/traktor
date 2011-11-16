@@ -15,6 +15,7 @@ const TypeInfo& CapsuleShapeRenderer::getDescType() const
 }
 
 void CapsuleShapeRenderer::draw(
+	resource::IResourceManager* resourceManager,
 	render::PrimitiveRenderer* primitiveRenderer,
 	const Transform& body1Transform0,
 	const Transform& body1Transform,

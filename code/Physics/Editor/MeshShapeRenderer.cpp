@@ -1,6 +1,8 @@
+#include "Physics/Mesh.h"
 #include "Physics/MeshShapeDesc.h"
 #include "Physics/Editor/MeshShapeRenderer.h"
 #include "Render/PrimitiveRenderer.h"
+#include "Resource/IResourceManager.h"
 
 namespace traktor
 {
@@ -15,6 +17,7 @@ const TypeInfo& MeshShapeRenderer::getDescType() const
 }
 
 void MeshShapeRenderer::draw(
+	resource::IResourceManager* resourceManager,
 	render::PrimitiveRenderer* primitiveRenderer,
 	const Transform& body1Transform0,
 	const Transform& body1Transform,
@@ -23,30 +26,33 @@ void MeshShapeRenderer::draw(
 {
 	const MeshShapeDesc* meshShapeDesc = checked_type_cast< const MeshShapeDesc*, false >(shapeDesc);
 
-	//resource::Proxy< Mesh > mesh = meshShapeDesc->getMesh();
-	//if (getContext()->getResourceManager()->bind(mesh) && mesh.validate())
-	//{
-	//	const AlignedVector< Vector4 >& vertices = mesh->getVertices();
-	//	const std::vector< Mesh::Triangle >& triangles = 
-	//		m_showHull ?
-	//		mesh->getHullTriangles() :
-	//	mesh->getShapeTriangles();
+	resource::Proxy< Mesh > mesh = meshShapeDesc->getMesh();
+	if (resourceManager->bind(mesh) && mesh.validate())
+	{
+		const AlignedVector< Vector4 >& vertices = mesh->getVertices();
 
-	//	for (std::vector< Mesh::Triangle >::const_iterator i = triangles.begin(); i != triangles.end(); ++i)
-	//	{
-	//		const Vector4& V0 = vertices[i->indices[0]];
-	//		const Vector4& V1 = vertices[i->indices[1]];
-	//		const Vector4& V2 = vertices[i->indices[2]];
+		const std::vector< Mesh::Triangle >& shapeTriangles = mesh->getShapeTriangles();
+		const std::vector< Mesh::Triangle >& hullTriangles = mesh->getHullTriangles();
 
-	//		if (getEntityAdapter()->isSelected())
-	//		{
-	//			primitiveRenderer->drawSolidTriangle(V0, V1, V2, Color4ub(128, 255, 255, 128));
-	//			primitiveRenderer->drawWireTriangle(V0, V1, V2, Color4ub(0, 255, 255));
-	//		}
-	//		else
-	//			primitiveRenderer->drawWireTriangle(V0, V1, V2, Color4ub(0, 255, 255, 180));
-	//	}
-	//}
+		for (std::vector< Mesh::Triangle >::const_iterator i = shapeTriangles.begin(); i != shapeTriangles.end(); ++i)
+		{
+			const Vector4& V0 = vertices[i->indices[0]];
+			const Vector4& V1 = vertices[i->indices[1]];
+			const Vector4& V2 = vertices[i->indices[2]];
+
+			primitiveRenderer->drawSolidTriangle(V0, V1, V2, Color4ub(128, 255, 255, 128));
+			primitiveRenderer->drawWireTriangle(V0, V1, V2, Color4ub(0, 255, 255));
+		}
+
+		for (std::vector< Mesh::Triangle >::const_iterator i = hullTriangles.begin(); i != hullTriangles.end(); ++i)
+		{
+			const Vector4& V0 = vertices[i->indices[0]];
+			const Vector4& V1 = vertices[i->indices[1]];
+			const Vector4& V2 = vertices[i->indices[2]];
+
+			primitiveRenderer->drawWireTriangle(V0, V1, V2, Color4ub(0, 255, 255, 180));
+		}
+	}
 }
 
 	}
