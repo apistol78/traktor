@@ -1,7 +1,5 @@
 #if !defined(WINCE)
 #	include <ctime>
-#else
-#	include <time_ce.h>
 #endif
 #include "World/Entity/PointLightEntity.h"
 
@@ -33,7 +31,7 @@ PointLightEntity::PointLightEntity(
 #if !defined(WINCE)
 ,	m_random(uint32_t(clock()))
 #else
-,	m_random(uint32_t(clock_ce()))
+,	m_random(0)
 #endif
 {
 }
