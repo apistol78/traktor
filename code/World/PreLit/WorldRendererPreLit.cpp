@@ -18,10 +18,10 @@
 #include "World/PreLit/LightRenderer.h"
 #include "World/PreLit/WorldRendererPreLit.h"
 #include "World/PreLit/WorldRenderPassPreLit.h"
-#include "World/SMProj/BoxSMProj.h"
-#include "World/SMProj/LiSPSMProj.h"
-#include "World/SMProj/TSMProj.h"
-#include "World/SMProj/UniformSMProj.h"
+#include "World/SMProj/BoxShadowProjection.h"
+#include "World/SMProj/LiSPShadowProjection.h"
+#include "World/SMProj/TrapezoidShadowProjection.h"
+#include "World/SMProj/UniformShadowProjection.h"
 
 namespace traktor
 {
@@ -154,32 +154,30 @@ bool WorldRendererPreLit::create(
 	{
 		render::RenderTargetSetCreateDesc desc;
 
+		uint32_t shadowMapResolution = m_settings.shadowMapResolution;
+		switch (m_settings.shadowsQuality)
+		{
+		case WorldRenderSettings::SqLow:
+			shadowMapResolution /= 4;
+			break;
+
+		case WorldRenderSettings::SqMedium:
+			shadowMapResolution /= 2;
+			break;
+
+		default:
+			break;
+		}
+
 		// Create shadow map target.
 		desc.count = 1;
 		desc.width =
-		desc.height = m_settings.shadowMapResolution;
+		desc.height = shadowMapResolution;
 		desc.multiSample = 0;
 		desc.createDepthStencil = true;
 		desc.usingPrimaryDepthStencil = false;
 		desc.preferTiled = true;
 		desc.targets[0].format = render::TfR8G8B8A8;
-
-		switch (m_settings.shadowsQuality)
-		{
-		case WorldRenderSettings::SqLow:
-			desc.width /= 4;
-			desc.height /= 4;
-			break;
-
-		case WorldRenderSettings::SqMedium:
-			desc.width /= 2;
-			desc.height /= 2;
-			break;
-                
-		default:
-			break;
-		}
-
 		m_shadowTargetSet = renderSystem->createRenderTargetSet(desc);
 
 		// Determine shadow mask size; high quality is same as entire screen.
@@ -288,6 +286,28 @@ bool WorldRendererPreLit::create(
 		{
 			log::warning << L"Unable to create shadow render targets; shadows disabled" << Endl;
 			m_settings.shadowsEnabled = false;
+		}
+
+		if (m_settings.shadowsEnabled)
+		{
+			switch (m_settings.shadowsProjection)
+			{
+			case WorldRenderSettings::SpBox:
+				m_shadowProjection = new BoxShadowProjection(m_settings);
+				break;
+
+			case WorldRenderSettings::SpLiSP:
+				m_shadowProjection = new LiSPShadowProjection();
+				break;
+
+			case WorldRenderSettings::SpTrapezoid:
+				m_shadowProjection = new TrapezoidShadowProjection(m_settings);
+
+			default:
+			case WorldRenderSettings::SpUniform:
+				m_shadowProjection = new UniformShadowProjection(m_settings, shadowMapResolution);
+				break;
+			}
 		}
 
 		// Ensure targets are destroyed if something went wrong in setup.
@@ -766,65 +786,17 @@ void WorldRendererPreLit::buildLightWithShadows(WorldRenderView& worldRenderView
 				Matrix44 shadowLightSquareProjection = Matrix44::identity();
 				Frustum shadowFrustum;
 
-				switch (m_settings.shadowsProjection)
-				{
-				case WorldRenderSettings::SpBox:
-					calculateBoxSMProj(
-						m_settings,
-						viewInverse,
-						light.position,
-						light.direction,
-						sliceViewFrustum,
-						shadowBox,
-						shadowLightView,
-						shadowLightProjection,
-						shadowLightSquareProjection,
-						shadowFrustum
-					);
-					break;
-
-				case WorldRenderSettings::SpLiSP:
-					calculateLiSPSMProj(
-						m_settings,
-						viewInverse,
-						light.position,
-						light.direction,
-						sliceViewFrustum,
-						shadowLightView,
-						shadowLightProjection,
-						shadowLightSquareProjection,
-						shadowFrustum
-					);
-					break;
-
-				case WorldRenderSettings::SpTrapezoid:
-					calculateTSMProj(
-						m_settings,
-						viewInverse,
-						light.position,
-						light.direction,
-						sliceViewFrustum,
-						shadowLightView,
-						shadowLightProjection,
-						shadowLightSquareProjection,
-						shadowFrustum
-					);
-					break;
-
-				case WorldRenderSettings::SpUniform:
-					calculateUniformSMProj(
-						m_settings,
-						viewInverse,
-						light.position,
-						light.direction,
-						sliceViewFrustum,
-						shadowLightView,
-						shadowLightProjection,
-						shadowLightSquareProjection,
-						shadowFrustum
-					);
-					break;
-				}
+				m_shadowProjection->calculate(
+					viewInverse,
+					light.position,
+					light.direction,
+					sliceViewFrustum,
+					shadowBox,
+					shadowLightView,
+					shadowLightProjection,
+					shadowLightSquareProjection,
+					shadowFrustum
+				);
 
 				// Render shadow map.
 				WorldRenderView shadowRenderView;

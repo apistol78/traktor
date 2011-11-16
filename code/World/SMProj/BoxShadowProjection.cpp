@@ -1,13 +1,18 @@
-#include "World/WorldRenderSettings.h"
-#include "World/SMProj/BoxSMProj.h"
+#include "World/SMProj/BoxShadowProjection.h"
 
 namespace traktor
 {
 	namespace world
 	{
 
-void calculateBoxSMProj(
-	const WorldRenderSettings& settings,
+T_IMPLEMENT_RTTI_CLASS(L"traktor.world.BoxShadowProjection", BoxShadowProjection, IWorldShadowProjection)
+
+BoxShadowProjection::BoxShadowProjection(const WorldRenderSettings& settings)
+:	m_settings(settings)
+{
+}
+
+void BoxShadowProjection::calculate(
 	const Matrix44& viewInverse,
 	const Vector4& lightPosition,
 	const Vector4& lightDirection,
@@ -17,9 +22,9 @@ void calculateBoxSMProj(
 	Matrix44& outLightProjection,
 	Matrix44& outLightSquareProjection,
 	Frustum& outShadowFrustum
-)
+) const
 {
-	Scalar lightDistance(settings.depthRange);
+	Scalar lightDistance(m_settings.depthRange);
 
 	Vector4 shadowBoxExtents[8];
 	shadowBox.getExtents(shadowBoxExtents);
