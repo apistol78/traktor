@@ -5326,7 +5326,7 @@
 			</dependencies>
 		</item>
 		<item type="Project" version="1">
-			<enable>true</enable>
+			<enable>false</enable>
 			<name>Traktor.Sound</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Sound</sourcePath>
 			<configurations>
@@ -5504,7 +5504,7 @@
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
 					<project type="Project" version="1">
-						<enable>true</enable>
+						<enable>false</enable>
 						<name>Extern.mpg123-1.13.2</name>
 						<sourcePath>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2</sourcePath>
 						<configurations>
@@ -5803,7 +5803,7 @@
 			</dependencies>
 		</item>
 		<item type="Project" version="1">
-			<enable>true</enable>
+			<enable>false</enable>
 			<name>Traktor.Sound.WinMM</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Sound/WinMM</sourcePath>
 			<configurations>
