@@ -28,6 +28,7 @@ class RenderTargetSet;
 	namespace world
 	{
 
+class IWorldShadowProjection;
 class PostProcess;
 class WorldContext;
 class WorldEntityRenderers;
@@ -117,6 +118,7 @@ private:
 	};
 
 	WorldRenderSettings m_settings;
+	Ref< IWorldShadowProjection > m_shadowProjection;
 	Ref< render::IRenderView > m_renderView;
 	Ref< render::RenderTargetSet > m_depthTargetSet;
 	Ref< render::RenderTargetSet > m_shadowTargetSet;

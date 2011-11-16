@@ -2,8 +2,7 @@
 #include "Core/Math/Aabb2.h"
 #include "Core/Math/Line2.h"
 #include "Core/Math/Winding2.h"
-#include "World/WorldRenderSettings.h"
-#include "World/SMProj/TSMProj.h"
+#include "World/SMProj/TrapezoidShadowProjection.h"
 
 namespace traktor
 {
@@ -24,17 +23,24 @@ Vector4 v2top4(const Vector2& v)
 
 		}
 
-void calculateTSMProj(
-	const WorldRenderSettings& settings,
+T_IMPLEMENT_RTTI_CLASS(L"traktor.world.TrapezoidShadowProjection", TrapezoidShadowProjection, IWorldShadowProjection)
+
+TrapezoidShadowProjection::TrapezoidShadowProjection(const WorldRenderSettings& settings)
+:	m_settings(settings)
+{
+}
+
+void TrapezoidShadowProjection::calculate(
 	const Matrix44& viewInverse,
 	const Vector4& lightPosition,
 	const Vector4& lightDirection,
 	const Frustum& viewFrustum,
+	const Aabb3& shadowBox,
 	Matrix44& outLightView,
 	Matrix44& outLightProjection,
 	Matrix44& outLightSquareProjection,
 	Frustum& outShadowFrustum
-)
+) const
 {
 	Vector4 viewDirection = viewInverse.axisZ();
 
@@ -127,7 +133,7 @@ void calculateTSMProj(
 
 	// Calculate light view and projection matrices.
 	Vector4 worldCenter = viewInverse * Vector4(0.0f, 0.0f, nz, 1.0f);
-	Scalar lightDistance = Scalar(settings.depthRange);
+	Scalar lightDistance = Scalar(m_settings.depthRange);
 
 	outLightView = Matrix44(
 		lightAxisX,

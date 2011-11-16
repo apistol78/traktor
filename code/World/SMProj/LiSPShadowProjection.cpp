@@ -1,22 +1,24 @@
 #include "World/WorldRenderSettings.h"
-#include "World/SMProj/LiSPSMProj.h"
+#include "World/SMProj/LiSPShadowProjection.h"
 
 namespace traktor
 {
 	namespace world
 	{
 
-void calculateLiSPSMProj(
-	const WorldRenderSettings& settings,
+T_IMPLEMENT_RTTI_CLASS(L"traktor.world.LiSPShadowProjection", LiSPShadowProjection, IWorldShadowProjection)
+
+void LiSPShadowProjection::calculate(
 	const Matrix44& viewInverse,
 	const Vector4& lightPosition,
 	const Vector4& lightDirection,
 	const Frustum& viewFrustum,
+	const Aabb3& shadowBox,
 	Matrix44& outLightView,
 	Matrix44& outLightProjection,
 	Matrix44& outLightSquareProjection,
 	Frustum& outShadowFrustum
-)
+) const
 {
 	outLightView = Matrix44::identity();
 	outLightProjection = Matrix44::identity();

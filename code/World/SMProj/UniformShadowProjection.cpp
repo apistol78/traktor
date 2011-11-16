@@ -1,22 +1,32 @@
-#include "World/WorldRenderSettings.h"
-#include "World/SMProj/UniformSMProj.h"
+#include "World/SMProj/UniformShadowProjection.h"
 
 namespace traktor
 {
 	namespace world
 	{
 
-void calculateUniformSMProj(
+T_IMPLEMENT_RTTI_CLASS(L"traktor.world.UniformShadowProjection", UniformShadowProjection, IWorldShadowProjection)
+
+UniformShadowProjection::UniformShadowProjection(
 	const WorldRenderSettings& settings,
+	uint32_t realShadowMapSize
+)
+:	m_settings(settings)
+,	m_realShadowMapSize(float(realShadowMapSize))
+{
+}
+
+void UniformShadowProjection::calculate(
 	const Matrix44& viewInverse,
 	const Vector4& lightPosition,
 	const Vector4& lightDirection,
 	const Frustum& viewFrustum,
+	const Aabb3& shadowBox,
 	Matrix44& outLightView,
 	Matrix44& outLightProjection,
 	Matrix44& outLightSquareProjection,
 	Frustum& outShadowFrustum
-)
+) const
 {
 	// Calculate light axises.
 	Vector4 lightAxisX, lightAxisY, lightAxisZ;
@@ -48,8 +58,8 @@ void calculateUniformSMProj(
 	Scalar ex = Scalar(std::ceil(extent.x() / c_extentStep) * c_extentStep);
 	Scalar ey = Scalar(std::ceil(extent.y() / c_extentStep) * c_extentStep);
 
-	Scalar smx = ex / Scalar(settings.shadowMapResolution);
-	Scalar smy = ey / Scalar(settings.shadowMapResolution);
+	Scalar smx = ex / Scalar(m_realShadowMapSize);
+	Scalar smy = ey / Scalar(m_realShadowMapSize);
 
 	Scalar cx = Scalar(std::floor(center.x() / smx) * smx);
 	Scalar cy = Scalar(std::floor(center.y() / smy) * smy);
@@ -61,7 +71,7 @@ void calculateUniformSMProj(
 		lightAxisZ * center.z() +
 		Vector4::origo();
 
-	Scalar lightDistance = Scalar(settings.depthRange);
+	Scalar lightDistance = Scalar(m_settings.depthRange);
 
 	outLightView = Matrix44(
 		lightAxisX,
