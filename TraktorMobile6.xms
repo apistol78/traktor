@@ -6915,7 +6915,7 @@
 		<item ref="/object/projects/item[13]/dependencies/item[1]/project"/>
 		<item ref="/object/projects/item[11]/dependencies/item[2]/project/dependencies/item[1]/project/dependencies/item[2]/project"/>
 		<item type="Project" version="1">
-			<enable>true</enable>
+			<enable>false</enable>
 			<name>UnitTest</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/UnitTest</sourcePath>
 			<configurations>
