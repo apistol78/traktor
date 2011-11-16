@@ -15,6 +15,7 @@ const TypeInfo& CylinderShapeRenderer::getDescType() const
 }
 
 void CylinderShapeRenderer::draw(
+	resource::IResourceManager* resourceManager,
 	render::PrimitiveRenderer* primitiveRenderer,
 	const Transform& body1Transform0,
 	const Transform& body1Transform,

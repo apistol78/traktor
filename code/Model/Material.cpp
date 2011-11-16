@@ -8,13 +8,13 @@ namespace traktor
 Material::Material()
 :	m_name(L"")
 ,	m_diffuseMap(L"")
-,	m_diffuseBlendOperator(BoDecal)
 ,	m_specularMap(L"")
 ,	m_normalMap(L"")
 ,	m_color(255, 255, 255, 255)
 ,	m_diffuseTerm(1.0f)
 ,	m_specularTerm(1.0f)
 ,	m_specularRoughness(0.8f)
+,	m_blendOperator(BoDecal)
 ,	m_doubleSided(false)
 {
 }
@@ -22,13 +22,13 @@ Material::Material()
 Material::Material(const std::wstring& name)
 :	m_name(name)
 ,	m_diffuseMap(L"")
-,	m_diffuseBlendOperator(BoDecal)
 ,	m_specularMap(L"")
 ,	m_normalMap(L"")
 ,	m_color(255, 255, 255, 255)
 ,	m_diffuseTerm(1.0f)
 ,	m_specularTerm(1.0f)
 ,	m_specularRoughness(0.8f)
+,	m_blendOperator(BoDecal)
 ,	m_doubleSided(false)
 {
 }
@@ -43,20 +43,14 @@ const std::wstring& Material::getName() const
 	return m_name;
 }
 
-void Material::setDiffuseMap(const std::wstring& diffuseMap, BlendOperator diffuseBlendOperator)
+void Material::setDiffuseMap(const std::wstring& diffuseMap)
 {
 	m_diffuseMap = diffuseMap;
-	m_diffuseBlendOperator = diffuseBlendOperator;
 }
 
 const std::wstring& Material::getDiffuseMap() const
 {
 	return m_diffuseMap;
-}
-
-Material::BlendOperator Material::getDiffuseBlendOperator() const
-{
-	return m_diffuseBlendOperator;
 }
 
 void Material::setSpecularMap(const std::wstring& specularMap)
@@ -117,6 +111,16 @@ void Material::setSpecularRoughness(float specularRoughness)
 float Material::getSpecularRoughness() const
 {
 	return m_specularRoughness;
+}
+
+void Material::setBlendOperator(BlendOperator blendOperator)
+{
+	m_blendOperator = blendOperator;
+}
+
+Material::BlendOperator Material::getBlendOperator() const
+{
+	return m_blendOperator;
 }
 
 void Material::setDoubleSided(bool doubleSided)

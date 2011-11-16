@@ -23,6 +23,13 @@ class PrimitiveRenderer;
 
 	}
 
+	namespace resource
+	{
+
+class IResourceManager;
+
+	}
+
 	namespace physics
 	{
 
@@ -36,6 +43,7 @@ public:
 	virtual const TypeInfo& getDescType() const = 0;
 
 	virtual void draw(
+		resource::IResourceManager* resourceManager,
 		render::PrimitiveRenderer* primitiveRenderer,
 		const Transform& body1Transform0,
 		const Transform& body1Transform,

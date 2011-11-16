@@ -10,6 +10,7 @@ extern "C"
 
 #include "Core/Io/Path.h"
 #include "Core/Log/Log.h"
+#include "Core/Math/Const.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Core/Serialization/ISerializable.h"
@@ -103,7 +104,8 @@ bool createMaterials(const lwObject* lwo, Model* outModel)
 				}
 
 				std::wstring textureName = mbstows(clip->source.still.name);
-				material.setDiffuseMap(textureName, diffuseBlendOperator);
+				material.setDiffuseMap(textureName);
+				material.setBlendOperator(diffuseBlendOperator);
 			}
 			else
 				log::debug << L"No diffuse texture clip for surface \"" << material.getName() << L"\"" << Endl;
@@ -139,8 +141,11 @@ bool createMaterials(const lwObject* lwo, Model* outModel)
 			uint8_t(surface->color.rgb[0] * 255.0f),
 			uint8_t(surface->color.rgb[1] * 255.0f),
 			uint8_t(surface->color.rgb[2] * 255.0f),
-			uint8_t(surface->transparency.val.val * 255.0f)
+			uint8_t((1.0f - surface->transparency.val.val) * 255.0f)
 		));
+
+		if (surface->transparency.val.val >= FUZZY_EPSILON)
+			material.setBlendOperator(Material::BoAlpha);
 
 		material.setDiffuseTerm(surface->diffuse.val);
 		material.setSpecularTerm(surface->specularity.val);

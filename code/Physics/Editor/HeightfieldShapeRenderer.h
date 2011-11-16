@@ -16,6 +16,7 @@ public:
 	virtual const TypeInfo& getDescType() const;
 
 	virtual void draw(
+		resource::IResourceManager* resourceManager,
 		render::PrimitiveRenderer* primitiveRenderer,
 		const Transform& body1Transform0,
 		const Transform& body1Transform,
