@@ -19,6 +19,25 @@ namespace traktor
 {
 	namespace render
 	{
+		namespace
+		{
+
+struct RenderEventTypePred
+{
+	RenderEventType m_type;
+
+	RenderEventTypePred(RenderEventType type)
+	:	m_type(type)
+	{
+	}
+
+	bool operator () (const RenderEvent& evt) const
+	{
+		return evt.type == m_type;
+	}
+};
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewOpenGL", RenderViewOpenGL, IRenderView)
 
@@ -26,14 +45,23 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewOpenGL", RenderViewOpenGL, IRe
 
 RenderViewOpenGL::RenderViewOpenGL(
 	const RenderViewDesc desc,
+	Window* window,
 	ContextOpenGL* context,
 	ContextOpenGL* resourceContext,
-	BlitHelper* blitHelper,
-	HWND hWnd
+	BlitHelper* blitHelper
 )
-:	m_context(context)
+:	m_window(window)
+,	m_context(context)
 ,	m_resourceContext(resourceContext)
 ,	m_blitHelper(blitHelper)
+{
+	m_primaryTargetDesc.multiSample = desc.multiSample;
+	m_primaryTargetDesc.createDepthStencil = bool(desc.depthBits > 0 || desc.stencilBits > 0);
+	m_waitVBlank = desc.waitVBlank;
+
+	if (m_window)
+		m_window->addListener(this);
+}
 
 #elif defined(__APPLE__)
 
@@ -48,28 +76,17 @@ RenderViewOpenGL::RenderViewOpenGL(
 ,	m_resourceContext(resourceContext)
 ,	m_blitHelper(blitHelper)
 ,	m_windowHandle(windowHandle)
-
-#else
-
-RenderViewOpenGL::RenderViewOpenGL(
-	const RenderViewDesc desc,
-	ContextOpenGL* context,
-	ContextOpenGL* resourceContext,
-	BlitHelper* blitHelper
-)
-:	m_context(context)
-,	m_resourceContext(resourceContext)
-,	m_blitHelper(blitHelper)
-
-#endif
 {
 	m_primaryTargetDesc.multiSample = desc.multiSample;
 	m_primaryTargetDesc.createDepthStencil = bool(desc.depthBits > 0 || desc.stencilBits > 0);
 	m_waitVBlank = desc.waitVBlank;
 }
 
+#endif
+
 RenderViewOpenGL::~RenderViewOpenGL()
 {
+	close();
 }
 
 bool RenderViewOpenGL::createPrimaryTarget()
@@ -104,18 +121,21 @@ bool RenderViewOpenGL::nextEvent(RenderEvent& outEvent)
 {
 #if defined(_WIN32)
 
-	bool going = true;
 	MSG msg;
-
-	while (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE))
+	while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 	{
-		int ret = GetMessage(&msg, NULL, 0, 0);
-		if (ret <= 0 || msg.message == WM_QUIT)
-			going = false;
-
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
+
+	if (!m_eventQueue.empty())
+	{
+		outEvent = m_eventQueue.front();
+		m_eventQueue.pop_front();
+		return true;
+	}
+	else
+		return false;
 
 #elif defined(__APPLE__)
 
@@ -128,23 +148,39 @@ bool RenderViewOpenGL::nextEvent(RenderEvent& outEvent)
 
 void RenderViewOpenGL::close()
 {
+#if defined(_WIN32)
+
+	if (m_window)
+	{
+		m_window->removeListener(this);
+		m_window = 0;
+	}
+
+#endif
+
 	safeDestroy(m_primaryTarget);
 	safeDestroy(m_context);
 }
 
 bool RenderViewOpenGL::reset(const RenderViewDefaultDesc& desc)
 {
-#if defined(__APPLE__)
-	if (!m_windowHandle)
-		return false;
-#endif
-
 	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
 
 	safeDestroy(m_primaryTarget);
 
-#if defined(__APPLE__)
+#if defined(_WIN32)
+
+	m_window->setTitle(desc.title ? desc.title : L"Traktor - OpenGL Renderer");
+
+	if (desc.fullscreen)
+		m_window->setFullScreenStyle(desc.displayMode.width, desc.displayMode.height);
+	else
+		m_window->setWindowedStyle(desc.displayMode.width, desc.displayMode.height);
+
+#elif defined(__APPLE__)
+
 	cglwModifyWindow(m_windowHandle, desc.displayMode, desc.fullscreen);
+
 #endif
 
 	m_context->update();
@@ -171,10 +207,6 @@ bool RenderViewOpenGL::reset(int32_t width, int32_t height)
 	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
 
 	safeDestroy(m_primaryTarget);
-
-#if defined(__APPLE__)
-	//cglwSetWindowSize(m_windowHandle, width, height);
-#endif
 
 	m_context->update();
 
@@ -500,6 +532,90 @@ void RenderViewOpenGL::popMarker()
 void RenderViewOpenGL::getStatistics(RenderViewStatistics& outStatistics) const
 {
 }
+
+#if defined(_WIN32)
+
+bool RenderViewOpenGL::windowListenerEvent(Window* window, UINT message, WPARAM wParam, LPARAM lParam, LRESULT& outResult)
+{
+	if (message == WM_CLOSE)
+	{
+		RenderEvent evt;
+		evt.type = ReClose;
+		m_eventQueue.push_back(evt);
+	}
+	else if (message == WM_SIZE)
+	{
+		// Remove all pending resize events.
+		m_eventQueue.remove_if(RenderEventTypePred(ReResize));
+
+		// Push new resize event if not matching current size.
+		int32_t width = LOWORD(lParam);
+		int32_t height = HIWORD(lParam);
+		if (width != getWidth() || height != getHeight())
+		{
+			RenderEvent evt;
+			evt.type = ReResize;
+			evt.resize.width = width;
+			evt.resize.height = height;
+			m_eventQueue.push_back(evt);
+		}
+	}
+	else if (message == WM_SIZING)
+	{
+		RECT* rcWindowSize = (RECT*)lParam;
+
+		int32_t width = rcWindowSize->right - rcWindowSize->left;
+		int32_t height = rcWindowSize->bottom - rcWindowSize->top;
+
+		if (width < 320)
+			width = 320;
+		if (height < 200)
+			height = 200;
+
+		if (wParam == WMSZ_RIGHT || wParam == WMSZ_TOPRIGHT || wParam == WMSZ_BOTTOMRIGHT)
+			rcWindowSize->right = rcWindowSize->left + width;
+		if (wParam == WMSZ_LEFT || wParam == WMSZ_TOPLEFT || wParam == WMSZ_BOTTOMLEFT)
+			rcWindowSize->left = rcWindowSize->right - width;
+
+		if (wParam == WMSZ_BOTTOM || wParam == WMSZ_BOTTOMLEFT || wParam == WMSZ_BOTTOMRIGHT)
+			rcWindowSize->bottom = rcWindowSize->top + height;
+		if (wParam == WMSZ_TOP || wParam == WMSZ_TOPLEFT || wParam == WMSZ_TOPRIGHT)
+			rcWindowSize->top = rcWindowSize->bottom - height;
+
+		outResult = TRUE;
+	}
+	else if (message == WM_SYSKEYDOWN)
+	{
+		if (wParam == VK_RETURN && (lParam & (1 << 29)) != 0)
+		{
+			RenderEvent evt;
+			evt.type = ReToggleFullScreen;
+			m_eventQueue.push_back(evt);
+		}
+	}
+	else if (message == WM_KEYDOWN)
+	{
+		if (wParam == VK_RETURN && (GetAsyncKeyState(VK_CONTROL) & 0x8000) != 0)
+		{
+			RenderEvent evt;
+			evt.type = ReToggleFullScreen;
+			m_eventQueue.push_back(evt);
+		}
+	}
+	else if (message == WM_SETCURSOR)
+	{
+		if (isFullScreen())
+			SetCursor(NULL);
+		else
+			SetCursor(LoadCursor(NULL, IDC_ARROW));
+	}
+	else
+		return false;
+
+	return true;
+}
+
+#endif
 
 	}
 }

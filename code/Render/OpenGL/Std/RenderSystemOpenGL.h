@@ -19,6 +19,7 @@ namespace traktor
 	{
 
 class BlitHelper;
+class Window;
 
 /*! \brief OpenGL render system.
  * \ingroup OGL
@@ -71,10 +72,8 @@ private:
 
 #if defined(_WIN32)
 
-	HWND m_hWndShared;
-	HWND m_hWnd;
-
-	static LRESULT wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	Ref< Window > m_windowShared;
+	Ref< Window > m_window;
 
 #elif defined(__APPLE__)
 

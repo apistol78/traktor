@@ -66,7 +66,7 @@ public:
 private:
 	resource::Proxy< render::Shader > m_shaderGlyph;
 	resource::Proxy< render::Shader > m_shaderGlyphMask;
-	Ref< render::VertexBuffer > m_vertexBuffers[32];
+	Ref< render::VertexBuffer > m_vertexBuffers[64];
 	Ref< render::IndexBuffer > m_indexBuffer;
 	uint32_t m_currentVertexBuffer;
 	uint8_t* m_vertex;

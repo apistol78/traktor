@@ -12201,6 +12201,15 @@
 							<fileName>Std/*.*</fileName>
 							<items/>
 						</item>
+						<item type="Filter">
+							<name>Win32</name>
+							<items>
+								<item type="File">
+									<fileName>Std/Win32/*.*</fileName>
+									<items/>
+								</item>
+							</items>
+						</item>
 					</items>
 				</item>
 			</items>
