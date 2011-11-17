@@ -44,8 +44,11 @@ public:
 		render::VertexBuffer* vertexBuffer,
 		render::IndexBuffer* indexBuffer,
 		const render::Primitives& primitives,
-		const resource::Proxy< render::Shader >& shader
+		const resource::Proxy< render::Shader >& shader,
+		const Vector4& sunDirection
 	);
+
+	void setSunDirection(const Vector4& sunDirection);
 
 	void render(
 		render::RenderContext* renderContext,
@@ -60,8 +63,7 @@ private:
 	Ref< render::IndexBuffer > m_indexBuffer;
 	render::Primitives m_primitives;
 	resource::Proxy< render::Shader > m_shader;
-	render::handle_t m_handleSkyDomeRadius;
-	render::handle_t m_handleTime;
+	Vector4 m_sunDirection;
 };
 
 	}

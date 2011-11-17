@@ -49,6 +49,43 @@ const char c_clearEffect[] =
 	"}													\r\n"
 };
 
+class StateManagerIntercept : public ID3DXEffectStateManager
+{
+public:
+	StateManagerIntercept(ParameterCache* parameterCache)
+	:	m_parameterCache(parameterCache)
+	{
+	}
+
+	STDMETHOD(QueryInterface)(THIS_ REFIID iid, LPVOID *ppv) { return S_OK; }
+	STDMETHOD_(ULONG, AddRef)(THIS) { return S_OK; }
+	STDMETHOD_(ULONG, Release)(THIS) { return S_OK; }
+
+	STDMETHOD(SetTransform)(THIS_ D3DTRANSFORMSTATETYPE State, CONST D3DMATRIX *pMatrix) { T_BREAKPOINT; return S_FALSE; }
+	STDMETHOD(SetMaterial)(THIS_ CONST D3DMATERIAL9 *pMaterial) { T_BREAKPOINT; return S_FALSE; }
+	STDMETHOD(SetLight)(THIS_ DWORD Index, CONST D3DLIGHT9 *pLight) { T_BREAKPOINT; return S_FALSE; }
+	STDMETHOD(LightEnable)(THIS_ DWORD Index, BOOL Enable) { T_BREAKPOINT; return S_FALSE; }
+	STDMETHOD(SetRenderState)(THIS_ D3DRENDERSTATETYPE State, DWORD Value) { T_BREAKPOINT; return S_FALSE; }
+	STDMETHOD(SetTexture)(THIS_ DWORD Stage, LPDIRECT3DBASETEXTURE9 pTexture) { T_BREAKPOINT; return S_FALSE; }
+	STDMETHOD(SetTextureStageState)(THIS_ DWORD Stage, D3DTEXTURESTAGESTATETYPE Type, DWORD Value) { T_BREAKPOINT; return S_FALSE; }
+	STDMETHOD(SetSamplerState)(THIS_ DWORD Sampler, D3DSAMPLERSTATETYPE Type, DWORD Value) { T_BREAKPOINT; return S_FALSE; }
+	STDMETHOD(SetNPatchMode)(THIS_ FLOAT NumSegments) { T_BREAKPOINT; return S_FALSE; }
+	STDMETHOD(SetFVF)(THIS_ DWORD FVF) { T_BREAKPOINT; return S_FALSE; }
+
+	STDMETHOD(SetVertexShader)(THIS_ LPDIRECT3DVERTEXSHADER9 pShader) { m_parameterCache->setVertexShader(pShader); return S_OK; }
+	STDMETHOD(SetVertexShaderConstantF)(THIS_ UINT RegisterIndex, CONST FLOAT *pConstantData, UINT RegisterCount) { m_parameterCache->setVertexShaderConstantAlways(RegisterIndex, RegisterCount, pConstantData); return S_OK; }
+	STDMETHOD(SetVertexShaderConstantI)(THIS_ UINT RegisterIndex, CONST INT *pConstantData, UINT RegisterCount) { T_BREAKPOINT; return S_FALSE; }
+	STDMETHOD(SetVertexShaderConstantB)(THIS_ UINT RegisterIndex, CONST BOOL *pConstantData, UINT RegisterCount) { T_BREAKPOINT; return S_FALSE; }
+
+	STDMETHOD(SetPixelShader)(THIS_ LPDIRECT3DPIXELSHADER9 pShader) { m_parameterCache->setPixelShader(pShader); return S_OK; }
+	STDMETHOD(SetPixelShaderConstantF)(THIS_ UINT RegisterIndex, CONST FLOAT *pConstantData, UINT RegisterCount) { m_parameterCache->setPixelShaderConstantAlways(RegisterIndex, RegisterCount, pConstantData); return S_OK; }
+	STDMETHOD(SetPixelShaderConstantI)(THIS_ UINT RegisterIndex, CONST INT *pConstantData, UINT RegisterCount) { T_BREAKPOINT; return S_FALSE; }
+	STDMETHOD(SetPixelShaderConstantB)(THIS_ UINT RegisterIndex, CONST BOOL *pConstantData, UINT RegisterCount) { T_BREAKPOINT; return S_FALSE; }
+
+private:
+	ParameterCache* m_parameterCache;
+};
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetWin32", RenderTargetWin32, ISimpleTexture)
@@ -228,6 +265,10 @@ void RenderTargetWin32::clear(
 		hr = d3dDevice->SetViewport(&d3dvp);
 		T_ASSERT (SUCCEEDED(hr));
 
+		// Replace with our own state manager; need to track everything.
+		StateManagerIntercept sm(parameterCache);
+		m_d3dClearEffect->SetStateManager(&sm);
+
 		hr = m_d3dClearEffect->Begin(&passes, D3DXFX_DONOTSAVESTATE);
 		T_ASSERT (SUCCEEDED(hr));
 		if (FAILED(hr))
@@ -271,14 +312,10 @@ void RenderTargetWin32::clear(
 		hr = m_d3dClearEffect->End();
 		T_ASSERT (SUCCEEDED(hr));
 
+		m_d3dClearEffect->SetStateManager(0);
+
 		hr = d3dDevice->SetViewport(&d3dvp0);
 		T_ASSERT (SUCCEEDED(hr));
-
-		// Need to force to dirty as various states may have been trashed.
-		ProgramWin32::forceDirty();
-
-		parameterCache->setVertexShader(0);
-		parameterCache->setPixelShader(0);
 	}
 	else
 	{

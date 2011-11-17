@@ -1,6 +1,7 @@
 #ifndef traktor_weather_SkyEntityData_H
 #define traktor_weather_SkyEntityData_H
 
+#include "Core/Math/Vector4.h"
 #include "Resource/Proxy.h"
 #include "World/Entity/EntityData.h"
 
@@ -45,10 +46,11 @@ public:
 
 	virtual bool serialize(ISerializer& s);
 
-	inline const resource::Proxy< render::Shader >& getShader() const { return m_shader; }
+	const resource::Proxy< render::Shader >& getShader() const { return m_shader; }
 
 private:
 	mutable resource::Proxy< render::Shader > m_shader;
+	Vector4 m_sunDirection;
 };
 
 	}

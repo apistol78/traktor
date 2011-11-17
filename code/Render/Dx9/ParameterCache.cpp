@@ -83,6 +83,19 @@ void ParameterCache::setVertexShaderConstant(uint32_t registerOffset, uint32_t r
 	float* shadow = m_vertexConstantsShadow.ptr() + registerOffset * 4;
 	if (!compareExchangeEqual4(shadow, constantData, registerCount * 4))
 		m_d3dDevice->SetVertexShaderConstantF(registerOffset, constantData, registerCount);
+#if defined(_DEBUG)
+	else if (registerCount <= 1)
+	{
+		float deviceConstantData[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+		m_d3dDevice->GetVertexShaderConstantF(registerOffset, deviceConstantData, registerCount);
+		T_ASSERT (
+			deviceConstantData[0] == constantData[0] &&
+			deviceConstantData[1] == constantData[1] &&
+			deviceConstantData[2] == constantData[2] &&
+			deviceConstantData[3] == constantData[3]
+		);
+	}
+#endif
 }
 
 void ParameterCache::setPixelShaderConstant(uint32_t registerOffset, uint32_t registerCount, const float* constantData)
@@ -90,6 +103,33 @@ void ParameterCache::setPixelShaderConstant(uint32_t registerOffset, uint32_t re
 	float* shadow = m_pixelConstantsShadow.ptr() + registerOffset * 4;
 	if (!compareExchangeEqual4(shadow, constantData, registerCount * 4))
 		m_d3dDevice->SetPixelShaderConstantF(registerOffset, constantData, registerCount);
+#if defined(_DEBUG)
+	else if (registerCount <= 1)
+	{
+		float deviceConstantData[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+		m_d3dDevice->GetPixelShaderConstantF(registerOffset, deviceConstantData, registerCount);
+		T_ASSERT (
+			deviceConstantData[0] == constantData[0] &&
+			deviceConstantData[1] == constantData[1] &&
+			deviceConstantData[2] == constantData[2] &&
+			deviceConstantData[3] == constantData[3]
+		);
+	}
+#endif
+}
+
+void ParameterCache::setVertexShaderConstantAlways(uint32_t registerOffset, uint32_t registerCount, const float* constantData)
+{
+	float* shadow = m_vertexConstantsShadow.ptr() + registerOffset * 4;
+	m_d3dDevice->SetVertexShaderConstantF(registerOffset, constantData, registerCount);
+	std::memcpy(shadow, constantData, registerCount * 4 * sizeof(float));
+}
+
+void ParameterCache::setPixelShaderConstantAlways(uint32_t registerOffset, uint32_t registerCount, const float* constantData)
+{
+	float* shadow = m_pixelConstantsShadow.ptr() + registerOffset * 4;
+	m_d3dDevice->SetPixelShaderConstantF(registerOffset, constantData, registerCount);
+	std::memcpy(shadow, constantData, registerCount * 4 * sizeof(float));
 }
 
 void ParameterCache::setVertexTexture(uint32_t stage, IDirect3DBaseTexture9* d3dTexture)
