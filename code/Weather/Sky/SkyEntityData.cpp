@@ -28,9 +28,10 @@ const int c_indexCount = c_triangleCount * 3;
 
 		}
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.weather.SkyEntityData", 0, SkyEntityData, world::EntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.weather.SkyEntityData", 1, SkyEntityData, world::EntityData)
 
 SkyEntityData::SkyEntityData()
+:	m_sunDirection(0.0f, 1.0f, 0.0f, 0.0f)
 {
 }
 
@@ -74,13 +75,13 @@ Ref< SkyEntity > SkyEntityData::createEntity(resource::IResourceManager* resourc
 
 	Ref< render::IndexBuffer > indexBuffer = renderSystem->createIndexBuffer(
 		render::ItUInt16,
-		c_indexCount * sizeof(unsigned short),
+		c_indexCount * sizeof(uint16_t),
 		false
 	);
 	if (!indexBuffer)
 		return 0;
 
-	unsigned short* index = static_cast< unsigned short* >(indexBuffer->lock());
+	uint16_t* index = static_cast< uint16_t* >(indexBuffer->lock());
 	T_ASSERT_M (index, L"Unable to lock index buffer");
 
 	for (int k = 0; k < c_latitudes - 2; ++k)
@@ -125,7 +126,8 @@ Ref< SkyEntity > SkyEntityData::createEntity(resource::IResourceManager* resourc
 		vertexBuffer,
 		indexBuffer,
 		primitives,
-		m_shader
+		m_shader,
+		m_sunDirection.xyz0().normalized()
 	);
 }
 
@@ -134,7 +136,12 @@ bool SkyEntityData::serialize(ISerializer& s)
 	if (!world::EntityData::serialize(s))
 		return false;
 
-	return s >> resource::Member< render::Shader, render::ShaderGraph >(L"shader", m_shader);
+	s >> resource::Member< render::Shader, render::ShaderGraph >(L"shader", m_shader);
+
+	if (s.getVersion() >= 1)
+		s >> Member< Vector4 >(L"sunDirection", m_sunDirection);
+
+	return true;
 }
 
 	}

@@ -9,6 +9,13 @@ namespace traktor
 {
 	namespace weather
 	{
+		namespace
+		{
+
+render::handle_t s_handleSkyDomeRadius;
+render::handle_t s_handleSunDirection;
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.weather.SkyEntity", SkyEntity, world::Entity)
 
@@ -16,14 +23,22 @@ SkyEntity::SkyEntity(
 	render::VertexBuffer* vertexBuffer,
 	render::IndexBuffer* indexBuffer,
 	const render::Primitives& primitives,
-	const resource::Proxy< render::Shader >& shader
+	const resource::Proxy< render::Shader >& shader,
+	const Vector4& sunDirection
 )
 :	m_vertexBuffer(vertexBuffer)
 ,	m_indexBuffer(indexBuffer)
 ,	m_primitives(primitives)
 ,	m_shader(shader)
-,	m_handleSkyDomeRadius(render::getParameterHandle(L"SkyDomeRadius"))
+,	m_sunDirection(sunDirection)
 {
+	s_handleSkyDomeRadius = render::getParameterHandle(L"SkyDomeRadius");
+	s_handleSunDirection = render::getParameterHandle(L"SunDirection");
+}
+
+void SkyEntity::setSunDirection(const Vector4& sunDirection)
+{
+	m_sunDirection = sunDirection;
 }
 
 void SkyEntity::render(
@@ -56,7 +71,8 @@ void SkyEntity::render(
 
 	worldRenderPass.setProgramParameters(renderBlock->programParams);
 	
-	renderBlock->programParams->setFloatParameter(m_handleSkyDomeRadius, worldRenderView.getViewFrustum().getFarZ());
+	renderBlock->programParams->setFloatParameter(s_handleSkyDomeRadius, worldRenderView.getViewFrustum().getFarZ());
+	renderBlock->programParams->setVectorParameter(s_handleSunDirection, m_sunDirection);
 
 	renderBlock->programParams->endParameters(renderContext);
 

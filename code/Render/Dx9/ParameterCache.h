@@ -35,6 +35,10 @@ public:
 
 	void setPixelShaderConstant(uint32_t registerOffset, uint32_t registerCount, const float* constantData);
 
+	void setVertexShaderConstantAlways(uint32_t registerOffset, uint32_t registerCount, const float* constantData);
+
+	void setPixelShaderConstantAlways(uint32_t registerOffset, uint32_t registerCount, const float* constantData);
+
 	void setVertexTexture(uint32_t stage, IDirect3DBaseTexture9* d3dTexture);
 
 	void setPixelTexture(uint32_t stage, IDirect3DBaseTexture9* d3dTexture);
