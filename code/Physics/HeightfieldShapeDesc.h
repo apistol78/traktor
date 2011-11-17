@@ -18,6 +18,7 @@ namespace traktor
 	{
 
 class Heightfield;
+class MaterialMask;
 
 	}
 
@@ -36,10 +37,15 @@ public:
 
 	const resource::Proxy< hf::Heightfield >& getHeightfield() const;
 
+	void setMaterialMask(const resource::Proxy< hf::MaterialMask >& materialMask);
+
+	const resource::Proxy< hf::MaterialMask >& getMaterialMask() const;
+
 	virtual bool serialize(ISerializer& s);
 
 private:
 	resource::Proxy< hf::Heightfield > m_heightfield;
+	resource::Proxy< hf::MaterialMask > m_materialMask;
 };
 
 	}

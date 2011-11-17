@@ -5,6 +5,8 @@
 #include "Heightfield/MaterialMask.h"
 #include "Heightfield/MaterialMaskFactory.h"
 #include "Heightfield/MaterialMaskResource.h"
+#include "Heightfield/MaterialMaskResourceLayer.h"
+#include "Heightfield/MaterialParams.h"
 
 namespace traktor
 {
@@ -44,9 +46,23 @@ Ref< Object > MaterialMaskFactory::create(resource::IResourceManager* resourceMa
 	if (!stream)
 		return 0;
 
+	const RefArray< MaterialMaskResourceLayer >& resourceLayers = resource->getLayers();
+
+	RefArray< MaterialParams > params(resourceLayers.size());
+	for (uint32_t i = 0; i < resourceLayers.size(); ++i)
+	{
+		params[i] = new MaterialParams();
+
+		const RefArray< ISerializable >& resourceLayerParams = resourceLayers[i]->getParams();
+		for (RefArray< ISerializable >::const_iterator j = resourceLayerParams.begin(); j != resourceLayerParams.end(); ++j)
+			params[i]->set(*j);
+	}
+
 	uint32_t size = resource->getSize();
-	Ref< MaterialMask > mask = new MaterialMask(size);
-	Reader(stream).read(mask->m_data, size * size, sizeof(uint8_t));
+	
+	Ref< MaterialMask > mask = new MaterialMask(size, params);
+	Reader(stream).read(mask->m_data.ptr(), size * size, sizeof(uint8_t));
+
 	stream->close();
 
 	return mask;

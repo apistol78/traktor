@@ -16,12 +16,21 @@ namespace traktor
 	namespace hf
 	{
 
+class MaterialMaskAssetLayer;
+
 class T_DLLCLASS MaterialMaskAsset : public editor::Asset
 {
 	T_RTTI_CLASS;
 
 public:
+	const RefArray< MaterialMaskAssetLayer >& getLayers() const;
+
 	virtual const TypeInfo* getOutputType() const;
+
+	virtual bool serialize(ISerializer& s);
+
+private:
+	RefArray< MaterialMaskAssetLayer > m_layers;
 };
 
 	}

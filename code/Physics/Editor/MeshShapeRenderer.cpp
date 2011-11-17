@@ -29,6 +29,8 @@ void MeshShapeRenderer::draw(
 	resource::Proxy< Mesh > mesh = meshShapeDesc->getMesh();
 	if (resourceManager->bind(mesh) && mesh.validate())
 	{
+		primitiveRenderer->pushWorld((body1Transform * shapeDesc->getLocalTransform()).toMatrix44());
+
 		const AlignedVector< Vector4 >& vertices = mesh->getVertices();
 
 		const std::vector< Mesh::Triangle >& shapeTriangles = mesh->getShapeTriangles();
@@ -52,6 +54,8 @@ void MeshShapeRenderer::draw(
 
 			primitiveRenderer->drawWireTriangle(V0, V1, V2, Color4ub(0, 255, 255, 180));
 		}
+
+		primitiveRenderer->popWorld();
 	}
 }
 

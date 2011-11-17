@@ -183,7 +183,7 @@ void UndergrowthEntity::updateTask(int start, int end, Vertex* outVertex)
 		int my = int(Scalar(m_materialMask->getSize()) * (seed.z() / worldExtent.z() + Scalar(0.5f)));
 		if (mx < 0 || my < 0 || mx >= int(m_materialMask->getSize()) || my >= int(m_materialMask->getSize()))
 			continue;
-		if (!m_materialMask->getMaterial(mx, my))
+		if (!m_materialMask->getId(mx, my))
 			continue;
 
 		m_cells[i].position = seed;

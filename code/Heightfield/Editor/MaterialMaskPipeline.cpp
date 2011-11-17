@@ -1,4 +1,5 @@
 #include <limits>
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
@@ -9,38 +10,17 @@
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
 #include "Heightfield/MaterialMaskResource.h"
-#include "Heightfield/Editor/MaterialMaskPipeline.h"
+#include "Heightfield/MaterialMaskResourceLayer.h"
 #include "Heightfield/Editor/MaterialMaskAsset.h"
+#include "Heightfield/Editor/MaterialMaskAssetLayer.h"
+#include "Heightfield/Editor/MaterialMaskPipeline.h"
 
 namespace traktor
 {
 	namespace hf
 	{
-		namespace
-		{
 
-uint8_t findBestMatch(const Color4f& color, const Color4f* colorSet, uint8_t count)
-{
-	float minD = std::numeric_limits< float >::max();
-	uint8_t minI = 0;
-
-	for (uint8_t i = 0; i < count; ++i)
-	{
-		Color4f dc = colorSet[i] - color;
-		float d = std::abs(dc.getRed()) + std::abs(dc.getGreen()) + std::abs(dc.getBlue());
-		if (d < minD)
-		{
-			minI = i;
-			minD = d;
-		}
-	}
-
-	return minI;
-}
-
-		}
-
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.hf.MaterialMaskPipeline", 2, MaterialMaskPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.hf.MaterialMaskPipeline", 3, MaterialMaskPipeline, editor::IPipeline)
 
 bool MaterialMaskPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -67,8 +47,18 @@ bool MaterialMaskPipeline::buildDependencies(
 ) const
 {
 	const MaterialMaskAsset* maskAsset = checked_type_cast< const MaterialMaskAsset* >(sourceAsset);
+
 	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, maskAsset->getFileName());
 	pipelineDepends->addDependency(fileName);
+
+	const RefArray< MaterialMaskAssetLayer >& maskLayers = maskAsset->getLayers();
+	for (RefArray< MaterialMaskAssetLayer >::const_iterator i = maskLayers.begin(); i != maskLayers.end(); ++i)
+	{
+		const RefArray< ISerializable >& maskLayerParams = (*i)->getParams();
+		for (RefArray< ISerializable >::const_iterator j = maskLayerParams.begin(); j != maskLayerParams.end(); ++j)
+			pipelineDepends->addDependency(*j);
+	}
+
 	return true;
 }
 
@@ -83,25 +73,37 @@ bool MaterialMaskPipeline::buildOutput(
 ) const
 {
 	const MaterialMaskAsset* maskAsset = checked_type_cast< const MaterialMaskAsset* >(sourceAsset);
-	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, maskAsset->getFileName());
-
-	Ref< drawing::Image > image = drawing::Image::load(fileName);
-	if (!image)
+	const RefArray< MaterialMaskAssetLayer >& maskLayers = maskAsset->getLayers();
+	if (maskLayers.empty())
 	{
-		log::error << L"Unable to load material mask source image \"" << fileName.getPathName() << L"\"" << Endl;
+		log::error << L"Failed to build material mask; no layers defined." << Endl;
 		return false;
 	}
 
-	if (image->getWidth() != image->getHeight())
+	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, maskAsset->getFileName());
+	Ref< drawing::Image > image = drawing::Image::load(fileName);
+	if (!image)
 	{
-		log::error << L"Material mask source image must be square" << Endl;
+		log::error << L"Failed to build material mask; unable to load source image \"" << fileName.getPathName() << L"\"." << Endl;
 		return false;
 	}
 
 	uint32_t size = image->getWidth();
+	if (size != image->getHeight())
+	{
+		log::error << L"Failed to build material mask; source image must be square." << Endl;
+		return false;
+	}
 
 	// Create mask resource.
-	Ref< MaterialMaskResource > resource = new MaterialMaskResource(size);
+	Ref< MaterialMaskResource > resource = new MaterialMaskResource();
+	resource->m_size = size;
+	resource->m_layers.resize(maskLayers.size());
+	for (uint32_t i = 0; i < maskLayers.size(); ++i)
+	{
+		resource->m_layers[i] = new MaterialMaskResourceLayer();
+		resource->m_layers[i]->m_params = maskLayers[i]->getParams();
+	}
 
 	// Create instance's name.
 	Ref< db::Instance > instance = pipelineBuilder->createOutputInstance(
@@ -110,7 +112,7 @@ bool MaterialMaskPipeline::buildOutput(
 	);
 	if (!instance)
 	{
-		log::error << L"Failed to build mask, unable to create instance" << Endl;
+		log::error << L"Failed to build material mask; unable to create instance." << Endl;
 		return false;
 	}
 
@@ -119,20 +121,22 @@ bool MaterialMaskPipeline::buildOutput(
 	Ref< IStream > stream = instance->writeData(L"Data");
 	if (!stream)
 	{
-		log::error << L"Failed to build mask, unable to create data stream" << Endl;
+		log::error << L"Failed to build material mask; unable to create data stream." << Endl;
 		instance->revert();
 		return false;
 	}
 
-	const Color4f c_materialColors[] =
+	AlignedVector< Color4f > maskLayerColors(maskLayers.size());
+	for (uint32_t i = 0; i < maskLayers.size(); ++i)
 	{
-		Color4f(0.0f, 0.0f, 0.0f, 0.0f),
-		Color4f(1.0f, 0.0f, 0.0f, 0.0f),
-		Color4f(0.0f, 1.0f, 0.0f, 0.0f),
-		Color4f(0.0f, 0.0f, 1.0f, 0.0f),
-		Color4f(1.0f, 1.0f, 0.0f, 0.0f),
-		Color4f(0.0f, 1.0f, 1.0f, 0.0f)
-	};
+		const Color4ub& c = maskLayers[i]->getColor();
+		maskLayerColors[i].set(
+			c.r  / 255.0f,
+			c.g  / 255.0f,
+			c.b  / 255.0f,
+			c.a  / 255.0f
+		);
+	}
 
 	// Convert image pixels into mask values.
 	Writer writer(stream);
@@ -140,10 +144,24 @@ bool MaterialMaskPipeline::buildOutput(
 	{
 		for (uint32_t x = 0; x < size; ++x)
 		{
-			Color4f imagePixel;
-			image->getPixelUnsafe(x, y, imagePixel);
-			uint8_t mask = findBestMatch(imagePixel, c_materialColors, sizeof_array(c_materialColors));
-			writer << mask;
+			Color4f sourceColor;
+			image->getPixelUnsafe(x, y, sourceColor);
+
+			float minD = std::numeric_limits< float >::max();
+			uint8_t minI = 0;
+
+			for (uint8_t i = 0; i < uint8_t(maskLayers.size()); ++i)
+			{
+				Color4f dc = maskLayerColors[i] - sourceColor;
+				float d = std::abs(dc.getRed()) + std::abs(dc.getGreen()) + std::abs(dc.getBlue());
+				if (d < minD)
+				{
+					minI = i;
+					minD = d;
+				}
+			}
+
+			writer << minI;
 		}
 	}
 
