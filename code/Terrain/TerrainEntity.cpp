@@ -680,7 +680,7 @@ bool TerrainEntity::updateTextures(bool normals, bool heights, bool materials)
 			for (int32_t u = 0; u < dim; ++u)
 			{
 				int32_t gx = (u * size) / dim;
-				mp[u + v * dim] = m_materialMask->getMaterial(gx, gz);
+				mp[u + v * dim] = m_materialMask->getId(gx, gz);
 			}
 		}
 
