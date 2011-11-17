@@ -133,6 +133,17 @@ void TreeViewItemWin32::select()
 	TreeView_SelectItem(m_hWndTree, m_hItem);
 }
 
+bool TreeViewItemWin32::isVisible() const
+{
+	RECT rc = { 0, 0, 0, 0 };
+	return TreeView_GetItemRect(m_hWndTree, m_hItem, &rc, FALSE) != 0;
+}
+
+void TreeViewItemWin32::show()
+{
+	TreeView_EnsureVisible(m_hWndTree, m_hItem);
+}
+
 bool TreeViewItemWin32::edit()
 {
 	SetFocus(m_hWndTree);

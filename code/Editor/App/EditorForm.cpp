@@ -559,6 +559,12 @@ void EditorForm::updateDatabaseView()
 	m_dataBaseView->updateView();
 }
 
+bool EditorForm::highlightInstance(const db::Instance* instance)
+{
+	T_ASSERT (m_dataBaseView);
+	return m_dataBaseView->highlight(instance);
+}
+
 const TypeInfo* EditorForm::browseType(const TypeInfo* base)
 {
 	const TypeInfo* type = 0;

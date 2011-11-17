@@ -52,6 +52,9 @@ public:
 	/*! \brief Update database view. */
 	virtual void updateDatabaseView() = 0;
 
+	/*! \brief High light instance in database view. */
+	virtual bool highlightInstance(const db::Instance* instance) = 0;
+
 	/*! \brief Browse for rtti type. */
 	virtual const TypeInfo* browseType(const TypeInfo* base = 0) = 0;
 

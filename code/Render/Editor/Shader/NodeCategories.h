@@ -16,7 +16,7 @@ struct NodeCategory
 	const wchar_t* description;
 };
 
-const NodeCategory c_nodeCateogories[] =
+const NodeCategory c_nodeCategories[] =
 {
 	{ type_of< Abs >(), L"SHADERGRAPH_ARITHMETIC", L"Absolute value" },
 	{ type_of< Add >(), L"SHADERGRAPH_ARITHMETIC", L"Addition" },
