@@ -1,9 +1,13 @@
 #ifndef traktor_render_RenderViewOpenGL_H
 #define traktor_render_RenderViewOpenGL_H
 
+#include <list>
 #include "Render/IRenderView.h"
 #include "Render/OpenGL/Platform.h"
 #include "Render/OpenGL/Std/ContextOpenGL.h"
+#if defined(_WIN32)
+#	include "Render/OpenGL/Std/Win32/Window.h"
+#endif
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -29,7 +33,11 @@ class VertexBufferOpenGL;
 /*!
  * \ingroup OGL
  */
-class T_DLLCLASS RenderViewOpenGL : public IRenderView
+class T_DLLCLASS RenderViewOpenGL
+:	public IRenderView
+#if defined(_WIN32)
+,	public IWindowListener
+#endif
 {
 	T_RTTI_CLASS;
 
@@ -38,10 +46,10 @@ public:
 
 	RenderViewOpenGL(
 		const RenderViewDesc desc,
+		Window* window,
 		ContextOpenGL* context,
 		ContextOpenGL* resourceContext,
-		BlitHelper* blitHelper,
-		HWND hWnd
+		BlitHelper* blitHelper
 	);
 
 #elif defined(__APPLE__)
@@ -52,15 +60,6 @@ public:
 		ContextOpenGL* resourceContext,
 		BlitHelper* blitHelper,
 		void* windowHandle
-	);
-
-#else
-
-	RenderViewOpenGL(
-		const RenderViewDesc desc,
-		ContextOpenGL* context,
-		ContextOpenGL* resourceContext,
-		BlitHelper* blitHelper
 	);
 
 #endif
@@ -116,24 +115,35 @@ public:
 	virtual void getStatistics(RenderViewStatistics& outStatistics) const;
 
 private:
-	Ref< RenderSystemOpenGL > m_renderSystem;
+#if defined(_WIN32)
+	Ref< Window > m_window;
+#endif
 	Ref< ContextOpenGL > m_context;
 	Ref< ContextOpenGL > m_resourceContext;
 	Ref< BlitHelper > m_blitHelper;
-	
 #if defined(__APPLE__)
 	void* m_windowHandle;
 #endif
-	
 	RenderTargetSetCreateDesc m_primaryTargetDesc;
 	Ref< RenderTargetSetOpenGL > m_primaryTarget;
-	
 	bool m_waitVBlank;
-
 	std::vector< RenderTargetOpenGL* > m_renderTargetStack;
 	Ref< VertexBufferOpenGL > m_currentVertexBuffer;
 	Ref< IndexBufferOpenGL > m_currentIndexBuffer;
 	Ref< ProgramOpenGL > m_currentProgram;
+
+#if defined(_WIN32)
+
+	std::list< RenderEvent > m_eventQueue;
+
+	// \name IWindowListener implementation.
+	// \{
+
+	virtual bool windowListenerEvent(Window* window, UINT message, WPARAM wParam, LPARAM lParam, LRESULT& outResult);
+
+	// \}
+
+#endif
 };
 
 	}
