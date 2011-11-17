@@ -80,6 +80,10 @@ bool WorldRendererPreLit::create(
 	m_renderView = renderView;
 	m_frames.resize(frameCount);
 
+	float fogColor[4];
+	settings.fogColor.getRGBA32F(fogColor);
+	m_fogColor = Vector4::loadUnaligned(fogColor);
+
 	int32_t width = renderView->getWidth();
 	int32_t height = renderView->getHeight();
 
@@ -481,10 +485,7 @@ void WorldRendererPreLit::build(WorldRenderView& worldRenderView, Entity* entity
 		WorldRenderPassPreLit depthPass(
 			ms_techniqueDepth,
 			depthRenderView,
-			m_settings.depthRange,
-			0,
-			0,
-			0
+			m_settings.depthRange
 		);
 		f.depth->build(depthRenderView, depthPass, entity);
 		f.depth->flush(depthRenderView, depthPass);
@@ -500,10 +501,7 @@ void WorldRendererPreLit::build(WorldRenderView& worldRenderView, Entity* entity
 		WorldRenderPassPreLit normalPass(
 			ms_techniqueNormal,
 			normalRenderView,
-			m_settings.depthRange,
-			0,
-			0,
-			0
+			m_settings.depthRange
 		);
 		f.normal->build(normalRenderView, normalPass, entity);
 		f.normal->flush(normalRenderView, normalPass);
@@ -816,10 +814,7 @@ void WorldRendererPreLit::buildLightWithShadows(WorldRenderView& worldRenderView
 				WorldRenderPassPreLit shadowPass(
 					ms_techniqueShadow,
 					shadowRenderView,
-					m_settings.depthRange,
-					0,
-					0,
-					0
+					m_settings.depthRange
 				);
 				f.slice[slice].shadow[i]->build(shadowRenderView, shadowPass, entity);
 				f.slice[slice].shadow[i]->flush(shadowRenderView, shadowPass);
@@ -863,8 +858,11 @@ void WorldRendererPreLit::buildVisual(WorldRenderView& worldRenderView, Entity* 
 		ms_techniquePreLitColor,
 		worldRenderView,
 		m_settings.depthRange,
+		m_settings.fogEnabled,
+		m_settings.fogDistance,
+		m_settings.fogRange,
+		m_fogColor,
 		f.haveDepth ? m_depthTargetSet->getColorTexture(0) : 0,
-		0,
 		m_lightMapTargetSet->getColorTexture(0)
 	);
 	f.visual->build(worldRenderView, defaultPreLitPass, entity);

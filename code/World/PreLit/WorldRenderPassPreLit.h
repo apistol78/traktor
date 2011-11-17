@@ -37,9 +37,18 @@ public:
 		render::handle_t technique,
 		const WorldRenderView& worldRenderView,
 		float depthRange,
+		bool fogEnabled,
+		float fogDistance,
+		float fogRange,
+		const Vector4& fogColor,
 		render::ISimpleTexture* depthMap,
-		render::ISimpleTexture* shadowMask,
 		render::ISimpleTexture* lightMap
+	);
+
+	WorldRenderPassPreLit(
+		render::handle_t technique,
+		const WorldRenderView& worldRenderView,
+		float depthRange
 	);
 
 	virtual render::handle_t getTechnique() const;
@@ -58,6 +67,10 @@ private:
 	render::handle_t m_technique;
 	const WorldRenderView& m_worldRenderView;
 	float m_depthRange;
+	bool m_fogEnabled;
+	float m_fogDistance;
+	float m_fogRange;
+	Vector4 m_fogColor;
 	render::ISimpleTexture* m_depthMap;
 	render::ISimpleTexture* m_shadowMask;
 	render::ISimpleTexture* m_lightMap;
@@ -69,6 +82,8 @@ private:
 	void setDepthMapProgramParameters(render::ProgramParameters* programParams) const;
 
 	void setLightMapProgramParameters(render::ProgramParameters* programParams) const;
+
+	void setFogProgramParameters(render::ProgramParameters* programParams) const;
 };
 	
 	}
