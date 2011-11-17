@@ -58,6 +58,10 @@ public:
 
 	virtual void select() = 0;
 
+	virtual bool isVisible() const = 0;
+
+	virtual void show() = 0;
+
 	virtual bool edit() = 0;
 
 	virtual Ref< TreeViewItem > getParent() const = 0;

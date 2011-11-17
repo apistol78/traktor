@@ -64,6 +64,8 @@ public:
 
 	void updateView();
 
+	bool highlight(const db::Instance* instance);
+
 	bool handleCommand(const ui::Command& command);
 
 	virtual void setEnable(bool enable);

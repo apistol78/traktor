@@ -89,6 +89,8 @@ public:
 
 	virtual void updateDatabaseView();
 
+	virtual bool highlightInstance(const db::Instance* instance);
+
 	virtual const TypeInfo* browseType(const TypeInfo* base);
 
 	virtual Ref< db::Instance > browseInstance(const IBrowseFilter* filter);

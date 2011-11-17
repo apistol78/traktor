@@ -156,6 +156,26 @@ private:
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.DatabaseView.GuidSetFilter", GuidSetFilter, DatabaseView::Filter)
 
+ui::TreeViewItem* findTreeItem(ui::TreeViewItem* item, const db::Instance* instance)
+{
+	if (!item)
+		return 0;
+
+	if (item->getData< db::Instance >(L"INSTANCE") == instance)
+		return item;
+
+	RefArray< ui::TreeViewItem > children;
+	item->getChildren(children);
+
+	for (RefArray< ui::TreeViewItem >::const_iterator i = children.begin(); i != children.end(); ++i)
+	{
+		if ((item = findTreeItem(*i, instance)) != 0)
+			return item;
+	}
+
+	return 0;
+}
+
 		}
 
 DatabaseView::DatabaseView(IEditor* editor)
@@ -329,6 +349,18 @@ void DatabaseView::updateView()
 
 	m_treeDatabase->applyState(m_treeState);
 	m_treeDatabase->update();
+}
+
+bool DatabaseView::highlight(const db::Instance* instance)
+{
+	ui::TreeViewItem* item = findTreeItem(m_treeDatabase->getRootItem(), instance);
+	if (!item)
+		return false;
+
+	item->show();
+	item->select();
+
+	return true;
 }
 
 bool DatabaseView::handleCommand(const ui::Command& command)

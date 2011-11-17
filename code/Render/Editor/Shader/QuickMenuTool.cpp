@@ -66,9 +66,9 @@ const TypeInfo* QuickMenuTool::showMenu()
 void QuickMenuTool::updateSuggestions(const std::wstring& filter)
 {
 	m_listBoxSuggestions->removeAll();
-	for (size_t i = 0; i < sizeof_array(c_nodeCateogories); ++i)
+	for (size_t i = 0; i < sizeof_array(c_nodeCategories); ++i)
 	{
-		std::wstring typeName = c_nodeCateogories[i].type.getName();
+		std::wstring typeName = c_nodeCategories[i].type.getName();
 		
 		size_t p = typeName.find_last_of(L'.');
 		if (p != typeName.npos)
@@ -77,7 +77,7 @@ void QuickMenuTool::updateSuggestions(const std::wstring& filter)
 		if (startsWith(toLower(typeName), toLower(filter)))
 			m_listBoxSuggestions->add(
 				typeName.substr(0, p),
-				new TypeInfoWrapper(c_nodeCateogories[i].type)
+				new TypeInfoWrapper(c_nodeCategories[i].type)
 			);
 	}
 	if (!filter.empty())

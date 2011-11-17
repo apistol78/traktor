@@ -182,28 +182,29 @@ bool ShaderGraphEditorPage::create(ui::Container* parent, editor::IEditorPageSit
 	Ref< ui::MenuItem > menuItemCreate = new ui::MenuItem(i18n::Text(L"SHADERGRAPH_CREATE_NODE"));
 	
 	std::map< std::wstring, Ref< ui::MenuItem > > categories;
-	for (size_t i = 0; i < sizeof_array(c_nodeCateogories); ++i)
+	for (size_t i = 0; i < sizeof_array(c_nodeCategories); ++i)
 	{
-		if (categories.find(c_nodeCateogories[i].category) == categories.end())
+		if (categories.find(c_nodeCategories[i].category) == categories.end())
 		{
-			categories[c_nodeCateogories[i].category] = new ui::MenuItem(i18n::Text(c_nodeCateogories[i].category));
+			categories[c_nodeCategories[i].category] = new ui::MenuItem(i18n::Text(c_nodeCategories[i].category));
 			menuItemCreate->add(
-				categories[c_nodeCateogories[i].category]
+				categories[c_nodeCategories[i].category]
 			);
 		}
 
-		std::wstring title = c_nodeCateogories[i].type.getName();
+		std::wstring title = c_nodeCategories[i].type.getName();
 		size_t p = title.find_last_of(L'.');
 		if (p > 0)
 			title = i18n::Text(L"SHADERGRAPH_NODE_" + toUpper(title.substr(p + 1)));
 
-		categories[c_nodeCateogories[i].category]->add(
+		categories[c_nodeCategories[i].category]->add(
 			new ui::MenuItem(ui::Command(i, L"ShaderGraph.Editor.Create"), title)
 		);
 	}
 
 	m_menuPopup->add(menuItemCreate);
 	m_menuPopup->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"SHADERGRAPH_DELETE_NODE")));
+	m_menuPopup->add(new ui::MenuItem(ui::Command(L"ShaderGraph.Editor.FindInDatabase"), i18n::Text(L"SHADERGRAPH_FIND_IN_DATABASE")));
 
 	// Build quick menu.
 	m_menuQuick = new QuickMenuTool();
@@ -696,6 +697,23 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 		}
 		m_editorGraph->setFocus();
 	}
+	else if (command == L"ShaderGraph.Editor.FindInDatabase")
+	{
+		RefArray< ui::custom::Node > nodes;
+		if (m_editorGraph->getSelectedNodes(nodes) <= 0)
+			return false;
+
+		for (RefArray< ui::custom::Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
+		{
+			Ref< External > selectedExternal = (*i)->getData< External >(L"SHADERNODE");
+			if (selectedExternal)
+			{
+				Ref< db::Instance > fragmentInstance = m_editor->getSourceDatabase()->getInstance(selectedExternal->getFragmentGuid());
+				if (fragmentInstance)
+					m_editor->highlightInstance(fragmentInstance);
+			}
+		}
+	}
 	else
 		return false;
 
@@ -1007,7 +1025,7 @@ void ShaderGraphEditorPage::eventButtonDown(ui::Event* event)
 
 	if (command == L"ShaderGraph.Editor.Create")	// Create
 	{
-		const TypeInfo& type = c_nodeCateogories[command.getId()].type;
+		const TypeInfo& type = c_nodeCategories[command.getId()].type;
 
 		// Save undo state.
 		m_undoStack->push(m_shaderGraph);
