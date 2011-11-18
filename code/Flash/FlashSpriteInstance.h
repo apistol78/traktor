@@ -52,14 +52,6 @@ public:
 
 	FlashDisplayList& getDisplayList();
 
-	void setVisible(bool visible);
-
-	bool isVisible() const;
-
-	void setEnabled(bool enabled);
-
-	bool isEnabled() const;
-
 	Ref< FlashSpriteInstance > clone() const;
 
 	SwfRect getLocalBounds() const;

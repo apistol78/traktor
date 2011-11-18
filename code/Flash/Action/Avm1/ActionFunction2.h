@@ -63,7 +63,7 @@ private:
 	uint8_t m_registerCount;
 	uint16_t m_flags;
 	std::vector< std::pair< uint32_t, uint8_t > > m_argumentsIntoRegisters;
-	std::vector< std::pair< uint32_t, ActionValue > > m_variables;
+	SmallMap< uint32_t, ActionValue > m_variables;
 	Ref< ActionDictionary > m_dictionary;
 };
 

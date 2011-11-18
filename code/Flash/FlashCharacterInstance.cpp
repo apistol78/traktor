@@ -17,6 +17,8 @@ FlashCharacterInstance::FlashCharacterInstance(ActionContext* context, const cha
 :	ActionObjectRelay(prototype)
 ,	m_context(context)
 ,	m_parent(parent)
+,	m_visible(true)
+,	m_enabled(true)
 {
 	m_cxform.red[0] =
 	m_cxform.green[0] =
@@ -80,6 +82,34 @@ void FlashCharacterInstance::setTransform(const Matrix33& transform)
 const Matrix33& FlashCharacterInstance::getTransform() const
 {
 	return m_transform;
+}
+
+Matrix33 FlashCharacterInstance::getFullTransform() const
+{
+	if (m_parent)
+		return m_parent->getFullTransform() * m_transform;
+	else
+		return m_transform;
+}
+
+void FlashCharacterInstance::setVisible(bool visible)
+{
+	m_visible = visible;
+}
+
+bool FlashCharacterInstance::isVisible() const
+{
+	return m_visible;
+}
+
+void FlashCharacterInstance::setEnabled(bool enabled)
+{
+	m_enabled = enabled;
+}
+
+bool FlashCharacterInstance::isEnabled() const
+{
+	return m_enabled;
 }
 
 void FlashCharacterInstance::setFocus(bool focus)

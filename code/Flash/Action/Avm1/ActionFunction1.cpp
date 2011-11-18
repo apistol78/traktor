@@ -20,11 +20,13 @@ ActionFunction1::ActionFunction1(
 	const IActionVMImage* image,
 	uint16_t argumentCount,
 	const std::vector< std::string >& argumentsIntoVariables,
+	const SmallMap< uint32_t, ActionValue >& variables,
 	ActionDictionary* dictionary
 )
 :	ActionFunction(context, name)
 ,	m_image(image)
 ,	m_argumentCount(argumentCount)
+,	m_variables(variables)
 ,	m_dictionary(dictionary)
 {
 	for (std::vector< std::string >::const_iterator i = argumentsIntoVariables.begin(); i != argumentsIntoVariables.end(); ++i)
@@ -40,6 +42,14 @@ ActionValue ActionFunction1::call(ActionObject* self, ActionObject* super, const
 	ActionValuePool& pool = getContext()->getPool();
 	T_ANONYMOUS_VAR(ActionValuePool::Scope)(pool);
 
+	// If self not provided use from activation scope.
+	if (!self)
+	{
+		SmallMap< uint32_t, ActionValue >::const_iterator i = m_variables.find(ActionContext::IdThis);
+		if (i != m_variables.end())
+			self = i->second.getObject();
+	}
+
 	ActionFrame callFrame(
 		getContext(),
 		self,
@@ -48,6 +58,11 @@ ActionValue ActionFunction1::call(ActionObject* self, ActionObject* super, const
 		m_dictionary,
 		this
 	);
+
+	// Prepare activation scope variables; do this first
+	// as some variables will get overridden below such as "this", "arguments" etc.
+	for (SmallMap< uint32_t, ActionValue >::const_iterator i = m_variables.begin(); i != m_variables.end(); ++i)
+		callFrame.setVariable(i->first, i->second);
 
 	ActionValueStack& callStack = callFrame.getStack();
 
@@ -78,6 +93,12 @@ ActionValue ActionFunction1::call(ActionObject* self, ActionObject* super, const
 		callFrame.setVariable(ActionContext::IdThis, ActionValue(self));
 		callFrame.setVariable(ActionContext::IdSuper, ActionValue(super2));
 	}
+	else
+	{
+		ActionValue selfValue;
+		callFrame.getVariable(ActionContext::IdThis, selfValue);
+		self = selfValue.getObject();
+	}
 
 	callFrame.setVariable(ActionContext::IdGlobal, ActionValue(getContext()->getGlobal()));
 	callFrame.setVariable(ActionContext::IdArguments, ActionValue(argumentArray->getAsObject(getContext())));
@@ -85,6 +106,22 @@ ActionValue ActionFunction1::call(ActionObject* self, ActionObject* super, const
 	getContext()->getVM()->execute(&callFrame);
 
 	return callStack.top();
+}
+
+void ActionFunction1::trace(const IVisitor& visitor) const
+{
+	for (SmallMap< uint32_t, ActionValue >::const_iterator i = m_variables.begin(); i != m_variables.end(); ++i)
+	{
+		if (i->second.isObject())
+			visitor(i->second.getObject());
+	}
+	ActionFunction::trace(visitor);
+}
+
+void ActionFunction1::dereference()
+{
+	m_variables.clear();
+	ActionFunction::dereference();
 }
 
 	}

@@ -32,15 +32,22 @@ public:
 		const IActionVMImage* image,
 		uint16_t argumentCount,
 		const std::vector< std::string >& argumentsIntoVariables,
+		const SmallMap< uint32_t, ActionValue >& variables,
 		ActionDictionary* dictionary
 	);
 
 	virtual ActionValue call(ActionObject* self, ActionObject* super, const ActionValueArray& args);
 
+protected:
+	virtual void trace(const IVisitor& visitor) const;
+
+	virtual void dereference();
+
 private:
 	Ref< const IActionVMImage > m_image;
 	uint16_t m_argumentCount;
 	std::vector< uint32_t > m_argumentsIntoVariables;
+	SmallMap< uint32_t, ActionValue > m_variables;
 	Ref< ActionDictionary > m_dictionary;
 };
 

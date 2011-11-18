@@ -213,7 +213,8 @@ void FlashDisplayList::getVisibleObjects(RefArray< FlashCharacterInstance >& out
 	for (FlashDisplayList::layer_map_t::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
 	{
 		T_ASSERT (i->second.instance);
-		outCharacterInstances.push_back(i->second.instance);
+		if (i->second.instance->isVisible())
+			outCharacterInstances.push_back(i->second.instance);
 	}
 }
 

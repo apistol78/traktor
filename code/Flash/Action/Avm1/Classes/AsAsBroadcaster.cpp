@@ -124,7 +124,7 @@ void AsAsBroadcaster::AsBroadcaster_broadcastMessage(CallArgs& ca)
 
 				ActionFunction* eventFunction = eventFunctionValue.getObject< ActionFunction >();
 				if (eventFunction)
-					eventFunction->call((*i).getObject(), args);
+					eventFunction->call(/*(*i).getObject(), */args);
 			}
 		}
 	}

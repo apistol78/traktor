@@ -89,6 +89,28 @@ public:
 	 */
 	const Matrix33& getTransform() const;
 
+	/*! \brief Get coordinate transformation; concatenated through parents.
+	 *
+	 * \return Transformation matrix.
+	 */
+	Matrix33 getFullTransform() const;
+
+	/*! \brief
+	 */
+	void setVisible(bool visible);
+
+	/*! \brief
+	 */
+	bool isVisible() const;
+
+	/*! \brief
+	 */
+	void setEnabled(bool enabled);
+
+	/*! \brief
+	 */
+	bool isEnabled() const;
+
 	/*! \brief Set focus.
 	 *
 	 * \return Set or remove focus.
@@ -168,6 +190,8 @@ private:
 	Ref< ActionContext > m_context;
 	FlashCharacterInstance* m_parent;
 	std::string m_name;
+	bool m_visible;
+	bool m_enabled;
 	SwfCxTransform m_cxform;
 	Matrix33 m_transform;
 	SmallMap< uint32_t, Ref< const IActionVMImage > > m_eventScripts;
