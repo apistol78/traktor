@@ -26,8 +26,6 @@ FlashSpriteInstance::FlashSpriteInstance(ActionContext* context, FlashCharacterI
 ,	m_skipEnterFrame(0)
 ,	m_initialized(false)
 ,	m_playing(true)
-,	m_visible(true)
-,	m_enabled(true)
 ,	m_inDispatch(false)
 ,	m_gotoIssued(false)
 ,	m_mouseX(0)
@@ -179,26 +177,6 @@ FlashDisplayList& FlashSpriteInstance::getDisplayList()
 	return m_displayList;
 }
 
-void FlashSpriteInstance::setVisible(bool visible)
-{
-	m_visible = visible;
-}
-
-bool FlashSpriteInstance::isVisible() const
-{
-	return m_visible && m_maskCount == 0;
-}
-
-void FlashSpriteInstance::setEnabled(bool enabled)
-{
-	m_enabled = enabled;
-}
-
-bool FlashSpriteInstance::isEnabled() const
-{
-	return m_enabled;
-}
-
 Ref< FlashSpriteInstance > FlashSpriteInstance::clone() const
 {
 	Ref< FlashSpriteInstance > cloneInstance = checked_type_cast< FlashSpriteInstance* >(m_sprite->createInstance(getContext(), getParent(), "", 0));
@@ -238,6 +216,8 @@ void FlashSpriteInstance::setMask(FlashSpriteInstance* mask)
 		m_mask->m_maskCount--;
 	if ((m_mask = mask) != 0)
 		m_mask->m_maskCount++;
+	if (m_mask)
+		m_mask->setVisible(false);
 }
 
 FlashSpriteInstance* FlashSpriteInstance::getMask()
@@ -466,7 +446,7 @@ void FlashSpriteInstance::eventMouseDown(int32_t x, int32_t y, int32_t button)
 	context->setMovieClip(this);
 
 	// Transform coordinates into local.
-	Vector2 xy = getTransform().inverse() * Vector2(x, y);
+	Vector2 xy = getFullTransform().inverse() * Vector2(x, y);
 	m_mouseX = int32_t(xy.x / 20.0f);
 	m_mouseY = int32_t(xy.y / 20.0f);
 
@@ -481,8 +461,9 @@ void FlashSpriteInstance::eventMouseDown(int32_t x, int32_t y, int32_t button)
 	}
 
 	// Check if we're inside then issue press events.
-	SwfRect bounds = getBounds();
-	bool inside = (x >= bounds.min.x && y >= bounds.min.y && x <= bounds.max.x && y <= bounds.max.y);
+	SwfRect bounds = getLocalBounds();
+	//bool inside = (x >= bounds.min.x && y >= bounds.min.y && x <= bounds.max.x && y <= bounds.max.y);
+	bool inside = (xy.x >= bounds.min.x && xy.y >= bounds.min.y && xy.x <= bounds.max.x && xy.y <= bounds.max.y);
 	if (inside)
 		executeScriptEvent(m_idOnPress);
 
@@ -500,7 +481,7 @@ void FlashSpriteInstance::eventMouseUp(int32_t x, int32_t y, int32_t button)
 	context->setMovieClip(this);
 
 	// Transform coordinates into local.
-	Vector2 xy = getTransform().inverse() * Vector2(x, y);
+	Vector2 xy = getFullTransform().inverse() * Vector2(x, y);
 	m_mouseX = int32_t(xy.x / 20.0f);
 	m_mouseY = int32_t(xy.y / 20.0f);
 
@@ -515,8 +496,9 @@ void FlashSpriteInstance::eventMouseUp(int32_t x, int32_t y, int32_t button)
 	}
 
 	// Check if we're inside then issue press events.
-	SwfRect bounds = getBounds();
-	bool inside = (x >= bounds.min.x && y >= bounds.min.y && x <= bounds.max.x && y <= bounds.max.y);
+	SwfRect bounds = getLocalBounds();
+	//bool inside = (x >= bounds.min.x && y >= bounds.min.y && x <= bounds.max.x && y <= bounds.max.y);
+	bool inside = (xy.x >= bounds.min.x && xy.y >= bounds.min.y && xy.x <= bounds.max.x && xy.y <= bounds.max.y);
 	if (inside)
 		executeScriptEvent(m_idOnRelease);
 
@@ -533,7 +515,7 @@ void FlashSpriteInstance::eventMouseMove(int32_t x, int32_t y, int32_t button)
 	context->setMovieClip(this);
 
 	// Transform coordinates into local.
-	Vector2 xy = getTransform().inverse() * Vector2(x, y);
+	Vector2 xy = getFullTransform().inverse() * Vector2(x, y);
 	m_mouseX = int32_t(xy.x / 20.0f);
 	m_mouseY = int32_t(xy.y / 20.0f);
 
@@ -556,8 +538,9 @@ SwfRect FlashSpriteInstance::getBounds() const
 {
 	SwfRect bounds = getLocalBounds();
 
-	bounds.min = getTransform() * bounds.min;
-	bounds.max = getTransform() * bounds.max;
+	Matrix33 transform = getTransform();
+	bounds.min = transform * bounds.min;
+	bounds.max = transform * bounds.max;
 
 	return bounds;
 }

@@ -29,17 +29,12 @@ ActionFunction2::ActionFunction2(
 ,	m_image(image)
 ,	m_registerCount(registerCount)
 ,	m_flags(flags)
+,	m_variables(variables)
 ,	m_dictionary(dictionary)
 {
 	for (std::vector< std::pair< std::string, uint8_t > >::const_iterator i = argumentsIntoRegisters.begin(); i != argumentsIntoRegisters.end(); ++i)
 		m_argumentsIntoRegisters.push_back(std::make_pair(
 			getContext()->getString(i->first),
-			i->second
-		));
-
-	for (SmallMap< uint32_t, ActionValue >::const_iterator i = variables.begin(); i != variables.end(); ++i)
-		m_variables.push_back(std::make_pair(
-			i->first,
 			i->second
 		));
 }
@@ -54,6 +49,14 @@ ActionValue ActionFunction2::call(ActionObject* self, ActionObject* super, const
 
 	Ref< ActionObject > super2 = super;
 
+	// If self not provided use from activation scope.
+	if (!self)
+	{
+		SmallMap< uint32_t, ActionValue >::const_iterator i = m_variables.find(ActionContext::IdThis);
+		if (i != m_variables.end())
+			self = i->second.getObject();
+	}
+
 	ActionFrame callFrame(
 		cx,
 		self,
@@ -65,7 +68,7 @@ ActionValue ActionFunction2::call(ActionObject* self, ActionObject* super, const
 
 	// Prepare activation scope variables; do this first
 	// as some variables will get overridden below such as "this", "arguments" etc.
-	for (std::vector< std::pair< uint32_t, ActionValue > >::const_iterator i = m_variables.begin(); i != m_variables.end(); ++i)
+	for (SmallMap< uint32_t, ActionValue >::const_iterator i = m_variables.begin(); i != m_variables.end(); ++i)
 		callFrame.setVariable(i->first, i->second);
 
 	if (self)
@@ -146,7 +149,7 @@ ActionValue ActionFunction2::call(ActionObject* self, ActionObject* super, const
 
 void ActionFunction2::trace(const IVisitor& visitor) const
 {
-	for (std::vector< std::pair< uint32_t, ActionValue > >::const_iterator i = m_variables.begin(); i != m_variables.end(); ++i)
+	for (SmallMap< uint32_t, ActionValue >::const_iterator i = m_variables.begin(); i != m_variables.end(); ++i)
 	{
 		if (i->second.isObject())
 			visitor(i->second.getObject());

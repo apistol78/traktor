@@ -48,8 +48,11 @@ ActionValue getVariable(ExecutionState& state, const std::string& variableName)
 	if (state.frame->getVariable(variableId, value))
 		return value;
 
-	if (state.self->getMember(variableId, value))
-		return value;
+	if (state.self)
+	{
+		if (state.self->getMember(variableId, value))
+			return value;
+	}
 
 	if (state.movieClip)
 	{
@@ -2134,6 +2137,7 @@ void opx_defineFunction(ExecutionState& state)
 		image,
 		argumentCount,
 		argumentsIntoVariables,
+		state.frame->getVariables(),
 		state.frame->getDictionary()
 	);
 
