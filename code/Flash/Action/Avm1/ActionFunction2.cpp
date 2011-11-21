@@ -49,14 +49,6 @@ ActionValue ActionFunction2::call(ActionObject* self, ActionObject* super, const
 
 	Ref< ActionObject > super2 = super;
 
-	// If self not provided use from activation scope.
-	if (!self)
-	{
-		SmallMap< uint32_t, ActionValue >::const_iterator i = m_variables.find(ActionContext::IdThis);
-		if (i != m_variables.end())
-			self = i->second.getObject();
-	}
-
 	ActionFrame callFrame(
 		cx,
 		self,
@@ -66,10 +58,8 @@ ActionValue ActionFunction2::call(ActionObject* self, ActionObject* super, const
 		this
 	);
 
-	// Prepare activation scope variables; do this first
-	// as some variables will get overridden below such as "this", "arguments" etc.
 	for (SmallMap< uint32_t, ActionValue >::const_iterator i = m_variables.begin(); i != m_variables.end(); ++i)
-		callFrame.setVariable(i->first, i->second);
+		callFrame.setScopeVariable(i->first, i->second);
 
 	if (self)
 	{

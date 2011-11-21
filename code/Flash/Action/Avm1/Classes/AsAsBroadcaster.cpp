@@ -110,21 +110,22 @@ void AsAsBroadcaster::AsBroadcaster_broadcastMessage(CallArgs& ca)
 		for (uint32_t i = 1; i < ca.args.size(); ++i)
 			args[i - 1] = ca.args[i];
 
-		Array* listenersArray = listenersArrayValue.getObject()->getRelay< Array >();
+		Ref< Array > listenersArray = listenersArrayValue.getObject()->getRelay< Array >();
 		if (listenersArray)
 		{
 			const AlignedVector< ActionValue >& listeners = listenersArray->getValues();
 			for (AlignedVector< ActionValue >::const_iterator i = listeners.begin(); i != listeners.end(); ++i)
 			{
-				if (!(*i).isObject())
+				Ref< ActionObject > listenerObject = (*i).getObject();
+				if (!listenerObject)
 					continue;
 
 				ActionValue eventFunctionValue;
-				(*i).getObject()->getMember(eventName, eventFunctionValue);
+				listenerObject->getMember(eventName, eventFunctionValue);
 
-				ActionFunction* eventFunction = eventFunctionValue.getObject< ActionFunction >();
+				Ref< ActionFunction > eventFunction = eventFunctionValue.getObject< ActionFunction >();
 				if (eventFunction)
-					eventFunction->call(/*(*i).getObject(), */args);
+					eventFunction->call(listenerObject, args);
 			}
 		}
 	}
