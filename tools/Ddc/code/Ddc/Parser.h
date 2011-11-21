@@ -1,7 +1,7 @@
 #define TOKEN_IMPORT                          1
-#define TOKEN_STRING                          2
-#define TOKEN_SEMI_COLON                      3
-#define TOKEN_ALIAS                           4
+#define TOKEN_SEMI_COLON                      2
+#define TOKEN_ALIAS                           3
+#define TOKEN_STRING                          4
 #define TOKEN_OPEN_BRACE                      5
 #define TOKEN_COMMA                           6
 #define TOKEN_CLOSE_BRACE                     7

@@ -48,7 +48,7 @@ statements(A) ::= statement(B).
 	A = new Token(B->node);
 }
 
-statement(A) ::= IMPORT STRING(B) SEMI_COLON.
+statement(A) ::= IMPORT qualified_literal(B) SEMI_COLON.
 {
 	A = new Token(
 		new DfnImport(
@@ -154,7 +154,7 @@ statement(A) ::= PRIVATE CLASS LITERAL(B) OPEN_BRACE members(C) CLOSE_BRACE.
 	);
 }
 
-statement(A) ::= CLASS LITERAL(B) COLON LITERAL(C) OPEN_BRACE members(D) CLOSE_BRACE.
+statement(A) ::= CLASS LITERAL(B) COLON qualified_literal(C) OPEN_BRACE members(D) CLOSE_BRACE.
 {
 	A = new Token(
 		new DfnClass(
@@ -166,7 +166,7 @@ statement(A) ::= CLASS LITERAL(B) COLON LITERAL(C) OPEN_BRACE members(D) CLOSE_B
 	);
 }
 
-statement(A) ::= PUBLIC CLASS LITERAL(B) COLON LITERAL(C) OPEN_BRACE members(D) CLOSE_BRACE.
+statement(A) ::= PUBLIC CLASS LITERAL(B) COLON qualified_literal(C) OPEN_BRACE members(D) CLOSE_BRACE.
 {
 	A = new Token(
 		new DfnClass(
@@ -178,7 +178,7 @@ statement(A) ::= PUBLIC CLASS LITERAL(B) COLON LITERAL(C) OPEN_BRACE members(D) 
 	);
 }
 
-statement(A) ::= PRIVATE CLASS LITERAL(B) COLON LITERAL(C) OPEN_BRACE members(D) CLOSE_BRACE.
+statement(A) ::= PRIVATE CLASS LITERAL(B) COLON qualified_literal(C) OPEN_BRACE members(D) CLOSE_BRACE.
 {
 	A = new Token(
 		new DfnClass(
