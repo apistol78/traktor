@@ -246,14 +246,14 @@ ActionValue ActionObject::toString()
 
 Ref< ActionObject > ActionObject::getSuper()
 {
-	ActionFunction* superClass;
+	Ref< ActionFunction > superClass;
 	ActionValue memberValue;
 
 	// __proto__
-	ActionObject* prototype = get__proto__();
+	Ref< ActionObject > prototype = get__proto__();
 
 	// __proto__.__proto__
-	ActionObject* superPrototype = prototype->get__proto__();
+	Ref< ActionObject > superPrototype = prototype->get__proto__();
 	if (superPrototype != prototype)
 	{
 		// __proto__.__ctor__

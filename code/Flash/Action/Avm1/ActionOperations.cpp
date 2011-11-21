@@ -48,18 +48,27 @@ ActionValue getVariable(ExecutionState& state, const std::string& variableName)
 	if (state.frame->getVariable(variableId, value))
 		return value;
 
-	if (state.self)
-	{
-		if (state.self->getMember(variableId, value))
-			return value;
-	}
+	if (state.frame->getScopeVariable(variableId, value))
+		return value;
 
 	if (state.movieClip)
 	{
-		ActionObject* movieClipAS = state.movieClip->getAsObject(state.context);
-		T_ASSERT (movieClipAS);
+		FlashCharacterInstance* movieClip = state.movieClip;
+		while (movieClip)
+		{
+			ActionObject* movieClipAS = movieClip->getAsObject(state.context);
+			T_ASSERT (movieClipAS);
 
-		if (movieClipAS != state.self && movieClipAS->getMember(variableId, value))
+			if (movieClipAS->getMember(variableId, value))
+				return value;
+
+			movieClip = movieClip->getParent();
+		}
+	}
+
+	if (state.self)
+	{
+		if (state.self->getMember(variableId, value))
 			return value;
 	}
 

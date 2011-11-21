@@ -53,11 +53,15 @@ public:
 
 	bool getVariable(uint32_t variableName, ActionValue& outVariableValue) const;
 
-	void setVariable(const std::string& variableName, const ActionValue& variableValue);
-
-	bool getVariable(const std::string& variableName, ActionValue& outVariableValue) const;
-
 	ActionValue* getVariableValue(uint32_t variableName);
+
+	bool hasScopeVariable(uint32_t variableName) const;
+
+	void setScopeVariable(uint32_t variableName, const ActionValue& variableValue);
+
+	bool getScopeVariable(uint32_t variableName, ActionValue& outVariableValue) const;
+
+	ActionValue* getScopeVariableValue(uint32_t variableName);
 
 	void setDictionary(ActionDictionary* dictionary);
 
@@ -71,6 +75,8 @@ public:
 
 	const SmallMap< uint32_t, ActionValue >& getVariables() const { return m_localVariables; }
 
+	const SmallMap< uint32_t, ActionValue >& getScopeVariables() const { return m_scopeVariables; }
+
 	ActionDictionary* getDictionary() const { return m_dictionary; }
 
 	ActionFunction* getCallee() const { return m_callee; }
@@ -83,6 +89,7 @@ private:
 	Ref< const IActionVMImage > m_image;
 	ActionValueArray m_localRegisters;
 	SmallMap< uint32_t, ActionValue > m_localVariables;
+	SmallMap< uint32_t, ActionValue > m_scopeVariables;
 	Ref< ActionDictionary > m_dictionary;
 	ActionFunction* m_callee;
 	ActionValueStack m_stack;

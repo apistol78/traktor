@@ -14,9 +14,6 @@ ActionSuper::ActionSuper(ActionContext* context, ActionObject* object, ActionObj
 ,	m_superPrototype(superPrototype)
 ,	m_superClass(superClass)
 {
-	T_ASSERT (!is_a< ActionSuper >(m_object));
-
-	// Ensure relay instance is accessible through super object.
 	setOverrideRelay(m_object->getRelay());
 }
 
@@ -83,7 +80,7 @@ Ref< ActionObject > ActionSuper::getSuper()
 
 	// __proto__.__proto__
 	Ref< ActionObject > superPrototype = m_superPrototype->get__proto__();
-	if (superPrototype != m_superPrototype)
+	if (m_superPrototype != 0 && superPrototype != m_superPrototype)
 	{
 		// __proto__.__ctor__
 		if (m_superPrototype->getLocalMember("__ctor__", memberValue))

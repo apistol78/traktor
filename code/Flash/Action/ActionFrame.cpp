@@ -58,26 +58,44 @@ bool ActionFrame::getVariable(uint32_t variableName, ActionValue& outVariableVal
 	return true;
 }
 
-void ActionFrame::setVariable(const std::string& variableName, const ActionValue& variableValue)
-{
-	setVariable(m_context->getString(variableName), variableValue);
-}
-
-bool ActionFrame::getVariable(const std::string& variableName, ActionValue& outVariableValue) const
-{
-	return getVariable(m_context->getString(variableName), outVariableValue);
-}
-
 ActionValue* ActionFrame::getVariableValue(uint32_t variableName)
 {
 	SmallMap< uint32_t, ActionValue >::iterator i = m_localVariables.find(variableName);
 	return (i != m_localVariables.end()) ? &i->second : 0;
 }
 
+bool ActionFrame::hasScopeVariable(uint32_t variableName) const
+{
+	SmallMap< uint32_t, ActionValue >::const_iterator i = m_scopeVariables.find(variableName);
+	return i != m_localVariables.end();
+}
+
+void ActionFrame::setScopeVariable(uint32_t variableName, const ActionValue& variableValue)
+{
+	m_scopeVariables[variableName] = variableValue;
+}
+
+bool ActionFrame::getScopeVariable(uint32_t variableName, ActionValue& outVariableValue) const
+{
+	SmallMap< uint32_t, ActionValue >::const_iterator i = m_scopeVariables.find(variableName);
+	if (i == m_scopeVariables.end())
+		return false;
+
+	outVariableValue = i->second;
+	return true;
+}
+
+ActionValue* ActionFrame::getScopeVariableValue(uint32_t variableName)
+{
+	SmallMap< uint32_t, ActionValue >::iterator i = m_scopeVariables.find(variableName);
+	return (i != m_scopeVariables.end()) ? &i->second : 0;
+}
+
 void ActionFrame::setDictionary(ActionDictionary* dictionary)
 {
 	m_dictionary = dictionary;
 }
+
 
 	}
 }
