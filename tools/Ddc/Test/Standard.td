@@ -16,7 +16,7 @@ alias "cpp" int32[]
 alias "cpp" int32[ N ]
 {
 	"int32_t",
-	"const std::vector< int32_t >&",
+	"const int32_t*",
 	"traktor::MemberStaticArray< int32_t, %N >(\"%0\", m_%0)"
 }
 

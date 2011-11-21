@@ -159,61 +159,61 @@ static const YYMINORTYPE yyzerominor = { 0 };
 **  yy_default[]       Default action for each state.
 */
 static const YYACTIONTYPE yy_action[] = {
- /*     0 */    58,   35,   10,   54,   62,    6,   44,   18,   52,    6,
- /*    10 */    44,   18,   32,   37,   60,   29,   31,    6,   44,   18,
- /*    20 */    76,    6,   44,   18,   46,    6,   44,   18,   89,   10,
- /*    30 */    40,    6,   44,   18,   61,    6,   44,   18,   70,   18,
- /*    40 */    20,  126,   64,   10,   30,   14,   74,   51,   81,   34,
- /*    50 */    12,    8,   53,   22,   50,   68,   11,    7,   23,   28,
- /*    60 */     5,   63,    2,   85,   82,   19,   72,   18,   25,   43,
- /*    70 */    83,   57,   65,    1,   36,   66,   92,   71,   67,   69,
- /*    80 */    80,   56,   17,   59,   15,   88,   26,   84,    3,   13,
- /*    90 */    49,   27,   73,   79,   33,   75,   86,    9,   48,   47,
- /*   100 */    42,   24,   21,   55,   78,   90,   91,   38,   16,   45,
- /*   110 */    87,  127,   41,   77,   39,    4,
+ /*     0 */    14,   26,   45,   26,   62,    7,   47,   44,   70,   25,
+ /*    10 */    51,    2,   35,   40,   60,   61,   26,   89,    9,   90,
+ /*    20 */     7,   47,   26,   17,   73,   57,    7,   47,   58,   26,
+ /*    30 */    56,   16,   49,    7,   47,   54,    8,   26,   30,    5,
+ /*    40 */    46,    7,   47,   66,   26,   38,    9,   43,    7,   47,
+ /*    50 */    26,   15,   20,   32,    7,   47,  126,   65,    9,   50,
+ /*    60 */    64,   12,    6,   84,   79,   53,   81,   22,   11,   20,
+ /*    70 */    29,   26,   68,   82,   19,    1,   71,   55,   63,   92,
+ /*    80 */    87,   78,   39,   67,   69,   88,   31,   59,   21,   86,
+ /*    90 */    72,    3,   27,   18,   80,   41,   24,   33,   85,   23,
+ /*   100 */    36,   10,   83,   34,   74,   75,   77,   91,    4,   48,
+ /*   110 */    52,   13,   28,   37,  127,   42,  127,  127,   76,
 };
 static const YYCODETYPE yy_lookahead[] = {
- /*     0 */     1,   22,   23,    4,   26,   27,   28,   29,   26,   27,
- /*    10 */    28,   29,   13,   14,   15,   16,   26,   27,   28,   29,
- /*    20 */    26,   27,   28,   29,   26,   27,   28,   29,   22,   23,
- /*    30 */    26,   27,   28,   29,   26,   27,   28,   29,   28,   29,
- /*    40 */    30,   21,   22,   23,    8,    6,   12,   24,   12,   10,
- /*    50 */     6,    9,   18,   11,   10,   12,    9,    5,   11,    8,
- /*    60 */     5,   18,    5,   12,   24,   25,   28,   29,    8,   17,
- /*    70 */    24,    8,   17,    5,   17,    8,    0,   29,   12,    7,
- /*    80 */     7,    2,    8,   14,   19,    3,    8,   12,    5,    2,
- /*    90 */     5,   14,   12,   12,    8,    7,    7,    5,    2,    6,
- /*   100 */     2,   11,   11,    8,    7,    3,    7,    2,    8,    8,
- /*   110 */     7,   31,    8,    7,    6,    5,
+ /*     0 */     1,   24,    3,   24,   27,   28,   29,   25,   29,   30,
+ /*    10 */     8,    5,   13,   14,   15,   16,   24,   22,   23,   27,
+ /*    20 */    28,   29,   24,   17,   12,   27,   28,   29,   24,   24,
+ /*    30 */    18,    6,   27,   28,   29,   10,    9,   24,   11,    5,
+ /*    40 */    27,   28,   29,   24,   24,   22,   23,   27,   28,   29,
+ /*    50 */    24,   17,    8,   27,   28,   29,   21,   22,   23,    8,
+ /*    60 */     8,    6,    5,   12,   12,   10,   25,   26,    9,    8,
+ /*    70 */    11,   24,   12,   25,   17,    5,   29,   24,   18,    0,
+ /*    80 */    24,   12,   24,   12,    7,    2,   14,   14,    8,    7,
+ /*    90 */    12,    5,    8,   19,    7,    6,   11,    4,    7,   11,
+ /*   100 */     8,    5,   12,    6,    2,    7,    7,    7,    5,    8,
+ /*   110 */     4,    4,    8,    4,   31,    5,   31,   31,    7,
 };
 #define YY_SHIFT_USE_DFLT (-2)
 #define YY_SHIFT_MAX 66
 static const signed char yy_shift_ofst[] = {
- /*     0 */    -1,   63,   63,   63,   63,   63,   63,   63,   63,   -1,
- /*    10 */    -1,   60,   63,   60,   60,   63,   55,   52,   42,   39,
- /*    20 */    44,   51,   43,   36,   34,   47,   57,   78,   75,   77,
- /*    30 */    81,   89,   86,   92,   91,   97,   95,  100,  103,  105,
- /*    40 */   106,  110,  108,  104,  101,  102,   99,   98,   93,   96,
- /*    50 */    90,   85,   88,   80,   87,   83,   82,   65,   79,   74,
- /*    60 */    69,   73,   72,   66,   76,   67,   68,
+ /*     0 */    -1,    2,    2,    2,    2,    2,    2,    2,    2,   -1,
+ /*    10 */    -1,   44,    2,   61,    2,    2,   44,    2,    2,    2,
+ /*    20 */    59,   57,   25,   12,   51,   55,   27,    6,   34,   52,
+ /*    30 */    60,   84,   87,   89,   93,   92,   96,   97,   99,  103,
+ /*    40 */   104,  106,  109,  111,  110,  107,  100,  101,  102,   98,
+ /*    50 */    90,   74,   91,   88,   85,   86,   78,   82,   83,   80,
+ /*    60 */    73,   72,   77,   71,   69,   79,   70,
 };
-#define YY_REDUCE_USE_DFLT (-23)
-#define YY_REDUCE_MAX 15
+#define YY_REDUCE_USE_DFLT (-24)
+#define YY_REDUCE_MAX 19
 static const signed char yy_reduce_ofst[] = {
- /*     0 */    20,  -22,  -10,   -2,    8,    4,   -6,  -18,   10,  -21,
- /*    10 */     6,   40,   38,   23,   46,   48,
+ /*     0 */    35,  -23,   -2,   13,   26,   20,    5,   -8,  -21,   -5,
+ /*    10 */    23,   41,   47,  -18,    4,   19,   48,   53,   56,   58,
 };
 static const YYACTIONTYPE yy_default[] = {
- /*     0 */   125,  125,  125,  125,  125,  125,  113,  125,  125,  125,
- /*    10 */    94,  125,  125,  125,  125,  125,  125,  125,  115,  125,
- /*    20 */   125,  125,  125,  125,  125,   97,  125,  125,  125,  125,
- /*    30 */   125,  125,  125,  125,   98,  125,  125,  125,  125,  125,
+ /*     0 */   125,  125,  125,  125,  125,  125,  125,  113,  125,   94,
+ /*    10 */   125,  125,  125,  125,  125,  125,  125,  125,  125,  125,
+ /*    20 */    97,  125,  125,  125,  125,  125,  115,  125,  125,  125,
+ /*    30 */   125,  125,  125,  125,  125,  125,  125,  125,  125,  125,
  /*    40 */   125,  125,  125,  125,  125,  125,  125,  125,  125,  125,
- /*    50 */   116,  125,  125,  125,  125,  125,  125,  124,  125,  125,
+ /*    50 */   125,  124,  125,  116,   98,  125,  125,  125,  125,  125,
  /*    60 */   125,  125,  125,  125,  125,  125,  125,  118,  117,  109,
- /*    70 */   122,  123,  121,  120,  119,  107,  112,  106,  105,  100,
- /*    80 */   110,   99,  104,  103,  102,  101,  108,   96,   95,   93,
- /*    90 */   114,  111,
+ /*    70 */   122,  121,  120,  119,  114,  107,  106,  105,  100,   99,
+ /*    80 */   110,  104,  103,  102,  101,   96,  108,  123,   95,   93,
+ /*    90 */   112,  111,
 };
 #define YY_SZ_ACTTAB (int)(sizeof(yy_action)/sizeof(yy_action[0]))
 
@@ -307,14 +307,14 @@ void ParseTrace(FILE *TraceFILE, char *zTracePrompt){
 /* For tracing shifts, the names of all terminals and nonterminals
 ** are required.  The following table supplies these names */
 static const char *const yyTokenName[] = { 
-  "$",             "IMPORT",        "STRING",        "SEMI_COLON",  
-  "ALIAS",         "OPEN_BRACE",    "COMMA",         "CLOSE_BRACE", 
+  "$",             "IMPORT",        "SEMI_COLON",    "ALIAS",       
+  "STRING",        "OPEN_BRACE",    "COMMA",         "CLOSE_BRACE", 
   "LITERAL",       "LESS",          "GREATER",       "OPEN_BRACKET",
   "CLOSE_BRACKET",  "NAMESPACE",     "CLASS",         "PUBLIC",      
   "PRIVATE",       "COLON",         "NUMBER",        "DOT",         
   "error",         "program",       "statements",    "statement",   
-  "alias_type",    "alias_type_subst",  "members",       "member",      
-  "member_type",   "qualified_literal",  "member_type_subst",
+  "qualified_literal",  "alias_type",    "alias_type_subst",  "members",     
+  "member",        "member_type",   "member_type_subst",
 };
 #endif /* NDEBUG */
 
@@ -325,7 +325,7 @@ static const char *const yyRuleName[] = {
  /*   0 */ "program ::= statements",
  /*   1 */ "statements ::= statement statements",
  /*   2 */ "statements ::= statement",
- /*   3 */ "statement ::= IMPORT STRING SEMI_COLON",
+ /*   3 */ "statement ::= IMPORT qualified_literal SEMI_COLON",
  /*   4 */ "statement ::= ALIAS STRING alias_type OPEN_BRACE STRING COMMA STRING COMMA STRING CLOSE_BRACE",
  /*   5 */ "alias_type ::= LITERAL",
  /*   6 */ "alias_type ::= LITERAL LESS alias_type_subst GREATER",
@@ -339,9 +339,9 @@ static const char *const yyRuleName[] = {
  /*  14 */ "statement ::= CLASS LITERAL OPEN_BRACE members CLOSE_BRACE",
  /*  15 */ "statement ::= PUBLIC CLASS LITERAL OPEN_BRACE members CLOSE_BRACE",
  /*  16 */ "statement ::= PRIVATE CLASS LITERAL OPEN_BRACE members CLOSE_BRACE",
- /*  17 */ "statement ::= CLASS LITERAL COLON LITERAL OPEN_BRACE members CLOSE_BRACE",
- /*  18 */ "statement ::= PUBLIC CLASS LITERAL COLON LITERAL OPEN_BRACE members CLOSE_BRACE",
- /*  19 */ "statement ::= PRIVATE CLASS LITERAL COLON LITERAL OPEN_BRACE members CLOSE_BRACE",
+ /*  17 */ "statement ::= CLASS LITERAL COLON qualified_literal OPEN_BRACE members CLOSE_BRACE",
+ /*  18 */ "statement ::= PUBLIC CLASS LITERAL COLON qualified_literal OPEN_BRACE members CLOSE_BRACE",
+ /*  19 */ "statement ::= PRIVATE CLASS LITERAL COLON qualified_literal OPEN_BRACE members CLOSE_BRACE",
  /*  20 */ "members ::= member members",
  /*  21 */ "members ::= member",
  /*  22 */ "member ::= member_type LITERAL SEMI_COLON",
@@ -435,9 +435,9 @@ static void yy_destructor(
     */
       /* TERMINAL Destructor */
     case 1: /* IMPORT */
-    case 2: /* STRING */
-    case 3: /* SEMI_COLON */
-    case 4: /* ALIAS */
+    case 2: /* SEMI_COLON */
+    case 3: /* ALIAS */
+    case 4: /* STRING */
     case 5: /* OPEN_BRACE */
     case 6: /* COMMA */
     case 7: /* CLOSE_BRACE */
@@ -690,14 +690,14 @@ static const struct {
   { 22, 1 },
   { 23, 3 },
   { 23, 10 },
-  { 24, 1 },
-  { 24, 4 },
-  { 24, 3 },
-  { 24, 4 },
-  { 24, 6 },
-  { 24, 7 },
-  { 25, 3 },
   { 25, 1 },
+  { 25, 4 },
+  { 25, 3 },
+  { 25, 4 },
+  { 25, 6 },
+  { 25, 7 },
+  { 26, 3 },
+  { 26, 1 },
   { 23, 5 },
   { 23, 5 },
   { 23, 6 },
@@ -705,19 +705,19 @@ static const struct {
   { 23, 7 },
   { 23, 8 },
   { 23, 8 },
-  { 26, 2 },
-  { 26, 1 },
-  { 27, 3 },
-  { 28, 1 },
-  { 28, 4 },
+  { 27, 2 },
+  { 27, 1 },
   { 28, 3 },
-  { 28, 4 },
-  { 28, 6 },
-  { 28, 7 },
+  { 29, 1 },
+  { 29, 4 },
+  { 29, 3 },
+  { 29, 4 },
+  { 29, 6 },
+  { 29, 7 },
   { 30, 3 },
   { 30, 1 },
-  { 29, 3 },
-  { 29, 1 },
+  { 24, 3 },
+  { 24, 1 },
 };
 
 static void yy_accept(yyParser*);  /* Forward Declaration */
@@ -797,16 +797,16 @@ static void yy_reduce(
 }
 #line 799 ".\\code\\Ddc\\Parser.c"
         break;
-      case 3: /* statement ::= IMPORT STRING SEMI_COLON */
+      case 3: /* statement ::= IMPORT qualified_literal SEMI_COLON */
 #line 52 ".\\code\\Ddc\\Parser.y"
 {
 	yygotominor.yy30 = new Token(
 		new DfnImport(
-			yymsp[-1].minor.yy0->literal
+			yymsp[-1].minor.yy30->literal
 		)
 	);
   yy_destructor(yypParser,1,&yymsp[-2].minor);
-  yy_destructor(yypParser,3,&yymsp[0].minor);
+  yy_destructor(yypParser,2,&yymsp[0].minor);
 }
 #line 812 ".\\code\\Ddc\\Parser.c"
         break;
@@ -822,7 +822,7 @@ static void yy_reduce(
 			yymsp[-1].minor.yy0->literal	// language member
 		)
 	);
-  yy_destructor(yypParser,4,&yymsp[-9].minor);
+  yy_destructor(yypParser,3,&yymsp[-9].minor);
   yy_destructor(yypParser,5,&yymsp[-6].minor);
   yy_destructor(yypParser,6,&yymsp[-4].minor);
   yy_destructor(yypParser,6,&yymsp[-2].minor);
@@ -961,14 +961,14 @@ static void yy_reduce(
 }
 #line 963 ".\\code\\Ddc\\Parser.c"
         break;
-      case 17: /* statement ::= CLASS LITERAL COLON LITERAL OPEN_BRACE members CLOSE_BRACE */
+      case 17: /* statement ::= CLASS LITERAL COLON qualified_literal OPEN_BRACE members CLOSE_BRACE */
 #line 158 ".\\code\\Ddc\\Parser.y"
 {
 	yygotominor.yy30 = new Token(
 		new DfnClass(
 			DfnClass::AccPrivate,
 			yymsp[-5].minor.yy0->literal,
-			yymsp[-3].minor.yy0->literal,
+			yymsp[-3].minor.yy30->literal,
 			yymsp[-1].minor.yy30->node
 		)
 	);
@@ -979,14 +979,14 @@ static void yy_reduce(
 }
 #line 981 ".\\code\\Ddc\\Parser.c"
         break;
-      case 18: /* statement ::= PUBLIC CLASS LITERAL COLON LITERAL OPEN_BRACE members CLOSE_BRACE */
+      case 18: /* statement ::= PUBLIC CLASS LITERAL COLON qualified_literal OPEN_BRACE members CLOSE_BRACE */
 #line 170 ".\\code\\Ddc\\Parser.y"
 {
 	yygotominor.yy30 = new Token(
 		new DfnClass(
 			DfnClass::AccPublic,
 			yymsp[-5].minor.yy0->literal,
-			yymsp[-3].minor.yy0->literal,
+			yymsp[-3].minor.yy30->literal,
 			yymsp[-1].minor.yy30->node
 		)
 	);
@@ -998,14 +998,14 @@ static void yy_reduce(
 }
 #line 1000 ".\\code\\Ddc\\Parser.c"
         break;
-      case 19: /* statement ::= PRIVATE CLASS LITERAL COLON LITERAL OPEN_BRACE members CLOSE_BRACE */
+      case 19: /* statement ::= PRIVATE CLASS LITERAL COLON qualified_literal OPEN_BRACE members CLOSE_BRACE */
 #line 182 ".\\code\\Ddc\\Parser.y"
 {
 	yygotominor.yy30 = new Token(
 		new DfnClass(
 			DfnClass::AccPrivate,
 			yymsp[-5].minor.yy0->literal,
-			yymsp[-3].minor.yy0->literal,
+			yymsp[-3].minor.yy30->literal,
 			yymsp[-1].minor.yy30->node
 		)
 	);
@@ -1032,7 +1032,7 @@ static void yy_reduce(
 	yygotominor.yy30 = new Token(
 		new DfnMember(yymsp[-2].minor.yy30->node, yymsp[-1].minor.yy0->literal)
 	);
-  yy_destructor(yypParser,3,&yymsp[0].minor);
+  yy_destructor(yypParser,2,&yymsp[0].minor);
 }
 #line 1038 ".\\code\\Ddc\\Parser.c"
         break;

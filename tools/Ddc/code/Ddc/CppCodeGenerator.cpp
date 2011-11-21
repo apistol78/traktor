@@ -279,7 +279,7 @@ bool resolveLanguageType(
 	}
 	else
 	{
-		traktor::log::error << L"Unable to find matching class nor language alias from type" << Endl;
+		traktor::log::error << L"Unable to find matching class nor language alias from type \"" << type->getName() << L"\"" << Endl;
 		return false;
 	}
 
@@ -321,8 +321,11 @@ T_IMPLEMENT_RTTI_CLASS(L"ddc.CppCodeGenerator", CppCodeGenerator, ICodeGenerator
 
 bool CppCodeGenerator::generate(const Path& sourceFilePath, const DfnNode* node) const
 {
+	log::info << L"Generating C++ header..." << Endl;
 	if (!generateHeader(sourceFilePath, node))
 		return false;
+
+	log::info << L"Generating C++ source..." << Endl;
 	if (!generateSource(sourceFilePath, node))
 		return false;
 
@@ -402,12 +405,12 @@ bool CppCodeGenerator::generateHeader(OutputStream& os, const DfnNode* programNo
 				{
 					std::wstring memberName = memberNode->getName();
 
-					os << L"\tinline void set" << getCppMethodName(memberName) << L"(" << typeName << L" " << memberName << L") {" << Endl;
+					os << L"\tvoid set" << getCppMethodName(memberName) << L"(" << typeName << L" " << memberName << L") {" << Endl;
 					os << L"\t\t" << getCppMemberName(memberName) << L" = " << memberName << L";" << Endl;
 					os << L"\t}" << Endl;
 					os << Endl;
 
-					os << L"\tinline " << typeName << L" get" << getCppMethodName(memberName) << L"() const {" << Endl;
+					os << L"\t" << typeName << L" get" << getCppMethodName(memberName) << L"() const {" << Endl;
 					os << L"\t\treturn " << getCppMemberName(memberName) << L";" << Endl;
 					os << L"\t}" << Endl;
 					os << Endl;
@@ -433,7 +436,7 @@ bool CppCodeGenerator::generateHeader(OutputStream& os, const DfnNode* programNo
 				}
 				else
 				{
-					traktor::log::error << L"Unable to find C++ type matching data type" << Endl;
+					traktor::log::error << L"Unable to find C++ type matching data type of member \"" << memberNode->getName() << L"\"" << Endl;
 					return false;
 				}
 			}

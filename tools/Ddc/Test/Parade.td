@@ -9,23 +9,23 @@ namespace parade
 
 class StageData
 {
-	LayerData[] layers;
+	parade.LayerData[] layers;
 }
 
 class LayerData
 {
-	string name;
+	std.string name;
 }
 
-class FlashLayerData : LayerData
+class FlashLayerData : parade.LayerData
 {
 	traktor.resource.Proxy< traktor.flash.FlashMovie > movie;
-	traktor.Ref< LayerData >[] children;
-	traktor.Ref< LayerData >[4] children;
-	std.vector< traktor.Ref< LayerData > > test;
+	traktor.Ref< parade.LayerData >[] children;
+	traktor.Ref< parade.LayerData >[4] children;
+	std.vector< traktor.Ref< parade.LayerData > > test;
 }
 
-class SceneLayerData : LayerData
+class SceneLayerData : parade.LayerData
 {
 	traktor.resource.Proxy< traktor.scene.Scene > scene;
 }
