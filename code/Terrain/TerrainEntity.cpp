@@ -16,7 +16,6 @@
 #include "Render/Context/RenderContext.h"
 #include "Resource/IResourceManager.h"
 #include "Terrain/TerrainEntity.h"
-#include "Terrain/TerrainEntityData.h"
 #include "Terrain/TerrainSurface.h"
 #include "Terrain/TerrainSurfaceCache.h"
 #include "World/IWorldRenderPass.h"
@@ -38,6 +37,14 @@ const uint32_t c_skipMaterialMaskTexture = 1;
 const uint32_t c_skipHeightTextureEditor = 4;
 const uint32_t c_skipNormalTextureEditor = 2;
 const uint32_t c_skipMaterialMaskTextureEditor = 1;
+
+const Vector4 c_lodColor[] =
+{
+	Vector4(1.0f, 0.0f, 0.0f, 0.0f),
+	Vector4(0.0f, 1.0f, 0.0f, 0.0f),
+	Vector4(0.0f, 0.0f, 1.0f, 0.0f),
+	Vector4(1.0f, 1.0f, 0.0f, 0.0f)
+};
 
 struct CullPatch
 {
@@ -81,6 +88,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.TerrainEntity", TerrainEntity, world::E
 TerrainEntity::TerrainEntity(render::IRenderSystem* renderSystem, bool editorMode)
 :	m_renderSystem(renderSystem)
 ,	m_editorMode(editorMode)
+,	m_visualizeMode(TerrainEntityData::VmDefault)
 ,	m_handleSurface(render::getParameterHandle(L"Surface"))
 ,	m_handleHeightfield(render::getParameterHandle(L"Heightfield"))
 ,	m_handleHeightfieldSize(render::getParameterHandle(L"HeightfieldSize"))
@@ -90,6 +98,7 @@ TerrainEntity::TerrainEntity(render::IRenderSystem* renderSystem, bool editorMod
 ,	m_handleWorldExtent(render::getParameterHandle(L"WorldExtent"))
 ,	m_handlePatchOrigin(render::getParameterHandle(L"PatchOrigin"))
 ,	m_handlePatchExtent(render::getParameterHandle(L"PatchExtent"))
+,	m_handlePatchLodColor(render::getParameterHandle(L"PatchLodColor"))
 {
 }
 
@@ -140,6 +149,12 @@ bool TerrainEntity::create(resource::IResourceManager* resourceManager, const Te
 				return false;
 		}
 	}
+
+	m_visualizeMode = data.getVisualizeMode();
+	if (m_visualizeMode != TerrainEntityData::VmDefault)
+		m_shader->setCombination(L"VisualizeLods", true);
+	else
+		m_shader->setCombination(L"VisualizeLods", false);
 
 	return true;
 }
@@ -234,6 +249,10 @@ void TerrainEntity::render(
 	// Sort patches front to back to maximize best use of surface cache and rendering.
 	std::sort(visiblePatches.begin(), visiblePatches.end(), PatchFrontToBackPredicate());
 
+	// Issue beginning of frame to surface cache.
+	if (updateCache)
+		m_surfaceCache->begin();
+
 	// Render each visible patch.
 	for (AlignedVector< CullPatch >::const_iterator i = visiblePatches.begin(); i != visiblePatches.end(); ++i)
 	{
@@ -294,6 +313,12 @@ void TerrainEntity::render(
 		renderBlock->programParams->setVectorParameter(m_handleWorldExtent, worldExtent);
 		renderBlock->programParams->setVectorParameter(m_handlePatchOrigin, patchOrigin);
 		renderBlock->programParams->setVectorParameter(m_handlePatchExtent, patchExtent);
+
+		if (m_visualizeMode == TerrainEntityData::VmSurfaceLod)
+			renderBlock->programParams->setVectorParameter(m_handlePatchLodColor, c_lodColor[surfaceLod]);
+		else if (m_visualizeMode == TerrainEntityData::VmPatchLod)
+			renderBlock->programParams->setVectorParameter(m_handlePatchLodColor, c_lodColor[patchLod]);
+
 		renderBlock->programParams->endParameters(renderContext);
 
 		renderContext->draw(render::RfOpaque, renderBlock);

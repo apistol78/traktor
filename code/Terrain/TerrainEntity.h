@@ -1,9 +1,10 @@
 #ifndef traktor_terrain_TerrainEntity_H
 #define traktor_terrain_TerrainEntity_H
 
-#include "Resource/Proxy.h"
-#include "World/Entity/Entity.h"
 #include "Render/Shader.h"
+#include "Resource/Proxy.h"
+#include "Terrain/TerrainEntityData.h"
+#include "World/Entity/Entity.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -52,7 +53,6 @@ class WorldRenderView;
 	namespace terrain
 	{
 
-class TerrainEntityData;
 class TerrainSurfaceCache;
 class TerrainSurface;
 
@@ -95,6 +95,7 @@ private:
 
 	Ref< render::IRenderSystem > m_renderSystem;
 	bool m_editorMode;
+	TerrainEntityData::VisualizeMode m_visualizeMode;
 	resource::Proxy< hf::Heightfield > m_heightfield;
 	resource::Proxy< hf::MaterialMask > m_materialMask;
 	resource::Proxy< render::Shader > m_shader;
@@ -121,6 +122,7 @@ private:
 	render::handle_t m_handleWorldExtent;
 	render::handle_t m_handlePatchOrigin;
 	render::handle_t m_handlePatchExtent;
+	render::handle_t m_handlePatchLodColor;
 
 	bool updatePatches(int32_t minX, int32_t minZ, int32_t maxX, int32_t maxZ);
 

@@ -33,6 +33,13 @@ class T_DLLCLASS TerrainEntityData : public world::EntityData
 	T_RTTI_CLASS;
 
 public:
+	enum VisualizeMode
+	{
+		VmDefault,
+		VmSurfaceLod,
+		VmPatchLod
+	};
+
 	TerrainEntityData();
 
 	virtual bool serialize(ISerializer& s);
@@ -43,6 +50,8 @@ public:
 
 	Ref< TerrainSurface > getSurface() const { return m_surface; }
 
+	VisualizeMode getVisualizeMode() const { return m_visualizeMode; }
+
 private:
 	friend class TerrainEntity;
 
@@ -51,6 +60,7 @@ private:
 	Ref< TerrainSurface > m_surface;
 	float m_patchLodDistance;
 	float m_surfaceLodDistance;
+	VisualizeMode m_visualizeMode;
 };
 
 	}
