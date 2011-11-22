@@ -57,6 +57,8 @@ public:
 
 	void flush();
 
+	void begin();
+
 	void get(
 		render::RenderContext* renderContext,
 		TerrainSurface* surface,
@@ -85,6 +87,7 @@ private:
 	Ref< render::ScreenRenderer > m_screenRenderer;
 	RefArray< render::RenderTargetSet > m_cache[4];
 	std::vector< Entry > m_entries;
+	int32_t m_updateAllowedCount;
 	render::handle_t m_handleHeightfield;
 	render::handle_t m_handleHeightfieldSize;
 	render::handle_t m_handleMaterialMask;
@@ -94,7 +97,6 @@ private:
 	render::handle_t m_handleWorldExtent;
 	render::handle_t m_handlePatchOrigin;
 	render::handle_t m_handlePatchExtent;
-	render::handle_t m_handlePatchLodColor;
 
 	Ref< render::RenderTargetSet > allocateTarget(uint32_t lod);
 };

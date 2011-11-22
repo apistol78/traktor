@@ -23,14 +23,6 @@ const uint32_t c_cacheSurfaceSize[] = { 1024, 512, 256, 128 };
 const uint32_t c_cacheSurfaceSize[] = { 512, 256, 128, 64 };
 #endif
 
-const Vector4 c_cacheSurfaceColor[] =
-{
-	Vector4(1.0f, 0.0f, 0.0f, 0.0f),
-	Vector4(0.0f, 1.0f, 0.0f, 0.0f),
-	Vector4(0.0f, 0.0f, 1.0f, 0.0f),
-	Vector4(1.0f, 1.0f, 0.0f, 0.0f)
-};
-
 struct TerrainSurfaceRenderBlock : public render::RenderBlock
 {
 	render::ScreenRenderer* screenRenderer;
@@ -78,7 +70,8 @@ struct TerrainSurfaceRenderBlock : public render::RenderBlock
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.TerrainSurfaceCache", TerrainSurfaceCache, Object)
 
 TerrainSurfaceCache::TerrainSurfaceCache()
-:	m_handleHeightfield(render::getParameterHandle(L"Heightfield"))
+:	m_updateAllowedCount(0)
+,	m_handleHeightfield(render::getParameterHandle(L"Heightfield"))
 ,	m_handleHeightfieldSize(render::getParameterHandle(L"HeightfieldSize"))
 ,	m_handleMaterialMask(render::getParameterHandle(L"MaterialMask"))
 ,	m_handleMaterialMaskSize(render::getParameterHandle(L"MaterialMaskSize"))
@@ -87,7 +80,6 @@ TerrainSurfaceCache::TerrainSurfaceCache()
 ,	m_handleWorldExtent(render::getParameterHandle(L"WorldExtent"))
 ,	m_handlePatchOrigin(render::getParameterHandle(L"PatchOrigin"))
 ,	m_handlePatchExtent(render::getParameterHandle(L"PatchExtent"))
-,	m_handlePatchLodColor(render::getParameterHandle(L"PatchLodColor"))
 {
 }
 
@@ -153,6 +145,11 @@ void TerrainSurfaceCache::flush()
 	m_entries.resize(0);
 }
 
+void TerrainSurfaceCache::begin()
+{
+	m_updateAllowedCount = 2;
+}
+
 void TerrainSurfaceCache::get(
 	render::RenderContext* renderContext,
 	TerrainSurface* surface,
@@ -172,9 +169,24 @@ void TerrainSurfaceCache::get(
 	// If the cache is already valid we just reuse it.
 	if (patchId < m_entries.size())
 	{
-		if (m_entries[patchId].lod == surfaceLod && m_entries[patchId].renderTargetSet)
+		if (m_updateAllowedCount > 0)
 		{
-			if (m_entries[patchId].renderTargetSet->isContentValid())
+			if (
+				m_entries[patchId].lod == surfaceLod &&
+				m_entries[patchId].renderTargetSet &&
+				m_entries[patchId].renderTargetSet->isContentValid()
+			)
+			{
+				outRenderBlock = 0;
+				outTexture = m_entries[patchId].renderTargetSet->getColorTexture(0);
+				return;
+			}
+		}
+		else
+		{
+			// We've already consumed our budget of updates for this frame; only
+			// update if absolutely necessary.
+			if (m_entries[patchId].renderTargetSet && m_entries[patchId].renderTargetSet->isContentValid())
 			{
 				outRenderBlock = 0;
 				outTexture = m_entries[patchId].renderTargetSet->getColorTexture(0);
@@ -184,6 +196,7 @@ void TerrainSurfaceCache::get(
 	
 		// Release cache as it's no longer valid.
 		flush(patchId);
+		m_updateAllowedCount--;
 	}
 	else
 	{
@@ -238,7 +251,6 @@ void TerrainSurfaceCache::get(
 		renderBlock->programParams->setVectorParameter(m_handleWorldExtent, worldExtent);
 		renderBlock->programParams->setVectorParameter(m_handlePatchOrigin, patchOrigin);
 		renderBlock->programParams->setVectorParameter(m_handlePatchExtent, patchExtent);
-		renderBlock->programParams->setVectorParameter(m_handlePatchLodColor, c_cacheSurfaceColor[surfaceLod]);
 		renderBlock->programParams->endParameters(renderContext);
 
 		T_SAFE_ADDREF(renderBlock->renderTargetSet);
