@@ -529,7 +529,11 @@
       <first>EXECUTE_TOOL_TITLE</first>
       <second>Execute tool</second>
     </item>
-		<item>
+    <item>
+      <first>FIND_IN_DATABASE</first>
+      <second>Find in database</second>
+    </item>
+    <item>
 			<first>IMPORT_ANIMATION_DESCRIPTION</first>
 			<second>Animation...</second>
 		</item>
@@ -1344,6 +1348,10 @@
     <item>
       <first>SHADERGRAPH_DELETE_NODE</first>
       <second>Delete</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_FIND_IN_DATABASE</first>
+      <second>Find in database</second>
     </item>
     <item>
       <first>SHADERGRAPH_MISCELLANEOUS</first>
