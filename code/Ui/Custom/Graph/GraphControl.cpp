@@ -801,7 +801,7 @@ void GraphControl::eventMouseMove(Event* e)
 	else if (m_mode == MdConnectEdge || m_mode == MdDrawEdge || m_mode == MdDrawSelectionRectangle)
 	{
 		Rect updateRect(
-			m_edgeOrigin,
+			m_moveOrigin,
 			m_cursor
 		);
 
