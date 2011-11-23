@@ -14,11 +14,15 @@ namespace traktor
 	namespace terrain
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.TerrainEntityData", 1, TerrainEntityData, world::EntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.TerrainEntityData", 2, TerrainEntityData, world::EntityData)
 
 TerrainEntityData::TerrainEntityData()
 :	m_patchLodDistance(100.0f)
+,	m_patchLodBias(0.0f)
+,	m_patchLodExponent(1.0f)
 ,	m_surfaceLodDistance(100.0f)
+,	m_surfaceLodBias(0.0f)
+,	m_surfaceLodExponent(1.0f)
 ,	m_visualizeMode(VmDefault)
 {
 }
@@ -31,8 +35,22 @@ bool TerrainEntityData::serialize(ISerializer& s)
 	s >> resource::Member< hf::Heightfield, hf::HeightfieldResource >(L"heightfield", m_heightfield);
 	s >> resource::Member< hf::MaterialMask, hf::MaterialMaskResource >(L"materialMask", m_materialMask);
 	s >> MemberRef< TerrainSurface >(L"surface", m_surface);
+
 	s >> Member< float >(L"patchLodDistance", m_patchLodDistance);
+
+	if (s.getVersion() >= 2)
+	{
+		s >> Member< float >(L"patchLodBias", m_patchLodBias);
+		s >> Member< float >(L"patchLodExponent", m_patchLodExponent);
+	}
+
 	s >> Member< float >(L"surfaceLodDistance", m_surfaceLodDistance);
+
+	if (s.getVersion() >= 2)
+	{
+		s >> Member< float >(L"surfaceLodBias", m_surfaceLodBias);
+		s >> Member< float >(L"surfaceLodExponent", m_surfaceLodExponent);
+	}
 
 	if (s.getVersion() >= 1)
 	{

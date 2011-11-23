@@ -48,18 +48,32 @@ public:
 
 	const resource::Proxy< hf::MaterialMask >& getMaterialMask() const { return m_materialMask; }
 
-	Ref< TerrainSurface > getSurface() const { return m_surface; }
+	TerrainSurface* getSurface() const { return m_surface; }
+
+	float getPatchLodDistance() const { return m_patchLodDistance; }
+
+	float getPatchLodBias() const { return m_patchLodBias; }
+
+	float getPatchLodExponent() const { return m_patchLodExponent; }
+
+	float getSurfaceLodDistance() const { return m_surfaceLodDistance; }
+
+	float getSurfaceLodBias() const { return m_surfaceLodBias; }
+
+	float getSurfaceLodExponent() const { return m_surfaceLodExponent; }
 
 	VisualizeMode getVisualizeMode() const { return m_visualizeMode; }
 
 private:
-	friend class TerrainEntity;
-
 	resource::Proxy< hf::Heightfield > m_heightfield;
 	resource::Proxy< hf::MaterialMask > m_materialMask;
 	Ref< TerrainSurface > m_surface;
 	float m_patchLodDistance;
+	float m_patchLodBias;
+	float m_patchLodExponent;
 	float m_surfaceLodDistance;
+	float m_surfaceLodBias;
+	float m_surfaceLodExponent;
 	VisualizeMode m_visualizeMode;
 };
 

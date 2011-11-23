@@ -37,6 +37,8 @@ const uint32_t c_skipMaterialMaskTexture = 1;
 const uint32_t c_skipHeightTextureEditor = 4;
 const uint32_t c_skipNormalTextureEditor = 2;
 const uint32_t c_skipMaterialMaskTextureEditor = 1;
+const int32_t c_patchLodSteps = 3;
+const int32_t c_surfaceLodSteps = 3;
 
 const Vector4 c_lodColor[] =
 {
@@ -49,6 +51,7 @@ const Vector4 c_lodColor[] =
 struct CullPatch
 {
 	float distance;
+	float area;
 	uint32_t patchId;
 	Vector4 patchOrigin;
 };
@@ -104,14 +107,14 @@ TerrainEntity::TerrainEntity(render::IRenderSystem* renderSystem, bool editorMod
 
 bool TerrainEntity::create(resource::IResourceManager* resourceManager, const TerrainEntityData& data)
 {
-	m_heightfield = data.m_heightfield;
+	m_heightfield = data.getHeightfield();
 	if (!resourceManager->bind(m_heightfield))
 		return false;
 
 	if (!m_heightfield.validate())
 		return false;
 
-	m_materialMask = data.m_materialMask;
+	m_materialMask = data.getMaterialMask();
 	if (!resourceManager->bind(m_materialMask))
 		return false;
 
@@ -136,9 +139,13 @@ bool TerrainEntity::create(resource::IResourceManager* resourceManager, const Te
 	if (!m_surfaceCache->create(resourceManager, m_renderSystem))
 		return false;
 
-	m_surface = data.m_surface;
-	m_patchLodDistance = data.m_patchLodDistance;
-	m_surfaceLodDistance = data.m_surfaceLodDistance;
+	m_surface = data.getSurface();
+	m_patchLodDistance = data.getPatchLodDistance();
+	m_patchLodBias = data.getPatchLodBias();
+	m_patchLodExponent = data.getPatchLodExponent();
+	m_surfaceLodDistance = data.getSurfaceLodDistance();
+	m_surfaceLodBias = data.getSurfaceLodBias();
+	m_surfaceLodExponent = data.getSurfaceLodExponent();
 
 	if (m_surface)
 	{
@@ -194,9 +201,7 @@ void TerrainEntity::render(
 		bool(worldRenderPass.getTechnique() == render::getParameterHandle(L"World_PreLitColor"));
 
 	const Vector4& worldExtent = m_heightfield->getResource().getWorldExtent();
-
 	Vector4 patchExtent(worldExtent.x() / float(m_patchCount), worldExtent.y(), worldExtent.z() / float(m_patchCount), 0.0f);
-	Scalar patchRadius = patchExtent.length() * Scalar(0.5f);
 
 	const Vector4& eyePosition = worldRenderView.getEyePosition();
 
@@ -205,8 +210,15 @@ void TerrainEntity::render(
 	visiblePatches.resize(0);
 
 	Vector4 patchTopLeft = (-worldExtent * Scalar(0.5f)).xyz1();
+	Vector4 patchDeltaHalf = patchExtent * Vector4(0.5f, 0.0f, 0.5f, 0.0f);
 	Vector4 patchDeltaX = patchExtent * Vector4(1.0f, 0.0f, 0.0f, 0.0f);
 	Vector4 patchDeltaZ = patchExtent * Vector4(0.0f, 0.0f, 1.0f, 0.0f);
+
+	Matrix44 viewInv = worldRenderView.getView().inverseOrtho();
+
+	Frustum worldCullFrustum = worldRenderView.getCullFrustum();
+	for (uint32_t i = 0; i < worldCullFrustum.planes.size(); ++i)
+		worldCullFrustum.planes[i] = viewInv * worldCullFrustum.planes[i];
 
 	for (uint32_t pz = 0; pz < m_patchCount; ++pz)
 	{
@@ -214,23 +226,61 @@ void TerrainEntity::render(
 		for (uint32_t px = 0; px < m_patchCount; ++px)
 		{
 			uint32_t patchId = px + pz * m_patchCount;
+			const Patch& patch = m_patches[patchId];
 
 			Vector4 patchCenterWorld = (patchOrigin + patchExtent * Scalar(0.5f)).xyz1();
-			Vector4 patchCenterView = worldRenderView.getView() * patchCenterWorld;
 
-			if (worldRenderView.getCullFrustum().inside(patchCenterView, patchRadius) != Frustum::IrOutside)
+			Aabb3 patchAabb(
+				patchCenterWorld - patchDeltaHalf + Vector4(0.0f, patch.minHeight, 0.0f, 0.0f),
+				patchCenterWorld + patchDeltaHalf + Vector4(0.0f, patch.maxHeight, 0.0f, 0.0f)
+			);
+
+			if (worldCullFrustum.inside(patchAabb) != Frustum::IrOutside)
 			{
-				CullPatch cp;
+				Scalar lodDistance = (patchCenterWorld - eyePosition).xyz0().length();
 
-				Aabb3 patchAabb(
-					patchCenterWorld - patchExtent * Scalar(0.5f),
-					patchCenterWorld + patchExtent * Scalar(0.5f)
+				// Project patch bounding box extents onto view plane and calculate screen area.
+				Vector4 extents[8];
+				patchAabb.getExtents(extents);
+
+				Vector4 mn(
+					std::numeric_limits< float >::max(),
+					std::numeric_limits< float >::max(),
+					std::numeric_limits< float >::max(),
+					std::numeric_limits< float >::max()
+				);
+				Vector4 mx(
+					-std::numeric_limits< float >::max(),
+					-std::numeric_limits< float >::max(),
+					-std::numeric_limits< float >::max(),
+					-std::numeric_limits< float >::max()
 				);
 
-				Scalar lodDistance(0.0f);
-				patchAabb.intersectRay(eyePosition, (patchCenterWorld - eyePosition).xyz0().normalized(), lodDistance);
+				Matrix44 viewProj = worldRenderView.getProjection() * worldRenderView.getView();
+				bool clipped = false;
 
+				for (int i = 0; i < sizeof_array(extents); ++i)
+				{
+					Vector4 p = viewProj * extents[i];
+					if (p.w() <= 0.0f)
+					{
+						clipped = true;
+						break;
+					}
+
+					// Homogeneous divide.
+					p /= p.w();
+
+					// Track screen space extents.
+					mn = min(mn, p);
+					mx = max(mx, p);
+				}
+
+				Vector4 e = mx - mn;
+
+				CullPatch cp;
 				cp.distance = lodDistance;
+				cp.area = !clipped ? e.x() * e.y() : Scalar(1000.0f);
 				cp.patchId = patchId;
 				cp.patchOrigin = patchOrigin;
 
@@ -238,6 +288,9 @@ void TerrainEntity::render(
 			}
 			else if (updateCache)
 			{
+				m_patches[patchId].lastPatchLod = c_patchLodSteps;
+				m_patches[patchId].lastSurfaceLod = c_surfaceLodSteps;
+
 				m_surfaceCache->flush(patchId);
 			}
 
@@ -256,18 +309,36 @@ void TerrainEntity::render(
 	// Render each visible patch.
 	for (AlignedVector< CullPatch >::const_iterator i = visiblePatches.begin(); i != visiblePatches.end(); ++i)
 	{
-		const Patch& patch = m_patches[i->patchId];
+		Patch& patch = m_patches[i->patchId];
 		const Vector4& patchOrigin = i->patchOrigin;
 
 		// Calculate which lods to use based one distance to patch center.
-		float lodDistance1 = std::pow(clamp(i->distance / m_patchLodDistance, 0.0f, 1.0f), 1.0f);
-		float lodDistance2 = std::pow(clamp(i->distance / m_surfaceLodDistance, 0.0f, 1.0f), 1.0f);
+		if (updateCache)
+		{
+			float patchLodDistance = std::pow(clamp(/*i->distance / m_patchLodDistance*/ 1.0f - i->area / m_patchLodDistance + m_patchLodBias, 0.0f, 1.0f), m_patchLodExponent);
+			float surfaceLodDistance = std::pow(clamp(i->distance / m_surfaceLodDistance /*1.0f - i->area / m_surfaceLodDistance*/ + m_surfaceLodBias, 0.0f, 1.0f), m_surfaceLodExponent);
 
-		const int c_patchLodSteps = sizeof_array(m_primitives) - 1;
-		const int c_surfaceLodSteps = 3;
+			float patchLodF = patchLodDistance * c_patchLodSteps;
+			float surfaceLodF = surfaceLodDistance * c_surfaceLodSteps;
 
-		int patchLod = int(lodDistance1 * c_patchLodSteps);
-		int surfaceLod = int(lodDistance2 * c_surfaceLodSteps);
+			int32_t patchLod = int32_t(patchLodF + 0.5f);
+			int32_t surfaceLod = int32_t(surfaceLodF + 0.5f);
+
+			const float c_lodHysteresisThreshold = 0.5f;
+			if (patchLod != patch.lastPatchLod)
+			{
+				if (std::abs(patchLodF - patch.lastPatchLod) < c_lodHysteresisThreshold)
+					patchLod = patch.lastPatchLod;
+			}
+			if (surfaceLod != patch.lastSurfaceLod)
+			{
+				if (std::abs(surfaceLodF - patch.lastSurfaceLod) < c_lodHysteresisThreshold)
+					surfaceLod = patch.lastSurfaceLod;
+			}
+
+			patch.lastPatchLod = patchLod;
+			patch.lastSurfaceLod = surfaceLod;
+		}
 
 		TerrainRenderBlock* renderBlock = renderContext->alloc< TerrainRenderBlock >("Terrain patch");
 
@@ -283,7 +354,7 @@ void TerrainEntity::render(
 				worldExtent,
 				patchOrigin,
 				patchExtent,
-				surfaceLod,
+				patch.lastSurfaceLod,
 				i->patchId,
 				// Out
 				renderBlock->nested,
@@ -300,7 +371,7 @@ void TerrainEntity::render(
 #else
 		renderBlock->vertexBuffer = m_vertexBuffer;
 #endif
-		renderBlock->primitives = &m_primitives[patchLod];
+		renderBlock->primitives = &m_primitives[patch.lastPatchLod];
 
 		renderBlock->programParams->beginParameters(renderContext);
 		worldRenderPass.setProgramParameters(renderBlock->programParams);
@@ -315,9 +386,9 @@ void TerrainEntity::render(
 		renderBlock->programParams->setVectorParameter(m_handlePatchExtent, patchExtent);
 
 		if (m_visualizeMode == TerrainEntityData::VmSurfaceLod)
-			renderBlock->programParams->setVectorParameter(m_handlePatchLodColor, c_lodColor[surfaceLod]);
+			renderBlock->programParams->setVectorParameter(m_handlePatchLodColor, c_lodColor[patch.lastSurfaceLod]);
 		else if (m_visualizeMode == TerrainEntityData::VmPatchLod)
-			renderBlock->programParams->setVectorParameter(m_handlePatchLodColor, c_lodColor[patchLod]);
+			renderBlock->programParams->setVectorParameter(m_handlePatchLodColor, c_lodColor[patch.lastPatchLod]);
 
 		renderBlock->programParams->endParameters(renderContext);
 
@@ -474,10 +545,10 @@ bool TerrainEntity::createPatches()
 			if (!vertexBuffer)
 				return false;
 
-			TerrainEntity::Patch patch = { 0.0f, 0.0f, vertexBuffer };
+			TerrainEntity::Patch patch = { 0.0f, 0.0f, vertexBuffer, c_patchLodSteps, c_surfaceLodSteps };
 			m_patches.push_back(patch);
 #else
-			TerrainEntity::Patch patch = { 0.0f, 0.0f };
+			TerrainEntity::Patch patch = { 0.0f, 0.0f, c_patchLodSteps, c_surfaceLodSteps };
 			m_patches.push_back(patch);
 #endif
 		}
