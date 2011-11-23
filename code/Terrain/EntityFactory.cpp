@@ -1,10 +1,12 @@
 #include "Terrain/EntityFactory.h"
-#include "Terrain/TerrainEntityData.h"
 #include "Terrain/TerrainEntity.h"
-#include "Terrain/OceanEntityData.h"
+#include "Terrain/TerrainEntityData.h"
 #include "Terrain/OceanEntity.h"
-#include "Terrain/UndergrowthEntityData.h"
+#include "Terrain/OceanEntityData.h"
+#include "Terrain/RiverEntity.h"
+#include "Terrain/RiverEntityData.h"
 #include "Terrain/UndergrowthEntity.h"
+#include "Terrain/UndergrowthEntityData.h"
 
 namespace traktor
 {
@@ -25,6 +27,7 @@ const TypeInfoSet EntityFactory::getEntityTypes() const
 	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< TerrainEntityData >());
 	typeSet.insert(&type_of< OceanEntityData >());
+	typeSet.insert(&type_of< RiverEntityData >());
 	typeSet.insert(&type_of< UndergrowthEntityData >());
 	return typeSet;
 }
@@ -38,6 +41,12 @@ Ref< world::Entity > EntityFactory::createEntity(world::IEntityBuilder* builder,
 		Ref< TerrainEntity > terrainEntity = new TerrainEntity(m_renderSystem, m_editorMode);
 		if (terrainEntity->create(m_resourceManager, static_cast< const TerrainEntityData& >(entityData)))
 			return terrainEntity;
+	}
+	else if (is_a< RiverEntityData >(&entityData))
+	{
+		Ref< RiverEntity > riverEntity = new RiverEntity();
+		if (riverEntity->create(m_resourceManager, m_renderSystem, static_cast< const RiverEntityData& >(entityData)))
+			return riverEntity;
 	}
 	else if (is_a< OceanEntityData >(&entityData))
 	{

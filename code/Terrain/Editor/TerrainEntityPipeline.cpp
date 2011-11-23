@@ -2,6 +2,7 @@
 #include "Terrain/TerrainEntityData.h"
 #include "Terrain/TerrainSurface.h"
 #include "Terrain/OceanEntityData.h"
+#include "Terrain/RiverEntityData.h"
 #include "Terrain/UndergrowthEntityData.h"
 #include "Editor/IPipelineDepends.h"
 
@@ -24,6 +25,7 @@ TypeInfoSet TerrainEntityPipeline::getAssetTypes() const
 	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< TerrainEntityData >());
 	typeSet.insert(&type_of< OceanEntityData >());
+	typeSet.insert(&type_of< RiverEntityData >());
 	typeSet.insert(&type_of< UndergrowthEntityData >());
 	return typeSet;
 }
@@ -55,6 +57,10 @@ bool TerrainEntityPipeline::buildDependencies(
 	{
 		pipelineDepends->addDependency(oceanEntityData->getHeightfield().getGuid(), editor::PdfBuild);
 		pipelineDepends->addDependency(oceanEntityData->getShader().getGuid(), editor::PdfBuild);
+	}
+	else if (const RiverEntityData* riverEntityData = dynamic_type_cast< const RiverEntityData* >(sourceAsset))
+	{
+		pipelineDepends->addDependency(riverEntityData->getShader().getGuid(), editor::PdfBuild);
 	}
 	else if (const UndergrowthEntityData* undergrowthEntityData = dynamic_type_cast< const UndergrowthEntityData* >(sourceAsset))
 	{

@@ -17,7 +17,7 @@ struct HF { static float value(const InputRumble& rumble) { return rumble.highFr
 template < typename F >
 struct RumbleAccessor
 {
-	static inline float time(const std::pair< float, InputRumble >& key)
+	static inline float time(const std::pair< float, InputRumble >* keys, size_t nkeys, const std::pair< float, InputRumble >& key)
 	{
 		return key.first;
 	}
