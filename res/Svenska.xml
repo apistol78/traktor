@@ -537,7 +537,11 @@
       <first>EXECUTE_TOOL_TITLE</first>
       <second>Utför verktyg</second>
     </item>
-		<item>
+    <item>
+      <first>FIND_IN_DATABASE</first>
+      <second>Hitta i databas</second>
+    </item>
+    <item>
 			<first>IMPORT_ANIMATION_DESCRIPTION</first>
 			<second>Animation</second>
 		</item>
@@ -1352,6 +1356,10 @@
     <item>
       <first>SHADERGRAPH_EXTERNAL_FRAGMENT_MISMATCH_TITLE</first>
       <second>Externa noder matchar ej</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_FIND_IN_DATABASE</first>
+      <second>Hitta i databas</second>
     </item>
     <item>
       <first>SHADERGRAPH_MISCELLANEOUS</first>

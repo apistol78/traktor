@@ -184,6 +184,8 @@ private:
 
 	void closeAllOtherEditors();
 
+	void findInDatabase();
+
 	void activatePreviousEditor();
 
 	void activateNextEditor();

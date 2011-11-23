@@ -343,6 +343,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 		return false;
 	m_menuTab->add(new ui::MenuItem(ui::Command(L"Editor.CloseEditor"), i18n::Text(L"CLOSE")));
 	m_menuTab->add(new ui::MenuItem(ui::Command(L"Editor.CloseAllOtherEditors"), i18n::Text(L"CLOSE_ALL_BUT_THIS")));
+	m_menuTab->add(new ui::MenuItem(ui::Command(L"Editor.FindInDatabase"), i18n::Text(L"FIND_IN_DATABASE")));
 
 	// Create status bar.
 	m_statusBar = new ui::custom::StatusBar();
@@ -1415,6 +1416,17 @@ void EditorForm::closeAllOtherEditors()
 	m_tab->update();
 }
 
+void EditorForm::findInDatabase()
+{
+	Ref< ui::TabPage > tabPage = m_tab->getActivePage();
+	T_ASSERT (tabPage);
+
+	Ref< db::Instance > instance = checked_type_cast< db::Instance* >(tabPage->getData(L"INSTANCE"));
+	T_ASSERT (instance);
+
+	highlightInstance(instance);
+}
+
 void EditorForm::activatePreviousEditor()
 {
 	Ref< ui::TabPage > previousTabPage = m_tab->cycleActivePage(false);
@@ -1588,6 +1600,8 @@ bool EditorForm::handleCommand(const ui::Command& command)
 		closeCurrentEditor();
 	else if (command == L"Editor.CloseAllOtherEditors")
 		closeAllOtherEditors();
+	else if (command == L"Editor.FindInDatabase")
+		findInDatabase();
 	else if (command == L"Editor.Build")
 		buildAssets(false);
 	else if (command == L"Editor.Rebuild")
