@@ -132,6 +132,46 @@ bool TerrainEntityEditor::handleCommand(const ui::Command& command)
 
 void TerrainEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer) const
 {
+	// Draw patch bounding boxes.
+
+	const TerrainEntity* terrainEntity = checked_type_cast< const TerrainEntity*, true >(getEntityAdapter()->getEntity());
+	if (terrainEntity)
+	{
+		const std::vector< TerrainEntity::Patch >& patches = terrainEntity->getPatches();
+		uint32_t patchCount = terrainEntity->getPatchCount();
+
+		const Vector4& worldExtent = terrainEntity->getHeightfield()->getResource().getWorldExtent();
+		Vector4 patchExtent(worldExtent.x() / float(patchCount), worldExtent.y(), worldExtent.z() / float(patchCount), 0.0f);
+
+		Vector4 patchTopLeft = (-worldExtent * Scalar(0.5f)).xyz1();
+		Vector4 patchDeltaHalf = patchExtent * Vector4(0.5f, 0.0f, 0.5f, 0.0f);
+		Vector4 patchDeltaX = patchExtent * Vector4(1.0f, 0.0f, 0.0f, 0.0f);
+		Vector4 patchDeltaZ = patchExtent * Vector4(0.0f, 0.0f, 1.0f, 0.0f);
+
+		for (uint32_t pz = 0; pz < patchCount; ++pz)
+		{
+			Vector4 patchOrigin = patchTopLeft;
+			for (uint32_t px = 0; px < patchCount; ++px)
+			{
+				uint32_t patchId = px + pz * patchCount;
+				const TerrainEntity::Patch& patch = patches[patchId];
+
+				Vector4 patchCenterWorld = (patchOrigin + patchExtent * Scalar(0.5f)).xyz1();
+				Aabb3 patchAabb(
+					patchCenterWorld - patchDeltaHalf + Vector4(0.0f, patch.minHeight, 0.0f, 0.0f),
+					patchCenterWorld + patchDeltaHalf + Vector4(0.0f, patch.maxHeight, 0.0f, 0.0f)
+				);
+
+				primitiveRenderer->drawWireAabb(patchAabb, Color4ub(255, 255, 0, 255));
+
+				patchOrigin += patchDeltaX;
+			}
+			patchTopLeft += patchDeltaZ;
+		}
+	}
+
+
+	// Draw cursor
 	const int32_t c_segments = 30;
 	const float c_offset = 0.4f;
 

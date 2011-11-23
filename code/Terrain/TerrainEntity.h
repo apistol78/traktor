@@ -70,6 +70,8 @@ public:
 #if !defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
 		Ref< render::VertexBuffer > vertexBuffer;
 #endif
+		int32_t lastPatchLod;
+		int32_t lastSurfaceLod;
 	};
 
 	TerrainEntity(render::IRenderSystem* renderSystem, bool editorMode);
@@ -87,6 +89,10 @@ public:
 	const resource::Proxy< hf::MaterialMask >& getMaterialMask() const { return m_materialMask; }
 
 	TerrainSurfaceCache* getSurfaceCache() const { return m_surfaceCache; }
+
+	const std::vector< Patch >& getPatches() const { return m_patches; }
+
+	uint32_t getPatchCount() const { return m_patchCount; }
 
 	virtual void update(const world::EntityUpdate* update);
 
@@ -112,7 +118,11 @@ private:
 #endif
 	render::Primitives m_primitives[4];
 	float m_patchLodDistance;
+	float m_patchLodBias;
+	float m_patchLodExponent;
 	float m_surfaceLodDistance;
+	float m_surfaceLodBias;
+	float m_surfaceLodExponent;
 	render::handle_t m_handleSurface;
 	render::handle_t m_handleHeightfield;
 	render::handle_t m_handleHeightfieldSize;
