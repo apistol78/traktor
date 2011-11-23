@@ -19,7 +19,7 @@ template <
 >
 struct HermiteAccessor
 {
-	static inline Time time(const Key& key)
+	static inline Time time(const Key* keys, size_t nkeys, const Key& key)
 	{
 		return Time(key.T);
 	}
@@ -63,12 +63,12 @@ public:
 	{
 		T_ASSERT (m_nkeys >= 2);
 
-		Time Tfirst(Accessor::time(m_keys[0]));
-		Time Tlast(Accessor::time(m_keys[m_nkeys - 1]));
+		Time Tfirst(Accessor::time(m_keys, m_nkeys, m_keys[0]));
+		Time Tlast(Accessor::time(m_keys, m_nkeys, m_keys[m_nkeys - 1]));
 		Time Tcurr = TimeControl::t(Tat, Tfirst, Tlast, Tend > Time(0.0f) ? Tend : Tlast);
 
 		int index = 0;
-		while (index < int(m_nkeys - 1) && Tcurr >= Accessor::time(m_keys[index + 1]))
+		while (index < int(m_nkeys - 1) && Tcurr >= Accessor::time(m_keys, m_nkeys, m_keys[index + 1]))
 			++index;
 
 		int index_n1 = TimeControl::index(index - 1, int(m_nkeys - 1));
@@ -81,8 +81,8 @@ public:
 		Value v0 = Accessor::value(cp0);
 		Value v1 = Accessor::value(cp1);
 
-		Time t0(Accessor::time(cp0));
-		Time t1(Accessor::time(cp1));
+		Time t0(Accessor::time(m_keys, m_nkeys, cp0));
+		Time t1(Accessor::time(m_keys, m_nkeys, cp1));
 
 		if (t0 >= t1)
 			t1 = Tend;

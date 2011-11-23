@@ -109,7 +109,7 @@ void fft(
 
 struct PairAccessor
 {
-	static inline float time(const std::pair< float, float >& key)
+	static inline float time(const std::pair< float, float >* keys, size_t nkeys, const std::pair< float, float >& key)
 	{
 		return key.first;
 	}

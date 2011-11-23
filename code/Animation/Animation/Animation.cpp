@@ -15,7 +15,7 @@ namespace traktor
 
 struct KeyPoseAccessor
 {
-	static inline Scalar time(const Animation::KeyPose& key)
+	static inline Scalar time(const Animation::KeyPose* keys, size_t nkeys, const Animation::KeyPose& key)
 	{
 		return Scalar(key.at);
 	}
