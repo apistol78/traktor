@@ -386,6 +386,9 @@ void CanvasGdiPlusWin32::drawText(const Point& at, const std::wstring& text)
 		m_stringFormat->SetTrimming(StringTrimmingNone);
 	}
 
+	m_stringFormat->SetAlignment(StringAlignmentNear);
+	m_stringFormat->SetLineAlignment(StringAlignmentNear);
+
 	m_graphics->DrawString(
 		text.c_str(),
 		(INT)text.length(),
@@ -401,46 +404,49 @@ void CanvasGdiPlusWin32::drawText(const Rect& rc, const std::wstring& text, Alig
 	if (!m_font.ptr())
 		m_font.reset(new Gdiplus::Font(m_hDC, m_hFont));
 
-	AutoPtr< StringFormat > stringFormat(StringFormat::GenericTypographic()->Clone());
+	if (!m_stringFormat.ptr())
+	{
+		m_stringFormat.reset(StringFormat::GenericTypographic()->Clone());
+		m_stringFormat->SetFormatFlags(StringFormatFlagsNoWrap | StringFormatFlagsMeasureTrailingSpaces);
+		m_stringFormat->SetTrimming(StringTrimmingNone);
+	}
 
 	switch (halign)
 	{
 	case AnLeft:
-		stringFormat->SetAlignment(StringAlignmentNear);
+		m_stringFormat->SetAlignment(StringAlignmentNear);
 		break;
 
 	case AnCenter:
-		stringFormat->SetAlignment(StringAlignmentCenter);
+		m_stringFormat->SetAlignment(StringAlignmentCenter);
 		break;
 
 	case AnRight:
-		stringFormat->SetAlignment(StringAlignmentFar);
+		m_stringFormat->SetAlignment(StringAlignmentFar);
 		break;
 	}
 
 	switch (valign)
 	{
 	case AnTop:
-		stringFormat->SetLineAlignment(StringAlignmentNear);
+		m_stringFormat->SetLineAlignment(StringAlignmentNear);
 		break;
 
 	case AnCenter:
-		stringFormat->SetLineAlignment(StringAlignmentCenter);
+		m_stringFormat->SetLineAlignment(StringAlignmentCenter);
 		break;
 
 	case AnBottom:
-		stringFormat->SetLineAlignment(StringAlignmentFar);
+		m_stringFormat->SetLineAlignment(StringAlignmentFar);
 		break;
 	}
-
-	stringFormat->SetFormatFlags(StringFormatFlagsNoWrap | StringFormatFlagsMeasureTrailingSpaces);
 
 	m_graphics->DrawString(
 		text.c_str(),
 		(INT)text.length(),
 		m_font.ptr(),
 		Gdiplus::RectF((Gdiplus::REAL)rc.left, (Gdiplus::REAL)rc.top, (Gdiplus::REAL)rc.getWidth(), (Gdiplus::REAL)rc.getHeight()),
-		stringFormat.ptr(),
+		m_stringFormat.ptr(),
 		&SolidBrush(m_foreGround)
 	);
 }
@@ -458,6 +464,9 @@ Size CanvasGdiPlusWin32::getTextExtent(const std::wstring& text) const
 		m_stringFormat->SetFormatFlags(StringFormatFlagsNoWrap | StringFormatFlagsMeasureTrailingSpaces);
 		m_stringFormat->SetTrimming(StringTrimmingNone);
 	}
+
+	m_stringFormat->SetAlignment(StringAlignmentNear);
+	m_stringFormat->SetLineAlignment(StringAlignmentNear);
 
 	m_graphics->MeasureString(
 		text.c_str(),
