@@ -190,22 +190,17 @@ void OrthogonalRenderControl::updateWorldRenderer()
 	wrs.depthPassEnabled = wrs.shadowsEnabled;
 	wrs.shadowsEnabled = false;
 
-	std::wstring worldRendererTypeName = m_context->getEditor()->getSettings()->getProperty< PropertyString >(L"Editor.WorldRenderer");
-	const TypeInfo* worldRendererType = TypeInfo::find(worldRendererTypeName);
-	if (worldRendererType)
-	{
-		Ref< world::IWorldRenderer > worldRenderer = new world::WorldRendererForward();
-		if (worldRenderer->create(
-			wrs,
-			worldEntityRenderers,
-			m_context->getResourceManager(),
-			m_context->getRenderSystem(),
-			m_renderView,
-			m_multiSample,
-			1
-		))
-			m_worldRenderer = worldRenderer;
-	}
+	Ref< world::IWorldRenderer > worldRenderer = new world::WorldRendererForward();
+	if (worldRenderer->create(
+		wrs,
+		worldEntityRenderers,
+		m_context->getResourceManager(),
+		m_context->getRenderSystem(),
+		m_renderView,
+		m_multiSample,
+		1
+	))
+		m_worldRenderer = worldRenderer;
 
 	m_viewFarZ = wrs.viewFarZ;
 }
