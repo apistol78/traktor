@@ -47,6 +47,10 @@ public:
 	virtual bool isSelected() const;
 	
 	virtual void select();
+	
+	virtual bool isVisible() const;
+	
+	virtual void show();
 
 	virtual bool edit();
 	
