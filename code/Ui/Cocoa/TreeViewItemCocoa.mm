@@ -93,6 +93,15 @@ void TreeViewItemCocoa::select()
 {
 }
 
+bool TreeViewItemCocoa::isVisible() const
+{
+	return false;
+}
+
+void TreeViewItemCocoa::show()
+{
+}
+
 bool TreeViewItemCocoa::edit()
 {
 	return false;
