@@ -8,6 +8,38 @@ namespace traktor
 	namespace script
 	{
 
+T_IMPLEMENT_RTTI_CLASS(L"traktor.Vector2", BoxedVector2, Object)
+
+BoxedVector2::BoxedVector2()
+:	m_value(0.0f, 0.0f)
+{
+}
+
+BoxedVector2::BoxedVector2(const Vector2& value)
+:	m_value(value)
+{
+}
+
+BoxedVector2::BoxedVector2(float x, float y)
+:	m_value(x, y)
+{
+}
+
+void BoxedVector2::set(float x, float y)
+{
+	m_value.set(x, y);
+}
+
+float BoxedVector2::x() const
+{
+	return m_value.x;
+}
+
+float BoxedVector2::y() const
+{
+	return m_value.y;
+}
+
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Vector4", BoxedVector4, Object)
 
 BoxedVector4::BoxedVector4()
@@ -305,6 +337,14 @@ Any BoxedStdVector::get(int32_t index)
 
 void registerBoxClasses(IScriptManager* scriptManager)
 {
+	Ref< AutoScriptClass< BoxedVector2 > > classBoxedVector2 = new AutoScriptClass< BoxedVector2 >();
+	classBoxedVector2->addConstructor();
+	classBoxedVector2->addConstructor< float, float >();
+	classBoxedVector2->addMethod(L"set", &BoxedVector2::set);
+	classBoxedVector2->addMethod(L"x", &BoxedVector2::x);
+	classBoxedVector2->addMethod(L"y", &BoxedVector2::y);
+	scriptManager->registerClass(classBoxedVector2);
+
 	Ref< AutoScriptClass< BoxedVector4 > > classBoxedVector4 = new AutoScriptClass< BoxedVector4 >();
 	classBoxedVector4->addConstructor();
 	classBoxedVector4->addConstructor< float, float, float >();

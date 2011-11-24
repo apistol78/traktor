@@ -3,6 +3,7 @@
 
 #include "Core/Object.h"
 #include "Core/RefArray.h"
+#include "Core/Math/Vector2.h"
 #include "Core/Math/Vector4.h"
 #include "Core/Math/Quaternion.h"
 #include "Core/Math/Transform.h"
@@ -21,7 +22,32 @@ namespace traktor
 {
 	namespace script
 	{
-	
+
+class T_DLLCLASS BoxedVector2 : public Object
+{
+	T_RTTI_CLASS;
+
+public:
+	BoxedVector2();
+
+	explicit BoxedVector2(const Vector2& value);
+
+	explicit BoxedVector2(float x, float y);
+
+	void set(float x, float y);
+
+	float x() const;
+
+	float y() const;
+
+	const Vector2& unbox() const {
+		return m_value;
+	}
+
+private:
+	Vector2 m_value;
+};
+
 class T_DLLCLASS BoxedVector4 : public Object
 {
 	T_RTTI_CLASS;
@@ -206,6 +232,28 @@ public:
 
 private:
 	std::vector< Any > m_arr;
+};
+
+template < >
+struct CastAny < Vector2, false >
+{
+	static Any set(const Vector2& value) {
+		return Any(new BoxedVector2(value));
+	}	
+	static Vector2 get(const Any& value) {
+		return checked_type_cast< BoxedVector2*, false >(value.getObject())->unbox();
+	}
+};
+
+template < >
+struct CastAny < const Vector2&, false >
+{
+	static Any set(const Vector2& value) {
+		return Any(new BoxedVector2(value));
+	}	
+	static Vector2 get(const Any& value) {
+		return checked_type_cast< BoxedVector2*, false >(value.getObject())->unbox();
+	}
 };
 
 template < >

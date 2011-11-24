@@ -104,8 +104,7 @@ void EmitterInstance::update(EmitterUpdateContext& context, const Transform& tra
 			if (!singleShot)
 			{
 				Vector4 dm = transform.translation() - m_position;
-				float velocity = dm.length() / context.deltaTime;
-				float emitVelocity = source->getVelocityRate() * velocity;
+				float emitVelocity = context.deltaTime > FUZZY_EPSILON ? source->getVelocityRate() * (dm.length() / context.deltaTime) : 0.0f;
 				float emitConstant = source->getConstantRate() * context.deltaTime;
 				float emit = emitVelocity + emitConstant + m_emitFraction;
 				uint32_t emitCountFrame = uint32_t(emit);
