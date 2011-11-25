@@ -30,7 +30,7 @@ template < typename PinType, typename PinAccessor >
 class MemberPin : public MemberComplex
 {
 public:
-	MemberPin(const std::wstring& name, PinType*& pin)
+	MemberPin(const wchar_t* const name, PinType*& pin)
 	:	MemberComplex(name, true)
 	,	m_pin(pin)
 	{

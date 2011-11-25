@@ -14,7 +14,7 @@ namespace traktor
 class MemberID3DXBuffer : public MemberComplex
 {
 public:
-	MemberID3DXBuffer(const std::wstring& name, ComRef< ID3DXBuffer >& ref)
+	MemberID3DXBuffer(const wchar_t* const name, ComRef< ID3DXBuffer >& ref)
 	:	MemberComplex(name, false)
 	,	m_ref(ref)
 	{
@@ -64,7 +64,7 @@ private:
 class MemberProgramScalar : public MemberComplex
 {
 public:
-	MemberProgramScalar(const std::wstring& name, ProgramScalar& ref)
+	MemberProgramScalar(const wchar_t* const name, ProgramScalar& ref)
 	:	MemberComplex(name, true)
 	,	m_ref(ref)
 	{
@@ -86,7 +86,7 @@ private:
 class MemberProgramSampler : public MemberComplex
 {
 public:
-	MemberProgramSampler(const std::wstring& name, ProgramSampler& ref)
+	MemberProgramSampler(const wchar_t* const name, ProgramSampler& ref)
 	:	MemberComplex(name, true)
 	,	m_ref(ref)
 	{

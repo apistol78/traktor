@@ -23,18 +23,18 @@ class ISerializer;
 class T_DLLCLASS MemberComplex
 {
 public:
-	MemberComplex(const std::wstring& name, bool compound);
+	MemberComplex(const wchar_t* const name, bool compound);
 
 	virtual ~MemberComplex();
 
-	const std::wstring& getName() const;
+	const wchar_t* const getName() const;
 	
 	bool getCompound() const;
 
 	virtual bool serialize(ISerializer& s) const = 0;
 	
 private:
-	std::wstring m_name;
+	const wchar_t* const m_name;
 	bool m_compound;
 };
 	

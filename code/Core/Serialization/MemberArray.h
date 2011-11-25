@@ -24,7 +24,7 @@ class ISerializer;
 class T_DLLCLASS MemberArray
 {
 public:
-	MemberArray(const std::wstring& name);
+	MemberArray(const wchar_t* const name);
 
 	virtual ~MemberArray();
 
@@ -32,7 +32,7 @@ public:
 	 *
 	 * \return Member's name.
 	 */
-	const std::wstring& getName() const;
+	const wchar_t* const getName() const;
 
 	/*!
 	 * Return element type if available.
@@ -68,7 +68,7 @@ public:
 	virtual bool insert() const = 0;
 
 private:
-	std::wstring m_name;
+	const wchar_t* const m_name;
 };
 
 }

@@ -16,7 +16,7 @@ namespace traktor
 class MemberInputDefaultControlType : public MemberEnum< InputDefaultControlType >
 {
 public:
-	MemberInputDefaultControlType(const std::wstring& name, InputDefaultControlType& ref)
+	MemberInputDefaultControlType(const wchar_t* const name, InputDefaultControlType& ref)
 	:	MemberEnum< InputDefaultControlType >(name, ref, g_InputDefaultControlType_Keys)
 	{
 	}

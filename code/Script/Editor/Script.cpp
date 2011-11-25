@@ -16,7 +16,7 @@ namespace traktor
 class MemberDependency : public Member< Guid >
 {
 public:
-	MemberDependency(const std::wstring& name, Member< Guid >::value_type& ref)
+	MemberDependency(const wchar_t* const name, Member< Guid >::value_type& ref)
 	:	Member< Guid >(name, ref, AttributeType(type_of< Script >()))
 	{
 	}

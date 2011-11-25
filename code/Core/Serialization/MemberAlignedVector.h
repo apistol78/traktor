@@ -18,7 +18,7 @@ class MemberAlignedVector : public MemberArray
 public:
 	typedef AlignedVector< ValueType > value_type;
 
-	MemberAlignedVector(const std::wstring& name, value_type& ref)
+	MemberAlignedVector(const wchar_t* const name, value_type& ref)
 	:	MemberArray(name)
 	,	m_ref(ref)
 	,	m_index(0)

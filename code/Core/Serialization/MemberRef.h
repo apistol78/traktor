@@ -18,7 +18,7 @@ class MemberRef : public MemberComplex
 public:
 	typedef Ref< Class > value_type;
 	
-	MemberRef(const std::wstring& name, value_type& ref)
+	MemberRef(const wchar_t* const name, value_type& ref)
 	:	MemberComplex(name, false)
 	,	m_ref(ref)
 	{

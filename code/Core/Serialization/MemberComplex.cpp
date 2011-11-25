@@ -4,7 +4,7 @@
 namespace traktor
 {
 
-MemberComplex::MemberComplex(const std::wstring& name, bool compound)
+MemberComplex::MemberComplex(const wchar_t* const name, bool compound)
 :	m_name(name)
 ,	m_compound(compound)
 {
@@ -14,7 +14,7 @@ MemberComplex::~MemberComplex()
 {
 }
 
-const std::wstring& MemberComplex::getName() const
+const wchar_t* const MemberComplex::getName() const
 {
 	return m_name;
 }

@@ -15,7 +15,7 @@ namespace traktor
 class MemberFragmentOffset : public MemberComplex
 {
 public:
-	MemberFragmentOffset(const std::wstring& name, FragmentOffset& ref)
+	MemberFragmentOffset(const wchar_t* const name, FragmentOffset& ref)
 	:	MemberComplex(name, true)
 	,	m_ref(ref)
 	{
@@ -35,7 +35,7 @@ private:
 class MemberProgramScalar : public MemberComplex
 {
 public:
-	MemberProgramScalar(const std::wstring& name, ProgramScalar& ref)
+	MemberProgramScalar(const wchar_t* const name, ProgramScalar& ref)
 	:	MemberComplex(name, true)
 	,	m_ref(ref)
 	{
@@ -57,7 +57,7 @@ private:
 class MemberProgramSampler : public MemberComplex
 {
 public:
-	MemberProgramSampler(const std::wstring& name, ProgramSampler& ref)
+	MemberProgramSampler(const wchar_t* const name, ProgramSampler& ref)
 	:	MemberComplex(name, true)
 	,	m_ref(ref)
 	{
@@ -77,7 +77,7 @@ private:
 class MemberScalarParameter : public MemberComplex
 {
 public:
-	MemberScalarParameter(const std::wstring& name, ScalarParameter& ref)
+	MemberScalarParameter(const wchar_t* const name, ScalarParameter& ref)
 	:	MemberComplex(name, true)
 	,	m_ref(ref)
 	{
@@ -97,7 +97,7 @@ private:
 class MemberSamplerState : public MemberComplex
 {
 public:
-	MemberSamplerState(const std::wstring& name, SamplerState& ref)
+	MemberSamplerState(const wchar_t* const name, SamplerState& ref)
 	:	MemberComplex(name, true)
 	,	m_ref(ref)
 	{
@@ -120,7 +120,7 @@ private:
 class MemberRenderState : public MemberComplex
 {
 public:
-	MemberRenderState(const std::wstring& name, RenderState& ref)
+	MemberRenderState(const wchar_t* const name, RenderState& ref)
 	:	MemberComplex(name, true)
 	,	m_ref(ref)
 	{

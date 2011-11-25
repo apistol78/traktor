@@ -4,7 +4,7 @@
 namespace traktor
 {
 
-MemberEnumBase::MemberEnumBase(const std::wstring& name, const Key* keys)
+MemberEnumBase::MemberEnumBase(const wchar_t* const name, const Key* keys)
 :	MemberComplex(name, false)
 ,	m_keys(keys)
 {

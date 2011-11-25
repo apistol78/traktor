@@ -14,7 +14,7 @@ namespace traktor
 class MemberID3D10Blob : public MemberComplex
 {
 public:
-	MemberID3D10Blob(const std::wstring& name, ComRef< ID3D10Blob >& ref)
+	MemberID3D10Blob(const wchar_t* const name, ComRef< ID3D10Blob >& ref)
 	:	MemberComplex(name, false)
 	,	m_ref(ref)
 	{
@@ -54,7 +54,7 @@ private:
 class MemberD3D10_RASTERIZER_DESC : public MemberComplex
 {
 public:
-	MemberD3D10_RASTERIZER_DESC(const std::wstring& name, D3D10_RASTERIZER_DESC& ref)
+	MemberD3D10_RASTERIZER_DESC(const wchar_t* const name, D3D10_RASTERIZER_DESC& ref)
 	:	MemberComplex(name, false)
 	,	m_ref(ref)
 	{
@@ -73,7 +73,7 @@ private:
 class MemberD3D10_DEPTH_STENCIL_DESC : public MemberComplex
 {
 public:
-	MemberD3D10_DEPTH_STENCIL_DESC(const std::wstring& name, D3D10_DEPTH_STENCIL_DESC& ref)
+	MemberD3D10_DEPTH_STENCIL_DESC(const wchar_t* const name, D3D10_DEPTH_STENCIL_DESC& ref)
 	:	MemberComplex(name, false)
 	,	m_ref(ref)
 	{
@@ -92,7 +92,7 @@ private:
 class MemberD3D10_BLEND_DESC : public MemberComplex
 {
 public:
-	MemberD3D10_BLEND_DESC(const std::wstring& name, D3D10_BLEND_DESC& ref)
+	MemberD3D10_BLEND_DESC(const wchar_t* const name, D3D10_BLEND_DESC& ref)
 	:	MemberComplex(name, false)
 	,	m_ref(ref)
 	{
@@ -111,7 +111,7 @@ private:
 class MemberD3D10_SAMPLER_DESC : public MemberComplex
 {
 public:
-	MemberD3D10_SAMPLER_DESC(const std::wstring& name, D3D10_SAMPLER_DESC& ref)
+	MemberD3D10_SAMPLER_DESC(const wchar_t* const name, D3D10_SAMPLER_DESC& ref)
 	:	MemberComplex(name, false)
 	,	m_ref(ref)
 	{

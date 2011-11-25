@@ -4,7 +4,7 @@
 namespace traktor
 {
 
-MemberType::MemberType(const std::wstring& name, const TypeInfo*& type)
+MemberType::MemberType(const wchar_t* const name, const TypeInfo*& type)
 :	MemberComplex(name, false)
 ,	m_type(type)
 {

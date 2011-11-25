@@ -23,7 +23,7 @@ class MemberStlVector : public MemberArray
 public:
 	typedef std::vector< ValueType > value_type;
 
-	MemberStlVector(const std::wstring& name, value_type& ref)
+	MemberStlVector(const wchar_t* const name, value_type& ref)
 	:	MemberArray(name)
 	,	m_ref(ref)
 	,	m_index(0)
@@ -88,7 +88,7 @@ class MemberStlList : public MemberArray
 public:
 	typedef std::list< ValueType > value_type;
 
-	MemberStlList(const std::wstring& name, value_type& ref)
+	MemberStlList(const wchar_t* const name, value_type& ref)
 	:	MemberArray(name)
 	,	m_ref(ref)
 	,	m_iter(m_ref.begin())
@@ -140,7 +140,7 @@ class MemberStlSet : public MemberArray
 public:
 	typedef std::set< ValueType > value_type;
 
-	MemberStlSet(const std::wstring& name, value_type& ref)
+	MemberStlSet(const wchar_t* const name, value_type& ref)
 	:	MemberArray(name)
 	,	m_ref(ref)
 	,	m_iter(m_ref.begin())
@@ -189,7 +189,7 @@ class MemberStlPair : public MemberComplex
 public:
 	typedef std::pair< FirstType, SecondType > value_type;
 
-	MemberStlPair(const std::wstring& name, value_type& ref)
+	MemberStlPair(const wchar_t* const name, value_type& ref)
 	:	MemberComplex(name, true)
 	,	m_ref(ref)
 	{
@@ -215,7 +215,7 @@ class MemberStlMap : public MemberArray
 public:
 	typedef std::map< KeyType, ValueType > value_type;
 
-	MemberStlMap(const std::wstring& name, value_type& ref)
+	MemberStlMap(const wchar_t* const name, value_type& ref)
 	:	MemberArray(name)
 	,	m_ref(ref)
 	,	m_iter(m_ref.begin())

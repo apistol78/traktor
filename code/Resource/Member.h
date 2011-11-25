@@ -3,16 +3,16 @@
 
 #include "Core/Serialization/AttributeType.h"
 #include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/MemberComplex.h"
 #include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberComplex.h"
 #include "Resource/Proxy.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RESOURCE_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -32,7 +32,7 @@ class Member : public MemberComplex
 public:
 	typedef Proxy< Class > value_type;
 
-	Member(const std::wstring& name, value_type& ref)
+	Member(const wchar_t* const name, value_type& ref)
 	:	MemberComplex(name, false)
 	,	m_ref(ref)
 	{
