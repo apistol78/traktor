@@ -14,7 +14,7 @@ namespace traktor
 class MemberLocal : public MemberComplex
 {
 public:
-	MemberLocal(const std::wstring& name, CallStack::Local& ref)
+	MemberLocal(const wchar_t* const name, CallStack::Local& ref)
 	:	MemberComplex(name, true)
 	,	m_ref(ref)
 	{
@@ -34,7 +34,7 @@ private:
 class MemberFrame : public MemberComplex
 {
 public:
-	MemberFrame(const std::wstring& name, CallStack::Frame& ref)
+	MemberFrame(const wchar_t* const name, CallStack::Frame& ref)
 	:	MemberComplex(name, true)
 	,	m_ref(ref)
 	{

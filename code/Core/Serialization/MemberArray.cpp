@@ -3,7 +3,7 @@
 namespace traktor
 {
 
-MemberArray::MemberArray(const std::wstring& name)
+MemberArray::MemberArray(const wchar_t* const name)
 :	m_name(name)
 {
 }
@@ -12,7 +12,7 @@ MemberArray::~MemberArray()
 {
 }
 
-const std::wstring& MemberArray::getName() const
+const wchar_t* const MemberArray::getName() const
 {
 	return m_name;
 }

@@ -11,7 +11,7 @@ namespace traktor
 class MemberAabb : public MemberComplex
 {
 public:
-	MemberAabb(const std::wstring& name, Aabb3& ref)
+	MemberAabb(const wchar_t* const name, Aabb3& ref)
 	:	MemberComplex(name, true)
 	,	m_ref(ref)
 	{

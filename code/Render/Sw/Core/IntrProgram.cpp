@@ -20,7 +20,7 @@ class MemberInstruction : public MemberComplex
 public:
 	typedef Instruction value_type;
 
-	MemberInstruction(const std::wstring& name, value_type& ref)
+	MemberInstruction(const wchar_t* const name, value_type& ref)
 	:	MemberComplex(name, true)
 	,	m_ref(ref)
 	{

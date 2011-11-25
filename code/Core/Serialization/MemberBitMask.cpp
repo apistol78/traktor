@@ -5,7 +5,7 @@
 namespace traktor
 {
 
-MemberBitMask::MemberBitMask(const std::wstring& name, uint32_t& bm, const Bit* bits)
+MemberBitMask::MemberBitMask(const wchar_t* const name, uint32_t& bm, const Bit* bits)
 :	MemberComplex(name, true)
 ,	m_bits(bits)
 ,	m_bm(bm)

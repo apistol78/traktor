@@ -24,17 +24,17 @@ class T_DLLCLASS MemberEnumBase : public MemberComplex
 public:
 	struct Key
 	{
-		const wchar_t* id;
+		const wchar_t* const id;
 		int val;
 	};
 
-	MemberEnumBase(const std::wstring& name, const Key* keys);
+	MemberEnumBase(const wchar_t* const name, const Key* keys);
 
 	const Key* keys() const;
 
 	virtual bool set(const std::wstring& id) const = 0;
 
-	virtual const wchar_t* get() const = 0;
+	virtual const wchar_t* const get() const = 0;
 
 	virtual bool serialize(ISerializer& s) const;
 
@@ -51,7 +51,7 @@ class MemberEnum : public MemberEnumBase
 public:
 	typedef EnumType value_type;
 
-	MemberEnum(const std::wstring& name, EnumType& en, const Key* keys)
+	MemberEnum(const wchar_t* const& name, EnumType& en, const Key* keys)
 	:	MemberEnumBase(name, keys)
 	,		m_en(en)
 	{
@@ -70,7 +70,7 @@ public:
 		return false;
 	}
 
-	virtual const wchar_t* get() const
+	virtual const wchar_t* const get() const
 	{
 		for (const Key* k = keys(); k->id; ++k)
 		{

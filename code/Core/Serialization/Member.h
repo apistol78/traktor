@@ -26,14 +26,14 @@ class Member
 public:
 	typedef T value_type;
 
-	Member(const std::wstring& name, value_type& ref)
+	Member(const wchar_t* const name, value_type& ref)
 	:	m_name(name)
 	,	m_ref(ref)
 	,	m_attributes(0)
 	{
 	}
 
-	Member(const std::wstring& name, value_type& ref, const Attribute& attributes)
+	Member(const wchar_t* const name, value_type& ref, const Attribute& attributes)
 	:	m_name(name)
 	,	m_ref(ref)
 	,	m_attributes(&attributes)
@@ -46,7 +46,7 @@ public:
 	 *
 	 * \return Member name.
 	 */
-	const std::wstring& getName() const { return m_name; }
+	const wchar_t* const getName() const { return m_name; }
 
 	/*! \brief Get member attributes.
 	 *
@@ -81,7 +81,7 @@ public:
 	void operator = (const value_type& value) const { m_ref = value; }
 	
 private:
-	std::wstring m_name;
+	const wchar_t* const m_name;
 	value_type& m_ref;
 	const Attribute* m_attributes;
 };
@@ -96,7 +96,7 @@ template < >
 class Member< void* >
 {
 public:
-	Member< void* >(const std::wstring& name, void* blob, uint32_t& blobSize)
+	Member< void* >(const wchar_t* const name, void* blob, uint32_t& blobSize)
 	:	m_name(name)
 	,	m_blob(blob)
 	,	m_blobSize(blobSize)
@@ -107,7 +107,7 @@ public:
 	 *
 	 * \return Member name.
 	 */
-	const std::wstring& getName() const { return m_name; }
+	const wchar_t* const getName() const { return m_name; }
 
 	/*! \brief Get pointer to binary blob.
 	 *
@@ -128,7 +128,7 @@ public:
 	void setBlobSize(uint32_t blobSize) const { m_blobSize = blobSize; }
 
 private:
-	std::wstring m_name;
+	const wchar_t* const m_name;
 	void* m_blob;
 	uint32_t& m_blobSize;
 };

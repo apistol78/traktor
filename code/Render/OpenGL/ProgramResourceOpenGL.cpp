@@ -14,7 +14,7 @@ namespace traktor
 class MemberSamplerState : public MemberComplex
 {
 public:
-	MemberSamplerState(const std::wstring& name, SamplerState& ref)
+	MemberSamplerState(const wchar_t* const name, SamplerState& ref)
 	:	MemberComplex(name, true)
 	,	m_ref(ref)
 	{
@@ -36,7 +36,7 @@ private:
 class MemberRenderState : public MemberComplex
 {
 public:
-	MemberRenderState(const std::wstring& name, RenderState& ref)
+	MemberRenderState(const wchar_t* const name, RenderState& ref)
 	:	MemberComplex(name, true)
 	,	m_ref(ref)
 	{

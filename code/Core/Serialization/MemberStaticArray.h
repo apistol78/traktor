@@ -13,7 +13,7 @@ template < typename ValueType, int ArraySize, typename ValueMember = Member< Val
 class MemberStaticArray : public MemberArray
 {
 public:
-	MemberStaticArray(const std::wstring& name, ValueType* arr)
+	MemberStaticArray(const wchar_t* const name, ValueType* arr)
 	:	MemberArray(name)
 	,	m_arr(arr)
 	,	m_index(0)

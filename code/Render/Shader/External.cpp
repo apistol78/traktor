@@ -23,7 +23,7 @@ class MemberInputPin : public MemberComplex
 public:
 	typedef InputPin* value_type;
 
-	MemberInputPin(const std::wstring& name, value_type& pin)
+	MemberInputPin(const wchar_t* const name, value_type& pin)
 	:	MemberComplex(name, true)
 	,	m_pin(pin)
 	{
@@ -69,7 +69,7 @@ class MemberOutputPin : public MemberComplex
 public:
 	typedef OutputPin* value_type;
 
-	MemberOutputPin(const std::wstring& name, value_type& pin)
+	MemberOutputPin(const wchar_t* const name, value_type& pin)
 	:	MemberComplex(name, true)
 	,	m_pin(pin)
 	{

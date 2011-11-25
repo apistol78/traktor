@@ -17,7 +17,7 @@ class MemberRefArray : public MemberArray
 public:
 	typedef RefArray< Class > value_type;
 
-	MemberRefArray(const std::wstring& name, value_type& ref)
+	MemberRefArray(const wchar_t* const name, value_type& ref)
 	:	MemberArray(name)
 	,	m_ref(ref)
 	,	m_index(0)

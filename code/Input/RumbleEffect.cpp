@@ -43,7 +43,7 @@ class MemberInputRumble : public MemberComplex
 public:
 	typedef InputRumble value_type;
 
-	MemberInputRumble(const std::wstring& name, value_type& ref)
+	MemberInputRumble(const wchar_t* const name, value_type& ref)
 	:	MemberComplex(name, true)
 	,	m_ref(ref)
 	{

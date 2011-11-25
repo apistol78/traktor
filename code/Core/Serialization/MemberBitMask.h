@@ -22,11 +22,11 @@ class T_DLLCLASS MemberBitMask : public MemberComplex
 public:
 	struct Bit
 	{
-		const wchar_t* id;
+		const wchar_t* const id;
 		uint32_t mask;
 	};
 
-	MemberBitMask(const std::wstring& name, uint32_t& bm, const Bit* bits);
+	MemberBitMask(const wchar_t* const name, uint32_t& bm, const Bit* bits);
 
 	virtual bool serialize(ISerializer& s) const;
 
