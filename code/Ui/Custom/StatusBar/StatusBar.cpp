@@ -36,8 +36,11 @@ bool StatusBar::create(Widget* parent, int style)
 
 void StatusBar::setText(const std::wstring& text)
 {
-	Widget::setText(text);
-	update();
+	if (text != getText())
+	{
+		Widget::setText(text);
+		update();
+	}
 }
 
 Size StatusBar::getPreferedSize() const
