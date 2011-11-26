@@ -162,7 +162,7 @@ bool XmlPullParserImpl::get(XmlPullParser::Event& outEvent)
 	// Wait until any event has been pushed.
 	while (m_eventQueueHead == m_eventQueueTail)
 	{
-		if (!m_eventQueuePush.wait(10000))
+		if (!m_eventQueuePush.wait(60000))
 		{
 			log::error << L"Unexpected timeout when waiting for XML event" << Endl;
 			return false;
