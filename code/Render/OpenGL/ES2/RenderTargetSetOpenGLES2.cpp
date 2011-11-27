@@ -89,7 +89,7 @@ int RenderTargetSetOpenGLES2::getHeight() const
 	return m_height;
 }
 
-Ref< ISimpleTexture > RenderTargetSetOpenGLES2::getColorTexture(int index) const
+ISimpleTexture* RenderTargetSetOpenGLES2::getColorTexture(int index) const
 {
 	return index < int(m_colorTextures.size()) ? m_colorTextures[index] : 0;
 }
