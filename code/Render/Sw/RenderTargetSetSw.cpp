@@ -59,7 +59,7 @@ int RenderTargetSetSw::getHeight() const
 	return m_height;
 }
 
-Ref< ISimpleTexture > RenderTargetSetSw::getColorTexture(int index) const
+ISimpleTexture* RenderTargetSetSw::getColorTexture(int index) const
 {
 	return m_colorTargets[index];
 }

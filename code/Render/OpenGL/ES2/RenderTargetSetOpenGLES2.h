@@ -44,7 +44,7 @@ public:
 	
 	virtual int getHeight() const;
 
-	virtual Ref< ISimpleTexture > getColorTexture(int index) const;
+	virtual ISimpleTexture* getColorTexture(int index) const;
 
 	virtual void swap(int index1, int index2);
 

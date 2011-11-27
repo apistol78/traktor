@@ -120,7 +120,7 @@ int RenderTargetSetDx11::getHeight() const
 	return m_height;
 }
 
-Ref< ISimpleTexture > RenderTargetSetDx11::getColorTexture(int index) const
+ISimpleTexture* RenderTargetSetDx11::getColorTexture(int index) const
 {
 	return index < int(m_colorTextures.size()) ? m_colorTextures[index] : 0;
 }

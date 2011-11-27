@@ -227,7 +227,7 @@ T dynamic_type_cast(const ITypedObject* obj)
  * \return Casted value, null if object isn't of correct type.
  */
 template < typename T, typename T0 >
-Ref< typename IsPointer< T >::base_t > dynamic_type_cast(const Ref< T0 >& obj)
+typename IsPointer< T >::base_t* dynamic_type_cast(const Ref< T0 >& obj)
 {
 	return dynamic_type_cast< typename IsPointer< T >::base_t* >(obj.ptr());
 }
@@ -303,7 +303,7 @@ T checked_type_cast(const T0* obj)
  * \return Casted value.
  */
 template < typename T, typename T0 >
-Ref< typename IsPointer< T >::base_t > checked_type_cast(const Ref< T0 >& obj)
+typename IsPointer< T >::base_t* checked_type_cast(const Ref< T0 >& obj)
 {
 	return checked_type_cast< typename IsPointer< T >::base_t* >(obj.ptr());
 }
@@ -317,7 +317,7 @@ Ref< typename IsPointer< T >::base_t > checked_type_cast(const Ref< T0 >& obj)
  * \return Casted value.
  */
 template < typename T, bool AllowNull, typename T0 >
-Ref< typename IsPointer< T >::base_t > checked_type_cast(const Ref< T0 >& obj)
+typename IsPointer< T >::base_t* checked_type_cast(const Ref< T0 >& obj)
 {
 	T_ASSERT ( (AllowNull && !obj.ptr()) || (obj.ptr() && is_a< T >(obj.ptr())) );
 	return checked_type_cast< typename IsPointer< T >::base_t* >(obj.ptr());
@@ -332,7 +332,7 @@ Ref< typename IsPointer< T >::base_t > checked_type_cast(const Ref< T0 >& obj)
  * \return Casted value.
  */
 template < typename T, typename T0 >
-Ref< typename IsPointer< T >::base_t > checked_type_cast(const InplaceRef< T0 >& obj)
+typename IsPointer< T >::base_t* checked_type_cast(const InplaceRef< T0 >& obj)
 {
 	return checked_type_cast< typename IsPointer< T >::base_t* >(obj.ptr());
 }
@@ -346,7 +346,7 @@ Ref< typename IsPointer< T >::base_t > checked_type_cast(const InplaceRef< T0 >&
  * \return Casted value.
  */
 template < typename T, bool AllowNull, typename T0 >
-Ref< typename IsPointer< T >::base_t > checked_type_cast(const InplaceRef< T0 >& obj)
+typename IsPointer< T >::base_t* checked_type_cast(const InplaceRef< T0 >& obj)
 {
 	T_ASSERT ( (AllowNull && !obj.ptr()) || (obj.ptr() && is_a< T >(obj.ptr())) );
 	return checked_type_cast< typename IsPointer< T >::base_t* >(obj.ptr());
