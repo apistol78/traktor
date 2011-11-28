@@ -2,6 +2,7 @@
 #define traktor_InplaceRef_H
 
 #include "Core/IRefCount.h"
+#include "Core/Meta/Traits.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -82,6 +83,35 @@ public:
 private:
 	pointer_reference m_ref;
 };
+
+/*! \brief Safe cast object.
+ *
+ * The cast will assert if object is of incorrect type.
+ *
+ * \param T Cast to type.
+ * \param o Object.
+ * \return Casted value.
+ */
+template < typename T, typename T0 >
+typename IsPointer< T >::base_t* checked_type_cast(const InplaceRef< T0 >& obj)
+{
+	return checked_type_cast< typename IsPointer< T >::base_t* >(obj.ptr());
+}
+
+/*! \brief Safe cast object.
+ *
+ * The cast will assert if object is of incorrect type.
+ *
+ * \param T Cast to type.
+ * \param o Object.
+ * \return Casted value.
+ */
+template < typename T, bool AllowNull, typename T0 >
+typename IsPointer< T >::base_t* checked_type_cast(const InplaceRef< T0 >& obj)
+{
+	T_ASSERT ( (AllowNull && !obj.ptr()) || (obj.ptr() && is_a< T >(obj.ptr())) );
+	return checked_type_cast< typename IsPointer< T >::base_t* >(obj.ptr());
+}
 
 }
 

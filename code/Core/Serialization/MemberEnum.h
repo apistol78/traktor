@@ -1,8 +1,6 @@
 #ifndef traktor_MemberEnum_H
 #define traktor_MemberEnum_H
 
-#include <algorithm>
-#include <map>
 #include "Core/Serialization/MemberComplex.h"
 
 // import/export mechanism.
@@ -24,8 +22,8 @@ class T_DLLCLASS MemberEnumBase : public MemberComplex
 public:
 	struct Key
 	{
-		const wchar_t* const id;
-		int val;
+		const wchar_t* id;
+		int32_t val;
 	};
 
 	MemberEnumBase(const wchar_t* const name, const Key* keys);
@@ -53,7 +51,7 @@ public:
 
 	MemberEnum(const wchar_t* const& name, EnumType& en, const Key* keys)
 	:	MemberEnumBase(name, keys)
-	,		m_en(en)
+	,	m_en(en)
 	{
 	}
 
