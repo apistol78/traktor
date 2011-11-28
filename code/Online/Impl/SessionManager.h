@@ -41,6 +41,8 @@ public:
 
 	virtual Ref< ILeaderboards > getLeaderboards() const;
 
+	virtual Ref< IMatchMaking > getMatchMaking() const;
+
 	virtual Ref< ISaveData > getSaveData() const;
 
 	virtual Ref< IStatistics > getStatistics() const;
@@ -50,6 +52,7 @@ private:
 	Ref< TaskQueue > m_taskQueues[2];
 	Ref< IAchievements > m_achievements;
 	Ref< ILeaderboards > m_leaderboards;
+	Ref< IMatchMaking > m_matchMaking;
 	Ref< ISaveData > m_saveData;
 	Ref< IStatistics > m_statistics;
 };

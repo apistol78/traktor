@@ -21,6 +21,7 @@ namespace traktor
 
 class SteamAchievements;
 class SteamLeaderboards;
+class SteamMatchMaking;
 class SteamSaveData;
 class SteamStatistics;
 
@@ -47,6 +48,8 @@ public:
 
 	virtual Ref< ILeaderboardsProvider > getLeaderboards() const;
 
+	virtual Ref< IMatchMakingProvider > getMatchMaking() const;
+
 	virtual Ref< ISaveDataProvider > getSaveData() const;
 
 	virtual Ref< IStatisticsProvider > getStatistics() const;
@@ -59,6 +62,7 @@ private:
 	mutable Semaphore m_lock;
 	Ref< SteamAchievements > m_achievements;
 	Ref< SteamLeaderboards > m_leaderboards;
+	Ref< SteamMatchMaking > m_matchMaking;
 	Ref< SteamSaveData > m_saveData;
 	Ref< SteamStatistics > m_statistics;
 	bool m_requireUserAttention;

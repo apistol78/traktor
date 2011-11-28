@@ -22,7 +22,7 @@ TaskAchievement::TaskAchievement(
 {
 }
 
-void TaskAchievement::execute()
+void TaskAchievement::execute(TaskQueue* taskQueue)
 {
 	T_ASSERT (m_provider);
 	T_ASSERT (m_result);

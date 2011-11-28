@@ -20,7 +20,7 @@ TaskEnumStatistics::TaskEnumStatistics(
 {
 }
 
-void TaskEnumStatistics::execute()
+void TaskEnumStatistics::execute(TaskQueue* taskQueue)
 {
 	T_ASSERT (m_provider);
 	log::debug << L"Online; Begin enumerating statistics" << Endl;

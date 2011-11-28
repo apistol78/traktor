@@ -23,7 +23,7 @@ public:
 		sink_method_t sinkMethod
 	);
 
-	virtual void execute();
+	virtual void execute(TaskQueue* taskQueue);
 
 private:
 	Ref< ILeaderboardsProvider > m_provider;

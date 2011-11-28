@@ -18,6 +18,7 @@ namespace traktor
 
 class IAchievements;
 class ILeaderboards;
+class IMatchMaking;
 class ISaveData;
 class IStatistics;
 
@@ -39,6 +40,8 @@ public:
 	virtual Ref< IAchievements > getAchievements() const = 0;
 
 	virtual Ref< ILeaderboards > getLeaderboards() const = 0;
+
+	virtual Ref< IMatchMaking > getMatchMaking() const = 0;
 
 	virtual Ref< ISaveData > getSaveData() const = 0;
 

@@ -20,7 +20,7 @@ TaskEnumAchievements::TaskEnumAchievements(
 {
 }
 
-void TaskEnumAchievements::execute()
+void TaskEnumAchievements::execute(TaskQueue* taskQueue)
 {
 	T_ASSERT (m_provider);
 	log::debug << L"Online; Begin enumerating achievements" << Endl;

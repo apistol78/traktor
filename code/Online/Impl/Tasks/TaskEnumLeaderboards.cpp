@@ -19,7 +19,7 @@ TaskEnumLeaderboards::TaskEnumLeaderboards(
 {
 }
 
-void TaskEnumLeaderboards::execute()
+void TaskEnumLeaderboards::execute(TaskQueue* taskQueue)
 {
 	T_ASSERT (m_provider);
 	log::debug << L"Online; Begin enumerating leaderboards" << Endl;

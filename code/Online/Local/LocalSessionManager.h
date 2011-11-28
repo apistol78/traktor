@@ -50,6 +50,8 @@ public:
 
 	virtual Ref< ILeaderboardsProvider > getLeaderboards() const;
 
+	virtual Ref< IMatchMakingProvider > getMatchMaking() const;
+
 	virtual Ref< ISaveDataProvider > getSaveData() const;
 
 	virtual Ref< IStatisticsProvider > getStatistics() const;

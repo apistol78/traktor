@@ -23,7 +23,7 @@ public:
 		Result* result
 	);
 
-	virtual void execute();
+	virtual void execute(TaskQueue* taskQueue);
 
 private:
 	Ref< IAchievementsProvider > m_provider;

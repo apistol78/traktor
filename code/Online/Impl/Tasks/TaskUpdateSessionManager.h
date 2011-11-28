@@ -17,7 +17,7 @@ class TaskUpdateSessionManager : public ITask
 public:
 	TaskUpdateSessionManager(ISessionManagerProvider* provider);
 
-	virtual void execute();
+	virtual void execute(TaskQueue* taskQueue);
 
 private:
 	Ref< ISessionManagerProvider > m_provider;

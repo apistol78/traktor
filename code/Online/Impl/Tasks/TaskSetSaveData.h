@@ -26,7 +26,7 @@ public:
 		Result* result
 	);
 
-	virtual void execute();
+	virtual void execute(TaskQueue* taskQueue);
 
 private:
 	Ref< ISaveDataProvider > m_provider;

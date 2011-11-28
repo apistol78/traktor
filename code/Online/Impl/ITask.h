@@ -8,12 +8,14 @@ namespace traktor
 	namespace online
 	{
 
+class TaskQueue;
+
 class ITask : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	virtual void execute() = 0;
+	virtual void execute(TaskQueue* taskQueue) = 0;
 };
 
 	}

@@ -67,7 +67,7 @@ void TaskQueue::threadQueue()
 		if (!m_queuedSignal.wait(100))
 		{
 			if (m_idleTask)
-				m_idleTask->execute();
+				m_idleTask->execute(this);
 			continue;
 		}
 
@@ -88,7 +88,7 @@ void TaskQueue::threadQueue()
 		m_queueLock.release();
 
 		if (task)
-			task->execute();
+			task->execute(this);
 	}
 }
 
