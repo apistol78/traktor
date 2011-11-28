@@ -13,7 +13,7 @@ TaskUpdateSessionManager::TaskUpdateSessionManager(ISessionManagerProvider* prov
 {
 }
 
-void TaskUpdateSessionManager::execute()
+void TaskUpdateSessionManager::execute(TaskQueue* taskQueue)
 {
 	T_ASSERT (m_provider);
 	m_provider->update();

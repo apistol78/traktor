@@ -22,7 +22,7 @@ TaskStatistics::TaskStatistics(
 {
 }
 
-void TaskStatistics::execute()
+void TaskStatistics::execute(TaskQueue* taskQueue)
 {
 	T_ASSERT (m_provider);
 	T_ASSERT (m_result);

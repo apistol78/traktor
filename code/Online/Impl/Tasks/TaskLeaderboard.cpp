@@ -22,7 +22,7 @@ TaskLeaderboard::TaskLeaderboard(
 {
 }
 
-void TaskLeaderboard::execute()
+void TaskLeaderboard::execute(TaskQueue* taskQueue)
 {
 	T_ASSERT (m_provider);
 	T_ASSERT (m_result);

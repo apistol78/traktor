@@ -6,6 +6,7 @@
 #include "Core/Thread/ThreadManager.h"
 #include "Online/Steam/SteamAchievements.h"
 #include "Online/Steam/SteamLeaderboards.h"
+#include "Online/Steam/SteamMatchMaking.h"
 #include "Online/Steam/SteamSaveData.h"
 #include "Online/Steam/SteamStatistics.h"
 #include "Online/Steam/SteamSessionManager.h"
@@ -115,6 +116,7 @@ bool SteamSessionManager::create(const SteamCreateDesc& desc)
 
 	m_achievements = new SteamAchievements(this, desc.achievementIds);
 	m_leaderboards = new SteamLeaderboards(this, desc.leaderboardIds);
+	m_matchMaking = new SteamMatchMaking(this);
 	m_saveData = new SteamSaveData();
 	m_statistics = new SteamStatistics(this, desc.statIds);
 
@@ -125,6 +127,7 @@ void SteamSessionManager::destroy()
 {
 	m_statistics = 0;
 	m_saveData = 0;
+	m_matchMaking = 0;
 	m_leaderboards = 0;
 	m_achievements = 0;
 
@@ -201,6 +204,11 @@ Ref< IAchievementsProvider > SteamSessionManager::getAchievements() const
 Ref< ILeaderboardsProvider > SteamSessionManager::getLeaderboards() const
 {
 	return m_leaderboards;
+}
+
+Ref< IMatchMakingProvider > SteamSessionManager::getMatchMaking() const
+{
+	return m_matchMaking;
 }
 
 Ref< ISaveDataProvider > SteamSessionManager::getSaveData() const

@@ -20,6 +20,7 @@ class IAchievementsProvider;
 class ILeaderboardsProvider;
 class ISaveDataProvider;
 class IStatisticsProvider;
+class IMatchMakingProvider;
 
 class T_DLLCLASS ISessionManagerProvider : public Object
 {
@@ -39,6 +40,8 @@ public:
 	virtual Ref< IAchievementsProvider > getAchievements() const = 0;
 
 	virtual Ref< ILeaderboardsProvider > getLeaderboards() const = 0;
+
+	virtual Ref< IMatchMakingProvider > getMatchMaking() const = 0;
 
 	virtual Ref< ISaveDataProvider > getSaveData() const = 0;
 

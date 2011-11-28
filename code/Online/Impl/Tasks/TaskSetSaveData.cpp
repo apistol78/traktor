@@ -26,7 +26,7 @@ TaskSetSaveData::TaskSetSaveData(
 {
 }
 
-void TaskSetSaveData::execute()
+void TaskSetSaveData::execute(TaskQueue* taskQueue)
 {
 	T_ASSERT (m_provider);
 	T_ASSERT (m_result);

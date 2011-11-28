@@ -159,6 +159,11 @@ Ref< ILeaderboardsProvider > LocalSessionManager::getLeaderboards() const
 	return m_leaderboards;
 }
 
+Ref< IMatchMakingProvider > LocalSessionManager::getMatchMaking() const
+{
+	return 0;
+}
+
 Ref< ISaveDataProvider > LocalSessionManager::getSaveData() const
 {
 	return m_saveData;

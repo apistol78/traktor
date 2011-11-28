@@ -4,6 +4,7 @@
 #include "Core/Thread/ThreadManager.h"
 #include "Online/Impl/Achievements.h"
 #include "Online/Impl/Leaderboards.h"
+#include "Online/Impl/MatchMaking.h"
 #include "Online/Impl/SaveData.h"
 #include "Online/Impl/SessionManager.h"
 #include "Online/Impl/Statistics.h"
@@ -69,6 +70,10 @@ bool SessionManager::create(ISessionManagerProvider* provider)
 	if (leaderboardsProvider)
 		m_leaderboards = new Leaderboards(leaderboardsProvider, m_taskQueues[0]);
 
+	Ref< IMatchMakingProvider > matchMakingProvider = m_provider->getMatchMaking();
+	if (matchMakingProvider)
+		m_matchMaking = new MatchMaking(matchMakingProvider, m_taskQueues[0]);
+
 	Ref< IStatisticsProvider > statisticsProvider = m_provider->getStatistics();
 	if (statisticsProvider)
 		m_statistics = new Statistics(statisticsProvider, m_taskQueues[0]);
@@ -80,6 +85,7 @@ void SessionManager::destroy()
 {
 	m_statistics = 0;
 	m_saveData = 0;
+	m_matchMaking = 0;
 	m_leaderboards = 0;
 	m_achievements = 0;
 
@@ -119,6 +125,11 @@ Ref< IAchievements > SessionManager::getAchievements() const
 Ref< ILeaderboards > SessionManager::getLeaderboards() const
 {
 	return waitUntilReady(m_leaderboards);
+}
+
+Ref< IMatchMaking > SessionManager::getMatchMaking() const
+{
+	return waitUntilReady(m_matchMaking);
 }
 
 Ref< ISaveData > SessionManager::getSaveData() const
