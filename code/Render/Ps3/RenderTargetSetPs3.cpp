@@ -201,7 +201,7 @@ int RenderTargetSetPs3::getHeight() const
 	return m_height;
 }
 
-Ref< ISimpleTexture > RenderTargetSetPs3::getColorTexture(int index) const
+ISimpleTexture* RenderTargetSetPs3::getColorTexture(int index) const
 {
 	return m_renderTargets[index];
 }

@@ -300,7 +300,7 @@ void EditorPlugin::eventTargetPlay(ui::Event* event)
 			chain.actions.push_back(new DeployTargetAction(m_editor, platformInstance, targetInstance, activeGuid));
 			chain.actions.push_back(new LaunchTargetAction(m_editor, platformInstance, targetInstance));
 		}
-		else if (event->getKeyState() & (ui::KsControl | ui::KsCommand) != 0)
+		else if ((event->getKeyState() & (ui::KsControl | ui::KsCommand)) != 0)
 		{
 			chain.actions.push_back(new MigrateTargetAction(m_editor, platformInstance, targetInstance));
 		}

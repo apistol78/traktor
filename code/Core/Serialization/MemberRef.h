@@ -1,6 +1,7 @@
 #ifndef traktor_MemberRef_H
 #define traktor_MemberRef_H
 
+#include "Core/Ref.h"
 #include "Core/Serialization/AttributeType.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberComplex.h"
