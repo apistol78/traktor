@@ -8,8 +8,9 @@
 #include "Online/Steam/SteamLeaderboards.h"
 #include "Online/Steam/SteamMatchMaking.h"
 #include "Online/Steam/SteamSaveData.h"
-#include "Online/Steam/SteamStatistics.h"
 #include "Online/Steam/SteamSessionManager.h"
+#include "Online/Steam/SteamStatistics.h"
+#include "Online/Steam/SteamUser.h"
 
 namespace traktor
 {
@@ -105,7 +106,7 @@ bool SteamSessionManager::create(const SteamCreateDesc& desc)
 		return false;
 	}
 
-	if (!SteamUser()->BLoggedOn())
+	if (!::SteamUser()->BLoggedOn())
 		log::warning << L"Steam running in offline mode; Some features will be disabled or postponed until connected" << Endl;
 
 	const char* allLanguages = SteamApps()->GetAvailableGameLanguages();
@@ -119,12 +120,14 @@ bool SteamSessionManager::create(const SteamCreateDesc& desc)
 	m_matchMaking = new SteamMatchMaking(this);
 	m_saveData = new SteamSaveData();
 	m_statistics = new SteamStatistics(this, desc.statIds);
+	m_user = new SteamUser();
 
 	return true;
 }
 
 void SteamSessionManager::destroy()
 {
+	m_user = 0;
 	m_statistics = 0;
 	m_saveData = 0;
 	m_matchMaking = 0;
@@ -140,7 +143,7 @@ bool SteamSessionManager::update()
 
 	if (!m_requestedStats)
 	{
-		if (SteamUser()->BLoggedOn())
+		if (::SteamUser()->BLoggedOn())
 		{
 			if (SteamUserStats()->RequestCurrentStats())
 			{
@@ -188,7 +191,7 @@ std::wstring SteamSessionManager::getLanguageCode() const
 
 bool SteamSessionManager::isConnected() const
 {
-	return SteamUser()->BLoggedOn();
+	return ::SteamUser()->BLoggedOn();
 }
 
 bool SteamSessionManager::requireUserAttention() const
@@ -196,36 +199,63 @@ bool SteamSessionManager::requireUserAttention() const
 	return m_requireUserAttention;
 }
 
-Ref< IAchievementsProvider > SteamSessionManager::getAchievements() const
+bool SteamSessionManager::haveP2PData() const
+{
+	uint32 available = 0;
+
+	if (!SteamNetworking()->IsP2PPacketAvailable(&available))
+		return false;
+
+	return available > 0;
+}
+
+uint32_t SteamSessionManager::receiveP2PData(void* data, uint32_t size, uint64_t& outFromUserHandle) const
+{
+	uint32_t receivedSize = 0;
+	CSteamID fromUserID;
+
+	if (!SteamNetworking()->ReadP2PPacket(data, size, &receivedSize, &fromUserID))
+		return false;
+
+	outFromUserHandle = fromUserID.ConvertToUint64();
+	return receivedSize;
+}
+
+IAchievementsProvider* SteamSessionManager::getAchievements() const
 {
 	return m_achievements;
 }
 
-Ref< ILeaderboardsProvider > SteamSessionManager::getLeaderboards() const
+ILeaderboardsProvider* SteamSessionManager::getLeaderboards() const
 {
 	return m_leaderboards;
 }
 
-Ref< IMatchMakingProvider > SteamSessionManager::getMatchMaking() const
+IMatchMakingProvider* SteamSessionManager::getMatchMaking() const
 {
 	return m_matchMaking;
 }
 
-Ref< ISaveDataProvider > SteamSessionManager::getSaveData() const
+ISaveDataProvider* SteamSessionManager::getSaveData() const
 {
 	return m_saveData;
 }
 
-Ref< IStatisticsProvider > SteamSessionManager::getStatistics() const
+IStatisticsProvider* SteamSessionManager::getStatistics() const
 {
 	return m_statistics;
+}
+
+IUserProvider* SteamSessionManager::getUser() const
+{
+	return m_user;
 }
 
 bool SteamSessionManager::waitForStats()
 {
 	if (!m_receivedStats)
 	{
-		if (!SteamUser()->BLoggedOn())
+		if (!::SteamUser()->BLoggedOn())
 			return false;
 
 		log::info << L"Steam; Waiting for stats..." << Endl;
@@ -238,7 +268,7 @@ bool SteamSessionManager::waitForStats()
 			if (currentThread)
 				currentThread->sleep(100);
 
-			if (!SteamUser()->BLoggedOn())
+			if (!::SteamUser()->BLoggedOn())
 				break;
 		}
 	}

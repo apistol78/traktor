@@ -18,9 +18,10 @@ namespace traktor
 
 class IAchievementsProvider;
 class ILeaderboardsProvider;
+class IMatchMakingProvider;
 class ISaveDataProvider;
 class IStatisticsProvider;
-class IMatchMakingProvider;
+class IUserProvider;
 
 class T_DLLCLASS ISessionManagerProvider : public Object
 {
@@ -37,15 +38,21 @@ public:
 
 	virtual bool requireUserAttention() const = 0;
 
-	virtual Ref< IAchievementsProvider > getAchievements() const = 0;
+	virtual bool haveP2PData() const = 0;
 
-	virtual Ref< ILeaderboardsProvider > getLeaderboards() const = 0;
+	virtual uint32_t receiveP2PData(void* data, uint32_t size, uint64_t& outFromUserHandle) const = 0;
 
-	virtual Ref< IMatchMakingProvider > getMatchMaking() const = 0;
+	virtual IAchievementsProvider* getAchievements() const = 0;
 
-	virtual Ref< ISaveDataProvider > getSaveData() const = 0;
+	virtual ILeaderboardsProvider* getLeaderboards() const = 0;
 
-	virtual Ref< IStatisticsProvider > getStatistics() const = 0;
+	virtual IMatchMakingProvider* getMatchMaking() const = 0;
+
+	virtual ISaveDataProvider* getSaveData() const = 0;
+
+	virtual IStatisticsProvider* getStatistics() const = 0;
+
+	virtual IUserProvider* getUser() const = 0;
 };
 
 	}

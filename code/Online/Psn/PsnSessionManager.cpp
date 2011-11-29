@@ -210,24 +210,44 @@ bool PsnSessionManager::requireUserAttention() const
 	return ms_requireUserAttention;
 }
 
-Ref< IAchievementsProvider > PsnSessionManager::getAchievements() const
+bool PsnSessionManager::haveP2PData() const
+{
+	return false;
+}
+
+uint32_t PsnSessionManager::receiveP2PData(void* data, uint32_t size, uint64_t& outFromUserHandle) const
+{
+	return 0;
+}
+
+IAchievementsProvider* PsnSessionManager::getAchievements() const
 {
 	return m_achievements;
 }
 
-Ref< ILeaderboardsProvider > PsnSessionManager::getLeaderboards() const
+ILeaderboardsProvider* PsnSessionManager::getLeaderboards() const
 {
 	return m_leaderboards;
 }
 
-Ref< ISaveDataProvider > PsnSessionManager::getSaveData() const
+IMatchMakingProvider* PsnSessionManager::getMatchMaking() const
+{
+	return 0;
+}
+
+ISaveDataProvider* PsnSessionManager::getSaveData() const
 {
 	return m_saveData;
 }
 
-Ref< IStatisticsProvider > PsnSessionManager::getStatistics() const
+IStatisticsProvider* PsnSessionManager::getStatistics() const
 {
 	return m_statistics;
+}
+
+IUserProvider* PsnSessionManager::getUser() const
+{
+	return 0;
 }
 
 void PsnSessionManager::systemCallback(uint64_t status, uint64_t param)

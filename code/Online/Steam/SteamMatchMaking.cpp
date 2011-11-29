@@ -39,9 +39,9 @@ SteamMatchMaking::SteamMatchMaking(SteamSessionManager* sessionManager)
 {
 }
 
-bool SteamMatchMaking::findMatchingLobbies(const std::wstring& key, const std::wstring& value, std::vector< LobbyData >& outLobbies)
+bool SteamMatchMaking::findMatchingLobbies(const std::wstring& key, const std::wstring& value, std::vector< uint64_t >& outLobbyHandles)
 {
-	m_outLobbies = &outLobbies;
+	m_outLobbies = &outLobbyHandles;
 
 	SteamMatchmaking()->AddRequestLobbyListStringFilter(
 		wstombs(key).c_str(),
@@ -61,9 +61,9 @@ bool SteamMatchMaking::findMatchingLobbies(const std::wstring& key, const std::w
 	return result;
 }
 
-bool SteamMatchMaking::createLobby(uint32_t maxUsers, LobbyData& outLobby)
+bool SteamMatchMaking::createLobby(uint32_t maxUsers, uint64_t& outLobbyHandle)
 {
-	m_outLobby = &outLobby;
+	m_outLobby = &outLobbyHandle;
 
 	SteamAPICall_t hSteamAPICall = SteamMatchmaking()->CreateLobby(k_ELobbyTypePublic, maxUsers);
 	m_callbackLobbyCreated.Set(hSteamAPICall, this, &SteamMatchMaking::OnLobbyCreated);
@@ -109,6 +109,38 @@ bool SteamMatchMaking::setMetaValue(uint64_t lobbyHandle, const std::wstring& ke
 	);
 }
 
+bool SteamMatchMaking::getMetaValue(uint64_t lobbyHandle, const std::wstring& key, std::wstring& outValue)
+{
+	CSteamID id(lobbyHandle);
+	if (!id.IsValid())
+		return false;
+
+	const char* value = SteamMatchmaking()->GetLobbyData(id, wstombs(key).c_str());
+	if (!value)
+		return false;
+
+	outValue = mbstows(value);
+	return true;
+}
+
+bool SteamMatchMaking::getParticipants(uint64_t lobbyHandle, std::vector< uint64_t >& outUserHandles)
+{
+	CSteamID id(lobbyHandle);
+	if (!id.IsValid())
+		return false;
+
+	int32_t memberCount = SteamMatchmaking()->GetNumLobbyMembers(id);
+
+	outUserHandles.reserve(memberCount);
+	for (int32_t i = 0; i < memberCount; ++i)
+	{
+		CSteamID memberId = SteamMatchmaking()->GetLobbyMemberByIndex(lobbyHandle, i);
+		outUserHandles.push_back(memberId.ConvertToUint64());
+	}
+
+	return true;
+}
+
 void SteamMatchMaking::OnLobbyMatch(LobbyMatchList_t* pCallback, bool bIOFailure)
 {
 	T_ASSERT (m_outLobbies != 0);
@@ -118,10 +150,7 @@ void SteamMatchMaking::OnLobbyMatch(LobbyMatchList_t* pCallback, bool bIOFailure
 		if (!lobbyId.IsValid())
 			continue;
 
-		LobbyData ld;
-		ld.handle = lobbyId.ConvertToUint64();
-
-		m_outLobbies->push_back(ld);
+		m_outLobbies->push_back(lobbyId.ConvertToUint64());
 	}
 }
 
@@ -129,7 +158,7 @@ void SteamMatchMaking::OnLobbyCreated(LobbyCreated_t* pCallback, bool bIOFailure
 {
 	T_ASSERT (m_outLobby != 0);
 	if (pCallback->m_eResult == k_EResultOK)
-		m_outLobby->handle = pCallback->m_ulSteamIDLobby;
+		*m_outLobby = pCallback->m_ulSteamIDLobby;
 	else
 		m_outLobby = 0;
 }

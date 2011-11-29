@@ -1,5 +1,5 @@
-#ifndef traktor_online_TaskCreateLobby_H
-#define traktor_online_TaskCreateLobby_H
+#ifndef traktor_online_TaskGetParticipants_H
+#define traktor_online_TaskGetParticipants_H
 
 #include "Online/Impl/ITask.h"
 
@@ -10,18 +10,18 @@ namespace traktor
 
 class IMatchMakingProvider;
 class IUserProvider;
-class LobbyResult;
+class UserArrayResult;
 
-class TaskCreateLobby : public ITask
+class TaskGetParticipants : public ITask
 {
 	T_RTTI_CLASS;
 
 public:
-	TaskCreateLobby(
+	TaskGetParticipants(
 		IMatchMakingProvider* matchMakingProvider,
 		IUserProvider* userProvider,
-		uint32_t maxUsers,
-		LobbyResult* result
+		uint64_t lobbyHandle,
+		UserArrayResult* result
 	);
 
 	virtual void execute(TaskQueue* taskQueue);
@@ -29,11 +29,11 @@ public:
 private:
 	Ref< IMatchMakingProvider > m_matchMakingProvider;
 	Ref< IUserProvider > m_userProvider;
-	uint32_t m_maxUsers;
-	Ref< LobbyResult > m_result;
+	uint64_t m_lobbyHandle;
+	Ref< UserArrayResult > m_result;
 };
 
 	}
 }
 
-#endif	// traktor_online_TaskCreateLobby_H
+#endif	// traktor_online_TaskGetParticipants_H

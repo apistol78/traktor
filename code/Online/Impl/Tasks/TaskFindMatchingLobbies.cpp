@@ -11,12 +11,14 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.online.TaskFindMatchingLobbies", TaskFindMatchingLobbies, ITask)
 
 TaskFindMatchingLobbies::TaskFindMatchingLobbies(
-	IMatchMakingProvider* provider,
+	IMatchMakingProvider* matchMakingProvider,
+	IUserProvider* userProvider,
 	const std::wstring& key,
 	const std::wstring& value,
 	LobbyArrayResult* result
 )
-:	m_provider(provider)
+:	m_matchMakingProvider(matchMakingProvider)
+,	m_userProvider(userProvider)
 ,	m_key(key)
 ,	m_value(value)
 ,	m_result(result)
@@ -25,20 +27,22 @@ TaskFindMatchingLobbies::TaskFindMatchingLobbies(
 
 void TaskFindMatchingLobbies::execute(TaskQueue* taskQueue)
 {
-	T_ASSERT (m_provider);
+	T_ASSERT (m_matchMakingProvider);
+	T_ASSERT (m_userProvider);
 	T_ASSERT (m_result);
 
-	std::vector< IMatchMakingProvider::LobbyData > providerLobbies;
-	if (m_provider->findMatchingLobbies(m_key, m_value, providerLobbies))
+	std::vector< uint64_t > providerLobbies;
+	if (m_matchMakingProvider->findMatchingLobbies(m_key, m_value, providerLobbies))
 	{
 		RefArray< ILobby > lobbies;
 		lobbies.reserve(providerLobbies.size());
-		for (std::vector< IMatchMakingProvider::LobbyData >::iterator i = providerLobbies.begin(); i != providerLobbies.end(); ++i)
+		for (std::vector< uint64_t >::iterator i = providerLobbies.begin(); i != providerLobbies.end(); ++i)
 		{
 			lobbies.push_back(new Lobby(
-				m_provider,
+				m_matchMakingProvider,
+				m_userProvider,
 				taskQueue,
-				i->handle
+				*i
 			));
 		}
 		m_result->succeed(lobbies);

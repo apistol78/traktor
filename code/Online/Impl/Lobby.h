@@ -9,6 +9,7 @@ namespace traktor
 	{
 
 class IMatchMakingProvider;
+class IUserProvider;
 class TaskQueue;
 
 class Lobby : public ILobby
@@ -24,15 +25,18 @@ public:
 
 	virtual Ref< Result > leave();
 
+	virtual Ref< UserArrayResult > getParticipants();
+
 private:
 	friend class TaskCreateLobby;
 	friend class TaskFindMatchingLobbies;
 
-	Ref< IMatchMakingProvider > m_provider;
+	Ref< IMatchMakingProvider > m_matchMakingProvider;
+	Ref< IUserProvider > m_userProvider;
 	Ref< TaskQueue > m_taskQueue;
 	uint64_t m_handle;
 
-	Lobby(IMatchMakingProvider* provider, TaskQueue* taskQueue, uint64_t handle);
+	Lobby(IMatchMakingProvider* matchMakingProvider, IUserProvider* userProvider, TaskQueue* taskQueue, uint64_t handle);
 };
 
 	}

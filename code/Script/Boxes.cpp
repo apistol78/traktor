@@ -305,11 +305,6 @@ Object* BoxedRefArray::get(int32_t index)
 		return 0;
 }
 
-const RefArray< Object >& BoxedRefArray::unbox() const
-{
-	return m_arr;
-}
-
 T_IMPLEMENT_RTTI_CLASS(L"traktor.StdVector", BoxedStdVector, Object)
 
 BoxedStdVector::BoxedStdVector()

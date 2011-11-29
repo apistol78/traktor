@@ -1,7 +1,7 @@
 #ifndef traktor_online_ILobby_H
 #define traktor_online_ILobby_H
 
-#include "Online/Result.h"
+#include "Online/UserArrayResult.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -28,6 +28,8 @@ public:
 	virtual Ref< Result > join() = 0;
 
 	virtual Ref< Result > leave() = 0;
+
+	virtual Ref< UserArrayResult > getParticipants() = 0;
 };
 
 	}

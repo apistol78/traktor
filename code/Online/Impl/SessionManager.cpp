@@ -9,6 +9,7 @@
 #include "Online/Impl/SessionManager.h"
 #include "Online/Impl/Statistics.h"
 #include "Online/Impl/TaskQueue.h"
+#include "Online/Impl/User.h"
 #include "Online/Impl/Tasks/TaskUpdateSessionManager.h"
 #include "Online/Provider/ISessionManagerProvider.h"
 
@@ -58,23 +59,25 @@ bool SessionManager::create(ISessionManagerProvider* provider)
 	if (!m_taskQueues[1]->create(0))
 		return false;
 
-	Ref< ISaveDataProvider > saveDataProvider = m_provider->getSaveData();
+	IAchievementsProvider* achievementsProvider = m_provider->getAchievements();
+	ILeaderboardsProvider* leaderboardsProvider = m_provider->getLeaderboards();
+	IMatchMakingProvider* matchMakingProvider = m_provider->getMatchMaking();
+	ISaveDataProvider* saveDataProvider = m_provider->getSaveData();
+	IStatisticsProvider* statisticsProvider = m_provider->getStatistics();
+	IUserProvider* userProvider = m_provider->getUser();
+
 	if (saveDataProvider)
 		m_saveData = new SaveData(saveDataProvider, m_taskQueues[1]);
 
-	Ref< IAchievementsProvider > achievementsProvider = m_provider->getAchievements();
 	if (achievementsProvider)
 		m_achievements = new Achievements(achievementsProvider, m_taskQueues[0]);
 
-	Ref< ILeaderboardsProvider > leaderboardsProvider = m_provider->getLeaderboards();
 	if (leaderboardsProvider)
 		m_leaderboards = new Leaderboards(leaderboardsProvider, m_taskQueues[0]);
 
-	Ref< IMatchMakingProvider > matchMakingProvider = m_provider->getMatchMaking();
-	if (matchMakingProvider)
-		m_matchMaking = new MatchMaking(matchMakingProvider, m_taskQueues[0]);
+	if (matchMakingProvider && userProvider)
+		m_matchMaking = new MatchMaking(matchMakingProvider, userProvider, m_taskQueues[0]);
 
-	Ref< IStatisticsProvider > statisticsProvider = m_provider->getStatistics();
 	if (statisticsProvider)
 		m_statistics = new Statistics(statisticsProvider, m_taskQueues[0]);
 
@@ -117,27 +120,54 @@ bool SessionManager::requireUserAttention() const
 	return m_provider ? m_provider->requireUserAttention() : false;
 }
 
-Ref< IAchievements > SessionManager::getAchievements() const
+bool SessionManager::haveP2PData() const
+{
+	return m_provider ? m_provider->haveP2PData() : false;
+}
+
+uint32_t SessionManager::receiveP2PData(void* data, uint32_t size, Ref< IUser >& outFromUser) const
+{
+	if (!m_provider)
+		return 0;
+
+	uint64_t fromUserHandle = 0;
+	uint32_t received = m_provider->receiveP2PData(data, size, fromUserHandle);
+	if (!received)
+		return 0;
+
+	SmallMap< uint64_t, Ref< IUser > >::const_iterator i = m_p2pUsers.find(fromUserHandle);
+	if (i != m_p2pUsers.end())
+		outFromUser = i->second;
+	else
+	{
+		outFromUser = new User(m_provider->getUser(), fromUserHandle);
+		m_p2pUsers.insert(fromUserHandle, outFromUser);
+	}
+
+	return received;
+}
+
+IAchievements* SessionManager::getAchievements() const
 {
 	return waitUntilReady(m_achievements);
 }
 
-Ref< ILeaderboards > SessionManager::getLeaderboards() const
+ILeaderboards* SessionManager::getLeaderboards() const
 {
 	return waitUntilReady(m_leaderboards);
 }
 
-Ref< IMatchMaking > SessionManager::getMatchMaking() const
+IMatchMaking* SessionManager::getMatchMaking() const
 {
 	return waitUntilReady(m_matchMaking);
 }
 
-Ref< ISaveData > SessionManager::getSaveData() const
+ISaveData* SessionManager::getSaveData() const
 {
 	return waitUntilReady(m_saveData);
 }
 
-Ref< IStatistics > SessionManager::getStatistics() const
+IStatistics* SessionManager::getStatistics() const
 {
 	return waitUntilReady(m_statistics);
 }

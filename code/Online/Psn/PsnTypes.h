@@ -23,7 +23,7 @@ struct PsnCreateDesc
 	const SceNpCommunicationPassphrase* passphrase;
 	const SceNpCommunicationSignature* signature;
 	const uint8_t* saveIconBuffer;
-	const int32_t saveIconSize;
+	int32_t saveIconSize;
 };
 
 	}

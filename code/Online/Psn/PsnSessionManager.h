@@ -42,13 +42,21 @@ public:
 
 	virtual bool requireUserAttention() const;
 
-	virtual Ref< IAchievementsProvider > getAchievements() const;
+	virtual bool haveP2PData() const;
 
-	virtual Ref< ILeaderboardsProvider > getLeaderboards() const;
+	virtual uint32_t receiveP2PData(void* data, uint32_t size, uint64_t& outFromUserHandle) const;
 
-	virtual Ref< ISaveDataProvider > getSaveData() const;
+	virtual IAchievementsProvider* getAchievements() const;
 
-	virtual Ref< IStatisticsProvider > getStatistics() const;
+	virtual ILeaderboardsProvider* getLeaderboards() const;
+
+	virtual IMatchMakingProvider* getMatchMaking() const;
+
+	virtual ISaveDataProvider* getSaveData() const;
+
+	virtual IStatisticsProvider* getStatistics() const;
+
+	virtual IUserProvider* getUser() const;
 
 private:
 	SceNpTrophyContext m_trophyContext;

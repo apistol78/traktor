@@ -9,7 +9,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.online.LobbyArrayResult", LobbyArrayResult, Res
 
 void LobbyArrayResult::succeed(const RefArray< ILobby >& lobbies)
 {
-	m_lobbies= lobbies;
+	m_lobbies = lobbies;
 	Result::succeed();
 }
 

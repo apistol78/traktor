@@ -21,6 +21,7 @@ class ILeaderboards;
 class IMatchMaking;
 class ISaveData;
 class IStatistics;
+class IUser;
 
 class T_DLLCLASS ISessionManager : public Object
 {
@@ -37,15 +38,19 @@ public:
 
 	virtual bool requireUserAttention() const = 0;
 
-	virtual Ref< IAchievements > getAchievements() const = 0;
+	virtual bool haveP2PData() const = 0;
 
-	virtual Ref< ILeaderboards > getLeaderboards() const = 0;
+	virtual uint32_t receiveP2PData(void* data, uint32_t size, Ref< IUser >& outFromUser) const = 0;
 
-	virtual Ref< IMatchMaking > getMatchMaking() const = 0;
+	virtual IAchievements* getAchievements() const = 0;
 
-	virtual Ref< ISaveData > getSaveData() const = 0;
+	virtual ILeaderboards* getLeaderboards() const = 0;
 
-	virtual Ref< IStatistics > getStatistics() const = 0;
+	virtual IMatchMaking* getMatchMaking() const = 0;
+
+	virtual ISaveData* getSaveData() const = 0;
+
+	virtual IStatistics* getStatistics() const = 0;
 };
 
 	}

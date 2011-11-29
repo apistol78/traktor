@@ -194,7 +194,14 @@ public:
 
 	Object* get(int32_t index);
 
-	const RefArray< Object >& unbox() const;
+	template < typename ObjectType >
+	RefArray< ObjectType > unbox() const
+	{
+		RefArray< ObjectType > arr(m_arr.size());
+		for (uint32_t i = 0; i < m_arr.size(); ++i)
+			arr[i] = checked_type_cast< ObjectType*, true >(m_arr[i]);
+		return arr;
+	}
 
 private:
 	RefArray< Object > m_arr;
@@ -329,7 +336,7 @@ struct CastAny < RefArray< InnerType >, false >
         return Any(new BoxedRefArray(value));
     }
     static RefArray< InnerType > get(const Any& value) {
-        return checked_type_cast< BoxedRefArray*, false >(value.getObject())->unbox();
+        return checked_type_cast< BoxedRefArray*, false >(value.getObject())->unbox< InnerType >();
     }
 };
 
@@ -340,7 +347,7 @@ struct CastAny < const RefArray< InnerType >&, false >
         return Any(new BoxedRefArray(value));
     }
     static RefArray< InnerType > get(const Any& value) {
-        return checked_type_cast< BoxedRefArray*, false >(value.getObject())->unbox();
+        return checked_type_cast< BoxedRefArray*, false >(value.getObject())->unbox< InnerType >();
     }
 };
 

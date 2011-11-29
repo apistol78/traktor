@@ -19,7 +19,8 @@ Ref< LobbyArrayResult > MatchMaking::findMatchingLobbies(const std::wstring& key
 {
 	Ref< LobbyArrayResult > result = new LobbyArrayResult();
 	if (m_taskQueue->add(new TaskFindMatchingLobbies(
-		m_provider,
+		m_matchMakingProvider,
+		m_userProvider,
 		key,
 		value,
 		result
@@ -33,7 +34,8 @@ Ref< LobbyResult > MatchMaking::createLobby(uint32_t maxUsers)
 {
 	Ref< LobbyResult > result = new LobbyResult();
 	if (m_taskQueue->add(new TaskCreateLobby(
-		m_provider,
+		m_matchMakingProvider,
+		m_userProvider,
 		maxUsers,
 		result
 	)))
@@ -42,8 +44,9 @@ Ref< LobbyResult > MatchMaking::createLobby(uint32_t maxUsers)
 		return 0;
 }
 
-MatchMaking::MatchMaking(IMatchMakingProvider* provider, TaskQueue* taskQueue)
-:	m_provider(provider)
+MatchMaking::MatchMaking(IMatchMakingProvider* matchMakingProvider, IUserProvider* userProvider, TaskQueue* taskQueue)
+:	m_matchMakingProvider(matchMakingProvider)
+,	m_userProvider(userProvider)
 ,	m_taskQueue(taskQueue)
 {
 }
