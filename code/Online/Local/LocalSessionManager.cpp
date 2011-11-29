@@ -149,29 +149,44 @@ bool LocalSessionManager::requireUserAttention() const
 	return false;
 }
 
-Ref< IAchievementsProvider > LocalSessionManager::getAchievements() const
+bool LocalSessionManager::haveP2PData() const
 {
-	return m_achievements;
+	return false;
 }
 
-Ref< ILeaderboardsProvider > LocalSessionManager::getLeaderboards() const
-{
-	return m_leaderboards;
-}
-
-Ref< IMatchMakingProvider > LocalSessionManager::getMatchMaking() const
+uint32_t LocalSessionManager::receiveP2PData(void* data, uint32_t size, uint64_t& outFromUserHandle) const
 {
 	return 0;
 }
 
-Ref< ISaveDataProvider > LocalSessionManager::getSaveData() const
+IAchievementsProvider* LocalSessionManager::getAchievements() const
+{
+	return m_achievements;
+}
+
+ILeaderboardsProvider* LocalSessionManager::getLeaderboards() const
+{
+	return m_leaderboards;
+}
+
+IMatchMakingProvider* LocalSessionManager::getMatchMaking() const
+{
+	return 0;
+}
+
+ISaveDataProvider* LocalSessionManager::getSaveData() const
 {
 	return m_saveData;
 }
 
-Ref< IStatisticsProvider > LocalSessionManager::getStatistics() const
+IStatisticsProvider* LocalSessionManager::getStatistics() const
 {
 	return m_statistics;
+}
+
+IUserProvider* LocalSessionManager::getUser() const
+{
+	return 0;
 }
 
 	}

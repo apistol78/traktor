@@ -11,11 +11,13 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.online.TaskCreateLobby", TaskCreateLobby, ITask)
 
 TaskCreateLobby::TaskCreateLobby(
-	IMatchMakingProvider* provider,
+	IMatchMakingProvider* matchMakingProvider,
+	IUserProvider* userProvider,
 	uint32_t maxUsers,
 	LobbyResult* result
 )
-:	m_provider(provider)
+:	m_matchMakingProvider(matchMakingProvider)
+,	m_userProvider(userProvider)
 ,	m_maxUsers(maxUsers)
 ,	m_result(result)
 {
@@ -23,16 +25,18 @@ TaskCreateLobby::TaskCreateLobby(
 
 void TaskCreateLobby::execute(TaskQueue* taskQueue)
 {
-	T_ASSERT (m_provider);
+	T_ASSERT (m_matchMakingProvider);
+	T_ASSERT (m_userProvider);
 	T_ASSERT (m_result);
 
-	IMatchMakingProvider::LobbyData providerLobby;
-	if (m_provider->createLobby(m_maxUsers, providerLobby))
+	uint64_t lobbyHandle;
+	if (m_matchMakingProvider->createLobby(m_maxUsers, lobbyHandle))
 	{
 		m_result->succeed(new Lobby(
-			m_provider,
+			m_matchMakingProvider,
+			m_userProvider,
 			taskQueue,
-			providerLobby.handle
+			lobbyHandle
 		));
 	}
 	else

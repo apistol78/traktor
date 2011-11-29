@@ -169,7 +169,7 @@ bool SteamLeaderboards::enumerate(std::map< std::wstring, LeaderboardData >& out
 
 bool SteamLeaderboards::set(const uint64_t handle, int32_t score)
 {
-	if (!handle || !SteamUser()->BLoggedOn())
+	if (!handle || !::SteamUser()->BLoggedOn())
 		return false;
 
 	SteamAPICall_t call = SteamUserStats()->UploadLeaderboardScore(handle, k_ELeaderboardUploadScoreMethodForceUpdate, score, 0, 0);

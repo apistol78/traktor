@@ -2,6 +2,7 @@
 #define traktor_online_SessionManager_H
 
 #include "Core/RefArray.h"
+#include "Core/Containers/SmallMap.h"
 #include "Online/ISessionManager.h"
 
 // import/export mechanism.
@@ -18,6 +19,7 @@ namespace traktor
 	{
 
 class ISessionManagerProvider;
+class IUser;
 class TaskQueue;
 
 class T_DLLCLASS SessionManager : public ISessionManager
@@ -37,15 +39,19 @@ public:
 
 	virtual bool requireUserAttention() const;
 
-	virtual Ref< IAchievements > getAchievements() const;
+	virtual bool haveP2PData() const;
 
-	virtual Ref< ILeaderboards > getLeaderboards() const;
+	virtual uint32_t receiveP2PData(void* data, uint32_t size, Ref< IUser >& outFromUser) const;
 
-	virtual Ref< IMatchMaking > getMatchMaking() const;
+	virtual IAchievements* getAchievements() const;
 
-	virtual Ref< ISaveData > getSaveData() const;
+	virtual ILeaderboards* getLeaderboards() const;
 
-	virtual Ref< IStatistics > getStatistics() const;
+	virtual IMatchMaking* getMatchMaking() const;
+
+	virtual ISaveData* getSaveData() const;
+
+	virtual IStatistics* getStatistics() const;
 
 private:
 	Ref< ISessionManagerProvider > m_provider;
@@ -55,6 +61,7 @@ private:
 	Ref< IMatchMaking > m_matchMaking;
 	Ref< ISaveData > m_saveData;
 	Ref< IStatistics > m_statistics;
+	mutable SmallMap< uint64_t, Ref< IUser > > m_p2pUsers;
 };
 
 	}

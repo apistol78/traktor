@@ -9,6 +9,7 @@ namespace traktor
 	{
 
 class IMatchMakingProvider;
+class IUserProvider;
 class TaskQueue;
 
 class MatchMaking : public IMatchMaking
@@ -25,10 +26,11 @@ public:
 private:
 	friend class SessionManager;
 
-	Ref< IMatchMakingProvider > m_provider;
+	Ref< IMatchMakingProvider > m_matchMakingProvider;
+	Ref< IUserProvider > m_userProvider;
 	Ref< TaskQueue > m_taskQueue;
 
-	MatchMaking(IMatchMakingProvider* provider, TaskQueue* taskQueue);
+	MatchMaking(IMatchMakingProvider* matchMakingProvider, IUserProvider* userProvider, TaskQueue* taskQueue);
 };
 
 	}
