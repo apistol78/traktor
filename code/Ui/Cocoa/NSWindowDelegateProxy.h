@@ -26,7 +26,7 @@ struct INSWindowEventsCallback
 	}
 }
 
-@interface NSWindowDelegateProxy : NSObject /*< NSWindowDelegate >*/
+@interface NSWindowDelegateProxy : NSObject < NSWindowDelegate >
 {
 	traktor::ui::INSWindowEventsCallback* m_eventsCallback;
 }

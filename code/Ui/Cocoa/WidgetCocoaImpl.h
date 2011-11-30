@@ -63,8 +63,6 @@ public:
 			[view removeFromSuperview];
 		
 		// Release objects.
-		T_ASSERT (m_control != m_view);
-		
 		if (m_control)
 		{
 			[m_control autorelease];
