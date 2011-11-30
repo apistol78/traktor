@@ -69,6 +69,10 @@ public:
 
 	float getSpecularRoughness() const;
 
+	void setRimLightIntensity(float rimLightIntensity);
+
+	float getRimLightIntensity() const;
+
 	void setBlendOperator(BlendOperator blendOperator);
 
 	BlendOperator getBlendOperator() const;
@@ -86,6 +90,7 @@ private:
 	float m_diffuseTerm;
 	float m_specularTerm;
 	float m_specularRoughness;
+	float m_rimLightIntensity;
 	BlendOperator m_blendOperator;
 	bool m_doubleSided;
 };

@@ -18,6 +18,14 @@
 					<optional>false</optional>
 				</item>
 				<item>
+					<name>T_RimColor</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<name>T_RimIntensity</name>
+					<optional>false</optional>
+				</item>
+				<item>
 					<name>T_SpecularRoughness</name>
 					<optional>false</optional>
 				</item>
@@ -52,8 +60,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>405</first>
-				<second>115</second>
+				<first>407</first>
+				<second>7</second>
 			</position>
 			<fragmentGuid>{4AC7418D-FF43-FE40-ADDC-33A162636FDC}</fragmentGuid>
 			<inputPins>
@@ -75,8 +83,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>368</first>
-				<second>194</second>
+				<first>369</first>
+				<second>88</second>
 			</position>
 			<fragmentGuid>{68DA66E7-1D9E-FD4C-9692-D947BEA3EBAD}</fragmentGuid>
 			<inputPins>
@@ -98,8 +106,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>362</first>
-				<second>273</second>
+				<first>365</first>
+				<second>169</second>
 			</position>
 			<fragmentGuid>{77489017-FBE8-4A4F-B11A-FDE48C69E021}</fragmentGuid>
 			<inputPins>
@@ -181,6 +189,24 @@
 				</item>
 				<item>
 					<name>T_WorldTangent</name>
+				</item>
+			</outputPins>
+			<values/>
+		</item>
+		<item type="traktor.render.External" version="1">
+			<comment/>
+			<position>
+				<first>464</first>
+				<second>298</second>
+			</position>
+			<fragmentGuid>{57310F3A-FEB0-7644-B641-EC3876773470}</fragmentGuid>
+			<inputPins/>
+			<outputPins>
+				<item>
+					<name>T_RimColor</name>
+				</item>
+				<item>
+					<name>T_RimIntensity</name>
 				</item>
 			</outputPins>
 			<values/>
@@ -345,6 +371,26 @@
 			<destination>
 				<node ref="/object/nodes/item"/>
 				<name>T_ViewNormal</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[5]"/>
+				<name>T_RimColor</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>T_RimColor</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[5]"/>
+				<name>T_RimIntensity</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>T_RimIntensity</name>
 			</destination>
 		</item>
 	</edges>
