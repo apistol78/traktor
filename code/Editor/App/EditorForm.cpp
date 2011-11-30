@@ -175,8 +175,14 @@ EditorForm::EditorForm()
 
 bool EditorForm::create(const CommandLine& cmdLine)
 {
+#if !defined(__APPLE__)
+	std::wstring settingsPath = L"Traktor.Editor";
+#else
+	std::wstring settingsPath = L"$(BUNDLE_PATH)/Contents/Resources/Traktor.Editor";
+#endif
+
 	// Load settings.
-	m_settings = loadSettings(L"Traktor.Editor");
+	m_settings = loadSettings(settingsPath);
 	if (!m_settings)
 	{
 		log::error << L"Unable to load settings" << Endl;
@@ -1619,7 +1625,12 @@ bool EditorForm::handleCommand(const ui::Command& command)
 		{
 			if (settingsDialog.showModal() == ui::DrOk)
 			{
-				saveSettings(L"Traktor.Editor");
+#if !defined(__APPLE__)
+				std::wstring settingsPath = L"Traktor.Editor";
+#else
+				std::wstring settingsPath = L"$(BUNDLE_PATH)/Contents/Resources/Traktor.Editor";
+#endif
+				saveSettings(settingsPath);
 				updateShortcutTable();
 
 				// Notify editor pages about changed settings.
@@ -1870,7 +1881,12 @@ void EditorForm::eventClose(ui::Event* event)
 	m_settings->setProperty< PropertyInteger >(L"Editor.SizeHeight", rc.getHeight());
 
 	// Save settings and pipeline hash.
-	saveSettings(L"Traktor.Editor");
+#if !defined(__APPLE__)
+	std::wstring settingsPath = L"Traktor.Editor";
+#else
+	std::wstring settingsPath = L"$(BUNDLE_PATH)/Contents/Resources/Traktor.Editor";
+#endif
+	saveSettings(settingsPath);
 
 	ui::Application::getInstance()->exit(0);
 }
