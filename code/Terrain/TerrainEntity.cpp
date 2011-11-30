@@ -692,15 +692,35 @@ bool TerrainEntity::createPatches()
 
 bool TerrainEntity::updateTextures(bool normals, bool heights, bool materials)
 {
-	const float c_scaleHeight = 300.0f;
+	const float c_scaleHeight = 100.0f;
 
 	if (normals)
 	{
+		const float c_directions[] =
+		{
+			0.0f, 0.0f,
+			-1.0f, -1.0f,
+			 1.0f, -1.0f,
+			 1.0f,  1.0f,
+			-1.0f,  1.0f
+		};
+
+		const uint32_t c_pattern[] =
+		{
+			0, 1, 2,
+			0, 2, 3,
+			0, 3, 4,
+			0, 4, 1
+		};
+
 		render::ITexture::Lock lock;
 		if (!m_normalTexture->lock(0, lock))
 			return false;
 
 		uint8_t* np = static_cast< uint8_t* >(lock.bits);
+
+		const Vector4& worldExtent = m_heightfield->getResource().getWorldExtent();
+		float scaleHeight = worldExtent.y() * c_scaleHeight;
 
 		int32_t size = m_heightfield->getResource().getSize();
 		int32_t dim = m_normalTexture->getWidth();
@@ -712,21 +732,34 @@ bool TerrainEntity::updateTextures(bool normals, bool heights, bool materials)
 			{
 				float gx = float(u * size) / dim;
 
-				float h = m_heightfield->getGridHeight(gx, gz);
-				float h1 = m_heightfield->getGridHeight(gx + 1, gz);
-				float h2 = m_heightfield->getGridHeight(gx, gz + 1);
+				float h[] =
+				{
+					m_heightfield->getGridHeight(gx, gz) * scaleHeight,
+					m_heightfield->getGridHeight(gx - 1, gz - 1) * scaleHeight,
+					m_heightfield->getGridHeight(gx + 1, gz - 1) * scaleHeight,
+					m_heightfield->getGridHeight(gx + 1, gz + 1) * scaleHeight,
+					m_heightfield->getGridHeight(gx - 1, gz + 1) * scaleHeight
+				};
 
-				Vector4 normal = cross(
-					Vector4(0.0f, (h - h1) * c_scaleHeight, 1.0f),
-					Vector4(1.0f, (h - h2) * c_scaleHeight, 0.0f)
-				).normalized();
+				Vector4 normal = Vector4::zero();
+				for (uint32_t i = 0; i < 4; ++i)
+				{
+					const uint32_t* p = &c_pattern[i * 3];
 
-				normal = normal * Vector4(-0.5f, 0.5f, -0.5f, 0.5f) + Vector4(0.5f, 0.5f, 0.5f, 0.0f);
+					Vector4 p1(c_directions[p[0] * 2 + 0], h[p[0]], c_directions[p[0] * 2 + 1], 0.0f);
+					Vector4 p2(c_directions[p[1] * 2 + 0], h[p[1]], c_directions[p[1] * 2 + 1], 0.0f);
+					Vector4 p3(c_directions[p[2] * 2 + 0], h[p[2]], c_directions[p[2] * 2 + 1], 0.0f);
+
+					normal += cross(p3 - p1, p2 - p1);
+				}
+
+				normal = normal.normalized();
+				normal = normal * Vector4(0.5f, 0.5f, 0.5f, 0.0f) + Vector4(0.5f, 0.5f, 0.5f, 0.0f);
 
 				uint8_t* p = &np[(u + v * dim) * 4];
-				p[0] = uint8_t(normal.z() * 255);
+				p[0] = uint8_t(normal.x() * 255);
 				p[1] = uint8_t(normal.y() * 255);
-				p[2] = uint8_t(normal.x() * 255);
+				p[2] = uint8_t(normal.z() * 255);
 				p[3] = 0;
 			}
 		}

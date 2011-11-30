@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ShaderGraph">
+	<nodes>
+		<item type="traktor.render.Scalar">
+			<comment>
+			<![CDATA[
+Tag_RimIntensity
+			]]>
+			</comment>
+			<position>
+				<first>772</first>
+				<second>417</second>
+			</position>
+			<value>0</value>
+		</item>
+		<item type="traktor.render.OutputPort">
+			<comment/>
+			<position>
+				<first>937</first>
+				<second>447</second>
+			</position>
+			<name>T_RimIntensity</name>
+		</item>
+		<item type="traktor.render.OutputPort">
+			<comment/>
+			<position>
+				<first>937</first>
+				<second>406</second>
+			</position>
+			<name>T_RimColor</name>
+		</item>
+		<item type="traktor.render.Color">
+			<comment/>
+			<position>
+				<first>686</first>
+				<second>341</second>
+			</position>
+			<color>255, 255, 255, 255</color>
+		</item>
+	</nodes>
+	<edges>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+	</edges>
+</object>

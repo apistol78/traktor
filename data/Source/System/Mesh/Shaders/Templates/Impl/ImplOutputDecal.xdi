@@ -4,7 +4,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>489</first>
+				<first>494</first>
 				<second>375</second>
 			</position>
 			<name>T_ViewPosition</name>
@@ -15,7 +15,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>490</first>
+				<first>495</first>
 				<second>303</second>
 			</position>
 			<name>T_SurfaceColor</name>
@@ -60,6 +60,14 @@
 					<optional>true</optional>
 				</item>
 				<item>
+					<name>RimColor</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<name>RimIntensity</name>
+					<optional>true</optional>
+				</item>
+				<item>
 					<name>SpecularRoughness</name>
 					<optional>true</optional>
 				</item>
@@ -75,6 +83,14 @@
 					<second>1</second>
 				</item>
 				<item>
+					<first>RimColor</first>
+					<second>0</second>
+				</item>
+				<item>
+					<first>RimIntensity</first>
+					<second>0</second>
+				</item>
+				<item>
 					<first>SpecularRoughness</first>
 					<second>0.8</second>
 				</item>
@@ -87,7 +103,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>485</first>
+				<first>490</first>
 				<second>483</second>
 			</position>
 			<name>T_SpecularTerm</name>
@@ -98,7 +114,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>491</first>
+				<first>496</first>
 				<second>195</second>
 			</position>
 			<name>T_EyeDirection</name>
@@ -109,7 +125,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>454</first>
+				<first>459</first>
 				<second>447</second>
 			</position>
 			<name>T_SpecularRoughness</name>
@@ -120,7 +136,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>493</first>
+				<first>498</first>
 				<second>411</second>
 			</position>
 			<name>T_DiffuseTerm</name>
@@ -131,7 +147,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>482</first>
+				<first>487</first>
 				<second>267</second>
 			</position>
 			<name>T_WorldPosition</name>
@@ -142,7 +158,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>485</first>
+				<first>490</first>
 				<second>231</second>
 			</position>
 			<name>T_WorldNormal</name>
@@ -153,10 +169,32 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>492</first>
+				<first>497</first>
 				<second>339</second>
 			</position>
 			<name>T_ViewNormal</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>513</first>
+				<second>519</second>
+			</position>
+			<name>T_RimColor</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>497</first>
+				<second>555</second>
+			</position>
+			<name>T_RimIntensity</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
 			<defaultValue>0</defaultValue>
@@ -251,6 +289,26 @@
 			<destination>
 				<node ref="/object/nodes/item[2]"/>
 				<name>ViewNormal</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[10]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<name>RimColor</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[11]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<name>RimIntensity</name>
 			</destination>
 		</item>
 	</edges>

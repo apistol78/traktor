@@ -18,6 +18,11 @@ namespace traktor
 
 /*! \brief LightWave model format.
  * \ingroup Model
+ *
+ * \note
+ * As there are always the case of interpretation differences
+ * the following assumptions are made:
+ * 1. Glow parameter of LW materials are interpreted as rim light intensity.
  */
 class T_DLLCLASS ModelFormatLwo : public ModelFormat
 {

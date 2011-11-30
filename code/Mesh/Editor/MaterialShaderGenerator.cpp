@@ -18,10 +18,12 @@ const Guid c_materialShader(L"{CCDB27F2-644B-0742-857D-680E846B5BA3}");
 const Guid c_tplDiffuseParams(L"{4AC7418D-FF43-FE40-ADDC-33A162636FDC}");
 const Guid c_tplNormalParams(L"{77489017-FBE8-4A4F-B11A-FDE48C69E021}");
 const Guid c_tplOutput(L"{6DA4BE0A-BE19-4440-9B08-FC3FD1FFECDC}");
+const Guid c_tplRimParams(L"{57310F3A-FEB0-7644-B641-EC3876773470}");
 const Guid c_tplSpecularParams(L"{68DA66E7-1D9E-FD4C-9692-D947BEA3EBAD}");
 const Guid c_tplVertexParams(L"{AEBE83FB-68D4-9D45-A672-0A8487A197CD}");
 const Guid c_implDiffuseConst(L"{BA68E2CA-77EB-684E-AD2B-0CD4BC35608D}");
 const Guid c_implNormalConst(L"{5D881AE1-B99D-8941-B949-4E95AEF1CB7A}");
+const Guid c_implRimConst(L"{449F16EF-5C14-4940-A5E1-E1ABF73CC5D7}");
 const Guid c_implOutputAdd(L"{321B8969-32D7-D44A-BF91-B056E4728DE2}");
 const Guid c_implOutputAlpha(L"{1CDA749C-D713-974F-8E84-895AFEE8D552}");
 const Guid c_implOutputDecal(L"{31FD2B2B-3D3C-024F-9AA6-544B73D6009C}");
@@ -91,6 +93,8 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(const model::Materi
 				break;
 			}
 		}
+		else if (fragmentGuid == c_tplRimParams)
+			(*i)->setFragmentGuid(c_implRimConst);
 		else if (fragmentGuid == c_tplSpecularParams)
 			(*i)->setFragmentGuid(c_implSpecularConst);
 		else if (fragmentGuid == c_tplVertexParams)
@@ -118,6 +122,12 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(const model::Materi
 			diffuseTermNode->setComment(L"");
 			diffuseTermNode->set(material.getDiffuseTerm());
 		}
+		else if (comment == L"Tag_RimIntensity")
+		{
+			render::Scalar* rimIntensityNode = checked_type_cast< render::Scalar* >(*i);
+			rimIntensityNode->setComment(L"");
+			rimIntensityNode->set(material.getRimLightIntensity());
+		}
 		else if (comment == L"Tag_SpecularTerm")
 		{
 			render::Scalar* specularTermNode = checked_type_cast< render::Scalar* >(*i);
@@ -141,10 +151,12 @@ void MaterialShaderGenerator::addDependencies(editor::IPipelineDepends* pipeline
 	pipelineDepends->addDependency(c_tplDiffuseParams, editor::PdfUse);
 	pipelineDepends->addDependency(c_tplNormalParams, editor::PdfUse);
 	pipelineDepends->addDependency(c_tplOutput, editor::PdfUse);
+	pipelineDepends->addDependency(c_tplRimParams, editor::PdfUse);
 	pipelineDepends->addDependency(c_tplSpecularParams, editor::PdfUse);
 	pipelineDepends->addDependency(c_tplVertexParams, editor::PdfUse);
 	pipelineDepends->addDependency(c_implDiffuseConst, editor::PdfUse);
 	pipelineDepends->addDependency(c_implNormalConst, editor::PdfUse);
+	pipelineDepends->addDependency(c_implRimConst, editor::PdfUse);
 	pipelineDepends->addDependency(c_implOutputAdd, editor::PdfUse);
 	pipelineDepends->addDependency(c_implOutputAlpha, editor::PdfUse);
 	pipelineDepends->addDependency(c_implOutputDecal, editor::PdfUse);
