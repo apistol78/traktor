@@ -90,21 +90,21 @@ bool SolutionForm::create(const traktor::CommandLine& cmdLine)
 	m_menuItemMRU = new ui::MenuItem(L"Recent");
 
 	Ref< ui::MenuItem > menuFile = new ui::MenuItem(L"File");
-	menuFile->add(new ui::MenuItem(ui::Command(L"File.New"), L"&New"));
-	menuFile->add(new ui::MenuItem(ui::Command(L"File.Open"), L"&Open..."));
-	menuFile->add(new ui::MenuItem(ui::Command(L"File.Save"), L"&Save"));
+	menuFile->add(new ui::MenuItem(ui::Command(L"File.New"), L"New"));
+	menuFile->add(new ui::MenuItem(ui::Command(L"File.Open"), L"Open..."));
+	menuFile->add(new ui::MenuItem(ui::Command(L"File.Save"), L"Save"));
 	menuFile->add(new ui::MenuItem(ui::Command(L"File.SaveAs"), L"Save As..."));
 	menuFile->add(m_menuItemMRU);
 	menuFile->add(new ui::MenuItem(L"-"));
-	menuFile->add(new ui::MenuItem(ui::Command(L"File.Exit"), L"E&xit"));
+	menuFile->add(new ui::MenuItem(ui::Command(L"File.Exit"), L"Exit"));
 	m_menuBar->add(menuFile);
 
 	Ref< ui::MenuItem > menuTools = new ui::MenuItem(L"Tools");
-	menuTools->add(new ui::MenuItem(ui::Command(L"Tools.AddMultipleConfigurations"), L"&Add multiple configurations..."));
-	menuTools->add(new ui::MenuItem(ui::Command(L"Tools.EditConfigurations"), L"&Edit configurations..."));
-	menuTools->add(new ui::MenuItem(ui::Command(L"Tools.ImportProject"), L"&Import project..."));
-	menuTools->add(new ui::MenuItem(ui::Command(L"Tools.ImportMsvcProject"), L"Import &MSVC project..."));
-	menuTools->add(new ui::MenuItem(ui::Command(L"Tools.FlattenDefinitions"), L"&Flatten definitions"));
+	menuTools->add(new ui::MenuItem(ui::Command(L"Tools.AddMultipleConfigurations"), L"Add multiple configurations..."));
+	menuTools->add(new ui::MenuItem(ui::Command(L"Tools.EditConfigurations"), L"Edit configurations..."));
+	menuTools->add(new ui::MenuItem(ui::Command(L"Tools.ImportProject"), L"Import project..."));
+	menuTools->add(new ui::MenuItem(ui::Command(L"Tools.ImportMsvcProject"), L"Import MSVC project..."));
+	menuTools->add(new ui::MenuItem(ui::Command(L"Tools.FlattenDefinitions"), L"Flatten definitions"));
 	m_menuBar->add(menuTools);
 
 	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();

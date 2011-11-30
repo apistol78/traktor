@@ -169,7 +169,8 @@ public:
 
 	virtual bool write(ISerializer& s) const
 	{
-		return s >> ValueMember(L"item", *m_iter++);
+		ValueType v = *m_iter++;
+		return s >> ValueMember(L"item", v);
 	}
 
 	virtual bool insert() const

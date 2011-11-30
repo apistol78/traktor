@@ -2,4 +2,4 @@
 
 export TRAKTOR_HOME=$PWD
 
-wine $TRAKTOR_HOME/bin/SolutionBuilder -f=xcode -xcode-root-suffix=-static -i=ipad TraktorIPad.xms -d=DebugStatic -r=ReleaseStatic
+$TRAKTOR_HOME/bin/osx/SolutionBuilder -f=xcode -xcode-root-suffix=-static -i=ipad TraktorIPad.xms -d=DebugStatic -r=ReleaseStatic
