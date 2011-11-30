@@ -20,7 +20,7 @@ struct INSOutlineViewEventsCallback
 	}
 }
 
-@interface NSOutlineViewDelegateProxy : NSObject
+@interface NSOutlineViewDelegateProxy : NSObject< NSOutlineViewDelegate >
 {
 	traktor::ui::INSOutlineViewEventsCallback* m_eventsCallback;
 }
