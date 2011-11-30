@@ -31,8 +31,10 @@
 #	undef MessageBox
 #endif
 
-#include "Resources/NotificationBusy.h"
-#include "Resources/NotificationIdle.h"
+#if defined(_WIN32)
+#	include "Resources/NotificationBusy.h"
+#	include "Resources/NotificationIdle.h"
+#endif
 
 using namespace traktor;
 
@@ -49,6 +51,8 @@ const uint8_t c_errUnknown = 255;
 
 std::wstring g_scratchPath;
 std::map< std::wstring, uint32_t > g_fileHashes;
+
+#if defined(_WIN32)
 Ref< ui::PopupMenu > g_popupMenu;
 Ref< ui::NotificationIcon > g_notificationIcon;
 
@@ -72,6 +76,7 @@ void eventNotificationButtonDown(ui::Event* event)
 			ui::Application::getInstance()->exit(0);
 	}
 }
+#endif
 
 uint8_t handleDeploy(net::Socket* clientSocket)
 {
@@ -282,6 +287,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 
 	g_scratchPath = cmdLine.getString(0);
 
+#if defined(_WIN32)
 	g_popupMenu = new ui::PopupMenu();
 	g_popupMenu->create();
 	g_popupMenu->add(new ui::MenuItem(ui::Command(L"RemoteServer.CopyScratch"), L"Copy Scratch Directory"));
@@ -290,6 +296,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	g_notificationIcon = new ui::NotificationIcon();
 	g_notificationIcon->create(L"Traktor RemoteServer (" + g_scratchPath + L")", ui::Bitmap::load(c_ResourceNotificationIdle, sizeof(c_ResourceNotificationIdle), L"png"));
 	g_notificationIcon->addButtonDownEventHandler(ui::createFunctionHandler(&eventNotificationButtonDown));
+#endif
 
 	net::Network::initialize();
 
@@ -311,8 +318,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	std::list< Thread* > clientThreads;
 	int32_t iconState = 0;
 
+#if defined(_WIN32)
 	while (ui::Application::getInstance()->process())
+#else
+	for (;;)
+#endif
 	{
+#if defined(_WIN32)
 		// Update notification icon if necessary.
 		if (clientThreads.empty() && iconState != 0)
 		{
@@ -326,6 +338,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 			g_notificationIcon->setImage(ui::Bitmap::load(c_ResourceNotificationBusy, sizeof(c_ResourceNotificationBusy), L"png"));
 			iconState = 1;
 		}
+#endif
 
 		// Check for events on server socket; if none we cleanup disconnected clients.
 		if (serverSocket->select(true, false, false, 100) <= 0)
@@ -364,11 +377,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 		clientThreads.push_back(clientThread);
 	}
 
+#if defined(_WIN32)
 	safeDestroy(g_notificationIcon);
 	safeDestroy(g_popupMenu);
+#endif
 
 	net::Network::finalize();
+	
+#if defined(_WIN32)
 	ui::Application::getInstance()->finalize();
+#endif
 
 	return 0;
 }

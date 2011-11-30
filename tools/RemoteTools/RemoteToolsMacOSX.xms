@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="Solution" version="1">
 	<name>RemoteTools MacOSX</name>
-	<rootPath>$(TRAKTOR_HOME)/tools/RemoteTools/build/osx</rootPath>
+	<rootPath>$(TRAKTOR_HOME)/tools/RemoteTools/build/macosx</rootPath>
 	<definitions/>
 	<projects>
 		<item type="Project" version="1">
@@ -28,7 +28,7 @@
 					<additionalLinkerOptions/>
 				</item>
 				<item type="Configuration" version="1">
-					<name>DebugShared</name>
+					<name>DebugStatic</name>
 					<targetFormat>TfExecutableConsole</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
@@ -38,6 +38,7 @@
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
+						<item>T_STATIC</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -88,7 +89,7 @@
 					<additionalLinkerOptions/>
 				</item>
 				<item type="Configuration" version="1">
-					<name>DebugShared</name>
+					<name>DebugStatic</name>
 					<targetFormat>TfExecutableConsole</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
@@ -98,6 +99,7 @@
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
+						<item>T_STATIC</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -130,7 +132,7 @@
 			<sourcePath>$(TRAKTOR_HOME)/tools/RemoteTools/code/Server</sourcePath>
 			<configurations>
 				<item type="Configuration" version="1">
-					<name>DebugShared</name>
+					<name>DebugStatic</name>
 					<targetFormat>TfExecutableConsole</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
@@ -140,6 +142,7 @@
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
+						<item>T_STATIC</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
