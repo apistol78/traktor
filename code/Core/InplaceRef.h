@@ -109,7 +109,7 @@ typename IsPointer< T >::base_t* checked_type_cast(const InplaceRef< T0 >& obj)
 template < typename T, bool AllowNull, typename T0 >
 typename IsPointer< T >::base_t* checked_type_cast(const InplaceRef< T0 >& obj)
 {
-	T_ASSERT ( (AllowNull && !obj.ptr()) || (obj.ptr() && is_a< T >(obj.ptr())) );
+	T_ASSERT (!(!AllowNull && obj.ptr() == 0));
 	return checked_type_cast< typename IsPointer< T >::base_t* >(obj.ptr());
 }
 
