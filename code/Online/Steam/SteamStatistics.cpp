@@ -15,7 +15,7 @@ SteamStatistics::SteamStatistics(SteamSessionManager* sessionManager, const wcha
 :	m_sessionManager(sessionManager)
 ,	m_callbackUserStatsStored(this, &SteamStatistics::OnUserStatsStored)
 {
-	for (const wchar_t** statId = statIds; *statId; ++statId)
+	for (const wchar_t** statId = statIds; statId && *statId; ++statId)
 		m_statIds.insert(*statId);
 }
 

@@ -13,7 +13,7 @@ SteamAchievements::SteamAchievements(SteamSessionManager* sessionManager, const 
 :	m_sessionManager(sessionManager)
 ,	m_callbackAchievementStored(this, &SteamAchievements::OnAchievementStored)
 {
-	for (const wchar_t** achievementId = achievementIds; *achievementId; ++achievementId)
+	for (const wchar_t** achievementId = achievementIds; achievementId && *achievementId; ++achievementId)
 		m_achievementIds.insert(*achievementId);
 }
 

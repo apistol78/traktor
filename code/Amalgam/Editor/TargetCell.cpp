@@ -16,7 +16,7 @@ namespace traktor
 		namespace
 		{
 
-const int32_t c_performanceHeight = 36;
+const int32_t c_performanceHeight = 48;
 
 std::wstring formatPerformanceTime(float time)
 {
@@ -151,14 +151,24 @@ void TargetCell::paint(ui::custom::AutoWidget* widget, ui::Canvas& canvas, const
 		middleRect.left += 80;
 		canvas.drawText(middleRect, L"S: " + toString(int32_t(performance.steps)) + L", " + formatPerformanceTime(performance.interval) + L", " + toString(performance.collisions), ui::AnLeft, ui::AnCenter);
 
+		ui::Rect middleRect2 = performanceRect;
+		middleRect2.top = performanceRect.top + 24;
+		middleRect2.bottom = performanceRect.top + 36;
+
+		middleRect2.left += 26;
+		canvas.drawText(middleRect2, L"Draw: " + toString(int32_t(performance.drawCalls)), ui::AnLeft, ui::AnCenter);
+
+		middleRect2.left += 100;
+		canvas.drawText(middleRect2, L"Prim: " + toString(int32_t(performance.primitiveCount)), ui::AnLeft, ui::AnCenter);
+
 		ui::Rect bottomRect = performanceRect;
-		bottomRect.top = performanceRect.top + 24;
+		bottomRect.top = performanceRect.top + 36;
 
 		bottomRect.left += 26;
-		canvas.drawText(bottomRect, L"M: " + toString(uint32_t(performance.memInUse / 1024)) + L" KiB", ui::AnLeft, ui::AnCenter);
+		canvas.drawText(bottomRect, L"Mem: " + toString(uint32_t(performance.memInUse / 1024)) + L" KiB", ui::AnLeft, ui::AnCenter);
 
-		bottomRect.left += 80;
-		canvas.drawText(bottomRect, L"O: " + toString(uint32_t(performance.heapObjects)), ui::AnLeft, ui::AnCenter);
+		bottomRect.left += 100;
+		canvas.drawText(bottomRect, L"Obj: " + toString(uint32_t(performance.heapObjects)), ui::AnLeft, ui::AnCenter);
 
 		performanceRect = performanceRect.offset(0, performanceRect.getHeight());
 	}

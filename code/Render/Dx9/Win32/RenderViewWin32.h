@@ -97,22 +97,20 @@ protected:
 
 	Ref< RenderSystemWin32 > m_renderSystem;
 	ParameterCache* m_parameterCache;
-
 	ComRef< IDirect3DDevice9 > m_d3dDevice;
 	ComRef< IDirect3DSwapChain9 > m_d3dSwapChain;
 	ComRef< IDirect3DSurface9 > m_d3dBackBuffer;
 	ComRef< IDirect3DSurface9 > m_d3dDepthStencilSurface;
 	ComRef< IDirect3DQuery9 > m_d3dSyncQueries[1];
-
 	D3DVIEWPORT9 m_d3dViewport;
-
 	std::list< RenderState > m_renderStateStack;
 	Ref< VertexBufferDx9 > m_currentVertexBuffer;
 	Ref< IndexBufferDx9 > m_currentIndexBuffer;
 	Ref< ProgramWin32 > m_currentProgram;
-
 	uint32_t m_frameCount;
 	bool m_targetDirty;
+	uint32_t m_drawCalls;
+	uint32_t m_primitiveCount;
 
 	void bindTargets();
 };

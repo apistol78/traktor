@@ -34,7 +34,7 @@ bool LocalSessionManager::create(const LocalCreateDesc& desc)
 		if (m_db->executeUpdate(L"create table Achievements (id varchar(64) primary key, reward integer)") < 0)
 			return false;
 
-		for (const wchar_t** achievementId = desc.achievementIds; *achievementId; ++achievementId)
+		for (const wchar_t** achievementId = desc.achievementIds; achievementId && *achievementId; ++achievementId)
 		{
 			if (m_db->executeUpdate(L"insert into Achievements (id, reward) values ('" + std::wstring(*achievementId) + L"', 0)") < 0)
 				return false;
@@ -42,7 +42,7 @@ bool LocalSessionManager::create(const LocalCreateDesc& desc)
 	}
 	else
 	{
-		for (const wchar_t** achievementId = desc.achievementIds; *achievementId; ++achievementId)
+		for (const wchar_t** achievementId = desc.achievementIds; achievementId && *achievementId; ++achievementId)
 		{
 			Ref< sql::IResultSet > rs = m_db->executeQuery(L"select count(*) from Achievements where id='" + std::wstring(*achievementId) + L"'");
 			if (!rs || !rs->next() || rs->getInt32(0) <= 0)
@@ -58,7 +58,7 @@ bool LocalSessionManager::create(const LocalCreateDesc& desc)
 		if (m_db->executeUpdate(L"create table Leaderboards (id integer primary key, name varchar(64), score integer)") < 0)
 			return false;
 
-		for (const wchar_t** leaderboardId = desc.leaderboardIds; *leaderboardId; ++leaderboardId)
+		for (const wchar_t** leaderboardId = desc.leaderboardIds; leaderboardId && *leaderboardId; ++leaderboardId)
 		{
 			if (m_db->executeUpdate(L"insert into Leaderboards (name, score) values ('" + std::wstring(*leaderboardId) + L"', 0)") < 0)
 				return false;
@@ -66,7 +66,7 @@ bool LocalSessionManager::create(const LocalCreateDesc& desc)
 	}
 	else
 	{
-		for (const wchar_t** leaderboardId = desc.leaderboardIds; *leaderboardId; ++leaderboardId)
+		for (const wchar_t** leaderboardId = desc.leaderboardIds; leaderboardId && *leaderboardId; ++leaderboardId)
 		{
 			Ref< sql::IResultSet > rs = m_db->executeQuery(L"select count(*) from Leaderboards where name='" + std::wstring(*leaderboardId) + L"'");
 			if (!rs || !rs->next() || rs->getInt32(0) <= 0)
@@ -88,7 +88,7 @@ bool LocalSessionManager::create(const LocalCreateDesc& desc)
 		if (m_db->executeUpdate(L"create table Statistics (id varchar(64) primary key, value float)") < 0)
 			return false;
 
-		for (const wchar_t** statId = desc.statIds; *statId; ++statId)
+		for (const wchar_t** statId = desc.statIds; statId && *statId; ++statId)
 		{
 			if (m_db->executeUpdate(L"insert into Statistics (id, value) values ('" + std::wstring(*statId) + L"', 0)") < 0)
 				return false;
@@ -96,7 +96,7 @@ bool LocalSessionManager::create(const LocalCreateDesc& desc)
 	}
 	else
 	{
-		for (const wchar_t** statId = desc.statIds; *statId; ++statId)
+		for (const wchar_t** statId = desc.statIds; statId && *statId; ++statId)
 		{
 			Ref< sql::IResultSet > rs = m_db->executeQuery(L"select count(*) from Statistics where id='" + std::wstring(*statId) + L"'");
 			if (!rs || !rs->next() || rs->getInt32(0) <= 0)

@@ -129,13 +129,15 @@ bool SteamMatchMaking::getParticipants(uint64_t lobbyHandle, std::vector< uint64
 	if (!id.IsValid())
 		return false;
 
+	CSteamID myId = ::SteamUser()->GetSteamID();
 	int32_t memberCount = SteamMatchmaking()->GetNumLobbyMembers(id);
 
 	outUserHandles.reserve(memberCount);
 	for (int32_t i = 0; i < memberCount; ++i)
 	{
 		CSteamID memberId = SteamMatchmaking()->GetLobbyMemberByIndex(lobbyHandle, i);
-		outUserHandles.push_back(memberId.ConvertToUint64());
+		if (memberId != myId)
+			outUserHandles.push_back(memberId.ConvertToUint64());
 	}
 
 	return true;

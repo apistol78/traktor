@@ -51,6 +51,8 @@ RenderViewWin32::RenderViewWin32(
 ,	m_d3dDevice(d3dDevice)
 ,	m_frameCount(0)
 ,	m_targetDirty(false)
+,	m_drawCalls(0)
+,	m_primitiveCount(0)
 {
 	m_renderSystem->addRenderView(this);
 }
@@ -130,6 +132,8 @@ bool RenderViewWin32::begin(EyeType eye)
 
 	m_renderStateStack.push_back(rs);
 	m_targetDirty = true;
+	m_drawCalls = 0;
+	m_primitiveCount = 0;
 
 	return true;
 }
@@ -246,6 +250,9 @@ void RenderViewWin32::draw(const Primitives& primitives)
 			primitives.count
 		);
 	}
+
+	m_drawCalls++;
+	m_primitiveCount += primitives.count;
 }
 
 void RenderViewWin32::end()
@@ -299,6 +306,9 @@ void RenderViewWin32::popMarker()
 
 void RenderViewWin32::getStatistics(RenderViewStatistics& outStatistics) const
 {
+	outStatistics.drawCalls = m_drawCalls;
+	outStatistics.primitiveCount = m_primitiveCount;
+	outStatistics.duration = 0.0;
 }
 
 void RenderViewWin32::bindTargets()
