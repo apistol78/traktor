@@ -22,6 +22,35 @@ namespace traktor
 
 const int32_t c_tableKey_class = -1;
 
+class TableContainerLua : public Object
+{
+	T_RTTI_CLASS;
+
+public:
+	TableContainerLua(lua_State* luaState)
+	:	m_luaState(luaState)
+	{
+		m_tableRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
+		push();
+	}
+
+	virtual ~TableContainerLua()
+	{
+		luaL_unref(m_luaState, LUA_REGISTRYINDEX, m_tableRef);
+	}
+
+	void push()
+	{
+		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_tableRef);
+	}
+
+private:
+	lua_State* m_luaState;
+	int32_t m_tableRef;
+};
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.script.TableContainerLua", TableContainerLua, Object)
+
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptManagerLua", 0, ScriptManagerLua, IScriptManager)
@@ -260,6 +289,14 @@ void ScriptManagerLua::pushObject(Object* object)
 		return;
 	}
 
+	// If this is a wrapped LUA table then unwrap table and push as is.
+	if (&type_of(object) == &type_of< TableContainerLua >())
+	{
+		TableContainerLua* tableContainer = checked_type_cast< TableContainerLua*, false >(object);
+		tableContainer->push();
+		return;
+	}
+
 	// Have we already pushed this object before and it's still alive in script-land then reuse it.
 	lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_objectTableRef);
 	lua_rawgeti(m_luaState, -1, int32_t(object));
@@ -337,6 +374,7 @@ Any ScriptManagerLua::toAny(int32_t index)
 	}
 	if (lua_istable(m_luaState, index))
 	{
+		// Unbox wrapped native type.
 		lua_rawgeti(m_luaState, index, c_tableKey_class);
 		if (lua_isuserdata(m_luaState, -1))
 		{
@@ -346,6 +384,9 @@ Any ScriptManagerLua::toAny(int32_t index)
 				return Any(&scriptClass->getExportType());
 		}
 		lua_pop(m_luaState, 1);
+
+		// Box LUA table into C++ container.
+		return Any(new TableContainerLua(m_luaState));
 	}
 
 	return Any();

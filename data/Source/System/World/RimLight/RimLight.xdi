@@ -96,7 +96,7 @@
 				<first>299</first>
 				<second>325</second>
 			</position>
-			<value>1.2</value>
+			<value>1.5</value>
 		</item>
 		<item type="traktor.render.Scalar">
 			<comment/>
@@ -104,7 +104,7 @@
 				<first>299</first>
 				<second>357</second>
 			</position>
-			<value>0.2</value>
+			<value>0.3</value>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>

@@ -779,10 +779,8 @@ bool Application::update()
 		// Publish performance to target manager.
 		if (m_targetManagerConnection)
 		{
-#	if defined(_PS3)
 			render::RenderViewStatistics statistics;
 			m_renderServer->getRenderView()->getStatistics(statistics);
-#	endif
 
 			TargetPerformance performance;
 			performance.time = m_updateInfo.m_totalTime;
@@ -802,6 +800,8 @@ bool Application::update()
 #	else
 			performance.render = float(statistics.duration);
 #	endif
+			performance.drawCalls = statistics.drawCalls;
+			performance.primitiveCount = statistics.primitiveCount;
 			performance.memInUse = Alloc::allocated();
 			performance.heapObjects = Object::getHeapObjectCount();
 			m_targetManagerConnection->setPerformance(performance);

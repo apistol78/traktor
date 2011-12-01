@@ -108,7 +108,7 @@ SteamLeaderboards::SteamLeaderboards(SteamSessionManager* sessionManager, const 
 ,	m_uploadedScore(false)
 ,	m_uploadedScoreSucceeded(false)
 {
-	for (const wchar_t** leaderboardId = leaderboardIds; *leaderboardId; ++leaderboardId)
+	for (const wchar_t** leaderboardId = leaderboardIds; leaderboardId && *leaderboardId; ++leaderboardId)
 		m_leaderboardIds.insert(*leaderboardId);
 }
 
