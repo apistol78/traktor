@@ -10,6 +10,7 @@
 #include "Online/Impl/Statistics.h"
 #include "Online/Impl/TaskQueue.h"
 #include "Online/Impl/User.h"
+#include "Online/Impl/UserCache.h"
 #include "Online/Impl/Tasks/TaskUpdateSessionManager.h"
 #include "Online/Provider/ISessionManagerProvider.h"
 
@@ -66,6 +67,9 @@ bool SessionManager::create(ISessionManagerProvider* provider)
 	IStatisticsProvider* statisticsProvider = m_provider->getStatistics();
 	IUserProvider* userProvider = m_provider->getUser();
 
+	if (userProvider)
+		m_userCache = new UserCache(userProvider);
+
 	if (saveDataProvider)
 		m_saveData = new SaveData(saveDataProvider, m_taskQueues[1]);
 
@@ -75,8 +79,8 @@ bool SessionManager::create(ISessionManagerProvider* provider)
 	if (leaderboardsProvider)
 		m_leaderboards = new Leaderboards(leaderboardsProvider, m_taskQueues[0]);
 
-	if (matchMakingProvider && userProvider)
-		m_matchMaking = new MatchMaking(matchMakingProvider, userProvider, m_taskQueues[0]);
+	if (matchMakingProvider && m_userCache)
+		m_matchMaking = new MatchMaking(matchMakingProvider, m_userCache, m_taskQueues[0]);
 
 	if (statisticsProvider)
 		m_statistics = new Statistics(statisticsProvider, m_taskQueues[0]);
@@ -86,6 +90,7 @@ bool SessionManager::create(ISessionManagerProvider* provider)
 
 void SessionManager::destroy()
 {
+	m_userCache = 0;
 	m_statistics = 0;
 	m_saveData = 0;
 	m_matchMaking = 0;
@@ -135,15 +140,7 @@ uint32_t SessionManager::receiveP2PData(void* data, uint32_t size, Ref< IUser >&
 	if (!received)
 		return 0;
 
-	SmallMap< uint64_t, Ref< IUser > >::const_iterator i = m_p2pUsers.find(fromUserHandle);
-	if (i != m_p2pUsers.end())
-		outFromUser = i->second;
-	else
-	{
-		outFromUser = new User(m_provider->getUser(), fromUserHandle);
-		m_p2pUsers.insert(fromUserHandle, outFromUser);
-	}
-
+	outFromUser = m_userCache->get(fromUserHandle);
 	return received;
 }
 

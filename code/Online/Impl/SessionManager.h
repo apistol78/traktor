@@ -2,7 +2,6 @@
 #define traktor_online_SessionManager_H
 
 #include "Core/RefArray.h"
-#include "Core/Containers/SmallMap.h"
 #include "Online/ISessionManager.h"
 
 // import/export mechanism.
@@ -21,6 +20,7 @@ namespace traktor
 class ISessionManagerProvider;
 class IUser;
 class TaskQueue;
+class UserCache;
 
 class T_DLLCLASS SessionManager : public ISessionManager
 {
@@ -61,7 +61,7 @@ private:
 	Ref< IMatchMaking > m_matchMaking;
 	Ref< ISaveData > m_saveData;
 	Ref< IStatistics > m_statistics;
-	mutable SmallMap< uint64_t, Ref< IUser > > m_p2pUsers;
+	Ref< UserCache > m_userCache;
 };
 
 	}

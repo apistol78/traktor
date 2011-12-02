@@ -9,8 +9,8 @@ namespace traktor
 	{
 
 class IMatchMakingProvider;
-class IUserProvider;
 class UserArrayResult;
+class UserCache;
 
 class TaskGetParticipants : public ITask
 {
@@ -19,7 +19,7 @@ class TaskGetParticipants : public ITask
 public:
 	TaskGetParticipants(
 		IMatchMakingProvider* matchMakingProvider,
-		IUserProvider* userProvider,
+		UserCache* userCache,
 		uint64_t lobbyHandle,
 		UserArrayResult* result
 	);
@@ -28,7 +28,7 @@ public:
 
 private:
 	Ref< IMatchMakingProvider > m_matchMakingProvider;
-	Ref< IUserProvider > m_userProvider;
+	Ref< UserCache > m_userCache;
 	uint64_t m_lobbyHandle;
 	Ref< UserArrayResult > m_result;
 };

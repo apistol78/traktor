@@ -55,7 +55,7 @@ Ref< UserArrayResult > Lobby::getParticipants()
 	Ref< UserArrayResult > result = new UserArrayResult();
 	if (m_taskQueue->add(new TaskGetParticipants(
 		m_matchMakingProvider,
-		m_userProvider,
+		m_userCache,
 		m_handle,
 		result
 	)))
@@ -64,9 +64,9 @@ Ref< UserArrayResult > Lobby::getParticipants()
 		return 0;
 }
 
-Lobby::Lobby(IMatchMakingProvider* matchMakingProvider, IUserProvider* userProvider, TaskQueue* taskQueue, uint64_t handle)
+Lobby::Lobby(IMatchMakingProvider* matchMakingProvider, UserCache* userCache, TaskQueue* taskQueue, uint64_t handle)
 :	m_matchMakingProvider(matchMakingProvider)
-,	m_userProvider(userProvider)
+,	m_userCache(userCache)
 ,	m_taskQueue(taskQueue)
 ,	m_handle(handle)
 {

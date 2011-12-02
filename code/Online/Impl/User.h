@@ -20,8 +20,7 @@ public:
 	virtual bool sendP2PData(const void* data, size_t size);
 
 private:
-	friend class SessionManager;
-	friend class TaskGetParticipants;
+	friend class UserCache;
 
 	Ref< IUserProvider > m_userProvider;
 	uint64_t m_handle;
