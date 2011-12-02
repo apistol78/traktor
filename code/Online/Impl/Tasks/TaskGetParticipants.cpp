@@ -1,5 +1,6 @@
 #include "Online/UserArrayResult.h"
 #include "Online/Impl/User.h"
+#include "Online/Impl/UserCache.h"
 #include "Online/Impl/Tasks/TaskGetParticipants.h"
 #include "Online/Provider/IMatchMakingProvider.h"
 
@@ -12,12 +13,12 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.online.TaskGetParticipants", TaskGetParticipant
 
 TaskGetParticipants::TaskGetParticipants(
 	IMatchMakingProvider* matchMakingProvider,
-	IUserProvider* userProvider,
+	UserCache* userCache,
 	uint64_t lobbyHandle,
 	UserArrayResult* result
 )
 :	m_matchMakingProvider(matchMakingProvider)
-,	m_userProvider(userProvider)
+,	m_userCache(userCache)
 ,	m_lobbyHandle(lobbyHandle)
 ,	m_result(result)
 {
@@ -26,7 +27,7 @@ TaskGetParticipants::TaskGetParticipants(
 void TaskGetParticipants::execute(TaskQueue* taskQueue)
 {
 	T_ASSERT (m_matchMakingProvider);
-	T_ASSERT (m_userProvider);
+	T_ASSERT (m_userCache);
 	T_ASSERT (m_result);
 
 	std::vector< uint64_t > userHandles;
@@ -35,7 +36,7 @@ void TaskGetParticipants::execute(TaskQueue* taskQueue)
 		RefArray< IUser > users;
 		users.reserve(userHandles.size());
 		for (std::vector< uint64_t >::iterator i = userHandles.begin(); i != userHandles.end(); ++i)
-			users.push_back(new User(m_userProvider, *i));
+			users.push_back(m_userCache->get(*i));
 		m_result->succeed(users);
 	}
 	else

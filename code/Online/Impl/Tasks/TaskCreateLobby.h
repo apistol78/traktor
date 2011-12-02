@@ -9,8 +9,8 @@ namespace traktor
 	{
 
 class IMatchMakingProvider;
-class IUserProvider;
 class LobbyResult;
+class UserCache;
 
 class TaskCreateLobby : public ITask
 {
@@ -19,7 +19,7 @@ class TaskCreateLobby : public ITask
 public:
 	TaskCreateLobby(
 		IMatchMakingProvider* matchMakingProvider,
-		IUserProvider* userProvider,
+		UserCache* userCache,
 		uint32_t maxUsers,
 		LobbyResult* result
 	);
@@ -28,7 +28,7 @@ public:
 
 private:
 	Ref< IMatchMakingProvider > m_matchMakingProvider;
-	Ref< IUserProvider > m_userProvider;
+	Ref< UserCache > m_userCache;
 	uint32_t m_maxUsers;
 	Ref< LobbyResult > m_result;
 };

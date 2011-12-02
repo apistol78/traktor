@@ -139,15 +139,11 @@ const float c_simulationDeltaTime = 1.0f / c_simulationFrequency;
 #if defined(_PS3)
 const int32_t c_maxSimulationUpdates = 2;
 #else
-const int32_t c_maxSimulationUpdates = 4;
+const int32_t c_maxSimulationUpdates = 16;
 #endif
 const float c_maxDeltaTime = 1.0f / 10.0f;
 const float c_minDeltaTime = 0.0f;
-#if defined(__APPLE__)
-const float c_deltaTimeFilterCoeff = 0.1f;
-#else
-const float c_deltaTimeFilterCoeff = 0.9f;
-#endif
+const float c_deltaTimeFilterCoeff = 0.99f;
 
 		}
 

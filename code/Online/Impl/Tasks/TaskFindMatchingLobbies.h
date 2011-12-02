@@ -9,8 +9,8 @@ namespace traktor
 	{
 
 class IMatchMakingProvider;
-class IUserProvider;
 class LobbyArrayResult;
+class UserCache;
 
 class TaskFindMatchingLobbies : public ITask
 {
@@ -19,7 +19,7 @@ class TaskFindMatchingLobbies : public ITask
 public:
 	TaskFindMatchingLobbies(
 		IMatchMakingProvider* matchMakingProvider,
-		IUserProvider* userProvider,
+		UserCache* userCache,
 		const std::wstring& key,
 		const std::wstring& value,
 		LobbyArrayResult* result
@@ -29,7 +29,7 @@ public:
 
 private:
 	Ref< IMatchMakingProvider > m_matchMakingProvider;
-	Ref< IUserProvider > m_userProvider;
+	Ref< UserCache > m_userCache;
 	std::wstring m_key;
 	std::wstring m_value;
 	Ref< LobbyArrayResult > m_result;

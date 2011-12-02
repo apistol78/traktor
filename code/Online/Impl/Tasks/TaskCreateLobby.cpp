@@ -12,12 +12,12 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.online.TaskCreateLobby", TaskCreateLobby, ITask
 
 TaskCreateLobby::TaskCreateLobby(
 	IMatchMakingProvider* matchMakingProvider,
-	IUserProvider* userProvider,
+	UserCache* userCache,
 	uint32_t maxUsers,
 	LobbyResult* result
 )
 :	m_matchMakingProvider(matchMakingProvider)
-,	m_userProvider(userProvider)
+,	m_userCache(userCache)
 ,	m_maxUsers(maxUsers)
 ,	m_result(result)
 {
@@ -26,7 +26,7 @@ TaskCreateLobby::TaskCreateLobby(
 void TaskCreateLobby::execute(TaskQueue* taskQueue)
 {
 	T_ASSERT (m_matchMakingProvider);
-	T_ASSERT (m_userProvider);
+	T_ASSERT (m_userCache);
 	T_ASSERT (m_result);
 
 	uint64_t lobbyHandle;
@@ -34,7 +34,7 @@ void TaskCreateLobby::execute(TaskQueue* taskQueue)
 	{
 		m_result->succeed(new Lobby(
 			m_matchMakingProvider,
-			m_userProvider,
+			m_userCache,
 			taskQueue,
 			lobbyHandle
 		));
