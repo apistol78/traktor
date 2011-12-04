@@ -31,7 +31,11 @@ namespace traktor
 const Guid c_guidTerrainShaderVFetch(L"{480B7C64-5494-A74A-8485-F2CA15A900E6}");
 const Guid c_guidTerrainShaderStatic(L"{557537A0-F1E3-AF4C-ACB9-FD862FC3265C}");
 
+#if defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
+const uint32_t c_skipHeightTexture = 1;
+#else
 const uint32_t c_skipHeightTexture = 4;
+#endif
 const uint32_t c_skipNormalTexture = 2;
 const uint32_t c_skipMaterialMaskTexture = 1;
 const uint32_t c_skipHeightTextureEditor = 4;
@@ -502,7 +506,7 @@ bool TerrainEntity::createPatches()
 	std::vector< render::VertexElement > vertexElements;
 	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtHalf2, 0));
 
-	m_vertexBuffer = renderSystem->createVertexBuffer(
+	m_vertexBuffer = m_renderSystem->createVertexBuffer(
 		vertexElements,
 		patchVertexCount * sizeof(half_t) * 2,
 		false
@@ -692,7 +696,7 @@ bool TerrainEntity::createPatches()
 
 bool TerrainEntity::updateTextures(bool normals, bool heights, bool materials)
 {
-	const float c_scaleHeight = 100.0f;
+	const float c_scaleHeight = 40.0f;
 
 	if (normals)
 	{

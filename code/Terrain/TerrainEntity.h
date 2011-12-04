@@ -56,7 +56,7 @@ class WorldRenderView;
 class TerrainSurfaceCache;
 class TerrainSurface;
 
-//#define T_USE_TERRAIN_VERTEX_TEXTURE_FETCH
+#define T_USE_TERRAIN_VERTEX_TEXTURE_FETCH
 
 class T_DLLCLASS TerrainEntity : public world::Entity
 {
