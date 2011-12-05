@@ -20,7 +20,7 @@ public:
 		PixelConstantCount = 224,
 		VertexTextureCount = 8,
 		PixelTextureCount = 8,
-		MaxTextureCount = 8
+		MaxSamplerCount = 256+4
 	};
 
 	ParameterCache(IDirect3DDevice9* d3dDevice, float mipBias, DWORD maxAnisotropy);
@@ -60,7 +60,7 @@ private:
 	IDirect3DBaseTexture9* m_vertexTextureShadow[VertexTextureCount];
 	IDirect3DBaseTexture9* m_pixelTextureShadow[PixelTextureCount];
 	std::vector< uint32_t > m_renderStates;
-	std::vector< uint32_t > m_samplerStates[MaxTextureCount];
+	std::vector< uint32_t > m_samplerStates[MaxSamplerCount];
 	float m_mipBias;
 	int32_t m_maxAnisotropy;
 };
