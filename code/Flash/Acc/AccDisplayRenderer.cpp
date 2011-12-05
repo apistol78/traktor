@@ -40,7 +40,7 @@ const uint32_t c_cacheGlyphSize = 64;
 #else
 const uint32_t c_cacheGlyphSize = 128;
 #endif
-const uint32_t c_cacheGlyphMargin = 7;
+const uint32_t c_cacheGlyphMargin = 2;
 const uint32_t c_cacheGlyphCountX = 16;
 const uint32_t c_cacheGlyphCountY = 8;
 const uint32_t c_cacheGlyphCount = c_cacheGlyphCountX * c_cacheGlyphCountY;
@@ -583,12 +583,6 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 	else
 		bounds.max.x = bounds.min.x + gh;
 
-	float m = c_cacheGlyphMargin * (bounds.max.x - bounds.min.x) / c_cacheGlyphSize;
-	bounds.min.x -= m;
-	bounds.min.y -= m;
-	bounds.max.x += m;
-	bounds.max.y += m;
-
 	// Get cached glyph target.
 	std::map< uint64_t, int32_t >::iterator it2 = m_glyphCache.find(hash);
 	if (it2 != m_glyphCache.end())
@@ -616,13 +610,22 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 		renderBlockBegin->renderTargetIndex = 0;
 		m_renderContext->draw(render::RfOverlay, renderBlockBegin);
 
+		float cachePixelDx = 1.0f / c_cacheGlyphDimX;
+		float cachePixelDy = 1.0f / c_cacheGlyphDimY;
+
 		Vector4 frameSize(bounds.min.x, bounds.min.y, bounds.max.x, bounds.max.y);
 		Vector4 viewSize(0.0f, 0.0f, 0.0f, 0.0f);
 		Vector4 viewOffset(
-			float(column) / c_cacheGlyphCountX - 2.0f / c_cacheGlyphDimX,
-			float(row) / c_cacheGlyphCountY - 2.0f / c_cacheGlyphDimY,
-			1.0f / c_cacheGlyphCountX + 4.0f / c_cacheGlyphDimX,
-			1.0f / c_cacheGlyphCountY + 4.0f / c_cacheGlyphDimY
+			float(column) / c_cacheGlyphCountX,
+			float(row) / c_cacheGlyphCountY,
+			1.0f / c_cacheGlyphCountX,
+			1.0f / c_cacheGlyphCountY
+		);
+		Vector4 viewOffsetWithMargin = viewOffset + Vector4(
+			cachePixelDx * c_cacheGlyphMargin,
+			cachePixelDy * c_cacheGlyphMargin,
+			-cachePixelDx * c_cacheGlyphMargin * 2.0f,
+			-cachePixelDy * c_cacheGlyphMargin * 2.0f
 		);
 
 		// Clear previous glyph by drawing a solid quad at it's place.
@@ -646,7 +649,7 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 			Matrix33::identity(),
 			frameSize,
 			viewSize,
-			viewOffset,
+			viewOffsetWithMargin,
 			0.0f,
 			c_cxfIdentity,
 			false,
@@ -680,10 +683,10 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 		transform,
 		cxf,
 		Vector4(
-			float(column) / c_cacheGlyphCountX + cachePixelDx * 2.0f,
-			float(row) / c_cacheGlyphCountY + cachePixelDy * 2.0f,
-			1.0f / c_cacheGlyphCountX - cachePixelDx * 4.0f,
-			1.0f / c_cacheGlyphCountY - cachePixelDy * 4.0f
+			float(column) / c_cacheGlyphCountX,
+			float(row) / c_cacheGlyphCountY,
+			1.0f / c_cacheGlyphCountX,
+			1.0f / c_cacheGlyphCountY
 		)
 	);
 }
