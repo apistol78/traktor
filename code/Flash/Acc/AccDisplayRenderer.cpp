@@ -40,7 +40,7 @@ const uint32_t c_cacheGlyphSize = 64;
 #else
 const uint32_t c_cacheGlyphSize = 128;
 #endif
-const uint32_t c_cacheGlyphMargin = 2;
+const uint32_t c_cacheGlyphMargin = 4;
 const uint32_t c_cacheGlyphCountX = 16;
 const uint32_t c_cacheGlyphCountY = 8;
 const uint32_t c_cacheGlyphCount = c_cacheGlyphCountX * c_cacheGlyphCountY;
