@@ -70,24 +70,6 @@ struct PatchFrontToBackPredicate
 	}
 };
 
-struct TerrainRenderBlock : public render::SimpleRenderBlock
-{
-	render::RenderBlock* nested;
-
-	TerrainRenderBlock()
-	:	nested(0)
-	{
-	}
-
-	virtual void render(render::IRenderView* renderView, const render::ProgramParameters* globalParameters) const
-	{
-		if (nested)
-			nested->render(renderView, globalParameters);
-
-		render::SimpleRenderBlock::render(renderView, globalParameters);
-	}
-};
-
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.TerrainEntity", TerrainEntity, world::Entity)
@@ -176,8 +158,6 @@ void TerrainEntity::render(
 	world::IWorldRenderPass& worldRenderPass
 )
 {
-	Ref< render::ISimpleTexture > surface;
-
 	if (!m_heightfield.valid() || !m_materialMask.valid())
 	{
 		if (!m_heightfield.validate() || !m_materialMask.validate())
@@ -220,10 +200,12 @@ void TerrainEntity::render(
 
 	Matrix44 viewInv = worldRenderView.getView().inverseOrtho();
 
+	// Calculate world frustum.
 	Frustum worldCullFrustum = worldRenderView.getCullFrustum();
 	for (uint32_t i = 0; i < worldCullFrustum.planes.size(); ++i)
 		worldCullFrustum.planes[i] = viewInv * worldCullFrustum.planes[i];
 
+	// Cull patches to world frustum.
 	for (uint32_t pz = 0; pz < m_patchCount; ++pz)
 	{
 		Vector4 patchOrigin = patchTopLeft;
@@ -310,17 +292,17 @@ void TerrainEntity::render(
 	if (updateCache)
 		m_surfaceCache->begin();
 
-	// Render each visible patch.
-	for (AlignedVector< CullPatch >::const_iterator i = visiblePatches.begin(); i != visiblePatches.end(); ++i)
+	// Update all patch surfaces.
+	if (updateCache)
 	{
-		Patch& patch = m_patches[i->patchId];
-		const Vector4& patchOrigin = i->patchOrigin;
-
-		// Calculate which lods to use based one distance to patch center.
-		if (updateCache)
+		for (AlignedVector< CullPatch >::const_iterator i = visiblePatches.begin(); i != visiblePatches.end(); ++i)
 		{
-			float patchLodDistance = std::pow(clamp(/*i->distance / m_patchLodDistance*/ 1.0f - i->area / m_patchLodDistance + m_patchLodBias, 0.0f, 1.0f), m_patchLodExponent);
-			float surfaceLodDistance = std::pow(clamp(i->distance / m_surfaceLodDistance /*1.0f - i->area / m_surfaceLodDistance*/ + m_surfaceLodBias, 0.0f, 1.0f), m_surfaceLodExponent);
+			Patch& patch = m_patches[i->patchId];
+			const Vector4& patchOrigin = i->patchOrigin;
+
+			// Calculate which lods to use based one distance to patch center.
+			float patchLodDistance = std::pow(clamp(1.0f - i->area / m_patchLodDistance + m_patchLodBias, 0.0f, 1.0f), m_patchLodExponent);
+			float surfaceLodDistance = std::pow(clamp(i->distance / m_surfaceLodDistance + m_surfaceLodBias, 0.0f, 1.0f), m_surfaceLodExponent);
 
 			float patchLodF = patchLodDistance * c_patchLodSteps;
 			float surfaceLodF = surfaceLodDistance * c_surfaceLodSteps;
@@ -342,13 +324,9 @@ void TerrainEntity::render(
 
 			patch.lastPatchLod = patchLod;
 			patch.lastSurfaceLod = surfaceLod;
-		}
 
-		TerrainRenderBlock* renderBlock = renderContext->alloc< TerrainRenderBlock >("Terrain patch");
-
-		// Update surface cache.
-		if (updateCache)
-		{
+			// Update surface cache.
+			render::RenderBlock* renderBlock = 0;
 			m_surfaceCache->get(
 				renderContext,
 				m_surface,
@@ -361,25 +339,36 @@ void TerrainEntity::render(
 				patch.lastSurfaceLod,
 				i->patchId,
 				// Out
-				renderBlock->nested,
-				surface
+				renderBlock,
+				patch.surface
 			);
+
+			// Queue render block.
+			if (renderBlock)
+				renderContext->draw(render::RfOpaque, renderBlock);
 		}
+	}
+
+#if defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
+
+	// Render each visible patch.
+	for (AlignedVector< CullPatch >::const_iterator i = visiblePatches.begin(); i != visiblePatches.end(); ++i)
+	{
+		Patch& patch = m_patches[i->patchId];
+		const Vector4& patchOrigin = i->patchOrigin;
+
+		render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >("Terrain patch");
 
 		renderBlock->distance = i->distance;
 		renderBlock->program = program;
 		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 		renderBlock->indexBuffer = m_indexBuffer;
-#if !defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
-		renderBlock->vertexBuffer = patch.vertexBuffer;
-#else
 		renderBlock->vertexBuffer = m_vertexBuffer;
-#endif
 		renderBlock->primitives = &m_primitives[patch.lastPatchLod];
 
 		renderBlock->programParams->beginParameters(renderContext);
 		worldRenderPass.setProgramParameters(renderBlock->programParams);
-		renderBlock->programParams->setTextureParameter(m_handleSurface, surface);
+		renderBlock->programParams->setTextureParameter(m_handleSurface, patch.surface);
 		renderBlock->programParams->setTextureParameter(m_handleHeightfield, m_heightTexture);
 		renderBlock->programParams->setFloatParameter(m_handleHeightfieldSize, float(m_heightTexture->getWidth()));
 		renderBlock->programParams->setTextureParameter(m_handleNormals, m_normalTexture);
@@ -398,6 +387,47 @@ void TerrainEntity::render(
 
 		renderContext->draw(render::RfOpaque, renderBlock);
 	}
+
+#else
+
+	// Render each visible patch.
+	for (AlignedVector< CullPatch >::const_iterator i = visiblePatches.begin(); i != visiblePatches.end(); ++i)
+	{
+		Patch& patch = m_patches[i->patchId];
+		const Vector4& patchOrigin = i->patchOrigin;
+
+		render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >("Terrain patch");
+
+		renderBlock->distance = i->distance;
+		renderBlock->program = program;
+		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
+		renderBlock->indexBuffer = m_indexBuffer;
+		renderBlock->vertexBuffer = patch.vertexBuffer;
+		renderBlock->primitives = &m_primitives[patch.lastPatchLod];
+
+		renderBlock->programParams->beginParameters(renderContext);
+		worldRenderPass.setProgramParameters(renderBlock->programParams);
+		renderBlock->programParams->setTextureParameter(m_handleSurface, patch.surface);
+		renderBlock->programParams->setTextureParameter(m_handleHeightfield, m_heightTexture);
+		renderBlock->programParams->setFloatParameter(m_handleHeightfieldSize, float(m_heightTexture->getWidth()));
+		renderBlock->programParams->setTextureParameter(m_handleNormals, m_normalTexture);
+		renderBlock->programParams->setFloatParameter(m_handleNormalsSize, float(m_normalTexture->getWidth()));
+		renderBlock->programParams->setVectorParameter(m_handleWorldOrigin, -worldExtent * Scalar(0.5f));
+		renderBlock->programParams->setVectorParameter(m_handleWorldExtent, worldExtent);
+		renderBlock->programParams->setVectorParameter(m_handlePatchOrigin, patchOrigin);
+		renderBlock->programParams->setVectorParameter(m_handlePatchExtent, patchExtent);
+
+		if (m_visualizeMode == TerrainEntityData::VmSurfaceLod)
+			renderBlock->programParams->setVectorParameter(m_handlePatchLodColor, c_lodColor[patch.lastSurfaceLod]);
+		else if (m_visualizeMode == TerrainEntityData::VmPatchLod)
+			renderBlock->programParams->setVectorParameter(m_handlePatchLodColor, c_lodColor[patch.lastPatchLod]);
+
+		renderBlock->programParams->endParameters(renderContext);
+
+		renderContext->draw(render::RfOpaque, renderBlock);
+	}
+
+#endif
 }
 
 void TerrainEntity::update(const world::EntityUpdate* update)
@@ -696,7 +726,7 @@ bool TerrainEntity::createPatches()
 
 bool TerrainEntity::updateTextures(bool normals, bool heights, bool materials)
 {
-	const float c_scaleHeight = 40.0f;
+	const float c_scaleHeight = 20.0f;
 
 	if (normals)
 	{

@@ -72,6 +72,7 @@ public:
 #endif
 		int32_t lastPatchLod;
 		int32_t lastSurfaceLod;
+		Ref< render::ISimpleTexture > surface;
 	};
 
 	TerrainEntity(render::IRenderSystem* renderSystem, bool editorMode);

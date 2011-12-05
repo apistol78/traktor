@@ -318,11 +318,10 @@ void RenderViewWin32::bindTargets()
 	HRESULT hr;
 
 	// Ensure RT texture isn't bound to any sampler.
-	for (int32_t i = 0; i < ParameterCache::MaxTextureCount; ++i)
-	{
+	for (int32_t i = 0; i < ParameterCache::VertexTextureCount; ++i)
 		m_parameterCache->setVertexTexture(i, 0);
+	for (int32_t i = 0; i < ParameterCache::PixelTextureCount; ++i)
 		m_parameterCache->setPixelTexture(i, 0);
-	}
 
 	const RenderState& rs = m_renderStateStack.back();
 

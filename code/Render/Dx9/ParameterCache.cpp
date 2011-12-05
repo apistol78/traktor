@@ -209,7 +209,7 @@ HRESULT ParameterCache::resetDevice(IDirect3DDevice9* d3dDevice)
 	m_d3dDevice->SetVertexShaderConstantF(0, m_vertexConstantsShadow.ptr(), VertexConstantCount);
 	m_d3dDevice->SetPixelShaderConstantF(0, m_pixelConstantsShadow.ptr(), PixelConstantCount);
 
-	for (int i = 0; i < MaxTextureCount; ++i)
+	for (int i = 0; i < MaxSamplerCount; ++i)
 	{
 		m_d3dDevice->SetSamplerState(i, D3DSAMP_MIPMAPLODBIAS, *(DWORD*)&m_mipBias);
 		m_d3dDevice->SetSamplerState(i, D3DSAMP_MAXANISOTROPY, m_maxAnisotropy);
