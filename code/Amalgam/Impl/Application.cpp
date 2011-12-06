@@ -141,7 +141,7 @@ const int32_t c_maxSimulationUpdates = 2;
 #else
 const int32_t c_maxSimulationUpdates = 16;
 #endif
-const float c_maxDeltaTime = 1.0f / 10.0f;
+const float c_maxDeltaTime = 0.5f;
 const float c_minDeltaTime = 0.0f;
 const float c_deltaTimeFilterCoeff = 0.99f;
 
@@ -570,7 +570,7 @@ bool Application::update()
 			m_updateInfo.m_simulationDeltaTime = c_simulationDeltaTime;
 			m_updateInfo.m_simulationFrequency = c_simulationFrequency;
 
-			float simulationEndTime = m_updateInfo.m_stateTime;
+			float simulationEndTime = m_updateInfo.m_stateTime + m_updateInfo.m_frameDeltaTime;
 			updateCount = std::min(int32_t(std::ceil((simulationEndTime - m_updateInfo.m_simulationTime) / c_simulationDeltaTime)), c_maxSimulationUpdates);
 
 			// Execute fixed update(s).
