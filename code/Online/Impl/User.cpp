@@ -13,9 +13,9 @@ bool User::getName(std::wstring& outName) const
 	return m_userProvider->getName(m_handle, outName);
 }
 
-bool User::sendP2PData(const void* data, size_t size)
+bool User::sendP2PData(const void* data, size_t size, bool reliable)
 {
-	return m_userProvider->sendP2PData(m_handle, data, size);
+	return m_userProvider->sendP2PData(m_handle, data, size, reliable);
 }
 
 User::User(IUserProvider* userProvider, uint64_t handle)

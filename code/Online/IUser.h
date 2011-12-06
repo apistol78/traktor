@@ -23,7 +23,7 @@ class T_DLLCLASS IUser : public Object
 public:
 	virtual bool getName(std::wstring& outName) const = 0;
 
-	virtual bool sendP2PData(const void* data, size_t size) = 0;
+	virtual bool sendP2PData(const void* data, size_t size, bool reliable) = 0;
 };
 
 	}

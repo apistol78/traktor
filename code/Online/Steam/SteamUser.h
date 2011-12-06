@@ -16,7 +16,7 @@ class SteamUser : public IUserProvider
 public:
 	virtual bool getName(uint64_t userHandle, std::wstring& outName);
 
-	virtual bool sendP2PData(uint64_t userHandle, const void* data, size_t size);
+	virtual bool sendP2PData(uint64_t userHandle, const void* data, size_t size, bool reliable);
 };
 
 	}

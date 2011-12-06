@@ -22,13 +22,13 @@ bool SteamUser::getName(uint64_t userHandle, std::wstring& outName)
 	return true;
 }
 
-bool SteamUser::sendP2PData(uint64_t userHandle, const void* data, size_t size)
+bool SteamUser::sendP2PData(uint64_t userHandle, const void* data, size_t size, bool reliable)
 {
 	CSteamID id(userHandle);
 	if (!id.IsValid())
 		return false;
 
-	return SteamNetworking()->SendP2PPacket(id, data, uint32(size), k_EP2PSendUnreliable);
+	return SteamNetworking()->SendP2PPacket(id, data, uint32(size), reliable ? k_EP2PSendReliable : k_EP2PSendUnreliableNoDelay);
 }
 
 	}

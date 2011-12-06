@@ -17,7 +17,7 @@ class User : public IUser
 public:
 	virtual bool getName(std::wstring& outName) const;
 
-	virtual bool sendP2PData(const void* data, size_t size);
+	virtual bool sendP2PData(const void* data, size_t size, bool reliable);
 
 private:
 	friend class UserCache;
