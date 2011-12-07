@@ -45,9 +45,9 @@ Ref< Result > Lobby::join()
 		return 0;
 }
 
-Ref< Result > Lobby::leave()
+bool Lobby::leave()
 {
-	return 0;
+	return m_matchMakingProvider->leaveLobby(m_handle);
 }
 
 Ref< UserArrayResult > Lobby::getParticipants()

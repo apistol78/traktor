@@ -27,7 +27,7 @@ public:
 
 	virtual Ref< Result > join() = 0;
 
-	virtual Ref< Result > leave() = 0;
+	virtual bool leave() = 0;
 
 	virtual Ref< UserArrayResult > getParticipants() = 0;
 };

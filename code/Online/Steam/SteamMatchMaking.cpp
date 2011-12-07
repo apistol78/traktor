@@ -96,6 +96,16 @@ bool SteamMatchMaking::joinLobby(uint64_t lobbyHandle)
 	return result;
 }
 
+bool SteamMatchMaking::leaveLobby(uint64_t lobbyHandle)
+{
+	CSteamID id(lobbyHandle);
+	if (!id.IsValid())
+		return false;
+
+	SteamMatchmaking()->LeaveLobby(lobbyHandle);
+	return true;
+}
+
 bool SteamMatchMaking::setMetaValue(uint64_t lobbyHandle, const std::wstring& key, const std::wstring& value)
 {
 	CSteamID id(lobbyHandle);

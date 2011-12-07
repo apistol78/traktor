@@ -23,7 +23,7 @@ public:
 
 	virtual Ref< Result > join();
 
-	virtual Ref< Result > leave();
+	virtual bool leave();
 
 	virtual Ref< UserArrayResult > getParticipants();
 
