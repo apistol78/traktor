@@ -28,6 +28,8 @@ public:
 
 	virtual bool joinLobby(uint64_t lobbyHandle) = 0;
 
+	virtual bool leaveLobby(uint64_t lobbyHandle) = 0;
+
 	virtual bool setMetaValue(uint64_t lobbyHandle, const std::wstring& key, const std::wstring& value) = 0;
 
 	virtual bool getMetaValue(uint64_t lobbyHandle, const std::wstring& key, std::wstring& outValue) = 0;
