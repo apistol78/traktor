@@ -38,6 +38,10 @@ public:
 
 	bool parseHtml(const std::wstring& html);
 
+	const SwfColor& getTextColor() const;
+
+	void setTextColor(const SwfColor& textColor);
+
 	text_t getText() const;
 
 	std::wstring getConcatedText() const;
@@ -49,6 +53,7 @@ public:
 private:
 	mutable Semaphore m_lock;
 	Ref< const FlashEdit > m_edit;
+	SwfColor m_textColor;
 	text_t m_text;
 };
 

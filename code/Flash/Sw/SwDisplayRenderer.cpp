@@ -108,9 +108,9 @@ void SwDisplayRenderer::preload(const FlashMovie& movie)
 void SwDisplayRenderer::begin(
 	const FlashMovie& movie,
 	const SwfColor& backgroundColor,
-	SwfScaleModeType scaleMode,
-	SwfAlignType alignH,
-	SwfAlignType alignV
+	float viewWidth,
+	float viewHeight,
+	const Vector4& viewOffset
 )
 {
 	uint32_t color = castColor(backgroundColor);

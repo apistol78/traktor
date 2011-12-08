@@ -96,7 +96,7 @@ private:
 
 	bool MovieClip_hitTest_1(const FlashSpriteInstance* self, const FlashCharacterInstance* shape) const;
 
-	bool MovieClip_hitTest_3(const FlashSpriteInstance* self, avm_number_t x, avm_number_t y) const;
+	bool MovieClip_hitTest_2(const FlashSpriteInstance* self, avm_number_t x, avm_number_t y) const;
 
 	void MovieClip_lineGradientStyle(FlashSpriteInstance* self) const;
 

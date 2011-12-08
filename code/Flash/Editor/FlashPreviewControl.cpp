@@ -47,7 +47,6 @@ const struct
 c_askeys[] =
 {
 	{ ui::VkBackSpace, AsKey::AkBackspace },
-	//{ ui::VkNull, AsKey::AkCapsLock },
 	{ ui::VkControl, AsKey::AkControl },
 	{ ui::VkDelete, AsKey::AkDeleteKey },
 	{ ui::VkDown, AsKey::AkDown },
@@ -112,9 +111,6 @@ bool FlashPreviewControl::create(ui::Widget* parent, int style, resource::IResou
 	m_displayRenderer->create(
 		resourceManager,
 		renderSystem,
-		float(viewport.width),
-		float(viewport.height),
-		float(viewport.width) / viewport.height,
 		1,
 		true,
 		0.0f
@@ -186,8 +182,10 @@ void FlashPreviewControl::setMovie(FlashMovie* movie)
 	if (m_moviePlayer)
 		m_moviePlayer->destroy();
 
+	ui::Size sz = getInnerRect().getSize();
+
 	m_moviePlayer = new FlashMoviePlayer(m_displayRenderer);
-	m_moviePlayer->create(movie);
+	m_moviePlayer->create(movie, sz.cx, sz.cy);
 
 	m_playing = true;
 }
@@ -256,11 +254,6 @@ void FlashPreviewControl::eventSize(ui::Event* event)
 		m_renderView->reset(sz.cx, sz.cy);
 		m_renderView->setViewport(render::Viewport(0, 0, sz.cx, sz.cy, 0, 1));
 	}
-	if (m_displayRenderer)
-	{
-		m_displayRenderer->setViewSize(float(sz.cx), float(sz.cy));
-		m_displayRenderer->setAspectRatio(float(sz.cx) / float(sz.cy));
-	}
 #else
 	if (!m_graphicsSystem)
 		return;
@@ -272,7 +265,7 @@ void FlashPreviewControl::eventSize(ui::Event* event)
 #endif
 
 	if (m_moviePlayer)
-		m_moviePlayer->postStageResize(sz.cx, sz.cy);
+		m_moviePlayer->postViewResize(sz.cx, sz.cy);
 }
 
 void FlashPreviewControl::eventPaint(ui::Event* event)
@@ -379,7 +372,7 @@ void FlashPreviewControl::eventButtonDown(ui::Event* event)
 	ui::MouseEvent* mouseEvent = checked_type_cast< ui::MouseEvent* >(event);
 	if (m_moviePlayer)
 	{
-		ui::Point mousePosition = getTwips(mouseEvent->getPosition());
+		ui::Point mousePosition = mouseEvent->getPosition();
 		m_moviePlayer->postMouseDown(mousePosition.x, mousePosition.y, mouseEvent->getButton());
 	}
 	setCapture();
@@ -391,7 +384,7 @@ void FlashPreviewControl::eventButtonUp(ui::Event* event)
 	ui::MouseEvent* mouseEvent = checked_type_cast< ui::MouseEvent* >(event);
 	if (m_moviePlayer)
 	{
-		ui::Point mousePosition = getTwips(mouseEvent->getPosition());
+		ui::Point mousePosition = mouseEvent->getPosition();
 		m_moviePlayer->postMouseUp(mousePosition.x, mousePosition.y, mouseEvent->getButton());
 	}
 	releaseCapture();
@@ -402,7 +395,7 @@ void FlashPreviewControl::eventMouseMove(ui::Event* event)
 	ui::MouseEvent* mouseEvent = checked_type_cast< ui::MouseEvent* >(event);
 	if (m_moviePlayer)
 	{
-		ui::Point mousePosition = getTwips(mouseEvent->getPosition());
+		ui::Point mousePosition = mouseEvent->getPosition();
 		m_moviePlayer->postMouseMove(mousePosition.x, mousePosition.y, mouseEvent->getButton());
 	}
 }

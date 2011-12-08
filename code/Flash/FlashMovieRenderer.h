@@ -40,9 +40,9 @@ public:
 	void renderFrame(
 		FlashMovie* movie,
 		FlashSpriteInstance* movieInstance,
-		SwfScaleModeType scaleMode,
-		SwfAlignType alignH,
-		SwfAlignType alignV
+		float viewWidth,
+		float viewHeight,
+		const Vector4& viewOffset
 	);
 
 private:

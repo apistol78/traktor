@@ -49,7 +49,7 @@ FlashMoviePlayer::~FlashMoviePlayer()
 	T_EXCEPTION_GUARD_END
 }
 
-bool FlashMoviePlayer::create(FlashMovie* movie)
+bool FlashMoviePlayer::create(FlashMovie* movie, int32_t width, int32_t height)
 {
 	ActionValue memberValue;
 
@@ -71,7 +71,11 @@ bool FlashMoviePlayer::create(FlashMovie* movie)
 		m_mouse = memberValue.getObject< AsMouse >();
 	if (global->getMember("Stage", memberValue))
 		m_stage = memberValue.getObject< AsStage >();
-		
+	
+	// Ensure stage are properly initialized.
+	if (m_stage)
+		m_stage->eventResize(width, height);
+
 	// Preload resources into display renderer.
 	m_displayRenderer->preload(*m_movie);
 	return true;
@@ -145,9 +149,9 @@ void FlashMoviePlayer::renderFrame()
 	m_movieRenderer->renderFrame(
 		m_movie,
 		m_movieInstance,
-		m_stage->getScaleMode(),
-		m_stage->getAlignH(),
-		m_stage->getAlignV()
+		m_stage->getViewWidth(),
+		m_stage->getViewHeight(),
+		m_stage->getViewOffset()
 	);
 }
 
@@ -211,9 +215,9 @@ void FlashMoviePlayer::executeFrame()
 				m_mouse->eventMouseMove(evt.mouse.x, evt.mouse.y, evt.mouse.button);
 			break;
 
-		case EvtStageResize:
+		case EvtViewResize:
 			if (m_stage)
-				m_stage->eventResize(evt.stage.width, evt.stage.height);
+				m_stage->eventResize(evt.view.width, evt.view.height);
 			break;
 		}
 		m_events.pop_front();
@@ -276,40 +280,46 @@ void FlashMoviePlayer::postKeyUp(int32_t keyCode)
 
 void FlashMoviePlayer::postMouseDown(int32_t x, int32_t y, int32_t button)
 {
+	Vector2 xy = m_stage->toStage(Vector2(x, y));
+
 	Event evt;
 	evt.eventType = EvtMouseDown;
-	evt.mouse.x = x;
-	evt.mouse.y = y;
+	evt.mouse.x = xy.x;
+	evt.mouse.y = xy.y;
 	evt.mouse.button = button;
 	m_events.push_back(evt);
 }
 
 void FlashMoviePlayer::postMouseUp(int32_t x, int32_t y, int32_t button)
 {
+	Vector2 xy = m_stage->toStage(Vector2(x, y));
+
 	Event evt;
 	evt.eventType = EvtMouseUp;
-	evt.mouse.x = x;
-	evt.mouse.y = y;
+	evt.mouse.x = xy.x;
+	evt.mouse.y = xy.y;
 	evt.mouse.button = button;
 	m_events.push_back(evt);
 }
 
 void FlashMoviePlayer::postMouseMove(int32_t x, int32_t y, int32_t button)
 {
+	Vector2 xy = m_stage->toStage(Vector2(x, y));
+
 	Event evt;
 	evt.eventType = EvtMouseMove;
-	evt.mouse.x = x;
-	evt.mouse.y = y;
+	evt.mouse.x = xy.x;
+	evt.mouse.y = xy.y;
 	evt.mouse.button = button;
 	m_events.push_back(evt);
 }
 
-void FlashMoviePlayer::postStageResize(int32_t width, int32_t height)
+void FlashMoviePlayer::postViewResize(int32_t width, int32_t height)
 {
 	Event evt;
-	evt.eventType = EvtStageResize;
-	evt.stage.width = width;
-	evt.stage.height = height;
+	evt.eventType = EvtViewResize;
+	evt.view.width = width;
+	evt.view.height = height;
 	m_events.push_back(evt);
 }
 

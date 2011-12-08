@@ -754,17 +754,21 @@ void AsTextField::TextField_set_text(FlashEditInstance* editInstance, const std:
 
 avm_number_t AsTextField::TextField_get_textColor(FlashEditInstance* editInstance) const
 {
-	T_IF_VERBOSE(
-		log::warning << L"TextField::get_textColor not implemented" << Endl;
-	)
-	return 0;
+	const SwfColor& textColor = editInstance->getTextColor();
+	return avm_number_t((textColor.red << 16) | (textColor.green << 8) | (textColor.blue));
 }
 
 void AsTextField::TextField_set_textColor(FlashEditInstance* editInstance, avm_number_t textColor) const
 {
-	T_IF_VERBOSE(
-		log::warning << L"TextField::set_textColor not implemented" << Endl;
-	)
+	uint32_t n = uint32_t(textColor);
+	SwfColor tc =
+	{
+		(n >> 16) & 255,
+		(n >> 8) & 255,
+		(n) & 255,
+		255
+	};
+	editInstance->setTextColor(tc);
 }
 
 avm_number_t AsTextField::TextField_get_textWidth(FlashEditInstance* editInstance) const
