@@ -33,6 +33,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashEditInstance", FlashEditInstance, Fl
 FlashEditInstance::FlashEditInstance(ActionContext* context, FlashCharacterInstance* parent, const FlashEdit* edit, const std::wstring& html)
 :	FlashCharacterInstance(context, "TextField", parent)
 ,	m_edit(edit)
+,	m_textColor(edit->getTextColor())
 {
 	if (m_edit->renderHtml())
 		parseHtml(html);
@@ -74,6 +75,16 @@ bool FlashEditInstance::parseHtml(const std::wstring& html)
 	}
 
 	return true;
+}
+
+const SwfColor& FlashEditInstance::getTextColor() const
+{
+	return m_textColor;
+}
+
+void FlashEditInstance::setTextColor(const SwfColor& textColor)
+{
+	m_textColor = textColor;
 }
 
 FlashEditInstance::text_t FlashEditInstance::getText() const

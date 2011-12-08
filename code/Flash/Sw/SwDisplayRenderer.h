@@ -35,9 +35,9 @@ public:
 	virtual void begin(
 		const FlashMovie& movie,
 		const SwfColor& backgroundColor,
-		SwfScaleModeType scaleMode,
-		SwfAlignType alignH,
-		SwfAlignType alignV
+		float viewWidth,
+		float viewHeight,
+		const Vector4& viewOffset
 	);
 
 	virtual void beginMask(bool increment);

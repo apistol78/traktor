@@ -42,16 +42,16 @@ public:
 	 *
 	 * \param movie Flash movie.
 	 * \param backgroundColor Frame background color.
-	 * \param scaleMode Scale mode.
-	 * \param alignH Horizontal alignment.
-	 * \param alignV Vertical alignment.
+	 * \param viewWidth View width in pixels.
+	 * \param viewHeight View height in pixels.
+	 * \param viewOffset View transformation; determined by stage alignment etc.
 	 */
 	virtual void begin(
 		const FlashMovie& movie,
 		const SwfColor& backgroundColor,
-		SwfScaleModeType scaleMode,
-		SwfAlignType alignH,
-		SwfAlignType alignV
+		float viewWidth,
+		float viewHeight,
+		const Vector4& viewOffset
 	) = 0;
 
 	/*! \brief Begin rendering mask.

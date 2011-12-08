@@ -111,8 +111,7 @@ AsMovieClip::AsMovieClip(ActionContext* context)
 			context,
 			0,
 			createNativeFunction(context, this, &AsMovieClip::MovieClip_hitTest_1),
-			0,
-			createNativeFunction(context, this, &AsMovieClip::MovieClip_hitTest_3)
+			createNativeFunction(context, this, &AsMovieClip::MovieClip_hitTest_2)
 		)
 	));
 	prototype->setMember("lineGradientStyle", ActionValue(createNativeFunction(context, this, &AsMovieClip::MovieClip_lineGradientStyle)));
@@ -594,10 +593,15 @@ bool AsMovieClip::MovieClip_hitTest_1(const FlashSpriteInstance* self, const Fla
 		(bounds.max.y > shapeBounds.min.y);
 }
 
-bool AsMovieClip::MovieClip_hitTest_3(const FlashSpriteInstance* self, avm_number_t x, avm_number_t y) const
+bool AsMovieClip::MovieClip_hitTest_2(const FlashSpriteInstance* self, avm_number_t x, avm_number_t y) const
 {
-	SwfRect bounds = self->getBounds();
-	return (x >= bounds.min.x && y >= bounds.min.y && x <= bounds.max.x && y <= bounds.max.y);
+	// Transform coordinates into local space.
+	Matrix33 Tinv = self->getFullTransform().inverse();
+	Vector2 L = Tinv * Vector2(x, y);
+
+	// Check if inside bounding box.
+	SwfRect bounds = self->getLocalBounds();
+	return (L.x >= bounds.min.x && L.y >= bounds.min.y && L.x <= bounds.max.x && L.y <= bounds.max.y);
 }
 
 void AsMovieClip::MovieClip_lineGradientStyle(FlashSpriteInstance* self) const

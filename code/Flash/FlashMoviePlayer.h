@@ -50,9 +50,11 @@ public:
 	/*! \brief Create movie player.
 	 *
 	 * \param movie Root movie.
+	 * \param width Output render width (in pixels).
+	 * \param height Output render height (in pixels).
 	 * \return True if created successfully.
 	 */
-	bool create(FlashMovie* movie);
+	bool create(FlashMovie* movie, int32_t width, int32_t height);
 
 	/*! \brief Destroy resources used by movie player. */
 	void destroy();
@@ -138,12 +140,12 @@ public:
 	 */
 	void postMouseMove(int32_t x, int32_t y, int32_t button);
 
-	/*! \brief Post stage resize event.
+	/*! \brief Post view resize event.
 	 *
-	 * \param width New stage width.
-	 * \param height New stage height.
+	 * \param width New view width (in pixels).
+	 * \param height New view height (in pixels).
 	 */
-	void postStageResize(int32_t width, int32_t height);
+	void postViewResize(int32_t width, int32_t height);
 
 	/*! \brief Pop FS command from queue.
 	 *
@@ -198,7 +200,7 @@ private:
 				int32_t width;
 				int32_t height;
 			}
-			stage;
+			view;
 		};
 	};
 

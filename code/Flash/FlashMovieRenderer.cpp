@@ -53,18 +53,18 @@ FlashMovieRenderer::FlashMovieRenderer(IDisplayRenderer* displayRenderer)
 void FlashMovieRenderer::renderFrame(
 	FlashMovie* movie,
 	FlashSpriteInstance* movieInstance,
-	SwfScaleModeType scaleMode,
-	SwfAlignType alignH,
-	SwfAlignType alignV
+	float viewWidth,
+	float viewHeight,
+	const Vector4& viewOffset
 )
 {
 	const SwfColor& backgroundColor = movieInstance->getDisplayList().getBackgroundColor();
 	m_displayRenderer->begin(
 		*movie,
 		backgroundColor,
-		scaleMode,
-		alignH,
-		alignV
+		viewWidth,
+		viewHeight,
+		viewOffset
 	);
 
 	renderSprite(
@@ -257,9 +257,9 @@ void FlashMovieRenderer::renderCharacter(
 		float fontHeight = edit->getFontHeight();
 
 		const SwfRect& bounds = edit->getTextBounds();
-		const SwfColor& color = edit->getTextColor();
 		bool wordWrap = edit->wordWrap();
 
+		const SwfColor& color = editInstance->getTextColor();
 		FlashEditInstance::text_t text = editInstance->getText();
 
 		const float c_magicX = 32.0f * 20.0f;

@@ -1,4 +1,5 @@
 #include "Core/Log/Log.h"
+#include "Core/Math/Const.h"
 #include "Core/Misc/String.h"
 #include "Flash/FlashMovie.h"
 #include "Flash/FlashSpriteInstance.h"
@@ -17,9 +18,12 @@ AsStage::AsStage(ActionContext* context)
 :	ActionObject(context)
 ,	m_width(0)
 ,	m_height(0)
+,	m_viewWidth(0)
+,	m_viewHeight(0)
 ,	m_alignH(SaCenter)
 ,	m_alignV(SaCenter)
 ,	m_scaleMode(SmShowAll)
+,	m_viewOffset(0.0f, 0.0f, 0.0f, 0.0f)
 {
 	addProperty("align", createNativeFunction(context, this, &AsStage::Stage_get_align), createNativeFunction(context, this, &AsStage::Stage_set_align));
 	addProperty("height", createNativeFunction(context, this, &AsStage::Stage_get_height), 0);
@@ -32,15 +36,32 @@ AsStage::AsStage(ActionContext* context)
 
 	m_width = int32_t((movie->getFrameBounds().max.x - movie->getFrameBounds().min.x) / 20.0f);
 	m_height = int32_t((movie->getFrameBounds().max.y - movie->getFrameBounds().min.y) / 20.0f);
+
+	m_viewWidth = m_width;
+	m_viewHeight = m_height;
+
+	updateViewOffset();
 }
 
 void AsStage::eventResize(int32_t width, int32_t height)
 {
-	if (m_scaleMode != SmNoScale || (width == m_width && height == m_height))
+	m_viewWidth = width;
+	m_viewHeight = height;
+
+	// Only adjust stage's size when in NoScale mode.
+	if (
+		m_scaleMode != SmNoScale ||
+		(width == m_width && height == m_height)
+	)
+	{
+		updateViewOffset();
 		return;
+	}
 
 	m_width = width;
 	m_height = height;
+
+	updateViewOffset();
 
 	ActionValue broadcastMessageValue;
 	getMember("broadcastMessage", broadcastMessageValue);
@@ -51,6 +72,165 @@ void AsStage::eventResize(int32_t width, int32_t height)
 		ActionValueArray args(getContext()->getPool(), 1);
 		args[0] = ActionValue("onResize");
 		broadcastMessageFn->call(this, args);
+	}
+}
+
+Vector2 AsStage::toStage(const Vector2& pos)
+{
+	const FlashMovie* movie = getContext()->getMovie();
+	T_ASSERT (movie);
+
+	SwfRect bounds = movie->getFrameBounds();
+
+	// Normalize screen coordinates into -1 to 1 ranges.
+	float sx = 2.0f * pos.x / m_viewWidth - 1.0f;
+	float sy = 2.0f * pos.y / m_viewHeight - 1.0f;
+
+	// Inverse transform into stage coordinates.
+	float tx = (((sx + 1.0f) / 2.0f - m_viewOffset.x()) / m_viewOffset.z()) * (bounds.max.x - bounds.min.x) + bounds.min.x;
+	float ty = (((sy + 1.0f) / 2.0f - m_viewOffset.y()) / m_viewOffset.w()) * (bounds.max.y - bounds.min.y) + bounds.min.y;
+	
+	return Vector2(tx, ty);
+}
+
+void AsStage::updateViewOffset()
+{
+	m_viewOffset.set(0.0f, 0.0f, 1.0f, 1.0f);
+
+	float aspectRatio = float(m_viewWidth) / m_viewHeight;
+	if (aspectRatio <= FUZZY_EPSILON)
+		return;
+
+	const FlashMovie* movie = getContext()->getMovie();
+	T_ASSERT (movie);
+
+	SwfRect bounds = movie->getFrameBounds();
+
+	if (m_scaleMode == SmShowAll)
+	{
+		float frameAspect = (bounds.max.x - bounds.min.x) / (bounds.max.y - bounds.min.y);
+		float scaleX = frameAspect / aspectRatio;
+		if (scaleX <= 1.0f)
+		{
+			float leftX;
+			switch (m_alignH)
+			{
+			case SaLeft:
+				leftX = 0.0f;
+				break;
+			case SaCenter:
+				leftX = -(scaleX - 1.0f) / 2.0f;
+				break;
+			case SaRight:
+				leftX = -(scaleX - 1.0f);
+				break;
+			}
+
+			m_viewOffset.set(leftX, 0.0f, scaleX, 1.0f);
+		}
+		else
+		{
+			float scaleY = 1.0f / scaleX;
+
+			float topY;
+			switch (m_alignV)
+			{
+			case SaTop:
+				topY = 0.0f;
+				break;
+			case SaCenter:
+				topY = -(scaleY - 1.0f) / 2.0f;
+				break;
+			case SaBottom:
+				topY = -(scaleY - 1.0f);
+				break;
+			}
+
+			m_viewOffset.set(0.0f, topY, 1.0f, scaleY);
+		}
+	}
+	else if (m_scaleMode == SmNoBorder)
+	{
+		float frameAspect = (bounds.max.x - bounds.min.x) / (bounds.max.y - bounds.min.y);
+		float scaleX = frameAspect / aspectRatio;
+		if (scaleX <= 1.0f)
+		{
+			float scaleY = 1.0f / scaleX;
+
+			float topY;
+			switch (m_alignV)
+			{
+			case SaTop:
+				topY = 0.0f;
+				break;
+			case SaCenter:
+				topY = -(scaleY - 1.0f) / 2.0f;
+				break;
+			case SaBottom:
+				topY = -(scaleY - 1.0f);
+				break;
+			}
+
+			m_viewOffset.set(0.0f, topY, 1.0f, scaleY);
+		}
+		else
+		{
+			float leftX;
+			switch (m_alignH)
+			{
+			case SaLeft:
+				leftX = 0.0f;
+				break;
+			case SaCenter:
+				leftX = -(scaleX - 1.0f) / 2.0f;
+				break;
+			case SaRight:
+				leftX = -(scaleX - 1.0f);
+				break;
+			}
+
+			m_viewOffset.set(leftX, 0.0f, scaleX, 1.0f);
+		}
+	}
+	else if (m_scaleMode == SmNoScale)
+	{
+		float viewWidth = m_viewWidth * 20.0f;
+		float viewHeight = m_viewHeight * 20.0f;
+
+		float boundsWidth = (bounds.max.x - bounds.min.x);
+		float boundsHeight = (bounds.max.y - bounds.min.y);
+
+		float scaleX = boundsWidth / viewWidth;
+		float scaleY = boundsHeight / viewHeight;
+
+		float leftX, topY;
+		switch (m_alignH)
+		{
+		case SaLeft:
+			leftX = 0.0f;
+			break;
+		case SaCenter:
+			leftX = (viewWidth - boundsWidth) / 2.0f;
+			break;
+		case SaRight:
+			leftX = viewWidth - boundsWidth;
+			break;
+		}
+
+		switch (m_alignV)
+		{
+		case SaTop:
+			topY = 0.0f;
+			break;
+		case SaCenter:
+			topY = (viewHeight - boundsHeight) / 2.0f;
+			break;
+		case SaRight:
+			topY = viewHeight - boundsHeight;
+			break;
+		}
+
+		m_viewOffset.set(leftX / viewWidth, topY / viewHeight, scaleX, scaleY);
 	}
 }
 
@@ -119,6 +299,8 @@ void AsStage::Stage_set_align(CallArgs& ca)
 		m_alignV = SaCenter;
 		m_alignH = SaCenter;
 	}
+
+	updateViewOffset();
 }
 
 void AsStage::Stage_get_height(CallArgs& ca)
@@ -149,6 +331,8 @@ void AsStage::Stage_set_scaleMode(CallArgs& ca)
 		m_scaleMode = SmExactFit;
 	else if (compareIgnoreCase< std::string >(sm, "noScale") == 0)
 		m_scaleMode = SmNoScale;
+
+	updateViewOffset();
 }
 
 void AsStage::Stage_get_showMenu(CallArgs& ca)
@@ -169,7 +353,6 @@ void AsStage::Stage_get_width(CallArgs& ca)
 {
 	ca.ret = ActionValue(avm_number_t(m_width));
 }
-
 
 	}
 }

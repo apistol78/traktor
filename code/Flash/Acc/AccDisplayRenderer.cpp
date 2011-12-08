@@ -80,7 +80,6 @@ AccDisplayRenderer::AccDisplayRenderer()
 ,	m_frameSize(0.0f, 0.0f, 0.0f, 0.0f)
 ,	m_viewSize(0.0f, 0.0f, 0.0f, 0.0f)
 ,	m_viewOffset(0.0f, 0.0f, 1.0f, 1.0f)
-,	m_aspectRatio(1.0f)
 ,	m_clearBackground(false)
 ,	m_stereoscopicOffset(0.0f)
 ,	m_maskWrite(false)
@@ -102,9 +101,6 @@ AccDisplayRenderer::~AccDisplayRenderer()
 bool AccDisplayRenderer::create(
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem,
-	float viewWidth,
-	float viewHeight,
-	float aspectRatio,
 	uint32_t frameCount,
 	bool clearBackground,
 	float stereoscopicOffset
@@ -113,8 +109,6 @@ bool AccDisplayRenderer::create(
 	m_resourceManager = resourceManager;
 	m_renderSystem = renderSystem;
 	m_textureCache = new AccTextureCache(m_renderSystem);
-	m_viewSize.set(viewWidth, viewHeight, 1.0f / viewWidth, 1.0f / viewHeight);
-	m_aspectRatio = aspectRatio;
 	m_clearBackground = clearBackground;
 	m_stereoscopicOffset = stereoscopicOffset;
 
@@ -216,16 +210,6 @@ void AccDisplayRenderer::render(render::IRenderView* renderView, uint32_t frame,
 	m_globalContext->flush();
 }
 
-void AccDisplayRenderer::setViewSize(float width, float height)
-{
-	m_viewSize.set(width, height, 1.0f / width, 1.0f / height);
-}
-
-void AccDisplayRenderer::setAspectRatio(float aspectRatio)
-{
-	m_aspectRatio = aspectRatio;
-}
-
 void AccDisplayRenderer::preload(const FlashMovie& movie)
 {
 	/*
@@ -260,152 +244,16 @@ void AccDisplayRenderer::preload(const FlashMovie& movie)
 void AccDisplayRenderer::begin(
 	const FlashMovie& movie,
 	const SwfColor& backgroundColor,
-	SwfScaleModeType scaleMode,
-	SwfAlignType alignH,
-	SwfAlignType alignV
+	float viewWidth,
+	float viewHeight,
+	const Vector4& viewOffset
 )
 {
 	const SwfRect& bounds = movie.getFrameBounds();
 
-	m_frameSize = Vector4(
-		bounds.min.x,
-		bounds.min.y,
-		bounds.max.x,
-		bounds.max.y
-	);
-
-	// Calculate horizontal scale factor to match aspect ratios;
-	// default to exact fit which doesn't require and ratios.
-	m_viewOffset.set(0.0f, 0.0f, 1.0f, 1.0f);
-	if (m_aspectRatio > FUZZY_EPSILON)
-	{
-		if (scaleMode == SmShowAll)
-		{
-			float frameAspect = (bounds.max.x - bounds.min.x) / (bounds.max.y - bounds.min.y);
-			float scaleX = frameAspect / m_aspectRatio;
-			if (scaleX <= 1.0f)
-			{
-				float leftX;
-				switch (alignH)
-				{
-				case SaLeft:
-					leftX = 0.0f;
-					break;
-				case SaCenter:
-					leftX = -(scaleX - 1.0f) / 2.0f;
-					break;
-				case SaRight:
-					leftX = -(scaleX - 1.0f);
-					break;
-				}
-
-				m_viewOffset.set(leftX, 0.0f, scaleX, 1.0f);
-			}
-			else
-			{
-				float scaleY = 1.0f / scaleX;
-				
-				float topY;
-				switch (alignV)
-				{
-				case SaTop:
-					topY = 0.0f;
-					break;
-				case SaCenter:
-					topY = -(scaleY - 1.0f) / 2.0f;
-					break;
-				case SaBottom:
-					topY = -(scaleY - 1.0f);
-					break;
-				}
-
-				m_viewOffset.set(0.0f, topY, 1.0f, scaleY);
-			}
-		}
-		else if (scaleMode == SmNoBorder)
-		{
-			float frameAspect = (bounds.max.x - bounds.min.x) / (bounds.max.y - bounds.min.y);
-			float scaleX = frameAspect / m_aspectRatio;
-			if (scaleX <= 1.0f)
-			{
-				float scaleY = 1.0f / scaleX;
-
-				float topY;
-				switch (alignV)
-				{
-				case SaTop:
-					topY = 0.0f;
-					break;
-				case SaCenter:
-					topY = -(scaleY - 1.0f) / 2.0f;
-					break;
-				case SaBottom:
-					topY = -(scaleY - 1.0f);
-					break;
-				}
-
-				m_viewOffset.set(0.0f, topY, 1.0f, scaleY);
-			}
-			else
-			{
-				float leftX;
-				switch (alignH)
-				{
-				case SaLeft:
-					leftX = 0.0f;
-					break;
-				case SaCenter:
-					leftX = -(scaleX - 1.0f) / 2.0f;
-					break;
-				case SaRight:
-					leftX = -(scaleX - 1.0f);
-					break;
-				}
-
-				m_viewOffset.set(leftX, 0.0f, scaleX, 1.0f);
-			}
-		}
-		else if (scaleMode == SmNoScale)
-		{
-			float viewWidth = m_viewSize.x() * 20.0f;
-			float viewHeight = m_viewSize.y() * 20.0f;
-
-			float boundsWidth = (bounds.max.x - bounds.min.x);
-			float boundsHeight = (bounds.max.y - bounds.min.y);
-
-			float scaleX = boundsWidth / viewWidth;
-			float scaleY = boundsHeight / viewHeight;
-
-			float leftX, topY;
-			switch (alignH)
-			{
-			case SaLeft:
-				leftX = 0.0f;
-				break;
-			case SaCenter:
-				leftX = (viewWidth - boundsWidth) / 2.0f;
-				break;
-			case SaRight:
-				leftX = viewWidth - boundsWidth;
-				break;
-			}
-
-			switch (alignV)
-			{
-			case SaTop:
-				topY = 0.0f;
-				break;
-			case SaCenter:
-				topY = (viewHeight - boundsHeight) / 2.0f;
-				break;
-			case SaRight:
-				topY = viewHeight - boundsHeight;
-				break;
-			}
-
-			m_viewOffset.set(leftX / viewWidth, topY / viewHeight, scaleX, scaleY);
-		}
-	}
+	m_frameSize.set(bounds.min.x, bounds.min.y, bounds.max.x, bounds.max.y);
+	m_viewSize.set(viewWidth, viewHeight, 1.0f / viewWidth, 1.0f / viewHeight);
+	m_viewOffset = viewOffset;
 
 	if (m_clearBackground)
 	{
@@ -433,8 +281,6 @@ void AccDisplayRenderer::begin(
 	m_maskWrite = false;
 	m_maskIncrement = false;
 	m_maskReference = 0;
-
-	// Allocate new vertex pool
 }
 
 void AccDisplayRenderer::beginMask(bool increment)

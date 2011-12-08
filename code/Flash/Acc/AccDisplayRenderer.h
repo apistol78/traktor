@@ -61,9 +61,6 @@ public:
 	bool create(
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
-		float viewWidth,
-		float viewHeight,
-		float aspectRatio,
 		uint32_t frameCount,
 		bool clearBackground,
 		float stereoscopicOffset
@@ -77,10 +74,6 @@ public:
 
 	void render(render::IRenderView* renderView, uint32_t frame, render::EyeType eye);
 
-	void setViewSize(float width, float height);
-
-	void setAspectRatio(float aspectRatio);
-
 	// \name IDisplayRenderer
 	// \{
 	
@@ -89,9 +82,9 @@ public:
 	virtual void begin(
 		const FlashMovie& movie,
 		const SwfColor& backgroundColor,
-		SwfScaleModeType scaleMode,
-		SwfAlignType alignH,
-		SwfAlignType alignV
+		float viewWidth,
+		float viewHeight,
+		const Vector4& viewOffset
 	);
 
 	virtual void beginMask(bool increment);
@@ -135,7 +128,7 @@ private:
 	Vector4 m_frameSize;
 	Vector4 m_viewSize;
 	Vector4 m_viewOffset;
-	float m_aspectRatio;
+	//float m_aspectRatio;
 	bool m_clearBackground;
 	float m_stereoscopicOffset;
 	bool m_maskWrite;
