@@ -309,7 +309,7 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 	{
 		float radius = cylinderShape->getRadius();
 		float length = cylinderShape->getLength();
-		shape = new btCylinderShapeZ(btVector3(radius, radius, length));
+		shape = new btCylinderShapeZ(btVector3(radius, radius, length / 2.0f));
 	}
 	else if (const MeshShapeDesc* meshShape = dynamic_type_cast< const MeshShapeDesc* >(shapeDesc))
 	{
