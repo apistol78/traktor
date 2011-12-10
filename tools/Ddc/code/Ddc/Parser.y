@@ -16,7 +16,6 @@
 #include "Ddc/DfnMember.h"
 #include "Ddc/DfnNamespace.h"
 #include "Ddc/DfnType.h"
-#include "Ddc/DfnTypeSubst.h"
 #include "Ddc/ParseState.h"
 #include "Ddc/Token.h"
 
@@ -72,32 +71,32 @@ statement(A) ::= ALIAS STRING(B) alias_type(C) OPEN_BRACE STRING(D) COMMA STRING
 
 alias_type(A) ::= LITERAL(B).
 {
-	A = new Token(new DfnType(B->literal, 0, false, 0));
+	A = new Token(new DfnType(B->literal, 0));
 }
 
 alias_type(A) ::= LITERAL(B) LESS alias_type_subst(C) GREATER.
 {
-	A = new Token(new DfnType(B->literal, C->node, false, 0));
+	A = new Token(new DfnType(B->literal, C->node));
 }
 
 alias_type(A) ::= LITERAL(B) OPEN_BRACKET CLOSE_BRACKET.
 {
-	A = new Token(new DfnType(B->literal, 0, true, 0));
+	A = new Token(new DfnType(B->literal, 0, true));
 }
 
 alias_type(A) ::= LITERAL(B) OPEN_BRACKET LITERAL(C) CLOSE_BRACKET.
 {
-	A = new Token(new DfnType(B->literal, 0, true, 0));
+	A = new Token(new DfnType(B->literal, 0, true));
 }
 
 alias_type(A) ::= LITERAL(B) LESS alias_type_subst(C) GREATER OPEN_BRACKET CLOSE_BRACKET.
 {
-	A = new Token(new DfnType(B->literal, C->node, true, 0));
+	A = new Token(new DfnType(B->literal, C->node, true));
 }
 
 alias_type(A) ::= LITERAL(B) LESS alias_type_subst(C) GREATER OPEN_BRACKET LITERAL(D) CLOSE_BRACKET.
 {
-	A = new Token(new DfnType(B->literal, C->node, true, 0));
+	A = new Token(new DfnType(B->literal, C->node, true));
 }
 
 alias_type_subst(A) ::= alias_type_subst(B) COMMA alias_type(C).
@@ -212,17 +211,17 @@ member(A) ::= member_type(B) LITERAL(C) SEMI_COLON.
 
 member_type(A) ::= qualified_literal(B).
 {
-	A = new Token(new DfnType(B->literal, 0, false, 0));
+	A = new Token(new DfnType(B->literal, 0));
 }
 
 member_type(A) ::= qualified_literal(B) LESS member_type_subst(C) GREATER.
 {
-	A = new Token(new DfnType(B->literal, C->node, false, 0));
+	A = new Token(new DfnType(B->literal, C->node));
 }
 
 member_type(A) ::= qualified_literal(B) OPEN_BRACKET CLOSE_BRACKET.
 {
-	A = new Token(new DfnType(B->literal, 0, true, 0));
+	A = new Token(new DfnType(B->literal, 0, true));
 }
 
 member_type(A) ::= qualified_literal(B) OPEN_BRACKET NUMBER(C) CLOSE_BRACKET.
@@ -232,7 +231,7 @@ member_type(A) ::= qualified_literal(B) OPEN_BRACKET NUMBER(C) CLOSE_BRACKET.
 
 member_type(A) ::= qualified_literal(B) LESS member_type_subst(C) GREATER OPEN_BRACKET CLOSE_BRACKET.
 {
-	A = new Token(new DfnType(B->literal, C->node, true, 0));
+	A = new Token(new DfnType(B->literal, C->node, true));
 }
 
 member_type(A) ::= qualified_literal(B) LESS member_type_subst(C) GREATER OPEN_BRACKET NUMBER(D) CLOSE_BRACKET.

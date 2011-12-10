@@ -1,4 +1,22 @@
 
+/*! \brief Static array of objects.
+ */
+alias "cpp" *[*] *
+{
+	"traktor::Ref< %0 > m_%M[%N]",
+	"%A*",
+	"traktor::MemberStaticArray< Ref< %A >, %N, trakor::MemberRef< %A > >"
+}
+
+/*! \brief Dynamic array of objects.
+ */
+alias "cpp" %A[] %M
+{
+	"traktor::RefArray< %A > m_%M",
+	"const traktor::RefArray< %A >&",
+	"traktor::MemberRefArray< %A >"
+}
+
 alias "cpp" int32
 {
 	"int32_t",
@@ -13,7 +31,7 @@ alias "cpp" int32[]
 	"traktor::MemberStlVector< int32_t >"
 }
 
-alias "cpp" int32[ N ]
+alias "cpp" int32[%N]
 {
 	"int32_t",
 	"const int32_t*",
