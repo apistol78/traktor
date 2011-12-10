@@ -13,7 +13,7 @@ class DfnType : public DfnNode
 public:
 	DfnType();
 
-	DfnType(const std::wstring& name, DfnNode* subst, bool isArray, int32_t range);
+	DfnType(const std::wstring& name, DfnNode* subst, bool isArray = false, int32_t range = -1);
 
 	virtual bool serialize(traktor::ISerializer& s);
 
@@ -22,6 +22,8 @@ public:
 	const DfnNode* getSubst() const { return m_subst; }
 
 	bool isArray() const { return m_isArray; }
+
+	bool haveRange() const { return m_range >= 0; }
 
 	int32_t getRange() const { return m_range; }
 
