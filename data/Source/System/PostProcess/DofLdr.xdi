@@ -115,7 +115,7 @@
 			<taps>15</taps>
 		</item>
 		<item type="traktor.world.PostProcessStepSetTarget">
-			<target>0</target>
+			<target>Output</target>
 		</item>
 		<item type="traktor.world.PostProcessStepSimple">
 			<shader>{794D41AE-C743-7C4E-9A55-0A118A55C341}</shader>
