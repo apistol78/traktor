@@ -30,6 +30,11 @@ DefaultEntityEditor::DefaultEntityEditor(SceneEditorContext* context, EntityAdap
 	updateSettings();
 }
 
+bool DefaultEntityEditor::isPickable() const
+{
+	return true;
+}
+
 bool DefaultEntityEditor::isGroup() const
 {
 	const world::EntityData* entityData = m_entityAdapter->getEntityData();
@@ -103,6 +108,7 @@ bool DefaultEntityEditor::queryRay(const Vector4& worldRayOrigin, const Vector4&
 		return false;
 
 	T_ASSERT (distance <= outDistance);
+	outDistance = distance;
 	return true;
 }
 

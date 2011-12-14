@@ -32,6 +32,8 @@ class T_DLLCLASS TerrainEntityEditor : public scene::DefaultEntityEditor
 public:
 	static Ref< TerrainEntityEditor > create(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter);
 
+	virtual bool isPickable() const;
+
 	virtual bool queryRay(
 		const Vector4& worldRayOrigin,
 		const Vector4& worldRayDirection,
