@@ -68,6 +68,8 @@ public:
 
 	void allocateVPos();
 
+	void allocateTargetSize();
+
 	void addSampler(const std::wstring& sampler, const D3D11_SAMPLER_DESC& dsd);
 
 	const std::map< std::wstring, D3D11_SAMPLER_DESC >& getSamplers() const;
@@ -98,6 +100,7 @@ private:
 	int32_t m_nextTemporaryVariable;
 	RefArray< StringOutputStream > m_outputStreams[BtLast];
 	bool m_needVPos;
+	bool m_needTargetSize;
 };
 
 	}

@@ -15,6 +15,12 @@ namespace traktor
 {
 	namespace render
 	{
+		namespace
+		{
+
+render::handle_t s_targetSizeHandle = 0;
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProgramDx11", ProgramDx11, IProgram)
 
@@ -28,6 +34,7 @@ ProgramDx11::ProgramDx11(ContextDx11* context)
 ,	m_parameterResArrayDirty(false)
 ,	m_bufferCycle(0)
 {
+	s_targetSizeHandle = getParameterHandle(L"_dx11_targetSize");
 }
 
 ProgramDx11::~ProgramDx11()
@@ -93,7 +100,6 @@ bool ProgramDx11::create(ID3D11Device* d3dDevice, StateCache& stateCache, const 
 	m_d3dBlendState = stateCache.getBlendState(resource->m_d3dBlendDesc);
 
 	m_stencilReference = resource->m_stencilReference;
-
 	return true;
 }
 
@@ -243,7 +249,7 @@ bool ProgramDx11::bind(
 	d3dDeviceContext->OMSetBlendState(m_d3dBlendState, blendFactors, 0xffffffff);
 
 	// Update target size parameter.
-	setVectorParameter(getParameterHandle(L"_dx11_targetSize"), Vector4(targetSize[0], targetSize[1], 0.0f, 0.0f));
+	setVectorParameter(s_targetSizeHandle, Vector4(targetSize[0], targetSize[1], 0.0f, 0.0f));
 
 	// Update constant buffers.
 	if (m_parameterArrayDirty || ms_activeProgram != this)
