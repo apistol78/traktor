@@ -20,6 +20,15 @@ namespace traktor
 
 const int32_t c_headerSize = 24;
 
+int32_t indexOf(const RefArray< GridRow >& rows, const GridRow* row)
+{
+	RefArray< GridRow >::const_iterator i = std::find(rows.begin(), rows.end(), row);
+	if (i == rows.end())
+		return -1;
+
+	return int32_t(std::distance(rows.begin(), i));
+}
+
 			}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.GridView", GridView, AutoWidget)
@@ -180,12 +189,10 @@ void GridView::eventButtonDown(Event* event)
 {
 	MouseEvent* mouseEvent = checked_type_cast< MouseEvent*, false >(event);
 	const Point& position = mouseEvent->getPosition();
-
-	m_clickRow = 0;
-	m_clickColumn = -1;
+	int32_t state = mouseEvent->getKeyState();
 
 	// De-select all rows if no modifier key.
-	bool modifier = bool((mouseEvent->getKeyState() & (KsShift | KsControl)) != 0);
+	bool modifier = bool((state & (KsShift | KsControl)) != 0);
 	if (!modifier)
 	{
 		RefArray< GridRow > rows;
@@ -198,12 +205,38 @@ void GridView::eventButtonDown(Event* event)
 	AutoWidgetCell* cell = hitTest(position);
 	if (GridRow* row = dynamic_type_cast< GridRow* >(cell))
 	{
-		// Select picked row.
-		row->setState(row->getState() | GridRow::RsSelected);
+		RefArray< GridRow > rows;
+		getRows(rows, GfDescendants | GfExpandedOnly);
+
+		// Select range.
+		if ((state & KsShift) != 0 && m_clickRow)
+		{
+			int32_t fromRowIndex = indexOf(rows, m_clickRow);
+			int32_t toRowIndex = indexOf(rows, row);
+			if (fromRowIndex >= 0 && toRowIndex >= 0)
+			{
+				if (fromRowIndex > toRowIndex)
+					std::swap(fromRowIndex, toRowIndex);
+
+				for (int32_t i = fromRowIndex; i <= toRowIndex; ++i)
+					rows[i]->setState(rows[i]->getState() | GridRow::RsSelected);
+			}
+		}
+		else
+		{
+			// Select single row.
+			row->setState(row->getState() | GridRow::RsSelected);
+		}
 
 		// Save column index.
 		m_clickRow = row;
 		m_clickColumn = getColumnIndex(position.x);
+	}
+	else
+	{
+		// Nothing hit.
+		m_clickRow = 0;
+		m_clickColumn = -1;
 	}
 
 	raiseEvent(EiSelectionChange, 0);
@@ -223,9 +256,6 @@ void GridView::eventButtonUp(Event* event)
 		{
 			CommandEvent cmdEvent(this, m_clickRow, Command(m_clickColumn));
 			raiseEvent(EiClick, &cmdEvent);
-
-			m_clickRow = 0;
-			m_clickColumn = -1;
 		}
 	}
 }
