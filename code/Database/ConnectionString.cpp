@@ -38,7 +38,10 @@ bool ConnectionString::have(const std::wstring& key) const
 
 void ConnectionString::set(const std::wstring& key, const std::wstring& value)
 {
-	m_values[key] = value;
+	if (!value.empty())
+		m_values[key] = value;
+	else
+		m_values.erase(key);
 }
 
 std::wstring ConnectionString::get(const std::wstring& key) const

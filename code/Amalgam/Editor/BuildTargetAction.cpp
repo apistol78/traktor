@@ -118,6 +118,7 @@ bool BuildTargetAction::execute()
 		sourceDatabaseCs.set(L"groupPath", groupPath.getPathName());
 	}
 
+	sourceDatabaseCs.set(L"fileStore", L"");
 	sourceDatabaseCs.set(L"eventFile", L"false");
 
 	pipelineConfiguration->setProperty< PropertyString >(L"Editor.SourceDatabase", sourceDatabaseCs.format());
