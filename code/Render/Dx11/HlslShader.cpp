@@ -15,6 +15,7 @@ HlslShader::HlslShader(ShaderType shaderType, IProgramHints* programHints)
 ,	m_booleanRegisterCount(0)
 ,	m_nextTemporaryVariable(0)
 ,	m_needVPos(false)
+,	m_needTargetSize(false)
 {
 	pushScope();
 	pushOutputStream(BtUniform, new StringOutputStream());
@@ -115,6 +116,11 @@ void HlslShader::allocateVPos()
 	m_needVPos = true;
 }
 
+void HlslShader::allocateTargetSize()
+{
+	m_needTargetSize = true;
+}
+
 void HlslShader::addSampler(const std::wstring& sampler, const D3D11_SAMPLER_DESC& dsd)
 {
 	m_samplers.insert(std::make_pair(sampler, dsd));
@@ -158,7 +164,8 @@ std::wstring HlslShader::getGeneratedShader()
 	ss << L"// THIS SHADER IS AUTOMATICALLY GENERATED! DO NOT EDIT!" << Endl;
 	ss << Endl;
 
-	ss << L"uniform float4 _dx11_targetSize;" << Endl;
+	if (m_needTargetSize)
+		ss << L"uniform float4 _dx11_targetSize;" << Endl;
 
 	std::wstring uniformText = getOutputStream(BtUniform).str();
 	if (!uniformText.empty())
