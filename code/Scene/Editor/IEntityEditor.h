@@ -60,9 +60,14 @@ public:
 		int mouseButton;
 	};
 
+	/*! \brief Is entity pickable.
+	 *
+	 * \return True if pickable.
+	 */
+	virtual bool isPickable() const = 0;
+
 	/*! \brief Is entity a group?
 	 *
-	 * \param entityAdapter Entity adapter.
 	 * \return True if group.
 	 */
 	virtual bool isGroup() const = 0;

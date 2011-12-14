@@ -300,7 +300,7 @@ Ref< EntityAdapter > OrthogonalRenderControl::pickEntity(const ui::Point& positi
 {
 	Vector4 worldRayOrigin, worldRayDirection;
 	calculateRay(position, worldRayOrigin, worldRayDirection);
-	return m_context->queryRay(worldRayOrigin, worldRayDirection);
+	return m_context->queryRay(worldRayOrigin, worldRayDirection, true);
 }
 
 void OrthogonalRenderControl::eventButtonDown(ui::Event* event)

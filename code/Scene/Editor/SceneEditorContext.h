@@ -203,7 +203,7 @@ public:
 	
 	EntityAdapter* findAdapterFromEntity(const world::Entity* entity) const;
 
-	EntityAdapter* queryRay(const Vector4& worldRayOrigin, const Vector4& worldRayDirection) const;
+	EntityAdapter* queryRay(const Vector4& worldRayOrigin, const Vector4& worldRayDirection, bool onlyPickable) const;
 
 	void cloneSelected();
 

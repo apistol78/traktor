@@ -371,7 +371,7 @@ Ref< EntityAdapter > PerspectiveRenderControl::pickEntity(const ui::Point& posit
 {
 	Vector4 worldRayOrigin, worldRayDirection;
 	calculateRay(position, worldRayOrigin, worldRayDirection);
-	return m_context->queryRay(worldRayOrigin, worldRayDirection);
+	return m_context->queryRay(worldRayOrigin, worldRayDirection, true);
 }
 
 Matrix44 PerspectiveRenderControl::getView() const

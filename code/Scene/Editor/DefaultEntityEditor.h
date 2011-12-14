@@ -25,6 +25,8 @@ class T_DLLCLASS DefaultEntityEditor : public IEntityEditor
 public:
 	DefaultEntityEditor(SceneEditorContext* context, EntityAdapter* entityAdapter);
 
+	virtual bool isPickable() const;
+
 	virtual bool isGroup() const;
 
 	virtual bool addChildEntity(EntityAdapter* childEntityAdapter) const;

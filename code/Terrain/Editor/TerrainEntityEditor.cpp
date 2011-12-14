@@ -40,6 +40,11 @@ Ref< TerrainEntityEditor > TerrainEntityEditor::create(scene::SceneEditorContext
 	return new TerrainEntityEditor(context, entityAdapter, compositor);
 }
 
+bool TerrainEntityEditor::isPickable() const
+{
+	return false;
+}
+
 bool TerrainEntityEditor::queryRay(
 	const Vector4& worldRayOrigin,
 	const Vector4& worldRayDirection,
