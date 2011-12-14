@@ -26,6 +26,8 @@ class EntityDependencyInvestigator : public ui::Container
 public:
 	EntityDependencyInvestigator(SceneEditorContext* context);
 
+	virtual void destroy();
+
 	bool create(ui::Widget* parent);
 
 	void setEntityAdapter(EntityAdapter* entityAdapter);

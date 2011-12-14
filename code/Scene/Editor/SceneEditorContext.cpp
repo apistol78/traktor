@@ -111,6 +111,35 @@ SceneEditorContext::SceneEditorContext(
 		);
 }
 
+SceneEditorContext::~SceneEditorContext()
+{
+	destroy();
+}
+
+void SceneEditorContext::destroy()
+{
+	m_editor = 0;
+	m_resourceDb = 0;
+	m_sourceDb = 0;
+	m_resourceManager = 0;
+	m_renderSystem = 0;
+	for (int32_t i = 0; i < sizeof_array(m_debugTexture); ++i)
+		m_debugTexture[i] = 0;
+	m_physicsManager = 0;
+	m_instance = 0;
+	m_editorProfiles.clear();
+	m_editorPlugins.clear();
+	m_controllerEditor = 0;
+	m_modifier = 0;
+	for (int32_t i = 0; i < sizeof_array(m_cameras); ++i)
+		m_cameras[i] = 0;
+	m_sceneAsset = 0;
+	m_scene = 0;
+	m_rootEntityAdapter = 0;
+	m_followEntityAdapter = 0;
+	m_renderEntityStack.clear();
+}
+
 void SceneEditorContext::addEditorProfile(ISceneEditorProfile* editorProfile)
 {
 	m_editorProfiles.push_back(editorProfile);

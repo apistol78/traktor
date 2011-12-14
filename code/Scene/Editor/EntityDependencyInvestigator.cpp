@@ -1,22 +1,23 @@
-#include "Scene/Editor/EntityDependencyInvestigator.h"
-#include "Scene/Editor/EntityAdapter.h"
-#include "Scene/Editor/SceneEditorContext.h"
-#include "Editor/IEditor.h"
-#include "Editor/Pipeline/PipelineDependency.h"
-#include "World/Entity/EntityData.h"
-#include "Database/Database.h"
-#include "Database/Instance.h"
-#include "Ui/Bitmap.h"
-#include "Ui/TreeView.h"
-#include "Ui/TreeViewItem.h"
-#include "Ui/TableLayout.h"
-#include "Ui/MethodHandler.h"
-#include "Ui/Events/CommandEvent.h"
-#include "I18N/Text.h"
-#include "I18N/Format.h"
-#include "Core/System/OS.h"
 #include "Core/Guid.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/SafeDestroy.h"
+#include "Core/System/OS.h"
+#include "Database/Database.h"
+#include "Database/Instance.h"
+#include "Editor/IEditor.h"
+#include "Editor/Pipeline/PipelineDependency.h"
+#include "I18N/Format.h"
+#include "I18N/Text.h"
+#include "Scene/Editor/EntityAdapter.h"
+#include "Scene/Editor/EntityDependencyInvestigator.h"
+#include "Scene/Editor/SceneEditorContext.h"
+#include "Ui/Bitmap.h"
+#include "Ui/MethodHandler.h"
+#include "Ui/TableLayout.h"
+#include "Ui/TreeView.h"
+#include "Ui/TreeViewItem.h"
+#include "Ui/Events/CommandEvent.h"
+#include "World/Entity/EntityData.h"
 
 // Resources
 #include "Resources/Types.h"
@@ -32,6 +33,14 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.EntityDependencyInvestigator", EntityDepe
 EntityDependencyInvestigator::EntityDependencyInvestigator(SceneEditorContext* context)
 :	m_context(context)
 {
+}
+
+void EntityDependencyInvestigator::destroy()
+{
+	safeDestroy(m_dependencyTree);
+	m_currentEntityAdapter = 0;
+	m_context = 0;
+	ui::Container::destroy();
 }
 
 bool EntityDependencyInvestigator::create(ui::Widget* parent)
