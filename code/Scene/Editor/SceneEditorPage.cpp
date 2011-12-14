@@ -183,15 +183,24 @@ void SceneEditorPage::destroy()
 	m_site->destroyAdditionalPanel(m_controllerPanel);
 
 	// Destroy widgets.
-	safeDestroy(m_entityMenu);
+	safeDestroy(m_editPanel);
+	safeDestroy(m_editControl);
 	safeDestroy(m_entityPanel);
 	safeDestroy(m_entityDependencyPanel);
+	safeDestroy(m_entityMenu);
 	safeDestroy(m_controllerPanel);
-	safeDestroy(m_editPanel);
+	safeDestroy(m_entityToolBar);
+	safeDestroy(m_instanceGrid);
+
+	m_toolLookAtEntity = 0;
+	m_toolFollowEntity = 0;
 
 	// Destroy physics manager.
 	if (m_context->getPhysicsManager())
 		m_context->getPhysicsManager()->destroy();
+
+	m_context->destroy();
+	m_context = 0;
 }
 
 void SceneEditorPage::activate()

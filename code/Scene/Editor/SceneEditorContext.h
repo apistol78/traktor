@@ -115,6 +115,10 @@ public:
 		physics::PhysicsManager* physicsManager
 	);
 
+	virtual ~SceneEditorContext();
+
+	void destroy();
+
 	void addEditorProfile(ISceneEditorProfile* editorProfile);
 
 	void addEditorPlugin(ISceneEditorPlugin* editorPlugin);
