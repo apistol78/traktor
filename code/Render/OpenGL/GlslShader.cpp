@@ -102,6 +102,16 @@ const std::set< std::wstring >& GlslShader::getUniforms() const
 {
 	return m_uniforms;
 }
+        
+bool GlslShader::defineSamplerTexture(const std::wstring& textureName)
+{
+    std::set< std::wstring >::const_iterator i = m_textures.find(textureName);
+    if (i != m_textures.end())
+        return false;
+    
+    m_textures.insert(textureName);
+    return true;
+}
 
 void GlslShader::pushOutputStream(BlockType blockType, StringOutputStream* outputStream)
 {

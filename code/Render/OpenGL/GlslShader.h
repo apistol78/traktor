@@ -64,6 +64,8 @@ public:
 	void addUniform(const std::wstring& uniform);
 
 	const std::set< std::wstring >& getUniforms() const;
+    
+    bool defineSamplerTexture(const std::wstring& textureName);
 
 	void pushOutputStream(BlockType blockType, StringOutputStream* outputStream);
 
@@ -80,6 +82,7 @@ private:
 	std::map< std::wstring, GlslVariable* > m_inputVariables;
 	std::list< scope_t > m_variables;
 	std::set< std::wstring > m_uniforms;
+    std::set< std::wstring > m_textures;
 	int32_t m_nextTemporaryVariable;
 	RefArray< StringOutputStream > m_outputStreams[BtLast];
 };

@@ -799,12 +799,16 @@ void emitSampler(GlslContext& cx, Sampler* node)
 		return;
 
 	GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat4);
-	
-	int32_t stage;
-	bool defineSampler = cx.defineSamplerTexture(texture->getName(), stage);
 
+    // Use same stage index for both vertex and fragment shader.
+    // Sampler name is defined by which stage it's associated with.
+	int32_t stage;
+    cx.defineSamplerTexture(texture->getName(), stage);
 	std::wstring samplerName = L"_gl_sampler_" + toString(stage);
-	
+
+    // See if we need to define sampler texture in current shader.
+    bool defineSampler = cx.getShader().defineSamplerTexture(texture->getName());
+
 	if (defineSampler)
 	{
 		// \fixme We only define a sampler based on texture name, we
@@ -886,15 +890,15 @@ void emitSampler(GlslContext& cx, Sampler* node)
 		switch (node->getLookup())
 		{
 		case Sampler::LuSimple:
-			assign(f, out) << L"texture2DLod(" << samplerName << L", " << texCoord->cast(GtFloat2) << L");" << Endl;
+			assign(f, out) << L"texture2DLod(" << samplerName << L", " << texCoord->cast(GtFloat2) << L", 0.0);" << Endl;
 			break;
 
 		case Sampler::LuCube:
-			assign(f, out) << L"textureCubeLod(" << samplerName << L", " << texCoord->cast(GtFloat3) << L");" << Endl;
+			assign(f, out) << L"textureCubeLod(" << samplerName << L", " << texCoord->cast(GtFloat3) << L", 0.0);" << Endl;
 			break;
 
 		case Sampler::LuVolume:
-			assign(f, out) << L"texture3DLod(" << samplerName << L", " << texCoord->cast(GtFloat3) << L");" << Endl;
+			assign(f, out) << L"texture3DLod(" << samplerName << L", " << texCoord->cast(GtFloat3) << L", 0.0);" << Endl;
 			break;
 		}
 	}
