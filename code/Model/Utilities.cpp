@@ -333,8 +333,9 @@ namespace
 		}
 	};
 
-	void calculateAdjacency(const std::vector< HullFace >& faces, std::vector< HullFaceAdjacency >& outAdjacency)
+	uint32_t calculateAdjacency(const std::vector< HullFace >& faces, std::vector< HullFaceAdjacency >& outAdjacency)
 	{
+		uint32_t errorCount = 0;
 		for (uint32_t i = 0; i < uint32_t(faces.size()); ++i)
 		{
 			HullFaceAdjacency adj;
@@ -364,16 +365,19 @@ namespace
 			}
 
 			if (adj.n[0] == ~0U || adj.n[1] == ~0U || adj.n[2] == ~0U)
-				log::warning << L"Unable to build complete adjacency of face " << i << Endl;
+				++errorCount;
 
 			outAdjacency.push_back(adj);
 		}
+		return errorCount;
 	}
 
 }
 
 void calculateConvexHull(Model& model)
 {
+	uint32_t errorCount = 0;
+
 	AlignedVector< Vector4 > vertices = model.getPositions();
 
 	// Find three valid vertices to build a plane.
@@ -414,7 +418,7 @@ void calculateConvexHull(Model& model)
 	faces.push_back(HullFace(0, k, t));
 
 	std::vector< HullFaceAdjacency > adjacency;
-	calculateAdjacency(faces, adjacency);
+	errorCount = calculateAdjacency(faces, adjacency);
 
 	for (uint32_t i = 0; i < uint32_t(vertices.size()); ++i)
 	{
@@ -468,7 +472,7 @@ void calculateConvexHull(Model& model)
 		
 		// Recalculate adjacency.
 		adjacency.resize(0);
-		calculateAdjacency(faces, adjacency);
+		errorCount = calculateAdjacency(faces, adjacency);
 	}
 
 	// Clear everything except positions.
@@ -502,6 +506,9 @@ void calculateConvexHull(Model& model)
 
 		model.addPolygon(polygon);
 	}
+
+	if (errorCount > 0)
+		log::warning << L"Unable to build complete adjacency of " << errorCount << L" face(s)" << Endl;
 }
 
 namespace
