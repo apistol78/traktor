@@ -91,7 +91,7 @@ bool SolutionBuilderMsvc::generate(Solution* solution)
 	context.set(L"SOLUTION_FILENAME", solutionFileName);
 
 	// Create root path.
-	if (!FileSystem::getInstance().makeDirectory(solution->getRootPath()))
+	if (!FileSystem::getInstance().makeAllDirectories(solution->getRootPath()))
 		return false;
 
 	// Generate projects.
