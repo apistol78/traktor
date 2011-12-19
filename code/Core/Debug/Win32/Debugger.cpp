@@ -80,11 +80,11 @@ Debugger& Debugger::getInstance()
 void Debugger::assertionFailed(const std::string& expression, const std::string& file, int line, const std::wstring& message)
 {
 #if !defined(T_STATIC)
-#if defined(_DEBUG)
+#   if defined(_DEBUG)
 	HINSTANCE hInstance = GetModuleHandle(_T("Traktor.Core_d.dll"));
-#else
+#   else
 	HINSTANCE hInstance = GetModuleHandle(_T("Traktor.Core.dll"));
-#endif
+#   endif
 #else
 	HINSTANCE hInstance = GetModuleHandle(NULL);
 #endif
@@ -107,7 +107,7 @@ void Debugger::assertionFailed(const std::string& expression, const std::string&
 	);
 
 	if (result == EcBreak)
-		__debugbreak();
+		breakDebugger();
 	else if (result == EcAbort)
 	{
 		raise(SIGABRT);
@@ -119,7 +119,9 @@ void Debugger::assertionFailed(const std::string& expression, const std::string&
 
 void Debugger::breakDebugger()
 {
+#if defined(_MSC_VER)
 	__debugbreak();
+#endif
 }
 
 void Debugger::reportEvent(const std::wstring& text, ...)
