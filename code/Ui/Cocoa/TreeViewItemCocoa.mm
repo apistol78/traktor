@@ -102,6 +102,15 @@ void TreeViewItemCocoa::show()
 {
 }
 
+void TreeViewItemCocoa::setEditable(bool editable)
+{
+}
+
+bool TreeViewItemCocoa::isEditable() const
+{
+	return true;
+}
+
 bool TreeViewItemCocoa::edit()
 {
 	return false;

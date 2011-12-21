@@ -51,6 +51,10 @@ public:
 	virtual bool isVisible() const;
 	
 	virtual void show();
+	
+	virtual void setEditable(bool editable);
+
+	virtual bool isEditable() const;
 
 	virtual bool edit();
 	
