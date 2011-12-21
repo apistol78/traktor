@@ -233,7 +233,7 @@ bool FileSystem::renameDirectory(const Path& directory, const std::wstring& newN
 
 Path FileSystem::getAbsolutePath(const Path& relativePath) const
 {
-	if (!relativePath.isRelative())
+	if (!relativePath.isRelative() && relativePath.hasVolume())
 		return relativePath;
 
 	Ref< IVolume > volume = getVolume(relativePath);
