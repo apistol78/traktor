@@ -83,6 +83,9 @@ struct ConstantFoldingVisitor
 			case PntScalar4:
 				node = new Vector(Vector4(it->second[0], it->second[1], it->second[2], it->second[3]));
 				break;
+				
+			default:
+				break;
 			}
 
 			if (node)

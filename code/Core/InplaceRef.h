@@ -84,6 +84,30 @@ private:
 	pointer_reference m_ref;
 };
 
+template < typename T, typename T0 >
+T dynamic_type_cast(T0* obj);
+
+template < typename T, typename T0 >
+T dynamic_type_cast(const T0* obj);
+
+template < typename T, typename T0 >
+T checked_type_cast(T0* obj);
+
+template < typename T, typename T0 >
+T checked_type_cast(const T0* obj);
+
+/*! \brief Dynamic cast object.
+ *
+ * \param T Cast to type.
+ * \param o Object.
+ * \return Casted value, null if object isn't of correct type.
+ */
+template < typename T, typename T0 >
+typename IsPointer< T >::base_t* dynamic_type_cast(const InplaceRef< T0 >& obj)
+{
+	return dynamic_type_cast< typename IsPointer< T >::base_t* >(obj.ptr());
+}
+
 /*! \brief Safe cast object.
  *
  * The cast will assert if object is of incorrect type.

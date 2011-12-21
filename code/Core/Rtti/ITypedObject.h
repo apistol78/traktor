@@ -201,8 +201,8 @@ bool is_a(const ITypedObject* obj)
  * \param o Object.
  * \return Casted value, null if object isn't of correct type.
  */
-template < typename T >
-T dynamic_type_cast(ITypedObject* obj)
+template < typename T, typename T0 >
+T dynamic_type_cast(T0* obj)
 {
 	return is_a< T >(obj) ? static_cast< T >(obj) : 0;
 }
@@ -213,8 +213,8 @@ T dynamic_type_cast(ITypedObject* obj)
  * \param o Object.
  * \return Casted value, null if object isn't of correct type.
  */
-template < typename T >
-T dynamic_type_cast(const ITypedObject* obj)
+template < typename T, typename T0 >
+T dynamic_type_cast(const T0* obj)
 {
 	return is_a< T >(obj) ? static_cast< T >(obj) : 0;
 }

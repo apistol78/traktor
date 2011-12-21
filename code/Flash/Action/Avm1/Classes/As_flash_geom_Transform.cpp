@@ -36,9 +36,9 @@ void As_flash_geom_Transform::initialize(ActionObject* self)
 void As_flash_geom_Transform::construct(ActionObject* self, const ActionValueArray& args)
 {
 	Ref< Transform > tf;
-	if (args.size() >= 1)
+	if (args.size() >= 1 && args[0].isObject())
 	{
-		Ref< FlashCharacterInstance > instance = args[0].getObject< FlashCharacterInstance >();
+		Ref< FlashCharacterInstance > instance = args[0].getObject()->getRelay< FlashCharacterInstance >();
 		if (instance)
 			tf = new Transform(instance);
 	}

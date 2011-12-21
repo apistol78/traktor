@@ -33,7 +33,7 @@ Ref< editor::IEditorPage > SceneEditorPageFactory::createEditorPage(editor::IEdi
 {
 	render::IRenderSystem* renderSystem = editor->getStoreObject< render::IRenderSystem >(L"RenderSystem");
 	if (!renderSystem)
-		return false;
+		return 0;
 
 	// Create resource manager.
 	Ref< resource::IResourceManager > resourceManager = new resource::ResourceManager();

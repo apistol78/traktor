@@ -12,7 +12,7 @@ struct IComboBoxDataCallback
 	virtual int comboBox_numberOfItems() const = 0;
 };
 
-@interface NSComboBoxDataSource : NSObject
+@interface NSComboBoxDataSource : NSObject < NSComboBoxDataSource >
 {
 	IComboBoxDataCallback* m_callback;
 }

@@ -149,7 +149,7 @@ bool NativeVolume::remove(const Path& filename)
 
 bool NativeVolume::rename(const Path& fileName, const std::wstring& newName)
 {
-	return false;
+	return ::rename(wstombs(getSystemPath(fileName)).c_str(), wstombs(newName).c_str()) == 0;
 }
 
 bool NativeVolume::makeDirectory(const Path& directory)

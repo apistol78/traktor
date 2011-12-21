@@ -171,6 +171,18 @@ private:
 	pointer m_ptr;
 };
 
+template < typename T, typename T0 >
+T dynamic_type_cast(T0* obj);
+
+template < typename T, typename T0 >
+T dynamic_type_cast(const T0* obj);
+
+template < typename T, typename T0 >
+T checked_type_cast(T0* obj);
+
+template < typename T, typename T0 >
+T checked_type_cast(const T0* obj);
+
 /*! \brief Dynamic cast object.
  *
  * \param T Cast to type.
