@@ -84,14 +84,7 @@ bool cglwMakeCurrent(void* context)
 {
 	WrContext* wrc = (WrContext*)context;
 	if (wrc)
-	{
 		[wrc->context makeCurrentContext];
-		if (wrc->view)
-		{
-			NSRect frame = [wrc->view frame];
-			glViewport(0, 0, frame.size.width, frame.size.height);
-		}
-	}
 	else
 		[NSOpenGLContext clearCurrentContext];
 
