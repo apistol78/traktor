@@ -530,7 +530,7 @@ bool SolutionBuilderXcode::generate(Solution* solution)
 	s << Endl;
 
 	generatePBXBuildFileSection(s, solution, projects);
-	//generatePBXBuildRuleSection(s, solution);
+	generatePBXBuildRuleSection(s, solution);
 	generatePBXContainerItemProxySection(s, solution, projects);
 	generatePBXCopyFilesBuildPhaseSection(s, solution, projects);
 	generatePBXFileReferenceSection(s, solution, projects, files);
@@ -695,9 +695,8 @@ void SolutionBuilderXcode::generatePBXBuildRuleSection(OutputStream& s, const So
 	s << L"\t\t\tfileType = pattern.proxy;" << Endl;
 	s << L"\t\t\tisEditable = 1;" << Endl;
 	s << L"\t\t\toutputFiles = (" << Endl;
-	s << L"\t\t\t\t\"${DERIVED_FILES_DIR}/Resources/${INPUT_FILE_BASE}.h\"," << Endl;
 	s << L"\t\t\t);" << Endl;
-	s << L"\t\t\tscript = \"BinaryInclude ${INPUT_FILE_PATH} '$(DERIVED_FILES_DIR)/Resources/$(INPUT_FILE_BASE).h' c_Resource${INPUT_FILE_BASE}\";" << Endl;
+	s << L"\t\t\tscript = \"\";" << Endl;
 	s << L"\t\t};" << Endl;
 	
 	s << L"\t\t" << SolutionUids(solution).getCustomBuildRuleUid(1) << L" /* PBXBuildRule */ = {" << Endl;
@@ -707,9 +706,8 @@ void SolutionBuilderXcode::generatePBXBuildRuleSection(OutputStream& s, const So
 	s << L"\t\t\tfileType = pattern.proxy;" << Endl;
 	s << L"\t\t\tisEditable = 1;" << Endl;
 	s << L"\t\t\toutputFiles = (" << Endl;
-	s << L"\t\t\t\t\"${DERIVED_FILES_DIR}/Resources/${INPUT_FILE_BASE}.h\"," << Endl;
 	s << L"\t\t\t);" << Endl;
-	s << L"\t\t\tscript = \"BinaryInclude ${INPUT_FILE_PATH} '$(DERIVED_FILES_DIR)/Resources/$(INPUT_FILE_BASE).h' c_Resource${INPUT_FILE_BASE}\";" << Endl;
+	s << L"\t\t\tscript = \"\";" << Endl;
 	s << L"\t\t};" << Endl;
 	
 	s << L"/* End PBXBuildRule section */" << Endl;
@@ -1314,8 +1312,8 @@ void SolutionBuilderXcode::generatePBXNativeTargetSection(OutputStream& s, const
 		s << L"\t\t\t\t" << ProjectUids(*i).getBuildPhaseFrameworksUid() << L" /* Frameworks */," << Endl;
 		s << L"\t\t\t);" << Endl;
 		s << L"\t\t\tbuildRules = (" << Endl;
-		//s << L"\t\t\t\t" << SolutionUids(solution).getCustomBuildRuleUid(0) << L" /* PBXBuildRule */," << Endl;
-		//s << L"\t\t\t\t" << SolutionUids(solution).getCustomBuildRuleUid(1) << L" /* PBXBuildRule */," << Endl;
+		s << L"\t\t\t\t" << SolutionUids(solution).getCustomBuildRuleUid(0) << L" /* PBXBuildRule */," << Endl;
+		s << L"\t\t\t\t" << SolutionUids(solution).getCustomBuildRuleUid(1) << L" /* PBXBuildRule */," << Endl;
 		s << L"\t\t\t);" << Endl;
 		s << L"\t\t\tdependencies = (" << Endl;
 
