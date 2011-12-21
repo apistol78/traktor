@@ -1,23 +1,25 @@
-#include <Core/Io/FileSystem.h>
-#include <Core/Io/FileOutputStream.h>
-#include <Core/Io/StringOutputStream.h>
-#include <Core/Io/StringReader.h>
-#include <Core/Io/IStream.h>
-#include <Core/Io/Path.h>
-#include <Core/Io/Utf8Encoding.h>
-#include <Core/Serialization/DeepHash.h>
-#include <Core/Misc/Adler32.h>
 #include <Core/Guid.h>
 #include <Core/RefSet.h>
+#include <Core/Io/FileSystem.h>
+#include <Core/Io/FileOutputStream.h>
+#include <Core/Io/IStream.h>
+#include <Core/Io/Path.h>
+#include <Core/Io/StringOutputStream.h>
+#include <Core/Io/StringReader.h>
+#include <Core/Io/Utf8Encoding.h>
 #include <Core/Log/Log.h>
-#include "SolutionBuilderLIB/Xcode/SolutionBuilderXcode.h"
-#include "SolutionBuilderLIB/Solution.h"
-#include "SolutionBuilderLIB/Project.h"
-#include "SolutionBuilderLIB/ProjectDependency.h"
-#include "SolutionBuilderLIB/ExternalDependency.h"
+#include <Core/Misc/Adler32.h>
+#include <Core/Serialization/DeepHash.h>
+#include "SolutionBuilderLIB/Aggregation.h"
+#include "SolutionBuilderLIB/AggregationItem.h"
 #include "SolutionBuilderLIB/Configuration.h"
+#include "SolutionBuilderLIB/ExternalDependency.h"
 #include "SolutionBuilderLIB/File.h"
 #include "SolutionBuilderLIB/Filter.h"
+#include "SolutionBuilderLIB/Project.h"
+#include "SolutionBuilderLIB/ProjectDependency.h"
+#include "SolutionBuilderLIB/Solution.h"
+#include "SolutionBuilderLIB/Xcode/SolutionBuilderXcode.h"
 
 using namespace traktor;
 
@@ -27,11 +29,42 @@ namespace
 	template < typename T1, typename T2, typename T3 >
 	struct triplet
 	{
-		typedef std::pair< T1, std::pair< T2, T3 > > type_t;
+		T1 first;
+		T2 second;
+		T3 third;
+
+		typedef triplet< T1, T2, T3 > type_t;
+
+		triplet< T1, T2, T3 >(T1 t1, T2 t2, T3 t3)
+		:	first(t1)
+		,	second(t2)
+		,	third(t3)
+		{
+		}
+
+		bool operator < (const type_t& rh) const
+		{
+			if (third < rh.third)
+				return true;
+			if (third > rh.third)
+				return false;
+
+			if (second < rh.second)
+				return true;
+			if (second > rh.second)
+				return false;
+
+			if (first < rh.first)
+				return true;
+			if (first > rh.first)
+				return false;
+
+			return false;
+		}
 
 		static type_t make_triplet(T1 t1, T2 t2, T3 t3)
 		{
-			return std::make_pair(t1, std::make_pair(t2, t3));
+			return type_t(t1, t2, t3);
 		}
 	};
 
@@ -211,6 +244,47 @@ namespace
 		Ref< const Project > m_project;
 	};
 
+	class AggregationUids
+	{
+	public:
+		AggregationUids(const Aggregation* aggregation)
+		:	m_aggregation(aggregation)
+		{
+		}
+
+		std::wstring getGroupUid() const { return calculateUid(m_aggregation, -1); }
+
+		std::wstring getBuildConfigurationListUid() const { return calculateUid(m_aggregation, -2); }
+
+		std::wstring getBuildConfigurationDebugUid() const { return calculateUid(m_aggregation, -3); }
+
+		std::wstring getBuildConfigurationReleaseUid() const { return calculateUid(m_aggregation, -4); }
+
+		std::wstring getBuildPhaseCopyFilesUid() const { return calculateUid(m_aggregation, -5); }
+
+		std::wstring getBuildPhaseCopyFilesUid(const Path& targetPath) const { return calculateUid(m_aggregation, targetPath, -1); }
+
+		std::wstring getBuildFileCopyFileUid(const Path& file) const { return calculateUid(m_aggregation, file, -2); }
+
+		std::wstring getBuildFileCopyFileUid(const Project* dependencyProject) const { return calculateUid(m_aggregation, dependencyProject, -1); }
+
+		std::wstring getTargetUid() const { return calculateUid(m_aggregation, -6); }
+
+		std::wstring getTargetDependencyUid(const Project* dependencyProject) const { return calculateUid(m_aggregation, dependencyProject, -2); }
+
+	private:
+		Ref< const Aggregation > m_aggregation;
+	};
+
+	void collectCopyPhases(const RefArray< AggregationItem >& items, std::set< Path >& outPaths)
+	{
+		for (RefArray< AggregationItem >::const_iterator i = items.begin(); i != items.end(); ++i)
+		{
+			Path targetPath = Path((*i)->getTargetPath()).getPathName();
+			outPaths.insert(targetPath);
+		}
+	}
+
 	void collectProjectFiles(const Project* project, const RefArray< ProjectItem >& items, std::set< Path >& outFiles)
 	{
 		for (RefArray< ProjectItem >::const_iterator i = items.begin(); i != items.end(); ++i)
@@ -325,9 +399,7 @@ namespace
 T_IMPLEMENT_RTTI_CLASS(L"SolutionBuilderXcode", SolutionBuilderXcode, SolutionBuilder)
 
 SolutionBuilderXcode::SolutionBuilderXcode()
-:	m_copyProductFiles(false)
-,	m_generateAllAggregate(false)
-,	m_iphone(false)
+:	m_iphone(false)
 {
 }
 
@@ -342,12 +414,6 @@ bool SolutionBuilderXcode::create(const CommandLine& cmdLine)
 		m_releaseConfig = cmdLine.getOption('r', L"xcode-release-config").getString();
 	else
 		m_releaseConfig = L"Release";
-
-	if (cmdLine.hasOption('c', L"xcode-copy-products"))
-		m_copyProductFiles = true;
-
-	if (cmdLine.hasOption('a', L"xcode-generate-aggregate"))
-		m_generateAllAggregate = true;
 
 	if (cmdLine.hasOption('i', L"xcode-configuration"))
 	{
@@ -406,16 +472,6 @@ bool SolutionBuilderXcode::generate(Solution* solution)
 		++i;
 	}
 
-	// Automatically create an "All" aggregate project.
-	if (m_generateAllAggregate)
-	{
-		Ref< Project > allProject = new Project();
-		allProject->setName(L"All");
-		for (RefArray< Project >::iterator i = unsorted.begin(); i != unsorted.end(); ++i)
-			allProject->addDependency(new ProjectDependency(*i));
-		unsorted.push_back(allProject);
-	}
-
 	// Sort projects by their dependencies.
 	RefArray< Project > projects;
 	while (!unsorted.empty())
@@ -469,7 +525,7 @@ bool SolutionBuilderXcode::generate(Solution* solution)
 	s << L"\tarchiveVersion = 1;" << Endl;
 	s << L"\tclasses = {" << Endl;
 	s << L"\t};" << Endl;
-	s << L"\tobjectVersion = 45;" << Endl;
+	s << L"\tobjectVersion = 46;" << Endl;
 	s << L"\tobjects = {" << Endl;
 	s << Endl;
 
@@ -480,7 +536,7 @@ bool SolutionBuilderXcode::generate(Solution* solution)
 	generatePBXFileReferenceSection(s, solution, projects, files);
 	generatePBXFrameworksBuildPhaseSection(s, solution, projects);
 	generatePBXGroupSection(s, solution, projects);
-	generatePBXAggregateTargetSection(s, solution, projects);
+	generatePBXAggregateTargetSection(s, solution);
 	generatePBXNativeTargetSection(s, solution, projects);
 	generatePBXProjectSection(s, solution, projects);
 	generatePBXReferenceProxySection(s, solution, projects);
@@ -488,7 +544,7 @@ bool SolutionBuilderXcode::generate(Solution* solution)
 	generatePBXShellScriptBuildPhaseSection(s, solution, projects);
 	generatePBXResourcesBuildPhaseSection(s, projects);
 	generatePBXSourcesBuildPhaseSection(s, projects);
-	generatePBXTargetDependencySection(s, projects);
+	generatePBXTargetDependencySection(s, solution, projects);
 	generateXCBuildConfigurationSection(s, solution, projects);
 	generateXCConfigurationListSection(s, solution, projects);
 
@@ -506,8 +562,6 @@ void SolutionBuilderXcode::showOptions() const
 {
 	log::info << L"\t-d,-xcode-debug-config = Debug configuration" << Endl;
 	log::info << L"\t-r,-xcode-release-config = Release configuration" << Endl;
-	log::info << L"\t-c,-xcode-copy-products = Copy products into bundles" << Endl;
-	log::info << L"\t-a,-xcode-generate-aggregate = Generate all aggregate" << Endl;
 	log::info << L"\t-i,-xcode-configuration = iPhone OS (iphone, ipad)" << Endl;
 	log::info << L"\t-xcode-root-suffix = Root path suffix" << Endl;
 }
@@ -538,9 +592,6 @@ void SolutionBuilderXcode::generatePBXBuildFileSection(OutputStream& s, const So
 	// Copy files.
 	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
-		if (isAggregate(*i))
-			continue;
-
 		Configuration::TargetFormat targetFormat = getTargetFormat(*i);
 		if (
 			targetFormat == Configuration::TfSharedLibrary ||
@@ -549,7 +600,7 @@ void SolutionBuilderXcode::generatePBXBuildFileSection(OutputStream& s, const So
 		)
 		{
 			std::set< ResolvedDependency > dependencies;
-			collectDependencies(solution, *i, dependencies, false, false);
+			collectCopyDependencies(solution, *i, dependencies, false);
 
 			for (std::set< ResolvedDependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
 			{
@@ -575,7 +626,7 @@ void SolutionBuilderXcode::generatePBXBuildFileSection(OutputStream& s, const So
 		if (targetFormat == Configuration::TfExecutable)
 		{
 			std::set< ResolvedDependency > dependencies;
-			collectDependencies(solution, *i, dependencies, true, false);
+			collectCopyDependencies(solution, *i, dependencies, false);
 
 			for (std::set< ResolvedDependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
 			{
@@ -592,13 +643,14 @@ void SolutionBuilderXcode::generatePBXBuildFileSection(OutputStream& s, const So
 	}
 
 	// Copy files into aggregates.
-	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+	const RefArray< Aggregation >& aggregations = solution->getAggregations();
+	for (RefArray< Aggregation >::const_iterator i = aggregations.begin(); i != aggregations.end(); ++i)
 	{
-		if (!isAggregate(*i))
+		if (!(*i)->getEnable())
 			continue;
 
 		std::set< ResolvedDependency > dependencies;
-		collectDependencies(solution, *i, dependencies, true, false);
+		collectCopyDependencies(solution, *i, dependencies, false);
 
 		for (std::set< ResolvedDependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
 		{
@@ -613,7 +665,18 @@ void SolutionBuilderXcode::generatePBXBuildFileSection(OutputStream& s, const So
 			std::wstring productUid = ProjectUids(j->project).getProductUid();
 			std::wstring productName = getProductName(j->project, targetFormat);
 
-			s << L"\t\t" << ProjectUids(*i).getBuildFileCopyFileUid(j->project) << L" /* " << productName << L" in CopyFiles */ = { isa = PBXBuildFile; fileRef = " << productUid << L" /* " << productName << L" */; };" << Endl;
+			s << L"\t\t" << AggregationUids(*i).getBuildFileCopyFileUid(j->project) << L" /* " << productName << L" in CopyFiles */ = { isa = PBXBuildFile; fileRef = " << productUid << L" /* " << productName << L" */; };" << Endl;
+		}
+
+		const RefArray< AggregationItem >& items = (*i)->getItems();
+		for (RefArray< AggregationItem >::const_iterator k = items.begin(); k != items.end(); ++k)
+		{
+			Path sourceFile((*k)->getSourceFile());
+			Path targetPath((*k)->getTargetPath());
+			Path targetFile = targetPath.getPathName() + L"/" + sourceFile.getFileName();
+
+			std::wstring fileUid = FileUids(sourceFile).getFileUid();
+			s << L"\t\t" << AggregationUids(*i).getBuildFileCopyFileUid(targetFile) << L" /* " << sourceFile.getFileName() << L" in CopyFiles */ = { isa = PBXBuildFile; fileRef = " << fileUid << L" /* " << sourceFile.getFileName() << L" */; };" << Endl;
 		}
 	}
 
@@ -655,14 +718,17 @@ void SolutionBuilderXcode::generatePBXBuildRuleSection(OutputStream& s, const So
 
 void SolutionBuilderXcode::generatePBXContainerItemProxySection(OutputStream& s, const Solution* solution, const RefArray< Project >& projects) const
 {
+	const RefArray< Aggregation >& aggregations = solution->getAggregations();
+	RefSet< const Project > localProjects;
+	RefSet< const Project > externalProjects;
+
 	s << L"/* Begin PBXContainerItemProxy section */" << Endl;
 	
-	// Local proxies.
-	RefSet< const Project > localProjects;
+	// Project's local proxies.
 	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
 		std::set< ResolvedDependency > dependencies;
-		collectDependencies(solution, *i, dependencies, false, false);
+		collectCopyDependencies(solution, *i, dependencies, false);
 
 		for (std::set< ResolvedDependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
 		{
@@ -680,13 +746,38 @@ void SolutionBuilderXcode::generatePBXContainerItemProxySection(OutputStream& s,
 			localProjects.insert(j->project);
 		}
 	}
+
+	// Aggregations local proxies.
+	for (RefArray< Aggregation >::const_iterator i = aggregations.begin(); i != aggregations.end(); ++i)
+	{
+		if (!(*i)->getEnable())
+			continue;
+
+		std::set< ResolvedDependency > dependencies;
+		collectCopyDependencies(solution, *i, dependencies, false);
+
+		for (std::set< ResolvedDependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
+		{
+			if (j->external || localProjects.find(j->project) != localProjects.end())
+				continue;
+
+			s << L"\t\t" << ProjectUids(j->project).getContainerItemProxy() << L" /* PBXContainerItemProxy */ = {" << Endl;
+			s << L"\t\t\tisa = PBXContainerItemProxy;" << Endl;
+			s << L"\t\t\tcontainerPortal = " << SolutionUids(solution).getProjectUid() << L" /* Project object */;" << Endl;
+			s << L"\t\t\tproxyType = 1;" << Endl;
+			s << L"\t\t\tremoteGlobalIDString = " << ProjectUids(j->project).getTargetUid() << L" /* " << j->project->getName() << L" */;" << Endl;
+			s << L"\t\t\tremoteInfo = \"" << j->project->getName() << L"\";" << Endl;
+			s << L"\t\t};" << Endl;
+
+			localProjects.insert(j->project);
+		}
+	}
 	
-	// External proxies.
-	RefSet< const Project > externalProjects;
+	// Project's external proxies.
 	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
 		std::set< ResolvedDependency > dependencies;
-		collectDependencies(solution, *i, dependencies, false, false);
+		collectCopyDependencies(solution, *i, dependencies, false);
 
 		for (std::set< ResolvedDependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
 		{
@@ -709,6 +800,34 @@ void SolutionBuilderXcode::generatePBXContainerItemProxySection(OutputStream& s,
 			externalProjects.insert(j->project);
 		}
 	}
+
+	// Aggregations external proxies.
+	for (RefArray< Aggregation >::const_iterator i = aggregations.begin(); i != aggregations.end(); ++i)
+	{
+		std::set< ResolvedDependency > dependencies;
+		collectCopyDependencies(solution, *i, dependencies, false);
+
+		for (std::set< ResolvedDependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
+		{
+			if (!j->external || externalProjects.find(j->project) != externalProjects.end())
+				continue;
+
+			Path externalXcodeProjectPath = j->solution->getRootPath() + m_rootSuffix + L"/" + j->solution->getName() + L".xcodeproj";
+
+			Configuration::TargetFormat targetFormat = getTargetFormat(j->project);
+			std::wstring externalProductName = getProductName(j->project, targetFormat);
+
+			s << L"\t\t" << ProjectUids(j->project).getContainerItemProxy() << L" /* PBXContainerItemProxy */ = {" << Endl;
+			s << L"\t\t\tisa = PBXContainerItemProxy;" << Endl;
+			s << L"\t\t\tcontainerPortal = " << FileUids(externalXcodeProjectPath).getFileUid() << L" /* " << externalXcodeProjectPath.getFileName() << L" */;" << Endl;
+			s << L"\t\t\tproxyType = 2;" << Endl;
+			s << L"\t\t\tremoteGlobalIDString = " << createNewUid() << L";" << Endl;
+			s << L"\t\t\tremoteInfo = \"" << j->project->getName() << L"\";" << Endl;
+			s << L"\t\t};" << Endl;
+
+			externalProjects.insert(j->project);
+		}
+	}
 	
 	s << L"/* End PBXContainerItemProxy section */" << Endl;
 	s << Endl;
@@ -716,32 +835,27 @@ void SolutionBuilderXcode::generatePBXContainerItemProxySection(OutputStream& s,
 
 void SolutionBuilderXcode::generatePBXCopyFilesBuildPhaseSection(traktor::OutputStream& s, const Solution* solution, const traktor::RefArray< Project >& projects) const
 {
-	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
-	{
-		// Always copy aggregates files.
-		if (!isAggregate(*i))
-		{
-			if (!m_copyProductFiles)
-				continue;
+	const RefArray< Aggregation >& aggregations = solution->getAggregations();
 
-			// Only executable (not console though) projects gets files copied as they are "bundles".
-			if (getTargetFormat(*i) != Configuration::TfExecutable)
-				continue;
-		}
-			
-		log::info << (*i)->getName() << L"..." << Endl;
-	
+	// Copy products of dependencies.
+	for (RefArray< Aggregation >::const_iterator i = aggregations.begin(); i != aggregations.end(); ++i)
+	{
+		if (!(*i)->getEnable())
+			continue;
+
+		log::info << L"Copy files phase \"" << (*i)->getName() << L"\"; products..." << Endl;
+
 		s << L"/* Begin PBXCopyFilesBuildPhase section */" << Endl;
-		
-		s << L"\t\t" << ProjectUids(*i).getBuildPhaseCopyFilesUid() << L" /* CopyFiles */ = {" << Endl;
+
+		s << L"\t\t" << AggregationUids(*i).getBuildPhaseCopyFilesUid() << L" /* CopyFiles */ = {" << Endl;
 		s << L"\t\t\tisa = PBXCopyFilesBuildPhase;" << Endl;
 		s << L"\t\t\tbuildActionMask = 2147483647;" << Endl;
-		s << L"\t\t\tdstPath = \"\";" << Endl;
-		s << L"\t\t\tdstSubfolderSpec = 6;" << Endl;
+		s << L"\t\t\tdstPath = \"" << (*i)->getName() << L".app/Contents/MacOS\";" << Endl;
+		s << L"\t\t\tdstSubfolderSpec = 16;" << Endl;
 		s << L"\t\t\tfiles = (" << Endl;
-		
+
 		std::set< ResolvedDependency > dependencies;
-		collectDependencies(solution, *i, dependencies, true, false);
+		collectCopyDependencies(solution, *i, dependencies, false);
 
 		for (std::set< ResolvedDependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
 		{
@@ -754,23 +868,69 @@ void SolutionBuilderXcode::generatePBXCopyFilesBuildPhaseSection(traktor::Output
 				continue;
 
 			std::wstring productName = getProductName(j->project, targetFormat);
-			std::wstring buildFileUid = ProjectUids(*i).getBuildFileCopyFileUid(j->project);
+			std::wstring buildFileUid = AggregationUids(*i).getBuildFileCopyFileUid(j->project);
 			s << L"\t\t\t\t" << buildFileUid << L" /* " << productName << L" in CopyFiles */," << Endl;
-			
-			log::info << L"\tCopy file \"" << productName << L"\"" << Endl;
+
+			log::info << L"\tCopy product \"" << productName << L"\"" << Endl;
 		}
-		
+
 		s << L"\t\t\t);" << Endl;
 		s << L"\t\t\trunOnlyForDeploymentPostprocessing = 0;" << Endl;
 		s << L"\t\t};" << Endl;
-		
+
 		s << L"/* End PBXCopyFilesBuildPhase section */" << Endl;
 		s << Endl;
+
+		const RefArray< AggregationItem >& items = (*i)->getItems();
+		if (!items.empty())
+		{
+			std::set< Path > paths;
+			collectCopyPhases(items, paths);
+			T_ASSERT (!paths.empty());
+
+			for (std::set< Path >::const_iterator j = paths.begin(); j != paths.end(); ++j)
+			{
+				log::info << L"Copy files phase \"" << (*i)->getName() << L"\"; into \"" << j->getPathName() << L"\"..." << Endl;
+
+				s << L"/* Begin PBXCopyFilesBuildPhase section */" << Endl;
+
+				s << L"\t\t" << AggregationUids(*i).getBuildPhaseCopyFilesUid(j->getPathName()) << L" /* CopyFiles */ = {" << Endl;
+				s << L"\t\t\tisa = PBXCopyFilesBuildPhase;" << Endl;
+				s << L"\t\t\tbuildActionMask = 2147483647;" << Endl;
+				s << L"\t\t\tdstPath = \"" << (*i)->getName() << L".app/" << j->getPathName() << L"\";" << Endl;
+				s << L"\t\t\tdstSubfolderSpec = 16;" << Endl;
+				s << L"\t\t\tfiles = (" << Endl;
+
+				for (RefArray< AggregationItem >::const_iterator k = items.begin(); k != items.end(); ++k)
+				{
+					Path sourceFile((*k)->getSourceFile());
+					Path targetPath((*k)->getTargetPath());
+					Path targetFile = targetPath.getPathName() + L"/" + sourceFile.getFileName();
+
+					if (!(targetPath == *j))
+						continue;
+
+					std::wstring buildFileUid = AggregationUids(*i).getBuildFileCopyFileUid(targetFile);
+					s << L"\t\t\t\t" << buildFileUid << L" /* " << sourceFile.getFileName() << L" in CopyFiles */," << Endl;
+
+					log::info << L"\tCopy file \"" << sourceFile.getPathName() << L"\" => \"" << targetFile.getPathName() << L"\"" << Endl;
+				}
+
+				s << L"\t\t\t);" << Endl;
+				s << L"\t\t\trunOnlyForDeploymentPostprocessing = 0;" << Endl;
+				s << L"\t\t};" << Endl;
+
+				s << L"/* End PBXCopyFilesBuildPhase section */" << Endl;
+				s << Endl;
+			}
+		}
 	}
 }
 
 void SolutionBuilderXcode::generatePBXFileReferenceSection(OutputStream& s, const Solution* solution, const RefArray< Project >& projects, const std::set< Path >& files) const
 {
+	std::set< std::wstring > copiedItems;
+
 	s << L"/* Begin PBXFileReference section */" << Endl;
 	for (std::set< Path >::const_iterator i = files.begin(); i != files.end(); ++i)
 	{
@@ -786,11 +946,35 @@ void SolutionBuilderXcode::generatePBXFileReferenceSection(OutputStream& s, cons
 		s << L"\t\t" << fileUid << L" /* " << i->getFileName() << L" */ = { isa = PBXFileReference; name = " << i->getFileName() << L"; path = " << relativeFilePath.getPathName() << L"; sourceTree = \"<group>\"; };" << Endl;
 	}
 
-	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+	const RefArray< Aggregation >& aggregations = solution->getAggregations();
+	for (RefArray< Aggregation >::const_iterator i = aggregations.begin(); i != aggregations.end(); ++i)
 	{
-		if (isAggregate(*i))
+		if (!(*i)->getEnable())
 			continue;
 
+		const RefArray< AggregationItem >& items = (*i)->getItems();
+		for (RefArray< AggregationItem >::const_iterator j = items.begin(); j != items.end(); ++j)
+		{
+			Path sourceFile((*j)->getSourceFile());
+
+			Path projectPath = FileSystem::getInstance().getAbsolutePath(solution->getRootPath() + m_rootSuffix);
+			Path filePath = FileSystem::getInstance().getAbsolutePath(sourceFile);
+
+			Path relativeFilePath;
+			if (!FileSystem::getInstance().getRelativePath(filePath, projectPath, relativeFilePath))
+				relativeFilePath = filePath;
+
+			std::wstring fileUid = FileUids(sourceFile).getFileUid();
+			if (copiedItems.find(fileUid) == copiedItems.end())
+			{
+				s << L"\t\t" << fileUid << L" /* " << sourceFile.getFileName() << L" */ = { isa = PBXFileReference; name = " << sourceFile.getFileName() << L"; path = " << relativeFilePath.getPathName() << L"; sourceTree = \"<group>\"; };" << Endl;
+				copiedItems.insert(fileUid);
+			}
+		}
+	}
+
+	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+	{
 		Configuration::TargetFormat targetFormat = getTargetFormat(*i);
 
 		std::wstring productUid = ProjectUids(*i).getProductUid();
@@ -849,9 +1033,6 @@ void SolutionBuilderXcode::generatePBXFrameworksBuildPhaseSection(OutputStream& 
 	s << L"/* Begin PBXFrameworksBuildPhase section */" << Endl;
 	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
-		if (isAggregate(*i))
-			continue;
-
 		s << L"\t\t" << ProjectUids(*i).getBuildPhaseFrameworksUid() << L" /* Frameworks */ = {" << Endl;
 		s << L"\t\t\tisa = PBXFrameworksBuildPhase;" << Endl;
 		s << L"\t\t\tbuildActionMask = 2147483647;" << Endl;
@@ -876,7 +1057,7 @@ void SolutionBuilderXcode::generatePBXFrameworksBuildPhaseSection(OutputStream& 
 
 			// Add dependent libraries.
 			std::set< ResolvedDependency > dependencies;
-			collectDependencies(solution, *i, dependencies, false, false);
+			collectLinkDependencies(solution, *i, dependencies, false);
 			
 			log::info << (*i)->getName() << L"..." << Endl;
 		
@@ -919,16 +1100,19 @@ void SolutionBuilderXcode::generatePBXFrameworksBuildPhaseSection(OutputStream& 
 
 void SolutionBuilderXcode::generatePBXGroupSection(OutputStream& s, const Solution* solution, const RefArray< Project >& projects) const
 {
+	const RefArray< Aggregation >& aggregations = solution->getAggregations();
+	RefSet< const Solution > externalSolutions;
+
 	s << L"/* Begin PBXGroup section */" << Endl;
 	s << L"\t\t" << SolutionUids(solution).getGroupUid() << L" = {" << Endl;
 	s << L"\t\t\tisa = PBXGroup;" << Endl;
 	s << L"\t\t\tchildren = (" << Endl;
 
-	RefSet< const Solution > externalSolutions;
+	// Add external solutions groups.
 	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
 		std::set< ResolvedDependency > dependencies;
-		collectDependencies(solution, *i, dependencies, false, false);
+		collectCopyDependencies(solution, *i, dependencies, false);
 
 		for (std::set< ResolvedDependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
 		{
@@ -951,12 +1135,24 @@ void SolutionBuilderXcode::generatePBXGroupSection(OutputStream& s, const Soluti
 		}
 	}
 
+	// Add projects groups.
 	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
 		std::wstring projectGroupUid = ProjectUids(*i).getGroupUid();
 		s << L"\t\t\t\t" << projectGroupUid << L" /* " << (*i)->getName() << L" */," << Endl;
 	}
 
+	// Add aggregations groups.
+	for (RefArray< Aggregation >::const_iterator i = aggregations.begin(); i != aggregations.end(); ++i)
+	{
+		if (!(*i)->getEnable())
+			continue;
+
+		std::wstring aggregationGroupUid = AggregationUids(*i).getGroupUid();
+		s << L"\t\t\t\t" << aggregationGroupUid << L" /* " << (*i)->getName() << L" */," << Endl;
+	}
+
+	// Add products group.
 	s << L"\t\t\t\t" << SolutionUids(solution).getProductsGroupUid() << L" /* Products */," << Endl;
 
 	s << L"\t\t\t);" << Endl;
@@ -973,6 +1169,35 @@ void SolutionBuilderXcode::generatePBXGroupSection(OutputStream& s, const Soluti
 			(*i)->getItems(),
 			true
 		);
+	}
+
+	for (RefArray< Aggregation >::const_iterator i = aggregations.begin(); i != aggregations.end(); ++i)
+	{
+		if (!(*i)->getEnable())
+			continue;
+
+		std::set< std::wstring > copiedFiles;
+
+		s << L"\t\t" << AggregationUids(*i).getGroupUid() << L" = /* " << (*i)->getName() << L" */ {" << Endl;
+		s << L"\t\t\tisa = PBXGroup;" << Endl;
+		s << L"\t\t\tchildren = (" << Endl;
+
+		const RefArray< AggregationItem >& items = (*i)->getItems();
+		for (RefArray< AggregationItem >::const_iterator j = items.begin(); j != items.end(); ++j)
+		{
+			Path sourceFile((*j)->getSourceFile());
+			std::wstring fileUid = FileUids(sourceFile).getFileUid();
+			if (copiedFiles.find(fileUid) == copiedFiles.end())
+			{
+				s << L"\t\t\t\t" << fileUid << L" /* " << sourceFile.getFileName() << L" */," << Endl;
+				copiedFiles.insert(fileUid);
+			}
+		}
+
+		s << L"\t\t\t);" << Endl;
+		s << L"\t\t\tname = \"" << (*i)->getName() << L"\";" << Endl;
+		s << L"\t\t\tsourceTree = \"<group>\";" << Endl;
+		s << L"\t\t};" << Endl;
 	}
 
 	s << L"\t\t" << SolutionUids(solution).getProductsGroupUid() << L" = /* Products */ {" << Endl;
@@ -992,9 +1217,6 @@ void SolutionBuilderXcode::generatePBXGroupSection(OutputStream& s, const Soluti
 		const RefArray< Project >& externalProjects = (*i)->getProjects();
 		for (RefArray< Project >::const_iterator i = externalProjects.begin(); i != externalProjects.end(); ++i)
 		{
-			if (isAggregate(*i))
-				continue;
-
 			Configuration::TargetFormat targetFormat = getTargetFormat(*i);
 
 			std::wstring productUid = ProjectUids(*i).getProductUid();
@@ -1013,19 +1235,33 @@ void SolutionBuilderXcode::generatePBXGroupSection(OutputStream& s, const Soluti
 	s << Endl;
 }
 
-void SolutionBuilderXcode::generatePBXAggregateTargetSection(OutputStream& s, const Solution* solution, const RefArray< Project >& projects) const
+void SolutionBuilderXcode::generatePBXAggregateTargetSection(OutputStream& s, const Solution* solution) const
 {
+	const RefArray< Aggregation >& aggregations = solution->getAggregations();
+
 	s << L"/* Begin PBXAggregateTarget section */" << Endl;
-	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+	for (RefArray< Aggregation >::const_iterator i = aggregations.begin(); i != aggregations.end(); ++i)
 	{
-		if (!isAggregate(*i))
+		if (!(*i)->getEnable())
 			continue;
 
-		s << L"\t\t" << ProjectUids(*i).getTargetUid() << L" /* " << (*i)->getName() << L" */ = {" << Endl;
+		s << L"\t\t" << AggregationUids(*i).getTargetUid() << L" /* " << (*i)->getName() << L" */ = {" << Endl;
 		s << L"\t\t\tisa = PBXAggregateTarget;" << Endl;
-		s << L"\t\t\tbuildConfigurationList = " << ProjectUids(*i).getBuildConfigurationListUid() << L" /* Build configuration list for PBXAggregateTarget \"" << (*i)->getName() << L"\" */;" << Endl;
+		s << L"\t\t\tbuildConfigurationList = " << AggregationUids(*i).getBuildConfigurationListUid() << L" /* Build configuration list for PBXAggregateTarget \"" << (*i)->getName() << L"\" */;" << Endl;
 		s << L"\t\t\tbuildPhases = (" << Endl;
-		s << L"\t\t\t\t" << ProjectUids(*i).getBuildPhaseCopyFilesUid() << L" /* CopyFiles */," << Endl;
+		s << L"\t\t\t\t" << AggregationUids(*i).getBuildPhaseCopyFilesUid() << L" /* CopyFiles */," << Endl;
+
+		const RefArray< AggregationItem >& items = (*i)->getItems();
+		if (!items.empty())
+		{
+			std::set< Path > paths;
+			collectCopyPhases(items, paths);
+			T_ASSERT (!paths.empty());
+
+			for (std::set< Path >::const_iterator j = paths.begin(); j != paths.end(); ++j)
+				s << L"\t\t\t\t" << AggregationUids(*i).getBuildPhaseCopyFilesUid(*j) << L" /* CopyFiles */," << Endl;
+		}
+
 		s << L"\t\t\t);" << Endl;
 		s << L"\t\t\tdependencies = (" << Endl;
 
@@ -1033,7 +1269,7 @@ void SolutionBuilderXcode::generatePBXAggregateTargetSection(OutputStream& s, co
 		for (RefArray< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
 		{
 			if (const ProjectDependency* projectDependency = dynamic_type_cast< const ProjectDependency* >(*j))
-				s << L"\t\t\t\t" << ProjectUids(*i).getTargetDependencyUid(projectDependency->getProject()) << L" /* PBXTargetDependency */," << Endl;
+				s << L"\t\t\t\t" << AggregationUids(*i).getTargetDependencyUid(projectDependency->getProject()) << L" /* PBXTargetDependency */," << Endl;
 		}
 
 		s << L"\t\t\t);" << Endl;
@@ -1050,9 +1286,6 @@ void SolutionBuilderXcode::generatePBXNativeTargetSection(OutputStream& s, const
 	s << L"/* Begin PBXNativeTarget section */" << Endl;
 	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
-		if (isAggregate(*i))
-			continue;
-
 		std::set< Path > projectFiles;
 		collectProjectFiles(*i, projectFiles);
 
@@ -1079,13 +1312,6 @@ void SolutionBuilderXcode::generatePBXNativeTargetSection(OutputStream& s, const
 		s << L"\t\t\t\t" << ProjectUids(*i).getBuildPhaseSourcesUid() << L" /* Sources */," << Endl;
 		s << L"\t\t\t\t" << ProjectUids(*i).getBuildPhaseResourcesUid() << L" /* Resources */," << Endl;
 		s << L"\t\t\t\t" << ProjectUids(*i).getBuildPhaseFrameworksUid() << L" /* Frameworks */," << Endl;
-		
-		if (m_copyProductFiles)
-		{
-			if (targetFormat == Configuration::TfExecutable || targetFormat == Configuration::TfExecutableConsole)
-				s << L"\t\t\t\t" << ProjectUids(*i).getBuildPhaseCopyFilesUid() << L" /* CopyFiles */," << Endl;
-		}
-			
 		s << L"\t\t\t);" << Endl;
 		s << L"\t\t\tbuildRules = (" << Endl;
 		//s << L"\t\t\t\t" << SolutionUids(solution).getCustomBuildRuleUid(0) << L" /* PBXBuildRule */," << Endl;
@@ -1113,18 +1339,27 @@ void SolutionBuilderXcode::generatePBXNativeTargetSection(OutputStream& s, const
 
 void SolutionBuilderXcode::generatePBXProjectSection(OutputStream& s, const Solution* solution, const RefArray< Project >& projects) const
 {
+	const RefArray< Aggregation >& aggregations = solution->getAggregations();
+	std::set< std::wstring > externalSolutionPaths;
+
 	s << L"/* Begin PBXProject section */" << Endl;
 	s << L"\t\t" << SolutionUids(solution).getProjectUid() << L" /* Project object */ = {" << Endl;
 	s << L"\t\t\tisa = PBXProject;" << Endl;
+	s << L"\t\t\tattributes = {" << Endl;
+	s << L"\t\t\t\tORGANIZATIONNAME = \"Doctor Entertainment AB\";" << Endl;
+	s << L"\t\t\t};" << Endl;
 	s << L"\t\t\tbuildConfigurationList = " << SolutionUids(solution).getBuildConfigurationListUid() << L" /* Build configuration list for PBXProject \"" << solution->getName() << L"\" */;" << Endl;
-	s << L"\t\t\tcompatibilityVersion = \"Xcode 3.1\";" << Endl;
+	s << L"\t\t\tcompatibilityVersion = \"Xcode 3.2\";" << Endl;
+	s << L"\t\t\tdevelopmentRegion = English;" << Endl;
 	s << L"\t\t\thasScannedForEncodings = 0;" << Endl;
+	s << L"\t\t\tknownRegions = (" << Endl;
+	s << L"\t\t\t\ten," << Endl;
+	s << L"\t\t\t);" << Endl;
 	s << L"\t\t\tmainGroup = " << SolutionUids(solution).getGroupUid() << L";" << Endl;
 	s << L"\t\t\tproductRefGroup = " << SolutionUids(solution).getProductsGroupUid() << L" /* Products */;" << Endl;
 	s << L"\t\t\tprojectDirPath = \"\";" << Endl;
 	s << L"\t\t\tprojectReferences = (" << Endl;
 
-	std::set< std::wstring > externalSolutionPaths;
 	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
 		const RefArray< Dependency >& dependencies = (*i)->getDependencies();
@@ -1152,8 +1387,16 @@ void SolutionBuilderXcode::generatePBXProjectSection(OutputStream& s, const Solu
 	s << L"\t\t\t);" << Endl;
 	s << L"\t\t\tprojectRoot = \"\";" << Endl;
 	s << L"\t\t\ttargets = (" << Endl;
+
 	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 		s << L"\t\t\t\t" << ProjectUids(*i).getTargetUid() << L" /* " << (*i)->getName() << L" */," << Endl;
+	for (RefArray< Aggregation >::const_iterator i = aggregations.begin(); i != aggregations.end(); ++i)
+	{
+		if (!(*i)->getEnable())
+			continue;
+		s << L"\t\t\t\t" << AggregationUids(*i).getTargetUid() << L" /* " << (*i)->getName() << L" */," << Endl;
+	}
+
 	s << L"\t\t\t);" << Endl;
 	s << L"\t\t};" << Endl;
 	s << L"/* End PBXProject section */" << Endl;
@@ -1162,13 +1405,15 @@ void SolutionBuilderXcode::generatePBXProjectSection(OutputStream& s, const Solu
 
 void SolutionBuilderXcode::generatePBXReferenceProxySection(OutputStream& s, const Solution* solution, const RefArray< Project >& projects) const
 {
+	const RefArray< Aggregation >& aggregations = solution->getAggregations();
+	RefSet< const Project > externalProjects;
+
 	s << L"/* Begin PBXReferenceProxy section */" << Endl;
 	
-	RefSet< const Project > externalProjects;
 	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
 		std::set< ResolvedDependency > dependencies;
-		collectDependencies(solution, *i, dependencies, true, false);
+		collectCopyDependencies(solution, *i, dependencies, false);
 
 		for (std::set< ResolvedDependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
 		{
@@ -1190,6 +1435,35 @@ void SolutionBuilderXcode::generatePBXReferenceProxySection(OutputStream& s, con
 			externalProjects.insert(j->project);
 		}
 	}
+
+	for (RefArray< Aggregation >::const_iterator i = aggregations.begin(); i != aggregations.end(); ++i)
+	{
+		if (!(*i)->getEnable())
+			continue;
+
+		std::set< ResolvedDependency > dependencies;
+		collectCopyDependencies(solution, *i, dependencies, false);
+
+		for (std::set< ResolvedDependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
+		{
+			if (!j->external || externalProjects.find(j->project) != externalProjects.end())
+				continue;
+
+			Configuration::TargetFormat targetFormat = getTargetFormat(j->project);
+			std::wstring productName = getProductName(j->project, targetFormat);
+			std::wstring productType = getProductType(targetFormat);
+
+			s << L"\t\t" << ProjectUids(j->project).getProductUid() << L" /* " << productName << L" */ = {" << Endl;
+			s << L"\t\t\tisa = PBXReferenceProxy;" << Endl;
+			s << L"\t\t\tfileType = \"" << productType << L"\";" << Endl;
+			s << L"\t\t\tpath = \"" << productName << L"\";" << Endl;
+			s << L"\t\t\tremoteRef = " << ProjectUids(j->project).getContainerItemProxy() << L" /* PBXContainerItemProxy */;" << Endl;
+			s << L"\t\t\tsourceTree = BUILT_PRODUCTS_DIR;" << Endl;
+			s << L"\t\t};" << Endl;
+
+			externalProjects.insert(j->project);
+		}
+	}
 	
 	s << L"/* End PBXReferenceProxy section */" << Endl;
 	s << Endl;
@@ -1200,9 +1474,6 @@ void SolutionBuilderXcode::generatePBXHeadersBuildPhaseSection(OutputStream& s, 
 	s << L"/* Begin PBXHeadersBuildPhase section */" << Endl;
 	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
-		if (isAggregate(*i))
-			continue;
-
 		Configuration::TargetFormat targetFormat = getTargetFormat(*i);
 
 		s << L"\t\t" << ProjectUids(*i).getBuildPhaseHeadersUid() << L" /* Headers */ = {" << Endl;
@@ -1232,9 +1503,6 @@ void SolutionBuilderXcode::generatePBXResourcesBuildPhaseSection(traktor::Output
 	s << L"/* Begin PBXResourcesBuildPhase section */" << Endl;
 	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
-		if (isAggregate(*i))
-			continue;
-
 		s << L"\t\t" << ProjectUids(*i).getBuildPhaseResourcesUid() << L" /* Resources */ = {" << Endl;
 		s << L"\t\t\tisa = PBXResourcesBuildPhase;" << Endl;
 		s << L"\t\t\tbuildActionMask = 2147483647;" << Endl;
@@ -1264,9 +1532,6 @@ void SolutionBuilderXcode::generatePBXShellScriptBuildPhaseSection(OutputStream&
 	s << L"/* Begin PBXShellScriptBuildPhase section */" << Endl;
 	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
-		if (isAggregate(*i))
-			continue;
-
 		std::set< Path > projectFiles;
 		collectProjectFiles(*i, projectFiles);
 
@@ -1327,9 +1592,6 @@ void SolutionBuilderXcode::generatePBXSourcesBuildPhaseSection(OutputStream& s, 
 	s << L"/* Begin PBXSourcesBuildPhase section */" << Endl;
 	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
-		if (isAggregate(*i))
-			continue;
-
 		Configuration::TargetFormat targetFormat = getTargetFormat(*i);
 
 		s << L"\t\t" << ProjectUids(*i).getBuildPhaseSourcesUid() << L" /* Sources */ = {" << Endl;
@@ -1360,9 +1622,12 @@ void SolutionBuilderXcode::generatePBXSourcesBuildPhaseSection(OutputStream& s, 
 	s << Endl;
 }
 
-void SolutionBuilderXcode::generatePBXTargetDependencySection(OutputStream& s, const RefArray< Project >& projects) const
+void SolutionBuilderXcode::generatePBXTargetDependencySection(OutputStream& s, const Solution* solution, const RefArray< Project >& projects) const
 {
+	const RefArray< Aggregation >& aggregations = solution->getAggregations();
+
 	s << L"/* Begin PBXTargetDependency section */" << Endl;
+
 	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
 		const RefArray< Dependency >& dependencies = (*i)->getDependencies();
@@ -1378,6 +1643,26 @@ void SolutionBuilderXcode::generatePBXTargetDependencySection(OutputStream& s, c
 			}
 		}
 	}
+
+	for (RefArray< Aggregation >::const_iterator i = aggregations.begin(); i != aggregations.end(); ++i)
+	{
+		if (!(*i)->getEnable())
+			continue;
+
+		const RefArray< Dependency >& dependencies = (*i)->getDependencies();
+		for (RefArray< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
+		{
+			if (const ProjectDependency* projectDependency = dynamic_type_cast< const ProjectDependency* >(*j))
+			{
+				s << L"\t\t" << AggregationUids(*i).getTargetDependencyUid(projectDependency->getProject()) << L" /* PBXTargetDependency */ = {" << Endl;
+				s << L"\t\t\tisa = PBXTargetDependency;" << Endl;
+				s << L"\t\t\ttarget = " << ProjectUids(projectDependency->getProject()).getTargetUid() << L" /* " << projectDependency->getProject()->getName() << L" */;" << Endl;
+				s << L"\t\t\ttargetProxy = " << ProjectUids(projectDependency->getProject()).getContainerItemProxy() << L" /* PBXContainerItemProxy */;" << Endl;
+				s << L"\t\t};" << Endl;
+			}
+		}
+	}
+
 	s << L"/* End PBXTargetDependency section */" << Endl;
 	s << Endl;
 }
@@ -1408,12 +1693,13 @@ void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, 
 	s << L"\t\t};" << Endl;
 
 	// Project settings.
-	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+	const RefArray< Aggregation >& aggregations = solution->getAggregations();
+	for (RefArray< Aggregation >::const_iterator i = aggregations.begin(); i != aggregations.end(); ++i)
 	{
-		if (!isAggregate(*i))
+		if (!(*i)->getEnable())
 			continue;
 
-		s << L"\t\t" << ProjectUids(*i).getBuildConfigurationDebugUid() << L" /* " << (*i)->getName() << L" Debug */ = {" << Endl;
+		s << L"\t\t" << AggregationUids(*i).getBuildConfigurationDebugUid() << L" /* " << (*i)->getName() << L" Debug */ = {" << Endl;
 		s << L"\t\t\tisa = XCBuildConfiguration;" << Endl;
 		s << L"\t\t\tbuildSettings = {" << Endl;
 		s << L"\t\t\t\tPRODUCT_NAME = \"" << (*i)->getName() << L"\";" << Endl;
@@ -1421,7 +1707,7 @@ void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, 
 		s << L"\t\t\tname = Debug;" << Endl;
 		s << L"\t\t};" << Endl;
 
-		s << L"\t\t" << ProjectUids(*i).getBuildConfigurationReleaseUid() << L" /* " << (*i)->getName() << L" Release */ = {" << Endl;
+		s << L"\t\t" << AggregationUids(*i).getBuildConfigurationReleaseUid() << L" /* " << (*i)->getName() << L" Release */ = {" << Endl;
 		s << L"\t\t\tisa = XCBuildConfiguration;" << Endl;
 		s << L"\t\t\tbuildSettings = {" << Endl;
 		s << L"\t\t\t\tPRODUCT_NAME = \"" << (*i)->getName() << L"\";" << Endl;
@@ -1432,9 +1718,6 @@ void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, 
 
 	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
-		if (isAggregate(*i))
-			continue;
-
 		Ref< Configuration > configurations[2];
 		getConfigurations(*i, configurations);
 		
@@ -1667,13 +1950,10 @@ void SolutionBuilderXcode::generateXCConfigurationListSection(OutputStream& s, c
 	s << L"\t\t\tdefaultConfigurationIsVisible = 0;" << Endl;
 	s << L"\t\t\tdefaultConfigurationName = Debug;" << Endl;
 	s << L"\t\t};" << Endl;
+
 	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
-		if (!isAggregate(*i))
-			s << L"\t\t" << ProjectUids(*i).getBuildConfigurationListUid() << L" /* Build configuration list for PBXNativeTarget \"" << (*i)->getName() << L"\" */ = {" << Endl;
-		else
-			s << L"\t\t" << ProjectUids(*i).getBuildConfigurationListUid() << L" /* Build configuration list for PBXAggregateTarget \"" << (*i)->getName() << L"\" */ = {" << Endl;
-
+		s << L"\t\t" << ProjectUids(*i).getBuildConfigurationListUid() << L" /* Build configuration list for PBXNativeTarget \"" << (*i)->getName() << L"\" */ = {" << Endl;
 		s << L"\t\t\tisa = XCConfigurationList;" << Endl;
 		s << L"\t\t\tbuildConfigurations = (" << Endl;
 		s << L"\t\t\t\t" << ProjectUids(*i).getBuildConfigurationDebugUid() << L" /* Debug */," << Endl;
@@ -1683,6 +1963,21 @@ void SolutionBuilderXcode::generateXCConfigurationListSection(OutputStream& s, c
 		s << L"\t\t\tdefaultConfigurationName = Debug;" << Endl;
 		s << L"\t\t};" << Endl;
 	}
+
+	const RefArray< Aggregation >& aggregations = solution->getAggregations();
+	for (RefArray< Aggregation >::const_iterator i = aggregations.begin(); i != aggregations.end(); ++i)
+	{
+		s << L"\t\t" << AggregationUids(*i).getBuildConfigurationListUid() << L" /* Build configuration list for PBXAggregateTarget \"" << (*i)->getName() << L"\" */ = {" << Endl;
+		s << L"\t\t\tisa = XCConfigurationList;" << Endl;
+		s << L"\t\t\tbuildConfigurations = (" << Endl;
+		s << L"\t\t\t\t" << AggregationUids(*i).getBuildConfigurationDebugUid() << L" /* Debug */," << Endl;
+		s << L"\t\t\t\t" << AggregationUids(*i).getBuildConfigurationReleaseUid() << L" /* Release */," << Endl;
+		s << L"\t\t\t);" << Endl;
+		s << L"\t\t\tdefaultConfigurationIsVisible = 0;" << Endl;
+		s << L"\t\t\tdefaultConfigurationName = Debug;" << Endl;
+		s << L"\t\t};" << Endl;
+	}
+
 	s << L"/* End XCConfigurationList section */" << Endl;
 }
 
@@ -1724,12 +2019,8 @@ std::wstring SolutionBuilderXcode::getProductType(Configuration::TargetFormat ta
 	case Configuration::TfSharedLibrary:
 		return L"com.apple.product-type.library.dynamic";
 	case Configuration::TfExecutable:
-		return L"com.apple.product-type.application";
 	case Configuration::TfExecutableConsole:
-		if (!m_iphone)
-			return L"com.apple.product-type.tool";
-		else
-			return L"com.apple.product-type.application";
+		return L"com.apple.product-type.tool";
 	}
 	return L"";
 }
@@ -1750,19 +2041,52 @@ std::wstring SolutionBuilderXcode::getProductName(const Project* project, Config
 	return L"";
 }
 
-void SolutionBuilderXcode::collectDependencies(
+void SolutionBuilderXcode::collectCopyDependencies(
 	const Solution* solution,
 	const Project* project,
 	std::set< ResolvedDependency >& outDependencies,
-	bool copyFilesDependencies,
 	bool parentExternal
 ) const
 {
 	const RefArray< Dependency >& dependencies = project->getDependencies();
 	for (RefArray< Dependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
 	{
-		// Copy all files regardless if we link with product or not; ie. application dynamically load some dependencies.
-		if (!copyFilesDependencies && !(*i)->shouldLinkWithProduct())
+		ResolvedDependency dependency;
+
+		if (const ProjectDependency* projectDependency = dynamic_type_cast< const ProjectDependency* >(*i))
+		{
+			dependency.solution = solution;
+			dependency.project = projectDependency->getProject();
+			dependency.external = parentExternal;
+		}
+		else if (const ExternalDependency* externalDependency = dynamic_type_cast< const ExternalDependency* >(*i))
+		{
+			dependency.solution = externalDependency->getSolution();
+			dependency.project = externalDependency->getProject();
+			dependency.external = true;
+		}
+		else
+			continue;
+
+		if (outDependencies.find(dependency) == outDependencies.end())
+		{
+			outDependencies.insert(dependency);
+			collectCopyDependencies(dependency.solution, dependency.project, outDependencies, dependency.external);
+		}
+	}
+}
+
+void SolutionBuilderXcode::collectLinkDependencies(
+	const Solution* solution,
+	const Project* project,
+	std::set< ResolvedDependency >& outDependencies,
+	bool parentExternal
+) const
+{
+	const RefArray< Dependency >& dependencies = project->getDependencies();
+	for (RefArray< Dependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
+	{
+		if (!(*i)->shouldLinkWithProduct())
 			continue;
 
 		ResolvedDependency dependency;
@@ -1782,28 +2106,48 @@ void SolutionBuilderXcode::collectDependencies(
 		else
 			continue;
 
-		if (isAggregate(dependency.project))
+		if (outDependencies.find(dependency) == outDependencies.end())
+		{
+			outDependencies.insert(dependency);
+			if (getTargetFormat(dependency.project) == Configuration::TfStaticLibrary)
+				collectLinkDependencies(dependency.solution, dependency.project, outDependencies, dependency.external);
+		}
+	}
+}
+
+void SolutionBuilderXcode::collectCopyDependencies(
+	const Solution* solution,
+	const Aggregation* aggregation,
+	std::set< ResolvedDependency >& outDependencies,
+	bool parentExternal
+) const
+{
+	const RefArray< Dependency >& dependencies = aggregation->getDependencies();
+	for (RefArray< Dependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
+	{
+		ResolvedDependency dependency;
+
+		if (const ProjectDependency* projectDependency = dynamic_type_cast< const ProjectDependency* >(*i))
+		{
+			dependency.solution = solution;
+			dependency.project = projectDependency->getProject();
+			dependency.external = parentExternal;
+		}
+		else if (const ExternalDependency* externalDependency = dynamic_type_cast< const ExternalDependency* >(*i))
+		{
+			dependency.solution = externalDependency->getSolution();
+			dependency.project = externalDependency->getProject();
+			dependency.external = true;
+		}
+		else
 			continue;
 
 		if (outDependencies.find(dependency) == outDependencies.end())
 		{
 			outDependencies.insert(dependency);
-			
-			Configuration::TargetFormat targetFormat = getTargetFormat(dependency.project);
-
-			// Determine if we need to recurse.
-			if (targetFormat == Configuration::TfStaticLibrary)
-				collectDependencies(dependency.solution, dependency.project, outDependencies, copyFilesDependencies, dependency.external);
-			if (copyFilesDependencies && targetFormat == Configuration::TfSharedLibrary)
-				collectDependencies(dependency.solution, dependency.project, outDependencies, copyFilesDependencies, dependency.external);
+			collectCopyDependencies(dependency.solution, dependency.project, outDependencies, dependency.external);
 		}
 	}
-}
-
-bool SolutionBuilderXcode::isAggregate(const Project* project) const
-{
-	// If the project doesn't have any configurations we assume it's an aggregate target.
-	return project->getConfigurations().empty();
 }
 
 bool SolutionBuilderXcode::includeFile(traktor::OutputStream& s, const traktor::Path& fileName, int32_t indent) const

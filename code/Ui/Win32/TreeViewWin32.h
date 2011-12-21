@@ -38,6 +38,7 @@ private:
 	HIMAGELIST m_hImageList;
 	std::map< HTREEITEM, Ref< TreeViewItemWin32 > > m_items;
 	Ref< TreeViewItemWin32 > m_dragItem;
+	TCHAR m_editBuffer[1024];
 
 	Ref< TreeViewItemWin32 > getFromHandle(HTREEITEM hItem) const;
 

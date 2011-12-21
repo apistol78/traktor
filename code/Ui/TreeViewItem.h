@@ -62,6 +62,10 @@ public:
 
 	virtual void show() = 0;
 
+	virtual void setEditable(bool editable) = 0;
+
+	virtual bool isEditable() const = 0;
+
 	virtual bool edit() = 0;
 
 	virtual Ref< TreeViewItem > getParent() const = 0;

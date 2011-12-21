@@ -38,7 +38,8 @@ public:
 
 	enum EventId
 	{
-		EiDrag = EiUser
+		EiDrag = EiUser,
+		EiEdit = EiUser + 1
 	};
 
 	bool create(Widget* parent, int style = WsDefault);
@@ -62,6 +63,8 @@ public:
 	void addSelectEventHandler(EventHandler* eventHandler);
 
 	void addActivateEventHandler(EventHandler* eventHandler);
+
+	void addEditEventHandler(EventHandler* eventHandler);
 
 	void addEditedEventHandler(EventHandler* eventHandler);
 

@@ -230,6 +230,14 @@
 					<fileName>*.*</fileName>
 					<items/>
 				</item>
+				<item type="File">
+					<fileName>../../../../res/Solution.png</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>../../../../res/TraktorSmall.png</fileName>
+					<items/>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="1">

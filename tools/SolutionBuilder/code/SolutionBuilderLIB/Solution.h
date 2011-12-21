@@ -5,6 +5,7 @@
 #include <Core/RefArray.h>
 #include <Core/Serialization/ISerializable.h>
 
+class Aggregation;
 class Configuration;
 class Project;
 
@@ -33,6 +34,12 @@ public:
 
 	const traktor::RefArray< Project >& getProjects() const;
 
+	void addAggregation(Aggregation* aggregation);
+
+	void removeAggregation(Aggregation* aggregation);
+
+	const traktor::RefArray< Aggregation >& getAggregations() const;
+
 	virtual bool serialize(traktor::ISerializer& s);
 
 private:
@@ -41,6 +48,7 @@ private:
 	std::vector< std::wstring > m_definitions;
 	traktor::RefArray< Configuration > m_configurations;
 	traktor::RefArray< Project > m_projects;
+	traktor::RefArray< Aggregation > m_aggregations;
 };
 
 #endif	// Solution_H

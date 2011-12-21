@@ -6,8 +6,9 @@
 #include "SolutionBuilderLIB/SolutionBuilder.h"
 #include "SolutionBuilderLIB/Configuration.h"
 
-class Solution;
+class Aggregation;
 class Project;
+class Solution;
 
 class SolutionBuilderXcode : public SolutionBuilder
 {
@@ -44,8 +45,6 @@ private:
 
 	std::wstring m_debugConfig;
 	std::wstring m_releaseConfig;
-	bool m_copyProductFiles;
-	bool m_generateAllAggregate;
 	bool m_iphone;
 	std::wstring m_projectConfigurationFileDebug;
 	std::wstring m_projectConfigurationFileRelease;
@@ -67,7 +66,7 @@ private:
 
 	void generatePBXGroupSection(traktor::OutputStream& s, const Solution* solution, const traktor::RefArray< Project >& projects) const;
 
-	void generatePBXAggregateTargetSection(traktor::OutputStream& s, const Solution* solution, const traktor::RefArray< Project >& projects) const;
+	void generatePBXAggregateTargetSection(traktor::OutputStream& s, const Solution* solution) const;
 
 	void generatePBXNativeTargetSection(traktor::OutputStream& s, const Solution* solution, const traktor::RefArray< Project >& projects) const;
 
@@ -83,7 +82,7 @@ private:
 
 	void generatePBXSourcesBuildPhaseSection(traktor::OutputStream& s, const traktor::RefArray< Project >& projects) const;
 
-	void generatePBXTargetDependencySection(traktor::OutputStream& s, const traktor::RefArray< Project >& projects) const;
+	void generatePBXTargetDependencySection(traktor::OutputStream& s, const Solution* solution, const traktor::RefArray< Project >& projects) const;
 
 	void generateXCBuildConfigurationSection(traktor::OutputStream& s, const Solution* solution, const traktor::RefArray< Project >& projects) const;
 
@@ -97,9 +96,11 @@ private:
 	
 	std::wstring getProductName(const Project* project, Configuration::TargetFormat targetFormat) const;
 	
-	void collectDependencies(const Solution* solution, const Project* project, std::set< ResolvedDependency >& outDependencies, bool copyFilesDependencies, bool parentExternal) const;
+	void collectCopyDependencies(const Solution* solution, const Project* project, std::set< ResolvedDependency >& outDependencies, bool parentExternal) const;
 
-	bool isAggregate(const Project* project) const;
+	void collectLinkDependencies(const Solution* solution, const Project* project, std::set< ResolvedDependency >& outDependencies, bool parentExternal) const;
+
+	void collectCopyDependencies(const Solution* solution, const Aggregation* aggregation, std::set< ResolvedDependency >& outDependencies, bool parentExternal) const;
 
 	bool includeFile(traktor::OutputStream& s, const traktor::Path& fileName, int32_t indent) const;
 };

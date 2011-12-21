@@ -27,7 +27,7 @@ bool ConfigurationPropertyPage::create(ui::Widget* parent)
 {
 	if (!ui::Container::create(
 		parent,
-		ui::WsClientBorder,
+		ui::WsNone,
 		new ui::TableLayout(L"*,100%", L"*,*,100%,100%,100%,100%,*,*", 4, 4)
 	))
 		return false;
