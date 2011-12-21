@@ -10,7 +10,7 @@ struct IListDataCallback
 	virtual std::wstring listValue(NSTableColumn* tableColumn, int index) const = 0;
 };
 
-@interface NSListDataSource : NSObject
+@interface NSListDataSource : NSObject < NSTableViewDataSource >
 {
 	IListDataCallback* m_callback;
 }

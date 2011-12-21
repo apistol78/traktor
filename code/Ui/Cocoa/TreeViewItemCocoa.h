@@ -74,7 +74,7 @@ private:
 	int m_image;
 	int m_expandedImage;
 	bool m_expanded;
-	Ref< TreeViewItemCocoa > m_parent;
+	TreeViewItemCocoa* m_parent;
 	std::vector< ObjCRef* > m_children;
 };
 	

@@ -151,6 +151,9 @@ bool convertMesh(Model& outModel, KFbxScene* scene, KFbxNode* meshNode, uint32_t
 									vertex.setTexCoord(0, outModel.addUniqueTexCoord(uv));
 								}
 								break;
+
+							default:
+								break;
 							}
 							break;
 
@@ -166,8 +169,14 @@ bool convertMesh(Model& outModel, KFbxScene* scene, KFbxNode* meshNode, uint32_t
 										vertex.setTexCoord(0, outModel.addUniqueTexCoord(uv));
 									}
 									break;
+
+								default:
+									break;
 								}
 							}
+							break;
+							
+						default:
 							break;
 						}
 					}

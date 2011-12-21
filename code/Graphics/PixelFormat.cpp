@@ -99,6 +99,9 @@ void T_DLLCLASS convertPixel(
 		rgb[1] = sp[1];
 		rgb[2] = sp[0];
 		break;
+		
+	default:
+		break;
 	}
 
 	switch (targetPixelFormat)
@@ -117,6 +120,9 @@ void T_DLLCLASS convertPixel(
 		tp[2] = rgb[0];
 		tp[1] = rgb[1];
 		tp[0] = rgb[2];
+		break;
+
+	default:
 		break;
 	}
 }

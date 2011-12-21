@@ -716,10 +716,11 @@ void AsMovieClip::MovieClip_swapDepths(FlashSpriteInstance* self, const ActionVa
 
 	if (arg0.isNumeric())
 		targetDepth = int32_t(arg0.getNumber());
-	else if (arg0.isObject< FlashSpriteInstance >())
+	else if (arg0.isObject())
 	{
-		Ref< FlashSpriteInstance > targetClipInstance = arg0.getObject< FlashSpriteInstance >();
-		targetDepth = parentClipInstance->getDisplayList().getObjectDepth(targetClipInstance);
+		Ref< FlashSpriteInstance > targetClipInstance = arg0.getObject()->getRelay< FlashSpriteInstance >();
+		if (targetClipInstance)
+			targetDepth = parentClipInstance->getDisplayList().getObjectDepth(targetClipInstance);
 	}
 
 	parentClipInstance->getDisplayList().swap(depth, targetDepth);

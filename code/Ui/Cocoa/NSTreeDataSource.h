@@ -17,7 +17,7 @@ struct ITreeDataCallback
 	virtual void treeSetValue(void* item, const std::wstring& value) = 0;
 };
 
-@interface NSTreeDataSource : NSObject
+@interface NSTreeDataSource : NSObject < NSOutlineViewDataSource >
 {
 	ITreeDataCallback* m_callback;
 }
