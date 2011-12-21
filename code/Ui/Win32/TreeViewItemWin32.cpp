@@ -14,6 +14,7 @@ TreeViewItemWin32::TreeViewItemWin32(TreeViewWin32* owner, TreeViewItem* parent,
 ,	m_expandedImage(expandedImage)
 ,	m_hWndTree(hWndTree)
 ,	m_hItem(NULL)
+,	m_editable(true)
 {
 }
 
@@ -142,6 +143,16 @@ bool TreeViewItemWin32::isVisible() const
 void TreeViewItemWin32::show()
 {
 	TreeView_EnsureVisible(m_hWndTree, m_hItem);
+}
+
+void TreeViewItemWin32::setEditable(bool editable)
+{
+	m_editable = editable;
+}
+
+bool TreeViewItemWin32::isEditable() const
+{
+	return m_editable;
 }
 
 bool TreeViewItemWin32::edit()

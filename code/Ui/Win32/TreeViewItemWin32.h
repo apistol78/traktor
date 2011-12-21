@@ -52,6 +52,10 @@ public:
 
 	virtual void show();
 
+	virtual void setEditable(bool editable);
+
+	virtual bool isEditable() const;
+
 	virtual bool edit();
 
 	virtual Ref< TreeViewItem > getParent() const;
@@ -74,6 +78,7 @@ private:
 	int m_expandedImage;
 	HWND m_hWndTree;
 	HTREEITEM m_hItem;
+	bool m_editable;
 };
 
 	}

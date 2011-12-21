@@ -139,6 +139,11 @@ void TreeView::addActivateEventHandler(EventHandler* eventHandler)
 	addEventHandler(EiActivate, eventHandler);
 }
 
+void TreeView::addEditEventHandler(EventHandler* eventHandler)
+{
+	addEventHandler(EiEdit, eventHandler);
+}
+
 void TreeView::addEditedEventHandler(EventHandler* eventHandler)
 {
 	addEventHandler(EiContentChange, eventHandler);

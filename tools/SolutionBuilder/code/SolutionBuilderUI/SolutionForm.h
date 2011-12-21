@@ -1,6 +1,8 @@
 #ifndef SolutionForm_H
 #define SolutionForm_H
 
+#include <Core/Misc/CommandLine.h>
+#include <Core/Io/Path.h>
 #include <Ui/Form.h>
 #include <Ui/ShortcutTable.h>
 #include <Ui/MenuBar.h>
@@ -8,20 +10,22 @@
 #include <Ui/TreeView.h>
 #include <Ui/TreeViewItem.h>
 #include <Ui/PopupMenu.h>
-#include <Core/Misc/CommandLine.h>
-#include <Core/Io/Path.h>
 
-class SolutionPropertyPage;
-class ProjectPropertyPage;
+class AggregationItemPropertyPage;
+class AggregationPropertyPage;
 class ConfigurationPropertyPage;
+class ProjectPropertyPage;
+class SolutionPropertyPage;
 
-class Solution;
+class Aggregation;
+class AggregationItem;
+class Configuration;
+class File;
+class Filter;
+class MRU;
 class Project;
 class ProjectItem;
-class Filter;
-class File;
-class Configuration;
-class MRU;
+class Solution;
 
 class SolutionForm : public traktor::ui::Form
 {
@@ -39,12 +43,16 @@ private:
 	traktor::Ref< traktor::ui::TreeView > m_treeSolution;
 	traktor::Ref< traktor::ui::PopupMenu > m_menuSolution;
 	traktor::Ref< traktor::ui::PopupMenu > m_menuProject;
+	traktor::Ref< traktor::ui::PopupMenu > m_menuAggregation;
 	traktor::Ref< traktor::ui::PopupMenu > m_menuConfiguration;
 	traktor::Ref< traktor::ui::PopupMenu > m_menuFilter;
 	traktor::Ref< traktor::ui::PopupMenu > m_menuFile;
-	traktor::Ref< SolutionPropertyPage > m_pageSolution;
-	traktor::Ref< ProjectPropertyPage > m_pageProject;
+	traktor::Ref< traktor::ui::PopupMenu > m_menuAggregationItem;
+	traktor::Ref< AggregationPropertyPage > m_pageAggregation;
+	traktor::Ref< AggregationItemPropertyPage > m_pageAggregationItem;
 	traktor::Ref< ConfigurationPropertyPage > m_pageConfiguration;
+	traktor::Ref< ProjectPropertyPage > m_pageProject;
+	traktor::Ref< SolutionPropertyPage > m_pageSolution;
 	traktor::Ref< Solution > m_solution;
 	std::wstring m_solutionFileName;
 	uint32_t m_solutionHash;
@@ -60,11 +68,15 @@ private:
 
 	traktor::ui::TreeViewItem* createTreeProjectItem(traktor::ui::TreeViewItem* parentItem, Project* project);
 
+	traktor::ui::TreeViewItem* createTreeAggregationItem(traktor::ui::TreeViewItem* parentItem, Aggregation* aggregation);
+
 	traktor::ui::TreeViewItem* createTreeConfigurationItem(traktor::ui::TreeViewItem* parentItem, Project* project, Configuration* configuration);
 
 	traktor::ui::TreeViewItem* createTreeFilterItem(traktor::ui::TreeViewItem* parentItem, Project* project, Filter* filter);
 
 	traktor::ui::TreeViewItem* createTreeFileItem(traktor::ui::TreeViewItem* parentItem, Project* project, File* file);
+
+	traktor::ui::TreeViewItem* createTreeAggregationItemItem(traktor::ui::TreeViewItem* parentItem, Aggregation* aggregation, AggregationItem* item);
 
 	bool loadSolution(const traktor::Path& fileName);
 
@@ -88,7 +100,11 @@ private:
 
 	void eventTreeSelect(traktor::ui::Event*);
 
+	void eventTreeEdit(traktor::ui::Event*);
+
 	void eventTreeChange(traktor::ui::Event*);
+
+	void eventPropertyPageChange(traktor::ui::Event*);
 };
 
 #endif	// SolutionForm_H

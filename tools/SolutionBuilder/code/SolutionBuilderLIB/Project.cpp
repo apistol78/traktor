@@ -1,13 +1,13 @@
 #include <Core/Serialization/ISerializer.h>
 #include <Core/Serialization/Member.h>
 #include <Core/Serialization/MemberRefArray.h>
-#include "Project.h"
-#include "ProjectItem.h"
-#include "Configuration.h"
-#include "Dependency.h"
+#include "SolutionBuilderLIB/Project.h"
+#include "SolutionBuilderLIB/ProjectItem.h"
+#include "SolutionBuilderLIB/Configuration.h"
+#include "SolutionBuilderLIB/Dependency.h"
 
 // Remove this when we have converted all solutions.
-#include "ProjectDependency.h"
+#include "SolutionBuilderLIB/ProjectDependency.h"
 
 using namespace traktor;
 

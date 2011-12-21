@@ -1,4 +1,10 @@
 #include <sstream>
+#include <Core/Io/FileSystem.h>
+#include <Core/Io/MemoryStream.h>
+#include <Core/Serialization/DeepHash.h>
+#include <Core/Serialization/DeepClone.h>
+#include <Core/Log/Log.h>
+#include <Drawing/Formats/ImageFormatBmp.h>
 #include <Ui/Application.h>
 #include <Ui/MessageBox.h>
 #include <Ui/FloodLayout.h>
@@ -6,42 +12,41 @@
 #include <Ui/MethodHandler.h>
 #include <Ui/Bitmap.h>
 #include <Ui/Custom/Splitter.h>
-#include <Ui/Events/MouseEvent.h>
-#include <Ui/Events/CommandEvent.h>
 #include <Ui/Events/CloseEvent.h>
-#include <Drawing/Formats/ImageFormatBmp.h>
+#include <Ui/Events/CommandEvent.h>
+#include <Ui/Events/MouseEvent.h>
+#include <Ui/Events/TreeViewEditEvent.h>
 #include <Xml/XmlSerializer.h>
 #include <Xml/XmlDeserializer.h>
-#include <Core/Io/FileSystem.h>
-#include <Core/Io/MemoryStream.h>
-#include <Core/Serialization/DeepHash.h>
-#include <Core/Serialization/DeepClone.h>
-#include <Core/Log/Log.h>
-#include "SolutionForm.h"
-#include "SolutionPropertyPage.h"
-#include "ProjectPropertyPage.h"
-#include "ConfigurationPropertyPage.h"
-#include "MRU.h"
-#include "SolutionBuilderLIB/Solution.h"
-#include "SolutionBuilderLIB/Project.h"
+#include "SolutionBuilderLIB/Aggregation.h"
+#include "SolutionBuilderLIB/AggregationItem.h"
 #include "SolutionBuilderLIB/Configuration.h"
+#include "SolutionBuilderLIB/Project.h"
+#include "SolutionBuilderLIB/Solution.h"
 #include "SolutionBuilderLIB/Filter.h"
 #include "SolutionBuilderLIB/File.h"
+#include "SolutionBuilderUI/AggregationItemPropertyPage.h"
+#include "SolutionBuilderUI/AggregationPropertyPage.h"
+#include "SolutionBuilderUI/ConfigurationPropertyPage.h"
+#include "SolutionBuilderUI/MRU.h"
+#include "SolutionBuilderUI/ProjectPropertyPage.h"
+#include "SolutionBuilderUI/SolutionForm.h"
+#include "SolutionBuilderUI/SolutionPropertyPage.h"
 
 // Tools
-#include "AddMultipleConfigurations.h"
-#include "EditConfigurations.h"
-#include "FlattenDefinitionsTool.h"
-#include "ImportMsvcProject.h"
-#include "ImportProject.h"
+#include "SolutionBuilderUI/AddMultipleConfigurations.h"
+#include "SolutionBuilderUI/EditConfigurations.h"
+#include "SolutionBuilderUI/FlattenDefinitionsTool.h"
+#include "SolutionBuilderUI/ImportMsvcProject.h"
+#include "SolutionBuilderUI/ImportProject.h"
 
 // Embedded resources.
-#include "SolutionBitmap.h"
-#include "TraktorBitmap.h"
+#include "Resources/Solution.h"
+#include "Resources/TraktorSmall.h"
 
 using namespace traktor;
 
-#define TITLE L"SolutionBuilder v2.4"
+#define TITLE L"SolutionBuilder v2.5"
 
 T_IMPLEMENT_RTTI_CLASS(L"SolutionForm", SolutionForm, ui::Form)
 
@@ -53,6 +58,14 @@ namespace
 		bool operator () (const Project* p1, const Project* p2) const
 		{
 			return p1->getName().compare(p2->getName()) < 0;
+		}
+	};
+
+	struct AggregationsSortPredicate
+	{
+		bool operator () (const Aggregation* a1, const Aggregation* a2) const
+		{
+			return a1->getName().compare(a2->getName()) < 0;
 		}
 	};
 
@@ -69,7 +82,7 @@ bool SolutionForm::create(const traktor::CommandLine& cmdLine)
 	))
 		return false;
 
-	setIcon(ui::Bitmap::load(c_traktorBitmap, sizeof(c_traktorBitmap), L"bmp"));
+	setIcon(ui::Bitmap::load(c_ResourceTraktorSmall, sizeof(c_ResourceTraktorSmall), L"png"));
 
 	addTimerEventHandler(ui::createMethodHandler(this, &SolutionForm::eventTimer));
 	addCloseEventHandler(ui::createMethodHandler(this, &SolutionForm::eventClose));
@@ -118,14 +131,16 @@ bool SolutionForm::create(const traktor::CommandLine& cmdLine)
 		ui::TreeView::WsTreeButtons |
 		ui::TreeView::WsTreeLines
 	);
-	m_treeSolution->addImage(ui::Bitmap::load(c_solutionBitmap, sizeof(c_solutionBitmap), L"bmp"), 6);
+	m_treeSolution->addImage(ui::Bitmap::load(c_ResourceSolution, sizeof(c_ResourceSolution), L"png"), 8);
 	m_treeSolution->addButtonDownEventHandler(ui::createMethodHandler(this, &SolutionForm::eventTreeButtonDown));
 	m_treeSolution->addSelectEventHandler(ui::createMethodHandler(this, &SolutionForm::eventTreeSelect));
+	m_treeSolution->addEditEventHandler(ui::createMethodHandler(this, &SolutionForm::eventTreeEdit));
 	m_treeSolution->addEditedEventHandler(ui::createMethodHandler(this, &SolutionForm::eventTreeChange));
 
 	m_menuSolution = new ui::PopupMenu();
 	m_menuSolution->create();
 	m_menuSolution->add(new ui::MenuItem(ui::Command(L"Solution.AddProject"), L"Add New Project"));
+	m_menuSolution->add(new ui::MenuItem(ui::Command(L"Solution.AddAggregation"), L"Add New Aggregation"));
 
 	m_menuProject = new ui::PopupMenu();
 	m_menuProject->create();
@@ -134,6 +149,12 @@ bool SolutionForm::create(const traktor::CommandLine& cmdLine)
 	m_menuProject->add(new ui::MenuItem(ui::Command(L"Project.AddFile"), L"Add New File"));
 	m_menuProject->add(new ui::MenuItem(ui::Command(L"Project.AddExistingFiles"), L"Add Existing File(s)..."));
 	m_menuProject->add(new ui::MenuItem(ui::Command(L"Project.Remove"), L"Remove"));
+
+	m_menuAggregation = new ui::PopupMenu();
+	m_menuAggregation->create();
+	m_menuAggregation->add(new ui::MenuItem(ui::Command(L"Aggregation.AddFile"), L"Add New File"));
+	m_menuAggregation->add(new ui::MenuItem(ui::Command(L"Aggregation.AddExistingFiles"), L"Add Existing File(s)..."));
+	m_menuAggregation->add(new ui::MenuItem(ui::Command(L"Aggregation.Remove"), L"Remove"));
 
 	m_menuConfiguration = new ui::PopupMenu();
 	m_menuConfiguration->create();
@@ -151,6 +172,10 @@ bool SolutionForm::create(const traktor::CommandLine& cmdLine)
 	m_menuFile->add(new ui::MenuItem(ui::Command(L"File.Flatten"), L"Flatten Wild-card..."));
 	m_menuFile->add(new ui::MenuItem(ui::Command(L"File.Remove"), L"Remove"));
 
+	m_menuAggregationItem = new ui::PopupMenu();
+	m_menuAggregationItem->create();
+	m_menuAggregationItem->add(new ui::MenuItem(ui::Command(L"AggregationItem.Remove"), L"Remove"));
+
 	Ref< ui::Container > pageContainer = new ui::Container();
 	pageContainer->create(splitter, ui::WsNone, new ui::FloodLayout());
 
@@ -161,6 +186,15 @@ bool SolutionForm::create(const traktor::CommandLine& cmdLine)
 	m_pageProject = new ProjectPropertyPage();
 	m_pageProject->create(pageContainer);
 	m_pageProject->hide();
+
+	m_pageAggregation = new AggregationPropertyPage();
+	m_pageAggregation->create(pageContainer);
+	m_pageAggregation->hide();
+
+	m_pageAggregationItem = new AggregationItemPropertyPage();
+	m_pageAggregationItem->create(pageContainer);
+	m_pageAggregationItem->addChangeEventHandler(ui::createMethodHandler(this, &SolutionForm::eventPropertyPageChange));
+	m_pageAggregationItem->hide();
 
 	m_pageConfiguration = new ConfigurationPropertyPage();
 	m_pageConfiguration->create(pageContainer);
@@ -195,9 +229,11 @@ bool SolutionForm::create(const traktor::CommandLine& cmdLine)
 
 void SolutionForm::destroy()
 {
+	m_menuAggregationItem->destroy();
 	m_menuFile->destroy();
 	m_menuFilter->destroy();
 	m_menuConfiguration->destroy();
+	m_menuAggregation->destroy();
 	m_menuProject->destroy();
 	m_menuSolution->destroy();
 	m_menuBar->destroy();
@@ -226,6 +262,8 @@ void SolutionForm::updateSolutionTree()
 	m_pageSolution->hide();
 	m_pageProject->hide();
 	m_pageConfiguration->hide();
+	m_pageAggregation->hide();
+	m_pageAggregationItem->hide();
 
 	Ref< ui::HierarchicalState > treeState = m_treeSolution->captureState();
 
@@ -240,6 +278,12 @@ void SolutionForm::updateSolutionTree()
 
 	for (RefArray< Project >::iterator i = projects.begin(); i != projects.end(); ++i)
 		createTreeProjectItem(treeSolution, *i);
+
+	RefArray< Aggregation > aggregations = m_solution->getAggregations();
+	aggregations.sort(AggregationsSortPredicate());
+
+	for (RefArray< Aggregation >::iterator i = aggregations.begin(); i != aggregations.end(); ++i)
+		createTreeAggregationItem(treeSolution, *i);
 
 	m_treeSolution->applyState(treeState);
 }
@@ -292,6 +336,19 @@ ui::TreeViewItem* SolutionForm::createTreeProjectItem(ui::TreeViewItem* parentIt
 	return treeProject;
 }
 
+ui::TreeViewItem* SolutionForm::createTreeAggregationItem(ui::TreeViewItem* parentItem, Aggregation* aggregation)
+{
+	Ref< ui::TreeViewItem > treeAggregation = m_treeSolution->createItem(parentItem, aggregation->getName(), 6);
+	treeAggregation->setData(L"PRIMARY", aggregation);
+	treeAggregation->setData(L"AGGREGATION", aggregation);
+
+	const RefArray< AggregationItem >& items = aggregation->getItems();
+	for (RefArray< AggregationItem >::const_iterator i = items.begin(); i != items.end(); ++i)
+		createTreeAggregationItemItem(treeAggregation, aggregation, *i);
+
+	return treeAggregation;
+}
+
 ui::TreeViewItem* SolutionForm::createTreeConfigurationItem(ui::TreeViewItem* parentItem, Project* project, Configuration* configuration)
 {
 	Ref< ui::TreeViewItem > treeConfiguration = m_treeSolution->createItem(parentItem, configuration->getName(), 5);
@@ -330,6 +387,14 @@ ui::TreeViewItem* SolutionForm::createTreeFileItem(ui::TreeViewItem* parentItem,
 	treeFile->setData(L"PROJECT", project);
 	treeFile->setData(L"FILE", file);
 	return treeFile;
+}
+
+ui::TreeViewItem* SolutionForm::createTreeAggregationItemItem(ui::TreeViewItem* parentItem, Aggregation* aggregation, AggregationItem* item)
+{
+	Ref< ui::TreeViewItem > treeItem = m_treeSolution->createItem(parentItem, item->getSourceFile() + L" => " + item->getTargetPath(), 7);
+	treeItem->setData(L"PRIMARY", item);
+	treeItem->setData(L"AGGREGATION", aggregation);
+	return treeItem;
 }
 
 bool SolutionForm::loadSolution(const traktor::Path& fileName)
@@ -565,15 +630,30 @@ void SolutionForm::eventTreeButtonDown(ui::Event* event)
 	Ref< Solution > solution = selectedItem->getData< Solution >(L"PRIMARY");
 	if (solution)
 	{
-		if (m_menuSolution->show(m_treeSolution, mouseEvent->getPosition()))
+		Ref< ui::MenuItem > menuItem = m_menuSolution->show(m_treeSolution, mouseEvent->getPosition());
+		if (menuItem)
 		{
-			Ref< Project > project = new Project();
-			project->setName(L"Unnamed");
+			const ui::Command& command = menuItem->getCommand();
+			if (command == L"Solution.AddProject")
+			{
+				Ref< Project > project = new Project();
+				project->setName(L"Unnamed");
 
-			solution->addProject(project);
+				solution->addProject(project);
 
-			createTreeProjectItem(selectedItem, project);
-			selectedItem->expand();
+				createTreeProjectItem(selectedItem, project);
+				selectedItem->expand();
+			}
+			else if (command == L"Solution.AddAggregation")
+			{
+				Ref< Aggregation > aggregation = new Aggregation();
+				aggregation->setName(L"Unnamed");
+
+				solution->addAggregation(aggregation);
+
+				createTreeAggregationItem(selectedItem, aggregation);
+				selectedItem->expand();
+			}
 		}
 	}
 
@@ -647,7 +727,61 @@ void SolutionForm::eventTreeButtonDown(ui::Event* event)
 			else if (command == L"Project.Remove")
 			{
 				m_solution->removeProject(project);
+				m_treeSolution->removeItem(selectedItem);
+			}
+		}
+	}
 
+	Ref< Aggregation > aggregation = selectedItem->getData< Aggregation >(L"PRIMARY");
+	if (aggregation)
+	{
+		Ref< ui::MenuItem > menuItem = m_menuAggregation->show(m_treeSolution, mouseEvent->getPosition());
+		if (menuItem)
+		{
+			const ui::Command& command = menuItem->getCommand();
+			if (command == L"Aggregation.AddFile")
+			{
+				Ref< AggregationItem > item = new AggregationItem();
+				item->setSourceFile(L"*.*");
+				item->setTargetPath(L"");
+				aggregation->addItem(item);
+
+				createTreeAggregationItemItem(selectedItem, aggregation, item);
+				selectedItem->expand();
+			}
+			else if (command == L"Aggregation.AddExistingFiles")
+			{
+				ui::FileDialog fileDialog;
+				if (fileDialog.create(this, L"Select file(s)...", L"All files;*.*"))
+				{
+					std::vector< traktor::Path > paths;
+					if (fileDialog.showModal(paths) == ui::DrOk)
+					{
+						traktor::Path rootPath = FileSystem::getInstance().getAbsolutePath(m_solution->getRootPath());
+
+						for (std::vector< traktor::Path >::iterator i = paths.begin(); i != paths.end(); ++i)
+						{
+							traktor::Path relativePath;
+							if (FileSystem::getInstance().getRelativePath(*i, rootPath, relativePath))
+							{
+								Ref< AggregationItem > item = new AggregationItem();
+								item->setSourceFile(relativePath.getPathName());
+								item->setTargetPath(L"");
+								aggregation->addItem(item);
+
+								createTreeAggregationItemItem(selectedItem, aggregation, item);
+								selectedItem->expand();
+							}
+							else
+								traktor::log::error << L"Unable to get relative path from \"" << i->getPathName() << L"\", not accessible from project's source path?" << Endl;
+						}
+					}
+					fileDialog.destroy();
+				}
+			}
+			else if (command == L"Aggregation.Remove")
+			{
+				m_solution->removeAggregation(aggregation);
 				m_treeSolution->removeItem(selectedItem);
 			}
 		}
@@ -818,6 +952,28 @@ void SolutionForm::eventTreeButtonDown(ui::Event* event)
 		}
 	}
 
+	Ref< AggregationItem > aggregationItem = selectedItem->getData< AggregationItem >(L"PRIMARY");
+	if (aggregationItem)
+	{
+		Ref< ui::MenuItem > menuItem = m_menuAggregationItem->show(m_treeSolution, mouseEvent->getPosition());
+		if (menuItem)
+		{
+			const ui::Command& command = menuItem->getCommand();
+			if (command == L"AggregationItem.Remove")
+			{
+				Ref< ui::TreeViewItem > parentItem = selectedItem->getParent();
+				if (parentItem)
+				{
+					Ref< Aggregation > parentAggregation = parentItem->getData< Aggregation >(L"PRIMARY");
+					if (parentAggregation)
+						parentAggregation->removeItem(aggregationItem);
+
+					m_treeSolution->removeItem(selectedItem);
+				}
+			}
+		}
+	}
+
 	m_treeSolution->update();
 }
 
@@ -832,6 +988,8 @@ void SolutionForm::eventTreeSelect(ui::Event* event)
 	m_pageSolution->hide();
 	m_pageProject->hide();
 	m_pageConfiguration->hide();
+	m_pageAggregation->hide();
+	m_pageAggregationItem->hide();
 
 	if (!treeItem)
 		return;
@@ -850,6 +1008,13 @@ void SolutionForm::eventTreeSelect(ui::Event* event)
 		m_pageProject->set(m_solution, project);
 	}
 
+	Ref< Aggregation > aggregation = treeItem->getData< Aggregation >(L"PRIMARY");
+	if (aggregation)
+	{
+		m_pageAggregation->show();
+		m_pageAggregation->set(m_solution, aggregation);
+	}
+
 	Ref< Configuration > configuration = treeItem->getData< Configuration >(L"CONFIGURATION");
 	if (configuration)
 	{
@@ -857,7 +1022,22 @@ void SolutionForm::eventTreeSelect(ui::Event* event)
 		m_pageConfiguration->set(configuration);
 	}
 
+	Ref< AggregationItem > aggregationItem = treeItem->getData< AggregationItem >(L"PRIMARY");
+	if (aggregationItem)
+	{
+		m_pageAggregationItem->show();
+		m_pageAggregationItem->set(aggregationItem);
+	}
+
 	update();
+}
+
+void SolutionForm::eventTreeEdit(ui::Event* event)
+{
+	Ref< ui::TreeViewItem > treeItem = static_cast< ui::TreeViewItem* >(event->getItem().ptr());
+	Ref< AggregationItem > aggregationItem = treeItem->getData< AggregationItem >(L"PRIMARY");
+	if (aggregationItem)
+		treeItem->setText(aggregationItem->getSourceFile());
 }
 
 void SolutionForm::eventTreeChange(ui::Event* event)
@@ -874,6 +1054,10 @@ void SolutionForm::eventTreeChange(ui::Event* event)
 	if (project)
 		project->setName(treeItem->getText());
 
+	Ref< Aggregation > aggregation = treeItem->getData< Aggregation >(L"PRIMARY");
+	if (aggregation)
+		aggregation->setName(treeItem->getText());
+
 	Ref< Configuration > configuration = treeItem->getData< Configuration >(L"PRIMARY");
 	if (configuration)
 		configuration->setName(treeItem->getText());
@@ -886,5 +1070,17 @@ void SolutionForm::eventTreeChange(ui::Event* event)
 	if (file)
 		file->setFileName(treeItem->getText());
 
+	Ref< AggregationItem > aggregationItem = treeItem->getData< AggregationItem >(L"PRIMARY");
+	if (aggregationItem)
+	{
+		aggregationItem->setSourceFile(treeItem->getText());
+		treeItem->setText(aggregationItem->getSourceFile() + L" => " + aggregationItem->getTargetPath());
+	}
+
 	event->consume();
+}
+
+void SolutionForm::eventPropertyPageChange(ui::Event*)
+{
+	updateSolutionTree();
 }

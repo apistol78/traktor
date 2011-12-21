@@ -1,9 +1,10 @@
-#include "Ui/Win32/TreeViewWin32.h"
-#include "Ui/Win32/TreeViewItemWin32.h"
-#include "Ui/Win32/BitmapWin32.h"
+#include "Core/Log/Log.h"
 #include "Ui/TreeView.h"
 #include "Ui/Events/TreeViewDragEvent.h"
-#include "Core/Log/Log.h"
+#include "Ui/Events/TreeViewEditEvent.h"
+#include "Ui/Win32/BitmapWin32.h"
+#include "Ui/Win32/TreeViewItemWin32.h"
+#include "Ui/Win32/TreeViewWin32.h"
 
 namespace traktor
 {
@@ -212,6 +213,34 @@ LRESULT TreeViewWin32::eventNotify(HWND hWnd, UINT message, WPARAM wParam, LPARA
 		break;
 
 	case TVN_BEGINLABELEDIT:
+		{
+			LPNMTVDISPINFO nmtvdi = reinterpret_cast< LPNMTVDISPINFO >(nmhdr);
+			if (nmtvdi->item.hItem)
+			{
+				Ref< TreeViewItemWin32 > item = getFromHandle(nmtvdi->item.hItem);
+				T_ASSERT (item);
+
+				if (!item->isEditable())
+					return TRUE;
+
+				TreeViewEditEvent editEvent(m_owner, item);
+				m_owner->raiseEvent(TreeView::EiEdit, &editEvent);
+
+				if (editEvent.consumed() && editEvent.cancelled())
+					return TRUE;
+
+				// In case the item's value has changed in the event handler we need
+				// to ensure the edit control has the proper value too.
+				HWND hEditCtrl = TreeView_GetEditControl(hWnd);
+				if (hEditCtrl != NULL)
+				{
+					std::wstring labelText = item->getText();
+					SetWindowText(hEditCtrl, wstots(labelText).c_str());
+				}
+			}
+			else
+				return TRUE;
+		}
 		break;
 
 	case TVN_ENDLABELEDIT:
@@ -236,7 +265,12 @@ LRESULT TreeViewWin32::eventNotify(HWND hWnd, UINT message, WPARAM wParam, LPARA
 					item->setText(originalText);
 				}
 				else
+				{
+					// Ensure content is set to the correct value.
+					_tcscpy(m_editBuffer, item->getText().c_str());
+					nmtvdi->item.pszText = m_editBuffer;
 					result = TRUE;
+				}
 			}
 		}
 		break;

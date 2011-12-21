@@ -1,23 +1,24 @@
 #include <Core/Io/Path.h>
-#include <Core/Timer/Timer.h>
+#include <Core/Log/Log.h>
 #include <Core/Misc/CommandLine.h>
 #include <Core/Misc/TString.h>
-#include <Core/Log/Log.h>
-#include "SolutionBuilderLIB/Solution.h"
+#include <Core/Timer/Timer.h>
+#include "SolutionBuilderLIB/Aggregation.h"
+#include "SolutionBuilderLIB/ExternalDependency.h"
 #include "SolutionBuilderLIB/Project.h"
 #include "SolutionBuilderLIB/ProjectDependency.h"
-#include "SolutionBuilderLIB/ExternalDependency.h"
+#include "SolutionBuilderLIB/Solution.h"
+#include "SolutionBuilderLIB/SolutionLoader.h"
 #include "SolutionBuilderLIB/CBlocks/SolutionBuilderCBlocks.h"
 #include "SolutionBuilderLIB/Eclipse/SolutionBuilderEclipse.h"
 #include "SolutionBuilderLIB/GraphViz/SolutionBuilderGraphViz.h"
 #include "SolutionBuilderLIB/Make/SolutionBuilderMake.h"
 #include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvc.h"
 #include "SolutionBuilderLIB/Xcode/SolutionBuilderXcode.h"
-#include "SolutionBuilderLIB/SolutionLoader.h"
 
 using namespace traktor;
 
-#define TITLE L"SolutionBuilder v2.6.3"
+#define TITLE L"SolutionBuilder v2.7"
 
 #define ERROR_UNKNOWN_FORMAT 1
 #define ERROR_UNABLE_TO_READ_SOLUTION 2
@@ -94,6 +95,20 @@ int main(int argc, const char** argv)
 
 	const RefArray< Project >& projects = solution->getProjects();
 	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+	{
+		const RefArray< Dependency >& dependencies = (*i)->getDependencies();
+		for (RefArray< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
+		{
+			if (!(*j)->resolve(&solutionLoader))
+			{
+				traktor::log::error << L"Unable to resolve all dependencies" << Endl;
+				return ERROR_UNABLE_TO_RESOLVE_DEPENDENCIES;
+			}
+		}
+	}
+
+	const RefArray< Aggregation >& aggregations = solution->getAggregations();
+	for (RefArray< Aggregation >::const_iterator i = aggregations.begin(); i != aggregations.end(); ++i)
 	{
 		const RefArray< Dependency >& dependencies = (*i)->getDependencies();
 		for (RefArray< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
