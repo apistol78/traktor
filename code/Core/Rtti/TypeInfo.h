@@ -67,6 +67,8 @@ public:
 		const IInstanceFactory* factory
 	);
 
+	virtual ~TypeInfo();
+
 	/*! \brief Name of type.
 	 *
 	 * \return Type name.

@@ -3,8 +3,8 @@
 #endif
 #include <cstdlib>
 #include <string>
-#include "Core/Rtti/TypeInfo.h"
 #include "Core/Misc/TString.h"
+#include "Core/Rtti/TypeInfo.h"
 
 namespace traktor
 {
@@ -59,6 +59,32 @@ void __registerTypeInfo(const TypeInfo* typeInfo)
 	}
 }
 
+void __unregisterTypeInfo(const TypeInfo* typeInfo)
+{
+	T_ASSERT_M (s_typeInfoRegistry != 0, L"Types never been registered");
+
+	const wchar_t* typeName = typeInfo->getName();
+
+	uint32_t index = 0;
+	while (index < s_typeInfoCount)
+	{
+		const TypeInfo* typeInfo2 = s_typeInfoRegistry[index];
+		T_ASSERT (typeInfo2);
+
+		const wchar_t* typeName2 = typeInfo2->getName();
+		if (wcscmp(typeName2, typeName) == 0)
+			break;
+
+		index++;
+	}
+	T_ASSERT_M(index >= s_typeInfoCount, L"Type not registered");
+
+	for (uint32_t i = index; i < s_typeInfoCount - 1; ++i)
+		s_typeInfoRegistry[i] = s_typeInfoRegistry[i + 1];
+
+	--s_typeInfoRegistry;
+}
+
 TypeInfo::TypeInfo(
 	const wchar_t* name,
 	size_t size,
@@ -75,6 +101,11 @@ TypeInfo::TypeInfo(
 ,	m_factory(factory)
 {
 	__registerTypeInfo(this);
+}
+
+TypeInfo::~TypeInfo()
+{
+	__unregisterTypeInfo(this);
 }
 
 const wchar_t* TypeInfo::getName() const
