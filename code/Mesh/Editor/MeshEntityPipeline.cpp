@@ -2,6 +2,7 @@
 #include "Mesh/MeshEntityData.h"
 #include "Mesh/Composite/CompositeMeshEntityData.h"
 #include "Mesh/Editor/MeshEntityPipeline.h"
+#include "Mesh/Lod/LodMeshEntityData.h"
 
 namespace traktor
 {
@@ -15,6 +16,7 @@ TypeInfoSet MeshEntityPipeline::getAssetTypes() const
 	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< MeshEntityData >());
 	typeSet.insert(&type_of< CompositeMeshEntityData >());
+	typeSet.insert(&type_of< LodMeshEntityData >());
 	return typeSet;
 }
 
@@ -31,6 +33,12 @@ bool MeshEntityPipeline::buildDependencies(
 	{
 		const RefArray< AbstractMeshEntityData >& entityData = compositeMeshEntityData->getEntityData();
 		for (RefArray< AbstractMeshEntityData >::const_iterator i = entityData.begin(); i != entityData.end(); ++i)
+			pipelineDepends->addDependency(*i);
+	}
+	else if (const LodMeshEntityData* lodMeshEntityData = dynamic_type_cast< const LodMeshEntityData* >(sourceAsset))
+	{
+		const RefArray< AbstractMeshEntityData >& lods = lodMeshEntityData->getLods();
+		for (RefArray< AbstractMeshEntityData >::const_iterator i = lods.begin(); i != lods.end(); ++i)
 			pipelineDepends->addDependency(*i);
 	}
 

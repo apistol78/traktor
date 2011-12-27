@@ -48,7 +48,10 @@ bool LerpNodeTraits::evaluateFull(
 	Constant& outputConstant
 ) const
 {
-	return false;
+	float k = inputConstants[2][0];
+	for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
+		outputConstant[i] = inputConstants[0][i] * (1.0f - k) + inputConstants[1][i] * k;
+	return true;
 }
 
 bool LerpNodeTraits::evaluatePartial(
@@ -59,7 +62,18 @@ bool LerpNodeTraits::evaluatePartial(
 	Constant& outputConstant
 ) const
 {
-	return false;
+	if (inputConstants[2].isZero() && inputConstants[0].getWidth() > 0)
+	{
+		outputConstant = inputConstants[0];
+		return true;
+	}
+	else if (inputConstants[2].isOne() && inputConstants[1].getWidth() > 0)
+	{
+		outputConstant = inputConstants[1];
+		return true;
+	}
+	else
+		return false;
 }
 
 	}

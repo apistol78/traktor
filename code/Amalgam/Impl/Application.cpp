@@ -77,6 +77,7 @@
 #	include <Mesh/Blend/BlendMeshResource.h>
 #	include <Mesh/Indoor/IndoorMeshResource.h>
 #	include <Mesh/Instance/InstanceMeshResource.h>
+#	include <Mesh/Lod/LodMeshEntityData.h>
 #	include <Mesh/Partition/PartitionMeshResource.h>
 #	include <Mesh/Partition/OctreePartitionData.h>
 #	include <Mesh/Skinned/SkinnedMeshResource.h>
@@ -240,6 +241,7 @@ bool Application::create(
 	T_FORCE_LINK_REF(mesh::BlendMeshResource);
 	T_FORCE_LINK_REF(mesh::IndoorMeshResource);
 	T_FORCE_LINK_REF(mesh::InstanceMeshResource);
+	T_FORCE_LINK_REF(mesh::LodMeshEntityData);
 	T_FORCE_LINK_REF(mesh::PartitionMeshResource);
 	T_FORCE_LINK_REF(mesh::OctreePartitionData);
 	T_FORCE_LINK_REF(mesh::SkinnedMeshResource);

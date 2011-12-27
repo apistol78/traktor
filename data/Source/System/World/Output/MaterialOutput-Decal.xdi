@@ -4,7 +4,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-76</first>
+				<first>-109</first>
 				<second>350</second>
 			</position>
 			<name>Normal</name>
@@ -15,8 +15,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-79</first>
-				<second>382</second>
+				<first>-112</first>
+				<second>383</second>
 			</position>
 			<name>Position</name>
 			<connectable>true</connectable>
@@ -26,8 +26,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-101</first>
-				<second>510</second>
+				<first>-134</first>
+				<second>515</second>
 			</position>
 			<name>DiffuseTerm</name>
 			<connectable>true</connectable>
@@ -37,8 +37,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-140</first>
-				<second>542</second>
+				<first>-173</first>
+				<second>548</second>
 			</position>
 			<name>SpecularRoughness</name>
 			<connectable>true</connectable>
@@ -48,8 +48,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-104</first>
-				<second>446</second>
+				<first>-137</first>
+				<second>449</second>
 			</position>
 			<name>ViewPosition</name>
 			<connectable>true</connectable>
@@ -59,8 +59,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-103</first>
-				<second>318</second>
+				<first>-136</first>
+				<second>317</second>
 			</position>
 			<name>EyeDirection</name>
 			<connectable>true</connectable>
@@ -70,8 +70,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-109</first>
-				<second>574</second>
+				<first>-142</first>
+				<second>581</second>
 			</position>
 			<name>SpecularTerm</name>
 			<connectable>true</connectable>
@@ -81,8 +81,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-104</first>
-				<second>414</second>
+				<first>-137</first>
+				<second>416</second>
 			</position>
 			<name>SurfaceColor</name>
 			<connectable>true</connectable>
@@ -92,8 +92,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-101</first>
-				<second>478</second>
+				<first>-134</first>
+				<second>482</second>
 			</position>
 			<name>ViewNormal</name>
 			<connectable>true</connectable>
@@ -104,7 +104,7 @@
 			<comment/>
 			<position>
 				<first>321</first>
-				<second>391</second>
+				<second>395</second>
 			</position>
 			<fragmentGuid>{7F2F8712-3B18-0000-6B1C-E9A3CADFF480}</fragmentGuid>
 			<inputPins>
@@ -165,7 +165,7 @@
 			<comment/>
 			<position>
 				<first>321</first>
-				<second>173</second>
+				<second>147</second>
 			</position>
 			<fragmentGuid>{DB61FE22-1D18-0000-A7CB-095CD836EEAD}</fragmentGuid>
 			<inputPins>
@@ -194,6 +194,14 @@
 					<optional>true</optional>
 				</item>
 				<item>
+					<name>Reflection</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<name>ReflectionMap</name>
+					<optional>true</optional>
+				</item>
+				<item>
 					<name>RimColor</name>
 					<optional>true</optional>
 				</item>
@@ -217,6 +225,14 @@
 					<second>1</second>
 				</item>
 				<item>
+					<first>Reflection</first>
+					<second>0</second>
+				</item>
+				<item>
+					<first>ReflectionMap</first>
+					<second>0</second>
+				</item>
+				<item>
 					<first>RimColor</first>
 					<second>0</second>
 				</item>
@@ -238,7 +254,7 @@
 			<comment/>
 			<position>
 				<first>321</first>
-				<second>645</second>
+				<second>651</second>
 			</position>
 			<fragmentGuid>{6B7A8D95-D3D4-A94F-8A99-4943A2470A55}</fragmentGuid>
 			<inputPins>
@@ -254,7 +270,7 @@
 			<comment/>
 			<position>
 				<first>321</first>
-				<second>582</second>
+				<second>579</second>
 			</position>
 			<fragmentGuid>{6EF33326-74C7-B640-BB38-5C57D2199FB4}</fragmentGuid>
 			<inputPins>
@@ -270,7 +286,7 @@
 			<comment/>
 			<position>
 				<first>321</first>
-				<second>725</second>
+				<second>723</second>
 			</position>
 			<fragmentGuid>{9375BC3C-8889-AC44-A5DE-AAF3B0E5574D}</fragmentGuid>
 			<inputPins>
@@ -298,8 +314,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-102</first>
-				<second>638</second>
+				<first>-135</first>
+				<second>647</second>
 			</position>
 			<name>RimIntensity</name>
 			<connectable>true</connectable>
@@ -309,10 +325,32 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-85</first>
-				<second>606</second>
+				<first>-118</first>
+				<second>614</second>
 			</position>
 			<name>RimColor</name>
+			<connectable>true</connectable>
+			<optional>true</optional>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>-146</first>
+				<second>713</second>
+			</position>
+			<name>ReflectionMap</name>
+			<connectable>true</connectable>
+			<optional>true</optional>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>-122</first>
+				<second>680</second>
+			</position>
+			<name>Reflection</name>
 			<connectable>true</connectable>
 			<optional>true</optional>
 			<defaultValue>0</defaultValue>
@@ -547,6 +585,26 @@
 			<destination>
 				<node ref="/object/nodes/item[9]"/>
 				<name>EyeDirection</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[17]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[10]"/>
+				<name>Reflection</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[16]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[10]"/>
+				<name>ReflectionMap</name>
 			</destination>
 		</item>
 	</edges>

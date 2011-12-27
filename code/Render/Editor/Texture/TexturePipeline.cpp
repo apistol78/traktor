@@ -17,6 +17,7 @@
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
 #include "Drawing/Filters/GammaFilter.h"
+#include "Drawing/Filters/MirrorFilter.h"
 #include "Drawing/Filters/NormalMapFilter.h"
 #include "Drawing/Filters/ScaleFilter.h"
 #include "Drawing/Filters/SwizzleFilter.h"
@@ -245,31 +246,34 @@ bool TexturePipeline::buildOutput(
 		height = textureAsset->m_scaleHeight;
 	}
 
-	// Skip mips.
-	width = std::max(1, width >> m_skipMips);
-	height = std::max(1, height >> m_skipMips);
+	if (!textureAsset->m_isCubeMap)
+	{
+		// Skip mips.
+		width = std::max(1, width >> m_skipMips);
+		height = std::max(1, height >> m_skipMips);
 
-	// Ensure image size doesn't exceed clamp size.
-	if (m_clampSize > 0)
-	{
-		if (width > m_clampSize)
+		// Ensure image size doesn't exceed clamp size.
+		if (m_clampSize > 0)
 		{
-			height = (height * m_clampSize) / width;
-			width = m_clampSize;
+			if (width > m_clampSize)
+			{
+				height = (height * m_clampSize) / width;
+				width = m_clampSize;
+			}
+			if (height > m_clampSize)
+			{
+				width = (width * m_clampSize) / height;
+				height = m_clampSize;
+			}
 		}
-		if (height > m_clampSize)
+
+		// Ensure power-of-2 textures.
+		if (!isLog2(width) || !isLog2(height))
 		{
-			width = (width * m_clampSize) / height;
-			height = m_clampSize;
+			log::warning << L"Texture dimension not power-of-2; resized to nearest valid dimension" << Endl;
+			width = nearestLog2(width);
+			height = nearestLog2(height);
 		}
-	}
-	
-	// Ensure power-of-2 textures.
-	if (!textureAsset->m_isCubeMap && (!isLog2(width) || !isLog2(height)))
-	{
-		log::warning << L"Texture dimension not power-of-2; resized to nearest valid dimension" << Endl;
-		width = nearestLog2(width);
-		height = nearestLog2(height);
 	}
 
 	// Create output instance.
@@ -437,10 +441,35 @@ bool TexturePipeline::buildOutput(
 	}
 	else
 	{
+		uint32_t layout = 0;
 		uint32_t sideSize = height;
-		if (sideSize != width / 6)
+
+		if (height == width / 6)
 		{
-			log::error << L"Cube map must have a 6:1 width/height ratio" << Endl;
+			// [+x][-x][+y][-y][+z][-z]
+			layout = 0;
+			sideSize = height;
+		}
+		else if (height / 3 == width / 4)
+		{
+			// [  ][+y][  ][  ]
+			// [-x][+z][+x][-z]
+			// [  ][-y][  ][  ]
+			layout = 1;
+			sideSize = height / 3;
+		}
+		else if (height / 4 == width / 3)
+		{
+			// [  ][+y][  ]
+			// [-x][+z][+x]
+			// [  ][-y][  ]
+			// [  ][-z][  ]
+			layout = 2;
+			sideSize = height / 4;
+		}
+		else
+		{
+			log::error << L"Cube map must have either a 6:1, 4:3 or 3:4 width/height ratio" << Endl;
 			return false;
 		}
 
@@ -466,7 +495,53 @@ bool TexturePipeline::buildOutput(
 		for (int side = 0; side < 6; ++side)
 		{
 			Ref< drawing::Image > sideImage = new drawing::Image(image->getPixelFormat(), sideSize, sideSize);
-			sideImage->copy(image, side * sideSize, 0, sideSize, sideSize);
+
+			if (layout == 0)
+				sideImage->copy(image, side * sideSize, 0, sideSize, sideSize);
+			else if (layout == 1)
+			{
+				const int32_t c_sideOffsets[][2] =
+				{
+					{ 2, 1 },
+					{ 0, 1 },
+					{ 1, 0 },
+					{ 1, 2 },
+					{ 1, 1 },
+					{ 3, 1 }
+				};
+				sideImage->copy(
+					image,
+					c_sideOffsets[side][0] * sideSize,
+					c_sideOffsets[side][1] * sideSize,
+					sideSize,
+					sideSize
+				);
+			}
+			else if (layout == 2)
+			{
+				const int32_t c_sideOffsets[][2] =
+				{
+					{ 2, 1 },
+					{ 0, 1 },
+					{ 1, 0 },
+					{ 1, 2 },
+					{ 1, 1 },
+					{ 1, 3 }
+				};
+				sideImage->copy(
+					image,
+					c_sideOffsets[side][0] * sideSize,
+					c_sideOffsets[side][1] * sideSize,
+					sideSize,
+					sideSize
+				);
+				if (side == 5)
+				{
+					// Flip -Z as it's defined up-side down in this layout.
+					drawing::MirrorFilter filter(true, true);
+					sideImage = sideImage->applyFilter(&filter);
+				}
+			}
 
 			for (int i = 0; i < mipCount; ++i)
 			{

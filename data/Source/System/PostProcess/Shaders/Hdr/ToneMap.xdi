@@ -73,10 +73,10 @@ Middle gray
 			]]>
 			</comment>
 			<position>
-				<first>396</first>
+				<first>395</first>
 				<second>63</second>
 			</position>
-			<value>0.55</value>
+			<value>0.65</value>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
