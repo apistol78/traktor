@@ -77,12 +77,12 @@ void __unregisterTypeInfo(const TypeInfo* typeInfo)
 
 		index++;
 	}
-	T_ASSERT_M(index >= s_typeInfoCount, L"Type not registered");
+	T_ASSERT_M(index < s_typeInfoCount, L"Type not registered");
 
 	for (uint32_t i = index; i < s_typeInfoCount - 1; ++i)
 		s_typeInfoRegistry[i] = s_typeInfoRegistry[i + 1];
 
-	--s_typeInfoRegistry;
+	--s_typeInfoCount;
 }
 
 TypeInfo::TypeInfo(
