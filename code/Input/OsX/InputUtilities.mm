@@ -28,7 +28,22 @@ bool isInputAllowed()
 	
 	return true;
 }
-	
+        
+bool getMousePosition(float& outX, float& outY)
+{
+	NSWindow* keyWindow = [NSApp keyWindow];
+	if (!keyWindow)
+		return false;
+    
+	NSPoint mouseLocationScreen = [NSEvent mouseLocation];
+	NSPoint mouseLocation = [keyWindow convertScreenToBase: mouseLocationScreen];
+    
+    outX = mouseLocationScreen.x;
+    outY = mouseLocationScreen.y;
+    
+    return true;
+}
+
 	}
 }
 

@@ -4620,6 +4620,7 @@
 								<libraryPaths/>
 								<libraries>
 									<item>CoreFoundation.framework</item>
+									<item>Foundation.framework</item>
 								</libraries>
 								<additionalCompilerOptions/>
 								<additionalLinkerOptions/>
@@ -4639,6 +4640,7 @@
 								<libraryPaths/>
 								<libraries>
 									<item>CoreFoundation.framework</item>
+									<item>Foundation.framework</item>
 								</libraries>
 								<additionalCompilerOptions/>
 								<additionalLinkerOptions/>
@@ -4656,7 +4658,10 @@
 									<item>_DEBUG</item>
 								</definitions>
 								<libraryPaths/>
-								<libraries/>
+								<libraries>
+									<item>CoreFoundation.framework</item>
+									<item>Foundation.framework</item>
+								</libraries>
 								<additionalCompilerOptions/>
 								<additionalLinkerOptions/>
 							</item>
@@ -4673,7 +4678,10 @@
 									<item>NDEBUG</item>
 								</definitions>
 								<libraryPaths/>
-								<libraries/>
+								<libraries>
+									<item>CoreFoundation.framework</item>
+									<item>Foundation.framework</item>
+								</libraries>
 								<additionalCompilerOptions/>
 								<additionalLinkerOptions/>
 							</item>
