@@ -7,11 +7,10 @@ if [[ ${1} == "build" ]]; then
 elif [[ ${1} == "deploy" ]]; then
 
 	mkdir bin
-	cp -Rf $DEPLOY_PROJECTROOT/bin/latest/osx/releaseshared/*.dylib bin/
-	cp -Rf $DEPLOY_PROJECTROOT/bin/latest/osx/releaseshared/*.app bin/
+	cp -Rf $DEPLOY_PROJECTROOT/bin/latest/osx/releaseshared/* bin/
 
 elif [[ ${1} == "launch" ]]; then
 
-	open -n bin/$DEPLOY_EXECUTABLE.app --args -s "$PWD/Application.config"
+	bin/$DEPLOY_EXECUTABLE -s "$PWD/Application.config"
 
 fi

@@ -7,6 +7,8 @@ namespace traktor
 	{
 
 bool isInputAllowed();
+        
+bool getMousePosition(float& outX, float& outY);
 	
 	}
 }

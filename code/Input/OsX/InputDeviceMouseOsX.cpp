@@ -25,7 +25,9 @@ c_mouseControlMap[] =
 	{ DtButton1, 0, false, L"Button 1" },
 	{ DtButton2, 1, false, L"Button 2" },
 	{ DtButton3, 2, false, L"Button 3" },
-	{ DtButton4, 3, false, L"Button 4" }
+	{ DtButton4, 3, false, L"Button 4" },
+	{ DtPositionX, -4, true, L"Axis X" },
+	{ DtPositionY, -5, true, L"Axis Y" }
 };
 
 int32_t getElementValue(IOHIDDeviceRef deviceRef, IOHIDElementRef elementRef)
@@ -116,6 +118,10 @@ float InputDeviceMouseOsX::getControlValue(int32_t control)
 		return m_axis[1];
 	else if (index == -3)
 		return m_axis[2];
+    else if (index == -4)
+        return m_axis[3];
+    else if (index == -5)
+        return m_axis[4];
 	else if (index >= 0 && index < sizeof_array(m_button))
 		return m_button[index] ? 1.0f : 0.0f;
 	else
@@ -201,6 +207,19 @@ void InputDeviceMouseOsX::readState()
 	}
 	
 	CFRelease(elements);
+    
+    // Get position of mouse relative to key window.
+    float mouseX, mouseY;
+    if (getMousePosition(mouseX, mouseY))
+    {
+        m_axis[3] = int32_t(mouseX);
+        m_axis[4] = int32_t(mouseY);
+    }
+    else
+    {
+        m_axis[3] =
+        m_axis[4] = 0;
+    }
 	
 	// As long as user keps mouse button pressed we cannot
 	// leave invalid state.

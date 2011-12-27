@@ -4,15 +4,16 @@
 #include <unistd.h>
 #include <dirent.h>
 #include <errno.h>
-#include "Core/Io/OsX/NativeVolume.h"
-#include "Core/Io/OsX/NativeStream.h"
-#include "Core/Io/FileSystem.h"
-#include "Core/Io/File.h"
+#include <Foundation/Foundation.h>
 #include "Core/Date/DateTime.h"
-#include "Core/Misc/String.h"
-#include "Core/Misc/WildCompare.h"
-#include "Core/Misc/TString.h"
+#include "Core/Io/File.h"
+#include "Core/Io/FileSystem.h"
+#include "Core/Io/OsX/NativeStream.h"
+#include "Core/Io/OsX/NativeVolume.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/String.h"
+#include "Core/Misc/TString.h"
+#include "Core/Misc/WildCompare.h"
 
 namespace traktor
 {
@@ -199,14 +200,24 @@ Path NativeVolume::getCurrentDirectory() const
 
 void NativeVolume::mountVolumes(FileSystem& fileSystem)
 {
-	char cwd[512];
-	getcwd(cwd, sizeof(cwd));
+	NSFileManager* fileManager = [NSFileManager defaultManager];
+    NSString* directoryPath = [fileManager currentDirectoryPath];
+	if (directoryPath)
+	{
+		char buffer[4096];
+		[directoryPath getCString: buffer maxLength: sizeof_array(buffer) encoding: NSUTF8StringEncoding];
+	
+		std::wstring workingDirectory = std::wstring(L"C:") + mbstows(buffer);
+		log::info << L"Initial working directory \"" << workingDirectory << L"\"" << Endl;
 
-	std::wstring workingDirectory = std::wstring(L"C:") + mbstows(cwd);
-
-	Ref< IVolume > volume = new NativeVolume(workingDirectory);
-	fileSystem.mount(L"C", volume);
-	fileSystem.setCurrentVolume(volume);
+		Ref< IVolume > volume = new NativeVolume(workingDirectory);
+		fileSystem.mount(L"C", volume);
+		fileSystem.setCurrentVolume(volume);
+	
+		[directoryPath release];
+	}
+	else
+		log::error << L"Unable to retrieve current working directory" << Endl;
 }
 
 std::wstring NativeVolume::getSystemPath(const Path& path) const
