@@ -70,6 +70,21 @@ bool Constant::isZero() const
 	return true;
 }
 
+bool Constant::isOne() const
+{
+	int32_t width = getWidth();
+	if (width <= 0)
+		return false;
+
+	for (int32_t i = 0; i < width; ++i)
+	{
+		if (fabs(m_data[i] - 1.0f) >= FUZZY_EPSILON)
+			return false;
+	}
+
+	return true;
+}
+
 float& Constant::operator [] (int32_t index)
 {
 	T_ASSERT (index < sizeof_array(m_data));

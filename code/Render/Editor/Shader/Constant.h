@@ -25,6 +25,8 @@ public:
 
 	bool isZero() const;
 
+	bool isOne() const;
+
 	float& operator [] (int32_t index);
 
 	float operator [] (int32_t index) const;

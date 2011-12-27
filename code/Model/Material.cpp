@@ -14,6 +14,7 @@ Material::Material()
 ,	m_diffuseTerm(1.0f)
 ,	m_specularTerm(1.0f)
 ,	m_specularRoughness(0.8f)
+,	m_reflection(0.0f)
 ,	m_rimLightIntensity(0.0f)
 ,	m_blendOperator(BoDecal)
 ,	m_doubleSided(false)
@@ -29,6 +30,7 @@ Material::Material(const std::wstring& name)
 ,	m_diffuseTerm(1.0f)
 ,	m_specularTerm(1.0f)
 ,	m_specularRoughness(0.8f)
+,	m_reflection(0.0f)
 ,	m_rimLightIntensity(0.0f)
 ,	m_blendOperator(BoDecal)
 ,	m_doubleSided(false)
@@ -113,6 +115,16 @@ void Material::setSpecularRoughness(float specularRoughness)
 float Material::getSpecularRoughness() const
 {
 	return m_specularRoughness;
+}
+
+void Material::setReflection(float reflection)
+{
+	m_reflection = reflection;
+}
+
+float Material::getReflection() const
+{
+	return m_reflection;
 }
 
 void Material::setRimLightIntensity(float rimLightIntensity)

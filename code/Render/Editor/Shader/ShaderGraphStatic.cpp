@@ -556,33 +556,6 @@ Ref< ShaderGraph > ShaderGraphStatic::getConstantFolded() const
 					i = nodes.erase(i);
 				else
 					++i;
-
-				//for (int32_t j = 0; j < inputPinCount; ++j)
-				//{
-				//	const InputPin* inputPin = (*i)->getInputPin(j);
-				//	T_ASSERT (inputPin);
-
-				//	const OutputPin* outputPin = m_shaderGraph->findSourcePin(inputPin);
-				//	if (!outputPin)
-				//		continue;
-
-				//	std::map< const OutputPin*, Constant >::const_iterator it = outputConstants.find(outputPin);
-				//	if (it != outputConstants.end() && it->second.isZero())
-				//	{
-				//		inputZero = true;
-				//		break;
-				//	}
-				//}
-
-				//if (inputZero)
-				//{
-				//	outputConstants[(*i)->getOutputPin(0)] = Constant(0.0f);
-				//	++partialQualifiedCount;
-
-				//	i = nodes.erase(i);
-				//}
-				//else
-				//	++i;
 			}
 
 			if (!partialQualifiedCount)

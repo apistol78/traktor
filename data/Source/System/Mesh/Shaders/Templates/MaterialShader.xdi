@@ -4,63 +4,7 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>922</first>
-				<second>355</second>
-			</position>
-			<fragmentGuid>{6DA4BE0A-BE19-4440-9B08-FC3FD1FFECDC}</fragmentGuid>
-			<inputPins>
-				<item>
-					<name>T_DiffuseTerm</name>
-					<optional>false</optional>
-				</item>
-				<item>
-					<name>T_EyeDirection</name>
-					<optional>false</optional>
-				</item>
-				<item>
-					<name>T_RimColor</name>
-					<optional>false</optional>
-				</item>
-				<item>
-					<name>T_RimIntensity</name>
-					<optional>false</optional>
-				</item>
-				<item>
-					<name>T_SpecularRoughness</name>
-					<optional>false</optional>
-				</item>
-				<item>
-					<name>T_SpecularTerm</name>
-					<optional>false</optional>
-				</item>
-				<item>
-					<name>T_SurfaceColor</name>
-					<optional>false</optional>
-				</item>
-				<item>
-					<name>T_ViewNormal</name>
-					<optional>false</optional>
-				</item>
-				<item>
-					<name>T_ViewPosition</name>
-					<optional>false</optional>
-				</item>
-				<item>
-					<name>T_WorldNormal</name>
-					<optional>false</optional>
-				</item>
-				<item>
-					<name>T_WorldPosition</name>
-					<optional>false</optional>
-				</item>
-			</inputPins>
-			<outputPins/>
-			<values/>
-		</item>
-		<item type="traktor.render.External" version="1">
-			<comment/>
-			<position>
-				<first>407</first>
+				<first>409</first>
 				<second>7</second>
 			</position>
 			<fragmentGuid>{4AC7418D-FF43-FE40-ADDC-33A162636FDC}</fragmentGuid>
@@ -83,8 +27,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>369</first>
-				<second>88</second>
+				<first>371</first>
+				<second>90</second>
 			</position>
 			<fragmentGuid>{68DA66E7-1D9E-FD4C-9692-D947BEA3EBAD}</fragmentGuid>
 			<inputPins>
@@ -106,8 +50,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>365</first>
-				<second>169</second>
+				<first>367</first>
+				<second>173</second>
 			</position>
 			<fragmentGuid>{77489017-FBE8-4A4F-B11A-FDE48C69E021}</fragmentGuid>
 			<inputPins>
@@ -196,8 +140,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>464</first>
-				<second>298</second>
+				<first>466</first>
+				<second>304</second>
 			</position>
 			<fragmentGuid>{57310F3A-FEB0-7644-B641-EC3876773470}</fragmentGuid>
 			<inputPins/>
@@ -211,11 +155,103 @@
 			</outputPins>
 			<values/>
 		</item>
+		<item type="traktor.render.External" version="1">
+			<comment/>
+			<position>
+				<first>431</first>
+				<second>387</second>
+			</position>
+			<fragmentGuid>{859D3A98-EB16-0F4B-A766-34B6D65096AA}</fragmentGuid>
+			<inputPins/>
+			<outputPins>
+				<item>
+					<name>T_Reflection</name>
+				</item>
+				<item>
+					<name>T_ReflectionMap</name>
+				</item>
+			</outputPins>
+			<values/>
+		</item>
+		<item type="traktor.render.External" version="1">
+			<comment/>
+			<position>
+				<first>1017</first>
+				<second>357</second>
+			</position>
+			<fragmentGuid>{6DA4BE0A-BE19-4440-9B08-FC3FD1FFECDC}</fragmentGuid>
+			<inputPins>
+				<item>
+					<name>T_DiffuseTerm</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<name>T_EyeDirection</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<name>T_Reflection</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<name>T_ReflectionMap</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<name>T_RimColor</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<name>T_RimIntensity</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<name>T_SpecularRoughness</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<name>T_SpecularTerm</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<name>T_SurfaceColor</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<name>T_ViewNormal</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<name>T_ViewPosition</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<name>T_WorldNormal</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<name>T_WorldPosition</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
+			<outputPins/>
+			<values/>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[4]"/>
+				<node ref="/object/nodes/item[3]"/>
+				<name>T_TexCoord</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>T_TexCoord</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
 				<name>T_TexCoord</name>
 			</source>
 			<destination>
@@ -225,7 +261,7 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[4]"/>
+				<node ref="/object/nodes/item[3]"/>
 				<name>T_TexCoord</name>
 			</source>
 			<destination>
@@ -235,162 +271,172 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[4]"/>
-				<name>T_TexCoord</name>
-			</source>
-			<destination>
 				<node ref="/object/nodes/item[3]"/>
-				<name>T_TexCoord</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[4]"/>
 				<name>T_WorldBinormal</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[3]"/>
+				<node ref="/object/nodes/item[2]"/>
 				<name>T_WorldBinormal</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[4]"/>
+				<node ref="/object/nodes/item[3]"/>
 				<name>T_WorldNormal</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[3]"/>
+				<node ref="/object/nodes/item[2]"/>
 				<name>T_WorldNormal</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[4]"/>
+				<node ref="/object/nodes/item[3]"/>
 				<name>T_WorldPosition</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[3]"/>
+				<node ref="/object/nodes/item[2]"/>
 				<name>T_WorldPosition</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[4]"/>
+				<node ref="/object/nodes/item[3]"/>
 				<name>T_WorldTangent</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[3]"/>
+				<node ref="/object/nodes/item[2]"/>
 				<name>T_WorldTangent</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[1]"/>
-				<name>T_DiffuseTerm</name>
-			</source>
-			<destination>
 				<node ref="/object/nodes/item"/>
 				<name>T_DiffuseTerm</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[6]"/>
+				<name>T_DiffuseTerm</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[4]"/>
+				<node ref="/object/nodes/item[3]"/>
 				<name>T_WorldEyeDirection</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item"/>
+				<node ref="/object/nodes/item[6]"/>
 				<name>T_EyeDirection</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[2]"/>
-				<name>T_SpecularRoughness</name>
+				<node ref="/object/nodes/item[4]"/>
+				<name>T_RimColor</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item"/>
-				<name>T_SpecularRoughness</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[2]"/>
-				<name>T_SpecularTerm</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item"/>
-				<name>T_SpecularTerm</name>
+				<node ref="/object/nodes/item[6]"/>
+				<name>T_RimColor</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
 				<node ref="/object/nodes/item[4]"/>
-				<name>T_ViewPosition</name>
+				<name>T_RimIntensity</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item"/>
-				<name>T_ViewPosition</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[3]"/>
-				<name>T_WorldNormal</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item"/>
-				<name>T_WorldNormal</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[3]"/>
-				<name>T_WorldPosition</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item"/>
-				<name>T_WorldPosition</name>
+				<node ref="/object/nodes/item[6]"/>
+				<name>T_RimIntensity</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
 				<node ref="/object/nodes/item[1]"/>
+				<name>T_SpecularRoughness</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[6]"/>
+				<name>T_SpecularRoughness</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<name>T_SpecularTerm</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[6]"/>
+				<name>T_SpecularTerm</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item"/>
 				<name>T_DiffuseColor</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item"/>
+				<node ref="/object/nodes/item[6]"/>
 				<name>T_SurfaceColor</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[4]"/>
+				<node ref="/object/nodes/item[3]"/>
 				<name>T_ViewNormal</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item"/>
+				<node ref="/object/nodes/item[6]"/>
 				<name>T_ViewNormal</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[5]"/>
-				<name>T_RimColor</name>
+				<node ref="/object/nodes/item[3]"/>
+				<name>T_ViewPosition</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item"/>
-				<name>T_RimColor</name>
+				<node ref="/object/nodes/item[6]"/>
+				<name>T_ViewPosition</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>T_WorldNormal</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[6]"/>
+				<name>T_WorldNormal</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>T_WorldPosition</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[6]"/>
+				<name>T_WorldPosition</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
 				<node ref="/object/nodes/item[5]"/>
-				<name>T_RimIntensity</name>
+				<name>T_Reflection</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item"/>
-				<name>T_RimIntensity</name>
+				<node ref="/object/nodes/item[6]"/>
+				<name>T_Reflection</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[5]"/>
+				<name>T_ReflectionMap</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[6]"/>
+				<name>T_ReflectionMap</name>
 			</destination>
 		</item>
 	</edges>

@@ -941,7 +941,21 @@ bool emitSampler(HlslContext& cx, Sampler* node)
 	if (defineSampler)
 	{
 		StringOutputStream& fu = cx.getShader().getOutputStream(HlslShader::BtUniform);
-		fu << L"sampler " << samplerName << L" : register(s" << stage << L");" << Endl;
+
+		switch (node->getLookup())
+		{
+		case Sampler::LuSimple:
+			fu << L"sampler " << samplerName << L" : register(s" << stage << L");" << Endl;
+			break;
+
+		case Sampler::LuCube:
+			fu << L"samplerCUBE " << samplerName << L" : register(s" << stage << L");" << Endl;
+			break;
+
+		case Sampler::LuVolume:
+			fu << L"sampler3D " << samplerName << L" : register(s" << stage << L");" << Endl;
+			break;
+		}
 
 		if (cx.inPixel())
 		{
