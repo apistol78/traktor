@@ -50,8 +50,6 @@ struct TerrainSurfaceRenderBlock : public render::RenderBlock
 
 		if (top)
 			renderView->end();
-
-		T_SAFE_RELEASE(renderTargetSet);
 	}
 };
 
@@ -258,8 +256,6 @@ void TerrainSurfaceCache::get(
 		);
 		renderBlock->programParams->setVectorParameter(m_handleTextureOffset, textureOffset);
 		renderBlock->programParams->endParameters(renderContext);
-
-		T_SAFE_ADDREF(renderBlock->renderTargetSet);
 
 		if (!renderBlockChain)
 		{
