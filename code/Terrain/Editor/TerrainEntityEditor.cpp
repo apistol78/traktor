@@ -142,7 +142,7 @@ void TerrainEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer
 	const TerrainEntity* terrainEntity = checked_type_cast< const TerrainEntity*, true >(getEntityAdapter()->getEntity());
 	if (terrainEntity)
 	{
-		const std::vector< TerrainEntity::Patch >& patches = terrainEntity->getPatches();
+		const AlignedVector< TerrainEntity::Patch >& patches = terrainEntity->getPatches();
 		uint32_t patchCount = terrainEntity->getPatchCount();
 
 		const Vector4& worldExtent = terrainEntity->getHeightfield()->getResource().getWorldExtent();
