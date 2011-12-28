@@ -1,6 +1,7 @@
 #ifndef traktor_terrain_TerrainEntity_H
 #define traktor_terrain_TerrainEntity_H
 
+#include "Core/Containers/AlignedVector.h"
 #include "Render/Shader.h"
 #include "Resource/Proxy.h"
 #include "Terrain/TerrainEntityData.h"
@@ -72,7 +73,7 @@ public:
 #endif
 		int32_t lastPatchLod;
 		int32_t lastSurfaceLod;
-		Ref< render::ISimpleTexture > surface;
+		Vector4 surfaceOffset;
 	};
 
 	TerrainEntity(render::IRenderSystem* renderSystem, bool editorMode);
@@ -91,7 +92,7 @@ public:
 
 	TerrainSurfaceCache* getSurfaceCache() const { return m_surfaceCache; }
 
-	const std::vector< Patch >& getPatches() const { return m_patches; }
+	const AlignedVector< Patch >& getPatches() const { return m_patches; }
 
 	uint32_t getPatchCount() const { return m_patchCount; }
 
@@ -108,7 +109,7 @@ private:
 	resource::Proxy< render::Shader > m_shader;
 	Ref< TerrainSurfaceCache > m_surfaceCache;
 	Ref< TerrainSurface > m_surface;
-	std::vector< Patch > m_patches;
+	AlignedVector< Patch > m_patches;
 	uint32_t m_patchCount;
 	Ref< render::ISimpleTexture > m_normalTexture;
 	Ref< render::ISimpleTexture > m_heightTexture;
@@ -125,6 +126,7 @@ private:
 	float m_surfaceLodBias;
 	float m_surfaceLodExponent;
 	render::handle_t m_handleSurface;
+	render::handle_t m_handleSurfaceOffset;
 	render::handle_t m_handleHeightfield;
 	render::handle_t m_handleHeightfieldSize;
 	render::handle_t m_handleNormals;

@@ -79,6 +79,7 @@ TerrainEntity::TerrainEntity(render::IRenderSystem* renderSystem, bool editorMod
 ,	m_editorMode(editorMode)
 ,	m_visualizeMode(TerrainEntityData::VmDefault)
 ,	m_handleSurface(render::getParameterHandle(L"Surface"))
+,	m_handleSurfaceOffset(render::getParameterHandle(L"SurfaceOffset"))
 ,	m_handleHeightfield(render::getParameterHandle(L"Heightfield"))
 ,	m_handleHeightfieldSize(render::getParameterHandle(L"HeightfieldSize"))
 ,	m_handleNormals(render::getParameterHandle(L"Normals"))
@@ -288,13 +289,10 @@ void TerrainEntity::render(
 	// Sort patches front to back to maximize best use of surface cache and rendering.
 	std::sort(visiblePatches.begin(), visiblePatches.end(), PatchFrontToBackPredicate());
 
-	// Issue beginning of frame to surface cache.
-	if (updateCache)
-		m_surfaceCache->begin();
-
 	// Update all patch surfaces.
 	if (updateCache)
 	{
+		m_surfaceCache->begin();
 		for (AlignedVector< CullPatch >::const_iterator i = visiblePatches.begin(); i != visiblePatches.end(); ++i)
 		{
 			Patch& patch = m_patches[i->patchId];
@@ -340,7 +338,7 @@ void TerrainEntity::render(
 				i->patchId,
 				// Out
 				renderBlock,
-				patch.surface
+				patch.surfaceOffset
 			);
 
 			// Queue render block.
@@ -368,7 +366,8 @@ void TerrainEntity::render(
 
 		renderBlock->programParams->beginParameters(renderContext);
 		worldRenderPass.setProgramParameters(renderBlock->programParams);
-		renderBlock->programParams->setTextureParameter(m_handleSurface, patch.surface);
+		renderBlock->programParams->setTextureParameter(m_handleSurface, m_surfaceCache->getVirtualTexture());
+		renderBlock->programParams->setVectorParameter(m_handleSurfaceOffset, patch.surfaceOffset);
 		renderBlock->programParams->setTextureParameter(m_handleHeightfield, m_heightTexture);
 		renderBlock->programParams->setFloatParameter(m_handleHeightfieldSize, float(m_heightTexture->getWidth()));
 		renderBlock->programParams->setTextureParameter(m_handleNormals, m_normalTexture);
@@ -407,7 +406,8 @@ void TerrainEntity::render(
 
 		renderBlock->programParams->beginParameters(renderContext);
 		worldRenderPass.setProgramParameters(renderBlock->programParams);
-		renderBlock->programParams->setTextureParameter(m_handleSurface, patch.surface);
+		renderBlock->programParams->setTextureParameter(m_handleSurface, m_surfaceCache->getVirtualTexture());
+		renderBlock->programParams->setVectorParameter(m_handleSurfaceOffset, patch.surfaceOffset);
 		renderBlock->programParams->setTextureParameter(m_handleHeightfield, m_heightTexture);
 		renderBlock->programParams->setFloatParameter(m_handleHeightfieldSize, float(m_heightTexture->getWidth()));
 		renderBlock->programParams->setTextureParameter(m_handleNormals, m_normalTexture);

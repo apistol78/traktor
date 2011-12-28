@@ -5,6 +5,7 @@
 #include "Core/RefArray.h"
 #include "Core/Math/Vector4.h"
 #include "Render/Types.h"
+#include "Terrain/TerrainSurfaceAlloc.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -72,20 +73,23 @@ public:
 		uint32_t patchId,
 		// Out
 		render::RenderBlock*& outRenderBlock,
-		Ref< render::ISimpleTexture >& outTexture
+		Vector4& outTextureOffset
 	);
+
+	render::ITexture* getVirtualTexture() const;
 
 private:
 	struct Entry
 	{
 		uint32_t lod;
-		Ref< render::RenderTargetSet > renderTargetSet;
+		TerrainSurfaceAlloc::Tile tile;
 	};
 
 	resource::IResourceManager* m_resourceManager;
 	render::IRenderSystem* m_renderSystem;
 	Ref< render::ScreenRenderer > m_screenRenderer;
-	RefArray< render::RenderTargetSet > m_cache[4];
+	TerrainSurfaceAlloc m_alloc;
+	Ref< render::RenderTargetSet > m_pool;
 	std::vector< Entry > m_entries;
 	int32_t m_updateAllowedCount;
 	render::handle_t m_handleHeightfield;
@@ -97,8 +101,7 @@ private:
 	render::handle_t m_handleWorldExtent;
 	render::handle_t m_handlePatchOrigin;
 	render::handle_t m_handlePatchExtent;
-
-	Ref< render::RenderTargetSet > allocateTarget(uint32_t lod);
+	render::handle_t m_handleTextureOffset;
 };
 
 	}
