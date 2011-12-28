@@ -58,10 +58,10 @@ struct TerrainSurfaceRenderBlock : public render::RenderBlock
 Vector4 offsetFromTile(const TerrainSurfaceAlloc::Tile& tile)
 {
 	return Vector4(
-		tile.x / 4096.0f,
-		tile.y / 4096.0f,
-		tile.dim / 4096.0f,
-		tile.dim / 4096.0f
+		(tile.x + 1) / 4096.0f,
+		(tile.y + 1) / 4096.0f,
+		(tile.dim - 2) / 4096.0f,
+		(tile.dim - 2) / 4096.0f
 	);
 }
 
@@ -218,6 +218,11 @@ void TerrainSurfaceCache::get(
 	// Composite surface.
 	TerrainSurfaceRenderBlock* renderBlockChain = 0;
 
+	Vector4 patchOriginM = patchOrigin;
+	patchOriginM -= Vector4(1.0f / 4096.0f, 0.0f, 1.0f / 4096.0f, 0.0f) * Scalar(10.0f);
+	Vector4 patchExtentM = patchExtent;
+	patchExtentM += Vector4(2.0f / 4096.0f, 0.0f, 2.0f / 4096.0f, 0.0f) * Scalar(10.0f);
+
 	std::vector< resource::Proxy< render::Shader > >& layers = surface->getLayers();
 	for (size_t i = 0; i < layers.size(); ++i)
 	{
@@ -242,8 +247,8 @@ void TerrainSurfaceCache::get(
 		renderBlock->programParams->setFloatParameter(m_handleMaterial, float(i));
 		renderBlock->programParams->setVectorParameter(m_handleWorldOrigin, worldOrigin);
 		renderBlock->programParams->setVectorParameter(m_handleWorldExtent, worldExtent);
-		renderBlock->programParams->setVectorParameter(m_handlePatchOrigin, patchOrigin);
-		renderBlock->programParams->setVectorParameter(m_handlePatchExtent, patchExtent);
+		renderBlock->programParams->setVectorParameter(m_handlePatchOrigin, patchOriginM);
+		renderBlock->programParams->setVectorParameter(m_handlePatchExtent, patchExtentM);
 
 		Vector4 textureOffset(
 			2.0f * tile.x / 4096.0f - 1.0f,
