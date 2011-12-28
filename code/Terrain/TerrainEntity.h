@@ -101,6 +101,12 @@ public:
 private:
 	friend class TerrainEntityEditor;
 
+	enum
+	{
+		LodCount = 4,
+		PatchInstanceCount = 8
+	};
+
 	Ref< render::IRenderSystem > m_renderSystem;
 	bool m_editorMode;
 	TerrainEntityData::VisualizeMode m_visualizeMode;
@@ -117,8 +123,10 @@ private:
 	Ref< render::IndexBuffer > m_indexBuffer;
 #if defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
 	Ref< render::VertexBuffer > m_vertexBuffer;
+	render::Primitives m_primitives[LodCount][PatchInstanceCount];
+#else
+	render::Primitives m_primitives[LodCount];
 #endif
-	render::Primitives m_primitives[4];
 	float m_patchLodDistance;
 	float m_patchLodBias;
 	float m_patchLodExponent;

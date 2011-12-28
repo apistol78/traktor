@@ -270,7 +270,6 @@ void TerrainEntity::render(
 				cp.area = !clipped ? e.x() * e.y() : Scalar(1000.0f);
 				cp.patchId = patchId;
 				cp.patchOrigin = patchOrigin;
-
 				visiblePatches.push_back(cp);
 			}
 			else if (updateCache)
@@ -288,6 +287,12 @@ void TerrainEntity::render(
 
 	// Sort patches front to back to maximize best use of surface cache and rendering.
 	std::sort(visiblePatches.begin(), visiblePatches.end(), PatchFrontToBackPredicate());
+
+#if defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
+	static AlignedVector< const CullPatch* > patchLodInstances[LodCount];
+	for (uint32_t i = 0; i < LodCount; ++i)
+		patchLodInstances[i].resize(0);
+#endif
 
 	// Update all patch surfaces.
 	if (updateCache)
@@ -344,47 +349,128 @@ void TerrainEntity::render(
 			// Queue render block.
 			if (renderBlock)
 				renderContext->draw(render::RfOpaque, renderBlock);
+
+			// Queue patch instance.
+#if defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
+			patchLodInstances[patchLod].push_back(&(*i));
+#endif
 		}
 	}
+#if defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
+	else
+	{
+		for (AlignedVector< CullPatch >::const_iterator i = visiblePatches.begin(); i != visiblePatches.end(); ++i)
+		{
+			Patch& patch = m_patches[i->patchId];
+			patchLodInstances[patch.lastPatchLod].push_back(&(*i));
+		}
+	}
+#endif
 
 #if defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
 
-	// Render each visible patch.
-	for (AlignedVector< CullPatch >::const_iterator i = visiblePatches.begin(); i != visiblePatches.end(); ++i)
+	// Render each visible patch; only default visualization mode can handle patch instancing.
+	if (m_visualizeMode == TerrainEntityData::VmDefault)
 	{
-		Patch& patch = m_patches[i->patchId];
-		const Vector4& patchOrigin = i->patchOrigin;
+		Vector4 patchOrigin[PatchInstanceCount];
+		Vector4 surfaceOffset[PatchInstanceCount];
 
-		render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >("Terrain patch");
+		for (uint32_t i = 0; i < LodCount; ++i)
+		{
+			uint32_t patchLodCount = patchLodInstances[i].size();
+			for (uint32_t j = 0; j < patchLodCount; j += PatchInstanceCount)
+			{
+				uint32_t instanceCount = std::min< uint32_t >(patchLodCount - j, PatchInstanceCount);
 
-		renderBlock->distance = i->distance;
-		renderBlock->program = program;
-		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
-		renderBlock->indexBuffer = m_indexBuffer;
-		renderBlock->vertexBuffer = m_vertexBuffer;
-		renderBlock->primitives = &m_primitives[patch.lastPatchLod];
+				float distance = std::numeric_limits< float >::max();
+				for (uint32_t k = 0; k < instanceCount; ++k)
+				{
+					const CullPatch* cullPatch = patchLodInstances[i][j + k];
+					const Patch& patch = m_patches[cullPatch->patchId];
+					patchOrigin[k] = cullPatch->patchOrigin;
+					surfaceOffset[k] = patch.surfaceOffset;
+					distance = std::min< float >(distance, cullPatch->distance);
+				}
 
-		renderBlock->programParams->beginParameters(renderContext);
-		worldRenderPass.setProgramParameters(renderBlock->programParams);
-		renderBlock->programParams->setTextureParameter(m_handleSurface, m_surfaceCache->getVirtualTexture());
-		renderBlock->programParams->setVectorParameter(m_handleSurfaceOffset, patch.surfaceOffset);
-		renderBlock->programParams->setTextureParameter(m_handleHeightfield, m_heightTexture);
-		renderBlock->programParams->setFloatParameter(m_handleHeightfieldSize, float(m_heightTexture->getWidth()));
-		renderBlock->programParams->setTextureParameter(m_handleNormals, m_normalTexture);
-		renderBlock->programParams->setFloatParameter(m_handleNormalsSize, float(m_normalTexture->getWidth()));
-		renderBlock->programParams->setVectorParameter(m_handleWorldOrigin, -worldExtent * Scalar(0.5f));
-		renderBlock->programParams->setVectorParameter(m_handleWorldExtent, worldExtent);
-		renderBlock->programParams->setVectorParameter(m_handlePatchOrigin, patchOrigin);
-		renderBlock->programParams->setVectorParameter(m_handlePatchExtent, patchExtent);
+				render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >("Terrain patch");
 
-		if (m_visualizeMode == TerrainEntityData::VmSurfaceLod)
-			renderBlock->programParams->setVectorParameter(m_handlePatchLodColor, c_lodColor[patch.lastSurfaceLod]);
-		else if (m_visualizeMode == TerrainEntityData::VmPatchLod)
-			renderBlock->programParams->setVectorParameter(m_handlePatchLodColor, c_lodColor[patch.lastPatchLod]);
+				renderBlock->distance = distance;
+				renderBlock->program = program;
+				renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
+				renderBlock->indexBuffer = m_indexBuffer;
+				renderBlock->vertexBuffer = m_vertexBuffer;
+				renderBlock->primitives = &m_primitives[i][instanceCount - 1];
 
-		renderBlock->programParams->endParameters(renderContext);
+				renderBlock->programParams->beginParameters(renderContext);
+				worldRenderPass.setProgramParameters(renderBlock->programParams);
 
-		renderContext->draw(render::RfOpaque, renderBlock);
+				renderBlock->programParams->setTextureParameter(m_handleSurface, m_surfaceCache->getVirtualTexture());
+				renderBlock->programParams->setTextureParameter(m_handleHeightfield, m_heightTexture);
+				renderBlock->programParams->setTextureParameter(m_handleNormals, m_normalTexture);
+
+				renderBlock->programParams->setFloatParameter(m_handleHeightfieldSize, float(m_heightTexture->getWidth()));
+				renderBlock->programParams->setFloatParameter(m_handleNormalsSize, float(m_normalTexture->getWidth()));
+
+				renderBlock->programParams->setVectorParameter(m_handleWorldOrigin, -worldExtent * Scalar(0.5f));
+				renderBlock->programParams->setVectorParameter(m_handleWorldExtent, worldExtent);
+				renderBlock->programParams->setVectorParameter(m_handlePatchExtent, patchExtent);
+
+				renderBlock->programParams->setVectorArrayParameter(m_handleSurfaceOffset, surfaceOffset, PatchInstanceCount);
+				renderBlock->programParams->setVectorArrayParameter(m_handlePatchOrigin, patchOrigin, PatchInstanceCount);
+
+				renderBlock->programParams->endParameters(renderContext);
+
+				renderContext->draw(render::RfOpaque, renderBlock);
+			}
+		}
+	}
+	else
+	{
+		Vector4 patchOrigin[PatchInstanceCount];
+		Vector4 surfaceOffset[PatchInstanceCount];
+
+		for (AlignedVector< CullPatch >::const_iterator i = visiblePatches.begin(); i != visiblePatches.end(); ++i)
+		{
+			Patch& patch = m_patches[i->patchId];
+
+			patchOrigin[0] = i->patchOrigin;
+			surfaceOffset[0] = patch.surfaceOffset;
+
+			render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >("Terrain patch");
+
+			renderBlock->distance = i->distance;
+			renderBlock->program = program;
+			renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
+			renderBlock->indexBuffer = m_indexBuffer;
+			renderBlock->vertexBuffer = m_vertexBuffer;
+			renderBlock->primitives = &m_primitives[patch.lastPatchLod][0];
+
+			renderBlock->programParams->beginParameters(renderContext);
+			worldRenderPass.setProgramParameters(renderBlock->programParams);
+
+			renderBlock->programParams->setTextureParameter(m_handleSurface, m_surfaceCache->getVirtualTexture());
+			renderBlock->programParams->setTextureParameter(m_handleHeightfield, m_heightTexture);
+			renderBlock->programParams->setTextureParameter(m_handleNormals, m_normalTexture);
+
+			renderBlock->programParams->setFloatParameter(m_handleHeightfieldSize, float(m_heightTexture->getWidth()));
+			renderBlock->programParams->setFloatParameter(m_handleNormalsSize, float(m_normalTexture->getWidth()));
+
+			renderBlock->programParams->setVectorParameter(m_handleWorldOrigin, -worldExtent * Scalar(0.5f));
+			renderBlock->programParams->setVectorParameter(m_handleWorldExtent, worldExtent);
+			renderBlock->programParams->setVectorParameter(m_handlePatchExtent, patchExtent);
+
+			renderBlock->programParams->setVectorArrayParameter(m_handleSurfaceOffset, surfaceOffset, PatchInstanceCount);
+			renderBlock->programParams->setVectorArrayParameter(m_handlePatchOrigin, patchOrigin, PatchInstanceCount);
+
+			if (m_visualizeMode == TerrainEntityData::VmSurfaceLod)
+				renderBlock->programParams->setVectorParameter(m_handlePatchLodColor, c_lodColor[patch.lastSurfaceLod]);
+			else if (m_visualizeMode == TerrainEntityData::VmPatchLod)
+				renderBlock->programParams->setVectorParameter(m_handlePatchLodColor, c_lodColor[patch.lastPatchLod]);
+
+			renderBlock->programParams->endParameters(renderContext);
+
+			renderContext->draw(render::RfOpaque, renderBlock);
+		}
 	}
 
 #else
@@ -534,25 +620,29 @@ bool TerrainEntity::createPatches()
 
 #if defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
 	std::vector< render::VertexElement > vertexElements;
-	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtHalf2, 0));
+	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat3, 0));
 
 	m_vertexBuffer = m_renderSystem->createVertexBuffer(
 		vertexElements,
-		patchVertexCount * sizeof(half_t) * 2,
+		patchVertexCount * sizeof(float) * 3 * PatchInstanceCount,
 		false
 	);
 	if (!m_vertexBuffer)
 		return false;
 
-	half_t* vertex = static_cast< half_t* >(m_vertexBuffer->lock());
+	float* vertex = static_cast< float* >(m_vertexBuffer->lock());
 	T_ASSERT_M (vertex, L"Unable to lock vertex buffer");
 
-	for (uint32_t z = 0; z < patchDim; ++z)
+	for (uint32_t i = 0; i < PatchInstanceCount; ++i)
 	{
-		for (uint32_t x = 0; x < patchDim; ++x)
+		for (uint32_t z = 0; z < patchDim; ++z)
 		{
-			*vertex++ = floatToHalf(float(x) / (patchDim - 1));
-			*vertex++ = floatToHalf(float(z) / (patchDim - 1));
+			for (uint32_t x = 0; x < patchDim; ++x)
+			{
+				*vertex++ = float(x) / (patchDim - 1);
+				*vertex++ = float(z) / (patchDim - 1);
+				*vertex++ = float(i);
+			}
 		}
 	}
 
@@ -591,10 +681,134 @@ bool TerrainEntity::createPatches()
 	updatePatches(0, 0, heightfieldSize, heightfieldSize);
 
 	std::vector< uint16_t > indices;
-	for (uint32_t lod = 0; lod < 4; ++lod)
+	for (uint32_t lod = 0; lod < LodCount; ++lod)
 	{
 		uint32_t indexOffset = uint32_t(indices.size());
 		uint32_t lodSkip = 1 << lod;
+
+#if defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
+
+		for (uint32_t y = 0; y < patchDim - 1; y += lodSkip)
+		{
+			uint32_t offset = y * patchDim;
+			for (uint32_t x = 0; x < patchDim - 1; x += lodSkip)
+			{
+				if (lod > 0 && (x == 0 || y == 0 || x == patchDim - 1 - lodSkip || y == patchDim - 1 - lodSkip))
+				{
+					int mid = x + offset + (lodSkip >> 1) + (lodSkip >> 1) * patchDim;
+
+					if (x == 0)
+					{
+						indices.push_back(mid);
+						indices.push_back(lodSkip + offset);
+						indices.push_back(lodSkip + offset + lodSkip * patchDim);
+
+						for (uint32_t i = 0; i < lodSkip; ++i)
+						{
+							indices.push_back(mid);
+							indices.push_back(offset + i * patchDim + patchDim);
+							indices.push_back(offset + i * patchDim);
+						}
+					}
+					else if (x == patchDim - 1 - lodSkip)
+					{
+						indices.push_back(mid);
+						indices.push_back(x + offset + lodSkip * patchDim);
+						indices.push_back(x + offset);
+
+						for (uint32_t i = 0; i < lodSkip; ++i)
+						{
+							indices.push_back(mid);
+							indices.push_back(x + offset + i * patchDim + lodSkip);
+							indices.push_back(x + offset + i * patchDim + lodSkip + patchDim);
+						}
+					}
+					else
+					{
+						indices.push_back(mid);
+						indices.push_back(x + offset + lodSkip * patchDim);
+						indices.push_back(x + offset);
+
+						indices.push_back(mid);
+						indices.push_back(x + offset + lodSkip);
+						indices.push_back(x + offset + lodSkip + lodSkip * patchDim);
+					}
+
+					if (y == 0)
+					{
+						indices.push_back(mid);
+						indices.push_back(x + lodSkip * patchDim + offset + lodSkip);
+						indices.push_back(x + lodSkip * patchDim + offset);
+
+						for (uint32_t i = 0; i < lodSkip; ++i)
+						{
+							indices.push_back(mid);
+							indices.push_back(x + offset + i);
+							indices.push_back(x + offset + i + 1);
+						}
+					}
+					else if (y == patchDim - 1 - lodSkip)
+					{
+						indices.push_back(mid);
+						indices.push_back(x + offset);
+						indices.push_back(x + offset + lodSkip);
+
+						for (uint32_t i = 0; i < lodSkip; ++i)
+						{
+							indices.push_back(mid);
+							indices.push_back(x + offset + i + lodSkip * patchDim + 1);
+							indices.push_back(x + offset + i + lodSkip * patchDim);
+						}
+					}
+					else
+					{
+						indices.push_back(mid);
+						indices.push_back(x + offset);
+						indices.push_back(x + offset + lodSkip);
+
+						indices.push_back(mid);
+						indices.push_back(x + offset + lodSkip * patchDim + lodSkip);
+						indices.push_back(x + offset + lodSkip * patchDim);
+					}
+				}
+				else
+				{
+					indices.push_back(x + offset);
+					indices.push_back(lodSkip + x + offset);
+					indices.push_back(lodSkip * patchDim + x + offset);
+
+					indices.push_back(lodSkip + x + offset);
+					indices.push_back(lodSkip * patchDim + lodSkip + x + offset);
+					indices.push_back(lodSkip * patchDim + x + offset);
+				}
+			}
+		}
+
+		uint32_t indexEndOffset = uint32_t(indices.size());
+
+		uint32_t minIndex = *std::min_element(indices.begin() + indexOffset, indices.begin() + indexEndOffset);
+		uint32_t maxIndex = *std::max_element(indices.begin() + indexOffset, indices.begin() + indexEndOffset);
+
+		// Duplicate for instances.
+		uint32_t indexBase = patchVertexCount;
+		for (uint32_t i = 1; i < PatchInstanceCount; ++i)
+		{
+			for (uint32_t j = indexOffset; j < indexEndOffset; ++j)
+				indices.push_back(indices[j] + indexBase);
+			indexBase += patchVertexCount;
+		}
+
+		for (uint32_t i = 0; i < PatchInstanceCount; ++i)
+		{
+			m_primitives[lod][i].setIndexed(
+				render::PtTriangles,
+				indexOffset,
+				(i + 1) * (indexEndOffset - indexOffset) / 3,
+				minIndex,
+				maxIndex + patchVertexCount * i
+			);
+		}
+#else
 
 		for (uint32_t y = 0; y < patchDim - 1; y += lodSkip)
 		{
@@ -704,6 +918,8 @@ bool TerrainEntity::createPatches()
 			minIndex,
 			maxIndex
 		);
+
+#endif
 	}
 
 	m_indexBuffer = m_renderSystem->createIndexBuffer(
