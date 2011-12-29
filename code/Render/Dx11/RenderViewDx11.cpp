@@ -52,6 +52,8 @@ RenderViewDx11::RenderViewDx11(
 ,	m_fullScreen(false)
 ,	m_waitVBlank(true)
 ,	m_dirty(false)
+,	m_drawCalls(0)
+,	m_primitiveCount(0)
 ,	m_currentVertexBuffer(0)
 ,	m_currentIndexBuffer(0)
 ,	m_currentProgram(0)
@@ -432,6 +434,9 @@ bool RenderViewDx11::begin(EyeType eye)
 	m_context->getD3DDeviceContext()->OMSetRenderTargets(1, &rs.d3dRenderView, rs.d3dDepthStencilView);
 	m_context->getD3DDeviceContext()->RSSetViewports(1, &rs.d3dViewport);
 
+	m_drawCalls = 0;
+	m_primitiveCount = 0;
+
 	return true;
 }
 
@@ -558,6 +563,9 @@ void RenderViewDx11::draw(const Primitives& primitives)
 		m_context->getD3DDeviceContext()->DrawIndexed(vertexCount, primitives.offset, 0);
 	else
 		m_context->getD3DDeviceContext()->Draw(vertexCount, primitives.offset);
+
+	m_drawCalls++;
+	m_primitiveCount += primitives.count;
 }
 
 void RenderViewDx11::end()
@@ -590,6 +598,9 @@ void RenderViewDx11::popMarker()
 
 void RenderViewDx11::getStatistics(RenderViewStatistics& outStatistics) const
 {
+	outStatistics.drawCalls = m_drawCalls;
+	outStatistics.primitiveCount = m_primitiveCount;
+	outStatistics.duration = 0.0;
 }
 
 bool RenderViewDx11::windowListenerEvent(Window* window, UINT message, WPARAM wParam, LPARAM lParam, LRESULT& outResult)

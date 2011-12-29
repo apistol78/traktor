@@ -114,6 +114,8 @@ private:
 	bool m_fullScreen;
 	bool m_waitVBlank;
 	bool m_dirty;
+	uint32_t m_drawCalls;
+	uint32_t m_primitiveCount;
 	Ref< VertexBufferDx11 > m_currentVertexBuffer;
 	Ref< IndexBufferDx11 > m_currentIndexBuffer;
 	Ref< ProgramDx11 > m_currentProgram;
