@@ -18,7 +18,9 @@ namespace traktor
 	namespace editor
 	{
 
+class IDocument;
 class IEditor;
+class IEditorPageSite;
 
 	}
 
@@ -51,21 +53,15 @@ class T_DLLEXPORT StateGraphEditorPage : public editor::IEditorPage
 	T_RTTI_CLASS;
 
 public:
-	StateGraphEditorPage(editor::IEditor* editor);
+	StateGraphEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document);
 
-	virtual bool create(ui::Container* parent, editor::IEditorPageSite* site);
+	virtual bool create(ui::Container* parent);
 
 	virtual void destroy();
 
 	virtual void activate();
 
 	virtual void deactivate();
-
-	virtual	bool setDataObject(db::Instance* instance, Object* data);
-
-	virtual Ref< db::Instance > getDataInstance();
-
-	virtual Ref< Object > getDataObject();
 
 	virtual bool dropInstance(db::Instance* instance, const ui::Point& position);
 
@@ -76,7 +72,7 @@ public:
 private:
 	editor::IEditor* m_editor;
 	Ref< editor::IEditorPageSite > m_site;
-	Ref< db::Instance > m_stateGraphInstance;
+	Ref< editor::IDocument > m_document;
 	Ref< StateGraph > m_stateGraph;
 	Ref< ui::custom::ToolBar > m_toolBar;
 	Ref< ui::custom::GraphControl > m_editorGraph;

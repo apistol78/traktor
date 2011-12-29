@@ -55,14 +55,12 @@ Ref< drawing::Image > readRawTerrain(const Path& fileName)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.hf.HeightfieldCompositor", HeightfieldCompositor, Object)
 
-Ref< HeightfieldCompositor > HeightfieldCompositor::createFromInstance(const db::Instance* assetInstance, const std::wstring& assetPath)
+Ref< HeightfieldCompositor > HeightfieldCompositor::createFromAsset(const HeightfieldAsset* asset, const std::wstring& assetPath)
 {
-	Ref< HeightfieldAsset > asset = checked_type_cast< HeightfieldAsset*, true >(assetInstance->getObject< HeightfieldAsset >());
-	if (!asset)
-		return 0;
-
 	Ref< drawing::Image > baseImage;
 	Ref< drawing::Image > offsetImage;
+	Ref< drawing::Image > accumImage;
+	Ref< drawing::Image > mergedImage;
 
 	// Load base layer as image.
 	Path fileName = FileSystem::getInstance().getAbsolutePath(assetPath, asset->getFileName());
@@ -88,77 +86,62 @@ Ref< HeightfieldCompositor > HeightfieldCompositor::createFromInstance(const db:
 	baseImage = baseImage->applyFilter(&scaleFilter);
 	T_ASSERT (baseImage);
 
+	// Create offset image.
+	offsetImage = new drawing::Image(drawing::PixelFormat::getR16(), size, size);
+	offsetImage->clear(Color4f(0.5f, 0.5f, 0.5f, 0.5f));
+
+	// Create accumulation image.
+	accumImage = new drawing::Image(drawing::PixelFormat::getR16(), size, size);
+	accumImage->clear(Color4f(0.5f, 0.5f, 0.5f, 0.5f));
+
+	// Create merged image by cloning base image.
+	mergedImage = baseImage->clone();
+
 	// Create compositor instance.
 	Ref< HeightfieldCompositor > compositor = new HeightfieldCompositor();
 	compositor->m_size = size;
 	compositor->m_worldExtent = asset->getWorldExtent();
 	compositor->m_baseLayer = new HeightfieldLayer(baseImage);
-
-	// Read or create offset layer.
-	Ref< IStream > offsetStream = assetInstance->readData(L"Offset");
-	if (offsetStream)
-	{
-		if ((offsetImage = readRawTerrain(offsetStream)) == 0)
-			return 0;
-
-		if (offsetImage->getWidth() != size)
-		{
-			drawing::ScaleFilter scaleOffsetFilter(
-				size,
-				size,
-				drawing::ScaleFilter::MnAverage,
-				drawing::ScaleFilter::MgLinear
-			);
-			offsetImage = offsetImage->applyFilter(&scaleOffsetFilter);
-			T_ASSERT (offsetImage);
-		}
-	}
-
-	if (!offsetImage)
-	{
-		offsetImage = new drawing::Image(drawing::PixelFormat::getR16(), size, size);
-		offsetImage->clear(Color4f(0.5f, 0.5f, 0.5f, 0.5f));
-	}
-
 	compositor->m_offsetLayer = new HeightfieldLayer(offsetImage);
-
-	// Create empty accumulation layer.
-	Ref< drawing::Image > accumImage = new drawing::Image(drawing::PixelFormat::getR16(), size, size);
-	accumImage->clear(Color4f(0.5f, 0.5f, 0.5f, 0.5f));
 	compositor->m_accumLayer = new HeightfieldLayer(accumImage);
-
-	// Create merged layer.
-	Ref< drawing::Image > mergedImage = new drawing::Image(drawing::PixelFormat::getR16(), size, size);
-	for (uint32_t y = 0; y < size; ++y)
-	{
-		for (uint32_t x = 0; x < size; ++x)
-		{
-			Color4f offset, merged;
-			
-			offsetImage->getPixel(x, y, offset);
-			baseImage->getPixel(x, y, merged);
-
-			merged += offset * Color4f(2.0f, 2.0f, 2.0f, 2.0f) - Color4f(1.0f, 1.0f, 1.0f, 1.0f);
-			mergedImage->setPixel(x, y, merged);
-		}
-	}
-
 	compositor->m_mergedLayer = new HeightfieldLayer(mergedImage);
 
 	return compositor;
 }
 
-bool HeightfieldCompositor::saveInstanceLayers(db::Instance* assetInstance) const
+bool HeightfieldCompositor::readInstanceData(const db::Instance* assetInstance)
 {
-	if (!assetInstance->checkout())
+	Ref< IStream > offsetStream = assetInstance->readData(L"Offset");
+	if (!offsetStream)
 		return false;
 
+	Ref< drawing::Image > offsetImage = readRawTerrain(offsetStream);
+	if (!offsetImage)
+		return false;
+
+	if (offsetImage->getWidth() != m_size)
+	{
+		drawing::ScaleFilter scaleOffsetFilter(
+			m_size,
+			m_size,
+			drawing::ScaleFilter::MnAverage,
+			drawing::ScaleFilter::MgLinear
+		);
+		offsetImage = offsetImage->applyFilter(&scaleOffsetFilter);
+		T_ASSERT (offsetImage);
+	}
+
+	m_offsetLayer->m_image = offsetImage;
+
+	updateMergedLayer();
+	return true;
+}
+
+bool HeightfieldCompositor::writeInstanceData(db::Instance* assetInstance) const
+{
 	Ref< IStream > offsetStream = assetInstance->writeData(L"Offset");
 	if (!offsetStream)
-	{
-		assetInstance->revert();
 		return false;
-	}
 
 	const drawing::Image* offsetImage = m_offsetLayer->getImage();
 	const height_t* heights = static_cast< const height_t* >(offsetImage->getData());
@@ -169,12 +152,6 @@ bool HeightfieldCompositor::saveInstanceLayers(db::Instance* assetInstance) cons
 		sizeof(height_t)
 	);
 	offsetStream->close();
-
-	if (!assetInstance->commit())
-	{
-		assetInstance->revert();
-		return false;
-	}
 
 	return true;
 }
@@ -474,6 +451,11 @@ float HeightfieldCompositor::gridToWorldX(float x) const
 float HeightfieldCompositor::gridToWorldZ(float z) const
 {
 	return (z + 0.5f) * m_worldExtent.z() / m_size - m_worldExtent.z() * 0.5f;
+}
+
+void HeightfieldCompositor::updateMergedLayer()
+{
+	updateMergedLayer(Region(0, 0, m_size, m_size));
 }
 
 void HeightfieldCompositor::updateMergedLayer(const Region& r)

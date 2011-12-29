@@ -26,6 +26,7 @@ class Instance;
 	namespace hf
 	{
 
+class HeightfieldAsset;
 class HeightfieldLayer;
 class IBrush;
 class Region;
@@ -35,9 +36,11 @@ class T_DLLCLASS HeightfieldCompositor : public Object
 	T_RTTI_CLASS;
 
 public:
-	static Ref< HeightfieldCompositor > createFromInstance(const db::Instance* assetInstance, const std::wstring& assetPath);
+	static Ref< HeightfieldCompositor > createFromAsset(const HeightfieldAsset* asset, const std::wstring& assetPath);
 
-	bool saveInstanceLayers(db::Instance* assetInstance) const;
+	bool readInstanceData(const db::Instance* assetInstance);
+
+	bool writeInstanceData(db::Instance* assetInstance) const;
 
 	float getNearestHeight(float x, float z) const;
 
@@ -83,6 +86,8 @@ private:
 	Ref< HeightfieldLayer > m_accumLayer;
 	Ref< HeightfieldLayer > m_mergedLayer;
 	Region m_dirtyDraw;
+
+	void updateMergedLayer();
 
 	void updateMergedLayer(const Region& r);
 };

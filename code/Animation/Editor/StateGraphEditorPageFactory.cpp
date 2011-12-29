@@ -1,6 +1,6 @@
-#include "Animation/Editor/StateGraphEditorPageFactory.h"
-#include "Animation/Editor/StateGraphEditorPage.h"
 #include "Animation/Animation/StateGraph.h"
+#include "Animation/Editor/StateGraphEditorPage.h"
+#include "Animation/Editor/StateGraphEditorPageFactory.h"
 #include "Ui/Command.h"
 
 namespace traktor
@@ -17,9 +17,9 @@ const TypeInfoSet StateGraphEditorPageFactory::getEditableTypes() const
 	return typeSet;
 }
 
-Ref< editor::IEditorPage > StateGraphEditorPageFactory::createEditorPage(editor::IEditor* editor) const
+Ref< editor::IEditorPage > StateGraphEditorPageFactory::createEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document) const
 {
-	return new StateGraphEditorPage(editor);
+	return new StateGraphEditorPage(editor, site, document);
 }
 
 void StateGraphEditorPageFactory::getCommands(std::list< ui::Command >& outCommands) const

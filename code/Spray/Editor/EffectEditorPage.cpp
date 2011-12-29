@@ -1,6 +1,7 @@
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/Settings.h"
+#include "Editor/IDocument.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPageSite.h"
 #include "I18N/Text.h"
@@ -39,35 +40,36 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectEditorPage", EffectEditorPage, editor::IEditorPage)
 
-EffectEditorPage::EffectEditorPage(editor::IEditor* editor)
+EffectEditorPage::EffectEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document)
 :	m_editor(editor)
+,	m_site(site)
+,	m_document(document)
 ,	m_velocityVisible(false)
 ,	m_guideVisible(true)
 ,	m_moveEmitter(false)
 {
 }
 
-bool EffectEditorPage::create(ui::Container* parent, editor::IEditorPageSite* site)
+bool EffectEditorPage::create(ui::Container* parent)
 {
 	render::IRenderSystem* renderSystem = m_editor->getStoreObject< render::IRenderSystem >(L"RenderSystem");
 	if (!renderSystem)
 		return false;
 
-	m_site = site;
-	T_ASSERT (m_site);
-
 	Ref< db::Database > database = m_editor->getOutputDatabase();
+	T_ASSERT (database);
 
 	m_resourceManager = new resource::ResourceManager();
-	m_resourceManager->addFactory(
-		new render::TextureFactory(database, renderSystem, 0)
-	);
-	m_resourceManager->addFactory(
-		new render::ShaderFactory(database, renderSystem)
-	);
-	m_resourceManager->addFactory(
-		new EffectFactory(database)
-	);
+	m_resourceManager->addFactory(new render::TextureFactory(database, renderSystem, 0));
+	m_resourceManager->addFactory(new render::ShaderFactory(database, renderSystem));
+	m_resourceManager->addFactory(new EffectFactory(database));
+
+	m_effect = m_document->getObject< Effect >(0);
+	if (!m_effect)
+		return false;
+
+	if (!m_effect->bind(m_resourceManager))
+		return false;
 
 	activate();
 
@@ -108,11 +110,14 @@ bool EffectEditorPage::create(ui::Container* parent, editor::IEditorPageSite* si
 	m_previewControl->create(splitter, ui::WsClientBorder, m_resourceManager, renderSystem);
 	m_previewControl->showGuide(m_guideVisible);
 	m_previewControl->setMoveEmitter(m_moveEmitter);
+	m_previewControl->setEffect(m_effect);
 
 	m_sequencer = new ui::custom::SequencerControl();
 	m_sequencer->create(splitter, ui::WsDoubleBuffer | ui::WsClientBorder);
 	m_sequencer->addSelectEventHandler(ui::createMethodHandler(this, &EffectEditorPage::eventLayerSelect));
 	m_sequencer->addCursorMoveEventHandler(ui::createMethodHandler(this, &EffectEditorPage::eventTimeCursorMove));
+
+	m_site->setPropertyObject(m_effect);
 
 	updateSequencer();
 	return true;
@@ -135,34 +140,6 @@ void EffectEditorPage::activate()
 
 void EffectEditorPage::deactivate()
 {
-}
-
-bool EffectEditorPage::setDataObject(db::Instance* instance, Object* data)
-{
-	m_effectInstance = instance;
-
-	m_effect = dynamic_type_cast< Effect* >(data);
-	if (!m_effect)
-		return false;
-
-	if (!m_effect->bind(m_resourceManager))
-		return false;
-
-	m_previewControl->setEffect(m_effect);
-	m_site->setPropertyObject(m_effect);
-
-	updateSequencer();
-	return true;
-}
-
-Ref< db::Instance > EffectEditorPage::getDataInstance()
-{
-	return m_effectInstance;
-}
-
-Ref< Object > EffectEditorPage::getDataObject()
-{
-	return m_effect;
 }
 
 bool EffectEditorPage::dropInstance(db::Instance* instance, const ui::Point& position)

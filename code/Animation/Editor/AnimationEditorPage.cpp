@@ -11,10 +11,10 @@
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/Settings.h"
 #include "Database/Instance.h"
+#include "Editor/IDocument.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPageSite.h"
 #include "Editor/TypeBrowseFilter.h"
-#include "Editor/UndoStack.h"
 #include "Resource/ResourceManager.h"
 #include "Ui/Application.h"
 #include "Ui/Clipboard.h"
@@ -142,8 +142,10 @@ const int c_animationLength = 10000;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.AnimationEditorPage", AnimationEditorPage, editor::IEditorPage)
 
-AnimationEditorPage::AnimationEditorPage(editor::IEditor* editor)
+AnimationEditorPage::AnimationEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document)
 :	m_editor(editor)
+,	m_site(site)
+,	m_document(document)
 ,	m_selectedBone(0)
 ,	m_showGhostTrail(false)
 ,	m_twistLock(false)
@@ -157,14 +159,15 @@ AnimationEditorPage::AnimationEditorPage(editor::IEditor* editor)
 {
 }
 
-bool AnimationEditorPage::create(ui::Container* parent, editor::IEditorPageSite* site)
+bool AnimationEditorPage::create(ui::Container* parent)
 {
 	render::IRenderSystem* renderSystem = m_editor->getStoreObject< render::IRenderSystem >(L"RenderSystem");
 	if (!renderSystem)
 		return false;
 
-	m_site = site;
-	T_ASSERT (m_site);
+	m_animation = m_document->getObject< Animation >(0);
+	if (!m_animation)
+		return false;
 
 	Ref< ui::custom::QuadSplitter > splitter = new ui::custom::QuadSplitter();
 	splitter->create(parent, ui::Point(50, 50), true);
@@ -270,9 +273,9 @@ bool AnimationEditorPage::create(ui::Container* parent, editor::IEditorPageSite*
 	if (!m_primitiveRenderer->create(m_resourceManager, renderSystem))
 		return false;
 
-	m_undoStack = new editor::UndoStack();
-
 	updateSettings();
+	updateSequencer();
+
 	return true;
 }
 
@@ -299,24 +302,6 @@ void AnimationEditorPage::activate()
 
 void AnimationEditorPage::deactivate()
 {
-}
-
-bool AnimationEditorPage::setDataObject(db::Instance* instance, Object* data)
-{
-	m_animationInstance = instance;
-	m_animation = checked_type_cast< Animation* >(data);
-	updateSequencer();
-	return true;
-}
-
-Ref< db::Instance > AnimationEditorPage::getDataInstance()
-{
-	return m_animationInstance;
-}
-
-Ref< Object > AnimationEditorPage::getDataObject()
-{
-	return m_animation;
 }
 
 bool AnimationEditorPage::dropInstance(db::Instance* instance, const ui::Point& position)
@@ -346,8 +331,7 @@ bool AnimationEditorPage::handleCommand(const ui::Command& command)
 
 		if (command == L"Editor.Cut")
 		{
-			m_undoStack->push(m_animation);
-
+			m_document->push();
 			m_animation->removeKeyPose(poseIndex);
 			updateRenderWidgets();
 			updateSequencer();
@@ -361,7 +345,7 @@ bool AnimationEditorPage::handleCommand(const ui::Command& command)
 		if (!data)
 			return false;
 
-		m_undoStack->push(m_animation);
+		m_document->push();
 		
 		float time = float(m_sequencer->getCursor() / 1000.0f);
 
@@ -375,20 +359,22 @@ bool AnimationEditorPage::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"Editor.Undo")
 	{
-		if (!m_undoStack->canUndo())
+		if (!m_document->undo())
 			return false;
 
-		m_animation = checked_type_cast< Animation* >(m_undoStack->undo(m_animation));
+		m_animation = m_document->getObject< Animation >(0);
+		T_ASSERT (m_animation);
 
 		updateRenderWidgets();
 		updateSequencer();
 	}
 	else if (command == L"Editor.Redo")
 	{
-		if (!m_undoStack->canRedo())
+		if (!m_document->redo())
 			return false;
 
-		m_animation = checked_type_cast< Animation* >(m_undoStack->redo(m_animation));
+		m_animation = m_document->getObject< Animation >(0);
+		T_ASSERT (m_animation);
 
 		updateRenderWidgets();
 		updateSequencer();
@@ -470,7 +456,7 @@ bool AnimationEditorPage::handleCommand(const ui::Command& command)
 	{
 		float time = float(m_sequencer->getCursor() / 1000.0f);
 
-		m_undoStack->push(m_animation);
+		m_document->push();
 
 		Animation::KeyPose keyPose;
 		keyPose.at = time;
@@ -486,7 +472,7 @@ bool AnimationEditorPage::handleCommand(const ui::Command& command)
 		if (!getSelectedPoseId(poseIndex))
 			return false;
 
-		m_undoStack->push(m_animation);
+		m_document->push();
 
 		m_animation->removeKeyPose(poseIndex);
 		updateRenderWidgets();
@@ -699,7 +685,7 @@ void AnimationEditorPage::eventRenderButtonDown(ui::Event* event)
 
 	m_editMode = (event->getKeyState() & ui::KsControl) != ui::KsControl;
 	if (m_editMode)
-		m_undoStack->push(m_animation);
+		m_document->push();
 
 	m_lastMousePosition = checked_type_cast< ui::MouseEvent* >(event)->getPosition();
 

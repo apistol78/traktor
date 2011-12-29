@@ -74,8 +74,11 @@ bool HeightfieldPipeline::buildOutput(
 	if (!assetInstance)
 		return false;
 
-	Ref< HeightfieldCompositor > compositor = HeightfieldCompositor::createFromInstance(assetInstance, m_assetPath);
+	Ref< HeightfieldCompositor > compositor = HeightfieldCompositor::createFromAsset(heightfieldAsset, m_assetPath);
 	if (!compositor)
+		return false;
+
+	if (!compositor->readInstanceData(assetInstance))
 		return false;
 
 	const HeightfieldLayer* mergedLayer = compositor->getMergedLayer();

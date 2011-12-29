@@ -4,15 +4,18 @@
 #include "Core/Serialization/DeepHash.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRef.h"
+#include "Core/Settings/PropertyString.h"
 #include "Core/Settings/Settings.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
+#include "Editor/IDocument.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPageSite.h"
-#include "Editor/UndoStack.h"
 #include "I18N/Text.h"
 #include "Physics/PhysicsManager.h"
+#include "Render/IRenderSystem.h"
+#include "Resource/ResourceManager.h"
 #include "Scene/ISceneController.h"
 #include "Scene/ISceneControllerData.h"
 #include "Scene/Scene.h"
@@ -28,7 +31,6 @@
 #include "Scene/Editor/SceneEditorPage.h"
 #include "Scene/Editor/ScenePreviewControl.h"
 #include "Scene/Editor/SelectEvent.h"
-#include "Resource/IResourceManager.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Clipboard.h"
@@ -76,15 +78,74 @@ const Guid c_guidWhiteRoomScene(L"{473467B0-835D-EF45-B308-E3C3C5B0F226}");
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.SceneEditorPage", SceneEditorPage, editor::IEditorPage)
 
-SceneEditorPage::SceneEditorPage(SceneEditorContext* context)
-:	m_context(context)
+SceneEditorPage::SceneEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document)
+:	m_editor(editor)
+,	m_site(site)
+,	m_document(document)
 {
 }
 
-bool SceneEditorPage::create(ui::Container* parent, editor::IEditorPageSite* site)
+bool SceneEditorPage::create(ui::Container* parent)
 {
-	m_site = site;
-	T_ASSERT (m_site);
+	render::IRenderSystem* renderSystem = m_editor->getStoreObject< render::IRenderSystem >(L"RenderSystem");
+	if (!renderSystem)
+		return false;
+
+	// Get physics manager type.
+	std::wstring physicsManagerTypeName = m_editor->getSettings()->getProperty< PropertyString >(L"SceneEditor.PhysicsManager");
+	const TypeInfo* physicsManagerType = TypeInfo::find(physicsManagerTypeName);
+	if (!physicsManagerType)
+	{
+		log::error << L"Unable to create scene editor; no such physics manager type \"" << physicsManagerTypeName << L"\"." << Endl;
+		return false;
+	}
+
+	// Create physics manager.
+	Ref< physics::PhysicsManager > physicsManager = checked_type_cast< physics::PhysicsManager* >(physicsManagerType->createInstance());
+	if (!physicsManager->create(1.0f / 60.0f))
+	{
+		log::error << L"Unable to create scene editor; failed to create physics manager." << Endl;
+		return false;
+	}
+
+	// Configure physics manager.
+	physicsManager->setGravity(Vector4(0.0f, -9.81f, 0.0f, 0.0f));
+
+	// Create resource manager.
+	Ref< resource::IResourceManager > resourceManager = new resource::ResourceManager();
+
+	// Create editor context.
+	m_context = new SceneEditorContext(
+		m_editor,
+		m_document,
+		m_editor->getOutputDatabase(),
+		m_editor->getSourceDatabase(),
+		resourceManager,
+		renderSystem,
+		physicsManager
+	);
+
+	// Create profiles, plugins, resource factories and entity editors.
+	std::vector< const TypeInfo* > profileTypes;
+	type_of< ISceneEditorProfile >().findAllOf(profileTypes);
+	for (std::vector< const TypeInfo* >::const_iterator i = profileTypes.begin(); i != profileTypes.end(); ++i)
+	{
+		Ref< ISceneEditorProfile > profile = dynamic_type_cast< ISceneEditorProfile* >((*i)->createInstance());
+		if (!profile)
+			continue;
+
+		m_context->addEditorProfile(profile);
+
+		RefArray< ISceneEditorPlugin > editorPlugins;
+		profile->createEditorPlugins(m_context, editorPlugins);
+		for (RefArray< ISceneEditorPlugin >::iterator j = editorPlugins.begin(); j != editorPlugins.end(); ++j)
+			m_context->addEditorPlugin(*j);
+
+		RefArray< resource::IResourceFactory > resourceFactories;
+		profile->createResourceFactories(m_context, resourceFactories);
+		for (RefArray< resource::IResourceFactory >::iterator j = resourceFactories.begin(); j != resourceFactories.end(); ++j)
+			resourceManager->addFactory(*j);
+	}
 
 	// Create editor panel.
 	m_editPanel = new ui::Container();
@@ -158,21 +219,18 @@ bool SceneEditorPage::create(ui::Container* parent, editor::IEditorPageSite* sit
 	m_context->addPreModifyEventHandler(ui::createMethodHandler(this, &SceneEditorPage::eventContextPreModify));
 	m_context->addPostModifyEventHandler(ui::createMethodHandler(this, &SceneEditorPage::eventContextPostModify));
 
-	// Restore camera from settings.
-	Ref< Settings > settings = m_context->getEditor()->getSettings();
-	T_ASSERT (settings);
-
-	m_undoStack = new editor::UndoStack();
+	// Finally realize the scene.
+	createSceneAsset();
+	updateScene();
+	updateInstanceGrid();
+	createControllerEditor();
+	updatePropertyObject();
 
 	return true;
 }
 
 void SceneEditorPage::destroy()
 {
-	// Save camera position in editor settings.
-	Ref< Settings > settings = m_context->getEditor()->getSettings();
-	T_ASSERT (settings);
-
 	// Destroy controller editor.
 	if (m_context->getControllerEditor())
 		m_context->getControllerEditor()->destroy();
@@ -213,59 +271,6 @@ void SceneEditorPage::deactivate()
 	m_editControl->setVisible(false);
 }
 
-bool SceneEditorPage::setDataObject(db::Instance* instance, Object* data)
-{
-	EnterLeave scopeVisible(
-		makeFunctor< ScenePreviewControl, bool >(m_editControl, &ScenePreviewControl::setVisible, false),
-		makeFunctor< ScenePreviewControl, bool >(m_editControl, &ScenePreviewControl::setVisible, true)
-	);
-
-	m_dataInstance = instance;
-
-	m_context->setInstance(instance);
-
-	Ref< SceneAsset > sceneAsset = dynamic_type_cast< SceneAsset* >(data);
-	if (sceneAsset)
-	{
-		m_context->setSceneAsset(sceneAsset);
-
-		updateScene();
-		updateInstanceGrid();
-	}
-	else
-	{
-		Ref< world::EntityData > entityData = dynamic_type_cast< world::EntityData* >(data);
-		if (!entityData)
-			return false;
-
-		sceneAsset = createWhiteRoomSceneAsset(entityData);
-		if (!sceneAsset)
-			return false;
-
-		m_context->setSceneAsset(sceneAsset);
-		updateScene();
-
-		updateInstanceGrid();
-	}
-
-	createControllerEditor();
-
-	m_dataObject = checked_type_cast< ISerializable* >(data);
-	updatePropertyObject();
-
-	return true;
-}
-
-Ref< db::Instance > SceneEditorPage::getDataInstance()
-{
-	return m_dataInstance;
-}
-
-Ref< Object > SceneEditorPage::getDataObject()
-{
-	return m_dataObject;
-}
-
 bool SceneEditorPage::dropInstance(db::Instance* instance, const ui::Point& position)
 {
 	const TypeInfo* primaryType = instance->getPrimaryType();
@@ -304,7 +309,7 @@ bool SceneEditorPage::dropInstance(db::Instance* instance, const ui::Point& posi
 		// Use name of instance as external entity's name.
 		entityData->setName(instance->getName());
 
-		m_undoStack->push(m_dataObject);
+		m_context->getDocument()->push();
 
 		// Create instance and adapter.
 		Ref< EntityAdapter > entityAdapter = new EntityAdapter(entityData);
@@ -339,48 +344,20 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"Editor.Undo")
 	{
-		if (!m_undoStack->canUndo())
+		if (!m_context->getDocument()->undo())
 			return false;
 
-		m_dataObject = m_undoStack->undo(m_dataObject);
-
-		if (Ref< SceneAsset > sceneAsset = dynamic_type_cast< SceneAsset* >(m_dataObject))
-		{
-			m_context->setSceneAsset(sceneAsset);
-		}
-		else if (Ref< world::EntityData > entityData = dynamic_type_cast< world::EntityData* >(m_dataObject))
-		{
-			Ref< SceneAsset > sceneAsset = createWhiteRoomSceneAsset(entityData);
-			if (sceneAsset)
-				m_context->setSceneAsset(sceneAsset);
-			else
-				log::warning << L"Unable to undo scene" << Endl;
-		}
-
+		createSceneAsset();
 		updateScene();
 		updateInstanceGrid();
 		updatePropertyObject();
 	}
 	else if (command == L"Editor.Redo")
 	{
-		if (!m_undoStack->canRedo())
+		if (!m_context->getDocument()->redo())
 			return false;
 
-		m_dataObject = m_undoStack->redo(m_dataObject);
-
-		if (Ref< SceneAsset > sceneAsset = dynamic_type_cast< SceneAsset* >(m_dataObject))
-		{
-			m_context->setSceneAsset(sceneAsset);
-		}
-		else if (Ref< world::EntityData > entityData = dynamic_type_cast< world::EntityData* >(m_dataObject))
-		{
-			Ref< SceneAsset > sceneAsset = createWhiteRoomSceneAsset(entityData);
-			if (sceneAsset)
-				m_context->setSceneAsset(sceneAsset);
-			else
-				log::warning << L"Unable to redo scene" << Endl;
-		}
-
+		createSceneAsset();
 		updateScene();
 		updateInstanceGrid();
 		updatePropertyObject();
@@ -391,7 +368,7 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 		if (!m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants))
 			return false;
 
-		m_undoStack->push(m_dataObject);
+		m_context->getDocument()->push();
 
 		// Create clipboard data with all selected entities; remove entities from scene if we're cutting.
 		Ref< EntityClipboardData > entityClipboardData = new EntityClipboardData();
@@ -436,7 +413,7 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 		if (!entityClipboardData)
 			return false;
 
-		m_undoStack->push(m_dataObject);
+		m_context->getDocument()->push();
 
 		// Create new instances and adapters for each entity found in clipboard.
 		const RefArray< world::EntityData >& entityData = entityClipboardData->getEntityData();
@@ -455,7 +432,7 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 		if (!m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants))
 			return false;
 
-		m_undoStack->push(m_dataObject);
+		m_context->getDocument()->push();
 
 		uint32_t removedCount = 0;
 		for (RefArray< EntityAdapter >::iterator i = selectedEntities.begin(); i != selectedEntities.end(); ++i)
@@ -543,6 +520,31 @@ void SceneEditorPage::handleDatabaseEvent(const Guid& eventId)
 	}
 }
 
+bool SceneEditorPage::createSceneAsset()
+{
+	Object* documentObject = m_context->getDocument()->getObject(0);
+	if (!documentObject)
+		return false;
+
+	if (SceneAsset* sceneAsset = dynamic_type_cast< SceneAsset* >(documentObject))
+		m_context->setSceneAsset(sceneAsset);
+	else if (world::EntityData* entityData = dynamic_type_cast< world::EntityData* >(documentObject))
+	{
+		Ref< SceneAsset > sceneAsset = m_context->getSourceDatabase()->getObjectReadOnly< SceneAsset >(c_guidWhiteRoomScene);
+		if (!sceneAsset)
+			return false;
+
+		Ref< world::GroupEntityData > rootGroup = checked_type_cast< world::GroupEntityData*, false >(sceneAsset->getEntityData());
+		rootGroup->addEntityData(entityData);
+
+		m_context->setSceneAsset(sceneAsset);
+	}
+	else
+		return false;
+
+	return true;
+}
+
 void SceneEditorPage::createControllerEditor()
 {
 	if (m_context->getControllerEditor())
@@ -593,19 +595,6 @@ void SceneEditorPage::createControllerEditor()
 				log::debug << L"Unable to find controller editor for type \"" << type_name(controllerData) << L"\"" << Endl;
 		}
 	}
-}
-
-Ref< SceneAsset > SceneEditorPage::createWhiteRoomSceneAsset(world::EntityData* entityData)
-{
-	// Read white-room scene asset from system database.
-	Ref< SceneAsset > sceneAsset = m_context->getSourceDatabase()->getObjectReadOnly< SceneAsset >(c_guidWhiteRoomScene);
-	T_ASSERT_M (sceneAsset, L"Unable to open white-room scene");
-
-	// Add our entity to white-room scene.
-	Ref< world::GroupEntityData > rootGroup = checked_type_cast< world::GroupEntityData*, false >(sceneAsset->getEntityData());
-	rootGroup->addEntityData(entityData);
-
-	return sceneAsset;
 }
 
 void SceneEditorPage::updateScene()
@@ -725,7 +714,7 @@ void SceneEditorPage::updatePropertyObject()
 		m_site->setPropertyObject(entityAdapter->getEntityData());
 	}
 	else
-		m_site->setPropertyObject(m_dataObject);
+		m_site->setPropertyObject(m_context->getDocument()->getObject(0));
 }
 
 bool SceneEditorPage::addEntity()
@@ -755,7 +744,7 @@ bool SceneEditorPage::addEntity()
 	Ref< world::EntityData > entityData = checked_type_cast< world::EntityData* >(entityType->createInstance());
 	T_ASSERT (entityData);
 
-	m_undoStack->push(m_dataObject);
+	m_context->getDocument()->push();
 
 	if (parentGroupAdapter)
 	{
@@ -974,7 +963,7 @@ void SceneEditorPage::eventContextSelect(ui::Event* event)
 
 void SceneEditorPage::eventContextPreModify(ui::Event* event)
 {
-	m_undoStack->push(m_dataObject);
+	m_context->getDocument()->push();
 }
 
 void SceneEditorPage::eventContextPostModify(ui::Event* event)

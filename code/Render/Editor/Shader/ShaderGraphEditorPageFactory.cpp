@@ -1,5 +1,5 @@
-#include "Render/Editor/Shader/ShaderGraphEditorPageFactory.h"
 #include "Render/Editor/Shader/ShaderGraphEditorPage.h"
+#include "Render/Editor/Shader/ShaderGraphEditorPageFactory.h"
 #include "Render/Shader/ShaderGraph.h"
 #include "Ui/Command.h"
 
@@ -17,9 +17,9 @@ const TypeInfoSet ShaderGraphEditorPageFactory::getEditableTypes() const
 	return typeSet;
 }
 
-Ref< editor::IEditorPage > ShaderGraphEditorPageFactory::createEditorPage(editor::IEditor* editor) const
+Ref< editor::IEditorPage > ShaderGraphEditorPageFactory::createEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document) const
 {
-	return new ShaderGraphEditorPage(editor);
+	return new ShaderGraphEditorPage(editor, site, document);
 }
 
 void ShaderGraphEditorPageFactory::getCommands(std::list< ui::Command >& outCommands) const

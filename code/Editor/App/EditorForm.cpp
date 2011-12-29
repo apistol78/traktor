@@ -5,9 +5,6 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/CommandLine.h"
 #include "Core/Misc/EnterLeave.h"
-#include "Core/Serialization/BinarySerializer.h"
-#include "Core/Serialization/DeepHash.h"
-#include "Core/Serialization/DeepClone.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
@@ -41,6 +38,7 @@
 #include "Editor/App/BrowseTypeDialog.h"
 #include "Editor/App/DatabaseView.h"
 #include "Editor/App/DefaultObjectEditor.h"
+#include "Editor/App/Document.h"
 #include "Editor/App/EditorForm.h"
 #include "Editor/App/EditorPageSite.h"
 #include "Editor/App/EditorPluginSite.h"
@@ -615,9 +613,15 @@ bool EditorForm::openEditor(db::Instance* instance)
 	for (int i = 0; i < m_tab->getPageCount(); ++i)
 	{
 		Ref< ui::TabPage > tabPage = m_tab->getPage(i);
-		if (dynamic_type_cast< db::Instance* >(tabPage->getData(L"INSTANCE")) == instance)
+		T_ASSERT (tabPage);
+
+		Ref< Document > document = tabPage->getData< Document >(L"DOCUMENT");
+		T_ASSERT (document);
+
+		if (document->containInstance(instance))
 		{
-			Ref< IEditorPage > editorPage = checked_type_cast< IEditorPage* >(tabPage->getData(L"EDITORPAGE"));
+			Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
+			T_ASSERT (editorPage);
 
 			setActiveEditorPage(editorPage);
 			m_tab->setActivePage(tabPage);
@@ -683,7 +687,12 @@ bool EditorForm::openEditor(db::Instance* instance)
 	// Create new editor page.
 	if (editorPageFactory)
 	{
-		Ref< IEditorPage > editorPage = editorPageFactory->createEditorPage(this);
+		Ref< Document > document = new Document();
+		document->editInstance(instance, object);
+
+		Ref< EditorPageSite > site = new EditorPageSite(this, false);
+
+		Ref< IEditorPage > editorPage = editorPageFactory->createEditorPage(this, site, document);
 		T_ASSERT (editorPage);
 
 		// Find icon index.
@@ -705,13 +714,15 @@ bool EditorForm::openEditor(db::Instance* instance)
 
 		// Create tab page container.
 		Ref< ui::TabPage > tabPage = new ui::TabPage();
-		tabPage->create(m_tab, instance->getName(), iconIndex, new ui::FloodLayout());
-
-		// Create editor site for this page.
-		Ref< EditorPageSite > site = new EditorPageSite(this, false);
+		if (!tabPage->create(m_tab, instance->getName(), iconIndex, new ui::FloodLayout()))
+		{
+			log::error << L"Failed to create editor; unable to create tab page" << Endl;
+			instance->revert();
+			return false;
+		}
 
 		// Create editor page.
-		if (!editorPage->create(tabPage, site))
+		if (!editorPage->create(tabPage))
 		{
 			log::error << L"Failed to create editor" << Endl;
 			instance->revert();
@@ -721,7 +732,8 @@ bool EditorForm::openEditor(db::Instance* instance)
 		// Save references to editor in tab page's user data.
 		tabPage->setData(L"EDITORPAGESITE", site);
 		tabPage->setData(L"EDITORPAGE", editorPage);
-		tabPage->setData(L"INSTANCE", instance);
+		tabPage->setData(L"DOCUMENT", document);
+		tabPage->setData(L"PRIMARY", instance);
 
 		// Add tab page to tab container.
 		m_tab->addPage(tabPage);
@@ -729,10 +741,6 @@ bool EditorForm::openEditor(db::Instance* instance)
 
 		// Activate newly created editor page.
 		setActiveEditorPage(editorPage);
-
-		// Finally provide data object to editor page.
-		editorPage->setDataObject(instance, object);
-		tabPage->setData(L"HASH", new DeepHash(checked_type_cast< ISerializable* >(editorPage->getDataObject())));
 	}
 	else if (objectEditorFactory)
 	{
@@ -821,6 +829,8 @@ void EditorForm::setActiveEditorPage(IEditorPage* editorPage)
 	setPropertyObject(0);
 
 	m_activeEditorPage = editorPage;
+	m_activeEditorPageSite = 0;
+	m_activeDocument = 0;
 
 	if (m_activeEditorPage)
 	{
@@ -830,7 +840,13 @@ void EditorForm::setActiveEditorPage(IEditorPage* editorPage)
 			if (page->getData< IEditorPage >(L"EDITORPAGE") == m_activeEditorPage)
 			{
 				m_tab->setActivePage(page);
+				
 				m_activeEditorPageSite = page->getData< EditorPageSite >(L"EDITORPAGESITE");
+				T_ASSERT (m_activeEditorPageSite);
+
+				m_activeDocument = page->getData< Document >(L"DOCUMENT");
+				T_ASSERT (m_activeDocument);
+
 				break;
 			}
 		}
@@ -849,7 +865,7 @@ void EditorForm::setPropertyObject(Object* properties)
 	// Use active editor's data object as outer object in serialization;
 	// we do this as some objects rely on outer object being part of the data object
 	// with serialization; most probaly the shader graph as external nodes might reconstruct it's pins.
-	Ref< Object > outer = m_activeEditorPage ? m_activeEditorPage->getDataObject() : 0;
+	Ref< Object > outer = m_activeDocument ? m_activeDocument->getObject(0) : 0;
 
 	m_propertiesView->setPropertyObject(
 		dynamic_type_cast< ISerializable* >(properties),
@@ -1218,39 +1234,28 @@ void EditorForm::saveCurrentDocument()
 		Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
 		T_ASSERT (editorPage);
 
-		Ref< db::Instance > instance = tabPage->getData< db::Instance >(L"INSTANCE");
-		T_ASSERT (instance);
+		Ref< Document > document = tabPage->getData< Document >(L"DOCUMENT");
+		T_ASSERT (document);
 
-		bool result = false;
+		ui::Command shouldSave(L"Editor.ShouldSave");
+		editorPage->handleCommand(shouldSave);
 
-		Ref< ISerializable > object = checked_type_cast< ISerializable* >(editorPage->getDataObject());
-		T_ASSERT (object);
-
-		if (instance->setObject(object))
-		{
-			if (instance->commit(db::CfKeepCheckedOut))
-			{
-				tabPage->setData(L"HASH", new DeepHash(object));
-				result = true;
-			}
-		}
-
+		bool result = document->save();
 		checkModified();
 
 		if (result)
 		{
-			m_statusBar->setText(L"Instance " + instance->getName() + L" saved successfully");
-			log::info << L"Instance " << instance->getName() << L" saved successfully" << Endl;
+			m_statusBar->setText(L"Document saved successfully");
+			log::info << L"Document saved successfully" << Endl;
 		}
 		else
 		{
 			ui::MessageBox::show(
 				this,
-				i18n::Format(L"ERROR_MESSAGE_UNABLE_TO_SAVE_INSTANCE", instance->getName()),
-				i18n::Text(L"ERROR_TITLE_UNABLE_TO_SAVE_INSTANCE"),
+				i18n::Text(L"ERROR_MESSAGE_UNABLE_TO_SAVE_DOCUMENT"),
+				i18n::Text(L"ERROR_TITLE_UNABLE_TO_SAVE_DOCUMENT"),
 				ui::MbOk | ui::MbIconExclamation
 			);
-			log::error << L"Unable to save instance \"" << instance->getName() << L"\"!" << Endl;
 		}
 	}
 }
@@ -1262,6 +1267,7 @@ void EditorForm::saveAllDocuments()
 		makeFunctor(this, &EditorForm::resetCursor)
 	);
 
+	bool allSuccessfull = true;
 	for (int i = 0; i < m_tab->getPageCount(); ++i)
 	{
 		Ref< ui::TabPage > tabPage = m_tab->getPage(i);
@@ -1270,43 +1276,28 @@ void EditorForm::saveAllDocuments()
 		Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
 		T_ASSERT (editorPage);
 
-		Ref< db::Instance > instance = tabPage->getData< db::Instance >(L"INSTANCE");
-		T_ASSERT (instance);
+		Ref< Document > document = tabPage->getData< Document >(L"DOCUMENT");
+		T_ASSERT (document);
 
-		Ref< DeepHash > objectHash = tabPage->getData< DeepHash >(L"HASH");
-		T_ASSERT (objectHash);
+		ui::Command shouldSave(L"Editor.ShouldSave");
+		editorPage->handleCommand(shouldSave);
 
-		Ref< ISerializable > object = checked_type_cast< ISerializable* >(editorPage->getDataObject());
-		T_ASSERT (object);
+		allSuccessfull &= document->save();
+	}
 
-		if (*objectHash != object)
-		{
-			bool result = false;
-			if (instance->setObject(object))
-			{
-				if (instance->commit(db::CfKeepCheckedOut))
-				{
-					tabPage->setData(L"HASH", new DeepHash(object));
-					result = true;
-				}
-			}
-
-			if (result)
-			{
-				m_statusBar->setText(L"Instance " + instance->getName() + L" saved successfully");
-				log::info << L"Instance " << instance->getName() << L" saved successfully" << Endl;
-			}
-			else
-			{
-				ui::MessageBox::show(
-					this,
-					i18n::Format(L"ERROR_MESSAGE_UNABLE_TO_SAVE_INSTANCE", instance->getName()),
-					i18n::Text(L"ERROR_TITLE_UNABLE_TO_SAVE_INSTANCE"),
-					ui::MbOk | ui::MbIconExclamation
-				);
-				log::error << L"Unable to save instance \"" << instance->getName() << L"\"!" << Endl;
-			}
-		}
+	if (allSuccessfull)
+	{
+		m_statusBar->setText(L"Document(s) saved successfully");
+		log::info << L"Document(s) saved successfully" << Endl;
+	}
+	else
+	{
+		ui::MessageBox::show(
+			this,
+			i18n::Text(L"ERROR_MESSAGE_UNABLE_TO_SAVE_DOCUMENT"),
+			i18n::Text(L"ERROR_TITLE_UNABLE_TO_SAVE_DOCUMENT"),
+			ui::MbOk | ui::MbIconExclamation
+		);
 	}
 
 	checkModified();
@@ -1343,11 +1334,8 @@ void EditorForm::closeCurrentEditor()
 	m_activeEditorPageSite = 0;
 	m_activeEditorPage = 0;
 
-	Ref< db::Instance > instance = checked_type_cast< db::Instance* >(tabPage->getData(L"INSTANCE"));
-	T_ASSERT (instance);
-
-	instance->revert();
-	instance = 0;
+	m_activeDocument->close();
+	m_activeDocument = 0;
 
 	m_tab->removePage(tabPage);
 	m_tab->update();
@@ -1376,20 +1364,23 @@ void EditorForm::closeAllEditors()
 
 		m_tab->removePage(tabPage);
 
-		Ref< IEditorPage > editorPage = checked_type_cast< IEditorPage* >(tabPage->getData(L"EDITORPAGE"));
+		Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
 		T_ASSERT (editorPage);
 
 		editorPage->deactivate();
 		editorPage->destroy();
 
-		Ref< db::Instance > instance = checked_type_cast< db::Instance* >(tabPage->getData(L"INSTANCE"));
-		T_ASSERT (instance);
+		Ref< Document > document = tabPage->getData< Document >(L"DOCUMENT");
+		T_ASSERT (document);
 
-		instance->revert();
+		document->close();
 	}
 
 	m_tab->update();
+
 	m_activeEditorPage = 0;
+	m_activeEditorPageSite = 0;
+	m_activeDocument = 0;
 }
 
 void EditorForm::closeAllOtherEditors()
@@ -1408,15 +1399,17 @@ void EditorForm::closeAllOtherEditors()
 		T_ASSERT (tabPage);
 		m_tab->removePage(tabPage);
 
-		Ref< IEditorPage > editorPage = checked_type_cast< IEditorPage* >(tabPage->getData(L"EDITORPAGE"));
+		Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
 		T_ASSERT (editorPage);
+		T_ASSERT (editorPage != m_activeEditorPage);
 
+		editorPage->deactivate();
 		editorPage->destroy();
 
-		Ref< db::Instance > instance = checked_type_cast< db::Instance* >(tabPage->getData(L"INSTANCE"));
-		T_ASSERT (instance);
+		Ref< Document > document = tabPage->getData< Document >(L"DOCUMENT");
+		T_ASSERT (document);
 
-		instance->revert();
+		document->close();
 	}
 
 	m_tab->update();
@@ -1427,7 +1420,7 @@ void EditorForm::findInDatabase()
 	Ref< ui::TabPage > tabPage = m_tab->getActivePage();
 	T_ASSERT (tabPage);
 
-	Ref< db::Instance > instance = checked_type_cast< db::Instance* >(tabPage->getData(L"INSTANCE"));
+	Ref< db::Instance > instance = tabPage->getData< db::Instance >(L"PRIMARY");
 	T_ASSERT (instance);
 
 	highlightInstance(instance);
@@ -1438,7 +1431,9 @@ void EditorForm::activatePreviousEditor()
 	Ref< ui::TabPage > previousTabPage = m_tab->cycleActivePage(false);
 	if (previousTabPage)
 	{
-		Ref< IEditorPage > editorPage = checked_type_cast< IEditorPage* >(previousTabPage->getData(L"EDITORPAGE"));
+		Ref< IEditorPage > editorPage = previousTabPage->getData< IEditorPage >(L"EDITORPAGE");
+		T_ASSERT (editorPage);
+
 		setActiveEditorPage(editorPage);
 	}
 }
@@ -1448,7 +1443,9 @@ void EditorForm::activateNextEditor()
 	Ref< ui::TabPage > nextTabPage = m_tab->cycleActivePage(true);
 	if (nextTabPage)
 	{
-		Ref< IEditorPage > editorPage = checked_type_cast< IEditorPage* >(nextTabPage->getData(L"EDITORPAGE"));
+		Ref< IEditorPage > editorPage = nextTabPage->getData< IEditorPage >(L"EDITORPAGE");
+		T_ASSERT (editorPage);
+
 		setActiveEditorPage(editorPage);
 	}
 }
@@ -1532,17 +1529,13 @@ void EditorForm::checkModified()
 		if (!editorPage)
 			continue;
 
-		Ref< db::Instance > instance = tabPage->getData< db::Instance >(L"INSTANCE");
-		Ref< DeepHash > objectHash = tabPage->getData< DeepHash >(L"HASH");
-		if (!instance || !objectHash)
-		{
-			// This can actually happen if timer event occurs while loading new page.
+		Ref< Document > document = tabPage->getData< Document >(L"DOCUMENT");
+		if (!document)
 			continue;
-		}
 
 		// Add or remove asterix on tab.
 		std::wstring tabName = tabPage->getText();
-		if (*objectHash != checked_type_cast< ISerializable* >(editorPage->getDataObject()))
+		if (document->modified())
 		{
 			if (tabName[tabName.length() - 1] != L'*')
 			{
@@ -1637,7 +1630,7 @@ bool EditorForm::handleCommand(const ui::Command& command)
 				for (int i = 0; i < m_tab->getPageCount(); ++i)
 				{
 					Ref< ui::TabPage > tabPage = m_tab->getPage(i);
-					Ref< IEditorPage > editorPage = checked_type_cast< IEditorPage* >(tabPage->getData(L"EDITORPAGE"));
+					Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
 					if (editorPage)
 						editorPage->handleCommand(ui::Command(L"Editor.SettingsChanged"));
 				}
@@ -1775,7 +1768,10 @@ void EditorForm::eventTabSelChange(ui::Event* event)
 {
 	Ref< ui::CommandEvent > commandEvent = checked_type_cast< ui::CommandEvent* >(event);
 	Ref< ui::TabPage > tabPage = checked_type_cast< ui::TabPage* >(commandEvent->getItem());
-	Ref< IEditorPage > editorPage = checked_type_cast< IEditorPage* >(tabPage->getData(L"EDITORPAGE"));
+	
+	Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
+	T_ASSERT (editorPage);
+
 	setActiveEditorPage(editorPage);
 }
 
@@ -1803,21 +1799,21 @@ void EditorForm::eventTabClose(ui::Event* event)
 
 	m_tab->removePage(tabPage);
 
-	Ref< IEditorPage > editor = checked_type_cast< IEditorPage* >(tabPage->getData(L"EDITORPAGE"));
-	T_ASSERT (editor);
-	T_ASSERT (m_activeEditorPage == editor);
+	Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
+	T_ASSERT (editorPage);
+	T_ASSERT (m_activeEditorPage == editorPage);
 
-	editor->deactivate();
-	editor->destroy();
-	editor = 0;
+	editorPage->deactivate();
+	editorPage->destroy();
+	editorPage = 0;
 
 	m_activeEditorPage = 0;
 
-	Ref< db::Instance > instance = checked_type_cast< db::Instance* >(tabPage->getData(L"INSTANCE"));
-	T_ASSERT (instance);
+	Ref< Document > document = tabPage->getData< Document >(L"DOCUMENT");
+	T_ASSERT (document);
 
-	instance->revert();
-	instance = 0;
+	document->close();
+	document = 0;
 
 	tabPage->destroy();
 	tabPage = 0;
@@ -1827,8 +1823,10 @@ void EditorForm::eventTabClose(ui::Event* event)
 	tabPage = m_tab->getActivePage();
 	if (tabPage)
 	{
-		Ref< IEditorPage > editor = checked_type_cast< IEditorPage* >(tabPage->getData(L"EDITORPAGE"));
-		setActiveEditorPage(editor);
+		Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
+		T_ASSERT (editorPage);
+
+		setActiveEditorPage(editorPage);
 	}
 
 	m_tab->update();
@@ -1859,12 +1857,18 @@ void EditorForm::eventClose(ui::Event* event)
 		Ref< ui::TabPage > tabPage = m_tab->getPage(0);
 		m_tab->removePage(tabPage);
 
-		Ref< IEditorPage > editorPage = checked_type_cast< IEditorPage* >(tabPage->getData(L"EDITORPAGE"));
+		Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
+		T_ASSERT (editorPage);
+
 		editorPage->deactivate();
 		editorPage->destroy();
+		editorPage = 0;
 
-		Ref< db::Instance > instance = checked_type_cast< db::Instance* >(tabPage->getData(L"INSTANCE"));
-		instance->revert();
+		Ref< Document > document = tabPage->getData< Document >(L"DOCUMENT");
+		T_ASSERT (document);
+
+		document->close();
+		document = 0;
 	}
 
 	// Save panes visible.
@@ -1939,7 +1943,7 @@ void EditorForm::eventTimer(ui::Event* /*event*/)
 		for (int i = 0; i < m_tab->getPageCount(); ++i)
 		{
 			Ref< ui::TabPage > tabPage = m_tab->getPage(i);
-			Ref< IEditorPage > editorPage = checked_type_cast< IEditorPage* >(tabPage->getData(L"EDITORPAGE"));
+			Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
 			if (editorPage)
 			{
 				for (std::vector< Guid >::iterator j = m_eventIds.begin(); j != m_eventIds.end(); ++j)

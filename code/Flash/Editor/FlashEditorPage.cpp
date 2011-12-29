@@ -3,6 +3,7 @@
 #include "Core/Settings/PropertyString.h"
 #include "Core/Settings/Settings.h"
 #include "Database/Instance.h"
+#include "Editor/IDocument.h"
 #include "Editor/IEditor.h"
 #include "Flash/FlashMovie.h"
 #include "Flash/FlashMovieFactory.h"
@@ -35,61 +36,22 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashEditorPage", FlashEditorPage, editor::IEditorPage)
 
-FlashEditorPage::FlashEditorPage(editor::IEditor* editor)
+FlashEditorPage::FlashEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document)
 :	m_editor(editor)
+,	m_site(site)
+,	m_document(document)
 {
 }
 
-bool FlashEditorPage::create(ui::Container* parent, editor::IEditorPageSite* site)
+bool FlashEditorPage::create(ui::Container* parent)
 {
 	render::IRenderSystem* renderSystem = m_editor->getStoreObject< render::IRenderSystem >(L"RenderSystem");
 	if (!renderSystem)
 		return false;
 
-	Ref< db::Database > database = m_editor->getOutputDatabase();
-
-	m_resourceManager = new resource::ResourceManager();
-	m_resourceManager->addFactory(
-		new render::ShaderFactory(database, renderSystem)
-	);
-
-	Ref< ui::Container > container = new ui::Container();
-	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
-
-	m_toolBarPlay = new ui::custom::ToolBar();
-	m_toolBarPlay->create(container);
-	m_toolBarPlay->addImage(ui::Bitmap::load(c_ResourcePlayback, sizeof(c_ResourcePlayback), L"png"), 6);
-	m_toolBarPlay->addImage(ui::Bitmap::load(c_ResourceAspect, sizeof(c_ResourceAspect), L"png"), 2);
-	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(L"Rewind", ui::Command(L"Flash.Editor.Rewind"), 0));
-	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(L"Play", ui::Command(L"Flash.Editor.Play"), 1));
-	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(L"Stop", ui::Command(L"Flash.Editor.Stop"), 2));
-	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(L"Forward", ui::Command(L"Flash.Editor.Forward"), 3));
-	m_toolBarPlay->addClickEventHandler(ui::createMethodHandler(this, &FlashEditorPage::eventToolClick));
-
-	m_previewControl = new FlashPreviewControl();
-	m_previewControl->create(container, ui::WsNone, m_resourceManager, renderSystem);
-
-	return true;
-}
-
-void FlashEditorPage::destroy()
-{
-	m_previewControl->destroy();
-}
-
-void FlashEditorPage::activate()
-{
-}
-
-void FlashEditorPage::deactivate()
-{
-}
-
-bool FlashEditorPage::setDataObject(db::Instance* instance, Object* data)
-{
-	m_movieInstance = instance;
-
-	Ref< FlashMovieAsset > asset = checked_type_cast< FlashMovieAsset* >(data);
+	Ref< FlashMovieAsset > asset = m_document->getObject< FlashMovieAsset >(0);
+	if (!asset)
+		return false;
 
 	std::wstring assetPath = m_editor->getSettings()->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
 	Path fileName = FileSystem::getInstance().getAbsolutePath(assetPath, asset->getFileName());
@@ -118,20 +80,45 @@ bool FlashEditorPage::setDataObject(db::Instance* instance, Object* data)
 	if (!m_movie)
 		return false;
 
+	Ref< db::Database > database = m_editor->getOutputDatabase();
+
+	m_resourceManager = new resource::ResourceManager();
+	m_resourceManager->addFactory(
+		new render::ShaderFactory(database, renderSystem)
+	);
+
+	Ref< ui::Container > container = new ui::Container();
+	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
+
+	m_toolBarPlay = new ui::custom::ToolBar();
+	m_toolBarPlay->create(container);
+	m_toolBarPlay->addImage(ui::Bitmap::load(c_ResourcePlayback, sizeof(c_ResourcePlayback), L"png"), 6);
+	m_toolBarPlay->addImage(ui::Bitmap::load(c_ResourceAspect, sizeof(c_ResourceAspect), L"png"), 2);
+	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(L"Rewind", ui::Command(L"Flash.Editor.Rewind"), 0));
+	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(L"Play", ui::Command(L"Flash.Editor.Play"), 1));
+	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(L"Stop", ui::Command(L"Flash.Editor.Stop"), 2));
+	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(L"Forward", ui::Command(L"Flash.Editor.Forward"), 3));
+	m_toolBarPlay->addClickEventHandler(ui::createMethodHandler(this, &FlashEditorPage::eventToolClick));
+
+	m_previewControl = new FlashPreviewControl();
+	m_previewControl->create(container, ui::WsNone, m_resourceManager, renderSystem);
 	m_previewControl->setMovie(m_movie);
 	m_previewControl->update();
 
 	return true;
 }
 
-Ref< db::Instance > FlashEditorPage::getDataInstance()
+void FlashEditorPage::destroy()
 {
-	return m_movieInstance;
+	m_previewControl->destroy();
 }
 
-Ref< Object > FlashEditorPage::getDataObject()
+void FlashEditorPage::activate()
 {
-	return 0;
+}
+
+void FlashEditorPage::deactivate()
+{
 }
 
 bool FlashEditorPage::dropInstance(db::Instance* instance, const ui::Point& position)

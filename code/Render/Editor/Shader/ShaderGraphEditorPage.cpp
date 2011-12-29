@@ -5,9 +5,9 @@
 #include "Core/Settings/Settings.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
+#include "Editor/IDocument.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPageSite.h"
-#include "Editor/UndoStack.h"
 #include "Editor/IBrowseFilter.h"
 #include "I18N/Text.h"
 #include "Render/Editor/Texture/TextureAsset.h"
@@ -113,16 +113,19 @@ struct RemoveInputPortPred
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphEditorPage", ShaderGraphEditorPage, editor::IEditorPage)
 
-ShaderGraphEditorPage::ShaderGraphEditorPage(editor::IEditor* editor)
+ShaderGraphEditorPage::ShaderGraphEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document)
 :	m_editor(editor)
+,	m_site(site)
+,	m_document(document)
 ,	m_lastValidationResult(true)
 {
 }
 
-bool ShaderGraphEditorPage::create(ui::Container* parent, editor::IEditorPageSite* site)
+bool ShaderGraphEditorPage::create(ui::Container* parent)
 {
-	m_site = site;
-	T_ASSERT (m_site);
+	m_shaderGraph = m_document->getObject< ShaderGraph >(0);
+	if (!m_shaderGraph)
+		return false;
 
 	Ref< ui::Container > container = new ui::Container();
 	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
@@ -225,9 +228,18 @@ bool ShaderGraphEditorPage::create(ui::Container* parent, editor::IEditorPageSit
 	m_nodeFacades[&type_of< External >()] = new ExternalNodeFacade(m_editorGraph);
 	m_nodeFacades[&type_of< Texture >()] = new TextureNodeFacade(m_editorGraph);
 
-	m_undoStack = new editor::UndoStack();
 	m_lastValidationResult = true;
 
+	createEditorNodes(
+		m_shaderGraph->getNodes(),
+		m_shaderGraph->getEdges()
+	);
+
+	m_editorGraph->center();
+
+	updateGraph();
+
+	m_site->setPropertyObject(0);
 	return true;
 }
 
@@ -245,43 +257,6 @@ void ShaderGraphEditorPage::activate()
 
 void ShaderGraphEditorPage::deactivate()
 {
-}
-
-bool ShaderGraphEditorPage::setDataObject(db::Instance* instance, Object* data)
-{
-	m_shaderGraph = dynamic_type_cast< ShaderGraph* >(data);
-	if (!m_shaderGraph)
-		return false;
-
-	m_editorGraph->removeAllEdges();
-	m_editorGraph->removeAllNodes();
-
-	createEditorNodes(
-		m_shaderGraph->getNodes(),
-		m_shaderGraph->getEdges()
-	);
-
-	m_editorGraph->center();
-
-	updateGraph();
-
-	m_site->setPropertyObject(0);
-	m_undoStack = new editor::UndoStack();
-
-	if (instance)
-		m_fragmentGuid = instance->getGuid();
-
-	return true;
-}
-
-Ref< db::Instance > ShaderGraphEditorPage::getDataInstance()
-{
-	return m_shaderGraphInstance;
-}
-
-Ref< Object > ShaderGraphEditorPage::getDataObject()
-{
-	return m_shaderGraph;
 }
 
 bool ShaderGraphEditorPage::dropInstance(db::Instance* instance, const ui::Point& position)
@@ -333,9 +308,7 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 {
 	if (command == L"Editor.PropertiesChanged")
 	{
-		// Save undo state.
-		m_undoStack->push(m_shaderGraph);
-
+		m_document->push();
 		refreshGraph();
 		updateGraph();
 	}
@@ -384,7 +357,7 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 			if (command == L"Editor.Cut")
 			{
 				// Save undo state.
-				m_undoStack->push(m_shaderGraph);
+				m_document->push();
 
 				// Remove edges which are connected to any selected node, not only those who connects to both selected end nodes.
 				selectedEdges.resize(0);
@@ -412,7 +385,7 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 		if (data)
 		{
 			// Save undo state.
-			m_undoStack->push(m_shaderGraph);
+			m_document->push();
 
 			const ui::Rect& bounds = data->getBounds();
 
@@ -453,7 +426,7 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 			return false;
 
 		// Save undo state.
-		m_undoStack->push(m_shaderGraph);
+		m_document->push();
 
 		// Remove edges first which are connected to selected nodes.
 		RefArray< ui::custom::Edge > edges;
@@ -481,13 +454,10 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"Editor.Undo")
 	{
-		// Restore last saved step.
-		if (m_undoStack->canUndo())
+		if (m_document->undo())
 		{
-			Ref< ShaderGraph > shaderGraph = dynamic_type_cast< ShaderGraph* >(m_undoStack->undo(m_shaderGraph));
-			T_ASSERT (shaderGraph);
-
-			m_shaderGraph = shaderGraph;
+			m_shaderGraph = m_document->getObject< ShaderGraph >(0);
+			T_ASSERT (m_shaderGraph);
 
 			m_editorGraph->removeAllEdges();
 			m_editorGraph->removeAllNodes();
@@ -504,13 +474,10 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"Editor.Redo")
 	{
-		// Redo last undone step.
-		if (m_undoStack->canRedo())
+		if (m_document->redo())
 		{
-			Ref< ShaderGraph > shaderGraph = dynamic_type_cast< ShaderGraph* >(m_undoStack->redo(m_shaderGraph));
-			T_ASSERT (shaderGraph);
-
-			m_shaderGraph = shaderGraph;
+			m_shaderGraph = m_document->getObject< ShaderGraph >(0);
+			T_ASSERT (m_shaderGraph);
 
 			m_editorGraph->removeAllEdges();
 			m_editorGraph->removeAllNodes();
@@ -527,7 +494,8 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"ShaderGraph.Editor.OpenReferee")
 	{
-		RefereeFilter filter(m_fragmentGuid);
+		Guid shaderGraphGuid = m_document->getInstance(0)->getGuid();
+		RefereeFilter filter(shaderGraphGuid);
 		Ref< db::Instance > refereeInstance = m_editor->browseInstance(&filter);
 		if (refereeInstance)
 			m_editor->openEditor(refereeInstance);
@@ -538,46 +506,42 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"ShaderGraph.Editor.AlignLeft")
 	{
-		// Save undo state.
-		m_undoStack->push(m_shaderGraph);
+		m_document->push();
 		m_editorGraph->alignNodes(ui::custom::GraphControl::AnLeft);
 	}
 	else if (command == L"ShaderGraph.Editor.AlignRight")
 	{
-		// Save undo state.
-		m_undoStack->push(m_shaderGraph);
+		m_document->push();
 		m_editorGraph->alignNodes(ui::custom::GraphControl::AnRight);
 	}
 	else if (command == L"ShaderGraph.Editor.AlignTop")
 	{
-		// Save undo state.
-		m_undoStack->push(m_shaderGraph);
+		m_document->push();
 		m_editorGraph->alignNodes(ui::custom::GraphControl::AnTop);
 	}
 	else if (command == L"ShaderGraph.Editor.AlignBottom")
 	{
-		// Save undo state.
-		m_undoStack->push(m_shaderGraph);
+		m_document->push();
 		m_editorGraph->alignNodes(ui::custom::GraphControl::AnBottom);
 	}
 	else if (command == L"ShaderGraph.Editor.EvenSpaceVertically")
 	{
-		// Save undo state.
-		m_undoStack->push(m_shaderGraph);
+		m_document->push();
 		m_editorGraph->evenSpace(ui::custom::GraphControl::EsVertically);
 	}
 	else if (command == L"ShaderGraph.Editor.EventSpaceHorizontally")
 	{
-		// Save undo state.
-		m_undoStack->push(m_shaderGraph);
+		m_document->push();
 		m_editorGraph->evenSpace(ui::custom::GraphControl::EsHorizontally);
 	}
 	else if (command == L"ShaderGraph.Editor.RemoveUnusedNodes")
 	{
-		// Save undo state.
-		m_undoStack->push(m_shaderGraph);
+		m_document->push();
 
 		m_shaderGraph = ShaderGraphOptimizer(m_shaderGraph).removeUnusedBranches();
+		T_ASSERT (m_shaderGraph);
+
+		m_document->setObject(0, m_shaderGraph);
 
 		m_editorGraph->removeAllEdges();
 		m_editorGraph->removeAllNodes();
@@ -593,10 +557,12 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"ShaderGraph.Editor.AutoMergeBranches")
 	{
-		// Save undo state.
-		m_undoStack->push(m_shaderGraph);
+		m_document->push();
 
 		m_shaderGraph = ShaderGraphOptimizer(m_shaderGraph).mergeBranches();
+		T_ASSERT (m_shaderGraph);
+
+		m_document->setObject(0, m_shaderGraph);
 
 		m_editorGraph->removeAllEdges();
 		m_editorGraph->removeAllNodes();
@@ -626,8 +592,7 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 
 		if (!selectedExternals.empty())
 		{
-			// Save undo state.
-			m_undoStack->push(m_shaderGraph);
+			m_document->push();
 
 			for (RefArray< External >::const_iterator i = selectedExternals.begin(); i != selectedExternals.end(); ++i)
 				updateExternalNode(*i);
@@ -647,10 +612,12 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"ShaderGraph.Editor.ConstantFold")
 	{
-		// Save undo state.
-		m_undoStack->push(m_shaderGraph);
+		m_document->push();
 
 		m_shaderGraph = ShaderGraphStatic(m_shaderGraph).getConstantFolded();
+		T_ASSERT (m_shaderGraph);
+
+		m_document->setObject(0, m_shaderGraph);
 
 		m_editorGraph->removeAllEdges();
 		m_editorGraph->removeAllNodes();
@@ -666,11 +633,13 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"ShaderGraph.Editor.PlatformPermutation")
 	{
-		// Save undo state.
-		m_undoStack->push(m_shaderGraph);
+		m_document->push();
 
 		std::wstring platformSignature = m_toolPlatform->getSelectedItem();
 		m_shaderGraph = ShaderGraphStatic(m_shaderGraph).getPlatformPermutation(platformSignature);
+		T_ASSERT (m_shaderGraph);
+
+		m_document->setObject(0, m_shaderGraph);
 
 		m_editorGraph->removeAllEdges();
 		m_editorGraph->removeAllNodes();
@@ -689,7 +658,7 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 		const TypeInfo* typeInfo = m_menuQuick->showMenu();
 		if (typeInfo)
 		{
-			m_undoStack->push(m_shaderGraph);
+			m_document->push();
 			createNode(
 				typeInfo,
 				m_editorGraph->getInnerRect().getCenter() - m_editorGraph->getOffset()
@@ -1025,11 +994,8 @@ void ShaderGraphEditorPage::eventButtonDown(ui::Event* event)
 
 	if (command == L"ShaderGraph.Editor.Create")	// Create
 	{
+		m_document->push();
 		const TypeInfo& type = c_nodeCategories[command.getId()].type;
-
-		// Save undo state.
-		m_undoStack->push(m_shaderGraph);
-
 		createNode(&type, mouseEvent->getPosition() - m_editorGraph->getOffset());
 	}
 	else
@@ -1062,8 +1028,7 @@ void ShaderGraphEditorPage::eventNodeMoved(ui::Event* event)
 	ui::Point position = editorNode->getPosition();
 	if (position.x != shaderNode->getPosition().first || position.y != shaderNode->getPosition().second)
 	{
-		// Save undo state.
-		m_undoStack->push(m_shaderGraph);
+		m_document->push();
 
 		// Reflect position into shader graph node.
 		shaderNode->setPosition(std::pair< int, int >(
@@ -1131,8 +1096,7 @@ void ShaderGraphEditorPage::eventEdgeConnect(ui::Event* event)
 		m_editorGraph->removeEdge(editorEdges.front());
 	}
 
-	// Save undo state.
-	m_undoStack->push(m_shaderGraph);
+	m_document->push();
 
 	shaderEdge = new Edge(shaderSourcePin, shaderDestinationPin);
 	m_shaderGraph->addEdge(shaderEdge);
@@ -1148,9 +1112,7 @@ void ShaderGraphEditorPage::eventEdgeDisconnect(ui::Event* event)
 	Ref< ui::custom::Edge > editorEdge = checked_type_cast< ui::custom::Edge* >(event->getItem());
 	Ref< Edge > shaderEdge = checked_type_cast< Edge* >(editorEdge->getData(L"SHADEREDGE"));
 
-	// Save undo state.
-	m_undoStack->push(m_shaderGraph);
-
+	m_document->push();
 	m_shaderGraph->removeEdge(shaderEdge);
 
 	updateGraph();

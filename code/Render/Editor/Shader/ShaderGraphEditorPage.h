@@ -18,8 +18,9 @@ namespace traktor
 	namespace editor
 	{
 
+class IDocument;
 class IEditor;
-class UndoStack;
+class IEditorPageSite;
 
 	}
 
@@ -56,21 +57,15 @@ class T_DLLEXPORT ShaderGraphEditorPage : public editor::IEditorPage
 	T_RTTI_CLASS;
 
 public:
-	ShaderGraphEditorPage(editor::IEditor* editor);
+	ShaderGraphEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document);
 
-	virtual bool create(ui::Container* parent, editor::IEditorPageSite* site);
+	virtual bool create(ui::Container* parent);
 
 	virtual void destroy();
 
 	virtual void activate();
 
 	virtual void deactivate();
-
-	virtual	bool setDataObject(db::Instance* instance, Object* data);
-
-	virtual Ref< db::Instance > getDataInstance();
-
-	virtual Ref< Object > getDataObject();
 
 	virtual bool dropInstance(db::Instance* instance, const ui::Point& position);
 
@@ -81,8 +76,7 @@ public:
 private:
 	editor::IEditor* m_editor;
 	Ref< editor::IEditorPageSite > m_site;
-	Ref< editor::UndoStack > m_undoStack;
-	Ref< db::Instance > m_shaderGraphInstance;
+	Ref< editor::IDocument > m_document;
 	Ref< ShaderGraph > m_shaderGraph;
 	Ref< ui::custom::ToolBar > m_toolBar;
 	Ref< ui::custom::ToolBarDropDown > m_toolPlatform;
@@ -90,7 +84,6 @@ private:
 	Ref< ui::PopupMenu > m_menuPopup;
 	Ref< QuickMenuTool > m_menuQuick;
 	std::map< const TypeInfo*, Ref< NodeFacade > > m_nodeFacades;
-	Guid m_fragmentGuid;
 	bool m_lastValidationResult;
 
 	void createEditorNodes(const RefArray< Node >& shaderNodes, const RefArray< Edge >& shaderEdges);

@@ -514,16 +514,16 @@
       <second>Unable to open database {0}</second>
     </item>
     <item>
-      <first>ERROR_MESSAGE_UNABLE_TO_SAVE_INSTANCE</first>
-      <second>Unable to save instance, possibly write-protected</second>
+      <first>ERROR_MESSAGE_UNABLE_TO_SAVE_DOCUMENT</first>
+      <second>Unable to save document, possibly write-protected</second>
     </item>
     <item>
       <first>ERROR_TITLE_UNABLE_TO_OPEN_DATABASE</first>
       <second>Unable to open database</second>
     </item>
     <item>
-      <first>ERROR_TITLE_UNABLE_TO_SAVE_INSTANCE</first>
-      <second>Unable to save instance</second>
+      <first>ERROR_TITLE_UNABLE_TO_SAVE_DOCUMENT</first>
+      <second>Unable to save document</second>
     </item>
     <item>
       <first>EXECUTE_TOOL_TITLE</first>

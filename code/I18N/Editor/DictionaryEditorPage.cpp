@@ -1,13 +1,14 @@
-#include "I18N/Editor/DictionaryEditorPage.h"
+#include "Core/Misc/String.h"
+#include "Editor/IDocument.h"
 #include "I18N/Dictionary.h"
+#include "I18N/Editor/DictionaryEditorPage.h"
 #include "Ui/Container.h"
 #include "Ui/MethodHandler.h"
-#include "Ui/Custom/GridView/GridView.h"
 #include "Ui/Custom/GridView/GridColumn.h"
-#include "Ui/Custom/GridView/GridRow.h"
 #include "Ui/Custom/GridView/GridItem.h"
+#include "Ui/Custom/GridView/GridRow.h"
+#include "Ui/Custom/GridView/GridView.h"
 #include "Ui/Custom/InputDialog.h"
-#include "Core/Misc/String.h"
 
 namespace traktor
 {
@@ -16,40 +17,24 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.i18n.DictionaryEditorPage", DictionaryEditorPage, editor::IEditorPage)
 
-DictionaryEditorPage::DictionaryEditorPage(editor::IEditor* editor)
+DictionaryEditorPage::DictionaryEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document)
 :	m_editor(editor)
+,	m_site(site)
+,	m_document(document)
 {
 }
 
-bool DictionaryEditorPage::create(ui::Container* parent, editor::IEditorPageSite* site)
+bool DictionaryEditorPage::create(ui::Container* parent)
 {
+	m_dictionary = m_document->getObject< Dictionary >(0);
+	if (!m_dictionary)
+		return false;
+
 	m_gridDictionary = new ui::custom::GridView();
 	m_gridDictionary->create(parent, ui::custom::GridView::WsColumnHeader | ui::WsDoubleBuffer);
 	m_gridDictionary->addColumn(new ui::custom::GridColumn(L"Id", 100));
 	m_gridDictionary->addColumn(new ui::custom::GridColumn(L"Text", 400));
 	m_gridDictionary->addDoubleClickEventHandler(ui::createMethodHandler(this, &DictionaryEditorPage::eventGridDoubleClick));
-	return true;
-}
-
-void DictionaryEditorPage::destroy()
-{
-	m_gridDictionary->destroy();
-}
-
-void DictionaryEditorPage::activate()
-{
-}
-
-void DictionaryEditorPage::deactivate()
-{
-}
-
-bool DictionaryEditorPage::setDataObject(db::Instance* instance, Object* data)
-{
-	m_dictionaryInstance = instance;
-
-	if (!(m_dictionary = dynamic_type_cast< Dictionary* >(data)))
-		return false;
 
 	const std::map< std::wstring, std::wstring >& map = m_dictionary->get();
 	for (std::map< std::wstring, std::wstring >::const_iterator i = map.begin(); i != map.end(); ++i)
@@ -64,14 +49,17 @@ bool DictionaryEditorPage::setDataObject(db::Instance* instance, Object* data)
 	return true;
 }
 
-Ref< db::Instance > DictionaryEditorPage::getDataInstance()
+void DictionaryEditorPage::destroy()
 {
-	return m_dictionaryInstance;
+	m_gridDictionary->destroy();
 }
 
-Ref< Object > DictionaryEditorPage::getDataObject()
+void DictionaryEditorPage::activate()
 {
-	return m_dictionary;
+}
+
+void DictionaryEditorPage::deactivate()
+{
 }
 
 bool DictionaryEditorPage::dropInstance(db::Instance* instance, const ui::Point& position)
@@ -95,7 +83,6 @@ void DictionaryEditorPage::eventGridDoubleClick(ui::Event* event)
 
 	if (selectedRows.size() > 0)
 	{
-		// Edit selected.
 		ui::custom::InputDialog::Field fields[] =
 		{
 			{
@@ -115,10 +102,12 @@ void DictionaryEditorPage::eventGridDoubleClick(ui::Event* event)
 		);
 		if (inputDialog.showModal() == ui::DrOk)
 		{
+			m_document->push();
 			m_dictionary->set(
 				checked_type_cast< ui::custom::GridItem*, false >(selectedRows[0]->get(0))->getText(),
 				fields->value
 			);
+
 			checked_type_cast< ui::custom::GridItem*, false >(selectedRows[0]->get(1))->setText(fields->value);
 			m_gridDictionary->update();
 		}
@@ -126,7 +115,7 @@ void DictionaryEditorPage::eventGridDoubleClick(ui::Event* event)
 	}
 	else
 	{
-		// Add new.
+		m_document->push();
 		m_dictionary->set(L"", L"");
 
 		Ref< ui::custom::GridRow > row = new ui::custom::GridRow();

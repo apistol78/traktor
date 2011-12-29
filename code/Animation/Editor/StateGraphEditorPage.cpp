@@ -3,9 +3,11 @@
 #include "Animation/Animation/StateNodeAnimation.h"
 #include "Animation/Animation/Transition.h"
 #include "Animation/Animation/Animation.h"
+#include "Database/Instance.h"
+#include "Editor/IDocument.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPageSite.h"
-#include "Database/Instance.h"
+#include "I18N/Text.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Container.h"
 #include "Ui/PopupMenu.h"
@@ -22,7 +24,6 @@
 #include "Ui/Custom/Graph/Edge.h"
 #include "Ui/Custom/Graph/Pin.h"
 #include "Ui/Custom/Graph/DefaultNodeShape.h"
-#include "I18N/Text.h"
 
 // Resources
 #include "Resources/Alignment.h"
@@ -34,15 +35,18 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.StateGraphEditorPage", StateGraphEditorPage, editor::IEditorPage)
 
-StateGraphEditorPage::StateGraphEditorPage(editor::IEditor* editor)
+StateGraphEditorPage::StateGraphEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document)
 :	m_editor(editor)
+,	m_site(site)
+,	m_document(document)
 {
 }
 
-bool StateGraphEditorPage::create(ui::Container* parent, editor::IEditorPageSite* site)
+bool StateGraphEditorPage::create(ui::Container* parent)
 {
-	m_site = site;
-	T_ASSERT (m_site);
+	m_stateGraph = m_document->getObject< StateGraph >(0);
+	if (!m_stateGraph)
+		return false;
 
 	Ref< ui::Container > container = new ui::Container();
 	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
@@ -77,6 +81,14 @@ bool StateGraphEditorPage::create(ui::Container* parent, editor::IEditorPageSite
 	m_menuPopup->add(new ui::MenuItem(L"-"));
 	m_menuPopup->add(new ui::MenuItem(ui::Command(L"StateGraph.Editor.SetRoot"), i18n::Text(L"STATEGRAPH_SET_ROOT")));
 
+	createEditorNodes(
+		m_stateGraph->getStates(),
+		m_stateGraph->getTransitions()
+	);
+
+	m_editorGraph->center();
+
+	updateGraph();
 	return true;
 }
 
@@ -92,40 +104,6 @@ void StateGraphEditorPage::activate()
 
 void StateGraphEditorPage::deactivate()
 {
-}
-
-bool StateGraphEditorPage::setDataObject(db::Instance* instance, Object* data)
-{
-	m_stateGraphInstance = instance;
-	m_stateGraph = dynamic_type_cast< StateGraph* >(data);
-	if (!m_stateGraph)
-		return false;
-
-	m_editorGraph->removeAllEdges();
-	m_editorGraph->removeAllNodes();
-
-	createEditorNodes(
-		m_stateGraph->getStates(),
-		m_stateGraph->getTransitions()
-	);
-
-	m_editorGraph->center();
-
-	updateGraph();
-
-	m_site->setPropertyObject(0);
-
-	return true;
-}
-
-Ref< db::Instance > StateGraphEditorPage::getDataInstance()
-{
-	return m_stateGraphInstance;
-}
-
-Ref< Object > StateGraphEditorPage::getDataObject()
-{
-	return m_stateGraph;
 }
 
 bool StateGraphEditorPage::dropInstance(db::Instance* instance, const ui::Point& position)
@@ -287,8 +265,7 @@ bool StateGraphEditorPage::handleCommand(const ui::Command& command)
 		if (m_editorGraph->getSelectedNodes(nodes) <= 0)
 			return false;
 
-	//	// Save undo state.
-	//	m_undoStack->push(m_shaderGraph);
+		m_document->push();
 
 		// First remove transitions which are connected to selected states.
 		RefArray< ui::custom::Edge > edges;
@@ -379,38 +356,32 @@ bool StateGraphEditorPage::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"StateGraph.Editor.AlignLeft")
 	{
-		//// Save undo state.
-		//m_undoStack->push(m_shaderGraph);
+		m_document->push();
 		m_editorGraph->alignNodes(ui::custom::GraphControl::AnLeft);
 	}
 	else if (command == L"StateGraph.Editor.AlignRight")
 	{
-		//// Save undo state.
-		//m_undoStack->push(m_shaderGraph);
+		m_document->push();
 		m_editorGraph->alignNodes(ui::custom::GraphControl::AnRight);
 	}
 	else if (command == L"StateGraph.Editor.AlignTop")
 	{
-		//// Save undo state.
-		//m_undoStack->push(m_shaderGraph);
+		m_document->push();
 		m_editorGraph->alignNodes(ui::custom::GraphControl::AnTop);
 	}
 	else if (command == L"StateGraph.Editor.AlignBottom")
 	{
-		//// Save undo state.
-		//m_undoStack->push(m_shaderGraph);
+		m_document->push();
 		m_editorGraph->alignNodes(ui::custom::GraphControl::AnBottom);
 	}
 	else if (command == L"StateGraph.Editor.EvenSpaceVertically")
 	{
-		//// Save undo state.
-		//m_undoStack->push(m_shaderGraph);
+		m_document->push();
 		m_editorGraph->evenSpace(ui::custom::GraphControl::EsVertically);
 	}
 	else if (command == L"StateGraph.Editor.EventSpaceHorizontally")
 	{
-		//// Save undo state.
-		//m_undoStack->push(m_shaderGraph);
+		m_document->push();
 		m_editorGraph->evenSpace(ui::custom::GraphControl::EsHorizontally);
 	}
 	else

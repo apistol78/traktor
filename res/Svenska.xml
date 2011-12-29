@@ -522,16 +522,16 @@
 			<second>Kan ej öppna databas {0}</second>
 		</item>
 		<item>
-			<first>ERROR_MESSAGE_UNABLE_TO_SAVE_INSTANCE</first>
-			<second>Kan ej spara instans, möjligtvis skrivskyddad</second>
+			<first>ERROR_MESSAGE_UNABLE_TO_SAVE_DOCUMENT</first>
+			<second>Kan ej spara dokument, möjligtvis skrivskyddad</second>
 		</item>
 		<item>
 			<first>ERROR_TITLE_UNABLE_TO_OPEN_DATABASE</first>
 			<second>Kan ej öppna databas</second>
 		</item>
 		<item>
-			<first>ERROR_TITLE_UNABLE_TO_SAVE_INSTANCE</first>
-			<second>Kan ej spara instans</second>
+			<first>ERROR_TITLE_UNABLE_TO_SAVE_DOCUMENT</first>
+			<second>Kan ej spara dokument</second>
 		</item>
     <item>
       <first>EXECUTE_TOOL_TITLE</first>

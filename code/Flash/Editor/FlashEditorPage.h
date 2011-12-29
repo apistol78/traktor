@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_FLASH_EDITOR_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -16,7 +16,9 @@ namespace traktor
 	namespace editor
 	{
 
+class IDocument;
 class IEditor;
+class IEditorPageSite;
 
 	}
 
@@ -52,21 +54,15 @@ class T_DLLCLASS FlashEditorPage : public editor::IEditorPage
 	T_RTTI_CLASS;
 
 public:
-	FlashEditorPage(editor::IEditor* editor);
+	FlashEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document);
 
-	virtual bool create(ui::Container* parent, editor::IEditorPageSite* site);
+	virtual bool create(ui::Container* parent);
 
 	virtual void destroy();
 
 	virtual void activate();
 
 	virtual void deactivate();
-
-	virtual	bool setDataObject(db::Instance* instance, Object* data);
-
-	virtual Ref< db::Instance > getDataInstance();
-
-	virtual Ref< Object > getDataObject();
 
 	virtual bool dropInstance(db::Instance* instance, const ui::Point& position);
 
@@ -76,7 +72,8 @@ public:
 
 private:
 	editor::IEditor* m_editor;
-	Ref< db::Instance > m_movieInstance;
+	Ref< editor::IEditorPageSite > m_site;
+	Ref< editor::IDocument > m_document;
 	Ref< FlashPreviewControl > m_previewControl;
 	Ref< ui::custom::ToolBar > m_toolBarPlay;
 	Ref< resource::IResourceManager > m_resourceManager;

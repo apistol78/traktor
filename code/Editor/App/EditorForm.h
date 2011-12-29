@@ -49,6 +49,7 @@ class Database;
 	{
 
 class DatabaseView;
+class Document;
 class PropertiesView;
 class LogView;
 class IEditorPageFactory;
@@ -148,6 +149,7 @@ private:
 	Ref< db::Database > m_sourceDatabase;
 	Ref< db::Database > m_outputDatabase;
 	Ref< IEditorPage > m_activeEditorPage;
+	Ref< Document > m_activeDocument;
 	Ref< EditorPageSite > m_activeEditorPageSite;
 	std::vector< Guid > m_eventIds;
 	Thread* m_threadAssetMonitor;

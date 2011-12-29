@@ -273,18 +273,18 @@ void EditorPlugin::eventTargetPlay(ui::Event* event)
 	if (targetInstance->getState() != TsIdle)
 		return;
 
-	bool publish = m_editor->getSettings()->getProperty< PropertyBoolean >(L"Amalgam.PublishActiveGuid", true);
-	if (publish)
-	{
-		// Publish active editor's guid to deploying application.
-		editor::IEditorPage* activeEditorPage = m_editor->getActiveEditorPage();
-		if (activeEditorPage)
-		{
-			Ref< db::Instance > dataInstance = activeEditorPage->getDataInstance();
-			if (dataInstance)
-				activeGuid = dataInstance->getGuid();
-		}
-	}
+	//bool publish = m_editor->getSettings()->getProperty< PropertyBoolean >(L"Amalgam.PublishActiveGuid", true);
+	//if (publish)
+	//{
+	//	// Publish active editor's guid to deploying application.
+	//	editor::IEditorPage* activeEditorPage = m_editor->getActiveEditorPage();
+	//	if (activeEditorPage)
+	//	{
+	//		Ref< db::Instance > dataInstance = activeEditorPage->getDataInstance();
+	//		if (dataInstance)
+	//			activeGuid = dataInstance->getGuid();
+	//	}
+	//}
 
 	targetInstance->setState(TsPending);
 	targetInstance->setBuildProgress(0);
