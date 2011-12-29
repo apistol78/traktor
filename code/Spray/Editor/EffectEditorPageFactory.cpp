@@ -1,6 +1,6 @@
-#include "Spray/Editor/EffectEditorPageFactory.h"
-#include "Spray/Editor/EffectEditorPage.h"
 #include "Spray/Effect.h"
+#include "Spray/Editor/EffectEditorPage.h"
+#include "Spray/Editor/EffectEditorPageFactory.h"
 #include "Ui/Command.h"
 
 namespace traktor
@@ -17,9 +17,9 @@ const TypeInfoSet EffectEditorPageFactory::getEditableTypes() const
 	return typeSet;
 }
 
-Ref< editor::IEditorPage > EffectEditorPageFactory::createEditorPage(editor::IEditor* editor) const
+Ref< editor::IEditorPage > EffectEditorPageFactory::createEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document) const
 {
-	return new EffectEditorPage(editor);
+	return new EffectEditorPage(editor, site, document);
 }
 
 void EffectEditorPageFactory::getCommands(std::list< ui::Command >& outCommands) const

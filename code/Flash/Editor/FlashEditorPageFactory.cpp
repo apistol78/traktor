@@ -1,5 +1,5 @@
-#include "Flash/Editor/FlashEditorPageFactory.h"
 #include "Flash/Editor/FlashEditorPage.h"
+#include "Flash/Editor/FlashEditorPageFactory.h"
 #include "Flash/Editor/FlashMovieAsset.h"
 #include "Ui/Command.h"
 
@@ -17,9 +17,9 @@ const TypeInfoSet FlashEditorPageFactory::getEditableTypes() const
 	return typeSet;
 }
 
-Ref< editor::IEditorPage > FlashEditorPageFactory::createEditorPage(editor::IEditor* editor) const
+Ref< editor::IEditorPage > FlashEditorPageFactory::createEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document) const
 {
-	return new FlashEditorPage(editor);
+	return new FlashEditorPage(editor, site, document);
 }
 
 void FlashEditorPageFactory::getCommands(std::list< ui::Command >& outCommands) const

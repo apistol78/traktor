@@ -17,9 +17,9 @@ const TypeInfoSet VideoEditorPageFactory::getEditableTypes() const
 	return typeSet;
 }
 
-Ref< editor::IEditorPage > VideoEditorPageFactory::createEditorPage(editor::IEditor* editor) const
+Ref< editor::IEditorPage > VideoEditorPageFactory::createEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document) const
 {
-	return new VideoEditorPage(editor);
+	return new VideoEditorPage(editor, site, document);
 }
 
 void VideoEditorPageFactory::getCommands(std::list< ui::Command >& outCommands) const

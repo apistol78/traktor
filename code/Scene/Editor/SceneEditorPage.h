@@ -16,6 +16,14 @@ namespace traktor
 
 class ISerializable;
 
+	namespace editor
+	{
+
+class IDocument;
+class IEditorPageSite;
+
+	}
+
 	namespace ui
 	{
 
@@ -34,13 +42,6 @@ class GridView;
 class GridRow;
 
 		}
-	}
-
-	namespace editor
-	{
-
-class UndoStack;
-
 	}
 
 	namespace world
@@ -64,21 +65,15 @@ class T_DLLCLASS SceneEditorPage : public editor::IEditorPage
 	T_RTTI_CLASS;
 
 public:
-	SceneEditorPage(SceneEditorContext* context);
+	SceneEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document);
 
-	virtual bool create(ui::Container* parent, editor::IEditorPageSite* site);
+	virtual bool create(ui::Container* parent);
 
 	virtual void destroy();
 
 	virtual void activate();
 
 	virtual void deactivate();
-
-	virtual	bool setDataObject(db::Instance* instance, Object* data);
-
-	virtual Ref< db::Instance > getDataInstance();
-
-	virtual Ref< Object > getDataObject();
 
 	virtual bool dropInstance(db::Instance* instance, const ui::Point& position);
 
@@ -87,10 +82,10 @@ public:
 	virtual void handleDatabaseEvent(const Guid& eventId);
 
 private:
-	Ref< SceneEditorContext > m_context;
+	editor::IEditor* m_editor;
 	Ref< editor::IEditorPageSite > m_site;
-	Ref< db::Instance > m_dataInstance;
-	Ref< ISerializable > m_dataObject;
+	Ref< editor::IDocument > m_document;
+	Ref< SceneEditorContext > m_context;
 	Ref< ui::Container > m_editPanel;
 	Ref< ScenePreviewControl > m_editControl;
 	Ref< ui::Container > m_entityPanel;
@@ -107,13 +102,12 @@ private:
 	Ref< ui::custom::GridView > m_instanceGrid;
 	Ref< ui::Font > m_instanceGridFontItalic;
 	Ref< ui::Font > m_instanceGridFontBold;
-	Ref< editor::UndoStack > m_undoStack;
 	Guid m_currentGuid;
 	uint32_t m_currentHash;
 
-	void createControllerEditor();
+	bool createSceneAsset();
 
-	Ref< SceneAsset > createWhiteRoomSceneAsset(world::EntityData* entityData);
+	void createControllerEditor();
 
 	void updateScene();
 

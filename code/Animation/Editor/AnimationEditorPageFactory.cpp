@@ -17,9 +17,9 @@ const TypeInfoSet AnimationEditorPageFactory::getEditableTypes() const
 	return typeSet;
 }
 
-Ref< editor::IEditorPage > AnimationEditorPageFactory::createEditorPage(editor::IEditor* editor) const
+Ref< editor::IEditorPage > AnimationEditorPageFactory::createEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document) const
 {
-	return new AnimationEditorPage(editor);
+	return new AnimationEditorPage(editor, site, document);
 }
 
 void AnimationEditorPageFactory::getCommands(std::list< ui::Command >& outCommands) const

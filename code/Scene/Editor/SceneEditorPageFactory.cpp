@@ -1,14 +1,8 @@
 #include "Core/Log/Log.h"
-#include "Core/Settings/PropertyString.h"
-#include "Core/Settings/Settings.h"
 #include "Editor/IEditor.h"
-#include "Physics/PhysicsManager.h"
-#include "Render/IRenderSystem.h"
-#include "Resource/ResourceManager.h"
 #include "Scene/Editor/ISceneEditorPlugin.h"
 #include "Scene/Editor/ISceneEditorProfile.h"
 #include "Scene/Editor/SceneAsset.h"
-#include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/SceneEditorPage.h"
 #include "Scene/Editor/SceneEditorPageFactory.h"
 #include "Ui/Command.h"
@@ -29,72 +23,9 @@ const TypeInfoSet SceneEditorPageFactory::getEditableTypes() const
 	return typeSet;
 }
 
-Ref< editor::IEditorPage > SceneEditorPageFactory::createEditorPage(editor::IEditor* editor) const
+Ref< editor::IEditorPage > SceneEditorPageFactory::createEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document) const
 {
-	render::IRenderSystem* renderSystem = editor->getStoreObject< render::IRenderSystem >(L"RenderSystem");
-	if (!renderSystem)
-		return 0;
-
-	// Create resource manager.
-	Ref< resource::IResourceManager > resourceManager = new resource::ResourceManager();
-
-	// Get physics manager type.
-	std::wstring physicsManagerTypeName = editor->getSettings()->getProperty< PropertyString >(L"SceneEditor.PhysicsManager");
-	const TypeInfo* physicsManagerType = TypeInfo::find(physicsManagerTypeName);
-	if (!physicsManagerType)
-	{
-		log::error << L"Unable to create scene editor; no such physics manager type \"" << physicsManagerTypeName << L"\"." << Endl;
-		return 0;
-	}
-
-	// Create physics manager.
-	Ref< physics::PhysicsManager > physicsManager = checked_type_cast< physics::PhysicsManager* >(physicsManagerType->createInstance());
-	if (!physicsManager->create(1.0f / 60.0f))
-	{
-		log::error << L"Unable to create scene editor; failed to create physics manager." << Endl;
-		return 0;
-	}
-
-	// Configure physics manager.
-	physicsManager->setGravity(Vector4(0.0f, -9.81f, 0.0f, 0.0f));
-
-	log::debug << L"Using physics manager \"" << physicsManagerTypeName << L"\"; created successfully" << Endl;
-
-	// Create editor context.
-	Ref< SceneEditorContext > context = new SceneEditorContext(
-		editor,
-		editor->getOutputDatabase(),
-		editor->getSourceDatabase(),
-		resourceManager,
-		renderSystem,
-		physicsManager
-	);
-
-	// Create profiles, plugins, resource factories and entity editors.
-	std::vector< const TypeInfo* > profileTypes;
-	type_of< ISceneEditorProfile >().findAllOf(profileTypes);
-	for (std::vector< const TypeInfo* >::const_iterator i = profileTypes.begin(); i != profileTypes.end(); ++i)
-	{
-		Ref< ISceneEditorProfile > profile = dynamic_type_cast< ISceneEditorProfile* >((*i)->createInstance());
-		if (!profile)
-			continue;
-
-		context->addEditorProfile(profile);
-
-		RefArray< ISceneEditorPlugin > editorPlugins;
-		profile->createEditorPlugins(context, editorPlugins);
-		for (RefArray< ISceneEditorPlugin >::iterator j = editorPlugins.begin(); j != editorPlugins.end(); ++j)
-			context->addEditorPlugin(*j);
-
-		RefArray< resource::IResourceFactory > resourceFactories;
-		profile->createResourceFactories(context, resourceFactories);
-		for (RefArray< resource::IResourceFactory >::iterator j = resourceFactories.begin(); j != resourceFactories.end(); ++j)
-			resourceManager->addFactory(*j);
-
-	}
-
-	// Create editor page.
-	return new SceneEditorPage(context);
+	return new SceneEditorPage(editor, site, document);
 }
 
 void SceneEditorPageFactory::getCommands(std::list< ui::Command >& outCommands) const

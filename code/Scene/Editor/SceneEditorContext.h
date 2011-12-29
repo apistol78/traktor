@@ -15,18 +15,26 @@
 
 namespace traktor
 {
-	namespace editor
-	{
-
-class IEditor;
-
-	}
-
 	namespace db
 	{
 
 class Database;
 class Instance;
+
+	}
+
+	namespace editor
+	{
+
+class IDocument;
+class IEditor;
+
+	}
+
+	namespace physics
+	{
+
+class PhysicsManager;
 
 	}
 
@@ -43,13 +51,6 @@ class IResourceManager;
 class IRenderSystem;
 class ITexture;
 class PrimitiveRenderer;
-
-	}
-
-	namespace physics
-	{
-
-class PhysicsManager;
 
 	}
 
@@ -108,6 +109,7 @@ public:
 
 	SceneEditorContext(
 		editor::IEditor* editor,
+		editor::IDocument* document,
 		db::Database* resourceDb,
 		db::Database* sourceDb,
 		resource::IResourceManager* resourceManager,
@@ -124,8 +126,6 @@ public:
 	void addEditorPlugin(ISceneEditorPlugin* editorPlugin);
 
 	void setControllerEditor(ISceneControllerEditor* controllerEditor);
-
-	void setInstance(db::Instance* instance);
 
 	/*! \name State management. */
 	//@{
@@ -247,11 +247,11 @@ public:
 
 	editor::IEditor* getEditor() { return m_editor; }
 
+	editor::IDocument* getDocument() { return m_document; }
+
 	db::Database* getResourceDatabase() { return m_resourceDb; }
 
 	db::Database* getSourceDatabase() { return m_sourceDb; }
-
-	db::Instance* getInstance() { return m_instance; }
 
 	resource::IResourceManager* getResourceManager() const { return m_resourceManager; }
 
@@ -311,13 +311,13 @@ public:
 
 private:
 	editor::IEditor* m_editor;
+	Ref< editor::IDocument > m_document;
 	Ref< db::Database > m_resourceDb;
 	Ref< db::Database > m_sourceDb;
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::IRenderSystem > m_renderSystem;
 	Ref< render::ITexture > m_debugTexture[4];
 	Ref< physics::PhysicsManager > m_physicsManager;
-	Ref< db::Instance > m_instance;
 	RefArray< ISceneEditorProfile > m_editorProfiles;
 	RefArray< ISceneEditorPlugin > m_editorPlugins;
 	Ref< ISceneControllerEditor > m_controllerEditor;

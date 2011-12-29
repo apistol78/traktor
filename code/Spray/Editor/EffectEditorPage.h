@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_SPRAY_EDITOR_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -17,6 +17,8 @@ namespace traktor
 	{
 
 class IEditor;
+class IEditorPageSite;
+class IDocument;
 
 	}
 
@@ -53,21 +55,15 @@ class T_DLLCLASS EffectEditorPage : public editor::IEditorPage
 	T_RTTI_CLASS;
 
 public:
-	EffectEditorPage(editor::IEditor* editor);
+	EffectEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document);
 
-	virtual bool create(ui::Container* parent, editor::IEditorPageSite* site);
+	virtual bool create(ui::Container* parent);
 
 	virtual void destroy();
 
 	virtual void activate();
 
 	virtual void deactivate();
-
-	virtual	bool setDataObject(db::Instance* instance, Object* data);
-
-	virtual Ref< db::Instance > getDataInstance();
-
-	virtual Ref< Object > getDataObject();
 
 	virtual bool dropInstance(db::Instance* instance, const ui::Point& position);
 
@@ -78,7 +74,7 @@ public:
 private:
 	editor::IEditor* m_editor;
 	Ref< editor::IEditorPageSite > m_site;
-	Ref< db::Instance > m_effectInstance;
+	Ref< editor::IDocument > m_document;
 	Ref< Effect > m_effect;
 	Ref< ui::custom::ToolBar > m_toolBar;
 	Ref< ui::custom::ToolBarButton > m_toolToggleGuide;

@@ -81,6 +81,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.SceneEditorContext", SceneEditorContext, 
 
 SceneEditorContext::SceneEditorContext(
 	editor::IEditor* editor,
+	editor::IDocument* document,
 	db::Database* resourceDb,
 	db::Database* sourceDb,
 	resource::IResourceManager* resourceManager,
@@ -88,6 +89,7 @@ SceneEditorContext::SceneEditorContext(
 	physics::PhysicsManager* physicsManager
 )
 :	m_editor(editor)
+,	m_document(document)
 ,	m_resourceDb(resourceDb)
 ,	m_sourceDb(sourceDb)
 ,	m_resourceManager(resourceManager)
@@ -119,6 +121,7 @@ SceneEditorContext::~SceneEditorContext()
 void SceneEditorContext::destroy()
 {
 	m_editor = 0;
+	m_document = 0;
 	m_resourceDb = 0;
 	m_sourceDb = 0;
 	m_resourceManager = 0;
@@ -126,7 +129,6 @@ void SceneEditorContext::destroy()
 	for (int32_t i = 0; i < sizeof_array(m_debugTexture); ++i)
 		m_debugTexture[i] = 0;
 	m_physicsManager = 0;
-	m_instance = 0;
 	m_editorProfiles.clear();
 	m_editorPlugins.clear();
 	m_controllerEditor = 0;
@@ -153,11 +155,6 @@ void SceneEditorContext::addEditorPlugin(ISceneEditorPlugin* editorPlugin)
 void SceneEditorContext::setControllerEditor(ISceneControllerEditor* controllerEditor)
 {
 	m_controllerEditor = controllerEditor;
-}
-
-void SceneEditorContext::setInstance(db::Instance* instance)
-{
-	m_instance = instance;
 }
 
 void SceneEditorContext::setModifier(IModifier* modifier)

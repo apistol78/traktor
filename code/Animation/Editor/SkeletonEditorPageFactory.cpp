@@ -1,6 +1,6 @@
-#include "Animation/Editor/SkeletonEditorPageFactory.h"
-#include "Animation/Editor/SkeletonEditorPage.h"
 #include "Animation/Skeleton.h"
+#include "Animation/Editor/SkeletonEditorPage.h"
+#include "Animation/Editor/SkeletonEditorPageFactory.h"
 #include "Ui/Command.h"
 
 namespace traktor
@@ -17,9 +17,9 @@ const TypeInfoSet SkeletonEditorPageFactory::getEditableTypes() const
 	return typeSet;
 }
 
-Ref< editor::IEditorPage > SkeletonEditorPageFactory::createEditorPage(editor::IEditor* editor) const
+Ref< editor::IEditorPage > SkeletonEditorPageFactory::createEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document) const
 {
-	return new SkeletonEditorPage(editor);
+	return new SkeletonEditorPage(editor, site, document);
 }
 
 void SkeletonEditorPageFactory::getCommands(std::list< ui::Command >& outCommands) const

@@ -7,9 +7,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_EDITOR_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -34,8 +34,6 @@ class Command;
 	namespace editor
 	{
 
-class IEditorPageSite;
-
 /*! \brief Editor page base.
  * \ingroup Editor
  *
@@ -51,15 +49,13 @@ public:
 	 *
 	 * First method called after specialized editor page
 	 * instantiated.
-	 * A "site" object is passed to let editor page
-	 * communicate with editor independent of other
-	 * pages.
+	 * It's main purpose is to let the editor page
+	 * create it's user interface.
 	 *
 	 * \param parent UI parent widget.
-	 * \param site Editor site interface.
 	 * \return True if page created successfully.
 	 */
-	virtual bool create(ui::Container* parent, IEditorPageSite* site) = 0;
+	virtual bool create(ui::Container* parent) = 0;
 
 	/*! \brief Destroy editor page.
 	 *
@@ -79,35 +75,6 @@ public:
 	 * Called when editor page is deactivated.
 	 */
 	virtual void deactivate() = 0;
-
-	/*! \brief Set data object.
-	 *
-	 * Set working data object. The data object is the
-	 * object which the editor page is modifying.
-	 * This method might be called frequently with different instances but
-	 * which reference the same content.
-	 *
-	 * \brief instance Database instance.
-	 * \brief data Data object.
-	 */
-	virtual	bool setDataObject(db::Instance* instance, Object* data) = 0;
-
-	/*! \brief Return database instance.
-	 *
-	 * Return current associated data object instance.
-	 *
-	 * \return Database instance.
-	 */
-	virtual Ref< db::Instance > getDataInstance() = 0;
-
-	/*! \brief Return data object.
-	 *
-	 * Return current associated data object.
-	 * Can be different instance than passed by setDataObject.
-	 *
-	 * \return Data object.
-	 */
-	virtual Ref< Object > getDataObject() = 0;
 
 	/*! \brief Drop instance from database view.
 	 *
@@ -130,6 +97,9 @@ public:
 	 *
 	 * "Editor.SettingsChanged"
 	 *  Issued when Editor settings has changed.
+	 *
+	 * "Editor.ShouldSave"
+	 *  Issued when Editor is about to save page's document.
 	 *
 	 * Commands are also propagated from shortcuts
 	 * or toolbar clicks.

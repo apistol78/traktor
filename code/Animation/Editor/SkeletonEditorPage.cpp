@@ -5,9 +5,9 @@
 #include "Animation/SkeletonUtils.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/Settings.h"
+#include "Editor/IDocument.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPageSite.h"
-#include "Editor/UndoStack.h"
 #include "Database/Database.h"
 #include "Resource/ResourceManager.h"
 #include "Ui/Bitmap.h"
@@ -57,8 +57,10 @@ int findIndexOfBone(const Skeleton* skeleton, const Bone* bone)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.SkeletonEditorPage", SkeletonEditorPage, editor::IEditorPage)
 
-SkeletonEditorPage::SkeletonEditorPage(editor::IEditor* editor)
+SkeletonEditorPage::SkeletonEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document)
 :	m_editor(editor)
+,	m_site(site)
+,	m_document(document)
 ,	m_selectedBone(-1)
 ,	m_cameraHead(0.0f)
 ,	m_cameraY(0.0f)
@@ -69,14 +71,15 @@ SkeletonEditorPage::SkeletonEditorPage(editor::IEditor* editor)
 {
 }
 
-bool SkeletonEditorPage::create(ui::Container* parent, editor::IEditorPageSite* site)
+bool SkeletonEditorPage::create(ui::Container* parent)
 {
 	render::IRenderSystem* renderSystem = m_editor->getStoreObject< render::IRenderSystem >(L"RenderSystem");
 	if (!renderSystem)
 		return false;
 
-	m_site = site;
-	T_ASSERT (site);
+	m_skeleton = m_document->getObject< Skeleton >(0);
+	if (!m_skeleton)
+		return false;
 
 	m_renderWidget = new ui::Widget();
 	m_renderWidget->create(parent, ui::WsNone);
@@ -130,40 +133,10 @@ bool SkeletonEditorPage::create(ui::Container* parent, editor::IEditorPageSite* 
 	if (!m_primitiveRenderer->create(m_resourceManager, renderSystem))
 		return false;
 
-	m_renderWidget->startTimer(30);
-	m_undoStack = new editor::UndoStack();
-
-	return true;
-}
-
-void SkeletonEditorPage::destroy()
-{
-	m_site->destroyAdditionalPanel(m_skeletonPanel);
-	
-	m_renderView->close();
-
-	// Destroy widgets.h
-	m_boneMenu->destroy();
-	m_skeletonPanel->destroy();
-	m_renderWidget->destroy();
-}
-
-void SkeletonEditorPage::activate()
-{
-}
-
-void SkeletonEditorPage::deactivate()
-{
-}
-
-bool SkeletonEditorPage::setDataObject(db::Instance* instance, Object* data)
-{
-	m_skeletonInstance = instance;
-	m_skeleton = checked_type_cast< Skeleton* >(data);
 	m_site->setPropertyObject(m_skeleton);
 
 	Aabb3 boundingBox = calculateBoundingBox(m_skeleton);
-	
+
 	int majorAxis = majorAxis3(boundingBox.getExtent());
 	float majorExtent = boundingBox.getExtent()[majorAxis];
 
@@ -176,17 +149,28 @@ bool SkeletonEditorPage::setDataObject(db::Instance* instance, Object* data)
 	m_cameraBoneScale = majorExtent / 100.0f;
 
 	createSkeletonTreeNodes();
+
+	m_renderWidget->startTimer(30);
 	return true;
 }
 
-Ref< db::Instance > SkeletonEditorPage::getDataInstance()
+void SkeletonEditorPage::destroy()
 {
-	return m_skeletonInstance;
+	m_site->destroyAdditionalPanel(m_skeletonPanel);
+	
+	m_renderView->close();
+
+	m_boneMenu->destroy();
+	m_skeletonPanel->destroy();
+	m_renderWidget->destroy();
 }
 
-Ref< Object > SkeletonEditorPage::getDataObject()
+void SkeletonEditorPage::activate()
 {
-	return m_skeleton;
+}
+
+void SkeletonEditorPage::deactivate()
+{
 }
 
 bool SkeletonEditorPage::dropInstance(db::Instance* instance, const ui::Point& position)
@@ -203,10 +187,11 @@ bool SkeletonEditorPage::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"Editor.Undo")
 	{
-		if (!m_undoStack->canUndo())
+		if (!m_document->undo())
 			return false;
 
-		m_skeleton = checked_type_cast< Skeleton* >(m_undoStack->undo(m_skeleton));
+		m_skeleton = m_document->getObject< Skeleton >(0);
+		T_ASSERT (m_skeleton);
 
 		createSkeletonTreeNodes();
 
@@ -215,10 +200,11 @@ bool SkeletonEditorPage::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"Editor.Redo")
 	{
-		if (!m_undoStack->canRedo())
+		if (!m_document->redo())
 			return false;
 
-		m_skeleton = checked_type_cast< Skeleton* >(m_undoStack->redo(m_skeleton));
+		m_skeleton = m_document->getObject< Skeleton >(0);
+		T_ASSERT (m_skeleton);
 
 		createSkeletonTreeNodes();
 
@@ -231,7 +217,7 @@ bool SkeletonEditorPage::handleCommand(const ui::Command& command)
 		if (!selectedTreeItem)
 			return true;
 
-		m_undoStack->push(m_skeleton);
+		m_document->push();
 
 		Ref< Bone > bone = selectedTreeItem->getData< Bone >(L"BONE");
 
@@ -257,7 +243,7 @@ bool SkeletonEditorPage::handleCommand(const ui::Command& command)
 		if (!selectedTreeItem)
 			return true;
 
-		m_undoStack->push(m_skeleton);
+		m_document->push();
 
 		Ref< Bone > parentBone = selectedTreeItem->getData< Bone >(L"BONE");
 
@@ -316,7 +302,7 @@ void SkeletonEditorPage::eventMouseDown(ui::Event* event)
 	if (!m_skeleton)
 		return;
 
-	m_undoStack->push(m_skeleton);
+	m_document->push();
 
 	m_lastMousePosition = checked_type_cast< ui::MouseEvent* >(event)->getPosition();
 	m_renderWidget->setCapture();

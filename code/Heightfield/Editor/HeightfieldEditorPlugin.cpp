@@ -2,17 +2,12 @@
 #include "Core/Settings/Settings.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
+#include "Editor/IDocument.h"
 #include "Editor/IEditor.h"
+#include "Heightfield/Editor/HeightfieldAsset.h"
 #include "Heightfield/Editor/HeightfieldCompositor.h"
 #include "Heightfield/Editor/HeightfieldEditorPlugin.h"
 #include "Scene/Editor/SceneEditorContext.h"
-#include "Ui/Bitmap.h"
-#include "Ui/Custom/ToolBar/ToolBar.h"
-#include "Ui/Custom/ToolBar/ToolBarButton.h"
-#include "Ui/Custom/ToolBar/ToolBarSeparator.h"
-
-// Resources
-#include "Resources/Heightfield.h"
 
 namespace traktor
 {
@@ -28,19 +23,15 @@ HeightfieldEditorPlugin::HeightfieldEditorPlugin(scene::SceneEditorContext* cont
 
 bool HeightfieldEditorPlugin::create(ui::Widget* parent, ui::custom::ToolBar* toolBar)
 {
-	uint32_t base = toolBar->addImage(ui::Bitmap::load(c_ResourceHeightfield, sizeof(c_ResourceHeightfield), L"png"), 6);
-	toolBar->addItem(new ui::custom::ToolBarSeparator());
-	toolBar->addItem(new ui::custom::ToolBarButton(L"Heightfield save", ui::Command(L"Heightfield.Save"), base));
 	return true;
 }
 
 bool HeightfieldEditorPlugin::handleCommand(const ui::Command& command)
 {
-	if (command == L"Heightfield.Save")
-	{
-		saveCompositors();
-		return true;
-	}
+	// Editor is about to save the document; need to write
+	// height-field into instance's data first.
+	if (command == L"Editor.ShouldSave")
+		writeInstanceData();
 	return false;
 }
 
@@ -50,31 +41,50 @@ HeightfieldCompositor* HeightfieldEditorPlugin::getCompositor(const Guid& assetG
 	if (i != m_compositors.end())
 		return i->second;
 
-	std::wstring assetPath = m_context->getEditor()->getSettings()->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
-
 	db::Database* sourceDatabase = m_context->getSourceDatabase();
 	if (!sourceDatabase)
 		return 0;
+
+	std::wstring assetPath = m_context->getEditor()->getSettings()->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
 
 	Ref< db::Instance > assetInstance = sourceDatabase->getInstance(assetGuid);
 	if (!assetInstance)
 		return 0;
 
-	Ref< HeightfieldCompositor > compositor = HeightfieldCompositor::createFromInstance(assetInstance, assetPath);
-	if (!compositor)
+	if (!assetInstance->checkout())
 		return 0;
+
+	Ref< HeightfieldAsset > asset = assetInstance->getObject< HeightfieldAsset >();
+	if (!asset)
+	{
+		assetInstance->revert();
+		return 0;
+	}
+
+	Ref< HeightfieldCompositor > compositor = HeightfieldCompositor::createFromAsset(asset, assetPath);
+	if (!compositor)
+	{
+		assetInstance->revert();
+		return 0;
+	}
+
+	if (!compositor->readInstanceData(assetInstance))
+	{
+		assetInstance->revert();
+		return 0;
+	}
+
+	m_context->getDocument()->editInstance(assetInstance, asset);
 
 	m_compositors.insert(std::make_pair(assetGuid, compositor));
 	return compositor;
 }
 
-bool HeightfieldEditorPlugin::saveCompositors()
+bool HeightfieldEditorPlugin::writeInstanceData()
 {
 	db::Database* sourceDatabase = m_context->getSourceDatabase();
 	if (!sourceDatabase)
 		return false;
-
-	std::vector< Guid > savedAssets;
 
 	for (std::map< Guid, Ref< HeightfieldCompositor > >::const_iterator i = m_compositors.begin(); i != m_compositors.end(); ++i)
 	{
@@ -82,13 +92,9 @@ bool HeightfieldEditorPlugin::saveCompositors()
 		if (!assetInstance)
 			return false;
 
-		if (!i->second->saveInstanceLayers(assetInstance))
+		if (!i->second->writeInstanceData(assetInstance))
 			return false;
-
-		savedAssets.push_back(i->first);
 	}
-
-	m_context->getEditor()->buildAssets(savedAssets, true);
 
 	return true;
 }

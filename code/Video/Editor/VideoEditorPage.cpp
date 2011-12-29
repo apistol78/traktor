@@ -2,6 +2,7 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyString.h"
 #include "Core/Settings/Settings.h"
+#include "Editor/IDocument.h"
 #include "Editor/IEditor.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
@@ -35,18 +36,37 @@ const Guid c_guidShaderMovie(L"{71682019-EB26-234C-8B48-0638F50DA662}");
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.video.VideoEditorPage", VideoEditorPage, editor::IEditorPage)
 
-VideoEditorPage::VideoEditorPage(editor::IEditor* editor)
+VideoEditorPage::VideoEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document)
 :	m_editor(editor)
+,	m_site(site)
+,	m_document(document)
 ,	m_shader(c_guidShaderMovie)
 {
 }
 
-bool VideoEditorPage::create(ui::Container* parent, editor::IEditorPageSite* site)
+bool VideoEditorPage::create(ui::Container* parent)
 {
+	Ref< VideoAsset > asset = m_document->getObject< VideoAsset >(0);
+	T_ASSERT (asset);
+
 	render::IRenderSystem* renderSystem = m_editor->getStoreObject< render::IRenderSystem >(L"RenderSystem");
 	if (!renderSystem)
 		return false;
 
+	// Open file stream to source video.
+	std::wstring assetPath = m_editor->getSettings()->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
+	Path fileName = FileSystem::getInstance().getAbsolutePath(assetPath, asset->getFileName());
+
+	Ref< IStream > stream = FileSystem::getInstance().open(fileName, File::FmRead);
+	if (!stream)
+		return false;
+
+	// Create video decoder.
+	Ref< VideoDecoderTheora > decoder = new VideoDecoderTheora();
+	if (!decoder->create(stream))
+		return false;
+
+	// Create preview render widget.
 	m_renderWidget = new ui::Widget();
 	if (!m_renderWidget->create(parent, ui::WsClientBorder))
 		return false;
@@ -76,6 +96,14 @@ bool VideoEditorPage::create(ui::Container* parent, editor::IEditorPageSite* sit
 
 	if (!m_resourceManager->bind(m_shader))
 		return false;
+
+	// Create video player.
+	Ref< Video > video = new Video();
+	if (!video->create(renderSystem, decoder))
+		return false;
+
+	m_video = video;
+	m_timer.start();
 
 	m_idleHandler = ui::createMethodHandler(this, &VideoEditorPage::eventIdle);
 	ui::Application::getInstance()->addEventHandler(ui::EiIdle, m_idleHandler);
@@ -108,45 +136,6 @@ void VideoEditorPage::activate()
 
 void VideoEditorPage::deactivate()
 {
-}
-
-bool VideoEditorPage::setDataObject(db::Instance* instance, Object* data)
-{
-	render::IRenderSystem* renderSystem = m_editor->getStoreObject< render::IRenderSystem >(L"RenderSystem");
-	T_ASSERT (renderSystem);
-
-	Ref< VideoAsset > asset = checked_type_cast< VideoAsset*, false >(data);
-
-	std::wstring assetPath = m_editor->getSettings()->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
-	Path fileName = FileSystem::getInstance().getAbsolutePath(assetPath, asset->getFileName());
-	Ref< IStream > stream = FileSystem::getInstance().open(fileName, File::FmRead);
-	if (!stream)
-		return false;
-
-	Ref< VideoDecoderTheora > decoder = new VideoDecoderTheora();
-	if (!decoder->create(stream))
-		return false;
-
-	Ref< Video > video = new Video();
-	if (!video->create(renderSystem, decoder))
-		return false;
-	
-	m_instance = instance;
-	m_asset = asset;
-	m_video = video;
-	m_timer.start();
-
-	return true;
-}
-
-Ref< db::Instance > VideoEditorPage::getDataInstance()
-{
-	return m_instance;
-}
-
-Ref< Object > VideoEditorPage::getDataObject()
-{
-	return m_asset;
 }
 
 bool VideoEditorPage::dropInstance(db::Instance* instance, const ui::Point& position)
@@ -196,8 +185,12 @@ void VideoEditorPage::eventPaint(ui::Event* event)
 			render::ISimpleTexture* texture = m_video->getTexture();
 			if (texture)
 			{
+				float width = float(texture->getWidth());
+				float height = float(texture->getHeight());
+
 				m_shader->setTextureParameter(L"Texture", texture);
-				m_shader->setVectorParameter(L"TextureSize", Vector4(texture->getWidth(), texture->getHeight(), 0.0f, 0.0f));
+				m_shader->setVectorParameter(L"TextureSize", Vector4(width, height, 0.0f, 0.0f));
+
 				m_screenRenderer->draw(m_renderView, m_shader);
 			}
 		}

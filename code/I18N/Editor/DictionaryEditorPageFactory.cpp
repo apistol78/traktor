@@ -1,6 +1,6 @@
-#include "I18N/Editor/DictionaryEditorPageFactory.h"
-#include "I18N/Editor/DictionaryEditorPage.h"
 #include "I18N/Dictionary.h"
+#include "I18N/Editor/DictionaryEditorPage.h"
+#include "I18N/Editor/DictionaryEditorPageFactory.h"
 
 namespace traktor
 {
@@ -16,9 +16,9 @@ const TypeInfoSet DictionaryEditorPageFactory::getEditableTypes() const
 	return typeSet;
 }
 
-Ref< editor::IEditorPage > DictionaryEditorPageFactory::createEditorPage(editor::IEditor* editor) const
+Ref< editor::IEditorPage > DictionaryEditorPageFactory::createEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document) const
 {
-	return new DictionaryEditorPage(editor);
+	return new DictionaryEditorPage(editor, site, document);
 }
 
 void DictionaryEditorPageFactory::getCommands(std::list< ui::Command >& outCommands) const

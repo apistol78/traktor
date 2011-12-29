@@ -23,7 +23,7 @@ class T_DLLCLASS ShaderGraphEditorPageFactory : public editor::IEditorPageFactor
 public:
 	virtual const TypeInfoSet getEditableTypes() const;
 
-	virtual Ref< editor::IEditorPage > createEditorPage(editor::IEditor* editor) const;
+	virtual Ref< editor::IEditorPage > createEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document) const;
 
 	virtual void getCommands(std::list< ui::Command >& outCommands) const;
 };

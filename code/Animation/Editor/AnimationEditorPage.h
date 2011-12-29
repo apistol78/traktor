@@ -9,9 +9,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_ANIMATION_EDITOR_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -19,8 +19,9 @@ namespace traktor
 	namespace editor
 	{
 
+class IDocument;
 class IEditor;
-class UndoStack;
+class IEditorPageSite;
 
 	}
 
@@ -75,21 +76,15 @@ class T_DLLCLASS AnimationEditorPage : public editor::IEditorPage
 	T_RTTI_CLASS;
 
 public:
-	AnimationEditorPage(editor::IEditor* editor);
+	AnimationEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document);
 
-	virtual bool create(ui::Container* parent, editor::IEditorPageSite* site);
+	virtual bool create(ui::Container* parent);
 
 	virtual void destroy();
 
 	virtual void activate();
 
 	virtual void deactivate();
-
-	virtual	bool setDataObject(db::Instance* instance, Object* data);
-
-	virtual Ref< db::Instance > getDataInstance();
-
-	virtual Ref< Object > getDataObject();
 
 	virtual bool dropInstance(db::Instance* instance, const ui::Point& position);
 
@@ -100,7 +95,7 @@ public:
 private:
 	editor::IEditor* m_editor;
 	Ref< editor::IEditorPageSite > m_site;
-	Ref< db::Instance > m_animationInstance;
+	Ref< editor::IDocument > m_document;
 	Ref< Animation > m_animation;
 	Ref< Skeleton > m_skeleton;
 	Ref< ui::Widget > m_renderWidgets[4];
@@ -110,7 +105,6 @@ private:
 	Ref< ui::PopupMenu > m_menuPopup;
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
 	Ref< resource::ResourceManager > m_resourceManager;
-	Ref< editor::UndoStack > m_undoStack;
 	Color4ub m_colorClear;
 	Color4ub m_colorGrid;
 	Color4ub m_colorBone;

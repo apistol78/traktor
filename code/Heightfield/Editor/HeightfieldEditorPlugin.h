@@ -33,11 +33,11 @@ public:
 
 	HeightfieldCompositor* getCompositor(const Guid& assetGuid);
 
-	bool saveCompositors();
-
 private:
 	scene::SceneEditorContext* m_context;
 	std::map< Guid, Ref< HeightfieldCompositor > > m_compositors;
+
+	bool writeInstanceData();
 };
 
 	}

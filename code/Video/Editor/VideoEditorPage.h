@@ -18,7 +18,9 @@ namespace traktor
 	namespace editor
 	{
 
+class IDocument;
 class IEditor;
+class IEditorPageSite;
 
 	}
 
@@ -61,21 +63,15 @@ class T_DLLCLASS VideoEditorPage : public editor::IEditorPage
 	T_RTTI_CLASS;
 
 public:
-	VideoEditorPage(editor::IEditor* editor);
+	VideoEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document);
 
-	virtual bool create(ui::Container* parent, editor::IEditorPageSite* site);
+	virtual bool create(ui::Container* parent);
 
 	virtual void destroy();
 
 	virtual void activate();
 
 	virtual void deactivate();
-
-	virtual	bool setDataObject(db::Instance* instance, Object* data);
-
-	virtual Ref< db::Instance > getDataInstance();
-
-	virtual Ref< Object > getDataObject();
 
 	virtual bool dropInstance(db::Instance* instance, const ui::Point& position);
 
@@ -85,14 +81,14 @@ public:
 
 private:
 	editor::IEditor* m_editor;
+	Ref< editor::IEditorPageSite > m_site;
+	Ref< editor::IDocument > m_document;
 	Ref< ui::Widget > m_renderWidget;
 	Ref< ui::EventHandler > m_idleHandler;
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::IRenderView > m_renderView;
 	Ref< render::ScreenRenderer > m_screenRenderer;
 	resource::Proxy< render::Shader > m_shader;
-	Ref< db::Instance > m_instance;
-	Ref< VideoAsset > m_asset;
 	Ref< Video > m_video;
 	Timer m_timer;
 
