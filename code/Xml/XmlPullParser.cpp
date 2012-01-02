@@ -280,10 +280,10 @@ void XmlPullParserImpl::pushCharacterData()
 	const wchar_t* ss = &m_cdata[0];
 	const wchar_t* es = &m_cdata[len - 1];
 
-	while ((*ss == ' ' || *ss == '\t' || *ss == 10) && ss <= es)
+	while ((*ss == ' ' || *ss == '\t' || *ss == 10) && ss < es)
 		++ss;
 
-	while ((*es == ' ' || *es == '\t' || *es == 10) && ss <= es)
+	while ((*es == ' ' || *es == '\t' || *es == 10) && ss < es)
 		--es;
 
 	if (ss <= es)
