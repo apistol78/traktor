@@ -184,21 +184,6 @@ Ref< ProgramOpenGL > ProgramOpenGL::create(ContextOpenGL* resourceContext, const
 			return 0;
 		}
 	}
-	
-#if defined(_DEBUG)
-	T_OGL_SAFE(glValidateProgramARB(programObject));
-	T_OGL_SAFE(glGetObjectParameterivARB(programObject, GL_OBJECT_VALIDATE_STATUS_ARB, &status));
-	if (status != GL_TRUE)
-	{
-		T_OGL_SAFE(glGetInfoLogARB(programObject, sizeof(errorBuf), &errorBufLen, errorBuf));
-		if (errorBufLen > 0)
-		{
-			log::error << L"GLSL program validate failed :" << Endl;
-			log::error << mbstows(errorBuf) << Endl;
-			return 0;
-		}
-	}
-#endif
 
 	Ref< ProgramOpenGL > program = new ProgramOpenGL(resourceContext, programObject, resource);
 	s_programCache.insert(std::make_pair(hash, program));
@@ -395,6 +380,26 @@ bool ProgramOpenGL::activate(float targetSize[2])
 		m_textureDirty = false;
 	}
 
+	// Check if program and state is valid.
+ #if defined(_DEBUG)
+	GLint status;
+	T_OGL_SAFE(glValidateProgramARB(m_program));
+	T_OGL_SAFE(glGetObjectParameterivARB(m_program, GL_OBJECT_VALIDATE_STATUS_ARB, &status));
+	if (status != GL_TRUE)
+	{
+		GLchar errorBuf[512];
+		GLint errorBufLen;
+		
+		T_OGL_SAFE(glGetInfoLogARB(m_program, sizeof(errorBuf), &errorBufLen, errorBuf));
+		if (errorBufLen > 0)
+		{
+			log::error << L"GLSL program validate failed :" << Endl;
+			log::error << mbstows(errorBuf) << Endl;
+			return false;
+		}
+	}
+ #endif
+
 	ms_activeProgram = this;
 	return true;
 }
@@ -464,9 +469,21 @@ ProgramOpenGL::ProgramOpenGL(ContextOpenGL* resourceContext, GLhandleARB program
 		if (p != uniformNameW.npos)
 			uniformNameW = uniformNameW.substr(0, p);
 
-		if (uniformType != GL_SAMPLER_2D_ARB)
+		if (uniformType == GL_FLOAT || uniformType == GL_FLOAT_VEC4_ARB || uniformType == GL_FLOAT_MAT4_ARB)
 		{
 			handle_t handle = getParameterHandle(uniformNameW);
+			
+			SmallMap< handle_t, uint32_t >::iterator k = m_parameterMap.find(handle);
+			if (k != m_parameterMap.end())
+			{
+				const Uniform& uniform = m_uniforms[k->second];
+				if (uniform.type != uniformType)
+				{
+					log::error << L"Parameter \"" << uniformNameW << L"\" already defined with another type" << Endl;
+					continue;
+				}
+			}
+			
 			if (m_parameterMap.find(handle) != m_parameterMap.end())
 				continue;
 
@@ -486,7 +503,6 @@ ProgramOpenGL::ProgramOpenGL(ContextOpenGL* resourceContext, GLhandleARB program
 				break;
 
 			default:
-				log::error << L"Invalid uniform type " << uint32_t(uniformType) << Endl;
 				break;
 			}
 

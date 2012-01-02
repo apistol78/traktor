@@ -36,10 +36,12 @@ bool getMousePosition(float& outX, float& outY)
 		return false;
     
 	NSPoint mouseLocationScreen = [NSEvent mouseLocation];
-	NSPoint mouseLocation = [keyWindow convertScreenToBase: mouseLocationScreen];
+	
+	NSRect frameRect = [keyWindow frame];
+	NSRect contentRect = [keyWindow contentRectForFrameRect: frameRect];
     
-    outX = mouseLocationScreen.x;
-    outY = mouseLocationScreen.y;
+    outX = mouseLocationScreen.x - contentRect.origin.x;
+    outY = contentRect.origin.y + contentRect.size.height - mouseLocationScreen.y;
     
     return true;
 }

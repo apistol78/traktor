@@ -57,8 +57,9 @@ public:
 private:
 	Ref< IContext > m_resourceContext;
 	GLuint m_textureName;
-	int m_side;
-	int m_pixelSize;
+	int32_t m_side;
+	int32_t m_pixelSize;
+	uint32_t m_mipCount;
 	GLint m_components;
 	GLenum m_format;
 	GLenum m_type;
