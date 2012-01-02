@@ -860,8 +860,8 @@ void emitSampler(GlslContext& cx, Sampler* node)
 		}
 		else
 		{
-			rs.samplerStates[stage].minFilter = GL_NEAREST;
-			rs.samplerStates[stage].magFilter = GL_NEAREST;
+			rs.samplerStates[stage].minFilter = c_glFilter[node->getMinFilter()];
+			rs.samplerStates[stage].magFilter = c_glFilter[node->getMagFilter()];
 			rs.samplerStates[stage].wrapS = GL_REPEAT;
 			rs.samplerStates[stage].wrapT = GL_REPEAT;
 		}

@@ -58,6 +58,7 @@ CubeTextureOpenGL::CubeTextureOpenGL(IContext* resourceContext)
 ,	m_textureName(0)
 ,	m_side(0)
 ,	m_pixelSize(0)
+,	m_mipCount(0)
 ,	m_components(0)
 ,	m_format(0)
 ,	m_type(0)
@@ -117,6 +118,7 @@ bool CubeTextureOpenGL::create(const CubeTextureCreateDesc& desc)
 		}
 	}
 
+	m_mipCount = desc.mipCount;
 	return true;
 }
 
@@ -162,8 +164,26 @@ void CubeTextureOpenGL::unlock(int side, int level)
 
 void CubeTextureOpenGL::bind(GLuint unit, const SamplerState& samplerState, GLint locationTexture)
 {
-	T_FATAL_ERROR;
-}
+	T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + unit));
+	T_OGL_SAFE(glBindTexture(GL_TEXTURE_CUBE_MAP, m_textureName));
+	
+	GLenum minFilter = GL_NEAREST;
+	if (m_mipCount > 1)
+		minFilter = samplerState.minFilter;
+	else
+	{
+		if (samplerState.minFilter != GL_NEAREST)
+			minFilter = GL_LINEAR;
+		else
+			minFilter = GL_NEAREST;
+	}
+	
+	T_OGL_SAFE(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, minFilter));
+	T_OGL_SAFE(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, samplerState.magFilter));
+	T_OGL_SAFE(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, samplerState.wrapS));
+	T_OGL_SAFE(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, samplerState.wrapT));
+	
+	T_OGL_SAFE(glUniform1iARB(locationTexture, unit));}
 
 	}
 }

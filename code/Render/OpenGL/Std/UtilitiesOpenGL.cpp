@@ -1,3 +1,4 @@
+#include "Core/Log/Log.h"
 #include "Render/OpenGL/Platform.h"
 #include "Render/OpenGL/Std/UtilitiesOpenGL.h"
 
@@ -108,6 +109,7 @@ bool convertTextureFormat(TextureFormat textureFormat, int& outPixelSize, GLint&
 #endif
 
 	default:
+		log::debug << L"Unsupported texture format used" << Endl;
 		return false;
 	}
 
