@@ -195,7 +195,7 @@ Ref< ProgramOpenGLES2 > ProgramOpenGLES2::create(ContextOpenGLES2* resourceConte
 		{
 			log::error << L"GLSL program link failed :" << Endl;
 			log::error << mbstows(errorBuf) << Endl;
-			return false;
+			return 0;
 		}
 	}
 

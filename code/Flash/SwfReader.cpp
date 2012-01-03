@@ -102,8 +102,8 @@ SwfGradient* SwfReader::readGradient(int shapeType)
 
 	m_bs->alignByte();
 
-	uint32_t spreadMode = m_bs->readUnsigned(2);
-	uint32_t interpolationMode = m_bs->readUnsigned(2);
+	/*uint32_t spreadMode = */m_bs->readUnsigned(2);
+	/*uint32_t interpolationMode = */m_bs->readUnsigned(2);
 
 	gradient->numGradientRecords = m_bs->readUnsigned(4);
 	gradient->gradientRecords = m_pool->allocArray< SwfGradientRecord >(gradient->numGradientRecords);
@@ -120,8 +120,8 @@ SwfGradient* SwfReader::readFocalGradient(int shapeType)
 
 	m_bs->alignByte();
 
-	uint32_t spreadMode = m_bs->readUnsigned(2);
-	uint32_t interpolationMode = m_bs->readUnsigned(2);
+	/*uint32_t spreadMode = */m_bs->readUnsigned(2);
+	/*uint32_t interpolationMode = */m_bs->readUnsigned(2);
 
 	gradient->numGradientRecords = m_bs->readUnsigned(4);
 	gradient->gradientRecords = m_pool->allocArray< SwfGradientRecord >(gradient->numGradientRecords);
@@ -182,23 +182,23 @@ SwfLineStyle* SwfReader::readLineStyle(int shapeType)
 		lineStyle->color = readRgba();
 	else if (shapeType == 4)
 	{
-		uint16_t startCapStyle = m_bs->readUnsigned(2);
+		/*uint16_t startCapStyle = */m_bs->readUnsigned(2);
 		uint16_t joinStyle = m_bs->readUnsigned(2);
 		bool hasFillFlag = m_bs->readBit();
-		bool noHScaleFlag = m_bs->readBit();
-		bool noVScaleFlag = m_bs->readBit();
-		bool pixelHintingFlag = m_bs->readBit();
+		/*bool noHScaleFlag = */m_bs->readBit();
+		/*bool noVScaleFlag = */m_bs->readBit();
+		/*bool pixelHintingFlag = */m_bs->readBit();
 
 		m_bs->skip(5);
 
-		bool noClose = m_bs->readBit();
-		uint16_t endCapStyle = m_bs->readUnsigned(2);
+		/*bool noClose = */m_bs->readBit();
+		/*uint16_t endCapStyle = */m_bs->readUnsigned(2);
 
 		m_bs->alignByte();
 
 		if (joinStyle == 2)
 		{
-			uint16_t miterLimitFactor = m_bs->readUInt16();
+			/*uint16_t miterLimitFactor = */m_bs->readUInt16();
 		}
 
 		if (!hasFillFlag)
@@ -329,18 +329,18 @@ bool SwfReader::readMorphLineStyle(SwfLineStyle*& outStartLineStyle, SwfLineStyl
 
 	if (shapeType == 2)
 	{
-		uint8_t startCapStyle = m_bs->readUnsigned(2);
+		/*uint8_t startCapStyle = */m_bs->readUnsigned(2);
 		uint8_t joinStyle = m_bs->readUnsigned(2);
 		hasFillFlag = m_bs->readBit();
-		bool hasHScaleFlag = m_bs->readBit();
-		bool hasVScaleFlag = m_bs->readBit();
-		bool pixelHintingFlag = m_bs->readBit();
+		/*bool hasHScaleFlag = */m_bs->readBit();
+		/*bool hasVScaleFlag = */m_bs->readBit();
+		/*bool pixelHintingFlag = */m_bs->readBit();
 		m_bs->skip(5);
-		bool noClose = m_bs->readBit();
-		uint8_t endCapStyle = m_bs->readUnsigned(2);
+		/*bool noClose = */m_bs->readBit();
+		/*uint8_t endCapStyle = */m_bs->readUnsigned(2);
 
 		if (joinStyle == 2)
-			uint16_t miterLimitFactor = m_bs->readUInt16();
+			/*uint16_t miterLimitFactor = */m_bs->readUInt16();
 	}
 
 	if (!hasFillFlag)
