@@ -519,8 +519,6 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 		{ (color.alpha * cxform.alpha[0]) / 255.0f + cxform.alpha[1], 0.0f }
 	};
 
-	float cachePixelDx = 1.0f / c_cacheGlyphDimX;
-	float cachePixelDy = 1.0f / c_cacheGlyphDimY;
 	int32_t column = index & (c_cacheGlyphCountX - 1);
 	int32_t row = index / c_cacheGlyphCountX;
 

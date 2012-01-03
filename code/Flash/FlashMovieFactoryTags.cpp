@@ -57,13 +57,16 @@ bool FlashTagDefineShape::read(SwfReader* swf, ReadContext& context)
 
 	if (m_shapeType == 4)
 	{
-		SwfRect edgeBounds = swf->readRect();
+		/*SwfRect edgeBounds = */swf->readRect();
 
 		bs.skip(5);
 
+		/*
 		bool useFillWindingRule = bs.readBit();
 		bool usesNonScalingStrokes = bs.readBit();
 		bool usesScalingStrokes = bs.readBit();
+		*/
+		bs.skip(3);
 	}
 
 	SwfShape* shape;
@@ -93,19 +96,19 @@ bool FlashTagDefineMorphShape::read(SwfReader* swf, ReadContext& context)
 
 	uint16_t shapeId = swf->getBitReader().readUInt16();
 	SwfRect startBounds = swf->readRect();
-	SwfRect endBounds = swf->readRect();
+	/*SwfRect endBounds = */swf->readRect();
 
 	if (m_shapeType == 2)
 	{
-		SwfRect startEdgeBounds = swf->readRect();
-		SwfRect endEdgeBounds = swf->readRect();
+		/*SwfRect startEdgeBounds = */swf->readRect();
+		/*SwfRect endEdgeBounds = */swf->readRect();
 
 		bs.skip(6);
-		bool nonScalingStrokes = bs.readBit();
-		bool scalingStrokes = bs.readBit();
+		/*bool nonScalingStrokes = */bs.readBit();
+		/*bool scalingStrokes = */bs.readBit();
 	}
 
-	uint32_t offsetMorph = bs.readUInt32();
+	/*uint32_t offsetMorph = */bs.readUInt32();
 
 	SwfStyles *startStyles, *endStyles;
 	if (!swf->readMorphStyles(startStyles, endStyles, m_shapeType))
@@ -170,14 +173,24 @@ bool FlashTagDefineFont::read(SwfReader* swf, ReadContext& context)
 	else if (m_fontType == 2 || m_fontType == 3)
 	{
 		bool hasLayout = bs.readBit();
+		
+		/*
 		bool shiftJIS = bs.readBit();
 		bool smallText = bs.readBit();		// SWF 7.0+
 		bool ansi = bs.readBit();
+		*/
+		bs.skip(3);
+		
 		bool wideOffsets = bs.readBit();
 		bool wideCodes = bs.readBit();
+		
+		/*
 		bool italic = bs.readBit();
 		bool bold = bs.readBit();
-		uint8_t languageCode = bs.readUInt8();	// SWF 6.0+
+		*/
+		bs.skip(2);
+		
+		/*uint8_t languageCode = */bs.readUInt8();	// SWF 6.0+
 		std::string name = swf->readStringU8();
 		
 		uint16_t glyphCount = bs.readUInt16();
@@ -308,9 +321,14 @@ bool FlashTagDefineEditText::read(SwfReader* swf, ReadContext& context)
 
 	bool hasText = bs.readBit();
 	bool wordWrap = bs.readBit();
+	
+	/*
 	bool multiLine = bs.readBit();
 	bool password = bs.readBit();
 	bool readonly = bs.readBit();
+	*/
+	bs.skip(3);
+	
 	bool hasColor = bs.readBit();
 	bool hasMaxLength = bs.readBit();
 	bool hasFont = bs.readBit();
@@ -323,11 +341,20 @@ bool FlashTagDefineEditText::read(SwfReader* swf, ReadContext& context)
 	else
 		bs.skip(2);
 	bool hasLayout = bs.readBit();
+	
+	/*
 	bool noSelect = bs.readBit();
 	bool border = bs.readBit();
+	*/
+	bs.skip(2);
+	
 	bs.skip(1);
 	bool html = bs.readBit();
+	
+	/*
 	bool useOutlines = bs.readBit();
+	*/
+	bs.skip(1);
 
 	uint16_t fontId = 0;
 	uint16_t fontHeight = 10;
@@ -340,7 +367,7 @@ bool FlashTagDefineEditText::read(SwfReader* swf, ReadContext& context)
 		textColor = swf->readRgba();
 	if (hasMaxLength)
 	{
-		uint16_t maxLength = bs.readUInt16();
+		/*uint16_t maxLength = */bs.readUInt16();
 	}
 
 	uint8_t align = 0;
@@ -351,8 +378,8 @@ bool FlashTagDefineEditText::read(SwfReader* swf, ReadContext& context)
 		align = bs.readUInt8();
 		leftMargin = bs.readUInt16();
 		rightMargin = bs.readUInt16();
-		int16_t indent = bs.readInt16();
-		int16_t leading = bs.readInt16();
+		/*int16_t indent = */bs.readInt16();
+		/*int16_t leading = */bs.readInt16();
 	}
 
 	std::wstring variableName = mbstows(swf->readString());
@@ -398,7 +425,7 @@ bool FlashTagDefineButton::read(SwfReader* swf, ReadContext& context)
 
 	if (m_buttonType == 1)
 	{
-		// @fixme Not implemented.
+		// \fixme Not implemented.
 		log::error << L"FlashTagDefineButton : Not implemented" << Endl;
 		return false;
 	}
@@ -406,8 +433,8 @@ bool FlashTagDefineButton::read(SwfReader* swf, ReadContext& context)
 	{
 		bs.skip(7);
 
-		bool trackAsMenu = bs.readBit();
-		uint16_t actionOffset = bs.readUInt16();
+		/*bool trackAsMenu = */bs.readBit();
+		/*uint16_t actionOffset = */bs.readUInt16();
 
 		// Read button characters.
 		for (;;)
@@ -451,7 +478,7 @@ bool FlashTagDefineButton::read(SwfReader* swf, ReadContext& context)
 			}
 			if (hasBlendMode)
 			{
-				uint8_t blendMode = bs.readUInt8();
+				/*uint8_t blendMode = */bs.readUInt8();
 			}
 
 			button->addButtonLayer(layer);
@@ -963,7 +990,7 @@ bool FlashTagPlaceObject::read(SwfReader* swf, ReadContext& context)
 				// "Key Press" events.
 				if (placeAction.eventMask & EvtKeyPress)
 				{
-					uint8_t keyCode = bs.readUInt8();
+					/*uint8_t keyCode = */bs.readUInt8();
 					log::debug << L"PlaceObject, unused keycode in EvtKeyPress" << Endl;
 				}
 
@@ -1065,8 +1092,8 @@ bool FlashTagImportAssets::read(SwfReader* swf, ReadContext& context)
 
 	if (m_importType == 2)
 	{
-		uint8_t version = bs.readUInt8();
-		uint8_t reserved = bs.readUInt8();
+		/*uint8_t version = */bs.readUInt8();
+		/*uint8_t reserved = */bs.readUInt8();
 	}
 
 	uint16_t count = bs.readUInt16();
@@ -1088,7 +1115,7 @@ bool FlashTagInitAction::read(SwfReader* swf, ReadContext& context)
 {
 	BitReader& bs = swf->getBitReader();
 
-	uint16_t spriteId = bs.readUInt16();
+	/*uint16_t spriteId = */bs.readUInt16();
 
 	Ref< const IActionVMImage > image = context.movie->getVM()->load(bs);
 	bs.alignByte();

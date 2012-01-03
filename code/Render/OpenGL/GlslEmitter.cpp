@@ -235,10 +235,9 @@ void emitDiscard(GlslContext& cx, Discard* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
+#if !defined(T_OPENGL_ES2)
 	// Emit input and reference branches.
 	GlslVariable* in = cx.emitInput(node, L"Input");
-
-#if !defined(T_OPENGL_ES2)
 	GlslVariable* ref = cx.emitInput(node, L"Reference");
 
 	// Create condition statement.
