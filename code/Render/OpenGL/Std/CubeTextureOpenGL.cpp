@@ -2,6 +2,7 @@
 #include "Render/OpenGL/Platform.h"
 #include "Render/OpenGL/IContext.h"
 #include "Render/OpenGL/Std/CubeTextureOpenGL.h"
+#include "Render/OpenGL/Std/Extensions.h"
 #include "Render/OpenGL/Std/UtilitiesOpenGL.h"
 
 namespace traktor
