@@ -151,6 +151,8 @@ void PostProcessStepSmProj::InstanceSmProj::render(
 	postProcess->prepareShader(shader);
 
 	float shadowMapBias = params.shadowMapBias / params.depthRange;
+	float shadowFadeZ = params.shadowFarZ * 0.7f;
+	float shadowFadeRate = 1.0f / (params.shadowFarZ - shadowFadeZ);
 
 	Vector4 sourceDepthSize(
 		float(sourceDepth->getWidth()),
@@ -161,8 +163,8 @@ void PostProcessStepSmProj::InstanceSmProj::render(
 	Vector4 shadowMapSizeAndBias(
 		1.0f / float(sourceShMap->getWidth()),
 		shadowMapBias,
-		0.0f,
-		0.0f
+		shadowFadeZ,
+		shadowFadeRate
 	);
 	
 	Scalar viewEdgeNorm = params.viewFrustum.getFarZ() / Scalar(params.depthRange);

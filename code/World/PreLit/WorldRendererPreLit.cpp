@@ -629,6 +629,7 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 						params.depthRange = m_settings.depthRange;
 						params.sliceNearZ = zn;
 						params.sliceFarZ = zf;
+						params.shadowFarZ = m_settings.shadowFarZ;
 						params.shadowMapBias = m_settings.shadowMapBias;
 						params.deltaTime = 0.0f;
 
