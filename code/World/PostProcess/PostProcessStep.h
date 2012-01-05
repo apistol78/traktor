@@ -58,6 +58,7 @@ public:
 			float depthRange;
 			float sliceNearZ;
 			float sliceFarZ;
+			float shadowFarZ;
 			float shadowMapBias;
 			float deltaTime;
 		};
