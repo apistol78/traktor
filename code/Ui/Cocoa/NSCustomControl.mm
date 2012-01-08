@@ -9,6 +9,7 @@
 	if ((self = [super initWithFrame: frameRect]) != nil)
 	{
 		m_string = nil;
+		m_font = nil;
 		m_eventsCallback = 0;
 	}
 	return self;
@@ -33,6 +34,22 @@
 - (NSString*) stringValue
 {
 	return m_string;
+}
+
+- (void) setFont: (NSFont*)font
+{
+	if (m_font)
+		[m_font autorelease];
+	
+	m_font = font;
+	
+	if (m_font)
+		[m_font retain];
+}
+
+- (NSFont*) font
+{
+	return m_font;
 }
 
 - (BOOL) isFlipped

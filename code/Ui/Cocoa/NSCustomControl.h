@@ -28,6 +28,7 @@ struct INSControlEventsCallback
 {
 	traktor::ui::INSControlEventsCallback* m_eventsCallback;
 	NSString* m_string;
+	NSFont* m_font;
 }
 
 - (id) initWithFrame: (NSRect)frameRect;
@@ -37,6 +38,10 @@ struct INSControlEventsCallback
 - (void) setStringValue: (NSString*)aString;
 
 - (NSString*) stringValue;
+
+- (void) setFont: (NSFont*)font;
+
+- (NSFont*) font;
 
 - (BOOL) isFlipped;
 

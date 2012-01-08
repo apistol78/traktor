@@ -13,7 +13,7 @@ namespace traktor
 class CanvasCocoa : public ICanvas
 {
 public:
-	CanvasCocoa(NSView* view);
+	CanvasCocoa(NSView* view, NSFont* font);
 	
 	virtual ~CanvasCocoa();
 	
@@ -73,6 +73,7 @@ private:
 	NSView* m_view;
 	NSColor* m_foregroundColor;
 	NSColor* m_backgroundColor;
+	NSFont* m_font;
 	bool m_haveClipper;
 };
 	
