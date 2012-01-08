@@ -17,6 +17,7 @@
 #include "Render/Editor/Shader/NodeFacade.h"
 #include "Render/Editor/Shader/ShaderGraphEditorClipboardData.h"
 #include "Render/Editor/Shader/ShaderGraphEditorPage.h"
+#include "Render/Editor/Shader/ShaderGraphHash.h"
 #include "Render/Editor/Shader/ShaderGraphStatic.h"
 #include "Render/Editor/Shader/ShaderGraphOptimizer.h"
 #include "Render/Editor/Shader/ShaderGraphValidator.h"
@@ -831,7 +832,10 @@ void ShaderGraphEditorPage::updateGraph()
 
 	// Indicate if all errors has been corrected.
 	if (validationResult && !m_lastValidationResult)
-		log::info << L"Validation succeeded" << Endl;
+	{
+		uint32_t hash = ShaderGraphHash::calculate(m_shaderGraph);
+		log::info << L"Validation succeeded; hash " << hash << Endl;
+	}
 
 	m_lastValidationResult = validationResult;
 
