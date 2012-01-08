@@ -34,6 +34,15 @@ PinType DotNodeTraits::getInputPinType(
 	return PntScalar4;
 }
 
+int32_t DotNodeTraits::getInputPinGroup(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const InputPin* inputPin
+) const
+{
+	return 0;
+}
+
 bool DotNodeTraits::evaluateFull(
 	const ShaderGraph* shaderGraph,
 	const Node* node,

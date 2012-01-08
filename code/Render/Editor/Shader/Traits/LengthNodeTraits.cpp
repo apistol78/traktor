@@ -34,6 +34,15 @@ PinType LengthNodeTraits::getInputPinType(
 	return PntScalar4;
 }
 
+int32_t LengthNodeTraits::getInputPinGroup(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const InputPin* inputPin
+) const
+{
+	return 0;
+}
+
 bool LengthNodeTraits::evaluateFull(
 	const ShaderGraph* shaderGraph,
 	const Node* node,

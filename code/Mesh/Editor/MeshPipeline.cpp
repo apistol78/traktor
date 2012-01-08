@@ -33,6 +33,7 @@
 #include "Render/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/ShaderGraphHash.h"
 #include "Render/Editor/Shader/ShaderGraphOptimizer.h"
+#include "Render/Editor/Shader/ShaderGraphStatic.h"
 #include "Render/Editor/Shader/ShaderGraphTechniques.h"
 #include "Render/Resource/FragmentLinker.h"
 
@@ -116,7 +117,7 @@ Guid incrementGuid(const Guid& g)
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 15, MeshPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 16, MeshPipeline, editor::IPipeline)
 
 MeshPipeline::MeshPipeline()
 :	m_promoteHalf(false)
@@ -320,6 +321,14 @@ bool MeshPipeline::buildOutput(
 		if (!materialShaderGraph)
 		{
 			log::error << L"MeshPipeline failed; unable to link shader fragments, material shader \"" << i->first << L"\"" << Endl;
+			return false;
+		}
+
+		// Freeze types, get typed permutation.
+		materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph).getTypePermutation();
+		if (!materialShaderGraph)
+		{
+			log::error << L"MeshPipeline failed; unable to freeze types, material shader \"" << i->first << L"\"" << Endl;
 			return false;
 		}
 

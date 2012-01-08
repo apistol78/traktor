@@ -5,6 +5,22 @@ namespace traktor
 {
 	namespace render
 	{
+		namespace
+		{
+
+int32_t getInputPinIndex(const Node* node, const InputPin* inputPin)
+{
+	int32_t inputPinCount = node->getInputPinCount();
+	for (int32_t i = 0; i < inputPinCount; ++i)
+	{
+		if (node->getInputPin(i) == inputPin)
+			return i;
+	}
+	T_FATAL_ERROR;
+	return -1;
+}
+
+		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.SamplerNodeTraits", 0, SamplerNodeTraits, INodeTraits)
 
@@ -47,6 +63,15 @@ PinType SamplerNodeTraits::getInputPinType(
 			return PntVoid;
 		}
 	}
+}
+
+int32_t SamplerNodeTraits::getInputPinGroup(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const InputPin* inputPin
+) const
+{
+	return getInputPinIndex(node, inputPin);
 }
 
 bool SamplerNodeTraits::evaluateFull(

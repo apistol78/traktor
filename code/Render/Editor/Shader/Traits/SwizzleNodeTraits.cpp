@@ -70,6 +70,15 @@ PinType SwizzleNodeTraits::getInputPinType(
 	return inputPinType;
 }
 
+int32_t SwizzleNodeTraits::getInputPinGroup(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const InputPin* inputPin
+) const
+{
+	return 0;
+}
+
 bool SwizzleNodeTraits::evaluateFull(
 	const ShaderGraph* shaderGraph,
 	const Node* node,

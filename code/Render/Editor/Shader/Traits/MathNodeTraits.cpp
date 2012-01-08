@@ -5,6 +5,22 @@ namespace traktor
 {
 	namespace render
 	{
+		namespace
+		{
+
+int32_t getInputPinIndex(const Node* node, const InputPin* inputPin)
+{
+	int32_t inputPinCount = node->getInputPinCount();
+	for (int32_t i = 0; i < inputPinCount; ++i)
+	{
+		if (node->getInputPin(i) == inputPin)
+			return i;
+	}
+	T_FATAL_ERROR;
+	return -1;
+}
+
+		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.MathNodeTraits", 0, MathNodeTraits, INodeTraits)
 
@@ -65,6 +81,23 @@ PinType MathNodeTraits::getInputPinType(
 ) const
 {
 	return outputPinTypes[0];
+}
+
+int32_t MathNodeTraits::getInputPinGroup(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const InputPin* inputPin
+) const
+{
+	if (is_a< Add >(node) || is_a< Max >(node) || is_a< Min >(node))
+		return 0;
+	else if (is_a< MulAdd >(node))
+	{
+		int32_t index = getInputPinIndex(node, inputPin);
+		return (index == 0) ? 0 : 1;
+	}
+	else
+		return getInputPinIndex(node, inputPin);
 }
 
 bool MathNodeTraits::evaluateFull(
