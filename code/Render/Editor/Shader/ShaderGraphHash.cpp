@@ -35,8 +35,8 @@ uint32_t ShaderGraphHash::calculate(const Node* node)
 
 uint32_t ShaderGraphHash::calculate(const ShaderGraph* shaderGraph)
 {
-	std::list< std::pair< const Node*, int32_t > > nodeStack;
-	std::set< std::pair< const Node*, int32_t > > nodeVisited;
+	std::list< std::pair< Ref< const Node >, int32_t > > nodeStack;
+	std::set< std::pair< Ref< const Node >, int32_t > > nodeVisited;
 	uint32_t hash = 0;
 
 	// Collect root nodes; assume all nodes with no output pins to be roots.
@@ -50,7 +50,7 @@ uint32_t ShaderGraphHash::calculate(const ShaderGraph* shaderGraph)
 	// Traverse graph nodes.
 	while (!nodeStack.empty())
 	{
-		std::pair< const Node*, int32_t > top = nodeStack.back();
+		std::pair< Ref< const Node >, int32_t > top = nodeStack.back();
 		nodeStack.pop_back();
 
 		// Already visited this node?
@@ -58,7 +58,7 @@ uint32_t ShaderGraphHash::calculate(const ShaderGraph* shaderGraph)
 			continue;
 		nodeVisited.insert(top);
 
-		const Node* node = top.first;
+		Ref< const Node > node = top.first;
 		int32_t order = top.second;
 
 		// Find node's traits; some nodes which doesn't have a trait

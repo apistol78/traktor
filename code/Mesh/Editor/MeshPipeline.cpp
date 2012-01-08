@@ -117,7 +117,7 @@ Guid incrementGuid(const Guid& g)
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 16, MeshPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 17, MeshPipeline, editor::IPipeline)
 
 MeshPipeline::MeshPipeline()
 :	m_promoteHalf(false)
@@ -332,11 +332,19 @@ bool MeshPipeline::buildOutput(
 			return false;
 		}
 
-		// Remove unused branches from shader graph.
-		materialShaderGraph = render::ShaderGraphOptimizer(materialShaderGraph).removeUnusedBranches();
+		// Perform constant folding early; will probably yield better hashing.
+		materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph).getConstantFolded();
 		if (!materialShaderGraph)
 		{
-			log::error << L"MeshPipeline failed; unable to remove unused branches, material shader \"" << i->first << L"\"" << Endl;
+			log::error << L"MeshPipeline failed; unable to fold constant branches, material shader \"" << i->first << L"\"" << Endl;
+			return false;
+		}
+
+		// Merge identical branches.
+		materialShaderGraph = render::ShaderGraphOptimizer(materialShaderGraph).mergeBranches();
+		if (!materialShaderGraph)
+		{
+			log::error << L"MeshPipeline failed; unable to merge branches, material shader \"" << i->first << L"\"" << Endl;
 			return false;
 		}
 

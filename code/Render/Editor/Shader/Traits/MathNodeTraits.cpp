@@ -89,12 +89,17 @@ int32_t MathNodeTraits::getInputPinGroup(
 	const InputPin* inputPin
 ) const
 {
-	if (is_a< Add >(node) || is_a< Max >(node) || is_a< Min >(node))
+	if (
+		is_a< Add >(node) ||
+		is_a< Mul >(node) ||
+		is_a< Max >(node) ||
+		is_a< Min >(node)
+	)
 		return 0;
 	else if (is_a< MulAdd >(node))
 	{
 		int32_t index = getInputPinIndex(node, inputPin);
-		return (index == 0) ? 0 : 1;
+		return (index == 0 || index == 1) ? 0 : 1;
 	}
 	else
 		return getInputPinIndex(node, inputPin);
