@@ -7,10 +7,11 @@ namespace traktor
 	namespace ui
 	{
 		
-CanvasCocoa::CanvasCocoa(NSView* view)
+CanvasCocoa::CanvasCocoa(NSView* view, NSFont* font)
 :	m_view(view)
 ,	m_foregroundColor(0)
 ,	m_backgroundColor(0)
+,	m_font(font)
 ,	m_haveClipper(false)
 {
 	m_foregroundColor = [NSColor controlTextColor];
@@ -35,6 +36,10 @@ void CanvasCocoa::setBackground(const Color4ub& background)
 
 void CanvasCocoa::setFont(const Font& font)
 {
+	m_font = [NSFont
+		fontWithName: makeNSString(font.getFace())
+		size: (CGFloat)font.getSize() / 1.2
+	];
 }
 
 void CanvasCocoa::setLineStyle(LineStyle lineStyle)
@@ -225,10 +230,8 @@ void CanvasCocoa::drawBitmap(const Point& dstAt, const Size& dstSize, const Poin
 
 void CanvasCocoa::drawText(const Point& at, const std::wstring& text)
 {
-	NSFont* font = [NSFont controlContentFontOfSize: 11];
-	
 	NSMutableDictionary* attributes = [NSMutableDictionary dictionary];
-	[attributes setObject: font forKey:NSFontAttributeName];
+	[attributes setObject: m_font forKey:NSFontAttributeName];
 	[attributes setObject: m_foregroundColor forKey: NSForegroundColorAttributeName];
 
 	NSString* str = makeNSString(text);
@@ -237,10 +240,8 @@ void CanvasCocoa::drawText(const Point& at, const std::wstring& text)
 
 void CanvasCocoa::drawText(const Rect& rc, const std::wstring& text, Align halign, Align valign)
 {
-	NSFont* font = [NSFont controlContentFontOfSize: 11];
-	
 	NSMutableDictionary* attributes = [NSMutableDictionary dictionary];
-	[attributes setObject: font forKey: NSFontAttributeName];
+	[attributes setObject: m_font forKey: NSFontAttributeName];
 	[attributes setObject: m_foregroundColor forKey: NSForegroundColorAttributeName];
 	
 	NSString* str = makeNSString(text);
@@ -263,10 +264,8 @@ void CanvasCocoa::drawText(const Rect& rc, const std::wstring& text, Align halig
 
 Size CanvasCocoa::getTextExtent(const std::wstring& text) const
 {
-	NSFont* font = [NSFont controlContentFontOfSize: 11];
-	
 	NSMutableDictionary* attributes = [NSMutableDictionary dictionary];
-	[attributes setObject: font forKey:NSFontAttributeName];
+	[attributes setObject: m_font forKey:NSFontAttributeName];
 
 	NSString* str = makeNSString(text);
 	NSSize size = [str sizeWithAttributes: attributes];

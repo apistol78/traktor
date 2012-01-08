@@ -31,6 +31,12 @@ bool UserWidgetCocoa::create(IWidget* parent, int style)
 	];
 	[m_control setCallback: this];
 	
+	NSFont* font = [NSFont controlContentFontOfSize: 11.0];
+	if (!font)
+		return false;
+	
+	[m_control setFont: font];
+	
 	NSView* contentView = (NSView*)parent->getInternalHandle();
 	T_ASSERT (contentView);
 	
@@ -45,8 +51,12 @@ bool UserWidgetCocoa::event_drawRect(const NSRect& rect)
 		return false;
 
 	Rect rc = fromNSRect(rect);
+	
+	NSFont* font = [m_control font];
+	if (!font)
+		return false;
 
-	CanvasCocoa canvasImpl(m_control);
+	CanvasCocoa canvasImpl(m_control, font);
 	Canvas canvas(&canvasImpl);
 	PaintEvent paintEvent(m_owner, (Object*)0, canvas, rc);
 	m_owner->raiseEvent(EiPaint, &paintEvent);

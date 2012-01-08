@@ -272,7 +272,7 @@ void RichEdit::updateScrollBars()
 	uint32_t lineHeight = font.getSize() + 1;
 	uint32_t pageLines = (rc.getHeight() + lineHeight - 1) / lineHeight;
 
-	m_scrollBarV->setRange(lineCount);
+	m_scrollBarV->setRange(lineCount + pageLines);
 	m_scrollBarV->setPage(pageLines);
 	m_scrollBarV->setVisible(lineCount > pageLines);
 	m_scrollBarV->update();
@@ -381,21 +381,25 @@ void RichEdit::scrollToCaret()
 
 int32_t RichEdit::getCharacterStops(const std::wstring& text, std::vector< int32_t >& outStops) const
 {
-	int32_t x = 0;
+	int32_t x = 0, x0 = 0;
 
 	outStops.resize(0);
 	outStops.reserve(text.length());
-
+	
+	std::wstring::const_iterator i0 = text.begin();
 	for (std::wstring::const_iterator i = text.begin(); i != text.end(); ++i)
 	{
 		outStops.push_back(x);
 		if (*i != '\t')
 		{
-			wchar_t chb[] = { *i, 0 };
-			x += getTextExtent(chb).cx;
+			x = x0 + getTextExtent(std::wstring(i0, i + 1)).cx;
 		}
 		else
+		{
 			x = alignUp(x + 4 * 8, 4 * 8);
+			x0 = x;
+			i0 = i + 1;
+		}
 	}
 
 	return x;
@@ -600,13 +604,14 @@ void RichEdit::eventButtonDown(Event* event)
 	std::vector< int32_t > stops;
 	int32_t lineWidth = getCharacterStops(text, stops);
 
-	int lineMargin = 30;
+	int32_t lineMargin = 30;
+	int32_t linePosition = mousePosition.x - lineMargin;
 
-	if (mousePosition.x - lineMargin < lineWidth)
+	if (linePosition < lineWidth)
 	{
 		for (int32_t i = stops.size() - 1; i >= 0; --i)
 		{
-			if (mousePosition.x - lineMargin >= stops[i])
+			if (linePosition >= stops[i])
 			{
 				m_caret = ln.start + i;
 				break;

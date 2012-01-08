@@ -247,13 +247,30 @@ public:
 
 	virtual Size getTextExtent(const std::wstring& text) const
 	{
+		NSMutableDictionary* attributes = [NSMutableDictionary dictionary];
+		
+		NSFont* font = [getControl() font];
+		if (!font)
+			font = [NSFont controlContentFontOfSize: 11];
+		
+		[attributes setObject: font forKey:NSFontAttributeName];
+
 		NSString* str = makeNSString(text);
-		NSSize sz = [str sizeWithAttributes: NULL];
+		NSSize sz = [str sizeWithAttributes: attributes];
+		
 		return fromNSSize(sz);
 	}
 
 	virtual void setFont(const Font& font)
 	{
+		NSFont* nsfnt = [NSFont
+			fontWithName: makeNSString(font.getFace())
+			size: (CGFloat)font.getSize() / 1.2
+		];
+		if (!nsfnt)
+			return;
+		
+		[getControl() setFont: nsfnt];
 	}
 
 	virtual Font getFont() const
