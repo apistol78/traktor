@@ -34,6 +34,15 @@ PinType ArcusTanTraits::getInputPinType(
 	return PntScalar2;
 }
 
+int32_t ArcusTanTraits::getInputPinGroup(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const InputPin* inputPin
+) const
+{
+	return 0;
+}
+
 bool ArcusTanTraits::evaluateFull(
 	const ShaderGraph* shaderGraph,
 	const Node* node,

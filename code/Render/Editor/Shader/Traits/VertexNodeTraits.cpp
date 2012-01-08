@@ -64,6 +64,15 @@ PinType VertexNodeTraits::getInputPinType(
 		return PntVoid;
 }
 
+int32_t VertexNodeTraits::getInputPinGroup(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const InputPin* inputPin
+) const
+{
+	return 0;
+}
+
 bool VertexNodeTraits::evaluateFull(
 	const ShaderGraph* shaderGraph,
 	const Node* node,

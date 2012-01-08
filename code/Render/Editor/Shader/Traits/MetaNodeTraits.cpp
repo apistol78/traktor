@@ -1,5 +1,5 @@
 #include "Render/Shader/Nodes.h"
-#include "Render/Editor/Shader/Traits/TransformNodeTraits.h"
+#include "Render/Editor/Shader/Traits/MetaNodeTraits.h"
 
 namespace traktor
 {
@@ -22,38 +22,37 @@ int32_t getInputPinIndex(const Node* node, const InputPin* inputPin)
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TransformNodeTraits", 0, TransformNodeTraits, INodeTraits)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.MetaNodeTraits", 0, MetaNodeTraits, INodeTraits)
 
-TypeInfoSet TransformNodeTraits::getNodeTypes() const
+TypeInfoSet MetaNodeTraits::getNodeTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< Transform >());
+	typeSet.insert(&type_of< Branch >());
+	typeSet.insert(&type_of< Platform >());
+	typeSet.insert(&type_of< Type >());
 	return typeSet;
 }
 
-PinType TransformNodeTraits::getOutputPinType(
+PinType MetaNodeTraits::getOutputPinType(
 	const Node* node,
 	const OutputPin* outputPin,
 	const PinType* inputPinTypes
 ) const
 {
-	return PntScalar4;
+	return PntVoid;
 }
 
-PinType TransformNodeTraits::getInputPinType(
+PinType MetaNodeTraits::getInputPinType(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const InputPin* inputPin,
 	const PinType* outputPinTypes
 ) const
 {
-	if (inputPin->getName() == L"Input")
-		return PntScalar4;
-	else
-		return PntMatrix;
+	return PntVoid;
 }
 
-int32_t TransformNodeTraits::getInputPinGroup(
+int32_t MetaNodeTraits::getInputPinGroup(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const InputPin* inputPin
@@ -62,7 +61,7 @@ int32_t TransformNodeTraits::getInputPinGroup(
 	return getInputPinIndex(node, inputPin);
 }
 
-bool TransformNodeTraits::evaluateFull(
+bool MetaNodeTraits::evaluateFull(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const OutputPin* outputPin,
@@ -73,7 +72,7 @@ bool TransformNodeTraits::evaluateFull(
 	return false;
 }
 
-bool TransformNodeTraits::evaluatePartial(
+bool MetaNodeTraits::evaluatePartial(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const OutputPin* outputPin,

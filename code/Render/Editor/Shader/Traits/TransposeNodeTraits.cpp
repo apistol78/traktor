@@ -34,6 +34,15 @@ PinType TransposeNodeTraits::getInputPinType(
 	return PntMatrix;
 }
 
+int32_t TransposeNodeTraits::getInputPinGroup(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const InputPin* inputPin
+) const
+{
+	return 0;
+}
+
 bool TransposeNodeTraits::evaluateFull(
 	const ShaderGraph* shaderGraph,
 	const Node* node,

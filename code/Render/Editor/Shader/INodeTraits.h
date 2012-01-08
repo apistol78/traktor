@@ -49,6 +49,20 @@ public:
 		const PinType* outputPinTypes
 	) const = 0;
 
+	/*! \brief Get input pin independence group.
+	 *
+	 * A independence group is defined as being a number
+	 * in which input pins can be swapped without
+	 * changing the result of the node.
+	 * For example both input pins of an Add node
+	 * can be swapped without changing the result.
+	 */
+	virtual int32_t getInputPinGroup(
+		const ShaderGraph* shaderGraph,
+		const Node* node,
+		const InputPin* inputPin
+	) const = 0;
+
 	/*! \brief Evaluate output pin from a fully constant input set.
 	 */
 	virtual bool evaluateFull(

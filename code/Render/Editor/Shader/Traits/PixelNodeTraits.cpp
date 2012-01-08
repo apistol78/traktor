@@ -79,6 +79,15 @@ PinType PixelNodeTraits::getInputPinType(
 	return PntScalar3;
 }
 
+int32_t PixelNodeTraits::getInputPinGroup(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const InputPin* inputPin
+) const
+{
+	return 0;
+}
+
 bool PixelNodeTraits::evaluateFull(
 	const ShaderGraph* shaderGraph,
 	const Node* node,

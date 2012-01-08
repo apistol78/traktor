@@ -1,5 +1,5 @@
-#ifndef traktor_render_IterativeNodeTraits_H
-#define traktor_render_IterativeNodeTraits_H
+#ifndef traktor_render_MetaNodeTraits_H
+#define traktor_render_MetaNodeTraits_H
 
 #include "Render/Editor/Shader/INodeTraits.h"
 
@@ -8,7 +8,7 @@ namespace traktor
 	namespace render
 	{
 
-class IterativeNodeTraits : public INodeTraits
+class MetaNodeTraits : public INodeTraits
 {
 	T_RTTI_CLASS;
 
@@ -54,4 +54,4 @@ public:
 	}
 }
 
-#endif	// traktor_render_IterativeNodeTraits_H
+#endif	// traktor_render_MetaNodeTraits_H

@@ -48,6 +48,15 @@ PinType ConstantNodeTraits::getInputPinType(
 	return PntVoid;
 }
 
+int32_t ConstantNodeTraits::getInputPinGroup(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const InputPin* inputPin
+) const
+{
+	return 0;
+}
+
 bool ConstantNodeTraits::evaluateFull(
 	const ShaderGraph* shaderGraph,
 	const Node* node,

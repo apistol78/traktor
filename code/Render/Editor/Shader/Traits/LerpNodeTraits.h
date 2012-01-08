@@ -28,6 +28,12 @@ public:
 		const PinType* outputPinTypes
 	) const;
 
+	virtual int32_t getInputPinGroup(
+		const ShaderGraph* shaderGraph,
+		const Node* node,
+		const InputPin* inputPin
+	) const;
+
 	virtual bool evaluateFull(
 		const ShaderGraph* shaderGraph,
 		const Node* node,
