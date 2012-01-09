@@ -58,6 +58,16 @@ bool ContainerCocoa::event_mouseMoved(NSEvent* theEvent, int button)
 {
 	return false;
 }
+
+bool ContainerCocoa::event_keyDown(NSEvent* theEvent)
+{
+	return false;
+}
+
+bool ContainerCocoa::event_keyUp(NSEvent* theEvent)
+{
+	return false;
+}
 	
 	}
 }
