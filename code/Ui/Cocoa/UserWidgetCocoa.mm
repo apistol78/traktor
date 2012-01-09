@@ -193,5 +193,27 @@ bool UserWidgetCocoa::event_keyUp(NSEvent* theEvent)
 	return true;
 }
 
+bool UserWidgetCocoa::event_performKeyEquivalent(NSEvent* theEvent)
+{
+	if (!m_owner->hasEventHandler(EiKey))
+		return false;
+
+	NSString* chs = [theEvent characters];
+	
+	uint32_t keyCode = [theEvent keyCode];
+	wchar_t keyChar = [chs length] > 0 ? (wchar_t)[chs characterAtIndex: 0] : 0;
+	
+	KeyEvent keyEvent(
+		m_owner,
+		0,
+		VkNull,
+		keyCode,
+		keyChar
+	);
+	m_owner->raiseEvent(EiKey, &keyEvent);
+
+	return true;
+}
+
 	}
 }

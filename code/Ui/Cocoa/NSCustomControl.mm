@@ -178,4 +178,17 @@
 		[super keyUp: theEvent];
 }
 
+- (BOOL) performKeyEquivalent: (NSEvent *)theEvent
+{
+	bool consumed = false;
+	
+	if (m_eventsCallback)
+		consumed = m_eventsCallback->event_performKeyEquivalent(theEvent);
+		
+	if (!consumed)
+		return [super performKeyEquivalent: theEvent];
+	else
+		return YES;
+}
+
 @end

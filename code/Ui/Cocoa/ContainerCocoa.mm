@@ -68,6 +68,11 @@ bool ContainerCocoa::event_keyUp(NSEvent* theEvent)
 {
 	return false;
 }
+
+bool ContainerCocoa::event_performKeyEquivalent(NSEvent* theEvent)
+{
+	return false;
+}
 	
 	}
 }
