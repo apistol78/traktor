@@ -156,4 +156,26 @@
 		[super mouseMoved: theEvent];
 }
 
+- (void) keyDown: (NSEvent*)theEvent
+{
+	bool consumed = false;
+	
+	if (m_eventsCallback)
+		consumed = m_eventsCallback->event_keyDown(theEvent);
+	
+	if (!consumed)
+		[super keyDown: theEvent];
+}
+
+- (void) keyUp: (NSEvent*)theEvent;
+{
+	bool consumed = false;
+	
+	if (m_eventsCallback)
+		consumed = m_eventsCallback->event_keyUp(theEvent);
+	
+	if (!consumed)
+		[super keyUp: theEvent];
+}
+
 @end

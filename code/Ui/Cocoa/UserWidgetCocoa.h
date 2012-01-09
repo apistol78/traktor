@@ -36,6 +36,10 @@ public:
 	virtual bool event_mouseUp(NSEvent* theEvent, int button);
 		
 	virtual bool event_mouseMoved(NSEvent* theEvent, int button);
+	
+	virtual bool event_keyDown(NSEvent* theEvent);
+	
+	virtual bool event_keyUp(NSEvent* theEvent);
 };
 
 	}

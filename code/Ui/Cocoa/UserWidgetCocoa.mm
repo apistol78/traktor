@@ -1,10 +1,11 @@
+#include "Ui/Canvas.h"
 #include "Ui/Cocoa/UserWidgetCocoa.h"
 #include "Ui/Cocoa/CanvasCocoa.h"
 #include "Ui/Cocoa/UtilitiesCocoa.h"
+#include "Ui/Events/KeyEvent.h"
 #include "Ui/Events/MouseEvent.h"
 #include "Ui/Events/PaintEvent.h"
 #include "Ui/EventSubject.h"
-#include "Ui/Canvas.h"
 
 namespace traktor
 {
@@ -145,6 +146,50 @@ bool UserWidgetCocoa::event_mouseMoved(NSEvent* theEvent, int button)
 	);
 	m_owner->raiseEvent(EiMouseMove, &mouseEvent);
 	
+	return true;
+}
+
+bool UserWidgetCocoa::event_keyDown(NSEvent* theEvent)
+{
+	if (!m_owner->hasEventHandler(EiKeyDown))
+		return false;
+	
+	NSString* chs = [theEvent characters];
+	
+	uint32_t keyCode = [theEvent keyCode];
+	wchar_t keyChar = [chs length] > 0 ? (wchar_t)[chs characterAtIndex: 0] : 0;
+	
+	KeyEvent keyEvent(
+		m_owner,
+		0,
+		VkNull,
+		keyCode,
+		keyChar
+	);
+	m_owner->raiseEvent(EiKeyDown, &keyEvent);
+
+	return true;
+}
+
+bool UserWidgetCocoa::event_keyUp(NSEvent* theEvent)
+{
+	if (!m_owner->hasEventHandler(EiKeyUp))
+		return false;
+
+	NSString* chs = [theEvent characters];
+	
+	uint32_t keyCode = [theEvent keyCode];
+	wchar_t keyChar = [chs length] > 0 ? (wchar_t)[chs characterAtIndex: 0] : 0;
+	
+	KeyEvent keyEvent(
+		m_owner,
+		0,
+		VkNull,
+		keyCode,
+		keyChar
+	);
+	m_owner->raiseEvent(EiKeyUp, &keyEvent);
+
 	return true;
 }
 

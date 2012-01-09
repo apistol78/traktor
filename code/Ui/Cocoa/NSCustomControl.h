@@ -19,6 +19,10 @@ struct INSControlEventsCallback
 	virtual bool event_mouseUp(NSEvent* theEvent, int button) = 0;
 		
 	virtual bool event_mouseMoved(NSEvent* theEvent, int button) = 0;
+	
+	virtual bool event_keyDown(NSEvent* theEvent) = 0;
+	
+	virtual bool event_keyUp(NSEvent* theEvent) = 0;
 };
 
 	}
@@ -62,6 +66,10 @@ struct INSControlEventsCallback
 - (void) mouseDragged: (NSEvent*)theEvent;
 
 - (void) rightMouseDragged: (NSEvent*)theEvent;
+
+- (void) keyDown: (NSEvent*)theEvent;
+
+- (void) keyUp: (NSEvent*)theEvent;
 
 @end
 
