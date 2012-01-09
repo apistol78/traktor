@@ -40,6 +40,8 @@ public:
 	explicit Any(int32_t value);
 
 	explicit Any(float value);
+	
+	explicit Any(const wchar_t* value);
 
 	explicit Any(const std::wstring& value);
 
