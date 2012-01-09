@@ -25,21 +25,6 @@ BoxedVector2::BoxedVector2(float x, float y)
 {
 }
 
-void BoxedVector2::set(float x, float y)
-{
-	m_value.set(x, y);
-}
-
-float BoxedVector2::x() const
-{
-	return m_value.x;
-}
-
-float BoxedVector2::y() const
-{
-	return m_value.y;
-}
-
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Vector4", BoxedVector4, Object)
 
 BoxedVector4::BoxedVector4()
@@ -65,36 +50,6 @@ BoxedVector4::BoxedVector4(float x, float y, float z, float w)
 void BoxedVector4::set(float x, float y, float z, float w)
 {
 	m_value.set(x, y, z, w);
-}
-
-float BoxedVector4::x() const
-{
-	return m_value.x();
-}
-
-float BoxedVector4::y() const
-{
-	return m_value.y();
-}
-
-float BoxedVector4::z() const
-{
-	return m_value.z();
-}
-
-float BoxedVector4::w() const
-{
-	return m_value.w();
-}
-
-Vector4 BoxedVector4::xyz0() const
-{
-	return m_value.xyz0();
-}
-
-Vector4 BoxedVector4::xyz1() const
-{
-	return m_value.xyz1();
 }
 
 Vector4 BoxedVector4::add(const Vector4& v) const
@@ -189,26 +144,6 @@ BoxedQuaternion::BoxedQuaternion(const Vector4& from, const Vector4& to)
 {
 }
 
-float BoxedQuaternion::x() const
-{
-	return m_value.e.x();
-}
-
-float BoxedQuaternion::y() const
-{
-	return m_value.e.y();
-}
-
-float BoxedQuaternion::z() const
-{
-	return m_value.e.z();
-}
-
-float BoxedQuaternion::w() const
-{
-	return m_value.e.w();
-}
-
 Quaternion BoxedQuaternion::normalized() const
 {
 	return m_value.normalized();
@@ -227,11 +162,6 @@ Quaternion BoxedQuaternion::concat(const Quaternion& q) const
 Vector4 BoxedQuaternion::transform(const Vector4& v) const
 {
 	return m_value * v;
-}
-
-const Quaternion& BoxedQuaternion::unbox() const
-{
-	return m_value;
 }
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Transform", BoxedTransform, Object)
@@ -273,11 +203,6 @@ Transform BoxedTransform::concat(const Transform& t) const
 Vector4 BoxedTransform::transform(const Vector4& v) const
 {
 	return m_value * v;
-}
-
-const Transform& BoxedTransform::unbox() const
-{
-	return m_value;
 }
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Array", BoxedRefArray, Object)

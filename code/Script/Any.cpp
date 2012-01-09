@@ -89,6 +89,12 @@ Any::Any(float value)
 	m_data.m_float = value;
 }
 
+Any::Any(const wchar_t* value)
+:	m_type(AtString)
+{
+	m_data.m_string = refStringCreate(value);
+}
+
 Any::Any(const std::wstring& value)
 :	m_type(AtString)
 {

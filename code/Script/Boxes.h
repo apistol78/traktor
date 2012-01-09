@@ -34,15 +34,13 @@ public:
 
 	explicit BoxedVector2(float x, float y);
 
-	void set(float x, float y);
+	void set(float x, float y) { m_value.set(x, y); }
 
-	float x() const;
+	float x() const { return m_value.x; }
 
-	float y() const;
+	float y() const { return m_value.y; }
 
-	const Vector2& unbox() const {
-		return m_value;
-	}
+	const Vector2& unbox() const { return m_value; }
 
 private:
 	Vector2 m_value;
@@ -63,17 +61,17 @@ public:
 
 	void set(float x, float y, float z, float w);
 	
-	float x() const;
+	float x() const { return m_value.x(); }
 	
-	float y() const;
+	float y() const { return m_value.y(); }
 	
-	float z() const;
+	float z() const { return m_value.z(); }
 	
-	float w() const;
+	float w() const { return m_value.w(); }
 
-	Vector4 xyz0() const;
+	Vector4 xyz0() const { return m_value.xyz0(); }
 
-	Vector4 xyz1() const;
+	Vector4 xyz1() const { return m_value.xyz1(); }
 
 	Vector4 add(const Vector4& v) const;
 
@@ -99,9 +97,7 @@ public:
 
 	Vector4 neg() const;
 	
-	const Vector4& unbox() const {
-		return m_value;
-	}
+	const Vector4& unbox() const { return m_value; }
 	
 private:
 	Vector4 m_value;
@@ -124,13 +120,13 @@ public:
 
 	explicit BoxedQuaternion(const Vector4& from, const Vector4& to);
 	
-	float x() const;
+	float x() const { return m_value.e.x(); }
 	
-	float y() const;
+	float y() const { return m_value.e.y(); }
 	
-	float z() const;
+	float z() const { return m_value.e.z(); }
 	
-	float w() const;
+	float w() const { return m_value.e.w(); }
 
 	Quaternion normalized() const;
 
@@ -140,7 +136,7 @@ public:
 
 	Vector4 transform(const Vector4& v) const;
 	
-	const Quaternion& unbox() const;
+	const Quaternion& unbox() const { return m_value; }
 
 private:
 	Quaternion m_value;
@@ -167,7 +163,7 @@ public:
 
 	Vector4 transform(const Vector4& v) const;
 	
-	const Transform& unbox() const;
+	const Transform& unbox() const { return m_value; }
 
 private:
 	Transform m_value;
