@@ -40,6 +40,8 @@ public:
 	virtual bool event_keyDown(NSEvent* theEvent);
 	
 	virtual bool event_keyUp(NSEvent* theEvent);
+
+	virtual bool event_performKeyEquivalent(NSEvent* theEvent);
 };
 
 	}
