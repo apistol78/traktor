@@ -48,6 +48,10 @@ public:
 	void setMaterialShaders(const std::map< std::wstring, Guid >& materialShaders) { m_materialShaders = materialShaders; }
 
 	const std::map< std::wstring, Guid >& getMaterialShaders() const { return m_materialShaders; }
+
+	void setMaterialTextures(const std::map< std::wstring, Guid >& materialTextures) { m_materialTextures = materialTextures; }
+
+	const std::map< std::wstring, Guid >& getMaterialTextures() const { return m_materialTextures; }
 	
 	void setBakeOcclusion(bool bakeOcclusion) { m_bakeOcclusion = bakeOcclusion; }
 	
@@ -60,6 +64,7 @@ public:
 private:
 	MeshType m_meshType;
 	std::map< std::wstring, Guid > m_materialShaders;
+	std::map< std::wstring, Guid > m_materialTextures;
 	bool m_bakeOcclusion;
 	bool m_cullDistantFaces;
 };

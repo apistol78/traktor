@@ -52,13 +52,20 @@ const lwTexture* getLwTexture(const lwTexture* tex)
 	return tex;
 }
 
-std::wstring fixTextureFileName(const Path& texturePath, const std::wstring& fileName)
+std::wstring fixTextureFileName(const std::wstring& fileName)
 {
-	size_t pos = fileName.find(L':');
+	std::wstring textureName = fileName;
+	size_t pos;
+
+	pos = textureName.find_last_of(L'/');
 	if (pos != std::wstring::npos)
-		return fileName.substr(0, pos + 1) + L'/' + fileName.substr(pos + 1);
-	else
-		return texturePath.getPathName() + fileName;
+		textureName = textureName.substr(pos + 1);
+
+	pos = textureName.find(L'.');
+	if (pos != std::wstring::npos)
+		textureName = textureName.substr(0, pos);
+
+	return textureName;
 }
 
 const lwVMapPt* findLwVMapPt(const lwVMapPt* vmaps, int nvmaps, const std::string& vmapName)
@@ -103,7 +110,7 @@ bool createMaterials(const lwObject* lwo, Model* outModel)
 					log::warning << L"Unknown opacity type (" << surface->color.tex->opac_type << L") on surface \"" << material.getName() << L"\"" << Endl;
 				}
 
-				std::wstring textureName = mbstows(clip->source.still.name);
+				std::wstring textureName = fixTextureFileName(mbstows(clip->source.still.name));
 				material.setDiffuseMap(textureName);
 				material.setBlendOperator(diffuseBlendOperator);
 			}
@@ -117,7 +124,7 @@ bool createMaterials(const lwObject* lwo, Model* outModel)
 			const lwClip* clip = findLwClip(lwo, texSpecular->param.imap.cindex);
 			if (clip)
 			{
-				std::wstring textureName = mbstows(clip->source.still.name);
+				std::wstring textureName = fixTextureFileName(mbstows(clip->source.still.name));
 				material.setSpecularMap(textureName);
 			}
 			else
@@ -130,7 +137,7 @@ bool createMaterials(const lwObject* lwo, Model* outModel)
 			const lwClip* clip = findLwClip(lwo, texBump->param.imap.cindex);
 			if (clip)
 			{
-				std::wstring textureName = mbstows(clip->source.still.name);
+				std::wstring textureName = fixTextureFileName(mbstows(clip->source.still.name));
 				material.setNormalMap(textureName);
 			}
 			else

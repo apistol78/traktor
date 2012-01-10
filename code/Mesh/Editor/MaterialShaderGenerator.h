@@ -43,7 +43,7 @@ class MaterialShaderGenerator : public Object
 public:
 	MaterialShaderGenerator(db::Database* database);
 
-	Ref< render::ShaderGraph > generate(const model::Material& material) const;
+	Ref< render::ShaderGraph > generate(const model::Material& material, const std::map< std::wstring, Guid >& textures) const;
 	
 	static void addDependencies(editor::IPipelineDepends* pipelineDepends);
 

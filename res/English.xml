@@ -906,8 +906,32 @@
       <second>Shader</second>
     </item>
     <item>
-      <first>MESHASSET_EDITOR_NOT_ASSIGNED</first>
+      <first>MESHASSET_EDITOR_SHADER_NOT_ASSIGNED</first>
       <second>[ Automatic shader ]</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_CREATE_TEXTURE</first>
+      <second>Create texture</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_BROWSE_TEXTURE</first>
+      <second>Browse texture</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_REMOVE_TEXTURE</first>
+      <second>Remove texture</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_TEXTURE_NAME</first>
+      <second>Name</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_TEXTURE_ASSET</first>
+      <second>Texture</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_TEXTURE_NOT_ASSIGNED</first>
+      <second>[ No texture ]</second>
     </item>
     <item>
       <first>MESHASSET_EDITOR_DISABLED</first>
