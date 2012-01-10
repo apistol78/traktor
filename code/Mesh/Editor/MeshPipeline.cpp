@@ -190,6 +190,11 @@ bool MeshPipeline::buildDependencies(
 	for (std::map< std::wstring, Guid >::const_iterator i = materialShaders.begin(); i != materialShaders.end(); ++i)
 		pipelineDepends->addDependency(i->second, editor::PdfUse);
 
+	// Add dependencies to material textures.
+	const std::map< std::wstring, Guid >& materialTextures = asset->getMaterialTextures();
+	for (std::map< std::wstring, Guid >::const_iterator i = materialTextures.begin(); i != materialTextures.end(); ++i)
+		pipelineDepends->addDependency(i->second, editor::PdfBuild);
+
 	return true;
 }
 
@@ -307,7 +312,7 @@ bool MeshPipeline::buildOutput(
 		}
 		else
 		{
-			materialShaderGraph = generator.generate(i->second);
+			materialShaderGraph = generator.generate(i->second, asset->getMaterialTextures());
 			if (!materialShaderGraph)
 			{
 				log::error << L"Mesh pipeline failed; unable to generate material shader \"" << i->first << L"\"" << Endl;
@@ -421,6 +426,26 @@ bool MeshPipeline::buildOutput(
 			}
 		}
 	}
+
+	// Dump information about material techniques and shaders.
+	log::info << L"Material techniques" << Endl;
+	log::info << IncreaseIndent;
+
+	for (std::map< std::wstring, std::list< MeshMaterialTechnique > >::const_iterator i = materialTechniqueMap.begin(); i != materialTechniqueMap.end(); ++i)
+	{
+		log::info << L"\"" << i->first << L"\"" << Endl;
+		log::info << IncreaseIndent;
+
+		for (std::list< MeshMaterialTechnique >::const_iterator j = i->second.begin(); j != i->second.end(); ++j)
+		{
+			log::info << L"World technique: \"" << j->worldTechnique << L"\"" << Endl;
+			log::info << L"Shader technique: \"" << j->shaderTechnique << L"\"" << Endl;
+		}
+
+		log::info << DecreaseIndent;
+	}
+
+	log::info << DecreaseIndent;
 
 	// Merge all shader technique fragments into a single material shader.
 	Ref< render::ShaderGraph > materialShaderGraph = new render::ShaderGraph();

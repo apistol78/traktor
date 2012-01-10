@@ -165,6 +165,25 @@ bool StaticMeshConverter::convert(
 
 	mesh->getIndexBuffer()->unlock();
 
+	// Dump index ranges.
+	log::info << L"Index ranges" << Endl;
+	log::info << IncreaseIndent;
+
+	for (std::map< std::wstring, std::vector< IndexRange > >::const_iterator i = techniqueRanges.begin(); i != techniqueRanges.end(); ++i)
+	{
+		log::info << L"\"" << i->first << L"\"" << Endl;
+	
+		log::info << IncreaseIndent;
+		for (uint32_t j = 0; j < i->second.size(); ++j)
+		{
+			const IndexRange& range = i->second[j];
+			log::info << j << L". offset from " << range.offsetFirst << L" to " << range.offsetLast << L", index min " << range.minIndex << L" max " << range.maxIndex << Endl;
+		}
+		log::info << DecreaseIndent;
+	}
+
+	log::info << DecreaseIndent;
+
 	// Build parts.
 	std::vector< render::Mesh::Part > meshParts;
 	std::map< std::wstring, StaticMeshResource::parts_t > parts;

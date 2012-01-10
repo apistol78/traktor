@@ -66,7 +66,8 @@ private:
 	Ref< ui::Container > m_containerMaterials;
 	Ref< ui::DropDown > m_dropMeshType;
 	Ref< ui::CheckBox > m_checkBakeOcclusion;
-	Ref< ui::ListView > m_materialList;
+	Ref< ui::ListView > m_materialShaderList;
+	Ref< ui::ListView > m_materialTextureList;
 	std::wstring m_assetPath;
 
 	void updateModel();
@@ -81,11 +82,21 @@ private:
 	
 	void removeMaterialShader();
 
+	void createMaterialTexture();
+
+	void browseMaterialTexture();
+
+	void removeMaterialTexture();
+
 	void eventBrowseClick(ui::Event* event);
 
-	void eventMaterialToolClick(ui::Event* event);
+	void eventMaterialShaderToolClick(ui::Event* event);
 
-	void eventMaterialListDoubleClick(ui::Event* event);
+	void eventMaterialShaderListDoubleClick(ui::Event* event);
+
+	void eventMaterialTextureToolClick(ui::Event* event);
+
+	void eventMaterialTextureListDoubleClick(ui::Event* event);
 };
 
 	}
