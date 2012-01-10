@@ -56,12 +56,13 @@ Ref< File > NativeVolume::get(const Path& path)
 		return 0;
 		
 	uint32_t flags = 0;
-	/*
-	if (sb.st_mode & S_ISREG)
+	if (sb.st_mode & S_IFREG)
 		flags |= File::FfNormal;
-	if (sb.st_mode & S_ISDIR)
+	if (sb.st_mode & S_IFDIR)
 		flags |= File::FfDirectory;
-	*/
+	if (!(sb.st_mode & S_IWUSR))
+		flags |= File::FfReadOnly;
+
 	return new File(
 		path,
 		sb.st_size,

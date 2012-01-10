@@ -15,19 +15,20 @@ struct MouseControlMap
 	InputDefaultControlType control;
 	int32_t index;
 	bool analogue;
+	bool relative;
 	const wchar_t* name;
 }
 c_mouseControlMap[] =
 {
-	{ DtAxisX, -1, true, L"Axis X" },
-	{ DtAxisY, -2, true, L"Axis Y" },
-	{ DtAxisZ, -3, true, L"Wheel" },
-	{ DtButton1, 0, false, L"Button 1" },
-	{ DtButton2, 1, false, L"Button 2" },
-	{ DtButton3, 2, false, L"Button 3" },
-	{ DtButton4, 3, false, L"Button 4" },
-	{ DtPositionX, -4, true, L"Axis X" },
-	{ DtPositionY, -5, true, L"Axis Y" }
+	{ DtAxisX, -1, true, true, L"Axis X" },
+	{ DtAxisY, -2, true, true, L"Axis Y" },
+	{ DtAxisZ, -3, true, true, L"Wheel" },
+	{ DtButton1, 0, false, true, L"Button 1" },
+	{ DtButton2, 1, false, true, L"Button 2" },
+	{ DtButton3, 2, false, true, L"Button 3" },
+	{ DtButton4, 3, false, true, L"Button 4" },
+	{ DtPositionX, -4, true, false, L"Axis X" },
+	{ DtPositionY, -5, true, false, L"Axis Y" }
 };
 
 int32_t getElementValue(IOHIDDeviceRef deviceRef, IOHIDElementRef elementRef)
@@ -106,7 +107,7 @@ bool InputDeviceMouseOsX::isControlAnalogue(int32_t control) const
 
 bool InputDeviceMouseOsX::isControlRelative(int32_t control) const
 {
-	return false;
+	return c_mouseControlMap[control].relative;
 }
 
 float InputDeviceMouseOsX::getControlValue(int32_t control)
