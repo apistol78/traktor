@@ -64,9 +64,9 @@ bool KeyboardDeviceWin32::isControlAnalogue(int32_t control) const
 	return false;
 }
 
-bool KeyboardDeviceWin32::isControlRelative(int32_t control) const
+bool KeyboardDeviceWin32::isControlStable(int32_t control) const
 {
-	return false;
+	return true;
 }
 
 float KeyboardDeviceWin32::getControlValue(int32_t control)

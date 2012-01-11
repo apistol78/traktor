@@ -15,7 +15,7 @@ struct MouseControlMap
 	InputDefaultControlType control;
 	int32_t index;
 	bool analogue;
-	bool relative;
+	bool stable;
 	const wchar_t* name;
 }
 c_mouseControlMap[] =
@@ -105,9 +105,9 @@ bool InputDeviceMouseOsX::isControlAnalogue(int32_t control) const
 	return c_mouseControlMap[control].analogue;
 }
 
-bool InputDeviceMouseOsX::isControlRelative(int32_t control) const
+bool InputDeviceMouseOsX::isControlStable(int32_t control) const
 {
-	return c_mouseControlMap[control].relative;
+	return c_mouseControlMap[control].stable;
 }
 
 float InputDeviceMouseOsX::getControlValue(int32_t control)

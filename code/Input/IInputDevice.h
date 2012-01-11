@@ -78,15 +78,15 @@ public:
 	 */
 	virtual bool isControlAnalogue(int32_t control) const = 0;
 
-	/*! \brief Check if control is relative.
+	/*! \brief Check if control is stable.
 	 *
-	 * Relative axises and digital controls return delta changes.
-	 * Relative controls must return 0 when idle.
+	 * Stable controls have a defined value when
+	 * no user interacts with the control.
 	 *
 	 * \param control Control identifier (0 - #controls-1).
-	 * \return True if control is relative.
+	 * \return True if control is stable.
 	 */
-	virtual bool isControlRelative(int32_t control) const = 0;
+	virtual bool isControlStable(int32_t control) const = 0;
 
 	/*! \brief Get current value of a control.
 	 *
