@@ -1,6 +1,7 @@
 #ifndef traktor_world_NullEntity_H
 #define traktor_world_NullEntity_H
 
+#include "Core/Math/IntervalTransform.h"
 #include "World/Entity/SpatialEntity.h"
 
 // import/export mechanism.
@@ -37,7 +38,7 @@ public:
 	Transform getTransform(float interval) const;
 
 private:
-	Transform m_transform[2];
+	IntervalTransform m_transform;
 };
 
 	}

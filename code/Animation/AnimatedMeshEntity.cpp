@@ -109,26 +109,28 @@ void AnimatedMeshEntity::render(
 
 void AnimatedMeshEntity::update(const world::EntityUpdate* update)
 {
-	if (!m_skeleton.validate() || !m_updateController)
-		return;
+	if (m_skeleton.validate() && m_updateController)
+	{
+		synchronize();
 
-	synchronize();
-
-	// Prevent further updates from evaluating pose controller,
-	// each pose controller needs to set this flag if it's
-	// required to continue running even when this entity
-	// hasn't been rendered.
-	m_updateController = false;
+		// Prevent further updates from evaluating pose controller,
+		// each pose controller needs to set this flag if it's
+		// required to continue running even when this entity
+		// hasn't been rendered.
+		m_updateController = false;
 
 #if defined(T_USE_UPDATE_JOBS)
-	m_updatePoseControllerJob = JobManager::getInstance().add(makeFunctor< AnimatedMeshEntity, float >(
-		this,
-		&AnimatedMeshEntity::updatePoseController,
-		update->getDeltaTime()
-	));
+		m_updatePoseControllerJob = JobManager::getInstance().add(makeFunctor< AnimatedMeshEntity, float >(
+			this,
+			&AnimatedMeshEntity::updatePoseController,
+			update->getDeltaTime()
+		));
 #else
-	updatePoseController(update->getDeltaTime());
+		updatePoseController(update->getDeltaTime());
 #endif
+	}
+
+	mesh::MeshEntity::update(update);
 }
 
 void AnimatedMeshEntity::setTransform(const Transform& transform)
@@ -244,7 +246,7 @@ void AnimatedMeshEntity::updatePoseController(float deltaTime)
 		// Evaluate pose transforms in object space.
 		m_poseController->evaluate(
 			deltaTime,
-			m_transform[1],
+			m_transform.get(),
 			m_skeleton,
 			m_neutralPose,
 			m_boneTransforms,
@@ -277,10 +279,10 @@ void AnimatedMeshEntity::updatePoseController(float deltaTime)
 			}
 	
 			if (m_normalizeTransform)
-				m_transform[1] = Transform(
-					m_transform[1].translation() + poseOffset.xyz1(),
-					m_transform[1].rotation()
-				);
+				m_transform.set(Transform(
+					m_transform.get().translation() + poseOffset.xyz1(),
+					m_transform.get().rotation()
+				));
 		}
 
 		// Initialize skin transforms.

@@ -15,7 +15,7 @@ CompositeMeshEntity::CompositeMeshEntity(const Transform& transform)
 
 void CompositeMeshEntity::setTransform(const Transform& transform)
 {
-	Transform deltaTransform = transform * m_transform[1].inverse();
+	Transform deltaTransform = transform * m_transform.get().inverse();
 	for (std::map< std::wstring, Ref< MeshEntity > >::iterator i = m_meshEntities.begin(); i != m_meshEntities.end(); ++i)
 	{
 		Transform currentTransform;
@@ -27,7 +27,7 @@ void CompositeMeshEntity::setTransform(const Transform& transform)
 
 Aabb3 CompositeMeshEntity::getBoundingBox() const
 {
-	Transform invTransform = m_transform[1].inverse();
+	Transform invTransform = m_transform.get().inverse();
 
 	Aabb3 boundingBox;
 	for (std::map< std::wstring, Ref< MeshEntity > >::const_iterator i = m_meshEntities.begin(); i != m_meshEntities.end(); ++i)

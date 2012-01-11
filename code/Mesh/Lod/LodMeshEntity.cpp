@@ -23,7 +23,7 @@ LodMeshEntity::LodMeshEntity(
 
 void LodMeshEntity::setTransform(const Transform& transform)
 {
-	Transform deltaTransform = transform * m_transform[1].inverse();
+	Transform deltaTransform = transform * m_transform.get().inverse();
 	for (RefArray< MeshEntity >::iterator i = m_lods.begin(); i != m_lods.end(); ++i)
 	{
 		Transform currentTransform;
@@ -35,7 +35,7 @@ void LodMeshEntity::setTransform(const Transform& transform)
 
 Aabb3 LodMeshEntity::getBoundingBox() const
 {
-	Transform invTransform = m_transform[0].inverse();
+	Transform invTransform = m_transform.get().inverse();
 
 	Aabb3 boundingBox;
 	for (RefArray< MeshEntity >::const_iterator i = m_lods.begin(); i != m_lods.end(); ++i)
