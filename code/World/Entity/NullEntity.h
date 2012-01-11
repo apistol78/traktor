@@ -34,8 +34,10 @@ public:
 
 	virtual Aabb3 getBoundingBox() const;
 
+	Transform getTransform(float interval) const;
+
 private:
-	Transform m_transform;
+	Transform m_transform[2];
 };
 
 	}

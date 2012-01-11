@@ -98,13 +98,12 @@ void AnimatedMeshEntity::render(
 	m_mesh->render(
 		worldContext.getRenderContext(),
 		worldRenderPass,
-		m_transform,
+		getTransform(worldRenderView.getInterval()),
 		m_skinTransforms,
 		distance,
 		getParameterCallback()
 	);
 
-	m_first = false;
 	m_updateController = true;
 }
 
@@ -245,7 +244,7 @@ void AnimatedMeshEntity::updatePoseController(float deltaTime)
 		// Evaluate pose transforms in object space.
 		m_poseController->evaluate(
 			deltaTime,
-			m_transform,
+			m_transform[1],
 			m_skeleton,
 			m_neutralPose,
 			m_boneTransforms,
@@ -278,9 +277,9 @@ void AnimatedMeshEntity::updatePoseController(float deltaTime)
 			}
 	
 			if (m_normalizeTransform)
-				m_transform = Transform(
-					m_transform.translation() + poseOffset.xyz1(),
-					m_transform.rotation()
+				m_transform[1] = Transform(
+					m_transform[1].translation() + poseOffset.xyz1(),
+					m_transform[1].rotation()
 				);
 		}
 

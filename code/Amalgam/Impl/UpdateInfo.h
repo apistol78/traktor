@@ -48,7 +48,7 @@ public:
 
 	virtual uint64_t getFrame() const { return m_frame; }
 
-	virtual float getInterval() const { return clamp(1.0f - (m_simulationTime - m_stateTime) / m_simulationDeltaTime, 0.0f, 1.0f); }
+	virtual float getInterval() const { return clamp((m_stateTime - m_simulationTime + m_simulationDeltaTime) / m_simulationDeltaTime, 0.0f, 1.0f); }
 };
 
 	}

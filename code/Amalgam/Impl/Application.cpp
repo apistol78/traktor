@@ -572,7 +572,7 @@ bool Application::update()
 			m_updateInfo.m_simulationDeltaTime = c_simulationDeltaTime;
 			m_updateInfo.m_simulationFrequency = c_simulationFrequency;
 
-			float simulationEndTime = m_updateInfo.m_stateTime + m_updateInfo.m_frameDeltaTime;
+			float simulationEndTime = m_updateInfo.m_stateTime;
 			updateCount = std::min(int32_t(std::ceil((simulationEndTime - m_updateInfo.m_simulationTime) / c_simulationDeltaTime)), c_maxSimulationUpdates);
 
 			// Execute fixed update(s).

@@ -50,14 +50,12 @@ void BlendMeshEntity::render(
 	m_mesh->render(
 		worldContext.getRenderContext(),
 		worldRenderPass,
-		m_transform,
+		getTransform(worldRenderView.getInterval()),
 		m_instance,
 		m_blendWeights,
 		distance,
 		getParameterCallback()
 	);
-
-	m_first = false;
 }
 
 bool BlendMeshEntity::validate() const

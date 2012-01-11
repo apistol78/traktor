@@ -63,8 +63,6 @@ void SkinnedMeshEntity::render(
 		distance,
 		getParameterCallback()
 	);
-
-	m_first = false;
 }
 
 bool SkinnedMeshEntity::validate() const

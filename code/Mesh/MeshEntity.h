@@ -67,11 +67,9 @@ public:
 	IMeshParameterCallback* getParameterCallback() const { return m_parameterCallback; }
 
 protected:
-	Transform m_transform;
-	Transform m_transformPrevious;
+	Transform m_transform[2];
 	float m_userParameter;
 	IMeshParameterCallback* m_parameterCallback;
-	bool m_first;
 
 	/*! \brief Calculate render transform.
 	 *

@@ -44,8 +44,6 @@ void StaticMeshEntity::render(
 		getUserParameter(),
 		getParameterCallback()
 	);
-
-	m_first = false;
 }
 
 	}
