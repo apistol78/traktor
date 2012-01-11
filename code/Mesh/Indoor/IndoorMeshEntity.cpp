@@ -40,12 +40,10 @@ void IndoorMeshEntity::render(
 		worldContext.getRenderContext(),
 		worldRenderView,
 		worldRenderPass,
-		m_transform,
+		getTransform(worldRenderView.getInterval()),
 		distance,
 		getParameterCallback()
 	);
-
-	m_first = false;
 }
 
 	}

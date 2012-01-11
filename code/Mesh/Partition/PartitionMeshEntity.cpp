@@ -45,8 +45,6 @@ void PartitionMeshEntity::render(
 		getUserParameter(),
 		getParameterCallback()
 	);
-
-	m_first = false;
 }
 
 	}

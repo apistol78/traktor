@@ -55,8 +55,6 @@ void InstanceMeshEntityRenderer::render(
 		packInstanceMeshData(transform, meshEntity->getUserParameter()),
 		distance
 	));
-
-	meshEntity->m_first = false;
 }
 
 void InstanceMeshEntityRenderer::flush(

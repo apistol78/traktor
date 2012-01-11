@@ -62,8 +62,6 @@ void StreamMeshEntity::render(
 		distance,
 		getParameterCallback()
 	);
-
-	m_first = false;
 }
 
 bool StreamMeshEntity::validate() const
