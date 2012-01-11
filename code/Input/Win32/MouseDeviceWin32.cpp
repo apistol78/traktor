@@ -14,17 +14,17 @@ const struct MouseControlMap
 	const wchar_t* name;
 	InputDefaultControlType controlType;
 	bool analogue;
-	bool relative;
+	bool stable;
 }
 c_mouseControlMap[] =
 {
-	{ L"Left mouse button", DtButton1, false, false },
-	{ L"Right mouse button", DtButton2, false, false },
-	{ L"Middle mouse button", DtButton3, false, false },
-	{ L"Mouse X axis", DtAxisX, true, false },
-	{ L"Mouse Y axis", DtAxisY, true, false },
-	{ L"Mouse X axis", DtPositionX, true, true },
-	{ L"Mouse Y axis", DtPositionY, true, true }
+	{ L"Left mouse button", DtButton1, false, true },
+	{ L"Right mouse button", DtButton2, false, true },
+	{ L"Middle mouse button", DtButton3, false, true },
+	{ L"Mouse X axis", DtAxisX, true, true },
+	{ L"Mouse Y axis", DtAxisY, true, true },
+	{ L"Mouse X axis", DtPositionX, true, false },
+	{ L"Mouse Y axis", DtPositionY, true, false }
 };
 
 		}
@@ -76,9 +76,9 @@ bool MouseDeviceWin32::isControlAnalogue(int32_t control) const
 	return c_mouseControlMap[control].analogue;
 }
 
-bool MouseDeviceWin32::isControlRelative(int32_t control) const
+bool MouseDeviceWin32::isControlStable(int32_t control) const
 {
-	return c_mouseControlMap[control].relative;
+	return c_mouseControlMap[control].stable;
 }
 
 float MouseDeviceWin32::getControlValue(int32_t control)

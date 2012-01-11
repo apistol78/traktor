@@ -21,7 +21,7 @@ bool isDeviceReady(IInputDevice* device)
 	int32_t controlCount = device->getControlCount();
 	for (int32_t i = 0; i < controlCount; ++i)
 	{
-		if (!device->isControlRelative(i))
+		if (!device->isControlStable(i))
 			continue;
 
 		float v = device->getControlValue(i);

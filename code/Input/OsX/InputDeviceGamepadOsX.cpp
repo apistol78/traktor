@@ -97,9 +97,9 @@ bool InputDeviceGamepadOsX::isControlAnalogue(int32_t control) const
 	return c_gamepadControlMap[control].analogue;
 }
 
-bool InputDeviceGamepadOsX::isControlRelative(int32_t control) const
+bool InputDeviceGamepadOsX::isControlStable(int32_t control) const
 {
-	return false;
+	return true;
 }
 
 float InputDeviceGamepadOsX::getControlValue(int32_t control)

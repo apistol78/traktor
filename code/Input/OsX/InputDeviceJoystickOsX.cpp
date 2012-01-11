@@ -91,9 +91,9 @@ bool InputDeviceJoystickOsX::isControlAnalogue(int32_t control) const
 	return c_joystickControlMap[control].analogue;
 }
 
-bool InputDeviceJoystickOsX::isControlRelative(int32_t control) const
+bool InputDeviceJoystickOsX::isControlStable(int32_t control) const
 {
-	return false;
+	return true;
 }
 
 float InputDeviceJoystickOsX::getControlValue(int32_t control)

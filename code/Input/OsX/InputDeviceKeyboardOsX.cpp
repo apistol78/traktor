@@ -146,9 +146,9 @@ bool InputDeviceKeyboardOsX::isControlAnalogue(int32_t control) const
 	return false;
 }
 
-bool InputDeviceKeyboardOsX::isControlRelative(int32_t control) const
+bool InputDeviceKeyboardOsX::isControlStable(int32_t control) const
 {
-	return false;
+	return true;
 }
 
 float InputDeviceKeyboardOsX::getControlValue(int32_t control)

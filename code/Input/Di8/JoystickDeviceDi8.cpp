@@ -80,9 +80,9 @@ bool JoystickDeviceDi8::isControlAnalogue(int32_t control) const
 	return m_controlInfo[control].analogue;
 }
 
-bool JoystickDeviceDi8::isControlRelative(int32_t control) const
+bool JoystickDeviceDi8::isControlStable(int32_t control) const
 {
-	return false;
+	return true;
 }
 
 float JoystickDeviceDi8::getControlValue(int32_t control)

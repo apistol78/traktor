@@ -28,7 +28,7 @@ public:
 
 	virtual bool isControlAnalogue(int32_t control) const;
 	
-	virtual bool isControlRelative(int32_t control) const;
+	virtual bool isControlStable(int32_t control) const;
 	
 	virtual float getControlValue(int32_t control);
 

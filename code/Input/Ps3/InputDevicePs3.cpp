@@ -106,9 +106,9 @@ bool InputDevicePs3::isControlAnalogue(int32_t control) const
 	return controlInfo.analogue;
 }
 
-bool InputDevicePs3::isControlRelative(int32_t control) const
+bool InputDevicePs3::isControlStable(int32_t control) const
 {
-	return false;
+	return true;
 }
 
 float InputDevicePs3::getControlValue(int32_t control)
