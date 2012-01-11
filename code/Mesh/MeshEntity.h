@@ -2,6 +2,7 @@
 #define traktor_mesh_MeshEntity_H
 
 #include "Core/Math/Aabb3.h"
+#include "Core/Math/IntervalTransform.h"
 #include "Render/Types.h"
 #include "World/Entity/SpatialEntity.h"
 
@@ -58,6 +59,8 @@ public:
 		float distance
 	) = 0;
 
+	void pushTransform();
+
 	void setUserParameter(const float userParameter) { m_userParameter = userParameter; }
 
 	float getUserParameter() const { return m_userParameter; }
@@ -67,7 +70,7 @@ public:
 	IMeshParameterCallback* getParameterCallback() const { return m_parameterCallback; }
 
 protected:
-	Transform m_transform[2];
+	IntervalTransform m_transform;
 	float m_userParameter;
 	IMeshParameterCallback* m_parameterCallback;
 

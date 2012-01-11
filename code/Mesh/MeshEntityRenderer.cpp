@@ -32,7 +32,9 @@ void MeshEntityRenderer::render(
 		return;
 
 	Aabb3 boundingBox = meshEntity->getBoundingBox();
-	Transform transform; meshEntity->getTransform(transform);
+
+	Transform transform;
+	meshEntity->getTransform(transform);
 
 	float distance = 0.0f;
 	if (!isMeshVisible(

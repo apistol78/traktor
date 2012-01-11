@@ -8,24 +8,23 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.NullEntity", NullEntity, SpatialEntity)
 
 NullEntity::NullEntity(const Transform& transform)
+:	m_transform(transform)
 {
-	m_transform[0] =
-	m_transform[1] = transform;
 }
 
 void NullEntity::update(const EntityUpdate* update)
 {
+	m_transform.step();
 }
 
 void NullEntity::setTransform(const Transform& transform)
 {
-	m_transform[0] = m_transform[1];
-	m_transform[1] = transform;
+	m_transform.set(transform);
 }
 
 bool NullEntity::getTransform(Transform& outTransform) const
 {
-	outTransform = m_transform[1];
+	outTransform = m_transform.get();
 	return true;
 }
 
@@ -39,7 +38,7 @@ Aabb3 NullEntity::getBoundingBox() const
 
 Transform NullEntity::getTransform(float interval) const
 {
-	return lerp(m_transform[0], m_transform[1], Scalar(interval));
+	return m_transform.get(interval);
 }
 
 	}
