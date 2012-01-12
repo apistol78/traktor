@@ -51,6 +51,8 @@ class T_DLLCLASS IGraphicsSystem : public Object
 public:
 	virtual bool getDisplayModes(std::vector< DisplayMode >& outDisplayModes) const = 0;
 
+	virtual bool getCurrentDisplayMode(DisplayMode& outDisplayMode) const = 0;
+
 	virtual bool create(const CreateDesc& createDesc) = 0;
 
 	virtual void destroy() = 0;

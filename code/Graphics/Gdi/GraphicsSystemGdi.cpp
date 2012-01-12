@@ -13,8 +13,28 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.graphics.GraphicsSystemGdi", GraphicsSystemGdi,
 
 bool GraphicsSystemGdi::getDisplayModes(std::vector< DisplayMode >& outDisplayModes) const
 {
-	DisplayMode dm = { 640, 480, 32 };
-	outDisplayModes.push_back(dm);
+	DEVMODE devm;
+	for (DWORD i = 0; EnumDisplaySettings(NULL, i, &devm) != 0; ++i)
+	{
+		DisplayMode dm;
+		dm.width = devm.dmPelsWidth;
+		dm.height = devm.dmPelsHeight;
+		dm.bits = devm.dmBitsPerPel;
+		outDisplayModes.push_back(dm);
+	}
+	return true;
+}
+
+bool GraphicsSystemGdi::getCurrentDisplayMode(DisplayMode& outDisplayMode) const
+{
+	DEVMODE devm;
+	if (!EnumDisplaySettings(NULL, ENUM_CURRENT_SETTINGS, &devm))
+		return false;
+
+	outDisplayMode.width = devm.dmPelsWidth;
+	outDisplayMode.height = devm.dmPelsHeight;
+	outDisplayMode.bits = devm.dmBitsPerPel;
+
 	return true;
 }
 
