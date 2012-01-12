@@ -1,4 +1,5 @@
 #include "Core/Log/Log.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Graphics/IGraphicsSystem.h"
 #include "Render/VertexElement.h"
@@ -52,7 +53,6 @@ RenderSystemSw::RenderSystemSw()
 :	m_hWnd(NULL)
 #endif
 {
-	m_processor = new ProcessorImpl();
 }
 
 bool RenderSystemSw::create(const RenderSystemCreateDesc& desc)
@@ -71,12 +71,29 @@ bool RenderSystemSw::create(const RenderSystemCreateDesc& desc)
 	wc.lpszClassName = c_windowClassName;
 	RegisterClass(&wc);
 
+#	if !defined(WINCE)
+	m_graphicsSystem = new graphics::GraphicsSystemGdi();
+#	else
+	m_graphicsSystem = new graphics::GraphicsSystemDdWm5();
+#	endif
 #endif
+
+	if (!m_graphicsSystem)
+		return false;
+
+	if (!m_graphicsSystem->getDisplayModes(m_displayModes))
+		return false;
+
+	m_processor = new ProcessorImpl();
+
 	return true;
 }
 
 void RenderSystemSw::destroy()
 {
+	m_processor = 0;
+	m_displayModes.clear();
+	safeDestroy(m_graphicsSystem);
 }
 
 uint32_t RenderSystemSw::getDisplayModeCount() const
@@ -96,7 +113,16 @@ DisplayMode RenderSystemSw::getDisplayMode(uint32_t index) const
 
 DisplayMode RenderSystemSw::getCurrentDisplayMode() const
 {
-	return DisplayMode();
+	graphics::DisplayMode gdm;
+	m_graphicsSystem->getCurrentDisplayMode(gdm);
+	
+	DisplayMode dm;
+	dm.width = gdm.width;
+	dm.height = gdm.height;
+	dm.refreshRate = 0;
+	dm.colorBits = gdm.bits;
+
+	return dm;
 }
 
 float RenderSystemSw::getDisplayAspectRatio() const
@@ -106,7 +132,6 @@ float RenderSystemSw::getDisplayAspectRatio() const
 
 Ref< IRenderView > RenderSystemSw::createRenderView(const RenderViewDefaultDesc& desc)
 {
-	Ref< graphics::IGraphicsSystem > graphicsSystem;
 	graphics::CreateDesc graphicsDesc;
 
 #if defined(_WIN32)
@@ -162,14 +187,6 @@ Ref< IRenderView > RenderSystemSw::createRenderView(const RenderViewDefaultDesc&
 
 #endif
 
-#if defined(_WIN32)
-#	if !defined(WINCE)
-	graphicsSystem = new graphics::GraphicsSystemGdi();
-#	else
-	graphicsSystem = new graphics::GraphicsSystemDdWm5();
-#	endif
-#endif
-
 	graphicsDesc.windowHandle = m_hWnd;
 	graphicsDesc.fullScreen = desc.fullscreen;
 	graphicsDesc.displayMode.width = desc.displayMode.width;
@@ -177,10 +194,10 @@ Ref< IRenderView > RenderSystemSw::createRenderView(const RenderViewDefaultDesc&
 	graphicsDesc.displayMode.bits = desc.displayMode.colorBits;
 	graphicsDesc.pixelFormat = graphics::PfeR5G6B5;
 
-	if (!graphicsSystem->create(graphicsDesc))
+	if (!m_graphicsSystem->create(graphicsDesc))
 		return 0;
 
-	return new RenderViewSw(this, graphicsSystem, m_processor);
+	return new RenderViewSw(this, m_graphicsSystem, m_processor);
 }
 
 Ref< IRenderView > RenderSystemSw::createRenderView(const RenderViewEmbeddedDesc& desc)

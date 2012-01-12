@@ -12,6 +12,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetSetSw", RenderTargetSetSw, R
 RenderTargetSetSw::RenderTargetSetSw()
 :	m_width(0)
 ,	m_height(0)
+,	m_usingPrimaryDepth(false)
 {
 }
 
@@ -22,6 +23,7 @@ bool RenderTargetSetSw::create(const RenderTargetSetCreateDesc& desc)
 
 	m_width = desc.width;
 	m_height = desc.height;
+	m_usingPrimaryDepth = desc.usingPrimaryDepthStencil;
 
 	m_colorTargets.resize(desc.count);
 	for (int i = 0; i < desc.count; ++i)
@@ -32,7 +34,12 @@ bool RenderTargetSetSw::create(const RenderTargetSetCreateDesc& desc)
 	}
 
 	if (desc.createDepthStencil)
+	{
+		if (m_usingPrimaryDepth)
+			return false;
+
 		m_depthSurface.reset(new uint16_t [desc.width * desc.height]);
+	}
 
 	return true;
 }
@@ -41,6 +48,7 @@ void RenderTargetSetSw::destroy()
 {
 	m_width =
 	m_height = 0;
+	m_usingPrimaryDepth = false;
 
 	for (RefArray< RenderTargetSw >::iterator i = m_colorTargets.begin(); i != m_colorTargets.end(); ++i)
 		(*i)->destroy();
@@ -72,11 +80,6 @@ void RenderTargetSetSw::swap(int index1, int index2)
 bool RenderTargetSetSw::read(int index, void* buffer) const
 {
 	return false;
-}
-
-uint16_t* RenderTargetSetSw::getDepthSurface()
-{
-	return m_depthSurface.ptr();
 }
 
 	}

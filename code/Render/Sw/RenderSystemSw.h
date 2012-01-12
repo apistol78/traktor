@@ -71,10 +71,11 @@ public:
 	virtual void getStatistics(RenderSystemStatistics& outStatistics) const;
 
 private:
+	Ref< graphics::IGraphicsSystem > m_graphicsSystem;
+	std::vector< graphics::DisplayMode > m_displayModes;
 	Ref< Processor > m_processor;
 #if defined(_WIN32)
 	HWND m_hWnd;
-	std::vector< graphics::DisplayMode > m_displayModes;
 
 	static LRESULT WINAPI wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 #endif
