@@ -2018,7 +2018,10 @@ std::wstring SolutionBuilderXcode::getProductType(Configuration::TargetFormat ta
 		return L"com.apple.product-type.library.dynamic";
 	case Configuration::TfExecutable:
 	case Configuration::TfExecutableConsole:
-		return L"com.apple.product-type.tool";
+		if (!m_iphone)
+			return L"com.apple.product-type.tool";
+		else
+			return L"com.apple.product-type.application";
 	}
 	return L"";
 }
