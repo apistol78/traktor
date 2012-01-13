@@ -4,7 +4,7 @@
 #	include <emmintrin.h>
 #elif defined(__APPLE__)
 #	include <TargetConditionals.h>
-#	if TARGET_CPU_X86 && TARGET_OS_MAC
+#	if TARGET_CPU_X86 && TARGET_OS_MAC && !TARGET_OS_IPHONE
 #		define USE_XMM_INTRINSICS
 #		include <emmintrin.h>
 #	endif
