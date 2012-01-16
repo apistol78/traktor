@@ -9,7 +9,7 @@
 #include "Render/Editor/Shader/Facades/ExternalNodeFacade.h"
 #include "Ui/Custom/Graph/GraphControl.h"
 #include "Ui/Custom/Graph/Node.h"
-#include "Ui/Custom/Graph/DefaultNodeShape.h"
+#include "Ui/Custom/Graph/ExternalNodeShape.h"
 #include "Ui/Custom/Graph/PaintSettings.h"
 
 namespace traktor
@@ -21,7 +21,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ExternalNodeFacade", ExternalNodeFacade,
 
 ExternalNodeFacade::ExternalNodeFacade(ui::custom::GraphControl* graphControl)
 {
-	m_nodeShape = new ui::custom::DefaultNodeShape(graphControl);
+	m_nodeShape = new ui::custom::ExternalNodeShape(graphControl);
 }
 
 Ref< Node > ExternalNodeFacade::createShaderNode(
@@ -88,7 +88,6 @@ Ref< ui::custom::Node > ExternalNodeFacade::createEditorNode(
 	}
 
 	editorNode->setComment(shaderNode->getComment());
-	editorNode->setColor(Color4ub(255, 255, 200));
 
 	return editorNode;
 }
@@ -125,7 +124,7 @@ void ExternalNodeFacade::setValidationIndicator(
 	bool validationSucceeded
 )
 {
-	editorNode->setColor(validationSucceeded ? Color4ub(255, 255, 200) : Color4ub(255, 120, 120));
+	editorNode->setState(validationSucceeded ? 0 : 1);
 }
 
 	}

@@ -88,7 +88,7 @@ void InterpolatorNodeFacade::setValidationIndicator(
 	bool validationSucceeded
 )
 {
-	editorNode->setColor(validationSucceeded ? Color4ub(255, 255, 255) : Color4ub(255, 120, 120));
+	editorNode->setState(validationSucceeded ? 0 : 1);
 }
 
 	}

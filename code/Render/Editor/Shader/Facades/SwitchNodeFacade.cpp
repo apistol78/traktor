@@ -96,7 +96,7 @@ void SwitchNodeFacade::setValidationIndicator(
 	bool validationSucceeded
 )
 {
-	editorNode->setColor(validationSucceeded ? traktor::Color4ub(255, 255, 255) : traktor::Color4ub(255, 120, 120));
+	editorNode->setState(validationSucceeded ? 0 : 1);
 }
 
 	}

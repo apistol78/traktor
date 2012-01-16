@@ -721,6 +721,10 @@ bool EditorForm::openEditor(db::Instance* instance)
 			return false;
 		}
 
+		// Add tab page to tab container.
+		m_tab->addPage(tabPage);
+		m_tab->update(0, true);
+
 		// Create editor page.
 		if (!editorPage->create(tabPage))
 		{
@@ -734,10 +738,6 @@ bool EditorForm::openEditor(db::Instance* instance)
 		tabPage->setData(L"EDITORPAGE", editorPage);
 		tabPage->setData(L"DOCUMENT", document);
 		tabPage->setData(L"PRIMARY", instance);
-
-		// Add tab page to tab container.
-		m_tab->addPage(tabPage);
-		m_tab->update(0, true);
 
 		// Activate newly created editor page.
 		setActiveEditorPage(editorPage);

@@ -1,14 +1,14 @@
 #include <algorithm>
-#include "Ui/Custom/Graph/DefaultNodeShape.h"
-#include "Ui/Custom/Graph/GraphControl.h"
-#include "Ui/Custom/Graph/PaintSettings.h"
-#include "Ui/Custom/Graph/Node.h"
-#include "Ui/Custom/Graph/Pin.h"
-#include "Ui/Bitmap.h"
 #include "Drawing/Image.h"
+#include "Ui/Bitmap.h"
+#include "Ui/Custom/Graph/ExternalNodeShape.h"
+#include "Ui/Custom/Graph/GraphControl.h"
+#include "Ui/Custom/Graph/Node.h"
+#include "Ui/Custom/Graph/PaintSettings.h"
+#include "Ui/Custom/Graph/Pin.h"
 
 // Resources
-#include "Resources/Node.h"
+#include "Resources/External.h"
 #include "Resources/Pin.h"
 
 namespace traktor
@@ -31,16 +31,16 @@ const int c_pinHitWidth = 14;	/*< Width of pin hit area from visual edge. */
 
 			}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.DefaultNodeShape", DefaultNodeShape, NodeShape)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.ExternalNodeShape", ExternalNodeShape, NodeShape)
 
-DefaultNodeShape::DefaultNodeShape(GraphControl* graphControl)
+ExternalNodeShape::ExternalNodeShape(GraphControl* graphControl)
 :	m_graphControl(graphControl)
 {
-	m_imageNode = Bitmap::load(c_ResourceNode, sizeof(c_ResourceNode), L"png");
+	m_imageNode = Bitmap::load(c_ResourceExternal, sizeof(c_ResourceExternal), L"png");
 	m_imagePin = Bitmap::load(c_ResourcePin, sizeof(c_ResourcePin), L"png");
 }
 
-Point DefaultNodeShape::getPinPosition(const Node* node, const Pin* pin)
+Point ExternalNodeShape::getPinPosition(const Node* node, const Pin* pin)
 {
 	Rect rc = node->calculateRect();
 	
@@ -66,7 +66,7 @@ Point DefaultNodeShape::getPinPosition(const Node* node, const Pin* pin)
 	return Point(rc.left + x, rc.top + top);
 }
 
-Ref< Pin > DefaultNodeShape::getPinAt(const Node* node, const Point& pt)
+Ref< Pin > ExternalNodeShape::getPinAt(const Node* node, const Point& pt)
 {
 	Rect rc = node->calculateRect();
 	if (!rc.inside(pt))
@@ -100,7 +100,7 @@ Ref< Pin > DefaultNodeShape::getPinAt(const Node* node, const Point& pt)
 	return 0;
 }
 
-void DefaultNodeShape::paint(const Node* node, const PaintSettings* settings, Canvas* canvas, const Size& offset)
+void ExternalNodeShape::paint(const Node* node, const PaintSettings* settings, Canvas* canvas, const Size& offset)
 {
 	Rect rc = node->calculateRect().offset(offset);
 
@@ -250,7 +250,7 @@ void DefaultNodeShape::paint(const Node* node, const PaintSettings* settings, Ca
 	}
 }
 
-Size DefaultNodeShape::calculateSize(const Node* node)
+Size ExternalNodeShape::calculateSize(const Node* node)
 {
 	Font currentFont = m_graphControl->getFont();
 

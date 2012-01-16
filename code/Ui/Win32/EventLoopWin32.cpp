@@ -1,12 +1,15 @@
-#include "Ui/Win32/EventLoopWin32.h"
-#if defined(T_USE_GDI_PLUS)
-#	include "Ui/Win32/CanvasGdiPlusWin32.h"
-#endif
-#include "Ui/Win32/UtilitiesWin32.h"
 #include "Ui/Enums.h"
 #include "Ui/EventSubject.h"
 #include "Ui/Events/KeyEvent.h"
 #include "Ui/Events/IdleEvent.h"
+#if defined(T_USE_DIRECT2D)
+#	include "Ui/Win32/CanvasDirect2DWin32.h"
+#endif
+#if defined(T_USE_GDI_PLUS)
+#	include "Ui/Win32/CanvasGdiPlusWin32.h"
+#endif
+#include "Ui/Win32/EventLoopWin32.h"
+#include "Ui/Win32/UtilitiesWin32.h"
 
 HINSTANCE g_hInstance = NULL;
 
@@ -28,11 +31,14 @@ EventLoopWin32::EventLoopWin32()
 #endif
 
 	INITCOMMONCONTROLSEX icc;
-	memset(&icc, 0, sizeof(icc));
+	std::memset(&icc, 0, sizeof(icc));
 	icc.dwSize = sizeof(icc);
 	icc.dwICC = ICC_WIN95_CLASSES | ICC_COOL_CLASSES;
 	InitCommonControlsEx(&icc);
 
+#if defined(T_USE_DIRECT2D)
+	CanvasDirect2DWin32::startup();
+#endif
 #if defined(T_USE_GDI_PLUS)
 	CanvasGdiPlusWin32::startup();
 #endif
@@ -48,6 +54,9 @@ EventLoopWin32::~EventLoopWin32()
 
 #if defined(T_USE_GDI_PLUS)
 	CanvasGdiPlusWin32::shutdown();
+#endif
+#if defined(T_USE_DIRECT2D)
+	CanvasDirect2DWin32::shutdown();
 #endif
 }
 

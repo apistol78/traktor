@@ -7983,6 +7983,10 @@
 										<fileName>../../../res/preview/PreviewFrame.png</fileName>
 										<items/>
 									</item>
+									<item type="File">
+										<fileName>../../../res/graph/External.png</fileName>
+										<items/>
+									</item>
 								</items>
 							</item>
 							<item type="Filter">
@@ -9469,12 +9473,15 @@
 									<item>UNICODE</item>
 									<item>_UNICODE</item>
 									<item>T_USE_GDI_PLUS</item>
+									<item>T_USE_DIRECT2D</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries>
 									<item>msimg32.lib</item>
 									<item>comctl32.lib</item>
 									<item>gdiplus.lib</item>
+									<item>d2d1.lib</item>
+									<item>dwrite.lib</item>
 								</libraries>
 								<additionalCompilerOptions/>
 								<additionalLinkerOptions/>
@@ -9493,12 +9500,15 @@
 									<item>UNICODE</item>
 									<item>_UNICODE</item>
 									<item>T_USE_GDI_PLUS</item>
+									<item>T_USE_DIRECT2D</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries>
 									<item>msimg32.lib</item>
 									<item>comctl32.lib</item>
 									<item>gdiplus.lib</item>
+									<item>d2d1.lib</item>
+									<item>dwrite.lib</item>
 								</libraries>
 								<additionalCompilerOptions/>
 								<additionalLinkerOptions/>
@@ -9517,12 +9527,15 @@
 									<item>UNICODE</item>
 									<item>_UNICODE</item>
 									<item>T_USE_GDI_PLUS</item>
+									<item>T_USE_DIRECT2D</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries>
 									<item>msimg32.lib</item>
 									<item>comctl32.lib</item>
 									<item>gdiplus.lib</item>
+									<item>d2d1.lib</item>
+									<item>dwrite.lib</item>
 								</libraries>
 								<additionalCompilerOptions/>
 								<additionalLinkerOptions/>
@@ -9541,12 +9554,15 @@
 									<item>UNICODE</item>
 									<item>_UNICODE</item>
 									<item>T_USE_GDI_PLUS</item>
+									<item>T_USE_DIRECT2D</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries>
 									<item>msimg32.lib</item>
 									<item>comctl32.lib</item>
 									<item>gdiplus.lib</item>
+									<item>d2d1.lib</item>
+									<item>dwrite.lib</item>
 								</libraries>
 								<additionalCompilerOptions/>
 								<additionalLinkerOptions/>

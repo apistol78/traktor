@@ -8239,6 +8239,10 @@
 													<fileName>../../../res/graph/Comment.png</fileName>
 													<items/>
 												</item>
+												<item type="File">
+													<fileName>../../../res/graph/External.png</fileName>
+													<items/>
+												</item>
 											</items>
 										</item>
 										<item type="Filter">

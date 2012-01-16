@@ -79,10 +79,10 @@ Ref< ui::custom::Node > DefaultNodeFacade::createEditorNode(
 
 	editorNode->setComment(shaderNode->getComment());
 
-	if (is_a< InputPort >(shaderNode) || is_a< OutputPort >(shaderNode))
-		editorNode->setColor(traktor::Color4ub(200, 255, 200));
-	else if (is_a< Uniform >(shaderNode) || is_a< IndexedUniform >(shaderNode))
-		editorNode->setColor(traktor::Color4ub(200, 255, 255));
+	//if (is_a< InputPort >(shaderNode) || is_a< OutputPort >(shaderNode))
+	//	editorNode->setColor(traktor::Color4ub(200, 255, 200));
+	//else if (is_a< Uniform >(shaderNode) || is_a< IndexedUniform >(shaderNode))
+	//	editorNode->setColor(traktor::Color4ub(200, 255, 255));
 
 	return editorNode;
 }
@@ -112,16 +112,7 @@ void DefaultNodeFacade::setValidationIndicator(
 	bool validationSucceeded
 )
 {
-	traktor::Color4ub color(255, 255, 255);
-
-	Ref< Node > shaderNode = editorNode->getData< Node >(L"SHADERNODE");
-
-	if (is_a< InputPort >(shaderNode) || is_a< OutputPort >(shaderNode))
-		color = traktor::Color4ub(200, 255, 200);
-	else if (is_a< Uniform >(shaderNode) || is_a< IndexedUniform >(shaderNode))
-		color = traktor::Color4ub(200, 255, 255);
-
-	editorNode->setColor(validationSucceeded ? color : traktor::Color4ub(255, 60, 60));
+	editorNode->setState(validationSucceeded ? 0 : 1);
 }
 
 	}

@@ -70,7 +70,6 @@ Ref< ui::custom::Node > TextureNodeFacade::createEditorNode(
 	}
 
 	editorNode->setComment(shaderNode->getComment());
-	editorNode->setColor(traktor::Color4ub(255, 255, 200));
 
 	updateThumb(editor, editorNode, texture);
 
@@ -107,7 +106,7 @@ void TextureNodeFacade::setValidationIndicator(
 	bool validationSucceeded
 )
 {
-	editorNode->setColor(validationSucceeded ? traktor::Color4ub(200, 255, 255) : traktor::Color4ub(255, 255, 200));
+	editorNode->setState(validationSucceeded ? 0 : 1);
 }
 
 void TextureNodeFacade::updateThumb(editor::IEditor* editor, ui::custom::Node* editorNode, Texture* texture) const

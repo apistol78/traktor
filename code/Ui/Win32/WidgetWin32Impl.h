@@ -18,6 +18,9 @@
 #include "Ui/Itf/IWidget.h"
 #include "Ui/Win32/Window.h"
 #include "Ui/Win32/CanvasGdiWin32.h"
+#if defined(T_USE_DIRECT2D)
+#	include "Ui/Win32/CanvasDirect2DWin32.h"
+#endif
 #if defined(T_USE_GDI_PLUS)
 #	include "Ui/Win32/CanvasGdiPlusWin32.h"
 #endif
@@ -497,11 +500,18 @@ protected:
 		if (style & WsDoubleBuffer)
 			m_doubleBuffer = true;
 
-#if defined(T_USE_GDI_PLUS)
-		m_canvasImpl = new CanvasGdiPlusWin32();
-#else
-		m_canvasImpl = new CanvasGdiWin32();
+#if defined(T_USE_DIRECT2D)
+		if (style & WsAccelerated)
+			m_canvasImpl = new CanvasDirect2DWin32();
 #endif
+
+#if defined(T_USE_GDI_PLUS)
+		if (!m_canvasImpl)
+			m_canvasImpl = new CanvasGdiPlusWin32();
+#endif
+
+		if (!m_canvasImpl)
+			m_canvasImpl = new CanvasGdiWin32();
 
 		m_hWnd.registerMessageHandler(WM_CHAR,          new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventChar));
 		m_hWnd.registerMessageHandler(WM_KEYDOWN,       new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventKeyDown));
