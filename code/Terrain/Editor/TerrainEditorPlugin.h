@@ -33,7 +33,7 @@ class T_DLLCLASS TerrainEditorPlugin : public scene::ISceneEditorPlugin
 	T_RTTI_CLASS;
 
 public:
-	TerrainEditorPlugin();
+	TerrainEditorPlugin(scene::SceneEditorContext* context);
 
 	virtual bool create(ui::Widget* parent, ui::custom::ToolBar* toolBar);
 
@@ -42,6 +42,7 @@ public:
 	int32_t getSelectedTool() const { return m_selectedTool; }
 
 private:
+	scene::SceneEditorContext* m_context;
 	Ref< ui::custom::ToolBarButton > m_toolRaiseTool;
 	Ref< ui::custom::ToolBarButton > m_toolFlattenTool;
 	Ref< ui::custom::ToolBarButton > m_toolSmoothTool;

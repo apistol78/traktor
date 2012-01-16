@@ -1,3 +1,4 @@
+#include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberAlignedVector.h"
@@ -12,7 +13,12 @@ namespace traktor
 	namespace terrain
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.RiverEntityData", 0, RiverEntityData, world::EntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.RiverEntityData", 2, RiverEntityData, world::EntityData)
+
+RiverEntityData::RiverEntityData()
+:	m_tileFactorV(1.0f)
+{
+}
 
 bool RiverEntityData::serialize(ISerializer& s)
 {
@@ -22,11 +28,15 @@ bool RiverEntityData::serialize(ISerializer& s)
 	s >> resource::Member< render::Shader, render::ShaderGraph >(L"shader", m_shader);
 	s >> MemberAlignedVector< ControlPoint, MemberComposite< ControlPoint > >(L"path", m_path);
 
+	if (s.getVersion() >= 2)
+		s >> Member< float >(L"tileFactorV", m_tileFactorV, AttributeRange(0.0f));
+
 	return true;
 }
 
 RiverEntityData::ControlPoint::ControlPoint()
 :	width(0.0f)
+,	tension(1.0f)
 {
 }
 
@@ -34,6 +44,10 @@ bool RiverEntityData::ControlPoint::serialize(ISerializer& s)
 {
 	s >> Member< Vector4 >(L"position", position);
 	s >> Member< float >(L"width", width);
+
+	if (s.getVersion() >= 1)
+		s >> Member< float >(L"tension", tension, AttributeRange(0.1f, 10.0f));
+
 	return true;
 }
 

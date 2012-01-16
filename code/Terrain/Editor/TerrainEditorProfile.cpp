@@ -21,6 +21,8 @@ void TerrainEditorProfile::getCommands(
 	outCommands.push_back(ui::Command(L"Ocean.RandomizeWaves"));
 	outCommands.push_back(ui::Command(L"Terrain.RaiseLowerTool"));
 	outCommands.push_back(ui::Command(L"Terrain.FlattenTool"));
+	outCommands.push_back(ui::Command(L"Terrain.AlignSelected"));
+	outCommands.push_back(ui::Command(L"Terrain.OrientSelected"));
 }
 
 void TerrainEditorProfile::createEditorPlugins(
@@ -28,7 +30,7 @@ void TerrainEditorProfile::createEditorPlugins(
 	RefArray< scene::ISceneEditorPlugin >& outEditorPlugins
 ) const
 {
-	outEditorPlugins.push_back(new TerrainEditorPlugin());
+	outEditorPlugins.push_back(new TerrainEditorPlugin(context));
 }
 
 void TerrainEditorProfile::createResourceFactories(

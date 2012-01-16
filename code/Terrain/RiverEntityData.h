@@ -35,11 +35,14 @@ public:
 	{
 		Vector4 position;
 		float width;
+		float tension;
 
 		ControlPoint();
 
 		bool serialize(ISerializer& s);
 	};
+
+	RiverEntityData();
 
 	virtual bool serialize(ISerializer& s);
 
@@ -47,9 +50,12 @@ public:
 
 	const AlignedVector< ControlPoint >& getPath() const { return m_path; }
 
+	float getTileFactorV() const { return m_tileFactorV; }
+
 private:
 	resource::Proxy< render::Shader > m_shader;
 	AlignedVector< ControlPoint > m_path;
+	float m_tileFactorV;
 };
 
 	}

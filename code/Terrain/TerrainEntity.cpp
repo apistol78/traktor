@@ -181,9 +181,8 @@ void TerrainEntity::render(
 	if (!program)
 		return;
 
-	bool updateCache =
-		bool(worldRenderPass.getTechnique() == render::getParameterHandle(L"World_ForwardColor")) ||
-		bool(worldRenderPass.getTechnique() == render::getParameterHandle(L"World_PreLitColor"));
+	// \fixme Assume depth pass enabled; need some information about first pass from camera POV.
+	bool updateCache = bool(worldRenderPass.getTechnique() == render::getParameterHandle(L"World_DepthWrite"));
 
 	const Vector4& worldExtent = m_heightfield->getResource().getWorldExtent();
 	Vector4 patchExtent(worldExtent.x() / float(m_patchCount), worldExtent.y(), worldExtent.z() / float(m_patchCount), 0.0f);
