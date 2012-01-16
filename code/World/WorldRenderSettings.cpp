@@ -29,7 +29,7 @@ WorldRenderSettings::WorldRenderSettings()
 ,	shadowMapResolution(1024)
 ,	shadowMapBias(0.001f)
 ,	shadowCascadingSlices(1)
-,	shadowCascadingLambda(0.5f)
+,	shadowCascadingLambda(1.0f)
 ,	fogEnabled(false)
 ,	fogDistance(90.0f)
 ,	fogRange(10.0f)
@@ -128,7 +128,7 @@ bool WorldRenderSettings::serialize(ISerializer& s)
 	if (s.getVersion() >= 7)
 	{
 		s >> Member< int32_t >(L"shadowCascadingSlices", shadowCascadingSlices, AttributeRange(1, MaxSliceCount));
-		s >> Member< float >(L"shadowCascadingLambda", shadowCascadingLambda, AttributeRange(0.0f, 1.0f));
+		s >> Member< float >(L"shadowCascadingLambda", shadowCascadingLambda, AttributeRange(0.0f));
 	}
 
 	if (s.getVersion() >= 9)

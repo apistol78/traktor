@@ -1,5 +1,6 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Random.h"
+#include "Core/Math/Float.h"
 #include "Core/Math/Format.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/IRenderSystem.h"
@@ -306,9 +307,8 @@ bool WorldRendererForward::create(
 	for (int32_t i = 0; i < m_settings.shadowCascadingSlices; ++i)
 	{
 		float ii = float(i) / m_settings.shadowCascadingSlices;
-		float log = m_settings.viewNearZ * powf(m_settings.shadowFarZ / m_settings.viewNearZ, ii);
-		float uni = m_settings.viewNearZ + (m_settings.shadowFarZ - m_settings.viewNearZ) * ii;
-		m_slicePositions[i] = log * m_settings.shadowCascadingLambda + uni * (1.0f - m_settings.shadowCascadingLambda);
+		float log = powf(ii, m_settings.shadowCascadingLambda);
+		m_slicePositions[i] = lerp(m_settings.viewNearZ, m_settings.shadowFarZ, log);
 	}
 	m_slicePositions[m_settings.shadowCascadingSlices] = m_settings.shadowFarZ;
 
@@ -381,8 +381,12 @@ void WorldRendererForward::build(WorldRenderView& worldRenderView, Entity* entit
 
 	if (m_settings.depthPassEnabled || m_settings.shadowsEnabled)
 	{
+		Matrix44 viewInverse = worldRenderView.getView().inverse();
+		Vector4 eyePosition = viewInverse.translation();
+
 		WorldRenderView depthRenderView = worldRenderView;
 		depthRenderView.resetLights();
+		depthRenderView.setEyePosition(eyePosition);
 
 		WorldRenderPassForward pass(
 			s_techniqueDepth,

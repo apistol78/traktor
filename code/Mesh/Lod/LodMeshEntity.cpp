@@ -1,5 +1,6 @@
 #include "Mesh/Lod/LodMeshEntity.h"
 #include "World/WorldContext.h"
+#include "World/WorldRenderView.h"
 
 namespace traktor
 {
@@ -63,16 +64,18 @@ void LodMeshEntity::render(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
 	world::IWorldRenderPass& worldRenderPass,
-	float distance
+	float /*distance*/
 )
 {
 	if (m_lods.empty())
 		return;
 
-	if (m_lodCullDistance >= FUZZY_EPSILON && distance >= m_lodCullDistance)
+	float lodDistance = (m_transform.get().translation() - worldRenderView.getEyePosition()).length();
+
+	if (m_lodCullDistance >= FUZZY_EPSILON && lodDistance >= m_lodCullDistance)
 		return;
 
-	int32_t lod = clamp< int32_t >(int32_t(distance / m_lodDistance), 0, m_lods.size() - 1);
+	int32_t lod = clamp< int32_t >(int32_t(lodDistance / m_lodDistance), 0, m_lods.size() - 1);
 	
 	m_lods[lod]->setUserParameter(m_userParameter);
 	worldContext.build(worldRenderView, worldRenderPass, m_lods[lod]);
