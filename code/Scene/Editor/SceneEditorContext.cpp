@@ -75,6 +75,21 @@ struct FindFromEntity
 	}
 };
 
+struct FindFromType
+{
+	const TypeInfo& m_entityDataType;
+
+	FindFromType(const TypeInfo& entityDataType)
+	:	m_entityDataType(entityDataType)
+	{
+	}
+
+	bool operator () (const EntityAdapter* entityAdapter) const
+	{
+		return is_type_of(m_entityDataType, type_of(entityAdapter->getEntityData()));
+	}
+};
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.SceneEditorContext", SceneEditorContext, ui::EventSubject)
@@ -400,6 +415,11 @@ uint32_t SceneEditorContext::getEntities(RefArray< EntityAdapter >& outEntityAda
 EntityAdapter* SceneEditorContext::findAdapterFromEntity(const world::Entity* entity) const
 {
 	return findAdapter(m_rootEntityAdapter, FindFromEntity(entity));
+}
+
+EntityAdapter* SceneEditorContext::findAdapterFromType(const TypeInfo& entityDataType) const
+{
+	return findAdapter(m_rootEntityAdapter, FindFromType(entityDataType));
 }
 
 EntityAdapter* SceneEditorContext::queryRay(const Vector4& worldRayOrigin, const Vector4& worldRayDirection, bool onlyPickable) const

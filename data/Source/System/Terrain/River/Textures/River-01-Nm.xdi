@@ -12,7 +12,7 @@
 	<scaleWidth>0</scaleWidth>
 	<scaleHeight>0</scaleHeight>
 	<enableCompression>false</enableCompression>
-	<enableNormalMapCompression>true</enableNormalMapCompression>
+	<enableNormalMapCompression>false</enableNormalMapCompression>
 	<inverseNormalMapY>false</inverseNormalMapY>
 	<linearGamma>true</linearGamma>
 	<generateSphereMap>false</generateSphereMap>

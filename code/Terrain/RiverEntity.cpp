@@ -44,6 +44,7 @@ struct ControlPointAccessor
 		key_t c;
 		c.width = v0.width * w0 + v1.width * w1 + v2.width * w2 + v3.width * w3;
 		c.position = v0.position * Scalar(w0) + v1.position * Scalar(w1) + v2.position * Scalar(w2) + v3.position * Scalar(w3);
+		c.tension = v0.tension * w0 + v1.tension * w1 + v2.tension * w2 + v3.tension * w3;
 		return c;
 	}
 };
@@ -74,16 +75,19 @@ bool RiverEntity::create(resource::IResourceManager* resourceManager, render::IR
 
 	hermite_t h(path.c_ptr(), path.size());
 	RiverEntityData::ControlPoint pc = h.evaluate(0.0f);
-	for (float T = dT; T <= 1.0f; T += dT)
+	for (float T = dT; T <= 1.0f; )
 	{
 		RiverEntityData::ControlPoint pn = h.evaluate(T);
+
 		Vector4 d = pn.position - pc.position;
 		Vector4 e = cross(d, Vector4(0.0f, 1.0f, 0.0f, 0.0f)).normalized();
 
-		silouette.push_back(pc.position - e * Scalar(pc.width / 2.0f));
-		silouette.push_back(pc.position + e * Scalar(pc.width / 2.0f));
+		silouette.push_back((pc.position - e * Scalar(pc.width / 2.0f)).xyz0() + Vector4(0.0f, 0.0f, 0.0f, T));
+		silouette.push_back((pc.position + e * Scalar(pc.width / 2.0f)).xyz0() + Vector4(0.0f, 0.0f, 0.0f, T));
 
 		pc = pn;
+
+		T += dT * pn.tension;
 	}
 
 	std::vector< render::VertexElement > vertexElements;
@@ -103,18 +107,15 @@ bool RiverEntity::create(resource::IResourceManager* resourceManager, render::IR
 		return false;
 
 	float u = 0.0f;
-	float v = 0.0f;
-
 	for (AlignedVector< Vector4 >::const_iterator i = silouette.begin(); i != silouette.end(); ++i)
 	{
-		i->storeUnaligned(vertex);
+		i->xyz1().storeUnaligned(vertex);
 		vertex += 4;
 
 		*vertex++ = u;
-		*vertex++ = v;
+		*vertex++ = data.getTileFactorV() * i->w();
 
 		u = 1.0f - u;
-		v += 8.0f * dT;
 	}
 
 	m_vertexBuffer->unlock();
