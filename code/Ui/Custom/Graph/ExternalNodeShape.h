@@ -1,5 +1,5 @@
-#ifndef traktor_ui_custom_DefaultNodeShape_H
-#define traktor_ui_custom_DefaultNodeShape_H
+#ifndef traktor_ui_custom_ExternalNodeShape_H
+#define traktor_ui_custom_ExternalNodeShape_H
 
 #include "Ui/Custom/Graph/NodeShape.h"
 
@@ -23,15 +23,15 @@ class Bitmap;
 
 class GraphControl;
 
-/*! \brief Default node shape.
+/*! \brief External node shape.
  * \ingroup UIC
  */
-class T_DLLCLASS DefaultNodeShape : public NodeShape
+class T_DLLCLASS ExternalNodeShape : public NodeShape
 {
 	T_RTTI_CLASS;
 
 public:
-	DefaultNodeShape(GraphControl* graphControl);
+	ExternalNodeShape(GraphControl* graphControl);
 
 	virtual Point getPinPosition(const Node* node, const Pin* pin);
 
@@ -51,4 +51,4 @@ private:
 	}
 }
 
-#endif	// traktor_ui_custom_DefaultNodeShape_H
+#endif	// traktor_ui_custom_ExternalNodeShape_H

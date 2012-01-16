@@ -16,7 +16,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.Node", Node, Object)
 Node::Node(const std::wstring& title, const std::wstring& info, const Point& position, NodeShape* shape)
 :	m_title(title)
 ,	m_info(info)
-,	m_color(255, 255, 255, 255)
+,	m_state(0)
 ,	m_position(position)
 ,	m_size(0, 0)
 ,	m_selected(false)
@@ -62,7 +62,12 @@ const std::wstring& Node::getComment() const
 
 void Node::setImage(Bitmap* image)
 {
-	m_image = image;
+	T_ASSERT (m_shape);
+	if (m_image != image)
+	{
+		m_image = image;
+		m_size = m_shape->calculateSize(this);
+	}
 }
 
 Ref< Bitmap > Node::getImage() const
@@ -70,16 +75,19 @@ Ref< Bitmap > Node::getImage() const
 	return m_image;
 }
 
-void Node::setColor(const Color4ub& color)
+void Node::setState(int32_t state)
 {
 	T_ASSERT (m_shape);
-	m_color = color;
-	m_size = m_shape->calculateSize(this);
+	if (m_state != state)
+	{
+		m_state = state;
+		m_size = m_shape->calculateSize(this);
+	}
 }
 
-const Color4ub& Node::getColor() const
+int32_t Node::getState() const
 {
-	return m_color;
+	return m_state;
 }
 
 void Node::setPosition(const Point& position)

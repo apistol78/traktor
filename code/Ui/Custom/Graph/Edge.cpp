@@ -29,38 +29,51 @@ void calculateLinearSpline(Point s1, Point d1, std::vector< Point >& outSpline)
 	d.x -= c_destPinOffset;
 
 	Point r(d.x - s.x, d.y - s.y);
-
-	int cx = r.x / 2;
-	int cy = r.y / 2;
-
-	int ex = r.x - (cx * 2);
-	int ey = r.y - (cy * 2);
+	Point ar(std::abs(r.x), std::abs(r.y));
+	Point c((s.x + d.x) / 2, (s.y + d.y) / 2);
 
 	Point m1, m2;
-	if (std::abs(r.x) > std::abs(r.y))
+
+	if (s.x <= d.x)
 	{
-		if (!((r.y >= 0) ^ (r.x >= 0)))
+		if (ar.x >= ar.y)
 		{
-			m1 = Point(s.x + cx - cy, s.y);
-			m2 = Point(s.x + cx + cy + ey, d.y);
+			m1 = Point(c.x - ar.y / 2, s.y);
+			m2 = Point(c.x + ar.y / 2, d.y);
 		}
 		else
 		{
-			m1 = Point(s.x + cx + cy + ey, s.y);
-			m2 = Point(s.x + cx - cy, d.y);
+			if (s.y < d.y)
+			{
+				m1 = Point(s.x, c.y - r.x / 2);
+				m2 = Point(d.x, c.y + r.x / 2);
+			}
+			else
+			{
+				m1 = Point(s.x, c.y + r.x / 2);
+				m2 = Point(d.x, c.y - r.x / 2);
+			}
 		}
 	}
 	else
 	{
-		if (!((r.y >= 0) ^ (r.x >= 0)))
+		if (ar.x >= ar.y)
 		{
-			m1 = Point(s.x, s.y + cy - cx);
-			m2 = Point(d.x, s.y + cy + cx + ex);
+			m1 = Point(s.x, c.y);
+			m2 = Point(d.x, c.y);
 		}
 		else
 		{
-			m1 = Point(s.x, s.y + cy + cx + ex);
-			m2 = Point(d.x, s.y + cy - cx);
+			if (s.y < d.y)
+			{
+				m1 = Point(s.x, c.y + r.x / 2);
+				m2 = Point(d.x, c.y - r.x / 2);
+			}
+			else
+			{
+				m1 = Point(s.x, c.y - r.x / 2);
+				m2 = Point(d.x, c.y + r.x / 2);
+			}
 		}
 	}
 
@@ -149,17 +162,15 @@ bool Edge::hit(const PaintSettings* paintSettings, const Point& p) const
 {
 	Vector2 P(float(p.x), float(p.y));
 
-	std::vector< Point > spline;
-
 	if (paintSettings->getSmoothSpline())
-		calculateSmoothSpline(m_source->getPosition(), m_destination->getPosition(), spline);
+		calculateSmoothSpline(m_source->getPosition(), m_destination->getPosition(), m_spline);
 	else
-		calculateLinearSpline(m_source->getPosition(), m_destination->getPosition(), spline);
+		calculateLinearSpline(m_source->getPosition(), m_destination->getPosition(), m_spline);
 
-	for (int i = 1; i < int(spline.size() - 2); ++i)
+	for (int i = 1; i < int(m_spline.size() - 2); ++i)
 	{
-		const Point& s = spline[i];
-		const Point& d = spline[i + 1];
+		const Point& s = m_spline[i];
+		const Point& d = m_spline[i + 1];
 
 		Vector2 v(float(d.x - s.x), float(d.y - s.y));
 		if (v.length() <= FUZZY_EPSILON)
@@ -203,12 +214,12 @@ void Edge::paint(const PaintSettings* paintSettings, Canvas* canvas, const Size&
 	Point s = m_source->getPosition() + offset;
 	Point d = m_destination->getPosition() + offset;
 
-	std::vector< Point > spline;
 	if (paintSettings->getSmoothSpline())
-		calculateSmoothSpline(s, d, spline);
+		calculateSmoothSpline(s, d, m_spline);
 	else
-		calculateLinearSpline(s, d, spline);
-	canvas->drawLines(spline);
+		calculateLinearSpline(s, d, m_spline);
+
+	canvas->drawLines(m_spline);
 
 	if (m_selected)
 		canvas->setPenThickness(1);

@@ -130,7 +130,7 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 
 	Ref< ui::Container > container = new ui::Container();
 	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
-
+	
 	// Create our custom toolbar.
 	m_toolBar = new ui::custom::ToolBar();
 	m_toolBar->create(container);
@@ -236,6 +236,7 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 		m_shaderGraph->getEdges()
 	);
 
+	parent->update();
 	m_editorGraph->center();
 
 	updateGraph();

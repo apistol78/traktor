@@ -64,15 +64,15 @@ void OutputNodeShape::paint(const Node* node, const PaintSettings* settings, Can
 	int sx[] = { 0, 20, 76, 96 };
 	int dx[] = { 0, 20, rc.getWidth() - 20, rc.getWidth() };
 
-	Color4ub modulate = node->isSelected() ? Color4ub(224, 224, 255) : Color4ub(255, 255, 255);
-	canvas->setBackground(modulate * node->getColor());
+	int ofx = node->isSelected() ? 96 : 0;
+	int ofy = node->getState() * 32;
 
 	for (int ix = 0; ix < 3; ++ix)
 	{
 		canvas->drawBitmap(
 			rc.getTopLeft() + Size(dx[ix], 0),
 			Size(dx[ix + 1] - dx[ix], 32),
-			Point(sx[ix], 0),
+			Point(sx[ix] + ofx, ofy),
 			Size(sx[ix + 1] - sx[ix], 32),
 			m_imageNode,
 			ui::BmAlpha | ui::BmModulate

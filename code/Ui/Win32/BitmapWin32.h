@@ -38,6 +38,8 @@ public:
 
 	LPVOID getBits() const { return m_pBits; }
 
+	LPVOID getBitsPerMulAlpha() const { return m_pBitsPreMulAlpha; }
+
 	COLORREF getMask() const { return m_mask; }
 
 	HBITMAP getHBitmap() const { return m_hBitmap; }

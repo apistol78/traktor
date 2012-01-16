@@ -62,9 +62,9 @@ public:
 
 	Ref< Bitmap > getImage() const;
 
-	void setColor(const Color4ub& color);
+	void setState(int32_t state);
 
-	const Color4ub& getColor() const;
+	int32_t getState() const;
 
 	void setPosition(const Point& position);
 
@@ -101,7 +101,7 @@ private:
 	std::wstring m_info;
 	std::wstring m_comment;
 	Ref< Bitmap > m_image;
-	Color4ub m_color;
+	int32_t m_state;
 	Point m_position;
 	Size m_size;
 	bool m_selected;

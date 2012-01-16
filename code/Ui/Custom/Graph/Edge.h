@@ -65,6 +65,7 @@ private:
 	std::wstring m_text;
 	bool m_selected;
 	std::map< std::wstring, Ref< Object > > m_data;
+	mutable std::vector< Point > m_spline;
 };
 
 		}
