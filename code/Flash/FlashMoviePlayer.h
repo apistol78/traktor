@@ -26,9 +26,11 @@ class AsMouse;
 class AsStage;
 class FlashMovie;
 class FlashMovieRenderer;
+class FlashSoundPlayer;
 class FlashSpriteInstance;
 class IActionVM;
 class IDisplayRenderer;
+class ISoundRenderer;
 
 struct CallArgs;
 
@@ -43,7 +45,7 @@ class T_DLLCLASS FlashMoviePlayer : public Object
 	T_RTTI_CLASS;
 
 public:
-	FlashMoviePlayer(IDisplayRenderer* displayRenderer);
+	FlashMoviePlayer(IDisplayRenderer* displayRenderer, ISoundRenderer* soundRenderer);
 
 	virtual ~FlashMoviePlayer();
 
@@ -213,7 +215,9 @@ private:
 	};
 
 	Ref< IDisplayRenderer > m_displayRenderer;
+	Ref< ISoundRenderer > m_soundRenderer;
 	Ref< FlashMovieRenderer > m_movieRenderer;
+	Ref< FlashSoundPlayer > m_soundPlayer;
 	Ref< IActionVM > m_actionVM;
 	Ref< AsKey > m_key;
 	Ref< AsMouse > m_mouse;

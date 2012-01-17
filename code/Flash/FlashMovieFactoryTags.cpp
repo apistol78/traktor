@@ -13,6 +13,7 @@
 #include "Flash/FlashMovieFactoryTags.h"
 #include "Flash/FlashCharacterInstance.h"
 #include "Flash/FlashMovie.h"
+#include "Flash/FlashSound.h"
 #include "Flash/FlashSprite.h"
 #include "Flash/FlashFrame.h"
 #include "Flash/FlashShape.h"
@@ -1162,6 +1163,95 @@ bool FlashTagDoABC::read(SwfReader* swf, ReadContext& context)
 		return false;
 
 	context.frame->addActionScript(image);
+	return true;
+}
+
+// ============================================================================
+// Define sound
+
+bool FlashTagDefineSound::read(SwfReader* swf, ReadContext& context)
+{
+	BitReader& bs = swf->getBitReader();
+
+	uint16_t soundId = bs.readUInt16();
+
+	uint8_t soundFormat = bs.readUnsigned(4);
+	if (soundFormat != 0 && soundFormat != 3)
+	{
+		log::error << L"Only uncompressed sounds are supported" << Endl;
+		return false;
+	}
+
+	uint8_t soundRate = bs.readUnsigned(2);
+	bool soundSize = bs.readBit();
+	bool soundType = bs.readBit();
+	uint32_t soundSampleCount = bs.readUInt32();
+
+	uint8_t soundChannels = soundType ? 2 : 1;
+	uint8_t soundSampleSize = soundSize ? 2 : 1;
+
+	AutoArrayPtr< uint8_t > soundData(new uint8_t [soundSampleCount * soundSampleSize * soundChannels]);
+	bs.getStream()->read(soundData.ptr(), soundSampleCount * soundSampleSize * soundChannels);
+	bs.getStream()->seek(IStream::SeekSet, context.tagEndPosition);
+	bs.alignByte();
+
+	const uint32_t c_soundRates[] = { 5500, 11025, 22050, 44100 };
+	T_ASSERT (soundRate < sizeof_array(c_soundRates));
+
+	Ref< FlashSound > sound = new FlashSound();
+	if (!sound->create(soundChannels, c_soundRates[soundRate], soundSampleCount))
+		return false;
+
+	if (soundSize)
+	{
+		// 16-bit samples
+		const int16_t* ss = reinterpret_cast< const int16_t* >(soundData.c_ptr());
+		
+		int16_t* dsl = reinterpret_cast< int16_t* >(sound->getSamples(0));
+		int16_t* dsr = reinterpret_cast< int16_t* >(sound->getSamples(1));
+
+		if (soundType)
+		{
+			// Stereo
+			for (uint32_t i = 0; i < soundSampleCount; ++i)
+			{
+				*dsl++ = *ss++;
+				*dsr++ = *ss++;
+			}
+		}
+		else
+		{
+			// Mono
+			for (uint32_t i = 0; i < soundSampleCount; ++i)
+				*dsl++ = *ss++;
+		}
+	}
+	else
+	{
+		// 8-bit samples
+		const int8_t* ss = reinterpret_cast< const int8_t* >(soundData.c_ptr());
+
+		int16_t* dsl = reinterpret_cast< int16_t* >(sound->getSamples(0));
+		int16_t* dsr = reinterpret_cast< int16_t* >(sound->getSamples(1));
+
+		if (soundType)
+		{
+			// Stereo
+			for (uint32_t i = 0; i < soundSampleCount; ++i)
+			{
+				*dsl++ = 256 * *ss++;
+				*dsr++ = 256 * *ss++;
+			}
+		}
+		else
+		{
+			// Mono
+			for (uint32_t i = 0; i < soundSampleCount; ++i)
+				*dsl++ = 256 * *ss++;
+		}
+	}
+
+	context.movie->defineSound(soundId, sound);
 	return true;
 }
 

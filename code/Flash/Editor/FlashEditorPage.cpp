@@ -1,5 +1,6 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/MemoryStream.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyString.h"
 #include "Core/Settings/Settings.h"
 #include "Database/Instance.h"
@@ -14,6 +15,8 @@
 #include "Render/IRenderSystem.h"
 #include "Render/Resource/ShaderFactory.h"
 #include "Resource/ResourceManager.h"
+#include "Sound/SoundSystem.h"
+#include "Sound/Editor/SoundSystemFactory.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Container.h"
 #include "Ui/MethodHandler.h"
@@ -45,9 +48,13 @@ FlashEditorPage::FlashEditorPage(editor::IEditor* editor, editor::IEditorPageSit
 
 bool FlashEditorPage::create(ui::Container* parent)
 {
-	render::IRenderSystem* renderSystem = m_editor->getStoreObject< render::IRenderSystem >(L"RenderSystem");
+	Ref< render::IRenderSystem > renderSystem = m_editor->getStoreObject< render::IRenderSystem >(L"RenderSystem");
 	if (!renderSystem)
 		return false;
+
+	Ref< sound::SoundSystemFactory > soundSystemFactory = m_editor->getStoreObject< sound::SoundSystemFactory >(L"SoundSystemFactory");
+	if (soundSystemFactory)
+		m_soundSystem = soundSystemFactory->createSoundSystem();
 
 	Ref< FlashMovieAsset > asset = m_document->getObject< FlashMovieAsset >(0);
 	if (!asset)
@@ -101,7 +108,7 @@ bool FlashEditorPage::create(ui::Container* parent)
 	m_toolBarPlay->addClickEventHandler(ui::createMethodHandler(this, &FlashEditorPage::eventToolClick));
 
 	m_previewControl = new FlashPreviewControl();
-	m_previewControl->create(container, ui::WsNone, m_resourceManager, renderSystem);
+	m_previewControl->create(container, ui::WsNone, m_resourceManager, renderSystem, m_soundSystem);
 	m_previewControl->setMovie(m_movie);
 	m_previewControl->update();
 
@@ -110,7 +117,8 @@ bool FlashEditorPage::create(ui::Container* parent)
 
 void FlashEditorPage::destroy()
 {
-	m_previewControl->destroy();
+	safeDestroy(m_previewControl);
+	safeDestroy(m_soundSystem);
 }
 
 void FlashEditorPage::activate()

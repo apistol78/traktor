@@ -1,7 +1,4 @@
 #include "Flash/FlashMovie.h"
-#include "Flash/FlashFont.h"
-#include "Flash/FlashBitmap.h"
-#include "Flash/FlashCharacter.h"
 #include "Flash/FlashSprite.h"
 #include "Flash/FlashSpriteInstance.h"
 #include "Flash/Action/ActionContext.h"
@@ -31,6 +28,11 @@ void FlashMovie::defineBitmap(uint16_t bitmapId, FlashBitmap* bitmap)
 	m_bitmaps[bitmapId] = bitmap;
 }
 
+void FlashMovie::defineSound(uint16_t soundId, FlashSound* sound)
+{
+	m_sounds[soundId] = sound;
+}
+
 void FlashMovie::defineCharacter(uint16_t characterId, FlashCharacter* character)
 {
 	m_characters[characterId] = character;
@@ -58,6 +60,12 @@ const FlashBitmap* FlashMovie::getBitmap(uint16_t bitmapId) const
 {
 	SmallMap< uint16_t, Ref< FlashBitmap > >::const_iterator i = m_bitmaps.find(bitmapId);
 	return i != m_bitmaps.end() ? i->second.ptr() : 0;
+}
+
+const FlashSound* FlashMovie::getSound(uint16_t soundId) const
+{
+	SmallMap< uint16_t, Ref< FlashSound > >::const_iterator i = m_sounds.find(soundId);
+	return i != m_sounds.end() ? i->second.ptr() : 0;
 }
 
 const FlashCharacter* FlashMovie::getCharacter(uint16_t characterId) const

@@ -227,6 +227,12 @@ public:
 	virtual bool read(SwfReader* swf, ReadContext& context);
 };
 
+class FlashTagDefineSound : public FlashTag
+{
+public:
+	virtual bool read(SwfReader* swf, ReadContext& context);
+};
+
 class FlashTagUnsupported : public FlashTag
 {
 public:

@@ -9,6 +9,7 @@ namespace traktor
 	{
 
 struct CallArgs;
+class FlashSoundPlayer;
 
 /*! \brief Sound class.
  * \ingroup Flash
@@ -18,7 +19,7 @@ class AsSound : public ActionClass
 	T_RTTI_CLASS;
 
 public:
-	AsSound(ActionContext* context);
+	AsSound(ActionContext* context, FlashSoundPlayer* soundPlayer);
 
 	virtual void initialize(ActionObject* self);
 
@@ -27,7 +28,9 @@ public:
 	virtual ActionValue xplicit(const ActionValueArray& args);
 
 private:
-	void Sound_attachSound(CallArgs& ca);
+	Ref< FlashSoundPlayer > m_soundPlayer;
+
+	void Sound_attachSound(ActionObject* self, const std::string& exportName) const;
 
 	void Sound_getBytesLoaded(CallArgs& ca);
 
@@ -47,9 +50,9 @@ private:
 
 	void Sound_setVolume(CallArgs& ca);
 
-	void Sound_start(CallArgs& ca);
+	void Sound_start(ActionObject* self) const;
 
-	void Sound_stop(CallArgs& ca);
+	void Sound_stop(ActionObject* self) const;
 
 	void Sound_get_checkPolicyFile(CallArgs& ca);
 

@@ -57,10 +57,10 @@ FlashMovieFactory::FlashMovieFactory()
 	m_tagReaders[TiEnableDebugger2] = new FlashTagProtect(3);
 	m_tagReaders[TiFrameLabel] = new FlashTagFrameLabel();
 	m_tagReaders[TiDoABC] = new FlashTagDoABC();
+	m_tagReaders[TiDefineSound] = new FlashTagDefineSound();
 
 	// Define readers for tags which isn't planed to be implemented.
 	m_tagReaders[TiDefineFontInfo] = new FlashTagUnsupported(TiDefineFontInfo);
-	m_tagReaders[TiDefineSound] = new FlashTagUnsupported(TiDefineSound);
 	m_tagReaders[TiStartSound] = new FlashTagUnsupported(TiStartSound);
 	m_tagReaders[TiSoundStreamHead] = new FlashTagUnsupported(TiSoundStreamHead);
 	m_tagReaders[TiSoundStreamBlock] = new FlashTagUnsupported(TiSoundStreamBlock);

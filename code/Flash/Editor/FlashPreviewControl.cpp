@@ -6,8 +6,9 @@
 #include "Flash/FlashMovie.h"
 #include "Flash/FlashFrame.h"
 #include "Flash/FlashSprite.h"
-#include "Flash/Action/Avm1/Classes/AsKey.h"
 #include "Flash/Acc/AccDisplayRenderer.h"
+#include "Flash/Action/Avm1/Classes/AsKey.h"
+#include "Flash/Sound/SoundRenderer.h"
 #include "Flash/Sw/SwDisplayRenderer.h"
 #include "Ui/Itf/IWidget.h"
 #include "Ui/Application.h"
@@ -87,7 +88,13 @@ FlashPreviewControl::FlashPreviewControl()
 {
 }
 
-bool FlashPreviewControl::create(ui::Widget* parent, int style, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem)
+bool FlashPreviewControl::create(
+	ui::Widget* parent,
+	int style,
+	resource::IResourceManager* resourceManager,
+	render::IRenderSystem* renderSystem,
+	sound::SoundSystem* soundSystem
+)
 {
 	if (!Widget::create(parent, style))
 		return false;
@@ -100,7 +107,6 @@ bool FlashPreviewControl::create(ui::Widget* parent, int style, resource::IResou
 	desc.waitVBlank = false;
 	desc.nativeWindowHandle = getIWidget()->getSystemHandle();
 
-	m_renderSystem = renderSystem;
 	m_renderView = renderSystem->createRenderView(desc);
 	if (!m_renderView)
 		return false;
@@ -134,6 +140,14 @@ bool FlashPreviewControl::create(ui::Widget* parent, int style, resource::IResou
 	m_displayRenderer = new SwDisplayRenderer();
 #endif
 
+	if (soundSystem)
+	{
+		m_soundRenderer = new SoundRenderer();
+		m_soundRenderer->create(soundSystem);
+	}
+	else
+		log::warning << L"Unable to create sound system; Flash sound disabled" << Endl;
+
 	addSizeEventHandler(ui::createMethodHandler(this, &FlashPreviewControl::eventSize));
 	addPaintEventHandler(ui::createMethodHandler(this, &FlashPreviewControl::eventPaint));
 	addKeyDownEventHandler(ui::createMethodHandler(this, &FlashPreviewControl::eventKeyDown));
@@ -159,6 +173,7 @@ void FlashPreviewControl::destroy()
 	}
 
 	safeDestroy(m_moviePlayer);
+	safeDestroy(m_soundRenderer);
 
 #if T_USE_ACCELERATED_RENDERER
 	safeDestroy(m_displayRenderer);
@@ -184,7 +199,7 @@ void FlashPreviewControl::setMovie(FlashMovie* movie)
 
 	ui::Size sz = getInnerRect().getSize();
 
-	m_moviePlayer = new FlashMoviePlayer(m_displayRenderer);
+	m_moviePlayer = new FlashMoviePlayer(m_displayRenderer, m_soundRenderer);
 	m_moviePlayer->create(movie, sz.cx, sz.cy);
 
 	m_playing = true;
