@@ -44,6 +44,8 @@ public:
 
 	bool playing() const;
 
+	void rewind();
+
 	render::ISimpleTexture* getTexture();
 
 private:
