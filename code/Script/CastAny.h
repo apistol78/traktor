@@ -2,6 +2,7 @@
 #define traktor_script_CastAny_H
 
 #include "Core/Io/Utf8Encoding.h"
+#include "Core/Math/Scalar.h"
 #include "Core/Meta/Traits.h"
 #include "Core/Misc/TString.h"
 #include "Script/Any.h"
@@ -130,6 +131,28 @@ struct CastAny < float, false >
 	}
 	static float get(const Any& value) {
 		return value.getFloat();
+	}
+};
+
+template < >
+struct CastAny < Scalar, false >
+{
+	static Any set(const Scalar& value) {
+		return Any(float(value));
+	}
+	static Scalar get(const Any& value) {
+		return Scalar(value.getFloat());
+	}
+};
+
+template < >
+struct CastAny < const Scalar&, false >
+{
+	static Any set(const Scalar& value) {
+		return Any(float(value));
+	}
+	static Scalar get(const Any& value) {
+		return Scalar(value.getFloat());
 	}
 };
 
