@@ -84,6 +84,14 @@ bool Video::playing() const
 	return m_playing;
 }
 
+void Video::rewind()
+{
+	m_time = 0.0f;
+	m_frame = ~0UL;
+	m_current = 0;
+	m_playing = true;
+}
+
 render::ISimpleTexture* Video::getTexture()
 {
 	return m_textures[m_current];
