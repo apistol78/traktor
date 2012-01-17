@@ -5,6 +5,7 @@
 #include "Flash/FlashMoviePlayer.h"
 #include "Flash/FlashMovieRenderer.h"
 #include "Flash/FlashMovie.h"
+#include "Flash/FlashSoundPlayer.h"
 #include "Flash/FlashSprite.h"
 #include "Flash/FlashSpriteInstance.h"
 #include "Flash/GC.h"
@@ -14,6 +15,7 @@
 #include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Avm1/Classes/AsKey.h"
 #include "Flash/Action/Avm1/Classes/AsMouse.h"
+#include "Flash/Action/Avm1/Classes/AsSound.h"
 #include "Flash/Action/Avm1/Classes/AsStage.h"
 
 namespace traktor
@@ -29,9 +31,11 @@ const int32_t c_framesBetweenCollections = 100;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashMoviePlayer", FlashMoviePlayer, Object)
 
-FlashMoviePlayer::FlashMoviePlayer(IDisplayRenderer* displayRenderer)
+FlashMoviePlayer::FlashMoviePlayer(IDisplayRenderer* displayRenderer, ISoundRenderer* soundRenderer)
 :	m_displayRenderer(displayRenderer)
+,	m_soundRenderer(soundRenderer)
 ,	m_movieRenderer(new FlashMovieRenderer(displayRenderer))
+,	m_soundPlayer(new FlashSoundPlayer(soundRenderer))
 ,	m_intervalNextId(1)
 ,	m_timeCurrent(0.0)
 ,	m_timeNext(0.0)
@@ -64,6 +68,9 @@ bool FlashMoviePlayer::create(FlashMovie* movie, int32_t width, int32_t height)
 	setGlobal("setInterval", ActionValue(createNativeFunction(context, this, &FlashMoviePlayer::Global_setInterval)));
 	setGlobal("clearInterval", ActionValue(createNativeFunction(context, this, &FlashMoviePlayer::Global_clearInterval)));
 
+	// Create sound prototype.
+	setGlobal("Sound", ActionValue(new AsSound(context, m_soundPlayer)));
+
 	// Get references to key and mouse singletons.
 	if (global->getMember("Key", memberValue))
 		m_key = memberValue.getObject< AsKey >();
@@ -84,7 +91,9 @@ bool FlashMoviePlayer::create(FlashMovie* movie, int32_t width, int32_t height)
 void FlashMoviePlayer::destroy()
 {
 	m_displayRenderer = 0;
+	m_soundRenderer = 0;
 	m_movieRenderer = 0;
+	m_soundPlayer = 0;
 	m_actionVM = 0;
 	m_key = 0;
 	m_mouse = 0;

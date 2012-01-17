@@ -1,17 +1,56 @@
 #include "Core/Log/Log.h"
+#include "Flash/FlashMovie.h"
+#include "Flash/FlashSoundPlayer.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFunctionNative.h"
+#include "Flash/Action/IActionObjectRelay.h"
 #include "Flash/Action/Avm1/Classes/AsSound.h"
 
 namespace traktor
 {
 	namespace flash
 	{
+		namespace
+		{
+
+class T_DLLCLASS FlashSoundRelay : public IActionObjectRelay
+{
+	T_RTTI_CLASS;
+
+public:
+	FlashSoundRelay(const FlashSound* sound)
+	:	m_sound(sound)
+	{
+	}
+
+	virtual void setAsObject(ActionObject* asObject) {}
+
+	virtual ActionObject* getAsObject(ActionContext* context) { return 0; }
+
+	virtual bool setMember(ActionContext* context, uint32_t memberName, const ActionValue& memberValue) { return false; }
+
+	virtual bool getMember(ActionContext* context, uint32_t memberName, ActionValue& outMemberValue) { return false; }
+
+	const FlashSound* getSound() const { return m_sound; }
+
+protected:
+	virtual void trace(const IVisitor& visitor) const {}
+
+	virtual void dereference() { m_sound = 0; }
+
+private:
+	Ref< const FlashSound > m_sound;
+};
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashSoundRelay", FlashSoundRelay, IActionObjectRelay)
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsSound", AsSound, ActionClass)
 
-AsSound::AsSound(ActionContext* context)
+AsSound::AsSound(ActionContext* context, FlashSoundPlayer* soundPlayer)
 :	ActionClass(context, "Sound")
+,	m_soundPlayer(soundPlayer)
 {
 	Ref< ActionObject > prototype = new ActionObject(context);
 
@@ -52,11 +91,24 @@ ActionValue AsSound::xplicit(const ActionValueArray& args)
 	return ActionValue();
 }
 
-void AsSound::Sound_attachSound(CallArgs& ca)
+void AsSound::Sound_attachSound(ActionObject* self, const std::string& exportName) const
 {
-	T_IF_VERBOSE(
-		log::warning << L"Sound::attachSound not implemented" << Endl;
-	)
+	uint16_t soundId;
+
+	if (!getContext()->getMovie()->getExportId(exportName, soundId))
+	{
+		log::error << L"No sound exported as \"" << mbstows(exportName) << L"\"" << Endl;
+		return;
+	}
+
+	const FlashSound* sound = getContext()->getMovie()->getSound(soundId);
+	if (!sound)
+	{
+		log::error << L"No sound defined with id " << soundId << L", exported as \"" << mbstows(exportName) << L"\"" << Endl;
+		return;
+	}
+
+	self->setRelay(new FlashSoundRelay(sound));
 }
 
 void AsSound::Sound_getBytesLoaded(CallArgs& ca)
@@ -122,18 +174,20 @@ void AsSound::Sound_setVolume(CallArgs& ca)
 	)
 }
 
-void AsSound::Sound_start(CallArgs& ca)
+void AsSound::Sound_start(ActionObject* self) const
 {
-	T_IF_VERBOSE(
-		log::warning << L"Sound::start not implemented" << Endl;
-	)
+	FlashSoundRelay* fsr = self->getRelay< FlashSoundRelay >();
+	if (!fsr)
+		return;
+
+	m_soundPlayer->play(*fsr->getSound());
 }
 
-void AsSound::Sound_stop(CallArgs& ca)
+void AsSound::Sound_stop(ActionObject* self) const
 {
-	T_IF_VERBOSE(
-		log::warning << L"Sound::stop not implemented" << Endl;
-	)
+	FlashSoundRelay* fsr = self->getRelay< FlashSoundRelay >();
+	if (!fsr)
+		return;
 }
 
 void AsSound::Sound_get_checkPolicyFile(CallArgs& ca)

@@ -729,7 +729,7 @@ bool EditorForm::openEditor(db::Instance* instance)
 		if (!editorPage->create(tabPage))
 		{
 			log::error << L"Failed to create editor" << Endl;
-			instance->revert();
+			document->close();
 			return false;
 		}
 

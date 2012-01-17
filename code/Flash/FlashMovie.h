@@ -21,6 +21,7 @@ namespace traktor
 class FlashBitmap;
 class FlashCharacter;
 class FlashFont;
+class FlashSound;
 class FlashSprite;
 class FlashSpriteInstance;
 class IActionVM;
@@ -39,6 +40,8 @@ public:
 
 	void defineBitmap(uint16_t bitmapId, FlashBitmap* bitmap);
 
+	void defineSound(uint16_t soundId, FlashSound* sound);
+
 	void defineCharacter(uint16_t characterId, FlashCharacter* character);
 
 	void removeCharacter(FlashCharacter* character);
@@ -46,6 +49,8 @@ public:
 	const FlashFont* getFont(uint16_t fontId) const;
 
 	const FlashBitmap* getBitmap(uint16_t bitmapId) const;
+
+	const FlashSound* getSound(uint16_t soundId) const;
 
 	const FlashCharacter* getCharacter(uint16_t characterId) const;
 
@@ -69,6 +74,8 @@ public:
 
 	const SmallMap< uint16_t, Ref< FlashBitmap > >& getBitmaps() const { return m_bitmaps; }
 
+	const SmallMap< uint16_t, Ref< FlashSound > >& getSounds() const { return m_sounds; }
+
 	const SmallMap< uint16_t, Ref< FlashCharacter > >& getCharacters() const { return m_characters; }
 
 	const SmallMap< std::string, uint16_t >& getExports() const { return m_exports; }
@@ -79,6 +86,7 @@ private:
 	Ref< FlashSprite > m_movieClip;
 	SmallMap< uint16_t, Ref< FlashFont > > m_fonts;
 	SmallMap< uint16_t, Ref< FlashBitmap > > m_bitmaps;
+	SmallMap< uint16_t, Ref< FlashSound > > m_sounds;
 	SmallMap< uint16_t, Ref< FlashCharacter > > m_characters;
 	SmallMap< std::string, uint16_t > m_exports;
 };

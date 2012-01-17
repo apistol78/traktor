@@ -43,6 +43,13 @@ class IResourceManager;
 
 	}
 
+	namespace sound
+	{
+
+class SoundSystem;
+
+	}
+
 	namespace flash
 	{
 
@@ -76,6 +83,7 @@ private:
 	Ref< editor::IDocument > m_document;
 	Ref< FlashPreviewControl > m_previewControl;
 	Ref< ui::custom::ToolBar > m_toolBarPlay;
+	Ref< sound::SoundSystem > m_soundSystem;
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< FlashMovie > m_movie;
 

@@ -3,8 +3,8 @@
 
 #define T_USE_ACCELERATED_RENDERER	1
 
-#include "Ui/Widget.h"
 #include "Core/Timer/Timer.h"
+#include "Ui/Widget.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -35,6 +35,13 @@ class Shader;
 	}
 #endif
 
+	namespace sound
+	{
+
+class SoundSystem;
+
+	}
+
 	namespace graphics
 	{
 
@@ -45,10 +52,11 @@ class GraphicsSystem;
 	namespace flash
 	{
 
-class FlashMovie;
 class AccDisplayRenderer;
-class SwDisplayRenderer;
+class FlashMovie;
 class FlashMoviePlayer;
+class SoundRenderer;
+class SwDisplayRenderer;
 
 class T_DLLCLASS FlashPreviewControl : public ui::Widget
 {
@@ -57,7 +65,13 @@ class T_DLLCLASS FlashPreviewControl : public ui::Widget
 public:
 	FlashPreviewControl();
 
-	bool create(ui::Widget* parent, int style, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem);
+	bool create(
+		ui::Widget* parent,
+		int style,
+		resource::IResourceManager* resourceManager,
+		render::IRenderSystem* renderSystem,
+		sound::SoundSystem* soundSystem
+	);
 
 	void destroy();
 
@@ -74,15 +88,15 @@ public:
 	virtual ui::Size getPreferedSize() const;
 
 private:
+	Ref< ui::EventHandler > m_idleHandler;
 #if T_USE_ACCELERATED_RENDERER
-	Ref< render::IRenderSystem > m_renderSystem;
 	Ref< render::IRenderView > m_renderView;
 	Ref< AccDisplayRenderer > m_displayRenderer;
 #else
 	Ref< graphics::GraphicsSystem > m_graphicsSystem;
 	Ref< SwDisplayRenderer > m_displayRenderer;
 #endif
-	Ref< ui::EventHandler > m_idleHandler;
+	Ref< SoundRenderer > m_soundRenderer;
 	Ref< FlashMoviePlayer > m_moviePlayer;
 	Ref< FlashMovie > m_movie;
 	Timer m_timer;

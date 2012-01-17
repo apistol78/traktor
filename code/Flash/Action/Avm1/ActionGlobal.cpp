@@ -25,7 +25,6 @@
 #include "Flash/Action/Avm1/Classes/AsNumber.h"
 #include "Flash/Action/Avm1/Classes/AsSecurity.h"
 #include "Flash/Action/Avm1/Classes/AsSelection.h"
-#include "Flash/Action/Avm1/Classes/AsSound.h"
 #include "Flash/Action/Avm1/Classes/AsStage.h"
 #include "Flash/Action/Avm1/Classes/AsString.h"
 #include "Flash/Action/Avm1/Classes/AsSystem.h"
@@ -87,7 +86,6 @@ ActionGlobal::ActionGlobal(ActionContext* context)
 	setMember("MovieClipLoader", ActionValue(new AsMovieClipLoader(context)));
 	setMember("Number", ActionValue(new AsNumber(context)));
 	setMember("Security", ActionValue(new AsSecurity(context)));
-	setMember("Sound", ActionValue(new AsSound(context)));
 	setMember("String", ActionValue(new AsString(context)));
 	setMember("System", ActionValue(new AsSystem(context)));
 	setMember("TextField", ActionValue(new AsTextField(context)));
