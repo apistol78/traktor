@@ -1,7 +1,8 @@
 #include <algorithm>
+#include "Resource/CachedResourceHandle.h"
 #include "Resource/ResourceManager.h"
-#include "Resource/ResourceHandle.h"
 #include "Resource/IResourceFactory.h"
+#include "Resource/UncachedResourceHandle.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/Acquire.h"
@@ -43,7 +44,8 @@ void ResourceManager::destroy()
 {
 	m_factories.clear();
 	m_nullHandle = 0;
-	m_cache.clear();
+	m_cachedHandles.clear();
+	m_uncachedHandles.clear();
 	m_times.clear();
 }
 
@@ -67,7 +69,7 @@ void ResourceManager::removeAllFactories()
 
 Ref< IResourceHandle > ResourceManager::bind(const TypeInfo& type, const Guid& guid)
 {
-	Ref< ResourceHandle > handle;
+	Ref< IResourceHandle > handle;
 
 	if (guid.isNull() || !guid.isValid())
 		return m_nullHandle;
@@ -77,36 +79,47 @@ Ref< IResourceHandle > ResourceManager::bind(const TypeInfo& type, const Guid& g
 		return m_nullHandle;
 
 	bool cacheable = factory->isCacheable();
-
+	if (cacheable)
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-		RefArray< ResourceHandle >& cache = m_cache[guid];
-		if (cacheable && !cache.empty())
-			handle = cache.front();
+		std::map< Guid, Ref< CachedResourceHandle > >::iterator i = m_cachedHandles.find(guid);
+		if (i != m_cachedHandles.end())
+			handle = i->second;
 		else
 		{
-			// First try to reuse empty handles; as final proxy reference is released resource
-			// handles becomes empty and thus it's safe to reuse them.
-			for (RefArray< ResourceHandle >::iterator i = cache.begin(); i != cache.end(); ++i)
+			Ref< CachedResourceHandle > cachedHandle = new CachedResourceHandle(type);
+			m_cachedHandles[guid] = cachedHandle;
+			handle = cachedHandle;
+		}
+	}
+	else
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+		RefArray< UncachedResourceHandle >& handles = m_uncachedHandles[guid];
+
+		// First try to reuse handles which are no longer in use; as final proxy reference is released resource
+		// handles becomes tagged as not being in se and thus it's safe to reuse them.
+		for (RefArray< UncachedResourceHandle >::iterator i = handles.begin(); i != handles.end(); ++i)
+		{
+			if (!(*i)->inUse())
 			{
-				if (!(*i)->get())
-				{
-					handle = *i;
-					break;
-				}
+				handle = *i;
+				break;
 			}
-			if (!handle)
-			{
-				handle = new ResourceHandle(type, cacheable);
-				cache.push_back(handle);
-			}
+		}
+
+		if (!handle)
+		{
+			Ref< UncachedResourceHandle > uncachedHandle = new UncachedResourceHandle(type);
+			handles.push_back(uncachedHandle);
+			handle = uncachedHandle;
 		}
 	}
 	
 	T_ASSERT (handle);
 
 	if (!handle->get())
-		load(guid, factory, handle);
+		load(guid, factory, type, handle);
 
 	return handle;
 }
@@ -115,19 +128,37 @@ void ResourceManager::update(const Guid& guid, bool force)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
-	std::map< Guid, RefArray< ResourceHandle > >::iterator i = m_cache.find(guid);
-	if (i == m_cache.end())
-		return;
-
-	const RefArray< ResourceHandle >& handles = i->second;
-	for (RefArray< ResourceHandle >::const_iterator i = handles.begin(); i != handles.end(); ++i)
+	std::map< Guid, RefArray< UncachedResourceHandle > >::iterator i0 = m_uncachedHandles.find(guid);
+	if (i0 != m_uncachedHandles.end())
 	{
-		if (!force && (*i)->get())
-			continue;
+		const RefArray< UncachedResourceHandle >& handles = i0->second;
+		for (RefArray< UncachedResourceHandle >::const_iterator i = handles.begin(); i != handles.end(); ++i)
+		{
+			if (!force && (*i)->get())
+				continue;
 
-		Ref< IResourceFactory > factory = findFactory((*i)->getResourceType());
+			const TypeInfo& resourceType = (*i)->getResourceType();
+
+			Ref< IResourceFactory > factory = findFactory(resourceType);
+			if (factory)
+				load(guid, factory, resourceType, *i);
+		}
+		return;
+	}
+
+	std::map< Guid, Ref< CachedResourceHandle > >::iterator i1 = m_cachedHandles.find(guid);
+	if (i1 != m_cachedHandles.end())
+	{
+		if (!force && i1->second->get())
+			return;
+
+		const TypeInfo& resourceType = i1->second->getResourceType();
+
+		Ref< IResourceFactory > factory = findFactory(resourceType);
 		if (factory)
-			load(guid, factory, *i);
+			load(guid, factory, resourceType, i1->second);
+
+		return;
 	}
 }
 
@@ -135,23 +166,35 @@ void ResourceManager::flush(const Guid& guid)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
-	std::map< Guid, RefArray< ResourceHandle > >::iterator i = m_cache.find(guid);
-	if (i == m_cache.end())
+	std::map< Guid, RefArray< UncachedResourceHandle > >::iterator i0 = m_uncachedHandles.find(guid);
+	if (i0 != m_uncachedHandles.end())
+	{
+		const RefArray< UncachedResourceHandle >& handles = i0->second;
+		for (RefArray< UncachedResourceHandle >::const_iterator i = handles.begin(); i != handles.end(); ++i)
+			(*i)->flush();
 		return;
+	}
 
-	const RefArray< ResourceHandle >& handles = i->second;
-	for (RefArray< ResourceHandle >::const_iterator i = handles.begin(); i != handles.end(); ++i)
-		(*i)->flush();
+	std::map< Guid, Ref< CachedResourceHandle > >::iterator i1 = m_cachedHandles.find(guid);
+	if (i1 != m_cachedHandles.end())
+	{
+		i1->second->flush();
+		return;
+	}
 }
 
 void ResourceManager::flush()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	for (std::map< Guid, RefArray< ResourceHandle > >::iterator i = m_cache.begin(); i != m_cache.end(); ++i)
+
+	for (std::map< Guid, RefArray< UncachedResourceHandle > >::iterator i = m_uncachedHandles.begin(); i != m_uncachedHandles.end(); ++i)
 	{
-		for (RefArray< ResourceHandle >::const_iterator j = i->second.begin(); j != i->second.end(); ++j)
+		for (RefArray< UncachedResourceHandle >::const_iterator j = i->second.begin(); j != i->second.end(); ++j)
 			(*j)->flush();
 	}
+
+	for (std::map< Guid, Ref< CachedResourceHandle > >::iterator i = m_cachedHandles.begin(); i != m_cachedHandles.end(); ++i)
+		i->second->flush();
 }
 
 void ResourceManager::dumpStatistics()
@@ -161,7 +204,8 @@ void ResourceManager::dumpStatistics()
 	log::debug << L"Resource manager statistics:" << Endl;
 	log::debug << IncreaseIndent;
 	
-	log::debug << uint32_t(m_cache.size()) << L" cache entries" << Endl;
+	log::debug << uint32_t(m_cachedHandles.size()) << L" persistent entries" << Endl;
+	log::debug << uint32_t(m_uncachedHandles.size()) << L" transient entries" << Endl;
 	
 	double totalTime = 0.0;
 	for (std::map< const TypeInfo*, TimeCount >::const_iterator i = m_times.begin(); i != m_times.end(); ++i)
@@ -183,7 +227,7 @@ Ref< IResourceFactory > ResourceManager::findFactory(const TypeInfo& type)
 	return 0;
 }
 
-void ResourceManager::load(const Guid& guid, IResourceFactory* factory, ResourceHandle* handle)
+void ResourceManager::load(const Guid& guid, IResourceFactory* factory, const TypeInfo& resourceType, IResourceHandle* handle)
 {
 	Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
 
@@ -200,7 +244,7 @@ void ResourceManager::load(const Guid& guid, IResourceFactory* factory, Resource
 	Timer timer;
 	timer.start();
 
-	const TypeInfo& resourceType = handle->getResourceType();
+	//const TypeInfo& resourceType = handle->getResourceType();
 	Ref< Object > object = factory->create(this, resourceType, guid);
 	if (object)
 	{
