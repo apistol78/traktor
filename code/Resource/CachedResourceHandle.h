@@ -1,5 +1,5 @@
-#ifndef traktor_resource_ResourceHandle_H
-#define traktor_resource_ResourceHandle_H
+#ifndef traktor_resource_CachedResourceHandle_H
+#define traktor_resource_CachedResourceHandle_H
 
 #include "Resource/IResourceHandle.h"
 
@@ -16,17 +16,18 @@ namespace traktor
 	namespace resource
 	{
 
-/*! \brief Resource handle.
+/*! \brief Cached resource handle.
  * \ingroup Resource
+ *
+ * Cached resource persist in the resource manager
+ * thus are never reloaded unless explicitly flushed.
  */
-class T_DLLCLASS ResourceHandle : public IResourceHandle
+class T_DLLCLASS CachedResourceHandle : public IResourceHandle
 {
 	T_RTTI_CLASS;
 
 public:
-	ResourceHandle(const TypeInfo& type, bool cacheable);
-
-	virtual void release(void* owner) const;
+	CachedResourceHandle(const TypeInfo& type);
 
 	virtual void replace(Object* object);
 
@@ -34,15 +35,14 @@ public:
 
 	virtual void flush();
 
-	const TypeInfo& getResourceType() const;
+	const TypeInfo& getResourceType() const { return m_resourceType; }
 
 private:
 	const TypeInfo& m_resourceType;
-	bool m_cacheable;
 	mutable Ref< Object > m_object;
 };
 
 	}
 }
 
-#endif	// traktor_resource_ResourceHandle_H
+#endif	// traktor_resource_CachedResourceHandle_H
