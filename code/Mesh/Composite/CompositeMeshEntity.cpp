@@ -15,12 +15,16 @@ CompositeMeshEntity::CompositeMeshEntity(const Transform& transform)
 
 void CompositeMeshEntity::setTransform(const Transform& transform)
 {
-	Transform deltaTransform = transform * m_transform.get().inverse();
+	Transform invTransform = m_transform.get().inverse();
 	for (std::map< std::wstring, Ref< MeshEntity > >::iterator i = m_meshEntities.begin(); i != m_meshEntities.end(); ++i)
 	{
 		Transform currentTransform;
 		if (i->second->getTransform(currentTransform))
-			i->second->setTransform(deltaTransform * currentTransform);
+		{
+			Transform Tlocal = invTransform * currentTransform;
+			Transform Tworld = transform * Tlocal;
+			i->second->setTransform(Tworld);
+		}
 	}
 	MeshEntity::setTransform(transform);
 }
