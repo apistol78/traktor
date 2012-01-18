@@ -44,6 +44,8 @@ public:
 
 	virtual void update();
 
+	virtual bool hitTest(const ui::Point& position) const;
+
 private:
 	Ref< SceneEditorContext > m_context;
 	int32_t m_index;

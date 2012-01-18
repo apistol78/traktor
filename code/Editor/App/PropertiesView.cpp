@@ -280,8 +280,14 @@ void PropertiesView::eventPropertyCommand(ui::Event* event)
 
 void PropertiesView::eventPropertyChange(ui::Event* event)
 {
+	IEditorPage* activeEditorPage = m_editor->getActiveEditorPage();
+	if (activeEditorPage)
+		activeEditorPage->handleCommand(ui::Command(L"Editor.PropertiesChanging"));
+
 	m_propertyList->apply();
-	m_editor->getActiveEditorPage()->handleCommand(ui::Command(L"Editor.PropertiesChanged"));
+
+	if (activeEditorPage)
+		activeEditorPage->handleCommand(ui::Command(L"Editor.PropertiesChanged"));
 }
 
 	}

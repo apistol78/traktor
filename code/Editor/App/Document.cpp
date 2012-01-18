@@ -75,15 +75,18 @@ void Document::push()
 {
 	if (!m_undoHistory.empty())
 	{
-		if (m_undoHistory.back().objectHashes.size() == m_objectHashes.size())
+		const std::vector< uint32_t >& lastHashes = m_undoHistory.back().objectHashes;
+		if (lastHashes.size() == m_objects.size())
 		{
-			bool eq = std::equal(
-				m_objectHashes.begin(),
-				m_objectHashes.end(),
-				m_undoHistory.back().objectHashes.begin()
-			);
-			if (eq)
-				return;
+			bool eq = true;
+			for (uint32_t i = 0; i < lastHashes.size(); ++i)
+			{
+				if (DeepHash(m_objects[i]).get() != lastHashes[i])
+				{
+					eq = false;
+					break;
+				}
+			}
 		}
 	}
 

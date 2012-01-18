@@ -299,6 +299,19 @@ bool ScenePreviewControl::handleCommand(const ui::Command& command)
 	return result;
 }
 
+bool ScenePreviewControl::getViewIndex(const ui::Point& position, uint32_t& outIndex) const
+{
+	for (RefArray< ISceneRenderControl >::const_iterator i = m_renderControls.begin(); i != m_renderControls.end(); ++i)
+	{
+		if ((*i)->hitTest(position))
+		{
+			outIndex = std::distance(m_renderControls.begin(), i);
+			return true;
+		}
+	}
+	return false;
+}
+
 ui::Size ScenePreviewControl::getPreferedSize() const
 {
 	return ui::Size(256, 256);

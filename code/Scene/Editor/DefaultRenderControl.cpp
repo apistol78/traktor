@@ -164,6 +164,11 @@ void DefaultRenderControl::update()
 		m_renderControl->update();
 }
 
+bool DefaultRenderControl::hitTest(const ui::Point& position) const
+{
+	return m_renderControl ? m_renderControl->hitTest(position) : false;
+}
+
 void DefaultRenderControl::createRenderControl(int32_t type)
 {
 	if (m_renderControl)
