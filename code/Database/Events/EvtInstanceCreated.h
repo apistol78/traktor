@@ -21,7 +21,14 @@ class T_DLLCLASS EvtInstanceCreated : public EvtInstance
 	T_RTTI_CLASS;
 
 public:
-	EvtInstanceCreated(const Guid& instanceGuid = Guid());
+	EvtInstanceCreated(const std::wstring& groupPath = L"", const Guid& instanceGuid = Guid());
+
+	const std::wstring& getGroupPath() const;
+
+	virtual bool serialize(ISerializer& s);
+
+private:
+	std::wstring m_groupPath;
 };
 
 	}

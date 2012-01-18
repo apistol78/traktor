@@ -250,6 +250,24 @@ bool Database::getEvent(Ref< const IEvent >& outEvent, bool& outRemote)
 
 		if (const EvtInstanceCreated* created = dynamic_type_cast< const EvtInstanceCreated* >(outEvent))
 		{
+			Ref< Group > group = m_rootGroup;
+
+			StringSplit< std::wstring > pathElements(created->getGroupPath(), L"/");
+			for (StringSplit< std::wstring >::const_iterator i = pathElements.begin(); group && i != pathElements.end(); ++i)
+			{
+				Ref< Group > childGroup = findChildGroup(group, FindGroupByName(*i));
+				if (childGroup)
+					group = childGroup;
+				else
+				{
+					group->internalAddExtGroup(*i);
+					group = findChildGroup(group, FindGroupByName(*i));
+				}
+			}
+
+			if (group)
+				group->internalAddExtInstance(created->getInstanceGuid());
+
 			m_instanceMap.clear();
 			buildInstanceMap(m_rootGroup, m_instanceMap);
 		}
@@ -291,7 +309,10 @@ void Database::instanceEventCreated(Instance* instance)
 
 	// Notify others about new instance.
 	if (m_providerBus)
-		m_providerBus->putEvent(new EvtInstanceCreated(instance->getGuid()));
+		m_providerBus->putEvent(new EvtInstanceCreated(
+			instance->getParent()->getPath(),
+			instance->getGuid()
+		));
 }
 
 void Database::instanceEventRemoved(Instance* instance)

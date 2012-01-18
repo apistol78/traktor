@@ -5,6 +5,7 @@
 #include "Database/Instance.h"
 #include "Database/Traverse.h"
 #include "Database/Provider/IProviderGroup.h"
+#include "Database/Provider/IProviderInstance.h"
 
 namespace traktor
 {
@@ -235,6 +236,52 @@ void Group::internalDestroy()
 		(*i)->internalDestroy();
 
 	m_childInstances.resize(0);
+}
+
+bool Group::internalAddExtGroup(const std::wstring& groupName)
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
+	RefArray< IProviderGroup > providerChildGroups;
+	m_providerGroup->getChildGroups(providerChildGroups);
+
+	for (RefArray< IProviderGroup >::iterator i = providerChildGroups.begin(); i != providerChildGroups.end(); ++i)
+	{
+		if ((*i)->getName() == groupName)
+		{
+			Ref< Group > childGroup = new Group(m_eventListener);
+			if (!childGroup->internalCreate(*i, this))
+				return false;
+
+			m_childGroups.push_back(childGroup);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool Group::internalAddExtInstance(const Guid& instanceGuid)
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
+	RefArray< IProviderInstance > providerChildInstances;
+	m_providerGroup->getChildInstances(providerChildInstances);
+
+	for (RefArray< IProviderInstance >::iterator i = providerChildInstances.begin(); i != providerChildInstances.end(); ++i)
+	{
+		if ((*i)->getGuid() == instanceGuid)
+		{
+			Ref< Instance > childInstance = new Instance(this);
+			if (!childInstance->internalCreateExisting(*i, this))
+				return false;
+
+			m_childInstances.push_back(childInstance);
+			return true;
+		}
+	}
+
+	return false;
 }
 
 void Group::instanceEventCreated(Instance* instance)
