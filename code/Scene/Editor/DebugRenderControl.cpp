@@ -93,6 +93,11 @@ void DebugRenderControl::update()
 	m_renderWidget->update();
 }
 
+bool DebugRenderControl::hitTest(const ui::Point& position) const
+{
+	return m_renderWidget->hitTest(position);
+}
+
 void DebugRenderControl::eventSize(ui::Event* event)
 {
 	if (!m_renderView || !m_renderWidget->isVisible(true))

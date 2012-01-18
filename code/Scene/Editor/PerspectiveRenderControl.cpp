@@ -323,6 +323,11 @@ void PerspectiveRenderControl::update()
 	m_renderWidget->update();
 }
 
+bool PerspectiveRenderControl::hitTest(const ui::Point& position) const
+{
+	return m_renderWidget->hitTest(position);
+}
+
 void PerspectiveRenderControl::updateSettings()
 {
 	Ref< PropertyGroup > colors = m_context->getEditor()->getSettings()->getProperty< PropertyGroup >(L"Editor.Colors");

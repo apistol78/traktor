@@ -9,6 +9,7 @@ namespace traktor
 	{
 
 class Command;
+class Point;
 
 	}
 
@@ -29,6 +30,8 @@ public:
 	virtual bool handleCommand(const ui::Command& command) = 0;
 
 	virtual void update() = 0;
+
+	virtual bool hitTest(const ui::Point& position) const = 0;
 };
 
 	}

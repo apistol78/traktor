@@ -276,6 +276,11 @@ bool SceneEditorPage::dropInstance(db::Instance* instance, const ui::Point& posi
 	const TypeInfo* primaryType = instance->getPrimaryType();
 	T_ASSERT (primaryType);
 
+	// Get index of view where user dropped instance.
+	uint32_t viewIndex;
+	if (!m_editControl->getViewIndex(position, viewIndex))
+		return false;
+
 	if (is_type_of< world::EntityData >(*primaryType))
 	{
 		Ref< EntityAdapter > parentGroupAdapter;
@@ -314,6 +319,14 @@ bool SceneEditorPage::dropInstance(db::Instance* instance, const ui::Point& posi
 		// Create instance and adapter.
 		Ref< EntityAdapter > entityAdapter = new EntityAdapter(entityData);
 
+		// Place instance in front of perspective camera.
+		Camera* camera = m_context->getCamera(viewIndex);
+		T_ASSERT (camera);
+
+		Matrix44 Mworld = camera->getCurrentWorld() * translate(0.0f, 0.0f, 4.0f);
+		entityAdapter->setTransform(Transform(Mworld.translation()));
+
+		// Finally add adapter to parent group.
 		if (parentGroupAdapter)
 			parentGroupAdapter->addChild(entityAdapter);
 		else

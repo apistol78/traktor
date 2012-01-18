@@ -232,6 +232,11 @@ void OrthogonalRenderControl::update()
 	m_renderWidget->update();
 }
 
+bool OrthogonalRenderControl::hitTest(const ui::Point& position) const
+{
+	return m_renderWidget->hitTest(position);
+}
+
 void OrthogonalRenderControl::updateSettings()
 {
 	Ref< PropertyGroup > colors = m_context->getEditor()->getSettings()->getProperty< PropertyGroup >(L"Editor.Colors");

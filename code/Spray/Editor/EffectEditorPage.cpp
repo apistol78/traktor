@@ -152,12 +152,7 @@ bool EffectEditorPage::handleCommand(const ui::Command& command)
 	if (!m_previewControl)
 		return false;
 
-	if (command == L"Editor.PropertiesChanged")
-	{
-		m_previewControl->syncEffect();
-		updateSequencer();
-	}
-	else if (command == L"Effect.Editor.Reset")
+	if (command == L"Effect.Editor.Reset")
 	{
 		m_previewControl->setTotalTime(0.0f);
 		m_previewControl->syncEffect();
@@ -192,6 +187,45 @@ bool EffectEditorPage::handleCommand(const ui::Command& command)
 	{
 		m_previewControl->randomizeSeed();
 		m_previewControl->syncEffect();
+	}
+	else if (command == L"Editor.PropertiesChanging")
+	{
+		m_document->push();
+	}
+	else if (command == L"Editor.PropertiesChanged")
+	{
+		m_previewControl->syncEffect();
+		updateSequencer();
+	}
+	else if (command == L"Editor.Undo")
+	{
+		if (m_document->undo())
+		{
+			m_effect = m_document->getObject< Effect >(0);
+			T_ASSERT (m_effect);
+
+			m_effect->bind(m_resourceManager);
+
+			m_site->setPropertyObject(m_effect);
+
+			m_previewControl->syncEffect();
+			updateSequencer();
+		}
+	}
+	else if (command == L"Editor.Redo")
+	{
+		if (m_document->redo())
+		{
+			m_effect = m_document->getObject< Effect >(0);
+			T_ASSERT (m_effect);
+
+			m_effect->bind(m_resourceManager);
+
+			m_site->setPropertyObject(m_effect);
+
+			m_previewControl->syncEffect();
+			updateSequencer();
+		}
 	}
 
 	return true;

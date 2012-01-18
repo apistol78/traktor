@@ -74,5 +74,10 @@ void ReferencesRenderControl::update()
 {
 }
 
+bool ReferencesRenderControl::hitTest(const ui::Point& position) const
+{
+	return false;
+}
+
 	}
 }
