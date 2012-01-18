@@ -14,12 +14,14 @@ struct SteamCreateDesc
 	const wchar_t** leaderboardIds;
 	const wchar_t** statIds;
 	uint32_t requestAttempts;
+	bool cloudEnabled;
 
 	SteamCreateDesc()
 	:	achievementIds(0)
 	,	leaderboardIds(0)
 	,	statIds(0)
 	,	requestAttempts(10)
+	,	cloudEnabled(true)
 	{
 	}
 };

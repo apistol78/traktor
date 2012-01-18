@@ -6,8 +6,9 @@
 #include "Core/Thread/ThreadManager.h"
 #include "Online/Steam/SteamAchievements.h"
 #include "Online/Steam/SteamLeaderboards.h"
+#include "Online/Steam/SteamLocalSaveData.h"
 #include "Online/Steam/SteamMatchMaking.h"
-#include "Online/Steam/SteamSaveData.h"
+#include "Online/Steam/SteamCloudSaveData.h"
 #include "Online/Steam/SteamSessionManager.h"
 #include "Online/Steam/SteamStatistics.h"
 #include "Online/Steam/SteamUser.h"
@@ -118,7 +119,12 @@ bool SteamSessionManager::create(const SteamCreateDesc& desc)
 	m_achievements = new SteamAchievements(this, desc.achievementIds);
 	m_leaderboards = new SteamLeaderboards(this, desc.leaderboardIds);
 	m_matchMaking = new SteamMatchMaking(this);
-	m_saveData = new SteamSaveData();
+	
+	if (desc.cloudEnabled)
+		m_saveData = new SteamCloudSaveData();
+	else
+		m_saveData = new SteamLocalSaveData();
+
 	m_statistics = new SteamStatistics(this, desc.statIds);
 	m_user = new SteamUser();
 
