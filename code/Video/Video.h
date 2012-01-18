@@ -2,6 +2,7 @@
 #define traktor_video_Video_H
 
 #include "Core/Object.h"
+#include "Video/Types.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -48,9 +49,12 @@ public:
 
 	render::ISimpleTexture* getTexture();
 
+	VideoFormat getFormat() const;
+
 private:
 	Ref< IVideoDecoder > m_decoder;
 	Ref< render::ISimpleTexture > m_textures[2];
+	VideoFormat m_format;
 	float m_time;
 	float m_rate;
 	uint32_t m_frame;

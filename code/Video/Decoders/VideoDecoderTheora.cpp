@@ -165,6 +165,23 @@ public:
 		outInfo.width = m_ti.pic_width;
 		outInfo.height = m_ti.pic_height;
 		outInfo.rate = float(m_ti.fps_numerator / m_ti.fps_denominator);
+		switch (m_ti.pixel_fmt)
+		{
+		case TH_PF_420:
+			outInfo.format = VfHalfXYChroma;
+			break;
+
+		case TH_PF_422:
+			outInfo.format = VfHalfXChroma;
+			break;
+
+		case TH_PF_444:
+			outInfo.format = VfFullChroma;
+			break;
+
+		default:
+			return false;
+		}
 		return true;
 	}
 
@@ -222,31 +239,74 @@ public:
 
 		if (m_ti.pixel_fmt == TH_PF_420)
 		{
+			// Copy luminance.
 			for (uint32_t y = 0; y < m_ti.pic_height; ++y)
 			{
 				const uint8_t* inY = yuv[0].data + yuv[0].stride * y;
-				const uint8_t* inU = yuv[1].data + yuv[1].stride * (y >> 1);
-				const uint8_t* inV = yuv[2].data + yuv[2].stride * (y >> 1);
-
 				uint8_t* w = static_cast< uint8_t* >(bits) + pitch * y;
 
 				for (uint32_t x = 0; x < m_ti.pic_width; ++x)
 				{
 					w[0] = inY[x];
-					w[1] = inU[x >> 1];
-					w[2] = inV[x >> 1];
+					w[3] = 0;
+					w += 4;
+				}
+			}
+
+			// Copy chroma.
+			for (uint32_t y = 0; y < m_ti.pic_height >> 1; ++y)
+			{
+				const uint8_t* inU = yuv[1].data + yuv[1].stride * y;
+				const uint8_t* inV = yuv[2].data + yuv[2].stride * y;
+				uint8_t* w = static_cast< uint8_t* >(bits) + pitch * y;
+
+				for (uint32_t x = 0; x < m_ti.pic_width >> 1; ++x)
+				{
+					w[1] = inU[x];
+					w[2] = inV[x];
 					w += 4;
 				}
 			}
 		}
 		else if (m_ti.pixel_fmt == TH_PF_422)
 		{
+			// Copy luminance.
 			for (uint32_t y = 0; y < m_ti.pic_height; ++y)
 			{
 				const uint8_t* inY = yuv[0].data + yuv[0].stride * y;
-				const uint8_t* inU = yuv[1].data + yuv[1].stride * (y >> 1);
-				const uint8_t* inV = yuv[2].data + yuv[2].stride * (y >> 1);
+				uint8_t* w = static_cast< uint8_t* >(bits) + pitch * y;
 
+				for (uint32_t x = 0; x < m_ti.pic_width; ++x)
+				{
+					w[0] = inY[x];
+					w[3] = 0;
+					w += 4;
+				}
+			}
+
+			// Copy chroma.
+			for (uint32_t y = 0; y < m_ti.pic_height; ++y)
+			{
+				const uint8_t* inU = yuv[1].data + yuv[1].stride * y;
+				const uint8_t* inV = yuv[2].data + yuv[2].stride * y;
+				uint8_t* w = static_cast< uint8_t* >(bits) + pitch * y;
+
+				for (uint32_t x = 0; x < m_ti.pic_width >> 1; ++x)
+				{
+					w[1] = inU[x];
+					w[2] = inV[x];
+					w += 4;
+				}
+			}
+		}
+		else if (m_ti.pixel_fmt == TH_PF_444)
+		{
+			// Copy luminance and chroma.
+			for (uint32_t y = 0; y < m_ti.pic_height; ++y)
+			{
+				const uint8_t* inY = yuv[0].data + yuv[0].stride * y;
+				const uint8_t* inU = yuv[1].data + yuv[1].stride * y;
+				const uint8_t* inV = yuv[2].data + yuv[2].stride * y;
 				uint8_t* w = static_cast< uint8_t* >(bits) + pitch * y;
 
 				for (uint32_t x = 0; x < m_ti.pic_width; ++x)
@@ -254,6 +314,7 @@ public:
 					w[0] = inY[x];
 					w[1] = inU[x];
 					w[2] = inV[x];
+					w[3] = 0;
 					w += 4;
 				}
 			}
