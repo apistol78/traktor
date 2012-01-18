@@ -110,6 +110,9 @@ bool LocalInstance::setName(const std::wstring& name)
 	if (!m_transaction || name.empty())
 		return false;
 
+	if (getName() == name)
+		return true;
+
 	Ref< ActionSetName > action = new ActionSetName(m_instancePath, name);
 	m_transaction->add(action);
 	m_transactionName = name;
