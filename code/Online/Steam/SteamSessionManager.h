@@ -70,7 +70,7 @@ private:
 	Ref< SteamAchievements > m_achievements;
 	Ref< SteamLeaderboards > m_leaderboards;
 	Ref< SteamMatchMaking > m_matchMaking;
-	Ref< SteamSaveData > m_saveData;
+	Ref< ISaveDataProvider > m_saveData;
 	Ref< SteamStatistics > m_statistics;
 	Ref< SteamUser > m_user;
 	bool m_requireUserAttention;

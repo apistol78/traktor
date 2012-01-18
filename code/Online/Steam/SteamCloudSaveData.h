@@ -1,5 +1,5 @@
-#ifndef traktor_online_SteamSaveData_H
-#define traktor_online_SteamSaveData_H
+#ifndef traktor_online_SteamCloudSaveData_H
+#define traktor_online_SteamCloudSaveData_H
 
 #include "Online/Provider/ISaveDataProvider.h"
 
@@ -8,7 +8,7 @@ namespace traktor
 	namespace online
 	{
 
-class SteamSaveData : public ISaveDataProvider
+class SteamCloudSaveData : public ISaveDataProvider
 {
 	T_RTTI_CLASS;
 
@@ -23,4 +23,4 @@ public:
 	}
 }
 
-#endif	// traktor_online_SteamSaveData_H
+#endif	// traktor_online_SteamCloudSaveData_H

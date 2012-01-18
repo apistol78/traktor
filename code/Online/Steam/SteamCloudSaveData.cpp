@@ -2,16 +2,16 @@
 #include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Misc/TString.h"
 #include "Core/Serialization/BinarySerializer.h"
-#include "Online/Steam/SteamSaveData.h"
+#include "Online/Steam/SteamCloudSaveData.h"
 
 namespace traktor
 {
 	namespace online
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.online.SteamSaveData", SteamSaveData, ISaveDataProvider)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.online.SteamCloudSaveData", SteamCloudSaveData, ISaveDataProvider)
 
-bool SteamSaveData::enumerate(std::set< std::wstring >& outSaveDataIds)
+bool SteamCloudSaveData::enumerate(std::set< std::wstring >& outSaveDataIds)
 {
 	int32_t fileCount = SteamRemoteStorage()->GetFileCount();
 	int32_t fileSize;
@@ -26,7 +26,7 @@ bool SteamSaveData::enumerate(std::set< std::wstring >& outSaveDataIds)
 	return true;
 }
 
-bool SteamSaveData::get(const std::wstring& saveDataId, Ref< ISerializable >& outAttachment)
+bool SteamCloudSaveData::get(const std::wstring& saveDataId, Ref< ISerializable >& outAttachment)
 {
 	std::string fileName = wstombs(saveDataId);
 
@@ -45,7 +45,7 @@ bool SteamSaveData::get(const std::wstring& saveDataId, Ref< ISerializable >& ou
 	return true;
 }
 
-bool SteamSaveData::set(const std::wstring& saveDataId, const SaveDataDesc& saveDataDesc, const ISerializable* attachment, bool replace)
+bool SteamCloudSaveData::set(const std::wstring& saveDataId, const SaveDataDesc& saveDataDesc, const ISerializable* attachment, bool replace)
 {
 	std::string fileName = wstombs(saveDataId);
 
