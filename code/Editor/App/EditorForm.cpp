@@ -733,6 +733,10 @@ bool EditorForm::openEditor(db::Instance* instance)
 			return false;
 		}
 
+		// Update tab page in order to ensure layout
+		// of child widgets are correct.
+		tabPage->update();
+
 		// Save references to editor in tab page's user data.
 		tabPage->setData(L"EDITORPAGESITE", site);
 		tabPage->setData(L"EDITORPAGE", editorPage);
