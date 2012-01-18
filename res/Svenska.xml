@@ -1106,6 +1106,10 @@
       <second>Referenser</second>
     </item>
     <item>
+      <first>SCENE_EDITOR_ASPECT</first>
+      <second>Aspekt</second>
+    </item>
+    <item>
       <first>SCENE_EDITOR_BROWSE_POSTPROCESS</first>
       <second>Välj efter-effekt...</second>
     </item>
@@ -1173,6 +1177,10 @@
 			<first>SCENE_EDITOR_ENTITY_NAME</first>
 			<second>Namn</second>
 		</item>
+    <item>
+      <first>SCENE_EDITOR_FOLLOW_ENTITY</first>
+      <second>Följ entitet</second>
+    </item>
 		<item>
 			<first>SCENE_EDITOR_FRAME_TIME</first>
 			<second>Total tid {0} ms, FPS {1}</second>
@@ -1238,12 +1246,24 @@
       <second>Stanna simulering</second>
     </item>
     <item>
+      <first>SCENE_EDITOR_TOGGLE_GRID</first>
+      <second>Rita rutnät</second>
+    </item>
+    <item>
       <first>SCENE_EDITOR_TOGGLE_GUIDE</first>
       <second>Rita hjälplinjer</second>
     </item>
     <item>
+      <first>SCENE_EDITOR_TOGGLE_PICK</first>
+      <second>Av-/aktivera markera</second>
+    </item>
+    <item>
       <first>SCENE_EDITOR_TOGGLE_SNAP</first>
       <second>Av-/aktivera magnestisk grip</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_TOGGLE_SNAP_SPACING</first>
+      <second>Magnetiskt grip avstånd</second>
     </item>
 		<item>
 			<first>SCENE_EDITOR_TOGGLE_X</first>
@@ -1257,6 +1277,10 @@
 			<first>SCENE_EDITOR_TOGGLE_Z</first>
 			<second>Av-/aktivera Z</second>
 		</item>
+    <item>
+      <first>SCENE_EDITOR_TOGGLE_POSTPROCESS</first>
+      <second>Av-/aktivera filter</second>
+    </item>
 		<item>
 			<first>SCENE_EDITOR_TRANSLATE</first>
 			<second>Translatera</second>
@@ -1265,6 +1289,10 @@
 			<first>SCENE_EDITOR_UNNAMED_ENTITY</first>
 			<second>Namnlös</second>
 		</item>
+    <item>
+      <first>SCENE_EDITOR_VIEW_MODE</first>
+      <second>Vy läge</second>
+    </item>
     <item>
       <first>SCENE_EDITOR_VIEW_PERSPECTIVE</first>
       <second>Perspektiv</second>
