@@ -406,7 +406,7 @@ void RenderViewSw::fetchVertex(uint32_t index, varying_data_t& outVertexVarying)
 	for (uint32_t i = 0; i < vertexElementCount; ++i)
 	{
 		uint32_t varyingOffset = getVaryingOffset(vertexElements[i].getDataUsage(), vertexElements[i].getIndex());
-		outVertexVarying[varyingOffset] = Vector4((const float *)vertices[i + vertexOffset]);
+		outVertexVarying[varyingOffset] = Vector4::loadUnaligned((const float *)vertices[i + vertexOffset]);
 	}
 
 	checkVaryings(outVertexVarying);

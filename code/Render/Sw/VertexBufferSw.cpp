@@ -29,13 +29,13 @@ VertexBufferSw::VertexBufferSw(const std::vector< VertexElement >& vertexElement
 :	VertexBuffer(bufferSize)
 ,	m_vertexElements(vertexElements)
 ,	m_vertexStride(getVertexSize(vertexElements))
-,	m_vertexCount(vertexElements.size() * bufferSize / m_vertexStride)
+,	m_vertexCount(bufferSize / m_vertexStride)
 ,	m_lock(0)
 ,	m_lockOffset(0)
 ,	m_lockCount(0)
 {
 	T_ASSERT (bufferSize % m_vertexStride == 0);
-	m_data.reset(new vertex_tuple_t[m_vertexCount]);
+	m_data.reset(new vertex_tuple_t[m_vertexCount * m_vertexElements.size()]);
 }
 
 void VertexBufferSw::destroy()
@@ -73,14 +73,15 @@ void VertexBufferSw::unlock()
 		return;
 
 	uint8_t* lockIter = m_lock;
+	vertex_tuple_t* ptr = &m_data[m_lockOffset * m_vertexElements.size()];
 
-	for (uint32_t offset = m_lockOffset; offset < m_lockOffset + m_lockCount; )
+	for (uint32_t i = 0; i < m_lockCount; ++i)
 	{
-		for (std::vector< VertexElement >::const_iterator j = m_vertexElements.begin(); j != m_vertexElements.end(); ++j, ++offset)
+		for (std::vector< VertexElement >::const_iterator j = m_vertexElements.begin(); j != m_vertexElements.end(); ++j)
 		{
 			uint8_t* source = lockIter + j->getOffset();
 
-			vertex_tuple_t& out = m_data[offset];
+			vertex_tuple_t& out = *ptr++;
 			switch (j->getDataType())
 			{
 			case DtFloat1:
