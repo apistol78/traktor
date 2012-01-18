@@ -105,12 +105,16 @@ void SpatialGroupEntity::update(const EntityUpdate* update)
 
 void SpatialGroupEntity::setTransform(const Transform& transform)
 {
-	Transform deltaTransform = transform * m_transform.inverse();
+	Transform invTransform = m_transform.inverse();
 	for (RefArray< SpatialEntity >::iterator i = m_entities.begin(); i != m_entities.end(); ++i)
 	{
-		Transform childTransform;
-		if ((*i)->getTransform(childTransform))
-			(*i)->setTransform(deltaTransform * childTransform);
+		Transform currentTransform;
+		if ((*i)->getTransform(currentTransform))
+		{
+			Transform Tlocal = invTransform * currentTransform;
+			Transform Tworld = transform * Tlocal;
+			(*i)->setTransform(Tworld);
+		}
 	}
 	m_transform = transform;
 }

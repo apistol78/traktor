@@ -24,12 +24,16 @@ LodMeshEntity::LodMeshEntity(
 
 void LodMeshEntity::setTransform(const Transform& transform)
 {
-	Transform deltaTransform = transform * m_transform.get().inverse();
+	Transform invTransform = m_transform.get().inverse();
 	for (RefArray< MeshEntity >::iterator i = m_lods.begin(); i != m_lods.end(); ++i)
 	{
 		Transform currentTransform;
 		if ((*i)->getTransform(currentTransform))
-			(*i)->setTransform(deltaTransform * currentTransform);
+		{
+			Transform Tlocal = invTransform * currentTransform;
+			Transform Tworld = transform * Tlocal;
+			(*i)->setTransform(Tworld);
+		}
 	}
 	MeshEntity::setTransform(transform);
 }
