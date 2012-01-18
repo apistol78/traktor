@@ -1066,6 +1066,10 @@
       <second>References</second>
     </item>
     <item>
+      <first>SCENE_EDITOR_ASPECT</first>
+      <second>Aspect</second>
+    </item>
+    <item>
       <first>SCENE_EDITOR_BROWSE_POSTPROCESS</first>
       <second>Browse postprocessing filter...</second>
     </item>
@@ -1132,6 +1136,10 @@
     <item>
       <first>SCENE_EDITOR_ENTITY_NAME</first>
       <second>Name</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_FOLLOW_ENTITY</first>
+      <second>Follow entity</second>
     </item>
     <item>
       <first>SCENE_EDITOR_FRAME_TIME</first>
@@ -1202,12 +1210,24 @@
       <second>Stop</second>
     </item>
     <item>
+      <first>SCENE_EDITOR_TOGGLE_GRID</first>
+      <second>Toggle grid</second>
+    </item>
+    <item>
       <first>SCENE_EDITOR_TOGGLE_GUIDE</first>
       <second>Toggle guide lines</second>
     </item>
     <item>
+      <first>SCENE_EDITOR_TOGGLE_PICK</first>
+      <second>Toggle pick</second>
+    </item>
+    <item>
       <first>SCENE_EDITOR_TOGGLE_SNAP</first>
       <second>Toggle snap</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_TOGGLE_SNAP_SPACING</first>
+      <second>Snap spacing</second>
     </item>
     <item>
       <first>SCENE_EDITOR_TOGGLE_X</first>
@@ -1222,12 +1242,20 @@
       <second>Toggle Z axis</second>
     </item>
     <item>
+      <first>SCENE_EDITOR_TOGGLE_POSTPROCESS</first>
+      <second>Toggle postprocessing</second>
+    </item>
+    <item>
       <first>SCENE_EDITOR_TRANSLATE</first>
       <second>Translate</second>
     </item>
     <item>
       <first>SCENE_EDITOR_UNNAMED_ENTITY</first>
       <second>Unnamed</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_VIEW_MODE</first>
+      <second>View mode</second>
     </item>
     <item>
       <first>SCENE_EDITOR_VIEW_PERSPECTIVE</first>
