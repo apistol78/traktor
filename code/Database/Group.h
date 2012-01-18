@@ -79,6 +79,10 @@ private:
 
 	void internalDestroy();
 
+	bool internalAddExtGroup(const std::wstring& groupName);
+
+	bool internalAddExtInstance(const Guid& instanceGuid);
+
 	// \name IInstanceEventListener
 	// \{
 
