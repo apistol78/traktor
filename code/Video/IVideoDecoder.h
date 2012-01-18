@@ -2,6 +2,7 @@
 #define traktor_video_IVideoDecoder_H
 
 #include "Core/Object.h"
+#include "Video/Types.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,7 +20,7 @@ class IStream;
 	namespace video
 	{
 
-/*! \brief
+/*! \brief Video decoder information.
  * \ingroup Video
  */
 struct VideoDecoderInfo
@@ -27,9 +28,10 @@ struct VideoDecoderInfo
 	uint32_t width;
 	uint32_t height;
 	float rate;
+	VideoFormat format;
 };
 
-/*! \brief
+/*! \brief Video decoder stream interface.
  * \ingroup Video
  */
 class T_DLLCLASS IVideoDecoder : public Object

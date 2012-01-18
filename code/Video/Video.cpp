@@ -12,7 +12,8 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.video.Video", Video, Object)
 
 Video::Video()
-:	m_time(0.0f)
+:	m_format(VfUnknown)
+,	m_time(0.0f)
 ,	m_rate(0.0f)
 ,	m_frame(0)
 ,	m_current(0)
@@ -40,6 +41,7 @@ bool Video::create(render::IRenderSystem* renderSystem, IVideoDecoder* decoder)
 	}
 
 	m_decoder = decoder;
+	m_format = info.format;
 	m_time = 0.0f;
 	m_rate = info.rate;
 	m_frame = ~0UL;
@@ -95,6 +97,11 @@ void Video::rewind()
 render::ISimpleTexture* Video::getTexture()
 {
 	return m_textures[m_current];
+}
+
+VideoFormat Video::getFormat() const
+{
+	return m_format;
 }
 
 	}
