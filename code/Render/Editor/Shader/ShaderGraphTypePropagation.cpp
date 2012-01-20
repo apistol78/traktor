@@ -15,16 +15,13 @@ namespace traktor
 struct EvalInitialOutputTypes
 {
 	const ShaderGraph* m_shaderGraph;
-	std::map< const InputPin*, PinType >& m_inputPinTypes;
 	std::map< const OutputPin*, PinType >& m_outputPinTypes;
 
 	EvalInitialOutputTypes(
 		const ShaderGraph* shaderGraph,
-		std::map< const InputPin*, PinType >& inputPinTypes,
 		std::map< const OutputPin*, PinType >& outputPinTypes
 	)
 	:	m_shaderGraph(shaderGraph)
-	,	m_inputPinTypes(inputPinTypes)
 	,	m_outputPinTypes(outputPinTypes)
 	{
 	}
@@ -90,13 +87,14 @@ struct EvalInputTypes
 		const INodeTraits* nodeTraits = INodeTraits::find(node);
 		T_ASSERT (nodeTraits);
 
-		PinType outputPinTypes[16];
+		PinType outputPinTypes[4];
 
 		uint32_t outputPinCount = node->getOutputPinCount();
+		T_ASSERT (outputPinCount <= sizeof_array(outputPinTypes));
+
 		for (uint32_t i = 0; i < outputPinCount; ++i)
 		{
 			const OutputPin* outputPin = node->getOutputPin(i);
-
 			T_ASSERT (m_outputPinTypes.find(outputPin) != m_outputPinTypes.end());
 			outputPinTypes[i] = m_outputPinTypes[outputPin];
 		}
@@ -105,18 +103,19 @@ struct EvalInputTypes
 		for (uint32_t i = 0; i < inputPinCount; ++i)
 		{
 			const InputPin* inputPin = node->getInputPin(i);
-
 			T_ASSERT (m_inputPinTypes.find(inputPin) == m_inputPinTypes.end());
-			m_inputPinTypes[inputPin] = nodeTraits->getInputPinType(m_shaderGraph, node, inputPin, outputPinTypes);
 
-			if (m_inputPinTypes[inputPin] == PntVoid)
+			PinType inputPinType = nodeTraits->getInputPinType(m_shaderGraph, node, inputPin, outputPinTypes);
+			if (inputPinType == PntVoid)
 			{
 				const OutputPin* sourceOutputPin = m_shaderGraph->findSourcePin(inputPin);
 				if (sourceOutputPin)
-					m_inputPinTypes[inputPin] = m_outputPinTypes[sourceOutputPin];
+					inputPinType = m_outputPinTypes[sourceOutputPin];
 				else
 					T_ASSERT (inputPin->isOptional());
 			}
+
+			m_inputPinTypes[inputPin] = inputPinType;
 		}
 
 		return true;
@@ -184,6 +183,27 @@ struct EvalOutputTypes
 	}
 };
 
+struct CollectNodesVisitor
+{
+	RefArray< const Node >& m_outNodes;
+
+	CollectNodesVisitor(RefArray< const Node >& outNodes)
+	:	m_outNodes(outNodes)
+	{
+	}
+
+	bool operator () (const Node* node)
+	{
+		m_outNodes.push_back(node);
+		return true;
+	}
+
+	bool operator () (const Edge* edge)
+	{
+		return true;
+	}
+};
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphTypePropagation", ShaderGraphTypePropagation, Object)
@@ -199,14 +219,23 @@ ShaderGraphTypePropagation::ShaderGraphTypePropagation(const ShaderGraph* shader
 			roots.push_back(*i);
 	}
 
+	RefArray< const Node > nodes;
+	nodes.reserve(m_shaderGraph->getNodes().size());
+
+	// Collect nodes which we should analysiz in "preorder" order.
 	ShaderGraphTraverse traverse(m_shaderGraph, roots);
+	CollectNodesVisitor visitor(nodes);
+	traverse.preorder(visitor);
 
 	// Initial estimate of output types.
 	{
-		EvalInitialOutputTypes visitor(m_shaderGraph, m_inputPinTypes, m_outputPinTypes);
-		traverse.postorder(visitor);
+		EvalInitialOutputTypes visitor(m_shaderGraph, m_outputPinTypes);
+		for (int32_t i = int32_t(nodes.size()) - 1; i >= 0; --i)
+			visitor(nodes[i]);
 	}
-
+		
+	// Iteratively solve types until all types are stable.
+	uint32_t iterationCount = 0;
 	for (;;)
 	{
 		m_inputPinTypes.clear();
@@ -214,17 +243,23 @@ ShaderGraphTypePropagation::ShaderGraphTypePropagation(const ShaderGraph* shader
 		// Determine input types.
 		{
 			EvalInputTypes visitor(m_shaderGraph, m_inputPinTypes, m_outputPinTypes);
-			traverse.preorder(visitor);
+			for (RefArray< const Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
+				visitor(*i);
 		}
 
 		// Propagate input types as new output types.
 		{
 			EvalOutputTypes visitor(m_shaderGraph, m_inputPinTypes, m_outputPinTypes);
-			traverse.preorder(visitor);
+			for (RefArray< const Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
+				visitor(*i);
 			if (!visitor.m_propagationCount)
 				break;
 		}
+		
+		++iterationCount;
 	}
+	
+	log::debug << L"Type propagation solved in " << iterationCount << L" iteration(s)" << Endl;
 
 	// Feed forward; determine output types from input types; some nodes have
 	// fixed output types and we need to respect that.
