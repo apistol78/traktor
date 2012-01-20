@@ -37,8 +37,6 @@
 #include "Render/Editor/Shader/ShaderGraphTechniques.h"
 #include "Render/Resource/FragmentLinker.h"
 
-#include "Xml/XmlSerializer.h"
-
 namespace traktor
 {
 	namespace mesh
@@ -337,13 +335,6 @@ bool MeshPipeline::buildOutput(
 		{
 			log::error << L"MeshPipeline failed; unable to freeze types, material shader \"" << i->first << L"\"" << Endl;
 			return false;
-		}
-
-		Ref< IStream > file = FileSystem::getInstance().open(L"Generated.xml", File::FmWrite);
-		if (file)
-		{
-			xml::XmlSerializer(file).writeObject(materialShaderGraph);
-			file->close();
 		}
 
 		// Perform constant folding early; will probably yield better hashing.
