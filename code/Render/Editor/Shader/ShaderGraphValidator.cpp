@@ -251,12 +251,12 @@ bool ShaderGraphValidator::validate(ShaderGraphType type, std::vector< const Nod
 	const RefArray< Node >& nodes = m_shaderGraph->getNodes();
 	for (RefArray< Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
 	{
-		if (is_a< VertexOutput >(*i) || is_a< PixelOutput >(*i) || is_a< OutputPort >(*i))
+		if ((*i)->getOutputPinCount() <= 0 && (*i)->getInputPinCount() > 0)
 			roots.push_back(*i);
 	}
 
 	CollectVisitor visitor;
-	shaderGraphTraverse(m_shaderGraph, roots, visitor);
+	ShaderGraphTraverse(m_shaderGraph, roots).preorder(visitor);
 
 	Report report(outErrorNodes);
 

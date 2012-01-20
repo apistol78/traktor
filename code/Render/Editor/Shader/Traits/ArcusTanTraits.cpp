@@ -58,9 +58,21 @@ bool ArcusTanTraits::evaluateFull(
 bool ArcusTanTraits::evaluatePartial(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
-	const OutputPin* outputPin,
+	const OutputPin* nodeOutputPin,
 	const Constant* inputConstants,
 	Constant& outputConstant
+) const
+{
+	return false;
+}
+
+bool ArcusTanTraits::evaluatePartial(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const OutputPin* nodeOutputPin,
+	const OutputPin** inputOutputPins,
+	const Constant* inputConstants,
+	const OutputPin*& foldOutputPin
 ) const
 {
 	return false;

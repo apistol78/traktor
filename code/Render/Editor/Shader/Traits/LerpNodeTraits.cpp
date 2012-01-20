@@ -82,19 +82,31 @@ bool LerpNodeTraits::evaluateFull(
 bool LerpNodeTraits::evaluatePartial(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
-	const OutputPin* outputPin,
+	const OutputPin* nodeOutputPin,
 	const Constant* inputConstants,
 	Constant& outputConstant
 ) const
 {
-	if (inputConstants[2].isZero() && inputConstants[0].getWidth() > 0)
+	return false;
+}
+
+bool LerpNodeTraits::evaluatePartial(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const OutputPin* nodeOutputPin,
+	const OutputPin** inputOutputPins,
+	const Constant* inputConstants,
+	const OutputPin*& foldOutputPin
+) const
+{
+	if (inputConstants[2].isZero())
 	{
-		outputConstant = inputConstants[0];
+		foldOutputPin = inputOutputPins[0];
 		return true;
 	}
-	else if (inputConstants[2].isOne() && inputConstants[1].getWidth() > 0)
+	else if (inputConstants[2].isOne())
 	{
-		outputConstant = inputConstants[1];
+		foldOutputPin = inputOutputPins[1];
 		return true;
 	}
 	else

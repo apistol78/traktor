@@ -994,45 +994,6 @@ void CaseRenderSw::run()
 		CASE_ASSERT_COMPARE(outputVarying1[0], outputVarying3[0], equalFuzzy);
 	}
 
-	// Splat
-	memset(outputVarying1, 0, sizeof(outputVarying1));
-	memset(outputVarying2, 0, sizeof(outputVarying2));
-	memset(outputVarying3, 0, sizeof(outputVarying3));
-	{
-		render::IntrProgram program;
-		program.addConstant(Vector4(1.0f, 2.0f, 3.0f, 4.0f));
-		program.addInstruction(render::Instruction(render::OpFetchConstant, 0, 0, 0, 0, 0));
-		program.addInstruction(render::Instruction(render::OpSplat, 1, 0, 0, 0, 0));
-		program.addInstruction(render::Instruction(render::OpSplat, 2, 0, 1, 0, 0));
-		program.addInstruction(render::Instruction(render::OpSplat, 3, 0, 2, 0, 0));
-		program.addInstruction(render::Instruction(render::OpSplat, 4, 0, 3, 0, 0));
-		program.addInstruction(render::Instruction(render::OpStoreVarying, 0, 1, 0, 0, 0));
-		program.addInstruction(render::Instruction(render::OpStoreVarying, 1, 2, 0, 0, 0));
-		program.addInstruction(render::Instruction(render::OpStoreVarying, 2, 3, 0, 0, 0));
-		program.addInstruction(render::Instruction(render::OpStoreVarying, 3, 4, 0, 0, 0));
-
-		render::Processor::image_t image1 = interpreter.compile(program);
-		render::Processor::image_t image2 = interpreterFixed.compile(program);
-		render::Processor::image_t image3 = jit.compile(program);
-
-		interpreter.execute(image1, inputUniforms, inputVaryings, targetSize, 0, outputVarying1);
-		interpreterFixed.execute(image2, inputUniforms, inputVaryings, targetSize, 0, outputVarying2);
-		jit.execute(image3, inputUniforms, inputVaryings, targetSize, 0, outputVarying3);
-
-		CASE_ASSERT_COMPARE(outputVarying1[0], Vector4(1.0f, 1.0f, 1.0f, 1.0f), equalFuzzy);
-		CASE_ASSERT_COMPARE(outputVarying1[1], Vector4(2.0f, 2.0f, 2.0f, 2.0f), equalFuzzy);
-		CASE_ASSERT_COMPARE(outputVarying1[2], Vector4(3.0f, 3.0f, 3.0f, 3.0f), equalFuzzy);
-		CASE_ASSERT_COMPARE(outputVarying1[3], Vector4(4.0f, 4.0f, 4.0f, 4.0f), equalFuzzy);
-		CASE_ASSERT_COMPARE(outputVarying1[0], outputVarying2[0], equalFuzzy);
-		CASE_ASSERT_COMPARE(outputVarying1[1], outputVarying2[1], equalFuzzy);
-		CASE_ASSERT_COMPARE(outputVarying1[2], outputVarying2[2], equalFuzzy);
-		CASE_ASSERT_COMPARE(outputVarying1[3], outputVarying2[3], equalFuzzy);
-		CASE_ASSERT_COMPARE(outputVarying1[0], outputVarying3[0], equalFuzzy);
-		CASE_ASSERT_COMPARE(outputVarying1[1], outputVarying3[1], equalFuzzy);
-		CASE_ASSERT_COMPARE(outputVarying1[2], outputVarying3[2], equalFuzzy);
-		CASE_ASSERT_COMPARE(outputVarying1[3], outputVarying3[3], equalFuzzy);
-	}
-
 	// Compare
 	memset(outputVarying1, 0, sizeof(outputVarying1));
 	memset(outputVarying2, 0, sizeof(outputVarying2));

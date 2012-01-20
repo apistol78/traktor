@@ -28,7 +28,7 @@ Variable* expandTypes(EmitterContext& cx, Variable* in, VariableType intoType)
 			// Splat single scalars.
 			Variable* tmp = cx.allocTemporary(intoType);
 
-			Instruction inst(OpSplat, tmp->reg, in->reg, 0, 0, 0);
+			Instruction inst(OpSwizzle, tmp->reg, SWIZZLE_MASK(0, 0, 0, 0), in->reg, 0, 0);
 			cx.emitInstruction(inst);
 
 			return tmp;
@@ -835,15 +835,10 @@ void emitSwizzle(EmitterContext& cx, Swizzle* node)
 	Instruction inst(OpSwizzle, out->reg, SWIZZLE_MASK(ch[0], ch[1], ch[2], ch[3]), in->reg, 0, 0);
 	cx.emitInstruction(inst);
 
-	if (s0)
+	if (s0 || s1)
 	{
-		Instruction is0(OpSet, out->reg, 0, s0, 0, 0);
+		Instruction is0(OpSet, out->reg, s1, s0, 0, 0);
 		cx.emitInstruction(is0); 
-	}
-	if (s1)
-	{
-		Instruction is1(OpSet, out->reg, s1, 0, 0, 0);
-		cx.emitInstruction(is1); 
 	}
 }
 
@@ -905,9 +900,17 @@ void emitUniform(EmitterContext& cx, Uniform* node)
 		break;
 	}
 
-	Variable* in = cx.emitUniform(node->getParameterName(), variableType);
-	Variable* out = cx.emitOutput(node, L"Output", in->type);
-	cx.emitInstruction(OpFetchUniform, out, in);
+	if (variableType == VtTexture)
+	{
+		Variable* out = cx.emitOutput(node, L"Output", VtTexture);
+		out->reg = cx.allocSampler(node->getParameterName());
+	}
+	else
+	{
+		Variable* in = cx.emitUniform(node->getParameterName(), variableType);
+		Variable* out = cx.emitOutput(node, L"Output", in->type);
+		cx.emitInstruction(OpFetchUniform, out, in);
+	}
 }
 
 void emitVector(EmitterContext& cx, Vector* node)

@@ -66,16 +66,15 @@ void ShaderGraph::addEdge(Edge* edge)
 void ShaderGraph::removeEdge(Edge* edge)
 {
 	RefArray< Edge >::iterator i = std::find(m_edges.begin(), m_edges.end(), edge);
-	if (i == m_edges.end())
-		return;
+	T_ASSERT (i != m_edges.end());
 
 	SmallMap< const InputPin*, Edge* >::iterator i1 = m_inputPinEdge.find(edge->getDestination());
-	if (i1 != m_inputPinEdge.end())
-		m_inputPinEdge.erase(i1);
+	T_ASSERT (i1 != m_inputPinEdge.end());
+	m_inputPinEdge.erase(i1);
 
 	SmallMap< const OutputPin*, RefSet< Edge >* >::iterator i2 = m_outputPinEdges.find(edge->getSource());
-	if (i2 != m_outputPinEdges.end())
-		i2->second->erase(edge);
+	T_ASSERT (i2 != m_outputPinEdges.end());
+	i2->second->erase(edge);
 
 	m_edges.erase(i);
 }

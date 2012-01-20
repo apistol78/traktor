@@ -808,14 +808,6 @@ Processor::image_t JitX86::compile(const IntrProgram& program) const
 			a.andps(xmmr(a, i.dest), XmmWordPtr(&s_masks[((~i.src[1]) & 15) * 4]));
 			break;
 
-		case OpSplat:
-			{
-				const uint8_t shuffle[] = { 0x00, 0x55, 0xaa, 0xff };
-				a.movaps(xmmw(a, i.dest), xmmr(a, i.src[0]));
-				a.shufps(xmmr(a, i.dest), xmmr(a, i.dest), shuffle[i.src[1]]);
-			}
-			break;
-
 		case OpCompareGreaterEqual:
 			a.movaps(xmmw(a, i.dest), xmmr(a, i.src[1]));
 			a.cmpleps(xmmr(a, i.dest), xmmr(a, i.src[0]));

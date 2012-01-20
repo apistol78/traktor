@@ -62,16 +62,28 @@ bool DotNodeTraits::evaluateFull(
 bool DotNodeTraits::evaluatePartial(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
-	const OutputPin* outputPin,
+	const OutputPin* nodeOutputPin,
 	const Constant* inputConstants,
 	Constant& outputConstant
 ) const
 {
 	if (inputConstants[0].isZero() || inputConstants[1].isZero())
 	{
-		outputConstant = Constant(0.0f);
+		outputConstant[0] = 0.0f;
 		return true;
 	}
+	return false;
+}
+
+bool DotNodeTraits::evaluatePartial(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const OutputPin* nodeOutputPin,
+	const OutputPin** inputOutputPins,
+	const Constant* inputConstants,
+	const OutputPin*& foldOutputPin
+) const
+{
 	return false;
 }
 

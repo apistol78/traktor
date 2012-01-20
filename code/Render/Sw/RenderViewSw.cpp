@@ -32,6 +32,8 @@ namespace traktor
 
 const int32_t c_targetScale = 1;
 
+typedef traktor::Scalar scalar_t;
+
 inline float clamp(float v, float mn, float mx)
 {
 	return min(max(v, mn), mx);
@@ -118,11 +120,6 @@ RenderViewSw::RenderViewSw(RenderSystemSw* renderSystem, graphics::IGraphicsSyst
 	m_depthBuffer.reset(new uint16_t [m_frameBufferSurfaceDesc.width * m_frameBufferSurfaceDesc.height]);
 	m_viewPort = Viewport(0, 0, m_frameBufferSurfaceDesc.width, m_frameBufferSurfaceDesc.height, 0.0f, 1.0f);
 
-	//m_dirty[0] = 0;
-	//m_dirty[1] = 0;
-	//m_dirty[2] = m_frameBufferSurfaceDesc.width;
-	//m_dirty[3] = m_frameBufferSurfaceDesc.height;
-
 	m_targetSize.set(
 		float(m_frameBufferSurfaceDesc.width),
 		float(m_frameBufferSurfaceDesc.height),
@@ -186,11 +183,6 @@ bool RenderViewSw::reset(int32_t width, int32_t height)
 	m_depthBuffer.reset(new uint16_t [m_frameBufferSurfaceDesc.width * m_frameBufferSurfaceDesc.height]);
 	m_viewPort.width = width / c_targetScale;
 	m_viewPort.height = height / c_targetScale;
-
-	//m_dirty[0] = 0;
-	//m_dirty[1] = 0;
-	//m_dirty[2] = m_frameBufferSurfaceDesc.width;
-	//m_dirty[3] = m_frameBufferSurfaceDesc.height;
 
 	m_targetSize.set(
 		float(width),
@@ -296,50 +288,34 @@ bool RenderViewSw::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 void RenderViewSw::clear(uint32_t clearMask, const float color[4], float depth, int32_t stencil)
 {
 	RenderState& rs = m_renderStateStack.back();
-
-	int32_t x1 = 0; //std::max< int32_t >(m_dirty[0], 0);
-	int32_t y1 = 0; //std::max< int32_t >(m_dirty[1], 0);
-	int32_t x2 = rs.width; //std::min< int32_t >(m_dirty[2], rs.width);
-	int32_t y2 = rs.height; //std::min< int32_t >(m_dirty[3], rs.height);
-
 	if (clearMask & CfColor)
 	{
 		uint16_t* colorTarget = rs.colorTarget;
 		if (colorTarget)
 		{
 			uint16_t clearColor = to565(color[0], color[1], color[2]);
-
-			colorTarget += y1 * rs.colorTargetPitch / sizeof(uint16_t);
-			for (int32_t y = y1; y < y2; ++y)
+			for (int32_t y = 0; y < rs.height; ++y)
 			{
-				for (int32_t x = x1; x < x2; ++x)
+				for (int32_t x = 0; x < rs.width; ++x)
 					colorTarget[x] = clearColor;
 				colorTarget += rs.colorTargetPitch / sizeof(uint16_t);
 			}
 		}
 	}
-
 	if (clearMask & CfDepth)
 	{
 		uint16_t* depthTarget = rs.depthTarget;
 		if (depthTarget)
 		{
 			uint16_t clearDepth = toDepth(1.0f - depth);
-
-			depthTarget += y1 * rs.depthTargetPitch / sizeof(uint16_t);
-			for (int32_t y = y1; y < y2; ++y)
+			for (int32_t y = 0; y < rs.height; ++y)
 			{
-				for (int32_t x = x1; x < x2; ++x)
+				for (int32_t x = 0; x < rs.width; ++x)
 					depthTarget[x] = clearDepth;
 				depthTarget += rs.depthTargetPitch / sizeof(uint16_t);
 			}
 		}
 	}
-
-	//m_dirty[0] = m_frameBufferSurfaceDesc.width;
-	//m_dirty[1] = m_frameBufferSurfaceDesc.height;
-	//m_dirty[2] = 0;
-	//m_dirty[3] = 0;
 }
 
 void RenderViewSw::setVertexBuffer(VertexBuffer* vertexBuffer)
@@ -401,7 +377,7 @@ void RenderViewSw::fetchVertex(uint32_t index, varying_data_t& outVertexVarying)
 	uint32_t vertexElementCount = uint32_t(vertexElements.size());
 	uint32_t vertexOffset = index * vertexElementCount;
 
-	T_ASSERT (vertexElementCount + vertexOffset <= m_currentVertexBuffer->getVertexCount());
+	T_ASSERT (index <= m_currentVertexBuffer->getVertexCount());
 
 	for (uint32_t i = 0; i < vertexElementCount; ++i)
 	{
@@ -480,7 +456,6 @@ void RenderViewSw::drawIndexed(const Primitives& primitives)
 	const RenderState& rs = m_renderStateStack.back();
 
 	static FragmentContext context;
-
 	context.depthEnable = m_currentProgram->getRenderState().depthEnable && bool(rs.depthTarget != 0);
 	context.depthWriteEnable = m_currentProgram->getRenderState().depthWriteEnable && bool(rs.depthTarget != 0);
 	context.blendEnable = m_currentProgram->getRenderState().blendEnable;
@@ -523,30 +498,21 @@ void RenderViewSw::drawIndexed(const Primitives& primitives)
 				// Project onto near view plane, aka screen.
 				projectScreen(context);
 
-				// Inverse interpolators to prepare for perspective correction.
-				for (uint32_t j = 0; j < context.clippedCount; ++j)
-				{
-					float iw = 1.0f / context.clippedVaryings[j][0].w();
-#if defined(_DEBUG)
-					if (isNan(iw) || isInfinite(iw))
-						iw = 1.0f;
-#endif
-
-					context.clippedVaryings[j][0] =
-						context.clippedVaryings[j][0].xyz0() + Vector4(0.0f, 0.0f, 0.0f, iw);
-
-					for (uint32_t k = 1; k < sizeof(varying_data_t) / sizeof(Vector4); ++k)
-						context.clippedVaryings[j][k] *= traktor::Scalar(iw);
-
-					// Update dirty rectangle.
-					//if (m_renderStateStack.size() <= 1)
-					//{
-					//	m_dirty[0] = std::min< int32_t >(m_dirty[0], floorf(context.screen[j].x));
-					//	m_dirty[1] = std::min< int32_t >(m_dirty[1], floorf(context.screen[j].y));
-					//	m_dirty[2] = std::max< int32_t >(m_dirty[2], ceilf(context.screen[j].x));
-					//	m_dirty[3] = std::max< int32_t >(m_dirty[3], ceilf(context.screen[j].y));
-					//}
-				}
+//				// Inverse interpolators to prepare for perspective correction.
+//				for (uint32_t j = 0; j < context.clippedCount; ++j)
+//				{
+//					float iw = 1.0f / context.clippedVaryings[j][0].w();
+//#if defined(_DEBUG)
+//					if (isNan(iw) || isInfinite(iw))
+//						iw = 1.0f;
+//#endif
+//
+//					context.clippedVaryings[j][0] =
+//						context.clippedVaryings[j][0].xyz0() + Vector4(0.0f, 0.0f, 0.0f, iw);
+//
+//					for (uint32_t k = 1; k < sizeof(varying_data_t) / sizeof(Vector4); ++k)
+//						context.clippedVaryings[j][k] *= scalar_t(iw);
+//				}
 
 				// Check culling, rewind vertices if needed as triangle rasterizer
 				// can only handle one type of winding.
@@ -627,7 +593,10 @@ void RenderViewSw::drawIndexed(const Primitives& primitives)
 						for (int k = 0; k < count2 - 2; ++k)
 						{
 							Vector2 Tc[] = { T2[0], T2[1 + k], T2[2 + k] };
-							triangle(Tc, this, &RenderViewSw::triangleShade, context);
+							if (!context.blendEnable)
+								triangle(Tc, this, &RenderViewSw::triangleShadeOpaque, context);
+							else
+								triangle(Tc, this, &RenderViewSw::triangleShadeBlend, context);
 						}
 					}
 					else
@@ -635,7 +604,10 @@ void RenderViewSw::drawIndexed(const Primitives& primitives)
 						for (int k = 0; k < count2 - 2; ++k)
 						{
 							Vector2 Tc[] = { T2[0], T2[2 + k], T2[1 + k] };
-							triangle(Tc, this, &RenderViewSw::triangleShade, context);
+							if (!context.blendEnable)
+								triangle(Tc, this, &RenderViewSw::triangleShadeOpaque, context);
+							else
+								triangle(Tc, this, &RenderViewSw::triangleShadeBlend, context);
 						}
 					}
 				}
@@ -653,7 +625,6 @@ void RenderViewSw::drawNonIndexed(const Primitives& primitives)
 	const RenderState& rs = m_renderStateStack.back();
 
 	static FragmentContext context;
-
 	context.depthEnable = m_currentProgram->getRenderState().depthEnable && bool(rs.depthTarget != 0);
 	context.depthWriteEnable = m_currentProgram->getRenderState().depthWriteEnable && bool(rs.depthTarget != 0);
 	context.blendEnable = m_currentProgram->getRenderState().blendEnable;
@@ -667,42 +638,9 @@ void RenderViewSw::drawNonIndexed(const Primitives& primitives)
 		break;
 
 	case PtLines:
-		//{
-		//	for (uint32_t i = 0; i < set.count; ++i)
-		//	{
-		//		fetchVertex(set.offset + i * 2 + 0, context.vertexVaryings[0]);
-		//		fetchVertex(set.offset + i * 2 + 1, context.vertexVaryings[1]);
-
-		//		executeVertexShader(context.vertexVaryings[0], context.interpolatorVaryings[0]);
-		//		executeVertexShader(context.vertexVaryings[1], context.interpolatorVaryings[1]);
-
-		//		clipPlanes(context, 2);
-		//		if (context.clippedCount < 2)
-		//			continue;
-
-		//		projectScreen(context);
-
-		//		// Clip line to view port.
-		//		Vector2 T1[8], T2[8];
-		//		int count1, count2;
-		//		count1 = clip< AxisX >(context.screen,      2, float(rs.viewPort.left),                     T1, std::greater_equal< float >());
-		//		count2 = clip< AxisX >(T1,             count1, float(rs.viewPort.left + rs.viewPort.width), T2, std::less         < float >());
-		//		count1 = clip< AxisY >(T2,             count2, float(rs.viewPort.top),                      T1, std::greater_equal< float >());
-		//		count2 = clip< AxisY >(T1,             count1, float(rs.viewPort.top + rs.viewPort.height), T2, std::less         < float >());
-
-		//		if (count2 >= 2)
-		//			line(T2, this, &RenderViewSw::lineShade, context);
-		//	}
-		//}
 		break;
 
 	case PtTriangleStrip:
-		{
-			T_ASSERT (primitives.count > 0);
-			for (uint32_t i = 1; i < primitives.count; ++i)
-			{
-			}
-		}
 		break;
 
 	case PtTriangles:
@@ -725,31 +663,22 @@ void RenderViewSw::drawNonIndexed(const Primitives& primitives)
 				// Project onto near view plane, aka screen.
 				projectScreen(context);
 
-				// Inverse interpolators to prepare for perspective correction.
-				for (uint32_t j = 0; j < context.clippedCount; ++j)
-				{
-					float iw = 1.0f / context.clippedVaryings[j][0].w();
-#if defined(_DEBUG)
-					if (isNan(iw) || isInfinite(iw))
-						iw = 1.0f;
-#endif
-
-					context.clippedVaryings[j][0] =
-						context.clippedVaryings[j][0].xyz0() +
-						Vector4(0.0f, 0.0f, 0.0f, iw);
-
-					for (uint32_t k = 1; k < sizeof(varying_data_t) / sizeof(Vector4); ++k)
-						context.clippedVaryings[j][k] *= traktor::Scalar(iw);
-
-					// Update dirty rectangle.
-					//if (m_renderStateStack.size() <= 1)
-					//{
-					//	m_dirty[0] = std::min< int32_t >(m_dirty[0], floorf(context.screen[j].x));
-					//	m_dirty[1] = std::min< int32_t >(m_dirty[1], floorf(context.screen[j].y));
-					//	m_dirty[2] = std::max< int32_t >(m_dirty[2], ceilf(context.screen[j].x));
-					//	m_dirty[3] = std::max< int32_t >(m_dirty[3], ceilf(context.screen[j].y));
-					//}
-				}
+//				// Inverse interpolators to prepare for perspective correction.
+//				for (uint32_t j = 0; j < context.clippedCount; ++j)
+//				{
+//					float iw = 1.0f / context.clippedVaryings[j][0].w();
+//#if defined(_DEBUG)
+//					if (isNan(iw) || isInfinite(iw))
+//						iw = 1.0f;
+//#endif
+//
+//					context.clippedVaryings[j][0] =
+//						context.clippedVaryings[j][0].xyz0() +
+//						Vector4(0.0f, 0.0f, 0.0f, iw);
+//
+//					for (uint32_t k = 1; k < sizeof(varying_data_t) / sizeof(Vector4); ++k)
+//						context.clippedVaryings[j][k] *= scalar_t(iw);
+//				}
 
 				// Check culling, rewind vertices if needed as triangle rasterizer
 				// can only handle one type of winding.
@@ -805,13 +734,16 @@ void RenderViewSw::drawNonIndexed(const Primitives& primitives)
 					// fab(x,y) = (ya - yb) * x + (xb - xa) * y + xa * yb - xb * ya
 
 					// f12(x0,y0) = (y1 - y2) * x0 + (x2 - x1) * y0 + x1 * y2 - x2 * y1
-					context.baryDenom[0] = 1.0f / ((T[1].y - T[2].y) * T[0].x + (T[2].x - T[1].x) * T[0].y + T[1].x * T[2].y - T[2].x * T[1].y);
+					context.baryOffset[0] = T[1].x * T[2].y - T[2].x * T[1].y;
+					context.baryDenom[0] = 1.0f / ((T[1].y - T[2].y) * T[0].x + (T[2].x - T[1].x) * T[0].y + context.baryOffset[0]);
 
 					// f20(x1,y1) = (y2 - y0) * x1 + (x0 - x2) * y1 + x2 * y0 - x0 * y2
-					context.baryDenom[1] = 1.0f / ((T[2].y - T[0].y) * T[1].x + (T[0].x - T[2].x) * T[1].y + T[2].x * T[0].y - T[0].x * T[2].y);
+					context.baryOffset[1] = T[2].x * T[0].y - T[0].x * T[2].y;
+					context.baryDenom[1] = 1.0f / ((T[2].y - T[0].y) * T[1].x + (T[0].x - T[2].x) * T[1].y + context.baryOffset[1]);
 
 					// f01(x2,y2) = (y0 - y1) * x2 + (x1 - x0) * y2 + x0 * y1 - x1 * y0
-					context.baryDenom[2] = 1.0f / ((T[0].y - T[1].y) * T[2].x + (T[1].x - T[0].x) * T[2].y + T[0].x * T[1].y - T[1].x * T[0].y);
+					context.baryOffset[2] = T[0].x * T[1].y - T[1].x * T[0].y;
+					context.baryDenom[2] = 1.0f / ((T[0].y - T[1].y) * T[2].x + (T[1].x - T[0].x) * T[2].y + context.baryOffset[2]);
 
 					// Clip triangle to view port.
 					Vector2 T1[8], T2[8];
@@ -827,7 +759,10 @@ void RenderViewSw::drawNonIndexed(const Primitives& primitives)
 						for (int k = 0; k < count2 - 2; ++k)
 						{
 							Vector2 Tc[] = { T2[0], T2[1 + k], T2[2 + k] };
-							triangle(Tc, this, &RenderViewSw::triangleShade, context);
+							if (!context.blendEnable)
+								triangle(Tc, this, &RenderViewSw::triangleShadeOpaque, context);
+							else
+								triangle(Tc, this, &RenderViewSw::triangleShadeBlend, context);
 						}
 					}
 					else
@@ -835,7 +770,10 @@ void RenderViewSw::drawNonIndexed(const Primitives& primitives)
 						for (int k = 0; k < count2 - 2; ++k)
 						{
 							Vector2 Tc[] = { T2[0], T2[2 + k], T2[1 + k] };
-							triangle(Tc, this, &RenderViewSw::triangleShade, context);
+							if (!context.blendEnable)
+								triangle(Tc, this, &RenderViewSw::triangleShadeOpaque, context);
+							else
+								triangle(Tc, this, &RenderViewSw::triangleShadeBlend, context);
 						}
 					}
 				}
@@ -843,58 +781,6 @@ void RenderViewSw::drawNonIndexed(const Primitives& primitives)
 		}
 		break;
 	}
-}
-
-void RenderViewSw::lineShade(const FragmentContext& context, int x, int y, float d)
-{
-//	RenderState& rs = m_renderStateStack.back();
-//
-//	Processor::image_t pixelProgram = m_currentProgram->getPixelProgram();
-//	const Vector4* parameters = m_currentProgram->getParameters();
-//	const Ref< AbstractSampler >* samplers = m_currentProgram->getSamplers();
-//
-//	uint32_t offset = x + y * rs.targetPitch;
-//
-//	varying_data_t pixelVaryings;
-//	varying_data_t fragmentVaryings;
-//
-//	for (size_t i = 0; i < sizeof(varying_data_t) / sizeof(Vector4); ++i)
-//		pixelVaryings[i] = context.interpolatorVaryings[0][i] + (context.interpolatorVaryings[1][i] - context.interpolatorVaryings[0][i]) * traktor::Scalar(d);
-//
-//	m_processor->execute(
-//		pixelProgram,
-//		parameters,
-//		pixelVaryings,
-//		samplers,
-//		fragmentVaryings
-//	);
-//
-//	Vector4& color = fragmentVaryings[0];
-//
-//	color = max(color, Vector4(0.0f, 0.0f, 0.0f, 0.0f));
-//	color = min(color, Vector4(1.0f, 1.0f, 1.0f, 1.0f));
-//	color *= traktor::Scalar(255.0f);
-//
-//	uint32_t target = 
-//		(uint32_t(color.x()) << 16) |
-//		(uint32_t(color.y()) << 8) |
-//		(uint32_t(color.z()));
-//
-//	//uint16_t iw = (uint16_t)(iz1 + (iz2 - iz1) * t);
-//	//if (/*!depthEnable || */iw <= rs.depthTarget[offset])
-//	{
-//		rs.colorTarget[offset] = target;
-//		//if (depthWriteEnable)
-//		//	rs.depthTarget[offset] = iw;
-//	}
-}
-
-void RenderViewSw::triangleShade(const FragmentContext& context, int x1, int x2, int y)
-{
-	if (!context.blendEnable)
-		triangleShadeOpaque(context, x1, x2, y);
-	else
-		triangleShadeBlend(context, x1, x2, y);
 }
 
 void RenderViewSw::triangleShadeOpaque(const FragmentContext& context, int x1, int x2, int y)
@@ -914,52 +800,47 @@ void RenderViewSw::triangleShadeOpaque(const FragmentContext& context, int x1, i
 	const uint32_t* I = context.indices;
 
 	// f12(x,y) = (y1 - y2) * x + (x2 - x1) * y + x1 * y2 - x2 * y1
-	traktor::Scalar alpha1 = traktor::Scalar(((T[1].y - T[2].y) * x1 + (T[2].x - T[1].x) * y + context.baryOffset[0]) * context.baryDenom[0]);
-	traktor::Scalar alpha2 = traktor::Scalar(((T[1].y - T[2].y) * x2 + (T[2].x - T[1].x) * y + context.baryOffset[0]) * context.baryDenom[0]);
+	scalar_t alpha1 = scalar_t(((T[1].y - T[2].y) * x1 + (T[2].x - T[1].x) * y + context.baryOffset[0]) * context.baryDenom[0]);
+	scalar_t alpha2 = scalar_t(((T[1].y - T[2].y) * x2 + (T[2].x - T[1].x) * y + context.baryOffset[0]) * context.baryDenom[0]);
 
 	// f20(x,y) = (y2 - y0) * x + (x0 - x2) * y + x2 * y0 - x0 * y2
-	traktor::Scalar beta1 = traktor::Scalar(((T[2].y - T[0].y) * x1 + (T[0].x - T[2].x) * y + context.baryOffset[1]) * context.baryDenom[1]);
-	traktor::Scalar beta2 = traktor::Scalar(((T[2].y - T[0].y) * x2 + (T[0].x - T[2].x) * y + context.baryOffset[1]) * context.baryDenom[1]);
+	scalar_t beta1 = scalar_t(((T[2].y - T[0].y) * x1 + (T[0].x - T[2].x) * y + context.baryOffset[1]) * context.baryDenom[1]);
+	scalar_t beta2 = scalar_t(((T[2].y - T[0].y) * x2 + (T[0].x - T[2].x) * y + context.baryOffset[1]) * context.baryDenom[1]);
 
 	// f01(x,y) = (y0 - y1) * x + (x1 - x0) * y + x0 * y1 - x1 * y0
-	traktor::Scalar gamma1 = traktor::Scalar(((T[0].y - T[1].y) * x1 + (T[1].x - T[0].x) * y + context.baryOffset[2]) * context.baryDenom[2]);
-	traktor::Scalar gamma2 = traktor::Scalar(((T[0].y - T[1].y) * x2 + (T[1].x - T[0].x) * y + context.baryOffset[2]) * context.baryDenom[2]);
+	scalar_t gamma1 = scalar_t(((T[0].y - T[1].y) * x1 + (T[1].x - T[0].x) * y + context.baryOffset[2]) * context.baryDenom[2]);
+	scalar_t gamma2 = scalar_t(((T[0].y - T[1].y) * x2 + (T[1].x - T[0].x) * y + context.baryOffset[2]) * context.baryDenom[2]);
 
 	// Calculate varyings.
 	T_ALIGN16 varying_data_t surfaceInterpolators[2];
 	T_ALIGN16 varying_data_t pixelVaryings;
 	T_ALIGN16 varying_data_t fragmentVaryings;
 
-	surfaceInterpolators[0][0] = context.clippedVaryings[I[0]][0] * alpha1 + context.clippedVaryings[I[1]][0] * beta1 + context.clippedVaryings[I[2]][0] * gamma1;
-	surfaceInterpolators[1][0] = context.clippedVaryings[I[0]][0] * alpha2 + context.clippedVaryings[I[1]][0] * beta2 + context.clippedVaryings[I[2]][0] * gamma2;
+	scalar_t w1 = surfaceInterpolators[0][0].w();
+	scalar_t w2 = surfaceInterpolators[1][0].w();
+	scalar_t ix = scalar_t(1.0f / float(x2 - x1));
 
-	traktor::Scalar iw1 = surfaceInterpolators[0][0].w();
-	traktor::Scalar iw2 = surfaceInterpolators[1][0].w();
-	traktor::Scalar ix = traktor::Scalar(1.0f / float(x2 - x1));
-
-	// Only interpolate DuCustom across surface.
-	for (uint32_t i = 6; i < 6 + icount; ++i)
+	for (uint32_t i = 0; i < 6 + icount; ++i)
 	{
 		surfaceInterpolators[0][i] = context.clippedVaryings[I[0]][i] * alpha1 + context.clippedVaryings[I[1]][i] * beta1 + context.clippedVaryings[I[2]][i] * gamma1;
 		surfaceInterpolators[1][i] = context.clippedVaryings[I[0]][i] * alpha2 + context.clippedVaryings[I[1]][i] * beta2 + context.clippedVaryings[I[2]][i] * gamma2;
-		surfaceInterpolators[1][i] = (surfaceInterpolators[1][i] - surfaceInterpolators[0][i]) * ix;
 	}
 
 	uint16_t fragmentColor = 0;
 
 	for (int x = 0; x < x2 - x1; ++x, ++colorTargetOffset, ++depthTargetOffset)
 	{
-		traktor::Scalar t = traktor::Scalar(x) * ix;
-		traktor::Scalar iw = iw1 + (iw2 - iw1) * traktor::Scalar(t);
-		uint16_t fragmentDepth = toDepth(iw);
+		scalar_t t = scalar_t(x * ix);
+		scalar_t w = lerp(w1, w2, t);
+		uint16_t fragmentDepth = toDepth(scalar_t(1.0f) / w);
 
-		if (!context.depthEnable || fragmentDepth > rs.depthTarget[depthTargetOffset])
+		//if (!context.depthEnable || fragmentDepth > rs.depthTarget[depthTargetOffset])
 		{
 			// Calculate per pixel varyings.
-			for (uint32_t i = 6; i < 6 + icount; ++i)
+			for (uint32_t i = 0; i < 6 + icount; ++i)
 			{
-				pixelVaryings[i] = surfaceInterpolators[0][i] / iw;
-				surfaceInterpolators[0][i] += surfaceInterpolators[1][i];
+				//pixelVaryings[i] = surfaceInterpolators[0][i] / iw;
+				pixelVaryings[i] = lerp(surfaceInterpolators[0][i], surfaceInterpolators[1][i], t);
 			}
 
 			// Execute pixel program.
@@ -1003,50 +884,46 @@ void RenderViewSw::triangleShadeBlend(const FragmentContext& context, int x1, in
 	const uint32_t* I = context.indices;
 
 	// f12(x,y) = (y1 - y2) * x + (x2 - x1) * y + x1 * y2 - x2 * y1
-	traktor::Scalar alpha1 = traktor::Scalar(((T[1].y - T[2].y) * x1 + (T[2].x - T[1].x) * y + context.baryOffset[0]) * context.baryDenom[0]);
-	traktor::Scalar alpha2 = traktor::Scalar(((T[1].y - T[2].y) * x2 + (T[2].x - T[1].x) * y + context.baryOffset[0]) * context.baryDenom[0]);
+	scalar_t alpha1 = scalar_t(((T[1].y - T[2].y) * x1 + (T[2].x - T[1].x) * y + context.baryOffset[0]) * context.baryDenom[0]);
+	scalar_t alpha2 = scalar_t(((T[1].y - T[2].y) * x2 + (T[2].x - T[1].x) * y + context.baryOffset[0]) * context.baryDenom[0]);
 
 	// f20(x,y) = (y2 - y0) * x + (x0 - x2) * y + x2 * y0 - x0 * y2
-	traktor::Scalar beta1 = traktor::Scalar(((T[2].y - T[0].y) * x1 + (T[0].x - T[2].x) * y + context.baryOffset[1]) * context.baryDenom[1]);
-	traktor::Scalar beta2 = traktor::Scalar(((T[2].y - T[0].y) * x2 + (T[0].x - T[2].x) * y + context.baryOffset[1]) * context.baryDenom[1]);
+	scalar_t beta1 = scalar_t(((T[2].y - T[0].y) * x1 + (T[0].x - T[2].x) * y + context.baryOffset[1]) * context.baryDenom[1]);
+	scalar_t beta2 = scalar_t(((T[2].y - T[0].y) * x2 + (T[0].x - T[2].x) * y + context.baryOffset[1]) * context.baryDenom[1]);
 
 	// f01(x,y) = (y0 - y1) * x + (x1 - x0) * y + x0 * y1 - x1 * y0
-	traktor::Scalar gamma1 = traktor::Scalar(((T[0].y - T[1].y) * x1 + (T[1].x - T[0].x) * y + context.baryOffset[2]) * context.baryDenom[2]);
-	traktor::Scalar gamma2 = traktor::Scalar(((T[0].y - T[1].y) * x2 + (T[1].x - T[0].x) * y + context.baryOffset[2]) * context.baryDenom[2]);
+	scalar_t gamma1 = scalar_t(((T[0].y - T[1].y) * x1 + (T[1].x - T[0].x) * y + context.baryOffset[2]) * context.baryDenom[2]);
+	scalar_t gamma2 = scalar_t(((T[0].y - T[1].y) * x2 + (T[1].x - T[0].x) * y + context.baryOffset[2]) * context.baryDenom[2]);
 
 	// Calculate surface interpolators.
 	varying_data_t surfaceInterpolators[2];
 	varying_data_t pixelVaryings;
 	varying_data_t fragmentVaryings;
 
-	surfaceInterpolators[0][0] = context.clippedVaryings[I[0]][0] * alpha1 + context.clippedVaryings[I[1]][0] * beta1 + context.clippedVaryings[I[2]][0] * gamma1;
-	surfaceInterpolators[1][0] = context.clippedVaryings[I[0]][0] * alpha2 + context.clippedVaryings[I[1]][0] * beta2 + context.clippedVaryings[I[2]][0] * gamma2;
-
-	traktor::Scalar iw1 = surfaceInterpolators[0][0].w();
-	traktor::Scalar iw2 = surfaceInterpolators[1][0].w();
-	traktor::Scalar ix = traktor::Scalar(1.0f / float(x2 - x1));
+	scalar_t w1 = surfaceInterpolators[0][0].w();
+	scalar_t w2 = surfaceInterpolators[1][0].w();
+	scalar_t ix = scalar_t(1.0f / float(x2 - x1));
 
 	// Only interpolate DuCustom across surface.
-	for (uint32_t i = 6; i < 6 + icount; ++i)
+	for (uint32_t i = 0; i < 6 + icount; ++i)
 	{
 		surfaceInterpolators[0][i] = context.clippedVaryings[I[0]][i] * alpha1 + context.clippedVaryings[I[1]][i] * beta1 + context.clippedVaryings[I[2]][i] * gamma1;
 		surfaceInterpolators[1][i] = context.clippedVaryings[I[0]][i] * alpha2 + context.clippedVaryings[I[1]][i] * beta2 + context.clippedVaryings[I[2]][i] * gamma2;
-		surfaceInterpolators[1][i] = (surfaceInterpolators[1][i] - surfaceInterpolators[0][i]) * ix;
 	}
 
 	for (int x = 0; x < x2 - x1; ++x, ++colorTargetOffset, ++depthTargetOffset)
 	{
-		traktor::Scalar t = traktor::Scalar(x - x1) * ix;
-		traktor::Scalar iw = iw1 + (iw2 - iw1) * t;
-		uint16_t fragmentDepth = toDepth(iw);
+		scalar_t t = scalar_t(x * ix);
+		scalar_t w = lerp(w1, w2, t);
+		uint16_t fragmentDepth = toDepth(scalar_t(1.0f) / w);
 
-		if (!context.depthEnable || fragmentDepth > rs.depthTarget[depthTargetOffset])
+		//if (!context.depthEnable || fragmentDepth > rs.depthTarget[depthTargetOffset])
 		{
 			// Calculate per pixel varyings.
-			for (uint32_t i = 6; i < 6 + icount; ++i)
+			for (uint32_t i = 0; i < 6 + icount; ++i)
 			{
-				pixelVaryings[i] = surfaceInterpolators[0][i] / iw;
-				surfaceInterpolators[0][i] += surfaceInterpolators[1][i];
+				//pixelVaryings[i] = surfaceInterpolators[0][i] / iw;
+				pixelVaryings[i] = lerp(surfaceInterpolators[0][i], surfaceInterpolators[1][i], t);
 			}
 
 			// Execute pixel program.
@@ -1077,7 +954,7 @@ void RenderViewSw::triangleShadeBlend(const FragmentContext& context, int x1, in
 				break;
 
 			case PixelOutput::BfOneMinusSourceColor:
-				color *= traktor::Scalar(1.0f) - color;
+				color *= scalar_t(1.0f) - color;
 				break;
 
 			case PixelOutput::BfDestinationColor:
@@ -1085,7 +962,7 @@ void RenderViewSw::triangleShadeBlend(const FragmentContext& context, int x1, in
 				break;
 
 			case PixelOutput::BfOneMinusDestinationColor:
-				color *= traktor::Scalar(1.0f) - destination;
+				color *= scalar_t(1.0f) - destination;
 				break;
 
 			case PixelOutput::BfSourceAlpha:
@@ -1093,7 +970,7 @@ void RenderViewSw::triangleShadeBlend(const FragmentContext& context, int x1, in
 				break;
 
 			case PixelOutput::BfOneMinusSourceAlpha:
-				color *= traktor::Scalar(1.0f) - color.w();
+				color *= scalar_t(1.0f) - color.w();
 				break;
 
 			case PixelOutput::BfDestinationAlpha:
@@ -1101,7 +978,7 @@ void RenderViewSw::triangleShadeBlend(const FragmentContext& context, int x1, in
 				break;
 
 			case PixelOutput::BfOneMinusDestinationAlpha:
-				color *= traktor::Scalar(1.0f) - destination.w();
+				color *= scalar_t(1.0f) - destination.w();
 				break;
 			}
 			
@@ -1119,7 +996,7 @@ void RenderViewSw::triangleShadeBlend(const FragmentContext& context, int x1, in
 				break;
 
 			case PixelOutput::BfOneMinusSourceColor:
-				destination *= traktor::Scalar(1.0f) - color;
+				destination *= scalar_t(1.0f) - color;
 				break;
 
 			case PixelOutput::BfDestinationColor:
@@ -1127,7 +1004,7 @@ void RenderViewSw::triangleShadeBlend(const FragmentContext& context, int x1, in
 				break;
 
 			case PixelOutput::BfOneMinusDestinationColor:
-				destination *= traktor::Scalar(1.0f) - destination;
+				destination *= scalar_t(1.0f) - destination;
 				break;
 
 			case PixelOutput::BfSourceAlpha:
@@ -1135,7 +1012,7 @@ void RenderViewSw::triangleShadeBlend(const FragmentContext& context, int x1, in
 				break;
 
 			case PixelOutput::BfOneMinusSourceAlpha:
-				destination *= traktor::Scalar(1.0f) - color.w();
+				destination *= scalar_t(1.0f) - color.w();
 				break;
 
 			case PixelOutput::BfDestinationAlpha:
@@ -1143,7 +1020,7 @@ void RenderViewSw::triangleShadeBlend(const FragmentContext& context, int x1, in
 				break;
 
 			case PixelOutput::BfOneMinusDestinationAlpha:
-				destination *= traktor::Scalar(1.0f) - destination.w();
+				destination *= scalar_t(1.0f) - destination.w();
 				break;
 			}
 

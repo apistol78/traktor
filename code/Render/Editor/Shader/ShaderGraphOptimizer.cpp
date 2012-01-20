@@ -50,13 +50,13 @@ Ref< ShaderGraph > ShaderGraphOptimizer::removeUnusedBranches() const
 	const RefArray< Node >& nodes = m_shaderGraph->getNodes();
 	for (RefArray< Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
 	{
-		if ((*i)->getOutputPinCount() <= 0)
+		if ((*i)->getOutputPinCount() <= 0 && (*i)->getInputPinCount() > 0)
 			roots.push_back(*i);
 	}
 
 	CopyVisitor visitor;
 	visitor.m_shaderGraph = new ShaderGraph();
-	shaderGraphTraverse(m_shaderGraph, roots, visitor);
+	ShaderGraphTraverse(m_shaderGraph, roots).preorder(visitor);
 
 	return visitor.m_shaderGraph;
 }

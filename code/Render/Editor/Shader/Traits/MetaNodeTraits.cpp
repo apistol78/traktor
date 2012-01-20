@@ -28,6 +28,8 @@ TypeInfoSet MetaNodeTraits::getNodeTypes() const
 {
 	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< Branch >());
+	typeSet.insert(&type_of< InputPort >());
+	typeSet.insert(&type_of< OutputPort >());
 	typeSet.insert(&type_of< Platform >());
 	typeSet.insert(&type_of< Type >());
 	return typeSet;
@@ -39,7 +41,14 @@ PinType MetaNodeTraits::getOutputPinType(
 	const PinType* inputPinTypes
 ) const
 {
-	return PntVoid;
+	PinType outputPinType = PntVoid;
+	uint32_t inputPinCount = node->getInputPinCount();
+	for (uint32_t i = 0; i < inputPinCount; ++i)
+		outputPinType = std::max< PinType >(
+			outputPinType,
+			inputPinTypes[i]
+		);
+	return outputPinType;
 }
 
 PinType MetaNodeTraits::getInputPinType(
@@ -49,7 +58,10 @@ PinType MetaNodeTraits::getInputPinType(
 	const PinType* outputPinTypes
 ) const
 {
-	return PntVoid;
+	if (is_a< OutputPort >(node))
+		return PntVoid;
+	else
+		return outputPinTypes[0];
 }
 
 int32_t MetaNodeTraits::getInputPinGroup(
@@ -75,9 +87,21 @@ bool MetaNodeTraits::evaluateFull(
 bool MetaNodeTraits::evaluatePartial(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
-	const OutputPin* outputPin,
+	const OutputPin* nodeOutputPin,
 	const Constant* inputConstants,
 	Constant& outputConstant
+) const
+{
+	return false;
+}
+
+bool MetaNodeTraits::evaluatePartial(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const OutputPin* nodeOutputPin,
+	const OutputPin** inputOutputPins,
+	const Constant* inputConstants,
+	const OutputPin*& foldOutputPin
 ) const
 {
 	return false;
