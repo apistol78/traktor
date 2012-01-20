@@ -3,7 +3,6 @@
 #include "Core/Misc/String.h"
 #include "Graphics/IGraphicsSystem.h"
 #include "Render/VertexElement.h"
-#include "Render/Shader/ShaderGraph.h"
 #include "Render/Sw/RenderSystemSw.h"
 #include "Render/Sw/RenderViewSw.h"
 #include "Render/Sw/VertexBufferSw.h"
@@ -13,8 +12,6 @@
 #include "Render/Sw/ProgramSw.h"
 #include "Render/Sw/ProgramCompilerSw.h"
 #include "Render/Sw/ProgramResourceSw.h"
-#include "Render/Sw/Emitter/Emitter.h"
-#include "Render/Sw/Emitter/EmitterContext.h"
 
 #if defined(_WIN32)
 #	if !defined(WINCE)
@@ -274,53 +271,23 @@ Ref< IProgram > RenderSystemSw::createProgram(const ProgramResource* programReso
 	if (!resource)
 		return 0;
 
-	const ShaderGraph* shaderGraph = resource->getShaderGraph();
-
-	RefArray< VertexOutput > vertexOutputs;
-	RefArray< PixelOutput > pixelOutputs;
-
-	shaderGraph->findNodesOf< VertexOutput >(vertexOutputs);
-	shaderGraph->findNodesOf< PixelOutput >(pixelOutputs);
-
-	if (vertexOutputs.size() != 1 || pixelOutputs.size() != 1)
-	{
-		log::error << L"Unable to generate program; incorrect number of outputs" << Endl;
-		return 0;
-	}
-
-	EmitterContext::Parameters parameters;
-	EmitterContext cx(shaderGraph, parameters);
-
-	// Emit outputs.
-	cx.emit(pixelOutputs[0]);
-	cx.emit(vertexOutputs[0]);
-
-	// Compile programs.
-	Processor::image_t vertexProgram = m_processor->compile(cx.getVertexProgram());
+	Processor::image_t vertexProgram = m_processor->compile(resource->getVertexProgram());
 	if (!vertexProgram)
 		return 0;
 
-	Processor::image_t pixelProgram = m_processor->compile(cx.getPixelProgram());
+	Processor::image_t pixelProgram = m_processor->compile(resource->getPixelProgram());
 	if (!pixelProgram)
 		return 0;
 
-#if defined(_DEBUG)
-	log::info << L"Vertex program:" << Endl;
-	cx.getVertexProgram().dump(log::info, parameters.uniforms);
-	log::info << Endl;
+	const std::map< std::wstring, std::pair< int32_t, int32_t > >& resourceParameterMap = resource->getParameterMap();
+	const std::map< std::wstring, int32_t >& resourceSamplerMap = resource->getSamplerMap();
+	std::map< handle_t, std::pair< int32_t, int32_t > > parameterMap;
+	std::map< handle_t, int32_t > samplerMap;
 
-	log::info << L"Pixel program:" << Endl;
-	cx.getPixelProgram().dump(log::info, parameters.uniforms);
-	log::info << Endl;
-#endif
+	for (std::map< std::wstring, std::pair< int32_t, int32_t > >::const_iterator i = resourceParameterMap.begin(); i != resourceParameterMap.end(); ++i)
+		parameterMap[getParameterHandle(i->first)] = i->second;
 
-	// Get emitter parameters.
-	std::map< handle_t, std::pair< int, int > > parameterMap;
-	for (std::map< std::wstring, Variable* >::const_iterator i = parameters.uniforms.begin(); i != parameters.uniforms.end(); ++i)
-		parameterMap[getParameterHandle(i->first)] = std::make_pair(i->second->reg, i->second->size);
-
-	std::map< handle_t, int > samplerMap;
-	for (std::map< std::wstring, int >::const_iterator i = parameters.samplers.begin(); i != parameters.samplers.end(); ++i)
+	for (std::map< std::wstring, int32_t >::const_iterator i = resourceSamplerMap.begin(); i != resourceSamplerMap.end(); ++i)
 		samplerMap[getParameterHandle(i->first)] = i->second;
 
 	return new ProgramSw(
@@ -328,8 +295,8 @@ Ref< IProgram > RenderSystemSw::createProgram(const ProgramResource* programReso
 		samplerMap,
 		vertexProgram,
 		pixelProgram,
-		cx.getRenderState(),
-		cx.getInterpolatorCount()
+		resource->getRenderState(),
+		resource->getInterpolatorCount()
 	);
 }
 

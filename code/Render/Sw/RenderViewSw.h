@@ -150,7 +150,6 @@ private:
 	Ref< ProgramSw > m_currentProgram;
 	Viewport m_viewPort;
 	Vector4 m_targetSize;
-	//int32_t m_dirty[4];
 
 	void fetchVertex(uint32_t index, varying_data_t& outVertexVarying) const;
 
@@ -163,10 +162,6 @@ private:
 	void drawIndexed(const Primitives& primitives);
 
 	void drawNonIndexed(const Primitives& primitives);
-
-	void lineShade(const FragmentContext& context, int x, int y, float d);
-
-	void triangleShade(const FragmentContext& context, int x1, int x2, int y);
 
 	void triangleShadeOpaque(const FragmentContext& context, int x1, int x2, int y);
 

@@ -401,13 +401,6 @@ void InterpreterFixed::execute(
 			}
 			break;
 
-		case OpSplat:
-			{
-				fp32_t sp = R[i->src[0]].e[i->src[1]];
-				dest.set(sp, sp, sp, sp);
-			}
-			break;
-
 		case OpCompareGreaterEqual:
 			{
 				fp32_t inp = R[i->src[0]].x;

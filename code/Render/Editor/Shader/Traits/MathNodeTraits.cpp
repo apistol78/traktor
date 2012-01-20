@@ -62,14 +62,17 @@ PinType MathNodeTraits::getOutputPinType(
 ) const
 {
 	PinType outputPinType = PntVoid;
-
-	uint32_t inputPinCount = node->getInputPinCount();
-	for (uint32_t i = 0; i < inputPinCount; ++i)
-		outputPinType = std::max< PinType >(
-			outputPinType,
-			inputPinTypes[i]
-		);
-
+	if (is_a< ArcusCos >(node) || is_a< Cos >(node) || is_a< Sin >(node) || is_a< Tan >(node))
+		outputPinType = PntScalar1;
+	else
+	{
+		uint32_t inputPinCount = node->getInputPinCount();
+		for (uint32_t i = 0; i < inputPinCount; ++i)
+			outputPinType = std::max< PinType >(
+				outputPinType,
+				inputPinTypes[i]
+			);
+	}
 	return outputPinType;
 }
 
@@ -80,7 +83,10 @@ PinType MathNodeTraits::getInputPinType(
 	const PinType* outputPinTypes
 ) const
 {
-	return outputPinTypes[0];
+	if (is_a< ArcusCos >(node) || is_a< Cos >(node) || is_a< Sin >(node) || is_a< Tan >(node))
+		return PntScalar1;
+	else
+		return outputPinTypes[0];
 }
 
 int32_t MathNodeTraits::getInputPinGroup(
@@ -241,7 +247,7 @@ bool MathNodeTraits::evaluateFull(
 bool MathNodeTraits::evaluatePartial(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
-	const OutputPin* outputPin,
+	const OutputPin* nodeOutputPin,
 	const Constant* inputConstants,
 	Constant& outputConstant
 ) const
@@ -275,6 +281,55 @@ bool MathNodeTraits::evaluatePartial(
 		if (inputConstants[0].isZero())
 		{
 			outputConstant = Constant(1.0f);
+			return true;
+		}
+	}
+	return false;
+}
+
+bool MathNodeTraits::evaluatePartial(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const OutputPin* nodeOutputPin,
+	const OutputPin** inputOutputPins,
+	const Constant* inputConstants,
+	const OutputPin*& foldOutputPin
+) const
+{
+	if (is_a< Div >(node))
+	{
+		if (inputConstants[1].isOne())
+		{
+			foldOutputPin = inputOutputPins[0];
+			return true;
+		}
+	}
+	else if (is_a< Mul >(node))
+	{
+		if (inputConstants[0].isOne())
+		{
+			foldOutputPin = inputOutputPins[1];
+			return true;
+		}
+		else if (inputConstants[1].isOne())
+		{
+			foldOutputPin = inputOutputPins[0];
+			return true;
+		}
+	}
+	else if (is_a< MulAdd >(node))
+	{
+		if (inputConstants[0].isZero() || inputConstants[1].isZero())
+		{
+			foldOutputPin = inputOutputPins[2];
+			return true;
+		}
+	}
+	else if (is_a< Pow >(node))
+	{
+		if (inputConstants[0].isOne())
+		{
+			foldOutputPin = inputOutputPins[1];
 			return true;
 		}
 	}

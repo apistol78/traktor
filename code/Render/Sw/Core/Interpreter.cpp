@@ -506,14 +506,6 @@ void Interpreter::execute(
 			}
 			break;
 
-		case OpSplat:
-			{
-				float sp = R(i->src[0])[i->src[1]];
-				dest.set(sp, sp, sp, sp);
-				CHECK(dest);
-			}
-			break;
-
 		case OpCompareGreaterEqual:
 			{
 				Scalar inp = R(i->src[0]).x();

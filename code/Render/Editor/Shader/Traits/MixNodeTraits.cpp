@@ -93,15 +93,57 @@ bool MixNodeTraits::evaluateFull(
 	Constant& outputConstant
 ) const
 {
+	if (is_a< MixIn >(node))
+	{
+		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
+		{
+			if (inputConstants[i].isZero())
+				outputConstant[i] = 0.0f;
+			else if (inputConstants[i].isOne())
+				outputConstant[i] = 1.0f;
+			else if (inputConstants[i].getWidth() >= 1)
+				outputConstant[i] = inputConstants[i][0];
+			else
+				return false;
+		}
+		return true;
+	}
+	else if (is_a< MixOut >(node))
+	{
+		if (outputPin->getName() == L"X")
+			outputConstant[0] = inputConstants[0][0];
+		else if (outputPin->getName() == L"Y")
+			outputConstant[0] = inputConstants[0][1];
+		else if (outputPin->getName() == L"Z")
+			outputConstant[0] = inputConstants[0][2];
+		else if (outputPin->getName() == L"W")
+			outputConstant[0] = inputConstants[0][3];
+		else
+			return false;
+
+		return true;
+	}
 	return false;
 }
 
 bool MixNodeTraits::evaluatePartial(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
-	const OutputPin* outputPin,
+	const OutputPin* nodeOutputPin,
 	const Constant* inputConstants,
 	Constant& outputConstant
+) const
+{
+	return false;
+}
+
+bool MixNodeTraits::evaluatePartial(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const OutputPin* nodeOutputPin,
+	const OutputPin** inputOutputPins,
+	const Constant* inputConstants,
+	const OutputPin*& foldOutputPin
 ) const
 {
 	return false;

@@ -305,9 +305,6 @@ bool RenderViewOpenGL::begin(EyeType eye)
 	if (!m_context->enter())
 		return false;
 
-	T_OGL_SAFE(glEnable(GL_DEPTH_TEST));
-	T_OGL_SAFE(glDepthFunc(GL_LEQUAL));
-
 	return begin(m_primaryTarget, 0);
 }
 
@@ -319,7 +316,10 @@ bool RenderViewOpenGL::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 	RenderTargetOpenGL* rt = checked_type_cast< RenderTargetOpenGL* >(rts->getColorTexture(renderTarget));
 	
 	if (!rt->bind(m_primaryTarget->getDepthBuffer()))
+	{
+		T_OGL_SAFE(glPopAttrib());
 		return false;
+	}
 	
 	rt->enter(m_primaryTarget->getDepthBuffer());
 

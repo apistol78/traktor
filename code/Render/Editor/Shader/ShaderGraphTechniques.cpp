@@ -95,7 +95,7 @@ Ref< ShaderGraph > ShaderGraphTechniques::generate(const std::wstring& name) con
 
 	CopyVisitor visitor;
 	visitor.m_shaderGraph = new ShaderGraph();
-	shaderGraphTraverse(m_shaderGraph, roots, visitor);
+	ShaderGraphTraverse(m_shaderGraph, roots).preorder(visitor);
 
 	return visitor.m_shaderGraph;
 }

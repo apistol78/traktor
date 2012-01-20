@@ -45,9 +45,18 @@ public:
 	virtual bool evaluatePartial(
 		const ShaderGraph* shaderGraph,
 		const Node* node,
-		const OutputPin* outputPin,
+		const OutputPin* nodeOutputPin,
 		const Constant* inputConstants,
 		Constant& outputConstant
+	) const;
+
+	virtual bool evaluatePartial(
+		const ShaderGraph* shaderGraph,
+		const Node* node,
+		const OutputPin* nodeOutputPin,
+		const OutputPin** inputOutputPins,
+		const Constant* inputConstants,
+		const OutputPin*& foldOutputPin
 	) const;
 };
 

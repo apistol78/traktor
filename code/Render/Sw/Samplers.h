@@ -17,7 +17,7 @@ class NullTextureSampler : public AbstractSampler
 public:
 	virtual Vector4 get(const Vector4& texCoord) const
 	{
-		return Vector4(0.0f, 0.0f, 0.0f, 0.0f);
+		return Vector4(1.0f, 0.0f, 0.0f, 1.0f);
 	}
 };
 

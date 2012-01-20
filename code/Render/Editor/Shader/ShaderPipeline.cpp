@@ -59,6 +59,7 @@ private:
 
 struct BuildCombinationTask : public Object
 {
+	std::wstring name;
 	ShaderGraphCombinations* combinations;
 	uint32_t combination;
 	ShaderResource* shaderResource;
@@ -270,7 +271,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.CachedProgramHints", CachedProgramHints,
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 40, ShaderPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 42, ShaderPipeline, editor::IPipeline)
 
 ShaderPipeline::ShaderPipeline()
 :	m_frequentUniformsAsLinear(false)
@@ -447,6 +448,7 @@ bool ShaderPipeline::buildOutput(
 		for (uint32_t combination = 0; combination < combinationCount; ++combination)
 		{
 			Ref< BuildCombinationTask > task = new BuildCombinationTask();
+			task->name = outputPath + L" - " + *i;
 			task->combinations = combinations;
 			task->combination = combination;
 			task->shaderResource = shaderResource;

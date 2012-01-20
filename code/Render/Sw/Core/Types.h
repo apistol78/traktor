@@ -57,7 +57,6 @@ enum Opcode
 	OpSwizzle,				// 41
 	OpSet,
 	OpExpandWithZero,
-	OpSplat,
 	OpCompareGreaterEqual,
 	OpCompareGreater,
 	OpCompareEqual,
@@ -113,7 +112,6 @@ static const wchar_t* c_opcodeText[] =
 	L"OpSwizzle",
 	L"OpSet",
 	L"OpExpandWithZero",
-	L"OpSplat",
 	L"OpCompareGreaterEqual",
 	L"OpCompareGreater",
 	L"OpCompareEqual",

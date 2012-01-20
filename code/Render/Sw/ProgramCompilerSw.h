@@ -1,10 +1,14 @@
 #ifndef traktor_render_ProgramCompilerSw_H
 #define traktor_render_ProgramCompilerSw_H
 
+#include "Core/Thread/Semaphore.h"
 #include "Render/IProgramCompiler.h"
 
 namespace traktor
 {
+
+class IStream;
+
 	namespace render
 	{
 
@@ -25,6 +29,10 @@ public:
 		IProgramHints* hints,
 		Stats* outStats
 	) const;
+
+private:
+	mutable Semaphore m_lock;
+	mutable Ref< IStream > m_dump;
 };
 
 	}
