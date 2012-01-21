@@ -181,7 +181,7 @@ ShaderGraphTypePropagation::ShaderGraphTypePropagation(const ShaderGraph* shader
 				}
 
 				T_ASSERT (m_outputPinTypes.find(outputPin) != m_outputPinTypes.end());
-				if (m_outputPinTypes[outputPin] != outputPinType)
+				if (outputPinType < m_outputPinTypes[outputPin])
 				{
 					nodeSetInput.insert(node);
 					m_outputPinTypes[outputPin] = outputPinType;
