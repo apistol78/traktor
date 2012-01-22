@@ -1,3 +1,4 @@
+#include <map>
 #include "Core/RefArray.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Semaphore.h"
@@ -11,8 +12,8 @@ namespace traktor
 		namespace
 		{
 
-RefArray< INodeTraits > s_traits;
 Semaphore s_lock;
+std::map< const TypeInfo*, Ref< INodeTraits > > s_traits;
 
 		}
 
@@ -20,29 +21,36 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.INodeTraits", INodeTraits, Object)
 
 const INodeTraits* INodeTraits::find(const Node* node)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(s_lock);
-
+	// Allow a race to initializing traits; lock at write.
 	if (s_traits.empty())
 	{
+		std::map< const TypeInfo*, Ref< INodeTraits > > traits;
+
+		// Find all concrete INodeTraits classes.
 		std::vector< const TypeInfo* > traitsTypes;
 		type_of< INodeTraits >().findAllOf(traitsTypes, false);
 
+		// Instantiate traits.
 		for (std::vector< const TypeInfo* >::const_iterator i = traitsTypes.begin(); i != traitsTypes.end(); ++i)
 		{
-			Ref< INodeTraits > traits = checked_type_cast< INodeTraits*, false >((*i)->createInstance());
-			s_traits.push_back(traits);
+			Ref< INodeTraits > tr = checked_type_cast< INodeTraits*, false >((*i)->createInstance());
+			T_ASSERT (tr);
+
+			TypeInfoSet nodeTypes = tr->getNodeTypes();
+			for (TypeInfoSet::const_iterator j = nodeTypes.begin(); j != nodeTypes.end(); ++j)
+				traits[*j] = tr;
+		}
+
+		// Update global traits.
+		{
+			T_ANONYMOUS_VAR(Acquire< Semaphore >)(s_lock);
+			s_traits = traits;
 		}
 	}
 
-	const TypeInfo& nodeType = type_of(node);
-	for (RefArray< INodeTraits >::const_iterator i = s_traits.begin(); i != s_traits.end(); ++i)
-	{
-		TypeInfoSet nodeTypes = (*i)->getNodeTypes();
-		if (nodeTypes.find(&nodeType) != nodeTypes.end())
-			return *i;
-	}
-
-	return 0;
+	// Find traits from node type.
+	std::map< const TypeInfo*, Ref< INodeTraits > >::const_iterator i = s_traits.find(&type_of(node));
+	return i != s_traits.end() ? i->second : 0;
 }
 
 	}
