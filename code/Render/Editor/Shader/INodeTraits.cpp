@@ -1,5 +1,5 @@
-#include <map>
 #include "Core/RefArray.h"
+#include "Core/Containers/SmallMap.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Semaphore.h"
 #include "Render/Shader/Node.h"
@@ -13,7 +13,7 @@ namespace traktor
 		{
 
 Semaphore s_lock;
-std::map< const TypeInfo*, Ref< INodeTraits > > s_traits;
+SmallMap< const TypeInfo*, Ref< INodeTraits > > s_traits;
 
 		}
 
@@ -24,7 +24,7 @@ const INodeTraits* INodeTraits::find(const Node* node)
 	// Allow a race to initializing traits; lock at write.
 	if (s_traits.empty())
 	{
-		std::map< const TypeInfo*, Ref< INodeTraits > > traits;
+		SmallMap< const TypeInfo*, Ref< INodeTraits > > traits;
 
 		// Find all concrete INodeTraits classes.
 		std::vector< const TypeInfo* > traitsTypes;
@@ -49,7 +49,7 @@ const INodeTraits* INodeTraits::find(const Node* node)
 	}
 
 	// Find traits from node type.
-	std::map< const TypeInfo*, Ref< INodeTraits > >::const_iterator i = s_traits.find(&type_of(node));
+	SmallMap< const TypeInfo*, Ref< INodeTraits > >::const_iterator i = s_traits.find(&type_of(node));
 	return i != s_traits.end() ? i->second : 0;
 }
 
