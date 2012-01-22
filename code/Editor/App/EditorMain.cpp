@@ -67,10 +67,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 		splash->create();
 
 		for (int i = 0; i < 10; ++i)
-		{
 			ui::Application::getInstance()->process();
-			ThreadManager::getInstance().getCurrentThread()->sleep(50);
-		}
 #endif
 
 		Ref< editor::EditorForm > editorForm = new editor::EditorForm();
