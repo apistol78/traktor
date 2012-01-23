@@ -64,7 +64,7 @@ public:
 		render::RenderContext* renderContext,
 		TerrainSurface* surface,
 		render::ISimpleTexture* heightfieldTexture,
-		render::ISimpleTexture* materialMaskTexture,
+		const RefArray< render::ISimpleTexture >& materialMaskTextures,
 		const Vector4& worldOrigin,
 		const Vector4& worldExtent,
 		const Vector4& patchOrigin,
@@ -96,7 +96,6 @@ private:
 	render::handle_t m_handleHeightfieldSize;
 	render::handle_t m_handleMaterialMask;
 	render::handle_t m_handleMaterialMaskSize;
-	render::handle_t m_handleMaterial;
 	render::handle_t m_handleWorldOrigin;
 	render::handle_t m_handleWorldExtent;
 	render::handle_t m_handlePatchOrigin;

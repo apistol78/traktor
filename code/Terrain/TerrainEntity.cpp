@@ -116,12 +116,6 @@ bool TerrainEntity::create(resource::IResourceManager* resourceManager, const Te
 	if (!resourceManager->bind(m_shader))
 		return false;
 
-	if (!createPatches())
-		return false;
-
-	if (!createTextures())
-		return false;
-
 	m_surfaceCache = new TerrainSurfaceCache();
 	if (!m_surfaceCache->create(resourceManager, m_renderSystem))
 		return false;
@@ -133,6 +127,12 @@ bool TerrainEntity::create(resource::IResourceManager* resourceManager, const Te
 	m_surfaceLodDistance = data.getSurfaceLodDistance();
 	m_surfaceLodBias = data.getSurfaceLodBias();
 	m_surfaceLodExponent = data.getSurfaceLodExponent();
+
+	if (!createPatches())
+		return false;
+
+	if (!createTextures())
+		return false;
 
 	if (m_surface)
 	{
@@ -333,7 +333,7 @@ void TerrainEntity::render(
 				renderContext,
 				m_surface,
 				m_heightTexture,
-				m_materialMaskTexture,
+				m_materialMaskTextures,
 				-worldExtent * Scalar(0.5f),
 				worldExtent,
 				patchOrigin,
@@ -1043,26 +1043,29 @@ bool TerrainEntity::updateTextures(bool normals, bool heights, bool materials)
 
 	if (materials)
 	{
-		render::ITexture::Lock lock;
-		if (!m_materialMaskTexture->lock(0, lock))
-			return false;
-
-		uint8_t* mp = static_cast< uint8_t* >(lock.bits);
-
-		int32_t size = m_materialMask->getSize();
-		int32_t dim = m_materialMaskTexture->getWidth();
-
-		for (int32_t v = 0; v < dim; ++v)
+		for (uint32_t i = 0; i < m_materialMaskTextures.size(); ++i)
 		{
-			int32_t gz = (v * size) / dim;
-			for (int32_t u = 0; u < dim; ++u)
-			{
-				int32_t gx = (u * size) / dim;
-				mp[u + v * dim] = m_materialMask->getId(gx, gz);
-			}
-		}
+			render::ITexture::Lock lock;
+			if (!m_materialMaskTextures[i]->lock(0, lock))
+				return false;
 
-		m_materialMaskTexture->unlock(0);
+			uint8_t* mp = static_cast< uint8_t* >(lock.bits);
+
+			int32_t size = m_materialMask->getSize();
+			int32_t dim = m_materialMaskTextures[i]->getWidth();
+
+			for (int32_t v = 0; v < dim; ++v)
+			{
+				int32_t gz = (v * size) / dim;
+				for (int32_t u = 0; u < dim; ++u)
+				{
+					int32_t gx = (u * size) / dim;
+					mp[u + v * dim] = (m_materialMask->getId(gx, gz) == i) ? 255 : 0;
+				}
+			}
+
+			m_materialMaskTextures[i]->unlock(0);
+		}
 	}
 
 	return true;
@@ -1072,7 +1075,8 @@ bool TerrainEntity::createTextures()
 {
 	safeDestroy(m_normalTexture);
 	safeDestroy(m_heightTexture);
-	safeDestroy(m_materialMaskTexture);
+	m_materialMaskTextures.clear();
+
 
 	{
 		uint32_t size = m_heightfield->getResource().getSize();
@@ -1127,8 +1131,13 @@ bool TerrainEntity::createTextures()
 		desc.format = render::TfR8;
 		desc.immutable = false;
 
-		if (!(m_materialMaskTexture = m_renderSystem->createSimpleTexture(desc)))
-			return false;
+		m_materialMaskTextures.resize(m_surface->getLayers().size());
+		for (uint32_t i = 0; i < m_materialMaskTextures.size(); ++i)
+		{
+			m_materialMaskTextures[i] = m_renderSystem->createSimpleTexture(desc);
+			if (!m_materialMaskTextures[i])
+				return false;
+		}
 	}
 
 	updateTextures(true, true, true);

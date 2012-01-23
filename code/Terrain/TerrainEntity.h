@@ -1,6 +1,7 @@
 #ifndef traktor_terrain_TerrainEntity_H
 #define traktor_terrain_TerrainEntity_H
 
+#include "Core/RefArray.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Render/Shader.h"
 #include "Resource/Proxy.h"
@@ -119,7 +120,7 @@ private:
 	uint32_t m_patchCount;
 	Ref< render::ISimpleTexture > m_normalTexture;
 	Ref< render::ISimpleTexture > m_heightTexture;
-	Ref< render::ISimpleTexture > m_materialMaskTexture;
+	RefArray< render::ISimpleTexture > m_materialMaskTextures;
 	Ref< render::IndexBuffer > m_indexBuffer;
 #if defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
 	Ref< render::VertexBuffer > m_vertexBuffer;
