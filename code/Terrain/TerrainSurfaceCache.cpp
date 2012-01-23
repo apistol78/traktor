@@ -73,7 +73,6 @@ TerrainSurfaceCache::TerrainSurfaceCache()
 ,	m_handleHeightfieldSize(render::getParameterHandle(L"HeightfieldSize"))
 ,	m_handleMaterialMask(render::getParameterHandle(L"MaterialMask"))
 ,	m_handleMaterialMaskSize(render::getParameterHandle(L"MaterialMaskSize"))
-,	m_handleMaterial(render::getParameterHandle(L"Material"))
 ,	m_handleWorldOrigin(render::getParameterHandle(L"WorldOrigin"))
 ,	m_handleWorldExtent(render::getParameterHandle(L"WorldExtent"))
 ,	m_handlePatchOrigin(render::getParameterHandle(L"PatchOrigin"))
@@ -154,7 +153,7 @@ void TerrainSurfaceCache::get(
 	render::RenderContext* renderContext,
 	TerrainSurface* surface,
 	render::ISimpleTexture* heightfieldTexture,
-	render::ISimpleTexture* materialMaskTexture,
+	const RefArray< render::ISimpleTexture >& materialMaskTextures,
 	const Vector4& worldOrigin,
 	const Vector4& worldExtent,
 	const Vector4& patchOrigin,
@@ -228,6 +227,10 @@ void TerrainSurfaceCache::get(
 		if (!shader.validate())
 			continue;
 
+		render::ISimpleTexture* materialMaskTexture = materialMaskTextures[i];
+		if (!materialMaskTexture)
+			continue;
+
 		TerrainSurfaceRenderBlock* renderBlock = renderContext->alloc< TerrainSurfaceRenderBlock >("Terrain surface");
 
 		renderBlock->screenRenderer = m_screenRenderer;
@@ -242,7 +245,6 @@ void TerrainSurfaceCache::get(
 		renderBlock->programParams->setFloatParameter(m_handleHeightfieldSize, float(heightfieldTexture->getWidth()));
 		renderBlock->programParams->setTextureParameter(m_handleMaterialMask, materialMaskTexture);
 		renderBlock->programParams->setFloatParameter(m_handleMaterialMaskSize, float(materialMaskTexture->getWidth()));
-		renderBlock->programParams->setFloatParameter(m_handleMaterial, float(i));
 		renderBlock->programParams->setVectorParameter(m_handleWorldOrigin, worldOrigin);
 		renderBlock->programParams->setVectorParameter(m_handleWorldExtent, worldExtent);
 		renderBlock->programParams->setVectorParameter(m_handlePatchOrigin, patchOriginM);
