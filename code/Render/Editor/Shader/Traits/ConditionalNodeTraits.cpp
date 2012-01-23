@@ -131,6 +131,60 @@ bool ConditionalNodeTraits::evaluatePartial(
 	Constant& outputConstant
 ) const
 {
+	if (const Conditional* conditional = dynamic_type_cast< const Conditional* >(node))
+	{
+		if (inputConstants[0].getWidth() <= 0 || inputConstants[1].getWidth() <= 0)
+			return false;
+
+		bool result = false;
+		switch (conditional->getOperator())
+		{
+		case Conditional::CoLess:
+			result = inputConstants[0][0] < inputConstants[1][0];
+			break;
+
+		case Conditional::CoLessEqual:
+			result = inputConstants[0][0] <= inputConstants[1][0];
+			break;
+
+		case Conditional::CoEqual:
+			result = inputConstants[0][0] == inputConstants[1][0];
+			break;
+
+		case Conditional::CoNotEqual:
+			result = inputConstants[0][0] != inputConstants[1][0];
+			break;
+
+		case Conditional::CoGreater:
+			result = inputConstants[0][0] > inputConstants[1][0];
+			break;
+
+		case Conditional::CoGreaterEqual:
+			result = inputConstants[0][0] >= inputConstants[1][0];
+			break;
+
+		default:
+			return false;
+		}
+
+		if (result)
+		{
+			if (inputConstants[2].getWidth() > 0)
+			{
+				outputConstant = inputConstants[2];
+				return true;
+			}
+		}
+		else
+		{
+			if (inputConstants[3].getWidth() > 0)
+			{
+				outputConstant = inputConstants[3];
+				return true;
+			}
+		}
+	}
+
 	return false;
 }
 
@@ -143,6 +197,53 @@ bool ConditionalNodeTraits::evaluatePartial(
 	const OutputPin*& foldOutputPin
 ) const
 {
+	if (const Conditional* conditional = dynamic_type_cast< const Conditional* >(node))
+	{
+		if (inputConstants[0].getWidth() <= 0 || inputConstants[1].getWidth() <= 0)
+			return false;
+
+		bool result = false;
+		switch (conditional->getOperator())
+		{
+		case Conditional::CoLess:
+			result = inputConstants[0][0] < inputConstants[1][0];
+			break;
+
+		case Conditional::CoLessEqual:
+			result = inputConstants[0][0] <= inputConstants[1][0];
+			break;
+
+		case Conditional::CoEqual:
+			result = inputConstants[0][0] == inputConstants[1][0];
+			break;
+
+		case Conditional::CoNotEqual:
+			result = inputConstants[0][0] != inputConstants[1][0];
+			break;
+
+		case Conditional::CoGreater:
+			result = inputConstants[0][0] > inputConstants[1][0];
+			break;
+
+		case Conditional::CoGreaterEqual:
+			result = inputConstants[0][0] >= inputConstants[1][0];
+			break;
+
+		default:
+			return false;
+		}
+
+		if (result)
+		{
+			foldOutputPin = inputOutputPins[2];
+			return true;
+		}
+		else
+		{
+			foldOutputPin = inputOutputPins[3];
+			return true;
+		}
+	}
 	return false;
 }
 
