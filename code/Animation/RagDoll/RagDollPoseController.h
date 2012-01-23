@@ -17,9 +17,9 @@ namespace traktor
 	namespace physics
 	{
 
-class PhysicsManager;
-class DynamicBody;
+class Body;
 class Joint;
+class PhysicsManager;
 
 	}
 
@@ -88,14 +88,14 @@ public:
 
 	bool isEnable() const;
 
-	const RefArray< physics::DynamicBody >& getLimbs() const;
+	const RefArray< physics::Body >& getLimbs() const;
 
 private:
 	Ref< IPoseController > m_trackPoseController;
 	Scalar m_trackLinearTension;
 	Scalar m_trackAngularTension;
 	float m_trackDuration;
-	RefArray< physics::DynamicBody > m_limbs;
+	RefArray< physics::Body > m_limbs;
 	RefArray< physics::Joint > m_joints;
 	Transform m_worldTransform;
 	bool m_enable;

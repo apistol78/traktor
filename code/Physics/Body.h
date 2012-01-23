@@ -3,7 +3,9 @@
 
 #include "Core/Object.h"
 #include "Core/RefArray.h"
+#include "Core/Math/Matrix33.h"
 #include "Core/Math/Transform.h"
+#include "Physics/BodyState.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -43,6 +45,9 @@ public:
 	 */
 	virtual Transform getTransform() const = 0;
 
+	/*! \brief Get type of body. */
+	virtual bool isStatic() const = 0;
+
 	/*! \brief Set rigid body active state.
 	 *
 	 * Activation state control if body is
@@ -72,6 +77,54 @@ public:
 	 * \return Enable state.
 	 */
 	virtual bool isEnable() const = 0;
+
+	/*! \brief Reset body state. */
+	virtual void reset() = 0;
+
+	/*! \brief Set body mass. */
+	virtual void setMass(float mass, const Vector4& inertiaTensor) = 0;
+
+	/*! \brief Get inverse body mass. */
+	virtual float getInverseMass() const = 0;
+
+	/*! \brief Get inverse inertia tensor in world space. */
+	virtual Matrix33 getInertiaTensorInverseWorld() const = 0;
+
+	/*! \brief Apply force on body. */
+	virtual void addForceAt(const Vector4& at, const Vector4& force, bool localSpace) = 0;
+
+	/*! \brief Apply torque on body. */
+	virtual void addTorque(const Vector4& torque, bool localSpace) = 0;
+
+	/*! \brief Apply linear impulse on body. */
+	virtual void addLinearImpulse(const Vector4& linearImpulse, bool localSpace) = 0;
+
+	/*! \brief Apply angular impulse on body. */
+	virtual void addAngularImpulse(const Vector4& angularImpulse, bool localSpace) = 0;
+
+	/*! \brief Apply impulse on body. */
+	virtual void addImpulse(const Vector4& at, const Vector4& impulse, bool localSpace) = 0;
+
+	/*! \brief Set linear velocity of body. */
+	virtual void setLinearVelocity(const Vector4& linearVelocity) = 0;
+
+	/*! \brief Get linear velocity of body. */
+	virtual Vector4 getLinearVelocity() const = 0;
+
+	/*! \brief Set angular velocity of body. */
+	virtual void setAngularVelocity(const Vector4& angularVelocity) = 0;
+
+	/*! \brief Get angular velocity of body. */
+	virtual Vector4 getAngularVelocity() const = 0;
+
+	/*! \brief Get velocity at a given position of body. */
+	virtual Vector4 getVelocityAt(const Vector4& at, bool localSpace) const = 0;
+
+	/*! \brief Set body's complete state. */
+	virtual bool setState(const BodyState& state) = 0;
+
+	/*! \brief Get complete state of body. */
+	virtual BodyState getState() const = 0;
 
 	/*! \brief Add collision listener callback.
 	 *

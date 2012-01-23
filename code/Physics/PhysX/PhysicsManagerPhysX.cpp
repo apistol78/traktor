@@ -18,13 +18,12 @@
 #include "Physics/HingeJointDesc.h"
 #include "Physics/Hinge2JointDesc.h"
 #include "Physics/Mesh.h"
-#include "Physics/PhysX/PhysicsManagerPhysX.h"
-#include "Physics/PhysX/StaticBodyPhysX.h"
-#include "Physics/PhysX/DynamicBodyPhysX.h"
 #include "Physics/PhysX/BallJointPhysX.h"
+#include "Physics/PhysX/BodyPhysX.h"
 #include "Physics/PhysX/ConeTwistJointPhysX.h"
-#include "Physics/PhysX/NxStreamWrapper.h"
 #include "Physics/PhysX/Conversion.h"
+#include "Physics/PhysX/NxStreamWrapper.h"
+#include "Physics/PhysX/PhysicsManagerPhysX.h"
 #include "Resource/IResourceManager.h"
 
 namespace traktor
@@ -329,10 +328,10 @@ Ref< Body > PhysicsManagerPhysX::createBody(resource::IResourceManager* resource
 
 		setActorGroup(actor, c_defaultGroup);
 
-		Ref< StaticBodyPhysX > staticBody = new StaticBodyPhysX(this, actor);
+		Ref< BodyPhysX > staticBody = new BodyPhysX(this, actor);
 		body = staticBody;
 
-		m_staticBodies.push_back(staticBody);
+		m_bodies.push_back(staticBody);
 	}
 	else if (const DynamicBodyDesc* dynamicDesc = dynamic_type_cast< const DynamicBodyDesc* >(desc))
 	{
@@ -356,10 +355,10 @@ Ref< Body > PhysicsManagerPhysX::createBody(resource::IResourceManager* resource
 		if (!dynamicDesc->getActive())
 			actor->putToSleep();
 
-		Ref< DynamicBodyPhysX > dynamicBody = new DynamicBodyPhysX(this, actor);
+		Ref< BodyPhysX > dynamicBody = new BodyPhysX(this, actor);
 		body = dynamicBody;
 
-		m_dynamicBodies.push_back(dynamicBody);
+		m_bodies.push_back(dynamicBody);
 	}
 	else
 	{
@@ -373,18 +372,8 @@ Ref< Body > PhysicsManagerPhysX::createBody(resource::IResourceManager* resource
 
 Ref< Joint > PhysicsManagerPhysX::createJoint(const JointDesc* desc, const Transform& transform, Body* body1, Body* body2)
 {
-	NxActor* actor1 = 0;
-	NxActor* actor2 = 0;
-
-	if (DynamicBodyPhysX* dynamicBody1 = dynamic_type_cast< DynamicBodyPhysX* >(body1))
-		actor1 = dynamicBody1->getActor();
-	else if (StaticBodyPhysX* staticBody1 = dynamic_type_cast< StaticBodyPhysX* >(body1))
-		actor1 = staticBody1->getActor();
-
-	if (DynamicBodyPhysX* dynamicBody2 = dynamic_type_cast< DynamicBodyPhysX* >(body2))
-		actor2 = dynamicBody2->getActor();
-	else if (StaticBodyPhysX* staticBody2 = dynamic_type_cast< StaticBodyPhysX* >(body2))
-		actor2 = staticBody2->getActor();
+	NxActor* actor1 = body1 ? checked_type_cast< BodyPhysX* >(body1)->getActor() : 0;
+	NxActor* actor2 = body2 ? checked_type_cast< BodyPhysX* >(body2)->getActor() : 0;
 
 	Ref< Joint > outJoint;
 
@@ -434,9 +423,6 @@ Ref< Joint > PhysicsManagerPhysX::createJoint(const JointDesc* desc, const Trans
 
 void PhysicsManagerPhysX::update()
 {
-	for (RefArray< DynamicBodyPhysX >::iterator i = m_dynamicBodies.begin(); i != m_dynamicBodies.end(); ++i)
-		(*i)->setPreviousState((*i)->getState());
-
 	m_scene->flushStream();
 	m_scene->simulate(m_simulationDeltaTime);
 	m_scene->fetchResults(NX_RIGID_BODY_FINISHED, true);
@@ -470,7 +456,7 @@ bool PhysicsManagerPhysX::queryRay(
 	// Move ignore actor into disabled group.
 	if (ignoreBody)
 	{
-		NxActor* actor = static_cast< const DynamicBodyPhysX* >(ignoreBody)->getActor();
+		NxActor* actor = checked_type_cast< const BodyPhysX* >(ignoreBody)->getActor();
 		setActorGroup(actor, c_ignoreBodyGroup);
 	}
 
@@ -493,7 +479,7 @@ bool PhysicsManagerPhysX::queryRay(
 	// Restore ignore actor into active group.
 	if (ignoreBody)
 	{
-		NxActor* actor = static_cast< const DynamicBodyPhysX* >(ignoreBody)->getActor();
+		NxActor* actor = checked_type_cast< const BodyPhysX* >(ignoreBody)->getActor();
 		T_ASSERT_M (hitShape != *actor->getShapes(), L"Collision with masked shape");
 
 		setActorGroup(actor, c_defaultGroup);
@@ -545,18 +531,9 @@ void PhysicsManagerPhysX::getBodyCount(uint32_t& outCount, uint32_t& outActiveCo
 
 void PhysicsManagerPhysX::destroyBody(Body* owner, NxActor& actor)
 {
-	if (StaticBodyPhysX* staticBody = dynamic_type_cast< StaticBodyPhysX* >(owner))
-	{
-		RefArray< StaticBodyPhysX >::iterator i = std::find(m_staticBodies.begin(), m_staticBodies.end(), staticBody);
-		if (i != m_staticBodies.end())
-			m_staticBodies.erase(i);
-	}
-	else if (DynamicBodyPhysX* dynamicBody = dynamic_type_cast< DynamicBodyPhysX* >(owner))
-	{
-		RefArray< DynamicBodyPhysX >::iterator i = std::find(m_dynamicBodies.begin(), m_dynamicBodies.end(), dynamicBody);
-		if (i != m_dynamicBodies.end())
-			m_dynamicBodies.erase(i);
-	}
+	RefArray< BodyPhysX >::iterator i = std::find(m_bodies.begin(), m_bodies.end(), owner);
+	if (i != m_bodies.end())
+		m_bodies.erase(i);
 	if (m_scene)
 		m_scene->releaseActor(actor);
 }

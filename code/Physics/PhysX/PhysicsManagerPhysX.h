@@ -20,8 +20,7 @@ namespace traktor
 	namespace physics
 	{
 
-class StaticBodyPhysX;
-class DynamicBodyPhysX;
+class BodyPhysX;
 
 /*!
  * \ingroup PhysX
@@ -102,8 +101,7 @@ private:
 	float m_simulationDeltaTime;
 	NxPhysicsSDK* m_sdk;
 	NxScene* m_scene;
-	RefArray< StaticBodyPhysX > m_staticBodies;
-	RefArray< DynamicBodyPhysX > m_dynamicBodies;
+	RefArray< BodyPhysX > m_bodies;
 
 	virtual void destroyBody(Body* owner, NxActor& actor);
 

@@ -24,13 +24,12 @@
 #include "Physics/Bullet/Conversion.h"
 #include "Physics/Bullet/AxisJointBullet.h"
 #include "Physics/Bullet/BallJointBullet.h"
+#include "Physics/Bullet/BodyBullet.h"
 #include "Physics/Bullet/ConeTwistJointBullet.h"
-#include "Physics/Bullet/DynamicBodyBullet.h"
 #include "Physics/Bullet/HeightfieldShapeBullet.h"
 #include "Physics/Bullet/HingeJointBullet.h"
 #include "Physics/Bullet/Hinge2JointBullet.h"
 #include "Physics/Bullet/PhysicsManagerBullet.h"
-#include "Physics/Bullet/StaticBodyBullet.h"
 #include "Resource/IResourceManager.h"
 
 #if defined(T_BULLET_USE_SPURS)
@@ -64,16 +63,11 @@ uint32_t getCollisionGroup(const btCollisionObject* collisionObject)
 	if (!collisionObject)
 		return ~0UL;
 
-	Body* body = static_cast< Body* >(collisionObject->getUserPointer());
+	BodyBullet* body = static_cast< BodyBullet* >(collisionObject->getUserPointer());
 	if (!body)
 		return ~0UL;
 
-	if (DynamicBodyBullet* dynamicBody = dynamic_type_cast< DynamicBodyBullet* >(body))
-		return dynamicBody->getCollisionGroup();
-	if (StaticBodyBullet* staticBody = dynamic_type_cast< StaticBodyBullet* >(body))
-		return staticBody->getCollisionGroup();
-
-	return ~0UL;
+	return body->getCollisionGroup();
 }
 
 struct ClosestConvexExcludeResultCallback : public btCollisionWorld::ClosestConvexResultCallback
@@ -244,19 +238,15 @@ void PhysicsManagerBullet::destroy()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	T_ANONYMOUS_VAR(RefArray< Joint >)(m_joints);
-	T_ANONYMOUS_VAR(RefArray< StaticBodyBullet >)(m_staticBodies);
-	T_ANONYMOUS_VAR(RefArray< DynamicBodyBullet >)(m_dynamicBodies);
+	T_ANONYMOUS_VAR(RefArray< BodyBullet >)(m_bodies);
 
 	while (!m_joints.empty())
 		m_joints.front()->destroy();
-	while (!m_dynamicBodies.empty())
-		m_dynamicBodies.front()->destroy();
-	while (!m_staticBodies.empty())
-		m_staticBodies.front()->destroy();
+	while (!m_bodies.empty())
+		m_bodies.front()->destroy();
 
 	m_joints.clear();
-	m_dynamicBodies.clear();
-	m_staticBodies.clear();
+	m_bodies.clear();
 
 	delete m_dynamicsWorld; m_dynamicsWorld = 0;
 	delete m_solver; m_solver = 0;
@@ -420,7 +410,7 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 		}
 
 		// Create our wrapper.
-		Ref< StaticBodyBullet > staticBody = new StaticBodyBullet(
+		Ref< BodyBullet > staticBody = new BodyBullet(
 			this,
 			m_dynamicsWorld,
 			rigidBody,
@@ -428,7 +418,7 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 			shapeDesc->getCollisionGroup(),
 			shapeDesc->getCollisionMask()
 		);
-		m_staticBodies.push_back(staticBody);
+		m_bodies.push_back(staticBody);
 
 		rigidBody->setUserPointer(staticBody);
 		body = staticBody;
@@ -464,7 +454,7 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 		}
 
 		// Create our wrapper.
-		Ref< DynamicBodyBullet > dynamicBody = new DynamicBodyBullet(
+		Ref< BodyBullet > dynamicBody = new BodyBullet(
 			this,
 			m_dynamicsWorld,
 			rigidBody,
@@ -472,7 +462,7 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 			shapeDesc->getCollisionGroup(),
 			shapeDesc->getCollisionMask()
 		);
-		m_dynamicBodies.push_back(dynamicBody);
+		m_bodies.push_back(dynamicBody);
 
 		rigidBody->setUserPointer(dynamicBody);
 		body = dynamicBody;
@@ -493,25 +483,8 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 	if (!desc)
 		return 0;
 
-	btRigidBody* b1 = 0;
-	btRigidBody* b2 = 0;
-
-	if (DynamicBodyBullet* dynamicBody1 = dynamic_type_cast< DynamicBodyBullet* >(body1))
-		b1 = dynamicBody1->getBtRigidBody();
-	else if (StaticBodyBullet* staticBody1 = dynamic_type_cast< StaticBodyBullet* >(body1))
-		b1 = staticBody1->getBtRigidBody();
-
-	T_ASSERT (b1);
-
-	if (body2)
-	{
-		if (DynamicBodyBullet* dynamicBody2 = dynamic_type_cast< DynamicBodyBullet* >(body2))
-			b2 = dynamicBody2->getBtRigidBody();
-		else if (StaticBodyBullet* staticBody2 = dynamic_type_cast< StaticBodyBullet* >(body2))
-			b2 = staticBody2->getBtRigidBody();
-
-		T_ASSERT (b2);
-	}
+	btRigidBody* b1 = body1 ? checked_type_cast< BodyBullet* >(body1)->getBtRigidBody() : 0;
+	btRigidBody* b2 = body2 ? checked_type_cast< BodyBullet* >(body2)->getBtRigidBody() : 0;
 	
 	Ref< Joint > joint;
 
@@ -722,9 +695,9 @@ void PhysicsManagerBullet::update()
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	T_ANONYMOUS_VAR(Save< PhysicsManagerBullet* >)(ms_this, this);
 
-	// Save current state of all dynamic bodies.
-	for (RefArray< DynamicBodyBullet >::iterator i = m_dynamicBodies.begin(); i != m_dynamicBodies.end(); ++i)
-		(*i)->setPreviousState((*i)->getState());
+	//// Save current state of all dynamic bodies.
+	//for (RefArray< DynamicBodyBullet >::iterator i = m_dynamicBodies.begin(); i != m_dynamicBodies.end(); ++i)
+	//	(*i)->setPreviousState((*i)->getState());
 
 	// Step simulation.
 	m_dynamicsWorld->stepSimulation(m_simulationDeltaTime, 0);
@@ -838,12 +811,7 @@ bool PhysicsManagerBullet::queryRay(
 	btVector3 from = toBtVector3(at);
 	btVector3 to = toBtVector3(at + direction * Scalar(maxLength));
 
-	btRigidBody* excludeBody = 0;
-
-	if (const DynamicBodyBullet* dynamicBody = dynamic_type_cast< const DynamicBodyBullet* >(ignoreBody))
-		excludeBody = dynamicBody->getBtRigidBody();
-	else if (const StaticBodyBullet* staticBody = dynamic_type_cast< const StaticBodyBullet* >(ignoreBody))
-		excludeBody = staticBody->getBtRigidBody();
+	btRigidBody* excludeBody = ignoreBody ? checked_type_cast< const BodyBullet* >(ignoreBody)->getBtRigidBody() : 0;
 
 	ClosestRayExcludeResultCallback callback(excludeBody, group, from, to);
 	m_dynamicsWorld->rayTest(from, to, callback);
@@ -863,40 +831,24 @@ uint32_t PhysicsManagerBullet::querySphere(const Vector4& at, float radius, uint
 {
 	outBodies.resize(0);
 
-	if (queryTypes & QtStatic)
+	for (RefArray< BodyBullet >::const_iterator i = m_bodies.begin(); i != m_bodies.end(); ++i)
 	{
-		for (RefArray< StaticBodyBullet >::const_iterator i = m_staticBodies.begin(); i != m_staticBodies.end(); ++i)
-		{
-			btRigidBody* rigidBody = (*i)->getBtRigidBody();
-			T_ASSERT (rigidBody);
+		if ((queryTypes & QtStatic) == 0 && (*i)->isStatic())
+			continue;
+		else if ((queryTypes & QtDynamic) == 0 && !(*i)->isStatic())
+			continue;
 
-			btVector3 aabbMin, aabbMax;
-			rigidBody->getAabb(aabbMin, aabbMax);
+		btRigidBody* rigidBody = (*i)->getBtRigidBody();
+		T_ASSERT (rigidBody);
 
-			float bodyRadius = (aabbMax - aabbMin).length() * 0.5f;
-			Vector4 bodyCenter = fromBtVector3((aabbMin + aabbMax) * 0.5f, 1.0f);
+		btVector3 aabbMin, aabbMax;
+		rigidBody->getAabb(aabbMin, aabbMax);
 
-			if ((bodyCenter - at).length() - radius - bodyRadius <= 0.0f)
-				outBodies.push_back(*i);
-		}
-	}
+		float bodyRadius = (aabbMax - aabbMin).length() * 0.5f;
+		Vector4 bodyCenter = fromBtVector3((aabbMin + aabbMax) * 0.5f, 1.0f);
 
-	if (queryTypes & QtDynamic)
-	{
-		for (RefArray< DynamicBodyBullet >::const_iterator i = m_dynamicBodies.begin(); i != m_dynamicBodies.end(); ++i)
-		{
-			btRigidBody* rigidBody = (*i)->getBtRigidBody();
-			T_ASSERT (rigidBody);
-
-			btVector3 aabbMin, aabbMax;
-			rigidBody->getAabb(aabbMin, aabbMax);
-
-			float bodyRadius = (aabbMax - aabbMin).length() * 0.5f;
-			Vector4 bodyCenter = fromBtVector3((aabbMin + aabbMax) * 0.5f, 1.0f);
-
-			if ((bodyCenter - at).length() - radius - bodyRadius <= 0.0f)
-				outBodies.push_back(*i);
-		}
+		if ((bodyCenter - at).length() - radius - bodyRadius <= 0.0f)
+			outBodies.push_back(*i);
 	}
 
 	return uint32_t(outBodies.size());
@@ -921,12 +873,7 @@ bool PhysicsManagerBullet::querySweep(
 	to.setIdentity();
 	to.setOrigin(toBtVector3(at + direction * Scalar(maxLength)));
 
-	btRigidBody* excludeBody = 0;
-
-	if (const DynamicBodyBullet* dynamicBody = dynamic_type_cast< const DynamicBodyBullet* >(ignoreBody))
-		excludeBody = dynamicBody->getBtRigidBody();
-	else if (const StaticBodyBullet* staticBody = dynamic_type_cast< const StaticBodyBullet* >(ignoreBody))
-		excludeBody = staticBody->getBtRigidBody();
+	btRigidBody* excludeBody = ignoreBody ? checked_type_cast< const BodyBullet* >(ignoreBody)->getBtRigidBody() : 0;
 
 	ClosestConvexExcludeResultCallback callback(group, excludeBody, from.getOrigin(), to.getOrigin());
 	m_dynamicsWorld->convexSweepTest(
@@ -959,17 +906,8 @@ bool PhysicsManagerBullet::querySweep(
 	QueryResult& outResult
 ) const
 {
-	btRigidBody* rigidBody = 0;
-	btCollisionShape* shape = 0;
-
-	if (const DynamicBodyBullet* dynamicBody = dynamic_type_cast< const DynamicBodyBullet* >(body))
-		rigidBody = dynamicBody->getBtRigidBody();
-	else if (const StaticBodyBullet* staticBody = dynamic_type_cast< const StaticBodyBullet* >(body))
-		rigidBody = staticBody->getBtRigidBody();
-	T_ASSERT (rigidBody);
-
-	shape = rigidBody->getCollisionShape();
-	T_ASSERT (shape);
+	btRigidBody* rigidBody = checked_type_cast< const BodyBullet* >(body)->getBtRigidBody();
+	btCollisionShape* shape = rigidBody->getCollisionShape();
 
 	// If shape is a compound we assume it's first child is a convex shape.
 	btQuaternion localRotation(0.0f, 0.0f, 0.0f, 1.0f);
@@ -1035,7 +973,6 @@ void PhysicsManagerBullet::getBodyCount(uint32_t& outCount, uint32_t& outActiveC
 void PhysicsManagerBullet::insertBody(btRigidBody* rigidBody, uint16_t collisionGroup, uint16_t collisionFilter)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	//m_dynamicsWorld->addRigidBody(rigidBody);
 	m_dynamicsWorld->addRigidBody(rigidBody, collisionGroup, collisionFilter);
 }
 
@@ -1057,24 +994,15 @@ void PhysicsManagerBullet::removeConstraint(btTypedConstraint* constraint)
 	m_dynamicsWorld->removeConstraint(constraint);
 }
 
-void PhysicsManagerBullet::destroyBody(Body* body, btRigidBody* rigidBody, btCollisionShape* shape)
+void PhysicsManagerBullet::destroyBody(BodyBullet* body, btRigidBody* rigidBody, btCollisionShape* shape)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	m_dynamicsWorld->removeRigidBody(rigidBody);
 
-	if (StaticBodyBullet* staticBody = dynamic_type_cast< StaticBodyBullet* >(body))
-	{
-		RefArray< StaticBodyBullet >::iterator i = std::find(m_staticBodies.begin(), m_staticBodies.end(), staticBody);
-		T_ASSERT (i != m_staticBodies.end());
-		m_staticBodies.erase(i);
-	}
-	else if (DynamicBodyBullet* dynamicBody = dynamic_type_cast< DynamicBodyBullet* >(body))
-	{
-		RefArray< DynamicBodyBullet >::iterator i = std::find(m_dynamicBodies.begin(), m_dynamicBodies.end(), dynamicBody);
-		T_ASSERT(i != m_dynamicBodies.end());
-		m_dynamicBodies.erase(i);
-	}
+	RefArray< BodyBullet >::iterator i = std::find(m_bodies.begin(), m_bodies.end(), body);
+	T_ASSERT (i != m_bodies.end());
+	m_bodies.erase(i);
 
 	delete rigidBody;
 	delete shape;
@@ -1100,34 +1028,15 @@ void PhysicsManagerBullet::nearCallback(btBroadphasePair& collisionPair, btColli
 	btCollisionObject* colObj0 = static_cast< btCollisionObject* >(collisionPair.m_pProxy0->m_clientObject);
 	btCollisionObject* colObj1 = static_cast< btCollisionObject* >(collisionPair.m_pProxy1->m_clientObject);
 
-	Body* body1 = colObj0 ? static_cast< Body* >(colObj0->getUserPointer()) : 0;
-	Body* body2 = colObj1 ? static_cast< Body* >(colObj1->getUserPointer()) : 0;
+	BodyBullet* body1 = colObj0 ? static_cast< BodyBullet* >(colObj0->getUserPointer()) : 0;
+	BodyBullet* body2 = colObj1 ? static_cast< BodyBullet* >(colObj1->getUserPointer()) : 0;
 	if (body1 && body2)
 	{
-		uint32_t group1 = 0, group2 = 0;
-		uint32_t mask1 = 0, mask2 = 0;
+		uint32_t group1 = body1->getCollisionGroup();
+		uint32_t mask1 = body1->getCollisionMask();
 
-		if (DynamicBodyBullet* dynamicBody1 = dynamic_type_cast< DynamicBodyBullet* >(body1))
-		{
-			group1 = dynamicBody1->getCollisionGroup();
-			mask1 = dynamicBody1->getCollisionMask();
-		}
-		else if (StaticBodyBullet* staticBody1 = dynamic_type_cast< StaticBodyBullet* >(body1))
-		{
-			group1 = staticBody1->getCollisionGroup();
-			mask1 = staticBody1->getCollisionMask();
-		}
-
-		if (DynamicBodyBullet* dynamicBody2 = dynamic_type_cast< DynamicBodyBullet* >(body2))
-		{
-			group2 = dynamicBody2->getCollisionGroup();
-			mask2 = dynamicBody2->getCollisionMask();
-		}
-		else if (StaticBodyBullet* staticBody2 = dynamic_type_cast< StaticBodyBullet* >(body2))
-		{
-			group2 = staticBody2->getCollisionGroup();
-			mask2 = staticBody2->getCollisionMask();
-		}
+		uint32_t group2 = body2->getCollisionGroup();
+		uint32_t mask2 = body2->getCollisionMask();
 
 		if ((group1 & mask2) == 0 && (group2 & mask1) == 0)
 			return;

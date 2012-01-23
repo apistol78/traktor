@@ -11,6 +11,8 @@ namespace traktor
 	namespace physics
 	{
 
+class Body;
+
 /*!
  * \ingroup Bullet
  */
