@@ -2,7 +2,6 @@
 #define traktor_SharedMemoryOsX_H
 
 #include "Core/System/ISharedMemory.h"
-#include "Core/Misc/AutoPtr.h"
 
 namespace traktor
 {
@@ -14,13 +13,15 @@ class SharedMemoryOsX : public ISharedMemory
 public:
 	SharedMemoryOsX(uint32_t size);
 	
+	virtual ~SharedMemoryOsX();
+	
 	virtual Ref< IStream > read(bool exclusive);
 	
 	virtual Ref< IStream > write();
 	
 private:
-	AutoArrayPtr< uint8_t > m_data;
 	uint32_t m_size;
+	void* m_buffer;
 };
 
 }
