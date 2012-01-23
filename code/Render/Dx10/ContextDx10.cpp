@@ -1,5 +1,5 @@
-#include "Render/Dx10/ContextDx10.h"
 #include "Core/Thread/Acquire.h"
+#include "Render/Dx10/ContextDx10.h"
 
 namespace traktor
 {
@@ -8,15 +8,26 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ContextDx10", ContextDx10, Object)
 
+ContextDx10::ContextDx10(
+	ID3D10Device* d3dDevice,
+	IDXGIFactory* dxgiFactory,
+	IDXGIOutput* dxgiOutput
+)
+:	m_d3dDevice(d3dDevice)
+,	m_dxgiFactory(dxgiFactory)
+,	m_dxgiOutput(dxgiOutput)
+{
+}
+
 void ContextDx10::deleteResource(DeleteCallback* callback)
 {
-	Acquire< Semaphore > lock(m_deleteResourcesLock);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_deleteResourcesLock);
 	m_deleteResources.push_back(callback);
 }
 
 void ContextDx10::deleteResources()
 {
-	Acquire< Semaphore > lock(m_deleteResourcesLock);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_deleteResourcesLock);
 	for (std::vector< DeleteCallback* >::iterator i = m_deleteResources.begin(); i != m_deleteResources.end(); ++i)
 		(*i)->deleteResource();
 	m_deleteResources.resize(0);

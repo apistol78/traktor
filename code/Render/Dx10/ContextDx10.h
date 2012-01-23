@@ -52,9 +52,21 @@ public:
 		virtual void deleteResource();
 	};
 
+	ContextDx10(
+		ID3D10Device* d3dDevice,
+		IDXGIFactory* dxgiFactory,
+		IDXGIOutput* dxgiOutput
+	);
+
 	void deleteResource(DeleteCallback* callback);
 
 	void deleteResources();
+
+	ID3D10Device* getD3DDevice() { return m_d3dDevice; }
+
+	IDXGIFactory* getDXGIFactory() { return m_dxgiFactory; }
+
+	IDXGIOutput* getDXGIOutput() { return m_dxgiOutput; }
 
 	template < typename InterfaceType >
 	void releaseComRef(ComRef< InterfaceType >& unk)
@@ -77,6 +89,9 @@ public:
 	}
 
 private:
+	ComRef< ID3D10Device > m_d3dDevice;
+	ComRef< IDXGIFactory > m_dxgiFactory;
+	ComRef< IDXGIOutput > m_dxgiOutput;
 	Semaphore m_deleteResourcesLock;
 	std::vector< DeleteCallback* > m_deleteResources;
 };

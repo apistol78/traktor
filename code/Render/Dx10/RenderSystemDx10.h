@@ -21,6 +21,7 @@ namespace traktor
 	{
 
 class ContextDx10;
+class Window;
 
 /*! \brief DirectX 10 render system.
  * \ingroup DX10
@@ -70,14 +71,9 @@ public:
 
 private:
 	Ref< ContextDx10 > m_context;
-	ComRef< ID3D10Device > m_d3dDevice;
-	ComRef< IDXGIFactory > m_dxgiFactory;
-	AutoArrayPtr< DXGI_MODE_DESC > m_dxgiDisplayModes;
-	std::vector< DisplayMode > m_displayModes;
-	HWND m_hWnd;
+	Ref< Window > m_window;
+	float m_displayAspect;
 	float m_mipBias;
-
-	static LRESULT wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 };
 
 	}
