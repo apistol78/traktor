@@ -79,7 +79,13 @@ bool SwitchNodeTraits::evaluateFull(
 	Constant& outputConstant
 ) const
 {
-	return false;
+	int32_t c = int32_t(inputConstants[0][0]);
+	if (c >= 0 && c < node->getInputPinCount() - 2)
+		outputConstant = inputConstants[c + 2];
+	else
+		outputConstant = inputConstants[1];
+
+	return true;
 }
 
 bool SwitchNodeTraits::evaluatePartial(
@@ -90,7 +96,16 @@ bool SwitchNodeTraits::evaluatePartial(
 	Constant& outputConstant
 ) const
 {
-	return false;
+	if (inputConstants[0].getWidth() <= 0)
+		return false;
+
+	int32_t c = int32_t(inputConstants[0][0]);
+	if (c >= 0 && c < node->getInputPinCount() - 2)
+		outputConstant = inputConstants[c + 2];
+	else
+		outputConstant = inputConstants[1];
+
+	return outputConstant.getWidth() > 0;
 }
 
 bool SwitchNodeTraits::evaluatePartial(
@@ -102,7 +117,16 @@ bool SwitchNodeTraits::evaluatePartial(
 	const OutputPin*& foldOutputPin
 ) const
 {
-	return false;
+	if (inputConstants[0].getWidth() <= 0)
+		return false;
+
+	int32_t c = int32_t(inputConstants[0][0]);
+	if (c >= 0 && c < node->getInputPinCount() - 2)
+		foldOutputPin = inputOutputPins[c + 2];
+	else
+		foldOutputPin = inputOutputPins[1];
+
+	return true;
 }
 
 	}

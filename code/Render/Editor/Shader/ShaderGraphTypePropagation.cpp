@@ -151,7 +151,7 @@ ShaderGraphTypePropagation::ShaderGraphTypePropagation(const ShaderGraph* shader
 
 		nodeSetInput.clear();
 
-		// We're finished when we havn't modified a single input pin type.
+		// We're finished when we haven't modified a single input pin type.
 		if (nodeSetOutput.empty())
 			break;
 
@@ -193,34 +193,6 @@ ShaderGraphTypePropagation::ShaderGraphTypePropagation(const ShaderGraph* shader
 	}
 	
 	log::debug << L"Type propagation solved in " << iterationCount << L" iteration(s)" << Endl;
-
-	// Feed forward; determine output types from input types; some nodes have
-	// fixed output types and we need to respect that.
-	for (RefArray< Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
-	{
-		const INodeTraits* nodeTraits = INodeTraits::find(*i);
-		T_ASSERT (nodeTraits);
-
-		uint32_t inputPinCount = (*i)->getInputPinCount();
-		uint32_t outputPinCount = (*i)->getOutputPinCount();
-
-		std::vector< PinType > inputPinTypes(inputPinCount);
-		for (uint32_t j = 0; j < inputPinCount; ++j)
-		{
-			const InputPin* inputPin = (*i)->getInputPin(j);
-			inputPinTypes[j] = m_inputPinTypes[inputPin];
-		}
-
-		for (uint32_t j = 0; j < outputPinCount; ++j)
-		{
-			const OutputPin* outputPin = (*i)->getOutputPin(j);
-			m_outputPinTypes[outputPin] = nodeTraits->getOutputPinType(
-				*i,
-				outputPin,
-				inputPinCount > 0 ? &inputPinTypes[0] : 0
-			);
-		}
-	}
 }
 
 PinType ShaderGraphTypePropagation::evaluate(const InputPin* inputPin) const
