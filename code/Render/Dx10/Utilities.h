@@ -2,6 +2,7 @@
 #define traktor_render_Utilities_H
 
 #include "Core/Config.h"
+#include "Render/Types.h"
 
 namespace traktor
 {
@@ -28,6 +29,23 @@ bool setupSampleDesc(ID3D10Device* d3dDevice, uint32_t sampleCount, DXGI_FORMAT 
  * \return True if successful.
  */
 bool setupSampleDesc(ID3D10Device* d3dDevice, uint32_t sampleCount, DXGI_FORMAT colorFormat, DXGI_FORMAT depthFormat, DXGI_SAMPLE_DESC& outSampleDesc);
+
+/*! \brief
+ */
+uint32_t getDisplayModeCount(IDXGIOutput* dxgiOutput);
+
+/*! \brief
+*/
+bool getDisplayMode(IDXGIOutput* dxgiOutput, uint32_t index, DisplayMode& outDisplayMode);
+
+/*! \brief Find matching DXGI display mode descriptor.
+ *
+ * \param dxgiOutput Output device.
+ * \param dm Display mode.
+ * \param outDxgiDisplayMode DXGI display mode descriptor.
+ * \return True if display mode found.
+ */
+bool findDxgiDisplayMode(IDXGIOutput* dxgiOutput, const DisplayMode& dm, DXGI_MODE_DESC& outDxgiDisplayMode);
 
 	}
 }

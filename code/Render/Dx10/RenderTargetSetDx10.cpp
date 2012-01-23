@@ -47,7 +47,10 @@ bool RenderTargetSetDx10::create(ID3D10Device* d3dDevice, const RenderTargetSetC
 		dtd.Height = desc.height;
 		dtd.MipLevels = 1;
 		dtd.ArraySize = 1;
-		dtd.Format = DXGI_FORMAT_D16_UNORM;
+		if (desc.ignoreStencil)
+			dtd.Format = DXGI_FORMAT_D16_UNORM;
+		else
+			dtd.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 		dtd.SampleDesc.Count = 1;
 		dtd.SampleDesc.Quality = 0;
 		dtd.Usage = D3D10_USAGE_DEFAULT;
