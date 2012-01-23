@@ -19,8 +19,8 @@ namespace traktor
 	namespace physics
 	{
 
+class Body;
 class ConeTwistJointDesc;
-class DynamicBody;
 
 /*!
  * \ingroup Bullet
@@ -51,8 +51,8 @@ private:
 	Vector4 m_coneAxis2;
 	Vector4 m_twistAxis1;
 	Vector4 m_twistAxis2;
-	Ref< DynamicBody > m_dynamicBody1;
-	Ref< DynamicBody > m_dynamicBody2;
+	Ref< Body > m_dynamicBody1;
+	Ref< Body > m_dynamicBody2;
 	Jacobian m_jac[3];
 	Scalar m_kCone;
 	Scalar m_coneAngleLimit;

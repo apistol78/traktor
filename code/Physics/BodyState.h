@@ -1,5 +1,5 @@
-#ifndef traktor_physics_DynamicBodyState_H
-#define traktor_physics_DynamicBodyState_H
+#ifndef traktor_physics_BodyState_H
+#define traktor_physics_BodyState_H
 
 #include "Core/Serialization/ISerializable.h"
 #include "Core/Math/Transform.h"
@@ -8,9 +8,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_PHYSICS_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -18,15 +18,15 @@ namespace traktor
 	namespace physics
 	{
 
-/*! \brief Dynamic rigid body state.
+/*! \brief Rigid body state.
  * \ingroup Physics
  */
-class T_DLLCLASS DynamicBodyState : public ISerializable
+class T_DLLCLASS BodyState : public ISerializable
 {
 	T_RTTI_CLASS;
 
 public:
-	DynamicBodyState();
+	BodyState();
 
 	void setTransform(const Transform& transform);
 
@@ -40,7 +40,7 @@ public:
 
 	const Vector4& getAngularVelocity() const;
 
-	DynamicBodyState interpolate(const DynamicBodyState& stateTarget, const Scalar& interpolate) const;
+	BodyState interpolate(const BodyState& stateTarget, const Scalar& interpolate) const;
 
 	virtual bool serialize(ISerializer& s);
 
@@ -53,4 +53,4 @@ private:
 	}
 }
 
-#endif	// traktor_physics_DynamicBodyState_H
+#endif	// traktor_physics_BodyState_H

@@ -43,13 +43,12 @@
 #include "Physics/HingeJointDesc.h"
 #include "Physics/Hinge2JointDesc.h"
 #include "Physics/Mesh.h"
-#include "Physics/Havok/PhysicsManagerHavok.h"
-#include "Physics/Havok/StaticBodyHavok.h"
-#include "Physics/Havok/DynamicBodyHavok.h"
 #include "Physics/Havok/BallJointHavok.h"
+#include "Physics/Havok/BodyHavok.h"
 #include "Physics/Havok/ConeTwistJointHavok.h"
-#include "Physics/Havok/HingeJointHavok.h"
 #include "Physics/Havok/Conversion.h"
+#include "Physics/Havok/HingeJointHavok.h"
+#include "Physics/Havok/PhysicsManagerHavok.h"
 #include "Resource/IResourceManager.h"
 
 namespace traktor
@@ -194,10 +193,8 @@ void PhysicsManagerHavok::destroy()
 	// Destroy all joints and bodies.
 	while (!m_joints.empty())
 		m_joints.front()->destroy();
-	while (!m_staticBodies.empty())
-		m_staticBodies.front()->destroy();
-	while (!m_dynamicBodies.empty())
-		m_dynamicBodies.front()->destroy();
+	while (!m_bodies.empty())
+		m_bodies.front()->destroy();
 
 	// Release world instance.
 	m_world->removeReference();
@@ -424,11 +421,12 @@ Ref< Body > PhysicsManagerHavok::createBody(resource::IResourceManager* resource
 		m_world->addEntity(rigidBody);
 
 		// Create our wrapper.
-		Ref< StaticBodyHavok > staticBody = new StaticBodyHavok(
+		Ref< BodyHavok > staticBody = new BodyHavok(
 			this,
-			rigidBody
+			rigidBody,
+			m_simulationDeltaTime
 		);
-		m_staticBodies.push_back(staticBody);
+		m_bodies.push_back(staticBody);
 
 		body = staticBody;
 	}
@@ -455,12 +453,12 @@ Ref< Body > PhysicsManagerHavok::createBody(resource::IResourceManager* resource
 		m_world->addEntity(rigidBody);
 
 		// Create our wrapper.
-		Ref< DynamicBodyHavok > dynamicBody = new DynamicBodyHavok(
+		Ref< BodyHavok > dynamicBody = new BodyHavok(
 			this,
 			rigidBody,
 			m_simulationDeltaTime
 		);
-		m_dynamicBodies.push_back(dynamicBody);
+		m_bodies.push_back(dynamicBody);
 
 		body = dynamicBody;
 	}
@@ -478,25 +476,12 @@ Ref< Joint > PhysicsManagerHavok::createJoint(const JointDesc* desc, const Trans
 	T_ASSERT (desc);
 	T_ASSERT (body1);
 
-	HvkRef< hkpRigidBody > b1;
-	HvkRef< hkpRigidBody > b2;
-
-	if (DynamicBodyHavok* dynamicBody1 = dynamic_type_cast< DynamicBodyHavok* >(body1))
-		b1 = dynamicBody1->getRigidBody();
-	else if (StaticBodyHavok* staticBody1 = dynamic_type_cast< StaticBodyHavok* >(body1))
-		b1 = staticBody1->getRigidBody();
-
-	T_ASSERT (b1);
-
+	HvkRef< hkpRigidBody > b1, b2;
+	
+	if (body1)
+		b1 = checked_type_cast< BodyHavok* >(body1)->getRigidBody();
 	if (body2)
-	{
-		if (DynamicBodyHavok* dynamicBody2 = dynamic_type_cast< DynamicBodyHavok* >(body2))
-			b2 = dynamicBody2->getRigidBody();
-		else if (StaticBodyHavok* staticBody2 = dynamic_type_cast< StaticBodyHavok* >(body2))
-			b2 = staticBody2->getRigidBody();
-
-		T_ASSERT (b2);
-	}
+		b2 = checked_type_cast< BodyHavok* >(body2)->getRigidBody();
 
 	HvkRef< hkpConstraintInstance > constraint;
 	Ref< Joint > joint;
@@ -620,10 +605,6 @@ Ref< Joint > PhysicsManagerHavok::createJoint(const JointDesc* desc, const Trans
 void PhysicsManagerHavok::update()
 {
 	T_ASSERT (m_world);
-
-	for (RefArray< DynamicBodyHavok >::iterator i = m_dynamicBodies.begin(); i != m_dynamicBodies.end(); ++i)
-		(*i)->setPreviousState((*i)->getState());
-
 	m_world->stepDeltaTime(m_simulationDeltaTime);
 }
 
@@ -660,7 +641,7 @@ bool PhysicsManagerHavok::queryRay(
 	if (ignoreBody)
 	{
 		IgnoreBodyClosestRayHitCollector collector(
-			static_cast< const DynamicBodyHavok* >(ignoreBody)->getRigidBody()->getCollidableRw()
+			static_cast< const BodyHavok* >(ignoreBody)->getRigidBody()->getCollidableRw()
 		);
 
 		m_world->castRay(input, collector);
@@ -702,8 +683,11 @@ uint32_t PhysicsManagerHavok::querySphere(
 
 	if (queryTypes & QtStatic)
 	{
-		for (RefArray< StaticBodyHavok >::const_iterator i = m_staticBodies.begin(); i != m_staticBodies.end(); ++i)
+		for (RefArray< BodyHavok >::const_iterator i = m_bodies.begin(); i != m_bodies.end(); ++i)
 		{
+			if (!(*i)->isStatic())
+				continue;
+
 			hkpRigidBody* rigidBody = (*i)->getRigidBody();
 			T_ASSERT (rigidBody);
 
@@ -727,8 +711,11 @@ uint32_t PhysicsManagerHavok::querySphere(
 
 	if (queryTypes & QtDynamic)
 	{
-		for (RefArray< DynamicBodyHavok >::const_iterator i = m_dynamicBodies.begin(); i != m_dynamicBodies.end(); ++i)
+		for (RefArray< BodyHavok >::const_iterator i = m_bodies.begin(); i != m_bodies.end(); ++i)
 		{
+			if ((*i)->isStatic())
+				continue;
+
 			hkpRigidBody* rigidBody = (*i)->getRigidBody();
 			T_ASSERT (rigidBody);
 
@@ -776,7 +763,7 @@ bool PhysicsManagerHavok::querySweep(
 	if (ignoreBody)
 	{
 		IgnoreBodyClosestContactCollector collector(
-			static_cast< const DynamicBodyHavok* >(ignoreBody)->getRigidBody()->getCollidableRw()
+			static_cast< const BodyHavok* >(ignoreBody)->getRigidBody()->getCollidableRw()
 		);
 
 		m_world->linearCast(&sphereColl, li, collector);
@@ -825,10 +812,10 @@ bool PhysicsManagerHavok::querySweep(
 
 void PhysicsManagerHavok::getBodyCount(uint32_t& outCount, uint32_t& outActiveCount) const
 {
-	outCount = uint32_t(m_staticBodies.size() + m_dynamicBodies.size());
+	outCount = uint32_t(m_bodies.size());
 
 	outActiveCount = 0;
-	for (RefArray< DynamicBodyHavok >::const_iterator i = m_dynamicBodies.begin(); i != m_dynamicBodies.end(); ++i)
+	for (RefArray< BodyHavok >::const_iterator i = m_bodies.begin(); i != m_bodies.end(); ++i)
 	{
 		if ((*i)->isActive())
 			++outActiveCount;
@@ -839,18 +826,9 @@ void PhysicsManagerHavok::destroyBody(Body* body, const HvkRef< hkpRigidBody >& 
 {
 	m_world->removeEntity(rigidBody);
 
-	if (StaticBodyHavok* staticBody = dynamic_type_cast< StaticBodyHavok* >(body))
-	{
-		RefArray< StaticBodyHavok >::iterator i = std::find(m_staticBodies.begin(), m_staticBodies.end(), staticBody);
-		if (i != m_staticBodies.end())
-			m_staticBodies.erase(i);
-	}
-	else if (DynamicBodyHavok* dynamicBody = dynamic_type_cast< DynamicBodyHavok* >(body))
-	{
-		RefArray< DynamicBodyHavok >::iterator i = std::find(m_dynamicBodies.begin(), m_dynamicBodies.end(), dynamicBody);
-		if (i != m_dynamicBodies.end())
-			m_dynamicBodies.erase(i);
-	}
+	RefArray< BodyHavok >::iterator i = std::find(m_bodies.begin(), m_bodies.end(), body);
+	if (i != m_bodies.end())
+		m_bodies.erase(i);
 }
 
 void PhysicsManagerHavok::destroyJoint(Joint* joint, const HvkRef< hkpConstraintInstance >& constraint)

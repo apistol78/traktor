@@ -4,9 +4,9 @@
 #include "Core/Math/Const.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Physics/BallJointDesc.h"
+#include "Physics/Body.h"
 #include "Physics/CapsuleShapeDesc.h"
 #include "Physics/ConeTwistJointDesc.h"
-#include "Physics/DynamicBody.h"
 #include "Physics/DynamicBodyDesc.h"
 #include "Physics/Joint.h"
 #include "Physics/PhysicsManager.h"
@@ -96,7 +96,7 @@ bool RagDollPoseController::create(
 			bodyDesc.setLinearThreshold(linearThreshold);
 			bodyDesc.setAngularThreshold(angularThreshold);
 
-			Ref< physics::DynamicBody > limb = checked_type_cast< physics::DynamicBody* >(physicsManager->createBody(0, &bodyDesc));
+			Ref< physics::Body > limb = physicsManager->createBody(0, &bodyDesc);
 			if (!limb)
 				return false;
 
@@ -221,7 +221,7 @@ void RagDollPoseController::destroy()
 			(*i)->destroy();
 	}
 
-	for (RefArray< physics::DynamicBody >::iterator i = m_limbs.begin(); i != m_limbs.end(); ++i)
+	for (RefArray< physics::Body >::iterator i = m_limbs.begin(); i != m_limbs.end(); ++i)
 	{
 		if (*i)
 			(*i)->destroy();
@@ -237,7 +237,7 @@ void RagDollPoseController::setTransform(const Transform& transform)
 	Transform deltaTransform = transform * m_worldTransform.inverse();
 
 	// Update all limbs with delta transform.
-	for (RefArray< physics::DynamicBody >::iterator i = m_limbs.begin(); i != m_limbs.end(); ++i)
+	for (RefArray< physics::Body >::iterator i = m_limbs.begin(); i != m_limbs.end(); ++i)
 	{
 		if (*i)
 		{
@@ -376,7 +376,7 @@ void RagDollPoseController::setEnable(bool enable)
 
 	if (enable)
 	{
-		for (RefArray< physics::DynamicBody >::iterator i = m_limbs.begin(); i != m_limbs.end(); ++i)
+		for (RefArray< physics::Body >::iterator i = m_limbs.begin(); i != m_limbs.end(); ++i)
 		{
 			if (*i)
 				(*i)->setEnable(true);
@@ -394,7 +394,7 @@ void RagDollPoseController::setEnable(bool enable)
 			if (*i)
 				(*i)->setEnable(false);
 		}
-		for (RefArray< physics::DynamicBody >::iterator i = m_limbs.begin(); i != m_limbs.end(); ++i)
+		for (RefArray< physics::Body >::iterator i = m_limbs.begin(); i != m_limbs.end(); ++i)
 		{
 			if (*i)
 				(*i)->setEnable(false);
@@ -409,7 +409,7 @@ bool RagDollPoseController::isEnable() const
 	return m_enable;
 }
 
-const RefArray< physics::DynamicBody >& RagDollPoseController::getLimbs() const
+const RefArray< physics::Body >& RagDollPoseController::getLimbs() const
 {
 	return m_limbs;
 }

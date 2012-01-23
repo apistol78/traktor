@@ -10,7 +10,7 @@ namespace traktor
 	namespace physics
 	{
 
-class Body;
+class BodyBullet;
 class Joint;
 
 /*!
@@ -26,7 +26,7 @@ struct IWorldCallback
 
 	virtual void removeConstraint(btTypedConstraint* constraint) = 0;
 
-	virtual void destroyBody(Body* body, btRigidBody* rigidBody, btCollisionShape* shape) = 0;
+	virtual void destroyBody(BodyBullet* body, btRigidBody* rigidBody, btCollisionShape* shape) = 0;
 
 	virtual void destroyConstraint(Joint* joint, btTypedConstraint* constraint) = 0;
 };

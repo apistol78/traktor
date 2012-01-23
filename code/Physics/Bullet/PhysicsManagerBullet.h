@@ -31,9 +31,8 @@ namespace traktor
 	namespace physics
 	{
 
-class DynamicBodyBullet;
+class BodyBullet;
 class Joint;
-class StaticBodyBullet;
 
 /*!
  * \ingroup Bullet
@@ -118,8 +117,7 @@ private:
 	btConstraintSolver* m_solver;
 	btDiscreteDynamicsWorld* m_dynamicsWorld;
 	Semaphore m_lock;
-	RefArray< StaticBodyBullet > m_staticBodies;
-	RefArray< DynamicBodyBullet > m_dynamicBodies;
+	RefArray< BodyBullet > m_bodies;
 	RefArray< Joint > m_joints;
 
 	static PhysicsManagerBullet* ms_this;
@@ -134,7 +132,7 @@ private:
 
 	virtual void removeConstraint(btTypedConstraint* constraint);
 
-	virtual void destroyBody(Body* body, btRigidBody* rigidBody, btCollisionShape* shape);
+	virtual void destroyBody(BodyBullet* body, btRigidBody* rigidBody, btCollisionShape* shape);
 
 	virtual void destroyConstraint(Joint* joint, btTypedConstraint* constraint);
 };

@@ -1,21 +1,34 @@
 #ifndef traktor_physics_BodyBullet_H
 #define traktor_physics_BodyBullet_H
 
-#include <btBulletDynamicsCommon.h>
-#include "Core/Misc/InvokeOnce.h"
-#include "Physics/Bullet/Types.h"
+#include "Physics/Body.h"
+
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_PHYSICS_BULLET_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
+// Bullet forward declarations.
+class btRigidBody;
+class btCollisionShape;
 
 namespace traktor
 {
 	namespace physics
 	{
 
+struct IWorldCallback;
+
 /*!
  * \ingroup Bullet
  */
-template < typename Outer >
-class BodyBullet : public Outer
+class T_DLLCLASS BodyBullet : public Body
 {
+	T_RTTI_CLASS;
+
 public:
 	BodyBullet(
 		IWorldCallback* callback,
@@ -24,50 +37,55 @@ public:
 		btCollisionShape* shape,
 		uint32_t collisionGroup,
 		uint32_t collisionMask
-	)
-	:	m_callback(callback)
-	,	m_dynamicsWorld(dynamicsWorld)
-	,	m_body(body)
-	,	m_shape(shape)
-	,	m_collisionGroup(collisionGroup)
-	,	m_collisionMask(collisionMask)
-	,	m_enable(false)
-	{
-	}
+	);
 
-	virtual ~BodyBullet()
-	{
-		destroy();
-	}
+	virtual void destroy();
 
-	virtual void destroy()
-	{
-		invokeOnce< IWorldCallback, Body*, btRigidBody*, btCollisionShape* >(m_callback, &IWorldCallback::destroyBody, this, m_body, m_shape);
+	virtual void setTransform(const Transform& transform);
 
-		m_dynamicsWorld = 0;
-		m_body = 0;
-		m_shape = 0;
+	virtual Transform getTransform() const;
 
-		Outer::destroy();
-	}
+	virtual bool isStatic() const;
 
-	virtual void setEnable(bool enable)
-	{
-		if (enable == m_enable)
-			return;
+	virtual void setActive(bool active);
 
-		if (enable)
-			m_callback->insertBody(m_body, (uint16_t)m_collisionGroup, (uint16_t)m_collisionMask);
-		else
-			m_callback->removeBody(m_body);
+	virtual bool isActive() const;
 
-		m_enable = enable;
-	}
+	virtual void setEnable(bool enable);
 
-	virtual bool isEnable() const
-	{
-		return m_enable;
-	}
+	virtual bool isEnable() const;
+
+	virtual void reset();
+
+	virtual void setMass(float mass, const Vector4& inertiaTensor);
+
+	virtual float getInverseMass() const;
+
+	virtual Matrix33 getInertiaTensorInverseWorld() const;
+
+	virtual void addForceAt(const Vector4& at, const Vector4& force, bool localSpace);
+
+	virtual void addTorque(const Vector4& torque, bool localSpace);
+
+	virtual void addLinearImpulse(const Vector4& linearImpulse, bool localSpace);
+
+	virtual void addAngularImpulse(const Vector4& angularImpulse, bool localSpace);
+
+	virtual void addImpulse(const Vector4& at, const Vector4& impulse, bool localSpace);
+
+	virtual void setLinearVelocity(const Vector4& linearVelocity);
+
+	virtual Vector4 getLinearVelocity() const;
+
+	virtual void setAngularVelocity(const Vector4& angularVelocity);
+
+	virtual Vector4 getAngularVelocity() const;
+
+	virtual Vector4 getVelocityAt(const Vector4& at, bool localSpace) const;
+
+	virtual bool setState(const BodyState& state);
+
+	virtual BodyState getState() const;
 
 	btDynamicsWorld* getBtDynamicsWorld() const { return m_dynamicsWorld; }
 
@@ -79,7 +97,7 @@ public:
 
 	uint32_t getCollisionMask() const { return m_collisionMask; }
 
-protected:
+private:
 	IWorldCallback* m_callback;
 	btDynamicsWorld* m_dynamicsWorld;
 	btRigidBody* m_body;

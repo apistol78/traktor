@@ -1,10 +1,10 @@
 #include <limits>
-#include "Physics/Bullet/ConeTwistJointBullet.h"
-#include "Physics/Bullet/Conversion.h"
-#include "Physics/ConeTwistJointDesc.h"
-#include "Physics/DynamicBody.h"
 #include "Core/Math/Quaternion.h"
 #include "Core/Math/Const.h"
+#include "Physics/Body.h"
+#include "Physics/ConeTwistJointDesc.h"
+#include "Physics/Bullet/ConeTwistJointBullet.h"
+#include "Physics/Bullet/Conversion.h"
 
 namespace traktor
 {
@@ -40,7 +40,7 @@ ConeTwistJointBullet::ConeTwistJointBullet(IWorldCallback* callback, JointConstr
 	m_coneAxis2 = coneAxis;
 	m_twistAxis2 = twistAxis;
 
-	m_dynamicBody1 = dynamic_type_cast< DynamicBody* >(body1);
+	m_dynamicBody1 = body1;
 }
 
 ConeTwistJointBullet::ConeTwistJointBullet(IWorldCallback* callback, JointConstraint* constraint, const Transform& transform, Body* body1, Body* body2, const ConeTwistJointDesc* desc)
@@ -59,8 +59,8 @@ ConeTwistJointBullet::ConeTwistJointBullet(IWorldCallback* callback, JointConstr
 	m_coneAxis2 = (body2->getTransform().inverse() * coneAxis).normalized();
 	m_twistAxis2 = (body2->getTransform().inverse() * twistAxis).normalized();
 
-	m_dynamicBody1 = dynamic_type_cast< DynamicBody* >(body1);
-	m_dynamicBody2 = dynamic_type_cast< DynamicBody* >(body2);
+	m_dynamicBody1 = body1;
+	m_dynamicBody2 = body2;
 }
 
 void ConeTwistJointBullet::prepare()

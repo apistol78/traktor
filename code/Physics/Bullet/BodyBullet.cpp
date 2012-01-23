@@ -1,9 +1,11 @@
 #include <btBulletDynamicsCommon.h>
 #include "Core/Math/Const.h"
 #include "Core/Math/Float.h"
-#include "Physics/DynamicBodyState.h"
+#include "Core/Misc/InvokeOnce.h"
+#include "Physics/BodyState.h"
 #include "Physics/Bullet/Conversion.h"
-#include "Physics/Bullet/DynamicBodyBullet.h"
+#include "Physics/Bullet/BodyBullet.h"
+#include "Physics/Bullet/Types.h"
 
 namespace traktor
 {
@@ -12,7 +14,7 @@ namespace traktor
 		namespace
 		{
 
-inline Vector4 convert(const DynamicBodyBullet* body, const Vector4& v, bool localSpace)
+inline Vector4 convert(const BodyBullet* body, const Vector4& v, bool localSpace)
 {
 	T_ASSERT (!isNan((v).x()));
 	T_ASSERT (!isNan((v).y()));
@@ -23,9 +25,9 @@ inline Vector4 convert(const DynamicBodyBullet* body, const Vector4& v, bool loc
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.DynamicBodyBullet", DynamicBodyBullet, DynamicBody)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.BodyBullet", BodyBullet, Body)
 
-DynamicBodyBullet::DynamicBodyBullet(
+BodyBullet::BodyBullet(
 	IWorldCallback* callback,
 	btDynamicsWorld* dynamicsWorld,
 	btRigidBody* body,
@@ -33,47 +35,104 @@ DynamicBodyBullet::DynamicBodyBullet(
 	uint32_t collisionGroup,
 	uint32_t collisionMask
 )
-:	BodyBullet< DynamicBody >(callback, dynamicsWorld, body, shape, collisionGroup, collisionMask)
+:	m_callback(callback)
+,	m_dynamicsWorld(dynamicsWorld)
+,	m_body(body)
+,	m_shape(shape)
+,	m_collisionGroup(collisionGroup)
+,	m_collisionMask(collisionMask)
+,	m_enable(false)
 {
 }
 
-void DynamicBodyBullet::setTransform(const Transform& transform)
+void BodyBullet::destroy()
 {
+	invokeOnce< IWorldCallback, BodyBullet*, btRigidBody*, btCollisionShape* >(m_callback, &IWorldCallback::destroyBody, this, m_body, m_shape);
+
+	m_dynamicsWorld = 0;
+	m_body = 0;
+	m_shape = 0;
+
+	Body::destroy();
+}
+
+void BodyBullet::setTransform(const Transform& transform)
+{
+	btTransform bt = toBtTransform(transform);
+
 	T_ASSERT (m_body);
-	m_body->setWorldTransform(toBtTransform(transform));
+	m_body->setWorldTransform(bt);
+
+	// Update motion state's transform as well in case if kinematic body.
+	if (m_body->isKinematicObject())
+		m_body->getMotionState()->setWorldTransform(bt);
 }
 
-Transform DynamicBodyBullet::getTransform() const
+Transform BodyBullet::getTransform() const
 {
 	T_ASSERT (m_body);
 	return fromBtTransform(m_body->getWorldTransform());
 }
 
-void DynamicBodyBullet::reset()
+bool BodyBullet::isStatic() const
+{
+	return m_body->isStaticOrKinematicObject();
+}
+
+void BodyBullet::setActive(bool active)
+{
+	if (!m_body->isKinematicObject())
+		m_body->setActivationState(active ? ACTIVE_TAG : ISLAND_SLEEPING);
+}
+
+bool BodyBullet::isActive() const
+{
+	return m_body->isActive();
+}
+
+void BodyBullet::setEnable(bool enable)
+{
+	if (enable == m_enable)
+		return;
+
+	if (enable)
+		m_callback->insertBody(m_body, (uint16_t)m_collisionGroup, (uint16_t)m_collisionMask);
+	else
+		m_callback->removeBody(m_body);
+
+	m_enable = enable;
+}
+
+bool BodyBullet::isEnable() const
+{
+	return m_enable;
+}
+
+void BodyBullet::reset()
 {
 	T_ASSERT (m_body);
 	m_body->clearForces();
 }
 
-void DynamicBodyBullet::setMass(float mass, const Vector4& inertiaTensor)
+void BodyBullet::setMass(float mass, const Vector4& inertiaTensor)
 {
 	T_ASSERT (m_body);
 	m_body->setMassProps(mass, toBtVector3(inertiaTensor));
 }
 
-float DynamicBodyBullet::getInverseMass() const
+float BodyBullet::getInverseMass() const
 {
 	T_ASSERT (m_body);
 	return m_body->getInvMass();
 }
 
-Matrix33 DynamicBodyBullet::getInertiaTensorInverseWorld() const
+Matrix33 BodyBullet::getInertiaTensorInverseWorld() const
 {
 	T_ASSERT (m_body);
 	return fromBtMatrix(m_body->getInvInertiaTensorWorld());
 }
 
-void DynamicBodyBullet::addForceAt(const Vector4& at, const Vector4& force, bool localSpace)
+void BodyBullet::addForceAt(const Vector4& at, const Vector4& force, bool localSpace)
 {
 	T_ASSERT (m_body);
 
@@ -87,28 +146,28 @@ void DynamicBodyBullet::addForceAt(const Vector4& at, const Vector4& force, bool
 	);
 }
 
-void DynamicBodyBullet::addTorque(const Vector4& torque, bool localSpace)
+void BodyBullet::addTorque(const Vector4& torque, bool localSpace)
 {
 	T_ASSERT (m_body);
 	Vector4 torque_ = convert(this, torque, localSpace);
 	m_body->applyTorque(toBtVector3(torque_));
 }
 
-void DynamicBodyBullet::addLinearImpulse(const Vector4& linearImpulse, bool localSpace)
+void BodyBullet::addLinearImpulse(const Vector4& linearImpulse, bool localSpace)
 {
 	T_ASSERT (m_body);
 	Vector4 linearImpulse_ = convert(this, linearImpulse, localSpace);
 	m_body->applyCentralImpulse(toBtVector3(linearImpulse_));
 }
 
-void DynamicBodyBullet::addAngularImpulse(const Vector4& angularImpulse, bool localSpace)
+void BodyBullet::addAngularImpulse(const Vector4& angularImpulse, bool localSpace)
 {
 	T_ASSERT (m_body);
 	Vector4 angularImpulse_ = convert(this, angularImpulse, localSpace);
 	m_body->applyTorqueImpulse(toBtVector3(angularImpulse_));
 }
 
-void DynamicBodyBullet::addImpulse(const Vector4& at, const Vector4& impulse, bool localSpace)
+void BodyBullet::addImpulse(const Vector4& at, const Vector4& impulse, bool localSpace)
 {
 	T_ASSERT (m_body);
 
@@ -122,31 +181,31 @@ void DynamicBodyBullet::addImpulse(const Vector4& at, const Vector4& impulse, bo
 	);
 }
 
-void DynamicBodyBullet::setLinearVelocity(const Vector4& linearVelocity)
+void BodyBullet::setLinearVelocity(const Vector4& linearVelocity)
 {
 	T_ASSERT (m_body);
 	m_body->setLinearVelocity(toBtVector3(linearVelocity));
 }
 
-Vector4 DynamicBodyBullet::getLinearVelocity() const
+Vector4 BodyBullet::getLinearVelocity() const
 {
 	T_ASSERT (m_body);
 	return fromBtVector3(m_body->getLinearVelocity(), 0.0f);
 }
 
-void DynamicBodyBullet::setAngularVelocity(const Vector4& angularVelocity)
+void BodyBullet::setAngularVelocity(const Vector4& angularVelocity)
 {
 	T_ASSERT (m_body);
 	m_body->setAngularVelocity(toBtVector3(angularVelocity));
 }
 
-Vector4 DynamicBodyBullet::getAngularVelocity() const
+Vector4 BodyBullet::getAngularVelocity() const
 {
 	T_ASSERT (m_body);
 	return fromBtVector3(m_body->getAngularVelocity(), 0.0f);
 }
 
-Vector4 DynamicBodyBullet::getVelocityAt(const Vector4& at, bool localSpace) const
+Vector4 BodyBullet::getVelocityAt(const Vector4& at, bool localSpace) const
 {
 	T_ASSERT (m_body);
 
@@ -162,7 +221,7 @@ Vector4 DynamicBodyBullet::getVelocityAt(const Vector4& at, bool localSpace) con
 	);
 }
 
-bool DynamicBodyBullet::setState(const DynamicBodyState& state)
+bool BodyBullet::setState(const BodyState& state)
 {
 	setTransform(state.getTransform());
 	setLinearVelocity(state.getLinearVelocity());
@@ -170,23 +229,13 @@ bool DynamicBodyBullet::setState(const DynamicBodyState& state)
 	return true;
 }
 
-DynamicBodyState DynamicBodyBullet::getState() const
+BodyState BodyBullet::getState() const
 {
-	DynamicBodyState state;
+	BodyState state;
 	state.setTransform(getTransform());
 	state.setLinearVelocity(getLinearVelocity());
 	state.setAngularVelocity(getAngularVelocity());
 	return state;
-}
-
-void DynamicBodyBullet::setActive(bool active)
-{
-	m_body->setActivationState(active ? ACTIVE_TAG : ISLAND_SLEEPING);
-}
-
-bool DynamicBodyBullet::isActive() const
-{
-	return m_body->isActive();
 }
 
 	}

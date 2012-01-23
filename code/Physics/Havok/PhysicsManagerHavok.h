@@ -21,8 +21,7 @@ namespace traktor
 	namespace physics
 	{
 
-class StaticBodyHavok;
-class DynamicBodyHavok;
+class BodyHavok;
 
 /*!
  * \ingroup Havok
@@ -105,8 +104,7 @@ private:
 	hkThreadMemory* m_threadMemory;
 	uint8_t* m_stackBuffer;
 	hkpWorld* m_world;
-	RefArray< StaticBodyHavok > m_staticBodies;
-	RefArray< DynamicBodyHavok > m_dynamicBodies;
+	RefArray< BodyHavok > m_bodies;
 	RefArray< Joint > m_joints;
 
 	virtual void destroyBody(Body* body, const HvkRef< hkpRigidBody >& rigidBody);
