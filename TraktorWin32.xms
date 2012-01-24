@@ -13909,7 +13909,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/LuaJIT-2.0.0-beta2/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/LuaJIT-2.0.0-beta9/src</item>
 					</includePaths>
 					<definitions>
 						<item>T_SCRIPT_LUA_EXPORT</item>
@@ -13927,7 +13927,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/LuaJIT-2.0.0-beta2/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/LuaJIT-2.0.0-beta9/src</item>
 					</includePaths>
 					<definitions>
 						<item>T_SCRIPT_LUA_EXPORT</item>
@@ -13945,7 +13945,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/LuaJIT-2.0.0-beta2/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/LuaJIT-2.0.0-beta9/src</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -13963,7 +13963,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/LuaJIT-2.0.0-beta2/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/LuaJIT-2.0.0-beta9/src</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -13994,8 +13994,8 @@
 					<linkWithProduct>true</linkWithProduct>
 					<project type="Project" version="1">
 						<enable>true</enable>
-						<name>Extern.LuaJIT-2.0.0-beta2</name>
-						<sourcePath>$(TRAKTOR_HOME)/3rdp/LuaJIT-2.0.0-beta2/src</sourcePath>
+						<name>Extern.LuaJIT-2.0.0-beta9</name>
+						<sourcePath>$(TRAKTOR_HOME)/3rdp/LuaJIT-2.0.0-beta9/src</sourcePath>
 						<configurations>
 							<item type="Configuration" version="1">
 								<name>DebugShared</name>
