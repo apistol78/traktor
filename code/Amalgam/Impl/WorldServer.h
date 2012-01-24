@@ -37,17 +37,25 @@ public:
 
 	int32_t reconfigure(const Settings* settings);
 
+	virtual void addEntityFactory(world::IEntityFactory* entityFactory);
+
+	virtual void removeEntityFactory(world::IEntityFactory* entityFactory);
+
+	virtual void addEntityRenderer(world::IEntityRenderer* entityRenderer);
+
+	virtual void removeEntityRenderer(world::IEntityRenderer* entityRenderer);
+
 	virtual world::IEntityBuilder* getEntityBuilder();
 
-	virtual Ref< world::IWorldRenderer > createWorldRenderer(
-		const world::WorldRenderSettings* worldRenderSettings,
-		const world::WorldEntityRenderers* entityRenderers
-	);
+	virtual world::WorldEntityRenderers* getEntityRenderers();
+
+	virtual Ref< world::IWorldRenderer > createWorldRenderer(const world::WorldRenderSettings* worldRenderSettings);
 
 	virtual int32_t getFrameCount() const;
 
 private:
 	Ref< world::IEntityBuilder > m_entityBuilder;
+	Ref< world::WorldEntityRenderers > m_entityRenderers;
 	Ref< IRenderServer > m_renderServer;
 	Ref< IResourceServer > m_resourceServer;
 	Ref< scene::SceneFactory > m_sceneFactory;

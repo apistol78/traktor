@@ -44,9 +44,23 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.WorldServer", WorldServer, IWorldServer
 
 bool WorldServer::create(const Settings* settings, IRenderServer* renderServer, IResourceServer* resourceServer)
 {
-	m_entityBuilder = new world::EntityBuilder();
 	m_renderServer = renderServer;
 	m_resourceServer = resourceServer;
+
+	m_entityBuilder = new world::EntityBuilder();
+
+	m_entityRenderers = new world::WorldEntityRenderers();
+	m_entityRenderers->add(new world::GroupEntityRenderer());
+	m_entityRenderers->add(new world::LightEntityRenderer());
+	m_entityRenderers->add(new world::TransientEntityRenderer());
+	m_entityRenderers->add(new mesh::MeshEntityRenderer());
+	m_entityRenderers->add(new mesh::InstanceMeshEntityRenderer());
+	m_entityRenderers->add(new spray::EffectEntityRenderer(m_renderServer->getRenderSystem()));
+	m_entityRenderers->add(new animation::ClothEntityRenderer());
+	m_entityRenderers->add(new animation::PathEntityRenderer());
+	m_entityRenderers->add(new physics::EntityRenderer());
+	m_entityRenderers->add(new weather::WeatherEntityRenderer());
+	m_entityRenderers->add(new terrain::EntityRenderer());
 
 	return true;
 }
@@ -105,38 +119,39 @@ int32_t WorldServer::reconfigure(const Settings* settings)
 	return CrUnaffected;
 }
 
+void WorldServer::addEntityFactory(world::IEntityFactory* entityFactory)
+{
+	m_entityBuilder->addFactory(entityFactory);
+}
+
+void WorldServer::removeEntityFactory(world::IEntityFactory* entityFactory)
+{
+	m_entityBuilder->removeFactory(entityFactory);
+}
+
+void WorldServer::addEntityRenderer(world::IEntityRenderer* entityRenderer)
+{
+	m_entityRenderers->add(entityRenderer);
+}
+
+void WorldServer::removeEntityRenderer(world::IEntityRenderer* entityRenderer)
+{
+	m_entityRenderers->remove(entityRenderer);
+}
+
 world::IEntityBuilder* WorldServer::getEntityBuilder()
 {
 	return m_entityBuilder;
 }
 
-Ref< world::IWorldRenderer > WorldServer::createWorldRenderer(
-	const world::WorldRenderSettings* worldRenderSettings,
-	const world::WorldEntityRenderers* entityRenderers
-)
+world::WorldEntityRenderers* WorldServer::getEntityRenderers()
+{
+	return m_entityRenderers;
+}
+
+Ref< world::IWorldRenderer > WorldServer::createWorldRenderer(const world::WorldRenderSettings* worldRenderSettings)
 {
 	T_ASSERT (worldRenderSettings);
-
-	Ref< world::WorldEntityRenderers > worldEntityRenderers = new world::WorldEntityRenderers();
-
-	worldEntityRenderers->add(new world::GroupEntityRenderer());
-	worldEntityRenderers->add(new world::LightEntityRenderer());
-	worldEntityRenderers->add(new world::TransientEntityRenderer());
-	worldEntityRenderers->add(new mesh::MeshEntityRenderer());
-	worldEntityRenderers->add(new mesh::InstanceMeshEntityRenderer());
-	worldEntityRenderers->add(new spray::EffectEntityRenderer(m_renderServer->getRenderSystem()));
-	worldEntityRenderers->add(new animation::ClothEntityRenderer());
-	worldEntityRenderers->add(new animation::PathEntityRenderer());
-	worldEntityRenderers->add(new physics::EntityRenderer());
-	worldEntityRenderers->add(new weather::WeatherEntityRenderer());
-	worldEntityRenderers->add(new terrain::EntityRenderer());
-
-	if (entityRenderers)
-	{
-		const RefArray< world::IEntityRenderer >& arr = entityRenderers->get();
-		for (RefArray< world::IEntityRenderer >::const_iterator i = arr.begin(); i != arr.end(); ++i)
-			worldEntityRenderers->add(*i);
-	}
 
 	Ref< world::IWorldRenderer > worldRenderer;
 
@@ -150,7 +165,7 @@ Ref< world::IWorldRenderer > WorldServer::createWorldRenderer(
 
 	if (!worldRenderer->create(
 		*worldRenderSettings,
-		worldEntityRenderers,
+		m_entityRenderers,
 		m_resourceServer->getResourceManager(),
 		m_renderServer->getRenderSystem(),
 		m_renderServer->getRenderView(),
