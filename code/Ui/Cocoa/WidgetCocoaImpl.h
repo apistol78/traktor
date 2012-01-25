@@ -265,7 +265,7 @@ public:
 	{
 		NSFont* nsfnt = [NSFont
 			fontWithName: makeNSString(font.getFace())
-			size: (CGFloat)font.getSize() / 1.2
+			size: (CGFloat)font.getSize()
 		];
 		if (!nsfnt)
 			return;
@@ -278,6 +278,7 @@ public:
 		NSFont* font = [getControl() font];
 		if (!font)
 			font = [NSFont controlContentFontOfSize: 11];
+
 		return Font(
 			fromNSString([font fontName]),
 			[font pointSize]
