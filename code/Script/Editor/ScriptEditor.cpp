@@ -80,7 +80,11 @@ bool ScriptEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	if (!m_edit->create(containerEdit, m_script->getText()))
 		return false;
 
+#if defined(__APPLE__)
+	m_edit->setFont(ui::Font(L"Courier New", 14));
+#else
 	m_edit->setFont(ui::Font(L"Courier New", 16));
+#endif
 	m_edit->addChangeEventHandler(ui::createMethodHandler(this, &ScriptEditor::eventScriptChange));
 
 	m_compileStatus = new ui::custom::StatusBar();

@@ -655,21 +655,11 @@ void RichEdit::eventPaint(Event* event)
 		canvas.setBackground(Color4ub(200, 200, 200));
 		canvas.fillGradientRect(marginRc, false);
 	
-		Rect lineRc(rc.left, rc.top, rc.right, rc.top + lineHeight);
+		Rect lineRc(rc.left, rc.top, rc.left + lineMargin, rc.top + lineHeight);
 		for (uint32_t i = lineOffset; i < lineOffset + pageLines && i < lineCount; ++i)
 		{
-			Rect lnrRc0 = lineRc;
-			lnrRc0.left += lineMargin;
-			
-			canvas.setBackground((i & 1) ? Color4ub(255, 255, 255) : Color4ub(245, 245, 245));
-			canvas.fillRect(lnrRc0);
-
-			Rect lnrRc1 = lineRc;
-			lnrRc1.right = lnrRc1.left + lineMargin;
-
 			canvas.setForeground(Color4ub(0, 0, 0));
-			canvas.drawText(lnrRc1, toString(i + 1), AnLeft, AnCenter);
-
+			canvas.drawText(lineRc, toString(i + 1), AnLeft, AnCenter);
 			lineRc = lineRc.offset(0, lineHeight);
 		}
 	}

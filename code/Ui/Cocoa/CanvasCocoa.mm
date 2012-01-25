@@ -38,7 +38,7 @@ void CanvasCocoa::setFont(const Font& font)
 {
 	m_font = [NSFont
 		fontWithName: makeNSString(font.getFace())
-		size: (CGFloat)font.getSize() / 1.2
+		size: (CGFloat)font.getSize()
 	];
 }
 
