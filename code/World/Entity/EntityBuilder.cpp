@@ -23,6 +23,7 @@ void EntityBuilder::addFactory(IEntityFactory* entityFactory)
 {
 	T_FATAL_ASSERT_M (!m_inbuild, L"Should not add entity factory when building");
 	m_entityFactories.push_back(entityFactory);
+	m_resolvedFactoryCache.clear();
 }
 
 void EntityBuilder::removeFactory(IEntityFactory* entityFactory)
@@ -30,7 +31,10 @@ void EntityBuilder::removeFactory(IEntityFactory* entityFactory)
 	T_FATAL_ASSERT_M (!m_inbuild, L"Should not remove entity factory when building");
 	RefArray< IEntityFactory >::iterator i = std::find(m_entityFactories.begin(), m_entityFactories.end(), entityFactory);
 	if (i != m_entityFactories.end())
+	{
 		m_entityFactories.erase(i);
+		m_resolvedFactoryCache.clear();
+	}
 }
 
 void EntityBuilder::begin(IEntitySchema* entitySchema)
