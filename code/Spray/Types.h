@@ -1,0 +1,31 @@
+#ifndef traktor_spray_Types_H
+#define traktor_spray_Types_H
+
+#include "Core/Math/RandomGeometry.h"
+
+namespace traktor
+{
+	namespace sound
+	{
+
+class SoundSystem;
+
+	}
+
+	namespace spray
+	{
+
+/*! \brief Effect context.
+ * \ingroup Spray
+ */
+struct Context
+{
+	float deltaTime;
+	RandomGeometry random;
+	sound::SoundSystem* soundSystem;
+};
+
+	}
+}
+
+#endif	// traktor_spray_Types_H
