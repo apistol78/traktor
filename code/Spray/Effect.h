@@ -7,9 +7,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_SPRAY_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -43,13 +43,13 @@ public:
 
 	virtual bool serialize(ISerializer& s);
 
-	inline float getDuration() const { return m_duration; }
+	float getDuration() const { return m_duration; }
 
-	inline float getLoopStart() const { return m_loopStart; }
+	float getLoopStart() const { return m_loopStart; }
 
-	inline float getLoopEnd() const { return m_loopEnd; }
+	float getLoopEnd() const { return m_loopEnd; }
 
-	inline const RefArray< EffectLayer >& getLayers() const { return m_layers; }
+	const RefArray< EffectLayer >& getLayers() const { return m_layers; }
 	
 private:
 	float m_duration;

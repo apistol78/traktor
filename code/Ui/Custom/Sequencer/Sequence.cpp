@@ -75,10 +75,12 @@ void Sequence::mouseDown(SequencerControl* sequencer, const Point& at, const Rec
 	m_selectedKey = 0;
 	m_trackKey = 0;
 
-	for (RefArray< Key >::const_iterator j = m_keys.begin(); j != m_keys.end(); ++j)
+	for (uint32_t j = m_keys.size(); j > 0; --j)
 	{
+		Key* key = m_keys[j - 1];
+
 		int left, right;
-		(*j)->getRange(this, left, right);
+		key->getRange(this, left, right);
 
 		left += separator - scrollOffset;
 		right += separator - scrollOffset;
@@ -86,8 +88,8 @@ void Sequence::mouseDown(SequencerControl* sequencer, const Point& at, const Rec
 		if (at.x >= left && at.x <= right)
 		{
 			m_previousPosition = at.x;
-			m_selectedKey = *j;
-			m_trackKey = *j;
+			m_selectedKey = key;
+			m_trackKey = key;
 			break;
 		}
 	}

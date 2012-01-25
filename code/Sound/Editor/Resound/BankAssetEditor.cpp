@@ -112,11 +112,9 @@ bool BankAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	}
 
 	m_resourceManager = new resource::ResourceManager();
-	if (m_soundSystem)
-		m_resourceManager->addFactory(new SoundFactory(
-			m_editor->getOutputDatabase(),
-			m_soundSystem
-		));
+	m_resourceManager->addFactory(new SoundFactory(
+		m_editor->getOutputDatabase()
+	));
 
 	updateGrainView();
 	return true;

@@ -6,7 +6,7 @@
 #include "Core/Math/Plane.h"
 #include "Core/Math/Aabb3.h"
 #include "Core/Thread/Job.h"
-#include "Spray/EmitterUpdateContext.h"
+#include "Spray/Types.h"
 #include "Spray/Modifier.h"
 #include "Spray/Point.h"
 
@@ -41,7 +41,7 @@ public:
 
 	virtual ~EmitterInstance();
 
-	void update(EmitterUpdateContext& context, const Transform& transform, bool emit, bool singleShot);
+	void update(Context& context, const Transform& transform, bool emit, bool singleShot);
 
 	void render(PointRenderer* pointRenderer, const Plane& cameraPlane) const;
 

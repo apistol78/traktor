@@ -8,9 +8,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_SPRAY_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -25,7 +25,7 @@ class IResourceManager;
 	namespace spray
 	{
 
-struct EmitterUpdateContext;
+struct Context;
 class EmitterInstance;
 
 /*! \brief Particle source.
@@ -41,7 +41,7 @@ public:
 	virtual bool bind(resource::IResourceManager* resourceManager) = 0;
 
 	virtual void emit(
-		EmitterUpdateContext& context,
+		Context& context,
 		const Transform& transform,
 		uint32_t emitCount,
 		EmitterInstance& emitterInstance

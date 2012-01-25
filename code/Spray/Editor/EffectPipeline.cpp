@@ -2,6 +2,8 @@
 #include "Spray/Effect.h"
 #include "Spray/EffectLayer.h"
 #include "Spray/Emitter.h"
+#include "Spray/Sequence.h"
+#include "Spray/SoundTrigger.h"
 #include "Spray/Sources/PointSetSource.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineBuilder.h"
@@ -50,6 +52,17 @@ bool EffectPipeline::buildDependencies(
 			const PointSetSource* pointSetSource = dynamic_type_cast< const PointSetSource* >(emitter->getSource());
 			if (pointSetSource)
 				pipelineDepends->addDependency(pointSetSource->getPointSet().getGuid(), editor::PdfBuild);
+		}
+
+		const Sequence* sequence = (*i)->getSequence();
+		if (sequence)
+		{
+			for (std::vector< Sequence::Key >::const_iterator i = sequence->getKeys().begin(); i != sequence->getKeys().end(); ++i)
+			{
+				const SoundTrigger* soundTrigger = dynamic_type_cast< const SoundTrigger* >(i->trigger);
+				if (soundTrigger)
+					pipelineDepends->addDependency(soundTrigger->getSound().getGuid(), editor::PdfBuild);
+			}
 		}
 	}
 

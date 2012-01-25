@@ -7,9 +7,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_SPRAY_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -18,6 +18,13 @@ namespace traktor
 	{
 
 class IResourceManager;
+
+	}
+
+	namespace sound
+	{
+
+class SoundSystem;
 
 	}
 
@@ -35,7 +42,7 @@ class T_DLLCLASS EffectEntityData : public world::SpatialEntityData
 	T_RTTI_CLASS;
 
 public:
-	Ref< EffectEntity > createEntity(resource::IResourceManager* resourceManager) const;
+	Ref< EffectEntity > createEntity(resource::IResourceManager* resourceManager, sound::SoundSystem* soundSystem) const;
 
 	virtual bool serialize(ISerializer& s);
 

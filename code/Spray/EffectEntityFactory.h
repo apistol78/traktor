@@ -20,6 +20,13 @@ class IResourceManager;
 
 	}
 
+	namespace sound
+	{
+
+class SoundSystem;
+
+	}
+
 	namespace spray
 	{
 
@@ -31,7 +38,7 @@ class T_DLLCLASS EffectEntityFactory : public world::IEntityFactory
 	T_RTTI_CLASS;
 
 public:
-	EffectEntityFactory(resource::IResourceManager* resourceManager);
+	EffectEntityFactory(resource::IResourceManager* resourceManager, sound::SoundSystem* soundSystem);
 
 	virtual const TypeInfoSet getEntityTypes() const;
 
@@ -39,6 +46,7 @@ public:
 
 private:
 	resource::IResourceManager* m_resourceManager;
+	sound::SoundSystem* m_soundSystem;
 };
 
 	}

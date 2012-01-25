@@ -21,15 +21,17 @@ const uint32_t c_updateDenom = 1;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectEntity", EffectEntity, world::SpatialEntity)
 
-EffectEntity::EffectEntity(const Transform& transform, const resource::Proxy< Effect >& effect)
+EffectEntity::EffectEntity(const Transform& transform, const resource::Proxy< Effect >& effect, sound::SoundSystem* soundSystem)
 :	m_transform(transform)
 ,	m_effect(effect)
-#if !defined(WINCE)
-,	m_context(0.0f, uint32_t(clock()))
-#endif
 ,	m_counter(0)
 ,	m_enable(true)
 {
+	m_context.deltaTime = 0.0f;
+#if !defined(WINCE)
+	m_context.random = RandomGeometry(uint32_t(clock()));
+#endif
+	m_context.soundSystem = soundSystem;
 }
 
 void EffectEntity::render(const Plane& cameraPlane, PointRenderer* pointRenderer)

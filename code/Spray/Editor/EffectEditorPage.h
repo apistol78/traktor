@@ -44,6 +44,13 @@ class IResourceManager;
 
 	}
 
+	namespace sound
+	{
+
+class SoundSystem;
+
+	}
+
 	namespace spray
 	{
 
@@ -82,6 +89,7 @@ private:
 	Ref< EffectPreviewControl > m_previewControl;
 	Ref< ui::custom::SequencerControl > m_sequencer;
 	Ref< resource::IResourceManager > m_resourceManager;
+	Ref< sound::SoundSystem > m_soundSystem;
 	bool m_velocityVisible;
 	bool m_guideVisible;
 	bool m_moveEmitter;
@@ -93,6 +101,8 @@ private:
 	void eventLayerSelect(ui::Event* event);
 
 	void eventTimeCursorMove(ui::Event* event);
+
+	void eventKeyMove(ui::Event* event);
 };
 
 	}

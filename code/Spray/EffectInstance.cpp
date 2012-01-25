@@ -2,7 +2,7 @@
 #include "Spray/Effect.h"
 #include "Spray/EffectLayer.h"
 #include "Spray/EffectLayerInstance.h"
-#include "Spray/EmitterUpdateContext.h"
+#include "Spray/Types.h"
 
 namespace traktor
 {
@@ -18,7 +18,7 @@ EffectInstance::EffectInstance(const Effect* effect)
 	m_loopEnable = effect->getLoopEnd() > effect->getLoopStart();
 }
 
-void EffectInstance::update(EmitterUpdateContext& context, const Transform& transform, bool enable)
+void EffectInstance::update(Context& context, const Transform& transform, bool enable)
 {
 	m_time += context.deltaTime;
 	if (m_loopEnable && m_time >= m_effect->getLoopEnd())

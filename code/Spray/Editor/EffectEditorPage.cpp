@@ -1,4 +1,5 @@
 #include "Core/Io/StringOutputStream.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/Settings.h"
 #include "Editor/IDocument.h"
@@ -9,9 +10,13 @@
 #include "Render/Resource/ShaderFactory.h"
 #include "Render/Resource/TextureFactory.h"
 #include "Resource/ResourceManager.h"
+#include "Sound/SoundFactory.h"
+#include "Sound/SoundSystem.h"
+#include "Sound/Editor/SoundSystemFactory.h"
 #include "Spray/Effect.h"
 #include "Spray/EffectFactory.h"
 #include "Spray/EffectLayer.h"
+#include "Spray/Sequence.h"
 #include "Spray/Editor/EffectEditorPage.h"
 #include "Spray/Editor/EffectPreviewControl.h"
 #include "Ui/Bitmap.h"
@@ -26,6 +31,7 @@
 #include "Ui/Custom/Sequencer/SequencerControl.h"
 #include "Ui/Custom/Sequencer/Sequence.h"
 #include "Ui/Custom/Sequencer/Range.h"
+#include "Ui/Custom/Sequencer/Tick.h"
 #include "Ui/Custom/Splitter.h"
 
 // Resources
@@ -56,12 +62,17 @@ bool EffectEditorPage::create(ui::Container* parent)
 	if (!renderSystem)
 		return false;
 
+	Ref< sound::SoundSystemFactory > soundSystemFactory = m_editor->getStoreObject< sound::SoundSystemFactory >(L"SoundSystemFactory");
+	if (soundSystemFactory)
+		m_soundSystem = soundSystemFactory->createSoundSystem();
+
 	Ref< db::Database > database = m_editor->getOutputDatabase();
 	T_ASSERT (database);
 
 	m_resourceManager = new resource::ResourceManager();
 	m_resourceManager->addFactory(new render::TextureFactory(database, renderSystem, 0));
 	m_resourceManager->addFactory(new render::ShaderFactory(database, renderSystem));
+	m_resourceManager->addFactory(new sound::SoundFactory(database));
 	m_resourceManager->addFactory(new EffectFactory(database));
 
 	m_effect = m_document->getObject< Effect >(0);
@@ -107,7 +118,7 @@ bool EffectEditorPage::create(ui::Container* parent)
 	splitter->create(container, false, -150, false);
 
 	m_previewControl = new EffectPreviewControl();
-	m_previewControl->create(splitter, ui::WsClientBorder, m_resourceManager, renderSystem);
+	m_previewControl->create(splitter, ui::WsClientBorder, m_resourceManager, renderSystem, m_soundSystem);
 	m_previewControl->showGuide(m_guideVisible);
 	m_previewControl->setMoveEmitter(m_moveEmitter);
 	m_previewControl->setEffect(m_effect);
@@ -116,6 +127,7 @@ bool EffectEditorPage::create(ui::Container* parent)
 	m_sequencer->create(splitter, ui::WsDoubleBuffer | ui::WsClientBorder);
 	m_sequencer->addSelectEventHandler(ui::createMethodHandler(this, &EffectEditorPage::eventLayerSelect));
 	m_sequencer->addCursorMoveEventHandler(ui::createMethodHandler(this, &EffectEditorPage::eventTimeCursorMove));
+	m_sequencer->addKeyMoveEventHandler(ui::createMethodHandler(this, &EffectEditorPage::eventKeyMove));
 
 	m_site->setPropertyObject(m_effect);
 
@@ -131,7 +143,9 @@ void EffectEditorPage::destroy()
 	settings->setProperty< PropertyBoolean >(L"EffectEditor.ToggleGuide", m_guideVisible);
 	settings->setProperty< PropertyBoolean >(L"EffectEditor.ToggleMove", m_moveEmitter);
 
-	m_previewControl->destroy();
+	safeDestroy(m_previewControl);
+	safeDestroy(m_soundSystem);
+	safeDestroy(m_resourceManager);
 }
 
 void EffectEditorPage::activate()
@@ -264,8 +278,20 @@ void EffectEditorPage::updateSequencer()
 			int(start * 1000),
 			int(end * 1000)
 		);
-
+		layerRange->setData(L"LAYER", *i);
 		layerItem->addKey(layerRange);
+
+		Sequence* sequence = (*i)->getSequence();
+		if (sequence)
+		{
+			const std::vector< Sequence::Key >& keys = sequence->getKeys();
+			for (std::vector< Sequence::Key >::const_iterator j = keys.begin(); j != keys.end(); ++j)
+			{
+				Ref< ui::custom::Tick > sequenceTick = new ui::custom::Tick(int32_t(j->T * 1000.0f));
+				sequenceTick->setData(L"LAYER", *i);
+				layerItem->addKey(sequenceTick);
+			}
+		}
 
 		m_sequencer->addSequenceItem(layerItem);
 	}
@@ -302,7 +328,30 @@ void EffectEditorPage::eventTimeCursorMove(ui::Event* event)
 	m_previewControl->setTimeScale(0.0f);
 	m_previewControl->setTotalTime(time);
 	m_previewControl->syncEffect();
+}
 
+void EffectEditorPage::eventKeyMove(ui::Event* event)
+{
+	ui::CommandEvent* commandEvent = checked_type_cast< ui::CommandEvent* >(event);
+	
+	ui::custom::Range* movedRange = dynamic_type_cast< ui::custom::Range* >(commandEvent->getItem());
+	if (movedRange)
+	{
+		Ref< EffectLayer > layer = movedRange->getData< EffectLayer >(L"LAYER");
+		T_ASSERT (layer);
+
+		float start = movedRange->getStart() / 1000.0f;
+		float end = movedRange->getEnd() / 1000.0f;
+
+		m_document->push();
+
+		layer->setTime(start);
+		layer->setDuration(end - start);
+
+		m_site->setPropertyObject(layer);
+	}
+
+	m_previewControl->syncEffect();
 }
 
 	}

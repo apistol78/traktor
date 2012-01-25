@@ -11,9 +11,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.SoundFactory", SoundFactory, resource::IResourceFactory)
 
-SoundFactory::SoundFactory(db::Database* db, SoundSystem* soundSystem)
+SoundFactory::SoundFactory(db::Database* db)
 :	m_db(db)
-,	m_soundSystem(soundSystem)
 {
 }
 
