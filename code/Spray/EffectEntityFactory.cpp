@@ -9,8 +9,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectEntityFactory", EffectEntityFactory, world::IEntityFactory)
 
-EffectEntityFactory::EffectEntityFactory(resource::IResourceManager* resourceManager)
+EffectEntityFactory::EffectEntityFactory(resource::IResourceManager* resourceManager, sound::SoundSystem* soundSystem)
 :	m_resourceManager(resourceManager)
+,	m_soundSystem(soundSystem)
 {
 }
 
@@ -23,7 +24,7 @@ const TypeInfoSet EffectEntityFactory::getEntityTypes() const
 
 Ref< world::Entity > EffectEntityFactory::createEntity(world::IEntityBuilder* builder, const world::EntityData& entityData) const
 {
-	return checked_type_cast< const EffectEntityData* >(&entityData)->createEntity(m_resourceManager);
+	return checked_type_cast< const EffectEntityData* >(&entityData)->createEntity(m_resourceManager, m_soundSystem);
 }
 
 	}

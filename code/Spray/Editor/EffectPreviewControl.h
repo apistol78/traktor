@@ -2,10 +2,10 @@
 #define traktor_spray_EffectPreviewControl_H
 
 #include <map>
-#include "Ui/Widget.h"
-#include "Spray/EmitterUpdateContext.h"
-#include "Spray/Point.h"
 #include "Core/Timer/Timer.h"
+#include "Spray/Point.h"
+#include "Spray/Types.h"
+#include "Ui/Widget.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -34,6 +34,13 @@ class PrimitiveRenderer;
 
 	}
 
+	namespace sound
+	{
+
+class SoundSystem;
+
+	}
+
 	namespace spray
 	{
 
@@ -50,7 +57,13 @@ class T_DLLCLASS EffectPreviewControl : public ui::Widget
 public:
 	EffectPreviewControl();
 
-	bool create(ui::Widget* parent, int style, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem);
+	bool create(
+		ui::Widget* parent,
+		int style,
+		resource::IResourceManager* resourceManager,
+		render::IRenderSystem* renderSystem,
+		sound::SoundSystem* soundSystem
+	);
 
 	void destroy();
 
@@ -75,11 +88,12 @@ private:
 	Ref< render::IRenderView > m_renderView;
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
 	Ref< render::RenderContext > m_renderContext;
+	Ref< sound::SoundSystem > m_soundSystem;
 	Ref< PointRenderer > m_pointRenderer;
 	Ref< Effect > m_effect;
 	Ref< EffectInstance > m_effectInstance;
 	uint32_t m_randomSeed;
-	EmitterUpdateContext m_context;
+	Context m_context;
 	Timer m_timer;
 	std::map< const TypeInfo*, Ref< SourceRenderer > > m_sourceRenderers;
 	Vector4 m_effectPosition;

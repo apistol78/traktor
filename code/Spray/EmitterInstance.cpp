@@ -4,7 +4,7 @@
 #include "Render/Shader.h"
 #include "Spray/Emitter.h"
 #include "Spray/EmitterInstance.h"
-#include "Spray/EmitterUpdateContext.h"
+#include "Spray/Types.h"
 #include "Spray/Modifier.h"
 #include "Spray/PointRenderer.h"
 #include "Spray/Source.h"
@@ -59,7 +59,7 @@ EmitterInstance::~EmitterInstance()
 	synchronize();
 }
 
-void EmitterInstance::update(EmitterUpdateContext& context, const Transform& transform, bool emit, bool singleShot)
+void EmitterInstance::update(Context& context, const Transform& transform, bool emit, bool singleShot)
 {
 	// Warm up instance.
 	if (!m_warm)
@@ -69,7 +69,9 @@ void EmitterInstance::update(EmitterUpdateContext& context, const Transform& tra
 
 		if (m_emitter->getWarmUp() >= FUZZY_EPSILON)
 		{
-			EmitterUpdateContext warmContext(c_warmUpDeltaTime);
+			Context warmContext;
+			warmContext.deltaTime = c_warmUpDeltaTime;
+			warmContext.soundSystem = 0;
 
 			float time = 0.0f;
 			for (; time < m_emitter->getWarmUp(); time += c_warmUpDeltaTime)

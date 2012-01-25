@@ -46,7 +46,7 @@ public:
 	virtual bool bind(resource::IResourceManager* resourceManager);
 
 	virtual void emit(
-		EmitterUpdateContext& context,
+		Context& context,
 		const Transform& transform,
 		uint32_t emitCount,
 		EmitterInstance& emitterInstance

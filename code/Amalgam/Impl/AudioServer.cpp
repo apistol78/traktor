@@ -90,8 +90,7 @@ void AudioServer::createResourceFactories(IEnvironment* environment)
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
 	db::Database* database = environment->getDatabase();
 
-	if (m_soundSystem)
-		resourceManager->addFactory(new sound::SoundFactory(database, m_soundSystem));
+	resourceManager->addFactory(new sound::SoundFactory(database));
 }
 
 void AudioServer::update(float dT, bool renderViewActive)

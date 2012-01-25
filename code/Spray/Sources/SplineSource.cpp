@@ -6,7 +6,7 @@
 #include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Spray/EmitterInstance.h"
-#include "Spray/EmitterUpdateContext.h"
+#include "Spray/Types.h"
 #include "Spray/Sources/SplineSource.h"
 
 namespace traktor
@@ -34,7 +34,7 @@ bool SplineSource::bind(resource::IResourceManager* resourceManager)
 }
 
 void SplineSource::emit(
-	EmitterUpdateContext& context,
+	Context& context,
 	const Transform& transform,
 	uint32_t emitCount,
 	EmitterInstance& emitterInstance

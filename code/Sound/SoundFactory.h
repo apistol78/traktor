@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_SOUND_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -23,8 +23,6 @@ class Database;
 	namespace sound
 	{
 
-class SoundSystem;
-
 /*! \brief Sound resource factory.
  * \ingroup Sound
  */
@@ -33,7 +31,7 @@ class T_DLLCLASS SoundFactory : public resource::IResourceFactory
 	T_RTTI_CLASS;
 
 public:
-	SoundFactory(db::Database* db, SoundSystem* soundSystem);
+	SoundFactory(db::Database* db);
 
 	virtual const TypeInfoSet getResourceTypes() const;
 
@@ -43,7 +41,6 @@ public:
 
 private:
 	Ref< db::Database > m_db;
-	Ref< SoundSystem > m_soundSystem;
 };
 
 	}

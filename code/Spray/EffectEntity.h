@@ -5,7 +5,7 @@
 #include "Core/Math/Plane.h"
 #include "Render/Types.h"
 #include "Resource/Proxy.h"
-#include "Spray/EmitterUpdateContext.h"
+#include "Spray/Types.h"
 #include "World/Entity/SpatialEntity.h"
 
 // import/export mechanism.
@@ -25,6 +25,13 @@ class IResourceManager;
 
 	}
 
+	namespace sound
+	{
+
+class SoundSystem;
+
+	}
+
 	namespace spray
 	{
 
@@ -40,7 +47,7 @@ class T_DLLCLASS EffectEntity : public world::SpatialEntity
 	T_RTTI_CLASS;
 
 public:
-	EffectEntity(const Transform& transform, const resource::Proxy< Effect >& effect);
+	EffectEntity(const Transform& transform, const resource::Proxy< Effect >& effect, sound::SoundSystem* soundSystem);
 
 	void render(const Plane& cameraPlane, PointRenderer* pointRenderer);
 
@@ -65,9 +72,10 @@ public:
 private:
 	Transform m_transform;
 	resource::Proxy< Effect > m_effect;
+	Ref< sound::SoundSystem > m_soundSystem;
 	Ref< EffectInstance > m_effectInstance;
 	std::set< render::handle_t > m_techniques;
-	EmitterUpdateContext m_context;
+	Context m_context;
 	uint32_t m_counter;
 	bool m_enable;
 };

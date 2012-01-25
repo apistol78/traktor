@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_SPRAY_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -25,6 +25,7 @@ class IResourceManager;
 
 class EffectLayerInstance;
 class Emitter;
+class Sequence;
 
 /*! \brief
  * \ingroup Spray
@@ -42,16 +43,23 @@ public:
 
 	virtual bool serialize(ISerializer& s);
 
-	inline float getTime() const { return m_time; }
+	void setTime(float time) { m_time = time; }
 
-	inline float getDuration() const { return m_duration; }
+	float getTime() const { return m_time; }
 
-	inline Emitter* getEmitter() const { return m_emitter; }
+	void setDuration(float duration) { m_duration = duration; }
+
+	float getDuration() const { return m_duration; }
+
+	Emitter* getEmitter() const { return m_emitter; }
+
+	Sequence* getSequence() const { return m_sequence; }
 
 private:
 	float m_time;
 	float m_duration;
 	Ref< Emitter > m_emitter;
+	Ref< Sequence > m_sequence;
 };
 
 	}

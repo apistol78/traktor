@@ -1,5 +1,5 @@
 #include "Spray/Sources/PointSource.h"
-#include "Spray/EmitterUpdateContext.h"
+#include "Spray/Types.h"
 #include "Spray/EmitterInstance.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
@@ -29,7 +29,7 @@ bool PointSource::bind(resource::IResourceManager* resourceManager)
 }
 
 void PointSource::emit(
-	EmitterUpdateContext& context,
+	Context& context,
 	const Transform& transform,
 	uint32_t emitCount,
 	EmitterInstance& emitterInstance

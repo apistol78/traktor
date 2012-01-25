@@ -12055,6 +12055,10 @@
 					<linkWithProduct>true</linkWithProduct>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[28]/dependencies/item[8]/project"/>
+				</item>
 			</dependencies>
 		</item>
 		<item type="Project" version="1">
@@ -12202,6 +12206,14 @@
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
 					<project ref="/object/projects/item[36]/dependencies/item[5]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[28]/dependencies/item[8]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[29]/dependencies/item[8]/project"/>
 				</item>
 			</dependencies>
 		</item>

@@ -20,7 +20,7 @@ namespace traktor
 	namespace spray
 	{
 
-struct EmitterUpdateContext;
+struct Context;
 class PointRenderer;
 class Effect;
 class EffectLayerInstance;
@@ -35,7 +35,7 @@ class T_DLLCLASS EffectInstance : public Object
 public:
 	EffectInstance(const Effect* effect);
 
-	void update(EmitterUpdateContext& context, const Transform& transform, bool enable);
+	void update(Context& context, const Transform& transform, bool enable);
 
 	void synchronize();
 

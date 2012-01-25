@@ -3,7 +3,7 @@
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Spray/EmitterInstance.h"
-#include "Spray/EmitterUpdateContext.h"
+#include "Spray/Types.h"
 #include "Spray/Sources/SphereSource.h"
 
 namespace traktor
@@ -31,7 +31,7 @@ bool SphereSource::bind(resource::IResourceManager* resourceManager)
 }
 
 void SphereSource::emit(
-	EmitterUpdateContext& context,
+	Context& context,
 	const Transform& transform,
 	uint32_t emitCount,
 	EmitterInstance& emitterInstance

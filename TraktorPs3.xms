@@ -4361,6 +4361,10 @@
 					<solutionFileName>$(TRAKTOR_HOME)/TraktorPs3-Spu.xms</solutionFileName>
 					<projectName>Traktor.Spray.JobPointRenderer</projectName>
 				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[19]/dependencies/item[8]/project"/>
+				</item>
 			</dependencies>
 		</item>
 		<item type="Project" version="1">

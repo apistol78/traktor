@@ -58,7 +58,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectPreviewControl", EffectPreviewContr
 
 EffectPreviewControl::EffectPreviewControl()
 :	m_randomSeed(c_initialRandomSeed)
-,	m_context(0.0f, c_initialRandomSeed)
 ,	m_effectPosition(0.0f, -2.0f, 7.0f, 1.0f)
 ,	m_angleHead(0.0f)
 ,	m_anglePitch(0.0f)
@@ -68,6 +67,10 @@ EffectPreviewControl::EffectPreviewControl()
 ,	m_velocityVisible(false)
 ,	m_moveEmitter(false)
 {
+	m_context.deltaTime = 0.0f;
+	m_context.random = RandomGeometry(c_initialRandomSeed);
+	m_context.soundSystem = 0;
+
 	m_sourceRenderers[&type_of< BoxSource >()] = new BoxSourceRenderer();
 	m_sourceRenderers[&type_of< ConeSource >()] = new ConeSourceRenderer();
 	m_sourceRenderers[&type_of< DiscSource >()] = new DiscSourceRenderer();
@@ -78,7 +81,13 @@ EffectPreviewControl::EffectPreviewControl()
 	m_sourceRenderers[&type_of< SplineSource >()] = new SplineSourceRenderer();
 }
 
-bool EffectPreviewControl::create(ui::Widget* parent, int style, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem)
+bool EffectPreviewControl::create(
+	ui::Widget* parent,
+	int style,
+	resource::IResourceManager* resourceManager,
+	render::IRenderSystem* renderSystem,
+	sound::SoundSystem* soundSystem
+)
 {
 	if (!Widget::create(parent, style))
 		return false;
@@ -99,6 +108,8 @@ bool EffectPreviewControl::create(ui::Widget* parent, int style, resource::IReso
 		return false;
 
 	m_renderContext = new render::RenderContext();
+	m_soundSystem = soundSystem;
+
 	m_pointRenderer = new PointRenderer(renderSystem);
 
 	addButtonDownEventHandler(ui::createMethodHandler(this, &EffectPreviewControl::eventButtonDown));
@@ -179,7 +190,10 @@ void EffectPreviewControl::randomizeSeed()
 
 void EffectPreviewControl::syncEffect()
 {
-	EmitterUpdateContext syncContext(0.0f, m_randomSeed);
+	Context syncContext;
+	syncContext.deltaTime = 0.0f;
+	syncContext.random = RandomGeometry(m_randomSeed);
+	syncContext.soundSystem = 0;
 
 	float currentTime = m_effectInstance->getTime();
 
@@ -340,6 +354,7 @@ void EffectPreviewControl::eventPaint(ui::Event* event)
 		float deltaTime = float(m_timer.getDeltaTime() * 0.9f + m_lastDeltaTime * 0.1f);
 
 		m_context.deltaTime = deltaTime * m_timeScale;
+		m_context.soundSystem = m_soundSystem;
 
 		Transform effectTransform = Transform::identity();
 		if (m_moveEmitter)
