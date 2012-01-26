@@ -9599,11 +9599,16 @@
 								<definitions>
 									<item>T_UI_WIN32_EXPORT</item>
 									<item>_DEBUG</item>
+									<item>T_USE_GDI_PLUS</item>
+									<item>T_USE_DIRECT2D</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries>
 									<item>msimg32.lib</item>
 									<item>comctl32.lib</item>
+									<item>gdiplus.lib</item>
+									<item>d2d1.lib</item>
+									<item>dwrite.lib</item>
 								</libraries>
 								<additionalCompilerOptions/>
 								<additionalLinkerOptions/>
@@ -9619,11 +9624,16 @@
 								<definitions>
 									<item>T_UI_WIN32_EXPORT</item>
 									<item>NDEBUG</item>
+									<item>T_USE_GDI_PLUS</item>
+									<item>T_USE_DIRECT2D</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries>
 									<item>msimg32.lib</item>
 									<item>comctl32.lib</item>
+									<item>gdiplus.lib</item>
+									<item>d2d1.lib</item>
+									<item>dwrite.lib</item>
 								</libraries>
 								<additionalCompilerOptions/>
 								<additionalLinkerOptions/>
@@ -9639,11 +9649,16 @@
 								<definitions>
 									<item>T_STATIC</item>
 									<item>_DEBUG</item>
+									<item>T_USE_GDI_PLUS</item>
+									<item>T_USE_DIRECT2D</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries>
 									<item>msimg32.lib</item>
 									<item>comctl32.lib</item>
+									<item>gdiplus.lib</item>
+									<item>d2d1.lib</item>
+									<item>dwrite.lib</item>
 								</libraries>
 								<additionalCompilerOptions/>
 								<additionalLinkerOptions/>
@@ -9659,11 +9674,16 @@
 								<definitions>
 									<item>T_STATIC</item>
 									<item>NDEBUG</item>
+									<item>T_USE_GDI_PLUS</item>
+									<item>T_USE_DIRECT2D</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries>
 									<item>msimg32.lib</item>
 									<item>comctl32.lib</item>
+									<item>gdiplus.lib</item>
+									<item>d2d1.lib</item>
+									<item>dwrite.lib</item>
 								</libraries>
 								<additionalCompilerOptions/>
 								<additionalLinkerOptions/>

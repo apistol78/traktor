@@ -1,3 +1,5 @@
+#if defined(T_USE_DIRECT2D)
+
 #include <limits>
 #include "Ui/Win32/BitmapWin32.h"
 #include "Ui/Win32/CanvasDirect2DWin32.h"
@@ -668,3 +670,5 @@ void CanvasDirect2DWin32::flushCachedBitmaps()
 
 	}
 }
+
+#endif
