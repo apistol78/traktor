@@ -2,6 +2,7 @@
 #define traktor_spray_ITriggerInstance_H
 
 #include "Core/Object.h"
+#include "Core/Math/Transform.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -26,7 +27,7 @@ class T_DLLCLASS ITriggerInstance : public Object
 	T_RTTI_CLASS;
 
 public:
-	virtual void perform(Context& context) = 0;
+	virtual void perform(Context& context, const Transform& transform) = 0;
 };
 
 	}

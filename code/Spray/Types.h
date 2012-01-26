@@ -9,6 +9,7 @@ namespace traktor
 	{
 
 class SoundSystem;
+class SurroundEnvironment;
 
 	}
 
@@ -23,6 +24,7 @@ struct Context
 	float deltaTime;
 	RandomGeometry random;
 	sound::SoundSystem* soundSystem;
+	sound::SurroundEnvironment* surroundEnvironment;
 };
 
 	}

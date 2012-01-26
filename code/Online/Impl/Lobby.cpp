@@ -64,6 +64,15 @@ Ref< UserArrayResult > Lobby::getParticipants()
 		return 0;
 }
 
+int32_t Lobby::getIndex() const
+{
+	int32_t index;
+	if (m_matchMakingProvider->getIndex(m_handle, index))
+		return index;
+	else
+		return -1;
+}
+
 Lobby::Lobby(IMatchMakingProvider* matchMakingProvider, UserCache* userCache, TaskQueue* taskQueue, uint64_t handle)
 :	m_matchMakingProvider(matchMakingProvider)
 ,	m_userCache(userCache)

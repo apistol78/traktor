@@ -55,7 +55,7 @@ void EffectLayerInstance::update(Context& context, const Transform& transform, f
 	if (m_sequenceInstance)
 	{
 		if (time >= m_start)
-			m_sequenceInstance->update(context, time - m_start);
+			m_sequenceInstance->update(context, transform, time - m_start);
 	}
 }
 

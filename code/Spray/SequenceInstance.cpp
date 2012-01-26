@@ -8,7 +8,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.SequenceInstance", SequenceInstance, Object)
 
-void SequenceInstance::update(Context& context, float T)
+void SequenceInstance::update(Context& context, const Transform& transform, float T)
 {
 	if (T < m_lastT)
 	{
@@ -23,7 +23,7 @@ void SequenceInstance::update(Context& context, float T)
 		return;
 
 	if (m_keys[m_index].trigger)
-		m_keys[m_index].trigger->perform(context);
+		m_keys[m_index].trigger->perform(context, transform);
 
 	++m_index;
 	m_lastT = T;
