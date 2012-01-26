@@ -34,6 +34,14 @@
 					<optional>true</optional>
 				</item>
 				<item>
+					<name>Reflection</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<name>ReflectionMap</name>
+					<optional>true</optional>
+				</item>
+				<item>
 					<name>SpecularRoughness</name>
 					<optional>true</optional>
 				</item>
@@ -47,6 +55,14 @@
 				<item>
 					<first>DiffuseTerm</first>
 					<second>1</second>
+				</item>
+				<item>
+					<first>Reflection</first>
+					<second>0</second>
+				</item>
+				<item>
+					<first>ReflectionMap</first>
+					<second>0</second>
 				</item>
 				<item>
 					<first>SpecularRoughness</first>
@@ -281,6 +297,26 @@
 			<destination>
 				<node ref="/object/nodes/item"/>
 				<name>EyeDirection</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[12]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>Reflection</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[13]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>ReflectionMap</name>
 			</destination>
 		</item>
 	</edges>
