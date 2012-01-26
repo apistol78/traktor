@@ -194,6 +194,7 @@ void EffectPreviewControl::syncEffect()
 	syncContext.deltaTime = 0.0f;
 	syncContext.random = RandomGeometry(m_randomSeed);
 	syncContext.soundSystem = 0;
+	syncContext.surroundEnvironment = 0;
 
 	float currentTime = m_effectInstance->getTime();
 
@@ -355,6 +356,7 @@ void EffectPreviewControl::eventPaint(ui::Event* event)
 
 		m_context.deltaTime = deltaTime * m_timeScale;
 		m_context.soundSystem = m_soundSystem;
+		m_context.surroundEnvironment = 0;
 
 		Transform effectTransform = Transform::identity();
 		if (m_moveEmitter)

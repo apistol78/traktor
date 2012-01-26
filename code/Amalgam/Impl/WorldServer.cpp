@@ -96,6 +96,7 @@ void WorldServer::createEntityFactories(IEnvironment* environment)
 {
 	physics::PhysicsManager* physicsManager = environment->getPhysics()->getPhysicsManager();
 	sound::SoundSystem* soundSystem = environment->getAudio()->getSoundSystem();
+	sound::SurroundEnvironment* surroundEnvironment = environment->getAudio()->getSurroundEnvironment();
 	render::IRenderSystem* renderSystem = environment->getRender()->getRenderSystem();
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
 
@@ -104,7 +105,7 @@ void WorldServer::createEntityFactories(IEnvironment* environment)
 	m_entityBuilder->addFactory(new animation::AnimatedMeshEntityFactory(resourceManager, physicsManager));
 	m_entityBuilder->addFactory(new animation::ClothEntityFactory(resourceManager, renderSystem, physicsManager));
 	m_entityBuilder->addFactory(new animation::PathEntityFactory());
-	m_entityBuilder->addFactory(new spray::EffectEntityFactory(resourceManager, soundSystem));
+	m_entityBuilder->addFactory(new spray::EffectEntityFactory(resourceManager, soundSystem, surroundEnvironment));
 	m_entityBuilder->addFactory(new terrain::EntityFactory(resourceManager, renderSystem, false));
 	m_entityBuilder->addFactory(new weather::WeatherEntityFactory(resourceManager, renderSystem));
 }

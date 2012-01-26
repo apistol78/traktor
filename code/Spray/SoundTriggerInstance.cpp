@@ -1,4 +1,6 @@
+#include "Sound/SoundChannel.h"
 #include "Sound/SoundSystem.h"
+#include "Sound/Filters/SurroundFilter.h"
 #include "Spray/SoundTriggerInstance.h"
 #include "Spray/Types.h"
 
@@ -9,10 +11,24 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.SoundTriggerInstance", SoundTriggerInstance, ITriggerInstance)
 
-void SoundTriggerInstance::perform(Context& context)
+void SoundTriggerInstance::perform(Context& context, const Transform& transform)
 {
-	if (context.soundSystem && m_sound.validate())
-		context.soundSystem->play(m_sound, 0, false);
+	if (
+		!context.soundSystem ||
+		!m_sound.validate()
+	)
+		return;
+
+	sound::SoundChannel* channel = context.soundSystem->play(m_sound, 0, false);
+	if (channel)
+	{
+		if (context.surroundEnvironment)
+		{
+			Ref< sound::SurroundFilter > filter = new sound::SurroundFilter(context.surroundEnvironment);
+			filter->setSpeakerPosition(transform.translation());
+			channel->setFilter(filter);
+		}
+	}
 }
 
 SoundTriggerInstance::SoundTriggerInstance(const resource::Proxy< sound::Sound >& sound)

@@ -153,6 +153,28 @@ bool SteamMatchMaking::getParticipants(uint64_t lobbyHandle, std::vector< uint64
 	return true;
 }
 
+bool SteamMatchMaking::getIndex(uint64_t lobbyHandle, int32_t& outIndex) const
+{
+	CSteamID id(lobbyHandle);
+	if (!id.IsValid())
+		return false;
+
+	CSteamID myId = ::SteamUser()->GetSteamID();
+	int32_t memberCount = SteamMatchmaking()->GetNumLobbyMembers(id);
+
+	for (int32_t i = 0; i < memberCount; ++i)
+	{
+		CSteamID memberId = SteamMatchmaking()->GetLobbyMemberByIndex(lobbyHandle, i);
+		if (memberId == myId)
+		{
+			outIndex = i;
+			return true;
+		}
+	}
+
+	return false;
+}
+
 void SteamMatchMaking::OnLobbyMatch(LobbyMatchList_t* pCallback, bool bIOFailure)
 {
 	T_ASSERT (m_outLobbies != 0);

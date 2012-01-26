@@ -25,6 +25,7 @@ class IResourceManager;
 	{
 
 class SoundSystem;
+class SurroundEnvironment;
 
 	}
 
@@ -42,7 +43,7 @@ class T_DLLCLASS EffectEntityData : public world::SpatialEntityData
 	T_RTTI_CLASS;
 
 public:
-	Ref< EffectEntity > createEntity(resource::IResourceManager* resourceManager, sound::SoundSystem* soundSystem) const;
+	Ref< EffectEntity > createEntity(resource::IResourceManager* resourceManager, sound::SoundSystem* soundSystem, sound::SurroundEnvironment* surroundEnvironment) const;
 
 	virtual bool serialize(ISerializer& s);
 

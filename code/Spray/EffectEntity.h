@@ -28,6 +28,7 @@ class IResourceManager;
 	namespace sound
 	{
 
+class SurroundEnvironment;
 class SoundSystem;
 
 	}
@@ -47,7 +48,7 @@ class T_DLLCLASS EffectEntity : public world::SpatialEntity
 	T_RTTI_CLASS;
 
 public:
-	EffectEntity(const Transform& transform, const resource::Proxy< Effect >& effect, sound::SoundSystem* soundSystem);
+	EffectEntity(const Transform& transform, const resource::Proxy< Effect >& effect, sound::SoundSystem* soundSystem, sound::SurroundEnvironment* surroundEnvironment);
 
 	void render(const Plane& cameraPlane, PointRenderer* pointRenderer);
 
@@ -72,7 +73,6 @@ public:
 private:
 	Transform m_transform;
 	resource::Proxy< Effect > m_effect;
-	Ref< sound::SoundSystem > m_soundSystem;
 	Ref< EffectInstance > m_effectInstance;
 	std::set< render::handle_t > m_techniques;
 	Context m_context;

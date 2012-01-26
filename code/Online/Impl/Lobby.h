@@ -27,6 +27,8 @@ public:
 
 	virtual Ref< UserArrayResult > getParticipants();
 
+	virtual int32_t getIndex() const;
+
 private:
 	friend class TaskCreateLobby;
 	friend class TaskFindMatchingLobbies;

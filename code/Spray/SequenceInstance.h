@@ -2,6 +2,7 @@
 #define traktor_spray_SequenceInstance_H
 
 #include "Core/Object.h"
+#include "Core/Math/Transform.h"
 #include "Spray/Types.h"
 
 // import/export mechanism.
@@ -28,7 +29,7 @@ class T_DLLCLASS SequenceInstance : public Object
 	T_RTTI_CLASS;
 
 public:
-	void update(Context& context, float T);
+	void update(Context& context, const Transform& transform, float T);
 
 private:
 	friend class Sequence;

@@ -32,7 +32,7 @@ class T_DLLCLASS SoundTriggerInstance : public ITriggerInstance
 	T_RTTI_CLASS;
 
 public:
-	virtual void perform(Context& context);
+	virtual void perform(Context& context, const Transform& transform);
 
 private:
 	friend class SoundTrigger;
