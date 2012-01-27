@@ -32,6 +32,7 @@ public:
 private:
 	Transform m_transform[2];
 	bool m_step;
+	bool m_first;
 };
 
 }
