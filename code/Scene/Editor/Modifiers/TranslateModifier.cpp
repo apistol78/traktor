@@ -21,7 +21,7 @@ void TranslateModifier::draw(
 	const Scalar c_guideMinLength(1.0f);
 	const float c_infinite = 1e4f;
 
-	Scalar cameraDistance = (worldTransform.toMatrix44() * viewTransform).translation().length();
+	Scalar cameraDistance = (viewTransform * worldTransform.toMatrix44()).translation().length();
 	Scalar guideLength = max(cameraDistance * c_guideScale, c_guideMinLength);
 	Scalar arrowLength = guideLength * Scalar(1.0f / 8.0f);
 
