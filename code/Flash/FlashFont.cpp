@@ -1,12 +1,19 @@
+#include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberAlignedVector.h"
+#include "Core/Serialization/MemberEnum.h"
+#include "Core/Serialization/MemberRefArray.h"
+#include "Core/Serialization/MemberSmallMap.h"
 #include "Flash/FlashFont.h"
 #include "Flash/FlashShape.h"
+#include "Flash/SwfMembers.h"
 
 namespace traktor
 {
 	namespace flash
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashFont", FlashFont, Object)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashFont", 0, FlashFont, ISerializable)
 
 FlashFont::FlashFont()
 :	m_ascent(0)
@@ -114,6 +121,28 @@ uint16_t FlashFont::lookupIndex(uint16_t code) const
 FlashFont::CoordinateType FlashFont::getCoordinateType() const
 {
 	return m_coordinateType;
+}
+
+bool FlashFont::serialize(ISerializer& s)
+{
+	const MemberEnum< CoordinateType >::Key kCoordinateType[] =
+	{
+		{ L"CtTwips", CtTwips },
+		{ L"CtEMSquare", CtEMSquare },
+		{ 0, 0 }
+	};
+
+	s >> MemberRefArray< FlashShape >(L"shapes", m_shapes);
+	s >> Member< int16_t >(L"ascent", m_ascent);
+	s >> Member< int16_t >(L"descent", m_descent);
+	s >> Member< int16_t >(L"leading", m_leading);
+	s >> MemberAlignedVector< int16_t >(L"advanceTable", m_advanceTable);
+	s >> MemberAlignedVector< SwfRect, MemberSwfRect >(L"boundsTable", m_boundsTable);
+	s >> MemberSmallMap< uint32_t, int16_t >(L"kerningLookup", m_kerningLookup);
+	s >> MemberSmallMap< uint16_t, uint16_t >(L"indexLookup", m_indexLookup);
+	s >> MemberEnum< CoordinateType >(L"coordinateType", m_coordinateType, kCoordinateType);
+
+	return true;
 }
 
 	}

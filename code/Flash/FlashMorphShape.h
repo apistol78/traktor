@@ -1,18 +1,18 @@
 #ifndef traktor_flash_FlashMorphShape_H
 #define traktor_flash_FlashMorphShape_H
 
-#include "Flash/FlashCharacter.h"
-#include "Flash/SwfTypes.h"
 #include "Flash/Path.h"
+#include "Flash/SwfTypes.h"
+#include "Flash/FlashCharacter.h"
 #include "Flash/FlashFillStyle.h"
 #include "Flash/FlashLineStyle.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_FLASH_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -28,6 +28,8 @@ class T_DLLCLASS FlashMorphShape : public FlashCharacter
 	T_RTTI_CLASS;
 
 public:
+	FlashMorphShape();
+
 	FlashMorphShape(uint16_t id);
 
 	bool create(const SwfRect& shapeBounds, const SwfShape* startShape, const SwfShape* endShape, const SwfStyles* startStyles, const SwfStyles* endStyles);
@@ -41,6 +43,8 @@ public:
 	const AlignedVector< FlashFillStyle >& getFillStyles() const { return m_fillStyles; }
 
 	const AlignedVector< FlashLineStyle >& getLineStyles() const { return m_lineStyles; }
+
+	virtual bool serialize(ISerializer& s);
 
 private:
 	SwfRect m_shapeBounds;

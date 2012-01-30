@@ -56,7 +56,7 @@ namespace traktor
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.ActionVM2", ActionVM2, IActionVM)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.ActionVM2", 0, ActionVM2, IActionVM)
 
 Ref< const IActionVMImage > ActionVM2::load(BitReader& br) const
 {
@@ -516,6 +516,11 @@ void ActionVM2::execute(ActionFrame* frame) const
 		VM_END()
 		}
 	}
+}
+
+bool ActionVM2::serialize(ISerializer& s)
+{
+	return true;
 }
 
 	}

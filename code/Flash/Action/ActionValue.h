@@ -16,6 +16,9 @@
 
 namespace traktor
 {
+
+class ISerializer;
+
 	namespace flash
 	{
 
@@ -116,6 +119,9 @@ public:
 	/*! \brief Get object always, ie. create boxes if not a object. */
 	template < typename ObjectType >
 	Ref< ObjectType > getObjectAlways(ActionContext* context) const { return dynamic_type_cast< ObjectType* >(getObjectAlways(context)); }
+
+	/*! \brief Serialize value. */
+	bool serialize(ISerializer& s);
 
 	/*! \brief Copy value. */
 	ActionValue& operator = (const ActionValue& v);

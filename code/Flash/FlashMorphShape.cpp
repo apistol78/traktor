@@ -1,15 +1,25 @@
 #include <algorithm>
+#include "Core/Log/Log.h"
+#include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberAlignedVector.h"
+#include "Core/Serialization/MemberComposite.h"
+#include "Core/Serialization/MemberStl.h"
 #include "Flash/FlashMorphShape.h"
 #include "Flash/FlashMorphShapeInstance.h"
 #include "Flash/Path.h"
-#include "Core/Log/Log.h"
+#include "Flash/SwfMembers.h"
 
 namespace traktor
 {
 	namespace flash
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashMorphShape", FlashMorphShape, FlashCharacter)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashMorphShape", 0, FlashMorphShape, FlashCharacter)
+
+FlashMorphShape::FlashMorphShape()
+{
+}
 
 FlashMorphShape::FlashMorphShape(uint16_t id)
 :	FlashCharacter(id)
@@ -133,6 +143,19 @@ bool FlashMorphShape::create(const SwfRect& shapeBounds, const SwfShape* startSh
 Ref< FlashCharacterInstance > FlashMorphShape::createInstance(ActionContext* context, FlashCharacterInstance* parent, const std::string& name, const ActionObject* initObject) const
 {
 	return new FlashMorphShapeInstance(context, parent, this);
+}
+
+bool FlashMorphShape::serialize(ISerializer& s)
+{
+	if (!FlashCharacter::serialize(s))
+		return false;
+
+	s >> MemberSwfRect(L"shapeBounds", m_shapeBounds);
+	s >> MemberStlList< Path, MemberComposite< Path > >(L"paths", m_paths);
+	s >> MemberAlignedVector< FlashFillStyle, MemberComposite< FlashFillStyle > >(L"fillStyles", m_fillStyles);
+	s >> MemberAlignedVector< FlashLineStyle, MemberComposite< FlashLineStyle > >(L"lineStyles", m_lineStyles);
+
+	return true;
 }
 
 	}

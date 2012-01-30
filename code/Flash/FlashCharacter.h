@@ -1,7 +1,7 @@
 #ifndef traktor_flash_FlashCharacter_H
 #define traktor_flash_FlashCharacter_H
 
-#include "Core/Object.h"
+#include "Core/Serialization/ISerializable.h"
 #include "Flash/SwfTypes.h"
 
 // import/export mechanism.
@@ -24,11 +24,13 @@ class FlashCharacterInstance;
 /*! \brief Character definition.
  * \ingroup Flash
  */
-class T_DLLCLASS FlashCharacter : public Object
+class T_DLLCLASS FlashCharacter : public ISerializable
 {
 	T_RTTI_CLASS;
 
 public:
+	FlashCharacter();
+
 	FlashCharacter(uint16_t id);
 
 	/*! \brief Get character identification.
@@ -46,6 +48,10 @@ public:
 	 * \return Character instance.
 	 */
 	virtual Ref< FlashCharacterInstance > createInstance(ActionContext* context, FlashCharacterInstance* parent, const std::string& name, const ActionObject* initObject) const = 0;
+
+	/*! \brief
+	 */
+	virtual bool serialize(ISerializer& s);
 
 private:
 	uint16_t m_id;

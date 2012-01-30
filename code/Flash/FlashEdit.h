@@ -7,9 +7,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_FLASH_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -32,6 +32,8 @@ public:
 		AnCenter = 0x02,
 		AnJustify = 0x03
 	};
+
+	FlashEdit();
 
 	FlashEdit(
 		uint16_t id,
@@ -108,6 +110,8 @@ public:
 	 * \return True if text is HTML.
 	 */
 	bool renderHtml() const;
+
+	virtual bool serialize(ISerializer& s);
 
 private:
 	uint16_t m_fontId;

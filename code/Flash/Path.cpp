@@ -1,9 +1,41 @@
-#include "Flash/Path.h"
 #include "Core/Log/Log.h"
+#include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberComposite.h"
+#include "Core/Serialization/MemberEnum.h"
+#include "Core/Serialization/MemberStl.h"
+#include "Flash/Path.h"
+
 namespace traktor
 {
 	namespace flash
 	{
+
+bool SubPathSegment::serialize(ISerializer& s)
+{
+	const MemberEnum< SubPathSegmentType >::Key kSubPathSegmentType[] =
+	{
+		{ L"SpgtUndefined", SpgtUndefined },
+		{ L"SpgtLinear", SpgtLinear },
+		{ L"SpgtQuadratic", SpgtQuadratic },
+		{ 0, 0 }
+	};
+
+	s >> MemberEnum< SubPathSegmentType >(L"type", type, kSubPathSegmentType);
+	s >> Member< uint32_t >(L"pointsOffset", pointsOffset);
+	s >> Member< uint32_t >(L"pointsCount", pointsCount);
+
+	return true;
+}
+
+bool SubPath::serialize(ISerializer& s)
+{
+	s >> Member< uint16_t >(L"fillStyle0", fillStyle0);
+	s >> Member< uint16_t >(L"fillStyle1", fillStyle1);
+	s >> Member< uint16_t >(L"lineStyle", lineStyle);
+	s >> MemberStlVector< SubPathSegment, MemberComposite< SubPathSegment > >(L"segments", segments);
+	return true;
+}
 
 Path::Path()
 :	m_cursor(0.0f, 0.0f)
@@ -68,6 +100,15 @@ void Path::end(uint16_t fillStyle0, uint16_t fillStyle1, uint16_t lineStyle)
 		m_subPaths.push_back(m_current);
 		m_current.segments.resize(0);
 	}
+}
+
+bool Path::serialize(ISerializer& s)
+{
+	s >> Member< Vector2 >(L"cursor", m_cursor);
+	s >> MemberStlVector< Vector2 >(L"points", m_points);
+	s >> MemberStlList< SubPath, MemberComposite< SubPath > >(L"subPaths", m_subPaths);
+	s >> MemberComposite< SubPath >(L"current", m_current);
+	return true;
 }
 
 void Path::transform(CoordinateMode from, CoordinateMode to, float& x, float& y) const

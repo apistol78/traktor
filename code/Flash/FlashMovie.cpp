@@ -1,7 +1,16 @@
+#include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberRef.h"
+#include "Core/Serialization/MemberSmallMap.h"
+#include "Flash/FlashBitmap.h"
+#include "Flash/FlashFont.h"
 #include "Flash/FlashMovie.h"
+#include "Flash/FlashSound.h"
 #include "Flash/FlashSprite.h"
 #include "Flash/FlashSpriteInstance.h"
+#include "Flash/SwfMembers.h"
 #include "Flash/Action/ActionContext.h"
+#include "Flash/Action/IActionVM.h"
 #include "Flash/Action/Avm1/ActionGlobal.h"
 
 namespace traktor
@@ -9,7 +18,11 @@ namespace traktor
 	namespace flash
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashMovie", FlashMovie, Object)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashMovie", 0, FlashMovie, ISerializable)
+
+FlashMovie::FlashMovie()
+{
+}
 
 FlashMovie::FlashMovie(const IActionVM* vm, const SwfRect& frameBounds, FlashSprite* movieClip)
 :	m_vm(vm)
@@ -143,6 +156,20 @@ Ref< FlashSpriteInstance > FlashMovie::createExternalMovieClipInstance(FlashSpri
 	);
 
 	return spriteInstance;
+}
+
+bool FlashMovie::serialize(ISerializer& s)
+{
+	s >> MemberRef< const IActionVM >(L"vm", m_vm);
+	s >> MemberSwfRect(L"frameBounds", m_frameBounds);
+	s >> MemberRef< FlashSprite >(L"movieClip", m_movieClip);
+	s >> MemberSmallMap< uint16_t, Ref< FlashFont >, Member< uint16_t >, MemberRef< FlashFont > >(L"fonts", m_fonts);
+	s >> MemberSmallMap< uint16_t, Ref< FlashBitmap >, Member< uint16_t >, MemberRef< FlashBitmap > >(L"bitmaps", m_bitmaps);
+	s >> MemberSmallMap< uint16_t, Ref< FlashSound >, Member< uint16_t >, MemberRef< FlashSound > >(L"sounds", m_sounds);
+	s >> MemberSmallMap< uint16_t, Ref< FlashCharacter >, Member< uint16_t >, MemberRef< FlashCharacter > >(L"characters", m_characters);
+	s >> MemberSmallMap< std::string, uint16_t >(L"exports", m_exports);
+
+	return true;
 }
 
 	}

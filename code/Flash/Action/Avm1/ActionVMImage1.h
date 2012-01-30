@@ -7,14 +7,8 @@
 
 namespace traktor
 {
-
-class Timer;
-
 	namespace flash
 	{
-
-class ActionFrame;
-class ActionVMTrace1;
 
 class ActionVMImage1 : public IActionVMImage
 {
@@ -25,13 +19,13 @@ public:
 
 	ActionVMImage1(const uint8_t* byteCode, uint32_t length);
 
-	void execute(ActionFrame* frame, const Timer& timer, ActionVMTrace1* trace) const;
-
 	void prepare();
 
 	uint16_t addConstData(const ActionValue& cd);
 
 	const ActionValue& getConstData(uint16_t index) const { return m_constData[index]; }
+
+	virtual bool serialize(ISerializer& s);
 
 private:
 	friend class ActionVM1;

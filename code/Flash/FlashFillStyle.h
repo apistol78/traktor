@@ -2,20 +2,23 @@
 #define traktor_flash_FlashFillStyle_H
 
 #include "Core/Object.h"
-#include "Core/Math/Matrix33.h"
 #include "Core/Containers/AlignedVector.h"
+#include "Core/Math/Matrix33.h"
 #include "Flash/SwfTypes.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_FLASH_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
 {
+
+class ISerializer;
+
 	namespace flash
 	{
 
@@ -46,6 +49,8 @@ public:
 		,	color(color_)
 		{
 		}
+
+		bool serialize(ISerializer& s);
 	};
 
 	FlashFillStyle();
@@ -67,6 +72,8 @@ public:
 	uint16_t getFillBitmap() const { return m_fillBitmap; }
 
 	const Matrix33& getFillBitmapMatrix() const { return m_fillBitmapMatrix; }
+
+	bool serialize(ISerializer& s);
 
 private:
 	AlignedVector< ColorRecord > m_colorRecords;

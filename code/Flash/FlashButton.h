@@ -1,16 +1,16 @@
 #ifndef traktor_flash_FlashButton_H
 #define traktor_flash_FlashButton_H
 
-#include "Flash/FlashCharacter.h"
-#include "Core/Math/Matrix33.h"
 #include "Core/Containers/AlignedVector.h"
+#include "Core/Math/Matrix33.h"
+#include "Flash/FlashCharacter.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_FLASH_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -68,6 +68,8 @@ public:
 			cxform.blue[0]  = 1.0f; cxform.blue[1]  = 0.0f;
 			cxform.alpha[0] = 1.0f; cxform.alpha[1] = 0.0f;
 		}
+
+		bool serialize(ISerializer& s);
 	};
 
 	struct ButtonCondition
@@ -81,10 +83,14 @@ public:
 		,	mask(0)
 		{
 		}
+
+		bool serialize(ISerializer& s);
 	};
 
 	typedef AlignedVector< ButtonLayer > button_layers_t;
 	typedef std::vector< ButtonCondition > button_conditions_t;
+
+	FlashButton();
 
 	FlashButton(uint16_t id);
 
@@ -113,6 +119,8 @@ public:
 	const button_conditions_t& getButtonConditions() const;
 
 	virtual Ref< FlashCharacterInstance > createInstance(ActionContext* context, FlashCharacterInstance* parent, const std::string& name, const ActionObject* initObject) const;
+
+	virtual bool serialize(ISerializer& s);
 
 private:
 	button_layers_t m_layers;

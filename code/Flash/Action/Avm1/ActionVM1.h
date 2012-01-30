@@ -36,6 +36,8 @@ public:
 
 	virtual void execute(ActionFrame* frame) const;
 
+	virtual bool serialize(ISerializer& s);
+
 private:
 	Timer m_timer;
 	Ref< ActionVMTrace1 > m_trace;

@@ -1,4 +1,10 @@
+#include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberAlignedVector.h"
+#include "Core/Serialization/MemberComposite.h"
+#include "Core/Serialization/MemberEnum.h"
 #include "Flash/FlashFillStyle.h"
+#include "Flash/SwfMembers.h"
 
 namespace traktor
 {
@@ -81,6 +87,32 @@ bool FlashFillStyle::create(uint16_t fillBitmap, const Matrix33& fillBitmapMatri
 {
 	m_fillBitmap = fillBitmap;
 	m_fillBitmapMatrix = fillBitmapMatrix;
+	return true;
+}
+
+bool FlashFillStyle::serialize(ISerializer& s)
+{
+	const MemberEnum< GradientType >::Key kGradientType[] =
+	{
+		{ L"GtInvalid", GtInvalid },
+		{ L"GtLinear", GtLinear },
+		{ L"GtRadial", GtRadial },
+		{ 0, 0 }
+	};
+
+	s >> MemberAlignedVector< ColorRecord, MemberComposite< ColorRecord > >(L"colorRecords", m_colorRecords);
+	s >> MemberEnum< GradientType >(L"gradientType", m_gradientType, kGradientType);
+	s >> Member< Matrix33 >(L"gradientMatrix", m_gradientMatrix);
+	s >> Member< uint16_t >(L"m_fillBitmap", m_fillBitmap);
+	s >> Member< Matrix33 >(L"fillBitmapMatrix", m_fillBitmapMatrix);
+
+	return true;
+}
+
+bool FlashFillStyle::ColorRecord::serialize(ISerializer& s)
+{
+	s >> Member< float >(L"ratio", ratio);
+	s >> MemberSwfColor(L"color", color);
 	return true;
 }
 
