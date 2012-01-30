@@ -14,6 +14,9 @@
 
 namespace traktor
 {
+
+class ISerializer;
+
 	namespace flash
 	{
 
@@ -30,6 +33,8 @@ public:
 	const SwfColor& getLineColor() const;
 
 	uint16_t getLineWidth() const;
+
+	bool serialize(ISerializer& s);
 
 private:
 	SwfColor m_lineColor;

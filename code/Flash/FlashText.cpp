@@ -1,13 +1,22 @@
 #include <sstream>
+#include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberAlignedVector.h"
+#include "Core/Serialization/MemberComposite.h"
 #include "Flash/FlashText.h"
 #include "Flash/FlashTextInstance.h"
+#include "Flash/SwfMembers.h"
 
 namespace traktor
 {
 	namespace flash
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashText", FlashText, FlashCharacter)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashText", 0, FlashText, FlashCharacter)
+
+FlashText::FlashText()
+{
+}
 
 FlashText::FlashText(uint16_t id, const SwfRect& textBounds, const Matrix33& textMatrix)
 :	FlashCharacter(id)
@@ -66,6 +75,29 @@ const SwfRect& FlashText::getTextBounds() const
 const Matrix33& FlashText::getTextMatrix() const
 {
 	return m_textMatrix;
+}
+
+bool FlashText::serialize(ISerializer& s)
+{
+	if (!FlashCharacter::serialize(s))
+		return false;
+
+	s >> MemberSwfRect(L"textBounds", m_textBounds);
+	s >> Member< Matrix33 >(L"textMatrix", m_textMatrix);
+	s >> MemberAlignedVector< Character, MemberComposite< Character > >(L"characters", m_characters);
+
+	return true;
+}
+
+bool FlashText::Character::serialize(ISerializer& s)
+{
+	s >> Member< uint16_t >(L"fontId", fontId);
+	s >> Member< int16_t >(L"offsetX", offsetX);
+	s >> Member< int16_t >(L"offsetY", offsetY);
+	s >> Member< int16_t >(L"height", height);
+	s >> MemberSwfColor(L"color", color);
+	s >> Member< uint32_t >(L"glyphIndexOrCode", glyphIndex);
+	return true;
 }
 
 	}

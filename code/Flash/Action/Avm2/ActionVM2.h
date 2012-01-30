@@ -182,6 +182,8 @@ public:
 	virtual Ref< const IActionVMImage > load(BitReader& br) const;
 
 	virtual void execute(ActionFrame* frame) const;
+
+	virtual bool serialize(ISerializer& s);
 };
 
 	}

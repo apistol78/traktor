@@ -1,12 +1,23 @@
+#include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberAlignedVector.h"
+#include "Core/Serialization/MemberComposite.h"
+#include "Core/Serialization/MemberRef.h"
+#include "Core/Serialization/MemberStl.h"
 #include "Flash/FlashButton.h"
 #include "Flash/FlashButtonInstance.h"
+#include "Flash/SwfMembers.h"
+#include "Flash/Action/IActionVMImage.h"
 
 namespace traktor
 {
 	namespace flash
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashButton", FlashButton, FlashCharacter)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashButton", 0, FlashButton, FlashCharacter)
+
+FlashButton::FlashButton()
+{
+}
 
 FlashButton::FlashButton(uint16_t id)
 :	FlashCharacter(id)
@@ -36,6 +47,35 @@ const FlashButton::button_conditions_t& FlashButton::getButtonConditions() const
 Ref< FlashCharacterInstance > FlashButton::createInstance(ActionContext* context, FlashCharacterInstance* parent, const std::string& name, const ActionObject* initObject) const
 {
 	return new FlashButtonInstance(context, parent, this);
+}
+
+bool FlashButton::serialize(ISerializer& s)
+{
+	if (!FlashCharacter::serialize(s))
+		return false;
+
+	s >> MemberAlignedVector< ButtonLayer, MemberComposite< ButtonLayer > >(L"layers", m_layers);
+	s >> MemberStlVector< ButtonCondition, MemberComposite< ButtonCondition > >(L"conditions", m_conditions);
+
+	return true;
+}
+
+bool FlashButton::ButtonLayer::serialize(ISerializer& s)
+{
+	s >> Member< uint8_t >(L"state", state);
+	s >> Member< uint16_t >(L"characterId", characterId);
+	s >> Member< uint16_t >(L"placeDepth", placeDepth);
+	s >> Member< Matrix33 >(L"placeMatrix", placeMatrix);
+	s >> MemberSwfCxTransform(L"cxform", cxform);
+	return true;
+}
+
+bool FlashButton::ButtonCondition::serialize(ISerializer& s)
+{
+	s >> Member< uint8_t >(L"key", key);
+	s >> Member< uint16_t >(L"mask", mask);
+	s >> MemberRef< const IActionVMImage >(L"script", script);
+	return true;
 }
 
 	}

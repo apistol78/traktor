@@ -1,0 +1,55 @@
+#include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberStaticArray.h"
+#include "Flash/SwfMembers.h"
+
+namespace traktor
+{
+	namespace flash
+	{
+
+MemberSwfColor::MemberSwfColor(const wchar_t* const name, SwfColor& ref)
+:	MemberComplex(name, true)
+,	m_ref(ref)
+{
+}
+
+bool MemberSwfColor::serialize(ISerializer& s) const
+{
+	s >> Member< uint8_t >(L"red", m_ref.red);
+	s >> Member< uint8_t >(L"green", m_ref.green);
+	s >> Member< uint8_t >(L"blue", m_ref.blue);
+	s >> Member< uint8_t >(L"alpha", m_ref.alpha);
+	return true;
+}
+
+MemberSwfCxTransform::MemberSwfCxTransform(const wchar_t* const name, SwfCxTransform& ref)
+:	MemberComplex(name, true)
+,	m_ref(ref)
+{
+}
+
+bool MemberSwfCxTransform::serialize(ISerializer& s) const
+{
+	s >> MemberStaticArray< float, 2 >(L"red", m_ref.red);
+	s >> MemberStaticArray< float, 2 >(L"green", m_ref.green);
+	s >> MemberStaticArray< float, 2 >(L"blue", m_ref.blue);
+	s >> MemberStaticArray< float, 2 >(L"alpha", m_ref.alpha);
+	return true;
+}
+
+MemberSwfRect::MemberSwfRect(const wchar_t* const name, SwfRect& ref)
+:	MemberComplex(name, true)
+,	m_ref(ref)
+{
+}
+
+bool MemberSwfRect::serialize(ISerializer& s) const
+{
+	s >> Member< Vector2 >(L"min", m_ref.min);
+	s >> Member< Vector2 >(L"max", m_ref.max);
+	return true;
+}
+
+	}
+}

@@ -1,10 +1,10 @@
 #ifndef traktor_flash_FlashFrame_H
 #define traktor_flash_FlashFrame_H
 
-#include "Core/Object.h"
 #include "Core/RefArray.h"
 #include "Core/Containers/SmallMap.h"
 #include "Core/Math/Matrix33.h"
+#include "Core/Serialization/ISerializable.h"
 #include "Flash/SwfTypes.h"
 
 // import/export mechanism.
@@ -28,7 +28,7 @@ class IActionVMImage;
  * Keep display list actions for a single
  * frame.
  */
-class T_DLLCLASS FlashFrame : public Object
+class T_DLLCLASS FlashFrame : public ISerializable
 {
 	T_RTTI_CLASS;
 
@@ -37,6 +37,8 @@ public:
 	{
 		uint32_t eventMask;
 		Ref< const IActionVMImage > script;
+
+		bool serialize(ISerializer& s);
 	};
 
 	struct PlaceObject
@@ -76,19 +78,23 @@ public:
 		,	depth(0)
 		{
 		}
+
+		bool serialize(ISerializer& s);
 	};
 
 	struct RemoveObject
 	{
-		unsigned hasCharacterId : 1;
+		bool hasCharacterId;
 		uint16_t depth;
 		uint16_t characterId;
 
 		RemoveObject()
-		:	hasCharacterId(0)
+		:	hasCharacterId(false)
 		,	depth(0)
 		{
 		}
+
+		bool serialize(ISerializer& s);
 	};
 
 	FlashFrame();
@@ -158,6 +164,10 @@ public:
 	 * \return Action scripts.
 	 */
 	const RefArray< const IActionVMImage >& getActionScripts() const;
+
+	/*! \brief
+	 */
+	virtual bool serialize(ISerializer& s);
 
 private:
 	std::string m_label;

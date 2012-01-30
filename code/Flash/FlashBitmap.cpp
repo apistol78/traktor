@@ -1,6 +1,8 @@
 #include <cstring>
 #include "Core/Log/Log.h"
 #include "Core/Math/Log2.h"
+#include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/Member.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
 #include "Drawing/Filters/ScaleFilter.h"
@@ -11,7 +13,7 @@ namespace traktor
 	namespace flash
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashBitmap", FlashBitmap, Object)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashBitmap", 0, FlashBitmap, ISerializable)
 
 FlashBitmap::FlashBitmap()
 :	m_width(0)
@@ -88,6 +90,22 @@ bool FlashBitmap::create(uint16_t width, uint16_t height)
 	m_width = width;
 	m_height = height;
 	m_bits.reset(new SwfColor [m_width * m_height]);
+	return true;
+}
+
+bool FlashBitmap::serialize(ISerializer& s)
+{
+	s >> Member< uint16_t >(L"width", m_width);
+	s >> Member< uint16_t >(L"height", m_height);
+
+	if (s.getDirection() == ISerializer::SdRead)
+		m_bits.reset(new SwfColor [m_width * m_height]);
+
+	void* bits = m_bits.ptr();
+	uint32_t size = m_width * m_height * sizeof(SwfColor);
+
+	s >> Member< void* >(L"bits", bits, size);
+
 	return true;
 }
 

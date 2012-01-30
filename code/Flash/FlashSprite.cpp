@@ -1,5 +1,8 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
+#include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberRefArray.h"
 #include "Flash/FlashFrame.h"
 #include "Flash/FlashMovie.h"
 #include "Flash/FlashSprite.h"
@@ -7,13 +10,19 @@
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFunction.h"
 #include "Flash/Action/ActionValueArray.h"
+#include "Flash/Action/IActionVMImage.h"
 
 namespace traktor
 {
 	namespace flash
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashSprite", FlashSprite, FlashCharacter)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashSprite", 0, FlashSprite, FlashCharacter)
+
+FlashSprite::FlashSprite()
+:	m_frameRate(0)
+{
+}
 
 FlashSprite::FlashSprite(uint16_t id, uint16_t frameRate)
 :	FlashCharacter(id)
@@ -106,6 +115,18 @@ Ref< FlashCharacterInstance > FlashSprite::createInstance(ActionContext* context
 	}
 
 	return spriteInstance;
+}
+
+bool FlashSprite::serialize(ISerializer& s)
+{
+	if (!FlashCharacter::serialize(s))
+		return false;
+
+	s >> Member< uint16_t >(L"frameRate", m_frameRate);
+	s >> MemberRefArray< FlashFrame >(L"frames", m_frames);
+	s >> MemberRefArray< const IActionVMImage >(L"initActionScripts", m_initActionScripts);
+
+	return true;
 }
 
 	}

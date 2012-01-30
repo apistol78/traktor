@@ -8,9 +8,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_FLASH_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -38,7 +38,11 @@ public:
 			uint32_t glyphIndex;
 			uint16_t code;
 		};
+
+		bool serialize(ISerializer& s);
 	};
+
+	FlashText();
 
 	FlashText(uint16_t id, const SwfRect& textBounds, const Matrix33& textMatrix);
 
@@ -51,6 +55,8 @@ public:
 	const SwfRect& getTextBounds() const;
 
 	const Matrix33& getTextMatrix() const;
+
+	virtual bool serialize(ISerializer& s);
 
 private:
 	SwfRect m_textBounds;

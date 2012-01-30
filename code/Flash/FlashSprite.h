@@ -32,6 +32,8 @@ class T_DLLCLASS FlashSprite : public FlashCharacter
 	T_RTTI_CLASS;
 
 public:
+	FlashSprite();
+
 	FlashSprite(uint16_t id, uint16_t frameRate);
 
 	uint16_t getFrameRate() const;
@@ -49,6 +51,8 @@ public:
 	const RefArray< const IActionVMImage >& getInitActionScripts() const;
 
 	virtual Ref< FlashCharacterInstance > createInstance(ActionContext* context, FlashCharacterInstance* parent, const std::string& name, const ActionObject* initObject) const;
+
+	virtual bool serialize(ISerializer& s);
 
 private:
 	uint16_t m_frameRate;

@@ -130,6 +130,11 @@ public:
 		return m_data.empty();
 	}
 
+	uint32_t size() const
+	{
+		return m_data.size();
+	}
+
 	Item& operator [] (const Key& key)
 	{
 		uint32_t is = 0;

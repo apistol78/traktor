@@ -3,6 +3,9 @@
 #include "Core/Memory/IAllocator.h"
 #include "Core/Memory/MemoryConfig.h"
 #include "Core/Misc/String.h"
+#include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberEnum.h"
 #include "Flash/Action/ActionValue.h"
 #include "Flash/Action/Classes/Boolean.h"
 #include "Flash/Action/Classes/Number.h"
@@ -239,6 +242,55 @@ Ref< ActionObject > ActionValue::getObjectAlways(ActionContext* context) const
 		break;
 	}
 	return new ActionObject(context);
+}
+
+bool ActionValue::serialize(ISerializer& s)
+{
+	const MemberEnum< Type >::Key kType[] =
+	{
+		{ L"AvtUndefined", AvtUndefined },
+		{ L"AvtBoolean", AvtBoolean },
+		{ L"AvtNumber", AvtNumber },
+		{ L"AvtString", AvtString },
+		{ L"AvtObject", AvtObject },
+		{ 0, 0 }
+	};
+
+	s >> MemberEnum< Type >(L"type", m_type, kType);
+	switch (m_type)
+	{
+	case AvtUndefined:
+		break;
+
+	case AvtBoolean:
+		s >> Member< bool >(L"value", m_value.b);
+		break;
+
+	case AvtNumber:
+		s >> Member< avm_number_t >(L"value", m_value.n);
+		break;
+
+	case AvtString:
+		{
+			if (s.getDirection() == ISerializer::SdRead)
+			{
+				std::string str;
+				s >> Member< std::string >(L"value", str);
+				m_value.s = refStringCreate(str.c_str());
+			}
+			else
+			{
+				std::string str = m_value.s;
+				s >> Member< std::string >(L"value", str);
+			}
+		}
+		break;
+
+	default:
+		return false;
+	}
+
+	return true;
 }
 
 ActionValue& ActionValue::operator = (const ActionValue& v)

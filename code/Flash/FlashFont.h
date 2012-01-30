@@ -1,9 +1,9 @@
 #ifndef traktor_flash_FlashFont_H
 #define traktor_flash_FlashFont_H
 
-#include "Core/Object.h"
 #include "Core/RefArray.h"
 #include "Core/Containers/SmallMap.h"
+#include "Core/Serialization/ISerializable.h"
 #include "Flash/SwfTypes.h"
 
 // import/export mechanism.
@@ -24,7 +24,7 @@ class FlashShape;
 /*! \brief Font
  * \ingroup Flash
  */
-class T_DLLCLASS FlashFont : public Object
+class T_DLLCLASS FlashFont : public ISerializable
 {
 	T_RTTI_CLASS;
 
@@ -68,6 +68,8 @@ public:
 	uint16_t lookupIndex(uint16_t code) const;
 
 	CoordinateType getCoordinateType() const;
+
+	virtual bool serialize(ISerializer& s);
 
 private:
 	RefArray< FlashShape > m_shapes;

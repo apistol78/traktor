@@ -16,6 +16,9 @@
 
 namespace traktor
 {
+
+class ISerializer;
+
 	namespace flash
 	{
 
@@ -42,7 +45,10 @@ struct SubPathSegment
 	:	type(type_)
 	,	pointsOffset(0)
 	,	pointsCount(0)
-	{}
+	{
+	}
+
+	bool serialize(ISerializer& s);
 };
 
 /*! \brief Sub path.
@@ -61,6 +67,8 @@ struct SubPath
 	,	lineStyle(0)
 	{
 	}
+
+	bool serialize(ISerializer& s);
 };
 
 /*! \brief Shape path.
@@ -131,6 +139,10 @@ public:
 	 * \return List of sub-paths.
 	 */
 	const std::list< SubPath >& getSubPaths() const { return m_subPaths; }
+
+	/*! \brief Serialize path.
+	 */
+	bool serialize(ISerializer& s);
 
 private:
 	Vector2 m_cursor;

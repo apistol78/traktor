@@ -1,7 +1,7 @@
 #ifndef traktor_flash_IActionVM_H
 #define traktor_flash_IActionVM_H
 
-#include "Core/Object.h"
+#include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -25,7 +25,7 @@ class IActionVMImage;
 /*! \brief ActionScript virtual machine interface.
  * \ingroup Flash
  */
-class T_DLLCLASS IActionVM : public Object
+class T_DLLCLASS IActionVM : public ISerializable
 {
 	T_RTTI_CLASS;
 

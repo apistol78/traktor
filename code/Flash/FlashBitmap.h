@@ -1,8 +1,8 @@
 #ifndef traktor_flash_FlashBitmap_H
 #define traktor_flash_FlashBitmap_H
 
-#include "Core/Object.h"
 #include "Core/Misc/AutoPtr.h"
+#include "Core/Serialization/ISerializable.h"
 #include "Flash/SwfTypes.h"
 
 // import/export mechanism.
@@ -28,7 +28,7 @@ class Image;
 /*! \brief Flash bitmap container.
  * \ingroup Flash
  */
-class T_DLLCLASS FlashBitmap : public Object
+class T_DLLCLASS FlashBitmap : public ISerializable
 {
 	T_RTTI_CLASS;
 
@@ -63,6 +63,8 @@ public:
 		if (x < m_width && y < m_height)
 			m_bits[x + y * m_width] = color;
 	}
+
+	virtual bool serialize(ISerializer& s);
 
 private:
 	uint16_t m_width;

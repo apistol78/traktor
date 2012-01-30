@@ -1,22 +1,23 @@
-#include "Flash/Editor/FlashPipeline.h"
-#include "Flash/Editor/FlashMovieAsset.h"
-#include "Flash/FlashMovieResource.h"
-#include "Editor/IPipelineDepends.h"
-#include "Editor/IPipelineBuilder.h"
-#include "Editor/IPipelineSettings.h"
-#include "Database/Instance.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
-#include "Core/Io/StreamCopy.h"
 #include "Core/Log/Log.h"
 #include "Core/Settings/PropertyString.h"
+#include "Database/Instance.h"
+#include "Editor/IPipelineBuilder.h"
+#include "Editor/IPipelineDepends.h"
+#include "Editor/IPipelineSettings.h"
+#include "Flash/FlashMovie.h"
+#include "Flash/FlashMovieFactory.h"
+#include "Flash/SwfReader.h"
+#include "Flash/Editor/FlashPipeline.h"
+#include "Flash/Editor/FlashMovieAsset.h"
 
 namespace traktor
 {
 	namespace flash
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashPipeline", 2, FlashPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashPipeline", 4, FlashPipeline, editor::IPipeline)
 
 bool FlashPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -79,9 +80,21 @@ bool FlashPipeline::buildOutput(
 	Ref< IStream > sourceStream = FileSystem::getInstance().open(fileName, File::FmRead);
 	if (!sourceStream)
 	{
-		log::error << L"Failed to import flash, unable to open source" << Endl;
+		log::error << L"Failed to import Flash; unable to open file \"" << fileName.getPathName() << L"\"" << Endl;
 		return false;
 	}
+
+	Ref< SwfReader > swf = new SwfReader(sourceStream);
+	Ref< FlashMovie > movie = flash::FlashMovieFactory().createMovie(swf);
+	if (!movie)
+	{
+		log::error << L"Failed to import Flash; unable to parse SWF" << Endl;
+		return false;
+	}
+
+	sourceStream->close();
+	sourceStream = 0;
+
 
 	Ref< db::Instance > instance = pipelineBuilder->createOutputInstance(
 		outputPath,
@@ -89,28 +102,15 @@ bool FlashPipeline::buildOutput(
 	);
 	if (!instance)
 	{
-		log::error << L"Failed to build flash resource, unable to create instance" << Endl;
+		log::error << L"Failed to import Flash; unable to create instance" << Endl;
 		return false;
 	}
 
-	instance->setObject(new flash::FlashMovieResource());
-
-	Ref< IStream > stream = instance->writeData(L"Data");
-	if (!stream)
-	{
-		log::error << L"Failed to build flash resource, unable to create data stream" << Endl;
-		instance->revert();
-		return false;
-	}
-
-	StreamCopy(stream, sourceStream).execute();
-
-	stream->close();
-	sourceStream->close();
+	instance->setObject(movie);
 
 	if (!instance->commit())
 	{
-		log::info << L"Failed to build flash resource, unable to commit instance" << Endl;
+		log::info << L"Failed to import Flash; unable to commit instance" << Endl;
 		return false;
 	}
 

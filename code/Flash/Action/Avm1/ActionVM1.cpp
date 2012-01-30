@@ -1,6 +1,7 @@
 #include <cstring>
 #include <cmath>
 #include "Core/Io/BitReader.h"
+#include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFrame.h"
 #include "Flash/Action/Avm1/ActionOpcodes.h"
 #include "Flash/Action/Avm1/ActionOperations.h"
@@ -13,7 +14,7 @@ namespace traktor
 	namespace flash
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.ActionVM1", ActionVM1, IActionVM)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.ActionVM1", 0, ActionVM1, IActionVM)
 
 ActionVM1::ActionVM1()
 {
@@ -60,7 +61,78 @@ void ActionVM1::execute(ActionFrame* frame) const
 	const ActionVMImage1* image = static_cast< const ActionVMImage1* >(frame->getImage());
 	T_ASSERT (image);
 
-	image->execute(frame, m_timer, m_trace);
+	ExecutionState state;
+	state.image = image;
+	state.frame = frame;
+	state.pc = image->m_byteCode.c_ptr();
+	state.npc = state.pc + 1;
+	state.data = 0;
+	state.length = 0;
+	state.timer = &m_timer;
+
+	// Cache frequently used instances.
+	state.context = frame->getContext();
+	state.self = frame->getSelf();
+	state.global = frame->getContext()->getGlobal();
+	state.movieClip = frame->getContext()->getMovieClip();
+	state.trace = 0;
+
+#if T_TRACE_EXECUTE
+	if (m_trace)
+	{
+		m_trace->beginDispatcher();
+		state.trace = &m_trace->getTraceStream();
+	}
+#endif
+
+	const uint8_t* end = state.pc + image->m_byteCode.size();
+	while (state.pc < end)
+	{
+		const uint8_t op = *state.pc;
+
+		if (op == AopEnd || op == AopReturn)
+			break;
+
+		state.npc = state.pc + 1;
+		state.data = 0;
+
+		// Decode instruction data.
+		state.length = 1;
+		if (op & 0x80)
+		{
+			state.length = *reinterpret_cast< const uint16_t* >(state.pc + 1);
+			state.data = state.pc + 3;
+			state.npc = state.data + state.length;
+		}
+
+		// Get instruction handler and dispatch.
+		const OperationInfo& info = c_operationInfos[op];
+		T_ASSERT (info.op == op);
+		T_ASSERT (info.execute != 0);
+
+#if T_TRACE_EXECUTE
+		if (m_trace)
+			m_trace->preDispatch(state, info);
+#endif
+		info.execute(state);
+#if T_TRACE_EXECUTE
+		if (m_trace)
+			m_trace->postDispatch(state, info);
+#endif
+
+		// Update program counter.
+		state.pc = state.npc;
+	}
+
+#if T_TRACE_EXECUTE
+	if (m_trace)
+		m_trace->endDispatcher();
+#endif
+}
+
+bool ActionVM1::serialize(ISerializer& s)
+{
+	return true;
 }
 
 	}

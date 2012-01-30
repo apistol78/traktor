@@ -311,6 +311,9 @@ bool Document::loadFromStream(IStream* stream, const IEncoding* encoding)
 
 bool Document::loadFromText(const std::wstring& text)
 {
+	if (text.empty())
+		return false;
+
 	std::vector< wchar_t > buffer(text.begin(), text.end());
 #if defined(_PS3)
 	for (std::vector< wchar_t >::iterator i = buffer.begin(); i != buffer.end(); ++i)
@@ -318,6 +321,7 @@ bool Document::loadFromText(const std::wstring& text)
 #endif
 	Ref< MemoryStream > stream = new MemoryStream(&buffer[0], buffer.size() * sizeof(wchar_t));
 	Ref< IEncoding > encoding = CreateEncoding< sizeof(wchar_t) >::createInstance();
+
 	return loadFromStream(stream, encoding);
 }
 

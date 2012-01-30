@@ -1,8 +1,8 @@
 #ifndef traktor_flash_FlashMovie_H
 #define traktor_flash_FlashMovie_H
 
-#include "Core/Object.h"
 #include "Core/Containers/SmallMap.h"
+#include "Core/Serialization/ISerializable.h"
 #include "Flash/SwfTypes.h"
 
 // import/export mechanism.
@@ -29,11 +29,13 @@ class IActionVM;
 /*! \brief Flash movie.
  * \ingroup Flash
  */
-class T_DLLCLASS FlashMovie : public Object
+class T_DLLCLASS FlashMovie : public ISerializable
 {
 	T_RTTI_CLASS;
 
 public:
+	FlashMovie();
+
 	FlashMovie(const IActionVM* vm, const SwfRect& frameBounds, FlashSprite* movieClip);
 
 	void defineFont(uint16_t fontId, FlashFont* font);
@@ -79,6 +81,8 @@ public:
 	const SmallMap< uint16_t, Ref< FlashCharacter > >& getCharacters() const { return m_characters; }
 
 	const SmallMap< std::string, uint16_t >& getExports() const { return m_exports; }
+
+	virtual bool serialize(ISerializer& s);
 
 private:
 	Ref< const IActionVM > m_vm;
