@@ -5,6 +5,7 @@
 #include "Flash/FlashEditInstance.h"
 #include "Flash/FlashFont.h"
 #include "Flash/FlashMovie.h"
+#include "Flash/FlashTextFormat.h"
 #include "Flash/Action/ActionContext.h"
 #include "Html/Document.h"
 #include "Html/Element.h"
@@ -34,6 +35,7 @@ FlashEditInstance::FlashEditInstance(ActionContext* context, FlashCharacterInsta
 :	FlashCharacterInstance(context, "TextField", parent)
 ,	m_edit(edit)
 ,	m_textColor(edit->getTextColor())
+,	m_letterSpacing(0.0f)
 {
 	if (m_edit->renderHtml())
 		parseHtml(html);
@@ -77,14 +79,24 @@ bool FlashEditInstance::parseHtml(const std::wstring& html)
 	return true;
 }
 
-const SwfColor& FlashEditInstance::getTextColor() const
+Ref< FlashTextFormat > FlashEditInstance::getTextFormat() const
 {
-	return m_textColor;
+	return new FlashTextFormat(m_letterSpacing);
 }
 
-void FlashEditInstance::setTextColor(const SwfColor& textColor)
+Ref< FlashTextFormat > FlashEditInstance::getTextFormat(int32_t beginIndex, int32_t endIndex) const
 {
-	m_textColor = textColor;
+	return new FlashTextFormat(m_letterSpacing);
+}
+
+void FlashEditInstance::setTextFormat(const FlashTextFormat* textFormat)
+{
+	m_letterSpacing = textFormat->getLetterSpacing();
+}
+
+void FlashEditInstance::setTextFormat(const FlashTextFormat* textFormat, int32_t beginIndex, int32_t endIndex)
+{
+	m_letterSpacing = textFormat->getLetterSpacing();
 }
 
 FlashEditInstance::text_t FlashEditInstance::getText() const

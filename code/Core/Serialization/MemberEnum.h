@@ -1,6 +1,7 @@
 #ifndef traktor_MemberEnum_H
 #define traktor_MemberEnum_H
 
+#include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberComplex.h"
 
 // import/export mechanism.

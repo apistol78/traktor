@@ -19,6 +19,7 @@ namespace traktor
 	{
 
 class FlashEdit;
+class FlashTextFormat;
 
 /*! \brief Dynamic text character instance.
  * \ingroup Flash
@@ -38,9 +39,13 @@ public:
 
 	bool parseHtml(const std::wstring& html);
 
-	const SwfColor& getTextColor() const;
+	Ref< FlashTextFormat > getTextFormat() const;
 
-	void setTextColor(const SwfColor& textColor);
+	Ref< FlashTextFormat > getTextFormat(int32_t beginIndex, int32_t endIndex) const;
+
+	void setTextFormat(const FlashTextFormat* textFormat);
+
+	void setTextFormat(const FlashTextFormat* textFormat, int32_t beginIndex, int32_t endIndex);
 
 	text_t getText() const;
 
@@ -50,10 +55,19 @@ public:
 
 	virtual SwfRect getBounds() const;
 
+	const SwfColor& getTextColor() const { return m_textColor; }
+
+	void setTextColor(const SwfColor& textColor) { m_textColor = textColor; }
+
+	void setLetterSpacing(float letterSpacing) { m_letterSpacing = letterSpacing; }
+
+	float getLetterSpacing() const { return m_letterSpacing; }
+
 private:
 	mutable Semaphore m_lock;
 	Ref< const FlashEdit > m_edit;
 	SwfColor m_textColor;
+	float m_letterSpacing;
 	text_t m_text;
 };
 
