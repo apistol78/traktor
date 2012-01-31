@@ -66,6 +66,8 @@ private:
 
 	Ref< ui::custom::ToolBar > m_toolBarActions;
 	Ref< ui::custom::ToolBarButton > m_toolTogglePick;
+	Ref< ui::custom::ToolBarButton > m_toolToggleTranslate;
+	Ref< ui::custom::ToolBarButton > m_toolToggleRotate;
 	Ref< ui::custom::ToolBarButton > m_toolToggleX;
 	Ref< ui::custom::ToolBarButton > m_toolToggleY;
 	Ref< ui::custom::ToolBarButton > m_toolToggleZ;
