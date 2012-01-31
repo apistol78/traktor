@@ -13,18 +13,9 @@ namespace traktor
 
 bool SubPathSegment::serialize(ISerializer& s)
 {
-	const MemberEnum< SubPathSegmentType >::Key kSubPathSegmentType[] =
-	{
-		{ L"SpgtUndefined", SpgtUndefined },
-		{ L"SpgtLinear", SpgtLinear },
-		{ L"SpgtQuadratic", SpgtQuadratic },
-		{ 0, 0 }
-	};
-
-	s >> MemberEnum< SubPathSegmentType >(L"type", type, kSubPathSegmentType);
+	s >> MemberEnumByValue< SubPathSegmentType, uint8_t >(L"type", type);
 	s >> Member< uint32_t >(L"pointsOffset", pointsOffset);
 	s >> Member< uint32_t >(L"pointsCount", pointsCount);
-
 	return true;
 }
 

@@ -49,7 +49,7 @@ class MemberEnum : public MemberEnumBase
 public:
 	typedef EnumType value_type;
 
-	MemberEnum(const wchar_t* const& name, EnumType& en, const Key* keys)
+	MemberEnum(const wchar_t* const name, EnumType& en, const Key* keys)
 	:	MemberEnumBase(name, keys)
 	,	m_en(en)
 	{
@@ -76,6 +76,32 @@ public:
 				return k->id;
 		}
 		return 0;
+	}
+
+private:
+	EnumType& m_en;
+};
+
+/*! \brief Enumeration member.
+ * \ingroup Core
+ */
+template < typename EnumType, typename ValueType = uint32_t >
+class MemberEnumByValue : public MemberComplex
+{
+public:
+	MemberEnumByValue(const wchar_t* const name, EnumType& en)
+	:	MemberComplex(name, false)
+	,	m_en(en)
+	{
+	}
+
+	virtual bool serialize(ISerializer& s) const
+	{
+		ValueType value = static_cast< ValueType >(m_en);
+		if (!(s >> Member< ValueType >(getName(), value)))
+			return false;
+		m_en = static_cast< EnumType >(value);
+		return true;
 	}
 
 private:
