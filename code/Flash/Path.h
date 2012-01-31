@@ -27,9 +27,9 @@ class ISerializer;
  */
 enum SubPathSegmentType
 {
-	SpgtUndefined,
-	SpgtLinear,
-	SpgtQuadratic
+	SpgtUndefined = 0,
+	SpgtLinear = 1,
+	SpgtQuadratic = 2
 };
 
 /*! \brief Sub path segment.
