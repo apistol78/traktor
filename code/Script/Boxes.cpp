@@ -190,6 +190,21 @@ const Quaternion& BoxedTransform::rotation() const
 	return m_value.rotation();
 }
 
+Vector4 BoxedTransform::axisX() const
+{
+	return m_value.axisX();
+}
+
+Vector4 BoxedTransform::axisY() const
+{
+	return m_value.axisY();
+}
+
+Vector4 BoxedTransform::axisZ() const
+{
+	return m_value.axisZ();
+}
+
 Transform BoxedTransform::inverse() const
 {
 	return m_value.inverse();
@@ -311,6 +326,9 @@ void registerBoxClasses(IScriptManager* scriptManager)
 	classBoxedTransform->addConstructor< const Vector4&, const Quaternion& >();
 	classBoxedTransform->addMethod(L"translation", &BoxedTransform::translation);
 	classBoxedTransform->addMethod(L"rotation", &BoxedTransform::rotation);
+	classBoxedTransform->addMethod(L"axisX", &BoxedTransform::axisX);
+	classBoxedTransform->addMethod(L"axisY", &BoxedTransform::axisY);
+	classBoxedTransform->addMethod(L"axisZ", &BoxedTransform::axisZ);
 	classBoxedTransform->addMethod(L"inverse", &BoxedTransform::inverse);
 	classBoxedTransform->addMethod(L"concat", &BoxedTransform::concat);
 	classBoxedTransform->addMethod(L"transform", &BoxedTransform::transform);

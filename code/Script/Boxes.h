@@ -157,6 +157,12 @@ public:
 	
 	const Quaternion& rotation() const;
 
+	Vector4 axisX() const;
+
+	Vector4 axisY() const;
+
+	Vector4 axisZ() const;
+
 	Transform inverse() const;
 
 	Transform concat(const Transform& t) const;
