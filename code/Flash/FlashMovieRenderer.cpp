@@ -260,6 +260,7 @@ void FlashMovieRenderer::renderCharacter(
 		bool wordWrap = edit->wordWrap();
 
 		const SwfColor& color = editInstance->getTextColor();
+		float letterSpacing = editInstance->getLetterSpacing() * 200.0f * 2000.0f / fontHeight;
 		FlashEditInstance::text_t text = editInstance->getText();
 
 		const float c_magicX = 32.0f * 20.0f;
@@ -293,7 +294,7 @@ void FlashMovieRenderer::renderCharacter(
 					int16_t glyphAdvance = font->getAdvance(glyphIndex);
 					if (k < wordLength - 1)
 						glyphAdvance += font->lookupKerning(word[k], word[k + 1]);
-					wordWidth += (glyphAdvance - c_magicX);
+					wordWidth += glyphAdvance - c_magicX + letterSpacing;
 				}
 
 				widths[j] = wordWidth * fontScale * fontHeight;
@@ -360,7 +361,7 @@ void FlashMovieRenderer::renderCharacter(
 						if (i < wordLength - 1)
 							glyphAdvance += font->lookupKerning(word[i], word[i + 1]);
 
-						offsetX += (glyphAdvance - c_magicX) * fontScale * fontHeight;
+						offsetX += (glyphAdvance - c_magicX + letterSpacing) * fontScale * fontHeight;
 					}
 
 					offsetX += spaceWidth * fontScale * fontHeight;

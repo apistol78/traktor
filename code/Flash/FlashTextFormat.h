@@ -21,7 +21,14 @@ class T_DLLCLASS FlashTextFormat : public ActionObjectRelay
 	T_RTTI_CLASS;
 
 public:
-	FlashTextFormat();
+	FlashTextFormat(float letterSpacing);
+
+	void setLetterSpacing(float letterSpacing) { m_letterSpacing = letterSpacing; }
+
+	float getLetterSpacing() const { return m_letterSpacing; }
+
+private:
+	float m_letterSpacing;
 };
 
 	}

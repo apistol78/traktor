@@ -149,26 +149,17 @@ Ref< Array > AsTextField::TextField_getFontList(FlashEditInstance* editInstance)
 
 Ref< FlashTextFormat > AsTextField::TextField_getNewTextFormat(FlashEditInstance* editInstance) const
 {
-	T_IF_VERBOSE(
-		log::warning << L"TextField::getNewTextFormat not implemented" << Endl;
-	)
-	return 0;
+	return editInstance->getTextFormat();
 }
 
 Ref< FlashTextFormat > AsTextField::TextField_getTextFormat_0(FlashEditInstance* editInstance) const
 {
-	T_IF_VERBOSE(
-		log::warning << L"TextField::getTextFormat_0 not implemented" << Endl;
-	)
-	return 0;
+	return editInstance->getTextFormat();
 }
 
 Ref< FlashTextFormat > AsTextField::TextField_getTextFormat_2(FlashEditInstance* editInstance, int32_t beginIndex, int32_t endIndex) const
 {
-	T_IF_VERBOSE(
-		log::warning << L"TextField::getTextFormat_2 not implemented" << Endl;
-	)
-	return 0;
+	return editInstance->getTextFormat(beginIndex, endIndex);
 }
 
 bool AsTextField::TextField_removeListener(FlashEditInstance* editInstance) const
@@ -202,23 +193,17 @@ void AsTextField::TextField_replaceText(FlashEditInstance* editInstance, int32_t
 
 void AsTextField::TextField_setNewTextFormat(FlashEditInstance* editInstance, FlashTextFormat* textFormat) const
 {
-	T_IF_VERBOSE(
-		log::warning << L"TextField::setNewTextFormat not implemented" << Endl;
-	)
+	editInstance->setTextFormat(textFormat);
 }
 
 void AsTextField::TextField_setTextFormat_0(FlashEditInstance* editInstance, FlashTextFormat* textFormat) const
 {
-	T_IF_VERBOSE(
-		log::warning << L"TextField::setTextFormat_0 not implemented" << Endl;
-	)
+	editInstance->setTextFormat(textFormat);
 }
 
 void AsTextField::TextField_setTextFormat_2(FlashEditInstance* editInstance, int32_t beginIndex, int32_t endIndex, FlashTextFormat* textFormat) const
 {
-	T_IF_VERBOSE(
-		log::warning << L"TextField::setTextFormat_2 not implemented" << Endl;
-	)
+	editInstance->setTextFormat(textFormat, beginIndex, endIndex);
 }
 
 avm_number_t AsTextField::TextField_get_alpha(FlashEditInstance* editInstance) const
