@@ -63,6 +63,8 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 		return false;
 
 	m_toolTogglePick = new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_TOGGLE_PICK"), ui::Command(1, L"Scene.Editor.TogglePick"), 10, ui::custom::ToolBarButton::BsDefaultToggle);
+	m_toolToggleTranslate = new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_TRANSLATE"), ui::Command(L"Scene.Editor.Translate"), 0, ui::custom::ToolBarButton::BsDefaultToggle);
+	m_toolToggleRotate = new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_ROTATE"), ui::Command(L"Scene.Editor.Rotate"), 1, ui::custom::ToolBarButton::BsDefaultToggle);
 	m_toolToggleX = new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_TOGGLE_X"), ui::Command(1, L"Scene.Editor.ToggleX"), 2, ui::custom::ToolBarButton::BsDefaultToggle);
 	m_toolToggleY = new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_TOGGLE_Y"), ui::Command(1, L"Scene.Editor.ToggleY"), 3, ui::custom::ToolBarButton::BsDefaultToggle);
 	m_toolToggleZ = new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_TOGGLE_Z"), ui::Command(1, L"Scene.Editor.ToggleZ"), 4, ui::custom::ToolBarButton::BsDefaultToggle);
@@ -81,6 +83,8 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 	T_ASSERT (settings);
 
 	m_toolTogglePick->setToggled(settings->getProperty< PropertyBoolean >(L"SceneEditor.TogglePick", true));
+	m_toolToggleTranslate->setToggled(true);
+	m_toolToggleRotate->setToggled(false);
 	m_toolToggleX->setToggled(settings->getProperty< PropertyBoolean >(L"SceneEditor.ToggleX", true));
 	m_toolToggleY->setToggled(settings->getProperty< PropertyBoolean >(L"SceneEditor.ToggleY", true));
 	m_toolToggleZ->setToggled(settings->getProperty< PropertyBoolean >(L"SceneEditor.ToggleZ", true));
@@ -92,8 +96,8 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 	m_toolBarActions->addImage(ui::Bitmap::load(c_ResourcePlayback, sizeof(c_ResourcePlayback), L"png"), 6);
 	m_toolBarActions->addItem(m_toolTogglePick);
 	m_toolBarActions->addItem(new ui::custom::ToolBarSeparator());
-	m_toolBarActions->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_TRANSLATE"), ui::Command(L"Scene.Editor.Translate"), 0));
-	m_toolBarActions->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_ROTATE"), ui::Command(L"Scene.Editor.Rotate"), 1));
+	m_toolBarActions->addItem(m_toolToggleTranslate);
+	m_toolBarActions->addItem(m_toolToggleRotate);
 	m_toolBarActions->addItem(new ui::custom::ToolBarSeparator());
 	m_toolBarActions->addItem(m_toolToggleX);
 	m_toolBarActions->addItem(m_toolToggleY);
@@ -180,14 +184,21 @@ bool ScenePreviewControl::handleCommand(const ui::Command& command)
 	bool result = true;
 
 	if (command == L"Scene.Editor.Translate")
+	{
 		m_context->setModifier(m_modifierTranslate);
+		m_toolToggleTranslate->setToggled(true);
+		m_toolToggleRotate->setToggled(false);
+	}
 	else if (command == L"Scene.Editor.Rotate")
+	{
 		m_context->setModifier(m_modifierRotate);
+		m_toolToggleTranslate->setToggled(false);
+		m_toolToggleRotate->setToggled(true);
+	}
 	else if (command == L"Scene.Editor.TogglePick")
 	{
 		if (command.getId() == 0)
 			m_toolTogglePick->setToggled(!m_toolTogglePick->isToggled());
-		updateEditState();
 	}
 	else if (command == L"Scene.Editor.ToggleX" || command == L"Scene.Editor.ToggleY" || command == L"Scene.Editor.ToggleZ")
 	{
@@ -200,17 +211,11 @@ bool ScenePreviewControl::handleCommand(const ui::Command& command)
 			else if (command == L"Scene.Editor.ToggleZ")
 				m_toolToggleZ->setToggled(!m_toolToggleZ->isToggled());
 		}
-		updateEditState();
 	}
 	else if (command == L"Scene.Editor.ToggleSnap")
 	{
 		if (command.getId() == 0)
 			m_toolToggleSnap->setToggled(!m_toolToggleSnap->isToggled());
-		updateEditState();
-	}
-	else if (command == L"Scene.Editor.SnapSpacing")
-	{
-		updateEditState();
 	}
 	else if (command == L"Scene.Editor.Rewind")
 	{
@@ -258,10 +263,14 @@ bool ScenePreviewControl::handleCommand(const ui::Command& command)
 		}
 
 		// Propagate command to active render control.
-		for (RefArray< ISceneRenderControl >::iterator i = m_renderControls.begin(); i != m_renderControls.end(); ++i)
+		if (!result)
 		{
-			if ((result = (*i)->handleCommand(command)) == true)
-				break;
+			for (RefArray< ISceneRenderControl >::iterator i = m_renderControls.begin(); i != m_renderControls.end(); ++i)
+			{
+				result = (*i)->handleCommand(command);
+				if (result)
+					break;
+			}
 		}
 
 		// Update settings in all entity editors.
@@ -278,7 +287,7 @@ bool ScenePreviewControl::handleCommand(const ui::Command& command)
 			}
 		}
 		// Propagate command to selected entity editors if render control has focus.
-		else if (containFocus())
+		else if (!result && containFocus())
 		{
 			RefArray< EntityAdapter > entities;
 			m_context->getEntities(entities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
@@ -295,6 +304,9 @@ bool ScenePreviewControl::handleCommand(const ui::Command& command)
 			}
 		}
 	}
+
+	if (result)
+		updateEditState();
 
 	return result;
 }

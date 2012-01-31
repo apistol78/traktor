@@ -160,7 +160,10 @@ bool TerrainEditorPlugin::handleCommand(const ui::Command& command)
 			));
 		}
 	}
-	return false;
+	else
+		return false;
+
+	return true;
 }
 
 	}

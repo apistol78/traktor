@@ -21,6 +21,7 @@ void TerrainEditorProfile::getCommands(
 	outCommands.push_back(ui::Command(L"Ocean.RandomizeWaves"));
 	outCommands.push_back(ui::Command(L"Terrain.RaiseLowerTool"));
 	outCommands.push_back(ui::Command(L"Terrain.FlattenTool"));
+	outCommands.push_back(ui::Command(L"Terrain.SmoothTool"));
 	outCommands.push_back(ui::Command(L"Terrain.AlignSelected"));
 	outCommands.push_back(ui::Command(L"Terrain.OrientSelected"));
 }
