@@ -82,6 +82,7 @@ SteamSessionManager::SteamSessionManager()
 ,	m_maxRequestAttempts(0)
 ,	m_callbackUserStatsReceived(this, &SteamSessionManager::OnUserStatsReceived)
 ,	m_callbackOverlay(this, &SteamSessionManager::OnOverlayActivated)
+,	m_callbackSessionRequest(this, &SteamSessionManager::OnP2PSessionRequest)
 {
 }
 
@@ -297,6 +298,12 @@ void SteamSessionManager::OnUserStatsReceived(UserStatsReceived_t* pCallback)
 void SteamSessionManager::OnOverlayActivated(GameOverlayActivated_t* pCallback)
 {
 	m_requireUserAttention = (pCallback->m_bActive != 0);
+}
+
+void SteamSessionManager::OnP2PSessionRequest(P2PSessionRequest_t* pP2PSessionRequest)
+{
+	log::info << L"Steam; Received P2P session request, accepting..." << Endl;
+	SteamNetworking()->AcceptP2PSessionWithUser(pP2PSessionRequest->m_steamIDRemote);
 }
 
 	}
