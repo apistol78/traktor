@@ -12,19 +12,17 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 9, WorldRenderSettings, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 10, WorldRenderSettings, ISerializable)
 
 WorldRenderSettings::WorldRenderSettings()
 :	renderType(RtForward)
 ,	viewNearZ(1.0f)
 ,	viewFarZ(100.0f)
 ,	depthPassEnabled(true)
-,	depthRange(100.0f)
 ,	velocityPassEnable(false)
 ,	shadowsEnabled(false)
 ,	shadowsProjection(SpUniform)
 ,	shadowsQuality(SqMedium)
-,	ssaoEnabled(false)
 ,	shadowFarZ(100.0f)
 ,	shadowMapResolution(1024)
 ,	shadowMapBias(0.001f)
@@ -42,12 +40,10 @@ WorldRenderSettings::WorldRenderSettings(const WorldRenderSettings& settings)
 ,	viewNearZ(settings.viewNearZ)
 ,	viewFarZ(settings.viewFarZ)
 ,	depthPassEnabled(settings.depthPassEnabled)
-,	depthRange(settings.depthRange)
 ,	velocityPassEnable(settings.velocityPassEnable)
 ,	shadowsEnabled(settings.shadowsEnabled)
 ,	shadowsProjection(settings.shadowsProjection)
 ,	shadowsQuality(settings.shadowsQuality)
-,	ssaoEnabled(settings.ssaoEnabled)
 ,	shadowFarZ(settings.shadowFarZ)
 ,	shadowMapResolution(settings.shadowMapResolution)
 ,	shadowMapBias(settings.shadowMapBias)
@@ -95,10 +91,11 @@ bool WorldRenderSettings::serialize(ISerializer& s)
 	s >> Member< float >(L"viewFarZ", viewFarZ, AttributeRange(0.0f));
 	s >> Member< bool >(L"depthPassEnabled", depthPassEnabled);
 
-	if (s.getVersion() >= 6)
+	if (s.getVersion() >= 6 && s.getVersion() < 10)
+	{
+		float depthRange = 0.0f;
 		s >> Member< float >(L"depthRange", depthRange);
-	else
-		depthRange = viewFarZ;
+	}
 	
 	if (s.getVersion() >= 1)
 		s >> Member< bool >(L"velocityPassEnable", velocityPassEnable);
@@ -111,8 +108,11 @@ bool WorldRenderSettings::serialize(ISerializer& s)
 	if (s.getVersion() >= 4)
 		s >> MemberEnum< ShadowQuality >(L"shadowsQuality", shadowsQuality, c_ShadowQuality_Keys);
 
-	if (s.getVersion() >= 3)
+	if (s.getVersion() >= 3 && s.getVersion() < 10)
+	{
+		bool ssaoEnabled = false;
 		s >> Member< bool >(L"ssaoEnabled", ssaoEnabled);
+	}
 
 	if (s.getVersion() <= 1)
 	{

@@ -99,7 +99,11 @@ bool WorldRendererPreLit::create(
 		desc.createDepthStencil = false;
 		desc.usingPrimaryDepthStencil = true;
 		desc.preferTiled = true;
+#if !defined(_PS3)
+		desc.targets[0].format = render::TfR16F;
+#else
 		desc.targets[0].format = render::TfR8G8B8A8;
+#endif
 
 		m_depthTargetSet = renderSystem->createRenderTargetSet(desc);
 
@@ -182,7 +186,11 @@ bool WorldRendererPreLit::create(
 		desc.createDepthStencil = true;
 		desc.usingPrimaryDepthStencil = false;
 		desc.preferTiled = true;
+#if !defined(_PS3)
+		desc.targets[0].format = render::TfR16F;
+#else
 		desc.targets[0].format = render::TfR8G8B8A8;
+#endif
 		m_shadowTargetSet = renderSystem->createRenderTargetSet(desc);
 
 		// Determine shadow mask size; high quality is same as entire screen.
@@ -488,8 +496,7 @@ void WorldRendererPreLit::build(WorldRenderView& worldRenderView, Entity* entity
 
 		WorldRenderPassPreLit depthPass(
 			ms_techniqueDepth,
-			depthRenderView,
-			m_settings.depthRange
+			depthRenderView
 		);
 		f.depth->build(depthRenderView, depthPass, entity);
 		f.depth->flush(depthRenderView, depthPass);
@@ -504,8 +511,7 @@ void WorldRendererPreLit::build(WorldRenderView& worldRenderView, Entity* entity
 
 		WorldRenderPassPreLit normalPass(
 			ms_techniqueNormal,
-			normalRenderView,
-			m_settings.depthRange
+			normalRenderView
 		);
 		f.normal->build(normalRenderView, normalPass, entity);
 		f.normal->flush(normalRenderView, normalPass);
@@ -630,7 +636,6 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 						params.viewToLight = f.slice[j].viewToLightSpace[i];
 						params.projection = projection;
 						params.squareProjection = f.slice[j].squareProjection[i];
-						params.depthRange = m_settings.depthRange;
 						params.sliceNearZ = zn;
 						params.sliceFarZ = zf;
 						params.shadowFarZ = m_settings.shadowFarZ;
@@ -659,7 +664,6 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 					PostProcessStep::Instance::RenderParams params;
 					params.viewFrustum = f.viewFrustum;
 					params.projection = projection;
-					params.depthRange = m_settings.depthRange;
 					params.sliceNearZ = 0.0f;
 					params.sliceFarZ = m_settings.shadowFarZ;
 					params.shadowMapBias = m_settings.shadowMapBias;
@@ -691,7 +695,6 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 					f.view,
 					f.eyePosition,
 					f.lights[i],
-					m_settings.depthRange,
 					m_depthTargetSet->getColorTexture(0),
 					m_normalTargetSet->getColorTexture(0),
 					f.haveShadows[i] ? m_shadowMaskFilterTargetSet[i]->getWidth() : 0,
@@ -818,8 +821,7 @@ void WorldRendererPreLit::buildLightWithShadows(WorldRenderView& worldRenderView
 
 				WorldRenderPassPreLit shadowPass(
 					ms_techniqueShadow,
-					shadowRenderView,
-					m_settings.depthRange
+					shadowRenderView
 				);
 				f.slice[slice].shadow[i]->build(shadowRenderView, shadowPass, entity);
 				f.slice[slice].shadow[i]->flush(shadowRenderView, shadowPass);
@@ -862,7 +864,6 @@ void WorldRendererPreLit::buildVisual(WorldRenderView& worldRenderView, Entity* 
 	WorldRenderPassPreLit defaultPreLitPass(
 		ms_techniquePreLitColor,
 		worldRenderView,
-		m_settings.depthRange,
 		m_settings.fogEnabled,
 		m_settings.fogDistance,
 		m_settings.fogRange,

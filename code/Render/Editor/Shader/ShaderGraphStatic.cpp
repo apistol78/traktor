@@ -10,6 +10,7 @@
 #include "Render/Editor/Shader/ShaderGraphTypeEvaluator.h"
 #include "Render/Editor/Shader/ShaderGraphTypePropagation.h"
 #include "Render/Editor/Shader/ShaderGraphUtilities.h"
+#include "Render/Editor/Shader/ShaderGraphValidator.h"
 
 namespace traktor
 {
@@ -103,7 +104,9 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphStatic", ShaderGraphStatic, O
 
 ShaderGraphStatic::ShaderGraphStatic(const ShaderGraph* shaderGraph)
 {
+	T_ASSERT (ShaderGraphValidator(shaderGraph).validateIntegrity());
 	m_shaderGraph = ShaderGraphOptimizer(shaderGraph).removeUnusedBranches();
+	T_ASSERT (ShaderGraphValidator(m_shaderGraph).validateIntegrity());
 }
 
 Ref< ShaderGraph > ShaderGraphStatic::getPlatformPermutation(const std::wstring& platform) const
@@ -278,6 +281,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getConstantFolded() const
 
 	Ref< ShaderGraph > shaderGraph = DeepClone(m_shaderGraph).create< ShaderGraph >();
 	T_ASSERT (shaderGraph);
+	T_ASSERT (ShaderGraphValidator(shaderGraph).validateIntegrity());
 
 	ShaderGraphTypePropagation typePropagation(shaderGraph);
 
@@ -406,11 +410,16 @@ Ref< ShaderGraph > ShaderGraphStatic::getConstantFolded() const
 		// No more constant nodes evaluted; begin second phase of collapsing
 		// partially constant nodes such as multiplication with zero etc.
 
+		// Iterate by index as we will add nodes at tail when partially constants
+		// nodes are found.
 		uint32_t partialQualifiedCount = 0;
-		for (RefArray< Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
+		for (uint32_t i = 0; i < nodes.size(); ++i)
 		{
+			const Node* node = nodes[i];
+			T_ASSERT (node);
+
 			// Partial nodes must have at least two inputs and at least one being constant.
-			int32_t inputPinCount = (*i)->getInputPinCount();
+			int32_t inputPinCount = node->getInputPinCount();
 			if (inputPinCount < 2)
 				continue;
 
@@ -421,7 +430,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getConstantFolded() const
 			int32_t constantInputCount = 0;
 			for (int32_t j = 0; j < inputPinCount; ++j)
 			{
-				const InputPin* inputPin = (*i)->getInputPin(j);
+				const InputPin* inputPin = node->getInputPin(j);
 				T_ASSERT (inputPin);
 
 				const OutputPin* outputPin = shaderGraph->findSourcePin(inputPin);
@@ -450,15 +459,15 @@ Ref< ShaderGraph > ShaderGraphStatic::getConstantFolded() const
 			if (constantInputCount <= 0)
 				continue;
 
-			const INodeTraits* nodeTraits = INodeTraits::find(*i);
+			const INodeTraits* nodeTraits = INodeTraits::find(node);
 			if (!nodeTraits)
 				continue;
 
 			// Evaluate output constant from partial constant input set.
-			int32_t outputPinCount = (*i)->getOutputPinCount();
+			int32_t outputPinCount = node->getOutputPinCount();
 			for (int32_t j = 0; j < outputPinCount; ++j)
 			{
-				const OutputPin* outputPin = (*i)->getOutputPin(j);
+				const OutputPin* outputPin = node->getOutputPin(j);
 				T_ASSERT (outputPin);
 
 				// Ignore evaluation if output is already classified as constant.
@@ -473,7 +482,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getConstantFolded() const
 				Constant outputConstant;
 				if (nodeTraits->evaluatePartial(
 					shaderGraph,
-					*i,
+					node,
 					outputPin,
 					&inputConstants[0],
 					outputConstant
@@ -491,7 +500,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getConstantFolded() const
 				const OutputPin* foldOutputPin = 0;
 				if (nodeTraits->evaluatePartial(
 					shaderGraph,
-					*i,
+					node,
 					outputPin,
 					&inputOutputPins[0],
 					&inputConstants[0],
@@ -580,6 +589,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getConstantFolded() const
 	visitor.m_outputConstants = outputConstants;
 	ShaderGraphTraverse(shaderGraph, roots).preorder(visitor);
 
+	T_ASSERT (ShaderGraphValidator(visitor.m_shaderGraph).validateIntegrity());
 	return visitor.m_shaderGraph;
 }
 

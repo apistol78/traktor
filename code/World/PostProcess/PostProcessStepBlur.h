@@ -80,7 +80,6 @@ public:
 		render::handle_t m_handleGaussianOffsetWeights;
 		render::handle_t m_handleDirection;
 		render::handle_t m_handleViewFar;
-		render::handle_t m_handleDepthRange;
 	};
 
 	PostProcessStepBlur();

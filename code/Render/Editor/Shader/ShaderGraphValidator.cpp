@@ -277,5 +277,36 @@ bool ShaderGraphValidator::validate(ShaderGraphType type, std::vector< const Nod
 	return bool(report.getErrorCount() == 0);
 }
 
+bool ShaderGraphValidator::validateIntegrity() const
+{
+	const RefArray< Node >& nodes = m_shaderGraph->getNodes();
+	const RefArray< Edge >& edges = m_shaderGraph->getEdges();
+
+	for (RefArray< Edge >::const_iterator i = edges.begin(); i != edges.end(); ++i)
+	{
+		const OutputPin* sourcePin = (*i)->getSource();
+		const InputPin* destinationPin = (*i)->getDestination();
+
+		if (!sourcePin || !destinationPin)
+		{
+			log::error << L"Invalid edge found in shader graph" << Endl;
+			return false;
+		}
+
+		if (std::find(nodes.begin(), nodes.end(), sourcePin->getNode()) == nodes.end())
+		{
+			log::error << L"Source node if edge (Pin " << sourcePin->getName() << L") not part of shader graph" << Endl;
+			return false;
+		}
+		if (std::find(nodes.begin(), nodes.end(), destinationPin->getNode()) == nodes.end())
+		{
+			log::error << L"Destination node if edge (Pin " << destinationPin->getName() << L") not part of shader graph" << Endl;
+			return false;
+		}
+	}
+
+	return true;
+}
+
 	}
 }

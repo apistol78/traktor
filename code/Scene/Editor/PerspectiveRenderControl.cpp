@@ -792,7 +792,6 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 				params.viewToLight = Matrix44::identity();
 				params.view = view;
 				params.projection = m_worldRenderView.getProjection();
-				params.depthRange = m_worldRenderSettings.depthRange;
 				params.deltaTime = deltaTime;
 
 				m_postProcess->render(

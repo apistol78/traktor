@@ -36,6 +36,8 @@ public:
 
 	bool validate(ShaderGraphType type, std::vector< const Node* >* outErrorNodes = 0) const;
 
+	bool validateIntegrity() const;
+
 private:
 	Ref< const ShaderGraph > m_shaderGraph;
 };

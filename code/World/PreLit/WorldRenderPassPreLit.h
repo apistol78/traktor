@@ -36,7 +36,6 @@ public:
 	WorldRenderPassPreLit(
 		render::handle_t technique,
 		const WorldRenderView& worldRenderView,
-		float depthRange,
 		bool fogEnabled,
 		float fogDistance,
 		float fogRange,
@@ -47,8 +46,7 @@ public:
 
 	WorldRenderPassPreLit(
 		render::handle_t technique,
-		const WorldRenderView& worldRenderView,
-		float depthRange
+		const WorldRenderView& worldRenderView
 	);
 
 	virtual render::handle_t getTechnique() const;
@@ -66,7 +64,6 @@ public:
 private:
 	render::handle_t m_technique;
 	const WorldRenderView& m_worldRenderView;
-	float m_depthRange;
 	bool m_fogEnabled;
 	float m_fogDistance;
 	float m_fogRange;

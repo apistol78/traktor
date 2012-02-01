@@ -133,7 +133,7 @@ void TrapezoidShadowProjection::calculate(
 
 	// Calculate light view and projection matrices.
 	Vector4 worldCenter = viewInverse * Vector4(0.0f, 0.0f, nz, 1.0f);
-	Scalar lightDistance = Scalar(m_settings.depthRange);
+	Scalar lightDistance = Scalar(m_settings.shadowFarZ * 2.0f);
 
 	outLightView = Matrix44(
 		lightAxisX,

@@ -26,7 +26,6 @@ render::handle_t s_handleShadowEnable;
 render::handle_t s_handleShadowMask;
 render::handle_t s_handleShadowMaskSize;
 render::handle_t s_handleDepthEnable;
-render::handle_t s_handleDepthRange;
 render::handle_t s_handleDepthMap;
 render::handle_t s_handleTime;
 
@@ -49,7 +48,6 @@ void initializeHandles()
 	s_handleShadowMask = render::getParameterHandle(L"ShadowMask");
 	s_handleShadowMaskSize = render::getParameterHandle(L"ShadowMaskSize");
 	s_handleDepthEnable = render::getParameterHandle(L"DepthEnable");
-	s_handleDepthRange = render::getParameterHandle(L"DepthRange");
 	s_handleDepthMap = render::getParameterHandle(L"DepthMap");
 	s_handleTime = render::getParameterHandle(L"Time");
 
@@ -63,7 +61,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.WorldRenderPassPreLit", WorldRenderPassPr
 WorldRenderPassPreLit::WorldRenderPassPreLit(
 	render::handle_t technique,
 	const WorldRenderView& worldRenderView,
-	float depthRange,
 	bool fogEnabled,
 	float fogDistance,
 	float fogRange,
@@ -73,7 +70,6 @@ WorldRenderPassPreLit::WorldRenderPassPreLit(
 )
 :	m_technique(technique)
 ,	m_worldRenderView(worldRenderView)
-,	m_depthRange(depthRange)
 ,	m_fogEnabled(fogEnabled)
 ,	m_fogDistance(fogDistance)
 ,	m_fogRange(fogRange)
@@ -87,12 +83,10 @@ WorldRenderPassPreLit::WorldRenderPassPreLit(
 
 WorldRenderPassPreLit::WorldRenderPassPreLit(
 	render::handle_t technique,
-	const WorldRenderView& worldRenderView,
-	float depthRange
+	const WorldRenderView& worldRenderView
 )
 :	m_technique(technique)
 ,	m_worldRenderView(worldRenderView)
-,	m_depthRange(depthRange)
 ,	m_fogEnabled(false)
 ,	m_fogDistance(0.0f)
 ,	m_fogRange(0.0f)
@@ -163,7 +157,6 @@ void WorldRenderPassPreLit::setWorldProgramParameters(render::ProgramParameters*
 	programParams->setMatrixParameter(s_handleSquareProjection, m_worldRenderView.getSquareProjection());
 	programParams->setMatrixParameter(s_handleView, m_worldRenderView.getView());
 	programParams->setMatrixParameter(s_handleWorld, world);
-	programParams->setFloatParameter(s_handleDepthRange, m_depthRange);
 }
 
 void WorldRenderPassPreLit::setShadowMapProgramParameters(render::ProgramParameters* programParams) const

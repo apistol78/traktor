@@ -73,7 +73,6 @@ public:
 		float m_time;
 		render::handle_t m_handleTime;
 		render::handle_t m_handleDeltaTime;
-		render::handle_t m_handleDepthRange;
 	};
 
 	virtual Ref< Instance > create(
