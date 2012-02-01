@@ -59,12 +59,10 @@ public:
 	float viewNearZ;
 	float viewFarZ;
 	bool depthPassEnabled;
-	float depthRange;
 	bool velocityPassEnable;
 	bool shadowsEnabled;
 	ShadowProjection shadowsProjection;
 	ShadowQuality shadowsQuality;
-	bool ssaoEnabled;
 	float shadowFarZ;
 	int32_t shadowMapResolution;
 	float shadowMapBias;

@@ -176,7 +176,6 @@ void PostProcessStepSsao::InstanceSsao::render(
 	shader->setMatrixParameter(L"Projection", params.projection);
 	shader->setVectorArrayParameter(L"Offsets", m_offsets, sizeof_array(m_offsets));
 	shader->setTextureParameter(L"RandomNormals", m_randomNormals);
-	shader->setFloatParameter(L"DepthRange", params.depthRange);
 	shader->setVectorParameter(L"MagicCoeffs", Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
 
 	for (std::vector< Source >::const_iterator i = m_sources.begin(); i != m_sources.end(); ++i)

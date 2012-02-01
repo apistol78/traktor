@@ -117,7 +117,6 @@ PostProcessStepSmProj::InstanceSmProj::InstanceSmProj(
 	m_handleSliceNearZ = render::getParameterHandle(L"SliceNearZ");
 	m_handleSliceFarZ = render::getParameterHandle(L"SliceFarZ");
 	m_handleDepth = render::getParameterHandle(L"Depth");
-	m_handleDepthRange = render::getParameterHandle(L"DepthRange");
 	m_handleDepth_Size = render::getParameterHandle(L"Depth_Size");
 	m_handleMagicCoeffs = render::getParameterHandle(L"MagicCoeffs");
 	m_handleViewEdgeTopLeft = render::getParameterHandle(L"ViewEdgeTopLeft");
@@ -150,7 +149,7 @@ void PostProcessStepSmProj::InstanceSmProj::render(
 
 	postProcess->prepareShader(shader);
 
-	float shadowMapBias = params.shadowMapBias / params.depthRange;
+	float shadowMapBias = params.shadowMapBias / params.shadowFarZ;
 	float shadowFadeZ = params.shadowFarZ * 0.7f;
 	float shadowFadeRate = 1.0f / (params.shadowFarZ - shadowFadeZ);
 
@@ -167,7 +166,7 @@ void PostProcessStepSmProj::InstanceSmProj::render(
 		shadowFadeRate
 	);
 	
-	Scalar viewEdgeNorm = params.viewFrustum.getFarZ() / Scalar(params.depthRange);
+	Scalar viewEdgeNorm = params.viewFrustum.getFarZ() / Scalar(params.shadowFarZ);
 	Vector4 viewEdgeTopLeft = params.viewFrustum.corners[4] / viewEdgeNorm;
 	Vector4 viewEdgeTopRight = params.viewFrustum.corners[5] / viewEdgeNorm;
 	Vector4 viewEdgeBottomLeft = params.viewFrustum.corners[7] / viewEdgeNorm;
@@ -183,7 +182,6 @@ void PostProcessStepSmProj::InstanceSmProj::render(
 	shader->setFloatParameter(m_handleSliceNearZ, params.sliceNearZ);
 	shader->setFloatParameter(m_handleSliceFarZ, params.sliceFarZ);
 	shader->setTextureParameter(m_handleDepth, sourceDepth->getColorTexture(0));
-	shader->setFloatParameter(m_handleDepthRange, params.depthRange);
 	shader->setVectorParameter(m_handleDepth_Size, sourceDepthSize);	
 	shader->setVectorParameter(m_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
 	shader->setVectorParameter(m_handleViewEdgeTopLeft, viewEdgeTopLeft);

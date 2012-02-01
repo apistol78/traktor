@@ -95,7 +95,11 @@ bool WorldRendererForward::create(
 		desc.createDepthStencil = false;
 		desc.usingPrimaryDepthStencil = true;
 		desc.preferTiled = true;
+#if !defined(_PS3)
+		desc.targets[0].format = render::TfR16F;
+#else
 		desc.targets[0].format = render::TfR8G8B8A8;
+#endif
 
 		m_depthTargetSet = renderSystem->createRenderTargetSet(desc);
 
@@ -145,7 +149,11 @@ bool WorldRendererForward::create(
 		desc.createDepthStencil = true;
 		desc.usingPrimaryDepthStencil = false;
 		desc.preferTiled = true;
+#if !defined(_PS3)
+		desc.targets[0].format = render::TfR16F;
+#else
 		desc.targets[0].format = render::TfR8G8B8A8;
+#endif
 		m_shadowTargetSet = renderSystem->createRenderTargetSet(desc);
 
 		// Determine shadow mask size; high quality is same as entire screen.
@@ -391,7 +399,6 @@ void WorldRendererForward::build(WorldRenderView& worldRenderView, Entity* entit
 		WorldRenderPassForward pass(
 			s_techniqueDepth,
 			depthRenderView,
-			m_settings.depthRange,
 			0
 		);
 		f.depth->build(depthRenderView, pass, entity);
@@ -498,7 +505,6 @@ void WorldRendererForward::render(uint32_t flags, int frame, render::EyeType eye
 					params.viewToLight = f.slice[i].viewToLightSpace;
 					params.projection = projection;
 					params.squareProjection = f.slice[i].squareProjection;
-					params.depthRange = m_settings.depthRange;
 					params.sliceNearZ = zn;
 					params.sliceFarZ = zf;
 					params.shadowFarZ = m_settings.shadowFarZ;
@@ -524,7 +530,6 @@ void WorldRendererForward::render(uint32_t flags, int frame, render::EyeType eye
 				PostProcessStep::Instance::RenderParams params;
 				params.viewFrustum = f.viewFrustum;
 				params.projection = projection;
-				params.depthRange = m_settings.depthRange;
 				params.sliceNearZ = 0.0f;
 				params.sliceFarZ = m_settings.shadowFarZ;
 				params.shadowMapBias = m_settings.shadowMapBias;
@@ -654,7 +659,6 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, Entity
 		WorldRenderPassForward shadowPass(
 			s_techniqueShadow,
 			shadowRenderView,
-			m_settings.depthRange,
 			0
 		);
 		f.slice[slice].shadow->build(shadowRenderView, shadowPass, entity);
@@ -671,7 +675,6 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, Entity
 	WorldRenderPassForward defaultPass(
 		s_techniqueDefault,
 		worldRenderView,
-		m_settings.depthRange,
 		m_settings.fogEnabled,
 		m_settings.fogDistance,
 		m_settings.fogRange,
@@ -700,7 +703,6 @@ void WorldRendererForward::buildNoShadows(WorldRenderView& worldRenderView, Enti
 	WorldRenderPassForward defaultPass(
 		s_techniqueDefault,
 		worldRenderView,
-		m_settings.depthRange,
 		m_settings.fogEnabled,
 		m_settings.fogDistance,
 		m_settings.fogRange,

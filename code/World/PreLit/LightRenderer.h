@@ -55,7 +55,6 @@ public:
 		const Matrix44& view,
 		const Vector4& eyePosition,
 		const Light& light,
-		float depthRange,
 		render::ITexture* depthMap,
 		render::ITexture* normalMap,
 		float shadowMaskSize,

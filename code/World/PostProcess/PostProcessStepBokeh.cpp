@@ -179,7 +179,6 @@ PostProcessStepBokeh::InstanceBokeh::InstanceBokeh(
 {
 	m_handleTime = render::getParameterHandle(L"Time");
 	m_handleDeltaTime = render::getParameterHandle(L"DeltaTime");
-	m_handleDepthRange = render::getParameterHandle(L"DepthRange");
 	m_handleRatio = render::getParameterHandle(L"Ratio");
 }
 
@@ -201,7 +200,6 @@ void PostProcessStepBokeh::InstanceBokeh::render(
 
 	m_shader->setFloatParameter(m_handleTime, m_time);
 	m_shader->setFloatParameter(m_handleDeltaTime, params.deltaTime);
-	m_shader->setFloatParameter(m_handleDepthRange, params.depthRange);
 	m_shader->setFloatParameter(m_handleRatio, float(renderView->getWidth()) / renderView->getHeight());
 
 	for (std::vector< Source >::const_iterator i = m_sources.begin(); i != m_sources.end(); ++i)

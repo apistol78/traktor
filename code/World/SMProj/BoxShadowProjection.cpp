@@ -24,7 +24,7 @@ void BoxShadowProjection::calculate(
 	Frustum& outShadowFrustum
 ) const
 {
-	Scalar lightDistance(m_settings.depthRange);
+	Scalar lightDistance(m_settings.shadowFarZ * 2.0f);
 
 	Vector4 shadowBoxExtents[8];
 	shadowBox.getExtents(shadowBoxExtents);

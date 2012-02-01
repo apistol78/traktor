@@ -64,7 +64,6 @@ public:
 		render::handle_t m_handleSliceNearZ;
 		render::handle_t m_handleSliceFarZ;
 		render::handle_t m_handleDepth;
-		render::handle_t m_handleDepthRange;
 		render::handle_t m_handleDepth_Size;
 		render::handle_t m_handleMagicCoeffs;
 		render::handle_t m_handleViewEdgeTopLeft;

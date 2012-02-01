@@ -1,6 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
+		<item type="traktor.render.VertexOutput" version="1">
+			<comment/>
+			<position>
+				<first>734</first>
+				<second>393</second>
+			</position>
+			<technique>World_ShadowWrite</technique>
+		</item>
+		<item type="traktor.render.Transform">
+			<comment/>
+			<position>
+				<first>471</first>
+				<second>416</second>
+			</position>
+		</item>
+		<item type="traktor.render.Transform">
+			<comment/>
+			<position>
+				<first>262</first>
+				<second>313</second>
+			</position>
+		</item>
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
@@ -22,19 +44,21 @@
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.VertexOutput" version="1">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>734</first>
-				<second>393</second>
+				<first>178</first>
+				<second>469</second>
 			</position>
-			<technique>World_ShadowWrite</technique>
+			<parameterName>SquareProjection</parameterName>
+			<type>PtMatrix</type>
+			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.PixelOutput" version="3">
 			<comment/>
 			<position>
-				<first>867</first>
-				<second>252</second>
+				<first>757</first>
+				<second>280</second>
 			</position>
 			<technique>World_ShadowWrite</technique>
 			<cullMode>CmNever</cullMode>
@@ -67,100 +91,10 @@
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>453</first>
-				<second>229</second>
+				<first>501</first>
+				<second>297</second>
 			</position>
 			<swizzle>z</swizzle>
-		</item>
-		<item type="traktor.render.Transform">
-			<comment/>
-			<position>
-				<first>262</first>
-				<second>313</second>
-			</position>
-		</item>
-		<item type="traktor.render.Interpolator">
-			<comment/>
-			<position>
-				<first>572</first>
-				<second>229</second>
-			</position>
-		</item>
-		<item type="traktor.render.External" version="1">
-			<comment/>
-			<position>
-				<first>695</first>
-				<second>232</second>
-			</position>
-			<fragmentGuid>{15A567D7-FC63-D649-AA8D-A0D34D3BCCC5}</fragmentGuid>
-			<inputPins>
-				<item>
-					<name>Value</name>
-					<optional>false</optional>
-				</item>
-				<item>
-					<name>Range Max</name>
-					<optional>true</optional>
-				</item>
-				<item>
-					<name>Range Min</name>
-					<optional>true</optional>
-				</item>
-			</inputPins>
-			<outputPins>
-				<item>
-					<name>Output</name>
-				</item>
-			</outputPins>
-			<values>
-				<item>
-					<first>Range Max</first>
-					<second>1000</second>
-				</item>
-				<item>
-					<first>Range Min</first>
-					<second>0</second>
-				</item>
-			</values>
-		</item>
-		<item type="traktor.render.Uniform" version="1">
-			<comment/>
-			<position>
-				<first>454</first>
-				<second>275</second>
-			</position>
-			<parameterName>DepthRange</parameterName>
-			<type>PtScalar</type>
-			<frequency>UfFrame</frequency>
-		</item>
-		<item type="traktor.render.Transform">
-			<comment/>
-			<position>
-				<first>471</first>
-				<second>416</second>
-			</position>
-		</item>
-		<item type="traktor.render.Uniform" version="1">
-			<comment/>
-			<position>
-				<first>178</first>
-				<second>469</second>
-			</position>
-			<parameterName>SquareProjection</parameterName>
-			<type>PtMatrix</type>
-			<frequency>UfFrame</frequency>
-		</item>
-		<item type="traktor.render.Comment">
-			<comment>
-			<![CDATA[
-Perform special mapping as some algorithms, such as PSM, makes Z perform
-"unlinearly".
-			]]>
-			</comment>
-			<position>
-				<first>392</first>
-				<second>532</second>
-			</position>
 		</item>
 	</nodes>
 	<edges>
@@ -170,83 +104,23 @@ Perform special mapping as some algorithms, such as PSM, makes Z perform
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[5]"/>
-				<name>Transform</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[5]"/>
 				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[5]"/>
+				<node ref="/object/nodes/item[2]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[4]"/>
+				<node ref="/object/nodes/item[1]"/>
 				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[4]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[6]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[6]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[7]"/>
-				<name>Value</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[7]"/>
-				<name>Output</name>
-			</source>
-			<destination>
 				<node ref="/object/nodes/item[3]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[8]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[7]"/>
-				<name>Range Max</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[10]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[9]"/>
-				<name>Transform</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[9]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -256,11 +130,41 @@ Perform special mapping as some algorithms, such as PSM, makes Z perform
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Transform</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
 				<node ref="/object/nodes/item[5]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[9]"/>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Transform</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[7]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[6]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[7]"/>
 				<name>Input</name>
 			</destination>
 		</item>
