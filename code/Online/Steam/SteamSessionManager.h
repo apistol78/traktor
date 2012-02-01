@@ -83,6 +83,8 @@ private:
 	STEAM_CALLBACK(SteamSessionManager, OnUserStatsReceived, UserStatsReceived_t, m_callbackUserStatsReceived);
 
 	STEAM_CALLBACK(SteamSessionManager, OnOverlayActivated, GameOverlayActivated_t, m_callbackOverlay);
+
+	STEAM_CALLBACK(SteamSessionManager, OnP2PSessionRequest, P2PSessionRequest_t, m_callbackSessionRequest);
 };
 
 	}
