@@ -13,6 +13,16 @@ bool User::getName(std::wstring& outName) const
 	return m_userProvider->getName(m_handle, outName);
 }
 
+bool User::setMetaValue(const std::wstring& key, const std::wstring& value)
+{
+	return m_userProvider->setMetaValue(m_handle, key, value);
+}
+
+bool User::getMetaValue(const std::wstring& key, std::wstring& outValue) const
+{
+	return m_userProvider->getMetaValue(m_handle, key, outValue);
+}
+
 bool User::sendP2PData(const void* data, size_t size, bool reliable)
 {
 	return m_userProvider->sendP2PData(m_handle, data, size, reliable);

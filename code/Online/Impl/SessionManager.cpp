@@ -68,7 +68,10 @@ bool SessionManager::create(ISessionManagerProvider* provider)
 	IUserProvider* userProvider = m_provider->getUser();
 
 	if (userProvider)
+	{
 		m_userCache = new UserCache(userProvider);
+		m_user = m_userCache->get(provider->getCurrentUserHandle());
+	}
 
 	if (saveDataProvider)
 		m_saveData = new SaveData(saveDataProvider, m_taskQueues[1]);
@@ -91,6 +94,7 @@ bool SessionManager::create(ISessionManagerProvider* provider)
 void SessionManager::destroy()
 {
 	m_userCache = 0;
+	m_user = 0;
 	m_statistics = 0;
 	m_saveData = 0;
 	m_matchMaking = 0;
@@ -167,6 +171,11 @@ ISaveData* SessionManager::getSaveData() const
 IStatistics* SessionManager::getStatistics() const
 {
 	return waitUntilReady(m_statistics);
+}
+
+IUser* SessionManager::getUser() const
+{
+	return m_user;
 }
 
 	}

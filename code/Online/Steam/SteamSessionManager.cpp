@@ -206,6 +206,11 @@ bool SteamSessionManager::requireUserAttention() const
 	return m_requireUserAttention;
 }
 
+uint64_t SteamSessionManager::getCurrentUserHandle() const
+{
+	return ::SteamUser()->GetSteamID().ConvertToUint64();
+}
+
 bool SteamSessionManager::haveP2PData() const
 {
 	uint32 available = 0;

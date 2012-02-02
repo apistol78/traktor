@@ -51,6 +51,8 @@ public:
 	virtual ISaveData* getSaveData() const = 0;
 
 	virtual IStatistics* getStatistics() const = 0;
+
+	virtual IUser* getUser() const = 0;
 };
 
 	}

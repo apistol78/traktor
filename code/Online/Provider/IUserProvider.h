@@ -23,6 +23,10 @@ class T_DLLCLASS IUserProvider : public Object
 public:
 	virtual bool getName(uint64_t userHandle, std::wstring& outName) = 0;
 
+	virtual bool setMetaValue(uint64_t userHandle, const std::wstring& key, const std::wstring& value) = 0;
+
+	virtual bool getMetaValue(uint64_t userHandle, const std::wstring& key, std::wstring& outValue) = 0;
+
 	virtual bool sendP2PData(uint64_t userHandle, const void* data, size_t size, bool reliable) = 0;
 };
 

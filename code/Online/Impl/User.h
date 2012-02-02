@@ -17,6 +17,10 @@ class User : public IUser
 public:
 	virtual bool getName(std::wstring& outName) const;
 
+	virtual bool setMetaValue(const std::wstring& key, const std::wstring& value);
+
+	virtual bool getMetaValue(const std::wstring& key, std::wstring& outValue) const;
+
 	virtual bool sendP2PData(const void* data, size_t size, bool reliable);
 
 private:

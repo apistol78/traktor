@@ -53,6 +53,8 @@ public:
 
 	virtual IStatistics* getStatistics() const;
 
+	virtual IUser* getUser() const;
+
 private:
 	Ref< ISessionManagerProvider > m_provider;
 	Ref< TaskQueue > m_taskQueues[2];
@@ -61,6 +63,7 @@ private:
 	Ref< IMatchMaking > m_matchMaking;
 	Ref< ISaveData > m_saveData;
 	Ref< IStatistics > m_statistics;
+	Ref< IUser > m_user;
 	Ref< UserCache > m_userCache;
 };
 
