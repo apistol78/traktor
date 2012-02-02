@@ -55,6 +55,7 @@ bool SolutionBuilderMsvcLinkerTool::generate(GeneratorContext& context, Solution
 	collectAdditionalLibraries(
 		project,
 		configuration,
+		context.getIncludeExternal(),
 		additionalLibraries,
 		additionalLibraryPaths
 	);
@@ -179,6 +180,7 @@ void SolutionBuilderMsvcLinkerTool::findDefinitions(GeneratorContext& context, S
 void SolutionBuilderMsvcLinkerTool::collectAdditionalLibraries(
 	Project* project,
 	Configuration* configuration,
+	bool includeExternal,
 	std::set< std::wstring >& outAdditionalLibraries,
 	std::set< std::wstring >& outAdditionalLibraryPaths
 ) const
@@ -215,6 +217,7 @@ void SolutionBuilderMsvcLinkerTool::collectAdditionalLibraries(
 				collectAdditionalLibraries(
 					projectDependency->getProject(),
 					dependentConfiguration,
+					includeExternal,
 					outAdditionalLibraries,
 					outAdditionalLibraryPaths
 				);
@@ -231,18 +234,22 @@ void SolutionBuilderMsvcLinkerTool::collectAdditionalLibraries(
 				continue;
 			}
 
-			std::wstring externalRootPath = externalDependency->getSolution()->getRootPath();
-			std::wstring externalProjectPath = externalRootPath + L"/" + toLower(externalConfiguration->getName());
-			std::wstring externalProjectName = externalDependency->getProject()->getName() + ((configuration->getTargetProfile() == Configuration::TpDebug) ? L"_d.lib" : L".lib");
+			// Add product only if external projects aren't included.
+			if (!includeExternal)
+			{
+				std::wstring externalRootPath = externalDependency->getSolution()->getRootPath();
+				std::wstring externalProjectPath = externalRootPath + L"/" + toLower(externalConfiguration->getName());
+				std::wstring externalProjectName = externalDependency->getProject()->getName() + ((configuration->getTargetProfile() == Configuration::TpDebug) ? L"_d.lib" : L".lib");
 
-			if (!m_resolveFullLibraryPaths)
-			{
-				outAdditionalLibraries.insert(externalProjectName);
-				outAdditionalLibraryPaths.insert(externalProjectPath);
-			}
-			else
-			{
-				outAdditionalLibraries.insert(externalProjectPath + L"/" + externalProjectName);
+				if (!m_resolveFullLibraryPaths)
+				{
+					outAdditionalLibraries.insert(externalProjectName);
+					outAdditionalLibraryPaths.insert(externalProjectPath);
+				}
+				else
+				{
+					outAdditionalLibraries.insert(externalProjectPath + L"/" + externalProjectName);
+				}
 			}
 
 			if (externalConfiguration->getTargetFormat() != Configuration::TfSharedLibrary)
@@ -250,6 +257,7 @@ void SolutionBuilderMsvcLinkerTool::collectAdditionalLibraries(
 				collectAdditionalLibraries(
 					externalDependency->getProject(),
 					externalConfiguration,
+					includeExternal,
 					outAdditionalLibraries,
 					outAdditionalLibraryPaths
 				);

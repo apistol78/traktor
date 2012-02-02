@@ -33,6 +33,7 @@ private:
 	void collectAdditionalLibraries(
 		Project* project,
 		Configuration* configuration,
+		bool includeExternal,
 		std::set< std::wstring >& outAdditionalLibraries,
 		std::set< std::wstring >& outAdditionalLibraryPaths
 	) const;

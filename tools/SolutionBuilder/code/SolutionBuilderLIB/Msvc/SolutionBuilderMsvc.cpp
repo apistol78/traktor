@@ -1,18 +1,20 @@
+#include <Core/RefSet.h>
+#include <Core/Log/Log.h>
+#include <Core/Misc/MD5.h>
+#include <Core/Io/AnsiEncoding.h>
+#include <Core/Io/FileOutputStream.h>
 #include <Core/Io/FileSystem.h>
 #include <Core/Io/IStream.h>
-#include <Core/Io/FileOutputStream.h>
-#include <Core/Io/AnsiEncoding.h>
-#include <Core/Misc/MD5.h>
-#include <Core/Log/Log.h>
 #include <Xml/XmlDeserializer.h>
-#include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvc.h"
-#include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvcSettings.h"
-#include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvcProject.h"
-#include "SolutionBuilderLIB/Msvc/GeneratorContext.h"
-#include "SolutionBuilderLIB/Solution.h"
+#include "SolutionBuilderLIB/Configuration.h"
+#include "SolutionBuilderLIB/ExternalDependency.h"
 #include "SolutionBuilderLIB/Project.h"
 #include "SolutionBuilderLIB/ProjectDependency.h"
-#include "SolutionBuilderLIB/Configuration.h"
+#include "SolutionBuilderLIB/Solution.h"
+#include "SolutionBuilderLIB/Msvc/GeneratorContext.h"
+#include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvc.h"
+#include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvcProject.h"
+#include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvcSettings.h"
 
 // Forced references
 #include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvcVCProj.h"
@@ -40,9 +42,15 @@ namespace
 
 T_IMPLEMENT_RTTI_CLASS(L"SolutionBuilderMsvc", SolutionBuilderMsvc, SolutionBuilder)
 
+SolutionBuilderMsvc::SolutionBuilderMsvc()
+:	m_includeExternal(false)
+{
+}
+
 bool SolutionBuilderMsvc::create(const CommandLine& cmdLine)
 {
 	Ref< SolutionBuilderMsvcSettings > settings = new SolutionBuilderMsvcSettings();
+
 	if (cmdLine.hasOption('p', L"msvc-platform"))
 	{
 		std::wstring platform = cmdLine.getOption('p', L"msvc-platform").getString();
@@ -65,6 +73,10 @@ bool SolutionBuilderMsvc::create(const CommandLine& cmdLine)
 
 		file->close();
 	}
+
+	if (cmdLine.hasOption('i', L"msvc-include-external"))
+		m_includeExternal = true;
+
 	m_settings = settings;
 	return true;
 }
@@ -85,7 +97,7 @@ bool SolutionBuilderMsvc::generate(Solution* solution)
 	std::wstring solutionFileName = solution->getRootPath() + L"/" + solution->getName() + L".sln";
 
 	// Setup generator context.
-	GeneratorContext context;
+	GeneratorContext context(m_includeExternal);
 	context.set(L"SOLUTION_NAME", solution->getName());
 	context.set(L"SOLUTION_ROOTPATH", solution->getRootPath());
 	context.set(L"SOLUTION_FILENAME", solutionFileName);
@@ -96,6 +108,7 @@ bool SolutionBuilderMsvc::generate(Solution* solution)
 
 	// Generate projects.
 	std::map< const Project*, std::wstring > projectGuids;
+	RefSet< Solution > externalSolutions;
 
 	const RefArray< Project >& projects = solution->getProjects();
 	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
@@ -123,6 +136,46 @@ bool SolutionBuilderMsvc::generate(Solution* solution)
 			project
 		))
 			return false;
+
+		// Collect external solutions which we should include. Only include first level of external
+		// solutions.
+		if (m_includeExternal)
+		{
+			const RefArray< Dependency >& dependencies = project->getDependencies();
+			for (RefArray< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
+			{
+				const ExternalDependency* externalDependency = dynamic_type_cast< const ExternalDependency* >(*j);
+				if (!externalDependency)
+					continue;
+
+				Solution* externalSolution = externalDependency->getSolution();
+				T_ASSERT (externalSolution);
+
+				const RefArray< Project >& externalProjects = externalSolution->getProjects();
+				for (RefArray< Project >::const_iterator j = externalProjects.begin(); j != externalProjects.end(); ++j)
+				{
+					Project* externalProject = *j;
+
+					if (!externalProject->getEnable())
+						continue;
+
+					std::wstring projectPath, projectFileName, projectGuid;
+					if (!m_settings->getProject()->getInformation(
+						context,
+						externalSolution,
+						externalProject,
+						projectPath,
+						projectFileName,
+						projectGuid
+					))
+						return false;
+
+					projectGuids[externalProject] = projectGuid;
+				}
+
+				externalSolutions.insert(externalSolution);
+			}
+		}
 
 		projectGuids[project] = projectGuid;
 	}
@@ -162,35 +215,133 @@ bool SolutionBuilderMsvc::generate(Solution* solution)
 			return false;
 
 		std::wstring projectExtension = Path(projectFileName).getExtension();
-		os << L"Project(\"" << solutionGuid << L"\") = \"" << project->getName() << L"\", \"" << project->getName() << L"\\" << project->getName() << L"." << projectExtension << L"\", \"" << projectGuids[project] << L"\"" << Endl;
+		os << L"Project(\"" << solutionGuid << L"\") = \"" << project->getName() << L"\", \"" << project->getName() << L"\\" << project->getName() << L"." << projectExtension << L"\", \"" << /*projectGuids[project]*/projectGuid << L"\"" << Endl;
 
-		// Add local dependencies.
+		// Add local, or first order external if enabled, dependencies.
 		const RefArray< Dependency >& dependencies = project->getDependencies();
 		if (!dependencies.empty())
 		{
 			os << IncreaseIndent;
 			os << L"ProjectSection(ProjectDependencies) = postProject" << Endl;
+
 			for (RefArray< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
 			{
-				if (!is_a< ProjectDependency >(*j))
-					continue;
-
-				Ref< const Project > dependencyProject = static_cast< const ProjectDependency* >(*j)->getProject();
-				if (!dependencyProject->getEnable())
+				if (const ProjectDependency* projectDependency = dynamic_type_cast< const ProjectDependency* >(*j))
 				{
-					traktor::log::warning << L"Trying to add disabled dependency to project \"" << project->getName() << L"\"; dependency skipped" << Endl;
-					continue;
-				}
+					Ref< const Project > dependentProject = projectDependency->getProject();
+					if (!dependentProject->getEnable())
+					{
+						traktor::log::warning << L"Trying to add disabled dependency to project \"" << project->getName() << L"\"; dependency skipped" << Endl;
+						continue;
+					}
 
-				os << IncreaseIndent;
-				os << projectGuids[dependencyProject] << L" = " << projectGuids[dependencyProject] << Endl;
-				os << DecreaseIndent;
+					os << IncreaseIndent;
+					os << projectGuids[dependentProject] << L" = " << projectGuids[dependentProject] << Endl;
+					os << DecreaseIndent;
+				}
+				else if (m_includeExternal)
+				{
+					if (const ExternalDependency* externalDependency = dynamic_type_cast< const ExternalDependency* >(*j))
+					{
+						Ref< const Project > dependentProject = externalDependency->getProject();
+						if (!dependentProject->getEnable())
+						{
+							traktor::log::warning << L"Trying to add disabled dependency to project \"" << project->getName() << L"\"; dependency skipped" << Endl;
+							continue;
+						}
+
+						os << IncreaseIndent;
+						os << projectGuids[dependentProject] << L" = " << projectGuids[dependentProject] << Endl;
+						os << DecreaseIndent;
+					}
+				}
 			}
+
 			os << L"EndProjectSection" << Endl;
 			os << DecreaseIndent;
 		}
 
 		os << L"EndProject" << Endl;
+	}
+
+	// Create solution folder with all external solutions.
+	if (m_includeExternal && !externalSolutions.empty())
+	{
+		for (RefSet< Solution >::const_iterator i = externalSolutions.begin(); i != externalSolutions.end(); ++i)
+		{
+			Solution* externalSolution = *i;
+
+			os << L"Project(\"{2150E333-8FDC-42A3-9474-1A3956D46DE8}\") = \"" << externalSolution->getName() << L"\", \"" << externalSolution->getName() << L"\", \"{3E0BD3A9-E831-4928-9EAA-B07D1ED32784}\"" << Endl;
+			os << L"EndProject" << Endl;
+
+			const RefArray< Project >& externalProjects = externalSolution->getProjects();
+			for (RefArray< Project >::const_iterator j = externalProjects.begin(); j != externalProjects.end(); ++j)
+			{
+				Project* externalProject = *j;
+
+				if (!externalProject->getEnable())
+					continue;
+
+				std::wstring projectPath, projectFileName, projectGuid;
+				if (!m_settings->getProject()->getInformation(
+					context,
+					externalSolution,
+					externalProject,
+					projectPath,
+					projectFileName,
+					projectGuid
+				))
+					continue;
+
+				Path externalProjectPath;
+				FileSystem::getInstance().getRelativePath(projectFileName, solution->getRootPath(), externalProjectPath);
+
+				std::wstring projectExtension = Path(projectFileName).getExtension();
+				os << L"Project(\"" << solutionGuid << L"\") = \"" << externalProject->getName() << L"\", \"" << replaceAll(externalProjectPath.getPathName(), L'/', L'\\') << L"\", \"" << projectGuid << L"\"" << Endl;
+
+				const RefArray< Dependency >& dependencies = externalProject->getDependencies();
+				if (!dependencies.empty())
+				{
+					os << IncreaseIndent;
+					os << L"ProjectSection(ProjectDependencies) = postProject" << Endl;
+
+					for (RefArray< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
+					{
+						if (const ProjectDependency* projectDependency = dynamic_type_cast< const ProjectDependency* >(*j))
+						{
+							Ref< const Project > dependentProject = projectDependency->getProject();
+							if (!dependentProject->getEnable())
+							{
+								traktor::log::warning << L"Trying to add disabled dependency to project \"" << externalProject->getName() << L"\"; dependency skipped" << Endl;
+								continue;
+							}
+
+							os << IncreaseIndent;
+							os << projectGuids[dependentProject] << L" = " << projectGuids[dependentProject] << Endl;
+							os << DecreaseIndent;
+						}
+						else if (const ExternalDependency* externalDependency = dynamic_type_cast< const ExternalDependency* >(*j))
+						{
+							Ref< const Project > dependentProject = externalDependency->getProject();
+							if (!dependentProject->getEnable())
+							{
+								traktor::log::warning << L"Trying to add disabled dependency to project \"" << externalProject->getName() << L"\"; dependency skipped" << Endl;
+								continue;
+							}
+
+							os << IncreaseIndent;
+							os << projectGuids[dependentProject] << L" = " << projectGuids[dependentProject] << Endl;
+							os << DecreaseIndent;
+						}
+					}
+
+					os << L"EndProjectSection" << Endl;
+					os << DecreaseIndent;
+				}
+
+				os << L"EndProject" << Endl;
+			}
+		}
 	}
 
 	os << L"Global" << Endl;
@@ -224,9 +375,10 @@ bool SolutionBuilderMsvc::generate(Solution* solution)
 
 	os << L"GlobalSection(ProjectConfigurationPlatforms) = postSolution" << Endl;
 	os << IncreaseIndent;
+
 	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
-		Ref< Project > project = *i;
+		Project* project = *i;
 
 		// Skip disabled projects.
 		if (!project->getEnable())
@@ -235,22 +387,76 @@ bool SolutionBuilderMsvc::generate(Solution* solution)
 		const RefArray< Configuration >& configurations = project->getConfigurations();
 		for (RefArray< Configuration >::const_iterator j = configurations.begin(); j != configurations.end(); ++j)
 		{
-			Ref< const Configuration > configuration = *j;
+			const Configuration* configuration = *j;
 			os << projectGuids[project] << L"." << configuration->getName() << L"|" << platform << L".ActiveCfg = " << configuration->getName() << L"|" << platform << L"" << Endl;
 			os << projectGuids[project] << L"." << configuration->getName() << L"|" << platform << L".Build.0 = " << configuration->getName() << L"|" << platform << L"" << Endl;
 		}
 	}
+
+	if (m_includeExternal)
+	{
+		for (RefSet< Solution >::const_iterator i = externalSolutions.begin(); i != externalSolutions.end(); ++i)
+		{
+			Solution* solution = *i;
+
+			const RefArray< Project >& externalProjects = solution->getProjects();
+			for (RefArray< Project >::const_iterator j = externalProjects.begin(); j != externalProjects.end(); ++j)
+			{
+				Project* project = *j;
+
+				// Skip disabled projects.
+				if (!project->getEnable())
+					continue;
+
+				const RefArray< Configuration >& configurations = project->getConfigurations();
+				for (RefArray< Configuration >::const_iterator j = configurations.begin(); j != configurations.end(); ++j)
+				{
+					const Configuration* configuration = *j;
+					os << projectGuids[project] << L"." << configuration->getName() << L"|" << platform << L".ActiveCfg = " << configuration->getName() << L"|" << platform << L"" << Endl;
+					os << projectGuids[project] << L"." << configuration->getName() << L"|" << platform << L".Build.0 = " << configuration->getName() << L"|" << platform << L"" << Endl;
+				}
+			}
+		}
+	}
+
 	os << DecreaseIndent;
 	os << L"EndGlobalSection" << Endl;
 
 	os << DecreaseIndent;
-
 	os << IncreaseIndent;
+	
 	os << L"GlobalSection(SolutionProperties) = preSolution" << Endl;
 	os << IncreaseIndent;
 	os << L"HideSolutionNode = FALSE" << Endl;
 	os << DecreaseIndent;
 	os << L"EndGlobalSection" << Endl;
+
+	if (m_includeExternal && !externalSolutions.empty())
+	{
+		os << L"GlobalSection(NestedProjects) = preSolution" << Endl;
+		os << IncreaseIndent;
+
+		for (RefSet< Solution >::const_iterator i = externalSolutions.begin(); i != externalSolutions.end(); ++i)
+		{
+			Solution* solution = *i;
+
+			const RefArray< Project >& externalProjects = solution->getProjects();
+			for (RefArray< Project >::const_iterator j = externalProjects.begin(); j != externalProjects.end(); ++j)
+			{
+				Project* project = *j;
+
+				// Skip disabled projects.
+				if (!project->getEnable())
+					continue;
+
+				os << projectGuids[project] << L" = {3E0BD3A9-E831-4928-9EAA-B07D1ED32784}" << Endl;
+			}
+		}
+
+		os << DecreaseIndent;
+		os << L"EndGlobalSection" << Endl;
+	}
+
 	os << DecreaseIndent;
 	os << L"EndGlobal" << Endl;
 

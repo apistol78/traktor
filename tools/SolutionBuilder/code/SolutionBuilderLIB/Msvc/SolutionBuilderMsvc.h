@@ -11,6 +11,8 @@ class SolutionBuilderMsvc : public SolutionBuilder
 	T_RTTI_CLASS;
 
 public:
+	SolutionBuilderMsvc();
+
 	virtual bool create(const traktor::CommandLine& cmdLine);
 
 	virtual bool generate(Solution* solution);
@@ -19,6 +21,7 @@ public:
 
 private:
 	traktor::Ref< SolutionBuilderMsvcSettings > m_settings;
+	bool m_includeExternal;
 };
 
 #endif	// SolutionBuilderMsvc_H
