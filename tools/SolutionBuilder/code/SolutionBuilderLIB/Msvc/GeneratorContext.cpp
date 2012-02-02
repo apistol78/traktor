@@ -1,10 +1,15 @@
 #include <sstream>
 #include <Core/Io/FileSystem.h>
-#include <Core/Misc/MD5.h>
 #include <Core/Log/Log.h>
+#include <Core/Misc/MD5.h>
 #include "SolutionBuilderLIB/Msvc/GeneratorContext.h"
 
 using namespace traktor;
+
+GeneratorContext::GeneratorContext(bool includeExternal)
+:	m_includeExternal(includeExternal)
+{
+}
 
 void GeneratorContext::set(const std::wstring& key, const std::wstring& value)
 {
