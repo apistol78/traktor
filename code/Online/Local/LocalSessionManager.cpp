@@ -149,6 +149,11 @@ bool LocalSessionManager::requireUserAttention() const
 	return false;
 }
 
+uint64_t LocalSessionManager::getCurrentUserHandle() const
+{
+	return 0;
+}
+
 bool LocalSessionManager::haveP2PData() const
 {
 	return false;

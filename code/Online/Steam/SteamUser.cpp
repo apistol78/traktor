@@ -22,6 +22,29 @@ bool SteamUser::getName(uint64_t userHandle, std::wstring& outName)
 	return true;
 }
 
+bool SteamUser::setMetaValue(uint64_t userHandle, const std::wstring& key, const std::wstring& value)
+{
+	CSteamID id(userHandle);
+	if (!id.IsValid())
+		return false;
+
+	return SteamFriends()->SetRichPresence(wstombs(key).c_str(), wstombs(value).c_str());
+}
+
+bool SteamUser::getMetaValue(uint64_t userHandle, const std::wstring& key, std::wstring& outValue)
+{
+	CSteamID id(userHandle);
+	if (!id.IsValid())
+		return false;
+
+	const char* value = SteamFriends()->GetFriendRichPresence(id, wstombs(key).c_str());
+	if (!value)
+		return false;
+
+	outValue = mbstows(value);
+	return true;
+}
+
 bool SteamUser::sendP2PData(uint64_t userHandle, const void* data, size_t size, bool reliable)
 {
 	CSteamID id(userHandle);

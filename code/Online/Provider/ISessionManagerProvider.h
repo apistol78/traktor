@@ -38,6 +38,8 @@ public:
 
 	virtual bool requireUserAttention() const = 0;
 
+	virtual uint64_t getCurrentUserHandle() const = 0;
+
 	virtual bool haveP2PData() const = 0;
 
 	virtual uint32_t receiveP2PData(void* data, uint32_t size, uint64_t& outFromUserHandle) const = 0;
