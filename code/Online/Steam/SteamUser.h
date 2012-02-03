@@ -16,9 +16,9 @@ class SteamUser : public IUserProvider
 public:
 	virtual bool getName(uint64_t userHandle, std::wstring& outName);
 
-	virtual bool setMetaValue(uint64_t userHandle, const std::wstring& key, const std::wstring& value);
+	virtual bool setPresenceValue(uint64_t userHandle, const std::wstring& key, const std::wstring& value);
 
-	virtual bool getMetaValue(uint64_t userHandle, const std::wstring& key, std::wstring& outValue);
+	virtual bool getPresenceValue(uint64_t userHandle, const std::wstring& key, std::wstring& outValue);
 
 	virtual bool sendP2PData(uint64_t userHandle, const void* data, size_t size, bool reliable);
 };

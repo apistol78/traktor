@@ -16,6 +16,8 @@ namespace traktor
 	namespace online
 	{
 
+class IUser;
+
 class T_DLLCLASS ILobby : public Object
 {
 	T_RTTI_CLASS;
@@ -24,6 +26,10 @@ public:
 	virtual Ref< Result > setMetaValue(const std::wstring& key, const std::wstring& value) = 0;
 
 	virtual bool getMetaValue(const std::wstring& key, std::wstring& outValue) const = 0;
+
+	virtual Ref< Result > setParticipantMetaValue(const std::wstring& key, const std::wstring& value) = 0;
+
+	virtual bool getParticipantMetaValue(const IUser* user, const std::wstring& key, std::wstring& outValue) const = 0;
 
 	virtual Ref< Result > join() = 0;
 

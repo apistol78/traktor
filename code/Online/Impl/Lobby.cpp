@@ -1,8 +1,10 @@
 #include "Online/Impl/Lobby.h"
 #include "Online/Impl/TaskQueue.h"
+#include "Online/Impl/User.h"
 #include "Online/Impl/Tasks/TaskGetParticipants.h"
 #include "Online/Impl/Tasks/TaskJoinLobby.h"
 #include "Online/Impl/Tasks/TaskSetLobbyMetaValue.h"
+#include "Online/Impl/Tasks/TaskSetLobbyParticipantMetaValue.h"
 #include "Online/Provider/IMatchMakingProvider.h"
 
 namespace traktor
@@ -30,6 +32,30 @@ Ref< Result > Lobby::setMetaValue(const std::wstring& key, const std::wstring& v
 bool Lobby::getMetaValue(const std::wstring& key, std::wstring& outValue) const
 {
 	return m_matchMakingProvider->getMetaValue(m_handle, key, outValue);
+}
+
+Ref< Result > Lobby::setParticipantMetaValue(const std::wstring& key, const std::wstring& value)
+{
+	Ref< Result > result = new Result();
+	if (m_taskQueue->add(new TaskSetLobbyParticipantMetaValue(
+		m_matchMakingProvider,
+		m_handle,
+		key,
+		value,
+		result
+	)))
+		return result;
+	else
+		return 0;
+}
+
+bool Lobby::getParticipantMetaValue(const IUser* user, const std::wstring& key, std::wstring& outValue) const
+{
+	const User* userImpl = dynamic_type_cast< const User* >(user);
+	if (userImpl)
+		return m_matchMakingProvider->getParticipantMetaValue(m_handle, userImpl->m_handle, key, outValue);
+	else
+		return false;
 }
 
 Ref< Result > Lobby::join()
