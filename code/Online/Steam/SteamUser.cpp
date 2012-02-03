@@ -22,7 +22,7 @@ bool SteamUser::getName(uint64_t userHandle, std::wstring& outName)
 	return true;
 }
 
-bool SteamUser::setMetaValue(uint64_t userHandle, const std::wstring& key, const std::wstring& value)
+bool SteamUser::setPresenceValue(uint64_t userHandle, const std::wstring& key, const std::wstring& value)
 {
 	CSteamID id(userHandle);
 	if (!id.IsValid())
@@ -31,7 +31,7 @@ bool SteamUser::setMetaValue(uint64_t userHandle, const std::wstring& key, const
 	return SteamFriends()->SetRichPresence(wstombs(key).c_str(), wstombs(value).c_str());
 }
 
-bool SteamUser::getMetaValue(uint64_t userHandle, const std::wstring& key, std::wstring& outValue)
+bool SteamUser::getPresenceValue(uint64_t userHandle, const std::wstring& key, std::wstring& outValue)
 {
 	CSteamID id(userHandle);
 	if (!id.IsValid())

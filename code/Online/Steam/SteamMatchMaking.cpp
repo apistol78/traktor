@@ -133,6 +133,35 @@ bool SteamMatchMaking::getMetaValue(uint64_t lobbyHandle, const std::wstring& ke
 	return true;
 }
 
+bool SteamMatchMaking::setParticipantMetaValue(uint64_t lobbyHandle, const std::wstring& key, const std::wstring& value)
+{
+	CSteamID id(lobbyHandle);
+	if (!id.IsValid())
+		return false;
+
+	SteamMatchmaking()->SetLobbyMemberData(
+		id,
+		wstombs(key).c_str(),
+		wstombs(value).c_str()
+	);
+
+	return true;
+}
+
+bool SteamMatchMaking::getParticipantMetaValue(uint64_t lobbyHandle, uint64_t userHandle, const std::wstring& key, std::wstring& outValue)
+{
+	CSteamID lobbyId(lobbyHandle), userId(userHandle);
+	if (!lobbyId.IsValid() || !userId.IsValid())
+		return false;
+
+	const char* value = SteamMatchmaking()->GetLobbyMemberData(lobbyId, userId, wstombs(key).c_str());
+	if (!value)
+		return false;
+
+	outValue = mbstows(value);
+	return true;
+}
+
 bool SteamMatchMaking::getParticipants(uint64_t lobbyHandle, std::vector< uint64_t >& outUserHandles)
 {
 	CSteamID id(lobbyHandle);

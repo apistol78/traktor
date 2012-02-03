@@ -21,6 +21,10 @@ public:
 
 	virtual bool getMetaValue(const std::wstring& key, std::wstring& outValue) const;
 
+	virtual Ref< Result > setParticipantMetaValue(const std::wstring& key, const std::wstring& value);
+
+	virtual bool getParticipantMetaValue(const IUser* user, const std::wstring& key, std::wstring& outValue) const;
+
 	virtual Ref< Result > join();
 
 	virtual bool leave();

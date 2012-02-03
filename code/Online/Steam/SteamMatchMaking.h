@@ -30,6 +30,10 @@ public:
 
 	virtual bool getMetaValue(uint64_t lobbyHandle, const std::wstring& key, std::wstring& outValue);
 
+	virtual bool setParticipantMetaValue(uint64_t lobbyHandle, const std::wstring& key, const std::wstring& value);
+
+	virtual bool getParticipantMetaValue(uint64_t lobbyHandle, uint64_t userHandle, const std::wstring& key, std::wstring& outValue);
+
 	virtual bool getParticipants(uint64_t lobbyHandle, std::vector< uint64_t >& outUserHandles);
 
 	virtual bool getIndex(uint64_t lobbyHandle, int32_t& outIndex) const;
