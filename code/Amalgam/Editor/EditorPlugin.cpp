@@ -3,6 +3,7 @@
 #include "Amalgam/Editor/EditorPlugin.h"
 #include "Amalgam/Editor/LaunchTargetAction.h"
 #include "Amalgam/Editor/MigrateTargetAction.h"
+#include "Amalgam/Editor/HostEnumerator.h"
 #include "Amalgam/Editor/Platform.h"
 #include "Amalgam/Editor/PlatformInstance.h"
 #include "Amalgam/Editor/PostTargetAction.h"
@@ -27,6 +28,7 @@
 #include "Editor/IEditorPageSite.h"
 #include "I18N/Text.h"
 #include "Net/Network.h"
+#include "Net/Discovery/DiscoveryManager.h"
 #include "Ui/Command.h"
 #include "Ui/Container.h"
 #include "Ui/MethodHandler.h"
@@ -71,18 +73,19 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	if (m_targetManager->create(
 		m_editor->getSettings()->getProperty< PropertyInteger >(L"Amalgam.TargetManagerPort", c_targetConnectionPort)
 	))
-	{
 		collectTargets();
-
-		// Create target manager communication thread.
-		m_threadTargetManager = ThreadManager::getInstance().create(makeFunctor(this, &EditorPlugin::threadTargetManager), L"Target manager");
-		m_threadTargetManager->start();
-	}
 	else
 	{
 		log::error << L"Unable to create target manager; target manager disabled" << Endl;
 		m_targetManager = 0;
 	}
+
+	// Create host enumerator.
+	m_discoveryManager = new net::DiscoveryManager();
+	if (!m_discoveryManager->create(false))
+		log::error << L"Unable to create discovery manager; unable to enumerate hosts" << Endl;
+
+	m_hostEnumerator = new HostEnumerator(m_discoveryManager);
 
 	// Create interface.
 	Ref< ui::Container > container = new ui::Container();
@@ -98,7 +101,7 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	m_toolPlatforms->select(0);
 	m_toolBar->addItem(m_toolPlatforms);
 
-	m_targetList = new TargetListControl();
+	m_targetList = new TargetListControl(m_hostEnumerator);
 	m_targetList->create(container);
 	for (RefArray< TargetInstance >::iterator i = m_targetInstances.begin(); i != m_targetInstances.end(); ++i)
 		m_targetList->add(*i);
@@ -134,16 +137,18 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	}
 
 	m_connectionManager = new db::ConnectionManager();
-	if (m_connectionManager->create(configuration))
-	{
-		m_threadConnectionManager = ThreadManager::getInstance().create(makeFunctor(this, &EditorPlugin::threadConnectionManager), L"Connection manager");
-		m_threadConnectionManager->start();
-	}
-	else
+	if (!m_connectionManager->create(configuration))
 	{
 		log::warning << L"Unable to create connection manager; remote database server disabled" << Endl;
 		m_connectionManager = 0;
 	}
+
+	// Create communication threads.
+	m_threadTargetManager = ThreadManager::getInstance().create(makeFunctor(this, &EditorPlugin::threadTargetManager), L"Target manager");
+	m_threadTargetManager->start();
+
+	m_threadConnectionManager = ThreadManager::getInstance().create(makeFunctor(this, &EditorPlugin::threadConnectionManager), L"Connection manager");
+	m_threadConnectionManager->start();
 
 	m_threadTargetActions = ThreadManager::getInstance().create(makeFunctor(this, &EditorPlugin::threadTargetActions), L"Targets");
 	m_threadTargetActions->start();
@@ -173,6 +178,7 @@ void EditorPlugin::destroy()
 
 	safeDestroy(m_connectionManager);
 	safeDestroy(m_targetManager);
+	safeDestroy(m_discoveryManager);
 
 	net::Network::finalize();
 }
@@ -268,26 +274,15 @@ void EditorPlugin::eventTargetPlay(ui::Event* event)
 
 	PlatformInstance* platformInstance = m_platformInstances[platformIndex];
 	TargetInstance* targetInstance = checked_type_cast< TargetInstance*, false >(event->getItem());
-	Guid activeGuid;
 
 	if (targetInstance->getState() != TsIdle)
 		return;
 
-	//bool publish = m_editor->getSettings()->getProperty< PropertyBoolean >(L"Amalgam.PublishActiveGuid", true);
-	//if (publish)
-	//{
-	//	// Publish active editor's guid to deploying application.
-	//	editor::IEditorPage* activeEditorPage = m_editor->getActiveEditorPage();
-	//	if (activeEditorPage)
-	//	{
-	//		Ref< db::Instance > dataInstance = activeEditorPage->getDataInstance();
-	//		if (dataInstance)
-	//			activeGuid = dataInstance->getGuid();
-	//	}
-	//}
-
 	targetInstance->setState(TsPending);
 	targetInstance->setBuildProgress(0);
+
+	std::wstring deployHost = L"";
+	m_hostEnumerator->getHost(targetInstance->getDeployHostId(), deployHost);
 
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_targetActionQueueLock);
@@ -297,8 +292,8 @@ void EditorPlugin::eventTargetPlay(ui::Event* event)
 
 		if (event->getKeyState() == 0)
 		{
-			chain.actions.push_back(new DeployTargetAction(m_editor, platformInstance, targetInstance, activeGuid));
-			chain.actions.push_back(new LaunchTargetAction(m_editor, platformInstance, targetInstance));
+			chain.actions.push_back(new DeployTargetAction(m_editor, platformInstance, targetInstance, deployHost));
+			chain.actions.push_back(new LaunchTargetAction(m_editor, platformInstance, targetInstance, deployHost));
 		}
 		else if ((event->getKeyState() & (ui::KsControl | ui::KsCommand)) != 0)
 		{
@@ -322,12 +317,19 @@ void EditorPlugin::eventTargetStop(ui::Event* event)
 
 void EditorPlugin::threadTargetManager()
 {
+	// Update target connection manager and host enumerator.
 	while (!m_threadTargetManager->stopped())
-		m_targetManager->update();
+	{
+		if (m_targetManager)
+			m_targetManager->update();
+		if (m_hostEnumerator)
+			m_hostEnumerator->update();
+	}
 }
 
 void EditorPlugin::threadConnectionManager()
 {
+	// Update remote database connection manager.
 	while (!m_threadConnectionManager->stopped())
 		m_connectionManager->update(100);
 }

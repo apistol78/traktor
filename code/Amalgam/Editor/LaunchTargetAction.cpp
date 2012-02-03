@@ -23,10 +23,16 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.LaunchTargetAction", LaunchTargetAction, ITargetAction)
 
-LaunchTargetAction::LaunchTargetAction(const editor::IEditor* editor, PlatformInstance* platformInstance, TargetInstance* targetInstance)
+LaunchTargetAction::LaunchTargetAction(
+	const editor::IEditor* editor,
+	PlatformInstance* platformInstance,
+	TargetInstance* targetInstance,
+	const std::wstring& deployHost
+)
 :	m_editor(editor)
 ,	m_platformInstance(platformInstance)
 ,	m_targetInstance(targetInstance)
+,	m_deployHost(deployHost)
 {
 }
 
@@ -52,6 +58,7 @@ bool LaunchTargetAction::execute()
 	envmap[L"DEPLOY_PROJECTROOT"] = projectRoot.getPathNameNoVolume();
 #endif
 	envmap[L"DEPLOY_EXECUTABLE"] = target->getExecutable();
+	envmap[L"DEPLOY_TARGET_HOST"] = m_deployHost;
 
 	// Merge tool environment variables.
 	const DeployTool& deployTool = platform->getDeployTool();

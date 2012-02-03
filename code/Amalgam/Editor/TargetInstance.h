@@ -45,6 +45,10 @@ public:
 
 	const Target* getTarget() const;
 
+	void setDeployHostId(int32_t deployHostId);
+
+	int32_t getDeployHostId() const;
+
 	void setState(TargetState state);
 
 	TargetState getState() const;
@@ -63,6 +67,7 @@ private:
 	Guid m_id;
 	std::wstring m_name;
 	Ref< const Target > m_target;
+	int32_t m_deployHostId;
 	TargetState m_state;
 	int32_t m_buildProgress;
 	RefArray< TargetConnection > m_connections;

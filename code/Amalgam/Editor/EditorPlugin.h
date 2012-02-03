@@ -14,6 +14,13 @@
 
 namespace traktor
 {
+	namespace net
+	{
+
+class DiscoveryManager;
+
+	}
+
 	namespace ui
 	{
 		namespace custom
@@ -29,6 +36,7 @@ class ToolBarDropDown;
 	{
 
 class ITargetAction;
+class HostEnumerator;
 class PlatformInstance;
 class TargetInstance;
 class TargetListControl;
@@ -64,6 +72,8 @@ private:
 	Ref< ui::custom::ToolBarDropDown > m_toolPlatforms;
 	Ref< TargetListControl > m_targetList;
 	Ref< TargetManager > m_targetManager;					//!< Target connection manager.
+	Ref< net::DiscoveryManager > m_discoveryManager;
+	Ref< HostEnumerator > m_hostEnumerator;
 	Ref< db::ConnectionManager > m_connectionManager;		//!< Remote database connection manager.
 	RefArray< PlatformInstance > m_platformInstances;
 	RefArray< TargetInstance > m_targetInstances;

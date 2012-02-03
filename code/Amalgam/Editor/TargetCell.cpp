@@ -1,6 +1,8 @@
 #include <iomanip>
 #include "Amalgam/Editor/ButtonCell.h"
+#include "Amalgam/Editor/DropListCell.h"
 #include "Amalgam/Editor/GraphCell.h"
+#include "Amalgam/Editor/HostEnumerator.h"
 #include "Amalgam/Editor/ProgressCell.h"
 #include "Amalgam/Editor/TargetCell.h"
 #include "Amalgam/Editor/TargetConnection.h"
@@ -34,10 +36,11 @@ std::wstring formatPerformanceValue(float value)
 
 		}
 
-TargetCell::TargetCell(ui::Bitmap* bitmap, TargetInstance* instance)
+TargetCell::TargetCell(ui::Bitmap* bitmap, HostEnumerator* hostEnumerator, TargetInstance* instance)
 :	m_instance(instance)
 {
 	m_progressCell = new ProgressCell();
+	m_hostsCell = new DropListCell(hostEnumerator, instance);
 	m_playCell = new ButtonCell(bitmap, 0, true, ui::EiUser + 1, instance);
 }
 
@@ -51,15 +54,31 @@ void TargetCell::placeCells(ui::custom::AutoWidget* widget, const ui::Rect& rect
 {
 	ui::Rect controlRect = rect; controlRect.bottom = rect.top + 28;
 
-	widget->placeCell(
-		m_progressCell,
-		ui::Rect(
-			controlRect.left + 4,
-			controlRect.getCenter().y - 8,
-			controlRect.right - 24 * 1 - 8,
-			controlRect.getCenter().y + 8
-		)
-	);
+	if (m_instance->getState() != TsIdle)
+	{
+		widget->placeCell(
+			m_progressCell,
+			ui::Rect(
+				controlRect.left + 4,
+				controlRect.getCenter().y - 8,
+				controlRect.right - 24 * 1 - 8,
+				controlRect.getCenter().y + 8
+			)
+		);
+	}
+
+	if (m_instance->getState() == TsIdle)
+	{
+		widget->placeCell(
+			m_hostsCell,
+			ui::Rect(
+				controlRect.getCenter().x - 16,
+				controlRect.getCenter().y - 10,
+				controlRect.right - 24 * 1 - 12,
+				controlRect.getCenter().y + 10
+			)
+		);
+	}
 
 	widget->placeCell(
 		m_playCell,

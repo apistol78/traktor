@@ -15,6 +15,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.TargetListControl", TargetListControl, ui::custom::AutoWidget)
 
+TargetListControl::TargetListControl(HostEnumerator* hostEnumerator)
+:	m_hostEnumerator(hostEnumerator)
+{
+}
+
 bool TargetListControl::create(ui::Widget* parent)
 {
 	if (!ui::custom::AutoWidget::create(parent, ui::WsDoubleBuffer))
@@ -26,7 +31,7 @@ bool TargetListControl::create(ui::Widget* parent)
 
 void TargetListControl::add(TargetInstance* instance)
 {
-	m_cells.push_back(new TargetCell(m_bitmapTargetControl, instance));
+	m_cells.push_back(new TargetCell(m_bitmapTargetControl, m_hostEnumerator, instance));
 	requestLayout();
 }
 
