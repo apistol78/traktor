@@ -210,6 +210,11 @@ bool PsnSessionManager::requireUserAttention() const
 	return ms_requireUserAttention;
 }
 
+uint64_t PsnSessionManager::getCurrentUserHandle() const
+{
+	return 0;
+}
+
 bool PsnSessionManager::haveP2PData() const
 {
 	return false;
