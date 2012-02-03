@@ -13,6 +13,7 @@ TargetInstance::TargetInstance(const std::wstring& name, const Target* target)
 :	m_id(Guid::create())
 ,	m_name(name)
 ,	m_target(target)
+,	m_deployHostId(0)
 ,	m_state(TsIdle)
 {
 }
@@ -38,6 +39,16 @@ const std::wstring& TargetInstance::getName() const
 const Target* TargetInstance::getTarget() const
 {
 	return m_target;
+}
+
+void TargetInstance::setDeployHostId(int32_t deployHostId)
+{
+	m_deployHostId = deployHostId;
+}
+
+int32_t TargetInstance::getDeployHostId() const
+{
+	return m_deployHostId;
 }
 
 void TargetInstance::setState(TargetState state)

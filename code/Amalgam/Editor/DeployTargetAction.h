@@ -25,7 +25,12 @@ class DeployTargetAction : public ITargetAction
 	T_RTTI_CLASS;
 
 public:
-	DeployTargetAction(const editor::IEditor* editor, PlatformInstance* platformInstance, TargetInstance* targetInstance, const Guid& activeGuid);
+	DeployTargetAction(
+		const editor::IEditor* editor,
+		PlatformInstance* platformInstance,
+		TargetInstance* targetInstance,
+		const std::wstring& deployHost
+	);
 
 	virtual bool execute();
 
@@ -33,7 +38,7 @@ private:
 	const editor::IEditor* m_editor;
 	Ref< PlatformInstance > m_platformInstance;
 	Ref< TargetInstance > m_targetInstance;
-	Guid m_activeGuid;
+	std::wstring m_deployHost;
 };
 
 	}

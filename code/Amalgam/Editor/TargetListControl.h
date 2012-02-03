@@ -9,6 +9,7 @@ namespace traktor
 	namespace amalgam
 	{
 
+class HostEnumerator;
 class TargetCell;
 class TargetInstance;
 
@@ -17,6 +18,8 @@ class TargetListControl : public ui::custom::AutoWidget
 	T_RTTI_CLASS;
 
 public:
+	TargetListControl(HostEnumerator* hostEnumerator);
+
 	bool create(ui::Widget* parent);
 
 	void add(TargetInstance* instance);
@@ -28,6 +31,7 @@ public:
 	void addStopEventHandler(ui::EventHandler* eventHandler);
 
 private:
+	Ref< HostEnumerator > m_hostEnumerator;
 	Ref< ui::Bitmap > m_bitmapTargetControl;
 	RefArray< TargetCell > m_cells;
 

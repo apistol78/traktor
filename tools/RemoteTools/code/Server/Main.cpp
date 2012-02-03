@@ -15,6 +15,8 @@
 #include <Net/SocketAddressIPv4.h>
 #include <Net/SocketStream.h>
 #include <Net/TcpSocket.h>
+#include <Net/Discovery/DiscoveryManager.h>
+#include <Net/Discovery/NetworkService.h>
 #include <Ui/Application.h>
 #include <Ui/Bitmap.h>
 #include <Ui/Clipboard.h>
@@ -300,6 +302,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 
 	net::Network::initialize();
 
+	// Create server socket.
 	Ref< net::TcpSocket > serverSocket = new net::TcpSocket();
 	if (!serverSocket->bind(net::SocketAddressIPv4(c_listenPort)))
 	{
@@ -312,6 +315,27 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 		traktor::log::error << L"Unable to listen on server socket" << Endl;
 		return 2;
 	}
+
+	// Create discovery manager and publish ourself.
+	Ref< net::DiscoveryManager > discoveryManager = new net::DiscoveryManager();
+	if (!discoveryManager->create(false))
+	{
+		traktor::log::error << L"Unable to create discovery manager" << Endl;
+		return 3;
+	}
+
+	RefArray< net::SocketAddressIPv4 > interfaces = net::SocketAddressIPv4::getInterfaces();
+	if (interfaces.empty())
+	{
+		traktor::log::error << L"Unable to get nic interfaces" << Endl;
+		return 4;
+	}
+
+	discoveryManager->addService(new net::NetworkService(
+		L"RemoteTools/Server",
+		interfaces[0]->getHostName(),
+		OS::getInstance().getComputerName()
+	));
 
 	traktor::log::info << L"Waiting for client(s)..." << Endl;
 

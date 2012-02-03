@@ -16,13 +16,15 @@ class Bitmap;
 	{
 
 class ButtonCell;
+class DropListCell;
+class HostEnumerator;
 class ProgressCell;
 class TargetInstance;
 
 class TargetCell : public ui::custom::AutoWidgetCell
 {
 public:
-	TargetCell(ui::Bitmap* bitmap, TargetInstance* instance);
+	TargetCell(ui::Bitmap* bitmap, HostEnumerator* hostEnumerator, TargetInstance* instance);
 
 	int32_t getHeight() const;
 
@@ -32,6 +34,7 @@ public:
 
 private:
 	Ref< ProgressCell > m_progressCell;
+	Ref< DropListCell > m_hostsCell;
 	Ref< ButtonCell > m_playCell;
 	Ref< TargetInstance > m_instance;
 };

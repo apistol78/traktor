@@ -31,7 +31,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.amalgam.DeploySettingsPage", 0, DeployS
 bool DeploySettingsPage::create(ui::Container* parent, Settings* settings, const std::list< ui::Command >& shortcutCommands)
 {
 	Ref< ui::Container > container = new ui::Container();
-	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,*,*,100%", 0, 4)))
+	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,*,100%", 0, 4)))
 		return false;
 
 	Ref< ui::Container > containerInner = new ui::Container();
@@ -50,9 +50,6 @@ bool DeploySettingsPage::create(ui::Container* parent, Settings* settings, const
 	m_editTargetManagerPort = new ui::Edit();
 	m_editTargetManagerPort->create(containerInner, toString(c_targetConnectionPort), ui::WsClientBorder, new ui::NumericEditValidator(false, 0, 65535, 0));
 
-	m_checkPublishActiveGuid = new ui::CheckBox();
-	m_checkPublishActiveGuid->create(container, L"Publish active editor");
-
 	m_checkInheritCache = new ui::CheckBox();
 	m_checkInheritCache->create(container, L"Inherit editor cache(s)");
 
@@ -61,9 +58,6 @@ bool DeploySettingsPage::create(ui::Container* parent, Settings* settings, const
 
 	int32_t targetManagerPort = settings->getProperty< PropertyInteger >(L"Amalgam.TargetManagerPort", c_targetConnectionPort);
 	m_editTargetManagerPort->setText(toString(targetManagerPort));
-
-	bool publish = settings->getProperty< PropertyBoolean >(L"Amalgam.PublishActiveGuid", true);
-	m_checkPublishActiveGuid->setChecked(publish);
 
 	bool inheritCache = settings->getProperty< PropertyBoolean >(L"Amalgam.InheritCache", true);
 	m_checkInheritCache->setChecked(inheritCache);
@@ -111,9 +105,6 @@ bool DeploySettingsPage::apply(Settings* settings)
 
 	int32_t targetManagerPort = parseString< int32_t >(m_editTargetManagerPort->getText());
 	settings->setProperty< PropertyInteger >(L"Amalgam.TargetManagerPort", targetManagerPort);
-
-	bool publish = m_checkPublishActiveGuid->isChecked();
-	settings->setProperty< PropertyBoolean >(L"Amalgam.PublishActiveGuid", publish);
 
 	bool inheritCache = m_checkInheritCache->isChecked();
 	settings->setProperty< PropertyBoolean >(L"Amalgam.InheritCache", inheritCache);

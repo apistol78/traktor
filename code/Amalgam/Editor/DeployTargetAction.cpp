@@ -32,11 +32,16 @@ const uint16_t c_targetConnectionPort = 36000;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.DeployTargetAction", DeployTargetAction, ITargetAction)
 
-DeployTargetAction::DeployTargetAction(const editor::IEditor* editor, PlatformInstance* platformInstance, TargetInstance* targetInstance, const Guid& activeGuid)
+DeployTargetAction::DeployTargetAction(
+	const editor::IEditor* editor,
+	PlatformInstance* platformInstance,
+	TargetInstance* targetInstance,
+	const std::wstring& deployHost
+)
 :	m_editor(editor)
 ,	m_platformInstance(platformInstance)
 ,	m_targetInstance(targetInstance)
-,	m_activeGuid(activeGuid)
+,	m_deployHost(deployHost)
 {
 }
 
@@ -96,10 +101,6 @@ bool DeployTargetAction::execute()
 	applicationConfiguration->setProperty< PropertyInteger >(L"Amalgam.TargetManager/Port", targetManagerPort);
 	applicationConfiguration->setProperty< PropertyString >(L"Amalgam.TargetManager/Id", m_targetInstance->getId().format());
 
-	// Append optional "active guid" to application configuration.
-	if (m_activeGuid.isValid() && !m_activeGuid.isNull())
-		applicationConfiguration->setProperty< PropertyString >(L"Amalgam.ActiveGuid", m_activeGuid.format());
-
 	// Append target guids to application configuration.
 	applicationConfiguration->setProperty< PropertyString >(L"Amalgam.RootGuid", target->getRootAsset().format());
 	applicationConfiguration->setProperty< PropertyString >(L"Amalgam.StartupGuid", target->getStartupInstance().format());
@@ -120,6 +121,7 @@ bool DeployTargetAction::execute()
 #else
 	envmap[L"DEPLOY_PROJECTROOT"] = projectRoot.getPathNameNoVolume();
 #endif
+	envmap[L"DEPLOY_TARGET_HOST"] = m_deployHost;
 
 	// Merge tool environment variables.
 	const DeployTool& deployTool = platform->getDeployTool();
