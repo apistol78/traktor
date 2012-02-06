@@ -25,7 +25,7 @@ bool HostEnumerator::getHost(int32_t index, std::wstring& outHost) const
 {
 	if (index >= 0 && index < int32_t(m_hosts.size()))
 	{
-		outHost = m_hosts[index];
+		outHost = m_hosts[index].host;
 		return true;
 	}
 	else
@@ -34,9 +34,9 @@ bool HostEnumerator::getHost(int32_t index, std::wstring& outHost) const
 
 bool HostEnumerator::getDescription(int32_t index, std::wstring& outDescription) const
 {
-	if (index >= 0 && index < int32_t(m_descriptions.size()))
+	if (index >= 0 && index < int32_t(m_hosts.size()))
 	{
-		outDescription = m_descriptions[index];
+		outDescription = m_hosts[index].description;
 		return true;
 	}
 	else
@@ -53,17 +53,25 @@ void HostEnumerator::update()
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 		m_hosts.clear();
-		m_descriptions.clear();
 
 		for (RefArray< net::NetworkService >::const_iterator i = services.begin(); i != services.end(); ++i)
 		{
 			if ((*i)->getType() != L"RemoteTools/Server")
 				continue;
 
-			m_hosts.push_back((*i)->getHost());
-			m_descriptions.push_back((*i)->getDescription());
+			Host h;
+			h.host = (*i)->getHost();
+			h.description = (*i)->getDescription();
+			m_hosts.push_back(h);
 		}
+
+		std::sort(m_hosts.begin(), m_hosts.end());
 	}
+}
+
+bool HostEnumerator::Host::operator < (const Host& h) const
+{
+	return description < h.description;
 }
 
 	}

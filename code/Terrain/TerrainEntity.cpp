@@ -380,6 +380,8 @@ void TerrainEntity::render(
 			for (uint32_t j = 0; j < patchLodCount; j += PatchInstanceCount)
 			{
 				uint32_t instanceCount = std::min< uint32_t >(patchLodCount - j, PatchInstanceCount);
+				T_ASSERT (instanceCount > 0);
+				T_ASSERT (instanceCount <= PatchInstanceCount);
 
 				float distance = std::numeric_limits< float >::max();
 				for (uint32_t k = 0; k < instanceCount; ++k)
@@ -389,6 +391,11 @@ void TerrainEntity::render(
 					patchOrigin[k] = cullPatch->patchOrigin;
 					surfaceOffset[k] = patch.surfaceOffset;
 					distance = std::min< float >(distance, cullPatch->distance);
+				}
+				for (uint32_t k = instanceCount; k < PatchInstanceCount; ++k)
+				{
+					patchOrigin[k] = Vector4::zero();
+					surfaceOffset[k] = Vector4::zero();
 				}
 
 				render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >("Terrain patch");
@@ -620,10 +627,11 @@ bool TerrainEntity::createPatches()
 #if defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
 	std::vector< render::VertexElement > vertexElements;
 	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat3, 0));
+	uint32_t vertexSize = render::getVertexSize(vertexElements);
 
 	m_vertexBuffer = m_renderSystem->createVertexBuffer(
 		vertexElements,
-		patchVertexCount * sizeof(float) * 3 * PatchInstanceCount,
+		patchVertexCount * vertexSize * PatchInstanceCount,
 		false
 	);
 	if (!m_vertexBuffer)
@@ -640,17 +648,16 @@ bool TerrainEntity::createPatches()
 			{
 				*vertex++ = float(x) / (patchDim - 1);
 				*vertex++ = float(z) / (patchDim - 1);
-				*vertex++ = float(i);
+				*vertex++ = float(i + 0.1f);
 			}
 		}
 	}
 
 	m_vertexBuffer->unlock();
-#endif
-
-#if !defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
+#else
 	std::vector< render::VertexElement > vertexElements;
 	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat3, 0));
+	uint32_t vertexSize = render::getVertexSize(vertexElements);
 #endif
 
 	m_patches.reserve(m_patchCount * m_patchCount);
@@ -662,7 +669,7 @@ bool TerrainEntity::createPatches()
 			// Create dynamic vertex buffers if we're in editor mode.
 			Ref< render::VertexBuffer > vertexBuffer = m_renderSystem->createVertexBuffer(
 				vertexElements,
-				patchVertexCount * sizeof(float) * 3,
+				patchVertexCount * vertexSize,
 				m_editorMode
 			);
 			if (!vertexBuffer)
@@ -784,9 +791,14 @@ bool TerrainEntity::createPatches()
 		}
 
 		uint32_t indexEndOffset = uint32_t(indices.size());
+		T_ASSERT ((indexEndOffset - indexOffset) % 3 == 0);
 
 		uint32_t minIndex = *std::min_element(indices.begin() + indexOffset, indices.begin() + indexEndOffset);
 		uint32_t maxIndex = *std::max_element(indices.begin() + indexOffset, indices.begin() + indexEndOffset);
+
+		T_ASSERT (minIndex < patchVertexCount);
+		T_ASSERT (maxIndex < patchVertexCount);
+		T_ASSERT (maxIndex + patchVertexCount * (PatchInstanceCount - 1) < 65536);
 
 		// Duplicate for instances.
 		uint32_t indexBase = patchVertexCount;

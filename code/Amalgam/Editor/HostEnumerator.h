@@ -32,10 +32,17 @@ public:
 	void update();
 
 private:
+	struct Host
+	{
+		std::wstring host;
+		std::wstring description;
+
+		bool operator < (const Host& h) const;
+	};
+
 	Ref< net::DiscoveryManager > m_discoveryManager;
 	mutable Semaphore m_lock;
-	std::vector< std::wstring > m_hosts;
-	std::vector< std::wstring > m_descriptions;
+	std::vector< Host > m_hosts;
 };
 
 	}

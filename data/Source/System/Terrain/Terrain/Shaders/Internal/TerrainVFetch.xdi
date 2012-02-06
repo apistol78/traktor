@@ -444,6 +444,13 @@ Generated texture from surface cache.
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>
+		<item type="traktor.render.Interpolator">
+			<comment/>
+			<position>
+				<first>1156</first>
+				<second>-14</second>
+			</position>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
@@ -624,16 +631,6 @@ Generated texture from surface cache.
 			<destination>
 				<node ref="/object/nodes/item[15]"/>
 				<name>Input3</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[18]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[17]"/>
-				<name>Index</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -878,16 +875,6 @@ Generated texture from surface cache.
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[18]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[37]"/>
-				<name>Index</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[38]"/>
 				<name>Output</name>
 			</source>
@@ -942,8 +929,38 @@ Generated texture from surface cache.
 				<name>Output</name>
 			</source>
 			<destination>
+				<node ref="/object/nodes/item[41]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[41]"/>
+				<name>Output</name>
+			</source>
+			<destination>
 				<node ref="/object/nodes/item[24]"/>
 				<name>ViewPosition</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[18]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[17]"/>
+				<name>Index</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[18]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[37]"/>
+				<name>Index</name>
 			</destination>
 		</item>
 	</edges>
