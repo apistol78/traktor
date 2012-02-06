@@ -65,7 +65,10 @@ Ref< HeightfieldCompositor > HeightfieldCompositor::createFromAsset(const Height
 	// Load base layer as image.
 	Path fileName = FileSystem::getInstance().getAbsolutePath(assetPath, asset->getFileName());
 	if ((baseImage = readRawTerrain(fileName)) == 0)
+	{
+		log::error << L"Unable to read heightfield source \"" << fileName.getPathName() << L"\"" << Endl;
 		return 0;
+	}
 
 	uint32_t size = baseImage->getWidth();
 
@@ -112,28 +115,30 @@ Ref< HeightfieldCompositor > HeightfieldCompositor::createFromAsset(const Height
 bool HeightfieldCompositor::readInstanceData(const db::Instance* assetInstance)
 {
 	Ref< IStream > offsetStream = assetInstance->readData(L"Offset");
-	if (!offsetStream)
-		return false;
-
-	Ref< drawing::Image > offsetImage = readRawTerrain(offsetStream);
-	if (!offsetImage)
-		return false;
-
-	if (offsetImage->getWidth() != m_size)
+	if (offsetStream)
 	{
-		drawing::ScaleFilter scaleOffsetFilter(
-			m_size,
-			m_size,
-			drawing::ScaleFilter::MnAverage,
-			drawing::ScaleFilter::MgLinear
-		);
-		offsetImage = offsetImage->applyFilter(&scaleOffsetFilter);
-		T_ASSERT (offsetImage);
+		Ref< drawing::Image > offsetImage = readRawTerrain(offsetStream);
+		if (!offsetImage)
+			return false;
+
+		if (offsetImage->getWidth() != m_size)
+		{
+			drawing::ScaleFilter scaleOffsetFilter(
+				m_size,
+				m_size,
+				drawing::ScaleFilter::MnAverage,
+				drawing::ScaleFilter::MgLinear
+			);
+			offsetImage = offsetImage->applyFilter(&scaleOffsetFilter);
+			T_ASSERT (offsetImage);
+		}
+
+		offsetStream->close();
+		offsetStream = 0;
+
+		m_offsetLayer->m_image = offsetImage;
+		updateMergedLayer();
 	}
-
-	m_offsetLayer->m_image = offsetImage;
-
-	updateMergedLayer();
 	return true;
 }
 

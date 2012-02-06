@@ -22,9 +22,9 @@
 			<depthEnable>false</depthEnable>
 			<depthWriteEnable>false</depthWriteEnable>
 			<depthFunction>CfLessEqual</depthFunction>
-			<alphaTestEnable>false</alphaTestEnable>
-			<alphaTestFunction>CfLess</alphaTestFunction>
-			<alphaTestReference>128</alphaTestReference>
+			<alphaTestEnable>true</alphaTestEnable>
+			<alphaTestFunction>CfGreater</alphaTestFunction>
+			<alphaTestReference>0</alphaTestReference>
 			<wireframe>false</wireframe>
 			<stencilEnable>false</stencilEnable>
 			<stencilFail>SoKeep</stencilFail>

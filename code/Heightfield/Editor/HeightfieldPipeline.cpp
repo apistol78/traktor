@@ -72,18 +72,30 @@ bool HeightfieldPipeline::buildOutput(
 
 	Ref< const db::Instance > assetInstance = checked_type_cast< const db::Instance*, true >(buildParams);
 	if (!assetInstance)
+	{
+		log::error << L"Failed to build heightfield; no asset instance" << Endl;
 		return false;
+	}
 
 	Ref< HeightfieldCompositor > compositor = HeightfieldCompositor::createFromAsset(heightfieldAsset, m_assetPath);
 	if (!compositor)
+	{
+		log::error << L"Failed to build heightfield; unable to create heightfield compositor from asset" << Endl;
 		return false;
+	}
 
 	if (!compositor->readInstanceData(assetInstance))
+	{
+		log::error << L"Failed to build heightfield; unable to read asset layers" << Endl;
 		return false;
+	}
 
 	const HeightfieldLayer* mergedLayer = compositor->getMergedLayer();
 	if (!mergedLayer)
+	{
+		log::error << L"Failed to build heightfield; unable to get merged layers" << Endl;
 		return false;
+	}
 
 	// Create height field resource.
 	Ref< HeightfieldResource > resource = new HeightfieldResource();
@@ -95,14 +107,14 @@ bool HeightfieldPipeline::buildOutput(
 	);
 	if (!instance)
 	{
-		log::error << L"Failed to build heightfield, unable to create instance" << Endl;
+		log::error << L"Failed to build heightfield; unable to create instance" << Endl;
 		return false;
 	}
 
 	Ref< IStream > stream = instance->writeData(L"Data");
 	if (!stream)
 	{
-		log::error << L"Failed to build heightfield, unable to create data stream" << Endl;
+		log::error << L"Failed to build heightfield; unable to create data stream" << Endl;
 		instance->revert();
 		return false;
 	}

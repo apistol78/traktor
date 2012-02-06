@@ -226,7 +226,7 @@ void ProgramWin32::setVectorParameter(handle_t handle, const Vector4& param)
 	if (i == m_scalarParameterMap.end())
 		return;
 
-	param.storeUnaligned(&m_scalarParameterData[i->second]);
+	param.storeAligned(&m_scalarParameterData[i->second]);
 #if defined(_DEBUG)
 	for (int j = 0; j < 4; ++j)
 		m_scalarParameterDataValid[i->second + j] = 1;
@@ -242,7 +242,7 @@ void ProgramWin32::setVectorArrayParameter(handle_t handle, const Vector4* param
 		return;
 
 	for (int j = 0; j < length; ++j)
-		param[j].storeUnaligned(&m_scalarParameterData[i->second + j * 4]);
+		param[j].storeAligned(&m_scalarParameterData[i->second + j * 4]);
 #if defined(_DEBUG)
 	for (int j = 0; j < length * 4; ++j)
 		m_scalarParameterDataValid[i->second + j] = 1;
@@ -257,7 +257,7 @@ void ProgramWin32::setMatrixParameter(handle_t handle, const Matrix44& param)
 	if (i == m_scalarParameterMap.end())
 		return;
 
-	param.storeUnaligned(&m_scalarParameterData[i->second]);
+	param.storeAligned(&m_scalarParameterData[i->second]);
 #if defined(_DEBUG)
 	for (int j = 0; j < 16; ++j)
 		m_scalarParameterDataValid[i->second + j] = 1;
@@ -273,7 +273,7 @@ void ProgramWin32::setMatrixArrayParameter(handle_t handle, const Matrix44* para
 		return;
 
 	for (int j = 0; j < length; ++j)
-		param[j].storeUnaligned(&m_scalarParameterData[i->second + j * 16]);
+		param[j].storeAligned(&m_scalarParameterData[i->second + j * 16]);
 #if defined(_DEBUG)
 	for (int j = 0; j < length * 16; ++j)
 		m_scalarParameterDataValid[i->second + j] = 1;
