@@ -215,7 +215,7 @@ template < typename Type >
 struct CastAny < Ref< Type >, false >
 {
 	static Any set(const Ref< Type >& value) {
-		return Any(value);
+		return Any(const_cast< typename IsConst< Type >::type_t* >(value.ptr()));
 	}
 	static Ref< Type > get(const Any& value) {
 		return checked_type_cast< Type*, false >(value.getObject());
@@ -226,7 +226,7 @@ template < typename Type >
 struct CastAny < const Ref< Type >&, false >
 {
 	static Any set(const Ref< Type >& value) {
-		return Any(value);
+		return Any(const_cast< typename IsConst< Type >::type_t* >(value.ptr()));
 	}
 	static Ref< Type > get(const Any& value) {
 		return checked_type_cast< Type*, false >(value.getObject());
