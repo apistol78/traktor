@@ -15,6 +15,7 @@ void AttachmentResult::succeed(ISerializable* attachment)
 
 ISerializable* AttachmentResult::get() const
 {
+	wait();
 	return m_attachment;
 }
 

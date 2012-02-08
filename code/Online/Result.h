@@ -95,6 +95,9 @@ public:
 		deferred();
 	}
 
+protected:
+	void wait() const;
+
 private:
 	bool m_ready;
 	bool m_succeeded;

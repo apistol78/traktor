@@ -55,9 +55,14 @@ bool Result::ready() const
 
 bool Result::succeeded() const
 {
+	wait();
+	return m_succeeded;
+}
+
+void Result::wait() const
+{
 	while (!m_ready)
 		s_eventStatus.wait(100);
-	return m_succeeded;
 }
 
 void Result::deferred()

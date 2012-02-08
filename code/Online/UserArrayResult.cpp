@@ -15,6 +15,7 @@ void UserArrayResult::succeed(const RefArray< IUser >& users)
 
 const RefArray< IUser >& UserArrayResult::get() const
 {
+	wait();
 	return m_users;
 }
 
