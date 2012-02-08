@@ -15,6 +15,7 @@ void LobbyArrayResult::succeed(const RefArray< ILobby >& lobbies)
 
 const RefArray< ILobby >& LobbyArrayResult::get() const
 {
+	wait();
 	return m_lobbies;
 }
 
