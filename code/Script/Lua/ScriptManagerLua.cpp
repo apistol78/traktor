@@ -31,7 +31,6 @@ public:
 	:	m_luaState(luaState)
 	{
 		m_tableRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
-		push();
 	}
 
 	virtual ~TableContainerLua()
@@ -42,6 +41,7 @@ public:
 	void push()
 	{
 		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_tableRef);
+		T_ASSERT (lua_istable(m_luaState, -1));
 	}
 
 private:
@@ -386,6 +386,7 @@ Any ScriptManagerLua::toAny(int32_t index)
 		lua_pop(m_luaState, 1);
 
 		// Box LUA table into C++ container.
+		lua_pushvalue(m_luaState, index);
 		return Any(new TableContainerLua(m_luaState));
 	}
 
