@@ -112,6 +112,8 @@ void BodyBullet::reset()
 {
 	T_ASSERT (m_body);
 	m_body->clearForces();
+	m_body->setLinearVelocity(btVector3(0.0f, 0.0f, 0.0f));
+	m_body->setAngularVelocity(btVector3(0.0f, 0.0f, 0.0f));
 }
 
 void BodyBullet::setMass(float mass, const Vector4& inertiaTensor)
