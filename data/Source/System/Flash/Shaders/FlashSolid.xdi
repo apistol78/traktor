@@ -40,7 +40,7 @@
 			<stencilPass>SoKeep</stencilPass>
 			<stencilFunction>CfAlways</stencilFunction>
 			<stencilReference>0</stencilReference>
-			<stencilMask>4294967295</stencilMask>
+			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
 		</item>
 		<item type="traktor.render.External" version="1">

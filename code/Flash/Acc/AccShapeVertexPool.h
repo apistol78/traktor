@@ -23,6 +23,15 @@ class AccShapeVertexPool : public Object
 	T_RTTI_CLASS;
 
 public:
+#pragma pack(1)
+	struct Vertex
+	{
+		float pos[2];
+		float uv[2];
+		uint8_t color[4];
+	};
+#pragma pack()
+
 	struct Range
 	{
 		render::VertexBuffer* vertexBuffer;

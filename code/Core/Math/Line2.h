@@ -36,6 +36,12 @@ public:
 
 	T_MATH_INLINE float distance(const Vector2& pt) const;
 
+	T_MATH_INLINE Vector2 project(const Vector2& pt) const;
+
+	T_MATH_INLINE bool inrange(const Vector2& pt) const;
+
+	T_MATH_INLINE bool classify(const Vector2& pt, float thickness) const;
+
 	/*! \brief Intersect line segment with ray.
 	 *
 	 * \param ray Intersecting ray.

@@ -247,6 +247,12 @@ Path FileSystem::getAbsolutePath(const Path& basePath, const Path& relativePath)
 {
 	Path absoluteBasePath = basePath.isRelative() ? getAbsolutePath(basePath) : basePath;
 
+	if (relativePath.hasVolume())
+	{
+		if (compareIgnoreCase(relativePath.getVolume(), absoluteBasePath.getVolume()) != 0)
+			return relativePath;
+	}
+
 	Path absolutePath = relativePath.isRelative() ?
 		Path(absoluteBasePath.getPathName() + L"/" + relativePath.getPathNameNoVolume()) :
 		Path(absoluteBasePath.getVolume() + L":" + relativePath.getPathNameNoVolume());
@@ -264,7 +270,7 @@ bool FileSystem::getRelativePath(const Path& absolutePath, const Path& relativeT
 		if (!absolutePath.hasVolume() || !relativeToPath.hasVolume())
 			return false;
 
-		if (absolutePath.getVolume() != relativeToPath.getVolume())
+		if (compareIgnoreCase(absolutePath.getVolume(), relativeToPath.getVolume()) != 0)
 			return false;
 	}
 

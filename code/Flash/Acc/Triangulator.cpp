@@ -1,8 +1,10 @@
 #include <algorithm>
 #include <cfloat>
 #include "Core/Log/Log.h"
+#include "Core/Math/Bezier2nd.h"
 #include "Core/Math/Const.h"
-#include "Core/Math/Triangulator.h"
+#include "Core/Math/Line2.h"
+#include "Core/Math/MathUtils.h"
 #include "Flash/Acc/Triangulator.h"
 
 namespace traktor
@@ -11,14 +13,6 @@ namespace traktor
 	{
 		namespace
 		{
-
-struct Trapezoid
-{
-	float y[2];
-	float lx[2];
-	float rx[2];
-	uint16_t fillStyle;
-};
 
 bool compareSegmentsY(const Segment& ls, const Segment& rs)
 {
@@ -47,49 +41,105 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.Triangulator", Triangulator, Object)
 void Triangulator::triangulate(const AlignedVector< Segment >& segments, AlignedVector< Triangle >& outTriangles)
 {
 	std::set< float > pys;
+	Segment s;
+	Triangle t;
 
 	m_segments.resize(0);
+
+	// Create vertical segments.
 	for (AlignedVector< Segment >::const_iterator i = segments.begin(); i != segments.end(); ++i)
 	{
 		if (!i->fillStyle0 && !i->fillStyle1)
 			continue;
 
-		float dy = i->v[0].y - i->v[1].y;
-
-		if (std::abs(dy) <= FUZZY_EPSILON)
-			continue;
-
-		Segment segment;
-
-		if (dy < 0.0f)
+		if (!i->curve)
 		{
-			segment.v[0] = i->v[0];
-			segment.v[1] = i->v[1];
-			segment.fillStyle0 = i->fillStyle0;
-			segment.fillStyle1 = i->fillStyle1;
-		}
-		else if (dy > 0.0f)
-		{
-			segment.v[0] = i->v[1];
-			segment.v[1] = i->v[0];
-			segment.fillStyle0 = i->fillStyle1;
-			segment.fillStyle1 = i->fillStyle0;
-		}
+			if (abs< float >(i->v[0].y - i->v[1].y) > FUZZY_EPSILON)
+			{
+				s.v[0] = i->v[0];
+				s.v[1] = i->v[1];
+				s.curve = false;
+				s.fillStyle0 = i->fillStyle0;
+				s.fillStyle1 = i->fillStyle1;
+				m_segments.push_back(s);
 
-		m_segments.push_back(segment);
-		pys.insert(segment.v[0].y);
-		pys.insert(segment.v[1].y);
+				pys.insert(s.v[0].y);
+				pys.insert(s.v[1].y);
+			}
+		}
+		else
+		{
+			Bezier2nd b(i->v[0], i->c, i->v[1]);
+
+			float Tlmmy = b.getLocalMinMaxY();
+			if (Tlmmy > 0.0f && Tlmmy < 1.0f)
+			{
+				// A local min/max exist; need to split curve into two segments.
+				Bezier2nd b0, b1;
+				b.split(Tlmmy, b0, b1);
+
+				if (abs< float >(b0.cp0.y - b0.cp2.y) > FUZZY_EPSILON)
+				{
+					s.v[0] = b0.cp0;
+					s.v[1] = b0.cp2;
+					s.c = b0.cp1;
+					s.curve = true;
+					s.fillStyle0 = i->fillStyle0;
+					s.fillStyle1 = i->fillStyle1;
+					m_segments.push_back(s);
+
+					pys.insert(s.v[0].y);
+					pys.insert(s.v[1].y);
+				}
+
+				if (abs< float >(b1.cp0.y - b1.cp2.y) > FUZZY_EPSILON)
+				{
+					s.v[0] = b1.cp0;
+					s.v[1] = b1.cp2;
+					s.c = b1.cp1;
+					s.curve = true;
+					s.fillStyle0 = i->fillStyle0;
+					s.fillStyle1 = i->fillStyle1;
+					m_segments.push_back(s);
+
+					pys.insert(s.v[0].y);
+					pys.insert(s.v[1].y);
+				}
+			}
+			else
+			{
+				if (abs< float >(b.cp0.y - b.cp2.y) > FUZZY_EPSILON)
+				{
+					s.v[0] = b.cp0;
+					s.v[1] = b.cp2;
+					s.c = b.cp1;
+					s.curve = true;
+					s.fillStyle0 = i->fillStyle0;
+					s.fillStyle1 = i->fillStyle1;
+					m_segments.push_back(s);
+
+					pys.insert(s.v[0].y);
+					pys.insert(s.v[1].y);
+				}
+			}
+		}
 	}
 
 	if (pys.empty())
 		return;
 
+	// Ensure all segments are top to bottom.
+	for (AlignedVector< Segment >::iterator i = m_segments.begin(); i != m_segments.end(); ++i)
+	{
+		if (i->v[0].y > i->v[1].y)
+		{
+			std::swap(i->v[0], i->v[1]);
+			std::swap(i->fillStyle0, i->fillStyle1);
+		}
+	}
+
 	// Sort segments to Y.
 	std::sort(m_segments.begin(), m_segments.end(), compareSegmentsY);
-
-	// Create trapezoids.
-	static AlignedVector< Trapezoid > trapezoids;
-	trapezoids.resize(0);
 
 	pys.erase(pys.begin());
 	for (std::set< float >::iterator i = pys.begin(); i != pys.end(); ++i)
@@ -103,31 +153,76 @@ void Triangulator::triangulate(const AlignedVector< Segment >& segments, Aligned
 			if (j->v[0].y >= *i)
 				break;
 
-			float d = (j->v[1].y - j->v[0].y);
-			if (d <= 0.0f)
-				d = 1.0f;
+			if (!j->curve)
+			{
+				float d = (j->v[1].y - j->v[0].y);
+				if (d <= 0.0f)
+					d = 1.0f;
 
-			float t = (*i - j->v[0].y) / d;
-			if (t > 1.0f)
-				t = 1.0f;
+				float t = (*i - j->v[0].y) / d;
+				if (t > 1.0f)
+					t = 1.0f;
 
-			float x = j->v[0].x + (j->v[1].x - j->v[0].x) * t;
+				float x = j->v[0].x + (j->v[1].x - j->v[0].x) * t;
 
-			Segment slab;
-			slab.v[0] = j->v[0];
-			slab.v[1] = Vector2(x, *i);
-			slab.fillStyle0 = j->fillStyle0;
-			slab.fillStyle1 = j->fillStyle1;
-			slab.lineStyle = j->lineStyle;
-			slabs.push_back(slab);
+				s.v[0] = j->v[0];
+				s.v[1] = Vector2(x, *i);
+				s.curve = false;
+				s.fillStyle0 = j->fillStyle0;
+				s.fillStyle1 = j->fillStyle1;
+				s.lineStyle = j->lineStyle;
+				slabs.push_back(s);
 
-			j->v[0] = slab.v[1];
+				j->v[0] = s.v[1];
+			}
+			else
+			{
+				if (*i < j->v[1].y)
+				{
+					Bezier2nd b(j->v[0], j->c, j->v[1]);
 
-			if (std::abs(j->v[1].y - j->v[0].y) <= FUZZY_EPSILON)
+					float t0, t1;
+					b.intersectX(*i, t0, t1);
+
+					T_ASSERT (t0 > -FUZZY_EPSILON && t0 < 1.0f + FUZZY_EPSILON);
+
+					Bezier2nd b0, b1;
+					b.split(t0, b0, b1);
+
+					s.v[0] = b0.cp0;
+					s.v[1] = b0.cp2;
+					s.c = b0.cp1;
+					s.curve = true;
+					s.fillStyle0 = j->fillStyle0;
+					s.fillStyle1 = j->fillStyle1;
+					s.lineStyle = j->lineStyle;
+					slabs.push_back(s);
+
+					j->v[0] = b1.cp0;
+					j->c = b1.cp1;
+				}
+				else
+				{
+					s.v[0] = j->v[0];
+					s.v[1] = j->v[1];
+					s.c = j->c;
+					s.curve = true;
+					s.fillStyle0 = j->fillStyle0;
+					s.fillStyle1 = j->fillStyle1;
+					s.lineStyle = j->lineStyle;
+					slabs.push_back(s);
+
+					j->v[0] = j->v[1];
+				}
+
+			}
+
+			if (abs< float >(j->v[1].y - j->v[0].y) <= 1e-4f)
 				j = m_segments.erase(j);
 			else
 				j++;
 		}
+
 		if (slabs.empty())
 			continue;
 
@@ -156,38 +251,131 @@ void Triangulator::triangulate(const AlignedVector< Segment >& segments, Aligned
 				if (sl.v[0].x >= sr.v[0].x && sl.v[1].x >= sr.v[1].x)
 					continue;
 
-				Trapezoid tr;
-				
-				tr.y[0] = sl.v[0].y;
-				tr.y[1] = sl.v[1].y;
-				tr.lx[0] = sl.v[0].x;
-				tr.lx[1] = sl.v[1].x;
-				tr.rx[0] = sr.v[0].x;
-				tr.rx[1] = sr.v[1].x;
-				tr.fillStyle = fillStyle;
+				float y0 = sl.v[0].y;
+				float y1 = sl.v[1].y;
 
-				trapezoids.push_back(tr);
+				bool il = false, ir = false;
+
+				if (sl.curve)
+				{
+					t.v[0] = Vector2(sl.v[0].x, y0);
+					t.v[1] = sl.c;
+					t.v[2] = Vector2(sl.v[1].x, y1);
+
+					il = bool(Line2(t.v[0], t.v[2]).distance(sl.c) >= 0.0f);
+
+					t.type = il ? TcOut : TcIn;
+					t.fillStyle = fillStyle;
+					outTriangles.push_back(t);
+				}
+
+				if (sr.curve)
+				{
+					t.v[0] = Vector2(sr.v[0].x, y0);
+					t.v[1] = sr.c;
+					t.v[2] = Vector2(sr.v[1].x, y1);
+
+					ir = bool(Line2(t.v[0], t.v[2]).distance(sr.c) < 0.0f);
+
+					t.type = ir ? TcOut : TcIn;
+					t.fillStyle = fillStyle;
+					outTriangles.push_back(t);
+				}
+
+				if (!il && !ir)
+				{
+					t.v[0] = Vector2(sl.v[0].x, y0);
+					t.v[1] = Vector2(sr.v[0].x, y0);
+					t.v[2] = Vector2(sl.v[1].x, y1);
+					t.type = TcFill;
+					t.fillStyle = fillStyle;
+					outTriangles.push_back(t);
+
+					t.v[0] = Vector2(sr.v[1].x, y1);
+					t.v[1] = Vector2(sl.v[1].x, y1);
+					t.v[2] = Vector2(sr.v[0].x, y0);
+					t.type = TcFill;
+					t.fillStyle = fillStyle;
+					outTriangles.push_back(t);
+				}
+				else if (il && !ir)
+				{
+					t.v[0] = Vector2(sl.v[0].x, y0);
+					t.v[1] = Vector2(sr.v[0].x, y0);
+					t.v[2] = sl.c;
+					t.type = TcFill;
+					t.fillStyle = fillStyle;
+					outTriangles.push_back(t);
+
+					t.v[0] = Vector2(sr.v[0].x, y0);
+					t.v[1] = Vector2(sr.v[1].x, y1);
+					t.v[2] = sl.c;
+					t.type = TcFill;
+					t.fillStyle = fillStyle;
+					outTriangles.push_back(t);
+
+					t.v[0] = Vector2(sr.v[1].x, y1);
+					t.v[1] = Vector2(sl.v[1].x, y1);
+					t.v[2] = sl.c;
+					t.type = TcFill;
+					t.fillStyle = fillStyle;
+					outTriangles.push_back(t);
+				}
+				else if (!il && ir)
+				{
+					t.v[0] = Vector2(sl.v[0].x, y0);
+					t.v[1] = Vector2(sr.v[0].x, y0);
+					t.v[2] = sr.c;
+					t.type = TcFill;
+					t.fillStyle = fillStyle;
+					outTriangles.push_back(t);
+
+					t.v[0] = Vector2(sl.v[1].x, y1);
+					t.v[1] = Vector2(sl.v[0].x, y0);
+					t.v[2] = sr.c;
+					t.type = TcFill;
+					t.fillStyle = fillStyle;
+					outTriangles.push_back(t);
+
+					t.v[0] = Vector2(sr.v[1].x, y1);
+					t.v[1] = Vector2(sl.v[1].x, y1);
+					t.v[2] = sr.c;
+					t.type = TcFill;
+					t.fillStyle = fillStyle;
+					outTriangles.push_back(t);
+				}
+				else	// il && ir
+				{
+					t.v[0] = Vector2(sl.v[0].x, y0);
+					t.v[1] = Vector2(sr.v[0].x, y0);
+					t.v[2] = sl.c;
+					t.type = TcFill;
+					t.fillStyle = fillStyle;
+					outTriangles.push_back(t);
+
+					t.v[0] = Vector2(sr.v[0].x, y0);
+					t.v[1] = sr.c;
+					t.v[2] = sl.c;
+					t.type = TcFill;
+					t.fillStyle = fillStyle;
+					outTriangles.push_back(t);
+
+					t.v[0] = Vector2(sr.v[1].x, y1);
+					t.v[1] = Vector2(sl.v[1].x, y1);
+					t.v[2] = sr.c;
+					t.type = TcFill;
+					t.fillStyle = fillStyle;
+					outTriangles.push_back(t);
+
+					t.v[0] = Vector2(sl.v[1].x, y1);
+					t.v[1] = sl.c;
+					t.v[2] = sr.c;
+					t.type = TcFill;
+					t.fillStyle = fillStyle;
+					outTriangles.push_back(t);
+				}
 			}
 		}
-	}
-
-	// Create triangles from trapezoids.
-	outTriangles.resize(trapezoids.size() * 2);
-	for (uint32_t i = 0; i < uint32_t(trapezoids.size()); ++i)
-	{
-		const Trapezoid& tz = trapezoids[i];
-
-		Triangle& t0 = outTriangles[i * 2 + 0];
-		t0.fillStyle = tz.fillStyle;
-		t0.v[0] = Vector2(tz.lx[0], tz.y[0]);
-		t0.v[1] = Vector2(tz.rx[0], tz.y[0]);
-		t0.v[2] = Vector2(tz.rx[1], tz.y[1]);
-
-		Triangle& t1 = outTriangles[i * 2 + 1];
-		t1.fillStyle = tz.fillStyle;
-		t1.v[0] = Vector2(tz.lx[0], tz.y[0]);
-		t1.v[1] = Vector2(tz.rx[1], tz.y[1]);
-		t1.v[2] = Vector2(tz.lx[1], tz.y[1]);
 	}
 }
 
