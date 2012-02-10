@@ -1,5 +1,6 @@
 #include "Core/Math/Const.h"
 #include "Core/Math/Line2.h"
+#include "Core/Math/MathUtils.h"
 
 namespace traktor
 {
@@ -37,6 +38,27 @@ T_MATH_INLINE Vector2 Line2::center() const
 T_MATH_INLINE float Line2::distance(const Vector2& pt) const
 {
 	return dot(normal(), pt - p[0]);
+}
+
+T_MATH_INLINE Vector2 Line2::project(const Vector2& pt) const
+{
+	float k = distance(pt);
+	return pt - normal() * k;
+}
+
+T_MATH_INLINE bool Line2::inrange(const Vector2& pt) const
+{
+	float k = dot(pt - p[0], delta()) / (length() * length());
+	return k >= 0.0f && k <= 1.0f;
+}
+
+T_MATH_INLINE bool Line2::classify(const Vector2& pt, float thickness) const
+{
+	float k = distance(pt);
+	if (abs(k) > thickness)
+		return false;
+	Vector2 p1 = pt - normal() * k;
+	return inrange(pt);
 }
 
 T_MATH_INLINE bool Line2::intersect(const Ray2& ray, float& outR, float& outK) const

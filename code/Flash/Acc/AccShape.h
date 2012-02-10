@@ -43,6 +43,8 @@ public:
 
 	virtual ~AccShape();
 
+	bool createTesselation(const std::list< Path >& paths);
+
 	bool createTesselation(const FlashShape& shape);
 
 	bool createTesselation(const FlashCanvas& canvas);
@@ -78,7 +80,6 @@ private:
 	struct TesselationBatch
 	{
 		AlignedVector< Triangle > triangles;
-		AlignedVector< Line > lines;
 	};
 
 	struct RenderBatch
@@ -93,7 +94,7 @@ private:
 	AlignedVector< TesselationBatch > m_tesselationBatches;
 	uint32_t m_tesselationTriangleCount;
 	AccShapeVertexPool::Range m_vertexRange;
-	AlignedVector< RenderBatch > m_renderBatches;
+	AlignedVector< RenderBatch > m_renderBatches[3];
 	SwfRect m_bounds;
 	uint8_t m_batchFlags;
 	bool m_needUpdate;

@@ -15,14 +15,6 @@ namespace traktor
 
 const uint32_t c_vertexPoolSize = 65536;
 
-#pragma pack(1)
-struct Vertex
-{
-	float pos[2];
-	uint8_t color[4];
-};
-#pragma pack()
-
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AccShapeVertexPool", AccShapeVertexPool, Object)
@@ -71,9 +63,10 @@ bool AccShapeVertexPool::acquireRange(int32_t vertexCount, Range& outRange)
 		}
 	}
 
-	std::vector< render::VertexElement > vertexElements(2);
+	std::vector< render::VertexElement > vertexElements(3);
 	vertexElements[0] = render::VertexElement(render::DuPosition, render::DtFloat2, offsetof(Vertex, pos));
-	vertexElements[1] = render::VertexElement(render::DuColor, render::DtByte4N, offsetof(Vertex, color), 0);
+	vertexElements[1] = render::VertexElement(render::DuCustom, render::DtFloat2, offsetof(Vertex, uv), 0);
+	vertexElements[2] = render::VertexElement(render::DuColor, render::DtByte4N, offsetof(Vertex, color), 0);
 	T_ASSERT (render::getVertexSize(vertexElements) == sizeof(Vertex));
 
 	Ref< render::VertexBuffer > vertexBuffer = m_renderSystem->createVertexBuffer(
