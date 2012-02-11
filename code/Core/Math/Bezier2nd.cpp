@@ -1,5 +1,7 @@
 #include <cmath>
 #include "Core/Math/Bezier2nd.h"
+#include "Core/Math/Const.h"
+#include "Core/Math/MathUtils.h"
 
 namespace traktor
 {
@@ -34,31 +36,47 @@ float Bezier2nd::getLocalMinMaxX() const
 void Bezier2nd::intersectX(float y, float& outT0, float& outT1) const
 {
 	float a = cp0.y - 2.0f * cp1.y + cp2.y;
-	float b = 2.0f * cp1.y - 2.0f * cp0.y;
-	float c = cp0.y - y;
+	if (abs< float >(a) > FUZZY_EPSILON)
+	{
+		float b = 2.0f * cp1.y - 2.0f * cp0.y;
+		float c = cp0.y - y;
 
-	float s = std::sqrtf(b * b - 4.0f * a * c);
-	float divisor = 2.0f * a;
-	float divend0 = -b + s;
-	float divend1 = -b - s;
+		float s = std::sqrtf(b * b - 4.0f * a * c);
+		float divisor = 2.0f * a;
+		float divend0 = -b + s;
+		float divend1 = -b - s;
 
-	outT0 = divend0 / divisor;
-	outT1 = divend1 / divisor;
+		outT0 = divend0 / divisor;
+		outT1 = divend1 / divisor;
+	}
+	else	// Not a 2nd degree polynomial
+	{
+		outT0 =
+		outT1 = (y - cp0.y) / (2.0f * cp1.y - 2.0f *  cp0.y);
+	}
 }
 
 void Bezier2nd::intersectY(float x, float& outT0, float& outT1) const
 {
 	float a = cp0.x - 2.0f * cp1.x + cp2.x;
-	float b = 2.0f * cp1.x - 2.0f * cp0.x;
-	float c = cp0.x - x;
+	if (abs< float >(a) > FUZZY_EPSILON)
+	{
+		float b = 2.0f * cp1.x - 2.0f * cp0.x;
+		float c = cp0.x - x;
 
-	float s = std::sqrtf(b * b - 4.0f * a * c);
-	float divisor = 2.0f * a;
-	float divend0 = -b + s;
-	float divend1 = -b - s;
+		float s = std::sqrtf(b * b - 4.0f * a * c);
+		float divisor = 2.0f * a;
+		float divend0 = -b + s;
+		float divend1 = -b - s;
 
-	outT0 = divend0 / divisor;
-	outT1 = divend1 / divisor;
+		outT0 = divend0 / divisor;
+		outT1 = divend1 / divisor;
+	}
+	else	// Not a 2nd degree polynomial
+	{
+		outT0 =
+		outT1 = (x - cp0.x) / (2.0f * cp1.x - 2.0f * cp0.x);
+	}
 }
 
 void Bezier2nd::split(float t, Bezier2nd& outLeft, Bezier2nd& outRight) const
