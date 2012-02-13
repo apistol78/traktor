@@ -332,6 +332,10 @@ bool SceneEditorPage::dropInstance(db::Instance* instance, const ui::Point& posi
 		else
 			m_context->getSceneAsset()->setEntityData(entityData);
 
+		// Select entity.
+		m_context->selectEntity(entityAdapter);
+		m_context->raiseSelect(this);
+
 		updateScene();
 		updateInstanceGrid();
 		updatePropertyObject();
