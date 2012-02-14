@@ -41,7 +41,7 @@ void Bezier2nd::intersectX(float y, float& outT0, float& outT1) const
 		float b = 2.0f * cp1.y - 2.0f * cp0.y;
 		float c = cp0.y - y;
 
-		float s = std::sqrtf(b * b - 4.0f * a * c);
+		float s = std::sqrt(b * b - 4.0f * a * c);
 		float divisor = 2.0f * a;
 		float divend0 = -b + s;
 		float divend1 = -b - s;
@@ -64,7 +64,7 @@ void Bezier2nd::intersectY(float x, float& outT0, float& outT1) const
 		float b = 2.0f * cp1.x - 2.0f * cp0.x;
 		float c = cp0.x - x;
 
-		float s = std::sqrtf(b * b - 4.0f * a * c);
+		float s = std::sqrt(b * b - 4.0f * a * c);
 		float divisor = 2.0f * a;
 		float divend0 = -b + s;
 		float divend1 = -b - s;
